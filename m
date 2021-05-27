@@ -2,46 +2,46 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B947C4707F
-	for <linux-tegra@archiver.kernel.org>; Thu, 27 May 2021 12:05:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF9A4C4707F
+	for <linux-tegra@archiver.kernel.org>; Thu, 27 May 2021 12:13:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D0F7261413
-	for <linux-tegra@archiver.kernel.org>; Thu, 27 May 2021 12:05:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AEC74613AA
+	for <linux-tegra@archiver.kernel.org>; Thu, 27 May 2021 12:13:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234627AbhE0MHU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 27 May 2021 08:07:20 -0400
-Received: from mail-pl1-f179.google.com ([209.85.214.179]:42717 "EHLO
-        mail-pl1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234574AbhE0MHR (ORCPT
+        id S235097AbhE0MOz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 27 May 2021 08:14:55 -0400
+Received: from mail-pf1-f182.google.com ([209.85.210.182]:34532 "EHLO
+        mail-pf1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234996AbhE0MOy (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 27 May 2021 08:07:17 -0400
-Received: by mail-pl1-f179.google.com with SMTP id v13so2224164ple.9;
-        Thu, 27 May 2021 05:05:43 -0700 (PDT)
+        Thu, 27 May 2021 08:14:54 -0400
+Received: by mail-pf1-f182.google.com with SMTP id q25so446120pfn.1;
+        Thu, 27 May 2021 05:13:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=YPiMEwGlMbValClUSlx6NzlbN5+iiX4yU0EKTF230x0=;
-        b=pT9gOuNC6izptvwsqIv8ZiEah+pFgewb0fZxJ1sOzA6YQEBxZqKXT+DY630mVEhaWU
-         kH73SI3/m9tNClsH+JE+mEQELJls7Z1IF9pExEA6xeDaRglt3OPCLpWILl3m+385gKYk
-         XHXuCLTRd5tWzJHVtOlRfcZ9pc3el9tX8QgR21VoM8C9bOLu60AE61N4KZ+MP6RaKmuE
-         x6J/VtAqka30xmvrMYzjqlPED/CeQWWvPRM9LNOCKAuuxAYzH2NflwwJtXO8G30kydct
-         KsKs3oHLuTb6MYHpbbgvvGo8lAR55Wpnj4NwEN/c/gwD4Kh93eYFUyuNgr5cX5Kulfbr
-         wpxw==
-X-Gm-Message-State: AOAM532LSQAjtJyAb7aAqKIzcgOd19ga52jnZ0vY5UJ2CSCJvBmw9iaH
-        G6usDmL19t5lU3VAozm59cM=
-X-Google-Smtp-Source: ABdhPJyq4o82UeSB/VMcI2HzJRqIKhAhsKPTexGNNjmDEjXXMkumsNeSiYwS1PfP5p1QerPuXbAhgw==
-X-Received: by 2002:a17:90a:5d8e:: with SMTP id t14mr3367014pji.85.1622117143281;
-        Thu, 27 May 2021 05:05:43 -0700 (PDT)
+        bh=Hp+Uy7UVKG2i4DKsG6eZskROxgnGGiFzGKlG97gaaTY=;
+        b=AiIKST4JmhQzcRY2fhfNDd/ps8dT9SdwmagRYHKHoV8KZQHCgDRARqZ9rF7Mh+cHoj
+         F/VhyrgLeYubzpwEEqQCkDEda8X2ddhsomOcrL6jtk5rYWr1ibO9gE2AXQnOqnHzAwqn
+         sYBl9h7Vpd/hKutz7vB6rHdC28N6IaX73IdDb5sgRf/g+l+7YqGmHgfhZ6350HK4ov4T
+         hgG5loa8WA1tlvaRpbQNjpVTPHfm4Voyo+ZgIVDjsZ31G7WyDgLrtCohMBGw7xrp5M3b
+         lFSVDVFQhu25mfeY7UHTSMNMKVSbLCOfFAiFCwVY/ctprLYDMuNnpPlfI/A15HNECbwk
+         DJ0Q==
+X-Gm-Message-State: AOAM531uXCCfYMcfIPybLLUFmSctjmyLy7hjfNqo/WlQh4rhmw95YtQv
+        wwWRLGexsq7ocmuCrdsCUNg=
+X-Google-Smtp-Source: ABdhPJzB28t814SgXj5tmGrrEwAQwUL5MPndC9/+sOTzEgPSfjZDYWZh79wNAEMuzStikwuubILejw==
+X-Received: by 2002:a65:6a4f:: with SMTP id o15mr3415028pgu.399.1622117601772;
+        Thu, 27 May 2021 05:13:21 -0700 (PDT)
 Received: from rocinante.localdomain ([95.155.85.46])
-        by smtp.gmail.com with ESMTPSA id e23sm1888250pfl.84.2021.05.27.05.05.36
+        by smtp.gmail.com with ESMTPSA id g72sm1840414pfb.33.2021.05.27.05.13.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 May 2021 05:05:42 -0700 (PDT)
-Date:   Thu, 27 May 2021 14:05:31 +0200
+        Thu, 27 May 2021 05:13:21 -0700 (PDT)
+Date:   Thu, 27 May 2021 14:13:10 +0200
 From:   Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
 To:     Om Prakash Singh <omp@nvidia.com>
 Cc:     vidyas@nvidia.com, lorenzo.pieralisi@arm.com, bhelgaas@google.com,
@@ -49,32 +49,52 @@ Cc:     vidyas@nvidia.com, lorenzo.pieralisi@arm.com, bhelgaas@google.com,
         linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org,
         linux-kernel@vger.kernel.org, kthota@nvidia.com,
         mmaddireddy@nvidia.com
-Subject: Re: [RESEND PATCH V1 4/5] PCI: tegra: Don't allow suspend when Tegra
- PCIe is in EP mode
-Message-ID: <20210527120531.GB213718@rocinante.localdomain>
+Subject: Re: [RESEND PATCH V1 3/5] PCI: tegra: Disable interrupts before
+ entering L2
+Message-ID: <20210527121310.GC213718@rocinante.localdomain>
 References: <20210527115246.20509-1-omp@nvidia.com>
- <20210527115246.20509-5-omp@nvidia.com>
+ <20210527115246.20509-4-omp@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20210527115246.20509-5-omp@nvidia.com>
+In-Reply-To: <20210527115246.20509-4-omp@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Prakash
+Hi Prakash,
 
-[...]
-> @@ -2276,6 +2276,11 @@ static int tegra_pcie_dw_suspend_late(struct device *dev)
-[...]
-> +	if (pcie->mode == DW_PCIE_EP_TYPE) {
-> +		dev_err(dev, "Tegra PCIe is in EP mode, suspend not allowed");
-> +		return -EPERM;
-> +	}
+> Tegra194 implements suspend_noirq() hook and during the system suspend, the link
+> is taken to L2 state after PME_Turn_off handshake and if it doesn't go into L2,
+> PERST# is asserted. It is observed that with some of the endpoints (Ex:- Marvell
+> SATA controller), the link doesn't go into L2 state and asserting PERST# results
+> in Surprise Link Down error and the corresponding AER interrupt is also raised.
+> Since the system is in noirq phase, this interrupt is not served. Both PME and
+> AER interrupts are served by the same wire interrupt in Tegra194, and since the
+> PCIe sub-system enables wake capability for PME interrupt, having a pending AER
+> interrupt is treated as PME wake interrupt by the system and prevents the system
+> going into the suspend state. To address this issue, the interrupts are disabled
+> before taking the link into L2 state as the interrupts are not expected anyway
+> from the controller afterward.
 
-Would the -EINVAL be more appropriate here?  It seem more appropriate
-when something is an invalid operation, rather than access to the
-resource being denied (or something along these lines), what do you
-think?
+This commit could use some formatting, perhaps splitting it into few
+paragraphs and also I believe your line length could use some
+adjustment.  Having said that, I am not sure if the whole detailed
+account of the problem is required to be included here in the commit
+message.
+
+> +	/*
+> +	 * PCIe controller exits from L2 only if reset is applied, so
+> +	 * controller doesn't handle interrupts. But in cases where
+> +	 * L2 entry fails, PERST# is asserted which can trigger surprise
+> +	 * link down AER. However this function call happens in
+> +	 * suspend_noirq(), so AER interrupt will not be processed.
+> +	 * Disable all interrupts to avoid such a scenario.
+> +	 */
+[...]
+
+This code comment added below makes for a better commit message that the
+commit message above - clear, concise and straight to the point of why
+this was added.
 
 	Krzysztof
