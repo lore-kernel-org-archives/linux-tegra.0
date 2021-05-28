@@ -2,202 +2,199 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3903AC4708D
-	for <linux-tegra@archiver.kernel.org>; Fri, 28 May 2021 16:53:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4353FC2B9F7
+	for <linux-tegra@archiver.kernel.org>; Fri, 28 May 2021 17:04:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 132DF613E5
-	for <linux-tegra@archiver.kernel.org>; Fri, 28 May 2021 16:53:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 252166117A
+	for <linux-tegra@archiver.kernel.org>; Fri, 28 May 2021 17:04:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233845AbhE1QzE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 28 May 2021 12:55:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37292 "EHLO
+        id S236934AbhE1RFe (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 28 May 2021 13:05:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39664 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230337AbhE1QzC (ORCPT
+        with ESMTP id S231219AbhE1RFe (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 28 May 2021 12:55:02 -0400
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F59CC061574;
-        Fri, 28 May 2021 09:53:26 -0700 (PDT)
-Received: by mail-ej1-x635.google.com with SMTP id l1so6351429ejb.6;
-        Fri, 28 May 2021 09:53:26 -0700 (PDT)
+        Fri, 28 May 2021 13:05:34 -0400
+Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39EEFC061574
+        for <linux-tegra@vger.kernel.org>; Fri, 28 May 2021 10:03:59 -0700 (PDT)
+Received: by mail-ed1-x530.google.com with SMTP id j10so5601447edw.8
+        for <linux-tegra@vger.kernel.org>; Fri, 28 May 2021 10:03:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=8/Q1T7/H3Ga42CpeeXwBtnXyWFCr/Nsv9NyGJyZCOVw=;
-        b=EMVcyf6Vgozn5JaYJzcv45C5rVttjwZhqro7BUHd7I3jakgKq8Pbk7u9QzQGlo5MAD
-         Dk2qFwXmHzAWKZpmpX8mTMlTgCUh5e8M0Nk7GJL8ar5Ok2CraN8y81cNbPrE2vGRTbrH
-         KGHuKPgYre/zEvkyFVKxIXf5edK1SPiaq04y/2nS3EQKznllAGzpPmcaJaxJJTYueipU
-         s7oNVNfnGFb2EZQOoWBsiAbTLe+413OVfW/uCjolzRCxjaXXncFbnhT6agwrdh/HKtWJ
-         qicDai95PQu5/TK8Fx3dccPsg+kEPUX4nY2Ipb+N8VYr0SkT92c0IlyFSA0E9A8g6kRB
-         fcLw==
+        bh=vQATZo+AZo4YlZU2F1YsWzh6lrZA5xtN0yUkcxgQjB0=;
+        b=BYr+K+Nr36WmmfDScZnUlfK7sTAJZtKemw1pJ/mtrtl2v5/tAfPjczuIoU0iraIwWA
+         t2A2/7pNO92Fik4NAZDBo4xu8R0AMrkCqypSw7uoWgehNvCcdYxpXBYZKHjgFG/PhBYO
+         /fNWHcozCdeVVnly3t7XODxA7RLCfdPPnGV+KpN1hCM9/fXI24BwQ+vMb1owRVmNJDjq
+         +K7sLll2egnECQFloecqqKplJa3uscANWEVV6+LUhMdv9jLHAjfwR8rzKCDZvtHk7tyG
+         o0Vd9pu4fjXSVLntOmm2ayPnD0uY2+lkKuBiu3PfVUjDJCB0LsgnDpWDIWR1nCk6QWXI
+         oUlg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=8/Q1T7/H3Ga42CpeeXwBtnXyWFCr/Nsv9NyGJyZCOVw=;
-        b=uod3f/ozGvcyo6/DxLUlcR3WDK+3BO7aPi4xVSxYqTrYb/aSIQTspCmro81YIGhEbM
-         ZigznA+G2gho748JGlW0sfI9Vuvzrzz191F2CD63DRGO7mzvOqk/xF3sc5EDUtzkAe+c
-         KIU6abESHayqCeGNSlNCJyNWtTbC2nkJz2842wkrQfiQBRhoDX4evJYAyBDL8M6X79Rb
-         /ThcTqZ+NjOOJaD2SxH4SpOQCxaCT5fCmy55w8sg5oYqj01jkzdkMvTZiUMMucPtQx/2
-         BgAkF1D439BbS8rJ7qcgK/54zMxpjr44b9JG10osgwXAtwqY0Fgml2PY4dcbcHA4HkG2
-         pQNg==
-X-Gm-Message-State: AOAM533xSw+VGKC7aju/xqLy2MTHGTrheGAuJLkUHwMvJOK8p4MaevNW
-        qxkbSN+xCweIcF5XCQ8U/Leh+4jZCWY=
-X-Google-Smtp-Source: ABdhPJw+KFj6oh+Lnn+VyF4bZ3YYAp39NuBtIqWCrkvnE4kOjTZxgBquKlUXFUfzQ3Ajk/jPxTuIHQ==
-X-Received: by 2002:a17:906:6dd0:: with SMTP id j16mr10062452ejt.208.1622220804798;
-        Fri, 28 May 2021 09:53:24 -0700 (PDT)
+        bh=vQATZo+AZo4YlZU2F1YsWzh6lrZA5xtN0yUkcxgQjB0=;
+        b=SdFkzKFZm9kxe+lvFcIANKVGJ4Dwlcegha0+tZE6SkuTAmE6IIfHA80CHIzekVgGWo
+         p4bazbpfuujDwtKLIS3ggHCH1mRsAigDS88Q6epXGaO4LcKv/oj3ICnjMEcqCpfLPA/Y
+         92pSPhVNlXK55QMZmVCF0e8BUobBcSP2qDZbopUDn82+CNItdx1L6AtqNCbl/sepsOYi
+         dvs5+UcN5fZW0kWbiwh4Gx51pcIk/HX11Kln7kg6XRjpbGja0XsGg8yuyMt4QWgP4Fc5
+         EKmuwAp0leOYIIvm0Ak+p/dvWUNN9l5vNBRY51hVTQwNx+tY0mtbh0fKnkP4TmzzOURw
+         +i0Q==
+X-Gm-Message-State: AOAM531be2gI8dbuJ29w+Z5J2XGpzBNVh/redHAWXSTbU9DUSBSBYg+u
+        E3wXUhyJEbSxmIOKZRoLq8I=
+X-Google-Smtp-Source: ABdhPJycpvmB9hvj5UhOb2wxYw+dia0+6YsgtT4XQ9JGvgKIKbT94ArxpuxjPIbVv1cFQLHbODVwWg==
+X-Received: by 2002:a05:6402:40c:: with SMTP id q12mr10793692edv.0.1622221437848;
+        Fri, 28 May 2021 10:03:57 -0700 (PDT)
 Received: from localhost ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id l11sm2600520ejd.103.2021.05.28.09.53.23
+        by smtp.gmail.com with ESMTPSA id e25sm600142eja.15.2021.05.28.10.03.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 May 2021 09:53:23 -0700 (PDT)
-Date:   Fri, 28 May 2021 18:54:55 +0200
+        Fri, 28 May 2021 10:03:56 -0700 (PDT)
+Date:   Fri, 28 May 2021 19:05:28 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
+To:     Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     Jon Hunter <jonathanh@nvidia.com>,
         Nicolin Chen <nicolinc@nvidia.com>,
-        Krishna Reddy <vdumpa@nvidia.com>,
-        Dmitry Osipenko <digetx@gmail.com>, devicetree@vger.kernel.org,
-        iommu@lists.linux-foundation.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v2 1/5] dt-bindings: reserved-memory: Document memory
- region specifier
-Message-ID: <YLEgXyLBF8PEFNw2@orome.fritz.box>
-References: <20210423163234.3651547-1-thierry.reding@gmail.com>
- <20210423163234.3651547-2-thierry.reding@gmail.com>
- <20210520220306.GA1976116@robh.at.kernel.org>
+        Krishna Reddy <vdumpa@nvidia.com>, linux-tegra@vger.kernel.org,
+        iommu@lists.linux-foundation.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 00/10] arm64: tegra: Prevent early SMMU faults
+Message-ID: <YLEi2FonP568wYrE@orome.fritz.box>
+References: <20210420172619.3782831-1-thierry.reding@gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="Q8VGTr6iP6guEeJM"
+        protocol="application/pgp-signature"; boundary="dbXO9L0VPFIC9kST"
 Content-Disposition: inline
-In-Reply-To: <20210520220306.GA1976116@robh.at.kernel.org>
+In-Reply-To: <20210420172619.3782831-1-thierry.reding@gmail.com>
 User-Agent: Mutt/2.0.6 (98f8cb83) (2021-03-06)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---Q8VGTr6iP6guEeJM
+--dbXO9L0VPFIC9kST
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 20, 2021 at 05:03:06PM -0500, Rob Herring wrote:
-> On Fri, Apr 23, 2021 at 06:32:30PM +0200, Thierry Reding wrote:
-> > From: Thierry Reding <treding@nvidia.com>
-> >=20
-> > Reserved memory region phandle references can be accompanied by a
-> > specifier that provides additional information about how that specific
-> > reference should be treated.
-> >=20
-> > One use-case is to mark a memory region as needing an identity mapping
-> > in the system's IOMMU for the device that references the region. This is
-> > needed for example when the bootloader has set up hardware (such as a
-> > display controller) to actively access a memory region (e.g. a boot
-> > splash screen framebuffer) during boot. The operating system can use the
-> > identity mapping flag from the specifier to make sure an IOMMU identity
-> > mapping is set up for the framebuffer before IOMMU translations are
-> > enabled for the display controller.
-> >=20
-> > Signed-off-by: Thierry Reding <treding@nvidia.com>
-> > ---
-> >  .../reserved-memory/reserved-memory.txt       | 21 +++++++++++++++++++
-> >  include/dt-bindings/reserved-memory.h         |  8 +++++++
-> >  2 files changed, 29 insertions(+)
-> >  create mode 100644 include/dt-bindings/reserved-memory.h
+On Tue, Apr 20, 2021 at 07:26:09PM +0200, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
 >=20
-> Sorry for being slow on this. I have 2 concerns.
+> Hi,
 >=20
-> First, this creates an ABI issue. A DT with cells in 'memory-region'=20
-> will not be understood by an existing OS. I'm less concerned about this=
-=20
-> if we address that with a stable fix. (Though I'm pretty sure we've=20
-> naively added #?-cells in the past ignoring this issue.)
+> this is a set of patches that is the result of earlier discussions
+> regarding early identity mappings that are needed to avoid SMMU faults
+> during early boot.
+>=20
+> The goal here is to avoid early identity mappings altogether and instead
+> postpone the need for the identity mappings to when devices are attached
+> to the SMMU. This works by making the SMMU driver coordinate with the
+> memory controller driver on when to start enforcing SMMU translations.
+> This makes Tegra behave in a more standard way and pushes the code to
+> deal with the Tegra-specific programming into the NVIDIA SMMU
+> implementation.
+>=20
+> Compared to the original version of these patches, I've split the
+> preparatory work into a separate patch series because it became very
+> large and will be mostly uninteresting for this audience.
+>=20
+> Patch 1 provides a mechanism to program SID overrides at runtime. Patch
+> 2 updates the ARM SMMU device tree bindings to include the Tegra186
+> compatible string as suggested by Robin during review.
+>=20
+> Patches 3 and 4 create the fundamentals in the SMMU driver to support
+> this and also make this functionality available on Tegra186. Patch 5
+> hooks the ARM SMMU up to the memory controller so that the memory client
+> stream ID overrides can be programmed at the right time.
+>=20
+> Patch 6 extends this mechanism to Tegra186 and patches 7-9 enable all of
+> this through device tree updates. Patch 10 is included here to show how
+> SMMU will be enabled for display controllers. However, it cannot be
+> applied yet because the code to create identity mappings for potentially
+> live framebuffers hasn't been merged yet.
+>=20
+> The end result is that various peripherals will have SMMU enabled, while
+> the display controllers will keep using passthrough, as initially set up
+> by firmware. Once the device tree bindings have been accepted and the
+> SMMU driver has been updated to create identity mappings for the display
+> controllers, they can be hooked up to the SMMU and the code in this
+> series will automatically program the SID overrides to enable SMMU
+> translations at the right time.
+>=20
+> Note that the series creates a compile time dependency between the
+> memory controller and IOMMU trees. If it helps I can provide a branch
+> for each tree, modelling the dependency, once the series has been
+> reviewed.
+>=20
+> Changes in v2:
+> - split off the preparatory work into a separate series (that needs to
+>   be applied first)
+> - address review comments by Robin
+>=20
+> Thierry
+>=20
+> Thierry Reding (10):
+>   memory: tegra: Implement SID override programming
+>   dt-bindings: arm-smmu: Add Tegra186 compatible string
+>   iommu/arm-smmu: Implement ->probe_finalize()
+>   iommu/arm-smmu: tegra: Detect number of instances at runtime
+>   iommu/arm-smmu: tegra: Implement SID override programming
+>   iommu/arm-smmu: Use Tegra implementation on Tegra186
+>   arm64: tegra: Use correct compatible string for Tegra186 SMMU
+>   arm64: tegra: Hook up memory controller to SMMU on Tegra186
+>   arm64: tegra: Enable SMMU support on Tegra194
+>   arm64: tegra: Enable SMMU support for display on Tegra194
+>=20
+>  .../devicetree/bindings/iommu/arm,smmu.yaml   |  11 +-
+>  arch/arm64/boot/dts/nvidia/tegra186.dtsi      |   4 +-
+>  arch/arm64/boot/dts/nvidia/tegra194.dtsi      | 166 ++++++++++++++++++
+>  drivers/iommu/arm/arm-smmu/arm-smmu-impl.c    |   3 +-
+>  drivers/iommu/arm/arm-smmu/arm-smmu-nvidia.c  |  90 ++++++++--
+>  drivers/iommu/arm/arm-smmu/arm-smmu.c         |  13 ++
+>  drivers/iommu/arm/arm-smmu/arm-smmu.h         |   1 +
+>  drivers/memory/tegra/mc.c                     |   9 +
+>  drivers/memory/tegra/tegra186.c               |  72 ++++++++
+>  include/soc/tegra/mc.h                        |   3 +
+>  10 files changed, 349 insertions(+), 23 deletions(-)
 
-A while ago I had proposed adding memory-region*s* as an alternative
-name for memory-region to make the naming more consistent with other
-types of properties (think clocks, resets, gpios, ...). If we added
-that, we could easily differentiate between the "legacy" cases where
-no #memory-region-cells was allowed and the new cases where it was.
+Will, Robin,
 
-> Second, it could be the bootloader setting up the reserved region. If a=
-=20
-> node already has 'memory-region', then adding more regions is more=20
-> complicated compared to adding new properties. And defining what each=20
-> memory-region entry is or how many in schemas is impossible.
+do you have any more comments on the ARM SMMU bits of this series? If
+not, can you guys provide an Acked-by so that Krzysztof can pick this
+(modulo the DT patches) up into the memory-controller tree for v5.14?
 
-It's true that updating the property gets a bit complicated, but it's
-not exactly rocket science. We really just need to splice the array. I
-have a working implemention for this in U-Boot.
+I'll send out a v3 with the bisectibilitiy fix that Krishna pointed
+out.
 
-For what it's worth, we could run into the same issue with any new
-property that we add. Even if we renamed this to iommu-memory-region,
-it's still possible that a bootloader may have to update this property
-if it already exists (it could be hard-coded in DT, or it could have
-been added by some earlier bootloader or firmware).
-
-> Both could be addressed with a new property. Perhaps something like=20
-> 'iommu-memory-region =3D <&phandle>;'. I think the 'iommu' prefix is=20
-> appropriate given this is entirely because of the IOMMU being in the=20
-> mix. I might feel differently if we had other uses for cells, but I=20
-> don't really see it in this case.=20
-
-I'm afraid that down the road we'll end up with other cases and then we
-might proliferate a number of *-memory-region properties with varying
-prefixes.
-
-I am aware of one other case where we might need something like this: on
-some Tegra SoCs we have audio processors that will access memory buffers
-using a DMA engine. These processors are booted from early firmware
-using firmware from system memory. In order to avoid trashing the
-firmware, we need to reserve memory. We can do this using reserved
-memory nodes. However, the audio DMA engine also uses the SMMU, so we
-need to make sure that the firmware memory is marked as reserved within
-the SMMU. This is similar to the identity mapping case, but not exactly
-the same. Instead of creating a 1:1 mapping, we just want that IOVA
-region to be reserved (i.e. IOMMU_RESV_RESERVED instead of
-IOMMU_RESV_DIRECT{,_RELAXABLE}).
-
-That would also fall into the IOMMU domain, but we can't reuse the
-iommu-memory-region property for that because then we don't have enough
-information to decide which type of reservation we need.
-
-We could obviously make iommu-memory-region take a specifier, but we
-could just as well use memory-regions in that case since we have
-something more generic anyway.
-
-With the #memory-region-cells proposal, we can easily extend the cell in
-the specifier with an additional MEMORY_REGION_IOMMU_RESERVE flag to
-take that other use case into account. If we than also change to the new
-memory-regions property name, we avoid the ABI issue (and we gain a bit
-of consistency while at it).
-
+Thanks,
 Thierry
 
---Q8VGTr6iP6guEeJM
+--dbXO9L0VPFIC9kST
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmCxIF0ACgkQ3SOs138+
-s6GgVBAAvM4rKjwwQlq4GSoJz946gpHZ/v8WPH/wvUQcsnFUrNIGJsLNItv+oeNC
-WSP4nCxc4cEhpi0Jl9MUM24e0I9BM1eL5x9t86XdssjF8ElmHeO6uUPL3zKUmhrv
-C94rix/U5H4oDUANv22Fi2GCVAMLjnCRAgz0jOzAmpRnR8CfpGhC8HD9+vsIOuyl
-jr0zb5JdJQntp9KfagD2sxrrMp3bkb3AURhgxvMzu+jMgsjAsg65LxZkrmwfLUOg
-Dt8LDNcbx42zE3ioF+F+fT7mHRfMPsxyAM9dYtFbjeGr4/+vdwEIuySRXW4lY9+U
-j1Lc/M5Fperag6as/U7dGSNutUBzWRJTKe9AmCgJ4+O0Z3GZJCl1ziuUjI7WmMxv
-6E2s5Mg0CImYe4rMFVy065os+saYdiLy4xJy2sjnt71qsa0GMzJ0k8H07E9RYQ9g
-l4RRkfj21qt/PuMAh9TuFewQIJxgVHUmOWFQ/qATYqTGKAmXriVBolY7wO/KuwTe
-zgo8dShCCO92KASb9NFZEqCg9Igi5c+5hzU5oi3tXKG54uCfWnhNn/HVN1viCbzi
-jr1cm5Bn/kj1id1xeHdPKPCIONcDEQYv/slUpRsMo3hTQzgpkxKP5OH7CbAxLo3Y
-/RPDyN8wSreHg3SM97nqYGade6GOZVug0oFC5RoL4oQaU02immw=
-=1rTq
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmCxItYACgkQ3SOs138+
+s6EDOBAAwOiGOvTRsOL0/TG+ekj2Qy8EtKdkYVeeHYkYzILZEbzntRj67AJ3MyWc
+Qz+08dicUEwFlehcUGCX1iltXX61eTLLxWATt14ogx2QWJMQ8MLAqbEifYpm1Q3g
+YqO7p/7l6y0F7Ah//pbROLvhHdQfIjbzypfpyzVRV4eyo8MVjttvOVymxYyekIHS
+5WT0lHXOxmOZBemH6bK66tdIceIZ/TEGSy6sI9a7fo1KSJRC8UyAvlUb2eG2WIgI
+KbsIunQUbT7jZx0bLTGVD5xJpcuZURgm+KkN0Y1cfRPP3XVlHWsotPH8O2G1Vqbb
+Ul5aQYHunYKOXRq4YxhtpTWCmg38ZsNjT941VvVqpZlUHHnHdPAIoV+e6B5Z/ZMk
+tVmWhG91uoGOiCp/KJZ+kc8E7TxkpYtw+HzdW1nQEVhlCJ6Lcjjp7vQdmuWb54/l
+5/ql3ep8u2Ycj0SBcuUMsfCZPoJwvysnlY5DswqHI1i5UslQ8FPBxH3pkNyERKZp
+b/pmkMN+RjKezyD6Y6LULATQG6Dif5Hrb7uIXOcMnhcDuFhb11Vf7MuXQwe4K+Ok
+MTqVgNWNo0kIMDNMZXraN3+k24R0MFBBOoLAY/bMeNDxXknCpqxWky6ouQbRalf+
+nc3IEDIy7U/mgb4HvI+25P1WIArtLpA9ZKbhUYmahdMlbkn77ww=
+=bqed
 -----END PGP SIGNATURE-----
 
---Q8VGTr6iP6guEeJM--
+--dbXO9L0VPFIC9kST--
