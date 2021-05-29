@@ -2,62 +2,61 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 988A6C2B9F7
-	for <linux-tegra@archiver.kernel.org>; Fri, 28 May 2021 17:42:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3067C47082
+	for <linux-tegra@archiver.kernel.org>; Sat, 29 May 2021 15:47:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 70AB761108
-	for <linux-tegra@archiver.kernel.org>; Fri, 28 May 2021 17:42:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9BFE4601FC
+	for <linux-tegra@archiver.kernel.org>; Sat, 29 May 2021 15:47:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229453AbhE1Roa (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 28 May 2021 13:44:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48592 "EHLO
+        id S229704AbhE2Psn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 29 May 2021 11:48:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52754 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229450AbhE1Roa (ORCPT
+        with ESMTP id S229693AbhE2Psm (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 28 May 2021 13:44:30 -0400
-Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 541FAC061574;
-        Fri, 28 May 2021 10:42:54 -0700 (PDT)
-Received: by mail-lf1-x12d.google.com with SMTP id q1so6475662lfo.3;
-        Fri, 28 May 2021 10:42:54 -0700 (PDT)
+        Sat, 29 May 2021 11:48:42 -0400
+Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8E9AC061574;
+        Sat, 29 May 2021 08:47:04 -0700 (PDT)
+Received: by mail-lf1-x12e.google.com with SMTP id b18so5764991lfv.11;
+        Sat, 29 May 2021 08:47:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=KI4+CLc3LVUdeiCFpZRQ3yReYzhuigspJBb1+pZncVg=;
-        b=oM14DXMeSFyqHfnSQZF6/HT5X7Rss3NnScX9QUatfLlN3bd0+VHUM0f/2bC9M1SxEY
-         A9dncf9wTPOIjBmPdsyS7C4c25qC2V0gQ7fQ8dNrQATJnvtfOm7k+JnlrujnaxncbJfZ
-         w5OV3aLAE1ikyxHCLZ7XLMgsOarJyoFfIsBhH3nn7m3InshlnPZ2tIB+Oycfg1PN5W+w
-         77YCy5f2hY/wLwHqTqcwHcnLpUUzaIzRTwAgYd35vsCVlLT20wbH+/r4QCinfQqsxnNc
-         IMaQ3cDTydPb6djFkuAuo07dKO4t4QdzbvZdx9X8Ez7XJqgK31aRm0WY4cQqexu41O78
-         vtGg==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=69jY18dEEmfg/ZmZabTRCrIvuDBUDZXyA3JOYkZkeGw=;
+        b=mRcFb2P0k5/vGofL5Z6ifIaPh1MLPeh+A8QKTudtugZOONYgG0jOYoQk/KzxhvhLfu
+         KQDDGsTNC3s8khsw5BXO5qgZGwIO5JOhSVNbW+6P2t+EueqiaQ52nNAuZMtaBBi0qNI/
+         e4/gvZtyvEjG3GDM0M5mJdhsqdRtzwFCojSM1uige15JzQLkmP5hhQkBQ5rYNglfZI2G
+         4BB56E95lEbYFkYDkzscfLeGKPT6axij8yPU4iub9LtKNwWi8th/kROMJ9eaVnOwxHd2
+         FcdezkdjweOLL4fvYsq2EVkXlzbUtMdJGumNsWVfsxucbJZd0QDvpO/M2fHbcC0JHyzL
+         lk5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=KI4+CLc3LVUdeiCFpZRQ3yReYzhuigspJBb1+pZncVg=;
-        b=O6ClZL38tPe1GfcZUoPPu70wpaRCCDF+UhK66B0Hu7aiYTGK7HQbVp4OjNHDZdNl2X
-         S2SYUwxbqqgCSRB0LE6Tnqr73bRR4VfKMPQBSbL+/fCd/9AZvBDfFNCDPG21kLz3KMMw
-         pM3DBeNXC0FGM3MeY5ADUnFCX4aCNdHudsp/YuaFgG8rzS4vmcr8U2272MmPJd1ABZV4
-         CIc2SZWgGLROX8xuYa8RHWyYUjTzSvGPKb1UiSb1jxsDWn/g/YHm8TbWrgvkUAS40MB2
-         HYludVjyAlu/DfDi+Ea9jsX9tsUXPuhGeqFIBTvNYyqsvkDK17edZWYxl2uXYgnn3OhD
-         2pbg==
-X-Gm-Message-State: AOAM532/0AF0z6Makt70tH0FjzLNLWTRzv7nifbG6Sb5Lyt0QljpoaRr
-        CNfsIza5Aak2BJNaZ7WyuMGdPKSAlJo=
-X-Google-Smtp-Source: ABdhPJxiEtzPDrR5ngSZmiruM65mcClPAqHZWszF1m2W/3v0KJZZPai1jBHELrIdAXfJzJrPHipbRg==
-X-Received: by 2002:ac2:4255:: with SMTP id m21mr6891577lfl.633.1622223772542;
-        Fri, 28 May 2021 10:42:52 -0700 (PDT)
-Received: from [192.168.2.145] (46-138-12-55.dynamic.spd-mgts.ru. [46.138.12.55])
-        by smtp.googlemail.com with ESMTPSA id n5sm521916lft.139.2021.05.28.10.42.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 28 May 2021 10:42:52 -0700 (PDT)
-Subject: Re: [PATCH v5 2/3] ASoC: tegra: Unify ASoC machine drivers
+        bh=69jY18dEEmfg/ZmZabTRCrIvuDBUDZXyA3JOYkZkeGw=;
+        b=FVsKAqyyjTM28B5xvfAz9BwrSGZtZ0Xy3aFAc0QyV+Rqb8o0O+nYnVI5e9c1INF36+
+         pX/gQRe44R1D0oMiDUWBF8PM7YTNG84F8TryDithrxsyepFCtwZirV+MUapqA1xDVqZK
+         mIflUq2UC2uVjUSUubc1V2iS88Ui5bValEI2riHHvAW2jmY7tmiKIoCvSxzIvhPSqzLc
+         zT+VI15kBEd1jLKhRFw2NZZcrsn78ELMOioPBEcL65G/LnbZojmxTQdlt5V0PvVLnSx2
+         alEPjAO5lC7quajUSXIVfLtJwgmyyXOrLLwk7jfpVW/fvuoKFeiTN+EyjEveOBNDCNcV
+         mNLw==
+X-Gm-Message-State: AOAM530CkqxZRQm7RWVyQDjrnYxtPfYwycFkj7CUG+vcieXzRaB/1of8
+        pAnkV97tMs6jbRXgxBvGGyE=
+X-Google-Smtp-Source: ABdhPJxub4O4ti3YHUpNH7X94BqtbHhnVYCK73BCXVrvgQWeio/I30cjJEEadISmn+0wxgOW1GLbgQ==
+X-Received: by 2002:a05:6512:a95:: with SMTP id m21mr9319762lfu.272.1622303223164;
+        Sat, 29 May 2021 08:47:03 -0700 (PDT)
+Received: from localhost.localdomain (46-138-84-89.dynamic.spd-mgts.ru. [46.138.84.89])
+        by smtp.gmail.com with ESMTPSA id y24sm764005lfg.232.2021.05.29.08.47.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 29 May 2021 08:47:02 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -68,73 +67,110 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Liam Girdwood <lgirdwood@gmail.com>
 Cc:     alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
-References: <20210528172833.21622-1-digetx@gmail.com>
- <20210528172833.21622-3-digetx@gmail.com>
-Message-ID: <722581fd-a89b-7b69-f0c0-414d732a6c5c@gmail.com>
-Date:   Fri, 28 May 2021 20:42:51 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+Subject: [PATCH v6 0/4] Unify NVIDIA Tegra ASoC machine drivers
+Date:   Sat, 29 May 2021 18:46:45 +0300
+Message-Id: <20210529154649.25936-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-In-Reply-To: <20210528172833.21622-3-digetx@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-28.05.2021 20:28, Dmitry Osipenko пишет:
-> -static int tegra_wm9712_driver_probe(struct platform_device *pdev)
-> -{
-> -	struct device_node *np = pdev->dev.of_node;
-> -	struct snd_soc_card *card = &snd_soc_tegra_wm9712;
-> -	struct tegra_wm9712 *machine;
-> -	int ret;
-> -
-> -	machine = devm_kzalloc(&pdev->dev, sizeof(struct tegra_wm9712),
-> -			       GFP_KERNEL);
-> -	if (!machine)
-> -		return -ENOMEM;
-> -
-> -	card->dev = &pdev->dev;
-> -	snd_soc_card_set_drvdata(card, machine);
-> -
-> -	machine->codec = platform_device_alloc("wm9712-codec", -1);
-> -	if (!machine->codec) {
-> -		dev_err(&pdev->dev, "Can't allocate wm9712 platform device\n");
-> -		return -ENOMEM;
-> -	}
-> -
-> -	ret = platform_device_add(machine->codec);
-> -	if (ret)
-> -		goto codec_put;
-> -
-> -	ret = snd_soc_of_parse_card_name(card, "nvidia,model");
-> -	if (ret)
-> -		goto codec_unregister;
-> -
-> -	ret = snd_soc_of_parse_audio_routing(card, "nvidia,audio-routing");
-> -	if (ret)
-> -		goto codec_unregister;
-> -
-> -	tegra_wm9712_dai.cpus->of_node = of_parse_phandle(np,
-> -				       "nvidia,ac97-controller", 0);
-> -	if (!tegra_wm9712_dai.cpus->of_node) {
-> -		dev_err(&pdev->dev,
-> -			"Property 'nvidia,ac97-controller' missing or invalid\n");
-> -		ret = -EINVAL;
-> -		goto codec_unregister;
-> -	}
-> -
-> -	tegra_wm9712_dai.platforms->of_node = tegra_wm9712_dai.cpus->of_node;
-> -
-> -	ret = tegra_asoc_utils_init(&machine->util_data, &pdev->dev);
-> -	if (ret)
-> -		goto codec_unregister;
-> -
-> -	ret = tegra_asoc_utils_set_ac97_rate(&machine->util_data);
-> -	if (ret)
-> -		goto codec_unregister;
+This series squashes all the ASoC machine drivers into a single one,
+this change was suggested by Jon Hunter. It also sets driver_name and
+components string of each card, allowing userspace alsa-lib to find
+UCMs at predictable path.
 
-I just noticed that this AC97 clk initialization is gone now for wm9712,
-I'll fix it in v6.
+Changelog:
+
+v6: - Fixed missed configuration of AC97 clock rate for the WM9712 codec
+      in the unified driver.
+
+    - Added new patch that removes now obsolete "utils" helpers and moves
+      code into the unified driver.
+
+        ASoC: tegra: Squash utils into common machine driver
+
+v5: - The v4 removed the customization of components string for Nexus 7,
+      but I missed to remove the "components" hook which is unused now,
+      it's removed in v5 for consistency.
+
+    - Slightly improved naming of the common 12MHz MCLK rate function
+      to make it more consistent with the rest of the driver functions.
+
+v4: - Moved out mclk_rate callback that is currently used only by WM8903
+      machine driver from the common driver. This was suggested by Jon Hunter.
+
+    - Dropped patch which was setting custom components string for Nexus 7.
+      Jaroslav Kysela wants it to be specified in a device-tree, but the
+      components string doesn't have a firm specification for today. It's
+      better to drop this change for now since it's optional anyways.
+
+    - Fixed compilation error that was reported by kernel robot for v3.
+
+    - Jaroslav Kysela merged alsa-ucm-conf PR [1] which added UCMs for
+      Nexus 7 and Acer A500. The UCMs are fully working using a combination
+      of updated kernel + alsa-ucm-conf master + alsa-lib master, meaning
+      that they will work with the next releases of kernel and ALSA userspace
+      upstream packages.
+
+    - Added ack from Jaroslav Kysela to the "Specify components string for
+      each card" patch that he gave to v3.
+
+v3: - Added components string as was suggested by Jaroslav Kysela to v2.
+
+    - Renamed MCLK rate function that is used by max98090 and other codecs
+      to make it look more generic. Added option for specifying CLK ID per
+      device. This all was suggested by Jon Hunter to v2.
+
+v2: - Dropped use of of_device_compatible_match(), like it was suggested
+      by Rob Herring in a review comment to v1.
+
+    - Added patch that sets card's driver_name of as Tegra ASoC drivers.
+      In a comment to v1 Jaroslav Kysela suggested that the Tegra drivers
+      don't set the card name properly and he was right.
+
+      I opened pull request with the new Tegra UCMs and updated lookup paths
+      for older UCMs [1].
+
+      [1] https://github.com/alsa-project/alsa-ucm-conf/pull/92
+
+Dmitry Osipenko (4):
+  ASoC: tegra: Set driver_name=tegra for all machine drivers
+  ASoC: tegra: Unify ASoC machine drivers
+  ASoC: tegra: Specify components string for each card
+  ASoC: tegra: Squash utils into common machine driver
+
+ sound/soc/tegra/Kconfig              |  12 +
+ sound/soc/tegra/Makefile             |  19 +-
+ sound/soc/tegra/tegra_alc5632.c      | 259 --------
+ sound/soc/tegra/tegra_asoc_machine.c | 854 +++++++++++++++++++++++++++
+ sound/soc/tegra/tegra_asoc_machine.h |  49 ++
+ sound/soc/tegra/tegra_asoc_utils.c   | 225 -------
+ sound/soc/tegra/tegra_asoc_utils.h   |  38 --
+ sound/soc/tegra/tegra_max98090.c     | 276 ---------
+ sound/soc/tegra/tegra_rt5640.c       | 222 -------
+ sound/soc/tegra/tegra_rt5677.c       | 324 ----------
+ sound/soc/tegra/tegra_sgtl5000.c     | 211 -------
+ sound/soc/tegra/tegra_wm8753.c       | 185 ------
+ sound/soc/tegra/tegra_wm8903.c       | 351 +++--------
+ sound/soc/tegra/tegra_wm9712.c       | 166 ------
+ sound/soc/tegra/trimslice.c          | 172 ------
+ 15 files changed, 996 insertions(+), 2367 deletions(-)
+ delete mode 100644 sound/soc/tegra/tegra_alc5632.c
+ create mode 100644 sound/soc/tegra/tegra_asoc_machine.c
+ create mode 100644 sound/soc/tegra/tegra_asoc_machine.h
+ delete mode 100644 sound/soc/tegra/tegra_asoc_utils.c
+ delete mode 100644 sound/soc/tegra/tegra_asoc_utils.h
+ delete mode 100644 sound/soc/tegra/tegra_max98090.c
+ delete mode 100644 sound/soc/tegra/tegra_rt5640.c
+ delete mode 100644 sound/soc/tegra/tegra_rt5677.c
+ delete mode 100644 sound/soc/tegra/tegra_sgtl5000.c
+ delete mode 100644 sound/soc/tegra/tegra_wm8753.c
+ delete mode 100644 sound/soc/tegra/tegra_wm9712.c
+ delete mode 100644 sound/soc/tegra/trimslice.c
+
+-- 
+2.30.2
+
