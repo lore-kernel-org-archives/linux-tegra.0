@@ -7,21 +7,21 @@ X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D118CC47095
-	for <linux-tegra@archiver.kernel.org>; Sun, 30 May 2021 12:22:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CC2FC4709C
+	for <linux-tegra@archiver.kernel.org>; Sun, 30 May 2021 12:22:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C182D60E0C
-	for <linux-tegra@archiver.kernel.org>; Sun, 30 May 2021 12:22:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4431E61108
+	for <linux-tegra@archiver.kernel.org>; Sun, 30 May 2021 12:22:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229759AbhE3MYD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 30 May 2021 08:24:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38382 "EHLO
+        id S229500AbhE3MYE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 30 May 2021 08:24:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38390 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229769AbhE3MYB (ORCPT
+        with ESMTP id S229813AbhE3MYB (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
         Sun, 30 May 2021 08:24:01 -0400
 Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D2A3C06138D
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B149EC06174A
         for <linux-tegra@vger.kernel.org>; Sun, 30 May 2021 05:22:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
          s=20161220; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
@@ -29,25 +29,25 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
         Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
         :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
         List-Post:List-Owner:List-Archive;
-        bh=9n4ilDFeEZkrMt2fapteRcChbmDyKI5GaTGTuSDYSI0=; b=W/6Lo+fhtWCJ3ftaGxX6B1ehA8
-        wsdt88OvBIRRpS/8FY8fNT8AUclaF8moPZDwb5Fq3Er9G4kmhKtIkasX7DQfdEkPd4zNRtZE02c1m
-        G8XHKl+4s/RCeLhoPW1D2PrbI9zLkrU3XkPPgy8PEioyNrQxdfzU251xjJ3L0ek2O0fpWppGJEMn6
-        8qnHOSUHmFhNBAs1/zBb+PY9aDQcSG0kCmBIi1bCLBGB49VsGpLfnNnCE9ZOUYLUtre9ti/JJFL8p
-        Jq8N60L7lq/b0FvHjVL1gl0rQf4gd0Borq5hv4pXFK/dlboY+54OIMmLUS3RM4D/svqqIr4Q6lVlK
-        fIjxci6Q==;
+        bh=7XgbqwpbDEarmd3LdvhiuL3gA2xLk1reVHJ8kSsmmmk=; b=eraQOpTMJScPetUx7lPfVmmsE+
+        kABPX5Y/u13nYGdLBxcOk/UP3AgDKtejI7hfGz1WuKu3qAizht5Yz8Xgd76LPH79Cnf0vgCBu5Dp0
+        T30woCq/ul98yvZYeIvlNcEnCpOf2W3iw8GkiAAaJb3n45MDCsFVLLbo3CRDUJpG27zhl2cDWfQso
+        jZQ7xzVqy9rPZPX7IRXTHUZdgum1JghqO5Ej0mGlk3wa7dQoFvBoTxMJp9oKog1Mb+OU6PoJEHAh2
+        m7o2tazX/VsK4QhmFVelhvlBJ8ZPstqWKcXXL7m/1qORkJjUrUhpC+KwxrhX+xKcEy0f4fF0dF8HC
+        e6Gb3vDg==;
 Received: from dsl-hkibng22-54f986-236.dhcp.inet.fi ([84.249.134.236] helo=toshino.localdomain)
         by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.89)
         (envelope-from <mperttunen@nvidia.com>)
-        id 1lnKSP-000775-OS; Sun, 30 May 2021 15:22:17 +0300
+        id 1lnKSQ-000775-Ka; Sun, 30 May 2021 15:22:18 +0300
 From:   Mikko Perttunen <mperttunen@nvidia.com>
 To:     thierry.reding@gmail.com, jonathanh@nvidia.com, digetx@gmail.com,
         airlied@linux.ie, daniel@ffwll.ch
 Cc:     dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
         Mikko Perttunen <mperttunen@nvidia.com>
-Subject: [PATCH v6 02/14] gpu: host1x: Add no-recovery mode
-Date:   Sun, 30 May 2021 15:21:44 +0300
-Message-Id: <20210530122156.3292479-3-mperttunen@nvidia.com>
+Subject: [PATCH v6 13/14] drm/tegra: Add job firewall
+Date:   Sun, 30 May 2021 15:21:55 +0300
+Message-Id: <20210530122156.3292479-14-mperttunen@nvidia.com>
 X-Mailer: git-send-email 2.30.1
 In-Reply-To: <20210530122156.3292479-1-mperttunen@nvidia.com>
 References: <20210530122156.3292479-1-mperttunen@nvidia.com>
@@ -60,253 +60,362 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Add a new property for jobs to enable or disable recovery i.e.
-CPU increments of syncpoints to max value on job timeout. This
-allows for a more solid model for hanged jobs, where userspace
-doesn't need to guess if a syncpoint increment happened because
-the job completed, or because job timeout was triggered.
+Add a firewall that validates jobs before submission to ensure
+they don't do anything they aren't allowed to do, like accessing
+memory they should not access.
 
-On job timeout, we stop the channel, NOP all future jobs on the
-channel using the same syncpoint, mark the syncpoint as locked
-and resume the channel from the next job, if any.
+The firewall is functionality-wise a copy of the firewall already
+implemented in gpu/host1x. It is copied here as it makes more
+sense for it to live on the DRM side, as it is only needed for
+userspace job submissions, and generally the data it needs to
+do its job is easier to access here.
 
-The future jobs are NOPed, since because we don't do the CPU
-increments, the value of the syncpoint is no longer synchronized,
-and any waiters would become confused if a future job incremented
-the syncpoint. The syncpoint is marked locked to ensure that any
-future jobs cannot increment the syncpoint either, until the
-application has recognized the situation and reallocated the
-syncpoint.
+In the future, the other implementation will be removed.
 
 Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
 ---
+v6:
+* If .is_valid_class is not set, match against client's
+  class
+* Fix indentation
+* Return to previous class after a WAIT command
+* Print warning detailing error when rejecting a command
+  buffer
+* Removed uapi subdirectory
 v5:
-* Update for change in put_ref prototype.
-* Fixed typo in comment.
+* Support SETCLASS opcode
 v3:
-* Move 'locked' check inside CDMA lock to prevent race
-* Add clarifying comment to NOP-patching code
+* New patch
 ---
- drivers/gpu/drm/tegra/drm.c        |  1 +
- drivers/gpu/host1x/cdma.c          | 58 ++++++++++++++++++++++++++----
- drivers/gpu/host1x/hw/channel_hw.c |  2 +-
- drivers/gpu/host1x/job.c           |  4 +++
- drivers/gpu/host1x/syncpt.c        |  2 ++
- drivers/gpu/host1x/syncpt.h        | 12 +++++++
- include/linux/host1x.h             |  9 +++++
- 7 files changed, 81 insertions(+), 7 deletions(-)
+ drivers/gpu/drm/tegra/Makefile   |   1 +
+ drivers/gpu/drm/tegra/firewall.c | 254 +++++++++++++++++++++++++++++++
+ drivers/gpu/drm/tegra/submit.c   |  12 +-
+ drivers/gpu/drm/tegra/submit.h   |   4 +
+ 4 files changed, 269 insertions(+), 2 deletions(-)
+ create mode 100644 drivers/gpu/drm/tegra/firewall.c
 
-diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
-index ce5bdc58d315..992aa5cde510 100644
---- a/drivers/gpu/drm/tegra/drm.c
-+++ b/drivers/gpu/drm/tegra/drm.c
-@@ -200,6 +200,7 @@ int tegra_drm_submit(struct tegra_drm_context *context,
- 	job->client = client;
- 	job->class = client->class;
- 	job->serialize = true;
-+	job->syncpt_recovery = true;
- 
- 	/*
- 	 * Track referenced BOs so that they can be unreferenced after the
-diff --git a/drivers/gpu/host1x/cdma.c b/drivers/gpu/host1x/cdma.c
-index 6e6ca774f68d..765e5aa64eb6 100644
---- a/drivers/gpu/host1x/cdma.c
-+++ b/drivers/gpu/host1x/cdma.c
-@@ -312,10 +312,6 @@ static void update_cdma_locked(struct host1x_cdma *cdma)
- 	bool signal = false;
- 	struct host1x_job *job, *n;
- 
--	/* If CDMA is stopped, queue is cleared and we can return */
--	if (!cdma->running)
--		return;
--
- 	/*
- 	 * Walk the sync queue, reading the sync point registers as necessary,
- 	 * to consume as many sync queue entries as possible without blocking
-@@ -324,7 +320,8 @@ static void update_cdma_locked(struct host1x_cdma *cdma)
- 		struct host1x_syncpt *sp = job->syncpt;
- 
- 		/* Check whether this syncpt has completed, and bail if not */
--		if (!host1x_syncpt_is_expired(sp, job->syncpt_end)) {
-+		if (!host1x_syncpt_is_expired(sp, job->syncpt_end) &&
-+		    !job->cancelled) {
- 			/* Start timer on next pending syncpt */
- 			if (job->timeout)
- 				cdma_start_timer_locked(cdma, job);
-@@ -413,8 +410,11 @@ void host1x_cdma_update_sync_queue(struct host1x_cdma *cdma,
- 	else
- 		restart_addr = cdma->last_pos;
- 
-+	if (!job)
-+		goto resume;
+diff --git a/drivers/gpu/drm/tegra/Makefile b/drivers/gpu/drm/tegra/Makefile
+index ab4289d1c991..5d2039f0c734 100644
+--- a/drivers/gpu/drm/tegra/Makefile
++++ b/drivers/gpu/drm/tegra/Makefile
+@@ -6,6 +6,7 @@ tegra-drm-y := \
+ 	uapi.o \
+ 	submit.o \
+ 	gather_bo.o \
++	firewall.o \
+ 	gem.o \
+ 	fb.o \
+ 	dp.o \
+diff --git a/drivers/gpu/drm/tegra/firewall.c b/drivers/gpu/drm/tegra/firewall.c
+new file mode 100644
+index 000000000000..1824d2db0e2c
+--- /dev/null
++++ b/drivers/gpu/drm/tegra/firewall.c
+@@ -0,0 +1,254 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/* Copyright (c) 2010-2020 NVIDIA Corporation */
 +
- 	/* do CPU increments for the remaining syncpts */
--	if (job) {
-+	if (job->syncpt_recovery) {
- 		dev_dbg(dev, "%s: perform CPU incr on pending buffers\n",
- 			__func__);
- 
-@@ -433,8 +433,44 @@ void host1x_cdma_update_sync_queue(struct host1x_cdma *cdma,
- 
- 		dev_dbg(dev, "%s: finished sync_queue modification\n",
- 			__func__);
-+	} else {
-+		struct host1x_job *failed_job = job;
++#include "drm.h"
++#include "submit.h"
++#include "uapi.h"
 +
-+		host1x_job_dump(dev, job);
++struct tegra_drm_firewall {
++	struct tegra_drm_submit_data *submit;
++	struct tegra_drm_client *client;
++	u32 *data;
++	u32 pos;
++	u32 end;
++	u32 class;
++};
 +
-+		host1x_syncpt_set_locked(job->syncpt);
-+		failed_job->cancelled = true;
-+
-+		list_for_each_entry_continue(job, &cdma->sync_queue, list) {
-+			unsigned int i;
-+
-+			if (job->syncpt != failed_job->syncpt)
-+				continue;
-+
-+			for (i = 0; i < job->num_slots; i++) {
-+				unsigned int slot = (job->first_get/8 + i) %
-+						    HOST1X_PUSHBUFFER_SLOTS;
-+				u32 *mapped = cdma->push_buffer.mapped;
-+
-+				/*
-+				 * Overwrite opcodes with 0 word writes
-+				 * to offset 0xbad. This does nothing but
-+				 * has a easily detected signature in debug
-+				 * traces.
-+				 */
-+				mapped[2*slot+0] = 0x1bad0000;
-+				mapped[2*slot+1] = 0x1bad0000;
-+			}
-+
-+			job->cancelled = true;
-+		}
-+
-+		wmb();
-+
-+		update_cdma_locked(cdma);
- 	}
- 
-+resume:
- 	/* roll back DMAGET and start up channel again */
- 	host1x_hw_cdma_resume(host1x, cdma, restart_addr);
- }
-@@ -490,6 +526,16 @@ int host1x_cdma_begin(struct host1x_cdma *cdma, struct host1x_job *job)
- 
- 	mutex_lock(&cdma->lock);
- 
-+	/*
-+	 * Check if syncpoint was locked due to previous job timeout.
-+	 * This needs to be done within the cdma lock to avoid a race
-+	 * with the timeout handler.
-+	 */
-+	if (job->syncpt->locked) {
-+		mutex_unlock(&cdma->lock);
-+		return -EPERM;
-+	}
-+
- 	if (job->timeout) {
- 		/* init state on first submit with timeout value */
- 		if (!cdma->timeout.initialized) {
-diff --git a/drivers/gpu/host1x/hw/channel_hw.c b/drivers/gpu/host1x/hw/channel_hw.c
-index d4c28faf27d1..bf21512e5078 100644
---- a/drivers/gpu/host1x/hw/channel_hw.c
-+++ b/drivers/gpu/host1x/hw/channel_hw.c
-@@ -191,7 +191,7 @@ static int channel_submit(struct host1x_job *job)
- 	/* schedule a submit complete interrupt */
- 	err = host1x_intr_add_action(host, sp, syncval,
- 				     HOST1X_INTR_ACTION_SUBMIT_COMPLETE, ch,
--				     completed_waiter, NULL);
-+				     completed_waiter, &job->waiter);
- 	completed_waiter = NULL;
- 	WARN(err, "Failed to set submit complete interrupt");
- 
-diff --git a/drivers/gpu/host1x/job.c b/drivers/gpu/host1x/job.c
-index adbdc225de8d..8f59b34672c2 100644
---- a/drivers/gpu/host1x/job.c
-+++ b/drivers/gpu/host1x/job.c
-@@ -79,6 +79,10 @@ static void job_free(struct kref *ref)
- {
- 	struct host1x_job *job = container_of(ref, struct host1x_job, ref);
- 
-+	if (job->waiter)
-+		host1x_intr_put_ref(job->syncpt->host, job->syncpt->id,
-+				    job->waiter, false);
-+
- 	if (job->syncpt)
- 		host1x_syncpt_put(job->syncpt);
- 
-diff --git a/drivers/gpu/host1x/syncpt.c b/drivers/gpu/host1x/syncpt.c
-index e648ebbb2027..d198a10848c6 100644
---- a/drivers/gpu/host1x/syncpt.c
-+++ b/drivers/gpu/host1x/syncpt.c
-@@ -407,6 +407,8 @@ static void syncpt_release(struct kref *ref)
- 
- 	atomic_set(&sp->max_val, host1x_syncpt_read(sp));
- 
-+	sp->locked = false;
-+
- 	mutex_lock(&sp->host->syncpt_mutex);
- 
- 	host1x_syncpt_base_free(sp->base);
-diff --git a/drivers/gpu/host1x/syncpt.h b/drivers/gpu/host1x/syncpt.h
-index a6766f8d55ee..93e894677d89 100644
---- a/drivers/gpu/host1x/syncpt.h
-+++ b/drivers/gpu/host1x/syncpt.h
-@@ -40,6 +40,13 @@ struct host1x_syncpt {
- 
- 	/* interrupt data */
- 	struct host1x_syncpt_intr intr;
-+
-+	/* 
-+	 * If a submission incrementing this syncpoint fails, lock it so that
-+	 * further submission cannot be made until application has handled the
-+	 * failure.
-+	 */
-+	bool locked;
- };
- 
- /* Initialize sync point array  */
-@@ -115,4 +122,9 @@ static inline int host1x_syncpt_is_valid(struct host1x_syncpt *sp)
- 	return sp->id < host1x_syncpt_nb_pts(sp->host);
- }
- 
-+static inline void host1x_syncpt_set_locked(struct host1x_syncpt *sp)
++static int fw_next(struct tegra_drm_firewall *fw, u32 *word)
 +{
-+	sp->locked = true;
++	if (fw->pos == fw->end)
++		return -EINVAL;
++
++	*word = fw->data[fw->pos++];
++
++	return 0;
 +}
 +
- #endif
-diff --git a/include/linux/host1x.h b/include/linux/host1x.h
-index f2ea24fe0b0d..98dfb72e6c77 100644
---- a/include/linux/host1x.h
-+++ b/include/linux/host1x.h
-@@ -233,9 +233,15 @@ struct host1x_job {
- 	u32 syncpt_incrs;
- 	u32 syncpt_end;
- 
-+	/* Completion waiter ref */
-+	void *waiter;
++static bool fw_check_addr_valid(struct tegra_drm_firewall *fw, u32 offset)
++{
++	u32 i;
 +
- 	/* Maximum time to wait for this job */
- 	unsigned int timeout;
- 
-+	/* Job has timed out and should be released */
-+	bool cancelled;
++	for (i = 0; i < fw->submit->num_used_mappings; i++) {
++		struct tegra_drm_mapping *m = fw->submit->used_mappings[i].mapping;
 +
- 	/* Index and number of slots used in the push buffer */
- 	unsigned int first_get;
- 	unsigned int num_slots;
-@@ -256,6 +262,9 @@ struct host1x_job {
- 
- 	/* Add a channel wait for previous ops to complete */
- 	bool serialize;
++		if (offset >= m->iova && offset <= m->iova_end)
++			return true;
++	}
 +
-+	/* Fast-forward syncpoint increments on job timeout */
-+	bool syncpt_recovery;
++	return false;
++}
++
++static int fw_check_reg(struct tegra_drm_firewall *fw, u32 offset)
++{
++	bool is_addr;
++	u32 word;
++	int err;
++
++	err = fw_next(fw, &word);
++	if (err)
++		return err;
++
++	if (!fw->client->ops->is_addr_reg)
++		return 0;
++
++	is_addr = fw->client->ops->is_addr_reg(fw->client->base.dev, fw->class,
++					       offset);
++
++	if (!is_addr)
++		return 0;
++
++	if (!fw_check_addr_valid(fw, word))
++		return -EINVAL;
++
++	return 0;
++}
++
++static int fw_check_regs_seq(struct tegra_drm_firewall *fw, u32 offset,
++			     u32 count, bool incr)
++{
++	u32 i;
++
++	for (i = 0; i < count; i++) {
++		if (fw_check_reg(fw, offset))
++			return -EINVAL;
++
++		if (incr)
++			offset++;
++	}
++
++	return 0;
++}
++
++static int fw_check_regs_mask(struct tegra_drm_firewall *fw, u32 offset,
++			      u16 mask)
++{
++	unsigned long bmask = mask;
++	unsigned int bit;
++
++	for_each_set_bit(bit, &bmask, 16) {
++		if (fw_check_reg(fw, offset+bit))
++			return -EINVAL;
++	}
++
++	return 0;
++}
++
++static int fw_check_regs_imm(struct tegra_drm_firewall *fw, u32 offset)
++{
++	bool is_addr;
++
++	is_addr = fw->client->ops->is_addr_reg(fw->client->base.dev, fw->class,
++					       offset);
++	if (is_addr)
++		return -EINVAL;
++
++	return 0;
++}
++
++static int fw_check_class(struct tegra_drm_firewall *fw, u32 class)
++{
++	if (!fw->client->ops->is_valid_class) {
++		if (class == fw->client->base.class)
++			return 0;
++		else
++			return -EINVAL;
++	}
++
++	if (!fw->client->ops->is_valid_class(class))
++		return -EINVAL;
++
++	return 0;
++}
++
++enum {
++	HOST1X_OPCODE_SETCLASS  = 0x00,
++	HOST1X_OPCODE_INCR      = 0x01,
++	HOST1X_OPCODE_NONINCR   = 0x02,
++	HOST1X_OPCODE_MASK      = 0x03,
++	HOST1X_OPCODE_IMM       = 0x04,
++	HOST1X_OPCODE_RESTART   = 0x05,
++	HOST1X_OPCODE_GATHER    = 0x06,
++	HOST1X_OPCODE_SETSTRMID = 0x07,
++	HOST1X_OPCODE_SETAPPID  = 0x08,
++	HOST1X_OPCODE_SETPYLD   = 0x09,
++	HOST1X_OPCODE_INCR_W    = 0x0a,
++	HOST1X_OPCODE_NONINCR_W = 0x0b,
++	HOST1X_OPCODE_GATHER_W  = 0x0c,
++	HOST1X_OPCODE_RESTART_W = 0x0d,
++	HOST1X_OPCODE_EXTEND    = 0x0e,
++};
++
++int tegra_drm_fw_validate(struct tegra_drm_client *client, u32 *data, u32 start,
++			  u32 words, struct tegra_drm_submit_data *submit,
++			  u32 *job_class)
++{
++	struct tegra_drm_firewall fw = {
++		.submit = submit,
++		.client = client,
++		.data = data,
++		.pos = start,
++		.end = start+words,
++		.class = *job_class,
++	};
++	bool payload_valid = false;
++	u32 payload;
++	int err;
++
++	while (fw.pos != fw.end) {
++		u32 word, opcode, offset, count, mask, class;
++
++		err = fw_next(&fw, &word);
++		if (err)
++			return err;
++
++		opcode = (word & 0xf0000000) >> 28;
++
++		switch (opcode) {
++		case HOST1X_OPCODE_SETCLASS:
++			offset = word >> 16 & 0xfff;
++			mask = word & 0x3f;
++			class = (word >> 6) & 0x3ff;
++			err = fw_check_class(&fw, class);
++			fw.class = class;
++			*job_class = class;
++			if (!err)
++				err = fw_check_regs_mask(&fw, offset, mask);
++			if (err)
++				dev_warn(client->base.dev,
++					 "illegal SETCLASS(offset=0x%x, mask=0x%x, class=0x%x) at word %u",
++					 offset, mask, class, fw.pos-1);
++			break;
++		case HOST1X_OPCODE_INCR:
++			offset = (word >> 16) & 0xfff;
++			count = word & 0xffff;
++			err = fw_check_regs_seq(&fw, offset, count, true);
++			if (err)
++				dev_warn(client->base.dev,
++					 "illegal INCR(offset=0x%x, count=%u) in class 0x%x at word %u",
++					 offset, count, fw.class, fw.pos-1);
++			break;
++		case HOST1X_OPCODE_NONINCR:
++			offset = (word >> 16) & 0xfff;
++			count = word & 0xffff;
++			err = fw_check_regs_seq(&fw, offset, count, false);
++			if (err)
++				dev_warn(client->base.dev,
++					 "illegal NONINCR(offset=0x%x, count=%u) in class 0x%x at word %u",
++					 offset, count, fw.class, fw.pos-1);
++			break;
++		case HOST1X_OPCODE_MASK:
++			offset = (word >> 16) & 0xfff;
++			mask = word & 0xffff;
++			err = fw_check_regs_mask(&fw, offset, mask);
++			if (err)
++				dev_warn(client->base.dev,
++					 "illegal MASK(offset=0x%x, mask=0x%x) in class 0x%x at word %u",
++					 offset, mask, fw.class, fw.pos-1);
++			break;
++		case HOST1X_OPCODE_IMM:
++			/* IMM cannot reasonably be used to write a pointer */
++			offset = (word >> 16) & 0xfff;
++			err = fw_check_regs_imm(&fw, offset);
++			if (err)
++				dev_warn(client->base.dev,
++					 "illegal IMM(offset=0x%x) in class 0x%x at word %u",
++					 offset, fw.class, fw.pos-1);
++			break;
++		case HOST1X_OPCODE_SETPYLD:
++			payload = word & 0xffff;
++			payload_valid = true;
++			break;
++		case HOST1X_OPCODE_INCR_W:
++			if (!payload_valid)
++				return -EINVAL;
++
++			offset = word & 0x3fffff;
++			err = fw_check_regs_seq(&fw, offset, payload, true);
++			if (err)
++				dev_warn(client->base.dev,
++					 "illegal INCR_W(offset=0x%x) in class 0x%x at word %u",
++					 offset, fw.class, fw.pos-1);
++			break;
++		case HOST1X_OPCODE_NONINCR_W:
++			if (!payload_valid)
++				return -EINVAL;
++
++			offset = word & 0x3fffff;
++			err = fw_check_regs_seq(&fw, offset, payload, false);
++			if (err)
++				dev_warn(client->base.dev,
++					 "illegal NONINCR(offset=0x%x) in class 0x%x at word %u",
++					 offset, fw.class, fw.pos-1);
++			break;
++		default:
++			dev_warn(client->base.dev, "illegal opcode at word %u",
++				 fw.pos-1);
++			return -EINVAL;
++		}
++
++		if (err)
++			return err;
++	}
++
++	return 0;
++}
+diff --git a/drivers/gpu/drm/tegra/submit.c b/drivers/gpu/drm/tegra/submit.c
+index ae1bf916b972..c23536a46475 100644
+--- a/drivers/gpu/drm/tegra/submit.c
++++ b/drivers/gpu/drm/tegra/submit.c
+@@ -246,7 +246,8 @@ static int submit_job_add_gather(struct host1x_job *job,
+ 				 struct tegra_drm_context *ctx,
+ 				 struct drm_tegra_submit_cmd_gather_uptr *cmd,
+ 				 struct gather_bo *bo, u32 *offset,
+-				 struct tegra_drm_submit_data *job_data)
++				 struct tegra_drm_submit_data *job_data,
++				 u32 *class)
+ {
+ 	u32 next_offset;
+ 
+@@ -271,6 +272,12 @@ static int submit_job_add_gather(struct host1x_job *job,
+ 		return -EINVAL;
+ 	}
+ 
++	if (tegra_drm_fw_validate(ctx->client, bo->gather_data, *offset,
++				  cmd->words, job_data, class)) {
++		SUBMIT_ERR(ctx, "job was rejected by firewall");
++		return -EINVAL;
++	}
++
+ 	host1x_job_add_gather(job, &bo->base, cmd->words, *offset * 4);
+ 
+ 	*offset = next_offset;
+@@ -327,7 +334,8 @@ static int submit_create_job(struct host1x_job **pjob,
+ 		if (cmd->type == DRM_TEGRA_SUBMIT_CMD_GATHER_UPTR) {
+ 			err = submit_job_add_gather(job, ctx,
+ 						    &cmd->gather_uptr, bo,
+-						    &gather_offset, job_data);
++						    &gather_offset, job_data,
++						    &class);
+ 			if (err)
+ 				goto free_job;
+ 		} else if (cmd->type == DRM_TEGRA_SUBMIT_CMD_WAIT_SYNCPT) {
+diff --git a/drivers/gpu/drm/tegra/submit.h b/drivers/gpu/drm/tegra/submit.h
+index 0a165e9e4bda..cf6a2f0a29fc 100644
+--- a/drivers/gpu/drm/tegra/submit.h
++++ b/drivers/gpu/drm/tegra/submit.h
+@@ -14,4 +14,8 @@ struct tegra_drm_submit_data {
+ 	u32 num_used_mappings;
  };
  
- struct host1x_job *host1x_job_alloc(struct host1x_channel *ch,
++int tegra_drm_fw_validate(struct tegra_drm_client *client, u32 *data, u32 start,
++			  u32 words, struct tegra_drm_submit_data *submit,
++			  u32 *job_class);
++
+ #endif
 -- 
 2.30.1
 
