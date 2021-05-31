@@ -2,294 +2,207 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-14.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_NONE,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6431C47083
-	for <linux-tegra@archiver.kernel.org>; Mon, 31 May 2021 15:18:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 842F2C47098
+	for <linux-tegra@archiver.kernel.org>; Mon, 31 May 2021 18:26:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AF1B8610A6
-	for <linux-tegra@archiver.kernel.org>; Mon, 31 May 2021 15:18:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6A64461090
+	for <linux-tegra@archiver.kernel.org>; Mon, 31 May 2021 18:26:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231418AbhEaPUQ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 31 May 2021 11:20:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53622 "EHLO
+        id S232726AbhEaS17 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 31 May 2021 14:27:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39752 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233329AbhEaPRV (ORCPT
+        with ESMTP id S232448AbhEaS1r (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 31 May 2021 11:17:21 -0400
-Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F8DEC035433;
-        Mon, 31 May 2021 07:11:49 -0700 (PDT)
-Received: by mail-wr1-x42e.google.com with SMTP id g17so11012799wrs.13;
-        Mon, 31 May 2021 07:11:49 -0700 (PDT)
+        Mon, 31 May 2021 14:27:47 -0400
+Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63F08C061574;
+        Mon, 31 May 2021 11:26:02 -0700 (PDT)
+Received: by mail-lf1-x133.google.com with SMTP id w33so17957379lfu.7;
+        Mon, 31 May 2021 11:26:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=AIjiXQgx7FWz0JkATZyG5fSCXhacRqcixlM/KFusILo=;
-        b=gR4eIVe6z1B1V7G8FlLeEfNs7u6igycqfpCxQ75B9VubkFodmpUkOaoMCXQ4Zb9Ddx
-         AR1APh8kdpq/ubV/6jpsIV6G7ZtlhbuFUdVqCgXGDoYRmFClNwlm18gTZBU9jnDs8kIG
-         w2on7dDZx+1pazEnxVAvVpSRiDDxex9nUyKgeE93E64a/GfG8EUKa+K78BoLnNBzeP49
-         kxnVqPE3N4uxt0EegLGqBswS4L21oVXyKqqITC+Su/GsORZViOtOzYCAk8Ivzob+Pmyz
-         BxRKFuafOdL/IiI0zDyzhmSdb9M1XuXEL0kJUeti4WycJmJx8H0z6BHSAjiFKE/m3DG+
-         uvAA==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=7TI7fQuGaEfrByk2jtW55koqbA8DqlXxD77ZaJA6t1A=;
+        b=BkqV3rt98TP8hqluqk7VN+9VjYOs4gN36fKstt5LLa66Bu7ISUjjVmcQy9TiOopU1F
+         dkgnNj4jAXIwqh4wTq317S097l2dsU64IghALR1A6U0mb84x07ThGdFvMURGAMxs6+5y
+         +5H0RZdUqKWvfaPArMVk99wHUWIDOH22UY5dC7b0jvdFFwi4vxtMf7NWiyHxbRAdMc17
+         v13KHXE/Fv+btg6OgaFJ3sPyIwoSVPuUeZSU+0COxXRci8fq5rhI0H/biQ/ZE1WSnhmI
+         c7zEsHr2dQmSoh9RkgmAhEA2YDeU0B4X13ijZx3O6HwV7jVkuW8kkMFD0x+N8cpnonCu
+         fvOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=AIjiXQgx7FWz0JkATZyG5fSCXhacRqcixlM/KFusILo=;
-        b=XE0maH0rTw7Oe3IPRqWCEpS1JgYYuG/4i6ZS2MLmMAkkkMqHBT+hnchs4Pgi+hJevV
-         acKG9usIupaj9G2gvb+QAI/IUiR35ldZrlT2UfnuauQU2F0NB9SlLOkCkqJbqs2mXUhd
-         saE4MDDbCu6fegls/mgzW//lYU2Yp/9Kns6lcCuEvTo9Uy0FOcwtB6R7pDBxVgG5W/ei
-         8VqlM+OQUPr7RnQCreMS/1OF4etv7TCfSM9xW9ASw1V8TdNfc6iaww5qmQ3cIcM+bXyC
-         UneJ/G4g3o1fvXuhTiqBnXtOu7GT2QZn5SLNyY0UbjNnjIKFvEtuHuN2lf8q5kfZQ/8K
-         ORdA==
-X-Gm-Message-State: AOAM532liEPh7N/F9q2ZQtLbui7dNjWCOAURGFRKdhUT5Epr7hyeJnFl
-        2fLzhrb/lqLL4NB1uJ0EFd8=
-X-Google-Smtp-Source: ABdhPJww9rCZ42lw+eUK5RSQAl0WzIrrsMfuz3xlNuebFpWzqMStHtaShdjJ1FOdW+v7tWxIXOFYFA==
-X-Received: by 2002:a5d:4287:: with SMTP id k7mr9213415wrq.98.1622470307828;
-        Mon, 31 May 2021 07:11:47 -0700 (PDT)
-Received: from localhost ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id o6sm7328692wre.73.2021.05.31.07.11.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 31 May 2021 07:11:46 -0700 (PDT)
-Date:   Mon, 31 May 2021 16:13:21 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Dmitry Osipenko <digetx@gmail.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=7TI7fQuGaEfrByk2jtW55koqbA8DqlXxD77ZaJA6t1A=;
+        b=Lb9QYn2dZxOD8rRrNI4jS0UrXbtT9ntCg/uivcHMHzfzcAwdsIkU1D4uHNmiDJLYaW
+         FR5mw7sMTaccxNbV5SspdnOCU12+IzbubwM4LBhphRvisbjE/frBtgECeVWNcCDAHsm3
+         B4viJxheFndMnVk/oz2/27eRomtOeNId7Az3G05Ap8DqUo/fW+0Fde5WrsivaYVaKl2T
+         yVeMTnUtYF3+K5j4L/dtO8vHZ3ruXiv6vyJlDud/sNwbXxwY6zYBntNGorTFjE2xzLd8
+         g8EPuaNctVCToV6qwJVverBWGBnsFixlE9VL7FtsSav6+RjZdd7Ulq2Xymy/Xf6/0k3p
+         1WQA==
+X-Gm-Message-State: AOAM533qm4EA+eHLz9Swb2a2CpLpOrDIgu/qFMiW6QcY4Vg37ouJV6kb
+        seKYGjKcFN0D68dMQuN9XAk=
+X-Google-Smtp-Source: ABdhPJzDaLCMVaI7SnJjyJWhEBHUkGbEWE2LJwZQCfXoFut+QRa+E1/YyAwrYwqCaa4eqtQBY/9Qiw==
+X-Received: by 2002:ac2:455b:: with SMTP id j27mr15219533lfm.587.1622485560717;
+        Mon, 31 May 2021 11:26:00 -0700 (PDT)
+Received: from [192.168.2.145] (79-139-170-222.dynamic.spd-mgts.ru. [79.139.170.222])
+        by smtp.googlemail.com with ESMTPSA id r17sm1424817lfr.18.2021.05.31.11.25.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 31 May 2021 11:26:00 -0700 (PDT)
+Subject: Re: [PATCH v17 1/2] drm/tegra: dc: Support memory bandwidth
+ management
+To:     Thierry Reding <thierry.reding@gmail.com>
 Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
         Matt Merhar <mattmerhar@protonmail.com>,
         Peter Geis <pgwipeout@gmail.com>,
         Nicolas Chauvet <kwizart@gmail.com>,
-        =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
         linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
         linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v17 1/2] drm/tegra: dc: Support memory bandwidth
- management
-Message-ID: <YLTvAVvWY0KcOx8s@orome.fritz.box>
 References: <20210510232709.1349-1-digetx@gmail.com>
- <20210510232709.1349-2-digetx@gmail.com>
+ <20210510232709.1349-2-digetx@gmail.com> <YLTvAVvWY0KcOx8s@orome.fritz.box>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <97bfce90-46d9-0ab0-e437-ce1e43b01b52@gmail.com>
+Date:   Mon, 31 May 2021 21:25:59 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="qCPCAX+azklwClYR"
-Content-Disposition: inline
-In-Reply-To: <20210510232709.1349-2-digetx@gmail.com>
-User-Agent: Mutt/2.0.6 (98f8cb83) (2021-03-06)
+In-Reply-To: <YLTvAVvWY0KcOx8s@orome.fritz.box>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+31.05.2021 17:13, Thierry Reding пишет:
+> On Tue, May 11, 2021 at 02:27:08AM +0300, Dmitry Osipenko wrote:
+>> Display controller (DC) performs isochronous memory transfers, and thus,
+>> has a requirement for a minimum memory bandwidth that shall be fulfilled,
+>> otherwise framebuffer data can't be fetched fast enough and this results
+>> in a DC's data-FIFO underflow that follows by a visual corruption.
+>>
+>> The Memory Controller drivers provide facility for memory bandwidth
+>> management via interconnect API. Let's wire up the interconnect API
+>> support to the DC driver in order to fix the distorted display output
+>> on T30 Ouya, T124 TK1 and other Tegra devices.
+>>
+>> Tested-by: Peter Geis <pgwipeout@gmail.com> # Ouya T30
+>> Tested-by: Matt Merhar <mattmerhar@protonmail.com> # Ouya T30
+>> Tested-by: Nicolas Chauvet <kwizart@gmail.com> # PAZ00 T20 and TK1 T124
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>>  drivers/gpu/drm/tegra/Kconfig |   1 +
+>>  drivers/gpu/drm/tegra/dc.c    | 352 ++++++++++++++++++++++++++++++++++
+>>  drivers/gpu/drm/tegra/dc.h    |  14 ++
+>>  drivers/gpu/drm/tegra/drm.c   |  14 ++
+>>  drivers/gpu/drm/tegra/hub.c   |   3 +
+>>  drivers/gpu/drm/tegra/plane.c | 116 +++++++++++
+>>  drivers/gpu/drm/tegra/plane.h |  15 ++
+>>  7 files changed, 515 insertions(+)
+>>
+> [...]
+>> diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
+> [...]
+>> @@ -2011,7 +2143,215 @@ static void tegra_crtc_atomic_flush(struct drm_crtc *crtc,
+>>  	value = tegra_dc_readl(dc, DC_CMD_STATE_CONTROL);
+>>  }
+>>  
+>> +static bool tegra_plane_is_cursor(const struct drm_plane_state *state)
+>> +{
+>> +	const struct tegra_dc_soc_info *soc = to_tegra_dc(state->crtc)->soc;
+>> +	const struct drm_format_info *fmt = state->fb->format;
+>> +	unsigned int src_w = drm_rect_width(&state->src) >> 16;
+>> +	unsigned int dst_w = drm_rect_width(&state->dst);
+>> +
+>> +	if (state->plane->type != DRM_PLANE_TYPE_CURSOR)
+>> +		return false;
+>> +
+>> +	if (soc->supports_cursor)
+>> +		return true;
+>> +
+>> +	if (src_w != dst_w || fmt->num_planes != 1 || src_w * fmt->cpp[0] > 256)
+>> +		return false;
+> 
+> Technically there could be some random overlay window that matches these
+> conditions and is erroneously detected as being a cursor.
 
---qCPCAX+azklwClYR
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The "random overlay window" with the DRM_PLANE_TYPE_CURSOR could happen
+only for the oldest Tegras. It's not a problem at all since everything
+will work properly anyways because we skip only the small sized plane
+that doesn't contribute to the BW requirement.
 
-On Tue, May 11, 2021 at 02:27:08AM +0300, Dmitry Osipenko wrote:
-> Display controller (DC) performs isochronous memory transfers, and thus,
-> has a requirement for a minimum memory bandwidth that shall be fulfilled,
-> otherwise framebuffer data can't be fetched fast enough and this results
-> in a DC's data-FIFO underflow that follows by a visual corruption.
->=20
-> The Memory Controller drivers provide facility for memory bandwidth
-> management via interconnect API. Let's wire up the interconnect API
-> support to the DC driver in order to fix the distorted display output
-> on T30 Ouya, T124 TK1 and other Tegra devices.
->=20
-> Tested-by: Peter Geis <pgwipeout@gmail.com> # Ouya T30
-> Tested-by: Matt Merhar <mattmerhar@protonmail.com> # Ouya T30
-> Tested-by: Nicolas Chauvet <kwizart@gmail.com> # PAZ00 T20 and TK1 T124
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/gpu/drm/tegra/Kconfig |   1 +
->  drivers/gpu/drm/tegra/dc.c    | 352 ++++++++++++++++++++++++++++++++++
->  drivers/gpu/drm/tegra/dc.h    |  14 ++
->  drivers/gpu/drm/tegra/drm.c   |  14 ++
->  drivers/gpu/drm/tegra/hub.c   |   3 +
->  drivers/gpu/drm/tegra/plane.c | 116 +++++++++++
->  drivers/gpu/drm/tegra/plane.h |  15 ++
->  7 files changed, 515 insertions(+)
->=20
-[...]
-> diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-[...]
-> @@ -2011,7 +2143,215 @@ static void tegra_crtc_atomic_flush(struct drm_cr=
-tc *crtc,
->  	value =3D tegra_dc_readl(dc, DC_CMD_STATE_CONTROL);
->  }
-> =20
-> +static bool tegra_plane_is_cursor(const struct drm_plane_state *state)
-> +{
-> +	const struct tegra_dc_soc_info *soc =3D to_tegra_dc(state->crtc)->soc;
-> +	const struct drm_format_info *fmt =3D state->fb->format;
-> +	unsigned int src_w =3D drm_rect_width(&state->src) >> 16;
-> +	unsigned int dst_w =3D drm_rect_width(&state->dst);
-> +
-> +	if (state->plane->type !=3D DRM_PLANE_TYPE_CURSOR)
-> +		return false;
-> +
-> +	if (soc->supports_cursor)
-> +		return true;
-> +
-> +	if (src_w !=3D dst_w || fmt->num_planes !=3D 1 || src_w * fmt->cpp[0] >=
- 256)
-> +		return false;
+> I wonder if we
+> should add a field to a plane that marks it as being used as cursor for
+> the cases where we don't support a hardware cursor.
 
-Technically there could be some random overlay window that matches these
-conditions and is erroneously detected as being a cursor. I wonder if we
-should add a field to a plane that marks it as being used as cursor for
-the cases where we don't support a hardware cursor.
+I don't think that we have information about how plane is used in the
+driver. DRM core should know this, tegra-drm not.
 
-[...]
-> diff --git a/drivers/gpu/drm/tegra/dc.h b/drivers/gpu/drm/tegra/dc.h
-> index 29f19c3c6149..db10af097033 100644
-> --- a/drivers/gpu/drm/tegra/dc.h
-> +++ b/drivers/gpu/drm/tegra/dc.h
-> @@ -15,6 +15,8 @@
-> =20
->  struct tegra_output;
-> =20
-> +#define TEGRA_DC_LEGACY_PLANES_NUM	7
-> +
->  struct tegra_dc_state {
->  	struct drm_crtc_state base;
-> =20
-> @@ -23,6 +25,8 @@ struct tegra_dc_state {
->  	unsigned int div;
-> =20
->  	u32 planes;
-> +
-> +	unsigned long plane_peak_bw[TEGRA_DC_LEGACY_PLANES_NUM];
+It's unpractical to worry about this case, hence I think it's better to
+leave this part as-is for now, if you don't mind.
 
-Why can we not store this peak bandwidth value within the plane state? I
-know that this isn't exactly per-plane data because it depends on the
-state of other planes, but that doesn't really prevent the value to live
-within the plane state. The plane state is, after all, part of the
-global state, and hence any such state needs to be considered within the
-context of that global atomic state.
+> [...]
+>> diff --git a/drivers/gpu/drm/tegra/dc.h b/drivers/gpu/drm/tegra/dc.h
+>> index 29f19c3c6149..db10af097033 100644
+>> --- a/drivers/gpu/drm/tegra/dc.h
+>> +++ b/drivers/gpu/drm/tegra/dc.h
+>> @@ -15,6 +15,8 @@
+>>  
+>>  struct tegra_output;
+>>  
+>> +#define TEGRA_DC_LEGACY_PLANES_NUM	7
+>> +
+>>  struct tegra_dc_state {
+>>  	struct drm_crtc_state base;
+>>  
+>> @@ -23,6 +25,8 @@ struct tegra_dc_state {
+>>  	unsigned int div;
+>>  
+>>  	u32 planes;
+>> +
+>> +	unsigned long plane_peak_bw[TEGRA_DC_LEGACY_PLANES_NUM];
+> 
+> Why can we not store this peak bandwidth value within the plane state? I
+> know that this isn't exactly per-plane data because it depends on the
+> state of other planes, but that doesn't really prevent the value to live
+> within the plane state. The plane state is, after all, part of the
+> global state, and hence any such state needs to be considered within the
+> context of that global atomic state.
+> 
+> I suppose that might make it a little bit more difficult to get at the
+> data, but I think the end result would be less confusing than having an
+> array here with potentially unused fields. It would also get rid of the
+> need to look up planes by their per-CRTC index.
 
-I suppose that might make it a little bit more difficult to get at the
-data, but I think the end result would be less confusing than having an
-array here with potentially unused fields. It would also get rid of the
-need to look up planes by their per-CRTC index.
+The reason I stored the peak_bw in CRTC state is because it feels more
+natural to me somehow. It shouldn't be a problem to move it to the
+planes state. I'll prepare the new version shortly.
 
->  };
-> =20
->  static inline struct tegra_dc_state *to_dc_state(struct drm_crtc_state *=
-state)
-> @@ -33,6 +37,12 @@ static inline struct tegra_dc_state *to_dc_state(struc=
-t drm_crtc_state *state)
->  	return NULL;
->  }
-> =20
-> +static inline const struct tegra_dc_state *
-> +to_const_dc_state(const struct drm_crtc_state *state)
-> +{
-> +	return to_dc_state((struct drm_crtc_state *)state);
-> +}
-> +
->  struct tegra_dc_stats {
->  	unsigned long frames;
->  	unsigned long vblank;
-> @@ -66,7 +76,9 @@ struct tegra_dc_soc_info {
->  	unsigned int num_overlay_formats;
->  	const u64 *modifiers;
->  	bool has_win_a_without_filters;
-> +	bool has_win_b_vfilter_mem_client;
->  	bool has_win_c_without_vert_filter;
-> +	bool plane_tiled_memory_bandwidth_x2;
->  };
-> =20
->  struct tegra_dc {
-> @@ -152,6 +164,8 @@ int tegra_dc_state_setup_clock(struct tegra_dc *dc,
->  			       struct drm_crtc_state *crtc_state,
->  			       struct clk *clk, unsigned long pclk,
->  			       unsigned int div);
-> +void tegra_crtc_atomic_post_commit(struct drm_crtc *crtc,
-> +				   struct drm_atomic_state *state);
-> =20
->  /* from rgb.c */
->  int tegra_dc_rgb_probe(struct tegra_dc *dc);
-> diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
-> index d76bcb6c5622..a10513d7f2e0 100644
-> --- a/drivers/gpu/drm/tegra/drm.c
-> +++ b/drivers/gpu/drm/tegra/drm.c
-> @@ -24,6 +24,7 @@
->  #include <asm/dma-iommu.h>
->  #endif
-> =20
-> +#include "dc.h"
->  #include "drm.h"
->  #include "gem.h"
-> =20
-> @@ -63,6 +64,17 @@ static const struct drm_mode_config_funcs tegra_drm_mo=
-de_config_funcs =3D {
->  	.atomic_commit =3D drm_atomic_helper_commit,
->  };
-> =20
-> +static void tegra_atomic_post_commit(struct drm_device *drm,
-> +				     struct drm_atomic_state *old_state)
-> +{
-> +	struct drm_crtc_state *old_crtc_state __maybe_unused;
-> +	struct drm_crtc *crtc;
-> +	unsigned int i;
-> +
-> +	for_each_old_crtc_in_state(old_state, crtc, old_crtc_state, i)
-> +		tegra_crtc_atomic_post_commit(crtc, old_state);
-> +}
-> +
->  static void tegra_atomic_commit_tail(struct drm_atomic_state *old_state)
->  {
->  	struct drm_device *drm =3D old_state->dev;
-> @@ -82,6 +94,8 @@ static void tegra_atomic_commit_tail(struct drm_atomic_=
-state *old_state)
->  	} else {
->  		drm_atomic_helper_commit_tail_rpm(old_state);
->  	}
-> +
-> +	tegra_atomic_post_commit(drm, old_state);
->  }
-> =20
->  static const struct drm_mode_config_helper_funcs
-> diff --git a/drivers/gpu/drm/tegra/hub.c b/drivers/gpu/drm/tegra/hub.c
-> index bfae8a02f55b..f1bbc5991854 100644
-> --- a/drivers/gpu/drm/tegra/hub.c
-> +++ b/drivers/gpu/drm/tegra/hub.c
-> @@ -358,6 +358,9 @@ static int tegra_shared_plane_atomic_check(struct drm=
-_plane *plane,
->  	struct tegra_dc *dc =3D to_tegra_dc(new_plane_state->crtc);
->  	int err;
-> =20
-> +	plane_state->peak_memory_bandwidth =3D 0;
-> +	plane_state->avg_memory_bandwidth =3D 0;
-> +
+...
+>>  static const struct drm_mode_config_helper_funcs
+>> diff --git a/drivers/gpu/drm/tegra/hub.c b/drivers/gpu/drm/tegra/hub.c
+>> index bfae8a02f55b..f1bbc5991854 100644
+>> --- a/drivers/gpu/drm/tegra/hub.c
+>> +++ b/drivers/gpu/drm/tegra/hub.c
+>> @@ -358,6 +358,9 @@ static int tegra_shared_plane_atomic_check(struct drm_plane *plane,
+>>  	struct tegra_dc *dc = to_tegra_dc(new_plane_state->crtc);
+>>  	int err;
+>>  
+>> +	plane_state->peak_memory_bandwidth = 0;
+>> +	plane_state->avg_memory_bandwidth = 0;
+>> +
+> 
+> Since ICC isn't supported yet on Tegra186 and later, does it even make
+> sense to initialize these?
 
-Since ICC isn't supported yet on Tegra186 and later, does it even make
-sense to initialize these?
-
-Thierry
-
---qCPCAX+azklwClYR
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmC07v4ACgkQ3SOs138+
-s6GGjhAAiGZK4l8fizM/LuWEruaWYR+N8fhxskHevsfd7OHuXkzxKyfl+pJ9MoSS
-RkVGhtbDqq/wEUm0kZRKRqQl7EZxUCBWZwx0TRi0sJI5FR29hLlgW6UCGEbL8mn3
-7wWXDeUbHavliTd+3KABmnzCLM/q60bgSAKPS33HWQeoIox7yxElTaNJEh1yJOaN
-WDl+eZdAbgLEY5L2h3b/SwaIRZ2ar/rtMc3Ix2yv8SzTMRiHdqeY7aHl/IgjVpT8
-7f8tf0a4hBteixEPKCSUe0fUCuhjdXuoI17vvGBJxEkP9hOwI9GkoLjFa4/WZiC9
-n3N5NyaR7HK1XkT6NgOJ8XZEZkOtrrKgVgsiyUrT7mlnhlsl14/bRmpovOip/XwU
-1Nqzuml0bHVWar2F/2eBHBca0SyKSisTMsUoSIGjJ4PTysccD36TiuOtfBo87LeS
-UU1RXEIAmp+7TNmAJ7XudfwWk4afsWkPwxIacehXL6BSSGSM8a214nvTvY80WZiD
-XVpQeMFYxUVp3JLiACwycwTwqZRg5ST2vArNjMhcaaiq19eyTzUwoh0GuPIkc5ne
-ChrgnFLEf89h+64mk4BHCviULdaUvwFfgI7iwZ9Wp07ebe4zqm2zdN2EbMNy23aB
-1AorQ09Z+QAFYVq0k84NDzWWWRCvFvYNP3gnT8brEt5NVK85sP0=
-=Zq3i
------END PGP SIGNATURE-----
-
---qCPCAX+azklwClYR--
+I added it for consistency, right now it's not needed for Tegra186+.
