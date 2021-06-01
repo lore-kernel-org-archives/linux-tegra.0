@@ -2,150 +2,146 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E466C4708F
-	for <linux-tegra@archiver.kernel.org>; Tue,  1 Jun 2021 12:26:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8030DC4708F
+	for <linux-tegra@archiver.kernel.org>; Tue,  1 Jun 2021 15:03:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5D52F613AD
-	for <linux-tegra@archiver.kernel.org>; Tue,  1 Jun 2021 12:26:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5481461375
+	for <linux-tegra@archiver.kernel.org>; Tue,  1 Jun 2021 15:03:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231726AbhFAM2d (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 1 Jun 2021 08:28:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46780 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231219AbhFAM2c (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 1 Jun 2021 08:28:32 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id D66B060FF0;
-        Tue,  1 Jun 2021 12:26:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1622550411;
-        bh=eXqJC3GRoWPNutXm6EevRjIRj1wQ3hmw12wr3ZM5m7U=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=rN+o2G4MHs1yeYvPmTOT8oqOzaqINuKaNHKggKT77EUnHxTV67rhmn3KfH6IAxtlL
-         m3vCUBcCZ5+DouvljOQC1q4oELw6hDAZ6N3IMWVzvr0OOhDt2YzUyk1GxbmSKyv+y2
-         Ld1+GprZJWsbWVt3rnlSqeCUPysA8HBELfRYmBzakT51wYAgBMzLYgxmDwyzkY22VV
-         Keivj4UvIYKb4UKDCa9mmJIrs4XxR7sMBc4xeO3alvw30Xu0uGyKYhlW/DUei7tBY9
-         y+kL4Bc+ylMniYyeteVF5h9KfvjBxV9VlB17TZbmvKp4p2g77My4xf463aUNLsxbUd
-         YVoiotYyNBDRQ==
-Date:   Tue, 1 Jun 2021 13:26:46 +0100
-From:   Will Deacon <will@kernel.org>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Nicolin Chen <nicolinc@nvidia.com>,
-        Krishna Reddy <vdumpa@nvidia.com>, linux-tegra@vger.kernel.org,
-        iommu@lists.linux-foundation.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 00/10] arm64: tegra: Prevent early SMMU faults
-Message-ID: <20210601122646.GB27832@willie-the-truck>
-References: <20210420172619.3782831-1-thierry.reding@gmail.com>
- <YLEi2FonP568wYrE@orome.fritz.box>
+        id S233797AbhFAPEw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 1 Jun 2021 11:04:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34020 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233924AbhFAPEw (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 1 Jun 2021 11:04:52 -0400
+Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1129C061574;
+        Tue,  1 Jun 2021 08:03:09 -0700 (PDT)
+Received: by mail-ed1-x534.google.com with SMTP id cb9so5872975edb.1;
+        Tue, 01 Jun 2021 08:03:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=wxdXKgcJOLVIsdWYp16GD2tdmuCQabo69N9o5gXMFQc=;
+        b=NdaVzt419/0A1UZh5W07t5UVPcFiBxBvZdB5g/unksXj39PhmpYBxuJAYVlxnaykMQ
+         4489Di3p3YKYPEJ1yn7ObtQQZYpAdDlUJvVkd9yhNXbkHgRaYzgzf5EkavaRI6u8bGCn
+         YiO+jh2+f+Ilw8n+5dvetEy4Lrwp4GSIqGbs3CnGYY6g1onO6/xdthZWp8Tss3EXgxgk
+         KuuRkU/jLbTcHDfB+ztVldOu2T/LjGvBxnQwDmeJzKcGQx3mgbin48TrWO2ML/yCgHzk
+         MLVeW6h89EWrWUIvkaMYOCbkcq7end/r50YbL7Qr/O10reTxjycX1DQx+RWl4G3DW/fc
+         bluQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=wxdXKgcJOLVIsdWYp16GD2tdmuCQabo69N9o5gXMFQc=;
+        b=nfDbVpc3zoDW1A3qgzqJb9mcMIVzkGGeel0R+phWqtJ0Xg6zNf6rHnvhq3g0/UWPd5
+         sjKxpiqLIfd0ODWMvn49z/MYvWley6kLRY23nifoZr6kPmvVyw4BmNcwFjto5zLDQBzJ
+         +ehKyneLdYO5kJMgTM+XrnR7RW2kmCalUMh+kPMXOj031xEG8RNWRv/m/WMb5vDNeRd4
+         mNImCaT69ijlcAPY5O7hRRoAKi2gJSTFWM/sGYUwrxJ8zy4WwvTnf+5a1FsctdqbD+uA
+         SvO3cOfhRlAi6iVMaorim+Lj4AH5H1q50BTVeLQS+eagsndBFruzDQoxjBqnZgIOp5ag
+         7eGg==
+X-Gm-Message-State: AOAM531+EjKfiDyD1yQrPfj0zX3ZYYbNCB/2Pm3fg5b/otXsL/38V/FB
+        JpXK++jqyg8pP88HpRTcxmY=
+X-Google-Smtp-Source: ABdhPJy0uimJUbz8rqAFk6jlRXH+bWrZe7CLnVSDFX2Sg9HVHp214eXSoB147n7qH0JEYJkGmBGIGw==
+X-Received: by 2002:a05:6402:12d8:: with SMTP id k24mr22591758edx.47.1622559788309;
+        Tue, 01 Jun 2021 08:03:08 -0700 (PDT)
+Received: from localhost ([62.96.65.119])
+        by smtp.gmail.com with ESMTPSA id v19sm1429028ejh.86.2021.06.01.08.03.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Jun 2021 08:03:06 -0700 (PDT)
+Date:   Tue, 1 Jun 2021 17:04:42 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Wolfram Sang <wsa@kernel.org>,
+        Shariff Md <smohammed@nvidia.com>, linux-i2c@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: Re: [PATCH 15/16] i2c: busses: i2c-tegra-bpmp: Demote kernel-doc
+ abuses
+Message-ID: <YLZMipfJt9rnIqV4@orome.fritz.box>
+References: <20210520190105.3772683-1-lee.jones@linaro.org>
+ <20210520190105.3772683-16-lee.jones@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="YzqOiTxPrUP7Jx1k"
 Content-Disposition: inline
-In-Reply-To: <YLEi2FonP568wYrE@orome.fritz.box>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20210520190105.3772683-16-lee.jones@linaro.org>
+User-Agent: Mutt/2.0.6 (98f8cb83) (2021-03-06)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, May 28, 2021 at 07:05:28PM +0200, Thierry Reding wrote:
-> On Tue, Apr 20, 2021 at 07:26:09PM +0200, Thierry Reding wrote:
-> > From: Thierry Reding <treding@nvidia.com>
-> > 
-> > Hi,
-> > 
-> > this is a set of patches that is the result of earlier discussions
-> > regarding early identity mappings that are needed to avoid SMMU faults
-> > during early boot.
-> > 
-> > The goal here is to avoid early identity mappings altogether and instead
-> > postpone the need for the identity mappings to when devices are attached
-> > to the SMMU. This works by making the SMMU driver coordinate with the
-> > memory controller driver on when to start enforcing SMMU translations.
-> > This makes Tegra behave in a more standard way and pushes the code to
-> > deal with the Tegra-specific programming into the NVIDIA SMMU
-> > implementation.
-> > 
-> > Compared to the original version of these patches, I've split the
-> > preparatory work into a separate patch series because it became very
-> > large and will be mostly uninteresting for this audience.
-> > 
-> > Patch 1 provides a mechanism to program SID overrides at runtime. Patch
-> > 2 updates the ARM SMMU device tree bindings to include the Tegra186
-> > compatible string as suggested by Robin during review.
-> > 
-> > Patches 3 and 4 create the fundamentals in the SMMU driver to support
-> > this and also make this functionality available on Tegra186. Patch 5
-> > hooks the ARM SMMU up to the memory controller so that the memory client
-> > stream ID overrides can be programmed at the right time.
-> > 
-> > Patch 6 extends this mechanism to Tegra186 and patches 7-9 enable all of
-> > this through device tree updates. Patch 10 is included here to show how
-> > SMMU will be enabled for display controllers. However, it cannot be
-> > applied yet because the code to create identity mappings for potentially
-> > live framebuffers hasn't been merged yet.
-> > 
-> > The end result is that various peripherals will have SMMU enabled, while
-> > the display controllers will keep using passthrough, as initially set up
-> > by firmware. Once the device tree bindings have been accepted and the
-> > SMMU driver has been updated to create identity mappings for the display
-> > controllers, they can be hooked up to the SMMU and the code in this
-> > series will automatically program the SID overrides to enable SMMU
-> > translations at the right time.
-> > 
-> > Note that the series creates a compile time dependency between the
-> > memory controller and IOMMU trees. If it helps I can provide a branch
-> > for each tree, modelling the dependency, once the series has been
-> > reviewed.
-> > 
-> > Changes in v2:
-> > - split off the preparatory work into a separate series (that needs to
-> >   be applied first)
-> > - address review comments by Robin
-> > 
-> > Thierry
-> > 
-> > Thierry Reding (10):
-> >   memory: tegra: Implement SID override programming
-> >   dt-bindings: arm-smmu: Add Tegra186 compatible string
-> >   iommu/arm-smmu: Implement ->probe_finalize()
-> >   iommu/arm-smmu: tegra: Detect number of instances at runtime
-> >   iommu/arm-smmu: tegra: Implement SID override programming
-> >   iommu/arm-smmu: Use Tegra implementation on Tegra186
-> >   arm64: tegra: Use correct compatible string for Tegra186 SMMU
-> >   arm64: tegra: Hook up memory controller to SMMU on Tegra186
-> >   arm64: tegra: Enable SMMU support on Tegra194
-> >   arm64: tegra: Enable SMMU support for display on Tegra194
-> > 
-> >  .../devicetree/bindings/iommu/arm,smmu.yaml   |  11 +-
-> >  arch/arm64/boot/dts/nvidia/tegra186.dtsi      |   4 +-
-> >  arch/arm64/boot/dts/nvidia/tegra194.dtsi      | 166 ++++++++++++++++++
-> >  drivers/iommu/arm/arm-smmu/arm-smmu-impl.c    |   3 +-
-> >  drivers/iommu/arm/arm-smmu/arm-smmu-nvidia.c  |  90 ++++++++--
-> >  drivers/iommu/arm/arm-smmu/arm-smmu.c         |  13 ++
-> >  drivers/iommu/arm/arm-smmu/arm-smmu.h         |   1 +
-> >  drivers/memory/tegra/mc.c                     |   9 +
-> >  drivers/memory/tegra/tegra186.c               |  72 ++++++++
-> >  include/soc/tegra/mc.h                        |   3 +
-> >  10 files changed, 349 insertions(+), 23 deletions(-)
-> 
-> Will, Robin,
-> 
-> do you have any more comments on the ARM SMMU bits of this series? If
-> not, can you guys provide an Acked-by so that Krzysztof can pick this
-> (modulo the DT patches) up into the memory-controller tree for v5.14?
-> 
-> I'll send out a v3 with the bisectibilitiy fix that Krishna pointed
-> out.
 
-Probably best if I queue 3-6 on a separate branch once you send a v3,
-then Krzysztof can pull that in if he needs it.
+--YzqOiTxPrUP7Jx1k
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Will
+On Thu, May 20, 2021 at 08:01:04PM +0100, Lee Jones wrote:
+> Fixes the following W=3D1 kernel build warning(s):
+>=20
+>  drivers/i2c/busses/i2c-tegra-bpmp.c:86: warning: Function parameter or m=
+ember 'i2c' not described in 'tegra_bpmp_serialize_i2c_msg'
+>  drivers/i2c/busses/i2c-tegra-bpmp.c:86: warning: Function parameter or m=
+ember 'request' not described in 'tegra_bpmp_serialize_i2c_msg'
+>  drivers/i2c/busses/i2c-tegra-bpmp.c:86: warning: Function parameter or m=
+ember 'msgs' not described in 'tegra_bpmp_serialize_i2c_msg'
+>  drivers/i2c/busses/i2c-tegra-bpmp.c:86: warning: Function parameter or m=
+ember 'num' not described in 'tegra_bpmp_serialize_i2c_msg'
+>  drivers/i2c/busses/i2c-tegra-bpmp.c:86: warning: expecting prototype for=
+ The serialized I2C format is simply the following(). Prototype was for teg=
+ra_bpmp_serialize_i2c_msg() instead
+>  drivers/i2c/busses/i2c-tegra-bpmp.c:130: warning: Function parameter or =
+member 'i2c' not described in 'tegra_bpmp_i2c_deserialize'
+>  drivers/i2c/busses/i2c-tegra-bpmp.c:130: warning: Function parameter or =
+member 'response' not described in 'tegra_bpmp_i2c_deserialize'
+>  drivers/i2c/busses/i2c-tegra-bpmp.c:130: warning: Function parameter or =
+member 'msgs' not described in 'tegra_bpmp_i2c_deserialize'
+>  drivers/i2c/busses/i2c-tegra-bpmp.c:130: warning: Function parameter or =
+member 'num' not described in 'tegra_bpmp_i2c_deserialize'
+>  drivers/i2c/busses/i2c-tegra-bpmp.c:130: warning: expecting prototype fo=
+r The data in the BPMP(). Prototype was for tegra_bpmp_i2c_deserialize() in=
+stead
+>=20
+> Cc: Thierry Reding <thierry.reding@gmail.com>
+> Cc: Jonathan Hunter <jonathanh@nvidia.com>
+> Cc: Wolfram Sang <wsa@kernel.org>
+> Cc: Shariff Md <smohammed@nvidia.com>
+> Cc: linux-i2c@vger.kernel.org
+> Cc: linux-tegra@vger.kernel.org
+> Signed-off-by: Lee Jones <lee.jones@linaro.org>
+> ---
+>  drivers/i2c/busses/i2c-tegra-bpmp.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+
+Acked-by: Thierry Reding <treding@nvidia.com>
+
+--YzqOiTxPrUP7Jx1k
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmC2TIcACgkQ3SOs138+
+s6HCoxAAgj33Wj3TAjYzXbOl8ORr2Iol4DmRu6QO+eJJ8/uw3Wl82xiAUFCb9OGK
+13JZpGo+uYttqJs1v372Qd0aGYtMoiTt9ylmRhZ3+N28smNUYUfPWrSpE6cet54W
+Xzd1x2jOqJ/g61yJ4cX0JkvakghNQNQ7nclcbxgfJiv9pgL38IrQ4CVziRuwULz5
+9rbPBTBiBacAUgMLMPPVsLhS4+adpf34CTmZnYFtK4ReVqcZOeI7IZYH853tddWY
+DydaZQRZ5wyjt8/cu+D4m86aKXJQl59GF30vwQ85I8YlES649Kys5YC09dy/ZsXx
+O42GPEEybJZGnF7ERLuzcBEWdRkd2ugXON0iUsHNFphCyrjaib8sqk8VVwH7xGrn
+WyjbUT7vqYhtXxch2sYrrn7OUglRh608r1Lg9h/m5C9n7WVozz7hcB0Fp6AFkpfv
+nHjds7UX88HYIRdX2gbM9BSTEXIgD+ASGi9DnTQagGtwdyZNC5UPoX8iBlSxR+RN
+kLmFZbZXtv1M142wjY46HO5rdc74v728a7cYYGisQKHS9JKJ1ygypHkaqyMfsUs4
+/X/FlQP1Ky0omj6Epoo+oPw+8396axhXcJmO3X3vqPSC5ByhQ9fHaB6wJdsQ/Vt6
+F50mdsAyp77dq+1Y6P//+wQcCOGgQrk/ut5rouhvNCJjmnR3Vok=
+=tO9/
+-----END PGP SIGNATURE-----
+
+--YzqOiTxPrUP7Jx1k--
