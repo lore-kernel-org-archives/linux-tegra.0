@@ -5,58 +5,58 @@ X-Spam-Level:
 X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22868C4709E
-	for <linux-tegra@archiver.kernel.org>; Tue,  1 Jun 2021 02:33:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2932EC47083
+	for <linux-tegra@archiver.kernel.org>; Tue,  1 Jun 2021 02:33:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 18BF361374
-	for <linux-tegra@archiver.kernel.org>; Tue,  1 Jun 2021 02:33:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1237D61396
+	for <linux-tegra@archiver.kernel.org>; Tue,  1 Jun 2021 02:33:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232880AbhFACfS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 31 May 2021 22:35:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33712 "EHLO
+        id S232848AbhFACfR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 31 May 2021 22:35:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33694 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232744AbhFACfN (ORCPT
+        with ESMTP id S232731AbhFACfM (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 31 May 2021 22:35:13 -0400
-Received: from mail-lj1-x231.google.com (mail-lj1-x231.google.com [IPv6:2a00:1450:4864:20::231])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 140A5C061574;
-        Mon, 31 May 2021 19:33:32 -0700 (PDT)
-Received: by mail-lj1-x231.google.com with SMTP id bn21so9880048ljb.1;
-        Mon, 31 May 2021 19:33:31 -0700 (PDT)
+        Mon, 31 May 2021 22:35:12 -0400
+Received: from mail-lj1-x22f.google.com (mail-lj1-x22f.google.com [IPv6:2a00:1450:4864:20::22f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 360E6C061760;
+        Mon, 31 May 2021 19:33:30 -0700 (PDT)
+Received: by mail-lj1-x22f.google.com with SMTP id a4so10426114ljq.9;
+        Mon, 31 May 2021 19:33:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=PnHT/nk8CJodgkwuBSRTekimstD88D/By8a3gAk3kxw=;
-        b=k/pMzHgG8hATlQQ+ok7gsve0AhesGFTrdUwA7wPJtgsSWc42ty+QmB6qy7PqiaZLu2
-         hF++84na4qbiZvNL663+FbDANKfVc0204sE8g8gAKzh04QmIZCBdQxUANyNQ2Nbtw5ri
-         iJdGx2azUU2CriRkaxTQ8ruo0d+2GnuLUz51UolAK6Pm97hzBtGdLhOAyyJo8WS98/qK
-         b+P5Cang85Vgjg7O/TBRZjZLXeUg3wwlWfmnMco2gXvB8w/1bgEUvEumdq1JmFGNUdrD
-         LsoC97RTTuaWcFZB9XK8yLD9/CioFHzGvkmYjjZxg7wT6bznf0j3uA8Mhg/IRw5sc6HO
-         haHA==
+        bh=HXT+IvjVluiKH3yhs5geuypz9CaKXis2aNZdKmGa0hs=;
+        b=kCB1uaH8+3YCfBcJRWhQYbFxvFFc/dX8aG7SETbuWSznv1t6P9RAGXAn539OqULoLD
+         0MEvBL3L0t6mzMFFwpPt1ZCv5R2LTZM+e4nm8C1q1BUAm5mecSMIm2/xNEO/pPcTm7ye
+         Lx2iwfguoYjhKhMFqAgZaG/gIilWkN0TmDJM9MeqW5dgRiTtjORZRqRVVp5HiXiTPIla
+         MUrTPpOVIy1eLZ53I8RtbJK+OrSnGQ7nBX7tqz+u6ttQp7HdZKI6Oh7vWvaa2vdFos4x
+         iX3ECwHsxtPCPQQRdAxemhXMdWDysizvZ1OGsbCclDScAnhDRmhpGeCL9OoJOr4HFAD4
+         Ry8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=PnHT/nk8CJodgkwuBSRTekimstD88D/By8a3gAk3kxw=;
-        b=TlENU4gwy+84/W02aulSz2tAQrt+tmPLYeZouoPOcIMynevrziaFVaMlBHxujpvi2B
-         jUDzhb9ngCmmRw46PfZ573TcfbRnWSN+Ns4iEmohsWAxLe9kT7iVNOchr6rk1qQugDbq
-         AXakyFfRs6E53IeGmxDowSYbuQitCe/bBgW5XRBaUXtK1w+kUxAgQVeRMkwS8GWgZ+kw
-         9E1YpErXm+t99bVgw395r/KryvQaK4kACnGB/9tv72p2vhvHj7yYRMXRRsJaqc7z6CQC
-         lvGAonUeNy8wvwYzMQUjXMYuw6woMpQBNPzgx5h966aeljn9OpxVnAqbLPB5I3Bbbb3l
-         OSdA==
-X-Gm-Message-State: AOAM530a/VuU9K11LMS+El3a89kUkkRUI8PTpUtxdcCFJZxCN9X3w/QL
-        O29kAhAmDIZbUz+D/6fCRBA=
-X-Google-Smtp-Source: ABdhPJxBnzJ//qQTiZyjhsMUjoiChvAsrs9NG52I4Fd0TKkWTwm4SPzvR8WVOeKEFs8xpuyMVQukXQ==
-X-Received: by 2002:a2e:908e:: with SMTP id l14mr18933182ljg.372.1622514810502;
-        Mon, 31 May 2021 19:33:30 -0700 (PDT)
+        bh=HXT+IvjVluiKH3yhs5geuypz9CaKXis2aNZdKmGa0hs=;
+        b=M98lb5s+wuRMWJirPxz6ZzfCRFt/sHhEJ3BOTe1JGgHKYz3el2szsTNVdqsx6Y+QvX
+         MZaSMZCYpxWLxPW2x97Tx0SxGBarsKbaMWc4kzC5PhbPMnkD13a6a3vIRnN/yIIu1kVE
+         AsrLGH+/9UUCyyzPL68WuuPHBWyXDEOkRdPRpQ2yHEjzbK8+iUu3BQTWWPb5WwyYYAOZ
+         FsSlDsvyULuOch0uLYvwkj8MU7dcgPUxQGeCuvOl0MYWv+hdeFakrIs1Bk1GsgGgAi7K
+         agfvaKLdCWsuSBYLzTkGcmF1Yetz3dtprOhUguCGtoSgHlzAjvUrXz6vWX/gHeSxzKOH
+         k5Hw==
+X-Gm-Message-State: AOAM530z8mAOaG24ThOS1tV/9pMuxBSUkcMfb8FpKX2DsjReCE12f4mp
+        eTjKtYV9cZ8ESK69iprNm9M=
+X-Google-Smtp-Source: ABdhPJzcTI1kEqoHnCkA+1cxDaaDR80YxZgRpqNecNQgJv+cGhA9pa964T0ywG+Rr7amDwze18W0gA==
+X-Received: by 2002:a2e:2e08:: with SMTP id u8mr7456379lju.319.1622514808588;
+        Mon, 31 May 2021 19:33:28 -0700 (PDT)
 Received: from localhost.localdomain (79-139-170-222.dynamic.spd-mgts.ru. [79.139.170.222])
-        by smtp.gmail.com with ESMTPSA id l21sm107848lfc.28.2021.05.31.19.33.29
+        by smtp.gmail.com with ESMTPSA id l21sm107848lfc.28.2021.05.31.19.33.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 31 May 2021 19:33:30 -0700 (PDT)
+        Mon, 31 May 2021 19:33:28 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -77,9 +77,9 @@ Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
         devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
         Nathan Chancellor <nathan@kernel.org>,
         linux-clk@vger.kernel.org
-Subject: [PATCH v6 07/14] memory: tegra: Fix compilation warnings on 64bit platforms
-Date:   Tue,  1 Jun 2021 05:31:12 +0300
-Message-Id: <20210601023119.22044-8-digetx@gmail.com>
+Subject: [PATCH v6 05/14] soc/tegra: fuse: Add stubs needed for compile-testing
+Date:   Tue,  1 Jun 2021 05:31:10 +0300
+Message-Id: <20210601023119.22044-6-digetx@gmail.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210601023119.22044-1-digetx@gmail.com>
 References: <20210601023119.22044-1-digetx@gmail.com>
@@ -89,49 +89,50 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Fix compilation warning on 64bit platforms caused by implicit promotion
-of 32bit signed integer to a 64bit unsigned value which happens after
-enabling compile-testing of the EMC drivers.
+Add missing stubs that will allow Tegra memory driver to be compile-tested
+by kernel build bots.
 
-Reported-by: kernel test robot <lkp@intel.com>
-Reviewed-by: Nathan Chancellor <nathan@kernel.org>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/memory/tegra/tegra124-emc.c | 4 ++--
- drivers/memory/tegra/tegra30-emc.c  | 4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ include/soc/tegra/fuse.h | 20 +++++++++++++++++---
+ 1 file changed, 17 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/memory/tegra/tegra124-emc.c b/drivers/memory/tegra/tegra124-emc.c
-index 5699d909abc2..a21ca8e0841a 100644
---- a/drivers/memory/tegra/tegra124-emc.c
-+++ b/drivers/memory/tegra/tegra124-emc.c
-@@ -272,8 +272,8 @@
- #define EMC_PUTERM_ADJ				0x574
+diff --git a/include/soc/tegra/fuse.h b/include/soc/tegra/fuse.h
+index 78cbc787a4dc..990701f788bc 100644
+--- a/include/soc/tegra/fuse.h
++++ b/include/soc/tegra/fuse.h
+@@ -52,14 +52,28 @@ struct tegra_sku_info {
+ 	enum tegra_revision revision;
+ };
  
- #define DRAM_DEV_SEL_ALL			0
--#define DRAM_DEV_SEL_0				(2 << 30)
--#define DRAM_DEV_SEL_1				(1 << 30)
-+#define DRAM_DEV_SEL_0				BIT(31)
-+#define DRAM_DEV_SEL_1				BIT(30)
++#ifdef CONFIG_ARCH_TEGRA
++extern struct tegra_sku_info tegra_sku_info;
+ u32 tegra_read_straps(void);
+ u32 tegra_read_ram_code(void);
+ int tegra_fuse_readl(unsigned long offset, u32 *value);
+-
+-#ifdef CONFIG_ARCH_TEGRA
+-extern struct tegra_sku_info tegra_sku_info;
+ #else
+ static struct tegra_sku_info tegra_sku_info __maybe_unused;
++
++static inline u32 tegra_read_straps(void)
++{
++	return 0;
++}
++
++static inline u32 tegra_read_ram_code(void)
++{
++	return 0;
++}
++
++static inline int tegra_fuse_readl(unsigned long offset, u32 *value)
++{
++	return -ENODEV;
++}
+ #endif
  
- #define EMC_CFG_POWER_FEATURES_MASK		\
- 	(EMC_CFG_DYN_SREF | EMC_CFG_DRAM_ACPD | EMC_CFG_DRAM_CLKSTOP_SR | \
-diff --git a/drivers/memory/tegra/tegra30-emc.c b/drivers/memory/tegra/tegra30-emc.c
-index 829f6d673c96..a2f2738ccb94 100644
---- a/drivers/memory/tegra/tegra30-emc.c
-+++ b/drivers/memory/tegra/tegra30-emc.c
-@@ -150,8 +150,8 @@
- #define EMC_SELF_REF_CMD_ENABLED		BIT(0)
- 
- #define DRAM_DEV_SEL_ALL			(0 << 30)
--#define DRAM_DEV_SEL_0				(2 << 30)
--#define DRAM_DEV_SEL_1				(1 << 30)
-+#define DRAM_DEV_SEL_0				BIT(31)
-+#define DRAM_DEV_SEL_1				BIT(30)
- #define DRAM_BROADCAST(num) \
- 	((num) > 1 ? DRAM_DEV_SEL_ALL : DRAM_DEV_SEL_0)
- 
+ struct device *tegra_soc_device_register(void);
 -- 
 2.30.2
 
