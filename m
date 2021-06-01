@@ -8,140 +8,114 @@ X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8030DC4708F
-	for <linux-tegra@archiver.kernel.org>; Tue,  1 Jun 2021 15:03:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B794C4708F
+	for <linux-tegra@archiver.kernel.org>; Tue,  1 Jun 2021 15:06:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5481461375
-	for <linux-tegra@archiver.kernel.org>; Tue,  1 Jun 2021 15:03:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5AD5461375
+	for <linux-tegra@archiver.kernel.org>; Tue,  1 Jun 2021 15:06:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233797AbhFAPEw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 1 Jun 2021 11:04:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34020 "EHLO
+        id S234043AbhFAPHm (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 1 Jun 2021 11:07:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34642 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233924AbhFAPEw (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 1 Jun 2021 11:04:52 -0400
-Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1129C061574;
-        Tue,  1 Jun 2021 08:03:09 -0700 (PDT)
-Received: by mail-ed1-x534.google.com with SMTP id cb9so5872975edb.1;
-        Tue, 01 Jun 2021 08:03:09 -0700 (PDT)
+        with ESMTP id S233797AbhFAPHl (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 1 Jun 2021 11:07:41 -0400
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D00EC061574
+        for <linux-tegra@vger.kernel.org>; Tue,  1 Jun 2021 08:06:00 -0700 (PDT)
+Received: by mail-wr1-x42d.google.com with SMTP id c5so3531482wrq.9
+        for <linux-tegra@vger.kernel.org>; Tue, 01 Jun 2021 08:06:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=wxdXKgcJOLVIsdWYp16GD2tdmuCQabo69N9o5gXMFQc=;
-        b=NdaVzt419/0A1UZh5W07t5UVPcFiBxBvZdB5g/unksXj39PhmpYBxuJAYVlxnaykMQ
-         4489Di3p3YKYPEJ1yn7ObtQQZYpAdDlUJvVkd9yhNXbkHgRaYzgzf5EkavaRI6u8bGCn
-         YiO+jh2+f+Ilw8n+5dvetEy4Lrwp4GSIqGbs3CnGYY6g1onO6/xdthZWp8Tss3EXgxgk
-         KuuRkU/jLbTcHDfB+ztVldOu2T/LjGvBxnQwDmeJzKcGQx3mgbin48TrWO2ML/yCgHzk
-         MLVeW6h89EWrWUIvkaMYOCbkcq7end/r50YbL7Qr/O10reTxjycX1DQx+RWl4G3DW/fc
-         bluQ==
+        bh=e8xNYfe1zvtxiEZOy0BS7QSXRXa9395+SNgTrtCae2I=;
+        b=A3HWMKedUGBthqZfR1Thq0fPPAnr6/eTpJ9DEqgeK4MvJOUyrZJltfMtbKhpl4q6CU
+         jEEcowG/3euqe1N1EbBBHkeSfCi86e3zsVAEBq6MNjdRFLhtSQJ9kpjxd2ALHJ1rKJsY
+         hIx55QtIRku4x3s9VLKPHA7jEDtWyWs/6if96wE89mAbSiL+X7ErewmsHliHx6lm/dRe
+         cQNxALuYzJccUma9uI5bt/wJSCv4I6imkU1alg2pX+v9YOQ4gkBfQS31b19Z4Spbw+01
+         8yIg2KzYinqmGLoTqy83mIxd6uer5WoFpgEYmMolAcIQNPVVf/DjfEsuDFi51rgzQe0B
+         Wdtw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=wxdXKgcJOLVIsdWYp16GD2tdmuCQabo69N9o5gXMFQc=;
-        b=nfDbVpc3zoDW1A3qgzqJb9mcMIVzkGGeel0R+phWqtJ0Xg6zNf6rHnvhq3g0/UWPd5
-         sjKxpiqLIfd0ODWMvn49z/MYvWley6kLRY23nifoZr6kPmvVyw4BmNcwFjto5zLDQBzJ
-         +ehKyneLdYO5kJMgTM+XrnR7RW2kmCalUMh+kPMXOj031xEG8RNWRv/m/WMb5vDNeRd4
-         mNImCaT69ijlcAPY5O7hRRoAKi2gJSTFWM/sGYUwrxJ8zy4WwvTnf+5a1FsctdqbD+uA
-         SvO3cOfhRlAi6iVMaorim+Lj4AH5H1q50BTVeLQS+eagsndBFruzDQoxjBqnZgIOp5ag
-         7eGg==
-X-Gm-Message-State: AOAM531+EjKfiDyD1yQrPfj0zX3ZYYbNCB/2Pm3fg5b/otXsL/38V/FB
-        JpXK++jqyg8pP88HpRTcxmY=
-X-Google-Smtp-Source: ABdhPJy0uimJUbz8rqAFk6jlRXH+bWrZe7CLnVSDFX2Sg9HVHp214eXSoB147n7qH0JEYJkGmBGIGw==
-X-Received: by 2002:a05:6402:12d8:: with SMTP id k24mr22591758edx.47.1622559788309;
-        Tue, 01 Jun 2021 08:03:08 -0700 (PDT)
+        bh=e8xNYfe1zvtxiEZOy0BS7QSXRXa9395+SNgTrtCae2I=;
+        b=Y6umKXr8+6nyy5OW7jPuX5ZGUmH16RYGKJJun7b/y2yLKXwBcy7VwvYnVV1Ca9YqPG
+         ZhoPHBL95esoQGcUp/kl2GonKO6MrLe/rBDJjOPpLi0h4IJICbPXDubgq4/MbMqyR6PG
+         hXKmoBNWTYqQVzWWLCi7KE8nzjmUWe1TsIk+y5L7fGvtjFdO1n3CIOgdJS5sxZ26uYkR
+         UM9cThrAv/ZErimKsJYqaGtnVzRqYzJoUwF3s7iFVkiTUxf+iTXqOO8wpi4gtYyNgzaF
+         pb3UT/j0dT2p+Zwu3E4nf9dojeTASDIs0q5MJOdBIAfQSn9e5n2r6ONryl7z5QS3z+Iy
+         O9Hw==
+X-Gm-Message-State: AOAM530CXchLIe6OMZ8gVIH3YMp+IEUw4wvE3irrCUmCIlu1IPUxc2a9
+        /DrdvJV+MIbIInLHxwK6UoQ=
+X-Google-Smtp-Source: ABdhPJynJhoGzcpgW41VVSF02TpW8SbAaJL1SqmyAr+/C2NfAPihcPMiW5wcy1EJ8RvHcPVTNJqfcA==
+X-Received: by 2002:adf:f642:: with SMTP id x2mr27814406wrp.323.1622559958954;
+        Tue, 01 Jun 2021 08:05:58 -0700 (PDT)
 Received: from localhost ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id v19sm1429028ejh.86.2021.06.01.08.03.06
+        by smtp.gmail.com with ESMTPSA id a16sm3380834wrw.62.2021.06.01.08.05.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Jun 2021 08:03:06 -0700 (PDT)
-Date:   Tue, 1 Jun 2021 17:04:42 +0200
+        Tue, 01 Jun 2021 08:05:57 -0700 (PDT)
+Date:   Tue, 1 Jun 2021 17:07:33 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Wolfram Sang <wsa@kernel.org>,
-        Shariff Md <smohammed@nvidia.com>, linux-i2c@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 15/16] i2c: busses: i2c-tegra-bpmp: Demote kernel-doc
- abuses
-Message-ID: <YLZMipfJt9rnIqV4@orome.fritz.box>
-References: <20210520190105.3772683-1-lee.jones@linaro.org>
- <20210520190105.3772683-16-lee.jones@linaro.org>
+To:     Zhen Lei <thunder.leizhen@huawei.com>
+Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
+        Timo Alho <talho@nvidia.com>,
+        linux-tegra <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 1/1] firmware: tegra: Fix error return code in
+ tegra210_bpmp_init()
+Message-ID: <YLZNNS1sPl9qbJVD@orome.fritz.box>
+References: <20210513132646.6488-1-thunder.leizhen@huawei.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="YzqOiTxPrUP7Jx1k"
+        protocol="application/pgp-signature"; boundary="ygv5veh6S+Cfn5/o"
 Content-Disposition: inline
-In-Reply-To: <20210520190105.3772683-16-lee.jones@linaro.org>
+In-Reply-To: <20210513132646.6488-1-thunder.leizhen@huawei.com>
 User-Agent: Mutt/2.0.6 (98f8cb83) (2021-03-06)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---YzqOiTxPrUP7Jx1k
+--ygv5veh6S+Cfn5/o
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 20, 2021 at 08:01:04PM +0100, Lee Jones wrote:
-> Fixes the following W=3D1 kernel build warning(s):
+On Thu, May 13, 2021 at 09:26:46PM +0800, Zhen Lei wrote:
+> When call irq_get_irq_data() to get the IRQ's irq_data failed, an
+> appropriate error code -ENOENT should be returned. However, we directly
+> return 'err', which records the IRQ number instead of the error code.
 >=20
->  drivers/i2c/busses/i2c-tegra-bpmp.c:86: warning: Function parameter or m=
-ember 'i2c' not described in 'tegra_bpmp_serialize_i2c_msg'
->  drivers/i2c/busses/i2c-tegra-bpmp.c:86: warning: Function parameter or m=
-ember 'request' not described in 'tegra_bpmp_serialize_i2c_msg'
->  drivers/i2c/busses/i2c-tegra-bpmp.c:86: warning: Function parameter or m=
-ember 'msgs' not described in 'tegra_bpmp_serialize_i2c_msg'
->  drivers/i2c/busses/i2c-tegra-bpmp.c:86: warning: Function parameter or m=
-ember 'num' not described in 'tegra_bpmp_serialize_i2c_msg'
->  drivers/i2c/busses/i2c-tegra-bpmp.c:86: warning: expecting prototype for=
- The serialized I2C format is simply the following(). Prototype was for teg=
-ra_bpmp_serialize_i2c_msg() instead
->  drivers/i2c/busses/i2c-tegra-bpmp.c:130: warning: Function parameter or =
-member 'i2c' not described in 'tegra_bpmp_i2c_deserialize'
->  drivers/i2c/busses/i2c-tegra-bpmp.c:130: warning: Function parameter or =
-member 'response' not described in 'tegra_bpmp_i2c_deserialize'
->  drivers/i2c/busses/i2c-tegra-bpmp.c:130: warning: Function parameter or =
-member 'msgs' not described in 'tegra_bpmp_i2c_deserialize'
->  drivers/i2c/busses/i2c-tegra-bpmp.c:130: warning: Function parameter or =
-member 'num' not described in 'tegra_bpmp_i2c_deserialize'
->  drivers/i2c/busses/i2c-tegra-bpmp.c:130: warning: expecting prototype fo=
-r The data in the BPMP(). Prototype was for tegra_bpmp_i2c_deserialize() in=
-stead
->=20
-> Cc: Thierry Reding <thierry.reding@gmail.com>
-> Cc: Jonathan Hunter <jonathanh@nvidia.com>
-> Cc: Wolfram Sang <wsa@kernel.org>
-> Cc: Shariff Md <smohammed@nvidia.com>
-> Cc: linux-i2c@vger.kernel.org
-> Cc: linux-tegra@vger.kernel.org
-> Signed-off-by: Lee Jones <lee.jones@linaro.org>
+> Fixes: 139251fc2208 ("firmware: tegra: add bpmp driver for Tegra210")
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
 > ---
->  drivers/i2c/busses/i2c-tegra-bpmp.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  drivers/firmware/tegra/bpmp-tegra210.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+Applied, thanks.
 
---YzqOiTxPrUP7Jx1k
+Thierry
+
+--ygv5veh6S+Cfn5/o
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmC2TIcACgkQ3SOs138+
-s6HCoxAAgj33Wj3TAjYzXbOl8ORr2Iol4DmRu6QO+eJJ8/uw3Wl82xiAUFCb9OGK
-13JZpGo+uYttqJs1v372Qd0aGYtMoiTt9ylmRhZ3+N28smNUYUfPWrSpE6cet54W
-Xzd1x2jOqJ/g61yJ4cX0JkvakghNQNQ7nclcbxgfJiv9pgL38IrQ4CVziRuwULz5
-9rbPBTBiBacAUgMLMPPVsLhS4+adpf34CTmZnYFtK4ReVqcZOeI7IZYH853tddWY
-DydaZQRZ5wyjt8/cu+D4m86aKXJQl59GF30vwQ85I8YlES649Kys5YC09dy/ZsXx
-O42GPEEybJZGnF7ERLuzcBEWdRkd2ugXON0iUsHNFphCyrjaib8sqk8VVwH7xGrn
-WyjbUT7vqYhtXxch2sYrrn7OUglRh608r1Lg9h/m5C9n7WVozz7hcB0Fp6AFkpfv
-nHjds7UX88HYIRdX2gbM9BSTEXIgD+ASGi9DnTQagGtwdyZNC5UPoX8iBlSxR+RN
-kLmFZbZXtv1M142wjY46HO5rdc74v728a7cYYGisQKHS9JKJ1ygypHkaqyMfsUs4
-/X/FlQP1Ky0omj6Epoo+oPw+8396axhXcJmO3X3vqPSC5ByhQ9fHaB6wJdsQ/Vt6
-F50mdsAyp77dq+1Y6P//+wQcCOGgQrk/ut5rouhvNCJjmnR3Vok=
-=tO9/
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmC2TTUACgkQ3SOs138+
+s6FbgA//bfh7mn3MPY3zPgUhvGoKMzg2HZOSYk23j5GURDnE2twcpNw20bRwg1S0
+cNbavlX265iT/t1PKCbssdgFJ+xu7wyCJO5OnG8HpOttglcy6rPoTkikiEw8idR1
+iyWczYf9BzaBZJqHRnas4eekyfa0dtB5b2veqfY0Zy7fm+2cNRYC2zLs77FXAvVC
+WR/dQOXXjV/wMPcZoUd1p9CUw30AUQW+uT5MdWKaa6m1LA3CpDD5n6Grbf6gHird
+ff65tzQItiqXyVnbEXcIu5+X512W9roEIq0eNCQ+vcKj8K+Pk7gSWNVH3L2MeCDw
+W7YHYZ/MZ+oU3ORlAWLQJAP5Ecramvmw//loeC2Tl6G2De3RV2qtnlMSbFUW7hvl
+mCaJBdZNVpacgESXayPzLGTXXc4NOZtYb6kmCC4sZ4m03CHSI6jilPWuJ5Yk3zLk
+UvKG93FkNsHHN4ibBAq3DZyE0c4GHtJ4DBm3KBKlhG2TNC6rI8klxC+OcDBkKoaj
+JPkLLFt07U0H+mSQucCgx7nwHurHUJ7SePiIQto1TVoqia32TPaL1ksVBuffkRp1
+9e3ebeyBGlGPxygD3d9e1Mep8GKvBf2YYzxB3PHsXyhSvTVfilDZI7ItUasqzdo5
+xsd6od933k+UQpYEjn3UQs+VYo8BxSPQwgPBTsDpTS2p3qBbyR8=
+=gc9i
 -----END PGP SIGNATURE-----
 
---YzqOiTxPrUP7Jx1k--
+--ygv5veh6S+Cfn5/o--
