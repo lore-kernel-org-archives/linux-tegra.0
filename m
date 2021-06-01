@@ -4,114 +4,152 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29C36C47080
-	for <linux-tegra@archiver.kernel.org>; Tue,  1 Jun 2021 15:35:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3864C47099
+	for <linux-tegra@archiver.kernel.org>; Tue,  1 Jun 2021 15:48:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0785E61396
-	for <linux-tegra@archiver.kernel.org>; Tue,  1 Jun 2021 15:35:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CCC776124B
+	for <linux-tegra@archiver.kernel.org>; Tue,  1 Jun 2021 15:48:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234066AbhFAPgt (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 1 Jun 2021 11:36:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41370 "EHLO
+        id S234533AbhFAPuQ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 1 Jun 2021 11:50:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44552 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230385AbhFAPgt (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 1 Jun 2021 11:36:49 -0400
-Received: from mail-pf1-x42c.google.com (mail-pf1-x42c.google.com [IPv6:2607:f8b0:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 159B7C061574;
-        Tue,  1 Jun 2021 08:35:07 -0700 (PDT)
-Received: by mail-pf1-x42c.google.com with SMTP id t28so1779757pfg.10;
-        Tue, 01 Jun 2021 08:35:07 -0700 (PDT)
+        with ESMTP id S234538AbhFAPuN (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 1 Jun 2021 11:50:13 -0400
+Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09945C061574;
+        Tue,  1 Jun 2021 08:48:31 -0700 (PDT)
+Received: by mail-lj1-x236.google.com with SMTP id v5so19872871ljg.12;
+        Tue, 01 Jun 2021 08:48:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=3HuiPCeuqXkl1SzHJvsVZWtr7PWvQn4WmEK8nHEzvA0=;
-        b=QGP68DpXcY2bPApu690wyA3jX5gM55Ygds+YsofPUJJuxnkE1FIAxaMFKwt3LTIzrU
-         FJ7TU30NRFWKipgHY+sN5fBCpJy3wJC7zTv2cs+v8Re54X1jarhO4m2pJk+4Wwv5D1PU
-         T3UIPBhiOG/gXQ/vyoj9rBVboKJcsqdyIN/qmvmeOGmDtRmlE4hJ4C+b1TgvfoJ+7apJ
-         ZicketUF9bK8prff0rAgySt48iLGmEcf9kjE6TJueLyQEW2hH9ntI1s2lnthq9TswKYw
-         90xidTwMXtOXGrH3ydBgX8i9p9+9yTwHWurabKNpeJsKZ/7C4moZntLHBvfhTTlN9UkC
-         p5BA==
+        bh=YUGtVN8Gnr12tiawIay9gy72JML+eakTViuP73Eai20=;
+        b=OJHtzK/coti4vjRxZPZ/gnY6fyiDLjcVi5yyKAV5aAu49hIcJUlgBlzgOpxcV7ZW/Q
+         VcwOW+Q3H8BWNtus7+7KcmdItodLuh6uiGe2EMpNMDTItylMvfnhILJyCTLDDRGW1lVl
+         3hDqx/QjZ1gliKtam64xa0u0VUCGqx8V9eX3fOoJ2SSkfF8oh9S96iWNsLkoX0LdVsqQ
+         oD3msqwPq2aN+J7XKeDJ8Lodcq7jxZuzYkMsiN3uDi3GeJE6ZnwUTBw3qwp1ZyPEznQg
+         oPZD7I1TVPyO2CH8AbfyZNOYwtPoB5/MPjkKMZCEEz1XVjUjjczIBiwI05VokIAbAyWD
+         ZayA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=3HuiPCeuqXkl1SzHJvsVZWtr7PWvQn4WmEK8nHEzvA0=;
-        b=l0YJtv9J9rHZjWWyL6GFszb6filzoEkermWEWckFlJ/Vx6J6LwW+C3Py+0FjtJlxmV
-         ztFFPRFMycv/vKVu7Ggl29cQNasR3Lh0r42CG5CnldR90UPoCTXzsb9Y3tuuvWmKzpVj
-         sSbYsEfhu43Da0UfyEw9cIWXjGraFmUrt6D8tBZaW6WzOQW9EZl/kLCZlaw4YiPrPgyd
-         Yltw6Hx+MNi21MPlBIBoZSi9vkDOg5oxS40kDFyQHvWiC4WI56nJGcZuMcH9lQMcXdsA
-         u8JsbUfXwQLbcgNLj7TTtRwktlpRAmww8MjXM1jjRiXTeKbLqc78FxIIBlHrHvd1wMnN
-         /b9w==
-X-Gm-Message-State: AOAM533SGRISDUX/1CsRZ9baBbVA0ooRrsIToXTka93/eh4B2TwkL2zJ
-        fSYhyqGy7JxIbl09KGR8VfXFNDCuT3E=
-X-Google-Smtp-Source: ABdhPJwrgfdey7uyo9cG9PKONhkzO8q/DQPTj6pBkGo1ABJP8RpR5dojTQx/0QOwcopW1NsH3xgTNA==
-X-Received: by 2002:a63:1e4f:: with SMTP id p15mr28615812pgm.40.1622561706051;
-        Tue, 01 Jun 2021 08:35:06 -0700 (PDT)
-Received: from [172.30.1.14] ([14.32.163.5])
-        by smtp.gmail.com with ESMTPSA id 136sm13363191pfu.195.2021.06.01.08.35.00
+        bh=YUGtVN8Gnr12tiawIay9gy72JML+eakTViuP73Eai20=;
+        b=dCPgdDHXU3mrvMMgcPhkGzrOA0h32S5f2fNMyoOy8RiJ2Fd0LQpMLkW8f2j1Etesvg
+         BnWcNYo3tNOT4eTAiQUIUakYHCIljZut9Hp7c21ureHpr81AcY9AOoD+w0nByJeNwkiH
+         Jo7QAXJuQ7e+DlO0QpL8w6Ifif8wsR1baqILU6N78kT5iDmLiMy+oJkjJSz2/YVkOXhK
+         V5Hrl1V0FqQEHiIG7OuymDQ3k8yaFVdFxjJgireLQAU4kghQ3S3uIZMMX8gZCNhAr7/Z
+         EUk0OJdeg1sEnUegg95ninoKVSwu230y7UbEN/+H0Fn5TJGtYEjuAtwH8gyOXuB3dN2t
+         NMqA==
+X-Gm-Message-State: AOAM5337jeo6nfhlJbz5cP5vW63mqD/9wXtk8yje88MV21TB5UJP68iz
+        ZdG47wndozRMy1ge/lygMpQq9MWZbFI=
+X-Google-Smtp-Source: ABdhPJy9rttrLcHdkOGUm+CtfYDWnuKNVHXP04yxuBgVs4bozqSmAzJsjrF93eQcp/YPsbt4c4qcNQ==
+X-Received: by 2002:a05:651c:550:: with SMTP id q16mr21146284ljp.433.1622562508733;
+        Tue, 01 Jun 2021 08:48:28 -0700 (PDT)
+Received: from [192.168.2.145] (79-139-170-222.dynamic.spd-mgts.ru. [79.139.170.222])
+        by smtp.googlemail.com with ESMTPSA id b23sm334560ljk.18.2021.06.01.08.48.27
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Jun 2021 08:35:05 -0700 (PDT)
-Subject: Re: [PATCH v2 0/2] Add thermal cooling support to NVIDIA Tegra
- devfreq
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
+        Tue, 01 Jun 2021 08:48:28 -0700 (PDT)
+Subject: Re: [PATCH v2 13/14] soc/tegra: pmc: Add core power domain
+To:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        =?UTF-8?Q?Nikola_Milosavljevi=c4=87?= <mnidza@outlook.com>,
         Peter Geis <pgwipeout@gmail.com>,
-        Matt Merhar <mattmerhar@protonmail.com>
-Cc:     linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-References: <20210601022319.17938-1-digetx@gmail.com>
-From:   Chanwoo Choi <cwchoi00@gmail.com>
-Message-ID: <04670190-f50c-25fe-6b51-969d5cd42eeb@gmail.com>
-Date:   Wed, 2 Jun 2021 00:35:01 +0900
+        Nicolas Chauvet <kwizart@gmail.com>,
+        Matt Merhar <mattmerhar@protonmail.com>,
+        Paul Fertser <fercerpav@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Nathan Chancellor <nathan@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+References: <20210523231335.8238-1-digetx@gmail.com>
+ <20210523231335.8238-14-digetx@gmail.com>
+ <CAPDyKFrto2cosX3Ben_QWCYVqgeoF1Yv=8gEx4Y86WNyjeHvdg@mail.gmail.com>
+ <f0b1bea7-0752-5584-8bcc-d8b602f22c13@gmail.com>
+ <CAPDyKFq0EpVjUg9RV7qR3_qywUQHKqStPNSFY==6AFBNC6m3KQ@mail.gmail.com>
+ <3d8d195f-d325-1b27-21f4-c1fb593678d1@gmail.com>
+ <CAPDyKFqktwCWMBDcoa7HDg6aCayPSSYG5QkekaxPaiL6kgAZmQ@mail.gmail.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <6c1e69b3-5c13-5be6-5a8d-1eecaaa45aa7@gmail.com>
+Date:   Tue, 1 Jun 2021 18:48:27 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.8.1
 MIME-Version: 1.0
-In-Reply-To: <20210601022319.17938-1-digetx@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <CAPDyKFqktwCWMBDcoa7HDg6aCayPSSYG5QkekaxPaiL6kgAZmQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 21. 6. 1. 오전 11:23, Dmitry Osipenko wrote:
-> This series adds two remaining patches of the ACTMON cooling support
-> series, converting the DT binding to schema and adding cooling properties.
-> The rest of the patches are already applied.
+01.06.2021 13:19, Ulf Hansson пишет:
+...
+>> This is not sufficient for Tegra because we have individual OPP tables for the root PLLs, system clocks and device clocks. The device clocks could be muxed to a different PLLs, depending on clk requirements of a particular board.
 > 
-> Changelog:
-> 
-> v2: - Added back the "MEMORY CONTROLLER" section to the description of the
->        interconnect-names property, which was suggested by Thierry Reding.
-> 
->      - Added r-b from Rob Herring and acks from Chanwoo Choi and
->        Thierry Reding.
-> 
-> Dmitry Osipenko (2):
->    dt-bindings: devfreq: tegra30-actmon: Convert to schema
->    dt-bindings: devfreq: tegra30-actmon: Add cooling-cells
-> 
->   .../arm/tegra/nvidia,tegra30-actmon.txt       |  57 --------
->   .../devfreq/nvidia,tegra30-actmon.yaml        | 126 ++++++++++++++++++
->   2 files changed, 126 insertions(+), 57 deletions(-)
->   delete mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,tegra30-actmon.txt
->   create mode 100644 Documentation/devicetree/bindings/devfreq/nvidia,tegra30-actmon.yaml
-> 
+> Are you saying that the clock providers for the "root PLLs" and
+> "system clocks" have OPP tables themselves? If so, would you mind
+> posting a patch for an updated DT binding for these changes, so it can
+> be discussed separately?
 
-Applied them. Thanks.
+I will post all those patches soon, thank you.
 
--- 
-Best Regards,
-Samsung Electronics
-Chanwoo Choi
+...
+>> The device drivers don't manage the parent clocks directly and OPP core doesn't support this use-case where OPP needs to be applied to a generic/parent PLL clock. Moving the OPP management to the clk driver is the easy solution which works good in practice for Tegra, it also removes a need to switch each driver to dev_pm_opp_set_rate() usage.
+> 
+> I admit, if clock consumer drivers could avoid calling
+> dev_pm_opp_set_rate|opp(), that would be nice. But, as I stated, it's
+> a fragile path from locking point of view, to call
+> dev_pm_opp_set_rate|opp() from a clock provider driver. Personally, I
+> think it's better to avoid it.
+> 
+> More importantly, you also need to convince the clock subsystem
+> maintainers, that setting an OPP internally from the clock provider
+> driver is a good idea. As far as I can tell, they have said *no* to
+> this, since the common clock framework was invented, I believe for
+> good reasons.
+
+Pushing the OPP into a CCF driver is indeed not ideal. I'm open to new
+ideas. I will post those patches where we could discuss this in a more
+details.
+
+...
+>> For example please see clock@60006000 and pmc@7000e400 nodes of [1].
+>>
+>> [1] https://github.com/grate-driver/linux/blob/master/arch/arm/boot/dts/tegra30.dtsi
+> 
+> Thanks, that certainly helped me understand better!
+> 
+> I see that you want to add OPP tables to clock provider nodes. As I
+> said above, an updated DT binding is probably a good idea to discuss
+> separately.
+...
+> 
+> Okay, to not stall things from moving forward, may I suggest that you
+> simply drop the call to lockdep_set_class() (and the corresponding
+> comment) for now.
+> 
+> Then you can continue to post the next parts - and if it turns out
+> that lockdep_set_class() becomes needed, you can always add it back
+> then.
+
+Thank you very much for helping with reviewing this all. I'll drop the
+lockdep_set_class() and post the v7 shortly. Afterwards, I'll send the
+rest of clk, device-tree and etc related patches targeting 5.15.
