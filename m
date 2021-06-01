@@ -2,115 +2,121 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 021BBC47080
-	for <linux-tegra@archiver.kernel.org>; Tue,  1 Jun 2021 15:51:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59CE0C47092
+	for <linux-tegra@archiver.kernel.org>; Tue,  1 Jun 2021 17:00:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DE183613B1
-	for <linux-tegra@archiver.kernel.org>; Tue,  1 Jun 2021 15:51:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3E6EF613BC
+	for <linux-tegra@archiver.kernel.org>; Tue,  1 Jun 2021 17:00:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234340AbhFAPxT (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 1 Jun 2021 11:53:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45254 "EHLO
+        id S234533AbhFARCN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 1 Jun 2021 13:02:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32934 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233326AbhFAPxS (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 1 Jun 2021 11:53:18 -0400
-Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B497CC061574;
-        Tue,  1 Jun 2021 08:51:36 -0700 (PDT)
-Received: by mail-lf1-x136.google.com with SMTP id r5so22557351lfr.5;
-        Tue, 01 Jun 2021 08:51:36 -0700 (PDT)
+        with ESMTP id S234505AbhFARCM (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 1 Jun 2021 13:02:12 -0400
+Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D58AC061574;
+        Tue,  1 Jun 2021 10:00:30 -0700 (PDT)
+Received: by mail-ej1-x62d.google.com with SMTP id e18so7089418eje.5;
+        Tue, 01 Jun 2021 10:00:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=onn9keWb/5Q8h7P0USAwNaJ0t0PscCKrWQtmrQdUT8Q=;
-        b=YQYgIWtmDRiNPQPiPtred3DvUbyBIZjo/kYv3X/GmB40n2V/6G4JCqIn0yWwef5vN7
-         8k25LU5Awxaww/HKb171Ld/Pq764n/594z3PzRj4x88qNuDifgV81CkLPZYqOPlQOauJ
-         D2iJaa5tGSuR43TsRpaACBXBGnhVoA3fmwcXske13VuybDT//P6wGqIbT0hEkAGqR1s0
-         TTPIYgWyGHJ+5UKJJ1PjK7CYvy5WIAFatZKvEZkUA+lrS4did9zIwdHIWvKljtSCtQSx
-         r9zILaZMGCq7S+tzqwk7WjWmfjdReOLpKivEGaJK5+4KRgDxJov560dyrZzQR/iNSqzF
-         O3mQ==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=CQMqoWBzPL5ZLjlastQzR0yj7aAdYnXQO5fTeIFHZ4k=;
+        b=ofaY6ZaT894tU9GoJsERFeuD9OD42gzTogC7Kxhjh/caApTFSPZUhXeALqmKwC49TY
+         O6KJKbTayLjj1K51CHu3nvHQg0A6jbNRc5lEjV1Gao2I203F1t8HD1bOQMsf6y1LXpdK
+         elUbzHcmR6qOHi5lmvk8ewFRC2UpJzz4bFXH0v/W5wq2A247kXrQPGJae0UWQZwpxesT
+         cYnNJo0Hcct+8Txg21brH899srxYL5ZNYPqG8Ry4+tLFbUtHiObim9mlppQrf/4tnQob
+         yB5NB9Ov+CPeBOHbCaZsYigVmI8mt9zLI9450umfPPXeM+Lw+lxvygGULrrZDOYkY5NU
+         tRZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=onn9keWb/5Q8h7P0USAwNaJ0t0PscCKrWQtmrQdUT8Q=;
-        b=eM6P6sxNbkhajBEnl8ms7EcHrwKFQkJewkYBFMjzeo2Ywp9LycASCUcqtEAshtTJBX
-         FrVe7/ss5x/IUGpdR+ReFZmWpq08ZwjjiVWcEBCtcbX+ATa4nT79to/Hqxku47Lvfdhj
-         WULK3DMAI92e8B59yWtrc2A40C8Zu/BUOBpahGpoQHvYfVjybWL7ndAX4tzK4dMHLH9/
-         OuhghcfWoZTvXtCXkGc/YkR8UQm/uPizrV3FysBEG2YjqiPYC0dsOUAuQreNFKacRBE4
-         f1SgLVMGfSHOQw+n0RbW0H/BY1Mq79VlIg9DYLlOgUFEh+PmgxsJDCq4387iJr0PbliT
-         R8Yg==
-X-Gm-Message-State: AOAM532+tjxljrVbG/c4I25DJWuAVZmp2Nusapm1kaZ1Ru4LNqqPkAyX
-        GC1wNujmttn9j0vMfXiPZwsqPDrk6l4=
-X-Google-Smtp-Source: ABdhPJzWcGefIy4rlt9EkULr/wrcbgCFzxyFOCrxX+af3/DttDgPF+s9kSaWAbJ47C7QGDenlRZDrA==
-X-Received: by 2002:a05:6512:a89:: with SMTP id m9mr18603701lfu.161.1622562694984;
-        Tue, 01 Jun 2021 08:51:34 -0700 (PDT)
-Received: from [192.168.2.145] (79-139-170-222.dynamic.spd-mgts.ru. [79.139.170.222])
-        by smtp.googlemail.com with ESMTPSA id c22sm2060757ljd.43.2021.06.01.08.51.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Jun 2021 08:51:34 -0700 (PDT)
-Subject: Re: [PATCH v6 00/14] NVIDIA Tegra memory and power management changes
- for 5.14
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-        =?UTF-8?Q?Nikola_Milosavljevi=c4=87?= <mnidza@outlook.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Matt Merhar <mattmerhar@protonmail.com>,
-        Paul Fertser <fercerpav@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
-        Nathan Chancellor <nathan@kernel.org>,
-        linux-clk@vger.kernel.org
-References: <20210601023119.22044-1-digetx@gmail.com>
- <YLYZvFPyJFJgxI56@orome.fritz.box>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <11206c96-9f56-ca6f-e5e3-658534356666@gmail.com>
-Date:   Tue, 1 Jun 2021 18:51:33 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=CQMqoWBzPL5ZLjlastQzR0yj7aAdYnXQO5fTeIFHZ4k=;
+        b=g5/VjIEjWR2RUmPDcVzUn5iuFybhN2IFctFw3cJbvnfHjYKgCNN/zp1wdClVUEix31
+         BftUCajf5yUNcRj4+mWe0fW8pmSDNLfQrDfzVB1rosgbjW+AkTEMEwmlfWmhqpOoFqOF
+         ZVJD6Ip+9pNdUiYz8+UgwFHfjD6Dt3Q8EcxLFDDKlma7XTpQkwrxXd5ywvaMuk4kKu1G
+         hkrCR8W+eVqfH2qphophGisraS1mXYF3GZds5ZkcMvMycKmlrFPyiBLDTZxgWbqLJIyj
+         lznzTaB22Q/C0W/SVBeUW/5VEFuJtiQJmA7V1Az0uR/OYhIA7Av30xeVwx2G+lMO8rV4
+         gGOQ==
+X-Gm-Message-State: AOAM530vsfq8NU33wpb2g6t9wZpIWAJqTDxLt1w2Q664zUHP6p5UYpQz
+        a3BKTvjDIWp6VTOFnOfm0PbO8RzosP8=
+X-Google-Smtp-Source: ABdhPJyeYOWjKhIUjgAyXu/6opTIZiY7INYhum2ypvPWZAVMNFSxz6OYqa+86KdwPYLX8cww7HPu7A==
+X-Received: by 2002:a17:907:7201:: with SMTP id dr1mr1121890ejc.19.1622566828720;
+        Tue, 01 Jun 2021 10:00:28 -0700 (PDT)
+Received: from localhost ([62.96.65.119])
+        by smtp.gmail.com with ESMTPSA id bq1sm3123438ejb.66.2021.06.01.10.00.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Jun 2021 10:00:27 -0700 (PDT)
+Date:   Tue, 1 Jun 2021 19:02:03 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Yang Yingliang <yangyingliang@huawei.com>
+Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        jonathanh@nvidia.com
+Subject: Re: [PATCH -next] soc/tegra: fuse: don't return -ENOMEM when
+ allocate lookups failed
+Message-ID: <YLZoC32dTDVwfSjh@orome.fritz.box>
+References: <20210412140527.4142735-1-yangyingliang@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <YLYZvFPyJFJgxI56@orome.fritz.box>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="P3fufEzxHHIvHqpA"
+Content-Disposition: inline
+In-Reply-To: <20210412140527.4142735-1-yangyingliang@huawei.com>
+User-Agent: Mutt/2.0.6 (98f8cb83) (2021-03-06)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-01.06.2021 14:27, Thierry Reding пишет:
-> On Tue, Jun 01, 2021 at 05:31:05AM +0300, Dmitry Osipenko wrote:
->> This series:
->>
->>   1. Adds CPU/core voltage bump before system is rebooted.
->>   2. Adds new devm_tegra_core_dev_init_opp_table() helper and switches
->>      Tegra memory drivers to use it.
->>   3. Adds compile-testing support to the Tegra memory drivers.
->>   4. Adds Tegra SoC core power domain support.
->>
->> Changelog:
->>
->> v6: - Fixed another compile-test trouble reported for v5. I double checked
->>       the clk stubs this time and compiled them locally.
-> 
-> Heh... I just fixed those locally on top of your v5. Let me see if I can
-> roll back the changes and apply this new set instead.
 
-Thank you! You probably saw already that Ulf Hansson suggested to remove
-the lockdep annotation for now from the core PD, I'll make a v7 with
-this small change.
+--P3fufEzxHHIvHqpA
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Apr 12, 2021 at 10:05:27PM +0800, Yang Yingliang wrote:
+> fuse->base can not be unmapped if allocate lookups failed in
+> tegra_init_fuse(), because it is an early_initcall, the driver
+> will be loaded anyway and fuse->base will be accessed by other
+> functions later, so remove the return -ENOMEM after allocating
+> lookups failed to make less confusing.
+>=20
+> Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
+> ---
+>  drivers/soc/tegra/fuse/fuse-tegra.c | 12 +++++++++---
+>  1 file changed, 9 insertions(+), 3 deletions(-)
+
+Applied, though I did drop the error message. Out-of-memory situations
+are noisy anyway, so the extra error message doesn't add anything.
+
+Thanks,
+Thierry
+
+--P3fufEzxHHIvHqpA
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmC2aAcACgkQ3SOs138+
+s6Fxtg//R8Jp1X7MQW6jXODjtxZCNLH2r+0MuF2z9+x5gE6deR0/Vfg4YrnIBPj2
+UijfczUYNHGsiJ6uisl6/VA4x2JgjZAmtuUActxkD+hAeMuCp+saF0LylsKI8HK2
+OcnELPh1sp11+1FPU75dxqsbEqYWbJ6ZqUlaHrugQ71Qe61+UflxirNQOsikKo6y
+sDewYLjcn36GWqLqCdaQjxKr8VC1GehSkWClHebPtyWCGdjcLntfcQ0HRIsefCHQ
+FkSVCwms74AxjnsmVwd92h0SlGdYkgpn2XU9Ox4KslX3KIkjwc8zQbKYC6p7y5d3
+0PxhOnxI5ygt0lANjvKHA4qKe6g3hIwPsWTzGmjKjwB3vTh4nj2tUfkev/8gNr25
+0DioLGQygX2pxoTrP0LtC6t7/15qRnTKpZEOp6i44uGiephPsNyqjm0mlYN35Gai
+9GrUBdpmsEK3lscQHuu2WnENOiqKXagdIDuuyPtv3bUMT9KXYi4Aor0uzWKae0od
+JwllY2Jt0nQMJzX95xxDgYpyNs5rtVWAO+m6tJuhcoF9K2wfkl1JdoZxdsD8l01M
+jbfriSy6S1UvkiW0H6IOpGg/9ZWOWj/7/NwxeKy9nAb6B0bjanBaw36VxxgOVgPk
+g8I6Y7hK4A6kmZ+JvTcRTkH+sM4Gau24xMGqsfTJQI/h5h19pyw=
+=Ak5L
+-----END PGP SIGNATURE-----
+
+--P3fufEzxHHIvHqpA--
