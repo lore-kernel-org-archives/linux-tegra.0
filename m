@@ -8,69 +8,70 @@ X-Spam-Status: No, score=-9.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03E80C4708F
-	for <linux-tegra@archiver.kernel.org>; Tue,  1 Jun 2021 18:53:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32DC3C47080
+	for <linux-tegra@archiver.kernel.org>; Tue,  1 Jun 2021 18:55:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D8484613BD
-	for <linux-tegra@archiver.kernel.org>; Tue,  1 Jun 2021 18:53:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A5B76136E
+	for <linux-tegra@archiver.kernel.org>; Tue,  1 Jun 2021 18:55:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234692AbhFASze (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 1 Jun 2021 14:55:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58466 "EHLO
+        id S234695AbhFAS4o (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 1 Jun 2021 14:56:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58730 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234690AbhFASze (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 1 Jun 2021 14:55:34 -0400
-Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8332C061574
-        for <linux-tegra@vger.kernel.org>; Tue,  1 Jun 2021 11:53:51 -0700 (PDT)
-Received: by mail-lf1-x136.google.com with SMTP id a2so23370274lfc.9
-        for <linux-tegra@vger.kernel.org>; Tue, 01 Jun 2021 11:53:51 -0700 (PDT)
+        with ESMTP id S233397AbhFAS4o (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 1 Jun 2021 14:56:44 -0400
+Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 567D0C061574
+        for <linux-tegra@vger.kernel.org>; Tue,  1 Jun 2021 11:55:01 -0700 (PDT)
+Received: by mail-lj1-x22c.google.com with SMTP id e11so20625268ljn.13
+        for <linux-tegra@vger.kernel.org>; Tue, 01 Jun 2021 11:55:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
+        h=subject:from:to:cc:references:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=H7SxkImpqjj3z3YdGpQXt/B5fzGnAypCUgNutEy7Lz0=;
-        b=mObZXlotTjUsvhFT4nnIwWPsmM9JkLNDbeSBYuMwplqPFfdTtCDh4SFVIM6svoTk3F
-         9cHQFE0yC1px1z2aWNmbpAxBksJ9yuBitTtVqHp+fqMZmhY4hOxq+NWTHT92qLdMcJyq
-         BEwae3yc3JFUnu8akSKntE7Wg0O91T+eScUmjzX0SUnPj5v/cDwGQ//4S8Opl7ms6rPX
-         UechJivn9Ilhw0s8YdfWrVT+PXS7uxKdltEZqj5LOe8WJcFHUpQFsvEba2Hv/r1tH4q6
-         rYITsbsOGwWdaexFJttFZ12mRPWuZSscXoxszECcgaKixVRTN+h9XbMY9PJ/rI49tl9e
-         iQyQ==
+        bh=90ZjmpEXNyf6E6e23qG/WrHrDClbChlpcWXXsKAb270=;
+        b=hJ0YuaSMm1c6pVhRdHOADwKQnqbTevD6g+1117/zAzfX0iXL+Pn2gKTSQTyPBo3Efg
+         Cbc2gyU1Si8NLDwkQwm7wtI6C3+Fb8FWmS6UX+WZ4WlwH5gwZ32R6wMo54RqhHvVfsFc
+         A5PE7mPyDPqUSVDL8Mq/rxeD+OuQ/9TsNPm0k3OW5E8vw2belBLIJ49s/rTqyqGvgShH
+         amVR5r1/UxVbPAWasqdH19XqT0Zi1lTPlAyd6Nxkz8yTJaItN7zdVXC2s+v1o0Pj9xpt
+         QmB4msvPkvJblzQ33gOpY7iLuSDjo8fgimoiWWaW4Or1TMqYnVgzmgtlb/pLbyLQKD9/
+         1Kig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=H7SxkImpqjj3z3YdGpQXt/B5fzGnAypCUgNutEy7Lz0=;
-        b=XHOLGAIbnx432f2HnYbesWkQwczZJMMu8BQw4+WqVUimrmfLuZbvZ9cUrWEl7yEuZZ
-         cB7fsLJdoIqbbnNRCI37+ai315awiRIDkUpzfEQfshdCKim/gj5eFu/3nT1acVkLD+Ua
-         qLBTtMlC36LgBdx/7nNLYw1fPvHC355ySCLYHEHcxiDkt2jOxeYgjf3xmNQD20kFYJwO
-         JUX8M6WHHI8YVfKqkSdQd38NzEeX1IujvyMt+2ZqBaKQ32PvNQhbW5OuHozd1TZZ+WO1
-         Giidc9k1fMhoJCdR8ITx+YYqAT4q96ic0ph0W9n02pAIQBzk60Lfka+jesdoweci9AcO
-         XlSg==
-X-Gm-Message-State: AOAM532Ab9XZzO+ELMVylvLRafM2+d8siuYTxSXDdNv9M6UPUu0aU7NX
-        7ygJNnDAcTO9z2r/toWQEbU=
-X-Google-Smtp-Source: ABdhPJy/Mkq/ISz0SlrS+V4d6CDL7R83HblP4DpOWHRS4jrYOuCMxJDDH9oTEglQvNrNXjjBg8NiRQ==
-X-Received: by 2002:a05:6512:6d3:: with SMTP id u19mr20390771lff.236.1622573630164;
-        Tue, 01 Jun 2021 11:53:50 -0700 (PDT)
+        bh=90ZjmpEXNyf6E6e23qG/WrHrDClbChlpcWXXsKAb270=;
+        b=ASg5k7lQvfRCesiLhscOCvG3u7k/bx1yol5xdFi+8TUYk/Bv1yANfPdTphgXnDOZ0h
+         NvUfNoj1alzFUXCfCWZCy2g1ND0sHfEpSgv9uhVxsnDyufp4hWsJKiRiATdmFnBAqZR4
+         yFfHRdKo/ykc98kDs9HrQc6v/ithKr0FcYdMejNrcjJ1NGdpYybH9YwzhVlrYlBDa1cJ
+         5qKEDPzjykO/1BjHcJvbTnc4G336EFwbvR+FFlsCIfaQC5dkiNN6WDs0SJQF6kdu2QQO
+         mm2HsettLyLfxC7261lNIi2izJlCrW34ovJ576bkxlUDbbesSOJWI8JF/gc/ElbES3Xq
+         RvsA==
+X-Gm-Message-State: AOAM5320QTZC2K5m5BidFPobJgz8e39NHsZl/Fed+sLuXZgU2HKvG7cg
+        rwJBUy13b22cL9nrjYT+3iUwMZgyL+Q=
+X-Google-Smtp-Source: ABdhPJwGOq0qbPXOMQHa7gwaglUPXSROAsHk1XSbGqaqeLrDnFALTraWSCZ3KiWBagdVY1GOyKmZpA==
+X-Received: by 2002:a05:651c:148:: with SMTP id c8mr11814813ljd.410.1622573699748;
+        Tue, 01 Jun 2021 11:54:59 -0700 (PDT)
 Received: from [192.168.2.145] (79-139-170-222.dynamic.spd-mgts.ru. [79.139.170.222])
-        by smtp.googlemail.com with ESMTPSA id e8sm1364465ljj.28.2021.06.01.11.53.49
+        by smtp.googlemail.com with ESMTPSA id f10sm1198639ljp.8.2021.06.01.11.54.59
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Jun 2021 11:53:49 -0700 (PDT)
+        Tue, 01 Jun 2021 11:54:59 -0700 (PDT)
 Subject: Re: [PATCH v2 07/12] memory: tegra: Parameterize interrupt handler
+From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 Cc:     Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
 References: <20210601175942.1920588-1-thierry.reding@gmail.com>
  <20210601175942.1920588-8-thierry.reding@gmail.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <9ce2210f-538d-607a-10e4-802ab849deb5@gmail.com>
-Date:   Tue, 1 Jun 2021 21:53:49 +0300
+ <9ce2210f-538d-607a-10e4-802ab849deb5@gmail.com>
+Message-ID: <72d26cbc-e252-8629-e47e-c6b2d13d28f3@gmail.com>
+Date:   Tue, 1 Jun 2021 21:54:58 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.8.1
 MIME-Version: 1.0
-In-Reply-To: <20210601175942.1920588-8-thierry.reding@gmail.com>
+In-Reply-To: <9ce2210f-538d-607a-10e4-802ab849deb5@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -78,14 +79,18 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-01.06.2021 20:59, Thierry Reding пишет:
-> --- a/drivers/memory/tegra/mc.h
-> +++ b/drivers/memory/tegra/mc.h
-> @@ -135,9 +135,13 @@ extern const struct tegra_mc_soc tegra210_mc_soc;
->      defined(CONFIG_ARCH_TEGRA_132_SOC) || \
->      defined(CONFIG_ARCH_TEGRA_210_SOC)
->  int tegra30_mc_probe(struct tegra_mc *mc);
-> +irqreturn_t tegra30_mc_handle_irq(int irq, void *data);
+01.06.2021 21:53, Dmitry Osipenko пишет:
+> 01.06.2021 20:59, Thierry Reding пишет:
+>> --- a/drivers/memory/tegra/mc.h
+>> +++ b/drivers/memory/tegra/mc.h
+>> @@ -135,9 +135,13 @@ extern const struct tegra_mc_soc tegra210_mc_soc;
+>>      defined(CONFIG_ARCH_TEGRA_132_SOC) || \
+>>      defined(CONFIG_ARCH_TEGRA_210_SOC)
+>>  int tegra30_mc_probe(struct tegra_mc *mc);
+>> +irqreturn_t tegra30_mc_handle_irq(int irq, void *data);
+> 
+> tegra30_mc_handle_irq() doesn't need to be made global, it's defined and
+> used only within mc.h.
+> 
 
-tegra30_mc_handle_irq() doesn't need to be made global, it's defined and
-used only within mc.h.
+* I meant mc.c.
