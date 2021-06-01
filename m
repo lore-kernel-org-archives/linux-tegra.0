@@ -8,63 +8,63 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7551C47080
-	for <linux-tegra@archiver.kernel.org>; Tue,  1 Jun 2021 17:58:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E113C47092
+	for <linux-tegra@archiver.kernel.org>; Tue,  1 Jun 2021 17:58:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B6A3A61375
-	for <linux-tegra@archiver.kernel.org>; Tue,  1 Jun 2021 17:58:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3EA05613BD
+	for <linux-tegra@archiver.kernel.org>; Tue,  1 Jun 2021 17:58:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234641AbhFASAM (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 1 Jun 2021 14:00:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46144 "EHLO
+        id S234643AbhFASAN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 1 Jun 2021 14:00:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46146 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234513AbhFASAM (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 1 Jun 2021 14:00:12 -0400
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A457C061574
-        for <linux-tegra@vger.kernel.org>; Tue,  1 Jun 2021 10:58:27 -0700 (PDT)
-Received: by mail-ej1-x636.google.com with SMTP id h24so19146345ejy.2
-        for <linux-tegra@vger.kernel.org>; Tue, 01 Jun 2021 10:58:27 -0700 (PDT)
+        with ESMTP id S234513AbhFASAN (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 1 Jun 2021 14:00:13 -0400
+Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64C90C06174A
+        for <linux-tegra@vger.kernel.org>; Tue,  1 Jun 2021 10:58:30 -0700 (PDT)
+Received: by mail-ej1-x634.google.com with SMTP id gb17so23054550ejc.8
+        for <linux-tegra@vger.kernel.org>; Tue, 01 Jun 2021 10:58:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=AkSG2pd+jkF67VxssdQ1P/zh+/VGfT/c+IwO9GhNnXM=;
-        b=Xs/HE775NFaUedpexkmhShHSkGHE6eZlO3mutI+ZPVuHgAFgxPKIh/QnIPbo6sJvEb
-         xW9fTzVV3bdilWR/5k10P+yhJIbX8vQDbgjn/f21xv2x+sKLWJa66/bgt3CBiWOnlRot
-         X7BFKlWEsSkJWCRjqO7EK5AfKc4uobBKbsD9NuDrHNfUYlh+maVGk3Y8QE+cfb+ntag8
-         /cKYLs0uWddxviHr8ozJOPdH+xahRtA9dOxssUhSTUcH67WAovSr5sPZXMeMyuneao6E
-         v7li+J+toEDU+9cjmeaR6cKOL/2Fil8Ovp0JXZuvxk7VMmu23N0YE6g2SSyHNrhZ0tnk
-         9Lrw==
+        bh=rXKSoIE3w80E2TCiGFgj4A7CPg5o8NjEWHDxCGB0AbU=;
+        b=C7fDqwBhb+pe3Lxll0U9SkVtJPFB8K6PeuFAjcCYIgOMHew/YvFgub4SzOkQd3rYgv
+         Q0t6kse6O9u4i98b7M57fSAmSfFEakc+Tp3nVoq2x2+H1K17mSRcwf4hOaQ0RCa1aaMg
+         Adxr+KLy7Tv48fEY6gJzuAYpTKCgz3Ic75xTL/fRuPvMIqQ0miYQVQB727W0fux0dr3w
+         lMqN2ygC4vN3NTVSpNoeT2ZBwtrs6K/7nRxkWB+dt2WeYEi7GqJ1EopRGB26N3SWnW5K
+         TvbAXKNYvvG/nhbbF6OIZdxUUP20wLuuyFXyMF4VbVawosyi2mansnOJB6OZRfDzjQaa
+         ktyA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=AkSG2pd+jkF67VxssdQ1P/zh+/VGfT/c+IwO9GhNnXM=;
-        b=LHxREjgYCdvLsWye0tU5j2tfyRBoPB/cCg/eXHiM4zUqoY3YeYow2mpRAgU1lefR5e
-         CAZPNEll0GnLv8lAsKpvTqVJYlhfDXc+xOsDH5zYazDVrR6enEnGNhEq7GVhg7ZZX1lF
-         cA8up+2aSW/L8AIZ3fv63EgpwaEbWe+UMZputo1FMKxsOQtSRUQTznqvJ+DRxH1dJcjf
-         UFcjQ7wQvK2/3iAqrJs74c5sNs75jP1ISxL4uIfw26UU4AYJZBcFGZABBLxUc4v++yGF
-         0bt6JngdxVgMAIdxo6AXIYs9WMvuXct3cbVhjVKdfbZ9eSYEHZVaUocX7ianJVgEMKIO
-         fEIA==
-X-Gm-Message-State: AOAM531lvV59Wyd6OXBdTju3Mr1aEYw40ihsbyIuJl6NF5uUXZW0kY8v
-        69lThC/Wg/ukq/9esRZpAb4=
-X-Google-Smtp-Source: ABdhPJykKRqEtYBzHG6axQf9BKhmq2dPwIAcD8yh3PN0o+Q8tboQgebLMQVaQ4SQ402gUWXp15JFCg==
-X-Received: by 2002:a17:906:2988:: with SMTP id x8mr8641182eje.122.1622570306098;
-        Tue, 01 Jun 2021 10:58:26 -0700 (PDT)
+        bh=rXKSoIE3w80E2TCiGFgj4A7CPg5o8NjEWHDxCGB0AbU=;
+        b=la9yOuzMVA3+2xa+jBHbG/NUyAYBAbT/HJkOmRiE8xJO/Ov7IkAlTN0zJuL4a8GwH+
+         BgawBerViKfN0BidGyhVoVWqxiD2Sx1hb11+GMDoQhQxMBTPjx3Xy0/615M6yacb/PKJ
+         eyYunRiEbQt0bODHpfm2DzzlTm/Jkit25G2z9w/g9QGTkN3dWs5bhVcTGIB1M1J8D+LZ
+         YUMogrLXO7AvfKLWkmXfUTjmXgToj6TQpHougE5u0R5YzuQPcETs4oBN7sGfvwO4R/6/
+         1I8xh3oXQdymCUKnSf1UFDPkd48Paq0fnUIMUmtpkQDMkRQbMIEAvj8xBXln33EuAUNY
+         B2mw==
+X-Gm-Message-State: AOAM531mT52d6kDwyQ5pMkuPuJG/Js++So4Njd6U5HPFz8d8Mxy6hXui
+        hSerZGr178XsDwCykDmsnbM=
+X-Google-Smtp-Source: ABdhPJyxBO+RCnGSlbA+or5V5Y3xY/GEzH26JfwsjKJe9riNdMOLiXmfOrIPBFOwDX3Bsa5sibcDmg==
+X-Received: by 2002:a17:906:148f:: with SMTP id x15mr29695362ejc.535.1622570309000;
+        Tue, 01 Jun 2021 10:58:29 -0700 (PDT)
 Received: from localhost ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id l25sm7559560ejk.100.2021.06.01.10.58.23
+        by smtp.gmail.com with ESMTPSA id wq10sm238768ejb.79.2021.06.01.10.58.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Jun 2021 10:58:23 -0700 (PDT)
+        Tue, 01 Jun 2021 10:58:27 -0700 (PDT)
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 Cc:     Jon Hunter <jonathanh@nvidia.com>,
         Dmitry Osipenko <digetx@gmail.com>,
         linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 06/12] memory: tegra: Extract setup code into callback
-Date:   Tue,  1 Jun 2021 19:59:36 +0200
-Message-Id: <20210601175942.1920588-7-thierry.reding@gmail.com>
+Subject: [PATCH v2 07/12] memory: tegra: Parameterize interrupt handler
+Date:   Tue,  1 Jun 2021 19:59:37 +0200
+Message-Id: <20210601175942.1920588-8-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20210601175942.1920588-1-thierry.reding@gmail.com>
 References: <20210601175942.1920588-1-thierry.reding@gmail.com>
@@ -76,255 +76,341 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-Separate the setup code for Tegra30 and later into a ->setup() callback
-and set it for all applicable chips.
+Tegra20 requires a slightly different interrupt handler than Tegra30 and
+later, so parameterize the handler, so that each SoC implementation can
+provide its own.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/memory/tegra/mc.c       | 127 ++++++++++++++++++--------------
- drivers/memory/tegra/mc.h       |   9 +++
- drivers/memory/tegra/tegra114.c |   1 +
- drivers/memory/tegra/tegra124.c |   2 +
- drivers/memory/tegra/tegra210.c |   1 +
- drivers/memory/tegra/tegra30.c  |   1 +
- 6 files changed, 84 insertions(+), 57 deletions(-)
+Changes in v2:
+- use tegra_mc_ prefix for status and error names arrays
+- keep IRQ handling mandatory in this patch
+- fix build on Tegra20
+
+ drivers/memory/tegra/mc.c      | 136 +++++++--------------------------
+ drivers/memory/tegra/mc.h      |   4 +
+ drivers/memory/tegra/tegra20.c |  74 ++++++++++++++++++
+ include/soc/tegra/mc.h         |   2 +
+ 4 files changed, 107 insertions(+), 109 deletions(-)
 
 diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
-index ea2142ba720a..edb3c4a25365 100644
+index edb3c4a25365..6725df851079 100644
 --- a/drivers/memory/tegra/mc.c
 +++ b/drivers/memory/tegra/mc.c
-@@ -299,38 +299,6 @@ static int tegra_mc_reset_setup(struct tegra_mc *mc)
+@@ -492,32 +492,7 @@ int tegra30_mc_probe(struct tegra_mc *mc)
  	return 0;
  }
  
--static int tegra_mc_setup_latency_allowance(struct tegra_mc *mc)
--{
--	unsigned long long tick;
--	unsigned int i;
--	u32 value;
+-const struct tegra_mc_ops tegra30_mc_ops = {
+-	.probe = tegra30_mc_probe,
+-};
+-#endif
 -
--	/* compute the number of MC clock cycles per tick */
--	tick = (unsigned long long)mc->tick * clk_get_rate(mc->clk);
--	do_div(tick, NSEC_PER_SEC);
+-static const char *const status_names[32] = {
+-	[ 1] = "External interrupt",
+-	[ 6] = "EMEM address decode error",
+-	[ 7] = "GART page fault",
+-	[ 8] = "Security violation",
+-	[ 9] = "EMEM arbitration error",
+-	[10] = "Page fault",
+-	[11] = "Invalid APB ASID update",
+-	[12] = "VPR violation",
+-	[13] = "Secure carveout violation",
+-	[16] = "MTS carveout violation",
+-};
 -
--	value = mc_readl(mc, MC_EMEM_ARB_CFG);
--	value &= ~MC_EMEM_ARB_CFG_CYCLES_PER_UPDATE_MASK;
--	value |= MC_EMEM_ARB_CFG_CYCLES_PER_UPDATE(tick);
--	mc_writel(mc, value, MC_EMEM_ARB_CFG);
+-static const char *const error_names[8] = {
+-	[2] = "EMEM decode error",
+-	[3] = "TrustZone violation",
+-	[4] = "Carveout violation",
+-	[6] = "SMMU translation error",
+-};
 -
--	/* write latency allowance defaults */
--	for (i = 0; i < mc->soc->num_clients; i++) {
--		const struct tegra_mc_client *client = &mc->soc->clients[i];
--		u32 value;
--
--		value = mc_readl(mc, client->regs.la.reg);
--		value &= ~(client->regs.la.mask << client->regs.la.shift);
--		value |= (client->regs.la.def & client->regs.la.mask) << client->regs.la.shift;
--		mc_writel(mc, value, client->regs.la.reg);
--	}
--
--	/* latch new values */
--	mc_writel(mc, MC_TIMING_UPDATE, MC_TIMING_CONTROL);
--
--	return 0;
--}
--
- int tegra_mc_write_emem_configuration(struct tegra_mc *mc, unsigned long rate)
+-static irqreturn_t tegra_mc_irq(int irq, void *data)
++irqreturn_t tegra30_mc_handle_irq(int irq, void *data)
  {
- 	unsigned int i;
-@@ -368,6 +336,43 @@ unsigned int tegra_mc_get_emem_device_count(struct tegra_mc *mc)
- }
- EXPORT_SYMBOL_GPL(tegra_mc_get_emem_device_count);
+ 	struct tegra_mc *mc = data;
+ 	unsigned long status;
+@@ -529,7 +504,7 @@ static irqreturn_t tegra_mc_irq(int irq, void *data)
+ 		return IRQ_NONE;
  
-+#if defined(CONFIG_ARCH_TEGRA_3x_SOC) || \
-+    defined(CONFIG_ARCH_TEGRA_114_SOC) || \
-+    defined(CONFIG_ARCH_TEGRA_124_SOC) || \
-+    defined(CONFIG_ARCH_TEGRA_132_SOC) || \
-+    defined(CONFIG_ARCH_TEGRA_210_SOC)
-+static int tegra_mc_setup_latency_allowance(struct tegra_mc *mc)
-+{
-+	unsigned long long tick;
-+	unsigned int i;
-+	u32 value;
-+
-+	/* compute the number of MC clock cycles per tick */
-+	tick = (unsigned long long)mc->tick * clk_get_rate(mc->clk);
-+	do_div(tick, NSEC_PER_SEC);
-+
-+	value = mc_readl(mc, MC_EMEM_ARB_CFG);
-+	value &= ~MC_EMEM_ARB_CFG_CYCLES_PER_UPDATE_MASK;
-+	value |= MC_EMEM_ARB_CFG_CYCLES_PER_UPDATE(tick);
-+	mc_writel(mc, value, MC_EMEM_ARB_CFG);
-+
-+	/* write latency allowance defaults */
-+	for (i = 0; i < mc->soc->num_clients; i++) {
-+		const struct tegra_mc_client *client = &mc->soc->clients[i];
-+		u32 value;
-+
-+		value = mc_readl(mc, client->regs.la.reg);
-+		value &= ~(client->regs.la.mask << client->regs.la.shift);
-+		value |= (client->regs.la.def & client->regs.la.mask) << client->regs.la.shift;
-+		mc_writel(mc, value, client->regs.la.reg);
-+	}
-+
-+	/* latch new values */
-+	mc_writel(mc, MC_TIMING_UPDATE, MC_TIMING_CONTROL);
-+
-+	return 0;
-+}
-+
- static int load_one_timing(struct tegra_mc *mc,
- 			   struct tegra_mc_timing *timing,
- 			   struct device_node *node)
-@@ -459,6 +464,39 @@ static int tegra_mc_setup_timings(struct tegra_mc *mc)
- 	return 0;
+ 	for_each_set_bit(bit, &status, 32) {
+-		const char *error = status_names[bit] ?: "unknown";
++		const char *error = tegra_mc_status_names[bit] ?: "unknown";
+ 		const char *client = "unknown", *desc;
+ 		const char *direction, *secure;
+ 		phys_addr_t addr = 0;
+@@ -569,7 +544,7 @@ static irqreturn_t tegra_mc_irq(int irq, void *data)
+ 
+ 		type = (value & MC_ERR_STATUS_TYPE_MASK) >>
+ 		       MC_ERR_STATUS_TYPE_SHIFT;
+-		desc = error_names[type];
++		desc = tegra_mc_error_names[type];
+ 
+ 		switch (value & MC_ERR_STATUS_TYPE_MASK) {
+ 		case MC_ERR_STATUS_TYPE_INVALID_SMMU_PAGE:
+@@ -614,78 +589,31 @@ static irqreturn_t tegra_mc_irq(int irq, void *data)
+ 	return IRQ_HANDLED;
  }
  
-+int tegra30_mc_probe(struct tegra_mc *mc)
-+{
-+	int err;
-+
-+	mc->clk = devm_clk_get_optional(mc->dev, "mc");
-+	if (IS_ERR(mc->clk)) {
-+		dev_err(mc->dev, "failed to get MC clock: %ld\n", PTR_ERR(mc->clk));
-+		return PTR_ERR(mc->clk);
-+	}
-+
-+	/* ensure that debug features are disabled */
-+	mc_writel(mc, 0x00000000, MC_TIMING_CONTROL_DBG);
-+
-+	err = tegra_mc_setup_latency_allowance(mc);
-+	if (err < 0) {
-+		dev_err(mc->dev, "failed to setup latency allowance: %d\n", err);
-+		return err;
-+	}
-+
-+	err = tegra_mc_setup_timings(mc);
-+	if (err < 0) {
-+		dev_err(mc->dev, "failed to setup timings: %d\n", err);
-+		return err;
-+	}
-+
-+	return 0;
-+}
-+
+-static __maybe_unused irqreturn_t tegra20_mc_irq(int irq, void *data)
+-{
+-	struct tegra_mc *mc = data;
+-	unsigned long status;
+-	unsigned int bit;
+-
+-	/* mask all interrupts to avoid flooding */
+-	status = mc_readl(mc, MC_INTSTATUS) & mc->soc->intmask;
+-	if (!status)
+-		return IRQ_NONE;
+-
+-	for_each_set_bit(bit, &status, 32) {
+-		const char *direction = "read", *secure = "";
+-		const char *error = status_names[bit];
+-		const char *client, *desc;
+-		phys_addr_t addr;
+-		u32 value, reg;
+-		u8 id, type;
+-
+-		switch (BIT(bit)) {
+-		case MC_INT_DECERR_EMEM:
+-			reg = MC_DECERR_EMEM_OTHERS_STATUS;
+-			value = mc_readl(mc, reg);
+-
+-			id = value & mc->soc->client_id_mask;
+-			desc = error_names[2];
+-
+-			if (value & BIT(31))
+-				direction = "write";
+-			break;
+-
+-		case MC_INT_INVALID_GART_PAGE:
+-			reg = MC_GART_ERROR_REQ;
+-			value = mc_readl(mc, reg);
+-
+-			id = (value >> 1) & mc->soc->client_id_mask;
+-			desc = error_names[2];
+-
+-			if (value & BIT(0))
+-				direction = "write";
+-			break;
+-
+-		case MC_INT_SECURITY_VIOLATION:
+-			reg = MC_SECURITY_VIOLATION_STATUS;
+-			value = mc_readl(mc, reg);
+-
+-			id = value & mc->soc->client_id_mask;
+-			type = (value & BIT(30)) ? 4 : 3;
+-			desc = error_names[type];
+-			secure = "secure ";
+-
+-			if (value & BIT(31))
+-				direction = "write";
+-			break;
+-
+-		default:
+-			continue;
+-		}
+-
+-		client = mc->soc->clients[id].name;
+-		addr = mc_readl(mc, reg + sizeof(u32));
+-
+-		dev_err_ratelimited(mc->dev, "%s: %s%s @%pa: %s (%s)\n",
+-				    client, secure, direction, &addr, error,
+-				    desc);
+-	}
 +const struct tegra_mc_ops tegra30_mc_ops = {
 +	.probe = tegra30_mc_probe,
++	.handle_irq = tegra30_mc_handle_irq,
 +};
 +#endif
-+
- static const char *const status_names[32] = {
- 	[ 1] = "External interrupt",
- 	[ 6] = "EMEM address decode error",
-@@ -777,13 +815,6 @@ static int tegra_mc_probe(struct platform_device *pdev)
- 	if (IS_ERR(mc->regs))
- 		return PTR_ERR(mc->regs);
  
--	mc->clk = devm_clk_get(&pdev->dev, "mc");
--	if (IS_ERR(mc->clk)) {
--		dev_err(&pdev->dev, "failed to get MC clock: %ld\n",
--			PTR_ERR(mc->clk));
--		return PTR_ERR(mc->clk);
--	}
--
- 	mc->debugfs.root = debugfs_create_dir("mc", NULL);
+-	/* clear interrupts */
+-	mc_writel(mc, status, MC_INTSTATUS);
++const char *const tegra_mc_status_names[32] = {
++	[ 1] = "External interrupt",
++	[ 6] = "EMEM address decode error",
++	[ 7] = "GART page fault",
++	[ 8] = "Security violation",
++	[ 9] = "EMEM arbitration error",
++	[10] = "Page fault",
++	[11] = "Invalid APB ASID update",
++	[12] = "VPR violation",
++	[13] = "Secure carveout violation",
++	[16] = "MTS carveout violation",
++};
  
- 	if (mc->soc->ops && mc->soc->ops->probe) {
-@@ -798,25 +829,7 @@ static int tegra_mc_probe(struct platform_device *pdev)
- 	} else
- #endif
- 	{
--		/* ensure that debug features are disabled */
--		mc_writel(mc, 0x00000000, MC_TIMING_CONTROL_DBG);
--
--		err = tegra_mc_setup_latency_allowance(mc);
--		if (err < 0) {
--			dev_err(&pdev->dev,
--				"failed to setup latency allowance: %d\n",
--				err);
--			return err;
--		}
--
- 		isr = tegra_mc_irq;
--
--		err = tegra_mc_setup_timings(mc);
--		if (err < 0) {
--			dev_err(&pdev->dev, "failed to setup timings: %d\n",
--				err);
--			return err;
--		}
+-	return IRQ_HANDLED;
+-}
++const char *const tegra_mc_error_names[8] = {
++	[2] = "EMEM decode error",
++	[3] = "TrustZone violation",
++	[4] = "Carveout violation",
++	[6] = "SMMU translation error",
++};
+ 
+ /*
+  * Memory Controller (MC) has few Memory Clients that are issuing memory
+@@ -786,7 +714,6 @@ static int tegra_mc_probe(struct platform_device *pdev)
+ {
+ 	struct resource *res;
+ 	struct tegra_mc *mc;
+-	void *isr;
+ 	u64 mask;
+ 	int err;
+ 
+@@ -823,15 +750,6 @@ static int tegra_mc_probe(struct platform_device *pdev)
+ 			return err;
  	}
  
+-#ifdef CONFIG_ARCH_TEGRA_2x_SOC
+-	if (mc->soc == &tegra20_mc_soc) {
+-		isr = tegra20_mc_irq;
+-	} else
+-#endif
+-	{
+-		isr = tegra_mc_irq;
+-	}
+-
  	mc->irq = platform_get_irq(pdev, 0);
+ 	if (mc->irq < 0)
+ 		return mc->irq;
+@@ -840,7 +758,7 @@ static int tegra_mc_probe(struct platform_device *pdev)
+ 
+ 	mc_writel(mc, mc->soc->intmask, MC_INTMASK);
+ 
+-	err = devm_request_irq(&pdev->dev, mc->irq, isr, 0,
++	err = devm_request_irq(&pdev->dev, mc->irq, mc->soc->ops->handle_irq, 0,
+ 			       dev_name(&pdev->dev), mc);
+ 	if (err < 0) {
+ 		dev_err(&pdev->dev, "failed to request IRQ#%u: %d\n", mc->irq,
 diff --git a/drivers/memory/tegra/mc.h b/drivers/memory/tegra/mc.h
-index 1ee34f0da4f7..731896169cf3 100644
+index 731896169cf3..cff8479e9d90 100644
 --- a/drivers/memory/tegra/mc.h
 +++ b/drivers/memory/tegra/mc.h
-@@ -129,6 +129,15 @@ extern const struct tegra_mc_soc tegra132_mc_soc;
- extern const struct tegra_mc_soc tegra210_mc_soc;
+@@ -135,9 +135,13 @@ extern const struct tegra_mc_soc tegra210_mc_soc;
+     defined(CONFIG_ARCH_TEGRA_132_SOC) || \
+     defined(CONFIG_ARCH_TEGRA_210_SOC)
+ int tegra30_mc_probe(struct tegra_mc *mc);
++irqreturn_t tegra30_mc_handle_irq(int irq, void *data);
+ extern const struct tegra_mc_ops tegra30_mc_ops;
  #endif
  
-+#if defined(CONFIG_ARCH_TEGRA_3x_SOC) || \
-+    defined(CONFIG_ARCH_TEGRA_114_SOC) || \
-+    defined(CONFIG_ARCH_TEGRA_124_SOC) || \
-+    defined(CONFIG_ARCH_TEGRA_132_SOC) || \
-+    defined(CONFIG_ARCH_TEGRA_210_SOC)
-+int tegra30_mc_probe(struct tegra_mc *mc);
-+extern const struct tegra_mc_ops tegra30_mc_ops;
-+#endif
++extern const char * const tegra_mc_status_names[32];
++extern const char * const tegra_mc_error_names[8];
 +
  /*
   * These IDs are for internal use of Tegra ICC drivers. The ID numbers are
   * chosen such that they don't conflict with the device-tree ICC node IDs.
-diff --git a/drivers/memory/tegra/tegra114.c b/drivers/memory/tegra/tegra114.c
-index 1f2054d34bf5..41350570c815 100644
---- a/drivers/memory/tegra/tegra114.c
-+++ b/drivers/memory/tegra/tegra114.c
-@@ -1113,4 +1113,5 @@ const struct tegra_mc_soc tegra114_mc_soc = {
- 	.reset_ops = &tegra_mc_reset_ops_common,
- 	.resets = tegra114_mc_resets,
- 	.num_resets = ARRAY_SIZE(tegra114_mc_resets),
-+	.ops = &tegra30_mc_ops,
- };
-diff --git a/drivers/memory/tegra/tegra124.c b/drivers/memory/tegra/tegra124.c
-index 8a8485ceb789..d780a84241fe 100644
---- a/drivers/memory/tegra/tegra124.c
-+++ b/drivers/memory/tegra/tegra124.c
-@@ -1274,6 +1274,7 @@ const struct tegra_mc_soc tegra124_mc_soc = {
- 	.resets = tegra124_mc_resets,
- 	.num_resets = ARRAY_SIZE(tegra124_mc_resets),
- 	.icc_ops = &tegra124_mc_icc_ops,
-+	.ops = &tegra30_mc_ops,
- };
- #endif /* CONFIG_ARCH_TEGRA_124_SOC */
+diff --git a/drivers/memory/tegra/tegra20.c b/drivers/memory/tegra/tegra20.c
+index 2c86c0d70d59..fcd7738fcb53 100644
+--- a/drivers/memory/tegra/tegra20.c
++++ b/drivers/memory/tegra/tegra20.c
+@@ -713,10 +713,84 @@ static int tegra20_mc_resume(struct tegra_mc *mc)
+ 	return 0;
+ }
  
-@@ -1305,5 +1306,6 @@ const struct tegra_mc_soc tegra132_mc_soc = {
- 	.resets = tegra124_mc_resets,
- 	.num_resets = ARRAY_SIZE(tegra124_mc_resets),
- 	.icc_ops = &tegra124_mc_icc_ops,
-+	.ops = &tegra30_mc_ops,
++static irqreturn_t tegra20_mc_handle_irq(int irq, void *data)
++{
++	struct tegra_mc *mc = data;
++	unsigned long status;
++	unsigned int bit;
++
++	/* mask all interrupts to avoid flooding */
++	status = mc_readl(mc, MC_INTSTATUS) & mc->soc->intmask;
++	if (!status)
++		return IRQ_NONE;
++
++	for_each_set_bit(bit, &status, 32) {
++		const char *error = tegra_mc_status_names[bit];
++		const char *direction = "read", *secure = "";
++		const char *client, *desc;
++		phys_addr_t addr;
++		u32 value, reg;
++		u8 id, type;
++
++		switch (BIT(bit)) {
++		case MC_INT_DECERR_EMEM:
++			reg = MC_DECERR_EMEM_OTHERS_STATUS;
++			value = mc_readl(mc, reg);
++
++			id = value & mc->soc->client_id_mask;
++			desc = tegra_mc_error_names[2];
++
++			if (value & BIT(31))
++				direction = "write";
++			break;
++
++		case MC_INT_INVALID_GART_PAGE:
++			reg = MC_GART_ERROR_REQ;
++			value = mc_readl(mc, reg);
++
++			id = (value >> 1) & mc->soc->client_id_mask;
++			desc = tegra_mc_error_names[2];
++
++			if (value & BIT(0))
++				direction = "write";
++			break;
++
++		case MC_INT_SECURITY_VIOLATION:
++			reg = MC_SECURITY_VIOLATION_STATUS;
++			value = mc_readl(mc, reg);
++
++			id = value & mc->soc->client_id_mask;
++			type = (value & BIT(30)) ? 4 : 3;
++			desc = tegra_mc_error_names[type];
++			secure = "secure ";
++
++			if (value & BIT(31))
++				direction = "write";
++			break;
++
++		default:
++			continue;
++		}
++
++		client = mc->soc->clients[id].name;
++		addr = mc_readl(mc, reg + sizeof(u32));
++
++		dev_err_ratelimited(mc->dev, "%s: %s%s @%pa: %s (%s)\n",
++				    client, secure, direction, &addr, error,
++				    desc);
++	}
++
++	/* clear interrupts */
++	mc_writel(mc, status, MC_INTSTATUS);
++
++	return IRQ_HANDLED;
++}
++
+ static const struct tegra_mc_ops tegra20_mc_ops = {
+ 	.probe = tegra20_mc_probe,
+ 	.suspend = tegra20_mc_suspend,
+ 	.resume = tegra20_mc_resume,
++	.handle_irq = tegra20_mc_handle_irq,
  };
- #endif /* CONFIG_ARCH_TEGRA_132_SOC */
-diff --git a/drivers/memory/tegra/tegra210.c b/drivers/memory/tegra/tegra210.c
-index 08f3a08cd743..8ab6498dbe7d 100644
---- a/drivers/memory/tegra/tegra210.c
-+++ b/drivers/memory/tegra/tegra210.c
-@@ -1286,4 +1286,5 @@ const struct tegra_mc_soc tegra210_mc_soc = {
- 	.reset_ops = &tegra_mc_reset_ops_common,
- 	.resets = tegra210_mc_resets,
- 	.num_resets = ARRAY_SIZE(tegra210_mc_resets),
-+	.ops = &tegra30_mc_ops,
+ 
+ const struct tegra_mc_soc tegra20_mc_soc = {
+diff --git a/include/soc/tegra/mc.h b/include/soc/tegra/mc.h
+index 00d16c356db8..87668ebab2a1 100644
+--- a/include/soc/tegra/mc.h
++++ b/include/soc/tegra/mc.h
+@@ -10,6 +10,7 @@
+ #include <linux/debugfs.h>
+ #include <linux/err.h>
+ #include <linux/interconnect-provider.h>
++#include <linux/irq.h>
+ #include <linux/reset-controller.h>
+ #include <linux/types.h>
+ 
+@@ -177,6 +178,7 @@ struct tegra_mc_ops {
+ 	int (*probe)(struct tegra_mc *mc);
+ 	int (*suspend)(struct tegra_mc *mc);
+ 	int (*resume)(struct tegra_mc *mc);
++	irqreturn_t (*handle_irq)(int irq, void *data);
  };
-diff --git a/drivers/memory/tegra/tegra30.c b/drivers/memory/tegra/tegra30.c
-index 1922ab64e686..84316357513d 100644
---- a/drivers/memory/tegra/tegra30.c
-+++ b/drivers/memory/tegra/tegra30.c
-@@ -1399,4 +1399,5 @@ const struct tegra_mc_soc tegra30_mc_soc = {
- 	.resets = tegra30_mc_resets,
- 	.num_resets = ARRAY_SIZE(tegra30_mc_resets),
- 	.icc_ops = &tegra30_mc_icc_ops,
-+	.ops = &tegra30_mc_ops,
- };
+ 
+ struct tegra_mc_soc {
 -- 
 2.31.1
 
