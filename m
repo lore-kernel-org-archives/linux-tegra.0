@@ -2,116 +2,151 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-4.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5542DC4708F
-	for <linux-tegra@archiver.kernel.org>; Tue,  1 Jun 2021 17:03:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0264C47098
+	for <linux-tegra@archiver.kernel.org>; Tue,  1 Jun 2021 17:08:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 35795613CB
-	for <linux-tegra@archiver.kernel.org>; Tue,  1 Jun 2021 17:03:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D4E0E613F3
+	for <linux-tegra@archiver.kernel.org>; Tue,  1 Jun 2021 17:08:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234530AbhFAREq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 1 Jun 2021 13:04:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33516 "EHLO
+        id S234587AbhFARKV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 1 Jun 2021 13:10:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34768 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234492AbhFAREq (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 1 Jun 2021 13:04:46 -0400
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68FA6C06174A;
-        Tue,  1 Jun 2021 10:03:04 -0700 (PDT)
-Received: by mail-ej1-x631.google.com with SMTP id g20so7359199ejt.0;
-        Tue, 01 Jun 2021 10:03:04 -0700 (PDT)
+        with ESMTP id S234581AbhFARKR (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 1 Jun 2021 13:10:17 -0400
+Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B91EC061760;
+        Tue,  1 Jun 2021 10:08:35 -0700 (PDT)
+Received: by mail-ed1-x52f.google.com with SMTP id dg27so8547198edb.12;
+        Tue, 01 Jun 2021 10:08:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=pXMzv2dknDoL7JPkXn/TuXhQO+T7tuVSK8fCsQ1MDW8=;
-        b=cHbMRfl4PTGDrInu+kUlRDrhr2PnoLqGMeMqNrKQ1JzWd7gm1CZhbiz9YCkifNabEd
-         AcLiPA9zF03VRY49AL0ya+/76xJVk4CfuT6qX2mf3/JLbIYh6hQoHCbjVPhPsQ59t4zr
-         5L5iGMvZHbTqHh6cXXQ4B3fns4pf2fwjzVwuZHqg14wh87I8V6UdjdN7C0aDxur2nQr8
-         CiBaC6ynR8ikaT0goUqjpT3ai/IBoDVAVlN1t9J+bBLBEb2828SVLVkc1tSJUXeWp8QB
-         mKH348aa0nZpTkq3R4QMXTRWSU2kHjnmX1uVY7+MUd4azHj+86mco2zVA+fPKTup6qmy
-         02kA==
+        bh=b14f7x0G6qwhXKyhv/ZWNE4Va6SHm9Fj/WA+S8U4gkk=;
+        b=VI37py+0idQkQMtyA2diYaP9Qs+Q0PI7DAaQNzlIIRdS5jdFlTxxq6fNexYlkF/b7t
+         2ZTUG38T0QH88npVF6+6aTmibfeCiSVnzTFKIrNQpYdpgS3PcBRSrQXRrmY+704bo+i/
+         pKajwjIOWL93YGz4q7HbDrwYOF9iEOVCGjHCycUDbsHfuTox+VhdGxbZWMspRjSbmYZ4
+         c0S1LkyyLr8Tz+tzsMfJP/UvseqCzZSGwNVdnsIGRHmopN1YBsE4z2CctEo8KJe6gWUd
+         h2mzqgq3/icbtbuA/7KhhKwloI+BfTkqJyy94ZD3ra2YO7iDf0g7jY2SXXsdG1m0ajPk
+         eAHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=pXMzv2dknDoL7JPkXn/TuXhQO+T7tuVSK8fCsQ1MDW8=;
-        b=rcKEYKnnJKKcY5qlhVuPwH4EHS9KHbUTcYdzU07QiajYO9PEMjSb/mYfiVjL2D4cR0
-         DHWTUtJI8DP8giTkgsIPZ/dhP43uQaVCOHwyNSuY5amSDAoUQ6KJ8mmaFAxYA8YZqnLJ
-         YtZg4FJIv3ZaXfKMMzCSlEl4Ja4J8BbhkBmnHCMT43OUlmMoD26/zhIX8sWU8/+QXGyV
-         ItwKthWrMLFxIpTgCyb6LBkFOdI34S5glElCCEVmAc3Ru/GS4oyaN4Uwy6lc5H5qo151
-         ywz0y0+nuM82TPm0HQ1s6AlDK2Nbg1fwy5HdgUWXKM8cymptKAh/y45t9H6JWUUjwKCb
-         esGw==
-X-Gm-Message-State: AOAM5314KePDyticDWCfbdigbA6r7EFpjxF04KEexhghlX+U1iFn7zsc
-        I3RUMZRJtIBk9jBhnpgzzK3XxJZJPK8=
-X-Google-Smtp-Source: ABdhPJxFRqoyCy02GFAR+AFVjiWrab+UEWNxdzt+a9vFHSF/xWpgpZkGHP33AmKDJB9bQVvqAsXB6w==
-X-Received: by 2002:a17:906:f9d1:: with SMTP id lj17mr9644880ejb.345.1622566983014;
-        Tue, 01 Jun 2021 10:03:03 -0700 (PDT)
+        bh=b14f7x0G6qwhXKyhv/ZWNE4Va6SHm9Fj/WA+S8U4gkk=;
+        b=mWQPl+DIcvsssHsqHzZ3elYIaSs2QpSppbxCqpaVHR09mSxlCzXZCBtXxxauToaHvy
+         SKEVfIHKRLkrtrb76VjzO50FtHxsR2Yrd1n3PmtnJZ9lUbVMZIKcZmaPYZKKXWijMFuZ
+         G9yW0xH9CM0Drv2WrMJWAhINcB6thDhHru14jbCz/UepTqRmoXRJ9c7kK9GMCgMGra0J
+         be9MuXirl+WcQFWFNzRxz79pH4XYijRkGcpzjHQsFdOvykHizKEmfDh4tdInttAmesZE
+         m2m0zDYbbSk2dqQp2hRfJWivQUWyHgihAPaGgs1TniqhV8HaXlSCHWrHxpKbvGcng4A9
+         /dKg==
+X-Gm-Message-State: AOAM531bywibznydGMXJkzL621lrO6CkJi/y4zhJ/sOpfJnEJzjqB0at
+        wO18huV65FeQUdYXS2QuZnA=
+X-Google-Smtp-Source: ABdhPJwaNZhg0igVAbJpgo4E4GFx+2pDpOX8Zrxo64OaAWULhK5yea/2YAcxTgnMuDGgV4a5ieTPkg==
+X-Received: by 2002:aa7:d8d8:: with SMTP id k24mr18079147eds.253.1622567313625;
+        Tue, 01 Jun 2021 10:08:33 -0700 (PDT)
 Received: from localhost ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id j1sm8775816edv.14.2021.06.01.10.03.01
+        by smtp.gmail.com with ESMTPSA id r21sm5292674edy.78.2021.06.01.10.08.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Jun 2021 10:03:01 -0700 (PDT)
-Date:   Tue, 1 Jun 2021 19:04:37 +0200
+        Tue, 01 Jun 2021 10:08:32 -0700 (PDT)
+Date:   Tue, 1 Jun 2021 19:10:08 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Zou Wei <zou_wei@huawei.com>
-Cc:     lorenzo.pieralisi@arm.com, robh@kernel.org, bhelgaas@google.com,
-        jonathanh@nvidia.com, linux-tegra@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -next] PCI: tegra: Add missing MODULE_DEVICE_TABLE
-Message-ID: <YLZopfEiv+4uzH8J@orome.fritz.box>
-References: <1620792422-16535-1-git-send-email-zou_wei@huawei.com>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
+        =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        Nikola =?utf-8?Q?Milosavljevi=C4=87?= <mnidza@outlook.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Matt Merhar <mattmerhar@protonmail.com>,
+        Paul Fertser <fercerpav@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
+        Nathan Chancellor <nathan@kernel.org>,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH v6 00/14] NVIDIA Tegra memory and power management
+ changes for 5.14
+Message-ID: <YLZp8FlV4lcDnL23@orome.fritz.box>
+References: <20210601023119.22044-1-digetx@gmail.com>
+ <YLYZvFPyJFJgxI56@orome.fritz.box>
+ <11206c96-9f56-ca6f-e5e3-658534356666@gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="wx+er7KiEyvePTDY"
+        protocol="application/pgp-signature"; boundary="UGsCKX3hLwTPT7Tr"
 Content-Disposition: inline
-In-Reply-To: <1620792422-16535-1-git-send-email-zou_wei@huawei.com>
+In-Reply-To: <11206c96-9f56-ca6f-e5e3-658534356666@gmail.com>
 User-Agent: Mutt/2.0.6 (98f8cb83) (2021-03-06)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---wx+er7KiEyvePTDY
-Content-Type: text/plain; charset=us-ascii
+--UGsCKX3hLwTPT7Tr
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 12, 2021 at 12:07:02PM +0800, Zou Wei wrote:
-> This patch adds missing MODULE_DEVICE_TABLE definition which generates
-> correct modalias for automatic loading of this driver when it is built
-> as an external module.
+On Tue, Jun 01, 2021 at 06:51:33PM +0300, Dmitry Osipenko wrote:
+> 01.06.2021 14:27, Thierry Reding =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > On Tue, Jun 01, 2021 at 05:31:05AM +0300, Dmitry Osipenko wrote:
+> >> This series:
+> >>
+> >>   1. Adds CPU/core voltage bump before system is rebooted.
+> >>   2. Adds new devm_tegra_core_dev_init_opp_table() helper and switches
+> >>      Tegra memory drivers to use it.
+> >>   3. Adds compile-testing support to the Tegra memory drivers.
+> >>   4. Adds Tegra SoC core power domain support.
+> >>
+> >> Changelog:
+> >>
+> >> v6: - Fixed another compile-test trouble reported for v5. I double che=
+cked
+> >>       the clk stubs this time and compiled them locally.
+> >=20
+> > Heh... I just fixed those locally on top of your v5. Let me see if I can
+> > roll back the changes and apply this new set instead.
 >=20
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Zou Wei <zou_wei@huawei.com>
-> ---
->  drivers/pci/controller/pci-tegra.c | 1 +
->  1 file changed, 1 insertion(+)
+> Thank you! You probably saw already that Ulf Hansson suggested to remove
+> the lockdep annotation for now from the core PD, I'll make a v7 with
+> this small change.
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+Can you perhaps post this change as a follow-up? That way I can just
+merge it into the corresponding branch, which may be easier than backing
+out all the changes spread over four branches and applying basically the
+same thing again.
 
---wx+er7KiEyvePTDY
+Thierry
+
+--UGsCKX3hLwTPT7Tr
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmC2aKUACgkQ3SOs138+
-s6HcaA/+MbOXo1+hpebluYaY0ckMgHPeUfiGr7UgDbPk/LLG1Sa3B1++2nukfL9D
-UXowBEAQIp/VHDZDpmHBpjC1nHAhS3xzCSB29aCeeQI1juJ3mqAIYZgwwf0nTQuO
-r9b/ZaiLHTo9eJxnntI+Z8rL93UHFcdQW0CA8WEoqgp4IitzRU5AApJMR2b8tnzs
-AsG53CfZu5KRFrWvbfeZ7Urj/4vPMgvTg+K4OAElZxcFF4ylaET+w42dVAWpyliY
-h15TceleLv/71HQLpro5Ck/IGY8o4H9oYhWryD4KXT0/RsSVZX/xGH8fkiRHaeVD
-P2zpTOZ8NrOqcUU/bIf7V8kYiMHWnc+3YsCpRINT/eY/LOG+Vig7fhmuFYFMRzOb
-8vgEM8QPOnA1nAAA2asJ5bBny/f3XMDBp3Rt59yyA9C9QDJoEZOye6mIxilyrqfp
-9pRnc59zpdJqsgy40or20CetWGTvgIUm1wq9tr9UcIKK220qfNtrxtJ5uSTUdGw0
-rhvL950Mso9oXRegDnxk7bO51rsMZYMW1gZUBfDS6jqdSdElP/OPwj4vouUjcoY/
-nqgkO1MjWm39vWgP2JLSU8N3kMzzBiMX4O31TOee8Ta26gyllP1WNQ2RlMusH5un
-azG61F15EE43STxJmSEUCrjIPagUkCVtTvuzDJG7M2Iva+OCW7w=
-=9uNf
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmC2afAACgkQ3SOs138+
+s6G/ew//SSAN5RwYaYKKZhq2h3fzHhv65ckrGL74avoGHdwES0XJzLEsMSULZggA
+w3NKHFtmqyDnaCTL2M9QSOnBPGohXwutZtX8GWifTATMzg+JaRNH1Hsm48lbuovi
+Aab4sL6NzAdX1j/MxI3PZgviVmDKz5R0uzAN3xa7CWjGs64a7nhvhf8ONRdJanEB
+7NiFjiR5HpcldgfR9hv6DwID5GxeAaQ6HcOngERDGTkC7dPPWfd7LrqJkOJ77iLG
+I0CFmXe4nu+lNI9zztqyuD3Z/b64otAmtwhVa30plsnysl40EaJJWI+nFrPMBrGj
+hh+5ZoFzPz+D5p6yZ0qjLCUZ8rL9JiRSdOEDl/mYVT3/pgO/zG8NpuuzEtYvQije
+62Tn7L4T5cpdRfkgTnmWWOE4fh6iWbRBHvp8RDJ/eaUjGaHC4E1yvw84YSOxkMgr
+dk0P9R1amzVgI8TFiPn2HQ9X/rbLSqlhjN7iKBffpKmrkaq+7QixSaHw/wbh8CqX
+msfyAyuGQC65JiyMtOQcZuARntKJtgZuYy9gwb+w6VyD8ttWFu3P0FpHvkSmFFz8
+DeGQ2aAaB/R8SpbIsasRxNGsFKEq3En7dfFLuM5TyAF+N///UuTpJVanB3967N3o
+DyuvDflL/6a7PTGJp2M4ZOBg9LKpQYMteNf9e8m9okhrtsKd/yQ=
+=Cbap
 -----END PGP SIGNATURE-----
 
---wx+er7KiEyvePTDY--
+--UGsCKX3hLwTPT7Tr--
