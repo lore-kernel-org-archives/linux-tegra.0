@@ -2,159 +2,158 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB9C1C47093
-	for <linux-tegra@archiver.kernel.org>; Wed,  2 Jun 2021 08:50:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42296C47092
+	for <linux-tegra@archiver.kernel.org>; Wed,  2 Jun 2021 09:05:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A8CFD613D5
-	for <linux-tegra@archiver.kernel.org>; Wed,  2 Jun 2021 08:50:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 28D67611BF
+	for <linux-tegra@archiver.kernel.org>; Wed,  2 Jun 2021 09:05:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232827AbhFBIw2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 2 Jun 2021 04:52:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46410 "EHLO
+        id S230264AbhFBJGy (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 2 Jun 2021 05:06:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49832 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232840AbhFBIw1 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 2 Jun 2021 04:52:27 -0400
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FDEFC061574
-        for <linux-tegra@vger.kernel.org>; Wed,  2 Jun 2021 01:50:43 -0700 (PDT)
-Received: by mail-ej1-x635.google.com with SMTP id h24so2727488ejy.2
-        for <linux-tegra@vger.kernel.org>; Wed, 02 Jun 2021 01:50:43 -0700 (PDT)
+        with ESMTP id S230145AbhFBJGx (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 2 Jun 2021 05:06:53 -0400
+Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF0BBC06174A;
+        Wed,  2 Jun 2021 02:05:09 -0700 (PDT)
+Received: by mail-ed1-x52a.google.com with SMTP id g18so5813edq.8;
+        Wed, 02 Jun 2021 02:05:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=jfHhOkr5oRpwhcn/dzyulVUHea2BAf1l3IILcH6GJvg=;
-        b=KSXjDeRuS4TDpidd7KGIhkQvk04ZjF/KBg1BT4Qxv+hZNcyVXRU3uHH/uipZrIH9ec
-         y/dGrxBi74DxJ0HUDx9ACKMfc461//RGhAYVm8o2CpoQox/z4OSPErtkm4cK5miQCxyg
-         TcFpwcpOIqUp+EwfXZoj80zeIf/7oW+KKAeIrPZA1Cr62mPdJNqJAiLVf1h3A3KW5+Ui
-         9Xem4RhciT2x6ZoMPPcVVhWVUCrc/Jrf+IqH67vhbjhyMHgRKz1c2AIVNmoviJ+IQvKT
-         N61LVyw5VBuFjUs3wlUDzOBuNuY/WZGDq+NWrjv6traDmixoxMcEI53wRDDgztkwUARJ
-         qsZA==
+        bh=UPjJ+Xb/IPe8pQPzEHkVZDRwhuI4BNPAjDSbmUBiWK0=;
+        b=C48RQJmJAtd4uOk6nkxwpndWiwOB3NmwUxkeVK5Bd0WOJWVcR6FpsM7agf1QworTJm
+         kkhTyUzQYf7AeZb9SOLYfnb7EfC+rs9+pu65ZYtigfxM5gf57wPJBia5JF58ADC/0MfP
+         dzkU0vnbXb2A4NILKkGFg0QoCpggjQ39LzpMDQKTGWQb47IPTAzrSGxod1kOiU+XlRfi
+         e9PFEOYnn/iFY0uMvRGor+kvyZwVKbjRSmZf/PzHCSB9VsNx+fWIDV895dZivDqcyxv9
+         4xXDORvnAUE/EGWxXvc/o8jZui5sLse6oNNw0LnfXEn5qf0VT/TLl65Q0Zh0+GrCgyDL
+         +YPw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=jfHhOkr5oRpwhcn/dzyulVUHea2BAf1l3IILcH6GJvg=;
-        b=HvOzXLx9jcuwaKCLQYTTdhMJ2aTDa/36d1GEhdTeQvofp5iWtXZxqMo1idXsMTMBo1
-         qGw+NPlmBlPx1A8S8mB02MmiK6/HAqwt+5LZrNj/WdukXsbpM6CaWPQOveXEJ11TGqHx
-         alsLYzje52yKwnX0zF4sVne7MH5OnATHaLFFR2P4iWorx8v/ivqhSjHlekhqeC1pdHDK
-         S82MRu98D9znWNr1UM0aK/BouYEMuUjMRWmglioUE1L7YuL+F9vGDlltaxsiJKkHKenk
-         Eg4kVBlbGGswOQUHG8v9uf+lKzJQmtQ0xh70A3FqC8W2LcZJLHbd/GmIm4Ev40uPDx4j
-         q2SQ==
-X-Gm-Message-State: AOAM530vi6ugSQk6pIP2DR+nNDOn+1YfZ+4OGo/tCw1sCM4aUtmGtuh5
-        fG5jprv5jL25TJbNJ6soXJ8=
-X-Google-Smtp-Source: ABdhPJz9iGXnkWDeLG4szjDriiFGBV56UP/M9sFVOQYgpX7ABv7shgsozjzYFxg2+3ipyDvqwwSrkg==
-X-Received: by 2002:a17:906:c010:: with SMTP id e16mr33534111ejz.214.1622623841920;
-        Wed, 02 Jun 2021 01:50:41 -0700 (PDT)
+        bh=UPjJ+Xb/IPe8pQPzEHkVZDRwhuI4BNPAjDSbmUBiWK0=;
+        b=lgK0X5pxwQ6rES5+MfMPz9HlIaIvkPFT60dEHDjY+fkQUmiKHrm4llRFwRWVHF67SC
+         d1zWNoP0+FsGTZZOPGOP8GPuPRQdeEBTGLKvOfjgUCZ9kirPTOgCT5rz/DvZlq/dPckB
+         NrKdhD6mdtGMB4R8mWztWniFaTwKOOWaAvHHzhpnjxdsM7g1A96VvEtZTmcBNzhIk88C
+         kp6GMLxJgvUlexscoXdiNtVrxTekwIBunjwM2qFiL4SyzZuYwprrN8W65RUhozVG0kSl
+         ok/CMPTpvKgZjJgO6bU/hdb4YuhpiqUEWoEXCqHhPFHN/pbl6BJYZJE+a3Nak6gahrO5
+         X4yg==
+X-Gm-Message-State: AOAM531JMI5hLDVI798v7m45WTFKAT0j6fdOaArGtZhAiq8vFrb3TYp4
+        WFq6FYYDsfV9l1pwbMDBwzY=
+X-Google-Smtp-Source: ABdhPJxJE/zSSZ+HLNiWD6Xj7xK3sL+zpdcPs/dmbEViW4cvOWW82ieaLYXQN4ylGZnxlj7x98bl5w==
+X-Received: by 2002:a05:6402:1111:: with SMTP id u17mr37633778edv.87.1622624708541;
+        Wed, 02 Jun 2021 02:05:08 -0700 (PDT)
 Received: from localhost ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id gv11sm3061599ejb.13.2021.06.02.01.50.40
+        by smtp.gmail.com with ESMTPSA id y9sm887281edc.46.2021.06.02.02.05.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Jun 2021 01:50:40 -0700 (PDT)
-Date:   Wed, 2 Jun 2021 10:52:16 +0200
+        Wed, 02 Jun 2021 02:05:06 -0700 (PDT)
+Date:   Wed, 2 Jun 2021 11:06:42 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Nicolin Chen <nicolinc@nvidia.com>,
-        Krishna Reddy <vdumpa@nvidia.com>, linux-tegra@vger.kernel.org,
-        iommu@lists.linux-foundation.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 00/10] arm64: tegra: Prevent early SMMU faults
-Message-ID: <YLdGwD0dxfER4USn@orome.fritz.box>
-References: <20210420172619.3782831-1-thierry.reding@gmail.com>
- <YLEi2FonP568wYrE@orome.fritz.box>
- <20210601122646.GB27832@willie-the-truck>
- <YLZ3qPC8ofjsGkPi@orome.fritz.box>
- <6826d892-d1ac-e3b1-ebee-68392d11d7c5@canonical.com>
- <8c70f82f-0db9-2312-7fc4-c079899c25a0@canonical.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Yang Yingliang <yangyingliang@huawei.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org, jonathanh@nvidia.com
+Subject: Re: [PATCH -next] clk: tegra: tegra124-emc: fix missing
+ clk_disable_unprepare() on error in emc_set_timing()
+Message-ID: <YLdKIqyqaOwlXw9v@orome.fritz.box>
+References: <20210518044247.605370-1-yangyingliang@huawei.com>
+ <162262068754.4130789.12258910664512101759@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="PzNzpL2lnE7MtP+o"
+        protocol="application/pgp-signature"; boundary="xNOpmisMFYQeyVNT"
 Content-Disposition: inline
-In-Reply-To: <8c70f82f-0db9-2312-7fc4-c079899c25a0@canonical.com>
+In-Reply-To: <162262068754.4130789.12258910664512101759@swboyd.mtv.corp.google.com>
 User-Agent: Mutt/2.0.6 (98f8cb83) (2021-03-06)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---PzNzpL2lnE7MtP+o
+--xNOpmisMFYQeyVNT
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 02, 2021 at 09:35:13AM +0200, Krzysztof Kozlowski wrote:
-> On 02/06/2021 09:33, Krzysztof Kozlowski wrote:
-> > On 01/06/2021 20:08, Thierry Reding wrote:
-> >> On Tue, Jun 01, 2021 at 01:26:46PM +0100, Will Deacon wrote:
-> >>> On Fri, May 28, 2021 at 07:05:28PM +0200, Thierry Reding wrote:
-> >>>> On Tue, Apr 20, 2021 at 07:26:09PM +0200, Thierry Reding wrote:
-> >>>>> From: Thierry Reding <treding@nvidia.com>
-> >>>>>
-> >>> Probably best if I queue 3-6 on a separate branch once you send a v3,
-> >>> then Krzysztof can pull that in if he needs it.
-> >>
-> >> Patch 5 has a build-time dependency on patch 1, so they need to go in
-> >> together. The reason why I suggested Krzysztof pick these up is because
-> >> there is a restructuring series that this depends on, which will go in=
-to
-> >> Krzysztof's tree. So in order to pull in 3-6, you'd get a bunch of oth=
-er
-> >> and mostly unrelated stuff as well.
-> >=20
-> > I missed that part... what other series are needed for this one? Except
-> > Dmitry's power management set I do not have anything in my sight for
-> > Tegras memory controllers.
-> >=20
-> > Anyway, I can take the memory bits and provide a stable tag with these.
-> > Recently there was quite a lot work around Tegra memory controllers, so
-> > this makes especially sense if new patches appear.
+On Wed, Jun 02, 2021 at 12:58:07AM -0700, Stephen Boyd wrote:
+> Why does the subject have -next in it?
 >=20
-> OK, I think I have now the patchset you talked about - "memory: tegra:
-> Driver unification" v2, right?
+> Quoting Yang Yingliang (2021-05-17 21:42:47)
+> > After calling clk_prepare_enable(), clk_disable_unprepare() need
+> > be called when prepare_timing_change() failed.
+> >=20
+> > Fixes: 2db04f16b589 ("clk: tegra: Add EMC clock driver")
+>=20
+> And then the Fixes tag is for a patch that was merged in v4.10?
 
-Yes, that's the one. That series is fairly self-contained, but Dmitry's
-power management set has dependencies that pull in the regulator, clock
-and ARM SoC trees.
+To be honest, I'm not sure it's worth backporting this. The probability
+of this happening is very small and the worst that will happen is that
+the parent clock may stay enabled even if it doesn't have to. However,
+the parent clock for these is one of pll_p, pll_c or pll_m, all of which
+are usually sourced from other peripherals.
 
-I did a test merge of the driver unification series with a branch that
-has Dmitry's patches and all the dependencies and there are no conflicts
-so that, fortunately, doesn't further complicates things.
+Yes, it's nice to fix this, but I don't think it warrants a backport, so
+I think I'll just drop the Fixes tag.
 
-Do you want me to send you a pull request with Dmitry's memory
-controller changes? You could then apply the unification series on top,
-which should allow this SMMU series to apply cleanly on top of that.
+> > Reported-by: Hulk Robot <hulkci@huawei.com>
+> > Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
+> > ---
+> >  drivers/clk/tegra/clk-tegra124-emc.c | 4 +++-
+> >  1 file changed, 3 insertions(+), 1 deletion(-)
+> >=20
+> > diff --git a/drivers/clk/tegra/clk-tegra124-emc.c b/drivers/clk/tegra/c=
+lk-tegra124-emc.c
+> > index bdf6f4a51617..74c1d894cca8 100644
+> > --- a/drivers/clk/tegra/clk-tegra124-emc.c
+> > +++ b/drivers/clk/tegra/clk-tegra124-emc.c
+> > @@ -249,8 +249,10 @@ static int emc_set_timing(struct tegra_clk_emc *te=
+gra,
+> >         div =3D timing->parent_rate / (timing->rate / 2) - 2;
+> > =20
+> >         err =3D tegra->prepare_timing_change(emc, timing->rate);
+> > -       if (err)
+> > +       if (err) {
+> > +               clk_disable_unprepare(timing->parent);
+> >                 return err;
+> > +       }
+> > =20
+> >         spin_lock_irqsave(tegra->lock, flags);
+> > =20
+>=20
+> Looks correct to me. I assume Thierry will pick it up for the next merge
+> window.
 
-I can also carry all these changes in the Tegra tree and send a PR in a
-few days once this has seen a bit more testing in linux-next, which also
-makes sure it's got a bit more testing in our internal test farm.
+Yes, I can do that. I've got a couple of minor fixes queued already, so
+this will fit right in.
 
 Thierry
 
---PzNzpL2lnE7MtP+o
+--xNOpmisMFYQeyVNT
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmC3RsAACgkQ3SOs138+
-s6HVFg//atk6G7hTlv5sn3s/G3YEJyP2SCQhtRd1CLlwU1YkoTgQ0PJ1q99DrE9Z
-sWfZAAC+t4ler/ZdWQCwclFLt5H3GXSfbVjMc5bTm7+cdk6XnKJY17xgiOEOTCpr
-T75lkHzkY0HWcWqt8g+ZifX2yXlF/y1tmDnIDdNp/sZpwaS2VOMJCl9kZJrv7A2z
-bq2hlCdw/Fkw+SpUpsZaoI93ObWIQSXz19zcDChwPWa0yKuQAUgZtMmhyM0oTNyY
-TkMVikzE0ff/xoZgdcCby03adaqTZlFWR0AwOsOilK2hnl6SbblnXAUwxRzASLDF
-qF2T+jsMYyH2Hg11Q1ZqW68obPUugPiDsetFMMo6WBe9u0Cxlsd1rVZ3jIka6cUq
-Njok0m6NhtCi04BTHKt6KEnTmAr9AuuHCnxlWNCZSdlnFKm7ZaH7JjJYIqLKFEMo
-jihj17YZwYbJiaZ/uvamjS9Ij5LMlmsQSgaXJkEQoxmYNH1PkC7mYxNPcyz0BsrN
-UCANWH2bEOwz51QS/eOdv8vAWBdLDLQ4Yh7n+FIORJapBZtJZ/14iAxwIOq491Mp
-ObDkAl9ULvjhfeXhgolCbHG74sBsWcm27c+rhh3iSyknkN4Hb6fc2q1NZMwtQ132
-sEPLkhYmGOI0h1mnr06qAliHOoyjQJb6+mfl4QENaRIUeqZyjEs=
-=DLjh
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmC3SiAACgkQ3SOs138+
+s6GKpxAAuesuCLZB+eIUpak/TE7XduGdf2+ojeeewKxlhqLuAhklZUqfOu2UU/r6
+uSB98Rbq21cjwHrkdPxgGfV1FoGZqm4VpY3cBEABWOTmgZQJhsOOPsQPX72RF8b8
+ogjXli1BznABlN9LYDbf80NJnirFq7Z67e837/ormYq69Wz0Vm9RjGI6gATxB2CP
+FJRrg831A/RBxaadhVJAm8dXbHp7Q3hk+Mg79GBcGcQEfm/ebr1RknVBeXqOPXHL
+/stQRUlQiHxphM9J5VionfJYZegaHBdHN+zWfoCFbdxYPVH9F6t7f9PG3nKTaDvR
+nQKyT6o4f+SB8jfAhvQ9q/coVY6VLzj/FxtZqMcUgwpabnY3NV4tkqxRfdg+IJYD
+wttTBeOgoYCRgCBaiOT6RE/s6eBeGAkEDS7/CZrikDvfD9Ky/pVptdyZ4cWiqkB+
+ysKn5Y24W5NEKoh6e1ZtJkItOLrtuwLaQxdw6/6ku7t4uuYeF4co0t90xehQuxVq
+QImfmpVY5Al19fmlSpdRd9l7G06MaMgRKWjs97n5ZXnTqiasH5iKew0EyYMpUx2U
+AK8vzkNegtwC6xt9apskwxW/PiVGpfdbarVIGvMDXuyA62kD+txDKaeiyze2XJZp
+42WYOEWZDG08UPBndnOmPXs9pg6+iE1Ewv1H1C+l9Uw5ufLPo78=
+=tsva
 -----END PGP SIGNATURE-----
 
---PzNzpL2lnE7MtP+o--
+--xNOpmisMFYQeyVNT--
