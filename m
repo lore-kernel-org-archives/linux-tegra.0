@@ -2,114 +2,131 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC814C4708F
-	for <linux-tegra@archiver.kernel.org>; Fri,  4 Jun 2021 12:51:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86909C47096
+	for <linux-tegra@archiver.kernel.org>; Sun,  6 Jun 2021 08:22:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CEF2661028
-	for <linux-tegra@archiver.kernel.org>; Fri,  4 Jun 2021 12:51:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 566D461420
+	for <linux-tegra@archiver.kernel.org>; Sun,  6 Jun 2021 08:22:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230163AbhFDMxh (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 4 Jun 2021 08:53:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54366 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229718AbhFDMxh (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 4 Jun 2021 08:53:37 -0400
-Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB9F9C06174A;
-        Fri,  4 Jun 2021 05:51:37 -0700 (PDT)
-Received: by mail-lj1-x22a.google.com with SMTP id u22so11395747ljh.7;
-        Fri, 04 Jun 2021 05:51:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=sWq9BtJeTbRBDmXrVmUrtGhFcWI4C+yAzYUMss7pZlo=;
-        b=sJ2Ky/+ylWNOBisYSJ7J3tzD8ZcTMNJQnxfxj+GaRKM+XK1XXTaVcWl0NgolOaHgmP
-         AcrMiKp8D+p+C43u+LMnbVMYXP6oJ5D0Fd/8k4CagMkvZWQpMMwY+2VSs62UV/dPS8B6
-         41mHD7sQOcjmd+1Q9TL1X028gN2bZ1WL942ZVKyU0IuWqchetnKB5CLS1ROxOCGoygXa
-         NUXjzLKrBcn6+/8ipnUMJTs2Wy9DFUTszGHpZgb7O5+vtCzNhWJfuW/XRl46esuEn/VH
-         4/B/52rbvtqXDBzeqlO37Cx1Ev2zvTDJISpkcpKWR4I7rFFnav5gXXmHmN9MjKRAS6d9
-         0NWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=sWq9BtJeTbRBDmXrVmUrtGhFcWI4C+yAzYUMss7pZlo=;
-        b=Sr4mkt7cHn93ciq7Df/rYCribKPjgvqfdABWx9is8H2VWr/cdp5JybsjMAZPwsNsON
-         qhnsaPhLAjs+0I2wOLPLYEHTH9Obq9reG2r23hCcVPBuw5u7rinSlQH1lce+L7YtPWqQ
-         0098+LtSeCop7eGizTeQg0J5cKq0P7aoLgihfh5ozabbl6x3ddTJ3lOCpVpQS3xCPa22
-         cPwMzBXqHvMVVGLqYx9c6AadKnGeiwDDtPu3pcBorZpjmvuf22jXItyerQTMdAp6Xo9S
-         BRUZF9pZ9lLRd5knRcM2i+a+K+uQhTrjj2ph7d3kDbFnaYT13cxY9dU42xIcyJ2rdt2F
-         8P5g==
-X-Gm-Message-State: AOAM532Ev0NG+wOVXpvtb8lb9muRZbGCFkQAC0JsIDHUtiQf/s2PihVI
-        kNjUgd3k+gkm3AoJWhztGScyMtLLJ0Q=
-X-Google-Smtp-Source: ABdhPJwRZvgz+MdzoAmEM0qrX+XvutCPsnAHjcOTDhIq44lSOxvVYGqOyIKCcpJYkADmrZXIlQfdvw==
-X-Received: by 2002:a05:651c:502:: with SMTP id o2mr3333254ljp.105.1622811095888;
-        Fri, 04 Jun 2021 05:51:35 -0700 (PDT)
-Received: from [192.168.2.145] (79-139-170-222.dynamic.spd-mgts.ru. [79.139.170.222])
-        by smtp.googlemail.com with ESMTPSA id w26sm611302lfl.111.2021.06.04.05.51.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 04 Jun 2021 05:51:35 -0700 (PDT)
-Subject: Re: [PULL] memory: tegra: Changes for v5.14-rc1
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20210603143739.787957-1-thierry.reding@gmail.com>
- <772bf62a-fb09-cec4-ed4d-ddbfc2832e2b@gmail.com>
- <YLnzQk+suAG5clzB@orome.fritz.box>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <3ed358ce-de98-0b42-2446-873af55ed825@gmail.com>
-Date:   Fri, 4 Jun 2021 15:51:34 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        id S230201AbhFFIYL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 6 Jun 2021 04:24:11 -0400
+Received: from mail-sn1anam02on2070.outbound.protection.outlook.com ([40.107.96.70]:6079
+        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S230083AbhFFIYK (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Sun, 6 Jun 2021 04:24:10 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=kAGcXiyEOSurIcQBSqTRnxQUYpELsTopZv1OUD9923EQM4w05cWijSTRedeqAdp326Qtup8ydUTrEYoomgfYHAhZmKHuhmfGSCokqMSMHApPvrPQptwVeZIZiTfxXXWYx1aWlnAgsicU5lSeUzPtlDp7vKdfMDYrs043jm+Yna2FBr7oMaLFWYNkjsgiXZDQC5x+OESDT0lHgk9lTwhWjiuHcuTanIJLOQUMVoa1KhCHTSn53Omg/Svmu1sUP7wMR2nlh/5LHNUkBbnO3cMlhEwBmEDdqnWmfgrefuSRSa2+3FdbCsZe8KldVqWzgt4VmgP3VJrl485Z3efhbTvIzw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=b4NTa6oVJv97qcVrmEx6XMmLsFdC/bFAIJcYsKemUW0=;
+ b=mJtOMgpYHS2F/OPH6zdYjRQzjJO5NYhcvITUUhS78IStFRT76hYNrQR1gETgkMSWC1Am3IQhrIC3pbqrqHkHBdh5Dzrjy4utgQBIQ/guDFYWMAfplZjmcRHkZK4/8ESkgDqRDWRU/a1gauU897Fnhg3+4E5yGREEXu/fuOn5Ps8xf0u4svNF0y+Bkelt4nowVGTOwWIllCsPU58fkA1TbWS1N2AqkZ5Z0dyro2LtmW/F4G8iIUe0NoiKMvJq5JnsQAjGfUbXOJId1G8rvbbyUlWMLoAddrCTmG/cSmPIPkbjkzlPc3cSq8bENwu9i2h70FqD9+QLcxj8vekh9QKcHQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.112.32) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=b4NTa6oVJv97qcVrmEx6XMmLsFdC/bFAIJcYsKemUW0=;
+ b=E7xkNHpnvrKWg+2CZ4DYqXSVeFL9+4eVIpLtb3PqG35PVFnwu1bPQkvox2euEypF/4GZdiExdMpxgfiiopd/w5Lmgx6pQ26rqCe6zhhDSO96BcDo7LZ3iNxMBhqGNhZuySwiJRBW/FAFwlTdhQBEfSprK8zOccsxTYZTUoNNVFubPaiQsZjNVUp2Iauuw4EcDpemCn6N2F2vitu7hL318ZqML0A5e/5//z9IQ8C2ik+dh3h5sk1m2xs6uYsAo+QeY6xb1UogJ7rWQmz5u8Lk3j0oYJhRC0m3Ex0JRaEJTYUU5IaLvfFZM+XvItd8n5AAJPbj0lFFYfHAPq20hfAzeg==
+Received: from BN6PR17CA0014.namprd17.prod.outlook.com (2603:10b6:404:65::24)
+ by BY5PR12MB3700.namprd12.prod.outlook.com (2603:10b6:a03:1a5::33) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4173.20; Sun, 6 Jun
+ 2021 08:22:19 +0000
+Received: from BN8NAM11FT063.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:404:65:cafe::44) by BN6PR17CA0014.outlook.office365.com
+ (2603:10b6:404:65::24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4195.20 via Frontend
+ Transport; Sun, 6 Jun 2021 08:22:19 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.32)
+ smtp.mailfrom=nvidia.com; vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.112.32 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.112.32; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (216.228.112.32) by
+ BN8NAM11FT063.mail.protection.outlook.com (10.13.177.110) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.4195.22 via Frontend Transport; Sun, 6 Jun 2021 08:22:19 +0000
+Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL109.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Sun, 6 Jun
+ 2021 01:22:18 -0700
+Received: from buildserver-hdc-comms.nvidia.com (172.20.187.5) by
+ mail.nvidia.com (172.20.187.18) with Microsoft SMTP Server id 15.0.1497.2 via
+ Frontend Transport; Sun, 6 Jun 2021 08:22:14 +0000
+From:   Om Prakash Singh <omp@nvidia.com>
+To:     <kw@linux.com>, <helgaas@kernel.org>, <vidyas@nvidia.com>,
+        <lorenzo.pieralisi@arm.com>, <bhelgaas@google.com>,
+        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>
+CC:     <linux-tegra@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kthota@nvidia.com>,
+        <mmaddireddy@nvidia.com>, Om Prakash Singh <omp@nvidia.com>
+Subject: [PATCH V2 0/5] Update pcie-tegra194 driver
+Date:   Sun, 6 Jun 2021 13:51:59 +0530
+Message-ID: <20210606082204.14222-1-omp@nvidia.com>
+X-Mailer: git-send-email 2.17.1
+X-NVConfidentiality: public
 MIME-Version: 1.0
-In-Reply-To: <YLnzQk+suAG5clzB@orome.fritz.box>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 0dd62b1a-516d-423d-0bfc-08d928c433bb
+X-MS-TrafficTypeDiagnostic: BY5PR12MB3700:
+X-Microsoft-Antispam-PRVS: <BY5PR12MB37002CDA25CEDA7E4B2C3F16DA399@BY5PR12MB3700.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:529;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: egAlxlaIaltPeUWsyDzzyyTDrdfPXzZB/11qcdEh6piQzT3UYy/L1FROW+rT/txzSjLiH/Synw/FzqDSqrlJNBkOQQvsvtrtpOSXflrzJJDCTojHKdy5MS8RMwG23qgEu7ekWZZv90lXDZ0/LzXaTNlUjIaZsCQBF+hmLHu8BxQPiD8wr+v4UJt+AfjnXdXUSzyVSZziXgIcvsV5mBeka/z3SC9VhEmxkAfSBLGPBByznimdysk5Be8JA0bBpqTLAWKYX+ahke23UwZDd3MiwBkBAvuiyUzlr5olQ/AXsvS8WQ6709SfcD7Vcl/ulw7dWov8Xvm/UByak3V7qNeOXYI/SBgK/40T1VGLiZnLmjiAij6RQzDSgWb5Q/zGMek+XToXGOV+abbGjn6CpW/xeXanYBkvL5Hl/3BgY6HfieM7CGbV/2qfVG1Gc/cRMdiCGBUg8YcEze6I1MY2fnfJCe9PpH8KCmZnPIVBli3kFf7mcWjPKLm7xFbV8XWEuQHato7xwmV0xvbb/psQEbDWktdubOPhUKrgJThTjwhd4vE9NNFkNbPHMTBmIlmMbGi2cFWz1doetHQlQef3VdX2Ut0ydIhITqzBdsfPNimOOBVyrJ+K9f3FlryuSsREVNRCyNJemM/u2473Y3EG50GY1O88U1fDcyeDSH/PxfXC50FZWu4MDE9gelHem0a2LmuWaN5W7SrbGPka6ZG79QG0wsRk3iX+QIBdIVRuNxfLauMeuKRaLEnGpkbOYZVdO5LDInLsVqzOjgf7Uk6Hhg+yEA==
+X-Forefront-Antispam-Report: CIP:216.228.112.32;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid01.nvidia.com;CAT:NONE;SFS:(4636009)(396003)(346002)(376002)(136003)(39860400002)(46966006)(36840700001)(36860700001)(4744005)(5660300002)(86362001)(966005)(26005)(4326008)(1076003)(2906002)(82740400003)(356005)(107886003)(7636003)(7696005)(478600001)(2616005)(316002)(54906003)(110136005)(83380400001)(47076005)(70206006)(336012)(70586007)(15650500001)(6666004)(186003)(8936002)(82310400003)(8676002)(426003)(36756003)(6636002);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Jun 2021 08:22:19.4411
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0dd62b1a-516d-423d-0bfc-08d928c433bb
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.32];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT063.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB3700
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-04.06.2021 12:32, Thierry Reding пишет:
-> On Thu, Jun 03, 2021 at 10:56:29PM +0300, Dmitry Osipenko wrote:
->> 03.06.2021 17:37, Thierry Reding пишет:
->>> memory: tegra: Changes for v5.14-rc1
->>>
->>> This stable tag contains Dmitry's power domain work, including all the
->>> necessary dependencies from the regulator, clock and ARM SoC trees.
->>>
->>> ----------------------------------------------------------------
->>> Dmitry Osipenko (18):
->>>       clk: tegra30: Use 300MHz for video decoder by default
->>>       clk: tegra: Fix refcounting of gate clocks
->>>       clk: tegra: Ensure that PLLU configuration is applied properly
->>>       clk: tegra: Halve SCLK rate on Tegra20
->>>       clk: tegra: Don't allow zero clock rate for PLLs
->>>       clk: tegra: cclk: Handle thermal DIV2 CPU frequency throttling
->>>       clk: tegra: Mark external clocks as not having reset control
->>>       clk: tegra: Don't deassert reset on enabling clocks
->>>       regulator: core: Add regulator_sync_voltage_rdev()
->>
->>>       soc/tegra: regulators: Bump voltages on system reboot
->>
->> This patch is a build dependency prerequisite for the "soc/tegra:
->> regulators: Support core domain state syncing" patch. Will you send a
->> new PR to Krzysztof with the remaining soc/tegra patches?
-> 
-> soc/tegra patches usually go in through ARM SoC. This is merely included
-> here because it was part of the set of patches that were needed to
-> enable compile testing for the memory controller drivers.
-> 
-> I've applied the remaining soc/tegra patches (12-14 of the series) to my
-> for-5.14/soc branch but ended up not pulling that part in because it was
-> unnecessary for the memory controller patches.
+Update pcie-tegra194 driver with bug fixing and cleanup
 
-Does this mean that if for-5.14/soc will be pulled first into mainline,
-then the patches will be applied in a wrong order?
+Changes from V1->V2
+  PCI: tegra: Fix handling BME_CHGED event
+	- Update variable naming
+  PCI: tegra: Fix MSI-X programming
+	- No change
+  PCI: tegra: Disable interrupts before entering L2
+	- Rephrase the commit message
+  PCI: tegra: Don't allow suspend when Tegra PCIe is in EP mode
+	- Update return value to -ENOTSUPP.
+  PCI: tegra: Cleanup unused code
+	- No Change
+
+V1:
+http://patchwork.ozlabs.org/project/linux-pci/patch/20210527115246.20509-2-omp@nvidia.com/
+
+Om Prakash Singh (5):
+  PCI: tegra: Fix handling BME_CHGED event
+  PCI: tegra: Fix MSI-X programming
+  PCI: tegra: Disable interrupts before entering L2
+  PCI: tegra: Don't allow suspend when Tegra PCIe is in EP mode
+  PCI: tegra: Cleanup unused code
+
+ drivers/pci/controller/dwc/pcie-tegra194.c | 36 +++++++++++++---------
+ 1 file changed, 22 insertions(+), 14 deletions(-)
+
+-- 
+2.17.1
+
