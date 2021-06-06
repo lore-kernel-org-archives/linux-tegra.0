@@ -2,135 +2,92 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A194C47096
-	for <linux-tegra@archiver.kernel.org>; Sun,  6 Jun 2021 08:22:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 242D3C4743D
+	for <linux-tegra@archiver.kernel.org>; Sun,  6 Jun 2021 22:30:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 322B7613EF
-	for <linux-tegra@archiver.kernel.org>; Sun,  6 Jun 2021 08:22:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F15C6611CE
+	for <linux-tegra@archiver.kernel.org>; Sun,  6 Jun 2021 22:30:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230242AbhFFIYa (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 6 Jun 2021 04:24:30 -0400
-Received: from mail-mw2nam12on2088.outbound.protection.outlook.com ([40.107.244.88]:58287
-        "EHLO NAM12-MW2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S230258AbhFFIY3 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 6 Jun 2021 04:24:29 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=FgGReczPtyvgjhFBJE2d3XHGoz1FBKyULorCMj+M5J5X4YUDPjj8VrPZb6Ha3a/95IQKF5ftrsy1tPQS6IjhfZfGQwYCtCfRJQH7OJT9x87sDhIGWugdz6Dcnz5l2NZWBrKaqZ+QkiPP9RB31FRLid4meA3KtigfsVW7ZfFx9G9rnCmpO0fCFbZ+GNMlyQ33ORLFOQSzBzfmo666euqUOgqLQDegpIVVdPai0hyODA0r7UVNUQ8v3cTqjs9kPbt+Hz/EYrSb7xHreEcvvJBUCXl9MxU3dq5HJTJj3mWJlCZJZskHajKpOCw3gQT7CRk6sPwJV0UP59D6olYlUtqLaA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=oG8VmMbc+i3+ywRgNnTrGbHx27HxSK7tNzOpd7aasF4=;
- b=BYIafJDe3Wu8TdmS4pN4lx8zbHqmLE5JFT3ZkWCj/SH3cFDBriUjEVPaQI3dKMVO7UNOwcSSAoBQ84yEphllzxns69GLVF+tn2yl5EK3+1tc585UuhCejRSgE1smzgsObbWYXiUP/ugdYVeT9yQtiEfJhxfQrc1SSjAJp1xLIgtLqG4yDLKqB4uzQ0IOJCc2Ns+EC3luKwqgelS9EUO7yFlQg+tQKo+ja+kttf1sjvAITnZ/JgDeJqN8wgmf5msvkpnxz3qpw95dF3CGw1YgeGsrz9841bfBkFQYrG39u1kckL4HKEf9BGe8zrxgtUkJhLJ4jEsS4OJZtTo7dwKKIQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.112.36) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=oG8VmMbc+i3+ywRgNnTrGbHx27HxSK7tNzOpd7aasF4=;
- b=p9BlpfphdtI57BAKwb9yt27hhnGd7d0TIKFt+SIidIZprbOJ8yiDh6naS/qmiEWPAKHN2yW//CAGI7Rx5o+cyC61aMsM/t9kbjxsgSXJN1gp97RvztpDnSZtrSmRJuGQDwIQu7Vrb/EtLAovjynmaJQHhovE+fzH57X1+la15Vn09U9Dcz+wPxK9sQkyFigImFA6vJGfcA5JLU8L0oZViyA16fWgiw0J9bVdBgSmauDlYNoQ67t8Gip/yzeOqU3iZPxNW4lEh2d1jQ8ZmFm77ak9dhac9J6lxhxbOtLvt7hBY1ML3OtgQutjG+oVJsJ0HBhfoWHULBqOQO/I9M5oRg==
-Received: from MW4PR04CA0001.namprd04.prod.outlook.com (2603:10b6:303:69::6)
- by BN6PR12MB1329.namprd12.prod.outlook.com (2603:10b6:404:19::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4195.23; Sun, 6 Jun
- 2021 08:22:39 +0000
-Received: from CO1NAM11FT034.eop-nam11.prod.protection.outlook.com
- (2603:10b6:303:69:cafe::3b) by MW4PR04CA0001.outlook.office365.com
- (2603:10b6:303:69::6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4195.23 via Frontend
- Transport; Sun, 6 Jun 2021 08:22:38 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.36)
- smtp.mailfrom=nvidia.com; vger.kernel.org; dkim=none (message not signed)
- header.d=none;vger.kernel.org; dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.112.36 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.112.36; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (216.228.112.36) by
- CO1NAM11FT034.mail.protection.outlook.com (10.13.174.248) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.4195.22 via Frontend Transport; Sun, 6 Jun 2021 08:22:38 +0000
-Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Sun, 6 Jun
- 2021 08:22:37 +0000
-Received: from buildserver-hdc-comms.nvidia.com (172.20.187.5) by
- mail.nvidia.com (172.20.187.18) with Microsoft SMTP Server id 15.0.1497.2 via
- Frontend Transport; Sun, 6 Jun 2021 08:22:34 +0000
-From:   Om Prakash Singh <omp@nvidia.com>
-To:     <kw@linux.com>, <helgaas@kernel.org>, <vidyas@nvidia.com>,
-        <lorenzo.pieralisi@arm.com>, <bhelgaas@google.com>,
-        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>
-CC:     <linux-tegra@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kthota@nvidia.com>,
-        <mmaddireddy@nvidia.com>, Om Prakash Singh <omp@nvidia.com>
-Subject: [PATCH V2 5/5] PCI: tegra: Cleanup unused code
-Date:   Sun, 6 Jun 2021 13:52:04 +0530
-Message-ID: <20210606082204.14222-6-omp@nvidia.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20210606082204.14222-1-omp@nvidia.com>
-References: <20210606082204.14222-1-omp@nvidia.com>
-X-NVConfidentiality: public
+        id S230451AbhFFWcC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 6 Jun 2021 18:32:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40604 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230355AbhFFWcB (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Sun, 6 Jun 2021 18:32:01 -0400
+Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7078EC061767;
+        Sun,  6 Jun 2021 15:30:03 -0700 (PDT)
+Received: by mail-lj1-x234.google.com with SMTP id 131so19468255ljj.3;
+        Sun, 06 Jun 2021 15:30:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tDrYU7w/5M/Foxc71oEtmOp5oUGC4maoR2CPQp+qTkU=;
+        b=e9Yl8stNoSl5shMZX9pzemPlVkIEdByFceV/u+2PhXtDSgNP6M3lA9TrHS9jH+S4js
+         uZoI2U33xszu4L4ltoJoHCaXgzzKdk8iWQXwZNvZfmCeFty+35uasCe8lj+/stnWLVWj
+         2H3ncDtKHeA0E6Jn3AIXelb3h+hikPJst3qwC+o+uRX9nWoJvzuDzVJ2iL8W20YIYDjx
+         6a/PulmhEDVxUsYGJGJIXsGrE1WvOeZwJB3ILH/QLyoQdpXwAn4nqQbtR68NT+Yu/Lnk
+         wFEzCr7UNS8fns6EQrDSFDgSrAjop9/1zHnawvz5rvgyo2voYu4ML95ntVQy4cP4V/PW
+         v+oA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tDrYU7w/5M/Foxc71oEtmOp5oUGC4maoR2CPQp+qTkU=;
+        b=Yt2ThztU/8/BiOKSlkoReRjiM/HoJzMWeRR+5HzI8PxOeycqytPQCG8bZz66Fs6Uw/
+         pwfqRiraePwgqo1bj4/7k7g/2rN3C+h3EHPqPgAh4OcLFL82GctlB5vl4mI2SSGQTlgx
+         rUIZ2Y6bW6yx70v8PLrmK2IZd/n24Rgciz9zb7TUDDSQtKK+zVuxg0FmhqVlTx0Xa/Va
+         LbVtTo+zmfHGiyOtkjbGV8MiNf2Y52TEQYFrBAjWvhThS8zUS+kFLfYlBAA3j4mWYIzZ
+         n8oCqTPqwXgumGRky16TQHxaJeobgAnVlsXZ2++VHy8E2uCo3ccfmttCC9fQVyM8HsBG
+         Ptwg==
+X-Gm-Message-State: AOAM533VuRB8YqXTum+SPJ79WmmQauRfvNHna50gKEtTJ/+IHs562Prn
+        +VN9bACyC4xpwAtyeSqALwA=
+X-Google-Smtp-Source: ABdhPJyo5xfPOyjYU5DFBRMnDWLX4sffYab0LeAsjjQwmCej4akRweKR5Z+bSCyrpxp2ni5Z9RyhEA==
+X-Received: by 2002:a2e:509:: with SMTP id 9mr12846090ljf.6.1623018601874;
+        Sun, 06 Jun 2021 15:30:01 -0700 (PDT)
+Received: from localhost.localdomain (94-29-51-134.dynamic.spd-mgts.ru. [94.29.51.134])
+        by smtp.gmail.com with ESMTPSA id i23sm1017778ljg.38.2021.06.06.15.30.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 06 Jun 2021 15:30:01 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: [PATCH v1 0/5] Compile-test NVIDIA Tegra CPUIDLE driver
+Date:   Mon,  7 Jun 2021 01:28:12 +0300
+Message-Id: <20210606222817.12388-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 11619f53-b962-41b4-17f7-08d928c43ef7
-X-MS-TrafficTypeDiagnostic: BN6PR12MB1329:
-X-Microsoft-Antispam-PRVS: <BN6PR12MB13298800F7C9C89918B3953FDA399@BN6PR12MB1329.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:327;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: /I913n5bmvPsL8628QYPRt0KIzNTfU/cRSBOYzxRHuvs4/tHzUSGTbf3xz/O6MlPdTxaovtlKe2sMkZ3a2NgaWHRtpqjlozRUz+rnSl36Vomwx2JIAoiQpJefDC54c+NBdlWETSJzQFvV/y5dGJARcQColmE5FSAG5aMzKfsRHHSh7UCt2tXqEPrtPil1HMXeNk7Qti1nAT2E/xIeNH6vMFJjo3zEY+2a1XBzfA1s/L7kK+8Glu8AM1RIgm1obZs9Cl+Ce6JeiDA6AvuyUlTK/hTT3YJUtaI12VKNoiBYYW0sj1WaiWAyOwqhexiT2IvYryPlgcWZjwu1R+xM68aj0t4j1oM1Q/L3btW0dRYNNwMlPErYMOLXs9LN55AKE87HtAI+1punt/KTIm+1gHQ5+yjJg/MIJmiYIYmKOROmAQht5MFneJApTNx6H78XMIx+8bgk243FqrCogsKKemQiGd0xHbvZQtaxqGMOCPxjKPDdSpSokroV3/4prdN49DdjhxQFyxacdzvFKaUcuSFajB2mjaG0kTF01n19XjTmbODFfGCk9n/vFeS6Qv1qjqyWAn106dM05Q0kX5wGFRgnvrz/z3/9LRVLCkKRm73MLtHKJIhLGzhGwJYAZ4IiQE8bqUIvN1ZPkI4MkFjrzzZ6gcyjlZ68ll4biv2zndxbwQ=
-X-Forefront-Antispam-Report: CIP:216.228.112.36;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid05.nvidia.com;CAT:NONE;SFS:(4636009)(376002)(346002)(396003)(136003)(39860400002)(46966006)(36840700001)(2616005)(107886003)(426003)(82310400003)(83380400001)(336012)(6666004)(86362001)(7636003)(356005)(54906003)(5660300002)(110136005)(316002)(4744005)(4326008)(82740400003)(8676002)(7696005)(70586007)(36860700001)(36906005)(36756003)(26005)(1076003)(6636002)(186003)(47076005)(2906002)(70206006)(478600001)(8936002);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Jun 2021 08:22:38.3574
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 11619f53-b962-41b4-17f7-08d928c43ef7
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.36];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT034.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR12MB1329
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Remove unused code from function tegra_pcie_config_ep.
+Add couple missing stubs needed for compile-testing of tegra-cpuidle
+driver and enable the compile-testing.
 
-Signed-off-by: Om Prakash Singh <omp@nvidia.com>
----
+Dmitry Osipenko (5):
+  soc/tegra: fuse: Add stubs needed for compile testing
+  soc/tegra: irq: Add stubs needed for compile testing
+  soc/tegra: pm: Make stubs usable for compile testing
+  clk: tegra: Add stubs needed for compile testing
+  cpuidle: tegra: Enable compile testing
 
-Changes in V2:
-	- No change
+ drivers/cpuidle/Kconfig.arm |  2 +-
+ include/linux/clk/tegra.h   |  4 ++++
+ include/soc/tegra/fuse.h    | 31 ++++++++++++++++++++++++++-----
+ include/soc/tegra/irq.h     |  9 ++++++++-
+ include/soc/tegra/pm.h      |  2 +-
+ 5 files changed, 40 insertions(+), 8 deletions(-)
 
- drivers/pci/controller/dwc/pcie-tegra194.c | 7 -------
- 1 file changed, 7 deletions(-)
-
-diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
-index ae4c0a29818d..e9d573c850dd 100644
---- a/drivers/pci/controller/dwc/pcie-tegra194.c
-+++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-@@ -2045,13 +2045,6 @@ static int tegra_pcie_config_ep(struct tegra_pcie_dw *pcie,
- 		return ret;
- 	}
- 
--	name = devm_kasprintf(dev, GFP_KERNEL, "tegra_pcie_%u_ep_work",
--			      pcie->cid);
--	if (!name) {
--		dev_err(dev, "Failed to create PCIe EP work thread string\n");
--		return -ENOMEM;
--	}
--
- 	pm_runtime_enable(dev);
- 
- 	ret = dw_pcie_ep_init(ep);
 -- 
-2.17.1
+2.30.2
 
