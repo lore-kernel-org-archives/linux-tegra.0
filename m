@@ -2,178 +2,164 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17C61C47082
-	for <linux-tegra@archiver.kernel.org>; Mon,  7 Jun 2021 13:24:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23EEBC47095
+	for <linux-tegra@archiver.kernel.org>; Mon,  7 Jun 2021 13:33:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E812861153
-	for <linux-tegra@archiver.kernel.org>; Mon,  7 Jun 2021 13:24:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 025C061159
+	for <linux-tegra@archiver.kernel.org>; Mon,  7 Jun 2021 13:33:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230177AbhFGN0r (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 7 Jun 2021 09:26:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38756 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230127AbhFGN0p (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 7 Jun 2021 09:26:45 -0400
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8CEE4C061766;
-        Mon,  7 Jun 2021 06:24:37 -0700 (PDT)
-Received: by mail-wr1-x433.google.com with SMTP id a20so17665616wrc.0;
-        Mon, 07 Jun 2021 06:24:37 -0700 (PDT)
+        id S230193AbhFGNfB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 7 Jun 2021 09:35:01 -0400
+Received: from mail-yb1-f174.google.com ([209.85.219.174]:41479 "EHLO
+        mail-yb1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230258AbhFGNe7 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 7 Jun 2021 09:34:59 -0400
+Received: by mail-yb1-f174.google.com with SMTP id q21so24922297ybg.8
+        for <linux-tegra@vger.kernel.org>; Mon, 07 Jun 2021 06:33:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=kL0P6p7GVBccTmZFiVNv5dWuKJqRPj/e2bExCk7GY8U=;
-        b=gJAqhKS/BcocY4c4HmeIirCyc8h7SJZPlPBiqHgX2CLV025tQNJKRtDhdk33WEsOLS
-         GMuQgNto+1cha72jx8U6lAi6Q0FH1DRcVfSJkkKhQVf27SsA3lcOzayE0vsp5tqSHizF
-         j6/JBPa4sE3O1skJNBTNf2ideKIz5rDbGWQ4EP25pe3u7ClBkBjxH513vpM9dJehPlgr
-         VnpvBVxLyNU57Qsb3Bmb8SDXLJ9Q0weNlM5mT56a7L0u1fxWHipJ3oVjHn5tqpWqrZO1
-         HMeJ5NEQno/tnu1z7IPHQKGPFbVPlh+qoAL9+CAL6QjKJkVV+XbcgBTHyQ8wFZpb4ZlC
-         udtQ==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=YibkF+CTDInDB6Yko+j9r/rSfAKJwby7pY3q4cSoOQY=;
+        b=v6ss0RJ1EPiJPtVvOBpNaNEngr47mmTyPmT4Zoiv0qyRWv7i46Y/bsdPD/FlG4i7ay
+         x3dWesztHwIUFec4tbFPSISh2T0FQhyz5Dx6hhXG5O5w4rxpCmLFkW6ZzMRBFhbZuSq/
+         830p2U9sCg/QQ8nxLyJZ8D9imluevnkxRLIIDOTomj2gnuxahaU9KYkOYrh3hJhtYhyS
+         aLcnYZDlyi98m1vMl0kXmrcG4LlrC2UL0igbuH5skRyPeueSrbHjTY7fv0E3mxUribdA
+         H/+RlxjNgrPqw1CRSrr4ewNIp94XCcl9KEUIxvzKzmOxREpbz1XIbDFDnELdchnvUDy+
+         5IvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=kL0P6p7GVBccTmZFiVNv5dWuKJqRPj/e2bExCk7GY8U=;
-        b=iaxgTTUc1aJf/du51OwAhHTWx1V0LGi0CDzy3uV8z5/Aqf++kidqU8i6Otbi9w56E4
-         35ZiNh/6jokt1Cawt2U7cGLI4MWEfhf01I4pNiBFQoirgFihbdRCNOvBv497WinAqDXj
-         wyo/TmkpV+OtHORpAKceERlAdy2fb7H13/r781uzm0x2/LQtn2YG8FJuHftESMcgUFUN
-         pz538ghD1hlsNB8Hs2h4OvbMPI0wsbd+80ezx1s8Tx2YBMJESHLyiSzve1iL1c2HYD8C
-         UMu0UamutDb3dSvhRY6w1BUewgHoZUT/CpQxyTIbkAzMMYUaJwtFg7VAsBEx9VXncdyl
-         wcxg==
-X-Gm-Message-State: AOAM532SvyECG9XiWVoC+s8kVHW8gx1oQ4Xkxb83lxWP6QCvdfhFsOI/
-        NH5/TAAsykpCpE31BoLeJCE=
-X-Google-Smtp-Source: ABdhPJzoAaTtJJq+pedRkcPQqkjWPLvJPfmb/qhIaZZAm7TAzcVlgKPd4LWUmQhwe6WZEF4LmeG14Q==
-X-Received: by 2002:adf:e5c7:: with SMTP id a7mr16938952wrn.117.1623072276151;
-        Mon, 07 Jun 2021 06:24:36 -0700 (PDT)
-Received: from localhost (pd9e51d70.dip0.t-ipconnect.de. [217.229.29.112])
-        by smtp.gmail.com with ESMTPSA id x20sm9754485wmc.39.2021.06.07.06.24.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Jun 2021 06:24:34 -0700 (PDT)
-Date:   Mon, 7 Jun 2021 15:26:15 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PULL] memory: tegra: Changes for v5.14-rc1
-Message-ID: <YL4ed935vYUb8L8d@orome.fritz.box>
-References: <20210603143739.787957-1-thierry.reding@gmail.com>
- <772bf62a-fb09-cec4-ed4d-ddbfc2832e2b@gmail.com>
- <YLnzQk+suAG5clzB@orome.fritz.box>
- <3ed358ce-de98-0b42-2446-873af55ed825@gmail.com>
- <9f1fe71e-3900-fa8a-8c09-4bc2dc084156@canonical.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=YibkF+CTDInDB6Yko+j9r/rSfAKJwby7pY3q4cSoOQY=;
+        b=ZXz846zqwgYCgNFX0QGXm908IaRFcNrc6lZHoKWD00T7eHJihA3fJyWKWo/TMXgrlT
+         Uw6otNr2CRFrKqk/dndARzYZpf49fVIZzHiOAuo2udKGaZ9k43jbe3ZhOL9PsyfRN3az
+         /ZDcuA0ViTH2GYwTuVi8jKr/BQ3bc/hKgmGa60V3oHyssbdZO/+Pby0z3QK/lpc/em6P
+         GJ7OGRJX83kQNDac8C5Ykl9CSYibRERF5b9sAlDLcwOAo4i08EU9Tu32hli37No05mBn
+         8pVFiLS9hPDmealgPyYhWTz4TAJfPie6szfTrHvU5cwUK8QqqgtXfVmjvKfMTjCroSqU
+         uxmg==
+X-Gm-Message-State: AOAM531zgdsQ9Wum/cKC++TC/tSYOvXDMXl9eRUo0oixYbY53qjiO2tx
+        SL0U6uDJQK46hnbCOKV7ZXTbBRMg90B/eYfaD6dyLg==
+X-Google-Smtp-Source: ABdhPJyo+9Wi3vh8r/SC8WNJP1dPzQVWz3v6gjDsptRNsqfMCr4Ng3IemF9lSoauCWrGPAdQn+BtZy6rSBw4fV0WqMU=
+X-Received: by 2002:a25:2f45:: with SMTP id v66mr6231341ybv.312.1623072727721;
+ Mon, 07 Jun 2021 06:32:07 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="DtDjyeay0fGCyGKR"
-Content-Disposition: inline
-In-Reply-To: <9f1fe71e-3900-fa8a-8c09-4bc2dc084156@canonical.com>
-User-Agent: Mutt/2.0.6 (98f8cb83) (2021-03-06)
+References: <20210602170823.vnshp2gfrcay35nx@yadro.com> <CAMpxmJWa0ZXN--2S84B-Un0WSKM16eKAiWUtKD4V_szZPEi+gg@mail.gmail.com>
+ <b2b7be69-eebb-b325-1962-4d45e6d5f088@nvidia.com>
+In-Reply-To: <b2b7be69-eebb-b325-1962-4d45e6d5f088@nvidia.com>
+From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date:   Mon, 7 Jun 2021 15:31:55 +0200
+Message-ID: <CAMpxmJUnn1e-grUxiMm4T84xBYRi7jQOtOODfSoiBtLmsSjodA@mail.gmail.com>
+Subject: Re: [PATCH] eeprom: at24: Support custom device names for AT24 EEPROMs
+To:     Jon Hunter <jonathanh@nvidia.com>,
+        Alexander Fomichev <fomichev.ru@gmail.com>
+Cc:     linux-i2c <linux-i2c@vger.kernel.org>, linux@yadro.com,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        Thierry Reding <treding@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-
---DtDjyeay0fGCyGKR
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, Jun 07, 2021 at 10:28:14AM +0200, Krzysztof Kozlowski wrote:
-> On 04/06/2021 14:51, Dmitry Osipenko wrote:
-> > 04.06.2021 12:32, Thierry Reding =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> >> On Thu, Jun 03, 2021 at 10:56:29PM +0300, Dmitry Osipenko wrote:
-> >>> 03.06.2021 17:37, Thierry Reding =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> >>>> memory: tegra: Changes for v5.14-rc1
-> >>>>
-> >>>> This stable tag contains Dmitry's power domain work, including all t=
-he
-> >>>> necessary dependencies from the regulator, clock and ARM SoC trees.
-> >>>>
-> >>>> ----------------------------------------------------------------
-> >>>> Dmitry Osipenko (18):
-> >>>>       clk: tegra30: Use 300MHz for video decoder by default
-> >>>>       clk: tegra: Fix refcounting of gate clocks
-> >>>>       clk: tegra: Ensure that PLLU configuration is applied properly
-> >>>>       clk: tegra: Halve SCLK rate on Tegra20
-> >>>>       clk: tegra: Don't allow zero clock rate for PLLs
-> >>>>       clk: tegra: cclk: Handle thermal DIV2 CPU frequency throttling
-> >>>>       clk: tegra: Mark external clocks as not having reset control
-> >>>>       clk: tegra: Don't deassert reset on enabling clocks
-> >>>>       regulator: core: Add regulator_sync_voltage_rdev()
-> >>>
-> >>>>       soc/tegra: regulators: Bump voltages on system reboot
-> >>>
-> >>> This patch is a build dependency prerequisite for the "soc/tegra:
-> >>> regulators: Support core domain state syncing" patch. Will you send a
-> >>> new PR to Krzysztof with the remaining soc/tegra patches?
+On Mon, Jun 7, 2021 at 1:09 PM Jon Hunter <jonathanh@nvidia.com> wrote:
+>
+>
+> On 04/06/2021 11:00, Bartosz Golaszewski wrote:
+> > On Wed, Jun 2, 2021 at 7:08 PM Alexander Fomichev <fomichev.ru@gmail.com> wrote:
+>
+> ...
+>
+> >> This change has a serious defect, as it doesn't guarantee a name
+> >> uniqueness. For my case there are a bunch of NVMEM devices with
+> >> 'dimm-spd' name. So the module initialization fails with several error
+> >> dumps in dmesg, like following:
 > >>
-> >> soc/tegra patches usually go in through ARM SoC. This is merely includ=
-ed
-> >> here because it was part of the set of patches that were needed to
-> >> enable compile testing for the memory controller drivers.
+> >> [    4.784679] at24 3-0051: supply vcc not found, using dummy regulator
+> >> [    4.784781] sysfs: cannot create duplicate filename '/bus/nvmem/devices/dimm-spd'
+> >> [    4.784783] CPU: 24 PID: 1354 Comm: systemd-udevd Not tainted 5.13.0-rc4-at24-catch+ #25
+> >> [    4.784787] Call Trace:
+> >> [    4.784789] [c00000003f3eb010] [c000000000914700] dump_stack+0xc4/0x114 (unreliable)
+> >> [    4.784797] [c00000003f3eb060] [c00000000061c5c8] sysfs_warn_dup+0x88/0xc0
+> >> [    4.784803] [c00000003f3eb0e0] [c00000000061ccec] sysfs_do_create_link_sd+0x17c/0x190
+> >> [    4.784809] [c00000003f3eb130] [c000000000ac3014] bus_add_device+0x94/0x1d0
+> >> [    4.784817] [c00000003f3eb1b0] [c000000000abe7b8] device_add+0x428/0xb90
+> >> [    4.784822] [c00000003f3eb2a0] [c000000000debbd0] nvmem_register+0x220/0xe00
+> >> [    4.784829] [c00000003f3eb390] [c000000000dec80c] devm_nvmem_register+0x5c/0xc0
+> >> [    4.784835] [c00000003f3eb3d0] [c008000016f40c20] at24_probe+0x668/0x940 [at24]
+> >> [    4.784845] [c00000003f3eb650] [c000000000cfecd4] i2c_device_probe+0x194/0x650
+> >> [    4.784850] [c00000003f3eb6f0] [c000000000ac4d3c] really_probe+0x1cc/0x790
+> >> [    4.784855] [c00000003f3eb790] [c000000000ac545c] driver_probe_device+0x15c/0x200
+> >> [    4.784861] [c00000003f3eb810] [c000000000ac5ecc] device_driver_attach+0x11c/0x130
+> >> [    4.784866] [c00000003f3eb850] [c000000000ac5fd0] __driver_attach+0xf0/0x200
+> >> [    4.784873] [c00000003f3eb8d0] [c000000000ac1158] bus_for_each_dev+0xa8/0x130
+> >> [    4.784879] [c00000003f3eb930] [c000000000ac4104] driver_attach+0x34/0x50
+> >> [    4.784885] [c00000003f3eb950] [c000000000ac35f0] bus_add_driver+0x1b0/0x2f0
+> >> [    4.784893] [c00000003f3eb9e0] [c000000000ac70b4] driver_register+0xb4/0x1c0
+> >> [    4.784900] [c00000003f3eba50] [c000000000cfe498] i2c_register_driver+0x78/0x120
+> >> [    4.784905] [c00000003f3ebad0] [c008000016f41260] at24_init+0x6c/0x88 [at24]
+> >> [    4.784914] [c00000003f3ebb30] [c0000000000122c0] do_one_initcall+0x60/0x2c0
+> >> [    4.784920] [c00000003f3ebc00] [c0000000002537bc] do_init_module+0x7c/0x350
+> >> [    4.784926] [c00000003f3ebc90] [c000000000257904] __do_sys_finit_module+0xd4/0x160
+> >> [    4.784932] [c00000003f3ebdb0] [c00000000002c104] system_call_exception+0xf4/0x200
+> >> [    4.784938] [c00000003f3ebe10] [c00000000000cf70] system_call_vectored_common+0xf0/0x268
+> >> [    4.784944] --- interrupt: 3000 at 0x7c1adac4b4c4
+> >> [    4.784948] NIP:  00007c1adac4b4c4 LR: 0000000000000000 CTR: 0000000000000000
+> >> [    4.784951] REGS: c00000003f3ebe80 TRAP: 3000   Not tainted  (5.13.0-rc4-at24-catch+)
+> >> [    4.784955] MSR:  900000000280f033 <SF,HV,VEC,VSX,EE,PR,FP,ME,IR,DR,RI,LE>  CR: 48222844  XER: 00000000
+> >> [    4.784976] IRQMASK: 0
+> >>                GPR00: 0000000000000161 00007fffefc78b90 00007c1adad37000 0000000000000006
+> >>                GPR04: 00000f6614d56be0 0000000000000000 0000000000000006 0000000000000000
+> >>                GPR08: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+> >>                GPR12: 0000000000000000 00007c1adafde680 0000000020000000 0000000000000000
+> >>                GPR16: 0000000000000000 00000f66118b1980 00000f66118b1a18 00000f66118b1948
+> >>                GPR20: 0000000000000000 00000f6614d60500 00007fffefc78df0 00000f6614d535c0
+> >>                GPR24: 00000f6614d56be0 00000f6614d60500 000000000000000c 00000f6614d49cb0
+> >>                GPR28: 00000f6614d56be0 0000000000020000 0000000000000000 00000f6614d60500
+> >> [    4.785033] NIP [00007c1adac4b4c4] 0x7c1adac4b4c4
+> >> [    4.785036] LR [0000000000000000] 0x0
+> >> [    4.785040] --- interrupt: 3000
+> >> [    4.785146] at24: probe of 3-0051 failed with error -17
 > >>
-> >> I've applied the remaining soc/tegra patches (12-14 of the series) to =
-my
-> >> for-5.14/soc branch but ended up not pulling that part in because it w=
-as
-> >> unnecessary for the memory controller patches.
-> >=20
-> > Does this mean that if for-5.14/soc will be pulled first into mainline,
-> > then the patches will be applied in a wrong order?
->=20
-> All of the branches of each maintainer should be bisectable, so order of
-> pulling by Linus' should not matter. Assuming current Thierry's branches
-> are bisectable, how Linus' tree can be broken after specific pull order?
+> >>
+> >> It needs either to use NVMEM_DEVID_AUTO flag irrespective of the 'label'
+> >> property or to add a sort of counter suffix to the name field.
+> >>
+> >>
+> >> Reported-by: Alexander Fomichev <fomichev.ru@gmail.com>
+> >> CC: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> >>
+> >> --
+> >> Regards,
+> >>   Alexander
+> >
+> > Alexander: Thanks for your bug report. The counter suffix you suggest
+> > is precisely what NVMEM_DEVID_AUTO would do so I think we'll need to
+> > use it. On the other hand, a non-unique label is bad design but
+> > obviously we can't break working setups.
+>
+> Yes the intention was that the label itself would be unique. In our case
+> we wanted to have something specifically named 'system' or 'module' to
+> identify a specific eeprom.
+>
+> BTW I did a quick grep from 'dimm-spd' and did not find it in the
+> kernel. Where is the device-tree you are using?
+>
+> > Jon: As the author of this patch - do you have any objections/better ideas?
+>
+> I would need to check if appending a suffix then has ramifications for
+> what we were trying to achieve.
+>
+> Jon
+>
+> --
+> nvpublic
 
-Yeah, I don't see how there could be issues. The for-5.14/soc does have
-all the dependencies that it needs, as far as I can tell, as does the
-for-5.14/memory branch. If for-5.14/soc gets pulled first, then the
-sub-branch that's included in for-5.14/memory will end up in ARM SoC
-before for-5.14/memory, but that should be harmless. Once
-for-5.14/memory is then pulled in, it'll pull in all the dependencies
-with it, except that part of them will be there already from
-for-5.14/soc.
+One alternative would be to use the label "as is" for the first device
+and then append ".x" for each subsequent device with a repeating
+label. Does this make sense?
 
-The only way this could break is if either the original series wasn't
-bisectible, or if some of the later SoC patches rely on patches from the
-memory portion of that, which rely on the earlier SoC patches. That'd be
-a very odd circular dependency and would add to the complexity on how to
-handle this. But given that all these branches seem to be building fine,
-I don't think that's the case.
-
-If something like that ever happens within a series, please make sure to
-point that out. In general a good way to manage such circular
-dependencies is to post subseries separately and make a note of the
-dependencies in the cover letter to make that clearer. That's also why
-it's usually a good idea to send series such that the patches within are
-ordered by tree. That way it's trivial to find out if there are any such
-circular dependencies by doing a bisectibility build on the branch.
-
-Thierry
-
---DtDjyeay0fGCyGKR
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmC+HnQACgkQ3SOs138+
-s6HEhw//SjMQbtd1X1kFxYO1XG6oQfHevfIcOu1eVxj+c1CyCIzKwO9XPmUP3mi8
-jua0he0jPjJ1fY7fmSDm7zVCqks8Fq93/AMMvWgBbo5olUAanVeWaFLJPKKCwsPN
-L6RR1VF5FIHY5+KVYrXC+EQdfGah2qApxnzdntzOP7AitsBsfCPa8WAlzVoKFxXc
-On2l1gtVV6rfQe+fM/cc+qepE0PJAdTPTaR0BN4HDhvjIouQE+Hlm1xj1YBpeR/S
-B2YbgFzjc0lllDzj22D0MkWVr7BgreBTWK9fyzGkGIFuIBJacM4HnYsVTvcFPRx8
-XUinQVahEXfK++NXYUcjvWKThZj/qHxggL21Wc/J/cS2F9HIbOZO87COmxAtBLGv
-eYHYMHpc3+BTe3obc0hKRFtjUrCCLCXfOs99yNK6L+a56pAo6Jl17+RDrcXLAFnV
-W09KyvaqaEmFdwnjTYLQ4LikQ9cugKOCu1gWOCSm+/rxgp9mWFWjDKbOrZxObNdT
-SU+xxSgG7qWAHNkUk/aVHaN/zRIFJ67MCrE+zpB3y5Os8TPfrAaUtCLE4PF9/qhB
-cSkf6Nyr7kAPlT0RsAtC9895lZ5OlC7Do+XxoJjkkjcVvpEi/4Jw/e12ORCu4Hw2
-s5QXGke94oZ4IEO4hZw9Gjs4Lnf9wXYdGF4kgL96b5+4zyPCz4k=
-=vmZq
------END PGP SIGNATURE-----
-
---DtDjyeay0fGCyGKR--
+Bart
