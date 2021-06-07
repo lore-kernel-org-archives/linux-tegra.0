@@ -2,164 +2,175 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23EEBC47095
-	for <linux-tegra@archiver.kernel.org>; Mon,  7 Jun 2021 13:33:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3132CC4743F
+	for <linux-tegra@archiver.kernel.org>; Mon,  7 Jun 2021 13:34:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 025C061159
-	for <linux-tegra@archiver.kernel.org>; Mon,  7 Jun 2021 13:33:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1963E61108
+	for <linux-tegra@archiver.kernel.org>; Mon,  7 Jun 2021 13:34:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230193AbhFGNfB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 7 Jun 2021 09:35:01 -0400
-Received: from mail-yb1-f174.google.com ([209.85.219.174]:41479 "EHLO
-        mail-yb1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230258AbhFGNe7 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 7 Jun 2021 09:34:59 -0400
-Received: by mail-yb1-f174.google.com with SMTP id q21so24922297ybg.8
-        for <linux-tegra@vger.kernel.org>; Mon, 07 Jun 2021 06:33:08 -0700 (PDT)
+        id S230306AbhFGNgc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 7 Jun 2021 09:36:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40912 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230264AbhFGNga (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 7 Jun 2021 09:36:30 -0400
+Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AAE57C061766;
+        Mon,  7 Jun 2021 06:34:25 -0700 (PDT)
+Received: by mail-wm1-x32e.google.com with SMTP id v206-20020a1cded70000b02901a586d3fa23so5921997wmg.4;
+        Mon, 07 Jun 2021 06:34:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=YibkF+CTDInDB6Yko+j9r/rSfAKJwby7pY3q4cSoOQY=;
-        b=v6ss0RJ1EPiJPtVvOBpNaNEngr47mmTyPmT4Zoiv0qyRWv7i46Y/bsdPD/FlG4i7ay
-         x3dWesztHwIUFec4tbFPSISh2T0FQhyz5Dx6hhXG5O5w4rxpCmLFkW6ZzMRBFhbZuSq/
-         830p2U9sCg/QQ8nxLyJZ8D9imluevnkxRLIIDOTomj2gnuxahaU9KYkOYrh3hJhtYhyS
-         aLcnYZDlyi98m1vMl0kXmrcG4LlrC2UL0igbuH5skRyPeueSrbHjTY7fv0E3mxUribdA
-         H/+RlxjNgrPqw1CRSrr4ewNIp94XCcl9KEUIxvzKzmOxREpbz1XIbDFDnELdchnvUDy+
-         5IvA==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=72Aq2IRVVuAlG+BxVmjLTJ3arbYuvMQ1+eZPQ9a8xXQ=;
+        b=oxZD6Zqnln0Io1phX+iliNpQP3rcAd/5VPQ9pTnnOMQV5bYbKZkH6nrKJjiJzXEIWy
+         CTKE16jnk5MIGtra3WVZjd6Kwpfq+ZqkT+5C9HCfYJeMLmh4OBTknBSIGvOaoX4CTHRR
+         VqteXdoHhEZ5fm5+PQ/Hnb9DbSKqYA7INxn6AOvJaGR4OUMyY9aR5e9pirME8dTs2120
+         AWO6y/0LB/Wgq4kVQQTucfpjfwuqg5CNuJvcaYbYbSbxJZ1B6y6uxU4OZkJ62IveuqPM
+         hc4q4Kbz9cRK1/mn1L5D0bAUE/3JuyvAbIsGNhEIHNs9kuem67gHHnWS/6iAUkxw+j4X
+         WaTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=YibkF+CTDInDB6Yko+j9r/rSfAKJwby7pY3q4cSoOQY=;
-        b=ZXz846zqwgYCgNFX0QGXm908IaRFcNrc6lZHoKWD00T7eHJihA3fJyWKWo/TMXgrlT
-         Uw6otNr2CRFrKqk/dndARzYZpf49fVIZzHiOAuo2udKGaZ9k43jbe3ZhOL9PsyfRN3az
-         /ZDcuA0ViTH2GYwTuVi8jKr/BQ3bc/hKgmGa60V3oHyssbdZO/+Pby0z3QK/lpc/em6P
-         GJ7OGRJX83kQNDac8C5Ykl9CSYibRERF5b9sAlDLcwOAo4i08EU9Tu32hli37No05mBn
-         8pVFiLS9hPDmealgPyYhWTz4TAJfPie6szfTrHvU5cwUK8QqqgtXfVmjvKfMTjCroSqU
-         uxmg==
-X-Gm-Message-State: AOAM531zgdsQ9Wum/cKC++TC/tSYOvXDMXl9eRUo0oixYbY53qjiO2tx
-        SL0U6uDJQK46hnbCOKV7ZXTbBRMg90B/eYfaD6dyLg==
-X-Google-Smtp-Source: ABdhPJyo+9Wi3vh8r/SC8WNJP1dPzQVWz3v6gjDsptRNsqfMCr4Ng3IemF9lSoauCWrGPAdQn+BtZy6rSBw4fV0WqMU=
-X-Received: by 2002:a25:2f45:: with SMTP id v66mr6231341ybv.312.1623072727721;
- Mon, 07 Jun 2021 06:32:07 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=72Aq2IRVVuAlG+BxVmjLTJ3arbYuvMQ1+eZPQ9a8xXQ=;
+        b=igu8TkOolpPHKkq4WWMoLBFLRNERX1XVWKxMPoB28YppxBnmvAjt+tCVDdLEw2rgqZ
+         EVAIuBa7opmg3NBI1qjYDloG8ptI3PmamZUBYOT3MON1IB/hOHPhMURdmdLVsZgz19eE
+         G82ud3slyJ3hfYAhgohCABzvz0vUgGljLs5S9A1zXc98kbymkUD2sGwZixkMVNQoMFa2
+         YIG3LwPErhmWCfKbu7oZke4L4de+15dipTLY9ScPqGW3tuLTwysHAvEOZD+fYiRxqNx7
+         xNyOH4cntzQoByHhyT1yZvq+JK5ihnvmD7Z9xwO3n32Q3vICdO6YaauByrljiJIJBDK9
+         H/OQ==
+X-Gm-Message-State: AOAM533pMIcu0csq4WvM8sILZL3LmdPKYHMksEqe1k5DXe2/J6irJio7
+        O2ubA93jrKFOtuwk1MJ64zg=
+X-Google-Smtp-Source: ABdhPJx78Hb1ow2zyDK514tMIszmaR8bb/TUHyENVmt1hS7sq8OY1P401AE2jjgHMilCoFs70oRWyQ==
+X-Received: by 2002:a7b:c34a:: with SMTP id l10mr17077892wmj.46.1623072864255;
+        Mon, 07 Jun 2021 06:34:24 -0700 (PDT)
+Received: from localhost (pd9e51d70.dip0.t-ipconnect.de. [217.229.29.112])
+        by smtp.gmail.com with ESMTPSA id u6sm17359575wre.76.2021.06.07.06.34.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Jun 2021 06:34:22 -0700 (PDT)
+Date:   Mon, 7 Jun 2021 15:36:03 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     Dmitry Osipenko <digetx@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        Nikola =?utf-8?Q?Milosavljevi=C4=87?= <mnidza@outlook.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Matt Merhar <mattmerhar@protonmail.com>,
+        Paul Fertser <fercerpav@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
+        Nathan Chancellor <nathan@kernel.org>,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH v6 08/14] memory: tegra: Enable compile testing for all
+ drivers
+Message-ID: <YL4gwxWopKT7LomG@orome.fritz.box>
+References: <20210601023119.22044-1-digetx@gmail.com>
+ <20210601023119.22044-9-digetx@gmail.com>
+ <41899ef4-bb16-6c3a-035c-1e840a993bec@canonical.com>
 MIME-Version: 1.0
-References: <20210602170823.vnshp2gfrcay35nx@yadro.com> <CAMpxmJWa0ZXN--2S84B-Un0WSKM16eKAiWUtKD4V_szZPEi+gg@mail.gmail.com>
- <b2b7be69-eebb-b325-1962-4d45e6d5f088@nvidia.com>
-In-Reply-To: <b2b7be69-eebb-b325-1962-4d45e6d5f088@nvidia.com>
-From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date:   Mon, 7 Jun 2021 15:31:55 +0200
-Message-ID: <CAMpxmJUnn1e-grUxiMm4T84xBYRi7jQOtOODfSoiBtLmsSjodA@mail.gmail.com>
-Subject: Re: [PATCH] eeprom: at24: Support custom device names for AT24 EEPROMs
-To:     Jon Hunter <jonathanh@nvidia.com>,
-        Alexander Fomichev <fomichev.ru@gmail.com>
-Cc:     linux-i2c <linux-i2c@vger.kernel.org>, linux@yadro.com,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Thierry Reding <treding@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="aMbWj/kSYVzrzPWY"
+Content-Disposition: inline
+In-Reply-To: <41899ef4-bb16-6c3a-035c-1e840a993bec@canonical.com>
+User-Agent: Mutt/2.0.6 (98f8cb83) (2021-03-06)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, Jun 7, 2021 at 1:09 PM Jon Hunter <jonathanh@nvidia.com> wrote:
->
->
-> On 04/06/2021 11:00, Bartosz Golaszewski wrote:
-> > On Wed, Jun 2, 2021 at 7:08 PM Alexander Fomichev <fomichev.ru@gmail.com> wrote:
->
-> ...
->
-> >> This change has a serious defect, as it doesn't guarantee a name
-> >> uniqueness. For my case there are a bunch of NVMEM devices with
-> >> 'dimm-spd' name. So the module initialization fails with several error
-> >> dumps in dmesg, like following:
-> >>
-> >> [    4.784679] at24 3-0051: supply vcc not found, using dummy regulator
-> >> [    4.784781] sysfs: cannot create duplicate filename '/bus/nvmem/devices/dimm-spd'
-> >> [    4.784783] CPU: 24 PID: 1354 Comm: systemd-udevd Not tainted 5.13.0-rc4-at24-catch+ #25
-> >> [    4.784787] Call Trace:
-> >> [    4.784789] [c00000003f3eb010] [c000000000914700] dump_stack+0xc4/0x114 (unreliable)
-> >> [    4.784797] [c00000003f3eb060] [c00000000061c5c8] sysfs_warn_dup+0x88/0xc0
-> >> [    4.784803] [c00000003f3eb0e0] [c00000000061ccec] sysfs_do_create_link_sd+0x17c/0x190
-> >> [    4.784809] [c00000003f3eb130] [c000000000ac3014] bus_add_device+0x94/0x1d0
-> >> [    4.784817] [c00000003f3eb1b0] [c000000000abe7b8] device_add+0x428/0xb90
-> >> [    4.784822] [c00000003f3eb2a0] [c000000000debbd0] nvmem_register+0x220/0xe00
-> >> [    4.784829] [c00000003f3eb390] [c000000000dec80c] devm_nvmem_register+0x5c/0xc0
-> >> [    4.784835] [c00000003f3eb3d0] [c008000016f40c20] at24_probe+0x668/0x940 [at24]
-> >> [    4.784845] [c00000003f3eb650] [c000000000cfecd4] i2c_device_probe+0x194/0x650
-> >> [    4.784850] [c00000003f3eb6f0] [c000000000ac4d3c] really_probe+0x1cc/0x790
-> >> [    4.784855] [c00000003f3eb790] [c000000000ac545c] driver_probe_device+0x15c/0x200
-> >> [    4.784861] [c00000003f3eb810] [c000000000ac5ecc] device_driver_attach+0x11c/0x130
-> >> [    4.784866] [c00000003f3eb850] [c000000000ac5fd0] __driver_attach+0xf0/0x200
-> >> [    4.784873] [c00000003f3eb8d0] [c000000000ac1158] bus_for_each_dev+0xa8/0x130
-> >> [    4.784879] [c00000003f3eb930] [c000000000ac4104] driver_attach+0x34/0x50
-> >> [    4.784885] [c00000003f3eb950] [c000000000ac35f0] bus_add_driver+0x1b0/0x2f0
-> >> [    4.784893] [c00000003f3eb9e0] [c000000000ac70b4] driver_register+0xb4/0x1c0
-> >> [    4.784900] [c00000003f3eba50] [c000000000cfe498] i2c_register_driver+0x78/0x120
-> >> [    4.784905] [c00000003f3ebad0] [c008000016f41260] at24_init+0x6c/0x88 [at24]
-> >> [    4.784914] [c00000003f3ebb30] [c0000000000122c0] do_one_initcall+0x60/0x2c0
-> >> [    4.784920] [c00000003f3ebc00] [c0000000002537bc] do_init_module+0x7c/0x350
-> >> [    4.784926] [c00000003f3ebc90] [c000000000257904] __do_sys_finit_module+0xd4/0x160
-> >> [    4.784932] [c00000003f3ebdb0] [c00000000002c104] system_call_exception+0xf4/0x200
-> >> [    4.784938] [c00000003f3ebe10] [c00000000000cf70] system_call_vectored_common+0xf0/0x268
-> >> [    4.784944] --- interrupt: 3000 at 0x7c1adac4b4c4
-> >> [    4.784948] NIP:  00007c1adac4b4c4 LR: 0000000000000000 CTR: 0000000000000000
-> >> [    4.784951] REGS: c00000003f3ebe80 TRAP: 3000   Not tainted  (5.13.0-rc4-at24-catch+)
-> >> [    4.784955] MSR:  900000000280f033 <SF,HV,VEC,VSX,EE,PR,FP,ME,IR,DR,RI,LE>  CR: 48222844  XER: 00000000
-> >> [    4.784976] IRQMASK: 0
-> >>                GPR00: 0000000000000161 00007fffefc78b90 00007c1adad37000 0000000000000006
-> >>                GPR04: 00000f6614d56be0 0000000000000000 0000000000000006 0000000000000000
-> >>                GPR08: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-> >>                GPR12: 0000000000000000 00007c1adafde680 0000000020000000 0000000000000000
-> >>                GPR16: 0000000000000000 00000f66118b1980 00000f66118b1a18 00000f66118b1948
-> >>                GPR20: 0000000000000000 00000f6614d60500 00007fffefc78df0 00000f6614d535c0
-> >>                GPR24: 00000f6614d56be0 00000f6614d60500 000000000000000c 00000f6614d49cb0
-> >>                GPR28: 00000f6614d56be0 0000000000020000 0000000000000000 00000f6614d60500
-> >> [    4.785033] NIP [00007c1adac4b4c4] 0x7c1adac4b4c4
-> >> [    4.785036] LR [0000000000000000] 0x0
-> >> [    4.785040] --- interrupt: 3000
-> >> [    4.785146] at24: probe of 3-0051 failed with error -17
-> >>
-> >>
-> >> It needs either to use NVMEM_DEVID_AUTO flag irrespective of the 'label'
-> >> property or to add a sort of counter suffix to the name field.
-> >>
-> >>
-> >> Reported-by: Alexander Fomichev <fomichev.ru@gmail.com>
-> >> CC: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> >>
-> >> --
-> >> Regards,
-> >>   Alexander
-> >
-> > Alexander: Thanks for your bug report. The counter suffix you suggest
-> > is precisely what NVMEM_DEVID_AUTO would do so I think we'll need to
-> > use it. On the other hand, a non-unique label is bad design but
-> > obviously we can't break working setups.
->
-> Yes the intention was that the label itself would be unique. In our case
-> we wanted to have something specifically named 'system' or 'module' to
-> identify a specific eeprom.
->
-> BTW I did a quick grep from 'dimm-spd' and did not find it in the
-> kernel. Where is the device-tree you are using?
->
-> > Jon: As the author of this patch - do you have any objections/better ideas?
->
-> I would need to check if appending a suffix then has ramifications for
-> what we were trying to achieve.
->
-> Jon
->
-> --
-> nvpublic
 
-One alternative would be to use the label "as is" for the first device
-and then append ".x" for each subsequent device with a repeating
-label. Does this make sense?
+--aMbWj/kSYVzrzPWY
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Bart
+On Mon, Jun 07, 2021 at 08:01:28AM +0200, Krzysztof Kozlowski wrote:
+> On 01/06/2021 04:31, Dmitry Osipenko wrote:
+> > Enable compile testing for all Tegra memory drivers.
+> >=20
+> > Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+> > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> > ---
+> >  drivers/memory/tegra/Kconfig | 16 ++++++++++------
+> >  1 file changed, 10 insertions(+), 6 deletions(-)
+> >=20
+>=20
+> Hi Dmitry,
+>=20
+> This fails on x86_64 and i386:
+> https://krzk.eu/#/builders/38/builds/260
+> https://krzk.eu/#/builders/40/builds/261
+>=20
+> /bin/ld: warning: orphan section `__reservedmem_of_table' from `drivers/m=
+emory/tegra/tegra210-emc-table.o' being placed in section `__reservedmem_of=
+_table'
+> /bin/ld: drivers/memory/tegra/mc.o: in function `tegra_mc_probe':
+> mc.c:(.text+0x87a): undefined reference to `reset_controller_register'
+> make[1]: *** [/home/buildbot/worker/builddir/build/Makefile:1191: vmlinux=
+] Error 1
+>=20
+> It's a defconfig with:
+> scripts/config --file out/.config -e COMPILE_TEST -e OF -e SRAM -e
+> MEMORY -e PM_DEVFREQ -e ARM_PL172_MPMC -e ATMEL_SDRAMC -e ATMEL_EBI -e
+> BRCMSTB_DPFE -e BT1_L2_CTL -e TI_AEMIF -e TI_EMIF -e OMAP_GPMC -e
+> TI_EMIF_SRAM -e MVEBU_DEVBUS -e FSL_CORENET_CF -e FSL_IFC -e JZ4780_NEMC
+> -e MTK_SMI -e DA8XX_DDRCTL -e PL353_SMC -e RENESAS_RPCIF -e
+> STM32_FMC2_EBI -e SAMSUNG_MC -e EXYNOS5422_DMC -e EXYNOS_SROM -e
+> TEGRA_MC -e TEGRA20_EMC -e TEGRA30_EMC -e TEGRA124_EMC -e
+> TEGRA210_EMC_TABLE -e TEGRA210_EMC
+
+Ugh... that's exactly one of the reasons why I dislike COMPILE_TEST...
+though admittedly it does point out a missing dependency here. I think
+we need to add && RESET_CONTROLLER to that || branch of the depends on
+to fix that. ARCH_TEGRA selects RESET_CONTROLLER explicitly, so the
+COMPILE_TEST branch needs to mirror that.
+
+Either that, or I suppose we could add the depends on RESET_CONTROLLER
+explicitly to TEGRA_MC, or perhaps even select it (although that could
+cause conflicts down the road, but should be fine right now because
+RESET_CONTROLLER doesn't have any other dependencies right now).
+
+Not sure what to do about that orphaned __reservedmem_of_table section.
+Maybe all we need to do is to select OF_RESERVED_MEM from
+TEGRA210_EMC_TABLE?
+
+Let me to a few test builds.
+
+Thierry
+
+--aMbWj/kSYVzrzPWY
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmC+IMMACgkQ3SOs138+
+s6HeDw//bUmVhBYQZAdR05dHVxNlK483hLerAbOIp/XZHKTPYqPuv8Awx4UPiYWI
+tuKqP9WupRe8cBtKVxslslOpFIktT1ewJx7/lODQre4FU/qsID3MqGl9rsGWnRRO
+QGRdXJM0GTF7Ysy8Su6rM8qshfnBqgo71DgYC7QZdNLa0XFThnjmfu+fYMo9VTZN
+j6WjB3DcbY4SkXGsECgwmFkrQD2WomJR4C4aPaujp4QND7I7O6RpODJrjTDj2t+A
+5nwFhQXgCb1mKh0aivRj/FVNQJ1MZGoIG2TXmyETPbELkbCKi/uUJa2AfPEOF3J0
+XlhlIwOPyOYb2hJt4ijIvU+emlM9CYR5aY2vUMiIF7Euz+n5yyTgxgk1zF/6QFGr
+gCIqoMXcmG3BbvsNRRSpsco2LKrtTcPNtEQwKsV00lhrzp1Ez8x3XNlyyEm+g4L6
+I3xUGzOpPqxk2O5RHX8oqyh2BW9Dk6o38wZmPdpMjdvsdjuqG/EbzB68mDbt9hPo
+I7WSJLVPwdk+Jb+VfS28OrW0CvpR50HEBFoxbDbwmnOt8Ba5iWHSBUTalEhSOd5G
+a9WPFqioVzPuTGHxB1bxogH8B5V2AgzlPR7WXZCAGzvWbd9j0+7Akje6Lvjtv2Sq
+O9tm6FoPxJ9MBSL9SW5gfNLB8Y7/Sf/pqdPBzQpt4as0c+hT4+o=
+=/jof
+-----END PGP SIGNATURE-----
+
+--aMbWj/kSYVzrzPWY--
