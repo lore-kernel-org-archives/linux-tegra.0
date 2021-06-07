@@ -2,95 +2,123 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FA68C4743F
-	for <linux-tegra@archiver.kernel.org>; Sun,  6 Jun 2021 22:41:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F27A5C48BC2
+	for <linux-tegra@archiver.kernel.org>; Mon,  7 Jun 2021 06:01:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 798E76141E
-	for <linux-tegra@archiver.kernel.org>; Sun,  6 Jun 2021 22:41:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D9AD461241
+	for <linux-tegra@archiver.kernel.org>; Mon,  7 Jun 2021 06:01:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231147AbhFFWnN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 6 Jun 2021 18:43:13 -0400
-Received: from mail-lj1-f179.google.com ([209.85.208.179]:38649 "EHLO
-        mail-lj1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230368AbhFFWnM (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Sun, 6 Jun 2021 18:43:12 -0400
-Received: by mail-lj1-f179.google.com with SMTP id a4so19482203ljd.5;
-        Sun, 06 Jun 2021 15:41:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=1GGJToq6i4FyeVRgJK+tocSjb9/+pC5ZQ5M4IXJpq6o=;
-        b=Mem2B/UUWNTL5KuAVNcaL+JsgqvSnNRdJmEc38/EL5Bd7Z2BKqK9r1EKj8Sj457dyO
-         iU4G5KCRV5XLcqfZQScec5zKVJilmpzfesbGYHQAAx0wZ6PP2Gg5NI/c5BO6h4JqJS2g
-         ZtpTL8R9ZCuPEhq3OtDeO5wQFRh88cSWcmnwsiG2He/FErIA/Fhp+iFz/mXJ31TF1Jrr
-         11pFrQHZtZzv07LhoJblgiaqh8P/f1+Lbq/FkOjdRpkKOhTMIoPUO+wDR+wFM7D47Fb1
-         Uatr90zTItMQHqKNlDGTFwdbhQwgLTIKhGH/yY1Ceju2E6wSAqtlSivrUXYcFiW5vTQ6
-         R8Bw==
+        id S230128AbhFGGDX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 7 Jun 2021 02:03:23 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:35022 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229923AbhFGGDX (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 7 Jun 2021 02:03:23 -0400
+Received: from mail-wr1-f71.google.com ([209.85.221.71])
+        by youngberry.canonical.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.93)
+        (envelope-from <krzysztof.kozlowski@canonical.com>)
+        id 1lq8KJ-00013o-IX
+        for linux-tegra@vger.kernel.org; Mon, 07 Jun 2021 06:01:31 +0000
+Received: by mail-wr1-f71.google.com with SMTP id h104-20020adf90710000b029010de8455a3aso7404499wrh.12
+        for <linux-tegra@vger.kernel.org>; Sun, 06 Jun 2021 23:01:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=1GGJToq6i4FyeVRgJK+tocSjb9/+pC5ZQ5M4IXJpq6o=;
-        b=Z9ZucJ2F9NvwQmD/SVGL4EP6MtDcZSDmBs3+5Lx3nMsFhSN4W4EuUG/pDpTFTCp1EW
-         UxEIK+hCjs+HVhpJrciIGSDX3CMjB6PtwjVxTiafkVwKfkCprAxsBeLiST0aDmJMuRlp
-         k2aJx6o90mswUtENzUfSm8JSQf/8EUXdkolchWPIeHngcx5DWAWS+DEi50HuZmG+n/aq
-         TH3NsVTBeCeWsbFvyp8iqHHG8P5jQYbV8SKgw9vmmnM3va1Frs2Cwd53wFXEaD+FcG9v
-         CjEJlFgSoXdWs6IlKcIoRzi3LDSNNIe4TAytFMIGquFuiZE1nBxSPrxFsCB3rauCTVs6
-         CZQA==
-X-Gm-Message-State: AOAM532JP2LK0Qc6hzwLAbxhbeAgGPdMbVc+NS86kDYv/HKbJBKhEp5J
-        zoXr8i1GyReldM56zucKJ+A=
-X-Google-Smtp-Source: ABdhPJyMQu9/FcrHkV8dRQItFculAkw1RXMxChQnHeiFJuNFbl7PO6XBoALQ1s94VBaENxwY6u/FNQ==
-X-Received: by 2002:a2e:7018:: with SMTP id l24mr12562657ljc.12.1623019208259;
-        Sun, 06 Jun 2021 15:40:08 -0700 (PDT)
-Received: from [192.168.2.145] (94-29-51-134.dynamic.spd-mgts.ru. [94.29.51.134])
-        by smtp.googlemail.com with ESMTPSA id q184sm1728861ljb.54.2021.06.06.15.40.07
+        bh=qAtq8fZxJa+xoWcGAlXfKDVfTmmln1jGGwqwLzPVz5w=;
+        b=DEwg5rmcBqZgJ0iobEHAKIbYG+YEIf8O+/FXao2D6BXiGRSu1nN2kb5kmhZgqMlqfQ
+         hgh/j7Zq6hbMDIPg30/SMOtEvv3PCV9xe5T94ajdpM5YC8CugWQkUW9ISKSMZyNO0GnV
+         iVO5lMrPiKAXXO4C/J1YpUT6ksPn+0fkGDjiHgFHkQ9Qg5AsE4gqYEv0QDtjEzMNj+n4
+         8xCMWWZHMO6eLrIruLgh2RqgqQBg7753QbV+OBj2WnS5Kk+1/g9o8Y3099s0DVaH2sY/
+         i1EiRjD1Ux4EeCzV7GNAq3xF+X4bU+KdLVEwr36j1MwbONYEzzE95NcAc1z9aG62xysl
+         ewTw==
+X-Gm-Message-State: AOAM530iABZBU7HmK6zww8y3EM9d9ZQ66LQNsFjygQRXbbFy/pDj5+Kd
+        NKhZfW/RvZyRN3ZSA5Kv87CD3A1ePkkEJTzMeDlRqVAhyiQaYrcYgcNeG4hmxN6mA1VvWfOYOdY
+        6eUsV7w6r2SPJ4otr6f6EH6KH0Irf50rqCajEJE/D
+X-Received: by 2002:a1c:740b:: with SMTP id p11mr14833136wmc.94.1623045690467;
+        Sun, 06 Jun 2021 23:01:30 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxpu7m3EIJUyOBKcObfXEeEge07GsVcQb9YzJG8QvObto+R5NJsN0+hGkmIqmu4dspK7YMSzw==
+X-Received: by 2002:a1c:740b:: with SMTP id p11mr14833107wmc.94.1623045690239;
+        Sun, 06 Jun 2021 23:01:30 -0700 (PDT)
+Received: from [192.168.1.115] (xdsl-188-155-185-9.adslplus.ch. [188.155.185.9])
+        by smtp.gmail.com with ESMTPSA id q20sm18398437wrf.45.2021.06.06.23.01.29
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 06 Jun 2021 15:40:07 -0700 (PDT)
-Subject: Re: [PATCH v18 0/2] Add memory bandwidth management to NVIDIA Tegra
- DRM driver
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Matt Merhar <mattmerhar@protonmail.com>,
+        Sun, 06 Jun 2021 23:01:29 -0700 (PDT)
+Subject: Re: [PATCH v6 08/14] memory: tegra: Enable compile testing for all
+ drivers
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        =?UTF-8?Q?Nikola_Milosavljevi=c4=87?= <mnidza@outlook.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
         Peter Geis <pgwipeout@gmail.com>,
         Nicolas Chauvet <kwizart@gmail.com>,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
-References: <20210601042108.1942-1-digetx@gmail.com>
-Message-ID: <8accfe1e-fc48-21ca-f7c6-bd2d60162e6d@gmail.com>
-Date:   Mon, 7 Jun 2021 01:40:06 +0300
+        Viresh Kumar <vireshk@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Matt Merhar <mattmerhar@protonmail.com>,
+        Paul Fertser <fercerpav@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>
+Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
+        Nathan Chancellor <nathan@kernel.org>,
+        linux-clk@vger.kernel.org
+References: <20210601023119.22044-1-digetx@gmail.com>
+ <20210601023119.22044-9-digetx@gmail.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Message-ID: <41899ef4-bb16-6c3a-035c-1e840a993bec@canonical.com>
+Date:   Mon, 7 Jun 2021 08:01:28 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.8.1
 MIME-Version: 1.0
-In-Reply-To: <20210601042108.1942-1-digetx@gmail.com>
+In-Reply-To: <20210601023119.22044-9-digetx@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-01.06.2021 07:21, Dmitry Osipenko пишет:
-> This series adds memory bandwidth management to the NVIDIA Tegra DRM driver,
-> which is done using interconnect framework. It fixes display corruption that
-> happens due to insufficient memory bandwidth.
+On 01/06/2021 04:31, Dmitry Osipenko wrote:
+> Enable compile testing for all Tegra memory drivers.
 > 
-> Changelog:
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/memory/tegra/Kconfig | 16 ++++++++++------
+>  1 file changed, 10 insertions(+), 6 deletions(-)
 > 
-> v18: - Moved total peak bandwidth from CRTC state to plane state and removed
->        dummy plane bandwidth state initialization from T186+ plane hub. This
->        was suggested by Thierry Reding to v17.
-> 
->      - I haven't done anything about the cursor's plane bandwidth which
->        doesn't contribute to overlapping bandwidths for a small sized
->        window because it works okay as-is.
 
-Thierry, will you take these patches for 5.14?
+Hi Dmitry,
+
+This fails on x86_64 and i386:
+https://krzk.eu/#/builders/38/builds/260
+https://krzk.eu/#/builders/40/builds/261
+
+/bin/ld: warning: orphan section `__reservedmem_of_table' from `drivers/memory/tegra/tegra210-emc-table.o' being placed in section `__reservedmem_of_table'
+/bin/ld: drivers/memory/tegra/mc.o: in function `tegra_mc_probe':
+mc.c:(.text+0x87a): undefined reference to `reset_controller_register'
+make[1]: *** [/home/buildbot/worker/builddir/build/Makefile:1191: vmlinux] Error 1
+
+It's a defconfig with:
+scripts/config --file out/.config -e COMPILE_TEST -e OF -e SRAM -e
+MEMORY -e PM_DEVFREQ -e ARM_PL172_MPMC -e ATMEL_SDRAMC -e ATMEL_EBI -e
+BRCMSTB_DPFE -e BT1_L2_CTL -e TI_AEMIF -e TI_EMIF -e OMAP_GPMC -e
+TI_EMIF_SRAM -e MVEBU_DEVBUS -e FSL_CORENET_CF -e FSL_IFC -e JZ4780_NEMC
+-e MTK_SMI -e DA8XX_DDRCTL -e PL353_SMC -e RENESAS_RPCIF -e
+STM32_FMC2_EBI -e SAMSUNG_MC -e EXYNOS5422_DMC -e EXYNOS_SROM -e
+TEGRA_MC -e TEGRA20_EMC -e TEGRA30_EMC -e TEGRA124_EMC -e
+TEGRA210_EMC_TABLE -e TEGRA210_EMC
+
+
+Best regards,
+Krzysztof
