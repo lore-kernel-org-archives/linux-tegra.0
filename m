@@ -2,64 +2,67 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00507C47095
-	for <linux-tegra@archiver.kernel.org>; Mon,  7 Jun 2021 14:02:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97DA0C47095
+	for <linux-tegra@archiver.kernel.org>; Mon,  7 Jun 2021 14:18:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DAAA761130
-	for <linux-tegra@archiver.kernel.org>; Mon,  7 Jun 2021 14:02:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8141161107
+	for <linux-tegra@archiver.kernel.org>; Mon,  7 Jun 2021 14:18:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230291AbhFGOEF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 7 Jun 2021 10:04:05 -0400
-Received: from mail-lj1-f173.google.com ([209.85.208.173]:33506 "EHLO
-        mail-lj1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230282AbhFGOD4 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 7 Jun 2021 10:03:56 -0400
-Received: by mail-lj1-f173.google.com with SMTP id o8so22415254ljp.0;
-        Mon, 07 Jun 2021 07:02:04 -0700 (PDT)
+        id S230269AbhFGOUK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 7 Jun 2021 10:20:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50548 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230209AbhFGOUK (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 7 Jun 2021 10:20:10 -0400
+Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54162C061766;
+        Mon,  7 Jun 2021 07:18:12 -0700 (PDT)
+Received: by mail-wm1-x32e.google.com with SMTP id l18-20020a1ced120000b029014c1adff1edso12854123wmh.4;
+        Mon, 07 Jun 2021 07:18:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=j/h58gR4t5OdekYQSFNWFSj/ytcD8nEYOcwTds5lTpM=;
-        b=cZ7XwpDmaKUFyRGuU/gySPHGHuthR5dZLIB7M0erV4onywKe23DLtafLrWOETo7w7T
-         hec5JQpo9owxIclFPifVIDu5njeS1SVs4jF/KMo8rQKYpmQLn+fZ/9aAZ8EKKtFPNW7H
-         49F6BSpfSgBjMCBbl3KpmVCDfCM1TJKe4pC2Nk1/6WsjTHnKy7Gqzkv8XgHqnP5IBtZG
-         GencLDReN0jxgqKJnkJB+cv/pT3NPJVv2orkahuGhqhga+9z/r5KBWuqA2P8n3VqXVTi
-         MiwDtmfQdL4oAK20X0SqY/RmbPdbM9NkOAAjlxsXVM7dJjteoUxAo3fUGYWqUsUr3Pnb
-         LN/A==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=mP6aWH2JsVa1KbPO8ptw+xPekYdfORcg07rO19MO1nI=;
+        b=iWwqA2UiiOytGSvgxV4BsphhYNrSbsS0zszvUB9s5j0NSax9HYzjumozJX5WGn8k4P
+         KWkZ7GTvswNLDHEYOZ61FY75YsE6JJsfv+ESIQGRQQz7x7MbYKP3TGWC/jzHqIafPtNp
+         KO8Dywn/x5VwmE57Z1nfFmol7mQzb1tr68GLoAKEPFDAowq7J2tYAQfuGRHnGMrpw9N3
+         ZGHBF0G3p/fjxYAlso57pzWNi02xXQ4f9y79KTp7bSw1J2w39S7vNj5isD1QAAD6MkOv
+         R0hL/dRy3n/qyArMsHynBWNvN6cOeug80cBY2Qt8m6rPXY5DTrz9VeYH8ib05e+2j9o0
+         MegQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=j/h58gR4t5OdekYQSFNWFSj/ytcD8nEYOcwTds5lTpM=;
-        b=EC4Oj2EPBsKKvvLuCE2kkpoconoDvp/CyjZnUxiTA5OslhSKQtgO1HdCcN6rlGq8Xw
-         Jwr75EM3OR5w1/nB1hw5Tmghz5QQ963bhOZt9F2iUw1KszJvTGc360aN7ntPuWUDMDfY
-         2Y3xhXcnkyzBqEkl6aAFnsMWw0fwOnZUDz1DZupwPf3nJydpUmwtPzMILG3/klCDQ5SA
-         4e9FM7akhASUMT6ZmZOr/LJ5/SO8sGYWY4wc8s3X8R6CI85VX6QE4apkV3N4Gu26klPT
-         DED/WeTv8Pb2u8tG2Z93nKSL7EGXTxXs0wEj2ta/fKj2prrAxsgeWPdUDO9VwaERO/66
-         TfVw==
-X-Gm-Message-State: AOAM530x/m9odo1NPGv0ZJHAk3wgTSJ2JRb8k3k8tBUVSdhHPtcabGZL
-        4C2eQk2dhSnouuGEoHHMxg7Jwa1eA67Phg==
-X-Google-Smtp-Source: ABdhPJwJPJlxEzcJy2V7HIsl9pZaKXUR1EHrfEc7wtr6r3yjIsl4WVm+fC5F1nStGJ5G324XD61png==
-X-Received: by 2002:a2e:98b:: with SMTP id 133mr14370450ljj.88.1623074463327;
-        Mon, 07 Jun 2021 07:01:03 -0700 (PDT)
-Received: from [192.168.2.145] (94-29-21-60.dynamic.spd-mgts.ru. [94.29.21.60])
-        by smtp.googlemail.com with ESMTPSA id u25sm1871572ljo.56.2021.06.07.07.01.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Jun 2021 07:01:02 -0700 (PDT)
-Subject: Re: [PATCH v6 08/14] memory: tegra: Enable compile testing for all
- drivers
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-        =?UTF-8?Q?Nikola_Milosavljevi=c4=87?= <mnidza@outlook.com>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=mP6aWH2JsVa1KbPO8ptw+xPekYdfORcg07rO19MO1nI=;
+        b=B0dNaFBgHL8nlRC2ng3OYOrILiqjKaTdF4lScxxtN2mQPoytT3gz2OCGTa7iaP6iUG
+         dRPwffD25Sz9v2seC4XWfZHmbojigGgZFm2LifjRp3AUTg++8S8tChDOFawcT9OYysZe
+         z4GUqYoSB86ldeMKmTXzpBH0su/BpNJc36Jhvl+EE8SyDhymRH5jmuxKk+opy8xqBi00
+         kP4AQGqOJQ1FKK+ItE9kj6b8k8M0h9uqXIrdxXyXWGR3kd4TUg/IFtDBwpeHpRUPC45D
+         epIcn2ZV6tNBXdTbR2zfAG+goF1vlF7NQgz6nSVyrAvxXZK7dxpokQasMS6VoVlMEYOX
+         o8xw==
+X-Gm-Message-State: AOAM530IN+fvy2+f8s0/bs2sWOmWBNs+BRpZ01Cn806XVHoQIPcBVpuC
+        TgLa2wKFOJoKjRKoRCISfx0=
+X-Google-Smtp-Source: ABdhPJxxHpTEw550CvQ0yBAx+uTU4KURTY7SABRasg2WbIBriTFGz4abTv+C8v8dtGyfuCSRKIwMYA==
+X-Received: by 2002:a1c:a382:: with SMTP id m124mr16894362wme.40.1623075490904;
+        Mon, 07 Jun 2021 07:18:10 -0700 (PDT)
+Received: from localhost ([62.96.65.119])
+        by smtp.gmail.com with ESMTPSA id f12sm582862wru.81.2021.06.07.07.18.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Jun 2021 07:18:09 -0700 (PDT)
+Date:   Mon, 7 Jun 2021 16:19:49 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        Nikola =?utf-8?Q?Milosavljevi=C4=87?= <mnidza@outlook.com>,
         Ulf Hansson <ulf.hansson@linaro.org>,
         Peter Geis <pgwipeout@gmail.com>,
         Nicolas Chauvet <kwizart@gmail.com>,
@@ -74,33 +77,102 @@ Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
         devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
         Nathan Chancellor <nathan@kernel.org>,
         linux-clk@vger.kernel.org
+Subject: Re: [PATCH v6 08/14] memory: tegra: Enable compile testing for all
+ drivers
+Message-ID: <YL4rBYkWHpeit66m@orome.fritz.box>
 References: <20210601023119.22044-1-digetx@gmail.com>
  <20210601023119.22044-9-digetx@gmail.com>
  <41899ef4-bb16-6c3a-035c-1e840a993bec@canonical.com>
  <YL4gwxWopKT7LomG@orome.fritz.box>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <a1f20257-f041-966e-c37e-5c81c4cf94d9@gmail.com>
-Date:   Mon, 7 Jun 2021 17:01:02 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+ <a1f20257-f041-966e-c37e-5c81c4cf94d9@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <YL4gwxWopKT7LomG@orome.fritz.box>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="d9Zh+1lS8Af2vnFR"
+Content-Disposition: inline
+In-Reply-To: <a1f20257-f041-966e-c37e-5c81c4cf94d9@gmail.com>
+User-Agent: Mutt/2.0.6 (98f8cb83) (2021-03-06)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-07.06.2021 16:36, Thierry Reding пишет:
->> /bin/ld: warning: orphan section `__reservedmem_of_table' from `drivers/memory/tegra/tegra210-emc-table.o' being placed in section `__reservedmem_of_table'
->> /bin/ld: drivers/memory/tegra/mc.o: in function `tegra_mc_probe':
->> mc.c:(.text+0x87a): undefined reference to `reset_controller_register'
->> make[1]: *** [/home/buildbot/worker/builddir/build/Makefile:1191: vmlinux] Error 1
-...
 
-> Not sure what to do about that orphaned __reservedmem_of_table section.
-> Maybe all we need to do is to select OF_RESERVED_MEM from
-> TEGRA210_EMC_TABLE?
+--d9Zh+1lS8Af2vnFR
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Select won't work easily, but the dependency for TEGRA210_EMC should.
+On Mon, Jun 07, 2021 at 05:01:02PM +0300, Dmitry Osipenko wrote:
+> 07.06.2021 16:36, Thierry Reding =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> >> /bin/ld: warning: orphan section `__reservedmem_of_table' from `driver=
+s/memory/tegra/tegra210-emc-table.o' being placed in section `__reservedmem=
+_of_table'
+> >> /bin/ld: drivers/memory/tegra/mc.o: in function `tegra_mc_probe':
+> >> mc.c:(.text+0x87a): undefined reference to `reset_controller_register'
+> >> make[1]: *** [/home/buildbot/worker/builddir/build/Makefile:1191: vmli=
+nux] Error 1
+> ...
+>=20
+> > Not sure what to do about that orphaned __reservedmem_of_table section.
+> > Maybe all we need to do is to select OF_RESERVED_MEM from
+> > TEGRA210_EMC_TABLE?
+>=20
+> Select won't work easily, but the dependency for TEGRA210_EMC should.
+
+Select works if I also select OF_EARLY_FLATTREE. That's slightly odd
+because typically that's something that the platform would select, but
+there's precedent for doing this in drivers/clk/x86/Kconfig, so I think
+it'd be fine.
+
+The attached patch resolves both of the above issues for me.
+
+Krzysztof: do you want to squash that into the problematic patch or do
+you want me to send this as a follow-up patch for you to apply? I guess
+the latter since you've already sent out the PR for Will and ARM SoC?
+
+Thierry
+
+--- >8 ---
+diff --git a/drivers/memory/tegra/Kconfig b/drivers/memory/tegra/Kconfig
+index f9bae36c03a3..ae8c57b921e6 100644
+--- a/drivers/memory/tegra/Kconfig
++++ b/drivers/memory/tegra/Kconfig
+@@ -4,6 +4,7 @@ config TEGRA_MC
+ 	default y
+ 	depends on ARCH_TEGRA || (COMPILE_TEST && COMMON_CLK)
+ 	select INTERCONNECT
++	select RESET_CONTROLLER
+ 	help
+ 	  This driver supports the Memory Controller (MC) hardware found on
+ 	  NVIDIA Tegra SoCs.
+@@ -48,6 +49,8 @@ config TEGRA124_EMC
+ config TEGRA210_EMC_TABLE
+ 	bool
+ 	depends on ARCH_TEGRA_210_SOC || COMPILE_TEST
++	select OF_EARLY_FLATTREE
++	select OF_RESERVED_MEM
+=20
+ config TEGRA210_EMC
+ 	tristate "NVIDIA Tegra210 External Memory Controller driver"
+--- >8 ---
+
+--d9Zh+1lS8Af2vnFR
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmC+KwMACgkQ3SOs138+
+s6GzBg//RConUScfmllWbC3RRw9aeJFxXHvtCSPDMWkFY4sn90LjxMo3Es5noyKr
+rFb8YNtCTs6nGvD6ShITplTVfCOnTLwiezOUymN5R5+Wlm7gjWefHp3AaPEWAF74
+oKVjhBxUID15IpgPyJein5EUFbNh9+Napbtm1CmOKvZELa4EW0rYji3ypYunjdvt
+kRVnSdGSq302YvlEVilkcczDeaq9TnkpRHf/V8iV6UG+HAN0YOJjHGag5U4lS/L3
+2KphggZb0la3tudDo/IbYYVL++B4deLZapifKd0TTTh53yDWX1aafgI6wCGAwaIs
+4MMDD/fGA9XZIQi7GpCgm8iEwKeubg+b+p4VdBssvWxpziT6MnzvVtiqTPY3e0nN
+rnj0MrW8GOL3tjA4IASNvW5i11cCLJBeZALhNc0cOdwE+/2nqEnqWoZVia5ECNCp
+odVA+MRQj5Hawh0juKyba82UB9hVYatcDzW+EIohErHPp0HpUg98WclOH3lNooJm
+o8RW/yV74toyi24b3aTDeaznn/QEJM9BBpa5Bq5mtuVMtK3WBurSDUqT9GPFDGFY
+T+YFmVAXe1fTx8OREgedCibMqTqD4s9FRKSrv8q7AHE64hr7ZoofEty3MVVdNZ9x
+nNmUbQaS3jUHQgQq8OgZkPY1ngBmjkRJbIsFYr2LlsBhHU4OQMc=
+=ygu6
+-----END PGP SIGNATURE-----
+
+--d9Zh+1lS8Af2vnFR--
