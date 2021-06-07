@@ -2,154 +2,255 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18FCAC47082
-	for <linux-tegra@archiver.kernel.org>; Mon,  7 Jun 2021 18:19:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C354C47082
+	for <linux-tegra@archiver.kernel.org>; Mon,  7 Jun 2021 23:50:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F23BA61105
-	for <linux-tegra@archiver.kernel.org>; Mon,  7 Jun 2021 18:19:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6A67E610E7
+	for <linux-tegra@archiver.kernel.org>; Mon,  7 Jun 2021 23:50:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230306AbhFGSVH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 7 Jun 2021 14:21:07 -0400
-Received: from mail-dm6nam11on2051.outbound.protection.outlook.com ([40.107.223.51]:58208
-        "EHLO NAM11-DM6-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S230333AbhFGSVG (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 7 Jun 2021 14:21:06 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=guCWbo+axKDCnxWODTfB95Js5cDt799eQ6pTPJDCKXaiVESxRewnKGRRvdkdpaX9zCEo4Kz2h8yCRsn81Jl9efsjn54ZGg+A2RAJamnPkN/AQ4p3b4EVRrormUhHQUwM8zycN2DWdqc8vOOX2BmSiGTIi4Ov/fjofRrYlTb0l9G8I9nhLvpSwQrEl+vU6ROQlRVkmUvTKpDhnICYwBwDjjzNbTEgrZf/ZbNPzXlahYYgeYyJoesFHV1geRtPxg0URYnL+XNXv+Tccc+4hMof7pF9qN+4POKw5uIZhaDLMQx1U7X5La7H8xMFMVGRrVO77QccFos9qElEXBmup3oVzQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RN504FY98AKYqF2OO0Zq7Q97VdjfmU96v+dxFtu7oPA=;
- b=I97/1cNCVvJuA4GZJYI3PxIOIuCxW6JWEnvvq/ggYJPHzo/MEejQhkrRUDiHBfkCMi7sVtuTZqkFk6L+t4ppeMc22GaB8bB2HfwFctm2ds7PgJXN89esrLnh140Uxj421QqMfLS5hFfQSzZTUUnB+WIiSbV49qipGR6JpA+73tQMS7hYC2CYxoM4izhybfHo3tKDitWg2sYSRX6kJW8+M34ASkHmX6D0RjuMVoJqx/QdYRX3bPZPNf0Y7jSBbkzAN1hbLWa+X+G7t8UFTqljs8BGNw/R4rahja3iNTwpM26kPXGPXUfP6MlwIK59BI+wNkGRzFK1OmjJuQ34DwIcXQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.112.34) smtp.rcpttodomain=google.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RN504FY98AKYqF2OO0Zq7Q97VdjfmU96v+dxFtu7oPA=;
- b=gUGl0TwdYxJfp0fHeE9jqjAq4Xmz659MckRMBXg29ATsShH+TXzszHldQQEDw7TBl/iNHSCgYHB+M59Uu3u43KBIkLRYYDEVDRmAjJOAyfVaEpyU/GxaHiQfehRkTMjNh3o0dSFhIpBCohjRgfDP5Vk4Si1HURnHAGLWIgmHFGq2sEBWMdUeIRecMb/431UfRIyfXYTbCSUfnCHO+aNZ1mPb7vK+acRBS+x5EVwOxXnHnvmqKBqIOQK5Tc4YDD0KSgT8P8V96KPMSmuTeCuJRA/q7j6OkoI2dTxwjgqUajeRcXhRbKbaKNCTn+cnw8tyLBj0kkPgppy/iXHfCSH6wQ==
-Received: from CO2PR04CA0157.namprd04.prod.outlook.com (2603:10b6:104:4::11)
- by DM6PR12MB4419.namprd12.prod.outlook.com (2603:10b6:5:2aa::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4173.24; Mon, 7 Jun
- 2021 18:19:12 +0000
-Received: from CO1NAM11FT048.eop-nam11.prod.protection.outlook.com
- (2603:10b6:104:4:cafe::64) by CO2PR04CA0157.outlook.office365.com
- (2603:10b6:104:4::11) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4195.22 via Frontend
- Transport; Mon, 7 Jun 2021 18:19:12 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.34)
- smtp.mailfrom=nvidia.com; google.com; dkim=none (message not signed)
- header.d=none;google.com; dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.112.34 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.112.34; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (216.228.112.34) by
- CO1NAM11FT048.mail.protection.outlook.com (10.13.175.148) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.4195.22 via Frontend Transport; Mon, 7 Jun 2021 18:19:12 +0000
-Received: from [10.26.49.10] (172.20.187.6) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Mon, 7 Jun
- 2021 18:19:10 +0000
-Subject: Re: [PATCH V3] PCI: tegra: Fix building Tegra194 PCIe driver
-To:     Bjorn Helgaas <helgaas@kernel.org>
-CC:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        id S230267AbhFGXwa (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 7 Jun 2021 19:52:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40882 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230330AbhFGXwa (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 7 Jun 2021 19:52:30 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id E627B60E0B;
+        Mon,  7 Jun 2021 23:50:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1623109838;
+        bh=zyZ+p1WGiJIHDLYNnGYHUCtowoPUjC3u0lfCydw2Q20=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=Hz2LEFUK4nc9Y6c9I89/J4eO1n21aDGaezWI/ciCsEneH5rvV7nEALDO8GLw6/yiD
+         xpe5ESQvkbL2UraF+hibV3FNXCrP99lwNjEgtbn+rhFAIoFvJKjkoHF1l5QrMPbZZv
+         bCldXYD+/8KyaYPpP/wKsmMpcfKWWHxDfOQStlT85WcpNuRh6ICDItR67g74L17+nN
+         TptdGdAcNGGSE9PFEuVPID8II1CAnfoApb0TKQrCLeDC75/3ITGIR/9QAXckYoN40J
+         UwdvBAXtLCD+ekLmJSwnNaZGc3KA4bYGRusyB9PpGVGIP/6cmlshIqfjICyniHq8ZC
+         tuLemMltF4VuQ==
+Date:   Mon, 7 Jun 2021 18:50:36 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
         Bjorn Helgaas <bhelgaas@google.com>,
         Thierry Reding <thierry.reding@gmail.com>,
         Vidya Sagar <vidyas@nvidia.com>,
-        =?UTF-8?Q?Krzysztof_Wilczy=c5=84ski?= <kw@linux.com>,
-        <linux-pci@vger.kernel.org>, <linux-tegra@vger.kernel.org>
-References: <20210607171842.GA2507565@bjorn-Precision-5520>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <0457da33-3ddd-2234-1d09-20d5537b8993@nvidia.com>
-Date:   Mon, 7 Jun 2021 19:19:08 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+        linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH V2] PCI: tegra: Fix building Tegra194 PCIe driver
+Message-ID: <20210607235036.GA2549845@bjorn-Precision-5520>
 MIME-Version: 1.0
-In-Reply-To: <20210607171842.GA2507565@bjorn-Precision-5520>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [172.20.187.6]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL107.nvidia.com (172.20.187.13)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 50a92c0c-250c-454d-a8dd-08d929e0c06b
-X-MS-TrafficTypeDiagnostic: DM6PR12MB4419:
-X-Microsoft-Antispam-PRVS: <DM6PR12MB4419B784197DB8AAD67E8DB8D9389@DM6PR12MB4419.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:10000;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: ZDsbWxA3CvpnDgM35WYnGYolbkbSH17VirNbcGpsp/PUs7sdeE9yRGEOQTQBPXYAj7oi6pMloGFf8idGvDMBT5JrLZW/qc0a8kUxcQ3kQJ6D4bjsG7Gc5lu0CTekiUrrVug3g22jreMu2hxXIOE0Tzp75UABAkoi5qDCViF8kzP0TW+SBvxg6S6vf4658Fy70m3RsoH6F60ul8ormgpS1xS5L1HQidTYUU4/MkMxTYkFib6/rz5gMU2eVzcJ7yjKhbXKT9E/ercSyEEixuboR5Ur07zFTzsOLZQFCqTjaR8YVMKe28ytioHkppfqwcSNPuyJBAFxD1tp6KuN2mcK51W7GVNh/tUUcSlnP/jgWnlyE7N8jCJaHaWvWllpobpKNmNpBJBXI8Oe0i/HWjz3ysTr0F2IBTYELa936ONKeoxAX5p5Vu0utSvvIWLrEfaaM2b3o3QmUSqRE8NTfW/zuMoRTPUoVVW/7il71+bLYBYqEbhK36IsmQDQ24pO2u3fumH3FUOcQ40gmLq4vAvHwVMr3KY9rgqKigtwsFWwFY1I9oEt3KlBD4mQ9W6RGPHRCu1nGEdhxGtFGFuS+vQ9cnYosftEXg3ens0Ug3+ZqYof+TMDC/zQ4vL7RdYZ4D+m6mfrvuTa0ni8bYwiw1nFIy8aWLflVm0pKUvr/chOmQxSBlke3PROg7so87B64Czv
-X-Forefront-Antispam-Report: CIP:216.228.112.34;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid03.nvidia.com;CAT:NONE;SFS:(4636009)(136003)(39860400002)(376002)(396003)(346002)(36840700001)(46966006)(16526019)(356005)(31686004)(36756003)(5660300002)(336012)(8676002)(36860700001)(47076005)(478600001)(186003)(86362001)(7636003)(6916009)(16576012)(2616005)(36906005)(4326008)(31696002)(70206006)(53546011)(70586007)(54906003)(83380400001)(82740400003)(82310400003)(316002)(2906002)(426003)(26005)(8936002)(43740500002);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jun 2021 18:19:12.6356
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 50a92c0c-250c-454d-a8dd-08d929e0c06b
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.34];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT048.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4419
+In-Reply-To: <a3f39a47-8dff-a4b0-a529-0f17f42114f3@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-
-On 07/06/2021 18:18, Bjorn Helgaas wrote:
-> On Mon, Jun 07, 2021 at 04:50:34PM +0100, Jon Hunter wrote:
->> Hi Bjorn, Lorenzo,
->>
->> On 26/05/2021 13:33, Jon Hunter wrote:
->>> Commit 7f100744749e ("PCI: tegra: Add Tegra194 MCFG quirks for ECAM
->>> errata") caused a few build regressions for the Tegra194 PCIe driver
->>> which are:
->>>
->>> 1. The Tegra194 PCIe driver can no longer be built as a module. This
->>>    was caused by removing the Makefile entry to build the pcie-tegra.c
->>>    based upon the CONFIG_PCIE_TEGRA194 option. Therefore, restore this
->>>    so that we can build the driver as a module.
->>> 2. 7f100744749e ("PCI: tegra: Add Tegra194 MCFG quirks for ECAM
->>>    errata") added "#ifdef CONFIG_PCIE_TEGRA194" around the native
->>>    driver. But if we set CONFIG_PCIE_TEGRA194=m to build the driver as a
->>>    module, autoconf.h contains "#define CONFIG_PCIE_TEGRA194_MODULE 1"
->>>    (not "#define CONFIG_PCIE_TEGRA194 1"), so the #ifdef excludes the
->>>    driver. Instead, use "IS_ENABLED(CONFIG_PCIE_TEGRA194)", which checks
->>>    for either CONFIG_PCIE_TEGRA194 or CONFIG_PCIE_TEGRA194_MODULE.
->>> 3. The below build warnings that are seen with particular kernel
->>>    configurations. Fix these by moving these structure definitions to
->>>    within the necessary guards.
->>>
->>>   drivers/pci/controller/dwc/pcie-tegra194.c:259:18: warning:
->>>   	‘event_cntr_data_offset’ defined but not used [-Wunused-const-variable=]
->>>   drivers/pci/controller/dwc/pcie-tegra194.c:250:18: warning:
->>>   	‘event_cntr_ctrl_offset’ defined but not used [-Wunused-const-variable=]
->>>   drivers/pci/controller/dwc/pcie-tegra194.c:243:27: warning:
->>>   	‘pcie_gen_freq’ defined but not used [-Wunused-const-variable=]
->>>
->>> Fixes: 7f100744749e ("PCI: tegra: Add Tegra194 MCFG quirks for ECAM errata")
->>> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
->>
->>
->> Any feedback on this? We need this for v5.13.
+On Fri, May 21, 2021 at 02:11:15PM +0100, Jon Hunter wrote:
 > 
-> Thanks for the reminder, I'll take a look at this.  It looks like we
-> broke this in v5.13-rc1, so we should fix it before v5.13.
+> On 20/05/2021 23:19, Bjorn Helgaas wrote:
+> > On Thu, May 20, 2021 at 10:01:23AM +0100, Jon Hunter wrote:
+> >> Commit 7f100744749e ("PCI: tegra: Add Tegra194 MCFG quirks for ECAM
+> >> errata") caused a few build regressions for the Tegra194 PCIe driver
+> >> which are:
+> >>
+> >> 1. The Tegra194 PCIe driver can no longer be built as a module. This
+> >>    was caused by removing the Makefile entry to build the pcie-tegra.c
+> >>    based upon the CONFIG_PCIE_TEGRA194 option. Therefore, restore this
+> >>    so that we can build the driver as a module if ACPI support is not
+> >>    enabled in the kernel.
+> > 
+> > I'm not sure what "if ACPI support is not enabled in the kernel" is
+> > telling me.  Does it mean that we can only build tegra194 as a module
+> > if ACPI is not enabled?  I don't think so (at least, I don't think
+> > Kconfig enforces that).
 > 
+> If ACPI is enabled, then we will build the driver into the kernel. If we
+> have ...
+> 
+>  CONFIG_ACPI=y
+>  CONFIG_PCIE_TEGRA194=m
+> 
+> FWICS the pcie-tegra194.c driver is builtin to the kernel.
 
-Thanks. Yes this is needed before v5.13.
+My understanding is that we want pcie-tegra194.c to be:
 
-Jon
+  - Built into the kernel when CONFIG_PCIE_TEGRA194=m or =y and
+    CONFIG_ACPI=y and CONFIG_PCI_QUIRKS=y.  If we're using the ACPI
+    pci_root.c driver, we must have the MCFG quirk built-in, and this
+    case worked as I expected (this is on x86):
 
--- 
-nvpublic
+      $ grep -E "CONFIG_(ACPI\>|PCI_QUIRKS|PCIE_TEGRA194)" .config
+      CONFIG_ACPI=y
+      CONFIG_PCI_QUIRKS=y
+      CONFIG_PCIE_TEGRA194=y
+      CONFIG_PCIE_TEGRA194_HOST=m
+      CONFIG_PCIE_TEGRA194_EP=y
+
+      $ rm drivers/pci/controller/dwc/pcie-tegra194.*o
+      $ make drivers/pci/controller/dwc/
+	...
+	CC      drivers/pci/controller/dwc/pcie-tegra194.o
+	AR      drivers/pci/controller/dwc/built-in.a
+
+  - Built as a module when CONFIG_PCIE_TEGRA194=m and CONFIG_ACPI is
+    not set.  In this case, we're not using the ACPI pci_root.c
+    driver, and we don't need the MCFG quirk built-in, so it should be
+    OK to build a module, and IIUC this patch is supposed to *allow*
+    that.  But in my testing, it did *not* build a module.  Am I
+    missing something?
+
+      $ grep -E "CONFIG_(ACPI\>|PCI_QUIRKS|PCIE_TEGRA194)" .config
+      # CONFIG_ACPI is not set
+      # CONFIG_PCI_QUIRKS is not set
+      CONFIG_PCIE_TEGRA194=y
+      CONFIG_PCIE_TEGRA194_HOST=m
+      CONFIG_PCIE_TEGRA194_EP=y
+
+      $ rm drivers/pci/controller/dwc/pcie-tegra194.*o
+      $ make drivers/pci/controller/dwc/
+	...
+	CC      drivers/pci/controller/dwc/pcie-tegra194.o
+	AR      drivers/pci/controller/dwc/built-in.a
+
+This was all done with V3 of the patch, but I'm responding to V2 to
+continue the conversation there since I don't think this part changed.
+
+> 	> Should the "if ACPI support is not enabled ..." part just be dropped?
+> > 
+> > I assume it should be possible to build the kernel with ACPI enabled
+> > and with pcie-tegra194 as a module?
+> 
+> Per the above that does not appear to be possible.
+> 
+> >> 2. If CONFIG_PCIE_TEGRA194 is configured to build the driver as a
+> >>    module, at the same time that CONFIG_ACPI and CONFIG_PCI_QUIRKS are
+> >>    selected to build the driver into the kernel, then the necessary
+> >>    functions in the driver to probe and remove the device when booting
+> >>    with device-tree and not compiled into to the driver. This prevents
+> >>    the PCIe devices being probed when booting with device-tree. Fix this
+> >>    by using the IS_ENABLED() macro.
+> > 
+> > The #ifdef vs IS_ENABLED() difference is kind of subtle and I have to
+> > figure it out every time.  Maybe something like this?
+> > 
+> >   7f100744749e ("PCI: tegra: Add Tegra194 MCFG quirks for ECAM
+> >   errata") added "#ifdef CONFIG_PCIE_TEGRA194" around the native
+> >   driver.
+> > 
+> >   But if we set CONFIG_PCIE_TEGRA194=m to build the driver as a
+> >   module, autoconf.h contains "#define CONFIG_PCIE_TEGRA194_MODULE 1"
+> >   (not "#define CONFIG_PCIE_TEGRA194 1"), so the #ifdef excludes the
+> >   driver.
+> > 
+> >   Instead, use "IS_ENABLED(CONFIG_PCIE_TEGRA194)", which checks for
+> >   either CONFIG_PCIE_TEGRA194 or CONFIG_PCIE_TEGRA194_MODULE.
+> 
+> OK sounds good. Thanks
+> 
+> >> 3. The below build warnings to be seen with particular kernel
+> >>    configurations. Fix these by adding the necessary guards around these
+> >>    variable definitions.
+> >>
+> >>   drivers/pci/controller/dwc/pcie-tegra194.c:259:18: warning:
+> >>   	‘event_cntr_data_offset’ defined but not used [-Wunused-const-variable=]
+> >>   drivers/pci/controller/dwc/pcie-tegra194.c:250:18: warning:
+> >>   	‘event_cntr_ctrl_offset’ defined but not used [-Wunused-const-variable=]
+> >>   drivers/pci/controller/dwc/pcie-tegra194.c:243:27: warning:
+> >>   	‘pcie_gen_freq’ defined but not used [-Wunused-const-variable=]
+> >>
+> >> Fixes: 7f100744749e ("PCI: tegra: Add Tegra194 MCFG quirks for ECAM errata")
+> >> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> > 
+> > This is a candidate for v5.13, since we merged 7f100744749e for
+> > v5.13-rc1.
+> 
+> Yes we need to fix for v5.13.
+> 
+> >> ---
+> >>  drivers/pci/controller/dwc/Makefile        | 1 +
+> >>  drivers/pci/controller/dwc/pcie-tegra194.c | 6 +++++-
+> >>  2 files changed, 6 insertions(+), 1 deletion(-)
+> >>
+> >> diff --git a/drivers/pci/controller/dwc/Makefile b/drivers/pci/controller/dwc/Makefile
+> >> index eca805c1a023..f0d1e2d8c022 100644
+> >> --- a/drivers/pci/controller/dwc/Makefile
+> >> +++ b/drivers/pci/controller/dwc/Makefile
+> >> @@ -32,6 +32,7 @@ obj-$(CONFIG_PCIE_UNIPHIER_EP) += pcie-uniphier-ep.o
+> >>  # depending on whether ACPI, the DT driver, or both are enabled.
+> >>  
+> >>  obj-$(CONFIG_PCIE_AL) += pcie-al.o
+> >> +obj-$(CONFIG_PCIE_TEGRA194) += pcie-tegra194.o
+> >>  obj-$(CONFIG_PCI_HISI) += pcie-hisi.o
+> > 
+> > It sounds like the interesting case is this:
+> > 
+> >   CONFIG_ARM64=y
+> >   CONFIG_ACPI=y
+> >   CONFIG_PCI_QUIRKS=y
+> >   CONFIG_PCIE_TEGRA194=m
+> > 
+> > I don't know how this works in this case:
+> > 
+> >   obj-$(CONFIG_PCIE_TEGRA194) += pcie-tegra194.o
+> >   obj-$(CONFIG_ARM64) += pcie-tegra194.o
+> > 
+> > We want tegra194_acpi_init() and the rest of the ECAM quirk to be
+> > compiled into the static kernel.  And we want tegra_pcie_dw_probe(),
+> > tegra_pcie_dw_remove(), etc, compiled into a module.
+> > 
+> > Does kbuild really compile pcie-tegra194.c twice?  And if so, it's not
+> > a problem that both the static kernel and the module contain a
+> > tegra194_pcie_ops symbol?
+> 
+> FWICT it does not compile it twice and I only see it builtin. We the
+> above I don't see any module generated.
+> 
+> >>  ifdef CONFIG_ACPI
+> >> diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
+> >> index b19775ab134e..ae70e53a7826 100644
+> >> --- a/drivers/pci/controller/dwc/pcie-tegra194.c
+> >> +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
+> >> @@ -240,13 +240,16 @@
+> >>  #define EP_STATE_DISABLED	0
+> >>  #define EP_STATE_ENABLED	1
+> >>  
+> >> +#if IS_ENABLED(CONFIG_PCIE_TEGRA194)
+> >>  static const unsigned int pcie_gen_freq[] = {
+> >>  	GEN1_CORE_CLK_FREQ,
+> >>  	GEN2_CORE_CLK_FREQ,
+> >>  	GEN3_CORE_CLK_FREQ,
+> >>  	GEN4_CORE_CLK_FREQ
+> >>  };
+> >> +#endif
+> > 
+> > This makes the minimal patch, but as Krzysztof suggests, I would
+> > prefer to move the whole struct so it's just inside the
+> > CONFIG_PCIE_TEGRA194 #ifdef.
+> 
+> OK, will do.
+> 
+> >> +#if defined(CONFIG_PCIEASPM)
+> >>  static const u32 event_cntr_ctrl_offset[] = {
+> >>  	0x1d8,
+> >>  	0x1a8,
+> >> @@ -264,6 +267,7 @@ static const u32 event_cntr_data_offset[] = {
+> >>  	0x1c8,
+> >>  	0x1dc
+> >>  };
+> >> +#endif
+> > 
+> > Similar for the CONFIG_PCIEASPM #ifdef.
+> 
+> OK.
+> 
+> Thanks
+> Jon
+> 
+> -- 
+> nvpublic
