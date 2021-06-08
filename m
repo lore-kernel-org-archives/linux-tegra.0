@@ -2,162 +2,136 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-14.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D7E1C47082
-	for <linux-tegra@archiver.kernel.org>; Tue,  8 Jun 2021 14:37:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACB3FC4743D
+	for <linux-tegra@archiver.kernel.org>; Tue,  8 Jun 2021 15:17:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 51AF361042
-	for <linux-tegra@archiver.kernel.org>; Tue,  8 Jun 2021 14:37:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9515F61246
+	for <linux-tegra@archiver.kernel.org>; Tue,  8 Jun 2021 15:17:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233506AbhFHOjN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 8 Jun 2021 10:39:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32972 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233288AbhFHOjC (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 8 Jun 2021 10:39:02 -0400
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D524C061574;
-        Tue,  8 Jun 2021 07:37:09 -0700 (PDT)
-Received: by mail-wr1-x429.google.com with SMTP id e11so11650292wrg.3;
-        Tue, 08 Jun 2021 07:37:09 -0700 (PDT)
+        id S232583AbhFHPS6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 8 Jun 2021 11:18:58 -0400
+Received: from mail-lf1-f45.google.com ([209.85.167.45]:37424 "EHLO
+        mail-lf1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232633AbhFHPS6 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 8 Jun 2021 11:18:58 -0400
+Received: by mail-lf1-f45.google.com with SMTP id f11so32509943lfq.4;
+        Tue, 08 Jun 2021 08:17:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=7Ue9KAC7qJaW16JeKkEn8iGR0sqX5WDTSVD1v13dL3I=;
-        b=Ukj+KDqPTO+UJF/BEvU3KpfMksSB2pQeL/ie4KKl0GFxijjAY4WcmnEWRNTrNrLOaR
-         2DHrxG3hpElAs9tZkRP0/ODEDEiC6gBkFv1fpWSr0VMyY7wW+JPwAEbQgknDjgG5FmEo
-         C2wvMPYo0K8Hdm4wtWOlJdLDWExLKL+oPLeJuNCXcgWheReYp+hJQ3Gk/cpnchtoXzMC
-         MSJWVzuoQc288K3blzLLEYrZvkWVx/tozHUzTKd1zNF1LEZVXU3AhdpyoECle1vQ9J4I
-         DDzvd9CzYYUTtfAgl0L3+b5AR0owWjNGEWOzjTWwVPHec8hl8BwT/qF2uxq6svFYXSI9
-         Z3Kw==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=zJjno0GCLiJ1Wpy5d6vNiYTsroNaBojnKVhJM2jeaPE=;
+        b=f2SXJXdL2EoTZbnXJc5ZNNcyGU1be8IDSyTDuPTR5Hu2zccbhzOO2HDfGKOnQ6LSaW
+         r4Ioet75GnHkTla9LQTSdn6oTZfyC2UrpozRq+YGEbO2ah9lQixFmFA+QCFo/lmh7PrM
+         V9cJUdykDJBcHAT62RuZ6+I/FXZQ+LPeYmmHUQARZHPusrIr/W00VkgzxFRFelhkOvNa
+         Lp1EoBfg/JxZ8gJQi+nrfejZuE7hjRn2RjP4Q1b60oRL3befu8clZXZUylrLtO6FImJP
+         cpt+GHRGq9a//WgbD3rXZP7PPYI6EX8T/dt+XVN9UXog8YWKhLOTUnsnMDf1C3UtbMQl
+         52Yg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=7Ue9KAC7qJaW16JeKkEn8iGR0sqX5WDTSVD1v13dL3I=;
-        b=SFjFNZFiVrpqwenjvAKGX7UYwvnLExM7KirqKYJx0Ii45b0uuKrSiWAI4gfqOS9SQN
-         6nF5+iKy16kpqdKv3BJ8Uryd1A0de1YRFLF8BwC2xdWmfXyTONdR91ycHBi8WHde/77b
-         ZMvX8Okvy5PVlQ+10w/UkTYMTkJOOelFn0Ro34xwhBq5nl+0lJ5SS1vufB/f5eaGGTDB
-         kQV6YR20/a2Ka3ybeNJfYHcRaeNZww98VXe76Bs/Mp3LXTbY4wPL2NntasUlXcoUSCjw
-         TXSahPbIpI+LHUxo8RsRToprP+qyiwfJbdfxDwJOhYVFHLUt1EAG1AuqvQ1HyEwcQZer
-         FdDQ==
-X-Gm-Message-State: AOAM532jL7FGiFO9GWFjZwL7d3E+x7SAHdfZnylsWtKgHgYw9ooADppd
-        Ev1zMNiX97PpB8fs2LRogKE=
-X-Google-Smtp-Source: ABdhPJyNHULCu3Cz5QZT9AskYvCL9LY9HsQM39c8QCo5M9iEBotkmmSMw3983N23quI52NayDR2YUA==
-X-Received: by 2002:a5d:5987:: with SMTP id n7mr22858341wri.293.1623163027746;
-        Tue, 08 Jun 2021 07:37:07 -0700 (PDT)
-Received: from localhost ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id p5sm21015798wrd.25.2021.06.08.07.37.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Jun 2021 07:37:06 -0700 (PDT)
-Date:   Tue, 8 Jun 2021 16:38:48 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Will Deacon <will@kernel.org>
-List-Id: <soc.lore.kernel.org>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
-        arm@kernel.org, soc@kernel.org, linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Nicolin Chen <nicolinc@nvidia.com>,
-        Krishna Reddy <vdumpa@nvidia.com>, linux-tegra@vger.kernel.org,
-        iommu@lists.linux-foundation.org,
-        linux-arm-kernel@lists.infradead.org,
-        Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [GIT PULL] memory: Tegra memory controller for v5.14
-Message-ID: <YL+A+MPjjaa3nSwq@orome.fritz.box>
-References: <20210607084910.21024-1-krzysztof.kozlowski@canonical.com>
- <20210608120128.GB10174@willie-the-truck>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=zJjno0GCLiJ1Wpy5d6vNiYTsroNaBojnKVhJM2jeaPE=;
+        b=S30MMO3opnGKPmgPYHrU3cC6gGrjik9kD7Boweey86Ejvd0wmLgdcG25HKN/46eCxE
+         TgHe3H9B8YXVrEdiwnqRMeOIGnjkBuG/VAOinrNowzKH9xbXQYCcIcgXndrVGilPrvNN
+         AjYF0WD7fBz5JJl48OTYXHkf3Ww15CNe72uLG1l+tuFu8ohwuOIXs8z5q8NxLPReQCyZ
+         qRldPegncvFuL9lCJOauAl6w6QjuN4N+dW8bqUykxT+ukKvijavUhlLJdIc5437PQYod
+         0efIsIM0VfGNbKkupyZxvo0NTcVadREkZ6XlOTZR9ACoBYH+XHq+n7aPL9N5zbkMYY9o
+         Wk2A==
+X-Gm-Message-State: AOAM5331KJmUSceYB26JN7VlFWSG2Co9+bagGVKJcFwcT9tlj8bjEZ6f
+        n8z8zAKMvRDqAJuU1zeXC4pV6Mw/+d0=
+X-Google-Smtp-Source: ABdhPJwGJnMtasHUBLZti+fIPjXvhlJzI3nhr4uPfW38zL1FW95RiZVvVWWqxYRPI+fCH8B+SJhzAA==
+X-Received: by 2002:ac2:551d:: with SMTP id j29mr13402917lfk.319.1623165364140;
+        Tue, 08 Jun 2021 08:16:04 -0700 (PDT)
+Received: from [192.168.2.145] (94-29-21-60.dynamic.spd-mgts.ru. [94.29.21.60])
+        by smtp.googlemail.com with ESMTPSA id g28sm1939509lfv.142.2021.06.08.08.16.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 08 Jun 2021 08:16:03 -0700 (PDT)
+Subject: Re: [PATCH] spi: tegra20-slink: Ensure SPI controller reset is
+ deasserted
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jon Hunter <jonathanh@nvidia.com>
+Cc:     Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+References: <20210608071518.93037-1-jonathanh@nvidia.com>
+ <YL9eI8L32Tc8G7uF@orome.fritz.box>
+ <7b4707f7-b895-9e98-c92e-d1e10b11c3f7@nvidia.com>
+ <YL9tx7gMCccFBWob@orome.fritz.box>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <502a0259-447f-f7bf-a08d-34c18fd76c24@gmail.com>
+Date:   Tue, 8 Jun 2021 18:16:02 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="f7Os7LJ667BkQ0FG"
-Content-Disposition: inline
-In-Reply-To: <20210608120128.GB10174@willie-the-truck>
-User-Agent: Mutt/2.0.6 (98f8cb83) (2021-03-06)
+In-Reply-To: <YL9tx7gMCccFBWob@orome.fritz.box>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+08.06.2021 16:16, Thierry Reding пишет:
+>>> Unless perhaps if Mark applies this for v5.13, then we can merge the
+>>> clock patch for v5.14-rc1 since SPI is the only IP that seems to be
+>>> broken by that change.
+>> Yes that works too.
 
---f7Os7LJ667BkQ0FG
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Will be great if this SPI fix could be merged into 5.13. It took two
+kernel releases to fix the audio resets, so I prefer not to postpone the
+clk patch again.
 
-On Tue, Jun 08, 2021 at 01:01:29PM +0100, Will Deacon wrote:
-> Hi Krzysztof, Thierry,
->=20
-> On Mon, Jun 07, 2021 at 10:49:10AM +0200, Krzysztof Kozlowski wrote:
-> > Hi Thierry and Will,
-> >=20
-> > This is the pull for you to base further SMMU aptches (prevent early SM=
-MU
-> > faults).
->=20
-> This is a tonne of code for me to pull into the SMMU tree given that I on=
-ly
-> want one patch!
->=20
-> Thierry, if I just stick:
->=20
-> https://lore.kernel.org/r/20210603164632.1000458-4-thierry.reding@gmail.c=
-om
->=20
-> on its own branch, can you stitch together whatever you need?
+>>>> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+>>>> ---
+>>>>  drivers/spi/spi-tegra20-slink.c | 5 +++++
+>>>>  1 file changed, 5 insertions(+)
+>>>>
+>>>> diff --git a/drivers/spi/spi-tegra20-slink.c b/drivers/spi/spi-tegra20-slink.c
+>>>> index f7c832fd4003..6a726c95ac7a 100644
+>>>> --- a/drivers/spi/spi-tegra20-slink.c
+>>>> +++ b/drivers/spi/spi-tegra20-slink.c
+>>>> @@ -1118,6 +1118,11 @@ static int tegra_slink_probe(struct platform_device *pdev)
+>>>>  		pm_runtime_put_noidle(&pdev->dev);
+>>>>  		goto exit_pm_disable;
+>>>>  	}
+>>>> +
+>>>> +	reset_control_assert(tspi->rst);
+>>>> +	udelay(2);
+>>>> +	reset_control_deassert(tspi->rst);
+>>>> +
+>>> I wonder if this doesn't break now again on suspend/resume. Should we
+>>> perhaps move this into tegra_slink_runtime_resume()? Or better yet, move
+>>> the reset_control_assert() into tegra_slink_runtime_suspend() and the
+>>> reset_control_deassert() into tegra_slink_runtime_resume(). That should
+>>> ensure the device's reset is always deasserted when runtime resumed.
+>> So we do test suspend/resume on Cardhu and I have seen no issues with
+>> this applied. At first I did put this in the runtime_suspend/resume
+>> handlers, but then looking at what is done in spi-tegra114.c it appears
+>> we just do this on probe. See ...
+>>
+>> commit 019194933339b3e9b486639c8cb3692020844d65
+>> Author: Sowjanya Komatineni <skomatineni@nvidia.com>
+>> Date:   Tue Mar 26 22:56:32 2019 -0700
+>>
+>>     spi: tegra114: reset controller on probe
+>>
+>> I guess moving it to the runtime_suspend/resume handlers would be more
+>> consistent with the previous code. What do you think?
+> Do we test that SPI is still functional after suspend/resume? If it is,
+> I have no objection to this patch. I think making this part of runtime
+> suspend/resume would be a bit more correct or robust, but it's also a
+> bit more complicated and might introduce other problems. For example,
+> I suspect that if we reset on runtime suspend/resume, we would likely
+> need to reprogram the SLINK_COMMAND* registers as well.
 
-I'm not sure I understand what you're proposing. For reference, here's
-the set of patches that I sent out:
-
-  1. memory: tegra: Implement SID override programming
-  2. dt-bindings: arm-smmu: Add Tegra186 compatible string
-  3. iommu/arm-smmu: Implement ->probe_finalize()
-  4. iommu/arm-smmu: tegra: Detect number of instances at runtime
-  5. iommu/arm-smmu: tegra: Implement SID override programming
-  6. iommu/arm-smmu: Use Tegra implementation on Tegra186
-  7. arm64: tegra: Use correct compatible string for Tegra186 SMMU
-  8. arm64: tegra: Hook up memory controller to SMMU on Tegra186
-  9. arm64: tegra: Enable SMMU support on Tegra194
-
-Krzysztof already picked up patch 1 and I was assuming that you'd pick
-up 2-6 because they are to the ARM SMMU driver. However, if you're
-primarily interested in just patch 3, which is more "core" ARM SMMU than
-the rest, which are Tegra-specific, then I suppose what we could do is
-for you to give an Acked-by on the rest (2, 4-6) and then Krzysztof or I
-can pick them up and take them via ARM SoC, based on the stable branch
-=66rom your tree that only has patch 3.
-
-Patch 6 touches arm-smmu-impl.c, though it's a two-line change that
-touches only the Tegra-specific matching bit in arm_smmu_impl_init(), so
-the likelihood of that conflicting with anything else is fairly small.
-
-Is that what you were proposing?
-
-Thierry
-
---f7Os7LJ667BkQ0FG
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmC/gPUACgkQ3SOs138+
-s6Gn5Q//XR1WBSTbtSwOrKQWuPDV7tOFjf6dfJEWfhiXlkB+CMwEWcejemQGS1He
-S9BFx8JjoV2ILf/+qWqgdtP8M8+mMLoIfhPqrfoV0bHI1leo15FN3+NbbveW6lHo
-7T7ZN6GC7AYC5OyQcQ4tF3GecV4U/d8sNUk/LPgLsR8ZLZTFm3ffemOkSC+pYPn9
-PtsN2+mpA+Nz8vIhKdA7pnFWb8ctXMndexyeY+Us669c1uKPvAqsK2Y87hl2EU81
-HYYVh/5VDp7VGgSMZG2mMiMTFnAKD2pKGTa+W2SqM958xjy7H0I8Fo/nifKOxc89
-mWdC56GwCPMjtJgXFtleInwK1gv0Vu6YuhH63XTcT5pjClgDaiYsiYdDU9kkzmeL
-qq6QdC0BrzEzeOByhzL5loeRoRja1xQxjBDXcE2zHpSqaXU+pQfAKELDfu1uYCKV
-3AUTN6HrUk+btr/7sSPHstUZqsTX6/VuMggMhnJQy25rFejJb0MWoe+C8U1MCtFh
-Ab6Nrp6mbJvf2YgMKLrwn1WbmVXd4pUxI7pMwoPRnfjdWJc1C95d8/wIHCsgI+KH
-aWasonEd33phX1sPzS0CucADcNfY4PaIkpbW+aM0w3qHdTmS05avnaU/5w2aRpZe
-3C5wVdVJffpcBjokYeVnVDm33uORvTdnFZeE7WvcVEUynZl84A4=
-=dmMX
------END PGP SIGNATURE-----
-
---f7Os7LJ667BkQ0FG--
+We don't support LP0 suspend state for older Tegra SoCs where hardware
+state is lost after suspending. Lot's of device drivers don't do
+suspend/resume properly. Fixing suspend/resume should be a separate
+patch, IMO.
