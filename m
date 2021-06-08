@@ -2,142 +2,726 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-18.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28BFBC47082
-	for <linux-tegra@archiver.kernel.org>; Tue,  8 Jun 2021 10:38:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A97EC4743F
+	for <linux-tegra@archiver.kernel.org>; Tue,  8 Jun 2021 10:50:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0E56B61263
-	for <linux-tegra@archiver.kernel.org>; Tue,  8 Jun 2021 10:38:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 235A26128A
+	for <linux-tegra@archiver.kernel.org>; Tue,  8 Jun 2021 10:50:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231501AbhFHKki (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 8 Jun 2021 06:40:38 -0400
-Received: from mail-bn8nam11on2086.outbound.protection.outlook.com ([40.107.236.86]:43104
-        "EHLO NAM11-BN8-obe.outbound.protection.outlook.com"
+        id S231995AbhFHKwD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 8 Jun 2021 06:52:03 -0400
+Received: from mail-mw2nam12on2046.outbound.protection.outlook.com ([40.107.244.46]:27520
+        "EHLO NAM12-MW2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S231283AbhFHKki (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 8 Jun 2021 06:40:38 -0400
+        id S231994AbhFHKwB (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 8 Jun 2021 06:52:01 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=c9qBzqlHKoYfPy8ZaZi6MIrZFy6FMpjxwLZuX9KQRop1lTKdDIjoAVhqKiGwUUMiTw3a6wyWn2u35ml1Dk8GltMJN+Lbhamu4AKl2KfGSAM4c2tvXGPXNQv9tLIvN0XfE5htZIOimXEdH0MhFr/yYMzZF9amFPSA1UYu8XMJLX7J4gILndlWqZLdxjLeNcOfDcKZ71OvMB69iIayyxKNT8zEoO0MFTIPzMwTTcUoXjEj+u84Y1JT98aH7HCULTwTWow/pSb3ATldHCrW6c7WM9YiPRfoQBULCFChRuGaUn3/kY2vHz10LA/3hr8oWuSpVsG0oOHe2X70IOTfUOGeug==
+ b=EQEufuuw2VA3z+qDb8/nLsNJSAfQKdwR7Y2S5S/JirwFB3CkDAae9hhHqQqZUh+M6/9u+aqg4yimauljUO+BUh3NBERwvGhat8uD4OxlkSVAGsWSahJVs6xcbyHn4FI+/5/AV6vMACVqoOAPlcLUHqu3mjrv3n8ql+II7ERxbMEkk1crI76Pfqa81trpjM/q1Zvmte1tUR0aMatBD62XY5uEBQC+7G6Hd6D+1+3L0AwJ2v79QsqLxaQqLsgR3X8AujlZWVkSwf2X71x4T80WM+7hkl+BZECjswn1kJG4RgaCQ3DAS60cl/A703L7QiPkePyD/YfICsvaSnRLUGNunQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LCZq4ykMjVmKZEB1toYi/uNgfrttYiIHJ7H45pLZnLQ=;
- b=lQE7FzUgtnvTsA8ee1c2Sp1Hsrb8ZU5oRNjFQxrvhRfCMLWD14FnJGqYqsL4myRIsmhcXybLP+eF8rp9YGvq9lkmsuTs2LLOefPaYz+xDCwG+SqCq5x61EwPm4/rE0je6eQ/zKa5sYF6JmoiS550qHoQGDXNJIkPbsUA8tEM1MnaMnjOiE3Qr9M1EUYJvkXefGnLhu7Av0syuenSq8VBcw6QKEAVWiaVFNFt2SC51I7M7shkSAYx3R8+PD4NVC1iUSB7pOCNmIRimTYk1X4xuluD+5ghSzldDOR2SbX4ybQO+dT0TyFzAdZLB42uMK7tnzY3CkmUqC1s9ZWtq22/2w==
+ bh=MITPOn1uhPc8mNxQrzMWUp/kmhBipqgLsuyP6qsXBWk=;
+ b=NQPYv9GKPEACQORKlUNJCiVw8F8i9iFKVADfkbsClLmNd0NCv07iailN/YfbJSa5TxtHV8mvaMsP+xOD+Emn6YcV51hq8284MuLLDb6WfMCfPOIneb+uGotEhvMdJ1RjPSqzJKvIeJxo8nfrpxxcBuYMjF3VQn93JvgSubbCDrlYZ20FmXzQwk11rB9EsGO31ijuEVODbLSuc0sHI2H8NWb0weswpXrWVtWjt9HYvsMUCPWDMuLGBxI4fGqJiKlcw5RdXDXksGUo5Rf4lxh5hUfrkTT2daY5QFNDgdp+0JqXC34hEB0zHAFrHn6GoVOpdf4kRZ3X6tqdNmHYK40/AA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.112.34) smtp.rcpttodomain=arm.com smtp.mailfrom=nvidia.com;
+ 216.228.112.32) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
  dmarc=pass (p=none sp=none pct=100) action=none header.from=nvidia.com;
  dkim=none (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LCZq4ykMjVmKZEB1toYi/uNgfrttYiIHJ7H45pLZnLQ=;
- b=TlqBv6ubYYyJURqbGk88caoCWy4c7F7a2VxyLEFVeRIbJ054wqg6t+KBvwR6Gk1gHU426Y773XxHsyXmLsT9VvSS7Rp4NyWau0ts0b0pFySZmwHLNX50/mDbc1s+2H3HZeD10XT4Azbp9aGPLCZYx2taJqQiqvMgEdWqKpTGigLk933XpdzMIxvfDJVWuNqQ1q/S8iWysEyF2DH9V+M0rgxWubkOI46I2n4ofJ0Ywj4i0I13/vPSe6wQ3+zGVwjyg+xEJ+0lVp/XErWdanEw44wbIQ0FdFyDNQjh0fCVTjHKf51cM7OLD6R2Mun/Ye7+29RJFm6kRygAJbA4IFcEqw==
-Received: from BN6PR21CA0019.namprd21.prod.outlook.com (2603:10b6:404:8e::29)
- by BN6PR12MB1345.namprd12.prod.outlook.com (2603:10b6:404:18::19) with
+ bh=MITPOn1uhPc8mNxQrzMWUp/kmhBipqgLsuyP6qsXBWk=;
+ b=WsgykVyBxxpFa5/kCnjvXK8iFA+NXAFJXRGhnUrTnYChvWpri0lTi+BTT/2ZQVxzvc/1yqrtcjKtN1w0aWOt0L8qTQqWa5w4oo1oCdIw7cIeFZ7y9471F/RIdMcqWhr6VsfwNaQe+atdDy0G4Fb/NdIrxObvhu2StMVO/KKEQoqoiND3NRUrkMQRwWLpn+QQOlk4qNOfTZO6FVAxiY2vI3TGilVCk3/Og9RWr99YD7g1fZMHfkTShtSare/jXOjKJ3EvpISVu/dOt9a3rBJLbsq4xJ9q8AT9u6I8Kds8ylDn9V9r985tCkJOvGBZjzA9IhC38FND5mIxbBCeH+jEHw==
+Received: from DM5PR21CA0062.namprd21.prod.outlook.com (2603:10b6:3:129::24)
+ by BYAPR12MB2808.namprd12.prod.outlook.com (2603:10b6:a03:69::24) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4195.22; Tue, 8 Jun
- 2021 10:38:44 +0000
-Received: from BN8NAM11FT055.eop-nam11.prod.protection.outlook.com
- (2603:10b6:404:8e:cafe::92) by BN6PR21CA0019.outlook.office365.com
- (2603:10b6:404:8e::29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4219.20; Tue, 8 Jun
+ 2021 10:50:06 +0000
+Received: from DM6NAM11FT006.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:3:129:cafe::a9) by DM5PR21CA0062.outlook.office365.com
+ (2603:10b6:3:129::24) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4242.4 via Frontend
- Transport; Tue, 8 Jun 2021 10:38:44 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.34)
- smtp.mailfrom=nvidia.com; arm.com; dkim=none (message not signed)
- header.d=none;arm.com; dmarc=pass action=none header.from=nvidia.com;
+ Transport; Tue, 8 Jun 2021 10:50:06 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.32)
+ smtp.mailfrom=nvidia.com; gmail.com; dkim=none (message not signed)
+ header.d=none;gmail.com; dmarc=pass action=none header.from=nvidia.com;
 Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.112.34 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.112.34; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (216.228.112.34) by
- BN8NAM11FT055.mail.protection.outlook.com (10.13.177.62) with Microsoft SMTP
+ 216.228.112.32 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.112.32; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (216.228.112.32) by
+ DM6NAM11FT006.mail.protection.outlook.com (10.13.173.104) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.4195.22 via Frontend Transport; Tue, 8 Jun 2021 10:38:44 +0000
-Received: from [10.25.75.134] (172.20.187.6) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Tue, 8 Jun
- 2021 10:38:40 +0000
-Subject: Re: [PATCH V2 5/5] PCI: tegra: Cleanup unused code
-To:     Om Prakash Singh <omp@nvidia.com>, <kw@linux.com>,
-        <helgaas@kernel.org>, <lorenzo.pieralisi@arm.com>,
-        <bhelgaas@google.com>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>
-CC:     <linux-tegra@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kthota@nvidia.com>,
-        <mmaddireddy@nvidia.com>
-References: <20210606082204.14222-1-omp@nvidia.com>
- <20210606082204.14222-6-omp@nvidia.com>
-From:   Vidya Sagar <vidyas@nvidia.com>
-Message-ID: <b72e09de-68ee-6ed3-3114-9a19779cb601@nvidia.com>
-Date:   Tue, 8 Jun 2021 16:08:37 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+ 15.20.4195.22 via Frontend Transport; Tue, 8 Jun 2021 10:50:06 +0000
+Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL109.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Tue, 8 Jun
+ 2021 03:50:03 -0700
+Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Tue, 8 Jun
+ 2021 10:50:03 +0000
+Received: from audio.nvidia.com (172.20.187.6) by mail.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Tue, 8 Jun 2021 10:50:01 +0000
+From:   Sameer Pujar <spujar@nvidia.com>
+To:     <thierry.reding@gmail.com>, <robh+dt@kernel.org>
+CC:     <jonathanh@nvidia.com>, <linux-tegra@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Sameer Pujar <spujar@nvidia.com>
+Subject: [PATCH] arm64: tegra: Audio graph sound card for Jetson Xavier NX
+Date:   Tue, 8 Jun 2021 16:19:48 +0530
+Message-ID: <1623149388-11995-1-git-send-email-spujar@nvidia.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-In-Reply-To: <20210606082204.14222-6-omp@nvidia.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [172.20.187.6]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 4a939b42-ee36-4ee0-969e-08d92a699700
-X-MS-TrafficTypeDiagnostic: BN6PR12MB1345:
-X-Microsoft-Antispam-PRVS: <BN6PR12MB1345DA8880CB16AB026BBF6CB8379@BN6PR12MB1345.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:327;
+X-MS-Office365-Filtering-Correlation-Id: f298f897-cf2e-4195-8a30-08d92a6b2db6
+X-MS-TrafficTypeDiagnostic: BYAPR12MB2808:
+X-Microsoft-Antispam-PRVS: <BYAPR12MB2808A258A37A9123C43ACD68A7379@BYAPR12MB2808.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:773;
 X-MS-Exchange-SenderADCheck: 1
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: wuROlBHbUm5aHG+eUFEEYNyI8BLY6sXX21iU1OzWKMjcH8RG+qGpKWEENA7cVG/65tJqQIpi6LxI6lF24xQBGQye/Sn7JEakzUXGpvBS8ArF36dNEKvcLqBoNjj3aG9Bf0vJrfEtDkkSIeS6l8lDIvVfhsCAoYaNHkNS3P9oEn+NmqiZXRbZoY8FxRtVnXO1J8ld2Oc1JQZVjkW6P9OI3OED27jGgdS0H1jRNgm62QEpPMU+WbmzbsVhI/grOh/zKBLwEqc/IAFpzR8RhGFjXdG5MTLW2DQzNCYY8Ck/0wvduwYu9VoeV+HDl2bq6H2V7HvJpherqG+Oz17viQwKU2CZaQc/VrhugeOMyz9JEIf7ZHtKlfm76t3e1O7LmNJXhbqoDsrbupXSrlxVgnW17i4ySJbq3T8GBfWtrjUDKsxyvxva/9J/5nNMrilJnySUGsTe7RqpAc5PYpiNWlqm7LQXEaP3fA7+W2fkMIVSb4P6AFqFJC/R84xwszCK1dL6X3R9FQgPh/z/mPpx7N3ev5tjiy52cfkwkTJ2OmUy4jT9sFzYLuLB0RAscQQ7agA5VwrizYb57M65CpyGHx/fwQpJhgvIl5aCITpJA2bSISLSId8Ab3hO2p5iH5QOcbmGIeBoHvp9M2dHgI9gzsOqhCeQ52ePcW67D2UmZPOtvV+j4s8/VYl7sWnMphtO8kp7
-X-Forefront-Antispam-Report: CIP:216.228.112.34;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid03.nvidia.com;CAT:NONE;SFS:(4636009)(396003)(39860400002)(376002)(346002)(136003)(46966006)(36840700001)(6636002)(2906002)(16576012)(31686004)(82740400003)(26005)(107886003)(7636003)(478600001)(36906005)(316002)(8936002)(36756003)(110136005)(83380400001)(4326008)(82310400003)(53546011)(70206006)(16526019)(70586007)(356005)(5660300002)(336012)(36860700001)(186003)(47076005)(31696002)(6666004)(54906003)(426003)(2616005)(8676002)(4744005)(86362001)(43740500002);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: CsSz+8nqeOkhH6FJQyA7MPChSY12hGy6vbuXaax1sgDPHIT/QkAkvMNcN1pZo+QOtQaImmxupjYmd+Yk/OI604ynoyLBtXulxmrsJSTrOvuUnafKjJ+wfxTRAdndx3WYNu5hFIkiSI8s3hPSgFBwSAvRC4Rw8xGCkOFW6Bn+XZYBBEhdpl0EoBGK/IfPNYvZGVNYFsUS3ljhPv/yAoDlTWhPn4bT2FOXuiJgpwLSigxvEhATz8XmR+SsTi9IRF9AsPj977xCrnP8xGQhOi2BCdHkyIIycPWjnNdG1wx0dczvkUhqlGNiS4cjSUrQmqfHhl0cWY2/9saPp3s/S16jEtlAjwugZoTkK4WC1/WAqnezxXW7nxkwmJQNa2OnMbSYQ0O6sjGtg0mRhleuZag/bMK41dEJLktn6xoZ/UhEklxl4pHPwFV5BHS+RcYxPW5DSmDYprNAlj+d3wI2eciVV54/4DfjTIrMnvOy8ctPBo+FtrdqehvU2UUWrk/9tT7FSoNPcNTA4Xi2P/tUDAcN4F8IN4dBIpAHDqk70IkyaOKBJsFqh1VW60TeIqSkIsyWxNvUrxEr0nodLIbPU2Erl4wFdmbgZ7simqj+Ij7AalHw2m4O6THa5/pK7iOwooZBRPzmx/GUzWFniT/azaOECw==
+X-Forefront-Antispam-Report: CIP:216.228.112.32;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid01.nvidia.com;CAT:NONE;SFS:(4636009)(136003)(396003)(376002)(346002)(39860400002)(46966006)(36840700001)(478600001)(36860700001)(7636003)(426003)(6666004)(86362001)(54906003)(110136005)(82740400003)(5660300002)(7696005)(186003)(8936002)(70206006)(36756003)(356005)(70586007)(2616005)(8676002)(26005)(2906002)(47076005)(4326008)(107886003)(316002)(82310400003)(336012);DIR:OUT;SFP:1101;
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jun 2021 10:38:44.0987
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jun 2021 10:50:06.5251
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4a939b42-ee36-4ee0-969e-08d92a699700
+X-MS-Exchange-CrossTenant-Network-Message-Id: f298f897-cf2e-4195-8a30-08d92a6b2db6
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.34];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT055.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.32];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT006.eop-nam11.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR12MB1345
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR12MB2808
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+Enable support for audio-graph based sound card on Jetson Xavier NX.
+Following I/O interfaces are enabled.
+  - I2S3 and I2S5
+  - DMIC1, DMIC2 and DMIC4
+  - DSPK1 and DSPK2
 
+Signed-off-by: Sameer Pujar <spujar@nvidia.com>
+---
+ .../arm64/boot/dts/nvidia/tegra194-p3509-0000.dtsi | 593 +++++++++++++++++++++
+ 1 file changed, 593 insertions(+)
 
-On 6/6/2021 1:52 PM, Om Prakash Singh wrote:
-> Remove unused code from function tegra_pcie_config_ep.
-> 
-> Signed-off-by: Om Prakash Singh <omp@nvidia.com>
-> ---
-> 
-> Changes in V2:
-> 	- No change
-> 
->   drivers/pci/controller/dwc/pcie-tegra194.c | 7 -------
->   1 file changed, 7 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
-> index ae4c0a29818d..e9d573c850dd 100644
-> --- a/drivers/pci/controller/dwc/pcie-tegra194.c
-> +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-> @@ -2045,13 +2045,6 @@ static int tegra_pcie_config_ep(struct tegra_pcie_dw *pcie,
->   		return ret;
->   	}
->   
-> -	name = devm_kasprintf(dev, GFP_KERNEL, "tegra_pcie_%u_ep_work",
-> -			      pcie->cid);
-> -	if (!name) {
-> -		dev_err(dev, "Failed to create PCIe EP work thread string\n");
-> -		return -ENOMEM;
-> -	}
-> -
->   	pm_runtime_enable(dev);
->   
->   	ret = dw_pcie_ep_init(ep);
-> 
-Acked-by: Vidya Sagar <vidyas@nvidia.com>
+diff --git a/arch/arm64/boot/dts/nvidia/tegra194-p3509-0000.dtsi b/arch/arm64/boot/dts/nvidia/tegra194-p3509-0000.dtsi
+index a717d2b..836a7e0 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra194-p3509-0000.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra194-p3509-0000.dtsi
+@@ -15,6 +15,577 @@
+ 			interrupt-controller@2a40000 {
+ 				status = "okay";
+ 			};
++
++			ahub@2900800 {
++				status = "okay";
++
++				ports {
++					#address-cells = <1>;
++					#size-cells = <0>;
++
++					port@0 {
++						reg = <0x0>;
++
++						xbar_admaif0_ep: endpoint {
++							remote-endpoint = <&admaif0_ep>;
++						};
++					};
++
++					port@1 {
++						reg = <0x1>;
++
++						xbar_admaif1_ep: endpoint {
++							remote-endpoint = <&admaif1_ep>;
++						};
++					};
++
++					port@2 {
++						reg = <0x2>;
++
++						xbar_admaif2_ep: endpoint {
++							remote-endpoint = <&admaif2_ep>;
++						};
++					};
++
++					port@3 {
++						reg = <0x3>;
++
++						xbar_admaif3_ep: endpoint {
++							remote-endpoint = <&admaif3_ep>;
++						};
++					};
++
++					port@4 {
++						reg = <0x4>;
++
++						xbar_admaif4_ep: endpoint {
++							remote-endpoint = <&admaif4_ep>;
++						};
++					};
++
++					port@5 {
++						reg = <0x5>;
++
++						xbar_admaif5_ep: endpoint {
++							remote-endpoint = <&admaif5_ep>;
++						};
++					};
++
++					port@6 {
++						reg = <0x6>;
++
++						xbar_admaif6_ep: endpoint {
++							remote-endpoint = <&admaif6_ep>;
++						};
++					};
++
++					port@7 {
++						reg = <0x7>;
++
++						xbar_admaif7_ep: endpoint {
++							remote-endpoint = <&admaif7_ep>;
++						};
++					};
++
++					port@8 {
++						reg = <0x8>;
++
++						xbar_admaif8_ep: endpoint {
++							remote-endpoint = <&admaif8_ep>;
++						};
++					};
++
++					port@9 {
++						reg = <0x9>;
++
++						xbar_admaif9_ep: endpoint {
++							remote-endpoint = <&admaif9_ep>;
++						};
++					};
++
++					port@a {
++						reg = <0xa>;
++
++						xbar_admaif10_ep: endpoint {
++							remote-endpoint = <&admaif10_ep>;
++						};
++					};
++
++					port@b {
++						reg = <0xb>;
++
++						xbar_admaif11_ep: endpoint {
++							remote-endpoint = <&admaif11_ep>;
++						};
++					};
++
++					port@c {
++						reg = <0xc>;
++
++						xbar_admaif12_ep: endpoint {
++							remote-endpoint = <&admaif12_ep>;
++						};
++					};
++
++					port@d {
++						reg = <0xd>;
++
++						xbar_admaif13_ep: endpoint {
++							remote-endpoint = <&admaif13_ep>;
++						};
++					};
++
++					port@e {
++						reg = <0xe>;
++
++						xbar_admaif14_ep: endpoint {
++							remote-endpoint = <&admaif14_ep>;
++						};
++					};
++
++					port@f {
++						reg = <0xf>;
++
++						xbar_admaif15_ep: endpoint {
++							remote-endpoint = <&admaif15_ep>;
++						};
++					};
++
++					port@10 {
++						reg = <0x10>;
++
++						xbar_admaif16_ep: endpoint {
++							remote-endpoint = <&admaif16_ep>;
++						};
++					};
++
++					port@11 {
++						reg = <0x11>;
++
++						xbar_admaif17_ep: endpoint {
++							remote-endpoint = <&admaif17_ep>;
++						};
++					};
++
++					port@12 {
++						reg = <0x12>;
++
++						xbar_admaif18_ep: endpoint {
++							remote-endpoint = <&admaif18_ep>;
++						};
++					};
++
++					port@13 {
++						reg = <0x13>;
++
++						xbar_admaif19_ep: endpoint {
++							remote-endpoint = <&admaif19_ep>;
++						};
++					};
++
++					xbar_i2s3_port: port@16 {
++						reg = <0x16>;
++
++						xbar_i2s3_ep: endpoint {
++							remote-endpoint = <&i2s3_cif_ep>;
++						};
++					};
++
++					xbar_i2s5_port: port@18 {
++						reg = <0x18>;
++
++						xbar_i2s5_ep: endpoint {
++							remote-endpoint = <&i2s5_cif_ep>;
++						};
++					};
++
++					xbar_dmic1_port: port@1a {
++						reg = <0x1a>;
++
++						xbar_dmic1_ep: endpoint {
++							remote-endpoint = <&dmic1_cif_ep>;
++						};
++					};
++
++					xbar_dmic2_port: port@1b {
++						reg = <0x1b>;
++
++						xbar_dmic2_ep: endpoint {
++							remote-endpoint = <&dmic2_cif_ep>;
++						};
++					};
++
++					xbar_dmic4_port: port@1d {
++						reg = <0x1d>;
++
++						xbar_dmic4_ep: endpoint {
++							remote-endpoint = <&dmic4_cif_ep>;
++						};
++					};
++
++					xbar_dspk1_port: port@1e {
++						reg = <0x1e>;
++
++						xbar_dspk1_ep: endpoint {
++							remote-endpoint = <&dspk1_cif_ep>;
++						};
++					};
++
++					xbar_dspk2_port: port@1f {
++						reg = <0x1f>;
++
++						xbar_dspk2_ep: endpoint {
++							remote-endpoint = <&dspk2_cif_ep>;
++						};
++					};
++				};
++
++				admaif@290f000 {
++					status = "okay";
++
++					ports {
++						#address-cells = <1>;
++						#size-cells = <0>;
++
++						admaif0_port: port@0 {
++							reg = <0x0>;
++
++							admaif0_ep: endpoint {
++								remote-endpoint = <&xbar_admaif0_ep>;
++							};
++						};
++
++						admaif1_port: port@1 {
++							reg = <0x1>;
++
++							admaif1_ep: endpoint {
++								remote-endpoint = <&xbar_admaif1_ep>;
++							};
++						};
++
++						admaif2_port: port@2 {
++							reg = <0x2>;
++
++							admaif2_ep: endpoint {
++								remote-endpoint = <&xbar_admaif2_ep>;
++							};
++						};
++
++						admaif3_port: port@3 {
++							reg = <0x3>;
++
++							admaif3_ep: endpoint {
++								remote-endpoint = <&xbar_admaif3_ep>;
++							};
++						};
++
++						admaif4_port: port@4 {
++							reg = <0x4>;
++
++							admaif4_ep: endpoint {
++								remote-endpoint = <&xbar_admaif4_ep>;
++							};
++						};
++
++						admaif5_port: port@5 {
++							reg = <0x5>;
++
++							admaif5_ep: endpoint {
++								remote-endpoint = <&xbar_admaif5_ep>;
++							};
++						};
++
++						admaif6_port: port@6 {
++							reg = <0x6>;
++
++							admaif6_ep: endpoint {
++								remote-endpoint = <&xbar_admaif6_ep>;
++							};
++						};
++
++						admaif7_port: port@7 {
++							reg = <0x7>;
++
++							admaif7_ep: endpoint {
++								remote-endpoint = <&xbar_admaif7_ep>;
++							};
++						};
++
++						admaif8_port: port@8 {
++							reg = <0x8>;
++
++							admaif8_ep: endpoint {
++								remote-endpoint = <&xbar_admaif8_ep>;
++							};
++						};
++
++						admaif9_port: port@9 {
++							reg = <0x9>;
++
++							admaif9_ep: endpoint {
++								remote-endpoint = <&xbar_admaif9_ep>;
++							};
++						};
++
++						admaif10_port: port@a {
++							reg = <0xa>;
++
++							admaif10_ep: endpoint {
++								remote-endpoint = <&xbar_admaif10_ep>;
++							};
++						};
++
++						admaif11_port: port@b {
++							reg = <0xb>;
++
++							admaif11_ep: endpoint {
++								remote-endpoint = <&xbar_admaif11_ep>;
++							};
++						};
++
++						admaif12_port: port@c {
++							reg = <0xc>;
++
++							admaif12_ep: endpoint {
++								remote-endpoint = <&xbar_admaif12_ep>;
++							};
++						};
++
++						admaif13_port: port@d {
++							reg = <0xd>;
++
++							admaif13_ep: endpoint {
++								remote-endpoint = <&xbar_admaif13_ep>;
++							};
++						};
++
++						admaif14_port: port@e {
++							reg = <0xe>;
++
++							admaif14_ep: endpoint {
++								remote-endpoint = <&xbar_admaif14_ep>;
++							};
++						};
++
++						admaif15_port: port@f {
++							reg = <0xf>;
++
++							admaif15_ep: endpoint {
++								remote-endpoint = <&xbar_admaif15_ep>;
++							};
++						};
++
++						admaif16_port: port@10 {
++							reg = <0x10>;
++
++							admaif16_ep: endpoint {
++								remote-endpoint = <&xbar_admaif16_ep>;
++							};
++						};
++
++						admaif17_port: port@11 {
++							reg = <0x11>;
++
++							admaif17_ep: endpoint {
++								remote-endpoint = <&xbar_admaif17_ep>;
++							};
++						};
++
++						admaif18_port: port@12 {
++							reg = <0x12>;
++
++							admaif18_ep: endpoint {
++								remote-endpoint = <&xbar_admaif18_ep>;
++							};
++						};
++
++						admaif19_port: port@13 {
++							reg = <0x13>;
++
++							admaif19_ep: endpoint {
++								remote-endpoint = <&xbar_admaif19_ep>;
++							};
++						};
++					};
++				};
++
++				i2s@2901200 {
++					status = "okay";
++
++					ports {
++						#address-cells = <1>;
++						#size-cells = <0>;
++
++						port@0 {
++							reg = <0>;
++
++							i2s3_cif_ep: endpoint {
++								remote-endpoint = <&xbar_i2s3_ep>;
++							};
++						};
++
++						i2s3_port: port@1 {
++							reg = <1>;
++
++							i2s3_dap_ep: endpoint {
++								dai-format = "i2s";
++								/* Place holder for external Codec */
++							};
++						};
++					};
++				};
++
++				i2s@2901400 {
++					status = "okay";
++
++					ports {
++						#address-cells = <1>;
++						#size-cells = <0>;
++
++						port@0 {
++							reg = <0>;
++
++							i2s5_cif_ep: endpoint {
++								remote-endpoint = <&xbar_i2s5_ep>;
++							};
++						};
++
++						i2s5_port: port@1 {
++							reg = <1>;
++
++							i2s5_dap_ep: endpoint@0 {
++								dai-format = "i2s";
++								/* Place holder for external Codec */
++							};
++						};
++					};
++				};
++
++				dmic@2904000 {
++					status = "okay";
++
++					ports {
++						#address-cells = <1>;
++						#size-cells = <0>;
++
++						port@0 {
++							reg = <0>;
++
++							dmic1_cif_ep: endpoint {
++								remote-endpoint = <&xbar_dmic1_ep>;
++							};
++						};
++
++						dmic1_port: port@1 {
++							reg = <1>;
++
++							dmic1_dap_ep: endpoint {
++								/* Place holder for external Codec */
++							};
++						};
++					};
++				};
++
++				dmic@2904100 {
++					status = "okay";
++
++					ports {
++						#address-cells = <1>;
++						#size-cells = <0>;
++
++						port@0 {
++							reg = <0>;
++
++							dmic2_cif_ep: endpoint {
++								remote-endpoint = <&xbar_dmic2_ep>;
++							};
++						};
++
++						dmic2_port: port@1 {
++							reg = <1>;
++
++							dmic2_dap_ep: endpoint {
++								/* Place holder for external Codec */
++							};
++						};
++					};
++				};
++
++				dmic@2904300 {
++					status = "okay";
++
++					ports {
++						#address-cells = <1>;
++						#size-cells = <0>;
++
++						port@0 {
++							reg = <0>;
++
++							dmic4_cif_ep: endpoint {
++								remote-endpoint = <&xbar_dmic4_ep>;
++							};
++						};
++
++						dmic4_port: port@1 {
++							reg = <1>;
++
++							dmic4_dap_ep: endpoint {
++								/* Place holder for external Codec */
++							};
++						};
++					};
++				};
++
++				dspk@2905000 {
++					status = "okay";
++
++					ports {
++						#address-cells = <1>;
++						#size-cells = <0>;
++
++						port@0 {
++							reg = <0>;
++
++							dspk1_cif_ep: endpoint {
++								remote-endpoint = <&xbar_dspk1_ep>;
++							};
++						};
++
++						dspk1_port: port@1 {
++							reg = <1>;
++
++							dspk1_dap_ep: endpoint {
++								/* Place holder for external Codec */
++							};
++						};
++					};
++				};
++
++				dspk@2905100 {
++					status = "okay";
++
++					ports {
++						#address-cells = <1>;
++						#size-cells = <0>;
++
++						port@0 {
++							reg = <0>;
++
++							dspk2_cif_ep: endpoint {
++								remote-endpoint = <&xbar_dspk2_ep>;
++							};
++						};
++
++						dspk2_port: port@1 {
++							reg = <1>;
++
++							dspk2_dap_ep: endpoint {
++								/* Place holder for external Codec */
++							};
++						};
++					};
++				};
++			};
+ 		};
+ 
+ 		ddc: i2c@3190000 {
+@@ -265,6 +836,28 @@
+ 		regulator-boot-on;
+ 	};
+ 
++	sound {
++		compatible = "nvidia,tegra186-audio-graph-card";
++		status = "okay";
++
++		dais = /* ADMAIF (FE) Ports */
++		       <&admaif0_port>, <&admaif1_port>, <&admaif2_port>, <&admaif3_port>,
++		       <&admaif4_port>, <&admaif5_port>, <&admaif6_port>, <&admaif7_port>,
++		       <&admaif8_port>, <&admaif9_port>, <&admaif10_port>, <&admaif11_port>,
++		       <&admaif12_port>, <&admaif13_port>, <&admaif14_port>, <&admaif15_port>,
++		       <&admaif16_port>, <&admaif17_port>, <&admaif18_port>, <&admaif19_port>,
++		       /* XBAR Ports */
++		       <&xbar_i2s3_port>, <&xbar_i2s5_port>,
++		       <&xbar_dmic1_port>, <&xbar_dmic2_port>, <&xbar_dmic4_port>,
++		       <&xbar_dspk1_port>, <&xbar_dspk2_port>,
++		       /* BE I/O Ports */
++		       <&i2s3_port>, <&i2s5_port>,
++		       <&dmic1_port>, <&dmic2_port>, <&dmic4_port>,
++		       <&dspk1_port>, <&dspk2_port>;
++
++		label = "NVIDIA Jetson Xavier NX APE";
++	};
++
+ 	thermal-zones {
+ 		cpu {
+ 			polling-delay = <0>;
+-- 
+2.7.4
+
