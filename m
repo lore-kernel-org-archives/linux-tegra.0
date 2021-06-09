@@ -2,193 +2,221 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 260D5C48BCF
-	for <linux-tegra@archiver.kernel.org>; Wed,  9 Jun 2021 16:58:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46BC7C48BCD
+	for <linux-tegra@archiver.kernel.org>; Wed,  9 Jun 2021 17:07:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0F420613C7
-	for <linux-tegra@archiver.kernel.org>; Wed,  9 Jun 2021 16:58:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 30B7A613D4
+	for <linux-tegra@archiver.kernel.org>; Wed,  9 Jun 2021 17:07:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231151AbhFIRAU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 9 Jun 2021 13:00:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43910 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229626AbhFIRAS (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 9 Jun 2021 13:00:18 -0400
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9ADFC06175F;
-        Wed,  9 Jun 2021 09:58:21 -0700 (PDT)
-Received: by mail-wm1-x32a.google.com with SMTP id t4-20020a1c77040000b029019d22d84ebdso4740481wmi.3;
-        Wed, 09 Jun 2021 09:58:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=LPZcUYkPSO1G9Scw6wuN7k1L83/gjShJz45DKE2h3Vw=;
-        b=fq1E5Yg6kO//k62W+a0n72IjuxqjxyWo0DKahVV/OY5GxnCjOkZa1RQ6DViBqQJ2w4
-         qoFaz+K1H/0zMidI+4MsQM4h1PltmefZAJIomoZL324PEdo40SSBfZVL2SOR5Y29skic
-         Fvr3NHKlbaCZm9p9REFbjR8bgy/eTtBdAnkdcC+Ue4meIeeEYyUdSP42BVyf0oHNHrlD
-         M8uemqAbSTJXkxTjatmw5MM9nkLvSVXPyHQ+LaCIpwwBfDXSuWecU7k8p92BlLpnQhjv
-         xEQ/5MIT2UhfwML2fKchY3lVa2v2lmZx4QkelCi9Js+4s3cb+77Yb7HQw0KLOQMvKh6g
-         VdfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=LPZcUYkPSO1G9Scw6wuN7k1L83/gjShJz45DKE2h3Vw=;
-        b=Dew1VC6VebYZVSk1zSSA0XwsMdEU3uC9yaM5PTehDoFNbnHs06d3DaTtHtufgbDanh
-         +JbXZACmpkcJsnRGoia6we6woXUYdrt5+x1sS4pF07G1P14wcCXfs4OjOj1IabnSD+9x
-         7sHXX5SYBozplFt4c33o/aI/4CRUFjaQU4BxGOW/mcBa1TrvvVOsoe2BttSgU8xMOwTN
-         K03uT/09CxYYG4NpS1Eg1xc3SnChenmvFFdhceCXcgoNDrVlzvDrHgzC3BmgR3xUeSlu
-         px80RzlA1aB4QxXxQi0HoYZaFqX+rpl0x/HZjx80ghkjG24PNnBXEn6HrUqEUfBhyxvB
-         OCwA==
-X-Gm-Message-State: AOAM532wy6/yIIb85xtm40WLQ76gOtdpW8uuwgAzBucjUrsfhsCqofmT
-        emOMiu/M42V3KluMY0IpeoI=
-X-Google-Smtp-Source: ABdhPJz4fXParEX2RlRjH8jPzx2kjKUPTrWE9TSE/A2MlXIRozdlBJF/0umNzW0FaATfo8kWiUkt8g==
-X-Received: by 2002:a05:600c:4ec8:: with SMTP id g8mr10698766wmq.62.1623257900500;
-        Wed, 09 Jun 2021 09:58:20 -0700 (PDT)
-Received: from localhost ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id l16sm7083014wmj.47.2021.06.09.09.58.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Jun 2021 09:58:19 -0700 (PDT)
-Date:   Wed, 9 Jun 2021 19:00:03 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Dmitry Osipenko <digetx@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] memory: tegra: Add missing dependencies
-Message-ID: <YMDzkyjaMhoJjMzL@orome.fritz.box>
-References: <20210609112806.3565057-1-thierry.reding@gmail.com>
- <20210609112806.3565057-2-thierry.reding@gmail.com>
- <0c762772-929e-2eb8-6568-4aa82ea2f9ad@gmail.com>
- <ee2846c0-9274-0888-90ac-dac72d2ab5fd@canonical.com>
+        id S230236AbhFIRJ3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 9 Jun 2021 13:09:29 -0400
+Received: from mail-bn7nam10on2049.outbound.protection.outlook.com ([40.107.92.49]:21473
+        "EHLO NAM10-BN7-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S229788AbhFIRJ2 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 9 Jun 2021 13:09:28 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=OUxQHRiA3KeGPmaI7weR9ZneZQAE5z+lrLYBjCtBYicJIaYzujy64TNyXbRK0/J95GOTiferHCp8iFxAjjfv2OA2/saJu/ZjNC20g4pigYx6IvbdUQp32TM3J9Azfjhf+gpOR55grx/be69K0+Sro9wpox07UWXPWu8pn9yrEXbk6YABpahKxfxv3GPiExVZWI6YLTu3JmPRS3+otvttCwbFS4j+Stt60HijMOMQMfDjnBSbXMK/teHOmozkrd+BRmhI/VPkPDqSjVW05E/cn+PXNDA0qzioefwwCvMDTTnmHlpO5c149MQXsVkApry61VXZrt2wYLrJiYpFFEW3Lw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=lxz8yOvzIkL3bfsemEEk5E3jJa4pmOrrYpsVfvvxqM8=;
+ b=nLhJtkA44w+2ZC/oFarrOebkayT/TBS0LbAGpTuHVpzqs8D0MMC94nD0yGGnhrjbd6XrseubJLlTOzEJ1HeZOOEdiQper12BZBN9z7G/woZQ4CL8kTeSrdGyuSSQqsdbAVf0FQUbaODZgQsI2N/yFhLdNBPiu2Zg9Sf9LIupaWwfh7f7nK3pieEF09D48kZzUDl/SLJkParGjE8fPoDd7myxrlylcgdexfgiDXyifHUeNSmo8E7+t64CKMu29pFYeU3fqvG09fPLUKlArwqpTBpMPWXZV9PKXdn8SFFGrBjFVUoWLjtolsnuvjj4qmMyexiPrFeu3DKmmuetMUWqng==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.112.34) smtp.rcpttodomain=google.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=lxz8yOvzIkL3bfsemEEk5E3jJa4pmOrrYpsVfvvxqM8=;
+ b=gxBa1GEWO6POsEra7+aEEiqfe/bm1AlRx1GiXbgMjX217Gw5LV5a8tvFqGW77gfy/XEZDdj8DdsshAggw8BdasmTJvknfypo4NE5eLFDMPi2RS2j7o7sL9Ly8y5eDNSbN0bfiWM3p/x2RTNMTMi4iA4lt71xkt4OOlsCBd52f4hH69/2KnYs06hGcR6Qb5W4XyndEQISJUKeyBRilXOb7TyiuYCcBUL/e7K526GhrxhFPgUS/EOn2KTPvcW7dHtbN1N0CBZeFBhNxyv8ov77I4ng7Gm5umh8QOWZCfGWxb2CvzPSNR8dn7/FwobubtLLbYM17PrkBgPSTjy3tTt3nA==
+Received: from MW4PR03CA0037.namprd03.prod.outlook.com (2603:10b6:303:8e::12)
+ by MW2PR12MB2410.namprd12.prod.outlook.com (2603:10b6:907:f::23) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4195.27; Wed, 9 Jun
+ 2021 17:07:30 +0000
+Received: from CO1NAM11FT036.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:303:8e:cafe::24) by MW4PR03CA0037.outlook.office365.com
+ (2603:10b6:303:8e::12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4219.21 via Frontend
+ Transport; Wed, 9 Jun 2021 17:07:30 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.34)
+ smtp.mailfrom=nvidia.com; google.com; dkim=none (message not signed)
+ header.d=none;google.com; dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.112.34 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.112.34; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (216.228.112.34) by
+ CO1NAM11FT036.mail.protection.outlook.com (10.13.174.124) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.4219.21 via Frontend Transport; Wed, 9 Jun 2021 17:07:30 +0000
+Received: from [10.26.49.10] (172.20.187.6) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Wed, 9 Jun
+ 2021 17:07:28 +0000
+Subject: Re: [PATCH V2] PCI: tegra: Fix building Tegra194 PCIe driver
+To:     Bjorn Helgaas <helgaas@kernel.org>
+CC:     Vidya Sagar <vidyas@nvidia.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        "Thierry Reding" <thierry.reding@gmail.com>,
+        =?UTF-8?Q?Krzysztof_Wilczy=c5=84ski?= <kw@linux.com>,
+        <linux-pci@vger.kernel.org>, <linux-tegra@vger.kernel.org>
+References: <20210609161842.GA2641672@bjorn-Precision-5520>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <21efef30-099b-9930-ba5c-9c030ea3414a@nvidia.com>
+Date:   Wed, 9 Jun 2021 18:07:26 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="L5qRBreJQ3rN4PcD"
-Content-Disposition: inline
-In-Reply-To: <ee2846c0-9274-0888-90ac-dac72d2ab5fd@canonical.com>
-User-Agent: Mutt/2.0.6 (98f8cb83) (2021-03-06)
+In-Reply-To: <20210609161842.GA2641672@bjorn-Precision-5520>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [172.20.187.6]
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 2113e4b2-4db6-4ee0-720a-08d92b69111d
+X-MS-TrafficTypeDiagnostic: MW2PR12MB2410:
+X-Microsoft-Antispam-PRVS: <MW2PR12MB2410FAA8687F00A0A77C8D9ED9369@MW2PR12MB2410.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:10000;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: qMyKMgMFmHt395BSLvwuEIxwKqDS41o2tBVCjmjoNEqR2s8OX44ONIJarjV6JypYAnTblSNubbCNNaG2FivIOSYWT+PvoDqVYPMhmNnexlsFTGYqsptpA8s78hzBMbx7WPn5d92r/qPE3Ofp/SNZX5G1AR4BvsIhOpDiqtOow7+rQvn0PpGPh0s1WlpYlwPM2mPjQUP9BpszScjPpyUfXDf7BGsD8S8nDuungRJ33nfKH0bj+KZQJ0ODhIW8gD5qjFe7pKLAP+H5SRCSKLHGtMxatIRlrdyXJxo0y+De07qtN/xIXvShOJcAyHGVlr126OJLPVW4m+QOZTkH+I6YoaKcSW7OtphmCjbNvCY1/kUI07kNd1rxeWDPh1yW2uYbhAFNofcH6yJmZMalaPsxENluxizd5PAvotNqxZelUDzqQlGv8EBXmoB6RYJtctH8kW0THlywr4dwYfjFp63foeL5DFiM92CQfOlZFHWuivr/iOjGGtB8MK25Gt3Cvkcx31/8YIPyeS5PKaSm/C4daWZReXuui6WDgknHDGIPw4Iku05v4wqltkE3U6soKt3J2iko7PygTfpW1H3Y97aYT8Qk68gUHYxG8PwR1Wwo+dgyL4lTEU4mgNUZd4Zey1XKOoGgaq02VW/NKI9mVyPg1RxrUVBNqYHn2V+nzpRBXYBjaBn0yX8v2wTLdNdS2mvZ
+X-Forefront-Antispam-Report: CIP:216.228.112.34;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid03.nvidia.com;CAT:NONE;SFS:(4636009)(396003)(346002)(136003)(376002)(39860400002)(36840700001)(46966006)(54906003)(26005)(8676002)(8936002)(6916009)(16576012)(36756003)(316002)(36906005)(186003)(16526019)(82310400003)(31686004)(86362001)(82740400003)(4326008)(478600001)(2616005)(426003)(356005)(5660300002)(7636003)(53546011)(36860700001)(70586007)(70206006)(31696002)(2906002)(336012)(83380400001)(47076005)(43740500002);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jun 2021 17:07:30.7339
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2113e4b2-4db6-4ee0-720a-08d92b69111d
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.34];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT036.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW2PR12MB2410
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---L5qRBreJQ3rN4PcD
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 09/06/2021 17:18, Bjorn Helgaas wrote:
+> On Tue, Jun 08, 2021 at 09:11:27PM +0100, Jon Hunter wrote:
+>> On 08/06/2021 19:34, Vidya Sagar wrote:
+>>
+>> ...
+>>
+>>>>> What is the purpose of PCIE_TEGRA194_EP (added by c57247f940e8 ("PCI:
+>>>>> tegra: Add support for PCIe endpoint mode in Tegra194") [1])?  I don't
+>>>>> see any reference to it in a makefile or a source file.
+>>>>>
+>>>>> It looks like one can build a single driver that works in either host
+>>>>> or endpoint mode, depending on whether a DT node matches
+>>>>> "nvidia,tegra194-pcie" or "nvidia,tegra194-pcie-ep".
+>>>>>
+>>>>> So I think PCIE_TEGRA194_EP is superfluous and should be removed and
+>>>>> you should have a single tristate Kconfig option.
+>>>>
+>>>> This is a good point.
+>>>>
+>>>> Sagar, any reason for this?
+>>> Although it is the same driver that works for both HOST mode and EP
+>>> mode, PCIE_TEGRA194_EP depends on PCI_ENDPOINT whereas the
+>>> PCIE_TEGRA194_HOST mode doesn't. Similarly the PCIE_TEGRA194_HOST mode
+>>> depends on PCI_MSI_IRQ_DOMAIN which PCIE_TEGRA194_EP doesn't depend on.
+>>> It is possible to have end point mode support disabled (at sub-system
+>>> level) in the system yet pcie-tegra194 can be compiled for the host mode
+>>> vice-a-versa for the endpoint mode.
+>>> Hence, appropriate config HOST/EP needs to be selected to make sure that
+>>> the rest of the dependencies are enabled in the system.
+>>> Hope I'm able to give the rationale correctly here.
+>>
+>> Yes but should we combine them like this ...
+>>
+>> diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
+>> index 423d35872ce4..206455a9b70d 100644
+>> --- a/drivers/pci/controller/dwc/Kconfig
+>> +++ b/drivers/pci/controller/dwc/Kconfig
+>> @@ -254,15 +254,12 @@ config PCI_MESON
+>>           implement the driver.
+>>  
+>>  config PCIE_TEGRA194
+>> -       tristate
+>> -
+>> -config PCIE_TEGRA194_HOST
+>> -       tristate "NVIDIA Tegra194 (and later) PCIe controller - Host Mode"
+>> +       tristate "NVIDIA Tegra194 (and later) PCIe controller"
+>>         depends on ARCH_TEGRA_194_SOC || COMPILE_TEST
+>> -       depends on PCI_MSI_IRQ_DOMAIN
+>> -       select PCIE_DW_HOST
+>> +       depends on PCI_MSI_IRQ_DOMAIN || PCI_ENDPOINT
+>> +       select PCIE_DW_HOST if PCI_MSI_IRQ_DOMAIN
+>> +       select PCIE_DW_EP if PCI_ENDPOINT
+>>         select PHY_TEGRA194_P2U
+>> -       select PCIE_TEGRA194
+>>         help
+>>           Enables support for the PCIe controller in the NVIDIA Tegra194 SoC to
+>>           work in host mode. There are two instances of PCIe controllers in
+>> @@ -271,21 +268,6 @@ config PCIE_TEGRA194_HOST
+>>           in order to enable device-specific features PCIE_TEGRA194_EP must be
+>>           selected. This uses the DesignWare core.
+>>  
+>> -config PCIE_TEGRA194_EP
+>> -       tristate "NVIDIA Tegra194 (and later) PCIe controller - Endpoint Mode"
+>> -       depends on ARCH_TEGRA_194_SOC || COMPILE_TEST
+>> -       depends on PCI_ENDPOINT
+>> -       select PCIE_DW_EP
+>> -       select PHY_TEGRA194_P2U
+>> -       select PCIE_TEGRA194
+>> -       help
+>> -         Enables support for the PCIe controller in the NVIDIA Tegra194 SoC to
+>> -         work in endpoint mode. There are two instances of PCIe controllers in
+>> -         Tegra194. This controller can work either as EP or RC. In order to
+>> -         enable host-specific features PCIE_TEGRA194_HOST must be selected and
+>> -         in order to enable device-specific features PCIE_TEGRA194_EP must be
+>> -         selected. This uses the DesignWare core.
+> 
+> I'm not a Kconfig expert, but I really like that solution, as long as
+> it addresses Vidya's concerns about RP/EP dependencies.
 
-On Wed, Jun 09, 2021 at 03:19:12PM +0200, Krzysztof Kozlowski wrote:
-> On 09/06/2021 13:58, Dmitry Osipenko wrote:
-> > 09.06.2021 14:28, Thierry Reding =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> >> From: Thierry Reding <treding@nvidia.com>
-> >>
-> >> When enabling the COMPILE_TEST Kconfig option, the Tegra memory
-> >> controller can be built without ARCH_TEGRA being selected. However, the
-> >> driver implicitly depends on some symbols pulled in via ARCH_TEGRA,
-> >> which causes the build to break.
-> >>
-> >> Add explicit dependencies for OF_EARLY_FLATTREE and OF_RESERVED_MEM to
-> >> the Tegra MC Kconfig option to make sure they are selected even if
-> >> ARCH_TEGRA is not.
-> >>
-> >> Reported-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-> >> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> >> ---
-> >>  drivers/memory/tegra/Kconfig | 2 ++
-> >>  1 file changed, 2 insertions(+)
-> >>
-> >> diff --git a/drivers/memory/tegra/Kconfig b/drivers/memory/tegra/Kconf=
-ig
-> >> index f9bae36c03a3..ecfb071fc4f4 100644
-> >> --- a/drivers/memory/tegra/Kconfig
-> >> +++ b/drivers/memory/tegra/Kconfig
-> >> @@ -48,6 +48,8 @@ config TEGRA124_EMC
-> >>  config TEGRA210_EMC_TABLE
-> >>  	bool
-> >>  	depends on ARCH_TEGRA_210_SOC || COMPILE_TEST
-> >> +	select OF_EARLY_FLATTREE
-> >> +	select OF_RESERVED_MEM
-> >> =20
-> >>  config TEGRA210_EMC
-> >>  	tristate "NVIDIA Tegra210 External Memory Controller driver"
-> >>
-> >=20
-> > Will this work if CONFIG_OF is disabled?
->=20
-> Yeah, good question. That's why I propose "depends on". No issues with
-> unmet or circular dependencies.
+I think that Sagar's concern is that if PCI_ENDPOINT and
+PCI_MSI_IRQ_DOMAIN are enabled, then we will always PCIE_DW_EP and
+PCIE_DW_HOST even if we only need RP or EP functionality. So there is no
+switch at the Tegra driver level to indicate if we want RP, EP or both.
 
-I couldn't find a way to make this work with "depends on" because
-OF_RESERVED_MEM is not user-visible and the only way to get it enabled
-is if something also selects OF_EARLY_FLATTREE, which is only ever done
-at the architecture Kconfig level (and for OF unit testing).
+My concern with the existing implementation is that if PCIE_TEGRA194_EP
+is disabled and PCIE_TEGRA194_HOST is enabled, then if PCI_ENDPOINT and
+PCIE_DW_EP already happen to be enabled, we will still have EP
+functionality regardless of PCIE_TEGRA194_EP setting.
 
-So switching this to a "depends on" causes the TEGRA210_EMC never to get
-enabled.
+I am not sure what is best/preferred in this case.
 
-However, with OF disabled, the above causes issues because it can lead
-to unmet direct dependencies. That, in turn, can be fixed by appending
-&& OF to the COMPILE_TEST branch, which seems like a good enough
-compromise.
+> Looks like the Kconfig help text should be updated to remove the
+> other PCIE_TEGRA194_EP reference?  Maybe it should include a clue
+> about how the connections to host/endpoint support, e.g., "includes
+> endpoint support if PCI_ENDPOINT is enabled"?
+> 
+>> Furthermore, I wonder if we should just move the code
+>> that is required for ACPI into it's own file like
+>> drivers/pci/controller/dwc/pcie-tegra194-acpi.c?
+> 
+> That might simplify things.  I think the reason we started with things
+> in one file is because for some drivers there's a lot of shared stuff
+> (#defines, register accessors) between the quirk and the native host
+> driver.  Either you have to put it all in one file, or you have to add
+> a shared .h file and make some of that stuff non-static.
 
-Here's what I have on top of the above patch and that seems to do the
-trick.
+I did test this and there is nothing that needs to be shared via a local
+header. We only need to include the appropriate pci headers and so the
+code is well isolated. I send the patch if that is easier to see.
 
---- >8 ---
-diff --git a/drivers/memory/tegra/Kconfig b/drivers/memory/tegra/Kconfig
-index ecfb071fc4f4..1c553895160c 100644
---- a/drivers/memory/tegra/Kconfig
-+++ b/drivers/memory/tegra/Kconfig
-@@ -47,13 +47,13 @@ config TEGRA124_EMC
-=20
- config TEGRA210_EMC_TABLE
- 	bool
--	depends on ARCH_TEGRA_210_SOC || COMPILE_TEST
-+	depends on ARCH_TEGRA_210_SOC || (COMPILE_TEST && OF)
- 	select OF_EARLY_FLATTREE
- 	select OF_RESERVED_MEM
-=20
- config TEGRA210_EMC
- 	tristate "NVIDIA Tegra210 External Memory Controller driver"
--	depends on ARCH_TEGRA_210_SOC || COMPILE_TEST
-+	depends on ARCH_TEGRA_210_SOC || (COMPILE_TEST && OF)
- 	select TEGRA210_EMC_TABLE
- 	help
- 	  This driver is for the External Memory Controller (EMC) found on
---- >8 ---
+Jon
 
-So in a nutshell this will only get compile-tested if OF is enabled, but
-then it will select OF_RESERVED_MEM and OF_EARLY_FLATTREE to get the
-required symbols.
-
-Thierry
-
---L5qRBreJQ3rN4PcD
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmDA85EACgkQ3SOs138+
-s6FXohAAvr/Os9xEEF1T2Sg8TGkz+SsYcoexhDi4owZ5aKwIz/reoQ4D2njF2vcp
-NQgReb2ktNChl2jU7fVtJQ6nf8XyRJBQq77G45LZ/QNNi8S7WLJzKM72M1x6Ph7b
-7wVDfsO2zHCRiDErSDAxNMgoP4GXnT6JInkLtnIKuvKSdj0jx6qopjtmWEqq+QNh
-YX7jtvbJK+04aCcalWZ4upBptHpfXZbntddNgvn/Z35ZzdKsSMxv4pHoV+nDWpa1
-wSyFuhy503wwzcnEYZTtffdxtJnb1oY4D89LCB7Q24nrm3Bz1EBx7iAn2IL+P+5f
-R2q8doh/YFbEiZ4IQ4RDUqzJKEja1TlhVycFcWyjKoYz0Kx9qBos8U8PYwtqWQpf
-SwUtQvWyPj9Jyb7Mu7REmvLoccoR7vV+uTwvV6KMlaN1II+NOeys8bdfXt1p2OmG
-wZ4Rr4dy/9Ybj1uRGb4QZGYAJxNQK9aeV8Ie/ANW01J5R4tCCzuDXXdBr6h2Ad8c
-i0FHJvaPnUtM5KzBnBP02RXthgYoxejxOEx5vA525VWcKBSTZ55l0K70aWizZUcF
-DtyVjxNkQmc6mpRNYDXw2GrghHMqq/TELoVlSjXnNr+GY8L2oNwJDG7LQ1Z2agJD
-J1szpCPXL9arb3hd4Nuxs/dN0UHWNeWMn5L7uAgy+lBGh6JrmCM=
-=dvBq
------END PGP SIGNATURE-----
-
---L5qRBreJQ3rN4PcD--
+-- 
+nvpublic
