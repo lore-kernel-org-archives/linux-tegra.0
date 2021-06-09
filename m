@@ -2,238 +2,140 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,MSGID_FROM_MTA_HEADER,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEF20C48BD1
-	for <linux-tegra@archiver.kernel.org>; Wed,  9 Jun 2021 15:22:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B571C48BD1
+	for <linux-tegra@archiver.kernel.org>; Wed,  9 Jun 2021 15:57:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BCC5D6100A
-	for <linux-tegra@archiver.kernel.org>; Wed,  9 Jun 2021 15:22:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 249C060FEB
+	for <linux-tegra@archiver.kernel.org>; Wed,  9 Jun 2021 15:57:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233864AbhFIPYX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 9 Jun 2021 11:24:23 -0400
-Received: from mail-bn7nam10on2047.outbound.protection.outlook.com ([40.107.92.47]:54336
-        "EHLO NAM10-BN7-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S235886AbhFIPYA (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 9 Jun 2021 11:24:00 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=jGGKIW6iF1bhEyQV+HXFII+mZf8BZq8G8plMWDQ/fV7X2ieDamoEBBEm0aA0SMw81FO7hY9ROPR67QL7/+mmtKdU0YYVRYm9OgrarsRZ3n6ylIuk5Gr2UkOw5aI32ZdMYqXZO100zQKfXLBXD0If7zMCWhToeGRXExdKd0F5uZOrOjQP2KH4glktJPIyB/eeux1+FfIhvLZowQBQw1lrN3l7yOwNZkNjh6rd46+JawIBwtDtQ1fSuZNhFiHLmG2OQymyC8NeDgNsBmr5P7RmYrHX/tHRThKko3hV/lJXyYCvtweYgYxR0HrRTJJUwxYvEJc5/RCnUfvPao1UBMBy/A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XPYo3SYryshXFR1+ZCxlT7E93wvokAIMWZIFKmFrRSY=;
- b=DtzTOrep3h4QbbW77UbqFyorfi0rUblLhfnY+VXZ55QbO6O6bck1Ri7qGu1tG3g4NENfo2HIhrLiCze4wuOPySe0LLbbNzuILt9J1rKib/68B2AU+U4YvwJiqVneqLDsg6qrrleqJwl3D4Xgy5S5qps35IrorQM0zuTGkBk/xlRmBQb+f9t4iX+w8HyaGgkhiBJ7lnc5xpHIZiDV0POHQdx5sck1jjPaVT6ttlEJzBp95GYsmxjiXGj+KRnrdpevRGw7sfDQYNyXWIz3ei8pCbXearqoMPtL073WuXo4hByxqXj93OfHLCHaiT+wNtBmXRf7iKcLoSNRRkEHHEE+iQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XPYo3SYryshXFR1+ZCxlT7E93wvokAIMWZIFKmFrRSY=;
- b=jkr0Lf5w5Q/gc1Dm1HozJbqsDZSg/XBZ0O2C6pRSG/qnefau8tbVt+udrb3lMO8KDi6w+tPHGlKeIJlaIminsIAZ5G7qB4SkzvdIqdruDNbmgd5/kjqZqrmEXSpry5gSb8AixAMCbW0aM4V/SGfPbHw9vD/CtyZ66bvijvPlPwI=
-Authentication-Results: lists.freedesktop.org; dkim=none (message not signed)
- header.d=none;lists.freedesktop.org; dmarc=none action=none
- header.from=amd.com;
-Received: from MN2PR12MB3775.namprd12.prod.outlook.com (2603:10b6:208:159::19)
- by BL0PR12MB2451.namprd12.prod.outlook.com (2603:10b6:207:4e::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4195.20; Wed, 9 Jun
- 2021 15:22:04 +0000
-Received: from MN2PR12MB3775.namprd12.prod.outlook.com
- ([fe80::6c9e:1e08:7617:f756]) by MN2PR12MB3775.namprd12.prod.outlook.com
- ([fe80::6c9e:1e08:7617:f756%5]) with mapi id 15.20.4219.022; Wed, 9 Jun 2021
- 15:22:04 +0000
-Subject: Re: [Nouveau] Trouble with TTM patches w/nouveau in linux-next
-To:     Ilia Mirkin <imirkin@alum.mit.edu>
-Cc:     Mikko Perttunen <cyndis@kapsi.fi>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        nouveau <nouveau@lists.freedesktop.org>, ray.huang@amd.com,
-        matthew.auld@intel.com, dri-devel <dri-devel@lists.freedesktop.org>
-References: <2e4987b0-7fc9-d217-450c-943de430dbd1@kapsi.fi>
- <816b619b-ff20-009a-ea05-504497c1946b@amd.com>
- <CAKb7UvjrxXyvr9qpLbkoDQ2eScj4YdayP6OnG8rZnmEn1hyKvw@mail.gmail.com>
- <1c9bdd1b-abea-872c-e23a-8a0e1e777a02@amd.com>
- <CAKb7UvhX9mABdtOnq5Uu4zmKW6HLaJzfFakcXVB008U4hRsgng@mail.gmail.com>
-From:   =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
-Message-ID: <367d42e1-eb7f-3dba-f33c-1fa0e555eebd@amd.com>
-Date:   Wed, 9 Jun 2021 17:21:59 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
-In-Reply-To: <CAKb7UvhX9mABdtOnq5Uu4zmKW6HLaJzfFakcXVB008U4hRsgng@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Originating-IP: [2a02:908:1252:fb60:3e79:91ff:ea38:2624]
-X-ClientProxiedBy: FR0P281CA0053.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:48::17) To MN2PR12MB3775.namprd12.prod.outlook.com
- (2603:10b6:208:159::19)
+        id S235617AbhFIP7Y (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 9 Jun 2021 11:59:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58674 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235633AbhFIP7Y (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 9 Jun 2021 11:59:24 -0400
+Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4766C06175F;
+        Wed,  9 Jun 2021 08:57:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
+         s=20161220; h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject
+        :Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+        Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+        In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=28I4IuSZAYmWqn18AViUdi1wb/tIUBRiUXVfn698loo=; b=Dmr19vb7YOyqX4nkty1OBS6cgs
+        hvsA5xuFLRoIcLmfseO9nSifjclaH4N8tsbBCwNiouGmi6m9SeT3rENV7ihyyjICH9o7OwUQdZD6x
+        P91gSlGl8gc+3ggwiPbScl9mLhVGLWOXSPxyw6sTAKnMbT/YLVLWh42A4aVMRKRnep4NlmNzsmaaX
+        tn/WXDXHCBa7Rbg0k/QBua6RWpGKUiUg4H61TkqksfJucJdIyI/M8CvJlTJemfi/LX2Gw9mx6vV8b
+        zhaMNcfIpOD8c/UwfJWQGOHsDvbaq/rL0GhHvDpkOsWQKz4JQIYYkqT+yBkrrSg0CeAJsgQ2EVJ2/
+        2VT2xzrQ==;
+Received: from dsl-hkibng22-54f986-236.dhcp.inet.fi ([84.249.134.236] helo=toshino.localdomain)
+        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <mperttunen@nvidia.com>)
+        id 1lr0a1-0002mP-1n; Wed, 09 Jun 2021 18:57:21 +0300
+From:   Mikko Perttunen <mperttunen@nvidia.com>
+To:     gregkh@linuxfoundation.org, jirislaby@kernel.org,
+        thierry.reding@gmail.com, jonathanh@nvidia.com
+Cc:     linux-serial@vger.kernel.org, linux-tegra@vger.kernel.org,
+        Mikko Perttunen <mperttunen@nvidia.com>
+Subject: [PATCH] serial: tegra-tcu: Reorder channel initialization
+Date:   Wed,  9 Jun 2021 18:56:55 +0300
+Message-Id: <20210609155655.3567545-1-mperttunen@nvidia.com>
+X-Mailer: git-send-email 2.30.1
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from [IPv6:2a02:908:1252:fb60:3e79:91ff:ea38:2624] (2a02:908:1252:fb60:3e79:91ff:ea38:2624) by FR0P281CA0053.DEUP281.PROD.OUTLOOK.COM (2603:10a6:d10:48::17) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4219.12 via Frontend Transport; Wed, 9 Jun 2021 15:22:02 +0000
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 6beec4c8-5cf8-4bdb-4f5f-08d92b5a55d1
-X-MS-TrafficTypeDiagnostic: BL0PR12MB2451:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <BL0PR12MB245167985EE3A30BC084562883369@BL0PR12MB2451.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:1303;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 2GYEGohwZw5sI8SABgpFk8XNyF3qw3P2uOe+gHt3/buVmalWxNPZYF/KsXx3aJY2LIO8iczbJ+YOiQoaYyF/8xMN5W1BV9NALnAGgH0DplSqxsw0BASyPKuZB23UcNhK51p0NCP56T+EreZT3Ubw45ojE736C3g9HIe5/b2a+tw0HTkY67u49wSgjJdigNeaQU/+Ex8ALPlP21YYZHTewFUQ6nA3NJcw4rNMy1bgKuOJ9k90WGIpDwpt6+lhh2Fzkn5yyf6JxjX3bbiEcpmGpWXlN3Fdrcb8sTimkUyAdvjA+fDv6FJvHb9te3tnTUbI5kVQGR3tT/oLgATz1pAvoSSXtlkiTtFwh8inqSpdjkv+xcW89oRkNKoUFKdDuGvcP7R/LDBJbNZ0sE5ixWGInpx9P151CB/hP64BPU3BcY7fRfOu1tMO4Y0h8Exp4Xewirke4PLprY5/OyzRZpoqFmGdIsYn8+fOqDX6XVedpGvootuEFyS9Tw6VdJ6spdySgvW9RcbJKFdVzxr1NCatrxa4GUbAfIVrqecUryTgdoPzR2WK1VKT4EbsV+uW+qiwPwtWBbaBQg5BFNhqk++jSfvHEYfRzybzXECT6Hisugfyw70nF/bmvO/oqiJqU0vnkgZsxg6HY9lPGwHq28HUuG2Y+FmcYpxnzSAoe3F+8rfwGc6VDBbAO3MU5ZQagqOIFa9hh4oRhTCWCf5ncI+FXOeklVQtES7+hsWxEBycsc8=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR12MB3775.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(136003)(346002)(39860400002)(396003)(376002)(366004)(966005)(478600001)(31686004)(38100700002)(54906003)(45080400002)(5660300002)(53546011)(2906002)(6916009)(6666004)(8676002)(66476007)(4326008)(8936002)(2616005)(66556008)(66946007)(6486002)(83380400001)(16526019)(31696002)(186003)(86362001)(36756003)(66574015)(316002)(45980500001)(43740500002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?d0U5VEtuQUNicHQzVWUzTVl3NG9VM2Uyamx2T1BhVnoyK2Y2K3QyMVFwMWkv?=
- =?utf-8?B?SHJORjBnNlpRNkdETlBBVE00TWJWZ3V2K2MzRDlDOERjUVZrTkkwQlMxSGRT?=
- =?utf-8?B?MzN4Z0kzWkt4SFFuSmYwcHhwbHY3S0VrN3U4dzFoRnRpYkdnK2R0dFFvSmUz?=
- =?utf-8?B?MnZXMDZ3TFA0Smd6cmszWXI1NzNrN1Z0ZVljc3N4RitsS1h1bXNZUFBnNnQx?=
- =?utf-8?B?Q0x4aHdpU2Q2WDFSYXVXSDZVZXhralFvR2lMZVZ3VE9uN1hyWVkwV1F1b05q?=
- =?utf-8?B?TkJvdUd0S2pWT1BmRm95NDNnekJzYTlaNXlPTUkyazdmcW5jQjRDa2xiRlBn?=
- =?utf-8?B?Ums4NU4wSVBxdW53ZUtETVhEUUtzWlN3YkVkbG9sNkFlQkRXMmcxa1RaVGZu?=
- =?utf-8?B?bEowVDh3bzJQY1BFUVNEa21WSVZIVnVNVHlzS3VOQzV6M1VDR0VVVlBUU2NN?=
- =?utf-8?B?YWFNUVVuZ05sZ1QvUGdSck1PbHkvdWdZNDIrM0s4NmtQMWtDWlhSSFJEeXdX?=
- =?utf-8?B?Sy9mUGUvd2I5N3M2NlBVbWlUUEt4aVdlQ3hIMm1ZeHFYZEVCTnZlM1RhN2d6?=
- =?utf-8?B?b2FRMkdXSGpNbEZpSTcvWmQxUXdPeW00ZHUxYmhRODFuL1h3RkpTRkFncm44?=
- =?utf-8?B?cjZuRmw5RmVCYW9CRlBCWXlXL0xDU2ZiZ3RJWWkwZEFGNnRKOGR3WEtUczUx?=
- =?utf-8?B?OGs5TTBoa0xuNjZrYWhTVGpxVHU4UUtlU29tMU9hVXFnYzltOU1TcFVUa2hE?=
- =?utf-8?B?VGV6TDNlNlU1NWpacThVN0g0VU5nOE1zS2trWTZycHNxMjJobG5jOHNHOHZO?=
- =?utf-8?B?OUZxREhHbVlJT1Y4RkhUSk02UFg0RFcxb01iNnR0T3VUWGNMb2NhY1BXSDNx?=
- =?utf-8?B?YVZ3WUFnTHhpMWROOXRxdXYyWGttMk01VGVqVTBJVXlZL21STkJEVkZrOC95?=
- =?utf-8?B?ZFRnYkVNTEwwODJCVENSNWhmSkIrdmNRVEF4Z3NUTGUycUlOMkhuMjk1YWlB?=
- =?utf-8?B?WWZucEFnWEFIb082V3FWMjZ2dEp0TUVhQUdnT3FtdnUvZWJxbnVDekgxRG42?=
- =?utf-8?B?RWR5T0o0Sk1nMFFJNDJSbWMrS00zOVBnQXgxaEM3L1o4dlBBaEhtVkJORzZr?=
- =?utf-8?B?ZmErMWhmSWJWeFFIOVdZUEUzc3F5VmNXUG1iVCs5bE1za0lBaGVXTjV3dWZ3?=
- =?utf-8?B?ZnFEQWM2WXpFNE5IWE1hMjRsa2VNWXV1eDdhSkhONFZ3bVNGTmNETEFCTXA1?=
- =?utf-8?B?MUcxRUlnU2JLZW1MK2cwbDBzbk44ZVBuYytmRC9lejJrSUhxNDVkVTNSUzZL?=
- =?utf-8?B?S2ZubjFrUXduK3R2OVpBbFVsTkY0S2tNaHlqYkRSMmNua2pFd3B2ODVIV2xw?=
- =?utf-8?B?MW5NdHUyYnF4R0ttUTQ3Y0lWL0Q3RnNoS0VFbmJScUlzVjUyWXVzU3owUWYv?=
- =?utf-8?B?dUlHT1NYNENEYW41N3d6Q1U5QmlkTnlvWkpZcVRpRyt6TjlOaGNST2RXbUsw?=
- =?utf-8?B?Q1BCdjA0Wi9LZVNZZldGQnhxNnFzK0dLY0lYVDhRQTZxV0UzZlVQYVc2azYz?=
- =?utf-8?B?K2hCdjNqWnVubFFQeldCb09BNTlKcTFNZ1A2U1hBL2xNS3lKK01rMlh2T05x?=
- =?utf-8?B?MURwWHRHVFZkT0hOUzd0MFJLNmVrWjU4c0lodDExcVh1QjAyUGF6aVdZNXc4?=
- =?utf-8?B?VjAzRGZlY25SckxhMzZEanIzWnN3RDRrZnJzWEdqOGdPM1RFQnRxbmIvbFBi?=
- =?utf-8?B?K3lYd2poaEE4OFNvd20xT2xUQndzS21ESDhFallnUEdDck8yc3hHUjVBMlgy?=
- =?utf-8?B?d0JGY2pDOXZvWlB6bXVjcXZNOFhqOGtZeXB3VnlnaHNMUXdrNUEvWDF6OG5Z?=
- =?utf-8?Q?P9amSjhveRM2k?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6beec4c8-5cf8-4bdb-4f5f-08d92b5a55d1
-X-MS-Exchange-CrossTenant-AuthSource: MN2PR12MB3775.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jun 2021 15:22:03.9315
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: VdxRVSOP6PCrohQ0dUb+xGzxrodelJO3hda1eCGU2xZlSQ0vUPdanRRGZ3hRE4rV
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL0PR12MB2451
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 84.249.134.236
+X-SA-Exim-Mail-From: mperttunen@nvidia.com
+X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Yeah, exactly that's the root cause of the problem.
+Request the RX mailbox only after initializing the UART data
+structures. Otherwise it can rarely happen that the receive
+callback is called before the UART is ready.
 
-GEM objects are the base class for TTM BOs for quite a while now.
+Fixes: 2d908b38d409 ("serial: Add Tegra Combined UART driver")
+Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+---
+ drivers/tty/serial/tegra-tcu.c | 26 +++++++++++++++-----------
+ 1 file changed, 15 insertions(+), 11 deletions(-)
 
-So we at least need to initialize them or otherwise at least the size of 
-the object is not available.
-
-Going to send a fix in a few minutes.
-
-Thanks,
-Christian.
-
-Am 09.06.21 um 17:13 schrieb Ilia Mirkin:
-> GEM init happens here:
->
-> https://nam11.safelinks.protection.outlook.com/?url=https%3A%2F%2Fcgit.freedesktop.org%2Fdrm%2Fdrm%2Ftree%2Fdrivers%2Fgpu%2Fdrm%2Fnouveau%2Fnouveau_gem.c%23n221&amp;data=04%7C01%7Cchristian.koenig%40amd.com%7C228788b1c8524fa8128b08d92b591b81%7C3dd8961fe4884e608e11a82d994e183d%7C0%7C0%7C637588483983919147%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000&amp;sdata=f%2BFFnPEAEoeuD8bKtnGtL5ZU0HBYpJAjqKqD29Xn9Kw%3D&amp;reserved=0
->
-> Note the bo alloc / gem init / bo init dance.
->
-> I don't think there is a GEM object for internal allocations at all --
-> we just allocate bo's directly and that's it. Perhaps you meant
-> something else? I thought GEM was meant for externally-available
-> objects.
->
-> Cheers,
->
->    -ilia
->
-> On Wed, Jun 9, 2021 at 10:58 AM Christian König
-> <christian.koenig@amd.com> wrote:
->> Good point, but I think that is unrelated.
->>
->> My suspicion is rather that nouveau is not initializing the underlying
->> GEM object for internal allocations.
->>
->> So what happens is the same as on VMWGFX that TTM doesn't know anything
->> about the size to of the BO resulting in a kmalloc() with a random value
->> and eventually -ENOMEM.
->>
->> Good news is that I can reproduce it, so going to look into that later
->> today.
->>
->> Regards,
->> Christian.
->>
->> Am 09.06.21 um 16:52 schrieb Ilia Mirkin:
->>> Christian - potentially relevant is that Tegra doesn't have VRAM at
->>> all -- all GTT (or GART or whatever it's called nowadays). No
->>> fake/stolen VRAM.
->>>
->>> Cheers,
->>>
->>>     -ilia
->>>
->>> On Wed, Jun 9, 2021 at 10:18 AM Christian König
->>> <christian.koenig@amd.com> wrote:
->>>> Hi Mikko,
->>>>
->>>> strange sounds like Nouveau was somehow also using the GEM workaround
->>>> for VMWGFX as well.
->>>>
->>>> But -12 means -ENOMEM which doesn't fits into the picture.
->>>>
->>>> I will try with a G710, but if that doesn't yields anything I need some
->>>> more input from you.
->>>>
->>>> Thanks for the report,
->>>> Christian.
->>>>
->>>>
->>>> Am 09.06.21 um 15:47 schrieb Mikko Perttunen:
->>>>> Hi,
->>>>>
->>>>> I'm observing nouveau not initializing recently on linux-next on my
->>>>> Tegra186 Jetson TX2 board. Specifically it looks like BO allocation is
->>>>> failing when initializing the sync subsystem:
->>>>>
->>>>> [   21.858149] nouveau 17000000.gpu: DRM: failed to initialise sync
->>>>> subsystem, -28
->>>>>
->>>>> I have been bisecting and I have found two patches that affect this.
->>>>> Firstly, things first break on
->>>>>
->>>>> d02117f8efaa drm/ttm: remove special handling for non GEM drivers
->>>>>
->>>>> starting to return error code -12. Then, at
->>>>>
->>>>> d79025c7f5e3 drm/ttm: always initialize the full ttm_resource v2
->>>>>
->>>>> the error code changes to the above -28.
->>>>>
->>>>> If I checkout one commit prior to d79025c7f5e3 and revert
->>>>> d02117f8efaa, things work again. There are a bunch of other TTM
->>>>> commits between this and HEAD, so reverting these on top of HEAD
->>>>> doesn't work. However, I checked that both yesterday's and today's
->>>>> nexts are also broken.
->>>>>
->>>>> Thank you,
->>>>> Mikko
->>>>>
->>>> _______________________________________________
->>>> Nouveau mailing list
->>>> Nouveau@lists.freedesktop.org
->>>> https://nam11.safelinks.protection.outlook.com/?url=https%3A%2F%2Flists.freedesktop.org%2Fmailman%2Flistinfo%2Fnouveau&amp;data=04%7C01%7Cchristian.koenig%40amd.com%7C228788b1c8524fa8128b08d92b591b81%7C3dd8961fe4884e608e11a82d994e183d%7C0%7C0%7C637588483983919147%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000&amp;sdata=dn0%2FRAOKKddFQbhJcjd3v1L%2BHc4hGlpWIURPTG33g50%3D&amp;reserved=0
+diff --git a/drivers/tty/serial/tegra-tcu.c b/drivers/tty/serial/tegra-tcu.c
+index 52687c65ad74..4877c54c613d 100644
+--- a/drivers/tty/serial/tegra-tcu.c
++++ b/drivers/tty/serial/tegra-tcu.c
+@@ -195,13 +195,6 @@ static int tegra_tcu_probe(struct platform_device *pdev)
+ 		return err;
+ 	}
+ 
+-	tcu->rx = mbox_request_channel_byname(&tcu->rx_client, "rx");
+-	if (IS_ERR(tcu->rx)) {
+-		err = PTR_ERR(tcu->rx);
+-		dev_err(&pdev->dev, "failed to get rx mailbox: %d\n", err);
+-		goto free_tx;
+-	}
+-
+ #if IS_ENABLED(CONFIG_SERIAL_TEGRA_TCU_CONSOLE)
+ 	/* setup the console */
+ 	strcpy(tcu->console.name, "ttyTCU");
+@@ -226,7 +219,7 @@ static int tegra_tcu_probe(struct platform_device *pdev)
+ 	if (err) {
+ 		dev_err(&pdev->dev, "failed to register UART driver: %d\n",
+ 			err);
+-		goto free_rx;
++		goto free_tx;
+ 	}
+ 
+ 	/* setup the port */
+@@ -246,6 +239,17 @@ static int tegra_tcu_probe(struct platform_device *pdev)
+ 		goto unregister_uart;
+ 	}
+ 
++	/*
++	 * Request RX channel after creating port to ensure tcu->port
++	 * is ready for any immediate incoming bytes.
++	 */
++	tcu->rx = mbox_request_channel_byname(&tcu->rx_client, "rx");
++	if (IS_ERR(tcu->rx)) {
++		err = PTR_ERR(tcu->rx);
++		dev_err(&pdev->dev, "failed to get rx mailbox: %d\n", err);
++		goto remove_uart_port;
++	}
++
+ 	platform_set_drvdata(pdev, tcu);
+ #if IS_ENABLED(CONFIG_SERIAL_TEGRA_TCU_CONSOLE)
+ 	register_console(&tcu->console);
+@@ -253,10 +257,10 @@ static int tegra_tcu_probe(struct platform_device *pdev)
+ 
+ 	return 0;
+ 
++remove_uart_port:
++	uart_remove_one_port(&tcu->driver, &tcu->port);
+ unregister_uart:
+ 	uart_unregister_driver(&tcu->driver);
+-free_rx:
+-	mbox_free_channel(tcu->rx);
+ free_tx:
+ 	mbox_free_channel(tcu->tx);
+ 
+@@ -270,9 +274,9 @@ static int tegra_tcu_remove(struct platform_device *pdev)
+ #if IS_ENABLED(CONFIG_SERIAL_TEGRA_TCU_CONSOLE)
+ 	unregister_console(&tcu->console);
+ #endif
++	mbox_free_channel(tcu->rx);
+ 	uart_remove_one_port(&tcu->driver, &tcu->port);
+ 	uart_unregister_driver(&tcu->driver);
+-	mbox_free_channel(tcu->rx);
+ 	mbox_free_channel(tcu->tx);
+ 
+ 	return 0;
+-- 
+2.30.1
 
