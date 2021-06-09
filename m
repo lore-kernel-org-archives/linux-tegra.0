@@ -5,181 +5,190 @@ X-Spam-Level:
 X-Spam-Status: No, score=-14.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABEFCC48BCD
-	for <linux-tegra@archiver.kernel.org>; Wed,  9 Jun 2021 16:57:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 260D5C48BCF
+	for <linux-tegra@archiver.kernel.org>; Wed,  9 Jun 2021 16:58:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8FD18613C7
-	for <linux-tegra@archiver.kernel.org>; Wed,  9 Jun 2021 16:57:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F420613C7
+	for <linux-tegra@archiver.kernel.org>; Wed,  9 Jun 2021 16:58:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230502AbhFIQ7s (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 9 Jun 2021 12:59:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43740 "EHLO
+        id S231151AbhFIRAU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 9 Jun 2021 13:00:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43910 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229626AbhFIQ7r (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 9 Jun 2021 12:59:47 -0400
-Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A78EC061574;
-        Wed,  9 Jun 2021 09:57:37 -0700 (PDT)
-Received: by mail-lj1-x22a.google.com with SMTP id c11so724691ljd.6;
-        Wed, 09 Jun 2021 09:57:37 -0700 (PDT)
+        with ESMTP id S229626AbhFIRAS (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 9 Jun 2021 13:00:18 -0400
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9ADFC06175F;
+        Wed,  9 Jun 2021 09:58:21 -0700 (PDT)
+Received: by mail-wm1-x32a.google.com with SMTP id t4-20020a1c77040000b029019d22d84ebdso4740481wmi.3;
+        Wed, 09 Jun 2021 09:58:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=rhOiM+M3O+xQ7gJUAO0buvm9+/qkjtxDLmSasWrNeIA=;
-        b=vbWQGKIgLlLNsu7TqvM1fa0bIzlDPM/OcMU1di/aQVML/yM79J1wMVCebUfAdy6z2X
-         WO3OrLJjxRyQ+PSp095q1DJ91171DJFAHxbWSk31k3jJzXKFUmImqrdT5nj5F9FWsgk2
-         FdyUy5JMRvmTSf4i3IOB9ohsGkHuxIpBlO1I4nm7Qvj7nSpzWQBhxHOM6qDNmKDo+5xP
-         X/0MxlUj5QGrpsz8nH4PQfS9fxwVPi0m4SGpW0rzm1JQrI2Vx9Y/7G7zsCSNZO8VGaNo
-         7wsGH2YVEFJ23K4sT66gW2vOCB4dnd6eHo2/gQyJvkNHqMNuKG3wDSN0ZzDXeUbtGvik
-         YF7g==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=LPZcUYkPSO1G9Scw6wuN7k1L83/gjShJz45DKE2h3Vw=;
+        b=fq1E5Yg6kO//k62W+a0n72IjuxqjxyWo0DKahVV/OY5GxnCjOkZa1RQ6DViBqQJ2w4
+         qoFaz+K1H/0zMidI+4MsQM4h1PltmefZAJIomoZL324PEdo40SSBfZVL2SOR5Y29skic
+         Fvr3NHKlbaCZm9p9REFbjR8bgy/eTtBdAnkdcC+Ue4meIeeEYyUdSP42BVyf0oHNHrlD
+         M8uemqAbSTJXkxTjatmw5MM9nkLvSVXPyHQ+LaCIpwwBfDXSuWecU7k8p92BlLpnQhjv
+         xEQ/5MIT2UhfwML2fKchY3lVa2v2lmZx4QkelCi9Js+4s3cb+77Yb7HQw0KLOQMvKh6g
+         VdfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=rhOiM+M3O+xQ7gJUAO0buvm9+/qkjtxDLmSasWrNeIA=;
-        b=Kk5iWYkS0u59y2Z98our9RlCBPBGk6m8trB63aQj6P51SBBjhdURqjTjM57XDhV3ro
-         G+b1cb1VaAMPgqf4dqs96AT34m4SU1OLtyK0IyDXYw/iNz2g85RUT+NfaGbG1U/9fMTI
-         XnOMya5u+Ds2gkz4LPNG3USBhGDASae3siDS0XVxkR5uYABADuTZAZVybQDwjuxyvSrj
-         fJwDwovshDJJHF7SwFZ43pBypv4R3p+UDPvcI43d/6p4fdGo/hAXs2Ej7AXkZLRmLB10
-         RiJOzqQywM0gWZgCIL+qtmX/6xrg+4EPl8pKuMeTxfcTA9NgERWM1+X8Clm/01u2h5T+
-         5MaA==
-X-Gm-Message-State: AOAM5310quvpQbFsLlTQsdl/T33AVLhEeyxj2rSMTkCURGjG833NeKv/
-        xNvhmHBYcXNtgQ7XXkDHxIZ6NbHakNQ=
-X-Google-Smtp-Source: ABdhPJys+RDo4Mo/fo3Pd9Vi+5a0dwi9/uP8gfbNx1Zzy/USczdnV0yb1ryAY89+66glxLsyT6WEIg==
-X-Received: by 2002:a2e:b5c1:: with SMTP id g1mr648831ljn.83.1623257855139;
-        Wed, 09 Jun 2021 09:57:35 -0700 (PDT)
-Received: from [192.168.2.145] (94-29-21-60.dynamic.spd-mgts.ru. [94.29.21.60])
-        by smtp.googlemail.com with ESMTPSA id n5sm37239lfq.107.2021.06.09.09.57.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Jun 2021 09:57:34 -0700 (PDT)
-Subject: Re: [PATCH 1/2] memory: tegra: Add missing dependencies
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-Cc:     Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=LPZcUYkPSO1G9Scw6wuN7k1L83/gjShJz45DKE2h3Vw=;
+        b=Dew1VC6VebYZVSk1zSSA0XwsMdEU3uC9yaM5PTehDoFNbnHs06d3DaTtHtufgbDanh
+         +JbXZACmpkcJsnRGoia6we6woXUYdrt5+x1sS4pF07G1P14wcCXfs4OjOj1IabnSD+9x
+         7sHXX5SYBozplFt4c33o/aI/4CRUFjaQU4BxGOW/mcBa1TrvvVOsoe2BttSgU8xMOwTN
+         K03uT/09CxYYG4NpS1Eg1xc3SnChenmvFFdhceCXcgoNDrVlzvDrHgzC3BmgR3xUeSlu
+         px80RzlA1aB4QxXxQi0HoYZaFqX+rpl0x/HZjx80ghkjG24PNnBXEn6HrUqEUfBhyxvB
+         OCwA==
+X-Gm-Message-State: AOAM532wy6/yIIb85xtm40WLQ76gOtdpW8uuwgAzBucjUrsfhsCqofmT
+        emOMiu/M42V3KluMY0IpeoI=
+X-Google-Smtp-Source: ABdhPJz4fXParEX2RlRjH8jPzx2kjKUPTrWE9TSE/A2MlXIRozdlBJF/0umNzW0FaATfo8kWiUkt8g==
+X-Received: by 2002:a05:600c:4ec8:: with SMTP id g8mr10698766wmq.62.1623257900500;
+        Wed, 09 Jun 2021 09:58:20 -0700 (PDT)
+Received: from localhost ([62.96.65.119])
+        by smtp.gmail.com with ESMTPSA id l16sm7083014wmj.47.2021.06.09.09.58.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Jun 2021 09:58:19 -0700 (PDT)
+Date:   Wed, 9 Jun 2021 19:00:03 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     Dmitry Osipenko <digetx@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] memory: tegra: Add missing dependencies
+Message-ID: <YMDzkyjaMhoJjMzL@orome.fritz.box>
 References: <20210609112806.3565057-1-thierry.reding@gmail.com>
  <20210609112806.3565057-2-thierry.reding@gmail.com>
  <0c762772-929e-2eb8-6568-4aa82ea2f9ad@gmail.com>
  <ee2846c0-9274-0888-90ac-dac72d2ab5fd@canonical.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <a3110fbd-c4af-0317-5a6d-1f780f1dac91@gmail.com>
-Date:   Wed, 9 Jun 2021 19:57:34 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="L5qRBreJQ3rN4PcD"
+Content-Disposition: inline
 In-Reply-To: <ee2846c0-9274-0888-90ac-dac72d2ab5fd@canonical.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/2.0.6 (98f8cb83) (2021-03-06)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-09.06.2021 16:19, Krzysztof Kozlowski пишет:
+
+--L5qRBreJQ3rN4PcD
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Jun 09, 2021 at 03:19:12PM +0200, Krzysztof Kozlowski wrote:
 > On 09/06/2021 13:58, Dmitry Osipenko wrote:
->> 09.06.2021 14:28, Thierry Reding пишет:
->>> From: Thierry Reding <treding@nvidia.com>
->>>
->>> When enabling the COMPILE_TEST Kconfig option, the Tegra memory
->>> controller can be built without ARCH_TEGRA being selected. However, the
->>> driver implicitly depends on some symbols pulled in via ARCH_TEGRA,
->>> which causes the build to break.
->>>
->>> Add explicit dependencies for OF_EARLY_FLATTREE and OF_RESERVED_MEM to
->>> the Tegra MC Kconfig option to make sure they are selected even if
->>> ARCH_TEGRA is not.
->>>
->>> Reported-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
->>> Signed-off-by: Thierry Reding <treding@nvidia.com>
->>> ---
->>>  drivers/memory/tegra/Kconfig | 2 ++
->>>  1 file changed, 2 insertions(+)
->>>
->>> diff --git a/drivers/memory/tegra/Kconfig b/drivers/memory/tegra/Kconfig
->>> index f9bae36c03a3..ecfb071fc4f4 100644
->>> --- a/drivers/memory/tegra/Kconfig
->>> +++ b/drivers/memory/tegra/Kconfig
->>> @@ -48,6 +48,8 @@ config TEGRA124_EMC
->>>  config TEGRA210_EMC_TABLE
->>>  	bool
->>>  	depends on ARCH_TEGRA_210_SOC || COMPILE_TEST
->>> +	select OF_EARLY_FLATTREE
->>> +	select OF_RESERVED_MEM
->>>  
->>>  config TEGRA210_EMC
->>>  	tristate "NVIDIA Tegra210 External Memory Controller driver"
->>>
->>
->> Will this work if CONFIG_OF is disabled?
-> 
+> > 09.06.2021 14:28, Thierry Reding =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> >> From: Thierry Reding <treding@nvidia.com>
+> >>
+> >> When enabling the COMPILE_TEST Kconfig option, the Tegra memory
+> >> controller can be built without ARCH_TEGRA being selected. However, the
+> >> driver implicitly depends on some symbols pulled in via ARCH_TEGRA,
+> >> which causes the build to break.
+> >>
+> >> Add explicit dependencies for OF_EARLY_FLATTREE and OF_RESERVED_MEM to
+> >> the Tegra MC Kconfig option to make sure they are selected even if
+> >> ARCH_TEGRA is not.
+> >>
+> >> Reported-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+> >> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> >> ---
+> >>  drivers/memory/tegra/Kconfig | 2 ++
+> >>  1 file changed, 2 insertions(+)
+> >>
+> >> diff --git a/drivers/memory/tegra/Kconfig b/drivers/memory/tegra/Kconf=
+ig
+> >> index f9bae36c03a3..ecfb071fc4f4 100644
+> >> --- a/drivers/memory/tegra/Kconfig
+> >> +++ b/drivers/memory/tegra/Kconfig
+> >> @@ -48,6 +48,8 @@ config TEGRA124_EMC
+> >>  config TEGRA210_EMC_TABLE
+> >>  	bool
+> >>  	depends on ARCH_TEGRA_210_SOC || COMPILE_TEST
+> >> +	select OF_EARLY_FLATTREE
+> >> +	select OF_RESERVED_MEM
+> >> =20
+> >>  config TEGRA210_EMC
+> >>  	tristate "NVIDIA Tegra210 External Memory Controller driver"
+> >>
+> >=20
+> > Will this work if CONFIG_OF is disabled?
+>=20
 > Yeah, good question. That's why I propose "depends on". No issues with
 > unmet or circular dependencies.
 
-What about to add stub for RESERVEDMEM_OF_DECLARE() + CONFIG_OF_RESERVED_MEM=n?
+I couldn't find a way to make this work with "depends on" because
+OF_RESERVED_MEM is not user-visible and the only way to get it enabled
+is if something also selects OF_EARLY_FLATTREE, which is only ever done
+at the architecture Kconfig level (and for OF unit testing).
 
-diff --git a/include/linux/of.h b/include/linux/of.h
-index d8db8d3592fd..9c2e71e202d1 100644
---- a/include/linux/of.h
-+++ b/include/linux/of.h
-@@ -1329,6 +1329,12 @@ static inline int of_get_available_child_count(const struct device_node *np)
- 	return num;
- }
- 
-+#define _OF_DECLARE_STUB(table, name, compat, fn, fn_type)		\
-+	static const struct of_device_id __of_table_##name		\
-+		__attribute__((unused))					\
-+		 = { .compatible = compat,				\
-+		     .data = (fn == (fn_type)NULL) ? fn : fn }
-+
- #if defined(CONFIG_OF) && !defined(MODULE)
- #define _OF_DECLARE(table, name, compat, fn, fn_type)			\
- 	static const struct of_device_id __of_table_##name		\
-@@ -1338,10 +1344,7 @@ static inline int of_get_available_child_count(const struct device_node *np)
- 		     .data = (fn == (fn_type)NULL) ? fn : fn  }
- #else
- #define _OF_DECLARE(table, name, compat, fn, fn_type)			\
--	static const struct of_device_id __of_table_##name		\
--		__attribute__((unused))					\
--		 = { .compatible = compat,				\
--		     .data = (fn == (fn_type)NULL) ? fn : fn }
-+	_OF_DECLARE_STUB(table, name, compat, fn, fn_type)
- #endif
- 
- typedef int (*of_init_fn_2)(struct device_node *, struct device_node *);
-diff --git a/include/linux/of_reserved_mem.h b/include/linux/of_reserved_mem.h
-index 76e4a0fffba4..4de2a24cadc9 100644
---- a/include/linux/of_reserved_mem.h
-+++ b/include/linux/of_reserved_mem.h
-@@ -27,11 +27,11 @@ struct reserved_mem_ops {
- 
- typedef int (*reservedmem_of_init_fn)(struct reserved_mem *rmem);
- 
-+#ifdef CONFIG_OF_RESERVED_MEM
-+
- #define RESERVEDMEM_OF_DECLARE(name, compat, init)			\
- 	_OF_DECLARE(reservedmem, name, compat, init, reservedmem_of_init_fn)
- 
--#ifdef CONFIG_OF_RESERVED_MEM
--
- int of_reserved_mem_device_init_by_idx(struct device *dev,
- 				       struct device_node *np, int idx);
- int of_reserved_mem_device_init_by_name(struct device *dev,
-@@ -41,6 +41,10 @@ void of_reserved_mem_device_release(struct device *dev);
- 
- struct reserved_mem *of_reserved_mem_lookup(struct device_node *np);
- #else
-+
-+#define RESERVEDMEM_OF_DECLARE(name, compat, init)			\
-+	_OF_DECLARE_STUB(reservedmem, name, compat, init, reservedmem_of_init_fn)
-+
- static inline int of_reserved_mem_device_init_by_idx(struct device *dev,
- 					struct device_node *np, int idx)
- {
+So switching this to a "depends on" causes the TEGRA210_EMC never to get
+enabled.
 
+However, with OF disabled, the above causes issues because it can lead
+to unmet direct dependencies. That, in turn, can be fixed by appending
+&& OF to the COMPILE_TEST branch, which seems like a good enough
+compromise.
 
+Here's what I have on top of the above patch and that seems to do the
+trick.
+
+--- >8 ---
+diff --git a/drivers/memory/tegra/Kconfig b/drivers/memory/tegra/Kconfig
+index ecfb071fc4f4..1c553895160c 100644
+--- a/drivers/memory/tegra/Kconfig
++++ b/drivers/memory/tegra/Kconfig
+@@ -47,13 +47,13 @@ config TEGRA124_EMC
+=20
+ config TEGRA210_EMC_TABLE
+ 	bool
+-	depends on ARCH_TEGRA_210_SOC || COMPILE_TEST
++	depends on ARCH_TEGRA_210_SOC || (COMPILE_TEST && OF)
+ 	select OF_EARLY_FLATTREE
+ 	select OF_RESERVED_MEM
+=20
+ config TEGRA210_EMC
+ 	tristate "NVIDIA Tegra210 External Memory Controller driver"
+-	depends on ARCH_TEGRA_210_SOC || COMPILE_TEST
++	depends on ARCH_TEGRA_210_SOC || (COMPILE_TEST && OF)
+ 	select TEGRA210_EMC_TABLE
+ 	help
+ 	  This driver is for the External Memory Controller (EMC) found on
+--- >8 ---
+
+So in a nutshell this will only get compile-tested if OF is enabled, but
+then it will select OF_RESERVED_MEM and OF_EARLY_FLATTREE to get the
+required symbols.
+
+Thierry
+
+--L5qRBreJQ3rN4PcD
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmDA85EACgkQ3SOs138+
+s6FXohAAvr/Os9xEEF1T2Sg8TGkz+SsYcoexhDi4owZ5aKwIz/reoQ4D2njF2vcp
+NQgReb2ktNChl2jU7fVtJQ6nf8XyRJBQq77G45LZ/QNNi8S7WLJzKM72M1x6Ph7b
+7wVDfsO2zHCRiDErSDAxNMgoP4GXnT6JInkLtnIKuvKSdj0jx6qopjtmWEqq+QNh
+YX7jtvbJK+04aCcalWZ4upBptHpfXZbntddNgvn/Z35ZzdKsSMxv4pHoV+nDWpa1
+wSyFuhy503wwzcnEYZTtffdxtJnb1oY4D89LCB7Q24nrm3Bz1EBx7iAn2IL+P+5f
+R2q8doh/YFbEiZ4IQ4RDUqzJKEja1TlhVycFcWyjKoYz0Kx9qBos8U8PYwtqWQpf
+SwUtQvWyPj9Jyb7Mu7REmvLoccoR7vV+uTwvV6KMlaN1II+NOeys8bdfXt1p2OmG
+wZ4Rr4dy/9Ybj1uRGb4QZGYAJxNQK9aeV8Ie/ANW01J5R4tCCzuDXXdBr6h2Ad8c
+i0FHJvaPnUtM5KzBnBP02RXthgYoxejxOEx5vA525VWcKBSTZ55l0K70aWizZUcF
+DtyVjxNkQmc6mpRNYDXw2GrghHMqq/TELoVlSjXnNr+GY8L2oNwJDG7LQ1Z2agJD
+J1szpCPXL9arb3hd4Nuxs/dN0UHWNeWMn5L7uAgy+lBGh6JrmCM=
+=dvBq
+-----END PGP SIGNATURE-----
+
+--L5qRBreJQ3rN4PcD--
