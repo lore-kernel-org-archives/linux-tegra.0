@@ -1,78 +1,90 @@
 Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.0 required=3.0 tests=BAYES_50,DKIMWL_BL,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-5.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DF73C48BE5
-	for <linux-tegra@archiver.kernel.org>; Wed,  9 Jun 2021 13:36:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8071CC48BD1
+	for <linux-tegra@archiver.kernel.org>; Wed,  9 Jun 2021 13:47:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 088CE6108D
-	for <linux-tegra@archiver.kernel.org>; Wed,  9 Jun 2021 13:36:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C143610A2
+	for <linux-tegra@archiver.kernel.org>; Wed,  9 Jun 2021 13:47:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236460AbhFINiP (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 9 Jun 2021 09:38:15 -0400
-Received: from flippie-beckerswealth-sa.xyz ([62.173.147.2]:33688 "EHLO
-        host.flippie-beckerswealth-sa.xyz" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S236458AbhFINiP (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 9 Jun 2021 09:38:15 -0400
-X-Greylist: delayed 4076 seconds by postgrey-1.27 at vger.kernel.org; Wed, 09 Jun 2021 09:38:15 EDT
-Received: from flippie-beckerswealth-sa.xyz (ec2-3-131-99-163.us-east-2.compute.amazonaws.com [3.131.99.163])
-        by host.flippie-beckerswealth-sa.xyz (Postfix) with ESMTPA id B80253120CED
-        for <linux-tegra@vger.kernel.org>; Wed,  9 Jun 2021 15:10:29 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 host.flippie-beckerswealth-sa.xyz B80253120CED
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=flippie-beckerswealth-sa.xyz; s=default; t=1623240631;
-        bh=h0ivQLrZuUWuyEKz/TWb+FP9AASpHhVqOsJtRcwKQV4=;
-        h=Reply-To:From:To:Subject:Date:From;
-        b=UEBF5I1RLcrm5PtBWc4BZSs37JrUyTxBPryuvPMd6CHTB2Cq/qjpPcbMD0oUgjh4j
-         AiC49RyCO+13zSaRUTbFcGBXaV71eKVUacLNtfGKx6zZYHmDvwQl43pFCXEf0bBuvf
-         zSfK8qfbK9wwAAahSRg73mP/elwGvXXjIaUjnnVc=
-DKIM-Filter: OpenDKIM Filter v2.11.0 host.flippie-beckerswealth-sa.xyz B80253120CED
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=flippie-beckerswealth-sa.xyz; s=default; t=1623240631;
-        bh=h0ivQLrZuUWuyEKz/TWb+FP9AASpHhVqOsJtRcwKQV4=;
-        h=Reply-To:From:To:Subject:Date:From;
-        b=UEBF5I1RLcrm5PtBWc4BZSs37JrUyTxBPryuvPMd6CHTB2Cq/qjpPcbMD0oUgjh4j
-         AiC49RyCO+13zSaRUTbFcGBXaV71eKVUacLNtfGKx6zZYHmDvwQl43pFCXEf0bBuvf
-         zSfK8qfbK9wwAAahSRg73mP/elwGvXXjIaUjnnVc=
-Reply-To: jmasuku40@flippiebeckerwealthservices.com
-From:   Jotham Masuku <jmasuku40@flippie-beckerswealth-sa.xyz>
-To:     linux-tegra@vger.kernel.org
-Subject: Proposal
-Date:   09 Jun 2021 12:10:29 +0000
-Message-ID: <20210609121029.A46E3BE063BE75EA@flippie-beckerswealth-sa.xyz>
-Mime-Version: 1.0
-Content-Type: text/plain;
-        charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+        id S234928AbhFINtK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 9 Jun 2021 09:49:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57370 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236585AbhFINtK (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 9 Jun 2021 09:49:10 -0400
+Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 652A5C061574
+        for <linux-tegra@vger.kernel.org>; Wed,  9 Jun 2021 06:47:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
+         s=20161220; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Date:
+        Message-ID:Subject:From:Cc:To:Sender:Reply-To:Content-ID:Content-Description:
+        Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+        In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=+fk3mv9ffvCqAu4Aewr2SlJtqBKj6DnprNXAVOj855w=; b=zjandDfYHqshA7iQHT9Fql8buv
+        a3IbpUXDMy0SFjosB2lKVD0NffpbFgfSGaFC1p1cHp620iis+R/zW3zTaiRVBAs/89xH3L/sR1ied
+        /oN4jf1rLBq+hsWc3p6iCdo4YXvBtmKO91h/oIyz/mX8NLbFFW1AOFqXxFyaWbqCB/OqEo6yd1J7N
+        x3aCnnbfAtr7hBINDKw5KAXSKgeIuDVWrMjR6g7Dum/m72icrQ+tM8jznnS+gSaV+RVSaqmo/1aG2
+        gjHs62MSQ9QQGsfB7wLExY98Rqm4MvzWPlH91PVV5ZFDfIEsrUrBdl4BU7s3QFYW5p6GG1C5lGDt9
+        qK8blIiA==;
+Received: from dsl-hkibng22-54f986-236.dhcp.inet.fi ([84.249.134.236] helo=[192.168.1.10])
+        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <cyndis@kapsi.fi>)
+        id 1lqyY0-0002vZ-TE; Wed, 09 Jun 2021 16:47:08 +0300
+To:     christian.koenig@amd.com
+Cc:     matthew.auld@intel.com, ray.huang@amd.com,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        nouveau@lists.freedesktop.org,
+        linux-tegra <linux-tegra@vger.kernel.org>
+From:   Mikko Perttunen <cyndis@kapsi.fi>
+Subject: Trouble with TTM patches w/nouveau in linux-next
+Message-ID: <2e4987b0-7fc9-d217-450c-943de430dbd1@kapsi.fi>
+Date:   Wed, 9 Jun 2021 16:47:08 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 84.249.134.236
+X-SA-Exim-Mail-From: cyndis@kapsi.fi
+X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hello there,
+Hi,
 
-I hope this message finds you in good spirits especially during=20
-this challenging time of coronavirus pandemic. I hope you and=20
-your family are well and keeping safe. Anyway, I am Jotham=20
-Masuku, a broker working with Flippiebecker Wealth. I got your=20
-contact (along with few other contacts) through an online=20
-business directory and I thought I should contact you to see if=20
-you are interested in this opportunity. I am contacting you=20
-because one of my high profile clients is interested in investing=20
-abroad and has asked me to look for individuals and companies=20
-with interesting business ideas and projects that he can invest=20
-in. He wants to invest a substantial amount of asset abroad.
+I'm observing nouveau not initializing recently on linux-next on my 
+Tegra186 Jetson TX2 board. Specifically it looks like BO allocation is 
+failing when initializing the sync subsystem:
 
-Please kindly respond back to this email if you are interested in=20
-this opportunity. Once I receive your response, I will give you=20
-more details and we can plan a strategy that will be beneficial=20
-to all parties.
+[   21.858149] nouveau 17000000.gpu: DRM: failed to initialise sync 
+subsystem, -28
 
-Best regards
+I have been bisecting and I have found two patches that affect this. 
+Firstly, things first break on
 
-J Masuku
-Flippiebecker Wealth
+d02117f8efaa drm/ttm: remove special handling for non GEM drivers
+
+starting to return error code -12. Then, at
+
+d79025c7f5e3 drm/ttm: always initialize the full ttm_resource v2
+
+the error code changes to the above -28.
+
+If I checkout one commit prior to d79025c7f5e3 and revert d02117f8efaa, 
+things work again. There are a bunch of other TTM commits between this 
+and HEAD, so reverting these on top of HEAD doesn't work. However, I 
+checked that both yesterday's and today's nexts are also broken.
+
+Thank you,
+Mikko
+
