@@ -2,143 +2,172 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MSGID_FROM_MTA_HEADER,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 182EDC48BCF
-	for <linux-tegra@archiver.kernel.org>; Wed,  9 Jun 2021 14:01:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EAB5C48BCF
+	for <linux-tegra@archiver.kernel.org>; Wed,  9 Jun 2021 14:18:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EE3FD613B8
-	for <linux-tegra@archiver.kernel.org>; Wed,  9 Jun 2021 14:01:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA661613B9
+	for <linux-tegra@archiver.kernel.org>; Wed,  9 Jun 2021 14:18:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237144AbhFIOCy (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 9 Jun 2021 10:02:54 -0400
-Received: from mail-dm6nam08on2073.outbound.protection.outlook.com ([40.107.102.73]:27521
-        "EHLO NAM04-DM6-obe.outbound.protection.outlook.com"
+        id S234713AbhFIOTz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 9 Jun 2021 10:19:55 -0400
+Received: from mail-bn7nam10on2084.outbound.protection.outlook.com ([40.107.92.84]:9800
+        "EHLO NAM10-BN7-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S237090AbhFIOCy (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 9 Jun 2021 10:02:54 -0400
+        id S232603AbhFIOTz (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 9 Jun 2021 10:19:55 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=js5O4ZgXzzxZe9uMkt+6HhhDA273wIp6j/190uXjzdihEiQN+NLK4+8Q4sBhx9vgpwVqB2/YZ63LZcBDJPh13wdU55ZMDmbGsAHjmG5xSnZFSRZUXE8qUvHbGSq839ZDoUk0ZdggqyD5VxBhekJV+/YRkeiJzeaVFMuMuzk1X8rHmI19OG7D8swmzUoxfuFwQqdAoc2A/Kb3lToGnBcaaBCw0zVzYLlxtCL92vM1oUwSD33ucMJarecuyvwUzCdRwdLRkpl0DWFILjz3BNiFr75rwt+m/neoHEH+kAkdTynwx6TFKRKnv6dfgKr370cmU0wucS++vg4JT+VFHX43Eg==
+ b=mrrFdLsVgqJ+L58cTrGpyRdu+Sz8gy9VHj8nDxrmzwi7FQohXD+xgAIEuCis5sSUOawyJpiAgKSYP1DoWhGIdYQ//5GlxKxHziSbgAqbMzrBxm2c5dHXANMkNje6pP9zJyrDuCQq8R+Yw43RxdJSGyADd/EiDqyKCuDl0phUxwG4+9KgMOy7GmHNz6nAaxhBzdpWVAHoQNpvW5v96OTZswCFaJt6PzLEtgA1HjlQYNFnSepVvis5crPCBjPcE3trZ9H55BTbwz1MzmFgPJYlxlPS2MZv2jb1vU7u5iB8PPtH8xWduuCErw0E8uF0iNpzHr8NStExqlYlqgOL6q1SHw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0LlsRH7dIp9v7CDlQkzUBq/ba21YEfRVH86qqDR0vyE=;
- b=LIcSobTNI5tYPqvVjLQZyXge5SpSnMd4Dz/9mR+2ldJTa8RCyrd9v0cPaYnSZJICf6Q7zKUzAwtM6SFqjA5iBXiXPMnLpezF2DssM4DTMa27kk8QaHIzNTXo4sCtcjrIUc4PJbRDua3pFFkdjxXfYlXdrryMK5LenfYvBFIcH4sJdjzsQW8kafhKwEQtHU/ltfoX2or88kew57gVU61g9ht1GVGZjFiBWvDMQKP7pKrltjiqNqkBb8okz+3GAddyud41JPWkL5gxoujpVArhElQymPE1/L1y4MaHrJPKidxX7m2esLDbwCTYgORHshMVF0cJyZhKIjwFqO9/p33GcQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.112.34) smtp.rcpttodomain=google.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
+ bh=opJFhbYtoNjag0wqv6IWmVtTMd0e2q8+Z1Fa63lqZhE=;
+ b=G8uXye9S9P33xaybYGVEufppFHbFAhgf1K4lvgs0dkoGXjVShMEHQvOqY8NLoh5a5iPJw7HZqHbdzi1JPstnzQzGWJqgnaKtheOpnrfXANb8BITMl8jJXG4CPr0HW54a23Y+AJbah10ptGFyTTXRc0Gi4ycmDZFhI8SWnLlD1vgKxgcNYBMcH0xEgH/gSOArFWpv4rguR24585UEeJgHX11banAnLRWlgQrpV4o+SeHmMrcfx9sGHcpAPmwDmYFWcQ5RhUjpg9v3X/npweAu6oISZTBsAhXNa4WDzy44Tu6zAFHfpHEg46DUdzS55zRGTz1v6YBHppDVMqL0ta0Kwg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0LlsRH7dIp9v7CDlQkzUBq/ba21YEfRVH86qqDR0vyE=;
- b=g+D6TeVbyPLQePdQ0gxNnz1cJzX5qDDi2nxJekT/cxEVDKXiunEDxW+YG3aQadcwIjoo/S72iqR2jRqw3BH3ogGBNlHW2fkqK99QlptkBhGkYcIKHXk0yXbUEIbpq5nHXFQQiYycCfXfxuLbKRKsqQ9alAgbdfF7OS4j7WJpcU31ilR0B4sxzos0EdMmB4oSFBPSUXOUEreSmJAoy8DaEsw8sXHravkdUnQJ1rpUDnt6cpTeEcEBROzytvPRZ2raaF+svSY/5nejcCwSWGn6SlE2ka55dYsXBhN83JSLxB6X0goWwNL4d5AVeE0HGWpthiXhsG0Fq6J6Iyw9smD8sw==
-Received: from MWHPR12CA0040.namprd12.prod.outlook.com (2603:10b6:301:2::26)
- by MWHPR12MB1295.namprd12.prod.outlook.com (2603:10b6:300:11::11) with
+ bh=opJFhbYtoNjag0wqv6IWmVtTMd0e2q8+Z1Fa63lqZhE=;
+ b=Rdy2eHJlk/iLbPTSogXGJ1R7rsyrMj3tM7vukIGipoBW28+G0cSJBkAudlW9zB0jKAn1iOnPfGrwOttiX5retAG0a13LuLolEV6JiVjRCGSI5R2GUw2CiQulUi0oPrmg4plfWAmXMsoWmDrxYVB5HHLguxqlAQ4IV50gjYyoLxo=
+Authentication-Results: vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=none action=none header.from=amd.com;
+Received: from MN2PR12MB3775.namprd12.prod.outlook.com (2603:10b6:208:159::19)
+ by BL0PR12MB4932.namprd12.prod.outlook.com (2603:10b6:208:1c2::13) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4195.27; Wed, 9 Jun
- 2021 14:00:58 +0000
-Received: from CO1NAM11FT009.eop-nam11.prod.protection.outlook.com
- (2603:10b6:301:2:cafe::e0) by MWHPR12CA0040.outlook.office365.com
- (2603:10b6:301:2::26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4219.21 via Frontend
- Transport; Wed, 9 Jun 2021 14:00:58 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.34)
- smtp.mailfrom=nvidia.com; google.com; dkim=none (message not signed)
- header.d=none;google.com; dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.112.34 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.112.34; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (216.228.112.34) by
- CO1NAM11FT009.mail.protection.outlook.com (10.13.175.61) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.4219.21 via Frontend Transport; Wed, 9 Jun 2021 14:00:57 +0000
-Received: from [10.25.75.134] (172.20.187.6) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Wed, 9 Jun
- 2021 14:00:55 +0000
-Subject: Re: [PATCH V2] PCI: tegra: Fix building Tegra194 PCIe driver
-To:     Jon Hunter <jonathanh@nvidia.com>,
-        Bjorn Helgaas <helgaas@kernel.org>
-CC:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        =?UTF-8?Q?Krzysztof_Wilczy=c5=84ski?= <kw@linux.com>,
-        <linux-pci@vger.kernel.org>, <linux-tegra@vger.kernel.org>
-References: <20210608130207.GA2597738@bjorn-Precision-5520>
- <754e3546-402c-2a0d-02e8-5d30701f3b94@nvidia.com>
- <9b027609-a2c3-3df0-5e65-1f282f03cc5d@nvidia.com>
- <303946c4-29a1-4f5b-6a4c-be451ece20fe@nvidia.com>
- <a80788e4-b0a9-b8d9-46d0-873b5cc6035b@nvidia.com>
-From:   Vidya Sagar <vidyas@nvidia.com>
-Message-ID: <c3fd5fce-e7cb-66ac-d792-5fcfd95135e0@nvidia.com>
-Date:   Wed, 9 Jun 2021 19:30:53 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
-MIME-Version: 1.0
-In-Reply-To: <a80788e4-b0a9-b8d9-46d0-873b5cc6035b@nvidia.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4219.20; Wed, 9 Jun
+ 2021 14:17:59 +0000
+Received: from MN2PR12MB3775.namprd12.prod.outlook.com
+ ([fe80::6c9e:1e08:7617:f756]) by MN2PR12MB3775.namprd12.prod.outlook.com
+ ([fe80::6c9e:1e08:7617:f756%5]) with mapi id 15.20.4219.022; Wed, 9 Jun 2021
+ 14:17:59 +0000
+Subject: Re: Trouble with TTM patches w/nouveau in linux-next
+To:     Mikko Perttunen <cyndis@kapsi.fi>
+Cc:     matthew.auld@intel.com, ray.huang@amd.com,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        nouveau@lists.freedesktop.org,
+        linux-tegra <linux-tegra@vger.kernel.org>
+References: <2e4987b0-7fc9-d217-450c-943de430dbd1@kapsi.fi>
+From:   =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
+Message-ID: <816b619b-ff20-009a-ea05-504497c1946b@amd.com>
+Date:   Wed, 9 Jun 2021 16:17:53 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
+In-Reply-To: <2e4987b0-7fc9-d217-450c-943de430dbd1@kapsi.fi>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [172.20.187.6]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
- HQMAIL107.nvidia.com (172.20.187.13)
-X-EOPAttributedMessage: 0
+X-Originating-IP: [2a02:908:1252:fb60:3e79:91ff:ea38:2624]
+X-ClientProxiedBy: PR3P251CA0001.EURP251.PROD.OUTLOOK.COM
+ (2603:10a6:102:b5::14) To MN2PR12MB3775.namprd12.prod.outlook.com
+ (2603:10b6:208:159::19)
+MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from [IPv6:2a02:908:1252:fb60:3e79:91ff:ea38:2624] (2a02:908:1252:fb60:3e79:91ff:ea38:2624) by PR3P251CA0001.EURP251.PROD.OUTLOOK.COM (2603:10a6:102:b5::14) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4195.15 via Frontend Transport; Wed, 9 Jun 2021 14:17:57 +0000
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 633e8397-bd1b-47e0-1f0b-08d92b4f01b6
-X-MS-TrafficTypeDiagnostic: MWHPR12MB1295:
-X-Microsoft-Antispam-PRVS: <MWHPR12MB129533D50A469B6D2CDF5823B8369@MWHPR12MB1295.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:8882;
+X-MS-Office365-Filtering-Correlation-Id: de66b01c-5bd0-4587-1152-08d92b51625a
+X-MS-TrafficTypeDiagnostic: BL0PR12MB4932:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <BL0PR12MB49329150FCE9CD1D58DDF9AF83369@BL0PR12MB4932.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:2043;
 X-MS-Exchange-SenderADCheck: 1
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 5O/3srBDt+EIE3zRTtjwHDKQPXCM3P8xM8LngSvOtYpb0n48SFcFwnT/yZSGR0XHG/JrIQXhYVV7qDX1NCw0Z3x9RZ15ZiASF+XZYeEVsZ4PoTsFrbmm4LHY5+ZZS39IS8z6FF82+zgx184zmGhnu5kF5vFzls7dg+pAO0oMF+RbAdM3NnYxKTbaacJ2rPxC5MMts1XTjPdlacTGjOM9R9c7Ae7kMEmGDVFpLLUx5KsxByPOw5JTvbjDegP+woAaSWdne0twsbO9fpwh4V4yvolUNMSvQQWBslLQAs/H1w8EhLb0PyueQHyRPQ7I20bxHn42tBXEHJgXKxBbtHgsFNMoM5zFy7ZRHZpigrVUsgnWxtTL0E1sPgugQFYmuW3x6LvgBKPM8chfWJT2RnHRJcI4wce0/jwDbl+y/YiXCuqpGJctc4GWZdNyPxm+P6+MmdaWpEeABCuIMCDxuz2KLIpZ17Qi6YA0W5Bl2eOVNUVLZXeAstHKrazSxI1Hgrjt5C3ecOWP+5Flh4vGk30Zgn5wDmtR/OFigP0lRxrkYSBcdBpm+tGYWo/QietCW75fqPboadOLISn/09HE6br0o6WIVjWImDWsNen6BAqvpZyz3vcii+d7Zh530VDN0KD33xDw7vh1RC02cneszMlDd4rTo7keQPUHzRDNQQrKivPONeAP2F+KK2LKEmieGJyH
-X-Forefront-Antispam-Report: CIP:216.228.112.34;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid03.nvidia.com;CAT:NONE;SFS:(4636009)(346002)(136003)(396003)(376002)(39860400002)(46966006)(36840700001)(70586007)(54906003)(31686004)(8676002)(16576012)(86362001)(478600001)(316002)(110136005)(36906005)(2906002)(47076005)(8936002)(356005)(336012)(5660300002)(36756003)(7636003)(4326008)(83380400001)(70206006)(53546011)(36860700001)(82740400003)(31696002)(426003)(2616005)(16526019)(26005)(186003)(82310400003)(43740500002);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jun 2021 14:00:57.9410
+X-Microsoft-Antispam-Message-Info: pjOK1xGJIfAHM0NuE4/ieLtpcC1C0QYbrL2D04cUGmmMewGC0//nk4kgYnt4Zg/soT8tP9XMWi15bukzVm+wAdqvhFyxg+zcPZS4WOtEt9wq/mAfmIppTtfFOkj27NpVIQ5GDCI/UKr63ar0GzwvFaGTPVEl3qE17mX6RP6mXMdV/SvA+++WH1XkhCZ4a+OoGW0PEvYSHcXUa95+6yU806HYMXdeirrEcoTTqiCw+AajLsCRnDsEUAbOk1BFvl+4MpY5LZyiykp5ZU5ONuNhip+TufRx6HaoO8M8tffJ4ZuBIBMoobVHA41Yyv1O17qaN9IWwQ84VsxZe5WKDQpzYm7OtDDp+RZa55VQb/lJxy67p8Y0MbnbBn3Ngn7aVCXcx8a3tZUlk99MSz94jvfBgMn6+xWHznxuy977QMl4bbT2v1B1BxauuVrScjm91Q1F9ggyk9dWqF5KWlmJKRXpEHpHDJmcWGunJwrY++R3ViAsFlF5k5l3ognjH0tPVVeB2Oaisya51brmKpkvqwMajPGrFSLHApBbLEpyoMPITBhkrh2fKi5BI/5/HFALZQTCAsU7GwVr5PMwohXq+nsfLdmZXiTviyA8XbZedxaJp/XtAfkjq+f/Cg0OBY+sX3porp+EhYysVAj/XqQkv10RJFI8WHKCFpLHricKi9MlaemHi7fxxBdk4Dh9KwD+ais3
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR12MB3775.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(136003)(396003)(366004)(346002)(39860400002)(376002)(31686004)(8676002)(2906002)(66556008)(6486002)(54906003)(186003)(16526019)(5660300002)(36756003)(4326008)(2616005)(38100700002)(316002)(478600001)(83380400001)(31696002)(8936002)(66476007)(6666004)(6916009)(66946007)(86362001)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?RXM2cmZVVXN0UU56ckQ2Ym1ROU51VnkweHlsMHhUL2QrK1JIUW1QMk5halN5?=
+ =?utf-8?B?c05GeUlPQ1NFSGNucG04L0hmcnI5em9sQ3g4ekErVDhJT3lsVnFMMVFValpJ?=
+ =?utf-8?B?dDM2ejNrcjkwNjVtRTJOOTdqYjdXMnI3OElhazM0TXhTM01YNEN0WCtxcnhq?=
+ =?utf-8?B?ZDRpcldDelhIbUIvSlJ5OUJEUXRVZUo0bEF2OXVzd2NBcE5nQUxuYVl1bjJR?=
+ =?utf-8?B?bXJDQndGbWRVc1JhbEFnbEcvSDBERmwyY0VHaCsxeHMyejVnNUI1MThBRkVm?=
+ =?utf-8?B?YTlhM1h1MDFTcUlrWVNKU0MzajNaUWhwZFhDT2syK3BKRHd6QWlzWHlIbzMz?=
+ =?utf-8?B?cUZlNmxPNUlia3hNeHZWQ1lFVDhZdGFMc2l4RzIrRjB1anN2RzAvZjVsVWxK?=
+ =?utf-8?B?SXRsZUNDQm4wN2xvVGdCWFdIV2cydTZJVEJtelFVZkVKOUF3MmlKN0RyTXpm?=
+ =?utf-8?B?NjBtdC9WZjU1V1pTVUNZejQveDZFM0lDOFpyeFF2U1FRQ0gzdXZVTFArbjJr?=
+ =?utf-8?B?RExPNzBFNVVrM0xLc0YzUmxVa29lZWN0NTFFNURrL1hWMzNDb1VLT0VXTmZL?=
+ =?utf-8?B?eHAxT3MrMlRFTWg0UkJ4azBwcm8xOGdyczhscDI5RTM4YzlCR2FlKytITmx5?=
+ =?utf-8?B?VTdNbTkrT0RzYjFtZGhJc3p1cWh0c252eU9nbHVkbmJBempuTUFIYW9rM1o3?=
+ =?utf-8?B?QmxpV1BCV0ZrdFFYdDBWY3lONFNqK0ZLdjNVYjJGS2c0VzVWNndUMXhaeUUy?=
+ =?utf-8?B?VEJFRUQzK3JPZHkxZksvY3hXMWh4aVZlNGlOdzllY0dLZEV5azVxNm1CNXll?=
+ =?utf-8?B?aWI5Q2hLRFVIOUhWNEpjaEozWXY0TmwrWVRkdSs0RXpwdWpyVnduZ2JSa2Zi?=
+ =?utf-8?B?QU5jUzEzSFI3NHYzVnBsZWs3S284NlZwRHp5b2JmTkk3SXRlVFo4WlpYMzc2?=
+ =?utf-8?B?R2dhNUR2VC8zUFh0d1lmcU84ZUs5Vi9IYTRpWjhpZlBnYU8yR0h2NVBCSTlN?=
+ =?utf-8?B?TmZucHRjeHlZSVZiOE5aK2FMRDV0TjB5NkQzb3dJL2owVkNoa0J1a0k5c0dY?=
+ =?utf-8?B?Z2tmazNTYXVCQk9EbGdKWnUwK0tDK1JydFVicEg2VE9qZ3hieC9aWlg5blpH?=
+ =?utf-8?B?elVFdHBWMk1IdmU2bDZXYXIwbGhSd3RLTFYvYlBVa3NEOUhybnVaQU5PYjQ3?=
+ =?utf-8?B?RTNnMUV0a0ZkcjdnVi85cnROWlN6bVE0M1FDQlJ4Yy9EdHlLWnlFdUFyQ3Bu?=
+ =?utf-8?B?TllPaWpQRDEySG0zcHp6ZEViaHpWY3RZU2RNcnJXeFNJMjM5MkNtbFArTm1z?=
+ =?utf-8?B?RzZFRzRGZ0E4R0lSLzJKV1ZUY29ubVM0QmZGdnVWb3RuM21nVFZTUUdDMEdn?=
+ =?utf-8?B?NDNmdlJRNURjZXpJbUorNFN4K1FzNTdsck9CUVIyRzlRZWkzckRQNXJVN3Vh?=
+ =?utf-8?B?anVXMndPOTBlSXFBV3o3UWN4djNEM2xJeVlwdERFR3lPdC9TTUpxTzdrMnRZ?=
+ =?utf-8?B?M2FQaWlVelk3ellLTE5uZUZWTWRsNEV5eXI5VGFXRXFTWFZyQ1BtVDlrUVZH?=
+ =?utf-8?B?UlZQS2lNc1lTYmI3a1pqRFFFdXhBZXdUVXhzeGVCR3JmZDhCT0ttVXFSa2hh?=
+ =?utf-8?B?RlFyOFB0dEc4aFZrandUTGM0c2Y5ZUVvWlpLOEdGK3NlanJ0U3JCZ3V2VTQ4?=
+ =?utf-8?B?R1FlVzY5UDF5TE9rVXhiMEQzd0FTbVFYSDdhWXpNNHVKczM4STYwSVNUK29w?=
+ =?utf-8?B?UzkyN0lXcDBvbkU5eFRNNzBWb0k2SmxETkgwZE9reWpQbFZKRVgrb0hYK0E5?=
+ =?utf-8?B?NjdLNlp0UG9PVU5vU2hMYUUvVFZIY0h1alZBYTNOZHI2K0hxSmF0ZUdOTm90?=
+ =?utf-8?Q?we5jmjHY0Zn2E?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: de66b01c-5bd0-4587-1152-08d92b51625a
+X-MS-Exchange-CrossTenant-AuthSource: MN2PR12MB3775.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jun 2021 14:17:59.4229
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 633e8397-bd1b-47e0-1f0b-08d92b4f01b6
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.34];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT009.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR12MB1295
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: pAgDE63dlyXzQp2AhrxpDnqDuVFVlJ44F7KLr6RsTH776cY+kST5bClwi6Q03ChC
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL0PR12MB4932
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+Hi Mikko,
+
+strange sounds like Nouveau was somehow also using the GEM workaround 
+for VMWGFX as well.
+
+But -12 means -ENOMEM which doesn't fits into the picture.
+
+I will try with a G710, but if that doesn't yields anything I need some 
+more input from you.
+
+Thanks for the report,
+Christian.
 
 
-On 6/9/2021 3:53 PM, Jon Hunter wrote:
-> 
-> On 08/06/2021 21:11, Jon Hunter wrote:
-> 
-> ...
-> 
->> Furthermore, I wonder if we should just move the code
->> that is required for ACPI into it's own file like
->> drivers/pci/controller/dwc/pcie-tegra194-acpi.c?
-> 
-> I have been doing some testing and the above works fine. IMO moving the
-> ACPI specific code to its own file is a lot cleaner and simplifies the
-> Makefile and Kconfig. Especially seeing as the ACPI quirk code is
-> independent of the actual Tegra194 PCIe driver. Therefore, unless you
-> have any objections I will send a patch to fix this by doing just that
-> tomorrow. Also let me know if you have any concerns about the file name
-> or location drivers/pci/controller/dwc/pcie-tegra194-acpi.c.
-I'm fine with this. No concerns from my side.
+Am 09.06.21 um 15:47 schrieb Mikko Perttunen:
+> Hi,
+>
+> I'm observing nouveau not initializing recently on linux-next on my 
+> Tegra186 Jetson TX2 board. Specifically it looks like BO allocation is 
+> failing when initializing the sync subsystem:
+>
+> [   21.858149] nouveau 17000000.gpu: DRM: failed to initialise sync 
+> subsystem, -28
+>
+> I have been bisecting and I have found two patches that affect this. 
+> Firstly, things first break on
+>
+> d02117f8efaa drm/ttm: remove special handling for non GEM drivers
+>
+> starting to return error code -12. Then, at
+>
+> d79025c7f5e3 drm/ttm: always initialize the full ttm_resource v2
+>
+> the error code changes to the above -28.
+>
+> If I checkout one commit prior to d79025c7f5e3 and revert 
+> d02117f8efaa, things work again. There are a bunch of other TTM 
+> commits between this and HEAD, so reverting these on top of HEAD 
+> doesn't work. However, I checked that both yesterday's and today's 
+> nexts are also broken.
+>
+> Thank you,
+> Mikko
+>
 
-> 
-> That will at least fix the issue with v5.13. If we do that, then for
-> v5.14 I will clean-up the Kconfig and place everything under a single
-> CONFIG_PCIE_TEGRA194 entry (which I can send out once the initial
-> problem is fixed). And finally I will remove the unnecessary cast in the
-> probe function.
-How are we going to address the dependency issues (w.r.t RP and EP) if 
-we keep only CONFIG_PCIE_TEGRA194?
-
-> 
-> Jon
-> 
