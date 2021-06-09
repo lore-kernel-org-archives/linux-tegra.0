@@ -2,145 +2,96 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16D02C48BCD
-	for <linux-tegra@archiver.kernel.org>; Wed,  9 Jun 2021 16:18:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 776BEC48BCD
+	for <linux-tegra@archiver.kernel.org>; Wed,  9 Jun 2021 16:29:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ED2CE6139A
-	for <linux-tegra@archiver.kernel.org>; Wed,  9 Jun 2021 16:18:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 60581613C0
+	for <linux-tegra@archiver.kernel.org>; Wed,  9 Jun 2021 16:29:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230027AbhFIQUj (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 9 Jun 2021 12:20:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54632 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229743AbhFIQUj (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 9 Jun 2021 12:20:39 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 373A7611AE;
-        Wed,  9 Jun 2021 16:18:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1623255524;
-        bh=BjlU8gKXTImqvRzch3ZWrjTYIXyugwh0tiubtJ5SERM=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=boFY8IEhHmjVbyy+tyVmRztkDek345WwZplLGeUTDJbMLi7gCg2iIPatcrkAWJ6xM
-         6ng6LicV91wilpfij4xgl3HFpkHEsrDwhZkqDBI4B1BUWX3KHRAUSPeaAh4Zi5zPst
-         JGW7JD5FHorWCpGX7Ngz4Ea6HLt4KGXBXi878eKIBjYR4anD74vTjdR4Y1bQzzf+QO
-         7XV1cfiNzta7Dk/C6Q11CPKspxIbr7NynsZGHW6lX3tEkjSZigqAxI+G+Gi62D9/r0
-         gQnNy47Ltvv1hScP8266UokfXmsVQU5tOVdLNBK0HElG7cHcIhHndHusbS82LzQv+P
-         ntE0oI8q3gSag==
-Date:   Wed, 9 Jun 2021 11:18:42 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Vidya Sagar <vidyas@nvidia.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-        linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH V2] PCI: tegra: Fix building Tegra194 PCIe driver
-Message-ID: <20210609161842.GA2641672@bjorn-Precision-5520>
+        id S233849AbhFIQa6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 9 Jun 2021 12:30:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37466 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232474AbhFIQa6 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 9 Jun 2021 12:30:58 -0400
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63B47C061574
+        for <linux-tegra@vger.kernel.org>; Wed,  9 Jun 2021 09:29:03 -0700 (PDT)
+Received: by mail-wr1-x42f.google.com with SMTP id m18so26195360wrv.2
+        for <linux-tegra@vger.kernel.org>; Wed, 09 Jun 2021 09:29:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fooishbar-org.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=tGWiX83Hywk9BgCeVsLYFd5tdqdc0fZh1j2g86mM9NQ=;
+        b=WjSZMYTEqWPM1HVhG7zxeukpq/DtDZR/ioBAuMiyzXZ3QWKoBIsBANXq0hMARslWSh
+         QuKKaF0LwObIHXaXGMEXLzoftLxAKA4QJHXrsrR+gIKtE6N5Zv1OCrY3EL43DEXYt6QW
+         ZGCOu+HAwCyI4OmjFlPCaNI18G+ebT9Ol5u9AV2GsiLbefnm/hJXVrbUAmFMjnmHF9CZ
+         T3pqhcjBWqmteg90bVFqiLDduluW0BK2ar8uze1sDNRbQhgg9B82g40JCwKfrYyYPp/R
+         nyc7OYc6MgCvVuaXm/x0ZCrHF2tt49jM8dB5aYhdYEDD7lGuYCTNk+ctUjQE3FxhjiXG
+         vPgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=tGWiX83Hywk9BgCeVsLYFd5tdqdc0fZh1j2g86mM9NQ=;
+        b=CbvHv54Pz2tNUDhVXf1afQKAFmNSOq3TZSfRWuRGDtmVHQvL7tdG5rC4uG9ZmE4eyZ
+         0KuSN4wt4+wXMxu3m9pzYi/HKtg80qErfVk8otq7YCNUKA/Cs+UmUXFgWbgXt9V1ES1w
+         5O9r0nt+a2DheEJQSUkmcOT6cK5gdfD80Pttg6UYTpCXojpb19q61dG1SNaIbN2snC1+
+         yi7lr3fHkAtM0TW1+OT7u68A0gXmZzy/Q2PlVRJziZ4EUXI+rNsjdrv4Ldw+o7sUwK7y
+         JoUoqivZ1b37QfZnKHPVU9IDgCsC1yCIu7YJKHUfhxBSnB5WTLIklgr3g7GdG9paw8pm
+         Zycw==
+X-Gm-Message-State: AOAM532rGY/T/hObofTHTTU5P88ac4JfWU4rOMFNuWIzsw3jh4GD9cG/
+        HEM1plYhnc+ObdiCtZ71YdmSLkMc5R64I5uMOx+uZw==
+X-Google-Smtp-Source: ABdhPJyGrufajQ9tkW7Bx2QtFsfOtFOpmrFCXaUC5i0cwvpLayIR5PKpP0lpcQYz0BtBHERd7g1SI98fU+iWRiPMPZQ=
+X-Received: by 2002:a5d:66c6:: with SMTP id k6mr739340wrw.6.1623256141950;
+ Wed, 09 Jun 2021 09:29:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <303946c4-29a1-4f5b-6a4c-be451ece20fe@nvidia.com>
+References: <20210326145139.467072-1-thierry.reding@gmail.com>
+ <20210326145139.467072-2-thierry.reding@gmail.com> <P6bikxumymMi9GOcPaj_n8vMt5caPR3rWO4Kga8Ud_FNIgytl3ljvnkU6nsyxIwN4VKNmfOfsC4KryzFTObEXjtFDiywRWDtO_ed71g9aj0=@emersion.fr>
+ <YF4L3kq9UN6PWh/h@orome.fritz.box> <CAPj87rO_RsEPpuC9-DyVEJ=K6OLeknHhOnjvbQ2EEnPPPrq+dg@mail.gmail.com>
+In-Reply-To: <CAPj87rO_RsEPpuC9-DyVEJ=K6OLeknHhOnjvbQ2EEnPPPrq+dg@mail.gmail.com>
+From:   Daniel Stone <daniel@fooishbar.org>
+Date:   Wed, 9 Jun 2021 17:28:50 +0100
+Message-ID: <CAPj87rOB8p+WSgVDwRbbLgW-di5qpSTY5Q6cmQYwbwD2Y3wKVA@mail.gmail.com>
+Subject: Re: [PATCH v2 01/10] drm/fourcc: Add macros to determine the modifier vendor
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Simon Ser <contact@emersion.fr>, David Airlie <airlied@linux.ie>,
+        James Jones <jajones@nvidia.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        linux-tegra@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Jun 08, 2021 at 09:11:27PM +0100, Jon Hunter wrote:
-> On 08/06/2021 19:34, Vidya Sagar wrote:
-> 
-> ...
-> 
-> >>> What is the purpose of PCIE_TEGRA194_EP (added by c57247f940e8 ("PCI:
-> >>> tegra: Add support for PCIe endpoint mode in Tegra194") [1])?  I don't
-> >>> see any reference to it in a makefile or a source file.
-> >>>
-> >>> It looks like one can build a single driver that works in either host
-> >>> or endpoint mode, depending on whether a DT node matches
-> >>> "nvidia,tegra194-pcie" or "nvidia,tegra194-pcie-ep".
-> >>>
-> >>> So I think PCIE_TEGRA194_EP is superfluous and should be removed and
-> >>> you should have a single tristate Kconfig option.
-> >>
-> >> This is a good point.
-> >>
-> >> Sagar, any reason for this?
-> > Although it is the same driver that works for both HOST mode and EP
-> > mode, PCIE_TEGRA194_EP depends on PCI_ENDPOINT whereas the
-> > PCIE_TEGRA194_HOST mode doesn't. Similarly the PCIE_TEGRA194_HOST mode
-> > depends on PCI_MSI_IRQ_DOMAIN which PCIE_TEGRA194_EP doesn't depend on.
-> > It is possible to have end point mode support disabled (at sub-system
-> > level) in the system yet pcie-tegra194 can be compiled for the host mode
-> > vice-a-versa for the endpoint mode.
-> > Hence, appropriate config HOST/EP needs to be selected to make sure that
-> > the rest of the dependencies are enabled in the system.
-> > Hope I'm able to give the rationale correctly here.
-> 
-> Yes but should we combine them like this ...
-> 
-> diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
-> index 423d35872ce4..206455a9b70d 100644
-> --- a/drivers/pci/controller/dwc/Kconfig
-> +++ b/drivers/pci/controller/dwc/Kconfig
-> @@ -254,15 +254,12 @@ config PCI_MESON
->           implement the driver.
->  
->  config PCIE_TEGRA194
-> -       tristate
-> -
-> -config PCIE_TEGRA194_HOST
-> -       tristate "NVIDIA Tegra194 (and later) PCIe controller - Host Mode"
-> +       tristate "NVIDIA Tegra194 (and later) PCIe controller"
->         depends on ARCH_TEGRA_194_SOC || COMPILE_TEST
-> -       depends on PCI_MSI_IRQ_DOMAIN
-> -       select PCIE_DW_HOST
-> +       depends on PCI_MSI_IRQ_DOMAIN || PCI_ENDPOINT
-> +       select PCIE_DW_HOST if PCI_MSI_IRQ_DOMAIN
-> +       select PCIE_DW_EP if PCI_ENDPOINT
->         select PHY_TEGRA194_P2U
-> -       select PCIE_TEGRA194
->         help
->           Enables support for the PCIe controller in the NVIDIA Tegra194 SoC to
->           work in host mode. There are two instances of PCIe controllers in
-> @@ -271,21 +268,6 @@ config PCIE_TEGRA194_HOST
->           in order to enable device-specific features PCIE_TEGRA194_EP must be
->           selected. This uses the DesignWare core.
->  
-> -config PCIE_TEGRA194_EP
-> -       tristate "NVIDIA Tegra194 (and later) PCIe controller - Endpoint Mode"
-> -       depends on ARCH_TEGRA_194_SOC || COMPILE_TEST
-> -       depends on PCI_ENDPOINT
-> -       select PCIE_DW_EP
-> -       select PHY_TEGRA194_P2U
-> -       select PCIE_TEGRA194
-> -       help
-> -         Enables support for the PCIe controller in the NVIDIA Tegra194 SoC to
-> -         work in endpoint mode. There are two instances of PCIe controllers in
-> -         Tegra194. This controller can work either as EP or RC. In order to
-> -         enable host-specific features PCIE_TEGRA194_HOST must be selected and
-> -         in order to enable device-specific features PCIE_TEGRA194_EP must be
-> -         selected. This uses the DesignWare core.
+Hi Thierry,
 
-I'm not a Kconfig expert, but I really like that solution, as long as
-it addresses Vidya's concerns about RP/EP dependencies.
+On Tue, 27 Apr 2021 at 19:40, Daniel Stone <daniel@fooishbar.org> wrote:
+> On Fri, 26 Mar 2021 at 16:29, Thierry Reding <thierry.reding@gmail.com> wrote:
+>> On Fri, Mar 26, 2021 at 02:54:22PM +0000, Simon Ser wrote:
+>> > LGTM, thanks!
+>> >
+>> > Reviewed-by: Simon Ser <contact@emersion.fr>
+>> >
+>> > Let me know if you need me to push this to drm-misc-next.
+>>
+>> I do have commit access for drm-misc-next, but I was thinking that I
+>> could take this through the drm/tegra tree along with the subsequent
+>> patches because of the dependency.
+>>
+>> Anyone willing to provide an Acked-by for that?
+>
+> Yep, no harm if that makes your life easier, so for both the patch itself and merging through tegra:
+> Acked-by: Daniel Stone <daniels@collabora.com>
 
-Looks like the Kconfig help text should be updated to remove the
-other PCIE_TEGRA194_EP reference?  Maybe it should include a clue
-about how the connections to host/endpoint support, e.g., "includes
-endpoint support if PCI_ENDPOINT is enabled"?
+Is this still in your queue somewhere?
 
-> Furthermore, I wonder if we should just move the code
-> that is required for ACPI into it's own file like
-> drivers/pci/controller/dwc/pcie-tegra194-acpi.c?
-
-That might simplify things.  I think the reason we started with things
-in one file is because for some drivers there's a lot of shared stuff
-(#defines, register accessors) between the quirk and the native host
-driver.  Either you have to put it all in one file, or you have to add
-a shared .h file and make some of that stuff non-static.
-
-Bjorn
+Cheers,
+Daniel
