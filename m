@@ -2,180 +2,183 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-4.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0826CC47094
-	for <linux-tegra@archiver.kernel.org>; Thu, 10 Jun 2021 09:05:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAE20C47094
+	for <linux-tegra@archiver.kernel.org>; Thu, 10 Jun 2021 09:17:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DB0E4613FE
-	for <linux-tegra@archiver.kernel.org>; Thu, 10 Jun 2021 09:05:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9512961407
+	for <linux-tegra@archiver.kernel.org>; Thu, 10 Jun 2021 09:17:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230055AbhFJJHd (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 10 Jun 2021 05:07:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58446 "EHLO
+        id S229993AbhFJJTg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 10 Jun 2021 05:19:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32956 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229715AbhFJJHc (ORCPT
+        with ESMTP id S229990AbhFJJTe (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 10 Jun 2021 05:07:32 -0400
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7C75C061574;
-        Thu, 10 Jun 2021 02:05:21 -0700 (PDT)
-Received: by mail-wm1-x333.google.com with SMTP id h11-20020a05600c350bb02901b59c28e8b4so5565805wmq.1;
-        Thu, 10 Jun 2021 02:05:21 -0700 (PDT)
+        Thu, 10 Jun 2021 05:19:34 -0400
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55638C061574;
+        Thu, 10 Jun 2021 02:17:25 -0700 (PDT)
+Received: by mail-wr1-x42d.google.com with SMTP id m18so1426678wrv.2;
+        Thu, 10 Jun 2021 02:17:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=p5NiQOW29LgoYtGrn9lsDMjFWiJOYahPMH/NM1fxUjY=;
-        b=VtuwuJx5q6q/8As+IDf2U+DbywdWX2CvfZeh3vVnd+R3EFbXpkc5IBFJ9l7X/8u8tv
-         +QkmPqORMla9MD5vWJsUtVv8UmBluEilH1HD00yPcmFWQc8erR+07HbeOpX4DKNF6WQX
-         UnwE3R2jCNCX/NSwbqxCtjbX8rDCFY5RxgflUFdXbF9RGKqhgsHAmoQIgzwC1NrcyE5B
-         bSiqJDvtajoslw+uxMVUcWx8HZs6lHg57ZGUSzvDE5KrCl32Y5nhu8uJW2pp0UaVzCU4
-         t5DezuyEIrv4Bqv3dR6/PeEtsnjhAbxUsQQlikHT/74JceFTGcLOYWRbuymgAC9zpB+Y
-         C6MQ==
+        bh=lufrtSYaRB+3cU25JjfQ213i4rIMewljTlWV6qMFCfU=;
+        b=OfUdSJkaR48ZzMbKamaCpBecfRh/Ga7yYmiWthlZkjbRD2aBAsms4czdHt0TeYv14s
+         gfEl53pzpd2J0B7NlM1RnZc0iENloEpbv9IXOBmMTJ3b4d4LjI+mcXJbUNGsckCtlNtz
+         w7tDV32ehthcXQRyNSqbTDDwcbPO0nV3y2V57Qom5op6xzhPIOiQJVIJ54hkYns38aTL
+         9epRtsCLy5qMyBpvMBv18xMcZvm/Q6COwzdr0ZxD+J8BbPGzWtp/X9bV1kUpiY+vPdbP
+         ugkz7as3b1trF3cEiUxBP8Bh+PiBOTOupB/UI6IHha6W/S2giYgnZtGBPlvCFerb7+/a
+         ffxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=p5NiQOW29LgoYtGrn9lsDMjFWiJOYahPMH/NM1fxUjY=;
-        b=pDcu/7WGu7WeUKXY7TzhhHQ/C6n/VNVl/s4USC7XjY2gNnkGNyVhZ4EFaxOg82uSe3
-         +nxAMeInTq5TRkW1mGbM0Mm1GGo4tdh5tZUY8tdnWjGS6r5T0pT0ovwG9+P/YsY8N8Hs
-         Y+z2j+8aFgVZnEXwGPMEEL9IvN6xD5t0r17edNEICjnFaeq2/Y2RP9kxQ+3lOZmWeIws
-         DDX9opGseb/7lAJJ9KojLw9z6GhL/ZUP56mBK07aHU3P0zORJitdXbWEG8gmjIec9ax+
-         WZ75o/SE6OYpe1F+7t4P6XOVQ/6nStmBYUgnTLhbhNn4nWmlIgouiENt2LBlWGijqu9I
-         NSRQ==
-X-Gm-Message-State: AOAM5304U4CONmXfLx/lIFR9fbAL/rjlG41YltTgTsmrUbHRgkmTHiRn
-        kJSxlixVfK57R9k0h9T5kEo=
-X-Google-Smtp-Source: ABdhPJwmWfEo2v+zBcV4ZNP9QUikLPHe4xyLK/775zUaAG9OoPoNbRaXn8D/IH3gbbLT7UEAccOcyw==
-X-Received: by 2002:a05:600c:2cd2:: with SMTP id l18mr3897426wmc.142.1623315920472;
-        Thu, 10 Jun 2021 02:05:20 -0700 (PDT)
+        bh=lufrtSYaRB+3cU25JjfQ213i4rIMewljTlWV6qMFCfU=;
+        b=Zide5TFQd4u6K6yJd64S5JVkyVvFuQOeW7LCeiHmDBNJvvGagettw133SaQnXkwaCb
+         og8FzN+8bCg1pwQBFV0m39aOzyiegZ9aM/gmnpAfvLEjEy5lF4CvcxraAKoU2eRYF1PF
+         KE0JX7UC01F+4ofT2hI69wj//NbFKvg3xzOETt0RN+JRONHL9zxxA8KC8ZP45voSGiDG
+         A8rI1VBVZHsDr3TsYG2votTNRYkgAKyrqBYiToDipGR6Rj2rB27tSUmXqcZbFn1tewry
+         ADQvnMSgIy5+F+Vcc8m37Z4GzDy0MyQ77vLYj7EBT1gz0h3xAsBgWQyXRHOkchJ0igDT
+         zv6w==
+X-Gm-Message-State: AOAM532EjUqEOYGXcaB5CCswyLJXs1ztVlYaxXYTyJZq537IncR74age
+        RGYIBOI2DdWdnVpkvnXO/uo=
+X-Google-Smtp-Source: ABdhPJyW5m2MHrnAF1Ii+EvXADbLuM7bYTX9Cc1kCfjq7UI7PxLu4x3Bw7uYywoxvxiaKBPgYspf6A==
+X-Received: by 2002:a5d:564a:: with SMTP id j10mr4235390wrw.171.1623316643906;
+        Thu, 10 Jun 2021 02:17:23 -0700 (PDT)
 Received: from localhost ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id j7sm2693281wrm.93.2021.06.10.02.05.18
+        by smtp.gmail.com with ESMTPSA id t1sm2710631wrx.28.2021.06.10.02.17.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Jun 2021 02:05:19 -0700 (PDT)
-Date:   Thu, 10 Jun 2021 11:07:02 +0200
+        Thu, 10 Jun 2021 02:17:22 -0700 (PDT)
+Date:   Thu, 10 Jun 2021 11:19:05 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Vidya Sagar <vidyas@nvidia.com>,
-        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-        linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH V4] PCI: tegra: Fix building Tegra194 PCIe driver
-Message-ID: <YMHWNusvLtwKWlQe@orome.fritz.box>
-References: <20210610064134.336781-1-jonathanh@nvidia.com>
+To:     Will Deacon <will@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+List-Id: <soc.lore.kernel.org>
+Cc:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
+        arm@kernel.org, soc@kernel.org, linux-kernel@vger.kernel.org,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Nicolin Chen <nicolinc@nvidia.com>,
+        Krishna Reddy <vdumpa@nvidia.com>, linux-tegra@vger.kernel.org,
+        iommu@lists.linux-foundation.org,
+        linux-arm-kernel@lists.infradead.org,
+        Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [GIT PULL] memory: Tegra memory controller for v5.14
+Message-ID: <YMHZCaRiQNQCSsVr@orome.fritz.box>
+References: <20210607084910.21024-1-krzysztof.kozlowski@canonical.com>
+ <20210608120128.GB10174@willie-the-truck>
+ <YL+A+MPjjaa3nSwq@orome.fritz.box>
+ <20210608164851.GB10994@willie-the-truck>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="aQWUWpnN9KJKqFLO"
+        protocol="application/pgp-signature"; boundary="jVj7juWizf7nxW9D"
 Content-Disposition: inline
-In-Reply-To: <20210610064134.336781-1-jonathanh@nvidia.com>
+In-Reply-To: <20210608164851.GB10994@willie-the-truck>
 User-Agent: Mutt/2.0.6 (98f8cb83) (2021-03-06)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---aQWUWpnN9KJKqFLO
-Content-Type: text/plain; charset=utf-8
+--jVj7juWizf7nxW9D
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 10, 2021 at 07:41:34AM +0100, Jon Hunter wrote:
-> Commit 7f100744749e ("PCI: tegra: Add Tegra194 MCFG quirks for ECAM
-> errata") caused a few build regressions for the Tegra194 PCIe driver
-> which are:
+On Tue, Jun 08, 2021 at 05:48:51PM +0100, Will Deacon wrote:
+> On Tue, Jun 08, 2021 at 04:38:48PM +0200, Thierry Reding wrote:
+> > On Tue, Jun 08, 2021 at 01:01:29PM +0100, Will Deacon wrote:
+> > > On Mon, Jun 07, 2021 at 10:49:10AM +0200, Krzysztof Kozlowski wrote:
+> > > > This is the pull for you to base further SMMU aptches (prevent earl=
+y SMMU
+> > > > faults).
+> > >=20
+> > > This is a tonne of code for me to pull into the SMMU tree given that =
+I only
+> > > want one patch!
+> > >=20
+> > > Thierry, if I just stick:
+> > >=20
+> > > https://lore.kernel.org/r/20210603164632.1000458-4-thierry.reding@gma=
+il.com
+> > >=20
+> > > on its own branch, can you stitch together whatever you need?
+> >=20
+> > I'm not sure I understand what you're proposing. For reference, here's
+> > the set of patches that I sent out:
+> >=20
+> >   1. memory: tegra: Implement SID override programming
+> >   2. dt-bindings: arm-smmu: Add Tegra186 compatible string
+> >   3. iommu/arm-smmu: Implement ->probe_finalize()
+> >   4. iommu/arm-smmu: tegra: Detect number of instances at runtime
+> >   5. iommu/arm-smmu: tegra: Implement SID override programming
+> >   6. iommu/arm-smmu: Use Tegra implementation on Tegra186
+> >   7. arm64: tegra: Use correct compatible string for Tegra186 SMMU
+> >   8. arm64: tegra: Hook up memory controller to SMMU on Tegra186
+> >   9. arm64: tegra: Enable SMMU support on Tegra194
+> >=20
+> > Krzysztof already picked up patch 1 and I was assuming that you'd pick
+> > up 2-6 because they are to the ARM SMMU driver. However, if you're
+> > primarily interested in just patch 3, which is more "core" ARM SMMU than
+> > the rest, which are Tegra-specific, then I suppose what we could do is
+> > for you to give an Acked-by on the rest (2, 4-6) and then Krzysztof or I
+> > can pick them up and take them via ARM SoC, based on the stable branch
+> > from your tree that only has patch 3.
 >=20
-> 1. The Tegra194 PCIe driver can no longer be built as a module. This
->    was caused by removing the Makefile entry to build the pcie-tegra.c
->    based upon the CONFIG_PCIE_TEGRA194 option. Therefore, restore this
->    so that we can build the driver as a module.
-> 2. 7f100744749e ("PCI: tegra: Add Tegra194 MCFG quirks for ECAM
->    errata") added "#ifdef CONFIG_PCIE_TEGRA194" around the native
->    driver. But if we set CONFIG_PCIE_TEGRA194=3Dm to build the driver as a
->    module, autoconf.h contains "#define CONFIG_PCIE_TEGRA194_MODULE 1"
->    (not "#define CONFIG_PCIE_TEGRA194 1"), so the #ifdef excludes the
-
-I think the correct way to write conditionals that are true on =3Dy and =3Dm
-is to use:
-
-	#ifdef IS_ENABLED(CONFIG_PCIE_TEGRA194)
-
-but that doesn't fix the issue of not getting the quirks included when
-CONFIG_PCIE_TEGRA194=3Dm.
-
->    driver. Given that the ACPI quirk code for Tegra194 is completely
->    independent of the native Tegra194 PCIe driver, move this code into
->    its own file so that it can be built independently and we can remove
->    the "#ifdef CONFIG_PCIE_TEGRA194" in the native driver. Note that
->    given the native Tegra194 PCIe driver is only used with device-tree,
->    this will not cause any conflicts.
-> 3. The below build warnings to be seen with particular kernel
->    configurations. Fix these by moving these structure definitions to
->    within the necessary guards.
+> I think you previously said that patch 5 depends on patch 1, so I can't
+> take 2-6 without also pulling in the memory controller queue.
 >=20
->   drivers/pci/controller/dwc/pcie-tegra194.c:259:18: warning:
->   	=E2=80=98event_cntr_data_offset=E2=80=99 defined but not used [-Wunuse=
-d-const-variable=3D]
->   drivers/pci/controller/dwc/pcie-tegra194.c:250:18: warning:
->   	=E2=80=98event_cntr_ctrl_offset=E2=80=99 defined but not used [-Wunuse=
-d-const-variable=3D]
->   drivers/pci/controller/dwc/pcie-tegra194.c:243:27: warning:
->   	=E2=80=98pcie_gen_freq=E2=80=99 defined but not used [-Wunused-const-v=
-ariable=3D]
+> > Patch 6 touches arm-smmu-impl.c, though it's a two-line change that
+> > touches only the Tegra-specific matching bit in arm_smmu_impl_init(), so
+> > the likelihood of that conflicting with anything else is fairly small.
+> >=20
+> > Is that what you were proposing?
 >=20
-> Fixes: 7f100744749e ("PCI: tegra: Add Tegra194 MCFG quirks for ECAM errat=
-a")
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> ---
-> Changes since V3:
-> - Moved ACPI quirk code into separate source file
+> I can queue as much or as little of 2-6 as you like, but I would like to
+> avoid pulling in the memory controller queue into the arm smmu tree. But
+> yes, whichever of those I take, I can put them on a separate branch so
+> that you're not blocked for the later patches.
 >=20
-> Changes since V2:
-> - Update the commit message per Bjorn's feedback
-> - Moved the structure definitions within the necessary guards as opposed
->   to wrapping the existing defintions with the appropriate guards.
->=20
-> Changes since V1:
-> - Added fixes tag
-> - Fixed 'defined but not used' compiler warnings
->=20
->  drivers/pci/controller/dwc/Makefile           |   3 +-
->  .../pci/controller/dwc/pcie-tegra194-acpi.c   | 108 ++++++++++++++
->  drivers/pci/controller/dwc/pcie-tegra194.c    | 138 +++---------------
->  3 files changed, 128 insertions(+), 121 deletions(-)
->  create mode 100644 drivers/pci/controller/dwc/pcie-tegra194-acpi.c
+> You have a better handle on the dependencies, so please tell me what works
+> for you. I just want to make sure that at least patch 3 lands in my tree,
+> so we don't get late conflicts with other driver changes.
 
-We've had a similar problem with Tegra210 EMC and the EMC frequency
-table parsing code. The EMC frequency table parsing code needs to be
-always built-in because it is stashed into a linker section. However
-we still want the driver to be able to be a loadable module. The only
-way I know how to achieve that is by splitting up the sources files
-like you do here, so I this looks like a correct fix:
+Yes, if you could pick up patch 3 and send out a link with the stable
+branch, I think Krzysztof or I could pull in that branch and pick up the
+remaining patches. It'd be good if you could also ack the remaining SMMU
+patches so that ARM SoC knows that they've been sanctioned.
 
-Reviewed-by: Thierry Reding <treding@nvidia.com>
+Krzysztof: would you be okay with picking up patches 2 and 4-6 on top of
+your memory branch for v5.14?
 
---aQWUWpnN9KJKqFLO
+Thierry
+
+--jVj7juWizf7nxW9D
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmDB1jYACgkQ3SOs138+
-s6HLLBAArU5vNgX8kJNJFsVVYw3Azstm43F6ZHniLPd1GmbqncxAzbNoK6u9PryZ
-s1dJzzlHvvA/t2KA2YtcxGdUII5hF4cYUxXvQK0tTSqU2JyCVT/9lvx4qQou24i0
-GmkBp8yPanRJYHLntm8YJHETaGew6i/dXjfLAxIgpJGm3uBC/KNnSBr59a34+5zF
-1LG1pzLojFV8zUS/a/zw2Krpq2vvudK6JTGNp5w5gifMFRM/11TMc4Sh7al6DlEX
-AH9qoLpCL/kK4mWrFTxEtfw5NEwdmjsMQ3smHKTyZs8ZPxab2EZ2CRM6b3EI1TNK
-EryNLPUrpgWtH5cJc9AU7APUesTmWlLQkWGytreuWNCTPfNPFG1hHxM9EWDbiv0K
-t2fVvyIIu6EWQG+kdSHh0nH5lgunhNJnx0CoqQXT8iurhLBArbE2q8/hw2rpS6vE
-FIDgzEIwSe8rvr49z8k1phQhXH0Ce77UQmz4PNMXk/rDBqCI7b2RfecVXbO1pvVo
-DyB53alhO5Vuo1h4FK633ovx8qXZRBjt+3a9EBwlYqBd9mK00kLq9e1hHSYz7aNf
-mbyCgNDDP98QcqzqD+f7hx4wBkjBi/4HrqJ4HwkDmuDv+QV3G12qjzjEA6/Xq/yQ
-RfqGp1iXJ3/n4nMyS0kDSxyU7wtdks2XYb2jYpq6wg9N8dyJWro=
-=Y3lX
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmDB2QcACgkQ3SOs138+
+s6EnLA//ZgBQdPoxTa9Yc7sswfHwAYyKCWSKQcgTH84rrCOszXWcAZORrfyMA4/d
+3OuzF8mlebPISC4OJoo3k9/EfITpQWbqFZSYQN03cqVDys/Kb+3woqyUvgrqmFUl
+rxrITRTsCOakoo3/OGgAtC0r3P+btzdZco6pqrsTr4PwQe1oUC+179jq6R536pVO
+n+liywt2NNxpGX1lI9rCpePyB777kLZZHI0oJO2HOtwLS/Z3TWLau3cRH1JSY7uy
+GpCUzS87izn2OPo65VOQDIHIDA67M6UiqesYQCOic0AY4fo4hvTIQ7DIdFMQYh0t
+Q2DUAr53VrV7m7DY313Xbo+ZGeq+c+ZQKn4JZ2KIOGDtucts8WpkEfmbJ2q7sUH7
+JnIBMeUs1k5v52eW8/GfZT6reyEcNzYCT/C1w2cSRwB/bCTc7j1+O4Iarc45mJgP
+pXFEsSZErCFLh0TBirnzJEqJ7eUyldWgSUy2jHndovEsS/hYJIuoKt6vILDlb4tn
+9KrMopwWp4gKN6fZwZZIV2dOgx07jzsVXpBjVjtnafnqad4IanU1RobRKOikiNkX
+xi97rLtRq5dB5oI1CTe3yHGUAz/A6gKyYtd3oQPP1hyeXglMAkThHJUBHTBlEAYy
+3GeB7oBGK6Cn/ZmG4qWFvsW82bxW9mjFzwOxW4zmSuLxPCFveG0=
+=Jpm0
 -----END PGP SIGNATURE-----
 
---aQWUWpnN9KJKqFLO--
+--jVj7juWizf7nxW9D--
