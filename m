@@ -2,92 +2,134 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29157C47094
-	for <linux-tegra@archiver.kernel.org>; Thu, 10 Jun 2021 15:51:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93012C47094
+	for <linux-tegra@archiver.kernel.org>; Thu, 10 Jun 2021 16:08:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 12C4D613D0
-	for <linux-tegra@archiver.kernel.org>; Thu, 10 Jun 2021 15:51:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7D4F8613F5
+	for <linux-tegra@archiver.kernel.org>; Thu, 10 Jun 2021 16:08:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231669AbhFJPx2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 10 Jun 2021 11:53:28 -0400
-Received: from mail-lj1-f180.google.com ([209.85.208.180]:43600 "EHLO
-        mail-lj1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231772AbhFJPx1 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 10 Jun 2021 11:53:27 -0400
-Received: by mail-lj1-f180.google.com with SMTP id r14so5543033ljd.10;
-        Thu, 10 Jun 2021 08:51:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=dJEQ05qdu+8nKCCgzfIKNvAnjM3rPput3SGOoOdwVG4=;
-        b=QXXfyC+CNRLr82a3T4zoVNqWsc6aHIooixWlBRMAvV8jgeq1VtCOLKgW9CnDdxXEMp
-         bBSvfsLmLqGnvOfzibxr3DiX1hOtLD9chD2ojf8BYLPUkp6i8Z9AmDB2pv+a1emtFdh7
-         Es7D6Suy14DUN8O+jGAFcmXnGMIOSByWfW8ldXV8TLSLPxQffIyMQ+fnndbC7n27v4ze
-         mmTuvG2gf/1dDU1KJgGpR8+vFs2nrjnaxtcvcfZ3VRfn1gUlEam3kl4AkxQhwynzRVCk
-         G0yizUAc2LPeITpnC/C9x/6fZ5t8nPD+mtqluShpZqg8JGhG3G/FrZukLWvxjJAzjIrz
-         3jFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=dJEQ05qdu+8nKCCgzfIKNvAnjM3rPput3SGOoOdwVG4=;
-        b=TjjUKj+lYHFdek+ESe5L60iINFIoaqKlJkzX/foTOFLMZB5creRPgQ0IS8Jyzn04A7
-         J7yt9u3xZx6xOPrzYW8dX08hGct/Gx/qk9F4d3nAHqDSALMfiY+2uMw9FXUwMW6kytrV
-         ROSjUSjFNIB/bOUbW2oXowDrrt3e3ZtIQHA8HeRCEg4mEOhLd0egsN8dk4A4rc3DQgKG
-         E79WSjO9GOooIP2toAXXd84VqMhgaZ8bySZTwcRjXxqeBPcGP1/wKN7/TYRWcsmFQm11
-         7Uk/WvGf4zwz0PejBhuqo1h3OarAOGPwj42MZ0hLUVWGjzvC5l2uRb7XC4yKkOYxLJXd
-         dd7w==
-X-Gm-Message-State: AOAM532qK3VfmN7sTBfqixqX6ssVX1FHfzB81/xYXWBeuhnC4do/v1Xj
-        TTZ0OCK7rwg0bCRRgIKXrdbrG9wI1Ww=
-X-Google-Smtp-Source: ABdhPJwac9R6lTcA7YMbwSgbmVO2TftWIG8X61GWwb+P+TB9zUhcJYF8mm9KjWnbyK3VOGP+fv2uig==
-X-Received: by 2002:a2e:b4c9:: with SMTP id r9mr2805279ljm.306.1623340217082;
-        Thu, 10 Jun 2021 08:50:17 -0700 (PDT)
-Received: from [192.168.2.145] (94-29-21-60.dynamic.spd-mgts.ru. [94.29.21.60])
-        by smtp.googlemail.com with ESMTPSA id z14sm380368ljc.51.2021.06.10.08.50.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Jun 2021 08:50:16 -0700 (PDT)
-Subject: Re: [PATCH 1/2] memory: tegra: Add missing dependencies
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-Cc:     Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20210609112806.3565057-1-thierry.reding@gmail.com>
- <20210609112806.3565057-2-thierry.reding@gmail.com>
- <0c762772-929e-2eb8-6568-4aa82ea2f9ad@gmail.com>
- <ee2846c0-9274-0888-90ac-dac72d2ab5fd@canonical.com>
- <a3110fbd-c4af-0317-5a6d-1f780f1dac91@gmail.com>
- <1400979c-c7a7-9618-1168-70185ed10546@canonical.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <8d8d019a-34c1-50bd-5eba-ce361c263d35@gmail.com>
-Date:   Thu, 10 Jun 2021 18:50:15 +0300
+        id S229990AbhFJQKQ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 10 Jun 2021 12:10:16 -0400
+Received: from mail-mw2nam08on2075.outbound.protection.outlook.com ([40.107.101.75]:32629
+        "EHLO NAM04-MW2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S229979AbhFJQKQ (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 10 Jun 2021 12:10:16 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=L6JgmHqPYIBtIf1iA6ZxGPqg2ZAb+PU54Uj+LtkvOtoN1z/7RCgimXZNng4ppKvOBIfjzd+WX108faGmbdU4WLD4HUnbpWDt8/fvujGf8MXCuOM/b0sn/Fs26wh1oAQmLmoV209gV1yEVIWpIY5DVVVRjHMVcSwZmlNN9lW3Nt6/PER4Rfz/4zxtgql0GPb+/JFlMrTSfROz3wD8OfrcGrFVSNWCXf+f8Uae5NZ7GwHjXz+KSPgFLth3yjrokgIGOv6oWFWXfUsGopk+Vq9X3OAczgMtCagya3l2A7iRLs0MqHaQY0FBEY/YMR7HotbgC7rIUoSeWWPdtBo0nfRyJg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=29GhoepTH2rjN7X+1AJEqNOtfR5d5L2secJ4ip3H53Q=;
+ b=ld171HQfiIKR6WMmfTOJAhEPekRGe2O8/PDameYvpyuDOD9YrVTZ8INkl5STaI1suMr7zqJ5rjUyKELj1O110B8WNuKsIvQQJfnZyEyx8l+7QttoeUk1XV75BY2jlIYdBgSAM05mSsQyRGUNAl7zGrNHw1XquiFiSb7oBlOjJ0gC2++DgObY5rhbcEUZ7xOXDXzkAtWqcTixGExkztq++uoiqen0JGEge/ikNWf/gTajhxiygN9Xn0+2zS6AhGXGPB6m4wc604i8LiQOKqOYtfITaLOx650NWJ6Spvw2ojjqOV/qykz+kCtkvZI0CjblyHPBrguRtkQtqjmCRSTUPw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.112.34) smtp.rcpttodomain=lunn.ch smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=29GhoepTH2rjN7X+1AJEqNOtfR5d5L2secJ4ip3H53Q=;
+ b=uF3QOJyYkoE5FaHXSjRKVG3cQq0ZjRQbGSHhZktuXK40cbPPvxuR8aVEQ6dQxysa7DgSnbG3DW0XgIzJGDHXqA7xAZSS6sskT/4UhE3Ijr3aoDcfFLoKRIFcrnxmideZPsQL9Lsi3N6BkbWU4pQKErVqki47d3lS/R+A02SfkmC78flzmTKTBcmkxeyt2dZy4T+iG7K/WJDFhhk9UtEuZpOp7Tz7iCPmaMOmCcnPkA9nzqzAaKMJIOTrEG8eAt/AdKGaRFI3mlOXBdGL3ye1K7xYJj5LX6pv5rrudpqCNTpIsNkZ9ZWtqllWpPzBiQW1oone2fjSSI2Nf//yi9+5xw==
+Received: from MWHPR17CA0067.namprd17.prod.outlook.com (2603:10b6:300:93::29)
+ by MWHPR12MB1502.namprd12.prod.outlook.com (2603:10b6:301:10::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4219.21; Thu, 10 Jun
+ 2021 16:08:18 +0000
+Received: from CO1NAM11FT011.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:300:93:cafe::5) by MWHPR17CA0067.outlook.office365.com
+ (2603:10b6:300:93::29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4219.21 via Frontend
+ Transport; Thu, 10 Jun 2021 16:08:18 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.34)
+ smtp.mailfrom=nvidia.com; lunn.ch; dkim=none (message not signed)
+ header.d=none;lunn.ch; dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.112.34 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.112.34; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (216.228.112.34) by
+ CO1NAM11FT011.mail.protection.outlook.com (10.13.175.186) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.4219.21 via Frontend Transport; Thu, 10 Jun 2021 16:08:18 +0000
+Received: from [10.26.49.10] (172.20.187.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Thu, 10 Jun
+ 2021 16:08:15 +0000
+Subject: Re: [PATCH v1 1/1] net: usb: asix: ax88772: manage PHY PM from MAC
+To:     Oleksij Rempel <o.rempel@pengutronix.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Russell King <linux@armlinux.org.uk>
+CC:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        <kernel@pengutronix.de>, <linux-kernel@vger.kernel.org>,
+        <linux-usb@vger.kernel.org>, <netdev@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>
+References: <20210610142009.16162-1-o.rempel@pengutronix.de>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <852dd4cf-206a-ff36-e219-3454c419a126@nvidia.com>
+Date:   Thu, 10 Jun 2021 17:08:13 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.8.1
 MIME-Version: 1.0
-In-Reply-To: <1400979c-c7a7-9618-1168-70185ed10546@canonical.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20210610142009.16162-1-o.rempel@pengutronix.de>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [172.20.187.5]
+X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 8d352902-8d82-4bb7-a1f5-08d92c29f61a
+X-MS-TrafficTypeDiagnostic: MWHPR12MB1502:
+X-Microsoft-Antispam-PRVS: <MWHPR12MB1502F972810B0C55832EE7C9D9359@MWHPR12MB1502.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:3383;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: HkHOG6xM/11kpfPVglojlATbQOpDUwPiXLN+Af3nokWYDPThduzmqbddqK7RtGLYOt6sqIyKd6asoBh1X+K4oS4zsqrPU9VElDpncSyAPdKdAD2VatFGb1cuyRYjFfmR4YfB54xx90oouniHVwGy5LuBwZSFoa/LLcZykDggdjzZ2YVz/YZ5pZpyikCIS/PeYQ0xubOMeheQUbkG+DFKjPQFaxAgxHaHjxPWuRzFO0hfuRJmG9OgzQ43fhH/4J0JJjZAJSwi3Zen0zjjIsbEq3ms024BOX2gVEyelL6TizM5issWfme0rteJ86kxpoA3gea7kp3H4enl/8rtNCygGz5w6jvj9KDnTzJOSpm5J/iz0evgsJ7+b30eEP7nL1QwR+Qw7tB2qN7dYYXPpdPleoKbcB7hcfAWIkWQMMTzhltAA7aW+16ivOSRLY3fu9aP4Lo5loD2RG73fEYeNG9H2r6N/c1hb/l1sSzLJw1p3Rh3qc0bDDrl+y5WpsN8BhN6VUBvovad29BVJCnKB9dQ8NqAb7szewSUdNsfmW5DD18O8G3FOCDmBDnZJP6eK0R0x6fDnwBD5q5mj0p4O6PwyLXdJ+qJWyQslZQ+xtDu/+/85LjlgPrWSU5wDAJThqj+SR2EsIAlgSaK+TOHGTeJntpjUW23GVGVChsO/dsUQMjACdltYsVh3fj/XlO2jm3C
+X-Forefront-Antispam-Report: CIP:216.228.112.34;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid03.nvidia.com;CAT:NONE;SFS:(4636009)(396003)(39860400002)(136003)(346002)(376002)(46966006)(36840700001)(36860700001)(53546011)(36906005)(8676002)(16576012)(110136005)(316002)(86362001)(31686004)(426003)(54906003)(4326008)(186003)(26005)(8936002)(2616005)(16526019)(5660300002)(336012)(4744005)(478600001)(47076005)(7636003)(70586007)(36756003)(70206006)(7416002)(83380400001)(2906002)(356005)(31696002)(82310400003)(82740400003)(43740500002);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jun 2021 16:08:18.2008
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8d352902-8d82-4bb7-a1f5-08d92c29f61a
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.34];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT011.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR12MB1502
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-10.06.2021 09:43, Krzysztof Kozlowski пишет:
-> The stubs might be good idea anyway, but the driver explicitly needs for
-> runtime working reservedmem, so it should select it.
 
-The OF and reservedmem are both selected by the ARCH for the runtime
-use. They may not be selected in the case of compile-testing.
 
-Both OF core and reservedmem provide stubs needed for compile-testing,
-it's only the RESERVEDMEM_OF_DECLARE() that is missing the stub. Adding
-the missing stub should be a more appropriate solution than adding extra
-Kconfig dependencies, IMO.
+On 10/06/2021 15:20, Oleksij Rempel wrote:
+> Take over PHY power management, otherwise PHY framework will try to
+> access ASIX MDIO bus before MAC resume was completed.
+> 
+> Fixes: e532a096be0e ("net: usb: asix: ax88772: add phylib support")
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Reported-by: Jon Hunter <jonathanh@nvidia.com>
+> Suggested-by: Heiner Kallweit <hkallweit1@gmail.com>
+> ---
+>  drivers/net/usb/asix_devices.c | 43 ++++++++++------------------------
+>  1 file changed, 12 insertions(+), 31 deletions(-)
+
+
+Thanks! Works for me ...
+
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+
+Cheers
+Jon
+
+-- 
+nvpublic
