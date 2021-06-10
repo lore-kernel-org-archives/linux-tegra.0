@@ -2,143 +2,180 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A380BC47094
-	for <linux-tegra@archiver.kernel.org>; Thu, 10 Jun 2021 08:57:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0826CC47094
+	for <linux-tegra@archiver.kernel.org>; Thu, 10 Jun 2021 09:05:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 77749613C0
-	for <linux-tegra@archiver.kernel.org>; Thu, 10 Jun 2021 08:57:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DB0E4613FE
+	for <linux-tegra@archiver.kernel.org>; Thu, 10 Jun 2021 09:05:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230080AbhFJI7a (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 10 Jun 2021 04:59:30 -0400
-Received: from mail-wm1-f41.google.com ([209.85.128.41]:54857 "EHLO
-        mail-wm1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230051AbhFJI7a (ORCPT
+        id S230055AbhFJJHd (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 10 Jun 2021 05:07:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58446 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229715AbhFJJHc (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 10 Jun 2021 04:59:30 -0400
-Received: by mail-wm1-f41.google.com with SMTP id m3so459486wms.4
-        for <linux-tegra@vger.kernel.org>; Thu, 10 Jun 2021 01:57:23 -0700 (PDT)
+        Thu, 10 Jun 2021 05:07:32 -0400
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7C75C061574;
+        Thu, 10 Jun 2021 02:05:21 -0700 (PDT)
+Received: by mail-wm1-x333.google.com with SMTP id h11-20020a05600c350bb02901b59c28e8b4so5565805wmq.1;
+        Thu, 10 Jun 2021 02:05:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=W1G4CqCNStWEWhk/Vyz5SeOif1UfAMFjFQWFAuyKoyM=;
-        b=J5H8i+u2GPu/Nn5n0u3gjxJ3Sb/GPN+KKh+tQbROYZlP2lcCSZT5ICezaRxnneRnbl
-         8KlL4sPti4uH6aYSSAFiR/rWjw/TE7zYKZVTWtPm9AVljBmGgAbS3WrafnZbYljtw+9z
-         QKv+GEHgONidqj8tdy9UOybEEb4ifEdCmMLHrlNbPWWptmUrIEH9QvJ/CWTzzZnp0WLZ
-         kAtJPRyDjrJ7B6+CpUkbUY8UHsl5JYB78zy9oSkGKDnSkyS3NXbZdhAdkffVlbyhreIO
-         1DJgT+wkvxjGxa8XYx/38RBOwWfqLaHywDvv188KvrAeuMsvduAbO813J3i3myU/JVOy
-         6KLA==
+        bh=p5NiQOW29LgoYtGrn9lsDMjFWiJOYahPMH/NM1fxUjY=;
+        b=VtuwuJx5q6q/8As+IDf2U+DbywdWX2CvfZeh3vVnd+R3EFbXpkc5IBFJ9l7X/8u8tv
+         +QkmPqORMla9MD5vWJsUtVv8UmBluEilH1HD00yPcmFWQc8erR+07HbeOpX4DKNF6WQX
+         UnwE3R2jCNCX/NSwbqxCtjbX8rDCFY5RxgflUFdXbF9RGKqhgsHAmoQIgzwC1NrcyE5B
+         bSiqJDvtajoslw+uxMVUcWx8HZs6lHg57ZGUSzvDE5KrCl32Y5nhu8uJW2pp0UaVzCU4
+         t5DezuyEIrv4Bqv3dR6/PeEtsnjhAbxUsQQlikHT/74JceFTGcLOYWRbuymgAC9zpB+Y
+         C6MQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=W1G4CqCNStWEWhk/Vyz5SeOif1UfAMFjFQWFAuyKoyM=;
-        b=QThQuLR3IeEwqlqY7anaPl/bp9K3ZJhtedkPJVsMmURmVbywLd11OFajiuTUJ9BAYX
-         2CqV6adSA1K6PDs+2pfiXOKMxiLeWcioXg0/2jnzoyC4tKqFYGXm9HYmVSwlxbJa+NhS
-         B1ygt/SewxoHqCqXP+cYrD4eIe+rRcA5IBvn9EpbmSuvR0rEfZpHMk51DSsa6C4TOE7z
-         fA7PU9bE3eUcqOjLcaLyHThVpHTl/fGMA/hnrC++bMyL//aCCzns8XLNWhBk98QMIZJq
-         xRPQiaEono8Z1rMKHNPtMZsycfKLmiBQD9gvyPnMbN9wQZPpogdfy3rb/FOjX008c61e
-         GHzg==
-X-Gm-Message-State: AOAM533fKn8X8YgL4z6VHEz7KFv9nP9vYE080t5Z1B3GEY9eSuXAWpgo
-        eSSdecZuXv9zyVGMALs2Nxc=
-X-Google-Smtp-Source: ABdhPJxt/2uIC/FjJ5n2uovK1nqmF14UWRIj4LzsJXTSck2vnsZp/zvrPbQZ2hE8NdoaQKadHUz9wQ==
-X-Received: by 2002:a05:600c:3514:: with SMTP id h20mr1601651wmq.70.1623315382650;
-        Thu, 10 Jun 2021 01:56:22 -0700 (PDT)
+        bh=p5NiQOW29LgoYtGrn9lsDMjFWiJOYahPMH/NM1fxUjY=;
+        b=pDcu/7WGu7WeUKXY7TzhhHQ/C6n/VNVl/s4USC7XjY2gNnkGNyVhZ4EFaxOg82uSe3
+         +nxAMeInTq5TRkW1mGbM0Mm1GGo4tdh5tZUY8tdnWjGS6r5T0pT0ovwG9+P/YsY8N8Hs
+         Y+z2j+8aFgVZnEXwGPMEEL9IvN6xD5t0r17edNEICjnFaeq2/Y2RP9kxQ+3lOZmWeIws
+         DDX9opGseb/7lAJJ9KojLw9z6GhL/ZUP56mBK07aHU3P0zORJitdXbWEG8gmjIec9ax+
+         WZ75o/SE6OYpe1F+7t4P6XOVQ/6nStmBYUgnTLhbhNn4nWmlIgouiENt2LBlWGijqu9I
+         NSRQ==
+X-Gm-Message-State: AOAM5304U4CONmXfLx/lIFR9fbAL/rjlG41YltTgTsmrUbHRgkmTHiRn
+        kJSxlixVfK57R9k0h9T5kEo=
+X-Google-Smtp-Source: ABdhPJwmWfEo2v+zBcV4ZNP9QUikLPHe4xyLK/775zUaAG9OoPoNbRaXn8D/IH3gbbLT7UEAccOcyw==
+X-Received: by 2002:a05:600c:2cd2:: with SMTP id l18mr3897426wmc.142.1623315920472;
+        Thu, 10 Jun 2021 02:05:20 -0700 (PDT)
 Received: from localhost ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id n42sm8470670wms.29.2021.06.10.01.56.20
+        by smtp.gmail.com with ESMTPSA id j7sm2693281wrm.93.2021.06.10.02.05.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Jun 2021 01:56:21 -0700 (PDT)
-Date:   Thu, 10 Jun 2021 10:58:04 +0200
+        Thu, 10 Jun 2021 02:05:19 -0700 (PDT)
+Date:   Thu, 10 Jun 2021 11:07:02 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Daniel Stone <daniel@fooishbar.org>
-Cc:     Simon Ser <contact@emersion.fr>, David Airlie <airlied@linux.ie>,
-        James Jones <jajones@nvidia.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        linux-tegra@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v2 01/10] drm/fourcc: Add macros to determine the
- modifier vendor
-Message-ID: <YMHUHGS94zXLshU5@orome.fritz.box>
-References: <20210326145139.467072-1-thierry.reding@gmail.com>
- <20210326145139.467072-2-thierry.reding@gmail.com>
- <P6bikxumymMi9GOcPaj_n8vMt5caPR3rWO4Kga8Ud_FNIgytl3ljvnkU6nsyxIwN4VKNmfOfsC4KryzFTObEXjtFDiywRWDtO_ed71g9aj0=@emersion.fr>
- <YF4L3kq9UN6PWh/h@orome.fritz.box>
- <CAPj87rO_RsEPpuC9-DyVEJ=K6OLeknHhOnjvbQ2EEnPPPrq+dg@mail.gmail.com>
- <CAPj87rOB8p+WSgVDwRbbLgW-di5qpSTY5Q6cmQYwbwD2Y3wKVA@mail.gmail.com>
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Vidya Sagar <vidyas@nvidia.com>,
+        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+        linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH V4] PCI: tegra: Fix building Tegra194 PCIe driver
+Message-ID: <YMHWNusvLtwKWlQe@orome.fritz.box>
+References: <20210610064134.336781-1-jonathanh@nvidia.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="w3UoTUzJreA15LR5"
+        protocol="application/pgp-signature"; boundary="aQWUWpnN9KJKqFLO"
 Content-Disposition: inline
-In-Reply-To: <CAPj87rOB8p+WSgVDwRbbLgW-di5qpSTY5Q6cmQYwbwD2Y3wKVA@mail.gmail.com>
+In-Reply-To: <20210610064134.336781-1-jonathanh@nvidia.com>
 User-Agent: Mutt/2.0.6 (98f8cb83) (2021-03-06)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---w3UoTUzJreA15LR5
-Content-Type: text/plain; charset=us-ascii
+--aQWUWpnN9KJKqFLO
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 09, 2021 at 05:28:50PM +0100, Daniel Stone wrote:
-> Hi Thierry,
+On Thu, Jun 10, 2021 at 07:41:34AM +0100, Jon Hunter wrote:
+> Commit 7f100744749e ("PCI: tegra: Add Tegra194 MCFG quirks for ECAM
+> errata") caused a few build regressions for the Tegra194 PCIe driver
+> which are:
 >=20
-> On Tue, 27 Apr 2021 at 19:40, Daniel Stone <daniel@fooishbar.org> wrote:
-> > On Fri, 26 Mar 2021 at 16:29, Thierry Reding <thierry.reding@gmail.com>=
- wrote:
-> >> On Fri, Mar 26, 2021 at 02:54:22PM +0000, Simon Ser wrote:
-> >> > LGTM, thanks!
-> >> >
-> >> > Reviewed-by: Simon Ser <contact@emersion.fr>
-> >> >
-> >> > Let me know if you need me to push this to drm-misc-next.
-> >>
-> >> I do have commit access for drm-misc-next, but I was thinking that I
-> >> could take this through the drm/tegra tree along with the subsequent
-> >> patches because of the dependency.
-> >>
-> >> Anyone willing to provide an Acked-by for that?
-> >
-> > Yep, no harm if that makes your life easier, so for both the patch itse=
-lf and merging through tegra:
-> > Acked-by: Daniel Stone <daniels@collabora.com>
+> 1. The Tegra194 PCIe driver can no longer be built as a module. This
+>    was caused by removing the Makefile entry to build the pcie-tegra.c
+>    based upon the CONFIG_PCIE_TEGRA194 option. Therefore, restore this
+>    so that we can build the driver as a module.
+> 2. 7f100744749e ("PCI: tegra: Add Tegra194 MCFG quirks for ECAM
+>    errata") added "#ifdef CONFIG_PCIE_TEGRA194" around the native
+>    driver. But if we set CONFIG_PCIE_TEGRA194=3Dm to build the driver as a
+>    module, autoconf.h contains "#define CONFIG_PCIE_TEGRA194_MODULE 1"
+>    (not "#define CONFIG_PCIE_TEGRA194 1"), so the #ifdef excludes the
+
+I think the correct way to write conditionals that are true on =3Dy and =3Dm
+is to use:
+
+	#ifdef IS_ENABLED(CONFIG_PCIE_TEGRA194)
+
+but that doesn't fix the issue of not getting the quirks included when
+CONFIG_PCIE_TEGRA194=3Dm.
+
+>    driver. Given that the ACPI quirk code for Tegra194 is completely
+>    independent of the native Tegra194 PCIe driver, move this code into
+>    its own file so that it can be built independently and we can remove
+>    the "#ifdef CONFIG_PCIE_TEGRA194" in the native driver. Note that
+>    given the native Tegra194 PCIe driver is only used with device-tree,
+>    this will not cause any conflicts.
+> 3. The below build warnings to be seen with particular kernel
+>    configurations. Fix these by moving these structure definitions to
+>    within the necessary guards.
 >=20
-> Is this still in your queue somewhere?
+>   drivers/pci/controller/dwc/pcie-tegra194.c:259:18: warning:
+>   	=E2=80=98event_cntr_data_offset=E2=80=99 defined but not used [-Wunuse=
+d-const-variable=3D]
+>   drivers/pci/controller/dwc/pcie-tegra194.c:250:18: warning:
+>   	=E2=80=98event_cntr_ctrl_offset=E2=80=99 defined but not used [-Wunuse=
+d-const-variable=3D]
+>   drivers/pci/controller/dwc/pcie-tegra194.c:243:27: warning:
+>   	=E2=80=98pcie_gen_freq=E2=80=99 defined but not used [-Wunused-const-v=
+ariable=3D]
+>=20
+> Fixes: 7f100744749e ("PCI: tegra: Add Tegra194 MCFG quirks for ECAM errat=
+a")
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> ---
+> Changes since V3:
+> - Moved ACPI quirk code into separate source file
+>=20
+> Changes since V2:
+> - Update the commit message per Bjorn's feedback
+> - Moved the structure definitions within the necessary guards as opposed
+>   to wrapping the existing defintions with the appropriate guards.
+>=20
+> Changes since V1:
+> - Added fixes tag
+> - Fixed 'defined but not used' compiler warnings
+>=20
+>  drivers/pci/controller/dwc/Makefile           |   3 +-
+>  .../pci/controller/dwc/pcie-tegra194-acpi.c   | 108 ++++++++++++++
+>  drivers/pci/controller/dwc/pcie-tegra194.c    | 138 +++---------------
+>  3 files changed, 128 insertions(+), 121 deletions(-)
+>  create mode 100644 drivers/pci/controller/dwc/pcie-tegra194-acpi.c
 
-I reverted to an open-coded version at the time because the -rc6 cut-off
-was coming up quickly and I wasn't getting a response. But I do have a
-set of follow-up patches in a branch somewhere that convert the existing
-users to the new helpers.
+We've had a similar problem with Tegra210 EMC and the EMC frequency
+table parsing code. The EMC frequency table parsing code needs to be
+always built-in because it is stashed into a linker section. However
+we still want the driver to be able to be a loadable module. The only
+way I know how to achieve that is by splitting up the sources files
+like you do here, so I this looks like a correct fix:
 
-Let me dig those out and send them out again.
+Reviewed-by: Thierry Reding <treding@nvidia.com>
 
-Thierry
-
---w3UoTUzJreA15LR5
+--aQWUWpnN9KJKqFLO
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmDB1BkACgkQ3SOs138+
-s6Gzzw//TFERJ2BwbZ1fNz8AG003O2xhche0U3nVDc0+ojkvZfsKHBhRvyuexPL+
-UwkvBeXVBa/NK7LPKy2Q/HaXhTH4iAZ8pBB0zpfiYBvHvUE/7NQKrNIKgl3zwcjN
-1SzRNPj1fTGW5JlOeCJubpRSIfesmYjbTpxzYpomB1XzcBtaeyNelNAvnGPQm2vK
-9w76ht908w7B+UrpNaFqdsHwY1s2xG0uOTNrdbJp0YpvFGyQKOeghJ617M95xqVi
-uLGi/t/c9rlaqxL6bStlQEBVi0Xi34IjkCD5PEri/VQKL3ALPqXZajx/m/LphLbD
-ISGfT9gofVJcaV5UVQ68uFI7BnSYSa2Gwj/cdo25tIELCwiyGcjdf1LGoj2HrCE7
-mD1wYjW03DtXZl+9XlpRXdJo5eXXFZx7DnLMEUi+2TxfSylxOW6lTW+hbsE47hHZ
-5qeINgsRFP/Rb/DzeoSn4sh4JmpbSDH4XwrRWuEcvovhKUuFSCpVMvNx93ma51hd
-a2WOpF5hw0aRadVc8+j0ahR4QmqPGGvUgGJp1MR44h6uiRgxQKA1sjwUBZXV3XST
-J25+VEvBGBzgE/4Cp1G6mYy3VrfT2hLRCzqU8lpFreeuNkK8zhjmYyxaGz7U3V4e
-varppfO3SGcgm0Os0DZdyzmSPFqnuxfhIZZw4qFt6qshZ51F15o=
-=I4ct
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmDB1jYACgkQ3SOs138+
+s6HLLBAArU5vNgX8kJNJFsVVYw3Azstm43F6ZHniLPd1GmbqncxAzbNoK6u9PryZ
+s1dJzzlHvvA/t2KA2YtcxGdUII5hF4cYUxXvQK0tTSqU2JyCVT/9lvx4qQou24i0
+GmkBp8yPanRJYHLntm8YJHETaGew6i/dXjfLAxIgpJGm3uBC/KNnSBr59a34+5zF
+1LG1pzLojFV8zUS/a/zw2Krpq2vvudK6JTGNp5w5gifMFRM/11TMc4Sh7al6DlEX
+AH9qoLpCL/kK4mWrFTxEtfw5NEwdmjsMQ3smHKTyZs8ZPxab2EZ2CRM6b3EI1TNK
+EryNLPUrpgWtH5cJc9AU7APUesTmWlLQkWGytreuWNCTPfNPFG1hHxM9EWDbiv0K
+t2fVvyIIu6EWQG+kdSHh0nH5lgunhNJnx0CoqQXT8iurhLBArbE2q8/hw2rpS6vE
+FIDgzEIwSe8rvr49z8k1phQhXH0Ce77UQmz4PNMXk/rDBqCI7b2RfecVXbO1pvVo
+DyB53alhO5Vuo1h4FK633ovx8qXZRBjt+3a9EBwlYqBd9mK00kLq9e1hHSYz7aNf
+mbyCgNDDP98QcqzqD+f7hx4wBkjBi/4HrqJ4HwkDmuDv+QV3G12qjzjEA6/Xq/yQ
+RfqGp1iXJ3/n4nMyS0kDSxyU7wtdks2XYb2jYpq6wg9N8dyJWro=
+=Y3lX
 -----END PGP SIGNATURE-----
 
---w3UoTUzJreA15LR5--
+--aQWUWpnN9KJKqFLO--
