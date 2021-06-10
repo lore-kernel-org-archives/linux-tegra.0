@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25953C49361
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B3D4C49EA3
 	for <linux-tegra@archiver.kernel.org>; Thu, 10 Jun 2021 11:05:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0E71E613FF
+	by mail.kernel.org (Postfix) with ESMTP id 62B7A613F5
 	for <linux-tegra@archiver.kernel.org>; Thu, 10 Jun 2021 11:05:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230117AbhFJLHT (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        id S230130AbhFJLHT (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
         Thu, 10 Jun 2021 07:07:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56706 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56712 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230113AbhFJLHR (ORCPT
+        with ESMTP id S230136AbhFJLHR (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
         Thu, 10 Jun 2021 07:07:17 -0400
 Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 060EDC0617AF
-        for <linux-tegra@vger.kernel.org>; Thu, 10 Jun 2021 04:05:19 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70F6BC0613A4
+        for <linux-tegra@vger.kernel.org>; Thu, 10 Jun 2021 04:05:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
          s=20161220; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
         Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
         Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
         :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
         List-Post:List-Owner:List-Archive;
-        bh=d9Ow2YEkAy05WgSpSx3SaZ9gLp8xiT4jm5jH+lxZaqo=; b=uvdzTyR9QFlyS2DsMLXoIgm2zu
-        s0INL93bTOvfr8r3PyBHCSx4lGw7/lBdP/rPqbG1lbOvLNuFWYXgUcuuNwZSGb7y3u4tljBETxIS0
-        Dhj7C58x0yx51ww6hIYTibFDDOnb8HgPlQ9H6//Jwind7Hy+ljZe6UcYYGa7UGd6BDM/iCMd1/49Z
-        bm1aONmq/l2heukEDyC3psNpm/LIEN55aDFGEwjSdw6SetXn+AIVTMtJ7UmSjVIQTi/21Edb+q/li
-        ky9fmxiBacg/NdObWfvNNWZvLeYnyMP3hkk5xM/rAai3fK9jYJ7GMqx5GbWXo1oplD91geG0JjDi7
-        4fUlZXRQ==;
+        bh=cJB33AJFsHvOFWnqa+79GJxl7hMYj9QR5SlxB22rF3g=; b=aXJfJcgr4hGRwlys3ue7q71vTc
+        VxT3aQgNZP8d3eBCOIyFMwusMDT8inSJsHCoyG+Sr4BJHHGrI+gQXpWvtAx+MVy2cG96eMN1aZgyP
+        Rnw2jVytMJM++rdN5QVzGXzQylyb5X5Vgr9KdlnI9UdWIeTn5SQXiZELrbsrifae/UEpPYh0enLue
+        C8QSDz9P/rj36qC3bKl4hTImJ8VhL2SeD7o6rVxGFBlckAjS+byhMJ5vOUJbCcK1R+lYjKCvc1zAX
+        LWWwcIuFLZuB0XnvZlXfDEQZYdCeRyO/WhV4xDEDtlznaSEso1MfKa+a5hjnV8hewypRtDOsZBTsb
+        r3M+Tndw==;
 Received: from dsl-hkibng22-54f986-236.dhcp.inet.fi ([84.249.134.236] helo=toshino.localdomain)
         by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.89)
         (envelope-from <mperttunen@nvidia.com>)
-        id 1lrIUt-0001s7-Il; Thu, 10 Jun 2021 14:05:15 +0300
+        id 1lrIUt-0001s7-6U; Thu, 10 Jun 2021 14:05:15 +0300
 From:   Mikko Perttunen <mperttunen@nvidia.com>
 To:     thierry.reding@gmail.com, jonathanh@nvidia.com, digetx@gmail.com,
         airlied@linux.ie, daniel@ffwll.ch
 Cc:     dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
         Mikko Perttunen <mperttunen@nvidia.com>
-Subject: [PATCH v7 12/15] drm/tegra: Implement syncpoint wait UAPI
-Date:   Thu, 10 Jun 2021 14:04:53 +0300
-Message-Id: <20210610110456.3692391-13-mperttunen@nvidia.com>
+Subject: [PATCH v7 07/15] drm/tegra: Add new UAPI to header
+Date:   Thu, 10 Jun 2021 14:04:48 +0300
+Message-Id: <20210610110456.3692391-8-mperttunen@nvidia.com>
 X-Mailer: git-send-email 2.30.1
 In-Reply-To: <20210610110456.3692391-1-mperttunen@nvidia.com>
 References: <20210610110456.3692391-1-mperttunen@nvidia.com>
@@ -60,83 +60,476 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Implement new syncpoint wait UAPI. This is different from the
-legacy one in taking an absolute timestamp in line with modern
-DRM conventions.
+Update the tegra_drm.h UAPI header, adding the new proposed UAPI.
+The old staging UAPI is left in for now, with minor modification
+to avoid name collisions.
 
 Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
 ---
 v6:
-- New patch
+* Fix comment
+* Add syncpoint allocation/freeing IOCTLs, use syncpoint ID
+  instead of syncpoint FD
+* Add syncobj fields to submit IOCTL
+* Add relative syncpoint wait
+* Add hardware flags field
+* Add syncpoint wait ioctl
+* Remove new GEM_CREATE/GEM_MMAP as unneeded
+v4:
+* Remove features that are not strictly necessary
+* Remove padding/reserved fields in IOCTL structs where
+  DRM's zero extension feature allows future expansion
+v3:
+* Remove timeout field
+* Inline the syncpt_incrs array to the submit structure
+* Remove WRITE_RELOC (it is now implicit)
 ---
- drivers/gpu/drm/tegra/drm.c  |  2 ++
- drivers/gpu/drm/tegra/uapi.c | 22 ++++++++++++++++++++++
- drivers/gpu/drm/tegra/uapi.h |  2 ++
- 3 files changed, 26 insertions(+)
+ include/uapi/drm/tegra_drm.h | 414 +++++++++++++++++++++++++++++++++--
+ 1 file changed, 391 insertions(+), 23 deletions(-)
 
-diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
-index 1237e7a02e14..07c332a4fa03 100644
---- a/drivers/gpu/drm/tegra/drm.c
-+++ b/drivers/gpu/drm/tegra/drm.c
-@@ -732,6 +732,8 @@ static const struct drm_ioctl_desc tegra_drm_ioctls[] = {
- 			  DRM_RENDER_ALLOW),
- 	DRM_IOCTL_DEF_DRV(TEGRA_SYNCPOINT_FREE, tegra_drm_ioctl_syncpoint_free,
- 			  DRM_RENDER_ALLOW),
-+	DRM_IOCTL_DEF_DRV(TEGRA_SYNCPOINT_WAIT, tegra_drm_ioctl_syncpoint_wait,
-+			  DRM_RENDER_ALLOW),
+diff --git a/include/uapi/drm/tegra_drm.h b/include/uapi/drm/tegra_drm.h
+index c4df3c3668b3..4820ae9e65c5 100644
+--- a/include/uapi/drm/tegra_drm.h
++++ b/include/uapi/drm/tegra_drm.h
+@@ -1,24 +1,5 @@
+-/*
+- * Copyright (c) 2012-2013, NVIDIA CORPORATION.  All rights reserved.
+- *
+- * Permission is hereby granted, free of charge, to any person obtaining a
+- * copy of this software and associated documentation files (the "Software"),
+- * to deal in the Software without restriction, including without limitation
+- * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+- * and/or sell copies of the Software, and to permit persons to whom the
+- * Software is furnished to do so, subject to the following conditions:
+- *
+- * The above copyright notice and this permission notice shall be included in
+- * all copies or substantial portions of the Software.
+- *
+- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+- * THE COPYRIGHT HOLDER(S) OR AUTHOR(S) BE LIABLE FOR ANY CLAIM, DAMAGES OR
+- * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+- * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+- * OTHER DEALINGS IN THE SOFTWARE.
+- */
++/* SPDX-License-Identifier: MIT */
++/* Copyright (c) 2012-2020 NVIDIA Corporation */
  
- 	DRM_IOCTL_DEF_DRV(TEGRA_GEM_CREATE, tegra_gem_create, DRM_RENDER_ALLOW),
- 	DRM_IOCTL_DEF_DRV(TEGRA_GEM_MMAP, tegra_gem_mmap, DRM_RENDER_ALLOW),
-diff --git a/drivers/gpu/drm/tegra/uapi.c b/drivers/gpu/drm/tegra/uapi.c
-index 1cc97d79bc5c..f2ba8af88f10 100644
---- a/drivers/gpu/drm/tegra/uapi.c
-+++ b/drivers/gpu/drm/tegra/uapi.c
-@@ -7,6 +7,7 @@
+ #ifndef _UAPI_TEGRA_DRM_H_
+ #define _UAPI_TEGRA_DRM_H_
+@@ -29,6 +10,8 @@
+ extern "C" {
+ #endif
  
- #include <drm/drm_drv.h>
- #include <drm/drm_file.h>
-+#include <drm/drm_utils.h>
++/* TegraDRM legacy UAPI. Only enabled with STAGING */
++
+ #define DRM_TEGRA_GEM_CREATE_TILED     (1 << 0)
+ #define DRM_TEGRA_GEM_CREATE_BOTTOM_UP (1 << 1)
  
- #include "drm.h"
- #include "uapi.h"
-@@ -313,3 +314,24 @@ int tegra_drm_ioctl_syncpoint_free(struct drm_device *drm, void *data,
+@@ -649,8 +632,8 @@ struct drm_tegra_gem_get_flags {
+ #define DRM_TEGRA_SYNCPT_READ		0x02
+ #define DRM_TEGRA_SYNCPT_INCR		0x03
+ #define DRM_TEGRA_SYNCPT_WAIT		0x04
+-#define DRM_TEGRA_OPEN_CHANNEL		0x05
+-#define DRM_TEGRA_CLOSE_CHANNEL		0x06
++#define DRM_TEGRA_OPEN_CHANNEL	        0x05
++#define DRM_TEGRA_CLOSE_CHANNEL	        0x06
+ #define DRM_TEGRA_GET_SYNCPT		0x07
+ #define DRM_TEGRA_SUBMIT		0x08
+ #define DRM_TEGRA_GET_SYNCPT_BASE	0x09
+@@ -674,6 +657,391 @@ struct drm_tegra_gem_get_flags {
+ #define DRM_IOCTL_TEGRA_GEM_SET_FLAGS DRM_IOWR(DRM_COMMAND_BASE + DRM_TEGRA_GEM_SET_FLAGS, struct drm_tegra_gem_set_flags)
+ #define DRM_IOCTL_TEGRA_GEM_GET_FLAGS DRM_IOWR(DRM_COMMAND_BASE + DRM_TEGRA_GEM_GET_FLAGS, struct drm_tegra_gem_get_flags)
  
- 	return 0;
++/* New TegraDRM UAPI */
++
++/**
++ * Reported by the driver in the `hardware_flags` field.
++ *
++ * If set, the engine is cache coherent with regard to the system
++ * memory.
++ */
++#define DRM_TEGRA_CHANNEL_OPEN_HW_CACHE_COHERENT	(1<<0)
++
++struct drm_tegra_channel_open {
++	/**
++	 * @host1x_class: [in]
++	 *
++	 * Host1x class of the engine that will be programmed using this
++	 * channel.
++	 */
++	__u32 host1x_class;
++
++	/**
++	 * @flags: [in]
++	 *
++	 * Flags.
++	 */
++	__u32 flags;
++
++	/**
++	 * @channel_ctx: [out]
++	 *
++	 * Opaque identifier corresponding to the opened channel.
++	 */
++	__u32 channel_ctx;
++
++	/**
++	 * @hardware_version: [out]
++	 *
++	 * Version of the engine hardware. This can be used by userspace
++	 * to determine how the engine needs to be programmed.
++	 */
++	__u32 hardware_version;
++
++	/**
++	 * @hardware_flags: [out]
++	 *
++	 * Flags describing the hardware capabilities.
++	 */
++	__u32 hardware_flags;
++};
++
++struct drm_tegra_channel_close {
++	/**
++	 * @channel_ctx: [in]
++	 *
++	 * Identifier of the channel to close.
++	 */
++	__u32 channel_ctx;
++};
++
++#define DRM_TEGRA_CHANNEL_MAP_READWRITE			(1<<0)
++
++struct drm_tegra_channel_map {
++	/**
++	 * @channel_ctx: [in]
++	 *
++	 * Identifier of the channel to which make memory available for.
++	 */
++	__u32 channel_ctx;
++
++	/**
++	 * @handle: [in]
++	 *
++	 * GEM handle of the memory to map.
++	 */
++	__u32 handle;
++
++	/**
++	 * @flags: [in]
++	 *
++	 * Flags.
++	 */
++	__u32 flags;
++
++	/**
++	 * @mapping_id: [out]
++	 *
++	 * Identifier corresponding to the mapping, to be used for
++	 * relocations or unmapping later.
++	 */
++	__u32 mapping_id;
++};
++
++struct drm_tegra_channel_unmap {
++	/**
++	 * @channel_ctx: [in]
++	 *
++	 * Channel identifier of the channel to unmap memory from.
++	 */
++	__u32 channel_ctx;
++
++	/**
++	 * @mapping_id: [in]
++	 *
++	 * Mapping identifier of the memory mapping to unmap.
++	 */
++	__u32 mapping_id;
++};
++
++/* Submission */
++
++/**
++ * Specify that bit 39 of the patched-in address should be set to
++ * trigger layout swizzling between Tegra and non-Tegra Blocklinear
++ * layout on systems that store surfaces in system memory in non-Tegra
++ * Blocklinear layout.
++ */
++#define DRM_TEGRA_SUBMIT_BUF_RELOC_BLOCKLINEAR		(1<<0)
++
++struct drm_tegra_submit_buf {
++	/**
++	 * @mapping_id: [in]
++	 *
++	 * Identifier of the mapping to use in the submission.
++	 */
++	__u32 mapping_id;
++
++	/**
++	 * @flags: [in]
++	 *
++	 * Flags.
++	 */
++	__u32 flags;
++
++	/**
++	 * Information for relocation patching.
++	 */
++	struct {
++		/**
++		 * @target_offset: [in]
++		 *
++		 * Offset from the start of the mapping of the data whose
++		 * address is to be patched into the gather.
++		 */
++		__u64 target_offset;
++
++		/**
++		 * @gather_offset_words: [in]
++		 *
++		 * Offset in words from the start of the gather data to
++		 * where the address should be patched into.
++		 */
++		__u32 gather_offset_words;
++
++		/**
++		 * @shift: [in]
++		 *
++		 * Number of bits the address should be shifted right before
++		 * patching in.
++		 */
++		__u32 shift;
++	} reloc;
++};
++
++struct drm_tegra_submit_syncpt_incr {
++	/**
++	 * @id: [in]
++	 *
++	 * ID of the syncpoint that the job will increment.
++	 */
++	__u32 id;
++
++	/**
++	 * @flags: [in]
++	 *
++	 * Flags.
++	 */
++	__u32 flags;
++
++	/**
++	 * @num_incrs: [in]
++	 *
++	 * Number of times the job will increment this syncpoint.
++	 */
++	__u32 num_incrs;
++
++	/**
++	 * @fence_value: [out]
++	 *
++	 * Value the syncpoint will have once the job has completed all
++	 * its specified syncpoint increments.
++	 *
++	 * Note that the kernel may increment the syncpoint before or after
++	 * the job. These increments are not reflected in this field.
++	 *
++	 * If the job hangs or times out, not all of the increments may
++	 * get executed.
++	 */
++	__u32 fence_value;
++};
++
++/**
++ * Execute `words` words of Host1x opcodes specified in the `gather_data_ptr`
++ * buffer. Each GATHER_UPTR command uses successive words from the buffer.
++ */
++#define DRM_TEGRA_SUBMIT_CMD_GATHER_UPTR		0
++/**
++ * Wait for a syncpoint to reach a value before continuing with further
++ * commands.
++ */
++#define DRM_TEGRA_SUBMIT_CMD_WAIT_SYNCPT		1
++/**
++ * Wait for a syncpoint to reach a value before continuing with further
++ * commands. The threshold is calculated in relation to the start of the
++ * job.
++ */
++#define DRM_TEGRA_SUBMIT_CMD_WAIT_SYNCPT_RELATIVE	2
++
++struct drm_tegra_submit_cmd_gather_uptr {
++	__u32 words;
++	__u32 reserved[3];
++};
++
++struct drm_tegra_submit_cmd_wait_syncpt {
++	__u32 id;
++	__u32 threshold;
++	__u32 reserved[2];
++};
++
++struct drm_tegra_submit_cmd {
++	/**
++	 * @type: [in]
++	 *
++	 * Command type to execute. One of the DRM_TEGRA_SUBMIT_CMD*
++	 * defines.
++	 */
++	__u32 type;
++
++	/**
++	 * @flags: [in]
++	 *
++	 * Flags.
++	 */
++	__u32 flags;
++
++	union {
++		struct drm_tegra_submit_cmd_gather_uptr gather_uptr;
++		struct drm_tegra_submit_cmd_wait_syncpt wait_syncpt;
++		__u32 reserved[4];
++	};
++};
++
++struct drm_tegra_channel_submit {
++	/**
++	 * @channel_ctx: [in]
++	 *
++	 * Identifier of the channel to submit this job to.
++	 */
++	__u32 channel_ctx;
++
++	/**
++	 * @num_bufs: [in]
++	 *
++	 * Number of elements in the `bufs_ptr` array.
++	 */
++	__u32 num_bufs;
++
++	/**
++	 * @num_cmds: [in]
++	 *
++	 * Number of elements in the `cmds_ptr` array.
++	 */
++	__u32 num_cmds;
++
++	/**
++	 * @gather_data_words: [in]
++	 *
++	 * Number of 32-bit words in the `gather_data_ptr` array.
++	 */
++	__u32 gather_data_words;
++
++	/**
++	 * @bufs_ptr: [in]
++	 *
++	 * Pointer to an array of drm_tegra_submit_buf structures.
++	 */
++	__u64 bufs_ptr;
++
++	/**
++	 * @cmds_ptr: [in]
++	 *
++	 * Pointer to an array of drm_tegra_submit_cmd structures.
++	 */
++	__u64 cmds_ptr;
++
++	/**
++	 * @gather_data_ptr: [in]
++	 *
++	 * Pointer to an array of Host1x opcodes to be used by GATHER_UPTR
++	 * commands.
++	 */
++	__u64 gather_data_ptr;
++
++	/**
++	 * @syncobj_in: [in]
++	 *
++	 * Handle for DRM syncobj that will be waited before submission.
++	 * Ignored if zero.
++	 */
++	__u32 syncobj_in;
++
++	/**
++	 * @syncobj_out: [in]
++	 *
++	 * Handle for DRM syncobj that will have its fence replaced with
++	 * the job's completion fence. Ignored if zero.
++	 */
++	__u32 syncobj_out;
++
++	/**
++	 * @syncpt_incr: [in,out]
++	 *
++	 * Information about the syncpoint the job will increment.
++	 */
++	struct drm_tegra_submit_syncpt_incr syncpt_incr;
++};
++
++struct drm_tegra_syncpoint_allocate {
++	/**
++	 * @id: [out]
++	 *
++	 * ID of allocated syncpoint.
++	 */
++	__u32 id;
++};
++
++struct drm_tegra_syncpoint_free {
++	/**
++	 * @id: [in]
++	 *
++	 * ID of syncpoint to free.
++	 */
++	__u32 id;
++};
++
++struct drm_tegra_syncpoint_wait {
++	/**
++	 * @timeout: [in]
++	 *
++	 * Absolute timestamp at which the wait will time out.
++	 */
++	__s64 timeout_ns;
++
++	/**
++	 * @id: [in]
++	 *
++	 * ID of syncpoint to wait on.
++	 */
++	__u32 id;
++
++	/**
++	 * @threshold: [in]
++	 *
++	 * Threshold to wait for.
++	 */
++	__u32 threshold;
++
++	/**
++	 * @value: [out]
++	 *
++	 * Value of the syncpoint upon wait completion.
++	 */
++	__u32 value;
++
++	__u32 padding[1];
++};
++
++#define DRM_IOCTL_TEGRA_CHANNEL_OPEN     DRM_IOWR(DRM_COMMAND_BASE + 0x10, struct drm_tegra_channel_open)
++#define DRM_IOCTL_TEGRA_CHANNEL_CLOSE    DRM_IOWR(DRM_COMMAND_BASE + 0x11, struct drm_tegra_channel_close)
++#define DRM_IOCTL_TEGRA_CHANNEL_MAP      DRM_IOWR(DRM_COMMAND_BASE + 0x12, struct drm_tegra_channel_map)
++#define DRM_IOCTL_TEGRA_CHANNEL_UNMAP    DRM_IOWR(DRM_COMMAND_BASE + 0x13, struct drm_tegra_channel_unmap)
++#define DRM_IOCTL_TEGRA_CHANNEL_SUBMIT   DRM_IOWR(DRM_COMMAND_BASE + 0x14, struct drm_tegra_channel_submit)
++
++#define DRM_IOCTL_TEGRA_SYNCPOINT_ALLOCATE	DRM_IOWR(DRM_COMMAND_BASE + 0x20, struct drm_tegra_syncpoint_allocate)
++#define DRM_IOCTL_TEGRA_SYNCPOINT_FREE		DRM_IOWR(DRM_COMMAND_BASE + 0x21, struct drm_tegra_syncpoint_free)
++#define DRM_IOCTL_TEGRA_SYNCPOINT_WAIT		DRM_IOWR(DRM_COMMAND_BASE + 0x22, struct drm_tegra_syncpoint_wait)
++
+ #if defined(__cplusplus)
  }
-+
-+int tegra_drm_ioctl_syncpoint_wait(struct drm_device *drm, void *data,
-+				   struct drm_file *file)
-+{
-+	struct host1x *host1x = tegra_drm_to_host1x(drm->dev_private);
-+	struct drm_tegra_syncpoint_wait *args = data;
-+	signed long timeout_jiffies;
-+	struct host1x_syncpt *sp;
-+
-+	if (args->padding[0] != 0)
-+		return -EINVAL;
-+
-+	sp = host1x_syncpt_get_by_id_noref(host1x, args->id);
-+	if (!sp)
-+		return -EINVAL;
-+
-+	timeout_jiffies = drm_timeout_abs_to_jiffies(args->timeout_ns);
-+
-+	return host1x_syncpt_wait(sp, args->threshold, timeout_jiffies,
-+				  &args->value);
-+}
-diff --git a/drivers/gpu/drm/tegra/uapi.h b/drivers/gpu/drm/tegra/uapi.h
-index e4e498facf61..12adad770ad3 100644
---- a/drivers/gpu/drm/tegra/uapi.h
-+++ b/drivers/gpu/drm/tegra/uapi.h
-@@ -49,6 +49,8 @@ int tegra_drm_ioctl_syncpoint_allocate(struct drm_device *drm, void *data,
- 				       struct drm_file *file);
- int tegra_drm_ioctl_syncpoint_free(struct drm_device *drm, void *data,
- 				   struct drm_file *file);
-+int tegra_drm_ioctl_syncpoint_wait(struct drm_device *drm, void *data,
-+				   struct drm_file *file);
- 
- void tegra_drm_uapi_close_file(struct tegra_drm_file *file);
- void tegra_drm_mapping_put(struct tegra_drm_mapping *mapping);
+ #endif
 -- 
 2.30.1
 
