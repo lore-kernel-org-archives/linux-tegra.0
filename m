@@ -2,854 +2,213 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8010C47094
-	for <linux-tegra@archiver.kernel.org>; Thu, 10 Jun 2021 11:05:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2770BC47094
+	for <linux-tegra@archiver.kernel.org>; Thu, 10 Jun 2021 12:54:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B57D561403
-	for <linux-tegra@archiver.kernel.org>; Thu, 10 Jun 2021 11:05:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 09BA3613C0
+	for <linux-tegra@archiver.kernel.org>; Thu, 10 Jun 2021 12:54:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229961AbhFJLHV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 10 Jun 2021 07:07:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56702 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230154AbhFJLHR (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 10 Jun 2021 07:07:17 -0400
-Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71CF3C061224
-        for <linux-tegra@vger.kernel.org>; Thu, 10 Jun 2021 04:05:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-         s=20161220; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
-        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=NpZCaXk6ptAsBqi5fU5uUL7UgJl9cCT2NwoocEnzo1U=; b=zhUjh7y/mu0PCxvHGKceESJeEa
-        bIBkYX1Cpu57shRqrivD/td+bH35ia68VHVNPmJwPDbUjp+UkqWLnQmycP+vO0KGK6eVAQO/E1N0J
-        p5hbEbYOiv352G3Dy6tLKQtGW7TyVMQGkmR5wlNOzwyR369kb5+ICNnDdGXna+SC05xMgbc0Eh2uy
-        Ptjjl4Lwj0LDI0/oxo2OAUx38zR6R8/CaDzxEQk0DC9HdlSBQAkpI/vqD5QnBfPbB5vVqUJaSW/i2
-        Lh7Vcz60Hnr1RIVjHcD3jvlXp7lKVAiNtLtp7bOflDuDfAgrRalMvyh2ZmHSbwRif+xqGph5tKEI9
-        mRk/gr7Q==;
-Received: from dsl-hkibng22-54f986-236.dhcp.inet.fi ([84.249.134.236] helo=toshino.localdomain)
-        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <mperttunen@nvidia.com>)
-        id 1lrIUt-0001s7-Kx; Thu, 10 Jun 2021 14:05:15 +0300
-From:   Mikko Perttunen <mperttunen@nvidia.com>
-To:     thierry.reding@gmail.com, jonathanh@nvidia.com, digetx@gmail.com,
-        airlied@linux.ie, daniel@ffwll.ch
-Cc:     dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-        Mikko Perttunen <mperttunen@nvidia.com>
-Subject: [PATCH v7 13/15] drm/tegra: Implement job submission part of new UAPI
-Date:   Thu, 10 Jun 2021 14:04:54 +0300
-Message-Id: <20210610110456.3692391-14-mperttunen@nvidia.com>
-X-Mailer: git-send-email 2.30.1
-In-Reply-To: <20210610110456.3692391-1-mperttunen@nvidia.com>
-References: <20210610110456.3692391-1-mperttunen@nvidia.com>
+        id S230361AbhFJM4Q (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 10 Jun 2021 08:56:16 -0400
+Received: from mail-dm6nam10on2062.outbound.protection.outlook.com ([40.107.93.62]:62752
+        "EHLO NAM10-DM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S230248AbhFJM4P (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 10 Jun 2021 08:56:15 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=YlDDd3IdmGjy3xckZaCfiQkxBM9A5AsuRGjBar3AdK8BgwZlHVo30aZ1/iyK0/W3ldm2+D+YOF0GwxJ6tiPT9gcW5JGBU3kMeWBBDgn9M0lmQLXJRMy1yIaE7z14fr7wRxi4rp9B1KZoun0qf9/OcyqLAaN3rgLw4QchhfgEmMi9gV+xIluFNgyl0K1eMz08xe1LL4sZobgOKl7k0l/rc6m7wFK9pIRK25aYBSAXkroBW++WFx+6cMivo+5rQIydeoZQ7wsF1aTAKp2xSHKo/jx2wnxWHlrjjchRK1VAW9o5Zh9rWTImSYRo4dwc1srCOGfNL98XDEhkfxUxqknH/Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=O+oWDPeo7Q+1evX/7/SWM7k/Pcrr/I+qdWXpMNUF+Us=;
+ b=JXpqoTeX5HLRdFSjb47JTiemGB9b6ALIos64ykcrIzldAo8DHgWhk3+0v8Q9N6DpVSa3FJncuZKQjKrN7cJX4fLpG1k9yU7sOPUCjUqXiERNBSynDZUiVzPnlkApR/P4bvGq5THG+R93jCWmpw7qWgBdD/1aohTFlmYLIDdxDVpdm6RqP9iyJ6GMBkVtbSIknv9VgxDE5/kmZKfVtdgNcwLIiUd5yR9CiyU7a4jmbnqkEqyc/QkSpS6PICRTk1Ymviuy+tPtvQNjfIPfj5lBA6tGkRel5FY4zYDvcmAaGs6bAjaHLdEDlxP+csHA8LVJBcDAVqQ5k4EaehxTfwlDzg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.112.34) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=O+oWDPeo7Q+1evX/7/SWM7k/Pcrr/I+qdWXpMNUF+Us=;
+ b=jaHs/YJ+M7rgwKmA4LAA9UQ/Z38b+x5R7pKwtVbEcZH4XMZBYyve2D25Cjh+a6ESvPQmGM66457LOMIgL4e8dMAEopieUndB1Lu6N9dCgCXpQ2Tm9LFW9Y2HbLUwv3706+5nseKXLKVGWnMvlret+7QWU7SPiAPgC409VyuOTNC/nT4Oeqabmi46DBpLgYKTUPk2aEuTtffUfUgu3NnuMb0xVyh6B9OIcz2imGo0JU3hJ0nVd9Kvx58GZE5kmq3ejyiz8StN0VcBuUNikSy0qhqVWrnvdmY/uyuCabaL3uMNy3USx2dmp04Q5kOr8gMSKoQ7MLAq/QpOsjS3+RRj0A==
+Received: from CO2PR04CA0202.namprd04.prod.outlook.com (2603:10b6:104:5::32)
+ by DM6PR12MB3819.namprd12.prod.outlook.com (2603:10b6:5:1c6::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4195.24; Thu, 10 Jun
+ 2021 12:54:18 +0000
+Received: from CO1NAM11FT037.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:104:5:cafe::61) by CO2PR04CA0202.outlook.office365.com
+ (2603:10b6:104:5::32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4219.20 via Frontend
+ Transport; Thu, 10 Jun 2021 12:54:17 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.34)
+ smtp.mailfrom=nvidia.com; kernel.org; dkim=none (message not signed)
+ header.d=none;kernel.org; dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.112.34 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.112.34; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (216.228.112.34) by
+ CO1NAM11FT037.mail.protection.outlook.com (10.13.174.91) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.4219.21 via Frontend Transport; Thu, 10 Jun 2021 12:54:17 +0000
+Received: from [10.26.49.10] (172.20.187.6) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Thu, 10 Jun
+ 2021 12:54:14 +0000
+Subject: Re: [PATCH net-next v2 4/8] net: usb: asix: ax88772: add phylib
+ support
+To:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Oleksij Rempel <o.rempel@pengutronix.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Russell King <linux@armlinux.org.uk>
+CC:     <kernel@pengutronix.de>, <linux-kernel@vger.kernel.org>,
+        <linux-usb@vger.kernel.org>, <netdev@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>
+References: <20210607082727.26045-1-o.rempel@pengutronix.de>
+ <20210607082727.26045-5-o.rempel@pengutronix.de>
+ <CGME20210609095923eucas1p2e692c9a482151742d543316c91f29802@eucas1p2.samsung.com>
+ <84ff1dab-ab0a-f27c-a948-e1ebdf778485@samsung.com>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <0ebb1698-cd52-d8ad-b5cc-045d29ea964f@nvidia.com>
+Date:   Thu, 10 Jun 2021 13:54:12 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 MIME-Version: 1.0
+In-Reply-To: <84ff1dab-ab0a-f27c-a948-e1ebdf778485@samsung.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 84.249.134.236
-X-SA-Exim-Mail-From: mperttunen@nvidia.com
-X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
+X-Originating-IP: [172.20.187.6]
+X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: a5d304fd-bbd0-4219-e8ac-08d92c0edbd5
+X-MS-TrafficTypeDiagnostic: DM6PR12MB3819:
+X-Microsoft-Antispam-PRVS: <DM6PR12MB3819D78605E7C72412806E10D9359@DM6PR12MB3819.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:255;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: qp+VULzv+p5ROxUxGntO/nSiGeGiDV9Ob0z7XMMvvNHYTku1rHOt/a/R7V4De2L1/ANVG/eYQN4D8UEJTX5VJSftXnjaLbvt72F/FflxX0fMY8TcqgRVObWMaVaAHbTdQa0uIibCynZqZn4UQeuBY8ZYvb2aSqIJ53v7rqPSphvyROQL+Gj/LDcH4GT+tcKY9SY2ZaAG/5wdsIMtZSEvzpYR77JzbuL3Yxpu4hPuYZdixAo4HmSMl4xjlC1X6P3aLIP7RnMxLGJsi+owgqo+ViMrmRD4GI0mUn1NWaHiU7udP6VyYKFihTNqaAl+1w91xLxT/S7JvZwgc8/XXI05smpWNWVIXUnmmxip1LWtJrpps2XrLUmed5yqUHbb91g/ihGd4knVn4XBBMuSvCYr8HXqxEBCCkXGOJMa4Ya+2aKSiyURpV5dB3nDsuz6AH5egywzLMqXDciiRbbOv4FxeHCBTFyNQMIor/E5bhf+60bPD1ltXEQxi0MFCNyaSooXyusHFbsC4Ux/jyDhgsOKgTiuedQEkvp4rcxGENLyC0+rcYQo/Xdq288SxDfn4Dx120dgVxlifyWBFbP177kNHBvR/d8dYu8j3v4cjvcSiAk3zjlLhD1awLQ1aMVwAl7ZALlpW1C80iMdh/8VEuf+T4UEnGTqGNBnM2na6gAT4AjUxfFYG6ftUvl51roYWZdS
+X-Forefront-Antispam-Report: CIP:216.228.112.34;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid03.nvidia.com;CAT:NONE;SFS:(4636009)(39860400002)(346002)(396003)(376002)(136003)(36840700001)(46966006)(31696002)(70206006)(110136005)(8676002)(70586007)(53546011)(336012)(5660300002)(36860700001)(8936002)(36756003)(7416002)(82740400003)(31686004)(186003)(2906002)(54906003)(478600001)(47076005)(7636003)(82310400003)(356005)(86362001)(316002)(426003)(16576012)(4326008)(36906005)(26005)(83380400001)(16526019)(2616005)(43740500002);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jun 2021 12:54:17.8029
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: a5d304fd-bbd0-4219-e8ac-08d92c0edbd5
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.34];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT037.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB3819
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Implement the job submission IOCTL with a minimum feature set.
 
-Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
----
-v7:
-* Allocate gather BO with DMA API to get page-aligned
-  memory
-* Add error prints to a few places where they were missing
-v6:
-* Remove sgt bypass path in gather_bo - this would cause
-  cache maintenance to be skipped and is unnecessary in
-  general.
-* Changes related to moving to using syncpoint IDs
-* Add syncobj related code
-* Print warning on submit failure describing the issue
-* Use ARCH_DMA_ADDR_T_64BIT to check if that is indeed
-  the case
-* Add support for relative syncpoint wait
-* Use pm_runtime_resume_and_get
-* Only try to resume engines that support runtime PM
-* Removed uapi subdirectory
-* Don't use "copy_err" variables for copy_from_user
-  return value
-* Fix setting of blocklinear flag
-v5:
-* Add 16K size limit to copies from userspace.
-* Guard RELOC_BLOCKLINEAR flag handling to only exist in ARM64
-  to prevent oversized shift on 32-bit platforms.
-v4:
-* Remove all features that are not strictly necessary.
-* Split into two patches.
-v3:
-* Remove WRITE_RELOC. Relocations are now patched implicitly
-  when patching is needed.
-* Directly call PM runtime APIs on devices instead of using
-  power_on/power_off callbacks.
-* Remove incorrect mutex unlock in tegra_drm_ioctl_channel_open
-* Use XA_FLAGS_ALLOC1 instead of XA_FLAGS_ALLOC
-* Accommodate for removal of timeout field and inlining of
-  syncpt_incrs array.
-* Copy entire user arrays at a time instead of going through
-  elements one-by-one.
-* Implement waiting of DMA reservations.
-* Split out gather_bo implementation into a separate file.
-* Fix length parameter passed to sg_init_one in gather_bo
-* Cosmetic cleanup.
----
- drivers/gpu/drm/tegra/Makefile    |   2 +
- drivers/gpu/drm/tegra/drm.c       |   4 +-
- drivers/gpu/drm/tegra/gather_bo.c |  82 +++++
- drivers/gpu/drm/tegra/gather_bo.h |  24 ++
- drivers/gpu/drm/tegra/submit.c    | 549 ++++++++++++++++++++++++++++++
- drivers/gpu/drm/tegra/submit.h    |  17 +
- 6 files changed, 677 insertions(+), 1 deletion(-)
- create mode 100644 drivers/gpu/drm/tegra/gather_bo.c
- create mode 100644 drivers/gpu/drm/tegra/gather_bo.h
- create mode 100644 drivers/gpu/drm/tegra/submit.c
- create mode 100644 drivers/gpu/drm/tegra/submit.h
+On 09/06/2021 10:59, Marek Szyprowski wrote:
+> Hi Oleksij,
+> 
+> On 07.06.2021 10:27, Oleksij Rempel wrote:
+>> To be able to use ax88772 with external PHYs and use advantage of
+>> existing PHY drivers, we need to port at least ax88772 part of asix
+>> driver to the phylib framework.
+>>
+>> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> 
+> This patch landed recently in linux-next as commit e532a096be0e ("net: 
+> usb: asix: ax88772: add phylib support"). I found that it causes some 
+> warnings on boards with those devices, see the following log:
+> 
+> root@target:~# time rtcwake -s10 -mmem
+> rtcwake: wakeup from "mem" using /dev/rtc0 at Wed Jun  9 08:16:41 2021
+> [  231.226579] PM: suspend entry (deep)
+> [  231.231697] Filesystems sync: 0.002 seconds
+> [  231.261761] Freezing user space processes ... (elapsed 0.002 seconds) 
+> done.
+> [  231.270526] OOM killer disabled.
+> [  231.273557] Freezing remaining freezable tasks ... (elapsed 0.002 
+> seconds) done.
+> [  231.282229] printk: Suspending console(s) (use no_console_suspend to 
+> debug)
+> ...
+> [  231.710852] Disabling non-boot CPUs ...
+> ...
+> [  231.901794] Enabling non-boot CPUs ...
+> ...
+> [  232.225640] usb usb3: root hub lost power or was reset
+> [  232.225746] usb usb1: root hub lost power or was reset
+> [  232.225864] usb usb5: root hub lost power or was reset
+> [  232.226206] usb usb6: root hub lost power or was reset
+> [  232.226207] usb usb4: root hub lost power or was reset
+> [  232.297749] usb usb2: root hub lost power or was reset
+> [  232.343227] asix 3-1:1.0 eth0: Failed to write reg index 0x0000: -22
+> [  232.343293] asix 3-1:1.0 eth0: Failed to enable software MII access
+> [  232.344486] asix 3-1:1.0 eth0: Failed to read reg index 0x0000: -22
+> [  232.344512] asix 3-1:1.0 eth0: Failed to write reg index 0x0000: -22
+> [  232.344529] PM: dpm_run_callback(): mdio_bus_phy_resume+0x0/0x78 
+> returns -22
+> [  232.344554] Asix Electronics AX88772C usb-003:002:10: PM: failed to 
+> resume: error -22
+> [  232.563712] usb 1-1: reset high-speed USB device number 2 using 
+> exynos-ehci
+> [  232.757653] usb 3-1: reset high-speed USB device number 2 using xhci-hcd
+> [  233.730994] OOM killer enabled.
+> [  233.734122] Restarting tasks ... done.
+> [  233.754992] PM: suspend exit
 
-diff --git a/drivers/gpu/drm/tegra/Makefile b/drivers/gpu/drm/tegra/Makefile
-index 783475ffd943..ab4289d1c991 100644
---- a/drivers/gpu/drm/tegra/Makefile
-+++ b/drivers/gpu/drm/tegra/Makefile
-@@ -4,6 +4,8 @@ ccflags-$(CONFIG_DRM_TEGRA_DEBUG) += -DDEBUG
- tegra-drm-y := \
- 	drm.o \
- 	uapi.o \
-+	submit.o \
-+	gather_bo.o \
- 	gem.o \
- 	fb.o \
- 	dp.o \
-diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
-index 07c332a4fa03..bf5cb553d0ae 100644
---- a/drivers/gpu/drm/tegra/drm.c
-+++ b/drivers/gpu/drm/tegra/drm.c
-@@ -728,6 +728,8 @@ static const struct drm_ioctl_desc tegra_drm_ioctls[] = {
- 			  DRM_RENDER_ALLOW),
- 	DRM_IOCTL_DEF_DRV(TEGRA_CHANNEL_UNMAP, tegra_drm_ioctl_channel_unmap,
- 			  DRM_RENDER_ALLOW),
-+	DRM_IOCTL_DEF_DRV(TEGRA_CHANNEL_SUBMIT, tegra_drm_ioctl_channel_submit,
-+			  DRM_RENDER_ALLOW),
- 	DRM_IOCTL_DEF_DRV(TEGRA_SYNCPOINT_ALLOCATE, tegra_drm_ioctl_syncpoint_allocate,
- 			  DRM_RENDER_ALLOW),
- 	DRM_IOCTL_DEF_DRV(TEGRA_SYNCPOINT_FREE, tegra_drm_ioctl_syncpoint_free,
-@@ -852,7 +854,7 @@ static void tegra_debugfs_init(struct drm_minor *minor)
- 
- static const struct drm_driver tegra_drm_driver = {
- 	.driver_features = DRIVER_MODESET | DRIVER_GEM |
--			   DRIVER_ATOMIC | DRIVER_RENDER,
-+			   DRIVER_ATOMIC | DRIVER_RENDER | DRIVER_SYNCOBJ,
- 	.open = tegra_drm_open,
- 	.postclose = tegra_drm_postclose,
- 	.lastclose = drm_fb_helper_lastclose,
-diff --git a/drivers/gpu/drm/tegra/gather_bo.c b/drivers/gpu/drm/tegra/gather_bo.c
-new file mode 100644
-index 000000000000..a60edcf6737a
---- /dev/null
-+++ b/drivers/gpu/drm/tegra/gather_bo.c
-@@ -0,0 +1,82 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/* Copyright (c) 2020 NVIDIA Corporation */
-+
-+#include <linux/dma-mapping.h>
-+#include <linux/scatterlist.h>
-+#include <linux/slab.h>
-+
-+#include "gather_bo.h"
-+
-+static struct host1x_bo *gather_bo_get(struct host1x_bo *host_bo)
-+{
-+	struct gather_bo *bo = container_of(host_bo, struct gather_bo, base);
-+
-+	kref_get(&bo->ref);
-+
-+	return host_bo;
-+}
-+
-+static void gather_bo_release(struct kref *ref)
-+{
-+	struct gather_bo *bo = container_of(ref, struct gather_bo, ref);
-+
-+	dma_free_attrs(bo->drm_dev, bo->gather_data_words * 4, bo->gather_data,
-+		       bo->gather_data_dma, 0);
-+	kfree(bo);
-+}
-+
-+void gather_bo_put(struct host1x_bo *host_bo)
-+{
-+	struct gather_bo *bo = container_of(host_bo, struct gather_bo, base);
-+
-+	kref_put(&bo->ref, gather_bo_release);
-+}
-+
-+static struct sg_table *
-+gather_bo_pin(struct device *dev, struct host1x_bo *host_bo, dma_addr_t *phys)
-+{
-+	struct gather_bo *bo = container_of(host_bo, struct gather_bo, base);
-+	struct sg_table *sgt;
-+	int err;
-+
-+	sgt = kzalloc(sizeof(*sgt), GFP_KERNEL);
-+	if (!sgt)
-+		return ERR_PTR(-ENOMEM);
-+
-+	err = dma_get_sgtable(bo->drm_dev, sgt, bo->gather_data,
-+			      bo->gather_data_dma, bo->gather_data_words * 4);
-+	if (err) {
-+		kfree(sgt);
-+		return ERR_PTR(err);
-+	}
-+
-+	return sgt;
-+}
-+
-+static void gather_bo_unpin(struct device *dev, struct sg_table *sgt)
-+{
-+	if (sgt) {
-+		sg_free_table(sgt);
-+		kfree(sgt);
-+	}
-+}
-+
-+static void *gather_bo_mmap(struct host1x_bo *host_bo)
-+{
-+	struct gather_bo *bo = container_of(host_bo, struct gather_bo, base);
-+
-+	return bo->gather_data;
-+}
-+
-+static void gather_bo_munmap(struct host1x_bo *host_bo, void *addr)
-+{
-+}
-+
-+const struct host1x_bo_ops gather_bo_ops = {
-+	.get = gather_bo_get,
-+	.put = gather_bo_put,
-+	.pin = gather_bo_pin,
-+	.unpin = gather_bo_unpin,
-+	.mmap = gather_bo_mmap,
-+	.munmap = gather_bo_munmap,
-+};
-diff --git a/drivers/gpu/drm/tegra/gather_bo.h b/drivers/gpu/drm/tegra/gather_bo.h
-new file mode 100644
-index 000000000000..e7b6564eafbb
---- /dev/null
-+++ b/drivers/gpu/drm/tegra/gather_bo.h
-@@ -0,0 +1,24 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/* Copyright (c) 2020 NVIDIA Corporation */
-+
-+#ifndef _TEGRA_DRM_SUBMIT_GATHER_BO_H
-+#define _TEGRA_DRM_SUBMIT_GATHER_BO_H
-+
-+#include <linux/host1x.h>
-+#include <linux/kref.h>
-+
-+struct gather_bo {
-+	struct host1x_bo base;
-+
-+	struct kref ref;
-+
-+	struct device *drm_dev;
-+	u32 *gather_data;
-+	dma_addr_t gather_data_dma;
-+	size_t gather_data_words;
-+};
-+
-+extern const struct host1x_bo_ops gather_bo_ops;
-+void gather_bo_put(struct host1x_bo *host_bo);
-+
-+#endif
-diff --git a/drivers/gpu/drm/tegra/submit.c b/drivers/gpu/drm/tegra/submit.c
-new file mode 100644
-index 000000000000..e3200c10ca9e
---- /dev/null
-+++ b/drivers/gpu/drm/tegra/submit.c
-@@ -0,0 +1,549 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/* Copyright (c) 2020 NVIDIA Corporation */
-+
-+#include <linux/dma-fence-array.h>
-+#include <linux/file.h>
-+#include <linux/host1x.h>
-+#include <linux/iommu.h>
-+#include <linux/kref.h>
-+#include <linux/list.h>
-+#include <linux/nospec.h>
-+#include <linux/pm_runtime.h>
-+#include <linux/sync_file.h>
-+
-+#include <drm/drm_drv.h>
-+#include <drm/drm_file.h>
-+#include <drm/drm_syncobj.h>
-+
-+#include "drm.h"
-+#include "gather_bo.h"
-+#include "gem.h"
-+#include "submit.h"
-+#include "uapi.h"
-+
-+#define SUBMIT_ERR(ctx, fmt, ...) \
-+	dev_err_ratelimited(ctx->client->base.dev, \
-+		"%s: job submission failed: " fmt "\n", \
-+		current->comm __VA_OPT__(,) __VA_ARGS__)
-+
-+static struct tegra_drm_mapping *
-+tegra_drm_mapping_get(struct tegra_drm_context *ctx, u32 id)
-+{
-+	struct tegra_drm_mapping *mapping;
-+
-+	xa_lock(&ctx->mappings);
-+	mapping = xa_load(&ctx->mappings, id);
-+	if (mapping)
-+		kref_get(&mapping->ref);
-+	xa_unlock(&ctx->mappings);
-+
-+	return mapping;
-+}
-+
-+static void *alloc_copy_user_array(void __user *from, size_t count, size_t size)
-+{
-+	size_t copy_len;
-+	void *data;
-+
-+	if (check_mul_overflow(count, size, &copy_len))
-+		return ERR_PTR(-EINVAL);
-+
-+	if (copy_len > 0x4000)
-+		return ERR_PTR(-E2BIG);
-+
-+	data = kvmalloc(copy_len, GFP_KERNEL);
-+	if (!data)
-+		return ERR_PTR(-ENOMEM);
-+
-+	if (copy_from_user(data, from, copy_len)) {
-+		kvfree(data);
-+		return ERR_PTR(-EFAULT);
-+	}
-+
-+	return data;
-+}
-+
-+static int submit_copy_gather_data(struct gather_bo **pbo,
-+				   struct device *drm_dev,
-+				   struct tegra_drm_context *ctx,
-+				   struct drm_tegra_channel_submit *args)
-+{
-+	struct gather_bo *bo;
-+	size_t copy_len;
-+
-+	if (args->gather_data_words == 0) {
-+		SUBMIT_ERR(ctx, "gather_data_words cannot be zero");
-+		return -EINVAL;
-+	}
-+
-+	if (check_mul_overflow((size_t)args->gather_data_words, (size_t)4, &copy_len)) {
-+		SUBMIT_ERR(ctx, "gather_data_words is too large");
-+		return -EINVAL;
-+	}
-+
-+	bo = kzalloc(sizeof(*bo), GFP_KERNEL);
-+	if (!bo) {
-+		SUBMIT_ERR(ctx, "failed to allocate memory for bo info");
-+		return -ENOMEM;
-+	}
-+
-+	kref_init(&bo->ref);
-+	host1x_bo_init(&bo->base, &gather_bo_ops);
-+
-+	bo->drm_dev = drm_dev;
-+	bo->gather_data =
-+		dma_alloc_attrs(drm_dev, copy_len, &bo->gather_data_dma,
-+				GFP_KERNEL | __GFP_NOWARN, 0);
-+	if (!bo->gather_data) {
-+		SUBMIT_ERR(ctx, "failed to allocate memory for gather data");
-+		kfree(bo);
-+		return -ENOMEM;
-+	}
-+
-+	if (copy_from_user(bo->gather_data,
-+			   u64_to_user_ptr(args->gather_data_ptr), copy_len)) {
-+		SUBMIT_ERR(ctx, "failed to copy gather data from userspace");
-+		dma_free_attrs(drm_dev, copy_len, bo->gather_data, bo->gather_data_dma, 0);
-+		kfree(bo);
-+		return -EFAULT;
-+	}
-+
-+	bo->gather_data_words = args->gather_data_words;
-+
-+	*pbo = bo;
-+
-+	return 0;
-+}
-+
-+static int submit_write_reloc(struct tegra_drm_context *ctx,
-+			      struct gather_bo *bo,
-+			      struct drm_tegra_submit_buf *buf,
-+			      struct tegra_drm_mapping *mapping)
-+{
-+	/* TODO check that target_offset is within bounds */
-+	dma_addr_t iova = mapping->iova + buf->reloc.target_offset;
-+	u32 written_ptr;
-+
-+#ifdef CONFIG_ARCH_DMA_ADDR_T_64BIT
-+	if (buf->flags & DRM_TEGRA_SUBMIT_BUF_RELOC_BLOCKLINEAR)
-+		iova |= BIT_ULL(39);
-+#endif
-+
-+	written_ptr = iova >> buf->reloc.shift;
-+
-+	if (buf->reloc.gather_offset_words >= bo->gather_data_words) {
-+		SUBMIT_ERR(ctx,
-+			   "relocation has too large gather offset (%u vs gather length %zu)",
-+			   buf->reloc.gather_offset_words, bo->gather_data_words);
-+		return -EINVAL;
-+	}
-+
-+	buf->reloc.gather_offset_words = array_index_nospec(
-+		buf->reloc.gather_offset_words, bo->gather_data_words);
-+
-+	bo->gather_data[buf->reloc.gather_offset_words] = written_ptr;
-+
-+	return 0;
-+}
-+
-+static int submit_process_bufs(struct tegra_drm_context *ctx,
-+			       struct gather_bo *bo,
-+			       struct drm_tegra_channel_submit *args,
-+			       struct tegra_drm_submit_data *job_data)
-+{
-+	struct tegra_drm_used_mapping *mappings;
-+	struct drm_tegra_submit_buf *bufs;
-+	int err;
-+	u32 i;
-+
-+	bufs = alloc_copy_user_array(u64_to_user_ptr(args->bufs_ptr),
-+				     args->num_bufs, sizeof(*bufs));
-+	if (IS_ERR(bufs)) {
-+		SUBMIT_ERR(ctx, "failed to copy bufs array from userspace");
-+		return PTR_ERR(bufs);
-+	}
-+
-+	mappings = kcalloc(args->num_bufs, sizeof(*mappings), GFP_KERNEL);
-+	if (!mappings) {
-+		SUBMIT_ERR(ctx, "failed to allocate memory for mapping info");
-+		err = -ENOMEM;
-+		goto done;
-+	}
-+
-+	for (i = 0; i < args->num_bufs; i++) {
-+		struct drm_tegra_submit_buf *buf = &bufs[i];
-+		struct tegra_drm_mapping *mapping;
-+
-+		if (buf->flags & ~DRM_TEGRA_SUBMIT_BUF_RELOC_BLOCKLINEAR) {
-+			SUBMIT_ERR(ctx, "invalid flag specified for buf");
-+			err = -EINVAL;
-+			goto drop_refs;
-+		}
-+
-+		mapping = tegra_drm_mapping_get(ctx, buf->mapping_id);
-+		if (!mapping) {
-+			SUBMIT_ERR(ctx, "invalid mapping_id for buf '%u'",
-+				   buf->mapping_id);
-+			err = -EINVAL;
-+			goto drop_refs;
-+		}
-+
-+		err = submit_write_reloc(ctx, bo, buf, mapping);
-+		if (err) {
-+			tegra_drm_mapping_put(mapping);
-+			goto drop_refs;
-+		}
-+
-+		mappings[i].mapping = mapping;
-+		mappings[i].flags = buf->flags;
-+	}
-+
-+	job_data->used_mappings = mappings;
-+	job_data->num_used_mappings = i;
-+
-+	err = 0;
-+
-+	goto done;
-+
-+drop_refs:
-+	for (;;) {
-+		if (i-- == 0)
-+			break;
-+
-+		tegra_drm_mapping_put(mappings[i].mapping);
-+	}
-+
-+	kfree(mappings);
-+	job_data->used_mappings = NULL;
-+
-+done:
-+	kvfree(bufs);
-+
-+	return err;
-+}
-+
-+static int submit_get_syncpt(struct tegra_drm_context *ctx,
-+			     struct host1x_job *job, struct xarray *syncpoints,
-+			     struct drm_tegra_channel_submit *args)
-+{
-+	struct host1x_syncpt *sp;
-+
-+	if (args->syncpt_incr.flags) {
-+		SUBMIT_ERR(ctx, "invalid flag specified for syncpt_incr");
-+		return -EINVAL;
-+	}
-+
-+	/* Syncpt ref will be dropped on job release */
-+	sp = xa_load(syncpoints, args->syncpt_incr.id);
-+	if (!sp) {
-+		SUBMIT_ERR(ctx, "syncpoint specified in syncpt_incr was not allocated");
-+		return -EINVAL;
-+	}
-+
-+	job->syncpt = host1x_syncpt_get(sp);
-+	job->syncpt_incrs = args->syncpt_incr.num_incrs;
-+
-+	return 0;
-+}
-+
-+static int submit_job_add_gather(struct host1x_job *job,
-+				 struct tegra_drm_context *ctx,
-+				 struct drm_tegra_submit_cmd_gather_uptr *cmd,
-+				 struct gather_bo *bo, u32 *offset,
-+				 struct tegra_drm_submit_data *job_data)
-+{
-+	u32 next_offset;
-+
-+	if (cmd->reserved[0] || cmd->reserved[1] || cmd->reserved[2]) {
-+		SUBMIT_ERR(ctx, "non-zero reserved field in GATHER_UPTR command");
-+		return -EINVAL;
-+	}
-+
-+	/* Check for maximum gather size */
-+	if (cmd->words > 16383) {
-+		SUBMIT_ERR(ctx, "too many words in GATHER_UPTR command");
-+		return -EINVAL;
-+	}
-+
-+	if (check_add_overflow(*offset, cmd->words, &next_offset)) {
-+		SUBMIT_ERR(ctx, "too many total words in job");
-+		return -EINVAL;
-+	}
-+
-+	if (next_offset > bo->gather_data_words) {
-+		SUBMIT_ERR(ctx, "GATHER_UPTR command overflows gather data");
-+		return -EINVAL;
-+	}
-+
-+	host1x_job_add_gather(job, &bo->base, cmd->words, *offset * 4);
-+
-+	*offset = next_offset;
-+
-+	return 0;
-+}
-+
-+static int submit_create_job(struct host1x_job **pjob,
-+			     struct tegra_drm_context *ctx,
-+			     struct gather_bo *bo,
-+			     struct drm_tegra_channel_submit *args,
-+			     struct tegra_drm_submit_data *job_data,
-+			     struct xarray *syncpoints)
-+{
-+	struct drm_tegra_submit_cmd *cmds;
-+	u32 i, gather_offset = 0, class;
-+	struct host1x_job *job;
-+	int err;
-+
-+	/* Set initial class for firewall. */
-+	class = ctx->client->base.class;
-+
-+	cmds = alloc_copy_user_array(u64_to_user_ptr(args->cmds_ptr),
-+				     args->num_cmds, sizeof(*cmds));
-+	if (IS_ERR(cmds)) {
-+		SUBMIT_ERR(ctx, "failed to copy cmds array from userspace");
-+		return PTR_ERR(cmds);
-+	}
-+
-+	job = host1x_job_alloc(ctx->channel, args->num_cmds, 0, true);
-+	if (!job) {
-+		SUBMIT_ERR(ctx, "failed to allocate memory for job");
-+		err = -ENOMEM;
-+		goto done;
-+	}
-+
-+	err = submit_get_syncpt(ctx, job, syncpoints, args);
-+	if (err < 0)
-+		goto free_job;
-+
-+	job->client = &ctx->client->base;
-+	job->class = ctx->client->base.class;
-+	job->serialize = true;
-+
-+	for (i = 0; i < args->num_cmds; i++) {
-+		struct drm_tegra_submit_cmd *cmd = &cmds[i];
-+
-+		if (cmd->flags) {
-+			SUBMIT_ERR(ctx, "unknown flags given for cmd");
-+			err = -EINVAL;
-+			goto free_job;
-+		}
-+
-+		if (cmd->type == DRM_TEGRA_SUBMIT_CMD_GATHER_UPTR) {
-+			err = submit_job_add_gather(job, ctx,
-+						    &cmd->gather_uptr, bo,
-+						    &gather_offset, job_data);
-+			if (err)
-+				goto free_job;
-+		} else if (cmd->type == DRM_TEGRA_SUBMIT_CMD_WAIT_SYNCPT) {
-+			if (cmd->wait_syncpt.reserved[0] ||
-+			    cmd->wait_syncpt.reserved[1]) {
-+				SUBMIT_ERR(ctx, "non-zero reserved value");
-+				err = -EINVAL;
-+				goto free_job;
-+			}
-+
-+			host1x_job_add_wait(job, cmd->wait_syncpt.id,
-+					    cmd->wait_syncpt.threshold,
-+					    false,
-+					    class);
-+		} else if (cmd->type == DRM_TEGRA_SUBMIT_CMD_WAIT_SYNCPT_RELATIVE) {
-+			if (cmd->wait_syncpt.reserved[0] ||
-+			    cmd->wait_syncpt.reserved[1]) {
-+				SUBMIT_ERR(ctx, "non-zero reserved value");
-+				err = -EINVAL;
-+				goto free_job;
-+			}
-+
-+			if (cmd->wait_syncpt.id != args->syncpt_incr.id) {
-+				SUBMIT_ERR(ctx, "syncpoint ID in CMD_WAIT_SYNCPT_RELATIVE is not used by the job");
-+				err = -EINVAL;
-+				goto free_job;
-+			}
-+
-+			host1x_job_add_wait(job, cmd->wait_syncpt.id,
-+					    cmd->wait_syncpt.threshold,
-+					    true,
-+					    class);
-+		} else {
-+			SUBMIT_ERR(ctx, "unknown cmd type");
-+			err = -EINVAL;
-+			goto free_job;
-+		}
-+	}
-+
-+	if (gather_offset == 0) {
-+		SUBMIT_ERR(ctx, "job must have at least one gather");
-+		err = -EINVAL;
-+		goto free_job;
-+	}
-+
-+	*pjob = job;
-+
-+	err = 0;
-+	goto done;
-+
-+free_job:
-+	host1x_job_put(job);
-+
-+done:
-+	kvfree(cmds);
-+
-+	return err;
-+}
-+
-+static void release_job(struct host1x_job *job)
-+{
-+	struct tegra_drm_client *client =
-+		container_of(job->client, struct tegra_drm_client, base);
-+	struct tegra_drm_submit_data *job_data = job->user_data;
-+	u32 i;
-+
-+	for (i = 0; i < job_data->num_used_mappings; i++)
-+		tegra_drm_mapping_put(job_data->used_mappings[i].mapping);
-+
-+	kfree(job_data->used_mappings);
-+	kfree(job_data);
-+
-+	if (pm_runtime_enabled(client->base.dev))
-+		pm_runtime_put_autosuspend(client->base.dev);
-+}
-+
-+int tegra_drm_ioctl_channel_submit(struct drm_device *drm, void *data,
-+				   struct drm_file *file)
-+{
-+	struct tegra_drm_file *fpriv = file->driver_priv;
-+	struct drm_tegra_channel_submit *args = data;
-+	struct tegra_drm_submit_data *job_data;
-+	struct drm_syncobj *syncobj = NULL;
-+	struct tegra_drm_context *ctx;
-+	struct host1x_job *job;
-+	struct gather_bo *bo;
-+	u32 i;
-+	int err;
-+
-+	mutex_lock(&fpriv->lock);
-+	ctx = xa_load(&fpriv->contexts, args->channel_ctx);
-+	if (!ctx) {
-+		mutex_unlock(&fpriv->lock);
-+		pr_err_ratelimited("%s: %s: invalid channel_ctx '%d'", __func__,
-+			current->comm, args->channel_ctx);
-+		return -EINVAL;
-+	}
-+
-+	if (args->syncobj_in) {
-+		struct dma_fence *fence;
-+
-+		err = drm_syncobj_find_fence(file, args->syncobj_in, 0, 0, &fence);
-+		if (err) {
-+			SUBMIT_ERR(ctx, "invalid syncobj_in '%d'", args->syncobj_in);
-+			goto unlock;
-+		}
-+
-+		err = dma_fence_wait_timeout(fence, true, msecs_to_jiffies(10000));
-+		dma_fence_put(fence);
-+		if (err) {
-+			SUBMIT_ERR(ctx, "wait for syncobj_in timed out");
-+			goto unlock;
-+		}
-+	}
-+
-+	if (args->syncobj_out) {
-+		syncobj = drm_syncobj_find(file, args->syncobj_out);
-+		if (!syncobj) {
-+			SUBMIT_ERR(ctx, "invalid syncobj_out '%d'", args->syncobj_out);
-+			err = -ENOENT;
-+			goto unlock;
-+		}
-+	}
-+
-+	/* Allocate gather BO and copy gather words in. */
-+	err = submit_copy_gather_data(&bo, drm->dev, ctx, args);
-+	if (err)
-+		goto unlock;
-+
-+	job_data = kzalloc(sizeof(*job_data), GFP_KERNEL);
-+	if (!job_data) {
-+		SUBMIT_ERR(ctx, "failed to allocate memory for job data");
-+		err = -ENOMEM;
-+		goto put_bo;
-+	}
-+
-+	/* Get data buffer mappings and do relocation patching. */
-+	err = submit_process_bufs(ctx, bo, args, job_data);
-+	if (err)
-+		goto free_job_data;
-+
-+	/* Allocate host1x_job and add gathers and waits to it. */
-+	err = submit_create_job(&job, ctx, bo, args, job_data,
-+				&fpriv->syncpoints);
-+	if (err)
-+		goto free_job_data;
-+
-+	/* Map gather data for Host1x. */
-+	err = host1x_job_pin(job, ctx->client->base.dev);
-+	if (err) {
-+		SUBMIT_ERR(ctx, "failed to pin job: %d", err);
-+		goto put_job;
-+	}
-+
-+	/* Boot engine. */
-+	if (pm_runtime_enabled(ctx->client->base.dev)) {
-+		err = pm_runtime_resume_and_get(ctx->client->base.dev);
-+		if (err < 0) {
-+			SUBMIT_ERR(ctx, "could not power up engine: %d", err);
-+			goto unpin_job;
-+		}
-+	}
-+
-+	job->user_data = job_data;
-+	job->release = release_job;
-+	job->timeout = 10000;
-+
-+	/*
-+	 * job_data is now part of job reference counting, so don't release
-+	 * it from here.
-+	 */
-+	job_data = NULL;
-+
-+	/* Submit job to hardware. */
-+	err = host1x_job_submit(job);
-+	if (err) {
-+		SUBMIT_ERR(ctx, "host1x job submission failed: %d", err);
-+		goto unpin_job;
-+	}
-+
-+	/* Return postfences to userspace and add fences to DMA reservations. */
-+	args->syncpt_incr.fence_value = job->syncpt_end;
-+
-+	if (syncobj) {
-+		struct dma_fence *fence = host1x_fence_create(job->syncpt, job->syncpt_end);
-+		if (IS_ERR(fence)) {
-+			err = PTR_ERR(fence);
-+			SUBMIT_ERR(ctx, "failed to create postfence: %d", err);
-+		}
-+
-+		drm_syncobj_replace_fence(syncobj, fence);
-+	}
-+
-+	goto put_job;
-+
-+unpin_job:
-+	host1x_job_unpin(job);
-+put_job:
-+	host1x_job_put(job);
-+free_job_data:
-+	if (job_data && job_data->used_mappings) {
-+		for (i = 0; i < job_data->num_used_mappings; i++)
-+			tegra_drm_mapping_put(job_data->used_mappings[i].mapping);
-+		kfree(job_data->used_mappings);
-+	}
-+	if (job_data)
-+		kfree(job_data);
-+put_bo:
-+	gather_bo_put(&bo->base);
-+unlock:
-+	if (syncobj)
-+		drm_syncobj_put(syncobj);
-+	mutex_unlock(&fpriv->lock);
-+	return err;
-+}
-diff --git a/drivers/gpu/drm/tegra/submit.h b/drivers/gpu/drm/tegra/submit.h
-new file mode 100644
-index 000000000000..0a165e9e4bda
---- /dev/null
-+++ b/drivers/gpu/drm/tegra/submit.h
-@@ -0,0 +1,17 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/* Copyright (c) 2020 NVIDIA Corporation */
-+
-+#ifndef _TEGRA_DRM_UAPI_SUBMIT_H
-+#define _TEGRA_DRM_UAPI_SUBMIT_H
-+
-+struct tegra_drm_used_mapping {
-+	struct tegra_drm_mapping *mapping;
-+	u32 flags;
-+};
-+
-+struct tegra_drm_submit_data {
-+	struct tegra_drm_used_mapping *used_mappings;
-+	u32 num_used_mappings;
-+};
-+
-+#endif
+
+I am seeing a similar problem on a couple of our Tegra boards that
+use AX88772A device. When resuming from suspend I see ...
+
+[   54.733266] PM: suspend entry (deep)
+
+[   54.737179] Filesystems sync: 0.000 seconds
+
+[   54.741904] Freezing user space processes ... (elapsed 0.001 seconds) done.
+
+[   54.750895] OOM killer disabled.
+
+[   54.754452] Freezing remaining freezable tasks ... (elapsed 0.001 seconds) done.
+
+[   54.763505] printk: Suspending console(s) (use no_console_suspend to debug)
+
+[   54.898334] Disabling non-boot CPUs ...
+
+[   54.899546] IRQ 26: no longer affine to CPU1
+
+[   54.924373] Entering suspend state LP1
+
+[   54.924493] Enabling non-boot CPUs ...
+
+[   54.933164] CPU1 is up
+
+[   55.005166] asix 3-1:1.0 eth0: Failed to write reg index 0x0000: -113
+
+[   55.005226] asix 3-1:1.0 eth0: Failed to enable software MII access
+
+[   55.006579] asix 3-1:1.0 eth0: Failed to read reg index 0x0000: -113
+
+[   55.006722] asix 3-1:1.0 eth0: Failed to write reg index 0x0000: -113
+
+[   55.006762] asix 3-1:1.0 eth0: Failed to enable software MII access
+
+
+Interestingly once commit d275afb66371 ("net: usb: asix: add error
+handling for asix_mdio_* functions") is applied, then resume from
+suspend completely fails because the error is propagated. Bisect
+is pointing to that patch, however, it is this patch that is
+causing the problem.
+
+Cheers
+Jon
+
 -- 
-2.30.1
-
+nvpublic
