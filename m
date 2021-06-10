@@ -7,69 +7,69 @@ X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29060C48BD1
-	for <linux-tegra@archiver.kernel.org>; Thu, 10 Jun 2021 06:42:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB268C47094
+	for <linux-tegra@archiver.kernel.org>; Thu, 10 Jun 2021 06:43:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0D44E613DE
-	for <linux-tegra@archiver.kernel.org>; Thu, 10 Jun 2021 06:42:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 939F4613CA
+	for <linux-tegra@archiver.kernel.org>; Thu, 10 Jun 2021 06:43:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230027AbhFJGoP (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 10 Jun 2021 02:44:15 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:39839 "EHLO
+        id S230134AbhFJGpr (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 10 Jun 2021 02:45:47 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:39862 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229634AbhFJGoO (ORCPT
+        with ESMTP id S230039AbhFJGpq (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 10 Jun 2021 02:44:14 -0400
-Received: from mail-wm1-f71.google.com ([209.85.128.71])
+        Thu, 10 Jun 2021 02:45:46 -0400
+Received: from mail-wr1-f69.google.com ([209.85.221.69])
         by youngberry.canonical.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
         (Exim 4.93)
         (envelope-from <krzysztof.kozlowski@canonical.com>)
-        id 1lrEOQ-00059x-32
-        for linux-tegra@vger.kernel.org; Thu, 10 Jun 2021 06:42:18 +0000
-Received: by mail-wm1-f71.google.com with SMTP id u17-20020a05600c19d1b02901af4c4deac5so2665389wmq.7
-        for <linux-tegra@vger.kernel.org>; Wed, 09 Jun 2021 23:42:18 -0700 (PDT)
+        id 1lrEPu-0005G5-1O
+        for linux-tegra@vger.kernel.org; Thu, 10 Jun 2021 06:43:50 +0000
+Received: by mail-wr1-f69.google.com with SMTP id k25-20020a5d52590000b0290114dee5b660so414576wrc.16
+        for <linux-tegra@vger.kernel.org>; Wed, 09 Jun 2021 23:43:50 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=V7+XL9sJ4avOAFbP8M5lm1xje4LiQLiEskoJgKOFT0w=;
-        b=uAgbfYTSVFl0T8q9X4fi02QLyQ6A2gwA1G+eh/bcofOsP2bL18e9Ju3pdHhzEQz79/
-         28xQIGL9XKK5xZ035CpdIw+aNlu1mxdjRdZvMpLwwOgsjeaBB1yoBNhe0T6SEZjW0r0d
-         TdOLxyLIf8N0bDAJx8KKlMAidB2u9DgRK2dpWGsDpclhKrJi3qTmw/qJEv4gEVJrJ2yL
-         /v5mNjFilEa9ItcZKezY9V+AYuTBvadzRqtEks4ySpc5CaJB2E21M1qIayCXJI9gzp3V
-         pLgMCWH41SR7ziW/iW9RP/5GJekaOjU+YuDTX/7raDr7aZ1TNKkK5tYHT5aSQbJBR8oM
-         975g==
-X-Gm-Message-State: AOAM533DQivFvA90YdeitsO4fWGmXl0s5cYMxTNpd93UgEJv9Jz19e+H
-        J5Cr6G8nT1DQyMymns+K31kuP2dciBnPPnFt5Z1GJ3as3C3mS2Iome0Y8BJmSNvSoco2je0oQIc
-        4+AV8NHgxXAWkCMGctSGMG8wCbaoF+tnkaMkY4lMA
-X-Received: by 2002:adf:eb82:: with SMTP id t2mr3473060wrn.337.1623307337785;
-        Wed, 09 Jun 2021 23:42:17 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwlNhcMYrDVL1IhoA/EKJ232q5LCxiyh5RMHIvdN4gRnzqxkVa6hl0Ki6hS5rAH/xKnsxMs5Q==
-X-Received: by 2002:adf:eb82:: with SMTP id t2mr3473045wrn.337.1623307337644;
-        Wed, 09 Jun 2021 23:42:17 -0700 (PDT)
+        bh=1Cnxc9a5Hbs5GVecJ6riph8QcEVy6pKQKSj3ZxVzabg=;
+        b=LW6H0ad5ifmNb3w17BG77gj5erWlidvK0d1w9uKod/dk1RYrRudmWv2/VufsOzpLWN
+         XgCkJF+jUru/bxtSPrN3BqEwU+7KBGxKe1lQDsiSz3jZVtmO79B1+h9KLsz6uob2KmE0
+         YVllIYDFiV5rUiOyDJJNziJmmwkuvPvp9yUoNtzsFiYnyK5kObx3GNR7hFRyPkQgzbtv
+         7lawE21tVk6DZCk7bxFwSRZhLlIXoCc98MLBtu1eWzCoZliFiV/ONko5ERSLzm8MK9oc
+         SiKuq0t0eump8Ru1HVYCKXBMAd3AQHMT9J3mUACdloNV3eTmwx8ff93qYXK8s5AugT8M
+         jPRQ==
+X-Gm-Message-State: AOAM530LoLy1c7OiBH8XXak09D1OQgesa5ZBn5phmdNN02+MX8DijC1V
+        u/+PUzjfSbxISRsJV93ZOnmKYBAYelWbmHHZgnyNw0ZJxrooaVk6lnbAxdrZkcayJziKXT+6zh+
+        u01NAvvg1bpbHYlxGQOntWIdjwrzOX6Zf4s9IgYLj
+X-Received: by 2002:a5d:648a:: with SMTP id o10mr3513543wri.274.1623307429724;
+        Wed, 09 Jun 2021 23:43:49 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxOOjeybgNtep8FfbNLzY/mE05daXRXnIof6P9YIUDD5UQ85p+2PLukrf344jAtP/7qei+svw==
+X-Received: by 2002:a5d:648a:: with SMTP id o10mr3513535wri.274.1623307429594;
+        Wed, 09 Jun 2021 23:43:49 -0700 (PDT)
 Received: from [192.168.1.115] (xdsl-188-155-177-222.adslplus.ch. [188.155.177.222])
-        by smtp.gmail.com with ESMTPSA id u18sm1853015wmj.15.2021.06.09.23.42.17
+        by smtp.gmail.com with ESMTPSA id c7sm2555372wrc.42.2021.06.09.23.43.49
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Jun 2021 23:42:17 -0700 (PDT)
+        Wed, 09 Jun 2021 23:43:49 -0700 (PDT)
 Subject: Re: [PATCH 1/2] memory: tegra: Add missing dependencies
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Dmitry Osipenko <digetx@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+Cc:     Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
 References: <20210609112806.3565057-1-thierry.reding@gmail.com>
  <20210609112806.3565057-2-thierry.reding@gmail.com>
  <0c762772-929e-2eb8-6568-4aa82ea2f9ad@gmail.com>
  <ee2846c0-9274-0888-90ac-dac72d2ab5fd@canonical.com>
- <YMDzkyjaMhoJjMzL@orome.fritz.box>
+ <a3110fbd-c4af-0317-5a6d-1f780f1dac91@gmail.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Message-ID: <97fc44f9-30d5-cbcf-431a-fd0c4c7517b7@canonical.com>
-Date:   Thu, 10 Jun 2021 08:42:16 +0200
+Message-ID: <1400979c-c7a7-9618-1168-70185ed10546@canonical.com>
+Date:   Thu, 10 Jun 2021 08:43:48 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.8.1
 MIME-Version: 1.0
-In-Reply-To: <YMDzkyjaMhoJjMzL@orome.fritz.box>
+In-Reply-To: <a3110fbd-c4af-0317-5a6d-1f780f1dac91@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -77,8 +77,8 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 09/06/2021 19:00, Thierry Reding wrote:
-> On Wed, Jun 09, 2021 at 03:19:12PM +0200, Krzysztof Kozlowski wrote:
+On 09/06/2021 18:57, Dmitry Osipenko wrote:
+> 09.06.2021 16:19, Krzysztof Kozlowski пишет:
 >> On 09/06/2021 13:58, Dmitry Osipenko wrote:
 >>> 09.06.2021 14:28, Thierry Reding пишет:
 >>>> From: Thierry Reding <treding@nvidia.com>
@@ -118,54 +118,69 @@ On 09/06/2021 19:00, Thierry Reding wrote:
 >> Yeah, good question. That's why I propose "depends on". No issues with
 >> unmet or circular dependencies.
 > 
-> I couldn't find a way to make this work with "depends on" because
-> OF_RESERVED_MEM is not user-visible and the only way to get it enabled
-> is if something also selects OF_EARLY_FLATTREE, which is only ever done
-> at the architecture Kconfig level (and for OF unit testing).
+> What about to add stub for RESERVEDMEM_OF_DECLARE() + CONFIG_OF_RESERVED_MEM=n?
 > 
-> So switching this to a "depends on" causes the TEGRA210_EMC never to get
-> enabled.
-
-Right.
-
-> 
-> However, with OF disabled, the above causes issues because it can lead
-> to unmet direct dependencies. That, in turn, can be fixed by appending
-> && OF to the COMPILE_TEST branch, which seems like a good enough
-> compromise.
-> 
-> Here's what I have on top of the above patch and that seems to do the
-> trick.
-> 
-> --- >8 ---
-> diff --git a/drivers/memory/tegra/Kconfig b/drivers/memory/tegra/Kconfig
-> index ecfb071fc4f4..1c553895160c 100644
-> --- a/drivers/memory/tegra/Kconfig
-> +++ b/drivers/memory/tegra/Kconfig
-> @@ -47,13 +47,13 @@ config TEGRA124_EMC
+> diff --git a/include/linux/of.h b/include/linux/of.h
+> index d8db8d3592fd..9c2e71e202d1 100644
+> --- a/include/linux/of.h
+> +++ b/include/linux/of.h
+> @@ -1329,6 +1329,12 @@ static inline int of_get_available_child_count(const struct device_node *np)
+>  	return num;
+>  }
 >  
->  config TEGRA210_EMC_TABLE
->  	bool
-> -	depends on ARCH_TEGRA_210_SOC || COMPILE_TEST
-> +	depends on ARCH_TEGRA_210_SOC || (COMPILE_TEST && OF)
->  	select OF_EARLY_FLATTREE
->  	select OF_RESERVED_MEM
+> +#define _OF_DECLARE_STUB(table, name, compat, fn, fn_type)		\
+> +	static const struct of_device_id __of_table_##name		\
+> +		__attribute__((unused))					\
+> +		 = { .compatible = compat,				\
+> +		     .data = (fn == (fn_type)NULL) ? fn : fn }
+> +
+>  #if defined(CONFIG_OF) && !defined(MODULE)
+>  #define _OF_DECLARE(table, name, compat, fn, fn_type)			\
+>  	static const struct of_device_id __of_table_##name		\
+> @@ -1338,10 +1344,7 @@ static inline int of_get_available_child_count(const struct device_node *np)
+>  		     .data = (fn == (fn_type)NULL) ? fn : fn  }
+>  #else
+>  #define _OF_DECLARE(table, name, compat, fn, fn_type)			\
+> -	static const struct of_device_id __of_table_##name		\
+> -		__attribute__((unused))					\
+> -		 = { .compatible = compat,				\
+> -		     .data = (fn == (fn_type)NULL) ? fn : fn }
+> +	_OF_DECLARE_STUB(table, name, compat, fn, fn_type)
+>  #endif
 >  
->  config TEGRA210_EMC
->  	tristate "NVIDIA Tegra210 External Memory Controller driver"
-> -	depends on ARCH_TEGRA_210_SOC || COMPILE_TEST
-> +	depends on ARCH_TEGRA_210_SOC || (COMPILE_TEST && OF)
->  	select TEGRA210_EMC_TABLE
->  	help
->  	  This driver is for the External Memory Controller (EMC) found on
-> --- >8 ---
-> 
-> So in a nutshell this will only get compile-tested if OF is enabled, but
-> then it will select OF_RESERVED_MEM and OF_EARLY_FLATTREE to get the
-> required symbols.
+>  typedef int (*of_init_fn_2)(struct device_node *, struct device_node *);
+> diff --git a/include/linux/of_reserved_mem.h b/include/linux/of_reserved_mem.h
+> index 76e4a0fffba4..4de2a24cadc9 100644
+> --- a/include/linux/of_reserved_mem.h
+> +++ b/include/linux/of_reserved_mem.h
+> @@ -27,11 +27,11 @@ struct reserved_mem_ops {
+>  
+>  typedef int (*reservedmem_of_init_fn)(struct reserved_mem *rmem);
+>  
+> +#ifdef CONFIG_OF_RESERVED_MEM
+> +
+>  #define RESERVEDMEM_OF_DECLARE(name, compat, init)			\
+>  	_OF_DECLARE(reservedmem, name, compat, init, reservedmem_of_init_fn)
+>  
+> -#ifdef CONFIG_OF_RESERVED_MEM
+> -
+>  int of_reserved_mem_device_init_by_idx(struct device *dev,
+>  				       struct device_node *np, int idx);
+>  int of_reserved_mem_device_init_by_name(struct device *dev,
+> @@ -41,6 +41,10 @@ void of_reserved_mem_device_release(struct device *dev);
+>  
+>  struct reserved_mem *of_reserved_mem_lookup(struct device_node *np);
+>  #else
+> +
+> +#define RESERVEDMEM_OF_DECLARE(name, compat, init)			\
+> +	_OF_DECLARE_STUB(reservedmem, name, compat, init, reservedmem_of_init_fn)
+> +
+>  static inline int of_reserved_mem_device_init_by_idx(struct device *dev,
+>  					struct device_node *np, int idx)
+>  {
 
-Could be also separate "depends on OF", even though it is included in
-ARCH_TEGRA_XXX, but I am fine with this here.
+The stubs might be good idea anyway, but the driver explicitly needs for
+runtime working reservedmem, so it should select it.
 
 Best regards,
 Krzysztof
