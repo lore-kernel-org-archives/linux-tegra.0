@@ -2,127 +2,109 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E0F6C48BD1
-	for <linux-tegra@archiver.kernel.org>; Fri, 11 Jun 2021 06:43:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9098CC48BE5
+	for <linux-tegra@archiver.kernel.org>; Fri, 11 Jun 2021 06:48:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2477961357
-	for <linux-tegra@archiver.kernel.org>; Fri, 11 Jun 2021 06:43:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 724D66135C
+	for <linux-tegra@archiver.kernel.org>; Fri, 11 Jun 2021 06:48:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230303AbhFKGp2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 11 Jun 2021 02:45:28 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:48609 "EHLO
+        id S229530AbhFKGuE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 11 Jun 2021 02:50:04 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:48803 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229777AbhFKGp2 (ORCPT
+        with ESMTP id S229960AbhFKGuD (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 11 Jun 2021 02:45:28 -0400
-Received: from mail-wr1-f69.google.com ([209.85.221.69])
+        Fri, 11 Jun 2021 02:50:03 -0400
+Received: from mail-wm1-f71.google.com ([209.85.128.71])
         by youngberry.canonical.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
         (Exim 4.93)
         (envelope-from <krzysztof.kozlowski@canonical.com>)
-        id 1lrat7-0000dd-HK
-        for linux-tegra@vger.kernel.org; Fri, 11 Jun 2021 06:43:29 +0000
-Received: by mail-wr1-f69.google.com with SMTP id h10-20020a5d688a0000b0290119c2ce2499so2112880wru.19
-        for <linux-tegra@vger.kernel.org>; Thu, 10 Jun 2021 23:43:29 -0700 (PDT)
+        id 1lraxY-00019t-W4
+        for linux-tegra@vger.kernel.org; Fri, 11 Jun 2021 06:48:05 +0000
+Received: by mail-wm1-f71.google.com with SMTP id u17-20020a05600c19d1b02901af4c4deac5so4047913wmq.7
+        for <linux-tegra@vger.kernel.org>; Thu, 10 Jun 2021 23:48:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=C6gfNxumQvAauUH0UC3BQ6OzW6ImVhOU0dXOw2iPMH4=;
-        b=kdGbVfTW85HYtpg/eNo0MPhexkvx/YLLRSN0yoF0js2HlmhmeZ+Gw0Vr+qbHXbbxaV
-         ec9qtHX/q0Y1RGQrq716UM4yJts2jmXE4QEG7GAaqtt0erQY26/627HAtq0HSCoqZTst
-         LUdmAIVECfvFYo+w3TobFMYuncjF/O4bodaWu3FUob3MABG1NvuKv0ks9YhxA277I+4D
-         gIg1ZmZj7R1CN7DQjxcZZVK+Dn0/nykJIEFnMe6Ks8Ww2Km90+fSScJ6ZhCQBZnq+dH3
-         Mree2uvh7Oz2wCqApDqZDlGd51lrIVt9z6dvEhT/szyVNELT10R7n3gWWdyCRemqcUzN
-         SUvQ==
-X-Gm-Message-State: AOAM5326WREGe37x3gk37sXYepy6doHcyqr+Q0tYWNXtIwwUM6WM4wem
-        /fsjVzfkv8YzDhSGongQt5vCWqc7LfVH4wywqR3SmtxSHgsURNjH60bYl6ttJsp8mHqKw2w1MZR
-        6yuk1BWsYCCXer2Vgk5oxl1f4AoIgYfGnrBXvhKg/
-X-Received: by 2002:a5d:4903:: with SMTP id x3mr2088756wrq.376.1623393809260;
-        Thu, 10 Jun 2021 23:43:29 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJxHIHXoAf7h4WnhTsz2rFmYQsfMYz4c84IeQVys+BC1mK1A1qd9wPsV+eWGDJaHAx4PsGcQwA==
-X-Received: by 2002:a5d:4903:: with SMTP id x3mr2088742wrq.376.1623393809106;
-        Thu, 10 Jun 2021 23:43:29 -0700 (PDT)
-Received: from [192.168.1.115] (xdsl-188-155-177-222.adslplus.ch. [188.155.177.222])
-        by smtp.gmail.com with ESMTPSA id z5sm6018735wrv.67.2021.06.10.23.43.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Jun 2021 23:43:28 -0700 (PDT)
-Subject: Re: [GIT PULL] memory: Tegra memory controller for v5.14
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=g18pPDMlWCQw8P7WsPDKmd8BzlhyjHJ9IBbVaDXTjEY=;
+        b=SzJ7tSp1tFFCawU9KX94CD933Z3D2DaQ4OYW2z3hDWAXz3DqR4QdnQxsmemLdfA78I
+         zA0O30VG0IzaWfPSbBilRMl1g0lcBVZc++c1zTfrn2FU84tj5/1fXoaYIerqtdBJiY4E
+         fo6RiDnhGK8gS6+Gl/RzTjf37zvctSzaJeqVQf35FOd0tPxNvUAjHJpSzMS3Ol7WoKLq
+         Wr1EJ4Uz/E/UUv75IcznxEKLglwqWAjAzqJfY3THoHN3fqWKX1s0jU4yn/g7A9VkZsvR
+         sn56Rlh7WuQ7Z5Sk7+pngaAGrY0DLP/z/lNwC70OwZ0sT/MTCB6uWMWGkbZ2gXKnOT+v
+         WqqA==
+X-Gm-Message-State: AOAM533y0dK6+j4qiMBHJXceHkMNe0gZgGU/UKR0b2Tflla0iOI40oUI
+        lPHNFOUPga50RzkjJJBYYqpH4/d/ra8Dxh5faMMeRYjuohjeS7z9ZR/OWHEL5pNMVX5a5eqlp+y
+        k4Mo2Is71sf9bJZzMjloHAdq+xYYYZ7PefjYukOyk
+X-Received: by 2002:a05:6000:1847:: with SMTP id c7mr2208581wri.368.1623394083493;
+        Thu, 10 Jun 2021 23:48:03 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJynbbdfGvQvWU48UUaPoxeMsAdxllaSjaX19MR91AuSg2c9vxcmsbkavMKDfKV0VyN9nT+STg==
+X-Received: by 2002:a05:6000:1847:: with SMTP id c7mr2208555wri.368.1623394083319;
+        Thu, 10 Jun 2021 23:48:03 -0700 (PDT)
+Received: from localhost.localdomain (xdsl-188-155-177-222.adslplus.ch. [188.155.177.222])
+        by smtp.gmail.com with ESMTPSA id l13sm6221631wrz.34.2021.06.10.23.48.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Jun 2021 23:48:02 -0700 (PDT)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 To:     Will Deacon <will@kernel.org>,
         Thierry Reding <thierry.reding@gmail.com>
-List-Id: <soc.lore.kernel.org>
-Cc:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
-        arm@kernel.org, soc@kernel.org, linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzk@kernel.org>,
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
         Robin Murphy <robin.murphy@arm.com>,
+        linux-tegra@vger.kernel.org, Joerg Roedel <joro@8bytes.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Krishna Reddy <vdumpa@nvidia.com>,
         Jon Hunter <jonathanh@nvidia.com>,
         Nicolin Chen <nicolinc@nvidia.com>,
-        Krishna Reddy <vdumpa@nvidia.com>, linux-tegra@vger.kernel.org,
-        iommu@lists.linux-foundation.org,
-        linux-arm-kernel@lists.infradead.org,
-        Dmitry Osipenko <digetx@gmail.com>
-References: <20210607084910.21024-1-krzysztof.kozlowski@canonical.com>
- <20210608120128.GB10174@willie-the-truck> <YL+A+MPjjaa3nSwq@orome.fritz.box>
- <20210608164851.GB10994@willie-the-truck> <YMHZCaRiQNQCSsVr@orome.fritz.box>
- <8c18edeb-2e3e-9072-6bb4-11637d0ca3e5@canonical.com>
- <YMIqNynz29Z9fYi3@orome.fritz.box> <20210610172958.GA14188@willie-the-truck>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Message-ID: <583c33e7-562f-0b1c-72b7-71f008a721f4@canonical.com>
-Date:   Fri, 11 Jun 2021 08:43:27 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        iommu@lists.linux-foundation.org
+Subject: Re: [PATCH v3 0/9] arm64: tegra: Prevent early SMMU faults
+Date:   Fri, 11 Jun 2021 08:48:00 +0200
+Message-Id: <162339404910.6729.11145661496228624827.b4-ty@canonical.com>
+X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20210603164632.1000458-1-thierry.reding@gmail.com>
+References: <20210603164632.1000458-1-thierry.reding@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20210610172958.GA14188@willie-the-truck>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 10/06/2021 19:29, Will Deacon wrote:
-> On Thu, Jun 10, 2021 at 05:05:27PM +0200, Thierry Reding wrote:
->> On Thu, Jun 10, 2021 at 04:23:56PM +0200, Krzysztof Kozlowski wrote:
->>> On 10/06/2021 11:19, Thierry Reding wrote:
->>>> On Tue, Jun 08, 2021 at 05:48:51PM +0100, Will Deacon wrote:
->>>>> I can queue as much or as little of 2-6 as you like, but I would like to
->>>>> avoid pulling in the memory controller queue into the arm smmu tree. But
->>>>> yes, whichever of those I take, I can put them on a separate branch so
->>>>> that you're not blocked for the later patches.
->>>>>
->>>>> You have a better handle on the dependencies, so please tell me what works
->>>>> for you. I just want to make sure that at least patch 3 lands in my tree,
->>>>> so we don't get late conflicts with other driver changes.
->>>>
->>>> Yes, if you could pick up patch 3 and send out a link with the stable
->>>> branch, I think Krzysztof or I could pull in that branch and pick up the
->>>> remaining patches. It'd be good if you could also ack the remaining SMMU
->>>> patches so that ARM SoC knows that they've been sanctioned.
->>>>
->>>> Krzysztof: would you be okay with picking up patches 2 and 4-6 on top of
->>>> your memory branch for v5.14?
->>>
->>> You mean the iommu patches? Yes, I can take them and later explain to
->>> Arnd/Olof why they come through me.
->>
->> Okay, great.
->>
->> Will, can you provide that stable branch? Or would you prefer if I
->> prepared it and sent you a pull request? We're kind of running out of
->> time, since for ARM SoC the cut-off point for new material is usually
->> -rc6 and that's coming up pretty fast.
+On Thu, 3 Jun 2021 18:46:23 +0200, Thierry Reding wrote:
+> this is a set of patches that is the result of earlier discussions
+> regarding early identity mappings that are needed to avoid SMMU faults
+> during early boot.
 > 
-> https://git.kernel.org/pub/scm/linux/kernel/git/will/linux.git/log/?h=for-thierry/arm-smmu
+> The goal here is to avoid early identity mappings altogether and instead
+> postpone the need for the identity mappings to when devices are attached
+> to the SMMU. This works by making the SMMU driver coordinate with the
+> memory controller driver on when to start enforcing SMMU translations.
+> This makes Tegra behave in a more standard way and pushes the code to
+> deal with the Tegra-specific programming into the NVIDIA SMMU
+> implementation.
+> 
+> [...]
 
-Merged, thanks.
+Applied, thanks!
 
-I'll take ARM/SMMU patches from Thierry's patchset: 2, 4-6.
+[1/9] memory: tegra: Implement SID override programming
+      (no commit info)
+[2/9] dt-bindings: arm-smmu: Add Tegra186 compatible string
+      commit: 4287861dca9d77490ee50de42aa3ada92da86c9d
 
+[3/9] - skipped
+
+[4/9] iommu/arm-smmu: tegra: Detect number of instances at runtime
+      commit: 7ecbf253f8d64c08de28d16a66e3abbe873f6c9f
+[5/9] iommu/arm-smmu: tegra: Implement SID override programming
+      commit: 8eb68595475ac5fcaaa3718a173283df48cb4ef1
+[6/9] iommu/arm-smmu: Use Tegra implementation on Tegra186
+      commit: 2c1bc371268862a991a6498e1dddc8971b9076b8
 
 Best regards,
-Krzysztof
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
