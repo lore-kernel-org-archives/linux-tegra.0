@@ -8,64 +8,62 @@ X-Spam-Status: No, score=-20.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09C6DC48BE0
-	for <linux-tegra@archiver.kernel.org>; Fri, 11 Jun 2021 16:44:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FA9BC48BE0
+	for <linux-tegra@archiver.kernel.org>; Fri, 11 Jun 2021 16:44:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E4AE9613F9
-	for <linux-tegra@archiver.kernel.org>; Fri, 11 Jun 2021 16:44:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 49F9C613BA
+	for <linux-tegra@archiver.kernel.org>; Fri, 11 Jun 2021 16:44:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231386AbhFKQqK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 11 Jun 2021 12:46:10 -0400
-Received: from mail-wr1-f42.google.com ([209.85.221.42]:34509 "EHLO
-        mail-wr1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231320AbhFKQqH (ORCPT
+        id S231342AbhFKQqW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 11 Jun 2021 12:46:22 -0400
+Received: from mail-wr1-f47.google.com ([209.85.221.47]:44749 "EHLO
+        mail-wr1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231384AbhFKQqR (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 11 Jun 2021 12:46:07 -0400
-Received: by mail-wr1-f42.google.com with SMTP id q5so6759887wrm.1
-        for <linux-tegra@vger.kernel.org>; Fri, 11 Jun 2021 09:44:08 -0700 (PDT)
+        Fri, 11 Jun 2021 12:46:17 -0400
+Received: by mail-wr1-f47.google.com with SMTP id f2so6739094wri.11
+        for <linux-tegra@vger.kernel.org>; Fri, 11 Jun 2021 09:44:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=G2y1nNc7K+FotKmCLrE2xc9UwhEMOudxdp6Ua/dpxnA=;
-        b=QVccNFWGssWk4k4ucBpwS+8fhjUb3TMNJNMl3t5FLIgQYgTmYAo8plKz5H+4I6bdxw
-         IavtWULG8FSlydKvTlF5wDV05v+xD0zIIEBNiwTirCs61LpCuoDGUEAOsWTujt2xjzww
-         co+cynmZegs1M4ZfA7dNcr7OVbDGxnXydXTbh5mbwDftvvdz9V8nqw1D+uLY7GJE+WmB
-         tguux8FWnY87SAfKaKtLIfMIt5RD9JxTuX48qUDwRZDQqY1BZxKNIm06y9SrP5CABZzd
-         3ScdNJe4dzNRoKCxM/IKKmcgvyDmbxxOWjd8lnwDWytgSCRcC5+yjQA1jvZ7W8Ngcg3E
-         nS2A==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Yl+waXKY/FzeWxugRNcrGJPBmosE4XJtLVOq9NfoCdA=;
+        b=HQ8jsuewe8HfyaOnNtZa8C5X/GJcV53S3VkxFu9yC8g9zTX4sEGzIyxPhFj+cPab3V
+         Bc1Uy4NJVc/PK9rnWKkbAM8WwrY+v5Ka491sb1RZNjBm5xejxmK7Vl/0x7jNvQDogSDw
+         HsjS1IKSBaKvR8YU3G8EJkPWZ/yNzuF4ckpDQbTl69fhWnZVpqTU1ae7022Cg0IFU/ed
+         I2478B4vbcuO5l1mIB3jOqscm4O8u03IounH/FhRTjeeqhH8YYunXY8wyYPQSeCzETK9
+         VCOodVoz5I7gq/43RNE1bJtFytMWu+twO9WRXgo2PpNjXP0GvLVK3Rbk/Ly942RzS2iD
+         eDew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=G2y1nNc7K+FotKmCLrE2xc9UwhEMOudxdp6Ua/dpxnA=;
-        b=SM8tbgLy/hV++8I2TMuPScXxQg5viJhrFWNA+XlfLwVv7qXo/dpf1UPVmtIR5hjTv2
-         gqlF8DajOPSl88gLs8bbZbOcY/uvj2SIB4GPLziraP9qs/kR4/IK0mzLxeSY7BN6wYBp
-         71hGWgbKGLJFZaoTMYnyLaqO61noNyxjRpDPt84RUsBF04hnmNPF/Vf6tei3a4x344vA
-         9Ial+kaCgbSsI+JecvcEsfVJziiczfeaDLkzXh5FgiOASopwaje1H17PXEXCv3IfBgr/
-         zhTPQt0TYLwUoWGjxubjxG+U7CvtcEc6ht/PAyTw/r7dB7I8LU6YT11/EhApLFLFFidf
-         eUFA==
-X-Gm-Message-State: AOAM5335RqLecLscyZqQV4j1WDKRq2DzfcBiL98e+XdKcRm7sTZUMldP
-        9TAU8Nf4VmZHYvNitiQjzOY=
-X-Google-Smtp-Source: ABdhPJxbh57z+wnedcBu6pjDDzsjRrMwjs2/RmVYmEKbEpOZMiesm6jZOqpG7ISItY/7hqRhGOo4mg==
-X-Received: by 2002:adf:a195:: with SMTP id u21mr4993145wru.367.1623429788401;
-        Fri, 11 Jun 2021 09:43:08 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Yl+waXKY/FzeWxugRNcrGJPBmosE4XJtLVOq9NfoCdA=;
+        b=UaZgDS8kD7XOxsX0a9uP/orK2obnz3SoBzXEfZrbwwECq75TqhYMY88KQceZdaxcdC
+         0kxpj3jOmv2ooNBH/v1WziP83rNvEorsoblLTHMToxIwG78M3DB8lj9Nr5+xDNVG8a+I
+         ayI9zB+Bvy4DB1hn54GYpNtH4AW7huj9pMOHspMobVVCcOzn7UG1gQ44it/t8I9FO/O9
+         hMDh0/s4ouCUP6bOmjq0xi9eFAetIAWNGKE+Geenmvy011SxpMVXAhlhk1APAw0UOmvo
+         SMz0Weded6DoV5olgqgc27SFfaB5LDX9/qrOcNcWv7PcGX3rmvLZKj9r6WdjkmmUDDAv
+         lEmg==
+X-Gm-Message-State: AOAM531mH6UH6HiwPcVa29M5YFnZH0AAXf2JeMyxeYlDsa6s6Kg57Wze
+        9E9136zZ/AvVG/HXP9HDZtk=
+X-Google-Smtp-Source: ABdhPJwpr82yBKai2lqfab3eosWyqwmbA9K9CMq+OT5UOv5auo2zvPeZCX49wZ5z9RhN8vfyvCX2MA==
+X-Received: by 2002:a5d:5987:: with SMTP id n7mr5118102wri.293.1623429782907;
+        Fri, 11 Jun 2021 09:43:02 -0700 (PDT)
 Received: from localhost ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id k8sm7725414wrp.3.2021.06.11.09.43.06
+        by smtp.gmail.com with ESMTPSA id r4sm8163109wre.84.2021.06.11.09.43.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Jun 2021 09:43:07 -0700 (PDT)
+        Fri, 11 Jun 2021 09:43:01 -0700 (PDT)
 From:   Thierry Reding <thierry.reding@gmail.com>
 List-Id: <soc.lore.kernel.org>
 To:     arm@kernel.org, soc@kernel.org
 Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [GIT PULL 3/6] firmware: tegra: Changes for v5.14-rc1
-Date:   Fri, 11 Jun 2021 18:44:34 +0200
-Message-Id: <20210611164437.3568059-3-thierry.reding@gmail.com>
+Subject: [GIT PULL 1/6] dt-bindings: Changes for v5.14-rc1
+Date:   Fri, 11 Jun 2021 18:44:32 +0200
+Message-Id: <20210611164437.3568059-1-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20210611164437.3568059-1-thierry.reding@gmail.com>
-References: <20210611164437.3568059-1-thierry.reding@gmail.com>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -81,29 +79,40 @@ The following changes since commit 6efb943b8616ec53a5e444193dccf1af9ad627b5:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.14-firmware
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.14-dt-bindings
 
-for you to fetch changes up to bd778b893963d67d7eb01f49d84ffcd3eaf229dd:
+for you to fetch changes up to 5f459cb0d67d6df6f74eac253ea10de9e9986812:
 
-  firmware: tegra: bpmp: Fix Tegra234-only builds (2021-06-11 13:31:51 +0200)
+  dt-bindings: soc: tegra-pmc: Document core power domain (2021-06-01 13:45:01 +0200)
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-firmware: tegra: Changes for v5.14-rc1
+dt-bindings: Changes for v5.14-rc1
 
-These changes contain two minor fixes for the Tegra BPMP driver.
+This contains a conversion of the Tegra clock and reset controller
+device tree bindings to the new json-schema format and adds the core
+power domain to the PMC device tree bindings.
 
 ----------------------------------------------------------------
-Thierry Reding (1):
-      firmware: tegra: bpmp: Fix Tegra234-only builds
+Dmitry Osipenko (2):
+      dt-bindings: clock: tegra: Convert to schema
+      dt-bindings: soc: tegra-pmc: Document core power domain
 
-Zhen Lei (1):
-      firmware: tegra: Fix error return code in tegra210_bpmp_init()
-
- drivers/firmware/tegra/Makefile        | 1 +
- drivers/firmware/tegra/bpmp-private.h  | 3 ++-
- drivers/firmware/tegra/bpmp-tegra210.c | 2 +-
- drivers/firmware/tegra/bpmp.c          | 3 ++-
- 4 files changed, 6 insertions(+), 3 deletions(-)
+ .../bindings/arm/tegra/nvidia,tegra20-pmc.yaml     |  35 +++++++
+ .../bindings/clock/nvidia,tegra114-car.txt         |  63 -----------
+ .../bindings/clock/nvidia,tegra124-car.txt         | 107 -------------------
+ .../bindings/clock/nvidia,tegra124-car.yaml        | 115 +++++++++++++++++++++
+ .../bindings/clock/nvidia,tegra20-car.txt          |  63 -----------
+ .../bindings/clock/nvidia,tegra20-car.yaml         |  69 +++++++++++++
+ .../bindings/clock/nvidia,tegra210-car.txt         |  56 ----------
+ .../bindings/clock/nvidia,tegra30-car.txt          |  63 -----------
+ 8 files changed, 219 insertions(+), 352 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra114-car.txt
+ delete mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra124-car.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra124-car.yaml
+ delete mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra20-car.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra20-car.yaml
+ delete mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra210-car.txt
+ delete mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra30-car.txt
