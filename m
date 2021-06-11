@@ -8,64 +8,61 @@ X-Spam-Status: No, score=-20.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37D3EC48BD1
-	for <linux-tegra@archiver.kernel.org>; Fri, 11 Jun 2021 16:43:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09C6DC48BE0
+	for <linux-tegra@archiver.kernel.org>; Fri, 11 Jun 2021 16:44:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 24D6D613BC
-	for <linux-tegra@archiver.kernel.org>; Fri, 11 Jun 2021 16:43:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E4AE9613F9
+	for <linux-tegra@archiver.kernel.org>; Fri, 11 Jun 2021 16:44:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229540AbhFKQpR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 11 Jun 2021 12:45:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55970 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229517AbhFKQpQ (ORCPT
+        id S231386AbhFKQqK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 11 Jun 2021 12:46:10 -0400
+Received: from mail-wr1-f42.google.com ([209.85.221.42]:34509 "EHLO
+        mail-wr1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231320AbhFKQqH (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 11 Jun 2021 12:45:16 -0400
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98455C061574
-        for <linux-tegra@vger.kernel.org>; Fri, 11 Jun 2021 09:43:11 -0700 (PDT)
-Received: by mail-wm1-x32e.google.com with SMTP id h22-20020a05600c3516b02901a826f84095so8924872wmq.5
-        for <linux-tegra@vger.kernel.org>; Fri, 11 Jun 2021 09:43:11 -0700 (PDT)
+        Fri, 11 Jun 2021 12:46:07 -0400
+Received: by mail-wr1-f42.google.com with SMTP id q5so6759887wrm.1
+        for <linux-tegra@vger.kernel.org>; Fri, 11 Jun 2021 09:44:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=/DDhEhmd/WWK/nmogtTO3okii3O3flMjdbqXxBBxu0U=;
-        b=lz6oU35YVQA5fAK7pA7HTI+BEiNXOMWV4Sh11Ysgg6MZU84SMNZDk/grXDOHr2dpmK
-         5JreUnXQrC+mc7KEujTHacVBcaRczS4HWp72t+JVoh+LCRDabWbTlAbk24gfhQKrZzMI
-         /+OtA/ZuuZiU5z1FRd90YnILbA1eIg4qXDiz5rpCp3plalERRqeEal9Et3PhFbRqJRqV
-         QbHwFy5H+aU8zi0kZsNo4xPcxwfhLtXx+fSSQZhIVvKLBuD0HoyhrCUmey2/Yz+X1MLi
-         x7SQXSmbr5C60h8W1xCwB2inVpMARJmhvjkBR8bo8ZyKJ8KLtixZ4/Ir+n9a4pfvY28p
-         ZpXw==
+        bh=G2y1nNc7K+FotKmCLrE2xc9UwhEMOudxdp6Ua/dpxnA=;
+        b=QVccNFWGssWk4k4ucBpwS+8fhjUb3TMNJNMl3t5FLIgQYgTmYAo8plKz5H+4I6bdxw
+         IavtWULG8FSlydKvTlF5wDV05v+xD0zIIEBNiwTirCs61LpCuoDGUEAOsWTujt2xjzww
+         co+cynmZegs1M4ZfA7dNcr7OVbDGxnXydXTbh5mbwDftvvdz9V8nqw1D+uLY7GJE+WmB
+         tguux8FWnY87SAfKaKtLIfMIt5RD9JxTuX48qUDwRZDQqY1BZxKNIm06y9SrP5CABZzd
+         3ScdNJe4dzNRoKCxM/IKKmcgvyDmbxxOWjd8lnwDWytgSCRcC5+yjQA1jvZ7W8Ngcg3E
+         nS2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=/DDhEhmd/WWK/nmogtTO3okii3O3flMjdbqXxBBxu0U=;
-        b=SEyWdb3HT42WDuoa+KHSk9792POgv4InIuQaCYkQUw3lGph+zD+tmCDiI/ozQM4ASU
-         5jnICkPl6+7YnAIG6jfiPI17ZkSGgdQBEZIIuNaULmpspqBhTICuq44J/125XgwcVTAV
-         CJ7ULNGcbObfAs+TbWzqAbyLwPuIc4yX9uhL21zOMmHWOpNnAJr9hoIksqfoCTv1Ghy3
-         VqUVt5DDiXsn8w8TNBOti8bxIdtoeiWy4a0jbqew7mWrcremmH5KDWz4LJA5FrULLas9
-         zXO3Hs43WWiKLvVXdxr1fjcnNor7ptpvTXewngr8M/5SMw2C+3EpI9YsaOBSYKz6/1Re
-         dFng==
-X-Gm-Message-State: AOAM533So4g+gOxu8Ryoa5xIKZxLb92FQhGXOUH2c34okz4boZj1Bw2J
-        K0ODumZtmOCuFv5+r1ZdROE=
-X-Google-Smtp-Source: ABdhPJxmSVTeUcIzERg8Pc4lCkUbFiPFHCflpAJq+LBSKHgIism1xc/jsLbY+QNRNkUHMKA5P+jErw==
-X-Received: by 2002:a05:600c:4fc5:: with SMTP id o5mr4925670wmq.148.1623429790181;
-        Fri, 11 Jun 2021 09:43:10 -0700 (PDT)
+        bh=G2y1nNc7K+FotKmCLrE2xc9UwhEMOudxdp6Ua/dpxnA=;
+        b=SM8tbgLy/hV++8I2TMuPScXxQg5viJhrFWNA+XlfLwVv7qXo/dpf1UPVmtIR5hjTv2
+         gqlF8DajOPSl88gLs8bbZbOcY/uvj2SIB4GPLziraP9qs/kR4/IK0mzLxeSY7BN6wYBp
+         71hGWgbKGLJFZaoTMYnyLaqO61noNyxjRpDPt84RUsBF04hnmNPF/Vf6tei3a4x344vA
+         9Ial+kaCgbSsI+JecvcEsfVJziiczfeaDLkzXh5FgiOASopwaje1H17PXEXCv3IfBgr/
+         zhTPQt0TYLwUoWGjxubjxG+U7CvtcEc6ht/PAyTw/r7dB7I8LU6YT11/EhApLFLFFidf
+         eUFA==
+X-Gm-Message-State: AOAM5335RqLecLscyZqQV4j1WDKRq2DzfcBiL98e+XdKcRm7sTZUMldP
+        9TAU8Nf4VmZHYvNitiQjzOY=
+X-Google-Smtp-Source: ABdhPJxbh57z+wnedcBu6pjDDzsjRrMwjs2/RmVYmEKbEpOZMiesm6jZOqpG7ISItY/7hqRhGOo4mg==
+X-Received: by 2002:adf:a195:: with SMTP id u21mr4993145wru.367.1623429788401;
+        Fri, 11 Jun 2021 09:43:08 -0700 (PDT)
 Received: from localhost ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id x10sm7604589wrt.26.2021.06.11.09.43.09
+        by smtp.gmail.com with ESMTPSA id k8sm7725414wrp.3.2021.06.11.09.43.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Jun 2021 09:43:09 -0700 (PDT)
+        Fri, 11 Jun 2021 09:43:07 -0700 (PDT)
 From:   Thierry Reding <thierry.reding@gmail.com>
 List-Id: <soc.lore.kernel.org>
 To:     arm@kernel.org, soc@kernel.org
 Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [GIT PULL 4/6] ARM: tegra: Device tree changes for v5.14-rc1
-Date:   Fri, 11 Jun 2021 18:44:35 +0200
-Message-Id: <20210611164437.3568059-4-thierry.reding@gmail.com>
+Subject: [GIT PULL 3/6] firmware: tegra: Changes for v5.14-rc1
+Date:   Fri, 11 Jun 2021 18:44:34 +0200
+Message-Id: <20210611164437.3568059-3-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20210611164437.3568059-1-thierry.reding@gmail.com>
 References: <20210611164437.3568059-1-thierry.reding@gmail.com>
@@ -84,51 +81,29 @@ The following changes since commit 6efb943b8616ec53a5e444193dccf1af9ad627b5:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.14-arm-dt
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.14-firmware
 
-for you to fetch changes up to 4c101a4466983abe7798493ef17279cc3f8eb028:
+for you to fetch changes up to bd778b893963d67d7eb01f49d84ffcd3eaf229dd:
 
-  ARM: tegra: ouya: Enable memory frequency thermal throttling using ACTMON (2021-05-31 11:40:29 +0200)
+  firmware: tegra: bpmp: Fix Tegra234-only builds (2021-06-11 13:31:51 +0200)
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-ARM: tegra: Device tree changes for v5.14-rc1
+firmware: tegra: Changes for v5.14-rc1
 
-This contains various improvements (such as microphone detection and
-thermal zones) for some older Tegra devices (such as the Nexus 7 or
-the Acer A500).
+These changes contain two minor fixes for the Tegra BPMP driver.
 
 ----------------------------------------------------------------
-Dmitry Osipenko (13):
-      ARM: tegra: acer-a500: Improve microphone detection
-      ARM: tegra: acer-a500: Specify proper voltage for WiFi SDIO bus
-      ARM: tegra: acer-a500: Bump thermal trips by 10C
-      ARM: tegra: Add reg property to Tegra20 EMC table device-tree nodes
-      ARM: tegra: wm8903: Fix polarity of headphones-detection GPIO in device-trees
-      ARM: tegra: paz00: Add CPU thermal zone
-      ARM: tegra: nexus7: Add i2c-thermtrip node
-      ARM: tegra: nexus7: Improve thermal zones
-      ARM: tegra: nexus7: Remove monitored-battery property
-      ARM: tegra: nexus7: Correct 3v3 regulator GPIO of PM269 variant
-      ARM: tegra: Add cooling cells to ACTMON device-tree node
-      ARM: tegra: nexus7: Enable memory frequency thermal throttling using ACTMON
-      ARM: tegra: ouya: Enable memory frequency thermal throttling using ACTMON
+Thierry Reding (1):
+      firmware: tegra: bpmp: Fix Tegra234-only builds
 
- arch/arm/boot/dts/tegra124.dtsi                    |  3 +-
- arch/arm/boot/dts/tegra20-acer-a500-picasso.dts    | 21 +++++++----
- arch/arm/boot/dts/tegra20-harmony.dts              |  2 +-
- arch/arm/boot/dts/tegra20-medcom-wide.dts          |  2 +-
- arch/arm/boot/dts/tegra20-paz00.dts                | 43 +++++++++++++++++++++-
- arch/arm/boot/dts/tegra20-plutux.dts               |  2 +-
- arch/arm/boot/dts/tegra20-seaboard.dts             |  2 +-
- arch/arm/boot/dts/tegra20-tec.dts                  |  2 +-
- arch/arm/boot/dts/tegra20-ventana.dts              |  2 +-
- .../dts/tegra30-asus-nexus7-grouper-common.dtsi    | 16 +++-----
- .../tegra30-asus-nexus7-grouper-maxim-pmic.dtsi    |  9 +++++
- .../dts/tegra30-asus-nexus7-grouper-ti-pmic.dtsi   | 11 +++++-
- arch/arm/boot/dts/tegra30-cardhu.dtsi              |  2 +-
- arch/arm/boot/dts/tegra30-ouya.dts                 |  4 +-
- arch/arm/boot/dts/tegra30.dtsi                     |  3 +-
- 15 files changed, 93 insertions(+), 31 deletions(-)
+Zhen Lei (1):
+      firmware: tegra: Fix error return code in tegra210_bpmp_init()
+
+ drivers/firmware/tegra/Makefile        | 1 +
+ drivers/firmware/tegra/bpmp-private.h  | 3 ++-
+ drivers/firmware/tegra/bpmp-tegra210.c | 2 +-
+ drivers/firmware/tegra/bpmp.c          | 3 ++-
+ 4 files changed, 6 insertions(+), 3 deletions(-)
