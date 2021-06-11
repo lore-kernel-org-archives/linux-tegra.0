@@ -2,90 +2,98 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 513B0C48BE0
-	for <linux-tegra@archiver.kernel.org>; Fri, 11 Jun 2021 14:18:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18BE3C48BD1
+	for <linux-tegra@archiver.kernel.org>; Fri, 11 Jun 2021 15:44:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2AE7E6141C
-	for <linux-tegra@archiver.kernel.org>; Fri, 11 Jun 2021 14:18:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DBB5D613AE
+	for <linux-tegra@archiver.kernel.org>; Fri, 11 Jun 2021 15:44:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231180AbhFKOUv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 11 Jun 2021 10:20:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52168 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230346AbhFKOUu (ORCPT
+        id S231642AbhFKPqQ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 11 Jun 2021 11:46:16 -0400
+Received: from mail-lf1-f41.google.com ([209.85.167.41]:43532 "EHLO
+        mail-lf1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231294AbhFKPqP (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 11 Jun 2021 10:20:50 -0400
-Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6E39C0617AF
-        for <linux-tegra@vger.kernel.org>; Fri, 11 Jun 2021 07:18:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-         s=20161220; h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject
-        :Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
-        Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-        In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=4XHeMHYpflYk86WCecrWDHGMAHWxZI12QAqDiuwkn4M=; b=YwSohPcEeU2K8H1ymGyMvFyfWA
-        VH0lqsZ6If2skIjMScrj7tFztpVZK6fpWQ0+e9y0kk0kcf6KYfDDvPlfJJs6FrFyKRVKpBDfSh/EK
-        3/wydZDluKn02g3wQyt8kQeimCyWNLJsUikJyZjET4JVlWKOgAjcryhGappxIjE0WfEak5G6oan5m
-        8658ENap2C3MVzsYtWBDTIrm4J7ukrkkkKwRgL0IMbA9aj/Ng9zhBoom6+49vz7R3ifGH/lvCEHzY
-        YcymNrBva/PnSfFlYQftIygFMIJbq0+xHCiD5SZkfXKmXweui2Ukwahfw+SXukoNFpnmJr+JZc3hr
-        yyQWoX8Q==;
-Received: from dsl-hkibng22-54f986-236.dhcp.inet.fi ([84.249.134.236] helo=toshino.localdomain)
-        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <mperttunen@nvidia.com>)
-        id 1lrhzf-0006vt-RK; Fri, 11 Jun 2021 17:18:43 +0300
-From:   Mikko Perttunen <mperttunen@nvidia.com>
-To:     bskeggs@redhat.com
-Cc:     nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-tegra@vger.kernel.org,
-        Mikko Perttunen <mperttunen@nvidia.com>
-Subject: [PATCH] drm/nouveau/gk20a: fix NULL dereference on allocation failure
-Date:   Fri, 11 Jun 2021 17:18:05 +0300
-Message-Id: <20210611141805.4084202-1-mperttunen@nvidia.com>
-X-Mailer: git-send-email 2.30.1
+        Fri, 11 Jun 2021 11:46:15 -0400
+Received: by mail-lf1-f41.google.com with SMTP id x24so3578783lfr.10;
+        Fri, 11 Jun 2021 08:44:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=PcsWKRjGDx2mqjUWfRMpElvDs8rKHv2+VyEn9Eaz0+A=;
+        b=ptJFAIc8TkmxeB15o6bz846TMCWai75j4OC77KIDe67deQlxlyJGEogmiC6CT1rY4h
+         x33cAwewQy6GB4xppISKjrAtjEDaU9MtzpYiVZfRrTZPz+CcmJLcfWwZE3mhUdxhZkfF
+         EYIZnDHJK6iiQV0uE4Uz0CBV6D3t2rV00COHczGeTbtjjcWdzhxF/psqhw+bOGpvduNl
+         nqTIIK3ofVuV2ouv7vJ9jJoqqdGssDk0xV7MKMho6ldiCwphrFuSaGRsPIeYk/lHuNmP
+         3EF8Rg9N1MlR4BChZ+OUzfKZT2M/mQ3XrTMxW4zMOHdANX9kJ2MSIVVY0WNbK1STZPho
+         JYcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=PcsWKRjGDx2mqjUWfRMpElvDs8rKHv2+VyEn9Eaz0+A=;
+        b=uf9ePxjgm9TfaX0MOX6QhIOPzKqnIHBzSmm/tR7MecdXNr15Ocjp195Y9tDdfca8Dk
+         J+ehwbQ92/HLylzGBn7t1VdhOmDu9YqcfxirRNTTG7LXVfWjs/1LztNqLyXjeUANFATb
+         z/NzktJOfE6jWvzMSiknrCHaAc++D0slTU0pyqcT0W3vOefXsFzawPrMQhviTjdvWlPN
+         24F+iHCXb8xbyfXDo1Ac3W+lQ0jyCMf4P4U4lcJzCNovFxl/l9DlcTZIosyE0KQt+5JW
+         5MlU/HLlFKBI9IsBwgaLCPe4qZUJDf6Ttc4VzuQyazKa/HxqbpkXZInVwcAoArbCLDid
+         9kjg==
+X-Gm-Message-State: AOAM532DoEoTREVfx0nlF5IikvVN2v/Zsh/vYbPEAcE9htb6T5FkbP6P
+        rr9nq/DxbHLq5M5N9uxlZD8=
+X-Google-Smtp-Source: ABdhPJyJFpBKp1PX0r64m29XgI+fy6dULwxH2rd0GyuxfwOChBL3hB9uSZYebhoVz7G1wF3r4uI3bg==
+X-Received: by 2002:ac2:4c0a:: with SMTP id t10mr2935039lfq.401.1623426196335;
+        Fri, 11 Jun 2021 08:43:16 -0700 (PDT)
+Received: from localhost.localdomain (94-29-21-60.dynamic.spd-mgts.ru. [94.29.21.60])
+        by smtp.gmail.com with ESMTPSA id l7sm762460ljc.28.2021.06.11.08.43.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Jun 2021 08:43:15 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: [PATCH v1] memory: tegra210-emc: Make driver dependent on OF_RESERVED_MEM
+Date:   Fri, 11 Jun 2021 18:42:06 +0300
+Message-Id: <20210611154206.30911-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 84.249.134.236
-X-SA-Exim-Mail-From: mperttunen@nvidia.com
-X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-If memory allocation fails, `node->base.imem` does not get populated,
-causing a NULL pointer dereference on instobj destruction. Fix this
-by dereferencing it only if the allocation was successful.
+Tegra210 EMC driver requires OF_RESERVED_MEM to be enabled in order
+to be useful at runtime. The OF_RESERVED_MEM is enabled by default in
+defconfig, but it could disabled manually, breaking functionality of
+the driver. Make driver dependent on OF_RESERVED_MEM Kconfig option,
+for clarity.
 
-Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+Suggested-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/gpu/drm/nouveau/nvkm/subdev/instmem/gk20a.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/memory/tegra/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/instmem/gk20a.c b/drivers/gpu/drm/nouveau/nvkm/subdev/instmem/gk20a.c
-index 648ecf5a8fbc..66d60d8bec60 100644
---- a/drivers/gpu/drm/nouveau/nvkm/subdev/instmem/gk20a.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/subdev/instmem/gk20a.c
-@@ -296,12 +296,12 @@ gk20a_instobj_dtor_dma(struct nvkm_memory *memory)
- {
- 	struct gk20a_instobj_dma *node = gk20a_instobj_dma(memory);
- 	struct gk20a_instmem *imem = node->base.imem;
--	struct device *dev = imem->base.subdev.device->dev;
+diff --git a/drivers/memory/tegra/Kconfig b/drivers/memory/tegra/Kconfig
+index f9bae36c03a3..17053eaf87b9 100644
+--- a/drivers/memory/tegra/Kconfig
++++ b/drivers/memory/tegra/Kconfig
+@@ -51,7 +51,7 @@ config TEGRA210_EMC_TABLE
  
- 	if (unlikely(!node->base.vaddr))
- 		goto out;
- 
--	dma_free_attrs(dev, (u64)node->base.mn->length << PAGE_SHIFT,
-+	dma_free_attrs(imem->base.subdev.device->dev,
-+		       (u64)node->base.mn->length << PAGE_SHIFT,
- 		       node->base.vaddr, node->handle, imem->attrs);
- 
- out:
+ config TEGRA210_EMC
+ 	tristate "NVIDIA Tegra210 External Memory Controller driver"
+-	depends on ARCH_TEGRA_210_SOC || COMPILE_TEST
++	depends on (ARCH_TEGRA_210_SOC && OF_RESERVED_MEM) || COMPILE_TEST
+ 	select TEGRA210_EMC_TABLE
+ 	help
+ 	  This driver is for the External Memory Controller (EMC) found on
 -- 
-2.30.1
+2.30.2
 
