@@ -8,67 +8,65 @@ X-Spam-Status: No, score=-20.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDDC3C48BD1
-	for <linux-tegra@archiver.kernel.org>; Fri, 11 Jun 2021 16:39:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1BD1C48BD1
+	for <linux-tegra@archiver.kernel.org>; Fri, 11 Jun 2021 16:39:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AB96B6101B
-	for <linux-tegra@archiver.kernel.org>; Fri, 11 Jun 2021 16:39:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7E2C4613BC
+	for <linux-tegra@archiver.kernel.org>; Fri, 11 Jun 2021 16:39:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229584AbhFKQlP (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 11 Jun 2021 12:41:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55016 "EHLO
+        id S229753AbhFKQlR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 11 Jun 2021 12:41:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55008 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229517AbhFKQlO (ORCPT
+        with ESMTP id S229517AbhFKQlQ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 11 Jun 2021 12:41:14 -0400
-Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD06FC0617AF
-        for <linux-tegra@vger.kernel.org>; Fri, 11 Jun 2021 09:39:05 -0700 (PDT)
-Received: by mail-wm1-x331.google.com with SMTP id k5-20020a05600c1c85b02901affeec3ef8so9051901wms.0
-        for <linux-tegra@vger.kernel.org>; Fri, 11 Jun 2021 09:39:05 -0700 (PDT)
+        Fri, 11 Jun 2021 12:41:16 -0400
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4348BC061574;
+        Fri, 11 Jun 2021 09:39:03 -0700 (PDT)
+Received: by mail-wr1-x435.google.com with SMTP id y7so6734536wrh.7;
+        Fri, 11 Jun 2021 09:39:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=YBWXbPTt5mAHxR/Tpna375Q9I2cVf+MKeEc1yT/OvlE=;
-        b=X76WYQgB9Uel+1VqQWMOhPWT0U++aPZIImiQ9bnoD5wQ/JTvWM2jmms0SpJGsSCeQ7
-         KTzPxn68OKYxE7hriuI9zSt8PH4M9hMEE8tbDYKYqJEybO0/a9OhgrRUqGfxEBci06ZF
-         dQUOJZE5e5BiXV1A51tfJwbUiR5VkKNRslFVYY1ed+LX+aAWiVnUTS9H6ICwvW644s4d
-         qW9elTSq1oICBpZ3+gjFN1JUFRIe98pAPofJhQykutyLP+tUaWNnHeprI+331nN7pGcY
-         o3paSvJmrMg8+6WOu6Yy3Zs4AlBALgtJUPaitxDqVw+QPtlvb96NF5oBN5sJq6wXMM56
-         5ruw==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=vYIMo2kK1HR0D/HaxbggTV2mSjd3Ph79XbWAi78jtog=;
+        b=HPmCRZaQTVPs7wWCO4Kdvv/bx6Mvg7TDmRumb5RWqXI7j5F4XBQQKm2HFtFi/9kNvB
+         NKGdgB1EX/d9ZwdXIhGsxDnazcJ1fJWzhIWI1OW4s/UhBmzE3q0Yj6pAbRnqSi3fpq+e
+         wITjoWp5qIG90SxbzngmcyM8sbtps1/F/OiM2yl521NkgRFG/TJctGxHKaGGBtl3vrfH
+         SezkjZYCWnwn+wLhtfwQPCyPNHEA/NfM9ykw1IiAqQm87asbdckmp1F60YmLL87ejRZo
+         Rq3MSidQyvk9SwBaEt2YjLCC/DmCA9Fa2EHkdyqAEuJ5GZCYgJ6KqRbBWqr5qc8huNcR
+         CzoA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=YBWXbPTt5mAHxR/Tpna375Q9I2cVf+MKeEc1yT/OvlE=;
-        b=PqKUnH1EHUZ3Zakv5lTrLRhav5nQJVJin6ykov2Lb1AaWfohRfkzUh+XBAqXKt8RQx
-         6sigCd/Z67AzISKm3t+fWgDcbJGZfHBcJYfvX5cvCDYmKPBY6OvapuMNoHdIT6bxW4XR
-         ARKpgGla+XV0asdENFG+VJANAEIM1CjjLeghuiDBI2U0LOrkbPcSSI1mZPMoEXMIIMPu
-         9996DLvNxOP1DCFdv99nJ4rqwYquxA2ngCPeP7eSOhxDTBosC0AfzPnLkNqUngWC7va5
-         mB+sYXjC6Ju5Xx4StXozyG6PMVuhel2UL70kY2N32hySBlm68EuDpuQkmBPvME36h8nC
-         T/tw==
-X-Gm-Message-State: AOAM5305+YYgvUcQwV4CJNXnRS9ShTLmtl/mVQGJgh9WuTFPh3KQcguU
-        bYzqnlFUjTw40+LCAa03fzU=
-X-Google-Smtp-Source: ABdhPJyjem/qQMuuB0A5uXCtiX19rwjNxRGalVwqIGepblIsxsGMK6AvOwuFjsdwmvnvV6iVo9lWkg==
-X-Received: by 2002:a1c:b087:: with SMTP id z129mr20677693wme.67.1623429543577;
-        Fri, 11 Jun 2021 09:39:03 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=vYIMo2kK1HR0D/HaxbggTV2mSjd3Ph79XbWAi78jtog=;
+        b=GVxJ8Pzw4DXj3N2H4uah3vRRMYJe8GB59iH36qgKSE54FAq6xBjOgbPvY/5y4KrW+4
+         iwwVI+3HSYi8gLcC1rRYky1ooqxxpOVVsuR3WM4V+aEaQIrLywhM7n5UT6Im7YGVzj5D
+         SkSlTaBqejojKEp3xBAYzeRSJYtclDqmZzmk2N+ffxRnZOa8APScxQg6u3SFZq3EEsZ0
+         toxjZn1MrHTWoaQBokwPogqXB0ZKRaYaUJJHjYL7q/D66IIOICh5GRF6oMvoP02AWW9b
+         uDmCWqm5noJDdQwr03nOjCFwSiYwLU3jrTYr+cUACHWlaqziRH/htPTrzJabhmRkaoxg
+         AwZA==
+X-Gm-Message-State: AOAM532TxT8zVMyNAKq2dhnWytY4KX3v5kC4alIfCPDo9yLcZL0oI844
+        zkz0Zgr0BoyWMD7b+Zm4+xE=
+X-Google-Smtp-Source: ABdhPJwtJKEBcxiZ9Un12SC7ERbwDyuA/+2tRc75Q2GSs7PFaDIOavICmsZji3vO74R6RhqECL1Qfw==
+X-Received: by 2002:a5d:4903:: with SMTP id x3mr4887361wrq.376.1623429541940;
+        Fri, 11 Jun 2021 09:39:01 -0700 (PDT)
 Received: from localhost ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id o5sm7783932wrw.65.2021.06.11.09.39.02
+        by smtp.gmail.com with ESMTPSA id l10sm7299105wrs.11.2021.06.11.09.39.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Jun 2021 09:39:02 -0700 (PDT)
+        Fri, 11 Jun 2021 09:39:00 -0700 (PDT)
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Felipe Balbi <balbi@kernel.org>
-Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
-        "Vinod Koul linux-usb @ vger . kernel . org" <vkoul@kernel.org>,
-        linux-phy@lists.infradead.org, linux-tegra@vger.kernel.org
-Subject: [GIT PULL 2/2] usb: tegra: Changes for v5.14-rc1
-Date:   Fri, 11 Jun 2021 18:40:37 +0200
-Message-Id: <20210611164037.3567270-2-thierry.reding@gmail.com>
+To:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Vinod Koul <vkoul@kernel.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Felipe Balbi <balbi@kernel.org>, linux-phy@lists.infradead.org,
+        linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: [GIT PULL 1/2] phy: tegra: Changes for v5.14-rc1
+Date:   Fri, 11 Jun 2021 18:40:36 +0200
+Message-Id: <20210611164037.3567270-1-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20210611164037.3567270-1-thierry.reding@gmail.com>
-References: <20210611164037.3567270-1-thierry.reding@gmail.com>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -76,45 +74,47 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Greg, Felipe,
+Hi Kishon, Vinod,
 
-The following changes since commit 1f9cab6cc20c6ed35c659aa25e282265275f0732:
+The following changes since commit 6efb943b8616ec53a5e444193dccf1af9ad627b5:
 
-  phy: tegra: xusb: Add wake/sleepwalk for Tegra186 (2021-06-03 14:52:45 +0200)
+  Linux 5.13-rc1 (2021-05-09 14:17:44 -0700)
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/for-5.14-usb
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/for-5.14-phy
 
-for you to fetch changes up to 971ee247060d88dceb72428b5d203687312884f4:
+for you to fetch changes up to 1f9cab6cc20c6ed35c659aa25e282265275f0732:
 
-  usb: xhci: tegra: Enable ELPG for runtime/system PM (2021-06-11 18:15:46 +0200)
+  phy: tegra: xusb: Add wake/sleepwalk for Tegra186 (2021-06-03 14:52:45 +0200)
 
-This is a set of changes that was supposed to go into v5.13 but missed
-the window by just a couple of days. I've since taken this for a spin
-in linux-next through the Tegra tree and everything seems A-OK.
-
-Note that this includes the contents of the first pull request in this
-set because of a build-time dependency. I'm assuming that all of this
-will go through Greg's USB tree, in which case there's no reason to pull
-in the first pull request since it's already included in this one.
+There should be no need to pull this into the PHY tree because these
+patches are dependencies for the second (USB) pull request in this set,
+but I'm sending this out for completeness in case you need this in your
+tree to resolve a conflict.
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-usb: tegra: Changes for v5.14-rc1
+phy: tegra: Changes for v5.14-rc1
 
-Implements proper suspend/resume for the XUSB controller found on recent
-Tegra chips.
+This set of changes adds USB wake and sleepwalk support to Tegra210 and
+Tegra186, which will be used to properly suspend and resume USB devices.
 
 ----------------------------------------------------------------
-JC Kuo (2):
-      usb: xhci: tegra: Unlink power domain devices
-      usb: xhci: tegra: Enable ELPG for runtime/system PM
+JC Kuo (7):
+      phy: tegra: xusb: Move usb3 port init for Tegra210
+      phy: tegra: xusb: Rearrange UPHY init on Tegra210
+      phy: tegra: xusb: Add Tegra210 lane_iddq operation
+      phy: tegra: xusb: Add sleepwalk and suspend/resume
+      phy: tegra: xusb: Add wake/sleepwalk for Tegra210
+      phy: tegra: xusb: Tegra210 host mode VBUS control
+      phy: tegra: xusb: Add wake/sleepwalk for Tegra186
 
-Thierry Reding (1):
-      Merge branch 'for-5.14/phy' into for-5.14/usb
-
- drivers/usb/host/xhci-tegra.c | 613 +++++++++++++++++++++++++++++++++---------
- 1 file changed, 482 insertions(+), 131 deletions(-)
+ drivers/phy/tegra/xusb-tegra186.c |  550 ++++++++++++-
+ drivers/phy/tegra/xusb-tegra210.c | 1533 +++++++++++++++++++++++++++++++------
+ drivers/phy/tegra/xusb.c          |   92 ++-
+ drivers/phy/tegra/xusb.h          |   22 +-
+ include/linux/phy/tegra/xusb.h    |   10 +-
+ 5 files changed, 1955 insertions(+), 252 deletions(-)
