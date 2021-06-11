@@ -8,61 +8,61 @@ X-Spam-Status: No, score=-20.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B71A8C48BE5
-	for <linux-tegra@archiver.kernel.org>; Fri, 11 Jun 2021 16:44:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43F04C48BD1
+	for <linux-tegra@archiver.kernel.org>; Fri, 11 Jun 2021 16:44:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9F089613D0
-	for <linux-tegra@archiver.kernel.org>; Fri, 11 Jun 2021 16:44:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E19D613D0
+	for <linux-tegra@archiver.kernel.org>; Fri, 11 Jun 2021 16:44:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231490AbhFKQqX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 11 Jun 2021 12:46:23 -0400
-Received: from mail-wm1-f47.google.com ([209.85.128.47]:44850 "EHLO
-        mail-wm1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231448AbhFKQqU (ORCPT
+        id S231552AbhFKQql (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 11 Jun 2021 12:46:41 -0400
+Received: from mail-wr1-f48.google.com ([209.85.221.48]:35751 "EHLO
+        mail-wr1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231466AbhFKQq0 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 11 Jun 2021 12:46:20 -0400
-Received: by mail-wm1-f47.google.com with SMTP id m41-20020a05600c3b29b02901b9e5d74f02so5829663wms.3
-        for <linux-tegra@vger.kernel.org>; Fri, 11 Jun 2021 09:44:05 -0700 (PDT)
+        Fri, 11 Jun 2021 12:46:26 -0400
+Received: by mail-wr1-f48.google.com with SMTP id m18so6760587wrv.2
+        for <linux-tegra@vger.kernel.org>; Fri, 11 Jun 2021 09:44:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=1PGvWqmX79u2BDZddtKUNdJQ6hsV0VE7RF8nOBTNFPA=;
-        b=QA5BVIhdRSLFSHl4Nt2kT2P14yFLZ/x9o/azS5r3wS6A3DFy5r2knf3shzwsymne/W
-         TiACsvGeFHuftNHEQ+LeZ/mzkB2stV9I/xvCadQ4fk7M3IxVpvomQI+t5WoBWX2bwG7h
-         QVpBJtR/56OTEQhnaWLquAokQvUmTFo7mZWp0H1BXTz0PHjfAmOk8xywHZ8+H06zGyq3
-         q6oP9pp3VpqWpJxCp2met1k5d6zniIHx8Ehuv6d/bg+6umfQgi11EDv2fwrjw0OlH1Zv
-         stZPAZ/m0lg+V51fWQZX8NLMQv5uRR20oYe7hgliN4hgBoD/5DKPmMwbOktJMxmiyFzP
-         NEFA==
+        bh=V5XYrnY/xVnCPcibAwboKgHCmrwG1kEd9Tte7IqhonY=;
+        b=AT2W/U1lava1Ca/zNFJ6uPGusersVIS6uHclYO2H/J6Qp1tt86eedRIFMioYpe8fqs
+         yrD74cQCB7gTkJ/kRf4Fa2ZDARKHtlWEHK8gvqQBojB2HoPIRlTiyqeoAzLb31bjDOwU
+         2fOqkJjuIv2s32Ktao44dlmqzx8n0MqHplzQKIo52w2TgS1YTFBc7LTxsz44LekNZlk4
+         +/JNa06aUjBU2QjmyFo0UWIdMu4V0iRUcJJZY/duMgkHzvhbWsV1XwULSqhLiHm75T3K
+         cG6DWTBPdfFjw8a2Jkvt7WvEfdmK4GqT3hWfjSP5PZJH7CTxPDGg2tMwz70xIRtgVOGt
+         hLqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=1PGvWqmX79u2BDZddtKUNdJQ6hsV0VE7RF8nOBTNFPA=;
-        b=jx6M1c8W6Mz5/2/gykduFtTQeHb5CmRXIT4xDcOaJ1oYd6U8kqmA3QiwmmAK29u48T
-         MAcf8xe3kUuSD+ecxjvWjB4wbtXsla57NPalXDVIBrwgVQM7R07ShNaVh83j04cAEBXi
-         DJO0camtCPN64DeOt9HZkaA0L3NExG5sD39EZKkh+lA0ieMVc5DdofCtXI+WT/qbXWlN
-         GSaNfRpmJFNPHmvRGb5wtKE6mt8Rn6mmDtxrmWd2WUX6/B7HxvUP4UA3pKsAvZH1U1Mm
-         V+DDQQOAHLaZaZAW827WdWq4riykwMVKwsaE3tUUVn7UCUXksxZstgvVAooa2xdJqkkv
-         p+ug==
-X-Gm-Message-State: AOAM531uQ2A5gExRPvx9SIlkIin1fpgyEFyMTUmaYDDVn+YOZ69InrG6
-        lyKaH9+4cKSAX5q9ZTq4yYE=
-X-Google-Smtp-Source: ABdhPJx2UkSalCYd1QzObIlllEjvyEnv67FhhSHetKO+GWfONxgJYkAlN+YEcB4wtkH8YeCbtfpIaA==
-X-Received: by 2002:a1c:a516:: with SMTP id o22mr21577690wme.136.1623429785287;
-        Fri, 11 Jun 2021 09:43:05 -0700 (PDT)
+        bh=V5XYrnY/xVnCPcibAwboKgHCmrwG1kEd9Tte7IqhonY=;
+        b=M++R1apIJiELO3WARtRtWGiVXNKb0wJfXzDCJe11XTJOXEgbhnSS/Acx8Q/WpngRMt
+         l0gvGQSbMJhaP/hqdmf+d8ogtRFq04Fi0FvvVH8tzTUlGc17/nMXMAnUpaTw5RVUdJGa
+         ea4VwfkLQJLzMbDsdd8cHUgrRNJQIHhB9PYehrj/Sj1jZlwe1Td973gowZnTbvODMlZB
+         hfcD8ScXvGIVduIsK3q9ZeTMWdNezc86gQPPcjqOJIX4dILslsF2oygEN62N+Z9qFOp9
+         +syNUfhaXAo6jh9Wmychjflod47Sv1Ky/B6aKhf+UjNsw6dLeoOsYLd2vtia89mZ6Xiy
+         +gtA==
+X-Gm-Message-State: AOAM533TRZgB/NXbRMAGLJs420TwNXj38J1640fur6s+lqlMByJkZijt
+        VMHpGUQU6xje0tg/2vF1oLs=
+X-Google-Smtp-Source: ABdhPJxlsbAOLOU1i27Ibi/lz52sIQVKiBthECxJn+E7iF+bsBneHJrvzhZpxGhPpbWTOw5uSu00yw==
+X-Received: by 2002:a5d:64c7:: with SMTP id f7mr5073620wri.36.1623429792242;
+        Fri, 11 Jun 2021 09:43:12 -0700 (PDT)
 Received: from localhost ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id l31sm6502345wms.31.2021.06.11.09.43.04
+        by smtp.gmail.com with ESMTPSA id p5sm8063831wrd.25.2021.06.11.09.43.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Jun 2021 09:43:04 -0700 (PDT)
+        Fri, 11 Jun 2021 09:43:11 -0700 (PDT)
 From:   Thierry Reding <thierry.reding@gmail.com>
 List-Id: <soc.lore.kernel.org>
 To:     arm@kernel.org, soc@kernel.org
 Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [GIT PULL 2/6] soc/tegra: Changes for v5.14-rc1
-Date:   Fri, 11 Jun 2021 18:44:33 +0200
-Message-Id: <20210611164437.3568059-2-thierry.reding@gmail.com>
+Subject: [GIT PULL 5/6] ARM: tegra: Default configuration changes for v5.14-rc1
+Date:   Fri, 11 Jun 2021 18:44:36 +0200
+Message-Id: <20210611164437.3568059-5-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20210611164437.3568059-1-thierry.reding@gmail.com>
 References: <20210611164437.3568059-1-thierry.reding@gmail.com>
@@ -75,53 +75,30 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 Hi ARM SoC maintainers,
 
-The following changes since commit 380d2b2d5a0491e47dfa250b40e3d849a922871d:
+The following changes since commit 6efb943b8616ec53a5e444193dccf1af9ad627b5:
 
-  regulator: core: Add regulator_sync_voltage_rdev() (2021-06-01 12:13:30 +0200)
+  Linux 5.13-rc1 (2021-05-09 14:17:44 -0700)
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.14-soc
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.14-arm-defconfig
 
-for you to fetch changes up to e2d0ee225e49a5553986f3138dd2803852a31fd5:
+for you to fetch changes up to 4302331fdf4440b96dba583384a0e2b759cb13bd:
 
-  soc/tegra: fuse: Fix Tegra234-only builds (2021-06-11 13:31:01 +0200)
+  ARM: tegra_defconfig: Enable CONFIG_DEVFREQ_THERMAL (2021-05-31 11:43:11 +0200)
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-soc/tegra: Changes for v5.14-rc1
+ARM: tegra: Default configuration changes for v5.14-rc1
 
-These changes implement the core power domain for the PMC, and fix a
-couple of minor issues as well as add stubs to help some drivers be
-compile tested more easily.
+Enables the devfreq thermal support to allow using the devfreq device as
+cooling device for the system.
 
 ----------------------------------------------------------------
-Dmitry Osipenko (7):
-      soc/tegra: regulators: Bump voltages on system reboot
-      soc/tegra: Add stub for soc_is_tegra()
-      soc/tegra: Add devm_tegra_core_dev_init_opp_table()
-      soc/tegra: fuse: Add stubs needed for compile-testing
-      soc/tegra: pmc: Add core power domain
-      soc/tegra: pmc: Add driver state syncing
-      soc/tegra: regulators: Support core domain state syncing
+Dmitry Osipenko (1):
+      ARM: tegra_defconfig: Enable CONFIG_DEVFREQ_THERMAL
 
-Thierry Reding (2):
-      Merge branch 'for-5.14/regulator' into for-5.14/soc
-      soc/tegra: fuse: Fix Tegra234-only builds
-
-Yang Yingliang (1):
-      soc/tegra: fuse: Don't return -ENOMEM when allocate lookups failed
-
- drivers/soc/tegra/Kconfig              |   2 +
- drivers/soc/tegra/common.c             |  97 ++++++++++++++++++++++
- drivers/soc/tegra/fuse/fuse-tegra.c    |   6 +-
- drivers/soc/tegra/fuse/fuse-tegra30.c  |   3 +-
- drivers/soc/tegra/pmc.c                | 144 +++++++++++++++++++++++++++++++++
- drivers/soc/tegra/regulators-tegra20.c |  94 ++++++++++++++++++++-
- drivers/soc/tegra/regulators-tegra30.c |  93 ++++++++++++++++++++-
- include/soc/tegra/common.h             |  31 +++++++
- include/soc/tegra/fuse.h               |  20 ++++-
- include/soc/tegra/pmc.h                |   7 ++
- 10 files changed, 485 insertions(+), 12 deletions(-)
+ arch/arm/configs/tegra_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
