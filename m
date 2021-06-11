@@ -6,62 +6,69 @@ X-Spam-Status: No, score=-20.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,INCLUDES_PULL_REQUEST,
 	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65257C48BE0
-	for <linux-tegra@archiver.kernel.org>; Fri, 11 Jun 2021 16:30:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDDC3C48BD1
+	for <linux-tegra@archiver.kernel.org>; Fri, 11 Jun 2021 16:39:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4D5F0613CD
-	for <linux-tegra@archiver.kernel.org>; Fri, 11 Jun 2021 16:30:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB96B6101B
+	for <linux-tegra@archiver.kernel.org>; Fri, 11 Jun 2021 16:39:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230406AbhFKQcv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 11 Jun 2021 12:32:51 -0400
-Received: from mail-wm1-f52.google.com ([209.85.128.52]:43783 "EHLO
-        mail-wm1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230425AbhFKQcv (ORCPT
+        id S229584AbhFKQlP (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 11 Jun 2021 12:41:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55016 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229517AbhFKQlO (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 11 Jun 2021 12:32:51 -0400
-Received: by mail-wm1-f52.google.com with SMTP id 3-20020a05600c0243b029019f2f9b2b8aso8918930wmj.2;
-        Fri, 11 Jun 2021 09:30:52 -0700 (PDT)
+        Fri, 11 Jun 2021 12:41:14 -0400
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD06FC0617AF
+        for <linux-tegra@vger.kernel.org>; Fri, 11 Jun 2021 09:39:05 -0700 (PDT)
+Received: by mail-wm1-x331.google.com with SMTP id k5-20020a05600c1c85b02901affeec3ef8so9051901wms.0
+        for <linux-tegra@vger.kernel.org>; Fri, 11 Jun 2021 09:39:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=G3J0KltuvW2EJuZnxDee5yWvvSDSls6rlNyeRO4m5mE=;
-        b=hTXC7Hie1gRGarT55fC6mJx+T3VqGJkIwjx81Z8pmSncsd8hjBwagV5ntFXNadMgg8
-         G45wOjIvr/gKKl93a4McKVNH/aTOVPsDjTKTuVS21aMLFuk4WYzLzH9n6UJbJRTRD85c
-         9E0XNVlDFYcqxeAhXwCsxFH2zvB45v3vuhG9hBJ/epftpC9X9IdmtjVBlJ75TPW0tVc9
-         BPTJUtSIovF6ovV+ouuW194/cVPH+afFSUgQppbWthxgBKKqWYbjSVpHacPPgKFcbrOd
-         Si5Sr7Xcyb3G/+TT8FzbPAcgHIOO5Ehr9lbaXTeQaxp1tYOlScFgtn5DfigOG6pJjcrI
-         rmPA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=YBWXbPTt5mAHxR/Tpna375Q9I2cVf+MKeEc1yT/OvlE=;
+        b=X76WYQgB9Uel+1VqQWMOhPWT0U++aPZIImiQ9bnoD5wQ/JTvWM2jmms0SpJGsSCeQ7
+         KTzPxn68OKYxE7hriuI9zSt8PH4M9hMEE8tbDYKYqJEybO0/a9OhgrRUqGfxEBci06ZF
+         dQUOJZE5e5BiXV1A51tfJwbUiR5VkKNRslFVYY1ed+LX+aAWiVnUTS9H6ICwvW644s4d
+         qW9elTSq1oICBpZ3+gjFN1JUFRIe98pAPofJhQykutyLP+tUaWNnHeprI+331nN7pGcY
+         o3paSvJmrMg8+6WOu6Yy3Zs4AlBALgtJUPaitxDqVw+QPtlvb96NF5oBN5sJq6wXMM56
+         5ruw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=G3J0KltuvW2EJuZnxDee5yWvvSDSls6rlNyeRO4m5mE=;
-        b=kSpdkSNgfU0gq3t6CLydl4bSXhDax6D6yBdOubDNSCgNdRDzQvL3GBxz7xF0E0OV/b
-         BeskrtNNlTh5Bdh6o37BLSqaT9M5WPIhzUQKK3x6ej862WvARwVzadhyxWs4pxPWHQfu
-         YjUYSWvCNRHso5n4+X2E6YDWrMPcTwFGKMzWdVp2j/eaDp7TfawkfZBlKiPK8WYuS3iQ
-         SOa4cxnTI5Gez88RSc+qpe+5hpdMFd6iB6QH1rlkdoX7+SkFpoGHuv5KML7c/9kpD9oK
-         gaZ2E0vCqSUX53VVVJ6mlCOMjPAJPrj/bL3n4UGOBeTAtfQD1tLxqkQT4e/tB4vkFSM3
-         MnQw==
-X-Gm-Message-State: AOAM532U7P8nVlZhZN5Toa+GIQdH8lKWbToIUsjlc4RzzqxWzo1IKjk0
-        XjYOyGvqMPgaPJ84+u8MQLw=
-X-Google-Smtp-Source: ABdhPJw+3dusjkCI0TJ8UjbL2moOvI7uUAjogH5hJt7P6l2UV05waVwV1DquOPcA3r4EDJ7VC2jDWA==
-X-Received: by 2002:a1c:7313:: with SMTP id d19mr4825397wmb.14.1623428992151;
-        Fri, 11 Jun 2021 09:29:52 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=YBWXbPTt5mAHxR/Tpna375Q9I2cVf+MKeEc1yT/OvlE=;
+        b=PqKUnH1EHUZ3Zakv5lTrLRhav5nQJVJin6ykov2Lb1AaWfohRfkzUh+XBAqXKt8RQx
+         6sigCd/Z67AzISKm3t+fWgDcbJGZfHBcJYfvX5cvCDYmKPBY6OvapuMNoHdIT6bxW4XR
+         ARKpgGla+XV0asdENFG+VJANAEIM1CjjLeghuiDBI2U0LOrkbPcSSI1mZPMoEXMIIMPu
+         9996DLvNxOP1DCFdv99nJ4rqwYquxA2ngCPeP7eSOhxDTBosC0AfzPnLkNqUngWC7va5
+         mB+sYXjC6Ju5Xx4StXozyG6PMVuhel2UL70kY2N32hySBlm68EuDpuQkmBPvME36h8nC
+         T/tw==
+X-Gm-Message-State: AOAM5305+YYgvUcQwV4CJNXnRS9ShTLmtl/mVQGJgh9WuTFPh3KQcguU
+        bYzqnlFUjTw40+LCAa03fzU=
+X-Google-Smtp-Source: ABdhPJyjem/qQMuuB0A5uXCtiX19rwjNxRGalVwqIGepblIsxsGMK6AvOwuFjsdwmvnvV6iVo9lWkg==
+X-Received: by 2002:a1c:b087:: with SMTP id z129mr20677693wme.67.1623429543577;
+        Fri, 11 Jun 2021 09:39:03 -0700 (PDT)
 Received: from localhost ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id h9sm6332809wmb.35.2021.06.11.09.29.50
+        by smtp.gmail.com with ESMTPSA id o5sm7783932wrw.65.2021.06.11.09.39.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Jun 2021 09:29:51 -0700 (PDT)
+        Fri, 11 Jun 2021 09:39:02 -0700 (PDT)
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: [GIT PULL] clk: tegra: Changes for v5.14-rc1
-Date:   Fri, 11 Jun 2021 18:31:24 +0200
-Message-Id: <20210611163124.3566027-1-thierry.reding@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Felipe Balbi <balbi@kernel.org>
+Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
+        "Vinod Koul linux-usb @ vger . kernel . org" <vkoul@kernel.org>,
+        linux-phy@lists.infradead.org, linux-tegra@vger.kernel.org
+Subject: [GIT PULL 2/2] usb: tegra: Changes for v5.14-rc1
+Date:   Fri, 11 Jun 2021 18:40:37 +0200
+Message-Id: <20210611164037.3567270-2-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.32.0
+In-Reply-To: <20210611164037.3567270-1-thierry.reding@gmail.com>
+References: <20210611164037.3567270-1-thierry.reding@gmail.com>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -69,56 +76,45 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Mike, Stephen,
+Hi Greg, Felipe,
 
-The following changes since commit 6efb943b8616ec53a5e444193dccf1af9ad627b5:
+The following changes since commit 1f9cab6cc20c6ed35c659aa25e282265275f0732:
 
-  Linux 5.13-rc1 (2021-05-09 14:17:44 -0700)
+  phy: tegra: xusb: Add wake/sleepwalk for Tegra186 (2021-06-03 14:52:45 +0200)
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/for-5.14-clk
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/for-5.14-usb
 
-for you to fetch changes up to f13570e7e830ca4fbf4869015af8492b8918445e:
+for you to fetch changes up to 971ee247060d88dceb72428b5d203687312884f4:
 
-  clk: tegra: tegra124-emc: Fix clock imbalance in emc_set_timing() (2021-06-02 11:08:00 +0200)
+  usb: xhci: tegra: Enable ELPG for runtime/system PM (2021-06-11 18:15:46 +0200)
+
+This is a set of changes that was supposed to go into v5.13 but missed
+the window by just a couple of days. I've since taken this for a spin
+in linux-next through the Tegra tree and everything seems A-OK.
+
+Note that this includes the contents of the first pull request in this
+set because of a build-time dependency. I'm assuming that all of this
+will go through Greg's USB tree, in which case there's no reason to pull
+in the first pull request since it's already included in this one.
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-clk: tegra: Changes for v5.14-rc1
+usb: tegra: Changes for v5.14-rc1
 
-This contains a few fixes across the board and adds stubs to allow
-certain drivers to be compile-tested. One other notable change added
-here is that clock enabling no longer deasserts the reset. Drivers are
-now supposed to do that explicitly because doing it implicitly can get
-in the way of certain power-up sequences.
+Implements proper suspend/resume for the XUSB controller found on recent
+Tegra chips.
 
 ----------------------------------------------------------------
-Dmitry Osipenko (9):
-      clk: tegra30: Use 300MHz for video decoder by default
-      clk: tegra: Fix refcounting of gate clocks
-      clk: tegra: Ensure that PLLU configuration is applied properly
-      clk: tegra: Halve SCLK rate on Tegra20
-      clk: tegra: Don't allow zero clock rate for PLLs
-      clk: tegra: cclk: Handle thermal DIV2 CPU frequency throttling
-      clk: tegra: Mark external clocks as not having reset control
-      clk: tegra: Don't deassert reset on enabling clocks
-      clk: tegra: Add stubs needed for compile-testing
+JC Kuo (2):
+      usb: xhci: tegra: Unlink power domain devices
+      usb: xhci: tegra: Enable ELPG for runtime/system PM
 
-Yang Yingliang (1):
-      clk: tegra: tegra124-emc: Fix clock imbalance in emc_set_timing()
+Thierry Reding (1):
+      Merge branch 'for-5.14/phy' into for-5.14/usb
 
- drivers/clk/tegra/clk-periph-gate.c      |  80 +++++++++++++++----------
- drivers/clk/tegra/clk-periph.c           |  11 ++++
- drivers/clk/tegra/clk-pll.c              |  12 ++--
- drivers/clk/tegra/clk-tegra-periph.c     |   6 +-
- drivers/clk/tegra/clk-tegra-super-cclk.c |  16 ++++-
- drivers/clk/tegra/clk-tegra124-emc.c     |   4 +-
- drivers/clk/tegra/clk-tegra20.c          |   6 +-
- drivers/clk/tegra/clk-tegra30.c          |   6 +-
- drivers/clk/tegra/clk.h                  |   4 --
- drivers/soc/tegra/pmc.c                  |   5 --
- include/linux/clk/tegra.h                | 100 ++++++++++++++++++++++++-------
- 11 files changed, 170 insertions(+), 80 deletions(-)
+ drivers/usb/host/xhci-tegra.c | 613 +++++++++++++++++++++++++++++++++---------
+ 1 file changed, 482 insertions(+), 131 deletions(-)
