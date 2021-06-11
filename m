@@ -8,97 +8,113 @@ X-Spam-Status: No, score=-20.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43F04C48BD1
-	for <linux-tegra@archiver.kernel.org>; Fri, 11 Jun 2021 16:44:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77F14C48BD1
+	for <linux-tegra@archiver.kernel.org>; Fri, 11 Jun 2021 16:50:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2E19D613D0
-	for <linux-tegra@archiver.kernel.org>; Fri, 11 Jun 2021 16:44:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5A44F613CA
+	for <linux-tegra@archiver.kernel.org>; Fri, 11 Jun 2021 16:50:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231552AbhFKQql (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 11 Jun 2021 12:46:41 -0400
-Received: from mail-wr1-f48.google.com ([209.85.221.48]:35751 "EHLO
-        mail-wr1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231466AbhFKQq0 (ORCPT
+        id S230356AbhFKQwW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 11 Jun 2021 12:52:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57654 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230344AbhFKQwV (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 11 Jun 2021 12:46:26 -0400
-Received: by mail-wr1-f48.google.com with SMTP id m18so6760587wrv.2
-        for <linux-tegra@vger.kernel.org>; Fri, 11 Jun 2021 09:44:12 -0700 (PDT)
+        Fri, 11 Jun 2021 12:52:21 -0400
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4160AC061574
+        for <linux-tegra@vger.kernel.org>; Fri, 11 Jun 2021 09:50:23 -0700 (PDT)
+Received: by mail-wm1-x333.google.com with SMTP id 3-20020a05600c0243b029019f2f9b2b8aso8960542wmj.2
+        for <linux-tegra@vger.kernel.org>; Fri, 11 Jun 2021 09:50:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=V5XYrnY/xVnCPcibAwboKgHCmrwG1kEd9Tte7IqhonY=;
-        b=AT2W/U1lava1Ca/zNFJ6uPGusersVIS6uHclYO2H/J6Qp1tt86eedRIFMioYpe8fqs
-         yrD74cQCB7gTkJ/kRf4Fa2ZDARKHtlWEHK8gvqQBojB2HoPIRlTiyqeoAzLb31bjDOwU
-         2fOqkJjuIv2s32Ktao44dlmqzx8n0MqHplzQKIo52w2TgS1YTFBc7LTxsz44LekNZlk4
-         +/JNa06aUjBU2QjmyFo0UWIdMu4V0iRUcJJZY/duMgkHzvhbWsV1XwULSqhLiHm75T3K
-         cG6DWTBPdfFjw8a2Jkvt7WvEfdmK4GqT3hWfjSP5PZJH7CTxPDGg2tMwz70xIRtgVOGt
-         hLqw==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=nVmUib6sDfDxsq9PQu+EpPYJQfq0CrzzM05aiercm/U=;
+        b=KhhZl/b2Ow3W3yc2DcOr0wyxc3rUaJAjd1ueuuU/Y9RCqpWRkC2VDwJ53fipizSte3
+         clfOV8Y+wC38okeLQyYfXvYpCrUBRFvCEIH7nSR5S2zStuRmlOAvT8DxHk6+OJ49eqqF
+         jFSpNLnrf5P/ZIWDbpPhLyDz0dDP35sbQaX08u7ofZs5rXQ/UHgF56FKrV7SPQZ4p+KM
+         pgBwBJ6T/O6EE0Re24ilA31254pb+TmpDMiFmva7JCgbObT5hU7eHmZR1sSL5jXJ8mho
+         fbzCS1Qber1ydUEBmw6vNnV3thhtT4VWRnI82dk+rShSU9PVekwpkifuBjAWYxa6qmzU
+         EjzQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=V5XYrnY/xVnCPcibAwboKgHCmrwG1kEd9Tte7IqhonY=;
-        b=M++R1apIJiELO3WARtRtWGiVXNKb0wJfXzDCJe11XTJOXEgbhnSS/Acx8Q/WpngRMt
-         l0gvGQSbMJhaP/hqdmf+d8ogtRFq04Fi0FvvVH8tzTUlGc17/nMXMAnUpaTw5RVUdJGa
-         ea4VwfkLQJLzMbDsdd8cHUgrRNJQIHhB9PYehrj/Sj1jZlwe1Td973gowZnTbvODMlZB
-         hfcD8ScXvGIVduIsK3q9ZeTMWdNezc86gQPPcjqOJIX4dILslsF2oygEN62N+Z9qFOp9
-         +syNUfhaXAo6jh9Wmychjflod47Sv1Ky/B6aKhf+UjNsw6dLeoOsYLd2vtia89mZ6Xiy
-         +gtA==
-X-Gm-Message-State: AOAM533TRZgB/NXbRMAGLJs420TwNXj38J1640fur6s+lqlMByJkZijt
-        VMHpGUQU6xje0tg/2vF1oLs=
-X-Google-Smtp-Source: ABdhPJxlsbAOLOU1i27Ibi/lz52sIQVKiBthECxJn+E7iF+bsBneHJrvzhZpxGhPpbWTOw5uSu00yw==
-X-Received: by 2002:a5d:64c7:: with SMTP id f7mr5073620wri.36.1623429792242;
-        Fri, 11 Jun 2021 09:43:12 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=nVmUib6sDfDxsq9PQu+EpPYJQfq0CrzzM05aiercm/U=;
+        b=omUG/TRvBYRkmWuhUNX9Nu9CJJ73T7pfCGvs6B35ub2T7QD7DBkMnv66gKRAsRiOyz
+         lmh/hRYR7x8ZGqMwN8l+VHn4n+3w9BVncBANbbPbxF/1qIUgXfTH4UyL3WWhpTBfWSOQ
+         K5ZB5KySlMoDo9Q5RB/CFK+lm6fb6MPObNoO/CG2zWXcZTEP2hl6tWgVkq3SsxejcjKf
+         6fJr+XEEoQjLrcwN4C1eQa2v2ZwLohLOtxwpV7kA++0IApuvpSVygibp9uj8S90u4/E3
+         FyyO7XOCSjx7kOQmdwkQ+ljNh74UydAgBNIcgP4IKZhxr74QRA/YSlHihqlQO2PTKyyG
+         Y0zw==
+X-Gm-Message-State: AOAM533w85pVLxvBt7qeJS3rpFbBPOrkLk2s8XxiHwcLNLaLwr56rnZ+
+        IAk1VtyGNp3AMHLx0xElRMU=
+X-Google-Smtp-Source: ABdhPJwUq5NIrEyc+uROlerUgrn1IVIULU9QdvwWIINCESl1ccBvHB535Tag9zaAcvORuocModFwlA==
+X-Received: by 2002:a05:600c:430a:: with SMTP id p10mr4956881wme.155.1623430221767;
+        Fri, 11 Jun 2021 09:50:21 -0700 (PDT)
 Received: from localhost ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id p5sm8063831wrd.25.2021.06.11.09.43.11
+        by smtp.gmail.com with ESMTPSA id r3sm6307970wmq.8.2021.06.11.09.50.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Jun 2021 09:43:11 -0700 (PDT)
+        Fri, 11 Jun 2021 09:50:21 -0700 (PDT)
 From:   Thierry Reding <thierry.reding@gmail.com>
-List-Id: <soc.lore.kernel.org>
-To:     arm@kernel.org, soc@kernel.org
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [GIT PULL 5/6] ARM: tegra: Default configuration changes for v5.14-rc1
-Date:   Fri, 11 Jun 2021 18:44:36 +0200
-Message-Id: <20210611164437.3568059-5-thierry.reding@gmail.com>
+To:     Dave Airlie <airlied@gmail.com>
+Cc:     dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
+Subject: [GIT PULL] drm/tegra: Changes for v5.14-rc1
+Date:   Fri, 11 Jun 2021 18:51:57 +0200
+Message-Id: <20210611165157.3569315-1-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20210611164437.3568059-1-thierry.reding@gmail.com>
-References: <20210611164437.3568059-1-thierry.reding@gmail.com>
-Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi ARM SoC maintainers,
+Hi Dave,
 
-The following changes since commit 6efb943b8616ec53a5e444193dccf1af9ad627b5:
+The following changes since commit 671cc352acd3e2b2832b59787ed8027d9f80ccc9:
 
-  Linux 5.13-rc1 (2021-05-09 14:17:44 -0700)
+  drm/tegra: Correct DRM_FORMAT_MOD_NVIDIA_SECTOR_LAYOUT (2021-05-31 14:29:44 +0200)
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.14-arm-defconfig
+  ssh://git.freedesktop.org/git/tegra/linux.git tags/drm/tegra/for-5.14-rc1
 
-for you to fetch changes up to 4302331fdf4440b96dba583384a0e2b759cb13bd:
+for you to fetch changes up to 46f99eebda08963e24efdacec5c95fc66b90f600:
 
-  ARM: tegra_defconfig: Enable CONFIG_DEVFREQ_THERMAL (2021-05-31 11:43:11 +0200)
+  drm/tegra: Don't call SET_APPLICATION_ID in VIC boot (2021-06-11 18:48:36 +0200)
+
+Note that I've based this on the drm/tegra/for-5.13-rc5 fixes PR that
+I sent out last week for simplicity.
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-ARM: tegra: Default configuration changes for v5.14-rc1
+drm/tegra: Changes for v5.14-rc1
 
-Enables the devfreq thermal support to allow using the devfreq device as
-cooling device for the system.
+The two major changes here are fixed YUV support as well as scaling on
+Tegra186 and later. This allows Tegra DRM to be used, for example, as a
+video sink for the kmssink gstreamer plugin. The remainder of the
+changes are minor fixes.
 
 ----------------------------------------------------------------
-Dmitry Osipenko (1):
-      ARM: tegra_defconfig: Enable CONFIG_DEVFREQ_THERMAL
+Mikko Perttunen (1):
+      drm/tegra: Don't call SET_APPLICATION_ID in VIC boot
 
- arch/arm/configs/tegra_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+Tan Zhongjun (1):
+      drm/tegra: Remove superfluous error messages around platform_get_irq()
+
+Thierry Reding (2):
+      drm/tegra: hub: Fix YUV support
+      drm/tegra: hub: Implement basic scaling support
+
+ drivers/gpu/drm/tegra/dc.c    |   2 +-
+ drivers/gpu/drm/tegra/dc.h    |  26 ++++++
+ drivers/gpu/drm/tegra/dpaux.c |   4 +-
+ drivers/gpu/drm/tegra/hub.c   | 182 +++++++++++++++++++++++++++++++++++++++---
+ drivers/gpu/drm/tegra/plane.c |  23 +++++-
+ drivers/gpu/drm/tegra/plane.h |   3 +-
+ drivers/gpu/drm/tegra/vic.c   |   2 -
+ drivers/gpu/drm/tegra/vic.h   |   1 -
+ 8 files changed, 223 insertions(+), 20 deletions(-)
