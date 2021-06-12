@@ -2,85 +2,73 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E0ABC48BE5
-	for <linux-tegra@archiver.kernel.org>; Sat, 12 Jun 2021 03:36:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C8F6C48BCF
+	for <linux-tegra@archiver.kernel.org>; Sat, 12 Jun 2021 07:30:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 110176113E
-	for <linux-tegra@archiver.kernel.org>; Sat, 12 Jun 2021 03:36:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 343B7610A0
+	for <linux-tegra@archiver.kernel.org>; Sat, 12 Jun 2021 07:30:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230523AbhFLDi3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 11 Jun 2021 23:38:29 -0400
-Received: from szxga01-in.huawei.com ([45.249.212.187]:9082 "EHLO
-        szxga01-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230411AbhFLDi3 (ORCPT
+        id S229532AbhFLHcj (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 12 Jun 2021 03:32:39 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:55022 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229446AbhFLHci (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 11 Jun 2021 23:38:29 -0400
-Received: from dggemv711-chm.china.huawei.com (unknown [172.30.72.53])
-        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4G23G817vwzZcxN;
-        Sat, 12 Jun 2021 11:33:36 +0800 (CST)
-Received: from dggema769-chm.china.huawei.com (10.1.198.211) by
- dggemv711-chm.china.huawei.com (10.1.198.66) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
- 15.1.2176.2; Sat, 12 Jun 2021 11:36:28 +0800
-Received: from localhost (10.174.179.215) by dggema769-chm.china.huawei.com
- (10.1.198.211) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2; Sat, 12
- Jun 2021 11:36:27 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>
-CC:     <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next] soc/tegra: fuse: Fix build error while only ARCH_TEGRA_234_SOC enabled
-Date:   Sat, 12 Jun 2021 11:36:14 +0800
-Message-ID: <20210612033614.42992-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.174.179.215]
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- dggema769-chm.china.huawei.com (10.1.198.211)
-X-CFilter-Loop: Reflected
+        Sat, 12 Jun 2021 03:32:38 -0400
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id 518E621994;
+        Sat, 12 Jun 2021 07:30:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1623483038; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=r2s1gQ67F+Qqs185IyCMy7UU3m8IkMgGFSBejMEBN2s=;
+        b=h/XSTcNP6FQSQ5sSo/oM1tdClqCRmGWni1uK7PwKdXaFgm+Wrucn0QDmPon79jN5zrpyna
+        tAE7H+p20nfg7KjHNIoPnxfsuDy7pf7rhBhmveBgdY6AscmPZx9PDsaMqnmR+ZJZozAwye
+        WY1bCFtOaJusxYLeLv/OnsU84j0o5Ug=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1623483038;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=r2s1gQ67F+Qqs185IyCMy7UU3m8IkMgGFSBejMEBN2s=;
+        b=YWPcWxMXp2sD40QH+v8C4nsxgXO9D5Bk0qj/FuhJl5vpiga79ftHwvrDSrx2Q4sq6013nK
+        igFjVldwoWfjDlDA==
+Received: from alsa1.suse.de (alsa1.suse.de [10.160.4.42])
+        by relay2.suse.de (Postfix) with ESMTP id 402BFA3B83;
+        Sat, 12 Jun 2021 07:30:38 +0000 (UTC)
+Date:   Sat, 12 Jun 2021 09:30:38 +0200
+Message-ID: <s5him2j5yld.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     Yang Yingliang <yangyingliang@huawei.com>
+Cc:     <linux-kernel@vger.kernel.org>, <alsa-devel@alsa-project.org>,
+        <linux-tegra@vger.kernel.org>, <tiwai@suse.com>
+Subject: Re: [PATCH -next] ALSA: hda/tegra: Use devm_platform_get_and_ioremap_resource()
+In-Reply-To: <20210610131922.134788-1-yangyingliang@huawei.com>
+References: <20210610131922.134788-1-yangyingliang@huawei.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/25.3
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-drivers/soc/tegra/fuse/fuse-tegra30.c:376:10: error: ‘tegra30_fuse_read’ undeclared here (not in a function); did you mean ‘tegra_fuse_readl’?
-  .read = tegra30_fuse_read,
-          ^~~~~~~~~~~~~~~~~
-          tegra_fuse_readl
-drivers/soc/tegra/fuse/fuse-tegra30.c:382:10: error: ‘tegra30_fuse_init’ undeclared here (not in a function); did you mean ‘tegra30_fuse_read’?
-  .init = tegra30_fuse_init,
-          ^~~~~~~~~~~~~~~~~
-          tegra30_fuse_read
+On Thu, 10 Jun 2021 15:19:22 +0200,
+Yang Yingliang wrote:
+> 
+> Use devm_platform_get_and_ioremap_resource() to simplify
+> code.
+> 
+> Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
 
-Add missing #ifdef macro to fix this.
+Thanks, applied.
 
-Fixes: 1f44febf71ba ("soc/tegra: fuse: Add Tegra234 support")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/soc/tegra/fuse/fuse-tegra30.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/soc/tegra/fuse/fuse-tegra30.c b/drivers/soc/tegra/fuse/fuse-tegra30.c
-index 9ea7f0168457..c1aa7815bd6e 100644
---- a/drivers/soc/tegra/fuse/fuse-tegra30.c
-+++ b/drivers/soc/tegra/fuse/fuse-tegra30.c
-@@ -37,7 +37,8 @@
-     defined(CONFIG_ARCH_TEGRA_132_SOC) || \
-     defined(CONFIG_ARCH_TEGRA_210_SOC) || \
-     defined(CONFIG_ARCH_TEGRA_186_SOC) || \
--    defined(CONFIG_ARCH_TEGRA_194_SOC)
-+    defined(CONFIG_ARCH_TEGRA_194_SOC) || \
-+    defined(CONFIG_ARCH_TEGRA_234_SOC)
- static u32 tegra30_fuse_read_early(struct tegra_fuse *fuse, unsigned int offset)
- {
- 	if (WARN_ON(!fuse->base))
--- 
-2.17.1
-
+Takashi
