@@ -2,126 +2,98 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D550C48BE8
-	for <linux-tegra@archiver.kernel.org>; Tue, 15 Jun 2021 10:26:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8440C48BDF
+	for <linux-tegra@archiver.kernel.org>; Tue, 15 Jun 2021 12:06:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 70AEC61451
-	for <linux-tegra@archiver.kernel.org>; Tue, 15 Jun 2021 10:26:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C652B61461
+	for <linux-tegra@archiver.kernel.org>; Tue, 15 Jun 2021 12:06:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231636AbhFOK2f (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 15 Jun 2021 06:28:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38752 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231626AbhFOK2e (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 15 Jun 2021 06:28:34 -0400
-Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DCBCFC0617AF
-        for <linux-tegra@vger.kernel.org>; Tue, 15 Jun 2021 03:26:29 -0700 (PDT)
-Received: by mail-pj1-x102e.google.com with SMTP id k22-20020a17090aef16b0290163512accedso1580028pjz.0
-        for <linux-tegra@vger.kernel.org>; Tue, 15 Jun 2021 03:26:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=G2yVLxb/hh2n7LVacW4I67omTPuI6DZTKOpd97sxzgk=;
-        b=UddeYs/ZaZLMXG7VO8mM72zRL7J8s2mLRPM4eCQInzGejwyWg0GYW9LjKRunr1FBl0
-         urxf4gwj+HXDQslXdPFlmk7pXQYoAB8NnDws3aNnDBSZX6iiCkLGtjNu2YJ0tVP/9aMB
-         MBkmVO1JQ09/iBVPAy8QVjILsEngWxRZcdSE12mNacqStj0OL0lwNzHmdnGCpCQ3OaTR
-         u2tNoTLh8WLvQluCqHUP/qGSAZjm19PKMoIFHqF3qSFQeu/YULhL0HHJtiAWgjNZAXzQ
-         VLl1ObTwiKW/HckINHeRbqXLAhH6TTp4u7HW2kvRdtqfEASj1A74apJ7Fe1NsxaR73Mp
-         MmwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=G2yVLxb/hh2n7LVacW4I67omTPuI6DZTKOpd97sxzgk=;
-        b=IPXGy1ltaZ1e3vb/wJTbBOLH9ejj3rbzyfE4nn/zkYZ4SZorEO8TP/9IS+z7hzN/oS
-         UU9y1DCvK3w+7FRqgcAmrxTI/r/zZDtHs9/da6/gnkelB4Pntg307pSFgSNZ+jqWFrJc
-         DYHvB9C7a9LgA9M9Wh8w4MI+WSomybZ1GUXQZC/I0x9oTNHiVjLvrxtV5WXk0nenO1xd
-         fwQ6DTUI/70COQ5rgZi/uhCe8g8fsZZVtTt4/romuh9F0Pyd5s8HTRx6+Alh3I8DxE8V
-         7Wji+VHsWCG+N0OAsTolOamkRSgC1bvb2jsdIhRM1niV4aosOA3KneMEbxOoDBxDKtpf
-         sopA==
-X-Gm-Message-State: AOAM531TyfMyYnDTYdLpHxb2sIn0srwkltiRMewMwBqyp3imtx1ZS4uJ
-        9a1lSlV5XrMzroxnMc9aaF5ARQ==
-X-Google-Smtp-Source: ABdhPJwDJvRyByWxHEqHEa7YHl6PWJ3ExPhL/hLqTNx/h7R8ACllZfqoqiW95kH7DAIkGWwwf0IJlQ==
-X-Received: by 2002:a17:902:ea0f:b029:10d:6029:780f with SMTP id s15-20020a170902ea0fb029010d6029780fmr3558504plg.66.1623752789333;
-        Tue, 15 Jun 2021 03:26:29 -0700 (PDT)
-Received: from localhost ([136.185.134.182])
-        by smtp.gmail.com with ESMTPSA id q4sm15285410pfg.3.2021.06.15.03.26.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Jun 2021 03:26:28 -0700 (PDT)
-Date:   Tue, 15 Jun 2021 15:56:26 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     Dmitry Osipenko <digetx@gmail.com>,
+        id S229557AbhFOMI4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 15 Jun 2021 08:08:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41786 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230179AbhFOMIz (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 15 Jun 2021 08:08:55 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id B6AE66140C;
+        Tue, 15 Jun 2021 12:06:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1623758811;
+        bh=/daMUTS8B/5YNsD/HuXDLshXDtUc1JGW3xyBGeJw/yM=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=hkVDK9KWawPhP92D2ldhtMc+k8ajdcN9uO0ANsOwNPl9XCIVuM4zjCqpMCAq7udOb
+         Uo9H5kL16cqzDCAnmHjb9p0H8vzYsizFRmjuT68SX0688y5IU3Q5OYXBWZAfKhxhMj
+         DPFk5zozzj2Aai8BLWobghkX0HPN8uvUkJ8ctHlS0h7Lh5Q6YurnTZ7/WxID8u32mX
+         /HH8P0Fpkg5qB76uJd590AVzepWFmabjJmDJ9ryN29WEsxTSpGXVB4zzQHvvdSHTL6
+         PNsS2wkVlvLUP9Y9mPw8DSa0vtc4wC8x3ri5ff/LIzu41z1vz0WdLrblD1yG+YId/p
+         COE1EBQEcqqcg==
+From:   Mark Brown <broonie@kernel.org>
+To:     Jonathan Hunter <jonathanh@nvidia.com>,
         Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Amit Kucheria <amitk@kernel.org>,
-        Andreas Westman Dorcsak <hedmoo@yahoo.com>,
-        Maxim Schwalm <maxim.schwalm@gmail.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Ion Agorria <ion@agorria.com>, Takashi Iwai <tiwai@suse.com>,
         Svyatoslav Ryhel <clamor95@gmail.com>,
-        Ihor Didenko <tailormoon@rambler.ru>,
-        Ion Agorria <ion@agorria.com>,
-        Matt Merhar <mattmerhar@protonmail.com>,
-        Peter Geis <pgwipeout@gmail.com>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-pm@vger.kernel.org
-Subject: Re: [PATCH v3 4/7] thermal/drivers/tegra: Add driver for Tegra30
- thermal sensor
-Message-ID: <20210615102626.dja3agclwzxv2sj4@vireshk-i7>
-References: <20210529170955.32574-1-digetx@gmail.com>
- <20210529170955.32574-5-digetx@gmail.com>
- <6f2b6290-095a-bd39-c160-1616a0ff89b1@linaro.org>
+        Jaroslav Kysela <perex@perex.cz>
+Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org, alsa-devel@alsa-project.org
+Subject: Re: [PATCH v6 0/4] Unify NVIDIA Tegra ASoC machine drivers
+Date:   Tue, 15 Jun 2021 13:06:26 +0100
+Message-Id: <162375817572.30661.13025882740801686844.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20210529154649.25936-1-digetx@gmail.com>
+References: <20210529154649.25936-1-digetx@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6f2b6290-095a-bd39-c160-1616a0ff89b1@linaro.org>
-User-Agent: NeoMutt/20180716-391-311a52
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 15-06-21, 12:03, Daniel Lezcano wrote:
+On Sat, 29 May 2021 18:46:45 +0300, Dmitry Osipenko wrote:
+> This series squashes all the ASoC machine drivers into a single one,
+> this change was suggested by Jon Hunter. It also sets driver_name and
+> components string of each card, allowing userspace alsa-lib to find
+> UCMs at predictable path.
 > 
-> [Cc Viresh]
+> Changelog:
 > 
-> On 29/05/2021 19:09, Dmitry Osipenko wrote:
-> > All NVIDIA Tegra30 SoCs have a two-channel on-chip sensor unit which
-> > monitors temperature and voltage of the SoC. Sensors control CPU frequency
-> > throttling, which is activated by hardware once preprogrammed temperature
-> > level is breached, they also send signal to Power Management controller to
-> > perform emergency shutdown on a critical overheat of the SoC die. Add
-> > driver for the Tegra30 TSENSOR module, exposing it as a thermal sensor
-> > and a cooling device.
-> 
-> IMO it does not make sense to expose the hardware throttling mechanism
-> as a cooling device because it is not usable anywhere from the thermal
-> framework.
-> 
-> Moreover, that will collide with the thermal / cpufreq framework
-> mitigation (hardware sets the frequency but the software thinks the freq
-> is different), right ?
+> [...]
 
-I am not even sure what the cooling device is doing here:
+Applied to
 
-tegra_tsensor_set_cur_state() is not implemented and it says hardware
-changed it by itself. What is the benefit you are getting out of the
-cooling device here ?
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-> The hardware limiter should let know the cpufreq framework about the
-> frequency change.
-> 
-> 	https://lkml.org/lkml/2021/6/8/1792
-> 
-> May be post the sensor without the hw limiter for now and address that
-> in a separate series ?
+Thanks!
 
--- 
-viresh
+[1/4] ASoC: tegra: Set driver_name=tegra for all machine drivers
+      commit: f6eb84fa596abf28959fc7e0b626f925eb1196c7
+[2/4] ASoC: tegra: Unify ASoC machine drivers
+      commit: cc8f70f5603986a99e7775f3cc4a10d337b82a4d
+[3/4] ASoC: tegra: Specify components string for each card
+      commit: c16aab8ddc645f129880a266c1626b07b41f7c55
+[4/4] ASoC: tegra: Squash utils into common machine driver
+      commit: 8c1b3b159300cc5ef6ba0d4b039ef68e766d46e3
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
