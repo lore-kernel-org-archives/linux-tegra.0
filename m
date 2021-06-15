@@ -2,252 +2,203 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B7AFC48BE5
-	for <linux-tegra@archiver.kernel.org>; Tue, 15 Jun 2021 19:03:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D995C48BDF
+	for <linux-tegra@archiver.kernel.org>; Tue, 15 Jun 2021 19:32:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 202F461350
-	for <linux-tegra@archiver.kernel.org>; Tue, 15 Jun 2021 19:03:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7AF30613B9
+	for <linux-tegra@archiver.kernel.org>; Tue, 15 Jun 2021 19:32:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229957AbhFOTFO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 15 Jun 2021 15:05:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45886 "EHLO
+        id S230162AbhFOTev (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 15 Jun 2021 15:34:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52462 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229749AbhFOTFN (ORCPT
+        with ESMTP id S229749AbhFOTeu (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 15 Jun 2021 15:05:13 -0400
-Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 745B6C061574
-        for <linux-tegra@vger.kernel.org>; Tue, 15 Jun 2021 12:03:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-         s=20161220; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
-        MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=oU7nAl7/FGlILYkRQZaEEHERR9sEwQY1ljIo0epVCyA=; b=Y6QmSW9+sZXXbnZMcSGkDk90+g
-        Bi1OHhB4TVC0n9bSi62mMwNI6CxAz//ESdYN0iI+NrTAa4E2f2501EZ84cgWL+rARWogglhR2Mxau
-        h+S15pqpZDC017iVNmyAqAHPs639MvKATbsMIhU+04DQ3pEESbVm+v5y9IOgrU0+LXBTfTJNTHu9G
-        MRa8e1iYN/63N81PoBeYXqQ6NWQEb6irY6IVqveZRwLljOrsLsuPY+iVGxQRMnPk0Vcmd553TRSQV
-        CuuvVz4VooBoH/2nOf6j2/HRRzZoPYF86FIcPky47R6eLd8br71OUuWOyxlvk9hzGY930D+gve/M4
-        7gucWAwg==;
-Received: from dsl-hkibng22-54f986-236.dhcp.inet.fi ([84.249.134.236] helo=[192.168.1.10])
-        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <cyndis@kapsi.fi>)
-        id 1ltEL2-0004aP-Jk; Tue, 15 Jun 2021 22:03:04 +0300
-Subject: Re: [PATCH v7 13/15] drm/tegra: Implement job submission part of new
- UAPI
-To:     Jon Hunter <jonathanh@nvidia.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        thierry.reding@gmail.com, digetx@gmail.com, airlied@linux.ie,
-        daniel@ffwll.ch
-Cc:     dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
-References: <20210610110456.3692391-1-mperttunen@nvidia.com>
- <20210610110456.3692391-14-mperttunen@nvidia.com>
- <381d3d28-1daa-6b75-962c-53a1a3368beb@nvidia.com>
-From:   Mikko Perttunen <cyndis@kapsi.fi>
-Message-ID: <da5b2f6a-609d-0f9b-2112-4859c82b3677@kapsi.fi>
-Date:   Tue, 15 Jun 2021 22:03:04 +0300
+        Tue, 15 Jun 2021 15:34:50 -0400
+Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8B96C061574;
+        Tue, 15 Jun 2021 12:32:44 -0700 (PDT)
+Received: by mail-lj1-x235.google.com with SMTP id e25so317572ljj.1;
+        Tue, 15 Jun 2021 12:32:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=y2rh97z0OrWxmrWAU8iLjlptE0MOV3gC6vzq0bU4ZRk=;
+        b=doJldfegpVqpneDhRMP1dGIxBsmih9aqEjv135OyJk/NvFBAa1NALJCvR6oRva7hfc
+         yabNy/uCBED0XVaYV7OnPLIQQ1CZt8t4NJ3GEQliq9vD2Cgo5fgwpoRaPd27MLX91MKq
+         6Q9pkkAFM3GWYyv0G4dDT5dWEW/PyUF1ICayH4q7ONe7KFId09QTMiopaKDMj/3Td1m/
+         giSvEvUkSO/MnWSb8hXU6etDVTQ8EGJChF41xrI34CjXUncQLeezYw4CHrvsMZ9qnxeg
+         UOViU7cItk+USHLXLDRkEyE62M12LJNIoMn4y7QYZzCnkDE5cnx4v60+ELkOvk3mAugP
+         GIng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=y2rh97z0OrWxmrWAU8iLjlptE0MOV3gC6vzq0bU4ZRk=;
+        b=fDJGrJB22QFyH61ICXUhh0JmgNlbZq9+W/yTbUHxpYslWfsE/l6CWHP+pcJ9GNb1xt
+         DHsk52cpR53f9UWuB4vAEqH5tZOqvUv6LJlcvEBbdV9emhIM74b+TIxsadVdHK4Kerbw
+         G0VeW4q65pfpjmJhMr0Aa3EHbI0CRNklOjQM85CRvj3zX9+SGoUraAT1KueEmII4Q8Ub
+         OPBX7DGuVZsxV7b68/1W18bHUtQiIeFPnnotrj7zv6cfLCxL4mrcvlFKtUyiIQyn67f6
+         rm11hrFhVqmGdB92CU0CZ4vODqi65Iq7bPhcb9fOgEotAhChL8v38J09WtCRKyfz+TVi
+         nosw==
+X-Gm-Message-State: AOAM533AaaJ4q5criEZ4+gXCmloUwc2UyeNZW7QJn6V/dD62hwGFhsnw
+        SLnvnq0sIZ7n10rR9RmG2FJ/8DKSyfQ=
+X-Google-Smtp-Source: ABdhPJxrPmHx/YKZjKrwOuEf1wrXynTHWyf+2/2BwXJHUT6FQYQW++Fjsuwf3UHHEhA01eKBWcq4UA==
+X-Received: by 2002:a05:651c:201d:: with SMTP id s29mr1093872ljo.258.1623785563170;
+        Tue, 15 Jun 2021 12:32:43 -0700 (PDT)
+Received: from [192.168.2.145] (94-29-31-25.dynamic.spd-mgts.ru. [94.29.31.25])
+        by smtp.googlemail.com with ESMTPSA id w24sm1897424lfl.123.2021.06.15.12.32.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Jun 2021 12:32:42 -0700 (PDT)
+Subject: Re: [PATCH v3 4/7] thermal/drivers/tegra: Add driver for Tegra30
+ thermal sensor
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Thara Gopinath <thara.gopinath@linaro.org>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Amit Kucheria <amitk@kernel.org>,
+        Andreas Westman Dorcsak <hedmoo@yahoo.com>,
+        Maxim Schwalm <maxim.schwalm@gmail.com>,
+        Svyatoslav Ryhel <clamor95@gmail.com>,
+        Ihor Didenko <tailormoon@rambler.ru>,
+        Ion Agorria <ion@agorria.com>,
+        Matt Merhar <mattmerhar@protonmail.com>,
+        Peter Geis <pgwipeout@gmail.com>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-pm@vger.kernel.org
+References: <20210529170955.32574-1-digetx@gmail.com>
+ <20210529170955.32574-5-digetx@gmail.com>
+ <6f2b6290-095a-bd39-c160-1616a0ff89b1@linaro.org>
+ <20210615102626.dja3agclwzxv2sj4@vireshk-i7>
+ <595f5e53-b872-bcc6-e886-ed225e26e9fe@gmail.com>
+ <fbdc3b56-4465-6d3e-74db-1d5082813b9c@linaro.org>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <4c7b23c4-cf6a-0942-5250-63515be4a219@gmail.com>
+Date:   Tue, 15 Jun 2021 22:32:41 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.0
+ Thunderbird/78.8.1
 MIME-Version: 1.0
-In-Reply-To: <381d3d28-1daa-6b75-962c-53a1a3368beb@nvidia.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <fbdc3b56-4465-6d3e-74db-1d5082813b9c@linaro.org>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 84.249.134.236
-X-SA-Exim-Mail-From: cyndis@kapsi.fi
-X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-
-
-On 6/15/21 10:00 PM, Jon Hunter wrote:
-> 
-> On 10/06/2021 12:04, Mikko Perttunen wrote:
->> Implement the job submission IOCTL with a minimum feature set.
+15.06.2021 19:18, Daniel Lezcano пишет:
+> On 15/06/2021 15:01, Dmitry Osipenko wrote:
+>> 15.06.2021 13:26, Viresh Kumar пишет:
+>>> On 15-06-21, 12:03, Daniel Lezcano wrote:
+>>>>
+>>>> [Cc Viresh]
+>>>>
+>>>> On 29/05/2021 19:09, Dmitry Osipenko wrote:
+>>>>> All NVIDIA Tegra30 SoCs have a two-channel on-chip sensor unit which
+>>>>> monitors temperature and voltage of the SoC. Sensors control CPU frequency
+>>>>> throttling, which is activated by hardware once preprogrammed temperature
+>>>>> level is breached, they also send signal to Power Management controller to
+>>>>> perform emergency shutdown on a critical overheat of the SoC die. Add
+>>>>> driver for the Tegra30 TSENSOR module, exposing it as a thermal sensor
+>>>>> and a cooling device.
+>>>>
+>>>> IMO it does not make sense to expose the hardware throttling mechanism
+>>>> as a cooling device because it is not usable anywhere from the thermal
+>>>> framework.
+>>>>
+>>>> Moreover, that will collide with the thermal / cpufreq framework
+>>>> mitigation (hardware sets the frequency but the software thinks the freq
+>>>> is different), right ?
 >>
->> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
->> ---
->> v7:
->> * Allocate gather BO with DMA API to get page-aligned
->>    memory
->> * Add error prints to a few places where they were missing
->> v6:
->> * Remove sgt bypass path in gather_bo - this would cause
->>    cache maintenance to be skipped and is unnecessary in
->>    general.
->> * Changes related to moving to using syncpoint IDs
->> * Add syncobj related code
->> * Print warning on submit failure describing the issue
->> * Use ARCH_DMA_ADDR_T_64BIT to check if that is indeed
->>    the case
->> * Add support for relative syncpoint wait
->> * Use pm_runtime_resume_and_get
->> * Only try to resume engines that support runtime PM
->> * Removed uapi subdirectory
->> * Don't use "copy_err" variables for copy_from_user
->>    return value
->> * Fix setting of blocklinear flag
->> v5:
->> * Add 16K size limit to copies from userspace.
->> * Guard RELOC_BLOCKLINEAR flag handling to only exist in ARM64
->>    to prevent oversized shift on 32-bit platforms.
->> v4:
->> * Remove all features that are not strictly necessary.
->> * Split into two patches.
->> v3:
->> * Remove WRITE_RELOC. Relocations are now patched implicitly
->>    when patching is needed.
->> * Directly call PM runtime APIs on devices instead of using
->>    power_on/power_off callbacks.
->> * Remove incorrect mutex unlock in tegra_drm_ioctl_channel_open
->> * Use XA_FLAGS_ALLOC1 instead of XA_FLAGS_ALLOC
->> * Accommodate for removal of timeout field and inlining of
->>    syncpt_incrs array.
->> * Copy entire user arrays at a time instead of going through
->>    elements one-by-one.
->> * Implement waiting of DMA reservations.
->> * Split out gather_bo implementation into a separate file.
->> * Fix length parameter passed to sg_init_one in gather_bo
->> * Cosmetic cleanup.
->> ---
->>   drivers/gpu/drm/tegra/Makefile    |   2 +
->>   drivers/gpu/drm/tegra/drm.c       |   4 +-
->>   drivers/gpu/drm/tegra/gather_bo.c |  82 +++++
->>   drivers/gpu/drm/tegra/gather_bo.h |  24 ++
->>   drivers/gpu/drm/tegra/submit.c    | 549 ++++++++++++++++++++++++++++++
->>   drivers/gpu/drm/tegra/submit.h    |  17 +
->>   6 files changed, 677 insertions(+), 1 deletion(-)
->>   create mode 100644 drivers/gpu/drm/tegra/gather_bo.c
->>   create mode 100644 drivers/gpu/drm/tegra/gather_bo.h
->>   create mode 100644 drivers/gpu/drm/tegra/submit.c
->>   create mode 100644 drivers/gpu/drm/tegra/submit.h
+>> H/w mitigation is additional and should be transparent to the software
+>> mitigation. The software mitigation is much more flexible, but it has
+>> latency. Software also could crash and hang.
+>>
+>> Hardware mitigation doesn't have latency and it will continue to work
+>> regardless of the software state.
 > 
-> ...
+> Yes, I agree. Both solutions have their pros and cons. However, I don't
+> think they can co-exist sanely.
 > 
->> +int tegra_drm_ioctl_channel_submit(struct drm_device *drm, void *data,
->> +				   struct drm_file *file)
->> +{
->> +	struct tegra_drm_file *fpriv = file->driver_priv;
->> +	struct drm_tegra_channel_submit *args = data;
->> +	struct tegra_drm_submit_data *job_data;
->> +	struct drm_syncobj *syncobj = NULL;
->> +	struct tegra_drm_context *ctx;
->> +	struct host1x_job *job;
->> +	struct gather_bo *bo;
->> +	u32 i;
->> +	int err;
->> +
->> +	mutex_lock(&fpriv->lock);
->> +	ctx = xa_load(&fpriv->contexts, args->channel_ctx);
->> +	if (!ctx) {
->> +		mutex_unlock(&fpriv->lock);
->> +		pr_err_ratelimited("%s: %s: invalid channel_ctx '%d'", __func__,
->> +			current->comm, args->channel_ctx);
->> +		return -EINVAL;
->> +	}
->> +
->> +	if (args->syncobj_in) {
->> +		struct dma_fence *fence;
->> +
->> +		err = drm_syncobj_find_fence(file, args->syncobj_in, 0, 0, &fence);
->> +		if (err) {
->> +			SUBMIT_ERR(ctx, "invalid syncobj_in '%d'", args->syncobj_in);
->> +			goto unlock;
->> +		}
->> +
->> +		err = dma_fence_wait_timeout(fence, true, msecs_to_jiffies(10000));
->> +		dma_fence_put(fence);
->> +		if (err) {
->> +			SUBMIT_ERR(ctx, "wait for syncobj_in timed out");
->> +			goto unlock;
->> +		}
->> +	}
->> +
->> +	if (args->syncobj_out) {
->> +		syncobj = drm_syncobj_find(file, args->syncobj_out);
->> +		if (!syncobj) {
->> +			SUBMIT_ERR(ctx, "invalid syncobj_out '%d'", args->syncobj_out);
->> +			err = -ENOENT;
->> +			goto unlock;
->> +		}
->> +	}
->> +
->> +	/* Allocate gather BO and copy gather words in. */
->> +	err = submit_copy_gather_data(&bo, drm->dev, ctx, args);
->> +	if (err)
->> +		goto unlock;
->> +
->> +	job_data = kzalloc(sizeof(*job_data), GFP_KERNEL);
->> +	if (!job_data) {
->> +		SUBMIT_ERR(ctx, "failed to allocate memory for job data");
->> +		err = -ENOMEM;
->> +		goto put_bo;
->> +	}
->> +
->> +	/* Get data buffer mappings and do relocation patching. */
->> +	err = submit_process_bufs(ctx, bo, args, job_data);
->> +	if (err)
->> +		goto free_job_data;
->> +
->> +	/* Allocate host1x_job and add gathers and waits to it. */
->> +	err = submit_create_job(&job, ctx, bo, args, job_data,
->> +				&fpriv->syncpoints);
->> +	if (err)
->> +		goto free_job_data;
->> +
->> +	/* Map gather data for Host1x. */
->> +	err = host1x_job_pin(job, ctx->client->base.dev);
->> +	if (err) {
->> +		SUBMIT_ERR(ctx, "failed to pin job: %d", err);
->> +		goto put_job;
->> +	}
->> +
->> +	/* Boot engine. */
->> +	if (pm_runtime_enabled(ctx->client->base.dev)) {
->> +		err = pm_runtime_resume_and_get(ctx->client->base.dev);
->> +		if (err < 0) {
->> +			SUBMIT_ERR(ctx, "could not power up engine: %d", err);
->> +			goto unpin_job;
->> +		}
->> +	}
->> +
->> +	job->user_data = job_data;
->> +	job->release = release_job;
->> +	job->timeout = 10000;
->> +
->> +	/*
->> +	 * job_data is now part of job reference counting, so don't release
->> +	 * it from here.
->> +	 */
->> +	job_data = NULL;
->> +
->> +	/* Submit job to hardware. */
->> +	err = host1x_job_submit(job);
->> +	if (err) {
->> +		SUBMIT_ERR(ctx, "host1x job submission failed: %d", err);
->> +		goto unpin_job;
->> +	}
+>> The CCF driver is aware about the h/w cooling status [1], hence software
+>> sees the actual frequency.
+>>
+>> [1]
+>> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit?id=344d5df34f5abd468267daa98f041abf90b2f660
 > 
+> Ah interesting, thanks for the pointer.
 > 
-> If we fail here, it appears that we may leave rpm enabled. Should we be
-> calling pm_runtime_put() for any failures from here on?
+> What I'm worried about is the consistency with cpufreq.
+> 
+> Probably cpufreq_update_limits() should be called from the interrupt
+> handler.
 
-host1x_job_put will call the release callback, which will do the PM 
-runtime put. So this should be taken care of.
+IIUC, the cpufreq already should be prepared for the case where firmware
+may override frequency. Viresh, could you please clarify what are the
+possible implications of the frequency overriding?
 
-thanks,
-Mikko
+>>> I am not even sure what the cooling device is doing here:
+>>>
+>>> tegra_tsensor_set_cur_state() is not implemented and it says hardware
+>>> changed it by itself. What is the benefit you are getting out of the
+>>> cooling device here ?
+>>
+>> It allows userspace to check whether hardware cooling is active via the
+>> cooling_device sysfs. Otherwise we don't have ability to check whether
+>> h/w cooling is active, I think it's a useful information. It's also
+>> interesting to see the cooling_device stats, showing how many times h/w
+>> mitigation was active.
+> 
+> Actually the stats are for software mitigation. For the driver, create a
+> debugfs entry like what do the other drivers or a module parameter with
+> the stats.
 
+Okay
+
+>>>> The hardware limiter should let know the cpufreq framework about the
+>>>> frequency change.
+>>>>
+>>>> 	https://lkml.org/lkml/2021/6/8/1792
+>>>>
+>>>> May be post the sensor without the hw limiter for now and address that
+>>>> in a separate series ?
+>>>
+>>
+>> I wasn't aware about existence of the thermal pressure, thank you for
+>> pointing at it. At a quick glance it should be possible to benefit from
+>> the information about the additional pressure.
+>>
+>> Seems the current thermal pressure API assumes that there is only one
+>> user of the API. So it's impossible to aggregate the pressure from
+>> different sources, like software cpufreq pressure + h/w freq pressure.
+>> Correct? If yes, then please let me know yours thoughts about the best
+>> approach of supporting the aggregation.
 > 
-> Cheers
-> Jon
+> That is a good question. IMO, first step would be to call
+> cpufreq_update_limits().
+
+Right
+
+> [ Cc Thara who implemented the thermal pressure ]
 > 
+> May be Thara has an idea about how to aggregate both? There is another
+> series floating around with hardware limiter [1] and the same problematic.
+> 
+>  [1] https://lkml.org/lkml/2021/6/8/1791
+
+Thanks, it indeed looks similar.
+
+I guess the common thermal pressure update code could be moved out into
+a new special cpufreq thermal QoS handler (policy->thermal_constraints),
+where handler will select the frequency constraint and set up the
+pressure accordingly. So there won't be any races in the code.
