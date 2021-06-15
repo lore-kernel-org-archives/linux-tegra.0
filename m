@@ -2,104 +2,197 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8247DC48BE5
-	for <linux-tegra@archiver.kernel.org>; Tue, 15 Jun 2021 15:31:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16296C48BE8
+	for <linux-tegra@archiver.kernel.org>; Tue, 15 Jun 2021 16:18:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6FDB561463
-	for <linux-tegra@archiver.kernel.org>; Tue, 15 Jun 2021 15:31:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E728761076
+	for <linux-tegra@archiver.kernel.org>; Tue, 15 Jun 2021 16:18:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231274AbhFOPdx (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 15 Jun 2021 11:33:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54412 "EHLO
+        id S229659AbhFOQUa (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 15 Jun 2021 12:20:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36764 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230267AbhFOPdw (ORCPT
+        with ESMTP id S229557AbhFOQU3 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 15 Jun 2021 11:33:52 -0400
-Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17E1CC061574
-        for <linux-tegra@vger.kernel.org>; Tue, 15 Jun 2021 08:31:47 -0700 (PDT)
-Received: by mail-lj1-x22b.google.com with SMTP id d2so25559781ljj.11
-        for <linux-tegra@vger.kernel.org>; Tue, 15 Jun 2021 08:31:47 -0700 (PDT)
+        Tue, 15 Jun 2021 12:20:29 -0400
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B6CEC06175F
+        for <linux-tegra@vger.kernel.org>; Tue, 15 Jun 2021 09:18:25 -0700 (PDT)
+Received: by mail-wr1-x429.google.com with SMTP id r9so18996248wrz.10
+        for <linux-tegra@vger.kernel.org>; Tue, 15 Jun 2021 09:18:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lixom-net.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=duvyCvHmd+BTAVZBBLmhVNs0XfE4IjvR7HWUZ6wXD0Q=;
-        b=kh5XeM4AlBuNpa8W+eTVOW3BNR+k/sn7xKiTD4y/Kft1yOc0RifDnYBT0UJ/rjsWlG
-         rd3Teimmx6QIbNXH88db+ajpGAS8kqBWlNj0kigY1BxlulthHK36+Xet+xYXkGlawdE0
-         hyxMSVXgsccotkq3MObcFrECoX8x+N3MWf4oThC1fkCACWCasFGvy5TcYxotpPxiWCcy
-         NLBiPUcV2IHBdX9/sC8mpwoFUIfTa56D41mlr2VbBG/9gOcGlI/EC0tkcUVIHKA4prXT
-         KcLdS8jVEuwKFKazp853TsjOM7x7mUjIzMEKS+qpgDAfo5bxVKtEMuoU0C8faNV67jRl
-         18Vg==
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=1ZQF286KDf3vsAW/1vOHKbnKaEK4bPamrOWEdser+to=;
+        b=R8NtmSj/KkG3mZwDtMueKosy4Ydw4GrSJwNmFCP/2GAiGlPKGRrYuCH4M9tj1lzpdZ
+         TOQzAmKvUS8t+X/VHs3BmDJH2G11gZymuYsJjEzOuae3PctlCZBbm7TXTiH4qCAeA8XM
+         zbObW0fr3fxlVZDjAwR4LRTLCj9/G4Hd4L/cm4/59omnvLGiL4ScAwHoupztlmqyhwz8
+         iU8eLBA0ppEdUc9vlzOpFeefz+fLv9yeZQSajgNS89mmGX/EmOteYaGcFLuDSkj382Fv
+         Q2eaNToG4DnSQXV49vCehLHK3qjJ8EpC8gu3diPhxsFpv6ZpTCN3/txAmxqE2wRyNJvO
+         Vi7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=duvyCvHmd+BTAVZBBLmhVNs0XfE4IjvR7HWUZ6wXD0Q=;
-        b=Jb2ixc8N2tIUvNxtlF6rG6m1jeOPnTQtBdVuwck83OS2eUm2JrowAt/8J/EqSgG/lM
-         bQU5uM4+5nrwibSgCL+PjoescCl8qhDKV6yfgRD0bsaXfVOOnL8vL87lqqLOJxVCDJlT
-         upEAzWX5ZwLCrB2CqMUZP4EsR2XCSfp1P4iXNpyk8ZgiUB/BonBtbb7KeiNwYr+557ve
-         xZVoR12jtyxI5nTPy0kjPPsLjIkQygxsh4z/bjmsUxB92pXctqH2DSz6WfCqXNk8gQFT
-         jzaeJX5+bKQizwK8q4b9gIdwN3izsMQOgaJcGVmaEt4xbMK7hc/P9HndSdQV3mJ94epi
-         JAkw==
-X-Gm-Message-State: AOAM530a+HRRBTih2yB7FNmUvjhPRbMp7Qolb/2tWbt7ulXiGZT1481/
-        p3eUHkvyrqiH9WDtoJfgAZS9qQ==
-X-Google-Smtp-Source: ABdhPJzggL7iEcu3ExvaAAL+Yv90Z0v1MCfcoLGjXHfnT4RC/2FQaj7hd5Gg2CkF5s7iu8rnmpi0jQ==
-X-Received: by 2002:a2e:b528:: with SMTP id z8mr167525ljm.350.1623771105401;
-        Tue, 15 Jun 2021 08:31:45 -0700 (PDT)
-Received: from localhost (h85-30-9-151.cust.a3fiber.se. [85.30.9.151])
-        by smtp.gmail.com with ESMTPSA id r25sm1152693lfg.246.2021.06.15.08.31.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Jun 2021 08:31:44 -0700 (PDT)
-Date:   Tue, 15 Jun 2021 08:24:05 -0700
-From:   Olof Johansson <olof@lixom.net>
-To:     Thierry Reding <thierry.reding@gmail.com>
-List-Id: <soc.lore.kernel.org>
-Cc:     arm@kernel.org, soc@kernel.org, Jon Hunter <jonathanh@nvidia.com>,
-        linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [GIT PULL] arm64: tegra: Device tree fixes for v5.13-rc6
-Message-ID: <20210615152405.GC11724@lx2k>
-References: <20210608121457.3202430-1-thierry.reding@gmail.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=1ZQF286KDf3vsAW/1vOHKbnKaEK4bPamrOWEdser+to=;
+        b=kncJjxS5lyWrnWVbJU4Xn4mxs+i4MRF1Cqw4i3vF9aM6rDyChBd8FJiMNtklZSd6e7
+         omOnN71RetwBpbLTZy45fi7oKekIQZ+/XrQdqbAABJdzo2kXs/hz5Ujvg16Vs7+AMgOO
+         5vbjL+ylQyUvkBRI0eZpdBd26eLuetrecfJtpvL+9591bJhM6TLD3oQ9Sr5JCRS60zmB
+         nEdRmsfS5W7K59UjBt35motMxh2UgC3PnXnbsL9fnDOyHv0tBWNS8zY6qsJcxgvPZDdB
+         x7tgvmJ+yvFwFkbmh7E7aL0WcNwwL7ZLRxKGm9tfeJoggCEI6gRnk4tnhT6hQJqhX/yZ
+         36WQ==
+X-Gm-Message-State: AOAM530kWQtXbnWeFVzU9t62TpkoImQZYPhunNHbUB0yLrl1Jg8+brCx
+        L9Rs02F25YFN3NTzBGQLOw9waw==
+X-Google-Smtp-Source: ABdhPJyDj5Em8ISoY6sbUQhzWQmsq+vp6ZTuVD0IHEcxEiux87fcQosE1ZHaKf/7wRcEOUNSE00SIg==
+X-Received: by 2002:adf:c393:: with SMTP id p19mr26505314wrf.92.1623773903610;
+        Tue, 15 Jun 2021 09:18:23 -0700 (PDT)
+Received: from ?IPv6:2a01:e34:ed2f:f020:613a:6939:5f7f:dceb? ([2a01:e34:ed2f:f020:613a:6939:5f7f:dceb])
+        by smtp.googlemail.com with ESMTPSA id n6sm2473026wme.21.2021.06.15.09.18.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Jun 2021 09:18:23 -0700 (PDT)
+Subject: Re: [PATCH v3 4/7] thermal/drivers/tegra: Add driver for Tegra30
+ thermal sensor
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Thara Gopinath <thara.gopinath@linaro.org>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Amit Kucheria <amitk@kernel.org>,
+        Andreas Westman Dorcsak <hedmoo@yahoo.com>,
+        Maxim Schwalm <maxim.schwalm@gmail.com>,
+        Svyatoslav Ryhel <clamor95@gmail.com>,
+        Ihor Didenko <tailormoon@rambler.ru>,
+        Ion Agorria <ion@agorria.com>,
+        Matt Merhar <mattmerhar@protonmail.com>,
+        Peter Geis <pgwipeout@gmail.com>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-pm@vger.kernel.org
+References: <20210529170955.32574-1-digetx@gmail.com>
+ <20210529170955.32574-5-digetx@gmail.com>
+ <6f2b6290-095a-bd39-c160-1616a0ff89b1@linaro.org>
+ <20210615102626.dja3agclwzxv2sj4@vireshk-i7>
+ <595f5e53-b872-bcc6-e886-ed225e26e9fe@gmail.com>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <fbdc3b56-4465-6d3e-74db-1d5082813b9c@linaro.org>
+Date:   Tue, 15 Jun 2021 18:18:21 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210608121457.3202430-1-thierry.reding@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <595f5e53-b872-bcc6-e886-ed225e26e9fe@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi,
+On 15/06/2021 15:01, Dmitry Osipenko wrote:
+> 15.06.2021 13:26, Viresh Kumar пишет:
+>> On 15-06-21, 12:03, Daniel Lezcano wrote:
+>>>
+>>> [Cc Viresh]
+>>>
+>>> On 29/05/2021 19:09, Dmitry Osipenko wrote:
+>>>> All NVIDIA Tegra30 SoCs have a two-channel on-chip sensor unit which
+>>>> monitors temperature and voltage of the SoC. Sensors control CPU frequency
+>>>> throttling, which is activated by hardware once preprogrammed temperature
+>>>> level is breached, they also send signal to Power Management controller to
+>>>> perform emergency shutdown on a critical overheat of the SoC die. Add
+>>>> driver for the Tegra30 TSENSOR module, exposing it as a thermal sensor
+>>>> and a cooling device.
+>>>
+>>> IMO it does not make sense to expose the hardware throttling mechanism
+>>> as a cooling device because it is not usable anywhere from the thermal
+>>> framework.
+>>>
+>>> Moreover, that will collide with the thermal / cpufreq framework
+>>> mitigation (hardware sets the frequency but the software thinks the freq
+>>> is different), right ?
+> 
+> H/w mitigation is additional and should be transparent to the software
+> mitigation. The software mitigation is much more flexible, but it has
+> latency. Software also could crash and hang.
+> 
+> Hardware mitigation doesn't have latency and it will continue to work
+> regardless of the software state.
+
+Yes, I agree. Both solutions have their pros and cons. However, I don't
+think they can co-exist sanely.
+
+> The CCF driver is aware about the h/w cooling status [1], hence software
+> sees the actual frequency.
+>
+> [1]
+> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit?id=344d5df34f5abd468267daa98f041abf90b2f660
+
+Ah interesting, thanks for the pointer.
+
+What I'm worried about is the consistency with cpufreq.
+
+Probably cpufreq_update_limits() should be called from the interrupt
+handler.
+
+>> I am not even sure what the cooling device is doing here:
+>>
+>> tegra_tsensor_set_cur_state() is not implemented and it says hardware
+>> changed it by itself. What is the benefit you are getting out of the
+>> cooling device here ?
+> 
+> It allows userspace to check whether hardware cooling is active via the
+> cooling_device sysfs. Otherwise we don't have ability to check whether
+> h/w cooling is active, I think it's a useful information. It's also
+> interesting to see the cooling_device stats, showing how many times h/w
+> mitigation was active.
+
+Actually the stats are for software mitigation. For the driver, create a
+debugfs entry like what do the other drivers or a module parameter with
+the stats.
+
+>>> The hardware limiter should let know the cpufreq framework about the
+>>> frequency change.
+>>>
+>>> 	https://lkml.org/lkml/2021/6/8/1792
+>>>
+>>> May be post the sensor without the hw limiter for now and address that
+>>> in a separate series ?
+>>
+> 
+> I wasn't aware about existence of the thermal pressure, thank you for
+> pointing at it. At a quick glance it should be possible to benefit from
+> the information about the additional pressure.
+> 
+> Seems the current thermal pressure API assumes that there is only one
+> user of the API. So it's impossible to aggregate the pressure from
+> different sources, like software cpufreq pressure + h/w freq pressure.
+> Correct? If yes, then please let me know yours thoughts about the best
+> approach of supporting the aggregation.
+
+That is a good question. IMO, first step would be to call
+cpufreq_update_limits().
+
+[ Cc Thara who implemented the thermal pressure ]
+
+May be Thara has an idea about how to aggregate both? There is another
+series floating around with hardware limiter [1] and the same problematic.
+
+ [1] https://lkml.org/lkml/2021/6/8/1791
+
+> I'll factor out the h/w limiter from this patchset and prepare the v4.
+> Thank you all for taking a look at the patches.
 
 
-On Tue, Jun 08, 2021 at 02:14:57PM +0200, Thierry Reding wrote:
-> Hi ARM SoC maintainers,
-> 
->   Linux 5.13-rc1 (2021-05-09 14:17:44 -0700)
-> 
-> are available in the Git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.13-arm64-dt-fixes
-> 
-> for you to fetch changes up to 9e79e58f330ea4860f2ced65a8a35dfb05fc03c1:
-> 
->   arm64: tegra: Add PMU node for Tegra194 (2021-05-28 17:45:38 +0200)
-> 
-> Thanks,
-> Thierry
-> 
-> ----------------------------------------------------------------
-> arm64: tegra: Fixes for v5.13-rc6
-> 
-> This contains a single fix to eliminate an error message during boot
-> caused by the lack of a PMU device tree node on Tegra194.
 
-This doesn't seem to be a regression, so I'll queue it up for next release.
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
-
--Olof
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
