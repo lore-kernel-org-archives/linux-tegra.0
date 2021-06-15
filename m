@@ -2,90 +2,85 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C6C3C48BDF
-	for <linux-tegra@archiver.kernel.org>; Tue, 15 Jun 2021 13:01:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B06CBC48BDF
+	for <linux-tegra@archiver.kernel.org>; Tue, 15 Jun 2021 13:05:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 63BE061474
-	for <linux-tegra@archiver.kernel.org>; Tue, 15 Jun 2021 13:01:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9297261468
+	for <linux-tegra@archiver.kernel.org>; Tue, 15 Jun 2021 13:05:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230089AbhFOND6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 15 Jun 2021 09:03:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47910 "EHLO
+        id S229989AbhFONH3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 15 Jun 2021 09:07:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48730 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229951AbhFOND6 (ORCPT
+        with ESMTP id S229977AbhFONH3 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 15 Jun 2021 09:03:58 -0400
-Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03CA3C061574;
-        Tue, 15 Jun 2021 06:01:53 -0700 (PDT)
-Received: by mail-lj1-x234.google.com with SMTP id x14so24868134ljp.7;
-        Tue, 15 Jun 2021 06:01:52 -0700 (PDT)
+        Tue, 15 Jun 2021 09:07:29 -0400
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78F09C061574
+        for <linux-tegra@vger.kernel.org>; Tue, 15 Jun 2021 06:05:24 -0700 (PDT)
+Received: by mail-wr1-x435.google.com with SMTP id c9so18253833wrt.5
+        for <linux-tegra@vger.kernel.org>; Tue, 15 Jun 2021 06:05:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=linaro.org; s=google;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Je6LUvQqM2+h4QweMn2XdMxL5oyPLqNPW0OGfuboKsg=;
-        b=IKTYPkLFGzVGeNItbfYkCLFxvZ42/oPY+6KyaJ9jPOnz9I9SusyGkOPU8iSMWwfOTO
-         T9cjw2fMCEg5SJjqdOAsHZ+OVv4xz0eSDgtg53iy2561cW1f3MDrlziMv3vSUl/BUzH5
-         Rb2s+ruRRaTXFnVAt2Vc7EhpdKA3KVo/GXcGbEC7cC2dq0OvvDyvLb5hwZsPLuGAgb0y
-         zaDpiZ6j4mhtrX0Kgu4BC2V5TkFde72QRCClAmaQaLJ5jnlDtgZBvmeU37WIIhEchG+F
-         5ykBNcx+K3DpvjSbpX11mo4lM7ISZEdpO4XqkLak3XGhATSbTHlwKCeW1FDAJOdpBQTP
-         UTjg==
+        bh=N/4p05McK2faiVXwCk4BFsV+8YmMH/7iKQXdzhdqhek=;
+        b=rDAIoqWfSw65j3/N6CwfdhwRjuBCt8ablOBGx5/JQgSOx6doHcIdhLL06iMwLeyjIz
+         8NMq90YBAr/5zaULjf31VSICil7K3OTIpDza/pkGD4UaQg3AtYkbCfsbhmd6aJn9h82N
+         g8apN9SiPWXQrP/+h2RA06bFFPtfwEa/2Pbk3sYOEOp2IaMl0+wM010Sgwss1uTSJUau
+         eaUCu9zua7iWSzKUUFp6iCOeBNmrwAL9rq8PO15dXAb0uHnXwU5ZeMGNM9SbBd3WuBmi
+         EYtUXhXL4JciRpVaKOdtspbu0xUxXXV5MQdHRMkxoNZP2HgaoG3JzdLD0wwjnPnTGLtm
+         0ogQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=Je6LUvQqM2+h4QweMn2XdMxL5oyPLqNPW0OGfuboKsg=;
-        b=L6O/1/BgE/ACA06gt1+E1Q94GOPitzTyEUHsOpnpgr6kiKZOP4ujz3s2dSplfPEwWq
-         tKn4qszQqtdU8p8iiMO8FjGfjkioGhiO7zVDUZow7C0DwiST5JU2BYZ0qxlQ1hzqoyWs
-         /GxT50NKnBoalpXtJ/RLgBNp0d/mm/K1T85rRMU1S8g4JxLTn2+tDhkaVV4Cpb+/PCRp
-         Mmxbr4ft+0wh4+i+mDVgtDp6gQuFfC4uxdAPvO+PboY+TBpz0SVAaFOskvTGgSsKOyXZ
-         ruoEt1LmJQsLfC5sUTZ2j7M446c+hF9fP5NrabqGyPapVbEzqqyajJ3bJ05kE9wwgi+I
-         4R6w==
-X-Gm-Message-State: AOAM5307VZ+Yv+UHb0CyBY2eSAyrhTkj3/lw8sYVdEqCN/0zARPwAHuA
-        ytMJ+MZ01xWvsdQICMhgiNz7TzU/dLE=
-X-Google-Smtp-Source: ABdhPJz05wB+Fj7uIytS6fn9Cd8advl4tRlk0ng7E+slzGo6f5CcKz7Pi96pGAqV9Go+EKbXW8fiNw==
-X-Received: by 2002:a05:651c:391:: with SMTP id e17mr17777217ljp.257.1623762109700;
-        Tue, 15 Jun 2021 06:01:49 -0700 (PDT)
-Received: from [192.168.2.145] (94-29-31-25.dynamic.spd-mgts.ru. [94.29.31.25])
-        by smtp.googlemail.com with ESMTPSA id v1sm1799731lfq.284.2021.06.15.06.01.48
+        bh=N/4p05McK2faiVXwCk4BFsV+8YmMH/7iKQXdzhdqhek=;
+        b=U9DnhLcETx4MJ5RYzY+vNSEmd9UNI9uvPhhmLIUzTGdLFcy6XBAxUHNf6Z6FqLRAji
+         2Dow0onX9zKGHH5m1CkbDkyOir9iPJoAhO1/vRFbkhGzTTSsxEUZm5Hx0o+FdAC2A6GD
+         17TINFtBukcQRmnJhBn+1AajkIMYief9tVhU0TYkhyXkRV2Vfrn0dB4mPVvNjHXFbIxE
+         X76dXGNZMEwnF+JvIkWJtbySVA0SAyn0+pkSjbkynkm8WoriwYr4MygvwMkPR/Udadl/
+         PyJJ5meFAc0yTw9GkHNx5NYSUOdpIsJcGglva1Y3kobmIZIZbXA9OETP4dikoN1IExg/
+         BIpw==
+X-Gm-Message-State: AOAM532GcuhDXgnjkCJz5QOJkSDCCa9MtdgkDW9xGu1Sanz/ym9s53hn
+        EEVfVPFGl8Re2dPu2ULSNauU3A==
+X-Google-Smtp-Source: ABdhPJy/KBp9eREgdz30fSRAhTAtvzNFrgFTO9OzbgvuLnw8zjLz3DJoVty/4+5esfDgoX8vcg5nig==
+X-Received: by 2002:a5d:4401:: with SMTP id z1mr25444259wrq.149.1623762322905;
+        Tue, 15 Jun 2021 06:05:22 -0700 (PDT)
+Received: from ?IPv6:2a01:e34:ed2f:f020:613a:6939:5f7f:dceb? ([2a01:e34:ed2f:f020:613a:6939:5f7f:dceb])
+        by smtp.googlemail.com with ESMTPSA id 6sm15715941wmg.17.2021.06.15.06.05.21
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Jun 2021 06:01:49 -0700 (PDT)
-Subject: Re: [PATCH v3 4/7] thermal/drivers/tegra: Add driver for Tegra30
- thermal sensor
-To:     Viresh Kumar <viresh.kumar@linaro.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>
+        Tue, 15 Jun 2021 06:05:22 -0700 (PDT)
+Subject: Re: [PATCH v1 03/10] ARM: tegra: acer-a500: Bump thermal trips by 10C
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
 Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Amit Kucheria <amitk@kernel.org>,
-        Andreas Westman Dorcsak <hedmoo@yahoo.com>,
-        Maxim Schwalm <maxim.schwalm@gmail.com>,
+        Agneli <poczt@protonmail.ch>, Paul Fertser <fercerpav@gmail.com>,
         Svyatoslav Ryhel <clamor95@gmail.com>,
-        Ihor Didenko <tailormoon@rambler.ru>,
-        Ion Agorria <ion@agorria.com>,
-        Matt Merhar <mattmerhar@protonmail.com>,
-        Peter Geis <pgwipeout@gmail.com>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-pm@vger.kernel.org
-References: <20210529170955.32574-1-digetx@gmail.com>
- <20210529170955.32574-5-digetx@gmail.com>
- <6f2b6290-095a-bd39-c160-1616a0ff89b1@linaro.org>
- <20210615102626.dja3agclwzxv2sj4@vireshk-i7>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <595f5e53-b872-bcc6-e886-ed225e26e9fe@gmail.com>
-Date:   Tue, 15 Jun 2021 16:01:48 +0300
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20210510202600.12156-1-digetx@gmail.com>
+ <20210510202600.12156-4-digetx@gmail.com>
+ <20210514211601.GA1969@qmqm.qmqm.pl>
+ <ecc89faf-97f5-65e9-0eb8-93c8414c69e5@linaro.org>
+ <eedb5792-d3a5-78b3-ec89-b26d2e45f9c4@gmail.com>
+ <c65a732d-b203-a1a0-e90b-0aa0664cfb55@linaro.org>
+ <e73b64b2-77a8-3671-1fc6-0bf77e2287c4@gmail.com>
+ <1abadc69-1dd1-5939-c089-37a84be4781b@linaro.org>
+ <60a280c3-e67f-ff3a-9f0e-7d12fc125c5b@gmail.com>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <8091014b-fe1b-9c4c-7a91-6aae5b4037e5@linaro.org>
+Date:   Tue, 15 Jun 2021 15:05:21 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.8.1
 MIME-Version: 1.0
-In-Reply-To: <20210615102626.dja3agclwzxv2sj4@vireshk-i7>
+In-Reply-To: <60a280c3-e67f-ff3a-9f0e-7d12fc125c5b@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -93,71 +88,56 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-15.06.2021 13:26, Viresh Kumar пишет:
-> On 15-06-21, 12:03, Daniel Lezcano wrote:
+On 15/06/2021 14:53, Dmitry Osipenko wrote:
+> 13.06.2021 21:19, Daniel Lezcano пишет:
+>> On 13/06/2021 02:25, Dmitry Osipenko wrote:
 >>
->> [Cc Viresh]
+>> [ ... ]
 >>
->> On 29/05/2021 19:09, Dmitry Osipenko wrote:
->>> All NVIDIA Tegra30 SoCs have a two-channel on-chip sensor unit which
->>> monitors temperature and voltage of the SoC. Sensors control CPU frequency
->>> throttling, which is activated by hardware once preprogrammed temperature
->>> level is breached, they also send signal to Power Management controller to
->>> perform emergency shutdown on a critical overheat of the SoC die. Add
->>> driver for the Tegra30 TSENSOR module, exposing it as a thermal sensor
->>> and a cooling device.
+>>>> You should set the trip points close to the functioning boundary
+>>>> temperature given in the hardware specification whatever the resulting
+>>>> heating effect is on the device.
+>>>>
+>>>> The thermal zone is there to protect the silicon and the system from a
+>>>> wild reboot.
+>>>>
+>>>> If the Nexus 7 is too hot after the changes, then you may act on the
+>>>> sources of the heat. For instance, set the the highest OPP to turbo or
+>>>> remove it, or, if there is one, change the thermal daemon to reduce the
+>>>> overall power consumption.
+>>>> In case you are interested in: https://lwn.net/Articles/839318/
+>>>
+>>> The DTPM is a very interesting approach. For now Tegra still misses some
+>>> basics in mainline kernel which have a higher priority, so I think it
+>>> should be good enough to perform the in-kernel thermal management for
+>>> the starter. We may consider a more complex solutions later on if will
+>>> be necessary.
+>>>
+>>> What I'm currently thinking to do is:
+>>>
+>>> 1. Set up the trips of SoC/CPU core thermal zones in accordance to the
+>>> silicon limits.
+>>>
+>>> 2. Set up the skin trips in accordance to the device limits.
+>>>
+>>> The breached skin trips will cause a mild throttling, while the SoC/CPU
+>>> trips will be allowed to cause the severe throttling. Does this sound
+>>> good to you?
 >>
->> IMO it does not make sense to expose the hardware throttling mechanism
->> as a cooling device because it is not usable anywhere from the thermal
->> framework.
->>
->> Moreover, that will collide with the thermal / cpufreq framework
->> mitigation (hardware sets the frequency but the software thinks the freq
->> is different), right ?
-
-H/w mitigation is additional and should be transparent to the software
-mitigation. The software mitigation is much more flexible, but it has
-latency. Software also could crash and hang.
-
-Hardware mitigation doesn't have latency and it will continue to work
-regardless of the software state.
-
-The CCF driver is aware about the h/w cooling status [1], hence software
-sees the actual frequency.
-
-[1]
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit?id=344d5df34f5abd468267daa98f041abf90b2f660
-
-> I am not even sure what the cooling device is doing here:
+>> The skin temperature must be managed from userspace. The kernel is
+>> unable to do a smart thermal management given different thermal zones
+>> but if the goal is to go forward and prevent the tablet to be hot
+>> temporarily until the other hardware support is there, I think it is
+>> acceptable.
 > 
-> tegra_tsensor_set_cur_state() is not implemented and it says hardware
-> changed it by itself. What is the benefit you are getting out of the
-> cooling device here ?
+> The current goal is to get maximum from what we already have, thank you.
 
-It allows userspace to check whether hardware cooling is active via the
-cooling_device sysfs. Otherwise we don't have ability to check whether
-h/w cooling is active, I think it's a useful information. It's also
-interesting to see the cooling_device stats, showing how many times h/w
-mitigation was active.
+maximum of performance or maximum of mitigation ?
 
->> The hardware limiter should let know the cpufreq framework about the
->> frequency change.
->>
->> 	https://lkml.org/lkml/2021/6/8/1792
->>
->> May be post the sensor without the hw limiter for now and address that
->> in a separate series ?
-> 
 
-I wasn't aware about existence of the thermal pressure, thank you for
-pointing at it. At a quick glance it should be possible to benefit from
-the information about the additional pressure.
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
-Seems the current thermal pressure API assumes that there is only one
-user of the API. So it's impossible to aggregate the pressure from
-different sources, like software cpufreq pressure + h/w freq pressure.
-Correct? If yes, then please let me know yours thoughts about the best
-approach of supporting the aggregation.
-
-I'll factor out the h/w limiter from this patchset and prepare the v4.
-Thank you all for taking a look at the patches.
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
