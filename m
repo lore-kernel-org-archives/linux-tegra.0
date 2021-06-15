@@ -2,84 +2,117 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEFC3C48BDF
-	for <linux-tegra@archiver.kernel.org>; Tue, 15 Jun 2021 19:50:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7F65C48BDF
+	for <linux-tegra@archiver.kernel.org>; Tue, 15 Jun 2021 20:32:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C0E42613B9
-	for <linux-tegra@archiver.kernel.org>; Tue, 15 Jun 2021 19:50:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F2476109E
+	for <linux-tegra@archiver.kernel.org>; Tue, 15 Jun 2021 20:32:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229898AbhFOTwk (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 15 Jun 2021 15:52:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34304 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229749AbhFOTwk (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 15 Jun 2021 15:52:40 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 14BCA6128B;
-        Tue, 15 Jun 2021 19:50:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1623786635;
-        bh=mArWVnYnQ6vLGF4/jXFA3EDckajI1UgQo8mIcx1O5ZU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=gp3kyyAH1Qs4tAACkkmh3LljxheC2CwXfAuW0NZ/NBAuKRtYK/syOIDj8HmnK5p6C
-         X2hfYs6dZfSdrf5i7wlq802Ifw0a4uzQHZLseBvuieQYZFobKapi7DLmWwvcWDTGKK
-         nfQ3WfSPwSrMDWSbu0D2x1DwII7R3AcopYWv/YsiCAbBUywpobjFBPEOO2FhbugX3f
-         ucX/+IvX6ihNhNVlc1gt+4LoRhtSiWaRoQul2MAaoHM2pzOVTefqgwbCYkkhoxzAg+
-         dnB2VFqFHMKzu8LuG0jcEjWGXOvsxLRUiik2/2RSuZEtJWN5vVElmAH9cp/0gnDF5i
-         p9tONIgr6dJ8g==
-Date:   Tue, 15 Jun 2021 20:50:30 +0100
-From:   Will Deacon <will@kernel.org>
-To:     Krishna Reddy <vdumpa@nvidia.com>
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Nicolin Chen <nicolinc@nvidia.com>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v3 3/9] iommu/arm-smmu: Implement ->probe_finalize()
-Message-ID: <20210615195030.GA21783@willie-the-truck>
-References: <20210603164632.1000458-1-thierry.reding@gmail.com>
- <20210603164632.1000458-4-thierry.reding@gmail.com>
- <CGME20210615180133eucas1p2563c2a173eca1fb5a1c5ccf654c23778@eucas1p2.samsung.com>
- <46e65ade-49cb-5437-5863-1f11ccc2205e@samsung.com>
- <BY5PR12MB376468558EB3330D64758210B3309@BY5PR12MB3764.namprd12.prod.outlook.com>
- <20210615182135.GA21481@willie-the-truck>
+        id S230352AbhFOUeU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 15 Jun 2021 16:34:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37372 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229979AbhFOUeU (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 15 Jun 2021 16:34:20 -0400
+Received: from mail-lj1-x22f.google.com (mail-lj1-x22f.google.com [IPv6:2a00:1450:4864:20::22f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 481A7C061574
+        for <linux-tegra@vger.kernel.org>; Tue, 15 Jun 2021 13:32:14 -0700 (PDT)
+Received: by mail-lj1-x22f.google.com with SMTP id 131so535429ljj.3
+        for <linux-tegra@vger.kernel.org>; Tue, 15 Jun 2021 13:32:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=8wFEhP3RtxfoxSD9RpFJsXqsCrndSkCzNDUEr2dYMqY=;
+        b=aFjSAPtCj3D7zoq/RO/Hp9R5N//xI0eqXcfHrL5DTbq9mvwaKT/9oXsUPAOnrl/wCn
+         4i2+1mexcPJv6sbChnEmeY9MOP785LQMuiUD0nLNNqOrkseUw2zXEnBVdfgoJx9SVHTp
+         NRou7IysYQPKMtmQW+HbjgWn0LS7p8L4gFn/QB0oN5uNJti8MelxP9EFZm+Fbs+z/Ir0
+         qYXJlPtOeoFUdQFme1HJuAuv0IwVhOL9FPM0Wpo7gR3wHfZNi2fXpkLwlbReClxqqDP6
+         QmyJXgmHi47a9D4Ti6d9FmEYlVcoQZ7/tFKeDLa3SLshv6hmzMvdM+67NKJBiCfrzpxR
+         7dWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=8wFEhP3RtxfoxSD9RpFJsXqsCrndSkCzNDUEr2dYMqY=;
+        b=GMboRMpAE9d6TtEDfEOhb3j+TQYgsAv51gfFrUWgNf44pgLV0ySuc78ZfiI1lxlvg/
+         mI3fSCvFkNTw9t7HXA5Ve4FKsGcUkcMJ33tykqqGt33w2TnJODcG8rs0ty7tqt3o5FEV
+         Oss94e9fV/Q/iqPeOOLrXpO8Y4TU0voI4wBvaXA3p+9QkmE5wTnqk6o2Gn2wOn5tScNq
+         fokrViXJ68rtFUlWsizI1aoNAKgKZgypk2NFktIPa8hVdTUtDO4YQKdWr2wteSyPDMfs
+         HXCDGIZp29FbfgYaGEblKM782By+UljU5l5KpPlinZlABv5W+5IdDTA4X8u3/nkoaPGs
+         mj+A==
+X-Gm-Message-State: AOAM533oW4xFt8VkqED6lW5Z/T5yTcdTk739kEBraRJdgH3sfq9KUQKX
+        2s2qnZVxx87C5FLEY8L0jGKNaoL7uRg=
+X-Google-Smtp-Source: ABdhPJzoZZyt9KQzwxoqBiGH/6kVvWE3IY4yESCONWdmKrl/Sr4PMxuwrFBoFshuY+1xlyhf9Y2rmA==
+X-Received: by 2002:a2e:a490:: with SMTP id h16mr1301782lji.270.1623789132579;
+        Tue, 15 Jun 2021 13:32:12 -0700 (PDT)
+Received: from [192.168.2.145] (94-29-31-25.dynamic.spd-mgts.ru. [94.29.31.25])
+        by smtp.googlemail.com with ESMTPSA id 15sm2302920ljr.25.2021.06.15.13.32.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Jun 2021 13:32:12 -0700 (PDT)
+Subject: Re: [PATCH v7 00/15] TegraDRM UAPI
+To:     Mikko Perttunen <mperttunen@nvidia.com>, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, airlied@linux.ie, daniel@ffwll.ch
+Cc:     dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
+References: <20210610110456.3692391-1-mperttunen@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <e91d780c-a157-1775-2d60-1379e7684f20@gmail.com>
+Date:   Tue, 15 Jun 2021 23:32:11 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210615182135.GA21481@willie-the-truck>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20210610110456.3692391-1-mperttunen@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Jun 15, 2021 at 07:21:35PM +0100, Will Deacon wrote:
-> On Tue, Jun 15, 2021 at 06:12:13PM +0000, Krishna Reddy wrote:
-> > > if (smmu->impl->probe_finalize)
-> > 
-> > The above is the issue. It should be updated as below similar to other instances impl callbacks.
-> > if (smmu->impl && smmu->impl->probe_finalize)
+10.06.2021 14:04, Mikko Perttunen пишет:
+> Hi all,
 > 
-> I'll push a patch on top shortly...
+> here's the seventh revision of the TegraDRM UAPI proposal.
+> Only some small changes to v6 here to fix things on older
+> Tegras with certain configuration combinations, as well as
+> rebasing to latest linux-next.
+> 
+> The following pieces of userspace have been updated to support
+> this revision of the UAPI (unchanged from v6):
+> 
+> * vaapi-tegra-driver - https://github.com/cyndis/vaapi-tegra-driver
+>   Experimental support for MPEG2 and H264 decoding on T210, T186
+>   and T194.
+> 
+> * xf86-video-opentegra - https://github.com/grate-driver/xf86-video-opentegra
+>   X11 userspace acceleration driver for Tegra20, Tegra30, and Tegra114.
+> 
+> * grate - https://github.com/grate-driver/grate
+>   3D rendering testbed for Tegra20, Tegra30, and Tegra114
+> 
+> The series can be also found in
+> https://github.com/cyndis/linux/commits/work/tegradrm-v7.
 
-Done:
+The needs of the newer hardware are mostly understood now, so it's not
+the biggest problem now, which is good. The only part that is still not
+clear to me is whether sync points sharing is mandatory or optional
+since it's needed only by a proprietary monitoring software.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/will/linux.git/log/?h=for-thierry/arm-smmu
+This is still not a full UAPI implementation and it's difficult for me
+to see how this will integrate with the DRM scheduler and etc.
 
-I'll send this lot to Joerg tomorrow.
-
-Thierry -- feel free to pull in the updated branch if you want the fix
-sooner, as it may be a few days before this hits -next.
-
-Cheers,
-
-Will
+I don't like that the new code is build upon the old troublesome
+codebase. The half of it will be removed later on and the other half
+will be reshuffled, which is a lot of effort that could be avoided. It's
+apparent to me that it should be much better if we could clean up the
+current code base first, but before doing it we need to agree on the
+organization of the updated driver, which should help a lot with moving
+forward.
