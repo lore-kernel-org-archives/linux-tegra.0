@@ -2,70 +2,282 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02884C48BE5
-	for <linux-tegra@archiver.kernel.org>; Tue, 15 Jun 2021 18:21:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A619EC48BDF
+	for <linux-tegra@archiver.kernel.org>; Tue, 15 Jun 2021 19:00:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D3764613CC
-	for <linux-tegra@archiver.kernel.org>; Tue, 15 Jun 2021 18:21:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E4BF61356
+	for <linux-tegra@archiver.kernel.org>; Tue, 15 Jun 2021 19:00:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231661AbhFOSXp (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 15 Jun 2021 14:23:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39490 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230349AbhFOSXp (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 15 Jun 2021 14:23:45 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id DE9E6610CD;
-        Tue, 15 Jun 2021 18:21:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1623781300;
-        bh=SzyNItewNDf3JLfbNaHGlLNTLLwcqD7llt2uApYwFsc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=p0dXbmARm2inTC1UzBTVZL0vHWS1a7A8WbWw5Ya+27l1H/AVxTX/AIUi8BNa2m69S
-         WldU9ZaDX171o/gB051qQ6RYH6l3R5QoMEvO39E8xySUu+8rbSZA58KJktl2Kydm+0
-         Ib5HqF2tEQmKvQoRWiQVGghg2pqwlk0Gc/ZlMQchF7PnelhopV3rLUdX64WF6z8yzP
-         OXPLyHlbMxxfXE+ZMol8ZfV4RvHEaQY1GLEsRHREhGsms+hkI98ImehNq/tQ27X3z1
-         w4PHNaztggl49onc3oECs14PoZF8XmiU4ZYXVpVhKKqLOx77QVBnj7IPXYvCB9blnb
-         cVAsZBHbBhvYg==
-Date:   Tue, 15 Jun 2021 19:21:35 +0100
-From:   Will Deacon <will@kernel.org>
-To:     Krishna Reddy <vdumpa@nvidia.com>
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Nicolin Chen <nicolinc@nvidia.com>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v3 3/9] iommu/arm-smmu: Implement ->probe_finalize()
-Message-ID: <20210615182135.GA21481@willie-the-truck>
-References: <20210603164632.1000458-1-thierry.reding@gmail.com>
- <20210603164632.1000458-4-thierry.reding@gmail.com>
- <CGME20210615180133eucas1p2563c2a173eca1fb5a1c5ccf654c23778@eucas1p2.samsung.com>
- <46e65ade-49cb-5437-5863-1f11ccc2205e@samsung.com>
- <BY5PR12MB376468558EB3330D64758210B3309@BY5PR12MB3764.namprd12.prod.outlook.com>
+        id S229749AbhFOTCU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 15 Jun 2021 15:02:20 -0400
+Received: from mail-mw2nam10on2075.outbound.protection.outlook.com ([40.107.94.75]:7503
+        "EHLO NAM10-MW2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S230329AbhFOTCU (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 15 Jun 2021 15:02:20 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=jMKm/e9+K71NJboAOYHWk7TZLUlejAKyQAEH+GkKuZbKZbvuc5y0Y4DP1nrM+20BEHwzRvbrZx9BvymhXzvlOebnDpmdcD3G7ua5jJ2qFWcT+276mWAsthgWdYrkbNSljRVufQ6K8/fv3nEAWT63AVR9MRlrn1vb9uaVJtdOKeJ5R9pwudX+ALm0A483CUwPhYylQpGbkXYIqw8mcEZvlmNFjEYX89scNcC+beAaxMfEUZC0Vx/9V2RwvMvjsc1HG4L24P7TyyabZZ/rNlQzH1gsYosb5r/mMH+5B0UdhEnilp+Y0q6/pno41fBY3jICgXvEOLQWmEbYvdcgoz4qCw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=k8v+r8x/x2fE6DrgYboV+n11inrLk09q8INLlcJfDoc=;
+ b=F6FYKY8Sao0O8TiVvFl8p27DS1m5tQjXP/3apNcUleTHMltOAWBKPvYvgo5KKSszRXyBmj4LfnCdh1roi9Zu4BiHXFpW7BZSAJGObeYWn7zuyHX+Y3sIob7D3F/95xS/MgiLgSL4Fp2Tk32TE9Wt80NqTcUoM9TmyOcmvB5ky5hjxzsMMQdd23pDptbRBzG3lDWrq2oJXAuqDAK612uUjOOcTQChFLAbS4rLv6LGK/0+KtAzVIOT6J90yg/naSJq3lS6YnYO1cHfGhBsO9QF1a0c5OmDZeyaMdxU2HP3zfRiOwxzi6omJMVNpw4kXvuAw+5CbDwTo1x2Lse3DHQLUQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.112.34) smtp.rcpttodomain=linux.ie smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=k8v+r8x/x2fE6DrgYboV+n11inrLk09q8INLlcJfDoc=;
+ b=CL/fvcL4aDcwF3of8lRTEyfj6A5ngDEHIZ2TNYbP0kddopGKh9VMWXfixXih1J+FLwg2rRTifHGOHVL7a1TKYAsgMKWC0y76wOLUwVqdnC1LUM0psFKnL8cJoaq+M6ONY/ySwM3ke3Y0pPXiPolQddnvhy3bnWni3Tc2bSiGNwnb0LAnYfO7x6bxJegR+7EI8xqSdnZ3RePIc/E/jdO/zndrKaxXNGaN3nPTdugbVrmASwuNqGV7JTz/BMCwSCt9Ujup1ltlrBCEozfIBP+QLmon7AOutYKolXPmmnAtGQLG6cLJ6eG6wkGleg1G+PNEqcxx2Vt2eXzDp8ymcv1BbA==
+Received: from MWHPR1601CA0024.namprd16.prod.outlook.com
+ (2603:10b6:300:da::34) by DM6PR12MB3083.namprd12.prod.outlook.com
+ (2603:10b6:5:11d::28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4219.22; Tue, 15 Jun
+ 2021 19:00:13 +0000
+Received: from CO1NAM11FT039.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:300:da:cafe::53) by MWHPR1601CA0024.outlook.office365.com
+ (2603:10b6:300:da::34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4242.16 via Frontend
+ Transport; Tue, 15 Jun 2021 19:00:13 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.34)
+ smtp.mailfrom=nvidia.com; linux.ie; dkim=none (message not signed)
+ header.d=none;linux.ie; dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.112.34 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.112.34; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (216.228.112.34) by
+ CO1NAM11FT039.mail.protection.outlook.com (10.13.174.110) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.4219.21 via Frontend Transport; Tue, 15 Jun 2021 19:00:13 +0000
+Received: from [10.26.49.10] (172.20.187.6) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Tue, 15 Jun
+ 2021 19:00:11 +0000
+Subject: Re: [PATCH v7 13/15] drm/tegra: Implement job submission part of new
+ UAPI
+To:     Mikko Perttunen <mperttunen@nvidia.com>,
+        <thierry.reding@gmail.com>, <digetx@gmail.com>, <airlied@linux.ie>,
+        <daniel@ffwll.ch>
+CC:     <dri-devel@lists.freedesktop.org>, <linux-tegra@vger.kernel.org>
+References: <20210610110456.3692391-1-mperttunen@nvidia.com>
+ <20210610110456.3692391-14-mperttunen@nvidia.com>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <381d3d28-1daa-6b75-962c-53a1a3368beb@nvidia.com>
+Date:   Tue, 15 Jun 2021 20:00:09 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <BY5PR12MB376468558EB3330D64758210B3309@BY5PR12MB3764.namprd12.prod.outlook.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20210610110456.3692391-14-mperttunen@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [172.20.187.6]
+X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 2d555b37-fe8a-49b7-656a-08d9302fce8d
+X-MS-TrafficTypeDiagnostic: DM6PR12MB3083:
+X-Microsoft-Antispam-PRVS: <DM6PR12MB308315CC9C5D7FDCC9195BD2D9309@DM6PR12MB3083.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:820;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: /nzPB7c4uKDCkEXhzJ1GLLKhwrMBbS3CJ7IcBWMXM3XE/QtHYmhk2xEqZzYoa+8b46RwzN5hiFmcqvTDph7sIIUfse8+m0xVc6+3e7gCpic/GnGIODrO/Xxy+6TRLAO/4OGqZUXIc2nKQQQhS2/OPKAS3BloE21mUGoczGkQCse3V9KAhUo5K3qyXIoYzFsoJQmnnLKUdEUIvXGnR62ZP7547Y3dh111SztjSakBXJ4RD4wFn+0xsx3YWqMqs2WOrG9hj3o2CboEF3nE+vx5DQP+ow1m9CkMVzanrKRBcPLL6ogDQC4RwFO8QQY0DNoXeU3R+ywqSeYahtMpa+ssGGdijaHVPFdtVOQLAg0dpMSlOhxhZb3KGJRUtiL1AUnG9y0yW0rxCYV6I5T0grocTeTqqXZG8gP/7gGkID7YdUlWp1id87Vwq79BY9KuLsqQUWkFCfzV4s97F8W1UxLDrdonZOCBjM/m8AZNXAFAGJp1vQlrqjbo0C/8dJx0Hyn2D3JrngCmDEAXEHfSwAuMxvgud05JPfqf8QjuFvNLM1mDUrD5TlTvOKB1lQfdESoQFR269/cRGm1L2itKBSjG7BuubD9xcG78b3zCiDucmxMrwdzFV5LPjZaWOYuL7gu4itgGzt07n65vcYtJ8+hojMfJWIZdau1bn+OxZWWxUSpOjk2BDToZ9tcHYte0qPrzjE/MP7C7ZUdkjgJmIQZqwA==
+X-Forefront-Antispam-Report: CIP:216.228.112.34;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid03.nvidia.com;CAT:NONE;SFS:(4636009)(136003)(39860400002)(396003)(346002)(376002)(36840700001)(46966006)(86362001)(356005)(2616005)(7636003)(26005)(36906005)(2906002)(83380400001)(5660300002)(316002)(70586007)(16576012)(70206006)(336012)(36860700001)(110136005)(31686004)(36756003)(54906003)(426003)(16526019)(31696002)(4326008)(8936002)(8676002)(186003)(478600001)(82740400003)(82310400003)(47076005)(53546011)(43740500002)(357404004);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jun 2021 19:00:13.5445
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2d555b37-fe8a-49b7-656a-08d9302fce8d
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.34];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT039.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB3083
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Jun 15, 2021 at 06:12:13PM +0000, Krishna Reddy wrote:
-> > if (smmu->impl->probe_finalize)
+
+On 10/06/2021 12:04, Mikko Perttunen wrote:
+> Implement the job submission IOCTL with a minimum feature set.
 > 
-> The above is the issue. It should be updated as below similar to other instances impl callbacks.
-> if (smmu->impl && smmu->impl->probe_finalize)
+> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+> ---
+> v7:
+> * Allocate gather BO with DMA API to get page-aligned
+>   memory
+> * Add error prints to a few places where they were missing
+> v6:
+> * Remove sgt bypass path in gather_bo - this would cause
+>   cache maintenance to be skipped and is unnecessary in
+>   general.
+> * Changes related to moving to using syncpoint IDs
+> * Add syncobj related code
+> * Print warning on submit failure describing the issue
+> * Use ARCH_DMA_ADDR_T_64BIT to check if that is indeed
+>   the case
+> * Add support for relative syncpoint wait
+> * Use pm_runtime_resume_and_get
+> * Only try to resume engines that support runtime PM
+> * Removed uapi subdirectory
+> * Don't use "copy_err" variables for copy_from_user
+>   return value
+> * Fix setting of blocklinear flag
+> v5:
+> * Add 16K size limit to copies from userspace.
+> * Guard RELOC_BLOCKLINEAR flag handling to only exist in ARM64
+>   to prevent oversized shift on 32-bit platforms.
+> v4:
+> * Remove all features that are not strictly necessary.
+> * Split into two patches.
+> v3:
+> * Remove WRITE_RELOC. Relocations are now patched implicitly
+>   when patching is needed.
+> * Directly call PM runtime APIs on devices instead of using
+>   power_on/power_off callbacks.
+> * Remove incorrect mutex unlock in tegra_drm_ioctl_channel_open
+> * Use XA_FLAGS_ALLOC1 instead of XA_FLAGS_ALLOC
+> * Accommodate for removal of timeout field and inlining of
+>   syncpt_incrs array.
+> * Copy entire user arrays at a time instead of going through
+>   elements one-by-one.
+> * Implement waiting of DMA reservations.
+> * Split out gather_bo implementation into a separate file.
+> * Fix length parameter passed to sg_init_one in gather_bo
+> * Cosmetic cleanup.
+> ---
+>  drivers/gpu/drm/tegra/Makefile    |   2 +
+>  drivers/gpu/drm/tegra/drm.c       |   4 +-
+>  drivers/gpu/drm/tegra/gather_bo.c |  82 +++++
+>  drivers/gpu/drm/tegra/gather_bo.h |  24 ++
+>  drivers/gpu/drm/tegra/submit.c    | 549 ++++++++++++++++++++++++++++++
+>  drivers/gpu/drm/tegra/submit.h    |  17 +
+>  6 files changed, 677 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/gpu/drm/tegra/gather_bo.c
+>  create mode 100644 drivers/gpu/drm/tegra/gather_bo.h
+>  create mode 100644 drivers/gpu/drm/tegra/submit.c
+>  create mode 100644 drivers/gpu/drm/tegra/submit.h
 
-I'll push a patch on top shortly...
+...
 
-Will
+> +int tegra_drm_ioctl_channel_submit(struct drm_device *drm, void *data,
+> +				   struct drm_file *file)
+> +{
+> +	struct tegra_drm_file *fpriv = file->driver_priv;
+> +	struct drm_tegra_channel_submit *args = data;
+> +	struct tegra_drm_submit_data *job_data;
+> +	struct drm_syncobj *syncobj = NULL;
+> +	struct tegra_drm_context *ctx;
+> +	struct host1x_job *job;
+> +	struct gather_bo *bo;
+> +	u32 i;
+> +	int err;
+> +
+> +	mutex_lock(&fpriv->lock);
+> +	ctx = xa_load(&fpriv->contexts, args->channel_ctx);
+> +	if (!ctx) {
+> +		mutex_unlock(&fpriv->lock);
+> +		pr_err_ratelimited("%s: %s: invalid channel_ctx '%d'", __func__,
+> +			current->comm, args->channel_ctx);
+> +		return -EINVAL;
+> +	}
+> +
+> +	if (args->syncobj_in) {
+> +		struct dma_fence *fence;
+> +
+> +		err = drm_syncobj_find_fence(file, args->syncobj_in, 0, 0, &fence);
+> +		if (err) {
+> +			SUBMIT_ERR(ctx, "invalid syncobj_in '%d'", args->syncobj_in);
+> +			goto unlock;
+> +		}
+> +
+> +		err = dma_fence_wait_timeout(fence, true, msecs_to_jiffies(10000));
+> +		dma_fence_put(fence);
+> +		if (err) {
+> +			SUBMIT_ERR(ctx, "wait for syncobj_in timed out");
+> +			goto unlock;
+> +		}
+> +	}
+> +
+> +	if (args->syncobj_out) {
+> +		syncobj = drm_syncobj_find(file, args->syncobj_out);
+> +		if (!syncobj) {
+> +			SUBMIT_ERR(ctx, "invalid syncobj_out '%d'", args->syncobj_out);
+> +			err = -ENOENT;
+> +			goto unlock;
+> +		}
+> +	}
+> +
+> +	/* Allocate gather BO and copy gather words in. */
+> +	err = submit_copy_gather_data(&bo, drm->dev, ctx, args);
+> +	if (err)
+> +		goto unlock;
+> +
+> +	job_data = kzalloc(sizeof(*job_data), GFP_KERNEL);
+> +	if (!job_data) {
+> +		SUBMIT_ERR(ctx, "failed to allocate memory for job data");
+> +		err = -ENOMEM;
+> +		goto put_bo;
+> +	}
+> +
+> +	/* Get data buffer mappings and do relocation patching. */
+> +	err = submit_process_bufs(ctx, bo, args, job_data);
+> +	if (err)
+> +		goto free_job_data;
+> +
+> +	/* Allocate host1x_job and add gathers and waits to it. */
+> +	err = submit_create_job(&job, ctx, bo, args, job_data,
+> +				&fpriv->syncpoints);
+> +	if (err)
+> +		goto free_job_data;
+> +
+> +	/* Map gather data for Host1x. */
+> +	err = host1x_job_pin(job, ctx->client->base.dev);
+> +	if (err) {
+> +		SUBMIT_ERR(ctx, "failed to pin job: %d", err);
+> +		goto put_job;
+> +	}
+> +
+> +	/* Boot engine. */
+> +	if (pm_runtime_enabled(ctx->client->base.dev)) {
+> +		err = pm_runtime_resume_and_get(ctx->client->base.dev);
+> +		if (err < 0) {
+> +			SUBMIT_ERR(ctx, "could not power up engine: %d", err);
+> +			goto unpin_job;
+> +		}
+> +	}
+> +
+> +	job->user_data = job_data;
+> +	job->release = release_job;
+> +	job->timeout = 10000;
+> +
+> +	/*
+> +	 * job_data is now part of job reference counting, so don't release
+> +	 * it from here.
+> +	 */
+> +	job_data = NULL;
+> +
+> +	/* Submit job to hardware. */
+> +	err = host1x_job_submit(job);
+> +	if (err) {
+> +		SUBMIT_ERR(ctx, "host1x job submission failed: %d", err);
+> +		goto unpin_job;
+> +	}
+
+
+If we fail here, it appears that we may leave rpm enabled. Should we be
+calling pm_runtime_put() for any failures from here on?
+
+Cheers
+Jon
+
+-- 
+nvpublic
