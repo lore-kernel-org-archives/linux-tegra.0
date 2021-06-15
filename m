@@ -4,34 +4,34 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-17.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D04A4C2B9F4
-	for <linux-tegra@archiver.kernel.org>; Tue, 15 Jun 2021 03:01:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDCA7C48BE8
+	for <linux-tegra@archiver.kernel.org>; Tue, 15 Jun 2021 03:01:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ADB0E61004
-	for <linux-tegra@archiver.kernel.org>; Tue, 15 Jun 2021 03:01:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B23C061055
+	for <linux-tegra@archiver.kernel.org>; Tue, 15 Jun 2021 03:01:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230136AbhFODDh (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        id S230332AbhFODDh (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
         Mon, 14 Jun 2021 23:03:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51132 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:51134 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230238AbhFODDh (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        id S230239AbhFODDh (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
         Mon, 14 Jun 2021 23:03:37 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 45500613BF;
-        Tue, 15 Jun 2021 01:06:03 +0000 (UTC)
+Received: by mail.kernel.org (Postfix) with ESMTPSA id D5E20611AB;
+        Tue, 15 Jun 2021 01:05:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1623719165;
-        bh=5nFeD8wP5nu+m9jfAlQJ3IU5zCr3m3wHffbBI/kxC+g=;
+        s=k20201202; t=1623719122;
+        bh=JowlqCnPSb4zz316zjuQPncCWVeSVEJsJRR6AJAI1SE=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=cI0ZAUKHSteG8ONkxc/ThavDvsqJrcD7JO88Gz0X6tpJrYNU2wmC/2o/xkDa/y6j9
-         iJ9Gqybh+cDoKlXzAVCKsS9rHrBF5jFABJQtk1r6rtL4b6jS1brCwgIYKV28I5Qwjr
-         VzM0WzzU+ezTwKaz1JMLDneEq61gkoynFFKhD7ohJ07ygzltuie4V0sxPFZW920cuI
-         EoapArbKqYaii6i4hOQ8LKXWphvea2grXo+uOKXbd8TAGSogP/NAj0dnQK6lPCxvB/
-         E/ihC2iZt7F+2jXHzsd/tEEpgzmeHJcG+K3lHpsJUS9XVhtGABjWwR4gZF+3yqqKTG
-         +l7y6DGl/8XTg==
-Date:   Tue, 15 Jun 2021 09:06:00 +0800
+        b=FtZQP1L3wOJJQ3lQRa2yCPA79Dj1fEvpClc3UBsJNhL/ydK/dIdi7RAXlq7aiHl+4
+         KfxN293mMtTchVS+AZCvuFFNolo8Ho3YA/csiLLs/rM0TFwmZ5TFbAEL2xFmZV77wJ
+         Lj9LtrZ9R+GmIRRpcJB4TAhJT2HfvoPSanuCBJ37oK5Gatmx5as3Rh0Nphj7EsY5ur
+         Src7pu9r2MT+7RboovQmnX18jreeLiLL15t86RVaJqI6EP8OzSOYIQJCaOZK/yR38+
+         baN7BwXVOiIRVCDve3dDel5iX7uBs6V7hjVoaGp4q1DPqgu4igQvGw6TXXPexDuGAd
+         Q/5DntGx/u5iw==
+Date:   Tue, 15 Jun 2021 09:05:16 +0800
 From:   Peter Chen <peter.chen@kernel.org>
 To:     Dmitry Osipenko <digetx@gmail.com>
 Cc:     Thierry Reding <thierry.reding@gmail.com>,
@@ -43,7 +43,7 @@ Cc:     Thierry Reding <thierry.reding@gmail.com>,
         linux-kernel@vger.kernel.org
 Subject: Re: [PATCH v1 1/2] usb: phy: tegra: Wait for VBUS wakeup status
  deassertion on suspend
-Message-ID: <20210615010600.GB28352@nchen>
+Message-ID: <20210615010516.GA28352@nchen>
 References: <20210613145936.9902-1-digetx@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -67,8 +67,6 @@ On 21-06-13 17:59:35, Dmitry Osipenko wrote:
 > Reported-by: Maxim Schwalm <maxim.schwalm@gmail.com> # Asus TF700T
 > Tested-by: Maxim Schwalm <maxim.schwalm@gmail.com> # Asus TF700T
 > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-
-Reviewed-by: Peter Chen <peter.chen@kernel.org>
 > ---
 >  drivers/usb/phy/phy-tegra-usb.c | 10 ++++++++++
 >  1 file changed, 10 insertions(+)
@@ -98,12 +96,9 @@ Reviewed-by: Peter Chen <peter.chen@kernel.org>
 > +					   val, !(val & VBUS_WAKEUP_STS),
 > +					   5000, 100000);
 > +
->  	utmi_phy_clk_disable(phy);
->  
->  	/* PHY won't resume if reset is asserted */
-> -- 
-> 2.30.2
-> 
+
+Where will clear VBUS_WAKEUP_STS? Or it will be cleared by HW after VBUS lower than
+B Session Valid?
 
 -- 
 
