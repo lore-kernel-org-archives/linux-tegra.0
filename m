@@ -2,69 +2,67 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5332C48BE5
-	for <linux-tegra@archiver.kernel.org>; Wed, 16 Jun 2021 10:49:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE105C48BE6
+	for <linux-tegra@archiver.kernel.org>; Wed, 16 Jun 2021 14:36:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C6CBA6115C
-	for <linux-tegra@archiver.kernel.org>; Wed, 16 Jun 2021 10:49:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9DB6961027
+	for <linux-tegra@archiver.kernel.org>; Wed, 16 Jun 2021 14:36:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232202AbhFPKv3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 16 Jun 2021 06:51:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59842 "EHLO
+        id S233563AbhFPOi3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 16 Jun 2021 10:38:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54986 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231769AbhFPKv3 (ORCPT
+        with ESMTP id S234050AbhFPOi1 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 16 Jun 2021 06:51:29 -0400
-Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EF92C061574;
-        Wed, 16 Jun 2021 03:49:22 -0700 (PDT)
-Received: by mail-lf1-x131.google.com with SMTP id q20so3603547lfo.2;
-        Wed, 16 Jun 2021 03:49:21 -0700 (PDT)
+        Wed, 16 Jun 2021 10:38:27 -0400
+Received: from mail-qk1-x734.google.com (mail-qk1-x734.google.com [IPv6:2607:f8b0:4864:20::734])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80950C061574
+        for <linux-tegra@vger.kernel.org>; Wed, 16 Jun 2021 07:36:20 -0700 (PDT)
+Received: by mail-qk1-x734.google.com with SMTP id g19so2843766qkk.2
+        for <linux-tegra@vger.kernel.org>; Wed, 16 Jun 2021 07:36:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=linaro.org; s=google;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=mGdoH7aBBtCdhYfLcQjLr73AllgTibDxP6UFUA4o5J4=;
-        b=OBtmDL1IeCF0SFh/JX41cE2Yey03CHwqXvmZ3v/8T9Q3wiR1bBno4ts5RK6zLJtpOP
-         aimf4sJOraWmiSnP6+z6G72/ucNITK4HkeHFwDDgW7FufCZGtDuv0OvDgRgHAr20StO0
-         S2Ot8A4Z7a3bkC6gmb00zlNZ1V0ixGdOywU3D97JciVoP5tXlIV/BJigPNewM/vpOA6b
-         TKoCw3ZVxyk3QTsejWF5u5Rx+EBSTMd+B2NOCheahQsShOoH/m4lgSjbxpgm2vFyQZxO
-         F0WS2qZFv8bAZmXkxr3Z5mjP5hIiIEdO80EKE3pk9utuxMvXrxUMpLK2I7cLgfZBTVJ3
-         8ckg==
+        bh=C6N7ZLY1WhDSZqhuZcLY/QHujQYu6PkAlcx3M6QgT6k=;
+        b=lOsfCoqWux3C4DdeAMZTDNufs06iP6UqU1XS14MePe0Fxa/GAhcx+oN0u6vW5Ilm/X
+         lN4FSzc0CG9F8545wOn5VtuDBEFQ8kAASsbxlqYt5DcwEZVQrlG84VemH3pEcOzxbh/l
+         1pT4rMyWUfJs9Qsmta5CcXcQbaGUkzOQ8T4MoOs4SSnIUTOqD6KMLnTmSaj9kH/v3zKT
+         +pQZL2VHUxAl3cyJjef6Oxy27O9TRzG1Vvj9zeD2CF+gfrgcdVYm2GJIfs6POyw5LCeZ
+         c84PFBSGWQxHOfErl78EpnnNhWJS6WOkxZZzcNZmXRS3gcPOqJEZveBloOPo1Xt7TMw2
+         aYHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=mGdoH7aBBtCdhYfLcQjLr73AllgTibDxP6UFUA4o5J4=;
-        b=WK4H61PLcOegyGEMVayq3MOTSTDPAFemWRNSlmgUDaK2mfuRHc2hNzSp8Kq2eyu2An
-         USotcdoRtnPtwLbcAVjf+3PA5X6bmSbopru9GhlBVecp1SsCfC79gzBBcl70VS7c3/nf
-         /M9tBje/U7OFfdZogwFbUcYvfIn/ZTJp3P/jhbpWBaTyGn3XMxdYz3mpvs9aZI2xcxiI
-         X/gj8mDP5Ysycy8ooeFctuaKjl9lbJ9g/6vP4l3muPZUj+LpsjwYXyW1CxFH1PNT0Fuc
-         6cbo2yPbmK4O7U5ASdyc2EErKvL0v2vNHxMPp6j9+l9rB9OOlj6jW0t9goja0JZVBTZp
-         3nCQ==
-X-Gm-Message-State: AOAM5311sKHbaKLv0iijx1y9Y6lOiFD2G0eJ8hKIDyVcbMdPLVMFXcG+
-        1979eHPHM9Qj1i9P5muIyWxwsVQvYPw=
-X-Google-Smtp-Source: ABdhPJxSP2EOyTVCfRqda9Fa5M63/2XdmMMZWZ0SCjugTxLMRWtY9MqjWhDR91zPwcwrDME0au56eA==
-X-Received: by 2002:ac2:544f:: with SMTP id d15mr3260452lfn.465.1623840559827;
-        Wed, 16 Jun 2021 03:49:19 -0700 (PDT)
-Received: from [192.168.2.145] (94-29-29-31.dynamic.spd-mgts.ru. [94.29.29.31])
-        by smtp.googlemail.com with ESMTPSA id x17sm229615ljx.75.2021.06.16.03.49.18
+        bh=C6N7ZLY1WhDSZqhuZcLY/QHujQYu6PkAlcx3M6QgT6k=;
+        b=Upk1lQt0VbEH84R4xduzFbTpr7IzU8qHLL1eLtS229KdVWeobCGbrRxepzvtzoiY+x
+         G0loB0FG5+xagyr4zrPdEBxt+BZRButDH5+onYoh99nrNSwS/B9viuOhOFjFqAe93ZlE
+         9RbZ2XSDEQ7aQn2KH4O0ofroJz8rlXAWQdywLTSRILL0FXNGyqsOTy4HGOQFpcJ5IRTU
+         3yJDg45Lk/stCdM8WVo4X7YgslQZYraV/dBsdNVbpYoqOU6jCEz3Y0WzQYZPsjGLVxW2
+         fmTQxDA0ov7q7m1eT6FPH325mHe5XHpqEQzQm+B9vCD131QEnW7E3RGs2+9vH9sUgopu
+         3G8g==
+X-Gm-Message-State: AOAM531A1nZbTxf5xUJerRMGyL0gjJElJi//xb+PpgOB15yHvia0uNoH
+        Q/P/eEgT4Q5vYm6oMZJdvdGc4Q==
+X-Google-Smtp-Source: ABdhPJyQfSgTLuanvM52DFRrLyjJpWyc1bNVtB3kIaDVomzEZTehCLdam7DcZd2qn8FbX1cl+wfGsw==
+X-Received: by 2002:a05:620a:4da:: with SMTP id 26mr348132qks.336.1623854179605;
+        Wed, 16 Jun 2021 07:36:19 -0700 (PDT)
+Received: from [192.168.1.93] (pool-71-163-245-5.washdc.fios.verizon.net. [71.163.245.5])
+        by smtp.gmail.com with ESMTPSA id a3sm1675158qkc.109.2021.06.16.07.36.18
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Jun 2021 03:49:19 -0700 (PDT)
+        Wed, 16 Jun 2021 07:36:19 -0700 (PDT)
 Subject: Re: [PATCH v3 4/7] thermal/drivers/tegra: Add driver for Tegra30
  thermal sensor
-To:     Vincent Guittot <vincent.guittot@linaro.org>
-Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
+To:     Dmitry Osipenko <digetx@gmail.com>,
         Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thara Gopinath <thara.gopinath@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Zhang Rui <rui.zhang@intel.com>,
         Amit Kucheria <amitk@kernel.org>,
@@ -74,12 +72,9 @@ Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
         Ihor Didenko <tailormoon@rambler.ru>,
         Ion Agorria <ion@agorria.com>,
         Matt Merhar <mattmerhar@protonmail.com>,
-        Peter Geis <pgwipeout@gmail.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-tegra@vger.kernel.org,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>
+        Peter Geis <pgwipeout@gmail.com>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-pm@vger.kernel.org
 References: <20210529170955.32574-1-digetx@gmail.com>
  <20210529170955.32574-5-digetx@gmail.com>
  <6f2b6290-095a-bd39-c160-1616a0ff89b1@linaro.org>
@@ -87,57 +82,124 @@ References: <20210529170955.32574-1-digetx@gmail.com>
  <595f5e53-b872-bcc6-e886-ed225e26e9fe@gmail.com>
  <fbdc3b56-4465-6d3e-74db-1d5082813b9c@linaro.org>
  <4c7b23c4-cf6a-0942-5250-63515be4a219@gmail.com>
- <20210616080310.vhvauvo5y6m2sekz@vireshk-i7>
- <CAKfTPtAxvj4_TBpFesjQxcVzvEi3QVUThccfSAJXwwrLtOH-xg@mail.gmail.com>
- <96bf59af-20b6-b706-5ff0-fe70f9eba827@gmail.com>
- <CAKfTPtBDzFaFKuYgY5XC+-vFxFSJvxKunGFwY50E98bYn0VE5Q@mail.gmail.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <57e044af-072f-cf7e-8f25-dc8b814c78c5@gmail.com>
-Date:   Wed, 16 Jun 2021 13:49:18 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+ <545974aa-bb0f-169b-6f31-6e8c2461343f@linaro.org>
+ <f06370e0-bfde-87d0-03b4-93c667f81817@gmail.com>
+From:   Thara Gopinath <thara.gopinath@linaro.org>
+Message-ID: <14b6344b-3994-7977-6933-a2d2357d23d5@linaro.org>
+Date:   Wed, 16 Jun 2021 10:36:17 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <CAKfTPtBDzFaFKuYgY5XC+-vFxFSJvxKunGFwY50E98bYn0VE5Q@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <f06370e0-bfde-87d0-03b4-93c667f81817@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-16.06.2021 11:51, Vincent Guittot пишет:
-> On Wed, 16 Jun 2021 at 10:39, Dmitry Osipenko <digetx@gmail.com> wrote:
+
+
+On 6/16/21 6:47 AM, Dmitry Osipenko wrote:
+> 16.06.2021 05:50, Thara Gopinath пишет:
+> ...
 >>
->> 16.06.2021 11:30, Vincent Guittot пишет:
->>> On Wed, 16 Jun 2021 at 10:03, Viresh Kumar <viresh.kumar@linaro.org> wrote:
->>>>
->>>> +Vincent.
->>>>
->>>> On 15-06-21, 22:32, Dmitry Osipenko wrote:
->>>>> IIUC, the cpufreq already should be prepared for the case where firmware
->>>>> may override frequency. Viresh, could you please clarify what are the
->>>>> possible implications of the frequency overriding?
->>>>
->>>> The only implication is software would think hardware is running at
->>>> some other frequency, while it is not. Not sure if something may break
->>>> as a result of this.
->>>>
->>>> The scheduler's view of CPUs will not be same though, i.e. scheduler
->>>> will see capacity as X, while in reality it has changed to Y.
->>>
->>> thermal_pressure is used by scheduler to balance the load between CPUs
->>> according to the actual max frequency. If the thermal pressure doesn't
->>> reflect reality, scheduler will end up enqueuing too many  tasks on a
->>> throttle CPU.
+>> Hi,
 >>
->> What if all CPUs are throttled equally and running on the same
->> frequency, will throttling have any effect on the scheduler decisions?
+>> Thermal pressure is letting scheduler know that the max capacity
+>> available for a cpu to schedule tasks is reduced due to a thermal event.
+>> So you cannot have a h/w thermal pressure and s/w thermal pressure.
+>> There is eventually only one capping applied at h/w level and the
+>> frequency corresponding to this capping should be used for thermal
+>> pressure.
+>>
+>> Ideally you should not be having both s/w and h/w trying to throttle at
+>> the same time. Why is this a scenario and what prevents you from
+>> disabling s/w throttling when h/w throttling is enabled. Now if there
+>> has to a aggregation for whatever reason this should be done at the
+>> thermal driver level and passed to scheduler.
 > 
-> Yes, the capacity is also used to detect when CPUs have spare capacity
-> or are already overloaded. We usually try to fill the spare capacity
-> of a CPU (CPU's max capacity - current utilization) but he max
-> capacity is reduced when the CPU is throttled, and the spare capacity
-> doesn't exist but scheduler could try to it
+> Hello,
+> 
+> The h/w mitigation is much more reactive than software, in the same time
+> it's much less flexible than software. It should provide additional
+> protection in a cases where software isn't doing a good job. Ideally h/w
+> mitigation should stay inactive all the time, nevertheless it should be
+> modeled properly by the driver.
+
+Ok. This is kind of opposite to what I am doing on the Qcom platform I 
+am working on. The h/w throttling is the default since like you 
+mentioned it is more reactive. And s/w does only critical trip management.
+
+> 
+>>>>
+>>>> That is a good question. IMO, first step would be to call
+>>>> cpufreq_update_limits().
+>>>
+>>> Right
+>>>
+>>>> [ Cc Thara who implemented the thermal pressure ]
+>>>>
+>>>> May be Thara has an idea about how to aggregate both? There is another
+>>>> series floating around with hardware limiter [1] and the same
+>>>> problematic.
+>>>>
+>>>>    [1] https://lkml.org/lkml/2021/6/8/1791
+>>>
+>>> Thanks, it indeed looks similar.
+>>>
+>>> I guess the common thermal pressure update code could be moved out into
+>>> a new special cpufreq thermal QoS handler (policy->thermal_constraints),
+>>> where handler will select the frequency constraint and set up the
+>>> pressure accordingly. So there won't be any races in the code.
+>>>
+>> It was a conscious decision to keep thermal pressure update out of qos
+>> max freq update because there are platforms that don't use the qos
+>> framework. For eg acpi uses cpufreq_update_policy.
+>> But you are right. We have two platforms now applying h/w throttling and
+>> cpufreq_cooling applying s/w throttling. So it does make sense to have
+>> one api doing all the computation to update thermal pressure. I am not
+>> sure how exactly/where exactly this will reside.
+> 
+> The generic cpufreq_cooling already uses QoS for limiting the CPU
+> frequency. It could be okay to use QoS for the OF drivers, this needs a
+> closer look.
+> 
+> We have the case where CPU frequency is changed by the thermal event and
+> the thermal pressure equation is the same for both s/w cpufreq_cooling
+> and h/w thermal driver. The pressure is calculated based on the QoS
+> cpufreq constraint that is already aggregated.
+> 
+> Hence what we may need to do on the thermal event is:
+> 
+> 1. Update the QoS request
+> 2. Update the thermal pressure
+> 3. Ensure that updates are not racing
+
+Yes. So the first two steps you mentioned is exactly what 
+cpufreq_cooling.c also does except for the fact that it is a s/w 
+mitigation. Now if you have two sources that is updating the max 
+frequency via qos, I think you can do either of the following before
+calculating thermal pressure
+1. Read the throttled frequency from h/w if  your h/w supports this feature.
+	or
+2. Use freq_qos_read_value to get the max frequency value.
+
+Either way only the correct throttled capacity should be passed to 
+scheduler.
+
+-- 
+Warm Regards
+Thara (She/Her/Hers)
+> 
+>> So for starters, I think you should replicate the update of thermal
+>> pressure in your h/w driver when you know that h/w is
+>> throttling/throttled the frequency. You can refer to cpufreq_cooling.c
+>> to see how it is done.
+>>
+>> Moving to a common api can be done as a separate patch series.
+>>
+> 
+> Thank you for the clarification and suggestion.
 > 
 
-Thank you.
