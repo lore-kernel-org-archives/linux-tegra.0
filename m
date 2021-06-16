@@ -2,122 +2,183 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1268C48BE6
-	for <linux-tegra@archiver.kernel.org>; Wed, 16 Jun 2021 19:19:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E07DC48BE5
+	for <linux-tegra@archiver.kernel.org>; Wed, 16 Jun 2021 19:21:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8C73061245
-	for <linux-tegra@archiver.kernel.org>; Wed, 16 Jun 2021 19:19:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A7F261245
+	for <linux-tegra@archiver.kernel.org>; Wed, 16 Jun 2021 19:21:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232589AbhFPTVK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 16 Jun 2021 15:21:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33968 "EHLO
+        id S232624AbhFPTXc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 16 Jun 2021 15:23:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34528 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232191AbhFPTVJ (ORCPT
+        with ESMTP id S232519AbhFPTXc (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 16 Jun 2021 15:21:09 -0400
-Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0411FC06175F
-        for <linux-tegra@vger.kernel.org>; Wed, 16 Jun 2021 12:19:02 -0700 (PDT)
-Received: by mail-wm1-x334.google.com with SMTP id l7-20020a05600c1d07b02901b0e2ebd6deso2292678wms.1
-        for <linux-tegra@vger.kernel.org>; Wed, 16 Jun 2021 12:19:01 -0700 (PDT)
+        Wed, 16 Jun 2021 15:23:32 -0400
+Received: from mail-yb1-xb30.google.com (mail-yb1-xb30.google.com [IPv6:2607:f8b0:4864:20::b30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EAE1EC06175F
+        for <linux-tegra@vger.kernel.org>; Wed, 16 Jun 2021 12:21:25 -0700 (PDT)
+Received: by mail-yb1-xb30.google.com with SMTP id g38so4556989ybi.12
+        for <linux-tegra@vger.kernel.org>; Wed, 16 Jun 2021 12:21:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=yjQYXquPSfp4MKH74/A3wiITHQsuloD60C8047bzcco=;
-        b=hdrV2N4BWsFHvM8vnAmuajEAtGWPWDTU8Qf+Q8IswzH612u9iV+sn9Q4aJ+0gjrhgy
-         ifCS7l0Jw/FoXdzvFCo/3rftJbRy8OAyk9zjJ+4ZbE5aI8IHCok5/TWSlDjhSqNn13B2
-         wX2Ih0/3dN/1YK+lz84zTYY73ktW/C53ITF1SX9UB/cjgs/neQyv+ua2CotMsgAGcxiw
-         0Nh/7m4s+lfT/bbDUJ8SrMJnJPgsFGysALidZ+DuSIQBG+ZIHKjs66qhqYpLYS7+WYEd
-         MmqweEV7TNO57DpS99oby5ApZqHRPqXwSl76fXI7ZD3qHCFJa+P+u+IaVWB0xT4DG2ib
-         Y3wQ==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=FIyyHg8rOxXHbIaFJjwLfLGJz05HjefUq3ZNeTfPC9I=;
+        b=Y4JrWrfZ0azYi3g5h0bLxah2fOOjP+oBBR/bv3qrm6wnV4th/xMCpikxXUkEBpOV1+
+         0z7STjvmteDxhndgg02Bn1yRx5ry47rQSPk2Vl+tXuk4zwakJ+h2wSu7ldQww+dwJTON
+         Ieukiv0lJxUUjtZqdUfAg3If8GslvOdy6O9XN930yhDPfvpgsylO89cCNEqbJnEIkZq8
+         /4E1ZesxV/mTs1kncXJHVV6fM5F7gguCy79poYpFiUqoLi+sB+rW3HZratQTvJ82/Tqb
+         HP5OCqzEvjawGYzLWTSed8LxpfxAVpY7O/v0kCmjSp2vu1sXm0lWfsFxcutE/N3vyZWF
+         x2BA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=yjQYXquPSfp4MKH74/A3wiITHQsuloD60C8047bzcco=;
-        b=Jd2P7zAIN3ZTOxNLMbj2oFhfpvPH0zmvvd/2wOIpN5ko1fp2Trczgbp+4SPEqMVmwn
-         //cgofvZe9pG7rOozgAG6QYTYx9sgFrdZeCxETQWs6ZHKkao0GGSq3Ku+gI/COVAoBMb
-         MpoOp/Sq71m7Lc64ZtU+jjoEfDmA48Pgd3H+EdvEGBPH0JaZ8cLoB0YCxLQro03rN1Qt
-         boE/AshcumTnv8cc3/aSnTvLytvb5daGRyw7aycNVG1zh3R9M/5q3fADFTU/O/OAJPA9
-         OqyM/4uWfUhFI9THUJ51t0Loh+OIQj6KAFdvb8dF3I8rDLmATtJFRsExGwayxqqenLoQ
-         gwoA==
-X-Gm-Message-State: AOAM532Bch/VQlW1nEgg8FnBUK1+7tG4SduboiJl9vrHrymogWwCnaW5
-        flp4jZM9flXNu/G1sVfV/pbPO6LOXJpv0fd3
-X-Google-Smtp-Source: ABdhPJxFgtVQdI5n9iwORw/50KziHniAznGliziCiHqWivbmq8GDfYByP0J94o0BJOOmjFfPk0GT/g==
-X-Received: by 2002:a05:600c:204:: with SMTP id 4mr585639wmi.95.1623871140462;
-        Wed, 16 Jun 2021 12:19:00 -0700 (PDT)
-Received: from ?IPv6:2a01:e34:ed2f:f020:60a0:f51c:af6:2dab? ([2a01:e34:ed2f:f020:60a0:f51c:af6:2dab])
-        by smtp.googlemail.com with ESMTPSA id p15sm2451112wmq.43.2021.06.16.12.18.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Jun 2021 12:18:59 -0700 (PDT)
-Subject: Re: [PATCH v1 2/5] soc/tegra: irq: Add stubs needed for compile
- testing
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc:     linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org
-References: <20210606222817.12388-1-digetx@gmail.com>
- <20210606222817.12388-3-digetx@gmail.com>
- <92b521c6-f3fd-4f2c-de4f-3363e0384f55@linaro.org>
- <cb9d8a40-a64f-e37f-1487-272b2c4ac9ea@gmail.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <e1484aa5-392b-4ad5-4716-5937dd0e2be5@linaro.org>
-Date:   Wed, 16 Jun 2021 21:18:58 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=FIyyHg8rOxXHbIaFJjwLfLGJz05HjefUq3ZNeTfPC9I=;
+        b=JyVGUPUGSerXve2+I5TPSdtf6f7xRVUh1ZH4fAM6UiXkGufYUWtMgeF8wJEgQ5okt4
+         /3eUJvQcOykcIRP2TI0W0r+y+d0oVSzpyH0X9kl595TgEg8S7Ff31kktefU6dn3+BS9Z
+         Z9mQyyq8l7fSN5vwQgR1xEfI1b+bRlOe23HHcwQTsm3vB6me92PgO2fIqs9EfhO/LxF9
+         FcLwzyMBDetKGkOllulCKNmXtwzcnJHYekCMGvqWt/mteagP6rl8984yd3PncLoAaTwt
+         H/jOBvYG450ue0TuZ0rmJNyMY2+gJMUTH8AdQgyHDT8MPw7JjKRXLuqtBEDlhVkAW3rk
+         Xi9w==
+X-Gm-Message-State: AOAM532wCbzhIcY43IUiJq1TBs50l9i4YwI3cCcadQ3Rb0hGfWiwApdK
+        hQlLw1XYYYmUaox6xH3XuLjEEmv1qa8q4VneOa4LdQ==
+X-Google-Smtp-Source: ABdhPJzacgTS8hHw1ZjQOfNBAr1mTKMWcivsKFDjT9uyNKrKsTpmXdWxGbPNewQjvNMxKTJ6vfoYkrt96NBmSGT//fE=
+X-Received: by 2002:a25:8804:: with SMTP id c4mr799996ybl.469.1623871285116;
+ Wed, 16 Jun 2021 12:21:25 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <cb9d8a40-a64f-e37f-1487-272b2c4ac9ea@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20210602170823.vnshp2gfrcay35nx@yadro.com> <CAMpxmJWa0ZXN--2S84B-Un0WSKM16eKAiWUtKD4V_szZPEi+gg@mail.gmail.com>
+ <b2b7be69-eebb-b325-1962-4d45e6d5f088@nvidia.com> <CAMpxmJUnn1e-grUxiMm4T84xBYRi7jQOtOODfSoiBtLmsSjodA@mail.gmail.com>
+ <20210616170050.ywh7xbvqxvybtvnb@yadro.com>
+In-Reply-To: <20210616170050.ywh7xbvqxvybtvnb@yadro.com>
+From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date:   Wed, 16 Jun 2021 21:21:14 +0200
+Message-ID: <CAMpxmJU0Uupdp6hOVhuSERicczFjObin3wk0_QfBEOQwfCmECA@mail.gmail.com>
+Subject: Re: [PATCH] eeprom: at24: Support custom device names for AT24 EEPROMs
+To:     Alexander Fomichev <fomichev.ru@gmail.com>
+Cc:     Jon Hunter <jonathanh@nvidia.com>,
+        linux-i2c <linux-i2c@vger.kernel.org>, linux@yadro.com,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        Thierry Reding <treding@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 16/06/2021 21:17, Dmitry Osipenko wrote:
-> 16.06.2021 22:06, Daniel Lezcano пишет:
->> On 07/06/2021 00:28, Dmitry Osipenko wrote:
->>> Add stubs needed for compile-testing of tegra-cpuidle driver.
->>>
->>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>> ---
->>>  include/soc/tegra/irq.h | 9 ++++++++-
->>>  1 file changed, 8 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/include/soc/tegra/irq.h b/include/soc/tegra/irq.h
->>> index 8eb11a7109e4..94539551c8c1 100644
->>> --- a/include/soc/tegra/irq.h
->>> +++ b/include/soc/tegra/irq.h
->>> @@ -6,8 +6,15 @@
->>>  #ifndef __SOC_TEGRA_IRQ_H
->>>  #define __SOC_TEGRA_IRQ_H
->>>  
->>> -#if defined(CONFIG_ARM)
->>> +#include <linux/types.h>
->>> +
->>> +#if defined(CONFIG_ARM) && defined(CONFIG_ARCH_TEGRA)
->>
->> Does not CONFIG_ARCH_TEGRA depends on CONFIG_ARM ?
->>
->>>  bool tegra_pending_sgi(void);
-> 
-> ARM and ARM64, only ARM32 variant builds tegra_pending_sgi().
+On Wed, Jun 16, 2021 at 7:00 PM Alexander Fomichev
+<fomichev.ru@gmail.com> wrote:
+>
+> On Mon, Jun 07, 2021 at 03:31:55PM +0200, Bartosz Golaszewski wrote:
+> > On Mon, Jun 7, 2021 at 1:09 PM Jon Hunter <jonathanh@nvidia.com> wrote:
+> > >
+> > >
+> > > On 04/06/2021 11:00, Bartosz Golaszewski wrote:
+> > > > On Wed, Jun 2, 2021 at 7:08 PM Alexander Fomichev <fomichev.ru@gmail.com> wrote:
+> > >
+> > > ...
+> > >
+> > > >> This change has a serious defect, as it doesn't guarantee a name
+> > > >> uniqueness. For my case there are a bunch of NVMEM devices with
+> > > >> 'dimm-spd' name. So the module initialization fails with several error
+> > > >> dumps in dmesg, like following:
+> > > >>
+> > > >> [    4.784679] at24 3-0051: supply vcc not found, using dummy regulator
+> > > >> [    4.784781] sysfs: cannot create duplicate filename '/bus/nvmem/devices/dimm-spd'
+> > > >> [    4.784783] CPU: 24 PID: 1354 Comm: systemd-udevd Not tainted 5.13.0-rc4-at24-catch+ #25
+> > > >> [    4.784787] Call Trace:
+> > > >> [    4.784789] [c00000003f3eb010] [c000000000914700] dump_stack+0xc4/0x114 (unreliable)
+> > > >> [    4.784797] [c00000003f3eb060] [c00000000061c5c8] sysfs_warn_dup+0x88/0xc0
+> > > >> [    4.784803] [c00000003f3eb0e0] [c00000000061ccec] sysfs_do_create_link_sd+0x17c/0x190
+> > > >> [    4.784809] [c00000003f3eb130] [c000000000ac3014] bus_add_device+0x94/0x1d0
+> > > >> [    4.784817] [c00000003f3eb1b0] [c000000000abe7b8] device_add+0x428/0xb90
+> > > >> [    4.784822] [c00000003f3eb2a0] [c000000000debbd0] nvmem_register+0x220/0xe00
+> > > >> [    4.784829] [c00000003f3eb390] [c000000000dec80c] devm_nvmem_register+0x5c/0xc0
+> > > >> [    4.784835] [c00000003f3eb3d0] [c008000016f40c20] at24_probe+0x668/0x940 [at24]
+> > > >> [    4.784845] [c00000003f3eb650] [c000000000cfecd4] i2c_device_probe+0x194/0x650
+> > > >> [    4.784850] [c00000003f3eb6f0] [c000000000ac4d3c] really_probe+0x1cc/0x790
+> > > >> [    4.784855] [c00000003f3eb790] [c000000000ac545c] driver_probe_device+0x15c/0x200
+> > > >> [    4.784861] [c00000003f3eb810] [c000000000ac5ecc] device_driver_attach+0x11c/0x130
+> > > >> [    4.784866] [c00000003f3eb850] [c000000000ac5fd0] __driver_attach+0xf0/0x200
+> > > >> [    4.784873] [c00000003f3eb8d0] [c000000000ac1158] bus_for_each_dev+0xa8/0x130
+> > > >> [    4.784879] [c00000003f3eb930] [c000000000ac4104] driver_attach+0x34/0x50
+> > > >> [    4.784885] [c00000003f3eb950] [c000000000ac35f0] bus_add_driver+0x1b0/0x2f0
+> > > >> [    4.784893] [c00000003f3eb9e0] [c000000000ac70b4] driver_register+0xb4/0x1c0
+> > > >> [    4.784900] [c00000003f3eba50] [c000000000cfe498] i2c_register_driver+0x78/0x120
+> > > >> [    4.784905] [c00000003f3ebad0] [c008000016f41260] at24_init+0x6c/0x88 [at24]
+> > > >> [    4.784914] [c00000003f3ebb30] [c0000000000122c0] do_one_initcall+0x60/0x2c0
+> > > >> [    4.784920] [c00000003f3ebc00] [c0000000002537bc] do_init_module+0x7c/0x350
+> > > >> [    4.784926] [c00000003f3ebc90] [c000000000257904] __do_sys_finit_module+0xd4/0x160
+> > > >> [    4.784932] [c00000003f3ebdb0] [c00000000002c104] system_call_exception+0xf4/0x200
+> > > >> [    4.784938] [c00000003f3ebe10] [c00000000000cf70] system_call_vectored_common+0xf0/0x268
+> > > >> [    4.784944] --- interrupt: 3000 at 0x7c1adac4b4c4
+> > > >> [    4.784948] NIP:  00007c1adac4b4c4 LR: 0000000000000000 CTR: 0000000000000000
+> > > >> [    4.784951] REGS: c00000003f3ebe80 TRAP: 3000   Not tainted  (5.13.0-rc4-at24-catch+)
+> > > >> [    4.784955] MSR:  900000000280f033 <SF,HV,VEC,VSX,EE,PR,FP,ME,IR,DR,RI,LE>  CR: 48222844  XER: 00000000
+> > > >> [    4.784976] IRQMASK: 0
+> > > >>                GPR00: 0000000000000161 00007fffefc78b90 00007c1adad37000 0000000000000006
+> > > >>                GPR04: 00000f6614d56be0 0000000000000000 0000000000000006 0000000000000000
+> > > >>                GPR08: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+> > > >>                GPR12: 0000000000000000 00007c1adafde680 0000000020000000 0000000000000000
+> > > >>                GPR16: 0000000000000000 00000f66118b1980 00000f66118b1a18 00000f66118b1948
+> > > >>                GPR20: 0000000000000000 00000f6614d60500 00007fffefc78df0 00000f6614d535c0
+> > > >>                GPR24: 00000f6614d56be0 00000f6614d60500 000000000000000c 00000f6614d49cb0
+> > > >>                GPR28: 00000f6614d56be0 0000000000020000 0000000000000000 00000f6614d60500
+> > > >> [    4.785033] NIP [00007c1adac4b4c4] 0x7c1adac4b4c4
+> > > >> [    4.785036] LR [0000000000000000] 0x0
+> > > >> [    4.785040] --- interrupt: 3000
+> > > >> [    4.785146] at24: probe of 3-0051 failed with error -17
+> > > >>
+> > > >>
+> > > >> It needs either to use NVMEM_DEVID_AUTO flag irrespective of the 'label'
+> > > >> property or to add a sort of counter suffix to the name field.
+> > > >>
+> > > >>
+> > > >> Reported-by: Alexander Fomichev <fomichev.ru@gmail.com>
+> > > >> CC: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> > > >>
+> > > >> --
+> > > >> Regards,
+> > > >>   Alexander
+> > > >
+> > > > Alexander: Thanks for your bug report. The counter suffix you suggest
+> > > > is precisely what NVMEM_DEVID_AUTO would do so I think we'll need to
+> > > > use it. On the other hand, a non-unique label is bad design but
+> > > > obviously we can't break working setups.
+> > >
+> > > Yes the intention was that the label itself would be unique. In our case
+> > > we wanted to have something specifically named 'system' or 'module' to
+> > > identify a specific eeprom.
+> > >
+> > > BTW I did a quick grep from 'dimm-spd' and did not find it in the
+> > > kernel. Where is the device-tree you are using?
+> > >
+> > > > Jon: As the author of this patch - do you have any objections/better ideas?
+> > >
+> > > I would need to check if appending a suffix then has ramifications for
+> > > what we were trying to achieve.
+> > >
+> > > Jon
+> > >
+> > > --
+> > > nvpublic
+> >
+> > One alternative would be to use the label "as is" for the first device
+> > and then append ".x" for each subsequent device with a repeating
+> > label. Does this make sense?
+> >
+>
+> This was my second suggestion, which I called 'counter suffix'. But it
+> requires additional effort.
+>
 
-Ah, I see, thanks!
+It looks like we can reuse the id field of nvmem_config and just track
+the suffix ourselves in the driver. It's not pretty but I've seen
+worse. I'll send a patch tomorrow for you to test - does this sound
+ok?
 
-
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Bart
