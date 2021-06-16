@@ -2,139 +2,135 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F773C48BE8
-	for <linux-tegra@archiver.kernel.org>; Wed, 16 Jun 2021 18:49:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B241C48BE5
+	for <linux-tegra@archiver.kernel.org>; Wed, 16 Jun 2021 19:05:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2BE87613DC
-	for <linux-tegra@archiver.kernel.org>; Wed, 16 Jun 2021 18:49:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0BE2E6008E
+	for <linux-tegra@archiver.kernel.org>; Wed, 16 Jun 2021 19:05:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232058AbhFPSvO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 16 Jun 2021 14:51:14 -0400
-Received: from mail-dm6nam12on2086.outbound.protection.outlook.com ([40.107.243.86]:16353
-        "EHLO NAM12-DM6-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S232053AbhFPSvN (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 16 Jun 2021 14:51:13 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=RgjRlqlbTyMsiOmQZk3mjrDYz45fB2CuuQ9pzF0k90q3UrxEm08X0X97X8bvWYYU2+6zOSrFHPDd0A6S68LdApVOHc5ZEY1Q5vgvYU2QB00AVPHdd1uuP4qQ5LeYrnK7dGUEM6Wu6r71hVmNF8lu/cd6ifnUHOe7oLxPIuFiaqse4RRtaY96DZgYGBJ8k+LK7XHP/sJpfDiOWduRgjNQ1pvn1SnDXvlAo4nT8aXRT/yPADML3/bgyjD8yjI4teIZGxv5BjvfilOI+rzDvIz47JVoOYWDxicg6jWMDoXkgOYJsoQJdrq+0yW+Yekx/vnNSjdtcsxjKQivtQCalMHGnw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JhO6CKLebdwoDMmIBDXeE7f88OmzTHptIhtuiwS0M3s=;
- b=XAZjDfl5OrRPp+XteVKB/aQTB7qxEjioD7LJdE4RopA6YKWFuitrL+GS+kmQnxnruJxScifsW7WNilxK4Gvu5CJIoCYtxD+E9XcYDnqNoZrywoGPXHPDd+b1NlI6peVnDekuxOq/1Y8QwKVZttQuxlX3eIEhpDNt43TsAH/kkG45RmFp6FdmdC38vYl4VcsMlUCx8LUV7Wb8geSz+uyLAv7cNl/9tNJwaCI9DvSL7RRFdPxGVZIJ0M8f42B5dlXaSODHEJZ7UAJyOOSTZf4Hti3lzzF8mfQMbmiht6Bd3B39cxtD7Yp7a1nz31VufX4Jbac/FZLguW8nAezOQEdmTg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.112.36) smtp.rcpttodomain=denx.de smtp.mailfrom=nvidia.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JhO6CKLebdwoDMmIBDXeE7f88OmzTHptIhtuiwS0M3s=;
- b=aNYLb9Oykix9i3XnJVU/o6cUCvf5eBGJ5+1MVFhpyqrb9aItZCwb/eOEwvhHwSmGPIRaU4CQXmelbzGqNR9yLtiipIDL/NGzWDf79KqEj7hc+ETZms0JEDUnhEQcg3TYmahVE+wqxtsOzts/qdGmRPYcVNHDNOFsuJlz9avhbY+CzjOWkfMLREMnAbq9/YmmmUUv2TKjfzDeUtkUQuhEUM+prfQcV/EK10gdvTtKxwfITXNMgZKcqaGTtOJ4giScQYg8ni+hWj8F7bckQigJiKMf5GgxCyC3zVTXvKlV1Z9iAH8A1mhZtw4IQTRJgQma/1Fwzcfx2kOIF9Y2J4avDg==
-Received: from BN9PR03CA0549.namprd03.prod.outlook.com (2603:10b6:408:138::14)
- by MWHPR12MB1311.namprd12.prod.outlook.com (2603:10b6:300:13::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4219.23; Wed, 16 Jun
- 2021 18:49:06 +0000
-Received: from BN8NAM11FT056.eop-nam11.prod.protection.outlook.com
- (2603:10b6:408:138:cafe::ff) by BN9PR03CA0549.outlook.office365.com
- (2603:10b6:408:138::14) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4242.19 via Frontend
- Transport; Wed, 16 Jun 2021 18:49:05 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.36)
- smtp.mailfrom=nvidia.com; denx.de; dkim=none (message not signed)
- header.d=none;denx.de; dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.112.36 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.112.36; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (216.228.112.36) by
- BN8NAM11FT056.mail.protection.outlook.com (10.13.177.26) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.4242.16 via Frontend Transport; Wed, 16 Jun 2021 18:49:05 +0000
-Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Wed, 16 Jun
- 2021 18:49:04 +0000
-Received: from jonathanh-vm-01.nvidia.com (172.20.187.5) by mail.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1497.2 via Frontend
- Transport; Wed, 16 Jun 2021 11:49:04 -0700
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
-        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
-        <stable@vger.kernel.org>, <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 5.10 00/38] 5.10.45-rc1 review
-In-Reply-To: <20210616152835.407925718@linuxfoundation.org>
-References: <20210616152835.407925718@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        id S232200AbhFPTHh (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 16 Jun 2021 15:07:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59092 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230239AbhFPTHh (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 16 Jun 2021 15:07:37 -0400
+Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A9E0C061574;
+        Wed, 16 Jun 2021 12:05:30 -0700 (PDT)
+Received: by mail-lj1-x236.google.com with SMTP id n17so5346332ljg.2;
+        Wed, 16 Jun 2021 12:05:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=UtJY5flZe37khK4mqWdfiiEYsdpOKZYMDHCXniEQmfo=;
+        b=s27Yhv4wGkshgOvdJeLFBfIbEqtaqnjR05vIj/+jjNYu9vdFXfYezVZW+dFOGB7Ymg
+         p+7EsCB48hbFJbBAfoYZ9vB0n45QIcjpje8YZuNgyvVOkqtmdRErWaZ+jaLHUACfKurS
+         mUCHtc87iIiBZsVvkd/6J2/leNFBMTp/FHs4YZavx2gz2NixOIs6vmyCxNMagzjcnVXe
+         PEo/RArkcS78AbUbqfGDm3oZhwXKwmyUx06xfoXIvq2Wj/q/RRKyXLB3cM8LwblloKwl
+         TqQCzkphiWkv+7jM8K5aluD6H+Vg/CxPINuTvVeGPxFbK4sXjzmRDzoC92e6MockNt/p
+         YdzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=UtJY5flZe37khK4mqWdfiiEYsdpOKZYMDHCXniEQmfo=;
+        b=sdcr9GWEVpiu6s5jo0BkVujIphgS2fevnl8Vd6mIoKme0b0fKtbOByRx1STpLsEG+d
+         h2hTGVb9xvtae21LmFg+Jf6kpk2EoqzxWkdJl9jKTsOmXBACGb64RsXb8lndYMnYmxxc
+         fm/HTmEHwgyvYPFMe/Z4hPShmQtYI3i0qYirUTUoOzCZ72GVr2g7q5YqqPbfGTVZQXx/
+         qhE9n7P5rnfm1wJJsSBuwKbckMFgMpPGxQjI0gTot65K/FIKmJsxK7bwlLTq1K0d7s83
+         9vsk9A+9rv8bMBRx71DdQsaJ8cfUkPBc28QIJ4WmTROTWEu3M68s2ycvs+VGZcHY1yJP
+         n2cw==
+X-Gm-Message-State: AOAM532n5u8OfAMEBbPSvPBWPq7Dd3ynhvo7bqIpE4BNfWb/Xs01mA28
+        fcJvHSxlEX3PxpQxxQ2MKYY=
+X-Google-Smtp-Source: ABdhPJxp9eXcNuLNvaf5Npy4dCg3qGjjED2cpTjcnQTJJ4Z4Smd0H9kVsgjjdt+JfsBACOQKCZm03Q==
+X-Received: by 2002:a2e:b5c8:: with SMTP id g8mr1197147ljn.204.1623870328322;
+        Wed, 16 Jun 2021 12:05:28 -0700 (PDT)
+Received: from localhost.localdomain (94-29-29-31.dynamic.spd-mgts.ru. [94.29.29.31])
+        by smtp.gmail.com with ESMTPSA id e20sm365951ljk.67.2021.06.16.12.05.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Jun 2021 12:05:27 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Andreas Westman Dorcsak <hedmoo@yahoo.com>,
+        Maxim Schwalm <maxim.schwalm@gmail.com>,
+        Svyatoslav Ryhel <clamor95@gmail.com>,
+        Ihor Didenko <tailormoon@rambler.ru>,
+        Ion Agorria <ion@agorria.com>,
+        Matt Merhar <mattmerhar@protonmail.com>,
+        Peter Geis <pgwipeout@gmail.com>
+Cc:     linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: [PATCH v4 0/6] Add driver for NVIDIA Tegra30 SoC Thermal sensor
+Date:   Wed, 16 Jun 2021 22:04:11 +0300
+Message-Id: <20210616190417.32214-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Message-ID: <b43076274282452bbd5785359c70ffea@HQMAIL109.nvidia.com>
-Date:   Wed, 16 Jun 2021 11:49:04 -0700
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 629aa60c-eb6a-4918-7ba9-08d930f76aec
-X-MS-TrafficTypeDiagnostic: MWHPR12MB1311:
-X-Microsoft-Antispam-PRVS: <MWHPR12MB131164C6409FBD52219DEF97D90F9@MWHPR12MB1311.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: sXUydLGPaUYGOelvG4H8gd0Gr+19F4lmlrO3gqmB6laG5myw2qy2k8Osk6JsG5kB3EGYW558zX5ccow1HBFP+SOdOtgYtbajfb5way1OJ2BglrIM3RxpRMXld4DTMDe3jL73e/k2O6tv2l5gs2f5ydR7QFB6PltQ4OkTs72zSOOfzWmdJ9YcbOX2RCU04rqFJs3yAHkw84+4iSIVmHHfL9BUo56uAW025CKMqTmYyTEzZ5pPU4Zs7KHu+i6ILdANH0w3KLqrj4FxQiv3WGUy0ZXV1ewwwYrM1TMxNmzMFpQ4j9nqdkwjdXxO8eMpAm/0ujSPF10ClPhV1bI1+VmTMeXcjYm6XsB2NdXpgnQgsR0Y1X5pZraFXMT+khzcQiIAo6qVpQwUrAl8x65ea6EUu6HnK0+X5S3bi0ugVfaI7wwMcDH6q26Rzl6b0it6NVtTMJJKSEWVhkObZmt+u+lb+fPT6RDMvV71CgP5Oi/i+ox23CG+xXqQTpjCSrPfAAcM0Gru9Vl51e/+d0cR4kR1f/EpVuWNURR95HJGl9A/IBIUoc/NZDyxUT/BgpqDZ1nHgQ2IPCkmX3Hr4hhSNzgm6Kc/o5/qEG1vphQU9jhMFw4zNaB6muagMra8nrDHUpAxucjKRVsO6dce9E4/JxyUwcs8gn2XikDABUUAZSZ339Cl3HteSsDjundv9ygRQKY+gJu/KhBlJMI2TP3+EGh1PF3ZvG4FOMXC/EkGHlccNIYXfrLMMqJv/bhH2yP6Qzwu6UC/AtGIg4hB9gHNHDyGlA==
-X-Forefront-Antispam-Report: CIP:216.228.112.36;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid05.nvidia.com;CAT:NONE;SFS:(4636009)(39860400002)(376002)(136003)(346002)(396003)(36840700001)(46966006)(6916009)(186003)(7636003)(4326008)(356005)(8936002)(26005)(478600001)(7416002)(82740400003)(86362001)(316002)(966005)(70586007)(70206006)(2906002)(426003)(8676002)(24736004)(336012)(36906005)(36860700001)(108616005)(54906003)(82310400003)(5660300002)(47076005);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jun 2021 18:49:05.6825
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 629aa60c-eb6a-4918-7ba9-08d930f76aec
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.36];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT056.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR12MB1311
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, 16 Jun 2021 17:33:09 +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.10.45 release.
-> There are 38 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Fri, 18 Jun 2021 15:28:19 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.45-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+Hi,
 
-All tests passing for Tegra ...
+This series adds support for the thermal sensor that is found on NVIDIA
+Tegra30 SoC. Sensor monitors temperature and voltage of the SoC, it also
+emits signals to the power management and clock controllers that are
+performing the emergency shut down and the CPU frequency throttling
+when a pre-programmed temperature levels are reached.
 
-Test results for stable-v5.10:
-    12 builds:	12 pass, 0 fail
-    28 boots:	28 pass, 0 fail
-    70 tests:	70 pass, 0 fail
+Changelog:
 
-Linux version:	5.10.45-rc1-gaba9bf2d6e40
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
-                tegra20-ventana, tegra210-p2371-2180,
-                tegra210-p3450-0000, tegra30-cardhu-a04
+v4: - Removed DIV2 CPU frequency throttling and cooling device part as was
+      suggested by Daniel Lezcano since we need to notify cpufreq about the
+      updated frequency and change the thermal pressure. The thermal pressure
+      change should co-exists with the cpufreq_cooling. This all needs some
+      more thought, so the DIV2 mitigation will come sometime later.
 
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
+    - Added ack from Thierry Reding.
 
-Jon
+    - Changed default TZ trips in the device-tree to the silicon temperature
+      levels, instead of the average device levels.
+
+v3: - No code changes. CC'ed linux-pm, which was previously missed by accident.
+      Not sure how much that is important for the thermal patches, but won't
+      hurt to re-send since only DT binding was reviewed so far.
+
+v2: - Made a very minor improvement to one error message, it now prints
+      number of channel at which error occurred.
+
+    - Added r-b from Rob Herring to the binding.
+
+Dmitry Osipenko (6):
+  dt-bindings: thermal: Add binding for Tegra30 thermal sensor
+  thermal: thermal_of: Stop zone device before unregistering it
+  thermal/drivers/tegra: Add driver for Tegra30 thermal sensor
+  ARM: tegra_defconfig: Enable CONFIG_TEGRA30_TSENSOR
+  ARM: multi_v7_defconfig: Enable CONFIG_TEGRA30_TSENSOR
+  ARM: tegra: Add SoC thermal sensor to Tegra30 device-trees
+
+ .../thermal/nvidia,tegra30-tsensor.yaml       |  73 ++
+ arch/arm/boot/dts/tegra30.dtsi                |  87 ++-
+ arch/arm/configs/multi_v7_defconfig           |   1 +
+ arch/arm/configs/tegra_defconfig              |   1 +
+ drivers/thermal/tegra/Kconfig                 |   7 +
+ drivers/thermal/tegra/Makefile                |   1 +
+ drivers/thermal/tegra/tegra30-tsensor.c       | 673 ++++++++++++++++++
+ drivers/thermal/thermal_of.c                  |   3 +
+ 8 files changed, 842 insertions(+), 4 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/thermal/nvidia,tegra30-tsensor.yaml
+ create mode 100644 drivers/thermal/tegra/tegra30-tsensor.c
+
+-- 
+2.30.2
+
