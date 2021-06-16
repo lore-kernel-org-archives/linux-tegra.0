@@ -2,79 +2,78 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-14.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 974C3C48BE5
-	for <linux-tegra@archiver.kernel.org>; Wed, 16 Jun 2021 19:25:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6153DC48BE6
+	for <linux-tegra@archiver.kernel.org>; Wed, 16 Jun 2021 19:35:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 74CEC6135C
-	for <linux-tegra@archiver.kernel.org>; Wed, 16 Jun 2021 19:25:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 23C6F60FDC
+	for <linux-tegra@archiver.kernel.org>; Wed, 16 Jun 2021 19:35:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232775AbhFPT1F (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 16 Jun 2021 15:27:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35310 "EHLO
+        id S232620AbhFPThZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 16 Jun 2021 15:37:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37582 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232670AbhFPT1F (ORCPT
+        with ESMTP id S231202AbhFPThZ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 16 Jun 2021 15:27:05 -0400
-Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A21DEC061574;
-        Wed, 16 Jun 2021 12:24:58 -0700 (PDT)
-Received: by mail-lf1-x12a.google.com with SMTP id r198so6061838lff.11;
-        Wed, 16 Jun 2021 12:24:58 -0700 (PDT)
+        Wed, 16 Jun 2021 15:37:25 -0400
+Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9F49C061574;
+        Wed, 16 Jun 2021 12:35:17 -0700 (PDT)
+Received: by mail-lf1-x134.google.com with SMTP id p17so6163779lfc.6;
+        Wed, 16 Jun 2021 12:35:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=pkR9B7CUCd/Xb9A+bBUd5E8+FpPhZajqebbesGuSC2Y=;
-        b=j7NJJI9jFEtOhoJLOq8rDrszZ10Ds1kA+A7eHZOmBdI+o4SCdbkvFE7FPhtQyy7eiK
-         fRhxkfYnhpcZSMH61apvhtJWlqL/tbwerMN1pnBUFCrNONvC9rlPIVl29DloqQvud9Ed
-         GmskciZtdXm8gVW1eXDUV84RaGMePAatIC9BUXpvNYe9t/QFhYGgT1ZSnxJLhmj5sI1C
-         nmJxkPWAdIiKHD6TJNEB7NiD4SBkzAB5gjpYydo58WVx6WqHHf0pS0ff6CTWtaIOHMuG
-         HocyRKkVQcYCuP/FcU1aOMFCWhc7z29vO93y7QzoWrFFxl12o9skhBYn51HVpnc9zxzn
-         xxqw==
+        bh=rJAS0QO9/vvlILD/ZTa23zQtC2ltrapB5MkxJmRJVEg=;
+        b=u0wPDzi4TM4v9c0jKyiLTcoEHZcJrKv79KDx7HBUAB+NNCsX1QCE7lsQ99gdqzYAZB
+         pk1A9TXLT6qAWjqhV1m422oec+rlGkGOSi5qmpQ0NhVnYTDEsvELl7i8V8jAuVEGMCfP
+         a+pqS2ci86prcmcQbnrrEhnfSpxkC8cyDkqBR/MpktLSidAzdpe16qbQkzRGHatOI31J
+         nopbkcPm4Mq2PN4f9gnMjgtxW8giaW5/FrS4CnqcnjqMJ4dhI4fN8NXPomQx/COseANZ
+         tLGglTqjz8hlUnghwu0wjkwNHQ1SFiDsQwssHwvPBCQr17YKg5uIfYfcTGKRZdIRe5s8
+         ZeZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=pkR9B7CUCd/Xb9A+bBUd5E8+FpPhZajqebbesGuSC2Y=;
-        b=dZltFat2982S76osSYDw9M8Z64lJOWEWSHoZt8pJdUtGE1O/Ak8BfsweIy0uhIIyri
-         Cv1ySdBMEkPQ0cKY0w7l5rL8+jQRLTZ4bvI2HhsRT+Y1sLOwptihHDunzFq8RNNJUwOL
-         NWZOPQARceLcDP/7a6WVurf1h/Ej7SOwhe0H4UN7DsoJQFHZOK0KOa96/cHJ2frnN29K
-         Y3ek96/xA2iIx+gXGaKspGTeTrQjTyrSc0x49wP5qya4lXOLEymUPP0poISCDgH8K83J
-         Ou80MDlVvE4tqVrZadbuoJkyk+27Is7xZMsD3mhdTnEkovg3yenAwNDdKmRmS7R05lL/
-         Nw7A==
-X-Gm-Message-State: AOAM531HNtb72obkEzPrRQV4Xv75bNqxgFR9UsHln6ZEUxN9JtISXF3g
-        t8RWdtTs59gxgOxZ4/3qTl9IMv3flfQ=
-X-Google-Smtp-Source: ABdhPJx93evgZTTeUv9fEUWTxN1RvZw2O7Uqx5I4Kg8iFMf+VV3y4anAhhvpSubsdbyDqXGUGkq6eQ==
-X-Received: by 2002:a05:6512:3f9b:: with SMTP id x27mr935329lfa.279.1623871496906;
-        Wed, 16 Jun 2021 12:24:56 -0700 (PDT)
+        bh=rJAS0QO9/vvlILD/ZTa23zQtC2ltrapB5MkxJmRJVEg=;
+        b=ivXWNyapq4DhJ9BQpDXZyi14azO8XKE9Ky+Vj6TfvMtFlXTj9eAocT4u1zw0jk3mag
+         qrUUr4S8h/cnlUGopjCjtJKzE8skWsoKpXsIzPFcqquzJl9fJijDdSWjRO8qbjr7g9hT
+         +jZLekA7FgyBxzlirakJCcLmUH/XKtmS12vANIyTpJVSnPZwGnFkg+lJgH8LpbDUa6vr
+         Yp0QIuHiLBhmYWR68OEpMJPkh6yWKKTy946zpiiJkGbPhDOVHaFOAh3qQd13JwYENMHi
+         FUxqYgRqLLs0G9uMEuUwyQDIL6KGkiq6k6oPfWcCtQw84bdlfwkAcZdCWZ4Jj+53/U8K
+         6UVA==
+X-Gm-Message-State: AOAM532NR958sGLLsJWNtl/0QXIyrtBkfsQogWJNAsCRpXE2ERL9rSX1
+        Q0QhoUsZ1uKgKZcZDJdqdtOThhHks2c=
+X-Google-Smtp-Source: ABdhPJwgBlDXU759cTSbp1ARDF1wy7fEejghYvLbfJfdsgHuij2hiUMaUEql8EuKrmF8RWkWIIuhtA==
+X-Received: by 2002:ac2:5fd1:: with SMTP id q17mr860162lfg.496.1623872115743;
+        Wed, 16 Jun 2021 12:35:15 -0700 (PDT)
 Received: from [192.168.2.145] (94-29-29-31.dynamic.spd-mgts.ru. [94.29.29.31])
-        by smtp.googlemail.com with ESMTPSA id q21sm366828lfp.260.2021.06.16.12.24.56
+        by smtp.googlemail.com with ESMTPSA id q21sm370449lfm.240.2021.06.16.12.35.15
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Jun 2021 12:24:56 -0700 (PDT)
-Subject: Re: [PATCH v1 5/5] cpuidle: tegra: Enable compile testing
-To:     kernel test robot <lkp@intel.com>,
+        Wed, 16 Jun 2021 12:35:15 -0700 (PDT)
+Subject: Re: [PATCH v1 4/5] clk: tegra: Add stubs needed for compile testing
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     kbuild-all@lists.01.org, linux-pm@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-References: <20210606222817.12388-6-digetx@gmail.com>
- <202106161518.TD3LfT4A-lkp@intel.com>
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc:     linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org
+References: <20210606222817.12388-1-digetx@gmail.com>
+ <20210606222817.12388-5-digetx@gmail.com>
+ <d74be172-1ef5-48f7-e1a1-de63a05f64ba@linaro.org>
 From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <ced4dd2f-770e-95a1-f4ee-9d3f9d50087d@gmail.com>
-Date:   Wed, 16 Jun 2021 22:24:55 +0300
+Message-ID: <53fc4f69-436b-8779-fc36-c54234d35449@gmail.com>
+Date:   Wed, 16 Jun 2021 22:35:14 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.8.1
 MIME-Version: 1.0
-In-Reply-To: <202106161518.TD3LfT4A-lkp@intel.com>
+In-Reply-To: <d74be172-1ef5-48f7-e1a1-de63a05f64ba@linaro.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -82,51 +81,36 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-16.06.2021 10:37, kernel test robot пишет:
-> Hi Dmitry,
+16.06.2021 22:08, Daniel Lezcano пишет:
+> On 07/06/2021 00:28, Dmitry Osipenko wrote:
+>> Add stubs needed for compile-testing of tegra-cpuidle driver.
+>>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>>  include/linux/clk/tegra.h | 4 ++++
+>>  1 file changed, 4 insertions(+)
+>>
+>> diff --git a/include/linux/clk/tegra.h b/include/linux/clk/tegra.h
+>> index d128ad1570aa..9bd06d8a5436 100644
+>> --- a/include/linux/clk/tegra.h
+>> +++ b/include/linux/clk/tegra.h
+>> @@ -42,7 +42,11 @@ struct tegra_cpu_car_ops {
+>>  #endif
+>>  };
+>>  
+>> +#ifdef CONFIG_ARCH_TEGRA
+>>  extern struct tegra_cpu_car_ops *tegra_cpu_car_ops;
+>> +#else
+>> +static struct tegra_cpu_car_ops *tegra_cpu_car_ops __maybe_unused;
+>> +#endif
 > 
-> I love your patch! Yet something to improve:
-> 
-> [auto build test ERROR on tegra/for-next]
-> [also build test ERROR on next-20210615]
-> [cannot apply to pm/linux-next daniel.lezcano/clockevents/next v5.13-rc6]
-> [If your patch is applied to the wrong git tree, kindly drop us a note.
-> And when submitting patch, we suggest to use '--base' as documented in
-> https://git-scm.com/docs/git-format-patch]
-> 
-> url:    https://github.com/0day-ci/linux/commits/Dmitry-Osipenko/Compile-test-NVIDIA-Tegra-CPUIDLE-driver/20210607-063217
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git for-next
-> config: arm-randconfig-r005-20210616 (attached as .config)
-> compiler: arm-linux-gnueabi-gcc (GCC) 9.3.0
-> reproduce (this is a W=1 build):
->         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->         chmod +x ~/bin/make.cross
->         # https://github.com/0day-ci/linux/commit/53a9ab1dfd605ffae44d67f01a07a18b8ecbb1be
->         git remote add linux-review https://github.com/0day-ci/linux
->         git fetch --no-tags linux-review Dmitry-Osipenko/Compile-test-NVIDIA-Tegra-CPUIDLE-driver/20210607-063217
->         git checkout 53a9ab1dfd605ffae44d67f01a07a18b8ecbb1be
->         # save the attached .config to linux build tree
->         COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-9.3.0 make.cross ARCH=arm 
-> 
-> If you fix the issue, kindly add following tag as appropriate
-> Reported-by: kernel test robot <lkp@intel.com>
-> 
-> All errors (new ones prefixed by >>):
-> 
->    arm-linux-gnueabi-ld: arch/arm/kernel/sleep.o: in function `__cpu_suspend':
->>> (.text+0x68): undefined reference to `cpu_sa110_suspend_size'
->    arm-linux-gnueabi-ld: arch/arm/kernel/suspend.o: in function `__cpu_suspend_save':
->>> suspend.c:(.text+0x118): undefined reference to `cpu_sa110_do_suspend'
->>> arm-linux-gnueabi-ld: suspend.c:(.text+0x13c): undefined reference to `cpu_sa110_do_resume'
+> Why not just have __may_be_unused without the #ifdef ?
 
-I can't find where cpu_sa110_do_resume is specified in kernel.
+The first variant is an external symbol. The tegra_cpu_car_ops* must be
+specified somewhere, otherwise linkage will fail. The __maybe_unused
+won't help here because symbol must be resolved by linker for the code
+where it's used.
 
-> Kconfig warnings: (for reference only)
->    WARNING: unmet direct dependencies detected for ARM_CPU_SUSPEND
->    Depends on ARCH_SUSPEND_POSSIBLE
->    Selected by
->    - ARM_TEGRA_CPUIDLE && CPU_IDLE && (ARM || ARM64) && (ARCH_TEGRA || COMPILE_TEST && !ARM64
-
-There are other Kconfig.arm entries that are compile-tested and select
-ARM_CPU_SUSPEND. Do they get the same warning? Should I do something
-about it?
+The latter variant is a static NULL pointer marked as __maybe_unused.
+This allows to include header file universally without producing
+compiler warning about the unused static variable during compile-testing.
