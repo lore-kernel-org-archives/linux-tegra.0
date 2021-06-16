@@ -2,184 +2,139 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3614AC48BE5
-	for <linux-tegra@archiver.kernel.org>; Wed, 16 Jun 2021 17:00:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 484F0C48BE5
+	for <linux-tegra@archiver.kernel.org>; Wed, 16 Jun 2021 18:49:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0E869613B9
-	for <linux-tegra@archiver.kernel.org>; Wed, 16 Jun 2021 17:00:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 35AB2613B4
+	for <linux-tegra@archiver.kernel.org>; Wed, 16 Jun 2021 18:49:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230291AbhFPRDB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 16 Jun 2021 13:03:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59566 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229547AbhFPRDB (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 16 Jun 2021 13:03:01 -0400
-Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2888C061574;
-        Wed, 16 Jun 2021 10:00:54 -0700 (PDT)
-Received: by mail-lj1-x230.google.com with SMTP id l4so4915016ljg.0;
-        Wed, 16 Jun 2021 10:00:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=8sdn/l7MMxSQXOq17Z+nDE+V1RtYej0krowxuSl/tPQ=;
-        b=erknLANmWysgOLs5xWtokO37NOWM62U32Q+u+qdouIQ1OvYWAsl+8MId1M6/t71UuN
-         vUhgd83mgQ1GggiW4zXAI6WI/yrnn3GJv+OaTJZreGQ2oO3udo5T3kbFy/Em2KdwYAvb
-         GScwhy28lXcI5NMXqCiLFGhj4aKOtIP27mziFYznRta842OEh119kyKiT87HmozYFOYi
-         36GNcgX62nW8nN9oUXQNbIEDHrGccoCgC/G9znDOIijpHlhhgXk4hVrEta0u2zmoz2sc
-         wTye1IPlXCX8fMk330KXAsWXtUYv2rbpA+W8W8hZQjirl13sXAQuT1IoB9MgorCySoZ+
-         +5Fw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=8sdn/l7MMxSQXOq17Z+nDE+V1RtYej0krowxuSl/tPQ=;
-        b=ZpKERBtNfXsro61NwQ2+/ev4Mo5EUXNz+4pv2Xfim33Ne4dOSoINL3Tr2oXt+jrtmO
-         9Sz/R4RmtWNIavGY2KU7bTX454609mHCHoaQ2nZ0QofFMbfQjgnNwQ1o/uzA4Z+8InV4
-         i2FhCtuM4w98bXHMJkfxgQk7gKDv4+4yGOlF73rz0uoontS+AoRWXVNUTd9ZM4ONlZbO
-         yKrXULwhaoVPqxonDnRNLlX/JPWy/ymsYBPQI2rPA1e9HkES2Berh0pXIrkJOnp0Y2cw
-         5gHNkckJ17Mi2zBidS4VlUAD8Oillhcrmu52xjwk/6Gj4LjakWFbSNQoS6kowbOQGIJB
-         t3jA==
-X-Gm-Message-State: AOAM532QVWn71MC5Qc18SROrqLRffM5L2M6cdO04KtJRcKwr1TnUdrJ7
-        kyWk7cvv70ufQal0vi2fGg8=
-X-Google-Smtp-Source: ABdhPJzNVmAgYAtjpQZVQUVAC1ot59CpvIGEgKSJsa+JljDZ33We4mWcP9DSwmoUo1EqvhOujwZ7Rw==
-X-Received: by 2002:a2e:8397:: with SMTP id x23mr719529ljg.228.1623862853269;
-        Wed, 16 Jun 2021 10:00:53 -0700 (PDT)
-Received: from localhost ([62.217.184.220])
-        by smtp.gmail.com with ESMTPSA id f11sm301310lfk.9.2021.06.16.10.00.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Jun 2021 10:00:52 -0700 (PDT)
-Date:   Wed, 16 Jun 2021 20:00:50 +0300
-From:   Alexander Fomichev <fomichev.ru@gmail.com>
-To:     Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc:     Jon Hunter <jonathanh@nvidia.com>,
-        linux-i2c <linux-i2c@vger.kernel.org>, linux@yadro.com,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Thierry Reding <treding@nvidia.com>
-Subject: Re: [PATCH] eeprom: at24: Support custom device names for AT24
- EEPROMs
-Message-ID: <20210616170050.ywh7xbvqxvybtvnb@yadro.com>
-References: <20210602170823.vnshp2gfrcay35nx@yadro.com>
- <CAMpxmJWa0ZXN--2S84B-Un0WSKM16eKAiWUtKD4V_szZPEi+gg@mail.gmail.com>
- <b2b7be69-eebb-b325-1962-4d45e6d5f088@nvidia.com>
- <CAMpxmJUnn1e-grUxiMm4T84xBYRi7jQOtOODfSoiBtLmsSjodA@mail.gmail.com>
+        id S232056AbhFPSvN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 16 Jun 2021 14:51:13 -0400
+Received: from mail-dm6nam12on2042.outbound.protection.outlook.com ([40.107.243.42]:58593
+        "EHLO NAM12-DM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S231942AbhFPSvN (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 16 Jun 2021 14:51:13 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=n/k3pnjIH+wmuIntfbqMFXyK6nY8nRKaZPspULqvGzPQhpjHKaEr+LvsKBKMouZpKXAOmkWeF8MrtYZn0ZgIVJxLKJDLSg3x+0zUoRTRP8cHCFxEo9NaKbUkKXkzjPE/9FmbDjqciXUxVO/B/ngu4Rk0IkPjtkHFcNJrjFBJ4ZNqRnZyhY0fYdav/jWvoInpsgWLH+oG7w3CINQeeGOI3x3U//0UIAloxUY4TxmxJTdtL048MYIYX4DH2Uz/M1WltmaU8OvhDHLPkeUV6Z1bLqSnl/XjFH6kP0VUoW2ghFggBPw73PUYcka5iF/08gu9Tcm0XY0xf9tDg+KG8pSFew==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Arubd1M1Fg5TsKdwVls4pzxeytppUy81FKuWDW+1TRQ=;
+ b=EIgqJBohLBM3vIhJnzs9QzJOS6HYuvYb/MAg2Rb7mLqEMhZovFzOqSzqigbeqotrjBBtbqSIIziOEkAk8KGZb8MnuYe10xhw/vpnvVqt87LWfzYN1Zu6dyKbPU3nrbHCnZ8SAY+S/a0a4iK0eMY+reusbx9F866lSIKIairjSZd3okL0qtFdmgwgfeP2IEs5u9oUh1WyCuy7wxI5lNRJTj7b7uW4VhyPmr03uZJ2LxCQcqM/KFLI1Tr4ZGjyE4VRuF7Yx0C+Hph8w0q7oeMWeCYsm1toORYLz0yOGuo0/F4Us7/iVkKRYq6KQvkA+X4uOm3K7d58TNzdE/FsjUtVrg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.112.35) smtp.rcpttodomain=denx.de smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Arubd1M1Fg5TsKdwVls4pzxeytppUy81FKuWDW+1TRQ=;
+ b=HIgOJTIABNK388DT3Ud51XSMC4WHIbprc3Qd9jsWgY1wmyXfSUk81/om6h7V/gw35d+jd8B151nq4pysRK50ixKE44F0fR15tDZdppJ7LDEdGJjGKo4PNjYCbvQIibyXWWuQv/5wS5UD5MPu92TW+5ObWlKTrofR/Kh79VImTFB7/uAhwvA/jQlgAbndXgv5htXGC5XKXVjGh8/hE7FG91mZ7ZJy3tV6A9wyDdbB5Uf6PnDD873csTDUKY+DrWE8BpLxzRtannTd7QQBpX8eemFx4DtNnxahsEfIkCiWBquFn8VCsqbbW/vSsrIO0JRKsMnjbAB1wfRF1Naczj7TCA==
+Received: from MWHPR04CA0039.namprd04.prod.outlook.com (2603:10b6:300:ee::25)
+ by MWHPR12MB1183.namprd12.prod.outlook.com (2603:10b6:300:d::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4219.24; Wed, 16 Jun
+ 2021 18:49:04 +0000
+Received: from CO1NAM11FT016.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:300:ee:cafe::5a) by MWHPR04CA0039.outlook.office365.com
+ (2603:10b6:300:ee::25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4219.20 via Frontend
+ Transport; Wed, 16 Jun 2021 18:49:04 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.35)
+ smtp.mailfrom=nvidia.com; denx.de; dkim=none (message not signed)
+ header.d=none;denx.de; dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.112.35 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.112.35; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (216.228.112.35) by
+ CO1NAM11FT016.mail.protection.outlook.com (10.13.175.141) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.4242.16 via Frontend Transport; Wed, 16 Jun 2021 18:49:04 +0000
+Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL111.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Wed, 16 Jun
+ 2021 18:49:04 +0000
+Received: from jonathanh-vm-01.nvidia.com (172.20.187.6) by mail.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1497.2 via Frontend
+ Transport; Wed, 16 Jun 2021 18:49:04 +0000
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
+        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
+        <stable@vger.kernel.org>, <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 5.4 00/28] 5.4.127-rc1 review
+In-Reply-To: <20210616152834.149064097@linuxfoundation.org>
+References: <20210616152834.149064097@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMpxmJUnn1e-grUxiMm4T84xBYRi7jQOtOODfSoiBtLmsSjodA@mail.gmail.com>
+Message-ID: <6b1a98a846d84cc191200ebac1995dee@HQMAIL111.nvidia.com>
+Date:   Wed, 16 Jun 2021 18:49:04 +0000
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: b7b84f6d-f60c-4827-1686-08d930f76a3f
+X-MS-TrafficTypeDiagnostic: MWHPR12MB1183:
+X-Microsoft-Antispam-PRVS: <MWHPR12MB1183CC7418F6AEC32AA76C16D90F9@MWHPR12MB1183.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: L08Oiqwml9KjZv4CEiJSTCYla4I4q1OQeKRmwaT0jCGQ0DhFghjjl4pddh1t7xYXWPVoXySeQNDDutnNuXuAIyvAFzw+Y83zKaz/PDfJ2eaBF8GXe3wkB9Jsk+dLeGiMVGYgD3kLhMfczUnPXkT4eU6aZskuffVNFNTP7dxObGlYqpkUYe/ub8WtKyZl7zdVvOpKLXb6/lnamM1DRMLWDbTN8WRvINWBVfs/FHp6RCoIhoKC1TqFBiAm9JYx0EsM2y+COmUpN65z57bkGZQL+fEJbQW+NpBj3hxf0Iay0nrNbViWGZoIK+ocDcCGMcDt5iztjqMtL3jjCKcXnQmYbU+6i6yeJAGckvNpTgbtj0nZmmE3GrVOtJHQBVAPxqYMIvJoanyGGEjQNAQ2ezlncRhlyoieHCcFhZ5Vu8GvW6TSLWUYHDpt+8rzWh7lEQrVvsC6ecL3daC7k7qZF7IEssFP4CFO4s41PNLDYxMqrE9VyoF3nOgBXhuVzNy8CjAq8EzQQQt7eaRzQfvM7apBMfmi5vz0Zb4hDkjcDZJ2Cb/6zzkJcvs2/zfaotMHyfAYg+Yiv5NrHjej4LNFE3O8QSK6xobs8erB2f2VMp/Qcf274DYJOYGoLaJV6Na28NRzq1AnI0zIDhZOyjG8WU2fbAc+jtbPYF6vUtLrq8p3S5SZRCQyqL7NuWYfHRUuU2VxxnWx2npRpT2l8cnxfKsWzLXh2dQMSskhF4ZaUPfyjErBK8bRs3r1NjgWfnZce7cYMVPrJ+z3K/BXIA4mGJtgtw==
+X-Forefront-Antispam-Report: CIP:216.228.112.35;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid04.nvidia.com;CAT:NONE;SFS:(4636009)(136003)(39860400002)(376002)(396003)(346002)(46966006)(36840700001)(186003)(4326008)(8936002)(70586007)(336012)(36906005)(7416002)(316002)(70206006)(54906003)(82310400003)(82740400003)(966005)(86362001)(426003)(5660300002)(2906002)(36860700001)(108616005)(24736004)(8676002)(6916009)(26005)(356005)(7636003)(47076005)(478600001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jun 2021 18:49:04.6101
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b7b84f6d-f60c-4827-1686-08d930f76a3f
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.35];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT016.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR12MB1183
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, Jun 07, 2021 at 03:31:55PM +0200, Bartosz Golaszewski wrote:
-> On Mon, Jun 7, 2021 at 1:09 PM Jon Hunter <jonathanh@nvidia.com> wrote:
-> >
-> >
-> > On 04/06/2021 11:00, Bartosz Golaszewski wrote:
-> > > On Wed, Jun 2, 2021 at 7:08 PM Alexander Fomichev <fomichev.ru@gmail.com> wrote:
-> >
-> > ...
-> >
-> > >> This change has a serious defect, as it doesn't guarantee a name
-> > >> uniqueness. For my case there are a bunch of NVMEM devices with
-> > >> 'dimm-spd' name. So the module initialization fails with several error
-> > >> dumps in dmesg, like following:
-> > >>
-> > >> [    4.784679] at24 3-0051: supply vcc not found, using dummy regulator
-> > >> [    4.784781] sysfs: cannot create duplicate filename '/bus/nvmem/devices/dimm-spd'
-> > >> [    4.784783] CPU: 24 PID: 1354 Comm: systemd-udevd Not tainted 5.13.0-rc4-at24-catch+ #25
-> > >> [    4.784787] Call Trace:
-> > >> [    4.784789] [c00000003f3eb010] [c000000000914700] dump_stack+0xc4/0x114 (unreliable)
-> > >> [    4.784797] [c00000003f3eb060] [c00000000061c5c8] sysfs_warn_dup+0x88/0xc0
-> > >> [    4.784803] [c00000003f3eb0e0] [c00000000061ccec] sysfs_do_create_link_sd+0x17c/0x190
-> > >> [    4.784809] [c00000003f3eb130] [c000000000ac3014] bus_add_device+0x94/0x1d0
-> > >> [    4.784817] [c00000003f3eb1b0] [c000000000abe7b8] device_add+0x428/0xb90
-> > >> [    4.784822] [c00000003f3eb2a0] [c000000000debbd0] nvmem_register+0x220/0xe00
-> > >> [    4.784829] [c00000003f3eb390] [c000000000dec80c] devm_nvmem_register+0x5c/0xc0
-> > >> [    4.784835] [c00000003f3eb3d0] [c008000016f40c20] at24_probe+0x668/0x940 [at24]
-> > >> [    4.784845] [c00000003f3eb650] [c000000000cfecd4] i2c_device_probe+0x194/0x650
-> > >> [    4.784850] [c00000003f3eb6f0] [c000000000ac4d3c] really_probe+0x1cc/0x790
-> > >> [    4.784855] [c00000003f3eb790] [c000000000ac545c] driver_probe_device+0x15c/0x200
-> > >> [    4.784861] [c00000003f3eb810] [c000000000ac5ecc] device_driver_attach+0x11c/0x130
-> > >> [    4.784866] [c00000003f3eb850] [c000000000ac5fd0] __driver_attach+0xf0/0x200
-> > >> [    4.784873] [c00000003f3eb8d0] [c000000000ac1158] bus_for_each_dev+0xa8/0x130
-> > >> [    4.784879] [c00000003f3eb930] [c000000000ac4104] driver_attach+0x34/0x50
-> > >> [    4.784885] [c00000003f3eb950] [c000000000ac35f0] bus_add_driver+0x1b0/0x2f0
-> > >> [    4.784893] [c00000003f3eb9e0] [c000000000ac70b4] driver_register+0xb4/0x1c0
-> > >> [    4.784900] [c00000003f3eba50] [c000000000cfe498] i2c_register_driver+0x78/0x120
-> > >> [    4.784905] [c00000003f3ebad0] [c008000016f41260] at24_init+0x6c/0x88 [at24]
-> > >> [    4.784914] [c00000003f3ebb30] [c0000000000122c0] do_one_initcall+0x60/0x2c0
-> > >> [    4.784920] [c00000003f3ebc00] [c0000000002537bc] do_init_module+0x7c/0x350
-> > >> [    4.784926] [c00000003f3ebc90] [c000000000257904] __do_sys_finit_module+0xd4/0x160
-> > >> [    4.784932] [c00000003f3ebdb0] [c00000000002c104] system_call_exception+0xf4/0x200
-> > >> [    4.784938] [c00000003f3ebe10] [c00000000000cf70] system_call_vectored_common+0xf0/0x268
-> > >> [    4.784944] --- interrupt: 3000 at 0x7c1adac4b4c4
-> > >> [    4.784948] NIP:  00007c1adac4b4c4 LR: 0000000000000000 CTR: 0000000000000000
-> > >> [    4.784951] REGS: c00000003f3ebe80 TRAP: 3000   Not tainted  (5.13.0-rc4-at24-catch+)
-> > >> [    4.784955] MSR:  900000000280f033 <SF,HV,VEC,VSX,EE,PR,FP,ME,IR,DR,RI,LE>  CR: 48222844  XER: 00000000
-> > >> [    4.784976] IRQMASK: 0
-> > >>                GPR00: 0000000000000161 00007fffefc78b90 00007c1adad37000 0000000000000006
-> > >>                GPR04: 00000f6614d56be0 0000000000000000 0000000000000006 0000000000000000
-> > >>                GPR08: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-> > >>                GPR12: 0000000000000000 00007c1adafde680 0000000020000000 0000000000000000
-> > >>                GPR16: 0000000000000000 00000f66118b1980 00000f66118b1a18 00000f66118b1948
-> > >>                GPR20: 0000000000000000 00000f6614d60500 00007fffefc78df0 00000f6614d535c0
-> > >>                GPR24: 00000f6614d56be0 00000f6614d60500 000000000000000c 00000f6614d49cb0
-> > >>                GPR28: 00000f6614d56be0 0000000000020000 0000000000000000 00000f6614d60500
-> > >> [    4.785033] NIP [00007c1adac4b4c4] 0x7c1adac4b4c4
-> > >> [    4.785036] LR [0000000000000000] 0x0
-> > >> [    4.785040] --- interrupt: 3000
-> > >> [    4.785146] at24: probe of 3-0051 failed with error -17
-> > >>
-> > >>
-> > >> It needs either to use NVMEM_DEVID_AUTO flag irrespective of the 'label'
-> > >> property or to add a sort of counter suffix to the name field.
-> > >>
-> > >>
-> > >> Reported-by: Alexander Fomichev <fomichev.ru@gmail.com>
-> > >> CC: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> > >>
-> > >> --
-> > >> Regards,
-> > >>   Alexander
-> > >
-> > > Alexander: Thanks for your bug report. The counter suffix you suggest
-> > > is precisely what NVMEM_DEVID_AUTO would do so I think we'll need to
-> > > use it. On the other hand, a non-unique label is bad design but
-> > > obviously we can't break working setups.
-> >
-> > Yes the intention was that the label itself would be unique. In our case
-> > we wanted to have something specifically named 'system' or 'module' to
-> > identify a specific eeprom.
-> >
-> > BTW I did a quick grep from 'dimm-spd' and did not find it in the
-> > kernel. Where is the device-tree you are using?
-> >
-> > > Jon: As the author of this patch - do you have any objections/better ideas?
-> >
-> > I would need to check if appending a suffix then has ramifications for
-> > what we were trying to achieve.
-> >
-> > Jon
-> >
-> > --
-> > nvpublic
+On Wed, 16 Jun 2021 17:33:11 +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.4.127 release.
+> There are 28 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> One alternative would be to use the label "as is" for the first device
-> and then append ".x" for each subsequent device with a repeating
-> label. Does this make sense?
+> Responses should be made by Fri, 18 Jun 2021 15:28:19 +0000.
+> Anything received after that time might be too late.
 > 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.127-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-This was my second suggestion, which I called 'counter suffix'. But it
-requires additional effort.
+All tests passing for Tegra ...
 
--- 
-Regards,
-  Alexander
+Test results for stable-v5.4:
+    12 builds:	12 pass, 0 fail
+    26 boots:	26 pass, 0 fail
+    59 tests:	59 pass, 0 fail
+
+Linux version:	5.4.127-rc1-g4e778e863160
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra20-ventana,
+                tegra210-p2371-2180, tegra210-p3450-0000,
+                tegra30-cardhu-a04
+
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+
+Jon
