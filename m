@@ -2,220 +2,178 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7E06C48BE5
-	for <linux-tegra@archiver.kernel.org>; Wed, 16 Jun 2021 09:31:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71819C48BE5
+	for <linux-tegra@archiver.kernel.org>; Wed, 16 Jun 2021 10:47:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 84D30611CA
-	for <linux-tegra@archiver.kernel.org>; Wed, 16 Jun 2021 09:31:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 533FD6115C
+	for <linux-tegra@archiver.kernel.org>; Wed, 16 Jun 2021 10:47:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231316AbhFPJdn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 16 Jun 2021 05:33:43 -0400
-Received: from mail-dm3nam07on2053.outbound.protection.outlook.com ([40.107.95.53]:30849
-        "EHLO NAM02-DM3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S231772AbhFPJdn (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 16 Jun 2021 05:33:43 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=mgn71rbRDjeaf+GpBhsgl2j+uopP4ntKxkgOIz1/9NdU8W1WOMXhE0qa6ue+wFHHynL4NSyxFFM3iTqA4RBjbued8Gb+Cp8pPiQlfXCM5dYSH1vQUs9KgTlePbzlXzhwI3qOxMqMDOy0mTS+lsImAdCQYyIzLQPu0fef7P00SGALKrK7N1kJsiFrASD68WZEJUSS6ShNeDvQTBty3RBGl5uB/UMFw3+RIfsp9Qw1yWZT3eNczDxbKnjf7bt5hhxM7VWKoNlh6yOuzhMbOEbSqsdSbFWrqhS09lQt3Uj6m3q6oi/b5RLqTAmSvr8D58zgQfseZO92DRR3P83m0PfiWg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=yBjJBJypb3P96mURgCe/Fs2u+W8ERFdAgR+DUmsMWsQ=;
- b=LQL3LC0u9fFElnFa/O3ug5eixB7vKdQqIq+zXPQ9KGjR/wm49V/5Vvt9sjrBdTq5M5Ee+fLiT+2gNu5qQHjFS1Wixpt5WUp2I0x38k+GGM0Xz+VIRIxoXbLaL55frIatJbV2K7Fw89E0ysZPMMYlINFcyp2wlzdps80fMSKEE0IjFUMV5/yxZTB7t8M4t2CKTLMSWMC8P4U6nyWc5ccPR/i4sMG5ErUt3SMP76yqRnszceKEIVkchkUmGBzQUQRXwA5DFvsFnUw6XL8mOo1aKpgKVzNzaR/H1N1WbZn2RtjQ5DsJZPEYBgPqUTyQKvm0FcdmnFcLc4YiSPSqA7qKZw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.112.34) smtp.rcpttodomain=linux.ie smtp.mailfrom=nvidia.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=yBjJBJypb3P96mURgCe/Fs2u+W8ERFdAgR+DUmsMWsQ=;
- b=ZNdv5ywjovs6LfmvXqzJHEgGR3wP2Rf283qV83T7YXgI1F4AClsxsFRm7Yif+uEmZjEDN8WLck2otIf85+7DwRDVuim2S6xRZ+RX7ZMG+dkpxmLRUjCI416jBtc4e69QPAAJCel+ekwPirre0qV+/DDx37PDy+NEBmwH+JjgIu+0xULcsKpEX7Q6jwTiglw5HH9zQUHFbmqIyu0z9MCbSgAoY5EQgOFrk6+kTSst4JwfJr9/rkxi3PMPTlmZqesxwSVbc4C7rvL78TjfbnCTj1nM5qbucldjnWjpTf/GmnnmJwNT5A16YFWZor91FGjSxQWN+iXZYW9LSClac4ubSQ==
-Received: from BN9PR03CA0623.namprd03.prod.outlook.com (2603:10b6:408:106::28)
- by DM6PR12MB2858.namprd12.prod.outlook.com (2603:10b6:5:182::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4219.22; Wed, 16 Jun
- 2021 09:31:36 +0000
-Received: from BN8NAM11FT053.eop-nam11.prod.protection.outlook.com
- (2603:10b6:408:106:cafe::15) by BN9PR03CA0623.outlook.office365.com
- (2603:10b6:408:106::28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4242.19 via Frontend
- Transport; Wed, 16 Jun 2021 09:31:36 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.34)
- smtp.mailfrom=nvidia.com; linux.ie; dkim=none (message not signed)
- header.d=none;linux.ie; dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.112.34 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.112.34; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (216.228.112.34) by
- BN8NAM11FT053.mail.protection.outlook.com (10.13.177.209) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.4242.16 via Frontend Transport; Wed, 16 Jun 2021 09:31:36 +0000
-Received: from [10.26.49.10] (172.20.187.6) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Wed, 16 Jun
- 2021 09:31:34 +0000
-Subject: Re: [PATCH v7 13/15] drm/tegra: Implement job submission part of new
- UAPI
-To:     Mikko Perttunen <mperttunen@nvidia.com>,
-        <thierry.reding@gmail.com>, <digetx@gmail.com>, <airlied@linux.ie>,
-        <daniel@ffwll.ch>
-CC:     <dri-devel@lists.freedesktop.org>, <linux-tegra@vger.kernel.org>
-References: <20210610110456.3692391-1-mperttunen@nvidia.com>
- <20210610110456.3692391-14-mperttunen@nvidia.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <72a1a9b5-475c-fd70-d46f-0762df71fa58@nvidia.com>
-Date:   Wed, 16 Jun 2021 10:31:31 +0100
+        id S232030AbhFPKtt (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 16 Jun 2021 06:49:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59468 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231922AbhFPKts (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 16 Jun 2021 06:49:48 -0400
+Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6E34C061574;
+        Wed, 16 Jun 2021 03:47:41 -0700 (PDT)
+Received: by mail-lf1-x12b.google.com with SMTP id j2so3556874lfg.9;
+        Wed, 16 Jun 2021 03:47:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=M8RbiCOq83IbnSA8G848uSB8CbMVC8ioIh0DaNZa9vc=;
+        b=m0+aLL36GaHNEjSSDDcmlxsML6+AeRiAhb+BmyBDrsanZORVU7IFdQvyNNWt34OjYQ
+         fRxAL1xbVx4pgLFlZqB8eGKklb3XqNxPR5YzyM7HG245bP2FtgV0yewdFAdf1aIte+j4
+         dmTxJp1AyWCUvbdmw5+r/kybXHdgxI0P57XNIzpxzWaP3BGEfcdmOQ8MC5niEfrRb+Vn
+         Etq4qmod4kKq1J3lwgiqGmtH6MpccArW0XGbg3rMNKK5Q1u6hFqKU4fRwClS3/Ealn6I
+         2VRkkpRpuqiDIFFJrNWBt+rJcoDL8/g3gRVi9rNLlRGzuluvRFfPZeoxZuL08TKE/u/1
+         XceA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=M8RbiCOq83IbnSA8G848uSB8CbMVC8ioIh0DaNZa9vc=;
+        b=fKhtepC2msJ36HIIfEfxaCSBgMpUJcOIZP0ZncCGOhWXttctYBbiPkYH/cprUgPoYL
+         EeimqvqNBxA+WV7AjACem/PSARjkMIZDRC5xmJsfbttiG1tF5nB0B10QLYnoJNPQPPvb
+         6AUyUptdMWDCnRffzHy7kPUIdRB86Qffr3FuSsW296OG3qsO3FJjzCjFCNDmYQRt0kBp
+         +9/yDWgJkq4hiASX8sN8iKQHANh+anoPH3YNhWxTThsaaGqfeu/fAoPtkYY3D/SCMBXp
+         tQ0Vrq/351k7Ue0DvdY9jkRSfIWt6cQWGNj9gdkDPT5a+V/OP8FJIbT2h/Zw5BSnwUFW
+         B82Q==
+X-Gm-Message-State: AOAM533XXBgSSiSUYSvJif9qyDJ45KpcArFqGvsnFFTthlhwInNdYqwy
+        1UEu8yQjB4Nwp6f7zsJwlHGEWyQj5LY=
+X-Google-Smtp-Source: ABdhPJz+0Zz9WG1zeE/j95jNz5K1F/ytl7qbFbKxW4oVKx0aC5XmOSp9HDSQN0heEC/zEiU0hkhcrg==
+X-Received: by 2002:ac2:4a6b:: with SMTP id q11mr3292061lfp.321.1623840460086;
+        Wed, 16 Jun 2021 03:47:40 -0700 (PDT)
+Received: from [192.168.2.145] (94-29-29-31.dynamic.spd-mgts.ru. [94.29.29.31])
+        by smtp.googlemail.com with ESMTPSA id h4sm209060lft.184.2021.06.16.03.47.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Jun 2021 03:47:39 -0700 (PDT)
+Subject: Re: [PATCH v3 4/7] thermal/drivers/tegra: Add driver for Tegra30
+ thermal sensor
+To:     Thara Gopinath <thara.gopinath@linaro.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Amit Kucheria <amitk@kernel.org>,
+        Andreas Westman Dorcsak <hedmoo@yahoo.com>,
+        Maxim Schwalm <maxim.schwalm@gmail.com>,
+        Svyatoslav Ryhel <clamor95@gmail.com>,
+        Ihor Didenko <tailormoon@rambler.ru>,
+        Ion Agorria <ion@agorria.com>,
+        Matt Merhar <mattmerhar@protonmail.com>,
+        Peter Geis <pgwipeout@gmail.com>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-pm@vger.kernel.org
+References: <20210529170955.32574-1-digetx@gmail.com>
+ <20210529170955.32574-5-digetx@gmail.com>
+ <6f2b6290-095a-bd39-c160-1616a0ff89b1@linaro.org>
+ <20210615102626.dja3agclwzxv2sj4@vireshk-i7>
+ <595f5e53-b872-bcc6-e886-ed225e26e9fe@gmail.com>
+ <fbdc3b56-4465-6d3e-74db-1d5082813b9c@linaro.org>
+ <4c7b23c4-cf6a-0942-5250-63515be4a219@gmail.com>
+ <545974aa-bb0f-169b-6f31-6e8c2461343f@linaro.org>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <f06370e0-bfde-87d0-03b4-93c667f81817@gmail.com>
+Date:   Wed, 16 Jun 2021 13:47:38 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.8.1
 MIME-Version: 1.0
-In-Reply-To: <20210610110456.3692391-14-mperttunen@nvidia.com>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <545974aa-bb0f-169b-6f31-6e8c2461343f@linaro.org>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [172.20.187.6]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
- HQMAIL107.nvidia.com (172.20.187.13)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: a37b88a5-05c0-4f40-9fcb-08d930a98964
-X-MS-TrafficTypeDiagnostic: DM6PR12MB2858:
-X-Microsoft-Antispam-PRVS: <DM6PR12MB285812D80895ABB2A84A9148D90F9@DM6PR12MB2858.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: p5Xbv8rJozKf5YiYXmDxx+P4fMPh5wgQia6xmjmpPyLLWYxrG3kWZEJk6z6I9LtIv2OHIsX0zCLvYq21A377G7INiKXfAaXYe1rwXOodgTPwUKjEeMp+8pOgMxnU/exa1eV/7tUNBR1sTvOknSWi5xsxRe8SSIaSp2FgFn8HL7lti7b92D+vS6B+U5Gdftd6TJH/eznhO/Ae2/zk71YNBta9T/fj9TKwvOHIgwXVuMm9Dm5POxHifXv/HkvQbDQcVhOdldt473g7snfhMQU65APzo6ZCjFsY7zTqRSVOPkBFEysXpxUINUcb8ujFVIoETHVzVgWI1Iqf8kAKLOAwge8EVkxCxwaNyQmCp+z6jx9le4hyN1oIrc5fRk3T2QfGhO5OFq9LnJEwDKDTfBoa2wpA3xxfiymqdN6Fcvqo7UACdVQKgDweCDjEpPglL7IYPBVNWtBpCx+ulXhEeR/tmOgWeg+z1tfKCvlxoKSTkwlJBzCrzZhIIonvMLcspL5dW9CWDDMS3DFkMUjQeTgIvtDJTENqx+UYaTJOK8TnFhb5zsJ43BUuqWj00Ox9tqvaiecw36gXmJt19BU3v30ooOdtQAR+CEwLqgaWYm9PA3LShNsRYUxqPenIPAnsmV1MRYHhX+qcJ+0MZCdvFj+78Rd+Sbsw0bBWnaJaGetFNgYgeQYf73W814f0BC255HXA
-X-Forefront-Antispam-Report: CIP:216.228.112.34;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid03.nvidia.com;CAT:NONE;SFS:(4636009)(39860400002)(136003)(376002)(346002)(396003)(36840700001)(46966006)(16526019)(478600001)(53546011)(31686004)(82740400003)(26005)(356005)(86362001)(16576012)(110136005)(82310400003)(6666004)(54906003)(8676002)(2906002)(31696002)(7636003)(83380400001)(2616005)(5660300002)(186003)(8936002)(316002)(47076005)(36906005)(36860700001)(36756003)(4326008)(336012)(426003)(70586007)(70206006)(43740500002);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jun 2021 09:31:36.0556
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a37b88a5-05c0-4f40-9fcb-08d930a98964
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.34];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT053.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB2858
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Mikko,
-
-On 10/06/2021 12:04, Mikko Perttunen wrote:
-> Implement the job submission IOCTL with a minimum feature set.
-> 
-> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
-> ---
-> v7:
-> * Allocate gather BO with DMA API to get page-aligned
->   memory
-> * Add error prints to a few places where they were missing
-> v6:
-> * Remove sgt bypass path in gather_bo - this would cause
->   cache maintenance to be skipped and is unnecessary in
->   general.
-> * Changes related to moving to using syncpoint IDs
-> * Add syncobj related code
-> * Print warning on submit failure describing the issue
-> * Use ARCH_DMA_ADDR_T_64BIT to check if that is indeed
->   the case
-> * Add support for relative syncpoint wait
-> * Use pm_runtime_resume_and_get
-> * Only try to resume engines that support runtime PM
-> * Removed uapi subdirectory
-> * Don't use "copy_err" variables for copy_from_user
->   return value
-> * Fix setting of blocklinear flag
-> v5:
-> * Add 16K size limit to copies from userspace.
-> * Guard RELOC_BLOCKLINEAR flag handling to only exist in ARM64
->   to prevent oversized shift on 32-bit platforms.
-> v4:
-> * Remove all features that are not strictly necessary.
-> * Split into two patches.
-> v3:
-> * Remove WRITE_RELOC. Relocations are now patched implicitly
->   when patching is needed.
-> * Directly call PM runtime APIs on devices instead of using
->   power_on/power_off callbacks.
-> * Remove incorrect mutex unlock in tegra_drm_ioctl_channel_open
-> * Use XA_FLAGS_ALLOC1 instead of XA_FLAGS_ALLOC
-> * Accommodate for removal of timeout field and inlining of
->   syncpt_incrs array.
-> * Copy entire user arrays at a time instead of going through
->   elements one-by-one.
-> * Implement waiting of DMA reservations.
-> * Split out gather_bo implementation into a separate file.
-> * Fix length parameter passed to sg_init_one in gather_bo
-> * Cosmetic cleanup.
-> ---
->  drivers/gpu/drm/tegra/Makefile    |   2 +
->  drivers/gpu/drm/tegra/drm.c       |   4 +-
->  drivers/gpu/drm/tegra/gather_bo.c |  82 +++++
->  drivers/gpu/drm/tegra/gather_bo.h |  24 ++
->  drivers/gpu/drm/tegra/submit.c    | 549 ++++++++++++++++++++++++++++++
->  drivers/gpu/drm/tegra/submit.h    |  17 +
->  6 files changed, 677 insertions(+), 1 deletion(-)
->  create mode 100644 drivers/gpu/drm/tegra/gather_bo.c
->  create mode 100644 drivers/gpu/drm/tegra/gather_bo.h
->  create mode 100644 drivers/gpu/drm/tegra/submit.c
->  create mode 100644 drivers/gpu/drm/tegra/submit.h
-
+16.06.2021 05:50, Thara Gopinath пишет:
 ...
+> 
+> Hi,
+> 
+> Thermal pressure is letting scheduler know that the max capacity
+> available for a cpu to schedule tasks is reduced due to a thermal event.
+> So you cannot have a h/w thermal pressure and s/w thermal pressure.
+> There is eventually only one capping applied at h/w level and the
+> frequency corresponding to this capping should be used for thermal
+> pressure.
+> 
+> Ideally you should not be having both s/w and h/w trying to throttle at
+> the same time. Why is this a scenario and what prevents you from
+> disabling s/w throttling when h/w throttling is enabled. Now if there
+> has to a aggregation for whatever reason this should be done at the
+> thermal driver level and passed to scheduler.
 
-> diff --git a/drivers/gpu/drm/tegra/submit.c b/drivers/gpu/drm/tegra/submit.c
-> new file mode 100644
-> index 000000000000..e3200c10ca9e
-> --- /dev/null
-> +++ b/drivers/gpu/drm/tegra/submit.c
-> @@ -0,0 +1,549 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/* Copyright (c) 2020 NVIDIA Corporation */
-> +
-> +#include <linux/dma-fence-array.h>
-> +#include <linux/file.h>
-> +#include <linux/host1x.h>
-> +#include <linux/iommu.h>
-> +#include <linux/kref.h>
-> +#include <linux/list.h>
-> +#include <linux/nospec.h>
-> +#include <linux/pm_runtime.h>
-> +#include <linux/sync_file.h>
-> +
-> +#include <drm/drm_drv.h>
-> +#include <drm/drm_file.h>
-> +#include <drm/drm_syncobj.h>
-> +
-> +#include "drm.h"
-> +#include "gather_bo.h"
-> +#include "gem.h"
-> +#include "submit.h"
-> +#include "uapi.h"
-> +
-> +#define SUBMIT_ERR(ctx, fmt, ...) \
-> +	dev_err_ratelimited(ctx->client->base.dev, \
-> +		"%s: job submission failed: " fmt "\n", \
-> +		current->comm __VA_OPT__(,) __VA_ARGS__)
+Hello,
 
+The h/w mitigation is much more reactive than software, in the same time
+it's much less flexible than software. It should provide additional
+protection in a cases where software isn't doing a good job. Ideally h/w
+mitigation should stay inactive all the time, nevertheless it should be
+modeled properly by the driver.
 
-For older compilers that don't support __VA_OPT__ this generates a
-compilation error ...
+>>>
+>>> That is a good question. IMO, first step would be to call
+>>> cpufreq_update_limits().
+>>
+>> Right
+>>
+>>> [ Cc Thara who implemented the thermal pressure ]
+>>>
+>>> May be Thara has an idea about how to aggregate both? There is another
+>>> series floating around with hardware limiter [1] and the same
+>>> problematic.
+>>>
+>>>   [1] https://lkml.org/lkml/2021/6/8/1791
+>>
+>> Thanks, it indeed looks similar.
+>>
+>> I guess the common thermal pressure update code could be moved out into
+>> a new special cpufreq thermal QoS handler (policy->thermal_constraints),
+>> where handler will select the frequency constraint and set up the
+>> pressure accordingly. So there won't be any races in the code.
+>>
+> It was a conscious decision to keep thermal pressure update out of qos
+> max freq update because there are platforms that don't use the qos
+> framework. For eg acpi uses cpufreq_update_policy.
+> But you are right. We have two platforms now applying h/w throttling and
+> cpufreq_cooling applying s/w throttling. So it does make sense to have
+> one api doing all the computation to update thermal pressure. I am not
+> sure how exactly/where exactly this will reside.
 
-drivers/gpu/drm/tegra/submit.c: In function ‘submit_copy_gather_data’:
-drivers/gpu/drm/tegra/submit.c:27:17: error: expected ‘)’ before
-‘__VA_OPT__’
-   current->comm __VA_OPT__(,) __VA_ARGS__)
-                 ^
-I think that we may just have to use ##__VA_ARGS__ here.
+The generic cpufreq_cooling already uses QoS for limiting the CPU
+frequency. It could be okay to use QoS for the OF drivers, this needs a
+closer look.
 
-Cheers
-Jon
+We have the case where CPU frequency is changed by the thermal event and
+the thermal pressure equation is the same for both s/w cpufreq_cooling
+and h/w thermal driver. The pressure is calculated based on the QoS
+cpufreq constraint that is already aggregated.
 
--- 
-nvpublic
+Hence what we may need to do on the thermal event is:
+
+1. Update the QoS request
+2. Update the thermal pressure
+3. Ensure that updates are not racing
+
+> So for starters, I think you should replicate the update of thermal
+> pressure in your h/w driver when you know that h/w is
+> throttling/throttled the frequency. You can refer to cpufreq_cooling.c
+> to see how it is done.
+> 
+> Moving to a common api can be done as a separate patch series.
+> 
+
+Thank you for the clarification and suggestion.
