@@ -2,35 +2,34 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02971C49EA2
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Jun 2021 09:52:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FE35C49EA4
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Jun 2021 09:52:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DD847613CE
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Jun 2021 09:52:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 040B2613D5
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Jun 2021 09:52:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232020AbhFQJyL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 17 Jun 2021 05:54:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58176 "EHLO
+        id S231389AbhFQJyN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 17 Jun 2021 05:54:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58164 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231461AbhFQJyI (ORCPT
+        with ESMTP id S231297AbhFQJyI (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
         Thu, 17 Jun 2021 05:54:08 -0400
 Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D25DC061574
-        for <linux-tegra@vger.kernel.org>; Thu, 17 Jun 2021 02:52:01 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63475C061760
+        for <linux-tegra@vger.kernel.org>; Thu, 17 Jun 2021 02:52:00 -0700 (PDT)
 Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
         by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <ukl@pengutronix.de>)
-        id 1ltogn-0007P8-79; Thu, 17 Jun 2021 11:51:57 +0200
+        id 1ltogm-0007OL-C6; Thu, 17 Jun 2021 11:51:56 +0200
 Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.92)
         (envelope-from <ukl@pengutronix.de>)
-        id 1ltogm-0005Ng-SG; Thu, 17 Jun 2021 11:51:56 +0200
+        id 1ltogl-0005N6-Hi; Thu, 17 Jun 2021 11:51:55 +0200
 From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
         <u.kleine-koenig@pengutronix.de>
 To:     Thierry Reding <thierry.reding@gmail.com>,
@@ -39,16 +38,12 @@ Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
         Philipp Zabel <p.zabel@pengutronix.de>,
         linux-pwm@vger.kernel.org, linux-tegra@vger.kernel.org,
         kernel@pengutronix.de
-Subject: [PATCH v1 4/6] pwm: tegra: Assert reset only after the PWM was unregistered
-Date:   Thu, 17 Jun 2021 11:51:43 +0200
-Message-Id: <20210617095145.163694-5-u.kleine-koenig@pengutronix.de>
+Subject: [PATCH v1 0/6] pwm: tegra: several improvements
+Date:   Thu, 17 Jun 2021 11:51:39 +0200
+Message-Id: <20210617095145.163694-1-u.kleine-koenig@pengutronix.de>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210617095145.163694-1-u.kleine-koenig@pengutronix.de>
-References: <20210617095145.163694-1-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-X-Patch-Hashes: v=1; h=sha256; i=/m4R0J8UVth94GKqUInFjs8A16/GNpJIbvipkp9jTr4=; m=l4Xm8J0VSHEoSUlreU7nDsFyAjmLqT8bMTbf9l/XVzA=; p=I3FylcGdLGcK/y6aRf5kncBAouk5M45XS6LZzZCcqK0=; g=d23df0fa8dbb9104130dd7a2076c9284681826b2
-X-Patch-Sig: m=pgp; i=uwe@kleine-koenig.org; s=0x0D2511F322BFAB1C1580266BE2DCDD9132669BD6; b=iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmDLGvkACgkQwfwUeK3K7AlHyAf+P/H TEN6jouEvdjniCqFv4iJUB8KlL1PR1P6PBs04bXj5yWaqHhbgM92slzhWLu+JcqUIBJ4KCcpaszpd FnA1ZaeKKyQqO0RqqmpW7FLn1h6VB0I0UcEedYSaSSX44wBtxlU/5sDYpkjRQuzRIxOr/kO3cLCD7 VIU8l/sd5JhDm8rEXMrkUB4U/xljhqZt3/ctVxQskheaLngURfOIQsAoS0OcP1iTUTgxtMrpVFsMx Nt4uVzTb1iVta58aJsrZ4iqjL3Vxv9Jy/9LeD5/zzLAGdZjaN3btxYkkyJXRZVpB4ArnIniK4nZeU CnFcwQLvSVPMwT6ZrnndI0veJzPiefw==
 Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
 X-SA-Exim-Mail-From: ukl@pengutronix.de
@@ -58,34 +53,38 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The driver is supposed to stay functional until pwmchip_remove()
-returns. So the reset must be asserted only after that.
+This series improves the tegra-pwm driver. There are a few problems left though:
 
-pwmchip_remove() always returns 0, so the return code can be ignored
-which keeps the tegra_pwm_remove() a bit simpler.
+ - if the PWM is configured to a 100% duty cycle it writes bit 24 which is
+   either bogus or needs a comment.
 
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
----
- drivers/pwm/pwm-tegra.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ - clock handling is broken: If pwm_disable() is called without calling
+   pwm_enable() before, this triggers a warning in clk_disable(). This also 
+   might trigger a HW fault as the register is accessed without enabling the
+   clock first.
 
-diff --git a/drivers/pwm/pwm-tegra.c b/drivers/pwm/pwm-tegra.c
-index e865743e5989..11a10b575ace 100644
---- a/drivers/pwm/pwm-tegra.c
-+++ b/drivers/pwm/pwm-tegra.c
-@@ -301,9 +301,11 @@ static int tegra_pwm_remove(struct platform_device *pdev)
- {
- 	struct tegra_pwm_chip *pc = platform_get_drvdata(pdev);
- 
-+	pwmchip_remove(&pc->chip);
-+
- 	reset_control_assert(pc->rst);
- 
--	return pwmchip_remove(&pc->chip);
-+	return 0;
- }
- 
- #ifdef CONFIG_PM_SLEEP
+ - The calculation of period and duty_cycle is imprecise as it divides by the
+   result of a division and it discards relevant bits from pc->clk_rate without
+   rounding. (I bet there are more problems, I only checked quickly
+   trying to implement .get_state(), but I gave up.)
+
+I didn't address these because I have neither any hardware to test nor
+documentation. So this series is only compile tested.
+
+Best regards
+Uwe
+
+Uwe Kleine-König (6):
+  pwm: tegra: Drop an if block with an always false condition
+  pwm: tegra: Don't modify HW state in .remove callback
+  pwm: tegra: Don't needlessly enable and disable the clock in .remove()
+  pwm: tegra: Assert reset only after the PWM was unregistered
+  pwm: tegra: Implement .apply callback
+  pwm: tegra: unfold legacy callbacks into tegra_pwm_apply()
+
+ drivers/pwm/pwm-tegra.c | 246 ++++++++++++++++++----------------------
+ 1 file changed, 112 insertions(+), 134 deletions(-)
+
 -- 
 2.30.2
 
