@@ -2,316 +2,124 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D500C2B9F4
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Jun 2021 11:40:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 365F1C2B9F4
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Jun 2021 11:46:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 766B0611CA
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Jun 2021 11:40:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C1416140C
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Jun 2021 11:46:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231265AbhFQLnB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 17 Jun 2021 07:43:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54648 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229584AbhFQLnB (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 17 Jun 2021 07:43:01 -0400
-Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A26BAC061574;
-        Thu, 17 Jun 2021 04:40:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-         s=20161220; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
-        MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=UNgERXXV8ydmy7VnDrKhZZhcHnThsxn5HpteKw/4aG8=; b=hdgO+HpveTfJPpBLfW0LrkGv0B
-        E8/mY6puABBnEYpozrpZsU0PPiQdjK3QJj895BK4qyegFTg/ormac4Srrlt6bQMHhjGdy+CP+abPY
-        fWYDElwgcaC+RBzHXY6N+gEAT8wPIXClhVxgg6oMWs0ebY8M+pepyj8JFQMkBefA8drHClbUiw5KM
-        jGM4yBgO8fgNMz+UnN+EFbzPMi+uo2/+2fe5JHEbL9t5dLEUHpQwo6Gn1IBIaJTPwtnxTAIdHnNUC
-        Q4tPQU/VwJ7m55JPRplpCy8QRDG+6V9DNDlbJnE3yhWqTd2SC8aHfiP7gLNfTx3nsNCHUXyhMOZJ7
-        0U9GTEow==;
-Received: from dsl-hkibng22-54f986-236.dhcp.inet.fi ([84.249.134.236] helo=[192.168.1.10])
-        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <cyndis@kapsi.fi>)
-        id 1ltqOA-000658-EX; Thu, 17 Jun 2021 14:40:50 +0300
-Subject: Re: [PATCH] misc: sram: Only map reserved areas in Tegra SYSRAM
-To:     Greg KH <gregkh@linuxfoundation.org>,
-        Mikko Perttunen <mperttunen@nvidia.com>
-Cc:     arnd@arndb.de, ykaukab@suse.de, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20210617094804.667716-1-mperttunen@nvidia.com>
- <YMsrU81o9hCTNfy7@kroah.com>
-From:   Mikko Perttunen <cyndis@kapsi.fi>
-Message-ID: <dd7fce36-9e11-5202-1c76-61b4e893c44f@kapsi.fi>
-Date:   Thu, 17 Jun 2021 14:40:49 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.0
+        id S232430AbhFQLsc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 17 Jun 2021 07:48:32 -0400
+Received: from foss.arm.com ([217.140.110.172]:52404 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232243AbhFQLsb (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 17 Jun 2021 07:48:31 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DE1EB11FB;
+        Thu, 17 Jun 2021 04:46:23 -0700 (PDT)
+Received: from C02TD0UTHF1T.local (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E0EC93F719;
+        Thu, 17 Jun 2021 04:46:21 -0700 (PDT)
+Date:   Thu, 17 Jun 2021 12:46:18 +0100
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Mikko Perttunen <mperttunen@nvidia.com>
+Cc:     catalin.marinas@arm.com, will@kernel.org, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH 1/2] arm64: traps: Support for registering SError hooks
+Message-ID: <20210617114618.GC82133@C02TD0UTHF1T.local>
+References: <20210617104053.765434-1-mperttunen@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <YMsrU81o9hCTNfy7@kroah.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 84.249.134.236
-X-SA-Exim-Mail-From: cyndis@kapsi.fi
-X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210617104053.765434-1-mperttunen@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 6/17/21 2:00 PM, Greg KH wrote:
-> On Thu, Jun 17, 2021 at 12:48:04PM +0300, Mikko Perttunen wrote:
->> On Tegra186 and later, a portion of the SYSRAM may be reserved for use
->> by TZ. Non-TZ memory accesses to this portion, including speculative
->> accesses, trigger SErrors that bring down the system. This does also
->> happen in practice occasionally (due to speculative accesses).
->>
->> To fix the issue, add a flag to the SRAM driver to only map the
->> device tree-specified reserved areas depending on a flag set
->> based on the compatibility string. This would not affect non-Tegra
->> systems that rely on the entire thing being memory mapped.
->>
->> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
->> ---
->>   drivers/misc/sram.c | 108 +++++++++++++++++++++++++++++++-------------
->>   drivers/misc/sram.h |   9 ++++
->>   2 files changed, 86 insertions(+), 31 deletions(-)
->>
->> diff --git a/drivers/misc/sram.c b/drivers/misc/sram.c
->> index 93638ae2753a..a27ffb3dbea8 100644
->> --- a/drivers/misc/sram.c
->> +++ b/drivers/misc/sram.c
->> @@ -97,7 +97,24 @@ static int sram_add_partition(struct sram_dev *sram, struct sram_reserve *block,
->>   	struct sram_partition *part = &sram->partition[sram->partitions];
->>   
->>   	mutex_init(&part->lock);
->> -	part->base = sram->virt_base + block->start;
->> +
->> +	if (sram->config->map_only_reserved) {
->> +		void *virt_base;
->> +
->> +		if (sram->no_memory_wc)
->> +			virt_base = devm_ioremap_resource(sram->dev, &block->res);
->> +		else
->> +			virt_base = devm_ioremap_resource_wc(sram->dev, &block->res);
->> +
->> +		if (IS_ERR(virt_base)) {
->> +			dev_err(sram->dev, "could not map SRAM at %pr\n", &block->res);
->> +			return PTR_ERR(virt_base);
->> +		}
->> +
->> +		part->base = virt_base;
->> +	} else {
->> +		part->base = sram->virt_base + block->start;
->> +	}
->>   
->>   	if (block->pool) {
->>   		ret = sram_add_pool(sram, block, start, part);
->> @@ -198,6 +215,7 @@ static int sram_reserve_regions(struct sram_dev *sram, struct resource *res)
->>   
->>   		block->start = child_res.start - res->start;
->>   		block->size = resource_size(&child_res);
->> +		block->res = child_res;
->>   		list_add_tail(&block->list, &reserve_list);
->>   
->>   		if (of_find_property(child, "export", NULL))
->> @@ -295,15 +313,17 @@ static int sram_reserve_regions(struct sram_dev *sram, struct resource *res)
->>   		 */
->>   		cur_size = block->start - cur_start;
->>   
->> -		dev_dbg(sram->dev, "adding chunk 0x%lx-0x%lx\n",
->> -			cur_start, cur_start + cur_size);
->> +		if (sram->pool) {
->> +			dev_dbg(sram->dev, "adding chunk 0x%lx-0x%lx\n",
->> +				cur_start, cur_start + cur_size);
->>   
->> -		ret = gen_pool_add_virt(sram->pool,
->> -				(unsigned long)sram->virt_base + cur_start,
->> -				res->start + cur_start, cur_size, -1);
->> -		if (ret < 0) {
->> -			sram_free_partitions(sram);
->> -			goto err_chunks;
->> +			ret = gen_pool_add_virt(sram->pool,
->> +					(unsigned long)sram->virt_base + cur_start,
->> +					res->start + cur_start, cur_size, -1);
->> +			if (ret < 0) {
->> +				sram_free_partitions(sram);
->> +				goto err_chunks;
->> +			}
->>   		}
->>   
->>   		/* next allocation after this reserved block */
->> @@ -331,40 +351,66 @@ static int atmel_securam_wait(void)
->>   					10000, 500000);
->>   }
->>   
->> +static const struct sram_config default_config = {
->> +};
+On Thu, Jun 17, 2021 at 01:40:52PM +0300, Mikko Perttunen wrote:
+> Add the ability for drivers to register SError hooks to be run
+> on a fatal SError interrupt. This allows printing of system-specific
+> error information to aid with debugging.
 > 
-> No need for a "default" config, just do not provide one and then do not
-> call it if it is not set.  Much simpler and less code churn.
+> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
 
-Sure, will do.
+Can't you dump information unconditionally in a panic notifier?
 
-> 
-> 
->> +
->> +static const struct sram_config atmel_securam_config = {
->> +	.init = atmel_securam_wait
-> 
-> Add a trailing , please.
+That wouldn't require any new infrastructure.
 
-Will do.
+Thanks,
+Mark.
 
+> ---
+>  arch/arm64/include/asm/traps.h |  6 ++++++
+>  arch/arm64/kernel/traps.c      | 20 ++++++++++++++++++++
+>  2 files changed, 26 insertions(+)
 > 
->> +};
->> +
->> +/*
->> + * SYSRAM contains areas that are not accessible by the
->> + * kernel, such as the first 256K that is reserved for TZ.
->> + * Accesses to those areas (including speculative accesses)
->> + * trigger SErrors. As such we must map only the areas of
->> + * SYSRAM specified in the device tree.
->> + */
->> +static const struct sram_config tegra_sysram_config = {
->> +	.map_only_reserved = true,
->> +};
->> +
->>   static const struct of_device_id sram_dt_ids[] = {
->> -	{ .compatible = "mmio-sram" },
->> -	{ .compatible = "atmel,sama5d2-securam", .data = atmel_securam_wait },
->> +	{ .compatible = "mmio-sram", .data = &default_config },
->> +	{ .compatible = "atmel,sama5d2-securam", .data = &atmel_securam_config },
->> +	{ .compatible = "nvidia,tegra186-sysram", .data = &tegra_sysram_config },
->> +	{ .compatible = "nvidia,tegra194-sysram", .data = &tegra_sysram_config },
->>   	{}
->>   };
->>   
->>   static int sram_probe(struct platform_device *pdev)
->>   {
->> +	const struct sram_config *config;
->>   	struct sram_dev *sram;
->>   	int ret;
->>   	struct resource *res;
->> -	int (*init_func)(void);
->> +
->> +	config = of_device_get_match_data(&pdev->dev);
->>   
->>   	sram = devm_kzalloc(&pdev->dev, sizeof(*sram), GFP_KERNEL);
->>   	if (!sram)
->>   		return -ENOMEM;
->>   
->>   	sram->dev = &pdev->dev;
->> +	sram->no_memory_wc = of_property_read_bool(pdev->dev.of_node, "no-memory-wc");
->> +	sram->config = config;
->> +
->> +	if (!config->map_only_reserved) {
->> +		res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->> +		if (sram->no_memory_wc)
->> +			sram->virt_base = devm_ioremap_resource(&pdev->dev, res);
->> +		else
->> +			sram->virt_base = devm_ioremap_resource_wc(&pdev->dev, res);
->> +		if (IS_ERR(sram->virt_base)) {
->> +			dev_err(&pdev->dev, "could not map SRAM registers\n");
->> +			return PTR_ERR(sram->virt_base);
->> +		}
->>   
->> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->> -	if (of_property_read_bool(pdev->dev.of_node, "no-memory-wc"))
->> -		sram->virt_base = devm_ioremap_resource(&pdev->dev, res);
->> -	else
->> -		sram->virt_base = devm_ioremap_resource_wc(&pdev->dev, res);
->> -	if (IS_ERR(sram->virt_base)) {
->> -		dev_err(&pdev->dev, "could not map SRAM registers\n");
->> -		return PTR_ERR(sram->virt_base);
->> +		sram->pool = devm_gen_pool_create(sram->dev, ilog2(SRAM_GRANULARITY),
->> +						  NUMA_NO_NODE, NULL);
->> +		if (IS_ERR(sram->pool))
->> +			return PTR_ERR(sram->pool);
->>   	}
->>   
->> -	sram->pool = devm_gen_pool_create(sram->dev, ilog2(SRAM_GRANULARITY),
->> -					  NUMA_NO_NODE, NULL);
->> -	if (IS_ERR(sram->pool))
->> -		return PTR_ERR(sram->pool);
->> -
->>   	sram->clk = devm_clk_get(sram->dev, NULL);
->>   	if (IS_ERR(sram->clk))
->>   		sram->clk = NULL;
->> @@ -378,15 +424,15 @@ static int sram_probe(struct platform_device *pdev)
->>   
->>   	platform_set_drvdata(pdev, sram);
->>   
->> -	init_func = of_device_get_match_data(&pdev->dev);
->> -	if (init_func) {
->> -		ret = init_func();
->> +	if (config->init) {
->> +		ret = config->init();
->>   		if (ret)
->>   			goto err_free_partitions;
->>   	}
->>   
->> -	dev_dbg(sram->dev, "SRAM pool: %zu KiB @ 0x%p\n",
->> -		gen_pool_size(sram->pool) / 1024, sram->virt_base);
->> +	if (sram->pool)
->> +		dev_dbg(sram->dev, "SRAM pool: %zu KiB @ 0x%p\n",
->> +			gen_pool_size(sram->pool) / 1024, sram->virt_base);
->>   
->>   	return 0;
->>   
->> @@ -405,7 +451,7 @@ static int sram_remove(struct platform_device *pdev)
->>   
->>   	sram_free_partitions(sram);
->>   
->> -	if (gen_pool_avail(sram->pool) < gen_pool_size(sram->pool))
->> +	if (sram->pool && gen_pool_avail(sram->pool) < gen_pool_size(sram->pool))
->>   		dev_err(sram->dev, "removed while SRAM allocated\n");
->>   
->>   	if (sram->clk)
->> diff --git a/drivers/misc/sram.h b/drivers/misc/sram.h
->> index 9c1d21ff7347..d2058d8c8f1d 100644
->> --- a/drivers/misc/sram.h
->> +++ b/drivers/misc/sram.h
->> @@ -5,6 +5,11 @@
->>   #ifndef __SRAM_H
->>   #define __SRAM_H
->>   
->> +struct sram_config {
->> +	int (*init)(void);
->> +	bool map_only_reserved;
->> +};
->> +
->>   struct sram_partition {
->>   	void __iomem *base;
->>   
->> @@ -15,8 +20,11 @@ struct sram_partition {
->>   };
->>   
->>   struct sram_dev {
->> +	const struct sram_config *config;
->> +
->>   	struct device *dev;
->>   	void __iomem *virt_base;
->> +	bool no_memory_wc;
+> diff --git a/arch/arm64/include/asm/traps.h b/arch/arm64/include/asm/traps.h
+> index 54f32a0675df..054fecfa22f0 100644
+> --- a/arch/arm64/include/asm/traps.h
+> +++ b/arch/arm64/include/asm/traps.h
+> @@ -22,8 +22,14 @@ struct undef_hook {
+>  	int (*fn)(struct pt_regs *regs, u32 instr);
+>  };
+>  
+> +struct serror_hook {
+> +	struct list_head node;
+> +	void (*fn)(void);
+> +};
+> +
+>  void register_undef_hook(struct undef_hook *hook);
+>  void unregister_undef_hook(struct undef_hook *hook);
+> +void register_serror_hook(struct serror_hook *hook);
+>  void force_signal_inject(int signal, int code, unsigned long address, unsigned int err);
+>  void arm64_notify_segfault(unsigned long addr);
+>  void arm64_force_sig_fault(int signo, int code, unsigned long far, const char *str);
+> diff --git a/arch/arm64/kernel/traps.c b/arch/arm64/kernel/traps.c
+> index 273066279bb5..02dbaab71ea3 100644
+> --- a/arch/arm64/kernel/traps.c
+> +++ b/arch/arm64/kernel/traps.c
+> @@ -890,8 +890,23 @@ void panic_bad_stack(struct pt_regs *regs, unsigned int esr, unsigned long far)
+>  }
+>  #endif
+>  
+> +static LIST_HEAD(serror_hook);
+> +static DEFINE_RAW_SPINLOCK(serror_lock);
+> +
+> +void register_serror_hook(struct serror_hook *hook)
+> +{
+> +	unsigned long flags;
+> +
+> +	raw_spin_lock_irqsave(&serror_lock, flags);
+> +	list_add(&hook->node, &serror_hook);
+> +	raw_spin_unlock_irqrestore(&serror_lock, flags);
+> +}
+> +
+>  void __noreturn arm64_serror_panic(struct pt_regs *regs, u32 esr)
+>  {
+> +	struct serror_hook *hook;
+> +	unsigned long flags;
+> +
+>  	console_verbose();
+>  
+>  	pr_crit("SError Interrupt on CPU%d, code 0x%08x -- %s\n",
+> @@ -899,6 +914,11 @@ void __noreturn arm64_serror_panic(struct pt_regs *regs, u32 esr)
+>  	if (regs)
+>  		__show_regs(regs);
+>  
+> +	raw_spin_lock_irqsave(&serror_lock, flags);
+> +	list_for_each_entry(hook, &serror_hook, node)
+> +		hook->fn();
+> +	raw_spin_unlock_irqrestore(&serror_lock, flags);
+> +
+>  	nmi_panic(regs, "Asynchronous SError Interrupt");
+>  
+>  	cpu_park_loop();
+> -- 
+> 2.30.1
 > 
-> What does "wc" here mean?
-
-Writecombine. The code in _probe checks for the "no-memory-wc" flag in 
-device tree and if it's set it uses devm_ioremap_resource instead of 
-devm_ioremap_resource_wc. Now that the ioremap call can happen outside 
-of _probe we need to save this property.
-
-> 
-> thanks,
-> 
-> greg k-h
-> 
-
-Thank you, will send a v2 with changes.
-
-Mikko
