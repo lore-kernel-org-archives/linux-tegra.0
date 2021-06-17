@@ -2,71 +2,72 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB2E3C2B9F4
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Jun 2021 14:54:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A555C48BE5
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Jun 2021 15:21:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9EBB0610A1
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Jun 2021 14:54:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0562F61245
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Jun 2021 15:21:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232176AbhFQO4m (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 17 Jun 2021 10:56:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41848 "EHLO
+        id S233189AbhFQPYD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 17 Jun 2021 11:24:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48226 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232146AbhFQO4l (ORCPT
+        with ESMTP id S233111AbhFQPYD (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 17 Jun 2021 10:56:41 -0400
-Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2896FC061760
-        for <linux-tegra@vger.kernel.org>; Thu, 17 Jun 2021 07:54:32 -0700 (PDT)
-Received: by mail-ej1-x632.google.com with SMTP id ho18so10357694ejc.8
-        for <linux-tegra@vger.kernel.org>; Thu, 17 Jun 2021 07:54:32 -0700 (PDT)
+        Thu, 17 Jun 2021 11:24:03 -0400
+Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD3C6C061574;
+        Thu, 17 Jun 2021 08:21:55 -0700 (PDT)
+Received: by mail-pj1-x102f.google.com with SMTP id 22-20020a17090a0c16b0290164a5354ad0so6301116pjs.2;
+        Thu, 17 Jun 2021 08:21:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=kP9FZJ6E9jOuvBEfkZXpWLxsS4aT6M+o/FNvbytEBx4=;
-        b=TAos1Myg6tlEtCXWGma2vcvlxK36hv6B5mhPDSIIXLJYHBezJ9p5/jWLLPjdXyNYV1
-         FxomDl3fMGV0SvrzgsumjDVbUm/n8EgyOTJHV6KVK5soWZejWDV/gpXg7RtzmUyH5f7i
-         nqIcyVq1AkuAyFzDLbrtLetR1gtiFS/w6kPyk3/YUICArZ6jnEzitOo+uce7OieRAmYu
-         eZw1rgReSSuT7johry48W+XUPoF0o8ODuBNmlXNZD8e6z5wt5ZBH+R+jXKC4mgXfKJA8
-         dP5pivfJr8M3DePenSPzKXIEjFp22RUrjlGZMMHzmrfMfNqpu0p0h7dTxpinblwIIHRZ
-         ve0A==
+        bh=7Y5GMN6FiWT3RZ9stwoM18lhVvKOaYLrtUlnA5+xu5w=;
+        b=ZK+bQixDW3Kz04tAtjGbJiPTg4/iZEM5+2CWDBAXtcTFRddlfa1cfEIwzpPh5Y5xMf
+         rKHQ3gFlHo2FK+l2zUApOOylNi631kiz+nmAh0Vm5rg/WcwlQwlo9cvP1KqZnbyZLgiD
+         fIYUoEt8vQE3GiNa3OTULSRI/XEPbczQ2yR/VTRj5J8DUHxqDfGB5VrDZVDwEpo3TvRT
+         G27/7Nz/HWkIwrAKA7dCO0ff5S1I+OjhGLTY4qvbIZVSbqaLiA0S7EPXYTywFQsxmGK/
+         XznjtVioNy3ReC+vB/reHgIXM8lkp+peDbD4y6BGUObwv0w51UKq+jTQD/o5ld/n01W9
+         tjVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=kP9FZJ6E9jOuvBEfkZXpWLxsS4aT6M+o/FNvbytEBx4=;
-        b=qsbkm1YNKHOiTvjwR7edcMWIyqm3UxMNoZPyjJ2uiqYJcKxeps6DcINA3I7we8mnPg
-         h51y5E/TglVY8gfbUUmALZaiOz8KHgrTmrZ9Pa32p60yVDgRNEP/tNX6baMw/e0+8of3
-         agntyxv45tNsHceAu8ez7hNSNQ1fhKOmarF5OiQEF6rkJ82jEklgVeYWat3L0QJiJNAQ
-         quX9/7ni0+0fF3+B+dPUyD14VNK0mrJEekgW7ZFIcwC5biYWcK+mnq1VKyswh7dv8beX
-         nLlFJ3SEz7FXe0Tb/zAuvksz7iIizH15MW4QlT7LQ1q/OK+9v40IbLrTOFKmBvke7dIg
-         E9DQ==
-X-Gm-Message-State: AOAM5329jebySl1ks63n+s017crMephq3PqEYtA3eoJBTBpgM4RsIJ1i
-        zm/3MiID2INnOC6xviPLhRQruL5a8oclCe4LnkB5QQ==
-X-Google-Smtp-Source: ABdhPJxrtEngye1FPnWP5qJqASxWqbVqz1llqVe9GVdKKRDt8N04M+Sb6HXeXjfsZEZA3AoWNAfc503S+WZNzPFUUYE=
-X-Received: by 2002:a17:906:5648:: with SMTP id v8mr5645692ejr.421.1623941670599;
- Thu, 17 Jun 2021 07:54:30 -0700 (PDT)
+        bh=7Y5GMN6FiWT3RZ9stwoM18lhVvKOaYLrtUlnA5+xu5w=;
+        b=CLPkJk91DIKCdEgAFAt7zALCG2eVs1bG1aTnHBFcOqSaM89aFTRkLzBwvpcmE/fnsW
+         B3nQwrjrWI7wp2K/hSHoU19yvmKvC3ya8Wko2wCIjc0YHtS1M7CzP2+3qFFdNpsT25tL
+         DSVL4iqTaqzeYDJeG0Jrh2vjpsSg91LJdWHT9MUULcN9EnUn4SfCREegyEUNUkc/TWzS
+         8Pfh5paiVvoAdOX+k+7L2AE7SYJCjWaP4NolrMQV7skjRbPuM713Ddz3/Q9yvH7Ci0uJ
+         qbKSDQrDXJu2DbCEY3TQTJXqxHJFaTTxjeWLA4KlekDMnqJ8jM2+HSDOGg0QaBwBnNOP
+         8aZg==
+X-Gm-Message-State: AOAM530yWDgVub9EnVerwpo2/uipu0gyTzj/GRfEtU7dDFfa7bnqowR6
+        TdyM6M0VSCKPAffYVACu1I4iyDQZ6mFpcoaDrPw=
+X-Google-Smtp-Source: ABdhPJwmoy5v2TRjlHnD6igB0E65N/FFyREMflvaeLcr9NvBLLK8YAI/KGpYVvh0m44yzwP9Mswq85QctQtnlkI5+Nc=
+X-Received: by 2002:a17:902:3:b029:11f:e733:408f with SMTP id
+ 3-20020a1709020003b029011fe733408fmr545961pla.21.1623943315210; Thu, 17 Jun
+ 2021 08:21:55 -0700 (PDT)
 MIME-Version: 1.0
 References: <1623924351-22489-1-git-send-email-akhilrajeev@nvidia.com>
 In-Reply-To: <1623924351-22489-1-git-send-email-akhilrajeev@nvidia.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 17 Jun 2021 16:54:18 +0200
-Message-ID: <CACRpkdYj9utWedo1-5NiRJRCHqhUmzYXHQzo8rvVq_4PETr0oA@mail.gmail.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Thu, 17 Jun 2021 18:21:38 +0300
+Message-ID: <CAHp75VdBQUv+yri453KGGBz5ynd0pETxdOngCgPe3mbG22sLXQ@mail.gmail.com>
 Subject: Re: [PATCH] gpio: tegra186: Add ACPI support
-To:     Akhil R <akhilrajeev@nvidia.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+To:     Akhil R <akhilrajeev@nvidia.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-tegra@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Mikko Perttunen <mperttunen@nvidia.com>,
         Laxman Dewangan <ldewangan@nvidia.com>,
         Suresh Mangipudi <smangipudi@nvidia.com>,
@@ -76,25 +77,41 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Akhil,
-
-thanks for your patch!
-
-On Thu, Jun 17, 2021 at 12:05 PM Akhil R <akhilrajeev@nvidia.com> wrote:
-
+On Thu, Jun 17, 2021 at 1:18 PM Akhil R <akhilrajeev@nvidia.com> wrote:
+>
 > From: Akhil Rajeev <akhilrajeev@nvidia.com>
 >
 > Add ACPI module ID to probe the driver from the ACPI based bootloader
 > firmware.
->
-> Signed-off-by: Akhil Rajeev <akhilrajeev@nvidia.com>
 
-Please include ACPI GPIO maintainer Andy Shevchenko on subsequent
-posts, he is looking after ACPI handling in the GPIO subsystem and
-always provide excellent reviews. (Added on To:)
+...
 
-It looks OK to my untrained eye, but I don't know ACPI details
-and expected behaviours as well as Andy.
+> +#include <linux/acpi.h>
 
-Yours,
-Linus Walleij
+It probably should be property.h, see below.
+
+...
+
+> +       if (has_acpi_companion(&pdev->dev)) {
+> +               gpio->secure = devm_platform_ioremap_resource(pdev, 0);
+> +               gpio->base = devm_platform_ioremap_resource(pdev, 1);
+> +       } else {
+> +               gpio->secure = devm_platform_ioremap_resource_byname(pdev, "security");
+> +               gpio->base = devm_platform_ioremap_resource_byname(pdev, "gpio");
+> +       }
+
+General comment here.
+Can't we rather try named resources first and fallback to indexed
+ones? (Or other way around)
+
+In this case you don't need to check for ACPI at all.
+
+...
+
+> +               .acpi_match_table = ACPI_PTR(tegra186_gpio_acpi_match),
+
+You can drop ACPI_PTR() along with ugly ifdeffery.
+
+-- 
+With Best Regards,
+Andy Shevchenko
