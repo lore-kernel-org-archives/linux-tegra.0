@@ -2,101 +2,199 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0381C2B9F4
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Jun 2021 07:24:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27347C2B9F4
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Jun 2021 08:06:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BB047613BF
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Jun 2021 07:24:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 00654610A0
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Jun 2021 08:06:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230215AbhFQH01 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 17 Jun 2021 03:26:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53138 "EHLO
+        id S230238AbhFQIJD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 17 Jun 2021 04:09:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34560 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229848AbhFQH00 (ORCPT
+        with ESMTP id S230225AbhFQIJC (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 17 Jun 2021 03:26:26 -0400
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4130DC061574;
-        Thu, 17 Jun 2021 00:24:19 -0700 (PDT)
-Received: by mail-lf1-x132.google.com with SMTP id r198so8716084lff.11;
-        Thu, 17 Jun 2021 00:24:19 -0700 (PDT)
+        Thu, 17 Jun 2021 04:09:02 -0400
+Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 933FBC061574;
+        Thu, 17 Jun 2021 01:06:54 -0700 (PDT)
+Received: by mail-lj1-x234.google.com with SMTP id a21so2718845ljj.1;
+        Thu, 17 Jun 2021 01:06:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=RtRECjuHE8VSl/pHqjivxGI8ToSVE21apQFUXU7vdb8=;
-        b=Z1JZqiKZBB7gCeAUgnrr58Sux4Mb1dytkvz39WcLmuJRLa/3NxdxiEkAi7B7iGK7X/
-         s8JbQifq15J0xb5c3kOS67XC6GfX/oR7EW3MR07vHdZbQlovkohPk3X1rRuxIyFUWcAU
-         cLbK13S9WJN/UXXVv7v0ia/gJXUfu1l2FtCvbz5FvQgs1yFTxEcsNBB5BgaZrimsfFFX
-         chz2rH0lBiUnda63qWfizyDL2D/Z6Rw3ipQS0RRJizxYRySvKqWea65Bh/w7PqCpJsoc
-         szyoSREiF5gg+r4p75Qqc0brdYa5xEqtYW7TLtjeTfNDSsMSGb3M6ONhfzQVRe0WPwDb
-         r5Lg==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=E/ccd0dqSJy/McqzhRpqmKa+k7SC00aixfZA3etaVec=;
+        b=vhMBbntuRNVRrweaVa51J+puxhMElqv7HZLMk307hKTfCzBYfZoqDcI3tZAzo3KHoG
+         R7kFNObeaVXZr6kUsh4ulidOCvYoRu6kuBXnHCDRkecCoDd0Jc5uhQnY1TYrM+QyfjEM
+         XnCrq5TZazeHuaVgmwPu5mJ4ZssNiuzn5fsqBuvupBa7IgNDdZnBiWIY1yud8UqQsTuI
+         Oj+ugK+cnbtYBoNOJpzCeS6BATG5LPmeelfvrOvuFk269OlPDk1c1w7OazlcL/wKjkRu
+         el9lNAqrLmWL/a4O/XipbdltuqaflzhfR2Xx3fPUfMKOVvqus2VrL1O4BZu7y+kl9RWD
+         hrzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=RtRECjuHE8VSl/pHqjivxGI8ToSVE21apQFUXU7vdb8=;
-        b=ee6mQk3rW18/I8JrsccYyw5lnjcaluGoaKpC5UIeZlYWPGOUSRhSy6yMAYEOvXu4qF
-         PEbC7Q2S9jzNNKcaAIR1jTp9dMgS2o0gp0knUKvK8UIIhDUa/oxVmnyD+POhC9RX4q3l
-         /ktbH/14lvKyscTJ/nD0anaw1gF3lDf+3z5/fd6c1Phj4uSwqG3ISEotkbgovYh/SWAg
-         +yHFAkDG9dATYGusvllZZtIMYarolxS/o/M1YVO+ucDHH2W4HUhnf11pLGyA8getzI6M
-         Znnij1/kColBML5RisMqmEPlBWbGF8WNsK3MFrMGYukMlJjq3t6KGm10QV+mGBK17xw4
-         +ZXw==
-X-Gm-Message-State: AOAM530EVSlRtFswY0Y7Vo07eVYOZGeYfYxMWCLOZmBaiQow9++xT9H8
-        Hd4kH5q+nvy8r0VbmZqiefk=
-X-Google-Smtp-Source: ABdhPJwiWJwBIEAXOcnfax5b9NHW3VV+Ld0Pc9uh1XV/GUCp9Hfb9RK3N+WJ3oHbgd5MU1L91QFkTw==
-X-Received: by 2002:ac2:5547:: with SMTP id l7mr2812424lfk.402.1623914657659;
-        Thu, 17 Jun 2021 00:24:17 -0700 (PDT)
-Received: from localhost.localdomain (94-29-29-31.dynamic.spd-mgts.ru. [94.29.29.31])
-        by smtp.gmail.com with ESMTPSA id d23sm487140lfi.4.2021.06.17.00.24.16
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=E/ccd0dqSJy/McqzhRpqmKa+k7SC00aixfZA3etaVec=;
+        b=ZmTNJtXl7Wt+tW+oBmMNuC1ZmTi+Y4RhxjnWBQs7yAABreXH7ZsFyPySslFv/4XGPg
+         OOwuSH2lBvL5HSn8cwNeByl/4+/t51VcXysFHemXrJ+KSvHTZECcd/3maz/KoHhheG7r
+         0izEqkcJVo4QnGumQ4M5VsVJO5fgJiBG9/q34cjt04bA4N57H3elK7CQyUlXUxQ6374a
+         tLVS20LIj5DnnMS6/R0IVy2ceX46yBKXZhbzbwFAfk8zmk22wt+rtnPu1F6dz2f3xiSs
+         JxmJGWPr+50PjIgJrL2XtUNkAyfL8E7C2MQ3vKKWf0dJhUEnBE2NPgcOiRxdnrYbJ1Bb
+         vtww==
+X-Gm-Message-State: AOAM53315D0MWTzYMgNw0WC6DleAdhlxX1S4MmhKQvvxstLKugY5Xn6C
+        m8prMBLDU+kC6ItdTjW24iw=
+X-Google-Smtp-Source: ABdhPJwi7z6ovaIPkStKrZo4EU/ElUb7h8gE7YMzGHo0/XpSbhL5v5Y/4N7VoJGnF0ce/Bg9/wrabQ==
+X-Received: by 2002:a2e:9ac6:: with SMTP id p6mr2420317ljj.367.1623917212965;
+        Thu, 17 Jun 2021 01:06:52 -0700 (PDT)
+Received: from localhost ([188.244.36.26])
+        by smtp.gmail.com with ESMTPSA id f8sm582878ljj.110.2021.06.17.01.06.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Jun 2021 00:24:17 -0700 (PDT)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>
-Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: [PATCH v1] thermal/drivers/tegra: Correct compile-testing of drivers
-Date:   Thu, 17 Jun 2021 10:24:03 +0300
-Message-Id: <20210617072403.3487-1-digetx@gmail.com>
-X-Mailer: git-send-email 2.30.2
+        Thu, 17 Jun 2021 01:06:52 -0700 (PDT)
+Date:   Thu, 17 Jun 2021 11:06:51 +0300
+From:   Alexander Fomichev <fomichev.ru@gmail.com>
+To:     Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc:     Jon Hunter <jonathanh@nvidia.com>,
+        linux-i2c <linux-i2c@vger.kernel.org>, linux@yadro.com,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        Thierry Reding <treding@nvidia.com>
+Subject: Re: [PATCH] eeprom: at24: Support custom device names for AT24
+ EEPROMs
+Message-ID: <20210617080651.lwrfkrliudyni2vi@yadro.com>
+References: <20210602170823.vnshp2gfrcay35nx@yadro.com>
+ <CAMpxmJWa0ZXN--2S84B-Un0WSKM16eKAiWUtKD4V_szZPEi+gg@mail.gmail.com>
+ <b2b7be69-eebb-b325-1962-4d45e6d5f088@nvidia.com>
+ <CAMpxmJUnn1e-grUxiMm4T84xBYRi7jQOtOODfSoiBtLmsSjodA@mail.gmail.com>
+ <20210616170050.ywh7xbvqxvybtvnb@yadro.com>
+ <CAMpxmJU0Uupdp6hOVhuSERicczFjObin3wk0_QfBEOQwfCmECA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMpxmJU0Uupdp6hOVhuSERicczFjObin3wk0_QfBEOQwfCmECA@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-All Tegra thermal drivers support compile-testing, but the drivers are
-not available for compile-testing because the whole Kconfig meny entry
-depends on ARCH_TEGRA, missing the alternative COMPILE_TEST dependency
-option. Correct the Kconfig entry.
+On Wed, Jun 16, 2021 at 09:21:14PM +0200, Bartosz Golaszewski wrote:
+> On Wed, Jun 16, 2021 at 7:00 PM Alexander Fomichev
+> <fomichev.ru@gmail.com> wrote:
+> >
+> > On Mon, Jun 07, 2021 at 03:31:55PM +0200, Bartosz Golaszewski wrote:
+> > > On Mon, Jun 7, 2021 at 1:09 PM Jon Hunter <jonathanh@nvidia.com> wrote:
+> > > >
+> > > >
+> > > > On 04/06/2021 11:00, Bartosz Golaszewski wrote:
+> > > > > On Wed, Jun 2, 2021 at 7:08 PM Alexander Fomichev <fomichev.ru@gmail.com> wrote:
+> > > >
+> > > > ...
+> > > >
+> > > > >> This change has a serious defect, as it doesn't guarantee a name
+> > > > >> uniqueness. For my case there are a bunch of NVMEM devices with
+> > > > >> 'dimm-spd' name. So the module initialization fails with several error
+> > > > >> dumps in dmesg, like following:
+> > > > >>
+> > > > >> [    4.784679] at24 3-0051: supply vcc not found, using dummy regulator
+> > > > >> [    4.784781] sysfs: cannot create duplicate filename '/bus/nvmem/devices/dimm-spd'
+> > > > >> [    4.784783] CPU: 24 PID: 1354 Comm: systemd-udevd Not tainted 5.13.0-rc4-at24-catch+ #25
+> > > > >> [    4.784787] Call Trace:
+> > > > >> [    4.784789] [c00000003f3eb010] [c000000000914700] dump_stack+0xc4/0x114 (unreliable)
+> > > > >> [    4.784797] [c00000003f3eb060] [c00000000061c5c8] sysfs_warn_dup+0x88/0xc0
+> > > > >> [    4.784803] [c00000003f3eb0e0] [c00000000061ccec] sysfs_do_create_link_sd+0x17c/0x190
+> > > > >> [    4.784809] [c00000003f3eb130] [c000000000ac3014] bus_add_device+0x94/0x1d0
+> > > > >> [    4.784817] [c00000003f3eb1b0] [c000000000abe7b8] device_add+0x428/0xb90
+> > > > >> [    4.784822] [c00000003f3eb2a0] [c000000000debbd0] nvmem_register+0x220/0xe00
+> > > > >> [    4.784829] [c00000003f3eb390] [c000000000dec80c] devm_nvmem_register+0x5c/0xc0
+> > > > >> [    4.784835] [c00000003f3eb3d0] [c008000016f40c20] at24_probe+0x668/0x940 [at24]
+> > > > >> [    4.784845] [c00000003f3eb650] [c000000000cfecd4] i2c_device_probe+0x194/0x650
+> > > > >> [    4.784850] [c00000003f3eb6f0] [c000000000ac4d3c] really_probe+0x1cc/0x790
+> > > > >> [    4.784855] [c00000003f3eb790] [c000000000ac545c] driver_probe_device+0x15c/0x200
+> > > > >> [    4.784861] [c00000003f3eb810] [c000000000ac5ecc] device_driver_attach+0x11c/0x130
+> > > > >> [    4.784866] [c00000003f3eb850] [c000000000ac5fd0] __driver_attach+0xf0/0x200
+> > > > >> [    4.784873] [c00000003f3eb8d0] [c000000000ac1158] bus_for_each_dev+0xa8/0x130
+> > > > >> [    4.784879] [c00000003f3eb930] [c000000000ac4104] driver_attach+0x34/0x50
+> > > > >> [    4.784885] [c00000003f3eb950] [c000000000ac35f0] bus_add_driver+0x1b0/0x2f0
+> > > > >> [    4.784893] [c00000003f3eb9e0] [c000000000ac70b4] driver_register+0xb4/0x1c0
+> > > > >> [    4.784900] [c00000003f3eba50] [c000000000cfe498] i2c_register_driver+0x78/0x120
+> > > > >> [    4.784905] [c00000003f3ebad0] [c008000016f41260] at24_init+0x6c/0x88 [at24]
+> > > > >> [    4.784914] [c00000003f3ebb30] [c0000000000122c0] do_one_initcall+0x60/0x2c0
+> > > > >> [    4.784920] [c00000003f3ebc00] [c0000000002537bc] do_init_module+0x7c/0x350
+> > > > >> [    4.784926] [c00000003f3ebc90] [c000000000257904] __do_sys_finit_module+0xd4/0x160
+> > > > >> [    4.784932] [c00000003f3ebdb0] [c00000000002c104] system_call_exception+0xf4/0x200
+> > > > >> [    4.784938] [c00000003f3ebe10] [c00000000000cf70] system_call_vectored_common+0xf0/0x268
+> > > > >> [    4.784944] --- interrupt: 3000 at 0x7c1adac4b4c4
+> > > > >> [    4.784948] NIP:  00007c1adac4b4c4 LR: 0000000000000000 CTR: 0000000000000000
+> > > > >> [    4.784951] REGS: c00000003f3ebe80 TRAP: 3000   Not tainted  (5.13.0-rc4-at24-catch+)
+> > > > >> [    4.784955] MSR:  900000000280f033 <SF,HV,VEC,VSX,EE,PR,FP,ME,IR,DR,RI,LE>  CR: 48222844  XER: 00000000
+> > > > >> [    4.784976] IRQMASK: 0
+> > > > >>                GPR00: 0000000000000161 00007fffefc78b90 00007c1adad37000 0000000000000006
+> > > > >>                GPR04: 00000f6614d56be0 0000000000000000 0000000000000006 0000000000000000
+> > > > >>                GPR08: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+> > > > >>                GPR12: 0000000000000000 00007c1adafde680 0000000020000000 0000000000000000
+> > > > >>                GPR16: 0000000000000000 00000f66118b1980 00000f66118b1a18 00000f66118b1948
+> > > > >>                GPR20: 0000000000000000 00000f6614d60500 00007fffefc78df0 00000f6614d535c0
+> > > > >>                GPR24: 00000f6614d56be0 00000f6614d60500 000000000000000c 00000f6614d49cb0
+> > > > >>                GPR28: 00000f6614d56be0 0000000000020000 0000000000000000 00000f6614d60500
+> > > > >> [    4.785033] NIP [00007c1adac4b4c4] 0x7c1adac4b4c4
+> > > > >> [    4.785036] LR [0000000000000000] 0x0
+> > > > >> [    4.785040] --- interrupt: 3000
+> > > > >> [    4.785146] at24: probe of 3-0051 failed with error -17
+> > > > >>
+> > > > >>
+> > > > >> It needs either to use NVMEM_DEVID_AUTO flag irrespective of the 'label'
+> > > > >> property or to add a sort of counter suffix to the name field.
+> > > > >>
+> > > > >>
+> > > > >> Reported-by: Alexander Fomichev <fomichev.ru@gmail.com>
+> > > > >> CC: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> > > > >>
+> > > > >> --
+> > > > >> Regards,
+> > > > >>   Alexander
+> > > > >
+> > > > > Alexander: Thanks for your bug report. The counter suffix you suggest
+> > > > > is precisely what NVMEM_DEVID_AUTO would do so I think we'll need to
+> > > > > use it. On the other hand, a non-unique label is bad design but
+> > > > > obviously we can't break working setups.
+> > > >
+> > > > Yes the intention was that the label itself would be unique. In our case
+> > > > we wanted to have something specifically named 'system' or 'module' to
+> > > > identify a specific eeprom.
+> > > >
+> > > > BTW I did a quick grep from 'dimm-spd' and did not find it in the
+> > > > kernel. Where is the device-tree you are using?
+> > > >
+> > > > > Jon: As the author of this patch - do you have any objections/better ideas?
+> > > >
+> > > > I would need to check if appending a suffix then has ramifications for
+> > > > what we were trying to achieve.
+> > > >
+> > > > Jon
+> > > >
+> > > > --
+> > > > nvpublic
+> > >
+> > > One alternative would be to use the label "as is" for the first device
+> > > and then append ".x" for each subsequent device with a repeating
+> > > label. Does this make sense?
+> > >
+> >
+> > This was my second suggestion, which I called 'counter suffix'. But it
+> > requires additional effort.
+> >
+> 
+> It looks like we can reuse the id field of nvmem_config and just track
+> the suffix ourselves in the driver. It's not pretty but I've seen
+> worse. I'll send a patch tomorrow for you to test - does this sound
+> ok?
+> 
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/thermal/tegra/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Sounds good. Thank you.
 
-diff --git a/drivers/thermal/tegra/Kconfig b/drivers/thermal/tegra/Kconfig
-index 019e3a2eb69e..cfa41d87a794 100644
---- a/drivers/thermal/tegra/Kconfig
-+++ b/drivers/thermal/tegra/Kconfig
-@@ -1,6 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0-only
- menu "NVIDIA Tegra thermal drivers"
--depends on ARCH_TEGRA
-+depends on ARCH_TEGRA || COMPILE_TEST
- 
- config TEGRA_SOCTHERM
- 	tristate "Tegra SOCTHERM thermal management"
 -- 
-2.30.2
-
+Regards,
+  Alexander
