@@ -2,128 +2,92 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E572C49EA6
-	for <linux-tegra@archiver.kernel.org>; Fri, 18 Jun 2021 21:12:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4522AC48BDF
+	for <linux-tegra@archiver.kernel.org>; Fri, 18 Jun 2021 21:34:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3084F613C2
-	for <linux-tegra@archiver.kernel.org>; Fri, 18 Jun 2021 21:12:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 253B460FE8
+	for <linux-tegra@archiver.kernel.org>; Fri, 18 Jun 2021 21:34:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234515AbhFRVOu (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 18 Jun 2021 17:14:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52134 "EHLO
+        id S233288AbhFRVgO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 18 Jun 2021 17:36:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56882 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234500AbhFRVOt (ORCPT
+        with ESMTP id S232997AbhFRVgO (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 18 Jun 2021 17:14:49 -0400
-Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A8E8C06175F;
-        Fri, 18 Jun 2021 14:12:37 -0700 (PDT)
-Received: by mail-lf1-x130.google.com with SMTP id m21so18748130lfg.13;
-        Fri, 18 Jun 2021 14:12:37 -0700 (PDT)
+        Fri, 18 Jun 2021 17:36:14 -0400
+Received: from mail-ot1-x333.google.com (mail-ot1-x333.google.com [IPv6:2607:f8b0:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94981C061574;
+        Fri, 18 Jun 2021 14:34:03 -0700 (PDT)
+Received: by mail-ot1-x333.google.com with SMTP id 6-20020a9d07860000b02903e83bf8f8fcso11046975oto.12;
+        Fri, 18 Jun 2021 14:34:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=yt0BSTexIurBcE0nAITbWkaUHmp5dbQZvjYenG8vIbg=;
-        b=K/42SDMAj0znlwahYBhl0x2JOmjsrGhuUp6jjMLaq5mpXsM9YGbShwP8vdZXb6vG/J
-         JMn9TR7G4RFvjS8Lb985dbeyVxQf2vh+iQwl5aPCLBgOto3VrkFeinhHRIX5sfOrfd3J
-         VOru5wZBFL2BADXRKJ0MknuaNk3ub1aVJeKbhKuvNDi4NqdXE62r6Cz94K0+60omxqUX
-         1OKruu7oBi3xqHa8wFc4XPLBrfNR22y8BbS720TKJZpXcThLg7J65k98oOJZIhKGjbcj
-         zqciJjfgKx0MhiHk6MxRvoZpVKgRz+5h9PYQIhQ90fxlRSQRMvG8pkVXGr4uh5F9tl/C
-         VhlA==
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=tDLxgRw6U+jtyiXpfy58MFNS9bu38g3mj9DzBt0QoYI=;
+        b=epDWvQLwnmqnMnaIxDXHkGUT8yMrs7usVOVM1jpfgGphdLPTeOxTzg6fh0wHNH8HZA
+         Fa9gQaoD19avx122YKr7ia4NC5PG5eX3BMXWjEO5mJghoKXRNKmhfjkngPN1Is0RrIsw
+         HTxBRrM1WEXnrKXam+94HQKdrlhuUvMtLpe5ap0J+6UjOoEgFtCd5e7+IfH59PAd5Gxf
+         YpnMOiaTH71R46OUVsIE3rAmAZ7VjJ1hI9OMpWk3Suq6kZXI6pBsgS34Hm0coq2HOsPQ
+         xVzPeURK74VXeqsv777omV0PnPmcChabS8F4DgXzMMw7mAmrkIeqKC1r8c/VGK5OtBFr
+         bbQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=yt0BSTexIurBcE0nAITbWkaUHmp5dbQZvjYenG8vIbg=;
-        b=TlhfZ6gyrFCSXBKMNxR37AxlLlcbRcmQp1urFLWgJrwuheVEiNCR7+IWQCHNsOYZTO
-         R4PkK0nAHIAKKXg2zNliCsh+llmzTl7efcnIQkkYkotixjZjX2bb9CArG9bRc3y6/A6d
-         iRhxfoW8Wj01vc+w6VvbCjac3rdBCxXvFJTbziS/GU8p6kSnwGPti9YH4xga3PUnxO21
-         QTi/behN91485wwlYyHwh4uFi5wJstEDlDxY/gToODjtKfa7yO2MH3tqzb9faR9bJsrm
-         3uVREvcO6ae8XvBVr0Z9YX2fDJELSvvGC1hC5H/BcUDXfxoGEkQSK7nVdP4hfVTgCxbP
-         V7bQ==
-X-Gm-Message-State: AOAM5329EwKpMesxgi2BXq+zGVMaLNP3vxQeqy4P6Zh6v0pvA7G6sYOX
-        4ZZQ7+fhy0/NhHvn5Pvltqs=
-X-Google-Smtp-Source: ABdhPJx4Cc33OigV7LRQR1q4T8/nSsRiVQlmW4dS4kxI7mgXhoq3UN8ktyJ0/63r6tpKYt/sIfWUoA==
-X-Received: by 2002:ac2:551b:: with SMTP id j27mr4745358lfk.459.1624050755986;
-        Fri, 18 Jun 2021 14:12:35 -0700 (PDT)
-Received: from localhost.localdomain (94-29-29-31.dynamic.spd-mgts.ru. [94.29.29.31])
-        by smtp.gmail.com with ESMTPSA id a8sm1183802ljq.127.2021.06.18.14.12.35
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to;
+        bh=tDLxgRw6U+jtyiXpfy58MFNS9bu38g3mj9DzBt0QoYI=;
+        b=WRnvA8P7NJzC9/EcVA8Yps/VrHV2JDpCJbjgIzYYrkMCMq7Y46yKwJM7QqpvZsn7Dl
+         sdYHWlmmwFFvMfg7nkqCg4eubzBgMdfN+sbac249SGDweF8Fm8ZVOGLzPGxw7+/eHAhD
+         OI7wGISkRogYd0HvGxTpRWSpDRbrt1nGTbdxn6OFBdyJjzhYNkcfD3WrgpFg/or9mU8o
+         ENyW3mRz/SN72KGELARYAxdVHeEmXQaMCzhw0WcvX6Rgzv8ABKwQ0IZTv9USlwZxqR6R
+         T3QsnHGwJrqQ+P1efmvuJYfH2OOhs9+ykZYPFJwE/o1aZT+T2LqeiQerx4jSHhzHFit9
+         PKyQ==
+X-Gm-Message-State: AOAM532LyaXhIkSWiY2pa9q9z/TUj7iu9s7NXqB61jB4TGSOdhj1SgoK
+        g8A5FZIrHR1QamNxXnoZN04=
+X-Google-Smtp-Source: ABdhPJwKE6/xUtXPVXgGpOWe9bodqGM1V9zK00jBCTaPyFJei1r4v/neRzg8dhzEEEghALdQK2eF8Q==
+X-Received: by 2002:a9d:2034:: with SMTP id n49mr11822816ota.231.1624052043016;
+        Fri, 18 Jun 2021 14:34:03 -0700 (PDT)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id o20sm1151285ook.40.2021.06.18.14.34.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Jun 2021 14:12:35 -0700 (PDT)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>
-Cc:     linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: [PATCH v2 4/4] hwmon: (lm90) Disable interrupt on suspend
-Date:   Sat, 19 Jun 2021 00:12:02 +0300
-Message-Id: <20210618211202.2938-5-digetx@gmail.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210618211202.2938-1-digetx@gmail.com>
+        Fri, 18 Jun 2021 14:34:02 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date:   Fri, 18 Jun 2021 14:34:00 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Jean Delvare <jdelvare@suse.com>, linux-kernel@vger.kernel.org,
+        linux-hwmon@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v2 0/4] HWMON LM90 interrupt fixes and improvements
+Message-ID: <20210618213400.GA1668818@roeck-us.net>
 References: <20210618211202.2938-1-digetx@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210618211202.2938-1-digetx@gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-I2C accesses are prohibited and will error out after suspending of the
-I2C controller, hence we need to ensure that interrupt won't fire on
-suspend when it's too late. Disable interrupt across suspend/resume.
+On Sat, Jun 19, 2021 at 12:11:58AM +0300, Dmitry Osipenko wrote:
+> Hi,
+> 
+> This series makes interrupt usable on NVIDIA Tegra devices, it also
+> switches LM90 driver to use hwmon_notify_event().
+> 
+> Dmitry Osipenko (4):
+>   hwmon: (lm90) Don't override interrupt trigger type
+>   hwmon: (lm90) Use hwmon_notify_event()
+>   hwmon: (lm90) Unmask hardware interrupt
+>   hwmon: (lm90) Disable interrupt on suspend
+> 
+>  drivers/hwmon/lm90.c | 79 ++++++++++++++++++++++++++++++++++++--------
+>  1 file changed, 66 insertions(+), 13 deletions(-)
+> 
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/hwmon/lm90.c | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+Please resubmit with change log.
 
-diff --git a/drivers/hwmon/lm90.c b/drivers/hwmon/lm90.c
-index 658b486d2f5e..b53f17511b05 100644
---- a/drivers/hwmon/lm90.c
-+++ b/drivers/hwmon/lm90.c
-@@ -1973,11 +1973,36 @@ static void lm90_alert(struct i2c_client *client, enum i2c_alert_protocol type,
- 	}
- }
- 
-+static int __maybe_unused lm90_suspend(struct device *dev)
-+{
-+	struct lm90_data *data = dev_get_drvdata(dev);
-+	struct i2c_client *client = data->client;
-+
-+	if (client->irq)
-+		disable_irq(client->irq);
-+
-+	return 0;
-+}
-+
-+static int __maybe_unused lm90_resume(struct device *dev)
-+{
-+	struct lm90_data *data = dev_get_drvdata(dev);
-+	struct i2c_client *client = data->client;
-+
-+	if (client->irq)
-+		enable_irq(client->irq);
-+
-+	return 0;
-+}
-+
-+static SIMPLE_DEV_PM_OPS(lm90_pm_ops, lm90_suspend, lm90_resume);
-+
- static struct i2c_driver lm90_driver = {
- 	.class		= I2C_CLASS_HWMON,
- 	.driver = {
- 		.name	= "lm90",
- 		.of_match_table = of_match_ptr(lm90_of_match),
-+		.pm	= &lm90_pm_ops,
- 	},
- 	.probe_new	= lm90_probe,
- 	.alert		= lm90_alert,
--- 
-2.30.2
-
+Guenter
