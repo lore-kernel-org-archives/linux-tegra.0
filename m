@@ -8,53 +8,53 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC89EC49EA4
-	for <linux-tegra@archiver.kernel.org>; Fri, 18 Jun 2021 21:12:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E572C49EA6
+	for <linux-tegra@archiver.kernel.org>; Fri, 18 Jun 2021 21:12:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8E295613FB
-	for <linux-tegra@archiver.kernel.org>; Fri, 18 Jun 2021 21:12:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3084F613C2
+	for <linux-tegra@archiver.kernel.org>; Fri, 18 Jun 2021 21:12:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234501AbhFRVOt (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 18 Jun 2021 17:14:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52132 "EHLO
+        id S234515AbhFRVOu (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 18 Jun 2021 17:14:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52134 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234488AbhFRVOs (ORCPT
+        with ESMTP id S234500AbhFRVOt (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 18 Jun 2021 17:14:48 -0400
-Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1595DC061574;
+        Fri, 18 Jun 2021 17:14:49 -0400
+Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A8E8C06175F;
         Fri, 18 Jun 2021 14:12:37 -0700 (PDT)
-Received: by mail-lj1-x234.google.com with SMTP id x14so15769550ljp.7;
-        Fri, 18 Jun 2021 14:12:36 -0700 (PDT)
+Received: by mail-lf1-x130.google.com with SMTP id m21so18748130lfg.13;
+        Fri, 18 Jun 2021 14:12:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=MeY6wV2QzE9NSk+VpIFpZHo+rQw4MCvKxWcvQ8OvFGU=;
-        b=ldzX5ODiQl04CIVwHg739Cs2Sj6BldgiRcPzF89bnaKpmEfIH6XA4TRwQdJ2mt8Y7U
-         1nX/GxCn1mOyiP/tNgzgpe3LoDJCu8YfKx4shy9SIr+zQ90rsNU9m5e4sfEGiy/3YWe+
-         LG8g6XTP0yzZlyuxPr9b3rHZCrAPaX8MKBVqBm3UTYqopC8y416+AYjwz2sh+BZOkTTe
-         2qQgLvS4RpDSvhOmwEBBzkpqcnjxtcWbWeL5I9QYxZdrn/TEG+Wgy4Yh8G+5q9gZPBxO
-         auWqokaTGdzSw84JEIpxYSi5wfjrJHgXGpXY5UVuENam1MloaYFUSLNB89jp3OA+Kzz7
-         kc9w==
+        bh=yt0BSTexIurBcE0nAITbWkaUHmp5dbQZvjYenG8vIbg=;
+        b=K/42SDMAj0znlwahYBhl0x2JOmjsrGhuUp6jjMLaq5mpXsM9YGbShwP8vdZXb6vG/J
+         JMn9TR7G4RFvjS8Lb985dbeyVxQf2vh+iQwl5aPCLBgOto3VrkFeinhHRIX5sfOrfd3J
+         VOru5wZBFL2BADXRKJ0MknuaNk3ub1aVJeKbhKuvNDi4NqdXE62r6Cz94K0+60omxqUX
+         1OKruu7oBi3xqHa8wFc4XPLBrfNR22y8BbS720TKJZpXcThLg7J65k98oOJZIhKGjbcj
+         zqciJjfgKx0MhiHk6MxRvoZpVKgRz+5h9PYQIhQ90fxlRSQRMvG8pkVXGr4uh5F9tl/C
+         VhlA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=MeY6wV2QzE9NSk+VpIFpZHo+rQw4MCvKxWcvQ8OvFGU=;
-        b=qM+19i6XMH7mgnyQQCqeX3iwZTG9BXqHisIk7UDMm2BzLQV8kqDMf09JB1HUuD9XjP
-         LTK+r4KLaYyaVzuc3m64XpIoQM9iIDrkp1OZuFYfRzkVIp7qadEVNqcABseRejJuskSo
-         TpvpjJRHbRTI9CvxyyNpBX7Q5+MUciwMHaViTZFhEjHh1C5AYW6kk2uyAB9IGn/gIjf0
-         72mzCyRquA+UKDY64cH1ULQzDqRayG5XyYOv+UTjgAyRB48Hwk+ug3W1794OyirGF9x3
-         BiRIvGodv6BhlF1wAbIXqQ5YfpeLaknIeGFqxjCkXvf9+Fc1gjkC7Omc6BtNG5h+Gt8j
-         ee7g==
-X-Gm-Message-State: AOAM530xQXMOPeh216Cp+3XUl74oEXa6nr80Ki67FnXpXILNydsH2CvZ
-        wn9/Tc+XtJ1L1A+0xUxR7HQ=
-X-Google-Smtp-Source: ABdhPJyNtmQgKHp6+KHVP3Bfj3OBMK62gLUpgyZwtfzSiIgQ9asfhF5OsOLcCgWxi4myUgFFl7ufBg==
-X-Received: by 2002:a05:651c:294:: with SMTP id b20mr11492718ljo.156.1624050755432;
+        bh=yt0BSTexIurBcE0nAITbWkaUHmp5dbQZvjYenG8vIbg=;
+        b=TlhfZ6gyrFCSXBKMNxR37AxlLlcbRcmQp1urFLWgJrwuheVEiNCR7+IWQCHNsOYZTO
+         R4PkK0nAHIAKKXg2zNliCsh+llmzTl7efcnIQkkYkotixjZjX2bb9CArG9bRc3y6/A6d
+         iRhxfoW8Wj01vc+w6VvbCjac3rdBCxXvFJTbziS/GU8p6kSnwGPti9YH4xga3PUnxO21
+         QTi/behN91485wwlYyHwh4uFi5wJstEDlDxY/gToODjtKfa7yO2MH3tqzb9faR9bJsrm
+         3uVREvcO6ae8XvBVr0Z9YX2fDJELSvvGC1hC5H/BcUDXfxoGEkQSK7nVdP4hfVTgCxbP
+         V7bQ==
+X-Gm-Message-State: AOAM5329EwKpMesxgi2BXq+zGVMaLNP3vxQeqy4P6Zh6v0pvA7G6sYOX
+        4ZZQ7+fhy0/NhHvn5Pvltqs=
+X-Google-Smtp-Source: ABdhPJx4Cc33OigV7LRQR1q4T8/nSsRiVQlmW4dS4kxI7mgXhoq3UN8ktyJ0/63r6tpKYt/sIfWUoA==
+X-Received: by 2002:ac2:551b:: with SMTP id j27mr4745358lfk.459.1624050755986;
         Fri, 18 Jun 2021 14:12:35 -0700 (PDT)
 Received: from localhost.localdomain (94-29-29-31.dynamic.spd-mgts.ru. [94.29.29.31])
-        by smtp.gmail.com with ESMTPSA id a8sm1183802ljq.127.2021.06.18.14.12.34
+        by smtp.gmail.com with ESMTPSA id a8sm1183802ljq.127.2021.06.18.14.12.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Fri, 18 Jun 2021 14:12:35 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
@@ -62,9 +62,9 @@ To:     Jean Delvare <jdelvare@suse.com>,
         Guenter Roeck <linux@roeck-us.net>
 Cc:     linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
         linux-tegra@vger.kernel.org
-Subject: [PATCH v2 3/4] hwmon: (lm90) Unmask hardware interrupt
-Date:   Sat, 19 Jun 2021 00:12:01 +0300
-Message-Id: <20210618211202.2938-4-digetx@gmail.com>
+Subject: [PATCH v2 4/4] hwmon: (lm90) Disable interrupt on suspend
+Date:   Sat, 19 Jun 2021 00:12:02 +0300
+Message-Id: <20210618211202.2938-5-digetx@gmail.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210618211202.2938-1-digetx@gmail.com>
 References: <20210618211202.2938-1-digetx@gmail.com>
@@ -74,33 +74,56 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The ALERT interrupt is enabled by default after power-on, but it could
-be masked by bootloader. For example this is the case on Acer A500 tablet
-device. Unmask the hardware interrupt if interrupt is provided.
+I2C accesses are prohibited and will error out after suspending of the
+I2C controller, hence we need to ensure that interrupt won't fire on
+suspend when it's too late. Disable interrupt across suspend/resume.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/hwmon/lm90.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/hwmon/lm90.c | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
 diff --git a/drivers/hwmon/lm90.c b/drivers/hwmon/lm90.c
-index e7b678a40b39..658b486d2f5e 100644
+index 658b486d2f5e..b53f17511b05 100644
 --- a/drivers/hwmon/lm90.c
 +++ b/drivers/hwmon/lm90.c
-@@ -1704,6 +1704,13 @@ static int lm90_init_client(struct i2c_client *client, struct lm90_data *data)
- 	if (data->kind == max6696)
- 		config &= ~0x08;
+@@ -1973,11 +1973,36 @@ static void lm90_alert(struct i2c_client *client, enum i2c_alert_protocol type,
+ 	}
+ }
  
-+	/*
-+	 * Interrupt is enabled by default on reset, but it may be disabled
-+	 * by bootloader, unmask it.
-+	 */
-+	if (client->irq)
-+		config &= ~0x80;
++static int __maybe_unused lm90_suspend(struct device *dev)
++{
++	struct lm90_data *data = dev_get_drvdata(dev);
++	struct i2c_client *client = data->client;
 +
- 	config &= 0xBF;	/* run */
- 	lm90_update_confreg(data, config);
- 
++	if (client->irq)
++		disable_irq(client->irq);
++
++	return 0;
++}
++
++static int __maybe_unused lm90_resume(struct device *dev)
++{
++	struct lm90_data *data = dev_get_drvdata(dev);
++	struct i2c_client *client = data->client;
++
++	if (client->irq)
++		enable_irq(client->irq);
++
++	return 0;
++}
++
++static SIMPLE_DEV_PM_OPS(lm90_pm_ops, lm90_suspend, lm90_resume);
++
+ static struct i2c_driver lm90_driver = {
+ 	.class		= I2C_CLASS_HWMON,
+ 	.driver = {
+ 		.name	= "lm90",
+ 		.of_match_table = of_match_ptr(lm90_of_match),
++		.pm	= &lm90_pm_ops,
+ 	},
+ 	.probe_new	= lm90_probe,
+ 	.alert		= lm90_alert,
 -- 
 2.30.2
 
