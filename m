@@ -2,162 +2,144 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 186CBC48BE8
-	for <linux-tegra@archiver.kernel.org>; Fri, 18 Jun 2021 14:32:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16921C48BDF
+	for <linux-tegra@archiver.kernel.org>; Fri, 18 Jun 2021 16:02:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E6261610CD
-	for <linux-tegra@archiver.kernel.org>; Fri, 18 Jun 2021 14:32:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EC23D611ED
+	for <linux-tegra@archiver.kernel.org>; Fri, 18 Jun 2021 16:02:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234540AbhFROeL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 18 Jun 2021 10:34:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46006 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233642AbhFROeK (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 18 Jun 2021 10:34:10 -0400
-Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1BB1C061574;
-        Fri, 18 Jun 2021 07:31:59 -0700 (PDT)
-Received: by mail-pl1-x62b.google.com with SMTP id 69so4764025plc.5;
-        Fri, 18 Jun 2021 07:31:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=UhsKKQf1Bn8x2XYapwaIUYSszikWCPheXCCZWgVxbyE=;
-        b=KilJ9mcISeyHVoaY3VaDryF//xzWjbHxRgypCLBrMp4n7ZM/oGg6PvjTstYtiiB/zM
-         Mp8iaRw30Qf6BsVuXz0QaLv4h4RrjPU7PYwX+2PYGple3ly4oxIy1MVFuqIUNWWD+M4B
-         d/uwuKaMZqLu4iassplEb6eXo+jBs5bO+b5fuqE/mslWN0wUnoLhukcpCrh7dfCDm8e3
-         RmmBjFu9w2yb1KiTa9XkQiVR1841Unch0LxM2O8P6lvNAqOtkscWbY6CDBaKtzOSSKYt
-         T5Iowon3NIe6Hap8BclIS+OSOnPdbIBtEVfOHESKppKH4Lvuu0VaaUqgmBGNVhiBJvPC
-         N9gg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=UhsKKQf1Bn8x2XYapwaIUYSszikWCPheXCCZWgVxbyE=;
-        b=JJYYZ54++OMW/mKBankJ5QMVkHZUn+PnoctCHDcHykH2XxiwfuDscBsdTp5agIKkfs
-         VvPzGlLX8mMgONMxUcNMtOe5xJOChDH96+T/8AyQm2o5l+djvxfyCkucsCLXVQWoDZvY
-         Vt70Sfva9Dp2RYTSu1Q5Kcxv0y+WxQv5Z6iK8+uGt3jMyFkSoVwg6P6GydQGQ0OfBO1E
-         MAf2uA5er73WcHRFu4zqDhY/mr8R1V5O1mBepUQVcSRtMycyaeNEvqZ7PRyMlJp36Jp9
-         1uaHkeWzy4C7ngZTjTyoKjZVzg8zc18pkYMmYetS8gyNtaVzH7gasqBBsCRY//bbbnr3
-         OeDg==
-X-Gm-Message-State: AOAM530ORGvJrMaqeWlTtLP1QnbrKrLlpv4n4DwEtovwWVaJSArKywgX
-        zXsKsH87uI/jtM7WfuY6xSR5PZPe2jOFRP1OOGY=
-X-Google-Smtp-Source: ABdhPJxRKOnL9RBTOa4bWcaV+zuH9g8v2LOetd5cesZ+rDkwoaFahZzfNMLhxRSTP6grYtX8QX6VhHDQ3f8WJZOGOSo=
-X-Received: by 2002:a17:90a:bc89:: with SMTP id x9mr11380786pjr.228.1624026719494;
- Fri, 18 Jun 2021 07:31:59 -0700 (PDT)
+        id S231127AbhFRQEh (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 18 Jun 2021 12:04:37 -0400
+Received: from mail-dm6nam12on2080.outbound.protection.outlook.com ([40.107.243.80]:42721
+        "EHLO NAM12-DM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S229945AbhFRQEh (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Fri, 18 Jun 2021 12:04:37 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=b7krZCSU9TwpF03ak9bRCLr5y5VpSV9WGfX1MV+GKbTsxHPfjLLp73njUmx/tcI2k+xocH3I+02gsqvZKb448+F1Q9wvWOBdfB4ggGFfmYyg/yEG0EWZMMUtJmsg9I+Z7g9OhJIDuHjApWDniTsKwFIigzRmhQwMvWbbKglSM+cuG/W/CY6RJFmJvZgM0/gym0KNU5cyWTxTCpfjK9WZ1QeOpOjOBBFlWv9fFQ+E7YVEuHbkYuWz04uNyVyHZi4WLS8U6RrfaTgBA07iNAKgHavD2AUM7oVmrUlkXELHLsYRdMbdRm2rBzSJErwhtX3Awhu2w3r2sz2iOWfFcOnmhw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=2PDbRDZTdu1LiyKB3LKBECP7k5jFp9quK5yV3JQ7DVQ=;
+ b=jb3CQ0VRCg07DljJ2vT7TK0+2gzM71s18pYFi7NmQg0JWm6TxzzIToGFC8Z9PGjrlUPcNDtHH+3Hz7QDmqsWR/JQpP2CgQn8gEpJInRJ/PVQRKi1mMuyQhMm+K9UvWKqJQO4S8klvBzrWn2NS2WGXKUP/jfRaNE/s5ef4XxK06ySB7GXkesoyUdlY6hC1zVwdf67VJoS71DWSjhbjX0mEUmxEX4wJBY128aIG0Br8XEB+XWzhj9J1PrGCXg7MmjqvK+bvD57/BEsVl6JKRaMjyOPPdwbc3T3zAEYZEB2UdgO1vdeDd+Jlzz9BykW+9ponUP2FTojfKCdu61DqGpL+g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.112.36) smtp.rcpttodomain=google.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=2PDbRDZTdu1LiyKB3LKBECP7k5jFp9quK5yV3JQ7DVQ=;
+ b=Kr6KnoGDrLJlx7s0RyZ3VNLdWY8VNFd5o5KDpatDpg9FP9oyyvCYetZSg0D1LgETzCwHPEo7FJbz/V/Zx8iZhKRBNd+xNLLn/ODZvCmpv61o98G0dsy3K0/U3uWaQEo40P4aBGC42+NwSB0vc5ARbnkm/p5LLX5hanhv1Ps5pz3t5xnJ+BMs3+FkSltdq+IYnQHiiD2TvURMO1vBhEnwBtTk+60Y8cS6IsXckEVkMxq2EQRas0pooQ8LA8gGZu+UJ6BI6Xc+QJGP7Jg7qfG7SYVhxygrndUfc1+iLJlgpaAYe7+st6AddB6aa81lxl5bx7exgopVtyTRhhEAz56W0Q==
+Received: from MWHPR15CA0029.namprd15.prod.outlook.com (2603:10b6:300:ad::15)
+ by DM6PR12MB3818.namprd12.prod.outlook.com (2603:10b6:5:1cf::24) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4242.19; Fri, 18 Jun
+ 2021 16:02:26 +0000
+Received: from CO1NAM11FT054.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:300:ad:cafe::16) by MWHPR15CA0029.outlook.office365.com
+ (2603:10b6:300:ad::15) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4242.19 via Frontend
+ Transport; Fri, 18 Jun 2021 16:02:26 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.36)
+ smtp.mailfrom=nvidia.com; google.com; dkim=none (message not signed)
+ header.d=none;google.com; dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.112.36 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.112.36; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (216.228.112.36) by
+ CO1NAM11FT054.mail.protection.outlook.com (10.13.174.70) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.4242.16 via Frontend Transport; Fri, 18 Jun 2021 16:02:25 +0000
+Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Fri, 18 Jun
+ 2021 16:02:25 +0000
+Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Fri, 18 Jun
+ 2021 16:02:25 +0000
+Received: from moonraker.nvidia.com (172.20.187.6) by mail.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Fri, 18 Jun 2021 09:02:23 -0700
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Vidya Sagar <vidyas@nvidia.com>
+CC:     <linux-pci@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        Jon Hunter <jonathanh@nvidia.com>
+Subject: [PATCH] PCI: tegra: Fix shiftTooManyBitsSigned warning for Tegra194
+Date:   Fri, 18 Jun 2021 17:02:19 +0100
+Message-ID: <20210618160219.303092-1-jonathanh@nvidia.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-References: <CAHp75VdBQUv+yri453KGGBz5ynd0pETxdOngCgPe3mbG22sLXQ@mail.gmail.com>
- <1624023587-7344-1-git-send-email-akhilrajeev@nvidia.com>
-In-Reply-To: <1624023587-7344-1-git-send-email-akhilrajeev@nvidia.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Fri, 18 Jun 2021 17:31:23 +0300
-Message-ID: <CAHp75Vf+8t78NbYeCh+VLEAzcYJxDP9Pz7DPW_MC9D-K_Ff8uA@mail.gmail.com>
-Subject: Re: [PATCH v2] gpio: tegra186: Add ACPI support
-To:     Akhil R <akhilrajeev@nvidia.com>
-Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Krishna Yarlagadda <kyarlagadda@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-tegra@vger.kernel.org,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Suresh Mangipudi <smangipudi@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+X-NVConfidentiality: public
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 60e3ebed-495a-432d-7106-08d93272775b
+X-MS-TrafficTypeDiagnostic: DM6PR12MB3818:
+X-Microsoft-Antispam-PRVS: <DM6PR12MB3818F4D3C23B976126330A6DD90D9@DM6PR12MB3818.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:6430;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 82BSdF3h8M3A1qZfwhR2B9d/ttZrWKmvbJwb82sx39nmQzt7gy1Jde60E0DU6o/hMgFFiIWg/xsWuWq8aojOjQjUdbTNn9t0HrqVfCnaVjc5FE3MyqJyt6b8osIUksRKGFBd/m02bDn4pWaugq8tvWBvuOFG0CVOEmgRBeH4Wdb4/VjZkgkyQT2+BiH4t6JKuoTB277T6qh4WtwXNy5jAR38B8nBhE9PEQfr/dPWfcUdBWAFVAL4uUmorfNc8+9Q6ae24R1ARQSv3JlZzGNOr/YvtXvgr/Vnm6SnTS02F65pLzAwzyFirU743XRxqmztNP/cw5c92lU82dzsemT/EnWp2M3KpArvmF4kalG3NdvjTmZrJSXSrv+MvVa+c7bVES3d6EEeqkYZmQzj09OVBq+AsKxzwhm1dTVkAr3BmqCnmZG0VQZR9CD+0zRFnmmUjXJ4fwxn5pEK1lQHh85YW8+75JNOODwVARQTD+6VC6GY+eFgLke27faDK+FIu4qhpMoCsKWPnQC0EKoBkKHXe07yaImgselb3XOOcQP6ROZoDzupTXj1VgLDQCbq4IlfI7B+s6Lhb27UiUKVXym0jWzI7gw6+r1b+bYzo4ukbHiJYkd/klgUCnRIJePNfqghof0aSDIJbrLj0JAQp1FPMjNrBrLTadEwGoeWIFcT46LukH9/yBlTvvhUt88SLask
+X-Forefront-Antispam-Report: CIP:216.228.112.36;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid05.nvidia.com;CAT:NONE;SFS:(4636009)(136003)(346002)(396003)(376002)(39860400002)(46966006)(36840700001)(54906003)(7696005)(36906005)(83380400001)(8676002)(8936002)(2616005)(70206006)(4326008)(82740400003)(6636002)(186003)(316002)(110136005)(6666004)(7636003)(36756003)(70586007)(2906002)(426003)(5660300002)(26005)(336012)(356005)(47076005)(478600001)(107886003)(82310400003)(36860700001)(1076003)(86362001)(145543001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jun 2021 16:02:25.8608
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 60e3ebed-495a-432d-7106-08d93272775b
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.36];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT054.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB3818
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, Jun 18, 2021 at 4:39 PM Akhil R <akhilrajeev@nvidia.com> wrote:
+The cppcheck tool issues the following warning for the Tegra194 PCIe
+driver ...
 
-Thanks for update, my comments below.
+ $ cppcheck --enable=all drivers/pci/controller/dwc/pcie-tegra194.c
+ Checking drivers/pci/controller/dwc/pcie-tegra194.c ...
 
-> From: Akhil Rajeev <akhilrajeev@nvidia.com>
+ drivers/pci/controller/dwc/pcie-tegra194.c:1829:23: portability:
+	Shifting signed 32-bit value by 31 bits is
+	implementation-defined behaviour. See condition at line 1826.
+	[shiftTooManyBitsSigned]
 
-You need to fix your Git configuration so you won't have this header
-inside the commit message.
+  appl_writel(pcie, (1 << irq), APPL_MSI_CTRL_1);
+                      ^
+The above warning occurs because the '1' is treated as a signed type
+and so fix this by using the 'BIT' macro to ensure that this is defined
+as a unsigned type.
 
-> Add ACPI module ID to probe the driver from the ACPI based bootloader
-> firmware.
+Fixes: c57247f940e8 PCI: tegra: Add support for PCIe endpoint mode in Tegra194
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+---
+ drivers/pci/controller/dwc/pcie-tegra194.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-...
-
-> +#include <linux/acpi.h>
-
-property.h ? (see below)
-
-...
-
-> -       gpio->soc = of_device_get_match_data(&pdev->dev);
-> +       gpio->soc = device_get_match_data(&pdev->dev);
->
->         gpio->secure = devm_platform_ioremap_resource_byname(pdev, "security");
-> -       if (IS_ERR(gpio->secure))
-> -               return PTR_ERR(gpio->secure);
-> -
->         gpio->base = devm_platform_ioremap_resource_byname(pdev, "gpio");
-> -       if (IS_ERR(gpio->base))
-> -               return PTR_ERR(gpio->base);
-
-> +       if (IS_ERR(gpio->secure) || IS_ERR(gpio->base)) {
-> +               gpio->secure = devm_platform_ioremap_resource(pdev, 0);
-> +               gpio->base = devm_platform_ioremap_resource(pdev, 1);
-> +
-> +               if (IS_ERR(gpio->secure))
-> +                       return PTR_ERR(gpio->secure);
-> +
-> +               if (IS_ERR(gpio->base))
-> +                       return PTR_ERR(gpio->base);
-> +       }
-
-
-What about doing like
-
-      gpio->secure = devm_platform_ioremap_resource_byname(pdev, "security");
-      if (IS_ERR(gpio->secure))
-              gpio->secure = devm_platform_ioremap_resource(pdev, 0);
-      if (IS_ERR(gpio->secure))
-              return PTR_ERR(gpio->secure);
-
-and similar for gpio->base?
-
-...
-
-> -       gpio->gpio.of_node = pdev->dev.of_node;
-> -       gpio->gpio.of_gpio_n_cells = 2;
-> -       gpio->gpio.of_xlate = tegra186_gpio_of_xlate;
->
-> -       gpio->intc.name = pdev->dev.of_node->name;
-
-> +       if (!has_acpi_companion(&pdev->dev)) {
-> +               gpio->gpio.of_node = pdev->dev.of_node;
-> +               gpio->gpio.of_gpio_n_cells = 2;
-> +               gpio->gpio.of_xlate = tegra186_gpio_of_xlate;
-> +               gpio->intc.name = pdev->dev.of_node->name;
-> +       } else {
-> +               gpio->intc.name = gpio->soc->name;
-> +       }
-
-Wouldn't the following be enough?
-
--       gpio->intc.name = pdev->dev.of_node->name;
-+       gpio->intc.name = devm_kasprintf(&pdev->dev, "%pfw",
-dev_fwnode(&pdev->dev));
-+       if (!gpio->intc.name)
-+               return -ENOMEM;
-
-Note, all above are questions and you know better which direction to
-take. In either way, please test and look at the result.
-
+diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
+index 8fc08336f76e..3c1feeab104f 100644
+--- a/drivers/pci/controller/dwc/pcie-tegra194.c
++++ b/drivers/pci/controller/dwc/pcie-tegra194.c
+@@ -1826,7 +1826,7 @@ static int tegra_pcie_ep_raise_msi_irq(struct tegra_pcie_dw *pcie, u16 irq)
+ 	if (unlikely(irq > 31))
+ 		return -EINVAL;
+ 
+-	appl_writel(pcie, (1 << irq), APPL_MSI_CTRL_1);
++	appl_writel(pcie, BIT(irq), APPL_MSI_CTRL_1);
+ 
+ 	return 0;
+ }
 -- 
-With Best Regards,
-Andy Shevchenko
+2.25.1
+
