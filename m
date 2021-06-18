@@ -2,203 +2,204 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48018C48BDF
-	for <linux-tegra@archiver.kernel.org>; Fri, 18 Jun 2021 12:33:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70B4FC48BDF
+	for <linux-tegra@archiver.kernel.org>; Fri, 18 Jun 2021 13:39:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2D10861222
-	for <linux-tegra@archiver.kernel.org>; Fri, 18 Jun 2021 12:33:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4D1CA613E2
+	for <linux-tegra@archiver.kernel.org>; Fri, 18 Jun 2021 13:39:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231445AbhFRMfN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 18 Jun 2021 08:35:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47008 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230438AbhFRMfM (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 18 Jun 2021 08:35:12 -0400
-Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 266CEC061574
-        for <linux-tegra@vger.kernel.org>; Fri, 18 Jun 2021 05:33:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-         s=20161220; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
-        MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=GG/hzykWmjeuPWurcE+pQYoL+q+WES40boSaQP7qAGQ=; b=B7a4qegVmyb2qfJUldd1u6muL5
-        80BlKdY59HRgafRgOLS4n7eQMSiw1+GvHSgP3I3LRTyzxGG7Thy8s0L/jd19wmspza8Bgl6ZyJoVQ
-        K3Wb/JByqidNxSKsDJKxNy7pVZGbWknQ/f0QnCR/jpdWUQITAreprjcX+mosGJQvDA6wTQ+ZxF0EK
-        d+ts+XF5WpsaLYUryn5KT1UsGZkBaxfaWjhgkCcBKskknMTf6KVskMIg8Q0dOEeRTM35RqIIbOP8v
-        FndrxBkbjsN4EF3Pz9TZpb8ZwZHyrrV/gEOXFfhpSDUlQaMQ6jQfzeLLRw+Q0MKDwIw1Z3aT2uexM
-        3vD0Y/wA==;
-Received: from dsl-hkibng22-54f986-236.dhcp.inet.fi ([84.249.134.236] helo=[192.168.1.10])
-        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <cyndis@kapsi.fi>)
-        id 1luDgC-0006uH-B8; Fri, 18 Jun 2021 15:33:00 +0300
-Subject: Re: [PATCH v2] soc: tegra: Add Tegra186 ARI driver
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>
-Cc:     jonathanh@nvidia.com, linux-tegra@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-References: <20210617121307.792386-1-mperttunen@nvidia.com>
- <YMyLqnbwOAyvXMPU@orome.fritz.box>
-From:   Mikko Perttunen <cyndis@kapsi.fi>
-Message-ID: <2f8c1195-7863-b5d3-0720-1d167f3fff27@kapsi.fi>
-Date:   Fri, 18 Jun 2021 15:32:59 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.0
+        id S232564AbhFRNl4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 18 Jun 2021 09:41:56 -0400
+Received: from mail-dm6nam08on2079.outbound.protection.outlook.com ([40.107.102.79]:56801
+        "EHLO NAM04-DM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S232089AbhFRNl4 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Fri, 18 Jun 2021 09:41:56 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Qb7VpY70ms7SkdLpYiJ/X5F9Bo9ptvOw9N8MH6HFjLcHzDHEUR/vOsthM9BsrLKP8i0SWjdIPVhUyZwar6wDLVSDodokGJ3ust6Ts1rIadxjQU8ThN3GZoxPfL9uCPNlWNSRucLKkkWYxoWI5ExyCjD0OasAyjc8yrXOO/CtcoqijDj1yWVUAb/PyMILbAKf0eZP78mZkMiquWNKKrASiHiQCzZ6erCHm70Ig+xhLiIfi5bcKKH5pigkyUqzhTNZdrqaX0NqjUQ93Mnv4S3P6xVDsIcQIHP1K8GV0RTuLUaE7AugVmJjJ74hy94up5d7j7ZQC60ozyVgecEjfyGRzQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=h2urixiQKIGk8wdkJzjwZvnlZCA9Lh7keSKR7c17Jg0=;
+ b=WsJ95dy6xezv9W73FGp0zZpsT99R0O5Wj3OBAc7ZtswbOOsx/oxQEgDwJRUabmY7DTcEqN1AefcKTVAnn0I2h30JnLSn9yC3kEeiX0mOh8//fRQPhgO7sTF4yH0idI5DPyHhTfbUZYfsfzIVpyNkahB2cNW6FfaQqugLZfnct80ehc8jKeF2ADUdEGgyr5opya5/9JOqJ/3UIE+ADWlAvMonVHGbTEUkx7c1t3GxIo5kkFRKujMKzeXFRFF2n2FwbF2FqusnuObW7oKHKiPjA0dKKwpzhoGeDrw05zRYLeCU+thruOHiSV6BPmq8qU5joEk26jwxKIlAokN8PdtRxA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.112.34) smtp.rcpttodomain=linaro.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=h2urixiQKIGk8wdkJzjwZvnlZCA9Lh7keSKR7c17Jg0=;
+ b=sQImgzFjuu0DAhOWbO1yyZc7p/c7QJTLm3mBlzQlO4rG4HNcHbc6H1jQdT/Z4uKh9R7OfS9wc9/MTMFkdtC33sk6bS+0kGlpDRyHeR7UPyrzFKejdbHSarRoYy7oxovuGaXS2Q4wPd/fVQF89odO+S9vsBxcNxxuSVGh1z8h4v/YVyXpZcRbi3RuPowEmKL+5X4RuzqqaZiP0Rovkb0vY7KMq14WJMy7EzhPvNWxZoX5RxS/NMz2JMbFDo7NRTVT+iYwG/P7s5kLD5nlFT43euHKlGkxYKRgMLrE9TuJhyf3oQ7xx/OrooWvGxXyGv1QJ05Lizu2RZ/cmQrvnKVVQA==
+Received: from DM3PR12CA0084.namprd12.prod.outlook.com (2603:10b6:0:57::28) by
+ SA0PR12MB4559.namprd12.prod.outlook.com (2603:10b6:806:9e::23) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.4242.16; Fri, 18 Jun 2021 13:39:46 +0000
+Received: from DM6NAM11FT037.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:0:57:cafe::f4) by DM3PR12CA0084.outlook.office365.com
+ (2603:10b6:0:57::28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4242.15 via Frontend
+ Transport; Fri, 18 Jun 2021 13:39:45 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.34)
+ smtp.mailfrom=nvidia.com; linaro.org; dkim=none (message not signed)
+ header.d=none;linaro.org; dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.112.34 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.112.34; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (216.228.112.34) by
+ DM6NAM11FT037.mail.protection.outlook.com (10.13.172.122) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.4242.16 via Frontend Transport; Fri, 18 Jun 2021 13:39:45 +0000
+Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Fri, 18 Jun
+ 2021 13:39:45 +0000
+Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Fri, 18 Jun
+ 2021 13:39:44 +0000
+Received: from kyarlagadda-linux.nvidia.com (172.20.187.5) by mail.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Fri, 18 Jun 2021 06:39:41 -0700
+From:   Akhil R <akhilrajeev@nvidia.com>
+To:     <andy.shevchenko@gmail.com>
+CC:     <akhilrajeev@nvidia.com>, <bgolaszewski@baylibre.com>,
+        <jonathanh@nvidia.com>, <kyarlagadda@nvidia.com>,
+        <ldewangan@nvidia.com>, <linus.walleij@linaro.org>,
+        <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <mperttunen@nvidia.com>,
+        <smangipudi@nvidia.com>, <thierry.reding@gmail.com>
+Subject: [PATCH v2] gpio: tegra186: Add ACPI support
+Date:   Fri, 18 Jun 2021 19:09:47 +0530
+Message-ID: <1624023587-7344-1-git-send-email-akhilrajeev@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <CAHp75VdBQUv+yri453KGGBz5ynd0pETxdOngCgPe3mbG22sLXQ@mail.gmail.com>
+References: <CAHp75VdBQUv+yri453KGGBz5ynd0pETxdOngCgPe3mbG22sLXQ@mail.gmail.com>
+X-NVConfidentiality: public
 MIME-Version: 1.0
-In-Reply-To: <YMyLqnbwOAyvXMPU@orome.fritz.box>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 84.249.134.236
-X-SA-Exim-Mail-From: cyndis@kapsi.fi
-X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 4c8415cf-d0b1-4a12-4490-08d9325e890d
+X-MS-TrafficTypeDiagnostic: SA0PR12MB4559:
+X-Microsoft-Antispam-PRVS: <SA0PR12MB45598E03964A27DB77891C33C00D9@SA0PR12MB4559.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:1443;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: Me1qXvpWpQE8OhTWKAnHXQ23LW1X3uA65sewJQg5x9F+us/LD19mRDlfSq03ZqwEIyFaZzAtXOX9lb+t0Xgyl6KwoJMX9TqNPsQ1/3RP0IG7c+9x9eXns0087i85uMXfUFYNvU8xPA1+TX4D1JQ/5JY7tMUipPG0sUNRzPVoopb1CmEnMPkwZZ/QN59+AfnPIVyqK9OK3QEmaMlBpo2WUsSugdgFn8F8Lc7TQFmX3Q6okf9V3veHGbkrhVyalGrnWFjgpfky7+MknXgOd5/sP503ij3hKE+t44GO4fYNHrCFip9Yx2q505CmEjSpooQtJd1HrHZSR5A9+oYZiwD3ltvIeufGVg0/VczHLrpSJRiEFqPNz3G0ZSg9vUqBMsbE6jF6C2M5PBxm2GiOgkCuWpE5nvLA/MQh0zZKVgqWkaAeiq9JJ3AG4VA5K+mgqp9PSYrCyopBiamEml9hjhc6djG3xboDSihtvk8xBIvdNE2HhKE1as44Cn2W91eTg0JgwxUUK6JgP33RtfsUcFcgaGqPnJeA05SAcOMkqGUHuE+tLXHsruw2Jh9vadea1z5D08A7d4ruyc5Savvgng71vEHzuKaPdXvlsomjvhvZxlFETaueOfRMvaBylILTwOjfjkXWG/tu5Ero24IBgGm2IJFCXKPsLqkel4aeoK28eEI=
+X-Forefront-Antispam-Report: CIP:216.228.112.34;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid03.nvidia.com;CAT:NONE;SFS:(4636009)(136003)(39860400002)(376002)(396003)(346002)(46966006)(36840700001)(478600001)(70586007)(2906002)(186003)(36906005)(4326008)(6916009)(36860700001)(336012)(70206006)(7696005)(54906003)(316002)(82310400003)(26005)(47076005)(356005)(8936002)(82740400003)(36756003)(8676002)(83380400001)(7636003)(2616005)(5660300002)(426003)(86362001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jun 2021 13:39:45.6199
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4c8415cf-d0b1-4a12-4490-08d9325e890d
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.34];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT037.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR12MB4559
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 6/18/21 3:03 PM, Thierry Reding wrote:
-> On Thu, Jun 17, 2021 at 03:13:07PM +0300, Mikko Perttunen wrote:
->> Add a driver to hook into panic notifiers and print machine check
->> status for debugging. Status information is retrieved via SMC. This
->> is supported by upstream ARM Trusted Firmware.
->>
->> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
->> ---
->> v2:
->> * Changed to use panic notifier instead of serror hook
->> ---
->>   drivers/soc/tegra/Makefile       |  1 +
->>   drivers/soc/tegra/ari-tegra186.c | 80 ++++++++++++++++++++++++++++++++
->>   2 files changed, 81 insertions(+)
->>   create mode 100644 drivers/soc/tegra/ari-tegra186.c
->>
->> diff --git a/drivers/soc/tegra/Makefile b/drivers/soc/tegra/Makefile
->> index 9c809c1814bd..054e862b63d8 100644
->> --- a/drivers/soc/tegra/Makefile
->> +++ b/drivers/soc/tegra/Makefile
->> @@ -7,3 +7,4 @@ obj-$(CONFIG_SOC_TEGRA_PMC) += pmc.o
->>   obj-$(CONFIG_SOC_TEGRA_POWERGATE_BPMP) += powergate-bpmp.o
->>   obj-$(CONFIG_SOC_TEGRA20_VOLTAGE_COUPLER) += regulators-tegra20.o
->>   obj-$(CONFIG_SOC_TEGRA30_VOLTAGE_COUPLER) += regulators-tegra30.o
->> +obj-$(CONFIG_ARCH_TEGRA_186_SOC) += ari-tegra186.o
->> diff --git a/drivers/soc/tegra/ari-tegra186.c b/drivers/soc/tegra/ari-tegra186.c
->> new file mode 100644
->> index 000000000000..02577853ec49
->> --- /dev/null
->> +++ b/drivers/soc/tegra/ari-tegra186.c
->> @@ -0,0 +1,80 @@
->> +// SPDX-License-Identifier: GPL-2.0-only
->> +/*
->> + * Copyright (c) 2021, NVIDIA CORPORATION.  All rights reserved.
->> + */
->> +
->> +#include <linux/arm-smccc.h>
->> +#include <linux/kernel.h>
->> +#include <linux/of.h>
->> +#include <linux/panic_notifier.h>
->> +
->> +#define SMC_SIP_INVOKE_MCE			0xc2ffff00
->> +#define MCE_SMC_READ_MCA			12
->> +
->> +#define MCA_ARI_CMD_RD_SERR			1
->> +
->> +#define MCA_ARI_RW_SUBIDX_STAT			1
->> +#define SERR_STATUS_VAL				BIT_ULL(63)
->> +
->> +#define MCA_ARI_RW_SUBIDX_ADDR			2
->> +#define MCA_ARI_RW_SUBIDX_MSC1			3
->> +#define MCA_ARI_RW_SUBIDX_MSC2			4
->> +
->> +static const char * const bank_names[] = {
->> +	"SYS:DPMU", "ROC:IOB", "ROC:MCB", "ROC:CCE", "ROC:CQX", "ROC:CTU",
->> +};
->> +
->> +static void read_uncore_mca(u8 cmd, u8 idx, u8 subidx, u8 inst, u64 *data)
->> +{
->> +	struct arm_smccc_res res;
->> +
->> +	arm_smccc_smc(SMC_SIP_INVOKE_MCE | MCE_SMC_READ_MCA,
->> +		      ((u64)inst << 24) | ((u64)idx << 16) |
->> +			      ((u64)subidx << 8) | ((u64)cmd << 0),
->> +		      0, 0, 0, 0, 0, 0, &res);
->> +
->> +	*data = res.a2;
->> +}
->> +
->> +static int tegra186_ari_panic_handler(struct notifier_block *nb,
->> +				      unsigned long code, void *unused)
->> +{
->> +	u64 status;
->> +	int i;
->> +
->> +	for (i = 0; i < ARRAY_SIZE(bank_names); i++) {
->> +		read_uncore_mca(MCA_ARI_CMD_RD_SERR, i, MCA_ARI_RW_SUBIDX_STAT,
->> +				0, &status);
->> +
->> +		if (status & SERR_STATUS_VAL) {
->> +			u64 addr, misc1, misc2;
->> +
->> +			read_uncore_mca(MCA_ARI_CMD_RD_SERR, i,
->> +					MCA_ARI_RW_SUBIDX_ADDR, 0, &addr);
->> +			read_uncore_mca(MCA_ARI_CMD_RD_SERR, i,
->> +					MCA_ARI_RW_SUBIDX_MSC1, 0, &misc1);
->> +			read_uncore_mca(MCA_ARI_CMD_RD_SERR, i,
->> +					MCA_ARI_RW_SUBIDX_MSC2, 0, &misc2);
->> +
->> +			pr_crit("Machine Check Error in %s\n"
->> +				"  status=0x%llx addr=0x%llx\n"
->> +				"  msc1=0x%llx msc2=0x%llx\n",
->> +				bank_names[i], status, addr, misc1, misc2);
-> 
-> This still looks rather cryptic to me. Is there some way to further
-> decode things like the status and MSC registers? Or is this something
-> that people are supposed to know how to intepret?
+From: Akhil Rajeev <akhilrajeev@nvidia.com>
 
-Indeed, it is very cryptic. The corresponding downstream driver does a 
-lot of work to print more human-readable descriptions of these - that's 
-what I used as a decoding reference as well myself.
+Add ACPI module ID to probe the driver from the ACPI based bootloader
+firmware.
 
-I was thinking that having the barebones here is good to at least have 
-the error data to decode manually, and we can add the more 
-human-readable decoding afterwards, or perhaps provide some script to 
-decode it.
+Signed-off-by: Akhil Rajeev <akhilrajeev@nvidia.com>
+---
+v2 changes:
+	* fallback to find resource by index if name is not found to support ACPI.
+	* removed #ifdef and ACPI_PTR.
+	* Apparently, acpi.h is required to support changes @@ -690,11 +697,15 
 
-> 
-> Also, I'm not sure it's evident what those various banks are. Is there
-> some way we can provide a description for these?
+ drivers/gpio/gpio-tegra186.c | 40 ++++++++++++++++++++++++++++++----------
+ 1 file changed, 30 insertions(+), 10 deletions(-)
 
-I don't know if the bank names themselves are very useful - each bank is 
-decoded differently and the decoded information is the useful part.
+diff --git a/drivers/gpio/gpio-tegra186.c b/drivers/gpio/gpio-tegra186.c
+index 1bd9e44..fa1295a 100644
+--- a/drivers/gpio/gpio-tegra186.c
++++ b/drivers/gpio/gpio-tegra186.c
+@@ -5,6 +5,7 @@
+  * Author: Thierry Reding <treding@nvidia.com>
+  */
+ 
++#include <linux/acpi.h>
+ #include <linux/gpio/driver.h>
+ #include <linux/interrupt.h>
+ #include <linux/irq.h>
+@@ -620,15 +621,21 @@ static int tegra186_gpio_probe(struct platform_device *pdev)
+ 	if (!gpio)
+ 		return -ENOMEM;
+ 
+-	gpio->soc = of_device_get_match_data(&pdev->dev);
++	gpio->soc = device_get_match_data(&pdev->dev);
+ 
+ 	gpio->secure = devm_platform_ioremap_resource_byname(pdev, "security");
+-	if (IS_ERR(gpio->secure))
+-		return PTR_ERR(gpio->secure);
+-
+ 	gpio->base = devm_platform_ioremap_resource_byname(pdev, "gpio");
+-	if (IS_ERR(gpio->base))
+-		return PTR_ERR(gpio->base);
++
++	if (IS_ERR(gpio->secure) || IS_ERR(gpio->base)) {
++		gpio->secure = devm_platform_ioremap_resource(pdev, 0);
++		gpio->base = devm_platform_ioremap_resource(pdev, 1);
++
++		if (IS_ERR(gpio->secure))
++			return PTR_ERR(gpio->secure);
++
++		if (IS_ERR(gpio->base))
++			return PTR_ERR(gpio->base);
++	}
+ 
+ 	err = platform_irq_count(pdev);
+ 	if (err < 0)
+@@ -690,11 +697,15 @@ static int tegra186_gpio_probe(struct platform_device *pdev)
+ 
+ 	gpio->gpio.names = (const char * const *)names;
+ 
+-	gpio->gpio.of_node = pdev->dev.of_node;
+-	gpio->gpio.of_gpio_n_cells = 2;
+-	gpio->gpio.of_xlate = tegra186_gpio_of_xlate;
+ 
+-	gpio->intc.name = pdev->dev.of_node->name;
++	if (!has_acpi_companion(&pdev->dev)) {
++		gpio->gpio.of_node = pdev->dev.of_node;
++		gpio->gpio.of_gpio_n_cells = 2;
++		gpio->gpio.of_xlate = tegra186_gpio_of_xlate;
++		gpio->intc.name = pdev->dev.of_node->name;
++	} else {
++		gpio->intc.name = gpio->soc->name;
++	}
+ 	gpio->intc.irq_ack = tegra186_irq_ack;
+ 	gpio->intc.irq_mask = tegra186_irq_mask;
+ 	gpio->intc.irq_unmask = tegra186_irq_unmask;
+@@ -918,10 +929,19 @@ static const struct of_device_id tegra186_gpio_of_match[] = {
+ };
+ MODULE_DEVICE_TABLE(of, tegra186_gpio_of_match);
+ 
++static const struct acpi_device_id  tegra186_gpio_acpi_match[] = {
++	{ .id = "NVDA0108", .driver_data = (kernel_ulong_t)&tegra186_main_soc },
++	{ .id = "NVDA0208", .driver_data = (kernel_ulong_t)&tegra186_aon_soc },
++	{ .id = "NVDA0308", .driver_data = (kernel_ulong_t)&tegra194_main_soc },
++	{ .id = "NVDA0408", .driver_data = (kernel_ulong_t)&tegra194_aon_soc },
++};
++MODULE_DEVICE_TABLE(acpi, tegra186_gpio_acpi_match);
++
+ static struct platform_driver tegra186_gpio_driver = {
+ 	.driver = {
+ 		.name = "tegra186-gpio",
+ 		.of_match_table = tegra186_gpio_of_match,
++		.acpi_match_table = tegra186_gpio_acpi_match,
+ 	},
+ 	.probe = tegra186_gpio_probe,
+ 	.remove = tegra186_gpio_remove,
+-- 
+2.7.4
 
-> 
-> Additional information doesn't necessarily have to go into code, but
-> it'd be nice if at least there was some sort of comment somewhere that
-> goes into a bit more detail so that people know how to use this. Or
-> perhaps this is documented in the TRM? If so, perhaps provide a
-> reference to that so that people know where to find the information.
-
-I don't know if the TRM has this information. How to decode these values 
-can be seen in
-
-https://nv-tegra.nvidia.com/gitweb/?p=linux-nvidia.git;a=blob;f=drivers/platform/tegra/ari_mca.c;h=040d05978ca49755a68365bebe7c46f6628c5162;hb=6dc57fec39c444e4c4448be61ddd19c55693daf1
-
-and
-
-https://nv-tegra.nvidia.com/gitweb/?p=linux-nvidia.git;a=blob;f=include/linux/platform/tegra/ari_mca.h;h=e6e4ac3abf674a1fc93f7b0dbcac4d6e672772d6;hb=6dc57fec39c444e4c4448be61ddd19c55693daf1
-
-Not sure if these kinds of links are very appropriate as references though.
-
-> 
-> Thierry
-> 
-
-Thanks,
-Mikko
