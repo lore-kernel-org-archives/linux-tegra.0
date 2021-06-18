@@ -2,104 +2,321 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 025DBC49EA3
-	for <linux-tegra@archiver.kernel.org>; Fri, 18 Jun 2021 13:44:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 274EEC48BDF
+	for <linux-tegra@archiver.kernel.org>; Fri, 18 Jun 2021 13:52:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DC8A861159
-	for <linux-tegra@archiver.kernel.org>; Fri, 18 Jun 2021 13:44:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 06F4A61248
+	for <linux-tegra@archiver.kernel.org>; Fri, 18 Jun 2021 13:52:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233893AbhFRNrG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 18 Jun 2021 09:47:06 -0400
-Received: from mx0b-00069f02.pphosted.com ([205.220.177.32]:65332 "EHLO
-        mx0b-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231855AbhFRNrG (ORCPT
+        id S234091AbhFRNyN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 18 Jun 2021 09:54:13 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:39850 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234173AbhFRNyK (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 18 Jun 2021 09:47:06 -0400
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 15IDhrhY010803;
-        Fri, 18 Jun 2021 13:44:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
- bh=FluAY6HgIzMDqkeeKmecM2WfpkpmZL6tgXmZI0hFMgU=;
- b=scjwU88SHNObbORJ+sYovhCb8iDxbzrcREmqBkDWDAStwot+DBW9x17+yz7mFSGp9G8a
- ff+U5xH1jFpcI31wA7VhvtjgjOVERZN5CqdVJFnWBq1loDyqTMxvlEDArj/8b5xjpfap
- hnrHj+SSn3ytRi2ImMAD+TpU5L/hvbiTxCHs72YCjFwBdgxr78+tfvRy9Zkii5TZ4wD1
- Scxn63pc42k8VAfC5STQozCy69xucyyPOvsjNYkd9m0B0sirm6exxfPRvZWWREcypW7J
- n9PGtvS0RLTPv73nwICfhpUaW8hUVHW8ClvxIG8A9jVa3fjtfHWC0VQ4CGofLzuQDxLH GQ== 
-Received: from oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by mx0b-00069f02.pphosted.com with ESMTP id 397w1y398h-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 18 Jun 2021 13:44:37 +0000
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [127.0.0.1])
-        by pps.podrdrct (8.16.0.36/8.16.0.36) with SMTP id 15IDiarG103154;
-        Fri, 18 Jun 2021 13:44:36 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by aserp3020.oracle.com with ESMTP id 396waxy563-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 18 Jun 2021 13:44:36 +0000
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 15IDiahj103133;
-        Fri, 18 Jun 2021 13:44:36 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserp3020.oracle.com with ESMTP id 396waxy55k-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 18 Jun 2021 13:44:36 +0000
-Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 15IDiXLW016901;
-        Fri, 18 Jun 2021 13:44:33 GMT
-Received: from mwanda (/102.222.70.252)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 18 Jun 2021 13:44:32 +0000
-Date:   Fri, 18 Jun 2021 16:44:24 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Liam Girdwood <lgirdwood@gmail.com>,
-        Dmitry Osipenko <digetx@gmail.com>
-Cc:     Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Svyatoslav Ryhel <clamor95@gmail.com>,
-        Ion Agorria <ion@agorria.com>, alsa-devel@alsa-project.org,
-        linux-tegra@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] ASoC: tegra: Fix a NULL vs IS_ERR() check
-Message-ID: <YMyjOKFsPe9SietU@mwanda>
+        Fri, 18 Jun 2021 09:54:10 -0400
+Received: from imap.suse.de (imap-alt.suse-dmz.suse.de [192.168.254.47])
+        (using TLSv1.2 with cipher ECDHE-ECDSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id D8EB121B4C;
+        Fri, 18 Jun 2021 13:51:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1624024319; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=2M9odon69m0SFHZacWPEqZnEilKCCclmoosV1K7Him4=;
+        b=GU/ZgvRChGCrAlBAzgPG1jYLpQ2BCgE1YylP317mbYUnZKM/AS4+yJjfuxiJ/tIT5ncInv
+        gcoBOxBtRKVZL96GpjSUN8RTfFa/MH/4v8jk2oyoaFYPROTj5d/BQUjfF0EuL0z+sUyjMw
+        iYWkOGzHPMbjBkrrf9erRd0cjFl9tY4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1624024319;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=2M9odon69m0SFHZacWPEqZnEilKCCclmoosV1K7Him4=;
+        b=AIzWdzwf6duUMExBlwcbYIbVYs1cgNpakA0x+uE3kVj6EBdGjUP3wD2bsxkZhayATphBw2
+        deDYnryH0F0z+ECQ==
+Received: from imap3-int (imap-alt.suse-dmz.suse.de [192.168.254.47])
+        by imap.suse.de (Postfix) with ESMTP id 96A33118DD;
+        Fri, 18 Jun 2021 13:51:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1624024319; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=2M9odon69m0SFHZacWPEqZnEilKCCclmoosV1K7Him4=;
+        b=GU/ZgvRChGCrAlBAzgPG1jYLpQ2BCgE1YylP317mbYUnZKM/AS4+yJjfuxiJ/tIT5ncInv
+        gcoBOxBtRKVZL96GpjSUN8RTfFa/MH/4v8jk2oyoaFYPROTj5d/BQUjfF0EuL0z+sUyjMw
+        iYWkOGzHPMbjBkrrf9erRd0cjFl9tY4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1624024319;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=2M9odon69m0SFHZacWPEqZnEilKCCclmoosV1K7Him4=;
+        b=AIzWdzwf6duUMExBlwcbYIbVYs1cgNpakA0x+uE3kVj6EBdGjUP3wD2bsxkZhayATphBw2
+        deDYnryH0F0z+ECQ==
+Received: from director2.suse.de ([192.168.254.72])
+        by imap3-int with ESMTPSA
+        id e9pcI/+kzGAGQAAALh3uQQ
+        (envelope-from <ykaukab@suse.de>); Fri, 18 Jun 2021 13:51:59 +0000
+Date:   Fri, 18 Jun 2021 15:51:58 +0200
+From:   Mian Yousaf Kaukab <ykaukab@suse.de>
+To:     Mikko Perttunen <cyndis@kapsi.fi>
+Cc:     Mikko Perttunen <mperttunen@nvidia.com>, arnd@arndb.de,
+        gregkh@linuxfoundation.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] misc: sram: Only map reserved areas in Tegra SYSRAM
+Message-ID: <20210618135158.GB81946@suse.de>
+References: <20210617094804.667716-1-mperttunen@nvidia.com>
+ <20210618081811.GA81946@suse.de>
+ <e3882a80-1bab-8216-3f9a-7f938d426d2c@kapsi.fi>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
-X-Proofpoint-ORIG-GUID: RudKXr0sEGZo39jcPkSRPU__TXjDmtST
-X-Proofpoint-GUID: RudKXr0sEGZo39jcPkSRPU__TXjDmtST
+In-Reply-To: <e3882a80-1bab-8216-3f9a-7f938d426d2c@kapsi.fi>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The tegra_machine_parse_phandle() function doesn't return NULL, it returns
-error pointers.
+On Fri, Jun 18, 2021 at 12:26:21PM +0300, Mikko Perttunen wrote:
+> On 6/18/21 11:18 AM, Mian Yousaf Kaukab wrote:
+> > On Thu, Jun 17, 2021 at 12:48:04PM +0300, Mikko Perttunen wrote:
+> > > On Tegra186 and later, a portion of the SYSRAM may be reserved for use
+> > > by TZ. Non-TZ memory accesses to this portion, including speculative
+> > > accesses, trigger SErrors that bring down the system. This does also
+> > > happen in practice occasionally (due to speculative accesses).
+> > > 
+> > > To fix the issue, add a flag to the SRAM driver to only map the
+> > > device tree-specified reserved areas depending on a flag set
+> > > based on the compatibility string. This would not affect non-Tegra
+> > > systems that rely on the entire thing being memory mapped.
+> > > 
+> > > Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+> > > ---
+> > >   drivers/misc/sram.c | 108 +++++++++++++++++++++++++++++++-------------
+> > >   drivers/misc/sram.h |   9 ++++
+> > >   2 files changed, 86 insertions(+), 31 deletions(-)
+> > > 
+> > > diff --git a/drivers/misc/sram.c b/drivers/misc/sram.c
+> > > index 93638ae2753a..a27ffb3dbea8 100644
+> > > --- a/drivers/misc/sram.c
+> > > +++ b/drivers/misc/sram.c
+> > > @@ -97,7 +97,24 @@ static int sram_add_partition(struct sram_dev *sram, struct sram_reserve *block,
+> > >   	struct sram_partition *part = &sram->partition[sram->partitions];
+> > >   	mutex_init(&part->lock);
+> > > -	part->base = sram->virt_base + block->start;
+> > > +
+> > > +	if (sram->config->map_only_reserved) {
+> > > +		void *virt_base;
+> > > +
+> > > +		if (sram->no_memory_wc)
+> > > +			virt_base = devm_ioremap_resource(sram->dev, &block->res);
+> > > +		else
+> > > +			virt_base = devm_ioremap_resource_wc(sram->dev, &block->res);
+> > > +
+> > > +		if (IS_ERR(virt_base)) {
+> > > +			dev_err(sram->dev, "could not map SRAM at %pr\n", &block->res);
+> > > +			return PTR_ERR(virt_base);
+> > > +		}
+> > > +
+> > > +		part->base = virt_base;
+> > > +	} else {
+> > > +		part->base = sram->virt_base + block->start;
+> > > +	}
+> > >   	if (block->pool) {
+> > >   		ret = sram_add_pool(sram, block, start, part);
+> > > @@ -198,6 +215,7 @@ static int sram_reserve_regions(struct sram_dev *sram, struct resource *res)
+> > >   		block->start = child_res.start - res->start;
+> > >   		block->size = resource_size(&child_res);
+> > > +		block->res = child_res;
+> > >   		list_add_tail(&block->list, &reserve_list);
+> > >   		if (of_find_property(child, "export", NULL))
+> > > @@ -295,15 +313,17 @@ static int sram_reserve_regions(struct sram_dev *sram, struct resource *res)
+> > >   		 */
+> > >   		cur_size = block->start - cur_start;
+> > > -		dev_dbg(sram->dev, "adding chunk 0x%lx-0x%lx\n",
+> > > -			cur_start, cur_start + cur_size);
+> > > +		if (sram->pool) {
+> > > +			dev_dbg(sram->dev, "adding chunk 0x%lx-0x%lx\n",
+> > > +				cur_start, cur_start + cur_size);
+> > > -		ret = gen_pool_add_virt(sram->pool,
+> > > -				(unsigned long)sram->virt_base + cur_start,
+> > > -				res->start + cur_start, cur_size, -1);
+> > > -		if (ret < 0) {
+> > > -			sram_free_partitions(sram);
+> > > -			goto err_chunks;
+> > > +			ret = gen_pool_add_virt(sram->pool,
+> > > +					(unsigned long)sram->virt_base + cur_start,
+> > > +					res->start + cur_start, cur_size, -1);
+> > > +			if (ret < 0) {
+> > > +				sram_free_partitions(sram);
+> > > +				goto err_chunks;
+> > > +			}
+> > >   		}
+> > >   		/* next allocation after this reserved block */
+> > > @@ -331,40 +351,66 @@ static int atmel_securam_wait(void)
+> > >   					10000, 500000);
+> > >   }
+> > > +static const struct sram_config default_config = {
+> > > +};
+> > > +
+> > > +static const struct sram_config atmel_securam_config = {
+> > > +	.init = atmel_securam_wait
+> > > +};
+> > > +
+> > > +/*
+> > > + * SYSRAM contains areas that are not accessible by the
+> > > + * kernel, such as the first 256K that is reserved for TZ.
+> > > + * Accesses to those areas (including speculative accesses)
+> > > + * trigger SErrors. As such we must map only the areas of
+> > > + * SYSRAM specified in the device tree.
+> > > + */
+> > > +static const struct sram_config tegra_sysram_config = {
+> > > +	.map_only_reserved = true,
+> > 
+> > In case of Tegra sram base is 64K aligned and the reserved partitions
+> > are 4K aligned. How this flag will work if the kernel is using 64K
+> > page size?
+> 
+> Good point - perhaps we need to consider another approach that just excludes
+> any inaccessible areas, though I think it'll be somewhat more complicated
+> and more Tegra-specific.
+Perhaps SError due to speculative access can be avoided by just using
+no-memory-wc, provided the performance impact due to this is OK for
+bpmp driver.
+> 
+> I'm going on vacation starting this evening so I'll look into this
+> afterwards.
+Enjoy your vacations!
 
-Fixes: cc8f70f56039 ("ASoC: tegra: Unify ASoC machine drivers")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- sound/soc/tegra/tegra_asoc_machine.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> Thanks,
+> Mikko
 
-diff --git a/sound/soc/tegra/tegra_asoc_machine.c b/sound/soc/tegra/tegra_asoc_machine.c
-index a53aec361a77..735909310a26 100644
---- a/sound/soc/tegra/tegra_asoc_machine.c
-+++ b/sound/soc/tegra/tegra_asoc_machine.c
-@@ -409,7 +409,7 @@ int tegra_asoc_machine_probe(struct platform_device *pdev)
- 		return PTR_ERR(np_codec);
- 
- 	np_i2s = tegra_machine_parse_phandle(dev, "nvidia,i2s-controller");
--	if (!np_i2s)
-+	if (IS_ERR(np_i2s))
- 		return PTR_ERR(np_i2s);
- 
- 	card->dai_link->cpus->of_node = np_i2s;
--- 
-2.30.2
-
+BR,
+Yousaf
+> 
+> > 
+> > > +};
+> > > +
+> > >   static const struct of_device_id sram_dt_ids[] = {
+> > > -	{ .compatible = "mmio-sram" },
+> > > -	{ .compatible = "atmel,sama5d2-securam", .data = atmel_securam_wait },
+> > > +	{ .compatible = "mmio-sram", .data = &default_config },
+> > > +	{ .compatible = "atmel,sama5d2-securam", .data = &atmel_securam_config },
+> > > +	{ .compatible = "nvidia,tegra186-sysram", .data = &tegra_sysram_config },
+> > > +	{ .compatible = "nvidia,tegra194-sysram", .data = &tegra_sysram_config },
+> > >   	{}
+> > >   };
+> > >   static int sram_probe(struct platform_device *pdev)
+> > >   {
+> > > +	const struct sram_config *config;
+> > >   	struct sram_dev *sram;
+> > >   	int ret;
+> > >   	struct resource *res;
+> > > -	int (*init_func)(void);
+> > > +
+> > > +	config = of_device_get_match_data(&pdev->dev);
+> > >   	sram = devm_kzalloc(&pdev->dev, sizeof(*sram), GFP_KERNEL);
+> > >   	if (!sram)
+> > >   		return -ENOMEM;
+> > >   	sram->dev = &pdev->dev;
+> > > +	sram->no_memory_wc = of_property_read_bool(pdev->dev.of_node, "no-memory-wc");
+> > > +	sram->config = config;
+> > > +
+> > > +	if (!config->map_only_reserved) {
+> > > +		res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> > > +		if (sram->no_memory_wc)
+> > > +			sram->virt_base = devm_ioremap_resource(&pdev->dev, res);
+> > > +		else
+> > > +			sram->virt_base = devm_ioremap_resource_wc(&pdev->dev, res);
+> > > +		if (IS_ERR(sram->virt_base)) {
+> > > +			dev_err(&pdev->dev, "could not map SRAM registers\n");
+> > > +			return PTR_ERR(sram->virt_base);
+> > > +		}
+> > > -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> > > -	if (of_property_read_bool(pdev->dev.of_node, "no-memory-wc"))
+> > > -		sram->virt_base = devm_ioremap_resource(&pdev->dev, res);
+> > > -	else
+> > > -		sram->virt_base = devm_ioremap_resource_wc(&pdev->dev, res);
+> > > -	if (IS_ERR(sram->virt_base)) {
+> > > -		dev_err(&pdev->dev, "could not map SRAM registers\n");
+> > > -		return PTR_ERR(sram->virt_base);
+> > > +		sram->pool = devm_gen_pool_create(sram->dev, ilog2(SRAM_GRANULARITY),
+> > > +						  NUMA_NO_NODE, NULL);
+> > > +		if (IS_ERR(sram->pool))
+> > > +			return PTR_ERR(sram->pool);
+> > >   	}
+> > > -	sram->pool = devm_gen_pool_create(sram->dev, ilog2(SRAM_GRANULARITY),
+> > > -					  NUMA_NO_NODE, NULL);
+> > > -	if (IS_ERR(sram->pool))
+> > > -		return PTR_ERR(sram->pool);
+> > > -
+> > >   	sram->clk = devm_clk_get(sram->dev, NULL);
+> > >   	if (IS_ERR(sram->clk))
+> > >   		sram->clk = NULL;
+> > > @@ -378,15 +424,15 @@ static int sram_probe(struct platform_device *pdev)
+> > >   	platform_set_drvdata(pdev, sram);
+> > > -	init_func = of_device_get_match_data(&pdev->dev);
+> > > -	if (init_func) {
+> > > -		ret = init_func();
+> > > +	if (config->init) {
+> > > +		ret = config->init();
+> > >   		if (ret)
+> > >   			goto err_free_partitions;
+> > >   	}
+> > > -	dev_dbg(sram->dev, "SRAM pool: %zu KiB @ 0x%p\n",
+> > > -		gen_pool_size(sram->pool) / 1024, sram->virt_base);
+> > > +	if (sram->pool)
+> > > +		dev_dbg(sram->dev, "SRAM pool: %zu KiB @ 0x%p\n",
+> > > +			gen_pool_size(sram->pool) / 1024, sram->virt_base);
+> > >   	return 0;
+> > > @@ -405,7 +451,7 @@ static int sram_remove(struct platform_device *pdev)
+> > >   	sram_free_partitions(sram);
+> > > -	if (gen_pool_avail(sram->pool) < gen_pool_size(sram->pool))
+> > > +	if (sram->pool && gen_pool_avail(sram->pool) < gen_pool_size(sram->pool))
+> > >   		dev_err(sram->dev, "removed while SRAM allocated\n");
+> > >   	if (sram->clk)
+> > > diff --git a/drivers/misc/sram.h b/drivers/misc/sram.h
+> > > index 9c1d21ff7347..d2058d8c8f1d 100644
+> > > --- a/drivers/misc/sram.h
+> > > +++ b/drivers/misc/sram.h
+> > > @@ -5,6 +5,11 @@
+> > >   #ifndef __SRAM_H
+> > >   #define __SRAM_H
+> > > +struct sram_config {
+> > > +	int (*init)(void);
+> > > +	bool map_only_reserved;
+> > > +};
+> > > +
+> > >   struct sram_partition {
+> > >   	void __iomem *base;
+> > > @@ -15,8 +20,11 @@ struct sram_partition {
+> > >   };
+> > >   struct sram_dev {
+> > > +	const struct sram_config *config;
+> > > +
+> > >   	struct device *dev;
+> > >   	void __iomem *virt_base;
+> > > +	bool no_memory_wc;
+> > >   	struct gen_pool *pool;
+> > >   	struct clk *clk;
+> > > @@ -29,6 +37,7 @@ struct sram_reserve {
+> > >   	struct list_head list;
+> > >   	u32 start;
+> > >   	u32 size;
+> > > +	struct resource res;
+> > >   	bool export;
+> > >   	bool pool;
+> > >   	bool protect_exec;
+> > > -- 
+> > > 2.30.1
+> > 
+> > BR,
+> > Yousaf
+> > 
