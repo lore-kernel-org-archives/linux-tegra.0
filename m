@@ -2,110 +2,162 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-2.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC698C48BDF
-	for <linux-tegra@archiver.kernel.org>; Fri, 18 Jun 2021 14:07:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 186CBC48BE8
+	for <linux-tegra@archiver.kernel.org>; Fri, 18 Jun 2021 14:32:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D8D2F6044F
-	for <linux-tegra@archiver.kernel.org>; Fri, 18 Jun 2021 14:07:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E6261610CD
+	for <linux-tegra@archiver.kernel.org>; Fri, 18 Jun 2021 14:32:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234220AbhFROJU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 18 Jun 2021 10:09:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40376 "EHLO
+        id S234540AbhFROeL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 18 Jun 2021 10:34:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46006 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229782AbhFROJU (ORCPT
+        with ESMTP id S233642AbhFROeK (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 18 Jun 2021 10:09:20 -0400
-Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03AACC061574;
-        Fri, 18 Jun 2021 07:07:10 -0700 (PDT)
-Received: by mail-lf1-x134.google.com with SMTP id m21so16872254lfg.13;
-        Fri, 18 Jun 2021 07:07:09 -0700 (PDT)
+        Fri, 18 Jun 2021 10:34:10 -0400
+Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1BB1C061574;
+        Fri, 18 Jun 2021 07:31:59 -0700 (PDT)
+Received: by mail-pl1-x62b.google.com with SMTP id 69so4764025plc.5;
+        Fri, 18 Jun 2021 07:31:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=/quGoc38c0p0H8/J6lRb7JsKFmpNqxFSoJWjBr7SmOk=;
-        b=ikMGpc/P3dIvtrCXQjqZgQvp/vsiCq4YWydduybjNDcgyQ/v9awwdDXyvTsSq6FXGk
-         QOQstqHaG6R1cz5XDEE1NJtaUfLfPtMe4I6pqWYB7/Jga7FnaRnNbqmfKIAZ5UmfTljp
-         Gh+D5+4jn/iwyAZxvnIWU5IHQX+XswPPL/+9pvGZ554Yc5ovfGys+xdnyREj2uKU2v/6
-         urken14llhUP7AcBSQpTa/lGPCZIJqEjgZ1VYkIN2cZHsizWJR5BkPOTkSNJtj8ZvlH1
-         HcxdDLDytJA1TJNE/zpkPjHN+OYAEct5UYtcX2w622wdfsGm3ldQf39hrLtXt9XKOALM
-         /4sg==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=UhsKKQf1Bn8x2XYapwaIUYSszikWCPheXCCZWgVxbyE=;
+        b=KilJ9mcISeyHVoaY3VaDryF//xzWjbHxRgypCLBrMp4n7ZM/oGg6PvjTstYtiiB/zM
+         Mp8iaRw30Qf6BsVuXz0QaLv4h4RrjPU7PYwX+2PYGple3ly4oxIy1MVFuqIUNWWD+M4B
+         d/uwuKaMZqLu4iassplEb6eXo+jBs5bO+b5fuqE/mslWN0wUnoLhukcpCrh7dfCDm8e3
+         RmmBjFu9w2yb1KiTa9XkQiVR1841Unch0LxM2O8P6lvNAqOtkscWbY6CDBaKtzOSSKYt
+         T5Iowon3NIe6Hap8BclIS+OSOnPdbIBtEVfOHESKppKH4Lvuu0VaaUqgmBGNVhiBJvPC
+         N9gg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=/quGoc38c0p0H8/J6lRb7JsKFmpNqxFSoJWjBr7SmOk=;
-        b=Pkxzar1qIWOu0eMQyvtsqAWVgy/mBi05ghn7kxq4TQ1Ti4z/pytfO3Nv+JsN8MmH2u
-         gQI24O41kAqqOjYttqUq+tM75lbT7qJWRxoskkM5FLEwqMztSb3PHO2fM/VDPOkns4Es
-         FHpeAZ82R0igZ1yDLAr5ziQt9KNz28uFUbCEgvpSqtr9T3pHEM0ogEm1d6JI7UOfzEcJ
-         uVR9DYGzOarUugk5d8jUBlaEvK6TWSnHlI7vd7frVlWppBYfhZLKuqQxFZr4vPy93OQn
-         zMoHMNc0LqVSgnUR4/RE/trqQyJTyByXEARXjNsyx8VDGIE40XyWzbexxcgaaBbNlV+z
-         RN0Q==
-X-Gm-Message-State: AOAM530uKATLKUs1gHnKEY6EhcRG9qzcomjgi6cZk+VZalOOWRo6995k
-        a2VVeNcxA9TFMUmiH9VmXBxmVbazyxA=
-X-Google-Smtp-Source: ABdhPJxVGE2BlZznSkbT7y1/6eEthlVx5uFIqu3gEggxDqgStqSnHNrPmHtE1voW/bVOntR35eiWxw==
-X-Received: by 2002:ac2:4219:: with SMTP id y25mr3320437lfh.400.1624025227243;
-        Fri, 18 Jun 2021 07:07:07 -0700 (PDT)
-Received: from [192.168.2.145] (94-29-29-31.dynamic.spd-mgts.ru. [94.29.29.31])
-        by smtp.googlemail.com with ESMTPSA id d15sm922354lfl.199.2021.06.18.07.07.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 18 Jun 2021 07:07:06 -0700 (PDT)
-Subject: Re: [PATCH] ASoC: tegra: Fix a NULL vs IS_ERR() check
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>
-Cc:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Svyatoslav Ryhel <clamor95@gmail.com>,
-        Ion Agorria <ion@agorria.com>, alsa-devel@alsa-project.org,
-        linux-tegra@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <YMyjOKFsPe9SietU@mwanda>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <be3feac7-e829-ab96-a866-1d9c58aa8dcd@gmail.com>
-Date:   Fri, 18 Jun 2021 17:07:05 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=UhsKKQf1Bn8x2XYapwaIUYSszikWCPheXCCZWgVxbyE=;
+        b=JJYYZ54++OMW/mKBankJ5QMVkHZUn+PnoctCHDcHykH2XxiwfuDscBsdTp5agIKkfs
+         VvPzGlLX8mMgONMxUcNMtOe5xJOChDH96+T/8AyQm2o5l+djvxfyCkucsCLXVQWoDZvY
+         Vt70Sfva9Dp2RYTSu1Q5Kcxv0y+WxQv5Z6iK8+uGt3jMyFkSoVwg6P6GydQGQ0OfBO1E
+         MAf2uA5er73WcHRFu4zqDhY/mr8R1V5O1mBepUQVcSRtMycyaeNEvqZ7PRyMlJp36Jp9
+         1uaHkeWzy4C7ngZTjTyoKjZVzg8zc18pkYMmYetS8gyNtaVzH7gasqBBsCRY//bbbnr3
+         OeDg==
+X-Gm-Message-State: AOAM530ORGvJrMaqeWlTtLP1QnbrKrLlpv4n4DwEtovwWVaJSArKywgX
+        zXsKsH87uI/jtM7WfuY6xSR5PZPe2jOFRP1OOGY=
+X-Google-Smtp-Source: ABdhPJxRKOnL9RBTOa4bWcaV+zuH9g8v2LOetd5cesZ+rDkwoaFahZzfNMLhxRSTP6grYtX8QX6VhHDQ3f8WJZOGOSo=
+X-Received: by 2002:a17:90a:bc89:: with SMTP id x9mr11380786pjr.228.1624026719494;
+ Fri, 18 Jun 2021 07:31:59 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <YMyjOKFsPe9SietU@mwanda>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <CAHp75VdBQUv+yri453KGGBz5ynd0pETxdOngCgPe3mbG22sLXQ@mail.gmail.com>
+ <1624023587-7344-1-git-send-email-akhilrajeev@nvidia.com>
+In-Reply-To: <1624023587-7344-1-git-send-email-akhilrajeev@nvidia.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Fri, 18 Jun 2021 17:31:23 +0300
+Message-ID: <CAHp75Vf+8t78NbYeCh+VLEAzcYJxDP9Pz7DPW_MC9D-K_Ff8uA@mail.gmail.com>
+Subject: Re: [PATCH v2] gpio: tegra186: Add ACPI support
+To:     Akhil R <akhilrajeev@nvidia.com>
+Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Krishna Yarlagadda <kyarlagadda@nvidia.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-tegra@vger.kernel.org,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Suresh Mangipudi <smangipudi@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-18.06.2021 16:44, Dan Carpenter пишет:
-> The tegra_machine_parse_phandle() function doesn't return NULL, it returns
-> error pointers.
-> 
-> Fixes: cc8f70f56039 ("ASoC: tegra: Unify ASoC machine drivers")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  sound/soc/tegra/tegra_asoc_machine.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/sound/soc/tegra/tegra_asoc_machine.c b/sound/soc/tegra/tegra_asoc_machine.c
-> index a53aec361a77..735909310a26 100644
-> --- a/sound/soc/tegra/tegra_asoc_machine.c
-> +++ b/sound/soc/tegra/tegra_asoc_machine.c
-> @@ -409,7 +409,7 @@ int tegra_asoc_machine_probe(struct platform_device *pdev)
->  		return PTR_ERR(np_codec);
->  
->  	np_i2s = tegra_machine_parse_phandle(dev, "nvidia,i2s-controller");
-> -	if (!np_i2s)
-> +	if (IS_ERR(np_i2s))
->  		return PTR_ERR(np_i2s);
->  
->  	card->dai_link->cpus->of_node = np_i2s;
-> 
+On Fri, Jun 18, 2021 at 4:39 PM Akhil R <akhilrajeev@nvidia.com> wrote:
 
-Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+Thanks for update, my comments below.
+
+> From: Akhil Rajeev <akhilrajeev@nvidia.com>
+
+You need to fix your Git configuration so you won't have this header
+inside the commit message.
+
+> Add ACPI module ID to probe the driver from the ACPI based bootloader
+> firmware.
+
+...
+
+> +#include <linux/acpi.h>
+
+property.h ? (see below)
+
+...
+
+> -       gpio->soc = of_device_get_match_data(&pdev->dev);
+> +       gpio->soc = device_get_match_data(&pdev->dev);
+>
+>         gpio->secure = devm_platform_ioremap_resource_byname(pdev, "security");
+> -       if (IS_ERR(gpio->secure))
+> -               return PTR_ERR(gpio->secure);
+> -
+>         gpio->base = devm_platform_ioremap_resource_byname(pdev, "gpio");
+> -       if (IS_ERR(gpio->base))
+> -               return PTR_ERR(gpio->base);
+
+> +       if (IS_ERR(gpio->secure) || IS_ERR(gpio->base)) {
+> +               gpio->secure = devm_platform_ioremap_resource(pdev, 0);
+> +               gpio->base = devm_platform_ioremap_resource(pdev, 1);
+> +
+> +               if (IS_ERR(gpio->secure))
+> +                       return PTR_ERR(gpio->secure);
+> +
+> +               if (IS_ERR(gpio->base))
+> +                       return PTR_ERR(gpio->base);
+> +       }
+
+
+What about doing like
+
+      gpio->secure = devm_platform_ioremap_resource_byname(pdev, "security");
+      if (IS_ERR(gpio->secure))
+              gpio->secure = devm_platform_ioremap_resource(pdev, 0);
+      if (IS_ERR(gpio->secure))
+              return PTR_ERR(gpio->secure);
+
+and similar for gpio->base?
+
+...
+
+> -       gpio->gpio.of_node = pdev->dev.of_node;
+> -       gpio->gpio.of_gpio_n_cells = 2;
+> -       gpio->gpio.of_xlate = tegra186_gpio_of_xlate;
+>
+> -       gpio->intc.name = pdev->dev.of_node->name;
+
+> +       if (!has_acpi_companion(&pdev->dev)) {
+> +               gpio->gpio.of_node = pdev->dev.of_node;
+> +               gpio->gpio.of_gpio_n_cells = 2;
+> +               gpio->gpio.of_xlate = tegra186_gpio_of_xlate;
+> +               gpio->intc.name = pdev->dev.of_node->name;
+> +       } else {
+> +               gpio->intc.name = gpio->soc->name;
+> +       }
+
+Wouldn't the following be enough?
+
+-       gpio->intc.name = pdev->dev.of_node->name;
++       gpio->intc.name = devm_kasprintf(&pdev->dev, "%pfw",
+dev_fwnode(&pdev->dev));
++       if (!gpio->intc.name)
++               return -ENOMEM;
+
+Note, all above are questions and you know better which direction to
+take. In either way, please test and look at the result.
+
+-- 
+With Best Regards,
+Andy Shevchenko
