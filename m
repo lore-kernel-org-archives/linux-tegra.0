@@ -2,82 +2,138 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D4B1C48BDF
-	for <linux-tegra@archiver.kernel.org>; Sun, 20 Jun 2021 19:23:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A07CC49EA3
+	for <linux-tegra@archiver.kernel.org>; Sun, 20 Jun 2021 20:35:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0F31B6113E
-	for <linux-tegra@archiver.kernel.org>; Sun, 20 Jun 2021 19:23:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C9726108E
+	for <linux-tegra@archiver.kernel.org>; Sun, 20 Jun 2021 20:35:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229875AbhFTTZu (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 20 Jun 2021 15:25:50 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:52998 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229708AbhFTTZu (ORCPT
+        id S230083AbhFTUht (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 20 Jun 2021 16:37:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46742 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229897AbhFTUhs (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 20 Jun 2021 15:25:50 -0400
-Received: from mail-ed1-f71.google.com ([209.85.208.71])
-        by youngberry.canonical.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.93)
-        (envelope-from <krzysztof.kozlowski@canonical.com>)
-        id 1lv32d-00046F-Vd
-        for linux-tegra@vger.kernel.org; Sun, 20 Jun 2021 19:23:36 +0000
-Received: by mail-ed1-f71.google.com with SMTP id p23-20020aa7cc970000b02903948bc39fd5so4740439edt.13
-        for <linux-tegra@vger.kernel.org>; Sun, 20 Jun 2021 12:23:35 -0700 (PDT)
+        Sun, 20 Jun 2021 16:37:48 -0400
+Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78721C061574;
+        Sun, 20 Jun 2021 13:35:34 -0700 (PDT)
+Received: by mail-lf1-x134.google.com with SMTP id f8so14805756lfu.6;
+        Sun, 20 Jun 2021 13:35:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=h7qy3vsXHdigHBzb/NyGdUZpvcQTxWroavq6cxrlgrU=;
+        b=Btk7qYK3cuIjJG70Wd/CdQyik6FRcf7NkbaeLKdXQ8EfUJVLVOJXJyVT0AfFFkZ5HX
+         KRthrLtmpbmtwnav53QuXUqfulOH0mZ0BhTI/IIVQs62u//haV0ZOnbLKk8fW/yRdiRd
+         dQbAFKoN+rCYZSvbxUN18b6RehqOr+Y1y+qLVpSPGsR9klV5ixxtp67axlZjyDVs11Hi
+         oDGd0Z9sYfz807Up17DrEfqedQLt30hKltSzgvhRzZj3st0kze7RDzHtLArKx5XgbqTe
+         saOuHrwYo4t2CcBEt585IbbPMam2DTv6SELZKsObgCLwzdgXqZ49xwW4fUna5e3s9+GZ
+         Xjjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=BmZlovYj9V7HeNkUQ5CcyPSAtuKZ8O3DexqZJGr+wKE=;
-        b=QUhcV6wgSMUfzNWjhJ1/NAapOkYEhM9JL3umfEkZ2e/2EdtVc2K4f9FQR7dJdDQ58G
-         VJyOv3gwrjbohXsmsFbzvXjb89pJA86TlYjcPpxCkMQjwKEBRIZEpNyzWl4ORZkYmRqk
-         d/pYnUhg2NFQ5OEf24K9FTQnpwcr70Jf7iNhqmkdlgItntXjPAyP5AP+dGS9/e6XeEXo
-         XmupPA+DkZ/soGlLD5peHNqu2sWdugMFdw5velZL1GQtJlGi+lpJ4F/rMWqDGAZ1dags
-         KLb9mGhQhN+JzG+8zN9Na/uBnoKiTAmysgBYvdEIlnlrnhxDvoc45TE5Xc8kBE+5FUt+
-         c2MQ==
-X-Gm-Message-State: AOAM532qyQdocHUia7SViNDSoOO2boMBFbpbHnfgzSBYUDLf8PdEWRbQ
-        /4v8WoVvyiY01GX2W2ybbMALisPB84EdRD47B1bvCoLN39dkRoBVz5fMpKnnebyF4KYxlj+9OFf
-        d5XRIGfQR/uS/1YCFDmI4Ht4qC+v9l/+Eot3SeHpt
-X-Received: by 2002:aa7:c997:: with SMTP id c23mr2730222edt.42.1624217015737;
-        Sun, 20 Jun 2021 12:23:35 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwEKmBjMwrWngqyo2C63u/7m5RV3LUtyPVC4cbCnhq2yZlx93BaiZjSA6UeNtixI5+0aCWU8g==
-X-Received: by 2002:aa7:c997:: with SMTP id c23mr2730211edt.42.1624217015613;
-        Sun, 20 Jun 2021 12:23:35 -0700 (PDT)
-Received: from localhost.localdomain (xdsl-188-155-177-222.adslplus.ch. [188.155.177.222])
-        by smtp.gmail.com with ESMTPSA id gz2sm3863690ejc.32.2021.06.20.12.23.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 20 Jun 2021 12:23:35 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        arm@kernel.org
-Subject: Re: [PATCH] memory: tegra: Add compile-test stub for tegra_mc_probe_device()
-Date:   Sun, 20 Jun 2021 21:23:33 +0200
-Message-Id: <162421700960.5053.12970820617415249488.b4-ty@canonical.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20210618111846.1286166-1-thierry.reding@gmail.com>
-References: <20210618111846.1286166-1-thierry.reding@gmail.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=h7qy3vsXHdigHBzb/NyGdUZpvcQTxWroavq6cxrlgrU=;
+        b=kGpFAExK8u1Wk89usRfzMNYtjjYtL94kau8kfP57MiAz7GH+eL+V3peY9l5oMITq3f
+         FjPLyaBaFd9G9CyJlKICqoNbyITuDiwoVFGWg6F1zKFzyB0SbzOfuexIGIRR7XT3WHLF
+         AUOUT3WFqtOQ+TjF33xp76eGSnnrFsH/bLy9TuXgL7yRwLKXkHpMNlXz2EZP1tM7Emsn
+         ogQ44DD/wz8ECrcdDIEcpMpnxCXJFXzX4vbCwbnThn3/AqPS0Du2NmuevI6NSDnXauf2
+         Ja2ljb1U9IThDaMsJvwd5AWUGtsM2fMYMyBDSBQWs6gpD18dspqQ1gTTN/C4GFSMZ3aD
+         13MA==
+X-Gm-Message-State: AOAM533/BLjHjp/dwYp3eLlI+7w/Jwuj/eXrXQjnpyw6MVr9am57LxKF
+        0lCdhoaFN1lcKUvFkV/GsKxqninfT4E=
+X-Google-Smtp-Source: ABdhPJy2QDvhHZzX8bLZV5CJENS4/s2JkNM/+OmtNh27GCujgDHvSadOKkXf+/kSAVAiSAkMkq7kiw==
+X-Received: by 2002:a05:6512:3f8d:: with SMTP id x13mr11719547lfa.278.1624221332611;
+        Sun, 20 Jun 2021 13:35:32 -0700 (PDT)
+Received: from [192.168.2.145] (94-29-29-31.dynamic.spd-mgts.ru. [94.29.29.31])
+        by smtp.googlemail.com with ESMTPSA id g16sm1860932ljn.103.2021.06.20.13.35.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 20 Jun 2021 13:35:31 -0700 (PDT)
+Subject: Re: [PATCH v1 1/2] hwmon: Support set_trips() of thermal device ops
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     Zhang Rui <rui.zhang@intel.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+References: <20210620161223.16844-1-digetx@gmail.com>
+ <20210620161223.16844-2-digetx@gmail.com>
+ <20210620172329.GA3850372@roeck-us.net>
+ <1cb97f70-9fdd-e7d5-da73-dc5c42a53104@gmail.com>
+ <20210620192124.GA3853199@roeck-us.net>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <4d12b57c-3dbb-e290-3f82-eb30aefa7dd4@gmail.com>
+Date:   Sun, 20 Jun 2021 23:35:31 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20210620192124.GA3853199@roeck-us.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, 18 Jun 2021 13:18:46 +0200, Thierry Reding wrote:
-> The tegra_mc_probe_device() symbol is only available when the TEGRA_MC
-> Kconfig option is enabled. Provide a stub if that's not the case so that
-> the driver can be compile-tested.
+20.06.2021 22:21, Guenter Roeck пишет:
+> On Sun, Jun 20, 2021 at 08:38:27PM +0300, Dmitry Osipenko wrote:
+>> 20.06.2021 20:23, Guenter Roeck пишет:
+>>> On Sun, Jun 20, 2021 at 07:12:22PM +0300, Dmitry Osipenko wrote:
+>>>> Support set_trips() callback of thermal device ops. This allows HWMON
+>>>> device to operatively notify thermal core about temperature changes, which
+>>>> is very handy to have in a case where HWMON sensor is used by CPU thermal
+>>>> zone that performs passive cooling and emergency shutdown on overheat.
+>>>> Thermal core will be able to react faster to temperature changes.
+>>>>
+>>>
+>>> Why would this require a driver callback, and why can it not be handled
+>>> in the hwmon core alone ? The hwmon core could register a set_trip function
+>>> if the chip (driver) supports setting low and high limits, and it could
+>>> call the appropriate driver functions when hwmon_thermal_set_trips()
+>>> is called.
+>>
+>> I wasn't sure about what other hwmon drivers may need and want to do for
+>> programming of the trips, so decided to start with this variant. I'll
+>> prepare v2 since you're suggesting that the universal callback should
+>> work okay for all drivers, thanks.
+> 
+> It will require some checks during probe to make sure that writeable limits
+> exist, but that is still better than per-driver code. If for whatever
+> reason some platform expects a different set of registers (say,
+> critical limits instead of warning limits to attach to trip points),
+> or if some platform expects that limits are _not_ used as trip points,
+> that would not be driver but platform specific. You would not be able
+> to address that on driver level with a single callback either (after all,
+> lm90 compatible chips support up to three sets of limits).
+> That means you already made an implementation specific choice with your
+> code, by selecting one of those three sets of limits to act as trip
+> points, and by making trip point support mandatory for all lm90 compatible
+> chips. If we need to make that configurable, we'll need a better solution
+> than a single driver callback, and that solution may as well be generic
+> and driver independent.
 
-Applied, thanks!
+Thank you for the clarification! If device makes a special use of lm90,
+then very likely that it won't attach sensor to thermal zone. At least
+all devices supported by mainline kernel should be okay here.
 
-[1/1] memory: tegra: Add compile-test stub for tegra_mc_probe_device()
-      commit: 47661ee1821fc3a6b5ae07aac37410d6ccada976
+I think other sensors should be in a similar position. If a more complex
+solution will be needed, then indeed hwmon API could be improved
+further. The thermal device is created only for hwmon sensors that are
+attached to thermal zone in a device-tree, so the scope of potentially
+affected device should be small. Seems lm90 is actually the only hwmon
+sensor that is used by thermal zones today.
 
-Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+AFAICS, all drivers return -EOPNOTSUPP if limits can't be changed, so we
+could equal this error code to success in a case of set_trips(). The
+set_trips() is very optional, if driver can't set limits, then the trips
+won't trigger and thermal core will continue to work like set_trips()
+wasn't hooked up. I'll implement this in v2.
