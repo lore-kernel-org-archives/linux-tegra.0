@@ -2,160 +2,140 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DC67C48BE5
-	for <linux-tegra@archiver.kernel.org>; Mon, 21 Jun 2021 06:47:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 686A5C48BE5
+	for <linux-tegra@archiver.kernel.org>; Mon, 21 Jun 2021 09:32:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2BC8561042
-	for <linux-tegra@archiver.kernel.org>; Mon, 21 Jun 2021 06:47:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 44132611BD
+	for <linux-tegra@archiver.kernel.org>; Mon, 21 Jun 2021 09:32:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229908AbhFUGtN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 21 Jun 2021 02:49:13 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:36352 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229583AbhFUGtM (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 21 Jun 2021 02:49:12 -0400
-Received: from mail-ed1-f71.google.com ([209.85.208.71])
-        by youngberry.canonical.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.93)
-        (envelope-from <krzysztof.kozlowski@canonical.com>)
-        id 1lvDhx-0004mZ-Qg
-        for linux-tegra@vger.kernel.org; Mon, 21 Jun 2021 06:46:57 +0000
-Received: by mail-ed1-f71.google.com with SMTP id p19-20020aa7c4d30000b0290394bdda6d9cso328250edr.21
-        for <linux-tegra@vger.kernel.org>; Sun, 20 Jun 2021 23:46:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=HBV8dNLDqIEAfk7W6R3y2yg9WhGkmywydr9E1vv22xo=;
-        b=pVe8/c28IrLExRz7KylqHPoFWKQDVpINf0fSPX99jvSV9iW4XmmxoVDzP43xTWNaZc
-         GlZ0EhicE7GYlaVc0b099SDemQ1DcqvVeVguOQkcTM3kEKjGVSzhpDOiU6bGHt/qurY5
-         MT/agJ1DEI3yJdcygUJe/sEMz17sMiy/feSttEAGC4ZezSCVQwEHYGYCHRGUWdx175Y5
-         WPk9UksyRgV/261UBjxXjkr5O9/HTPg42FcxDPg2bsS7wQFWDI3oVyOoD0HzYR/4eptK
-         xHqe3Es9mJrpDQKAb2xnCZYoOBssr3n5+4+KS3hSr00xFv2aZ6Vh/R9J1OIK7AAtzl+p
-         rTBQ==
-X-Gm-Message-State: AOAM5311foh9T9GosozAxQ8E8ZQADL0E1tVSZj+6jaZ3075MbquLHKyL
-        ghjbBTp0WwIspP5RpVgKNj+TVRn/Zyl4rYJzp2rqWrH9lUFfUpNDsTDrw+iZ36WD6C3Z9Lgz7At
-        FF1BYUrDXMkfZl/gH9Ayovxg8qYedWQ28PRKIiG0f
-X-Received: by 2002:aa7:cb43:: with SMTP id w3mr11978033edt.126.1624258016708;
-        Sun, 20 Jun 2021 23:46:56 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwW7f8aTJ93Kkruw0X6I/5OojOVeM3oazExumrI1P2lMRb9QkgVXDIlJDsddLfp5/Vdq5FSOA==
-X-Received: by 2002:aa7:cb43:: with SMTP id w3mr11977987edt.126.1624258016218;
-        Sun, 20 Jun 2021 23:46:56 -0700 (PDT)
-Received: from [192.168.1.115] (xdsl-188-155-177-222.adslplus.ch. [188.155.177.222])
-        by smtp.gmail.com with ESMTPSA id w8sm9950041edc.39.2021.06.20.23.46.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 20 Jun 2021 23:46:55 -0700 (PDT)
-Subject: Re: [PATCH v3 2/9] dt-bindings: arm-smmu: Add Tegra186 compatible
- string
-To:     Rob Herring <robh@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Will Deacon <will@kernel.org>
-Cc:     Joerg Roedel <joro@8bytes.org>,
-        Linux IOMMU <iommu@lists.linux-foundation.org>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Nicolin Chen <nicolinc@nvidia.com>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-References: <20210603164632.1000458-1-thierry.reding@gmail.com>
- <20210603164632.1000458-3-thierry.reding@gmail.com>
- <CAL_JsqLDKxwANn2Pba0Db6J9337pK0dNL=bBN8ucn-k4DZ3gyg@mail.gmail.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Message-ID: <14551e79-853d-471f-bb5e-0d2d6581a9b6@canonical.com>
-Date:   Mon, 21 Jun 2021 08:46:54 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        id S229904AbhFUJec (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 21 Jun 2021 05:34:32 -0400
+Received: from mail-dm6nam11on2075.outbound.protection.outlook.com ([40.107.223.75]:61497
+        "EHLO NAM11-DM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S229597AbhFUJeb (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 21 Jun 2021 05:34:31 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=DtM9fIchsN0/uO9pQEnF3S01UMWG/DnsAazKx0bJqlpOBn0llxV/qhGMD1xUYtz6imX8m/i1TEbvlarODoilkx0DKz1hfP+oj1y8eqKBIrJjj924rt22l04z9PiCO2MKAqXZZ1I6ComayozbcQsr6S+719HElQusG96sqkyB7jHhEBc3MGTDVpH/Unt7Sc1LnPRl8khtsQJjDZI3v3BlodfIYGqwYxJxGFPbKSa1iI1TidtOnu4N8NHE1DyHDakg5dogUXBh7NpqO71792sEVFIvl/azOa6UvyvscGtucOSZaHDAVyjgiOdYMDxi5lh8YmiXNt5x7RCCIkEB/znqRQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=pzIvKC/j5e5RN+JNSAQ5DnewpfLxEAHlZ9MBygMV56o=;
+ b=bGgCbYGE75DLFnuWUh3i2FDnceovVriTfbNqn2b389GJ0cSbtA+4puy2Ap/2e2S8HC6u9j8UD6MOI7ah0iTg2LIFVocjKtPt8AqepD7mAcvFvUSnqWLuGUlccugDqexomCIHuEbjbKoBNhcspelq8td9V+0SMq+YJvpt0fdVMWHeyO1+hJPsPmhutkgSU8vFHrR+n4waiK0t1CdcN0XQwVYHIaATmNyRR4ODguE5tv1QRMggCM+t0he8TbBMELEKcz7XnVG09gRrFwJIJEIPuKQiMlPUPi0CcNsWWw3GQOjrhv9yYurpi7AaQtI9dWZKMQxOwxNFQ8DFGcfi84E/2Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.112.34) smtp.rcpttodomain=arm.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=pzIvKC/j5e5RN+JNSAQ5DnewpfLxEAHlZ9MBygMV56o=;
+ b=SR5NqV+Yp9G907h52u5yiehEkQrjLZJ7FJNMtLWoPhE980kEQ8GXJ5/QWFMayVisOYVyZpprd8gT3cfd8z6YmlibALWJDGYOxMnhJ45ybd5VDIWbkZsMpWf892WiOrNJJhcC8/xarV1iY41YYDiaROB2RYmpaXTRffoXlVv5SNeOjCNmq0t2deEboBQfoSzW74xg1PFnHFKBUQfbZyi5sU0rU6YHdC6jYgsO2V/4M7grqrc35ccfehV+BucBU5zBM4iU12vYpQOHxA8HBQxbsf7qEPsQ/UZWaKqGc+zDPgn+W5u+DHaRryry39rgsG3C3h5Hq8NlxVy+8DTqzEDNPQ==
+Received: from BN6PR18CA0022.namprd18.prod.outlook.com (2603:10b6:404:121::32)
+ by CY4PR12MB1525.namprd12.prod.outlook.com (2603:10b6:910:11::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4242.19; Mon, 21 Jun
+ 2021 09:32:16 +0000
+Received: from BN8NAM11FT040.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:404:121:cafe::a7) by BN6PR18CA0022.outlook.office365.com
+ (2603:10b6:404:121::32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4242.19 via Frontend
+ Transport; Mon, 21 Jun 2021 09:32:16 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.34)
+ smtp.mailfrom=nvidia.com; arm.com; dkim=none (message not signed)
+ header.d=none;arm.com; dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.112.34 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.112.34; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (216.228.112.34) by
+ BN8NAM11FT040.mail.protection.outlook.com (10.13.177.166) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.4242.16 via Frontend Transport; Mon, 21 Jun 2021 09:32:15 +0000
+Received: from [10.40.204.223] (172.20.187.6) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Mon, 21 Jun
+ 2021 09:32:11 +0000
+Subject: Re: [PATCH V2 0/5] Update pcie-tegra194 driver
+To:     <kw@linux.com>, <helgaas@kernel.org>, <vidyas@nvidia.com>,
+        <lorenzo.pieralisi@arm.com>, <bhelgaas@google.com>,
+        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>
+CC:     <linux-tegra@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kthota@nvidia.com>,
+        <mmaddireddy@nvidia.com>
+References: <20210606082204.14222-1-omp@nvidia.com>
+From:   Om Prakash Singh <omp@nvidia.com>
+Message-ID: <2fdb1d89-88d5-6895-ec20-0e2ce4cacb85@nvidia.com>
+Date:   Mon, 21 Jun 2021 15:02:07 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-In-Reply-To: <CAL_JsqLDKxwANn2Pba0Db6J9337pK0dNL=bBN8ucn-k4DZ3gyg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20210606082204.14222-1-omp@nvidia.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [172.20.187.6]
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 3a8483d5-e28e-4350-f07e-08d934977526
+X-MS-TrafficTypeDiagnostic: CY4PR12MB1525:
+X-Microsoft-Antispam-PRVS: <CY4PR12MB1525AC0AF536B2B708B4FF92DA0A9@CY4PR12MB1525.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:8273;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: mwvd+FEYSNHqQ44CJX+2LIeSrIQ1oFNqKv5sI6yDgguenM87OkFJj4KZkTHoHdgEmhZ2yyB/N0fzhbw7FuTyzgRbbJX7Io1CJbxrs9d/tKBqBRkQxiqOzMup2vS9EToKB06sXp0w3PNVT72Rb+xyfqFHgPV21mPgTFljr2rfKI6xsTlPwpwSofUBVYjpwUXiYp5bRdshMXxb29ZCldIy+wk5W/Bb9azmhpr4iHC8soRt9voQeab0Kqvl2zRIdh7Cd2ZXLY+d7dv3sJQAsKpsm9j12CyxAvxGrPRh5t8LKgtBJ5Ubx38wDwBCcMnhKLFdbs8Ma2JCf+i8jEXLYbRKZFB9pHBBbzzcVm5qjtr3L1UQgN9pDH9FOOrFvtn4nJaEUKEG5+XA9t8/pKTrzg5Mb6FUF7mJswAl6RFXl9YSWOMYBYPQEFTeb1jschtq4WSh/wZPXCaAYoix9ujiFj9bzWIWd0l8o29loioddiDgbHWdU4CyyJUc1nUuw9BkSkcvkS2av5lfDHjuXInQ3fBls7y2UU9+WXQJIsfX4dAx5Mol22tHZrZXSj2foiUgeHes2yauB+i3uQ+F8fD3QVr7ng4c4eFws4lpMrJQGhju+8w/3lJNqdgDDYiTMDZdXFYvvPSWygoTmK6dg5ur9g5qCYZ8a0rnFzLfKxP0R2tVhwzVRPxB+QxvVIi5/YYxPYhvTune1mrbFmfsUnVMr9o99zKKr5FHZ6QoyjQ3kwmk+W+YciH/yYwYHPckB4YfBW0OY9oimAuhUDGtktX4bNvRZj4ccLXqQlKqUkyYQvf8rn7ZbFxqFZvcwPHHq6ufkW64
+X-Forefront-Antispam-Report: CIP:216.228.112.34;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid03.nvidia.com;CAT:NONE;SFS:(4636009)(396003)(376002)(136003)(346002)(39860400002)(46966006)(36840700001)(966005)(8936002)(26005)(6666004)(82740400003)(47076005)(86362001)(36756003)(15650500001)(82310400003)(8676002)(4326008)(6636002)(53546011)(84040400003)(107886003)(7636003)(478600001)(70586007)(70206006)(356005)(36860700001)(2906002)(31696002)(16526019)(2616005)(5660300002)(16576012)(316002)(54906003)(36906005)(336012)(83380400001)(31686004)(186003)(426003)(110136005)(43740500002);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jun 2021 09:32:15.7979
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3a8483d5-e28e-4350-f07e-08d934977526
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.34];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT040.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR12MB1525
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 18/06/2021 21:47, Rob Herring wrote:
-> On Thu, Jun 3, 2021 at 10:49 AM Thierry Reding <thierry.reding@gmail.com> wrote:
->>
->> From: Thierry Reding <treding@nvidia.com>
->>
->> The ARM SMMU instantiations found on Tegra186 and later need inter-
->> operation with the memory controller in order to correctly program
->> stream ID overrides.
->>
->> Furthermore, on Tegra194 multiple instances of the SMMU can gang up
->> to achieve higher throughput. In order to do this, they have to be
->> programmed identically so that the memory controller can interleave
->> memory accesses between them.
->>
->> Add the Tegra186 compatible string to make sure the interoperation
->> with the memory controller can be enabled on that SoC generation.
->>
->> Signed-off-by: Thierry Reding <treding@nvidia.com>
->> ---
->>  Documentation/devicetree/bindings/iommu/arm,smmu.yaml | 11 +++++++++--
->>  1 file changed, 9 insertions(+), 2 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/iommu/arm,smmu.yaml b/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
->> index 9d27aa5111d4..1181b590db71 100644
->> --- a/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
->> +++ b/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
->> @@ -54,8 +54,14 @@ properties:
->>            - const: arm,mmu-500
->>        - description: NVIDIA SoCs that program two ARM MMU-500s identically
->>          items:
->> +      - description: NVIDIA SoCs that require memory controller interaction
+Hi Lorenzo, Bjorn,
+Can you help review this patch series please?
+
+Thanks,
+Om
+
+
+On 6/6/2021 1:51 PM, Om Prakash Singh wrote:
+> Update pcie-tegra194 driver with bug fixing and cleanup
 > 
-> This is not valid jsonschema:
+> Changes from V1->V2
+>    PCI: tegra: Fix handling BME_CHGED event
+> 	- Update variable naming
+>    PCI: tegra: Fix MSI-X programming
+> 	- No change
+>    PCI: tegra: Disable interrupts before entering L2
+> 	- Rephrase the commit message
+>    PCI: tegra: Don't allow suspend when Tegra PCIe is in EP mode
+> 	- Update return value to -ENOTSUPP.
+>    PCI: tegra: Cleanup unused code
+> 	- No Change
 > 
-> /builds/robherring/linux-dt/Documentation/devicetree/bindings/iommu/arm,smmu.yaml:
-> properties:compatible:oneOf:4:items: 'anyOf' conditional failed, one
-> must be fixed:
-> None is not of type 'object', 'boolean'
-> None is not of type 'array'
-> from schema $id: http://json-schema.org/draft-07/schema#
-> /builds/robherring/linux-dt/Documentation/devicetree/bindings/iommu/arm,smmu.yaml:
-> properties:compatible:oneOf:4:items: 'oneOf' conditional failed, one
-> must be fixed:
-> None is not of type 'object'
-> None is not of type 'array'
-> from schema $id: http://devicetree.org/meta-schemas/keywords.yaml#
-> /builds/robherring/linux-dt/Documentation/devicetree/bindings/iommu/arm,smmu.yaml:
-> properties:compatible:oneOf:4:items: 'oneOf' conditional failed, one
-> must be fixed:
-> None is not of type 'object'
-> None is not of type 'array'
-> from schema $id: http://devicetree.org/meta-schemas/string-array.yaml#
-> /builds/robherring/linux-dt/Documentation/devicetree/bindings/iommu/arm,smmu.yaml:
-> properties:compatible:oneOf:5:items: 'oneOf' conditional failed, one
-> must be fixed:
-> [{'enum': [{'const': 'nvidia,tegra194-smmu'}, {'const':
-> 'nvidia,tegra186-smmu'}]}, {'const': 'nvidia,smmu-500'}] is not of
-> type 'object'
-> {'const': 'nvidia,tegra194-smmu'} is not of type 'string'
-> {'const': 'nvidia,tegra186-smmu'} is not of type 'string'
-> from schema $id: http://devicetree.org/meta-schemas/string-array.yaml#
+> V1:
+> http://patchwork.ozlabs.org/project/linux-pci/patch/20210527115246.20509-2-omp@nvidia.com/
 > 
+> Om Prakash Singh (5):
+>    PCI: tegra: Fix handling BME_CHGED event
+>    PCI: tegra: Fix MSI-X programming
+>    PCI: tegra: Disable interrupts before entering L2
+>    PCI: tegra: Don't allow suspend when Tegra PCIe is in EP mode
+>    PCI: tegra: Cleanup unused code
 > 
-> This was not reviewed nor tested since the DT list was not Cc'ed.
-
-Ugh, I see now weird empty item on a list... and not only DT list was
-skipped - Thierry did not Cc you either.
-
-My bad, I did not check that patch thoroughly before applying.
-
-Thierry, please Cc folks mentioned by get_maintainer.pl. Either sent a
-fix or a revert, if fix needs more time.
-
-Additionally, why the patch changes reg to "minItems: 1" for
-nvidia,tegra194-smmu?
-
-Best regards,
-Krzysztof
+>   drivers/pci/controller/dwc/pcie-tegra194.c | 36 +++++++++++++---------
+>   1 file changed, 22 insertions(+), 14 deletions(-)
+> 
