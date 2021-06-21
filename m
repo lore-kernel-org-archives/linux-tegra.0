@@ -2,142 +2,126 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56CA9C48BC2
-	for <linux-tegra@archiver.kernel.org>; Mon, 21 Jun 2021 15:07:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2634EC48BC2
+	for <linux-tegra@archiver.kernel.org>; Mon, 21 Jun 2021 15:36:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3B21E60FE9
-	for <linux-tegra@archiver.kernel.org>; Mon, 21 Jun 2021 15:07:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE22661042
+	for <linux-tegra@archiver.kernel.org>; Mon, 21 Jun 2021 15:36:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229789AbhFUPKH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 21 Jun 2021 11:10:07 -0400
-Received: from mail-bn8nam12on2041.outbound.protection.outlook.com ([40.107.237.41]:37409
-        "EHLO NAM12-BN8-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S229747AbhFUPKH (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 21 Jun 2021 11:10:07 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=T00HV84hoWf0JvE1Nd4R0wTlgIo9p7D/e7z0ba9mIYmSvkGmUxBuxzH2eKneQXb+q68lYsPM5sjKhDRuehl+f8jtdKj155kjFPxj4mUQqiKI0sieP0E05QC42C1c29wpFH12Ro7jUGtr6UslbAs3mjrYdRQZ3POk/1pUJewcmTTj84OQzNlywlm8cacqf3I4WRcmN143/1R/w9ddFQTdT24hdXr7EOE9iViTVcvg4hc9w64DIIfD+zlvQtvUkB7XpnzF5KHoCqkmnJFePw3HXsM7zbncp7aHEl24EYTn+7tvvvytqX1ME0lIuCldvVUqP6Z2oE8yPtQWzMpAmLqh0A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FF/KNHmvI2t390kvAJBAdUJkBPIqws1VqiHmnCuR1aQ=;
- b=NBJAzYsq47zF5YoCOm4FJwg34WbM2Qq1VtAsSxMdXkunOaOkOFrTBsEiX04oO/JwBuG0hgQPjwkc4yhalJ7QEqHjLP87FeKl/ZCCvJGTWvccOTTQuZT7QkX90NMBw3HpuLSWG9+dWZPOM3JUammML8BWdA+bmKdhrRlBXvonkGTlD9vpR68Fs+tYAoG0r0sqytmCayP9hwO55P5T9QbfoIYxVwaFMeWknNBUD6Dlf8HVUtuX3lG52/z0vDJlCe7JS3t4B0vdPQB3FRPc31jMvDM8HFzt2kofV3nGci020D2D/TcQ4v76HG18RllOR20KuEpqxC8RjSTpJQ/xWMcjfQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.112.34) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FF/KNHmvI2t390kvAJBAdUJkBPIqws1VqiHmnCuR1aQ=;
- b=WEX531AiY5gFqpBEkKkispoVUpI7z/pVovo/uTXqi2E05JOntud0CEueSjqaCk92xVg/wpY6mQ9opOw3pcU3b2R833zHQgc60rHYJQFANB0QHrgPhJibsPE176eTPpjX6w7r2ARWj3y4l3FwtL6ppIVirF92oTdvXIG1M10CRDtxqsmvvI+Mb1rrZSmHdeDTVJnasEB3dSTFesiDDXQbyc+UxjZBIdxav0mivmusDUaIR4NdPEqDcZfvXfwRyCbKgi2TIauNCieSgwiaaid9+GuhNLUKFy7lOUamf6J5ZQeT001tXgV4K0H2k1yVXwGu6rA4oGeUwxSPtKlg+t904Q==
-Received: from DM3PR12CA0058.namprd12.prod.outlook.com (2603:10b6:0:56::26) by
- DM6PR12MB2859.namprd12.prod.outlook.com (2603:10b6:5:15d::29) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.4242.19; Mon, 21 Jun 2021 15:07:51 +0000
-Received: from DM6NAM11FT026.eop-nam11.prod.protection.outlook.com
- (2603:10b6:0:56:cafe::a0) by DM3PR12CA0058.outlook.office365.com
- (2603:10b6:0:56::26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4242.16 via Frontend
- Transport; Mon, 21 Jun 2021 15:07:51 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.34)
- smtp.mailfrom=nvidia.com; vger.kernel.org; dkim=none (message not signed)
- header.d=none;vger.kernel.org; dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.112.34 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.112.34; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (216.228.112.34) by
- DM6NAM11FT026.mail.protection.outlook.com (10.13.172.161) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.4242.16 via Frontend Transport; Mon, 21 Jun 2021 15:07:50 +0000
-Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Mon, 21 Jun
- 2021 15:07:50 +0000
-Received: from kyarlagadda-linux.nvidia.com (172.20.187.5) by mail.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Mon, 21 Jun 2021 15:07:46 +0000
-From:   Akhil R <akhilrajeev@nvidia.com>
-To:     <andy.shevchenko@gmail.com>
-CC:     <akhilrajeev@nvidia.com>, <bgolaszewski@baylibre.com>,
-        <jonathanh@nvidia.com>, <kyarlagadda@nvidia.com>,
-        <ldewangan@nvidia.com>, <linus.walleij@linaro.org>,
-        <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <mperttunen@nvidia.com>,
-        <smangipudi@nvidia.com>, <thierry.reding@gmail.com>
-Subject: Re: [PATCH v2] gpio: tegra186: Add ACPI support
-Date:   Mon, 21 Jun 2021 20:38:09 +0530
-Message-ID: <1624288089-15278-1-git-send-email-akhilrajeev@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <CAHp75Vf+8t78NbYeCh+VLEAzcYJxDP9Pz7DPW_MC9D-K_Ff8uA@mail.gmail.com>
-References: <CAHp75Vf+8t78NbYeCh+VLEAzcYJxDP9Pz7DPW_MC9D-K_Ff8uA@mail.gmail.com>
+        id S230186AbhFUPil (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 21 Jun 2021 11:38:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45970 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229747AbhFUPil (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 21 Jun 2021 11:38:41 -0400
+Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EA84C061574;
+        Mon, 21 Jun 2021 08:36:25 -0700 (PDT)
+Received: by mail-lf1-x12f.google.com with SMTP id j2so30946385lfg.9;
+        Mon, 21 Jun 2021 08:36:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=eZm8zZbaVXs8SDuUBCinObEMuZP/+XNNAcVwyswH7lY=;
+        b=aXD5UxUlEodrQYRBS9ddtWkRy09zqoRQKErfxaPb0WCVUQ2edBB7/BluWZB4xPghvm
+         Xl4mDXd4aDfEDoV2ctBdDuS2al7WQiou775gcnVqwyqQ9TJ4dUXgprxquqp9w+e7SGdU
+         5Ic9n87Ii23a635nXi5Q3N7AOJCsTLELbiRs4Bg4yZb8x03CUKWbERbGcO5omGIhnQsu
+         Fdpps9I/BYs4bS5Enb7FZmgpqiuXTij1+pcGaapKk6FDcDMZxWAyYzFUaAJscfE7wW3f
+         7BQTMjQx/DnsgBGBCo7b+E/Xvjik2Wil1anGHxwxNiOtqcRzqghqJCy6a8GSfU+m3kqw
+         nn1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=eZm8zZbaVXs8SDuUBCinObEMuZP/+XNNAcVwyswH7lY=;
+        b=lmcj+8B7hK9H0E+mIx067WCJBwu9Y5Nxe4RAdtwV4tZmM2CIoKZQSK7jK0PTRC0sxa
+         LjhJGfrlB42BMRaAFn3iXTM23mRTRzfKrsO0JGP8m7YJPIPITv+twWhlwgDA42kNTDHL
+         Rkt1NlqMh53dlyJt+pBQnrGzoA3XQOECbWkWlQDdDN7KR4VVhuH8sOoOiKFHHYgt1EUb
+         O20oSXtacIK0lFQ4PQ0ovp1X8txr+qRg2v+lPAmpd5VDcKjJ0Ps1sE8e74jkUgT46fCl
+         AoQFIsMFDmNanYvt7k5f7khuGSuUIgVqqRtiC18eXSfwXLfcgTq5dvk/LO/SAyroTHI4
+         tGcQ==
+X-Gm-Message-State: AOAM5303Pu7cin1pGRiwPuDTX4px/yf2k8+sLfgubgR7TRHgJsLyyzRf
+        K6sko0NnFBsm0RpGTxXXY7PnUheccBk=
+X-Google-Smtp-Source: ABdhPJxXi5tvtZ3lWXr4E1t/FgsW6Qpm7a109AvW6YcGqGwDIaYsLVT1gwAxLpna/5/Uw4PDHaQtYA==
+X-Received: by 2002:a05:6512:13a8:: with SMTP id p40mr14791103lfa.14.1624289783693;
+        Mon, 21 Jun 2021 08:36:23 -0700 (PDT)
+Received: from [192.168.2.145] (94-29-29-31.dynamic.spd-mgts.ru. [94.29.29.31])
+        by smtp.googlemail.com with ESMTPSA id x1sm2219464lji.19.2021.06.21.08.36.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Jun 2021 08:36:23 -0700 (PDT)
+Subject: Re: [PATCH v2 1/2] hwmon: (lm90) Prevent integer overflow of
+ temperature calculations
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     Zhang Rui <rui.zhang@intel.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+References: <20210620211408.3893-1-digetx@gmail.com>
+ <20210620211408.3893-2-digetx@gmail.com>
+ <20210621121229.GB116119@roeck-us.net>
+ <ac1c4350-687e-7999-633c-6b7354ef9b8c@gmail.com>
+ <20210621142415.GA3604789@roeck-us.net>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <ffedf276-245b-1be6-4182-5d7a117eedd4@gmail.com>
+Date:   Mon, 21 Jun 2021 18:35:10 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 38cf5f20-90b1-4d18-1fa9-08d934c6568d
-X-MS-TrafficTypeDiagnostic: DM6PR12MB2859:
-X-Microsoft-Antispam-PRVS: <DM6PR12MB2859EEAD95A17C42E132DA95C00A9@DM6PR12MB2859.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:8273;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: GlPdjBs6aS0srCIz2fLtIz4ED2bULvqKH2wes9LdHsgN0K6WRsHIV25QxQyrB9pSPCFSCXlqe8SdArjZiIUSZWrZSq51Thsrsbve/GkZ4pu6/ip/kCPYxhCNqjfn8FwGlQKpH2ZyiR8vtoNXOy9hD1WVflyHJZ3mfPXl88gDMS0rOAFVcn9wxKc0U0xEDCT22mUhAhIYani7yV0vxJnU8BTJNK9NZa++yu9GMCVLCH8y7TyYdcZn0yvGLb1/Zh6u5ri+I/X69uTJiJu8S4g8Srt/x5P/0fUvnDIkm+ljfQjpq5Cby1kgF2eED/4uOU8bhEmcDAI+ma3wdZK8AHqZz7Qzoe7pIVjTCmjltwtQHagbIl6dIVqR2SH1zDjWBMv7WJ+9Nwf8rVjWNp3PIFIzTAap8jSKIf6g2VZA/Kr9EVeImxp+cJKdbce/ad4BSq7dcV8ww4WLMPEj1rkLmoi9Q6xvWZT+PQpsaNyle0c8oAbzIT6dXtGO3YGBs3Qt/Ky8bMYXN4GrJcEtiWxxBOcFI/Ru2ISU5aXxrcbnub+HEugxaeH6C0TOxtxjsKQgY2jUFE0MvbgZUX1c8tCwXKThrMvpUk/jfVxB9qCaYzfJDm8Dre2DfyeqqGcuxRetNRRHQS7tNl7JKV9kAjsHDmcFQ0OWL09z0C9DAOYO65lbS0k=
-X-Forefront-Antispam-Report: CIP:216.228.112.34;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid03.nvidia.com;CAT:NONE;SFS:(4636009)(136003)(376002)(39860400002)(346002)(396003)(46966006)(36840700001)(426003)(316002)(82740400003)(478600001)(36906005)(7696005)(8676002)(36756003)(5660300002)(86362001)(4326008)(6916009)(36860700001)(2616005)(47076005)(8936002)(6666004)(336012)(83380400001)(70206006)(70586007)(54906003)(82310400003)(2906002)(186003)(26005)(356005)(7636003);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jun 2021 15:07:50.8674
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 38cf5f20-90b1-4d18-1fa9-08d934c6568d
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.34];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT026.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB2859
+In-Reply-To: <20210621142415.GA3604789@roeck-us.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+21.06.2021 17:24, Guenter Roeck пишет:
+> On Mon, Jun 21, 2021 at 03:14:40PM +0300, Dmitry Osipenko wrote:
+>> 21.06.2021 15:12, Guenter Roeck пишет:
+>>> On Mon, Jun 21, 2021 at 12:14:07AM +0300, Dmitry Osipenko wrote:
+>>>> The minimum temperature value that is passed to the driver is unlimited
+>>>> and value that is close to INT_MIN results in integer overflow of
+>>>> temperature calculations made by the driver. Limit the value in order
+>>>> to prevent the overflow. For now the overflow condition is harmless,
+>>>> but thermal framework won't work properly once we will support the
+>>>> set_trips() callback because it will pass INT_MIN value to the driver.
+>>>>
+>>> AFAICS that should only happen for lm99 because all other values
+>>> are bound in the temp_to_xxx functions. Where else do you see an
+>>> overflow (or underflow) ?
+>>
+>> You're correct that the overflow affects only lm99. But why we should
+>> ignore it?
+> 
+> That isn't the point. The point is that you claimed there would be a
+> generic underflow, which is not the case. That means we'll only need
+> to apply the fix to the lm99 specific code (which unconditionally
+> subtracts an offset from the provided value, causing the underflow).
+> 
+> Anyway, thanks for alerting me to the issue. As it turns out, there are
+> other underflow issues in the driver. With improved module test scripts,
+> I get:
+> 
+> Testing lm90 ...
+> temp1_crit_hyst: Suspected underflow: [min=54000, read 85000, written -9223372036854775808]
+> Testing lm99 ...
+> temp1_crit_hyst: Suspected underflow: [min=96000, read 127000, written -9223372036854775808]
+> temp2_crit: Suspected underflow: [min=-112000, read 143000, written -9223372036854775808]
+> temp2_min: Suspected underflow: [min=-112000, read 143875, written -9223372036854775808]
+> temp2_max: Suspected underflow: [min=-112000, read 143875, written -9223372036854775808]
+> 
+> So we'll need fixes for lm99 temp2_{min/max/crit} and for temp1_crit_hyst
+> (the latter affects all chips supported by the driver).
 
-Thanks Andy for the suggestions. Few thoughts I have below.
-
->What about doing like
-
->      gpio->secure = devm_platform_ioremap_resource_byname(pdev, "security");
->      if (IS_ERR(gpio->secure))
->              gpio->secure = devm_platform_ioremap_resource(pdev, 0);
->      if (IS_ERR(gpio->secure))
->              return PTR_ERR(gpio->secure);
->
->and similar for gpio->base?
-
-Wouldn't this cause a redundant check if it had already succeeded in getting
-the resource by name? Also, could it happen that if the device tree is
-incorrect, then one of the resource is fetched by name and other by the index,
-which I guess, would mess things up. Just my random thoughts, not sure if it
-is valid enough.
-
->Wouldn't the following be enough?
->
->-       gpio->intc.name = pdev->dev.of_node->name;
->+       gpio->intc.name = devm_kasprintf(&pdev->dev, "%pfw",
->dev_fwnode(&pdev->dev));
->+       if (!gpio->intc.name)
->+
-
-How about this way? I feel it would be right to add the OF functions conditionally.
-
-+   if (pdev->dev.of_node) {
-+       gpio->gpio.of_node = pdev->dev.of_node;
-+       gpio->gpio.of_gpio_n_cells = 2;
-+       gpio->gpio.of_xlate = tegra186_gpio_of_xlate;
-+   }
-
-+   gpio->intc.name = gpio->soc->name;
-
---
-Best Regards,
-Akhil
+I'll prepare v3 with the updated commit message and fixed
+temp1_crit_hyst, thank you.
