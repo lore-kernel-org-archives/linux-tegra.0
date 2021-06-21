@@ -2,119 +2,174 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D633C4743C
-	for <linux-tegra@archiver.kernel.org>; Mon, 21 Jun 2021 16:10:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4B48C4743C
+	for <linux-tegra@archiver.kernel.org>; Mon, 21 Jun 2021 17:13:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 15FAF6115B
-	for <linux-tegra@archiver.kernel.org>; Mon, 21 Jun 2021 16:10:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A0F036102A
+	for <linux-tegra@archiver.kernel.org>; Mon, 21 Jun 2021 17:13:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230121AbhFUQMV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 21 Jun 2021 12:12:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53688 "EHLO
+        id S230520AbhFURPx (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 21 Jun 2021 13:15:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39658 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230071AbhFUQMV (ORCPT
+        with ESMTP id S230444AbhFURPw (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 21 Jun 2021 12:12:21 -0400
-Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB823C061574;
-        Mon, 21 Jun 2021 09:10:06 -0700 (PDT)
-Received: by mail-lj1-x230.google.com with SMTP id k8so2958913ljk.7;
-        Mon, 21 Jun 2021 09:10:06 -0700 (PDT)
+        Mon, 21 Jun 2021 13:15:52 -0400
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CEBE7C061760
+        for <linux-tegra@vger.kernel.org>; Mon, 21 Jun 2021 10:13:36 -0700 (PDT)
+Received: by mail-wr1-x42d.google.com with SMTP id d11so18149678wrm.0
+        for <linux-tegra@vger.kernel.org>; Mon, 21 Jun 2021 10:13:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ICkdfzH6XCcjBYxGEsjQo2bFyJ6lwjMxxQXnUmGqrvc=;
-        b=XDRZ8PFNYOTui7aSL6NlwFjzQAM5YqE+Hbp7/ywcKilL8ADnJXU5ER4eblkIapr/VP
-         vv1zsKBFx6pHrikjZ2tsd+3ETTb/rhp3pCmAP69nbFPyMNei70KWSf8N2TQfI2Z4KjY5
-         qpI7CTtJc38uTYhK4jaA2D3IKL34DM6qKvGmLLrewvuB7xr86XkNCeDcoV0byAvhxY3n
-         AEd26Ub/tAzth6EbottMjQeMeql7uPqOJ012i1tWQLyhvulvoQSVs7nL4OFPf8CqTgpV
-         DFexIku0E6BopK+p0a36RvkibLMmHXL/QoZYTQVDVUrqQKV+ACI7ymHvJGzLzxL2b7/+
-         VyfA==
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=4i6nEUVfh/Y08sl+Bt5V/buNM5eumRmDejjNLtBa3t0=;
+        b=Dhs/CzchoEy1Qd18n03P5M6oqeh73HOJ5bMqv+/Qr5DuxS9vzUpYGKW45m7ZKA1iWV
+         D6hoRxWwAVzZ3yfq8nzB0Qzuhpb+Qf9hP576yTmnMmzIa9tuFOOG8JYdVpN8Wwu3D4WR
+         SbvBDZNP9cq0rBJmd9GjUnYk4pMvXlho/B0V0bQTD4qGR70oqfyyJCpPe0PWme9P+ypZ
+         Iipek0imAwblBt2PnAs6scn5+GzjHy3eU5LH2q+kzbK+udSje5XfkqSgbdigFligtx7H
+         vW1DeOEB806VdbDDx19UNGfVncG9mbVJqMJ4lz9vSRrdKVklCmXsyxfoCyUFQtDC2aTW
+         yZlg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=ICkdfzH6XCcjBYxGEsjQo2bFyJ6lwjMxxQXnUmGqrvc=;
-        b=pmKPI7F9/K5jEr7kIpo9XeYP8vjApTX4LZr7NiSoHwRnLB9J+PpZuk7of/Hxi/V+6Z
-         v4BFJFIdmv/T2bb+OPG6VYmX2mQWU+cs8qYw1gKbDmARilr34JakrB5P65yaMnIoYyW9
-         u5xqvrWE3ibKRRwiOpM1Go96ZwH7yr9r8ffoueosi+4P5cMkPst6RqFvg7wS7CzRItkD
-         2HEywHOTnD/baR7ucNLsl+Hzju4kWocTWl48umPI5qSvj/F4PecipJIsGTjCq+UD2j3M
-         vJUH/Ky0SaADQhJEmWyvAPopx4M/+B34dT55H6v1NfKzWZpMrZBnYePyB+t9HffuG/wq
-         3ocg==
-X-Gm-Message-State: AOAM533moFRuIH2x70VlvYCG4B04sD/YjaC/P6+0yc65fwhNOQnMoHne
-        8vqerlsTawIamIzXiTVzn5E=
-X-Google-Smtp-Source: ABdhPJw+z+F/RX/pIwciHgZzeVtAviu351AwkBaOXZkuSyayZWlDQgyxro7OlRKRaOWdlTcsg6NMTg==
-X-Received: by 2002:a2e:b4c6:: with SMTP id r6mr10614446ljm.302.1624291805123;
-        Mon, 21 Jun 2021 09:10:05 -0700 (PDT)
-Received: from localhost.localdomain (94-29-29-31.dynamic.spd-mgts.ru. [94.29.29.31])
-        by smtp.gmail.com with ESMTPSA id j9sm1916033lfm.309.2021.06.21.09.10.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Jun 2021 09:10:04 -0700 (PDT)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <treding@nvidia.com>,
+        bh=4i6nEUVfh/Y08sl+Bt5V/buNM5eumRmDejjNLtBa3t0=;
+        b=ZZuDPMiZ84c348xmaE0DxKY1RlqA0pkXehz7ImC/Y50PgSr4+SitUvkQ29hO8ko30R
+         Rben37MMAW20ti1wQwiEeHuwnekYuZmDoaJTBq6vy59WtFVFA0UhflMl62kxjB5oQ/r4
+         HsmVwNJCEDTKyYqbqR37SimPQo8i8xO0ciDOIwBHlohCMRc3EvKnabzKcMaTEHpkE8rE
+         0LeqyTCCEWUyxANuflzu+hKk5s2+/tOGxzKzvlSuxFZ6QPzYN8b39+xfDy93j9XYcNQu
+         AYNpHPnF9pzUWQj8oGnf3JyX9+E4tbHyrBGuX3XTJztczV7J/2zsMkKu3L9anF+b9lN0
+         +7OQ==
+X-Gm-Message-State: AOAM530vf3eq/bGFxZeKwD8dlgal0KhU+Hh++mBHHf2MHsFNZBZWujGY
+        PQXFxJ0BTa0M7xguueCUVr9rKvRMDpNovmY4
+X-Google-Smtp-Source: ABdhPJxSoWqFYS/3j+FYJIhz0NY142RhvRcIzSb0atBjmOVMKz6zGh2e6kpvX9Ul3VkFk6qxpN/gdA==
+X-Received: by 2002:a05:6000:1a41:: with SMTP id t1mr29063076wry.175.1624295615215;
+        Mon, 21 Jun 2021 10:13:35 -0700 (PDT)
+Received: from ?IPv6:2a01:e34:ed2f:f020:5ebd:8bd9:d549:4211? ([2a01:e34:ed2f:f020:5ebd:8bd9:d549:4211])
+        by smtp.googlemail.com with ESMTPSA id 9sm197835wmf.3.2021.06.21.10.13.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Jun 2021 10:13:34 -0700 (PDT)
+Subject: Re: [PATCH v4 0/6] Add driver for NVIDIA Tegra30 SoC Thermal sensor
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Mark Brown <broonie@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: [PATCH v1] soc/tegra: Make regulator couplers depend on CONFIG_REGULATOR
-Date:   Mon, 21 Jun 2021 19:07:39 +0300
-Message-Id: <20210621160739.22448-1-digetx@gmail.com>
-X-Mailer: git-send-email 2.30.2
+        Zhang Rui <rui.zhang@intel.com>,
+        Amit Kucheria <amitk@kernel.org>,
+        Andreas Westman Dorcsak <hedmoo@yahoo.com>,
+        Maxim Schwalm <maxim.schwalm@gmail.com>,
+        Svyatoslav Ryhel <clamor95@gmail.com>,
+        Ihor Didenko <tailormoon@rambler.ru>,
+        Ion Agorria <ion@agorria.com>,
+        Matt Merhar <mattmerhar@protonmail.com>,
+        Peter Geis <pgwipeout@gmail.com>
+Cc:     linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+References: <20210616190417.32214-1-digetx@gmail.com>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <e1e3816a-ddf4-be13-0410-0b929f3be60b@linaro.org>
+Date:   Mon, 21 Jun 2021 19:13:33 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 MIME-Version: 1.0
+In-Reply-To: <20210616190417.32214-1-digetx@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The regulator coupler drivers now use regulator-driver API function that
-isn't available during compile-testing. Make regulator coupler drivers
-depend on CONFIG_REGULATOR in Kconfig.
 
-Fixes: 03978d42ed0d ("soc/tegra: regulators: Bump voltages on system reboot")
-Reported-by: kernel test robot <lkp@intel.com>
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/soc/tegra/Kconfig | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+Hi Dmitry,
 
-diff --git a/drivers/soc/tegra/Kconfig b/drivers/soc/tegra/Kconfig
-index db49075b1946..1224e1c8c2c9 100644
---- a/drivers/soc/tegra/Kconfig
-+++ b/drivers/soc/tegra/Kconfig
-@@ -15,7 +15,7 @@ config ARCH_TEGRA_2x_SOC
- 	select PL310_ERRATA_769419 if CACHE_L2X0
- 	select SOC_TEGRA_FLOWCTRL
- 	select SOC_TEGRA_PMC
--	select SOC_TEGRA20_VOLTAGE_COUPLER
-+	select SOC_TEGRA20_VOLTAGE_COUPLER if REGULATOR
- 	select TEGRA_TIMER
- 	help
- 	  Support for NVIDIA Tegra AP20 and T20 processors, based on the
-@@ -29,7 +29,7 @@ config ARCH_TEGRA_3x_SOC
- 	select PL310_ERRATA_769419 if CACHE_L2X0
- 	select SOC_TEGRA_FLOWCTRL
- 	select SOC_TEGRA_PMC
--	select SOC_TEGRA30_VOLTAGE_COUPLER
-+	select SOC_TEGRA30_VOLTAGE_COUPLER if REGULATOR
- 	select TEGRA_TIMER
- 	help
- 	  Support for NVIDIA Tegra T30 processor family, based on the
-@@ -154,7 +154,9 @@ config SOC_TEGRA_POWERGATE_BPMP
- config SOC_TEGRA20_VOLTAGE_COUPLER
- 	bool "Voltage scaling support for Tegra20 SoCs"
- 	depends on ARCH_TEGRA_2x_SOC || COMPILE_TEST
-+	depends on REGULATOR
- 
- config SOC_TEGRA30_VOLTAGE_COUPLER
- 	bool "Voltage scaling support for Tegra30 SoCs"
- 	depends on ARCH_TEGRA_3x_SOC || COMPILE_TEST
-+	depends on REGULATOR
+I compiled the your series and got these unresolved.
+
+arm-linux-gnueabi-ld: drivers/thermal/tegra/soctherm-fuse.o: in function
+`tegra_calc_shared_calib':
+soctherm-fuse.c:(.text+0x60): undefined reference to `tegra_fuse_readl'
+arm-linux-gnueabi-ld: soctherm-fuse.c:(.text+0xf0): undefined reference
+to `tegra_fuse_readl'
+arm-linux-gnueabi-ld: drivers/thermal/tegra/soctherm-fuse.o: in function
+`tegra_calc_tsensor_calib':
+soctherm-fuse.c:(.text+0x144): undefined reference to `tegra_fuse_readl'
+arm-linux-gnueabi-ld: drivers/thermal/tegra/tegra30-tsensor.o: in
+function `tegra_tsensor_fuse_read_spare':
+tegra30-tsensor.c:(.text+0x364): undefined reference to `tegra_fuse_readl'
+arm-linux-gnueabi-ld: drivers/thermal/tegra/tegra30-tsensor.o: in
+function `tegra_tsensor_probe':
+tegra30-tsensor.c:(.text+0x874): undefined reference to `tegra_fuse_readl'
+arm-linux-gnueabi-ld:
+drivers/thermal/tegra/tegra30-tsensor.o:tegra30-tsensor.c:(.text+0x904):
+more undefined references to `tegra_fuse_readl' follow
+make[1]: *** [/home/dlezcano/Work/src/linux/Makefile:1196: vmlinux] Error 1
+make: *** [/home/dlezcano/Work/src/linux/Makefile:215: __sub-make] Error 2
+
+
+
+On 16/06/2021 21:04, Dmitry Osipenko wrote:
+> Hi,
+> 
+> This series adds support for the thermal sensor that is found on NVIDIA
+> Tegra30 SoC. Sensor monitors temperature and voltage of the SoC, it also
+> emits signals to the power management and clock controllers that are
+> performing the emergency shut down and the CPU frequency throttling
+> when a pre-programmed temperature levels are reached.
+> 
+> Changelog:
+> 
+> v4: - Removed DIV2 CPU frequency throttling and cooling device part as was
+>       suggested by Daniel Lezcano since we need to notify cpufreq about the
+>       updated frequency and change the thermal pressure. The thermal pressure
+>       change should co-exists with the cpufreq_cooling. This all needs some
+>       more thought, so the DIV2 mitigation will come sometime later.
+> 
+>     - Added ack from Thierry Reding.
+> 
+>     - Changed default TZ trips in the device-tree to the silicon temperature
+>       levels, instead of the average device levels.
+> 
+> v3: - No code changes. CC'ed linux-pm, which was previously missed by accident.
+>       Not sure how much that is important for the thermal patches, but won't
+>       hurt to re-send since only DT binding was reviewed so far.
+> 
+> v2: - Made a very minor improvement to one error message, it now prints
+>       number of channel at which error occurred.
+> 
+>     - Added r-b from Rob Herring to the binding.
+> 
+> Dmitry Osipenko (6):
+>   dt-bindings: thermal: Add binding for Tegra30 thermal sensor
+>   thermal: thermal_of: Stop zone device before unregistering it
+>   thermal/drivers/tegra: Add driver for Tegra30 thermal sensor
+>   ARM: tegra_defconfig: Enable CONFIG_TEGRA30_TSENSOR
+>   ARM: multi_v7_defconfig: Enable CONFIG_TEGRA30_TSENSOR
+>   ARM: tegra: Add SoC thermal sensor to Tegra30 device-trees
+> 
+>  .../thermal/nvidia,tegra30-tsensor.yaml       |  73 ++
+>  arch/arm/boot/dts/tegra30.dtsi                |  87 ++-
+>  arch/arm/configs/multi_v7_defconfig           |   1 +
+>  arch/arm/configs/tegra_defconfig              |   1 +
+>  drivers/thermal/tegra/Kconfig                 |   7 +
+>  drivers/thermal/tegra/Makefile                |   1 +
+>  drivers/thermal/tegra/tegra30-tsensor.c       | 673 ++++++++++++++++++
+>  drivers/thermal/thermal_of.c                  |   3 +
+>  8 files changed, 842 insertions(+), 4 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/thermal/nvidia,tegra30-tsensor.yaml
+>  create mode 100644 drivers/thermal/tegra/tegra30-tsensor.c
+> 
+
+
 -- 
-2.30.2
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
