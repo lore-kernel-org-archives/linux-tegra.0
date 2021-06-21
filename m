@@ -2,135 +2,128 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2F3FC48BC2
-	for <linux-tegra@archiver.kernel.org>; Mon, 21 Jun 2021 11:44:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A81F0C48BE5
+	for <linux-tegra@archiver.kernel.org>; Mon, 21 Jun 2021 12:12:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B34426109E
-	for <linux-tegra@archiver.kernel.org>; Mon, 21 Jun 2021 11:44:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E6466128A
+	for <linux-tegra@archiver.kernel.org>; Mon, 21 Jun 2021 12:12:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229611AbhFULqg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 21 Jun 2021 07:46:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48996 "EHLO
+        id S229710AbhFUMOt (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 21 Jun 2021 08:14:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55576 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229487AbhFULqg (ORCPT
+        with ESMTP id S229640AbhFUMOt (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 21 Jun 2021 07:46:36 -0400
-Received: from mail-lj1-x231.google.com (mail-lj1-x231.google.com [IPv6:2a00:1450:4864:20::231])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F78EC061574;
-        Mon, 21 Jun 2021 04:44:21 -0700 (PDT)
-Received: by mail-lj1-x231.google.com with SMTP id u20so5001398ljl.13;
-        Mon, 21 Jun 2021 04:44:21 -0700 (PDT)
+        Mon, 21 Jun 2021 08:14:49 -0400
+Received: from mail-ot1-x32f.google.com (mail-ot1-x32f.google.com [IPv6:2607:f8b0:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B79EC061574;
+        Mon, 21 Jun 2021 05:12:32 -0700 (PDT)
+Received: by mail-ot1-x32f.google.com with SMTP id 7-20020a9d0d070000b0290439abcef697so17492054oti.2;
+        Mon, 21 Jun 2021 05:12:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=TvnTnGnSvT/wzcRtCIQ6B7dOOoTU5ysPY7rP65LBPcY=;
-        b=NXGg0c7craxUcqNhRaT+jQw2x5ROQqdt5x2dBCqXs2jNFOEy/YGap3LnXP1YwcUAjM
-         5G01dyQKmz25sWNdAzoECLk94HKhYL3CSlwl8Sb8Cr9/Z0uIcXA+uKLE2DXZ7xzJGgCh
-         LpexwTncTGfEFCD0q83Dbcor+Aao2Jhbtym/jCGzjruRUIg3QuWH5NboNFiUrYIoVAwS
-         QALcOuU0LGWRYtO5ZSu1YTuK0vb0SsavpdHeIWe3owroU6nnG93Oc0/DWQ1hga5vuhod
-         NU/eTkw/kA3mLYrsFDCJqSfxEQNpeBZEQpZwvqyDS/vaIJtMJ+IuIpl0bSd4qj0nex/T
-         JDjw==
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=7prD3+xyczLmEe+2BW6g+fySkx140ZkBVmo1/PVnD/0=;
+        b=fm4gnMesUyw40L3SKOPhrgTBm5DZNGB6NREf6eSHQIwbSBIi+4MV1hRSGtSenQQxyf
+         V4mpB8XuBmtgMc/a1Pmx64AkTmBWXrf0SOiFEb6Vk7eElheahMKgLtxL8nzvyC0jOrPJ
+         yM5oBJNk5yUSRRhuGAI9QEOQKcj0BbehVsPR45t0hrHCowVswteZtm796p+F80NDqBO3
+         8qntcKBPouxTWLp6BCnU6wtgXeyJU6rCEPzG/wyMWzNZqEXj0opDAWcGgBflhoM8LXYV
+         uzAwlkJyIDIpE2/V2E48Cj5z54hu2HtLQDLDmRdYL5Cw8AAWLT/AUN5o4md8eNjFu4r7
+         TfUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=TvnTnGnSvT/wzcRtCIQ6B7dOOoTU5ysPY7rP65LBPcY=;
-        b=QWYmaQInwfwqnhYUSyvdH5YTcd7RzvpRypRU83/jrktqfGAjeu6Aibx9GrlCt9izfy
-         C0W6TjUwAl7Ok6vlN+kQFEi2XkSNVuUrJsZmidQhqza+/6SfygshwlYqMmyThT68H6z1
-         3qbax7qlU1HNTTWLZQP554jP3KTs5YfFNWBawXWIoWS5OLPrSNdufBMVYdCHAAIEF8ZW
-         gR41LVgdwNyiHZfL3vSGtFfELW8vDiz7dXMrMbn5hDKdmnTyTh1w5clNdfCXyEc5Vvhg
-         YQZAeOH9wg8UpyJneOTI3WoCq4unfB2dcm1aventCnGstIyQavgiDWFPwL2AvMgJqoL+
-         UE4A==
-X-Gm-Message-State: AOAM532F4mwuf/q9+sN/0fGV7dQF9JI56wwORmrhAmRx4F/ex6REPfe0
-        b6FbXMbGYGMy2pyVTeG6twY=
-X-Google-Smtp-Source: ABdhPJzZqNE1v82IJt68up+rW8SvYARB7SxPKZ+9ubQvwMGy0eOKEOsPIa0ETY98RpNKHEL+/717Ng==
-X-Received: by 2002:a05:651c:236:: with SMTP id z22mr5920364ljn.106.1624275859324;
-        Mon, 21 Jun 2021 04:44:19 -0700 (PDT)
-Received: from [192.168.2.145] (94-29-29-31.dynamic.spd-mgts.ru. [94.29.29.31])
-        by smtp.googlemail.com with ESMTPSA id z4sm2085643lji.61.2021.06.21.04.44.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Jun 2021 04:44:19 -0700 (PDT)
-Subject: Re: [PATCH v18 0/2] Add memory bandwidth management to NVIDIA Tegra
- DRM driver
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Matt Merhar <mattmerhar@protonmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
-References: <20210601042108.1942-1-digetx@gmail.com>
- <8accfe1e-fc48-21ca-f7c6-bd2d60162e6d@gmail.com>
- <50912a57-aa43-58b0-02d2-6928578d6286@gmail.com>
- <YNBxiFXMS9rfT93c@orome.fritz.box>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <af058fc3-8696-a8f9-b52d-8e1b2ee760c3@gmail.com>
-Date:   Mon, 21 Jun 2021 14:43:06 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to;
+        bh=7prD3+xyczLmEe+2BW6g+fySkx140ZkBVmo1/PVnD/0=;
+        b=tnEaapHFLKPRx7KAVwXjEoodolxc2dahDa5lrzv2HSzJWqRZnmbLTJjqrHD8G9b6EW
+         N/Y5VVQVBjwd82Vq63kpnvxU30NEeH/VUrxgXBw8RVh/hAJ+3CT6EfbfStF/owKJyX2S
+         aYN26x/T7E+zkA+KZuCazQMlF90vASY1FZH2cOsvgx+Z/CamC4yXO4Y7YlCgw74pllEq
+         tTZ8qTGmEIn0qrlxXv+CLPD7cWKiMLcXXjxX02++wetfz/WNv3u4+ujqkjuwECIjI8sE
+         ygqK+Mm2jH1mb7CQ7c5AHUYeqJPFF9YD8JJ2VaiXxDQQDDMh/+0wLPoYuMMV7/vm9ovQ
+         zy5A==
+X-Gm-Message-State: AOAM531ugoGOYjyASSw0bBAP4AyLkvZbamLFsO3NfuCaY7Wt81yzEZYT
+        VeB0CNw4wBtNEw7VvSOfE/Y=
+X-Google-Smtp-Source: ABdhPJz8s0vLG/6CFPlnj29FKy2jKzk7XkGcEWsdltHcIj7UMrnV4h5GbExX/F3zaZ+Rs5GLcq9Acg==
+X-Received: by 2002:a9d:2f0:: with SMTP id 103mr20486373otl.174.1624277551825;
+        Mon, 21 Jun 2021 05:12:31 -0700 (PDT)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id n20sm4086841otj.11.2021.06.21.05.12.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Jun 2021 05:12:31 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date:   Mon, 21 Jun 2021 05:12:29 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Zhang Rui <rui.zhang@intel.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] hwmon: (lm90) Prevent integer overflow of
+ temperature calculations
+Message-ID: <20210621121229.GB116119@roeck-us.net>
+References: <20210620211408.3893-1-digetx@gmail.com>
+ <20210620211408.3893-2-digetx@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <YNBxiFXMS9rfT93c@orome.fritz.box>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210620211408.3893-2-digetx@gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-21.06.2021 14:01, Thierry Reding пишет:
-> On Mon, Jun 21, 2021 at 07:19:15AM +0300, Dmitry Osipenko wrote:
->> 07.06.2021 01:40, Dmitry Osipenko пишет:
->>> 01.06.2021 07:21, Dmitry Osipenko пишет:
->>>> This series adds memory bandwidth management to the NVIDIA Tegra DRM driver,
->>>> which is done using interconnect framework. It fixes display corruption that
->>>> happens due to insufficient memory bandwidth.
->>>>
->>>> Changelog:
->>>>
->>>> v18: - Moved total peak bandwidth from CRTC state to plane state and removed
->>>>        dummy plane bandwidth state initialization from T186+ plane hub. This
->>>>        was suggested by Thierry Reding to v17.
->>>>
->>>>      - I haven't done anything about the cursor's plane bandwidth which
->>>>        doesn't contribute to overlapping bandwidths for a small sized
->>>>        window because it works okay as-is.
->>>
->>> Thierry, will you take these patches for 5.14?
->>>
->>
->> The display controller does _NOT_WORK_ properly without bandwidth
->> management.
+On Mon, Jun 21, 2021 at 12:14:07AM +0300, Dmitry Osipenko wrote:
+> The minimum temperature value that is passed to the driver is unlimited
+> and value that is close to INT_MIN results in integer overflow of
+> temperature calculations made by the driver. Limit the value in order
+> to prevent the overflow. For now the overflow condition is harmless,
+> but thermal framework won't work properly once we will support the
+> set_trips() callback because it will pass INT_MIN value to the driver.
 > 
-> That's surprising. So either it has never worked before (which I think
-> I'd know) or something has caused this regression recently. In the
-> latter case we need to identify what that was and revert (or fix) it.
 
-The problem is caused by the support of dynamic memory frequency scaling
-which does a good job at keeping memory in a low power state during idle
-time. So display controller may not get enough bandwidth at the start of
-scanout if it won't request BW beforehand. This problem existed for many
-years on T124 and now T20/30 are also affected. The DC of T20 is the
-least tolerant to memory bandwidth troubles.
+AFAICS that should only happen for lm99 because all other values
+are bound in the temp_to_xxx functions. Where else do you see an
+overflow (or underflow) ?
 
-This problem is not critical, but it hurts user experience since high
-resolution modes may not work at all and display output may become
-distorted, requiring a DC reset.
+Thanks,
+Guenter
 
->> Can we get this patch into 5.14? What is the problem?
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/hwmon/lm90.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
 > 
-> There was not enough time to review and test this, so I didn't feel
-> comfortable picking it up so close to the -rc6 cut-off. I plan to pick
-> this up early in the v5.14 release cycle and target v5.15.
-
-Thank you for the explanation! It's not uncommon to forget about
-patches, so the silence worries me. I hoped that both the dynamic freq
-scaling and display BW support would be merged around the same time, but
-apparently we got a disconnect here.
+> diff --git a/drivers/hwmon/lm90.c b/drivers/hwmon/lm90.c
+> index b53f17511b05..6e2fa976098f 100644
+> --- a/drivers/hwmon/lm90.c
+> +++ b/drivers/hwmon/lm90.c
+> @@ -1028,6 +1028,9 @@ static int lm90_set_temp11(struct lm90_data *data, int index, long val)
+>  	struct reg *regp = &reg[index];
+>  	int err;
+>  
+> +	/* prevent integer overflow */
+> +	val = max(val, -128000l);
+> +
+>  	/* +16 degrees offset for temp2 for the LM99 */
+>  	if (data->kind == lm99 && index <= 2)
+>  		val -= 16000;
+> @@ -1088,6 +1091,9 @@ static int lm90_set_temp8(struct lm90_data *data, int index, long val)
+>  	struct i2c_client *client = data->client;
+>  	int err;
+>  
+> +	/* prevent integer overflow */
+> +	val = max(val, -128000l);
+> +
+>  	/* +16 degrees offset for temp2 for the LM99 */
+>  	if (data->kind == lm99 && index == 3)
+>  		val -= 16000;
+> -- 
+> 2.30.2
+> 
