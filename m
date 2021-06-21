@@ -2,145 +2,73 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FE36C49EA2
-	for <linux-tegra@archiver.kernel.org>; Mon, 21 Jun 2021 21:33:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA4C4C48BC2
+	for <linux-tegra@archiver.kernel.org>; Mon, 21 Jun 2021 23:39:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4857061350
-	for <linux-tegra@archiver.kernel.org>; Mon, 21 Jun 2021 21:33:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9828360FE7
+	for <linux-tegra@archiver.kernel.org>; Mon, 21 Jun 2021 23:39:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231661AbhFUVfe (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 21 Jun 2021 17:35:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41700 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231680AbhFUVfc (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 21 Jun 2021 17:35:32 -0400
-Received: from mail-lj1-x231.google.com (mail-lj1-x231.google.com [IPv6:2a00:1450:4864:20::231])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3804C061574;
-        Mon, 21 Jun 2021 14:33:16 -0700 (PDT)
-Received: by mail-lj1-x231.google.com with SMTP id k8so4183052ljk.7;
-        Mon, 21 Jun 2021 14:33:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=LwLiDvKh+SYknHvIUl9sZJTxK3M1sxYb6xuIBop9DcM=;
-        b=CGENMLH4FOKUotexatotqZrpSnrbqA4qPnOp5TuH0n6mWIHe64R1nJKEF5w6TJMnYV
-         boWZlAOumdzJOeNlpjwWA+gW9s2xjU1TdQVWXvfkjlrhxXuuT6D3M7lgK5WW9D4KZcCo
-         BtvhljYxplt9UAjTjXD/80UvQzyRsvBd7Pzn/nK1KXl9zS8KY/BiwypeWYmgcyurJMOd
-         iIQuJGttsmtHaNt/CeSePAVAbOkSgD1A9OS/Y4BZG9XhzmJiheG1PD8F/aoH4Kz91Aca
-         nseH7Rw7WL6tyKdxQO9xCqSZiw6iYycSCTv7G+J18/eDHBUNqUaXQ8hYp8WIM879zxlf
-         ygvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=LwLiDvKh+SYknHvIUl9sZJTxK3M1sxYb6xuIBop9DcM=;
-        b=G0yIra/1DIgK4/Bil2Al+4LXdJrAGPVOaIYEkhaxrScGdc84IU5t5ThW7GgPxCpDAL
-         y8H8qvL2vumwNvKhviTXNrab8Iep/Ss39meLToFw4/AJoWEveV2i7sup0HSs/ZV15dPG
-         kEQwaA3jJjSUG3He8Eu191YXmZlQZ2trCli7rzJeDsEhpzUkjDmUagJpec7On7pEWCpW
-         w2ASJzVgGfiFv2F1Jvx79fW4T2WpSBbzXs+91WpaGdQI2ZD8Z0iS68fcKoDq/eWgY7xR
-         xUpuQY4ISrEQWufVFvS3CweXsiu7PQULR7yIcGTHQJZAJJfqxfj/1xa531YQhKR7Fq9P
-         xlSA==
-X-Gm-Message-State: AOAM53274EKOn99hL/gn9g9zaO5N0K2jLlRpjq0NdwqgQszlsmDSaI1H
-        9urkwAK++pwO7xJMGfpThBM=
-X-Google-Smtp-Source: ABdhPJzYpGk8aMYTdwETyUthyvjaqalAG3POwWNtEPPFWfh3BtaoZ68RIC1fNdTnARTZwtFEAqKQvQ==
-X-Received: by 2002:a2e:9009:: with SMTP id h9mr206916ljg.213.1624311195066;
-        Mon, 21 Jun 2021 14:33:15 -0700 (PDT)
-Received: from localhost.localdomain (94-29-29-31.dynamic.spd-mgts.ru. [94.29.29.31])
-        by smtp.gmail.com with ESMTPSA id u10sm1074722lfg.240.2021.06.21.14.33.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Jun 2021 14:33:14 -0700 (PDT)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Zhang Rui <rui.zhang@intel.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>
-Cc:     linux-hwmon@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: [PATCH v4 2/2] hwmon: Support set_trips() of thermal device ops
-Date:   Tue, 22 Jun 2021 00:31:53 +0300
-Message-Id: <20210621213153.28247-3-digetx@gmail.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210621213153.28247-1-digetx@gmail.com>
-References: <20210621213153.28247-1-digetx@gmail.com>
+        id S231722AbhFUXlV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 21 Jun 2021 19:41:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38600 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231268AbhFUXlV (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 21 Jun 2021 19:41:21 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id C20AF60FE7;
+        Mon, 21 Jun 2021 23:39:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1624318746;
+        bh=zNyYHhxGOJx5d/wsCld5lYfjFtG4ODEEPzj4WizHqms=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=RN85PB+fn+Y/D2UjjwjBBGXkona1J+JNuHQVZX9ayB5qcNwB8M8tUsgMqWGUrQOzV
+         HX+luVIBT3vu1zp5HY2Q0Di/VDEnoG3Ef9U3PTPnRkcPCylxE68cI4VcXUq3CA1rGu
+         hSaZdknXbNwwbeh4OW9z1Q47iNtZe2r48PN1a0dYhymt4Ieudh4aLPRwin445ZgqNX
+         9E10R7t8rXKyjGL1B1VOcyrP9bntoqoxyLeAynK3ZFFfiy5QPKQmwcq0JxQgUgdO1b
+         TTcaY0zQrCFUKGAiZiwwJlXQhUq1NhZw1VKrOAD99v3FM/SecjkPLgC4YZ8fs5CuIs
+         PvamzsduJi22A==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20210611163124.3566027-1-thierry.reding@gmail.com>
+References: <20210611163124.3566027-1-thierry.reding@gmail.com>
+Subject: Re: [GIT PULL] clk: tegra: Changes for v5.14-rc1
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Thierry Reding <thierry.reding@gmail.com>
+Date:   Mon, 21 Jun 2021 16:39:05 -0700
+Message-ID: <162431874543.3552334.2396645089646938680@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Support set_trips() callback of thermal device ops. This allows HWMON
-device to operatively notify thermal core about temperature changes, which
-is very handy to have in a case where HWMON sensor is used by CPU thermal
-zone that performs passive cooling and emergency shutdown on overheat.
-Thermal core will be able to react faster to temperature changes.
+Quoting Thierry Reding (2021-06-11 09:31:24)
+> Hi Mike, Stephen,
+>=20
+> The following changes since commit 6efb943b8616ec53a5e444193dccf1af9ad627=
+b5:
+>=20
+>   Linux 5.13-rc1 (2021-05-09 14:17:44 -0700)
+>=20
+> are available in the Git repository at:
+>=20
+>   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/for-=
+5.14-clk
+>=20
+> for you to fetch changes up to f13570e7e830ca4fbf4869015af8492b8918445e:
+>=20
+>   clk: tegra: tegra124-emc: Fix clock imbalance in emc_set_timing() (2021=
+-06-02 11:08:00 +0200)
+>=20
+> Thanks,
+> Thierry
+>=20
+> ----------------------------------------------------------------
 
-The set_trips() callback is entirely optional. If HWMON sensor doesn't
-support setting thermal trips, then the callback is a NO-OP. The dummy
-callback has no effect on the thermal core. The temperature trips are
-either complement the temperature polling mechanism of thermal core or
-replace the polling if sensor can set the trips and polling is disabled
-by a particular device in a device-tree.
-
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/hwmon/hwmon.c | 33 +++++++++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
-
-diff --git a/drivers/hwmon/hwmon.c b/drivers/hwmon/hwmon.c
-index fd47ab4e6892..9cb9d814cb88 100644
---- a/drivers/hwmon/hwmon.c
-+++ b/drivers/hwmon/hwmon.c
-@@ -153,8 +153,41 @@ static int hwmon_thermal_get_temp(void *data, int *temp)
- 	return 0;
- }
- 
-+static int hwmon_thermal_set_trips(void *data, int low, int high)
-+{
-+	struct hwmon_thermal_data *tdata = data;
-+	struct hwmon_device *hwdev = to_hwmon_device(tdata->dev);
-+	const struct hwmon_chip_info *chip = hwdev->chip;
-+	const struct hwmon_channel_info **info = chip->info;
-+	unsigned int i;
-+	int err;
-+
-+	if (!chip->ops->write)
-+		return 0;
-+
-+	for (i = 0; info[i] && info[i]->type != hwmon_temp; i++)
-+		continue;
-+
-+	if (info[i] && info[i]->config[tdata->index] & HWMON_T_MIN) {
-+		err = chip->ops->write(tdata->dev, hwmon_temp,
-+				       hwmon_temp_min, tdata->index, low);
-+		if (err && err != -EOPNOTSUPP)
-+			return err;
-+	}
-+
-+	if (info[i] && info[i]->config[tdata->index] & HWMON_T_MAX) {
-+		err = chip->ops->write(tdata->dev, hwmon_temp,
-+				       hwmon_temp_max, tdata->index, high);
-+		if (err && err != -EOPNOTSUPP)
-+			return err;
-+	}
-+
-+	return 0;
-+}
-+
- static const struct thermal_zone_of_device_ops hwmon_thermal_ops = {
- 	.get_temp = hwmon_thermal_get_temp,
-+	.set_trips = hwmon_thermal_set_trips,
- };
- 
- static void hwmon_thermal_remove_sensor(void *data)
--- 
-2.30.2
-
+Thanks. Pulled into clk-next
