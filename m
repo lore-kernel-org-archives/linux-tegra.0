@@ -2,189 +2,119 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A5EDC4743C
-	for <linux-tegra@archiver.kernel.org>; Mon, 21 Jun 2021 16:01:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D633C4743C
+	for <linux-tegra@archiver.kernel.org>; Mon, 21 Jun 2021 16:10:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 76FEE610EA
-	for <linux-tegra@archiver.kernel.org>; Mon, 21 Jun 2021 16:01:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 15FAF6115B
+	for <linux-tegra@archiver.kernel.org>; Mon, 21 Jun 2021 16:10:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230118AbhFUQDd (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 21 Jun 2021 12:03:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51626 "EHLO
+        id S230121AbhFUQMV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 21 Jun 2021 12:12:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53688 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229719AbhFUQDc (ORCPT
+        with ESMTP id S230071AbhFUQMV (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 21 Jun 2021 12:03:32 -0400
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F8A2C061574
-        for <linux-tegra@vger.kernel.org>; Mon, 21 Jun 2021 09:01:17 -0700 (PDT)
-Received: by mail-wm1-x32a.google.com with SMTP id f16-20020a05600c1550b02901b00c1be4abso14288870wmg.2
-        for <linux-tegra@vger.kernel.org>; Mon, 21 Jun 2021 09:01:17 -0700 (PDT)
+        Mon, 21 Jun 2021 12:12:21 -0400
+Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB823C061574;
+        Mon, 21 Jun 2021 09:10:06 -0700 (PDT)
+Received: by mail-lj1-x230.google.com with SMTP id k8so2958913ljk.7;
+        Mon, 21 Jun 2021 09:10:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ivAWWnxfgtrmvv3mt9r+kn10vF6aZeuh33extDSkaTo=;
-        b=uOqWwWQ4WOIl9VuV2Y274ZVEHBTN0BdemWxxZnRE4hduwnBUSKhefHy6iBk+4Zsibt
-         GDRyURS5vRNIpHQpbAGKCzVSK93YcqY9v9Z5w8BiX5SGcTNKppe8Wp9r1k2FdlIlOB6I
-         2vSaJW+0KGyconEKhQBsYZtNheZfpHLphF1nLeGOhSFBYbRershc8nBGaqvuzwZRT76d
-         NL/2twFjbBzLAIerHZApKmg/H7YSv/woTz6gs7E1h5pAl68osiT/Pti4kMdbcbZtl/Wd
-         nE/heYSlsxk/HBUIQg0dbbJZl+XZtZvc6/86NWBi3fABFvAWVqXODwyc/yUsfwYykoN+
-         T/tg==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ICkdfzH6XCcjBYxGEsjQo2bFyJ6lwjMxxQXnUmGqrvc=;
+        b=XDRZ8PFNYOTui7aSL6NlwFjzQAM5YqE+Hbp7/ywcKilL8ADnJXU5ER4eblkIapr/VP
+         vv1zsKBFx6pHrikjZ2tsd+3ETTb/rhp3pCmAP69nbFPyMNei70KWSf8N2TQfI2Z4KjY5
+         qpI7CTtJc38uTYhK4jaA2D3IKL34DM6qKvGmLLrewvuB7xr86XkNCeDcoV0byAvhxY3n
+         AEd26Ub/tAzth6EbottMjQeMeql7uPqOJ012i1tWQLyhvulvoQSVs7nL4OFPf8CqTgpV
+         DFexIku0E6BopK+p0a36RvkibLMmHXL/QoZYTQVDVUrqQKV+ACI7ymHvJGzLzxL2b7/+
+         VyfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ivAWWnxfgtrmvv3mt9r+kn10vF6aZeuh33extDSkaTo=;
-        b=MbZRLza6hrr9x427+3NuV3gLaHyx1J9K6YsiqcNK9nmMCGBgnq/T64V7RvKXtir6D9
-         MZhqcEdbuah4vR7W+jxYItutX0Xepef8xErHrVjf1/3ZkCVYZRJfw9IFCt0BN19uzaBx
-         M4Sct1gqrngUQCDGao9qJ8RUtNcdrE8AEnNKLIM1zhTQCK4OUriwsoYgN/7NvVOs4VJF
-         T4IZ5L0xEOEKILuglD7OR3gCz1ODnKGyL1ooAFxFH0jnpYHbPWesKy/XAQIDKzIRWnp6
-         4wc5FdJiEqjPdIoaWow9/EMtzG/KfTghhgBAb4EjjRJxQhoz/UDeHumEn36WLypeKgy0
-         IG2A==
-X-Gm-Message-State: AOAM530mJoSZo9m6gGJ+NDU60o8dFgLl0o5EE/8o17fdTaodD9XJVqBf
-        HKs4CEmVSwlhoXiBS2I5CbI=
-X-Google-Smtp-Source: ABdhPJx7aPSw8G1VbByNyfHybZXWzG2tegvel5Pn2UV6Pnm1dIobwxNlOc5wlZr/ZS/3wK6c5Iaf7Q==
-X-Received: by 2002:a1c:4b05:: with SMTP id y5mr4923971wma.96.1624291275970;
-        Mon, 21 Jun 2021 09:01:15 -0700 (PDT)
-Received: from localhost ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id c13sm18590628wrb.5.2021.06.21.09.01.14
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ICkdfzH6XCcjBYxGEsjQo2bFyJ6lwjMxxQXnUmGqrvc=;
+        b=pmKPI7F9/K5jEr7kIpo9XeYP8vjApTX4LZr7NiSoHwRnLB9J+PpZuk7of/Hxi/V+6Z
+         v4BFJFIdmv/T2bb+OPG6VYmX2mQWU+cs8qYw1gKbDmARilr34JakrB5P65yaMnIoYyW9
+         u5xqvrWE3ibKRRwiOpM1Go96ZwH7yr9r8ffoueosi+4P5cMkPst6RqFvg7wS7CzRItkD
+         2HEywHOTnD/baR7ucNLsl+Hzju4kWocTWl48umPI5qSvj/F4PecipJIsGTjCq+UD2j3M
+         vJUH/Ky0SaADQhJEmWyvAPopx4M/+B34dT55H6v1NfKzWZpMrZBnYePyB+t9HffuG/wq
+         3ocg==
+X-Gm-Message-State: AOAM533moFRuIH2x70VlvYCG4B04sD/YjaC/P6+0yc65fwhNOQnMoHne
+        8vqerlsTawIamIzXiTVzn5E=
+X-Google-Smtp-Source: ABdhPJw+z+F/RX/pIwciHgZzeVtAviu351AwkBaOXZkuSyayZWlDQgyxro7OlRKRaOWdlTcsg6NMTg==
+X-Received: by 2002:a2e:b4c6:: with SMTP id r6mr10614446ljm.302.1624291805123;
+        Mon, 21 Jun 2021 09:10:05 -0700 (PDT)
+Received: from localhost.localdomain (94-29-29-31.dynamic.spd-mgts.ru. [94.29.29.31])
+        by smtp.gmail.com with ESMTPSA id j9sm1916033lfm.309.2021.06.21.09.10.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Jun 2021 09:01:14 -0700 (PDT)
-Date:   Mon, 21 Jun 2021 18:03:11 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Will Deacon <will@kernel.org>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Rob Herring <robh@kernel.org>, Joerg Roedel <joro@8bytes.org>,
-        Linux IOMMU <iommu@lists.linux-foundation.org>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Nicolin Chen <nicolinc@nvidia.com>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v3 2/9] dt-bindings: arm-smmu: Add Tegra186 compatible
- string
-Message-ID: <YNC4PxIqUZb6gtZc@orome.fritz.box>
-References: <20210603164632.1000458-1-thierry.reding@gmail.com>
- <20210603164632.1000458-3-thierry.reding@gmail.com>
- <CAL_JsqLDKxwANn2Pba0Db6J9337pK0dNL=bBN8ucn-k4DZ3gyg@mail.gmail.com>
- <14551e79-853d-471f-bb5e-0d2d6581a9b6@canonical.com>
- <YNCeK9cdMPf+serd@orome.fritz.box>
- <20210621155418.GA29488@willie-the-truck>
+        Mon, 21 Jun 2021 09:10:04 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <treding@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Mark Brown <broonie@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: [PATCH v1] soc/tegra: Make regulator couplers depend on CONFIG_REGULATOR
+Date:   Mon, 21 Jun 2021 19:07:39 +0300
+Message-Id: <20210621160739.22448-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="+CwF57SIeipNOA+L"
-Content-Disposition: inline
-In-Reply-To: <20210621155418.GA29488@willie-the-truck>
-User-Agent: Mutt/2.0.7 (481f3800) (2021-05-04)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+The regulator coupler drivers now use regulator-driver API function that
+isn't available during compile-testing. Make regulator coupler drivers
+depend on CONFIG_REGULATOR in Kconfig.
 
---+CwF57SIeipNOA+L
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Fixes: 03978d42ed0d ("soc/tegra: regulators: Bump voltages on system reboot")
+Reported-by: kernel test robot <lkp@intel.com>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ drivers/soc/tegra/Kconfig | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-On Mon, Jun 21, 2021 at 04:54:18PM +0100, Will Deacon wrote:
-> On Mon, Jun 21, 2021 at 04:11:55PM +0200, Thierry Reding wrote:
-> > On Mon, Jun 21, 2021 at 08:46:54AM +0200, Krzysztof Kozlowski wrote:
-> > > On 18/06/2021 21:47, Rob Herring wrote:
-> > > > On Thu, Jun 3, 2021 at 10:49 AM Thierry Reding <thierry.reding@gmai=
-l.com> wrote:
-> > > >> diff --git a/Documentation/devicetree/bindings/iommu/arm,smmu.yaml=
- b/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
-> > > >> index 9d27aa5111d4..1181b590db71 100644
-> > > >> --- a/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
-> > > >> +++ b/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
-> > > >> @@ -54,8 +54,14 @@ properties:
-> > > >>            - const: arm,mmu-500
-> > > >>        - description: NVIDIA SoCs that program two ARM MMU-500s id=
-entically
-> > > >>          items:
-> > > >> +      - description: NVIDIA SoCs that require memory controller i=
-nteraction
-> > > >=20
-> > > > This is not valid jsonschema:
-> > > >=20
-> > > > /builds/robherring/linux-dt/Documentation/devicetree/bindings/iommu=
-/arm,smmu.yaml:
-> > > > properties:compatible:oneOf:4:items: 'anyOf' conditional failed, one
-> > > > must be fixed:
-> > > > None is not of type 'object', 'boolean'
-> > > > None is not of type 'array'
-> > > > from schema $id: http://json-schema.org/draft-07/schema#
-> > > > /builds/robherring/linux-dt/Documentation/devicetree/bindings/iommu=
-/arm,smmu.yaml:
-> > > > properties:compatible:oneOf:4:items: 'oneOf' conditional failed, one
-> > > > must be fixed:
-> > > > None is not of type 'object'
-> > > > None is not of type 'array'
-> > > > from schema $id: http://devicetree.org/meta-schemas/keywords.yaml#
-> > > > /builds/robherring/linux-dt/Documentation/devicetree/bindings/iommu=
-/arm,smmu.yaml:
-> > > > properties:compatible:oneOf:4:items: 'oneOf' conditional failed, one
-> > > > must be fixed:
-> > > > None is not of type 'object'
-> > > > None is not of type 'array'
-> > > > from schema $id: http://devicetree.org/meta-schemas/string-array.ya=
-ml#
-> > > > /builds/robherring/linux-dt/Documentation/devicetree/bindings/iommu=
-/arm,smmu.yaml:
-> > > > properties:compatible:oneOf:5:items: 'oneOf' conditional failed, one
-> > > > must be fixed:
-> > > > [{'enum': [{'const': 'nvidia,tegra194-smmu'}, {'const':
-> > > > 'nvidia,tegra186-smmu'}]}, {'const': 'nvidia,smmu-500'}] is not of
-> > > > type 'object'
-> > > > {'const': 'nvidia,tegra194-smmu'} is not of type 'string'
-> > > > {'const': 'nvidia,tegra186-smmu'} is not of type 'string'
-> > > > from schema $id: http://devicetree.org/meta-schemas/string-array.ya=
-ml#
-> > > >=20
-> > > >=20
-> > > > This was not reviewed nor tested since the DT list was not Cc'ed.
-> > >=20
-> > > Ugh, I see now weird empty item on a list... and not only DT list was
-> > > skipped - Thierry did not Cc you either.
-> >=20
-> > This seemed like a too trivial addition to waste Rob's time on, so I
-> > didn't add him (or the DT list for that matter) on Cc. The ARM SMMU
-> > maintainers had reviewed this, which seemed like it was enough for what
-> > the DT bindings change was doing.
->=20
-> Hmm, I didn't review it. I find the yaml stuff unreadable so I usually
-> wait for the DT folks to ack bindings changes before I queue them in the
-> SMMU tree.
+diff --git a/drivers/soc/tegra/Kconfig b/drivers/soc/tegra/Kconfig
+index db49075b1946..1224e1c8c2c9 100644
+--- a/drivers/soc/tegra/Kconfig
++++ b/drivers/soc/tegra/Kconfig
+@@ -15,7 +15,7 @@ config ARCH_TEGRA_2x_SOC
+ 	select PL310_ERRATA_769419 if CACHE_L2X0
+ 	select SOC_TEGRA_FLOWCTRL
+ 	select SOC_TEGRA_PMC
+-	select SOC_TEGRA20_VOLTAGE_COUPLER
++	select SOC_TEGRA20_VOLTAGE_COUPLER if REGULATOR
+ 	select TEGRA_TIMER
+ 	help
+ 	  Support for NVIDIA Tegra AP20 and T20 processors, based on the
+@@ -29,7 +29,7 @@ config ARCH_TEGRA_3x_SOC
+ 	select PL310_ERRATA_769419 if CACHE_L2X0
+ 	select SOC_TEGRA_FLOWCTRL
+ 	select SOC_TEGRA_PMC
+-	select SOC_TEGRA30_VOLTAGE_COUPLER
++	select SOC_TEGRA30_VOLTAGE_COUPLER if REGULATOR
+ 	select TEGRA_TIMER
+ 	help
+ 	  Support for NVIDIA Tegra T30 processor family, based on the
+@@ -154,7 +154,9 @@ config SOC_TEGRA_POWERGATE_BPMP
+ config SOC_TEGRA20_VOLTAGE_COUPLER
+ 	bool "Voltage scaling support for Tegra20 SoCs"
+ 	depends on ARCH_TEGRA_2x_SOC || COMPILE_TEST
++	depends on REGULATOR
+ 
+ config SOC_TEGRA30_VOLTAGE_COUPLER
+ 	bool "Voltage scaling support for Tegra30 SoCs"
+ 	depends on ARCH_TEGRA_3x_SOC || COMPILE_TEST
++	depends on REGULATOR
+-- 
+2.30.2
 
-Alright... in the future I'll make sure to always Cc DT folks, even for
-trivial stuff like this.
-
-Thierry
-
---+CwF57SIeipNOA+L
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmDQuD0ACgkQ3SOs138+
-s6HSvA/7BHYi/gFhpj4KkJ1anrFhbP8ExJoJGbVVjxip0aEE5drYxHHLf9eORDpC
-zm5GpLFak8QUqsmQpu3uJDZV5GngAu+Py7MsD/F/sw/NV4sl/P2QaGO94sv3wxGU
-8c/4lslxP+tS/1RQRM51y/UJntsHCMfjsFiGiGQX350CBzw8V8vBb1Hvl9DgUQKN
-sW4t3nRr8vE3MfL+Bmd3rROk6sKo6oVpLA7txsPfCr3s4PS4bNo1jbEZBysDukSj
-7HfGI+e/lbIBQuOcjWRrpTR2vu7cqYFKJgStP4oNcC/jyh2JuUVc4+3Lt8j8WsSD
-DKGtySqU73ZLVhmcDi42mKQLRDnkqetdQvaDr91EVXrNhXCZpZOksY86K0C8cLt5
-e+0/WTBftQTnSZE/fEOWVm4DtlxJij5HSScAeC3rXd8P+arP7rxlzRoDeospXKfz
-rx0epONpi/LWuzCy8hjtU5+A9Tcl4xD31cEVXxwLMUEIdptt9jJj5/QymsLxW2OJ
-noa2gxXa3OTutq7h4SJPRb1BW9kIFuC8lut7rVMnMUnSKgmtK/YbR1dHeHDMxzdR
-isHDUlPNS+R/6Qh78c0FrUmySfU91YjBg5JuxY0nek+vmY5jHCZYITBItOfBPq21
-30xQwGk0iFKRPoqInoz+sHsJ5+OkecFPXmjBmRBktj8DLfQoemI=
-=w4gL
------END PGP SIGNATURE-----
-
---+CwF57SIeipNOA+L--
