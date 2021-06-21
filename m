@@ -2,88 +2,155 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36F76C48BC2
-	for <linux-tegra@archiver.kernel.org>; Mon, 21 Jun 2021 18:47:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6F42C4743C
+	for <linux-tegra@archiver.kernel.org>; Mon, 21 Jun 2021 20:30:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2195F61358
-	for <linux-tegra@archiver.kernel.org>; Mon, 21 Jun 2021 18:47:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AA0E86115B
+	for <linux-tegra@archiver.kernel.org>; Mon, 21 Jun 2021 20:30:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231680AbhFUStZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 21 Jun 2021 14:49:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40888 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232238AbhFUStW (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 21 Jun 2021 14:49:22 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 4D78B6128C;
-        Mon, 21 Jun 2021 18:47:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1624301226;
-        bh=4ynnjLFGqT7jeVoGFXKGU1jJH+2RzYGaTP4Lm67YYMU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ny0E3T5RoNSybmXudw3iIbk8cMmu/KS9qAH9i8fLgRzSJaZmj2gYncYDR1q4PxVWF
-         b53Dac9NfbCRhF4c/Pu5hqX2OOncLEZdiud6h9ABGt4UKzGoaqoeXkNAkTIikKcjED
-         ZpUyFrsKKDml4i5FpwOV/Jf8nt47FRt25QdyDC5x16cjpaCr2mlwMYA7GTBo+++NBc
-         fjzRr5kPx0J3mIRqqqSHtG23xpNgsE4279mr18+yvS2zd4Y355uLorxYYaBb33HCP7
-         ZfuXWv8qN/8uYwdhiJ+7gcHryjUsEKraB5b9igFkVt7KpP2GxEXbmqRmfv05P5jNdt
-         IpdJ4mewPLiqQ==
-From:   Mark Brown <broonie@kernel.org>
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Liam Girdwood <lgirdwood@gmail.com>
-Cc:     Mark Brown <broonie@kernel.org>, kernel-janitors@vger.kernel.org,
-        Takashi Iwai <tiwai@suse.com>,
-        Svyatoslav Ryhel <clamor95@gmail.com>,
-        Ion Agorria <ion@agorria.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>,
+        id S230291AbhFUUdD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 21 Jun 2021 16:33:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56010 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229890AbhFUUdC (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 21 Jun 2021 16:33:02 -0400
+Received: from mail-ot1-x32d.google.com (mail-ot1-x32d.google.com [IPv6:2607:f8b0:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38633C061574;
+        Mon, 21 Jun 2021 13:30:47 -0700 (PDT)
+Received: by mail-ot1-x32d.google.com with SMTP id i12-20020a05683033ecb02903346fa0f74dso19029063otu.10;
+        Mon, 21 Jun 2021 13:30:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=mQv3Z7D0iMF3aOJrwwNHkFbnP6xGshyBJZOccBybwCI=;
+        b=eOboM+Q6MjsdtqO/ld6VirBXOlQSSHx5jF2cxLvj+n/zJlgEoxSSOyCumPuHukyTHh
+         maN3yjss+MpgTFynXinqj/Tr7DWghQdfwdtAIyxC7i1APrMeNjtmgvgMwrKV4ySpeoDy
+         K8urpj6gMC5qU9SucCN7Km12Xjd+rLcsY40poxaADwyZAJrOTsrQiZn7MrICTBIPVpto
+         zVR/Ez+0SORmbC2Dq35P/fNvYF8cs8s7/KmJeyo5+H2Snl67e1O/p/hRXmKtTtjQp7Fp
+         7Y0WWdvdLoKaJbDsZXBoxabdPWEqlWQBguHDxRSDrcZtHlrUVuYYPwTUt6n6JBuWqW9/
+         h6zw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to;
+        bh=mQv3Z7D0iMF3aOJrwwNHkFbnP6xGshyBJZOccBybwCI=;
+        b=ZVzrkPGdeeBF+ro2S7Y9InuKbxVQkAIm4f5wqPlkoYjjt30f/qOqyL2GhnuVsAOTlf
+         ZHd46qxVZwDq0BKw6aWwO8QvlpmDvw88GewjNKxwfji6qg+N7qb+Q3aOshMdDgbIzIWU
+         1ezZc/712fkfGX5c0n+1xvngfa7z85NmBtjZj4AiHiFefPhN6QhqIFvh6OtCHaEXKZ0R
+         P4ZRH1gUIbq8jhyuYHY0ka4s7LFVC9zo3ANSSbh88buPRbmC3r/8o9jJ+oeaD2Sp3dFj
+         aTCG7KSnMAXBY+F1DkWJV6FJGDfcW44VY3nUhfJOsvTdOv1arGZDzQTSFPBBJPtMtnql
+         8w2g==
+X-Gm-Message-State: AOAM532HSEJZzcT7FleuacKcOlA8BtkaExgUmCdri5CnG654CNbtaobY
+        zMjnVo0L3Qo+PRSIWMTS2KY=
+X-Google-Smtp-Source: ABdhPJy2ZZPf4fuo+WrxWBLKMlQkXf75CFR+UbxKiLrGQ0k0zym8y4pH9vrUQwyXVyCGb8RvHtCQMg==
+X-Received: by 2002:a9d:6f93:: with SMTP id h19mr252183otq.292.1624307446495;
+        Mon, 21 Jun 2021 13:30:46 -0700 (PDT)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id w200sm3814390oie.10.2021.06.21.13.30.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Jun 2021 13:30:46 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date:   Mon, 21 Jun 2021 13:30:44 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Zhang Rui <rui.zhang@intel.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-tegra@vger.kernel.org
-Subject: Re: [PATCH] ASoC: tegra: Fix a NULL vs IS_ERR() check
-Date:   Mon, 21 Jun 2021 19:46:02 +0100
-Message-Id: <162430055263.9224.14507478089189972560.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <YMyjOKFsPe9SietU@mwanda>
-References: <YMyjOKFsPe9SietU@mwanda>
+Subject: Re: [PATCH v3 2/2] hwmon: Support set_trips() of thermal device ops
+Message-ID: <20210621203044.GA631670@roeck-us.net>
+References: <20210621184058.4110-1-digetx@gmail.com>
+ <20210621184058.4110-3-digetx@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210621184058.4110-3-digetx@gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, 18 Jun 2021 16:44:24 +0300, Dan Carpenter wrote:
-> The tegra_machine_parse_phandle() function doesn't return NULL, it returns
-> error pointers.
+On Mon, Jun 21, 2021 at 09:40:58PM +0300, Dmitry Osipenko wrote:
+> Support set_trips() callback of thermal device ops. This allows HWMON
+> device to operatively notify thermal core about temperature changes, which
+> is very handy to have in a case where HWMON sensor is used by CPU thermal
+> zone that performs passive cooling and emergency shutdown on overheat.
+> Thermal core will be able to react faster to temperature changes.
+> 
 
-Applied to
+I think that warrants an explanation why it doesn't matter if the
+code doesn't really set any trip points.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/hwmon/hwmon.c | 32 ++++++++++++++++++++++++++++++++
+>  1 file changed, 32 insertions(+)
+> 
+> diff --git a/drivers/hwmon/hwmon.c b/drivers/hwmon/hwmon.c
+> index fd47ab4e6892..e74dc81e650d 100644
+> --- a/drivers/hwmon/hwmon.c
+> +++ b/drivers/hwmon/hwmon.c
+> @@ -153,8 +153,40 @@ static int hwmon_thermal_get_temp(void *data, int *temp)
+>  	return 0;
+>  }
+>  
+> +static int hwmon_thermal_set_trips(void *data, int low, int high)
+> +{
+> +	struct hwmon_thermal_data *tdata = data;
+> +	struct hwmon_device *hwdev = to_hwmon_device(tdata->dev);
+> +	const struct hwmon_chip_info *chip = hwdev->chip;
+> +	const struct hwmon_channel_info **info = chip->info;
+> +	unsigned int i;
+> +
+> +	if (!chip->ops->write)
+> +		return 0;
+> +
+> +	for (i = 1; info[i] && info[i]->type != hwmon_temp; i++)
+> +		continue;
 
-Thanks!
+Why start with index 1 ? While index 0 is commonly used for chip data,
+that is not mandatory.
 
-[1/1] ASoC: tegra: Fix a NULL vs IS_ERR() check
-      commit: 3aed3ddf9639a4f915984177ff8a2253f3f8acfe
+> +
+> +	if (info[i] && info[i]->config[tdata->index] & HWMON_T_MIN) {
+> +		int err = chip->ops->write(tdata->dev, hwmon_temp,
+> +					   hwmon_temp_min, tdata->index, low);
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+checkpatch will complain here because it expects an empty line after a
+declaration. Since err is used in multiple conditionals, I would suggest
+to declare it once in the function header.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+> +		if (err < 0 && err != -EOPNOTSUPP)
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+"< 0" is unnecessary.
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+> +			return err;
+> +	}
+> +
+> +	if (info[i] && info[i]->config[tdata->index] & HWMON_T_MAX) {
+> +		int err = chip->ops->write(tdata->dev, hwmon_temp,
+> +					   hwmon_temp_max, tdata->index, high);
+> +		if (err < 0 && err != -EOPNOTSUPP)
 
-Thanks,
-Mark
+"< 0" is unnecessary.
+
+> +			return err;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  static const struct thermal_zone_of_device_ops hwmon_thermal_ops = {
+>  	.get_temp = hwmon_thermal_get_temp,
+> +	.set_trips = hwmon_thermal_set_trips,
+>  };
+>  
+>  static void hwmon_thermal_remove_sensor(void *data)
