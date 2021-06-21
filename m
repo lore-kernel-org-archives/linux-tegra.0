@@ -2,63 +2,64 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4B48C4743C
-	for <linux-tegra@archiver.kernel.org>; Mon, 21 Jun 2021 17:13:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B86FC48BC2
+	for <linux-tegra@archiver.kernel.org>; Mon, 21 Jun 2021 17:27:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A0F036102A
-	for <linux-tegra@archiver.kernel.org>; Mon, 21 Jun 2021 17:13:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4BDF46109E
+	for <linux-tegra@archiver.kernel.org>; Mon, 21 Jun 2021 17:27:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230520AbhFURPx (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 21 Jun 2021 13:15:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39658 "EHLO
+        id S231599AbhFUR3X (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 21 Jun 2021 13:29:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42824 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230444AbhFURPw (ORCPT
+        with ESMTP id S231712AbhFUR3N (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 21 Jun 2021 13:15:52 -0400
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CEBE7C061760
-        for <linux-tegra@vger.kernel.org>; Mon, 21 Jun 2021 10:13:36 -0700 (PDT)
-Received: by mail-wr1-x42d.google.com with SMTP id d11so18149678wrm.0
-        for <linux-tegra@vger.kernel.org>; Mon, 21 Jun 2021 10:13:36 -0700 (PDT)
+        Mon, 21 Jun 2021 13:29:13 -0400
+Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DBCCC061574;
+        Mon, 21 Jun 2021 10:26:57 -0700 (PDT)
+Received: by mail-lf1-x132.google.com with SMTP id m21so31453432lfg.13;
+        Mon, 21 Jun 2021 10:26:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=4i6nEUVfh/Y08sl+Bt5V/buNM5eumRmDejjNLtBa3t0=;
-        b=Dhs/CzchoEy1Qd18n03P5M6oqeh73HOJ5bMqv+/Qr5DuxS9vzUpYGKW45m7ZKA1iWV
-         D6hoRxWwAVzZ3yfq8nzB0Qzuhpb+Qf9hP576yTmnMmzIa9tuFOOG8JYdVpN8Wwu3D4WR
-         SbvBDZNP9cq0rBJmd9GjUnYk4pMvXlho/B0V0bQTD4qGR70oqfyyJCpPe0PWme9P+ypZ
-         Iipek0imAwblBt2PnAs6scn5+GzjHy3eU5LH2q+kzbK+udSje5XfkqSgbdigFligtx7H
-         vW1DeOEB806VdbDDx19UNGfVncG9mbVJqMJ4lz9vSRrdKVklCmXsyxfoCyUFQtDC2aTW
-         yZlg==
+        bh=qTJ8d7qLE7Gd/2AFDmVpTLBFC1/hqPXn3WccgyH694U=;
+        b=AxrGHKT+jPS1YjETVrAnz/rOvl3bPkG73k+isXGuIVUPTEA5DcLy7CPLbO0l/K+nB5
+         80NY3RHAYg9xc/5Qg0+FzqBxGSe6NYuY3oDB6eSTVuKxydox2Zgjry8McByJ97w4BMmf
+         rMnWsg3bcd+FKbAyoN70VOd+GChVUNVW+kRf9H4TxREGL1tNUg8X3cXtbMzQ/L6oe60P
+         w+CgoHRFjhDBxs4H5xQAS+09my7YuTnUwGngQLLBTNGdxc7syZOXnn0awA+iN+egGWn6
+         wZGAKVSaMgdlWiACLIs6Kv7fONjFr8jBxVGb3Y8bdQ5YaM0oTVyL/HpBAZT/qdgkzGEJ
+         kB2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=4i6nEUVfh/Y08sl+Bt5V/buNM5eumRmDejjNLtBa3t0=;
-        b=ZZuDPMiZ84c348xmaE0DxKY1RlqA0pkXehz7ImC/Y50PgSr4+SitUvkQ29hO8ko30R
-         Rben37MMAW20ti1wQwiEeHuwnekYuZmDoaJTBq6vy59WtFVFA0UhflMl62kxjB5oQ/r4
-         HsmVwNJCEDTKyYqbqR37SimPQo8i8xO0ciDOIwBHlohCMRc3EvKnabzKcMaTEHpkE8rE
-         0LeqyTCCEWUyxANuflzu+hKk5s2+/tOGxzKzvlSuxFZ6QPzYN8b39+xfDy93j9XYcNQu
-         AYNpHPnF9pzUWQj8oGnf3JyX9+E4tbHyrBGuX3XTJztczV7J/2zsMkKu3L9anF+b9lN0
-         +7OQ==
-X-Gm-Message-State: AOAM530vf3eq/bGFxZeKwD8dlgal0KhU+Hh++mBHHf2MHsFNZBZWujGY
-        PQXFxJ0BTa0M7xguueCUVr9rKvRMDpNovmY4
-X-Google-Smtp-Source: ABdhPJxSoWqFYS/3j+FYJIhz0NY142RhvRcIzSb0atBjmOVMKz6zGh2e6kpvX9Ul3VkFk6qxpN/gdA==
-X-Received: by 2002:a05:6000:1a41:: with SMTP id t1mr29063076wry.175.1624295615215;
-        Mon, 21 Jun 2021 10:13:35 -0700 (PDT)
-Received: from ?IPv6:2a01:e34:ed2f:f020:5ebd:8bd9:d549:4211? ([2a01:e34:ed2f:f020:5ebd:8bd9:d549:4211])
-        by smtp.googlemail.com with ESMTPSA id 9sm197835wmf.3.2021.06.21.10.13.33
+        bh=qTJ8d7qLE7Gd/2AFDmVpTLBFC1/hqPXn3WccgyH694U=;
+        b=BjTFFURMHXLH15RPyTxt+IH7hzWrdzwjvmfnPBBry/cuAPBRk0Mx11QAs1Y1UjBRHi
+         Ni09DtoK7jf1mtpVxm8wQ7WBcMhrqx09Oc5Lq56ww6BbWfsFLcC7G1ndCvUVPjEk5xIU
+         r3T/Ix+zqKGIzTY55VG/RaVjbw/9x+R6PgUDYpP/FLaXbxdv/iFElyrXw6sEdEw/cTIn
+         MwyJCKJVQgB4N6Q5xTM3R0FZJP33GU26BSR8GmV0VW+jKD8M0mZGP95PhhSmzrQ7qWYo
+         QXN5h1sq8C7I1hZ73xh+Ododhg8kmimjhbNXdODCnsIyaKz0js0i6ZCqAsqs8I7a1He/
+         FQMg==
+X-Gm-Message-State: AOAM532UY3KuVHucSuI2FwIA/dfz2Jw8irzSfPnS+D6KGPDIeLSe8u3v
+        bPFJqAEC81PFyEBwMY0wLuZ7MbH42OI=
+X-Google-Smtp-Source: ABdhPJycHCdwyibfOMhKbl7EIjatmizAb1TSn7L2eyr8LlhuBZlslq+1aiqJPmTitjeCyLDm8ai+gA==
+X-Received: by 2002:a19:3846:: with SMTP id d6mr2578677lfj.525.1624296415572;
+        Mon, 21 Jun 2021 10:26:55 -0700 (PDT)
+Received: from [192.168.2.145] (94-29-29-31.dynamic.spd-mgts.ru. [94.29.29.31])
+        by smtp.googlemail.com with ESMTPSA id j5sm1931055lfe.124.2021.06.21.10.26.54
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Jun 2021 10:13:34 -0700 (PDT)
+        Mon, 21 Jun 2021 10:26:55 -0700 (PDT)
 Subject: Re: [PATCH v4 0/6] Add driver for NVIDIA Tegra30 SoC Thermal sensor
-To:     Dmitry Osipenko <digetx@gmail.com>,
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Zhang Rui <rui.zhang@intel.com>,
@@ -73,13 +74,14 @@ To:     Dmitry Osipenko <digetx@gmail.com>,
 Cc:     linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
 References: <20210616190417.32214-1-digetx@gmail.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <e1e3816a-ddf4-be13-0410-0b929f3be60b@linaro.org>
-Date:   Mon, 21 Jun 2021 19:13:33 +0200
+ <e1e3816a-ddf4-be13-0410-0b929f3be60b@linaro.org>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <cdc3d6fe-f2a8-d50c-af11-98ab4f72b713@gmail.com>
+Date:   Mon, 21 Jun 2021 20:26:54 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.8.1
 MIME-Version: 1.0
-In-Reply-To: <20210616190417.32214-1-digetx@gmail.com>
+In-Reply-To: <e1e3816a-ddf4-be13-0410-0b929f3be60b@linaro.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -87,89 +89,39 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+21.06.2021 20:13, Daniel Lezcano пишет:
+> 
+> Hi Dmitry,
+> 
+> I compiled the your series and got these unresolved.
+> 
+> arm-linux-gnueabi-ld: drivers/thermal/tegra/soctherm-fuse.o: in function
+> `tegra_calc_shared_calib':
+> soctherm-fuse.c:(.text+0x60): undefined reference to `tegra_fuse_readl'
+> arm-linux-gnueabi-ld: soctherm-fuse.c:(.text+0xf0): undefined reference
+> to `tegra_fuse_readl'
+> arm-linux-gnueabi-ld: drivers/thermal/tegra/soctherm-fuse.o: in function
+> `tegra_calc_tsensor_calib':
+> soctherm-fuse.c:(.text+0x144): undefined reference to `tegra_fuse_readl'
+> arm-linux-gnueabi-ld: drivers/thermal/tegra/tegra30-tsensor.o: in
+> function `tegra_tsensor_fuse_read_spare':
+> tegra30-tsensor.c:(.text+0x364): undefined reference to `tegra_fuse_readl'
+> arm-linux-gnueabi-ld: drivers/thermal/tegra/tegra30-tsensor.o: in
+> function `tegra_tsensor_probe':
+> tegra30-tsensor.c:(.text+0x874): undefined reference to `tegra_fuse_readl'
+> arm-linux-gnueabi-ld:
+> drivers/thermal/tegra/tegra30-tsensor.o:tegra30-tsensor.c:(.text+0x904):
+> more undefined references to `tegra_fuse_readl' follow
+> make[1]: *** [/home/dlezcano/Work/src/linux/Makefile:1196: vmlinux] Error 1
+> make: *** [/home/dlezcano/Work/src/linux/Makefile:215: __sub-make] Error 2
 
-Hi Dmitry,
+The missing stub was added by [1]. I guess you could take [2] for the
+base since Thierry already sent out PR for 5.14, or we could defer the
+"thermal/drivers/tegra: Correct compile-testing of drivers" patch till
+the next kernel version. Please choose whatever is easier for you.
 
-I compiled the your series and got these unresolved.
+[1]
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=30b44e81772a5caa983000057ce1cd9cb4531647
 
-arm-linux-gnueabi-ld: drivers/thermal/tegra/soctherm-fuse.o: in function
-`tegra_calc_shared_calib':
-soctherm-fuse.c:(.text+0x60): undefined reference to `tegra_fuse_readl'
-arm-linux-gnueabi-ld: soctherm-fuse.c:(.text+0xf0): undefined reference
-to `tegra_fuse_readl'
-arm-linux-gnueabi-ld: drivers/thermal/tegra/soctherm-fuse.o: in function
-`tegra_calc_tsensor_calib':
-soctherm-fuse.c:(.text+0x144): undefined reference to `tegra_fuse_readl'
-arm-linux-gnueabi-ld: drivers/thermal/tegra/tegra30-tsensor.o: in
-function `tegra_tsensor_fuse_read_spare':
-tegra30-tsensor.c:(.text+0x364): undefined reference to `tegra_fuse_readl'
-arm-linux-gnueabi-ld: drivers/thermal/tegra/tegra30-tsensor.o: in
-function `tegra_tsensor_probe':
-tegra30-tsensor.c:(.text+0x874): undefined reference to `tegra_fuse_readl'
-arm-linux-gnueabi-ld:
-drivers/thermal/tegra/tegra30-tsensor.o:tegra30-tsensor.c:(.text+0x904):
-more undefined references to `tegra_fuse_readl' follow
-make[1]: *** [/home/dlezcano/Work/src/linux/Makefile:1196: vmlinux] Error 1
-make: *** [/home/dlezcano/Work/src/linux/Makefile:215: __sub-make] Error 2
-
-
-
-On 16/06/2021 21:04, Dmitry Osipenko wrote:
-> Hi,
-> 
-> This series adds support for the thermal sensor that is found on NVIDIA
-> Tegra30 SoC. Sensor monitors temperature and voltage of the SoC, it also
-> emits signals to the power management and clock controllers that are
-> performing the emergency shut down and the CPU frequency throttling
-> when a pre-programmed temperature levels are reached.
-> 
-> Changelog:
-> 
-> v4: - Removed DIV2 CPU frequency throttling and cooling device part as was
->       suggested by Daniel Lezcano since we need to notify cpufreq about the
->       updated frequency and change the thermal pressure. The thermal pressure
->       change should co-exists with the cpufreq_cooling. This all needs some
->       more thought, so the DIV2 mitigation will come sometime later.
-> 
->     - Added ack from Thierry Reding.
-> 
->     - Changed default TZ trips in the device-tree to the silicon temperature
->       levels, instead of the average device levels.
-> 
-> v3: - No code changes. CC'ed linux-pm, which was previously missed by accident.
->       Not sure how much that is important for the thermal patches, but won't
->       hurt to re-send since only DT binding was reviewed so far.
-> 
-> v2: - Made a very minor improvement to one error message, it now prints
->       number of channel at which error occurred.
-> 
->     - Added r-b from Rob Herring to the binding.
-> 
-> Dmitry Osipenko (6):
->   dt-bindings: thermal: Add binding for Tegra30 thermal sensor
->   thermal: thermal_of: Stop zone device before unregistering it
->   thermal/drivers/tegra: Add driver for Tegra30 thermal sensor
->   ARM: tegra_defconfig: Enable CONFIG_TEGRA30_TSENSOR
->   ARM: multi_v7_defconfig: Enable CONFIG_TEGRA30_TSENSOR
->   ARM: tegra: Add SoC thermal sensor to Tegra30 device-trees
-> 
->  .../thermal/nvidia,tegra30-tsensor.yaml       |  73 ++
->  arch/arm/boot/dts/tegra30.dtsi                |  87 ++-
->  arch/arm/configs/multi_v7_defconfig           |   1 +
->  arch/arm/configs/tegra_defconfig              |   1 +
->  drivers/thermal/tegra/Kconfig                 |   7 +
->  drivers/thermal/tegra/Makefile                |   1 +
->  drivers/thermal/tegra/tegra30-tsensor.c       | 673 ++++++++++++++++++
->  drivers/thermal/thermal_of.c                  |   3 +
->  8 files changed, 842 insertions(+), 4 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/thermal/nvidia,tegra30-tsensor.yaml
->  create mode 100644 drivers/thermal/tegra/tegra30-tsensor.c
-> 
-
-
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+[2]
+https://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git/log/?h=for-5.14/soc
