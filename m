@@ -2,137 +2,88 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9663C49EA7
-	for <linux-tegra@archiver.kernel.org>; Mon, 21 Jun 2021 18:41:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36F76C48BC2
+	for <linux-tegra@archiver.kernel.org>; Mon, 21 Jun 2021 18:47:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 861B460200
-	for <linux-tegra@archiver.kernel.org>; Mon, 21 Jun 2021 18:41:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2195F61358
+	for <linux-tegra@archiver.kernel.org>; Mon, 21 Jun 2021 18:47:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230268AbhFUSnd (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 21 Jun 2021 14:43:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59676 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230057AbhFUSnb (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 21 Jun 2021 14:43:31 -0400
-Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBDA9C06175F;
-        Mon, 21 Jun 2021 11:41:15 -0700 (PDT)
-Received: by mail-lf1-x12c.google.com with SMTP id u13so12508385lfk.2;
-        Mon, 21 Jun 2021 11:41:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=OaHrTHwOZlGiJZp19fuqPfINJsoeOnFyeJ/MKkylnkI=;
-        b=EfIszghJdm21cMreSbQ996P4YHET0dcRSj3dKOVqDInMzRelDwW2na///uju3wbFB4
-         L3NnrpvKinrjb2pK/l/SuBtg5aQNPinZRpOY9mIda+IZS4aFdxtKAfUdA4cpmNIC/TTa
-         XrkUgszFd9zc/OWujPxq6c2dFgnRxP3CZiN/oCvkkHOolOvUawfXW586wlfvnzk+78/O
-         Y+M1pqaCt66DBNmESW4qkSmv4jnAYc7MZ3FlkeTx+In/x2uNXthFjDtOO5fDn+bM0nWq
-         yGzcr1bMU6FylSmEVKPfBi6FoXGdzKlj4BG1n7EYZ2eDEMVTDOkM3MUlI0tWiE2Z7rcS
-         NGuA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=OaHrTHwOZlGiJZp19fuqPfINJsoeOnFyeJ/MKkylnkI=;
-        b=D7/jO2zagXoG1QOdBeDvBCOdIoFxqzJBtlqEpdIGjq14wYf3PjmgMQ7IhB/og46m4g
-         cD/DGmpn56e0RL5qqWPvsM+hm8a4irM2VDaPtRaLUIFyMrX6MLL/B+EJRh/z35VLDmAF
-         ckkMjW99cvUUo72SOsK6uFbj0yqKUT13TU0uHlLgrxAc3kBYUZzD+9mGuHEPMhqSBn/n
-         2RZqlzg6Z7ry2PsgquumilKBeOwoM0agHdElzRw46D8f4UCCuelpBPcOxz1akA7y4pCT
-         FgWyrg33+dDxIhhCp4+TwyuvR6h2xieFWxMi4iV71PG2qhL8dhUpdYPE5CUV0ZuUrdRK
-         m5yQ==
-X-Gm-Message-State: AOAM532ZbDYDC/k6tuTY8IMiMwjeJJka1krJ/q6zZnrWT7Y5XTr2+Esb
-        fV3nDPB2xTfvb09yVPfk3gc=
-X-Google-Smtp-Source: ABdhPJxwJmm4BeibPP0lzIuhx6wMYOcQrZkZUFKCj4OeTFs2ubahQPT6J+uDdEPtnXKz7H2EBRHwFQ==
-X-Received: by 2002:a05:6512:92d:: with SMTP id f13mr15320408lft.186.1624300874353;
-        Mon, 21 Jun 2021 11:41:14 -0700 (PDT)
-Received: from localhost.localdomain (94-29-29-31.dynamic.spd-mgts.ru. [94.29.29.31])
-        by smtp.gmail.com with ESMTPSA id y22sm1950843lfa.145.2021.06.21.11.41.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Jun 2021 11:41:14 -0700 (PDT)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Zhang Rui <rui.zhang@intel.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>
-Cc:     linux-hwmon@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: [PATCH v3 2/2] hwmon: Support set_trips() of thermal device ops
-Date:   Mon, 21 Jun 2021 21:40:58 +0300
-Message-Id: <20210621184058.4110-3-digetx@gmail.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210621184058.4110-1-digetx@gmail.com>
-References: <20210621184058.4110-1-digetx@gmail.com>
+        id S231680AbhFUStZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 21 Jun 2021 14:49:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40888 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232238AbhFUStW (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 21 Jun 2021 14:49:22 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 4D78B6128C;
+        Mon, 21 Jun 2021 18:47:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1624301226;
+        bh=4ynnjLFGqT7jeVoGFXKGU1jJH+2RzYGaTP4Lm67YYMU=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=ny0E3T5RoNSybmXudw3iIbk8cMmu/KS9qAH9i8fLgRzSJaZmj2gYncYDR1q4PxVWF
+         b53Dac9NfbCRhF4c/Pu5hqX2OOncLEZdiud6h9ABGt4UKzGoaqoeXkNAkTIikKcjED
+         ZpUyFrsKKDml4i5FpwOV/Jf8nt47FRt25QdyDC5x16cjpaCr2mlwMYA7GTBo+++NBc
+         fjzRr5kPx0J3mIRqqqSHtG23xpNgsE4279mr18+yvS2zd4Y355uLorxYYaBb33HCP7
+         ZfuXWv8qN/8uYwdhiJ+7gcHryjUsEKraB5b9igFkVt7KpP2GxEXbmqRmfv05P5jNdt
+         IpdJ4mewPLiqQ==
+From:   Mark Brown <broonie@kernel.org>
+To:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Liam Girdwood <lgirdwood@gmail.com>
+Cc:     Mark Brown <broonie@kernel.org>, kernel-janitors@vger.kernel.org,
+        Takashi Iwai <tiwai@suse.com>,
+        Svyatoslav Ryhel <clamor95@gmail.com>,
+        Ion Agorria <ion@agorria.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>,
+        linux-tegra@vger.kernel.org
+Subject: Re: [PATCH] ASoC: tegra: Fix a NULL vs IS_ERR() check
+Date:   Mon, 21 Jun 2021 19:46:02 +0100
+Message-Id: <162430055263.9224.14507478089189972560.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <YMyjOKFsPe9SietU@mwanda>
+References: <YMyjOKFsPe9SietU@mwanda>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Support set_trips() callback of thermal device ops. This allows HWMON
-device to operatively notify thermal core about temperature changes, which
-is very handy to have in a case where HWMON sensor is used by CPU thermal
-zone that performs passive cooling and emergency shutdown on overheat.
-Thermal core will be able to react faster to temperature changes.
+On Fri, 18 Jun 2021 16:44:24 +0300, Dan Carpenter wrote:
+> The tegra_machine_parse_phandle() function doesn't return NULL, it returns
+> error pointers.
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/hwmon/hwmon.c | 32 ++++++++++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
+Applied to
 
-diff --git a/drivers/hwmon/hwmon.c b/drivers/hwmon/hwmon.c
-index fd47ab4e6892..e74dc81e650d 100644
---- a/drivers/hwmon/hwmon.c
-+++ b/drivers/hwmon/hwmon.c
-@@ -153,8 +153,40 @@ static int hwmon_thermal_get_temp(void *data, int *temp)
- 	return 0;
- }
- 
-+static int hwmon_thermal_set_trips(void *data, int low, int high)
-+{
-+	struct hwmon_thermal_data *tdata = data;
-+	struct hwmon_device *hwdev = to_hwmon_device(tdata->dev);
-+	const struct hwmon_chip_info *chip = hwdev->chip;
-+	const struct hwmon_channel_info **info = chip->info;
-+	unsigned int i;
-+
-+	if (!chip->ops->write)
-+		return 0;
-+
-+	for (i = 1; info[i] && info[i]->type != hwmon_temp; i++)
-+		continue;
-+
-+	if (info[i] && info[i]->config[tdata->index] & HWMON_T_MIN) {
-+		int err = chip->ops->write(tdata->dev, hwmon_temp,
-+					   hwmon_temp_min, tdata->index, low);
-+		if (err < 0 && err != -EOPNOTSUPP)
-+			return err;
-+	}
-+
-+	if (info[i] && info[i]->config[tdata->index] & HWMON_T_MAX) {
-+		int err = chip->ops->write(tdata->dev, hwmon_temp,
-+					   hwmon_temp_max, tdata->index, high);
-+		if (err < 0 && err != -EOPNOTSUPP)
-+			return err;
-+	}
-+
-+	return 0;
-+}
-+
- static const struct thermal_zone_of_device_ops hwmon_thermal_ops = {
- 	.get_temp = hwmon_thermal_get_temp,
-+	.set_trips = hwmon_thermal_set_trips,
- };
- 
- static void hwmon_thermal_remove_sensor(void *data)
--- 
-2.30.2
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
+Thanks!
+
+[1/1] ASoC: tegra: Fix a NULL vs IS_ERR() check
+      commit: 3aed3ddf9639a4f915984177ff8a2253f3f8acfe
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
