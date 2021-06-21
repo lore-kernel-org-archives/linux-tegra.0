@@ -2,94 +2,110 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DAFFC4743C
-	for <linux-tegra@archiver.kernel.org>; Mon, 21 Jun 2021 18:30:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7314AC48BC2
+	for <linux-tegra@archiver.kernel.org>; Mon, 21 Jun 2021 18:41:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 171076124B
-	for <linux-tegra@archiver.kernel.org>; Mon, 21 Jun 2021 18:30:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 58E5A60200
+	for <linux-tegra@archiver.kernel.org>; Mon, 21 Jun 2021 18:41:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231725AbhFUScu (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 21 Jun 2021 14:32:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35076 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231176AbhFUScu (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 21 Jun 2021 14:32:50 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id A0B0A6109F;
-        Mon, 21 Jun 2021 18:30:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1624300235;
-        bh=7dNAcBaBB3r3f56b8noXX9KANJx89Luv9hz3RFrfo8Q=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=fJIgmzYL+E+F2mQOyhtGpctz9YKHx/aAG/J/6pbwRIHjqtTqsTt4oIdgn9BkHl21Z
-         Ss3gz4NUOuYaYYYSRSNLn6DxQZIYU8ajzi3pJ1wBn+njHoykHPfl8E6pC0TiV3LdTH
-         X/nCEcBFm0FBQgL38pXpvdQ8xTdymDPTnEhLQccuZWk6vHP8nZJJzxwgbTp6sdIjOe
-         u+ClYAtq7z6Ly0jO8X6P+R6eImkbWDZwmIKllhQBU+2hyWSP4hIQOtJBj0Huzepwgk
-         oHAdHrLtuUrBVg8qE7jHvkfPdPYhH2wrdIFk0O6iJGQWl8XNbTrp7KVLgpgIZsxx0G
-         oPuea9leudQZw==
-Date:   Mon, 21 Jun 2021 13:30:33 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Om Prakash Singh <omp@nvidia.com>
-Cc:     kw@linux.com, vidyas@nvidia.com, lorenzo.pieralisi@arm.com,
-        bhelgaas@google.com, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, linux-tegra@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kthota@nvidia.com, mmaddireddy@nvidia.com
-Subject: Re: [PATCH V2 0/5] Update pcie-tegra194 driver
-Message-ID: <20210621183033.GA3290720@bjorn-Precision-5520>
+        id S230137AbhFUSnc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 21 Jun 2021 14:43:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59668 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230032AbhFUSna (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 21 Jun 2021 14:43:30 -0400
+Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9989C061756;
+        Mon, 21 Jun 2021 11:41:14 -0700 (PDT)
+Received: by mail-lf1-x135.google.com with SMTP id u13so12508278lfk.2;
+        Mon, 21 Jun 2021 11:41:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=rCjRGBTH8ADpERadaop92tDPR/QT7QNlg1YlaywmJB0=;
+        b=arLaxeAmpb8C6Ar+P13BxH6GG1GYxUiibPri0MWT/fm4bbT4x/00xdAtWKQgpRIj8Y
+         rw1/mMn//cZZQXMLx8Gs+k8czUom2uU3yJ0tGt0W8iLU+RGk72Ypm4jfDNjVxMTQBQhd
+         rAOeeTx3HIEWxdm0rtys54AecEKAi6DbAI2gULX3RdenREh825oVeYUpkN20qJVHzDIy
+         Ot2M3ZYm65G8+WjccAI89xD6lYm4V+rArO8nwQdMRpSQDXsN8DmomzkBBDXM36uO+zWJ
+         cLtcT9+7Emzl9cjdu0jfrqFJw5K6JhhF9fTMMaMGpbspD0LgJuz6p/8x2fvget3sPk03
+         zWag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=rCjRGBTH8ADpERadaop92tDPR/QT7QNlg1YlaywmJB0=;
+        b=oFrunvkLXws84G/HAfk4IYQKLkftUsHZwGXUYhoOY4kq1Pu2R3i/R+Ux3pNciwrGFn
+         H24tHD+LdOBMu+NEi0FxWiiiVnvByjiHid/ErFVIS77hS/r338lMNTUBEu3uMFDxhIzP
+         bsK5sg0yySNNMeNB81822+zi326wFLmIHJevpXJ+VwKblTdokrsmG2KGM3o1gKqHbpdA
+         7WHX164pKWvjAQzONseH5jt6F1DfZ23EVRvh2z/j5Z/I21NkW8kNvaTn50wA6WWjgI3x
+         bk7ciKR/cnP10TWxKu2Rxe+twLO3KEE8GP900rzx6RGzGYHk7UytHRCKG+1+KapvzJyw
+         L6Wg==
+X-Gm-Message-State: AOAM532o4aTQtykpGSZ/kzNggZDBtoR+E5hddfPBGiCwQzIm/F4vAKpk
+        Zgqug9iQl+cPIh9Pls/VLYc=
+X-Google-Smtp-Source: ABdhPJwNY1Em83gAncrjMb32cXw0579K8DBHoqShynYRhmbuf57atwgnXK8gXLV7TcmHL8lcre8NbA==
+X-Received: by 2002:a05:6512:13a8:: with SMTP id p40mr15338234lfa.14.1624300873109;
+        Mon, 21 Jun 2021 11:41:13 -0700 (PDT)
+Received: from localhost.localdomain (94-29-29-31.dynamic.spd-mgts.ru. [94.29.29.31])
+        by smtp.gmail.com with ESMTPSA id y22sm1950843lfa.145.2021.06.21.11.41.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Jun 2021 11:41:12 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Zhang Rui <rui.zhang@intel.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>
+Cc:     linux-hwmon@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: [PATCH v3 0/2] Support temperature trips by HWMON core and LM90 driver
+Date:   Mon, 21 Jun 2021 21:40:56 +0300
+Message-Id: <20210621184058.4110-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210606082204.14222-1-omp@nvidia.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Sun, Jun 06, 2021 at 01:51:59PM +0530, Om Prakash Singh wrote:
-> Update pcie-tegra194 driver with bug fixing and cleanup
-> 
-> Changes from V1->V2
->   PCI: tegra: Fix handling BME_CHGED event
-> 	- Update variable naming
->   PCI: tegra: Fix MSI-X programming
-> 	- No change
->   PCI: tegra: Disable interrupts before entering L2
-> 	- Rephrase the commit message
->   PCI: tegra: Don't allow suspend when Tegra PCIe is in EP mode
-> 	- Update return value to -ENOTSUPP.
->   PCI: tegra: Cleanup unused code
-> 	- No Change
-> 
-> V1:
-> http://patchwork.ozlabs.org/project/linux-pci/patch/20210527115246.20509-2-omp@nvidia.com/
-> 
-> Om Prakash Singh (5):
->   PCI: tegra: Fix handling BME_CHGED event
->   PCI: tegra: Fix MSI-X programming
->   PCI: tegra: Disable interrupts before entering L2
->   PCI: tegra: Don't allow suspend when Tegra PCIe is in EP mode
->   PCI: tegra: Cleanup unused code
+Hi,
 
-Reviewed-by: Bjorn Helgaas <bhelgaas@google.com>
+It's typical for embedded devices to use LM90-compatible sensor for
+monitoring of CPU core and skin temperatures. The sensor is often
+used by thermal zone that performs passive cooling and emergency
+shutdown on overheat, hence it's more optimal to use interrupt for
+a faster notification about temperature changes. Thermal framework
+provides set_trips() callback for programming of temperature trips,
+let's support it by HWMON.
 
-But please update the subject lines to be:
+Changelog:
 
-  PCI: tegra194: ...
+v3: - Improved patch that fixes integer overflows by fixing the hysteresis
+      underflow and improving the commit message, telling that min/max/crit
+      fixes are only related to the LM99 sensor. Thanks to Guenter Roeck
+      for the suggestion.
 
-to differentiate this driver from drivers/pci/controller/pci-tegra.c.
-In the past we've used the "PCI: tegra:" prefix for both, but that's
-confusing.
+v2: - Reworked set_trips() by making it generic. Now callback invokes
+      the min/max temperature write method directly, instead of using
+      additional new hwmon callback. This was suggested by Guenter Roeck.
 
-I think Lorenzo will take care of this series, but he's been away for
-a week or so and will take a bit to catch up.
+    - Added new patch that fixes integer overflows in the LM90 driver.
+      The fixes are necessary for supporting set_trips().
 
->  drivers/pci/controller/dwc/pcie-tegra194.c | 36 +++++++++++++---------
->  1 file changed, 22 insertions(+), 14 deletions(-)
-> 
-> -- 
-> 2.17.1
-> 
+Dmitry Osipenko (2):
+  hwmon: (lm90) Prevent integer underflows of temperature calculations
+  hwmon: Support set_trips() of thermal device ops
+
+ drivers/hwmon/hwmon.c | 32 ++++++++++++++++++++++++++++++++
+ drivers/hwmon/lm90.c  |  9 +++++++++
+ 2 files changed, 41 insertions(+)
+
+-- 
+2.30.2
+
