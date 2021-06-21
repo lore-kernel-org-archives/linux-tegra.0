@@ -4,147 +4,133 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CE08C4743C
-	for <linux-tegra@archiver.kernel.org>; Mon, 21 Jun 2021 10:59:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2F3FC48BC2
+	for <linux-tegra@archiver.kernel.org>; Mon, 21 Jun 2021 11:44:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EB7A6610CA
-	for <linux-tegra@archiver.kernel.org>; Mon, 21 Jun 2021 10:59:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B34426109E
+	for <linux-tegra@archiver.kernel.org>; Mon, 21 Jun 2021 11:44:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229663AbhFULBu (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 21 Jun 2021 07:01:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39064 "EHLO
+        id S229611AbhFULqg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 21 Jun 2021 07:46:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48996 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229641AbhFULBt (ORCPT
+        with ESMTP id S229487AbhFULqg (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 21 Jun 2021 07:01:49 -0400
-Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99B90C061574;
-        Mon, 21 Jun 2021 03:59:34 -0700 (PDT)
-Received: by mail-ed1-x52a.google.com with SMTP id h2so4797683edt.3;
-        Mon, 21 Jun 2021 03:59:34 -0700 (PDT)
+        Mon, 21 Jun 2021 07:46:36 -0400
+Received: from mail-lj1-x231.google.com (mail-lj1-x231.google.com [IPv6:2a00:1450:4864:20::231])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F78EC061574;
+        Mon, 21 Jun 2021 04:44:21 -0700 (PDT)
+Received: by mail-lj1-x231.google.com with SMTP id u20so5001398ljl.13;
+        Mon, 21 Jun 2021 04:44:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=mQxqixLK5rjqMvfwNndLJU9kpq2UUMss0IdRDqE4Nyc=;
-        b=YxZQAdUUkLMQ2M2mYkUfSjDJ+SB9P+64CPFg3uK5hM1E/C6K8NmCvjI6fxDHBrBoe5
-         Lq7cJ78pC6eJoQL/iMslWnzhkAluJRJRKlpXrcHJnAUBY4LLp/MkPZU7sYhkLRFqBEPl
-         0uRZq36q9MKx0pTNYdZeSNZVZbFJ3t7QfDM1AYpc6XcFG9PqXhyyIxdCa5GYj1KE51gX
-         CERelqx0rdtwMVSq94UjUjpVTG8H0AvhhKV8qm464N8P+VLib7JBniwt5Gxc5ZaGVkw8
-         lQDzEpiPMwHEZaSZ1PmHvgWOeshz1XWPFZ9zBPPsG67Jh3+Her1tkKd/DUdiLjAtUvJM
-         joSA==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=TvnTnGnSvT/wzcRtCIQ6B7dOOoTU5ysPY7rP65LBPcY=;
+        b=NXGg0c7craxUcqNhRaT+jQw2x5ROQqdt5x2dBCqXs2jNFOEy/YGap3LnXP1YwcUAjM
+         5G01dyQKmz25sWNdAzoECLk94HKhYL3CSlwl8Sb8Cr9/Z0uIcXA+uKLE2DXZ7xzJGgCh
+         LpexwTncTGfEFCD0q83Dbcor+Aao2Jhbtym/jCGzjruRUIg3QuWH5NboNFiUrYIoVAwS
+         QALcOuU0LGWRYtO5ZSu1YTuK0vb0SsavpdHeIWe3owroU6nnG93Oc0/DWQ1hga5vuhod
+         NU/eTkw/kA3mLYrsFDCJqSfxEQNpeBZEQpZwvqyDS/vaIJtMJ+IuIpl0bSd4qj0nex/T
+         JDjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=mQxqixLK5rjqMvfwNndLJU9kpq2UUMss0IdRDqE4Nyc=;
-        b=njVvNvWBWgtdZ4Zc1jjo/ZF+k+3FXSkkPtDGHEfIuLP+Cg8Q9uCnfWcBTBgSvJIMSs
-         spH7Wi3g8Umr3zNOgt84mH79d/Mtcq9IJBJTn/n8zKcsV2lXDfYqv1X6M5DaRDhtHH9/
-         UiXbotFVdvKNAhqNhmlFpb35u/y8F/X7RL0y1WBOBRnstIadJxdk3WaxEMiWw0P1bgsy
-         YXt+l0h06hjYfLNU0p9Un549obS2D+RHtnaIa78e28HEEss+KGkwPDp6d1hLDpjx15Gy
-         oi04iO7HjJv1IAtdz234B6p0Abkz1bhwS3rUpN06abQEvh9Si9QhlUeGy799pSpvdvXa
-         OXjQ==
-X-Gm-Message-State: AOAM531ZSS2Xkjy6w9PUPPET8Jm84LZJ+AnSx4Dx8slY5KBeboBZiaJo
-        bRz/+oQ1c4cgV4bUWeq8B7w=
-X-Google-Smtp-Source: ABdhPJygm2GSM+8x1mA8AMigPK6YI6mwpzcBwg47WwZ0gmXyzshqwUTK6KliNuLXNpTFL6h27g8Z5Q==
-X-Received: by 2002:a50:fd1a:: with SMTP id i26mr6912086eds.181.1624273173262;
-        Mon, 21 Jun 2021 03:59:33 -0700 (PDT)
-Received: from localhost ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id c15sm7817001edu.19.2021.06.21.03.59.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Jun 2021 03:59:32 -0700 (PDT)
-Date:   Mon, 21 Jun 2021 13:01:28 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Dmitry Osipenko <digetx@gmail.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=TvnTnGnSvT/wzcRtCIQ6B7dOOoTU5ysPY7rP65LBPcY=;
+        b=QWYmaQInwfwqnhYUSyvdH5YTcd7RzvpRypRU83/jrktqfGAjeu6Aibx9GrlCt9izfy
+         C0W6TjUwAl7Ok6vlN+kQFEi2XkSNVuUrJsZmidQhqza+/6SfygshwlYqMmyThT68H6z1
+         3qbax7qlU1HNTTWLZQP554jP3KTs5YfFNWBawXWIoWS5OLPrSNdufBMVYdCHAAIEF8ZW
+         gR41LVgdwNyiHZfL3vSGtFfELW8vDiz7dXMrMbn5hDKdmnTyTh1w5clNdfCXyEc5Vvhg
+         YQZAeOH9wg8UpyJneOTI3WoCq4unfB2dcm1aventCnGstIyQavgiDWFPwL2AvMgJqoL+
+         UE4A==
+X-Gm-Message-State: AOAM532F4mwuf/q9+sN/0fGV7dQF9JI56wwORmrhAmRx4F/ex6REPfe0
+        b6FbXMbGYGMy2pyVTeG6twY=
+X-Google-Smtp-Source: ABdhPJzZqNE1v82IJt68up+rW8SvYARB7SxPKZ+9ubQvwMGy0eOKEOsPIa0ETY98RpNKHEL+/717Ng==
+X-Received: by 2002:a05:651c:236:: with SMTP id z22mr5920364ljn.106.1624275859324;
+        Mon, 21 Jun 2021 04:44:19 -0700 (PDT)
+Received: from [192.168.2.145] (94-29-29-31.dynamic.spd-mgts.ru. [94.29.29.31])
+        by smtp.googlemail.com with ESMTPSA id z4sm2085643lji.61.2021.06.21.04.44.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Jun 2021 04:44:19 -0700 (PDT)
+Subject: Re: [PATCH v18 0/2] Add memory bandwidth management to NVIDIA Tegra
+ DRM driver
+To:     Thierry Reding <thierry.reding@gmail.com>
 Cc:     linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
         linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
         Matt Merhar <mattmerhar@protonmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Peter Geis <pgwipeout@gmail.com>,
         Nicolas Chauvet <kwizart@gmail.com>,
-        =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
-Subject: Re: [PATCH v18 0/2] Add memory bandwidth management to NVIDIA Tegra
- DRM driver
-Message-ID: <YNBxiFXMS9rfT93c@orome.fritz.box>
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
 References: <20210601042108.1942-1-digetx@gmail.com>
  <8accfe1e-fc48-21ca-f7c6-bd2d60162e6d@gmail.com>
  <50912a57-aa43-58b0-02d2-6928578d6286@gmail.com>
+ <YNBxiFXMS9rfT93c@orome.fritz.box>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <af058fc3-8696-a8f9-b52d-8e1b2ee760c3@gmail.com>
+Date:   Mon, 21 Jun 2021 14:43:06 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="hHIGeTg/3zFQR6Mt"
-Content-Disposition: inline
-In-Reply-To: <50912a57-aa43-58b0-02d2-6928578d6286@gmail.com>
-User-Agent: Mutt/2.0.7 (481f3800) (2021-05-04)
+In-Reply-To: <YNBxiFXMS9rfT93c@orome.fritz.box>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+21.06.2021 14:01, Thierry Reding пишет:
+> On Mon, Jun 21, 2021 at 07:19:15AM +0300, Dmitry Osipenko wrote:
+>> 07.06.2021 01:40, Dmitry Osipenko пишет:
+>>> 01.06.2021 07:21, Dmitry Osipenko пишет:
+>>>> This series adds memory bandwidth management to the NVIDIA Tegra DRM driver,
+>>>> which is done using interconnect framework. It fixes display corruption that
+>>>> happens due to insufficient memory bandwidth.
+>>>>
+>>>> Changelog:
+>>>>
+>>>> v18: - Moved total peak bandwidth from CRTC state to plane state and removed
+>>>>        dummy plane bandwidth state initialization from T186+ plane hub. This
+>>>>        was suggested by Thierry Reding to v17.
+>>>>
+>>>>      - I haven't done anything about the cursor's plane bandwidth which
+>>>>        doesn't contribute to overlapping bandwidths for a small sized
+>>>>        window because it works okay as-is.
+>>>
+>>> Thierry, will you take these patches for 5.14?
+>>>
+>>
+>> The display controller does _NOT_WORK_ properly without bandwidth
+>> management.
+> 
+> That's surprising. So either it has never worked before (which I think
+> I'd know) or something has caused this regression recently. In the
+> latter case we need to identify what that was and revert (or fix) it.
 
---hHIGeTg/3zFQR6Mt
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The problem is caused by the support of dynamic memory frequency scaling
+which does a good job at keeping memory in a low power state during idle
+time. So display controller may not get enough bandwidth at the start of
+scanout if it won't request BW beforehand. This problem existed for many
+years on T124 and now T20/30 are also affected. The DC of T20 is the
+least tolerant to memory bandwidth troubles.
 
-On Mon, Jun 21, 2021 at 07:19:15AM +0300, Dmitry Osipenko wrote:
-> 07.06.2021 01:40, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > 01.06.2021 07:21, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> >> This series adds memory bandwidth management to the NVIDIA Tegra DRM d=
-river,
-> >> which is done using interconnect framework. It fixes display corruptio=
-n that
-> >> happens due to insufficient memory bandwidth.
-> >>
-> >> Changelog:
-> >>
-> >> v18: - Moved total peak bandwidth from CRTC state to plane state and r=
-emoved
-> >>        dummy plane bandwidth state initialization from T186+ plane hub=
-=2E This
-> >>        was suggested by Thierry Reding to v17.
-> >>
-> >>      - I haven't done anything about the cursor's plane bandwidth which
-> >>        doesn't contribute to overlapping bandwidths for a small sized
-> >>        window because it works okay as-is.
-> >=20
-> > Thierry, will you take these patches for 5.14?
-> >=20
->=20
-> The display controller does _NOT_WORK_ properly without bandwidth
-> management.
+This problem is not critical, but it hurts user experience since high
+resolution modes may not work at all and display output may become
+distorted, requiring a DC reset.
 
-That's surprising. So either it has never worked before (which I think
-I'd know) or something has caused this regression recently. In the
-latter case we need to identify what that was and revert (or fix) it.
+>> Can we get this patch into 5.14? What is the problem?
+> 
+> There was not enough time to review and test this, so I didn't feel
+> comfortable picking it up so close to the -rc6 cut-off. I plan to pick
+> this up early in the v5.14 release cycle and target v5.15.
 
-> Can we get this patch into 5.14? What is the problem?
-
-There was not enough time to review and test this, so I didn't feel
-comfortable picking it up so close to the -rc6 cut-off. I plan to pick
-this up early in the v5.14 release cycle and target v5.15.
-
-Thierry
-
---hHIGeTg/3zFQR6Mt
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmDQcYQACgkQ3SOs138+
-s6HM5Q//eNrrfdv1Eha+kmKoOay07IzXHohR56bITStHor3M0uzvNVZaSCcADjl4
-FpHEAIfe2FuS41Y81iUZqV3PmRNXloneCz4vzgFVkmz8poeq5aPwiQlsSPEzRawt
-UJbyYSGTUhtM8GvqxW6TL47M8wYCYND7bTp+GIh45nGPSuZlGIhT4Qp9zqfxARn7
-AmuA/lUkHxT5krTo1Sx9PfTENLPxMikM4MdahTnro0S1WAOqWaudqnWidV81jA2j
-pAektGCfs5uanFq8nOjpO4/AkHmYfq1FSOS0ZpYn2eyhDDK9BDPLuW4L3ithBl1o
-r+vqwedj/xAPeOWxha6JwEvMwhRReZHN0/uZTlWDnqvAVgVFrptefGKo7V355Brw
-NRgJrJFCdoCW8m2FntrRCoxTqDy0v9h+607vD3myk9pyD94IZ7SeKEwyh31vKls3
-OwIGQEVPgyDXoSolj/rG7xwF2vDN+OaW+hidqmuM3p5xpjOqwToJ996s0F0XuUc1
-x0uKQ5+jnuRH132Nn2K73OBFzBS6Le/h1N/DLtxOhq1L3VcZczRx9MYDR5aT6p5r
-Pug+Byyy3Qx0TRDUq6P+bJGTHu3di+ty0Rvrd/LdbTCXHNNctN/N95ZUseeUsG1E
-RnN2FwphYn08qZ5QKGWesnLj4+RJHVjH+c8PpXjyaj2FNXyvsZU=
-=NJyS
------END PGP SIGNATURE-----
-
---hHIGeTg/3zFQR6Mt--
+Thank you for the explanation! It's not uncommon to forget about
+patches, so the silence worries me. I hoped that both the dynamic freq
+scaling and display BW support would be merged around the same time, but
+apparently we got a disconnect here.
