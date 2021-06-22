@@ -7,67 +7,67 @@ X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31049C49EBC
-	for <linux-tegra@archiver.kernel.org>; Tue, 22 Jun 2021 14:10:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1C45C49EB9
+	for <linux-tegra@archiver.kernel.org>; Tue, 22 Jun 2021 14:10:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1BA1561378
-	for <linux-tegra@archiver.kernel.org>; Tue, 22 Jun 2021 14:10:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A237E61380
+	for <linux-tegra@archiver.kernel.org>; Tue, 22 Jun 2021 14:10:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231791AbhFVOMm (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 22 Jun 2021 10:12:42 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:37064 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231603AbhFVOMl (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
+        id S231759AbhFVOMl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
         Tue, 22 Jun 2021 10:12:41 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:37030 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231589AbhFVOMi (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 22 Jun 2021 10:12:38 -0400
 Received: from imap.suse.de (imap-alt.suse-dmz.suse.de [192.168.254.47])
         (using TLSv1.2 with cipher ECDHE-ECDSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 7209321999;
-        Tue, 22 Jun 2021 14:10:23 +0000 (UTC)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 7736F2197A;
+        Tue, 22 Jun 2021 14:10:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1624371023; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1624371021; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=fAA+PSWAGMC7Oc/TNne06PabP9x4guG85Mcb8reLWzc=;
-        b=Gp0Bsiuk4/omIcKqd5q6F2LBtT4st3uVxxa8DM1tglgjp78584hhLqjybx/uGohvgn1qsf
-        gN1u8AbfgI1j4egBO71WdW/8RgqNkvh9Cg74/OQi6yUFV7i3MB29iSuPe8anaj2HW/dzlE
-        VIJGuPBokrIDLomYMP7kE0j4hDDKCaE=
+        bh=eQTWdf0/PIeqR+OtvVI1Ry57+82jitavcgCSlPgIzZQ=;
+        b=c7b4AXAcGH/bAEXw8Ghdu9GTFduB5gY2x5HgddK57C70i3PzdLsD10Kma1Bsx2uRhyPeJs
+        20Co2J3mBbYTWSrbUYPpaeU5fYavZOQA40S4OBWL0ejv7GcR98fMG3NU/VWy4DuzkIYAkL
+        nxUBP8lCfiY3hSBu0xHc1E3lIQFizYs=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1624371023;
+        s=susede2_ed25519; t=1624371021;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=fAA+PSWAGMC7Oc/TNne06PabP9x4guG85Mcb8reLWzc=;
-        b=aN4UiTeiTCThMbcT4yve2DrHPP1jCJ9kpS7pBurA97V3ZyMD8jRfMjQepu2Jtq2YGDS8Ze
-        Axfl3/TkiFL2xfDQ==
+        bh=eQTWdf0/PIeqR+OtvVI1Ry57+82jitavcgCSlPgIzZQ=;
+        b=6r2l44Ff6BoeQLlNn5A7fG60gW+AQ0BfYu1c25LDL0anTrO6DXvbOOhj//R7nLdH1pJHXi
+        SWYkAelMz0htb9Dg==
 Received: from imap3-int (imap-alt.suse-dmz.suse.de [192.168.254.47])
-        by imap.suse.de (Postfix) with ESMTP id 79AAA118DD;
-        Tue, 22 Jun 2021 14:10:22 +0000 (UTC)
+        by imap.suse.de (Postfix) with ESMTP id 7A128118DD;
+        Tue, 22 Jun 2021 14:10:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1624371023; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1624371021; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=fAA+PSWAGMC7Oc/TNne06PabP9x4guG85Mcb8reLWzc=;
-        b=Gp0Bsiuk4/omIcKqd5q6F2LBtT4st3uVxxa8DM1tglgjp78584hhLqjybx/uGohvgn1qsf
-        gN1u8AbfgI1j4egBO71WdW/8RgqNkvh9Cg74/OQi6yUFV7i3MB29iSuPe8anaj2HW/dzlE
-        VIJGuPBokrIDLomYMP7kE0j4hDDKCaE=
+        bh=eQTWdf0/PIeqR+OtvVI1Ry57+82jitavcgCSlPgIzZQ=;
+        b=c7b4AXAcGH/bAEXw8Ghdu9GTFduB5gY2x5HgddK57C70i3PzdLsD10Kma1Bsx2uRhyPeJs
+        20Co2J3mBbYTWSrbUYPpaeU5fYavZOQA40S4OBWL0ejv7GcR98fMG3NU/VWy4DuzkIYAkL
+        nxUBP8lCfiY3hSBu0xHc1E3lIQFizYs=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1624371023;
+        s=susede2_ed25519; t=1624371021;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=fAA+PSWAGMC7Oc/TNne06PabP9x4guG85Mcb8reLWzc=;
-        b=aN4UiTeiTCThMbcT4yve2DrHPP1jCJ9kpS7pBurA97V3ZyMD8jRfMjQepu2Jtq2YGDS8Ze
-        Axfl3/TkiFL2xfDQ==
+        bh=eQTWdf0/PIeqR+OtvVI1Ry57+82jitavcgCSlPgIzZQ=;
+        b=6r2l44Ff6BoeQLlNn5A7fG60gW+AQ0BfYu1c25LDL0anTrO6DXvbOOhj//R7nLdH1pJHXi
+        SWYkAelMz0htb9Dg==
 Received: from director2.suse.de ([192.168.254.72])
         by imap3-int with ESMTPSA
-        id UEvjHE7v0WD3UAAALh3uQQ
-        (envelope-from <tzimmermann@suse.de>); Tue, 22 Jun 2021 14:10:22 +0000
+        id IAvvHEzv0WD3UAAALh3uQQ
+        (envelope-from <tzimmermann@suse.de>); Tue, 22 Jun 2021 14:10:20 +0000
 From:   Thomas Zimmermann <tzimmermann@suse.de>
 To:     daniel@ffwll.ch, airlied@linux.ie, alexander.deucher@amd.com,
         christian.koenig@amd.com, Xinhui.Pan@amd.com,
@@ -100,9 +100,9 @@ Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
         linux-stm32@st-md-mailman.stormreply.com,
         linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
         Thomas Zimmermann <tzimmermann@suse.de>
-Subject: [PATCH v2 18/22] drm/tidss: Don't use struct drm_device.irq_enabled
-Date:   Tue, 22 Jun 2021 16:09:58 +0200
-Message-Id: <20210622141002.11590-19-tzimmermann@suse.de>
+Subject: [PATCH v2 16/22] drm/sun4i: Don't set struct drm_device.irq_enabled
+Date:   Tue, 22 Jun 2021 16:09:56 +0200
+Message-Id: <20210622141002.11590-17-tzimmermann@suse.de>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20210622141002.11590-1-tzimmermann@suse.de>
 References: <20210622141002.11590-1-tzimmermann@suse.de>
@@ -113,27 +113,26 @@ List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 The field drm_device.irq_enabled is only used by legacy drivers
-with userspace modesetting. Don't use it in tidss.
+with userspace modesetting. Don't set it in sun4i.
 
 Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
 ---
- drivers/gpu/drm/tidss/tidss_irq.c | 3 ---
- 1 file changed, 3 deletions(-)
+ drivers/gpu/drm/sun4i/sun4i_drv.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/tidss/tidss_irq.c b/drivers/gpu/drm/tidss/tidss_irq.c
-index a5ec7931ef6b..2ed3e3296776 100644
---- a/drivers/gpu/drm/tidss/tidss_irq.c
-+++ b/drivers/gpu/drm/tidss/tidss_irq.c
-@@ -57,9 +57,6 @@ irqreturn_t tidss_irq_handler(int irq, void *arg)
- 	unsigned int id;
- 	dispc_irq_t irqstatus;
+diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/sun4i_drv.c
+index af335f58bdfc..570f3af25e86 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_drv.c
++++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
+@@ -97,8 +97,6 @@ static int sun4i_drv_bind(struct device *dev)
+ 	if (ret)
+ 		goto cleanup_mode_config;
  
--	if (WARN_ON(!ddev->irq_enabled))
--		return IRQ_NONE;
+-	drm->irq_enabled = true;
 -
- 	irqstatus = dispc_read_and_clear_irqstatus(tidss->dispc);
- 
- 	for (id = 0; id < tidss->num_crtcs; id++) {
+ 	/* Remove early framebuffers (ie. simplefb) */
+ 	ret = drm_aperture_remove_framebuffers(false, "sun4i-drm-fb");
+ 	if (ret)
 -- 
 2.32.0
 
