@@ -2,100 +2,107 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC06EC2B9F4
-	for <linux-tegra@archiver.kernel.org>; Tue, 22 Jun 2021 13:21:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A214C2B9F4
+	for <linux-tegra@archiver.kernel.org>; Tue, 22 Jun 2021 13:42:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 975C661002
-	for <linux-tegra@archiver.kernel.org>; Tue, 22 Jun 2021 13:21:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1E6A461370
+	for <linux-tegra@archiver.kernel.org>; Tue, 22 Jun 2021 13:42:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229907AbhFVNXv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 22 Jun 2021 09:23:51 -0400
-Received: from zg8tmty1ljiyny4xntqumjca.icoremail.net ([165.227.154.27]:36122
-        "HELO zg8tmty1ljiyny4xntqumjca.icoremail.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with SMTP id S229835AbhFVNXv (ORCPT
+        id S230381AbhFVNom (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 22 Jun 2021 09:44:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34714 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230102AbhFVNom (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 22 Jun 2021 09:23:51 -0400
+        Tue, 22 Jun 2021 09:44:42 -0400
+Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ADA63C061574;
+        Tue, 22 Jun 2021 06:42:25 -0700 (PDT)
+Received: by mail-ed1-x529.google.com with SMTP id n20so23721913edv.8;
+        Tue, 22 Jun 2021 06:42:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fudan.edu.cn; s=dkim; h=Received:From:To:Cc:Subject:Date:
-        Message-Id; bh=ZOVCmjtN4hOBQh1DKf9a6KHhvEzyeUUkbIct1IDWLiU=; b=o
-        0C6D4ELRgG6ezFpazEo5UyYUEKf/zRbpI3dP8ESlP+cwwx4wuwIbzF16px3SF8IY
-        gSE5SDJAmnfbzLW9xAqVh6kFb40R+prtH2s9jP1c4CZv9Lux/omCi5tGG6PD3RZt
-        PygbDfFHk+fDQUFn1pDqzSkS04QfwL1h2h2WSbMNsA=
-Received: from ubuntu (unknown [10.177.89.109])
-        by app1 (Coremail) with SMTP id XAUFCgAnLy+h49FgJZUUAA--.20132S3;
-        Tue, 22 Jun 2021 21:20:33 +0800 (CST)
-From:   Jiajun Cao <jjcao20@fudan.edu.cn>
-Cc:     yuanxzhang@fudan.edu.cn, Jiajun Cao <jjcao20@fudan.edu.cn>,
-        Xin Tan <tanxin.ctf@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Mohan Kumar <mkumard@nvidia.com>,
-        Peter Geis <pgwipeout@gmail.com>, alsa-devel@alsa-project.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] pci: hda: Add IRQ check for platform_get_irq()
-Date:   Tue, 22 Jun 2021 21:19:42 +0800
-Message-Id: <20210622131947.94346-1-jjcao20@fudan.edu.cn>
-X-Mailer: git-send-email 2.17.1
-X-CM-TRANSID: XAUFCgAnLy+h49FgJZUUAA--.20132S3
-X-Coremail-Antispam: 1UD129KBjvdXoWrtr4rXryUuF1DJr1DtF1fWFg_yoWDXwb_Kw
-        4xZwn7u395Gwn7tFn3Kwn3Xr17Jw40kr12g34xtF4Iga9Igr40qry5ArnxCFWxWrs3tF47
-        Crn2yrsavry3KjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUIcSsGvfJTRUUUbSAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-        6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-        A2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
-        6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-        Cq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
-        0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr
-        1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IE
-        rcIFxwACI402YVCY1x02628vn2kIc2xKxwCY02Avz4vE-syl42xK82IYc2Ij64vIr41l4I
-        8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AK
-        xVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MI8E62xC7I0kMIIYrxkI7VAKI48JMIIF0x
-        vE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE
-        42xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2js
-        IEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0pRcAw7UUUUU=
-X-CM-SenderInfo: isqsiiasuqikmw6i3vldqovvfxof0/
-To:     unlisted-recipients:; (no To-header on input)
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=rYbyIihRvo72ig9gf4wBfLcqKtLrAdcnI5ji/ZLlHA0=;
+        b=cz/qeC3hhIw6O72ATzXg8SJFas4+uG7NerP9nsBN1hqKF49s2j+/tRrsXQQwlu0g8B
+         3/IxtlrisFzly4q418bZx9bWVbaCQvXSpybETrznd36f/jqLp6Idg+FolubhzR5d7hGV
+         mb1Fnr1Vu3JyCWq6D6IahilNZ//ngMQKpQiJwtdNnHJtYA/DhXoNWmA4+7sS3f+mkTho
+         bGHNlqWKFBXukAvdwTBYJ9xuEsuqtE4nvLhY9enY3Sm6fduWQ9dq7Jf6m61RP+ocsSCS
+         ElwvcCtSafGqxCIV36r1kr9O5DOHQ2dcnPue9WX+/RyxniDkYZMGqwKE9RDmpXBM6nbT
+         2NBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=rYbyIihRvo72ig9gf4wBfLcqKtLrAdcnI5ji/ZLlHA0=;
+        b=c+4sIGaNycxmI9IKlwr/AdhT9wWMJyGM8TmctqQwLAM/oxWjz6G/qTOZS3gKmaSDuk
+         6fXYudRUxuk2KF+rlfNtMOaB8OvsM+ljDLIpHNvG/edMGl28bmwnTAP4soaQ08JWlrbW
+         Sse6n1onF9jc2MLzbamAjrQ83tP57oSq5tHatctUeyl6+gDm9FB8MuYq2GPc1kduNcnO
+         /HeyNtp5RQDAlYwv9vfjZ703I04U6gSpqr0bhZ1ol1Y0Tuno4YpOLPT4wkKSHDYC4dCb
+         0XZDJYTkHUZCCAH081UmY4ARXFcsbBO9Ouksm0MyD69qMCVuVqNNVRBB+dY2LHd3u52B
+         qiQA==
+X-Gm-Message-State: AOAM533MUeqQPhY2TT0/VXSxJX/XHfeJgjf7iJtQEzbK+OYvwjvpLAvT
+        GB5HaFMhCkT18SnSc9mXSlM=
+X-Google-Smtp-Source: ABdhPJwnizRCabvI0mSiesvRo3MpO3nMO5cL683gtSg8a7tEyYyLLY7pm/WXZzFs8FrDmKTErwT1eA==
+X-Received: by 2002:aa7:c845:: with SMTP id g5mr5131917edt.306.1624369344211;
+        Tue, 22 Jun 2021 06:42:24 -0700 (PDT)
+Received: from localhost ([62.96.65.119])
+        by smtp.gmail.com with ESMTPSA id b25sm12386888edv.9.2021.06.22.06.42.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Jun 2021 06:42:23 -0700 (PDT)
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Jon Hunter <jonathanh@nvidia.com>,
+        Rob Herring <robh+dt@kernel.org>, linux-tegra@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: [PATCH] arm64: tegra: Fix compatible string for Tegra132 CPUs
+Date:   Tue, 22 Jun 2021 15:44:22 +0200
+Message-Id: <20210622134422.3869451-1-thierry.reding@gmail.com>
+X-Mailer: git-send-email 2.32.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The function hda_tegra_first_init() neglects to check the return
-value after executing platform_get_irq().
+From: Thierry Reding <treding@nvidia.com>
 
-hda_tegra_first_init() should check the return value (if negative
-error number) for errors so as to not pass a negative value to
-the devm_request_irq().
+The documented compatible string for the CPUs found on Tegra132 is
+"nvidia,tegra132-denver", rather than the previously used compatible
+string "nvidia,denver".
 
-Fix it by adding a check for the return value irq_id.
-
-Signed-off-by: Jiajun Cao <jjcao20@fudan.edu.cn>
-Signed-off-by: Xin Tan <tanxin.ctf@gmail.com>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- sound/pci/hda/hda_tegra.c | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/arm64/boot/dts/nvidia/tegra132.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/sound/pci/hda/hda_tegra.c b/sound/pci/hda/hda_tegra.c
-index 6f2b743b9d75..6c6dc3fcde60 100644
---- a/sound/pci/hda/hda_tegra.c
-+++ b/sound/pci/hda/hda_tegra.c
-@@ -262,6 +262,9 @@ static int hda_tegra_first_init(struct azx *chip, struct platform_device *pdev)
- 	const char *sname, *drv_name = "tegra-hda";
- 	struct device_node *np = pdev->dev.of_node;
+diff --git a/arch/arm64/boot/dts/nvidia/tegra132.dtsi b/arch/arm64/boot/dts/nvidia/tegra132.dtsi
+index 89ba63dbf1cb..1c3a5c3dfc57 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra132.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra132.dtsi
+@@ -1227,13 +1227,13 @@ cpus {
  
-+	if (irq_id < 0)
-+		return irq_id;
-+
- 	err = hda_tegra_init_chip(chip, pdev);
- 	if (err)
- 		return err;
+ 		cpu@0 {
+ 			device_type = "cpu";
+-			compatible = "nvidia,denver";
++			compatible = "nvidia,tegra132-denver";
+ 			reg = <0>;
+ 		};
+ 
+ 		cpu@1 {
+ 			device_type = "cpu";
+-			compatible = "nvidia,denver";
++			compatible = "nvidia,tegra132-denver";
+ 			reg = <1>;
+ 		};
+ 	};
 -- 
-2.17.1
+2.32.0
 
