@@ -7,67 +7,67 @@ X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F843C49EA4
-	for <linux-tegra@archiver.kernel.org>; Tue, 22 Jun 2021 14:10:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22065C49EA5
+	for <linux-tegra@archiver.kernel.org>; Tue, 22 Jun 2021 14:10:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1278061357
-	for <linux-tegra@archiver.kernel.org>; Tue, 22 Jun 2021 14:10:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0794C61027
+	for <linux-tegra@archiver.kernel.org>; Tue, 22 Jun 2021 14:10:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231526AbhFVOM0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 22 Jun 2021 10:12:26 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:36528 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231417AbhFVOMX (ORCPT
+        id S231592AbhFVOM2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 22 Jun 2021 10:12:28 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:34178 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231489AbhFVOM0 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 22 Jun 2021 10:12:23 -0400
+        Tue, 22 Jun 2021 10:12:26 -0400
 Received: from imap.suse.de (imap-alt.suse-dmz.suse.de [192.168.254.47])
         (using TLSv1.2 with cipher ECDHE-ECDSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id A156621988;
-        Tue, 22 Jun 2021 14:10:06 +0000 (UTC)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id E909F1FD64;
+        Tue, 22 Jun 2021 14:10:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1624371006; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1624371009; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=SRAIM2b9hcMZtpj1XmOCRlAOXVW+Cbn/WAr682hqNSs=;
-        b=vqm9dI3V0nrHSjy2CtFLenVHqjz8WsHqZyyjhgNtOINrIavnieIQ310rzLkEAPtHq7VzGS
-        VHLPNnQEc6k693CAl2rM+uYgXq+OrJd5hMG3WynS3vDPiEhJD54dTYSd3GXskP1jP4nEyp
-        dxj1jZ3xfQ7o4TdmLLfQxD9AbLw4GdY=
+        bh=LmPfb64X8tj/DNKvWm1kt/9W5qYrZUqV8P+ClQ9hd/8=;
+        b=lTUZ8V1oJTHYzc4Ml3xPNwPeZSdgkT8hodxTjoNqOwsNrcoomQSvnNKRCRzl5WA0KAWRe/
+        UTAmw0rVxScvyNG1eW/aWYlJXWOSFzJTXT9SQK5cqpl75TEFbRvpl7jVsaflu2rxa6S6B6
+        Z6905oROH2SSoRHNFsjFCUvQaJUrfQg=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1624371006;
+        s=susede2_ed25519; t=1624371009;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=SRAIM2b9hcMZtpj1XmOCRlAOXVW+Cbn/WAr682hqNSs=;
-        b=xBXa4bW1nD4K8968XQUo8pVHbPuTILpO3mWKrxajgAUVry/PxbHgWYOtNoK22If5d4UBBj
-        w+UCYzGFnlkmd6Aw==
+        bh=LmPfb64X8tj/DNKvWm1kt/9W5qYrZUqV8P+ClQ9hd/8=;
+        b=apUm2Sl4mqRTl56/rFzfx09nnvcB8Y78+XRwpJqACmw1MAtl399SzzZyczQT/8o+wcHPKA
+        485ffWRdIaWi3ZAw==
 Received: from imap3-int (imap-alt.suse-dmz.suse.de [192.168.254.47])
-        by imap.suse.de (Postfix) with ESMTP id 9B8C8118DD;
-        Tue, 22 Jun 2021 14:10:05 +0000 (UTC)
+        by imap.suse.de (Postfix) with ESMTP id E033B11A98;
+        Tue, 22 Jun 2021 14:10:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1624371006; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1624371009; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=SRAIM2b9hcMZtpj1XmOCRlAOXVW+Cbn/WAr682hqNSs=;
-        b=vqm9dI3V0nrHSjy2CtFLenVHqjz8WsHqZyyjhgNtOINrIavnieIQ310rzLkEAPtHq7VzGS
-        VHLPNnQEc6k693CAl2rM+uYgXq+OrJd5hMG3WynS3vDPiEhJD54dTYSd3GXskP1jP4nEyp
-        dxj1jZ3xfQ7o4TdmLLfQxD9AbLw4GdY=
+        bh=LmPfb64X8tj/DNKvWm1kt/9W5qYrZUqV8P+ClQ9hd/8=;
+        b=lTUZ8V1oJTHYzc4Ml3xPNwPeZSdgkT8hodxTjoNqOwsNrcoomQSvnNKRCRzl5WA0KAWRe/
+        UTAmw0rVxScvyNG1eW/aWYlJXWOSFzJTXT9SQK5cqpl75TEFbRvpl7jVsaflu2rxa6S6B6
+        Z6905oROH2SSoRHNFsjFCUvQaJUrfQg=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1624371006;
+        s=susede2_ed25519; t=1624371009;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=SRAIM2b9hcMZtpj1XmOCRlAOXVW+Cbn/WAr682hqNSs=;
-        b=xBXa4bW1nD4K8968XQUo8pVHbPuTILpO3mWKrxajgAUVry/PxbHgWYOtNoK22If5d4UBBj
-        w+UCYzGFnlkmd6Aw==
+        bh=LmPfb64X8tj/DNKvWm1kt/9W5qYrZUqV8P+ClQ9hd/8=;
+        b=apUm2Sl4mqRTl56/rFzfx09nnvcB8Y78+XRwpJqACmw1MAtl399SzzZyczQT/8o+wcHPKA
+        485ffWRdIaWi3ZAw==
 Received: from director2.suse.de ([192.168.254.72])
         by imap3-int with ESMTPSA
-        id AKIBJT3v0WD3UAAALh3uQQ
-        (envelope-from <tzimmermann@suse.de>); Tue, 22 Jun 2021 14:10:05 +0000
+        id qOjeNUDv0WD3UAAALh3uQQ
+        (envelope-from <tzimmermann@suse.de>); Tue, 22 Jun 2021 14:10:08 +0000
 From:   Thomas Zimmermann <tzimmermann@suse.de>
 To:     daniel@ffwll.ch, airlied@linux.ie, alexander.deucher@amd.com,
         christian.koenig@amd.com, Xinhui.Pan@amd.com,
@@ -100,9 +100,9 @@ Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
         linux-stm32@st-md-mailman.stormreply.com,
         linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
         Thomas Zimmermann <tzimmermann@suse.de>
-Subject: [PATCH v2 02/22] drm/hibmc: Call drm_irq_uninstall() unconditionally
-Date:   Tue, 22 Jun 2021 16:09:42 +0200
-Message-Id: <20210622141002.11590-3-tzimmermann@suse.de>
+Subject: [PATCH v2 05/22] drm/komeda: Don't set struct drm_device.irq_enabled
+Date:   Tue, 22 Jun 2021 16:09:45 +0200
+Message-Id: <20210622141002.11590-6-tzimmermann@suse.de>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20210622141002.11590-1-tzimmermann@suse.de>
 References: <20210622141002.11590-1-tzimmermann@suse.de>
@@ -112,29 +112,43 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Remove the check around drm_irq_uninstall(). The same test is
-done by the function internally. The tested state in irq_enabled
-is considered obsolete and should not be used by KMS drivers.
+The field drm_device.irq_enabled is only used by legacy drivers
+with userspace modesetting. Don't set it in komeda.
 
 Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
 ---
- drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/gpu/drm/arm/display/komeda/komeda_kms.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
-index f4bc5386574a..f8ef711bbe5d 100644
---- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
-+++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
-@@ -253,8 +253,7 @@ static int hibmc_unload(struct drm_device *dev)
- {
- 	drm_atomic_helper_shutdown(dev);
+diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_kms.c b/drivers/gpu/drm/arm/display/komeda/komeda_kms.c
+index ff45f23f3d56..52a6db5707a3 100644
+--- a/drivers/gpu/drm/arm/display/komeda/komeda_kms.c
++++ b/drivers/gpu/drm/arm/display/komeda/komeda_kms.c
+@@ -301,8 +301,6 @@ struct komeda_kms_dev *komeda_kms_attach(struct komeda_dev *mdev)
+ 	if (err)
+ 		goto free_component_binding;
  
--	if (dev->irq_enabled)
--		drm_irq_uninstall(dev);
-+	drm_irq_uninstall(dev);
+-	drm->irq_enabled = true;
+-
+ 	drm_kms_helper_poll_init(drm);
  
- 	pci_disable_msi(to_pci_dev(dev->dev));
+ 	err = drm_dev_register(drm, 0);
+@@ -313,7 +311,6 @@ struct komeda_kms_dev *komeda_kms_attach(struct komeda_dev *mdev)
  
+ free_interrupts:
+ 	drm_kms_helper_poll_fini(drm);
+-	drm->irq_enabled = false;
+ free_component_binding:
+ 	component_unbind_all(mdev->dev, drm);
+ cleanup_mode_config:
+@@ -331,7 +328,6 @@ void komeda_kms_detach(struct komeda_kms_dev *kms)
+ 	drm_dev_unregister(drm);
+ 	drm_kms_helper_poll_fini(drm);
+ 	drm_atomic_helper_shutdown(drm);
+-	drm->irq_enabled = false;
+ 	component_unbind_all(mdev->dev, drm);
+ 	drm_mode_config_cleanup(drm);
+ 	komeda_kms_cleanup_private_objs(kms);
 -- 
 2.32.0
 
