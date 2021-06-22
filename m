@@ -2,66 +2,39 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7412DC48BE5
-	for <linux-tegra@archiver.kernel.org>; Tue, 22 Jun 2021 15:24:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 447D2C48BDF
+	for <linux-tegra@archiver.kernel.org>; Tue, 22 Jun 2021 15:25:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 60B9E600D3
-	for <linux-tegra@archiver.kernel.org>; Tue, 22 Jun 2021 15:24:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E8DA61357
+	for <linux-tegra@archiver.kernel.org>; Tue, 22 Jun 2021 15:25:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232241AbhFVP0n (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 22 Jun 2021 11:26:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58486 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230510AbhFVP0m (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 22 Jun 2021 11:26:42 -0400
-Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 978B5C061756
-        for <linux-tegra@vger.kernel.org>; Tue, 22 Jun 2021 08:24:26 -0700 (PDT)
-Received: by mail-wr1-x42c.google.com with SMTP id a13so2358698wrf.10
-        for <linux-tegra@vger.kernel.org>; Tue, 22 Jun 2021 08:24:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=ZeqWuXtX2BrYCzJWvhQ3y4KbulOq0QYwwBD94QW58/k=;
-        b=ZlqWM+jail8wVe6yddVhoDkll94K1QcrO1qPfcnvA5ZgF7O5UWGiwgAoirgPr5VThQ
-         PxLEoFhDthsBu11VLuKNyZ4t3jV2oXfE2AjGKpc2koo0GT0EP0wz7tBbPjapFZRbS4qF
-         iL45agNDVjpfa14ecS7F0zPBWAmsGHIs8s5iQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=ZeqWuXtX2BrYCzJWvhQ3y4KbulOq0QYwwBD94QW58/k=;
-        b=pdeJwq8RsJAWvc6w2CdlXrLTNaa8zlrdwJ3GvxsrSI0j/UuE8oRDiUKo7xuZ0oXZKq
-         oRQIWCk4lMwaCaX81wNTKAAqcXEK6vk0d4JVVJNMpdkh6ohynDa8N/CXA3mG/TVQxK2B
-         P3Oura6aNCTNGEn6Y/xB42psDAq6P4e52FAuLywjx7geOMDBrNpKKByREwl67rDV+ooG
-         gjl//0ZW9mwcBzFFdmNbth67BIuu5Rd7zBOFW56e1dUuJ5aYlRDXE5S6ZSCLIE/zUtH5
-         um53dbrx5TubMu5bj72oo03RvZDrzsyuwtNhMQuiOTi+EIEQAZMn7pVQ971NKt4VzcKQ
-         cNyw==
-X-Gm-Message-State: AOAM531UCVieGV+9Ux7Qg4M1UTFSU/mt6f1leStlbfIatvcSd6nIpScI
-        CIqaRevoE8BQ3a8b3fVAhBztfA==
-X-Google-Smtp-Source: ABdhPJxIsS4KMhI+Y3KiogSWjdDWrVZYSvpp7dXLHAVjT9HzjIzI+eRKdkXYHvp6Rq+N7hy/RDRSKg==
-X-Received: by 2002:a05:6000:128b:: with SMTP id f11mr5556353wrx.171.1624375465147;
-        Tue, 22 Jun 2021 08:24:25 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id a24sm2852645wmj.30.2021.06.22.08.24.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Jun 2021 08:24:24 -0700 (PDT)
-Date:   Tue, 22 Jun 2021 17:24:21 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
+        id S232282AbhFVP13 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 22 Jun 2021 11:27:29 -0400
+Received: from foss.arm.com ([217.140.110.172]:51072 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232161AbhFVP1W (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 22 Jun 2021 11:27:22 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1D6AFED1;
+        Tue, 22 Jun 2021 08:25:06 -0700 (PDT)
+Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CC6103F792;
+        Tue, 22 Jun 2021 08:25:05 -0700 (PDT)
+Received: by e110455-lin.cambridge.arm.com (Postfix, from userid 1000)
+        id 7C5A86837C9; Tue, 22 Jun 2021 16:25:04 +0100 (BST)
+Date:   Tue, 22 Jun 2021 16:25:04 +0100
+From:   Liviu Dudau <liviu.dudau@arm.com>
 To:     Thomas Zimmermann <tzimmermann@suse.de>
 Cc:     daniel@ffwll.ch, airlied@linux.ie, alexander.deucher@amd.com,
         christian.koenig@amd.com, Xinhui.Pan@amd.com,
-        james.qian.wang@arm.com, liviu.dudau@arm.com,
-        mihail.atanassov@arm.com, brian.starkey@arm.com,
-        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-        inki.dae@samsung.com, jy0922.shim@samsung.com,
+        james.qian.wang@arm.com, mihail.atanassov@arm.com,
+        brian.starkey@arm.com, maarten.lankhorst@linux.intel.com,
+        mripard@kernel.org, inki.dae@samsung.com, jy0922.shim@samsung.com,
         sw0312.kim@samsung.com, kyungmin.park@samsung.com,
         krzysztof.kozlowski@canonical.com, xinliang.liu@linaro.org,
         tiantao6@hisilicon.com, john.stultz@linaro.org,
@@ -86,122 +59,122 @@ Cc:     daniel@ffwll.ch, airlied@linux.ie, alexander.deucher@amd.com,
         linux-rockchip@lists.infradead.org,
         linux-stm32@st-md-mailman.stormreply.com,
         linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v2 00/22] Deprecate struct drm_device.irq_enabled
-Message-ID: <YNIApfAnFCsCHoYK@phenom.ffwll.local>
+Subject: Re: [PATCH v2 04/22] drm: Don't test for IRQ support in VBLANK ioctls
+Message-ID: <20210622152504.2sw6khajwydsoaqa@e110455-lin.cambridge.arm.com>
 References: <20210622141002.11590-1-tzimmermann@suse.de>
+ <20210622141002.11590-5-tzimmermann@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20210622141002.11590-1-tzimmermann@suse.de>
-X-Operating-System: Linux phenom 5.10.0-7-amd64 
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210622141002.11590-5-tzimmermann@suse.de>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Jun 22, 2021 at 04:09:40PM +0200, Thomas Zimmermann wrote:
-> Remove references to struct drm_device.irq_enabled from modern
-> DRM drivers and core.
+Hello,
+
+On Tue, Jun 22, 2021 at 04:09:44PM +0200, Thomas Zimmermann wrote:
+> For KMS drivers, replace the IRQ check in VBLANK ioctls with a check for
+> vblank support. IRQs might be enabled wthout vblanking being supported.
 > 
-> KMS drivers enable IRQs for their devices internally. They don't
-> have to keep track of the IRQ state via irq_enabled. For vblanking,
-> it's cleaner to test for vblanking support directly than to test
-> for enabled IRQs.
-> 
-> This used to be a single patch, [1] but it's now a full series.
-> 
-> The first 3 patches replace instances of irq_enabled that are not
-> required.
-> 
-> Patch 4 fixes vblank ioctls to actually test for vblank support
-> instead of IRQs.
-> 
-> THe rest of the patchset removes irq_enabled from all non-legacy
-> drivers. The only exception is omapdrm, which has an internal
-> dpendency on the field's value. For this drivers, the state gets
-> duplicated internally.
-> 
-> With the patchset applied, drivers can later switch over to plain
-> Linux IRQ interfaces and DRM's IRQ midlayer can be declared legacy.
+> This change also removes the DRM framework's only dependency on IRQ state
+> for non-legacy drivers. For legacy drivers with userspace modesetting,
+> the original test remains in drm_wait_vblank_ioctl().
 > 
 > v2:
-> 	* keep the original test for legacy drivers in
+> 	* keep the old test for legacy drivers in
 > 	  drm_wait_vblank_ioctl() (Daniel)
 > 
-> [1] https://lore.kernel.org/dri-devel/20210608090301.4752-1-tzimmermann@suse.de/
-
-On the series:
-
-Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-
-But I've only done a very light reading of this, so please wait for driver
-folks to have some time to check their own before merging.
-
-I think a devm_ version of drm_irq_install might be helpful in further
-untangling here, but that's definitely for another series.
--Daniel
-
+> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+> ---
+>  drivers/gpu/drm/drm_irq.c    | 10 +++-------
+>  drivers/gpu/drm/drm_vblank.c | 13 +++++++++----
+>  2 files changed, 12 insertions(+), 11 deletions(-)
 > 
-> Thomas Zimmermann (22):
->   drm/amdgpu: Track IRQ state in local device state
->   drm/hibmc: Call drm_irq_uninstall() unconditionally
->   drm/radeon: Track IRQ state in local device state
->   drm: Don't test for IRQ support in VBLANK ioctls
->   drm/komeda: Don't set struct drm_device.irq_enabled
->   drm/malidp: Don't set struct drm_device.irq_enabled
->   drm/exynos: Don't set struct drm_device.irq_enabled
->   drm/kirin: Don't set struct drm_device.irq_enabled
->   drm/imx: Don't set struct drm_device.irq_enabled
->   drm/mediatek: Don't set struct drm_device.irq_enabled
->   drm/nouveau: Don't set struct drm_device.irq_enabled
->   drm/omapdrm: Track IRQ state in local device state
->   drm/rockchip: Don't set struct drm_device.irq_enabled
->   drm/sti: Don't set struct drm_device.irq_enabled
->   drm/stm: Don't set struct drm_device.irq_enabled
->   drm/sun4i: Don't set struct drm_device.irq_enabled
->   drm/tegra: Don't set struct drm_device.irq_enabled
->   drm/tidss: Don't use struct drm_device.irq_enabled
->   drm/vc4: Don't set struct drm_device.irq_enabled
->   drm/vmwgfx: Don't set struct drm_device.irq_enabled
->   drm/xlnx: Don't set struct drm_device.irq_enabled
->   drm/zte: Don't set struct drm_device.irq_enabled
-> 
->  drivers/gpu/drm/amd/amdgpu/amdgpu_irq.c         |  6 +++---
->  drivers/gpu/drm/arm/display/komeda/komeda_kms.c |  4 ----
->  drivers/gpu/drm/arm/malidp_drv.c                |  4 ----
->  drivers/gpu/drm/drm_irq.c                       | 10 +++-------
->  drivers/gpu/drm/drm_vblank.c                    | 13 +++++++++----
->  drivers/gpu/drm/exynos/exynos_drm_drv.c         | 10 ----------
->  drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c |  3 +--
->  drivers/gpu/drm/hisilicon/kirin/kirin_drm_drv.c |  2 --
->  drivers/gpu/drm/imx/dcss/dcss-kms.c             |  3 ---
->  drivers/gpu/drm/imx/imx-drm-core.c              | 11 -----------
->  drivers/gpu/drm/mediatek/mtk_drm_drv.c          |  6 ------
->  drivers/gpu/drm/nouveau/nouveau_drm.c           |  3 ---
->  drivers/gpu/drm/omapdrm/omap_drv.h              |  2 ++
->  drivers/gpu/drm/omapdrm/omap_irq.c              |  6 +++---
->  drivers/gpu/drm/radeon/radeon_fence.c           |  2 +-
->  drivers/gpu/drm/radeon/radeon_irq_kms.c         | 16 ++++++++--------
->  drivers/gpu/drm/rockchip/rockchip_drm_drv.c     |  6 ------
->  drivers/gpu/drm/sti/sti_compositor.c            |  2 --
->  drivers/gpu/drm/stm/ltdc.c                      |  3 ---
->  drivers/gpu/drm/sun4i/sun4i_drv.c               |  2 --
->  drivers/gpu/drm/tegra/drm.c                     |  7 -------
->  drivers/gpu/drm/tidss/tidss_irq.c               |  3 ---
->  drivers/gpu/drm/vc4/vc4_kms.c                   |  1 -
->  drivers/gpu/drm/vmwgfx/vmwgfx_irq.c             |  8 --------
->  drivers/gpu/drm/xlnx/zynqmp_dpsub.c             |  2 --
->  drivers/gpu/drm/zte/zx_drm_drv.c                |  6 ------
->  26 files changed, 30 insertions(+), 111 deletions(-)
-> 
-> 
-> base-commit: 8c1323b422f8473421682ba783b5949ddd89a3f4
-> prerequisite-patch-id: c2b2f08f0eccc9f5df0c0da49fa1d36267deb11d
-> prerequisite-patch-id: c67e5d886a47b7d0266d81100837557fda34cb24
-> --
+> diff --git a/drivers/gpu/drm/drm_irq.c b/drivers/gpu/drm/drm_irq.c
+> index c3bd664ea733..1d7785721323 100644
+> --- a/drivers/gpu/drm/drm_irq.c
+> +++ b/drivers/gpu/drm/drm_irq.c
+> @@ -74,10 +74,8 @@
+>   * only supports devices with a single interrupt on the main device stored in
+>   * &drm_device.dev and set as the device paramter in drm_dev_alloc().
+>   *
+> - * These IRQ helpers are strictly optional. Drivers which roll their own only
+> - * need to set &drm_device.irq_enabled to signal the DRM core that vblank
+> - * interrupts are working. Since these helpers don't automatically clean up the
+> - * requested interrupt like e.g. devm_request_irq() they're not really
+> + * These IRQ helpers are strictly optional. Since these helpers don't automatically
+> + * clean up the requested interrupt like e.g. devm_request_irq() they're not really
+>   * recommended.
+>   */
+>  
+> @@ -91,9 +89,7 @@
+>   * and after the installation.
+>   *
+>   * This is the simplified helper interface provided for drivers with no special
+> - * needs. Drivers which need to install interrupt handlers for multiple
+> - * interrupts must instead set &drm_device.irq_enabled to signal the DRM core
+> - * that vblank interrupts are available.
+> + * needs.
+>   *
+>   * @irq must match the interrupt number that would be passed to request_irq(),
+>   * if called directly instead of using this helper function.
+> diff --git a/drivers/gpu/drm/drm_vblank.c b/drivers/gpu/drm/drm_vblank.c
+> index 3417e1ac7918..a98a4aad5037 100644
+> --- a/drivers/gpu/drm/drm_vblank.c
+> +++ b/drivers/gpu/drm/drm_vblank.c
+> @@ -1748,8 +1748,13 @@ int drm_wait_vblank_ioctl(struct drm_device *dev, void *data,
+>  	unsigned int pipe_index;
+>  	unsigned int flags, pipe, high_pipe;
+>  
+> -	if (!dev->irq_enabled)
+> -		return -EOPNOTSUPP;
+> +	if  (drm_core_check_feature(dev, DRIVER_MODESET)) {
+> +		if (!drm_dev_has_vblank(dev))
+> +			return -EOPNOTSUPP;
+> +	} else {
+> +		if (!dev->irq_enabled)
+> +			return -EOPNOTSUPP;
+> +	}
+
+For a system call that is used quite a lot by userspace we have increased the code size
+in a noticeable way. Can we not cache it privately?
+
+Best regards,
+Liviu
+
+>  
+>  	if (vblwait->request.type & _DRM_VBLANK_SIGNAL)
+>  		return -EINVAL;
+> @@ -2023,7 +2028,7 @@ int drm_crtc_get_sequence_ioctl(struct drm_device *dev, void *data,
+>  	if (!drm_core_check_feature(dev, DRIVER_MODESET))
+>  		return -EOPNOTSUPP;
+>  
+> -	if (!dev->irq_enabled)
+> +	if (!drm_dev_has_vblank(dev))
+>  		return -EOPNOTSUPP;
+>  
+>  	crtc = drm_crtc_find(dev, file_priv, get_seq->crtc_id);
+> @@ -2082,7 +2087,7 @@ int drm_crtc_queue_sequence_ioctl(struct drm_device *dev, void *data,
+>  	if (!drm_core_check_feature(dev, DRIVER_MODESET))
+>  		return -EOPNOTSUPP;
+>  
+> -	if (!dev->irq_enabled)
+> +	if (!drm_dev_has_vblank(dev))
+>  		return -EOPNOTSUPP;
+>  
+>  	crtc = drm_crtc_find(dev, file_priv, queue_seq->crtc_id);
+> -- 
 > 2.32.0
 > 
 
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+====================
+| I would like to |
+| fix the world,  |
+| but they're not |
+| giving me the   |
+ \ source code!  /
+  ---------------
+    ¯\_(ツ)_/¯
