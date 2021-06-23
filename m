@@ -2,204 +2,136 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9A83C4743C
-	for <linux-tegra@archiver.kernel.org>; Wed, 23 Jun 2021 12:15:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AB50C4743C
+	for <linux-tegra@archiver.kernel.org>; Wed, 23 Jun 2021 12:28:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C75DB6100B
-	for <linux-tegra@archiver.kernel.org>; Wed, 23 Jun 2021 12:15:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 248D461076
+	for <linux-tegra@archiver.kernel.org>; Wed, 23 Jun 2021 12:28:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230157AbhFWMSP (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 23 Jun 2021 08:18:15 -0400
-Received: from foss.arm.com ([217.140.110.172]:34374 "EHLO foss.arm.com"
+        id S231391AbhFWMai (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 23 Jun 2021 08:30:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56714 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230019AbhFWMSP (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 23 Jun 2021 08:18:15 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 69258ED1;
-        Wed, 23 Jun 2021 05:15:57 -0700 (PDT)
-Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2AC093F718;
-        Wed, 23 Jun 2021 05:15:57 -0700 (PDT)
-Received: by e110455-lin.cambridge.arm.com (Postfix, from userid 1000)
-        id DA9E16837C9; Wed, 23 Jun 2021 13:15:55 +0100 (BST)
-Date:   Wed, 23 Jun 2021 13:15:55 +0100
-From:   Liviu Dudau <liviu.dudau@arm.com>
-To:     Thomas Zimmermann <tzimmermann@suse.de>
-Cc:     emma@anholt.net, airlied@linux.ie, nouveau@lists.freedesktop.org,
-        alexandre.torgue@foss.st.com, dri-devel@lists.freedesktop.org,
-        michal.simek@xilinx.com, linux-tegra@vger.kernel.org,
-        thierry.reding@gmail.com, laurent.pinchart@ideasonboard.com,
-        benjamin.gaignard@linaro.org, mihail.atanassov@arm.com,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-samsung-soc@vger.kernel.org, jy0922.shim@samsung.com,
-        krzysztof.kozlowski@canonical.com,
-        linux-rockchip@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, wens@csie.org,
-        jernej.skrabec@gmail.com, jonathanh@nvidia.com,
-        xinliang.liu@linaro.org, kong.kongxinwei@hisilicon.com,
-        james.qian.wang@arm.com, linux-imx@nxp.com,
-        linux-graphics-maintainer@vmware.com, linux-sunxi@lists.linux.dev,
-        bskeggs@redhat.com, chunkuang.hu@kernel.org,
-        puck.chen@hisilicon.com, s.hauer@pengutronix.de,
-        laurentiu.palcu@oss.nxp.com, matthias.bgg@gmail.com,
-        kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org,
-        mcoquelin.stm32@gmail.com, amd-gfx@lists.freedesktop.org,
-        hyun.kwon@xilinx.com, tomba@kernel.org, jyri.sarha@iki.fi,
-        yannick.fertre@foss.st.com, Xinhui.Pan@amd.com,
-        sw0312.kim@samsung.com, hjc@rock-chips.com,
-        christian.koenig@amd.com, kyungmin.park@samsung.com,
-        philippe.cornu@foss.st.com, alexander.deucher@amd.com,
-        tiantao6@hisilicon.com, shawnguo@kernel.org
-Subject: Re: [PATCH v2 04/22] drm: Don't test for IRQ support in VBLANK ioctls
-Message-ID: <20210623121555.ttos325zjt55dynw@e110455-lin.cambridge.arm.com>
-References: <20210622141002.11590-1-tzimmermann@suse.de>
- <20210622141002.11590-5-tzimmermann@suse.de>
- <20210622152504.2sw6khajwydsoaqa@e110455-lin.cambridge.arm.com>
- <f7e72a3c-df86-2d4b-2caa-bf91442290a9@suse.de>
+        id S231614AbhFWMaH (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 23 Jun 2021 08:30:07 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 6F56E6108E;
+        Wed, 23 Jun 2021 12:27:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1624451269;
+        bh=HAVJtTVrzJxFsKJDIJrqeHQYANllpN93YiRxUl5ea+M=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=r9uTZTY8L+cxqEC0D/c6wq3MQRcaWXF8v7sEiOA9xiQU3ruHwYZWlEDOtHm13UOCz
+         19cSGVM+U+wIUWMw5KNz4JLBEaiSgi/jXU+Qd5dWM1Ju2o71bNZJQ26eFpUw9efCdc
+         cDzo49YNoThQnCPYFjdZQZ/JCIX4YErETCp93OnjO7RAI11/xLR0fa1tV9LGQ+4ZKJ
+         eamWbxN4iYGqMN5auJNmXQR4quHCm1r/VbRVKMuIPEdOIBddH0lftIrAGFkY1dzORL
+         8Z0h2MVg7se6DDADGr3tGAgbWUcsP5cg1AKfqAxSCpXjsVT6OuEuSkYL1Wm5RvhI0t
+         mmwuRI1fQgjIg==
+Date:   Wed, 23 Jun 2021 07:27:47 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc:     Vidya Sagar <vidyas@nvidia.com>, Tian Tao <tiantao6@hisilicon.com>,
+        p.zabel@pengutronix.de, bhelgaas@google.com,
+        linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org,
+        tglx@linutronix.de, maz@kernel.org
+Subject: Re: [PATCH v2] PCI: tegra: move to use request_irq by IRQF_NO_AUTOEN
+ flag
+Message-ID: <20210623122747.GA3357115@bjorn-Precision-5520>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <f7e72a3c-df86-2d4b-2caa-bf91442290a9@suse.de>
+In-Reply-To: <20210623094519.GA11297@lpieralisi>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Thomas,
-
-On Wed, Jun 23, 2021 at 08:43:07AM +0200, Thomas Zimmermann wrote:
-> Hi Liviu
+On Wed, Jun 23, 2021 at 10:45:19AM +0100, Lorenzo Pieralisi wrote:
+> [+Marc, Thomas]
 > 
-> Am 22.06.21 um 17:25 schrieb Liviu Dudau:
-> > Hello,
-> > 
-> > On Tue, Jun 22, 2021 at 04:09:44PM +0200, Thomas Zimmermann wrote:
-> > > For KMS drivers, replace the IRQ check in VBLANK ioctls with a check for
-> > > vblank support. IRQs might be enabled wthout vblanking being supported.
+> thread: https://lore.kernel.org/linux-pci/1621213953-54030-1-git-send-email-tiantao6@hisilicon.com
+> 
+> On Mon, May 31, 2021 at 03:32:33PM +0530, Vidya Sagar wrote:
+> > I want to re-examine this patch.
+> > I don't see any references in the kernel where IRQ_NOAUTOEN is passed
+> > directly in request_irq APIs.
+> 
+> AFAICS there are many references, not sure what you actually checked.
+> 
+> > It is always set explicitly through irq_set_status_flags() *before*
+> > calling request_irq APIs.  I don't see any comment in the header file
+> > either that says something like it should always be set before
+> > requesting the irq.  Lorenzo/Bjorn, could you please throw some light
+> > on what is correct thing to do here?
+> 
+> To be honest I don't know. Certainly Marc and Thomas know if they have
+> a minute to chime in.
+
+I don't know either.  If this *is* the right thing to do it needs a
+much better commit log because this is not merely a simplification
+that can be verified with a couple minutes of code reading.
+
+This is the only use of IRQ_NOAUTOEN in drivers/pci/, which itself
+raises the question of why we need it.
+
+Also, please update the subject line to s/tegra/tegra194/ and start
+with a capital letter to match convention.
+
+> > On 5/17/2021 3:47 PM, Vidya Sagar wrote:
+> > > Thanks for the patch.
 > > > 
-> > > This change also removes the DRM framework's only dependency on IRQ state
-> > > for non-legacy drivers. For legacy drivers with userspace modesetting,
-> > > the original test remains in drm_wait_vblank_ioctl().
+> > > Reviewed-by: Vidya Sagar <vidyas@nvidia.com>
 > > > 
-> > > v2:
-> > > 	* keep the old test for legacy drivers in
-> > > 	  drm_wait_vblank_ioctl() (Daniel)
+> > > - Vidya Sagar
 > > > 
-> > > Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-> > > ---
-> > >   drivers/gpu/drm/drm_irq.c    | 10 +++-------
-> > >   drivers/gpu/drm/drm_vblank.c | 13 +++++++++----
-> > >   2 files changed, 12 insertions(+), 11 deletions(-)
-> > > 
-> > > diff --git a/drivers/gpu/drm/drm_irq.c b/drivers/gpu/drm/drm_irq.c
-> > > index c3bd664ea733..1d7785721323 100644
-> > > --- a/drivers/gpu/drm/drm_irq.c
-> > > +++ b/drivers/gpu/drm/drm_irq.c
-> > > @@ -74,10 +74,8 @@
-> > >    * only supports devices with a single interrupt on the main device stored in
-> > >    * &drm_device.dev and set as the device paramter in drm_dev_alloc().
-> > >    *
-> > > - * These IRQ helpers are strictly optional. Drivers which roll their own only
-> > > - * need to set &drm_device.irq_enabled to signal the DRM core that vblank
-> > > - * interrupts are working. Since these helpers don't automatically clean up the
-> > > - * requested interrupt like e.g. devm_request_irq() they're not really
-> > > + * These IRQ helpers are strictly optional. Since these helpers don't automatically
-> > > + * clean up the requested interrupt like e.g. devm_request_irq() they're not really
-> > >    * recommended.
-> > >    */
-> > > @@ -91,9 +89,7 @@
-> > >    * and after the installation.
-> > >    *
-> > >    * This is the simplified helper interface provided for drivers with no special
-> > > - * needs. Drivers which need to install interrupt handlers for multiple
-> > > - * interrupts must instead set &drm_device.irq_enabled to signal the DRM core
-> > > - * that vblank interrupts are available.
-> > > + * needs.
-> > >    *
-> > >    * @irq must match the interrupt number that would be passed to request_irq(),
-> > >    * if called directly instead of using this helper function.
-> > > diff --git a/drivers/gpu/drm/drm_vblank.c b/drivers/gpu/drm/drm_vblank.c
-> > > index 3417e1ac7918..a98a4aad5037 100644
-> > > --- a/drivers/gpu/drm/drm_vblank.c
-> > > +++ b/drivers/gpu/drm/drm_vblank.c
-> > > @@ -1748,8 +1748,13 @@ int drm_wait_vblank_ioctl(struct drm_device *dev, void *data,
-> > >   	unsigned int pipe_index;
-> > >   	unsigned int flags, pipe, high_pipe;
-> > > -	if (!dev->irq_enabled)
-> > > -		return -EOPNOTSUPP;
-> > > +	if  (drm_core_check_feature(dev, DRIVER_MODESET)) {
-> > > +		if (!drm_dev_has_vblank(dev))
-> > > +			return -EOPNOTSUPP;
-> > > +	} else {
-> > > +		if (!dev->irq_enabled)
-> > > +			return -EOPNOTSUPP;
-> > > +	}
-> > 
-> > For a system call that is used quite a lot by userspace we have increased the code size
-> > in a noticeable way. Can we not cache it privately?
-> 
-> I'm not quite sure that I understand your concern. The additionally called
-> functions are trivial one-liners; probably inlined anyway.
-
-They are inlined. However we replace the pointer dereference (which can be calculated
-at compile time as offset from a base pointer) with the code in
-drm_core_check_all_features() that does 3 pointer dereferences, masking and logical
-AND before checking for matching value.
-
-> 
-> However, irq_enabled is only relevant for legacy drivers and will eventually
-> disappear behind CONFIG_DRM_LEGACY. We can rewrite the test like this:
-
-I get the point that irq_enabled is legacy. However the IOCTL call is not and usually
-is used in time critical code to wait for vblank before starting the old buffers for
-a new frame. At 60Hz that's probably less of a concern, but at 120Hz refresh rate and
-reduced vblank time your time slice allocation for new work matters.
-
-Best regards,
-Liviu
-
-> 
-> ifdef CONFIG_DRM_LEGACY
->   if (unlikely(check_feature(dev, DRIVER_LEGACY))) {
->     if (!irq_enabled)
->       return;
->   } else
-> #endif
->   {
->     if (!has_vblank_support(dev))
->       return;
->   }
-> 
-> As CONFIG_DRM_LEGACY is most likely disabled on concurrent systems, we'd get
-> a single test for the modern drivers. If DRM_LEGACYis on, the compiler at
-> least knows that the else branch is preferred.
-> 
-> Best regards
-> Thomas
-> 
-> -- 
-> Thomas Zimmermann
-> Graphics Driver Developer
-> SUSE Software Solutions Germany GmbH
-> Maxfeldstr. 5, 90409 NÃ¼rnberg, Germany
-> (HRB 36809, AG NÃ¼rnberg)
-> GeschÃ¤ftsfÃ¼hrer: Felix ImendÃ¶rffer
-> 
-
-
-
-
--- 
-====================
-| I would like to |
-| fix the world,  |
-| but they're not |
-| giving me the   |
- \ source code!  /
-  ---------------
-    Â¯\_(ãƒ„)_/Â¯
+> > > On 5/17/2021 6:42 AM, Tian Tao wrote:
+> > > > External email: Use caution opening links or attachments
+> > > > 
+> > > > 
+> > > > request_irq() after setting IRQ_NOAUTOEN as below
+> > > > irq_set_status_flags(irq, IRQ_NOAUTOEN);
+> > > > request_irq(dev, irq...);
+> > > > can be replaced by request_irq() with IRQF_NO_AUTOEN flag.
+> > > > 
+> > > > this change is just to simplify the code, no actual functional changes.
+> > > > 
+> > > > Signed-off-by: Tian Tao <tiantao6@hisilicon.com>
+> > > > ---
+> > > > 
+> > > > v2: update the commit message.
+> > > > ---
+> > > >   drivers/pci/controller/dwc/pcie-tegra194.c | 5 ++---
+> > > >   1 file changed, 2 insertions(+), 3 deletions(-)
+> > > > 
+> > > > diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c
+> > > > b/drivers/pci/controller/dwc/pcie-tegra194.c
+> > > > index bafd2c6..7349926 100644
+> > > > --- a/drivers/pci/controller/dwc/pcie-tegra194.c
+> > > > +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
+> > > > @@ -2021,14 +2021,13 @@ static int tegra_pcie_config_ep(struct
+> > > > tegra_pcie_dw *pcie,
+> > > >                  return -ENOMEM;
+> > > >          }
+> > > > 
+> > > > -       irq_set_status_flags(pcie->pex_rst_irq, IRQ_NOAUTOEN);
+> > > > -
+> > > >          pcie->ep_state = EP_STATE_DISABLED;
+> > > > 
+> > > >          ret = devm_request_threaded_irq(dev, pcie->pex_rst_irq, NULL,
+> > > >                                          tegra_pcie_ep_pex_rst_irq,
+> > > >                                          IRQF_TRIGGER_RISING |
+> > > > -                                       IRQF_TRIGGER_FALLING |
+> > > > IRQF_ONESHOT,
+> > > > +                                       IRQF_TRIGGER_FALLING |
+> > > > +                                       IRQF_ONESHOT | IRQF_NO_AUTOEN
+> > > >                                          name, (void *)pcie);
+> > > >          if (ret < 0) {
+> > > >                  dev_err(dev, "Failed to request IRQ for PERST:
+> > > > %d\n", ret);
+> > > > -- 
+> > > > 2.7.4
+> > > > 
