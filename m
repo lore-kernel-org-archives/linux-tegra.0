@@ -2,136 +2,66 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AB50C4743C
-	for <linux-tegra@archiver.kernel.org>; Wed, 23 Jun 2021 12:28:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D3EAC4743C
+	for <linux-tegra@archiver.kernel.org>; Wed, 23 Jun 2021 15:23:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 248D461076
-	for <linux-tegra@archiver.kernel.org>; Wed, 23 Jun 2021 12:28:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1CADE61166
+	for <linux-tegra@archiver.kernel.org>; Wed, 23 Jun 2021 15:23:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231391AbhFWMai (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 23 Jun 2021 08:30:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56714 "EHLO mail.kernel.org"
+        id S230243AbhFWPZp (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 23 Jun 2021 11:25:45 -0400
+Received: from foss.arm.com ([217.140.110.172]:36852 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231614AbhFWMaH (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 23 Jun 2021 08:30:07 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 6F56E6108E;
-        Wed, 23 Jun 2021 12:27:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1624451269;
-        bh=HAVJtTVrzJxFsKJDIJrqeHQYANllpN93YiRxUl5ea+M=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=r9uTZTY8L+cxqEC0D/c6wq3MQRcaWXF8v7sEiOA9xiQU3ruHwYZWlEDOtHm13UOCz
-         19cSGVM+U+wIUWMw5KNz4JLBEaiSgi/jXU+Qd5dWM1Ju2o71bNZJQ26eFpUw9efCdc
-         cDzo49YNoThQnCPYFjdZQZ/JCIX4YErETCp93OnjO7RAI11/xLR0fa1tV9LGQ+4ZKJ
-         eamWbxN4iYGqMN5auJNmXQR4quHCm1r/VbRVKMuIPEdOIBddH0lftIrAGFkY1dzORL
-         8Z0h2MVg7se6DDADGr3tGAgbWUcsP5cg1AKfqAxSCpXjsVT6OuEuSkYL1Wm5RvhI0t
-         mmwuRI1fQgjIg==
-Date:   Wed, 23 Jun 2021 07:27:47 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc:     Vidya Sagar <vidyas@nvidia.com>, Tian Tao <tiantao6@hisilicon.com>,
-        p.zabel@pengutronix.de, bhelgaas@google.com,
-        linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org,
-        tglx@linutronix.de, maz@kernel.org
-Subject: Re: [PATCH v2] PCI: tegra: move to use request_irq by IRQF_NO_AUTOEN
- flag
-Message-ID: <20210623122747.GA3357115@bjorn-Precision-5520>
+        id S229523AbhFWPZp (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 23 Jun 2021 11:25:45 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id ED1B331B;
+        Wed, 23 Jun 2021 08:23:27 -0700 (PDT)
+Received: from e123427-lin.arm.com (unknown [10.57.46.124])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C3D1E3F718;
+        Wed, 23 Jun 2021 08:23:26 -0700 (PDT)
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Bjorn Helgaas <bhelgaas@google.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Vidya Sagar <vidyas@nvidia.com>
+Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH] PCI: tegra: Fix shiftTooManyBitsSigned warning for Tegra194
+Date:   Wed, 23 Jun 2021 16:23:20 +0100
+Message-Id: <162446177943.19852.7323663097557808562.b4-ty@arm.com>
+X-Mailer: git-send-email 2.26.1
+In-Reply-To: <20210618160219.303092-1-jonathanh@nvidia.com>
+References: <20210618160219.303092-1-jonathanh@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20210623094519.GA11297@lpieralisi>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, Jun 23, 2021 at 10:45:19AM +0100, Lorenzo Pieralisi wrote:
-> [+Marc, Thomas]
+On Fri, 18 Jun 2021 17:02:19 +0100, Jon Hunter wrote:
+> The cppcheck tool issues the following warning for the Tegra194 PCIe
+> driver ...
 > 
-> thread: https://lore.kernel.org/linux-pci/1621213953-54030-1-git-send-email-tiantao6@hisilicon.com
+>  $ cppcheck --enable=all drivers/pci/controller/dwc/pcie-tegra194.c
+>  Checking drivers/pci/controller/dwc/pcie-tegra194.c ...
 > 
-> On Mon, May 31, 2021 at 03:32:33PM +0530, Vidya Sagar wrote:
-> > I want to re-examine this patch.
-> > I don't see any references in the kernel where IRQ_NOAUTOEN is passed
-> > directly in request_irq APIs.
+>  drivers/pci/controller/dwc/pcie-tegra194.c:1829:23: portability:
+> 	Shifting signed 32-bit value by 31 bits is
+> 	implementation-defined behaviour. See condition at line 1826.
+> 	[shiftTooManyBitsSigned]
 > 
-> AFAICS there are many references, not sure what you actually checked.
-> 
-> > It is always set explicitly through irq_set_status_flags() *before*
-> > calling request_irq APIs.  I don't see any comment in the header file
-> > either that says something like it should always be set before
-> > requesting the irq.  Lorenzo/Bjorn, could you please throw some light
-> > on what is correct thing to do here?
-> 
-> To be honest I don't know. Certainly Marc and Thomas know if they have
-> a minute to chime in.
+> [...]
 
-I don't know either.  If this *is* the right thing to do it needs a
-much better commit log because this is not merely a simplification
-that can be verified with a couple minutes of code reading.
+Applied to pci/tegra, thanks!
 
-This is the only use of IRQ_NOAUTOEN in drivers/pci/, which itself
-raises the question of why we need it.
+[1/1] PCI: tegra194: Fix shiftTooManyBitsSigned warning for Tegra194
+      https://git.kernel.org/lpieralisi/pci/c/b1eca3a544
 
-Also, please update the subject line to s/tegra/tegra194/ and start
-with a capital letter to match convention.
-
-> > On 5/17/2021 3:47 PM, Vidya Sagar wrote:
-> > > Thanks for the patch.
-> > > 
-> > > Reviewed-by: Vidya Sagar <vidyas@nvidia.com>
-> > > 
-> > > - Vidya Sagar
-> > > 
-> > > On 5/17/2021 6:42 AM, Tian Tao wrote:
-> > > > External email: Use caution opening links or attachments
-> > > > 
-> > > > 
-> > > > request_irq() after setting IRQ_NOAUTOEN as below
-> > > > irq_set_status_flags(irq, IRQ_NOAUTOEN);
-> > > > request_irq(dev, irq...);
-> > > > can be replaced by request_irq() with IRQF_NO_AUTOEN flag.
-> > > > 
-> > > > this change is just to simplify the code, no actual functional changes.
-> > > > 
-> > > > Signed-off-by: Tian Tao <tiantao6@hisilicon.com>
-> > > > ---
-> > > > 
-> > > > v2: update the commit message.
-> > > > ---
-> > > >   drivers/pci/controller/dwc/pcie-tegra194.c | 5 ++---
-> > > >   1 file changed, 2 insertions(+), 3 deletions(-)
-> > > > 
-> > > > diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c
-> > > > b/drivers/pci/controller/dwc/pcie-tegra194.c
-> > > > index bafd2c6..7349926 100644
-> > > > --- a/drivers/pci/controller/dwc/pcie-tegra194.c
-> > > > +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-> > > > @@ -2021,14 +2021,13 @@ static int tegra_pcie_config_ep(struct
-> > > > tegra_pcie_dw *pcie,
-> > > >                  return -ENOMEM;
-> > > >          }
-> > > > 
-> > > > -       irq_set_status_flags(pcie->pex_rst_irq, IRQ_NOAUTOEN);
-> > > > -
-> > > >          pcie->ep_state = EP_STATE_DISABLED;
-> > > > 
-> > > >          ret = devm_request_threaded_irq(dev, pcie->pex_rst_irq, NULL,
-> > > >                                          tegra_pcie_ep_pex_rst_irq,
-> > > >                                          IRQF_TRIGGER_RISING |
-> > > > -                                       IRQF_TRIGGER_FALLING |
-> > > > IRQF_ONESHOT,
-> > > > +                                       IRQF_TRIGGER_FALLING |
-> > > > +                                       IRQF_ONESHOT | IRQF_NO_AUTOEN
-> > > >                                          name, (void *)pcie);
-> > > >          if (ret < 0) {
-> > > >                  dev_err(dev, "Failed to request IRQ for PERST:
-> > > > %d\n", ret);
-> > > > -- 
-> > > > 2.7.4
-> > > > 
+Thanks,
+Lorenzo
