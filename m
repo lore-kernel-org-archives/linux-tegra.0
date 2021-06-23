@@ -2,155 +2,130 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94ED6C2B9F4
-	for <linux-tegra@archiver.kernel.org>; Tue, 22 Jun 2021 23:17:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 326A5C4743C
+	for <linux-tegra@archiver.kernel.org>; Wed, 23 Jun 2021 04:22:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 798F8611CE
-	for <linux-tegra@archiver.kernel.org>; Tue, 22 Jun 2021 23:17:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F4926135A
+	for <linux-tegra@archiver.kernel.org>; Wed, 23 Jun 2021 04:22:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229794AbhFVXUN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 22 Jun 2021 19:20:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53192 "EHLO
+        id S229665AbhFWEZH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 23 Jun 2021 00:25:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35558 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229501AbhFVXUM (ORCPT
+        with ESMTP id S229544AbhFWEZG (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 22 Jun 2021 19:20:12 -0400
-Received: from mail-ot1-x32f.google.com (mail-ot1-x32f.google.com [IPv6:2607:f8b0:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94FC3C061574;
-        Tue, 22 Jun 2021 16:17:56 -0700 (PDT)
-Received: by mail-ot1-x32f.google.com with SMTP id g19-20020a9d12930000b0290457fde18ad0so156111otg.1;
-        Tue, 22 Jun 2021 16:17:56 -0700 (PDT)
+        Wed, 23 Jun 2021 00:25:06 -0400
+Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBE95C061574;
+        Tue, 22 Jun 2021 21:22:48 -0700 (PDT)
+Received: by mail-lf1-x130.google.com with SMTP id h15so1720153lfv.12;
+        Tue, 22 Jun 2021 21:22:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=Apo7HvFOUae0jeu1BlraoIMCVf87oiSN4EtBtQKMT4A=;
-        b=NjUcEb64fuF18yJQzCQqQPg4tSbvd+sP8zL1dFHF/P5PwiA50SFjEUOlrHsnRAyEL3
-         c1NfrQ/Mg6T/6pwa3rooJNh0Pw3nrcEKY4LYNY0GI+cpzLcILMnwUCx49FFdZd5eCQkO
-         +p/q19PFoLf+AGB8ELk9FbSHQdL2LfidVdq2+eJhpg1pVVigFQZhJ4lPW9S+xGfXxBgC
-         mbXcwGArr8LLzP/c9Z1qVEtWt8xVVGjwJn2H6YdmyoWjr7UqhFLYkGzWksUq1dTWay9Y
-         0c0l7MzGeVBvORA2nzWDG0vpECQam3Zh5ik2gYaYqIUhjrisyC+mHdxT9UEEMbgBdJoX
-         l7uw==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=T75ZiFQpoQ634G5OU7PgmJhvFeitTm6q8P6qqnQ5xXM=;
+        b=Nxrg5H8/5SMeo73YmxK9Mq+d3r+kYdtPchv9mAlCPCMxnuNub8Vb1OEQtBHuCKQmPw
+         VNz8NUfOlDvpFBH3Gx5d+VpcJODS2U9S7cOcBsOBtXGGUaSG7CcZuEhYHASDeAuY2l9s
+         9mIYJjfi4MbTMASQJ2AuHkYQzPZ6L8fHCe+tI+AKSDM5onwutxp2wtCa3hXvPY4IB2nY
+         eZXafSMqrTA5oiAa4Vzc1zdOQziqn4YXDMJfpsLNe9fN/sx1Lou7LRTwvROp0qbrtrRg
+         aDclp/qsQlpPbsAt8b92L4zPvVUeTDUZlniFuFJjBkAwEIYMeT+hh+jR4PrgfFxS9jqp
+         Sppg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to;
-        bh=Apo7HvFOUae0jeu1BlraoIMCVf87oiSN4EtBtQKMT4A=;
-        b=Fql04jVA9szXT96iZYJdV/YuTH7lZLIByVa68Q5d5u9821imnk5HIiuGHdjqYX1Ce9
-         ZN9SKVJ8RGjTz0sk8nO4tOFiCj1PA69kpGzMCncXjN1o4LpX6cXgzznObDwVa0rwKTxP
-         IPkn1tDIXaCHbzW+jlIQCf35fS4bxqANlbqMZbCeXE9qNgatlh2aKsAdQhcCwRx8Seay
-         DSd32kr2Sj1byn8QMGPZ80N9bBw+lEGrv60bhZC+Hv13AMrdrdd4CJ0//InXRgxhxWpa
-         yaP9/O6nGvttGBxR/4BDWrAYV59ugvQTNkLCFKmTypvwSj2F22YKo34LStYLeUttvXVP
-         KfXQ==
-X-Gm-Message-State: AOAM5318whwMSC+eKYTNiLv++alqxm0lEFzLzgGhT45nVgjs0HrteG/3
-        BdNMLdTwkawtdy/NFkdRrNg=
-X-Google-Smtp-Source: ABdhPJwJOFUjT+Gbzya6a48v24DuC7UaiH9+N1uD3DJow5hG0SrLDeaIobioR6hNuwmSCz2cnrhJBg==
-X-Received: by 2002:a9d:7f03:: with SMTP id j3mr5093750otq.235.1624403875153;
-        Tue, 22 Jun 2021 16:17:55 -0700 (PDT)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id y13sm195876ots.47.2021.06.22.16.17.54
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=T75ZiFQpoQ634G5OU7PgmJhvFeitTm6q8P6qqnQ5xXM=;
+        b=WXJWSyV/pJqJCIPt3nJi6rfKcqoyBwTemS539mZmOZtC3/Q+hwUzouGIO1X+iGjHDq
+         gvQ5pgjQYGVvszuHWpBpEpKibduYTVvtcXO7I8cN+ASd/TqRLOW8jxQN/PbV5Wfiygud
+         IW73aSLBU5VkoE8AGPW9H+DYOv62Pqd/RLE9feV8Syk2DTowF7ZToWuvC43e80BfvBHc
+         arERoKJt1pHzQTB2seYItXstQUS6iURfdmX9ZH0fTPYwLy5AGjm1I/ow5LGWBxQef3uz
+         b2Ml6/4bN58Kqgji9A/ymbl35uB4LGxNRtCJ103oOvb+rvHgDWfpsO0DzoSnUu7xKr/r
+         TkyQ==
+X-Gm-Message-State: AOAM531Ggfws3tH5mt2KAdgTMBc8fZAXHTJa/ursp5QN+He55Igo3Y8E
+        EYPo7ah+5UA6ocVYjB2OK3U=
+X-Google-Smtp-Source: ABdhPJwbmI+YvEVrS3BYpHPEd8GKZ/HXfTdebYBKwgqeeUycXQAmi1FI/+s5ZdYk0sN72DBFfQumOA==
+X-Received: by 2002:a19:6a15:: with SMTP id u21mr562250lfu.309.1624422167172;
+        Tue, 22 Jun 2021 21:22:47 -0700 (PDT)
+Received: from localhost.localdomain (94-29-29-31.dynamic.spd-mgts.ru. [94.29.29.31])
+        by smtp.gmail.com with ESMTPSA id c9sm174027ljb.22.2021.06.22.21.22.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Jun 2021 16:17:54 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date:   Tue, 22 Jun 2021 16:17:53 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Zhang Rui <rui.zhang@intel.com>,
+        Tue, 22 Jun 2021 21:22:46 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Zhang Rui <rui.zhang@intel.com>,
         Daniel Lezcano <daniel.lezcano@linaro.org>,
         Amit Kucheria <amitk@kernel.org>,
-        Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v4 2/2] hwmon: Support set_trips() of thermal device ops
-Message-ID: <20210622231753.GB1299338@roeck-us.net>
-References: <20210621213153.28247-1-digetx@gmail.com>
- <20210621213153.28247-3-digetx@gmail.com>
+        Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>
+Cc:     linux-hwmon@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: [PATCH v5 0/2] Support temperature trips by HWMON core and LM90 driver
+Date:   Wed, 23 Jun 2021 07:22:29 +0300
+Message-Id: <20210623042231.16008-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210621213153.28247-3-digetx@gmail.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Jun 22, 2021 at 12:31:53AM +0300, Dmitry Osipenko wrote:
-> Support set_trips() callback of thermal device ops. This allows HWMON
-> device to operatively notify thermal core about temperature changes, which
-> is very handy to have in a case where HWMON sensor is used by CPU thermal
-> zone that performs passive cooling and emergency shutdown on overheat.
-> Thermal core will be able to react faster to temperature changes.
-> 
-> The set_trips() callback is entirely optional. If HWMON sensor doesn't
-> support setting thermal trips, then the callback is a NO-OP. The dummy
-> callback has no effect on the thermal core. The temperature trips are
-> either complement the temperature polling mechanism of thermal core or
-> replace the polling if sensor can set the trips and polling is disabled
-> by a particular device in a device-tree.
-> 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/hwmon/hwmon.c | 33 +++++++++++++++++++++++++++++++++
->  1 file changed, 33 insertions(+)
-> 
-> diff --git a/drivers/hwmon/hwmon.c b/drivers/hwmon/hwmon.c
-> index fd47ab4e6892..9cb9d814cb88 100644
-> --- a/drivers/hwmon/hwmon.c
-> +++ b/drivers/hwmon/hwmon.c
-> @@ -153,8 +153,41 @@ static int hwmon_thermal_get_temp(void *data, int *temp)
->  	return 0;
->  }
->  
-> +static int hwmon_thermal_set_trips(void *data, int low, int high)
-> +{
-> +	struct hwmon_thermal_data *tdata = data;
-> +	struct hwmon_device *hwdev = to_hwmon_device(tdata->dev);
-> +	const struct hwmon_chip_info *chip = hwdev->chip;
-> +	const struct hwmon_channel_info **info = chip->info;
-> +	unsigned int i;
-> +	int err;
-> +
-> +	if (!chip->ops->write)
-> +		return 0;
-> +
-> +	for (i = 0; info[i] && info[i]->type != hwmon_temp; i++)
-> +		continue;
-> +
-Please add
-	if (!info[i])
-		return 0;
-here and drop the two checks for info[i] below.
+Hi,
 
-Thanks,
-Guenter
+It's typical for embedded devices to use LM90-compatible sensor for
+monitoring of CPU core and skin temperatures. The sensor is often
+used by thermal zone that performs passive cooling and emergency
+shutdown on overheat, hence it's more optimal to use interrupt for
+a faster notification about temperature changes. Thermal framework
+provides set_trips() callback for programming of temperature trips,
+let's support it by HWMON.
 
-> +	if (info[i] && info[i]->config[tdata->index] & HWMON_T_MIN) {
-> +		err = chip->ops->write(tdata->dev, hwmon_temp,
-> +				       hwmon_temp_min, tdata->index, low);
-> +		if (err && err != -EOPNOTSUPP)
-> +			return err;
-> +	}
-> +
-> +	if (info[i] && info[i]->config[tdata->index] & HWMON_T_MAX) {
-> +		err = chip->ops->write(tdata->dev, hwmon_temp,
-> +				       hwmon_temp_max, tdata->index, high);
-> +		if (err && err != -EOPNOTSUPP)
-> +			return err;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  static const struct thermal_zone_of_device_ops hwmon_thermal_ops = {
->  	.get_temp = hwmon_thermal_get_temp,
-> +	.set_trips = hwmon_thermal_set_trips,
->  };
->  
->  static void hwmon_thermal_remove_sensor(void *data)
-> -- 
-> 2.30.2
-> 
+Changelog:
+
+v5: - Factored out the !info[i] check in set_trips() and moved integer
+      underflow preventions closer to the code that underflows. This was
+      suggested by Guenter Roeck.
+
+v4: - Extended commit message of the set_trips() patch, saying that
+      it has no effect on sensors that can't set trips. This was
+      suggested by Guenter Roeck.
+
+    - The channels are now iterated starting from 0 instead of 1 in the
+      set_trips() callback. This was suggested by Guenter Roeck.
+
+    - Moved out declaration of the err variable into the upper scope of
+      set_trips(), like it was suggested by Guenter Roeck. The checkpatch
+      normally warns about missing empty line after a declaration, but it
+      couldn't detect this case here.
+
+    - Replaced the err < 0 comparisons with err != 0, since write callback
+      of the chip ops isn't supposed to return positive values. This was
+      suggested by Guenter Roeck.
+
+v3: - Improved patch that fixes integer overflows by fixing the hysteresis
+      underflow and improving the commit message, telling that min/max/crit
+      fixes are only related to the LM99 sensor. Thanks to Guenter Roeck
+      for the suggestion.
+
+v2: - Reworked set_trips() by making it generic. Now callback invokes
+      the min/max temperature write method directly, instead of using
+      additional new hwmon callback. This was suggested by Guenter Roeck.
+
+    - Added new patch that fixes integer overflows in the LM90 driver.
+      The fixes are necessary for supporting set_trips().
+
+Dmitry Osipenko (2):
+  hwmon: (lm90) Prevent integer underflows of temperature calculations
+  hwmon: Support set_trips() of thermal device ops
+
+ drivers/hwmon/hwmon.c | 36 ++++++++++++++++++++++++++++++++++++
+ drivers/hwmon/lm90.c  | 13 +++++++++++--
+ 2 files changed, 47 insertions(+), 2 deletions(-)
+
+-- 
+2.30.2
+
