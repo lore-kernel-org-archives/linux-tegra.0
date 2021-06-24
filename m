@@ -7,30 +7,33 @@ X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91E04C49EA6
-	for <linux-tegra@archiver.kernel.org>; Thu, 24 Jun 2021 10:47:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3490C49EA7
+	for <linux-tegra@archiver.kernel.org>; Thu, 24 Jun 2021 10:48:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7957C61405
-	for <linux-tegra@archiver.kernel.org>; Thu, 24 Jun 2021 10:47:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C93A761400
+	for <linux-tegra@archiver.kernel.org>; Thu, 24 Jun 2021 10:48:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232248AbhFXKuC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 24 Jun 2021 06:50:02 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:38616 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232146AbhFXKuC (ORCPT
+        id S232230AbhFXKuz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 24 Jun 2021 06:50:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50076 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232127AbhFXKuz (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 24 Jun 2021 06:50:02 -0400
+        Thu, 24 Jun 2021 06:50:55 -0400
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A16F0C061756;
+        Thu, 24 Jun 2021 03:48:36 -0700 (PDT)
 Received: from pendragon.ideasonboard.com (62-78-145-57.bb.dnainternet.fi [62.78.145.57])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 842B9532;
-        Thu, 24 Jun 2021 12:47:39 +0200 (CEST)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 571A61254;
+        Thu, 24 Jun 2021 12:48:33 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1624531659;
-        bh=ZNycYCdpm5oEjlFfF/sEqNXjEFO/n03c+byQ10Bt5bw=;
+        s=mail; t=1624531713;
+        bh=fIk5wMEN1B7CMPOBGbKPIoyHWGb/NJbW3Q+hz7HFjMM=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=CGN9DVFsEHoPFf+pGvo+BS5Oqq8sbq0BRLQS9wPa02YfsZbZHe42KSDL8SiS8nknQ
-         Dlh8v3FIrtFZ+aIelYdI0hq6VcbgqVLgvJq3npv5I27MKCnHAHxEiouigFeN+ZPJ+I
-         gY9uoWeAbXhjpnjIo6lsntNy9MnvXU5it7HqZ5l0=
-Date:   Thu, 24 Jun 2021 13:47:08 +0300
+        b=OoLj5b8l/ofOHdX9hMnRB54xFpHcmL5qCdyqf0btt+Wqy//1J8rGXdoC24H1uq8n1
+         048gJuhXofMiwBWBvQAq72XeLSOhwF8Jn/QOm5PZoqoyR+V/AZX9s6u3YYgXawYOjf
+         yqs50G3bJBKCjDvGArnYQnXaHNQWu9PnXSCiArt0=
+Date:   Thu, 24 Jun 2021 13:48:03 +0300
 From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 To:     Thomas Zimmermann <tzimmermann@suse.de>
 Cc:     daniel@ffwll.ch, airlied@linux.ie, alexander.deucher@amd.com,
@@ -67,15 +70,15 @@ Cc:     daniel@ffwll.ch, airlied@linux.ie, alexander.deucher@amd.com,
         linux-stm32@st-md-mailman.stormreply.com,
         linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
         intel-gfx@lists.freedesktop.org
-Subject: Re: [PATCH v3 16/27] drm/rcar-du: Don't set struct
+Subject: Re: [PATCH v3 24/27] drm/vkms: Don't set struct
  drm_device.irq_enabled
-Message-ID: <YNRirARS1AIVncc+@pendragon.ideasonboard.com>
+Message-ID: <YNRi4yR6lQTix7ar@pendragon.ideasonboard.com>
 References: <20210624072916.27703-1-tzimmermann@suse.de>
- <20210624072916.27703-17-tzimmermann@suse.de>
+ <20210624072916.27703-25-tzimmermann@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20210624072916.27703-17-tzimmermann@suse.de>
+In-Reply-To: <20210624072916.27703-25-tzimmermann@suse.de>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -84,31 +87,31 @@ Hi Thomas,
 
 Thank you for the patch.
 
-On Thu, Jun 24, 2021 at 09:29:05AM +0200, Thomas Zimmermann wrote:
+On Thu, Jun 24, 2021 at 09:29:13AM +0200, Thomas Zimmermann wrote:
 > The field drm_device.irq_enabled is only used by legacy drivers
-> with userspace modesetting. Don't set it in rcar-du.
+> with userspace modesetting. Don't set it in vkms.
 > 
 > Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
 
 Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
 > ---
->  drivers/gpu/drm/rcar-du/rcar_du_drv.c | 2 --
+>  drivers/gpu/drm/vkms/vkms_drv.c | 2 --
 >  1 file changed, 2 deletions(-)
 > 
-> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-> index bfbff90588cb..e289a66594a7 100644
-> --- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-> +++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-> @@ -593,8 +593,6 @@ static int rcar_du_probe(struct platform_device *pdev)
->  		goto error;
+> diff --git a/drivers/gpu/drm/vkms/vkms_drv.c b/drivers/gpu/drm/vkms/vkms_drv.c
+> index 027ffe759440..496de38ad983 100644
+> --- a/drivers/gpu/drm/vkms/vkms_drv.c
+> +++ b/drivers/gpu/drm/vkms/vkms_drv.c
+> @@ -163,8 +163,6 @@ static int vkms_create(struct vkms_config *config)
+>  		goto out_devres;
 >  	}
 >  
-> -	rcdu->ddev.irq_enabled = 1;
+> -	vkms_device->drm.irq_enabled = true;
 > -
->  	/*
->  	 * Register the DRM device with the core and the connectors with
->  	 * sysfs.
+>  	ret = drm_vblank_init(&vkms_device->drm, 1);
+>  	if (ret) {
+>  		DRM_ERROR("Failed to vblank\n");
 
 -- 
 Regards,
