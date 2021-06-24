@@ -2,119 +2,209 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 750D3C49EA6
-	for <linux-tegra@archiver.kernel.org>; Thu, 24 Jun 2021 08:47:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E2FCC48BDF
+	for <linux-tegra@archiver.kernel.org>; Thu, 24 Jun 2021 08:52:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 59E52613D8
-	for <linux-tegra@archiver.kernel.org>; Thu, 24 Jun 2021 08:47:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C350613EC
+	for <linux-tegra@archiver.kernel.org>; Thu, 24 Jun 2021 08:52:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229864AbhFXIuJ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 24 Jun 2021 04:50:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50820 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229796AbhFXIuJ (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 24 Jun 2021 04:50:09 -0400
-Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73F97C061574
-        for <linux-tegra@vger.kernel.org>; Thu, 24 Jun 2021 01:47:49 -0700 (PDT)
-Received: by mail-ed1-x52e.google.com with SMTP id r7so7342390edv.12
-        for <linux-tegra@vger.kernel.org>; Thu, 24 Jun 2021 01:47:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=deviqon.com; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=3beJCK47iYcCQoPpTeNCafKWJMPyjBWHMs2C9W8/fyY=;
-        b=tLd/qzhMHVLKc+9KmNB81Fu7KJ2HXQJrg9oX23hvl1usJCk9a3rf20uhOoutD8mwrG
-         7mXS4ME3/sJ7CpVanjyQd8CZ6e8kaCbiidDi6TpJ3+wScAiVXrF06jxRk7eqWX8atzSn
-         Qu5fNZs8l8GkqBBK81H0PJmcqK7Ram+TeXnd5zVER28SOVgm38YORaA0Piu6dqDwRtCz
-         71C0+GIw5+yUkbFBhdgw27QOaOzoyBsXWg329u/kqLQmgm2ZvDnRqyKdDdpkUm1hRlEN
-         nPNqCTyhADIeMDlRAAYw0j/LtrR53kca+0YXLLIbwHuOOkZ6TBdwlbZgRF4eZy6MHGQG
-         Jtow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=3beJCK47iYcCQoPpTeNCafKWJMPyjBWHMs2C9W8/fyY=;
-        b=Gd/eJ1wIGtl78+fMH30xWjnrc6UA8rVQoR55khiljl+tZx7HZMTVed4h0mR2Qj1+Dt
-         xEOuhjPlP+swPmowvmAhx/fzKbaqSq6R01gb4rhBO0BjIQoMx9qIAHa72teKDZTykE5j
-         UwXtOZL9pcq46sKOKfOKji/5e62SFRGXEEXtw4vSO68aQ+i69nypMHP/Kd2GcPMxzIzt
-         6vUpqH6KYUdmaTLvqP8Sxgd7Cq9Fmt5MDIpw+NpcQrFdUfkvGIe8WZH1vIC3q/paRvbt
-         m09shxNl9F/TfbmJ1tcqENdnLye94LdJumrPCz1w+2xdjOUHG1+97pBWA/EZmg068wDS
-         l+Nw==
-X-Gm-Message-State: AOAM530lp1MPPIJieAP9Wp3RMTQMlvV410qeORNaRatXIqiViPl/EM0E
-        54q0do2iw2fCsO/li5GgswCOwg==
-X-Google-Smtp-Source: ABdhPJzFUyIQeIv0Hj7mjfxoBxRanCL1jf/TWrJO9oCt2Rky48z9Hu7axK1WWB0nTyh327UMJkpbcQ==
-X-Received: by 2002:a05:6402:781:: with SMTP id d1mr5749413edy.32.1624524468124;
-        Thu, 24 Jun 2021 01:47:48 -0700 (PDT)
-Received: from neptune.. ([5.2.193.191])
-        by smtp.gmail.com with ESMTPSA id hz11sm883612ejc.125.2021.06.24.01.47.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Jun 2021 01:47:47 -0700 (PDT)
-From:   Alexandru Ardelean <aardelean@deviqon.com>
-To:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Cc:     pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        Alexandru Ardelean <aardelean@deviqon.com>
-Subject: [PATCH] clk: tegra: clk-tegra124-dfll-fcpu: don't use devm functions for regulator
-Date:   Thu, 24 Jun 2021 11:47:37 +0300
-Message-Id: <20210624084737.42336-1-aardelean@deviqon.com>
-X-Mailer: git-send-email 2.31.1
+        id S229907AbhFXIy0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 24 Jun 2021 04:54:26 -0400
+Received: from mga02.intel.com ([134.134.136.20]:35036 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229796AbhFXIy0 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 24 Jun 2021 04:54:26 -0400
+IronPort-SDR: h7r+kg2UMWRzx6G9i04jpQ3S2olC60hXE+XI20qN+cImh0dZegB3kxEeg3Ir2KZhjOHoFvexuQ
+ LOzg3RshuRcA==
+X-IronPort-AV: E=McAfee;i="6200,9189,10024"; a="194568609"
+X-IronPort-AV: E=Sophos;i="5.83,296,1616482800"; 
+   d="scan'208";a="194568609"
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2021 01:52:05 -0700
+IronPort-SDR: b2WPW20xI/GJO29ic6WIfxIMz72rLAtb0USOd7lNI7J+Sgm2+3/EG1ErQrLUO2vnU20Qh+TbCW
+ rzKM1urai8Fg==
+X-IronPort-AV: E=Sophos;i="5.83,296,1616482800"; 
+   d="scan'208";a="487681787"
+Received: from schulke-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.59.242])
+  by orsmga001-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2021 01:51:41 -0700
+From:   Jani Nikula <jani.nikula@linux.intel.com>
+To:     Thomas Zimmermann <tzimmermann@suse.de>, daniel@ffwll.ch,
+        airlied@linux.ie, alexander.deucher@amd.com,
+        christian.koenig@amd.com, Xinhui.Pan@amd.com,
+        james.qian.wang@arm.com, liviu.dudau@arm.com,
+        mihail.atanassov@arm.com, brian.starkey@arm.com,
+        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        inki.dae@samsung.com, jy0922.shim@samsung.com,
+        sw0312.kim@samsung.com, kyungmin.park@samsung.com,
+        krzysztof.kozlowski@canonical.com, xinliang.liu@linaro.org,
+        tiantao6@hisilicon.com, john.stultz@linaro.org,
+        kong.kongxinwei@hisilicon.com, puck.chen@hisilicon.com,
+        laurentiu.palcu@oss.nxp.com, l.stach@pengutronix.de,
+        p.zabel@pengutronix.de, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        linux-imx@nxp.com, chunkuang.hu@kernel.org, matthias.bgg@gmail.com,
+        bskeggs@redhat.com, tomba@kernel.org, hjc@rock-chips.com,
+        heiko@sntech.de, benjamin.gaignard@linaro.org,
+        yannick.fertre@foss.st.com, philippe.cornu@foss.st.com,
+        mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
+        wens@csie.org, jernej.skrabec@gmail.com, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, jyri.sarha@iki.fi, emma@anholt.net,
+        linux-graphics-maintainer@vmware.com, zackr@vmware.com,
+        hyun.kwon@xilinx.com, laurent.pinchart@ideasonboard.com,
+        michal.simek@xilinx.com, rodrigo.vivi@intel.com,
+        linux@armlinux.org.uk, kieran.bingham+renesas@ideasonboard.com,
+        rodrigosiqueiramelo@gmail.com, melissa.srw@gmail.com,
+        hamohammed.sa@gmail.com
+Cc:     linux-samsung-soc@vger.kernel.org, nouveau@lists.freedesktop.org,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-sunxi@lists.linux.dev, linux-rockchip@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, amd-gfx@lists.freedesktop.org,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        linux-tegra@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 04/27] drm: Don't test for IRQ support in VBLANK ioctls
+In-Reply-To: <b5e7729f-ed11-e9ca-386e-562feb2bd2b7@suse.de>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20210624072916.27703-1-tzimmermann@suse.de> <20210624072916.27703-5-tzimmermann@suse.de> <87im23u1ok.fsf@intel.com> <b5e7729f-ed11-e9ca-386e-562feb2bd2b7@suse.de>
+Date:   Thu, 24 Jun 2021 11:51:37 +0300
+Message-ID: <877dijtzl2.fsf@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The purpose of the device-managed functions is to bind the life-time of an
-object to that of a parent device object.
+On Thu, 24 Jun 2021, Thomas Zimmermann <tzimmermann@suse.de> wrote:
+> Hi
+>
+> Am 24.06.21 um 10:06 schrieb Jani Nikula:
+>> On Thu, 24 Jun 2021, Thomas Zimmermann <tzimmermann@suse.de> wrote:
+>>> diff --git a/drivers/gpu/drm/drm_vblank.c b/drivers/gpu/drm/drm_vblank.c
+>>> index 3417e1ac7918..10fe16bafcb6 100644
+>>> --- a/drivers/gpu/drm/drm_vblank.c
+>>> +++ b/drivers/gpu/drm/drm_vblank.c
+>>> @@ -1748,8 +1748,16 @@ int drm_wait_vblank_ioctl(struct drm_device *dev, void *data,
+>>>   	unsigned int pipe_index;
+>>>   	unsigned int flags, pipe, high_pipe;
+>>>   
+>>> -	if (!dev->irq_enabled)
+>>> -		return -EOPNOTSUPP;
+>>> +#if defined(CONFIG_DRM_LEGACY)
+>>> +	if  (unlikely(drm_core_check_feature(dev, DRIVER_LEGACY))) {
+>>> +		if (!dev->irq_enabled)
+>>> +			return -EOPNOTSUPP;
+>>> +	} else /* if DRIVER_MODESET */
+>>> +#endif
+>>> +	{
+>>> +		if (!drm_dev_has_vblank(dev))
+>>> +			return -EOPNOTSUPP;
+>>> +	}
+>> 
+>> Sheesh I hate this kind of inline #ifdefs.
+>> 
+>> Two alternate suggestions that I believe should be as just efficient:
+>
+> Or how about:
+>
+> static bool drm_wait_vblank_supported(struct drm_device *dev)
+>
+> {
+>
+> if defined(CONFIG_DRM_LEGACY)
+> 	if  (unlikely(drm_core_check_feature(dev, DRIVER_LEGACY)))
+>
+> 		return dev->irq_enabled;
+>
+> #endif
+> 	return drm_dev_has_vblank(dev);
+>
+> }
+>
+>
+> ?
+>
+> It's inline, but still readable.
 
-This is not the case for the 'vdd-cpu' regulator in this driver. A
-reference is obtained via devm_regulator_get() and immediately released
-with devm_regulator_put().
+It's definitely better than the original, but it's unclear to me why
+you'd prefer this over option 2) below. I guess the only reason I can
+think of is emphasizing the conditional compilation. However,
+IS_ENABLED() is widely used in this manner specifically to avoid inline
+#if, and the compiler optimizes it away.
 
-In this case, the usage of devm_ functions is slightly excessive, as the
-un-managed versions of these functions is a little cleaner (and slightly
-more economical in terms of allocation).
+BR,
+Jani.
 
-This change converts the devm_regulator_{get,put}() to
-regulator_{get,put}() in the get_alignment_from_regulator() function of
-this driver.
 
-Signed-off-by: Alexandru Ardelean <aardelean@deviqon.com>
----
- drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> Best regards
+> Thomas
+>
+>> 
+>> 1) The more verbose:
+>> 
+>> #if defined(CONFIG_DRM_LEGACY)
+>> static bool drm_wait_vblank_supported(struct drm_device *dev)
+>> {
+>> 	if  (unlikely(drm_core_check_feature(dev, DRIVER_LEGACY)))
+>> 		return dev->irq_enabled;
+>> 	else
+>> 		return drm_dev_has_vblank(dev);
+>> }
+>> #else
+>> static bool drm_wait_vblank_supported(struct drm_device *dev)
+>> {
+>> 	return drm_dev_has_vblank(dev);
+>> }
+>> #endif
+>> 
+>> 2) The more compact:
+>> 
+>> static bool drm_wait_vblank_supported(struct drm_device *dev)
+>> {
+>> 	if  (IS_ENABLED(CONFIG_DRM_LEGACY) && unlikely(drm_core_check_feature(dev, DRIVER_LEGACY)))
+>> 		return dev->irq_enabled;
+>> 	else
+>> 		return drm_dev_has_vblank(dev);
+>> }
+>> 
+>> Then, in drm_wait_vblank_ioctl().
+>> 
+>> 	if (!drm_wait_vblank_supported(dev))
+>> 		return -EOPNOTSUPP;
+>> 
+>> The compiler should do the right thing without any explicit inline
+>> keywords etc.
+>> 
+>> BR,
+>> Jani.
+>> 
+>>>   
+>>>   	if (vblwait->request.type & _DRM_VBLANK_SIGNAL)
+>>>   		return -EINVAL;
+>>> @@ -2023,7 +2031,7 @@ int drm_crtc_get_sequence_ioctl(struct drm_device *dev, void *data,
+>>>   	if (!drm_core_check_feature(dev, DRIVER_MODESET))
+>>>   		return -EOPNOTSUPP;
+>>>   
+>>> -	if (!dev->irq_enabled)
+>>> +	if (!drm_dev_has_vblank(dev))
+>>>   		return -EOPNOTSUPP;
+>>>   
+>>>   	crtc = drm_crtc_find(dev, file_priv, get_seq->crtc_id);
+>>> @@ -2082,7 +2090,7 @@ int drm_crtc_queue_sequence_ioctl(struct drm_device *dev, void *data,
+>>>   	if (!drm_core_check_feature(dev, DRIVER_MODESET))
+>>>   		return -EOPNOTSUPP;
+>>>   
+>>> -	if (!dev->irq_enabled)
+>>> +	if (!drm_dev_has_vblank(dev))
+>>>   		return -EOPNOTSUPP;
+>>>   
+>>>   	crtc = drm_crtc_find(dev, file_priv, queue_seq->crtc_id);
+>> 
 
-diff --git a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-index 2ac2679d696d..5e339ad0a97c 100644
---- a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-+++ b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-@@ -537,7 +537,7 @@ static void get_alignment_from_dt(struct device *dev,
- static int get_alignment_from_regulator(struct device *dev,
- 					 struct rail_alignment *align)
- {
--	struct regulator *reg = devm_regulator_get(dev, "vdd-cpu");
-+	struct regulator *reg = regulator_get(dev, "vdd-cpu");
- 
- 	if (IS_ERR(reg))
- 		return PTR_ERR(reg);
-@@ -545,7 +545,7 @@ static int get_alignment_from_regulator(struct device *dev,
- 	align->offset_uv = regulator_list_voltage(reg, 0);
- 	align->step_uv = regulator_get_linear_step(reg);
- 
--	devm_regulator_put(reg);
-+	regulator_put(reg);
- 
- 	return 0;
- }
 -- 
-2.31.1
-
+Jani Nikula, Intel Open Source Graphics Center
