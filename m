@@ -2,153 +2,228 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB1B5C49EA7
-	for <linux-tegra@archiver.kernel.org>; Thu, 24 Jun 2021 14:15:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 341CEC49EA6
+	for <linux-tegra@archiver.kernel.org>; Thu, 24 Jun 2021 22:40:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 91A3C613EB
-	for <linux-tegra@archiver.kernel.org>; Thu, 24 Jun 2021 14:15:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 16C93613AD
+	for <linux-tegra@archiver.kernel.org>; Thu, 24 Jun 2021 22:40:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231417AbhFXOSE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 24 Jun 2021 10:18:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41168 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230170AbhFXOSE (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 24 Jun 2021 10:18:04 -0400
-Received: from mail-ot1-x329.google.com (mail-ot1-x329.google.com [IPv6:2607:f8b0:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C873C061574;
-        Thu, 24 Jun 2021 07:15:44 -0700 (PDT)
-Received: by mail-ot1-x329.google.com with SMTP id d21-20020a9d72d50000b02904604cda7e66so3925435otk.7;
-        Thu, 24 Jun 2021 07:15:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=nZjVyzZsb81wztakP7Xrxylxn59FboylSwahYy/4064=;
-        b=sY+1LZiod5ob1CQgRJB49BxZQt5g2B77cLoV3iMQxICp1nnaVf8oxKjngOrjsyWZ3z
-         rUGnAOSRVwdaLMMXdQlAQK7DSb/IF+r9BXtlfS8oAtNnZ7JJUubjKT3HSMfIQevmAU1G
-         dDpivzr2g3iyUhCBKwBBzRyNkiEXnUh99SEWPoXB2tLgq66EnL3fuOoQWkXNsaJTyuli
-         HWJhJ2FBaGGvXpAtxs1QaFQdcF17CLjK1FERXD0xqFDukik5gF9F1vlqPibrsBnHWx+/
-         R4Zl/ETxWJisg0MV4BnBAzCV1oUxytzlKMhU+ITxS6RoDl/BcqVzvYS+baeqgyebHU84
-         d5Vw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to;
-        bh=nZjVyzZsb81wztakP7Xrxylxn59FboylSwahYy/4064=;
-        b=IgVZNJ595K9u8+hcW2HUzGt/MWic3sm3dv4OlifJdk0fBHdvDPqEiElYyLru4iWpYM
-         tr46Ml/S9EFib7DjrodVoYN9VzPwH0XuicO+A7Zh/D7/OXmtZY4VCi28uLP2ihhAKQEV
-         9saa40HTtnBqtQP58L+LknpR2YHnsptcGzeoXivV/n5epa8FXsANOtAw1OLROgJ4ItO2
-         B9Mm8tvOQaifnD++qDHjZfoem+Vlx6xlHTgvcQVHqXx/HuoXMMVXARt5BTAcvN9nNcXw
-         1zlnnTpYgX8AbLbZYYaQamtZS6q2dcVoyiN/o+rupSoYPIshvUvFmhaA6aoZJBJgEKJU
-         CTag==
-X-Gm-Message-State: AOAM531Tg9uiknpIW0O8ZC9376kqByEMrfPG+2fjyPtP0BWYs9cE30qy
-        WvT0xP5d3vnfN5GHD31rPHI=
-X-Google-Smtp-Source: ABdhPJyOYwSFZ9SagWIpjFLYG7gIV01mU7gqgRWWiAKmJAFo2SFbLpyPScHulTrk8tZi5uVy9kG5Kg==
-X-Received: by 2002:a9d:6508:: with SMTP id i8mr4596161otl.368.1624544143599;
-        Thu, 24 Jun 2021 07:15:43 -0700 (PDT)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id l2sm726900otl.27.2021.06.24.07.15.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Jun 2021 07:15:43 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date:   Thu, 24 Jun 2021 07:15:41 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Zhang Rui <rui.zhang@intel.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        id S232784AbhFXWnC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 24 Jun 2021 18:43:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48166 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229643AbhFXWnC (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 24 Jun 2021 18:43:02 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 45373613A9;
+        Thu, 24 Jun 2021 22:40:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1624574442;
+        bh=2RVF0pPWJN9bsOvwEQ1wuKz8hUlipUgiYt0DkqZHZtU=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=C07/XAF2fa67lKOB++qXyN0IRjAQX8HJ2L0BsJLlxgNNyjMCsl3m0tSFsLFA5xvqs
+         RuJA/oxtWcJjtIhCFOGLQ0blYbayFGWQ5i0aotk9lcH/REAfA35SSMGLuGNwDYgkHU
+         L0vY+sXoGTmF22zybs787DZkfceg+CGDn/Z4jQe2NjdWipqh0uaOHQzDcCTwmYXtiZ
+         tOXfqBi7Sk/rL2iEDA+IVSOY7dzCq7RtxERD8QvQHfiaoF3XwlzucUapiVpKCGqc0G
+         nS1JnsB7pu9yK+lEoi/5OS/OwRCuxUSc51hLyCBnXzi4JKdZjWPRoPV9btzF2rYi1e
+         hxt46bcoGnE3g==
+Date:   Thu, 24 Jun 2021 17:40:40 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Javier Martinez Canillas <javierm@redhat.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Peter Robinson <pbrobinson@gmail.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Rob Herring <robh@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
+        linux-rockchip@lists.infradead.org,
+        Michal Simek <michal.simek@xilinx.com>,
+        Ley Foon Tan <ley.foon.tan@intel.com>,
+        rfi@lists.rocketboards.org, Jingoo Han <jingoohan1@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
         linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v5 2/2] hwmon: Support set_trips() of thermal device ops
-Message-ID: <20210624141541.GA3709721@roeck-us.net>
-References: <20210623042231.16008-1-digetx@gmail.com>
- <20210623042231.16008-3-digetx@gmail.com>
+Subject: Re: [PATCH v2] PCI: rockchip: Avoid accessing PCIe registers with
+ clocks gated
+Message-ID: <20210624224040.GA3567297@bjorn-Precision-5520>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210623042231.16008-3-digetx@gmail.com>
+In-Reply-To: <20210608080409.1729276-1-javierm@redhat.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, Jun 23, 2021 at 07:22:31AM +0300, Dmitry Osipenko wrote:
-> Support set_trips() callback of thermal device ops. This allows HWMON
-> device to operatively notify thermal core about temperature changes, which
-> is very handy to have in a case where HWMON sensor is used by CPU thermal
-> zone that performs passive cooling and emergency shutdown on overheat.
-> Thermal core will be able to react faster to temperature changes.
+[+cc Michal, Ley Foon, Jingoo, Thierry, Jonathan]
+
+On Tue, Jun 08, 2021 at 10:04:09AM +0200, Javier Martinez Canillas wrote:
+> IRQ handlers that are registered for shared interrupts can be called at
+> any time after have been registered using the request_irq() function.
 > 
-> The set_trips() callback is entirely optional. If HWMON sensor doesn't
-> support setting thermal trips, then the callback is a NO-OP. The dummy
-> callback has no effect on the thermal core. The temperature trips are
-> either complement the temperature polling mechanism of thermal core or
-> replace the polling if sensor can set the trips and polling is disabled
-> by a particular device in a device-tree.
+> It's up to drivers to ensure that's always safe for these to be called.
 > 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> Both the "pcie-sys" and "pcie-client" interrupts are shared, but since
+> their handlers are registered very early in the probe function, an error
+> later can lead to these handlers being executed before all the required
+> resources have been properly setup.
+> 
+> For example, the rockchip_pcie_read() function used by these IRQ handlers
+> expects that some PCIe clocks will already be enabled, otherwise trying
+> to access the PCIe registers causes the read to hang and never return.
+> 
+> The CONFIG_DEBUG_SHIRQ option tests if drivers are able to cope with their
+> shared interrupt handlers being called, by generating a spurious interrupt
+> just before a shared interrupt handler is unregistered.
+> 
+> But this means that if the option is enabled, any error in the probe path
+> of this driver could lead to one of the IRQ handlers to be executed.
 
-Applied.
+I'm not an IRQ expert, but I think this is an issue regardless of
+CONFIG_DEBUG_SHIRQ, isn't it?  Anything used by an IRQ handler should
+be initialized before the handler is registered.  CONFIG_DEBUG_SHIRQ
+is just a way to help find latent problems.
 
-Thanks,
-Guenter
+> In a rockpro64 board, the following sequence of events happens:
+> 
+>   1) "pcie-sys" IRQ is requested and its handler registered.
+>   2) "pcie-client" IRQ is requested and its handler registered.
+>   3) probe later fails due readl_poll_timeout() returning a timeout.
+>   4) the "pcie-sys" IRQ is unregistered.
+>   5) CONFIG_DEBUG_SHIRQ triggers a spurious interrupt.
+>   6) "pcie-client" IRQ handler is called for this spurious interrupt.
+>   7) IRQ handler tries to read PCIE_CLIENT_INT_STATUS with clocks gated.
+>   8) the machine hangs because rockchip_pcie_read() call never returns.
+> 
+> To avoid cases like this, the handlers don't have to be registered until
+> very late in the probe function, once all the resources have been setup.
+> 
+> So let's just move all the IRQ init before the pci_host_probe() call, that
+> will prevent issues like this and seems to be the correct thing to do too.
 
+Previously we registered rockchip_pcie_subsys_irq_handler() and
+rockchip_pcie_client_irq_handler() before the PCIe clocks were
+enabled.  That's a problem because they depend on those clocks being
+enabled, and your patch fixes that.
+
+rockchip_pcie_legacy_int_handler() depends on rockchip->irq_domain,
+which isn't initialized until rockchip_pcie_init_irq_domain().
+Previously we registered rockchip_pcie_legacy_int_handler() as the
+handler for the "legacy" IRQ before rockchip_pcie_init_irq_domain().
+
+I think you patch *also* fixes that problem, right?
+
+I think this is also an issue with the following other drivers.  They all
+set the handler to something that uses an IRQ domain before they
+actually initialize the domain:
+
+  # nwl --------------------------------------------------------------
+  nwl_pcie_probe
+    nwl_pcie_parse_dt
+      pcie->irq_intx = platform_get_irq_byname(pdev, "intx")
+      irq_set_chained_handler_and_data(pcie->irq_intx, nwl_pcie_leg_handler)
+    nwl_pcie_bridge_init
+      devm_request_irq
+    nwl_pcie_init_irq_domain
+      pcie->legacy_irq_domain = irq_domain_add_linear()
+
+  nwl_pcie_leg_handler
+    irq_find_mapping(pcie->legacy_irq_domain)
+
+
+  # altera --------------------------------------------------------------
+  altera_pcie_probe
+    altera_pcie_parse_dt
+      irq_set_chained_handler_and_data(altera_pcie_isr)
+    altera_pcie_init_irq_domain
+      pcie->irq_domain = irq_domain_add_linear()
+
+  altera_pcie_isr
+    irq_find_mapping(pcie->irq_domain)
+
+
+  # ks --------------------------------------------------------------
+  ks_pcie_config_legacy_irq
+    irq_set_chained_handler_and_data(ks_pcie_legacy_irq_handler)
+    ks_pcie->legacy_irq_domain = irq_domain_add_linear()
+
+  ks_pcie_legacy_irq_handler
+    ks_pcie_handle_legacy_irqirq_linear_revmap(ks_pcie->legacy_irq_domain)
+
+
+  # tegra --------------------------------------------------------------
+  tegra_pcie_msi_setup
+    if (IS_ENABLED(CONFIG_PCI_MSI)) {
+      tegra_allocate_domains
+	parent = irq_domain_create_linear()
+	msi->domain = pci_msi_create_irq_domain(parent)
+    }
+    irq_set_chained_handler_and_data(tegra_pcie_msi_irq)
+
+  tegra_pcie_msi_irq
+    irq_find_mapping(msi->domain->parent)
+
+
+Tegra is a little wierd because the IS_ENABLED(CONFIG_PCI_MSI) only
+covers the IRQ domain alloc; it doesn't cover setting the handler.  So
+if CONFIG_PCI_MSI is not set, we don't alloc the IRQ domain, but we
+still set a handler that *uses* the IRQ domain.  That seems somewhat
+broken.
+
+> Reported-by: Peter Robinson <pbrobinson@gmail.com>
+> Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
+> Acked-by: Shawn Lin <shawn.lin@rock-chips.com>
 > ---
->  drivers/hwmon/hwmon.c | 36 ++++++++++++++++++++++++++++++++++++
->  1 file changed, 36 insertions(+)
 > 
-> diff --git a/drivers/hwmon/hwmon.c b/drivers/hwmon/hwmon.c
-> index fd47ab4e6892..8d3b1dae31df 100644
-> --- a/drivers/hwmon/hwmon.c
-> +++ b/drivers/hwmon/hwmon.c
-> @@ -153,8 +153,44 @@ static int hwmon_thermal_get_temp(void *data, int *temp)
->  	return 0;
->  }
+> Changes in v2:
+> - Add missing word in the commit message.
+> - Include Shawn Lin's Acked-by tag.
+> 
+>  drivers/pci/controller/pcie-rockchip-host.c | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/pcie-rockchip-host.c b/drivers/pci/controller/pcie-rockchip-host.c
+> index f1d08a1b159..78d04ac29cd 100644
+> --- a/drivers/pci/controller/pcie-rockchip-host.c
+> +++ b/drivers/pci/controller/pcie-rockchip-host.c
+> @@ -592,10 +592,6 @@ static int rockchip_pcie_parse_host_dt(struct rockchip_pcie *rockchip)
+>  	if (err)
+>  		return err;
 >  
-> +static int hwmon_thermal_set_trips(void *data, int low, int high)
-> +{
-> +	struct hwmon_thermal_data *tdata = data;
-> +	struct hwmon_device *hwdev = to_hwmon_device(tdata->dev);
-> +	const struct hwmon_chip_info *chip = hwdev->chip;
-> +	const struct hwmon_channel_info **info = chip->info;
-> +	unsigned int i;
-> +	int err;
-> +
-> +	if (!chip->ops->write)
-> +		return 0;
-> +
-> +	for (i = 0; info[i] && info[i]->type != hwmon_temp; i++)
-> +		continue;
-> +
-> +	if (!info[i])
-> +		return 0;
-> +
-> +	if (info[i]->config[tdata->index] & HWMON_T_MIN) {
-> +		err = chip->ops->write(tdata->dev, hwmon_temp,
-> +				       hwmon_temp_min, tdata->index, low);
-> +		if (err && err != -EOPNOTSUPP)
-> +			return err;
-> +	}
-> +
-> +	if (info[i]->config[tdata->index] & HWMON_T_MAX) {
-> +		err = chip->ops->write(tdata->dev, hwmon_temp,
-> +				       hwmon_temp_max, tdata->index, high);
-> +		if (err && err != -EOPNOTSUPP)
-> +			return err;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  static const struct thermal_zone_of_device_ops hwmon_thermal_ops = {
->  	.get_temp = hwmon_thermal_get_temp,
-> +	.set_trips = hwmon_thermal_set_trips,
->  };
+> -	err = rockchip_pcie_setup_irq(rockchip);
+> -	if (err)
+> -		return err;
+> -
+>  	rockchip->vpcie12v = devm_regulator_get_optional(dev, "vpcie12v");
+>  	if (IS_ERR(rockchip->vpcie12v)) {
+>  		if (PTR_ERR(rockchip->vpcie12v) != -ENODEV)
+> @@ -973,8 +969,6 @@ static int rockchip_pcie_probe(struct platform_device *pdev)
+>  	if (err)
+>  		goto err_vpcie;
 >  
->  static void hwmon_thermal_remove_sensor(void *data)
+> -	rockchip_pcie_enable_interrupts(rockchip);
+> -
+>  	err = rockchip_pcie_init_irq_domain(rockchip);
+>  	if (err < 0)
+>  		goto err_deinit_port;
+> @@ -992,6 +986,12 @@ static int rockchip_pcie_probe(struct platform_device *pdev)
+>  	bridge->sysdata = rockchip;
+>  	bridge->ops = &rockchip_pcie_ops;
+>  
+> +	err = rockchip_pcie_setup_irq(rockchip);
+> +	if (err)
+> +		goto err_remove_irq_domain;
+> +
+> +	rockchip_pcie_enable_interrupts(rockchip);
+> +
+>  	err = pci_host_probe(bridge);
+>  	if (err < 0)
+>  		goto err_remove_irq_domain;
+> -- 
+> 2.31.1
+> 
