@@ -2,131 +2,80 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3565AC2B9F4
-	for <linux-tegra@archiver.kernel.org>; Fri, 25 Jun 2021 09:08:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FC04C2B9F4
+	for <linux-tegra@archiver.kernel.org>; Fri, 25 Jun 2021 14:32:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1022261427
-	for <linux-tegra@archiver.kernel.org>; Fri, 25 Jun 2021 09:08:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 149FC61963
+	for <linux-tegra@archiver.kernel.org>; Fri, 25 Jun 2021 14:32:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230480AbhFYJLM (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 25 Jun 2021 05:11:12 -0400
-Received: from foss.arm.com ([217.140.110.172]:50866 "EHLO foss.arm.com"
+        id S231524AbhFYOe6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 25 Jun 2021 10:34:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57400 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229839AbhFYJLM (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 25 Jun 2021 05:11:12 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B9FF331B;
-        Fri, 25 Jun 2021 02:08:51 -0700 (PDT)
-Received: from lpieralisi (e121166-lin.cambridge.arm.com [10.1.196.255])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B87053F719;
-        Fri, 25 Jun 2021 02:08:50 -0700 (PDT)
-Date:   Fri, 25 Jun 2021 10:08:45 +0100
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     Jon Hunter <jonathanh@nvidia.com>,
+        id S229958AbhFYOe5 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Fri, 25 Jun 2021 10:34:57 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id A6DCB61953;
+        Fri, 25 Jun 2021 14:32:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1624631556;
+        bh=2Rsr+frvlcCR/IKRspsnz6sq84iOA0m+JQ4nu1bYRWY=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=JFEbQu3OYlq7C7dwQ8IB+5DV/KhwM33GLo/pQSDGvu69txLQYrnZWwANbYWJ002R+
+         0nk7eSMXPs+nDjIVwzqAMvV8Os6cy99lHC0D9QG6JZyJI1w5iE+WCoMpgxTImv4RHH
+         FlmXeTju1AUiQ87JOtSNEfio7CmstAtjC23VHFzP0jDWVZGcOlHJ/CS4w9ViC8CZs9
+         86rCNNOqeHhULLa1ak4Nb+2GX8qnfiFZlz/VvcQjr7w2XAaO+oQS9Cw+0ojazRbMMt
+         W1BLmXGbTStGPUJA9iHlZ2kFXbHpJdse1vwiGCwCKEW2LT6goSl07skkmVTPafRRy5
+         rrcRgt1Mu/G6A==
+Date:   Fri, 25 Jun 2021 09:32:35 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Javier Martinez Canillas <javierm@redhat.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Peter Robinson <pbrobinson@gmail.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
         Bjorn Helgaas <bhelgaas@google.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Rob Herring <robh@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
+        linux-rockchip@lists.infradead.org,
+        Michal Simek <michal.simek@xilinx.com>,
+        Ley Foon Tan <ley.foon.tan@intel.com>,
+        rfi@lists.rocketboards.org, Jingoo Han <jingoohan1@gmail.com>,
         Thierry Reding <thierry.reding@gmail.com>,
-        Vidya Sagar <vidyas@nvidia.com>, linux-pci@vger.kernel.org,
+        Jonathan Hunter <jonathanh@nvidia.com>,
         linux-tegra@vger.kernel.org
-Subject: Re: [PATCH] PCI: tegra: Fix shiftTooManyBitsSigned warning for
- Tegra194
-Message-ID: <20210625090845.GA15052@lpieralisi>
-References: <20210618230428.GA3231877@bjorn-Precision-5520>
- <20210624230150.GA3574555@bjorn-Precision-5520>
+Subject: Re: [PATCH v2] PCI: rockchip: Avoid accessing PCIe registers with
+ clocks gated
+Message-ID: <20210625143235.GA3624355@bjorn-Precision-5520>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210624230150.GA3574555@bjorn-Precision-5520>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <5bee3702-595b-f57b-f962-28644b7e646f@redhat.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, Jun 24, 2021 at 06:01:50PM -0500, Bjorn Helgaas wrote:
-> On Fri, Jun 18, 2021 at 06:04:28PM -0500, Bjorn Helgaas wrote:
-> > On Fri, Jun 18, 2021 at 05:02:19PM +0100, Jon Hunter wrote:
-> > > The cppcheck tool issues the following warning for the Tegra194 PCIe
-> > > driver ...
-> > > 
-> > >  $ cppcheck --enable=all drivers/pci/controller/dwc/pcie-tegra194.c
-> > >  Checking drivers/pci/controller/dwc/pcie-tegra194.c ...
-> > > 
-> > >  drivers/pci/controller/dwc/pcie-tegra194.c:1829:23: portability:
-> > > 	Shifting signed 32-bit value by 31 bits is
-> > > 	implementation-defined behaviour. See condition at line 1826.
-> > > 	[shiftTooManyBitsSigned]
-> > > 
-> > >   appl_writel(pcie, (1 << irq), APPL_MSI_CTRL_1);
-> > >                       ^
-> > > The above warning occurs because the '1' is treated as a signed type
-> > > and so fix this by using the 'BIT' macro to ensure that this is defined
-> > > as a unsigned type.
-> > 
-> > The subject and commit log should describe the problem we're fixing.
-> > The *warning* is not the problem; the problem is the undefined
-> > behavior.
+On Fri, Jun 25, 2021 at 09:09:36AM +0200, Javier Martinez Canillas wrote:
+> On 6/25/21 12:40 AM, Bjorn Helgaas wrote:
 
-I updated the commit log accordingly but I did not change the
-subject :-/
+> > I think this is also an issue with the following other drivers.  They all
+> > set the handler to something that uses an IRQ domain before they
+> > actually initialize the domain:
+> 
+> Yes, I agreed with your assessment and also noticed that others drivers have
+> similar issues. I just don't have any of those platforms to try to reproduce
+> the bugs and test a fix.
 
-> > I'll fix this up, no need to repost for this.
-> 
-> I merged this from Lorenzo's branch, but I updated the commit log like
-> this because the undefined behavior is the real problem:
-> 
->     PCI: tegra194: Fix tegra_pcie_ep_raise_msi_irq() ill-defined shift
+Even if you don't have other platforms for testing, I'm thrilled when
+folks point out issues with them and (given time and inclination) post
+patches for them.
 
-Yep, I forgot to update the subject, thanks for doing that.
+I'd much rather fix *all* instances of the problem than just one, even
+if we can't test them all.  Frequently driver maintainers will review
+and test patches for their hardware even if we can't.
 
-Lorenzo
-
-> 
->     tegra_pcie_ep_raise_msi_irq() shifted a signed 32-bit value left by 31
->     bits.  The behavior of this is implementation-defined.
-> 
->     Replace the shift by BIT(), which is well-defined.
-> 
->     Found by cppcheck:
-> 
->       $ cppcheck --enable=all drivers/pci/controller/dwc/pcie-tegra194.c
->       Checking drivers/pci/controller/dwc/pcie-tegra194.c ...
-> 
->       drivers/pci/controller/dwc/pcie-tegra194.c:1829:23: portability: Shifting signed 32-bit value by 31 bits is implementation-defined behaviour. See condition at line 1826.  [shiftTooManyBitsSigned]
-> 
->       appl_writel(pcie, (1 << irq), APPL_MSI_CTRL_1);
->                          ^
-> 
->     [bhelgaas: commit log]
->     Link: https://lore.kernel.org/r/20210618160219.303092-1-jonathanh@nvidia.com
->     Fixes: c57247f940e8 ("PCI: tegra: Add support for PCIe endpoint mode in Tegra194")
->     Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
->     Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
->     Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-> 
-> > > Fixes: c57247f940e8 PCI: tegra: Add support for PCIe endpoint mode in Tegra194
-> > > Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> > > ---
-> > >  drivers/pci/controller/dwc/pcie-tegra194.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > 
-> > > diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
-> > > index 8fc08336f76e..3c1feeab104f 100644
-> > > --- a/drivers/pci/controller/dwc/pcie-tegra194.c
-> > > +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-> > > @@ -1826,7 +1826,7 @@ static int tegra_pcie_ep_raise_msi_irq(struct tegra_pcie_dw *pcie, u16 irq)
-> > >  	if (unlikely(irq > 31))
-> > >  		return -EINVAL;
-> > >  
-> > > -	appl_writel(pcie, (1 << irq), APPL_MSI_CTRL_1);
-> > > +	appl_writel(pcie, BIT(irq), APPL_MSI_CTRL_1);
-> > >  
-> > >  	return 0;
-> > >  }
-> > > -- 
-> > > 2.25.1
-> > > 
+Bjorn
