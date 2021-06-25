@@ -2,178 +2,211 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD86CC49EA7
-	for <linux-tegra@archiver.kernel.org>; Fri, 25 Jun 2021 07:09:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29498C48BC2
+	for <linux-tegra@archiver.kernel.org>; Fri, 25 Jun 2021 08:22:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9C43F6140F
-	for <linux-tegra@archiver.kernel.org>; Fri, 25 Jun 2021 07:09:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1390E61436
+	for <linux-tegra@archiver.kernel.org>; Fri, 25 Jun 2021 08:22:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229878AbhFYHME (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 25 Jun 2021 03:12:04 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:20530 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229826AbhFYHMD (ORCPT
+        id S230032AbhFYIYs (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 25 Jun 2021 04:24:48 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:41830 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229864AbhFYIYr (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 25 Jun 2021 03:12:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1624604983;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=FLtazXb3G6fRRX9xtmGZQwP57cBRAMVoE8LLTV4/QLo=;
-        b=gsKuak43jCbQLfJUWeIRtFrbUHEIA0EeOOh8Vj/aupS7AVKT/XTki/u+1wg76kL9aW3cCa
-        c2Iu1/7JXjsuf87HtQOshkLdeoVdACPXqCdujheDJSd9bR26TUKnREiKo5DpB+pdflbrRs
-        FSTPp3s0CodDxsCDPH9wyFwzfsyJmSU=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-414-G7_4JWVjMlimV_aAsR_mCw-1; Fri, 25 Jun 2021 03:09:40 -0400
-X-MC-Unique: G7_4JWVjMlimV_aAsR_mCw-1
-Received: by mail-wr1-f71.google.com with SMTP id v9-20020a5d4a490000b029011a86baa40cso3147497wrs.7
-        for <linux-tegra@vger.kernel.org>; Fri, 25 Jun 2021 00:09:40 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=FLtazXb3G6fRRX9xtmGZQwP57cBRAMVoE8LLTV4/QLo=;
-        b=cpAA/dLYv4Q/K2Y6DuDbPJ6HO7SPYdnTGLnTToEEc3MI4JczJ04uqWHgl6497iNYul
-         /i1dDDlUaZM7+/ERCN4ci6F0w2CUjJvFADAqrhcDUbKrYMq9OCWS5+FXLGLZD2kORJZh
-         9+LrfVnuhfjvCYbBakUHzvLh8yNd/iBuvnoSsTxfIPOxfnIiipAh1HiqV8dToAyPObun
-         ZWEF+s1i1Sc1GF52uuiWAgiOjoJJbboeMH3/vU4l27Kzl0ZyYi2K0ZZSCXdOyOXSp3Jb
-         pmjRBYV4/AZXyPUYsmF3yw5U72MReEgyawru7Aq7k2dQ3sfW2mYlKSEMt2xsR0WsWZdy
-         yE2w==
-X-Gm-Message-State: AOAM530XCpArmPvRdpxpsaJV9XZOx925Z9rfHfmIdQWB33tLZEmCqi8r
-        Y1aOM9Oa2Xyuu3+HzSZlB0gP34td2LzidafhNmnB/Yjv1lkRXPQwxRfG29FINTmgYL6iEefvcn5
-        aYnI6MweaeSINPrJZulFQABoukhWldYBQvL1FhG40PBEUKDaGm9OjR80Hm8o0lBopSyisaZiPCw
-        ==
-X-Received: by 2002:a1c:4b04:: with SMTP id y4mr8928275wma.186.1624604979105;
-        Fri, 25 Jun 2021 00:09:39 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwEZC10pOGlNPzeVGtuSNOzeepcf5gnuWto136WmaedGGkMX3t/mR9Y/5SHRge1PZWfwCJHYw==
-X-Received: by 2002:a1c:4b04:: with SMTP id y4mr8928243wma.186.1624604978853;
-        Fri, 25 Jun 2021 00:09:38 -0700 (PDT)
-Received: from [192.168.1.101] ([92.176.231.106])
-        by smtp.gmail.com with ESMTPSA id i18sm1603468wrw.55.2021.06.25.00.09.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 25 Jun 2021 00:09:38 -0700 (PDT)
-Subject: Re: [PATCH v2] PCI: rockchip: Avoid accessing PCIe registers with
- clocks gated
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Peter Robinson <pbrobinson@gmail.com>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Rob Herring <robh@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
+        Fri, 25 Jun 2021 04:24:47 -0400
+Received: from imap.suse.de (imap-alt.suse-dmz.suse.de [192.168.254.47])
+        (using TLSv1.2 with cipher ECDHE-ECDSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id C3B8921C23;
+        Fri, 25 Jun 2021 08:22:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1624609344; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=xmMBjdIQxn88DbEVG5TvHaTNv0fMM7Fk0W+dtuw1P5k=;
+        b=c8mqqRyyGvgW96sIBzNkUvBvL9cL2p9CBVkbGrhlqk7HC6jdBkgB+8HQzxgWo22Kj6axOs
+        fz/qKGkTy37Qgctvsv5asTkubcrcsvEvHyAxx9AqUmS7WqfIk64opdOyOxjF+V29YhUKKL
+        /EB3+wqaeeW+1GcazmAh0rrp7atuNKw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1624609344;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=xmMBjdIQxn88DbEVG5TvHaTNv0fMM7Fk0W+dtuw1P5k=;
+        b=rpkFMIxIqKtJO2iW62YOJLHcKB93dVaWkjMtNJVNDBMDnIW1WJDAPufXr013u+Ngc7k7bZ
+        4iFa6YeY3o7yg8CA==
+Received: from imap3-int (imap-alt.suse-dmz.suse.de [192.168.254.47])
+        by imap.suse.de (Postfix) with ESMTP id 9B57111A97;
+        Fri, 25 Jun 2021 08:22:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1624609344; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=xmMBjdIQxn88DbEVG5TvHaTNv0fMM7Fk0W+dtuw1P5k=;
+        b=c8mqqRyyGvgW96sIBzNkUvBvL9cL2p9CBVkbGrhlqk7HC6jdBkgB+8HQzxgWo22Kj6axOs
+        fz/qKGkTy37Qgctvsv5asTkubcrcsvEvHyAxx9AqUmS7WqfIk64opdOyOxjF+V29YhUKKL
+        /EB3+wqaeeW+1GcazmAh0rrp7atuNKw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1624609344;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=xmMBjdIQxn88DbEVG5TvHaTNv0fMM7Fk0W+dtuw1P5k=;
+        b=rpkFMIxIqKtJO2iW62YOJLHcKB93dVaWkjMtNJVNDBMDnIW1WJDAPufXr013u+Ngc7k7bZ
+        4iFa6YeY3o7yg8CA==
+Received: from director2.suse.de ([192.168.254.72])
+        by imap3-int with ESMTPSA
+        id Ky8IJT+S1WAISwAALh3uQQ
+        (envelope-from <tzimmermann@suse.de>); Fri, 25 Jun 2021 08:22:23 +0000
+From:   Thomas Zimmermann <tzimmermann@suse.de>
+To:     daniel@ffwll.ch, airlied@linux.ie, alexander.deucher@amd.com,
+        christian.koenig@amd.com, Xinhui.Pan@amd.com,
+        james.qian.wang@arm.com, liviu.dudau@arm.com,
+        mihail.atanassov@arm.com, brian.starkey@arm.com,
+        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        inki.dae@samsung.com, jy0922.shim@samsung.com,
+        sw0312.kim@samsung.com, kyungmin.park@samsung.com,
+        krzysztof.kozlowski@canonical.com, xinliang.liu@linaro.org,
+        tiantao6@hisilicon.com, john.stultz@linaro.org,
+        kong.kongxinwei@hisilicon.com, puck.chen@hisilicon.com,
+        laurentiu.palcu@oss.nxp.com, l.stach@pengutronix.de,
+        p.zabel@pengutronix.de, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        linux-imx@nxp.com, chunkuang.hu@kernel.org, matthias.bgg@gmail.com,
+        bskeggs@redhat.com, tomba@kernel.org, hjc@rock-chips.com,
+        heiko@sntech.de, yannick.fertre@foss.st.com,
+        philippe.cornu@foss.st.com, mcoquelin.stm32@gmail.com,
+        alexandre.torgue@foss.st.com, wens@csie.org,
+        jernej.skrabec@gmail.com, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, jyri.sarha@iki.fi, emma@anholt.net,
+        linux-graphics-maintainer@vmware.com, zackr@vmware.com,
+        hyun.kwon@xilinx.com, laurent.pinchart@ideasonboard.com,
+        michal.simek@xilinx.com, jani.nikula@linux.intel.com,
+        rodrigo.vivi@intel.com, linux@armlinux.org.uk,
+        kieran.bingham+renesas@ideasonboard.com,
+        rodrigosiqueiramelo@gmail.com, melissa.srw@gmail.com,
+        hamohammed.sa@gmail.com
+Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, nouveau@lists.freedesktop.org,
         linux-rockchip@lists.infradead.org,
-        Michal Simek <michal.simek@xilinx.com>,
-        Ley Foon Tan <ley.foon.tan@intel.com>,
-        rfi@lists.rocketboards.org, Jingoo Han <jingoohan1@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-tegra@vger.kernel.org
-References: <20210624224040.GA3567297@bjorn-Precision-5520>
-From:   Javier Martinez Canillas <javierm@redhat.com>
-Message-ID: <5bee3702-595b-f57b-f962-28644b7e646f@redhat.com>
-Date:   Fri, 25 Jun 2021 09:09:36 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
+        intel-gfx@lists.freedesktop.org,
+        Thomas Zimmermann <tzimmermann@suse.de>
+Subject: [PATCH v4 00/27] Deprecate struct drm_device.irq_enabled
+Date:   Fri, 25 Jun 2021 10:21:55 +0200
+Message-Id: <20210625082222.3845-1-tzimmermann@suse.de>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-In-Reply-To: <20210624224040.GA3567297@bjorn-Precision-5520>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hello Bjorn,
+Remove references to struct drm_device.irq_enabled from modern
+DRM drivers and core.
 
-On 6/25/21 12:40 AM, Bjorn Helgaas wrote:
-> [+cc Michal, Ley Foon, Jingoo, Thierry, Jonathan]
-> 
-> On Tue, Jun 08, 2021 at 10:04:09AM +0200, Javier Martinez Canillas wrote:
->> IRQ handlers that are registered for shared interrupts can be called at
->> any time after have been registered using the request_irq() function.
->>
->> It's up to drivers to ensure that's always safe for these to be called.
->>
->> Both the "pcie-sys" and "pcie-client" interrupts are shared, but since
->> their handlers are registered very early in the probe function, an error
->> later can lead to these handlers being executed before all the required
->> resources have been properly setup.
->>
->> For example, the rockchip_pcie_read() function used by these IRQ handlers
->> expects that some PCIe clocks will already be enabled, otherwise trying
->> to access the PCIe registers causes the read to hang and never return.
->>
->> The CONFIG_DEBUG_SHIRQ option tests if drivers are able to cope with their
->> shared interrupt handlers being called, by generating a spurious interrupt
->> just before a shared interrupt handler is unregistered.
->>
->> But this means that if the option is enabled, any error in the probe path
->> of this driver could lead to one of the IRQ handlers to be executed.
-> 
-> I'm not an IRQ expert, but I think this is an issue regardless of
-> CONFIG_DEBUG_SHIRQ, isn't it?  Anything used by an IRQ handler should
-> be initialized before the handler is registered.  CONFIG_DEBUG_SHIRQ
-> is just a way to help find latent problems.
->
+KMS drivers enable IRQs for their devices internally. They don't
+have to keep track of the IRQ state via irq_enabled. For vblanking,
+it's cleaner to test for vblanking support directly than to test
+for enabled IRQs.
 
-Yes, it's an issue regardless. It's just that this debug option tests if the
-drivers aren't making the wrong assumption, exactly to find issues like this.
+The first 3 patches replace uses of irq_enabled that are not
+required.
 
->> In a rockpro64 board, the following sequence of events happens:
->>
->>   1) "pcie-sys" IRQ is requested and its handler registered.
->>   2) "pcie-client" IRQ is requested and its handler registered.
->>   3) probe later fails due readl_poll_timeout() returning a timeout.
->>   4) the "pcie-sys" IRQ is unregistered.
->>   5) CONFIG_DEBUG_SHIRQ triggers a spurious interrupt.
->>   6) "pcie-client" IRQ handler is called for this spurious interrupt.
->>   7) IRQ handler tries to read PCIE_CLIENT_INT_STATUS with clocks gated.
->>   8) the machine hangs because rockchip_pcie_read() call never returns.
->>
->> To avoid cases like this, the handlers don't have to be registered until
->> very late in the probe function, once all the resources have been setup.
->>
->> So let's just move all the IRQ init before the pci_host_probe() call, that
->> will prevent issues like this and seems to be the correct thing to do too.
-> 
-> Previously we registered rockchip_pcie_subsys_irq_handler() and
-> rockchip_pcie_client_irq_handler() before the PCIe clocks were
-> enabled.  That's a problem because they depend on those clocks being
-> enabled, and your patch fixes that.
->
-> rockchip_pcie_legacy_int_handler() depends on rockchip->irq_domain,
-> which isn't initialized until rockchip_pcie_init_irq_domain().
-> Previously we registered rockchip_pcie_legacy_int_handler() as the
-> handler for the "legacy" IRQ before rockchip_pcie_init_irq_domain().
-> 
-> I think you patch *also* fixes that problem, right?
->
+Patch 4 fixes vblank ioctls to actually test for vblank support
+instead of IRQs (for KMS drivers).
 
-Correct, that's why I moved the initialization and IRQ enable after that.
- 
-> I think this is also an issue with the following other drivers.  They all
-> set the handler to something that uses an IRQ domain before they
-> actually initialize the domain:
+The rest of the patchset removes irq_enabled from all non-legacy
+drivers. The only exceptions are i915 and omapdrm, which have an
+internal dpendency on the field's value. For these drivers, the
+state gets duplicated internally.
 
-Yes, I agreed with your assessment and also noticed that others drivers have
-similar issues. I just don't have any of those platforms to try to reproduce
-the bugs and test a fix.
+With the patchset applied, drivers can later switch over to plain
+Linux IRQ interfaces and DRM's IRQ midlayer can be declared legacy.
 
-Best regards,
--- 
-Javier Martinez Canillas
-Software Engineer
-New Platform Technologies Enablement team
-RHEL Engineering
+v4:
+	* avoid preprocessor ifdef in drm_wait_vblank_ioctl()
+	  (Jani, Thierry)
+v3:
+	* update armada, i915, rcar-du and vkms as well (Laurent)
+	* optimize drm_wait_vblank_ioctl() for KMS (Liviu)
+	* move imx/dcss changes into their own patch (Laurentiu)
+	* doc cleanups
+v2:
+	* keep the original test for legacy drivers in
+	  drm_wait_vblank_ioctl() (Daniel)
+
+Thomas Zimmermann (27):
+  drm/amdgpu: Track IRQ state in local device state
+  drm/hibmc: Call drm_irq_uninstall() unconditionally
+  drm/radeon: Track IRQ state in local device state
+  drm: Don't test for IRQ support in VBLANK ioctls
+  drm/armada: Don't set struct drm_device.irq_enabled
+  drm/i915: Track IRQ state in local device state
+  drm/komeda: Don't set struct drm_device.irq_enabled
+  drm/malidp: Don't set struct drm_device.irq_enabled
+  drm/exynos: Don't set struct drm_device.irq_enabled
+  drm/kirin: Don't set struct drm_device.irq_enabled
+  drm/imx: Don't set struct drm_device.irq_enabled
+  drm/imx/dcss: Don't set struct drm_device.irq_enabled
+  drm/mediatek: Don't set struct drm_device.irq_enabled
+  drm/nouveau: Don't set struct drm_device.irq_enabled
+  drm/omapdrm: Track IRQ state in local device state
+  drm/rcar-du: Don't set struct drm_device.irq_enabled
+  drm/rockchip: Don't set struct drm_device.irq_enabled
+  drm/sti: Don't set struct drm_device.irq_enabled
+  drm/stm: Don't set struct drm_device.irq_enabled
+  drm/sun4i: Don't set struct drm_device.irq_enabled
+  drm/tegra: Don't set struct drm_device.irq_enabled
+  drm/tidss: Don't use struct drm_device.irq_enabled
+  drm/vc4: Don't set struct drm_device.irq_enabled
+  drm/vkms: Don't set struct drm_device.irq_enabled
+  drm/vmwgfx: Don't set struct drm_device.irq_enabled
+  drm/xlnx: Don't set struct drm_device.irq_enabled
+  drm/zte: Don't set struct drm_device.irq_enabled
+
+ drivers/gpu/drm/amd/amdgpu/amdgpu_irq.c         |  6 +++---
+ drivers/gpu/drm/arm/display/komeda/komeda_kms.c |  4 ----
+ drivers/gpu/drm/arm/malidp_drv.c                |  4 ----
+ drivers/gpu/drm/armada/armada_drv.c             |  2 --
+ drivers/gpu/drm/drm_irq.c                       | 13 ++++---------
+ drivers/gpu/drm/drm_vblank.c                    | 15 ++++++++++++---
+ drivers/gpu/drm/exynos/exynos_drm_drv.c         | 10 ----------
+ drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c |  3 +--
+ drivers/gpu/drm/hisilicon/kirin/kirin_drm_drv.c |  2 --
+ drivers/gpu/drm/i915/i915_drv.h                 |  2 ++
+ drivers/gpu/drm/i915/i915_irq.c                 |  8 ++++----
+ drivers/gpu/drm/imx/dcss/dcss-kms.c             |  3 ---
+ drivers/gpu/drm/imx/imx-drm-core.c              | 11 -----------
+ drivers/gpu/drm/mediatek/mtk_drm_drv.c          |  6 ------
+ drivers/gpu/drm/nouveau/nouveau_drm.c           |  3 ---
+ drivers/gpu/drm/omapdrm/omap_drv.h              |  2 ++
+ drivers/gpu/drm/omapdrm/omap_irq.c              |  6 +++---
+ drivers/gpu/drm/radeon/radeon_fence.c           |  2 +-
+ drivers/gpu/drm/radeon/radeon_irq_kms.c         | 16 ++++++++--------
+ drivers/gpu/drm/rcar-du/rcar_du_drv.c           |  2 --
+ drivers/gpu/drm/rockchip/rockchip_drm_drv.c     |  6 ------
+ drivers/gpu/drm/sti/sti_compositor.c            |  2 --
+ drivers/gpu/drm/stm/ltdc.c                      |  3 ---
+ drivers/gpu/drm/sun4i/sun4i_drv.c               |  2 --
+ drivers/gpu/drm/tegra/drm.c                     |  7 -------
+ drivers/gpu/drm/tidss/tidss_irq.c               |  3 ---
+ drivers/gpu/drm/vc4/vc4_kms.c                   |  1 -
+ drivers/gpu/drm/vkms/vkms_drv.c                 |  2 --
+ drivers/gpu/drm/vmwgfx/vmwgfx_irq.c             |  8 --------
+ drivers/gpu/drm/xlnx/zynqmp_dpsub.c             |  2 --
+ drivers/gpu/drm/zte/zx_drm_drv.c                |  6 ------
+ 31 files changed, 40 insertions(+), 122 deletions(-)
+
+
+base-commit: 8c1323b422f8473421682ba783b5949ddd89a3f4
+prerequisite-patch-id: c2b2f08f0eccc9f5df0c0da49fa1d36267deb11d
+prerequisite-patch-id: c67e5d886a47b7d0266d81100837557fda34cb24
+--
+2.32.0
 
