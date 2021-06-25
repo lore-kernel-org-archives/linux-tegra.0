@@ -7,67 +7,67 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26CFCC4BA03
-	for <linux-tegra@archiver.kernel.org>; Fri, 25 Jun 2021 08:22:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FC91C4BA00
+	for <linux-tegra@archiver.kernel.org>; Fri, 25 Jun 2021 08:22:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0AC5F6142D
-	for <linux-tegra@archiver.kernel.org>; Fri, 25 Jun 2021 08:22:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1AB9361438
+	for <linux-tegra@archiver.kernel.org>; Fri, 25 Jun 2021 08:22:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230274AbhFYIZH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 25 Jun 2021 04:25:07 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:42468 "EHLO
+        id S230252AbhFYIZF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 25 Jun 2021 04:25:05 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:42402 "EHLO
         smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229890AbhFYIZH (ORCPT
+        with ESMTP id S230263AbhFYIZD (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 25 Jun 2021 04:25:07 -0400
+        Fri, 25 Jun 2021 04:25:03 -0400
 Received: from imap.suse.de (imap-alt.suse-dmz.suse.de [192.168.254.47])
         (using TLSv1.2 with cipher ECDHE-ECDSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 0171B21A8A;
-        Fri, 25 Jun 2021 08:22:46 +0000 (UTC)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 6917521C23;
+        Fri, 25 Jun 2021 08:22:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1624609366; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1624609362; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=nGXqgezA3DH40NKC8JsOWRUv5iKSH3hlmAbcoV/jF1o=;
-        b=sIUNyE4N0TNyen69kWBc5Qi9GYyDr3usMOWqmwbvapYgcIApBH5g03EPAfbholTXVBq0HB
-        qW/Jt+Due5/m6vPcJflQnZ+AzxQk1nGA5bG5CSd/lS3nCH9gvoZgvTp7FHt0cvq9329qqg
-        tkbSZGINVww5SD4wAiyIG+Ho1u9nZRM=
+        bh=wvcnz4j6Hq3MjYMJtyLI/IeHV+w1RM8qr5Lppsuycr8=;
+        b=Zzd0czBk5wP0uL6YSn8ukugWO2Y0gtqSLv+AwRwPQsKjsYj3PXK0i00Dw8Qmq3zOvaNMqR
+        EU+TMMdK7NgR2dmja7SLpRRy5pcmocOCd5YyYyyv0BURAi6SseZmlkwPmxv8VP5wiygaZQ
+        +nlVSLDX6+O8rtZDSVI2uSEQR1APcPI=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1624609366;
+        s=susede2_ed25519; t=1624609362;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=nGXqgezA3DH40NKC8JsOWRUv5iKSH3hlmAbcoV/jF1o=;
-        b=OxjXlMZplkgOX2MP4aqaDLtgahD+h+HWgMnvflbDz75hs7nQnau9yVQkfQxIbRl7uxmCOW
-        MwzbCK9nqYD9wwBw==
+        bh=wvcnz4j6Hq3MjYMJtyLI/IeHV+w1RM8qr5Lppsuycr8=;
+        b=yYLvT2bpRrl4UHctxzYWO6NLRSGX5PmHKADdrpw8c/UFfe4S9a2uxW2Qc+T9ZUUYQw1H0o
+        qLc6V7Vzs45w4tDA==
 Received: from imap3-int (imap-alt.suse-dmz.suse.de [192.168.254.47])
-        by imap.suse.de (Postfix) with ESMTP id C477511A97;
-        Fri, 25 Jun 2021 08:22:44 +0000 (UTC)
+        by imap.suse.de (Postfix) with ESMTP id 3BAA311C9B;
+        Fri, 25 Jun 2021 08:22:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1624609365; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1624609362; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=nGXqgezA3DH40NKC8JsOWRUv5iKSH3hlmAbcoV/jF1o=;
-        b=l4O/3qDtyMcVed2sR3mXrb1VMCfITzjbUp3srIfMFtCXr8T5YKNSjVXe3u3xh43rSzdOai
-        gu6savaGIgSayDTVf68kMUhpGiCCFwNQe4RKda7CcC7Mu/cB0NCKzeuxFm6vbBybd6xqMz
-        GYeuvOakBBqvBhK1TK93d2nyuC14/Fg=
+        bh=wvcnz4j6Hq3MjYMJtyLI/IeHV+w1RM8qr5Lppsuycr8=;
+        b=Zzd0czBk5wP0uL6YSn8ukugWO2Y0gtqSLv+AwRwPQsKjsYj3PXK0i00Dw8Qmq3zOvaNMqR
+        EU+TMMdK7NgR2dmja7SLpRRy5pcmocOCd5YyYyyv0BURAi6SseZmlkwPmxv8VP5wiygaZQ
+        +nlVSLDX6+O8rtZDSVI2uSEQR1APcPI=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1624609365;
+        s=susede2_ed25519; t=1624609362;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=nGXqgezA3DH40NKC8JsOWRUv5iKSH3hlmAbcoV/jF1o=;
-        b=hBiA/bd1f5vNc0KOfKRQeeGN2y4FetigJQ1PHzbPyKeLFSEzrAJoMz1YJu90pJc9aAP/U6
-        xh7e/KUpYA8v5cBQ==
+        bh=wvcnz4j6Hq3MjYMJtyLI/IeHV+w1RM8qr5Lppsuycr8=;
+        b=yYLvT2bpRrl4UHctxzYWO6NLRSGX5PmHKADdrpw8c/UFfe4S9a2uxW2Qc+T9ZUUYQw1H0o
+        qLc6V7Vzs45w4tDA==
 Received: from director2.suse.de ([192.168.254.72])
         by imap3-int with ESMTPSA
-        id MPwIL1SS1WAISwAALh3uQQ
-        (envelope-from <tzimmermann@suse.de>); Fri, 25 Jun 2021 08:22:44 +0000
+        id gGe6DVGS1WAISwAALh3uQQ
+        (envelope-from <tzimmermann@suse.de>); Fri, 25 Jun 2021 08:22:41 +0000
 From:   Thomas Zimmermann <tzimmermann@suse.de>
 To:     daniel@ffwll.ch, airlied@linux.ie, alexander.deucher@amd.com,
         christian.koenig@amd.com, Xinhui.Pan@amd.com,
@@ -106,9 +106,9 @@ Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
         intel-gfx@lists.freedesktop.org,
         Thomas Zimmermann <tzimmermann@suse.de>,
         Daniel Vetter <daniel.vetter@ffwll.ch>
-Subject: [PATCH v4 18/27] drm/sti: Don't set struct drm_device.irq_enabled
-Date:   Fri, 25 Jun 2021 10:22:13 +0200
-Message-Id: <20210625082222.3845-19-tzimmermann@suse.de>
+Subject: [PATCH v4 15/27] drm/omapdrm: Track IRQ state in local device state
+Date:   Fri, 25 Jun 2021 10:22:10 +0200
+Message-Id: <20210625082222.3845-16-tzimmermann@suse.de>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20210625082222.3845-1-tzimmermann@suse.de>
 References: <20210625082222.3845-1-tzimmermann@suse.de>
@@ -118,28 +118,57 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The field drm_device.irq_enabled is only used by legacy drivers
-with userspace modesetting. Don't set it in sti.
+Replace usage of struct drm_device.irq_enabled with the driver's
+own state field struct omap_drm_device.irq_enabled. The field in
+the DRM device structure is considered legacy and should not be
+used by KMS drivers.
 
 Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
 Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
 ---
- drivers/gpu/drm/sti/sti_compositor.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/gpu/drm/omapdrm/omap_drv.h | 2 ++
+ drivers/gpu/drm/omapdrm/omap_irq.c | 6 +++---
+ 2 files changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/sti/sti_compositor.c b/drivers/gpu/drm/sti/sti_compositor.c
-index 319962a2c17b..9caaf3ccfabe 100644
---- a/drivers/gpu/drm/sti/sti_compositor.c
-+++ b/drivers/gpu/drm/sti/sti_compositor.c
-@@ -145,8 +145,6 @@ static int sti_compositor_bind(struct device *dev,
- 	}
+diff --git a/drivers/gpu/drm/omapdrm/omap_drv.h b/drivers/gpu/drm/omapdrm/omap_drv.h
+index d6f136984da9..591d4c273f02 100644
+--- a/drivers/gpu/drm/omapdrm/omap_drv.h
++++ b/drivers/gpu/drm/omapdrm/omap_drv.h
+@@ -48,6 +48,8 @@ struct omap_drm_private {
+ 	struct dss_device *dss;
+ 	struct dispc_device *dispc;
  
- 	drm_vblank_init(drm_dev, crtc_id);
--	/* Allow usage of vblank without having to call drm_irq_install */
--	drm_dev->irq_enabled = 1;
++	bool irq_enabled;
++
+ 	unsigned int num_pipes;
+ 	struct omap_drm_pipeline pipes[8];
+ 	struct omap_drm_pipeline *channels[8];
+diff --git a/drivers/gpu/drm/omapdrm/omap_irq.c b/drivers/gpu/drm/omapdrm/omap_irq.c
+index 15148d4b35b5..bb6e3fc18204 100644
+--- a/drivers/gpu/drm/omapdrm/omap_irq.c
++++ b/drivers/gpu/drm/omapdrm/omap_irq.c
+@@ -291,7 +291,7 @@ int omap_drm_irq_install(struct drm_device *dev)
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	dev->irq_enabled = true;
++	priv->irq_enabled = true;
  
  	return 0;
+ }
+@@ -300,10 +300,10 @@ void omap_drm_irq_uninstall(struct drm_device *dev)
+ {
+ 	struct omap_drm_private *priv = dev->dev_private;
+ 
+-	if (!dev->irq_enabled)
++	if (!priv->irq_enabled)
+ 		return;
+ 
+-	dev->irq_enabled = false;
++	priv->irq_enabled = false;
+ 
+ 	dispc_free_irq(priv->dispc, dev);
  }
 -- 
 2.32.0
