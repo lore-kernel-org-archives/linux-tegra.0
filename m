@@ -5,69 +5,69 @@ X-Spam-Level:
 X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CB37C49EBF
-	for <linux-tegra@archiver.kernel.org>; Fri, 25 Jun 2021 08:22:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DC9EC49EC8
+	for <linux-tegra@archiver.kernel.org>; Fri, 25 Jun 2021 08:22:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3D7D76142C
-	for <linux-tegra@archiver.kernel.org>; Fri, 25 Jun 2021 08:22:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 731496142D
+	for <linux-tegra@archiver.kernel.org>; Fri, 25 Jun 2021 08:22:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230032AbhFYIZK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 25 Jun 2021 04:25:10 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:42574 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230292AbhFYIZJ (ORCPT
+        id S230292AbhFYIZL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 25 Jun 2021 04:25:11 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:35422 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230282AbhFYIZK (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 25 Jun 2021 04:25:09 -0400
+        Fri, 25 Jun 2021 04:25:10 -0400
 Received: from imap.suse.de (imap-alt.suse-dmz.suse.de [192.168.254.47])
         (using TLSv1.2 with cipher ECDHE-ECDSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 657E221C24;
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 976F11FE51;
+        Fri, 25 Jun 2021 08:22:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1624609369; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=S5YG9pSeazw2V8PInyaqALDObYkhkZqmd0bn3CypZOY=;
+        b=vYRyjCghBdIH1eFGDPjSik02T1m1t4UZGaX31vNbNHPkrgBtqitc94f210uyLZR+8bI4aN
+        GnSybbR3JuCR6nQEHKSdojbO+NrHEDqVEt3uJbZCzqP3wkNyJtWDRyJv3768X5btEOftlU
+        g4b/SSVb1/v+yXuvHlUMs7dcQAMfV+o=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1624609369;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=S5YG9pSeazw2V8PInyaqALDObYkhkZqmd0bn3CypZOY=;
+        b=6/9G6mU7nbG+kzsM4AO0VNJBC62CFUiK2IvgHNPVZmFrN3C1Xf+T4hP7h4RR1DB3FGLR3f
+        tTnAVI+/xGtH0FAA==
+Received: from imap3-int (imap-alt.suse-dmz.suse.de [192.168.254.47])
+        by imap.suse.de (Postfix) with ESMTP id 68E3D11C9B;
         Fri, 25 Jun 2021 08:22:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1624609368; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1624609369; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=IH+s4Mu/zKH8gHYuYzCH/sOKY3wcKmWqcy6ZIGL6kvY=;
-        b=LJWBn6POODzMgRi8+oSs0Huic+o/Dz5DxZHt4r8wSdi9mMKxiF3TRn1Ix1rNb4TJRs1OkQ
-        rqYtGnM+HSVQ/e3B01d3Rv8SW+dER4PyrONl63nHeBf75+NSB8IvdgOg2JA9f0uxAL9qRV
-        FX/I5sh+RgQxFJPBdfzFOv2FCCU0caI=
+        bh=S5YG9pSeazw2V8PInyaqALDObYkhkZqmd0bn3CypZOY=;
+        b=vYRyjCghBdIH1eFGDPjSik02T1m1t4UZGaX31vNbNHPkrgBtqitc94f210uyLZR+8bI4aN
+        GnSybbR3JuCR6nQEHKSdojbO+NrHEDqVEt3uJbZCzqP3wkNyJtWDRyJv3768X5btEOftlU
+        g4b/SSVb1/v+yXuvHlUMs7dcQAMfV+o=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1624609368;
+        s=susede2_ed25519; t=1624609369;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=IH+s4Mu/zKH8gHYuYzCH/sOKY3wcKmWqcy6ZIGL6kvY=;
-        b=Zf2LJBEAxYJr+LPbEeTxOlWTbaQJhI+yn186uBUVvloqq8fQKTFTukDpsN3qqJWTnGwjw7
-        QOkTDiMo8mAXxkDA==
-Received: from imap3-int (imap-alt.suse-dmz.suse.de [192.168.254.47])
-        by imap.suse.de (Postfix) with ESMTP id 3D36911A97;
-        Fri, 25 Jun 2021 08:22:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1624609368; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=IH+s4Mu/zKH8gHYuYzCH/sOKY3wcKmWqcy6ZIGL6kvY=;
-        b=LJWBn6POODzMgRi8+oSs0Huic+o/Dz5DxZHt4r8wSdi9mMKxiF3TRn1Ix1rNb4TJRs1OkQ
-        rqYtGnM+HSVQ/e3B01d3Rv8SW+dER4PyrONl63nHeBf75+NSB8IvdgOg2JA9f0uxAL9qRV
-        FX/I5sh+RgQxFJPBdfzFOv2FCCU0caI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1624609368;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=IH+s4Mu/zKH8gHYuYzCH/sOKY3wcKmWqcy6ZIGL6kvY=;
-        b=Zf2LJBEAxYJr+LPbEeTxOlWTbaQJhI+yn186uBUVvloqq8fQKTFTukDpsN3qqJWTnGwjw7
-        QOkTDiMo8mAXxkDA==
+        bh=S5YG9pSeazw2V8PInyaqALDObYkhkZqmd0bn3CypZOY=;
+        b=6/9G6mU7nbG+kzsM4AO0VNJBC62CFUiK2IvgHNPVZmFrN3C1Xf+T4hP7h4RR1DB3FGLR3f
+        tTnAVI+/xGtH0FAA==
 Received: from director2.suse.de ([192.168.254.72])
         by imap3-int with ESMTPSA
-        id uNcHDleS1WAISwAALh3uQQ
-        (envelope-from <tzimmermann@suse.de>); Fri, 25 Jun 2021 08:22:47 +0000
+        id KPvDGFiS1WAISwAALh3uQQ
+        (envelope-from <tzimmermann@suse.de>); Fri, 25 Jun 2021 08:22:48 +0000
 From:   Thomas Zimmermann <tzimmermann@suse.de>
 To:     daniel@ffwll.ch, airlied@linux.ie, alexander.deucher@amd.com,
         christian.koenig@amd.com, Xinhui.Pan@amd.com,
@@ -105,10 +105,11 @@ Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
         linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
         intel-gfx@lists.freedesktop.org,
         Thomas Zimmermann <tzimmermann@suse.de>,
+        Thierry Reding <treding@nvidia.com>,
         Daniel Vetter <daniel.vetter@ffwll.ch>
-Subject: [PATCH v4 20/27] drm/sun4i: Don't set struct drm_device.irq_enabled
-Date:   Fri, 25 Jun 2021 10:22:15 +0200
-Message-Id: <20210625082222.3845-21-tzimmermann@suse.de>
+Subject: [PATCH v4 21/27] drm/tegra: Don't set struct drm_device.irq_enabled
+Date:   Fri, 25 Jun 2021 10:22:16 +0200
+Message-Id: <20210625082222.3845-22-tzimmermann@suse.de>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20210625082222.3845-1-tzimmermann@suse.de>
 References: <20210625082222.3845-1-tzimmermann@suse.de>
@@ -119,28 +120,34 @@ List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 The field drm_device.irq_enabled is only used by legacy drivers
-with userspace modesetting. Don't set it in sun4i.
+with userspace modesetting. Don't set it in tegra.
 
 Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
 Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Acked-by: Thierry Reding <treding@nvidia.com>
 Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
 ---
- drivers/gpu/drm/sun4i/sun4i_drv.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/gpu/drm/tegra/drm.c | 7 -------
+ 1 file changed, 7 deletions(-)
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/sun4i_drv.c
-index af335f58bdfc..570f3af25e86 100644
---- a/drivers/gpu/drm/sun4i/sun4i_drv.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
-@@ -97,8 +97,6 @@ static int sun4i_drv_bind(struct device *dev)
- 	if (ret)
- 		goto cleanup_mode_config;
+diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
+index f96c237b2242..8d27c21ddf48 100644
+--- a/drivers/gpu/drm/tegra/drm.c
++++ b/drivers/gpu/drm/tegra/drm.c
+@@ -1188,13 +1188,6 @@ static int host1x_drm_probe(struct host1x_device *dev)
+ 			goto device;
+ 	}
  
+-	/*
+-	 * We don't use the drm_irq_install() helpers provided by the DRM
+-	 * core, so we need to set this manually in order to allow the
+-	 * DRM_IOCTL_WAIT_VBLANK to operate correctly.
+-	 */
 -	drm->irq_enabled = true;
 -
- 	/* Remove early framebuffers (ie. simplefb) */
- 	ret = drm_aperture_remove_framebuffers(false, "sun4i-drm-fb");
- 	if (ret)
+ 	/* syncpoints are used for full 32-bit hardware VBLANK counters */
+ 	drm->max_vblank_count = 0xffffffff;
+ 
 -- 
 2.32.0
 
