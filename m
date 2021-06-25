@@ -5,69 +5,69 @@ X-Spam-Level:
 X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CF83C49EAF
-	for <linux-tegra@archiver.kernel.org>; Fri, 25 Jun 2021 08:22:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6234EC49EAB
+	for <linux-tegra@archiver.kernel.org>; Fri, 25 Jun 2021 08:22:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 393FA6141C
-	for <linux-tegra@archiver.kernel.org>; Fri, 25 Jun 2021 08:22:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C94361426
+	for <linux-tegra@archiver.kernel.org>; Fri, 25 Jun 2021 08:22:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230160AbhFYIYx (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 25 Jun 2021 04:24:53 -0400
-Received: from smtp-out2.suse.de ([195.135.220.29]:34638 "EHLO
+        id S230093AbhFYIYz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 25 Jun 2021 04:24:55 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:34612 "EHLO
         smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230040AbhFYIYv (ORCPT
+        with ESMTP id S230137AbhFYIYv (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
         Fri, 25 Jun 2021 04:24:51 -0400
 Received: from imap.suse.de (imap-alt.suse-dmz.suse.de [192.168.254.47])
         (using TLSv1.2 with cipher ECDHE-ECDSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 64B161FE5B;
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 814DA1FE5E;
+        Fri, 25 Jun 2021 08:22:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1624609350; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=iJDmR8rDlltHR/97r6V3tkbjm89CSUAMbzOVnRIQGOo=;
+        b=UEsMYyV9x1f8die9B9P6av2F4DB+LUMYsi6wqo2e8n/lYLoWxQZsDMJtuwp9lHwcdg8zVS
+        hQUUGliZLwXpoYD37NyQIz55Z9K7E7IauFvjhH5dA6Yzl1iahKynAhaQWOv97mvpLV84vV
+        TB5Y5dOovTE0bh2eGCR1JhlkUQPgkCA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1624609350;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=iJDmR8rDlltHR/97r6V3tkbjm89CSUAMbzOVnRIQGOo=;
+        b=GqNaVraFbZT5nFeCEgLgQEIYia1Q7Uujhzexl+4Fxq4jQBKau/T/uRUnYu8mnF+YciU80D
+        c4qz9ufWmlHhT2Cw==
+Received: from imap3-int (imap-alt.suse-dmz.suse.de [192.168.254.47])
+        by imap.suse.de (Postfix) with ESMTP id 6707311C9B;
         Fri, 25 Jun 2021 08:22:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1624609349; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1624609350; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=6HUCUuf+BAHl7AqHp+Ft2lxNllp/xAoIbNrwPrmEHOI=;
-        b=X5IUeNhYSm4x8iei8XJdXqzqeFxHkKMNa/Spyuts3vP0ruXiFK+3G6vUkOYVzwQh84VFfb
-        GKiorY7onG9oCJFXFXufkSin/bfZMSI7utiWqudI1cDulmNleBhPB9eDv4sLwC3JN5HC9C
-        U0sVF4uXUU3B+bcyy9jTcakE5l6DE5w=
+        bh=iJDmR8rDlltHR/97r6V3tkbjm89CSUAMbzOVnRIQGOo=;
+        b=UEsMYyV9x1f8die9B9P6av2F4DB+LUMYsi6wqo2e8n/lYLoWxQZsDMJtuwp9lHwcdg8zVS
+        hQUUGliZLwXpoYD37NyQIz55Z9K7E7IauFvjhH5dA6Yzl1iahKynAhaQWOv97mvpLV84vV
+        TB5Y5dOovTE0bh2eGCR1JhlkUQPgkCA=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1624609349;
+        s=susede2_ed25519; t=1624609350;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=6HUCUuf+BAHl7AqHp+Ft2lxNllp/xAoIbNrwPrmEHOI=;
-        b=Yt8DHF+ZwOI8VaaT1T40cUEiDktU+k3gbob1As7aaasUwdI9XCSJgmUJ5I9t2E+6CuE4jb
-        TySj3nxuAYZwJNAg==
-Received: from imap3-int (imap-alt.suse-dmz.suse.de [192.168.254.47])
-        by imap.suse.de (Postfix) with ESMTP id 49A9011A97;
-        Fri, 25 Jun 2021 08:22:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1624609349; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=6HUCUuf+BAHl7AqHp+Ft2lxNllp/xAoIbNrwPrmEHOI=;
-        b=X5IUeNhYSm4x8iei8XJdXqzqeFxHkKMNa/Spyuts3vP0ruXiFK+3G6vUkOYVzwQh84VFfb
-        GKiorY7onG9oCJFXFXufkSin/bfZMSI7utiWqudI1cDulmNleBhPB9eDv4sLwC3JN5HC9C
-        U0sVF4uXUU3B+bcyy9jTcakE5l6DE5w=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1624609349;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=6HUCUuf+BAHl7AqHp+Ft2lxNllp/xAoIbNrwPrmEHOI=;
-        b=Yt8DHF+ZwOI8VaaT1T40cUEiDktU+k3gbob1As7aaasUwdI9XCSJgmUJ5I9t2E+6CuE4jb
-        TySj3nxuAYZwJNAg==
+        bh=iJDmR8rDlltHR/97r6V3tkbjm89CSUAMbzOVnRIQGOo=;
+        b=GqNaVraFbZT5nFeCEgLgQEIYia1Q7Uujhzexl+4Fxq4jQBKau/T/uRUnYu8mnF+YciU80D
+        c4qz9ufWmlHhT2Cw==
 Received: from director2.suse.de ([192.168.254.72])
         by imap3-int with ESMTPSA
-        id kCMiEUSS1WAISwAALh3uQQ
-        (envelope-from <tzimmermann@suse.de>); Fri, 25 Jun 2021 08:22:28 +0000
+        id AJxQGEWS1WAISwAALh3uQQ
+        (envelope-from <tzimmermann@suse.de>); Fri, 25 Jun 2021 08:22:29 +0000
 From:   Thomas Zimmermann <tzimmermann@suse.de>
 To:     daniel@ffwll.ch, airlied@linux.ie, alexander.deucher@amd.com,
         christian.koenig@amd.com, Xinhui.Pan@amd.com,
@@ -104,11 +104,10 @@ Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
         linux-stm32@st-md-mailman.stormreply.com,
         linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
         intel-gfx@lists.freedesktop.org,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>
-Subject: [PATCH v4 04/27] drm: Don't test for IRQ support in VBLANK ioctls
-Date:   Fri, 25 Jun 2021 10:21:59 +0200
-Message-Id: <20210625082222.3845-5-tzimmermann@suse.de>
+        Thomas Zimmermann <tzimmermann@suse.de>
+Subject: [PATCH v4 05/27] drm/armada: Don't set struct drm_device.irq_enabled
+Date:   Fri, 25 Jun 2021 10:22:00 +0200
+Message-Id: <20210625082222.3845-6-tzimmermann@suse.de>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20210625082222.3845-1-tzimmermann@suse.de>
 References: <20210625082222.3845-1-tzimmermann@suse.de>
@@ -118,117 +117,27 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-For KMS drivers, replace the IRQ check in VBLANK ioctls with a check for
-vblank support. IRQs might be enabled wthout vblanking being supported.
-
-This change also removes the DRM framework's only dependency on IRQ state
-for non-legacy drivers. For legacy drivers with userspace modesetting,
-the original test remains in drm_wait_vblank_ioctl().
-
-v4:
-	* avoid preprocessor ifdef in drm_wait_vblank_ioctl()
-	  (Jani, Thierry)
-v3:
-	* optimize test in drm_wait_vblank_ioctl() for KMS case (Liviu)
-	* update docs for drm_irq_uninstall()
-v2:
-	* keep the old test for legacy drivers in
-	  drm_wait_vblank_ioctl() (Daniel)
+The field drm_device.irq_enabled is only used by legacy drivers
+with userspace modesetting. Don't set it in armada.
 
 Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Reviewed-by: Liviu Dudau <liviu.dudau@arm.com>
-Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
 ---
- drivers/gpu/drm/drm_irq.c    | 13 ++++---------
- drivers/gpu/drm/drm_vblank.c | 15 ++++++++++++---
- 2 files changed, 16 insertions(+), 12 deletions(-)
+ drivers/gpu/drm/armada/armada_drv.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_irq.c b/drivers/gpu/drm/drm_irq.c
-index c3bd664ea733..945dd82e2ea3 100644
---- a/drivers/gpu/drm/drm_irq.c
-+++ b/drivers/gpu/drm/drm_irq.c
-@@ -74,10 +74,8 @@
-  * only supports devices with a single interrupt on the main device stored in
-  * &drm_device.dev and set as the device paramter in drm_dev_alloc().
-  *
-- * These IRQ helpers are strictly optional. Drivers which roll their own only
-- * need to set &drm_device.irq_enabled to signal the DRM core that vblank
-- * interrupts are working. Since these helpers don't automatically clean up the
-- * requested interrupt like e.g. devm_request_irq() they're not really
-+ * These IRQ helpers are strictly optional. Since these helpers don't automatically
-+ * clean up the requested interrupt like e.g. devm_request_irq() they're not really
-  * recommended.
-  */
+diff --git a/drivers/gpu/drm/armada/armada_drv.c b/drivers/gpu/drm/armada/armada_drv.c
+index dab0a1f0983b..4a64f1b9ec4d 100644
+--- a/drivers/gpu/drm/armada/armada_drv.c
++++ b/drivers/gpu/drm/armada/armada_drv.c
+@@ -130,8 +130,6 @@ static int armada_drm_bind(struct device *dev)
+ 	if (ret)
+ 		goto err_comp;
  
-@@ -91,9 +89,7 @@
-  * and after the installation.
-  *
-  * This is the simplified helper interface provided for drivers with no special
-- * needs. Drivers which need to install interrupt handlers for multiple
-- * interrupts must instead set &drm_device.irq_enabled to signal the DRM core
-- * that vblank interrupts are available.
-+ * needs.
-  *
-  * @irq must match the interrupt number that would be passed to request_irq(),
-  * if called directly instead of using this helper function.
-@@ -156,8 +152,7 @@ EXPORT_SYMBOL(drm_irq_install);
-  *
-  * Calls the driver's &drm_driver.irq_uninstall function and unregisters the IRQ
-  * handler.  This should only be called by drivers which used drm_irq_install()
-- * to set up their interrupt handler. Other drivers must only reset
-- * &drm_device.irq_enabled to false.
-+ * to set up their interrupt handler.
-  *
-  * Note that for kernel modesetting drivers it is a bug if this function fails.
-  * The sanity checks are only to catch buggy user modesetting drivers which call
-diff --git a/drivers/gpu/drm/drm_vblank.c b/drivers/gpu/drm/drm_vblank.c
-index 3417e1ac7918..bba6781cc48f 100644
---- a/drivers/gpu/drm/drm_vblank.c
-+++ b/drivers/gpu/drm/drm_vblank.c
-@@ -1737,6 +1737,15 @@ static void drm_wait_vblank_reply(struct drm_device *dev, unsigned int pipe,
- 	reply->tval_usec = ts.tv_nsec / 1000;
- }
+-	priv->drm.irq_enabled = true;
+-
+ 	drm_mode_config_reset(&priv->drm);
  
-+static bool drm_wait_vblank_supported(struct drm_device *dev)
-+{
-+	if  (IS_ENABLED(CONFIG_DRM_LEGACY)) {
-+		if (unlikely(drm_core_check_feature(dev, DRIVER_LEGACY)))
-+			return dev->irq_enabled;
-+	}
-+	return drm_dev_has_vblank(dev);
-+}
-+
- int drm_wait_vblank_ioctl(struct drm_device *dev, void *data,
- 			  struct drm_file *file_priv)
- {
-@@ -1748,7 +1757,7 @@ int drm_wait_vblank_ioctl(struct drm_device *dev, void *data,
- 	unsigned int pipe_index;
- 	unsigned int flags, pipe, high_pipe;
- 
--	if (!dev->irq_enabled)
-+	if (!drm_wait_vblank_supported(dev))
- 		return -EOPNOTSUPP;
- 
- 	if (vblwait->request.type & _DRM_VBLANK_SIGNAL)
-@@ -2023,7 +2032,7 @@ int drm_crtc_get_sequence_ioctl(struct drm_device *dev, void *data,
- 	if (!drm_core_check_feature(dev, DRIVER_MODESET))
- 		return -EOPNOTSUPP;
- 
--	if (!dev->irq_enabled)
-+	if (!drm_dev_has_vblank(dev))
- 		return -EOPNOTSUPP;
- 
- 	crtc = drm_crtc_find(dev, file_priv, get_seq->crtc_id);
-@@ -2082,7 +2091,7 @@ int drm_crtc_queue_sequence_ioctl(struct drm_device *dev, void *data,
- 	if (!drm_core_check_feature(dev, DRIVER_MODESET))
- 		return -EOPNOTSUPP;
- 
--	if (!dev->irq_enabled)
-+	if (!drm_dev_has_vblank(dev))
- 		return -EOPNOTSUPP;
- 
- 	crtc = drm_crtc_find(dev, file_priv, queue_seq->crtc_id);
+ 	ret = armada_fbdev_init(&priv->drm);
 -- 
 2.32.0
 
