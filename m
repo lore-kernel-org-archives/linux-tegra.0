@@ -2,133 +2,108 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31CD0C48BC2
-	for <linux-tegra@archiver.kernel.org>; Fri, 25 Jun 2021 23:48:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18539C2B9F4
+	for <linux-tegra@archiver.kernel.org>; Sat, 26 Jun 2021 01:32:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1CCDB61584
-	for <linux-tegra@archiver.kernel.org>; Fri, 25 Jun 2021 23:48:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE73161973
+	for <linux-tegra@archiver.kernel.org>; Sat, 26 Jun 2021 01:32:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230036AbhFYXvF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 25 Jun 2021 19:51:05 -0400
-Received: from mail-mw2nam08on2070.outbound.protection.outlook.com ([40.107.101.70]:21600
-        "EHLO NAM04-MW2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S230137AbhFYXum (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 25 Jun 2021 19:50:42 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=cqHReTvPOfyqJ3NO3JdGRmrVsHpLGHKJ6ujujDK2fNoaNmT9zDBnnMwcGMrDAhq2yoRZ8ifLyyFoNP0UEYjAisenukM6xcSqu+H6ntakDNnQPeCDFkPnAU/wfW9mJdZjYmkZNWlCx1j8lX4ZYkLknD44mT6O5hPKaYKYAJGUWl6LoArDmDOLv8mk0/jtf+OCtxO4C6H8vRnW0b8pmhQ3pKt7HSk86ehfMUsBiyM/E1QIdNgM/BJHBippIEWPp/20uqowVAk2ialjuFo3d9kP9URrKwJM0ECbZGjGB7/wYPNT5I7WCkzIRzX3CgO/BO2dqoLFr/jrF4qpfhgmliNZDg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=V8FTLM7KteR//C/rKZXf2MJCR/ZihWfFQMwp9poEZRM=;
- b=hEhMFhzoKzzwC+vaL4N+t2CQ91U6Hb62TUdEhm+aM5kG4DAr93TdGEj9Qi9Yk0mLbk44qplG8LBEi3cx/tuXOQ/szW44Deij3Sf3kJ36kMstXI8SERarg6UQ5oMACjEGI6tMGIXGeLMyVghYg7HrG1UhMlNPHRyAROlhqgnoJZO9NeUkl2qBUkOoi09jH7R1PmXV9bj6ahCrbpbQxjLMGKKfKLYuAB0zuALEJ/sX63cY4Ng7xwLuXpxHT/Geaen7q3yDPvA2n5K9ihfkCrjBzXEOZSutnYjvsL7pNBTBPw4Wz/fpytxRYkZf+iMziqDfw8nMYgpUWhcP3UijO1V3pg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.112.36) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=V8FTLM7KteR//C/rKZXf2MJCR/ZihWfFQMwp9poEZRM=;
- b=Kyy7aVOPnn21H+qkXPAvewMZcZhO1wQ3G9mHKei5IqQLuTQJYsFnRw4WiitqXwxvqIhcTFABDMwF1W9OZmOrPBO2AJ6m5WAbQ9C5dsTrtEzbuk2PGLK/qwxNd6uykKoK5ReOH548adoIH4Tn2mc08KV+9xCE+Gomgow0nYDImW7u+cNgpG/zEk2ck8TzmyhD6ubQarbjDec2JfSFXhrStqtiy41jVUqF4s0kkeKzhdN70hfHXdK5hFy0i16GlcELEl3vG/g3gSbbz2CU0KUpA7bdOQQCqxDypyZAZ84m3zn/JTJAe1nGQPTPjiW3tMxGk9j0vbArYEPGew3ulCmqSA==
-Received: from DM6PR04CA0014.namprd04.prod.outlook.com (2603:10b6:5:334::19)
- by MN2PR12MB4013.namprd12.prod.outlook.com (2603:10b6:208:163::27) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4264.19; Fri, 25 Jun
- 2021 23:48:18 +0000
-Received: from DM6NAM11FT062.eop-nam11.prod.protection.outlook.com
- (2603:10b6:5:334:cafe::8) by DM6PR04CA0014.outlook.office365.com
- (2603:10b6:5:334::19) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4264.19 via Frontend
- Transport; Fri, 25 Jun 2021 23:48:18 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.36)
- smtp.mailfrom=nvidia.com; gmail.com; dkim=none (message not signed)
- header.d=none;gmail.com; dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.112.36 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.112.36; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (216.228.112.36) by
- DM6NAM11FT062.mail.protection.outlook.com (10.13.173.40) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.4264.18 via Frontend Transport; Fri, 25 Jun 2021 23:48:18 +0000
-Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Fri, 25 Jun
- 2021 23:48:16 +0000
-Received: from dipenp.nvidia.com (172.20.187.6) by mail.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Fri, 25 Jun 2021 23:48:16 +0000
-From:   Dipen Patel <dipenp@nvidia.com>
-To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, <linus.walleij@linaro.org>,
-        <bgolaszewski@baylibre.com>, <warthog618@gmail.com>,
-        <devicetree@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <dipenp@nvidia.com>, <robh+dt@kernel.org>
-Subject: [RFC 11/11] MAINTAINERS: Added HTE Subsystem
-Date:   Fri, 25 Jun 2021 16:55:32 -0700
-Message-ID: <20210625235532.19575-12-dipenp@nvidia.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20210625235532.19575-1-dipenp@nvidia.com>
-References: <20210625235532.19575-1-dipenp@nvidia.com>
-X-NVConfidentiality: public
+        id S229956AbhFZBfL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 25 Jun 2021 21:35:11 -0400
+Received: from szxga01-in.huawei.com ([45.249.212.187]:5081 "EHLO
+        szxga01-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229889AbhFZBfL (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Fri, 25 Jun 2021 21:35:11 -0400
+Received: from dggemv703-chm.china.huawei.com (unknown [172.30.72.57])
+        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4GBbpG09ggzXlCG;
+        Sat, 26 Jun 2021 09:27:34 +0800 (CST)
+Received: from dggpemm500006.china.huawei.com (7.185.36.236) by
+ dggemv703-chm.china.huawei.com (10.3.19.46) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.2; Sat, 26 Jun 2021 09:32:47 +0800
+Received: from [127.0.0.1] (10.174.179.0) by dggpemm500006.china.huawei.com
+ (7.185.36.236) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2176.2; Sat, 26 Jun
+ 2021 09:32:47 +0800
+Subject: Re: [PATCH 1/1] clk: tegra: tegra124-emc: Fix possible memory leak
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>
+References: <20210617082759.1008-1-thunder.leizhen@huawei.com>
+ <162466387362.3259633.2364843071785127818@swboyd.mtv.corp.google.com>
+From:   "Leizhen (ThunderTown)" <thunder.leizhen@huawei.com>
+Message-ID: <a6f88419-2cb9-0717-7737-e4666cdcc211@huawei.com>
+Date:   Sat, 26 Jun 2021 09:32:46 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 342f9a54-6565-4873-a90d-08d93833b536
-X-MS-TrafficTypeDiagnostic: MN2PR12MB4013:
-X-Microsoft-Antispam-PRVS: <MN2PR12MB4013432E0BAA8DC5DE6BFE80AE069@MN2PR12MB4013.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:1728;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: Y5geudkZv/njWc6HaJo/XUjZMTuHcr6c/JdwOpVVxGo2HWaS5CzY+mE6jozm6tXu0qyayzYlsWhy+rq7Brxn6OjpGKGfduzeZ5g6I/xO/x8btYotAP9Tnux+aHsX0NSV+mIxCCKr1v1igLv1xNDtHpJ4dRKyoNxVHuz3f8Ex0X3j8+mwBJkyyhJlip+opSK8RgxKsW1KhHbAt+1SXO/EARs5Kv8Xo2gEkH7YPCnBEdmIOcgmv15IpIXk9bC6ocSlOlmG6YRhoykXxDoU8ghaPuTTQdU5XApvSEN+KZyarv09DrBJ1aiwgi6+m2kV5FVNhahZNPuLJ+5ga8DfgRZ6SESlu+EVQtAb/pSlUu512KphuxdmphZ8XOPKWo0/dnwjI3A3b06LVOAqjEjg11B5XRLFZ+iFP7cwA6to5Q4tffDDuJ7uX4VkAgV7+9R/EOI1MZphQ6e/zrUmhTklX5zUh/8Ybkxj9p1XeMu39WuCTV5JD1YsJUSLj++9+dcwvpk+G/rI4YquCjTPwo46B9v2tTUoadPU6ewnbAnuWvl4J2Dnf3zqAF1Y5yuAwtrjF2KVGuqgdns4AdgDpzC2Y5ybODkNXIzGZJ3tkNGCgT8zcsBuTqV4AR3HQhGKjWI0eNcllj8TgYSpAoyg+/VGt6/ocoZW8pSNu8CzwN3pnKDaAhfLVzzI2tEqUSbTHSTXFRKVT/qkI0M2zOZWVOovDpHK6AvNPFNO5MqBipZOF8+e7/vtKQ3cECJm14JEPKFxD+pT6Zd+t2i6fG/BjUXRxCxMsw==
-X-Forefront-Antispam-Report: CIP:216.228.112.36;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid05.nvidia.com;CAT:NONE;SFS:(4636009)(346002)(376002)(396003)(39860400002)(136003)(36840700001)(46966006)(4744005)(7416002)(356005)(86362001)(7636003)(316002)(110136005)(1076003)(478600001)(2906002)(5660300002)(2616005)(921005)(36756003)(70206006)(7696005)(8936002)(336012)(8676002)(70586007)(82740400003)(6666004)(186003)(26005)(426003)(36860700001)(82310400003)(47076005)(83996005)(2101003);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jun 2021 23:48:18.2452
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 342f9a54-6565-4873-a90d-08d93833b536
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.36];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT062.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4013
+In-Reply-To: <162466387362.3259633.2364843071785127818@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.174.179.0]
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ dggpemm500006.china.huawei.com (7.185.36.236)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Added myself as a maintainer for this new Hardware Timestamping Engine
-(HTE) subsystem.
 
-Signed-off-by: Dipen Patel <dipenp@nvidia.com>
----
- MAINTAINERS | 8 ++++++++
- 1 file changed, 8 insertions(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index ba0cc0a67b32..29e79e7f5a50 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -8390,6 +8390,14 @@ L:	linux-input@vger.kernel.org
- S:	Maintained
- F:	drivers/input/touchscreen/htcpen.c
- 
-+HTE SUBSYSTEM
-+M:	dipenp@nvidia.com
-+S:	Maintained
-+F:	drivers/hte/*
-+F:	include/linux/hte.h
-+F:	Documentation/hte/*
-+F:	Documentation/devicetree/bindings/hte/*
-+
- HTS221 TEMPERATURE-HUMIDITY IIO DRIVER
- M:	Lorenzo Bianconi <lorenzo.bianconi83@gmail.com>
- L:	linux-iio@vger.kernel.org
--- 
-2.17.1
+On 2021/6/26 7:31, Stephen Boyd wrote:
+> Quoting Zhen Lei (2021-06-17 01:27:59)
+>> When krealloc() fails to expand the memory and returns NULL, the original
+>> memory is not released. In this case, the original "timings" scale should
+>> be maintained.
+>>
+>> Fixes: 888ca40e2843 ("clk: tegra: emc: Support multiple RAM codes")
+>> Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
+>> ---
+> 
+> Looks correct, but when does krealloc() return NULL? My read of the
+> kerneldoc is that it would return the original memory if the new
+> allocation "failed".
+
+That must be the wrong description in the document. For example, the original
+100-byte memory needs to be expanded to 200 bytes. If the memory allocation fails,
+a non-null pointer is returned. People must think they've applied for it and
+continue to use it, the end result is memory crashed.
+
+I don't think the kernel needs to be different from libc's realloc().
+
+The implementation of __do_krealloc() illustrates this as well:
+        /* If the object still fits, repoison it precisely. */
+        if (ks >= new_size) {
+                p = kasan_krealloc((void *)p, new_size, flags);
+                return (void *)p;
+        }
+
+        ret = kmalloc_track_caller(new_size, flags);			//enlarge, allocate new memory
+	if (ret && p) {
+                memcpy(ret, kasan_reset_tag(p), ks);			//copy the old content from 'p' to new memory 'ret'
+        }
+
+	return ret;							//ret may be NULL, if kmalloc_track_caller() failed
+
+
+
+> 
+> Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+> 
+> .
+> 
 
