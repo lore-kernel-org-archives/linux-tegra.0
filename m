@@ -2,118 +2,137 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F86CC49EB7
-	for <linux-tegra@archiver.kernel.org>; Mon, 28 Jun 2021 12:03:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BFC1C49EA3
+	for <linux-tegra@archiver.kernel.org>; Mon, 28 Jun 2021 12:27:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E498761C72
-	for <linux-tegra@archiver.kernel.org>; Mon, 28 Jun 2021 12:03:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6E6E061279
+	for <linux-tegra@archiver.kernel.org>; Mon, 28 Jun 2021 12:27:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232774AbhF1MFp (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 28 Jun 2021 08:05:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59940 "EHLO
+        id S232941AbhF1M3x (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 28 Jun 2021 08:29:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37124 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232608AbhF1MFn (ORCPT
+        with ESMTP id S232802AbhF1M3w (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 28 Jun 2021 08:05:43 -0400
-Received: from mail-pg1-x52b.google.com (mail-pg1-x52b.google.com [IPv6:2607:f8b0:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4817DC061574;
-        Mon, 28 Jun 2021 05:03:17 -0700 (PDT)
-Received: by mail-pg1-x52b.google.com with SMTP id d12so15270037pgd.9;
-        Mon, 28 Jun 2021 05:03:17 -0700 (PDT)
+        Mon, 28 Jun 2021 08:29:52 -0400
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3ED56C061574;
+        Mon, 28 Jun 2021 05:27:26 -0700 (PDT)
+Received: by mail-wm1-x32a.google.com with SMTP id o22so10391094wms.0;
+        Mon, 28 Jun 2021 05:27:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=hC95X8dILV4yUsxnWcqyaUSRLR/4KhkkqpuXQlMJ+os=;
-        b=j/1qnIN05R1GrGDHQLT945i6wPcIK8UlPXIPynREbRgcev1CYX2vV3PdaSuMf/fkFk
-         5cqvLfoq5LYsQxXfM7WQ0FhWh/GEM4zDYp5YUE+qMxSxIVkZ7BKnlyGaKE/bSRaOvHBg
-         TBZ0p8k4IY1hA9bUBHOp66D2kooiwq9RIKp0v+M+UCECYePx1BGSp6UWwbcxRdr1vGBU
-         YhrN7Hyf6PH/SHx5y8fvtG5Q53KD9JWDK6pJ02iF3Cy0+B3mLGowTZUmWFnuQlP3f7Nx
-         +XjgCAXiaMUgzXVlCRGJGktRvkV7Bp51kBbOk6qaMNw6n64Vu4Jj8gRaEQVLEsn/xxNv
-         kMUA==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=iQRqD1hmQxQYQdy9yTVFY+obxJxwa/bp+3TJRW7YBnc=;
+        b=jqtEmnwAxPw8R0y/vZBwXbfrplyZFpZY+gX1f6YU9nyBuU/jqvQRl1Kms1mWbm85d9
+         RSD9UhIOgzpHMfZXM/qAWfKMNbxtx3QVnfoAEV+HqSdO/a0GdsJSrFbNPj1SydfVR08f
+         OfLR4HX0GLhx9yQjos5W75+IFstMC0WbHVc/oGsOPUXcSz7g7QCbwUtpsAsbyW3qOx1G
+         LDVwsVnoabqHKTDApJ/RSJjrd5ylfm/7XNJxc4O9kTS15q/urvcEuYGW+bQeaKHwOwFs
+         DiGfFu+6kC2LkzAu6QfK14G5pbfbdbkVBba0SKK+GAYGNpOUzqf5EIqnkKW3GinfuM+x
+         nMvw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=hC95X8dILV4yUsxnWcqyaUSRLR/4KhkkqpuXQlMJ+os=;
-        b=RnPTzM1taTLl4W5n+cIexpiXT28ml9J8lJs3VAWL6VH+n5K193xCj1EQARZQ0jY4lA
-         4ML/VaJaSIzavDrc6svh8wD3wkAqLI43AVbXvFFRhgRBcrkuBW+eE9HhMZlevHPW7IqS
-         tMWgGeAhV3YbKX9IILxu2iONOl250J+LcsWC9WHPJTff8TWXI2nfODpyi9SQJXJyxfZ/
-         uZeqbhcqL+HQlhu4w/yda75TxHJnX+VY7LU3NVJwbhL3l3rv7xHoyyUauWIS9h+p0Lnd
-         T4di5v1ifT1xbKisBDy/r+BcEhefhgzgiP7/ouB6PmuhlU/O02WGODi5ZVUfKNhD6E+Z
-         n7Tg==
-X-Gm-Message-State: AOAM530bKDNQSI/J+Esjde5p2KKiwTUl4Sk75mK+Wt2nz1A/62hHj37v
-        s/TSKrT/y5a/1TvHm38Lf7LFxCQWQVU1TZaOFo8=
-X-Google-Smtp-Source: ABdhPJyAv9znER5hh/JOnKHGaD1NRGWHP3IrFfiODa8IXBazHOnTNyl7L/0rKn7rdXQ7fCvZ/iGF6s9IOTuD8HfB+dg=
-X-Received: by 2002:a63:f609:: with SMTP id m9mr1004059pgh.74.1624881796677;
- Mon, 28 Jun 2021 05:03:16 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=iQRqD1hmQxQYQdy9yTVFY+obxJxwa/bp+3TJRW7YBnc=;
+        b=p797AQS3sfuiGEsK9I0bZRSJBT/cxyHt9g+fiHLnZysEm+LVZl7CHpVogQDc+ZwEpe
+         FVXutOlOT1DeXU8bI6MPWQsCx/dvfgv9BSvNOfytBbSHDcJ3oZzcFLJhdhPgFIzTmcwV
+         iQjPPkuCHl04AI8kVnUfgVgAlqq6ghBbPw/LtAcA2KKmSias3NsRc97W/C3dBSJyOMab
+         rkoSoXyZMGCYEZ03kqJEqvj3nEQi4RLFmfuZLJ/oXm1Dt3U6l3mT7Z8+ApzW+hIWQLit
+         HKkeND9eihjpA7ri1o5eihkngdASlnOFeiPaUai6FzxbSLQvF23Bu+QoEIh1X+5S+TzG
+         uU1A==
+X-Gm-Message-State: AOAM530D0z6AWLz8NsdWRb1TvnVgxbmqEdPuAU8ZYJi/twLW+9j4W5N1
+        10OjXX4ewKNH8ee8Rr5m4Dc=
+X-Google-Smtp-Source: ABdhPJzu+Hkm1uflUklKWqGf56ONDt61rFasIAROPDkD6tppmurMVzdJm+5tCdYkxl1z1ahZNy9jgA==
+X-Received: by 2002:a1c:c90c:: with SMTP id f12mr26315327wmb.80.1624883244703;
+        Mon, 28 Jun 2021 05:27:24 -0700 (PDT)
+Received: from localhost ([62.96.65.119])
+        by smtp.gmail.com with ESMTPSA id y20sm13212152wmi.25.2021.06.28.05.27.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Jun 2021 05:27:23 -0700 (PDT)
+Date:   Mon, 28 Jun 2021 14:29:35 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+Cc:     Lee Jones <lee.jones@linaro.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        linux-pwm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        kernel@pengutronix.de
+Subject: Re: [PATCH v1 5/6] pwm: tegra: Implement .apply callback
+Message-ID: <YNnArzeS/DtIlFa9@orome.fritz.box>
+References: <20210617095145.163694-1-u.kleine-koenig@pengutronix.de>
+ <20210617095145.163694-6-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
-References: <20210625235532.19575-1-dipenp@nvidia.com> <CAHp75Vf4TKjtC7cLNape4r+hE-AWnbxtbww2ofCcHQJf9zyh-g@mail.gmail.com>
- <CACRpkdbXE2A98P0_juA9PNEKTo89FcgywYmnqJSC5bV+Vox=Fw@mail.gmail.com>
-In-Reply-To: <CACRpkdbXE2A98P0_juA9PNEKTo89FcgywYmnqJSC5bV+Vox=Fw@mail.gmail.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Mon, 28 Jun 2021 15:02:39 +0300
-Message-ID: <CAHp75Vcv3BsQ87bnnYK07npQsp3GU4JC1k+iXUw2uuGbSKBQNg@mail.gmail.com>
-Subject: Re: [RFC 00/11] Intro to Hardware timestamping engine
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Ye Xiang <xiang.ye@intel.com>, Drew Fustini <drew@beagleboard.org>,
-        Sandeep Singh <sandeep.singh@amd.com>,
-        Dipen Patel <dipenp@nvidia.com>,
-        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Kent Gibson <warthog618@gmail.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Documentation List <linux-doc@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        linux-iio <linux-iio@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="oa/u8ID5+y++Yt33"
+Content-Disposition: inline
+In-Reply-To: <20210617095145.163694-6-u.kleine-koenig@pengutronix.de>
+User-Agent: Mutt/2.1 (4b100969) (2021-06-12)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Sun, Jun 27, 2021 at 5:41 PM Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Sun, Jun 27, 2021 at 3:08 PM Andy Shevchenko
-> <andy.shevchenko@gmail.com> wrote:
->
-> > > To summarize upstream discussion:
-> > > - It was heavily favoured by Linus and Kent to extend GPIOLIB and supporting
-> > > GPIO drivers to add HTE functionality and I agreed to experiment with it.
-> >
-> > I guess this series should include more people from different
-> > companies, especially documentation parts. This may be used by
-> > different hardware and quite different vendors. Developing a framework
-> > like this for only one vendor is no go in general.
->
-> I forwarded patch 00 to the IIO list and Jonathan Cameron,
-> and let's page Ye Xiang who made a bunch of contributions
-> from Intel's side to IIO directly. (Hi Ye, please check this concept
-> if you have time!)
->
-> The actually most important target group would be people
-> doing things like sensor fusion where a common timebase is
-> important, I don't know who does really, but Sandeep Singh from
-> AMD has contributed the AMD Sensor Fusion hub in
-> drivers/hid/amd-sfh-hid and might know a few things about this
-> though I don't think SFH would need this directly.
-> https://en.wikipedia.org/wiki/Sensor_fusion
->
-> Also Paging Drew Fustini, who knows a lot of maker and tinker
-> people, he might know a bit about this or know someone who
-> knows.
 
-Thank you!
+--oa/u8ID5+y++Yt33
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
--- 
-With Best Regards,
-Andy Shevchenko
+On Thu, Jun 17, 2021 at 11:51:44AM +0200, Uwe Kleine-K=C3=B6nig wrote:
+> To ease review this reuses the formerly implemented callbacks.
+>=20
+> Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
+> ---
+>  drivers/pwm/pwm-tegra.c | 32 +++++++++++++++++++++++++++++---
+>  1 file changed, 29 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/drivers/pwm/pwm-tegra.c b/drivers/pwm/pwm-tegra.c
+> index 11a10b575ace..1161c6323e60 100644
+> --- a/drivers/pwm/pwm-tegra.c
+> +++ b/drivers/pwm/pwm-tegra.c
+> @@ -227,10 +227,36 @@ static void tegra_pwm_disable(struct pwm_chip *chip=
+, struct pwm_device *pwm)
+>  	clk_disable_unprepare(pc->clk);
+>  }
+> =20
+> +static int tegra_pwm_apply(struct pwm_chip *chip, struct pwm_device *pwm,
+> +			   const struct pwm_state *state)
+> +{
+> +	int err;
+> +
+> +	if (state->polarity !=3D PWM_POLARITY_INVERSED)
+> +		return -EINVAL;
+
+Where does this come from? I can't see this condition anywhere in the
+existing driver.
+
+Thierry
+
+--oa/u8ID5+y++Yt33
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmDZv/8ACgkQ3SOs138+
+s6EoWg/+OW+/0r7pZfoau/gkUOEbkDAaRUDlbG8ZLMVnxi9wN+S04QcpTqAqa27N
+iw4gaApGepRnJUjuCz9KmBX8lDS5mXAc57XWxnYScF0P8aZiK6+pYdbwKCUp48PV
+FiE43YyQRlPNggyp2jM94Yy5/xNzRBS2cGmq8SAGniNVbbJRys4q5aRFGBYv0xe/
+UB1uFkgl7mtYzZQYTN62xJS774DKlP/cvMgP/r2kZtu46bcWXw/CYl9F0eWGrN49
+jHuvjWbeafhMGxSaGXi04Cp2YgiCh8rdn4CwOpGA9RFgt42a9ijR4+R5S3bEPeKP
+ynOVvzIGJPYgtdvpRqvlwjVy3EZplCkNpSL6qQRq7e8mAZPtfQnJfjWgISvt8dWq
+SQ25GQc9bswFicCGxEnJZVsB9HAE0yOmDJlSiO4pw7kJz8qkeAd2ZPrQ/0whj/bB
+9Y1/t5YtxlA6IQJfM8pY549KFqlXzEEYMiObNaoWJ1G1aq5WwdvmV3SPFTN9Ku+L
+g6lFREwnkbLwR0VrFznYKqqQ2JNHfDWKrBd3zKsIqnTlwOwS3DRGExHLgIbr2PA0
+681OkyzoyJt87kEUiQjmIyQp1tR02clRdatgBFXdporlOUZ8JX+RMVJeep+G8ooZ
+GT0Z69gTHg3H6UrR7kk4YENwcbep2E2D77CFtudJ8fmnEnOqCCE=
+=UOCg
+-----END PGP SIGNATURE-----
+
+--oa/u8ID5+y++Yt33--
