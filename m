@@ -2,79 +2,122 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF2DAC11F6A
-	for <linux-tegra@archiver.kernel.org>; Tue, 29 Jun 2021 15:59:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8687C11F67
+	for <linux-tegra@archiver.kernel.org>; Tue, 29 Jun 2021 17:03:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B9BCA61D94
-	for <linux-tegra@archiver.kernel.org>; Tue, 29 Jun 2021 15:59:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A5AC261DEF
+	for <linux-tegra@archiver.kernel.org>; Tue, 29 Jun 2021 17:03:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233294AbhF2QCO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 29 Jun 2021 12:02:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60742 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232698AbhF2QCO (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 29 Jun 2021 12:02:14 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 328F661DC8;
-        Tue, 29 Jun 2021 15:59:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1624982387;
-        bh=mApRLgk69+mMV6V2Jp0Hts8X9JoUe+4WPGnamh9oiBU=;
-        h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc:From;
-        b=jn/UYtxd6DOT82xj4Jn5ozrIOU1lYCBRLr3TmBNuywthA+if1knOf6CycPUljm3dn
-         qrjGs6Lu1J28zcL8aopJN6s5OgAz8oLAytGSTEQG1DzNQPPf3gRaYpVpMxeLaaiOyh
-         bVLemkmvbDMqQhIQKL1xV/Q0bjnonDenCYi8Nolx6I+32TCDLTuouRZokZI1drVfJE
-         rJ0FGqtMN7GMe63abKwOLeIESoem7LfaZWgx2r5f3S3BCSvyUtxwGLzfmuIrRVi5Ux
-         miLI4IVM6blF+0nBNxbMjbmWsAsTFPSHxCiyoRO2xhOx2NgTOob6j1ZWe0xWsOAKXd
-         Tr8eWN67R/h5g==
-Received: by mail-lf1-f50.google.com with SMTP id f30so40460638lfj.1;
-        Tue, 29 Jun 2021 08:59:47 -0700 (PDT)
-X-Gm-Message-State: AOAM5325nLRkV7BJpUmlMsiWkykTciFSYDs4EaRYuWaV6NtGoKoasv2k
-        zp8Wr9jW9N/7ZGsYLuoiE8/hGhf6rHJj8EXImFA=
-X-Google-Smtp-Source: ABdhPJxbKRPGstVIg+10tcjtk+VnYZ+lj9b97iwRcHVe57pqV9+t3IECtbTnQC+RnmS+mFeMuInfdc2gJTFJGcCpAlk=
-X-Received: by 2002:a19:e210:: with SMTP id z16mr1316558lfg.233.1624982385490;
- Tue, 29 Jun 2021 08:59:45 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210629135833.22679-1-tzimmermann@suse.de>
-In-Reply-To: <20210629135833.22679-1-tzimmermann@suse.de>
-Reply-To: wens@kernel.org
-From:   Chen-Yu Tsai <wens@kernel.org>
-Date:   Tue, 29 Jun 2021 23:59:33 +0800
-X-Gmail-Original-Message-ID: <CAGb2v66wYxs7u1AubriRokPFh72ZONMxGgmGNPB5mFLOZNw_3Q@mail.gmail.com>
-Message-ID: <CAGb2v66wYxs7u1AubriRokPFh72ZONMxGgmGNPB5mFLOZNw_3Q@mail.gmail.com>
-Subject: Re: [PATCH] drm/aperture: Pass DRM driver structure instead of driver name
-To:     Thomas Zimmermann <tzimmermann@suse.de>
-Cc:     Daniel Vetter <daniel@ffwll.ch>, airlied@redhat.com,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-tegra@vger.kernel.org, linux-sunxi@lists.linux.dev,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        spice-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
-        Intel Graphics <intel-gfx@lists.freedesktop.org>,
+        id S232257AbhF2RGM (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 29 Jun 2021 13:06:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52554 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232231AbhF2RGL (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 29 Jun 2021 13:06:11 -0400
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D4C4C061767
+        for <linux-tegra@vger.kernel.org>; Tue, 29 Jun 2021 10:03:44 -0700 (PDT)
+Received: by mail-wr1-x42f.google.com with SMTP id m18so76766wrv.2
+        for <linux-tegra@vger.kernel.org>; Tue, 29 Jun 2021 10:03:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:organization:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=1mzwo7wjAUa0IJEbXNRwxkpgdnTr5r+kaQt26hfpS9Q=;
+        b=QmmxT28DkHNzpao9vOpgiqd/+dJLsDibGQbrStNZ7JbAn0dorBqHkDj0WWKEfZk7OQ
+         FNxBzNYYbYzgKsCZ0j18iEU1KtSxaIL4Fyk8uM4HCQ67154O4rhEmH9kLiuRXoOrC5q7
+         S624F07BLgYEYsvGXAHARz0QA4dg1CTiaNym2G/4ZRiWeANMPe2N15L3MveDp/WgRSYk
+         IJA2nKKslgAsYg8dbGq8sMAXlDTQQYlDUbjGPAMWzEYVYvDRIOTDYXncAhpesbhqxL40
+         4Pb94hp2YdPRJ2JAMke+tMLiLTqa8JIZadNCDJ75yRoh9swK/MMMGXHQQBoAwR42SkSD
+         djPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=1mzwo7wjAUa0IJEbXNRwxkpgdnTr5r+kaQt26hfpS9Q=;
+        b=fb6F/Tkt2uzpUZ9Iytt7y/RKJbuO37VKFR3vfJyeWiZvbCCjQm4fN0kXVZSaDrrj2p
+         lkEjuNxYQ9sfHPVqrGUHZAaxasQt58truWdikY6cAwib3etL5EKGv2XdluHIwn0+eGed
+         DPIb3mPvjeClFKeo8p6QwNfk9EaCLnWGZ8z02AoJbF1/KsGoYb6BaG8mZ4+rqERVUmEZ
+         1Lm5iMe5uOOTVA2QQATHdmn7QyVoMsl0EJjUvT9ZlC+CA3Kif/cAI7RTeHwf5YtHNJPK
+         u9DR0JZRo/d3bYxIDqbjKWUhL5bBfoQxmiDq+VjuF3+nMPi2wDui6vEDx/UoKB/AuJEy
+         6vbg==
+X-Gm-Message-State: AOAM530VG5CijttkKxu/UEJQ/786Fy2lwzmLCIqTI//AbNWiXYEBlPIx
+        83DlZu+mBSCpea7G5MDjbjQMpw==
+X-Google-Smtp-Source: ABdhPJw9BHdV2PhR+4EY9fQcITZ83GZhxsD5N3hVP1Z53THaNgNupwsLwr8mtFaReraEAQtYUI3qaQ==
+X-Received: by 2002:adf:ff8e:: with SMTP id j14mr34485328wrr.374.1624986222594;
+        Tue, 29 Jun 2021 10:03:42 -0700 (PDT)
+Received: from ?IPv6:2001:861:44c0:66c0:9ed5:b63d:622c:fb4e? ([2001:861:44c0:66c0:9ed5:b63d:622c:fb4e])
+        by smtp.gmail.com with ESMTPSA id h10sm3399285wmb.40.2021.06.29.10.03.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 29 Jun 2021 10:03:37 -0700 (PDT)
+Subject: Re: [PATCH] drm/aperture: Pass DRM driver structure instead of driver
+ name
+To:     Thomas Zimmermann <tzimmermann@suse.de>, daniel@ffwll.ch,
+        airlied@redhat.com
+Cc:     linux-hyperv@vger.kernel.org, nouveau@lists.freedesktop.org,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
         virtualization@lists.linux-foundation.org,
-        linux-hyperv@vger.kernel.org, amd-gfx@lists.freedesktop.org
-Content-Type: text/plain; charset="UTF-8"
+        linux-rockchip@lists.infradead.org, amd-gfx@lists.freedesktop.org,
+        linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        spice-devel@lists.freedesktop.org,
+        linux-amlogic@lists.infradead.org, freedreno@lists.freedesktop.org,
+        linux-sunxi@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+References: <20210629135833.22679-1-tzimmermann@suse.de>
+From:   Neil Armstrong <narmstrong@baylibre.com>
+Organization: Baylibre
+Message-ID: <32c2b8f1-e8e5-c161-ed87-f80190173552@baylibre.com>
+Date:   Tue, 29 Jun 2021 19:03:36 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
+MIME-Version: 1.0
+In-Reply-To: <20210629135833.22679-1-tzimmermann@suse.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Jun 29, 2021 at 9:58 PM Thomas Zimmermann <tzimmermann@suse.de> wrote:
->
+Hi,
+
+On 29/06/2021 15:58, Thomas Zimmermann wrote:
 > Print the name of the DRM driver when taking over fbdev devices. Makes
 > the output to dmesg more consistent. Note that the driver name is only
 > used for printing a string to the kernel log. No UAPI is affected by this
 > change.
->
+> 
 > Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
 > ---
 
->  drivers/gpu/drm/sun4i/sun4i_drv.c             |  2 +-
+...
 
-Acked-by: Chen-Yu Tsai <wens@csie.org>
+>  drivers/gpu/drm/meson/meson_drv.c             |  2 +-
+
+Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+
+...
+
+>  
+> diff --git a/drivers/gpu/drm/meson/meson_drv.c b/drivers/gpu/drm/meson/meson_drv.c
+> index a7388bf7c838..3d0ccc7eef1b 100644
+> --- a/drivers/gpu/drm/meson/meson_drv.c
+> +++ b/drivers/gpu/drm/meson/meson_drv.c
+> @@ -285,7 +285,7 @@ static int meson_drv_bind_master(struct device *dev, bool has_components)
+>  	 * Remove early framebuffers (ie. simplefb). The framebuffer can be
+>  	 * located anywhere in RAM
+>  	 */
+> -	ret = drm_aperture_remove_framebuffers(false, "meson-drm-fb");
+> +	ret = drm_aperture_remove_framebuffers(false, &meson_driver);
+>  	if (ret)
+>  		goto free_drm;
+>  
+
+...
