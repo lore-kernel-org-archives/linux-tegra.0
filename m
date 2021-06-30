@@ -2,126 +2,169 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96D80C11F65
-	for <linux-tegra@archiver.kernel.org>; Wed, 30 Jun 2021 16:14:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18A93C11F69
+	for <linux-tegra@archiver.kernel.org>; Wed, 30 Jun 2021 17:06:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6F2966142C
-	for <linux-tegra@archiver.kernel.org>; Wed, 30 Jun 2021 16:14:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F26446146E
+	for <linux-tegra@archiver.kernel.org>; Wed, 30 Jun 2021 17:06:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229540AbhF3QRR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 30 Jun 2021 12:17:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50504 "EHLO
+        id S232364AbhF3RJD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 30 Jun 2021 13:09:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33764 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229529AbhF3QRR (ORCPT
+        with ESMTP id S229510AbhF3RJA (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 30 Jun 2021 12:17:17 -0400
-Received: from mail-pf1-x429.google.com (mail-pf1-x429.google.com [IPv6:2607:f8b0:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6882DC061756;
-        Wed, 30 Jun 2021 09:14:48 -0700 (PDT)
-Received: by mail-pf1-x429.google.com with SMTP id x16so2864207pfa.13;
-        Wed, 30 Jun 2021 09:14:48 -0700 (PDT)
+        Wed, 30 Jun 2021 13:09:00 -0400
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 765ECC061756;
+        Wed, 30 Jun 2021 10:06:26 -0700 (PDT)
+Received: by mail-ej1-x62e.google.com with SMTP id nd37so5441066ejc.3;
+        Wed, 30 Jun 2021 10:06:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=QgAvMFP+qrxfjOSSdXRrrMLtbz84Nhwtu91bshNexkw=;
-        b=Mm3FgkghzO+j1nGqCHtJiFFm3dZgDyQbN0FI5Hwgzq4XYxSBvsmCl9p5uigkj0/M7/
-         E67LJnfBWZNq69WoZjq8Mi/Fb7OZXZn3tXGdtsYMpOeciRWx8Bqhmrcc5WM9Dda0p0GE
-         M/4I5Rmejm71VcN/4d8y9bP6LbgNGkzNzlj3Iy8dxlaPUeFD8l8bmy3iYvlC041ASauY
-         zUhCsFg1L7ZBT7BO1vjt14LPUOyAnsHT7jxGIQveOaRXh8Lg657CwFp+LQW9I6eU/9O5
-         a3RBom3Qwn52WeO6skY8Qt8jMflDKyx73ApHX2BTtU4cqKH343yG7mqHtxzPB4qo8XTZ
-         4D3w==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=iu5sFxaU8kKRhqgad7LJpaKxFYK9+ER2NkvqoVrkaOo=;
+        b=KSMt8I1uExsygoWSB7BZJN3CHxPdTUelyHJbPDwNCAN35W+EASXVhDdw8cArkq3MVK
+         x474AcgafFrPwFXOi1zH/nb2/26IgZK0DAGGHDeD+FbfMumwTVMo5EAJB/IQATkSHYvS
+         gx/AWfb8udKIdM+FiAhA9XCl23XRfHcAJdjNp4oMtNff7xRUjPTfv+i9l1ABRVIcfAUA
+         UpitpOP9am2v6AaGUZ7xzsbZbbhcjog8tgAZdaowyTNGP4niC14EYw3uXQzEqkuqhcpB
+         eFBBVzxSaN1mPrVqkwxseJAME2ipKQ4FRrNrVq3heaOMaNqIXgufKRTp8FdRkWcktpQF
+         9APg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=QgAvMFP+qrxfjOSSdXRrrMLtbz84Nhwtu91bshNexkw=;
-        b=a+SWvS6yXv18LW6/qMPXNvqm6MDGVu+VWDNSSO4iJN7SoPmpog0uHaHxlZfMFzobtr
-         kwQAOzpFvY0z8MmWAOPbi3IJeb3NxzLbRdror2Sn/SGY4U6bgY7TjUT+sFEnSMjkuoyZ
-         UrrRgSfZQQgmmrobcjwWfjfQMf617Fz8b26Oj+4+JAnA1Q6m5yqgtZoAQe99oftWlRNS
-         kFri+K80IuqZ9YPivSPezp1Cic8+2qrC0Xe9YnqXBguk0XpCiQOrtPWNmCLfi7JHJIwl
-         x2aUg02wKMkE6W36d92P+S/EvoIeU1G59ARIcxJqqOFeF5Te0U1TdcjyXlkWudC9xMQq
-         H7Tg==
-X-Gm-Message-State: AOAM531uvpoHulgnCvc++HGt49xsealREQQf0xMHh4nbGBtyjtp4oOyM
-        pzoo9SA1xcSPLJo1UJZoY3MlsCXlNbjyQsYTKyA=
-X-Google-Smtp-Source: ABdhPJytB5yT0vt5F3GBmKifMbacxRb58zX1c5t5Rtnm5tmWBdT7IOSB7p6dqcaNxbFv0/31qZFbuc6YKCrBSqi3T44=
-X-Received: by 2002:a05:6a00:2ad:b029:303:41fb:41d7 with SMTP id
- q13-20020a056a0002adb029030341fb41d7mr36321202pfs.7.1625069687894; Wed, 30
- Jun 2021 09:14:47 -0700 (PDT)
-MIME-Version: 1.0
-References: <CAHp75Vf+8t78NbYeCh+VLEAzcYJxDP9Pz7DPW_MC9D-K_Ff8uA@mail.gmail.com>
- <1624288089-15278-1-git-send-email-akhilrajeev@nvidia.com>
-In-Reply-To: <1624288089-15278-1-git-send-email-akhilrajeev@nvidia.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Wed, 30 Jun 2021 19:14:10 +0300
-Message-ID: <CAHp75VdkC4vcOnC37D4iDZs3g=2K=+iTsXZX=20CK2Og6WtgPA@mail.gmail.com>
-Subject: Re: [PATCH v2] gpio: tegra186: Add ACPI support
-To:     Akhil R <akhilrajeev@nvidia.com>
-Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=iu5sFxaU8kKRhqgad7LJpaKxFYK9+ER2NkvqoVrkaOo=;
+        b=Ham/FWGWqO/ncx3F21yhCPdF0h4PPNDi8SZIvM6W63aA/uzQUPpH8+7TKvzscC40zz
+         0lJbdBeNrGnFDoRwg4XNUyG8moK9uP69MhV/U1k6Fk3DBJjcIZR0zJ79on2Sg/0X0lny
+         xAPLgToleLZAGtPK9hcu3sA7TIWTdN/0AUWj4zugSFqmxcscrR5NUqePU6EhlvnJ2zl/
+         iwrJloWzVCh4ADRR+SDVW3FqGfDHdHAifUFO+mnOOBvWfG1+pMEqk/wUono3RUg3tpb7
+         IOPp6Nx7kz5jSR52adbwNg4MHznOpbTlrk3PvCXy4UNYCHAGJNz30UAcTZQaf5JapORT
+         oRfQ==
+X-Gm-Message-State: AOAM532TzjOSLClJOsKtP8MosIFzJmqMsgVvlH9+VG+N7ysjlqdfqbjh
+        eqUbjdn0111FoqVeljlbebs=
+X-Google-Smtp-Source: ABdhPJzPHcvZoSH13U/U3KmwMD1wXsgCXKEcsfuPmMyb3D4n2+6TttGKaQkbbcqU6wlm49/Sd7h5tg==
+X-Received: by 2002:a17:906:4fc7:: with SMTP id i7mr36601117ejw.46.1625072784981;
+        Wed, 30 Jun 2021 10:06:24 -0700 (PDT)
+Received: from localhost ([62.96.65.119])
+        by smtp.gmail.com with ESMTPSA id r17sm13121834edt.33.2021.06.30.10.06.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Jun 2021 10:06:24 -0700 (PDT)
+Date:   Wed, 30 Jun 2021 19:08:40 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
         Jon Hunter <jonathanh@nvidia.com>,
-        Krishna Yarlagadda <kyarlagadda@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Suresh Mangipudi <smangipudi@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        Sameer Pujar <spujar@nvidia.com>, linux-tegra@vger.kernel.org,
+        devicetree@vger.kernel.org, alsa-devel@alsa-project.org,
+        Rob Herring <robh+dt@kernel.org>
+Subject: Re: (subset) [PATCH 0/2] arm64: tegra: Enable audio IOMMU support on
+ Tegra194
+Message-ID: <YNylGG9RaM72CY2i@orome.fritz.box>
+References: <20210628181118.2295007-1-thierry.reding@gmail.com>
+ <162506854659.43525.4480397285287043164.b4-ty@kernel.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="AO3+dklKfp1RO0kr"
+Content-Disposition: inline
+In-Reply-To: <162506854659.43525.4480397285287043164.b4-ty@kernel.org>
+User-Agent: Mutt/2.1 (4b100969) (2021-06-12)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, Jun 21, 2021 at 6:07 PM Akhil R <akhilrajeev@nvidia.com> wrote:
 
-> >What about doing like
->
-> >      gpio->secure = devm_platform_ioremap_resource_byname(pdev, "security");
-> >      if (IS_ERR(gpio->secure))
-> >              gpio->secure = devm_platform_ioremap_resource(pdev, 0);
-> >      if (IS_ERR(gpio->secure))
-> >              return PTR_ERR(gpio->secure);
-> >
-> >and similar for gpio->base?
->
-> Wouldn't this cause a redundant check if it had already succeeded in getting
-> the resource by name? Also, could it happen that if the device tree is
-> incorrect, then one of the resource is fetched by name and other by the index,
-> which I guess, would mess things up. Just my random thoughts, not sure if it
-> is valid enough.
->
-> >Wouldn't the following be enough?
-> >
-> >-       gpio->intc.name = pdev->dev.of_node->name;
-> >+       gpio->intc.name = devm_kasprintf(&pdev->dev, "%pfw",
-> >dev_fwnode(&pdev->dev));
-> >+       if (!gpio->intc.name)
-> >+
->
-> How about this way? I feel it would be right to add the OF functions conditionally.
+--AO3+dklKfp1RO0kr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Looks okay, although I have a question here.
+On Wed, Jun 30, 2021 at 05:10:33PM +0100, Mark Brown wrote:
+> On Mon, 28 Jun 2021 20:11:16 +0200, Thierry Reding wrote:
+> > This small series addresses a minor issue with how IOMMU support is
+> > wired up on various Tegra generations. Currently the virtual "card"
+> > device is used to allocate DMA memory for, but since that device does
+> > not actually exist, the path to memory cannot be correctly described.
+> >=20
+> > To address this, this series moves to using the ADMAIF as the DMA device
+> > for audio. This is a real device that can have a proper DMA mask set and
+> > with which a stream ID can be associated with in the SMMU. The memory
+> > accesses technically originate from the ADMA controller (that the ADMAIF
+> > uses), but DMA channel are dynamically allocated at runtime while DMA
+> > memory is allocated at driver load time, drivers won't have access to
+> > the ADMA device yet.
+> >=20
+> > [...]
+>=20
+> Applied to
+>=20
+>    https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-=
+next
+>=20
+> Thanks!
+>=20
+> [1/2] ASoC: tegra: Use ADMAIF component for DMA allocations
+>       commit: e6b66edfef64698d4d9ed3847c95cdfab9bde579
+>=20
+> All being well this means that it will be integrated into the linux-next
+> tree (usually sometime in the next 24 hours) and sent to Linus during
+> the next merge window (or sooner if it is a bug fix), however if
+> problems are discovered then the patch may be dropped or reverted.
+>=20
+> You may get further e-mails resulting from automated or manual testing
+> and review of the tree, please engage with people reporting problems and
+> send followup patches addressing any issues that are reported if needed.
+>=20
+> If any updates are required or you are submitting further changes they
+> should be sent as incremental updates against current git, existing
+> patches will not be replaced.
+>=20
+> Please add any relevant lists and maintainers to the CCs when replying
+> to this mail.
 
-> +   if (pdev->dev.of_node) {
+Hi Mark,
 
-Do we really need this check at all? If the OF-node is NULL then it
-doesn't matter if other fields are filled or not, correct?
+Looks like I was a bit quick on the trigger with this one. Turns out
+this breaks audio on Tegra186 because we had already merged the patch
+that adds the iommus property to the wrong device tree node, so the
+damage had already been done and we're going to have to provide a
+backwards-compatibility fallback.
 
-What you need is #ifdef CONFIG_OF_GPIO (IIRC the name correctly).
+I've got a v2 of this series that incorporates the fallback (which is
+just a two-line addition, luckily) but I wanted to give it another spin
+in our test farm to make sure it's safe this time.
 
-> +       gpio->gpio.of_node = pdev->dev.of_node;
-> +       gpio->gpio.of_gpio_n_cells = 2;
-> +       gpio->gpio.of_xlate = tegra186_gpio_of_xlate;
-> +   }
->
-> +   gpio->intc.name = gpio->soc->name;
+Could you drop this patch from your queue at this time? I can send out
+the updated patch once I'm convinced it isn't going to regress further.
 
--- 
-With Best Regards,
-Andy Shevchenko
+Thanks and sorry for the noise,
+Thierry
+
+--AO3+dklKfp1RO0kr
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmDcpRUACgkQ3SOs138+
+s6G/2Q//QRCtwKfF7z1icysAmOshgHtawZ9IN6XraxSRkuhgQH9GY7X1Ay+BNNkX
+v35Wck8fhtiQuT+6o0YGf38wc7Uu7Y0oBJkaotbbEemGxtG4EgRj5ADXqNkpIC3y
+Dd08lSVhPA3nonta3PVf4/Rwcp/WjwFr1UMMFpT2GMuTK1hMdj2Mg9T7IVShSvlt
+JXG2on2ybxJjHeLQCzeov92NWmZvcrGml+btt/3Ys/jVwjxcW+ipu/Sgjt5PhXFg
+6GQhxd5a1xKIjmAOv69rfBEAzl7Q5MU4T7OUtVM4hnzlFVN5R0+yKBujsXl23eEN
+iQlyz1Lcf2jpNVsB6iJB0oegE6SMKAqbu3CJA+BykQTufLDdtgIafLffINx0V+Yc
+RWoKPI1nHt2bAwqnt799ua2icqRcPnUb8VWB54CgpwLC6zKUZRh37ns/7lXlWKMY
+q4/bey5eTkve1g9ze0jLdFR3a7wzlzrxxo84/6y2KsmfoOnjKc5JH3hjpbYaUYpG
+ZQFRXWeFt4x+Ph+8tI/a/A/AfYPWOcvYQ36rWXNJQg/b8uV4jhfHozL+gmSHFxil
+ZK5GAf+YLM9eipc3idcLVsocmMquWhgef6M4x/g6UxOCkyLePtE9S1F+IP2R85GW
+06ABdIC4WA7v4/RqVQvttQ5gk7v5VynLtXazMGilT1PG3/Z0zxU=
+=lSrp
+-----END PGP SIGNATURE-----
+
+--AO3+dklKfp1RO0kr--
