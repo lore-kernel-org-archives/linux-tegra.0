@@ -2,111 +2,83 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71832C11F68
-	for <linux-tegra@archiver.kernel.org>; Wed, 30 Jun 2021 18:24:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DFEEC11F68
+	for <linux-tegra@archiver.kernel.org>; Wed, 30 Jun 2021 18:49:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5CC3661477
-	for <linux-tegra@archiver.kernel.org>; Wed, 30 Jun 2021 18:24:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E945061431
+	for <linux-tegra@archiver.kernel.org>; Wed, 30 Jun 2021 18:49:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233296AbhF3S0l (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 30 Jun 2021 14:26:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51258 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233288AbhF3S0i (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 30 Jun 2021 14:26:38 -0400
-Received: from mail-pl1-x62c.google.com (mail-pl1-x62c.google.com [IPv6:2607:f8b0:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3544C061756;
-        Wed, 30 Jun 2021 11:24:08 -0700 (PDT)
-Received: by mail-pl1-x62c.google.com with SMTP id h6so836391plf.11;
-        Wed, 30 Jun 2021 11:24:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=1iFQK7L8q2hmxsjwhX/82JFmJsDjXfMWUFK5XtDFsp4=;
-        b=M5zKdYsoJKPTj4GnRB8GogwcMg6lYQlCwo3iln947/o0M3yqOlL2ft4BgpQ+h6nh3e
-         4w3ovk+R3vEE/v5/vBMTFH8psgCQ+bYWc/dsXEwmKuTgZo9mMpKH2AxzoHJFIkB5IIr/
-         v/RVOs1fg+Gs/puiRM8C0ykuwclOKLvwlNaPA2Haj1vFVnjCli+xd5BGWiu4JStwfFKI
-         1/4muXVAA/A5b9V4JNHUBfZ9iGld0Ir4ZxFD+yDEhrgyIFVgy8P1bv0R6hZj4NEvrepW
-         /ZAj8H0uruRlFvV9WJN1j/PGxAZrDsfWal/s+JHBgLmZoeCWbkycoGsnpJH3sDbDUIeT
-         L0Ng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1iFQK7L8q2hmxsjwhX/82JFmJsDjXfMWUFK5XtDFsp4=;
-        b=ezrNiQXa1bJ3Od6U9vqcT+zs+V0ayu0xR6XG1deEEEfy/br5DbbaDtOjtlYARvSpPN
-         cmz8Q1snxL0aJLwRJcLuz/T7DPXR57VRh+ES37BZuUs06KWsc9TAGEnklCOlIQ29aj0G
-         +706akXdlJ+W58aRzsMw2nFl51SRcynSH5yFLkU/8P1eo8ATK/3pRs7QJf4TL+EUmy+P
-         IbuHxHH/BFh8Ya7v6cXiJ+L2SrgsLVKOkPBIMIzjGh9HGbtcBcYfJOLPQEXYWBzkNFKJ
-         DSgHvAJSzcdp275xCuOCsw+1M8Mp30DGKRnCLNgN1ihD+uG3MXnSz7sycEos4DPu1TT9
-         cI+w==
-X-Gm-Message-State: AOAM531uNJDF3lfEwjdsQorEAKbT15u054zj/B1Gpf/pgPWkavvgK27/
-        7s/yB655TYr1V00aDcJqj3oMG5OIJLU/8Ah6/Ys=
-X-Google-Smtp-Source: ABdhPJw+0cW8yMy3eqCVH8XvrUKQR6KmP/EP0Z8heuZTchmBIbMMrJMmw5ImtWoTkPyfbq7Pu4sYKv/7JrQOkvzJPPE=
-X-Received: by 2002:a17:90a:af90:: with SMTP id w16mr5726843pjq.129.1625077448237;
- Wed, 30 Jun 2021 11:24:08 -0700 (PDT)
+        id S233587AbhF3Sw1 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 30 Jun 2021 14:52:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43324 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233046AbhF3SwZ (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 30 Jun 2021 14:52:25 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 09F9361426;
+        Wed, 30 Jun 2021 18:49:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1625078996;
+        bh=KG5Bqyi3jxIYrNsBw3UY3iU1TyTs0dI1AHQH1CTlP64=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=CFRO26B8UzegkPMTQBrMAKRXhkzPFZxRCW3DZesVDQR2m9NbxLWdLHuWRsSDIwyaG
+         aE4cOx0n52hYXGBrXbsrIRS0aUEz1ANdHGxl1dtP20+JDKhJI6qgv6uYjABRLIPVCe
+         NFttkrr9UheWlTihMLH5ZJexzX1MC1GBE1wNQ3r0djrOxl63MQ7zkGAyBdz2L01FW0
+         6BJBL/zBjF4FEQ4/0zuQPu0wpWHHv1JFiXmTbytq5g/6YF5kouXy1fCvkczksZnrp4
+         BgyFjavilOZ4wAq9gbQBlcE5yZymxNo/omBtYH74fKk3znEawB7q4db4tqT/qHEF20
+         TCM79k+8xTEnA==
+Date:   Wed, 30 Jun 2021 13:49:54 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Robin Murphy <robin.murphy@arm.com>
+Cc:     Javier Martinez Canillas <javierm@redhat.com>,
+        linux-kernel@vger.kernel.org,
+        Peter Robinson <pbrobinson@gmail.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Rob Herring <robh@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
+        linux-rockchip@lists.infradead.org,
+        Michal Simek <michal.simek@xilinx.com>,
+        Ley Foon Tan <ley.foon.tan@intel.com>,
+        rfi@lists.rocketboards.org, Jingoo Han <jingoohan1@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v2] PCI: rockchip: Avoid accessing PCIe registers with
+ clocks gated
+Message-ID: <20210630184954.GA4169648@bjorn-Precision-5520>
 MIME-Version: 1.0
-References: <1625075239-19120-1-git-send-email-akhilrajeev@nvidia.com> <1625077055-20363-1-git-send-email-akhilrajeev@nvidia.com>
-In-Reply-To: <1625077055-20363-1-git-send-email-akhilrajeev@nvidia.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Wed, 30 Jun 2021 21:23:30 +0300
-Message-ID: <CAHp75VfB8varyi5j=j8YaysdgofxFU1-xCKLFPrxiYz7KadGfA@mail.gmail.com>
-Subject: Re: [PATCH v3] gpio: tegra186: Add ACPI support
-To:     Akhil R <akhilrajeev@nvidia.com>
-Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Krishna Yarlagadda <kyarlagadda@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Suresh Mangipudi <smangipudi@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3d5a983f-bfdd-d79b-4ec9-357ea26dd2c8@arm.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, Jun 30, 2021 at 9:17 PM Akhil R <akhilrajeev@nvidia.com> wrote:
->
-> Add ACPI module ID to probe the driver from the ACPI based bootloader
-> firmware.
+On Tue, Jun 29, 2021 at 11:52:44AM +0100, Robin Murphy wrote:
 
-Thanks for an update, my comments below.
-After addressing, feel free to add
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> Well, it does use devm_request_irq() so the handler should be unregistered
+> by devres *after* ->remove has finished, however that does still leave a
+> potential race window in which a pending IRQ could be taken during the later
+> part of rockchip_pcie_remove() after it has started turning off critical
+> things. Unless the clocks and regulators can also be delegated to devres, it
+> might be more robust to explicitly manage the IRQs as well. Mixing the two
+> schemes can be problematic when the exact order of both setup and teardown
+> matters.
 
-> Change-Id: Id8e892f989e4ccc935b87aa0d84b10a3d1efd8f9
+Thanks for this.  I missed this problem.  We have lots of PCI
+controller drivers that use some devm interfaces but use the non-devm
+clk_prepare_enable(), and they generally turn things off in their
+.remove() methods, which is obviously before any devm unregistration.
 
-This is not for upstream.
+Many .suspend() methods turn off clocks and power while leaving the
+IRQ handler installed.  Should we get an interrupt from our device
+after .suspend()?  *Probably* not, but it makes me a little queasy to
+rely on that, or to rely on the assumption that the IRQ is not shared.
 
-> Signed-off-by: Akhil Rajeev <akhilrajeev@nvidia.com>
-
-...
-
-> +static const struct acpi_device_id  tegra186_gpio_acpi_match[] = {
-> +       { .id = "NVDA0108", .driver_data = (kernel_ulong_t)&tegra186_main_soc },
-> +       { .id = "NVDA0208", .driver_data = (kernel_ulong_t)&tegra186_aon_soc },
-> +       { .id = "NVDA0308", .driver_data = (kernel_ulong_t)&tegra194_main_soc },
-> +       { .id = "NVDA0408", .driver_data = (kernel_ulong_t)&tegra194_aon_soc },
-
-> +       {},
-
-Comma is not needed for terminator lines.
-
-> +};
-> +MODULE_DEVICE_TABLE(acpi, tegra186_gpio_acpi_match);
-
--- 
-With Best Regards,
-Andy Shevchenko
+Bjorn
