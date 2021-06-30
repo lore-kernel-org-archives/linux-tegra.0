@@ -2,154 +2,162 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DD2CC11F68
-	for <linux-tegra@archiver.kernel.org>; Wed, 30 Jun 2021 12:09:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AE1FC11F65
+	for <linux-tegra@archiver.kernel.org>; Wed, 30 Jun 2021 12:49:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ECA4861990
-	for <linux-tegra@archiver.kernel.org>; Wed, 30 Jun 2021 12:09:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 234666144B
+	for <linux-tegra@archiver.kernel.org>; Wed, 30 Jun 2021 12:49:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234392AbhF3MLh (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 30 Jun 2021 08:11:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51300 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234301AbhF3MLh (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 30 Jun 2021 08:11:37 -0400
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 419F5C061756;
-        Wed, 30 Jun 2021 05:09:07 -0700 (PDT)
-Received: by mail-ed1-x52c.google.com with SMTP id t3so2854422edt.12;
-        Wed, 30 Jun 2021 05:09:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=yv6G0XlLyx0cNOQs1yjuDHkPDLgd8do+KRNU+Bsw+0s=;
-        b=CkRrjJ/lY+3bATyA92auA3pghlGCQ2eFNmp4H3pXt+NRbRWGhBB4hltIOTFH3pRix6
-         p0lCxBkhh9zbj9bbTsdBrexjgi3fjYO0t3k1bc811RNUyuEIbrvnbZop/lWDNPU3gtOd
-         dgmjQ8BwQd/EN2igFwT5J0ZOZeCYv7ckefvh+PkOyiWxmqDjK9tUl5jTA27c0cmGJtQx
-         h+cKtoeGlA/nhGnwRSyCRwALTae6coD4kx0eJ1uHqfb2uhhDiOB5N05/h/s0g3uIQrPW
-         qLjx94Sl46KLPnvsJ3RSr0HnslRIQErnDgH3Xy8OBo46oGd6IgFjGNzkjy5XIvu8KYgz
-         tXhw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=yv6G0XlLyx0cNOQs1yjuDHkPDLgd8do+KRNU+Bsw+0s=;
-        b=fs7NEe8RcrQ/9pozkKz3AiZyiLbElaxVoIz5SLNVCvTUyPIr/AjpPGw6PEFIYaROZ1
-         y5yhklwJl1lXXTO9tNTEy/GOB6xCjkIRZU+bkqELatKgjX1NKU8It12pE2he1v1S9u7v
-         UL4Y6TCNpJW7Wyp3nqy5Oo2I/NSGhlUhMi4cPsEQ2kySSrzey48ICs3fwTJU4vxJ4aMI
-         42m8N/1vkuOaWIXeZu6kFEqPkP5ruOtC2lIEkbdNP4ClLrg/MBdR5ttGdX8ZqTwaBFC+
-         V8taWDYUWesMxXhDpMfstBxt8DXL5IEHbMxVLiXK4QER61punHyhqdSPkVnZKDIshW5s
-         qvYg==
-X-Gm-Message-State: AOAM5301vY+vI4zJS0NuMBdo1VXzfLdXD0sMDsxlSMLOT2vNw3CIAqvo
-        GZDHtKGqk6AYRdtl8By7jtY=
-X-Google-Smtp-Source: ABdhPJzWMorsWU9d5ILFTqwqY3jORo1NxDTXRBq7dmVffuaKlaYjuobtomju7gLCQyQbhqEAhKm+CA==
-X-Received: by 2002:aa7:d592:: with SMTP id r18mr12085582edq.269.1625054945856;
-        Wed, 30 Jun 2021 05:09:05 -0700 (PDT)
-Received: from localhost ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id p5sm9388990ejm.115.2021.06.30.05.09.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Jun 2021 05:09:04 -0700 (PDT)
-Date:   Wed, 30 Jun 2021 14:11:20 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Krishna Yarlagadda <kyarlagadda@nvidia.com>,
-        linux-serial@vger.kernel.org, linux-tegra@vger.kernel.org,
-        stable@vger.kernel.org
+        id S234622AbhF3MwE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 30 Jun 2021 08:52:04 -0400
+Received: from mail-dm6nam12on2086.outbound.protection.outlook.com ([40.107.243.86]:16247
+        "EHLO NAM12-DM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S234455AbhF3MwD (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 30 Jun 2021 08:52:03 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=aaZ/BRwChI57IUVD5no6mr3g1HT44JzmBjdA+CYPj63vq3m6BDeXitFzH2Biahu1hBHoRrdfycnNIJQFY51vVey7RVzE61FmSgfYok9B9088QwYuN9gMTr9ltTovxfSuuvsYeZ5SHGzL0fioDMZvyUNH6KrNl7s6zioy6RrBERPapFSKoTqeOB5Xdho3lZXtvyH8Te933zDBaFtK7DT3wBb49xXDdHuL4knIsvc/dsl9d9nwWIQnly9lOq0suCO0z+vapSxESVvxQi9Ue7dsGXufD7nIxx4j+Q9/zyj7odTlG3y0pwH3fkw27DeZOW1lBwN6cF4lvRsj6UDKhrhOPQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=RDnEO4pDQeSu3wQEAp+gwYDa9wRTXQ4hBnCzDCuErDY=;
+ b=O80dEzM1AHbE1J6y4cZg7SRafB72lqsW85Iggx/vGmlj/FBvb656ed47zNNuOXYxUcK9n9nZKu8kAAiZiCPmgk32mUs4ZSQpmOPDtWfwrNMF6VCnroj/BEsiaGNY/oWHfWLxbBi/fuoYuLbACKMaVpeCeJAmccOi2P9s+x2vMU9Dx+Qbi5ZaVcThCxNysS9jqL0KNXdcqK4yvRbII/65kCelMzaGHaVQZwaDBcqfqd1XW4d3cCBGXR0YFUCUrPfV2L2LKYQve6IX1aG9/a6qQHGXWiPWFFf7ImWjAm53QzOXTPZUCbXza5JE5tUZSU/Dgs7EZFJcpozI2rR64FXogA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.112.34) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=RDnEO4pDQeSu3wQEAp+gwYDa9wRTXQ4hBnCzDCuErDY=;
+ b=c9AhB3eou4k4UzO1DyASaAXTP0nQygTWh4lZAQFQxDg3EXtjxoPTtFFVoYQEluSrJJwDusznf536FPty8piD4SJ2y854mTgfVHUMFN8A0o0tP37s5AYZPNGDRGTKxSk+ZCM5nXKEVR2YUrbI5JXZXvMpWNsh/aRuOGIP6X9Tctz2YAw8tWOP2A/8z6SqJtChfPcnVpXg9JxclnDMFrccRL16qYmb92/dDplCoqXP6YjLWCzF0WwjMxnssBYbuylUFqdG7yuQdXgN+Tzm1xC0hI7mOFucOelLrVg7s32HhEPekF+/11wIkiV6o1tbf/fWlaxFixRmTOlZDN3y9vavRQ==
+Received: from DS7PR03CA0041.namprd03.prod.outlook.com (2603:10b6:5:3b5::16)
+ by MWHPR12MB1424.namprd12.prod.outlook.com (2603:10b6:300:13::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4264.23; Wed, 30 Jun
+ 2021 12:49:32 +0000
+Received: from DM6NAM11FT042.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:5:3b5:cafe::ff) by DS7PR03CA0041.outlook.office365.com
+ (2603:10b6:5:3b5::16) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4287.22 via Frontend
+ Transport; Wed, 30 Jun 2021 12:49:31 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.34)
+ smtp.mailfrom=nvidia.com; kernel.org; dkim=none (message not signed)
+ header.d=none;kernel.org; dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.112.34 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.112.34; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (216.228.112.34) by
+ DM6NAM11FT042.mail.protection.outlook.com (10.13.173.165) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.4287.22 via Frontend Transport; Wed, 30 Jun 2021 12:49:31 +0000
+Received: from [10.26.49.10] (172.20.187.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Wed, 30 Jun
+ 2021 12:49:28 +0000
 Subject: Re: [PATCH] serial: tegra: Only print FIFO error message when an
  error occurs
-Message-ID: <YNxfaEDFIW7d7rYi@orome.fritz.box>
+To:     Thierry Reding <thierry.reding@gmail.com>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        "Krishna Yarlagadda" <kyarlagadda@nvidia.com>,
+        <linux-serial@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <stable@vger.kernel.org>
 References: <20210630094601.136280-1-jonathanh@nvidia.com>
+ <YNxfaEDFIW7d7rYi@orome.fritz.box>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <f93a11ad-e6cc-7a5a-173a-d2087f6dda12@nvidia.com>
+Date:   Wed, 30 Jun 2021 13:49:26 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="RV9/iY+PrzN4D53L"
-Content-Disposition: inline
-In-Reply-To: <20210630094601.136280-1-jonathanh@nvidia.com>
-User-Agent: Mutt/2.1 (4b100969) (2021-06-12)
+In-Reply-To: <YNxfaEDFIW7d7rYi@orome.fritz.box>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [172.20.187.5]
+X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: d219a22d-8a0a-4031-a99a-08d93bc58165
+X-MS-TrafficTypeDiagnostic: MWHPR12MB1424:
+X-Microsoft-Antispam-PRVS: <MWHPR12MB142452325E5ABE20835F4FAFD9019@MWHPR12MB1424.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:8273;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: jg18m4nz7UZCGsRMrq6QSesIIhtYV6BLVU+w2xAtKJMnaMDnmOEV5rlbRFG1b0d7QYWP3Km9NBwCak4hiUUXsHn85bSyQlU7zZA1OxxJ82mGgggsTEBRebb8CemJ6IzI+58VMYl3IhWTgvxyxg/8nkbLnFt1ZikrW7oaoYjGB0BTnVQUcjkMT/MkkaAXp6dLP880SiqZjH9bbR6PpsAojpYg3w8JCo5N5jVNPKL59LWcjhALwec682iefX1h1emD8I6E5ZowGJsvS8dqrPPGxePIweHS7KeIKW9+96w7FA6ly67MVeSfHWpZcLZTtH6f2yT6dzPyBVIRPQRsT6DOxYsS2fbhbZJO7SGBGBaV4F8M2Ep1z3WTOiJ2xxnPVvaK++EAbyDz1fmifcV/tPPO2cOkQ5EuTvjaoSUC08McYMXYVMb374hiWxRoBSmKfghe46/az9Ep8LCvm5LDqJ1bBrOqz42QyxIycWOmSN475fmH5UwYrDdaOHMYsoILK77281+vU6DphJfSFiiadcAhioIWm/yKLq10DZt4WX8T2F4qSEISTjIvZ43FJyXBOCpOrepRbsT+aZztZekjFb5pTQ97ghPj3FTwj+72ADH8jLzqlVJo6grs24c0t8N6mCXdjzaFGCupGXCEf6WQS/Wl3XTK3sS+LqauqBo+nH8enJoZvkwuLhmaiDoSTe0UeJ5UxD80WQHRvsSaRxIJGx54RDEirOsHEgUwvnioH/FCSWE=
+X-Forefront-Antispam-Report: CIP:216.228.112.34;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid03.nvidia.com;CAT:NONE;SFS:(4636009)(376002)(136003)(396003)(39860400002)(346002)(46966006)(36840700001)(336012)(36756003)(31696002)(70206006)(26005)(316002)(53546011)(47076005)(478600001)(5660300002)(16576012)(2906002)(7636003)(83380400001)(4326008)(86362001)(54906003)(186003)(36860700001)(16526019)(70586007)(2616005)(426003)(6916009)(31686004)(82740400003)(8676002)(356005)(15650500001)(82310400003)(8936002)(43740500002);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jun 2021 12:49:31.4065
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: d219a22d-8a0a-4031-a99a-08d93bc58165
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.34];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT042.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR12MB1424
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---RV9/iY+PrzN4D53L
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 30/06/2021 13:11, Thierry Reding wrote:
+> On Wed, Jun 30, 2021 at 10:46:01AM +0100, Jon Hunter wrote:
+>> The Tegra serial driver always prints an error message when enabling the
+>> FIFO for devices that have support for checking the FIFO enable status.
+>> Fix this by only display the error message, when an error occurs.
+>>
+>> Fixes: 222dcdff3405 ("serial: tegra: check for FIFO mode enabled status")
+>> Cc: <stable@vger.kernel.org>
+>> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+>> ---
+>>  drivers/tty/serial/serial-tegra.c | 5 +++--
+>>  1 file changed, 3 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/tty/serial/serial-tegra.c b/drivers/tty/serial/serial-tegra.c
+>> index 222032792d6c..cd481f7ba8eb 100644
+>> --- a/drivers/tty/serial/serial-tegra.c
+>> +++ b/drivers/tty/serial/serial-tegra.c
+>> @@ -1045,9 +1045,10 @@ static int tegra_uart_hw_init(struct tegra_uart_port *tup)
+>>  
+>>  	if (tup->cdata->fifo_mode_enable_status) {
+>>  		ret = tegra_uart_wait_fifo_mode_enabled(tup);
+>> -		dev_err(tup->uport.dev, "FIFO mode not enabled\n");
+>> -		if (ret < 0)
+>> +		if (ret < 0) {
+>> +			dev_err(tup->uport.dev, "FIFO mode not enabled\n");
+> 
+> The error message seems a bit confusing. I read this as meaning "FIFO
+> mode was expected to be enabled but wasn't" whereas this really seems to
+> mean that for some reason the FIFO enable timed out.
+> 
+> In the former case it sounds like a some configuration mismatch, while
+> it's really something that went wrong during the process of enabling the
+> FIFO mode.
+> 
+> So I wonder if this should perhaps be something like:
+> 
+> 	dev_err(tup->uport.dev, "FIFO mode enable timed out\n");
+> 
+> or something along those lines.
 
-On Wed, Jun 30, 2021 at 10:46:01AM +0100, Jon Hunter wrote:
-> The Tegra serial driver always prints an error message when enabling the
-> FIFO for devices that have support for checking the FIFO enable status.
-> Fix this by only display the error message, when an error occurs.
->=20
-> Fixes: 222dcdff3405 ("serial: tegra: check for FIFO mode enabled status")
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> ---
->  drivers/tty/serial/serial-tegra.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/tty/serial/serial-tegra.c b/drivers/tty/serial/seria=
-l-tegra.c
-> index 222032792d6c..cd481f7ba8eb 100644
-> --- a/drivers/tty/serial/serial-tegra.c
-> +++ b/drivers/tty/serial/serial-tegra.c
-> @@ -1045,9 +1045,10 @@ static int tegra_uart_hw_init(struct tegra_uart_po=
-rt *tup)
-> =20
->  	if (tup->cdata->fifo_mode_enable_status) {
->  		ret =3D tegra_uart_wait_fifo_mode_enabled(tup);
-> -		dev_err(tup->uport.dev, "FIFO mode not enabled\n");
-> -		if (ret < 0)
-> +		if (ret < 0) {
-> +			dev_err(tup->uport.dev, "FIFO mode not enabled\n");
+Yes good point. Maybe I should just ...
 
-The error message seems a bit confusing. I read this as meaning "FIFO
-mode was expected to be enabled but wasn't" whereas this really seems to
-mean that for some reason the FIFO enable timed out.
+	dev_err(tup->uport.dev,
+		"Failed to enable FIFO mode: %d\n", ret);
 
-In the former case it sounds like a some configuration mismatch, while
-it's really something that went wrong during the process of enabling the
-FIFO mode.
+Then if it is updated to ever return anything other that -ETIMEDOUT we
+are covered. I will send a V2.
 
-So I wonder if this should perhaps be something like:
+Jon
 
-	dev_err(tup->uport.dev, "FIFO mode enable timed out\n");
-
-or something along those lines.
-
-That said, this is a pre-existing problem and it's a bit pedantic, so in
-either case:
-
-Acked-by: Thierry Reding <treding@nvidia.com>
-
---RV9/iY+PrzN4D53L
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmDcX2UACgkQ3SOs138+
-s6HGfBAAhJ56RUVkZakA6i0f8fZvbqOVfkvQ4AKu9idObDl5ZBDSvQIHKaJ5xM0q
-sEB+kFXswZ1tH3Sy8/oAMASrT0uTH/uS+MGNdEYBM3XDN/oxU2Ep8IWHSh0Zbn8x
-P9Vfx/NAqvzRLZ6bDl1v6CRMHgzr+caTbTsuWEDiHL97F1jDsURaA1LGEEg78FF3
-8q6Aw6msOrSNHlSt6q5Jz72gI40inCz1EVlS1o+LkaTFLuQs4g4paIUDQg+lnO7N
-JyEpiavuX6ypPCyKLm1pI0J09fFSL/AzUaDpA1ELkVhiXdn3cWexLaCrvlhy0cGM
-N8WAcgGLCKEw5Ft0LbeeAZzS278Kv+uVdx9X6MWrHNEGnULCyVf5dte16hkpufYR
-80haGhJYGmh2f729yO696MVVYeqqhND/qm2e0uweAifjUWB7OP5JGil+p/JxjLgk
-v0C6tmD7N3x6Z0snBCULe/l4+k87IS9tVnApB4UbVV4W4KGf17dqeI12jyNRqC0N
-H8FBGoIpNId/LWe++Zwz8gb6ewftNoa3tY5lI3k2azp/FE8UMYP0w+ppEE117DBO
-eYZ9rSuBppleHvz0Z1m7cfWniegSum/bGr63tRil/Mh13y86HUtJ0x93PPshcqvw
-wU5szYWJgPsySIqECQrOzf71f4OgDcgv9BTgB4xspCdsm0FH8hQ=
-=liif
------END PGP SIGNATURE-----
-
---RV9/iY+PrzN4D53L--
+-- 
+nvpublic
