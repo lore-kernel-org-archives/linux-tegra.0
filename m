@@ -5,57 +5,57 @@ X-Spam-Level:
 X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C152FC11F6C
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FD53C11F6A
 	for <linux-tegra@archiver.kernel.org>; Thu,  1 Jul 2021 23:28:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AB9476141D
+	by mail.kernel.org (Postfix) with ESMTP id 2BF8361413
 	for <linux-tegra@archiver.kernel.org>; Thu,  1 Jul 2021 23:28:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234488AbhGAXbT (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 1 Jul 2021 19:31:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40376 "EHLO
+        id S234457AbhGAXbR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 1 Jul 2021 19:31:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40374 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234405AbhGAXbL (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 1 Jul 2021 19:31:11 -0400
-Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E19AC0613DB;
-        Thu,  1 Jul 2021 16:28:39 -0700 (PDT)
-Received: by mail-lf1-x12f.google.com with SMTP id n14so14801409lfu.8;
-        Thu, 01 Jul 2021 16:28:39 -0700 (PDT)
+        with ESMTP id S234266AbhGAXbI (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 1 Jul 2021 19:31:08 -0400
+Received: from mail-lj1-x22f.google.com (mail-lj1-x22f.google.com [IPv6:2a00:1450:4864:20::22f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2BA9C061762;
+        Thu,  1 Jul 2021 16:28:36 -0700 (PDT)
+Received: by mail-lj1-x22f.google.com with SMTP id p24so10842762ljj.1;
+        Thu, 01 Jul 2021 16:28:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=HzpHVd/wXJ30oh466IC2EVzooXzefGiYFjcn2n08ruo=;
-        b=QzQ5pplO2hhsbw4yrYD9N9EAUWtcjbEFGLQlsHe9NA9KplC5LuAmxFr/VdBx7bMNOf
-         QB7TRZeR7R/KI4EfpynT6XoWcHWfAYjJa79Cb+2r8X1IdcS+NpTRZe1H8qgwhS5JLu0M
-         IAn6mv4rTdgIcaDbKpKo+1rsyEoW1kqrzKsm3QQ6o+F4wZeKFSOTeYUaG0jDRtoo16lO
-         yKwjInhJ2v7Wqxwkz9r/QG28vovm0TsXrnXWL1j3E7R1AF9gfEWuNyKN4uH/Q9gZacxO
-         Ar8aE68laHh1v2wlCYzyD5y9Sm21I+y7UMOYhLElHhKvB6Yeut1gLfV6aOge3lLRz5rS
-         UhYw==
+        bh=siP4gSWyG5pwngs77eaG9u5rXqAR0sxlIWowQKNY7qI=;
+        b=YJ77qQ/Jsrba+akC61s5SzoPtP/wZfbkiGlrz09dqzYVcBGl8t1Njs5BEu7KFjfRIj
+         Mnl5RZpnucZWyE0j0c1YrxG+FoiafR4ginKs/Te0OSk/V1bb6Kl5UYIN4q4FGZqibcTF
+         99Uctas9z3VkEgE9J3m7ekGgFsVX8PzIyHpFOySJ5kw7nwS6mynuAHEjq2n4fgdRIl3e
+         2brrJx2eJzNODEUEO67/tzlVsql6OeHU0QJMZ0Qlkiq6//5Pb7o7mkgcxlhIaTjEQlJ5
+         TTsmpreFi3yXG1I+jchlgn2B9As3sHzRd7Yfrx78xWi3Es+oTi9s30q1QvOrdwdSd73D
+         xeOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=HzpHVd/wXJ30oh466IC2EVzooXzefGiYFjcn2n08ruo=;
-        b=fXpDsSITch+r0Mwia0WWPRLWc3K17e/L5VJwKSvpFSCxqJXsjDwXAxmxsj/x/IfMRL
-         TfaDDYMlvc2xk2tUXv7oFbgMMFNyQBt2qa7rifzU4dbfwMBnfbyiBIGtJFo1Q3xp+bLs
-         y3z+ifqKugnVqFOU7PXNzvgUjckGnAHMbVp5XlKXwZDFhCWttZqeVcnJ9kJSdj9cAfNR
-         MD0tRzyZVwJXCneJypGEeWMHCb2fyWipXQcs6GAhO+820s6tsBbvdR1quH9yenKbXZfF
-         rhRDXdRR9pEnXVAzSitqOYrBASPGfvi7j/E01p+SEEJmtv5WXZBrf75zGwz0BMiyQr21
-         vybQ==
-X-Gm-Message-State: AOAM532WrKwIwW1ikkm4YITIbsDbYiUFRgdAaV7YmSiN4lw0WaVSZTvz
-        TpKJIivCX7k62sDjXl9Zkmk=
-X-Google-Smtp-Source: ABdhPJzfqFSUj+VP5Nw9ZJTEEruIvxosX04YbKueXxIvsSGSB7k6tIGdggcUDopLk6lGDR/1cFu6BQ==
-X-Received: by 2002:a05:6512:3b27:: with SMTP id f39mr1479891lfv.360.1625182117689;
-        Thu, 01 Jul 2021 16:28:37 -0700 (PDT)
+        bh=siP4gSWyG5pwngs77eaG9u5rXqAR0sxlIWowQKNY7qI=;
+        b=Xv1q++8BlCHORFUiW8ddzAeUe3gqKg0fwTQYCUqBPut/ggwDuCn/gsaBFuOHTqkf3o
+         T2DWaM2guEqTXGsgJln/ds4GQpyAKdgws3kwBovb5u7L0C0oqG17GNf51BlRf+qkKPvN
+         z1ng1ypf5iDEgo6nJoBA2Be7lhaGvTkyg99BeHUZ00J0i0iHs0HZT4pkYR4SsjF7LWEy
+         nj8Sv/LDl+63FjjtC1raFo3IH26zG9dmhnzRBmHb0bkpvQJWzaZ6O5OsBEU/MogF3EIH
+         9NWCeCqcGrXoTTWlcmfYZEGPv2YvxCiAmk6x/EWmhRnDl+DRcnu1j5Zg9DddGunUsGzs
+         l0Mg==
+X-Gm-Message-State: AOAM532PollboXNucuAj9zloW3q2TWAIeEObh5ywFvYQiQOvhAd/X+jQ
+        3kUjzJlAYxs+nU/1DbeO5Dw=
+X-Google-Smtp-Source: ABdhPJydkwDmszKhecbbynICYkP+98jUxwqcWcVc3TYUdOAeFBjQmutJzhvdVAwNaUF8PU/ZpxSrqw==
+X-Received: by 2002:a2e:7617:: with SMTP id r23mr1513704ljc.376.1625182114914;
+        Thu, 01 Jul 2021 16:28:34 -0700 (PDT)
 Received: from localhost.localdomain (94-29-37-113.dynamic.spd-mgts.ru. [94.29.37.113])
-        by smtp.gmail.com with ESMTPSA id s20sm102655lfr.39.2021.07.01.16.28.37
+        by smtp.gmail.com with ESMTPSA id s20sm102655lfr.39.2021.07.01.16.28.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Jul 2021 16:28:37 -0700 (PDT)
+        Thu, 01 Jul 2021 16:28:34 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -65,9 +65,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Peter De Schrijver <pdeschrijver@nvidia.com>
 Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-pm@vger.kernel.org
-Subject: [PATCH v7 13/37] drm/tegra: hdmi: Add OPP support
-Date:   Fri,  2 Jul 2021 02:27:04 +0300
-Message-Id: <20210701232728.23591-14-digetx@gmail.com>
+Subject: [PATCH v7 09/37] gpu: host1x: Add host1x_channel_stop()
+Date:   Fri,  2 Jul 2021 02:27:00 +0300
+Message-Id: <20210701232728.23591-10-digetx@gmail.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210701232728.23591-1-digetx@gmail.com>
 References: <20210701232728.23591-1-digetx@gmail.com>
@@ -77,55 +77,52 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The HDMI on Tegra belongs to the core power domain and we're going to
-enable GENPD support for the core domain. Now HDMI driver must use
-OPP API for driving the controller's clock rate because OPP API takes
-care of reconfiguring the domain's performance state in accordance to
-the clock rate. Add OPP support to the HDMI driver.
+Add host1x_channel_stop() which waits till channel becomes idle and then
+stops the channel hardware. This is needed for supporting suspend/resume
+by host1x drivers since the hardware state is lost after power-gating,
+thus the channel needs to be stopped before client enters into suspend.
 
+Tested-by: Peter Geis <pgwipeout@gmail.com> # Ouya T30
+Tested-by: Paul Fertser <fercerpav@gmail.com> # PAZ00 T20
+Tested-by: Nicolas Chauvet <kwizart@gmail.com> # PAZ00 T20 and TK1 T124
+Tested-by: Matt Merhar <mattmerhar@protonmail.com> # Ouya T30
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/gpu/drm/tegra/hdmi.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ drivers/gpu/host1x/channel.c | 8 ++++++++
+ include/linux/host1x.h       | 1 +
+ 2 files changed, 9 insertions(+)
 
-diff --git a/drivers/gpu/drm/tegra/hdmi.c b/drivers/gpu/drm/tegra/hdmi.c
-index e5d2a4026028..5b5d174c5a2b 100644
---- a/drivers/gpu/drm/tegra/hdmi.c
-+++ b/drivers/gpu/drm/tegra/hdmi.c
-@@ -11,10 +11,13 @@
- #include <linux/math64.h>
- #include <linux/module.h>
- #include <linux/of_device.h>
-+#include <linux/pm_opp.h>
- #include <linux/pm_runtime.h>
- #include <linux/regulator/consumer.h>
- #include <linux/reset.h>
+diff --git a/drivers/gpu/host1x/channel.c b/drivers/gpu/host1x/channel.c
+index 4cd212bb570d..2a9a3a8d5931 100644
+--- a/drivers/gpu/host1x/channel.c
++++ b/drivers/gpu/host1x/channel.c
+@@ -75,6 +75,14 @@ struct host1x_channel *host1x_channel_get_index(struct host1x *host,
+ 	return ch;
+ }
  
-+#include <soc/tegra/common.h>
++void host1x_channel_stop(struct host1x_channel *channel)
++{
++	struct host1x *host = dev_get_drvdata(channel->dev->parent);
 +
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_crtc.h>
- #include <drm/drm_debugfs.h>
-@@ -1195,7 +1198,7 @@ static void tegra_hdmi_encoder_enable(struct drm_encoder *encoder)
- 	h_back_porch = mode->htotal - mode->hsync_end;
- 	h_front_porch = mode->hsync_start - mode->hdisplay;
- 
--	err = clk_set_rate(hdmi->clk, hdmi->pixel_clock);
-+	err = dev_pm_opp_set_rate(hdmi->dev, hdmi->pixel_clock);
- 	if (err < 0) {
- 		dev_err(hdmi->dev, "failed to set HDMI clock frequency: %d\n",
- 			err);
-@@ -1708,6 +1711,10 @@ static int tegra_hdmi_probe(struct platform_device *pdev)
- 
- 	hdmi->output.dev = &pdev->dev;
- 
-+	err = devm_tegra_core_dev_init_opp_table_simple(&pdev->dev);
-+	if (err)
-+		return err;
++	host1x_hw_cdma_stop(host, &channel->cdma);
++}
++EXPORT_SYMBOL(host1x_channel_stop);
 +
- 	err = tegra_output_probe(&hdmi->output);
- 	if (err < 0)
- 		return err;
+ static void release_channel(struct kref *kref)
+ {
+ 	struct host1x_channel *channel =
+diff --git a/include/linux/host1x.h b/include/linux/host1x.h
+index 9b0487c88571..789aee540700 100644
+--- a/include/linux/host1x.h
++++ b/include/linux/host1x.h
+@@ -179,6 +179,7 @@ struct host1x_job;
+ 
+ struct host1x_channel *host1x_channel_request(struct host1x_client *client);
+ struct host1x_channel *host1x_channel_get(struct host1x_channel *channel);
++void host1x_channel_stop(struct host1x_channel *channel);
+ void host1x_channel_put(struct host1x_channel *channel);
+ int host1x_job_submit(struct host1x_job *job);
+ 
 -- 
 2.30.2
 
