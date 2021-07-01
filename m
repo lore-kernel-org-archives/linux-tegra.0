@@ -2,59 +2,60 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68F56C11F67
-	for <linux-tegra@archiver.kernel.org>; Thu,  1 Jul 2021 23:43:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8158BC11F67
+	for <linux-tegra@archiver.kernel.org>; Thu,  1 Jul 2021 23:43:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 400796141D
-	for <linux-tegra@archiver.kernel.org>; Thu,  1 Jul 2021 23:43:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6F31161411
+	for <linux-tegra@archiver.kernel.org>; Thu,  1 Jul 2021 23:43:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234095AbhGAXqX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 1 Jul 2021 19:46:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43858 "EHLO
+        id S234376AbhGAXqZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 1 Jul 2021 19:46:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43870 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234063AbhGAXqX (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 1 Jul 2021 19:46:23 -0400
-Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB263C061762;
-        Thu,  1 Jul 2021 16:43:51 -0700 (PDT)
-Received: by mail-lf1-x12b.google.com with SMTP id k10so14778033lfv.13;
-        Thu, 01 Jul 2021 16:43:51 -0700 (PDT)
+        with ESMTP id S234352AbhGAXqY (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 1 Jul 2021 19:46:24 -0400
+Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 720D8C061764;
+        Thu,  1 Jul 2021 16:43:53 -0700 (PDT)
+Received: by mail-lj1-x235.google.com with SMTP id u20so10780956ljo.12;
+        Thu, 01 Jul 2021 16:43:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=GxmceOXlSx//Z7AXWshXZETJTGUmHRmXWRqvH0CzuXQ=;
-        b=JvIypy2z9SDBnwZ4f3wpB2JNJWN+WoyyQ2FKe3wp1MlfN2Rr7TwZ8DBy6fec4zP2V8
-         af8F0t5uAxkeK+vQoDqaq6fVwLgPKE0E6UL5IDEYvnaDu5EiVGYNsWdre8xPury6ACe5
-         xCp+TA43FMxkFpK1kHtxYWMNBeZKk+eJVH26ERWzc7Xy6hF3qvWmtq+1nKTEKQCHQY3I
-         9o9SyhNWQe31BcQ6lhluLWO4BYiYkr6fWf8UIoKcgr+kCaA9YUN9d7YOaUxz6SU4XSh1
-         zID/5Bd6Lh5hhDYcQShw31k/zIYox+pVciSPGRYT8pyuXAjNnc+/HjYJnDsJjvIAmXvz
-         VO5w==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=adJQUfPeiRUepTm54Dxm95RAQuwCijRoZlMsrd5sNGE=;
+        b=t4WwozpdNtQFm35n9vvIaC+3/5uF/mj+RGDBfVbac6Q8gdx0e68DgGpBd/ZWYnYRy5
+         rRJVfBUY8GSWhsez485W9CfUou+UtylEFooQ9N3acejkPXqFqj6D7wUWCaxK4K8hSAjZ
+         dCAw1d+zqsdcJFhE30UelMsJHRf7D1gAoqXbOzaCZy3sa/lflKUGE4cAZBtiDKLf7JFA
+         mghrjxXa9UlzKnmP+NQy9DTYZ121pCOYqwRynadzRZdXQUeKFOj+ZF0JA8TYiNq1Netg
+         8Nzqo48/GVlB9pTLFVmoS/r3lU/RnW7yxxjQhKka5IvrIFW+eR4RTtwN1DzQSSNz9QEH
+         Wu/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=GxmceOXlSx//Z7AXWshXZETJTGUmHRmXWRqvH0CzuXQ=;
-        b=mb7ECcHnJC/IC24fp268h/X6X1gQHzVn1smlO6oveg550bHZWvbx6NcgxDcv+OSG85
-         ex/E95qYTwm1/W7XfzHz3mvmCWs+mc/IY3I2TKvfjvTSdH9QGSx3Jk+tFhLO/53CBaFN
-         StrJs1ucb/oAtA5OQdS9Aeq7aCOKT9iOegmFkG+iQ91UdqJRX7qUQhn3o6qSbg4mVN3I
-         0SDKzAhVCkUoPr2njq1ozUCXYjyhLW0Ke0fYP/Rhf0Pt1rrDYtZygE3srW2U7ONRRkEN
-         rZ0FmgrGA7OsQVOIfjBhOCCe9jxY2FWJSxRX1tBiGHGK5h/fSbfg0lE1i9oD3xfx875M
-         oeYw==
-X-Gm-Message-State: AOAM531fY03MlIodKuQq9GaiEJyOXyfnCh/EytgHmRj03uqDHFgjHCJP
-        gANm2qRBGT+aVO5BS2vX59s=
-X-Google-Smtp-Source: ABdhPJww81eLXSEUQEKQ4zGmxQndbDRbQvxhqYQpJSQB6vXHcAEwqkwiWSdaIqhn9IYO4qqkgQVz6Q==
-X-Received: by 2002:a05:6512:30d:: with SMTP id t13mr1609874lfp.14.1625183030356;
-        Thu, 01 Jul 2021 16:43:50 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=adJQUfPeiRUepTm54Dxm95RAQuwCijRoZlMsrd5sNGE=;
+        b=pYKEvQkTkcc4esOndwOOuJley7kD2ks8BBaNUqNfOoNqeARAQBKPwkimPnO5JnLdxn
+         2aisci2qif0/W8wmQ9AbAc4sDXZ5jpMYJiT7+DjtO0Za3qseadnEzhfcSTWBA+5Pc2UQ
+         CJbxBRy/6JFgmCKyWYFT94SSlWQXrSYLuWNGv5tTrftmzuDn1UU9iXSlqjdgdJc4VF8P
+         OU3TAwZ8PbCRCL3hN/3D54lB4k61+G5/wzntIDc4+IFtbduXB0qj8x8I/Z9bj5RMICBw
+         8jH/R9E2U8L2TllMOQ+Rj2/lw5BuAhL8ko2+B8k42uAI7npjgnTAlQ/rA3Qr0lYrp/Kz
+         EA8w==
+X-Gm-Message-State: AOAM532jiK7rsxH47IgPYRFREA7iVlKMkhhy+WaLaA3w6a/g6atgQBny
+        L4mugxkRc3/qMOv2GZdHBwY=
+X-Google-Smtp-Source: ABdhPJwVf6Y/f55g2R6MJe4/lIwGUkfZNzgt5agcmDHckVkkenxJG89Yu0PLVAPgVPtTYj4gZ9gtHw==
+X-Received: by 2002:a2e:9152:: with SMTP id q18mr1510345ljg.493.1625183031834;
+        Thu, 01 Jul 2021 16:43:51 -0700 (PDT)
 Received: from localhost.localdomain (94-29-37-113.dynamic.spd-mgts.ru. [94.29.37.113])
-        by smtp.gmail.com with ESMTPSA id e23sm60743lfq.221.2021.07.01.16.43.49
+        by smtp.gmail.com with ESMTPSA id e23sm60743lfq.221.2021.07.01.16.43.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Jul 2021 16:43:50 -0700 (PDT)
+        Thu, 01 Jul 2021 16:43:51 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <treding@nvidia.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -68,64 +69,101 @@ To:     Thierry Reding <treding@nvidia.com>,
 Cc:     devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
         linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-tegra@vger.kernel.org
-Subject: [PATCH v2 00/12] Add OTG mode support to Tegra USB PHY, SMB347 and Nexus 7
-Date:   Fri,  2 Jul 2021 02:43:05 +0300
-Message-Id: <20210701234317.26393-1-digetx@gmail.com>
+Subject: [PATCH v2 02/12] dt-bindings: phy: tegra20-usb-phy: Document properties needed for OTG mode
+Date:   Fri,  2 Jul 2021 02:43:07 +0300
+Message-Id: <20210701234317.26393-3-digetx@gmail.com>
 X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20210701234317.26393-1-digetx@gmail.com>
+References: <20210701234317.26393-1-digetx@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi,
+In order to support OTG mode we need these new properties:
 
-This series adds USB OTG mode support to the NVIDIA Tegra USB PHY driver,
-SMB347 charger driver and Nexus 7 tablet.
+	- interrupt
+	- nvidia,pmc
+	- nvidia,phy-instance
 
-Changelog:
+The nvidia,phy-instance isn't strictly needed for the OTG mode since we
+know that only first controller supports it in practice, but it will be
+needed in general for supporting more complex hardware features that
+require knowledge of the PHY offset within common registers of the Power
+Management controller (PMC).
 
-v2: - The PHY's interrupt is now enabled from PHY's set_wakeup() callback.
-      It prevents getting a spurious interrupt during the CI driver probe
-      time.
+Add the new properties to the bindings.
 
-Dmitry Osipenko (12):
-  dt-bindings: phy: tegra20-usb-phy: Convert to schema
-  dt-bindings: phy: tegra20-usb-phy: Document properties needed for OTG
-    mode
-  soc/tegra: pmc: Expose USB regmap to all SoCs
-  usb: phy: tegra: Support OTG mode programming
-  usb: otg-fsm: Fix hrtimer list corruption
-  dt-bindings: power: supply: smb347-charger: Document USB VBUS
-    regulator
-  power: supply: smb347-charger: Make smb347_set_writable() IRQ-safe
-  power: supply: smb347-charger: Remove caching of charger state
-  power: supply: smb347-charger: Implement USB VBUS regulator
-  arm64: tegra132: Add new properties to USB PHY device-tree node
-  ARM: tegra: Add new properties to USB PHY device-tree nodes
-  ARM: tegra: nexus7: Enable USB OTG mode
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ .../bindings/phy/nvidia,tegra20-usb-phy.yaml  | 20 +++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
- .../bindings/phy/nvidia,tegra20-usb-phy.txt   |  74 ----
- .../bindings/phy/nvidia,tegra20-usb-phy.yaml  | 377 ++++++++++++++++++
- .../power/supply/summit,smb347-charger.yaml   |  28 ++
- arch/arm/boot/dts/tegra114.dtsi               |   6 +
- arch/arm/boot/dts/tegra124.dtsi               |   9 +
- arch/arm/boot/dts/tegra20.dtsi                |   9 +
- .../tegra30-asus-nexus7-grouper-common.dtsi   |  25 +-
- arch/arm/boot/dts/tegra30.dtsi                |   9 +
- arch/arm64/boot/dts/nvidia/tegra132.dtsi      |   9 +
- drivers/power/supply/Kconfig                  |   1 +
- drivers/power/supply/smb347-charger.c         | 259 +++++++++++-
- drivers/soc/tegra/pmc.c                       |   6 +-
- drivers/usb/common/usb-otg-fsm.c              |   6 +-
- drivers/usb/phy/phy-tegra-usb.c               | 202 +++++++++-
- .../dt-bindings/power/summit,smb347-charger.h |   4 +
- include/linux/usb/otg-fsm.h                   |   1 +
- include/linux/usb/tegra_usb_phy.h             |   5 +
- 17 files changed, 926 insertions(+), 104 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/phy/nvidia,tegra20-usb-phy.txt
- create mode 100644 Documentation/devicetree/bindings/phy/nvidia,tegra20-usb-phy.yaml
-
+diff --git a/Documentation/devicetree/bindings/phy/nvidia,tegra20-usb-phy.yaml b/Documentation/devicetree/bindings/phy/nvidia,tegra20-usb-phy.yaml
+index 593187234e6a..a108f1552042 100644
+--- a/Documentation/devicetree/bindings/phy/nvidia,tegra20-usb-phy.yaml
++++ b/Documentation/devicetree/bindings/phy/nvidia,tegra20-usb-phy.yaml
+@@ -77,6 +77,9 @@ properties:
+           - const: timer
+           - const: utmi-pads
+ 
++  interrupts:
++    maxItems: 1
++
+   resets:
+     oneOf:
+       - maxItems: 1
+@@ -199,6 +202,17 @@ properties:
+     maxItems: 1
+     description: GPIO used to reset the PHY.
+ 
++  nvidia,pmc:
++    $ref: /schemas/types.yaml#/definitions/phandle
++    description:
++      Phandle to Power Management controller.
++
++  nvidia,phy-instance:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    minimum: 0
++    maximum: 2
++    description: Unique hardware ID.
++
+ required:
+   - compatible
+   - reg
+@@ -320,6 +334,7 @@ examples:
+         compatible = "nvidia,tegra124-usb-phy", "nvidia,tegra30-usb-phy";
+         reg = <0x7d008000 0x4000>,
+               <0x7d000000 0x4000>;
++        interrupts = <0 97 4>;
+         phy_type = "utmi";
+         clocks = <&tegra_car TEGRA124_CLK_USB3>,
+                  <&tegra_car TEGRA124_CLK_PLL_U>,
+@@ -338,6 +353,8 @@ examples:
+         nvidia,hssquelch-level = <2>;
+         nvidia,hsdiscon-level = <5>;
+         nvidia,xcvr-hsslew = <12>;
++        nvidia,pmc = <&tegra_pmc>;
++        nvidia,phy-instance= <2>;
+     };
+ 
+   - |
+@@ -346,6 +363,7 @@ examples:
+     usb-phy@c5004000 {
+         compatible = "nvidia,tegra20-usb-phy";
+         reg = <0xc5004000 0x4000>;
++        interrupts = <0 21 4>;
+         phy_type = "ulpi";
+         clocks = <&tegra_car TEGRA20_CLK_USB2>,
+                  <&tegra_car TEGRA20_CLK_PLL_U>,
+@@ -354,4 +372,6 @@ examples:
+         resets = <&tegra_car 58>, <&tegra_car 22>;
+         reset-names = "usb", "utmi-pads";
+         #phy-cells = <0>;
++        nvidia,pmc = <&tegra_pmc>;
++        nvidia,phy-instance= <1>;
+     };
 -- 
 2.30.2
 
