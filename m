@@ -8,54 +8,54 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83442C11F90
-	for <linux-tegra@archiver.kernel.org>; Thu,  1 Jul 2021 23:29:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D693C11F7B
+	for <linux-tegra@archiver.kernel.org>; Thu,  1 Jul 2021 23:29:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 64C2C61413
-	for <linux-tegra@archiver.kernel.org>; Thu,  1 Jul 2021 23:29:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 872DE61411
+	for <linux-tegra@archiver.kernel.org>; Thu,  1 Jul 2021 23:29:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234722AbhGAXbf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 1 Jul 2021 19:31:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40398 "EHLO
+        id S234738AbhGAXbg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 1 Jul 2021 19:31:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40370 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234465AbhGAXbR (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 1 Jul 2021 19:31:17 -0400
-Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66532C061765;
-        Thu,  1 Jul 2021 16:28:45 -0700 (PDT)
-Received: by mail-lf1-x12a.google.com with SMTP id t17so14910697lfq.0;
-        Thu, 01 Jul 2021 16:28:45 -0700 (PDT)
+        with ESMTP id S234219AbhGAXbZ (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 1 Jul 2021 19:31:25 -0400
+Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE1BCC061765;
+        Thu,  1 Jul 2021 16:28:53 -0700 (PDT)
+Received: by mail-lj1-x236.google.com with SMTP id f13so10772261ljp.10;
+        Thu, 01 Jul 2021 16:28:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=yseaQW+MaeBCwD6ZauN1QagZb1MK1zpaTRkjvaZq/jc=;
-        b=Qw9oBSACWA/WgYkqpH/fhhk1Yyn5shydRzAVulVS1c5cXRvoIbDYaP0zbifxPCwoLX
-         bCSWeQQwQXZ7beBm5QTw+ay5otV2KFYku+qkoejNpAg+7b1BzGHOp10t1z1TAmlpT6g/
-         QL3VTyWuwngVEiiX/4JKMXXGJtgWUw2HfFcArWIjbhhuWrqM0lnuvpLSxNv7iDbzj1QK
-         RS4di3PNvrwHYNc5UtDINbr5/hnFIDT2vrJrhOqrks83HiOSkjbyk4y5UP4NRty/OjLn
-         IgxHHq/rvvCo0FIH3LmcySMSqQc4IOARSnWbcDW5GiIKAd7LeSaiQuYFkNWHGOFjWp5x
-         msfg==
+        bh=7DByxmYrfYSoFtOXvgezAULCD+kJQTte6BMf4Jj2BLw=;
+        b=IyY9IJkajgob5/6uiA3dJZZOwAlwoF5a2OenrCfuwzof+vwSxfggxSPUyvrw9HY14p
+         l8WIbQk1JpgXE0UcqFufaMzXTp+N/UTO3zOitpXX4YHj6mVvAmRtyykI2Sdps0lwMpjY
+         WVidEhoF9aEMEDje0jBOIS80MHbcIArPrt7oxRrHBr8SAcUYfZoG5+xebDMw41BJ0Q+i
+         AhiTrICXsOfRiXflvtOhhVhgknBH9KDcj1TOGhctmRiQAa2r/F5TGrOgnfm6pJK3OltJ
+         weA+8YBxHY5EL2bvOGBVZ0qe8voPUKo2F+zwd9/V93g9duJLM0G3RN7ivozWPhQCJCI1
+         yu0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=yseaQW+MaeBCwD6ZauN1QagZb1MK1zpaTRkjvaZq/jc=;
-        b=Qm7NJtYBtfkv0UNrZRmGgTuI7Ky8n7YsfNW58onwpyHweFYIBCMMEOC3FGSRV//zoc
-         WKZKM7MGyw7RXBFuT34mpo7/JcPAVT8P6oh8v7FmweR8HMq1NkL1E7dAgdS+aMP8n/Dz
-         uNG7iftIycQjWKwFNIGDbLUUXfBsCae65/jtxNqIfE3dljofVfAqOAuYDILx38yqVu+u
-         sI2EiuyLPEQ2Ou9a5mNniy6yOBCR6jGEgCt1WldVMW90SyR1s4kyzZUgxplFGmyqKIwf
-         MKw9iJO/0q2VqxVnXFsRLb10l7rlbnam5NgDjuSiIcDIBkKOR/Fqmg/eUosunlg2yaXI
-         m1qw==
-X-Gm-Message-State: AOAM531VxwhNXN1C5yq4iC1HG5UNIOS4ARsAjVC/ZEKG90/NMrye3GZ4
-        x931AuXPM8zDxnUg6lIN3j4=
-X-Google-Smtp-Source: ABdhPJwXttkhDKkaCqXDWX3QMMqdlEOYjPyKkqkz/1O7JxhDdTnqwwP39b6C8Hym6+CioMK/ueVF0Q==
-X-Received: by 2002:a19:4842:: with SMTP id v63mr1527718lfa.417.1625182123789;
-        Thu, 01 Jul 2021 16:28:43 -0700 (PDT)
+        bh=7DByxmYrfYSoFtOXvgezAULCD+kJQTte6BMf4Jj2BLw=;
+        b=I4liqj1321dtByFPIFMTvSKtNOEUmUzjyu2iaIKHUmeaGYYeKaPOOxZAmGGh/NBwqW
+         hXRxwpZykYhBIgzSZdW29DXgbZ/NCCYAtbHfrctQ8ETIf0e3FJb5rxpLsyrH8dPIDMlv
+         tzLZJ5K4k3iZoXTmu01btekNQ/ZniJ8jLdnI+Sr9HL9z8MJ/feIp1ch63G7lcfmqxjCp
+         zLfO7RiEv2OEO0HUo/6/NKZeG8wSi3HcPVKcLSDyG+gq2gyWMuwKXzX63NSunLSWW2LA
+         I4Ai132aB6kTdHKYzFbQEe2utF0V0qbyKsXomYPcYhSkylpcWPdj5X9R/fWzJjcWhuZX
+         B7zg==
+X-Gm-Message-State: AOAM530lZWBMN9BuApElEgD3fSSrWB5ofItxF/g3lSx6mT6v2b0AD0VE
+        8b+seFI/xQF/J90cqbFx3c4=
+X-Google-Smtp-Source: ABdhPJyGD4x3fV5UTZqG8S5sHrMDuLGq4yPbUGaXALPZU5QCVl0twJSS9LvqKKIy27oPC49mFdqm0Q==
+X-Received: by 2002:a2e:b708:: with SMTP id j8mr1524001ljo.285.1625182132342;
+        Thu, 01 Jul 2021 16:28:52 -0700 (PDT)
 Received: from localhost.localdomain (94-29-37-113.dynamic.spd-mgts.ru. [94.29.37.113])
-        by smtp.gmail.com with ESMTPSA id s20sm102655lfr.39.2021.07.01.16.28.43
+        by smtp.gmail.com with ESMTPSA id s20sm102655lfr.39.2021.07.01.16.28.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Jul 2021 16:28:43 -0700 (PDT)
+        Thu, 01 Jul 2021 16:28:52 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -65,9 +65,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Peter De Schrijver <pdeschrijver@nvidia.com>
 Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-pm@vger.kernel.org
-Subject: [PATCH v7 23/37] soc/tegra: fuse: Add runtime PM support
-Date:   Fri,  2 Jul 2021 02:27:14 +0300
-Message-Id: <20210701232728.23591-24-digetx@gmail.com>
+Subject: [PATCH v7 37/37] soc/tegra: pmc: Enable core domain support on Tegra20 and Tegra30
+Date:   Fri,  2 Jul 2021 02:27:28 +0300
+Message-Id: <20210701232728.23591-38-digetx@gmail.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210701232728.23591-1-digetx@gmail.com>
 References: <20210701232728.23591-1-digetx@gmail.com>
@@ -77,155 +77,36 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The Tegra FUSE belongs to the core power domain and we're going to enable
-GENPD support for the core domain. Now FUSE device must be resumed using
-runtime PM API in order to initialize the FUSE power state. Add runtime PM
-support to the FUSE driver.
+All device drivers got runtime PM and OPP support. Flip the core domain
+support status for Tegra20 and Tegra30 SoCs.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/soc/tegra/fuse/fuse-tegra.c   | 30 +++++++++++++++++++++++++++
- drivers/soc/tegra/fuse/fuse-tegra20.c | 10 +++++----
- drivers/soc/tegra/fuse/fuse-tegra30.c |  9 ++++----
- 3 files changed, 40 insertions(+), 9 deletions(-)
+ drivers/soc/tegra/pmc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/soc/tegra/fuse/fuse-tegra.c b/drivers/soc/tegra/fuse/fuse-tegra.c
-index 2434c570b53c..747237865aff 100644
---- a/drivers/soc/tegra/fuse/fuse-tegra.c
-+++ b/drivers/soc/tegra/fuse/fuse-tegra.c
-@@ -13,6 +13,7 @@
- #include <linux/of.h>
- #include <linux/of_address.h>
- #include <linux/platform_device.h>
-+#include <linux/pm_runtime.h>
- #include <linux/slab.h>
- #include <linux/sys_soc.h>
- 
-@@ -210,6 +211,8 @@ static int tegra_fuse_probe(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, fuse);
- 	fuse->dev = &pdev->dev;
- 
-+	pm_runtime_enable(&pdev->dev);
-+
- 	if (fuse->soc->probe) {
- 		err = fuse->soc->probe(fuse);
- 		if (err < 0)
-@@ -248,13 +251,40 @@ static int tegra_fuse_probe(struct platform_device *pdev)
- restore:
- 	fuse->clk = NULL;
- 	fuse->base = base;
-+	pm_runtime_disable(&pdev->dev);
- 	return err;
+diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+index ebafb818b08e..1f6872f7b211 100644
+--- a/drivers/soc/tegra/pmc.c
++++ b/drivers/soc/tegra/pmc.c
+@@ -3177,7 +3177,7 @@ static void tegra20_pmc_setup_irq_polarity(struct tegra_pmc *pmc,
  }
  
-+static int __maybe_unused tegra_fuse_runtime_resume(struct device *dev)
-+{
-+	int err;
-+
-+	err = clk_prepare_enable(fuse->clk);
-+	if (err < 0) {
-+		dev_err(dev, "failed to enable FUSE clock: %d\n", err);
-+		return err;
-+	}
-+
-+	return 0;
-+}
-+
-+static int __maybe_unused tegra_fuse_runtime_suspend(struct device *dev)
-+{
-+	clk_disable_unprepare(fuse->clk);
-+
-+	return 0;
-+}
-+
-+static const struct dev_pm_ops tegra_fuse_pm = {
-+	SET_RUNTIME_PM_OPS(tegra_fuse_runtime_suspend, tegra_fuse_runtime_resume,
-+			   NULL)
-+};
-+
- static struct platform_driver tegra_fuse_driver = {
- 	.driver = {
- 		.name = "tegra-fuse",
- 		.of_match_table = tegra_fuse_match,
-+		.pm = &tegra_fuse_pm,
- 		.suppress_bind_attrs = true,
- 	},
- 	.probe = tegra_fuse_probe,
-diff --git a/drivers/soc/tegra/fuse/fuse-tegra20.c b/drivers/soc/tegra/fuse/fuse-tegra20.c
-index 16aaa28573ac..cd6a273707fe 100644
---- a/drivers/soc/tegra/fuse/fuse-tegra20.c
-+++ b/drivers/soc/tegra/fuse/fuse-tegra20.c
-@@ -16,6 +16,7 @@
- #include <linux/kobject.h>
- #include <linux/of_device.h>
- #include <linux/platform_device.h>
-+#include <linux/pm_runtime.h>
- #include <linux/random.h>
+ static const struct tegra_pmc_soc tegra20_pmc_soc = {
+-	.supports_core_domain = false,
++	.supports_core_domain = true,
+ 	.num_powergates = ARRAY_SIZE(tegra20_powergates),
+ 	.powergates = tegra20_powergates,
+ 	.num_cpu_powergates = 0,
+@@ -3238,7 +3238,7 @@ static const char * const tegra30_reset_sources[] = {
+ };
  
- #include <soc/tegra/fuse.h>
-@@ -46,6 +47,10 @@ static u32 tegra20_fuse_read(struct tegra_fuse *fuse, unsigned int offset)
- 	u32 value = 0;
- 	int err;
- 
-+	err = pm_runtime_resume_and_get(fuse->dev);
-+	if (err)
-+		return err;
-+
- 	mutex_lock(&fuse->apbdma.lock);
- 
- 	fuse->apbdma.config.src_addr = fuse->phys + FUSE_BEGIN + offset;
-@@ -66,8 +71,6 @@ static u32 tegra20_fuse_read(struct tegra_fuse *fuse, unsigned int offset)
- 
- 	reinit_completion(&fuse->apbdma.wait);
- 
--	clk_prepare_enable(fuse->clk);
--
- 	dmaengine_submit(dma_desc);
- 	dma_async_issue_pending(fuse->apbdma.chan);
- 	time_left = wait_for_completion_timeout(&fuse->apbdma.wait,
-@@ -78,10 +81,9 @@ static u32 tegra20_fuse_read(struct tegra_fuse *fuse, unsigned int offset)
- 	else
- 		value = *fuse->apbdma.virt;
- 
--	clk_disable_unprepare(fuse->clk);
--
- out:
- 	mutex_unlock(&fuse->apbdma.lock);
-+	pm_runtime_put(fuse->dev);
- 	return value;
- }
- 
-diff --git a/drivers/soc/tegra/fuse/fuse-tegra30.c b/drivers/soc/tegra/fuse/fuse-tegra30.c
-index c1aa7815bd6e..dd03565a39a4 100644
---- a/drivers/soc/tegra/fuse/fuse-tegra30.c
-+++ b/drivers/soc/tegra/fuse/fuse-tegra30.c
-@@ -12,6 +12,7 @@
- #include <linux/of_device.h>
- #include <linux/of_address.h>
- #include <linux/platform_device.h>
-+#include <linux/pm_runtime.h>
- #include <linux/random.h>
- 
- #include <soc/tegra/fuse.h>
-@@ -52,15 +53,13 @@ static u32 tegra30_fuse_read(struct tegra_fuse *fuse, unsigned int offset)
- 	u32 value;
- 	int err;
- 
--	err = clk_prepare_enable(fuse->clk);
--	if (err < 0) {
--		dev_err(fuse->dev, "failed to enable FUSE clock: %d\n", err);
-+	err = pm_runtime_resume_and_get(fuse->dev);
-+	if (err)
- 		return 0;
--	}
- 
- 	value = readl_relaxed(fuse->base + FUSE_BEGIN + offset);
- 
--	clk_disable_unprepare(fuse->clk);
-+	pm_runtime_put(fuse->dev);
- 
- 	return value;
- }
+ static const struct tegra_pmc_soc tegra30_pmc_soc = {
+-	.supports_core_domain = false,
++	.supports_core_domain = true,
+ 	.num_powergates = ARRAY_SIZE(tegra30_powergates),
+ 	.powergates = tegra30_powergates,
+ 	.num_cpu_powergates = ARRAY_SIZE(tegra30_cpu_powergates),
 -- 
 2.30.2
 
