@@ -2,86 +2,118 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E7F1C11F64
-	for <linux-tegra@archiver.kernel.org>; Thu,  1 Jul 2021 12:52:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D851C11F64
+	for <linux-tegra@archiver.kernel.org>; Thu,  1 Jul 2021 13:55:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DAA6061400
-	for <linux-tegra@archiver.kernel.org>; Thu,  1 Jul 2021 12:52:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E810C6115C
+	for <linux-tegra@archiver.kernel.org>; Thu,  1 Jul 2021 13:55:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236490AbhGAMye (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 1 Jul 2021 08:54:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57990 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S236488AbhGAMyd (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 1 Jul 2021 08:54:33 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id D2475613FE;
-        Thu,  1 Jul 2021 12:52:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1625143923;
-        bh=7/B1O5SRCZQDIH9JnUtLeO06PzUiR1aaEtM7Xh38A3U=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=rymjU5e08NAPC41iGQ7oNJ01iDBURqmIomvMkTKIzMdhACduI1TLDPR90eQvkwt40
-         mPD6U7gQh5JkbL5LEY0tq09tMilj1KaWmiRUPBfldfc/FKjcj1Cv+5MlglvHI+kCB1
-         ywE6Xr8LQkI689pD649R1Wn2bvBYojvyostqE46cf6V20RgPxSk+E4hGxMm0e+uEqj
-         Yba2npgPX9/JYOaPAirQqBo+wbIuCclxbhHCFvW1zIIME1colzKmkkKm/lCAsfCeWC
-         yurn0fCtTH8kDP7iA/X3YtcVq8pGvUMmwu5L0Y5PtuwV1OTajWPhn6oZl9taO4jiOj
-         jxkWUGPGJjgNA==
-Date:   Thu, 1 Jul 2021 13:51:34 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Sameer Pujar <spujar@nvidia.com>, linux-tegra@vger.kernel.org,
-        devicetree@vger.kernel.org, alsa-devel@alsa-project.org,
-        Rob Herring <robh+dt@kernel.org>
-Subject: Re: (subset) [PATCH 0/2] arm64: tegra: Enable audio IOMMU support on
- Tegra194
-Message-ID: <20210701125134.GB4641@sirena.org.uk>
-References: <20210628181118.2295007-1-thierry.reding@gmail.com>
- <162506854659.43525.4480397285287043164.b4-ty@kernel.org>
- <YNylGG9RaM72CY2i@orome.fritz.box>
+        id S232081AbhGAN5h (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 1 Jul 2021 09:57:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53640 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231915AbhGAN5h (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 1 Jul 2021 09:57:37 -0400
+Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 644B3C061762;
+        Thu,  1 Jul 2021 06:55:06 -0700 (PDT)
+Received: by mail-lf1-x12d.google.com with SMTP id k10so11912899lfv.13;
+        Thu, 01 Jul 2021 06:55:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=0VL4IXxd5AnZL1Kenx9fq6N8MYqIdB30L/yz2TQItQ8=;
+        b=Af5CwAOdB2vCyDpMdR43RknHlmbUBESopoD3qTgU3+XlT9dKUMkFNNi9z21EVTCFh0
+         kQcvi+i0NbDIRMdStKIft9x6Zl7VepkmE9uMZhqDLChO11ADD1AN564LS3pO3TtNkQJc
+         BiCUq6xfuafu9rZDWbVl4wxdvfAlLVW2z4eZm2teDxQcG1tHRmbbtIV61PItPRK1K5eV
+         gsHrpyJcRTIKD4ZC11IQoMfgFA2MN/AeMieluJ3M202LIoLtTCN1LIpKYkQmEovnU/p4
+         MEqgqpkHvLnawqp531g3/x27DCq63gOLVJd/LBtwJOb/WgHduApC40iJotBVh2c//yJo
+         95xQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=0VL4IXxd5AnZL1Kenx9fq6N8MYqIdB30L/yz2TQItQ8=;
+        b=g5vEZBHk3mjlE2FTpxeS5q1ekObZwOJhL0RdTfB1d7KP70y35Axj43ZTQ1vt6mkUYl
+         RM5W59EdTkP0nDQPxVjnuFrei672TCjepUN4NMKdmAV1+qFb7Cb3CSAGb6yyjcFxDq0S
+         oUXqEHLHhD1KZbr1Avj+J00NwTmgswI25Xm1mC45xdTYTfr0CelSTPUpw0usEbg1lTmY
+         h5C/T3pn3NInjND0X9TBz8DnAF5PqD56OeTKZP2mSoXmb6F20BY6/wyIoYUcc5OnTpsU
+         mCYJH5bhZbQ6h3N0jWAMi0T55brRhj87ZJTaYzu/iMuI5JCy513VGQMrBRUq4fZR1Sqs
+         5e/Q==
+X-Gm-Message-State: AOAM530zsx8F2zuvv1kXw9dyHAfg38y39v70auQFEFnfzlkMla+lXJLZ
+        HPXFaqzCJzDCSHXPI1+GBVGzrze2t90=
+X-Google-Smtp-Source: ABdhPJzJ7Tg9H51VzbUqiuSbZJdvpdDBjZQ84opVMhpLNLjdh1cOuj+PWDDACLDZVp+3+gc/Gr+e1A==
+X-Received: by 2002:a05:6512:1683:: with SMTP id bu3mr33422652lfb.520.1625147704518;
+        Thu, 01 Jul 2021 06:55:04 -0700 (PDT)
+Received: from [192.168.2.145] (94-29-37-113.dynamic.spd-mgts.ru. [94.29.37.113])
+        by smtp.googlemail.com with ESMTPSA id k11sm9694ljj.132.2021.07.01.06.55.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 01 Jul 2021 06:55:03 -0700 (PDT)
+Subject: Re: [PATCH v1 04/12] usb: phy: tegra: Support OTG mode programming
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <treding@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Peter Chen <peter.chen@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Felipe Balbi <balbi@kernel.org>,
+        David Heidelberg <david@ixit.cz>
+Cc:     devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+References: <20210701022405.10817-1-digetx@gmail.com>
+ <20210701022405.10817-5-digetx@gmail.com>
+Message-ID: <12f5b8cc-982e-f112-e0a4-21afdf3bce06@gmail.com>
+Date:   Thu, 1 Jul 2021 16:55:03 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="aM3YZ0Iwxop3KEKx"
-Content-Disposition: inline
-In-Reply-To: <YNylGG9RaM72CY2i@orome.fritz.box>
-X-Cookie: Turn off engine while fueling.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20210701022405.10817-5-digetx@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+01.07.2021 05:23, Dmitry Osipenko пишет:
+>  static int tegra_usb_phy_init(struct usb_phy *u_phy)
+> @@ -967,12 +1057,26 @@ static int tegra_usb_phy_init(struct usb_phy *u_phy)
+>  			goto disable_vbus;
+>  	}
+>  
+> +	err = tegra_usb_phy_configure_pmc(phy);
+> +	if (err)
+> +		goto close_phy;
+> +
+>  	err = tegra_usb_phy_power_on(phy);
+>  	if (err)
+>  		goto close_phy;
+>  
+> +	if (phy->irq > 0) {
+> +		err = request_irq(phy->irq, tegra_usb_phy_isr, IRQF_SHARED,
+> +				  dev_name(phy->u_phy.dev), phy);
+> +		if (err)
+> +			goto pwr_off_phy;
+> +	}
 
---aM3YZ0Iwxop3KEKx
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+There were reports that this patch was casing an unhandled USB interrupt
+event on some devices. I thought this problem was fixed already, but
+looking again at the offending kernel log again, it still should be a
+problem.
 
-On Wed, Jun 30, 2021 at 07:08:40PM +0200, Thierry Reding wrote:
-
-> Could you drop this patch from your queue at this time? I can send out
-> the updated patch once I'm convinced it isn't going to regress further.
-
-OK since it's the top commit, in general it's better to send reverts for
-things like this though - like some other people I rarely rebase or
-otherwise modify existing commits.
-
---aM3YZ0Iwxop3KEKx
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmDdulUACgkQJNaLcl1U
-h9BeeQf/T+umKNdbt87xaPCht7wCPEszcEG0SV5z2Y9UFkIs6HfeU/f4HRiuMtIv
-DzTs/T0UmrqyzxLH49YkXfgCRTrkPr5qmdm0iZL6ng4YzWlJmOqT/vLKKyunFyKH
-feshTEJ9AtH0pLzyjYkOyAr4HeLEt1+wsgyTTXS+MAGMSZrL/Y3titN0kvjYnWVq
-2ju+YlZDQyOxIxvpltiXzgyKG94CUsG5NPBUh7xtHfkhcoHuW9vPBUvA0tyrC8EQ
-p+PD96ZfICydEWEsSeA/WBtTVqfSbJRlPomAsaXcai9iZc7RAv7wBJkhEcL+qZde
-iNBRANBx4F87MBzZill+pkwUsMHECw==
-=mdqc
------END PGP SIGNATURE-----
-
---aM3YZ0Iwxop3KEKx--
+The interrupt fires from the usb_add_hcd() of the CI driver before CI
+driver have requested interrupt in ci_hdrc_probe(). So either CI driver
+should request interrupt earlier or Tegra PHY driver should keep shared
+interrupt disabled after requesting it, the latter variant should be
+more robust. I'll improve it in v2.
