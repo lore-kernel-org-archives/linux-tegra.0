@@ -2,306 +2,130 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 104BFC11F64
-	for <linux-tegra@archiver.kernel.org>; Thu,  1 Jul 2021 14:24:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 134FFC11F64
+	for <linux-tegra@archiver.kernel.org>; Thu,  1 Jul 2021 14:59:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EE243613E8
-	for <linux-tegra@archiver.kernel.org>; Thu,  1 Jul 2021 14:24:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E96796128C
+	for <linux-tegra@archiver.kernel.org>; Thu,  1 Jul 2021 14:59:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234110AbhGAO1L (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 1 Jul 2021 10:27:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60458 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233950AbhGAO1L (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 1 Jul 2021 10:27:11 -0400
-Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF536C061762;
-        Thu,  1 Jul 2021 07:24:40 -0700 (PDT)
-Received: by mail-pj1-x1033.google.com with SMTP id in17-20020a17090b4391b0290170ba0ec7fcso6732887pjb.4;
-        Thu, 01 Jul 2021 07:24:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=mW1av2xdS1y2jG3ZVCe9a+vSXQ1T1E+gfBtuwxq5unk=;
-        b=nvfJR6qQdw1paCfrrtoYPSZdPb8p2EjkJxnL4srGXcI6juBkHU6iUXG5h458hRWEIv
-         21lfzIuboj+UfJaHB2XKPmSay/KTTdCgHXKogF8/ChqCJw4YEt3JfcsyivGs+CGaLePz
-         Gcj6NsTpOHJBZmHFMWtOymA8Wa7MSvn+8aG/8Eq6NXKxbjljMXGp4df0bcCRmYX3fO4K
-         zV5x9ax1Wq0JoEbPOjxIkjCbxOivNEd727bhdiY6qXpHH/G0WrhL8A/4LpsTSUXuPfsz
-         18KFP2ABfTLduVpF2HPj5eiEhqVjWAvo14BcciV6S4kPqzd1pKC+jKhqDcfWL8IfTzul
-         Lfkg==
+        id S233096AbhGAPCK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 1 Jul 2021 11:02:10 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:46475 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233023AbhGAPCK (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 1 Jul 2021 11:02:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1625151579;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=IVh85kthu0SpW7UY6smgM11I1yNN5lgiNNeNgndC7x4=;
+        b=FnbVaaEUtTxLffeLXdycmyQ0IMLiUFqROzWEVmzdb8ZThmSsN05G/3SIStX9pBi4kQx5FE
+        HbXlB6U82rD/wnlpmqZ5yzou7K232drvaT0gGQP4M9R1avcz5nskClvW9UVWRDSQPTxbWp
+        m9ZWft0A+JLRUQBHPqB7wD1YGwsk5G4=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-228-AoqJI8qwPySVWh8RYldEVA-1; Thu, 01 Jul 2021 10:59:38 -0400
+X-MC-Unique: AoqJI8qwPySVWh8RYldEVA-1
+Received: by mail-wr1-f69.google.com with SMTP id h104-20020adf90710000b029010de8455a3aso2669515wrh.12
+        for <linux-tegra@vger.kernel.org>; Thu, 01 Jul 2021 07:59:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=mW1av2xdS1y2jG3ZVCe9a+vSXQ1T1E+gfBtuwxq5unk=;
-        b=HvZR/OpuDGMwGeH3hHSFAQQhp4lVKzdLvWk7wC1gXQH2yu5lYbk/ZVO7cp8WbBoxSB
-         +ADPVzocQWhH3fogetl8fVgT1wMVDGLy2z/2HvkhX/U59d/F4lFQDvNxQ4m3f2aJ0xzX
-         gIKRJY0eN0zcAzTzcGfBGX4f0GcJ0VEKzqKDeOBKVlga0uMpZdvSe6L3xrz4CV3YnOQT
-         rdamfHiFTQVpRQVvpZ2yq7KDk6TwHHJHrtxnRB9vJqFDkbzDzKNZQ2tk1BephzeP390W
-         o4CdFF38ORaV7aFc1yStAmy8oWhZd+2YD/Dr0LZRuU7h2f57tNQReSojM2HhCGcxdam7
-         9nQQ==
-X-Gm-Message-State: AOAM533hhhOxSXF4cLeCFbX1nUEFHGHXZL/3LBlX8xSDO1bqSYmvpVKh
-        ctBTxFDT67wGBIfkMSqEJCM=
-X-Google-Smtp-Source: ABdhPJwN8TK5iwZB8PkGLcVbcZBrAQy2hxo1r4BcZKhVigrizTzGD6K+OZwq5uWYe/dzjVShDlT/qg==
-X-Received: by 2002:a17:90a:3ccf:: with SMTP id k15mr28417657pjd.226.1625149480366;
-        Thu, 01 Jul 2021 07:24:40 -0700 (PDT)
-Received: from sol (106-69-174-4.dyn.iinet.net.au. [106.69.174.4])
-        by smtp.gmail.com with ESMTPSA id t3sm204251pfl.44.2021.07.01.07.24.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Jul 2021 07:24:39 -0700 (PDT)
-Date:   Thu, 1 Jul 2021 22:24:33 +0800
-From:   Kent Gibson <warthog618@gmail.com>
-To:     Dipen Patel <dipenp@nvidia.com>
-Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linus.walleij@linaro.org,
-        bgolaszewski@baylibre.com, devicetree@vger.kernel.org,
-        linux-doc@vger.kernel.org, robh+dt@kernel.org
-Subject: Re: [RFC 08/11] gpiolib: cdev: Add hardware timestamp clock type
-Message-ID: <20210701142433.GC34285@sol>
-References: <20210625235532.19575-1-dipenp@nvidia.com>
- <20210625235532.19575-9-dipenp@nvidia.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=IVh85kthu0SpW7UY6smgM11I1yNN5lgiNNeNgndC7x4=;
+        b=eVCVdDmNRNlRCkr8EEERBXiVhSyCSpTbEGaOu8MQV4ijRb3DuS5Hzw3GTwperoz9Jd
+         cOfg/I8Cxe94g2VvTvDBccbgSnV3KV5/pAobWFZF+GYKJv+D25z0tzzXkev6Z3/+C1LB
+         DHsmc40VX13P+6oVXOZ33jH9cjrH1sl8g4BqhEGxqqHpCFuWxr0UYnxwM30Y/oin8ZmZ
+         1F3pY2u6oNgNqSRkcymWf25fK57Q6DjJCX3pN+PgTO0DUd63i9h0CTxMSLJKN47zPOsO
+         JCWyQ2OYdybfI3UJM9b34ZV0tGZk8pw7TYJoyRlzJLiEG4MAWuJzXUfqHV1bLH6oUIdI
+         CfYA==
+X-Gm-Message-State: AOAM5323NYo+Z3xCrn0vPhGwBFmJ4OYJHSAWJDyb4WbLLROHPsRwlxMu
+        9MuPLYe/gsQwPNKAIH+j0o5V+wWaBFdKxBtzzRcJPl8tikWe6Esob/o8ZRzp2lDCYbkOtFwFNfP
+        nNRynJJhDb6bN0aZXfkB9EgYDk2OvOWHxCihb+mmWs1pIN5Xs5+FAYDAyeotVRsN/VvNkLW5DOQ
+        ==
+X-Received: by 2002:a7b:c39a:: with SMTP id s26mr123465wmj.115.1625151577108;
+        Thu, 01 Jul 2021 07:59:37 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJyeHU3WCUYY7UnaCN/G0uYLtwdgKJ2wXf9QG99tZjlIEUdpQJOc/y9rZPsTlaSCWiCikljylg==
+X-Received: by 2002:a7b:c39a:: with SMTP id s26mr123429wmj.115.1625151576888;
+        Thu, 01 Jul 2021 07:59:36 -0700 (PDT)
+Received: from [192.168.1.101] ([92.176.231.106])
+        by smtp.gmail.com with ESMTPSA id n19sm277863wms.4.2021.07.01.07.59.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 01 Jul 2021 07:59:36 -0700 (PDT)
+Subject: Re: [PATCH v2] PCI: rockchip: Avoid accessing PCIe registers with
+ clocks gated
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Peter Robinson <pbrobinson@gmail.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Rob Herring <robh@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
+        linux-rockchip@lists.infradead.org,
+        Michal Simek <michal.simek@xilinx.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-tegra@vger.kernel.org
+References: <20210701135949.GA51123@bjorn-Precision-5520>
+From:   Javier Martinez Canillas <javierm@redhat.com>
+Message-ID: <747df123-0aa0-7cb7-9fb3-f13c849894e5@redhat.com>
+Date:   Thu, 1 Jul 2021 16:59:35 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210625235532.19575-9-dipenp@nvidia.com>
+In-Reply-To: <20210701135949.GA51123@bjorn-Precision-5520>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, Jun 25, 2021 at 04:55:29PM -0700, Dipen Patel wrote:
-> This patch adds new clock type for the GPIO controller which can
-> timestamp gpio lines using hardware means. To expose such
-> functionalities to the userspace, code has been added in this patch
-> where during line create call, it checks for new clock type and if
-> requested, calls hardware timestamp related API from gpiolib.c.
-> During line change event, it retrieves timestamp in nano seconds by
-> calling gpiod_get_hw_timestamp API from gpiolib.c. At the line release,
-> it disables this functionality by calling gpiod_hw_timestamp_control.
+On 7/1/21 3:59 PM, Bjorn Helgaas wrote:
+
+[snip]
+
+>> The IRQ handler is not called when unregistered, but it is called
+>> when another handler for the shared IRQ is unregistered. In this
+>> particular driver, both a "pcie-sys" and "pcie-client" handlers are
+>> registered, then an error leads to "pcie-sys" being unregistered and
+>> the handler for "pcie-client" being called.
 > 
-> Signed-off-by: Dipen Patel <dipenp@nvidia.com>
-> ---
->  drivers/gpio/gpiolib-cdev.c | 65 +++++++++++++++++++++++++++++++++++--
->  include/uapi/linux/gpio.h   |  1 +
->  2 files changed, 64 insertions(+), 2 deletions(-)
+> Is this really true?  I think that would mean CONFIG_DEBUG_SHIRQ would
+> not find this kind of bug unless we actually registered two or more
+> handlers for the shared IRQ, but it's still a bug even only one
+> handler is registered.
 > 
-> diff --git a/drivers/gpio/gpiolib-cdev.c b/drivers/gpio/gpiolib-cdev.c
-> index 1631727bf0da..9f98c727e937 100644
-> --- a/drivers/gpio/gpiolib-cdev.c
-> +++ b/drivers/gpio/gpiolib-cdev.c
-> @@ -518,6 +518,7 @@ struct linereq {
->  	 GPIO_V2_LINE_DRIVE_FLAGS | \
->  	 GPIO_V2_LINE_EDGE_FLAGS | \
->  	 GPIO_V2_LINE_FLAG_EVENT_CLOCK_REALTIME | \
-> +	 GPIO_V2_LINE_FLAG_EVENT_CLOCK_HARDWARE | \
->  	 GPIO_V2_LINE_BIAS_FLAGS)
->  
->  static void linereq_put_event(struct linereq *lr,
-> @@ -540,9 +541,20 @@ static void linereq_put_event(struct linereq *lr,
->  
->  static u64 line_event_timestamp(struct line *line)
->  {
-> +	bool block;
-> +
->  	if (test_bit(FLAG_EVENT_CLOCK_REALTIME, &line->desc->flags))
->  		return ktime_get_real_ns();
->  
-> +	if (test_bit(FLAG_EVENT_CLOCK_HARDWARE, &line->desc->flags)) {
-> +		if (irq_count())
-> +			block = false;
-> +		else
-> +			block = true;
-> +
-> +		return gpiod_get_hw_timestamp(line->desc, block);
-> +	}
-> +
-
-Use in_task() instead of block?
-
->  	return ktime_get_ns();
->  }
->  
-> @@ -828,6 +840,7 @@ static int edge_detector_setup(struct line *line,
->  		return ret;
->  
->  	line->irq = irq;
-> +
->  	return 0;
->  }
->  
-
-Remove gratuitous whitespace changes.
-If you dislike the formatting then suggest it in a separate patch.
-
-> @@ -891,7 +904,6 @@ static int gpio_v2_line_flags_validate(u64 flags)
->  	/* Return an error if an unknown flag is set */
->  	if (flags & ~GPIO_V2_LINE_VALID_FLAGS)
->  		return -EINVAL;
-> -
->  	/*
->  	 * Do not allow both INPUT and OUTPUT flags to be set as they are
->  	 * contradictory.
-> @@ -900,6 +912,14 @@ static int gpio_v2_line_flags_validate(u64 flags)
->  	    (flags & GPIO_V2_LINE_FLAG_OUTPUT))
->  		return -EINVAL;
->  
-
-Same here.
-
-> +	/*
-> +	 * Do not mix with any other clocks if hardware assisted timestamp is
-> +	 * asked.
-> +	 */
-> +	if ((flags & GPIO_V2_LINE_FLAG_EVENT_CLOCK_REALTIME) &&
-> +	    (flags & GPIO_V2_LINE_FLAG_EVENT_CLOCK_HARDWARE))
-> +		return -EINVAL;
-> +
-
-The comment is very hw timestamp centric. It should just be something
-along the lines of "only allow one event clock source".
-
->  	/* Edge detection requires explicit input. */
->  	if ((flags & GPIO_V2_LINE_EDGE_FLAGS) &&
->  	    !(flags & GPIO_V2_LINE_FLAG_INPUT))
-> @@ -992,6 +1012,8 @@ static void gpio_v2_line_config_flags_to_desc_flags(u64 flags,
->  
->  	assign_bit(FLAG_EVENT_CLOCK_REALTIME, flagsp,
->  		   flags & GPIO_V2_LINE_FLAG_EVENT_CLOCK_REALTIME);
-> +	assign_bit(FLAG_EVENT_CLOCK_HARDWARE, flagsp,
-> +		   flags & GPIO_V2_LINE_FLAG_EVENT_CLOCK_HARDWARE);
->  }
->  
->  static long linereq_get_values(struct linereq *lr, void __user *ip)
-> @@ -1139,6 +1161,18 @@ static long linereq_set_config_unlocked(struct linereq *lr,
->  			int val = gpio_v2_line_config_output_value(lc, i);
->  
->  			edge_detector_stop(&lr->lines[i]);
-> +
-> +			/*
-> +			 * Assuming line was input before and hardware
-> +			 * assisted timestamp only timestamps the input
-> +			 * lines.
-> +			 */
-> +			if (gpiod_is_hw_timestamp_enabled(desc)) {
-> +				ret = gpiod_hw_timestamp_control(desc, false);
-> +				if (ret)
-> +					return ret;
-> +			}
-> +
-
-So if you fail to disable the hw timestamp then you fail the set_config?
-Does that make sense?
-It should be impossible to fail, as per the preceding edge_detector_stop(),
-or any failure in this context is irrelevant and so can be ignored.
-
->  			ret = gpiod_direction_output(desc, val);
->  			if (ret)
->  				return ret;
-> @@ -1152,6 +1186,13 @@ static long linereq_set_config_unlocked(struct linereq *lr,
->  					polarity_change);
->  			if (ret)
->  				return ret;
-> +
-> +			/* Check if new config sets hardware assisted clock */
-> +			if (flags & GPIO_V2_LINE_FLAG_EVENT_CLOCK_HARDWARE) {
-> +				ret = gpiod_hw_timestamp_control(desc, true);
-> +				if (ret)
-> +					return ret;
-> +			}
->  		}
->  
-
-The error code here can come from the pinctrl timestamp_control(), so it
-should be sanitised before being returned to userspace.
-
->  		blocking_notifier_call_chain(&desc->gdev->notifier,
-> @@ -1281,8 +1322,12 @@ static void linereq_free(struct linereq *lr)
->  
->  	for (i = 0; i < lr->num_lines; i++) {
->  		edge_detector_stop(&lr->lines[i]);
-> -		if (lr->lines[i].desc)
-> +		if (lr->lines[i].desc) {
-> +			if (gpiod_is_hw_timestamp_enabled(lr->lines[i].desc))
-> +				gpiod_hw_timestamp_control(lr->lines[i].desc,
-> +							   false);
->  			gpiod_free(lr->lines[i].desc);
-> +		}
-
-Potential race on gpiod_is_hw_timestamp_enabled() and the call to
-gpiod_hw_timestamp_control()?
-Why not put the gpiod_is_hw_timestamp_enabled() check inside
-gpiod_hw_timestamp_control()?
-
-And the gpiod_hw_timestamp_control() call should be moved inside
-gpiod_free(), or more correctly gpiod_free_commit().
-i.e. whenever you free the gpio you release any associated hw timestamp.
-
->  	}
->  	kfifo_free(&lr->events);
->  	kfree(lr->label);
-> @@ -1409,6 +1454,15 @@ static int linereq_create(struct gpio_device *gdev, void __user *ip)
->  					flags & GPIO_V2_LINE_EDGE_FLAGS);
->  			if (ret)
->  				goto out_free_linereq;
-> +
-> +			/*
-> +			 * Check if hardware assisted timestamp is requested
-> +			 */
-> +			if (flags & GPIO_V2_LINE_FLAG_EVENT_CLOCK_HARDWARE) {
-> +				ret = gpiod_hw_timestamp_control(desc, true);
-> +				if (ret)
-> +					goto out_free_linereq;
-> +			}
->  		}
->  
-
-Comment can fit on one line, and probably isn't even necessary - the
-code is clear enough.
-
->  		blocking_notifier_call_chain(&desc->gdev->notifier,
-> @@ -1956,8 +2010,15 @@ static void gpio_desc_to_lineinfo(struct gpio_desc *desc,
->  	if (test_bit(FLAG_EDGE_FALLING, &desc->flags))
->  		info->flags |= GPIO_V2_LINE_FLAG_EDGE_FALLING;
->  
-> +	/*
-> +	 * Practically it is possible that user will want both the real time
-> +	 * and hardware timestamps on GPIO events, for now however lets just
-> +	 * work with either clocks
-> +	 */
->  	if (test_bit(FLAG_EVENT_CLOCK_REALTIME, &desc->flags))
->  		info->flags |= GPIO_V2_LINE_FLAG_EVENT_CLOCK_REALTIME;
-> +	else if (test_bit(FLAG_EVENT_CLOCK_HARDWARE, &desc->flags))
-> +		info->flags |= GPIO_V2_LINE_FLAG_EVENT_CLOCK_HARDWARE;
->
-
-If there is any need or intent to support multiple clock sources then
-avoid creeping API changes and add it now.
-Either way, drop the comment.
-
->  	debounce_period_us = READ_ONCE(desc->debounce_period_us);
->  	if (debounce_period_us) {
-> diff --git a/include/uapi/linux/gpio.h b/include/uapi/linux/gpio.h
-> index eaaea3d8e6b4..d360545b4c21 100644
-> --- a/include/uapi/linux/gpio.h
-> +++ b/include/uapi/linux/gpio.h
-> @@ -80,6 +80,7 @@ enum gpio_v2_line_flag {
->  	GPIO_V2_LINE_FLAG_BIAS_PULL_DOWN	= _BITULL(9),
->  	GPIO_V2_LINE_FLAG_BIAS_DISABLED		= _BITULL(10),
->  	GPIO_V2_LINE_FLAG_EVENT_CLOCK_REALTIME	= _BITULL(11),
-> +	GPIO_V2_LINE_FLAG_EVENT_CLOCK_HARDWARE	= _BITULL(12),
->  };
->  
->  /**
-> -- 
-> 2.17.1
+> Looking at __free_irq() [1], my impression is that "action" is what
+> we're removing and action->handler() is the IRQ handler we call when
+> CONFIG_DEBUG_SHIRQ, so it doesn't look like it's calling the remaining
+> handlers after removing one of them.
 > 
 
-Cheers,
-Kent.
+Oh, you are completely right. I wrongly assumed that it was for the other
+registered IRQ handlers but reading the source is clearly how you say it.
+
+I now wonder why when debugging this I saw that the "pcie-client" handler
+was called when "pcie-sys" was unregistered...
+
+But anyways, you are correct and I'm OK with the text you shared.
+
+Best regards,
+-- 
+Javier Martinez Canillas
+Software Engineer
+New Platform Technologies Enablement team
+RHEL Engineering
+
