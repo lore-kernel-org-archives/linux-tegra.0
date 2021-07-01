@@ -5,57 +5,57 @@ X-Spam-Level:
 X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3670C11F6F
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1779C11F6D
 	for <linux-tegra@archiver.kernel.org>; Thu,  1 Jul 2021 23:28:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9BED3613F4
+	by mail.kernel.org (Postfix) with ESMTP id 8776961425
 	for <linux-tegra@archiver.kernel.org>; Thu,  1 Jul 2021 23:28:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234286AbhGAXbI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 1 Jul 2021 19:31:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40376 "EHLO
+        id S234322AbhGAXbJ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 1 Jul 2021 19:31:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40370 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234195AbhGAXbE (ORCPT
+        with ESMTP id S234192AbhGAXbE (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>); Thu, 1 Jul 2021 19:31:04 -0400
-Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FA77C061764;
-        Thu,  1 Jul 2021 16:28:33 -0700 (PDT)
-Received: by mail-lj1-x235.google.com with SMTP id u20so10739354ljo.12;
-        Thu, 01 Jul 2021 16:28:33 -0700 (PDT)
+Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F18FC061765;
+        Thu,  1 Jul 2021 16:28:32 -0700 (PDT)
+Received: by mail-lf1-x12e.google.com with SMTP id u13so14871082lfk.2;
+        Thu, 01 Jul 2021 16:28:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=2rjt72BrK6zM3ojSq5raXIazBYQfzGXAb+ry7eKtvkM=;
-        b=Z3kIPHE8uHdC7RoITeyonHoeWs+0fBCqtYcAx/hFHCee05ngXRrYULOxgNpx/qufYH
-         Ka8IjizoSNgsDz0K+GP3eSeJXo6DsMIe1CHZ6hM3OWtJVqJPSEoMipowduNEdBeYDGsW
-         UPtcbBSOUl/p4T4xv0GimyQtEvgp7l9ADs6KOTsEXUJRd/rJbAqlBxMfa30yuTt/4z+t
-         5YR9eps0EoJFlPeuxzCOnTAGLtm0UOG2lB0TAPBPYALbKFgwrge0Z8xtAWhIhF0DSKBm
-         2cgR0OZcZcprGBl5QV4tcyoDYIvHWqZdHYlVfJUNAmSfYsyV5Ou+Bt/iTfEXWP4qPgDC
-         TgDg==
+        bh=/aJ3rO0obgv/dk/av8APlj6qYGi3UG1POE4HkgpMfsI=;
+        b=l+NRm+C8MpZp0LAy2j2qcTIVyaxAldCFDPpX3Wv4OTdd9uTONJActpI9U9AcWWxC3j
+         3Ux0/VDTs0LBYgk165KPdHyFdcyh+ZrWdtgVt1KDuRHXVVVwI4OldqEoOjg1hKPIFKE5
+         SGxjpzRYHgkAGpsYTp8zA5sN55ZIEusXv6dg09FgxfJX1E9waSHDmm82aSHlvvKZ6MU+
+         BdcTHptBoCDdiCFx/Lt92VQXsayDQ6HTMPRMCZB0d0aKk/2xf1SdV130+yxK2vsgMPTP
+         KLgLbfWSzccNkkLRSkM31ZwxYqudhsN7DlbrReeatKBvSfu37hYg1kYlxNnuSGyT2POX
+         oS3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=2rjt72BrK6zM3ojSq5raXIazBYQfzGXAb+ry7eKtvkM=;
-        b=dUAc6gtbcDbQ1xMLaxBEjxqw2orq//UGw+xMboxMABpt/OMB0LnOKxPyC5RousxTbw
-         bIcrKOCZtg2OSdol/+OrW88hZN8oKkPy6DFNEiqt8nLAHLe+uU3C/+KJTbvdDqvIEXLw
-         9A3iItIxcfKKGDuLT50ODUaNRCqUKI7W3W3OmnroAJFSSCXIqaqxiLSsn9YWRX+3N3Du
-         uvu37rqhpJk0C9L495bjGm3EsY/PR1rTtp11XPU3vBC8FuJ6j6reqJcuv52F1nfiSKvs
-         opk6QXJn8bkbaSx2/bbB+VK7oS1ZCijk04IOwy1V5AB6cRuXF71qXgxaOz2yXse1t4se
-         GG0w==
-X-Gm-Message-State: AOAM53100935kp9963FOSC+XWwBv1IcpL73cc/PZNqlAjkmK9mkOx2rQ
-        k1zXsTQkPkIn1GMHx+lLGpM=
-X-Google-Smtp-Source: ABdhPJylSTpB9cCgB2CTj1z4ymkAq7CXVLq3yIKc7gqoUzqHlLeJlcI0UmHa6sxwMUKXjyvwwed6jg==
-X-Received: by 2002:a2e:581a:: with SMTP id m26mr765247ljb.86.1625182111685;
-        Thu, 01 Jul 2021 16:28:31 -0700 (PDT)
+        bh=/aJ3rO0obgv/dk/av8APlj6qYGi3UG1POE4HkgpMfsI=;
+        b=TQzom207Pvezelz70Xtm35FUYUHBi9AbTRp4F55/7o+6PLZSD/bFShwdO4/ZyieNqk
+         jrSwBAWFtSQNR1OFzAC1qHAN6fJsPFj+1xg0K/ix3vk8l3dGqE/bK+NgTCn9jcbbacrV
+         hGIukvylL4m7Opr/Dgd0oOkt75gnCr5CI3EfSFzIxNTTdCod2gih54XQSfwJXaARqhOJ
+         i+IN2CwFdN10UIeUE6w2S0yGXFwodLDlzehxzRUyBtAKxHBXKnoqgwB0Uzev9qooORAH
+         tplK/cKWy1Kpv/3OKEMVJTatdkPA5eVfHCSyBTVVDV8YHjN/1t00BrD9udhG1t5Acn/6
+         3WAA==
+X-Gm-Message-State: AOAM530W4aLX5AN6EUxodOBthpBs/arogTFmM88I4+n+Y0oFVrzEmxmu
+        e+Km5Rm+YyQD9w4XEHxwPEk=
+X-Google-Smtp-Source: ABdhPJxEdqeuE7KZSaXkFfoydhrDnYK1YpuZtyv4PM8pWRzL1ZMsZIK9N8xQAYw9DIen3LOYgh1xKw==
+X-Received: by 2002:a19:501a:: with SMTP id e26mr1478263lfb.161.1625182110450;
+        Thu, 01 Jul 2021 16:28:30 -0700 (PDT)
 Received: from localhost.localdomain (94-29-37-113.dynamic.spd-mgts.ru. [94.29.37.113])
-        by smtp.gmail.com with ESMTPSA id s20sm102655lfr.39.2021.07.01.16.28.31
+        by smtp.gmail.com with ESMTPSA id s20sm102655lfr.39.2021.07.01.16.28.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Jul 2021 16:28:31 -0700 (PDT)
+        Thu, 01 Jul 2021 16:28:30 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -65,9 +65,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Peter De Schrijver <pdeschrijver@nvidia.com>
 Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-pm@vger.kernel.org
-Subject: [PATCH v7 04/37] soc/tegra: Add devm_tegra_core_dev_init_opp_table_simple()
-Date:   Fri,  2 Jul 2021 02:26:55 +0300
-Message-Id: <20210701232728.23591-5-digetx@gmail.com>
+Subject: [PATCH v7 02/37] soc/tegra: pmc: Implement attach_dev() of power domain drivers
+Date:   Fri,  2 Jul 2021 02:26:53 +0300
+Message-Id: <20210701232728.23591-3-digetx@gmail.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210701232728.23591-1-digetx@gmail.com>
 References: <20210701232728.23591-1-digetx@gmail.com>
@@ -77,37 +77,187 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Only couple drivers need to get the -ENODEV error code and explicitly
-initialize the performance state. Add new helper that allows to avoid
-the extra boilerplate code in majority of drivers.
+Implement attach_dev() callback of power domain drivers that initializes
+the domain's performance state. GENPD core will apply the performance
+state on the first runtime PM resume of the attached device.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- include/soc/tegra/common.h | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ drivers/soc/tegra/pmc.c | 147 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 147 insertions(+)
 
-diff --git a/include/soc/tegra/common.h b/include/soc/tegra/common.h
-index af41ad80ec21..265ad90e45a2 100644
---- a/include/soc/tegra/common.h
-+++ b/include/soc/tegra/common.h
-@@ -39,4 +39,17 @@ devm_tegra_core_dev_init_opp_table(struct device *dev,
+diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+index f63dfb2ca3f9..ebafb818b08e 100644
+--- a/drivers/soc/tegra/pmc.c
++++ b/drivers/soc/tegra/pmc.c
+@@ -506,6 +506,151 @@ static void tegra_pmc_scratch_writel(struct tegra_pmc *pmc, u32 value,
+ 		writel(value, pmc->scratch + offset);
  }
- #endif
  
-+static inline int
-+devm_tegra_core_dev_init_opp_table_simple(struct device *dev)
++static const char * const tegra_emc_compats[] = {
++	"nvidia,tegra20-emc",
++	"nvidia,tegra30-emc",
++	NULL,
++};
++
++/*
++ * This GENPD callback is used by both powergate and core domains.
++ *
++ * We retrieve clock rate of the attached device and initialize domain's
++ * performance state in accordance to the clock rate.
++ */
++static int tegra_pmc_pd_attach_dev(struct generic_pm_domain *genpd,
++				   struct device *dev)
 +{
-+	struct tegra_core_opp_params params = {};
-+	int err;
++	struct generic_pm_domain_data *gpd_data = dev_gpd_data(dev);
++	struct opp_table *opp_table, *pd_opp_table;
++	struct generic_pm_domain *core_genpd;
++	struct dev_pm_opp *opp, *pd_opp;
++	unsigned long rate, state;
++	struct gpd_link *link;
++	struct clk *clk;
++	u32 hw_version;
++	int ret;
 +
-+	err = devm_tegra_core_dev_init_opp_table(dev, &params);
-+	if (err != -ENODEV)
-+		return err;
++	/*
++	 * Tegra114+ SocS don't support OPP yet.  But if they will get OPP
++	 * support, then we want to skip OPP for older kernels to preserve
++	 * compatibility of newer DTBs with older kernels.
++	 */
++	if (!pmc->soc->supports_core_domain)
++		return 0;
 +
-+	return 0;
++	/*
++	 * The EMC devices are a special case because we have a protection
++	 * from non-EMC drivers getting clock handle before EMC driver is
++	 * fully initialized.  The goal of the protection is to prevent
++	 * devfreq driver from getting failures if it will try to change
++	 * EMC clock rate until clock is fully initialized.  The EMC drivers
++	 * will initialize the performance state by themselves.
++	 */
++	if (of_device_compatible_match(dev->of_node, tegra_emc_compats))
++		return 0;
++
++	clk = clk_get(dev, NULL);
++	if (IS_ERR(clk)) {
++		dev_err(&genpd->dev, "failed to get clk of %s: %pe\n",
++			dev_name(dev), clk);
++		return PTR_ERR(clk);
++	}
++
++	rate = clk_get_rate(clk);
++	if (!rate) {
++		dev_err(&genpd->dev, "failed to get clk rate of %s\n",
++			dev_name(dev));
++		ret = -EINVAL;
++		goto put_clk;
++	}
++
++	if (of_machine_is_compatible("nvidia,tegra20"))
++		hw_version = BIT(tegra_sku_info.soc_process_id);
++	else
++		hw_version = BIT(tegra_sku_info.soc_speedo_id);
++
++	opp_table = dev_pm_opp_set_supported_hw(dev, &hw_version, 1);
++	if (IS_ERR(opp_table)) {
++		dev_err(&genpd->dev, "failed to set OPP supported HW for %s: %d\n",
++			dev_name(dev), ret);
++		ret = PTR_ERR(opp_table);
++		goto put_clk;
++	}
++
++	ret = dev_pm_opp_of_add_table(dev);
++	if (ret) {
++		/* older DTBs that don't have OPPs will get -ENODEV here */
++		if (ret != -ENODEV)
++			dev_err(&genpd->dev, "failed to get OPP table of %s: %d\n",
++				dev_name(dev), ret);
++		else
++			ret = 0;
++
++		goto put_supported_hw;
++	}
++
++	/* find suitable OPP for the rate */
++	opp = dev_pm_opp_find_freq_ceil(dev, &rate);
++
++	if (opp == ERR_PTR(-ERANGE))
++		opp = dev_pm_opp_find_freq_floor(dev, &rate);
++
++	if (IS_ERR(opp)) {
++		dev_err(&genpd->dev, "failed to find OPP for %luHz of %s: %pe\n",
++			rate, dev_name(dev), opp);
++		ret = PTR_ERR(opp);
++		goto remove_dev_table;
++	}
++
++	if (!list_empty(&genpd->child_links)) {
++		link = list_first_entry(&genpd->child_links, struct gpd_link,
++					child_node);
++		core_genpd = link->parent;
++	} else {
++		core_genpd = genpd;
++	}
++
++	pd_opp_table = dev_pm_opp_get_opp_table(&core_genpd->dev);
++	if (IS_ERR(pd_opp_table)) {
++		dev_err(&genpd->dev, "failed to get OPP table of %s: %pe\n",
++			dev_name(&core_genpd->dev), pd_opp_table);
++		ret = PTR_ERR(pd_opp_table);
++		goto put_dev_opp;
++	}
++
++	pd_opp = dev_pm_opp_xlate_required_opp(opp_table, pd_opp_table, opp);
++	if (IS_ERR(pd_opp)) {
++		dev_err(&genpd->dev,
++			"failed to xlate required OPP for %luHz of %s: %pe\n",
++			rate, dev_name(dev), pd_opp);
++		ret = PTR_ERR(pd_opp);
++		goto put_pd_opp_table;
++	}
++
++	/*
++	 * The initialized state will be applied by GENPD core on the first
++	 * RPM-resume of the device.  This means that drivers don't need to
++	 * explicitly initialize performance state.
++	 */
++	state = pm_genpd_opp_to_performance_state(&core_genpd->dev, pd_opp);
++	gpd_data->rpm_pstate = state;
++	dev_pm_opp_put(pd_opp);
++
++put_pd_opp_table:
++	dev_pm_opp_put_opp_table(pd_opp_table);
++put_dev_opp:
++	dev_pm_opp_put(opp);
++remove_dev_table:
++	dev_pm_opp_of_remove_table(dev);
++put_supported_hw:
++	dev_pm_opp_put_supported_hw(opp_table);
++put_clk:
++	clk_put(clk);
++
++	return ret;
 +}
 +
- #endif /* __SOC_TEGRA_COMMON_H__ */
+ /*
+  * TODO Figure out a way to call this with the struct tegra_pmc * passed in.
+  * This currently doesn't work because readx_poll_timeout() can only operate
+@@ -1238,6 +1383,7 @@ static int tegra_powergate_add(struct tegra_pmc *pmc, struct device_node *np)
+ 
+ 	pg->id = id;
+ 	pg->genpd.name = np->name;
++	pg->genpd.attach_dev = tegra_pmc_pd_attach_dev;
+ 	pg->genpd.power_off = tegra_genpd_power_off;
+ 	pg->genpd.power_on = tegra_genpd_power_on;
+ 	pg->pmc = pmc;
+@@ -1354,6 +1500,7 @@ static int tegra_pmc_core_pd_add(struct tegra_pmc *pmc, struct device_node *np)
+ 		return -ENOMEM;
+ 
+ 	genpd->name = np->name;
++	genpd->attach_dev = tegra_pmc_pd_attach_dev;
+ 	genpd->set_performance_state = tegra_pmc_core_pd_set_performance_state;
+ 	genpd->opp_to_performance_state = tegra_pmc_core_pd_opp_to_performance_state;
+ 
 -- 
 2.30.2
 
