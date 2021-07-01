@@ -2,189 +2,86 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85FB5C11F64
-	for <linux-tegra@archiver.kernel.org>; Thu,  1 Jul 2021 09:01:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E7F1C11F64
+	for <linux-tegra@archiver.kernel.org>; Thu,  1 Jul 2021 12:52:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6A1B061480
-	for <linux-tegra@archiver.kernel.org>; Thu,  1 Jul 2021 09:01:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DAA6061400
+	for <linux-tegra@archiver.kernel.org>; Thu,  1 Jul 2021 12:52:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235586AbhGAJDe (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 1 Jul 2021 05:03:34 -0400
-Received: from mail-bn7nam10on2041.outbound.protection.outlook.com ([40.107.92.41]:59392
-        "EHLO NAM10-BN7-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S235088AbhGAJDe (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 1 Jul 2021 05:03:34 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=j531ySpa9MLgm8w78gH5KS6ue09KKaR77ulFSaPmvc7qLtBxczPQtHDOWzpEtx8pY7ZsH+PwgJ38xIhtDjmN9OaYgz15A3yTuQefh7Du3qH0DdLXRzbRHByBZPUdVsZWWFBvVchluTTXl3Pbqk/6q83BCMMEgqoDakxanCJna3ilVZE2APYKVFIjdHvLtpjab2sdf9J3aOhWrzHOloyfQIPHjQGEZzX6otn0+GkvTqk1qGo9ggoMCwb0ZL12JgsOGCx/qgsLUB4Cxkz6inWI0ASFJFdnK4eubjha6OTCzzK894Sa6IwYTDtf+2fCzTJh7tDaOTuRlHZ2yXfEHsdNoQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CmnX6lgqxG9jF6donItuhdkQWhswluwfWjc5gogAKpU=;
- b=H8gdEWqFhGJvRrjfFRCgv9qqHXOO5xRlde5YVSfpAZOYTURDQavAuunfYqkVdpRY9hhETXn6KZvzyF8Ghc+kimiKwrT7sXSagOXlCH0MOL2cpsvKNL1VgxCKIJSP99IpJYGVb9FIRUHOy0lh3nqD+7DqdsitIaxdqvozENyzZ/nfdoHhqZz/025XPLR4fUs1/JEPMfxWu7nnS7WtenNOos4f74JtW5EehXzvtsjbyqD2WMfGaXFsXm6LnOFku/CYJ8x7Ff1zl/YlcWx8Bq3pwZMZVEP6lavaMi4A6Top6muRB+RSryiMl0bzgJHgwYqHemRjlVeyxiefClkx3fe4tQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.112.32) smtp.rcpttodomain=linaro.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CmnX6lgqxG9jF6donItuhdkQWhswluwfWjc5gogAKpU=;
- b=Wt+1sKIiuZJi9PYgxTyLGcRYgWH5qlFaezFD1s1/4Nz5B35iisxv0DtJjigiHUCzt6NF2noGbXhQQgD3L0z2lVNCcIV8mE4DtDMX+uv/OpYhm2stXm324iREKtvPcgDuZxgKVoe0QqRfAYL2bK+nFjqixNUM3etQuxT8JrkNGXhn9MB+xP4ENpKprQKRGrEJOv0PrV82uLiVuG/H0PifqO7zotjqJyVRZ4QoiI/xDy3ixN4soOZPuwm8VpG/vuzKAaFrllh6wlIbmLLr+8MGaLNg+Wz85pN8W9j/c7mq77HGXCHwkXOIqy3r7Nzl3gvzAinlwlH/i5xjJljQrMmUxQ==
-Received: from DM6PR08CA0062.namprd08.prod.outlook.com (2603:10b6:5:1e0::36)
- by PH0PR12MB5434.namprd12.prod.outlook.com (2603:10b6:510:d5::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4264.18; Thu, 1 Jul
- 2021 09:01:02 +0000
-Received: from DM6NAM11FT041.eop-nam11.prod.protection.outlook.com
- (2603:10b6:5:1e0:cafe::23) by DM6PR08CA0062.outlook.office365.com
- (2603:10b6:5:1e0::36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4287.22 via Frontend
- Transport; Thu, 1 Jul 2021 09:01:02 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.32)
- smtp.mailfrom=nvidia.com; linaro.org; dkim=none (message not signed)
- header.d=none;linaro.org; dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.112.32 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.112.32; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (216.228.112.32) by
- DM6NAM11FT041.mail.protection.outlook.com (10.13.172.98) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.4287.22 via Frontend Transport; Thu, 1 Jul 2021 09:01:02 +0000
-Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL109.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Thu, 1 Jul
- 2021 02:01:01 -0700
-Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Thu, 1 Jul
- 2021 09:01:01 +0000
-Received: from kyarlagadda-linux.nvidia.com (172.20.187.5) by mail.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Thu, 1 Jul 2021 09:00:58 +0000
-From:   Akhil R <akhilrajeev@nvidia.com>
-To:     <jonathanh@nvidia.com>
-CC:     <akhilrajeev@nvidia.com>, <andy.shevchenko@gmail.com>,
-        <bgolaszewski@baylibre.com>, <kyarlagadda@nvidia.com>,
-        <ldewangan@nvidia.com>, <linus.walleij@linaro.org>,
-        <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <mperttunen@nvidia.com>,
-        <smangipudi@nvidia.com>, <thierry.reding@gmail.com>
-Subject: [PATCH v5] gpio: tegra186: Add ACPI support
-Date:   Thu, 1 Jul 2021 14:30:54 +0530
-Message-ID: <1625130054-22947-1-git-send-email-akhilrajeev@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <2a8eb285-3b71-199c-1bf4-39fb47fac77e@nvidia.com>
-References: <2a8eb285-3b71-199c-1bf4-39fb47fac77e@nvidia.com>
-X-NVConfidentiality: public
+        id S236490AbhGAMye (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 1 Jul 2021 08:54:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57990 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S236488AbhGAMyd (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 1 Jul 2021 08:54:33 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id D2475613FE;
+        Thu,  1 Jul 2021 12:52:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1625143923;
+        bh=7/B1O5SRCZQDIH9JnUtLeO06PzUiR1aaEtM7Xh38A3U=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=rymjU5e08NAPC41iGQ7oNJ01iDBURqmIomvMkTKIzMdhACduI1TLDPR90eQvkwt40
+         mPD6U7gQh5JkbL5LEY0tq09tMilj1KaWmiRUPBfldfc/FKjcj1Cv+5MlglvHI+kCB1
+         ywE6Xr8LQkI689pD649R1Wn2bvBYojvyostqE46cf6V20RgPxSk+E4hGxMm0e+uEqj
+         Yba2npgPX9/JYOaPAirQqBo+wbIuCclxbhHCFvW1zIIME1colzKmkkKm/lCAsfCeWC
+         yurn0fCtTH8kDP7iA/X3YtcVq8pGvUMmwu5L0Y5PtuwV1OTajWPhn6oZl9taO4jiOj
+         jxkWUGPGJjgNA==
+Date:   Thu, 1 Jul 2021 13:51:34 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Sameer Pujar <spujar@nvidia.com>, linux-tegra@vger.kernel.org,
+        devicetree@vger.kernel.org, alsa-devel@alsa-project.org,
+        Rob Herring <robh+dt@kernel.org>
+Subject: Re: (subset) [PATCH 0/2] arm64: tegra: Enable audio IOMMU support on
+ Tegra194
+Message-ID: <20210701125134.GB4641@sirena.org.uk>
+References: <20210628181118.2295007-1-thierry.reding@gmail.com>
+ <162506854659.43525.4480397285287043164.b4-ty@kernel.org>
+ <YNylGG9RaM72CY2i@orome.fritz.box>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: f194b908-b849-4386-2bb8-08d93c6ec07b
-X-MS-TrafficTypeDiagnostic: PH0PR12MB5434:
-X-Microsoft-Antispam-PRVS: <PH0PR12MB54348DEE7A442589DEBD9499C0009@PH0PR12MB5434.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:1417;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 27SZMe+v1mQCaotArqaWNqz4sSew1LtVkJcGn+I7bniUm4juKBGzp7kyDayfIleZrvv/Rgw1Dtw0AxkrNMw2+3OBI0r6rLnjmdCl8Bpc4mIa+LI0l+/WxRdZTf1WYanTaWyv3P1ehr1AkHj/gPe1rAQqmg7QquwBTeijfbE7h64D3Tta3DmF5W0F4e3j7kaxN3xRBBfM2QzzJNvwgWHFkx4QfFMgRdG7Lk0yi3SdrbTIqaVUDfzR0utwnEUDSjgIJix0uWE40MozTarq03hMDziHHLHgUqpButPl913+k8O252cYYgn/IQg3ji2sh5PASZD6qv85974mV3VK02ikgfFO04Y8cFWoMKkkum7XcuC8LJPRcYHiopybLwBly2Ay9P+iyyM2aUK8hEQ/TIAhM/162A/3OWZ/HuVn6uA6R0MrhEjQvPX2QWIyReaEtLRcvagJo16WIQrpQqykMfJyb1T0SK/1gkq/Eu3LU8vZvFgZrizCxhv38Dcae12pxAB+GpZlsluw63GjkyG/0SsLxSXwoswkTTTJtgTlJVZfWl/l6SBq+8yuwTnATD5o72aOAFOtBJ6Pv/81jU7VVu0VmwOy5WTTd5rZGeDIizaS1SzgR6Qe7ssGSoTnzAJJrJGLGjq/ItnhWORwdx84l2+s5HpbN3JoJcHou0Boi5iKWiBPxuGuZtPcqEunoUiA3/qBT2koohb9n+ktz8wyHKVhgA==
-X-Forefront-Antispam-Report: CIP:216.228.112.32;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid01.nvidia.com;CAT:NONE;SFS:(4636009)(396003)(136003)(346002)(39860400002)(376002)(46966006)(36840700001)(316002)(426003)(2616005)(2906002)(6862004)(8936002)(8676002)(336012)(54906003)(37006003)(6666004)(5660300002)(478600001)(4326008)(82310400003)(36860700001)(356005)(7636003)(47076005)(86362001)(82740400003)(83380400001)(36756003)(26005)(70206006)(7696005)(70586007)(6636002)(186003);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Jul 2021 09:01:02.1363
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f194b908-b849-4386-2bb8-08d93c6ec07b
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.32];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT041.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB5434
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="aM3YZ0Iwxop3KEKx"
+Content-Disposition: inline
+In-Reply-To: <YNylGG9RaM72CY2i@orome.fritz.box>
+X-Cookie: Turn off engine while fueling.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Add ACPI module ID to probe the driver from the ACPI based bootloader
-firmware.
 
-Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
----
-v5 changes:
-	* Updated ioremap_resource check as per Jon's comments.
+--aM3YZ0Iwxop3KEKx
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
- drivers/gpio/gpio-tegra186.c | 30 ++++++++++++++++++++++++------
- 1 file changed, 24 insertions(+), 6 deletions(-)
+On Wed, Jun 30, 2021 at 07:08:40PM +0200, Thierry Reding wrote:
 
-diff --git a/drivers/gpio/gpio-tegra186.c b/drivers/gpio/gpio-tegra186.c
-index 1bd9e44..8a64dcb 100644
---- a/drivers/gpio/gpio-tegra186.c
-+++ b/drivers/gpio/gpio-tegra186.c
-@@ -620,15 +620,21 @@ static int tegra186_gpio_probe(struct platform_device *pdev)
- 	if (!gpio)
- 		return -ENOMEM;
- 
--	gpio->soc = of_device_get_match_data(&pdev->dev);
-+	gpio->soc = device_get_match_data(&pdev->dev);
- 
- 	gpio->secure = devm_platform_ioremap_resource_byname(pdev, "security");
--	if (IS_ERR(gpio->secure))
--		return PTR_ERR(gpio->secure);
-+	if (IS_ERR(gpio->secure)) {
-+		gpio->secure = devm_platform_ioremap_resource(pdev, 0);
-+		if (IS_ERR(gpio->secure))
-+			return PTR_ERR(gpio->secure);
-+	}
- 
- 	gpio->base = devm_platform_ioremap_resource_byname(pdev, "gpio");
--	if (IS_ERR(gpio->base))
--		return PTR_ERR(gpio->base);
-+	if (IS_ERR(gpio->base)) {
-+		gpio->base = devm_platform_ioremap_resource(pdev, 1);
-+		if (IS_ERR(gpio->base))
-+			return PTR_ERR(gpio->base);
-+	}
- 
- 	err = platform_irq_count(pdev);
- 	if (err < 0)
-@@ -690,11 +696,13 @@ static int tegra186_gpio_probe(struct platform_device *pdev)
- 
- 	gpio->gpio.names = (const char * const *)names;
- 
-+#if defined(CONFIG_OF_GPIO)
- 	gpio->gpio.of_node = pdev->dev.of_node;
- 	gpio->gpio.of_gpio_n_cells = 2;
- 	gpio->gpio.of_xlate = tegra186_gpio_of_xlate;
-+#endif /* CONFIG_OF_GPIO */
- 
--	gpio->intc.name = pdev->dev.of_node->name;
-+	gpio->intc.name = dev_name(&pdev->dev);
- 	gpio->intc.irq_ack = tegra186_irq_ack;
- 	gpio->intc.irq_mask = tegra186_irq_mask;
- 	gpio->intc.irq_unmask = tegra186_irq_unmask;
-@@ -918,10 +926,20 @@ static const struct of_device_id tegra186_gpio_of_match[] = {
- };
- MODULE_DEVICE_TABLE(of, tegra186_gpio_of_match);
- 
-+static const struct acpi_device_id  tegra186_gpio_acpi_match[] = {
-+	{ .id = "NVDA0108", .driver_data = (kernel_ulong_t)&tegra186_main_soc },
-+	{ .id = "NVDA0208", .driver_data = (kernel_ulong_t)&tegra186_aon_soc },
-+	{ .id = "NVDA0308", .driver_data = (kernel_ulong_t)&tegra194_main_soc },
-+	{ .id = "NVDA0408", .driver_data = (kernel_ulong_t)&tegra194_aon_soc },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(acpi, tegra186_gpio_acpi_match);
-+
- static struct platform_driver tegra186_gpio_driver = {
- 	.driver = {
- 		.name = "tegra186-gpio",
- 		.of_match_table = tegra186_gpio_of_match,
-+		.acpi_match_table = tegra186_gpio_acpi_match,
- 	},
- 	.probe = tegra186_gpio_probe,
- 	.remove = tegra186_gpio_remove,
--- 
-2.7.4
+> Could you drop this patch from your queue at this time? I can send out
+> the updated patch once I'm convinced it isn't going to regress further.
 
+OK since it's the top commit, in general it's better to send reverts for
+things like this though - like some other people I rarely rebase or
+otherwise modify existing commits.
+
+--aM3YZ0Iwxop3KEKx
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmDdulUACgkQJNaLcl1U
+h9BeeQf/T+umKNdbt87xaPCht7wCPEszcEG0SV5z2Y9UFkIs6HfeU/f4HRiuMtIv
+DzTs/T0UmrqyzxLH49YkXfgCRTrkPr5qmdm0iZL6ng4YzWlJmOqT/vLKKyunFyKH
+feshTEJ9AtH0pLzyjYkOyAr4HeLEt1+wsgyTTXS+MAGMSZrL/Y3titN0kvjYnWVq
+2ju+YlZDQyOxIxvpltiXzgyKG94CUsG5NPBUh7xtHfkhcoHuW9vPBUvA0tyrC8EQ
+p+PD96ZfICydEWEsSeA/WBtTVqfSbJRlPomAsaXcai9iZc7RAv7wBJkhEcL+qZde
+iNBRANBx4F87MBzZill+pkwUsMHECw==
+=mdqc
+-----END PGP SIGNATURE-----
+
+--aM3YZ0Iwxop3KEKx--
