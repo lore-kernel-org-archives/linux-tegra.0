@@ -8,54 +8,54 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1779C11F6D
-	for <linux-tegra@archiver.kernel.org>; Thu,  1 Jul 2021 23:28:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBDD6C11F67
+	for <linux-tegra@archiver.kernel.org>; Thu,  1 Jul 2021 23:28:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8776961425
-	for <linux-tegra@archiver.kernel.org>; Thu,  1 Jul 2021 23:28:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B1084613BD
+	for <linux-tegra@archiver.kernel.org>; Thu,  1 Jul 2021 23:28:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234322AbhGAXbJ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 1 Jul 2021 19:31:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40370 "EHLO
+        id S234214AbhGAXbP (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 1 Jul 2021 19:31:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40376 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234192AbhGAXbE (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 1 Jul 2021 19:31:04 -0400
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F18FC061765;
-        Thu,  1 Jul 2021 16:28:32 -0700 (PDT)
-Received: by mail-lf1-x12e.google.com with SMTP id u13so14871082lfk.2;
-        Thu, 01 Jul 2021 16:28:32 -0700 (PDT)
+        with ESMTP id S234230AbhGAXbH (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 1 Jul 2021 19:31:07 -0400
+Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AADE9C061764;
+        Thu,  1 Jul 2021 16:28:34 -0700 (PDT)
+Received: by mail-lf1-x132.google.com with SMTP id k10so14722012lfv.13;
+        Thu, 01 Jul 2021 16:28:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=/aJ3rO0obgv/dk/av8APlj6qYGi3UG1POE4HkgpMfsI=;
-        b=l+NRm+C8MpZp0LAy2j2qcTIVyaxAldCFDPpX3Wv4OTdd9uTONJActpI9U9AcWWxC3j
-         3Ux0/VDTs0LBYgk165KPdHyFdcyh+ZrWdtgVt1KDuRHXVVVwI4OldqEoOjg1hKPIFKE5
-         SGxjpzRYHgkAGpsYTp8zA5sN55ZIEusXv6dg09FgxfJX1E9waSHDmm82aSHlvvKZ6MU+
-         BdcTHptBoCDdiCFx/Lt92VQXsayDQ6HTMPRMCZB0d0aKk/2xf1SdV130+yxK2vsgMPTP
-         KLgLbfWSzccNkkLRSkM31ZwxYqudhsN7DlbrReeatKBvSfu37hYg1kYlxNnuSGyT2POX
-         oS3Q==
+        bh=zX1sjCHEoECKxSxZgGaSbFwkcOk/x+5uR1IgyY9PPus=;
+        b=UwV9y8DnP2M/lWxw/gqbWRcMuM5YpZdMtpePjpjtZDXfqaMe+oLdYNCczmGMB1wxFY
+         i23c38KnXUj6wjODvvOOLDC1GnGu81s+mw+xyVdb7rUEjkYN+H3tYFgvyxXfp6CoQa2p
+         xYSIyWJFGcLjYdkaE6sTcRvdp51aTlP0dqCRFWPEXJ3dlQGMllWzIxperr24OFSQm1Zr
+         8J2zYtSxvJjTuJB3nzUdPLvwXNLP2Q9Jm+CsF5/DZ5p56LCe3/bZD1hI1x6U2zeKOKY2
+         XNgcweKjPbOZ0V/GBSSwgi+QAoTR190Zjo0H+jBvCea+wspNav/kz7qePVXYHcEg3Z71
+         4/Vw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=/aJ3rO0obgv/dk/av8APlj6qYGi3UG1POE4HkgpMfsI=;
-        b=TQzom207Pvezelz70Xtm35FUYUHBi9AbTRp4F55/7o+6PLZSD/bFShwdO4/ZyieNqk
-         jrSwBAWFtSQNR1OFzAC1qHAN6fJsPFj+1xg0K/ix3vk8l3dGqE/bK+NgTCn9jcbbacrV
-         hGIukvylL4m7Opr/Dgd0oOkt75gnCr5CI3EfSFzIxNTTdCod2gih54XQSfwJXaARqhOJ
-         i+IN2CwFdN10UIeUE6w2S0yGXFwodLDlzehxzRUyBtAKxHBXKnoqgwB0Uzev9qooORAH
-         tplK/cKWy1Kpv/3OKEMVJTatdkPA5eVfHCSyBTVVDV8YHjN/1t00BrD9udhG1t5Acn/6
-         3WAA==
-X-Gm-Message-State: AOAM530W4aLX5AN6EUxodOBthpBs/arogTFmM88I4+n+Y0oFVrzEmxmu
-        e+Km5Rm+YyQD9w4XEHxwPEk=
-X-Google-Smtp-Source: ABdhPJxEdqeuE7KZSaXkFfoydhrDnYK1YpuZtyv4PM8pWRzL1ZMsZIK9N8xQAYw9DIen3LOYgh1xKw==
-X-Received: by 2002:a19:501a:: with SMTP id e26mr1478263lfb.161.1625182110450;
-        Thu, 01 Jul 2021 16:28:30 -0700 (PDT)
+        bh=zX1sjCHEoECKxSxZgGaSbFwkcOk/x+5uR1IgyY9PPus=;
+        b=nuRjhVwCur9O04dX3r2Gj2M1tgImsrp20JT3cZbyH2DNtDPG6N6qv4dbyehOVCTlPJ
+         VLEv830kdpHG83w82qJAzqe9fhbRvwusc+THSqrS6+N7y6YypRT9yBTenWVR7LnLPYaH
+         l2eeyF7IA4A6jZUK3Gz4fF04uIjOJrNpmtN4XPlOu/3W/or6e4G+W8TLde44QAb6QrWk
+         N56aC/QRMl/aS5hnqFXjqoZiMOBJ1fvfVo5q2MlvVfSDBBf6E6n+tecpEWVbVNUP1J0s
+         pKGugZpXDIN7Mvc673os/VxKCxqMILlVkURIQ7F5f4JSTGEMg6EflAFBxZUpXv1CjU2k
+         9K6g==
+X-Gm-Message-State: AOAM533WPBV5LNmEIf1nVmxmdxLCWYpsZZ37fEW7pEcJcdysjf3ZHwyq
+        sWfVIGLxgCnFmF0TMFnjJ0tgtZd/lm8=
+X-Google-Smtp-Source: ABdhPJx09w8BUAgzFiPzNfmmG6FiZymebLBQlJFec+hrOPjakjv7XAXIeukRa9+tJ0L59eO3GUEfFg==
+X-Received: by 2002:ac2:5237:: with SMTP id i23mr1579610lfl.29.1625182112937;
+        Thu, 01 Jul 2021 16:28:32 -0700 (PDT)
 Received: from localhost.localdomain (94-29-37-113.dynamic.spd-mgts.ru. [94.29.37.113])
-        by smtp.gmail.com with ESMTPSA id s20sm102655lfr.39.2021.07.01.16.28.29
+        by smtp.gmail.com with ESMTPSA id s20sm102655lfr.39.2021.07.01.16.28.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Jul 2021 16:28:30 -0700 (PDT)
+        Thu, 01 Jul 2021 16:28:32 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -65,9 +65,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Peter De Schrijver <pdeschrijver@nvidia.com>
 Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-pm@vger.kernel.org
-Subject: [PATCH v7 02/37] soc/tegra: pmc: Implement attach_dev() of power domain drivers
-Date:   Fri,  2 Jul 2021 02:26:53 +0300
-Message-Id: <20210701232728.23591-3-digetx@gmail.com>
+Subject: [PATCH v7 06/37] clk: tegra: Support runtime PM and power domain
+Date:   Fri,  2 Jul 2021 02:26:57 +0300
+Message-Id: <20210701232728.23591-7-digetx@gmail.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210701232728.23591-1-digetx@gmail.com>
 References: <20210701232728.23591-1-digetx@gmail.com>
@@ -77,187 +77,616 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Implement attach_dev() callback of power domain drivers that initializes
-the domain's performance state. GENPD core will apply the performance
-state on the first runtime PM resume of the attached device.
+The Clock-and-Reset controller resides in a core power domain on NVIDIA
+Tegra SoCs.  In order to support voltage scaling of the core power domain,
+we hook up DVFS-capable clocks to the core GENPD for managing of the
+GENPD's performance state based on the clock changes.
 
+Some clocks don't have any specific physical hardware unit that backs
+them, like root PLLs and system clock and they have theirs own voltage
+requirements.  This patch adds new clk-device driver that backs the clocks
+and provides runtime PM functionality for them.  A virtual clk-device is
+created for each such DVFS-capable clock at the clock's registration time
+by the new tegra_clk_register() helper.  Driver changes clock's device
+GENPD performance state based on clk-rate notifications.
+
+In result we have this sequence of events:
+
+  1. Clock driver creates virtual device for selective clocks, enables
+     runtime PM for the created device and registers the clock.
+  2. Clk-device driver starts to listen to clock rate changes.
+  3. Something changes clk rate or enables/disables clk.
+  4. CCF core propagates the change through the clk tree.
+  5. Clk-device driver gets clock rate-change notification or GENPD core
+     handles prepare/unprepare of the clock.
+  6. Clk-device driver changes GENPD performance state on clock rate
+     change.
+  7. GENPD driver changes voltage regulator state change.
+  8. The regulator state is committed to hardware via I2C.
+
+We rely on fact that DVFS is not needed for Tegra I2C.  Hence I2C
+subsystem stays independent from the clk power management and there
+are no deadlock spots in the sequence.
+
+Currently all clocks are registered very early during kernel boot when the
+device driver core isn't available yet.  The clk-device can't be created
+at that time.  This patch splits the registration of the clocks in two
+phases:
+
+  1. Register all essential clocks which don't use RPM and are needed
+     during early boot.
+
+  2. Register at a later boot time the rest of clocks.
+
+This patch adds power management support for Tegra20 and Tegra30 clocks.
+
+Tested-by: Peter Geis <pgwipeout@gmail.com> # Ouya T30
+Tested-by: Paul Fertser <fercerpav@gmail.com> # PAZ00 T20
+Tested-by: Nicolas Chauvet <kwizart@gmail.com> # PAZ00 T20 and TK1 T124
+Tested-by: Matt Merhar <mattmerhar@protonmail.com> # Ouya T30
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/soc/tegra/pmc.c | 147 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 147 insertions(+)
+ drivers/clk/tegra/Makefile      |   1 +
+ drivers/clk/tegra/clk-device.c  | 222 ++++++++++++++++++++++++++++++++
+ drivers/clk/tegra/clk-pll.c     |   2 +-
+ drivers/clk/tegra/clk-super.c   |   2 +-
+ drivers/clk/tegra/clk-tegra20.c |  39 ++++--
+ drivers/clk/tegra/clk-tegra30.c |  70 ++++++----
+ drivers/clk/tegra/clk.c         |  66 ++++++++++
+ drivers/clk/tegra/clk.h         |   2 +
+ 8 files changed, 368 insertions(+), 36 deletions(-)
+ create mode 100644 drivers/clk/tegra/clk-device.c
 
-diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index f63dfb2ca3f9..ebafb818b08e 100644
---- a/drivers/soc/tegra/pmc.c
-+++ b/drivers/soc/tegra/pmc.c
-@@ -506,6 +506,151 @@ static void tegra_pmc_scratch_writel(struct tegra_pmc *pmc, u32 value,
- 		writel(value, pmc->scratch + offset);
- }
- 
-+static const char * const tegra_emc_compats[] = {
-+	"nvidia,tegra20-emc",
-+	"nvidia,tegra30-emc",
-+	NULL,
-+};
+diff --git a/drivers/clk/tegra/Makefile b/drivers/clk/tegra/Makefile
+index 7b1816856eb5..a0715cdfc1a4 100644
+--- a/drivers/clk/tegra/Makefile
++++ b/drivers/clk/tegra/Makefile
+@@ -1,6 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0
+ obj-y					+= clk.o
+ obj-y					+= clk-audio-sync.o
++obj-y					+= clk-device.o
+ obj-y					+= clk-dfll.o
+ obj-y					+= clk-divider.o
+ obj-y					+= clk-periph.o
+diff --git a/drivers/clk/tegra/clk-device.c b/drivers/clk/tegra/clk-device.c
+new file mode 100644
+index 000000000000..1399eaba1c91
+--- /dev/null
++++ b/drivers/clk/tegra/clk-device.c
+@@ -0,0 +1,222 @@
++// SPDX-License-Identifier: GPL-2.0-only
++
++#include <linux/clk.h>
++#include <linux/clk-provider.h>
++#include <linux/mutex.h>
++#include <linux/of_device.h>
++#include <linux/platform_device.h>
++#include <linux/pm_domain.h>
++#include <linux/pm_opp.h>
++#include <linux/pm_runtime.h>
++#include <linux/slab.h>
++
++#include <soc/tegra/common.h>
++
++#include "clk.h"
 +
 +/*
-+ * This GENPD callback is used by both powergate and core domains.
-+ *
-+ * We retrieve clock rate of the attached device and initialize domain's
-+ * performance state in accordance to the clock rate.
++ * This driver manages performance state of the core power domain for the
++ * independent PLLs and system clocks.  We created a virtual clock device
++ * for such clocks, see tegra_clk_register().
 + */
-+static int tegra_pmc_pd_attach_dev(struct generic_pm_domain *genpd,
-+				   struct device *dev)
++
++struct tegra_clk_device {
++	struct notifier_block clk_nb;
++	struct device *dev;
++	struct clk_hw *hw;
++	struct mutex lock;
++};
++
++static int tegra_clock_set_pd_state(struct tegra_clk_device *clk_dev,
++				    unsigned long rate)
 +{
-+	struct generic_pm_domain_data *gpd_data = dev_gpd_data(dev);
-+	struct opp_table *opp_table, *pd_opp_table;
-+	struct generic_pm_domain *core_genpd;
-+	struct dev_pm_opp *opp, *pd_opp;
-+	unsigned long rate, state;
-+	struct gpd_link *link;
-+	struct clk *clk;
-+	u32 hw_version;
-+	int ret;
++	struct device *dev = clk_dev->dev;
++	struct dev_pm_opp *opp;
++	unsigned int pstate;
 +
-+	/*
-+	 * Tegra114+ SocS don't support OPP yet.  But if they will get OPP
-+	 * support, then we want to skip OPP for older kernels to preserve
-+	 * compatibility of newer DTBs with older kernels.
-+	 */
-+	if (!pmc->soc->supports_core_domain)
-+		return 0;
-+
-+	/*
-+	 * The EMC devices are a special case because we have a protection
-+	 * from non-EMC drivers getting clock handle before EMC driver is
-+	 * fully initialized.  The goal of the protection is to prevent
-+	 * devfreq driver from getting failures if it will try to change
-+	 * EMC clock rate until clock is fully initialized.  The EMC drivers
-+	 * will initialize the performance state by themselves.
-+	 */
-+	if (of_device_compatible_match(dev->of_node, tegra_emc_compats))
-+		return 0;
-+
-+	clk = clk_get(dev, NULL);
-+	if (IS_ERR(clk)) {
-+		dev_err(&genpd->dev, "failed to get clk of %s: %pe\n",
-+			dev_name(dev), clk);
-+		return PTR_ERR(clk);
-+	}
-+
-+	rate = clk_get_rate(clk);
-+	if (!rate) {
-+		dev_err(&genpd->dev, "failed to get clk rate of %s\n",
-+			dev_name(dev));
-+		ret = -EINVAL;
-+		goto put_clk;
-+	}
-+
-+	if (of_machine_is_compatible("nvidia,tegra20"))
-+		hw_version = BIT(tegra_sku_info.soc_process_id);
-+	else
-+		hw_version = BIT(tegra_sku_info.soc_speedo_id);
-+
-+	opp_table = dev_pm_opp_set_supported_hw(dev, &hw_version, 1);
-+	if (IS_ERR(opp_table)) {
-+		dev_err(&genpd->dev, "failed to set OPP supported HW for %s: %d\n",
-+			dev_name(dev), ret);
-+		ret = PTR_ERR(opp_table);
-+		goto put_clk;
-+	}
-+
-+	ret = dev_pm_opp_of_add_table(dev);
-+	if (ret) {
-+		/* older DTBs that don't have OPPs will get -ENODEV here */
-+		if (ret != -ENODEV)
-+			dev_err(&genpd->dev, "failed to get OPP table of %s: %d\n",
-+				dev_name(dev), ret);
-+		else
-+			ret = 0;
-+
-+		goto put_supported_hw;
-+	}
-+
-+	/* find suitable OPP for the rate */
 +	opp = dev_pm_opp_find_freq_ceil(dev, &rate);
-+
-+	if (opp == ERR_PTR(-ERANGE))
++	if (opp == ERR_PTR(-ERANGE)) {
++		dev_dbg(dev, "failed to find ceil OPP for %luHz\n", rate);
 +		opp = dev_pm_opp_find_freq_floor(dev, &rate);
++	}
 +
 +	if (IS_ERR(opp)) {
-+		dev_err(&genpd->dev, "failed to find OPP for %luHz of %s: %pe\n",
-+			rate, dev_name(dev), opp);
-+		ret = PTR_ERR(opp);
-+		goto remove_dev_table;
++		dev_err(dev, "failed to find OPP for %luHz: %pe\n", rate, opp);
++		return PTR_ERR(opp);
 +	}
 +
-+	if (!list_empty(&genpd->child_links)) {
-+		link = list_first_entry(&genpd->child_links, struct gpd_link,
-+					child_node);
-+		core_genpd = link->parent;
-+	} else {
-+		core_genpd = genpd;
-+	}
-+
-+	pd_opp_table = dev_pm_opp_get_opp_table(&core_genpd->dev);
-+	if (IS_ERR(pd_opp_table)) {
-+		dev_err(&genpd->dev, "failed to get OPP table of %s: %pe\n",
-+			dev_name(&core_genpd->dev), pd_opp_table);
-+		ret = PTR_ERR(pd_opp_table);
-+		goto put_dev_opp;
-+	}
-+
-+	pd_opp = dev_pm_opp_xlate_required_opp(opp_table, pd_opp_table, opp);
-+	if (IS_ERR(pd_opp)) {
-+		dev_err(&genpd->dev,
-+			"failed to xlate required OPP for %luHz of %s: %pe\n",
-+			rate, dev_name(dev), pd_opp);
-+		ret = PTR_ERR(pd_opp);
-+		goto put_pd_opp_table;
-+	}
-+
-+	/*
-+	 * The initialized state will be applied by GENPD core on the first
-+	 * RPM-resume of the device.  This means that drivers don't need to
-+	 * explicitly initialize performance state.
-+	 */
-+	state = pm_genpd_opp_to_performance_state(&core_genpd->dev, pd_opp);
-+	gpd_data->rpm_pstate = state;
-+	dev_pm_opp_put(pd_opp);
-+
-+put_pd_opp_table:
-+	dev_pm_opp_put_opp_table(pd_opp_table);
-+put_dev_opp:
++	pstate = dev_pm_opp_get_required_pstate(opp, 0);
 +	dev_pm_opp_put(opp);
-+remove_dev_table:
-+	dev_pm_opp_of_remove_table(dev);
-+put_supported_hw:
-+	dev_pm_opp_put_supported_hw(opp_table);
-+put_clk:
-+	clk_put(clk);
++
++	return dev_pm_genpd_set_performance_state(dev, pstate);
++}
++
++static int tegra_clock_change_notify(struct notifier_block *nb,
++				     unsigned long msg, void *data)
++{
++	struct clk_notifier_data *cnd = data;
++	struct tegra_clk_device *clk_dev;
++	int err = 0;
++
++	clk_dev = container_of(nb, struct tegra_clk_device, clk_nb);
++
++	mutex_lock(&clk_dev->lock);
++	switch (msg) {
++	case PRE_RATE_CHANGE:
++		if (cnd->new_rate > cnd->old_rate)
++			err = tegra_clock_set_pd_state(clk_dev, cnd->new_rate);
++		break;
++
++	case ABORT_RATE_CHANGE:
++		err = tegra_clock_set_pd_state(clk_dev, cnd->old_rate);
++		break;
++
++	case POST_RATE_CHANGE:
++		if (cnd->new_rate < cnd->old_rate)
++			err = tegra_clock_set_pd_state(clk_dev, cnd->new_rate);
++		break;
++
++	default:
++		break;
++	}
++	mutex_unlock(&clk_dev->lock);
++
++	return notifier_from_errno(err);
++}
++
++static int tegra_clock_sync_pd_state(struct tegra_clk_device *clk_dev)
++{
++	unsigned long rate;
++	int ret = 0;
++
++	mutex_lock(&clk_dev->lock);
++
++	if (!pm_runtime_status_suspended(clk_dev->dev)) {
++		rate = clk_hw_get_rate(clk_dev->hw);
++		ret = tegra_clock_set_pd_state(clk_dev, rate);
++	}
++
++	mutex_unlock(&clk_dev->lock);
 +
 +	return ret;
 +}
 +
- /*
-  * TODO Figure out a way to call this with the struct tegra_pmc * passed in.
-  * This currently doesn't work because readx_poll_timeout() can only operate
-@@ -1238,6 +1383,7 @@ static int tegra_powergate_add(struct tegra_pmc *pmc, struct device_node *np)
++static int tegra_clock_probe(struct platform_device *pdev)
++{
++	struct tegra_clk_device *clk_dev;
++	struct device *dev = &pdev->dev;
++	struct clk *clk;
++	int err;
++
++	if (!dev->pm_domain)
++		return -EINVAL;
++
++	clk_dev = devm_kzalloc(dev, sizeof(*clk_dev), GFP_KERNEL);
++	if (!clk_dev)
++		return -ENOMEM;
++
++	clk = devm_clk_get(dev, NULL);
++	if (IS_ERR(clk))
++		return PTR_ERR(clk);
++
++	clk_dev->dev = dev;
++	clk_dev->hw = __clk_get_hw(clk);
++	clk_dev->clk_nb.notifier_call = tegra_clock_change_notify;
++	mutex_init(&clk_dev->lock);
++
++	platform_set_drvdata(pdev, clk_dev);
++
++	err = devm_tegra_core_dev_init_opp_table_simple(dev);
++	if (err)
++		return err;
++
++	err = clk_notifier_register(clk, &clk_dev->clk_nb);
++	if (err) {
++		dev_err(dev, "failed to register clk notifier: %d\n", err);
++		return err;
++	}
++
++	/*
++	 * The driver is attaching to a potentially active/resumed clock, hence
++	 * we need to sync the power domain performance state in a accordance to
++	 * the clock rate if clock is resumed.
++	 */
++	err = tegra_clock_sync_pd_state(clk_dev);
++	if (err)
++		goto unreg_clk;
++
++	return 0;
++
++unreg_clk:
++	clk_notifier_unregister(clk, &clk_dev->clk_nb);
++
++	return err;
++}
++
++static __maybe_unused int tegra_clock_pm_suspend(struct device *dev)
++{
++	struct tegra_clk_device *clk_dev = dev_get_drvdata(dev);
++
++	/*
++	 * Power management of the clock is entangled with the Tegra PMC
++	 * GENPD because PMC driver enables/disables clocks for toggling
++	 * of the PD's on/off state.
++	 *
++	 * The PMC GENPD is resumed in NOIRQ phase, before RPM of the clocks
++	 * becomes available, hence PMC can't use clocks at the early resume
++	 * phase if RPM is involved. For example when 3d clock is enabled,
++	 * it may enable the parent PLL clock that needs to be RPM-resumed.
++	 *
++	 * Secondly, the PLL clocks may be enabled by the low level suspend
++	 * code, so we need to assume that PLL is in enabled state during
++	 * suspend.
++	 *
++	 * We will keep PLLs and system clock resumed during suspend time.
++	 * All PLLs on all SoCs are low power and system clock is always-on,
++	 * so practically not much is changed here.
++	 */
++
++	return clk_prepare(clk_dev->hw->clk);
++}
++
++static __maybe_unused int tegra_clock_pm_resume(struct device *dev)
++{
++	struct tegra_clk_device *clk_dev = dev_get_drvdata(dev);
++
++	clk_unprepare(clk_dev->hw->clk);
++
++	return 0;
++}
++
++static void tegra_clock_shutdown(struct platform_device *pdev)
++{
++	struct tegra_clk_device *clk_dev = platform_get_drvdata(pdev);
++
++	clk_prepare(clk_dev->hw->clk);
++}
++
++static const struct dev_pm_ops tegra_clock_pm = {
++	SET_SYSTEM_SLEEP_PM_OPS(tegra_clock_pm_suspend,
++				tegra_clock_pm_resume)
++};
++
++static const struct of_device_id tegra_clock_match[] = {
++	{ .compatible = "nvidia,tegra20-sclk" },
++	{ .compatible = "nvidia,tegra30-sclk" },
++	{ .compatible = "nvidia,tegra30-pllc" },
++	{ .compatible = "nvidia,tegra30-plle" },
++	{ .compatible = "nvidia,tegra30-pllm" },
++	{ }
++};
++
++static struct platform_driver tegra_clock_driver = {
++	.driver = {
++		.name = "tegra-clock",
++		.of_match_table = tegra_clock_match,
++		.pm = &tegra_clock_pm,
++		.suppress_bind_attrs = true,
++	},
++	.probe = tegra_clock_probe,
++	.shutdown = tegra_clock_shutdown,
++};
++builtin_platform_driver(tegra_clock_driver);
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index eaa079c177c3..131efc53659d 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -1914,7 +1914,7 @@ static struct clk *_tegra_clk_register_pll(struct tegra_clk_pll *pll,
+ 	/* Data in .init is copied by clk_register(), so stack variable OK */
+ 	pll->hw.init = &init;
  
- 	pg->id = id;
- 	pg->genpd.name = np->name;
-+	pg->genpd.attach_dev = tegra_pmc_pd_attach_dev;
- 	pg->genpd.power_off = tegra_genpd_power_off;
- 	pg->genpd.power_on = tegra_genpd_power_on;
- 	pg->pmc = pmc;
-@@ -1354,6 +1500,7 @@ static int tegra_pmc_core_pd_add(struct tegra_pmc *pmc, struct device_node *np)
- 		return -ENOMEM;
+-	return clk_register(NULL, &pll->hw);
++	return tegra_clk_register(&pll->hw);
+ }
  
- 	genpd->name = np->name;
-+	genpd->attach_dev = tegra_pmc_pd_attach_dev;
- 	genpd->set_performance_state = tegra_pmc_core_pd_set_performance_state;
- 	genpd->opp_to_performance_state = tegra_pmc_core_pd_opp_to_performance_state;
+ struct clk *tegra_clk_register_pll(const char *name, const char *parent_name,
+diff --git a/drivers/clk/tegra/clk-super.c b/drivers/clk/tegra/clk-super.c
+index 6099c6e9acd4..d1af4817051e 100644
+--- a/drivers/clk/tegra/clk-super.c
++++ b/drivers/clk/tegra/clk-super.c
+@@ -226,7 +226,7 @@ struct clk *tegra_clk_register_super_mux(const char *name,
+ 	/* Data in .init is copied by clk_register(), so stack variable OK */
+ 	super->hw.init = &init;
  
+-	clk = clk_register(NULL, &super->hw);
++	clk = tegra_clk_register(&super->hw);
+ 	if (IS_ERR(clk))
+ 		kfree(super);
+ 
+diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
+index 3664593a5ba4..cf92c0f4db61 100644
+--- a/drivers/clk/tegra/clk-tegra20.c
++++ b/drivers/clk/tegra/clk-tegra20.c
+@@ -710,13 +710,6 @@ static void tegra20_super_clk_init(void)
+ 			      NULL);
+ 	clks[TEGRA20_CLK_CCLK] = clk;
+ 
+-	/* SCLK */
+-	clk = tegra_clk_register_super_mux("sclk", sclk_parents,
+-			      ARRAY_SIZE(sclk_parents),
+-			      CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
+-			      clk_base + SCLK_BURST_POLICY, 0, 4, 0, 0, NULL);
+-	clks[TEGRA20_CLK_SCLK] = clk;
+-
+ 	/* twd */
+ 	clk = clk_register_fixed_factor(NULL, "twd", "cclk", 0, 1, 4);
+ 	clks[TEGRA20_CLK_TWD] = clk;
+@@ -1146,13 +1139,39 @@ static void __init tegra20_clock_init(struct device_node *np)
+ 	tegra20_periph_clk_init();
+ 	tegra20_audio_clk_init();
+ 
+-	tegra_init_dup_clks(tegra_clk_duplicates, clks, TEGRA20_CLK_CLK_MAX);
+-
+ 	tegra_add_of_provider(np, tegra20_clk_src_onecell_get);
+-	tegra_register_devclks(devclks, ARRAY_SIZE(devclks));
+ 
+ 	tegra_clk_apply_init_table = tegra20_clock_apply_init_table;
+ 
+ 	tegra_cpu_car_ops = &tegra20_cpu_car_ops;
+ }
+ CLK_OF_DECLARE(tegra20, "nvidia,tegra20-car", tegra20_clock_init);
++
++/*
++ * Clocks that use runtime PM can't be created at the CLK_OF_DECLARE
++ * stage because drivers base isn't initialized yet, and thus platform
++ * devices can't be created for the clocks.  Hence we need to split the
++ * registration of the clocks into two phases.  The first phase registers
++ * essential clocks which don't require RPM and are actually used during
++ * early boot.  The second phase registers clocks which use RPM and this
++ * is done when device drivers core API is ready.
++ */
++static int __init tegra20_init_runtime_pm_clocks(void)
++{
++	struct clk *clk;
++
++	if (!of_machine_is_compatible("nvidia,tegra20"))
++		return 0;
++
++	clk = tegra_clk_register_super_mux("sclk", sclk_parents,
++			      ARRAY_SIZE(sclk_parents),
++			      CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
++			      clk_base + SCLK_BURST_POLICY, 0, 4, 0, 0, NULL);
++	clks[TEGRA20_CLK_SCLK] = clk;
++
++	tegra_init_dup_clks(tegra_clk_duplicates, clks, TEGRA20_CLK_CLK_MAX);
++	tegra_register_devclks(devclks, ARRAY_SIZE(devclks));
++
++	return 0;
++}
++postcore_initcall_sync(tegra20_init_runtime_pm_clocks);
+diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
+index 64121bc66d85..a8ca313f3c6f 100644
+--- a/drivers/clk/tegra/clk-tegra30.c
++++ b/drivers/clk/tegra/clk-tegra30.c
+@@ -812,11 +812,6 @@ static void __init tegra30_pll_init(void)
+ {
+ 	struct clk *clk;
+ 
+-	/* PLLC */
+-	clk = tegra_clk_register_pll("pll_c", "pll_ref", clk_base, pmc_base, 0,
+-				     &pll_c_params, NULL);
+-	clks[TEGRA30_CLK_PLL_C] = clk;
+-
+ 	/* PLLC_OUT1 */
+ 	clk = tegra_clk_register_divider("pll_c_out1_div", "pll_c",
+ 				clk_base + PLLC_OUT, 0, TEGRA_DIVIDER_ROUND_UP,
+@@ -826,11 +821,6 @@ static void __init tegra30_pll_init(void)
+ 				0, NULL);
+ 	clks[TEGRA30_CLK_PLL_C_OUT1] = clk;
+ 
+-	/* PLLM */
+-	clk = tegra_clk_register_pll("pll_m", "pll_ref", clk_base, pmc_base,
+-			    CLK_SET_RATE_GATE, &pll_m_params, NULL);
+-	clks[TEGRA30_CLK_PLL_M] = clk;
+-
+ 	/* PLLM_OUT1 */
+ 	clk = tegra_clk_register_divider("pll_m_out1_div", "pll_m",
+ 				clk_base + PLLM_OUT, 0, TEGRA_DIVIDER_ROUND_UP,
+@@ -880,9 +870,6 @@ static void __init tegra30_pll_init(void)
+ 			       ARRAY_SIZE(pll_e_parents),
+ 			       CLK_SET_RATE_NO_REPARENT,
+ 			       clk_base + PLLE_AUX, 2, 1, 0, NULL);
+-	clk = tegra_clk_register_plle("pll_e", "pll_e_mux", clk_base, pmc_base,
+-			     CLK_GET_RATE_NOCACHE, &pll_e_params, NULL);
+-	clks[TEGRA30_CLK_PLL_E] = clk;
+ }
+ 
+ static const char *cclk_g_parents[] = { "clk_m", "pll_c", "clk_32k", "pll_m",
+@@ -971,14 +958,6 @@ static void __init tegra30_super_clk_init(void)
+ 			      NULL);
+ 	clks[TEGRA30_CLK_CCLK_LP] = clk;
+ 
+-	/* SCLK */
+-	clk = tegra_clk_register_super_mux("sclk", sclk_parents,
+-				  ARRAY_SIZE(sclk_parents),
+-				  CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
+-				  clk_base + SCLK_BURST_POLICY,
+-				  0, 4, 0, 0, NULL);
+-	clks[TEGRA30_CLK_SCLK] = clk;
+-
+ 	/* twd */
+ 	clk = clk_register_fixed_factor(NULL, "twd", "cclk_g",
+ 					CLK_SET_RATE_PARENT, 1, 2);
+@@ -1354,13 +1333,56 @@ static void __init tegra30_clock_init(struct device_node *np)
+ 			     tegra30_audio_plls,
+ 			     ARRAY_SIZE(tegra30_audio_plls), 24000000);
+ 
+-	tegra_init_dup_clks(tegra_clk_duplicates, clks, TEGRA30_CLK_CLK_MAX);
+-
+ 	tegra_add_of_provider(np, tegra30_clk_src_onecell_get);
+-	tegra_register_devclks(devclks, ARRAY_SIZE(devclks));
+ 
+ 	tegra_clk_apply_init_table = tegra30_clock_apply_init_table;
+ 
+ 	tegra_cpu_car_ops = &tegra30_cpu_car_ops;
+ }
+ CLK_OF_DECLARE(tegra30, "nvidia,tegra30-car", tegra30_clock_init);
++
++/*
++ * Clocks that use runtime PM can't be created at the CLK_OF_DECLARE
++ * stage because drivers base isn't initialized yet, and thus platform
++ * devices can't be created for the clocks.  Hence we need to split the
++ * registration of the clocks into two phases.  The first phase registers
++ * essential clocks which don't require RPM and are actually used during
++ * early boot.  The second phase registers clocks which use RPM and this
++ * is done when device drivers core API is ready.
++ */
++static int __init tegra30_init_runtime_pm_clocks(void)
++{
++	struct clk *clk;
++
++	if (!of_machine_is_compatible("nvidia,tegra30"))
++		return 0;
++
++	/* PLLC */
++	clk = tegra_clk_register_pll("pll_c", "pll_ref", clk_base, pmc_base, 0,
++				     &pll_c_params, NULL);
++	clks[TEGRA30_CLK_PLL_C] = clk;
++
++	/* PLLE */
++	clk = tegra_clk_register_plle("pll_e", "pll_e_mux", clk_base, pmc_base,
++				      CLK_GET_RATE_NOCACHE, &pll_e_params, NULL);
++	clks[TEGRA30_CLK_PLL_E] = clk;
++
++	/* PLLM */
++	clk = tegra_clk_register_pll("pll_m", "pll_ref", clk_base, pmc_base,
++				     CLK_SET_RATE_GATE, &pll_m_params, NULL);
++	clks[TEGRA30_CLK_PLL_M] = clk;
++
++	/* SCLK */
++	clk = tegra_clk_register_super_mux("sclk", sclk_parents,
++					   ARRAY_SIZE(sclk_parents),
++					   CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
++					   clk_base + SCLK_BURST_POLICY,
++					   0, 4, 0, 0, NULL);
++	clks[TEGRA30_CLK_SCLK] = clk;
++
++	tegra_init_dup_clks(tegra_clk_duplicates, clks, TEGRA30_CLK_CLK_MAX);
++	tegra_register_devclks(devclks, ARRAY_SIZE(devclks));
++
++	return 0;
++}
++postcore_initcall_sync(tegra30_init_runtime_pm_clocks);
+diff --git a/drivers/clk/tegra/clk.c b/drivers/clk/tegra/clk.c
+index f6cdce441cf7..dda27dc14993 100644
+--- a/drivers/clk/tegra/clk.c
++++ b/drivers/clk/tegra/clk.c
+@@ -9,14 +9,19 @@
+ #include <linux/delay.h>
+ #include <linux/io.h>
+ #include <linux/of.h>
++#include <linux/of_device.h>
+ #include <linux/clk/tegra.h>
++#include <linux/platform_device.h>
++#include <linux/pm_runtime.h>
+ #include <linux/reset-controller.h>
++#include <linux/string.h>
+ 
+ #include <soc/tegra/fuse.h>
+ 
+ #include "clk.h"
+ 
+ /* Global data of Tegra CPU CAR ops */
++static struct device_node *tegra_car_np;
+ static struct tegra_cpu_car_ops dummy_car_ops;
+ struct tegra_cpu_car_ops *tegra_cpu_car_ops = &dummy_car_ops;
+ 
+@@ -320,6 +325,8 @@ void __init tegra_add_of_provider(struct device_node *np,
+ {
+ 	int i;
+ 
++	tegra_car_np = np;
++
+ 	for (i = 0; i < clk_num; i++) {
+ 		if (IS_ERR(clks[i])) {
+ 			pr_err
+@@ -372,6 +379,65 @@ struct clk ** __init tegra_lookup_dt_id(int clk_id,
+ 		return NULL;
+ }
+ 
++static struct device_node *tegra_clk_get_of_node(struct clk_hw *hw)
++{
++	struct device_node *np, *root;
++
++	if (!tegra_car_np)
++		return NULL;
++
++	root = of_get_child_by_name(tegra_car_np, "tegra-clocks");
++	if (!root)
++		return NULL;
++
++	for_each_child_of_node(root, np) {
++		if (strcmp(np->name, hw->init->name))
++			continue;
++
++		if (!of_device_is_compatible(np, "nvidia,tegra-clock"))
++			continue;
++
++		return np;
++	}
++
++	of_node_put(root);
++
++	return NULL;
++}
++
++struct clk *tegra_clk_register(struct clk_hw *hw)
++{
++	struct platform_device *pdev;
++	struct device *dev = NULL;
++	struct device_node *np;
++	const char *dev_name;
++
++	np = tegra_clk_get_of_node(hw);
++
++	if (!of_device_is_available(np))
++		goto reg_clk;
++
++	dev_name = kasprintf(GFP_KERNEL, "tegra_clk_%s", hw->init->name);
++	if (!dev_name) {
++		of_node_put(np);
++		goto reg_clk;
++	}
++
++	pdev = of_platform_device_create(np, dev_name, NULL);
++	if (!pdev) {
++		pr_err("%s: failed to create device for %pOF\n", __func__, np);
++		kfree(dev_name);
++		of_node_put(np);
++		goto reg_clk;
++	}
++
++	dev = &pdev->dev;
++	pm_runtime_enable(dev);
++
++reg_clk:
++	return clk_register(dev, hw);
++}
++
+ tegra_clk_apply_init_table_func tegra_clk_apply_init_table;
+ 
+ static int __init tegra_clocks_apply_init_table(void)
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index 0c3ba0ccce1a..4fab4aa9fa31 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -927,4 +927,6 @@ struct clk *tegra20_clk_register_emc(void __iomem *ioaddr, bool low_jitter);
+ struct clk *tegra210_clk_register_emc(struct device_node *np,
+ 				      void __iomem *regs);
+ 
++struct clk *tegra_clk_register(struct clk_hw *hw);
++
+ #endif /* TEGRA_CLK_H */
 -- 
 2.30.2
 
