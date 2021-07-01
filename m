@@ -2,130 +2,192 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 134FFC11F64
-	for <linux-tegra@archiver.kernel.org>; Thu,  1 Jul 2021 14:59:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20A23C11F69
+	for <linux-tegra@archiver.kernel.org>; Thu,  1 Jul 2021 15:54:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E96796128C
-	for <linux-tegra@archiver.kernel.org>; Thu,  1 Jul 2021 14:59:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0AF1B6141A
+	for <linux-tegra@archiver.kernel.org>; Thu,  1 Jul 2021 15:54:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233096AbhGAPCK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 1 Jul 2021 11:02:10 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:46475 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233023AbhGAPCK (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 1 Jul 2021 11:02:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1625151579;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=IVh85kthu0SpW7UY6smgM11I1yNN5lgiNNeNgndC7x4=;
-        b=FnbVaaEUtTxLffeLXdycmyQ0IMLiUFqROzWEVmzdb8ZThmSsN05G/3SIStX9pBi4kQx5FE
-        HbXlB6U82rD/wnlpmqZ5yzou7K232drvaT0gGQP4M9R1avcz5nskClvW9UVWRDSQPTxbWp
-        m9ZWft0A+JLRUQBHPqB7wD1YGwsk5G4=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-228-AoqJI8qwPySVWh8RYldEVA-1; Thu, 01 Jul 2021 10:59:38 -0400
-X-MC-Unique: AoqJI8qwPySVWh8RYldEVA-1
-Received: by mail-wr1-f69.google.com with SMTP id h104-20020adf90710000b029010de8455a3aso2669515wrh.12
-        for <linux-tegra@vger.kernel.org>; Thu, 01 Jul 2021 07:59:38 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=IVh85kthu0SpW7UY6smgM11I1yNN5lgiNNeNgndC7x4=;
-        b=eVCVdDmNRNlRCkr8EEERBXiVhSyCSpTbEGaOu8MQV4ijRb3DuS5Hzw3GTwperoz9Jd
-         cOfg/I8Cxe94g2VvTvDBccbgSnV3KV5/pAobWFZF+GYKJv+D25z0tzzXkev6Z3/+C1LB
-         DHsmc40VX13P+6oVXOZ33jH9cjrH1sl8g4BqhEGxqqHpCFuWxr0UYnxwM30Y/oin8ZmZ
-         1F3pY2u6oNgNqSRkcymWf25fK57Q6DjJCX3pN+PgTO0DUd63i9h0CTxMSLJKN47zPOsO
-         JCWyQ2OYdybfI3UJM9b34ZV0tGZk8pw7TYJoyRlzJLiEG4MAWuJzXUfqHV1bLH6oUIdI
-         CfYA==
-X-Gm-Message-State: AOAM5323NYo+Z3xCrn0vPhGwBFmJ4OYJHSAWJDyb4WbLLROHPsRwlxMu
-        9MuPLYe/gsQwPNKAIH+j0o5V+wWaBFdKxBtzzRcJPl8tikWe6Esob/o8ZRzp2lDCYbkOtFwFNfP
-        nNRynJJhDb6bN0aZXfkB9EgYDk2OvOWHxCihb+mmWs1pIN5Xs5+FAYDAyeotVRsN/VvNkLW5DOQ
-        ==
-X-Received: by 2002:a7b:c39a:: with SMTP id s26mr123465wmj.115.1625151577108;
-        Thu, 01 Jul 2021 07:59:37 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJyeHU3WCUYY7UnaCN/G0uYLtwdgKJ2wXf9QG99tZjlIEUdpQJOc/y9rZPsTlaSCWiCikljylg==
-X-Received: by 2002:a7b:c39a:: with SMTP id s26mr123429wmj.115.1625151576888;
-        Thu, 01 Jul 2021 07:59:36 -0700 (PDT)
-Received: from [192.168.1.101] ([92.176.231.106])
-        by smtp.gmail.com with ESMTPSA id n19sm277863wms.4.2021.07.01.07.59.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 01 Jul 2021 07:59:36 -0700 (PDT)
-Subject: Re: [PATCH v2] PCI: rockchip: Avoid accessing PCIe registers with
- clocks gated
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Peter Robinson <pbrobinson@gmail.com>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Rob Herring <robh@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        Michal Simek <michal.simek@xilinx.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-tegra@vger.kernel.org
-References: <20210701135949.GA51123@bjorn-Precision-5520>
-From:   Javier Martinez Canillas <javierm@redhat.com>
-Message-ID: <747df123-0aa0-7cb7-9fb3-f13c849894e5@redhat.com>
-Date:   Thu, 1 Jul 2021 16:59:35 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        id S233876AbhGAP5V (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 1 Jul 2021 11:57:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55580 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233585AbhGAP5T (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 1 Jul 2021 11:57:19 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id B78246141C;
+        Thu,  1 Jul 2021 15:54:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1625154888;
+        bh=O06CAm7WJ4496cl30laeh/1AvJeU0pg7XZCQUJVmPNI=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=QlSj3zmd+DKrGqUvD72miBdMUZIXTb216PgVdkwcPqnvLsMr867mXlEqDq3QnwZ+o
+         Wql2K9G2Vll5l1DyycbEqKM0DGtSU39lyIkdjUgiQgDgjG7FQgJzC8SDIFdEm9xhAx
+         /cSZaF4kge8xK8zZ2YK4jmtvQdud1z14C+9V7SVHkdqJ1McdaF6qj72Rp6GcZfLLBd
+         sgBNRCUF5z0/Q8NYKdTha1V0p6O8IuQSLUCrloWxfH4zSeDPEwQI7TKPj5KwfDfbfQ
+         dxyauCjZ4GtC8vlAnNaRkDGazuU2kcCQJOtyPBRncRnGFg+fwanYeReKmO1kdnZrHC
+         5WjElVD6y/z4A==
+Received: by mail-ed1-f45.google.com with SMTP id t3so9078714edt.12;
+        Thu, 01 Jul 2021 08:54:48 -0700 (PDT)
+X-Gm-Message-State: AOAM530KU7gRY7sryMQqoLck0aZAab2Xcmng5anq5ETrgf/KI/b9Yu1H
+        tvYMjP5cyamfkwlcVOjgU9mRs2KTb6ZufTTpkg==
+X-Google-Smtp-Source: ABdhPJyDGAPIxTTNb6EWHJ2bVQwwFnuQfTQVDIiAx37Nf4MM2e0CE5x4dJwLmA9fI5C6HgKQd8YK6NB1MjuOVMKZnSU=
+X-Received: by 2002:aa7:c54b:: with SMTP id s11mr627155edr.373.1625154887254;
+ Thu, 01 Jul 2021 08:54:47 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20210701135949.GA51123@bjorn-Precision-5520>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20210625235532.19575-1-dipenp@nvidia.com> <20210625235532.19575-5-dipenp@nvidia.com>
+In-Reply-To: <20210625235532.19575-5-dipenp@nvidia.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Thu, 1 Jul 2021 09:54:35 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqLUc=_oyutBQ0rQP7uGhwh2dQeOng0ZEAfgOdqjGbiwOA@mail.gmail.com>
+Message-ID: <CAL_JsqLUc=_oyutBQ0rQP7uGhwh2dQeOng0ZEAfgOdqjGbiwOA@mail.gmail.com>
+Subject: Re: [RFC 04/11] dt-bindings: Add HTE bindings
+To:     Dipen Patel <dipenp@nvidia.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        warthog618@gmail.com, devicetree@vger.kernel.org,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 7/1/21 3:59 PM, Bjorn Helgaas wrote:
+On Fri, Jun 25, 2021 at 5:48 PM Dipen Patel <dipenp@nvidia.com> wrote:
+>
+> Introduces HTE devicetree binding details for the HTE subsystem. It
+> includes examples for the consumers, binding details for the providers
+> and specific binding details for the Tegra194 based HTE providers.
+>
+> Signed-off-by: Dipen Patel <dipenp@nvidia.com>
+> ---
+>  .../devicetree/bindings/hte/hte-consumer.yaml | 47 +++++++++++
+>  .../devicetree/bindings/hte/hte.yaml          | 34 ++++++++
+>  .../bindings/hte/nvidia,tegra194-hte.yaml     | 83 +++++++++++++++++++
+>  3 files changed, 164 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/hte/hte-consumer.yaml
+>  create mode 100644 Documentation/devicetree/bindings/hte/hte.yaml
+>  create mode 100644 Documentation/devicetree/bindings/hte/nvidia,tegra194-hte.yaml
+>
+> diff --git a/Documentation/devicetree/bindings/hte/hte-consumer.yaml b/Documentation/devicetree/bindings/hte/hte-consumer.yaml
+> new file mode 100644
+> index 000000000000..79ae1f7d5185
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/hte/hte-consumer.yaml
+> @@ -0,0 +1,47 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/hte/hte-consumer.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: HTE Consumer Device Tree Bindings
+> +
+> +maintainers:
+> +  - Dipen Patel <dipenp@nvidia.com>
+> +
+> +description: |
+> +  HTE properties should be named "htes". The exact meaning of each htes
+> +  property must be documented in the device tree binding for each device.
+> +  An optional property "hte-names" may contain a list of strings to label
+> +  each of the HTE devices listed in the "htes" property.
+> +
+> +  The "hte-names" property if specified is used to map the name of the HTE
+> +  device requested by the devm_of_hte_request_ts() or of_hte_request_ts
+> +  call to an index into the list given by the "htes" property.
+> +
+> +properties:
+> +  htes:
+> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> +    description:
+> +      The list of HTE provider phandle. The provider must document the number
+> +      of cell that must be passed in this property along with phandle.
+> +
+> +  hte-names:
+> +    $ref: /schemas/types.yaml#/definitions/string-array
+> +    description:
+> +      An optional string property.
+> +
+> +required:
+> +  - "htes"
+> +
+> +dependencies:
+> +  hte-names: [ htes ]
+> +
+> +additionalProperties: true
+> +
+> +examples:
+> +  - |
+> +    hte_irq_consumer {
+> +              htes = <&tegra_hte_lic 0x19>;
+> +              hte-names = "hte-irq";
+> +    };
+> diff --git a/Documentation/devicetree/bindings/hte/hte.yaml b/Documentation/devicetree/bindings/hte/hte.yaml
+> new file mode 100644
+> index 000000000000..e285c38f1a05
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/hte/hte.yaml
+> @@ -0,0 +1,34 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/hte/hte.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: HTE providers
+> +
+> +maintainers:
+> +  - Dipen Patel <dipenp@nvidia.com>
+> +
+> +properties:
+> +  $nodename:
+> +    pattern: "^hte(@.*|-[0-9a-f])*$"
+> +
+> +  "#hte-cells":
+> +    description:
+> +      Number of cells in a HTE specifier.
+> +
+> +required:
+> +  - "#hte-cells"
+> +
+> +additionalProperties: true
+> +
+> +examples:
+> +  - |
+> +    tegra_hte_aon: hte@c1e0000 {
+> +              compatible = "nvidia,tegra194-gte-aon";
+> +              reg = <0xc1e0000 0x10000>;
+> +              interrupts = <0 13 0x4>;
+> +              int-threshold = <1>;
+> +              slices = <3>;
+> +              #hte-cells = <1>;
+> +    };
+> \ No newline at end of file
+> diff --git a/Documentation/devicetree/bindings/hte/nvidia,tegra194-hte.yaml b/Documentation/devicetree/bindings/hte/nvidia,tegra194-hte.yaml
+> new file mode 100644
+> index 000000000000..bb76cc1971f0
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/hte/nvidia,tegra194-hte.yaml
+> @@ -0,0 +1,83 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/hte/nvidia,tegra194-hte.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Tegra194 on chip generic hardware timestamping engine (HTE)
 
-[snip]
+I had to read until here to know what HTE is.
 
->> The IRQ handler is not called when unregistered, but it is called
->> when another handler for the shared IRQ is unregistered. In this
->> particular driver, both a "pcie-sys" and "pcie-client" handlers are
->> registered, then an error leads to "pcie-sys" being unregistered and
->> the handler for "pcie-client" being called.
-> 
-> Is this really true?  I think that would mean CONFIG_DEBUG_SHIRQ would
-> not find this kind of bug unless we actually registered two or more
-> handlers for the shared IRQ, but it's still a bug even only one
-> handler is registered.
-> 
-> Looking at __free_irq() [1], my impression is that "action" is what
-> we're removing and action->handler() is the IRQ handler we call when
-> CONFIG_DEBUG_SHIRQ, so it doesn't look like it's calling the remaining
-> handlers after removing one of them.
-> 
+Is there another example of this type of h/w that this should be a
+generic binding?
 
-Oh, you are completely right. I wrongly assumed that it was for the other
-registered IRQ handlers but reading the source is clearly how you say it.
-
-I now wonder why when debugging this I saw that the "pcie-client" handler
-was called when "pcie-sys" was unregistered...
-
-But anyways, you are correct and I'm OK with the text you shared.
-
-Best regards,
--- 
-Javier Martinez Canillas
-Software Engineer
-New Platform Technologies Enablement team
-RHEL Engineering
-
+Rob
