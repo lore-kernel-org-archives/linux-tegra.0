@@ -5,57 +5,57 @@ X-Spam-Level:
 X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E879C11F86
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FA74C11F6E
 	for <linux-tegra@archiver.kernel.org>; Thu,  1 Jul 2021 23:29:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E79D0613F4
-	for <linux-tegra@archiver.kernel.org>; Thu,  1 Jul 2021 23:29:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 387D3613BD
+	for <linux-tegra@archiver.kernel.org>; Thu,  1 Jul 2021 23:29:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234621AbhGAXba (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 1 Jul 2021 19:31:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40374 "EHLO
+        id S234627AbhGAXbb (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 1 Jul 2021 19:31:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40456 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234482AbhGAXbT (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 1 Jul 2021 19:31:19 -0400
-Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89CB6C0613DB;
-        Thu,  1 Jul 2021 16:28:46 -0700 (PDT)
-Received: by mail-lj1-x234.google.com with SMTP id p24so10843187ljj.1;
-        Thu, 01 Jul 2021 16:28:46 -0700 (PDT)
+        with ESMTP id S234565AbhGAXbX (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 1 Jul 2021 19:31:23 -0400
+Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FB26C0613E4;
+        Thu,  1 Jul 2021 16:28:50 -0700 (PDT)
+Received: by mail-lf1-x12d.google.com with SMTP id a15so14804745lfr.6;
+        Thu, 01 Jul 2021 16:28:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=pqOHj6UrFfgcQU2vnkicKWRHxHORBQtzS7/4pVKTGxE=;
-        b=p/S/evnlDY8Y47RxMRWl4G0g+WA6F+DXjVn+WNg3RJdi6Ow/eh4kYoBBZoNpyXPWsp
-         ZIiCMx7znWdNULpZzwdojijgI2r5GhpBx5Vpy9tSNFZDzNOB/YHS4NGl13xD9oxSnpmp
-         pMTDe0cwOd4Jspep1s6qTZUFUdboSBQLl/Hn2Mtvxo/7bC+vf/1RN1//AM8tOLhO39HH
-         vh/wSrYs0X26J8eaV1lLnCeoYwNTZNW9jVwOJw+M+SnqfR1ZkHEN69LSO7D0aUAliDSm
-         wAwcG0h9a1Lgtn8gbgxsvn3Efqe3lKv50g6ME383GUuBv1jvuUPUwjS6WTmrL6RGxw6C
-         EbjQ==
+        bh=8MImUidm1gDekFfDfoWTVcFhn/N8F2Rqq9dMc3ipEl8=;
+        b=chyc1ShOo454Rdk0BIabkeO4dsmyA1uVDbqeeJG1RI40lA11s9nTQHnc80N4v8QoYG
+         NDbkYKETGm+tDmjELJu7qhUCaClm4qOkWn+sVUu29AEZRazYYmVzLpvZOZzapvDovwrF
+         yB5NjfW7YOOwN3tA674lTRHOgoL9Bh1SRTo9HrDEcSI4sDeJZ37KtTFHnPW2XbolyACH
+         Vaz/Gs6YN3FFnhFSXxYoo6O2QXfu3ggLZbpSCDO7tB91kiO3Q1hYLAraaF3CHZLp/Dzh
+         vJTJw91AlyNhyReCD+/UF2cCNt9NSLzJQsxmFY3ZDa5z6Whn+BECHdxSpv8m2F8FUAWC
+         FmZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=pqOHj6UrFfgcQU2vnkicKWRHxHORBQtzS7/4pVKTGxE=;
-        b=L2w4pvNarqUdBt1gXfKEA+txpNFToxJjbsSA0HUnSMatgy2liIOgABIl08soGzKLzg
-         IDOn27LCKHu0Ahx3QPhK5l/HEjdMxSRBvnGOKyKdHUEaVBx2vEytCIsYLnpeAEBqWNBg
-         7Hx6rxLzf3Ri87dZGraUgho2e3QJm2duCH10Bt2hhJ4TO06wDCotL8524XyPra9Dixvi
-         uYYxAmE50IKDYoLqxAdRclAydmEUjaXvM7WwERYQ6VP3WORvn/8/pN0pBwFuA8EIdcVs
-         oGDfp86xDLiRd3btoJYBupqz1UVHKNJurucLqLOHT5lWnKLPNb1luXdKTCsXFjlaE4Yo
-         k/RA==
-X-Gm-Message-State: AOAM530cYxYaloGNtC1BMKxRHCQgzRLTp3Nbm2ykU4saKBfWd8qv4Oti
-        rG8RFrvHtsHYD4aF1QvtAvQ=
-X-Google-Smtp-Source: ABdhPJyQcvw0XZ6Z8C/0FdRqZAA7PCaWoycuxhyd4tykJmzWd0PCREHHOhoXVeSHDVNGgM5oyFuodg==
-X-Received: by 2002:a2e:b4d0:: with SMTP id r16mr1601164ljm.114.1625182124972;
-        Thu, 01 Jul 2021 16:28:44 -0700 (PDT)
+        bh=8MImUidm1gDekFfDfoWTVcFhn/N8F2Rqq9dMc3ipEl8=;
+        b=VMhR9bj+dOFSBgfNG7udFV910t1CKjgvyjSnC/aEHoV4z0aJxWy6y0dXcH4DZDTM8B
+         5fa7lVI0gkSq5UTuJRA/qHRigpQQ29hoUgRyOlA37RjSv/KamL8WkfKm+m8S4rXasD8S
+         +Si4c4qSgTaxfHXJip8Fa0u+/4Qgzm58pKmCSev272RaO1es4vpI6Y4u7K+hMOMvYRnR
+         ETcRd2hamIPHEQZTwxWKnepiyTPM7PUoEr2gdDmjC65qVEQ+DY4ERgIeSQlyydFUnLcd
+         jwa2z+QYx7rYnqkSpvcbD0lapIlUbmSyLZYMAj36UrmogxA2TNHfMI+/0rvEJODi7ijs
+         qSXw==
+X-Gm-Message-State: AOAM530tG/DrDMBaMuIWPP5j2m1JmoyVECIjrUGBTzh1ckWjTJwghq6G
+        makneuRW6LrfEw6cwinxiws=
+X-Google-Smtp-Source: ABdhPJzbVdICdIgwhYFT642OtXnYQqajx9dryhBakJCzskRpLR2YBvng2rrZn4iMQL/QJaoiaNY+YQ==
+X-Received: by 2002:ac2:58d8:: with SMTP id u24mr1563434lfo.460.1625182128547;
+        Thu, 01 Jul 2021 16:28:48 -0700 (PDT)
 Received: from localhost.localdomain (94-29-37-113.dynamic.spd-mgts.ru. [94.29.37.113])
-        by smtp.gmail.com with ESMTPSA id s20sm102655lfr.39.2021.07.01.16.28.44
+        by smtp.gmail.com with ESMTPSA id s20sm102655lfr.39.2021.07.01.16.28.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Jul 2021 16:28:44 -0700 (PDT)
+        Thu, 01 Jul 2021 16:28:48 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -65,9 +65,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Peter De Schrijver <pdeschrijver@nvidia.com>
 Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-pm@vger.kernel.org
-Subject: [PATCH v7 25/37] clk: tegra: Remove CLK_IS_CRITICAL flag from fuse clock
-Date:   Fri,  2 Jul 2021 02:27:16 +0300
-Message-Id: <20210701232728.23591-26-digetx@gmail.com>
+Subject: [PATCH v7 31/37] media: dt: bindings: tegra-vde: Document OPP and power domain
+Date:   Fri,  2 Jul 2021 02:27:22 +0300
+Message-Id: <20210701232728.23591-32-digetx@gmail.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210701232728.23591-1-digetx@gmail.com>
 References: <20210701232728.23591-1-digetx@gmail.com>
@@ -77,31 +77,42 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-FUSE driver now takes care of keeping the clock enabled when necessary.
-Remove the CLK_IS_CRITICAL flag from the clock.
+Document new OPP table and power domain properties of the video decoder
+hardware.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/clk/tegra/clk-tegra-periph.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+ .../devicetree/bindings/media/nvidia,tegra-vde.yaml  | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
-index 292d6269daf1..4dcf7f7cb8a0 100644
---- a/drivers/clk/tegra/clk-tegra-periph.c
-+++ b/drivers/clk/tegra/clk-tegra-periph.c
-@@ -777,11 +777,7 @@ static struct tegra_periph_init_data gate_clks[] = {
- 	GATE("ahbdma", "hclk", 33, 0, tegra_clk_ahbdma, 0),
- 	GATE("apbdma", "pclk", 34, 0, tegra_clk_apbdma, 0),
- 	GATE("kbc", "clk_32k", 36, TEGRA_PERIPH_ON_APB | TEGRA_PERIPH_NO_RESET, tegra_clk_kbc, 0),
--	/*
--	 * Critical for RAM re-repair operation, which must occur on resume
--	 * from LP1 system suspend and as part of CCPLEX cluster switching.
--	 */
--	GATE("fuse", "clk_m", 39, TEGRA_PERIPH_ON_APB, tegra_clk_fuse, CLK_IS_CRITICAL),
-+	GATE("fuse", "clk_m", 39, TEGRA_PERIPH_ON_APB, tegra_clk_fuse, 0),
- 	GATE("fuse_burn", "clk_m", 39, TEGRA_PERIPH_ON_APB, tegra_clk_fuse_burn, 0),
- 	GATE("kfuse", "clk_m", 40, TEGRA_PERIPH_ON_APB, tegra_clk_kfuse, 0),
- 	GATE("apbif", "clk_m", 107, TEGRA_PERIPH_ON_APB, tegra_clk_apbif, 0),
+diff --git a/Documentation/devicetree/bindings/media/nvidia,tegra-vde.yaml b/Documentation/devicetree/bindings/media/nvidia,tegra-vde.yaml
+index 3b6c1f031e04..0b7d4d815707 100644
+--- a/Documentation/devicetree/bindings/media/nvidia,tegra-vde.yaml
++++ b/Documentation/devicetree/bindings/media/nvidia,tegra-vde.yaml
+@@ -68,6 +68,16 @@ properties:
+     description:
+       Phandle of the SRAM MMIO node.
+ 
++  operating-points-v2:
++    description:
++      Should contain freqs and voltages and opp-supported-hw property,
++      which is a bitfield indicating SoC speedo or process ID mask.
++
++  power-domains:
++    maxItems: 1
++    description:
++      Phandle to the SoC core power domain.
++
+ required:
+   - compatible
+   - reg
+@@ -104,4 +114,6 @@ examples:
+       reset-names = "vde", "mc";
+       resets = <&rst 61>, <&mem 13>;
+       iommus = <&mem 15>;
++      operating-points-v2 = <&dvfs_opp_table>;
++      power-domains = <&domain>;
+     };
 -- 
 2.30.2
 
