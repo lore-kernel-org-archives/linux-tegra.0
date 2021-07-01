@@ -8,54 +8,54 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A68CC11F84
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE7A2C11F87
 	for <linux-tegra@archiver.kernel.org>; Thu,  1 Jul 2021 23:28:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 80DB56141E
+	by mail.kernel.org (Postfix) with ESMTP id B89B8613F4
 	for <linux-tegra@archiver.kernel.org>; Thu,  1 Jul 2021 23:28:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234595AbhGAXb3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 1 Jul 2021 19:31:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40374 "EHLO
+        id S234608AbhGAXba (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 1 Jul 2021 19:31:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40370 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234195AbhGAXbR (ORCPT
+        with ESMTP id S234467AbhGAXbR (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>); Thu, 1 Jul 2021 19:31:17 -0400
-Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5741C061762;
-        Thu,  1 Jul 2021 16:28:44 -0700 (PDT)
-Received: by mail-lj1-x22a.google.com with SMTP id h6so10779441ljl.8;
-        Thu, 01 Jul 2021 16:28:44 -0700 (PDT)
+Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFAA9C061764;
+        Thu,  1 Jul 2021 16:28:45 -0700 (PDT)
+Received: by mail-lf1-x12e.google.com with SMTP id q18so14797991lfc.7;
+        Thu, 01 Jul 2021 16:28:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=gm3ofSamUdmxAaD1zjMkIrbw5F8DM2MvEznhnJlT0ls=;
-        b=s4x5xOmmj6K4cZR2Q2lEgnBz14QJvZ5gjyzCwVM1RdJdHz93qN5YgTbCLxK8wAwnws
-         WekUfbTI3mbXn9zOK05BuQbbKKBQwj1qOaI0jyS8QrV7hEIIxpJeKcAR/bkLf8MQONS/
-         0X/EkwFk/3I8w+4ML5WjDWFfAJDBTlbMNZltZWtyIeEjbo8jUcL9VSlloe67Ustdbggu
-         VLXFT/BY+A5djLPB2jTUvtMRVuwwkiA4NOWvNGjdqP+YHOwB9+0twkFWzzFCwVmM2ZLK
-         nNZmbDVideLXWfckVuH2071g6xJY1LLTtSe3vc29w0YxArLrE8r/caYjin8BRI+kS+30
-         6ypg==
+        bh=uA7sTyUkq0alTs4vrb0YXe1CZtnJjoECt5LclMuFlrk=;
+        b=mco3V7cGIfY68+nLUeX5XJXk5XpSosxJeMty9pLFyC7ix6t+Bp0yzUsZpvqA4QPPNw
+         U+5mOnWvjoaApOiT2SS/u4RZ1VgWxQSfSnb2lCAlyTbnYCEh7n17t9pbWfQ4e3Uk/Id1
+         JdCQ55j7uHFAaQCuXcoVSTm+sX+nDrlfrCeUeYXduX2bPukhEZCzTXqkl2a+2MMxY9lF
+         PvaLaXOMJURNj4FuI5ImybQTRy9nN2yDBZnZYEWwJ4NIY4F6/tG4+DzrrMZix2f2EKxX
+         ONFwol+21/cj6GSLuJCRzH5tQtszD46Q9F+8gzkQZ0QNTbTmVwCQFLE0809rAxLiunPG
+         UKoA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=gm3ofSamUdmxAaD1zjMkIrbw5F8DM2MvEznhnJlT0ls=;
-        b=H3lHV/W59rkJTF6NnWR40iEyNgxvxM7tJKvEE8Kct3ZDgWFXtyg0J+EjcN9A7CQk90
-         RAMW1fuNpaZK2hfj0US0FpeFsZBNN78vrjD8iETAEgkHgGQVlx/gccnLtxDPyqOlvP9P
-         yafoBvYdqGnpEfkYVZiwKdYyriV6sptiz9q74j2DYi+qtOktsxQLIXNTgfNqoBWHCtpk
-         yAHbb1fOTFOnHyDe9cOP5solTU0Rfjfd8SEpo1pmf5T9rdCLGz71/VJeQghPGMl42f1Z
-         lcBx9ku9KilRYwLXcUm3CI45hwXVAjS1PtSEG+/IyVXms3VSuYeGi3bIAlEi0LHk0Nwi
-         ip0g==
-X-Gm-Message-State: AOAM531izDwm9wYft9qyfxOLtSY7RYeJVXVX7cMEhRhTaxRxPG7BAsNW
-        oeg9ZtX3CgsWBBFA1ma6FwY=
-X-Google-Smtp-Source: ABdhPJzDBurrPkiOEx2PgHSdoQoLrTATOJ2A9eRLLIrxJOaN7wRWidS8gB/GQDSYeGXO8HbJ2tbDcA==
-X-Received: by 2002:a2e:bf10:: with SMTP id c16mr1544018ljr.289.1625182123204;
-        Thu, 01 Jul 2021 16:28:43 -0700 (PDT)
+        bh=uA7sTyUkq0alTs4vrb0YXe1CZtnJjoECt5LclMuFlrk=;
+        b=Dq7JMsPabkXGiCVIiG4GEIzpOij5/dmB1keZ/QmBY6VRzxcl2utHQ/6l9EzeLifASy
+         /srb1xuxG4bBbwb3SXIbc/wyI6Bxibp+H/J/pXYgI2hUZDxQg6K0G2O/E0qqm7hy1AOR
+         0ugTpvi4kJgEgXVksSFAqgOx3nYOus7T8gRK0tJ7uQPdwPwBYbD6wB+Ytjj4Xog6CMPe
+         38+AU6mX3cySjb9lFAC+CDSXdPx4mKtCOM9g95iZzyYKu3IHJzpsVR/AWZD4zgc5GzJK
+         g6NjByBbOTcncIHe4bPL2azV1AbViMetUL9h1wNCAlXk13YAFm3Oe40jkSJ7g1U84vUU
+         1zJQ==
+X-Gm-Message-State: AOAM531UFnxinHqVH9LArZVJwlM5OeaJsEof25vqBpN7NkRuXNb2fdXf
+        ZDVxtHjIdyQZunn+6vAj74g=
+X-Google-Smtp-Source: ABdhPJyMMFV6IUxCT/HnpY7zTNvnpk/NeK1tqlZkbn/ivrYHQi01QDRHJsMYicnIFIh2gm1hnxv+1Q==
+X-Received: by 2002:a05:6512:304b:: with SMTP id b11mr1505701lfb.315.1625182124376;
+        Thu, 01 Jul 2021 16:28:44 -0700 (PDT)
 Received: from localhost.localdomain (94-29-37-113.dynamic.spd-mgts.ru. [94.29.37.113])
-        by smtp.gmail.com with ESMTPSA id s20sm102655lfr.39.2021.07.01.16.28.42
+        by smtp.gmail.com with ESMTPSA id s20sm102655lfr.39.2021.07.01.16.28.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Jul 2021 16:28:43 -0700 (PDT)
+        Thu, 01 Jul 2021 16:28:44 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -65,9 +65,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Peter De Schrijver <pdeschrijver@nvidia.com>
 Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-pm@vger.kernel.org
-Subject: [PATCH v7 22/37] soc/tegra: fuse: Clear fuse->clk on driver probe failure
-Date:   Fri,  2 Jul 2021 02:27:13 +0300
-Message-Id: <20210701232728.23591-23-digetx@gmail.com>
+Subject: [PATCH v7 24/37] soc/tegra: fuse: Enable fuse clock on suspend
+Date:   Fri,  2 Jul 2021 02:27:15 +0300
+Message-Id: <20210701232728.23591-25-digetx@gmail.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210701232728.23591-1-digetx@gmail.com>
 References: <20210701232728.23591-1-digetx@gmail.com>
@@ -77,26 +77,88 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The fuse->clk must be cleared if FUSE driver fails to probe, otherwise
-tegra_fuse_readl() will crash.
+The FUSE clock should be enabled during suspend on Tegra124. Currently
+clk driver enables it on all SoCs, but FUSE may require a higher core
+voltage on Tegra30 while enabled. Move the quirk into the FUSE driver
+and make it specific to Tegra124.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/soc/tegra/fuse/fuse-tegra.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/soc/tegra/fuse/fuse-tegra.c   | 31 +++++++++++++++++++++++++++
+ drivers/soc/tegra/fuse/fuse-tegra30.c |  1 +
+ drivers/soc/tegra/fuse/fuse.h         |  2 ++
+ 3 files changed, 34 insertions(+)
 
 diff --git a/drivers/soc/tegra/fuse/fuse-tegra.c b/drivers/soc/tegra/fuse/fuse-tegra.c
-index 3d9da3d359da..2434c570b53c 100644
+index 747237865aff..f660a3557478 100644
 --- a/drivers/soc/tegra/fuse/fuse-tegra.c
 +++ b/drivers/soc/tegra/fuse/fuse-tegra.c
-@@ -246,6 +246,7 @@ static int tegra_fuse_probe(struct platform_device *pdev)
+@@ -275,9 +275,40 @@ static int __maybe_unused tegra_fuse_runtime_suspend(struct device *dev)
  	return 0;
- 
- restore:
-+	fuse->clk = NULL;
- 	fuse->base = base;
- 	return err;
  }
+ 
++static int __maybe_unused tegra_fuse_resume(struct device *dev)
++{
++	int err;
++
++	/*
++	 * Critical for RAM re-repair operation, which must occur on resume
++	 * from LP1 system suspend and as part of CCPLEX cluster switching.
++	 */
++	if (fuse->soc->clk_suspend_on) {
++		err = pm_runtime_force_resume(dev);
++		if (err)
++			return err;
++	}
++
++	return 0;
++}
++
++static int __maybe_unused tegra_fuse_suspend(struct device *dev)
++{
++	int err;
++
++	if (fuse->soc->clk_suspend_on) {
++		err = pm_runtime_force_suspend(dev);
++		if (err)
++			return err;
++	}
++
++	return 0;
++}
++
+ static const struct dev_pm_ops tegra_fuse_pm = {
+ 	SET_RUNTIME_PM_OPS(tegra_fuse_runtime_suspend, tegra_fuse_runtime_resume,
+ 			   NULL)
++	SET_SYSTEM_SLEEP_PM_OPS(tegra_fuse_suspend, tegra_fuse_resume)
+ };
+ 
+ static struct platform_driver tegra_fuse_driver = {
+diff --git a/drivers/soc/tegra/fuse/fuse-tegra30.c b/drivers/soc/tegra/fuse/fuse-tegra30.c
+index dd03565a39a4..e1f1db3b0526 100644
+--- a/drivers/soc/tegra/fuse/fuse-tegra30.c
++++ b/drivers/soc/tegra/fuse/fuse-tegra30.c
+@@ -208,6 +208,7 @@ const struct tegra_fuse_soc tegra124_fuse_soc = {
+ 	.lookups = tegra124_fuse_lookups,
+ 	.num_lookups = ARRAY_SIZE(tegra124_fuse_lookups),
+ 	.soc_attr_group = &tegra_soc_attr_group,
++	.clk_suspend_on = true,
+ };
+ #endif
+ 
+diff --git a/drivers/soc/tegra/fuse/fuse.h b/drivers/soc/tegra/fuse/fuse.h
+index e057a58e2060..de58feba0435 100644
+--- a/drivers/soc/tegra/fuse/fuse.h
++++ b/drivers/soc/tegra/fuse/fuse.h
+@@ -34,6 +34,8 @@ struct tegra_fuse_soc {
+ 	unsigned int num_lookups;
+ 
+ 	const struct attribute_group *soc_attr_group;
++
++	bool clk_suspend_on;
+ };
+ 
+ struct tegra_fuse {
 -- 
 2.30.2
 
