@@ -8,54 +8,54 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52E16C11F70
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E30DCC11F77
 	for <linux-tegra@archiver.kernel.org>; Thu,  1 Jul 2021 23:44:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4A99161409
-	for <linux-tegra@archiver.kernel.org>; Thu,  1 Jul 2021 23:44:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CCAEF61413
+	for <linux-tegra@archiver.kernel.org>; Thu,  1 Jul 2021 23:44:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234547AbhGAXqc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 1 Jul 2021 19:46:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43872 "EHLO
+        id S234576AbhGAXqd (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 1 Jul 2021 19:46:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43878 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234426AbhGAXq2 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 1 Jul 2021 19:46:28 -0400
-Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 237A6C061765;
-        Thu,  1 Jul 2021 16:43:54 -0700 (PDT)
-Received: by mail-lj1-x22a.google.com with SMTP id u20so10780988ljo.12;
-        Thu, 01 Jul 2021 16:43:54 -0700 (PDT)
+        with ESMTP id S234518AbhGAXqc (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 1 Jul 2021 19:46:32 -0400
+Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41459C0613E2;
+        Thu,  1 Jul 2021 16:43:59 -0700 (PDT)
+Received: by mail-lj1-x235.google.com with SMTP id w11so10930571ljh.0;
+        Thu, 01 Jul 2021 16:43:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=/9otFKisgPOH6tThhGv9XOsJl/riZw+uATOpo0ZIOk8=;
-        b=Q9kN4sHZQJxoQVjE0ZP/HLsLJis/iLJGM+CGzfnCv2b6P/zbRB3Gxvz18O6C4xuxVq
-         He1kFJ+m2p5KzUJn9OjhSfJ1BWs6DhwDQCOYXUnZ83ftq+pB6Ai/A5Up31hAQpQPHAU5
-         35kZu/YlVLmAjKe9UkSCNfwpzSEOqOKwFfZ3/LmUVowCUXsSYZTqj1NYB3+oU5FYqBUT
-         P9/jrc+RCLB7Z2kc/7g5TWYso0Ko2wb5aTtQXZZdCbgp3H8nVyl+goAYsj3xK2QNW4yN
-         7ceLBnPfdPYFrFh2S61TPIyNkM3hduZTQJ6a+3Jqx1uQX0tkeft5Jwm/E4r0/2IJkpaA
-         1Q/A==
+        bh=M1qDl3BGg6VpIYc8VXbw9H+0wY0xY/SOujcU5elyW2g=;
+        b=cpICum/fxWscly74MyaLuOZYF4sKEDMY1fWtzY56jDGptCaUfSFTzlFErcduoAjTcL
+         BjVHrNt2GsvnkNRMVmW1k9LmJUTf1LGuRlUJ/vf/LbIo/ssvKV4LjbXkUiwh9Ehpn/wk
+         85x3eGg//aqP1bdrVHjoRGFY1hmLbnvQ95huQb8OLlsQw+rMa2qYgRarg2A9TDv/bG2V
+         dTfUjjh4t6GkqTcJ+jeiBX2FLwUtxS58a0v/5KSKcWS65MKvkj10A9g0q44F/Smpee8W
+         OFfoHpOkKh02MCMcYPKBAbrsTpPCOfyCdjLiHOh82NS/HbLBVaBzm5inbkbxhHDMj92L
+         XU2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=/9otFKisgPOH6tThhGv9XOsJl/riZw+uATOpo0ZIOk8=;
-        b=rQZj4P/q643F/N07pMuNwYcOf5+cjD4azNxpBLQetkaHg/gF4u1EAz3stB9PYYATgk
-         sYLW0QbAwYSY0OhBSvFCT+wM9idWTUpfeoaP8VH8zJ+hKFN5+HdNyRee85YiHlvgPmni
-         ByLACJH2oojYO1/sanIl2JmygmmKYwIj7T11q5Mdl0tj1GLo+NHOduG7jdJ0Alrhw6nd
-         6o5bpTkfmTOqaSP+kaBqwx2fgJ5qzksH9f5S8Sh4kfXqRoOygb5z0r+JLad0UEW3wOpD
-         QINXbNzt7wderWSMxfkEo+nAUiTzKEM/F8+rUzIG0dLafBSFZY60oTUL3dbc6ICzXN7F
-         O0Xw==
-X-Gm-Message-State: AOAM530bc8prnj56Jz3/Lei8CGtvnIS4JtgJZdVHAt1o1jfPHXHnqYJo
-        rUwoToKG96q5QTrV2veb0Y8=
-X-Google-Smtp-Source: ABdhPJyuIkipLFi9GnzWx1JZ0RvxTdsaubH+BAY0RHsNGIxZB/8Mz9e6G0uzaVPbU/sMia/0mXwlXw==
-X-Received: by 2002:a05:651c:a0a:: with SMTP id k10mr1541060ljq.22.1625183032556;
-        Thu, 01 Jul 2021 16:43:52 -0700 (PDT)
+        bh=M1qDl3BGg6VpIYc8VXbw9H+0wY0xY/SOujcU5elyW2g=;
+        b=NoDEUEYE2nnJoNH3id/6FV9uu6QSurPtpWbT5cLfkO8cU5H8qJT06l7W14XCc7ntAU
+         dumFokJ6lRPs/TF+PfvvgXzlMLAQXj5bBYh4k1v+qS+ZYboXVOISLUopKX3gs8CpEY8/
+         Z+4ZKsxD5KbSL/vResZzDB+/7/4fBrf54U5SLjMzbEsMQZn/FLWGxKYTUSFpGvwPXAtK
+         A9ebHIn4bsFxBA5IFGjELTcFGjdQqcR3JzG/IJnkGrSDAD+EcqxBD+lFrZwlipPkWRCp
+         jJwkAldrKUjPU+n5B8URxctEO7a53KDAzlT1OX+fkV5CnODQBkigD/8c3rvYZh+qRhb+
+         YGFA==
+X-Gm-Message-State: AOAM531ZlXq0Vgc5tHWutUv9+2plM9hep/7VMc8G1b2A0wc0azgxn+E2
+        dLs4b66CWfPuIEj2RYrIVEU=
+X-Google-Smtp-Source: ABdhPJw6RrwM3wb57uDPc8M68q1Viw3RuWVodVE2AQGhTG9micW585YzcYsOdlN+IYEPKlUsVVVv/w==
+X-Received: by 2002:a2e:9806:: with SMTP id a6mr1508173ljj.498.1625183037684;
+        Thu, 01 Jul 2021 16:43:57 -0700 (PDT)
 Received: from localhost.localdomain (94-29-37-113.dynamic.spd-mgts.ru. [94.29.37.113])
-        by smtp.gmail.com with ESMTPSA id e23sm60743lfq.221.2021.07.01.16.43.51
+        by smtp.gmail.com with ESMTPSA id e23sm60743lfq.221.2021.07.01.16.43.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Jul 2021 16:43:52 -0700 (PDT)
+        Thu, 01 Jul 2021 16:43:57 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <treding@nvidia.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -69,9 +69,9 @@ To:     Thierry Reding <treding@nvidia.com>,
 Cc:     devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
         linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-tegra@vger.kernel.org
-Subject: [PATCH v2 03/12] soc/tegra: pmc: Expose USB regmap to all SoCs
-Date:   Fri,  2 Jul 2021 02:43:08 +0300
-Message-Id: <20210701234317.26393-4-digetx@gmail.com>
+Subject: [PATCH v2 10/12] arm64: tegra132: Add new properties to USB PHY device-tree node
+Date:   Fri,  2 Jul 2021 02:43:15 +0300
+Message-Id: <20210701234317.26393-11-digetx@gmail.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210701234317.26393-1-digetx@gmail.com>
 References: <20210701234317.26393-1-digetx@gmail.com>
@@ -81,46 +81,68 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-All Tegra SoCs prior to Tegra186 have USB power controls within the Power
-Management controller. These controls need to be configured by USB driver.
-Expose the regmap to these SoCs.
+Add new properties to USB PHYs needed for enabling USB OTG mode.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/soc/tegra/pmc.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/arm64/boot/dts/nvidia/tegra132.dtsi | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index 1f6872f7b211..73ba4982ba6d 100644
---- a/drivers/soc/tegra/pmc.c
-+++ b/drivers/soc/tegra/pmc.c
-@@ -3202,7 +3202,7 @@ static const struct tegra_pmc_soc tegra20_pmc_soc = {
- 	.pmc_clks_data = NULL,
- 	.num_pmc_clks = 0,
- 	.has_blink_output = true,
--	.has_usb_sleepwalk = false,
-+	.has_usb_sleepwalk = true,
- };
+diff --git a/arch/arm64/boot/dts/nvidia/tegra132.dtsi b/arch/arm64/boot/dts/nvidia/tegra132.dtsi
+index 9928a87f593a..fa3bab8138f5 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra132.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra132.dtsi
+@@ -1123,6 +1123,7 @@ phy1: usb-phy@7d000000 {
+ 		compatible = "nvidia,tegra124-usb-phy", "nvidia,tegra30-usb-phy";
+ 		reg = <0x0 0x7d000000 0x0 0x4000>,
+ 		      <0x0 0x7d000000 0x0 0x4000>;
++		interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
+ 		phy_type = "utmi";
+ 		clocks = <&tegra_car TEGRA124_CLK_USBD>,
+ 			 <&tegra_car TEGRA124_CLK_PLL_U>,
+@@ -1142,6 +1143,8 @@ phy1: usb-phy@7d000000 {
+ 		nvidia,hsdiscon-level = <5>;
+ 		nvidia,xcvr-hsslew = <12>;
+ 		nvidia,has-utmi-pad-registers;
++		nvidia,pmc = <&tegra_pmc>;
++		nvidia,phy-instance = <0>;
+ 		status = "disabled";
+ 	};
  
- static const char * const tegra30_powergates[] = {
-@@ -3263,7 +3263,7 @@ static const struct tegra_pmc_soc tegra30_pmc_soc = {
- 	.pmc_clks_data = tegra_pmc_clks_data,
- 	.num_pmc_clks = ARRAY_SIZE(tegra_pmc_clks_data),
- 	.has_blink_output = true,
--	.has_usb_sleepwalk = false,
-+	.has_usb_sleepwalk = true,
- };
+@@ -1162,6 +1165,7 @@ phy2: usb-phy@7d004000 {
+ 		compatible = "nvidia,tegra124-usb-phy", "nvidia,tegra30-usb-phy";
+ 		reg = <0x0 0x7d004000 0x0 0x4000>,
+ 		      <0x0 0x7d000000 0x0 0x4000>;
++		interrupts = <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
+ 		phy_type = "utmi";
+ 		clocks = <&tegra_car TEGRA124_CLK_USB2>,
+ 			 <&tegra_car TEGRA124_CLK_PLL_U>,
+@@ -1180,6 +1184,8 @@ phy2: usb-phy@7d004000 {
+ 		nvidia,hssquelch-level = <2>;
+ 		nvidia,hsdiscon-level = <5>;
+ 		nvidia,xcvr-hsslew = <12>;
++		nvidia,pmc = <&tegra_pmc>;
++		nvidia,phy-instance = <1>;
+ 		status = "disabled";
+ 	};
  
- static const char * const tegra114_powergates[] = {
-@@ -3320,7 +3320,7 @@ static const struct tegra_pmc_soc tegra114_pmc_soc = {
- 	.pmc_clks_data = tegra_pmc_clks_data,
- 	.num_pmc_clks = ARRAY_SIZE(tegra_pmc_clks_data),
- 	.has_blink_output = true,
--	.has_usb_sleepwalk = false,
-+	.has_usb_sleepwalk = true,
- };
+@@ -1200,6 +1206,7 @@ phy3: usb-phy@7d008000 {
+ 		compatible = "nvidia,tegra124-usb-phy", "nvidia,tegra30-usb-phy";
+ 		reg = <0x0 0x7d008000 0x0 0x4000>,
+ 		      <0x0 0x7d000000 0x0 0x4000>;
++		interrupts = <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>;
+ 		phy_type = "utmi";
+ 		clocks = <&tegra_car TEGRA124_CLK_USB3>,
+ 			 <&tegra_car TEGRA124_CLK_PLL_U>,
+@@ -1218,6 +1225,8 @@ phy3: usb-phy@7d008000 {
+ 		nvidia,hssquelch-level = <2>;
+ 		nvidia,hsdiscon-level = <5>;
+ 		nvidia,xcvr-hsslew = <12>;
++		nvidia,pmc = <&tegra_pmc>;
++		nvidia,phy-instance = <2>;
+ 		status = "disabled";
+ 	};
  
- static const char * const tegra124_powergates[] = {
 -- 
 2.30.2
 
