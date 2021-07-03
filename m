@@ -2,38 +2,62 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BAD5C07E97
-	for <linux-tegra@archiver.kernel.org>; Sat,  3 Jul 2021 11:08:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A67DFC07E99
+	for <linux-tegra@archiver.kernel.org>; Sat,  3 Jul 2021 17:22:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 38A8661628
-	for <linux-tegra@archiver.kernel.org>; Sat,  3 Jul 2021 11:08:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 835EA61944
+	for <linux-tegra@archiver.kernel.org>; Sat,  3 Jul 2021 17:22:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230231AbhGCLK4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 3 Jul 2021 07:10:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51084 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229829AbhGCLK4 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Sat, 3 Jul 2021 07:10:56 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 3E0FD6162A;
-        Sat,  3 Jul 2021 11:08:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1625310503;
-        bh=la7QnelDNFLhNjusTN/qGJQp8b6+XlbmXDa/JaB3FIQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=RMxLJ7Zrihaykg0n7Ky0Nq83U57Z8EB+sMgZlxbrK1YyM/yWDYFnMDzDAkufeXH1O
-         YxWu0HoVP4OEQcF6W/IBJ4LEneFyzcogTfKsc+Hxtl8jheMyQPA9n+G+6goD9CwmPg
-         iKJ5GPsI3HoVC3tawow3mWuCiWdtRUHiuwohfv9lin3Zta91D5Bv97MrLqv5B0vrSx
-         FQJs1v5AMozJmClSLUxySDlmlVju39IAl17/35nfoNyGLwSFm1NibqVM8FFjeX4K1w
-         ffEM0x6TVDHUdIfnbc5pnlqFUqoZusMbQdiFpDl7Num0Tth9M36lEGO6072q2ouMcX
-         4lWRor0gpCSOQ==
-Date:   Sat, 3 Jul 2021 19:08:09 +0800
-From:   Peter Chen <peter.chen@kernel.org>
-To:     Dmitry Osipenko <digetx@gmail.com>
+        id S229557AbhGCRZR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 3 Jul 2021 13:25:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54380 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229463AbhGCRZR (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Sat, 3 Jul 2021 13:25:17 -0400
+Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21D77C061762;
+        Sat,  3 Jul 2021 10:22:42 -0700 (PDT)
+Received: by mail-lj1-x22a.google.com with SMTP id r16so18120421ljk.9;
+        Sat, 03 Jul 2021 10:22:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=GkqlghX39ZQMv0VL5XMqearbdcMjcK0zkdFdKOtJnZE=;
+        b=JPznIM0Ow6NR7CkKU2r2nhwUcgQydZM7A1VNBFp+isDWXxuevJXSfv8RQkurrGQL2k
+         WPQI59y6D3Tsnx8EwwRGVJArttxiRuNmrmX1DG58hyG/SDRlYihmk353i+llBl2zLCjg
+         fSfnVH9lD/Rjs5dJf9p75JWWl84pxuczO6ZuoD1hB9/JVLPHUnTQgeKPUkfLS/dmG/qs
+         mu7ImVMZ3anXjv9croyzuBMSReWpgtRDi5WnHEFhqT59Iw0O6HEU7d/z8JGkWoGPo/Fb
+         73S7EShfF1P5P9sxmGyFsvelgFUCsky2sQDBx8HSB7pWnbs6tI/NdFzBJAIfzggsLDFP
+         PnUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=GkqlghX39ZQMv0VL5XMqearbdcMjcK0zkdFdKOtJnZE=;
+        b=GeCZbNj+hh0yyo7eYN02DKa4NLy1JaEjUhANj7AAm63LXNTdpYng27AjUrraamfinE
+         RpsHUKymFlmZtoPrQ7/iwnDOLFt+yoFTK1lOgKxsGMMtxcRjqhSdS1WDy3ybieZJgXDV
+         tj8eX8c3Do5ZLor2biOE5D012gN3nQCovPtQLkgJKqaZtAuRKnxA75EcevcNWpLJeuc0
+         uGyO4Oq/L+ZGRo+GW6hTdWCrDcSUt7jEBMIXcQgrvMmcskmq67P9eEEThEnSW/Lnt01v
+         H3fxRZT3EsVD04DlGUFBcWhLwmodp4L3NidcF1FfKQpFQ8V9s1uY6L3P3x5GJE5RgUWm
+         a2uQ==
+X-Gm-Message-State: AOAM532P/42N91FIo73btN+xMXlfihmTk/OKv73jlcFeWzleWR3ziOgm
+        4hofPYh2lBOlWCclEBA9PqPYrFhtjsQ=
+X-Google-Smtp-Source: ABdhPJz99JpS1s9M1J2vPLOFyo50q0z+BC5l0L+5Y8kLjHwHDWH3mZKaBsEFzY7LPxfB6iP5MWp3FQ==
+X-Received: by 2002:a05:651c:504:: with SMTP id o4mr4090359ljp.357.1625332960228;
+        Sat, 03 Jul 2021 10:22:40 -0700 (PDT)
+Received: from [192.168.2.145] (94-29-37-113.dynamic.spd-mgts.ru. [94.29.37.113])
+        by smtp.googlemail.com with ESMTPSA id x3sm749371ljm.43.2021.07.03.10.22.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 03 Jul 2021 10:22:39 -0700 (PDT)
+Subject: Re: [PATCH v2 05/12] usb: otg-fsm: Fix hrtimer list corruption
+To:     Peter Chen <peter.chen@kernel.org>
 Cc:     Thierry Reding <treding@nvidia.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Mark Brown <broonie@kernel.org>,
@@ -44,73 +68,33 @@ Cc:     Thierry Reding <treding@nvidia.com>,
         David Heidelberg <david@ixit.cz>, devicetree@vger.kernel.org,
         linux-pm@vger.kernel.org, linux-usb@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v2 05/12] usb: otg-fsm: Fix hrtimer list corruption
-Message-ID: <20210703110809.GA4289@Peter>
 References: <20210701234317.26393-1-digetx@gmail.com>
- <20210701234317.26393-6-digetx@gmail.com>
+ <20210701234317.26393-6-digetx@gmail.com> <20210703110809.GA4289@Peter>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <29476aa3-c34e-8bf0-5eab-f7def493f329@gmail.com>
+Date:   Sat, 3 Jul 2021 20:22:38 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210701234317.26393-6-digetx@gmail.com>
+In-Reply-To: <20210703110809.GA4289@Peter>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 21-07-02 02:43:10, Dmitry Osipenko wrote:
-> The HNP work can be re-scheduled while it's still in-fly. This results in
-> re-initialization of the busy work, resetting the hrtimer's list node of
-> the work and crashing kernel with null dereference within kernel/timer
-> once work's timer is expired. It's very easy to trigger this problem by
-> re-plugging USB cable quickly. Initialize HNP work only once to fix this
-> trouble.
-
-Fully OTG compliance support has not maintained for years, what's the use case you
-still want to use?
-
-Peter
+03.07.2021 14:08, Peter Chen пишет:
+> On 21-07-02 02:43:10, Dmitry Osipenko wrote:
+>> The HNP work can be re-scheduled while it's still in-fly. This results in
+>> re-initialization of the busy work, resetting the hrtimer's list node of
+>> the work and crashing kernel with null dereference within kernel/timer
+>> once work's timer is expired. It's very easy to trigger this problem by
+>> re-plugging USB cable quickly. Initialize HNP work only once to fix this
+>> trouble.
 > 
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/usb/common/usb-otg-fsm.c | 6 +++++-
->  include/linux/usb/otg-fsm.h      | 1 +
->  2 files changed, 6 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/usb/common/usb-otg-fsm.c b/drivers/usb/common/usb-otg-fsm.c
-> index 3740cf95560e..0697fde51d00 100644
-> --- a/drivers/usb/common/usb-otg-fsm.c
-> +++ b/drivers/usb/common/usb-otg-fsm.c
-> @@ -193,7 +193,11 @@ static void otg_start_hnp_polling(struct otg_fsm *fsm)
->  	if (!fsm->host_req_flag)
->  		return;
->  
-> -	INIT_DELAYED_WORK(&fsm->hnp_polling_work, otg_hnp_polling_work);
-> +	if (!fsm->hnp_work_inited) {
-> +		INIT_DELAYED_WORK(&fsm->hnp_polling_work, otg_hnp_polling_work);
-> +		fsm->hnp_work_inited = true;
-> +	}
-> +
->  	schedule_delayed_work(&fsm->hnp_polling_work,
->  					msecs_to_jiffies(T_HOST_REQ_POLL));
->  }
-> diff --git a/include/linux/usb/otg-fsm.h b/include/linux/usb/otg-fsm.h
-> index 3aee78dda16d..784659d4dc99 100644
-> --- a/include/linux/usb/otg-fsm.h
-> +++ b/include/linux/usb/otg-fsm.h
-> @@ -196,6 +196,7 @@ struct otg_fsm {
->  	struct mutex lock;
->  	u8 *host_req_flag;
->  	struct delayed_work hnp_polling_work;
-> +	bool hnp_work_inited;
->  	bool state_changed;
->  };
->  
-> -- 
-> 2.30.2
-> 
+> Fully OTG compliance support has not maintained for years, what's the use case you
+> still want to use?
 
--- 
-
-Thanks,
-Peter Chen
-
+I don't have any use case for it, but I had CONFIG_USB_OTG_FSM=y and it
+was crashing kernel badly. The OTG works perfectly fine without the FSM.
