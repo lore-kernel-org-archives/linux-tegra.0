@@ -5,57 +5,57 @@ X-Spam-Level:
 X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08C45C11F72
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 532C6C11F73
 	for <linux-tegra@archiver.kernel.org>; Sun,  4 Jul 2021 22:56:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DD51E613F9
-	for <linux-tegra@archiver.kernel.org>; Sun,  4 Jul 2021 22:56:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 37CCA61405
+	for <linux-tegra@archiver.kernel.org>; Sun,  4 Jul 2021 22:56:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230086AbhGDW6w (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 4 Jul 2021 18:58:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42316 "EHLO
+        id S230096AbhGDW6x (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 4 Jul 2021 18:58:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42290 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229713AbhGDW6p (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Sun, 4 Jul 2021 18:58:45 -0400
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7AE4C061764;
-        Sun,  4 Jul 2021 15:56:09 -0700 (PDT)
-Received: by mail-lf1-x132.google.com with SMTP id r26so11572476lfp.2;
-        Sun, 04 Jul 2021 15:56:09 -0700 (PDT)
+        with ESMTP id S229982AbhGDW6q (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Sun, 4 Jul 2021 18:58:46 -0400
+Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35368C061574;
+        Sun,  4 Jul 2021 15:56:08 -0700 (PDT)
+Received: by mail-lj1-x230.google.com with SMTP id k21so22062335ljh.2;
+        Sun, 04 Jul 2021 15:56:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=5vwSYHWvsFFWwr0WMVQTe8N3Eb33ImyMSmRuVsspPMo=;
-        b=bhgK2ANMfzyHNBxSf3UIZkZEDxqX5j1iuOq+6Z+bE508Y65lQzUNK/VvOHGT5akup7
-         8cYgWslGL26pCEyYFfN6FWKqP6nyuyDUVZAqplEQNFsnxEiVZwM6arVXEJpcv21ZWx94
-         lalwkyjaN5lJcDE9VR+yDSKDH0Rb+/n/ZCKEOYvdX12rP/yCxs4tHikScPNRhFK4x2ng
-         McidgawtnZMj8TmMFjRmFewKVX7397RuGNh96LmPtIy/Bg+P19d2y94rQzYCIO0dFpyQ
-         nMNQXldtpa09y3bH7qsN0TDL+JnMFKOKOz2sYiVOnez9sCWLJ9Rd75LeUwUei22LVdjg
-         F9Xg==
+        bh=d5DXCJ4TGIghBr5tKB7RBQAGB0HsPXVJ3LIrt5+RqZ0=;
+        b=ptFOsTOI3Ct++plBlK7C1HWYYDPjIVfW8kgxF01A58pgCViZ4IWOY1Q6icf3l0k/+R
+         nRzwQIn6Pxuoje3WAGUGpJC+OKL2lOUailZFzeiVpvLw7gy+BMd8xPmxWoEC38VMvdWW
+         Muhm5zT/3kCGVJLHqK8gfRvePZQ/FokwBQIsWC6ODBEhFGPDOHFFPRQGpDsaiDeFHKbV
+         0w2ul6gsmrLevXEjwtBuIUSQIdNED7/tAI6v7iUdvWdHVxmI9bH6YMC7gI9x8IjERFD+
+         H46x3zSBW99QRmbLEda3eSGX3qCeCIQawcqsASnJx6+GzWhR5ots5I6KWgHytczUU20G
+         ScjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=5vwSYHWvsFFWwr0WMVQTe8N3Eb33ImyMSmRuVsspPMo=;
-        b=rLLwztnMtifyLam2Ui5Ke3Mr4ruH9/BiQjny+Bs5irK9XBkrHoS5trLNGHB9dlK2MU
-         75XPdroWRrHOGEpNj/+qWymYqHbnXlyaWmi3fY3ErnsaYt5GcRmNJbd8BBtxwPNVQEEU
-         JurFcZSjUNifsiTK5kGzWSFeFgni+vDKcsZro6h4Qi18sHUtf10d8Iyu3MNtdsQH6iBi
-         5S/fWi12U0ardyCozA4mPFKxkf6n+ObFODHu29ZlqP2SJRI/mCjJgnEeTrgQ35N9auHP
-         r/V9u8gvVyvne4VV8MEoXyNthqmp9KU/DlmwvA3ruoc0kVGdmFJmnx8P8GGrGyXlfCdt
-         w9Yw==
-X-Gm-Message-State: AOAM530BSx/XghoSlPZlL7PEycMJLCkMTdSfnfhTq0rlEKnssgWJBUKM
-        I8tkaU/tNpXY8vn73iM72Oc=
-X-Google-Smtp-Source: ABdhPJyc1Gsmoq+hy3pIw4nSKGRNuR3zsn7mU/FXSXSG51tL952xLbP8vQCOOEpESTg8tpxRfZac6Q==
-X-Received: by 2002:a05:6512:6cc:: with SMTP id u12mr8466639lff.32.1625439368026;
-        Sun, 04 Jul 2021 15:56:08 -0700 (PDT)
+        bh=d5DXCJ4TGIghBr5tKB7RBQAGB0HsPXVJ3LIrt5+RqZ0=;
+        b=moecYhm6WZg3cVAyx3CDCgQ+sBfItwtCHRVCzvHg5t+mcO+lNNb3fqoOmmBWqYta9A
+         N/GqbbSkT1AQN6XcPnjjJtqh31ZMo7oWlQnd+nPAwmwcua5zknJW8dDSeccfNqIAVE7G
+         tNl6gCgEk0CgW5Ab3tzUpGojw72W8SgRs7f3Z9aPAWJSv8CbRhKg+ckhQ8SmducTBxUM
+         Y22rvbCb3vT4hsDCUzxlNOE0fMi+45CkEsV8YDnH04081LNS65G7+lXLxvTCCNGNRk/V
+         risCBDsAy8uN6kk/28AvB0DcqFniormQyaNr9P1aNj5+4nRku9jRQEOb5n+cbMbGwT5k
+         Z+3A==
+X-Gm-Message-State: AOAM531JByDXoTI1l1UyMx8BwqXKPZCGrDeXqj2CzGYcVxn89eWcPC4U
+        lWfc7xCHjj7UN3q4bunerIM=
+X-Google-Smtp-Source: ABdhPJwMmoHJYjNoOCOfT96GCowUZxfjFlQWkn9tMvxoNyc0spY6aa9I+db6vI/EZLGugnszW9xOew==
+X-Received: by 2002:a2e:151e:: with SMTP id s30mr5102998ljd.106.1625439366566;
+        Sun, 04 Jul 2021 15:56:06 -0700 (PDT)
 Received: from localhost.localdomain (94-29-37-113.dynamic.spd-mgts.ru. [94.29.37.113])
-        by smtp.gmail.com with ESMTPSA id i13sm497921lfc.111.2021.07.04.15.56.07
+        by smtp.gmail.com with ESMTPSA id i13sm497921lfc.111.2021.07.04.15.56.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 04 Jul 2021 15:56:07 -0700 (PDT)
+        Sun, 04 Jul 2021 15:56:06 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <treding@nvidia.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -69,9 +69,9 @@ To:     Thierry Reding <treding@nvidia.com>,
 Cc:     devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
         linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-tegra@vger.kernel.org
-Subject: [PATCH v3 11/12] ARM: tegra: Add new properties to USB PHY device-tree nodes
-Date:   Mon,  5 Jul 2021 01:54:32 +0300
-Message-Id: <20210704225433.32029-12-digetx@gmail.com>
+Subject: [PATCH v3 09/12] power: supply: smb347-charger: Implement USB VBUS regulator
+Date:   Mon,  5 Jul 2021 01:54:30 +0300
+Message-Id: <20210704225433.32029-10-digetx@gmail.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20210704225433.32029-1-digetx@gmail.com>
 References: <20210704225433.32029-1-digetx@gmail.com>
@@ -81,219 +81,379 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Add new properties to USB PHYs needed for enabling USB OTG mode.
+SMB347 can supply power to USB VBUS, implement the USB VBUS regulator.
+USB VBUS needs to be powered for switching OTG-cable USB port into host
+mode.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- arch/arm/boot/dts/tegra114.dtsi | 6 ++++++
- arch/arm/boot/dts/tegra124.dtsi | 9 +++++++++
- arch/arm/boot/dts/tegra20.dtsi  | 9 +++++++++
- arch/arm/boot/dts/tegra30.dtsi  | 9 +++++++++
- 4 files changed, 33 insertions(+)
+ drivers/power/supply/Kconfig          |   1 +
+ drivers/power/supply/smb347-charger.c | 219 ++++++++++++++++++++++++++
+ 2 files changed, 220 insertions(+)
 
-diff --git a/arch/arm/boot/dts/tegra114.dtsi b/arch/arm/boot/dts/tegra114.dtsi
-index fb99b3e971c3..c04817851bce 100644
---- a/arch/arm/boot/dts/tegra114.dtsi
-+++ b/arch/arm/boot/dts/tegra114.dtsi
-@@ -706,6 +706,7 @@ phy1: usb-phy@7d000000 {
- 		compatible = "nvidia,tegra114-usb-phy", "nvidia,tegra30-usb-phy";
- 		reg = <0x7d000000 0x4000>,
- 		      <0x7d000000 0x4000>;
-+		interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
- 		phy_type = "utmi";
- 		clocks = <&tegra_car TEGRA114_CLK_USBD>,
- 			 <&tegra_car TEGRA114_CLK_PLL_U>,
-@@ -725,6 +726,8 @@ phy1: usb-phy@7d000000 {
- 		nvidia,hsdiscon-level = <5>;
- 		nvidia,xcvr-hsslew = <12>;
- 		nvidia,has-utmi-pad-registers;
-+		nvidia,pmc = <&tegra_pmc>;
-+		nvidia,phy-instance = <0>;
- 		status = "disabled";
- 	};
+diff --git a/drivers/power/supply/Kconfig b/drivers/power/supply/Kconfig
+index 832190743e00..5a4f82ba9375 100644
+--- a/drivers/power/supply/Kconfig
++++ b/drivers/power/supply/Kconfig
+@@ -688,6 +688,7 @@ config CHARGER_BQ256XX
+ config CHARGER_SMB347
+ 	tristate "Summit Microelectronics SMB3XX Battery Charger"
+ 	depends on I2C
++	depends on REGULATOR
+ 	select REGMAP_I2C
+ 	help
+ 	  Say Y to include support for Summit Microelectronics SMB345,
+diff --git a/drivers/power/supply/smb347-charger.c b/drivers/power/supply/smb347-charger.c
+index f81c60c679a0..330f1cd40e5e 100644
+--- a/drivers/power/supply/smb347-charger.c
++++ b/drivers/power/supply/smb347-charger.c
+@@ -18,6 +18,7 @@
+ #include <linux/power_supply.h>
+ #include <linux/property.h>
+ #include <linux/regmap.h>
++#include <linux/regulator/driver.h>
  
-@@ -744,6 +747,7 @@ phy3: usb-phy@7d008000 {
- 		compatible = "nvidia,tegra114-usb-phy", "nvidia,tegra30-usb-phy";
- 		reg = <0x7d008000 0x4000>,
- 		      <0x7d000000 0x4000>;
-+		interrupts = <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>;
- 		phy_type = "utmi";
- 		clocks = <&tegra_car TEGRA114_CLK_USB3>,
- 			 <&tegra_car TEGRA114_CLK_PLL_U>,
-@@ -762,6 +766,8 @@ phy3: usb-phy@7d008000 {
- 		nvidia,hssquelch-level = <2>;
- 		nvidia,hsdiscon-level = <5>;
- 		nvidia,xcvr-hsslew = <12>;
-+		nvidia,pmc = <&tegra_pmc>;
-+		nvidia,phy-instance = <2>;
- 		status = "disabled";
- 	};
+ #include <dt-bindings/power/summit,smb347-charger.h>
  
-diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
-index 8b38f123f554..0daa1e97c1f6 100644
---- a/arch/arm/boot/dts/tegra124.dtsi
-+++ b/arch/arm/boot/dts/tegra124.dtsi
-@@ -1094,6 +1094,7 @@ phy1: usb-phy@7d000000 {
- 		compatible = "nvidia,tegra124-usb-phy", "nvidia,tegra30-usb-phy";
- 		reg = <0x0 0x7d000000 0x0 0x4000>,
- 		      <0x0 0x7d000000 0x0 0x4000>;
-+		interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
- 		phy_type = "utmi";
- 		clocks = <&tegra_car TEGRA124_CLK_USBD>,
- 			 <&tegra_car TEGRA124_CLK_PLL_U>,
-@@ -1113,6 +1114,8 @@ phy1: usb-phy@7d000000 {
- 		nvidia,hsdiscon-level = <5>;
- 		nvidia,xcvr-hsslew = <12>;
- 		nvidia,has-utmi-pad-registers;
-+		nvidia,pmc = <&tegra_pmc>;
-+		nvidia,phy-instance = <0>;
- 		status = "disabled";
- 	};
+@@ -62,12 +63,15 @@
+ #define CFG_THERM_SOFT_COLD_COMPENSATION_SHIFT	2
+ #define CFG_THERM_MONITOR_DISABLED		BIT(4)
+ #define CFG_SYSOK				0x08
++#define CFG_SYSOK_INOK_ACTIVE_HIGH		BIT(0)
+ #define CFG_SYSOK_SUSPEND_HARD_LIMIT_DISABLED	BIT(2)
+ #define CFG_OTHER				0x09
+ #define CFG_OTHER_RID_MASK			0xc0
+ #define CFG_OTHER_RID_ENABLED_AUTO_OTG		0xc0
+ #define CFG_OTG					0x0a
+ #define CFG_OTG_TEMP_THRESHOLD_MASK		0x30
++#define CFG_OTG_CURRENT_LIMIT_250mA		BIT(2)
++#define CFG_OTG_CURRENT_LIMIT_750mA		BIT(3)
+ #define CFG_OTG_TEMP_THRESHOLD_SHIFT		4
+ #define CFG_OTG_CC_COMPENSATION_MASK		0xc0
+ #define CFG_OTG_CC_COMPENSATION_SHIFT		6
+@@ -91,6 +95,7 @@
+ #define CMD_A					0x30
+ #define CMD_A_CHG_ENABLED			BIT(1)
+ #define CMD_A_SUSPEND_ENABLED			BIT(2)
++#define CMD_A_OTG_ENABLED			BIT(4)
+ #define CMD_A_ALLOW_WRITE			BIT(7)
+ #define CMD_B					0x31
+ #define CMD_C					0x33
+@@ -132,10 +137,12 @@
+  * @regmap: pointer to driver regmap
+  * @mains: power_supply instance for AC/DC power
+  * @usb: power_supply instance for USB power
++ * @usb_rdev: USB VBUS regulator device
+  * @id: SMB charger ID
+  * @mains_online: is AC/DC input connected
+  * @usb_online: is USB input connected
+  * @irq_unsupported: is interrupt unsupported by SMB hardware
++ * @usb_vbus_enabled: is USB VBUS powered by SMB charger
+  * @max_charge_current: maximum current (in uA) the battery can be charged
+  * @max_charge_voltage: maximum voltage (in uV) the battery can be charged
+  * @pre_charge_current: current (in uA) to use in pre-charging phase
+@@ -166,6 +173,8 @@
+  * @use_usb_otg: USB OTG output can be used (not implemented yet)
+  * @enable_control: how charging enable/disable is controlled
+  *		    (driver/pin controls)
++ * @inok_polarity: polarity of INOK signal which denotes presence of external
++ *		   power supply
+  *
+  * @use_main, @use_usb, and @use_usb_otg are means to enable/disable
+  * hardware support for these. This is useful when we want to have for
+@@ -188,10 +197,12 @@ struct smb347_charger {
+ 	struct regmap		*regmap;
+ 	struct power_supply	*mains;
+ 	struct power_supply	*usb;
++	struct regulator_dev	*usb_rdev;
+ 	unsigned int		id;
+ 	bool			mains_online;
+ 	bool			usb_online;
+ 	bool			irq_unsupported;
++	bool			usb_vbus_enabled;
  
-@@ -1132,6 +1135,7 @@ phy2: usb-phy@7d004000 {
- 		compatible = "nvidia,tegra124-usb-phy", "nvidia,tegra30-usb-phy";
- 		reg = <0x0 0x7d004000 0x0 0x4000>,
- 		      <0x0 0x7d000000 0x0 0x4000>;
-+		interrupts = <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
- 		phy_type = "utmi";
- 		clocks = <&tegra_car TEGRA124_CLK_USB2>,
- 			 <&tegra_car TEGRA124_CLK_PLL_U>,
-@@ -1150,6 +1154,8 @@ phy2: usb-phy@7d004000 {
- 		nvidia,hssquelch-level = <2>;
- 		nvidia,hsdiscon-level = <5>;
- 		nvidia,xcvr-hsslew = <12>;
-+		nvidia,pmc = <&tegra_pmc>;
-+		nvidia,phy-instance = <1>;
- 		status = "disabled";
- 	};
+ 	unsigned int		max_charge_current;
+ 	unsigned int		max_charge_voltage;
+@@ -212,6 +223,7 @@ struct smb347_charger {
+ 	bool			use_usb;
+ 	bool			use_usb_otg;
+ 	unsigned int		enable_control;
++	unsigned int		inok_polarity;
+ };
  
-@@ -1169,6 +1175,7 @@ phy3: usb-phy@7d008000 {
- 		compatible = "nvidia,tegra124-usb-phy", "nvidia,tegra30-usb-phy";
- 		reg = <0x0 0x7d008000 0x0 0x4000>,
- 		      <0x0 0x7d000000 0x0 0x4000>;
-+		interrupts = <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>;
- 		phy_type = "utmi";
- 		clocks = <&tegra_car TEGRA124_CLK_USB3>,
- 			 <&tegra_car TEGRA124_CLK_PLL_U>,
-@@ -1187,6 +1194,8 @@ phy3: usb-phy@7d008000 {
- 		nvidia,hssquelch-level = <2>;
- 		nvidia,hsdiscon-level = <5>;
- 		nvidia,xcvr-hsslew = <12>;
-+		nvidia,pmc = <&tegra_pmc>;
-+		nvidia,phy-instance = <2>;
- 		status = "disabled";
- 	};
+ enum smb_charger_chipid {
+@@ -361,6 +373,11 @@ static int smb347_charging_set(struct smb347_charger *smb, bool enable)
+ 		return 0;
+ 	}
  
-diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
-index 70d81a6cbc61..d4c068415bfd 100644
---- a/arch/arm/boot/dts/tegra20.dtsi
-+++ b/arch/arm/boot/dts/tegra20.dtsi
-@@ -875,6 +875,7 @@ phy1: usb-phy@c5000000 {
- 		compatible = "nvidia,tegra20-usb-phy";
- 		reg = <0xc5000000 0x4000>,
- 		      <0xc5000000 0x4000>;
-+		interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
- 		phy_type = "utmi";
- 		clocks = <&tegra_car TEGRA20_CLK_USBD>,
- 			 <&tegra_car TEGRA20_CLK_PLL_U>,
-@@ -893,6 +894,8 @@ phy1: usb-phy@c5000000 {
- 		nvidia,xcvr-lsfslew = <1>;
- 		nvidia,xcvr-lsrslew = <1>;
- 		nvidia,has-utmi-pad-registers;
-+		nvidia,pmc = <&tegra_pmc>;
-+		nvidia,phy-instance= <0>;
- 		status = "disabled";
- 	};
++	if (enable && smb->usb_vbus_enabled) {
++		dev_dbg(smb->dev, "charging not enabled because USB is in host mode\n");
++		return 0;
++	}
++
+ 	return regmap_update_bits(smb->regmap, CMD_A, CMD_A_CHG_ENABLED,
+ 				  enable ? CMD_A_CHG_ENABLED : 0);
+ }
+@@ -1243,6 +1260,13 @@ static void smb347_dt_parse_dev_info(struct smb347_charger *smb)
+ 	/* Select charging control */
+ 	device_property_read_u32(dev, "summit,enable-charge-control",
+ 				 &smb->enable_control);
++
++	/*
++	 * Polarity of INOK signal indicating presence of external power
++	 * supply connected to the charger.
++	 */
++	device_property_read_u32(dev, "summit,inok-polarity",
++				 &smb->inok_polarity);
+ }
  
-@@ -913,6 +916,7 @@ usb@c5004000 {
- 	phy2: usb-phy@c5004000 {
- 		compatible = "nvidia,tegra20-usb-phy";
- 		reg = <0xc5004000 0x4000>;
-+		interrupts = <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
- 		phy_type = "ulpi";
- 		clocks = <&tegra_car TEGRA20_CLK_USB2>,
- 			 <&tegra_car TEGRA20_CLK_PLL_U>,
-@@ -921,6 +925,8 @@ phy2: usb-phy@c5004000 {
- 		resets = <&tegra_car 58>, <&tegra_car 22>;
- 		reset-names = "usb", "utmi-pads";
- 		#phy-cells = <0>;
-+		nvidia,pmc = <&tegra_pmc>;
-+		nvidia,phy-instance= <1>;
- 		status = "disabled";
- 	};
+ static int smb347_get_battery_info(struct smb347_charger *smb)
+@@ -1294,6 +1318,160 @@ static int smb347_get_battery_info(struct smb347_charger *smb)
+ 	return 0;
+ }
  
-@@ -942,6 +948,7 @@ phy3: usb-phy@c5008000 {
- 		compatible = "nvidia,tegra20-usb-phy";
- 		reg = <0xc5008000 0x4000>,
- 		      <0xc5000000 0x4000>;
-+		interrupts = <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>;
- 		phy_type = "utmi";
- 		clocks = <&tegra_car TEGRA20_CLK_USB3>,
- 			 <&tegra_car TEGRA20_CLK_PLL_U>,
-@@ -958,6 +965,8 @@ phy3: usb-phy@c5008000 {
- 		nvidia,xcvr-setup = <9>;
- 		nvidia,xcvr-lsfslew = <2>;
- 		nvidia,xcvr-lsrslew = <2>;
-+		nvidia,pmc = <&tegra_pmc>;
-+		nvidia,phy-instance= <2>;
- 		status = "disabled";
- 	};
++static int smb347_usb_vbus_get_current_limit(struct regulator_dev *rdev)
++{
++	struct smb347_charger *smb = rdev_get_drvdata(rdev);
++	unsigned int val;
++	int ret;
++
++	ret = regmap_read(smb->regmap, CFG_OTG, &val);
++	if (ret < 0)
++		return ret;
++
++	/*
++	 * It's unknown what happens if this bit is unset due to lack of
++	 * access to the datasheet, assume it's limit-enable.
++	 */
++	if (!(val & CFG_OTG_CURRENT_LIMIT_250mA))
++		return 0;
++
++	return val & CFG_OTG_CURRENT_LIMIT_750mA ? 750000 : 250000;
++}
++
++static int smb347_usb_vbus_set_new_current_limit(struct smb347_charger *smb,
++						 int max_uA)
++{
++	const unsigned int mask = CFG_OTG_CURRENT_LIMIT_750mA |
++				  CFG_OTG_CURRENT_LIMIT_250mA;
++	unsigned int val = CFG_OTG_CURRENT_LIMIT_250mA;
++	int ret;
++
++	if (max_uA >= 750000)
++		val |= CFG_OTG_CURRENT_LIMIT_750mA;
++
++	ret = regmap_update_bits(smb->regmap, CFG_OTG, mask, val);
++	if (ret < 0)
++		dev_err(smb->dev, "failed to change USB current limit\n");
++
++	return ret;
++}
++
++static int smb347_usb_vbus_set_current_limit(struct regulator_dev *rdev,
++					     int min_uA, int max_uA)
++{
++	struct smb347_charger *smb = rdev_get_drvdata(rdev);
++	int ret;
++
++	ret = smb347_set_writable(smb, true, true);
++	if (ret < 0)
++		return ret;
++
++	ret = smb347_usb_vbus_set_new_current_limit(smb, max_uA);
++	smb347_set_writable(smb, false, true);
++
++	return ret;
++}
++
++static int smb347_usb_vbus_regulator_enable(struct regulator_dev *rdev)
++{
++	struct smb347_charger *smb = rdev_get_drvdata(rdev);
++	int ret, max_uA;
++
++	ret = smb347_set_writable(smb, true, true);
++	if (ret < 0)
++		return ret;
++
++	smb347_charging_disable(smb);
++
++	if (device_property_read_bool(&rdev->dev, "summit,needs-inok-toggle")) {
++		unsigned int sysok = 0;
++
++		if (smb->inok_polarity == SMB3XX_SYSOK_INOK_ACTIVE_LOW)
++			sysok = CFG_SYSOK_INOK_ACTIVE_HIGH;
++
++		/*
++		 * VBUS won't be powered if INOK is active, so we need to
++		 * manually disable INOK on some platforms.
++		 */
++		ret = regmap_update_bits(smb->regmap, CFG_SYSOK,
++					 CFG_SYSOK_INOK_ACTIVE_HIGH, sysok);
++		if (ret < 0) {
++			dev_err(smb->dev, "failed to disable INOK\n");
++			goto done;
++		}
++	}
++
++	ret = smb347_usb_vbus_get_current_limit(rdev);
++	if (ret < 0) {
++		dev_err(smb->dev, "failed to get USB VBUS current limit\n");
++		goto done;
++	}
++
++	max_uA = ret;
++
++	ret = smb347_usb_vbus_set_new_current_limit(smb, 250000);
++	if (ret < 0) {
++		dev_err(smb->dev, "failed to preset USB VBUS current limit\n");
++		goto done;
++	}
++
++	ret = regmap_set_bits(smb->regmap, CMD_A, CMD_A_OTG_ENABLED);
++	if (ret < 0) {
++		dev_err(smb->dev, "failed to enable USB VBUS\n");
++		goto done;
++	}
++
++	smb->usb_vbus_enabled = true;
++
++	ret = smb347_usb_vbus_set_new_current_limit(smb, max_uA);
++	if (ret < 0) {
++		dev_err(smb->dev, "failed to restore USB VBUS current limit\n");
++		goto done;
++	}
++done:
++	smb347_set_writable(smb, false, true);
++
++	return ret;
++}
++
++static int smb347_usb_vbus_regulator_disable(struct regulator_dev *rdev)
++{
++	struct smb347_charger *smb = rdev_get_drvdata(rdev);
++	int ret;
++
++	ret = smb347_set_writable(smb, true, true);
++	if (ret < 0)
++		return ret;
++
++	ret = regmap_clear_bits(smb->regmap, CMD_A, CMD_A_OTG_ENABLED);
++	if (ret < 0) {
++		dev_err(smb->dev, "failed to disable USB VBUS\n");
++		goto done;
++	}
++
++	smb->usb_vbus_enabled = false;
++
++	if (device_property_read_bool(&rdev->dev, "summit,needs-inok-toggle")) {
++		unsigned int sysok = 0;
++
++		if (smb->inok_polarity == SMB3XX_SYSOK_INOK_ACTIVE_HIGH)
++			sysok = CFG_SYSOK_INOK_ACTIVE_HIGH;
++
++		ret = regmap_update_bits(smb->regmap, CFG_SYSOK,
++					 CFG_SYSOK_INOK_ACTIVE_HIGH, sysok);
++		if (ret < 0) {
++			dev_err(smb->dev, "failed to enable INOK\n");
++			goto done;
++		}
++	}
++
++	smb347_start_stop_charging(smb);
++done:
++	smb347_set_writable(smb, false, true);
++
++	return ret;
++}
++
+ static const struct regmap_config smb347_regmap = {
+ 	.reg_bits	= 8,
+ 	.val_bits	= 8,
+@@ -1302,6 +1480,14 @@ static const struct regmap_config smb347_regmap = {
+ 	.readable_reg	= smb347_readable_reg,
+ };
  
-diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
-index 377bbc50ad2a..f6d63799f05d 100644
---- a/arch/arm/boot/dts/tegra30.dtsi
-+++ b/arch/arm/boot/dts/tegra30.dtsi
-@@ -1143,6 +1143,7 @@ phy1: usb-phy@7d000000 {
- 		compatible = "nvidia,tegra30-usb-phy";
- 		reg = <0x7d000000 0x4000>,
- 		      <0x7d000000 0x4000>;
-+		interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
- 		phy_type = "utmi";
- 		clocks = <&tegra_car TEGRA30_CLK_USBD>,
- 			 <&tegra_car TEGRA30_CLK_PLL_U>,
-@@ -1163,6 +1164,8 @@ phy1: usb-phy@7d000000 {
- 		nvidia,hssquelch-level = <2>;
- 		nvidia,hsdiscon-level = <5>;
- 		nvidia,has-utmi-pad-registers;
-+		nvidia,pmc = <&tegra_pmc>;
-+		nvidia,phy-instance = <0>;
- 		status = "disabled";
- 	};
++static const struct regulator_ops smb347_usb_vbus_regulator_ops = {
++	.is_enabled	= regulator_is_enabled_regmap,
++	.enable		= smb347_usb_vbus_regulator_enable,
++	.disable	= smb347_usb_vbus_regulator_disable,
++	.get_current_limit = smb347_usb_vbus_get_current_limit,
++	.set_current_limit = smb347_usb_vbus_set_current_limit,
++};
++
+ static const struct power_supply_desc smb347_mains_desc = {
+ 	.name		= "smb347-mains",
+ 	.type		= POWER_SUPPLY_TYPE_MAINS,
+@@ -1318,10 +1504,24 @@ static const struct power_supply_desc smb347_usb_desc = {
+ 	.num_properties	= ARRAY_SIZE(smb347_properties),
+ };
  
-@@ -1184,6 +1187,7 @@ phy2: usb-phy@7d004000 {
- 		compatible = "nvidia,tegra30-usb-phy";
- 		reg = <0x7d004000 0x4000>,
- 		      <0x7d000000 0x4000>;
-+		interrupts = <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
- 		phy_type = "utmi";
- 		clocks = <&tegra_car TEGRA30_CLK_USB2>,
- 			 <&tegra_car TEGRA30_CLK_PLL_U>,
-@@ -1203,6 +1207,8 @@ phy2: usb-phy@7d004000 {
- 		nvidia,xcvr-hsslew = <32>;
- 		nvidia,hssquelch-level = <2>;
- 		nvidia,hsdiscon-level = <5>;
-+		nvidia,pmc = <&tegra_pmc>;
-+		nvidia,phy-instance = <1>;
- 		status = "disabled";
- 	};
++static const struct regulator_desc smb347_usb_vbus_regulator_desc = {
++	.name		= "smb347-usb-vbus",
++	.of_match	= of_match_ptr("usb-vbus"),
++	.ops		= &smb347_usb_vbus_regulator_ops,
++	.type		= REGULATOR_VOLTAGE,
++	.owner		= THIS_MODULE,
++	.enable_reg	= CMD_A,
++	.enable_mask	= CMD_A_OTG_ENABLED,
++	.enable_val	= CMD_A_OTG_ENABLED,
++	.fixed_uV	= 5000000,
++	.n_voltages	= 1,
++};
++
+ static int smb347_probe(struct i2c_client *client,
+ 			const struct i2c_device_id *id)
+ {
+ 	struct power_supply_config mains_usb_cfg = {};
++	struct regulator_config usb_rdev_cfg = {};
+ 	struct device *dev = &client->dev;
+ 	struct smb347_charger *smb;
+ 	int ret;
+@@ -1369,6 +1569,18 @@ static int smb347_probe(struct i2c_client *client,
+ 	if (ret)
+ 		return ret;
  
-@@ -1224,6 +1230,7 @@ phy3: usb-phy@7d008000 {
- 		compatible = "nvidia,tegra30-usb-phy";
- 		reg = <0x7d008000 0x4000>,
- 		      <0x7d000000 0x4000>;
-+		interrupts = <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>;
- 		phy_type = "utmi";
- 		clocks = <&tegra_car TEGRA30_CLK_USB3>,
- 			 <&tegra_car TEGRA30_CLK_PLL_U>,
-@@ -1243,6 +1250,8 @@ phy3: usb-phy@7d008000 {
- 		nvidia,xcvr-hsslew = <32>;
- 		nvidia,hssquelch-level = <2>;
- 		nvidia,hsdiscon-level = <5>;
-+		nvidia,pmc = <&tegra_pmc>;
-+		nvidia,phy-instance = <2>;
- 		status = "disabled";
- 	};
++	usb_rdev_cfg.dev = dev;
++	usb_rdev_cfg.driver_data = smb;
++	usb_rdev_cfg.regmap = smb->regmap;
++
++	smb->usb_rdev = devm_regulator_register(dev,
++						&smb347_usb_vbus_regulator_desc,
++						&usb_rdev_cfg);
++	if (IS_ERR(smb->usb_rdev)) {
++		smb347_irq_disable(smb);
++		return PTR_ERR(smb->usb_rdev);
++	}
++
+ 	return 0;
+ }
  
+@@ -1376,11 +1588,17 @@ static int smb347_remove(struct i2c_client *client)
+ {
+ 	struct smb347_charger *smb = i2c_get_clientdata(client);
+ 
++	smb347_usb_vbus_regulator_disable(smb->usb_rdev);
+ 	smb347_irq_disable(smb);
+ 
+ 	return 0;
+ }
+ 
++static void smb347_shutdown(struct i2c_client *client)
++{
++	smb347_remove(client);
++}
++
+ static const struct i2c_device_id smb347_id[] = {
+ 	{ "smb345", SMB345 },
+ 	{ "smb347", SMB347 },
+@@ -1404,6 +1622,7 @@ static struct i2c_driver smb347_driver = {
+ 	},
+ 	.probe = smb347_probe,
+ 	.remove = smb347_remove,
++	.shutdown = smb347_shutdown,
+ 	.id_table = smb347_id,
+ };
+ module_i2c_driver(smb347_driver);
 -- 
 2.32.0
 
