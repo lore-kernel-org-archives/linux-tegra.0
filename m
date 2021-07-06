@@ -7,42 +7,42 @@ X-Spam-Status: No, score=-20.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2A62C07E9E
-	for <linux-tegra@archiver.kernel.org>; Tue,  6 Jul 2021 12:30:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7044FC07E9B
+	for <linux-tegra@archiver.kernel.org>; Tue,  6 Jul 2021 12:30:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8E21C619C6
-	for <linux-tegra@archiver.kernel.org>; Tue,  6 Jul 2021 12:30:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 58EE6619D2
+	for <linux-tegra@archiver.kernel.org>; Tue,  6 Jul 2021 12:30:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234888AbhGFMdZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 6 Jul 2021 08:33:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42522 "EHLO mail.kernel.org"
+        id S233317AbhGFMd0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 6 Jul 2021 08:33:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47560 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234886AbhGFLdr (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 6 Jul 2021 07:33:47 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 5985A61E0A;
-        Tue,  6 Jul 2021 11:23:00 +0000 (UTC)
+        id S237113AbhGFLfz (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 6 Jul 2021 07:35:55 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id D193361C9E;
+        Tue,  6 Jul 2021 11:25:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1625570581;
-        bh=J9jzMF9UE8azGOzNI1ZPfuhQllO46jyFP0pJ2whawEw=;
+        s=k20201202; t=1625570733;
+        bh=m3J9UNyQjPyxEdeBDHGCu5rS6SkucFEvaf5a6IRbY/w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DXhsM1+6c1yaUlgQHEGYYRYIav3wuXasSobVmHXaizCNf0UEWDbMl0bj2dW3W5b6D
-         tMDERoMKBOdX6jJ1nXVwsdX803BTegVv/D/VMyNZRRmPpcho5GwdgX41x9PKmY/Wud
-         qd0RClcncsrmw9OKbVwMWyBB8h46/QB4wnVSDouKRfo3UK/xUxv4Mh5EUKmB5egdgS
-         uJedQsrsQQI/8B/4nm63xm7Tz+FUo+FdAMWuRddk9oZYoYoKMSZbtL/nRaQKCJdzuY
-         1jUDfSON3aYcpencIaZ2Fkj6YEhU2NJr504CeVW3xqOeAlwAR4yR1fgRYcCJgstOsQ
-         U3s6z3MQ+o4sw==
+        b=qHRnBZJL1K5ZG4pyfXr7gbDtbfY0EQ8usd20/oVCba9xELsROnuyWNscM/pzmUyPQ
+         T2dJYWhPrQ3lmlT+CXww3kIdwq4AvuuCUVUvLCovKsusbS4/GjhZHZii+H57FbK2SU
+         XcdxPjyKbrgz4ieTFJHafNIMjCSQs583dLo7cWJnfmzuWdSbBALKh0BW2GKVcfOvvx
+         9GeZ8MGK1Xl0crG7HYmvJnhxoGWquoyL6HMfnoPW+iC15r5m2nNHmcdOWCpVZQdJ4Z
+         HrOkJULO0/W6/iBqsTXwwFjmOB04xjWD/dkVnStvD8myPQ/oFNmPuKj6UIKIiQ7PHo
+         j8qiCmx552OLw==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Dmitry Osipenko <digetx@gmail.com>,
         Thierry Reding <treding@nvidia.com>,
         Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org,
         linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.10 044/137] clk: tegra: Ensure that PLLU configuration is applied properly
-Date:   Tue,  6 Jul 2021 07:20:30 -0400
-Message-Id: <20210706112203.2062605-44-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.4 24/74] clk: tegra: Ensure that PLLU configuration is applied properly
+Date:   Tue,  6 Jul 2021 07:24:12 -0400
+Message-Id: <20210706112502.2064236-24-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210706112203.2062605-1-sashal@kernel.org>
-References: <20210706112203.2062605-1-sashal@kernel.org>
+In-Reply-To: <20210706112502.2064236-1-sashal@kernel.org>
+References: <20210706112502.2064236-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -73,10 +73,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 4 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index c5cc0a2dac6f..d709ecb7d8d7 100644
+index 80f640d9ea71..24ecfc114d41 100644
 --- a/drivers/clk/tegra/clk-pll.c
 +++ b/drivers/clk/tegra/clk-pll.c
-@@ -1131,7 +1131,8 @@ static int clk_pllu_enable(struct clk_hw *hw)
+@@ -1089,7 +1089,8 @@ static int clk_pllu_enable(struct clk_hw *hw)
  	if (pll->lock)
  		spin_lock_irqsave(pll->lock, flags);
  
@@ -86,7 +86,7 @@ index c5cc0a2dac6f..d709ecb7d8d7 100644
  
  	ret = clk_pll_wait_for_lock(pll);
  	if (ret < 0)
-@@ -1748,15 +1749,13 @@ static int clk_pllu_tegra114_enable(struct clk_hw *hw)
+@@ -1706,15 +1707,13 @@ static int clk_pllu_tegra114_enable(struct clk_hw *hw)
  		return -EINVAL;
  	}
  
