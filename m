@@ -7,42 +7,42 @@ X-Spam-Status: No, score=-20.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A1C1C11F7C
-	for <linux-tegra@archiver.kernel.org>; Tue,  6 Jul 2021 11:34:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A834AC11F6A
+	for <linux-tegra@archiver.kernel.org>; Tue,  6 Jul 2021 11:34:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 334A661E4F
-	for <linux-tegra@archiver.kernel.org>; Tue,  6 Jul 2021 11:34:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 912F361E8B
+	for <linux-tegra@archiver.kernel.org>; Tue,  6 Jul 2021 11:34:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233935AbhGFLhd (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 6 Jul 2021 07:37:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47548 "EHLO mail.kernel.org"
+        id S234343AbhGFLh3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 6 Jul 2021 07:37:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47606 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S237496AbhGFLgL (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 6 Jul 2021 07:36:11 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 4B20861F12;
-        Tue,  6 Jul 2021 11:28:11 +0000 (UTC)
+        id S237344AbhGFLgG (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 6 Jul 2021 07:36:06 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 72C7A61EFC;
+        Tue,  6 Jul 2021 11:27:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1625570892;
+        s=k20201202; t=1625570822;
         bh=6fxvkolb4LQvw1c/ZtbEpDhH5Y7OIb8tJ40UCw5uHgw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aBs+PFU34WJ75+z6aUTTQgXHlAnbaISl6+TcQ7CLGMVqEB8T5ZtSPO79V5shgORfL
-         KCjCrIf4HIICRArvL68cRsVsSsuqLYzRfsGSz8GECl6IL8aCoViex8fjAi0wMy8oUv
-         GAkySAx23/L3a1LCk4q5dU8fQP14nmMakKsteQEALq06T/f6Zgjt/kVX6845FQyFyT
-         xk7lNDHH1GPiMqhcDcBp2oh5mu9BrvgQ/ts1CYPMPMMaeFFvA1uXke/2YkFPiNQ8XR
-         yLfubYm+u84Ixs6qZFo4cpW4FWOm2e4ag2cSf1ihN5B4KCKDOKq/nJPHvazm8NGh26
-         M92yah/Qsw+EQ==
+        b=LGdC85hFi3TwTH9htvR0ONxn+h0HH6v8LrrmVuRCiSJ5rXlLt/GE9eJ7JQP7XmhdT
+         /kMzpQ4OmsUSOgZsnooqBWReZVE+OuJFHr5IS71nEC3oF+Z6oA5ni8KdmbeLqqLAsl
+         4G4jJNHtsTl0o5a6zUdaH/+kP9qiYDtXG60liE9e1L8O3wKR8xpzWU90F2iQF2xvNT
+         bY6Eb75UozmTVfE8c34NZDSEFOV8o+3PkM0hMeC7EZWKFKs4NRUoTQ4HSya4N2ggNE
+         hfQC7sw6qtBh+BNqhbvWJ7v9KwEqmiz0dbVocVhvABSmqkX7Bw5QK4B4J6VRdbbF4Y
+         YGMOmK3ufav3Q==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Dmitry Osipenko <digetx@gmail.com>,
         Thierry Reding <treding@nvidia.com>,
         Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org,
         linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 17/45] clk: tegra: Ensure that PLLU configuration is applied properly
-Date:   Tue,  6 Jul 2021 07:27:21 -0400
-Message-Id: <20210706112749.2065541-17-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 18/55] clk: tegra: Ensure that PLLU configuration is applied properly
+Date:   Tue,  6 Jul 2021 07:26:01 -0400
+Message-Id: <20210706112638.2065023-18-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210706112749.2065541-1-sashal@kernel.org>
-References: <20210706112749.2065541-1-sashal@kernel.org>
+In-Reply-To: <20210706112638.2065023-1-sashal@kernel.org>
+References: <20210706112638.2065023-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
