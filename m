@@ -2,89 +2,118 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 433A4C07E99
-	for <linux-tegra@archiver.kernel.org>; Mon,  5 Jul 2021 22:32:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C3D1C07E99
+	for <linux-tegra@archiver.kernel.org>; Tue,  6 Jul 2021 00:57:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1D5D461956
-	for <linux-tegra@archiver.kernel.org>; Mon,  5 Jul 2021 22:32:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 324496197E
+	for <linux-tegra@archiver.kernel.org>; Tue,  6 Jul 2021 00:57:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230149AbhGEWee (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 5 Jul 2021 18:34:34 -0400
-Received: from mail-lf1-f48.google.com ([209.85.167.48]:40865 "EHLO
-        mail-lf1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230086AbhGEWee (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 5 Jul 2021 18:34:34 -0400
-Received: by mail-lf1-f48.google.com with SMTP id q18so34793491lfc.7;
-        Mon, 05 Jul 2021 15:31:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=XxIYzc2a0GDS3UgyyLc6UOgUpTaRimvmHueOqUiNlAo=;
-        b=GGzFZa1ON7XO8JxzZ/b9/mnrym6z2i0TllvAf60WWEzPT1TFFrgnO/mEkst5xmyR02
-         0MRtTUzFGiRhGlJahrmBO/wfjdQg0Son14YojLohjzidmJSZfJoPY0pkjMTkjPKDqtbM
-         NyHjAtABE3r3m3XaALiZMqKKZHTchA9Pxd3qRfiq61JVeLf/Sfa96jtGnNFO1wEl1LGw
-         RX8kc0Nh2l/4BINKwkWJ3npqWwnlJNMW9o974z0O4/ypMLuvAYgtwtHroCpieZlbxSd5
-         MtmvfZ1dZ059NGlk8xjyDfZdppDAReZkNGpfMtUN6MoLeLkTq2Ep8KL3ujoNslbhOp/c
-         3bSA==
-X-Gm-Message-State: AOAM532e1H9Lp6QeWtry4xFdTSZ4n+KPZwnYXbBDkTzi6Qpd1EUWVbKO
-        5R3Kioo6hQXZJq0kyZCsPKE=
-X-Google-Smtp-Source: ABdhPJwhTaMDcZK4oJs5vCYFU941vuJCjaKeS/t/gMmUoiDsOK+EDfsIeiiIvmNjg4Dj0eA7GWSjrA==
-X-Received: by 2002:a19:6e46:: with SMTP id q6mr8610756lfk.165.1625524314396;
-        Mon, 05 Jul 2021 15:31:54 -0700 (PDT)
-Received: from rocinante ([95.155.85.46])
-        by smtp.gmail.com with ESMTPSA id j17sm365773lja.38.2021.07.05.15.31.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Jul 2021 15:31:53 -0700 (PDT)
-Date:   Tue, 6 Jul 2021 00:31:52 +0200
-From:   Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     thierry.reding@gmail.com, lorenzo.pieralisi@arm.com,
-        robh@kernel.org, bhelgaas@google.com, jonathanh@nvidia.com,
-        linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH 3/3] PCI: tegra: make const array err_msg static
-Message-ID: <20210705223152.GA142312@rocinante>
-References: <55b11e9a7fa2987fbc0869d68ae59888954d65e2.1620148539.git.christophe.jaillet@wanadoo.fr>
- <5f3f35296b944b94546cc7d1e9cc6186484620d8.1620148539.git.christophe.jaillet@wanadoo.fr>
+        id S229753AbhGFBAX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 5 Jul 2021 21:00:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46790 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229722AbhGFBAX (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 5 Jul 2021 21:00:23 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id A021F6195E;
+        Tue,  6 Jul 2021 00:57:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1625533065;
+        bh=3sZXtqzPBmQeDtxCNP5rxxVJeRlFAwqPjm3IYlPYZLg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=dq0wOX39lFI1rViG4OrBnjClqeJW3nZ6ovSvlw0cGfvB/K7EZnA2KWFcshzstdftr
+         HBhNWQle5uDA/IYsbJJe66Z3i7Clq7NeQVE0ulqNAg9P0Ffqics1ANoyUh5mfCEMlG
+         mit6X+HBvVHHxhehKOAc7ro31jW7FEeOJbLylbc1PUAF3FPnSTYyU//AONbpKd/N+q
+         AxGU7cixYxF1iN13OsBzD2PsXkcd9VGZJTikRuI1SglIba7jKpUGU1JGE03XYv1lQr
+         PAE1FCLFp/94YhmxXxGjYQKcXvclDu/mA7cPXD1rURIycDkxfFf57vW+gpL/9Ovo2l
+         POJBzuN21/m5A==
+Date:   Tue, 6 Jul 2021 08:57:39 +0800
+From:   Peter Chen <peter.chen@kernel.org>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Thierry Reding <treding@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Felipe Balbi <balbi@kernel.org>,
+        David Heidelberg <david@ixit.cz>, devicetree@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v3 05/12] usb: otg-fsm: Fix hrtimer list corruption
+Message-ID: <20210706005739.GA19143@nchen>
+References: <20210704225433.32029-1-digetx@gmail.com>
+ <20210704225433.32029-6-digetx@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <5f3f35296b944b94546cc7d1e9cc6186484620d8.1620148539.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20210704225433.32029-6-digetx@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Christophe,
+On 21-07-05 01:54:26, Dmitry Osipenko wrote:
+> The HNP work can be re-scheduled while it's still in-fly. This results in
+> re-initialization of the busy work, resetting the hrtimer's list node of
+> the work and crashing kernel with null dereference within kernel/timer
+> once work's timer is expired. It's very easy to trigger this problem by
+> re-plugging USB cable quickly. Initialize HNP work only once to fix this
+> trouble.
+> 
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 
-Thank you for sending the patches over and taking care about these!
+Acked-by: Peter Chen <peter.chen@kernel.org>
 
-I was wondering whether you will be willing to send a v2 of this series
-that would include fixes to everything the checkpatch.pl script reports
-against this driver?  There aren't a lot of things to fix, thus the idea
-to squash everything at once.  These warnings would be as follows
-(excluding the ones you taken care of in this series):
+It is better to append kernel dump if you have v4 patchset.
 
-  drivers/pci/controller/pci-tegra.c:1661: WARNING: please, no space before tabs
-  drivers/pci/controller/pci-tegra.c:1890: WARNING: quoted string split across lines
-  drivers/pci/controller/pci-tegra.c:1891: WARNING: quoted string split across lines
-  drivers/pci/controller/pci-tegra.c:2619: WARNING: Symbolic permissions 'S_IRUGO' are not preferred. Consider using octal permissions '0444'.
+Peter
 
-These should be trivial to fix.  The two pertaining to "quoted string
-split across lines" would be something that we might or might not decide
-to do anything about this - technically, as per the Linux kernel coding
-style [1], we ought to fix this... but, this particular case is not
-a terrible example, so I will leave this at your discretion.
+> ---
+>  drivers/usb/common/usb-otg-fsm.c | 6 +++++-
+>  include/linux/usb/otg-fsm.h      | 1 +
+>  2 files changed, 6 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/usb/common/usb-otg-fsm.c b/drivers/usb/common/usb-otg-fsm.c
+> index 3740cf95560e..0697fde51d00 100644
+> --- a/drivers/usb/common/usb-otg-fsm.c
+> +++ b/drivers/usb/common/usb-otg-fsm.c
+> @@ -193,7 +193,11 @@ static void otg_start_hnp_polling(struct otg_fsm *fsm)
+>  	if (!fsm->host_req_flag)
+>  		return;
+>  
+> -	INIT_DELAYED_WORK(&fsm->hnp_polling_work, otg_hnp_polling_work);
+> +	if (!fsm->hnp_work_inited) {
+> +		INIT_DELAYED_WORK(&fsm->hnp_polling_work, otg_hnp_polling_work);
+> +		fsm->hnp_work_inited = true;
+> +	}
+> +
+>  	schedule_delayed_work(&fsm->hnp_polling_work,
+>  					msecs_to_jiffies(T_HOST_REQ_POLL));
+>  }
+> diff --git a/include/linux/usb/otg-fsm.h b/include/linux/usb/otg-fsm.h
+> index 3aee78dda16d..784659d4dc99 100644
+> --- a/include/linux/usb/otg-fsm.h
+> +++ b/include/linux/usb/otg-fsm.h
+> @@ -196,6 +196,7 @@ struct otg_fsm {
+>  	struct mutex lock;
+>  	u8 *host_req_flag;
+>  	struct delayed_work hnp_polling_work;
+> +	bool hnp_work_inited;
+>  	bool state_changed;
+>  };
+>  
+> -- 
+> 2.32.0
+> 
 
-What do you think?
+-- 
 
-Also, don't worry if you don't have the time or otherwise, as these are
-trivial things and it would only be a bonus to take care of them.
+Thanks,
+Peter Chen
 
-1. https://www.kernel.org/doc/html/v4.10/process/coding-style.html#breaking-long-lines-and-strings
-
-	Krzysztof
