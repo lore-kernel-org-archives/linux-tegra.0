@@ -2,108 +2,97 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-20.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7044FC07E9B
-	for <linux-tegra@archiver.kernel.org>; Tue,  6 Jul 2021 12:30:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D43D6C07E95
+	for <linux-tegra@archiver.kernel.org>; Wed,  7 Jul 2021 18:24:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 58EE6619D2
-	for <linux-tegra@archiver.kernel.org>; Tue,  6 Jul 2021 12:30:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B425461C72
+	for <linux-tegra@archiver.kernel.org>; Wed,  7 Jul 2021 18:24:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233317AbhGFMd0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 6 Jul 2021 08:33:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47560 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S237113AbhGFLfz (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 6 Jul 2021 07:35:55 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id D193361C9E;
-        Tue,  6 Jul 2021 11:25:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1625570733;
-        bh=m3J9UNyQjPyxEdeBDHGCu5rS6SkucFEvaf5a6IRbY/w=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qHRnBZJL1K5ZG4pyfXr7gbDtbfY0EQ8usd20/oVCba9xELsROnuyWNscM/pzmUyPQ
-         T2dJYWhPrQ3lmlT+CXww3kIdwq4AvuuCUVUvLCovKsusbS4/GjhZHZii+H57FbK2SU
-         XcdxPjyKbrgz4ieTFJHafNIMjCSQs583dLo7cWJnfmzuWdSbBALKh0BW2GKVcfOvvx
-         9GeZ8MGK1Xl0crG7HYmvJnhxoGWquoyL6HMfnoPW+iC15r5m2nNHmcdOWCpVZQdJ4Z
-         HrOkJULO0/W6/iBqsTXwwFjmOB04xjWD/dkVnStvD8myPQ/oFNmPuKj6UIKIiQ7PHo
-         j8qiCmx552OLw==
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 24/74] clk: tegra: Ensure that PLLU configuration is applied properly
-Date:   Tue,  6 Jul 2021 07:24:12 -0400
-Message-Id: <20210706112502.2064236-24-sashal@kernel.org>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210706112502.2064236-1-sashal@kernel.org>
-References: <20210706112502.2064236-1-sashal@kernel.org>
+        id S231312AbhGGS10 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 7 Jul 2021 14:27:26 -0400
+Received: from smtp04.smtpout.orange.fr ([80.12.242.126]:19145 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231430AbhGGS1Z (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 7 Jul 2021 14:27:25 -0400
+Received: from [192.168.1.18] ([86.243.172.93])
+        by mwinf5d07 with ME
+        id SJQh2500Q21Fzsu03JQiZT; Wed, 07 Jul 2021 20:24:43 +0200
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Wed, 07 Jul 2021 20:24:43 +0200
+X-ME-IP: 86.243.172.93
+Subject: Re: [PATCH 3/3] PCI: tegra: make const array err_msg static
+To:     =?UTF-8?Q?Krzysztof_Wilczy=c5=84ski?= <kw@linux.com>
+Cc:     thierry.reding@gmail.com, lorenzo.pieralisi@arm.com,
+        robh@kernel.org, bhelgaas@google.com, jonathanh@nvidia.com,
+        linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <55b11e9a7fa2987fbc0869d68ae59888954d65e2.1620148539.git.christophe.jaillet@wanadoo.fr>
+ <5f3f35296b944b94546cc7d1e9cc6186484620d8.1620148539.git.christophe.jaillet@wanadoo.fr>
+ <20210705223152.GA142312@rocinante>
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Message-ID: <a3d48884-9e47-8623-6fc5-6c52f4ca0568@wanadoo.fr>
+Date:   Wed, 7 Jul 2021 20:24:41 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
+In-Reply-To: <20210705223152.GA142312@rocinante>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Dmitry Osipenko <digetx@gmail.com>
+Le 06/07/2021 à 00:31, Krzysztof Wilczyński a écrit :
+> Hi Christophe,
+> 
+> Thank you for sending the patches over and taking care about these!
+> 
+> I was wondering whether you will be willing to send a v2 of this series
+> that would include fixes to everything the checkpatch.pl script reports
+> against this driver?  There aren't a lot of things to fix, thus the idea
+> to squash everything at once.  These warnings would be as follows
+> (excluding the ones you taken care of in this series):
+> 
+>    drivers/pci/controller/pci-tegra.c:1661: WARNING: please, no space before tabs
+>    drivers/pci/controller/pci-tegra.c:1890: WARNING: quoted string split across lines
+>    drivers/pci/controller/pci-tegra.c:1891: WARNING: quoted string split across lines
+>    drivers/pci/controller/pci-tegra.c:2619: WARNING: Symbolic permissions 'S_IRUGO' are not preferred. Consider using octal permissions '0444'.
+> 
+> These should be trivial to fix.  The two pertaining to "quoted string
+> split across lines" would be something that we might or might not decide
+> to do anything about this - technically, as per the Linux kernel coding
+> style [1], we ought to fix this... but, this particular case is not
+> a terrible example, so I will leave this at your discretion.
+> 
+> What do you think?
 
-[ Upstream commit a7196048cd5168096c2c4f44a3939d7a6dcd06b9 ]
+Hi,
+I don't think it worth it.
 
-The PLLU (USB) consists of the PLL configuration itself and configuration
-of the PLLU outputs. The PLLU programming is inconsistent on T30 vs T114,
-where T114 immediately bails out if PLLU is enabled and T30 re-enables
-a potentially already enabled PLL (left after bootloader) and then fully
-reprograms it, which could be unsafe to do. The correct way should be to
-skip enabling of the PLL if it's already enabled and then apply
-configuration to the outputs. This patch doesn't fix any known problems,
-it's a minor improvement.
+Even for patch 2/3 about 'seq_printf' --> 'seq_puts' conversion, I'm not 
+fully convinced myself that is useful.
 
-Acked-by: Thierry Reding <treding@nvidia.com>
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/clk/tegra/clk-pll.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+Too trivial clean-ups only mess-up 'git blame' for no real added value.
 
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index 80f640d9ea71..24ecfc114d41 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -1089,7 +1089,8 @@ static int clk_pllu_enable(struct clk_hw *hw)
- 	if (pll->lock)
- 		spin_lock_irqsave(pll->lock, flags);
- 
--	_clk_pll_enable(hw);
-+	if (!clk_pll_is_enabled(hw))
-+		_clk_pll_enable(hw);
- 
- 	ret = clk_pll_wait_for_lock(pll);
- 	if (ret < 0)
-@@ -1706,15 +1707,13 @@ static int clk_pllu_tegra114_enable(struct clk_hw *hw)
- 		return -EINVAL;
- 	}
- 
--	if (clk_pll_is_enabled(hw))
--		return 0;
--
- 	input_rate = clk_hw_get_rate(__clk_get_hw(osc));
- 
- 	if (pll->lock)
- 		spin_lock_irqsave(pll->lock, flags);
- 
--	_clk_pll_enable(hw);
-+	if (!clk_pll_is_enabled(hw))
-+		_clk_pll_enable(hw);
- 
- 	ret = clk_pll_wait_for_lock(pll);
- 	if (ret < 0)
--- 
-2.30.2
+If you want these clean-ups, I can send a patch for it, but checkpatch 
+output need sometimes to be ignored on files already in the tree. At 
+least, this is my point of view.
+
+CJ
+
+
+
+> Also, don't worry if you don't have the time or otherwise, as these are
+> trivial things and it would only be a bonus to take care of them.
+> 
+> 1. https://www.kernel.org/doc/html/v4.10/process/coding-style.html#breaking-long-lines-and-strings
+> 
+> 	Krzysztof
+> 
 
