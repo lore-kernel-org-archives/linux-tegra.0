@@ -8,68 +8,62 @@ X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF2D7C07E9E
-	for <linux-tegra@archiver.kernel.org>; Thu,  8 Jul 2021 10:32:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9F3EC07E96
+	for <linux-tegra@archiver.kernel.org>; Thu,  8 Jul 2021 10:37:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 946F161476
-	for <linux-tegra@archiver.kernel.org>; Thu,  8 Jul 2021 10:32:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8CC0461447
+	for <linux-tegra@archiver.kernel.org>; Thu,  8 Jul 2021 10:37:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231494AbhGHKev (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 8 Jul 2021 06:34:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52246 "EHLO
+        id S231493AbhGHKjo (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 8 Jul 2021 06:39:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53328 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231470AbhGHKev (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 8 Jul 2021 06:34:51 -0400
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5ADC1C061574;
-        Thu,  8 Jul 2021 03:32:09 -0700 (PDT)
-Received: by mail-wr1-x435.google.com with SMTP id f17so6878722wrt.6;
-        Thu, 08 Jul 2021 03:32:09 -0700 (PDT)
+        with ESMTP id S231332AbhGHKjn (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 8 Jul 2021 06:39:43 -0400
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF5B6C061574
+        for <linux-tegra@vger.kernel.org>; Thu,  8 Jul 2021 03:37:01 -0700 (PDT)
+Received: by mail-wm1-x333.google.com with SMTP id u8-20020a7bcb080000b02901e44e9caa2aso3688123wmj.4
+        for <linux-tegra@vger.kernel.org>; Thu, 08 Jul 2021 03:37:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=DMo1FwPXUmdGeHuTylB1bhXZtdOnnUeT5f6CbSUaCzs=;
-        b=p1FAx0sXOfW6uoejHheFl6xvVQZqCqeoJDup1pcl51HWurhVMhnRCKEsJ1RAQFooXl
-         QJ60l7CT0z5JrFWInnEHnVZwDIkYjw2aTrwu1XB2ZDbggC51KvsGl0/sf/d6AIoUbqrw
-         cTjDR63q6xN5qLSHPbnliQAk3djKNdR6PYveqztvQ7zA1n3zovLDGKzbJ7ZieeE7q7+Q
-         RaaQb3N7RO94pciVu14NO/AFmQ3dk4RS6clfXnNiaU+uHL7FSdt0b+uHcKaiT29aSCwH
-         NGHrQZTN7Kv1AXaDHq10myQ1w6EVxd+QwJsvFXjLPAIVzFqbaCQ00OT53LiKqJxL5WZZ
-         oNpA==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=sKIAzp43GPHBSu1FCv0hVUbO8ZG1NpGSHhgylht/1Zg=;
+        b=FjPQAn+m6ILUXNh+Na1REYIshgD/NFG2dbp9OYC2BVYZqVQBTWCGmTnA/LHDczIsCo
+         pgKFdkG2fKMzIebZEMjVrHOmHzoZ7r1VurqG6cuMGyx4OUGSzDCPy+PgIl8zZ/4qEO+q
+         AdSfox6wvUd+08pc7sTjgAThD2raXTIBpdp66ORJrEI/iWlTncDqyZ12G3dZ9h0H/sCX
+         2p1e2/KQtba0aJZL/dYHxR8RpfcWvpwYgiXqzbqQdIHcM35RcHg0awli5tTOq9DIcRo2
+         VD7s933iqOa6HbsKH/SX5swCq53ZyIvqnHRWmshri6u79E1sUKRNtAihlzYp6BUeEJAd
+         dGeA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=DMo1FwPXUmdGeHuTylB1bhXZtdOnnUeT5f6CbSUaCzs=;
-        b=Lfz6fbpu9LOCW1IQJw1TbnkaXCV/Spu9rF0k4tzlj9TCCATKyDgeIEoKVCTey4Hew+
-         6cCkOGnhvTYA6M1GrPenE/Me+xfL7QxfTtWTqpulHzNslzD2DrwphkBSTDoHBluiMOdq
-         ekI6zml34TgDNtth1Z2f0AReqzMhF+5WrGdZN13ScGUj+fk+6iBk5HKD+o9WxGI1eIaB
-         HvlottDbAYfSGvBBqqvHk3XJBFOhihpOC/7u8MJFsfZWLzXL79GUe2E9zB2i9Cyc414S
-         8I6zEnirEZeN8Y7P+5HCfcayQ6QfnZ/8TUX4a0FRbS+s6v84kFC5wYoYvlyP0hrlCtwJ
-         WzLg==
-X-Gm-Message-State: AOAM533PPU0RPEd8ITyRJXJKumdZB6XuY7cJ9/BJ5D8ixqurtDBdEflE
-        YFQnWeI/HX3GaAi2wJ+BaEw=
-X-Google-Smtp-Source: ABdhPJzlvFcZx5xlorsp2MwJBbqPjX+k+YaeqaloucD+hMVipmfutFPdh/YzQIe6ATjQbbORHM8SLA==
-X-Received: by 2002:a5d:6702:: with SMTP id o2mr27199118wru.405.1625740327975;
-        Thu, 08 Jul 2021 03:32:07 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=sKIAzp43GPHBSu1FCv0hVUbO8ZG1NpGSHhgylht/1Zg=;
+        b=PI5vwo8vKbUI6lZUTdk0tVW7PAkQP6XZcJ24OgwbeMYNme3UvX8DC0l9agUKAKEhZx
+         zcaXQ+VOMoIh/nmo1pv2SfMhRmvOZu6agH0TOMWvVobzqgXk+2fatw4h7eMbNnJM2CKj
+         eb/ZpMDbY8oT+ibdzujRCYuxntXFBp2mZnxcmdV1/jh32jzMeMCTHh+SSjyC5rx7+qC3
+         KYyZdLtD0s39wLQMPkCCpjQgWmjXCblNmw5vyd2cy1w5ZNYd/S65EE4Oms5/oIK74VQB
+         dw7wA2I2EFxPFCZSuUgKz4RM0XeZbsOGIeIWAWdOeD6q9lSKVJSG7dhNe3zfdold1vgh
+         StTg==
+X-Gm-Message-State: AOAM533MaBAM9ZnOAsX9oQoFE724tYrYi1GOW8MBvCXm7b8PAGJJA+CO
+        8QR1cuUQsSL1rugaaDfZcRw=
+X-Google-Smtp-Source: ABdhPJwnX/VYXrJPRKoCMtY0t3Yd5CgpNauyTx3NQvPaA6T5p96cJfRbEQzLuM5OzxfNounD6Adm9g==
+X-Received: by 2002:a1c:de88:: with SMTP id v130mr8505389wmg.98.1625740620562;
+        Thu, 08 Jul 2021 03:37:00 -0700 (PDT)
 Received: from localhost ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id g10sm1383954wrq.63.2021.07.08.03.32.06
+        by smtp.gmail.com with ESMTPSA id a22sm1888751wrc.66.2021.07.08.03.36.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Jul 2021 03:32:07 -0700 (PDT)
+        Thu, 08 Jul 2021 03:36:59 -0700 (PDT)
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Sameer Pujar <spujar@nvidia.com>, linux-tegra@vger.kernel.org,
-        alsa-devel@alsa-project.org, devicetree@vger.kernel.org
-Subject: [PATCH v2 2/2] arm64: tegra: Enable audio IOMMU support on Tegra194
-Date:   Thu,  8 Jul 2021 12:34:32 +0200
-Message-Id: <20210708103432.1690385-3-thierry.reding@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] arm64: tegra: Enable SMMU support for USB on Tegra194
+Date:   Thu,  8 Jul 2021 12:39:32 +0200
+Message-Id: <20210708103932.1691306-1-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20210708103432.1690385-1-thierry.reding@gmail.com>
-References: <20210708103432.1690385-1-thierry.reding@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -78,32 +72,48 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-Add iommus and interconnects properties to the ADMAIF device tree node
-on Tegra194. This ensures that the correct SID is used for translation
-of physical to I/O virtual addresses and that the path to system memory
-is properly described, which in turn can impact the range of memory that
-the device can address.
+As of commit c7289b1c8a4e ("arm64: tegra: Enable SMMU support on
+Tegra194"), SMMU support is enabled system-wide on Tegra194. However,
+there was a bit of overlap between the SMMU enablement and the USB
+support addition, so the USB device tree nodes are missing the iommus
+and interconnects properties. This in turn leads to SMMU faults for
+these devices, since by default the ARM SMMU will fault.
 
+Add the iommus and interconnects properties to the XUSB and XUDC device
+tree nodes to restore their functionality.
+
+Fixes: c7289b1c8a4e ("arm64: tegra: Enable SMMU support on Tegra194")
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- arch/arm64/boot/dts/nvidia/tegra194.dtsi | 4 ++++
- 1 file changed, 4 insertions(+)
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-index b7d532841390..07e61f084123 100644
+index 07e61f084123..7cc6dc19ff9f 100644
 --- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
 +++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-@@ -200,6 +200,10 @@ tegra_admaif: admaif@290f000 {
- 						    "rx19", "tx19",
- 						    "rx20", "tx20";
- 					status = "disabled";
-+					interconnects = <&mc TEGRA194_MEMORY_CLIENT_APEDMAR &emc>,
-+							<&mc TEGRA194_MEMORY_CLIENT_APEDMAW &emc>;
-+					interconnect-names = "dma-mem", "write";
-+					iommus = <&smmu TEGRA194_SID_APE>;
- 				};
+@@ -952,6 +952,10 @@ usb@3550000 {
+ 				 <&bpmp TEGRA194_CLK_XUSB_SS>,
+ 				 <&bpmp TEGRA194_CLK_XUSB_FS>;
+ 			clock-names = "dev", "ss", "ss_src", "fs_src";
++			interconnects = <&mc TEGRA194_MEMORY_CLIENT_XUSB_DEVR &emc>,
++					<&mc TEGRA194_MEMORY_CLIENT_XUSB_DEVW &emc>;
++			interconnect-names = "dma-mem", "write";
++			iommus = <&smmu TEGRA194_SID_XUSB_DEV>;
+ 			power-domains = <&bpmp TEGRA194_POWER_DOMAIN_XUSBB>,
+ 					<&bpmp TEGRA194_POWER_DOMAIN_XUSBA>;
+ 			power-domain-names = "dev", "ss";
+@@ -981,6 +985,10 @@ usb@3610000 {
+ 				      "xusb_ss", "xusb_ss_src", "xusb_hs_src",
+ 				      "xusb_fs_src", "pll_u_480m", "clk_m",
+ 				      "pll_e";
++			interconnects = <&mc TEGRA194_MEMORY_CLIENT_XUSB_HOSTR &emc>,
++					<&mc TEGRA194_MEMORY_CLIENT_XUSB_HOSTW &emc>;
++			interconnect-names = "dma-mem", "write";
++			iommus = <&smmu TEGRA194_SID_XUSB_HOST>;
  
- 				tegra_i2s1: i2s@2901000 {
+ 			power-domains = <&bpmp TEGRA194_POWER_DOMAIN_XUSBC>,
+ 					<&bpmp TEGRA194_POWER_DOMAIN_XUSBA>;
 -- 
 2.32.0
 
