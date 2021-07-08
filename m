@@ -7,74 +7,96 @@ X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05AA0C07E96
-	for <linux-tegra@archiver.kernel.org>; Thu,  8 Jul 2021 22:25:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2A5AC07E96
+	for <linux-tegra@archiver.kernel.org>; Thu,  8 Jul 2021 22:33:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DB2626162D
-	for <linux-tegra@archiver.kernel.org>; Thu,  8 Jul 2021 22:25:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7FD3061864
+	for <linux-tegra@archiver.kernel.org>; Thu,  8 Jul 2021 22:33:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230211AbhGHW20 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 8 Jul 2021 18:28:26 -0400
-Received: from rere.qmqm.pl ([91.227.64.183]:10209 "EHLO rere.qmqm.pl"
+        id S229631AbhGHWfm (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 8 Jul 2021 18:35:42 -0400
+Received: from rere.qmqm.pl ([91.227.64.183]:61074 "EHLO rere.qmqm.pl"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229631AbhGHW20 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 8 Jul 2021 18:28:26 -0400
+        id S229497AbhGHWfm (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 8 Jul 2021 18:35:42 -0400
 Received: from remote.user (localhost [127.0.0.1])
-        by rere.qmqm.pl (Postfix) with ESMTPSA id 4GLW8Q2rRLzMT;
-        Fri,  9 Jul 2021 00:25:42 +0200 (CEST)
+        by rere.qmqm.pl (Postfix) with ESMTPSA id 4GLWJn47tgzTS;
+        Fri,  9 Jul 2021 00:32:57 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
-        t=1625783142; bh=e54EZYnhz2/diQUGmYLli8uvYZdZ3+QkPp8ageHuW/g=;
+        t=1625783577; bh=aSRPhRNGkFjEWLH2kg/7j89z1gCsuMcB8R59/oKF8I8=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=fjCBMF2LOLl9a9eqbpNR6rvsC7McNsLnEOONpDfUAdOBydd+uI44iTlRmVR/FI9NA
-         f4CsjBPQzs9RhXHzD7U5LLdzDzjccaHc/NsT/b9OQhOzmyaIbMB3zrzryezyuadpSi
-         1QDxzZENajFscTDSiY5dsvVtvyLiygFAsfxqSZuS1KqcNwUXZlb0Iir2tUbALtoat2
-         K14o7Z2aD4SCX8NmbLt75apxT4dGKb+Cy2VpqbD4IlWSfMXqMotO62owlOfwaO1n5q
-         8Le8vCIYAIo4a4+uQdfqK+IwqlDOc4vzA/kkos4704YlCOG7O5nwcb1if4l/VfdUZd
-         V8T3usV1/XjDA==
+        b=JdcfHB95JZvOq9AwYo66uRnlaRCmz91L8Cj5IBH0eXUke32R+PvFPcm9toZQMM95N
+         /Y1gk1nfN/MyGCcH8tOzDn5CPBgAbfJUuhxi8Hgfdj4287vlB1Uy55dz8kuI3ru4zE
+         nPwcHhb+5U8xxrys8VlQTA4haGyH+2Hf5MXA7XBFkk/whZRjfgWRInFjZ6AkyXa6O6
+         tJHBNGGyUq9mGtzeAelqMxVyajw9fLe9JC7Su0DM9J06GugR2q4CbIywIP8HFx2/Tz
+         r1+1EjF/z+UP4xoMK1xsPiL/43cmyUwSWpAV1vmSVw8blvRcxefhWqJCG7vg1W6LC1
+         fzlGVc5wXAiWA==
 X-Virus-Status: Clean
 X-Virus-Scanned: clamav-milter 0.103.2 at mail
-Date:   Fri, 9 Jul 2021 00:25:41 +0200
+Date:   Fri, 9 Jul 2021 00:32:56 +0200
 From:   =?iso-8859-2?Q?Micha=B3_Miros=B3aw?= <mirq-linux@rere.qmqm.pl>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Krishna Yarlagadda <kyarlagadda@nvidia.com>,
-        linux-serial@vger.kernel.org, linux-tegra@vger.kernel.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH V2] serial: tegra: Only print FIFO error message when an
- error occurs
-Message-ID: <YOd7ZTJf0WoQ8oKo@qmqm.qmqm.pl>
-References: <20210630125643.264264-1-jonathanh@nvidia.com>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Thierry Reding <treding@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Peter Chen <peter.chen@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Felipe Balbi <balbi@kernel.org>,
+        David Heidelberg <david@ixit.cz>, devicetree@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v1 04/12] usb: phy: tegra: Support OTG mode programming
+Message-ID: <YOd9GE7xM150i1XT@qmqm.qmqm.pl>
+References: <20210701022405.10817-1-digetx@gmail.com>
+ <20210701022405.10817-5-digetx@gmail.com>
+ <12f5b8cc-982e-f112-e0a4-21afdf3bce06@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-2
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20210630125643.264264-1-jonathanh@nvidia.com>
+In-Reply-To: <12f5b8cc-982e-f112-e0a4-21afdf3bce06@gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, Jun 30, 2021 at 01:56:43PM +0100, Jon Hunter wrote:
-> The Tegra serial driver always prints an error message when enabling the
-> FIFO for devices that have support for checking the FIFO enable status.
-> Fix this by displaying the error message, only when an error occurs.
+On Thu, Jul 01, 2021 at 04:55:03PM +0300, Dmitry Osipenko wrote:
+> 01.07.2021 05:23, Dmitry Osipenko пишет:
+> >  static int tegra_usb_phy_init(struct usb_phy *u_phy)
+> > @@ -967,12 +1057,26 @@ static int tegra_usb_phy_init(struct usb_phy *u_phy)
+> >  			goto disable_vbus;
+> >  	}
+> >  
+> > +	err = tegra_usb_phy_configure_pmc(phy);
+> > +	if (err)
+> > +		goto close_phy;
+> > +
+> >  	err = tegra_usb_phy_power_on(phy);
+> >  	if (err)
+> >  		goto close_phy;
+> >  
+> > +	if (phy->irq > 0) {
+> > +		err = request_irq(phy->irq, tegra_usb_phy_isr, IRQF_SHARED,
+> > +				  dev_name(phy->u_phy.dev), phy);
+> > +		if (err)
+> > +			goto pwr_off_phy;
+> > +	}
 > 
-> Finally, update the error message to make it clear that enabling the
-> FIFO failed and display the error code.
-[...]
-> @@ -1045,9 +1045,11 @@ static int tegra_uart_hw_init(struct tegra_uart_port *tup)
->  
->  	if (tup->cdata->fifo_mode_enable_status) {
->  		ret = tegra_uart_wait_fifo_mode_enabled(tup);
-> -		dev_err(tup->uport.dev, "FIFO mode not enabled\n");
-> -		if (ret < 0)
-> +		if (ret < 0) {
-> +			dev_err(tup->uport.dev,
-> +				"Failed to enable FIFO mode: %d\n", ret);
+> There were reports that this patch was casing an unhandled USB interrupt
+> event on some devices. I thought this problem was fixed already, but
+> looking again at the offending kernel log again, it still should be a
+> problem.
+> 
+> The interrupt fires from the usb_add_hcd() of the CI driver before CI
+> driver have requested interrupt in ci_hdrc_probe(). So either CI driver
+> should request interrupt earlier or Tegra PHY driver should keep shared
+> interrupt disabled after requesting it, the latter variant should be
+> more robust. I'll improve it in v2.
 
-Could you change this to use %pe and ERR_PTR(ret)?
+I'd suggest the first solution, as the latter is a workaround for what
+is a normal shared interrupt behaviour. Maybe a controller reset is
+needed in CI driver before going on with PHY init?
 
 Best Regards
-Micha� Miros�aw
+Michał Mirosław
