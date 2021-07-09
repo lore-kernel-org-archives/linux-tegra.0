@@ -2,82 +2,84 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 981BFC07E99
-	for <linux-tegra@archiver.kernel.org>; Fri,  9 Jul 2021 21:31:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E10BC07E99
+	for <linux-tegra@archiver.kernel.org>; Fri,  9 Jul 2021 21:38:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 713E0613C2
-	for <linux-tegra@archiver.kernel.org>; Fri,  9 Jul 2021 21:31:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 707CF613C7
+	for <linux-tegra@archiver.kernel.org>; Fri,  9 Jul 2021 21:38:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229931AbhGIVdo (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 9 Jul 2021 17:33:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42540 "EHLO
+        id S230406AbhGIVlA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 9 Jul 2021 17:41:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44194 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229546AbhGIVdo (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 9 Jul 2021 17:33:44 -0400
-Received: from mail-lj1-x22e.google.com (mail-lj1-x22e.google.com [IPv6:2a00:1450:4864:20::22e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12950C0613DD;
-        Fri,  9 Jul 2021 14:30:59 -0700 (PDT)
-Received: by mail-lj1-x22e.google.com with SMTP id e20so10179138ljn.8;
-        Fri, 09 Jul 2021 14:30:58 -0700 (PDT)
+        with ESMTP id S229546AbhGIVlA (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 9 Jul 2021 17:41:00 -0400
+Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BC44C0613DD;
+        Fri,  9 Jul 2021 14:38:16 -0700 (PDT)
+Received: by mail-lj1-x236.google.com with SMTP id s18so10226595ljg.7;
+        Fri, 09 Jul 2021 14:38:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=7W1D2O2qCEKR7zKJko/Cm8ADrfYCvs83FXBwHmuFLyE=;
-        b=BdGDQ6jSViMaKzGdsr6ZoU0Tvd2zdumu+PG7fYrDZ3n2CsSldNFUxvbWKD+yRrc8PM
-         t4o6jkAlroYfRR0emUYH/ZW6ziAilDLfp7/DtRyw+GY/w5gVGcvS8pNq+4F42ooggwrq
-         rUis38T7r91qvNISo6AbW6w8KVIh67BQUibiklO3cT7XrYpsApINVpHvuSWKYCpMTHvz
-         YbOipvwDmtEQyq3vPTGMUoqTcQETjs8wDYrdIkUykFnlc2zGJMqd22iaSYMXIzJFZVuS
-         lVSjcItQzxhY95u2nBTIsxKlQRpjYYmUJr+cYcjxzuZCTCw3mUHyuGgaOuMCn4SMAhmq
-         ZGIg==
+        bh=ZVPWYqSyixkxkDSr12zp1Gb/EBiJF8//ADhPZjQHkNY=;
+        b=coLNTHP2JDZCDbh9rSFwBNNgy4/PiQ/h9A/b2My9drw7hVjw4e/I1PIv8KKuORE6Hk
+         jWcWEXi+PDqWxto9Glc1TIpdlXlKr8wWvNu2Vjvo9N9KpAHG1jnE2HGGPMU+epgHq2t5
+         U+Locdqonh9XT90mb49h3q075H6dSI42y77G3HhagnYPyY1WN52zV+g3DFkqDlHeVY1a
+         43N1EYAefr9OWNvkklsjyf+PsFX93qJk5j00thze8kzNFnc0H5XX8hzxBvdNgpHMAV9S
+         EFdvYQBBJP8iA38ln3xJreH/QEH9IfuBghoqell+XhAoCV1FV/5YGgHdg9NxTfw8oYq7
+         3ujA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=7W1D2O2qCEKR7zKJko/Cm8ADrfYCvs83FXBwHmuFLyE=;
-        b=RgERSvzzvNzCt2rStGN0ZfKGfLYukqARtvD+Qvi5KqyUkU1wJMA+pKTfTVNUK5LiHW
-         JRHYirr0r6nFj/6A30ZeolzU9CBYo5/48GzIdfSdLhYbjS1A3YxVdSZjK3fCly7Glz81
-         KymAbh4ADlfWLh+QcL+73M7cCgyeowD0q6PJz951gGF42g4K4yrbMundgCG7JO4lt7eC
-         hgZU/+LMtsWEHKGt/dY52p7migt1oyWrT9ukhgzynVoDSIAgbSUuiCzhCC+EWwQY0GCA
-         Mm7fXSZI4233c6pZr6LyxnBOz2uJdNxEmwKO7eRyi0MSIRJtrm9oMe3WGbfkpXXx55dG
-         VTBQ==
-X-Gm-Message-State: AOAM5306S+jXFGsarwgO7ET4QhakFEdqrsHePPKff0Vh9VXqKRt91mFy
-        i91roIDYDvy3uwq8o1jaQ+d0Zg/fdGU=
-X-Google-Smtp-Source: ABdhPJx7Ivk1JigvlM02oU8v95RxaDB+0vSAbo5j+QhkyIX8MAl/FYsqYFAam37aCC/eIPTOxvoHkg==
-X-Received: by 2002:a2e:8001:: with SMTP id j1mr31741200ljg.332.1625866257344;
-        Fri, 09 Jul 2021 14:30:57 -0700 (PDT)
+        bh=ZVPWYqSyixkxkDSr12zp1Gb/EBiJF8//ADhPZjQHkNY=;
+        b=qDm13BZUi7v647q+jSy55Yt6UwCpPtcrVf/q0ckRTcCFiyuwe+y22btZk7VSbibsst
+         bJRM209xfNZj44kG5py6NbZKJV4/rxfKDruk4KongDYwUQEkED7Jea+L3jAKLAT3tIGO
+         +AF1Yi14yh+CvBcmGc34yLVEUcYjv4MaxiXYEhkNeU+/V1f/48mEsXX5MezEbEVEnVFe
+         y/kqL8XpufU29dR0ajzQaHHazNTqHLWzS614BKgJA+2tDQSroeLs7ABpTgjRuFMgvAKM
+         n6qYRpJSyf5qBkaexaQnS+T5MV+HeVx/R3/ymLLXZ2HkbEXIo6sO/Rtd8C+fu0tcAB/b
+         a6tw==
+X-Gm-Message-State: AOAM5305/IKKH/6xyN6DIsJKI0HUlxGuenzKdDXHwcDSzziFyylkigHQ
+        7X0z2NDiEKY8pncgk0fKNO39eM3sumc=
+X-Google-Smtp-Source: ABdhPJy8w4nB0SwfVg9e0pH/UJAZ+6wCIk2dWvx5t8aq1ddzP6Wwk2dKZXg4s8nCC0uwx+l+sxxvkQ==
+X-Received: by 2002:a2e:a16d:: with SMTP id u13mr23697171ljl.222.1625866694503;
+        Fri, 09 Jul 2021 14:38:14 -0700 (PDT)
 Received: from [192.168.2.145] (94-29-37-113.dynamic.spd-mgts.ru. [94.29.37.113])
-        by smtp.googlemail.com with ESMTPSA id y12sm681083ljh.19.2021.07.09.14.30.56
+        by smtp.googlemail.com with ESMTPSA id y7sm667113lji.64.2021.07.09.14.38.13
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 09 Jul 2021 14:30:56 -0700 (PDT)
-Subject: Re: [PATCH v1 05/12] usb: otg-fsm: Fix hrtimer list corruption
-To:     =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
-Cc:     Thierry Reding <treding@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Mark Brown <broonie@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Peter Chen <peter.chen@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Felipe Balbi <balbi@kernel.org>,
-        David Heidelberg <david@ixit.cz>, devicetree@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-References: <20210701022405.10817-1-digetx@gmail.com>
- <20210701022405.10817-6-digetx@gmail.com> <YOd/SfxC26esmVXU@qmqm.qmqm.pl>
+        Fri, 09 Jul 2021 14:38:14 -0700 (PDT)
+Subject: Re: [PATCH V2] serial: tegra: Only print FIFO error message when an
+ error occurs
+To:     =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        Jon Hunter <jonathanh@nvidia.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Krishna Yarlagadda <kyarlagadda@nvidia.com>,
+        linux-serial@vger.kernel.org, linux-tegra@vger.kernel.org,
+        stable@vger.kernel.org
+References: <20210630125643.264264-1-jonathanh@nvidia.com>
+ <YOd7ZTJf0WoQ8oKo@qmqm.qmqm.pl>
+ <aad402e7-a2b7-1faf-bc22-eb90bee39d3b@nvidia.com>
+ <30057ea5-5699-9335-f4dd-a9e8ed847ee4@nvidia.com>
+ <YOiNh2ue6YnN6Zr/@qmqm.qmqm.pl>
 From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <7b0940a9-ea65-d83e-7450-a09a0082bcd5@gmail.com>
-Date:   Sat, 10 Jul 2021 00:30:56 +0300
+Message-ID: <0e5678f2-96d3-9970-b2e4-f1efb395c919@gmail.com>
+Date:   Sat, 10 Jul 2021 00:38:13 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.11.0
 MIME-Version: 1.0
-In-Reply-To: <YOd/SfxC26esmVXU@qmqm.qmqm.pl>
+In-Reply-To: <YOiNh2ue6YnN6Zr/@qmqm.qmqm.pl>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -85,25 +87,44 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-09.07.2021 01:42, Michał Mirosław пишет:
-> On Thu, Jul 01, 2021 at 05:23:58AM +0300, Dmitry Osipenko wrote:
->> The HNP work can be re-scheduled while it's still in-fly. This results in
->> re-initialization of the busy work, resetting the hrtimer's list node of
->> the work and crashing kernel with null dereference within kernel/timer
->> once work's timer is expired. It's very easy to trigger this problem by
->> re-plugging USB cable quickly. Initialize HNP work only once to fix this
->> trouble.
-> [...]
->> -	INIT_DELAYED_WORK(&fsm->hnp_polling_work, otg_hnp_polling_work);
->> +	if (!fsm->hnp_work_inited) {
->> +		INIT_DELAYED_WORK(&fsm->hnp_polling_work, otg_hnp_polling_work);
->> +		fsm->hnp_work_inited = true;
->> +	}
->> +
+09.07.2021 20:55, Michał Mirosław пишет:
+> On Fri, Jul 09, 2021 at 12:38:07PM +0100, Jon Hunter wrote:
+>>
+>> On 09/07/2021 09:34, Jon Hunter wrote:
+>>>
+>>>
+>>> On 08/07/2021 23:25, Michał Mirosław wrote:
+>>>> On Wed, Jun 30, 2021 at 01:56:43PM +0100, Jon Hunter wrote:
+>>>>> The Tegra serial driver always prints an error message when enabling the
+>>>>> FIFO for devices that have support for checking the FIFO enable status.
+>>>>> Fix this by displaying the error message, only when an error occurs.
+>>>>>
+>>>>> Finally, update the error message to make it clear that enabling the
+>>>>> FIFO failed and display the error code.
+>>>> [...]
+>>>>> @@ -1045,9 +1045,11 @@ static int tegra_uart_hw_init(struct tegra_uart_port *tup)
+>>>>>  
+>>>>>  	if (tup->cdata->fifo_mode_enable_status) {
+>>>>>  		ret = tegra_uart_wait_fifo_mode_enabled(tup);
+>>>>> -		dev_err(tup->uport.dev, "FIFO mode not enabled\n");
+>>>>> -		if (ret < 0)
+>>>>> +		if (ret < 0) {
+>>>>> +			dev_err(tup->uport.dev,
+>>>>> +				"Failed to enable FIFO mode: %d\n", ret);
+>>>>
+>>>> Could you change this to use %pe and ERR_PTR(ret)?
+>>>
+>>> Sorry, but it is not clear to me why this would be necessary in this case.
+>>
+>> I see so '%pe' prints the symbolic name of the error code. While that is
+>> nice, it also looks a bit odd. Given that we simply print the error code
+>> values in this driver, from looking at other prints, I prefer to keep it
+>> as is for consistency.
 > 
-> Maybe you could just add an initialization function to be called by
-> users of otg_fsm? It seems that only chipidea driver uses this
-> struct currently.
+> It is a quite new facility of printk(), so I woudn't expect it to be
+> present in older code. It saves a bit of time when you occasionally
+> hit an error, so even incremental conversion seems beneficial for me.
 
-If there are any out-of-tree users of the OTG FSM, then they will all
-get the fix too using the universal solution.
+It doesn't feel like a good approach to use ERR_PTR where it's not very
+appropriate. I suppose printk could get a new specifier, like '%de' for
+example, for the verbose integer error codes, couldn't it?
