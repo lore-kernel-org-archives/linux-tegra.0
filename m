@@ -2,144 +2,275 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URI_HEX autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD215C07E99
-	for <linux-tegra@archiver.kernel.org>; Fri,  9 Jul 2021 12:11:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AD36C07E99
+	for <linux-tegra@archiver.kernel.org>; Fri,  9 Jul 2021 13:02:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A9B0C613CC
-	for <linux-tegra@archiver.kernel.org>; Fri,  9 Jul 2021 12:11:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E36F96023E
+	for <linux-tegra@archiver.kernel.org>; Fri,  9 Jul 2021 13:02:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230471AbhGIMOH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 9 Jul 2021 08:14:07 -0400
-Received: from mail-mw2nam12on2062.outbound.protection.outlook.com ([40.107.244.62]:15457
-        "EHLO NAM12-MW2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S230404AbhGIMOH (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 9 Jul 2021 08:14:07 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=CptpmyqerMUzdEJOLS+dkhAvIuAMqJS1tV0gre5qQYMLQlJCWfNRMS9N8hzFXzHsPzRL3yWcm0Zd4SeHASLV1gAenPwEG1JbfRQnx0JF61IvqweN6Exkf2HqjYnB8zX2x7V9oZ4HUoeV+CL+fQ+V1B7JnFep+Gy8ZPxkyNJ2d8OfqG610YQTFqjbYYW3bBSPHQF5M6U1y3/Tu8OetFnJJN1E5CFhLQVMM7FJNjNB7bbwOtAatCQ6Xm0yqdIr0ElAvJ3+jn9X+TbzipE6E6YzaCwxVb5xOs8EI8WeVxyLhnDNWYHMbIpur9qdEl5bG56JhO6/THfuIgk+QHzEjzSjWQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nVWbcnSix3/dyZxkJu/0dkn8Yv08AzaqiPddYQAIEoE=;
- b=YuvgwTqjVjuN47tQuVwH4trvMJrP05JhALfDUcPgmsovT79ecbJIx3CyFf36Hnh30+XpcPR/Nfblhe9FmocROxYNNrHoxF7G8iR5x4MBltvstDMaw3gnRlhWkrJcRADh86/5kw8nt9B1GXT2IOwmCXgNpGM142sSMzmqe9zRuMGDINkMCdiP0zAJlcVID9nh0Vj/8+329esLifh262UqB+Un8ntbKs/qn6CzqbMtSSIsE7gpwRWJLn+/HZupjMyyHf7Pn1jhUye21QwHcSv1QGJGM5e2NQE9MQDgRXqlySp0CIIcTJCYY6UFKOHok5zt7UzBxtUHTd8HDFrtKb1eeA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.112.34) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nVWbcnSix3/dyZxkJu/0dkn8Yv08AzaqiPddYQAIEoE=;
- b=LQG4rrIUPC2qG3nRCZMIPHVD11loKIPx7RLryjJHKP34moVAEm9R5yXLhijvAAvrMB+xtQjscbe4fWXZIHHxqmshDKPaa2ahMY5mk7m1BvUGUANdzI86OQiLsw0QqtiL8IlrA93VwdDSf+dNsGk6MEgrSr390dKmD3MD8egUCjKqbYrI81o5wjlgp4rl0VtuhKunhV8wiVI47Q0kwFQzgtchhZJetvDITbRwVZukfvOlPhdzboY3q+WOHYvVqXe6SvoawMjy8dHejZJ5zCJJbVbmmY2XjG8UrY+bvIPtcHbxTCeWzD7uMuv1lEte//plPwykMLCof7kGFR0vN9m8ng==
-Received: from MW4PR04CA0186.namprd04.prod.outlook.com (2603:10b6:303:86::11)
- by MN2PR12MB3933.namprd12.prod.outlook.com (2603:10b6:208:162::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4308.20; Fri, 9 Jul
- 2021 12:11:22 +0000
-Received: from CO1NAM11FT022.eop-nam11.prod.protection.outlook.com
- (2603:10b6:303:86:cafe::65) by MW4PR04CA0186.outlook.office365.com
- (2603:10b6:303:86::11) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4308.21 via Frontend
- Transport; Fri, 9 Jul 2021 12:11:22 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.34)
- smtp.mailfrom=nvidia.com; gmail.com; dkim=none (message not signed)
- header.d=none;gmail.com; dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.112.34 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.112.34; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (216.228.112.34) by
- CO1NAM11FT022.mail.protection.outlook.com (10.13.175.199) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.4308.20 via Frontend Transport; Fri, 9 Jul 2021 12:11:22 +0000
-Received: from [10.26.49.10] (172.20.187.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Fri, 9 Jul
- 2021 12:11:20 +0000
-Subject: Re: [PATCH] arm64: tegra: Enable audio IOMMU support on Tegra194
-To:     Thierry Reding <thierry.reding@gmail.com>
-CC:     <linux-tegra@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20210709121127.2529364-1-thierry.reding@gmail.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <b0fb36da-5d35-9453-b3f0-4792cf6c39b7@nvidia.com>
-Date:   Fri, 9 Jul 2021 13:11:18 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        id S231701AbhGINFH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 9 Jul 2021 09:05:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39828 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231453AbhGINFG (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 9 Jul 2021 09:05:06 -0400
+Received: from mail-vs1-xe35.google.com (mail-vs1-xe35.google.com [IPv6:2607:f8b0:4864:20::e35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C97BC0613E5
+        for <linux-tegra@vger.kernel.org>; Fri,  9 Jul 2021 06:02:22 -0700 (PDT)
+Received: by mail-vs1-xe35.google.com with SMTP id h18so5542973vsj.2
+        for <linux-tegra@vger.kernel.org>; Fri, 09 Jul 2021 06:02:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=TAIZJVlH8Y2YqNZo8d2pJK9Ss3UycuHLJWPexBI7axE=;
+        b=A16X2V42weuudBPxgonBeebw8re+EWAjOn3wZP98m7gV1L5RlqklKfjCFeKKq2vubB
+         IZMArHgMAToqcWDiPDV8U5GBOm+SQE9hgTLxqyBdoAx+cNMx/wcDnOEpu5lxWAZh+s5J
+         wDa+yhcRmrDI99UodVFIhL7bIhWqeHDr8vDbFkNd15DjrQo0ziTi6SiazD449lC6Tie1
+         nEHy09WmaPxidVJ69xUj4MsCQD8zqtQ2+fpxJ2R4H19NZy0b+m+my5U7+cxvb1eefzPH
+         GNTnhJQbcbTQtJYTJxYLQQfaup2gPfByEqRGlTbt5oC9A3nSSrj94KXk48ywk7cAhEqs
+         eL/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=TAIZJVlH8Y2YqNZo8d2pJK9Ss3UycuHLJWPexBI7axE=;
+        b=PVFvdhmT6W2Dhz4J75B3eOknk5/cxoT+kRwYluWJprfeKfe9ejnWj9FQAktlZVBngV
+         kjKYsi/aZBwNOHLofPtGI0cI6A8iytmBXm0E8NuZGvNRmZTRjCeGUbxwwQBX0Nh+Sxx/
+         RCQrERMRKhiq4MiDt5WXOgg0b6KwP6RX3CbbWbxyItTWXSLxFG+GJlFVqZ3GrJLMRpBy
+         +Rmof6S4E+F0PlB0w0EG9JLIMeZ4dPblOiH2roqQutR/5Kd/IVqngvPB2kPlZQpmA0yg
+         Dtke3dx4YhLZpYN+Oh4wtJjZxmIQEQintEpDThBxMsxNFLamuDJr4LZ72X6iskB7VvVs
+         2i5g==
+X-Gm-Message-State: AOAM531/88f6meHNdNF0VuZEjBgphdR69mink/Y7oD5hvbDdGVPmSFpA
+        KK6r0YlFgTA12gemdHHm1xbLynsguvVSxxbrFrRieQ==
+X-Google-Smtp-Source: ABdhPJyEvDZ4fadDrPqh33c2U9yNN2X8cR1YJgisOMsbHDKd7A3qWQidNaZTN61mOdKuvkYE5Eav6Sub5yE7kPQoEGM=
+X-Received: by 2002:a67:8c46:: with SMTP id o67mr35000628vsd.34.1625835741333;
+ Fri, 09 Jul 2021 06:02:21 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20210709121127.2529364-1-thierry.reding@gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [172.20.187.5]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
- HQMAIL107.nvidia.com (172.20.187.13)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 588b4ee9-be57-474b-3598-08d942d2aa99
-X-MS-TrafficTypeDiagnostic: MN2PR12MB3933:
-X-Microsoft-Antispam-PRVS: <MN2PR12MB3933F6C7505D2FDB59D02CC2D9189@MN2PR12MB3933.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:7219;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: S9CPGnawxSI3ePV9oFBsqxiAXxm+wacmiC47ssdLDivlb7c3Kajff6I2FvvzwQsrdVfjg5kjPC/ixWZ7/Ye66P+CcktA11XXXwRAmK1sBRcqn8/m0Adu1KZ1oONE/1pu84RK3IPofrJyJmrSWe1fT9aMjetmii0UGVvHoPSusHh24KH2hGJKH9OtnkaJKFJyzcp6QeosULwmgIJFuZNING0cTzxlD4I4yrWqdl+8v52OTgdM0ZrVwvM+LKEeqTdLdrjA4Xwls2cKxFaG4UstUXgJ6H87qr8MbcJj60jN6hJMRhfF4hr88SyME1hivxNWb2Biow5G3MiopHjqco/BqAc/TmG/igQQSymdJKbqcGT/GHCYRzRvwwjOZrXr16zV7jQ5F3lBiZykrCgRkS1gKXg4KRou1BkZoBZi6Fpey25SCbWXXcEJhMQA/82xXcvwQkem4pEhUop4Hksbvqy41rb5UlW3uT8+LIE28BYMGGStuqTdRVcCdMYUEuG5WHB3wKCNJtkPJ0V6MrurBMuGCgIgRvYbCBU+mZPwIqz8pYxyNIAApDDgyDkRptt8YjIhsYpNwc2oOfsT7otZ8E7M6zfFXd8euB52ADlqadOn8j95H2faAAruA3pvK3Lx1kcKZBAKWxgVNh0rCi1QIFJ+IgT+oZHe/2obUWfswZu7hPtDhj3OEESYV7pi1Vr/BDEHXxOwVT1X0eJHmt0MRIkEzl2LTGfWP/6YbqxAgUgrgxsqs6sTcUE1QZDljLhYq9tM51KeXWy6YtoTPpTcWrCHPw==
-X-Forefront-Antispam-Report: CIP:216.228.112.34;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid03.nvidia.com;CAT:NONE;SFS:(4636009)(376002)(346002)(396003)(39860400002)(136003)(36840700001)(46966006)(53546011)(336012)(426003)(2616005)(8676002)(5660300002)(2906002)(86362001)(34070700002)(8936002)(31686004)(356005)(36756003)(31696002)(70586007)(70206006)(4326008)(83380400001)(36860700001)(478600001)(47076005)(82740400003)(54906003)(16576012)(7636003)(36906005)(316002)(26005)(82310400003)(6916009)(186003)(16526019)(43740500002);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jul 2021 12:11:22.1219
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 588b4ee9-be57-474b-3598-08d942d2aa99
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.34];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT022.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB3933
+References: <20210701232728.23591-1-digetx@gmail.com>
+In-Reply-To: <20210701232728.23591-1-digetx@gmail.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Fri, 9 Jul 2021 15:01:45 +0200
+Message-ID: <CAPDyKFry00yzp9upsVy+yb7oX-k-bBgfrff+Q7qbK0cGh8ishQ@mail.gmail.com>
+Subject: Re: [PATCH v7 00/37] NVIDIA Tegra power management patches for 5.15
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On Fri, 2 Jul 2021 at 01:28, Dmitry Osipenko <digetx@gmail.com> wrote:
+>
+> Hello,
+>
+> This series continues the work on enabling voltage scaling of the core
+> power domain for NVIDIA Tegra SoCs. All the previous grounding work around
+> improving OPP API and adding the initial core power domain driver is now
+> landing into 5.14 kernel and already available in linux-next.
+>
+> The biggest challenge left so far is the power management of the PLLs
+> and system clocks which don't have a dedicated hardware unit. I made a lot
+> of changes around it by going back to a variant where individual device
+> drivers are responsible for the power management in oppose to a recent
+> variant where the most of power management was done by the clk controller
+> driver. This allowed to drop the need of having a special lockdep
+> annotation for the power domain's mutex, which Ulf Hansson didn't like
+> previously. We don't have situations of a nested GENPD accesses anymore.
+> It also allowed to minimize the clk patch a lot. Now clk driver manages
+> power of the internal clocks only.
+>
+> This series enables a full power management for Tegra20 and Tegra30 SoCs.
+> It doesn't include all the device-tree binding patches. I'll try to split
+> this series into a smaller parts that could be applied individually. For
+> now I want to get a feedback at least on the first six patches.
+>
+> Example /sys/kernel/debug/pm_genpd/pm_genpd_summary from Tegra20 Acer A500:
+>
+> domain                          status          children                           performance
+>     /device                                             runtime status
+> ----------------------------------------------------------------------------------------------
+> mpe                             off-0                                              0
+>     /devices/soc0/50000000.host1x/54040000.mpe          suspended                  0
+> vdec                            off-0                                              0
+>     /devices/soc0/6001a000.vde                          suspended                  0
+> venc                            off-0                                              0
+>     /devices/soc0/50000000.host1x/54080000.vi           suspended                  0
+>     /devices/soc0/50000000.host1x/54100000.isp          suspended                  0
+> 3d                              off-0                                              0
+>     /devices/soc0/50000000.host1x/54180000.gr3d         suspended                  0
+> core-domain                     on                                                 1100000
+>                                                 3d, venc, vdec, mpe
+>     /devices/soc0/50000000.host1x                       active                     1100000
+>     /devices/soc0/50000000.host1x/540c0000.epp          suspended                  0
+>     /devices/soc0/50000000.host1x/54140000.gr2d         suspended                  0
+>     /devices/soc0/50000000.host1x/54280000.hdmi         suspended                  0
+>     /devices/soc0/c5000000.usb                          active                     1100000
+>     /devices/soc0/c5008000.usb                          active                     1100000
+>     /devices/soc0/c8000000.mmc                          active                     1000000
+>     /devices/soc0/c8000400.mmc                          active                     1000000
+>     /devices/soc0/c8000600.mmc                          active                     1000000
+>     /devices/soc0/7000f400.memory-controller            active                     1000000
+>     /devices/platform/tegra_clk_sclk                    active                     950000
+>     /devices/soc0/50000000.host1x/54200000.dc           active                     950000
+>     /devices/soc0/50000000.host1x/54240000.dc           suspended                  0
+>
+>
+> Example /sys/kernel/debug/pm_genpd/pm_genpd_summary from Tegra30 Nexus 7:
+>
+> domain                          status          children                           performance
+>     /device                                             runtime status
+> ----------------------------------------------------------------------------------------------
+> heg                             on                                                 1000000
+>     /devices/soc0/50000000.host1x                       active                     1000000
+>     /devices/soc0/50000000.host1x/540c0000.epp          suspended                  0
+>     /devices/soc0/50000000.host1x/54140000.gr2d         suspended                  0
+> mpe                             off-0                                              0
+>     /devices/soc0/50000000.host1x/54040000.mpe          suspended                  0
+> vdec                            off-0                                              0
+>     /devices/soc0/6001a000.vde                          suspended                  0
+> venc                            off-0                                              0
+>     /devices/soc0/50000000.host1x/54080000.vi           suspended                  0
+>     /devices/soc0/50000000.host1x/54100000.isp          suspended                  0
+> 3d1                             off-0                                              0
+>     /devices/genpd:1:54180000.gr3d                      suspended                  0
+> 3d0                             off-0                                              0
+>     /devices/genpd:0:54180000.gr3d                      suspended                  0
+> core-domain                     on                                                 1000000
+>                                                 3d0, 3d1, venc, vdec, mpe, heg
+>     /devices/soc0/7d000000.usb                          active                     1000000
+>     /devices/soc0/78000400.mmc                          active                     950000
+>     /devices/soc0/7000f400.memory-controller            active                     1000000
+>     /devices/soc0/7000a000.pwm                          active                     1000000
+>     /devices/platform/tegra_clk_pll_c                   active                     1000000
+>     /devices/platform/tegra_clk_pll_e                   suspended                  0
+>     /devices/platform/tegra_clk_pll_m                   active                     1000000
+>     /devices/platform/tegra_clk_sclk                    active                     1000000
+>     /devices/soc0/7000f800.fuse                         suspended                  0
+>     /devices/soc0/50000000.host1x/54240000.dc           suspended                  0
+>     /devices/soc0/50000000.host1x/54200000.dc           active                     1000000
+>
+> Dmitry Osipenko (37):
+>   soc/tegra: pmc: Temporarily disable PMC state syncing
+>   soc/tegra: pmc: Implement attach_dev() of power domain drivers
+>   soc/tegra: Don't print error message when OPPs not available
+>   soc/tegra: Add devm_tegra_core_dev_init_opp_table_simple()
+>   dt-bindings: clock: tegra-car: Document new tegra-clocks node
+>   clk: tegra: Support runtime PM and power domain
+>   dt-bindings: host1x: Document OPP and power domain properties
+>   dt-bindings: host1x: Document Memory Client resets of Host1x, GR2D and
+>     GR3D
+>   gpu: host1x: Add host1x_channel_stop()
+>   gpu: host1x: Add runtime PM support
+>   gpu: host1x: Add stub driver for MPE, VI, EPP and ISP
+>   drm/tegra: dc: Support OPP and SoC core voltage scaling
+>   drm/tegra: hdmi: Add OPP support
+>   drm/tegra: gr2d: Support OPP and power management
+>   drm/tegra: gr3d: Support OPP and power management
+>   drm/tegra: vic: Stop channel before suspending
+>   usb: chipidea: tegra: Add runtime PM support
+>   bus: tegra-gmi: Add runtime PM support
+>   pwm: tegra: Add runtime PM and OPP support
+>   mmc: sdhci-tegra: Add runtime PM and OPP support
+>   mtd: rawnand: tegra: Add runtime PM support
+>   soc/tegra: fuse: Clear fuse->clk on driver probe failure
+>   soc/tegra: fuse: Add runtime PM support
+>   soc/tegra: fuse: Enable fuse clock on suspend
+>   clk: tegra: Remove CLK_IS_CRITICAL flag from fuse clock
+>   spi: tegra20-slink: Improve runtime PM usage
+>   spi: tegra20-slink: Add OPP support
+>   memory: tegra20-emc: Add minimal runtime PM support
+>   memory: tegra30-emc: Add minimal runtime PM support
+>   media: dt: bindings: tegra-vde: Convert to schema
+>   media: dt: bindings: tegra-vde: Document OPP and power domain
+>   media: staging: tegra-vde: Support generic power domain
+>   ARM: tegra: Add OPP tables and power domains to Tegra20 device-trees
+>   ARM: tegra: Add OPP tables and power domains to Tegra30 device-trees
+>   ARM: tegra: Add Memory Client resets to Tegra20 GR2D, GR3D and Host1x
+>   ARM: tegra: Add Memory Client resets to Tegra30 GR2D, GR3D and Host1x
+>   soc/tegra: pmc: Enable core domain support on Tegra20 and Tegra30
+>
+>  .../bindings/clock/nvidia,tegra20-car.yaml    |   51 +
+>  .../display/tegra/nvidia,tegra20-host1x.txt   |   53 +
+>  .../bindings/media/nvidia,tegra-vde.txt       |   64 -
+>  .../bindings/media/nvidia,tegra-vde.yaml      |  119 ++
+>  .../boot/dts/tegra20-acer-a500-picasso.dts    |    1 +
+>  arch/arm/boot/dts/tegra20-colibri.dtsi        |    3 +-
+>  arch/arm/boot/dts/tegra20-harmony.dts         |    3 +-
+>  arch/arm/boot/dts/tegra20-paz00.dts           |    1 +
+>  .../arm/boot/dts/tegra20-peripherals-opp.dtsi |  941 +++++++++++
+>  arch/arm/boot/dts/tegra20-seaboard.dts        |    3 +-
+>  arch/arm/boot/dts/tegra20-tamonten.dtsi       |    3 +-
+>  arch/arm/boot/dts/tegra20-trimslice.dts       |    9 +
+>  arch/arm/boot/dts/tegra20-ventana.dts         |    1 +
+>  arch/arm/boot/dts/tegra20.dtsi                |  115 +-
+>  .../tegra30-asus-nexus7-grouper-common.dtsi   |    1 +
+>  arch/arm/boot/dts/tegra30-beaver.dts          |    1 +
+>  arch/arm/boot/dts/tegra30-cardhu.dtsi         |    1 +
+>  arch/arm/boot/dts/tegra30-colibri.dtsi        |   17 +-
+>  arch/arm/boot/dts/tegra30-ouya.dts            |    1 +
+>  .../arm/boot/dts/tegra30-peripherals-opp.dtsi | 1412 +++++++++++++++++
+>  arch/arm/boot/dts/tegra30.dtsi                |  170 +-
+>  drivers/bus/tegra-gmi.c                       |   44 +-
+>  drivers/clk/tegra/Makefile                    |    1 +
+>  drivers/clk/tegra/clk-device.c                |  222 +++
+>  drivers/clk/tegra/clk-pll.c                   |    2 +-
+>  drivers/clk/tegra/clk-super.c                 |    2 +-
+>  drivers/clk/tegra/clk-tegra-periph.c          |    6 +-
+>  drivers/clk/tegra/clk-tegra20.c               |   39 +-
+>  drivers/clk/tegra/clk-tegra30.c               |   70 +-
+>  drivers/clk/tegra/clk.c                       |   66 +
+>  drivers/clk/tegra/clk.h                       |    2 +
+>  drivers/gpu/drm/tegra/dc.c                    |   69 +
+>  drivers/gpu/drm/tegra/dc.h                    |    2 +
+>  drivers/gpu/drm/tegra/gr2d.c                  |  156 +-
+>  drivers/gpu/drm/tegra/gr3d.c                  |  401 ++++-
+>  drivers/gpu/drm/tegra/hdmi.c                  |    9 +-
+>  drivers/gpu/drm/tegra/vic.c                   |   15 +
+>  drivers/gpu/host1x/channel.c                  |    8 +
+>  drivers/gpu/host1x/debug.c                    |   15 +
+>  drivers/gpu/host1x/dev.c                      |  184 ++-
+>  drivers/gpu/host1x/dev.h                      |    3 +-
+>  drivers/gpu/host1x/hw/channel_hw.c            |   44 +-
+>  drivers/gpu/host1x/intr.c                     |    3 -
+>  drivers/gpu/host1x/syncpt.c                   |    5 +-
+>  drivers/memory/tegra/tegra20-emc.c            |   31 +
+>  drivers/memory/tegra/tegra30-emc.c            |   31 +
+>  drivers/mmc/host/sdhci-tegra.c                |   81 +-
+>  drivers/mtd/nand/raw/tegra_nand.c             |   44 +-
+>  drivers/pwm/pwm-tegra.c                       |  104 +-
+>  drivers/soc/tegra/common.c                    |    4 +-
+>  drivers/soc/tegra/fuse/fuse-tegra.c           |   62 +
+>  drivers/soc/tegra/fuse/fuse-tegra20.c         |   10 +-
+>  drivers/soc/tegra/fuse/fuse-tegra30.c         |   10 +-
+>  drivers/soc/tegra/fuse/fuse.h                 |    2 +
+>  drivers/soc/tegra/pmc.c                       |  164 ++
+>  drivers/spi/spi-tegra20-slink.c               |   76 +-
+>  drivers/staging/media/tegra-vde/vde.c         |   59 +-
+>  drivers/usb/chipidea/ci_hdrc_tegra.c          |   50 +-
+>  include/linux/host1x.h                        |    1 +
+>  include/soc/tegra/common.h                    |   13 +
+>  60 files changed, 4710 insertions(+), 370 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/media/nvidia,tegra-vde.txt
+>  create mode 100644 Documentation/devicetree/bindings/media/nvidia,tegra-vde.yaml
+>  create mode 100644 drivers/clk/tegra/clk-device.c
+>
 
-On 09/07/2021 13:11, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
-> 
-> Add iommus and interconnects properties to the sound device tree node on
-> Tegra194. This ensures that the correct SID is used for translation of
-> physical to I/O virtual addresses and that the path to system memory is
-> properly described, which in turn can impact the range of memory that
-> the device can address.
-> 
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> ---
->  arch/arm64/boot/dts/nvidia/tegra194.dtsi | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-> index a6e61d899a27..076d5efc4c3d 100644
-> --- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-> +++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-> @@ -2477,6 +2477,11 @@ sound {
->  		 * for 8x and 11.025x sample rate streams.
->  		 */
->  		assigned-clock-rates = <258000000>;
-> +
-> +		interconnects = <&mc TEGRA194_MEMORY_CLIENT_APEDMAR &emc>,
-> +				<&mc TEGRA194_MEMORY_CLIENT_APEDMAW &emc>;
-> +		interconnect-names = "dma-mem", "write";
-> +		iommus = <&smmu TEGRA194_SID_APE>;
->  	};
->  
->  	tcu: tcu {
-> 
+Dmitry, I am happy to help to review this, but unfortunately(?) I am
+moving into holiday mode for a couple of weeks, very soon. I will do
+my best to move forward with the review, but please be patient.
 
-
-Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
-
-Thanks!
-Jon
-
--- 
-nvpublic
+Kind regards
+Uffe
