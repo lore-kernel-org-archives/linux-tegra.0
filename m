@@ -2,145 +2,103 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05885C07E99
-	for <linux-tegra@archiver.kernel.org>; Fri,  9 Jul 2021 11:38:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AA39C07E99
+	for <linux-tegra@archiver.kernel.org>; Fri,  9 Jul 2021 12:05:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DAD03613C1
-	for <linux-tegra@archiver.kernel.org>; Fri,  9 Jul 2021 11:38:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D7E94613CC
+	for <linux-tegra@archiver.kernel.org>; Fri,  9 Jul 2021 12:05:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230209AbhGILk5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 9 Jul 2021 07:40:57 -0400
-Received: from mail-mw2nam12on2058.outbound.protection.outlook.com ([40.107.244.58]:22304
-        "EHLO NAM12-MW2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S230024AbhGILk5 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 9 Jul 2021 07:40:57 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ZpmUd1D/xXvNBLS5XrRI5G3NY42QhT8/VbuMgpDEqttdTYLn3sNEBY0IesdUtzjhNAgwihu5JTU35wvu6AeZBCE9LafPKZHsqHbExf+UbI/fP7O3sOB1DBCYUgINQ2WCg7nrUTphDkzDw5VgN+PZpSGtWpsrO4x3EeL5wr4UxvJXuf1Pkr69pOa2ml6ny3nvtPgJpk0nJtOxlfJCr8rOE9Ry8U1TzVnVTtAv3+suaHD9VxC5ptpBZOmEoh6s19GCYIuhAWmzm34lE26ljlj9vbJ16GFMX3k+T5Jo+VciOjY381L5dZSZxD0DxvX5f1gNaXdpFo1mVGDJtZrGk+4wcg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7mz4QUJNWYJYVAeaK8HiF3+qno/BpzPeapxhxrzE6MA=;
- b=KJwFDdGiyGmxoRFikYypqos2n8kRJcxtDnK5G6tLy7BjDNeNXNlSvk/epDtK8iZWBITBjRZ2HVnc0KqbawSoRKcChpYB58VAMgM5810Z8WXANUR4ufV9kuhOr15Wrzjvm3OGulBVj795fsTPT5nNlLTsRdMto6jpmpwVk+GcgrmQFFGOEGml+8CcmB9y08wzVQtJeERwiQo3J/AOBTRc4yY9n3uAE4prMBQIndx/+NgUNPIRYUFMttyuEBYqRWlEak26k3bXnoJUvvDvwhvE4qzbBo6HHO1CBoWUeJJqNgdWBs6Q1OLBaJI3HuySPeIgmbxf5YEAUozvSFAZLGNNPQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.112.34) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7mz4QUJNWYJYVAeaK8HiF3+qno/BpzPeapxhxrzE6MA=;
- b=JWUzpS11T8eAdFBmWICULagf25maWlOvr4mhQHWFxRqFI6LMhXklXbr5yJT1WHKqmEitsqpMzz+h+zDxE0aaEPaAk0chWVaOpwPXwBLz17giEpLWweJ4VG8BSwkzG62U17rOWCuc4MoRpTtJvdPaGErDTYYMGbl2BoBUDimRhTg1Tecq53cV61dZIkaqiD1SVzc6UcdTL7rlB7jCZL5/QTi2TMQFSZmpTr8D5QkeFY4n1c/Uw72WQU5GnbmDqFMum4qrA/C1YLfG/JgUC1qEVGzxSOr/QJKs+U7T4g6IJGi1lwZDGRx8hozhe6H8y/+y8I5RkwMHsVOBphvW4cTAiA==
-Received: from DS7PR05CA0002.namprd05.prod.outlook.com (2603:10b6:5:3b9::7) by
- MN2PR12MB3615.namprd12.prod.outlook.com (2603:10b6:208:c9::18) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.4308.23; Fri, 9 Jul 2021 11:38:12 +0000
-Received: from DM6NAM11FT050.eop-nam11.prod.protection.outlook.com
- (2603:10b6:5:3b9:cafe::9c) by DS7PR05CA0002.outlook.office365.com
- (2603:10b6:5:3b9::7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4331.12 via Frontend
- Transport; Fri, 9 Jul 2021 11:38:12 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.34)
- smtp.mailfrom=nvidia.com; kernel.org; dkim=none (message not signed)
- header.d=none;kernel.org; dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.112.34 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.112.34; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (216.228.112.34) by
- DM6NAM11FT050.mail.protection.outlook.com (10.13.173.111) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.4308.20 via Frontend Transport; Fri, 9 Jul 2021 11:38:12 +0000
-Received: from [10.26.49.10] (172.20.187.6) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Fri, 9 Jul
- 2021 11:38:09 +0000
-Subject: Re: [PATCH V2] serial: tegra: Only print FIFO error message when an
- error occurs
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        "Laxman Dewangan" <ldewangan@nvidia.com>,
-        Krishna Yarlagadda <kyarlagadda@nvidia.com>,
-        <linux-serial@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <stable@vger.kernel.org>
-References: <20210630125643.264264-1-jonathanh@nvidia.com>
- <YOd7ZTJf0WoQ8oKo@qmqm.qmqm.pl>
- <aad402e7-a2b7-1faf-bc22-eb90bee39d3b@nvidia.com>
-Message-ID: <30057ea5-5699-9335-f4dd-a9e8ed847ee4@nvidia.com>
-Date:   Fri, 9 Jul 2021 12:38:07 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        id S231152AbhGIMI1 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 9 Jul 2021 08:08:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55334 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230404AbhGIMI1 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 9 Jul 2021 08:08:27 -0400
+Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18346C0613DD
+        for <linux-tegra@vger.kernel.org>; Fri,  9 Jul 2021 05:05:43 -0700 (PDT)
+Received: by mail-wm1-x329.google.com with SMTP id t14-20020a05600c198eb029020c8aac53d4so25077986wmq.1
+        for <linux-tegra@vger.kernel.org>; Fri, 09 Jul 2021 05:05:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=LTDEG9hvZInxM37EKZrzZicUKHO/JiAFLKZv8qufjKU=;
+        b=jNhXOnRyWet7pdO2shipHZ9vU8Wsf4crnYNrygsILNxSahTLJ8YuN3KeiBxefgNzwk
+         qAjBL1Ns/61zEMQY17u0Z40k8bZlhCeMXcOM7NDfGDNoUfZOBgc6sB861URFMxKoJJTw
+         CdYdpVX0R1M/S7sk0OS8IZzKjreMx4s0y2x6hTlaj/+CbZ3absfX8HqKcT1c9nMWX+/e
+         naxWRytFVn5XCo8xWmCoSOhLJxZYP8t6cl/2/7N+Gc87LsHYCBkowRWmluG+Vw/hyhai
+         f00KTAmdy/hN1d5+KgSBK05loC0bvDoXjaEPkpQrsjHmyp2I/tYOH7aGagClWWjexou+
+         rAWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=LTDEG9hvZInxM37EKZrzZicUKHO/JiAFLKZv8qufjKU=;
+        b=KAZIJpsia5wS6vXGis9jXvQXwSdTcr1govWNAjD8ou3VGR8Xia0lQqf8oOl5nYQmNJ
+         y6NMDVJPhqrPpY+0X2dd37c2dGSI7KkUANPHfvnU5NfuKZkTRTBgzfuuaUajRvnzhXSu
+         GOyMtneQwdBwGlV5ciuKtI7zmoz68wnxB2S8vHW9HjiWN2ng8f2uK6kAviSicdw5vtQZ
+         2KM0NqOqHQL8tfCOC3ytH8PXdAznuxzWg8/4DJWHg42A62mbbeQzvZtxzvMDx00Ki9EH
+         xGofnKJyMfIHVzALgPpEjN75x2WxAq5glUyDmZKt5eLxBDiZ+dWv+Hc6edF3cPnuTsLB
+         fQJg==
+X-Gm-Message-State: AOAM532Tf1nvgEFPqhbUWUQMvsMQbUOiPGvo/cIbC40qUr0iG8QD9JFz
+        tabAKt8lOh81UYlOO9bZqS8=
+X-Google-Smtp-Source: ABdhPJyrD2PALCtAQWdI+3LCYqDTZ7ve0J0SKzSbA89keGTe0RvKFv8kMOHdA9C2iXzNyz8fmANv0w==
+X-Received: by 2002:a05:600c:2281:: with SMTP id 1mr16567968wmf.10.1625832341685;
+        Fri, 09 Jul 2021 05:05:41 -0700 (PDT)
+Received: from localhost ([62.96.65.119])
+        by smtp.gmail.com with ESMTPSA id s1sm11875597wmj.8.2021.07.09.05.05.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 Jul 2021 05:05:40 -0700 (PDT)
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] arm64: tegra: Enable audio IOMMU support on Tegra194
+Date:   Fri,  9 Jul 2021 14:08:12 +0200
+Message-Id: <20210709120812.2529034-1-thierry.reding@gmail.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-In-Reply-To: <aad402e7-a2b7-1faf-bc22-eb90bee39d3b@nvidia.com>
-Content-Type: text/plain; charset="iso-8859-2"
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [172.20.187.6]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
- HQMAIL107.nvidia.com (172.20.187.13)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 738774ff-3a19-4ff3-36a8-08d942ce0868
-X-MS-TrafficTypeDiagnostic: MN2PR12MB3615:
-X-Microsoft-Antispam-PRVS: <MN2PR12MB3615571DC2BA155AF7586240D9189@MN2PR12MB3615.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:10000;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: khNE8m2v2aRjlez8ulankrvbZRXvdM0UTTvMWd26OOmPn5zOdIzqq5eS+1t+4qk8hc/9Cn0FZVutTZQ31ZBKBZr5K/03EbmgpqZ0OURf6+kHY02d2tBytngVewN5efAOmY96PS0S2BEF5ME4Tjfy0vA+DYblRdBnT6a8B7MQkBY4+xbrVifKohy9SxUxLgCnoaQybRslxJl/QYDgD1dO1WplAdsb8i/SFDDHnO8smo+uyTdIKvP3sBsMEg5Fkcni+n16ij4DTJgoVHWNfcEVk4YwH5ro+qNHeP/Scs9xNROCQvVVlycFSDUTHMxhuSaxaYUVPCiT4AZA4RDvgn0mDQMwaH9ACuIcAm5oNK99UOuvicJZv+1gqT0pJQnFL3FTmeNFBCJFJDKm1oKTvgfzHfMhQ2xM3UJje/PUwUjw6f+1n2zBH+gL32NKw6l9KM9zN1Hmsqh1jQSkPE1mYsTHv6FLI48APH/Xk3Rwv28Rfgvd7DNwq3e4MKLe1azh29HC9n2OUAPlHtbz8lD2AkhFdXdR5+8fxpYQn1ThsPZrlu4Tq6cwYNgtYQaLiAMHd0SmZK2jw0WfPE/tNZMYgHaEOFXtnlQj8gMKikRVU+TCBT9OQADWBFoxEGs1spDBIVe8Mz1qX4vOrpvAyAHZzMINjtWCgZu1EPEIeDtcxi6kf5nkZ7/WnorhJ5ZNditfCuK30rKobpXxHbE1xIFGbBAzGnK42KCR6+hSbV6B+iQMX9FEdMJwNMOMmK0WuaLqMDFEWdvJHTcWRbCWwntNp0ghQg==
-X-Forefront-Antispam-Report: CIP:216.228.112.34;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid03.nvidia.com;CAT:NONE;SFS:(4636009)(396003)(346002)(39860400002)(136003)(376002)(46966006)(36840700001)(6916009)(5660300002)(36906005)(82740400003)(8676002)(47076005)(8936002)(15650500001)(36756003)(4326008)(54906003)(34070700002)(16576012)(316002)(31696002)(7636003)(356005)(82310400003)(26005)(2906002)(70586007)(70206006)(16526019)(186003)(66574015)(31686004)(426003)(83380400001)(53546011)(86362001)(36860700001)(478600001)(2616005)(336012)(43740500002);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jul 2021 11:38:12.0370
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 738774ff-3a19-4ff3-36a8-08d942ce0868
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.34];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT050.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB3615
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+From: Thierry Reding <treding@nvidia.com>
 
-On 09/07/2021 09:34, Jon Hunter wrote:
-> 
-> 
-> On 08/07/2021 23:25, Micha³ Miros³aw wrote:
->> On Wed, Jun 30, 2021 at 01:56:43PM +0100, Jon Hunter wrote:
->>> The Tegra serial driver always prints an error message when enabling the
->>> FIFO for devices that have support for checking the FIFO enable status.
->>> Fix this by displaying the error message, only when an error occurs.
->>>
->>> Finally, update the error message to make it clear that enabling the
->>> FIFO failed and display the error code.
->> [...]
->>> @@ -1045,9 +1045,11 @@ static int tegra_uart_hw_init(struct tegra_uart_port *tup)
->>>  
->>>  	if (tup->cdata->fifo_mode_enable_status) {
->>>  		ret = tegra_uart_wait_fifo_mode_enabled(tup);
->>> -		dev_err(tup->uport.dev, "FIFO mode not enabled\n");
->>> -		if (ret < 0)
->>> +		if (ret < 0) {
->>> +			dev_err(tup->uport.dev,
->>> +				"Failed to enable FIFO mode: %d\n", ret);
->>
->> Could you change this to use %pe and ERR_PTR(ret)?
-> 
-> Sorry, but it is not clear to me why this would be necessary in this case.
+Add iommus and interconnects properties to the sound device tree node on
+Tegra194. This ensures that the correct SID is used for translation of
+physical to I/O virtual addresses and that the path to system memory is
+properly described, which in turn can impact the range of memory that
+the device can address.
 
-I see so '%pe' prints the symbolic name of the error code. While that is
-nice, it also looks a bit odd. Given that we simply print the error code
-values in this driver, from looking at other prints, I prefer to keep it
-as is for consistency.
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-Jon
-
+diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+index a6e61d899a27..076d5efc4c3d 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+@@ -2477,6 +2477,11 @@ sound {
+ 		 * for 8x and 11.025x sample rate streams.
+ 		 */
+ 		assigned-clock-rates = <258000000>;
++
++		interconnects = <&mc TEGRA194_MEMORY_CLIENT_APEDMAR &emc>,
++				<&mc TEGRA194_MEMORY_CLIENT_APEDMAW &emc>;
++		interconnect-names = "dma-mem", "write";
++		iommus = <&smmu TEGRA194_SID_APE>;
+ 	};
+ 
+ 	tcu: tcu {
 -- 
-nvpublic
+2.32.0
+
