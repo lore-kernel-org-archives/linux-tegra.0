@@ -2,50 +2,51 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-19.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3354EC11F6F
-	for <linux-tegra@archiver.kernel.org>; Sat, 10 Jul 2021 23:51:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A30ACC11F67
+	for <linux-tegra@archiver.kernel.org>; Sat, 10 Jul 2021 23:52:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 235A6613D0
-	for <linux-tegra@archiver.kernel.org>; Sat, 10 Jul 2021 23:51:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C86361429
+	for <linux-tegra@archiver.kernel.org>; Sat, 10 Jul 2021 23:52:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233725AbhGJXyc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 10 Jul 2021 19:54:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41052 "EHLO mail.kernel.org"
+        id S233637AbhGJXz3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 10 Jul 2021 19:55:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41100 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233183AbhGJXxv (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Sat, 10 Jul 2021 19:53:51 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 22536613F4;
-        Sat, 10 Jul 2021 23:50:56 +0000 (UTC)
+        id S233720AbhGJXyd (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Sat, 10 Jul 2021 19:54:33 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 324F361057;
+        Sat, 10 Jul 2021 23:51:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1625961056;
-        bh=FMURi659BF6tUhmU3ktVWQ2aF1tAjYXwc1hLEmqYgnI=;
+        s=k20201202; t=1625961087;
+        bh=ltZ7vO6TGRJU0yf0niTNoGRE3EuoqsctVzx+HefZ7Do=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Gp4QKP3VpWryQuKi4LSB3uoWyqaV/olmDX3kE3dYM3FGttQrtFGsDhzOavE47KqfP
-         0/y8ggYDkR/BTAPhKr9iQG9GgGedFTLnFcgS2Lo9RvPOTmmw6BJwR8ztBLA7heki54
-         43xQY+SyVNFq6YcZnIA22Gdj2h6h1cCIBml4nHgYtgspY+VUR7MHxqURG7tP1ESFh5
-         1kmJW3+fUTcl7Taj+beMNmzDJaTZOxgQ/HcS+76sLSQiHlCRFfMwFms2Wpik/+PZRH
-         H6ofMZQi1N05JJBYE7gRG+NuI3c3FHFAVYPDYA5BIGbmJTSnuSNp9dA+MuXTJxvJLm
-         NYZkMcKpF7XsA==
+        b=AQXbkkE3X0p3Vc49jaAIJo2IigfPV483QqSDj9aRBPJtIn6PU2RIAaUOyxwdKwFjt
+         kI0t+3P+bovud/O97XkcqXXA3uTEiNcTVL0/eO7Zy5GaKVM7NOLhPz8TTmXCaTGj+M
+         RV+1R1lKv5Zo5lG1drSqCliVuqOSu9BK0nieFETvvosB5aSsj52EjNhs1W+MVPY13b
+         xUH+4TL43Z2BvNfllWM3cC0iWOOarSJmKn2QE2AHxrfujvVokTHQgN8ay5K8vxAbgN
+         Ew37x3Vaj/n1BRPriz86vg8qsp7cm+H7yKN37lvWqKa81L/gF+610T7o93YERF2pxJ
+         pqrX8XQcxWYvQ==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Sasha Levin <sashal@kernel.org>, linux-pwm@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.10 30/37] pwm: tegra: Don't modify HW state in .remove callback
-Date:   Sat, 10 Jul 2021 19:50:08 -0400
-Message-Id: <20210710235016.3221124-30-sashal@kernel.org>
+Cc:     Zou Wei <zou_wei@huawei.com>, Hulk Robot <hulkci@huawei.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Vidya Sagar <vidyas@nvidia.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Sasha Levin <sashal@kernel.org>, linux-tegra@vger.kernel.org,
+        linux-pci@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 15/28] PCI: tegra: Add missing MODULE_DEVICE_TABLE
+Date:   Sat, 10 Jul 2021 19:50:54 -0400
+Message-Id: <20210710235107.3221840-15-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210710235016.3221124-1-sashal@kernel.org>
-References: <20210710235016.3221124-1-sashal@kernel.org>
+In-Reply-To: <20210710235107.3221840-1-sashal@kernel.org>
+References: <20210710235107.3221840-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -53,56 +54,37 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+From: Zou Wei <zou_wei@huawei.com>
 
-[ Upstream commit 86f7fa71cd830d18d7ebcaf719dffd5ddfe1acdd ]
+[ Upstream commit 7bf475a4614a9722b9b989e53184a02596cf16d1 ]
 
-A consumer is expected to disable a PWM before calling pwm_put(). And if
-they didn't there is hopefully a good reason (or the consumer needs
-fixing). Also if disabling an enabled PWM was the right thing to do,
-this should better be done in the framework instead of in each low level
-driver.
+Add missing MODULE_DEVICE_TABLE definition so we generate correct modalias
+for automatic loading of this driver when it is built as a module.
 
-So drop the hardware modification from the .remove() callback.
-
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-Signed-off-by: Thierry Reding <thierry.reding@gmail.com>
+Link: https://lore.kernel.org/r/1620792422-16535-1-git-send-email-zou_wei@huawei.com
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Zou Wei <zou_wei@huawei.com>
+Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Reviewed-by: Vidya Sagar <vidyas@nvidia.com>
+Acked-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pwm/pwm-tegra.c | 13 -------------
- 1 file changed, 13 deletions(-)
+ drivers/pci/controller/pci-tegra.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/pwm/pwm-tegra.c b/drivers/pwm/pwm-tegra.c
-index 1daf591025c0..8c4e6657b61e 100644
---- a/drivers/pwm/pwm-tegra.c
-+++ b/drivers/pwm/pwm-tegra.c
-@@ -303,7 +303,6 @@ static int tegra_pwm_probe(struct platform_device *pdev)
- static int tegra_pwm_remove(struct platform_device *pdev)
+diff --git a/drivers/pci/controller/pci-tegra.c b/drivers/pci/controller/pci-tegra.c
+index cfa3c83d6cc7..99d505a85067 100644
+--- a/drivers/pci/controller/pci-tegra.c
++++ b/drivers/pci/controller/pci-tegra.c
+@@ -2613,6 +2613,7 @@ static const struct of_device_id tegra_pcie_of_match[] = {
+ 	{ .compatible = "nvidia,tegra20-pcie", .data = &tegra20_pcie },
+ 	{ },
+ };
++MODULE_DEVICE_TABLE(of, tegra_pcie_of_match);
+ 
+ static void *tegra_pcie_ports_seq_start(struct seq_file *s, loff_t *pos)
  {
- 	struct tegra_pwm_chip *pc = platform_get_drvdata(pdev);
--	unsigned int i;
- 	int err;
- 
- 	if (WARN_ON(!pc))
-@@ -313,18 +312,6 @@ static int tegra_pwm_remove(struct platform_device *pdev)
- 	if (err < 0)
- 		return err;
- 
--	for (i = 0; i < pc->chip.npwm; i++) {
--		struct pwm_device *pwm = &pc->chip.pwms[i];
--
--		if (!pwm_is_enabled(pwm))
--			if (clk_prepare_enable(pc->clk) < 0)
--				continue;
--
--		pwm_writel(pc, i, 0);
--
--		clk_disable_unprepare(pc->clk);
--	}
--
- 	reset_control_assert(pc->rst);
- 	clk_disable_unprepare(pc->clk);
- 
 -- 
 2.30.2
 
