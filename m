@@ -4,45 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-19.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DD86C11F72
-	for <linux-tegra@archiver.kernel.org>; Sat, 10 Jul 2021 02:42:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8DC5C11F68
+	for <linux-tegra@archiver.kernel.org>; Sat, 10 Jul 2021 23:50:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4CE58613E8
-	for <linux-tegra@archiver.kernel.org>; Sat, 10 Jul 2021 02:42:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C416661376
+	for <linux-tegra@archiver.kernel.org>; Sat, 10 Jul 2021 23:50:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234258AbhGJCpR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 9 Jul 2021 22:45:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33902 "EHLO mail.kernel.org"
+        id S232957AbhGJXwx (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 10 Jul 2021 19:52:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39158 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235408AbhGJCns (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 9 Jul 2021 22:43:48 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 868D561409;
-        Sat, 10 Jul 2021 02:39:43 +0000 (UTC)
+        id S232681AbhGJXwf (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Sat, 10 Jul 2021 19:52:35 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 1974B61355;
+        Sat, 10 Jul 2021 23:49:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1625884784;
-        bh=+GxOXwBIVChAEIPaJlTqVRD9YIlZFBH0s/v8OF5M8is=;
+        s=k20201202; t=1625960989;
+        bh=7zuqEJtcX/xnHOsRzILBcADqTxEWzA2lE8i1F+mGGWc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QBRc8JRgMf5yDi2YaVcLlvQFWEgdJ7CTSVImLjzdFS9EiG2Z4eWQ+hQTXGc3BWJf9
-         k7JJmxZUWvTC38wXxRODnHJm2/Nw53dpYtQ1os6sn26gG5DSacIPGk4mlN1PR825iU
-         R1PI5ACcj7hd4pMcHBp/gKP+xLWpPYg9ojiWfvJz85ZwKdb0Tma8zZWQRU9qCY9ZBD
-         Jyv5jMjhzal4HujEItagPzKudhUHVPNjjSVrBFE+5i685xM9zR+IMQAKIdSTY0H/4b
-         ZYXP6ISLj9dEMpIHdBMtifCbht8ZT+NtNHytwCO08jZseIHzutyoOO4F9T8iftkrLQ
-         aFGvEYaKZqnqg==
+        b=rVhlWzVk5KaQPbyj9dR94ZiPbBv2adm1FNlXwmpBzvV0WkfFgm3kdD0QD4rMY9UIS
+         aMbw7LdzrtWXZ38HZuXE4PFdetFg6prn1YnGe1tVmXAwf3swh0sUPKr2O5QmNWxc03
+         6S1EEKcUg86UG/Wn0O9DI47HyZ5GmLI/imYtLdsGEM5kTxNn3XF0nV329fuP7ZfAnj
+         wGeEBStOXnsJiW3rzIftfl0S3yFaHIBZHktHrmKYlGWrHHVdvw3zFGZOGpvT/cxYeB
+         jTXLVOkTpb3YkqU/Tm9MgBpjZL4uXVg2iK71uXNre3/WDFOvmMkmB4zJK4vdO9dmRq
+         Hw8Btumy7JqLA==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jiajun Cao <jjcao20@fudan.edu.cn>, Xin Tan <tanxin.ctf@gmail.com>,
+Cc:     Zou Wei <zou_wei@huawei.com>, Hulk Robot <hulkci@huawei.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Vidya Sagar <vidyas@nvidia.com>,
         Thierry Reding <treding@nvidia.com>,
-        Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>,
-        alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 21/23] ALSA: hda: Add IRQ check for platform_get_irq()
-Date:   Fri,  9 Jul 2021 22:39:10 -0400
-Message-Id: <20210710023912.3172972-21-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>, linux-tegra@vger.kernel.org,
+        linux-pci@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.12 22/43] PCI: tegra: Add missing MODULE_DEVICE_TABLE
+Date:   Sat, 10 Jul 2021 19:48:54 -0400
+Message-Id: <20210710234915.3220342-22-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210710023912.3172972-1-sashal@kernel.org>
-References: <20210710023912.3172972-1-sashal@kernel.org>
+In-Reply-To: <20210710234915.3220342-1-sashal@kernel.org>
+References: <20210710234915.3220342-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -51,43 +54,37 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Jiajun Cao <jjcao20@fudan.edu.cn>
+From: Zou Wei <zou_wei@huawei.com>
 
-[ Upstream commit 8c13212443230d03ff25014514ec0d53498c0912 ]
+[ Upstream commit 7bf475a4614a9722b9b989e53184a02596cf16d1 ]
 
-The function hda_tegra_first_init() neglects to check the return
-value after executing platform_get_irq().
+Add missing MODULE_DEVICE_TABLE definition so we generate correct modalias
+for automatic loading of this driver when it is built as a module.
 
-hda_tegra_first_init() should check the return value (if negative
-error number) for errors so as to not pass a negative value to
-the devm_request_irq().
-
-Fix it by adding a check for the return value irq_id.
-
-Signed-off-by: Jiajun Cao <jjcao20@fudan.edu.cn>
-Signed-off-by: Xin Tan <tanxin.ctf@gmail.com>
-Reviewed-by: Thierry Reding <treding@nvidia.com>
-Link: https://lore.kernel.org/r/20210622131947.94346-1-jjcao20@fudan.edu.cn
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Link: https://lore.kernel.org/r/1620792422-16535-1-git-send-email-zou_wei@huawei.com
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Zou Wei <zou_wei@huawei.com>
+Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Reviewed-by: Vidya Sagar <vidyas@nvidia.com>
+Acked-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/pci/hda/hda_tegra.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/pci/controller/pci-tegra.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/sound/pci/hda/hda_tegra.c b/sound/pci/hda/hda_tegra.c
-index 039fbbb1e53c..89359a962e47 100644
---- a/sound/pci/hda/hda_tegra.c
-+++ b/sound/pci/hda/hda_tegra.c
-@@ -363,6 +363,9 @@ static int hda_tegra_first_init(struct azx *chip, struct platform_device *pdev)
- 	unsigned short gcap;
- 	int irq_id = platform_get_irq(pdev, 0);
+diff --git a/drivers/pci/controller/pci-tegra.c b/drivers/pci/controller/pci-tegra.c
+index 8fcabed7c6a6..1a2af963599c 100644
+--- a/drivers/pci/controller/pci-tegra.c
++++ b/drivers/pci/controller/pci-tegra.c
+@@ -2506,6 +2506,7 @@ static const struct of_device_id tegra_pcie_of_match[] = {
+ 	{ .compatible = "nvidia,tegra20-pcie", .data = &tegra20_pcie },
+ 	{ },
+ };
++MODULE_DEVICE_TABLE(of, tegra_pcie_of_match);
  
-+	if (irq_id < 0)
-+		return irq_id;
-+
- 	err = hda_tegra_init_chip(chip, pdev);
- 	if (err)
- 		return err;
+ static void *tegra_pcie_ports_seq_start(struct seq_file *s, loff_t *pos)
+ {
 -- 
 2.30.2
 
