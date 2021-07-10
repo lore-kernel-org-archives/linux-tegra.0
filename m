@@ -2,129 +2,92 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-19.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E10BC07E99
-	for <linux-tegra@archiver.kernel.org>; Fri,  9 Jul 2021 21:38:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3169C11F6A
+	for <linux-tegra@archiver.kernel.org>; Sat, 10 Jul 2021 02:25:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 707CF613C7
-	for <linux-tegra@archiver.kernel.org>; Fri,  9 Jul 2021 21:38:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C6192613F8
+	for <linux-tegra@archiver.kernel.org>; Sat, 10 Jul 2021 02:25:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230406AbhGIVlA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 9 Jul 2021 17:41:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44194 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229546AbhGIVlA (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 9 Jul 2021 17:41:00 -0400
-Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BC44C0613DD;
-        Fri,  9 Jul 2021 14:38:16 -0700 (PDT)
-Received: by mail-lj1-x236.google.com with SMTP id s18so10226595ljg.7;
-        Fri, 09 Jul 2021 14:38:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ZVPWYqSyixkxkDSr12zp1Gb/EBiJF8//ADhPZjQHkNY=;
-        b=coLNTHP2JDZCDbh9rSFwBNNgy4/PiQ/h9A/b2My9drw7hVjw4e/I1PIv8KKuORE6Hk
-         jWcWEXi+PDqWxto9Glc1TIpdlXlKr8wWvNu2Vjvo9N9KpAHG1jnE2HGGPMU+epgHq2t5
-         U+Locdqonh9XT90mb49h3q075H6dSI42y77G3HhagnYPyY1WN52zV+g3DFkqDlHeVY1a
-         43N1EYAefr9OWNvkklsjyf+PsFX93qJk5j00thze8kzNFnc0H5XX8hzxBvdNgpHMAV9S
-         EFdvYQBBJP8iA38ln3xJreH/QEH9IfuBghoqell+XhAoCV1FV/5YGgHdg9NxTfw8oYq7
-         3ujA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ZVPWYqSyixkxkDSr12zp1Gb/EBiJF8//ADhPZjQHkNY=;
-        b=qDm13BZUi7v647q+jSy55Yt6UwCpPtcrVf/q0ckRTcCFiyuwe+y22btZk7VSbibsst
-         bJRM209xfNZj44kG5py6NbZKJV4/rxfKDruk4KongDYwUQEkED7Jea+L3jAKLAT3tIGO
-         +AF1Yi14yh+CvBcmGc34yLVEUcYjv4MaxiXYEhkNeU+/V1f/48mEsXX5MezEbEVEnVFe
-         y/kqL8XpufU29dR0ajzQaHHazNTqHLWzS614BKgJA+2tDQSroeLs7ABpTgjRuFMgvAKM
-         n6qYRpJSyf5qBkaexaQnS+T5MV+HeVx/R3/ymLLXZ2HkbEXIo6sO/Rtd8C+fu0tcAB/b
-         a6tw==
-X-Gm-Message-State: AOAM5305/IKKH/6xyN6DIsJKI0HUlxGuenzKdDXHwcDSzziFyylkigHQ
-        7X0z2NDiEKY8pncgk0fKNO39eM3sumc=
-X-Google-Smtp-Source: ABdhPJy8w4nB0SwfVg9e0pH/UJAZ+6wCIk2dWvx5t8aq1ddzP6Wwk2dKZXg4s8nCC0uwx+l+sxxvkQ==
-X-Received: by 2002:a2e:a16d:: with SMTP id u13mr23697171ljl.222.1625866694503;
-        Fri, 09 Jul 2021 14:38:14 -0700 (PDT)
-Received: from [192.168.2.145] (94-29-37-113.dynamic.spd-mgts.ru. [94.29.37.113])
-        by smtp.googlemail.com with ESMTPSA id y7sm667113lji.64.2021.07.09.14.38.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 09 Jul 2021 14:38:14 -0700 (PDT)
-Subject: Re: [PATCH V2] serial: tegra: Only print FIFO error message when an
- error occurs
-To:     =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-        Jon Hunter <jonathanh@nvidia.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Krishna Yarlagadda <kyarlagadda@nvidia.com>,
-        linux-serial@vger.kernel.org, linux-tegra@vger.kernel.org,
-        stable@vger.kernel.org
-References: <20210630125643.264264-1-jonathanh@nvidia.com>
- <YOd7ZTJf0WoQ8oKo@qmqm.qmqm.pl>
- <aad402e7-a2b7-1faf-bc22-eb90bee39d3b@nvidia.com>
- <30057ea5-5699-9335-f4dd-a9e8ed847ee4@nvidia.com>
- <YOiNh2ue6YnN6Zr/@qmqm.qmqm.pl>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <0e5678f2-96d3-9970-b2e4-f1efb395c919@gmail.com>
-Date:   Sat, 10 Jul 2021 00:38:13 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        id S233030AbhGJC1n (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 9 Jul 2021 22:27:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43262 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233711AbhGJC1E (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Fri, 9 Jul 2021 22:27:04 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 34891613F8;
+        Sat, 10 Jul 2021 02:24:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1625883851;
+        bh=BBIWsxldfa1/BlZAXDvliQuDJ1M4egHfyUxTTQQcEcA=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=nV4F1bcdaJwGkqh8A4pbZFe21Dy55UmhF5+RsD1jSmsyPMw8kMeqJaKG5UFapTity
+         kaqIoXCt2xyXxFicFrHVyrTVWg5hvKzHqWO2G0U8lEh1/O0GSCJevIUaO3HKuiA88+
+         YvoHXpiSBZnucfz6nB8e1tg5oYm1iAnsNc+9xWgZpj7KpCslo67iNdHwzcQrRn0aY6
+         1vGr3+iEI6Yyk1wk+JhmqGUJOVEVPBWFeVSYqwDqbLWDbKF4gRwN4bZmv2zJMvnBJZ
+         n67bkrTY4bDbHJfgVIuIiuo8tyTpdTvV14+V4v+5apk7aL+UwFCiQsrmWtzWfkTEM1
+         LZTbHJ6ChzBqQ==
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Jiajun Cao <jjcao20@fudan.edu.cn>, Xin Tan <tanxin.ctf@gmail.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>,
+        alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.12 094/104] ALSA: hda: Add IRQ check for platform_get_irq()
+Date:   Fri,  9 Jul 2021 22:21:46 -0400
+Message-Id: <20210710022156.3168825-94-sashal@kernel.org>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20210710022156.3168825-1-sashal@kernel.org>
+References: <20210710022156.3168825-1-sashal@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <YOiNh2ue6YnN6Zr/@qmqm.qmqm.pl>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+X-stable: review
+X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-09.07.2021 20:55, Michał Mirosław пишет:
-> On Fri, Jul 09, 2021 at 12:38:07PM +0100, Jon Hunter wrote:
->>
->> On 09/07/2021 09:34, Jon Hunter wrote:
->>>
->>>
->>> On 08/07/2021 23:25, Michał Mirosław wrote:
->>>> On Wed, Jun 30, 2021 at 01:56:43PM +0100, Jon Hunter wrote:
->>>>> The Tegra serial driver always prints an error message when enabling the
->>>>> FIFO for devices that have support for checking the FIFO enable status.
->>>>> Fix this by displaying the error message, only when an error occurs.
->>>>>
->>>>> Finally, update the error message to make it clear that enabling the
->>>>> FIFO failed and display the error code.
->>>> [...]
->>>>> @@ -1045,9 +1045,11 @@ static int tegra_uart_hw_init(struct tegra_uart_port *tup)
->>>>>  
->>>>>  	if (tup->cdata->fifo_mode_enable_status) {
->>>>>  		ret = tegra_uart_wait_fifo_mode_enabled(tup);
->>>>> -		dev_err(tup->uport.dev, "FIFO mode not enabled\n");
->>>>> -		if (ret < 0)
->>>>> +		if (ret < 0) {
->>>>> +			dev_err(tup->uport.dev,
->>>>> +				"Failed to enable FIFO mode: %d\n", ret);
->>>>
->>>> Could you change this to use %pe and ERR_PTR(ret)?
->>>
->>> Sorry, but it is not clear to me why this would be necessary in this case.
->>
->> I see so '%pe' prints the symbolic name of the error code. While that is
->> nice, it also looks a bit odd. Given that we simply print the error code
->> values in this driver, from looking at other prints, I prefer to keep it
->> as is for consistency.
-> 
-> It is a quite new facility of printk(), so I woudn't expect it to be
-> present in older code. It saves a bit of time when you occasionally
-> hit an error, so even incremental conversion seems beneficial for me.
+From: Jiajun Cao <jjcao20@fudan.edu.cn>
 
-It doesn't feel like a good approach to use ERR_PTR where it's not very
-appropriate. I suppose printk could get a new specifier, like '%de' for
-example, for the verbose integer error codes, couldn't it?
+[ Upstream commit 8c13212443230d03ff25014514ec0d53498c0912 ]
+
+The function hda_tegra_first_init() neglects to check the return
+value after executing platform_get_irq().
+
+hda_tegra_first_init() should check the return value (if negative
+error number) for errors so as to not pass a negative value to
+the devm_request_irq().
+
+Fix it by adding a check for the return value irq_id.
+
+Signed-off-by: Jiajun Cao <jjcao20@fudan.edu.cn>
+Signed-off-by: Xin Tan <tanxin.ctf@gmail.com>
+Reviewed-by: Thierry Reding <treding@nvidia.com>
+Link: https://lore.kernel.org/r/20210622131947.94346-1-jjcao20@fudan.edu.cn
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ sound/pci/hda/hda_tegra.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/sound/pci/hda/hda_tegra.c b/sound/pci/hda/hda_tegra.c
+index 6f2b743b9d75..6c6dc3fcde60 100644
+--- a/sound/pci/hda/hda_tegra.c
++++ b/sound/pci/hda/hda_tegra.c
+@@ -262,6 +262,9 @@ static int hda_tegra_first_init(struct azx *chip, struct platform_device *pdev)
+ 	const char *sname, *drv_name = "tegra-hda";
+ 	struct device_node *np = pdev->dev.of_node;
+ 
++	if (irq_id < 0)
++		return irq_id;
++
+ 	err = hda_tegra_init_chip(chip, pdev);
+ 	if (err)
+ 		return err;
+-- 
+2.30.2
+
