@@ -5,44 +5,44 @@ X-Spam-Level:
 X-Spam-Status: No, score=-19.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC34DC07E99
-	for <linux-tegra@archiver.kernel.org>; Sat, 10 Jul 2021 02:38:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34022C11F69
+	for <linux-tegra@archiver.kernel.org>; Sat, 10 Jul 2021 02:38:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D06D0613CA
-	for <linux-tegra@archiver.kernel.org>; Sat, 10 Jul 2021 02:38:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 18ABD613CC
+	for <linux-tegra@archiver.kernel.org>; Sat, 10 Jul 2021 02:38:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234101AbhGJClH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 9 Jul 2021 22:41:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58372 "EHLO mail.kernel.org"
+        id S234306AbhGJClI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 9 Jul 2021 22:41:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58440 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234915AbhGJCjS (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 9 Jul 2021 22:39:18 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 18FDA613EE;
-        Sat, 10 Jul 2021 02:35:07 +0000 (UTC)
+        id S235800AbhGJCjr (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Fri, 9 Jul 2021 22:39:47 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 8190261412;
+        Sat, 10 Jul 2021 02:35:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1625884508;
+        s=k20201202; t=1625884556;
         bh=L97dLeP6erxCCovARaRHBZiyyAeRSD+wLyweSRUnot8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UeeNOMWTQMTvWk0JgSxlj6yJyHKsjny+e4Wf+XNMyLIqaT2YCSwiD6iWTQEGK8XtC
-         408GyObvKqc7BQ2OA3nabFWzJdlmTz/5VAk/UFHbY0NQ0WSA7pv8KeZjjwdtmYEyBy
-         8qtrcAXQvQ7OYEHUxYFMO0zyJRhEW30Y5d6HMG3Vf0cBSgPXZzCEkZfR9AR2JAmpHT
-         uVIPa2s7l+5Schlxon6AQFOTe8YOVbHAy4hPbvXCnjAIK1TZUoPq7KvBqUy06ydP3c
-         8vheqkshtgkgApr8Pn6kV94Cv2j6D95gNrIGhMom/zBnWc0sd4UiqGpo0P3aLh39iK
-         21MoiGpA+E+Bw==
+        b=Sp3hE/zHs8gNWD3l1LbG+YY53HGqIrHdSfK7N/PPsS7GowTjAlVEH0SE+poQ3lW39
+         WYrhMiTaiyr7pBaYAq/C/q+b5v3RK2uMuqV6TF03i20S1ilyD2GThrMvCMXU95ath3
+         K20vcI+daPCzf5IuE1xvtvQkAtmjG+UE6TmLRWiVXYUOBGBu3DeRfS8JoUSpBV66MI
+         pfLwcjIDsUZZVaqv2ITenyKewa7Ikgu2RUzU/FqA5LaR+BQhy4O+y53Qvpz6B2lm6H
+         Id7w4TKRzhF1zTvOekxH6fBniH/H7/LW1jA6H0Yp6+ego15KuUakIgcqgr3OP0NpZn
+         Eqx8k/c+l6reA==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Jiajun Cao <jjcao20@fudan.edu.cn>, Xin Tan <tanxin.ctf@gmail.com>,
         Thierry Reding <treding@nvidia.com>,
         Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>,
         alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 34/39] ALSA: hda: Add IRQ check for platform_get_irq()
-Date:   Fri,  9 Jul 2021 22:31:59 -0400
-Message-Id: <20210710023204.3171428-34-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 28/33] ALSA: hda: Add IRQ check for platform_get_irq()
+Date:   Fri,  9 Jul 2021 22:35:10 -0400
+Message-Id: <20210710023516.3172075-28-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210710023204.3171428-1-sashal@kernel.org>
-References: <20210710023204.3171428-1-sashal@kernel.org>
+In-Reply-To: <20210710023516.3172075-1-sashal@kernel.org>
+References: <20210710023516.3172075-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
