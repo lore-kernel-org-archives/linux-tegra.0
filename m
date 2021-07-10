@@ -7,42 +7,42 @@ X-Spam-Status: No, score=-19.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34022C11F69
-	for <linux-tegra@archiver.kernel.org>; Sat, 10 Jul 2021 02:38:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57E2EC11F67
+	for <linux-tegra@archiver.kernel.org>; Sat, 10 Jul 2021 02:41:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 18ABD613CC
-	for <linux-tegra@archiver.kernel.org>; Sat, 10 Jul 2021 02:38:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3FB8C6124C
+	for <linux-tegra@archiver.kernel.org>; Sat, 10 Jul 2021 02:41:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234306AbhGJClI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 9 Jul 2021 22:41:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58440 "EHLO mail.kernel.org"
+        id S235388AbhGJCnr (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 9 Jul 2021 22:43:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33770 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235800AbhGJCjr (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 9 Jul 2021 22:39:47 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 8190261412;
-        Sat, 10 Jul 2021 02:35:55 +0000 (UTC)
+        id S235267AbhGJCmz (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Fri, 9 Jul 2021 22:42:55 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 0C614613E4;
+        Sat, 10 Jul 2021 02:39:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1625884556;
+        s=k20201202; t=1625884747;
         bh=L97dLeP6erxCCovARaRHBZiyyAeRSD+wLyweSRUnot8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Sp3hE/zHs8gNWD3l1LbG+YY53HGqIrHdSfK7N/PPsS7GowTjAlVEH0SE+poQ3lW39
-         WYrhMiTaiyr7pBaYAq/C/q+b5v3RK2uMuqV6TF03i20S1ilyD2GThrMvCMXU95ath3
-         K20vcI+daPCzf5IuE1xvtvQkAtmjG+UE6TmLRWiVXYUOBGBu3DeRfS8JoUSpBV66MI
-         pfLwcjIDsUZZVaqv2ITenyKewa7Ikgu2RUzU/FqA5LaR+BQhy4O+y53Qvpz6B2lm6H
-         Id7w4TKRzhF1zTvOekxH6fBniH/H7/LW1jA6H0Yp6+ego15KuUakIgcqgr3OP0NpZn
-         Eqx8k/c+l6reA==
+        b=JaYDYPVci2/iArRrQkbzwh2FcGqPVdH5NdVtC0C4RZ0wEd7JqeclcjoWO8sYyQeXk
+         qw0nWbmAsqwtBWraxX4vpCM85xnH7E6h8O4eTKWsHTyteJzKfJU2VEJjy11OZEHdCw
+         A5m7dQcSWwdHA7uUqZJGfY4J0Gkk5ZJcUQIraY9qvVHYwjmnuxjEebZBcYbi8omKIL
+         7JwpahoZrphuElV1rJrYXEZ2LZxB2z9Qd2BCq/D3BK9g6EaBJDD9yhkPHZATMZwrI6
+         g6FpFlHcnk2LFh/JINtodS/U8r29EkJwXn/e/eH8fJRwVKmziICZeAhTMBKHMPT2QK
+         IvZQzh6yqY3Ow==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Jiajun Cao <jjcao20@fudan.edu.cn>, Xin Tan <tanxin.ctf@gmail.com>,
         Thierry Reding <treding@nvidia.com>,
         Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>,
         alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 28/33] ALSA: hda: Add IRQ check for platform_get_irq()
-Date:   Fri,  9 Jul 2021 22:35:10 -0400
-Message-Id: <20210710023516.3172075-28-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 23/26] ALSA: hda: Add IRQ check for platform_get_irq()
+Date:   Fri,  9 Jul 2021 22:36:01 -0400
+Message-Id: <20210710023604.3172486-23-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210710023516.3172075-1-sashal@kernel.org>
-References: <20210710023516.3172075-1-sashal@kernel.org>
+In-Reply-To: <20210710023604.3172486-1-sashal@kernel.org>
+References: <20210710023604.3172486-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
