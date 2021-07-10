@@ -7,30 +7,30 @@ X-Spam-Status: No, score=-19.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6B69C11F67
-	for <linux-tegra@archiver.kernel.org>; Sat, 10 Jul 2021 23:55:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A48BCC11F6C
+	for <linux-tegra@archiver.kernel.org>; Sat, 10 Jul 2021 23:57:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AE590613E9
-	for <linux-tegra@archiver.kernel.org>; Sat, 10 Jul 2021 23:55:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F3FB61362
+	for <linux-tegra@archiver.kernel.org>; Sat, 10 Jul 2021 23:57:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233911AbhGJX61 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 10 Jul 2021 19:58:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40800 "EHLO mail.kernel.org"
+        id S233887AbhGJX7p (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 10 Jul 2021 19:59:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48432 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233939AbhGJX5O (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Sat, 10 Jul 2021 19:57:14 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 18F0B6140C;
-        Sat, 10 Jul 2021 23:52:33 +0000 (UTC)
+        id S233539AbhGJX60 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Sat, 10 Jul 2021 19:58:26 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 49AF56142C;
+        Sat, 10 Jul 2021 23:52:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1625961153;
-        bh=DPYLXDBQlJ4xCJUeTqh/3nUbSMOGFtVr9aV+f0tGoH0=;
+        s=k20201202; t=1625961178;
+        bh=yZiHhf7MDMsrBOm+Rfirza9bKGPc4BGe3mcHCLe6UbU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aHCuFxyaT2fpyVmiZx4XB6ldel4RXR13ZY/4uRs7FYlatevVlpXsC1XPoduXFykcL
-         wpEP1MnwiAKu4rRgNvpaVxbRQCVxXo7dPx053sooFsMb6SubwRAhFwpEs3AN6CHqwD
-         fOlzjS63LECCg957h+DPqDmH5njAgIWOsaJq/vvKIdN8EtfqwN7m53NDrSY0Ya00CQ
-         uf2or82PKvsWmkrA9ARERWMuwo5Tl/ALQsaFKJVYf9oy2B6TD83YhfjBh27ItYzEqd
-         iQUjhrHw2B2OvrUytU1yCE9IiLdUyUD1q1njrQf9zNBFiEtuC+ObxhYim71RMzFN0q
-         XhoJuC81r9zRw==
+        b=O94iuvZXk4uGfJb4ZnYK2KI77MeMFWbUF99qGbrmtrmmsVBztDF7Ofz5dtPhRgtTv
+         1qF7N1Sy/YPPLzssFHso6a7Xs/iBIgE6bOzeE5/eNeNCs0D5Hjc/RjiJoECkh4+fuu
+         x78w0IG/eKVLGD0qxqNhS7KIs1JNzZxEthI54q6nU1BaZhlVxVoFQ7Mb9VtYPqenYn
+         xgNs1G8yrCOrimIwtKyu3dpdgZFs/ZLRiCQw1EUULu/PjeV6ugsLcEPd2pbpo+u7sB
+         HC9QxPVZs+Efudjarg82k1VnagyQW2GTueVVck9r23vUBj2L0WDlx+RBJ4X0u/ykhm
+         Hia1D113fPEbQ==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
@@ -38,12 +38,12 @@ Cc:     =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?=
         Thierry Reding <thierry.reding@gmail.com>,
         Sasha Levin <sashal@kernel.org>, linux-pwm@vger.kernel.org,
         linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 16/21] pwm: tegra: Don't modify HW state in .remove callback
-Date:   Sat, 10 Jul 2021 19:52:07 -0400
-Message-Id: <20210710235212.3222375-16-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 13/16] pwm: tegra: Don't modify HW state in .remove callback
+Date:   Sat, 10 Jul 2021 19:52:37 -0400
+Message-Id: <20210710235240.3222618-13-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210710235212.3222375-1-sashal@kernel.org>
-References: <20210710235212.3222375-1-sashal@kernel.org>
+In-Reply-To: <20210710235240.3222618-1-sashal@kernel.org>
+References: <20210710235240.3222618-1-sashal@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-stable: review
@@ -73,10 +73,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 13 deletions(-)
 
 diff --git a/drivers/pwm/pwm-tegra.c b/drivers/pwm/pwm-tegra.c
-index f8ebbece57b7..6be14e0f1dc3 100644
+index 7e8906d6ab7a..d76698ce6472 100644
 --- a/drivers/pwm/pwm-tegra.c
 +++ b/drivers/pwm/pwm-tegra.c
-@@ -245,7 +245,6 @@ static int tegra_pwm_probe(struct platform_device *pdev)
+@@ -228,7 +228,6 @@ static int tegra_pwm_probe(struct platform_device *pdev)
  static int tegra_pwm_remove(struct platform_device *pdev)
  {
  	struct tegra_pwm_chip *pc = platform_get_drvdata(pdev);
@@ -84,7 +84,7 @@ index f8ebbece57b7..6be14e0f1dc3 100644
  	int err;
  
  	if (WARN_ON(!pc))
-@@ -255,18 +254,6 @@ static int tegra_pwm_remove(struct platform_device *pdev)
+@@ -238,18 +237,6 @@ static int tegra_pwm_remove(struct platform_device *pdev)
  	if (err < 0)
  		return err;
  
