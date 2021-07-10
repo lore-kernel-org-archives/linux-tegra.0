@@ -5,44 +5,44 @@ X-Spam-Level:
 X-Spam-Status: No, score=-19.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57E2EC11F67
-	for <linux-tegra@archiver.kernel.org>; Sat, 10 Jul 2021 02:41:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DD86C11F72
+	for <linux-tegra@archiver.kernel.org>; Sat, 10 Jul 2021 02:42:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3FB8C6124C
-	for <linux-tegra@archiver.kernel.org>; Sat, 10 Jul 2021 02:41:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4CE58613E8
+	for <linux-tegra@archiver.kernel.org>; Sat, 10 Jul 2021 02:42:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235388AbhGJCnr (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 9 Jul 2021 22:43:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33770 "EHLO mail.kernel.org"
+        id S234258AbhGJCpR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 9 Jul 2021 22:45:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33902 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235267AbhGJCmz (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 9 Jul 2021 22:42:55 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 0C614613E4;
-        Sat, 10 Jul 2021 02:39:05 +0000 (UTC)
+        id S235408AbhGJCns (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Fri, 9 Jul 2021 22:43:48 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 868D561409;
+        Sat, 10 Jul 2021 02:39:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1625884747;
-        bh=L97dLeP6erxCCovARaRHBZiyyAeRSD+wLyweSRUnot8=;
+        s=k20201202; t=1625884784;
+        bh=+GxOXwBIVChAEIPaJlTqVRD9YIlZFBH0s/v8OF5M8is=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JaYDYPVci2/iArRrQkbzwh2FcGqPVdH5NdVtC0C4RZ0wEd7JqeclcjoWO8sYyQeXk
-         qw0nWbmAsqwtBWraxX4vpCM85xnH7E6h8O4eTKWsHTyteJzKfJU2VEJjy11OZEHdCw
-         A5m7dQcSWwdHA7uUqZJGfY4J0Gkk5ZJcUQIraY9qvVHYwjmnuxjEebZBcYbi8omKIL
-         7JwpahoZrphuElV1rJrYXEZ2LZxB2z9Qd2BCq/D3BK9g6EaBJDD9yhkPHZATMZwrI6
-         g6FpFlHcnk2LFh/JINtodS/U8r29EkJwXn/e/eH8fJRwVKmziICZeAhTMBKHMPT2QK
-         IvZQzh6yqY3Ow==
+        b=QBRc8JRgMf5yDi2YaVcLlvQFWEgdJ7CTSVImLjzdFS9EiG2Z4eWQ+hQTXGc3BWJf9
+         k7JJmxZUWvTC38wXxRODnHJm2/Nw53dpYtQ1os6sn26gG5DSacIPGk4mlN1PR825iU
+         R1PI5ACcj7hd4pMcHBp/gKP+xLWpPYg9ojiWfvJz85ZwKdb0Tma8zZWQRU9qCY9ZBD
+         Jyv5jMjhzal4HujEItagPzKudhUHVPNjjSVrBFE+5i685xM9zR+IMQAKIdSTY0H/4b
+         ZYXP6ISLj9dEMpIHdBMtifCbht8ZT+NtNHytwCO08jZseIHzutyoOO4F9T8iftkrLQ
+         aFGvEYaKZqnqg==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Jiajun Cao <jjcao20@fudan.edu.cn>, Xin Tan <tanxin.ctf@gmail.com>,
         Thierry Reding <treding@nvidia.com>,
         Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>,
         alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 23/26] ALSA: hda: Add IRQ check for platform_get_irq()
-Date:   Fri,  9 Jul 2021 22:36:01 -0400
-Message-Id: <20210710023604.3172486-23-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 21/23] ALSA: hda: Add IRQ check for platform_get_irq()
+Date:   Fri,  9 Jul 2021 22:39:10 -0400
+Message-Id: <20210710023912.3172972-21-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210710023604.3172486-1-sashal@kernel.org>
-References: <20210710023604.3172486-1-sashal@kernel.org>
+In-Reply-To: <20210710023912.3172972-1-sashal@kernel.org>
+References: <20210710023912.3172972-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -75,7 +75,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 3 insertions(+)
 
 diff --git a/sound/pci/hda/hda_tegra.c b/sound/pci/hda/hda_tegra.c
-index e85fb04ec7be..b567c4bdae00 100644
+index 039fbbb1e53c..89359a962e47 100644
 --- a/sound/pci/hda/hda_tegra.c
 +++ b/sound/pci/hda/hda_tegra.c
 @@ -363,6 +363,9 @@ static int hda_tegra_first_init(struct azx *chip, struct platform_device *pdev)
