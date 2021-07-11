@@ -2,107 +2,120 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A48BCC11F6C
-	for <linux-tegra@archiver.kernel.org>; Sat, 10 Jul 2021 23:57:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9796C07E96
+	for <linux-tegra@archiver.kernel.org>; Sun, 11 Jul 2021 23:44:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8F3FB61362
-	for <linux-tegra@archiver.kernel.org>; Sat, 10 Jul 2021 23:57:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A162960FE6
+	for <linux-tegra@archiver.kernel.org>; Sun, 11 Jul 2021 23:44:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233887AbhGJX7p (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 10 Jul 2021 19:59:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48432 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233539AbhGJX60 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Sat, 10 Jul 2021 19:58:26 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 49AF56142C;
-        Sat, 10 Jul 2021 23:52:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1625961178;
-        bh=yZiHhf7MDMsrBOm+Rfirza9bKGPc4BGe3mcHCLe6UbU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=O94iuvZXk4uGfJb4ZnYK2KI77MeMFWbUF99qGbrmtrmmsVBztDF7Ofz5dtPhRgtTv
-         1qF7N1Sy/YPPLzssFHso6a7Xs/iBIgE6bOzeE5/eNeNCs0D5Hjc/RjiJoECkh4+fuu
-         x78w0IG/eKVLGD0qxqNhS7KIs1JNzZxEthI54q6nU1BaZhlVxVoFQ7Mb9VtYPqenYn
-         xgNs1G8yrCOrimIwtKyu3dpdgZFs/ZLRiCQw1EUULu/PjeV6ugsLcEPd2pbpo+u7sB
-         HC9QxPVZs+Efudjarg82k1VnagyQW2GTueVVck9r23vUBj2L0WDlx+RBJ4X0u/ykhm
-         Hia1D113fPEbQ==
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Sasha Levin <sashal@kernel.org>, linux-pwm@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 13/16] pwm: tegra: Don't modify HW state in .remove callback
-Date:   Sat, 10 Jul 2021 19:52:37 -0400
-Message-Id: <20210710235240.3222618-13-sashal@kernel.org>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210710235240.3222618-1-sashal@kernel.org>
-References: <20210710235240.3222618-1-sashal@kernel.org>
+        id S229753AbhGKXrW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 11 Jul 2021 19:47:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50226 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229660AbhGKXrW (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Sun, 11 Jul 2021 19:47:22 -0400
+Received: from mail-qk1-x72a.google.com (mail-qk1-x72a.google.com [IPv6:2607:f8b0:4864:20::72a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4785C0613DD;
+        Sun, 11 Jul 2021 16:44:34 -0700 (PDT)
+Received: by mail-qk1-x72a.google.com with SMTP id a6so16240242qka.4;
+        Sun, 11 Jul 2021 16:44:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=dT2rznG8+FNKAzNmailx5hWz/y69Nu1aZdBmqBWLa+8=;
+        b=uDVO3NRG80yF6HB1qsls7uukms/Tg4hA/pbbUNAVxvSh66dWbZi9dX83Q+UGVxVFsD
+         6YdNP1OHMMxFXtRjrrvLtc2zTKR7+SGfsPf1T+uO5CEkLOlIdTXwNVmpzuOH6DTLatM4
+         D7J8K8WYEByTKCbp5OpjJbMNSD4KqIZJzl1v2HdwQoLAV6meBnshfUvFu09cDBbzW9cW
+         Hj0CTZS9iPJGDhfa2S7Z+okJB67l74dbbRjN0foF6H8sWxYI/IcebiNQ+JEOtpRiwOjO
+         ALA9vfzve+wutpv0CSRG2uUDFgtcRyhnVuuxfwExdxnrlvLlLGjO/8GC1rahZSspS6/8
+         +vfw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=dT2rznG8+FNKAzNmailx5hWz/y69Nu1aZdBmqBWLa+8=;
+        b=A9e+KX8QI3fjqnNloAYpW5srsLNVW+b+mv8V0DmHkJxdzyjv24SHDKlPDGQnXCzhPg
+         PfWM16IwFNuPTsSEdcutzHZNb2C/C2FlBDDczWU4c/ZKXiesKoMDCnIUIbmuKcewNJhQ
+         ZSmB0XzOcWFrurlRukFnQamnHcNxZv1PHwmHadxaKoTIRpsDJoudJD7im3Q3yFznuKJO
+         ywwi08cqiZnaDp4CD1Brs0IMrF1KY2AnaGyeGhtfpUMB//gg2wr+FVoEfuNd9V8shF6i
+         k4eXymcCdRonwYmKF9IjPPRAlu4eMbLcHUKDJwznj8U+tCYDWLdqOHAbT0PKuTWLB3Sv
+         LETw==
+X-Gm-Message-State: AOAM530MPQicn29bgnwNyNXXEsz5NSTQlhkNIT97712INRLADTDaE49j
+        l1tjPOkOsOdzOZrA9/o9Avc=
+X-Google-Smtp-Source: ABdhPJyK8kSt1AYgWtmz003nSG3PBEgZ2QlEj3nEV/+Yf0KihD7Q93gFt4WlXm6OorhXNJZtshYOuQ==
+X-Received: by 2002:a37:58b:: with SMTP id 133mr8772140qkf.125.1626047072595;
+        Sun, 11 Jul 2021 16:44:32 -0700 (PDT)
+Received: from localhost.localdomain (94-29-37-113.dynamic.spd-mgts.ru. [94.29.37.113])
+        by smtp.gmail.com with ESMTPSA id e123sm2146507qkf.103.2021.07.11.16.44.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 11 Jul 2021 16:44:32 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Matt Merhar <mattmerhar@protonmail.com>,
+        Peter Geis <pgwipeout@gmail.com>
+Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: [PATCH v1 00/13] Tegra ARM32 device-tree improvements for 5.15
+Date:   Mon, 12 Jul 2021 02:43:50 +0300
+Message-Id: <20210711234403.24691-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-stable: review
-X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+This series:
 
-[ Upstream commit 86f7fa71cd830d18d7ebcaf719dffd5ddfe1acdd ]
+  - adds SoC thermal sensor node
+  - adds interrupt for LM90 to Ouya, AC100, Nexus 7 and A500 devices
+  - fixes interrupt of LM90 sensor for all boards
+  - removes bogus VBUS regulators from A500 device-tree
+  - improves thermal zones of Nexus 7 and A500 devices based on previous
+    discussion with Daniel Lezcano [1]
 
-A consumer is expected to disable a PWM before calling pwm_put(). And if
-they didn't there is hopefully a good reason (or the consumer needs
-fixing). Also if disabling an enabled PWM was the right thing to do,
-this should better be done in the framework instead of in each low level
-driver.
+[1] https://lore.kernel.org/lkml/1abadc69-1dd1-5939-c089-37a84be4781b@linaro.org/
 
-So drop the hardware modification from the .remove() callback.
+Dmitry Osipenko (13):
+  ARM: tegra: Add SoC thermal sensor to Tegra30 device-trees
+  ARM: tegra: ouya: Add interrupt to temperature sensor node
+  ARM: tegra: paz00: Add interrupt to temperature sensor node
+  ARM: tegra: nexus7: Add interrupt to temperature sensor node
+  ARM: tegra: acer-a500: Add interrupt to temperature sensor node
+  ARM: tegra: nyan: Correct interrupt trigger type of temperature sensor
+  ARM: tegra: apalis: Correct interrupt trigger type of temperature
+    sensor
+  ARM: tegra: cardhu: Correct interrupt trigger type of temperature
+    sensor
+  ARM: tegra: dalmore: Correct interrupt trigger type of temperature
+    sensor
+  ARM: tegra: jetson-tk1: Correct interrupt trigger type of temperature
+    sensor
+  ARM: tegra: acer-a500: Remove bogus USB VBUS regulators
+  ARM: tegra: acer-a500: Improve thermal zones
+  ARM: tegra: nexus7: Improve thermal zones
 
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-Signed-off-by: Thierry Reding <thierry.reding@gmail.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/pwm/pwm-tegra.c | 13 -------------
- 1 file changed, 13 deletions(-)
+ arch/arm/boot/dts/tegra114-dalmore.dts        |  2 +-
+ arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi   |  2 +-
+ arch/arm/boot/dts/tegra124-apalis.dtsi        |  2 +-
+ arch/arm/boot/dts/tegra124-jetson-tk1.dts     |  2 +-
+ arch/arm/boot/dts/tegra124-nyan.dtsi          |  2 +-
+ .../boot/dts/tegra20-acer-a500-picasso.dts    | 84 +++++++++++-------
+ arch/arm/boot/dts/tegra20-paz00.dts           |  4 +
+ .../tegra30-asus-nexus7-grouper-common.dtsi   | 60 ++++++++++++-
+ arch/arm/boot/dts/tegra30-cardhu.dtsi         |  2 +-
+ arch/arm/boot/dts/tegra30-ouya.dts            | 13 ++-
+ arch/arm/boot/dts/tegra30.dtsi                | 87 ++++++++++++++++++-
+ 11 files changed, 206 insertions(+), 54 deletions(-)
 
-diff --git a/drivers/pwm/pwm-tegra.c b/drivers/pwm/pwm-tegra.c
-index 7e8906d6ab7a..d76698ce6472 100644
---- a/drivers/pwm/pwm-tegra.c
-+++ b/drivers/pwm/pwm-tegra.c
-@@ -228,7 +228,6 @@ static int tegra_pwm_probe(struct platform_device *pdev)
- static int tegra_pwm_remove(struct platform_device *pdev)
- {
- 	struct tegra_pwm_chip *pc = platform_get_drvdata(pdev);
--	unsigned int i;
- 	int err;
- 
- 	if (WARN_ON(!pc))
-@@ -238,18 +237,6 @@ static int tegra_pwm_remove(struct platform_device *pdev)
- 	if (err < 0)
- 		return err;
- 
--	for (i = 0; i < pc->chip.npwm; i++) {
--		struct pwm_device *pwm = &pc->chip.pwms[i];
--
--		if (!pwm_is_enabled(pwm))
--			if (clk_prepare_enable(pc->clk) < 0)
--				continue;
--
--		pwm_writel(pc, i, 0);
--
--		clk_disable_unprepare(pc->clk);
--	}
--
- 	reset_control_assert(pc->rst);
- 	clk_disable_unprepare(pc->clk);
- 
 -- 
-2.30.2
+2.32.0
 
