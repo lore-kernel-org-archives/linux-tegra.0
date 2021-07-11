@@ -8,55 +8,55 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F29EAC07E9E
-	for <linux-tegra@archiver.kernel.org>; Sun, 11 Jul 2021 23:44:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FBABC07E96
+	for <linux-tegra@archiver.kernel.org>; Sun, 11 Jul 2021 23:44:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D8A5261042
-	for <linux-tegra@archiver.kernel.org>; Sun, 11 Jul 2021 23:44:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7C29761026
+	for <linux-tegra@archiver.kernel.org>; Sun, 11 Jul 2021 23:44:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231827AbhGKXrh (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 11 Jul 2021 19:47:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50298 "EHLO
+        id S232507AbhGKXri (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 11 Jul 2021 19:47:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50310 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232405AbhGKXrf (ORCPT
+        with ESMTP id S232454AbhGKXrh (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 11 Jul 2021 19:47:35 -0400
-Received: from mail-qk1-x72b.google.com (mail-qk1-x72b.google.com [IPv6:2607:f8b0:4864:20::72b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC346C0613DD;
-        Sun, 11 Jul 2021 16:44:47 -0700 (PDT)
-Received: by mail-qk1-x72b.google.com with SMTP id s6so13370622qkc.8;
-        Sun, 11 Jul 2021 16:44:47 -0700 (PDT)
+        Sun, 11 Jul 2021 19:47:37 -0400
+Received: from mail-qv1-xf2f.google.com (mail-qv1-xf2f.google.com [IPv6:2607:f8b0:4864:20::f2f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00BA7C0613DD;
+        Sun, 11 Jul 2021 16:44:50 -0700 (PDT)
+Received: by mail-qv1-xf2f.google.com with SMTP id d2so7669156qvh.2;
+        Sun, 11 Jul 2021 16:44:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=qGeXepf/KMG3yJmBmCJiEn21XsFabFobQrJDwifVJjA=;
-        b=Kih3GOIoZrs5NCClvBOjQzoMvLrvNXI5MnbfxGUzPQ1LRL7vyC2KWcuJYWKXqde32V
-         dr2JpOAH9+AFPciyfPecMUfYjM2x5P2AYC/C6pwSIRIwH0ezCmpnG3bRlP/rWiPD/CPw
-         03dWMbvSg3LYHW5zDVWvTad8qNloW+HvaXWcvh388N0XQ4XimdeRs4U3R4rX/kSgep4A
-         LoFHwx8v+xHAuXOabV5OoT8YsIGUk89lLKjQzgO3eTYP2zIw2H/LUCG4VHmDiZs43pjj
-         vS81yowwdmqGCZcPeabNbQ8sZIYqyCTkU8fooFU3twNHcv4I9cKnN6ZQEH0fD/cxHXo9
-         OWww==
+        bh=r+n6L5LnjkR3JjMOorSuNebIWgL0pmMvWc1cKkkewqM=;
+        b=WlCPGARS3kVzY38WuLIECrBptA5EPSr8qet57xYQ4Zf5lsBmmQUCZoIa12PKoj9sNh
+         hnGb/wW5zZVIlF4/07ZsviXgIb1QK2vlJrVgn6874ma2PTQ6Ut23cmvBwr+N3U7s6Hkg
+         t4y0eEwV6AYyf6wqMZg4DRHc4S4cozcGT1gYgHG4q2mCMG+xGINSmVh6R3Q9L7Qwwa5q
+         Qc+19rSAyS1Wx22fVdN9BkHRIvdMWSQnMGsUylqdpY5mPrcKbP4gNjJBpwoYiSDeaqtV
+         BWsxYlkGcBz5k7j8+2zLoVDFSxBNVvsTdJtj34uUHiTqvC+Ucz7M61mQXaLIMgwvoUtn
+         zF5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=qGeXepf/KMG3yJmBmCJiEn21XsFabFobQrJDwifVJjA=;
-        b=l8gESMJdtsmle+EitCLAM4dm0eJmPi6Pfo/RgSHj7vnxOmPz5LuPX3OpOHa7nobQlF
-         +svwVYpbwxAAuhoaawB9sY7IT0tD4tqmLRSeCdw8d8j7C9KN8mSMuCNf7wweZ7OY44t8
-         9hFlJWCugfVb/jv5MJoGCBXu5YfZHI5p8ZFWL3GDnY+RYEHaUoj6p/hg5mZdOHSY6xPC
-         Up0gvUk5akabwJ9Mh4smOIVj28Yrk7r6eeOQ/snUo9sMAH+BaabyiEGWK/eMS8fi/xJI
-         wJEwHucf1IZjDFBl+jIjGJr0lWNG2dYrz/WMrDCy0e5zQp4Pp3B0NdsfATpUBulByyxH
-         KaZA==
-X-Gm-Message-State: AOAM531mEn1SmtBue6oUG71uroSUjonVYhOj9NE8RBzwu01w4EdWuOog
-        Tzi4NdAZRdP53P4Xwy71cpI=
-X-Google-Smtp-Source: ABdhPJxO3JKt+Zf6lNpwVkFlgcQ247uGXAM7JH834me5xHboBlDJbFY6X7FMAnEe9t53Q/jPKRrYIg==
-X-Received: by 2002:a05:620a:64f:: with SMTP id a15mr32232549qka.28.1626047087146;
-        Sun, 11 Jul 2021 16:44:47 -0700 (PDT)
+        bh=r+n6L5LnjkR3JjMOorSuNebIWgL0pmMvWc1cKkkewqM=;
+        b=iBrNTLU6VFXVNIdtMkVGM0wqCqjbdUNksMJxH4SxnrtG7BwdmHrQbZM3V6lpP4VStw
+         n/N2WB94xEgM/qNLDPNEYse/nz4HGcQIgCXBPHhJXg1hpa+pcO9LPhzSDCquWjN7Twf4
+         RqV+lM2UygXm5PpGa1ki0ZTrOh4hyJUvggCZwmVNCnQM5ZqzkjFVlFVtQfpE92Lys1P+
+         9SeocTUQeP1kRftldDoY7R5Bv9BhnVM0igO67WH9p87J0ph2vaDcoACrZ8iI7urIBsHg
+         EZARxTRKs9BTgtorp6N2u+adqgxZp5tvlKZqt/gNBNZpl2YRdaokxxgVXQznsOshm8e0
+         mg6w==
+X-Gm-Message-State: AOAM530T/Z/k2evXMNuu6pbm7kh8Yeem8goIhlaWOJx0NxQzhm2GU5oi
+        Fv4FdBsSrZQYGUQLbya2TSE=
+X-Google-Smtp-Source: ABdhPJyBniIbRxSmH0zC//mwYMq57+X5rs8mQBMW5AfgHBQ2aJeaJNroWbx+Fht+2iiZy8QRNi935A==
+X-Received: by 2002:ad4:57ac:: with SMTP id g12mr11621567qvx.32.1626047089184;
+        Sun, 11 Jul 2021 16:44:49 -0700 (PDT)
 Received: from localhost.localdomain (94-29-37-113.dynamic.spd-mgts.ru. [94.29.37.113])
-        by smtp.gmail.com with ESMTPSA id e123sm2146507qkf.103.2021.07.11.16.44.45
+        by smtp.gmail.com with ESMTPSA id e123sm2146507qkf.103.2021.07.11.16.44.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 11 Jul 2021 16:44:46 -0700 (PDT)
+        Sun, 11 Jul 2021 16:44:48 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -64,9 +64,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Peter Geis <pgwipeout@gmail.com>
 Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
         linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: [PATCH v1 07/13] ARM: tegra: apalis: Correct interrupt trigger type of temperature sensor
-Date:   Mon, 12 Jul 2021 02:43:57 +0300
-Message-Id: <20210711234403.24691-8-digetx@gmail.com>
+Subject: [PATCH v1 08/13] ARM: tegra: cardhu: Correct interrupt trigger type of temperature sensor
+Date:   Mon, 12 Jul 2021 02:43:58 +0300
+Message-Id: <20210711234403.24691-9-digetx@gmail.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20210711234403.24691-1-digetx@gmail.com>
 References: <20210711234403.24691-1-digetx@gmail.com>
@@ -83,36 +83,22 @@ trigger type.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi | 2 +-
- arch/arm/boot/dts/tegra124-apalis.dtsi      | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/tegra30-cardhu.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi b/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
-index 1e30fa405fa0..cde9ae8fa04b 100644
---- a/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
-+++ b/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
-@@ -1751,7 +1751,7 @@ temp-sensor@4c {
- 			compatible = "ti,tmp451";
+diff --git a/arch/arm/boot/dts/tegra30-cardhu.dtsi b/arch/arm/boot/dts/tegra30-cardhu.dtsi
+index d9dd11569d4b..448f1397e64a 100644
+--- a/arch/arm/boot/dts/tegra30-cardhu.dtsi
++++ b/arch/arm/boot/dts/tegra30-cardhu.dtsi
+@@ -348,7 +348,7 @@ nct1008: temperature-sensor@4c {
  			reg = <0x4c>;
+ 			vcc-supply = <&sys_3v3_reg>;
  			interrupt-parent = <&gpio>;
--			interrupts = <TEGRA_GPIO(I, 6) IRQ_TYPE_LEVEL_LOW>;
-+			interrupts = <TEGRA_GPIO(I, 6) IRQ_TYPE_EDGE_FALLING>;
+-			interrupts = <TEGRA_GPIO(CC, 2) IRQ_TYPE_LEVEL_LOW>;
++			interrupts = <TEGRA_GPIO(CC, 2) IRQ_TYPE_EDGE_FALLING>;
  			#thermal-sensor-cells = <1>;
- 			vcc-supply = <&reg_module_3v3>;
  		};
-diff --git a/arch/arm/boot/dts/tegra124-apalis.dtsi b/arch/arm/boot/dts/tegra124-apalis.dtsi
-index 608896f8dd52..a46d9ba9bb7a 100644
---- a/arch/arm/boot/dts/tegra124-apalis.dtsi
-+++ b/arch/arm/boot/dts/tegra124-apalis.dtsi
-@@ -1744,7 +1744,7 @@ temp-sensor@4c {
- 			compatible = "ti,tmp451";
- 			reg = <0x4c>;
- 			interrupt-parent = <&gpio>;
--			interrupts = <TEGRA_GPIO(I, 6) IRQ_TYPE_LEVEL_LOW>;
-+			interrupts = <TEGRA_GPIO(I, 6) IRQ_TYPE_EDGE_FALLING>;
- 			#thermal-sensor-cells = <1>;
- 			vcc-supply = <&reg_module_3v3>;
- 		};
+ 
 -- 
 2.32.0
 
