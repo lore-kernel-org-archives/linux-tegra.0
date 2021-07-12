@@ -5,68 +5,69 @@ X-Spam-Level:
 X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 609A1C07E9B
-	for <linux-tegra@archiver.kernel.org>; Mon, 12 Jul 2021 00:14:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94F44C07E96
+	for <linux-tegra@archiver.kernel.org>; Mon, 12 Jul 2021 00:24:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4213D61042
-	for <linux-tegra@archiver.kernel.org>; Mon, 12 Jul 2021 00:14:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 67D186100C
+	for <linux-tegra@archiver.kernel.org>; Mon, 12 Jul 2021 00:24:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229758AbhGLAR2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 11 Jul 2021 20:17:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56990 "EHLO
+        id S229793AbhGLA1F (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 11 Jul 2021 20:27:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59086 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229660AbhGLAR1 (ORCPT
+        with ESMTP id S229660AbhGLA1F (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 11 Jul 2021 20:17:27 -0400
-Received: from mail-qv1-xf35.google.com (mail-qv1-xf35.google.com [IPv6:2607:f8b0:4864:20::f35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83951C0613DD;
-        Sun, 11 Jul 2021 17:14:40 -0700 (PDT)
-Received: by mail-qv1-xf35.google.com with SMTP id f5so7680327qvu.8;
-        Sun, 11 Jul 2021 17:14:40 -0700 (PDT)
+        Sun, 11 Jul 2021 20:27:05 -0400
+Received: from mail-qk1-x731.google.com (mail-qk1-x731.google.com [IPv6:2607:f8b0:4864:20::731])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEF5AC0613DD;
+        Sun, 11 Jul 2021 17:24:16 -0700 (PDT)
+Received: by mail-qk1-x731.google.com with SMTP id e14so16279162qkl.9;
+        Sun, 11 Jul 2021 17:24:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=cbWrCRAXNKnrsAOs9jzjwaP+o7LOU1NoMDrvo6psqh0=;
-        b=pcZhmUBcBartxQVH+z7tpAIZMC86HC+ySHISakIRBBaS3KGUJa+s9ghxKBdpT3cesy
-         LaKgepCTVBG43f87Q5L7av2e1NvU43Ui0UtZSSwGOIkiuxunRYGoitmjF+Q8fyPB7F9F
-         G6S2trIQ8lVL1wploYqYw6O1vSea0sQXACuZBcd91DrQLo+ygk6V4DGlxpHX1TWpnFYM
-         FzQrhG020laUrHf6orAxZWFOduVXCsGpxcGYlF0qDatd75s0qZwNyK5ROHlCcB75D225
-         uk5HVuwBS1XGf5dzg7pzOlHN9iQZy0ehNZWwlTBnrGsuhpVgrJlltmJyCJAhYHPkgTjg
-         rMpQ==
+        bh=H7a9eq7wZxPQFQwI3zuFeYX1K7ObSWQ2BOFHF5Y37r4=;
+        b=LrTG6jSuNYP2KLXY3Sg1oI8YVomTr6ejvQpaWvQBc/kSNm7yLGlYehHIe6msSHNAeD
+         Y9j90nnpSRE1qYAWUf9M8rodWVyAk9mCOSXlZu+FH39kFB+2SYATPIkquqzzvFdpdW7N
+         mQlNtGGUhLlnfbfgpBgRnTuVtczUW8QYPiYftvzu+kfLf6pM1VR1wPZNW+b5XZFFYRdw
+         IDpYRXReYfHhDuMU4IRAkwSqKahppPt1i8b4zEHqWPN69XvvDRAdy0HyI8kJuSanSn1c
+         G27qTmyQRZ67kNtpi0dBgI+sgtivJn8b6uQGl6bQI/kQgtyzNLmCGUfdBICtEZOuXqcm
+         dPYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=cbWrCRAXNKnrsAOs9jzjwaP+o7LOU1NoMDrvo6psqh0=;
-        b=K60Ds9LR7VhhO+P5xSCyGCONSAd495NsVSxvupedKztcsF9QeCysnMVxvIiu6CRk5N
-         cS0LqwtyiXZdI0osG/W4OGktL3gsWKOdUDxg3oX4eGy0xJ691GUJUNz9B6qddETM6TFJ
-         lNGLDe3VWvaPB3N6t/IDTbTht1/nZNs81gvRzeCeyKir6BbDtDqxTxkOLUq87E86zKfw
-         GzayhPRosq16wq7VLo0r9H9+rC7rW1OyzRoOwBUpZTSzjS9Fk4yyQg9qbJAAJ0vqy4M4
-         LBfqNbvFrCzO8smqQC8BrtpiPVVZHIl2fuRbCl80GMZgxko00aYQ/T8AZcinwEjr4x0/
-         vICQ==
-X-Gm-Message-State: AOAM532e0TLCZtIbmmqh9p60XuiLoZwVsjsztvlZ0A3jaSsoIVMGxiOa
-        JeSvNGnMHC7zWRKbjG+qejU=
-X-Google-Smtp-Source: ABdhPJxOe5ByYnSBkxL9fC/fx33DHCY7UT7W1x8vp0k92vpxW0k3wg+UPpWI9Vis/OijUYmVaG97+Q==
-X-Received: by 2002:a0c:9e6a:: with SMTP id z42mr34205762qve.37.1626048879641;
-        Sun, 11 Jul 2021 17:14:39 -0700 (PDT)
+        bh=H7a9eq7wZxPQFQwI3zuFeYX1K7ObSWQ2BOFHF5Y37r4=;
+        b=E1iyPFR3SBM7eQwYROMHwisBke6N+oNKkrwRc+AAobjdG/C7DE1/xwKOKiUecCSpq0
+         pX530jFd9WCau67pWtYIQBYK5nE/wvSXB5KVPRIvry2eXTC/2gptydUAP39q3qFulTsB
+         81gTaZodtA4BRwFLeiOGaAYCPFZ8hWQRmjkUTEUMggsj4xTrSJmsoBnzDxpe4rKVnMYI
+         vxDWvy2snWmNDZV1uHmvO2NG7fcZ5qfbW21qjgG2+0+liMI5sSLfelv22m7m0+XmlAqO
+         fAJKZfIcBK5rYjB3TA5kNBP6P+kdUoNPFI8VFpnJo6CpgLrYQFoxMi5FKEhxkEManiXo
+         F7EA==
+X-Gm-Message-State: AOAM532zaYrQVUgtPtDQP9FBrXyqFbr+1Cq0DuV+0H2ADf7/oWVyazTB
+        3GLPZ3fVsjJVBX2dskcOPxw=
+X-Google-Smtp-Source: ABdhPJxfBTp4T49Mv2FPNU/JPT/VkuLWO727r+QA6VRfGDv/OKPt8IM/+h/Z1eG9QNGD5tIm8wajDA==
+X-Received: by 2002:a37:2d04:: with SMTP id t4mr6426682qkh.160.1626049455843;
+        Sun, 11 Jul 2021 17:24:15 -0700 (PDT)
 Received: from localhost.localdomain (94-29-37-113.dynamic.spd-mgts.ru. [94.29.37.113])
-        by smtp.gmail.com with ESMTPSA id b5sm687481qtk.46.2021.07.11.17.14.37
+        by smtp.gmail.com with ESMTPSA id h13sm5860762qkg.13.2021.07.11.17.24.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 11 Jul 2021 17:14:39 -0700 (PDT)
+        Sun, 11 Jul 2021 17:24:15 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Krishna Reddy <vdumpa@nvidia.com>,
-        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>
-Cc:     linux-tegra@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v1] iommu/tegra-smmu: Change debugfs directory name
-Date:   Mon, 12 Jul 2021 03:13:41 +0300
-Message-Id: <20210712001341.11166-1-digetx@gmail.com>
+        Zhang Rui <rui.zhang@intel.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amitk@kernel.org>
+Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: [PATCH v1] thermal/drivers/tegra-soctherm: Silence message about clamped temperature
+Date:   Mon, 12 Jul 2021 03:23:53 +0300
+Message-Id: <20210712002353.17276-1-digetx@gmail.com>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -74,26 +75,30 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Change debugfs directory name to "smmu", which is a much more obvious name
-than the generic name of the memory controller device-tree node.
+The Tegra soctherm driver prints message about the clamped temperature
+trip each time when thermal core disables the low/high trip. The message
+is confusing and creates illusion that driver is malfunctioning. Turn that
+noisy info message into a debug message.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/iommu/tegra-smmu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/thermal/tegra/soctherm.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
-index 0a281833f611..093c270b9245 100644
---- a/drivers/iommu/tegra-smmu.c
-+++ b/drivers/iommu/tegra-smmu.c
-@@ -1141,7 +1141,7 @@ struct tegra_smmu *tegra_smmu_probe(struct device *dev,
+diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
+index 8e303e9d1dc0..210325f92559 100644
+--- a/drivers/thermal/tegra/soctherm.c
++++ b/drivers/thermal/tegra/soctherm.c
+@@ -450,8 +450,8 @@ static int enforce_temp_range(struct device *dev, int trip_temp)
  
- 	tegra_smmu_ahb_enable();
- 
--	err = iommu_device_sysfs_add(&smmu->iommu, dev, NULL, dev_name(dev));
-+	err = iommu_device_sysfs_add(&smmu->iommu, dev, NULL, "smmu");
- 	if (err)
- 		return ERR_PTR(err);
+ 	temp = clamp_val(trip_temp, min_low_temp, max_high_temp);
+ 	if (temp != trip_temp)
+-		dev_info(dev, "soctherm: trip temperature %d forced to %d\n",
+-			 trip_temp, temp);
++		dev_dbg(dev, "soctherm: trip temperature %d forced to %d\n",
++			trip_temp, temp);
+ 	return temp;
+ }
  
 -- 
 2.32.0
