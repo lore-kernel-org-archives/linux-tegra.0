@@ -2,95 +2,139 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8499C07E9A
-	for <linux-tegra@archiver.kernel.org>; Mon, 12 Jul 2021 10:47:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC28BC07E99
+	for <linux-tegra@archiver.kernel.org>; Mon, 12 Jul 2021 13:13:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AC57B61152
-	for <linux-tegra@archiver.kernel.org>; Mon, 12 Jul 2021 10:47:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9818661158
+	for <linux-tegra@archiver.kernel.org>; Mon, 12 Jul 2021 13:13:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234539AbhGLKun (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 12 Jul 2021 06:50:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35384 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234469AbhGLKu2 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 12 Jul 2021 06:50:28 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id C36CA610CD;
-        Mon, 12 Jul 2021 10:47:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1626086860;
-        bh=rRB64sjiBKQruseT1bEUVq+5wupC8VMPtoVNxCyIyEI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CqaBZWa8B/RzkMpNzg2pUREb4m99FHCCi+BgPzMI3gBp7KIaEjQDI15R967JPVHZN
-         fy6kfNvy7u+HGV+NdZZ0jhyLagk87O22kRz7sj/RJx4ODORvj4HkdyVC3nqOCu0mip
-         3628geIVhUvowjNSywPgGajW8aWQHlNc9x+pX30XdnKSAZBXH4IPeRqKp6ZnL1oSpV
-         Pklg2fgfMCsbiyl3JnJP12QWxKO/qzXzWWA/OeE7XqUGFYHqFx63I6F0Ro24NCbYrO
-         Y2EXbVByywveXqyWiYwTKLBoHezzRGwAIgnBQ44siYYghnsaIIRsJPZn/DhpJM146M
-         7DNM2DtMMeqTA==
-From:   Mark Brown <broonie@kernel.org>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Liam Girdwood <lgirdwood@gmail.com>
-Cc:     Mark Brown <broonie@kernel.org>, linux-tegra@vger.kernel.org,
-        Sameer Pujar <spujar@nvidia.com>,
-        Jon Hunter <jonathanh@nvidia.com>, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>
-Subject: Re: (subset) [PATCH v2 0/2] arm64: tegra: Enable audio IOMMU support on Tegra194
-Date:   Mon, 12 Jul 2021 11:45:57 +0100
-Message-Id: <162608623153.3192.16025207604600677942.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20210708103432.1690385-1-thierry.reding@gmail.com>
-References: <20210708103432.1690385-1-thierry.reding@gmail.com>
-MIME-Version: 1.0
+        id S230214AbhGLNQm (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 12 Jul 2021 09:16:42 -0400
+Received: from mail-co1nam11on2053.outbound.protection.outlook.com ([40.107.220.53]:6433
+        "EHLO NAM11-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S229479AbhGLNQm (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 12 Jul 2021 09:16:42 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=PoL3J9iU/KXobg+jPjhHkvI83rG050cuCGm7Af2spwzu76UE3TPQc07WpQxoAkZilqTyJ0mKNx6hrQ3SdIBNPdCK6pzLuAKqjGb/MprtmK90FFQMwo0b5hZ9c8LaxehBl6Bp5niuRYj2li5MbYI+ALW59wZfXFAPVIKBecj71Oqd/kD5Do4fXUb/sRya0f7uLjGXdXeMbGOprGSS3mgVacj3LahR2Q10WMPvLbFoXZt8UwLWqchFAJoXY5lASb0XkGMMjRJb4XB50RTwUXJ4gdKNbLUHIq8bbsTjMsAMgvtdhrYF9ClOHLAInIsaEr32HKYO1BW2E/Co6UJ03jZwgg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=h62qIkDbL518JaGAmkGZTa9WSjY43ISEkddqWr3aCyk=;
+ b=ONxFC8qqewdHQwZADOQ0bQMv8bYa9YxLOLJ+f8TKry7M9O/Md6vmSZnRdTJawGJSCs4Q+SB0SIZOPEX+u8MSk9JsfyM2Vha5AdfId95m/s4+fhkYlYEHL+TOFyvd2ccJziiF/bO6KnS1xfxCwgeYqoAb5qCAhKrB1rlVd94x+SdwJi7MiEgxKWOBjaMOHLDzCxDja0tik2pyTfX9R/ym/N3v2Re1mjaRdNl8qkb/5KXM9OjRq23lXJIhaHgp7jVRfLkUwp2ytymsi7TqleiqFOLhKhVj4Y+dnU4OqocjtVAFrHAf9uucmooyDoWedPQUkz3+eb60nq/qjRTz7MQfSg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.112.32) smtp.rcpttodomain=denx.de smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=h62qIkDbL518JaGAmkGZTa9WSjY43ISEkddqWr3aCyk=;
+ b=FTwIDlVdxMM+P39W5bx0sJxmc4QRoc2JZ7bxjL7hO6g5rJ/IOXsXq4hECB9B5x4/1vC73l0RK4mKfF0hbqJ2G5wQLbi48ySg+3aAFjtmptSd0UsVlAtVywkGJaoNNROj6lUW2MgeELiD3ZqQ/mp1nm5KNIPpAE30ueTS+ylIOXdO1I40y7Ll/13qL7OhmI4UZsdZcf45LImDBJ48nW8JodU2yWN+wBOSz1G+AO4Ga7IZV3kSQoYlwrQA5BJd7wJKDi0yz7yemFUXnVZDnp48iT2wLbWGZGkcOOrWS9mATs8vJw88TGNcit5a9MvhSNKbxm4CKIu/1pReuWLfF/25kA==
+Received: from BN9PR03CA0207.namprd03.prod.outlook.com (2603:10b6:408:f9::32)
+ by BN8PR12MB3442.namprd12.prod.outlook.com (2603:10b6:408:43::33) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4308.20; Mon, 12 Jul
+ 2021 13:13:52 +0000
+Received: from BN8NAM11FT015.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:408:f9:cafe::8b) by BN9PR03CA0207.outlook.office365.com
+ (2603:10b6:408:f9::32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4308.20 via Frontend
+ Transport; Mon, 12 Jul 2021 13:13:52 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.32)
+ smtp.mailfrom=nvidia.com; denx.de; dkim=none (message not signed)
+ header.d=none;denx.de; dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.112.32 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.112.32; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (216.228.112.32) by
+ BN8NAM11FT015.mail.protection.outlook.com (10.13.176.90) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.4308.20 via Frontend Transport; Mon, 12 Jul 2021 13:13:51 +0000
+Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL109.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Mon, 12 Jul
+ 2021 06:13:50 -0700
+Received: from jonathanh-vm-01.nvidia.com (172.20.187.5) by mail.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1497.2 via Frontend
+ Transport; Mon, 12 Jul 2021 13:13:51 +0000
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
+        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
+        <stable@vger.kernel.org>, <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 5.10 000/593] 5.10.50-rc1 review
+In-Reply-To: <20210712060843.180606720@linuxfoundation.org>
+References: <20210712060843.180606720@linuxfoundation.org>
+X-NVConfidentiality: public
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Message-ID: <b4f70158ac294358bea84a69ab4c9b61@HQMAIL111.nvidia.com>
+Date:   Mon, 12 Jul 2021 13:13:51 +0000
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: e102374d-b738-49e0-bea4-08d94536e4ef
+X-MS-TrafficTypeDiagnostic: BN8PR12MB3442:
+X-Microsoft-Antispam-PRVS: <BN8PR12MB34428E935F07A842638B1D02D9159@BN8PR12MB3442.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: bRHs0zTGnFM1mruUJwt8Uxz4SYd72a7Sh2s+J4+8pzz7ZLVeUtYvmczQbNhlN8JlqG0LOQLC4O8OOOpJgypQXC5l+7ny37zgoo61js2N2WxnhBkHprvcqNpsDU14F3fPCoRykVdRF4gFkMMqoAOUEOun6tkbrOqV5ztOv+nfOC6kzkJp+hKdpY39YOgi5bXV/AmDdyiqRCyu9NO/tqus1lJ2q6Q18UyUEO7rLtYaZGodDOtQmZmR3zuEXuiG1GKmJUV1tLbYc/pAdRF9LoyEVNweknrgOoQHKWHLXGxbsGRCOz04NRFZwEME+9eKI/nxqypHCt+7+rHyKwCdY5QUeMKjKIiFlIO0wQa0LqFYZNvtcLt5Ezmb1RBhhH4shJO/QG2d/a5Xkhq1SepgpF/Ip1t/en0Eno98blB+yJPrllRRz5XHELiI7SKSogVVTC+vJf+JGjsNlz+JlY71AG/+UBEsiD3GR4ETU4URnhxa85S1fly243s8HGSXUj2DFPTwF2cQiNt+RD7O+3DHhOfG3j9te+i30/aUYoja4BT59y3+AKLvPlWJHK+a0ra+fYIP3u0JrVbgzHWLe0Be3py8ojp8MTTi/uPy79O46cbifrv0uZLRByFsYZ146VdiFQvK6np7yV29a0O11JQTp4MYq2/KhK5rvIeNuo5r1X2YJf+3XZHnu37EYlCswrjUEw6Y9g8FBV6G3ODjfk2sL9lbCLVKuduDtINLOgCiyMQrc7y5Y9Ua9CbHjo10PW3xJ5CuIYw/aCeMXpVUsGlzaNO2PmrJ11LWB2Tw9z8v+gnjrPo/RuifR7Ry/QnB5noCOGVd
+X-Forefront-Antispam-Report: CIP:216.228.112.32;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid01.nvidia.com;CAT:NONE;SFS:(4636009)(39860400002)(376002)(346002)(136003)(396003)(36840700001)(46966006)(34020700004)(82740400003)(356005)(478600001)(316002)(7416002)(7636003)(966005)(36860700001)(5660300002)(47076005)(82310400003)(4326008)(86362001)(70586007)(70206006)(8936002)(26005)(54906003)(108616005)(186003)(6916009)(24736004)(8676002)(336012)(426003)(2906002);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jul 2021 13:13:51.9234
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: e102374d-b738-49e0-bea4-08d94536e4ef
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.32];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT015.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN8PR12MB3442
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, 8 Jul 2021 12:34:30 +0200, Thierry Reding wrote:
-> This small series addresses a minor issue with how IOMMU support is
-> wired up on various Tegra generations. Currently the virtual "card"
-> device is used to allocate DMA memory for, but since that device does
-> not actually exist, the path to memory cannot be correctly described.
+On Mon, 12 Jul 2021 08:02:40 +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.10.50 release.
+> There are 593 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> To address this, this series moves to using the ADMAIF as the DMA device
-> for audio. This is a real device that can have a proper DMA mask set and
-> with which a stream ID can be associated with in the SMMU. The memory
-> accesses technically originate from the ADMA controller (that the ADMAIF
-> uses), but DMA channel are dynamically allocated at runtime while DMA
-> memory is allocated at driver load time, drivers won't have access to
-> the ADMA device yet.
+> Responses should be made by Wed, 14 Jul 2021 06:02:46 +0000.
+> Anything received after that time might be too late.
 > 
-> [...]
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.50-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-Applied to
+All tests passing for Tegra ...
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+Test results for stable-v5.10:
+    10 builds:	10 pass, 0 fail
+    28 boots:	28 pass, 0 fail
+    70 tests:	70 pass, 0 fail
 
-Thanks!
+Linux version:	5.10.50-rc1-g3e2628c73ba0
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
+                tegra20-ventana, tegra210-p2371-2180,
+                tegra210-p3450-0000, tegra30-cardhu-a04
 
-[1/2] ASoC: tegra: Use ADMAIF component for DMA allocations
-      commit: 0dfc21c1a4cac321749a53c92da616d9546d00e3
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+Jon
