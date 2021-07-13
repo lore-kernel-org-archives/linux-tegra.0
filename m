@@ -2,96 +2,100 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-16.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59B80C07E95
-	for <linux-tegra@archiver.kernel.org>; Tue, 13 Jul 2021 04:44:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF51EC07E95
+	for <linux-tegra@archiver.kernel.org>; Tue, 13 Jul 2021 08:04:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2F2336100A
-	for <linux-tegra@archiver.kernel.org>; Tue, 13 Jul 2021 04:44:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B7B9761283
+	for <linux-tegra@archiver.kernel.org>; Tue, 13 Jul 2021 08:04:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230503AbhGMErL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 13 Jul 2021 00:47:11 -0400
-Received: from mail-dm6nam10on2069.outbound.protection.outlook.com ([40.107.93.69]:61011
-        "EHLO NAM10-DM6-obe.outbound.protection.outlook.com"
+        id S234520AbhGMIGy (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 13 Jul 2021 04:06:54 -0400
+Received: from mail-dm6nam11on2056.outbound.protection.outlook.com ([40.107.223.56]:54881
+        "EHLO NAM11-DM6-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S229470AbhGMErL (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 13 Jul 2021 00:47:11 -0400
+        id S234157AbhGMIGx (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 13 Jul 2021 04:06:53 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Ik67Q8k28faSO5hSyQHQCyAtppW+RNywyHz0+gNxkktdtkglHJVpNSBqkunOXEPRXtRseCh8U/GLW+5e1svzVdgVFgRs1+VxMj5DGr/JJXcyHTT2+qB7+4Lvs8nZYIwYILKHNE2M6p1jz3Jl395/VolhGfvRrffxzlHPlHMcqyQMANYCixTVF/kPIpuG7qiJqR4Hq8mWhRxI+SAhpGo6Ok1VwVqtX4KtQ7W8xtJEENi6M+N3yPWWzrZL6u2H1uG2D0ku0H4wEm4qfp/OzbT/RITaCKNJPE3xdr69zINc00HQi+/PfO50NFxdID1YIYW6RthpjizClL//IGgRcKOcPQ==
+ b=lBMc7DpCbpp7P3l9/nfC+dWvMhsYuZksGYxdlyYY8BV0BX5M8EZlxGoRicz6LZ9GS1wTXSZa3ZCVi4yFzC73uPQxuCwQft+r1wbXlAJLSsEH21VBzbSolMkVSfJUDaLDqa0F5CafWeIskBmlH3tHBD47BWWsL9+ULo1WPYG/gJRnt/PRVpl6vE/WjLBTIi1qMxy1na4DHIQkt0twX1ODH7FaKX40SkVQCoYhgehdzXyFBr6zrL3SEOAy6ZQ+eknNKylnVYbA9oTywO6F71DEZr1jS+Vy/U5zlvBj1RNHubnmaeOaCZ61Z0gKW9JOPdzqbzo105YEMRhSuH725Y031w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HKXJ525CwgeC1c3a+y5zqUHzkf1/AtZMd/rvPQXJrNs=;
- b=UEyAleyw22ytHp/2IZSkfvMN6xD/9QEsUJx20BOQ4US9h2iENqcCv7rDNMEtrUpElgIq6+nAyyQWZTXp73zaXM+QFAh5k/PWk7KZ353zpYflFPkG/wHDkmp6vVFctmpqyyKli7ecVKz9F3Gy72q1mtAcj8deJS19hho0eb7KCHaVhkWVYUPLdQxh8tFyVw2IgW4B2N7TvvDujxoBLsKCzZWzWeMIS9TIYeJf5/xKWa37JRNE+O9hWoxfh5/B2OLKzHgrKQIZbfAB96Ke+ok5CvAA1t7M2Ehxos+LBmdcEQsxhXnDVVjGJrfHp9VskB9YXbsd5Nl6Xm592QkC+gUB2w==
+ bh=BXe1t9MT8DGmIsU/dLUA3fWdUr6dxm7MiALiGWFg7bg=;
+ b=arw6DBT61HpN1BTL657ipNLmc5GPoIBdtM5cndMx8QL92H32d3nV6c3tNzmvldKjWcMEKpCg8A2JVckY8U8f746+BU8IByn+WINcHC/HPPHBMU0FhxCtl/yXc31f4o0c8RdT86cL1d/ukFzLMmUIjKZFP/J0fCPkjRcA0ydbjAVFh+BchU+qGa63XVFFkP77oCicIntpqDBBUifwdtgyoCjcE2EiK2n/IsZDg0/HRTCMoAIa4fa88VgRYtSWLDz8MQuAYNeru7AIGSA6Gsyw2Q7VuTeH2ibj+w33fHU4wwKWyhhPUd3iR92w9Aw33HzG3TJIK4VD+4AQeAYqboI4+Q==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.112.32) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
+ 216.228.112.35) smtp.rcpttodomain=denx.de smtp.mailfrom=nvidia.com;
  dmarc=pass (p=none sp=none pct=100) action=none header.from=nvidia.com;
  dkim=none (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HKXJ525CwgeC1c3a+y5zqUHzkf1/AtZMd/rvPQXJrNs=;
- b=Mr553rxOdUqHP1cXHm2G/rkytlC7GIy1iyCCzvQq781islvJiqN23hTQIfpeVdt9DcntrfXhXeEFerFcvR7G9v/FZKwAMkLhF0WrbenyFZXChcU8LbvWzwiWSUWHRgcvBowpsImQDaFZnPB5rlPFX6pFEfcesLGniv28Y4ph5vrBAJ+aNi828HTbWGL4Gx7MiuHj8xhRSWbg/2uwNQmDxjZ2B5G0hahun/bFh+hC5bCXjnwadFlgU+OXlOOKVHcABqQe9LPyLn5ZBNO2ZPIs560zdGEXUq+kx9O1DlmgxF0i1ZMAUU3rTvHN7zMuz2L2PdXibQwsRlHNkY502OGxNw==
-Received: from DM5PR19CA0066.namprd19.prod.outlook.com (2603:10b6:3:116::28)
+ bh=BXe1t9MT8DGmIsU/dLUA3fWdUr6dxm7MiALiGWFg7bg=;
+ b=D9FxmZ8ZoX95605/x6R4SrKOXCLUKaSQGzvZPdYD+4bMyEyPFiQZlVfsYENfOUwiuHNlygoV9+qYF4fxsXez3Mbupn7BR+TYsGAZrVBq3Q12MTapCE+nNIDMgpUHnZHctFCzhHZRjCVq4UfHkj7ChjzYN82xOVtpEpe+/a4U+7bw03K2wvOoUmeVf5ButBgaWHmMW6x8IBhlLPU/PDL3BRXtEl/22SXO829SOxF7GTjxdpDrxqfGjLI8lEsDafBvo0wMU58BWK0UjCxFzT4WRiub1y+cexigZ4AouXGllOBPGALaNL3xpFD63B4zHznhaB12GX4ekGG1nVecE0qMSA==
+Received: from BN0PR02CA0009.namprd02.prod.outlook.com (2603:10b6:408:e4::14)
  by DM6PR12MB4988.namprd12.prod.outlook.com (2603:10b6:5:16a::17) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4308.22; Tue, 13 Jul
- 2021 04:44:20 +0000
-Received: from DM6NAM11FT049.eop-nam11.prod.protection.outlook.com
- (2603:10b6:3:116:cafe::74) by DM5PR19CA0066.outlook.office365.com
- (2603:10b6:3:116::28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4308.19 via Frontend
- Transport; Tue, 13 Jul 2021 04:44:20 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.32)
- smtp.mailfrom=nvidia.com; vger.kernel.org; dkim=none (message not signed)
- header.d=none;vger.kernel.org; dmarc=pass action=none header.from=nvidia.com;
+ 2021 08:04:02 +0000
+Received: from BN8NAM11FT064.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:408:e4:cafe::19) by BN0PR02CA0009.outlook.office365.com
+ (2603:10b6:408:e4::14) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4308.20 via Frontend
+ Transport; Tue, 13 Jul 2021 08:04:02 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.35)
+ smtp.mailfrom=nvidia.com; denx.de; dkim=none (message not signed)
+ header.d=none;denx.de; dmarc=pass action=none header.from=nvidia.com;
 Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.112.32 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.112.32; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (216.228.112.32) by
- DM6NAM11FT049.mail.protection.outlook.com (10.13.172.188) with Microsoft SMTP
+ 216.228.112.35 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.112.35; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (216.228.112.35) by
+ BN8NAM11FT064.mail.protection.outlook.com (10.13.176.160) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.4308.20 via Frontend Transport; Tue, 13 Jul 2021 04:44:20 +0000
-Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL109.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Mon, 12 Jul
- 2021 21:44:19 -0700
-Received: from vidyas-desktop.nvidia.com (172.20.187.5) by mail.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Mon, 12 Jul 2021 21:44:17 -0700
-From:   Vidya Sagar <vidyas@nvidia.com>
-To:     <robh+dt@kernel.org>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>
-CC:     <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kthota@nvidia.com>,
-        <mmaddireddy@nvidia.com>, <vidyas@nvidia.com>, <sagar.tv@gmail.com>
-Subject: [PATCH] arm64: tegra: Enable SMMU support for PCIe on Tegra194
-Date:   Tue, 13 Jul 2021 10:14:14 +0530
-Message-ID: <20210713044414.25536-1-vidyas@nvidia.com>
-X-Mailer: git-send-email 2.17.1
+ 15.20.4308.20 via Frontend Transport; Tue, 13 Jul 2021 08:04:01 +0000
+Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL111.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Tue, 13 Jul
+ 2021 08:04:00 +0000
+Received: from jonathanh-vm-01.nvidia.com (172.20.187.5) by mail.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1497.2 via Frontend
+ Transport; Tue, 13 Jul 2021 08:04:00 +0000
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
+        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
+        <stable@vger.kernel.org>, <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 5.4 000/349] 5.4.132-rc2 review
+In-Reply-To: <20210712184735.997723427@linuxfoundation.org>
+References: <20210712184735.997723427@linuxfoundation.org>
 X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: text/plain
+Message-ID: <975fa0a9fe264adfa478ac6a69bde755@HQMAIL101.nvidia.com>
+Date:   Tue, 13 Jul 2021 08:04:00 +0000
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 6c5ebd6d-b54b-47db-1da3-08d945b8e17d
+X-MS-Office365-Filtering-Correlation-Id: 5c42f7ab-2251-4588-a24b-08d945d4c6c2
 X-MS-TrafficTypeDiagnostic: DM6PR12MB4988:
-X-Microsoft-Antispam-PRVS: <DM6PR12MB4988615D4ACF3E1236DFF2B6B8149@DM6PR12MB4988.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:619;
+X-Microsoft-Antispam-PRVS: <DM6PR12MB4988E34CBAC5D89015A9A30AD9149@DM6PR12MB4988.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
 X-MS-Exchange-SenderADCheck: 1
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: yMMjlm+PZ3NB/5naEqc+tgW6kLOoeSJwnHuU/ixZfz7SArqDRjr7W6DykkyAPHEw1ga4nuWrWw0yeDb7JPs9nJx0M5VkSIi0gSv1lGnNlhFv2LnCPBeozG86dAkTE2zjvEUCFYsgmIP/apjVjHJyoLmV4o+L7FkrKv/4+qvcvW7VJLtWzNqYnLFNZT4oFdhcu1wWzTeUncBtar6wQkfXKI5GNiowYKkflN0FpTa9ngPNVV8H2ad3M9tmUuCA6vkgN8YpJKpJ/df0V0WXqj3vk7Wd6qaXJfuOj/o54G66LPc4YELj3YMKT0CQv1AcI9rJlz2qQIJg9mVo9vFjm5j5dzAX0XoW4enG6w4G/eQenIBPcQuxVAMCmQ0FI3bSdIrfpLBaVzIXIx2Oos8X2OFkLWZ0U+FdTgU235zHNGczQnD92SWWthZ6Y3RRPvBSDLZtx+Yu1fYSsGu/s4bmk4CBhl2RaYPlu42JAXKuifhEeu5MOBkYO2IksMbvyDc6GqHS+kfnDmiRrxtkqNzJKpP776V34hgxJ0G/6ZK6IT+kArpngqTNHdN3Cs7dWmOVpp8h2IK9K+o9pgD8/jYbsrjaRmvu7jZosk0I3DB+Nzt5Tbq+kmLfMQCXYeFLSUQ+EnwuuorJZK2HSowqctVR1qHu7RCX4B3B/8W3QT1v+9px0sS8bwDx2Px3qHJfm6O0WhxTbTdYRtGl1S48i644L9R2b5fpdb0iaZUaqenAnRLKYSU=
-X-Forefront-Antispam-Report: CIP:216.228.112.32;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid01.nvidia.com;CAT:NONE;SFS:(4636009)(346002)(39860400002)(396003)(376002)(136003)(46966006)(36840700001)(70206006)(70586007)(2906002)(186003)(1076003)(86362001)(5660300002)(6666004)(356005)(7696005)(36860700001)(83380400001)(26005)(34020700004)(82310400003)(316002)(82740400003)(36756003)(6636002)(8676002)(426003)(336012)(8936002)(4326008)(47076005)(2616005)(478600001)(110136005)(7636003)(54906003);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: pAxxGRWpaiiiNA/JyrzVtb6lG9/ENEaAwhcuSthUIK0nfL5pIjeWirrXnqv5wLZG8COeFm6ZVWSi/YZO46467z7H1diiTOeDB/OLVcqCJqxqQKKpV/4I/V8gi2jfT3C1MZqFb/ynu+QfSETLXE6nnGajSjE6qnF1dJ3MyUigLU5te4yeYZcoEoF7b26RprPHodQhtBSp3OUeT8lSa4GTPF6l2v+oIuAXIxUMkoV2Z6T9ypAunARIAjpJt0d6gQN0kfMT3m5VBmb66ULLQnsbg/t1xGL6ncX57nMWz+gqlbeX2P1FZjLt/LZmA1kxJhgBSRCwc3/F3f3VkmnWf851OwNrPDaakb4c2fDau8emc8KUSRcfXGqD8clz0dbt+5OiLmPNSIeu07HgmqMvOgawn8w9AXC4h5+QYfQmX0HBowt/AA9QJ14cx23Rip4yTQunggoJODiyPiQZj4HwIvYMv1oY47mwqTYFnmeFLL7tAm6RLRoF80vXXPdeAA4aWziNvy9u4URLd0xxWWrbmem05PFVVFCRZfWHt9qkGWqEI955CQp1i3SHV+Bynylq/9RHWK+kgHG0o3rrTfDOQFj13uwtNqeTl8bn7SYRe8wEXn5ZrjWtw4m63/T1C63S/q1vZN0eo4o0iYf0aKdf+dyHNYekXpt/z/k6XDcn4zcpEmY8HtB286qBd3w9IlQSTolEw6BB3lACflqMTV7p+vqjTQAw8C3HlB4jgQqa9TBQSc7f3qFb1hP1nBcoMLreSEpH2+oZjHfG1mMIjd7nRzANApatKXruVrmoFrYl45zZ5+97dgLffzHyn+ilgQ0ToWr2
+X-Forefront-Antispam-Report: CIP:216.228.112.35;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid02.nvidia.com;CAT:NONE;SFS:(4636009)(376002)(396003)(136003)(39860400002)(346002)(36840700001)(46966006)(8676002)(36906005)(4326008)(336012)(8936002)(426003)(36860700001)(82310400003)(82740400003)(7636003)(478600001)(54906003)(34020700004)(316002)(6916009)(7416002)(47076005)(24736004)(186003)(2906002)(966005)(356005)(108616005)(5660300002)(70586007)(70206006)(26005)(86362001);DIR:OUT;SFP:1101;
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Jul 2021 04:44:20.7908
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Jul 2021 08:04:01.7904
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6c5ebd6d-b54b-47db-1da3-08d945b8e17d
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5c42f7ab-2251-4588-a24b-08d945d4c6c2
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.32];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT049.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.35];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT064.eop-nam11.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4988
@@ -99,150 +103,38 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-As of commit c7289b1c8a4e ("arm64: tegra: Enable SMMU support on
-Tegra194"), SMMU support is enabled system-wide on Tegra194. However,
-there was a bit of overlap between the SMMU enablement and the PCIe
-support addition, so the PCIe device tree nodes are missing the iommus
-and interconnects properties. This in turn leads to SMMU faults for
-these devices, since by default the ARM SMMU will fault.
+On Mon, 12 Jul 2021 20:49:06 +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.4.132 release.
+> There are 349 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Wed, 14 Jul 2021 18:45:40 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.132-rc2.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-Add the iommus and interconnects properties to all the PCIe device
-tree nodes to restore their functionality.
+All tests passing for Tegra ...
 
-Fixes: c7289b1c8a4e ("arm64: tegra: Enable SMMU support on Tegra194")
+Test results for stable-v5.4:
+    10 builds:	10 pass, 0 fail
+    26 boots:	26 pass, 0 fail
+    59 tests:	59 pass, 0 fail
 
-Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
----
- arch/arm64/boot/dts/nvidia/tegra194.dtsi | 60 +++++++++++++++++++++---
- 1 file changed, 54 insertions(+), 6 deletions(-)
+Linux version:	5.4.132-rc2-g22b22e7110f5
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra20-ventana,
+                tegra210-p2371-2180, tegra210-p3450-0000,
+                tegra30-cardhu-a04
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-index 076d5efc4c3d..b55522aacfb0 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-@@ -1840,7 +1840,11 @@
- 
- 		interconnects = <&mc TEGRA194_MEMORY_CLIENT_PCIE1R &emc>,
- 				<&mc TEGRA194_MEMORY_CLIENT_PCIE1W &emc>;
--		interconnect-names = "read", "write";
-+		interconnect-names = "dma-mem", "dma-mem";
-+		iommus = <&smmu TEGRA194_SID_PCIE1>;
-+		iommu-map = <0x0 &smmu TEGRA194_SID_PCIE1 0x1000>;
-+		iommu-map-mask = <0x0>;
-+		dma-coherent;
- 	};
- 
- 	pcie@14120000 {
-@@ -1890,7 +1894,11 @@
- 
- 		interconnects = <&mc TEGRA194_MEMORY_CLIENT_PCIE2AR &emc>,
- 				<&mc TEGRA194_MEMORY_CLIENT_PCIE2AW &emc>;
--		interconnect-names = "read", "write";
-+		interconnect-names = "dma-mem", "dma-mem";
-+		iommus = <&smmu TEGRA194_SID_PCIE2>;
-+		iommu-map = <0x0 &smmu TEGRA194_SID_PCIE2 0x1000>;
-+		iommu-map-mask = <0x0>;
-+		dma-coherent;
- 	};
- 
- 	pcie@14140000 {
-@@ -1940,7 +1948,11 @@
- 
- 		interconnects = <&mc TEGRA194_MEMORY_CLIENT_PCIE3R &emc>,
- 				<&mc TEGRA194_MEMORY_CLIENT_PCIE3W &emc>;
--		interconnect-names = "read", "write";
-+		interconnect-names = "dma-mem", "dma-mem";
-+		iommus = <&smmu TEGRA194_SID_PCIE3>;
-+		iommu-map = <0x0 &smmu TEGRA194_SID_PCIE3 0x1000>;
-+		iommu-map-mask = <0x0>;
-+		dma-coherent;
- 	};
- 
- 	pcie@14160000 {
-@@ -1990,7 +2002,11 @@
- 
- 		interconnects = <&mc TEGRA194_MEMORY_CLIENT_PCIE4R &emc>,
- 				<&mc TEGRA194_MEMORY_CLIENT_PCIE4W &emc>;
--		interconnect-names = "read", "write";
-+		interconnect-names = "dma-mem", "dma-mem";
-+		iommus = <&smmu TEGRA194_SID_PCIE4>;
-+		iommu-map = <0x0 &smmu TEGRA194_SID_PCIE4 0x1000>;
-+		iommu-map-mask = <0x0>;
-+		dma-coherent;
- 	};
- 
- 	pcie@14180000 {
-@@ -2040,7 +2056,11 @@
- 
- 		interconnects = <&mc TEGRA194_MEMORY_CLIENT_PCIE0R &emc>,
- 				<&mc TEGRA194_MEMORY_CLIENT_PCIE0W &emc>;
--		interconnect-names = "read", "write";
-+		interconnect-names = "dma-mem", "dma-mem";
-+		iommus = <&smmu TEGRA194_SID_PCIE0>;
-+		iommu-map = <0x0 &smmu TEGRA194_SID_PCIE0 0x1000>;
-+		iommu-map-mask = <0x0>;
-+		dma-coherent;
- 	};
- 
- 	pcie@141a0000 {
-@@ -2094,7 +2114,11 @@
- 
- 		interconnects = <&mc TEGRA194_MEMORY_CLIENT_PCIE5R &emc>,
- 				<&mc TEGRA194_MEMORY_CLIENT_PCIE5W &emc>;
--		interconnect-names = "read", "write";
-+		interconnect-names = "dma-mem", "dma-mem";
-+		iommus = <&smmu TEGRA194_SID_PCIE5>;
-+		iommu-map = <0x0 &smmu TEGRA194_SID_PCIE5 0x1000>;
-+		iommu-map-mask = <0x0>;
-+		dma-coherent;
- 	};
- 
- 	pcie_ep@14160000 {
-@@ -2127,6 +2151,14 @@
- 		nvidia,aspm-cmrt-us = <60>;
- 		nvidia,aspm-pwr-on-t-us = <20>;
- 		nvidia,aspm-l0s-entrance-latency-us = <3>;
-+
-+		interconnects = <&mc TEGRA194_MEMORY_CLIENT_PCIE4R &emc>,
-+				<&mc TEGRA194_MEMORY_CLIENT_PCIE4W &emc>;
-+		interconnect-names = "dma-mem", "dma-mem";
-+		iommus = <&smmu TEGRA194_SID_PCIE4>;
-+		iommu-map = <0x0 &smmu TEGRA194_SID_PCIE4 0x1000>;
-+		iommu-map-mask = <0x0>;
-+		dma-coherent;
- 	};
- 
- 	pcie_ep@14180000 {
-@@ -2159,6 +2191,14 @@
- 		nvidia,aspm-cmrt-us = <60>;
- 		nvidia,aspm-pwr-on-t-us = <20>;
- 		nvidia,aspm-l0s-entrance-latency-us = <3>;
-+
-+		interconnects = <&mc TEGRA194_MEMORY_CLIENT_PCIE0R &emc>,
-+				<&mc TEGRA194_MEMORY_CLIENT_PCIE0W &emc>;
-+		interconnect-names = "dma-mem", "dma-mem";
-+		iommus = <&smmu TEGRA194_SID_PCIE0>;
-+		iommu-map = <0x0 &smmu TEGRA194_SID_PCIE0 0x1000>;
-+		iommu-map-mask = <0x0>;
-+		dma-coherent;
- 	};
- 
- 	pcie_ep@141a0000 {
-@@ -2194,6 +2234,14 @@
- 		nvidia,aspm-cmrt-us = <60>;
- 		nvidia,aspm-pwr-on-t-us = <20>;
- 		nvidia,aspm-l0s-entrance-latency-us = <3>;
-+
-+		interconnects = <&mc TEGRA194_MEMORY_CLIENT_PCIE5R &emc>,
-+				<&mc TEGRA194_MEMORY_CLIENT_PCIE5W &emc>;
-+		interconnect-names = "dma-mem", "dma-mem";
-+		iommus = <&smmu TEGRA194_SID_PCIE5>;
-+		iommu-map = <0x0 &smmu TEGRA194_SID_PCIE5 0x1000>;
-+		iommu-map-mask = <0x0>;
-+		dma-coherent;
- 	};
- 
- 	sram@40000000 {
--- 
-2.17.1
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
+Jon
