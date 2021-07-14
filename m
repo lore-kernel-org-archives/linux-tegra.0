@@ -4,44 +4,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-19.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	MAILING_LIST_MULTI,SPF_HELO_NONE,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BE6CC47E4D
-	for <linux-tegra@archiver.kernel.org>; Wed, 14 Jul 2021 19:43:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4725DC47E54
+	for <linux-tegra@archiver.kernel.org>; Wed, 14 Jul 2021 19:43:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5673C613E2
-	for <linux-tegra@archiver.kernel.org>; Wed, 14 Jul 2021 19:43:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2D85661417
+	for <linux-tegra@archiver.kernel.org>; Wed, 14 Jul 2021 19:43:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236255AbhGNTqQ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 14 Jul 2021 15:46:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37258 "EHLO mail.kernel.org"
+        id S237347AbhGNTqo (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 14 Jul 2021 15:46:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38672 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S237182AbhGNTpb (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 14 Jul 2021 15:45:31 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id C164B613F6;
-        Wed, 14 Jul 2021 19:42:01 +0000 (UTC)
+        id S235127AbhGNTp7 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 14 Jul 2021 15:45:59 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id CDD1061402;
+        Wed, 14 Jul 2021 19:42:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1626291722;
-        bh=6S8AVHLNAmd9xsReFCgEiM8XvVuir6ejAlpgj9XQ6oU=;
+        s=k20201202; t=1626291746;
+        bh=9vX5Pw3btHf51G/PwJ69a7b1fuw17DF2HH/8DIhR/qo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JayVENt1h73BShi6UTkCrBxdb8pghUQdi8oThCK++DTmNoTXtw8HkJDHwe9CkFOFl
-         A1yQ9c1y6AIIhLFLctRmZ7MKnZVdi1brG2hKe6y4JLrm6gRoGZ1fONH+CuW4M22acF
-         Ds6YfyaFn693gkT43iZH9gWdBl0aVHPazP8x7LWfzsEK8bhrqcquezg5+kFAxpC7KI
-         UHRPT43ZE9tMZwzOzMkYaeziHzqrKNT7staV3KY1lPxuCoLPVzcBLsh7zam/u38z+D
-         FJcRmvwP2zo57rMeXaTysq9vokdoOSpHQkZ81LjCxgmP2zrIXdLB8R+cI0mRR7gaIo
-         OeHY3PwZGJV4Q==
+        b=oP8iSICBAzcBYDXDGRNWR6kybekp57LHF94BD/Iara8zFDArMrnfvlac73WhTyrT4
+         bjeKGQ7zJACRF3e/zA4qHGErFj7FjC8hvjHfZ1u/38OAcA0axDpNENGVK8IXTaPTaI
+         IQOicRN/sHo1zElSs5n+z22etxmm1ZomuWuP0bkOTfZ4GCJx+9osfBeW9Kc6frMYd+
+         Ejv6AjB7qdiU4uIL6W53vUM8ut2YoQpa2Mf7ZtAYSRM+5N1fR6XXKnBTj8a0OGdywS
+         ZeqkEx0V5wA5H8wktJeLVwmUlobJUftsZWUid7HztdDNoT4yMUuwHGJYAZ/E3qgTcZ
+         PZhVYR71m7ZqA==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Dmitry Osipenko <digetx@gmail.com>,
-        kernel test robot <lkp@intel.com>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Thierry Reding <treding@nvidia.com>,
+Cc:     Thierry Reding <treding@nvidia.com>,
         Sasha Levin <sashal@kernel.org>, linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.12 061/102] memory: tegra: Fix compilation warnings on 64bit platforms
-Date:   Wed, 14 Jul 2021 15:39:54 -0400
-Message-Id: <20210714194036.53141-61-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.12 077/102] soc/tegra: fuse: Fix Tegra234-only builds
+Date:   Wed, 14 Jul 2021 15:40:10 -0400
+Message-Id: <20210714194036.53141-77-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210714194036.53141-1-sashal@kernel.org>
 References: <20210714194036.53141-1-sashal@kernel.org>
@@ -53,55 +49,33 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Dmitry Osipenko <digetx@gmail.com>
+From: Thierry Reding <treding@nvidia.com>
 
-[ Upstream commit e0740fb869730110b36a4afcf05ad1b9d6f5fb6d ]
+[ Upstream commit e2d0ee225e49a5553986f3138dd2803852a31fd5 ]
 
-Fix compilation warning on 64bit platforms caused by implicit promotion
-of 32bit signed integer to a 64bit unsigned value which happens after
-enabling compile-testing of the EMC drivers.
+The tegra30_fuse_read() symbol is used on Tegra234, so make sure it's
+available.
 
-Reported-by: kernel test robot <lkp@intel.com>
-Reviewed-by: Nathan Chancellor <nathan@kernel.org>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/memory/tegra/tegra124-emc.c | 4 ++--
- drivers/memory/tegra/tegra30-emc.c  | 4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/soc/tegra/fuse/fuse-tegra30.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/memory/tegra/tegra124-emc.c b/drivers/memory/tegra/tegra124-emc.c
-index bee8d9f79b04..865a81cf362f 100644
---- a/drivers/memory/tegra/tegra124-emc.c
-+++ b/drivers/memory/tegra/tegra124-emc.c
-@@ -272,8 +272,8 @@
- #define EMC_PUTERM_ADJ				0x574
- 
- #define DRAM_DEV_SEL_ALL			0
--#define DRAM_DEV_SEL_0				(2 << 30)
--#define DRAM_DEV_SEL_1				(1 << 30)
-+#define DRAM_DEV_SEL_0				BIT(31)
-+#define DRAM_DEV_SEL_1				BIT(30)
- 
- #define EMC_CFG_POWER_FEATURES_MASK		\
- 	(EMC_CFG_DYN_SREF | EMC_CFG_DRAM_ACPD | EMC_CFG_DRAM_CLKSTOP_SR | \
-diff --git a/drivers/memory/tegra/tegra30-emc.c b/drivers/memory/tegra/tegra30-emc.c
-index 6985da0ffb35..802f93411f7f 100644
---- a/drivers/memory/tegra/tegra30-emc.c
-+++ b/drivers/memory/tegra/tegra30-emc.c
-@@ -150,8 +150,8 @@
- #define EMC_SELF_REF_CMD_ENABLED		BIT(0)
- 
- #define DRAM_DEV_SEL_ALL			(0 << 30)
--#define DRAM_DEV_SEL_0				(2 << 30)
--#define DRAM_DEV_SEL_1				(1 << 30)
-+#define DRAM_DEV_SEL_0				BIT(31)
-+#define DRAM_DEV_SEL_1				BIT(30)
- #define DRAM_BROADCAST(num) \
- 	((num) > 1 ? DRAM_DEV_SEL_ALL : DRAM_DEV_SEL_0)
- 
+diff --git a/drivers/soc/tegra/fuse/fuse-tegra30.c b/drivers/soc/tegra/fuse/fuse-tegra30.c
+index 9ea7f0168457..c1aa7815bd6e 100644
+--- a/drivers/soc/tegra/fuse/fuse-tegra30.c
++++ b/drivers/soc/tegra/fuse/fuse-tegra30.c
+@@ -37,7 +37,8 @@
+     defined(CONFIG_ARCH_TEGRA_132_SOC) || \
+     defined(CONFIG_ARCH_TEGRA_210_SOC) || \
+     defined(CONFIG_ARCH_TEGRA_186_SOC) || \
+-    defined(CONFIG_ARCH_TEGRA_194_SOC)
++    defined(CONFIG_ARCH_TEGRA_194_SOC) || \
++    defined(CONFIG_ARCH_TEGRA_234_SOC)
+ static u32 tegra30_fuse_read_early(struct tegra_fuse *fuse, unsigned int offset)
+ {
+ 	if (WARN_ON(!fuse->base))
 -- 
 2.30.2
 
