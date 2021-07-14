@@ -7,40 +7,37 @@ X-Spam-Status: No, score=-19.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61400C47E4B
-	for <linux-tegra@archiver.kernel.org>; Wed, 14 Jul 2021 19:53:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75F38C47E4D
+	for <linux-tegra@archiver.kernel.org>; Wed, 14 Jul 2021 19:53:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4CB12613C3
-	for <linux-tegra@archiver.kernel.org>; Wed, 14 Jul 2021 19:53:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 638816100A
+	for <linux-tegra@archiver.kernel.org>; Wed, 14 Jul 2021 19:53:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237928AbhGNTzq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 14 Jul 2021 15:55:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46320 "EHLO mail.kernel.org"
+        id S240489AbhGNTzt (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 14 Jul 2021 15:55:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46536 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S239234AbhGNTtN (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 14 Jul 2021 15:49:13 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id DC32A61405;
-        Wed, 14 Jul 2021 19:44:09 +0000 (UTC)
+        id S240062AbhGNTt3 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 14 Jul 2021 15:49:29 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 13447613E9;
+        Wed, 14 Jul 2021 19:44:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1626291850;
-        bh=liSe6McanGWa85HIg5Ho5nJWQTQVWy1aqtWDNjbkKxs=;
+        s=k20201202; t=1626291884;
+        bh=9vX5Pw3btHf51G/PwJ69a7b1fuw17DF2HH/8DIhR/qo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cq/BmJTVe99paow+PF40DivL82vFftt4WP5nqL3aS0rJjn/qrhmVvpkxPV1qzl9fC
-         b3hUyX6DO9toDUhls8Wam+ri93rC8drWK290thw6gPqdNNwu6JB4fAzvpB3oMNeJPw
-         B00tfA9xXwk+ypZWeR3MZ2EkWr5V5id9uwJjNi34z0HccqBHJbWamQ+6OTTAVcbzeL
-         juFVt+ZOHFM/8cdu7a0EH7wgauW7pCh2H9jOS7yH4hD4GXgOWX1yp2mMCaxOIWzmP0
-         VrPS00umz31njE5TvMUvTgRdXDnZWVhSnVKVxaqKc3syf8XBb3IekmyGTxPQ2y6wjZ
-         y/82mX+YVo+cg==
+        b=CDM4mnxVc/EQAeoCQyrHM+GdlDIEaOTWAwfFNdDWTLqyUgA48as2MVCn42CTFZhgS
+         95MMGRf+PW9skQPfTl/RdIpjCFvqhOaXctTdSBUWSVksWJ4ZzzoPes2WkH+GeYLIEI
+         551buBAGwmcwRYKIfRabUBBE3ZLsr3JnjzsffEY1JhQEGLkv0Py8QS+DTlJhhOuD6J
+         VIahdNM+gkP9fNQJn9uJ8YywDu4xbPRzk3AVXTxtsohEnxnqNnwqCMD6V6xxJ3UgHR
+         hatx832HQbuusnPkxPkaa5h3998V95K2v8xGQUMEw/A8ujBldin8m/tIGi5IpPUoDG
+         zFgLQXEdO0R4A==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Dmitry Osipenko <digetx@gmail.com>,
-        Svyatoslav Ryhel <clamor95@gmail.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.10 44/88] ARM: tegra: nexus7: Correct 3v3 regulator GPIO of PM269 variant
-Date:   Wed, 14 Jul 2021 15:42:19 -0400
-Message-Id: <20210714194303.54028-44-sashal@kernel.org>
+Cc:     Thierry Reding <treding@nvidia.com>,
+        Sasha Levin <sashal@kernel.org>, linux-tegra@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.10 67/88] soc/tegra: fuse: Fix Tegra234-only builds
+Date:   Wed, 14 Jul 2021 15:42:42 -0400
+Message-Id: <20210714194303.54028-67-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210714194303.54028-1-sashal@kernel.org>
 References: <20210714194303.54028-1-sashal@kernel.org>
@@ -52,35 +49,33 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Dmitry Osipenko <digetx@gmail.com>
+From: Thierry Reding <treding@nvidia.com>
 
-[ Upstream commit c4dd6066bc304649e3159f1c7a08ece25d537e00 ]
+[ Upstream commit e2d0ee225e49a5553986f3138dd2803852a31fd5 ]
 
-The 3v3 regulator GPIO is GP6 and not GP7, which is the DDR regulator.
-Both regulators are always-on, nevertheless the DT model needs to be
-corrected, fix it.
+The tegra30_fuse_read() symbol is used on Tegra234, so make sure it's
+available.
 
-Reported-by: Svyatoslav Ryhel <clamor95@gmail.com>
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/tegra30-asus-nexus7-grouper-ti-pmic.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/soc/tegra/fuse/fuse-tegra30.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-ti-pmic.dtsi b/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-ti-pmic.dtsi
-index bfc06b988781..215e497652d8 100644
---- a/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-ti-pmic.dtsi
-+++ b/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-ti-pmic.dtsi
-@@ -143,7 +143,7 @@ vdd_core: core-regulator@60 {
- 	};
- 
- 	vdd_3v3_sys: regulator@1 {
--		gpio = <&pmic 7 GPIO_ACTIVE_HIGH>;
-+		gpio = <&pmic 6 GPIO_ACTIVE_HIGH>;
- 		enable-active-high;
- 	};
- };
+diff --git a/drivers/soc/tegra/fuse/fuse-tegra30.c b/drivers/soc/tegra/fuse/fuse-tegra30.c
+index 9ea7f0168457..c1aa7815bd6e 100644
+--- a/drivers/soc/tegra/fuse/fuse-tegra30.c
++++ b/drivers/soc/tegra/fuse/fuse-tegra30.c
+@@ -37,7 +37,8 @@
+     defined(CONFIG_ARCH_TEGRA_132_SOC) || \
+     defined(CONFIG_ARCH_TEGRA_210_SOC) || \
+     defined(CONFIG_ARCH_TEGRA_186_SOC) || \
+-    defined(CONFIG_ARCH_TEGRA_194_SOC)
++    defined(CONFIG_ARCH_TEGRA_194_SOC) || \
++    defined(CONFIG_ARCH_TEGRA_234_SOC)
+ static u32 tegra30_fuse_read_early(struct tegra_fuse *fuse, unsigned int offset)
+ {
+ 	if (WARN_ON(!fuse->base))
 -- 
 2.30.2
 
