@@ -4,43 +4,45 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-19.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB674C47E48
-	for <linux-tegra@archiver.kernel.org>; Wed, 14 Jul 2021 19:40:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52C79C47E4F
+	for <linux-tegra@archiver.kernel.org>; Wed, 14 Jul 2021 19:42:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B7067613D4
-	for <linux-tegra@archiver.kernel.org>; Wed, 14 Jul 2021 19:40:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C08561415
+	for <linux-tegra@archiver.kernel.org>; Wed, 14 Jul 2021 19:42:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231154AbhGNTnZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 14 Jul 2021 15:43:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37944 "EHLO mail.kernel.org"
+        id S231837AbhGNTpq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 14 Jul 2021 15:45:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36978 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230364AbhGNTmx (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 14 Jul 2021 15:42:53 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id AD6296044F;
-        Wed, 14 Jul 2021 19:40:00 +0000 (UTC)
+        id S237088AbhGNTpM (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 14 Jul 2021 15:45:12 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 78981613F8;
+        Wed, 14 Jul 2021 19:41:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1626291601;
-        bh=IS1vLpPz6uocNDSd2Xrszaj7fRjp7DbJLKWZOOhIkb4=;
+        s=k20201202; t=1626291705;
+        bh=9Nk3/spMfVozeWDhx63OJP8tGztlAFpk4J1r7m/We0U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=X8obvJmzeWeiGhRv9qd2vl2WfDfo6bTUjkcxs8BxrlLz8cryaQBQNjqcrUXix3JpX
-         KaAv65wu6LGx8Y98pzCCj1Iq2tFDUGXGg2zl5RQB35rdc5Eo8vJS/0yxAeZdCh98D/
-         nvQl7Jj6AmmAl5C8rBmPZW7IKdDHBmPsFQT4Y39y8ytf63Z+oqIoUM5wonLRqXP4+t
-         krwkpJsQqQTS951uyrea+AOiP38HuR+4JttsGLyycYyt3nK+tz4M77EKmDLxOGx1kj
-         bj/QrAyQxdzJJ4RWRs+ReE4YiKvN8bPfXC6ZJLdVwxIT/MoTXWozc7OivXBrYMJp3F
-         ZhTFGfzlrWIrw==
+        b=Nl3XUHv+NWmR0G07h4hxNrq50Vwk27PHjzPfWJrdkAovJmEyUKYgYE1oQAZXuZvpw
+         hcEMhvFam0/2pixof601VewyWVfF+Y19Mm2mcYvKq+e1KzGgh71cdAsmxI8y4400Bb
+         f6mgCigEHxy16ojSJ45VXn/7qbJbEkGFPGHG2/0dHZRw5OUL5n9J7gsRebQaPZ/T71
+         tULsjz14LbBGsAUSq+ynbEWBGGWJ7tzYAzCGxeaCrcSbmthfmHOmcTjpM9PZnoEVhu
+         5ewY6XksViltvi9qABvOqIpzpq1meT3ftOUcQvWPITIUPqpfib1uCDB/j4bahoDfFx
+         TEYFPt1QZcOYQ==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Thierry Reding <treding@nvidia.com>,
-        Sasha Levin <sashal@kernel.org>, linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.13 083/108] firmware: tegra: bpmp: Fix Tegra234-only builds
-Date:   Wed, 14 Jul 2021 15:37:35 -0400
-Message-Id: <20210714193800.52097-83-sashal@kernel.org>
+Cc:     Jon Hunter <jonathanh@nvidia.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.12 049/102] arm64: tegra: Add PMU node for Tegra194
+Date:   Wed, 14 Jul 2021 15:39:42 -0400
+Message-Id: <20210714194036.53141-49-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210714193800.52097-1-sashal@kernel.org>
-References: <20210714193800.52097-1-sashal@kernel.org>
+In-Reply-To: <20210714194036.53141-1-sashal@kernel.org>
+References: <20210714194036.53141-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -49,61 +51,47 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
 
-[ Upstream commit bd778b893963d67d7eb01f49d84ffcd3eaf229dd ]
+[ Upstream commit 9e79e58f330ea4860f2ced65a8a35dfb05fc03c1 ]
 
-The tegra186_bpmp_ops symbol is used on Tegra234, so make sure it's
-available.
+Populate the device-tree node for the PMU device on Tegra194. This also
+fixes the following warning that is observed on booting Tegra194.
 
+ ERR KERN kvm: pmu event creation failed -2
+
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/firmware/tegra/Makefile       | 1 +
- drivers/firmware/tegra/bpmp-private.h | 3 ++-
- drivers/firmware/tegra/bpmp.c         | 3 ++-
- 3 files changed, 5 insertions(+), 2 deletions(-)
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/drivers/firmware/tegra/Makefile b/drivers/firmware/tegra/Makefile
-index 49c87e00fafb..620cf3fdd607 100644
---- a/drivers/firmware/tegra/Makefile
-+++ b/drivers/firmware/tegra/Makefile
-@@ -3,6 +3,7 @@ tegra-bpmp-y			= bpmp.o
- tegra-bpmp-$(CONFIG_ARCH_TEGRA_210_SOC)	+= bpmp-tegra210.o
- tegra-bpmp-$(CONFIG_ARCH_TEGRA_186_SOC)	+= bpmp-tegra186.o
- tegra-bpmp-$(CONFIG_ARCH_TEGRA_194_SOC)	+= bpmp-tegra186.o
-+tegra-bpmp-$(CONFIG_ARCH_TEGRA_234_SOC)	+= bpmp-tegra186.o
- tegra-bpmp-$(CONFIG_DEBUG_FS)	+= bpmp-debugfs.o
- obj-$(CONFIG_TEGRA_BPMP)	+= tegra-bpmp.o
- obj-$(CONFIG_TEGRA_IVC)		+= ivc.o
-diff --git a/drivers/firmware/tegra/bpmp-private.h b/drivers/firmware/tegra/bpmp-private.h
-index 54d560c48398..182bfe396516 100644
---- a/drivers/firmware/tegra/bpmp-private.h
-+++ b/drivers/firmware/tegra/bpmp-private.h
-@@ -24,7 +24,8 @@ struct tegra_bpmp_ops {
- };
+diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+index 9449156fae39..2e40b6047283 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+@@ -2345,6 +2345,20 @@ l3c: l3-cache {
+ 		};
+ 	};
  
- #if IS_ENABLED(CONFIG_ARCH_TEGRA_186_SOC) || \
--    IS_ENABLED(CONFIG_ARCH_TEGRA_194_SOC)
-+    IS_ENABLED(CONFIG_ARCH_TEGRA_194_SOC) || \
-+    IS_ENABLED(CONFIG_ARCH_TEGRA_234_SOC)
- extern const struct tegra_bpmp_ops tegra186_bpmp_ops;
- #endif
- #if IS_ENABLED(CONFIG_ARCH_TEGRA_210_SOC)
-diff --git a/drivers/firmware/tegra/bpmp.c b/drivers/firmware/tegra/bpmp.c
-index 0742a90cb844..5654c5e9862b 100644
---- a/drivers/firmware/tegra/bpmp.c
-+++ b/drivers/firmware/tegra/bpmp.c
-@@ -809,7 +809,8 @@ static const struct dev_pm_ops tegra_bpmp_pm_ops = {
- };
- 
- #if IS_ENABLED(CONFIG_ARCH_TEGRA_186_SOC) || \
--    IS_ENABLED(CONFIG_ARCH_TEGRA_194_SOC)
-+    IS_ENABLED(CONFIG_ARCH_TEGRA_194_SOC) || \
-+    IS_ENABLED(CONFIG_ARCH_TEGRA_234_SOC)
- static const struct tegra_bpmp_soc tegra186_soc = {
- 	.channels = {
- 		.cpu_tx = {
++	pmu {
++		compatible = "arm,armv8-pmuv3";
++		interrupts = <GIC_SPI 384 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 385 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 386 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 387 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 388 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 389 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 390 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 391 IRQ_TYPE_LEVEL_HIGH>;
++		interrupt-affinity = <&cpu0_0 &cpu0_1 &cpu1_0 &cpu1_1
++				      &cpu2_0 &cpu2_1 &cpu3_0 &cpu3_1>;
++	};
++
+ 	psci {
+ 		compatible = "arm,psci-1.0";
+ 		status = "okay";
 -- 
 2.30.2
 
