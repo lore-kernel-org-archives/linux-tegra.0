@@ -7,41 +7,40 @@ X-Spam-Status: No, score=-19.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0B2FC4CC65
-	for <linux-tegra@archiver.kernel.org>; Wed, 14 Jul 2021 19:53:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61400C47E4B
+	for <linux-tegra@archiver.kernel.org>; Wed, 14 Jul 2021 19:53:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E6DC3613C3
-	for <linux-tegra@archiver.kernel.org>; Wed, 14 Jul 2021 19:53:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4CB12613C3
+	for <linux-tegra@archiver.kernel.org>; Wed, 14 Jul 2021 19:53:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238746AbhGNTzr (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 14 Jul 2021 15:55:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45690 "EHLO mail.kernel.org"
+        id S237928AbhGNTzq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 14 Jul 2021 15:55:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46320 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S239589AbhGNTtV (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 14 Jul 2021 15:49:21 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id A7FED6141D;
-        Wed, 14 Jul 2021 19:44:22 +0000 (UTC)
+        id S239234AbhGNTtN (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 14 Jul 2021 15:49:13 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id DC32A61405;
+        Wed, 14 Jul 2021 19:44:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1626291863;
-        bh=jZnR+OKmW5BxyLXY45C4iTzEQyWzRuvZLowEeHhGgnA=;
+        s=k20201202; t=1626291850;
+        bh=liSe6McanGWa85HIg5Ho5nJWQTQVWy1aqtWDNjbkKxs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TAXRngNlXfDT36MVjEKx25FUD2oLdgIIPrRzSZ3Onfxfo6V2squ/RT9Gfzfv+aKcf
-         wB/bM3wz7WTv5eFoi3hsSGMImg1YG20+akrxNFIvbA2t5fRE5L6nF6jhcrhTwbyRgz
-         zn1Ub1ks1ih5uapFYyHPK9+3TOav0f9g40X7nAIqBA+TRMuTbdOM/8ZJ5Cin0rPook
-         dY0T25OHzT94+wlCw2ERIZm9UsoZ57u26caOfAfM4zduv9/Ost+AJ1JKwKINWM1Lj4
-         Vusb6DT60bsnVpz1n5C7mDieXlEcIf0KUADczMWtT1Q5HI4MrdcCf+J6VqhCpFjOJn
-         hzo01UViFp4lQ==
+        b=cq/BmJTVe99paow+PF40DivL82vFftt4WP5nqL3aS0rJjn/qrhmVvpkxPV1qzl9fC
+         b3hUyX6DO9toDUhls8Wam+ri93rC8drWK290thw6gPqdNNwu6JB4fAzvpB3oMNeJPw
+         B00tfA9xXwk+ypZWeR3MZ2EkWr5V5id9uwJjNi34z0HccqBHJbWamQ+6OTTAVcbzeL
+         juFVt+ZOHFM/8cdu7a0EH7wgauW7pCh2H9jOS7yH4hD4GXgOWX1yp2mMCaxOIWzmP0
+         VrPS00umz31njE5TvMUvTgRdXDnZWVhSnVKVxaqKc3syf8XBb3IekmyGTxPQ2y6wjZ
+         y/82mX+YVo+cg==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Dmitry Osipenko <digetx@gmail.com>,
-        kernel test robot <lkp@intel.com>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Svyatoslav Ryhel <clamor95@gmail.com>,
         Thierry Reding <treding@nvidia.com>,
-        Sasha Levin <sashal@kernel.org>, linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.10 53/88] memory: tegra: Fix compilation warnings on 64bit platforms
-Date:   Wed, 14 Jul 2021 15:42:28 -0400
-Message-Id: <20210714194303.54028-53-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.10 44/88] ARM: tegra: nexus7: Correct 3v3 regulator GPIO of PM269 variant
+Date:   Wed, 14 Jul 2021 15:42:19 -0400
+Message-Id: <20210714194303.54028-44-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210714194303.54028-1-sashal@kernel.org>
 References: <20210714194303.54028-1-sashal@kernel.org>
@@ -55,53 +54,33 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Dmitry Osipenko <digetx@gmail.com>
 
-[ Upstream commit e0740fb869730110b36a4afcf05ad1b9d6f5fb6d ]
+[ Upstream commit c4dd6066bc304649e3159f1c7a08ece25d537e00 ]
 
-Fix compilation warning on 64bit platforms caused by implicit promotion
-of 32bit signed integer to a 64bit unsigned value which happens after
-enabling compile-testing of the EMC drivers.
+The 3v3 regulator GPIO is GP6 and not GP7, which is the DDR regulator.
+Both regulators are always-on, nevertheless the DT model needs to be
+corrected, fix it.
 
-Reported-by: kernel test robot <lkp@intel.com>
-Reviewed-by: Nathan Chancellor <nathan@kernel.org>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Reported-by: Svyatoslav Ryhel <clamor95@gmail.com>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/memory/tegra/tegra124-emc.c | 4 ++--
- drivers/memory/tegra/tegra30-emc.c  | 4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ arch/arm/boot/dts/tegra30-asus-nexus7-grouper-ti-pmic.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/memory/tegra/tegra124-emc.c b/drivers/memory/tegra/tegra124-emc.c
-index 76ace42a688a..dae816e840a9 100644
---- a/drivers/memory/tegra/tegra124-emc.c
-+++ b/drivers/memory/tegra/tegra124-emc.c
-@@ -265,8 +265,8 @@
- #define EMC_PUTERM_ADJ				0x574
+diff --git a/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-ti-pmic.dtsi b/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-ti-pmic.dtsi
+index bfc06b988781..215e497652d8 100644
+--- a/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-ti-pmic.dtsi
++++ b/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-ti-pmic.dtsi
+@@ -143,7 +143,7 @@ vdd_core: core-regulator@60 {
+ 	};
  
- #define DRAM_DEV_SEL_ALL			0
--#define DRAM_DEV_SEL_0				(2 << 30)
--#define DRAM_DEV_SEL_1				(1 << 30)
-+#define DRAM_DEV_SEL_0				BIT(31)
-+#define DRAM_DEV_SEL_1				BIT(30)
- 
- #define EMC_CFG_POWER_FEATURES_MASK		\
- 	(EMC_CFG_DYN_SREF | EMC_CFG_DRAM_ACPD | EMC_CFG_DRAM_CLKSTOP_SR | \
-diff --git a/drivers/memory/tegra/tegra30-emc.c b/drivers/memory/tegra/tegra30-emc.c
-index 055af0e08a2e..1bd6d3d827aa 100644
---- a/drivers/memory/tegra/tegra30-emc.c
-+++ b/drivers/memory/tegra/tegra30-emc.c
-@@ -145,8 +145,8 @@
- #define EMC_SELF_REF_CMD_ENABLED		BIT(0)
- 
- #define DRAM_DEV_SEL_ALL			(0 << 30)
--#define DRAM_DEV_SEL_0				(2 << 30)
--#define DRAM_DEV_SEL_1				(1 << 30)
-+#define DRAM_DEV_SEL_0				BIT(31)
-+#define DRAM_DEV_SEL_1				BIT(30)
- #define DRAM_BROADCAST(num) \
- 	((num) > 1 ? DRAM_DEV_SEL_ALL : DRAM_DEV_SEL_0)
- 
+ 	vdd_3v3_sys: regulator@1 {
+-		gpio = <&pmic 7 GPIO_ACTIVE_HIGH>;
++		gpio = <&pmic 6 GPIO_ACTIVE_HIGH>;
+ 		enable-active-high;
+ 	};
+ };
 -- 
 2.30.2
 
