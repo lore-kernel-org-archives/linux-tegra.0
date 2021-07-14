@@ -4,42 +4,43 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-19.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52C79C47E4F
-	for <linux-tegra@archiver.kernel.org>; Wed, 14 Jul 2021 19:42:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A63C2C47E4F
+	for <linux-tegra@archiver.kernel.org>; Wed, 14 Jul 2021 19:43:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3C08561415
-	for <linux-tegra@archiver.kernel.org>; Wed, 14 Jul 2021 19:42:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8CB3261421
+	for <linux-tegra@archiver.kernel.org>; Wed, 14 Jul 2021 19:43:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231837AbhGNTpq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 14 Jul 2021 15:45:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36978 "EHLO mail.kernel.org"
+        id S237609AbhGNTqP (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 14 Jul 2021 15:46:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36706 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S237088AbhGNTpM (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 14 Jul 2021 15:45:12 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 78981613F8;
-        Wed, 14 Jul 2021 19:41:44 +0000 (UTC)
+        id S234622AbhGNTpU (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 14 Jul 2021 15:45:20 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id DA541613F4;
+        Wed, 14 Jul 2021 19:41:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1626291705;
-        bh=9Nk3/spMfVozeWDhx63OJP8tGztlAFpk4J1r7m/We0U=;
+        s=k20201202; t=1626291709;
+        bh=liSe6McanGWa85HIg5Ho5nJWQTQVWy1aqtWDNjbkKxs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Nl3XUHv+NWmR0G07h4hxNrq50Vwk27PHjzPfWJrdkAovJmEyUKYgYE1oQAZXuZvpw
-         hcEMhvFam0/2pixof601VewyWVfF+Y19Mm2mcYvKq+e1KzGgh71cdAsmxI8y4400Bb
-         f6mgCigEHxy16ojSJ45VXn/7qbJbEkGFPGHG2/0dHZRw5OUL5n9J7gsRebQaPZ/T71
-         tULsjz14LbBGsAUSq+ynbEWBGGWJ7tzYAzCGxeaCrcSbmthfmHOmcTjpM9PZnoEVhu
-         5ewY6XksViltvi9qABvOqIpzpq1meT3ftOUcQvWPITIUPqpfib1uCDB/j4bahoDfFx
-         TEYFPt1QZcOYQ==
+        b=gz/QwSOyp137vnWjXr3XXjT3727bjjSHQjrU4A0Xp7nj0n5CBCw++hurF2WkGXlKH
+         zqW9sRZaPN/WbfffjCF0Bpt4R48Y79SWAk6ByJvz/I6L7wgBvhT4wHbc6qONB5cDS1
+         CZGENH/ND1zf9/n8entxNPrT+kb3grl4Jy47BQS3eQesvmAh8aFLmDS8POXel9IzoO
+         +SueYfIZGbebyT5LHeOCWieivxBA7ScjVdWDQdbUwDMntAmiewYRvojzHAqpEex+jE
+         x7yQydryt41BLGNl0LD6FdwBaNrBggMBpdMFNxlb7CTuEfoBkA5sjOce3ftih680VY
+         fCD6mRN4aMw7Q==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jon Hunter <jonathanh@nvidia.com>,
+Cc:     Dmitry Osipenko <digetx@gmail.com>,
+        Svyatoslav Ryhel <clamor95@gmail.com>,
         Thierry Reding <treding@nvidia.com>,
         Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org,
         linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.12 049/102] arm64: tegra: Add PMU node for Tegra194
-Date:   Wed, 14 Jul 2021 15:39:42 -0400
-Message-Id: <20210714194036.53141-49-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.12 052/102] ARM: tegra: nexus7: Correct 3v3 regulator GPIO of PM269 variant
+Date:   Wed, 14 Jul 2021 15:39:45 -0400
+Message-Id: <20210714194036.53141-52-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210714194036.53141-1-sashal@kernel.org>
 References: <20210714194036.53141-1-sashal@kernel.org>
@@ -51,47 +52,35 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Jon Hunter <jonathanh@nvidia.com>
+From: Dmitry Osipenko <digetx@gmail.com>
 
-[ Upstream commit 9e79e58f330ea4860f2ced65a8a35dfb05fc03c1 ]
+[ Upstream commit c4dd6066bc304649e3159f1c7a08ece25d537e00 ]
 
-Populate the device-tree node for the PMU device on Tegra194. This also
-fixes the following warning that is observed on booting Tegra194.
+The 3v3 regulator GPIO is GP6 and not GP7, which is the DDR regulator.
+Both regulators are always-on, nevertheless the DT model needs to be
+corrected, fix it.
 
- ERR KERN kvm: pmu event creation failed -2
-
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+Reported-by: Svyatoslav Ryhel <clamor95@gmail.com>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/boot/dts/nvidia/tegra194.dtsi | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ arch/arm/boot/dts/tegra30-asus-nexus7-grouper-ti-pmic.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-index 9449156fae39..2e40b6047283 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-@@ -2345,6 +2345,20 @@ l3c: l3-cache {
- 		};
+diff --git a/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-ti-pmic.dtsi b/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-ti-pmic.dtsi
+index bfc06b988781..215e497652d8 100644
+--- a/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-ti-pmic.dtsi
++++ b/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-ti-pmic.dtsi
+@@ -143,7 +143,7 @@ vdd_core: core-regulator@60 {
  	};
  
-+	pmu {
-+		compatible = "arm,armv8-pmuv3";
-+		interrupts = <GIC_SPI 384 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 385 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 386 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 387 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 388 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 389 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 390 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 391 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-affinity = <&cpu0_0 &cpu0_1 &cpu1_0 &cpu1_1
-+				      &cpu2_0 &cpu2_1 &cpu3_0 &cpu3_1>;
-+	};
-+
- 	psci {
- 		compatible = "arm,psci-1.0";
- 		status = "okay";
+ 	vdd_3v3_sys: regulator@1 {
+-		gpio = <&pmic 7 GPIO_ACTIVE_HIGH>;
++		gpio = <&pmic 6 GPIO_ACTIVE_HIGH>;
+ 		enable-active-high;
+ 	};
+ };
 -- 
 2.30.2
 
