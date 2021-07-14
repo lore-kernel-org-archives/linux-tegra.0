@@ -7,39 +7,41 @@ X-Spam-Status: No, score=-19.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3BBEC47E5B
-	for <linux-tegra@archiver.kernel.org>; Wed, 14 Jul 2021 19:53:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0B2FC4CC65
+	for <linux-tegra@archiver.kernel.org>; Wed, 14 Jul 2021 19:53:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B3370613D0
-	for <linux-tegra@archiver.kernel.org>; Wed, 14 Jul 2021 19:53:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E6DC3613C3
+	for <linux-tegra@archiver.kernel.org>; Wed, 14 Jul 2021 19:53:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231907AbhGNTzf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 14 Jul 2021 15:55:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44850 "EHLO mail.kernel.org"
+        id S238746AbhGNTzr (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 14 Jul 2021 15:55:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45690 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S239201AbhGNTtM (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 14 Jul 2021 15:49:12 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 8E77960FF2;
-        Wed, 14 Jul 2021 19:44:08 +0000 (UTC)
+        id S239589AbhGNTtV (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 14 Jul 2021 15:49:21 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id A7FED6141D;
+        Wed, 14 Jul 2021 19:44:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1626291849;
-        bh=q3NJyJfhIGkLleFwN7UUYvLNduBnBmgYyo2FEYvO44E=;
+        s=k20201202; t=1626291863;
+        bh=jZnR+OKmW5BxyLXY45C4iTzEQyWzRuvZLowEeHhGgnA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OqBzvZN7adIEtNXZyFSdwZPv3v9h2B3oY5diwOTwhzCCddAKk9mcloOMTQwP3qQKE
-         Dz1zriOpKR92IbTigYojnGypwrsbzEFu96+w3nDL5pX6aAxFwt9VPzHnlv5GO6Y0Q/
-         ODj85uSkNBj0gGwZZg1WDAuFc8m2ifoQsToZNwYwRLfmimwD2nDQIWUZTAY7Ey5kjq
-         NY2nqlJsHExEvMa79oZ7DUrIwRLqsuNkitsUmOcAB7RasyLQiBQfjl2McGLNvElSxk
-         qVufbxi8w5KqQk78opYEhY1H+n1gyND1ukg0mV0boJF8r6v0f+KkOIyTXjfBq9whvd
-         Zm1MWSwqJFa0Q==
+        b=TAXRngNlXfDT36MVjEKx25FUD2oLdgIIPrRzSZ3Onfxfo6V2squ/RT9Gfzfv+aKcf
+         wB/bM3wz7WTv5eFoi3hsSGMImg1YG20+akrxNFIvbA2t5fRE5L6nF6jhcrhTwbyRgz
+         zn1Ub1ks1ih5uapFYyHPK9+3TOav0f9g40X7nAIqBA+TRMuTbdOM/8ZJ5Cin0rPook
+         dY0T25OHzT94+wlCw2ERIZm9UsoZ57u26caOfAfM4zduv9/Ost+AJ1JKwKINWM1Lj4
+         Vusb6DT60bsnVpz1n5C7mDieXlEcIf0KUADczMWtT1Q5HI4MrdcCf+J6VqhCpFjOJn
+         hzo01UViFp4lQ==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Dmitry Osipenko <digetx@gmail.com>,
+        kernel test robot <lkp@intel.com>,
+        Nathan Chancellor <nathan@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
         Thierry Reding <treding@nvidia.com>,
-        Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.10 43/88] ARM: tegra: wm8903: Fix polarity of headphones-detection GPIO in device-trees
-Date:   Wed, 14 Jul 2021 15:42:18 -0400
-Message-Id: <20210714194303.54028-43-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>, linux-tegra@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.10 53/88] memory: tegra: Fix compilation warnings on 64bit platforms
+Date:   Wed, 14 Jul 2021 15:42:28 -0400
+Message-Id: <20210714194303.54028-53-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210714194303.54028-1-sashal@kernel.org>
 References: <20210714194303.54028-1-sashal@kernel.org>
@@ -53,131 +55,53 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Dmitry Osipenko <digetx@gmail.com>
 
-[ Upstream commit 5f45da704de425d74abd75feaa928fc8a3df03ba ]
+[ Upstream commit e0740fb869730110b36a4afcf05ad1b9d6f5fb6d ]
 
-All Tegra boards which use WM8903 audio codec are specifying a wrong
-polarity for the headphones detection GPIO. The kernel driver hardcodes
-the polarity to active-low, which is the correct polarity, so we can fix
-the device-trees safely.
+Fix compilation warning on 64bit platforms caused by implicit promotion
+of 32bit signed integer to a 64bit unsigned value which happens after
+enabling compile-testing of the EMC drivers.
 
+Reported-by: kernel test robot <lkp@intel.com>
+Reviewed-by: Nathan Chancellor <nathan@kernel.org>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/tegra20-acer-a500-picasso.dts | 2 +-
- arch/arm/boot/dts/tegra20-harmony.dts           | 2 +-
- arch/arm/boot/dts/tegra20-medcom-wide.dts       | 2 +-
- arch/arm/boot/dts/tegra20-plutux.dts            | 2 +-
- arch/arm/boot/dts/tegra20-seaboard.dts          | 2 +-
- arch/arm/boot/dts/tegra20-tec.dts               | 2 +-
- arch/arm/boot/dts/tegra20-ventana.dts           | 2 +-
- arch/arm/boot/dts/tegra30-cardhu.dtsi           | 2 +-
- 8 files changed, 8 insertions(+), 8 deletions(-)
+ drivers/memory/tegra/tegra124-emc.c | 4 ++--
+ drivers/memory/tegra/tegra30-emc.c  | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts b/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts
-index 068aabcffb13..5d0f0fbba1d2 100644
---- a/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts
-+++ b/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts
-@@ -1009,7 +1009,7 @@ sound {
- 		nvidia,audio-codec = <&wm8903>;
+diff --git a/drivers/memory/tegra/tegra124-emc.c b/drivers/memory/tegra/tegra124-emc.c
+index 76ace42a688a..dae816e840a9 100644
+--- a/drivers/memory/tegra/tegra124-emc.c
++++ b/drivers/memory/tegra/tegra124-emc.c
+@@ -265,8 +265,8 @@
+ #define EMC_PUTERM_ADJ				0x574
  
- 		nvidia,spkr-en-gpios = <&wm8903 2 GPIO_ACTIVE_HIGH>;
--		nvidia,hp-det-gpios = <&gpio TEGRA_GPIO(W, 2) GPIO_ACTIVE_HIGH>;
-+		nvidia,hp-det-gpios = <&gpio TEGRA_GPIO(W, 2) GPIO_ACTIVE_LOW>;
- 		nvidia,int-mic-en-gpios = <&wm8903 1 GPIO_ACTIVE_HIGH>;
- 		nvidia,headset;
+ #define DRAM_DEV_SEL_ALL			0
+-#define DRAM_DEV_SEL_0				(2 << 30)
+-#define DRAM_DEV_SEL_1				(1 << 30)
++#define DRAM_DEV_SEL_0				BIT(31)
++#define DRAM_DEV_SEL_1				BIT(30)
  
-diff --git a/arch/arm/boot/dts/tegra20-harmony.dts b/arch/arm/boot/dts/tegra20-harmony.dts
-index 86494cb4d5a1..ae4312eedcbd 100644
---- a/arch/arm/boot/dts/tegra20-harmony.dts
-+++ b/arch/arm/boot/dts/tegra20-harmony.dts
-@@ -748,7 +748,7 @@ sound {
+ #define EMC_CFG_POWER_FEATURES_MASK		\
+ 	(EMC_CFG_DYN_SREF | EMC_CFG_DRAM_ACPD | EMC_CFG_DRAM_CLKSTOP_SR | \
+diff --git a/drivers/memory/tegra/tegra30-emc.c b/drivers/memory/tegra/tegra30-emc.c
+index 055af0e08a2e..1bd6d3d827aa 100644
+--- a/drivers/memory/tegra/tegra30-emc.c
++++ b/drivers/memory/tegra/tegra30-emc.c
+@@ -145,8 +145,8 @@
+ #define EMC_SELF_REF_CMD_ENABLED		BIT(0)
  
- 		nvidia,spkr-en-gpios = <&wm8903 2 GPIO_ACTIVE_HIGH>;
- 		nvidia,hp-det-gpios = <&gpio TEGRA_GPIO(W, 2)
--			GPIO_ACTIVE_HIGH>;
-+			GPIO_ACTIVE_LOW>;
- 		nvidia,int-mic-en-gpios = <&gpio TEGRA_GPIO(X, 0)
- 			GPIO_ACTIVE_HIGH>;
- 		nvidia,ext-mic-en-gpios = <&gpio TEGRA_GPIO(X, 1)
-diff --git a/arch/arm/boot/dts/tegra20-medcom-wide.dts b/arch/arm/boot/dts/tegra20-medcom-wide.dts
-index a348ca30e522..b31c9bca16e6 100644
---- a/arch/arm/boot/dts/tegra20-medcom-wide.dts
-+++ b/arch/arm/boot/dts/tegra20-medcom-wide.dts
-@@ -84,7 +84,7 @@ sound {
- 		nvidia,audio-codec = <&wm8903>;
+ #define DRAM_DEV_SEL_ALL			(0 << 30)
+-#define DRAM_DEV_SEL_0				(2 << 30)
+-#define DRAM_DEV_SEL_1				(1 << 30)
++#define DRAM_DEV_SEL_0				BIT(31)
++#define DRAM_DEV_SEL_1				BIT(30)
+ #define DRAM_BROADCAST(num) \
+ 	((num) > 1 ? DRAM_DEV_SEL_ALL : DRAM_DEV_SEL_0)
  
- 		nvidia,spkr-en-gpios = <&wm8903 2 GPIO_ACTIVE_HIGH>;
--		nvidia,hp-det-gpios = <&gpio TEGRA_GPIO(W, 2) GPIO_ACTIVE_HIGH>;
-+		nvidia,hp-det-gpios = <&gpio TEGRA_GPIO(W, 2) GPIO_ACTIVE_LOW>;
- 
- 		clocks = <&tegra_car TEGRA20_CLK_PLL_A>,
- 			 <&tegra_car TEGRA20_CLK_PLL_A_OUT0>,
-diff --git a/arch/arm/boot/dts/tegra20-plutux.dts b/arch/arm/boot/dts/tegra20-plutux.dts
-index 378f23b2958b..5811b7006a9b 100644
---- a/arch/arm/boot/dts/tegra20-plutux.dts
-+++ b/arch/arm/boot/dts/tegra20-plutux.dts
-@@ -52,7 +52,7 @@ sound {
- 		nvidia,audio-codec = <&wm8903>;
- 
- 		nvidia,spkr-en-gpios = <&wm8903 2 GPIO_ACTIVE_HIGH>;
--		nvidia,hp-det-gpios = <&gpio TEGRA_GPIO(W, 2) GPIO_ACTIVE_HIGH>;
-+		nvidia,hp-det-gpios = <&gpio TEGRA_GPIO(W, 2) GPIO_ACTIVE_LOW>;
- 
- 		clocks = <&tegra_car TEGRA20_CLK_PLL_A>,
- 			 <&tegra_car TEGRA20_CLK_PLL_A_OUT0>,
-diff --git a/arch/arm/boot/dts/tegra20-seaboard.dts b/arch/arm/boot/dts/tegra20-seaboard.dts
-index c24d4a37613e..92d494b8c3d2 100644
---- a/arch/arm/boot/dts/tegra20-seaboard.dts
-+++ b/arch/arm/boot/dts/tegra20-seaboard.dts
-@@ -911,7 +911,7 @@ sound {
- 		nvidia,audio-codec = <&wm8903>;
- 
- 		nvidia,spkr-en-gpios = <&wm8903 2 GPIO_ACTIVE_HIGH>;
--		nvidia,hp-det-gpios = <&gpio TEGRA_GPIO(X, 1) GPIO_ACTIVE_HIGH>;
-+		nvidia,hp-det-gpios = <&gpio TEGRA_GPIO(X, 1) GPIO_ACTIVE_LOW>;
- 
- 		clocks = <&tegra_car TEGRA20_CLK_PLL_A>,
- 			 <&tegra_car TEGRA20_CLK_PLL_A_OUT0>,
-diff --git a/arch/arm/boot/dts/tegra20-tec.dts b/arch/arm/boot/dts/tegra20-tec.dts
-index 44ced60315de..10ff09d86efa 100644
---- a/arch/arm/boot/dts/tegra20-tec.dts
-+++ b/arch/arm/boot/dts/tegra20-tec.dts
-@@ -61,7 +61,7 @@ sound {
- 
- 		nvidia,spkr-en-gpios = <&wm8903 2 GPIO_ACTIVE_HIGH>;
- 		nvidia,hp-det-gpios = <&gpio TEGRA_GPIO(W, 2)
--			GPIO_ACTIVE_HIGH>;
-+			GPIO_ACTIVE_LOW>;
- 
- 		clocks = <&tegra_car TEGRA20_CLK_PLL_A>,
- 			 <&tegra_car TEGRA20_CLK_PLL_A_OUT0>,
-diff --git a/arch/arm/boot/dts/tegra20-ventana.dts b/arch/arm/boot/dts/tegra20-ventana.dts
-index 055334ae3d28..fe400fb84f02 100644
---- a/arch/arm/boot/dts/tegra20-ventana.dts
-+++ b/arch/arm/boot/dts/tegra20-ventana.dts
-@@ -686,7 +686,7 @@ sound {
- 		nvidia,audio-codec = <&wm8903>;
- 
- 		nvidia,spkr-en-gpios = <&wm8903 2 GPIO_ACTIVE_HIGH>;
--		nvidia,hp-det-gpios = <&gpio TEGRA_GPIO(W, 2) GPIO_ACTIVE_HIGH>;
-+		nvidia,hp-det-gpios = <&gpio TEGRA_GPIO(W, 2) GPIO_ACTIVE_LOW>;
- 		nvidia,int-mic-en-gpios = <&gpio TEGRA_GPIO(X, 0)
- 			GPIO_ACTIVE_HIGH>;
- 		nvidia,ext-mic-en-gpios = <&gpio TEGRA_GPIO(X, 1)
-diff --git a/arch/arm/boot/dts/tegra30-cardhu.dtsi b/arch/arm/boot/dts/tegra30-cardhu.dtsi
-index dab9989fa760..57aead7d8162 100644
---- a/arch/arm/boot/dts/tegra30-cardhu.dtsi
-+++ b/arch/arm/boot/dts/tegra30-cardhu.dtsi
-@@ -589,7 +589,7 @@ sound {
- 
- 		nvidia,spkr-en-gpios = <&wm8903 2 GPIO_ACTIVE_HIGH>;
- 		nvidia,hp-det-gpios = <&gpio TEGRA_GPIO(W, 2)
--			GPIO_ACTIVE_HIGH>;
-+			GPIO_ACTIVE_LOW>;
- 
- 		clocks = <&tegra_car TEGRA30_CLK_PLL_A>,
- 			 <&tegra_car TEGRA30_CLK_PLL_A_OUT0>,
 -- 
 2.30.2
 
