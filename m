@@ -5,29 +5,29 @@ X-Spam-Level:
 X-Spam-Status: No, score=-19.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 296CCC636CA
-	for <linux-tegra@archiver.kernel.org>; Thu, 15 Jul 2021 18:52:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FFE4C636CE
+	for <linux-tegra@archiver.kernel.org>; Thu, 15 Jul 2021 19:02:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 02B0C613DA
-	for <linux-tegra@archiver.kernel.org>; Thu, 15 Jul 2021 18:52:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 48B09613ED
+	for <linux-tegra@archiver.kernel.org>; Thu, 15 Jul 2021 19:02:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241431AbhGOSzm (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 15 Jul 2021 14:55:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58132 "EHLO mail.kernel.org"
+        id S237428AbhGOTFQ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 15 Jul 2021 15:05:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38802 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S241729AbhGOSyg (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 15 Jul 2021 14:54:36 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 6A43F613CF;
-        Thu, 15 Jul 2021 18:51:41 +0000 (UTC)
+        id S240256AbhGOTEl (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 15 Jul 2021 15:04:41 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id EB8D3613E5;
+        Thu, 15 Jul 2021 19:00:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1626375101;
-        bh=tB9n9DecfNlZ8D3SRM40CXHbkxGOBPpWXf2po1dV+kg=;
+        s=korg; t=1626375647;
+        bh=E1rfawRYE3YC1A6vcqcfifcrxN/c0o1AcCscCPZDZlc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=j1OblpDdKfSJZHz2qNm7CUIIbXrkLWaMBbkgzX9g2iMtKL4X5wJ9HHrpdk3CSu2gt
-         5sSavOHNpsRMRM58WwN0qIZT9YHUV/VWdWjttsiOagE3qR4Ga4hiiUrDg+KYHBoht2
-         lzd0vG025CRJW4nJ0BQbat78JC5qneP+TC5YoEbo=
+        b=oveI0Kf6iCURMd53xdRXi3aYfAePiLcV1EGArviCTdBAI4GJXVb5wZRH6A7+P94mv
+         fX3zTkUPKVHsOe9hou5B2ojqDj4TsS/Ir+3UfBAHzSfg3hyd9W7NtWO/1MWqivkBxm
+         73uDTog3qagLh+44SbvTuskfAO9nbIHgBjkPmICU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -38,12 +38,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         linux-tegra@vger.kernel.org
-Subject: [PATCH 5.10 161/215] drm/tegra: Dont set allow_fb_modifiers explicitly
-Date:   Thu, 15 Jul 2021 20:38:53 +0200
-Message-Id: <20210715182627.992575303@linuxfoundation.org>
+Subject: [PATCH 5.12 177/242] drm/tegra: Dont set allow_fb_modifiers explicitly
+Date:   Thu, 15 Jul 2021 20:38:59 +0200
+Message-Id: <20210715182624.391118308@linuxfoundation.org>
 X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20210715182558.381078833@linuxfoundation.org>
-References: <20210715182558.381078833@linuxfoundation.org>
+In-Reply-To: <20210715182551.731989182@linuxfoundation.org>
+References: <20210715182551.731989182@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -122,7 +122,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  		return ERR_PTR(err);
 --- a/drivers/gpu/drm/tegra/drm.c
 +++ b/drivers/gpu/drm/tegra/drm.c
-@@ -1127,8 +1127,6 @@ static int host1x_drm_probe(struct host1
+@@ -1122,8 +1122,6 @@ static int host1x_drm_probe(struct host1
  	drm->mode_config.max_width = 4096;
  	drm->mode_config.max_height = 4096;
  
