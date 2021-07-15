@@ -7,43 +7,43 @@ X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D2A1C12002
-	for <linux-tegra@archiver.kernel.org>; Thu, 15 Jul 2021 03:22:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CD1BC07E96
+	for <linux-tegra@archiver.kernel.org>; Thu, 15 Jul 2021 04:29:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5070961374
-	for <linux-tegra@archiver.kernel.org>; Thu, 15 Jul 2021 03:22:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7124C61360
+	for <linux-tegra@archiver.kernel.org>; Thu, 15 Jul 2021 04:29:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231196AbhGODZZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 14 Jul 2021 23:25:25 -0400
-Received: from mga02.intel.com ([134.134.136.20]:26431 "EHLO mga02.intel.com"
+        id S236788AbhGOEck (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 15 Jul 2021 00:32:40 -0400
+Received: from mga03.intel.com ([134.134.136.65]:5317 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230495AbhGODZZ (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 14 Jul 2021 23:25:25 -0400
-X-IronPort-AV: E=McAfee;i="6200,9189,10045"; a="197650125"
+        id S234002AbhGOEcd (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 15 Jul 2021 00:32:33 -0400
+X-IronPort-AV: E=McAfee;i="6200,9189,10045"; a="210514506"
 X-IronPort-AV: E=Sophos;i="5.84,240,1620716400"; 
-   d="gz'50?scan'50,208,50";a="197650125"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2021 20:22:32 -0700
+   d="gz'50?scan'50,208,50";a="210514506"
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2021 21:29:34 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.84,240,1620716400"; 
-   d="gz'50?scan'50,208,50";a="412985563"
+   d="gz'50?scan'50,208,50";a="655383707"
 Received: from lkp-server01.sh.intel.com (HELO 4aae0cb4f5b5) ([10.239.97.150])
-  by orsmga006.jf.intel.com with ESMTP; 14 Jul 2021 20:22:29 -0700
+  by fmsmga005.fm.intel.com with ESMTP; 14 Jul 2021 21:29:32 -0700
 Received: from kbuild by 4aae0cb4f5b5 with local (Exim 4.92)
         (envelope-from <lkp@intel.com>)
-        id 1m3rxF-000JIV-0q; Thu, 15 Jul 2021 03:22:29 +0000
-Date:   Thu, 15 Jul 2021 11:21:33 +0800
+        id 1m3t07-000JLA-9T; Thu, 15 Jul 2021 04:29:31 +0000
+Date:   Thu, 15 Jul 2021 12:28:39 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Mikko Perttunen <mperttunen@nvidia.com>
 Cc:     clang-built-linux@googlegroups.com, kbuild-all@lists.01.org,
         dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
         Thierry Reding <treding@nvidia.com>
-Subject: [tegra-drm:drm/tegra/for-next 1/14]
- drivers/gpu/host1x/fence.c:168:5: warning: no previous prototype for
- function 'host1x_fence_create_fd'
-Message-ID: <202107151126.oqA20lbx-lkp@intel.com>
+Subject: [tegra-drm:drm/tegra/for-next 9/14]
+ drivers/gpu/drm/tegra/uapi.c:278:5: warning: no previous prototype for
+ function 'tegra_drm_ioctl_gem_create'
+Message-ID: <202107151232.fWKAbOZG-lkp@intel.com>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="qDbXVdCdHGoSgWSk"
+Content-Type: multipart/mixed; boundary="DocE+STaALJfprDB"
 Content-Disposition: inline
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
@@ -51,13 +51,13 @@ List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---qDbXVdCdHGoSgWSk
+--DocE+STaALJfprDB
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
 tree:   git://anongit.freedesktop.org/tegra/linux.git drm/tegra/for-next
 head:   b19502d1a683c11f6f2c92ad63c61288b0fbe1a1
-commit: ad0529424defbbe0b6a154cc100e82c1a9f91400 [1/14] gpu: host1x: Add DMA fence implementation
+commit: cdf631031f3e574b76afed51bda0ccc9d71d4a4e [9/14] drm/tegra: Implement new UAPI
 config: arm64-randconfig-r025-20210714 (attached as .config)
 compiler: clang version 13.0.0 (https://github.com/llvm/llvm-project 0e49c54a8cbd3e779e5526a5888c683c01cc3c50)
 reproduce (this is a W=1 build):
@@ -67,7 +67,7 @@ reproduce (this is a W=1 build):
         # apt-get install binutils-aarch64-linux-gnu
         git remote add tegra-drm git://anongit.freedesktop.org/tegra/linux.git
         git fetch --no-tags tegra-drm drm/tegra/for-next
-        git checkout ad0529424defbbe0b6a154cc100e82c1a9f91400
+        git checkout cdf631031f3e574b76afed51bda0ccc9d71d4a4e
         # save the attached .config to linux build tree
         COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross ARCH=arm64 
 
@@ -76,57 +76,55 @@ Reported-by: kernel test robot <lkp@intel.com>
 
 All warnings (new ones prefixed by >>):
 
->> drivers/gpu/host1x/fence.c:168:5: warning: no previous prototype for function 'host1x_fence_create_fd' [-Wmissing-prototypes]
-   int host1x_fence_create_fd(struct host1x_syncpt *sp, u32 threshold)
+>> drivers/gpu/drm/tegra/uapi.c:278:5: warning: no previous prototype for function 'tegra_drm_ioctl_gem_create' [-Wmissing-prototypes]
+   int tegra_drm_ioctl_gem_create(struct drm_device *drm, void *data,
        ^
-   drivers/gpu/host1x/fence.c:168:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
-   int host1x_fence_create_fd(struct host1x_syncpt *sp, u32 threshold)
+   drivers/gpu/drm/tegra/uapi.c:278:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
+   int tegra_drm_ioctl_gem_create(struct drm_device *drm, void *data,
    ^
    static 
-   1 warning generated.
+>> drivers/gpu/drm/tegra/uapi.c:295:5: warning: no previous prototype for function 'tegra_drm_ioctl_gem_mmap' [-Wmissing-prototypes]
+   int tegra_drm_ioctl_gem_mmap(struct drm_device *drm, void *data,
+       ^
+   drivers/gpu/drm/tegra/uapi.c:295:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
+   int tegra_drm_ioctl_gem_mmap(struct drm_device *drm, void *data,
+   ^
+   static 
+   2 warnings generated.
 
 
-vim +/host1x_fence_create_fd +168 drivers/gpu/host1x/fence.c
+vim +/tegra_drm_ioctl_gem_create +278 drivers/gpu/drm/tegra/uapi.c
 
-   167	
- > 168	int host1x_fence_create_fd(struct host1x_syncpt *sp, u32 threshold)
-   169	{
-   170		struct sync_file *file;
-   171		struct dma_fence *f;
-   172		int fd;
-   173	
-   174		f = host1x_fence_create(sp, threshold);
-   175		if (IS_ERR(f))
-   176			return PTR_ERR(f);
-   177	
-   178		fd = get_unused_fd_flags(O_CLOEXEC);
-   179		if (fd < 0) {
-   180			dma_fence_put(f);
-   181			return fd;
-   182		}
-   183	
-   184		file = sync_file_create(f);
-   185		dma_fence_put(f);
-   186		if (!file)
-   187			return -ENOMEM;
-   188	
-   189		fd_install(fd, file->file);
-   190	
-   191		return fd;
-   192	}
-   193	EXPORT_SYMBOL(host1x_fence_create_fd);
-   194	
+   277	
+ > 278	int tegra_drm_ioctl_gem_create(struct drm_device *drm, void *data,
+   279				       struct drm_file *file)
+   280	{
+   281		struct drm_tegra_gem_create *args = data;
+   282		struct tegra_bo *bo;
+   283	
+   284		if (args->flags)
+   285			return -EINVAL;
+   286	
+   287		bo = tegra_bo_create_with_handle(file, drm, args->size, args->flags,
+   288						 &args->handle);
+   289		if (IS_ERR(bo))
+   290			return PTR_ERR(bo);
+   291	
+   292		return 0;
+   293	}
+   294	
+ > 295	int tegra_drm_ioctl_gem_mmap(struct drm_device *drm, void *data,
 
 ---
 0-DAY CI Kernel Test Service, Intel Corporation
 https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
 
---qDbXVdCdHGoSgWSk
+--DocE+STaALJfprDB
 Content-Type: application/gzip
 Content-Disposition: attachment; filename=".config.gz"
 Content-Transfer-Encoding: base64
 
-H4sICH+g72AAAy5jb25maWcAnDzZduM2su/5Cp3kZeYhHe227z1+gEiQQkQSNEHKywuOYqs7
+H4sICK2x72AAAy5jb25maWcAnDzZduM2su/5Cp3kZeYhHe227z1+gEiQQkQSNEHKywuOYqs7
 vuOlR5Y76b+fKoALAIJyz+2T02mhCkChUKgNBf7y0y8j8n58fd4dH+93T0/fR1/2L/vD7rh/
 GH1+fNr/7yjko4yXIxqy8hMgJ48v73//tjs8L+ejxafJ/NP418P9ZLTZH172T6Pg9eXz45d3
 6P/4+vLTLz8FPItYLINAbmkhGM9kSW/Ky5/vn3YvX0bf9oc3wBtNZp/Gn8ajf3x5PP7Pb7/B
@@ -674,4 +672,4 @@ s+4wzQIFCrKNdlMMjVaAwtAtL3jaeFYL4lYXFaa/hLzMwRUOwEpQK43hUNTDrQ3JlA5GPKlX
 qFKhnSsFLSpEqxaffQLqNklV3UILE/mO9Ons3/Mz+J9xlgFLxfcJXI/ITNHcN3R/R8sMuH67
 gpcCkRvw5F7z3ObkQ8H/B8k7KdG1zwEA
 
---qDbXVdCdHGoSgWSk--
+--DocE+STaALJfprDB--
