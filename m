@@ -7,27 +7,27 @@ X-Spam-Status: No, score=-19.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FFE4C636CE
-	for <linux-tegra@archiver.kernel.org>; Thu, 15 Jul 2021 19:02:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9590DC64E6B
+	for <linux-tegra@archiver.kernel.org>; Thu, 15 Jul 2021 19:12:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 48B09613ED
-	for <linux-tegra@archiver.kernel.org>; Thu, 15 Jul 2021 19:02:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B250613E6
+	for <linux-tegra@archiver.kernel.org>; Thu, 15 Jul 2021 19:12:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237428AbhGOTFQ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 15 Jul 2021 15:05:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38802 "EHLO mail.kernel.org"
+        id S244061AbhGOTPd (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 15 Jul 2021 15:15:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50730 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S240256AbhGOTEl (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 15 Jul 2021 15:04:41 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id EB8D3613E5;
-        Thu, 15 Jul 2021 19:00:46 +0000 (UTC)
+        id S244763AbhGOTPO (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 15 Jul 2021 15:15:14 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 019D66141C;
+        Thu, 15 Jul 2021 19:11:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1626375647;
-        bh=E1rfawRYE3YC1A6vcqcfifcrxN/c0o1AcCscCPZDZlc=;
+        s=korg; t=1626376278;
+        bh=Pi3SmP6rNxgRgWzCKdrqpUvK9hb/g61I4pJGz9oPqgs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oveI0Kf6iCURMd53xdRXi3aYfAePiLcV1EGArviCTdBAI4GJXVb5wZRH6A7+P94mv
-         fX3zTkUPKVHsOe9hou5B2ojqDj4TsS/Ir+3UfBAHzSfg3hyd9W7NtWO/1MWqivkBxm
-         73uDTog3qagLh+44SbvTuskfAO9nbIHgBjkPmICU=
+        b=gVU5XToCAhIq4sARu6KWNV9xRr7DFrQuQ1cAxtGh7n3jqiiT9lgPDgAnvOM82fooZ
+         CxPv0/3YeJSBiBxLgG2JsdXGs7pbUCEKmOWJ16YqHpRCrLu8VPirriXy52HYv3J/Fg
+         MWa7jf99KVDLUecFMWed6eithsi3BQ5YSEPhjuao=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -38,12 +38,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         linux-tegra@vger.kernel.org
-Subject: [PATCH 5.12 177/242] drm/tegra: Dont set allow_fb_modifiers explicitly
-Date:   Thu, 15 Jul 2021 20:38:59 +0200
-Message-Id: <20210715182624.391118308@linuxfoundation.org>
+Subject: [PATCH 5.13 201/266] drm/tegra: Dont set allow_fb_modifiers explicitly
+Date:   Thu, 15 Jul 2021 20:39:16 +0200
+Message-Id: <20210715182645.713987940@linuxfoundation.org>
 X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20210715182551.731989182@linuxfoundation.org>
-References: <20210715182551.731989182@linuxfoundation.org>
+In-Reply-To: <20210715182613.933608881@linuxfoundation.org>
+References: <20210715182613.933608881@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -89,7 +89,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 --- a/drivers/gpu/drm/tegra/dc.c
 +++ b/drivers/gpu/drm/tegra/dc.c
-@@ -947,6 +947,11 @@ static const struct drm_plane_helper_fun
+@@ -999,6 +999,11 @@ static const struct drm_plane_helper_fun
  	.atomic_disable = tegra_cursor_atomic_disable,
  };
  
@@ -101,7 +101,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  static struct drm_plane *tegra_dc_cursor_plane_create(struct drm_device *drm,
  						      struct tegra_dc *dc)
  {
-@@ -975,7 +980,7 @@ static struct drm_plane *tegra_dc_cursor
+@@ -1032,7 +1037,7 @@ static struct drm_plane *tegra_dc_cursor
  
  	err = drm_universal_plane_init(drm, &plane->base, possible_crtcs,
  				       &tegra_plane_funcs, formats,
@@ -110,7 +110,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  				       DRM_PLANE_TYPE_CURSOR, NULL);
  	if (err < 0) {
  		kfree(plane);
-@@ -1094,7 +1099,8 @@ static struct drm_plane *tegra_dc_overla
+@@ -1151,7 +1156,8 @@ static struct drm_plane *tegra_dc_overla
  
  	err = drm_universal_plane_init(drm, &plane->base, possible_crtcs,
  				       &tegra_plane_funcs, formats,
@@ -122,9 +122,9 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  		return ERR_PTR(err);
 --- a/drivers/gpu/drm/tegra/drm.c
 +++ b/drivers/gpu/drm/tegra/drm.c
-@@ -1122,8 +1122,6 @@ static int host1x_drm_probe(struct host1
- 	drm->mode_config.max_width = 4096;
- 	drm->mode_config.max_height = 4096;
+@@ -1124,8 +1124,6 @@ static int host1x_drm_probe(struct host1
+ 	drm->mode_config.max_width = 0;
+ 	drm->mode_config.max_height = 0;
  
 -	drm->mode_config.allow_fb_modifiers = true;
 -
