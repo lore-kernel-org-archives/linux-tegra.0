@@ -2,162 +2,170 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-23.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84D58C636CA
-	for <linux-tegra@archiver.kernel.org>; Fri, 16 Jul 2021 08:31:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A5EBC12002
+	for <linux-tegra@archiver.kernel.org>; Fri, 16 Jul 2021 10:46:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 649C5613E8
-	for <linux-tegra@archiver.kernel.org>; Fri, 16 Jul 2021 08:31:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 52EF0613E9
+	for <linux-tegra@archiver.kernel.org>; Fri, 16 Jul 2021 10:46:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237633AbhGPIep (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 16 Jul 2021 04:34:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45192 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237240AbhGPIeo (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 16 Jul 2021 04:34:44 -0400
-Received: from mail-yb1-xb2f.google.com (mail-yb1-xb2f.google.com [IPv6:2607:f8b0:4864:20::b2f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC8D3C06175F
-        for <linux-tegra@vger.kernel.org>; Fri, 16 Jul 2021 01:31:49 -0700 (PDT)
-Received: by mail-yb1-xb2f.google.com with SMTP id v189so13619046ybg.3
-        for <linux-tegra@vger.kernel.org>; Fri, 16 Jul 2021 01:31:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=HGtdpt91do0UAzKVjzqqDE3AvD/lqY8Xht/fEpMQnq0=;
-        b=P16oRGarQytiFqfhZJBl+ZUQro/UDrWvRJMIJRxWNLceCagZTA596fayFSMH/AnHGj
-         QTlAYO4VpCZMbgfGKnEwFHjpTZAVt+Xmp1kCh4ViFplkfDuIsrS1mZtuIz4bCJMufi1H
-         nA5HcY2XlZU4IZn/GXXQ6r19L0OFWRmf4/jvnbHMBVM+mItS1AXlb5NI3mckzFpSWs88
-         Ny3/J22+ib9UC4j5kLZNJvK/1M65jsTU+sm600K4LfhmJY2GQcU8MObLT2ZDg/ry2c+D
-         uLUTtLHogxXDhFn44cs9MsQAZ9G3d9mZ61UTsFnXP8JOIJRUwbyphx6Q67iaOFKMzrkc
-         7UOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=HGtdpt91do0UAzKVjzqqDE3AvD/lqY8Xht/fEpMQnq0=;
-        b=VbKqfM0+1TKU6kXeG5bagKqopvF5q9cdhy3YEzy5gPOC5q6ca66rZNz1Lhmug/L2kk
-         g0UYEOS4XNCf1n5qVDkiUMfGnY3yy/EMqdddkEfvEorL+mphymIoW6DWjG5GLVy8Utdo
-         /nQ4G3e121AaeXsad60OIAdejIEuCWgEiCIAAOc03irLm7ed1YQzNLumBtkX1u3/uTng
-         C+23GelPU5HEiG0HMyE0U44fYlcB/Ao1EVO2K3oRU3WaW5Ze9RrRja6kWpa6pe4Vf5Pw
-         ksAXhc7GnNnkZAwHSTNqe9QQlkPc9tEN+9R7Jt93tOKAlNA9qD2I1Z3gHXPsd8In9cWD
-         73/g==
-X-Gm-Message-State: AOAM530FpBSHX90/IkDDblntfvMbAKX50TSMtNM3bKg9T4KcCeV/WstL
-        +DS8/UTCP8YjTcd6p4GuJqjK+MayNcvKl0Ln0ufs9Q==
-X-Google-Smtp-Source: ABdhPJzkTD6LkoXc/pFhqTkKNykHf2PVZO0AP5IDnDLnq5zEgkGOvdFHuwv0PEs9Ri9z730K1Gh6OWBhrBE68LPcXMk=
-X-Received: by 2002:a25:487:: with SMTP id 129mr11566148ybe.0.1626424309121;
- Fri, 16 Jul 2021 01:31:49 -0700 (PDT)
+        id S239388AbhGPKtU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 16 Jul 2021 06:49:20 -0400
+Received: from mail-dm6nam08on2089.outbound.protection.outlook.com ([40.107.102.89]:33046
+        "EHLO NAM04-DM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S238724AbhGPKtU (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Fri, 16 Jul 2021 06:49:20 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=TnyheKwUAXt8fpB7C+end9N6O1EDc3qA5/4WypGj3qxZkJlu7vH1CG5qrqpjbTYyIpaV5HUSEeOS3Q3KekOhM7WRXZDoAav2t+Jq+NCqcFLnxLZLxalWW/yMTaNnjkZ2rfnDiMokvpaXXbUaTO73zwlF9g4stFQIquWU34M1embF5fsXXXkyMSP7kWbx1XFV+72mFLGd6MkRyO7twucY/oVmc0TtyfNiksKtqqsT7+mA1grtR/0dvJPbzuQX3ec5hngat1IgvbTxqBDeCeghy9r8ShoNvwnLlLugmKreOKqhO0dd1AZziV9/HJSGFMAXpXanK8qE8D4cqK9Hnk4Rmg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fFfoIV0QzJ2CqNL6jGd0YeUCDEWHpfwKHhHKrnpri70=;
+ b=WpuMWZlZbiUnoelB790/1f7/SO+VZ2Vu6Nq6Hc7yB1WZ9p+NXofdTWQAxWjYxERkqgLWZa4WXRBfZs3dTnKKHtWD0K0BP5OBH8M9yYzb7SnsDimuJviMp7fNTmOncftGmMNqG86BQdDJt7rMCrz5en6y1uX/pbRmFrSp8Fpn4B7LcDGhQNCGrsm6aa39Hm0D7u0NlIGmKyU9KemHp3pFmv09hepLb6E1FqIN8OfE6hZYXEeCKhUtyKteMZV3oAXNEhFn7K2Kb5xF1M+ZnaAB0igtopdj+1b1k99j+WeaLnUlkMax7tvpQ2kyrQyMTt7UaNYvsGKpUFDcRKRpfQZNnQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.112.34) smtp.rcpttodomain=lists.linaro.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fFfoIV0QzJ2CqNL6jGd0YeUCDEWHpfwKHhHKrnpri70=;
+ b=PmFA9AvmPfEVoElj/Z45TQMgfg8o7BpSU46n1yYpXo6zvHF9zO5LIbAxXqMs74vVbHfJaE6g/8egL91Rn9icVbQoOGo8BL1D14cqXJXH6YtFGBPB74z+WTYI7RMghex0oERbl63S0KRIvjvj7H6sbbhhWbg3yzpbkDG4ENgDb134CAWsCffydwHwhat3bfUT9HnVmuBh36FN7YlMrf89EWhKTH1/Dl4VxV+vZEKrzz7rGZ8KOjde3TwqQrpfn8niYdAMQrgpNlMBJkZI98pPWg5YiILL8lI2PJN8SxwE/GJG16wrY2rFUPn0RCnxDw/TBqo1IptA6P3xKRv6GFkRuQ==
+Received: from BN6PR16CA0048.namprd16.prod.outlook.com (2603:10b6:405:14::34)
+ by MN2PR12MB3568.namprd12.prod.outlook.com (2603:10b6:208:c3::33) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4308.21; Fri, 16 Jul
+ 2021 10:46:23 +0000
+Received: from BN8NAM11FT039.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:405:14:cafe::86) by BN6PR16CA0048.outlook.office365.com
+ (2603:10b6:405:14::34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4331.21 via Frontend
+ Transport; Fri, 16 Jul 2021 10:46:23 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.34)
+ smtp.mailfrom=nvidia.com; lists.linaro.org; dkim=none (message not signed)
+ header.d=none;lists.linaro.org; dmarc=pass action=none
+ header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.112.34 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.112.34; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (216.228.112.34) by
+ BN8NAM11FT039.mail.protection.outlook.com (10.13.177.169) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.4331.21 via Frontend Transport; Fri, 16 Jul 2021 10:46:23 +0000
+Received: from [10.26.49.10] (172.20.187.6) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Fri, 16 Jul
+ 2021 10:46:20 +0000
+Subject: Re: submit.c:27:17: error: expected ')' before '__VA_OPT__'
+ current->comm __VA_OPT__(,) __VA_ARGS__)
+To:     Naresh Kamboju <naresh.kamboju@linaro.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        <lkft-triage@lists.linaro.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>
+CC:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Thierry Reding <treding@nvidia.com>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        David Airlie <airlied@linux.ie>,
+        Nathan Chancellor <natechancellor@gmail.com>
+References: <CA+G9fYshrRFN=Qa62eLKPbKHpRt0L-FuRrp0ebc29gdBqFMxeA@mail.gmail.com>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <f889adb9-dc01-79e3-12fb-1e66485246df@nvidia.com>
+Date:   Fri, 16 Jul 2021 11:46:18 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-References: <2a8eb285-3b71-199c-1bf4-39fb47fac77e@nvidia.com> <1625130054-22947-1-git-send-email-akhilrajeev@nvidia.com>
-In-Reply-To: <1625130054-22947-1-git-send-email-akhilrajeev@nvidia.com>
-From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date:   Fri, 16 Jul 2021 10:31:38 +0200
-Message-ID: <CAMpxmJWZm_N3yPKa2+32PNOyCUuSbjqWiDBSO3WHjKekZj8Fzg@mail.gmail.com>
-Subject: Re: [PATCH v5] gpio: tegra186: Add ACPI support
-To:     Akhil R <akhilrajeev@nvidia.com>
-Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        kyarlagadda@nvidia.com, Laxman Dewangan <ldewangan@nvidia.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio <linux-gpio@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>, mperttunen@nvidia.com,
-        smangipudi@nvidia.com, Thierry Reding <thierry.reding@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CA+G9fYshrRFN=Qa62eLKPbKHpRt0L-FuRrp0ebc29gdBqFMxeA@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [172.20.187.6]
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 2e118498-bcc3-4860-ff22-08d94846f480
+X-MS-TrafficTypeDiagnostic: MN2PR12MB3568:
+X-Microsoft-Antispam-PRVS: <MN2PR12MB35682DE06834B4C6494E62B8D9119@MN2PR12MB3568.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:7219;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: GkCXnlYnCKb1kjMOCyrgJDSr80vAJL+jSG73PCydUOK/0OY7F0IzYbVeXjI394NGG5cX3zZgeYIVfXHtPjLFktkjlAQ9AQUDuBtO5Iu6gcaItQF8g/6rXoGXhLPH1gG6l96SHEP8nejd+IgiZqXaWK8nn5BEk+Lyv5MhRIKxQ0/Qm2QXdRJ68MzhonzGkqF/kWnLuiDz41bCAK8+jVVUhJONn+48M3pOzLW9SqIltT1yRz4XAHspTn5Mx38qUjN0z8hd/htozTdXG5wQxUvd0FfT7T9KLxZPn1KFZxlfn8cX3eRgxE9rjXeBShZn4ZmzmC/5K3E1Vc11NY6lKzHZaZ/Lv2EhJjaEfBC655MXiFP1dts/yGlaef6rvfrDpbH/scz3zvQWAnyDtZ6lCbwcybE8re3LrHMmwY/dGiddORgyFvCAcwVxJoUVZXLyx4afK/OZ+VHh7ElJo1gMHpFVbNro1bZTESJ7sbJlCgUPoXCPjOmGFoRhvYSPQFAeEgWAIY7W0C7MtR8gr19QxTRiQ41HMv9A/GREXbfZU59+cbntT3yaPHliLNv0R0gdbZ5eKyv2sPfguWe3lunrZnZSaljWy6XiuaVYOi1gYA1jOwHueNxKr2pFciVx2Js2JRJzQ6ygCQ1TijLjl3vMA7r642aweHsyRWnSV8XpX/nZoexUX1nt4k6eXFPtVBTzBM143YVMSC70eQHekjxR8SKaHrkS0eeemKCtrz0xPklSLNG5qPNmZTS0Rp4JMMvHwQhRP+IhoYpt3SgdveZFg1R663y9/9xJik60rx5m2wLNeO2+6mhGQoL99f0itJH0Yg6LY2sWMESMM+vhlKieWtjL3qo3ujLxI/+i0mvMpGR3nOknMG+hDqx0jm9LVqgdsL5d
+X-Forefront-Antispam-Report: CIP:216.228.112.34;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid03.nvidia.com;CAT:NONE;SFS:(4636009)(346002)(136003)(396003)(376002)(39860400002)(36840700001)(46966006)(316002)(8936002)(70206006)(82740400003)(36906005)(2906002)(16526019)(186003)(36756003)(26005)(2616005)(54906003)(70586007)(478600001)(4326008)(31686004)(110136005)(31696002)(336012)(426003)(8676002)(7416002)(16576012)(53546011)(34020700004)(47076005)(7636003)(82310400003)(966005)(86362001)(356005)(36860700001)(83380400001)(5660300002)(43740500002)(2101003);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jul 2021 10:46:23.3862
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2e118498-bcc3-4860-ff22-08d94846f480
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.34];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT039.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB3568
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, Jul 1, 2021 at 11:01 AM Akhil R <akhilrajeev@nvidia.com> wrote:
->
-> Add ACPI module ID to probe the driver from the ACPI based bootloader
-> firmware.
->
-> Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
-> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-> ---
-> v5 changes:
->         * Updated ioremap_resource check as per Jon's comments.
->
->  drivers/gpio/gpio-tegra186.c | 30 ++++++++++++++++++++++++------
->  1 file changed, 24 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/gpio/gpio-tegra186.c b/drivers/gpio/gpio-tegra186.c
-> index 1bd9e44..8a64dcb 100644
-> --- a/drivers/gpio/gpio-tegra186.c
-> +++ b/drivers/gpio/gpio-tegra186.c
-> @@ -620,15 +620,21 @@ static int tegra186_gpio_probe(struct platform_device *pdev)
->         if (!gpio)
->                 return -ENOMEM;
->
-> -       gpio->soc = of_device_get_match_data(&pdev->dev);
-> +       gpio->soc = device_get_match_data(&pdev->dev);
->
->         gpio->secure = devm_platform_ioremap_resource_byname(pdev, "security");
-> -       if (IS_ERR(gpio->secure))
-> -               return PTR_ERR(gpio->secure);
-> +       if (IS_ERR(gpio->secure)) {
-> +               gpio->secure = devm_platform_ioremap_resource(pdev, 0);
-> +               if (IS_ERR(gpio->secure))
-> +                       return PTR_ERR(gpio->secure);
-> +       }
->
->         gpio->base = devm_platform_ioremap_resource_byname(pdev, "gpio");
-> -       if (IS_ERR(gpio->base))
-> -               return PTR_ERR(gpio->base);
-> +       if (IS_ERR(gpio->base)) {
-> +               gpio->base = devm_platform_ioremap_resource(pdev, 1);
-> +               if (IS_ERR(gpio->base))
-> +                       return PTR_ERR(gpio->base);
-> +       }
->
->         err = platform_irq_count(pdev);
->         if (err < 0)
-> @@ -690,11 +696,13 @@ static int tegra186_gpio_probe(struct platform_device *pdev)
->
->         gpio->gpio.names = (const char * const *)names;
->
-> +#if defined(CONFIG_OF_GPIO)
->         gpio->gpio.of_node = pdev->dev.of_node;
->         gpio->gpio.of_gpio_n_cells = 2;
->         gpio->gpio.of_xlate = tegra186_gpio_of_xlate;
-> +#endif /* CONFIG_OF_GPIO */
->
-> -       gpio->intc.name = pdev->dev.of_node->name;
-> +       gpio->intc.name = dev_name(&pdev->dev);
->         gpio->intc.irq_ack = tegra186_irq_ack;
->         gpio->intc.irq_mask = tegra186_irq_mask;
->         gpio->intc.irq_unmask = tegra186_irq_unmask;
-> @@ -918,10 +926,20 @@ static const struct of_device_id tegra186_gpio_of_match[] = {
->  };
->  MODULE_DEVICE_TABLE(of, tegra186_gpio_of_match);
->
-> +static const struct acpi_device_id  tegra186_gpio_acpi_match[] = {
-> +       { .id = "NVDA0108", .driver_data = (kernel_ulong_t)&tegra186_main_soc },
-> +       { .id = "NVDA0208", .driver_data = (kernel_ulong_t)&tegra186_aon_soc },
-> +       { .id = "NVDA0308", .driver_data = (kernel_ulong_t)&tegra194_main_soc },
-> +       { .id = "NVDA0408", .driver_data = (kernel_ulong_t)&tegra194_aon_soc },
-> +       {}
-> +};
-> +MODULE_DEVICE_TABLE(acpi, tegra186_gpio_acpi_match);
-> +
->  static struct platform_driver tegra186_gpio_driver = {
->         .driver = {
->                 .name = "tegra186-gpio",
->                 .of_match_table = tegra186_gpio_of_match,
-> +               .acpi_match_table = tegra186_gpio_acpi_match,
->         },
->         .probe = tegra186_gpio_probe,
->         .remove = tegra186_gpio_remove,
-> --
-> 2.7.4
->
 
-Can you rebase it on top of v5.14-rc1 and resend?
+On 15/07/2021 19:36, Naresh Kamboju wrote:
+> Regression detected on  Linux next tag 20210715 for arm64 due to the
+> following patch with
+>  - gcc-7 - FAILED
+>  -  clang-10 - FAILED
+>  -  clang-11- FAILED
+> But PASS with gcc-11 and clang-12
+> 
+> drm/tegra: Implement job submission part of new UAPI
+> Implement the job submission IOCTL with a minimum feature set.
+> 
+> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+> 
+> Build error:
+> ------------
+>   CC [M]  drivers/gpu/drm/tegra/submit.o
+> In file included include/linux/device.h:15:0,
+>                  include/linux/host1x.h:9,
+>                  drivers/gpu/drm/tegra/submit.c:6:
+> drivers/gpu/drm/tegra/submit.c: In function 'submit_copy_gather_data':
+> drivers/gpu/drm/tegra/submit.c:27:17: error: expected ')' before '__VA_OPT__'
+>    current->comm __VA_OPT__(,) __VA_ARGS__)
+>                  ^
+> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> 
+> ref:
+> https://gitlab.com/Linaro/lkft/mirrors/next/linux-next/-/jobs/1425953551#L197
+> 
+> https://ci.linaro.org/view/lkft/job/openembedded-lkft-linux-next/DISTRO=lkft,MACHINE=juno,label=docker-buster-lkft/1068/consoleText
 
-Bart
+
+Thanks, yes I am seeing the same. The following fixes this and I will
+send a patch to get this corrected.
+
+diff --git a/drivers/gpu/drm/tegra/submit.c b/drivers/gpu/drm/tegra/submit.c
+index c53b7207c478..e49630089149 100644
+--- a/drivers/gpu/drm/tegra/submit.c
++++ b/drivers/gpu/drm/tegra/submit.c
+@@ -24,7 +24,7 @@
+ #define SUBMIT_ERR(context, fmt, ...) \
+        dev_err_ratelimited(context->client->base.dev, \
+                "%s: job submission failed: " fmt "\n", \
+-               current->comm __VA_OPT__(,) __VA_ARGS__)
++               current->comm, ##__VA_ARGS__)
+
+ static struct tegra_drm_mapping *
+ tegra_drm_mapping_get(struct tegra_drm_context *context, u32 id)
+
+
+Cheers
+Jon
+
+-- 
+nvpublic
