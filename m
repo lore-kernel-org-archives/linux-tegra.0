@@ -2,105 +2,140 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-20.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18C98C636CB
-	for <linux-tegra@archiver.kernel.org>; Fri, 16 Jul 2021 23:37:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FD35C636C9
+	for <linux-tegra@archiver.kernel.org>; Sat, 17 Jul 2021 07:30:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 03819613ED
-	for <linux-tegra@archiver.kernel.org>; Fri, 16 Jul 2021 23:37:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1FFE66115A
+	for <linux-tegra@archiver.kernel.org>; Sat, 17 Jul 2021 07:30:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229984AbhGPXj6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 16 Jul 2021 19:39:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53536 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229893AbhGPXj5 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 16 Jul 2021 19:39:57 -0400
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 165CCC06175F
-        for <linux-tegra@vger.kernel.org>; Fri, 16 Jul 2021 16:37:01 -0700 (PDT)
-Received: by mail-wr1-x432.google.com with SMTP id f9so13811422wrq.11
-        for <linux-tegra@vger.kernel.org>; Fri, 16 Jul 2021 16:37:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=aFrqnuOxWnNghnHgreX5L4xNHEhiU0UDW3cJN11PLf8=;
-        b=MvIuIMqjYumtbh44qjjRozsAAdYcITm/9s2p9OPQdA+GM2Ab66yw1p7V+Nl4ORdsLY
-         xFqwMJIvGuB1AaMJ92DoSStF7ZM/UMZyl9Q76N0axfICJ7KsdTOXryahc4b83Cq/OScs
-         xrml6AAI6H+uoZDRowqrQL1ZzVKY6wHlcH06/7iaimCIE4QNF3jNrAMWXWyCeMApMlFd
-         vl1i+irnZ5haQtHWkY1PT3FpJjZBH/ll/x3G4EyQmedq5+S/tVsSo+LNgSurxWXqItJ9
-         R9z4co1Pq34hmrXcIktMqTKQlkyT6i8jKsvlmTfds4yP47N2o65exVjdh3r2CTQCtlD8
-         Obmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=aFrqnuOxWnNghnHgreX5L4xNHEhiU0UDW3cJN11PLf8=;
-        b=aNCmZ2o7cmIw9t4IbzuJwi0qggs9RMt8qTEj6VBHEKJpAMj3jxvq+pObl5lzFa3MJv
-         W0Tg1cPs0MibMGQJ3Dzw6BP50UWyRwSmdz3QuxkzF88Q6E/6Gg4gLPFDGf64Q/Au0An8
-         o9iZOW18oHH+68PFi6zltihJNCzbtIEJqqgoIU/JvFH9HgVlaAhrbyavvh4lm4hTRSkQ
-         NZZCsfXb7E6BgNZRwwQh/KHT52RqUsoDRJ7rEyldlfs42HjtkdaMa3YsJLyLWhBHyHAN
-         bsDeE4h+ed++QyZfy1kuRGnMA77cWUQclqpkbJCAVjeqfa+khZ6MhEScmjFG8aBefjom
-         T99g==
-X-Gm-Message-State: AOAM5300LNsjmSMTmrcaunZJFABimxbgZIo+/oFWP999qiGc4SmkHGjk
-        C5UBlHcUjqsFg95wng0GckI=
-X-Google-Smtp-Source: ABdhPJz4ustaG9g3xZy9RSyi5wlvAUtBExjgHaBvQOOm6zEhvFpT5mamVE8voUvEkbl79WTJlrq6Zw==
-X-Received: by 2002:adf:f292:: with SMTP id k18mr15257499wro.265.1626478619581;
-        Fri, 16 Jul 2021 16:36:59 -0700 (PDT)
-Received: from localhost ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id o19sm260893wmr.18.2021.07.16.16.36.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Jul 2021 16:36:58 -0700 (PDT)
-From:   Thierry Reding <thierry.reding@gmail.com>
-List-Id: <soc.lore.kernel.org>
-To:     arm@kernel.org, soc@kernel.org
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [GIT PULL] arm64: tegra: Device tree fixes for v5.14-rc3
-Date:   Sat, 17 Jul 2021 01:38:58 +0200
-Message-Id: <20210716233858.10096-1-thierry.reding@gmail.com>
-X-Mailer: git-send-email 2.32.0
+        id S231596AbhGQHdm (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 17 Jul 2021 03:33:42 -0400
+Received: from mail-mw2nam10on2071.outbound.protection.outlook.com ([40.107.94.71]:27776
+        "EHLO NAM10-MW2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S230419AbhGQHdl (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Sat, 17 Jul 2021 03:33:41 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=SVBgq6GHpxjmedX1E83tEELm3tfSTrM1CTqyMm1nfcAIrP6aAa0Kz+xkJQ1X2bW3tJXM8MjLIhWfgzdowVNRmHwWYZ/+6bI4hR9izcHgs619QVGSDZCfHXMSdI9CPjT90CevWuubgMlnfWAigG2SNCGrLLqXdlx4RhdZh+Fott75NqAcmnOSf10VGF6tcMVCackUQQRAHYagioMCtHMakEaoEyquXFY74z/fRmoFFhtH9ivqy375YrWt1wcT5n98rv9B/NCJBbnAqXTrt8U8+EtxebZoW9S7u+4jMr/xt+qO7/6cnSMC1q61UaX5Xfo3CJ0/q7tFdO0VSnPuOz4E3Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hBiurlDpX5kHpiGl8jtalFwt8rADWTzR/aGec36+dCI=;
+ b=WZthFcdbX5HLbRyhT9Up9y48CyLduYlcB0fc5uNMn7TQRzoVw6L5iM2LXyWWR7QtOAATN0LUWvLQ7cB4dqq5scN5zvQOYjXKxRypE4Z9RFikTIR6vvnzVpfQZ1X9o4eTPLYhHiqZ1DlDSwKGv4SF86NGkuv4PwmMlDpqW5lIx4ZBtzXrMZNqnwYO5bZWIzRz8GNiWtblbRrerSTcEr8uHXgCy15+hf4VJ4irvKiPAVcr+yyJQU/LibK6uHmsb3HuT8IC/54LyMb/eXQhJZIm/XMHyjku8/FLsfe0KXeEaCIBUTiLNdcb7/9jDenLvitpImAavZKmiKo096UqdQ+SGg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.112.34) smtp.rcpttodomain=denx.de smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hBiurlDpX5kHpiGl8jtalFwt8rADWTzR/aGec36+dCI=;
+ b=EryQzZGZADOpuyLfEzV+HpWKohCXs7AEHJumK+cfmUWCu0H1jWNreOc4NELtLZ9/JOWg4ux2/ndbO6zL4XNQsm4+pqd54vazG1m0i7zN/02elampeRfTfaBFq7NermSaSDgPv3WPtwKhrGKRhZM2egkCjMAPa/vk11J/D620ScnsZ3yPMtmunoH4MDWxVLC34YY47BMbLRbXolZvepOgyQUSWBu/rfEi9R5z/zSK99QgphDthVbs197/5vtJ+UpnuvYaQ/LLBoAkUqkYAn9ulVd6nBrdY2Ak2tEYqlFO6OeYokrAcCGSGiW28W7dw2UmY0+GgMbW4+oGnUHd6qkGBg==
+Received: from DM6PR18CA0032.namprd18.prod.outlook.com (2603:10b6:5:15b::45)
+ by CH2PR12MB5563.namprd12.prod.outlook.com (2603:10b6:610:6a::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4331.21; Sat, 17 Jul
+ 2021 07:30:44 +0000
+Received: from DM6NAM11FT065.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:5:15b:cafe::8a) by DM6PR18CA0032.outlook.office365.com
+ (2603:10b6:5:15b::45) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4331.21 via Frontend
+ Transport; Sat, 17 Jul 2021 07:30:44 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.34)
+ smtp.mailfrom=nvidia.com; denx.de; dkim=none (message not signed)
+ header.d=none;denx.de; dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.112.34 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.112.34; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (216.228.112.34) by
+ DM6NAM11FT065.mail.protection.outlook.com (10.13.172.109) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.4331.21 via Frontend Transport; Sat, 17 Jul 2021 07:30:44 +0000
+Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Sat, 17 Jul
+ 2021 07:30:43 +0000
+Received: from jonathanh-vm-01.nvidia.com (172.20.187.6) by mail.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1497.2 via Frontend
+ Transport; Sat, 17 Jul 2021 07:30:43 +0000
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
+        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
+        <stable@vger.kernel.org>, <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 5.12 000/235] 5.12.18-rc2 review
+In-Reply-To: <20210716182137.994236340@linuxfoundation.org>
+References: <20210716182137.994236340@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Message-ID: <285bd02c2f2042e1ba43f240ee024384@HQMAIL105.nvidia.com>
+Date:   Sat, 17 Jul 2021 07:30:43 +0000
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: c957a401-5b6c-4d14-721a-08d948f4c9a3
+X-MS-TrafficTypeDiagnostic: CH2PR12MB5563:
+X-Microsoft-Antispam-PRVS: <CH2PR12MB5563EC9E35C0B85D74EC79DCD9109@CH2PR12MB5563.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: o49dD5c6nSStNyfc1YsNd7wHT9wV7C18deoZwZRXJA4xxkDZ9W0WYU4Oqr40jcYT5T4lipEwFJyETlJbdaXctF9j6ivMXOZxoVOonXPAKS3/QXwF1Ig2+WFuXOFEKHV37bw4nU6Pq5/an3rPo7d4RO+xGFp44jSp8cK1uaI7KpzBr9Rxp0XIT+jXU7fopsD2vTzSIsXgjax+KhUoMPRb0wMQfkEo6OYcMz1dNEofBAGinjwIMoqA+CK7gi+bv6ov5/vbZDwswP/mp8v5EZb6x5bLlgZ4Uh30aSbkX1xpv2bW0oauVdG/j8l0xo9iIhK3zNLmCq7gcuP7JZUggwCFOKqJtmmVlNyCf6frjSjgKXjNzCPD1AR787Ahn1pT1whp0lgtAaMEzNkoHsFOME4AwLccOqUgANEg+8r5hWQF6eZpFmU4r/e/wdsHlL5YTikK8SoUpPa6bRgIty/7mQ6gciCJYa2Jv7BZfMQvdGKWbF/BsKNHfswcOBJMxKIXLXt3Zy6OooO7F3hUS6UEMlOWIS6ZiKod31319tI84ewCNj689HkLWVYpnqOehiTMzUT/JEAfKFHucdub/yPWgQ81jJXBh4J0Ric9PrNkHekwPZG7KvmUS5afIB46qBW5+d3/b0vqsg6H61bzQpU+U0qicYLEkIiSg38UvA44k1BTqEMZqS2v0AitOn1pY87G16pk1KkE1LFo/c5d5gLXPR+lOCu6x6M4qaGJqIIkxWozK0eoqhRBaEy7cGYAkDgQeT/TWt27Cq22N90v4SD/bF1sJ3luAOVBV2rETfypns42F7aR8f0B4V8JW1A/uWg8A3L0
+X-Forefront-Antispam-Report: CIP:216.228.112.34;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid03.nvidia.com;CAT:NONE;SFS:(4636009)(346002)(396003)(136003)(376002)(39860400002)(36840700001)(46966006)(4326008)(82740400003)(8676002)(70206006)(26005)(70586007)(426003)(82310400003)(336012)(54906003)(34020700004)(6916009)(86362001)(2906002)(478600001)(36860700001)(7416002)(356005)(24736004)(186003)(108616005)(36906005)(8936002)(316002)(5660300002)(966005)(47076005)(7636003);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jul 2021 07:30:44.0558
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: c957a401-5b6c-4d14-721a-08d948f4c9a3
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.34];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT065.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB5563
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi ARM SoC maintainers,
+On Fri, 16 Jul 2021 20:29:03 +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.12.18 release.
+> There are 235 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sun, 18 Jul 2021 18:16:27 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.12.18-rc2.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.12.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-The following changes since commit c667dcd4dfcd515ad2c9b3953a33d742985a0b5e:
+All tests passing for Tegra ...
 
-  arm64: tegra: Enable SMMU support for USB on Tegra194 (2021-07-09 16:50:44 +0200)
+Test results for stable-v5.12:
+    10 builds:	10 pass, 0 fail
+    28 boots:	28 pass, 0 fail
+    110 tests:	110 pass, 0 fail
 
-are available in the Git repository at:
+Linux version:	5.12.18-rc2-g55f470748e68
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
+                tegra20-ventana, tegra210-p2371-2180,
+                tegra210-p3450-0000, tegra30-cardhu-a04
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.14-rc3-arm64-dt
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
-for you to fetch changes up to ba02920c51debb9198e72b3a8726a7c5ae4ffb41:
-
-  arm64: tegra: Enable SMMU support for PCIe on Tegra194 (2021-07-17 01:27:10 +0200)
-
-Here's another fix for SMMU support affecting PCIe that Vidya found. We
-do have a lack of test coverage in this area that we're working to fix.
-
-Thierry
-
-----------------------------------------------------------------
-arm64: tegra: Device tree fixes for v5.14-rc3
-
-This contains one more fix for SMMU enablement on Tegra194, this time
-for PCIe.
-
-----------------------------------------------------------------
-Vidya Sagar (1):
-      arm64: tegra: Enable SMMU support for PCIe on Tegra194
-
- arch/arm64/boot/dts/nvidia/tegra194.dtsi | 60 ++++++++++++++++++++++++++++----
- 1 file changed, 54 insertions(+), 6 deletions(-)
+Jon
