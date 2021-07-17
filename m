@@ -2,32 +2,64 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6212C636CA
-	for <linux-tegra@archiver.kernel.org>; Sat, 17 Jul 2021 16:20:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6351FC636CA
+	for <linux-tegra@archiver.kernel.org>; Sat, 17 Jul 2021 17:29:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 83D9860FF3
-	for <linux-tegra@archiver.kernel.org>; Sat, 17 Jul 2021 16:20:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4813F60FE4
+	for <linux-tegra@archiver.kernel.org>; Sat, 17 Jul 2021 17:29:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229932AbhGQQXI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 17 Jul 2021 12:23:08 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:47196 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229462AbhGQQXH (ORCPT
+        id S232601AbhGQRcc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 17 Jul 2021 13:32:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60674 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232010AbhGQRcc (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sat, 17 Jul 2021 12:23:07 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: sre)
-        with ESMTPSA id 890A01F43463
-Received: by earth.universe (Postfix, from userid 1000)
-        id 03D273C0C97; Sat, 17 Jul 2021 18:20:07 +0200 (CEST)
-Date:   Sat, 17 Jul 2021 18:20:06 +0200
-From:   Sebastian Reichel <sebastian.reichel@collabora.com>
-To:     Dmitry Osipenko <digetx@gmail.com>
+        Sat, 17 Jul 2021 13:32:32 -0400
+Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28A41C061762;
+        Sat, 17 Jul 2021 10:29:35 -0700 (PDT)
+Received: by mail-lf1-x12d.google.com with SMTP id f30so21512081lfj.1;
+        Sat, 17 Jul 2021 10:29:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=N5z7xrInHmNrXI9aN34rhAl4c3ECcOCnUV9aOKCVrIg=;
+        b=YWLHiL6JCxcbNMlOR6BFuGqIAblgPQHJosP23FUYarmDwJVc3NtsUY5qKPgzO8bKB8
+         6SLc5MBTx3GcPB1B+0J1SzFDs7UMnvonHgQOfA1vygxaaUHp6pHb5Vhf0Hx1NObWPpAs
+         KpkZ4sY/oJdP+yl3gyZ/Pa2iG9IhjXgQPKTzc19+h5T3FhgW92Ayphy8kk8JpkN0OSJU
+         jTyyOFJQOyANGhxkFcclOy/27rD/89EVnFuSjYbcfhFZE2i6izbE8ReTDsdaT/G6773V
+         Qf4F8IiNCumQM5V9/QiF5F6YmnNbd23fQmV8q8HY98HIr/hMTwq1SCvpuoVkPtIFPRxH
+         pi4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=N5z7xrInHmNrXI9aN34rhAl4c3ECcOCnUV9aOKCVrIg=;
+        b=RNiy93nqjUOqnP0gLGsZQwiTeu+V42WmpLZCSACTsSdtubfj2BASEtocEPmdMPnU+e
+         Nw1wp1AA0na1qF+MsE3uRqx4JqFfMAbCmSDkOxN07xvMb/xsK/Ny5u2uAetQQstWByTV
+         nAuymiMZ6b+JY37YRSwJhg2tYZrhvELJOSNmMBh+iGBHqdpp/V5f22ipO+GkWtbUwA26
+         TWG3zg9B7iLfOCOgA5Hog2+4zu06PgnDs4MeYQRIMNYHbFA87dWh00Hx0f6dltnjmt8/
+         0VkcwyXphqdzWRcYGIUY4LHXl82V8037Q/4P/YCmIfZoPNr0JCnS2sFACXjMicxTzOFg
+         51tA==
+X-Gm-Message-State: AOAM530cb5i1LgJOeROkkqsXgPKAq16aaiw1TnadSZrmF0J1c60xjCuP
+        Yi8tOChUQ6Tu5tHbkxUL8uezoUkzyc0=
+X-Google-Smtp-Source: ABdhPJwBfAn5E2GJO9yPk4k/vB8xdiHsfYG9R/Bcgjxu8CLZu25n9DKLoYHljQE9Bz12qdbtFS/pAw==
+X-Received: by 2002:ac2:52ac:: with SMTP id r12mr11713196lfm.364.1626542973425;
+        Sat, 17 Jul 2021 10:29:33 -0700 (PDT)
+Received: from [192.168.2.145] (46-138-17-250.dynamic.spd-mgts.ru. [46.138.17.250])
+        by smtp.googlemail.com with ESMTPSA id o11sm1385871ljg.29.2021.07.17.10.29.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 17 Jul 2021 10:29:33 -0700 (PDT)
+Subject: Re: [PATCH v4 08/12] power: supply: smb347-charger: Remove caching of
+ charger state
+To:     Sebastian Reichel <sebastian.reichel@collabora.com>
 Cc:     Thierry Reding <treding@nvidia.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Mark Brown <broonie@kernel.org>,
@@ -38,121 +70,39 @@ Cc:     Thierry Reding <treding@nvidia.com>,
         David Heidelberg <david@ixit.cz>, devicetree@vger.kernel.org,
         linux-pm@vger.kernel.org, linux-usb@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v4 08/12] power: supply: smb347-charger: Remove caching
- of charger state
-Message-ID: <20210717162006.66cqkbw2mertd6tr@earth.universe>
 References: <20210717121112.3248-1-digetx@gmail.com>
  <20210717121112.3248-9-digetx@gmail.com>
+ <20210717162006.66cqkbw2mertd6tr@earth.universe>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <0df9fbf5-26fa-5d35-46d6-5c36567d6ed2@gmail.com>
+Date:   Sat, 17 Jul 2021 20:29:32 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="dgyf46uz57z2zrjo"
-Content-Disposition: inline
-In-Reply-To: <20210717121112.3248-9-digetx@gmail.com>
+In-Reply-To: <20210717162006.66cqkbw2mertd6tr@earth.universe>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+17.07.2021 19:20, Sebastian Reichel пишет:
+> Hi,
+> 
+> On Sat, Jul 17, 2021 at 03:11:08PM +0300, Dmitry Osipenko wrote:
+>> Regmap already provides us with the caching, so remove caching of charger
+>> state to make code cleaner.
+> 
+> cache_type is not initialized in smb347's regmap config and thus
+> set to 0 = REGCACHE_NONE:
+> 
+> static const struct regmap_config smb347_regmap = {
+> 	.reg_bits	= 8,
+> 	.val_bits	= 8,
+> 	.max_register	= SMB347_MAX_REGISTER,
+> 	.volatile_reg	= smb347_volatile_reg,
+> 	.readable_reg	= smb347_readable_reg,
+> };
 
---dgyf46uz57z2zrjo
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi,
-
-On Sat, Jul 17, 2021 at 03:11:08PM +0300, Dmitry Osipenko wrote:
-> Regmap already provides us with the caching, so remove caching of charger
-> state to make code cleaner.
-
-cache_type is not initialized in smb347's regmap config and thus
-set to 0 =3D REGCACHE_NONE:
-
-static const struct regmap_config smb347_regmap =3D {
-	.reg_bits	=3D 8,
-	.val_bits	=3D 8,
-	.max_register	=3D SMB347_MAX_REGISTER,
-	.volatile_reg	=3D smb347_volatile_reg,
-	.readable_reg	=3D smb347_readable_reg,
-};
-
--- Sebastian
-
-
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/power/supply/smb347-charger.c | 14 ++------------
->  1 file changed, 2 insertions(+), 12 deletions(-)
->=20
-> diff --git a/drivers/power/supply/smb347-charger.c b/drivers/power/supply=
-/smb347-charger.c
-> index db1378b41f80..f81c60c679a0 100644
-> --- a/drivers/power/supply/smb347-charger.c
-> +++ b/drivers/power/supply/smb347-charger.c
-> @@ -135,7 +135,6 @@
->   * @id: SMB charger ID
->   * @mains_online: is AC/DC input connected
->   * @usb_online: is USB input connected
-> - * @charging_enabled: is charging enabled
->   * @irq_unsupported: is interrupt unsupported by SMB hardware
->   * @max_charge_current: maximum current (in uA) the battery can be charg=
-ed
->   * @max_charge_voltage: maximum voltage (in uV) the battery can be charg=
-ed
-> @@ -192,7 +191,6 @@ struct smb347_charger {
->  	unsigned int		id;
->  	bool			mains_online;
->  	bool			usb_online;
-> -	bool			charging_enabled;
->  	bool			irq_unsupported;
-> =20
->  	unsigned int		max_charge_current;
-> @@ -358,21 +356,13 @@ static int smb347_charging_status(struct smb347_cha=
-rger *smb)
-> =20
->  static int smb347_charging_set(struct smb347_charger *smb, bool enable)
->  {
-> -	int ret =3D 0;
-> -
->  	if (smb->enable_control !=3D SMB3XX_CHG_ENABLE_SW) {
->  		dev_dbg(smb->dev, "charging enable/disable in SW disabled\n");
->  		return 0;
->  	}
-> =20
-> -	if (smb->charging_enabled !=3D enable) {
-> -		ret =3D regmap_update_bits(smb->regmap, CMD_A, CMD_A_CHG_ENABLED,
-> -					 enable ? CMD_A_CHG_ENABLED : 0);
-> -		if (!ret)
-> -			smb->charging_enabled =3D enable;
-> -	}
-> -
-> -	return ret;
-> +	return regmap_update_bits(smb->regmap, CMD_A, CMD_A_CHG_ENABLED,
-> +				  enable ? CMD_A_CHG_ENABLED : 0);
->  }
-> =20
->  static inline int smb347_charging_enable(struct smb347_charger *smb)
-> --=20
-> 2.32.0
->=20
-
---dgyf46uz57z2zrjo
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmDzAzIACgkQ2O7X88g7
-+pquQw//T9rvYylRZXTm+X6TbARMLX/jnUii6FLPGAAb5Xs/ROMpqOqzUuK5v9JL
-iOs1r2DNcK1OzdDEPLwh2OA5FHoihxx+K/ZMLm0aAJZNXmTbmysa0UcdFWrRgtrV
-CZ41kuCa3VOJWBexZt+MZ1vXjIOi1T4CGfbhoGnFggv+jEHF/k6+XncDSFCw/HDn
-PiZm5TklYUEQPkcJPhGBxQra1UNjTGOg6XQ4rIfgKQG/TyTdEv2/MAPsHLk9KC5N
-6NgGxBRcvDgb+BLmJ4d5j4FLebnSIJaRaRSN5rojjdIIG72mwtSbeyq/URs5ucKU
-ejDWI/nag9xwPPU+l+LFc7sYiUuEnWameuuzbex1kpa4/uWDX9QRvnPZpZWhTAfC
-8Ki+Sg4BkVIxvyosRmKUBccAfPNrs6TPPfpjgbiHjvrYkk2ZS5aJ1/vZeW94vDuw
-rph+KJQ5yHIjwdXnbx6i+zjjwAphdqOUpFqc+KeOyrGp8Q0Re4RVRs+wxd6pEdCo
-+FapgItIggnp8FGvfOwSIqEC2Hhz/wOFLKlKudhbKdESeAqXf/VxqP6Tf1mESP9Y
-vQDYcglbuiU5bAiWO6bmEPOvPa4IYYBf5oAxhDe/fR9fGM/JrZenFpavcsVHAQV7
-bRiHd5YeHAmORHxxvb3iB/U0jKwFdKnYE+PJOrfbcWtViktV4gY=
-=9ZX5
------END PGP SIGNATURE-----
-
---dgyf46uz57z2zrjo--
+Good catch, thank you. I'll add patch to enable caching.
