@@ -2,165 +2,170 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.5 required=3.0 tests=BAYES_00,
-	DKIM_ADSP_CUSTOM_MED,DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-20.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9C52C63798
-	for <linux-tegra@archiver.kernel.org>; Sat, 17 Jul 2021 18:23:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E907C636CB
+	for <linux-tegra@archiver.kernel.org>; Sun, 18 Jul 2021 11:41:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B0F7161183
-	for <linux-tegra@archiver.kernel.org>; Sat, 17 Jul 2021 18:23:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 16806611AE
+	for <linux-tegra@archiver.kernel.org>; Sun, 18 Jul 2021 11:41:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235844AbhGQS0h (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 17 Jul 2021 14:26:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44288 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235283AbhGQS0F (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Sat, 17 Jul 2021 14:26:05 -0400
-Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F95AC061767;
-        Sat, 17 Jul 2021 11:23:08 -0700 (PDT)
-Received: by mail-lf1-x135.google.com with SMTP id g8so15764854lfh.8;
-        Sat, 17 Jul 2021 11:23:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=5Vgfkn6aojezGyNshrp4rdUuCsXyIjMI3yAFc0juggw=;
-        b=dB+8mmmwzGt+/Vy7uuglaj10Q8xGvMXumt3y0N/FQd01CCNkYOLiONJQTitQUgpnjR
-         mOja3Z+IPjQ6NrCqXRfwfMo4n90CMjJVLsFXx4WpIGJg57tbeozxs5dYMFQps6AuMpmA
-         AogzkcbUpR23cTnZa0bFcA7iJB86WtfsViFdoC+h3m8h/Zayu4C5pIp5Kz0DjAO97k3/
-         1Iva72Qkkl8KwE8ZebPEwpuDpVIAZ5MyxYVnXTyJ/N0QzXfA5HfUeI5aa35pDEXIdiJ9
-         pKPBWtQ2jw1fQ310DLC5W2vujqMYP+C/YRxRdoryEP8w+N5M33I91eSZw/E19ws65Iu7
-         6jOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=5Vgfkn6aojezGyNshrp4rdUuCsXyIjMI3yAFc0juggw=;
-        b=ER0j+120iGDNciI7J8AFata+vWK5iT4J5m79R8s9ByW8FEdUnz+YZuIi1/vUBQ+Tqq
-         8UtzqeNUxApMdkaXO6/80b+znqhMY3AROx970ORCVvuBr6KKAN2E4YnZbu0Jnv2RWEET
-         U6K9xh3QpXBLSsnjr3IlmDDossXRxgt66y3u4iH9FXaN/jdJVUSNl2RAUQShRSYJCkc1
-         bQHrGtHVpIs/4u5gn4klqNERguipENoB6unU4haaNDxNmLIdKu3Zds53QnQIfT4+F2jx
-         jD8T26RBFb6c64AFcddqe/tkTrjiJ6Fksra715HUREyd2VnEb1XM05ju08lctlAKEqCT
-         Pebw==
-X-Gm-Message-State: AOAM531G1OOJp/z5128K1YBV+k5w33DtJHFsSMA05f4hPjYVy23aDoPC
-        CyuRqwuFp28ckIx6I6k1SJQ=
-X-Google-Smtp-Source: ABdhPJwNiE2Ba5A66eTVEdLqAWKmYI5rMLDUIsmfcF2G529UU5aO0hwhC2ISCZTWSC4j76AM8hkQ+g==
-X-Received: by 2002:a19:7408:: with SMTP id v8mr12332827lfe.508.1626546186467;
-        Sat, 17 Jul 2021 11:23:06 -0700 (PDT)
-Received: from localhost.localdomain (46-138-17-250.dynamic.spd-mgts.ru. [46.138.17.250])
-        by smtp.gmail.com with ESMTPSA id z20sm1409532ljk.123.2021.07.17.11.23.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 17 Jul 2021 11:23:06 -0700 (PDT)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <treding@nvidia.com>,
+        id S233043AbhGRLn5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 18 Jul 2021 07:43:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60848 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232851AbhGRLn4 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Sun, 18 Jul 2021 07:43:56 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id C29DB611AD;
+        Sun, 18 Jul 2021 11:40:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1626608458;
+        bh=3r+ZJ2a/sCjL++ntc+WZnrTk0ubp8K3+zZZ4PPnoCDs=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=cX0vEmyFJvWdDz2GDub0q5Evrfuz5TWhTAO4PTTcSIjo3PN8Htz3NmYRq8yxhEys0
+         kBW/bZOE2ziuzNJ+uGSvJ3Pj42C/5QpDtxIzf+zmDHk4E2jwmmj4JJnqPkaeQgiHRK
+         2OHxCf+oz2UTpW6xywqJX07AcfzP78deOuElK1lwy2tralsQH8iZ0r8Z8Tj2oX+SoA
+         wplTKiKOcsLf28NuhozUJ58o9afWIJiLlsDuiajbknMYrtcS5YDyY0e8KXe37qE5/c
+         Vgc97DkRz4wnw2Ul7FJips9qLI+MpWd9Ik1mQppTynMXSMC/BBdGr0rA7sghxZJib1
+         P0KvWzvE1EewQ==
+Received: by mail.kernel.org with local (Exim 4.94.2)
+        (envelope-from <mchehab@kernel.org>)
+        id 1m55AE-001DwD-DS; Sun, 18 Jul 2021 13:40:54 +0200
+From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To:     Rob Herring <robh@kernel.org>
+Cc:     linuxarm@huawei.com, mauro.chehab@huawei.com,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>, JC Kuo <jckuo@nvidia.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Mark Brown <broonie@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Peter Chen <peter.chen@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Felipe Balbi <balbi@kernel.org>,
-        David Heidelberg <david@ixit.cz>
-Cc:     devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Sameer Pujar <spujar@nvidia.com>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Vidya Sagar <vidyas@nvidia.com>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
         linux-tegra@vger.kernel.org
-Subject: [PATCH v5 06/12] dt-bindings: power: supply: smb347-charger: Document USB VBUS regulator
-Date:   Sat, 17 Jul 2021 21:21:28 +0300
-Message-Id: <20210717182134.30262-7-digetx@gmail.com>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20210717182134.30262-1-digetx@gmail.com>
-References: <20210717182134.30262-1-digetx@gmail.com>
+Subject: [PATCH v5 5/5] dt-bindings: arm64: tegra: fix pcie-ep DT nodes
+Date:   Sun, 18 Jul 2021 13:40:52 +0200
+Message-Id: <15cf5067c0567614d5b186d006ebd88395d56b63.1626608375.git.mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.31.1
+In-Reply-To: <cover.1626608375.git.mchehab+huawei@kernel.org>
+References: <cover.1626608375.git.mchehab+huawei@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Sender: Mauro Carvalho Chehab <mchehab@kernel.org>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-SMB347 can supply power to USB VBUS, which is required by OTG-cable
-devices that want to switch USB port into the host mode. Add USB VBUS
-regulator properties.
+As defined by Documentation/devicetree/bindings/pci/pci-ep.yaml,
+PCIe endpoints match this pattern:
 
-Reviewed-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+	properties:
+	  $nodename:
+	    pattern: "^pcie-ep@"
+
+Change the existing ones in order to avoid those warnings:
+
+	arch/arm64/boot/dts/nvidia/tegra194-p3509-0000+p3668-0001.dt.yaml: pcie_ep@14160000: $nodename:0: 'pcie_ep@14160000' does not match '^pcie-ep@'
+		From schema: Documentation/devicetree/bindings/pci/snps,dw-pcie-ep.yaml
+	arch/arm64/boot/dts/nvidia/tegra194-p3509-0000+p3668-0001.dt.yaml: pcie_ep@14180000: $nodename:0: 'pcie_ep@14180000' does not match '^pcie-ep@'
+		From schema: Documentation/devicetree/bindings/pci/snps,dw-pcie-ep.yaml
+	arch/arm64/boot/dts/nvidia/tegra194-p3509-0000+p3668-0001.dt.yaml: pcie_ep@141a0000: $nodename:0: 'pcie_ep@141a0000' does not match '^pcie-ep@'
+		From schema: Documentation/devicetree/bindings/pci/snps,dw-pcie-ep.yaml
+	arch/arm64/boot/dts/nvidia/tegra194-p3509-0000+p3668-0000.dt.yaml: pcie_ep@14160000: $nodename:0: 'pcie_ep@14160000' does not match '^pcie-ep@'
+		From schema: Documentation/devicetree/bindings/pci/snps,dw-pcie-ep.yaml
+	arch/arm64/boot/dts/nvidia/tegra194-p3509-0000+p3668-0000.dt.yaml: pcie_ep@14180000: $nodename:0: 'pcie_ep@14180000' does not match '^pcie-ep@'
+		From schema: Documentation/devicetree/bindings/pci/snps,dw-pcie-ep.yaml
+	arch/arm64/boot/dts/nvidia/tegra194-p3509-0000+p3668-0000.dt.yaml: pcie_ep@141a0000: $nodename:0: 'pcie_ep@141a0000' does not match '^pcie-ep@'
+		From schema: Documentation/devicetree/bindings/pci/snps,dw-pcie-ep.yaml
+	arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dt.yaml: pcie_ep@14160000: $nodename:0: 'pcie_ep@14160000' does not match '^pcie-ep@'
+		From schema: Documentation/devicetree/bindings/pci/snps,dw-pcie-ep.yaml
+	arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dt.yaml: pcie_ep@14180000: $nodename:0: 'pcie_ep@14180000' does not match '^pcie-ep@'
+		From schema: Documentation/devicetree/bindings/pci/snps,dw-pcie-ep.yaml
+	arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dt.yaml: pcie_ep@141a0000: $nodename:0: 'pcie_ep@141a0000' does not match '^pcie-ep@'
+		From schema: Documentation/devicetree/bindings/pci/snps,dw-pcie-ep.yaml
+
+Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- .../power/supply/summit,smb347-charger.yaml   | 30 +++++++++++++++++++
- .../dt-bindings/power/summit,smb347-charger.h |  4 +++
- 2 files changed, 34 insertions(+)
+ .../devicetree/bindings/pci/nvidia,tegra194-pcie.txt        | 2 +-
+ arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts          | 2 +-
+ arch/arm64/boot/dts/nvidia/tegra194-p3509-0000.dtsi         | 2 +-
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi                    | 6 +++---
+ 4 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/power/supply/summit,smb347-charger.yaml b/Documentation/devicetree/bindings/power/supply/summit,smb347-charger.yaml
-index 983fc215c1e5..20862cdfc116 100644
---- a/Documentation/devicetree/bindings/power/supply/summit,smb347-charger.yaml
-+++ b/Documentation/devicetree/bindings/power/supply/summit,smb347-charger.yaml
-@@ -73,6 +73,26 @@ properties:
-       - 1 # SMB3XX_SOFT_TEMP_COMPENSATE_CURRENT Current compensation
-       - 2 # SMB3XX_SOFT_TEMP_COMPENSATE_VOLTAGE Voltage compensation
+diff --git a/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.txt b/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.txt
+index 6a99d2aa8075..8e4f9bfb316d 100644
+--- a/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.txt
++++ b/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.txt
+@@ -197,7 +197,7 @@ Tegra194 RC mode:
+ Tegra194 EP mode:
+ -----------------
  
-+  summit,inok-polarity:
-+    description: |
-+      Polarity of INOK signal indicating presence of external power supply.
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    enum:
-+      - 0 # SMB3XX_SYSOK_INOK_ACTIVE_LOW
-+      - 1 # SMB3XX_SYSOK_INOK_ACTIVE_HIGH
-+
-+  usb-vbus:
-+    $ref: "../../regulator/regulator.yaml#"
-+    type: object
-+
-+    properties:
-+      summit,needs-inok-toggle:
-+        type: boolean
-+        description: INOK signal is fixed and polarity needs to be toggled
-+                     in order to enable/disable output mode.
-+
-+    unevaluatedProperties: false
-+
- allOf:
-   - if:
-       properties:
-@@ -134,6 +154,7 @@ examples:
-             reg = <0x7f>;
+-	pcie_ep@141a0000 {
++	pcie-ep@141a0000 {
+ 		compatible = "nvidia,tegra194-pcie-ep", "snps,dw-pcie-ep";
+ 		power-domains = <&bpmp TEGRA194_POWER_DOMAIN_PCIEX8A>;
+ 		reg = <0x00 0x141a0000 0x0 0x00020000   /* appl registers (128K)      */
+diff --git a/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts b/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
+index 96bd01cadb18..542bf761c097 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
++++ b/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
+@@ -764,7 +764,7 @@ pcie@141a0000 {
+ 			    "p2u-5", "p2u-6", "p2u-7";
+ 	};
  
-             summit,enable-charge-control = <SMB3XX_CHG_ENABLE_PIN_ACTIVE_HIGH>;
-+            summit,inok-polarity = <SMB3XX_SYSOK_INOK_ACTIVE_LOW>;
-             summit,chip-temperature-threshold-celsius = <110>;
-             summit,mains-current-limit-microamp = <2000000>;
-             summit,usb-current-limit-microamp = <500000>;
-@@ -141,6 +162,15 @@ examples:
-             summit,enable-mains-charging;
+-	pcie_ep@141a0000 {
++	pcie-ep@141a0000 {
+ 		status = "disabled";
  
-             monitored-battery = <&battery>;
-+
-+            usb-vbus {
-+                regulator-name = "usb_vbus";
-+                regulator-min-microvolt = <5000000>;
-+                regulator-max-microvolt = <5000000>;
-+                regulator-min-microamp = <750000>;
-+                regulator-max-microamp = <750000>;
-+                summit,needs-inok-toggle;
-+            };
-         };
-     };
+ 		vddio-pex-ctl-supply = <&vdd_1v8ao>;
+diff --git a/arch/arm64/boot/dts/nvidia/tegra194-p3509-0000.dtsi b/arch/arm64/boot/dts/nvidia/tegra194-p3509-0000.dtsi
+index 836a7e0a4267..a71848177849 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra194-p3509-0000.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra194-p3509-0000.dtsi
+@@ -741,7 +741,7 @@ pcie@141a0000 {
+ 			    "p2u-5", "p2u-6", "p2u-7";
+ 	};
  
-diff --git a/include/dt-bindings/power/summit,smb347-charger.h b/include/dt-bindings/power/summit,smb347-charger.h
-index d918bf321a71..3205699b5e41 100644
---- a/include/dt-bindings/power/summit,smb347-charger.h
-+++ b/include/dt-bindings/power/summit,smb347-charger.h
-@@ -16,4 +16,8 @@
- #define SMB3XX_CHG_ENABLE_PIN_ACTIVE_LOW	1
- #define SMB3XX_CHG_ENABLE_PIN_ACTIVE_HIGH	2
+-	pcie_ep@141a0000 {
++	pcie-ep@141a0000 {
+ 		status = "disabled";
  
-+/* Polarity of INOK signal */
-+#define SMB3XX_SYSOK_INOK_ACTIVE_LOW		0
-+#define SMB3XX_SYSOK_INOK_ACTIVE_HIGH		1
-+
- #endif
+ 		vddio-pex-ctl-supply = <&vdd_1v8ao>;
+diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+index 5ba7a4519b95..606065fc373f 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+@@ -2121,7 +2121,7 @@ pcie@141a0000 {
+ 		dma-coherent;
+ 	};
+ 
+-	pcie_ep@14160000 {
++	pcie-ep@14160000 {
+ 		compatible = "nvidia,tegra194-pcie-ep", "snps,dw-pcie-ep";
+ 		power-domains = <&bpmp TEGRA194_POWER_DOMAIN_PCIEX4A>;
+ 		reg = <0x00 0x14160000 0x0 0x00020000>, /* appl registers (128K)      */
+@@ -2161,7 +2161,7 @@ pcie_ep@14160000 {
+ 		dma-coherent;
+ 	};
+ 
+-	pcie_ep@14180000 {
++	pcie-ep@14180000 {
+ 		compatible = "nvidia,tegra194-pcie-ep", "snps,dw-pcie-ep";
+ 		power-domains = <&bpmp TEGRA194_POWER_DOMAIN_PCIEX8B>;
+ 		reg = <0x00 0x14180000 0x0 0x00020000>, /* appl registers (128K)      */
+@@ -2201,7 +2201,7 @@ pcie_ep@14180000 {
+ 		dma-coherent;
+ 	};
+ 
+-	pcie_ep@141a0000 {
++	pcie-ep@141a0000 {
+ 		compatible = "nvidia,tegra194-pcie-ep", "snps,dw-pcie-ep";
+ 		power-domains = <&bpmp TEGRA194_POWER_DOMAIN_PCIEX8A>;
+ 		reg = <0x00 0x141a0000 0x0 0x00020000>, /* appl registers (128K)      */
 -- 
-2.32.0
+2.31.1
 
