@@ -2,138 +2,142 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76044C636C8
-	for <linux-tegra@archiver.kernel.org>; Tue, 20 Jul 2021 09:35:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A391C07E95
+	for <linux-tegra@archiver.kernel.org>; Tue, 20 Jul 2021 10:46:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 603676120C
-	for <linux-tegra@archiver.kernel.org>; Tue, 20 Jul 2021 09:35:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4642D6120C
+	for <linux-tegra@archiver.kernel.org>; Tue, 20 Jul 2021 10:46:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235524AbhGTIzE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 20 Jul 2021 04:55:04 -0400
-Received: from mail-bn8nam11on2052.outbound.protection.outlook.com ([40.107.236.52]:21505
-        "EHLO NAM11-BN8-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S235313AbhGTIwv (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 20 Jul 2021 04:52:51 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=X62+QQKdg/adj9mJ9P/R4vNfKPIxM4eBc9oH4D6GVNSUn9fNqGGULbT0yYjizhUcO0PCrYO5jgbLfcLtrDlQKngzwoKmb525gEnt20Yl9jxmTynV/YWNVbrZva7/OxiHefOW6+sbxcxOIUK/7enaGJz/FhNF1mboR+8a6cS3297CaN4G6CyzRg4PN9+2TpEc3wxW7HAtV5DL2DEFi9+ZWWcjpX5lpcNLGGe14POIIEY4nf35vGXlR+wfg8Bi3IVWaWBFk0/PI68j4AMSBRSFI9G4fJqgTmO+h9NGZNtgkso96zUoCh0lb+LHfN2zS3muxksrUIWlpKiuGqU2kpoHbg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TiFiA6KzYe8X94WZiibZOY/4uuoiI144nygHLBV49+0=;
- b=YCZB2qo4rdyWt3JMw2pAb8U9DyNRELN3uqs23c1O1I43ZSBLP/BfZA7z70IpqrIEEYqKpsgr+vglhRPbpVyH8W2zAH7ROwCDXqePFAMyt3Wo/tXQ3FlWqR/lAtzBxYkHZy8KmTRlgImExphzwKhQ3RB7Bk82Xw+++txR8OanNGrNLLLwD5NjEQ2Q6QMptVSKP23nL4lgEbNa55zQlcp12OklAPWvtUVsoZ4X2bUfTPpR7MVPnwSGf8ujthAtOdaXlkRuoM4YvYrMMhrDpUs34wUpOalbch74gfvRh+kd2dMlZZk9l+VIuhMNZnYhlO1uU03X6pTuwC7cpx2T9VlHmA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.112.36) smtp.rcpttodomain=denx.de smtp.mailfrom=nvidia.com;
- dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TiFiA6KzYe8X94WZiibZOY/4uuoiI144nygHLBV49+0=;
- b=npxuPhxrfdNKnziMzWJcPP82c8uvOLrIgXcfCys2x+vbCcwAvqbPyodnjHkTcWM/aHvw1Dz1/Y9XtHtmzPOpY3BkGqdDEroC6dJ5+UxoQKL2PJSlhkHNi9VBQaGEcenmpcdrbeX1q3JkLhP6oS+LOBY8rFT2cho0BEf9SxnnelVtlM+u4Xuk1JU+nFHQObE18Y5vpceGTEFo7LYKcMxPn0XhrKpdw1wNaZfDUgV0bJ7vY911ktpU9obqaTv0CvG8JdtZMYbTsxjwuRahpz2eTiT8/8pxUDZwaTUTyREeu179A10j7JlTCNA77+xb/pLQ4U3zzDKRBg+/WVksBqDoMQ==
-Received: from BN0PR03CA0004.namprd03.prod.outlook.com (2603:10b6:408:e6::9)
- by BL0PR12MB5540.namprd12.prod.outlook.com (2603:10b6:208:1cb::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4331.21; Tue, 20 Jul
- 2021 09:33:28 +0000
-Received: from BN8NAM11FT057.eop-nam11.prod.protection.outlook.com
- (2603:10b6:408:e6:cafe::ba) by BN0PR03CA0004.outlook.office365.com
- (2603:10b6:408:e6::9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4331.21 via Frontend
- Transport; Tue, 20 Jul 2021 09:33:28 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.36)
- smtp.mailfrom=nvidia.com; denx.de; dkim=none (message not signed)
- header.d=none;denx.de; dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.112.36 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.112.36; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (216.228.112.36) by
- BN8NAM11FT057.mail.protection.outlook.com (10.13.177.49) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.4331.21 via Frontend Transport; Tue, 20 Jul 2021 09:33:27 +0000
-Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Tue, 20 Jul
- 2021 09:33:27 +0000
-Received: from jonathanh-vm-01.nvidia.com (172.20.187.5) by mail.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.2 via Frontend
- Transport; Tue, 20 Jul 2021 09:33:27 +0000
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
-        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
-        <stable@vger.kernel.org>, <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 4.4 000/188] 4.4.276-rc1 review
-In-Reply-To: <20210719144913.076563739@linuxfoundation.org>
-References: <20210719144913.076563739@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        id S237648AbhGTKFd (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 20 Jul 2021 06:05:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47674 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237492AbhGTKC0 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 20 Jul 2021 06:02:26 -0400
+Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED107C061768;
+        Tue, 20 Jul 2021 03:43:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
+         s=20161220; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=xNvRDW9ONZjf7Gs+YtUdAugHR2FJ1EQUstu+mZZ9L0Q=; b=U81FZl+vNFO9GD3jInsGgPvHct
+        Zf0A71gTS4Md6zf7CRJOAB39THGy6h+2l+/rd7FDQRllwnSdF+h7hl9tgQMQjMHXaH6oZsRZ2vf9L
+        6Q0AJmHA9KtPHMvQ+Uqy+y9EG3F8uuWaHdx2PJUcHqq1yU9AfgaR/opzttdYXlQmQ2wUCNTOocWjN
+        la8MKImt4/VGhBiyTJjIQcKwLhwMJ8uKkrcV8hcCOJMbVpkfNTr0m/SaOTmbT8LRR2xG/IyNPQ1QW
+        GtwUpG1v8slJy1OaI9Y4L0XO/8O1ePZg+oq0rJ4OyCcJ3Z86/Abor8Wkvo7dZEf7SzjXprf9gSLHs
+        jHleeoBg==;
+Received: from dsl-hkibng22-54f986-236.dhcp.inet.fi ([84.249.134.236] helo=toshino.localdomain)
+        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <mperttunen@nvidia.com>)
+        id 1m5nDF-0000EK-Vy; Tue, 20 Jul 2021 13:42:58 +0300
+From:   Mikko Perttunen <mperttunen@nvidia.com>
+To:     thierry.reding@gmail.com, jonathanh@nvidia.com
+Cc:     linux-tegra@vger.kernel.org, linux-next@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        kernel test robot <lkp@intel.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: [PATCH] gpu: host1x: Remove unused functions
+Date:   Tue, 20 Jul 2021 13:42:03 +0300
+Message-Id: <20210720104203.2045449-1-mperttunen@nvidia.com>
+X-Mailer: git-send-email 2.30.1
+In-Reply-To: <20210720180805.57baa5c7@canb.auug.org.au>
+References: <20210720180805.57baa5c7@canb.auug.org.au>
 MIME-Version: 1.0
-Message-ID: <ffa78222df134fe3a320fef01dbfe2f8@HQMAIL107.nvidia.com>
-Date:   Tue, 20 Jul 2021 09:33:27 +0000
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 50d4d75d-3ed7-48d7-3ca9-08d94b616e1b
-X-MS-TrafficTypeDiagnostic: BL0PR12MB5540:
-X-Microsoft-Antispam-PRVS: <BL0PR12MB55408E58766036DDEE0309DAD9E29@BL0PR12MB5540.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: j1qDLlWbFKekN5FakRSo5ggFErTe4664p2E+drlhr/1Bse2SgQajxjyYj6cX0d03q0jYf5aejaLg/wtgl1xUMs06DHZxnCLLsYqmtmdRUZuLLE2IZe5sYipnHlfw8GVqmLIcygJfyVF+ftFknW+OCp9r0za2K4WPuFGaqQObfUf3H+uE1xVw8Foy/I5wQlOZ9L3Grl5E6RFvTGfgr3vrLnV0BvAh32OpxREKzuTx0/50V4lkcw3Iy8xIC85lkGmrUJFBRswg98cwfhUDm3CjlfjWm+XB5AmK3crO2o0jg4qDm8ax3wI7DZbbixkr4bEZtkDdHTmxtUlsJvINsLSeg/K5554PG0pXfIVFVkqNtQuwTFNEtWAbKZd53zMb4OmwKMfXStcEcnwKtVhQfzIMA23nNfeMl34fSg0kSA5uIdgJUUrJSuHjKJGKrcPT64OHgpt7KsY+FOkQssm+YQOoBpFYtRpVLjHt8Hqw9ZJopRhcwiYbfqAqn6QJTLX5IZC5mb90WEFSgQVzj2jOcwi+iSl+tLBKClS9kcnghaUQb/vsEHO8bkco+gEcLrYVLN1N/3H0PlyKNab55B6JmQrxsyVuehY2w9SL89SVIvl8+vZWgDXMWJaTbNZzv1QsnzwG8PAA8Z06gWaf+z+O7g5tqGothVHBqxVoU3Y9ULQm3DENF7HVIgqsPHxgrAyuiiiV8nU1TbqK5xE4D+VOLBn94g8ih2bJgjkcatSvqwEJZ6IjMrbpOd/DJLhESfARhlpm4Cxq/pbyuaqDxaVXUbXk+KW0YpEHeIFnzV21kb0TcKw=
-X-Forefront-Antispam-Report: CIP:216.228.112.36;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid05.nvidia.com;CAT:NONE;SFS:(4636009)(36840700001)(46966006)(316002)(36906005)(36860700001)(26005)(356005)(186003)(8936002)(8676002)(508600001)(5660300002)(7636003)(82310400003)(54906003)(70206006)(4326008)(6916009)(426003)(966005)(70586007)(7416002)(108616005)(336012)(47076005)(86362001)(24736004)(2906002);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Jul 2021 09:33:27.9276
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 50d4d75d-3ed7-48d7-3ca9-08d94b616e1b
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.36];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT057.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL0PR12MB5540
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 84.249.134.236
+X-SA-Exim-Mail-From: mperttunen@nvidia.com
+X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, 19 Jul 2021 16:49:44 +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.4.276 release.
-> There are 188 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Wed, 21 Jul 2021 14:47:42 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.276-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+Remove the host1x_fence_create_fd and host1x_fence_extract
+functions that are not used anywhere. host1x_fence_create_fd
+is additionally using sync_file_create without there being
+a Kconfig dependency to SYNC_FILE, causing builds to fail.
 
-All tests passing for Tegra ...
+Reported-by: kernel test robot <lkp@intel.com>
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+---
+ drivers/gpu/host1x/fence.c | 43 --------------------------------------
+ include/linux/host1x.h     |  1 -
+ 2 files changed, 44 deletions(-)
 
-Test results for stable-v4.4:
-    6 builds:	6 pass, 0 fail
-    12 boots:	12 pass, 0 fail
-    30 tests:	30 pass, 0 fail
+diff --git a/drivers/gpu/host1x/fence.c b/drivers/gpu/host1x/fence.c
+index 06c6b86237bd..5de4affcb918 100644
+--- a/drivers/gpu/host1x/fence.c
++++ b/drivers/gpu/host1x/fence.c
+@@ -164,46 +164,3 @@ struct dma_fence *host1x_fence_create(struct host1x_syncpt *sp, u32 threshold)
+ 	return &fence->base;
+ }
+ EXPORT_SYMBOL(host1x_fence_create);
+-
+-int host1x_fence_create_fd(struct host1x_syncpt *sp, u32 threshold)
+-{
+-	struct sync_file *file;
+-	struct dma_fence *f;
+-	int fd;
+-
+-	f = host1x_fence_create(sp, threshold);
+-	if (IS_ERR(f))
+-		return PTR_ERR(f);
+-
+-	fd = get_unused_fd_flags(O_CLOEXEC);
+-	if (fd < 0) {
+-		dma_fence_put(f);
+-		return fd;
+-	}
+-
+-	file = sync_file_create(f);
+-	dma_fence_put(f);
+-	if (!file)
+-		return -ENOMEM;
+-
+-	fd_install(fd, file->file);
+-
+-	return fd;
+-}
+-EXPORT_SYMBOL(host1x_fence_create_fd);
+-
+-int host1x_fence_extract(struct dma_fence *fence, u32 *id, u32 *threshold)
+-{
+-	struct host1x_syncpt_fence *f;
+-
+-	if (fence->ops != &host1x_syncpt_fence_ops)
+-		return -EINVAL;
+-
+-	f = container_of(fence, struct host1x_syncpt_fence, base);
+-
+-	*id = f->sp->id;
+-	*threshold = f->threshold;
+-
+-	return 0;
+-}
+-EXPORT_SYMBOL(host1x_fence_extract);
+diff --git a/include/linux/host1x.h b/include/linux/host1x.h
+index 9b6784708f2e..2127762fc63d 100644
+--- a/include/linux/host1x.h
++++ b/include/linux/host1x.h
+@@ -171,7 +171,6 @@ void host1x_syncpt_release_vblank_reservation(struct host1x_client *client,
+ 					      u32 syncpt_id);
+ 
+ struct dma_fence *host1x_fence_create(struct host1x_syncpt *sp, u32 threshold);
+-int host1x_fence_extract(struct dma_fence *fence, u32 *id, u32 *threshold);
+ 
+ /*
+  * host1x channel
+-- 
+2.30.1
 
-Linux version:	4.4.276-rc1-gffa748a4e4ff
-Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
-                tegra30-cardhu-a04
-
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
-
-Jon
