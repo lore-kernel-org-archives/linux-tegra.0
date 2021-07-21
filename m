@@ -2,142 +2,89 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A391C07E95
-	for <linux-tegra@archiver.kernel.org>; Tue, 20 Jul 2021 10:46:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2F80C12002
+	for <linux-tegra@archiver.kernel.org>; Wed, 21 Jul 2021 14:08:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4642D6120C
-	for <linux-tegra@archiver.kernel.org>; Tue, 20 Jul 2021 10:46:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C9E9761249
+	for <linux-tegra@archiver.kernel.org>; Wed, 21 Jul 2021 14:08:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237648AbhGTKFd (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 20 Jul 2021 06:05:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47674 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237492AbhGTKC0 (ORCPT
+        id S231791AbhGUN1o (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 21 Jul 2021 09:27:44 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:52990 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233543AbhGUN1n (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 20 Jul 2021 06:02:26 -0400
-Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED107C061768;
-        Tue, 20 Jul 2021 03:43:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-         s=20161220; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
-        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=xNvRDW9ONZjf7Gs+YtUdAugHR2FJ1EQUstu+mZZ9L0Q=; b=U81FZl+vNFO9GD3jInsGgPvHct
-        Zf0A71gTS4Md6zf7CRJOAB39THGy6h+2l+/rd7FDQRllwnSdF+h7hl9tgQMQjMHXaH6oZsRZ2vf9L
-        6Q0AJmHA9KtPHMvQ+Uqy+y9EG3F8uuWaHdx2PJUcHqq1yU9AfgaR/opzttdYXlQmQ2wUCNTOocWjN
-        la8MKImt4/VGhBiyTJjIQcKwLhwMJ8uKkrcV8hcCOJMbVpkfNTr0m/SaOTmbT8LRR2xG/IyNPQ1QW
-        GtwUpG1v8slJy1OaI9Y4L0XO/8O1ePZg+oq0rJ4OyCcJ3Z86/Abor8Wkvo7dZEf7SzjXprf9gSLHs
-        jHleeoBg==;
-Received: from dsl-hkibng22-54f986-236.dhcp.inet.fi ([84.249.134.236] helo=toshino.localdomain)
-        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <mperttunen@nvidia.com>)
-        id 1m5nDF-0000EK-Vy; Tue, 20 Jul 2021 13:42:58 +0300
-From:   Mikko Perttunen <mperttunen@nvidia.com>
-To:     thierry.reding@gmail.com, jonathanh@nvidia.com
-Cc:     linux-tegra@vger.kernel.org, linux-next@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        kernel test robot <lkp@intel.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: [PATCH] gpu: host1x: Remove unused functions
-Date:   Tue, 20 Jul 2021 13:42:03 +0300
-Message-Id: <20210720104203.2045449-1-mperttunen@nvidia.com>
-X-Mailer: git-send-email 2.30.1
-In-Reply-To: <20210720180805.57baa5c7@canb.auug.org.au>
-References: <20210720180805.57baa5c7@canb.auug.org.au>
+        Wed, 21 Jul 2021 09:27:43 -0400
+Received: from imap1.suse-dmz.suse.de (imap1.suse-dmz.suse.de [192.168.254.73])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 9C16620341;
+        Wed, 21 Jul 2021 14:08:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1626876499; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Q55yZIwgrOMLI8+g0CE8a6c06nPPqRsHLKQZ5mZTjAc=;
+        b=ms0MdtnSy8eMy3ZAo6AcdziLloi7t3ZNZv94tgEvBvDjFanP2grZFYGt1cQ3SPCzuVq5Nj
+        63qZJyXCiUWT06zJyOGiump5ew0qG5WtYlvjAnYm8myg6xl9vcPtqOE/KkaRQA55ZzpnVP
+        +y8WoJjKOnlSbOSkNgkxNWCL1y/LJ6w=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1626876499;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Q55yZIwgrOMLI8+g0CE8a6c06nPPqRsHLKQZ5mZTjAc=;
+        b=2Cr6OZg2Ox8T/S4EehiZkei0sWAfcq7Lvk1LDxpOT6nvLMcmA10KBSSh0Lug5CGZ7ZwgE0
+        Or2YhAHbmDwdV4Dg==
+Received: from imap1.suse-dmz.suse.de (imap1.suse-dmz.suse.de [192.168.254.73])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap1.suse-dmz.suse.de (Postfix) with ESMTPS id 64DA113BE8;
+        Wed, 21 Jul 2021 14:08:19 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap1.suse-dmz.suse.de with ESMTPSA
+        id s9OyFlMq+GC3HAAAGKfGzw
+        (envelope-from <ykaukab@suse.de>); Wed, 21 Jul 2021 14:08:19 +0000
+Date:   Wed, 21 Jul 2021 16:08:17 +0200
+From:   Mian Yousaf Kaukab <ykaukab@suse.de>
+To:     Mikko Perttunen <mperttunen@nvidia.com>
+Cc:     arnd@arndb.de, gregkh@linuxfoundation.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] misc: sram: Only map reserved areas in Tegra SYSRAM
+Message-ID: <20210721140817.GA140161@suse.de>
+References: <20210715103423.1811101-1-mperttunen@nvidia.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 84.249.134.236
-X-SA-Exim-Mail-From: mperttunen@nvidia.com
-X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20210715103423.1811101-1-mperttunen@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Remove the host1x_fence_create_fd and host1x_fence_extract
-functions that are not used anywhere. host1x_fence_create_fd
-is additionally using sync_file_create without there being
-a Kconfig dependency to SYNC_FILE, causing builds to fail.
+On Thu, Jul 15, 2021 at 01:34:23PM +0300, Mikko Perttunen wrote:
+> On Tegra186 and later, a portion of the SYSRAM may be reserved for use
+> by TZ. Non-TZ memory accesses to this portion, including speculative
+> accesses, trigger SErrors that bring down the system. This does also
+> happen in practice occasionally (due to speculative accesses).
+> 
+> To fix the issue, add a flag to the SRAM driver to only map the
+> device tree-specified reserved areas depending on a flag set
+> based on the compatibility string. This would not affect non-Tegra
+> systems that rely on the entire thing being memory mapped.
+> 
+> If 64K pages are being used, we cannot exactly map the 4K regions
+> that are placed in SYSRAM - ioremap code instead aligns to closest
+> 64K pages. However, since in practice the non-accessible memory area
+> is 64K aligned, these mappings do not overlap with the non-accessible
+> memory area and things work out.
+> 
+> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
 
-Reported-by: kernel test robot <lkp@intel.com>
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
----
- drivers/gpu/host1x/fence.c | 43 --------------------------------------
- include/linux/host1x.h     |  1 -
- 2 files changed, 44 deletions(-)
-
-diff --git a/drivers/gpu/host1x/fence.c b/drivers/gpu/host1x/fence.c
-index 06c6b86237bd..5de4affcb918 100644
---- a/drivers/gpu/host1x/fence.c
-+++ b/drivers/gpu/host1x/fence.c
-@@ -164,46 +164,3 @@ struct dma_fence *host1x_fence_create(struct host1x_syncpt *sp, u32 threshold)
- 	return &fence->base;
- }
- EXPORT_SYMBOL(host1x_fence_create);
--
--int host1x_fence_create_fd(struct host1x_syncpt *sp, u32 threshold)
--{
--	struct sync_file *file;
--	struct dma_fence *f;
--	int fd;
--
--	f = host1x_fence_create(sp, threshold);
--	if (IS_ERR(f))
--		return PTR_ERR(f);
--
--	fd = get_unused_fd_flags(O_CLOEXEC);
--	if (fd < 0) {
--		dma_fence_put(f);
--		return fd;
--	}
--
--	file = sync_file_create(f);
--	dma_fence_put(f);
--	if (!file)
--		return -ENOMEM;
--
--	fd_install(fd, file->file);
--
--	return fd;
--}
--EXPORT_SYMBOL(host1x_fence_create_fd);
--
--int host1x_fence_extract(struct dma_fence *fence, u32 *id, u32 *threshold)
--{
--	struct host1x_syncpt_fence *f;
--
--	if (fence->ops != &host1x_syncpt_fence_ops)
--		return -EINVAL;
--
--	f = container_of(fence, struct host1x_syncpt_fence, base);
--
--	*id = f->sp->id;
--	*threshold = f->threshold;
--
--	return 0;
--}
--EXPORT_SYMBOL(host1x_fence_extract);
-diff --git a/include/linux/host1x.h b/include/linux/host1x.h
-index 9b6784708f2e..2127762fc63d 100644
---- a/include/linux/host1x.h
-+++ b/include/linux/host1x.h
-@@ -171,7 +171,6 @@ void host1x_syncpt_release_vblank_reservation(struct host1x_client *client,
- 					      u32 syncpt_id);
- 
- struct dma_fence *host1x_fence_create(struct host1x_syncpt *sp, u32 threshold);
--int host1x_fence_extract(struct dma_fence *fence, u32 *id, u32 *threshold);
- 
- /*
-  * host1x channel
--- 
-2.30.1
-
+Reviewed-by: Mian Yousaf Kaukab <ykaukab@suse.de>
