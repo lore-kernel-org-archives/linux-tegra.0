@@ -7,40 +7,44 @@ X-Spam-Status: No, score=-20.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E143C12002
-	for <linux-tegra@archiver.kernel.org>; Wed, 21 Jul 2021 15:14:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F55FC636CA
+	for <linux-tegra@archiver.kernel.org>; Wed, 21 Jul 2021 15:25:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6A2A761248
-	for <linux-tegra@archiver.kernel.org>; Wed, 21 Jul 2021 15:14:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1643B61019
+	for <linux-tegra@archiver.kernel.org>; Wed, 21 Jul 2021 15:25:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239633AbhGUOdb (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 21 Jul 2021 10:33:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60420 "EHLO mail.kernel.org"
+        id S239825AbhGUOpS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 21 Jul 2021 10:45:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35308 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S239627AbhGUOda (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 21 Jul 2021 10:33:30 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id F2EF6606A5;
-        Wed, 21 Jul 2021 15:14:05 +0000 (UTC)
+        id S237983AbhGUOpS (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 21 Jul 2021 10:45:18 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 6D33861244;
+        Wed, 21 Jul 2021 15:25:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1626880447;
-        bh=NrwxCLoURd1LdJnNYb7I+1LjEmcgSb+64PHqxxsUM4I=;
+        s=k20201202; t=1626881154;
+        bh=wjqtZHJ1O1pIfsvtHuG3THZnQPY//zpBpnkaegjFRl8=;
         h=From:To:Cc:Subject:Date:From;
-        b=Ai94YkINIWn0q5DQOaZUuANgc0RtwanZUvEZVehbnCvj68tqPtZ723F0AqhaD39jr
-         xLzgo/uUlrqeeq54MLgAgVaphpG+59NLHEoereK2n52MgBmstdnapJtWI97Pv/ShqF
-         g3NkWIjvQztfURWxz3y7DCJSnjn4TTC9QEwiijo3lWwRBNCCoKuFlH65wHf39fFkwb
-         6EDEwL81L3DyzCwaZe3/H9gd3hfSrKvSPf7wHb8PgnKYEBHB2YvnQWmP3eve1UQsj4
-         wK5K0ssSd+R9edohGM9K2yc582prjkJPZd4fSr3ME6PzaBPe5bZifawkVBRZ3lBMO6
-         EigtS73S9OqgQ==
+        b=Dvw6DkqeI3kmFnWhMCI8yihoXRo9PNLiyahTyM6EVJ3ohV6CGpnLy2kVkcRqNzzaF
+         /znCchJtzAl6ShY/0rrE//3j5HVXWgvFrvGYTnjK1nTmbUqDU2asaoHi5GrLfBu8C/
+         10UW3fRofo/lvTY8kLME6R5iMszcLxxP1MvxUC+sdQItdc/lRCoONd8UHdq4Jax8MN
+         2cyeJHF7DxrW6e2eZEZIjlwxNXoVYqsN8WnLExVTzxjEK7axC1xAX8YItgmejVll9Q
+         zCx5hOCcUXr+m3ALPp5X+RS3gLL/p30ECJOdmstJM5qcHZrFfwyaP3yJNjP20zKm/J
+         hwrW41syI4U9g==
 From:   Arnd Bergmann <arnd@kernel.org>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Dmitry Osipenko <digetx@gmail.com>
+To:     JC Kuo <jckuo@nvidia.com>, Kishon Vijay Abraham I <kishon@ti.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
 Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] arm64: tegra: add regulator dependency
-Date:   Wed, 21 Jul 2021 17:13:57 +0200
-Message-Id: <20210721151403.2218211-1-arnd@kernel.org>
+        Rikard Falkeborn <rikard.falkeborn@gmail.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        linux-phy@lists.infradead.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] phy: tegra: xusb: mark PM functions as __maybe_unused
+Date:   Wed, 21 Jul 2021 17:25:42 +0200
+Message-Id: <20210721152550.2976003-1-arnd@kernel.org>
 X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -50,40 +54,43 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-The two regulator drivers in the drivers/soc/ directory fail to build
-when regulator support is disabled:
+When these are not referenced, gcc prints a harmless warning:
 
-aarch64-linux-ld: drivers/soc/tegra/regulators-tegra20.o: in function `tegra20_regulator_reboot':
-regulators-tegra20.c:(.text.tegra20_regulator_reboot+0x4c): undefined reference to `regulator_sync_voltage_rdev'
-aarch64-linux-ld: regulators-tegra20.c:(.text.tegra20_regulator_reboot+0x58): undefined reference to `regulator_sync_voltage_rdev'
-aarch64-linux-ld: drivers/soc/tegra/regulators-tegra30.o: in function `tegra30_regulator_reboot':
-regulators-tegra30.c:(.text.tegra30_regulator_reboot+0x44): undefined reference to `regulator_sync_voltage_rdev'
-aarch64-linux-ld: regulators-tegra30.c:(.text.tegra30_regulator_reboot+0x50): undefined reference to `regulator_sync_voltage_rdev'
+drivers/phy/tegra/xusb.c:1286:12: error: 'tegra_xusb_padctl_resume_noirq' defined but not used [-Werror=unused-function]
+ 1286 | static int tegra_xusb_padctl_resume_noirq(struct device *dev)
+      |            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+drivers/phy/tegra/xusb.c:1276:12: error: 'tegra_xusb_padctl_suspend_noirq' defined but not used [-Werror=unused-function]
+ 1276 | static int tegra_xusb_padctl_suspend_noirq(struct device *dev)
+      |            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Add a Kconfig dependency to avoid this configuration.
-
-Fixes: 496747e7d907 ("soc/tegra: regulators: Add regulators coupler for Tegra20")
-Fixes: 783807436f36 ("soc/tegra: regulators: Add regulators coupler for Tegra30")
+Fixes: c545a9056712 ("phy: tegra: xusb: Add sleepwalk and suspend/resume")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/soc/tegra/Kconfig | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/phy/tegra/xusb.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/soc/tegra/Kconfig b/drivers/soc/tegra/Kconfig
-index db49075b1946..c56122be27a9 100644
---- a/drivers/soc/tegra/Kconfig
-+++ b/drivers/soc/tegra/Kconfig
-@@ -153,8 +153,10 @@ config SOC_TEGRA_POWERGATE_BPMP
+diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
+index 0aadac678191..963de5913e50 100644
+--- a/drivers/phy/tegra/xusb.c
++++ b/drivers/phy/tegra/xusb.c
+@@ -1273,7 +1273,7 @@ static int tegra_xusb_padctl_remove(struct platform_device *pdev)
+ 	return err;
+ }
  
- config SOC_TEGRA20_VOLTAGE_COUPLER
- 	bool "Voltage scaling support for Tegra20 SoCs"
-+	depends on REGULATOR
- 	depends on ARCH_TEGRA_2x_SOC || COMPILE_TEST
+-static int tegra_xusb_padctl_suspend_noirq(struct device *dev)
++static __maybe_unused int tegra_xusb_padctl_suspend_noirq(struct device *dev)
+ {
+ 	struct tegra_xusb_padctl *padctl = dev_get_drvdata(dev);
  
- config SOC_TEGRA30_VOLTAGE_COUPLER
- 	bool "Voltage scaling support for Tegra30 SoCs"
-+	depends on REGULATOR
- 	depends on ARCH_TEGRA_3x_SOC || COMPILE_TEST
+@@ -1283,7 +1283,7 @@ static int tegra_xusb_padctl_suspend_noirq(struct device *dev)
+ 	return 0;
+ }
+ 
+-static int tegra_xusb_padctl_resume_noirq(struct device *dev)
++static __maybe_unused int tegra_xusb_padctl_resume_noirq(struct device *dev)
+ {
+ 	struct tegra_xusb_padctl *padctl = dev_get_drvdata(dev);
+ 
 -- 
 2.29.2
 
