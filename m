@@ -2,101 +2,140 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B8A8C4338F
-	for <linux-tegra@archiver.kernel.org>; Fri, 23 Jul 2021 06:27:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2877DC4338F
+	for <linux-tegra@archiver.kernel.org>; Fri, 23 Jul 2021 08:01:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5542A60EE6
-	for <linux-tegra@archiver.kernel.org>; Fri, 23 Jul 2021 06:27:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 077E760EFD
+	for <linux-tegra@archiver.kernel.org>; Fri, 23 Jul 2021 08:01:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233935AbhGWFqy (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 23 Jul 2021 01:46:54 -0400
-Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:52404
-        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233835AbhGWFqw (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 23 Jul 2021 01:46:52 -0400
-Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com [209.85.208.71])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPS id 5A3273F343
-        for <linux-tegra@vger.kernel.org>; Fri, 23 Jul 2021 06:27:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1627021645;
-        bh=BVfxHW5e0txMWNeBpenkIfYlW9+/vHPUxzadxmisj2M=;
-        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-         MIME-Version:Content-Type;
-        b=ZrnFRL0GfkWrskmb3/CFK89YlQ08WG+8vPLS1bmowGdzTdW+xJAjKbV62gIyv9ho2
-         Mgk4BQj3KGuZj4iCHdGmS3xUc3icnqrnH6daO7n7i/EozYAw6s7n6FNXAsC3dUZiqJ
-         CHn8Dtg+o7/a5415rTycOc92K2V+C3uQQhL6pR3TMB6CBXVMm2igknPfTLaIWPp8gc
-         y0VlRo8N5qa9PlG100s0njrByt24ir2DUkXpzWm3X1/1HZ4Nm7vmb4fO2kAZY5ANFS
-         9seE225FGDn+8nibd1pnXK2LYIQVH602qi76gvqPgb09oBl2fEMisv4Y/Uvy6kQN4W
-         cPKwcmCJqCi0Q==
-Received: by mail-ed1-f71.google.com with SMTP id n10-20020a05640206cab02903a4b3e93e15so233407edy.2
-        for <linux-tegra@vger.kernel.org>; Thu, 22 Jul 2021 23:27:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=BVfxHW5e0txMWNeBpenkIfYlW9+/vHPUxzadxmisj2M=;
-        b=HSQJ/CJXyM+EF8smufVIaGrkJVIcQeOtdFzZmEOklSPv27mQ4EHhMw9iCQkYhVe74d
-         SUF6D4PBCq4lr0EZJgUGbM+Z3Sy9L6azITivuvMNYJkW2broncXrzCflt74yPhX8wqG/
-         nUqxL9Cb3hrMZ1kb0ycBt/Jwp5+LNS38/DvFXBKZ0efkCMw8JFUW8Bgt7WKO6TwjHfKS
-         /B4GVSadzUNA8hjjF/5to561iRXx3QBsA0Ur+wGmAUvvNM1ntbui3a0Zl4noGeLe7Sdb
-         wbXqLM2Hq8pspopK9PY/TrWPyJhp+X3wpeVb3/q/m8B7yRpF4kSUiBlyDVFMXPrnqLrF
-         CV6w==
-X-Gm-Message-State: AOAM531GrFyeEOmR2ylQ3Kf7fuMO7lZiMqoqPAN144ztnp8TyVF5wzqt
-        dAtquQ9tdokcFSj9VA0Hc1TJs2OLG/cvdhH+HMkUJ6HBtMXP7ixXWF/mB3LyQAjgNWXjZU7v5VB
-        llp1TGdEkrDNsVmWFDQcLeohz5UYGAzpm+/UZQyB1
-X-Received: by 2002:a05:6402:14c7:: with SMTP id f7mr3836124edx.84.1627021645157;
-        Thu, 22 Jul 2021 23:27:25 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJw7YBaLklYdx8pMyrPGwqRyW3BrTXsuwbNayQmX95MvMBycvj7QgE68fkUlanxy0AVX3tZvBw==
-X-Received: by 2002:a05:6402:14c7:: with SMTP id f7mr3836115edx.84.1627021645050;
-        Thu, 22 Jul 2021 23:27:25 -0700 (PDT)
-Received: from localhost.localdomain ([86.32.47.9])
-        by smtp.gmail.com with ESMTPSA id u5sm13449844edv.64.2021.07.22.23.27.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Jul 2021 23:27:24 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-To:     Jonathan Hunter <jonathanh@nvidia.com>,
-        Arnd Bergmann <arnd@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        linux-tegra@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] memory: tegra: fix unused-function warning
-Date:   Fri, 23 Jul 2021 08:27:17 +0200
-Message-Id: <162702163037.6229.205743572149857743.b4-ty@canonical.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20210722090748.1157470-1-arnd@kernel.org>
-References: <20210722090748.1157470-1-arnd@kernel.org>
-MIME-Version: 1.0
+        id S234190AbhGWHUt (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 23 Jul 2021 03:20:49 -0400
+Received: from mail-dm6nam12on2086.outbound.protection.outlook.com ([40.107.243.86]:34752
+        "EHLO NAM12-DM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S234030AbhGWHUs (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Fri, 23 Jul 2021 03:20:48 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ApieuBAyvgKQRYs8PLGAvCVDHHcVVQ/q/dfzvFwWWKP1Flv+TgyPXlqzPMjb5eRbgFbBkcf2T2qhV+r4N2IpS2Ymb0ifsCe/bcdNqe6acJbzC4Frsj8FSt3o/T2WoqMnxERKNkUz0CMcHqRDv904j8/l6VhAv71UXXeyQKyOnEUvQI91D/ww/xIgZvEOrhzhwAY33WOmZrRCcYcOEkkGbnHNg15DCI+cm6pZeusO+Jh0xr2ebYHoqRn07MARb3aXkuiiIsbd8onqSw1Onwjy50dlz85TYUGEkWaUYhJrvQrSmxwYwPBDUMaxYtCxlUWfEP+GzGTNxhBq5NiP21tEHA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=r/6W42g2Y+xb7jET7I6gsgtSPaSeLo/JuN6R4+21DYY=;
+ b=T/ICfWjEZHKepkJqFr+NeoQEd/f9XIczahO9O5UjHaBQak6cBq541j/UMCl+UqIHo8Gu/R5TnGLZZnCUj6KuBXlpZYGqackkbmMOewKQKuXVPt3K03BBVrqIuuLo+qNThO3TluT2uO1A6fwyZH5CjHuec15bWFEaeIl63+vPgg93vJo5IP04EWByfnimZcuhQjDk/4GA58lOLwA8LdpZ5vQ87FjngZnaibh4fRsOR9XJK4T6NWykcEsN5gRXVmi4viSGPPgDsAT5N0XR0itH48CbcbtlxQ7TRoFWe+8ruO3Y/Niis7SlMu+NPxb3oX+rbCOh3Tcx/SaPeaQe4cojXQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.112.36) smtp.rcpttodomain=denx.de smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=r/6W42g2Y+xb7jET7I6gsgtSPaSeLo/JuN6R4+21DYY=;
+ b=IM0Hkp11QXNXfA56TULsQmot6Dab1E16XniMRt1/Xm9+L/d5l2q8pc9VsUWIEdexGEut807cWlDmyIxF84oVLNlm928X/SiqksM4x1VnJKCo7nvEeIkryP5Sq1v+p1wxa62m7bwtYKU67BC0YkJMiny28mkbrK5Bmx68thJ4/P2Bd6OHPnMUETgcoYNdJvT2MlNIV1qrusZx77bv5MUQ8VMjWrVJhXInXffQPALmoCiVwOrH9a2E9zcPKBPpjJA0FhG3j5JExr8oHyRTmqSuU6/2x+xqk0NO+B9vOF0y/5qy0JQjoqGrKGfUolPrsAzb9gn7wIQRpHh4RDOH3tsU/Q==
+Received: from BN6PR20CA0059.namprd20.prod.outlook.com (2603:10b6:404:151::21)
+ by BN9PR12MB5131.namprd12.prod.outlook.com (2603:10b6:408:118::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4352.26; Fri, 23 Jul
+ 2021 08:01:20 +0000
+Received: from BN8NAM11FT028.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:404:151:cafe::cd) by BN6PR20CA0059.outlook.office365.com
+ (2603:10b6:404:151::21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4352.24 via Frontend
+ Transport; Fri, 23 Jul 2021 08:01:20 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.36)
+ smtp.mailfrom=nvidia.com; denx.de; dkim=none (message not signed)
+ header.d=none;denx.de; dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.112.36 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.112.36; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (216.228.112.36) by
+ BN8NAM11FT028.mail.protection.outlook.com (10.13.176.225) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.4352.24 via Frontend Transport; Fri, 23 Jul 2021 08:01:20 +0000
+Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Fri, 23 Jul
+ 2021 08:01:20 +0000
+Received: from jonathanh-vm-01.nvidia.com (172.20.187.6) by mail.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1497.2 via Frontend
+ Transport; Fri, 23 Jul 2021 08:01:20 +0000
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
+        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
+        <stable@vger.kernel.org>, <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 5.13 000/156] 5.13.5-rc1 review
+In-Reply-To: <20210722155628.371356843@linuxfoundation.org>
+References: <20210722155628.371356843@linuxfoundation.org>
+X-NVConfidentiality: public
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Message-ID: <5c9558802e92442488cd21e88863d779@HQMAIL101.nvidia.com>
+Date:   Fri, 23 Jul 2021 08:01:20 +0000
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 2b4ca047-ee69-4fdf-4873-08d94db00ece
+X-MS-TrafficTypeDiagnostic: BN9PR12MB5131:
+X-Microsoft-Antispam-PRVS: <BN9PR12MB513180E30DD719A9F1161FFED9E59@BN9PR12MB5131.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 8AdhZELEIDZjPKEy5I9I2wry1FGBorqSXwJUjDpiVnqaT6gabEY8lDJBBBglovWvHY0y+rRmukvVZNner4nYItjSX9JZ5L/gCv8AG8DX3HiGRpcFFtC93ONKoDhYYsSmC0eoG1XsgJsW5IO9BB4eVpCh+iPBwOXLstTO34exIrRHXxoY4tm+IuqWzENDWQCHkT8TtuzSdgmJMx3HNvLjC378U3SjiUyYC2N2WunOVD7Z2dSDlZsSxHzBD7lhIZY70LtNpXO80EWLTsa+VyrEbsKuRjFBxo3OFZVgLYb+oXOdrko6NYxmJDNvMjPUmT+CnDSHsHkZNdn+C3krzyY3fYLPowTMA37h5Uut4RbaiVgsMkovoy47hb2cQHN5jIgw0Z1BIKgV2S9F+xggWwQ/218Ls9w0jI6NVAVvhFuXFU5jBGLZ6l9lEJKYqyz4rts2njlQSs1xcFEjJ2LEzoSUpeLfrhUEbX5XfodakINEg28uPJqNGtlJCXVWmZuDFhZtyHQ+8DsIALvPZTJHZqwmy0HYRwt/aa4bL1GFw3hQSgTXKkfvPg/xbQDwTUx6472Z3cxtXaQfxET2ZlWkQjzeYG6Zka7TXu64HSJ8OV11zsc+mnCrVCGck1t8Ty6UDlFXKAaJ5z46OvpbVIXxWdGoToAAd438gA3TsbNyFeVK0RmwzOTOPTdr/mWeayHKRoj/bvNltbOZFCioim8+9YcUQIzMNhGwdrAPilIpzGykOovBMfdkWr6yj7HWo6OvA9bTwKaTbM5JDvq3/Q1oTpZQfed/aUTZY2PEMB/SOoe+COQ=
+X-Forefront-Antispam-Report: CIP:216.228.112.36;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid05.nvidia.com;CAT:NONE;SFS:(4636009)(376002)(39860400002)(396003)(346002)(136003)(46966006)(36840700001)(24736004)(966005)(108616005)(7636003)(26005)(8676002)(86362001)(36906005)(5660300002)(6916009)(4326008)(316002)(70586007)(54906003)(47076005)(426003)(70206006)(7416002)(2906002)(82310400003)(356005)(36860700001)(478600001)(336012)(186003)(82740400003)(8936002);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jul 2021 08:01:20.6019
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2b4ca047-ee69-4fdf-4873-08d94db00ece
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.36];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT028.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN9PR12MB5131
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, 22 Jul 2021 11:07:43 +0200, Arnd Bergmann wrote:
-> The tegra186_mc_client_sid_override() is only called from
-> an #ifdef block:
+On Thu, 22 Jul 2021 18:29:35 +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.13.5 release.
+> There are 156 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> drivers/memory/tegra/tegra186.c:74:13: error: 'tegra186_mc_client_sid_override' defined but not used [-Werror=unused-function]
->    74 | static void tegra186_mc_client_sid_override(struct tegra_mc *mc,
->       |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> Responses should be made by Sat, 24 Jul 2021 15:56:00 +0000.
+> Anything received after that time might be too late.
 > 
-> [...]
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.13.5-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.13.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-Applied, thanks!
+All tests passing for Tegra ...
 
-[1/1] memory: tegra: fix unused-function warning
-      commit: eaf89f1cd38cf7256ab64424fe94014632044d57
+Test results for stable-v5.13:
+    10 builds:	10 pass, 0 fail
+    28 boots:	28 pass, 0 fail
+    110 tests:	110 pass, 0 fail
 
-Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Linux version:	5.13.5-rc1-g80f75a7443c5
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
+                tegra20-ventana, tegra210-p2371-2180,
+                tegra210-p3450-0000, tegra30-cardhu-a04
+
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+
+Jon
