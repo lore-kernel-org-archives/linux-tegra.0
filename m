@@ -2,84 +2,82 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4DDFC4338F
-	for <linux-tegra@archiver.kernel.org>; Wed, 28 Jul 2021 05:45:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76548C4338F
+	for <linux-tegra@archiver.kernel.org>; Wed, 28 Jul 2021 14:44:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 87E7060F9D
-	for <linux-tegra@archiver.kernel.org>; Wed, 28 Jul 2021 05:45:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 49A2E60F91
+	for <linux-tegra@archiver.kernel.org>; Wed, 28 Jul 2021 14:44:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233574AbhG1Fpi (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 28 Jul 2021 01:45:38 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:47692 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232891AbhG1Fpi (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 28 Jul 2021 01:45:38 -0400
-Received: from pendragon.ideasonboard.com (62-78-145-57.bb.dnainternet.fi [62.78.145.57])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 6FDDDEE;
-        Wed, 28 Jul 2021 07:45:35 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1627451135;
-        bh=SHdFeGCCQ/sDHraMXKm6bZmYzkPYi/TuFkJK9P990Hg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=SIjc52b3eYG/7mWKEkGrNiErMGhWMQbQ7feSpqTH5TL1AV5imPpXWcMLVVCdW3mHu
-         1KvxV3Zf6gfi2UcPztL5kxEmciawrjJK8UgJv317FEeMh2BVUHAaqJj5nfEeizqQbB
-         WZSWwvT2/Jel3pGGbRlnEZtcs5169ureSLPSHx94=
-Date:   Wed, 28 Jul 2021 08:45:29 +0300
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Cai Huoqing <caihuoqing@baidu.com>
-Cc:     mchehab@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: Re: [PATCH V2] media: uvcvideo: Remove unused including
- <linux/version.h>
-Message-ID: <YQDu+afJRtcTK/c0@pendragon.ideasonboard.com>
-References: <20210727092854.1006-1-caihuoqing@baidu.com>
+        id S236626AbhG1Oop (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 28 Jul 2021 10:44:45 -0400
+Received: from mail.ispras.ru ([83.149.199.84]:53758 "EHLO mail.ispras.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S235528AbhG1Ooo (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 28 Jul 2021 10:44:44 -0400
+Received: from hellwig.intra.ispras.ru (unknown [83.149.199.249])
+        by mail.ispras.ru (Postfix) with ESMTPS id E1F8240A2BD9;
+        Wed, 28 Jul 2021 14:44:34 +0000 (UTC)
+From:   Evgeny Novikov <novikov@ispras.ru>
+To:     Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Cc:     Evgeny Novikov <novikov@ispras.ru>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-tegra@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ldv-project@linuxtesting.org
+Subject: [PATCH] media: tegra-cec: Handle errors of clk_prepare_enable()
+Date:   Wed, 28 Jul 2021 17:44:32 +0300
+Message-Id: <20210728144432.23966-1-novikov@ispras.ru>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20210727092854.1006-1-caihuoqing@baidu.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Cai,
+tegra_cec_probe() and tegra_cec_resume() ignored possible errors of
+clk_prepare_enable(). The patch fixes this.
 
-Thank you for the patch.
+Found by Linux Driver Verification project (linuxtesting.org).
 
-On Tue, Jul 27, 2021 at 05:28:53PM +0800, Cai Huoqing wrote:
-> Remove including <linux/version.h> that don't need it.
-> 
-> V1->V2: Split the patch in two.
-> 
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Signed-off-by: Cai Huoqing <caihuoqing@baidu.com>
+Signed-off-by: Evgeny Novikov <novikov@ispras.ru>
+---
+ drivers/media/cec/platform/tegra/tegra_cec.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-Taken in my tree for v5.15. Thank you.
-
-> ---
->  drivers/media/usb/uvc/uvc_driver.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
-> index 9a791d8ef200..b1b055784f8d 100644
-> --- a/drivers/media/usb/uvc/uvc_driver.c
-> +++ b/drivers/media/usb/uvc/uvc_driver.c
-> @@ -16,7 +16,6 @@
->  #include <linux/videodev2.h>
->  #include <linux/vmalloc.h>
->  #include <linux/wait.h>
-> -#include <linux/version.h>
->  #include <asm/unaligned.h>
->  
->  #include <media/v4l2-common.h>
-
+diff --git a/drivers/media/cec/platform/tegra/tegra_cec.c b/drivers/media/cec/platform/tegra/tegra_cec.c
+index 1ac0c70a5981..5e907395ca2e 100644
+--- a/drivers/media/cec/platform/tegra/tegra_cec.c
++++ b/drivers/media/cec/platform/tegra/tegra_cec.c
+@@ -366,7 +366,11 @@ static int tegra_cec_probe(struct platform_device *pdev)
+ 		return -ENOENT;
+ 	}
+ 
+-	clk_prepare_enable(cec->clk);
++	ret = clk_prepare_enable(cec->clk);
++	if (ret) {
++		dev_err(&pdev->dev, "Unable to prepare clock for CEC\n");
++		return ret;
++	}
+ 
+ 	/* set context info. */
+ 	cec->dev = &pdev->dev;
+@@ -446,9 +450,7 @@ static int tegra_cec_resume(struct platform_device *pdev)
+ 
+ 	dev_notice(&pdev->dev, "Resuming\n");
+ 
+-	clk_prepare_enable(cec->clk);
+-
+-	return 0;
++	return clk_prepare_enable(cec->clk);
+ }
+ #endif
+ 
 -- 
-Regards,
+2.26.2
 
-Laurent Pinchart
