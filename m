@@ -5,31 +5,31 @@ X-Spam-Level:
 X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 368FFC19F33
-	for <linux-tegra@archiver.kernel.org>; Wed, 28 Jul 2021 15:37:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1A33C19F37
+	for <linux-tegra@archiver.kernel.org>; Wed, 28 Jul 2021 15:37:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 16F106101C
-	for <linux-tegra@archiver.kernel.org>; Wed, 28 Jul 2021 15:37:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AF70B6101B
+	for <linux-tegra@archiver.kernel.org>; Wed, 28 Jul 2021 15:37:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237157AbhG1Phw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 28 Jul 2021 11:37:52 -0400
+        id S236736AbhG1Phy (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 28 Jul 2021 11:37:54 -0400
 Received: from perceval.ideasonboard.com ([213.167.242.64]:55994 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235722AbhG1Phw (ORCPT
+        with ESMTP id S235722AbhG1Phy (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 28 Jul 2021 11:37:52 -0400
+        Wed, 28 Jul 2021 11:37:54 -0400
 Received: from pendragon.lan (62-78-145-57.bb.dnainternet.fi [62.78.145.57])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id F073A51D;
-        Wed, 28 Jul 2021 17:37:48 +0200 (CEST)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 0BC54D89;
+        Wed, 28 Jul 2021 17:37:50 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1627486669;
-        bh=CwxbwCkqGqK1SZKbEj9PHsjwrLYwY6EhjNCkCzt3EE4=;
+        s=mail; t=1627486671;
+        bh=xPX5vJyQI01YAKbR9+mBBKgK9BGoWiq0OfZfoRRqhSg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Cj0iVhrptUAbRXvwQxr8/W86i+0EqAnFp0oGvcFj2N89QAgGDTxqe4nbvKexnhUxF
-         IfvpVEmkxmF2VfGk5O9/TJZXT9C9thR+ZyKbU1gf78wQw0Bt1mAA48C5bDBicMP0Bh
-         g9Z7tehxp+divG1g7s/j8GMUI6oSgJGn2X5+EYqM=
+        b=ABbfU37DpB4YwMoMCqNsuw4ZMSFWmaHrmPz4N2E2S2dlRLPH4veVRNJjNFSMlSfA6
+         am2t9DL1Bu6OJXQUbACbDScnHZ0LY0vVHNTvoLt4S1kY09WEclWVzgofbYYIlqRXq2
+         EbtdcqKxW1GpuaW93tiUR4zAhx9dpXPPNeNC25bM=
 From:   Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 To:     dri-devel@lists.freedesktop.org
 Cc:     linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
@@ -43,9 +43,9 @@ Cc:     linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Jyri Sarha <jyri.sarha@iki.fi>
-Subject: [PATCH 3/7] drm/imx/dcss: Enable COMPILE_TEST on all ARM64 platforms
-Date:   Wed, 28 Jul 2021 18:37:32 +0300
-Message-Id: <20210728153736.15240-4-laurent.pinchart+renesas@ideasonboard.com>
+Subject: [PATCH 5/7] drm/sti: Enable COMPILE_TEST on all ARM and ARM64 platforms
+Date:   Wed, 28 Jul 2021 18:37:34 +0300
+Message-Id: <20210728153736.15240-6-laurent.pinchart+renesas@ideasonboard.com>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20210728153736.15240-1-laurent.pinchart+renesas@ideasonboard.com>
 References: <20210728153736.15240-1-laurent.pinchart+renesas@ideasonboard.com>
@@ -55,28 +55,29 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-To extend test coverage, relax the dependency on ARCH_MXC to also enable
-compilation when COMPILE_TEST is selected.
+To extend test coverage, relax the dependency on ARCH_STI or
+ARCH_MULTIPLATFORM to also enable compilation on ARM or ARM4 when
+COMPILE_TEST is selected.
 
 Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
- drivers/gpu/drm/imx/dcss/Kconfig | 3 ++-
+ drivers/gpu/drm/sti/Kconfig | 3 ++-
  1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/imx/dcss/Kconfig b/drivers/gpu/drm/imx/dcss/Kconfig
-index 2b17a964ff05..ad9844fb85ac 100644
---- a/drivers/gpu/drm/imx/dcss/Kconfig
-+++ b/drivers/gpu/drm/imx/dcss/Kconfig
-@@ -3,7 +3,8 @@ config DRM_IMX_DCSS
- 	select IMX_IRQSTEER
- 	select DRM_KMS_CMA_HELPER
- 	select VIDEOMODE_HELPERS
--	depends on DRM && ARCH_MXC && ARM64
-+	depends on DRM
-+	depends on ARM64 && (ARCH_MXC || COMPILE_TEST)
- 	help
- 	  Choose this if you have a NXP i.MX8MQ based system and want to use the
- 	  Display Controller Subsystem. This option enables DCSS support.
+diff --git a/drivers/gpu/drm/sti/Kconfig b/drivers/gpu/drm/sti/Kconfig
+index d0cfdd36b38f..e7d18893bc11 100644
+--- a/drivers/gpu/drm/sti/Kconfig
++++ b/drivers/gpu/drm/sti/Kconfig
+@@ -1,7 +1,8 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ config DRM_STI
+ 	tristate "DRM Support for STMicroelectronics SoC stiH4xx Series"
+-	depends on OF && DRM && (ARCH_STI || ARCH_MULTIPLATFORM)
++	depends on OF && DRM
++	depends on ARCH_STI || ARCH_MULTIPLATFORM || ((ARM || ARM64) && COMPILE_TEST)
+ 	select RESET_CONTROLLER
+ 	select DRM_KMS_HELPER
+ 	select DRM_GEM_CMA_HELPER
 -- 
 Regards,
 
