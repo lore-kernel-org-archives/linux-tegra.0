@@ -2,132 +2,139 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-17.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39E33C4338F
-	for <linux-tegra@archiver.kernel.org>; Thu, 29 Jul 2021 02:34:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A857FC4338F
+	for <linux-tegra@archiver.kernel.org>; Thu, 29 Jul 2021 06:13:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 12FD361019
-	for <linux-tegra@archiver.kernel.org>; Thu, 29 Jul 2021 02:34:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 70D8761053
+	for <linux-tegra@archiver.kernel.org>; Thu, 29 Jul 2021 06:13:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233436AbhG2CeQ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 28 Jul 2021 22:34:16 -0400
-Received: from mail-dm6nam11on2054.outbound.protection.outlook.com ([40.107.223.54]:5728
-        "EHLO NAM11-DM6-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S233256AbhG2CeP (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 28 Jul 2021 22:34:15 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=BRNc69ze35VpdoCzd8OP/5L6aBFWkSdN1RxgZVkYMFStcVIdVZMf49n5eroxCykhHKl4dIhVWSaTpjfDDJ9NsOku+DIaq/WSPV4DDB+Pc4WBIoGh40/pCqcCwIr7hnvjFaVJY6uRfKJ/Wh6Shuz57+pd0W202kzaIaB4IbEJWRLImp2dK5fGPRovRMEZGNWdmHt42B4gjpM/QKvSzz1U69YfXaOzGus4Gi4RmuGPVcczHQybW5jurAK8Bn8E8DUbwf88jqmQ9BsmB4Bd5EMmWNxWh6GI02824hlehjxQXAjad65jVJ36PG5hP3ql4DOeZhOIDu4rUM2UyAfhIlGzmg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CJMp3LtMC0aUsoCI313qE9kTxEUhSqB2aJRasr9CuUw=;
- b=V8iUUs9l1nhePqLU0fLE7D175meRblYgBU311xNkZw9YtcEMx/tUNmZ1B0B+0vSFrlbsCOUiVG9M/5h8oZHIHOsud10WbtKptGS5NE2aLNTD25Go4KaPVsGqsEkseSzDlUgi/xrFn1pC3UEs4ClLOuLwXmVVTwUN/PLrxMG3hucy+3mTzWjM5NNvDWCbMCkSNSqLkapHMVK+LwxDOd3BmzsXmIUAJGmxpPN5Q7ccaDwXTHGCuHwayW54Tmi+g636TmauJgyI+mZPJP9klJoViApm6Ita2uQlqkp2TjVr+bwMhVf6Aubjz48Ifs75uADdv5WrESiLMf7uV8qDwn6ZZQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.112.34) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CJMp3LtMC0aUsoCI313qE9kTxEUhSqB2aJRasr9CuUw=;
- b=CJbWZVF3fb2St7tgkj9YUJzT1IBx+RRe/RF7cMqAWtuCdLNhihcKYEK5o8Oi/m/9kVzTuNL1pjSVshbg0UeeCradcFVidzx32hkZz+iyUvHeXF33l6tKF9ycchDtJtE+K2hG53S3GxZJBDw3u6I/oJuKVWgOa2UU+ZytPODJeVBbA+Rzroaktty21YlRCFVNT/hQGzrdfLrTuYiUzjWG6MUULNJ4icaEPGh+jI+gs+vVmeCKSND5Y4RFkhIAxqobFlLIpLsjTNk5oSkJX1vZ7E0izIwuKjlBW8SLWXesElswYyXjAU4XFve8kCkv1IZjOGbSxOMWVXpdhFwbHalvLQ==
-Received: from BN8PR04CA0039.namprd04.prod.outlook.com (2603:10b6:408:d4::13)
- by DM5PR1201MB0105.namprd12.prod.outlook.com (2603:10b6:4:54::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4352.29; Thu, 29 Jul
- 2021 02:34:12 +0000
-Received: from BN8NAM11FT018.eop-nam11.prod.protection.outlook.com
- (2603:10b6:408:d4:cafe::c3) by BN8PR04CA0039.outlook.office365.com
- (2603:10b6:408:d4::13) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4373.20 via Frontend
- Transport; Thu, 29 Jul 2021 02:34:12 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.34)
- smtp.mailfrom=nvidia.com; vger.kernel.org; dkim=none (message not signed)
- header.d=none;vger.kernel.org; dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.112.34 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.112.34; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (216.228.112.34) by
- BN8NAM11FT018.mail.protection.outlook.com (10.13.176.89) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.4373.18 via Frontend Transport; Thu, 29 Jul 2021 02:34:11 +0000
-Received: from [172.17.173.69] (172.20.187.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Thu, 29 Jul
- 2021 02:34:10 +0000
-Subject: Re: [RFC 03/11] hte: Add tegra194 HTE kernel provider
-To:     =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
-CC:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, <linus.walleij@linaro.org>,
-        <bgolaszewski@baylibre.com>, <warthog618@gmail.com>,
-        <devicetree@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <robh+dt@kernel.org>
-References: <20210625235532.19575-1-dipenp@nvidia.com>
- <20210625235532.19575-4-dipenp@nvidia.com> <YOeLT4T5stjsAUMr@qmqm.qmqm.pl>
-X-Nvconfidentiality: public
-From:   Dipen Patel <dipenp@nvidia.com>
-Message-ID: <945e19cf-5575-ae19-d3bf-c819b7aa2199@nvidia.com>
-Date:   Wed, 28 Jul 2021 19:43:09 -0700
+        id S234022AbhG2GN1 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 29 Jul 2021 02:13:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55714 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234019AbhG2GN1 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 29 Jul 2021 02:13:27 -0400
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7093BC061757;
+        Wed, 28 Jul 2021 23:13:24 -0700 (PDT)
+Received: from [192.168.1.111] (91-158-153-130.elisa-laajakaista.fi [91.158.153.130])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 8DA65DD;
+        Thu, 29 Jul 2021 08:13:20 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1627539201;
+        bh=R3bIRoMJigxo4p2zsGRPWQLBZtNi1OaMwnrZvxXIzUs=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=UHqT89lFKI8lt1u1fbSbMNICG7xkE54D7Zj4fMddWyWtk/Tg9T8ejBv8h0V+EK8xL
+         xe/NaixlcBjGnfIPiZyYd1jskXItHlr1OwDtIMEnxzIcLIAoCgEleWhPDa9x0xLTt8
+         rAm01G7OZSjbm/sYvAFyLgxuA7uy0ctxDbKLUPAk=
+Subject: Re: [PATCH 1/7] drm/omap: Cast pointer to integer safely
+To:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        dri-devel@lists.freedesktop.org
+Cc:     linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+        Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>, linux-imx@nxp.com,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Jyri Sarha <jyri.sarha@iki.fi>
+References: <20210728153736.15240-1-laurent.pinchart+renesas@ideasonboard.com>
+ <20210728153736.15240-2-laurent.pinchart+renesas@ideasonboard.com>
+From:   Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Message-ID: <69ac4474-3bbf-db72-3777-74c59f947d42@ideasonboard.com>
+Date:   Thu, 29 Jul 2021 09:13:17 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.11.0
 MIME-Version: 1.0
-In-Reply-To: <YOeLT4T5stjsAUMr@qmqm.qmqm.pl>
-Content-Type: text/plain; charset="iso-8859-2"
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210728153736.15240-2-laurent.pinchart+renesas@ideasonboard.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-X-Originating-IP: [172.20.187.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL107.nvidia.com (172.20.187.13)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 6ab11dbb-b12b-4734-ca3e-08d9523959a1
-X-MS-TrafficTypeDiagnostic: DM5PR1201MB0105:
-X-Microsoft-Antispam-PRVS: <DM5PR1201MB0105AE294498335C84BBA96AAEEB9@DM5PR1201MB0105.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: xHikgkLCGQn+/Q6X/DmzTqm61N+BbsT8Zzk1jHNcsthMyfv2b3mOLA9xoeVqOw8HEBpY1ujcN9qMRA7IU2rkorBx3uhpWwZm5GA6CSNNTVZHLcgWG+3tw4cZzMTAi+jiyyiiONG2zyAjYqNTLNYAM0e4yAX6YcxOsbpkIXbYwLYaZxBAoYhpkJw5C/ncmTFQPdGRcdkFy4UJSNxJDeeTlBnuGOVjwgUy373S9he3ZMUzFxzRbRkSqUUfBpsvudyxJAMsfWuP4DpRgvIO2vmVKDQu93cBA+rCrZltCV4gIZCVzWeMZGtDPkuY0RButXKoNgP1YVktfIemlWjnKDYEDPmBiMQeK1CrkPhvIqqB3TAjK72gsjSfLokIJCNcLz3X3fLQ0eIwmJz4kJgv9r5ceDD0xIDqrdNxYs7aTn4A8H0tQSvJI4r+H4Ay8SHAhUdPHmw0U9miS4KDH1CZgaJDU/e17k9lluS9aIjv2OoznSHrHXk81NOcTUO+eEltKJGhjTMaUyzw81SMeWvcopYujbMrpw1U8pa6c8zpGOGd38ib+dID2j+hCfIllArrW9/BhwXG3h3J2XmgWAc74b4wg5TVQ1WPusNIWnGBEUaKmP7pOAMVCrogiLmaosPme1ngCZoTEfTVdeyNifb451B6OOmXEOpinqkk3ixwJb1WnOKArQBnYocRmUDybITW8XZvJzOUQM/Ps0kx+b3CyKnxt3xp+Cdpi/TOKJFXDL9gBps=
-X-Forefront-Antispam-Report: CIP:216.228.112.34;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid03.nvidia.com;CAT:NONE;SFS:(4636009)(136003)(39860400002)(346002)(396003)(376002)(36840700001)(46966006)(316002)(336012)(4326008)(7416002)(86362001)(31686004)(8676002)(8936002)(4744005)(5660300002)(31696002)(16576012)(186003)(26005)(7636003)(356005)(54906003)(82310400003)(47076005)(426003)(36756003)(53546011)(478600001)(16526019)(36860700001)(6916009)(2616005)(70586007)(2906002)(36906005)(82740400003)(70206006)(43740500002);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jul 2021 02:34:11.8505
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6ab11dbb-b12b-4734-ca3e-08d9523959a1
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.34];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT018.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR1201MB0105
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Thanks for the suggestion, will change it in next RFC series.
+On 28/07/2021 18:37, Laurent Pinchart wrote:
+> On 64-bit platforms, the compiler complains that casting a void pointer
+> to an unsigned int loses data. Cast the pointer to a uintptr_t unsigned
+> to fix this.
+> 
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> ---
+>   drivers/gpu/drm/omapdrm/omap_drv.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/omapdrm/omap_drv.c b/drivers/gpu/drm/omapdrm/omap_drv.c
+> index f86e20578143..c05d3975cb31 100644
+> --- a/drivers/gpu/drm/omapdrm/omap_drv.c
+> +++ b/drivers/gpu/drm/omapdrm/omap_drv.c
+> @@ -572,7 +572,7 @@ static int omapdrm_init(struct omap_drm_private *priv, struct device *dev)
+>   	priv->dss->mgr_ops_priv = priv;
+>   
+>   	soc = soc_device_match(omapdrm_soc_devices);
+> -	priv->omaprev = soc ? (unsigned int)soc->data : 0;
+> +	priv->omaprev = soc ? (uintptr_t)soc->data : 0;
+>   	priv->wq = alloc_ordered_workqueue("omapdrm", 0);
+>   
+>   	mutex_init(&priv->list_lock);
+> 
 
-On 7/8/21 4:33 PM, Micha� Miros�aw wrote:
-> On Fri, Jun 25, 2021 at 04:55:24PM -0700, Dipen Patel wrote:
->> Tegra194 device has multiple HTE instances also known as GTE
->> (Generic hardware Timestamping Engine) which can timestamp subset of
->> SoC lines/signals. This provider driver focuses on IRQ and GPIO lines
->> and exposes timestamping ability on those lines to the consumers
->> through HTE subsystem.
-> [...]
->> +	ret = of_property_read_u32(dev->of_node, "slices", &slices);
->> +	if (ret != 0) {
->> +		dev_err(dev, "Could not read slices\n");
->> +		return -EINVAL;
->> +	}
->> +
->> +	hte_dev->sl = devm_kzalloc(dev, sizeof(struct hte_slices) * slices,
->> +				   GFP_KERNEL);
-> Nit: There is devm_kcalloc() that will check for overflow in the
-> multiply in case @slices from DT is broken.
->
-> Best Regards
-> Micha� Miros�aw
+Looks fine, although the subject sounds odd. Why was the cast "unsafe" before, and "safe" now?
+
+There's also another bunch of warnings I see:
+
+drivers/gpu/drm/omapdrm/dss/dsi.c: In function ‘dsi_vc_send_long’:
+drivers/gpu/drm/omapdrm/dss/dsi.c:7:25: warning: format ‘%d’ expects argument of type ‘int’, but argument 3 has type ‘size_t’ {aka ‘const long unsigned int’} [-Wformat=]
+     7 | #define DSS_SUBSYS_NAME "DSI"
+       |                         ^~~~~
+drivers/gpu/drm/omapdrm/dss/dss.h:30:21: note: in expansion of macro ‘DSS_SUBSYS_NAME’
+    30 | #define pr_fmt(fmt) DSS_SUBSYS_NAME ": " fmt
+       |                     ^~~~~~~~~~~~~~~
+./include/linux/dynamic_debug.h:134:15: note: in expansion of macro ‘pr_fmt’
+   134 |   func(&id, ##__VA_ARGS__);  \
+       |               ^~~~~~~~~~~
+./include/linux/dynamic_debug.h:152:2: note: in expansion of macro ‘__dynamic_func_call’
+   152 |  __dynamic_func_call(__UNIQUE_ID(ddebug), fmt, func, ##__VA_ARGS__)
+       |  ^~~~~~~~~~~~~~~~~~~
+./include/linux/dynamic_debug.h:162:2: note: in expansion of macro ‘_dynamic_func_call’
+   162 |  _dynamic_func_call(fmt, __dynamic_pr_debug,  \
+       |  ^~~~~~~~~~~~~~~~~~
+./include/linux/printk.h:471:2: note: in expansion of macro ‘dynamic_pr_debug’
+   471 |  dynamic_pr_debug(fmt, ##__VA_ARGS__)
+       |  ^~~~~~~~~~~~~~~~
+drivers/gpu/drm/omapdrm/dss/dss.h:36:2: note: in expansion of macro ‘pr_debug’
+    36 |  pr_debug(format, ## __VA_ARGS__)
+       |  ^~~~~~~~
+drivers/gpu/drm/omapdrm/dss/dsi.c:2097:3: note: in expansion of macro ‘DSSDBG’
+  2097 |   DSSDBG("dsi_vc_send_long, %d bytes\n", msg->tx_len);
+       |   ^~~~~~
+In file included from ./include/linux/printk.h:7,
+                  from ./include/linux/kernel.h:19,
+                  from drivers/gpu/drm/omapdrm/dss/dsi.c:9:
+drivers/gpu/drm/omapdrm/dss/dsi.c: In function ‘dsi_vc_generic_read’:
+./include/linux/kern_levels.h:5:18: warning: format ‘%d’ expects argument of type ‘int’, but argument 4 has type ‘size_t’ {aka ‘const long unsigned int’} [-Wformat=]
+     5 | #define KERN_SOH "\001"  /* ASCII Start Of Header */
+       |                  ^~~~~~
+./include/linux/kern_levels.h:11:18: note: in expansion of macro ‘KERN_SOH’
+    11 | #define KERN_ERR KERN_SOH "3" /* error conditions */
+       |                  ^~~~~~~~
+./include/linux/printk.h:390:9: note: in expansion of macro ‘KERN_ERR’
+   390 |  printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
+       |         ^~~~~~~~
+drivers/gpu/drm/omapdrm/dss/dss.h:40:2: note: in expansion of macro ‘pr_err’
+    40 |  pr_err("omapdss " DSS_SUBSYS_NAME " error: " format, ##__VA_ARGS__)
+       |  ^~~~~~
+drivers/gpu/drm/omapdrm/dss/dsi.c:2393:2: note: in expansion of macro ‘DSSERR’
+  2393 |  DSSERR("%s(vc %d, reqlen %d) failed\n", __func__,  vc, msg->tx_len);
+       |  ^~~~~~
+
+
+  Tomi
