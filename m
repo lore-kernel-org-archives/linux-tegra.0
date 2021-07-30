@@ -2,104 +2,106 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CB9DC4338F
-	for <linux-tegra@archiver.kernel.org>; Fri, 30 Jul 2021 18:35:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 645A4C4320A
+	for <linux-tegra@archiver.kernel.org>; Fri, 30 Jul 2021 19:33:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8546460F94
-	for <linux-tegra@archiver.kernel.org>; Fri, 30 Jul 2021 18:35:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4AE3860EBB
+	for <linux-tegra@archiver.kernel.org>; Fri, 30 Jul 2021 19:33:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231140AbhG3SfJ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 30 Jul 2021 14:35:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48640 "EHLO
+        id S230475AbhG3Tdg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 30 Jul 2021 15:33:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35892 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231214AbhG3Sc0 (ORCPT
+        with ESMTP id S230335AbhG3Tdg (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 30 Jul 2021 14:32:26 -0400
-Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDB72C06179F;
-        Fri, 30 Jul 2021 11:30:30 -0700 (PDT)
-Received: by mail-lj1-x236.google.com with SMTP id f12so13659301ljn.1;
-        Fri, 30 Jul 2021 11:30:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=kLTRgWW1RC8wwF+L3PsHjCu3c3dwv6n19TzK0kS6YIw=;
-        b=JmvXevrl2LOt3e2KuoIgrvxI8FsQnT84rnrdp2A3VztlrNyh5c1vsG7zuoFx3EF4xZ
-         HRqsdZ+GzSORFsiy9NPqtgKmj2eK455Q4lfZVCpIcVPJmpp7OEeEl6VICGFARdeSDKhW
-         zgGEbAV46pmmaaYP+3mxq3DhTrbKAlgcnyKwlfDeoJSgsAggumBFZqOXPHohkiWU+wpO
-         0ldGo2nZEnT2SNgC03jOYgFKhy1LG9g7Cr5RpGoKVcSAq7x+YZVCYy/mhNWaqgQ6CeBe
-         +g5ySNOu4n0abxLAj1l43W7Z0Bf8qTPvXPLrviji6cgXirp3QGB4BzQSZ9XsHuOng8qG
-         4ZPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=kLTRgWW1RC8wwF+L3PsHjCu3c3dwv6n19TzK0kS6YIw=;
-        b=K1Fqqd7ITDbUNWCAgJmZTbJhE+gt5Zqvpyj1DdQqnCCq+9xmaovgZS/Qv1dd2u+uQ9
-         WQLr/YAFhX/v0gGpCWjbaf0+RUWpaHLOR2GxxNdWpVuWj55rBu38+uvLRipQtOejo0c/
-         +7tQUUtTgnwOE6Un7TaBbp1i19W8YrPqDQ76A4Dv1xM24zQdz29L01vHORresbZrh6B7
-         1p1rDAfZEKK9975vOal/BWLHk5PTC8EeNnMRJttSRLubWJZeD/93Jkcd+jY1viMZ13FM
-         POTW8DNZKvhjrU+17VsHR/fRx5POsYxHO5m9viEKnYl9fOY904ML/Ir/T2EjIFEJGhm+
-         Yzpg==
-X-Gm-Message-State: AOAM533U5A5JD8EtxDiJFhuWUL90SQLMnx2U+Uwg14YJ+Hg8OrpN+MTR
-        M2Kn6G1d2zL+wtt9aOjRo9Y=
-X-Google-Smtp-Source: ABdhPJwFpji7ox8+1JGfmFGQYduc2n0jdrvImyTMPIbZQej5droNw1BHSHHnopCJYN4bgpXuToS5jg==
-X-Received: by 2002:a05:651c:12c6:: with SMTP id 6mr2445246lje.173.1627669829233;
-        Fri, 30 Jul 2021 11:30:29 -0700 (PDT)
-Received: from [192.168.2.145] (94-29-39-114.dynamic.spd-mgts.ru. [94.29.39.114])
-        by smtp.googlemail.com with ESMTPSA id h1sm210020lfk.187.2021.07.30.11.30.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 30 Jul 2021 11:30:28 -0700 (PDT)
-Subject: Re: [PATCH v5 00/12] Add OTG mode support to Tegra USB PHY, SMB347
- and Nexus 7
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Sebastian Reichel <sre@kernel.org>,
-        David Heidelberg <david@ixit.cz>
-Cc:     devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org, Thierry Reding <treding@nvidia.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Fri, 30 Jul 2021 15:33:36 -0400
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2934C06175F;
+        Fri, 30 Jul 2021 12:33:30 -0700 (PDT)
+Received: from pendragon.ideasonboard.com (62-78-145-57.bb.dnainternet.fi [62.78.145.57])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id E210C2A3;
+        Fri, 30 Jul 2021 21:33:27 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1627673608;
+        bh=ok0naQzMlCI0ggY3MCduPnEZLiYeC3q7JCVFbjkuKBI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=wQ06hs0knVejc5QAd8CqkgdH4Ct/SQEIc95F++VL3jGUOhgRN4Wo5fj0GAbAM0swG
+         h2wQ6Zg6/1g3x2IhosUMltFcbZTuhwGELuX2WA24YCcj+TOB+xh4KXvopwGCLrhBSt
+         ejne5iel98vHNlL/6d/to81Ehrkgc9Mi/EwPXhs4=
+Date:   Fri, 30 Jul 2021 22:33:19 +0300
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Sam Ravnborg <sam@ravnborg.org>
+Cc:     dri-devel@lists.freedesktop.org, Tomi Valkeinen <tomba@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Jyri Sarha <jyri.sarha@iki.fi>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Mark Brown <broonie@kernel.org>,
-        Peter Chen <peter.chen@kernel.org>,
-        Felipe Balbi <balbi@kernel.org>
-References: <20210717182134.30262-1-digetx@gmail.com>
- <ed3c2a5c-a916-2215-a767-5546fa8cd352@gmail.com>
-Message-ID: <f612e599-42ee-f385-b198-bdab95ab890a@gmail.com>
-Date:   Fri, 30 Jul 2021 21:30:27 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        linux-renesas-soc@vger.kernel.org,
+        Thierry Reding <thierry.reding@gmail.com>, linux-imx@nxp.com,
+        Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
+        linux-tegra@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>
+Subject: Re: [PATCH 0/7] drm: Extend COMPILE_TEST support to some ARM drivers
+Message-ID: <YQRT/9xIH2PyACbt@pendragon.ideasonboard.com>
+References: <20210728153736.15240-1-laurent.pinchart+renesas@ideasonboard.com>
+ <YQLdDTu4duXXQXAs@ravnborg.org>
 MIME-Version: 1.0
-In-Reply-To: <ed3c2a5c-a916-2215-a767-5546fa8cd352@gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Disposition: inline
+In-Reply-To: <YQLdDTu4duXXQXAs@ravnborg.org>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-30.07.2021 20:37, Dmitry Osipenko пишет:
-> 17.07.2021 21:21, Dmitry Osipenko пишет:
-> ...
->>   power: supply: smb347-charger: Make smb347_set_writable() IRQ-safe
->>   power: supply: smb347-charger: Utilize generic regmap caching
->>   power: supply: smb347-charger: Implement USB VBUS regulator
-> 
-> I noticed that charging doesn't work properly now, will fix it in v6.
-> 
+Hi Sam,
 
-For the record, it wasn't enough to enable the regmap caching, we also
-need to fill up the cache on init by specifying the num_reg_defaults_raw
-parameter.
+On Thu, Jul 29, 2021 at 06:53:33PM +0200, Sam Ravnborg wrote:
+> On Wed, Jul 28, 2021 at 06:37:29PM +0300, Laurent Pinchart wrote:
+> > Hello,
+> > 
+> > This patch series stems from subsystem-wide changes I wanted to
+> > compile-test with an ARM64 cross-compiler. My laziness to fire a 32-bit
+> > ARM build probably resulted in more time being spent writing these
+> > patches, but hopefully they'll turn out to be useful for more people :-)
+> > 
+> > Patches 1/7 and 2/7 are fixes for compilation warnings on 64-bit
+> > platforms in the omapdrm and sti-drm drivers. They are a dependency for
+> > the Kconfig changes that follow to avoid introducing build warnings, but
+> > could also be merged before.
+> > 
+> > Patches 3/7 to 7/7 enable compilation of the imx-dcss, omapdrm, sti-drm,
+> > tegra-drm and tilcdc drivers on ARM64 with COMPILE_TEST. The patches are
+> > independent from each other, so they can be picked by their respective
+> > maintainers.
+> > 
+> > We could also extend test compilation to more architecture, but I didn't
+> > want to remove all dependencies on ARM or ARM64 at this point for fear
+> > or triggering build warnings that I wouldn't be able to catch locally.
+> > If there's a consensus that fully relaxing the platform requirement is
+> > better, I can submit a new version that does so and rely on the 0day bot
+> > to catch issues.
+>
+> I have alpha, sparc64, and a few more so we can get pretty good coverage
+> before it hits -next.
 
-This uncovered another problem where the pin control "enable" bit was
-unsettling because the default regmap values were initialized to zeros
-and driver doesn't set the enable bit at all.
+It seems that the consensus is to enable COMPILE_TEST on all platforms,
+so I'll do that.
+
+> If we enable more build coverage then please address all W=1 warnings
+> first.
+> 
+> I for once always builds with W=1 these days, and I see more and more
+> warnings sneaking in again.
+> So lets try to keep the noise level down.
+
+Hmmmm... I build my kernel with -Werror to make sure I catch all
+warnings. W=1 doesn't play well with that :-S I'll see if I can turn the
+additional warnings into non-errors, but that may become a game of
+whack-a-mole.
+
+-- 
+Regards,
+
+Laurent Pinchart
