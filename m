@@ -2,140 +2,230 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-8.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09CDCC43214
-	for <linux-tegra@archiver.kernel.org>; Thu, 29 Jul 2021 18:35:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6382AC4320E
+	for <linux-tegra@archiver.kernel.org>; Fri, 30 Jul 2021 01:23:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E448360F5E
-	for <linux-tegra@archiver.kernel.org>; Thu, 29 Jul 2021 18:35:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4835D60F94
+	for <linux-tegra@archiver.kernel.org>; Fri, 30 Jul 2021 01:23:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231329AbhG2Sfb (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 29 Jul 2021 14:35:31 -0400
-Received: from mail-dm6nam10on2081.outbound.protection.outlook.com ([40.107.93.81]:31712
-        "EHLO NAM10-DM6-obe.outbound.protection.outlook.com"
+        id S233660AbhG3BXN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 29 Jul 2021 21:23:13 -0400
+Received: from mail-mw2nam10on2077.outbound.protection.outlook.com ([40.107.94.77]:55453
+        "EHLO NAM10-MW2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S230141AbhG2Sf2 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 29 Jul 2021 14:35:28 -0400
+        id S233516AbhG3BXM (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 29 Jul 2021 21:23:12 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=bOPf3cGfW2PNOok/WvQhdN1Td20tnwqZVDd+/wlY4ag/TqhYDbT+PrmvoSYa5i3pwoHrbv31HDD1SqUi6v7GxDg8SzS10WwJ00yoRC3+i6FIBgMXz66/Zv47BS5Ni+JeTz57bkb5sPw4h63sKyFkpWUisX7TiquVV4WRLUgm3LIWh09TPYfS5rwXQJ5j1oITJyFjdB+pzH8MgDccttZyz29KArdYSlgxvjGRqLMC6XvSBRx6bAuQKDywEJogCDWcQuxBX8h+a+sIfmkvJmS6h+Doa8xs5nbR35oTg1s5Fw4tdkux+whBwfm4fMvp5ij0w7XGhPfqQZVCbznJsEdRAg==
+ b=W6OAv4xTRdnDnrrc9eFSHjEzIFLET+ENZ0NKgJKS4GkcXB8qHUTCgpMOi9jRGA/INcPAFFtIVrOiz9E4W8453a95SEf9PlbNFM/YH6v9g7uXP1DFoKj65cgiEHSYA8hH9zg31CEFcB5Rcy+AHYHqMEsF6s/+ZK9Nw3box5HIMwj1Hu4staR8gnhLMgoWx1iIIzIQ3+lierqIO71SbV3TgxfZDcWx3Yz/kp69sO0b0/V73tCcgeZsgfyvFq6tLMg9BRwnDsjoOdvNQbHWic3xZon2KxEg6Gh5Z2QADceCeFU7YHA/J5Kyy8hb1JUMty00sgtJ8+drNu/hUx4jQ3ThJg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4qZEyc9WmdPDU4n33n24DikqvOJP4JoEdWMQGniseqg=;
- b=D7oIV4UOGz5GcZ5pg1ejTD1up9cq0y2tldfTg7YxQUH0rawRJjh53byJ4oicNNOAcM750Iqc7cNJ1LWmtvsR2WhKitM3KjqeUbXtwrI0cx2qbRMge9czn/JMbmiAhR1HtVGon34GyVehZksUqPldiGxk1xNdCWFDYfDePVJbNoUc2s5WDeOWBbDF+FCwWQuyHxz6VBbyukGqnEWi/6/754eGDdiQTTd3mNFZmnVmqUb2da5UCdy6Oi0iOlw/hSXgvkqZz1AkJV9iMpkhqYWy5j6XLSsNxb0VsYQJiU8CQhIf5TKGvDQw1JXNjO0KT8qE8sfNRjLYAKR52gsDrCzLKA==
+ bh=F1HoiVDlfNurHMXTqTtTCtGSCNxkPr7ROAQv+iTVSC8=;
+ b=Oq/NDfzS+4ahqZWP54EvJly+i/N/uMbec1tiRqRLMRnfFH27H/ZTQSavE9tY0sRjRlAHlFPJoZMqeKdBqbeppS3Dsb277To6S2t7fwLFFesFaO7jUOASLCLzpfl60mO2c+c+hPKpR+NpEwo6Zf/7PcpwndpG7TLgXbH5pwsR6kCazQ8/GcSPx9Y0nk0HNxmkyE3uqY6hRpYMhJWEjuUmH5m28o9U3+8OZv0sgelsuNLUkM3m10jFTWU+xwTkE0zvZ9e3DTUR9FcD/t3xzs1TvhgTDNEnhSTK8TX9YvTCvoKrJiN21FDDMso9tU3iilOKJewYT0Vviehf5yi6S8FvBg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.112.34) smtp.rcpttodomain=denx.de smtp.mailfrom=nvidia.com;
+ 216.228.112.34) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
  dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=nvidia.com;
  dkim=none (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4qZEyc9WmdPDU4n33n24DikqvOJP4JoEdWMQGniseqg=;
- b=tkHfoASGvzme068Fqu7XEO8uknEmL3J1h0HkvdX6Myzij5BP2Zpkrn/CmysFno/zYzRdFG4nHarFIOkvDMja52uDnTgAxIwfnadQOR4S5C8kzKnTih1voIQ2PJy316aUgw2ioUq8tWLp4MMLGlskfupk+J2Ci7yUpW3kJH619AZTJLSgbgY6NVxVBy9zHSv1zaLMF0IMcYvckKdF6f/ImaSfJpKvW5sgrLuY8nP/h3HinYUkUYktLSpdfddYyf/WQXre0n8y1GQ4DiMjtIR3GrdKrObLiqKUZe9X+MEU7b5Sqvw36cNtIes7YpBT9PNhWDF1Nx0wnHGiJoXMYhJIGQ==
-Received: from DM3PR12CA0105.namprd12.prod.outlook.com (2603:10b6:0:55::25) by
- BYAPR12MB3208.namprd12.prod.outlook.com (2603:10b6:a03:13b::32) with
+ bh=F1HoiVDlfNurHMXTqTtTCtGSCNxkPr7ROAQv+iTVSC8=;
+ b=XdetbWhcO8k4LMmy3pjxwUWW1nGRbDy/bWaZmkKSTAjAYBC8oMMXVgDKFqYOZTM9zSX9bpvdNxdqngoaqCCcwAIeBw1c7YIqax2rL3zTVEfUT5bKNFg4wbrhXASwX5d7OoMvY1Rakq9KUutCcPLY4wDiq1CBDzRDPQjI97scdEUiCHakJsJEn8Xj7phwTblIt9W+twhQmMfpnLFJsvK8Tc+sV8KJ3yJy3l1ahvHUtCbRY1ehidlt8s+712fk0aoAAHvusrSLqWscEsewYDC0MQ9ihRSaGKtjTUiBitkma3Rv12B9NBSAsrfH1NV4qJ8hrrLEzHOSpBWta4ICn+kgTg==
+Received: from DM6PR03CA0082.namprd03.prod.outlook.com (2603:10b6:5:333::15)
+ by MN2PR12MB3998.namprd12.prod.outlook.com (2603:10b6:208:16d::19) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4373.18; Thu, 29 Jul
- 2021 18:35:22 +0000
-Received: from DM6NAM11FT039.eop-nam11.prod.protection.outlook.com
- (2603:10b6:0:55:cafe::8d) by DM3PR12CA0105.outlook.office365.com
- (2603:10b6:0:55::25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4373.17 via Frontend
- Transport; Thu, 29 Jul 2021 18:35:22 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4373.18; Fri, 30 Jul
+ 2021 01:23:06 +0000
+Received: from DM6NAM11FT058.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:5:333:cafe::e5) by DM6PR03CA0082.outlook.office365.com
+ (2603:10b6:5:333::15) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4373.20 via Frontend
+ Transport; Fri, 30 Jul 2021 01:23:06 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.34)
- smtp.mailfrom=nvidia.com; denx.de; dkim=none (message not signed)
- header.d=none;denx.de; dmarc=pass action=none header.from=nvidia.com;
+ smtp.mailfrom=nvidia.com; vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=pass action=none header.from=nvidia.com;
 Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
  216.228.112.34 as permitted sender) receiver=protection.outlook.com;
  client-ip=216.228.112.34; helo=mail.nvidia.com;
 Received: from mail.nvidia.com (216.228.112.34) by
- DM6NAM11FT039.mail.protection.outlook.com (10.13.172.83) with Microsoft SMTP
+ DM6NAM11FT058.mail.protection.outlook.com (10.13.172.216) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.4373.18 via Frontend Transport; Thu, 29 Jul 2021 18:35:21 +0000
-Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Thu, 29 Jul
- 2021 18:35:21 +0000
-Received: from jonathanh-vm-01.nvidia.com (172.20.187.5) by mail.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1497.2 via Frontend
- Transport; Thu, 29 Jul 2021 18:35:21 +0000
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
-        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
-        <stable@vger.kernel.org>, <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 5.10 00/24] 5.10.55-rc1 review
-In-Reply-To: <20210729135137.267680390@linuxfoundation.org>
-References: <20210729135137.267680390@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+ 15.20.4373.18 via Frontend Transport; Fri, 30 Jul 2021 01:23:06 +0000
+Received: from [172.17.173.69] (172.20.187.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Fri, 30 Jul
+ 2021 01:23:05 +0000
+Subject: Re: [RFC 04/11] dt-bindings: Add HTE bindings
+To:     Linus Walleij <linus.walleij@linaro.org>
+CC:     "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Kent Gibson <warthog618@gmail.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>
+References: <20210625235532.19575-1-dipenp@nvidia.com>
+ <20210625235532.19575-5-dipenp@nvidia.com>
+ <CACRpkdbazcGqapWMLnj8=UShU0j002SkKRTxgpprfDeaP_nAQQ@mail.gmail.com>
+X-Nvconfidentiality: public
+From:   Dipen Patel <dipenp@nvidia.com>
+Message-ID: <4b313c41-2b1b-8498-e5dd-1f82b939fa6c@nvidia.com>
+Date:   Thu, 29 Jul 2021 18:32:05 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-Message-ID: <55eceb48408b4a63a15159f0fd6d4a29@HQMAIL101.nvidia.com>
-Date:   Thu, 29 Jul 2021 18:35:21 +0000
+In-Reply-To: <CACRpkdbazcGqapWMLnj8=UShU0j002SkKRTxgpprfDeaP_nAQQ@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Originating-IP: [172.20.187.5]
+X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
+ HQMAIL107.nvidia.com (172.20.187.13)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 2b1fbee7-3d0b-4ea6-1d5f-08d952bf9fa3
-X-MS-TrafficTypeDiagnostic: BYAPR12MB3208:
-X-Microsoft-Antispam-PRVS: <BYAPR12MB3208FD6A275308692C26ECB0D9EB9@BYAPR12MB3208.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
+X-MS-Office365-Filtering-Correlation-Id: e6af2362-34a5-482c-f0da-08d952f89596
+X-MS-TrafficTypeDiagnostic: MN2PR12MB3998:
+X-Microsoft-Antispam-PRVS: <MN2PR12MB399808DBFF668BB2704715ECAEEC9@MN2PR12MB3998.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:7219;
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: rON0m9U/6U+K0bbWbShp/KNZYT47ApUMwDncgGRrEAnXr7DvE9mlwTJrFhREXUxOgUlWJFIuVypKSctEh2+cdb2miqqqX2q1nrHP30jO2HQ12JPt2ChsWPn9VgRlfpgmqpeCJpGS9KrCudQK7SsNZfRLmOS3Y7EP+q2gxoea5dyzZi3j2YsWiGx8WInh9XcfR0Jk4npeA0lHc2pYE4VAnzJ8rbQhyZJO371TYngsVpTLxAokumIml7Nd55e6SvmY280znJvMd7CMyFDbWEqzqp4p5xMPIbOEF/NQLAyiwdMvphwXpFTL64JRkIw4+koAKv6vTtoVx6La3jQCGpQ+9rgZaNJ8iEQl6bnJhL3tS+48KHEFODgwsDA9LG4pIgUO4TjC2FhVKfFjNeKKswV5CD6TBcQbWIQwbwUGC8rIMD/+DdxcbRMgNuyX+N1UTEW43UePREqjRvgDLukQjZQOAg9r90nXFGVIvo9pht/6b1HOb7fKr946k8gQo/LR5PHMxs8106FS8p6rxWx7FXh2JycLFbZXI6Fp6TGf+DBiTNNi+n19zXjoEap4qfHxgsww3zZlfx4fKhW3Wku628T4cMDQj3l0xGQyu+lk5Us/HJqtLHS6z/fnOiLuKECfX2vH6eVX5J4D961/y3dzIj6UjWY0wkZ0oRXu8fboWaCWE8YZaS69WUVBmYsWcQNRWs0Xr1J+3Mylf3z1uukR00l+vChewEk04YjrcFbFzXkGffzUXjAPnKV4VqHx7pP2RjyArAb3QULdbB1RxrJ2ytW2av/gnUMeDYObiW6t0+uX6SA=
-X-Forefront-Antispam-Report: CIP:216.228.112.34;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid03.nvidia.com;CAT:NONE;SFS:(4636009)(39860400002)(396003)(346002)(136003)(376002)(46966006)(36840700001)(36860700001)(86362001)(7636003)(2906002)(8936002)(36906005)(8676002)(82310400003)(4326008)(336012)(7416002)(82740400003)(47076005)(356005)(108616005)(478600001)(966005)(426003)(26005)(5660300002)(6916009)(70586007)(70206006)(316002)(186003)(24736004)(54906003);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: SuvqXzHU/oYcn+Ruw2ZO1CpgfjBIKJUFcNa+xXCtxhNgMKS1c2xbsmR5FAIvqmKpUBubNwT7oHS6gJF9KZQBKFMY/4c33xPa1pvpX36Wns2P2VMWEGw9OB6s7HrUhv7cXaTzxihdJMe3+VMcw0pLJm5gtpwKdFkzx8GBQ5Sd3PToFb+lQySt1fxscPyKXTmCcw7tXdaJdNzoXRA6xzQtaZlTVeAkyqzwdo3GAzHC1Dp8eKWeX935w9wDSaEGAR9IBItQ38hA4ulNteGwYtj8NqxLXnJIrzPt57iDkCvYgnEw8CiFK1uao017CJLZoDcRcUkOT2sWYFSpaeamyWQHQq4ILwMYNZ1FeXdi0MulhUa+ia6BFsszjCTWNFoc3W8LUhncG6KXPwtXhw8MV2vgypbKnMKstSfwAlpq1+GKWGgI23yZrCSWMgL7/9MerLvIS4ZpeRoW4JeADlyjlcdL9qze2Wq2NTos9fUqxumEsZkvGEQtgmlADu4Oy0k95y7BlPfgmzoMP9m+cokPy9dek4ph5/ZweFRG/OytIR4aWnageXl882RNi0zRVI7jMiGXjvlYO70p6834nfEErj6st8WfZIKf1oct0yaJyS23+duuI7a9mQhuq46uHxM5vMNOE6BbPzDYTV2Y8wqpQ41GM8fS4WnNBU6oigptDh7ohSxL5NHWTK0H+vgPrCbaAbYAgfMqR9rCE9sr9la1Pg1XvQynPfztKAbXXfR2wQy0emgDBverLi2jzC+zEOfohB93L2Gt34sv/2rJGZeo9EUa/kwtD+UAqDNtm4sxoIRaD4gJ3pS5AlScLN7op4J5kB8m
+X-Forefront-Antispam-Report: CIP:216.228.112.34;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid03.nvidia.com;CAT:NONE;SFS:(4636009)(39860400002)(376002)(396003)(136003)(346002)(46966006)(36840700001)(316002)(8676002)(966005)(70206006)(6916009)(16576012)(2616005)(36860700001)(186003)(82310400003)(54906003)(70586007)(478600001)(36906005)(36756003)(16526019)(26005)(336012)(8936002)(2906002)(5660300002)(356005)(426003)(7636003)(47076005)(86362001)(4326008)(82740400003)(31686004)(53546011)(7416002)(31696002)(43740500002);DIR:OUT;SFP:1101;
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jul 2021 18:35:21.9084
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jul 2021 01:23:06.3380
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2b1fbee7-3d0b-4ea6-1d5f-08d952bf9fa3
+X-MS-Exchange-CrossTenant-Network-Message-Id: e6af2362-34a5-482c-f0da-08d952f89596
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.34];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT039.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT058.eop-nam11.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR12MB3208
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB3998
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, 29 Jul 2021 15:54:20 +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.10.55 release.
-> There are 24 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sat, 31 Jul 2021 13:51:22 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.55-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
 
-All tests passing for Tegra ...
+On 6/27/21 3:56 AM, Linus Walleij wrote:
+> Hi Dipen,
+>
+> thanks a lot for this very interesting patch set!
+>
+> I'm gonna try to review properly, just pointing out some conceptual
+> things to begin with. Bindings is a good place to start.
+>
+> On Sat, Jun 26, 2021 at 1:48 AM Dipen Patel <dipenp@nvidia.com> wrote:
+>
+>> +description: |
+>> +  HTE properties should be named "htes". The exact meaning of each htes
+>> +  property must be documented in the device tree binding for each device.
+>> +  An optional property "hte-names" may contain a list of strings to label
+>> +  each of the HTE devices listed in the "htes" property.
+> I think this is a bit over-abbreviated. IIO has:
+> io-channels =...
+> io-channel-names =...
+>
+> Given DT:s infatuation with using english plural I would opt for:
+> hardware-timestamps = ..
+> hardware-timestamp-names = ...
+I can change it to suggested names in next RFC series.
+>
+> The "engine" part is a bit of an nVidia:ism I think and a too generic
+> term. Could as well be "processor" or "automata" but nVidia just
+> happened to name it an engine. (DMA engine would be a precedent
+> though, so no hard preference from my side.)
+>
+> When reading this it is pretty intuitively evident what is going on.
+>
+> Other than that it looks really good!
+>
+>> +++ b/Documentation/devicetree/bindings/hte/hte.yaml
+> I would name this hardware-timestamp-common.yamp or so.
 
-Test results for stable-v5.10:
-    10 builds:	10 pass, 0 fail
-    28 boots:	28 pass, 0 fail
-    75 tests:	75 pass, 0 fail
+Sure, but do I have to change hte-consumer and other hte named
 
-Linux version:	5.10.55-rc1-gdfa33f1e9f64
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
-                tegra20-ventana, tegra210-p2371-2180,
-                tegra210-p3450-0000, tegra30-cardhu-a04
+yaml as well in this directory? If yes, I am referring HTE everywhere  in the
 
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
+code (framework is named as hte itself), I hope that is fine and does not
 
-Jon
+create any confusion.
+
+>
+>> +title: HTE providers
+> Spell this out: Hardware timestamp providers
+Can I do hardware timestamp engine provider instead?
+>
+>> +properties:
+>> +  $nodename:
+>> +    pattern: "^hte(@.*|-[0-9a-f])*$"
+> Likewise:
+> hardware-timestamp@ ...
+>
+> I think this is good because it is very unambiguous.
+>
+>> +examples:
+>> +  - |
+>> +    tegra_hte_aon: hte@c1e0000 {
+>> +              compatible = "nvidia,tegra194-gte-aon";
+>> +              reg = <0xc1e0000 0x10000>;
+>> +              interrupts = <0 13 0x4>;
+>> +              int-threshold = <1>;
+>> +              slices = <3>;
+>> +              #hte-cells = <1>;
+>> +    };
+> The examples can be kept to the tegra194 bindings I think, this
+> generic binding doesn't need an example as such.
+Ok, will remove it.
+>
+>> +$id: http://devicetree.org/schemas/hte/nvidia,tegra194-hte.yaml#
+> This one should be named like this, that is great.
+>
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Tegra194 on chip generic hardware timestamping engine (HTE)
+> This is clear and nice.
+>
+>> +  int-threshold:
+>> +    description:
+>> +      HTE device generates its interrupt based on this u32 FIFO threshold
+>> +      value. The recommended value is 1.
+>> +    minimum: 1
+>> +    maximum: 256
+> Does this mean a single timestamp in the FIFO will generate an IRQ?
+> Then spell that out so it is clear.
+In the description I said that.
+>
+>> +  slices:
+>> +   description:
+>> +    HTE lines are arranged in 32 bit slice where each bit represents different
+>> +    line/signal that it can enable/configure for the timestamp. It is u32
+>> +    property and depends on the HTE instance in the chip.
+>> +   oneOf:
+>> +    - items:
+>> +        - const: 3
+>> +    - items:
+>> +        - const: 11
+> Can't you just use
+> enum: [3, 11]
+> ?
+Sure, will change it.
+>
+>> +  '#hte-cells':
+>> +    const: 1
+> So IMO this would be something like
+> #hardware-timestamp-cells
+Sure.
+>
+> Other than this it overall looks very nice to me!
+>
+> Yours,
+> Linus Walleij
