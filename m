@@ -7,32 +7,29 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A812EC4320E
-	for <linux-tegra@archiver.kernel.org>; Sat, 31 Jul 2021 01:40:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B54E9C4338F
+	for <linux-tegra@archiver.kernel.org>; Sat, 31 Jul 2021 01:40:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 94F0561052
-	for <linux-tegra@archiver.kernel.org>; Sat, 31 Jul 2021 01:40:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C83660FED
+	for <linux-tegra@archiver.kernel.org>; Sat, 31 Jul 2021 01:40:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235323AbhGaBkU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 30 Jul 2021 21:40:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39576 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235245AbhGaBkT (ORCPT
+        id S235347AbhGaBkV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 30 Jul 2021 21:40:21 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:33336 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235339AbhGaBkV (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 30 Jul 2021 21:40:19 -0400
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87689C06175F;
-        Fri, 30 Jul 2021 18:40:14 -0700 (PDT)
+        Fri, 30 Jul 2021 21:40:21 -0400
 Received: from pendragon.lan (62-78-145-57.bb.dnainternet.fi [62.78.145.57])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 02763E81;
-        Sat, 31 Jul 2021 03:40:10 +0200 (CEST)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id E584A1027;
+        Sat, 31 Jul 2021 03:40:13 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1627695611;
-        bh=AYL6GFoeD+crZns3tBIIFsN+kRzv0ihNWl3ak38Yu9g=;
+        s=mail; t=1627695614;
+        bh=s8lWldAwCfpDlUn10rnLS7SwtEHK7/qK7+IBJMGKT7k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pH/ZGh/kcA87XNIttHFobtNJq/2Ex41Mc8y+gPszSqxQcXIOI8b+QMeZe4qK2VBTd
-         NrvfrkPbpjSYig1YzS7cjCswIfik6JWE9T0rUHcX4ghF2cS/MDovW99DS2CFLZnXuN
-         zITWx36NXvtoc+0vG0VWsJ4zMC1reymVjUvfHLXw=
+        b=kgbqgtkMYLNT0CEtO/SKVlzzmo4bwVkRUB2Q315oLbqeE1kTMP7krqmCgg8QWfMPo
+         ISDDbIBAaPA5YT4PPIue+Q6IhjRAy9aJv6I2fzg8XEcS1XpYRfqoXVRfPAcQAsytqo
+         i3DucdDDH1vfvWblxSzwmNb+w6aI8iCloQIHkEYo=
 From:   Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 To:     dri-devel@lists.freedesktop.org
 Cc:     Tomi Valkeinen <tomba@kernel.org>,
@@ -45,9 +42,9 @@ Cc:     Tomi Valkeinen <tomba@kernel.org>,
         linux-tegra@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>,
         Alain VOLMAT-SCND-01 <alain.volmat@foss.st.com>,
         Benjamin Gaignard <benjamin.gaignard@collabora.com>
-Subject: [PATCH v2 3/9] drm/sti: Use correct printk format specifiers for size_t
-Date:   Sat, 31 Jul 2021 04:39:48 +0300
-Message-Id: <20210731013954.11926-4-laurent.pinchart+renesas@ideasonboard.com>
+Subject: [PATCH v2 6/9] drm/rcar-du: Enable COMPILE_TEST on all architectures
+Date:   Sat, 31 Jul 2021 04:39:51 +0300
+Message-Id: <20210731013954.11926-7-laurent.pinchart+renesas@ideasonboard.com>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20210731013954.11926-1-laurent.pinchart+renesas@ideasonboard.com>
 References: <20210731013954.11926-1-laurent.pinchart+renesas@ideasonboard.com>
@@ -57,34 +54,28 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The correct format specifier for size_t is %zu. Using %d (or %u)
-generates a warning on 64-bit platforms. Fix it.
+To extend test coverage, support COMPILE_TEST on all architectures by
+dropping the ARM || ARM64 dependency. The dependency is a no-op when
+COMPILE_TEST is not selected as ARCH_RENESAS can only be defined for ARM
+or ARM64.
 
 Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Reviewed-by: Philippe Cornu <philippe.cornu@foss.st.com>
 ---
- drivers/gpu/drm/sti/sti_hqvdp.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/rcar-du/Kconfig | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/sti/sti_hqvdp.c b/drivers/gpu/drm/sti/sti_hqvdp.c
-index d09b08995b12..3c61ba8b43e0 100644
---- a/drivers/gpu/drm/sti/sti_hqvdp.c
-+++ b/drivers/gpu/drm/sti/sti_hqvdp.c
-@@ -927,12 +927,12 @@ static void sti_hqvdp_start_xp70(struct sti_hqvdp *hqvdp)
- 
- 	header = (struct fw_header *)firmware->data;
- 	if (firmware->size < sizeof(*header)) {
--		DRM_ERROR("Invalid firmware size (%d)\n", firmware->size);
-+		DRM_ERROR("Invalid firmware size (%zu)\n", firmware->size);
- 		goto out;
- 	}
- 	if ((sizeof(*header) + header->rd_size + header->wr_size +
- 		header->pmem_size + header->dmem_size) != firmware->size) {
--		DRM_ERROR("Invalid fmw structure (%d+%d+%d+%d+%d != %d)\n",
-+		DRM_ERROR("Invalid fmw structure (%zu+%d+%d+%d+%d != %zu)\n",
- 			  sizeof(*header), header->rd_size, header->wr_size,
- 			  header->pmem_size, header->dmem_size,
- 			  firmware->size);
+diff --git a/drivers/gpu/drm/rcar-du/Kconfig b/drivers/gpu/drm/rcar-du/Kconfig
+index b47e74421e34..bce3a67f14d3 100644
+--- a/drivers/gpu/drm/rcar-du/Kconfig
++++ b/drivers/gpu/drm/rcar-du/Kconfig
+@@ -2,7 +2,6 @@
+ config DRM_RCAR_DU
+ 	tristate "DRM Support for R-Car Display Unit"
+ 	depends on DRM && OF
+-	depends on ARM || ARM64
+ 	depends on ARCH_RENESAS || COMPILE_TEST
+ 	imply DRM_RCAR_CMM
+ 	imply DRM_RCAR_LVDS
 -- 
 Regards,
 
