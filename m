@@ -5,269 +5,229 @@ X-Spam-Level:
 X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D236C19F35
-	for <linux-tegra@archiver.kernel.org>; Sat, 31 Jul 2021 18:57:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07B7EC4338F
+	for <linux-tegra@archiver.kernel.org>; Sat, 31 Jul 2021 19:15:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 22A1C61050
-	for <linux-tegra@archiver.kernel.org>; Sat, 31 Jul 2021 18:57:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DED6261055
+	for <linux-tegra@archiver.kernel.org>; Sat, 31 Jul 2021 19:15:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230342AbhGaS5R (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 31 Jul 2021 14:57:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44734 "EHLO
+        id S229709AbhGaTPb (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 31 Jul 2021 15:15:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49392 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230398AbhGaS5R (ORCPT
+        with ESMTP id S229642AbhGaTPa (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sat, 31 Jul 2021 14:57:17 -0400
-Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77F9FC06175F;
-        Sat, 31 Jul 2021 11:57:10 -0700 (PDT)
-Received: by mail-lj1-x22c.google.com with SMTP id u20so17920269ljo.0;
-        Sat, 31 Jul 2021 11:57:10 -0700 (PDT)
+        Sat, 31 Jul 2021 15:15:30 -0400
+Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FF0EC0613CF;
+        Sat, 31 Jul 2021 12:15:24 -0700 (PDT)
+Received: by mail-lf1-x131.google.com with SMTP id r26so25348899lfp.5;
+        Sat, 31 Jul 2021 12:15:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=+/WYo8QV+iZpYeEZvpXl5J2olgvwzkYcuOSEqBeA8sI=;
-        b=e3qLhBXhJis92SjGbiSmhxP6wPsHmOMb+IFZwpENnh7tGOQyv2K6ZOTk92C1k22zez
-         /er+WbZXYkG2IOoXbpmHlYJVfHF4f+qZl4c0Wj4mW6F8B8NiXDKtjQywYJdmwhMMdvBV
-         UA5pb9Ho8F604LrEdGaKC08ZV3bvskPx6OU+3kY0bfD7g7Bg6ro/4+MxvGMRNldHy8ee
-         arBesUciw9twEBuZsuwNPLAI2lXZxAFQ02KpdhLz0xE7oW28mHahJGwvjNQnEy33qGKi
-         Psg8rXPrKyMpe4iu62xOxj8YK7mLbRNmnRTkp4DtjM4EgPS7K7vBjmB8JPJ2HFV2Avj3
-         2OEg==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=O6HizKYjgpTKrJ3jzl7u6TzRt2edy1/wCW+GDPbwhfc=;
+        b=fdoVfL84CyiznnmBfdYdjkMQ6j45YNWXp8MpxPFW1uE1yoyJIJGGRw7IcSycSG9Jo4
+         mANN3z34Sqtzt5LYu9OVPblxviUfwwcjZIIyZxeypk62d7cmcZHVrWrE3xJMag7NDW1/
+         nKpKe910717Re8y/817xnAMyYyE/oEZ1phXQcObuuf9Y6SqX/7KY+2/qMDEcOgPgoQtJ
+         Bi9GlmZTd+TOcjfyU+xJ+jJyMVLAAIrul2oboyn9HnJTuBksyguCiMEIcmsCU9MGt5oj
+         dqliy9XxRIKz747BmTtiOSzecblxwJPHH4+QwYfYFiIJdU/Ej8SASAgEAf+i6H3vBGB+
+         I+gA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=+/WYo8QV+iZpYeEZvpXl5J2olgvwzkYcuOSEqBeA8sI=;
-        b=WPHzDQ/yc5x8GVB6/Ki27T/vzo7og4kC4+LHZLE9Tk3CSKhcnKC3PYmT+S1E76cvjZ
-         xuO2qd79tJ+AZtWpFmNdeJ4CwU3W4EcAE4fFT/uBcAvYhE1WV+8epBVA//DRRg2fdhpB
-         zbrpVQ91HkvXKoENth1z3bo9mRLoV4c0zWraq8Gmwju0UdEwq3YQXNghdMOllOoH3x2p
-         4PR6n2hwTOakW+gIw+FP8ZynZIgmB3LfXX7/yW75uV5gDZR+NcIoSN2dP3NsR9mqZVTN
-         xyldDQzJP9vLxSUr+Yo0sAhm8cYWcVMpDZZEdcYFHs5roLw0Ua4YrrVVqyLAY/wMFZgj
-         dpDg==
-X-Gm-Message-State: AOAM532d+j2yB6DVMsE1U0zk9vxOmt0iQyOEkxQkS5zwbnWakO3bazIO
-        iqkqSlXQBY2qqSmfMcbE1GM=
-X-Google-Smtp-Source: ABdhPJwUVQ/+Kcer+GEI9EQ5RHOkSGNApeuahYKxUIkTU7VJsLbr6lnS/z5ajIp/wbDRsmLKc/jl/w==
-X-Received: by 2002:a2e:581a:: with SMTP id m26mr5749716ljb.401.1627757828788;
-        Sat, 31 Jul 2021 11:57:08 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=O6HizKYjgpTKrJ3jzl7u6TzRt2edy1/wCW+GDPbwhfc=;
+        b=S7wtC+SEdFsEBcmlkp5sVXAvDt2ZozJVttKNVBmfXjKPCwLYemiNv/Jb/8O8YJ85Pc
+         JR5CYHjz/axiRx8MTU1PuWIRtAEZgtMsPKxkxQI0BYFL7Mfjw6QxVQPBELC1bG4tRtLN
+         KYo14h6estAWrdJWAcnTzcVGa3b/USzm8DNqsC5xf+yClp4TyxprTjUQRFmNOqLQ9pBH
+         OHIvJ41Zbp8f5J2SlMbZWgTjW5w2A9Osr5t59cudwS3sQsIPwGY6cfaDC7HQoTiqnZsz
+         tmINTA0fRRt5mG7nzFYtSqP4SdMkr1+pa05fiGG/Nfa5+9kzCwYyVYjHZt0iPtHl/PBr
+         +IQA==
+X-Gm-Message-State: AOAM533iJGeqgMeNxCAikyWxLoJb9BFvYFP/KwxuyRNBteLXqMxucOj8
+        uIKn8lOUekSJJ/uao2AhUnY=
+X-Google-Smtp-Source: ABdhPJzTt7Uh80Ab4qfr7a5+r5WHylnUr0O7FG0DBD8AboWV7mqfsOMHg9CciPNr1T50Ah8IZs3C/w==
+X-Received: by 2002:a05:6512:3f18:: with SMTP id y24mr2052427lfa.531.1627758922581;
+        Sat, 31 Jul 2021 12:15:22 -0700 (PDT)
 Received: from localhost.localdomain (94-29-22-96.dynamic.spd-mgts.ru. [94.29.22.96])
-        by smtp.gmail.com with ESMTPSA id c10sm507653lfv.10.2021.07.31.11.57.07
+        by smtp.gmail.com with ESMTPSA id g17sm424259ljm.28.2021.07.31.12.15.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 31 Jul 2021 11:57:08 -0700 (PDT)
+        Sat, 31 Jul 2021 12:15:22 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>,
-        Thierry Reding <thierry.reding@gmail.com>,
+To:     Thierry Reding <treding@nvidia.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>,
-        David Heidelberg <david@ixit.cz>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Ion Agorria <AG0RRIA@yahoo.com>,
-        Svyatoslav Ryhel <clamor95@gmail.com>
-Cc:     linux-tegra@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-efi <linux-efi@vger.kernel.org>
-Subject: [PATCH v3 3/3] partitions/efi: Support NVIDIA Tegra devices
-Date:   Sat, 31 Jul 2021 21:56:52 +0300
-Message-Id: <20210731185652.6421-4-digetx@gmail.com>
+        Mark Brown <broonie@kernel.org>,
+        Laxman Dewangan <ldewangan@nvidia.com>
+Cc:     linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: [PATCH v1 1/2] spi: tegra20-slink: Improve runtime PM usage
+Date:   Sat, 31 Jul 2021 22:14:57 +0300
+Message-Id: <20210731191458.30535-1-digetx@gmail.com>
 X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20210731185652.6421-1-digetx@gmail.com>
-References: <20210731185652.6421-1-digetx@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-NVIDIA Tegra consumer devices have EMMC storage that has GPT entry at a
-non-standard location. Support looking up GPT entry at a special sector
-to enable such devices.
+The Tegra SPI driver supports runtime PM, which controls the clock
+enable state, but the clk is also enabled separately from the RPM
+at the driver probe time, and thus, stays always on. Fix it.
+
+Runtime PM now is always available on Tegra, hence there is no need to
+check the RPM presence in the driver anymore. Remove these checks.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- block/partitions/Kconfig  |  8 ++++
- block/partitions/Makefile |  1 +
- block/partitions/check.h  |  2 +
- block/partitions/core.c   |  3 ++
- block/partitions/efi.c    |  9 ++++
- block/partitions/tegra.c  | 86 +++++++++++++++++++++++++++++++++++++++
- 6 files changed, 109 insertions(+)
- create mode 100644 block/partitions/tegra.c
+ drivers/spi/spi-tegra20-slink.c | 73 +++++++++++----------------------
+ 1 file changed, 25 insertions(+), 48 deletions(-)
 
-diff --git a/block/partitions/Kconfig b/block/partitions/Kconfig
-index 278593b8e4e9..5db25e7efbb7 100644
---- a/block/partitions/Kconfig
-+++ b/block/partitions/Kconfig
-@@ -267,3 +267,11 @@ config CMDLINE_PARTITION
- 	help
- 	  Say Y here if you want to read the partition table from bootargs.
- 	  The format for the command line is just like mtdparts.
-+
-+config TEGRA_PARTITION
-+	bool "NVIDIA Tegra Partition support" if PARTITION_ADVANCED
-+	default y if ARCH_TEGRA
-+	depends on EFI_PARTITION && MMC_BLOCK && (ARCH_TEGRA || COMPILE_TEST)
-+	help
-+	  Say Y here if you would like to be able to read the hard disk
-+	  partition table format used by NVIDIA Tegra machines.
-diff --git a/block/partitions/Makefile b/block/partitions/Makefile
-index a7f05cdb02a8..83cb70c6d08d 100644
---- a/block/partitions/Makefile
-+++ b/block/partitions/Makefile
-@@ -20,3 +20,4 @@ obj-$(CONFIG_IBM_PARTITION) += ibm.o
- obj-$(CONFIG_EFI_PARTITION) += efi.o
- obj-$(CONFIG_KARMA_PARTITION) += karma.o
- obj-$(CONFIG_SYSV68_PARTITION) += sysv68.o
-+obj-$(CONFIG_TEGRA_PARTITION) += tegra.o
-diff --git a/block/partitions/check.h b/block/partitions/check.h
-index c577e9ee67f0..5fcc85087465 100644
---- a/block/partitions/check.h
-+++ b/block/partitions/check.h
-@@ -22,6 +22,7 @@ struct parsed_partitions {
- 	int limit;
- 	bool access_beyond_eod;
- 	char *pp_buf;
-+	sector_t force_gpt_sector;
- };
+diff --git a/drivers/spi/spi-tegra20-slink.c b/drivers/spi/spi-tegra20-slink.c
+index 6a726c95ac7a..501eca1d0f89 100644
+--- a/drivers/spi/spi-tegra20-slink.c
++++ b/drivers/spi/spi-tegra20-slink.c
+@@ -1061,33 +1061,12 @@ static int tegra_slink_probe(struct platform_device *pdev)
+ 		dev_err(&pdev->dev, "Can not get clock %d\n", ret);
+ 		goto exit_free_master;
+ 	}
+-	ret = clk_prepare(tspi->clk);
+-	if (ret < 0) {
+-		dev_err(&pdev->dev, "Clock prepare failed %d\n", ret);
+-		goto exit_free_master;
+-	}
+-	ret = clk_enable(tspi->clk);
+-	if (ret < 0) {
+-		dev_err(&pdev->dev, "Clock enable failed %d\n", ret);
+-		goto exit_clk_unprepare;
+-	}
+-
+-	spi_irq = platform_get_irq(pdev, 0);
+-	tspi->irq = spi_irq;
+-	ret = request_threaded_irq(tspi->irq, tegra_slink_isr,
+-			tegra_slink_isr_thread, IRQF_ONESHOT,
+-			dev_name(&pdev->dev), tspi);
+-	if (ret < 0) {
+-		dev_err(&pdev->dev, "Failed to register ISR for IRQ %d\n",
+-					tspi->irq);
+-		goto exit_clk_disable;
+-	}
  
- typedef struct {
-@@ -67,4 +68,5 @@ int osf_partition(struct parsed_partitions *state);
- int sgi_partition(struct parsed_partitions *state);
- int sun_partition(struct parsed_partitions *state);
- int sysv68_partition(struct parsed_partitions *state);
-+int tegra_partition_forced_gpt(struct parsed_partitions *state);
- int ultrix_partition(struct parsed_partitions *state);
-diff --git a/block/partitions/core.c b/block/partitions/core.c
-index fb3a556cacce..2fb6db3134ee 100644
---- a/block/partitions/core.c
-+++ b/block/partitions/core.c
-@@ -82,6 +82,9 @@ static int (*check_part[])(struct parsed_partitions *) = {
- #endif
- #ifdef CONFIG_SYSV68_PARTITION
- 	sysv68_partition,
-+#endif
-+#ifdef CONFIG_TEGRA_PARTITION
-+	tegra_partition_forced_gpt,
- #endif
- 	NULL
- };
-diff --git a/block/partitions/efi.c b/block/partitions/efi.c
-index e2716792ecc1..093b084d002f 100644
---- a/block/partitions/efi.c
-+++ b/block/partitions/efi.c
-@@ -621,6 +621,15 @@ static int find_valid_gpt(struct parsed_partitions *state, gpt_header **gpt,
-         if (!good_agpt && force_gpt)
-                 good_agpt = is_gpt_valid(state, lastlba, &agpt, &aptes);
+ 	tspi->rst = devm_reset_control_get_exclusive(&pdev->dev, "spi");
+ 	if (IS_ERR(tspi->rst)) {
+ 		dev_err(&pdev->dev, "can not get reset\n");
+ 		ret = PTR_ERR(tspi->rst);
+-		goto exit_free_irq;
++		goto exit_free_master;
+ 	}
  
-+	/*
-+	 * The force_gpt_sector is used by NVIDIA Tegra partition parser in
-+	 * order to convey a non-standard location of the GPT entry for lookup.
-+	 * By default force_gpt_sector is set to 0 and has no effect.
-+	 */
-+	if (!good_agpt && force_gpt && state->force_gpt_sector)
-+		good_agpt = is_gpt_valid(state, state->force_gpt_sector,
-+					 &agpt, &aptes);
-+
-         /* The obviously unsuccessful case */
-         if (!good_pgpt && !good_agpt)
-                 goto fail;
-diff --git a/block/partitions/tegra.c b/block/partitions/tegra.c
-new file mode 100644
-index 000000000000..d8801a885a62
---- /dev/null
-+++ b/block/partitions/tegra.c
-@@ -0,0 +1,86 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#define pr_fmt(fmt) "tegra-partition: " fmt
-+
-+#include <linux/blkdev.h>
-+#include <linux/kernel.h>
-+#include <linux/of.h>
-+#include <linux/sizes.h>
-+
-+#include <linux/mmc/blkdev.h>
-+#include <linux/mmc/card.h>
-+#include <linux/mmc/host.h>
-+
-+#include <soc/tegra/common.h>
-+
-+#include "check.h"
-+
-+#define TEGRA_PT_ERR(_state, fmt, ...)					\
-+	pr_debug("%s: " fmt,						\
-+		 (_state)->bdev->bd_disk->disk_name, ##__VA_ARGS__)
-+
-+static const struct of_device_id tegra_sdhci_match[] = {
-+	{ .compatible = "nvidia,tegra20-sdhci", },
-+	{ .compatible = "nvidia,tegra30-sdhci", },
-+	{ .compatible = "nvidia,tegra114-sdhci", },
-+	{ .compatible = "nvidia,tegra124-sdhci", },
-+	{}
-+};
-+
-+static int
-+tegra_partition_table_emmc_boot_offset(struct parsed_partitions *state)
-+{
-+	struct mmc_card *card = mmc_bdev_to_card(state->bdev);
-+
-+	/* filter out unrelated and untested boot sources */
-+	if (!card || card->ext_csd.rev < 3 ||
-+	    !mmc_card_is_blockaddr(card) ||
-+	     mmc_card_is_removable(card->host) ||
-+	     bdev_logical_block_size(state->bdev) != SZ_512 ||
-+	    !of_match_node(tegra_sdhci_match, card->host->parent->of_node)) {
-+		TEGRA_PT_ERR(state, "unexpected boot source\n");
-+		return -1;
+ 	tspi->max_buf_size = SLINK_FIFO_DEPTH << 2;
+@@ -1095,7 +1074,7 @@ static int tegra_slink_probe(struct platform_device *pdev)
+ 
+ 	ret = tegra_slink_init_dma_param(tspi, true);
+ 	if (ret < 0)
+-		goto exit_free_irq;
++		goto exit_free_master;
+ 	ret = tegra_slink_init_dma_param(tspi, false);
+ 	if (ret < 0)
+ 		goto exit_rx_dma_free;
+@@ -1106,16 +1085,9 @@ static int tegra_slink_probe(struct platform_device *pdev)
+ 	init_completion(&tspi->xfer_completion);
+ 
+ 	pm_runtime_enable(&pdev->dev);
+-	if (!pm_runtime_enabled(&pdev->dev)) {
+-		ret = tegra_slink_runtime_resume(&pdev->dev);
+-		if (ret)
+-			goto exit_pm_disable;
+-	}
+-
+-	ret = pm_runtime_get_sync(&pdev->dev);
+-	if (ret < 0) {
++	ret = pm_runtime_resume_and_get(&pdev->dev);
++	if (ret) {
+ 		dev_err(&pdev->dev, "pm runtime get failed, e = %d\n", ret);
+-		pm_runtime_put_noidle(&pdev->dev);
+ 		goto exit_pm_disable;
+ 	}
+ 
+@@ -1123,33 +1095,43 @@ static int tegra_slink_probe(struct platform_device *pdev)
+ 	udelay(2);
+ 	reset_control_deassert(tspi->rst);
+ 
++	spi_irq = platform_get_irq(pdev, 0);
++	tspi->irq = spi_irq;
++	ret = request_threaded_irq(tspi->irq, tegra_slink_isr,
++				   tegra_slink_isr_thread, IRQF_ONESHOT,
++				   dev_name(&pdev->dev), tspi);
++	if (ret < 0) {
++		dev_err(&pdev->dev, "Failed to register ISR for IRQ %d\n",
++			tspi->irq);
++		goto exit_pm_put;
 +	}
 +
-+	/*
-+	 * eMMC storage has two special boot partitions in addition to the
-+	 * main one.  NVIDIA's bootloader linearizes eMMC boot0->boot1->main
-+	 * accesses, this means that the partition table addresses are shifted
-+	 * by the size of boot partitions.  In accordance with the eMMC
-+	 * specification, the boot partition size is calculated as follows:
-+	 *
-+	 *	boot partition size = 128K byte x BOOT_SIZE_MULT
-+	 *
-+	 * This function returns number of sectors occupied by the both boot
-+	 * partitions.
-+	 */
-+	return card->ext_csd.raw_boot_mult * SZ_128K /
-+	       SZ_512 * MMC_NUM_BOOT_PARTITION;
-+}
+ 	tspi->def_command_reg  = SLINK_M_S;
+ 	tspi->def_command2_reg = SLINK_CS_ACTIVE_BETWEEN;
+ 	tegra_slink_writel(tspi, tspi->def_command_reg, SLINK_COMMAND);
+ 	tegra_slink_writel(tspi, tspi->def_command2_reg, SLINK_COMMAND2);
+-	pm_runtime_put(&pdev->dev);
+ 
+ 	master->dev.of_node = pdev->dev.of_node;
+ 	ret = devm_spi_register_master(&pdev->dev, master);
+ 	if (ret < 0) {
+ 		dev_err(&pdev->dev, "can not register to master err %d\n", ret);
+-		goto exit_pm_disable;
++		goto exit_free_irq;
+ 	}
 +
-+int tegra_partition_forced_gpt(struct parsed_partitions *state)
-+{
-+	int ret, boot_offset;
++	pm_runtime_put(&pdev->dev);
 +
-+	if (!soc_is_tegra())
-+		return 0;
+ 	return ret;
+ 
++exit_free_irq:
++	free_irq(spi_irq, tspi);
++exit_pm_put:
++	pm_runtime_put(&pdev->dev);
+ exit_pm_disable:
+ 	pm_runtime_disable(&pdev->dev);
+-	if (!pm_runtime_status_suspended(&pdev->dev))
+-		tegra_slink_runtime_suspend(&pdev->dev);
 +
-+	boot_offset = tegra_partition_table_emmc_boot_offset(state);
-+	if (boot_offset < 0)
-+		return 0;
-+
-+	/*
-+	 * The fixed GPT entry address is calculated like this:
-+	 *
-+	 * gpt_sector = ext_csd.sectors_num - ext_csd.boot_sectors_num - 1
-+	 *
-+	 * This algorithm is defined by NVIDIA and used by Android devices.
-+	 */
-+	state->force_gpt_sector  = get_capacity(state->bdev->bd_disk);
-+	state->force_gpt_sector -= boot_offset + 1;
-+
-+	ret = efi_partition(state);
-+	state->force_gpt_sector = 0;
-+
-+	return ret;
-+}
+ 	tegra_slink_deinit_dma_param(tspi, false);
+ exit_rx_dma_free:
+ 	tegra_slink_deinit_dma_param(tspi, true);
+-exit_free_irq:
+-	free_irq(spi_irq, tspi);
+-exit_clk_disable:
+-	clk_disable(tspi->clk);
+-exit_clk_unprepare:
+-	clk_unprepare(tspi->clk);
+ exit_free_master:
+ 	spi_master_put(master);
+ 	return ret;
+@@ -1162,8 +1144,7 @@ static int tegra_slink_remove(struct platform_device *pdev)
+ 
+ 	free_irq(tspi->irq, tspi);
+ 
+-	clk_disable(tspi->clk);
+-	clk_unprepare(tspi->clk);
++	pm_runtime_disable(&pdev->dev);
+ 
+ 	if (tspi->tx_dma_chan)
+ 		tegra_slink_deinit_dma_param(tspi, false);
+@@ -1171,10 +1152,6 @@ static int tegra_slink_remove(struct platform_device *pdev)
+ 	if (tspi->rx_dma_chan)
+ 		tegra_slink_deinit_dma_param(tspi, true);
+ 
+-	pm_runtime_disable(&pdev->dev);
+-	if (!pm_runtime_status_suspended(&pdev->dev))
+-		tegra_slink_runtime_suspend(&pdev->dev);
+-
+ 	return 0;
+ }
+ 
 -- 
 2.32.0
 
