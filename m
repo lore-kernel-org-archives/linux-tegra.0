@@ -2,104 +2,146 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 645A4C4320A
-	for <linux-tegra@archiver.kernel.org>; Fri, 30 Jul 2021 19:33:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA7C0C4338F
+	for <linux-tegra@archiver.kernel.org>; Sat, 31 Jul 2021 00:25:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4AE3860EBB
-	for <linux-tegra@archiver.kernel.org>; Fri, 30 Jul 2021 19:33:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C3B2C60EBB
+	for <linux-tegra@archiver.kernel.org>; Sat, 31 Jul 2021 00:25:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230475AbhG3Tdg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 30 Jul 2021 15:33:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35892 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230335AbhG3Tdg (ORCPT
+        id S234464AbhGaAZX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 30 Jul 2021 20:25:23 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:60766 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234624AbhGaAZW (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 30 Jul 2021 15:33:36 -0400
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2934C06175F;
-        Fri, 30 Jul 2021 12:33:30 -0700 (PDT)
+        Fri, 30 Jul 2021 20:25:22 -0400
 Received: from pendragon.ideasonboard.com (62-78-145-57.bb.dnainternet.fi [62.78.145.57])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id E210C2A3;
-        Fri, 30 Jul 2021 21:33:27 +0200 (CEST)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id ED7572A3;
+        Sat, 31 Jul 2021 02:25:15 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1627673608;
-        bh=ok0naQzMlCI0ggY3MCduPnEZLiYeC3q7JCVFbjkuKBI=;
+        s=mail; t=1627691116;
+        bh=Se3omj1MbC8A2uCU/g3eF6EOHI8xJCoOcrDna0LOm8E=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=wQ06hs0knVejc5QAd8CqkgdH4Ct/SQEIc95F++VL3jGUOhgRN4Wo5fj0GAbAM0swG
-         h2wQ6Zg6/1g3x2IhosUMltFcbZTuhwGELuX2WA24YCcj+TOB+xh4KXvopwGCLrhBSt
-         ejne5iel98vHNlL/6d/to81Ehrkgc9Mi/EwPXhs4=
-Date:   Fri, 30 Jul 2021 22:33:19 +0300
+        b=pKF8FZTQE9iBIPHxNDy/m4fYIqhpghC1iXTHNOvh9x9yEwdLAIklsw238YDe1IEWd
+         c1sIGbc51lhSlEzfXa9xPDmasjYGVZrG4Qx5IN0VMMmmFkSPXZvW1PAuoW0WnN4I2S
+         UI1H1SgYDaIXovWcA1JL3oON5rje2bkzoXdSWs3E=
+Date:   Sat, 31 Jul 2021 03:25:07 +0300
 From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Sam Ravnborg <sam@ravnborg.org>
-Cc:     dri-devel@lists.freedesktop.org, Tomi Valkeinen <tomba@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Jyri Sarha <jyri.sarha@iki.fi>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Thierry Reding <thierry.reding@gmail.com>, linux-imx@nxp.com,
+To:     Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc:     dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        linux-tegra@vger.kernel.org,
         Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
-        linux-tegra@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>
-Subject: Re: [PATCH 0/7] drm: Extend COMPILE_TEST support to some ARM drivers
-Message-ID: <YQRT/9xIH2PyACbt@pendragon.ideasonboard.com>
+        Lucas Stach <l.stach@pengutronix.de>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>, linux-imx@nxp.com,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Jyri Sarha <jyri.sarha@iki.fi>
+Subject: Re: [PATCH 1/7] drm/omap: Cast pointer to integer safely
+Message-ID: <YQSYYywcs3FpTn6u@pendragon.ideasonboard.com>
 References: <20210728153736.15240-1-laurent.pinchart+renesas@ideasonboard.com>
- <YQLdDTu4duXXQXAs@ravnborg.org>
+ <20210728153736.15240-2-laurent.pinchart+renesas@ideasonboard.com>
+ <69ac4474-3bbf-db72-3777-74c59f947d42@ideasonboard.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <YQLdDTu4duXXQXAs@ravnborg.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <69ac4474-3bbf-db72-3777-74c59f947d42@ideasonboard.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Sam,
+Hi Tomi,
 
-On Thu, Jul 29, 2021 at 06:53:33PM +0200, Sam Ravnborg wrote:
-> On Wed, Jul 28, 2021 at 06:37:29PM +0300, Laurent Pinchart wrote:
-> > Hello,
+On Thu, Jul 29, 2021 at 09:13:17AM +0300, Tomi Valkeinen wrote:
+> On 28/07/2021 18:37, Laurent Pinchart wrote:
+> > On 64-bit platforms, the compiler complains that casting a void pointer
+> > to an unsigned int loses data. Cast the pointer to a uintptr_t unsigned
+> > to fix this.
 > > 
-> > This patch series stems from subsystem-wide changes I wanted to
-> > compile-test with an ARM64 cross-compiler. My laziness to fire a 32-bit
-> > ARM build probably resulted in more time being spent writing these
-> > patches, but hopefully they'll turn out to be useful for more people :-)
+> > Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> > ---
+> >   drivers/gpu/drm/omapdrm/omap_drv.c | 2 +-
+> >   1 file changed, 1 insertion(+), 1 deletion(-)
 > > 
-> > Patches 1/7 and 2/7 are fixes for compilation warnings on 64-bit
-> > platforms in the omapdrm and sti-drm drivers. They are a dependency for
-> > the Kconfig changes that follow to avoid introducing build warnings, but
-> > could also be merged before.
+> > diff --git a/drivers/gpu/drm/omapdrm/omap_drv.c b/drivers/gpu/drm/omapdrm/omap_drv.c
+> > index f86e20578143..c05d3975cb31 100644
+> > --- a/drivers/gpu/drm/omapdrm/omap_drv.c
+> > +++ b/drivers/gpu/drm/omapdrm/omap_drv.c
+> > @@ -572,7 +572,7 @@ static int omapdrm_init(struct omap_drm_private *priv, struct device *dev)
+> >   	priv->dss->mgr_ops_priv = priv;
+> >   
+> >   	soc = soc_device_match(omapdrm_soc_devices);
+> > -	priv->omaprev = soc ? (unsigned int)soc->data : 0;
+> > +	priv->omaprev = soc ? (uintptr_t)soc->data : 0;
+> >   	priv->wq = alloc_ordered_workqueue("omapdrm", 0);
+> >   
+> >   	mutex_init(&priv->list_lock);
 > > 
-> > Patches 3/7 to 7/7 enable compilation of the imx-dcss, omapdrm, sti-drm,
-> > tegra-drm and tilcdc drivers on ARM64 with COMPILE_TEST. The patches are
-> > independent from each other, so they can be picked by their respective
-> > maintainers.
-> > 
-> > We could also extend test compilation to more architecture, but I didn't
-> > want to remove all dependencies on ARM or ARM64 at this point for fear
-> > or triggering build warnings that I wouldn't be able to catch locally.
-> > If there's a consensus that fully relaxing the platform requirement is
-> > better, I can submit a new version that does so and rely on the 0day bot
-> > to catch issues.
->
-> I have alpha, sparc64, and a few more so we can get pretty good coverage
-> before it hits -next.
-
-It seems that the consensus is to enable COMPILE_TEST on all platforms,
-so I'll do that.
-
-> If we enable more build coverage then please address all W=1 warnings
-> first.
 > 
-> I for once always builds with W=1 these days, and I see more and more
-> warnings sneaking in again.
-> So lets try to keep the noise level down.
+> Looks fine, although the subject sounds odd. Why was the cast "unsafe"
+> before, and "safe" now?
 
-Hmmmm... I build my kernel with -Werror to make sure I catch all
-warnings. W=1 doesn't play well with that :-S I'll see if I can turn the
-additional warnings into non-errors, but that may become a game of
-whack-a-mole.
+The result is indeed exactly the same. It was safe before, because we
+know the value won't exceed 32 bits. I'll s/safely/without generating a
+warning/.
+
+> There's also another bunch of warnings I see:
+
+I wonder how I missed those. Will fix.
+
+> drivers/gpu/drm/omapdrm/dss/dsi.c: In function ‘dsi_vc_send_long’:
+> drivers/gpu/drm/omapdrm/dss/dsi.c:7:25: warning: format ‘%d’ expects argument of type ‘int’, but argument 3 has type ‘size_t’ {aka ‘const long unsigned int’} [-Wformat=]
+>      7 | #define DSS_SUBSYS_NAME "DSI"
+>        |                         ^~~~~
+> drivers/gpu/drm/omapdrm/dss/dss.h:30:21: note: in expansion of macro ‘DSS_SUBSYS_NAME’
+>     30 | #define pr_fmt(fmt) DSS_SUBSYS_NAME ": " fmt
+>        |                     ^~~~~~~~~~~~~~~
+> ./include/linux/dynamic_debug.h:134:15: note: in expansion of macro ‘pr_fmt’
+>    134 |   func(&id, ##__VA_ARGS__);  \
+>        |               ^~~~~~~~~~~
+> ./include/linux/dynamic_debug.h:152:2: note: in expansion of macro ‘__dynamic_func_call’
+>    152 |  __dynamic_func_call(__UNIQUE_ID(ddebug), fmt, func, ##__VA_ARGS__)
+>        |  ^~~~~~~~~~~~~~~~~~~
+> ./include/linux/dynamic_debug.h:162:2: note: in expansion of macro ‘_dynamic_func_call’
+>    162 |  _dynamic_func_call(fmt, __dynamic_pr_debug,  \
+>        |  ^~~~~~~~~~~~~~~~~~
+> ./include/linux/printk.h:471:2: note: in expansion of macro ‘dynamic_pr_debug’
+>    471 |  dynamic_pr_debug(fmt, ##__VA_ARGS__)
+>        |  ^~~~~~~~~~~~~~~~
+> drivers/gpu/drm/omapdrm/dss/dss.h:36:2: note: in expansion of macro ‘pr_debug’
+>     36 |  pr_debug(format, ## __VA_ARGS__)
+>        |  ^~~~~~~~
+> drivers/gpu/drm/omapdrm/dss/dsi.c:2097:3: note: in expansion of macro ‘DSSDBG’
+>   2097 |   DSSDBG("dsi_vc_send_long, %d bytes\n", msg->tx_len);
+>        |   ^~~~~~
+> In file included from ./include/linux/printk.h:7,
+>                   from ./include/linux/kernel.h:19,
+>                   from drivers/gpu/drm/omapdrm/dss/dsi.c:9:
+> drivers/gpu/drm/omapdrm/dss/dsi.c: In function ‘dsi_vc_generic_read’:
+> ./include/linux/kern_levels.h:5:18: warning: format ‘%d’ expects argument of type ‘int’, but argument 4 has type ‘size_t’ {aka ‘const long unsigned int’} [-Wformat=]
+>      5 | #define KERN_SOH "\001"  /* ASCII Start Of Header */
+>        |                  ^~~~~~
+> ./include/linux/kern_levels.h:11:18: note: in expansion of macro ‘KERN_SOH’
+>     11 | #define KERN_ERR KERN_SOH "3" /* error conditions */
+>        |                  ^~~~~~~~
+> ./include/linux/printk.h:390:9: note: in expansion of macro ‘KERN_ERR’
+>    390 |  printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
+>        |         ^~~~~~~~
+> drivers/gpu/drm/omapdrm/dss/dss.h:40:2: note: in expansion of macro ‘pr_err’
+>     40 |  pr_err("omapdss " DSS_SUBSYS_NAME " error: " format, ##__VA_ARGS__)
+>        |  ^~~~~~
+> drivers/gpu/drm/omapdrm/dss/dsi.c:2393:2: note: in expansion of macro ‘DSSERR’
+>   2393 |  DSSERR("%s(vc %d, reqlen %d) failed\n", __func__,  vc, msg->tx_len);
+>        |  ^~~~~~
+> 
 
 -- 
 Regards,
