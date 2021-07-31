@@ -5,58 +5,58 @@ X-Spam-Level:
 X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BACAEC43214
-	for <linux-tegra@archiver.kernel.org>; Sat, 31 Jul 2021 17:39:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F9C9C432BE
+	for <linux-tegra@archiver.kernel.org>; Sat, 31 Jul 2021 17:39:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A013560FE7
-	for <linux-tegra@archiver.kernel.org>; Sat, 31 Jul 2021 17:39:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 417F561042
+	for <linux-tegra@archiver.kernel.org>; Sat, 31 Jul 2021 17:39:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231529AbhGaRjf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 31 Jul 2021 13:39:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52174 "EHLO
+        id S232830AbhGaRji (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 31 Jul 2021 13:39:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52126 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231614AbhGaRjT (ORCPT
+        with ESMTP id S232035AbhGaRjP (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sat, 31 Jul 2021 13:39:19 -0400
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5DA91C0613D5;
-        Sat, 31 Jul 2021 10:39:06 -0700 (PDT)
-Received: by mail-lf1-x132.google.com with SMTP id h2so24955983lfu.4;
-        Sat, 31 Jul 2021 10:39:06 -0700 (PDT)
+        Sat, 31 Jul 2021 13:39:15 -0400
+Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90AA4C06179E;
+        Sat, 31 Jul 2021 10:39:03 -0700 (PDT)
+Received: by mail-lf1-x12c.google.com with SMTP id r26so24977404lfp.5;
+        Sat, 31 Jul 2021 10:39:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=nGQjSozPSFmelHHY6OEA+/mUKU2e+EvC+v2vXqxb8f8=;
-        b=A3XJtK58biEnbflsvi+OcJIdj/DAXYi9J5DnR2uRyLgQJpN5kV2arK3R6FVy/yS2oA
-         wtMEP0Fs+smeGc8A+XB15cMsJSVfsoLVIMTfHZczV5a2pzOBBa6kJV81nogaaLRD/6UI
-         qIt+QRN6CW9QE7V8mDs2cVnNButqKe5TqFrXpAdGycCvXh483zc53SSqeQNv3Wdijio8
-         YqfC7JMfWUIfagxDcj3SiLODt2NLOrXN+y2Zs5q3zdj3cq7zbwGCqavIBd8m88y23NT+
-         VOcUqZfiZESUkX6lXR9gLw9pKHzzRrJWcgqZnKA5kJ0uXTBQQI2qCHgbar075SAvz256
-         YnyA==
+        bh=j0s0M0z8QxhlBsL/EnH/YmL65tjqGzsbgcjcWgYpzJI=;
+        b=K9PirLv1mOWvDgd8sp69mCRYJ1EjRQRQ85rDiyTUWEGz4X7ckDYyvJBYezxA107zZ2
+         /HkPm9Rmsyr/iAuyQONAa5+z/vIlFL6zk2SQtLVaPIz+6xU0WRxV6CGrYJm/RV3Bh5UI
+         zQgKftSuTqzT4cjvIU7v+flWOsJOYmvBzaviBSrDEch7T/8tZYd1VDpAHjMBPOpeyG1X
+         TKtZw5hSwNZLkaNgN3NUlgHpmt01Qti71CNnRMIJZm9RTuX/9W/WOi/Ad7QTIb56H7Lj
+         9nn/J5vG+k3hXP10fvBSrsbkRctJoxEIv6Oy3Tm5S3a2SNMSehTpIULVFSmm8eSQVAsd
+         Q9Ig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=nGQjSozPSFmelHHY6OEA+/mUKU2e+EvC+v2vXqxb8f8=;
-        b=SYmg4EPxv5tEmjgADHj+bdhrq0o+kEBmpQOfdVZusk1E1g5QC1RZi04vmwqbjl4bVT
-         DX9p6o9y6PvEz/J8xkKHWYqrYq/n90HYaCR9GEeU+dFukp+XLEg+QTlZ/2K77Mc2+SaR
-         VVcfbXhv3LGYNDTtSuqXhcGoL4AiFbN1QAAeZRb5lnx8y7ebFfXDK4YhMxz2RY4p1Qhf
-         cYBHwAqVVP3W6cqLsGy/Rr6Pe1Z6k9pGi/XQqCVxN04ruO58lHnkCBt5w5Oyo8WfqqOy
-         YvDKzm4SKPk4pPzQWb7UXxnQ0Q2bzId6mGKZGvDKAiZcD9XNPsr5IG/mU1tPMyzLBvbb
-         IC/Q==
-X-Gm-Message-State: AOAM532+yMi3WWEg1wMK4OO3Ss/rgnQz2syrvzMIFfYwInBw1izzZkR9
-        BroK36R1Vu60i395sKNhxhc=
-X-Google-Smtp-Source: ABdhPJz5XlyxAn3Rw6IUKI00TONoeXELq14ceNPjYcom+Fmu5CCYYYfFqcFkPMVzXo143Q0Xx/7DyA==
-X-Received: by 2002:a05:6512:cf:: with SMTP id c15mr6460507lfp.317.1627753144755;
-        Sat, 31 Jul 2021 10:39:04 -0700 (PDT)
+        bh=j0s0M0z8QxhlBsL/EnH/YmL65tjqGzsbgcjcWgYpzJI=;
+        b=jT7xkdXuI0wKJ462jl5CCAGQkqLbdFlCuF7O6NaTTlE25lc9sTThVxD89V7S5LKrt6
+         Gii1R21wn8PoiHxpbVhna+KRxtE307J9oEFCB1JNJ1dfwUaGF3z/5rGn0dpj/mOk2BAG
+         yCkDMj7IBjaejtW/hZ8CgthAExoN5n1W753BAMn0BLO6wuwABqMcODg9tdJP8tF7aZag
+         Q0EaAVDwPVv+zhptBewq/nYKyq1zpS24KKnM06zCmEqPcx2j5q+p0nho/G25aqmuDeg1
+         n9pgCKoW3ucZhQZwH7fwS84eXgBlXhrJniImpbMm88bWMUIR+Zuios3yBj9wOFtM4fvU
+         FNrQ==
+X-Gm-Message-State: AOAM531aud2+jgMQkAUbWBOZHIPU0i0s+cGmaDt+p9EsRxFV/+KypBvJ
+        C2Sfp9Sk637VaR3W4GaIK5c=
+X-Google-Smtp-Source: ABdhPJzdbPAxAHPWyw7f2fAj8Bhx089XN80sHpWwM+q7Y8pZ7ono1d7fmHD6++Zp7tde1FKjopqeow==
+X-Received: by 2002:ac2:4119:: with SMTP id b25mr2741917lfi.284.1627753141929;
+        Sat, 31 Jul 2021 10:39:01 -0700 (PDT)
 Received: from localhost.localdomain (94-29-22-96.dynamic.spd-mgts.ru. [94.29.22.96])
-        by smtp.gmail.com with ESMTPSA id s15sm445272lfp.216.2021.07.31.10.39.04
+        by smtp.gmail.com with ESMTPSA id s15sm445272lfp.216.2021.07.31.10.39.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 31 Jul 2021 10:39:04 -0700 (PDT)
+        Sat, 31 Jul 2021 10:39:01 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <treding@nvidia.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -69,9 +69,9 @@ To:     Thierry Reding <treding@nvidia.com>,
 Cc:     devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
         linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-tegra@vger.kernel.org
-Subject: [PATCH v6 10/12] ARM: tegra: Add new properties to USB PHY device-tree nodes
-Date:   Sat, 31 Jul 2021 20:38:40 +0300
-Message-Id: <20210731173842.19643-11-digetx@gmail.com>
+Subject: [PATCH v6 06/12] power: supply: smb347-charger: Make smb347_set_writable() IRQ-safe
+Date:   Sat, 31 Jul 2021 20:38:36 +0300
+Message-Id: <20210731173842.19643-7-digetx@gmail.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20210731173842.19643-1-digetx@gmail.com>
 References: <20210731173842.19643-1-digetx@gmail.com>
@@ -81,208 +81,100 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Add new properties to USB PHYs needed for enabling USB OTG mode.
+The smb347_set_writable() is used by interrupt handler and outside of it.
+The interrupt should be disabled when the function is used outside of
+interrupt handler in order to prevent racing with the interrupt context.
+Add new parameter to smb347_set_writable() that allows to disable IRQ.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- arch/arm/boot/dts/tegra114.dtsi | 4 ++++
- arch/arm/boot/dts/tegra124.dtsi | 6 ++++++
- arch/arm/boot/dts/tegra20.dtsi  | 6 ++++++
- arch/arm/boot/dts/tegra30.dtsi  | 6 ++++++
- 4 files changed, 22 insertions(+)
+ drivers/power/supply/smb347-charger.c | 30 +++++++++++++++++++--------
+ 1 file changed, 21 insertions(+), 9 deletions(-)
 
-diff --git a/arch/arm/boot/dts/tegra114.dtsi b/arch/arm/boot/dts/tegra114.dtsi
-index fb99b3e971c3..b391c7940b8f 100644
---- a/arch/arm/boot/dts/tegra114.dtsi
-+++ b/arch/arm/boot/dts/tegra114.dtsi
-@@ -706,6 +706,7 @@ phy1: usb-phy@7d000000 {
- 		compatible = "nvidia,tegra114-usb-phy", "nvidia,tegra30-usb-phy";
- 		reg = <0x7d000000 0x4000>,
- 		      <0x7d000000 0x4000>;
-+		interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
- 		phy_type = "utmi";
- 		clocks = <&tegra_car TEGRA114_CLK_USBD>,
- 			 <&tegra_car TEGRA114_CLK_PLL_U>,
-@@ -725,6 +726,7 @@ phy1: usb-phy@7d000000 {
- 		nvidia,hsdiscon-level = <5>;
- 		nvidia,xcvr-hsslew = <12>;
- 		nvidia,has-utmi-pad-registers;
-+		nvidia,pmc = <&tegra_pmc 0>;
- 		status = "disabled";
- 	};
+diff --git a/drivers/power/supply/smb347-charger.c b/drivers/power/supply/smb347-charger.c
+index df240420f2de..db1378b41f80 100644
+--- a/drivers/power/supply/smb347-charger.c
++++ b/drivers/power/supply/smb347-charger.c
+@@ -671,10 +671,22 @@ static int smb347_set_temp_limits(struct smb347_charger *smb)
+  *
+  * Returns %0 on success and negative errno in case of failure.
+  */
+-static int smb347_set_writable(struct smb347_charger *smb, bool writable)
++static int smb347_set_writable(struct smb347_charger *smb, bool writable,
++			       bool irq_toggle)
+ {
+-	return regmap_update_bits(smb->regmap, CMD_A, CMD_A_ALLOW_WRITE,
+-				  writable ? CMD_A_ALLOW_WRITE : 0);
++	struct i2c_client *client = to_i2c_client(smb->dev);
++	int ret;
++
++	if (writable && irq_toggle && !smb->irq_unsupported)
++		disable_irq(client->irq);
++
++	ret = regmap_update_bits(smb->regmap, CMD_A, CMD_A_ALLOW_WRITE,
++				 writable ? CMD_A_ALLOW_WRITE : 0);
++
++	if ((!writable || ret) && irq_toggle && !smb->irq_unsupported)
++		enable_irq(client->irq);
++
++	return ret;
+ }
  
-@@ -744,6 +746,7 @@ phy3: usb-phy@7d008000 {
- 		compatible = "nvidia,tegra114-usb-phy", "nvidia,tegra30-usb-phy";
- 		reg = <0x7d008000 0x4000>,
- 		      <0x7d000000 0x4000>;
-+		interrupts = <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>;
- 		phy_type = "utmi";
- 		clocks = <&tegra_car TEGRA114_CLK_USB3>,
- 			 <&tegra_car TEGRA114_CLK_PLL_U>,
-@@ -762,6 +765,7 @@ phy3: usb-phy@7d008000 {
- 		nvidia,hssquelch-level = <2>;
- 		nvidia,hsdiscon-level = <5>;
- 		nvidia,xcvr-hsslew = <12>;
-+		nvidia,pmc = <&tegra_pmc 2>;
- 		status = "disabled";
- 	};
+ static int smb347_hw_init(struct smb347_charger *smb)
+@@ -682,7 +694,7 @@ static int smb347_hw_init(struct smb347_charger *smb)
+ 	unsigned int val;
+ 	int ret;
  
-diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
-index 8b38f123f554..ee28bb2b01ba 100644
---- a/arch/arm/boot/dts/tegra124.dtsi
-+++ b/arch/arm/boot/dts/tegra124.dtsi
-@@ -1094,6 +1094,7 @@ phy1: usb-phy@7d000000 {
- 		compatible = "nvidia,tegra124-usb-phy", "nvidia,tegra30-usb-phy";
- 		reg = <0x0 0x7d000000 0x0 0x4000>,
- 		      <0x0 0x7d000000 0x0 0x4000>;
-+		interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
- 		phy_type = "utmi";
- 		clocks = <&tegra_car TEGRA124_CLK_USBD>,
- 			 <&tegra_car TEGRA124_CLK_PLL_U>,
-@@ -1113,6 +1114,7 @@ phy1: usb-phy@7d000000 {
- 		nvidia,hsdiscon-level = <5>;
- 		nvidia,xcvr-hsslew = <12>;
- 		nvidia,has-utmi-pad-registers;
-+		nvidia,pmc = <&tegra_pmc 0>;
- 		status = "disabled";
- 	};
+-	ret = smb347_set_writable(smb, true);
++	ret = smb347_set_writable(smb, true, false);
+ 	if (ret < 0)
+ 		return ret;
  
-@@ -1132,6 +1134,7 @@ phy2: usb-phy@7d004000 {
- 		compatible = "nvidia,tegra124-usb-phy", "nvidia,tegra30-usb-phy";
- 		reg = <0x0 0x7d004000 0x0 0x4000>,
- 		      <0x0 0x7d000000 0x0 0x4000>;
-+		interrupts = <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
- 		phy_type = "utmi";
- 		clocks = <&tegra_car TEGRA124_CLK_USB2>,
- 			 <&tegra_car TEGRA124_CLK_PLL_U>,
-@@ -1150,6 +1153,7 @@ phy2: usb-phy@7d004000 {
- 		nvidia,hssquelch-level = <2>;
- 		nvidia,hsdiscon-level = <5>;
- 		nvidia,xcvr-hsslew = <12>;
-+		nvidia,pmc = <&tegra_pmc 1>;
- 		status = "disabled";
- 	};
+@@ -758,7 +770,7 @@ static int smb347_hw_init(struct smb347_charger *smb)
+ 	ret = smb347_start_stop_charging(smb);
  
-@@ -1169,6 +1173,7 @@ phy3: usb-phy@7d008000 {
- 		compatible = "nvidia,tegra124-usb-phy", "nvidia,tegra30-usb-phy";
- 		reg = <0x0 0x7d008000 0x0 0x4000>,
- 		      <0x0 0x7d000000 0x0 0x4000>;
-+		interrupts = <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>;
- 		phy_type = "utmi";
- 		clocks = <&tegra_car TEGRA124_CLK_USB3>,
- 			 <&tegra_car TEGRA124_CLK_PLL_U>,
-@@ -1187,6 +1192,7 @@ phy3: usb-phy@7d008000 {
- 		nvidia,hssquelch-level = <2>;
- 		nvidia,hsdiscon-level = <5>;
- 		nvidia,xcvr-hsslew = <12>;
-+		nvidia,pmc = <&tegra_pmc 2>;
- 		status = "disabled";
- 	};
+ fail:
+-	smb347_set_writable(smb, false);
++	smb347_set_writable(smb, false, false);
+ 	return ret;
+ }
  
-diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
-index 2015147c2de3..ce2171739cf8 100644
---- a/arch/arm/boot/dts/tegra20.dtsi
-+++ b/arch/arm/boot/dts/tegra20.dtsi
-@@ -879,6 +879,7 @@ phy1: usb-phy@c5000000 {
- 		compatible = "nvidia,tegra20-usb-phy";
- 		reg = <0xc5000000 0x4000>,
- 		      <0xc5000000 0x4000>;
-+		interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
- 		phy_type = "utmi";
- 		clocks = <&tegra_car TEGRA20_CLK_USBD>,
- 			 <&tegra_car TEGRA20_CLK_PLL_U>,
-@@ -897,6 +898,7 @@ phy1: usb-phy@c5000000 {
- 		nvidia,xcvr-lsfslew = <1>;
- 		nvidia,xcvr-lsrslew = <1>;
- 		nvidia,has-utmi-pad-registers;
-+		nvidia,pmc = <&tegra_pmc 0>;
- 		status = "disabled";
- 	};
+@@ -866,7 +878,7 @@ static int smb347_irq_set(struct smb347_charger *smb, bool enable)
+ 	if (smb->irq_unsupported)
+ 		return 0;
  
-@@ -917,6 +919,7 @@ usb@c5004000 {
- 	phy2: usb-phy@c5004000 {
- 		compatible = "nvidia,tegra20-usb-phy";
- 		reg = <0xc5004000 0x4000>;
-+		interrupts = <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
- 		phy_type = "ulpi";
- 		clocks = <&tegra_car TEGRA20_CLK_USB2>,
- 			 <&tegra_car TEGRA20_CLK_PLL_U>,
-@@ -925,6 +928,7 @@ phy2: usb-phy@c5004000 {
- 		resets = <&tegra_car 58>, <&tegra_car 22>;
- 		reset-names = "usb", "utmi-pads";
- 		#phy-cells = <0>;
-+		nvidia,pmc = <&tegra_pmc 1>;
- 		status = "disabled";
- 	};
+-	ret = smb347_set_writable(smb, true);
++	ret = smb347_set_writable(smb, true, true);
+ 	if (ret < 0)
+ 		return ret;
  
-@@ -946,6 +950,7 @@ phy3: usb-phy@c5008000 {
- 		compatible = "nvidia,tegra20-usb-phy";
- 		reg = <0xc5008000 0x4000>,
- 		      <0xc5000000 0x4000>;
-+		interrupts = <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>;
- 		phy_type = "utmi";
- 		clocks = <&tegra_car TEGRA20_CLK_USB3>,
- 			 <&tegra_car TEGRA20_CLK_PLL_U>,
-@@ -962,6 +967,7 @@ phy3: usb-phy@c5008000 {
- 		nvidia,xcvr-setup = <9>;
- 		nvidia,xcvr-lsfslew = <2>;
- 		nvidia,xcvr-lsrslew = <2>;
-+		nvidia,pmc = <&tegra_pmc 2>;
- 		status = "disabled";
- 	};
+@@ -891,7 +903,7 @@ static int smb347_irq_set(struct smb347_charger *smb, bool enable)
+ 	ret = regmap_update_bits(smb->regmap, CFG_PIN, CFG_PIN_EN_CHARGER_ERROR,
+ 				 enable ? CFG_PIN_EN_CHARGER_ERROR : 0);
+ fail:
+-	smb347_set_writable(smb, false);
++	smb347_set_writable(smb, false, true);
+ 	return ret;
+ }
  
-diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
-index 339ddda4b2a7..9c757b63a197 100644
---- a/arch/arm/boot/dts/tegra30.dtsi
-+++ b/arch/arm/boot/dts/tegra30.dtsi
-@@ -1151,6 +1151,7 @@ phy1: usb-phy@7d000000 {
- 		compatible = "nvidia,tegra30-usb-phy";
- 		reg = <0x7d000000 0x4000>,
- 		      <0x7d000000 0x4000>;
-+		interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
- 		phy_type = "utmi";
- 		clocks = <&tegra_car TEGRA30_CLK_USBD>,
- 			 <&tegra_car TEGRA30_CLK_PLL_U>,
-@@ -1171,6 +1172,7 @@ phy1: usb-phy@7d000000 {
- 		nvidia,hssquelch-level = <2>;
- 		nvidia,hsdiscon-level = <5>;
- 		nvidia,has-utmi-pad-registers;
-+		nvidia,pmc = <&tegra_pmc 0>;
- 		status = "disabled";
- 	};
+@@ -919,7 +931,7 @@ static int smb347_irq_init(struct smb347_charger *smb,
+ 	if (!client->irq)
+ 		return 0;
  
-@@ -1192,6 +1194,7 @@ phy2: usb-phy@7d004000 {
- 		compatible = "nvidia,tegra30-usb-phy";
- 		reg = <0x7d004000 0x4000>,
- 		      <0x7d000000 0x4000>;
-+		interrupts = <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
- 		phy_type = "utmi";
- 		clocks = <&tegra_car TEGRA30_CLK_USB2>,
- 			 <&tegra_car TEGRA30_CLK_PLL_U>,
-@@ -1211,6 +1214,7 @@ phy2: usb-phy@7d004000 {
- 		nvidia,xcvr-hsslew = <32>;
- 		nvidia,hssquelch-level = <2>;
- 		nvidia,hsdiscon-level = <5>;
-+		nvidia,pmc = <&tegra_pmc 1>;
- 		status = "disabled";
- 	};
+-	ret = smb347_set_writable(smb, true);
++	ret = smb347_set_writable(smb, true, false);
+ 	if (ret < 0)
+ 		return ret;
  
-@@ -1232,6 +1236,7 @@ phy3: usb-phy@7d008000 {
- 		compatible = "nvidia,tegra30-usb-phy";
- 		reg = <0x7d008000 0x4000>,
- 		      <0x7d000000 0x4000>;
-+		interrupts = <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>;
- 		phy_type = "utmi";
- 		clocks = <&tegra_car TEGRA30_CLK_USB3>,
- 			 <&tegra_car TEGRA30_CLK_PLL_U>,
-@@ -1251,6 +1256,7 @@ phy3: usb-phy@7d008000 {
- 		nvidia,xcvr-hsslew = <32>;
- 		nvidia,hssquelch-level = <2>;
- 		nvidia,hsdiscon-level = <5>;
-+		nvidia,pmc = <&tegra_pmc 2>;
- 		status = "disabled";
- 	};
+@@ -931,7 +943,7 @@ static int smb347_irq_init(struct smb347_charger *smb,
+ 				 CFG_STAT_ACTIVE_HIGH | CFG_STAT_DISABLED,
+ 				 CFG_STAT_DISABLED);
  
+-	smb347_set_writable(smb, false);
++	smb347_set_writable(smb, false, false);
+ 
+ 	if (ret < 0) {
+ 		dev_warn(smb->dev, "failed to initialize IRQ: %d\n", ret);
 -- 
 2.32.0
 
