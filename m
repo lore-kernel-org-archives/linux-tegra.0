@@ -2,117 +2,122 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-14.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CBC4C432BE
-	for <linux-tegra@archiver.kernel.org>; Sat, 31 Jul 2021 06:16:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BF3AC4320A
+	for <linux-tegra@archiver.kernel.org>; Sat, 31 Jul 2021 10:14:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 507A8601FF
-	for <linux-tegra@archiver.kernel.org>; Sat, 31 Jul 2021 06:16:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 41DC760F35
+	for <linux-tegra@archiver.kernel.org>; Sat, 31 Jul 2021 10:14:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236048AbhGaGQc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 31 Jul 2021 02:16:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47194 "EHLO
+        id S232182AbhGaKOV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 31 Jul 2021 06:14:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49038 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229683AbhGaGQb (ORCPT
+        with ESMTP id S233016AbhGaKOT (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sat, 31 Jul 2021 02:16:31 -0400
-Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC4A3C06175F;
-        Fri, 30 Jul 2021 23:16:25 -0700 (PDT)
-Received: by mail-pl1-x632.google.com with SMTP id u16so5096379ple.2;
-        Fri, 30 Jul 2021 23:16:25 -0700 (PDT)
+        Sat, 31 Jul 2021 06:14:19 -0400
+Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C467FC0617A1;
+        Sat, 31 Jul 2021 03:13:18 -0700 (PDT)
+Received: by mail-lj1-x234.google.com with SMTP id u20so16381874ljo.0;
+        Sat, 31 Jul 2021 03:13:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=w4o8GTKb8Zatf93vHXEadq9v5OlamLv4NAJhut7CkBc=;
-        b=YCwMC2hLVOwrqQ+QPSrGoEMS16Wshm7+D1dBSpG5DQOXMhhYqO7+XH9dcczRFEZ28E
-         Pv2TnZxu6G3B+88FqBJFkT0xVWJbmVQrpI6BXlUlsPukZqBKbSkBEjGOilXyZf+G0wSl
-         fWy11sMrGOVgNMJVw9/Jpz2ox0YyNiYx+Dmnmo2I+LeU3KfwW6UY7DHBI41Ev5EcGPlf
-         teMqk+yLfg+b56gAVnZAJnyDwlgRadzazYzNAHWbGvjOgk7rbtwgDIY6Qmuiz17Ooko6
-         dJt/ModJ2N92A12fKQPj56DKGk4rkxWeJNIsqQzjZHxetfdGAFxSdRl233t/QT/6COq2
-         wBIA==
+        h=subject:to:cc:references:from:organization:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=OZPudOm1n3Y0XK4jpf40ZUtCnIltLVwQU7PwAg/PlfY=;
+        b=DRZznyy8033aJy2PoYq1zVwec5R6Eceg1j5V48MBWbNB0iv7w7ORqdtrgcv2QjX+V6
+         Rvia4WqY0iJvNvsVcXOBk1t1TkUQWAlDoP3RQJGlc2kRUdxSAf84hmkUAQNFShMPuq27
+         eS9BN6ie7iwx334d4wKMQGi+ybdC9EoU9+kXmLM2/NCtIojOirgxY5mfAEjCKiAVGzIE
+         4frtasTQw/Kgi3REZzYXx0/Phgm79S27UcWUKph8t4JEljjkj8ZirEg2egWmd2NEQF2l
+         57lolTAXyQYaYHP5WvfPSdjY1655PKC15xhDpaunlERKBX9c74aRxCO29KO+KZYcMFot
+         B5gw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=w4o8GTKb8Zatf93vHXEadq9v5OlamLv4NAJhut7CkBc=;
-        b=a5kvumUPJfNDhchx0PANGiIaDx2VEzFeoJrGF3aLO2o0QMFmrAQ0lbr3ykNzxpoFje
-         GD5neLcfpSqXhtAy7WilmjxY8E9XG83nW9AuVV1ld7ACr4qXEJLbOmu2yFXi8/RKJrfU
-         dUNViD27rD1le8vBeA28Alkrm2kd+PIZ6sqE8eQXk9A/BjCgIHoo4XXEFgqDKRXY54lX
-         9lvG6gobAsmOGeJMLYYqdUdpe08MDc9VmCSE9cYgDKu8YSzePA8PQf+tfXqLVF8Mvu6q
-         KCvOtwiVD8wUQxjc7XD5qn/l1xNXWpFMS3+l3lu7sYbwEI2mZiMTp90xHXXY3u0WA+km
-         VMkw==
-X-Gm-Message-State: AOAM5333ZPORFbhTZtu3bezNq6AQYE+C3GlDmiZFG34UHmdFpctyVLwz
-        hgM639/uSK12PUJjGiXCf+o=
-X-Google-Smtp-Source: ABdhPJxGylcHolsQDxOLOZUyr0m3+qX2MoUW24vW7wkJKGxw2TKUvHhIvNlPUgdhbC4iaMpaIu0ZKQ==
-X-Received: by 2002:a17:903:1cf:b029:12b:cbdb:e402 with SMTP id e15-20020a17090301cfb029012bcbdbe402mr4068033plh.27.1627712185276;
-        Fri, 30 Jul 2021 23:16:25 -0700 (PDT)
-Received: from sol (106-69-176-40.dyn.iinet.net.au. [106.69.176.40])
-        by smtp.gmail.com with ESMTPSA id n32sm4453203pfv.59.2021.07.30.23.16.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Jul 2021 23:16:24 -0700 (PDT)
-Date:   Sat, 31 Jul 2021 14:16:17 +0800
-From:   Kent Gibson <warthog618@gmail.com>
-To:     Dipen Patel <dipenp@nvidia.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>
-Subject: Re: [RFC 09/11] tools: gpio: Add new hardware clock type
-Message-ID: <20210731061617.GA12414@sol>
-References: <20210625235532.19575-1-dipenp@nvidia.com>
- <20210625235532.19575-10-dipenp@nvidia.com>
- <CACRpkdaqKJLUdf3NiFHaTgu6buyhMb_D1yKyHF4M=eTQ94pe-g@mail.gmail.com>
- <b87fa5d8-bef9-9046-9747-d4428ddf58ea@nvidia.com>
+        h=x-gm-message-state:subject:to:cc:references:from:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=OZPudOm1n3Y0XK4jpf40ZUtCnIltLVwQU7PwAg/PlfY=;
+        b=l1GTNQwj7E+6HJqIICF8cSXJMyreGGzlDHZ8aPLwyyXFjHP535LUwZokCAV48ujQOK
+         KaUiNQ4ZjZ0wvNQaZVkPLpNXJVpVRHPVKpPhopGHhOGqzJnAs/gSEAvsD0T9e8gtRrQ3
+         13u/xAL7A5eoectxrs2tHIISqiZJ8CfagxTpjTIzpcn7YRsh+ouS8RN9vAYyeKr4JK2v
+         kva432/ZiJVWz9hK88nfE/xYUNm0nYesmMsD2I/IUsg1oaHJbZRcJ47t3v0jpJ5F31e7
+         4qVzgOMjLyaGqPqcIywvDJlApRW/jX2CWCQ1EpbfMS37XKfhNUHmdGBL54wDBCJczZTt
+         isnw==
+X-Gm-Message-State: AOAM531biaeJoVWTrNoU9UaEgvTo2Mu+mSdZvjoXlcZy5sR4ny/9m9pJ
+        UlEow31JbVIByVKz/L/rE7c=
+X-Google-Smtp-Source: ABdhPJz32IHR5BKnLNNi9FksHxGMzGdjnjiBqp7uquONQESyGp5t0qF7c6FPEGC/L09TJGPVjkiaRA==
+X-Received: by 2002:a2e:a712:: with SMTP id s18mr4775392lje.161.1627726397082;
+        Sat, 31 Jul 2021 03:13:17 -0700 (PDT)
+Received: from [192.168.1.100] ([178.176.77.134])
+        by smtp.gmail.com with ESMTPSA id w26sm301595ljd.89.2021.07.31.03.13.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 31 Jul 2021 03:13:16 -0700 (PDT)
+Subject: Re: [PATCH v2 2/9] drm/omap: Cast pointer to integer without
+ generating warning
+To:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        dri-devel@lists.freedesktop.org
+Cc:     Tomi Valkeinen <tomba@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Jyri Sarha <jyri.sarha@iki.fi>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Thierry Reding <thierry.reding@gmail.com>, linux-imx@nxp.com,
+        Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
+        linux-tegra@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>,
+        Alain VOLMAT-SCND-01 <alain.volmat@foss.st.com>,
+        Benjamin Gaignard <benjamin.gaignard@collabora.com>
+References: <20210731013954.11926-1-laurent.pinchart+renesas@ideasonboard.com>
+ <20210731013954.11926-3-laurent.pinchart+renesas@ideasonboard.com>
+From:   Sergei Shtylyov <sergei.shtylyov@gmail.com>
+Organization: Brain-dead Software
+Message-ID: <32ff5167-01f3-3af4-9075-f61a659c35eb@gmail.com>
+Date:   Sat, 31 Jul 2021 13:12:58 +0300
+User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b87fa5d8-bef9-9046-9747-d4428ddf58ea@nvidia.com>
+In-Reply-To: <20210731013954.11926-3-laurent.pinchart+renesas@ideasonboard.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, Jul 29, 2021 at 08:17:22PM -0700, Dipen Patel wrote:
-> 
-> On 6/27/21 4:36 AM, Linus Walleij wrote:
-> > On Sat, Jun 26, 2021 at 1:48 AM Dipen Patel <dipenp@nvidia.com> wrote:
-> >
-> >> gpiolib-cdev is extended to support hardware clock type, this
-> >> patch reflects that fact.
-> >>
-> >> Signed-off-by: Dipen Patel <dipenp@nvidia.com>
-> > (...)
-> >>                 case 'w':
-> >>                         config.flags |= GPIO_V2_LINE_FLAG_EVENT_CLOCK_REALTIME;
-> >>                         break;
-> >> +               case 't':
-> >> +                       config.flags |= GPIO_V2_LINE_FLAG_EVENT_CLOCK_HARDWARE;
-> >> +                       break;
-> > After the checking of the command line options we need a small sanity
-> > check so we don't try to enable both realtime and hardware clock
-> > at the same time, we will only be able to request one of them.
-> 
-> This will any way fail at gpiolib-cdev layer. Do we want to add it here
-> 
-> as well?
-> 
+Hello
 
-I can't speak for Linus, but I'm fine with it as is as it allows the tool
-to be used to exercise the sanity check in the kernel.
+On 31.07.2021 4:39, Laurent Pinchart wrote:
 
-Cheers,
-Kent.
+> On 64-bit platforms, the compiler complains that casting a void pointer
+> to an unsigned int loses data. Cast the pointer to a uintptr_t unsigned
 
+    Is "unsigned" really needed here?
+
+> to fix this.
+> 
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> ---
+>   drivers/gpu/drm/omapdrm/omap_drv.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/omapdrm/omap_drv.c b/drivers/gpu/drm/omapdrm/omap_drv.c
+> index f86e20578143..c05d3975cb31 100644
+> --- a/drivers/gpu/drm/omapdrm/omap_drv.c
+> +++ b/drivers/gpu/drm/omapdrm/omap_drv.c
+> @@ -572,7 +572,7 @@ static int omapdrm_init(struct omap_drm_private *priv, struct device *dev)
+>   	priv->dss->mgr_ops_priv = priv;
+>   
+>   	soc = soc_device_match(omapdrm_soc_devices);
+> -	priv->omaprev = soc ? (unsigned int)soc->data : 0;
+> +	priv->omaprev = soc ? (uintptr_t)soc->data : 0;
+>   	priv->wq = alloc_ordered_workqueue("omapdrm", 0);
+>   
+>   	mutex_init(&priv->list_lock);
+
+MBR, Sergei
