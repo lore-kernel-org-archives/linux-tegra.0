@@ -8,52 +8,52 @@ X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99F66C4320E
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8D99C43214
 	for <linux-tegra@archiver.kernel.org>; Mon,  2 Aug 2021 22:13:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 79B1061038
+	by mail.kernel.org (Postfix) with ESMTP id A573961029
 	for <linux-tegra@archiver.kernel.org>; Mon,  2 Aug 2021 22:13:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232130AbhHBWOB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        id S232147AbhHBWOB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
         Mon, 2 Aug 2021 18:14:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51970 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51978 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232006AbhHBWOA (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 2 Aug 2021 18:14:00 -0400
-Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 234CDC06175F;
+        with ESMTP id S230156AbhHBWOB (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 2 Aug 2021 18:14:01 -0400
+Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA4FFC06175F;
         Mon,  2 Aug 2021 15:13:50 -0700 (PDT)
-Received: by mail-lf1-x133.google.com with SMTP id b6so13606026lff.10;
+Received: by mail-lj1-x230.google.com with SMTP id m9so25781171ljp.7;
         Mon, 02 Aug 2021 15:13:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=zTbtTeGMZ/VuLuFz8YHm5zAulKED+PIDxcJPdSaYy1A=;
-        b=T38CTxzx9veawl0upAiLeh4Htr/ULbKZCBqlNQgBB52VfQ4ldDYUV4J+SXIOV3FBhg
-         liAYCpjAx0ncSKiE6tw4XSua86FlSwJW2S+3txfT4OnPG6NdAw8WHtYp9aCB5enwyhE0
-         uN3yZqe7ZYW6ObY6baJbDwHCfNvFHK4r93EmO6f2Y8Dr9Fl1Et63OonxFkaqZh6GKF7m
-         ZZqsPLROcj0BV9rtOcnj41goYqMsmCuHhauvjqPa96PitoJ4bSM2/TddGvbNq79V0TFq
-         AfuPKLpttNZVlay6gwj5dkKLe4Hau49gP+TLxunEctl9JpputYNNSbQ7oeo2eK/EPE8w
-         UYtA==
+        bh=YWDQ/oQ+F5/HwJrzhjalYg0o564TWde1kW73fPkVwC0=;
+        b=gGkrPaQ/wwaRu30EMPrNYwugGzY1BcFEoObvHmna8ZrNWqIrQcngOpxxh7nO4chSSo
+         hjgyZ+vg3gT+NusZzgntC1TVl6RtzmaTPjHFnSFZICnOV68OcjwSglaGerqws3B1uOLT
+         3RgA8mLi21kexfNK0rcgY0p9tpNoRuJHG3OR7R/iUjvX1eYBCEf1DzxATyPMyHg9+38y
+         3qAylUN4rMoYSKx7ezU3u5vSxsKpADY4Pom8AuDGSqFBZSZPH0j4wR1nKyCsT1+JwNR+
+         NKa0eChOCiGaIXw883huy38YOp8fVYA7ebW1vhOZGYNm3PF2EYi8EGJXOony48oHS8vF
+         29FA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=zTbtTeGMZ/VuLuFz8YHm5zAulKED+PIDxcJPdSaYy1A=;
-        b=pGjg+UPGwCu61dR2ZgsqjuKztBsFHKLEx80hn+wnRyUY43PDL/35V0jmSCy3LtYYXc
-         F2w4aKLFH0PJTVNYN1FyT97UBQ5y8IXdUC299ZPlwiaVHElgfuJYfMXSwMJGaVPmJNj6
-         ZcKHYuWcwFapEdhVv9e0iTsXoEh5pvvzYsBvc7LrLdLfDjt/WEkT6PXSguj8lhRznw0N
-         5l+g6gc8/KFQFK2wz+3YKkRKcfyi6+sk7Oko388c32x04qMUOhVhh2w0ONUMk5xruMu3
-         meBe6KRBoBPyo7mD21aFgUZWj1abnJpcz/k/d1j2+jMtu3YXPKtBrWDvC9KQlKgf4hA/
-         Rj3g==
-X-Gm-Message-State: AOAM5326vzmpoUw4CFHJS3CIDyjf3bDHgjoK9J6hzsDrYPYa05+3B5tR
-        F6Cc//8r93SQ1axeb7ko04I=
-X-Google-Smtp-Source: ABdhPJygK7r9LhuLEHcQv8Tc0kY5ttYHMPHffHqrds86rWD05ZFT76UekV/n02g2LBijJhXgvdSaFg==
-X-Received: by 2002:ac2:5471:: with SMTP id e17mr8706132lfn.216.1627942428564;
-        Mon, 02 Aug 2021 15:13:48 -0700 (PDT)
+        bh=YWDQ/oQ+F5/HwJrzhjalYg0o564TWde1kW73fPkVwC0=;
+        b=mufkxXKeTjnnEZWPnqbfyC2XCGwjgxPvUmGB0LIImMBKO9NngMI+I6E795Z/IDdf61
+         z8ur8y2TpYeiKJ5ify3ijisyIaPn0PfilpMr528Hls47obO0BMr7rvlTerwzSUquxOe9
+         qWkWi4GZ7LZipRIzv4me3L3Jv+q4xSGffFAPtGNaUzkMIBrmi+Up6MYlBCYinczPiCic
+         zVNvA6/uVrES1xmhdR3pDL/MlnRrcwsLvFJkuADHTG9lREk8ENQQJvOgvLnKnPWSadxa
+         pcdE9Y7fnZGj9oJPCrC3uiu4CkiPrTh104LdRViqPc1a5oexyat9NiB9lZTnsG8RzVeH
+         K7Rg==
+X-Gm-Message-State: AOAM532kZhK1ajv+kIS1caI0NqOPGziDW22EizQBQ6gCne820CLj1Fkv
+        qnYQkjz465x19Bl0dhO36JQ=
+X-Google-Smtp-Source: ABdhPJz/1/unfd12b3K26oPUeLacBTM0qTmWvXbIqHFlDGZwIFjp1KCQVkhXP4HHL6lFlIiSgo/Xpg==
+X-Received: by 2002:a05:651c:906:: with SMTP id e6mr12212506ljq.160.1627942429230;
+        Mon, 02 Aug 2021 15:13:49 -0700 (PDT)
 Received: from localhost.localdomain (94-29-22-96.dynamic.spd-mgts.ru. [94.29.22.96])
-        by smtp.gmail.com with ESMTPSA id c10sm960167ljn.11.2021.08.02.15.13.47
+        by smtp.gmail.com with ESMTPSA id c10sm960167ljn.11.2021.08.02.15.13.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Mon, 02 Aug 2021 15:13:48 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
@@ -65,9 +65,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Stephen Boyd <sboyd@kernel.org>
 Cc:     linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v1 1/4] soc/tegra: fuse: Clear fuse->clk on driver probe failure
-Date:   Tue,  3 Aug 2021 01:13:33 +0300
-Message-Id: <20210802221336.32016-2-digetx@gmail.com>
+Subject: [PATCH v1 2/4] soc/tegra: fuse: Add runtime PM support
+Date:   Tue,  3 Aug 2021 01:13:34 +0300
+Message-Id: <20210802221336.32016-3-digetx@gmail.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20210802221336.32016-1-digetx@gmail.com>
 References: <20210802221336.32016-1-digetx@gmail.com>
@@ -77,26 +77,154 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The fuse->clk must be cleared if FUSE driver fails to probe, otherwise
-tegra_fuse_readl() will crash. It's unlikely to happen in practice,
-nevertheless let's correct it for completeness.
+The Tegra FUSE belongs to the core power domain and we're going to enable
+GENPD support for the core domain. Now FUSE device must be resumed using
+runtime PM API in order to initialize the FUSE power state. Add runtime PM
+support to the FUSE driver.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/soc/tegra/fuse/fuse-tegra.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/soc/tegra/fuse/fuse-tegra.c   | 30 +++++++++++++++++++++++++++
+ drivers/soc/tegra/fuse/fuse-tegra20.c | 10 +++++----
+ drivers/soc/tegra/fuse/fuse-tegra30.c |  9 ++++----
+ 3 files changed, 40 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/soc/tegra/fuse/fuse-tegra.c b/drivers/soc/tegra/fuse/fuse-tegra.c
-index 3d9da3d359da..2434c570b53c 100644
+index 2434c570b53c..747237865aff 100644
 --- a/drivers/soc/tegra/fuse/fuse-tegra.c
 +++ b/drivers/soc/tegra/fuse/fuse-tegra.c
-@@ -246,6 +246,7 @@ static int tegra_fuse_probe(struct platform_device *pdev)
- 	return 0;
+@@ -13,6 +13,7 @@
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+ #include <linux/platform_device.h>
++#include <linux/pm_runtime.h>
+ #include <linux/slab.h>
+ #include <linux/sys_soc.h>
  
+@@ -210,6 +211,8 @@ static int tegra_fuse_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, fuse);
+ 	fuse->dev = &pdev->dev;
+ 
++	pm_runtime_enable(&pdev->dev);
++
+ 	if (fuse->soc->probe) {
+ 		err = fuse->soc->probe(fuse);
+ 		if (err < 0)
+@@ -248,13 +251,40 @@ static int tegra_fuse_probe(struct platform_device *pdev)
  restore:
-+	fuse->clk = NULL;
+ 	fuse->clk = NULL;
  	fuse->base = base;
++	pm_runtime_disable(&pdev->dev);
  	return err;
+ }
+ 
++static int __maybe_unused tegra_fuse_runtime_resume(struct device *dev)
++{
++	int err;
++
++	err = clk_prepare_enable(fuse->clk);
++	if (err < 0) {
++		dev_err(dev, "failed to enable FUSE clock: %d\n", err);
++		return err;
++	}
++
++	return 0;
++}
++
++static int __maybe_unused tegra_fuse_runtime_suspend(struct device *dev)
++{
++	clk_disable_unprepare(fuse->clk);
++
++	return 0;
++}
++
++static const struct dev_pm_ops tegra_fuse_pm = {
++	SET_RUNTIME_PM_OPS(tegra_fuse_runtime_suspend, tegra_fuse_runtime_resume,
++			   NULL)
++};
++
+ static struct platform_driver tegra_fuse_driver = {
+ 	.driver = {
+ 		.name = "tegra-fuse",
+ 		.of_match_table = tegra_fuse_match,
++		.pm = &tegra_fuse_pm,
+ 		.suppress_bind_attrs = true,
+ 	},
+ 	.probe = tegra_fuse_probe,
+diff --git a/drivers/soc/tegra/fuse/fuse-tegra20.c b/drivers/soc/tegra/fuse/fuse-tegra20.c
+index 16aaa28573ac..cd6a273707fe 100644
+--- a/drivers/soc/tegra/fuse/fuse-tegra20.c
++++ b/drivers/soc/tegra/fuse/fuse-tegra20.c
+@@ -16,6 +16,7 @@
+ #include <linux/kobject.h>
+ #include <linux/of_device.h>
+ #include <linux/platform_device.h>
++#include <linux/pm_runtime.h>
+ #include <linux/random.h>
+ 
+ #include <soc/tegra/fuse.h>
+@@ -46,6 +47,10 @@ static u32 tegra20_fuse_read(struct tegra_fuse *fuse, unsigned int offset)
+ 	u32 value = 0;
+ 	int err;
+ 
++	err = pm_runtime_resume_and_get(fuse->dev);
++	if (err)
++		return err;
++
+ 	mutex_lock(&fuse->apbdma.lock);
+ 
+ 	fuse->apbdma.config.src_addr = fuse->phys + FUSE_BEGIN + offset;
+@@ -66,8 +71,6 @@ static u32 tegra20_fuse_read(struct tegra_fuse *fuse, unsigned int offset)
+ 
+ 	reinit_completion(&fuse->apbdma.wait);
+ 
+-	clk_prepare_enable(fuse->clk);
+-
+ 	dmaengine_submit(dma_desc);
+ 	dma_async_issue_pending(fuse->apbdma.chan);
+ 	time_left = wait_for_completion_timeout(&fuse->apbdma.wait,
+@@ -78,10 +81,9 @@ static u32 tegra20_fuse_read(struct tegra_fuse *fuse, unsigned int offset)
+ 	else
+ 		value = *fuse->apbdma.virt;
+ 
+-	clk_disable_unprepare(fuse->clk);
+-
+ out:
+ 	mutex_unlock(&fuse->apbdma.lock);
++	pm_runtime_put(fuse->dev);
+ 	return value;
+ }
+ 
+diff --git a/drivers/soc/tegra/fuse/fuse-tegra30.c b/drivers/soc/tegra/fuse/fuse-tegra30.c
+index c1aa7815bd6e..dd03565a39a4 100644
+--- a/drivers/soc/tegra/fuse/fuse-tegra30.c
++++ b/drivers/soc/tegra/fuse/fuse-tegra30.c
+@@ -12,6 +12,7 @@
+ #include <linux/of_device.h>
+ #include <linux/of_address.h>
+ #include <linux/platform_device.h>
++#include <linux/pm_runtime.h>
+ #include <linux/random.h>
+ 
+ #include <soc/tegra/fuse.h>
+@@ -52,15 +53,13 @@ static u32 tegra30_fuse_read(struct tegra_fuse *fuse, unsigned int offset)
+ 	u32 value;
+ 	int err;
+ 
+-	err = clk_prepare_enable(fuse->clk);
+-	if (err < 0) {
+-		dev_err(fuse->dev, "failed to enable FUSE clock: %d\n", err);
++	err = pm_runtime_resume_and_get(fuse->dev);
++	if (err)
+ 		return 0;
+-	}
+ 
+ 	value = readl_relaxed(fuse->base + FUSE_BEGIN + offset);
+ 
+-	clk_disable_unprepare(fuse->clk);
++	pm_runtime_put(fuse->dev);
+ 
+ 	return value;
  }
 -- 
 2.32.0
