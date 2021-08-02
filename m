@@ -5,57 +5,57 @@ X-Spam-Level:
 X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DA72C4320E
-	for <linux-tegra@archiver.kernel.org>; Mon,  2 Aug 2021 21:20:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73436C432BE
+	for <linux-tegra@archiver.kernel.org>; Mon,  2 Aug 2021 21:20:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1F3D260F58
-	for <linux-tegra@archiver.kernel.org>; Mon,  2 Aug 2021 21:20:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5DD3960F4B
+	for <linux-tegra@archiver.kernel.org>; Mon,  2 Aug 2021 21:20:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232816AbhHBVUt (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 2 Aug 2021 17:20:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39032 "EHLO
+        id S232993AbhHBVUv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 2 Aug 2021 17:20:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39044 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231675AbhHBVUs (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 2 Aug 2021 17:20:48 -0400
-Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FEC8C06175F;
-        Mon,  2 Aug 2021 14:20:38 -0700 (PDT)
-Received: by mail-lf1-x12d.google.com with SMTP id b6so13394654lff.10;
-        Mon, 02 Aug 2021 14:20:38 -0700 (PDT)
+        with ESMTP id S232888AbhHBVUu (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 2 Aug 2021 17:20:50 -0400
+Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C822BC061760;
+        Mon,  2 Aug 2021 14:20:39 -0700 (PDT)
+Received: by mail-lj1-x232.google.com with SMTP id m18so1851344ljo.1;
+        Mon, 02 Aug 2021 14:20:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Nw2Y0y0fghw+sFEgC64gNuaGBHW1wy1WhSDHTe1H5dY=;
-        b=qmXEfvlt5ZJukJLd9J/LlnBeRZua9XCr1Ch+H6TojPzJUVw2OdyhKOH/AD4m4Ovc4r
-         TnGDK50jm8XGwBLP/0ofVakvt8CL4G10ZxmZR8/PPdbDa40yOxSC38V2S9OdG8kNio2D
-         FUsgGdrn79JHiPpg4++88HQo0UVDY2yMU0jbmOb2pXLBzEsGP4+8slA0K1azYRoueenf
-         /O9OCvMfac+EJePzlHMD6Wrp7UPttGknhKnqmL7Swz5d+j9E1a6ef61mS8gVkxC2K8qO
-         z2QGyhUbgWmqqjKdkBa2IUICopXhdOdd3pzoKr3W0UcHxqBr5DJMeGXGQWvXpa8QDc+z
-         cY6w==
+        bh=8urCBMft39SinX6pTZXVMVPwus5YNF2nzxVXIu9iO4E=;
+        b=ouTJF8rmGa6mR5xx7qF1nQDtISGcUvhC+Ptb8UkCTSxMUctVXOyq4ypZpYJMOpqHIt
+         rF9kJ0aaVdM86JU9t1z+op8pX83IQAOYCdHQPze6cltZcm2nHb8fkwPc5qm7hJK5ThvD
+         ExRNjtvTZaBmjzLuuAqN+SlJlJ73+PbS0o2ACFWbtcb8yjcjMjfodE2LK30h8BWq1Gx3
+         ceY2PUY5b4Y/Xb1hUvKje2ZFHrc/me7scc19sDvXKOGQdsbhE1B5IS9zlPLBq+s3GoH/
+         Jpj2dz5ppgivMOf1eLUJf8C/c20uqcjZkxbjaURabFH32S7h44Gv7S3PW8FFm5Yb4PS5
+         LWJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Nw2Y0y0fghw+sFEgC64gNuaGBHW1wy1WhSDHTe1H5dY=;
-        b=ZLuI1M6SnPXYG2zRU32I9UOIDKhLJ2sh/IupBNCzLcQ691qSfaXlFbqMl3cZei9S3G
-         8uzbOYzaLYrDZuKIDWmiMfFXC4Fo4/KUvZ2L8MNGYkQ9c5WWvnxGFWSwAvJPbs/ZlfOi
-         kcHYlA4Ijsc6qZHEEgjxV77v1w218KWNo0AKa60Vk/dVPZ5cRKwuy+8wscZoYUo3A8tu
-         ljWc3RPEVox/De4tQ/R47JO3zFMJY6u23DB58xL9Z/1K/rBtzO8hX7MxhvapNOZeUKh/
-         9KdD8aUTy+QuPwCCOZ0nsgXFab0sMg5KYzux8BFXsRrYQvxtDWXNV9n1gcsvUW8qnDZd
-         0XMw==
-X-Gm-Message-State: AOAM532Xqogt9g97tJbDSGwDc9nH7MvFe97eMSTXNHcEozRupam9l/X9
-        kmk/1PVASLRKc9aEt6LZjug=
-X-Google-Smtp-Source: ABdhPJwfQ9REISquOUPaYiCcW3Jms2LLuB4Cg71HUCHKdwVrw7zHtR+QhhAVEi+TWk+BpkSAzpfZTw==
-X-Received: by 2002:a05:6512:169d:: with SMTP id bu29mr9951423lfb.160.1627939236961;
-        Mon, 02 Aug 2021 14:20:36 -0700 (PDT)
+        bh=8urCBMft39SinX6pTZXVMVPwus5YNF2nzxVXIu9iO4E=;
+        b=A04xQAtasZGJDsIZsDdRhu6xos8w1kutVyp2BLLRCNEQTPaUBMWt959lSQbqp23Tm7
+         2hAOxK7lkxgoq8hPq68ke4h+F5bhsRW1L5UmSj6EU0SAkVi9HNWj0VOBn+U0lns8UWTm
+         hB7oV0L1HstwmRW4kqu5Q/NJha2jgrvtJ64KIRKApbETSOydL0laziOMXU8OUUO81Df2
+         K51dvJv0Wvvdd7AF4VJL06vTrfF/yx2BDbpRMcszzbjGSCcPhLPqEmLGuPgXeNab+rPu
+         dh3vHCExt2Wc85tYiPjT0RlRPU/YN1/7vEv1Lsoj3rY+C1t1c5GQKl6iMGUH5Av6y25Y
+         kd0Q==
+X-Gm-Message-State: AOAM533KfTrO8VLNt4nLxji4wSqqelgLt4/JPg1ti+u2DfLE4UmGXRdz
+        bZ/IazHMeql4GO/vHMsmCXE=
+X-Google-Smtp-Source: ABdhPJxVGyiYZRetyOJgFGt2gDhqoYhO94+wsvn4uxeS92n8yYYHd2FdROgYHh157W15WI5MMD4Qlg==
+X-Received: by 2002:a2e:a80f:: with SMTP id l15mr12825486ljq.354.1627939238204;
+        Mon, 02 Aug 2021 14:20:38 -0700 (PDT)
 Received: from localhost.localdomain (94-29-22-96.dynamic.spd-mgts.ru. [94.29.22.96])
-        by smtp.gmail.com with ESMTPSA id p14sm764942lfa.117.2021.08.02.14.20.36
+        by smtp.gmail.com with ESMTPSA id p14sm764942lfa.117.2021.08.02.14.20.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Aug 2021 14:20:36 -0700 (PDT)
+        Mon, 02 Aug 2021 14:20:37 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -63,9 +63,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Peter Geis <pgwipeout@gmail.com>
 Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
         linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: [PATCH v2 02/15] ARM: tegra: ouya: Add interrupt to temperature sensor node
-Date:   Tue,  3 Aug 2021 00:19:34 +0300
-Message-Id: <20210802211947.19715-3-digetx@gmail.com>
+Subject: [PATCH v2 04/15] ARM: tegra: nexus7: Add interrupt to temperature sensor node
+Date:   Tue,  3 Aug 2021 00:19:36 +0300
+Message-Id: <20210802211947.19715-5-digetx@gmail.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20210802211947.19715-1-digetx@gmail.com>
 References: <20210802211947.19715-1-digetx@gmail.com>
@@ -76,47 +76,28 @@ List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 The TEMP_ALERT pin of LM90 temperature sensor is connected to Tegra SoC.
-Add interrupt property to the temperature sensor and enable it in pinmux,
-for completeness.
+Add interrupt property to the temperature sensor for completeness.
 
-Tested-by: Matt Merhar <mattmerhar@protonmail.com>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- arch/arm/boot/dts/tegra30-ouya.dts | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+ arch/arm/boot/dts/tegra30-asus-nexus7-grouper-common.dtsi | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/arch/arm/boot/dts/tegra30-ouya.dts b/arch/arm/boot/dts/tegra30-ouya.dts
-index ab8744f3d72d..90db5ff72537 100644
---- a/arch/arm/boot/dts/tegra30-ouya.dts
-+++ b/arch/arm/boot/dts/tegra30-ouya.dts
-@@ -124,12 +124,11 @@ cpu_temp: nct1008@4c {
+diff --git a/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-common.dtsi b/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-common.dtsi
+index ae8300baa2d4..33985fca956f 100644
+--- a/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-common.dtsi
++++ b/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-common.dtsi
+@@ -920,6 +920,10 @@ nct72: temperature-sensor@4c {
  			compatible = "onnn,nct1008";
  			reg = <0x4c>;
- 			vcc-supply = <&sys_3v3_reg>;
+ 			vcc-supply = <&vdd_3v3_sys>;
 +
 +			interrupt-parent = <&gpio>;
-+			interrupts = <TEGRA_GPIO(CC, 2) IRQ_TYPE_EDGE_FALLING>;
++			interrupts = <TEGRA_GPIO(S, 3) IRQ_TYPE_EDGE_FALLING>;
 +
  			#thermal-sensor-cells = <1>;
--/*
-- *			The interrupt is bugged, once triggered it never clears.
-- *			interrupt-parent = <&gpio>;
-- *			interrupts = <TEGRA_GPIO(CC, 2) IRQ_TYPE_LEVEL_LOW>;
-- */
  		};
  
- 		pmic: pmic@2d {
-@@ -4376,8 +4375,8 @@ pcc2 {
- 		nvidia,pins = "pcc2";
- 		nvidia,function = "i2s4";
- 		nvidia,pull = <TEGRA_PIN_PULL_NONE>;
--		nvidia,tristate = <TEGRA_PIN_ENABLE>;
--		nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+		nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+		nvidia,enable-input = <TEGRA_PIN_ENABLE>;
- 	};
- 	sdmmc4_rst_n_pcc3 {
- 		nvidia,pins = "sdmmc4_rst_n_pcc3";
 -- 
 2.32.0
 
