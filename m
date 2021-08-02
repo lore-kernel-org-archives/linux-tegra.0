@@ -2,144 +2,129 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E5E8C4338F
-	for <linux-tegra@archiver.kernel.org>; Mon,  2 Aug 2021 18:23:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95970C4338F
+	for <linux-tegra@archiver.kernel.org>; Mon,  2 Aug 2021 21:20:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6704760F36
-	for <linux-tegra@archiver.kernel.org>; Mon,  2 Aug 2021 18:23:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 76DD860F4B
+	for <linux-tegra@archiver.kernel.org>; Mon,  2 Aug 2021 21:20:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229677AbhHBSYE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 2 Aug 2021 14:24:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51588 "EHLO
+        id S231730AbhHBVUr (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 2 Aug 2021 17:20:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39024 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229640AbhHBSYE (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 2 Aug 2021 14:24:04 -0400
-Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CC0BC06175F;
-        Mon,  2 Aug 2021 11:23:54 -0700 (PDT)
-Received: by mail-lf1-x12d.google.com with SMTP id t9so22378692lfc.6;
-        Mon, 02 Aug 2021 11:23:54 -0700 (PDT)
+        with ESMTP id S231675AbhHBVUr (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 2 Aug 2021 17:20:47 -0400
+Received: from mail-lj1-x22d.google.com (mail-lj1-x22d.google.com [IPv6:2a00:1450:4864:20::22d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18C18C06175F;
+        Mon,  2 Aug 2021 14:20:37 -0700 (PDT)
+Received: by mail-lj1-x22d.google.com with SMTP id l4so25651540ljq.4;
+        Mon, 02 Aug 2021 14:20:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=A2cWlW6pgYuSWsahIzYgGPs6I4RK+uZng7TRkUqOaAw=;
-        b=H1pn8GH7wXvWvYwTnbs7bdMHPlwqcM/iJScEzxQ/zAkWypusygPPbvku3eSuT190yN
-         zPFRoZCvktkuxqoleBgK8y5Uzv5Fmeqd1bbhmRsU+8MxXxRw8T8y+0sHploztJ2+QVqn
-         K58S/JnExlUO6oIXV0tFWcBYPeYiwBJRkgmKCMuWnC+4A28bNtIqaxlBVCyURf9FOwKk
-         4FnjEmQtRKc+BFOug7/xn0azcogjPR+odU0hl0SM8YwaLE6GnhT3w/niXT/0cWqbRgq8
-         MzqMNgzev0LA/KsZ9+9+qg6oaNg1l98gmbVMYv/uMejRIVq6umScHxBgKK4OnEdG/ZwO
-         QAiQ==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=y5HDwcPgFO0wIL6EDiNp4UExa/hSrgV/KUielM+lB70=;
+        b=NkZ7fYBaE9n0IXzNOS3qlCvM5o82ewlJh+lSYQ3AMpYr2fWIvSiEqPbemGMEKAeus/
+         ryVMMMsGT8d2SVAHYFge2gUQcEM7yiTRp05cJxvJ4e++xoz1pLhWVbMlaOZdqBIerB+Z
+         a+4lzupKwfQ5h5QwMQRcjKEC+AnAX4VQVzyBJFRspUGYdaVGru+NlzKsJdsSX/Qq5j3h
+         It5NO7Shqlqw3TOy9lzbHO1raXvvmDErX7JDhQqXSYYkZDdsvYX2Emnet+1NIaF6/eVn
+         0N3wpnX7/Upr+YZQcSePBBqCvkkdyMQXu/VB/RIP6/X+w8DFurd4Tey3lg3XRj5Qyojg
+         xwIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=A2cWlW6pgYuSWsahIzYgGPs6I4RK+uZng7TRkUqOaAw=;
-        b=ZFSD4EGWeLsfw4QOuveV6jasRhvNynglh6HqG6ZA8RYH5HylrqMJKvnjyYYBlHMDhn
-         PQr5g5yuZBFFdppkcIIN6G1YjSaa5mrvtgkWSJA0EYr3BCODDW8RXHvtIuPtxhQqdxV2
-         kQ0h6tC40sjHDNhRB2BKNj1sqIjdvXMl9qWCTrdbUIo+O49VJzVKe0geSes8bABOB4ab
-         sGN4PZWxJ/o44k1THFldvoDiPVrSsiWFuZ5tagYMcZ/PBLbngEgkozzHn/csgehGaVNG
-         ITDf0+A8a66KOiwUJImd4erhk4UrYjPMneHD7AuNqCkRNWzbwShYwOXj+3PSPzz3OyrN
-         wdKg==
-X-Gm-Message-State: AOAM533pOkVgSmLC5ZyuodLAhPrRF9AVFVXidBfbFXDyNHgo3iLFiDHg
-        iBshAneJJDV4f8v5yiQuzesFjaLwxPk=
-X-Google-Smtp-Source: ABdhPJxmeetaV9/wDLh3f6TYJLqFwfzcDKekE86b0K3MFq343cGfeWSlBYy2uLtfZPYyOQFzUh4IaA==
-X-Received: by 2002:ac2:5f78:: with SMTP id c24mr13366081lfc.199.1627928632378;
-        Mon, 02 Aug 2021 11:23:52 -0700 (PDT)
-Received: from [192.168.2.145] (94-29-22-96.dynamic.spd-mgts.ru. [94.29.22.96])
-        by smtp.googlemail.com with ESMTPSA id f23sm911482ljm.34.2021.08.02.11.23.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Aug 2021 11:23:51 -0700 (PDT)
-Subject: Re: [PATCH v7 02/37] soc/tegra: pmc: Implement attach_dev() of power
- domain drivers
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>
-References: <20210701232728.23591-1-digetx@gmail.com>
- <20210701232728.23591-3-digetx@gmail.com>
- <CAPDyKFrtWDYJo_NjS8306Z9ykbg7XZ55jC9hKEBMGkcrx1=4kQ@mail.gmail.com>
+        bh=y5HDwcPgFO0wIL6EDiNp4UExa/hSrgV/KUielM+lB70=;
+        b=YDjOWvF3xE7gdAZgoOBMib+1vNeAx3zCwG1RwrXLWI+G0ivnrCzPmqVeQGHLINQ5ab
+         w5i2nsHdfPC0Vy3M+UKEIFOE8hY6N/5fR+9z1azq4BflgwBFMkp6yA5VtJ25CFVofU/S
+         U0vYNfBgOmSOeFuzQ6b8ge6BZaOt/liHR+FY/QlVULzkacaQH3ykvMj8PRXtjfHFu6jB
+         nQTJG+dPqKYnVx4anN/YPo2uyDWVXMfUNVa0XuUB/XapyzJQEuWSIv/qdL1raWphZTVT
+         haYoOicZAvI7wvdJWn7EjaeH32VRUt5uzw0QOOnGBrYbBbPwxDbE8e4h1x9mAARArNyp
+         1rbA==
+X-Gm-Message-State: AOAM532II87L9PVqpwYN+Y38Wh8PNMk8UlGiT7OlnCuQT667DCmXhXI3
+        S3LzRMbe2B628+SWBLdYFxcBAdnHRcY=
+X-Google-Smtp-Source: ABdhPJxz6GR2DBrKxSEb8jADdnaAMave3FPgC0Xe/Kl63jvfnxlKrmevs8xiDm+VM8OTF/0ffp3/og==
+X-Received: by 2002:a2e:98d1:: with SMTP id s17mr12043645ljj.457.1627939235458;
+        Mon, 02 Aug 2021 14:20:35 -0700 (PDT)
+Received: from localhost.localdomain (94-29-22-96.dynamic.spd-mgts.ru. [94.29.22.96])
+        by smtp.gmail.com with ESMTPSA id p14sm764942lfa.117.2021.08.02.14.20.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Aug 2021 14:20:35 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <1034458d-78e0-5036-e278-6fee5d0d75ac@gmail.com>
-Date:   Mon, 2 Aug 2021 21:23:51 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Matt Merhar <mattmerhar@protonmail.com>,
+        Peter Geis <pgwipeout@gmail.com>
+Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: [PATCH v2 00/15] Tegra ARM32 device-tree improvements for 5.15
+Date:   Tue,  3 Aug 2021 00:19:32 +0300
+Message-Id: <20210802211947.19715-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-In-Reply-To: <CAPDyKFrtWDYJo_NjS8306Z9ykbg7XZ55jC9hKEBMGkcrx1=4kQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-02.08.2021 17:48, Ulf Hansson пишет:
-...
->> +       if (!list_empty(&genpd->child_links)) {
->> +               link = list_first_entry(&genpd->child_links, struct gpd_link,
->> +                                       child_node);
->> +               core_genpd = link->parent;
->> +       } else {
->> +               core_genpd = genpd;
->> +       }
-> 
-> This looks a bit odd to me. A genpd provider shouldn't need to walk
-> these links as these are considered internals to genpd. Normally this
-> needs lockings, etc.
-> 
-> Why exactly do you need this?
+This series:
 
-We have a chain of PMC domain -> core domain, both domains are created
-and liked together by this PMC driver. Devices are attached to either
-PMC domain or to core domain. PMC domain doesn't handle the performance
-changes, performance requests go down to the core domain.
+  - adds SoC thermal sensor node
+  - adds interrupt for LM90 to Ouya, AC100, Nexus 7 and A500 devices
+  - fixes interrupt of LM90 sensor for all boards
+  - removes bogus VBUS regulators from A500 device-tree
+  - improves thermal zones of Nexus 7 and A500 devices based on previous
+    discussion with Daniel Lezcano [1]
 
-This is needed in order to translate the device's OPP into performance
-state of the core domain, based on the domain to which device is attached.
+[1] https://lore.kernel.org/lkml/1abadc69-1dd1-5939-c089-37a84be4781b@linaro.org/
 
->> +
->> +       pd_opp_table = dev_pm_opp_get_opp_table(&core_genpd->dev);
->> +       if (IS_ERR(pd_opp_table)) {
->> +               dev_err(&genpd->dev, "failed to get OPP table of %s: %pe\n",
->> +                       dev_name(&core_genpd->dev), pd_opp_table);
->> +               ret = PTR_ERR(pd_opp_table);
->> +               goto put_dev_opp;
->> +       }
->> +
->> +       pd_opp = dev_pm_opp_xlate_required_opp(opp_table, pd_opp_table, opp);
->> +       if (IS_ERR(pd_opp)) {
->> +               dev_err(&genpd->dev,
->> +                       "failed to xlate required OPP for %luHz of %s: %pe\n",
->> +                       rate, dev_name(dev), pd_opp);
->> +               ret = PTR_ERR(pd_opp);
->> +               goto put_pd_opp_table;
->> +       }
->> +
->> +       /*
->> +        * The initialized state will be applied by GENPD core on the first
->> +        * RPM-resume of the device.  This means that drivers don't need to
->> +        * explicitly initialize performance state.
->> +        */
->> +       state = pm_genpd_opp_to_performance_state(&core_genpd->dev, pd_opp);
->> +       gpd_data->rpm_pstate = state;
-> 
-> Could the above be replaced with Rajendra's suggestion [1], which
-> changes genpd to internally during attach, to set a default
-> performance state when there is a "required-opp" specified in the
-> device  node?
+Changelog:
 
-It's not a "static" performance level here, but any level depending on
-h/w state left from bootloader and etc. The performance level
-corresponds to the voltage of the core domain, hence we need to
-initialize the voltage vote before device is resumed.
+v2: - Added these new minor patches:
+
+  ARM: tegra: acer-a500: Add power supplies to accelerometer
+  ARM: tegra: acer-a500: Use verbose variant of atmel,wakeup-method
+
+Dmitry Osipenko (15):
+  ARM: tegra: Add SoC thermal sensor to Tegra30 device-trees
+  ARM: tegra: ouya: Add interrupt to temperature sensor node
+  ARM: tegra: paz00: Add interrupt to temperature sensor node
+  ARM: tegra: nexus7: Add interrupt to temperature sensor node
+  ARM: tegra: acer-a500: Add interrupt to temperature sensor node
+  ARM: tegra: nyan: Correct interrupt trigger type of temperature sensor
+  ARM: tegra: apalis: Correct interrupt trigger type of temperature
+    sensor
+  ARM: tegra: cardhu: Correct interrupt trigger type of temperature
+    sensor
+  ARM: tegra: dalmore: Correct interrupt trigger type of temperature
+    sensor
+  ARM: tegra: jetson-tk1: Correct interrupt trigger type of temperature
+    sensor
+  ARM: tegra: acer-a500: Remove bogus USB VBUS regulators
+  ARM: tegra: acer-a500: Add power supplies to accelerometer
+  ARM: tegra: acer-a500: Use verbose variant of atmel,wakeup-method
+    value
+  ARM: tegra: acer-a500: Improve thermal zones
+  ARM: tegra: nexus7: Improve thermal zones
+
+ arch/arm/boot/dts/tegra114-dalmore.dts        |  2 +-
+ arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi   |  2 +-
+ arch/arm/boot/dts/tegra124-apalis.dtsi        |  2 +-
+ arch/arm/boot/dts/tegra124-jetson-tk1.dts     |  2 +-
+ arch/arm/boot/dts/tegra124-nyan.dtsi          |  2 +-
+ .../boot/dts/tegra20-acer-a500-picasso.dts    | 90 ++++++++++++-------
+ arch/arm/boot/dts/tegra20-paz00.dts           |  4 +
+ .../tegra30-asus-nexus7-grouper-common.dtsi   | 60 ++++++++++++-
+ arch/arm/boot/dts/tegra30-cardhu.dtsi         |  2 +-
+ arch/arm/boot/dts/tegra30-ouya.dts            | 13 ++-
+ arch/arm/boot/dts/tegra30.dtsi                | 87 +++++++++++++++++-
+ 11 files changed, 211 insertions(+), 55 deletions(-)
+
+-- 
+2.32.0
+
