@@ -2,130 +2,242 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0BA9C4338F
-	for <linux-tegra@archiver.kernel.org>; Mon,  2 Aug 2021 14:34:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2BF2C4338F
+	for <linux-tegra@archiver.kernel.org>; Mon,  2 Aug 2021 14:48:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8235E60EE8
-	for <linux-tegra@archiver.kernel.org>; Mon,  2 Aug 2021 14:34:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B8CB660F6E
+	for <linux-tegra@archiver.kernel.org>; Mon,  2 Aug 2021 14:48:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233925AbhHBOeo (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 2 Aug 2021 10:34:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49220 "EHLO
+        id S234319AbhHBOtA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 2 Aug 2021 10:49:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52948 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234400AbhHBOei (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 2 Aug 2021 10:34:38 -0400
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C4A5C06175F;
-        Mon,  2 Aug 2021 07:34:29 -0700 (PDT)
-Received: by mail-wr1-x436.google.com with SMTP id j2so21682706wrx.9;
-        Mon, 02 Aug 2021 07:34:29 -0700 (PDT)
+        with ESMTP id S234008AbhHBOtA (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 2 Aug 2021 10:49:00 -0400
+Received: from mail-vs1-xe2d.google.com (mail-vs1-xe2d.google.com [IPv6:2607:f8b0:4864:20::e2d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88853C061760
+        for <linux-tegra@vger.kernel.org>; Mon,  2 Aug 2021 07:48:50 -0700 (PDT)
+Received: by mail-vs1-xe2d.google.com with SMTP id j19so9668712vso.0
+        for <linux-tegra@vger.kernel.org>; Mon, 02 Aug 2021 07:48:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=JG8ecXhoC8Ej/py6hyvwqWnXQNEv8TbQr/VbiNiY5Vs=;
-        b=ZFyb3P85dZM/QXDL+mEHAN26/1R1zJUOx3eL/vqP+UTSS5rgUj+vkXhPXnCWAvN668
-         Ip7WF2p3OAt6Xm8NGNI03XsHD9oan571fJ3/NkNdqYcRNwqd05CVIUi/Esq+MqEHy9J5
-         WAIgWeSTD/m39ltM/Y5OJQEVaGhvt7nBw72cBFmqzF+N4bQes5UV4wV/84Cscgm7+4XN
-         IeQ/OD9ZcRzt3CgRVRaq05+LZJxZYiV+5Di9SftK9eFtmu/c/TY+QT00ox+Mjm7D36d9
-         AHi3X3Wy+fgkJLwDpXz/w3fg75vCKNr43sZIHpCgokqoXUX/AynzblhuXT/arwFKy5Z2
-         ivsA==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=dySXiO64z/OcknsIe2UwAThjfnI5DezTj8C+OPiFnlc=;
+        b=v9aZRfoxU30681CCl+iKq2Xe+bDAfeQbOeL4VEz43ScsGGDi4ksNicVf3zjRZUfNBj
+         wYTFHdyQlfBg5j3R9Zu9ssNhF7On8ttv1lNy6VOgZgGYzAV4E1sNY6kOSTUyiKKwfO7w
+         4Q6uzd4z2Uy4gIOTcXKSCZi8qlIUzQI05NpeNe+u2ehI+DmIthIltnWZJRlOHKSyDoT6
+         lERogpp3KQLA5H7tH3ZixqXFmGzfaDlNuBKiWc7LAWq+udz/zC+cwiaKsHhJbH8RMuHi
+         xvzNy5tUEQzqGq5YUtBWi6/G10cacSzy7dSKhzfV6REw0XUssJG/mISGVads2VngMekJ
+         AgZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=JG8ecXhoC8Ej/py6hyvwqWnXQNEv8TbQr/VbiNiY5Vs=;
-        b=R4zXuOPmjIPiTQEaj6Rer3e1wm7SdJaBcOGBsOxDBymRlGlMdM71GefWaPNGLASpgJ
-         8KpXoi+w8dSc6FQjC1oEHPJGKnvOo/0GoKfiXmWqsUfw42vAu12RfpvqpXMQ5cVt2G0Z
-         1i37bzr3ZX4vQIieWaur73YxgI85u699DbhE0EODzbII2KV8koQMDHFH6LkUlYo3UwR0
-         ZxFVkzE6T3CNbRAM6vaK+aID5WHB2VetMeXMDSb05MEni5FsTcSyw9KLhuieM9syJMlP
-         BKa87mywU8M40HRR6tSfc0GjOGCahOxvcLWG4jeV9V+fztl1pfv9dVRkyg3ilVgL3ygm
-         o4ow==
-X-Gm-Message-State: AOAM531A81AaQeTL1UyYG/thzZyHpiOwANfX5GiCwMd+gBT361PaAkzA
-        GHmbJXGcTlLM79H1VV5SvUw=
-X-Google-Smtp-Source: ABdhPJzn4tAn4treh3aVKHh6Tm4Nuw3ZkV2gD3VoI7ADP7Kd/tFKLW9aa2wO3iqTJX4uRIB+Eksoig==
-X-Received: by 2002:a05:6000:1366:: with SMTP id q6mr17641077wrz.60.1627914867426;
-        Mon, 02 Aug 2021 07:34:27 -0700 (PDT)
-Received: from localhost ([217.111.27.204])
-        by smtp.gmail.com with ESMTPSA id g11sm4659348wrd.97.2021.08.02.07.34.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Aug 2021 07:34:26 -0700 (PDT)
-Date:   Mon, 2 Aug 2021 16:36:44 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Dmitry Osipenko <digetx@gmail.com>
-List-Id: <soc.lore.kernel.org>
-Cc:     Thierry Reding <treding@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Arnd Bergmann <arnd@kernel.org>,
-        Mark Brown <broonie@kernel.org>, soc@kernel.org,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v2] soc/tegra: Make regulator couplers depend on
- CONFIG_REGULATOR
-Message-ID: <YQgC/POOrX4t9hUN@orome.fritz.box>
-References: <20210721232616.1935-1-digetx@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=dySXiO64z/OcknsIe2UwAThjfnI5DezTj8C+OPiFnlc=;
+        b=cNLJRMVgMX/xRNkRmdMaCRpLQFbyNAC9k9GqjpTr4c0yEJ+AJ2DVDlvXYXkKUAkoWe
+         FFwEe5yFEepykMGDY961gAjNbFArsI4RU5juJQezArXU1m8GPhySvbTQgUTL/akPkXI1
+         MRV/NG2304wIEeuRvw9VizroQohXyOSN+G5n4XgZfaw+gOiLqYtL5NMGb1lmhuppIupS
+         UwvcaxwOberJE0RtlCO5ZNWXsxj4TzidN2gviIfhL0gdaraaPAErQaEfuYqKqcnqSSxp
+         e+w4Y0uq7KZNo5I+ucE9MEXuM/bPyWAzN56VbIFoustwrJkOyyvCYMhUW92D5jA7dGyI
+         IThw==
+X-Gm-Message-State: AOAM533JmyuWcO7xut6l05ibcFpAqap0yYnxa6AOH3jcqT48qJGddLDA
+        71SQh0i86uaT11UFg/QbsvhrF2pUfnwqmOmsA1Sghg==
+X-Google-Smtp-Source: ABdhPJz900uxJ3lZZ4kHywmto6JpFC3IWNqol5Y4dVGhJQ8Lg7yOVdQBBX7Afxl6KnNTXd28RaQtQxHfVUovyD42tiI=
+X-Received: by 2002:a05:6102:12:: with SMTP id j18mr9869420vsp.55.1627915729609;
+ Mon, 02 Aug 2021 07:48:49 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="/M3eTd4X7b+v6KJy"
-Content-Disposition: inline
-In-Reply-To: <20210721232616.1935-1-digetx@gmail.com>
-User-Agent: Mutt/2.1.1 (e2a89abc) (2021-07-12)
+References: <20210701232728.23591-1-digetx@gmail.com> <20210701232728.23591-3-digetx@gmail.com>
+In-Reply-To: <20210701232728.23591-3-digetx@gmail.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Mon, 2 Aug 2021 16:48:13 +0200
+Message-ID: <CAPDyKFrtWDYJo_NjS8306Z9ykbg7XZ55jC9hKEBMGkcrx1=4kQ@mail.gmail.com>
+Subject: Re: [PATCH v7 02/37] soc/tegra: pmc: Implement attach_dev() of power
+ domain drivers
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-
---/M3eTd4X7b+v6KJy
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Jul 22, 2021 at 02:26:16AM +0300, Dmitry Osipenko wrote:
-> The regulator coupler drivers now use regulator-driver API function that
-> isn't available during compile-testing. Make regulator coupler drivers
-> dependent on CONFIG_REGULATOR in Kconfig.
->=20
-> Fixes: 03978d42ed0d ("soc/tegra: regulators: Bump voltages on system rebo=
-ot")
-> Reported-by: kernel test robot <lkp@intel.com>
+On Fri, 2 Jul 2021 at 01:28, Dmitry Osipenko <digetx@gmail.com> wrote:
+>
+> Implement attach_dev() callback of power domain drivers that initializes
+> the domain's performance state. GENPD core will apply the performance
+> state on the first runtime PM resume of the attached device.
+>
 > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > ---
->=20
-> Changelog:
->=20
-> v2: - No changes. Re-sending to Arnd Bergmann and soc@kernel.org.
->=20
->  drivers/soc/tegra/Kconfig | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
+>  drivers/soc/tegra/pmc.c | 147 ++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 147 insertions(+)
+>
+> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+> index f63dfb2ca3f9..ebafb818b08e 100644
+> --- a/drivers/soc/tegra/pmc.c
+> +++ b/drivers/soc/tegra/pmc.c
+> @@ -506,6 +506,151 @@ static void tegra_pmc_scratch_writel(struct tegra_pmc *pmc, u32 value,
+>                 writel(value, pmc->scratch + offset);
+>  }
+>
+> +static const char * const tegra_emc_compats[] = {
+> +       "nvidia,tegra20-emc",
+> +       "nvidia,tegra30-emc",
+> +       NULL,
+> +};
+> +
+> +/*
+> + * This GENPD callback is used by both powergate and core domains.
+> + *
+> + * We retrieve clock rate of the attached device and initialize domain's
+> + * performance state in accordance to the clock rate.
+> + */
+> +static int tegra_pmc_pd_attach_dev(struct generic_pm_domain *genpd,
+> +                                  struct device *dev)
+> +{
+> +       struct generic_pm_domain_data *gpd_data = dev_gpd_data(dev);
+> +       struct opp_table *opp_table, *pd_opp_table;
+> +       struct generic_pm_domain *core_genpd;
+> +       struct dev_pm_opp *opp, *pd_opp;
+> +       unsigned long rate, state;
+> +       struct gpd_link *link;
+> +       struct clk *clk;
+> +       u32 hw_version;
+> +       int ret;
+> +
+> +       /*
+> +        * Tegra114+ SocS don't support OPP yet.  But if they will get OPP
+> +        * support, then we want to skip OPP for older kernels to preserve
+> +        * compatibility of newer DTBs with older kernels.
+> +        */
+> +       if (!pmc->soc->supports_core_domain)
+> +               return 0;
+> +
+> +       /*
+> +        * The EMC devices are a special case because we have a protection
+> +        * from non-EMC drivers getting clock handle before EMC driver is
+> +        * fully initialized.  The goal of the protection is to prevent
+> +        * devfreq driver from getting failures if it will try to change
+> +        * EMC clock rate until clock is fully initialized.  The EMC drivers
+> +        * will initialize the performance state by themselves.
+> +        */
+> +       if (of_device_compatible_match(dev->of_node, tegra_emc_compats))
+> +               return 0;
+> +
+> +       clk = clk_get(dev, NULL);
+> +       if (IS_ERR(clk)) {
+> +               dev_err(&genpd->dev, "failed to get clk of %s: %pe\n",
+> +                       dev_name(dev), clk);
+> +               return PTR_ERR(clk);
+> +       }
+> +
+> +       rate = clk_get_rate(clk);
+> +       if (!rate) {
+> +               dev_err(&genpd->dev, "failed to get clk rate of %s\n",
+> +                       dev_name(dev));
+> +               ret = -EINVAL;
+> +               goto put_clk;
+> +       }
+> +
+> +       if (of_machine_is_compatible("nvidia,tegra20"))
+> +               hw_version = BIT(tegra_sku_info.soc_process_id);
+> +       else
+> +               hw_version = BIT(tegra_sku_info.soc_speedo_id);
+> +
+> +       opp_table = dev_pm_opp_set_supported_hw(dev, &hw_version, 1);
+> +       if (IS_ERR(opp_table)) {
+> +               dev_err(&genpd->dev, "failed to set OPP supported HW for %s: %d\n",
+> +                       dev_name(dev), ret);
+> +               ret = PTR_ERR(opp_table);
+> +               goto put_clk;
+> +       }
+> +
+> +       ret = dev_pm_opp_of_add_table(dev);
+> +       if (ret) {
+> +               /* older DTBs that don't have OPPs will get -ENODEV here */
+> +               if (ret != -ENODEV)
+> +                       dev_err(&genpd->dev, "failed to get OPP table of %s: %d\n",
+> +                               dev_name(dev), ret);
+> +               else
+> +                       ret = 0;
+> +
+> +               goto put_supported_hw;
+> +       }
+> +
+> +       /* find suitable OPP for the rate */
+> +       opp = dev_pm_opp_find_freq_ceil(dev, &rate);
+> +
+> +       if (opp == ERR_PTR(-ERANGE))
+> +               opp = dev_pm_opp_find_freq_floor(dev, &rate);
+> +
+> +       if (IS_ERR(opp)) {
+> +               dev_err(&genpd->dev, "failed to find OPP for %luHz of %s: %pe\n",
+> +                       rate, dev_name(dev), opp);
+> +               ret = PTR_ERR(opp);
+> +               goto remove_dev_table;
+> +       }
+> +
+> +       if (!list_empty(&genpd->child_links)) {
+> +               link = list_first_entry(&genpd->child_links, struct gpd_link,
+> +                                       child_node);
+> +               core_genpd = link->parent;
+> +       } else {
+> +               core_genpd = genpd;
+> +       }
 
-Seeing that Arnd hasn't picked this up yet, I've now applied it to the
-Tegra tree and plan to send out a PR for v5.14 later this week.
+This looks a bit odd to me. A genpd provider shouldn't need to walk
+these links as these are considered internals to genpd. Normally this
+needs lockings, etc.
 
-Thierry
+Why exactly do you need this?
 
---/M3eTd4X7b+v6KJy
-Content-Type: application/pgp-signature; name="signature.asc"
+> +
+> +       pd_opp_table = dev_pm_opp_get_opp_table(&core_genpd->dev);
+> +       if (IS_ERR(pd_opp_table)) {
+> +               dev_err(&genpd->dev, "failed to get OPP table of %s: %pe\n",
+> +                       dev_name(&core_genpd->dev), pd_opp_table);
+> +               ret = PTR_ERR(pd_opp_table);
+> +               goto put_dev_opp;
+> +       }
+> +
+> +       pd_opp = dev_pm_opp_xlate_required_opp(opp_table, pd_opp_table, opp);
+> +       if (IS_ERR(pd_opp)) {
+> +               dev_err(&genpd->dev,
+> +                       "failed to xlate required OPP for %luHz of %s: %pe\n",
+> +                       rate, dev_name(dev), pd_opp);
+> +               ret = PTR_ERR(pd_opp);
+> +               goto put_pd_opp_table;
+> +       }
+> +
+> +       /*
+> +        * The initialized state will be applied by GENPD core on the first
+> +        * RPM-resume of the device.  This means that drivers don't need to
+> +        * explicitly initialize performance state.
+> +        */
+> +       state = pm_genpd_opp_to_performance_state(&core_genpd->dev, pd_opp);
+> +       gpd_data->rpm_pstate = state;
 
------BEGIN PGP SIGNATURE-----
+Could the above be replaced with Rajendra's suggestion [1], which
+changes genpd to internally during attach, to set a default
+performance state when there is a "required-opp" specified in the
+device  node?
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmEIAmoACgkQ3SOs138+
-s6EwYw/8C93PUwLlmRxlWx4ljKaUh0VrMk7Vtj/Csbd9n9qHn552gJ/iYQFJQUQP
-jlOk6UQx/7Ydov0fYLbfaIVCvyO3/BzZCbR2hxjTua/DwyTnVDWW1LzHjK8UWnxF
-OXr9gsg7M95UZCQiRkXIyIa/Vw2/N71uPJEsGrULKAvYkPppjig57IcHUt/kgNuo
-BVe4XtCLocyb5dRqDISC/lzuraJN7+3HijN2A0bDuFylqr8pkVIl4umcDbPtpiab
-Kg1rlLhkJgyEiEhkH3mpWaDaY6ngV88eBvbjNa8K/NemFtj+EaNFwMu9lCKQ2dZR
-uXW5GVSW7Dn9O1mJf4tWzhlY+8IQyy79iaoRLh5koTbjtIx2drmfyEvKq064mgeJ
-zCvfm2rV/OiE46NWRVyoyA3vuaFBnIB9OwqNPv3jsabp2AYBtFVyvjoxQN7M09WK
-z5mG0WxKC7WbrBQyAZXttUEba3TYCP5VEg4+MNZwkQWnHeeXuG6eAywPLQ9pjPBz
-Jq8+DRG/gSw9DlHTVvdnC9fBy07JJQoUC4/jrIyLwXsRM12UZCEsG4ZOvPmOOxKy
-eW59yz7DE5pFGNswbVVUm3Rl+NX9uOBfV5h+vpkYGjqBHzmKw5Gjl/kmAIQtScYG
-hmePRpO9EuEka0n2FfAKHP4rL3KNtkx4agaDiV5mwgATYyUzitU=
-=DsWr
------END PGP SIGNATURE-----
+[...]
 
---/M3eTd4X7b+v6KJy--
+Kind regards
+Uffe
+
+[1]
+https://lkml.org/lkml/2021/7/20/99
