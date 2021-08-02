@@ -4,123 +4,142 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25D3CC432BE
-	for <linux-tegra@archiver.kernel.org>; Mon,  2 Aug 2021 16:21:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E5E8C4338F
+	for <linux-tegra@archiver.kernel.org>; Mon,  2 Aug 2021 18:23:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0A08060F9E
-	for <linux-tegra@archiver.kernel.org>; Mon,  2 Aug 2021 16:21:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6704760F36
+	for <linux-tegra@archiver.kernel.org>; Mon,  2 Aug 2021 18:23:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229780AbhHBQVj (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 2 Aug 2021 12:21:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49146 "EHLO
+        id S229677AbhHBSYE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 2 Aug 2021 14:24:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51588 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229612AbhHBQVj (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 2 Aug 2021 12:21:39 -0400
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0BABC06175F;
-        Mon,  2 Aug 2021 09:21:28 -0700 (PDT)
-Received: by mail-wr1-x433.google.com with SMTP id c16so22109386wrp.13;
-        Mon, 02 Aug 2021 09:21:28 -0700 (PDT)
+        with ESMTP id S229640AbhHBSYE (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 2 Aug 2021 14:24:04 -0400
+Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CC0BC06175F;
+        Mon,  2 Aug 2021 11:23:54 -0700 (PDT)
+Received: by mail-lf1-x12d.google.com with SMTP id t9so22378692lfc.6;
+        Mon, 02 Aug 2021 11:23:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Eo/ko/cKXyffVXdy/1Hup8RlLilDw0wcG1gMwmDSxRA=;
-        b=bWW29oBh9sAPntXWB3hWAVN29lWeSqsKPgOKpS9sl+GDTCWiWizvTBm1jbQFljO3d1
-         I05t/uZVMo5kpEERlB4YppqlViue5NeWp1pN3++/uw6xHN27s8bRWe0dIGfrVFozl9Bl
-         tG/8TLeM4EOED0mIDfwKFwZ9DxNFXNIeQwPD36vsg0712PCfssoX3g32hrrmnC+NcxY0
-         YSMfYJ2fbSHGnXQoJb7pAPPAc6aKrS1C+r+TmzvVUiblEJNGY82DvxMrd6L3PDoYDC1W
-         DxJQ6qQJnWUmmF4MxZV8NWmyRCc2Up0sRQ/z5H/PqkCI+brQAIn1fmDWqccgQbeLjTy+
-         tgEQ==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=A2cWlW6pgYuSWsahIzYgGPs6I4RK+uZng7TRkUqOaAw=;
+        b=H1pn8GH7wXvWvYwTnbs7bdMHPlwqcM/iJScEzxQ/zAkWypusygPPbvku3eSuT190yN
+         zPFRoZCvktkuxqoleBgK8y5Uzv5Fmeqd1bbhmRsU+8MxXxRw8T8y+0sHploztJ2+QVqn
+         K58S/JnExlUO6oIXV0tFWcBYPeYiwBJRkgmKCMuWnC+4A28bNtIqaxlBVCyURf9FOwKk
+         4FnjEmQtRKc+BFOug7/xn0azcogjPR+odU0hl0SM8YwaLE6GnhT3w/niXT/0cWqbRgq8
+         MzqMNgzev0LA/KsZ9+9+qg6oaNg1l98gmbVMYv/uMejRIVq6umScHxBgKK4OnEdG/ZwO
+         QAiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Eo/ko/cKXyffVXdy/1Hup8RlLilDw0wcG1gMwmDSxRA=;
-        b=uXbBeYRRtYC0u3kmMx96OkNhJg/B203RxKXGsE1JMWQFRxeO4UQpe61j7m7jmnM6xv
-         vXeNEDvYh9wc/CCNMTACsDyEPHYjlnaiObWMnx0U+ha3tcaLVBphamVZZfLDKspXk/78
-         vZyzZPl9eu6u6Ba6lRXxaICT8fTYoC4ohjgZW9oNSJlMz9RX/aY9kZ+T/n44iHQxNjkQ
-         P5mnbb0aAWHXS4P+I3wFDa88Fh1jFRuCwIPBE9TAQlHAoA+HPdBnAJ2uUF4l07izOVgw
-         5rJ5h00uEXPfNsX63Ri2mh1vGnUbMfv6DqhKCiS2WxSWhONP7zNhItYqUxUO5sM9bY6m
-         e0GA==
-X-Gm-Message-State: AOAM532hUdn/PEcFS/7jvhFWkbANSiECvpnsdlsJrSXzNs34XPv8ZvVy
-        6tmaF7EcfNLdhpFZkzNtOzg=
-X-Google-Smtp-Source: ABdhPJwMlXJ/6C6206MZvjQ+7RCGAygddlBwfk70hYzOjyW81IkrpCsWmySfMg+Qh3JNDcX8yeYThw==
-X-Received: by 2002:a5d:528d:: with SMTP id c13mr18746610wrv.343.1627921287427;
-        Mon, 02 Aug 2021 09:21:27 -0700 (PDT)
-Received: from localhost ([217.111.27.204])
-        by smtp.gmail.com with ESMTPSA id c10sm4321264wml.44.2021.08.02.09.21.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Aug 2021 09:21:26 -0700 (PDT)
-Date:   Mon, 2 Aug 2021 18:23:45 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Arnd Bergmann <arnd@kernel.org>
-List-Id: <soc.lore.kernel.org>
-Cc:     Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <treding@nvidia.com>,
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=A2cWlW6pgYuSWsahIzYgGPs6I4RK+uZng7TRkUqOaAw=;
+        b=ZFSD4EGWeLsfw4QOuveV6jasRhvNynglh6HqG6ZA8RYH5HylrqMJKvnjyYYBlHMDhn
+         PQr5g5yuZBFFdppkcIIN6G1YjSaa5mrvtgkWSJA0EYr3BCODDW8RXHvtIuPtxhQqdxV2
+         kQ0h6tC40sjHDNhRB2BKNj1sqIjdvXMl9qWCTrdbUIo+O49VJzVKe0geSes8bABOB4ab
+         sGN4PZWxJ/o44k1THFldvoDiPVrSsiWFuZ5tagYMcZ/PBLbngEgkozzHn/csgehGaVNG
+         ITDf0+A8a66KOiwUJImd4erhk4UrYjPMneHD7AuNqCkRNWzbwShYwOXj+3PSPzz3OyrN
+         wdKg==
+X-Gm-Message-State: AOAM533pOkVgSmLC5ZyuodLAhPrRF9AVFVXidBfbFXDyNHgo3iLFiDHg
+        iBshAneJJDV4f8v5yiQuzesFjaLwxPk=
+X-Google-Smtp-Source: ABdhPJxmeetaV9/wDLh3f6TYJLqFwfzcDKekE86b0K3MFq343cGfeWSlBYy2uLtfZPYyOQFzUh4IaA==
+X-Received: by 2002:ac2:5f78:: with SMTP id c24mr13366081lfc.199.1627928632378;
+        Mon, 02 Aug 2021 11:23:52 -0700 (PDT)
+Received: from [192.168.2.145] (94-29-22-96.dynamic.spd-mgts.ru. [94.29.22.96])
+        by smtp.googlemail.com with ESMTPSA id f23sm911482ljm.34.2021.08.02.11.23.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Aug 2021 11:23:51 -0700 (PDT)
+Subject: Re: [PATCH v7 02/37] soc/tegra: pmc: Implement attach_dev() of power
+ domain drivers
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Mark Brown <broonie@kernel.org>, SoC Team <soc@kernel.org>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH v2] soc/tegra: Make regulator couplers depend on
- CONFIG_REGULATOR
-Message-ID: <YQgcEfv3DJy9jli1@orome.fritz.box>
-References: <20210721232616.1935-1-digetx@gmail.com>
- <YQgC/POOrX4t9hUN@orome.fritz.box>
- <CAK8P3a1oVOqdyYUNBM8UiakEkznQ--SPEHVz4U0HQOMy4DiCbw@mail.gmail.com>
- <CAK8P3a1ycMhqZ-nvsxusPa5JijjL1hBOpBffhJ0okm5Kav0jzA@mail.gmail.com>
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>
+References: <20210701232728.23591-1-digetx@gmail.com>
+ <20210701232728.23591-3-digetx@gmail.com>
+ <CAPDyKFrtWDYJo_NjS8306Z9ykbg7XZ55jC9hKEBMGkcrx1=4kQ@mail.gmail.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <1034458d-78e0-5036-e278-6fee5d0d75ac@gmail.com>
+Date:   Mon, 2 Aug 2021 21:23:51 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="vf3CEbbqSz/G3rGB"
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a1ycMhqZ-nvsxusPa5JijjL1hBOpBffhJ0okm5Kav0jzA@mail.gmail.com>
-User-Agent: Mutt/2.1.1 (e2a89abc) (2021-07-12)
+In-Reply-To: <CAPDyKFrtWDYJo_NjS8306Z9ykbg7XZ55jC9hKEBMGkcrx1=4kQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+02.08.2021 17:48, Ulf Hansson пишет:
+...
+>> +       if (!list_empty(&genpd->child_links)) {
+>> +               link = list_first_entry(&genpd->child_links, struct gpd_link,
+>> +                                       child_node);
+>> +               core_genpd = link->parent;
+>> +       } else {
+>> +               core_genpd = genpd;
+>> +       }
+> 
+> This looks a bit odd to me. A genpd provider shouldn't need to walk
+> these links as these are considered internals to genpd. Normally this
+> needs lockings, etc.
+> 
+> Why exactly do you need this?
 
---vf3CEbbqSz/G3rGB
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+We have a chain of PMC domain -> core domain, both domains are created
+and liked together by this PMC driver. Devices are attached to either
+PMC domain or to core domain. PMC domain doesn't handle the performance
+changes, performance requests go down to the core domain.
 
-On Mon, Aug 02, 2021 at 05:05:01PM +0200, Arnd Bergmann wrote:
-> On Mon, Aug 2, 2021 at 5:03 PM Arnd Bergmann <arnd@kernel.org> wrote:
-> > On Mon, Aug 2, 2021 at 4:35 PM Thierry Reding <thierry.reding@gmail.com=
-> wrote:
-> >
-> > If you have other fixes that are already in your fixes branch
-> ... that you want to have in rc5, please send them soon, as I'm going
-> to prepare that pull request in a few days.
->=20
-> I'll probably do another one for -rc6 though.
+This is needed in order to translate the device's OPP into performance
+state of the core domain, based on the domain to which device is attached.
 
-Okay, will do. Thanks.
+>> +
+>> +       pd_opp_table = dev_pm_opp_get_opp_table(&core_genpd->dev);
+>> +       if (IS_ERR(pd_opp_table)) {
+>> +               dev_err(&genpd->dev, "failed to get OPP table of %s: %pe\n",
+>> +                       dev_name(&core_genpd->dev), pd_opp_table);
+>> +               ret = PTR_ERR(pd_opp_table);
+>> +               goto put_dev_opp;
+>> +       }
+>> +
+>> +       pd_opp = dev_pm_opp_xlate_required_opp(opp_table, pd_opp_table, opp);
+>> +       if (IS_ERR(pd_opp)) {
+>> +               dev_err(&genpd->dev,
+>> +                       "failed to xlate required OPP for %luHz of %s: %pe\n",
+>> +                       rate, dev_name(dev), pd_opp);
+>> +               ret = PTR_ERR(pd_opp);
+>> +               goto put_pd_opp_table;
+>> +       }
+>> +
+>> +       /*
+>> +        * The initialized state will be applied by GENPD core on the first
+>> +        * RPM-resume of the device.  This means that drivers don't need to
+>> +        * explicitly initialize performance state.
+>> +        */
+>> +       state = pm_genpd_opp_to_performance_state(&core_genpd->dev, pd_opp);
+>> +       gpd_data->rpm_pstate = state;
+> 
+> Could the above be replaced with Rajendra's suggestion [1], which
+> changes genpd to internally during attach, to set a default
+> performance state when there is a "required-opp" specified in the
+> device  node?
 
-Thierry
-
---vf3CEbbqSz/G3rGB
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmEIG7cACgkQ3SOs138+
-s6EkZA//ZdnqjrQ338ZZNlhh150PojQ/JfLtFYHYRj3fDGKXPbAfQiRMdjRYQ/yE
-Fd8sMWcT1rJ3r2+qkzt7BHyW9zkrRNGHWBRAI+zbMo1pME7ia/jAKDEEqan4aoA2
-FNByG96WD2TxmuBPflRzBRjCsPD/cTFsbVaPjlEwdx3m5SYDzP6jCD5DnkcCbjI7
-U/L2ihw0g7vqAkKvUrtr8RA2YcLccY/W2pimqdXmlQrAy1a87KEG447UtCk0PA2K
-H3DevLVu8vYRlOujkGw9LgZyNRmqh/54sILk+0d8I1apMgxVTWtU393WOZx9p2oW
-Kn17XRwaTD8vwZ4pyfLy9Q4PsqDJ6vri4sK07Dqwj7jGXtu/SHEk0LPNh3tiQV+2
-3dGuHiGR8+P2qMnAvW7UP3yQ6lJIV9qLsbKgMKfE+6iSEKMDgaH/3ZJNSh+vJJ6F
-P0NO4G8hrOn6kjNs2ehai4UMIr84NxYThop9QTvpU3Nc1yJ0d3GIYLsGqADPQGfQ
-xBejqW3YmnsUO08/K714WhnOki+TGxs4auBUlZUIi+JDPq08/QzZgJNTkD/0i2qa
-E59yyGqSWo4f8bjco+GH7l6I5PCNhykTuNTZhUjicKZFQ7tBnyvKgKZ4z5e+hNP1
-akXPKEigG7hAuWqc54tCqg5vk0iabq93tWP/XLSjl0UzAkllybo=
-=8TBq
------END PGP SIGNATURE-----
-
---vf3CEbbqSz/G3rGB--
+It's not a "static" performance level here, but any level depending on
+h/w state left from bootloader and etc. The performance level
+corresponds to the voltage of the core domain, hence we need to
+initialize the voltage vote before device is resumed.
