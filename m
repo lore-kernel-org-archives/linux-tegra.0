@@ -8,52 +8,52 @@ X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E13BC4320E
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AEB4C432BE
 	for <linux-tegra@archiver.kernel.org>; Mon,  2 Aug 2021 21:20:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 06E8160F58
+	by mail.kernel.org (Postfix) with ESMTP id 13EE460EEA
 	for <linux-tegra@archiver.kernel.org>; Mon,  2 Aug 2021 21:20:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233312AbhHBVU7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 2 Aug 2021 17:20:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39088 "EHLO
+        id S233403AbhHBVVC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 2 Aug 2021 17:21:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39094 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233176AbhHBVUy (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 2 Aug 2021 17:20:54 -0400
-Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE64EC06175F;
-        Mon,  2 Aug 2021 14:20:44 -0700 (PDT)
-Received: by mail-lf1-x12b.google.com with SMTP id g13so36132485lfj.12;
-        Mon, 02 Aug 2021 14:20:44 -0700 (PDT)
+        with ESMTP id S233253AbhHBVUz (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 2 Aug 2021 17:20:55 -0400
+Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83931C061760;
+        Mon,  2 Aug 2021 14:20:45 -0700 (PDT)
+Received: by mail-lf1-x134.google.com with SMTP id z2so36253425lft.1;
+        Mon, 02 Aug 2021 14:20:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=TktwpNHSF+Wej1fEkDyfPl6h0HdQmW0Iv261nOuSRAA=;
-        b=K28cQHg0KLDgRBBDY1hTmUeLuS+xbqfKHiPtJ4CEtctFddCw7ZoK7lep+9Scg9UboC
-         n9eErnhNw/x5Gfj6KV0lYpfZgF8Fei2YUJETtx8D37mGegbd1fcYmhtnInv1tVHhwXyV
-         +Ig0a1/hb6AYSANCKvcnvXvKgy0HPzHzB2u10qDNsS4emQmHrPMJozs2xb4D/HBEnxyw
-         rA+jhVAu3jG/DRibeJvVDyvto7tj/1FbZRBjdGp8HwSPunkNGC4aH8XnNL6XD+97dl+X
-         GPLPHZ+i5fUMcceGn36rlM5VJxE0t65KJjPicfTzyTsMdbOjh1qTd0coDIMdmTZfLndq
-         PB1g==
+        bh=StG+IKbcIZwECEdYhEBSqXu9eQrqr6uGhG0A53vuzqg=;
+        b=V9EXrP69VVf2/x3zymaRMCFobVwL3aq1/ttMA8zdqib5BtaTkinFjEW3GE3y6brupx
+         XGGWYuFhhUBUlwDDNpN9Svx29HvtYE/k6hCgJG57uZ3avxg9Zc3C3UPchX1MlQqTUYfv
+         4ZVg/ZjydoB94XcTmuBo8om6tGxG99d1ltTaqUqqtrj8nC0DbCpG+xq6/XvKRCm/7WfK
+         OwI/5ztP3Wq2HCuT27OmhxYWAjbr1E1OAVnnVuGRqy/Fakp/uTCcXw8mQ/xLzH+0Y5mO
+         DlppM0BJLIDig7RxW/Fgb+TGs6+udP4eZq0RX1AlXh62oxJ88SJfn3AFoVrIz3ioHqXE
+         P2Zw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=TktwpNHSF+Wej1fEkDyfPl6h0HdQmW0Iv261nOuSRAA=;
-        b=jGATK9m4o+vuFG536IysdYy8uLdSfW/o4FoupOfiOikHS8IBqPw8XbgUWxI7jIPW2/
-         D5n+UqiFqdFp9PX9U/D1DiO4EvZwrqULvZIQx8qtP3rx9lsZaXmf6SVB/Q4rxzOH8Xqj
-         4D/+aA9HmiWpX5L4SJhs4jr75LtxevV16hUdCVr6BqOdKtr4w8QljAE7LKTk78XZY5om
-         LWySNgQXNffftaDlr432z62K06UXHrPKK+ltkRzolgjnTDp5dDPgs43d2Fs/1JqLhVys
-         7IrFZ3Ie53OrqK8CT6dH1mLWpYOq3p0O2dO2vzlNiCsBzeYjBVDFP6csAH4mZWCguIj/
-         pyvQ==
-X-Gm-Message-State: AOAM531n0SmLNqJvS7CUA2IlmTW/to7JtyzudoczdyVZ3nhhFqTGSnM2
-        A+5RBWiJ/9FxLzh09phB6Dc=
-X-Google-Smtp-Source: ABdhPJxjpeEfHPefZzpx1NNXA/4Fg3p0q/H/4FbfjjSEbi5VUaYW6VFtEU5P2ps51PgssXcb6c8akw==
-X-Received: by 2002:ac2:592b:: with SMTP id v11mr14197920lfi.59.1627939243349;
+        bh=StG+IKbcIZwECEdYhEBSqXu9eQrqr6uGhG0A53vuzqg=;
+        b=ULOXAu1viDGF+m8snWMorfUk3LVT4sVp+Khr+BLPmJT7wyoGK+PkjFi5RnfLuiKS3q
+         qxxtqtZRvngCuQYEsHioWVE67SEWTt0fq6G58HV5boqmztHVVm7C7juzn+PYCtCz5nw9
+         9laJiziOXl1si4xplJMuWyW5oMOOMa8A25V8df8NMu34dJRbJkOHFq38MPhLx3u/lHP9
+         mP6Obo0CR94srOpdiv+GapfMhcFZEMvQ5bUnl5MLyzHsJz9VvsTLm/y1H+aunUV0gOwS
+         193uU49rmghdena5aSYO79GImisoT+uDYauTsSP+qjmbygKbM+e9iuHx8n5Kr7e0yV/G
+         pLtw==
+X-Gm-Message-State: AOAM5320iSrVRZikZqGOFthtLDqEe9atzsTFsQfjdx+QklSmqwDs87UI
+        skAyrT0og9OpeegglzlSQ5o=
+X-Google-Smtp-Source: ABdhPJwVsQek7f4I+bxcOb2VDkgCWplFv5JektS7apxN4HVk1iMYtg9VosWglfcjKrYFLMNuA+UXVg==
+X-Received: by 2002:a05:6512:320b:: with SMTP id d11mr13924378lfe.502.1627939243964;
         Mon, 02 Aug 2021 14:20:43 -0700 (PDT)
 Received: from localhost.localdomain (94-29-22-96.dynamic.spd-mgts.ru. [94.29.22.96])
-        by smtp.gmail.com with ESMTPSA id p14sm764942lfa.117.2021.08.02.14.20.42
+        by smtp.gmail.com with ESMTPSA id p14sm764942lfa.117.2021.08.02.14.20.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Mon, 02 Aug 2021 14:20:43 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
@@ -63,9 +63,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Peter Geis <pgwipeout@gmail.com>
 Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
         linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: [PATCH v2 12/15] ARM: tegra: acer-a500: Add power supplies to accelerometer
-Date:   Tue,  3 Aug 2021 00:19:44 +0300
-Message-Id: <20210802211947.19715-13-digetx@gmail.com>
+Subject: [PATCH v2 13/15] ARM: tegra: acer-a500: Use verbose variant of atmel,wakeup-method value
+Date:   Tue,  3 Aug 2021 00:19:45 +0300
+Message-Id: <20210802211947.19715-14-digetx@gmail.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20210802211947.19715-1-digetx@gmail.com>
 References: <20210802211947.19715-1-digetx@gmail.com>
@@ -75,27 +75,36 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Add power supplies to accelerometer node, for completeness.
+The verbose variant of the atmel,wakeup-method value was lost when patch
+that added the property was merged because it conflicted with other patch,
+re-add it for consistency.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- arch/arm/boot/dts/tegra20-acer-a500-picasso.dts | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/arm/boot/dts/tegra20-acer-a500-picasso.dts | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts b/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts
-index c385b13d4faa..7f20ea506803 100644
+index 7f20ea506803..87fef4cb630f 100644
 --- a/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts
 +++ b/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts
-@@ -482,6 +482,9 @@ accelerometer@f {
- 					interrupt-parent = <&gpio>;
- 					interrupts = <TEGRA_GPIO(S, 7) IRQ_TYPE_EDGE_RISING>;
+@@ -1,6 +1,7 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /dts-v1/;
  
-+					vdd-supply   = <&vdd_1v8_sys>;
-+					vddio-supply = <&vdd_1v8_sys>;
-+
- 					mount-matrix =	 "0",  "1",  "0",
- 							 "1",  "0",  "0",
- 							 "0",  "0", "-1";
++#include <dt-bindings/input/atmel-maxtouch.h>
+ #include <dt-bindings/input/gpio-keys.h>
+ #include <dt-bindings/input/input.h>
+ #include <dt-bindings/thermal/thermal.h>
+@@ -454,7 +455,7 @@ touchscreen@4c {
+ 			vdda-supply = <&vdd_3v3_sys>;
+ 			vdd-supply  = <&vdd_3v3_sys>;
+ 
+-			atmel,wakeup-method = <1>;
++			atmel,wakeup-method = <ATMEL_MXT_WAKEUP_I2C_SCL>;
+ 		};
+ 
+ 		gyroscope@68 {
 -- 
 2.32.0
 
