@@ -8,172 +8,402 @@ X-Spam-Status: No, score=-18.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E21FEC19F31
-	for <linux-tegra@archiver.kernel.org>; Tue,  3 Aug 2021 16:42:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 420E1C4320A
+	for <linux-tegra@archiver.kernel.org>; Tue,  3 Aug 2021 22:31:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C5D5A60555
-	for <linux-tegra@archiver.kernel.org>; Tue,  3 Aug 2021 16:42:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1C12961040
+	for <linux-tegra@archiver.kernel.org>; Tue,  3 Aug 2021 22:31:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234627AbhHCQmz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 3 Aug 2021 12:42:55 -0400
-Received: from mail-sn1anam02on2056.outbound.protection.outlook.com ([40.107.96.56]:25031
-        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
+        id S231409AbhHCWby (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 3 Aug 2021 18:31:54 -0400
+Received: from mail-mw2nam10on2078.outbound.protection.outlook.com ([40.107.94.78]:4801
+        "EHLO NAM10-MW2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S234271AbhHCQmx (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 3 Aug 2021 12:42:53 -0400
+        id S229611AbhHCWby (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 3 Aug 2021 18:31:54 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=UEajfggEKDTfbN8FHxKOncQcxHBsi4+ZAGXor2JvEs/geYwMCsc3Ols/kNMVj4mYgXwys8SduOszendV71SjNtk6DZCED0ljazsIuHjbQM0dqh/inFerfCc3FOo1l+lz7k/PwogvmVhJjY5qrK03g8VZqvDbMcLucJTXAO0aB2se6gNFCNUmoqD+obDmLJu4gc6ywbSkMlsWlUzTXuivuvfiXBIY4q+JIscCDljrLwiQHRmpz2YwvrtaQ9B4v/LFfPZHADjd2DsKjRsb1wWdjXTCXNSHfcDNSVmqb0wWGvSCIFHCdFTDQyebY8cLXmETgQsK4Fjgjph2G2JNwCOC7g==
+ b=gpyG8AetGnwzR1K27uSNnHMYAZlOleGpZtHG9pCpdobfIB++igN2vxaKtsErl5dZEfuWTamaXxKGq4ec7dsxpbcScSMO4PEbmoFIo+OV4cQVlrcjik47najWJyrAUw9EilW2DGZITpHZeMg+bvAY8RAzb9c5rPde/zYEfrOdV+oNyC4LOUwcdEzR7ZB/QNED2zwp7gBcquIDzTg4gFQLtW0zJ9v8Zs8E5VYjX4c08IZswc09aByrwpMCbkcrOjGc2cDV+umvGswUB8aAGvlM5Sw4Eas0H0TUJWo8j87X+1LFX0SpMeffCHLMvrqc/jkwoGWu0C2a0ycFq5FzaenpRg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NYAxFss/rHV0AyqyoZ8N3Hyzhw5w+9NpH1zIm6LWCL4=;
- b=fSPlQJyaWJ4tyk3zzXKy4t/xbVTgfRvtcgeu6no9q+niPvcyhpw5DOcojIk5qHCIwtPU6WJSUWo+jRoy6E2DE8p6U2nNaffTvULKHTXuS+tKcH1meNBIo8/geY3j39F43F7Yj5HlyIQXGYvDBoI9SFcSEhrffBeVEgABpqLkGuYyY6AoQU88rLjjjrT5isFw/vy3H6j050u+JPV8CXuL6FwW4wSijjfmyjR6GO1KrMYoVgxY9Q5qCa+C9hNxRvT54UZEkgRP3Lk17+2RZJPKjQ396efq9HziufBLHXjhL4Bpk3iVMA8cZJPj/XM7fiz6XEgTdiwELrN0PH0pwNvr8A==
+ bh=Jhd4cV1rRALCQyWnHc9JU7/h3T2GK9F7UnCLW0PtRxo=;
+ b=WLIADYlnqOa4EY61J8x/0wemKF0vofaA33NqKPS6CyzsSpwgv9UHXOrq+9dmr7xu79gQzN+WhCVenVIgMhrEs9kGDSfxi96zJTBhwSlIcq8TPcdBX/eFbL4e60W6IqRKo+HDOlAL12RffubQsKNZkp00PIi0/aFI/wOALScsccwMSmuVP7vtJDM/RPdJlyINLomPnIGhsVa9tKsZOSKUxPDPuKh9BFzghbDeKybdGCf2/2TfwchsydWFwsEiDK0Xrl1Hk9rb5XPsZt29bfuA6YEjZE7CrfWIP2jk+1/1QA2Vw74HtAK5137GR8uCjqnf9q0UuY6xbDRQSV7IbF7Zeg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.112.32) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ 216.228.112.35) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
  dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=nvidia.com;
  dkim=none (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NYAxFss/rHV0AyqyoZ8N3Hyzhw5w+9NpH1zIm6LWCL4=;
- b=pLbFLHvyYTPEL8nzAPDKzOwxcVl29jOZX/Yo5crCS9Aa8UWsaiZ8q9SFLWszhSo/uSACUXS+uc9a/nV7Bdpzg1GIqKXLiDOtZom9rOkgP/+k/6gk6kPdPDacYcppxqt3uP97j6J6L78tew/80yGGEizNlA5qkgOZkTmjLBmmGGWhCJmOFViHZ0zv9m0Cav5mzRjO0nSafFx5fU2nh2G7jV8CprJ5NLM5rx6V93qfzy3kAWzKnaRWPheQJfkr+VEKafGLd5Yp8wN29a+jveXm1LIjGhXLDK8U3hSqU0msRh7FZcCv/OM1n7XFlqfMSJeAkP/4oc0q8lyOjk8ouzBS2A==
-Received: from DM5PR20CA0004.namprd20.prod.outlook.com (2603:10b6:3:93::14) by
- DM4PR12MB5197.namprd12.prod.outlook.com (2603:10b6:5:394::24) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.4373.19; Tue, 3 Aug 2021 16:42:40 +0000
-Received: from DM6NAM11FT067.eop-nam11.prod.protection.outlook.com
- (2603:10b6:3:93:cafe::8e) by DM5PR20CA0004.outlook.office365.com
- (2603:10b6:3:93::14) with Microsoft SMTP Server (version=TLS1_2,
+ bh=Jhd4cV1rRALCQyWnHc9JU7/h3T2GK9F7UnCLW0PtRxo=;
+ b=eVvAWJ1LGtAwzDpxtyY/hv2bVK/IMkXNNA2dkVHF9ZaJbai2sct8lr5nyUvap7PvkTi1CD2Urv3upSNsBSe9wA3/PCWIXefTejMfeKaQ+f7d5QCjd8Rm/gmI0NwZY550jmsP4JOZ+wVCAU+lMO66xpXJrubt17tnEmWErs5poahQfj89eZwDojhAJBA99yqFqtSrrfQE3TpdRVao/1ZDulYYALZU7AypO017LvWMhU2Vjl9PmeS8RvD5zJ5FMUhqSbc4LD+rLfeje8eaIjdmfv/9CIo7cDLQLXSmb2JahIi87Ma2G27MINBsUljdk5tsGkK1e1h0KarIDgyu7UfjrA==
+Received: from DM5PR2001CA0001.namprd20.prod.outlook.com (2603:10b6:4:16::11)
+ by DM6PR12MB2636.namprd12.prod.outlook.com (2603:10b6:5:4a::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4373.26; Tue, 3 Aug
+ 2021 22:31:41 +0000
+Received: from DM6NAM11FT057.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:4:16:cafe::ce) by DM5PR2001CA0001.outlook.office365.com
+ (2603:10b6:4:16::11) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4394.15 via Frontend
- Transport; Tue, 3 Aug 2021 16:42:40 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.32)
+ Transport; Tue, 3 Aug 2021 22:31:41 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.35)
  smtp.mailfrom=nvidia.com; kernel.org; dkim=none (message not signed)
  header.d=none;kernel.org; dmarc=pass action=none header.from=nvidia.com;
 Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.112.32 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.112.32; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (216.228.112.32) by
- DM6NAM11FT067.mail.protection.outlook.com (10.13.172.76) with Microsoft SMTP
+ 216.228.112.35 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.112.35; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (216.228.112.35) by
+ DM6NAM11FT057.mail.protection.outlook.com (10.13.172.252) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.4373.18 via Frontend Transport; Tue, 3 Aug 2021 16:42:40 +0000
-Received: from DRHQMAIL107.nvidia.com (10.27.9.16) by HQMAIL109.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Tue, 3 Aug
- 2021 09:42:40 -0700
-Received: from [10.2.59.40] (172.20.187.6) by DRHQMAIL107.nvidia.com
+ 15.20.4373.18 via Frontend Transport; Tue, 3 Aug 2021 22:31:41 +0000
+Received: from DRHQMAIL107.nvidia.com (10.27.9.16) by HQMAIL111.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Tue, 3 Aug
+ 2021 22:31:40 +0000
+Received: from [172.17.173.69] (172.20.187.6) by DRHQMAIL107.nvidia.com
  (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Tue, 3 Aug 2021
- 16:42:39 +0000
-Subject: Re: [RFC 08/11] gpiolib: cdev: Add hardware timestamp clock type
-To:     Dipen Patel <dipenp@nvidia.com>, <thierry.reding@gmail.com>,
+ 22:31:39 +0000
+Subject: Re: [RFC 03/11] hte: Add tegra194 HTE kernel provider
+To:     Kent Gibson <warthog618@gmail.com>
+CC:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
         <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
         <linux-gpio@vger.kernel.org>, <linus.walleij@linaro.org>,
-        <bgolaszewski@baylibre.com>, <warthog618@gmail.com>,
-        <devicetree@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <robh+dt@kernel.org>
+        <bgolaszewski@baylibre.com>, <devicetree@vger.kernel.org>,
+        <linux-doc@vger.kernel.org>, <robh+dt@kernel.org>
 References: <20210625235532.19575-1-dipenp@nvidia.com>
- <20210625235532.19575-9-dipenp@nvidia.com>
- <7e49e6a9-bd7c-1b97-50e6-bc803addc27f@nvidia.com>
- <65bf01e1-66e1-7eec-0052-4d707f4a3f6b@nvidia.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <8d3257f3-54b1-e658-245d-3a070aba44c4@nvidia.com>
-Date:   Tue, 3 Aug 2021 17:42:37 +0100
+ <20210625235532.19575-4-dipenp@nvidia.com> <20210701142156.GA34285@sol>
+ <52768891-6c01-7588-e557-5c9eae5375b6@nvidia.com>
+ <20210731154323.GA24906@sol>
+From:   Dipen Patel <dipenp@nvidia.com>
+X-Nvconfidentiality: public
+Message-ID: <6429d26d-7835-c4f7-96b3-c8b0ba730187@nvidia.com>
+Date:   Tue, 3 Aug 2021 15:40:50 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.11.0
 MIME-Version: 1.0
-In-Reply-To: <65bf01e1-66e1-7eec-0052-4d707f4a3f6b@nvidia.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+In-Reply-To: <20210731154323.GA24906@sol>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
 X-Originating-IP: [172.20.187.6]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
+X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
  DRHQMAIL107.nvidia.com (10.27.9.16)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 0dcc4978-3157-4870-a5fc-08d9569db5bb
-X-MS-TrafficTypeDiagnostic: DM4PR12MB5197:
-X-Microsoft-Antispam-PRVS: <DM4PR12MB519745CBD4D3C998294C04F6D9F09@DM4PR12MB5197.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:4714;
+X-MS-Office365-Filtering-Correlation-Id: 23d567a6-682f-4baa-7a3b-08d956ce7725
+X-MS-TrafficTypeDiagnostic: DM6PR12MB2636:
+X-Microsoft-Antispam-PRVS: <DM6PR12MB2636B279F2437B42D78B58F5AEF09@DM6PR12MB2636.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: ItN4P9u1dP25ftP39RGx3+v5HPVQv0HGmG0cPlCbkAQsxupHrxO+zUDdh31cAB17VoTrlScycYadgi42fU7BeCFswxaJ66D80h9zZy8hXnWVOg2AN+1CDlT4q165bfOVs7Db/jBYBvdy9MqFHHwVwkF+ZJDC1lzUOHf0tDj6zcY3GUVzJa8YTLfrJjosDY99TRaOT4KxfeymDjYriOSZSNtv2oZVlzJYSArkZXaKHEPDWrMOGyjSm4fpkdaoehPd3b+SxkZ980PK4NBlcneuVIedfYL7ZOkcM+y+EB94uspW7gq2sFsZH5gyrEYjslg4/xkevm9EXyYaZz7hW4LhLlTzlAy10du7Hxz284qya4v8KA9VuxkAaS9hvzWeloDXFyn9Xl/EW0wh6ZqtpbvOlG3tuJPgLytGwvkiRVqkW8i6aMkZd2cnw8GXX4cU3Z5Jq7M8uVl7Nblj2rD3HqYafactQ1GCeaT6PpMdqJ1mpmoGUcBcmz0+M4vHmIRhovhGDcWJ3mF03O+wNRm0l5H1uocBeEafFRn2urQdJvggb32oAlKfxB67nO6tBjlvJxeABqFAAUppmEwwAmZVTI04Ji1xkrR+bwGU9g4ysLt6okLwCx+vYu+2F7U0Zv7up76bVfd6G/pzL8Hp9B7K5vfH+egN9qpRVEsc7mCwg/gHk/S+1gki+AQ0Ut/ti/zEDMq4dDS9RxdQbH0OSXhgfUGMGk3wRlX+W6dG3iaa6l7Vqol7Ee5QDdrW96gngPCLQ9RJg7RkY7tccudHv/E9gBBHt8B5ppUjxm6TOEociEtrcjc=
-X-Forefront-Antispam-Report: CIP:216.228.112.32;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid01.nvidia.com;CAT:NONE;SFS:(4636009)(39860400002)(346002)(376002)(396003)(136003)(46966006)(36840700001)(921005)(82310400003)(70206006)(426003)(8936002)(26005)(7416002)(356005)(83380400001)(8676002)(16576012)(316002)(2616005)(86362001)(70586007)(36860700001)(16526019)(110136005)(186003)(36756003)(53546011)(82740400003)(5660300002)(47076005)(336012)(478600001)(2906002)(7636003)(31696002)(31686004)(43740500002)(83996005)(2101003);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: NdlrU+dvkEFlvld+ZSfdyx3QY7pchb8yucpzKqjWnt4rC1Tk6SyK11XDT/ogPAT9pZ0jc4vzVgkWX0NQFfuP59PQH62hFIYl6Q4jx4HjAoz8bIUSFjTyWNmLl1AVkfZHuDrnIwJjY8vwtp/u3w18aJRYryRL26f35I564BIzedQJoXltDxJmIXAqKSAvKby0EUuxiQEhtEVtB7hL4xt1kRXV1LzkxsB+WOGv0/+v+1+M9/v/HPQG6XBg7UMJaXlPK/LCBYkol5DXmNzZbTyjNRXPsf7UdzYqL2Ak6PTCrJs5qKeQb/r9hQASyUgFNZOVTvLEM8YupzNwVvD39vGCjfGuTF+QWMUtnLJ4ouOKhLztPUDNASNT2tpOnlPQcCBgSSE0kqDnkME2Z0pBgXtR9Nr33d+B+zFvFcn2f+zbjrnrpzIsCGY9anYnRjNLqrh9dsFj1P+XwdSdA43z6yx4p5VtZ7gEr+koQXmcyfvB2sRp8eEV5m0Ih78qMNI4rlBEsCBX05a0VzUP+M+T0CLHEkSpnY31Va3U9EKxPGf0Z3HTk1ifdp6kuOsCP/v4PuQqwaLW2MUZdXVOezTAhItseZs2Y+hS39PYzyx06XSD2pvDVEv7OZEGWox0WLYb0Qr7dmryWTvoHDv2AxdMiSv1ltpBnyYUxhrqI0LLG5mKIqo2nlaY01ySFRGkAoCxiwS1lI541C/xS3+kJ1NOVSDV82oqQqYM/IPdUh0m1rg7d80=
+X-Forefront-Antispam-Report: CIP:216.228.112.35;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid02.nvidia.com;CAT:NONE;SFS:(4636009)(39860400002)(136003)(346002)(396003)(376002)(46966006)(36840700001)(47076005)(7416002)(70586007)(2616005)(82310400003)(70206006)(8676002)(426003)(7636003)(5660300002)(6916009)(31686004)(2906002)(6666004)(8936002)(36756003)(53546011)(478600001)(26005)(54906003)(16526019)(186003)(86362001)(4326008)(36906005)(36860700001)(316002)(16576012)(30864003)(31696002)(83380400001)(82740400003)(356005)(336012)(43740500002);DIR:OUT;SFP:1101;
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Aug 2021 16:42:40.7394
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Aug 2021 22:31:41.0792
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0dcc4978-3157-4870-a5fc-08d9569db5bb
+X-MS-Exchange-CrossTenant-Network-Message-Id: 23d567a6-682f-4baa-7a3b-08d956ce7725
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.32];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT067.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.35];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT057.eop-nam11.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB5197
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB2636
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
-On 30/07/2021 03:33, Dipen Patel wrote:
-> 
-> On 7/9/21 1:30 AM, Jon Hunter wrote:
->> On 26/06/2021 00:55, Dipen Patel wrote:
->>> This patch adds new clock type for the GPIO controller which can
->>> timestamp gpio lines using hardware means. To expose such
->>> functionalities to the userspace, code has been added in this patch
->>> where during line create call, it checks for new clock type and if
->>> requested, calls hardware timestamp related API from gpiolib.c.
->>> During line change event, it retrieves timestamp in nano seconds by
->>> calling gpiod_get_hw_timestamp API from gpiolib.c. At the line release,
->>> it disables this functionality by calling gpiod_hw_timestamp_control.
->>>
->>> Signed-off-by: Dipen Patel <dipenp@nvidia.com>
->>> ---
->>>   drivers/gpio/gpiolib-cdev.c | 65 +++++++++++++++++++++++++++++++++++--
->>>   include/uapi/linux/gpio.h   |  1 +
->>>   2 files changed, 64 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/drivers/gpio/gpiolib-cdev.c b/drivers/gpio/gpiolib-cdev.c
->>> index 1631727bf0da..9f98c727e937 100644
->>> --- a/drivers/gpio/gpiolib-cdev.c
->>> +++ b/drivers/gpio/gpiolib-cdev.c
->>> @@ -518,6 +518,7 @@ struct linereq {
->>>   	 GPIO_V2_LINE_DRIVE_FLAGS | \
->>>   	 GPIO_V2_LINE_EDGE_FLAGS | \
->>>   	 GPIO_V2_LINE_FLAG_EVENT_CLOCK_REALTIME | \
->>> +	 GPIO_V2_LINE_FLAG_EVENT_CLOCK_HARDWARE | \
->>>   	 GPIO_V2_LINE_BIAS_FLAGS)
->>>   
->>>   static void linereq_put_event(struct linereq *lr,
->>> @@ -540,9 +541,20 @@ static void linereq_put_event(struct linereq *lr,
->>>   
->>>   static u64 line_event_timestamp(struct line *line)
->>>   {
->>> +	bool block;
->>> +
->>>   	if (test_bit(FLAG_EVENT_CLOCK_REALTIME, &line->desc->flags))
->>>   		return ktime_get_real_ns();
->>>   
->>> +	if (test_bit(FLAG_EVENT_CLOCK_HARDWARE, &line->desc->flags)) {
->>> +		if (irq_count())
->>> +			block = false;
->>> +		else
->>> +			block = true;
->>> +
->>> +		return gpiod_get_hw_timestamp(line->desc, block);
->>> +	}
->>> +
->>>   	return ktime_get_ns();
->>>   }
+On 7/31/21 8:43 AM, Kent Gibson wrote:
+> On Wed, Jul 28, 2021 at 04:59:08PM -0700, Dipen Patel wrote:
+>> Thanks Kent for the review comment. My responses inline.
 >>
->> Looking at line_event_timestamp() and the callers of this function, it
->> appears that this should always return nanoseconds. Does
->> gpiod_get_hw_timestamp() return nanoseconds?
-> Yes, it returns in ns to align with line_event_timestamp.
+>> On 7/1/21 7:21 AM, Kent Gibson wrote:
+>>> On Fri, Jun 25, 2021 at 04:55:24PM -0700, Dipen Patel wrote:
+>>>> Tegra194 device has multiple HTE instances also known as GTE
+>>>> (Generic hardware Timestamping Engine) which can timestamp subset of
+>>>> SoC lines/signals. This provider driver focuses on IRQ and GPIO lines
+>>>> and exposes timestamping ability on those lines to the consumers
+>>>> through HTE subsystem.
+>>>>
+>>>> Also, with this patch, added:
+>>>> - documentation about this provider and its capabilities at
+>>>> Documentation/hte.
+>>>> - Compilation support in Makefile and Kconfig
+>>>>
+>>>> Signed-off-by: Dipen Patel <dipenp@nvidia.com>
+>>>> ---
+>>>>  Documentation/hte/index.rst        |  21 ++
+>>>>  Documentation/hte/tegra194-hte.rst |  65 ++++
+>>>>  Documentation/index.rst            |   1 +
+>>>>  drivers/hte/Kconfig                |  12 +
+>>>>  drivers/hte/Makefile               |   1 +
+>>>>  drivers/hte/hte-tegra194.c         | 554 +++++++++++++++++++++++++++++
+>>>>  6 files changed, 654 insertions(+)
+>>>>  create mode 100644 Documentation/hte/index.rst
+>>>>  create mode 100644 Documentation/hte/tegra194-hte.rst
+>>>>  create mode 100644 drivers/hte/hte-tegra194.c
+>>>>
+>>>> diff --git a/Documentation/hte/index.rst b/Documentation/hte/index.rst
+>>>> new file mode 100644
+>>>> index 000000000000..f311ebec6b47
+>>>> --- /dev/null
+>>>> +++ b/Documentation/hte/index.rst
+>>>> @@ -0,0 +1,21 @@
+>>>> +.. SPDX-License-Identifier: GPL-2.0
+>>>> +
+>>>> +============================================
+>>>> +The Linux Hardware Timestamping Engine (HTE)
+>>>> +============================================
+>>>> +
+>>>> +The HTE Subsystem
+>>>> +=================
+>>>> +
+>>>> +.. toctree::
+>>>> +   :maxdepth: 1
+>>>> +
+>>>> +   hte
+>>>> +
+>>>> +HTE Tegra Provider
+>>>> +==================
+>>>> +
+>>>> +.. toctree::
+>>>> +   :maxdepth: 1
+>>>> +
+>>>> +   tegra194-hte
+>>>> \ No newline at end of file
+>>>> diff --git a/Documentation/hte/tegra194-hte.rst b/Documentation/hte/tegra194-hte.rst
+>>>> new file mode 100644
+>>>> index 000000000000..c23eaafcf080
+>>>> --- /dev/null
+>>>> +++ b/Documentation/hte/tegra194-hte.rst
+>>>> @@ -0,0 +1,65 @@
+>>>> +HTE Kernel provider driver
+>>>> +==========================
+>>>> +
+>>>> +Description
+>>>> +-----------
+>>>> +The Nvidia tegra194 chip has many hardware timestamping engine (HTE) instances
+>>>> +known as generic timestamping engine (GTE). This provider driver implements
+>>>> +two GTE instances 1) GPIO GTE and 2) IRQ GTE. The both GTEs instances get the
+>>>> +timestamp from the system counter TSC which has 31.25MHz clock rate, and the
+>>>> +driver converts clock tick rate to nano seconds before storing it as timestamp
+>>>> +value.
+>>>> +
+>>>> +GPIO GTE
+>>>> +--------
+>>>> +
+>>>> +This GTE instance help timestamps GPIO in real time, for that to happen GPIO
+>>>> +needs to be configured as input and IRQ needs to ba enabled as well. The only
+>>>> +always on (AON) gpio controller instance supports timestamping GPIOs in
+>>>> +realtime and it has 39 GPIO lines. There is also a dependency on AON GPIO
+>>>> +controller as it requires very specific bits to be set in GPIO config register.
+>>>> +It in a way creates cyclic dependency between GTE and GPIO controller. The GTE
+>>>> +GPIO functionality is accessed from the GPIOLIB. It can support both the in
+>>>> +kernel and userspace consumers. In the later case, requests go through GPIOLIB
+>>>> +CDEV framework. The below APIs are added in GPIOLIB framework to access HTE
+>>>> +subsystem and GPIO GTE for in kernel consumers.
+>>>> +
+>>>> +.. c:function:: int gpiod_hw_timestamp_control( struct gpio_desc *desc, bool enable )
+>>>> +
+>>>> +	To enable HTE on given GPIO line.
+>>>> +
+>>>> +.. c:function:: u64 gpiod_get_hw_timestamp( struct gpio_desc *desc, bool block )
+>>>> +
+>>>> +	To retrieve hardwre timestamp in nano seconds.
+>>>> +
+>>>> +.. c:function:: bool gpiod_is_hw_timestamp_enabled( const struct gpio_desc *desc )
+>>>> +
+>>>> +	To query if HTE is enabled on the given GPIO.
+>>>> +
+>>>> +There is hte-tegra194-gpio-test.c, located in ``drivers/hte/`` directory, test
+>>>> +driver which demonstrates above APIs for the Jetson AGX platform. For userspace
+>>>> +consumers, GPIO_V2_LINE_FLAG_EVENT_CLOCK_HARDWARE flag must be specifed during
+>>>> +IOCTL calls, refer ``tools/gpio/gpio-event-mon.c``, which returns the timestamp
+>>>> +in nano second.
+>>>> +
+>>> <snip>
+>>>
+>>>> +
+>>>> +static void tegra_hte_read_fifo(struct tegra_hte_soc *gs)
+>>>> +{
+>>>> +	u32 tsh, tsl, src, pv, cv, acv, slice, bit_index, line_id;
+>>>> +	u64 tsc;
+>>>> +	int dir;
+>>>> +	struct hte_ts_data el;
+>>>> +
+>>>> +	while ((tegra_hte_readl(gs, HTE_TESTATUS) >>
+>>>> +		HTE_TESTATUS_OCCUPANCY_SHIFT) &
+>>>> +		HTE_TESTATUS_OCCUPANCY_MASK) {
+>>>> +		tsh = tegra_hte_readl(gs, HTE_TETSCH);
+>>>> +		tsl = tegra_hte_readl(gs, HTE_TETSCL);
+>>>> +		tsc = (((u64)tsh << 32) | tsl);
+>>>> +
+>>>> +		src = tegra_hte_readl(gs, HTE_TESRC);
+>>>> +		slice = (src >> HTE_TESRC_SLICE_SHIFT) &
+>>>> +			    HTE_TESRC_SLICE_DEFAULT_MASK;
+>>>> +
+>>>> +		pv = tegra_hte_readl(gs, HTE_TEPCV);
+>>>> +		cv = tegra_hte_readl(gs, HTE_TECCV);
+>>>> +		acv = pv ^ cv;
+>>>> +		while (acv) {
+>>>> +			bit_index = __builtin_ctz(acv);
+>>>> +			if ((pv >> bit_index) & BIT(0))
+>>>> +				dir = HTE_EVENT_RISING_EDGE;
+>>>> +			else
+>>>> +				dir = HTE_EVENT_FALLING_EDGE;
+>>>> +
+>>>> +			line_id = bit_index + (slice << 5);
+>>>> +			el.dir = dir;
+>>>> +			el.tsc = tsc << HTE_TS_NS_SHIFT;
+>>>> +			hte_push_ts_ns_atomic(gs->chip, line_id, &el,
+>>>> +					      sizeof(el));
+>>>> +			acv &= ~BIT(bit_index);
+>>>> +		}
+>>>> +		tegra_hte_writel(gs, HTE_TECMD, HTE_TECMD_CMD_POP);
+>>>> +	}
+>>>> +}
+>>> What happens when the hte_push_ts_ns_atomic() fails?
+>>> The timestamp will be quietly dropped?
+>>> What happens when the interrupt corresponding to that dropped timestamp
+>>> asks for it?  The irq handler thread will block until it can get a
+>>> timestamp from the subsequent interrupt?
+>> Two things happen, 1) at the push, HTE core increments seq counter
+>>
+>> 2) If the consumer has provided callback, it will either call that callback
+>>
+>> with HTE_TS_DROPPED or HTE_TS_AVAIL. The seq counter gives indirect
+>>
+>> view of dropped ts. However, I see the problem with the consumers not
+>>
+>> providing callback, in that case, push_ts* API just wakes up process without
+>>
+>> indicating why (assuming notify variable is true or else there is a chance for
+>>
+>> the thread to block forever). One easy approach I can think of for now is to
+>>
+>> make callback mandatory (which is optional right now), I will have to rethink
+>>
+>> that scenario and will push corrected version next RFC version.
+>>
+>> Thanks for pointing out.
+>>
+> I'm not sure you understood my question, which was intended to
+> demonstrate how an overflow here would break your gpio integration, but I
+> am certain that I don't understand your answer.
+>
+> Using the callback to signal fifo overflow to the consumer is crazy.
+> If the consumer is too busy to service the fifo then they probably wont
+> be prepared to deal with the callback either. And the primary purpose of
+> the fifo is to decouple the producer and consumer, so requiring a callback
+> defeats the whole purpose of having the fifo there in the first place.
+>
+>>> Which brings me back to the concern I have with the approach used in
+>>> the hte/gpiolib integration - how do you guarantee that the timestamp
+>>> returned by gpiod_get_hw_timestamp() corresponds to the irq interrupt
+>>> being handled, particularly in the face of errors such as:
+>>>  - overflows of the timestamp FIFO in the chip
+>> I currently do not have any indication mechanism as the providers
+>>
+>> I am dealing with right now does not have overflow hardware detection
+>>
+>> support. If the chip supports, it should be easy to integrate that feature.
+>>
+>> I will provide some hook function or change in push_* API to accommodate
+>>
+>> this in next version of RFC.
+>>
+>>>  - overflows of software FIFOs as here
+>> HTE core records sequence counter as well it callsback the consumer with
+>>
+>> HTE_TS_DROPPED.
+>>
+>>>  - lost interupts (if the hw generates interrupts faster than the CPU
+>>>    can service them)
+>> For this, I have no idea unless hardware supports some sort of mechanism
+>>
+>> to catch that. For the current providers, as soon as it detects changes on lines
+>>
+>> it captures TS in its hw fifo. Its interrupt gets generated based on threshold
+>>
+>> set in that hw fifo. This interrupt is different than the lines of actual device
+>>
+>> that is why I said I have no idea how we can tackle that. Let me know if there
+>>
+>> is any idea or reference of the codes which does tackle this.
+>>
+> As far as I am aware there is no solution, given your suggested
+> architecture.
+>
+> Your architecture is inherently fragile, as you try to use one stream
+> of data (the timestamp fifo) to provide supplementary info for another
+> (the physical irq).  Guaranteeing that the two are synchronised is
+> impossible - even if you can get them synced at some point, they can
+> fall out of sync without any indication.
+> That is a recipe for Ingenuity flight 6.
+>
+> My solution would be to use the hte timestamp fifo as the event source,
+> rather than the physical irq.  With only one event source the 
+> synchronisation problem disappears.  As to how to implement that,
+> gpiolib-cdev would request a line from the hte subsystem and register
+> and event handler for it, much as it does currently with the irq
+> subsystem. 
+Regarding "
 
+much as it does currently with the irq
+subsystem
 
-It might be worth updating the function name to 
-gpiod_get_hw_timestamp_ns() so that this is clear.
+" Statment, do you mean edge_irq_handler?
+> That event handler would translate the hte events into gpio
+> events.
+>
+> You still have to deal with possible fifo overflows, but if the fifo
+> overflows result in discarding the oldest event, rather than the most
+> recent, then everything comes out in the wash.  If not then the final
+> event in a burst may not correspond to the actual state so you need
+> some additional mechanism to address that.
+> Either way the consumer needs to be aware that events may be lost - but
+> with the event seqno for consumers to detect those lost events we
+> already have that covered.
+>
+>> Regarding HTE/GPIOLIB integration comment:
+>>
+>> You are right, currently, I have only tsc field returned from struct hte_ts_data
+>>
+>> to gpiolib. If I can extend that to return hte_ts_data structure which has seq
+>>
+>> counter, which I believe can be used to track the overflow situation. The
+>>
+>> dropped scenario can be easily tracked if gpiolib can be notified with above
+>>
+>> mentioned DROP event through callback. If that is the case, is it ok to have
+>>
+>> some sort of callback per gpio in gpiolib?
+>>
+> Even better if you can provide the whole struct hte_ts_data so we have
+> the direction as well (assuming all hte providers provide direction?).
+> Otherwise gpiolib-cdev may need to read the physical line state and that
+> may have changed since the hardware captured the event.
+> In the solution I outlined above, the hte_ts_data would be provided to
+> the event handler registered by gpiolib-cdev.
 
-Jon
+How is this event handler different then cdev providing callback to
 
---
-nvpublic
+hte core? I am guessing even cdev registers event handler with HTE
+
+it is some sort of function  pointer so does callbacks.
+
+> And in this case you could skip buffering the event in hte - it could be
+> passed to the event handler as soon as it is read from the hardware - 
+> gpiolib-cdev does its own buffering of gpio events.
+>
+>> Any idea how I can integrate callback notification with gpiolib if you do not agree on
+>>
+>> above callback suggestion?
+>>
+> See above.  But this is just my take, so I would get feedback from the
+> relevant maintainers or SMEs before you act on anything suggested above.
+>
+> Cheers,
+> Kent.
+>
