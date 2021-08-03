@@ -2,139 +2,178 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-18.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FEB3C432BE
-	for <linux-tegra@archiver.kernel.org>; Tue,  3 Aug 2021 14:50:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E21FEC19F31
+	for <linux-tegra@archiver.kernel.org>; Tue,  3 Aug 2021 16:42:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EE8A161037
-	for <linux-tegra@archiver.kernel.org>; Tue,  3 Aug 2021 14:50:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C5D5A60555
+	for <linux-tegra@archiver.kernel.org>; Tue,  3 Aug 2021 16:42:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232748AbhHCOuc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 3 Aug 2021 10:50:32 -0400
-Received: from mail-dm6nam10on2081.outbound.protection.outlook.com ([40.107.93.81]:64224
-        "EHLO NAM10-DM6-obe.outbound.protection.outlook.com"
+        id S234627AbhHCQmz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 3 Aug 2021 12:42:55 -0400
+Received: from mail-sn1anam02on2056.outbound.protection.outlook.com ([40.107.96.56]:25031
+        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S236599AbhHCOub (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 3 Aug 2021 10:50:31 -0400
+        id S234271AbhHCQmx (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 3 Aug 2021 12:42:53 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=lX/N9VIN1b+1jiPMPN47EDzMe5L5qxa8ucFwM2y1SLVX+R6Wh18lJQ79J0eGZxYRfegVXHDGFlj6F0c7k6hS0j1kEon+kHSZn1LinMtI9CNwPowxOEvQyvugilheloQjQAbE4N2YQm9BolZ/LprWuFW8+9SlvQ+3d6fTb0MtLx9z5QHRPxdORqCKsYOl+pbY9RXzBvpmjdNpa67HYWeKGx7SyZhihZeqk7EbbN0TZPp81Pl/KeGk7rb0nS04cOVWfeOfFvGFAFdSoZoHagIk3V8LXSd9rSJHVi6GYFfhpnx7q0aEw7ycTqZ7DYFGn4b+DNkal5avjG16QS4sBeBluA==
+ b=UEajfggEKDTfbN8FHxKOncQcxHBsi4+ZAGXor2JvEs/geYwMCsc3Ols/kNMVj4mYgXwys8SduOszendV71SjNtk6DZCED0ljazsIuHjbQM0dqh/inFerfCc3FOo1l+lz7k/PwogvmVhJjY5qrK03g8VZqvDbMcLucJTXAO0aB2se6gNFCNUmoqD+obDmLJu4gc6ywbSkMlsWlUzTXuivuvfiXBIY4q+JIscCDljrLwiQHRmpz2YwvrtaQ9B4v/LFfPZHADjd2DsKjRsb1wWdjXTCXNSHfcDNSVmqb0wWGvSCIFHCdFTDQyebY8cLXmETgQsK4Fjgjph2G2JNwCOC7g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fly+40zLuIVO6A1RsFXWv1XFox5u6FfnG2bLIakwsB0=;
- b=gj1D4OyhRpP3jFbndPdCPOhQMuhKfdhy+GzflX5Z9fSUJaXy1tFjc4mPFwHfrAJi7JrZaikqycA2UY4VKTo+GDB5XMgbHERR/EdDtJNV3ph34mcBka97NQtPev6fOkerLayjAY8XvVn7xQ2+97s9z8NwRVx26kdDtR0JJ3OQcdhIdkWkBpZRYkrnU8vTKsmkx6byML+emOftMPZgHrhgzR2Ij6VVfYl6QZOKZkZ+JIhAP6RyfjHVapLwJnIUGW3N81BX1ARaBJOgjVwD6lP24YhaopQvea+hvlyB5kVUQ9DzsiWz23GHKUB7dwJ4GhX2IbNj25ERvt2yIbwI5dQ76Q==
+ bh=NYAxFss/rHV0AyqyoZ8N3Hyzhw5w+9NpH1zIm6LWCL4=;
+ b=fSPlQJyaWJ4tyk3zzXKy4t/xbVTgfRvtcgeu6no9q+niPvcyhpw5DOcojIk5qHCIwtPU6WJSUWo+jRoy6E2DE8p6U2nNaffTvULKHTXuS+tKcH1meNBIo8/geY3j39F43F7Yj5HlyIQXGYvDBoI9SFcSEhrffBeVEgABpqLkGuYyY6AoQU88rLjjjrT5isFw/vy3H6j050u+JPV8CXuL6FwW4wSijjfmyjR6GO1KrMYoVgxY9Q5qCa+C9hNxRvT54UZEkgRP3Lk17+2RZJPKjQ396efq9HziufBLHXjhL4Bpk3iVMA8cZJPj/XM7fiz6XEgTdiwELrN0PH0pwNvr8A==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.112.34) smtp.rcpttodomain=denx.de smtp.mailfrom=nvidia.com;
+ 216.228.112.32) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
  dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=nvidia.com;
  dkim=none (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fly+40zLuIVO6A1RsFXWv1XFox5u6FfnG2bLIakwsB0=;
- b=hPRV1s/kI4Fo/65QP7hT/9TaOo+gAcBgCJWac74tThOONkeSLOH3wNx8qAxZvySWpRdz48a1nkQT+ray+UDYM1gBeJaOrGwaLPPNpuDgDmG2XgWi3CuC8oQUIPNpi0V2fuWB3GtP/TjzY6EOL1v6JRf8Of8DWOXpKJhxe6zkhK1pOcvbYLQY5sjHOhOv6CnXx1vLN/aVozdD+7yzN6ZNY3RW1cHFW9NZF5PNzutcbso5uXFmH+hZCl7ZgT9PEfdyahrJ8yy2CEPS/SSvDDJeKqtv0W4I4h9khX/ushUv5wqEmBB14S0w75PmaKk3FdzZcCQmAXfVj7aTd+1Gzp5L1w==
-Received: from MW2PR16CA0010.namprd16.prod.outlook.com (2603:10b6:907::23) by
- MWHPR12MB1583.namprd12.prod.outlook.com (2603:10b6:301:11::17) with Microsoft
+ bh=NYAxFss/rHV0AyqyoZ8N3Hyzhw5w+9NpH1zIm6LWCL4=;
+ b=pLbFLHvyYTPEL8nzAPDKzOwxcVl29jOZX/Yo5crCS9Aa8UWsaiZ8q9SFLWszhSo/uSACUXS+uc9a/nV7Bdpzg1GIqKXLiDOtZom9rOkgP/+k/6gk6kPdPDacYcppxqt3uP97j6J6L78tew/80yGGEizNlA5qkgOZkTmjLBmmGGWhCJmOFViHZ0zv9m0Cav5mzRjO0nSafFx5fU2nh2G7jV8CprJ5NLM5rx6V93qfzy3kAWzKnaRWPheQJfkr+VEKafGLd5Yp8wN29a+jveXm1LIjGhXLDK8U3hSqU0msRh7FZcCv/OM1n7XFlqfMSJeAkP/4oc0q8lyOjk8ouzBS2A==
+Received: from DM5PR20CA0004.namprd20.prod.outlook.com (2603:10b6:3:93::14) by
+ DM4PR12MB5197.namprd12.prod.outlook.com (2603:10b6:5:394::24) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.4394.15; Tue, 3 Aug 2021 14:50:16 +0000
-Received: from CO1NAM11FT066.eop-nam11.prod.protection.outlook.com
- (2603:10b6:907:0:cafe::13) by MW2PR16CA0010.outlook.office365.com
- (2603:10b6:907::23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4373.18 via Frontend
- Transport; Tue, 3 Aug 2021 14:50:16 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.34)
- smtp.mailfrom=nvidia.com; denx.de; dkim=none (message not signed)
- header.d=none;denx.de; dmarc=pass action=none header.from=nvidia.com;
+ 15.20.4373.19; Tue, 3 Aug 2021 16:42:40 +0000
+Received: from DM6NAM11FT067.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:3:93:cafe::8e) by DM5PR20CA0004.outlook.office365.com
+ (2603:10b6:3:93::14) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4394.15 via Frontend
+ Transport; Tue, 3 Aug 2021 16:42:40 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.32)
+ smtp.mailfrom=nvidia.com; kernel.org; dkim=none (message not signed)
+ header.d=none;kernel.org; dmarc=pass action=none header.from=nvidia.com;
 Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.112.34 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.112.34; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (216.228.112.34) by
- CO1NAM11FT066.mail.protection.outlook.com (10.13.175.18) with Microsoft SMTP
+ 216.228.112.32 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.112.32; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (216.228.112.32) by
+ DM6NAM11FT067.mail.protection.outlook.com (10.13.172.76) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.4373.18 via Frontend Transport; Tue, 3 Aug 2021 14:50:15 +0000
-Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Tue, 3 Aug
- 2021 14:50:13 +0000
-Received: from jonathanh-vm-01.nvidia.com (172.20.187.6) by mail.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1497.2 via Frontend
- Transport; Tue, 3 Aug 2021 07:50:12 -0700
+ 15.20.4373.18 via Frontend Transport; Tue, 3 Aug 2021 16:42:40 +0000
+Received: from DRHQMAIL107.nvidia.com (10.27.9.16) by HQMAIL109.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Tue, 3 Aug
+ 2021 09:42:40 -0700
+Received: from [10.2.59.40] (172.20.187.6) by DRHQMAIL107.nvidia.com
+ (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Tue, 3 Aug 2021
+ 16:42:39 +0000
+Subject: Re: [RFC 08/11] gpiolib: cdev: Add hardware timestamp clock type
+To:     Dipen Patel <dipenp@nvidia.com>, <thierry.reding@gmail.com>,
+        <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>, <linus.walleij@linaro.org>,
+        <bgolaszewski@baylibre.com>, <warthog618@gmail.com>,
+        <devicetree@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <robh+dt@kernel.org>
+References: <20210625235532.19575-1-dipenp@nvidia.com>
+ <20210625235532.19575-9-dipenp@nvidia.com>
+ <7e49e6a9-bd7c-1b97-50e6-bc803addc27f@nvidia.com>
+ <65bf01e1-66e1-7eec-0052-4d707f4a3f6b@nvidia.com>
 From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
-        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
-        <stable@vger.kernel.org>, <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 5.10 00/67] 5.10.56-rc1 review
-In-Reply-To: <20210802134339.023067817@linuxfoundation.org>
-References: <20210802134339.023067817@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Message-ID: <8d3257f3-54b1-e658-245d-3a070aba44c4@nvidia.com>
+Date:   Tue, 3 Aug 2021 17:42:37 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-Message-ID: <1322cf508ba445e39ff9fbf04ec14368@HQMAIL109.nvidia.com>
-Date:   Tue, 3 Aug 2021 07:50:12 -0700
+In-Reply-To: <65bf01e1-66e1-7eec-0052-4d707f4a3f6b@nvidia.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [172.20.187.6]
+X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
+ DRHQMAIL107.nvidia.com (10.27.9.16)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 3b80f237-11be-4948-d2fb-08d9568e0149
-X-MS-TrafficTypeDiagnostic: MWHPR12MB1583:
-X-Microsoft-Antispam-PRVS: <MWHPR12MB15835C98F18525B9EB14056BD9F09@MWHPR12MB1583.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
+X-MS-Office365-Filtering-Correlation-Id: 0dcc4978-3157-4870-a5fc-08d9569db5bb
+X-MS-TrafficTypeDiagnostic: DM4PR12MB5197:
+X-Microsoft-Antispam-PRVS: <DM4PR12MB519745CBD4D3C998294C04F6D9F09@DM4PR12MB5197.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:4714;
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: cJSke/ZB6FieyKuMIRs3sRuBuC1vvv0OcA4e1HiDFh0K6j+TMzaQCm1rUn95bTfUE7fadmSHEEk502Ahq86xc3tMoJQIesOO0bzn1Pk846xThWc7qWoarfJAL5ebLgB48gz4LImdtokL3NRfCp08sroH2NE0xpSoxB1FFr+b7vOJKuVwA/Rskl82eu2bqYycDGxLspDbPo+jH202bvjdbnIL/ptFFZt7N2EVkBjo4VtwWwA1hXEll7nrfHwVEJRcK7RUlyQZWG+YuUdU96/HhqZbihdKt8LHoFSRoM1RNHmG/ACpt4Vf2HKaekoTfDNc52Fxfp9iMhVKaDQLNG8J2vAgH06K1s7uFbKpV8JRpwum5LR4n0g38O7CZJBaDZR6O2O6ax2Ci1D2YYlrWgHA3WEWPbEdpqUMUEHdO318fPEjq8GxVXvYvQfWoEprngPsx7j3VyDC5xv8E40czWsp5Y5CbXYthQ1GkMlXyhxVRrJU/5iqO2LIlVL6bEWHIRfa2l2sSjApwPm7fRAHcwNl0CLQGWoicMuWPwLX9ervi5pS8xP8W7JBuMWZ0pIYbL454SPIWGdBEhivwOfbm7xSPfAAyvnQwoXU4dR9mLwKHwP2P7bstbhc61He5oRXcnWbXoUwEB0cZ1rYlVR5NkS6z+fu5v+TOPRKKUy5npFEodIBTmq4/k2TsnYxkDts9kahC2FYmXurraBghycFdnahvHJgspC/VmHXLe+YxiGTC6E81uWhPyBSeJWPON5wR+Da5tG7YKlD3H/zluZsPEw2vSnfxBRjR+wnAbtOsdvFoVY=
-X-Forefront-Antispam-Report: CIP:216.228.112.34;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid03.nvidia.com;CAT:NONE;SFS:(4636009)(396003)(376002)(136003)(346002)(39860400002)(46966006)(36840700001)(86362001)(8676002)(356005)(336012)(4326008)(8936002)(82740400003)(7636003)(478600001)(966005)(5660300002)(36860700001)(54906003)(7416002)(70206006)(108616005)(316002)(36906005)(2906002)(70586007)(6916009)(426003)(82310400003)(186003)(26005)(24736004)(47076005);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: ItN4P9u1dP25ftP39RGx3+v5HPVQv0HGmG0cPlCbkAQsxupHrxO+zUDdh31cAB17VoTrlScycYadgi42fU7BeCFswxaJ66D80h9zZy8hXnWVOg2AN+1CDlT4q165bfOVs7Db/jBYBvdy9MqFHHwVwkF+ZJDC1lzUOHf0tDj6zcY3GUVzJa8YTLfrJjosDY99TRaOT4KxfeymDjYriOSZSNtv2oZVlzJYSArkZXaKHEPDWrMOGyjSm4fpkdaoehPd3b+SxkZ980PK4NBlcneuVIedfYL7ZOkcM+y+EB94uspW7gq2sFsZH5gyrEYjslg4/xkevm9EXyYaZz7hW4LhLlTzlAy10du7Hxz284qya4v8KA9VuxkAaS9hvzWeloDXFyn9Xl/EW0wh6ZqtpbvOlG3tuJPgLytGwvkiRVqkW8i6aMkZd2cnw8GXX4cU3Z5Jq7M8uVl7Nblj2rD3HqYafactQ1GCeaT6PpMdqJ1mpmoGUcBcmz0+M4vHmIRhovhGDcWJ3mF03O+wNRm0l5H1uocBeEafFRn2urQdJvggb32oAlKfxB67nO6tBjlvJxeABqFAAUppmEwwAmZVTI04Ji1xkrR+bwGU9g4ysLt6okLwCx+vYu+2F7U0Zv7up76bVfd6G/pzL8Hp9B7K5vfH+egN9qpRVEsc7mCwg/gHk/S+1gki+AQ0Ut/ti/zEDMq4dDS9RxdQbH0OSXhgfUGMGk3wRlX+W6dG3iaa6l7Vqol7Ee5QDdrW96gngPCLQ9RJg7RkY7tccudHv/E9gBBHt8B5ppUjxm6TOEociEtrcjc=
+X-Forefront-Antispam-Report: CIP:216.228.112.32;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid01.nvidia.com;CAT:NONE;SFS:(4636009)(39860400002)(346002)(376002)(396003)(136003)(46966006)(36840700001)(921005)(82310400003)(70206006)(426003)(8936002)(26005)(7416002)(356005)(83380400001)(8676002)(16576012)(316002)(2616005)(86362001)(70586007)(36860700001)(16526019)(110136005)(186003)(36756003)(53546011)(82740400003)(5660300002)(47076005)(336012)(478600001)(2906002)(7636003)(31696002)(31686004)(43740500002)(83996005)(2101003);DIR:OUT;SFP:1101;
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Aug 2021 14:50:15.5506
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Aug 2021 16:42:40.7394
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3b80f237-11be-4948-d2fb-08d9568e0149
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0dcc4978-3157-4870-a5fc-08d9569db5bb
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.34];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT066.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.32];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT067.eop-nam11.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR12MB1583
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB5197
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, 02 Aug 2021 15:44:23 +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.10.56 release.
-> There are 67 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Wed, 04 Aug 2021 13:43:24 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.56-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
 
-All tests passing for Tegra ...
+On 30/07/2021 03:33, Dipen Patel wrote:
+> 
+> On 7/9/21 1:30 AM, Jon Hunter wrote:
+>> On 26/06/2021 00:55, Dipen Patel wrote:
+>>> This patch adds new clock type for the GPIO controller which can
+>>> timestamp gpio lines using hardware means. To expose such
+>>> functionalities to the userspace, code has been added in this patch
+>>> where during line create call, it checks for new clock type and if
+>>> requested, calls hardware timestamp related API from gpiolib.c.
+>>> During line change event, it retrieves timestamp in nano seconds by
+>>> calling gpiod_get_hw_timestamp API from gpiolib.c. At the line release,
+>>> it disables this functionality by calling gpiod_hw_timestamp_control.
+>>>
+>>> Signed-off-by: Dipen Patel <dipenp@nvidia.com>
+>>> ---
+>>>   drivers/gpio/gpiolib-cdev.c | 65 +++++++++++++++++++++++++++++++++++--
+>>>   include/uapi/linux/gpio.h   |  1 +
+>>>   2 files changed, 64 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/drivers/gpio/gpiolib-cdev.c b/drivers/gpio/gpiolib-cdev.c
+>>> index 1631727bf0da..9f98c727e937 100644
+>>> --- a/drivers/gpio/gpiolib-cdev.c
+>>> +++ b/drivers/gpio/gpiolib-cdev.c
+>>> @@ -518,6 +518,7 @@ struct linereq {
+>>>   	 GPIO_V2_LINE_DRIVE_FLAGS | \
+>>>   	 GPIO_V2_LINE_EDGE_FLAGS | \
+>>>   	 GPIO_V2_LINE_FLAG_EVENT_CLOCK_REALTIME | \
+>>> +	 GPIO_V2_LINE_FLAG_EVENT_CLOCK_HARDWARE | \
+>>>   	 GPIO_V2_LINE_BIAS_FLAGS)
+>>>   
+>>>   static void linereq_put_event(struct linereq *lr,
+>>> @@ -540,9 +541,20 @@ static void linereq_put_event(struct linereq *lr,
+>>>   
+>>>   static u64 line_event_timestamp(struct line *line)
+>>>   {
+>>> +	bool block;
+>>> +
+>>>   	if (test_bit(FLAG_EVENT_CLOCK_REALTIME, &line->desc->flags))
+>>>   		return ktime_get_real_ns();
+>>>   
+>>> +	if (test_bit(FLAG_EVENT_CLOCK_HARDWARE, &line->desc->flags)) {
+>>> +		if (irq_count())
+>>> +			block = false;
+>>> +		else
+>>> +			block = true;
+>>> +
+>>> +		return gpiod_get_hw_timestamp(line->desc, block);
+>>> +	}
+>>> +
+>>>   	return ktime_get_ns();
+>>>   }
+>>
+>> Looking at line_event_timestamp() and the callers of this function, it
+>> appears that this should always return nanoseconds. Does
+>> gpiod_get_hw_timestamp() return nanoseconds?
+> Yes, it returns in ns to align with line_event_timestamp.
 
-Test results for stable-v5.10:
-    10 builds:	10 pass, 0 fail
-    28 boots:	28 pass, 0 fail
-    75 tests:	75 pass, 0 fail
 
-Linux version:	5.10.56-rc1-gf9063e43ccbb
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
-                tegra20-ventana, tegra210-p2371-2180,
-                tegra210-p3450-0000, tegra30-cardhu-a04
-
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
+It might be worth updating the function name to 
+gpiod_get_hw_timestamp_ns() so that this is clear.
 
 Jon
+
+--
+nvpublic
