@@ -2,173 +2,81 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B4D4C4320A
-	for <linux-tegra@archiver.kernel.org>; Wed,  4 Aug 2021 10:00:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D353C4338F
+	for <linux-tegra@archiver.kernel.org>; Wed,  4 Aug 2021 11:29:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EA62561029
-	for <linux-tegra@archiver.kernel.org>; Wed,  4 Aug 2021 10:00:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 57E8A61037
+	for <linux-tegra@archiver.kernel.org>; Wed,  4 Aug 2021 11:29:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237311AbhHDKAX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 4 Aug 2021 06:00:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49504 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237257AbhHDKAX (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 4 Aug 2021 06:00:23 -0400
-Received: from mail-vs1-xe2e.google.com (mail-vs1-xe2e.google.com [IPv6:2607:f8b0:4864:20::e2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09D9DC061798
-        for <linux-tegra@vger.kernel.org>; Wed,  4 Aug 2021 03:00:11 -0700 (PDT)
-Received: by mail-vs1-xe2e.google.com with SMTP id j19so732284vso.0
-        for <linux-tegra@vger.kernel.org>; Wed, 04 Aug 2021 03:00:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=KZQURuUvCTt1Dtzvc06E1K1bLOJD8iseyaRl8XN5Pfc=;
-        b=hLsLtCjOZNf8KRF5d/vdQ9oZuNAoT9Eg3LqcwzTR1WqqPznTHVqfZ7QC5CE4teJJOE
-         vJROdJstvA+WA5mLYhAzMDB1DIxd5ywVPl9xMCFBIh1nUiTgw4Ph+dkj8D9SzUXKA6fZ
-         sVa8WeDimt4VpSJ8VnXxHAmqb8yztQWS7mn+vpYKF1rfotJmVW8TYetCigqq/FVr7uNx
-         531UgugUZQaVtyfqyl9eLDl7+/Lms+2Cc9uwWWjTqJfI79kJFFB8mZjP069zbQcQniDe
-         1bMS/4FMCNWGqUH1zGD6cnkYxxDtYopR7XSSzLLSqOsWrvu8ZUZz5EusoKUKcEpo00ps
-         0LAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=KZQURuUvCTt1Dtzvc06E1K1bLOJD8iseyaRl8XN5Pfc=;
-        b=f+6CjMavY+u9bJm5tO6x5+2A1q3Lx2y1m+qTWNDzjd2tSQxv+BptcnYWcqr04E3Juc
-         texJpai/dC5ucjlKzRA749gTRf4SSyeosTN9A59VcoFk8FWJCSheJJKN+lZNvwGHE8TO
-         Xsf5EcXzNgzqzSEzJUXNkUKFrNOy3YtCXRpbtTtVNMqCdr+FiSrShHg251cE/Ip2hq7t
-         e/4C3XZADZV7wtT7EG5Ptv2dv8QpOU1k3XgWc7L/7Cr428PUOwdE3w//sZEBbKDgKHVJ
-         vkGV/i592erWdD5wY+dNGpeavJ5walpB2WCH0my4nWEt7Gzjuh9KjopQIuj3fpek7Hmr
-         FcJw==
-X-Gm-Message-State: AOAM532oPOI10w30+GtSfcshW7POI7dGUO7O1H+w7NeIy1+jjFfBQ0Kv
-        +P69o1yztzROSQORbaMsjxMRf77HMAl//i8J3BHwMw==
-X-Google-Smtp-Source: ABdhPJxbm5Y/wyGvHg385WeEq/rdxsg9pBpHshQlE18FxBQCwqaKoec7NnZjlIGraYbQyO4/D4SyyrqC1cHImBk2U4o=
-X-Received: by 2002:a67:328f:: with SMTP id y137mr16927749vsy.34.1628071210155;
- Wed, 04 Aug 2021 03:00:10 -0700 (PDT)
+        id S237736AbhHDL3z (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 4 Aug 2021 07:29:55 -0400
+Received: from foss.arm.com ([217.140.110.172]:59542 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S237630AbhHDL3u (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 4 Aug 2021 07:29:50 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4A3F813D5;
+        Wed,  4 Aug 2021 04:29:37 -0700 (PDT)
+Received: from e123427-lin.arm.com (unknown [10.57.38.165])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7084E3F719;
+        Wed,  4 Aug 2021 04:29:35 -0700 (PDT)
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     thierry.reding@gmail.com, bhelgaas@google.com, vidyas@nvidia.com,
+        kw@linux.com, Om Prakash Singh <omp@nvidia.com>,
+        helgaas@kernel.org, jonathanh@nvidia.com
+Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        linux-pci@vger.kernel.org, mmaddireddy@nvidia.com,
+        linux-tegra@vger.kernel.org, kthota@nvidia.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V3 0/5] Update pcie-tegra194 driver
+Date:   Wed,  4 Aug 2021 12:29:28 +0100
+Message-Id: <162807654994.14268.4256716042526607815.b4-ty@arm.com>
+X-Mailer: git-send-email 2.31.0
+In-Reply-To: <20210623100525.19944-1-omp@nvidia.com>
+References: <20210623100525.19944-1-omp@nvidia.com>
 MIME-Version: 1.0
-References: <20210701232728.23591-1-digetx@gmail.com> <20210701232728.23591-3-digetx@gmail.com>
- <CAPDyKFrtWDYJo_NjS8306Z9ykbg7XZ55jC9hKEBMGkcrx1=4kQ@mail.gmail.com> <1034458d-78e0-5036-e278-6fee5d0d75ac@gmail.com>
-In-Reply-To: <1034458d-78e0-5036-e278-6fee5d0d75ac@gmail.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Wed, 4 Aug 2021 11:59:33 +0200
-Message-ID: <CAPDyKFoafAk72Kw6X7626Niduaii0V5VM4dGSWmq+e3JTh7VRg@mail.gmail.com>
-Subject: Re: [PATCH v7 02/37] soc/tegra: pmc: Implement attach_dev() of power
- domain drivers
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, 2 Aug 2021 at 20:23, Dmitry Osipenko <digetx@gmail.com> wrote:
->
-> 02.08.2021 17:48, Ulf Hansson =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> ...
-> >> +       if (!list_empty(&genpd->child_links)) {
-> >> +               link =3D list_first_entry(&genpd->child_links, struct =
-gpd_link,
-> >> +                                       child_node);
-> >> +               core_genpd =3D link->parent;
-> >> +       } else {
-> >> +               core_genpd =3D genpd;
-> >> +       }
-> >
-> > This looks a bit odd to me. A genpd provider shouldn't need to walk
-> > these links as these are considered internals to genpd. Normally this
-> > needs lockings, etc.
-> >
-> > Why exactly do you need this?
->
-> We have a chain of PMC domain -> core domain, both domains are created
-> and liked together by this PMC driver. Devices are attached to either
-> PMC domain or to core domain. PMC domain doesn't handle the performance
-> changes, performance requests go down to the core domain.
+On Wed, 23 Jun 2021 15:35:20 +0530, Om Prakash Singh wrote:
+> Update pcie-tegra194 driver with bug fixing and cleanup
+> 
+> Changes from V2->V3
+>   Updated subject line from "PCI: tegra:" to  "PCI: tegra194:"
+> 
+> Changes from V1->V2
+>   PCI: tegra: Fix handling BME_CHGED event
+> 	- Update variable naming
+>   PCI: tegra: Fix MSI-X programming
+> 	- No change
+>   PCI: tegra: Disable interrupts before entering L2
+> 	- Rephrase the commit message
+>   PCI: tegra: Don't allow suspend when Tegra PCIe is in EP mode
+> 	- Update return value to -ENOTSUPP.
+>   PCI: tegra: Cleanup unused code
+> 	- No Change
+> 
+> [...]
 
-Did I get this right? The core domain is the parent to the PMC domain?
+Applied to pci/tegra194, thanks!
 
->
-> This is needed in order to translate the device's OPP into performance
-> state of the core domain, based on the domain to which device is attached=
-.
+[1/5] PCI: tegra194: Fix handling BME_CHGED event
+      https://git.kernel.org/lpieralisi/pci/c/ceb1412c1c
+[2/5] PCI: tegra194: Fix MSI-X programming
+      https://git.kernel.org/lpieralisi/pci/c/43537cf7e3
+[3/5] PCI: tegra194: Disable interrupts before entering L2
+      https://git.kernel.org/lpieralisi/pci/c/834c5cf2b5
+[4/5] PCI: tegra194: Don't allow suspend when Tegra PCIe is in EP mode
+      https://git.kernel.org/lpieralisi/pci/c/de2bbf2b71
+[5/5] PCI: tegra194: Cleanup unused code
+      https://git.kernel.org/lpieralisi/pci/c/f62750e691
 
-So, the PMC domain doesn't have an OPP table associated with it, but
-some of its attached devices may still have available OPPs, which
-should be managed through the parent domain (core domain). Correct?
-
-Is there a DT patch in the series that I can look at that shows how
-this is encoded?
-
-Hmm, I have the feeling that we should try to manage in some generic
-way in genpd, rather than having to deal with it here.
-
->
-> >> +
-> >> +       pd_opp_table =3D dev_pm_opp_get_opp_table(&core_genpd->dev);
-> >> +       if (IS_ERR(pd_opp_table)) {
-> >> +               dev_err(&genpd->dev, "failed to get OPP table of %s: %=
-pe\n",
-> >> +                       dev_name(&core_genpd->dev), pd_opp_table);
-> >> +               ret =3D PTR_ERR(pd_opp_table);
-> >> +               goto put_dev_opp;
-> >> +       }
-> >> +
-> >> +       pd_opp =3D dev_pm_opp_xlate_required_opp(opp_table, pd_opp_tab=
-le, opp);
-> >> +       if (IS_ERR(pd_opp)) {
-> >> +               dev_err(&genpd->dev,
-> >> +                       "failed to xlate required OPP for %luHz of %s:=
- %pe\n",
-> >> +                       rate, dev_name(dev), pd_opp);
-> >> +               ret =3D PTR_ERR(pd_opp);
-> >> +               goto put_pd_opp_table;
-> >> +       }
-> >> +
-> >> +       /*
-> >> +        * The initialized state will be applied by GENPD core on the =
-first
-> >> +        * RPM-resume of the device.  This means that drivers don't ne=
-ed to
-> >> +        * explicitly initialize performance state.
-> >> +        */
-> >> +       state =3D pm_genpd_opp_to_performance_state(&core_genpd->dev, =
-pd_opp);
-> >> +       gpd_data->rpm_pstate =3D state;
-> >
-> > Could the above be replaced with Rajendra's suggestion [1], which
-> > changes genpd to internally during attach, to set a default
-> > performance state when there is a "required-opp" specified in the
-> > device  node?
->
-> It's not a "static" performance level here, but any level depending on
-> h/w state left from bootloader and etc. The performance level
-> corresponds to the voltage of the core domain, hence we need to
-> initialize the voltage vote before device is resumed.
-
-Why not let the driver deal with this instead? It should be able to
-probe its device, no matter what state the bootloader has put the
-device into.
-
-To me, it sounds like a call to dev_pm_genpd_set_performance_state()
-(perhaps via dev_pm_opp_set_opp() or dev_pm_opp_set_rate()) from the
-driver itself, should be sufficient?
-
-I understand that it means the domain may change the OPP during boot,
-without respecting a vote for a device that has not been probed yet.
-But is there a problem with this?
-
-Kind regards
-Uffe
+Thanks,
+Lorenzo
