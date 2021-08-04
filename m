@@ -2,153 +2,173 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 428C4C432BE
-	for <linux-tegra@archiver.kernel.org>; Tue,  3 Aug 2021 23:09:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B4D4C4320A
+	for <linux-tegra@archiver.kernel.org>; Wed,  4 Aug 2021 10:00:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1E86060F70
-	for <linux-tegra@archiver.kernel.org>; Tue,  3 Aug 2021 23:09:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA62561029
+	for <linux-tegra@archiver.kernel.org>; Wed,  4 Aug 2021 10:00:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232802AbhHCXJX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 3 Aug 2021 19:09:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44310 "EHLO
+        id S237311AbhHDKAX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 4 Aug 2021 06:00:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49504 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232231AbhHCXJW (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 3 Aug 2021 19:09:22 -0400
-Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69D94C06175F;
-        Tue,  3 Aug 2021 16:09:10 -0700 (PDT)
-Received: by mail-pj1-x102d.google.com with SMTP id dw2-20020a17090b0942b0290177cb475142so6140917pjb.2;
-        Tue, 03 Aug 2021 16:09:10 -0700 (PDT)
+        with ESMTP id S237257AbhHDKAX (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 4 Aug 2021 06:00:23 -0400
+Received: from mail-vs1-xe2e.google.com (mail-vs1-xe2e.google.com [IPv6:2607:f8b0:4864:20::e2e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09D9DC061798
+        for <linux-tegra@vger.kernel.org>; Wed,  4 Aug 2021 03:00:11 -0700 (PDT)
+Received: by mail-vs1-xe2e.google.com with SMTP id j19so732284vso.0
+        for <linux-tegra@vger.kernel.org>; Wed, 04 Aug 2021 03:00:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=C3KYIJGdJToivyjORx5q82nqhu11jt/K74TDDXfOTGo=;
-        b=QIZwzTIiTszqKVgfitNRcGkm/ynh/6HIxfhVKQSYPBDy4QpjzJOX9rWVNgE4M4vVX8
-         dPZ055r+K5Xk3oLieWoRIMZSmpu2OkSfhbJkQOdCKJfQZtRbyqnApb65ej0qfoJp8Qvl
-         Xrj3bVtCHpBHM4OpaXfHIm7TdIBhGcFrEv+UeUWiuVFZTKGdm7ah3HmNvNlTWgFoHxyg
-         CZeFP3wJ2mLdYTBWrKDBkmaHKxJ5eJ4p4QQ4gomLdqGWIghBpEcqI8jV/2ZcGr2IqugI
-         9JimAum7yy6iq+tbFOYO2mSVL4RHOOkzBFOWprjT9FflJZc0ei6teglpCF4MtAsAm/2T
-         RRlA==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=KZQURuUvCTt1Dtzvc06E1K1bLOJD8iseyaRl8XN5Pfc=;
+        b=hLsLtCjOZNf8KRF5d/vdQ9oZuNAoT9Eg3LqcwzTR1WqqPznTHVqfZ7QC5CE4teJJOE
+         vJROdJstvA+WA5mLYhAzMDB1DIxd5ywVPl9xMCFBIh1nUiTgw4Ph+dkj8D9SzUXKA6fZ
+         sVa8WeDimt4VpSJ8VnXxHAmqb8yztQWS7mn+vpYKF1rfotJmVW8TYetCigqq/FVr7uNx
+         531UgugUZQaVtyfqyl9eLDl7+/Lms+2Cc9uwWWjTqJfI79kJFFB8mZjP069zbQcQniDe
+         1bMS/4FMCNWGqUH1zGD6cnkYxxDtYopR7XSSzLLSqOsWrvu8ZUZz5EusoKUKcEpo00ps
+         0LAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=C3KYIJGdJToivyjORx5q82nqhu11jt/K74TDDXfOTGo=;
-        b=s7Mq9BAWmEQ5rO+tgtI0l3BsRYAWrWn8CB8MwHZU8ovqYJrZjfxfijJyMao61Q5Vm6
-         S0LP1mLckp6b9S2r+FQsplpqOBjsKYLzL4qvFuSfSvAR8xzPvNkQYLU91eijJLXRWNX8
-         nyuTsSEPJ+m6hnQZgBFXGODHEAntDFKojQAikw4DDlcDEnv8wXSZXYLVgmS5e/8qxTfZ
-         fdAkKvcMT1EuW8/5aOEbz3UrksXhQtYkepy/7A48jCYTHuQqAWD/1QNY8NzVHx70mj5m
-         cEU8DqwGHjxc8t4hENN2uWxDjt0/sCXu42JcKrlztlys4Y1I7wWV5b74/OEMdgEeXfgx
-         bgRw==
-X-Gm-Message-State: AOAM532YpxIQMSgCzp6IZzSOWVVVuZqwHHzf416LGX3EWGImSpzON8Pc
-        HV+MIZwgILQVlNGWi7YUtIA=
-X-Google-Smtp-Source: ABdhPJykE5uxGG4ltXmtBgNgS89quz1IZwLAwmx8DoUUclEyGv+Lsan3bQfl848E+zaQYCp6lRAn5A==
-X-Received: by 2002:a65:55c9:: with SMTP id k9mr589617pgs.262.1628032149840;
-        Tue, 03 Aug 2021 16:09:09 -0700 (PDT)
-Received: from sol (106-69-177-173.dyn.iinet.net.au. [106.69.177.173])
-        by smtp.gmail.com with ESMTPSA id d15sm181821pgj.84.2021.08.03.16.09.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Aug 2021 16:09:09 -0700 (PDT)
-Date:   Wed, 4 Aug 2021 07:09:02 +0800
-From:   Kent Gibson <warthog618@gmail.com>
-To:     Dipen Patel <dipenp@nvidia.com>
-Cc:     Jon Hunter <jonathanh@nvidia.com>, thierry.reding@gmail.com,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linus.walleij@linaro.org,
-        bgolaszewski@baylibre.com, devicetree@vger.kernel.org,
-        linux-doc@vger.kernel.org, robh+dt@kernel.org
-Subject: Re: [RFC 08/11] gpiolib: cdev: Add hardware timestamp clock type
-Message-ID: <20210803230902.GA7730@sol>
-References: <20210625235532.19575-1-dipenp@nvidia.com>
- <20210625235532.19575-9-dipenp@nvidia.com>
- <7e49e6a9-bd7c-1b97-50e6-bc803addc27f@nvidia.com>
- <65bf01e1-66e1-7eec-0052-4d707f4a3f6b@nvidia.com>
- <8d3257f3-54b1-e658-245d-3a070aba44c4@nvidia.com>
- <f0d8da75-6e31-5432-6909-8eab6960b787@nvidia.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=KZQURuUvCTt1Dtzvc06E1K1bLOJD8iseyaRl8XN5Pfc=;
+        b=f+6CjMavY+u9bJm5tO6x5+2A1q3Lx2y1m+qTWNDzjd2tSQxv+BptcnYWcqr04E3Juc
+         texJpai/dC5ucjlKzRA749gTRf4SSyeosTN9A59VcoFk8FWJCSheJJKN+lZNvwGHE8TO
+         Xsf5EcXzNgzqzSEzJUXNkUKFrNOy3YtCXRpbtTtVNMqCdr+FiSrShHg251cE/Ip2hq7t
+         e/4C3XZADZV7wtT7EG5Ptv2dv8QpOU1k3XgWc7L/7Cr428PUOwdE3w//sZEBbKDgKHVJ
+         vkGV/i592erWdD5wY+dNGpeavJ5walpB2WCH0my4nWEt7Gzjuh9KjopQIuj3fpek7Hmr
+         FcJw==
+X-Gm-Message-State: AOAM532oPOI10w30+GtSfcshW7POI7dGUO7O1H+w7NeIy1+jjFfBQ0Kv
+        +P69o1yztzROSQORbaMsjxMRf77HMAl//i8J3BHwMw==
+X-Google-Smtp-Source: ABdhPJxbm5Y/wyGvHg385WeEq/rdxsg9pBpHshQlE18FxBQCwqaKoec7NnZjlIGraYbQyO4/D4SyyrqC1cHImBk2U4o=
+X-Received: by 2002:a67:328f:: with SMTP id y137mr16927749vsy.34.1628071210155;
+ Wed, 04 Aug 2021 03:00:10 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <f0d8da75-6e31-5432-6909-8eab6960b787@nvidia.com>
+References: <20210701232728.23591-1-digetx@gmail.com> <20210701232728.23591-3-digetx@gmail.com>
+ <CAPDyKFrtWDYJo_NjS8306Z9ykbg7XZ55jC9hKEBMGkcrx1=4kQ@mail.gmail.com> <1034458d-78e0-5036-e278-6fee5d0d75ac@gmail.com>
+In-Reply-To: <1034458d-78e0-5036-e278-6fee5d0d75ac@gmail.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Wed, 4 Aug 2021 11:59:33 +0200
+Message-ID: <CAPDyKFoafAk72Kw6X7626Niduaii0V5VM4dGSWmq+e3JTh7VRg@mail.gmail.com>
+Subject: Re: [PATCH v7 02/37] soc/tegra: pmc: Implement attach_dev() of power
+ domain drivers
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Aug 03, 2021 at 03:51:31PM -0700, Dipen Patel wrote:
-> 
-> On 8/3/21 9:42 AM, Jon Hunter wrote:
+On Mon, 2 Aug 2021 at 20:23, Dmitry Osipenko <digetx@gmail.com> wrote:
+>
+> 02.08.2021 17:48, Ulf Hansson =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> ...
+> >> +       if (!list_empty(&genpd->child_links)) {
+> >> +               link =3D list_first_entry(&genpd->child_links, struct =
+gpd_link,
+> >> +                                       child_node);
+> >> +               core_genpd =3D link->parent;
+> >> +       } else {
+> >> +               core_genpd =3D genpd;
+> >> +       }
 > >
-> > On 30/07/2021 03:33, Dipen Patel wrote:
-> >>
-> >> On 7/9/21 1:30 AM, Jon Hunter wrote:
-> >>> On 26/06/2021 00:55, Dipen Patel wrote:
-> >>>> This patch adds new clock type for the GPIO controller which can
-> >>>> timestamp gpio lines using hardware means. To expose such
-> >>>> functionalities to the userspace, code has been added in this patch
-> >>>> where during line create call, it checks for new clock type and if
-> >>>> requested, calls hardware timestamp related API from gpiolib.c.
-> >>>> During line change event, it retrieves timestamp in nano seconds by
-> >>>> calling gpiod_get_hw_timestamp API from gpiolib.c. At the line release,
-> >>>> it disables this functionality by calling gpiod_hw_timestamp_control.
-> >>>>
-> >>>> Signed-off-by: Dipen Patel <dipenp@nvidia.com>
-> >>>> ---
-> >>>>   drivers/gpio/gpiolib-cdev.c | 65 +++++++++++++++++++++++++++++++++++--
-> >>>>   include/uapi/linux/gpio.h   |  1 +
-> >>>>   2 files changed, 64 insertions(+), 2 deletions(-)
-> >>>>
-> >>>> diff --git a/drivers/gpio/gpiolib-cdev.c b/drivers/gpio/gpiolib-cdev.c
-> >>>> index 1631727bf0da..9f98c727e937 100644
-> >>>> --- a/drivers/gpio/gpiolib-cdev.c
-> >>>> +++ b/drivers/gpio/gpiolib-cdev.c
-> >>>> @@ -518,6 +518,7 @@ struct linereq {
-> >>>>        GPIO_V2_LINE_DRIVE_FLAGS | \
-> >>>>        GPIO_V2_LINE_EDGE_FLAGS | \
-> >>>>        GPIO_V2_LINE_FLAG_EVENT_CLOCK_REALTIME | \
-> >>>> +     GPIO_V2_LINE_FLAG_EVENT_CLOCK_HARDWARE | \
-> >>>>        GPIO_V2_LINE_BIAS_FLAGS)
-> >>>>     static void linereq_put_event(struct linereq *lr,
-> >>>> @@ -540,9 +541,20 @@ static void linereq_put_event(struct linereq *lr,
-> >>>>     static u64 line_event_timestamp(struct line *line)
-> >>>>   {
-> >>>> +    bool block;
-> >>>> +
-> >>>>       if (test_bit(FLAG_EVENT_CLOCK_REALTIME, &line->desc->flags))
-> >>>>           return ktime_get_real_ns();
-> >>>>   +    if (test_bit(FLAG_EVENT_CLOCK_HARDWARE, &line->desc->flags)) {
-> >>>> +        if (irq_count())
-> >>>> +            block = false;
-> >>>> +        else
-> >>>> +            block = true;
-> >>>> +
-> >>>> +        return gpiod_get_hw_timestamp(line->desc, block);
-> >>>> +    }
-> >>>> +
-> >>>>       return ktime_get_ns();
-> >>>>   }
-> >>>
-> >>> Looking at line_event_timestamp() and the callers of this function, it
-> >>> appears that this should always return nanoseconds. Does
-> >>> gpiod_get_hw_timestamp() return nanoseconds?
-> >> Yes, it returns in ns to align with line_event_timestamp.
+> > This looks a bit odd to me. A genpd provider shouldn't need to walk
+> > these links as these are considered internals to genpd. Normally this
+> > needs lockings, etc.
 > >
-> >
-> > It might be worth updating the function name to gpiod_get_hw_timestamp_ns() so that this is clear.
-> Wouldn't be sufficient to right into its description rather embed in API name?
-> >
+> > Why exactly do you need this?
+>
+> We have a chain of PMC domain -> core domain, both domains are created
+> and liked together by this PMC driver. Devices are attached to either
+> PMC domain or to core domain. PMC domain doesn't handle the performance
+> changes, performance requests go down to the core domain.
 
-Adding a suffix identifying the timestamp resolution to variable and
-function names is pretty standard in the kernel.
-It makes the code easier to read as you don't have to keep checking the
-documentation.
+Did I get this right? The core domain is the parent to the PMC domain?
 
-Cheers,
-Kent.
+>
+> This is needed in order to translate the device's OPP into performance
+> state of the core domain, based on the domain to which device is attached=
+.
+
+So, the PMC domain doesn't have an OPP table associated with it, but
+some of its attached devices may still have available OPPs, which
+should be managed through the parent domain (core domain). Correct?
+
+Is there a DT patch in the series that I can look at that shows how
+this is encoded?
+
+Hmm, I have the feeling that we should try to manage in some generic
+way in genpd, rather than having to deal with it here.
+
+>
+> >> +
+> >> +       pd_opp_table =3D dev_pm_opp_get_opp_table(&core_genpd->dev);
+> >> +       if (IS_ERR(pd_opp_table)) {
+> >> +               dev_err(&genpd->dev, "failed to get OPP table of %s: %=
+pe\n",
+> >> +                       dev_name(&core_genpd->dev), pd_opp_table);
+> >> +               ret =3D PTR_ERR(pd_opp_table);
+> >> +               goto put_dev_opp;
+> >> +       }
+> >> +
+> >> +       pd_opp =3D dev_pm_opp_xlate_required_opp(opp_table, pd_opp_tab=
+le, opp);
+> >> +       if (IS_ERR(pd_opp)) {
+> >> +               dev_err(&genpd->dev,
+> >> +                       "failed to xlate required OPP for %luHz of %s:=
+ %pe\n",
+> >> +                       rate, dev_name(dev), pd_opp);
+> >> +               ret =3D PTR_ERR(pd_opp);
+> >> +               goto put_pd_opp_table;
+> >> +       }
+> >> +
+> >> +       /*
+> >> +        * The initialized state will be applied by GENPD core on the =
+first
+> >> +        * RPM-resume of the device.  This means that drivers don't ne=
+ed to
+> >> +        * explicitly initialize performance state.
+> >> +        */
+> >> +       state =3D pm_genpd_opp_to_performance_state(&core_genpd->dev, =
+pd_opp);
+> >> +       gpd_data->rpm_pstate =3D state;
+> >
+> > Could the above be replaced with Rajendra's suggestion [1], which
+> > changes genpd to internally during attach, to set a default
+> > performance state when there is a "required-opp" specified in the
+> > device  node?
+>
+> It's not a "static" performance level here, but any level depending on
+> h/w state left from bootloader and etc. The performance level
+> corresponds to the voltage of the core domain, hence we need to
+> initialize the voltage vote before device is resumed.
+
+Why not let the driver deal with this instead? It should be able to
+probe its device, no matter what state the bootloader has put the
+device into.
+
+To me, it sounds like a call to dev_pm_genpd_set_performance_state()
+(perhaps via dev_pm_opp_set_opp() or dev_pm_opp_set_rate()) from the
+driver itself, should be sufficient?
+
+I understand that it means the domain may change the OPP during boot,
+without respecting a vote for a device that has not been probed yet.
+But is there a problem with this?
+
+Kind regards
+Uffe
