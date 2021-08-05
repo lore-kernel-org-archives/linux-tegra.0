@@ -2,124 +2,65 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 047F6C432BE
-	for <linux-tegra@archiver.kernel.org>; Thu,  5 Aug 2021 09:42:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C72FDC4338F
+	for <linux-tegra@archiver.kernel.org>; Thu,  5 Aug 2021 10:43:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D185060E96
-	for <linux-tegra@archiver.kernel.org>; Thu,  5 Aug 2021 09:42:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A5ECA6105A
+	for <linux-tegra@archiver.kernel.org>; Thu,  5 Aug 2021 10:43:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239309AbhHEJnA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 5 Aug 2021 05:43:00 -0400
-Received: from foss.arm.com ([217.140.110.172]:41868 "EHLO foss.arm.com"
+        id S240430AbhHEKnh (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 5 Aug 2021 06:43:37 -0400
+Received: from foss.arm.com ([217.140.110.172]:42568 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234746AbhHEJm7 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 5 Aug 2021 05:42:59 -0400
+        id S240388AbhHEKng (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 5 Aug 2021 06:43:36 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 342BA6D;
-        Thu,  5 Aug 2021 02:42:45 -0700 (PDT)
-Received: from lpieralisi (e121166-lin.cambridge.arm.com [10.1.196.255])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7B7A73F719;
-        Thu,  5 Aug 2021 02:42:42 -0700 (PDT)
-Date:   Thu, 5 Aug 2021 10:42:37 +0100
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C06E81FB;
+        Thu,  5 Aug 2021 03:43:21 -0700 (PDT)
+Received: from e123427-lin.arm.com (unknown [10.57.41.33])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 438F63F719;
+        Thu,  5 Aug 2021 03:43:20 -0700 (PDT)
 From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Baruch Siach <baruch@tkos.co.il>
-Cc:     Rob Herring <robh@kernel.org>,
-        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Selvam Sathappan Periakaruppan <speriaka@codeaurora.org>,
-        Kathiravan T <kathirav@codeaurora.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Robert Marko <robert.marko@sartura.hr>,
-        devicetree@vger.kernel.org, linux-phy@lists.infradead.org,
-        linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 0/6] arm64: IPQ6018 PCIe support
-Message-ID: <20210805094237.GA18330@lpieralisi>
-References: <cover.1620203062.git.baruch@tkos.co.il>
- <87o8acxtqm.fsf@tarshish>
+To:     bhelgaas@google.com,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        jonathanh@nvidia.com, thierry.reding@gmail.com, robh@kernel.org
+Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] PCI: tegra: Fix OF node reference leak
+Date:   Thu,  5 Aug 2021 11:43:14 +0100
+Message-Id: <162816017970.17991.9169417632084960512.b4-ty@arm.com>
+X-Mailer: git-send-email 2.31.0
+In-Reply-To: <55b11e9a7fa2987fbc0869d68ae59888954d65e2.1620148539.git.christophe.jaillet@wanadoo.fr>
+References: <55b11e9a7fa2987fbc0869d68ae59888954d65e2.1620148539.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87o8acxtqm.fsf@tarshish>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, Aug 05, 2021 at 09:58:57AM +0300, Baruch Siach wrote:
-> Hi Lorenzo, Rob, Krzysztof,
+On Tue, 4 May 2021 19:17:42 +0200, Christophe JAILLET wrote:
+> Commit 9e38e690ace3 ("PCI: tegra: Fix OF node reference leak") has fixed
+> some node reference leaks in this function but missed some of them.
 > 
-> On Wed, May 05 2021, Baruch Siach wrote:
-> > This series adds support for the single PCIe lane on IPQ6018 SoCs. The code is 
-> > ported from downstream Codeaurora v5.4 kernel. The main difference from 
-> > downstream code is the split of PCIe registers configuration from .init to 
-> > .post_init, since it requires phy_power_on().
-> >
-> > Tested on IPQ6010 based hardware.
+> In fact, having 'port' referenced in the 'rp' structure is not enough to
+> prevent the leak, until 'rp' is actually added in the 'pcie->ports' list.
 > 
-> It's been 3 months with no comment. Would you consider applying the dwc
-> part (patches #1 and #2) for the v5.15 merge window?
-> 
-> I tested the patches here successfully on top of v5.14-rc4.
+> Add the missing 'goto err_node_put' accordingly.
 
-You need an ACK from the respective drivers maintainers. We look into
-overall pci/controller drivers structure and common code, it is up
-to drivers maintainers to review and ACK your patches, I will certainly
-pick them up when that's done.
+Applied to pci/tegra, thanks!
+
+[1/3] PCI: tegra: Fix OF node reference leak
+      https://git.kernel.org/lpieralisi/pci/c/eff21f5da3
+[2/3] PCI: tegra: Use 'seq_puts' instead of 'seq_printf'
+      https://git.kernel.org/lpieralisi/pci/c/804b2b6f2a
+[3/3] PCI: tegra: make const array err_msg static
+      https://git.kernel.org/lpieralisi/pci/c/fd44e8efcc
 
 Thanks,
 Lorenzo
-
-> Thanks,
-> baruch
-> 
-> >
-> > Changes in v2:
-> >
-> >   * Add patch moving GEN3_RELATED macros to a common header
-> >
-> >   * Drop ATU configuration from pcie-qcom
-> >
-> >   * Remove local definition of common registers
-> >
-> >   * Use bulk clk and reset APIs
-> >
-> >   * Remove msi-parent from device-tree
-> >
-> > Baruch Siach (3):
-> >   PCI: dwc: tegra: move GEN3_RELATED DBI register to common header
-> >   dt-bindings: phy: qcom,qmp: Add IPQ60xx PCIe PHY bindings
-> >   dt-bindings: pci: qcom: Document PCIe bindings for IPQ6018 SoC
-> >
-> > Selvam Sathappan Periakaruppan (3):
-> >   PCI: qcom: add support for IPQ60xx PCIe controller
-> >   phy: qcom-qmp: add QMP V2 PCIe PHY support for ipq60xx
-> >   arm64: dts: ipq6018: Add pcie support
-> >
-> >  .../devicetree/bindings/pci/qcom,pcie.txt     |  24 +++
-> >  .../devicetree/bindings/phy/qcom,qmp-phy.yaml |  25 +++
-> >  arch/arm64/boot/dts/qcom/ipq6018.dtsi         |  99 ++++++++++++
-> >  drivers/pci/controller/dwc/pcie-designware.h  |   7 +
-> >  drivers/pci/controller/dwc/pcie-qcom.c        | 150 ++++++++++++++++++
-> >  drivers/pci/controller/dwc/pcie-tegra194.c    |   6 -
-> >  drivers/phy/qualcomm/phy-qcom-qmp.c           | 147 +++++++++++++++++
-> >  drivers/phy/qualcomm/phy-qcom-qmp.h           | 132 +++++++++++++++
-> >  8 files changed, 584 insertions(+), 6 deletions(-)
-> 
-> 
-> -- 
->                                                      ~. .~   Tk Open Systems
-> =}------------------------------------------------ooO--U--Ooo------------{=
->    - baruch@tkos.co.il - tel: +972.52.368.4656, http://www.tkos.co.il -
