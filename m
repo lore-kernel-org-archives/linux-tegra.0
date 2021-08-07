@@ -2,484 +2,468 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+X-Spam-Status: No, score=-20.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F562C4320E
-	for <linux-tegra@archiver.kernel.org>; Fri,  6 Aug 2021 21:14:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8425EC4320A
+	for <linux-tegra@archiver.kernel.org>; Sat,  7 Aug 2021 02:32:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 86510611C3
-	for <linux-tegra@archiver.kernel.org>; Fri,  6 Aug 2021 21:14:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C37961184
+	for <linux-tegra@archiver.kernel.org>; Sat,  7 Aug 2021 02:32:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245199AbhHFVO7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 6 Aug 2021 17:14:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33882 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235354AbhHFVO7 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 6 Aug 2021 17:14:59 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 7A18461186;
-        Fri,  6 Aug 2021 21:14:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1628284482;
-        bh=zCZOV6mtGH/8CwtGHIxPWriGp90nAg/fdRfU3cQVJTo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=VEjl0vH1Og/TB3UWFN7lAnVkMIrMx4DWZoBmFAA6Slav7l24Oj7t3SLrSsKOuufOP
-         0x5jaNcLM3zn+O3XYmN1bhhHRX58VsnC03JGsDdICd0YoG4qORQrsgA2dNoj86cyKb
-         2CSV1+mc5pLcVEoE71GfAyue+Dj9wGSf7pqa84tNXxfKB9pk30oMRcvBW/8IIUxvOV
-         /UGGl7Zenw9rAEi7ifqkVVJwAAbWY9XXBXHqebkTmqKhINhYtImaxEk+apqGdabTng
-         UT3Y7k0kqZek72nepUbjMVS4KZsXfVgwkr+yU+nxy2N6t/HPtNKJOQ46H/4zEv5w3L
-         mVIrg0myfFCjA==
-Received: by earth.universe (Postfix, from userid 1000)
-        id 7E5F83C0C99; Fri,  6 Aug 2021 23:14:40 +0200 (CEST)
-Date:   Fri, 6 Aug 2021 23:14:40 +0200
-From:   Sebastian Reichel <sre@kernel.org>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Thierry Reding <treding@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Mark Brown <broonie@kernel.org>,
-        Peter Chen <peter.chen@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Felipe Balbi <balbi@kernel.org>,
-        David Heidelberg <david@ixit.cz>, devicetree@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v6 09/12] power: supply: smb347-charger: Implement USB
- VBUS regulator
-Message-ID: <20210806211440.fzgy6a33cpx6rvdn@earth.universe>
-References: <20210731173842.19643-1-digetx@gmail.com>
- <20210731173842.19643-10-digetx@gmail.com>
+        id S230053AbhHGCcU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 6 Aug 2021 22:32:20 -0400
+Received: from mail-bn8nam12on2077.outbound.protection.outlook.com ([40.107.237.77]:48065
+        "EHLO NAM12-BN8-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S229943AbhHGCcT (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Fri, 6 Aug 2021 22:32:19 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=eXf5mLgay0WI+W3m2RWorN/MS253UUSA8S9HmR4fROAJqZFknHH2oBn27IKQNlk+yAB4njoJiCF3MSZcC1UzuBwLgRBaUVKy7kCdW33+4mZ8IeWrH6Rj2Z+yvUkT4FSmj8Z0mqpTyNAiyFL06SWnb2sUAQiu/ft/+o0cjty6slhlI7iXAk4K/H32R5in9yvnE269Np97gwooAK2rXQeLeTl7AZ2QrYTzXPXoJ1R5KczmzwU0almC8LjuvPvbZWl+r05I1zmzsLitPpaygSoXQrDCPx5dmRqIozWb/PBX+n11c90w6f4U8xNz7mlCLa2sYLhWFqCjg9HBuW+JsUtkow==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Va4CkV9/EN4UccB4qoVFjhpxDY0VY+XTycDWqGWKZcI=;
+ b=QgyF+guD8Pf4ztl83Qrwk/IJZ0YbM2Fw5U+zY4roq+Uu4SaocEm9dUWlvZIW1a5+N1l5z6qdctVReyBT+UmdnHFTa45UjrwIFn457/cVfZoBqUxpqD9rm9EfAXEBEeFRBX/i6NpWhXkzO4BOc9nxoAURKEVF3FsO8glhZsKuW/v/AsEpMou8VM3W+gQ95uwj5lgZb1x7S36VPacDtDpa1mG9Zn0jCwQqS/OnXCstiCLsKXleui+/wDYJ84mdIyB4U1hMmUUEcarx1XPn/5DG2fDdFDg73LzGNW0sXZ0fLD3VOhrBZnwY6FuJ7SIsUpuSBeZW2/4gI52XrspnQxTIjw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.112.34) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Va4CkV9/EN4UccB4qoVFjhpxDY0VY+XTycDWqGWKZcI=;
+ b=uP4E1I9oM8fzMudryFo+c3C8ivw/wE4OqeZhgs1ThuyCrUzu3xoLH7EMn4ltoF1W8S5sdW59GWBwnW8pGZsLAI3HDGyjKRq708cSHd+sSBCru0kN8a6k6caisO39Nm+DL4mGJYWyg1Gw0Le4WbLpVw1DvxIXDnxb8hwI9DXt49ClJakJanMX3WRATJh3M61dOWONBI9Pwv65ZjSmkU9oXHVmWhTSPNaeTSZ3aw7qu5BsHTLRvVJJAuaf3RitfsBnW4EaDSh7S0O+z+8wNkj3itMIme5hd33KlcrRxX+W4LYcdfUNK3MA0a+azFwsTJb9ZHYMwPzh0x4UujTrk7Znyw==
+Received: from MWHPR2001CA0017.namprd20.prod.outlook.com
+ (2603:10b6:301:15::27) by MN2PR12MB4639.namprd12.prod.outlook.com
+ (2603:10b6:208:a4::31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4394.15; Sat, 7 Aug
+ 2021 02:31:58 +0000
+Received: from CO1NAM11FT003.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:301:15:cafe::16) by MWHPR2001CA0017.outlook.office365.com
+ (2603:10b6:301:15::27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4394.15 via Frontend
+ Transport; Sat, 7 Aug 2021 02:31:58 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.34)
+ smtp.mailfrom=nvidia.com; vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.112.34 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.112.34; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (216.228.112.34) by
+ CO1NAM11FT003.mail.protection.outlook.com (10.13.175.93) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.4394.16 via Frontend Transport; Sat, 7 Aug 2021 02:31:58 +0000
+Received: from [172.17.173.69] (172.20.187.6) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Sat, 7 Aug
+ 2021 02:31:52 +0000
+Subject: Re: [RFC 03/11] hte: Add tegra194 HTE kernel provider
+To:     Kent Gibson <warthog618@gmail.com>
+CC:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>, <linus.walleij@linaro.org>,
+        <bgolaszewski@baylibre.com>, <devicetree@vger.kernel.org>,
+        <linux-doc@vger.kernel.org>, <robh+dt@kernel.org>
+References: <20210625235532.19575-1-dipenp@nvidia.com>
+ <20210625235532.19575-4-dipenp@nvidia.com> <20210701142156.GA34285@sol>
+ <52768891-6c01-7588-e557-5c9eae5375b6@nvidia.com>
+ <20210731154323.GA24906@sol>
+X-Nvconfidentiality: public
+From:   Dipen Patel <dipenp@nvidia.com>
+Message-ID: <1ff6df66-9895-bd42-322a-515327f30366@nvidia.com>
+Date:   Fri, 6 Aug 2021 19:41:09 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="ephl3snswcksh5tx"
-Content-Disposition: inline
-In-Reply-To: <20210731173842.19643-10-digetx@gmail.com>
+In-Reply-To: <20210731154323.GA24906@sol>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Originating-IP: [172.20.187.6]
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 1db1894b-ef9e-4cac-5834-08d9594b87ba
+X-MS-TrafficTypeDiagnostic: MN2PR12MB4639:
+X-Microsoft-Antispam-PRVS: <MN2PR12MB4639F5B23C9B086252AAFFADAEF49@MN2PR12MB4639.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: S19C6W1F5KKqYJBdsXnElbW14ZFNC3RuzssjX+8mIos8LFcla3dTOrEEhe0d3IJp0pPT05jF3reaDbKnrK25G/N+Og9nuZj1fu60hi1zGWpybfvD7DZveWI2TROQAKtVSO5KtgKnZ06K6d8mzmVxkVvFtFILX/kNWrdTHd1UJt36TlyJ/nozvGowrFMXA9ouU+HL0WUcGZwXS6p2EGgZ7O61wt7sDPIPxmJE5vtk+lY/ThKoxOqQfeAbCsfBrDdQbZVmsQBHNENfhONRAVecgLUbrbraUwGRwhMa7FmSvIAlbeZYsCwrJa9Cyeh+7J2WrGHYYTj/xDllYe/NmmONl112JbzogNAO3HMib4jY30pmMKDDMVRRvcexetW0haixnMM1tE0Op0c4ZLq9zDc6rmR62XAmsK5t6lOxECPM/Kbw81dGK+MGMrf1WfatwvvobxsKS+90ZHEZmsEO8xpmTZ4MRAvu9Pi1aTeDWK4/GrefvSd0CAa5uC9mKUeteilP2EtMjLArmhHaa8TH7dcsO+vNmHk+8QOruxpNnhcnq6tR7UfS5zz5eoq/1bK/dpXk5ki4R5803u9oFqMtIH+f7t0SXxzGnELRYT4N2XZDsEcTOJN7CqOIPSUt5EvaL/M1K2qtBTx536nVGP9oZOQ6jfew7STyJr4XsvjGl4xK08ukiyQldIP9eITj/aGF6CEJ5DunM5raS5avlNhbJ2daNg/9//tbb6M6TfS4lGwHC8s=
+X-Forefront-Antispam-Report: CIP:216.228.112.34;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid03.nvidia.com;CAT:NONE;SFS:(4636009)(39860400002)(346002)(136003)(396003)(376002)(46966006)(36840700001)(426003)(53546011)(8936002)(2616005)(36906005)(7636003)(31696002)(31686004)(16576012)(316002)(82740400003)(336012)(54906003)(83380400001)(86362001)(26005)(6916009)(30864003)(7416002)(4326008)(70206006)(70586007)(82310400003)(36860700001)(16526019)(8676002)(47076005)(356005)(5660300002)(6666004)(36756003)(186003)(2906002)(478600001)(43740500002);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Aug 2021 02:31:58.3062
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1db1894b-ef9e-4cac-5834-08d9594b87ba
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.34];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT003.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4639
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---ephl3snswcksh5tx
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 7/31/21 8:43 AM, Kent Gibson wrote:
+> On Wed, Jul 28, 2021 at 04:59:08PM -0700, Dipen Patel wrote:
+>> Thanks Kent for the review comment. My responses inline.
+>>
+>> On 7/1/21 7:21 AM, Kent Gibson wrote:
+>>> On Fri, Jun 25, 2021 at 04:55:24PM -0700, Dipen Patel wrote:
+>>>> Tegra194 device has multiple HTE instances also known as GTE
+>>>> (Generic hardware Timestamping Engine) which can timestamp subset of
+>>>> SoC lines/signals. This provider driver focuses on IRQ and GPIO lines
+>>>> and exposes timestamping ability on those lines to the consumers
+>>>> through HTE subsystem.
+>>>>
+>>>> Also, with this patch, added:
+>>>> - documentation about this provider and its capabilities at
+>>>> Documentation/hte.
+>>>> - Compilation support in Makefile and Kconfig
+>>>>
+>>>> Signed-off-by: Dipen Patel <dipenp@nvidia.com>
+>>>> ---
+>>>>  Documentation/hte/index.rst        |  21 ++
+>>>>  Documentation/hte/tegra194-hte.rst |  65 ++++
+>>>>  Documentation/index.rst            |   1 +
+>>>>  drivers/hte/Kconfig                |  12 +
+>>>>  drivers/hte/Makefile               |   1 +
+>>>>  drivers/hte/hte-tegra194.c         | 554 +++++++++++++++++++++++++++++
+>>>>  6 files changed, 654 insertions(+)
+>>>>  create mode 100644 Documentation/hte/index.rst
+>>>>  create mode 100644 Documentation/hte/tegra194-hte.rst
+>>>>  create mode 100644 drivers/hte/hte-tegra194.c
+>>>>
+>>>> diff --git a/Documentation/hte/index.rst b/Documentation/hte/index.rst
+>>>> new file mode 100644
+>>>> index 000000000000..f311ebec6b47
+>>>> --- /dev/null
+>>>> +++ b/Documentation/hte/index.rst
+>>>> @@ -0,0 +1,21 @@
+>>>> +.. SPDX-License-Identifier: GPL-2.0
+>>>> +
+>>>> +============================================
+>>>> +The Linux Hardware Timestamping Engine (HTE)
+>>>> +============================================
+>>>> +
+>>>> +The HTE Subsystem
+>>>> +=================
+>>>> +
+>>>> +.. toctree::
+>>>> +   :maxdepth: 1
+>>>> +
+>>>> +   hte
+>>>> +
+>>>> +HTE Tegra Provider
+>>>> +==================
+>>>> +
+>>>> +.. toctree::
+>>>> +   :maxdepth: 1
+>>>> +
+>>>> +   tegra194-hte
+>>>> \ No newline at end of file
+>>>> diff --git a/Documentation/hte/tegra194-hte.rst b/Documentation/hte/tegra194-hte.rst
+>>>> new file mode 100644
+>>>> index 000000000000..c23eaafcf080
+>>>> --- /dev/null
+>>>> +++ b/Documentation/hte/tegra194-hte.rst
+>>>> @@ -0,0 +1,65 @@
+>>>> +HTE Kernel provider driver
+>>>> +==========================
+>>>> +
+>>>> +Description
+>>>> +-----------
+>>>> +The Nvidia tegra194 chip has many hardware timestamping engine (HTE) instances
+>>>> +known as generic timestamping engine (GTE). This provider driver implements
+>>>> +two GTE instances 1) GPIO GTE and 2) IRQ GTE. The both GTEs instances get the
+>>>> +timestamp from the system counter TSC which has 31.25MHz clock rate, and the
+>>>> +driver converts clock tick rate to nano seconds before storing it as timestamp
+>>>> +value.
+>>>> +
+>>>> +GPIO GTE
+>>>> +--------
+>>>> +
+>>>> +This GTE instance help timestamps GPIO in real time, for that to happen GPIO
+>>>> +needs to be configured as input and IRQ needs to ba enabled as well. The only
+>>>> +always on (AON) gpio controller instance supports timestamping GPIOs in
+>>>> +realtime and it has 39 GPIO lines. There is also a dependency on AON GPIO
+>>>> +controller as it requires very specific bits to be set in GPIO config register.
+>>>> +It in a way creates cyclic dependency between GTE and GPIO controller. The GTE
+>>>> +GPIO functionality is accessed from the GPIOLIB. It can support both the in
+>>>> +kernel and userspace consumers. In the later case, requests go through GPIOLIB
+>>>> +CDEV framework. The below APIs are added in GPIOLIB framework to access HTE
+>>>> +subsystem and GPIO GTE for in kernel consumers.
+>>>> +
+>>>> +.. c:function:: int gpiod_hw_timestamp_control( struct gpio_desc *desc, bool enable )
+>>>> +
+>>>> +	To enable HTE on given GPIO line.
+>>>> +
+>>>> +.. c:function:: u64 gpiod_get_hw_timestamp( struct gpio_desc *desc, bool block )
+>>>> +
+>>>> +	To retrieve hardwre timestamp in nano seconds.
+>>>> +
+>>>> +.. c:function:: bool gpiod_is_hw_timestamp_enabled( const struct gpio_desc *desc )
+>>>> +
+>>>> +	To query if HTE is enabled on the given GPIO.
+>>>> +
+>>>> +There is hte-tegra194-gpio-test.c, located in ``drivers/hte/`` directory, test
+>>>> +driver which demonstrates above APIs for the Jetson AGX platform. For userspace
+>>>> +consumers, GPIO_V2_LINE_FLAG_EVENT_CLOCK_HARDWARE flag must be specifed during
+>>>> +IOCTL calls, refer ``tools/gpio/gpio-event-mon.c``, which returns the timestamp
+>>>> +in nano second.
+>>>> +
+>>> <snip>
+>>>
+>>>> +
+>>>> +static void tegra_hte_read_fifo(struct tegra_hte_soc *gs)
+>>>> +{
+>>>> +	u32 tsh, tsl, src, pv, cv, acv, slice, bit_index, line_id;
+>>>> +	u64 tsc;
+>>>> +	int dir;
+>>>> +	struct hte_ts_data el;
+>>>> +
+>>>> +	while ((tegra_hte_readl(gs, HTE_TESTATUS) >>
+>>>> +		HTE_TESTATUS_OCCUPANCY_SHIFT) &
+>>>> +		HTE_TESTATUS_OCCUPANCY_MASK) {
+>>>> +		tsh = tegra_hte_readl(gs, HTE_TETSCH);
+>>>> +		tsl = tegra_hte_readl(gs, HTE_TETSCL);
+>>>> +		tsc = (((u64)tsh << 32) | tsl);
+>>>> +
+>>>> +		src = tegra_hte_readl(gs, HTE_TESRC);
+>>>> +		slice = (src >> HTE_TESRC_SLICE_SHIFT) &
+>>>> +			    HTE_TESRC_SLICE_DEFAULT_MASK;
+>>>> +
+>>>> +		pv = tegra_hte_readl(gs, HTE_TEPCV);
+>>>> +		cv = tegra_hte_readl(gs, HTE_TECCV);
+>>>> +		acv = pv ^ cv;
+>>>> +		while (acv) {
+>>>> +			bit_index = __builtin_ctz(acv);
+>>>> +			if ((pv >> bit_index) & BIT(0))
+>>>> +				dir = HTE_EVENT_RISING_EDGE;
+>>>> +			else
+>>>> +				dir = HTE_EVENT_FALLING_EDGE;
+>>>> +
+>>>> +			line_id = bit_index + (slice << 5);
+>>>> +			el.dir = dir;
+>>>> +			el.tsc = tsc << HTE_TS_NS_SHIFT;
+>>>> +			hte_push_ts_ns_atomic(gs->chip, line_id, &el,
+>>>> +					      sizeof(el));
+>>>> +			acv &= ~BIT(bit_index);
+>>>> +		}
+>>>> +		tegra_hte_writel(gs, HTE_TECMD, HTE_TECMD_CMD_POP);
+>>>> +	}
+>>>> +}
+>>> What happens when the hte_push_ts_ns_atomic() fails?
+>>> The timestamp will be quietly dropped?
+>>> What happens when the interrupt corresponding to that dropped timestamp
+>>> asks for it?  The irq handler thread will block until it can get a
+>>> timestamp from the subsequent interrupt?
+>> Two things happen, 1) at the push, HTE core increments seq counter
+>>
+>> 2) If the consumer has provided callback, it will either call that callback
+>>
+>> with HTE_TS_DROPPED or HTE_TS_AVAIL. The seq counter gives indirect
+>>
+>> view of dropped ts. However, I see the problem with the consumers not
+>>
+>> providing callback, in that case, push_ts* API just wakes up process without
+>>
+>> indicating why (assuming notify variable is true or else there is a chance for
+>>
+>> the thread to block forever). One easy approach I can think of for now is to
+>>
+>> make callback mandatory (which is optional right now), I will have to rethink
+>>
+>> that scenario and will push corrected version next RFC version.
+>>
+>> Thanks for pointing out.
+>>
+> I'm not sure you understood my question, which was intended to
+> demonstrate how an overflow here would break your gpio integration, but I
+> am certain that I don't understand your answer.
+>
+> Using the callback to signal fifo overflow to the consumer is crazy.
+> If the consumer is too busy to service the fifo then they probably wont
+> be prepared to deal with the callback either. And the primary purpose of
+> the fifo is to decouple the producer and consumer, so requiring a callback
+> defeats the whole purpose of having the fifo there in the first place.
+>
+>>> Which brings me back to the concern I have with the approach used in
+>>> the hte/gpiolib integration - how do you guarantee that the timestamp
+>>> returned by gpiod_get_hw_timestamp() corresponds to the irq interrupt
+>>> being handled, particularly in the face of errors such as:
+>>>  - overflows of the timestamp FIFO in the chip
+>> I currently do not have any indication mechanism as the providers
+>>
+>> I am dealing with right now does not have overflow hardware detection
+>>
+>> support. If the chip supports, it should be easy to integrate that feature.
+>>
+>> I will provide some hook function or change in push_* API to accommodate
+>>
+>> this in next version of RFC.
+>>
+>>>  - overflows of software FIFOs as here
+>> HTE core records sequence counter as well it callsback the consumer with
+>>
+>> HTE_TS_DROPPED.
+>>
+>>>  - lost interupts (if the hw generates interrupts faster than the CPU
+>>>    can service them)
+>> For this, I have no idea unless hardware supports some sort of mechanism
+>>
+>> to catch that. For the current providers, as soon as it detects changes on lines
+>>
+>> it captures TS in its hw fifo. Its interrupt gets generated based on threshold
+>>
+>> set in that hw fifo. This interrupt is different than the lines of actual device
+>>
+>> that is why I said I have no idea how we can tackle that. Let me know if there
+>>
+>> is any idea or reference of the codes which does tackle this.
+>>
+> As far as I am aware there is no solution, given your suggested
+> architecture.
+>
+> Your architecture is inherently fragile, as you try to use one stream
+> of data (the timestamp fifo) to provide supplementary info for another
+> (the physical irq).  Guaranteeing that the two are synchronised is
+> impossible - even if you can get them synced at some point, they can
+> fall out of sync without any indication.
+> That is a recipe for Ingenuity flight 6.
+>
+> My solution would be to use the hte timestamp fifo as the event source,
+> rather than the physical irq.  With only one event source the 
+> synchronisation problem disappears.  As to how to implement that,
+> gpiolib-cdev would request a line from the hte subsystem and register
+> and event handler for it, much as it does currently with the irq
+> subsystem. That event handler would translate the hte events into gpio
+> events.
 
-Hi,
+I have to circle back to here regarding the event handler thing. I
 
-On Sat, Jul 31, 2021 at 08:38:39PM +0300, Dmitry Osipenko wrote:
-> SMB347 can supply power to USB VBUS, implement the USB VBUS regulator.
-> USB VBUS needs to be powered for switching OTG-cable USB port into host
-> mode.
->=20
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
+surely did not understand fifo as event source rather than physical irq
 
-Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+part? I believe you are suggesting to have somekind of buffer abstraction
 
--- Sebastian
+layer for the hardware fifo similar to what I have with software buffer and
 
->  drivers/power/supply/Kconfig          |   1 +
->  drivers/power/supply/smb347-charger.c | 219 ++++++++++++++++++++++++++
->  2 files changed, 220 insertions(+)
->=20
-> diff --git a/drivers/power/supply/Kconfig b/drivers/power/supply/Kconfig
-> index 8543c89a0c1a..e83e9e4d512c 100644
-> --- a/drivers/power/supply/Kconfig
-> +++ b/drivers/power/supply/Kconfig
-> @@ -694,6 +694,7 @@ config CHARGER_BQ256XX
->  config CHARGER_SMB347
->  	tristate "Summit Microelectronics SMB3XX Battery Charger"
->  	depends on I2C
-> +	depends on REGULATOR
->  	select REGMAP_I2C
->  	help
->  	  Say Y to include support for Summit Microelectronics SMB345,
-> diff --git a/drivers/power/supply/smb347-charger.c b/drivers/power/supply=
-/smb347-charger.c
-> index 1c9205ca0993..753944e774c4 100644
-> --- a/drivers/power/supply/smb347-charger.c
-> +++ b/drivers/power/supply/smb347-charger.c
-> @@ -18,6 +18,7 @@
->  #include <linux/power_supply.h>
->  #include <linux/property.h>
->  #include <linux/regmap.h>
-> +#include <linux/regulator/driver.h>
-> =20
->  #include <dt-bindings/power/summit,smb347-charger.h>
-> =20
-> @@ -63,12 +64,15 @@
->  #define CFG_THERM_SOFT_COLD_COMPENSATION_SHIFT	2
->  #define CFG_THERM_MONITOR_DISABLED		BIT(4)
->  #define CFG_SYSOK				0x08
-> +#define CFG_SYSOK_INOK_ACTIVE_HIGH		BIT(0)
->  #define CFG_SYSOK_SUSPEND_HARD_LIMIT_DISABLED	BIT(2)
->  #define CFG_OTHER				0x09
->  #define CFG_OTHER_RID_MASK			0xc0
->  #define CFG_OTHER_RID_ENABLED_AUTO_OTG		0xc0
->  #define CFG_OTG					0x0a
->  #define CFG_OTG_TEMP_THRESHOLD_MASK		0x30
-> +#define CFG_OTG_CURRENT_LIMIT_250mA		BIT(2)
-> +#define CFG_OTG_CURRENT_LIMIT_750mA		BIT(3)
->  #define CFG_OTG_TEMP_THRESHOLD_SHIFT		4
->  #define CFG_OTG_CC_COMPENSATION_MASK		0xc0
->  #define CFG_OTG_CC_COMPENSATION_SHIFT		6
-> @@ -92,6 +96,7 @@
->  #define CMD_A					0x30
->  #define CMD_A_CHG_ENABLED			BIT(1)
->  #define CMD_A_SUSPEND_ENABLED			BIT(2)
-> +#define CMD_A_OTG_ENABLED			BIT(4)
->  #define CMD_A_ALLOW_WRITE			BIT(7)
->  #define CMD_B					0x31
->  #define CMD_C					0x33
-> @@ -133,10 +138,12 @@
->   * @regmap: pointer to driver regmap
->   * @mains: power_supply instance for AC/DC power
->   * @usb: power_supply instance for USB power
-> + * @usb_rdev: USB VBUS regulator device
->   * @id: SMB charger ID
->   * @mains_online: is AC/DC input connected
->   * @usb_online: is USB input connected
->   * @irq_unsupported: is interrupt unsupported by SMB hardware
-> + * @usb_vbus_enabled: is USB VBUS powered by SMB charger
->   * @max_charge_current: maximum current (in uA) the battery can be charg=
-ed
->   * @max_charge_voltage: maximum voltage (in uV) the battery can be charg=
-ed
->   * @pre_charge_current: current (in uA) to use in pre-charging phase
-> @@ -167,6 +174,8 @@
->   * @use_usb_otg: USB OTG output can be used (not implemented yet)
->   * @enable_control: how charging enable/disable is controlled
->   *		    (driver/pin controls)
-> + * @inok_polarity: polarity of INOK signal which denotes presence of ext=
-ernal
-> + *		   power supply
->   *
->   * @use_main, @use_usb, and @use_usb_otg are means to enable/disable
->   * hardware support for these. This is useful when we want to have for
-> @@ -189,10 +198,12 @@ struct smb347_charger {
->  	struct regmap		*regmap;
->  	struct power_supply	*mains;
->  	struct power_supply	*usb;
-> +	struct regulator_dev	*usb_rdev;
->  	unsigned int		id;
->  	bool			mains_online;
->  	bool			usb_online;
->  	bool			irq_unsupported;
-> +	bool			usb_vbus_enabled;
-> =20
->  	unsigned int		max_charge_current;
->  	unsigned int		max_charge_voltage;
-> @@ -213,6 +224,7 @@ struct smb347_charger {
->  	bool			use_usb;
->  	bool			use_usb_otg;
->  	unsigned int		enable_control;
-> +	unsigned int		inok_polarity;
->  };
-> =20
->  enum smb_charger_chipid {
-> @@ -362,6 +374,11 @@ static int smb347_charging_set(struct smb347_charger=
- *smb, bool enable)
->  		return 0;
->  	}
-> =20
-> +	if (enable && smb->usb_vbus_enabled) {
-> +		dev_dbg(smb->dev, "charging not enabled because USB is in host mode\n"=
-);
-> +		return 0;
-> +	}
-> +
->  	return regmap_update_bits(smb->regmap, CMD_A, CMD_A_CHG_ENABLED,
->  				  enable ? CMD_A_CHG_ENABLED : 0);
->  }
-> @@ -1253,6 +1270,13 @@ static void smb347_dt_parse_dev_info(struct smb347=
-_charger *smb)
->  	/* Select charging control */
->  	device_property_read_u32(dev, "summit,enable-charge-control",
->  				 &smb->enable_control);
-> +
-> +	/*
-> +	 * Polarity of INOK signal indicating presence of external power
-> +	 * supply connected to the charger.
-> +	 */
-> +	device_property_read_u32(dev, "summit,inok-polarity",
-> +				 &smb->inok_polarity);
->  }
-> =20
->  static int smb347_get_battery_info(struct smb347_charger *smb)
-> @@ -1304,6 +1328,160 @@ static int smb347_get_battery_info(struct smb347_=
-charger *smb)
->  	return 0;
->  }
-> =20
-> +static int smb347_usb_vbus_get_current_limit(struct regulator_dev *rdev)
-> +{
-> +	struct smb347_charger *smb =3D rdev_get_drvdata(rdev);
-> +	unsigned int val;
-> +	int ret;
-> +
-> +	ret =3D regmap_read(smb->regmap, CFG_OTG, &val);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	/*
-> +	 * It's unknown what happens if this bit is unset due to lack of
-> +	 * access to the datasheet, assume it's limit-enable.
-> +	 */
-> +	if (!(val & CFG_OTG_CURRENT_LIMIT_250mA))
-> +		return 0;
-> +
-> +	return val & CFG_OTG_CURRENT_LIMIT_750mA ? 750000 : 250000;
-> +}
-> +
-> +static int smb347_usb_vbus_set_new_current_limit(struct smb347_charger *=
-smb,
-> +						 int max_uA)
-> +{
-> +	const unsigned int mask =3D CFG_OTG_CURRENT_LIMIT_750mA |
-> +				  CFG_OTG_CURRENT_LIMIT_250mA;
-> +	unsigned int val =3D CFG_OTG_CURRENT_LIMIT_250mA;
-> +	int ret;
-> +
-> +	if (max_uA >=3D 750000)
-> +		val |=3D CFG_OTG_CURRENT_LIMIT_750mA;
-> +
-> +	ret =3D regmap_update_bits(smb->regmap, CFG_OTG, mask, val);
-> +	if (ret < 0)
-> +		dev_err(smb->dev, "failed to change USB current limit\n");
-> +
-> +	return ret;
-> +}
-> +
-> +static int smb347_usb_vbus_set_current_limit(struct regulator_dev *rdev,
-> +					     int min_uA, int max_uA)
-> +{
-> +	struct smb347_charger *smb =3D rdev_get_drvdata(rdev);
-> +	int ret;
-> +
-> +	ret =3D smb347_set_writable(smb, true, true);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	ret =3D smb347_usb_vbus_set_new_current_limit(smb, max_uA);
-> +	smb347_set_writable(smb, false, true);
-> +
-> +	return ret;
-> +}
-> +
-> +static int smb347_usb_vbus_regulator_enable(struct regulator_dev *rdev)
-> +{
-> +	struct smb347_charger *smb =3D rdev_get_drvdata(rdev);
-> +	int ret, max_uA;
-> +
-> +	ret =3D smb347_set_writable(smb, true, true);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	smb347_charging_disable(smb);
-> +
-> +	if (device_property_read_bool(&rdev->dev, "summit,needs-inok-toggle")) {
-> +		unsigned int sysok =3D 0;
-> +
-> +		if (smb->inok_polarity =3D=3D SMB3XX_SYSOK_INOK_ACTIVE_LOW)
-> +			sysok =3D CFG_SYSOK_INOK_ACTIVE_HIGH;
-> +
-> +		/*
-> +		 * VBUS won't be powered if INOK is active, so we need to
-> +		 * manually disable INOK on some platforms.
-> +		 */
-> +		ret =3D regmap_update_bits(smb->regmap, CFG_SYSOK,
-> +					 CFG_SYSOK_INOK_ACTIVE_HIGH, sysok);
-> +		if (ret < 0) {
-> +			dev_err(smb->dev, "failed to disable INOK\n");
-> +			goto done;
-> +		}
-> +	}
-> +
-> +	ret =3D smb347_usb_vbus_get_current_limit(rdev);
-> +	if (ret < 0) {
-> +		dev_err(smb->dev, "failed to get USB VBUS current limit\n");
-> +		goto done;
-> +	}
-> +
-> +	max_uA =3D ret;
-> +
-> +	ret =3D smb347_usb_vbus_set_new_current_limit(smb, 250000);
-> +	if (ret < 0) {
-> +		dev_err(smb->dev, "failed to preset USB VBUS current limit\n");
-> +		goto done;
-> +	}
-> +
-> +	ret =3D regmap_set_bits(smb->regmap, CMD_A, CMD_A_OTG_ENABLED);
-> +	if (ret < 0) {
-> +		dev_err(smb->dev, "failed to enable USB VBUS\n");
-> +		goto done;
-> +	}
-> +
-> +	smb->usb_vbus_enabled =3D true;
-> +
-> +	ret =3D smb347_usb_vbus_set_new_current_limit(smb, max_uA);
-> +	if (ret < 0) {
-> +		dev_err(smb->dev, "failed to restore USB VBUS current limit\n");
-> +		goto done;
-> +	}
-> +done:
-> +	smb347_set_writable(smb, false, true);
-> +
-> +	return ret;
-> +}
-> +
-> +static int smb347_usb_vbus_regulator_disable(struct regulator_dev *rdev)
-> +{
-> +	struct smb347_charger *smb =3D rdev_get_drvdata(rdev);
-> +	int ret;
-> +
-> +	ret =3D smb347_set_writable(smb, true, true);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	ret =3D regmap_clear_bits(smb->regmap, CMD_A, CMD_A_OTG_ENABLED);
-> +	if (ret < 0) {
-> +		dev_err(smb->dev, "failed to disable USB VBUS\n");
-> +		goto done;
-> +	}
-> +
-> +	smb->usb_vbus_enabled =3D false;
-> +
-> +	if (device_property_read_bool(&rdev->dev, "summit,needs-inok-toggle")) {
-> +		unsigned int sysok =3D 0;
-> +
-> +		if (smb->inok_polarity =3D=3D SMB3XX_SYSOK_INOK_ACTIVE_HIGH)
-> +			sysok =3D CFG_SYSOK_INOK_ACTIVE_HIGH;
-> +
-> +		ret =3D regmap_update_bits(smb->regmap, CFG_SYSOK,
-> +					 CFG_SYSOK_INOK_ACTIVE_HIGH, sysok);
-> +		if (ret < 0) {
-> +			dev_err(smb->dev, "failed to enable INOK\n");
-> +			goto done;
-> +		}
-> +	}
-> +
-> +	smb347_start_stop_charging(smb);
-> +done:
-> +	smb347_set_writable(smb, false, true);
-> +
-> +	return ret;
-> +}
-> +
->  static const struct regmap_config smb347_regmap =3D {
->  	.reg_bits	=3D 8,
->  	.val_bits	=3D 8,
-> @@ -1314,6 +1492,14 @@ static const struct regmap_config smb347_regmap =
-=3D {
->  	.num_reg_defaults_raw =3D SMB347_MAX_REGISTER,
->  };
-> =20
-> +static const struct regulator_ops smb347_usb_vbus_regulator_ops =3D {
-> +	.is_enabled	=3D regulator_is_enabled_regmap,
-> +	.enable		=3D smb347_usb_vbus_regulator_enable,
-> +	.disable	=3D smb347_usb_vbus_regulator_disable,
-> +	.get_current_limit =3D smb347_usb_vbus_get_current_limit,
-> +	.set_current_limit =3D smb347_usb_vbus_set_current_limit,
-> +};
-> +
->  static const struct power_supply_desc smb347_mains_desc =3D {
->  	.name		=3D "smb347-mains",
->  	.type		=3D POWER_SUPPLY_TYPE_MAINS,
-> @@ -1330,10 +1516,24 @@ static const struct power_supply_desc smb347_usb_=
-desc =3D {
->  	.num_properties	=3D ARRAY_SIZE(smb347_properties),
->  };
-> =20
-> +static const struct regulator_desc smb347_usb_vbus_regulator_desc =3D {
-> +	.name		=3D "smb347-usb-vbus",
-> +	.of_match	=3D of_match_ptr("usb-vbus"),
-> +	.ops		=3D &smb347_usb_vbus_regulator_ops,
-> +	.type		=3D REGULATOR_VOLTAGE,
-> +	.owner		=3D THIS_MODULE,
-> +	.enable_reg	=3D CMD_A,
-> +	.enable_mask	=3D CMD_A_OTG_ENABLED,
-> +	.enable_val	=3D CMD_A_OTG_ENABLED,
-> +	.fixed_uV	=3D 5000000,
-> +	.n_voltages	=3D 1,
-> +};
-> +
->  static int smb347_probe(struct i2c_client *client,
->  			const struct i2c_device_id *id)
->  {
->  	struct power_supply_config mains_usb_cfg =3D {};
-> +	struct regulator_config usb_rdev_cfg =3D {};
->  	struct device *dev =3D &client->dev;
->  	struct smb347_charger *smb;
->  	int ret;
-> @@ -1381,6 +1581,18 @@ static int smb347_probe(struct i2c_client *client,
->  	if (ret)
->  		return ret;
-> =20
-> +	usb_rdev_cfg.dev =3D dev;
-> +	usb_rdev_cfg.driver_data =3D smb;
-> +	usb_rdev_cfg.regmap =3D smb->regmap;
-> +
-> +	smb->usb_rdev =3D devm_regulator_register(dev,
-> +						&smb347_usb_vbus_regulator_desc,
-> +						&usb_rdev_cfg);
-> +	if (IS_ERR(smb->usb_rdev)) {
-> +		smb347_irq_disable(smb);
-> +		return PTR_ERR(smb->usb_rdev);
-> +	}
-> +
->  	return 0;
->  }
-> =20
-> @@ -1388,11 +1600,17 @@ static int smb347_remove(struct i2c_client *clien=
-t)
->  {
->  	struct smb347_charger *smb =3D i2c_get_clientdata(client);
-> =20
-> +	smb347_usb_vbus_regulator_disable(smb->usb_rdev);
->  	smb347_irq_disable(smb);
-> =20
->  	return 0;
->  }
-> =20
-> +static void smb347_shutdown(struct i2c_client *client)
-> +{
-> +	smb347_remove(client);
-> +}
-> +
->  static const struct i2c_device_id smb347_id[] =3D {
->  	{ "smb345", SMB345 },
->  	{ "smb347", SMB347 },
-> @@ -1416,6 +1634,7 @@ static struct i2c_driver smb347_driver =3D {
->  	},
->  	.probe =3D smb347_probe,
->  	.remove =3D smb347_remove,
-> +	.shutdown =3D smb347_shutdown,
->  	.id_table =3D smb347_id,
->  };
->  module_i2c_driver(smb347_driver);
-> --=20
-> 2.32.0
->=20
+register handler to that buffer, right?
 
---ephl3snswcksh5tx
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
+The current implementation I have (not with gpiolib/HTE integration)
 
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmENpkAACgkQ2O7X88g7
-+pp91BAAqI5zMOm4UbecLjdyRi+p8rkgzNYAqWl3oHUuI/w/TYMk10jHpDELUXBx
-x3mBlYa0+4TZ3YhfGWSd5cwN8kqRljooHrqlZ64h6oa+RpzBvLW8FGxiCQpPf4so
-5ubv8xElCgB6CEAXx7yX85jNuetA7xJVJp7RGuAWn8Tu9lrPYoNjBLPaw46IIpRR
-ER6NrevVzuvtg+yHtYJ2+sy8jp68y3KSefAQPGelgWy/7K3u5v3OwLrX2RmAsOvM
-vOzJmtHev2i/44PmIIGmkdl1yiOB+zpG+O0MOWfHpubZaTDiU/MZ65Vu4LeZ18CK
-FHj20DCKmThG4CnZxvMI8CzIv6tGMvYljU8jBidzLMiiSR+Mg7iilZEZLRKQkLa+
-JLnr6U7rIXPZWoPVZl/K9ZZEcJHG47y5X/olMfUebVh+vDDUwjI14Vvl2+gaUWyu
-G4bZy2YX8HwnRH5tp9K/aFPJ18neYX4iGpErBxZI+AtqmcWkmy6r4ZppppyqFhAo
-k8oaElSmAh07JKeUkw8purd72cNebZf56uYgpmIUCEBbtOX8njfnHlrLGAk2wef8
-XVyvYrkP4knS3mLptoH6RgzHtVX/OeqKJAoLr+7M9zTWGi5+plTqE0QtI5vxDSto
-vuFQoiF8ZHSq6XHqXREWINN6B8P+QXbhGXuOJnyTGISGZiDmGf8=
-=j3qL
------END PGP SIGNATURE-----
+is partially simlar to event handler mechanism except that it does not send data
 
---ephl3snswcksh5tx--
+with it. See hte-tegra194-irq-test.c in this patch.
+
+
+Coming back to gpiolib/hte integration part and your suggestion about
+
+providing event handler during hte registration. I have below doubts:
+
+1. When HTE calls this provided hte_handler, will it store data into
+
+hte->timestamp_ns directly, I am guessing yes.
+
+2. Does hte handler solution create race between two handlers? i.e. edge_irq_handler and
+
+hte_handler, for the worst case scenario as below?
+
+2.a edge_irq_handler runs first, checks some kind of flag to see if
+
+we are using hardware clock and if yes, directly accesses timestamp_ns
+
+instead of calling line_event_timestamp.
+
+2.b finds timestamp_ns to be invalid since it ran first before hte event handler did.
+
+2.c returns and invokes edge_irq_thread.
+
+2.c.1 Here, should edge_irq_thread wait in cdev till hte handler to be called? If yes,
+
+Doesn't it have case where it will wait forever till hte handler gets called, also not
+
+to mention keeping irq line disabled since IRQF_ONESHOT is specified, could be possible
+
+when provider has gone rogue?
+
+3. I am guessing there will not be dropped event in this suggestion since are
+
+directly sending data without buffering in HTE, that is the good part I believe.
+
+
+>
+> You still have to deal with possible fifo overflows, but if the fifo
+> overflows result in discarding the oldest event, rather than the most
+> recent, then everything comes out in the wash.  If not then the final
+> event in a burst may not correspond to the actual state so you need
+> some additional mechanism to address that.
+> Either way the consumer needs to be aware that events may be lost - but
+> with the event seqno for consumers to detect those lost events we
+> already have that covered.
+
+Correct (for the seqno part), you already have seqno, cdev does not need
+
+struct hte_ts_data's u64 seq counter.
+
+
+On similar note, I was looking at the linereq_put_event
+
+function and I have below doubts:
+
+1. IIUC, you are discarding oldest data when fifo is full, right?
+
+2. There is no indication to waiting client if overflow is true beside pr_debug print.
+
+2.a Does this not block waiting client infinitely since there is no wake_up_poll call
+
+in case of overflow == 1?
+
+2.c If I have missed, what current mechanism cdev provides to client beside seqno
+
+to indicate there is a drop and if there is a drop, what it does to re-sync?
+
+
+>
+>> Regarding HTE/GPIOLIB integration comment:
+>>
+>> You are right, currently, I have only tsc field returned from struct hte_ts_data
+>>
+>> to gpiolib. If I can extend that to return hte_ts_data structure which has seq
+>>
+>> counter, which I believe can be used to track the overflow situation. The
+>>
+>> dropped scenario can be easily tracked if gpiolib can be notified with above
+>>
+>> mentioned DROP event through callback. If that is the case, is it ok to have
+>>
+>> some sort of callback per gpio in gpiolib?
+>>
+> Even better if you can provide the whole struct hte_ts_data so we have
+> the direction as well (assuming all hte providers provide direction?).
+> Otherwise gpiolib-cdev may need to read the physical line state and that
+> may have changed since the hardware captured the event.
+> In the solution I outlined above, the hte_ts_data would be provided to
+> the event handler registered by gpiolib-cdev.
+> And in this case you could skip buffering the event in hte - it could be
+> passed to the event handler as soon as it is read from the hardware - 
+> gpiolib-cdev does its own buffering of gpio events.
+>
+>> Any idea how I can integrate callback notification with gpiolib if you do not agree on
+>>
+>> above callback suggestion?
+>>
+> See above.  But this is just my take, so I would get feedback from the
+> relevant maintainers or SMEs before you act on anything suggested above.
+>
+> Cheers,
+> Kent.
+>
