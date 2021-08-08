@@ -2,156 +2,440 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DAF4C4320A
-	for <linux-tegra@archiver.kernel.org>; Sat,  7 Aug 2021 05:42:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FB2EC4320E
+	for <linux-tegra@archiver.kernel.org>; Sun,  8 Aug 2021 15:01:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6783B61167
-	for <linux-tegra@archiver.kernel.org>; Sat,  7 Aug 2021 05:42:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 557AA60FC1
+	for <linux-tegra@archiver.kernel.org>; Sun,  8 Aug 2021 15:01:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230510AbhHGFmi (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 7 Aug 2021 01:42:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34530 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230377AbhHGFmh (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Sat, 7 Aug 2021 01:42:37 -0400
-Received: from mail-pl1-x62f.google.com (mail-pl1-x62f.google.com [IPv6:2607:f8b0:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9FCEC0613CF;
-        Fri,  6 Aug 2021 22:42:19 -0700 (PDT)
-Received: by mail-pl1-x62f.google.com with SMTP id k2so9952668plk.13;
-        Fri, 06 Aug 2021 22:42:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=h3Id8M67EDYA4oftmPt0MF1yxlKi4SAv+ZwAi66z1h0=;
-        b=IxnCXHoKkR+Av77wnIM3ZpSCpu6fUNWfPJuD4gm+L0PAmGaKxbGoFOQW4u7Y4tBJGX
-         IpeOtCette2U9I0N1Y8uJVjjkbTUczX9S4DD+f37zdGfUSXQAJwXPC//ppiNlo4Z5Xay
-         wkR/Nuq4KkOMyHYfqnJSlx0/XqSQKzt7JmgWLfdKIFwybhBulYrIO9HNMA74K2hulD92
-         lH9V0nOrsF/z7JRGqmt6RzMR/TkP0KSZAxEnCgO/Rp+zKJQvjmIiSB7d4/QmbB3Te1co
-         +5tmF1F1BeJQdBQZtz4IdHMIru54aXv77IgO15EzSRhJLMMGWN+Qi5e4WJpwZjjTlpzD
-         6CqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=h3Id8M67EDYA4oftmPt0MF1yxlKi4SAv+ZwAi66z1h0=;
-        b=ryj95+GpIXGBhua7G5NuirqkTBqb3SBpYbPZFSmnmkRyhS6JlW4GBP3k9reVxjchD9
-         vp68SjEN/hmVOn4eQf6x3GfhAKegNNZ/enMEzYm7S7VQ+GTA32a28MrcShcrqBSjuvcN
-         Uvu/p/gSWqPRrX5wEwVWPGQ/US2wdjJfy6WoZkPyqdOi5HgJ75wY/Ysg5w3q3dh+3A7w
-         ddc7liz321ajUDtrWcZSaS73pbpFRrVSHkQqwNRtKGUFAWGtbPgfDuOFH4HOGvP/xWIL
-         gLi4TCHhkJNvAJ1qPBHjyrBN6hepS7NhO8R8xt5Kb5K4y+SACulzdVJyOfTgkmijqwxx
-         yMtw==
-X-Gm-Message-State: AOAM531BrVE9b5cPOyFv6Yeqd2eTxYzWMuXy8CL8bM50zIOYBTtFQFlb
-        p5nDpyCX/GUV0E8gPU4jR2o=
-X-Google-Smtp-Source: ABdhPJyzrF+tgC9Wbm12wjUmhBB+JbW7ppgrwCGpjq81d7/agN2NEHw5koO9dr3kkJR5gUGy/IlDGw==
-X-Received: by 2002:a63:5641:: with SMTP id g1mr84757pgm.33.1628314939371;
-        Fri, 06 Aug 2021 22:42:19 -0700 (PDT)
-Received: from sol (106-69-178-229.dyn.iinet.net.au. [106.69.178.229])
-        by smtp.gmail.com with ESMTPSA id h24sm12747632pfn.180.2021.08.06.22.42.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Aug 2021 22:42:18 -0700 (PDT)
-Date:   Sat, 7 Aug 2021 13:42:12 +0800
-From:   Kent Gibson <warthog618@gmail.com>
-To:     Dipen Patel <dipenp@nvidia.com>
-Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linus.walleij@linaro.org,
-        bgolaszewski@baylibre.com, devicetree@vger.kernel.org,
-        linux-doc@vger.kernel.org, robh+dt@kernel.org
-Subject: Re: [RFC 03/11] hte: Add tegra194 HTE kernel provider
-Message-ID: <20210807054212.GA15085@sol>
-References: <20210625235532.19575-1-dipenp@nvidia.com>
- <20210625235532.19575-4-dipenp@nvidia.com>
- <20210701142156.GA34285@sol>
- <52768891-6c01-7588-e557-5c9eae5375b6@nvidia.com>
- <20210731154323.GA24906@sol>
- <1ff6df66-9895-bd42-322a-515327f30366@nvidia.com>
- <20210807030746.GA9850@sol>
- <91a173b3-18dc-5d6b-002f-893e7478717b@nvidia.com>
- <20210807045116.GA13675@sol>
- <7f6a2591-c264-e005-18ae-242320d4a22e@nvidia.com>
+        id S231995AbhHHPBf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 8 Aug 2021 11:01:35 -0400
+Received: from mail-mw2nam12on2072.outbound.protection.outlook.com ([40.107.244.72]:15169
+        "EHLO NAM12-MW2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S231414AbhHHPBf (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Sun, 8 Aug 2021 11:01:35 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=NcncfVNzJ/9GgcRKXIm68LyDPxFXQyv8XuPVveA6eqGeTzk/76mYDN2oraw3Fz0bnKDeRnSSxR9RF1/GUwNeKBcFMK7VIrtTcncIwmFBdwts4905M4ygQPI3SjgyeOLtrX9vPN4Tuy8hJYg3KSC32kuEYVi2wlgk29vHhSzIMLhrkprFn2KWfkHVQ9vED7LXvwwTFG41JlPNQOWC7/sLBzKxk8wIsT5cOzb8vKaFtrEJDG/QQ4ZbVPOqtWpRPY7e7BbFNxitilNGGF+pmWMAk02/lyMGFyDDzRvzy1tgGxc9BL+vnVURKQ3f6rruLFAhSo1KuAqscOy3+VzHbKFbQQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=PhasFYYMko6r/yf2Bx0pW3+kS/oKcu3YuIws4gMaMLQ=;
+ b=bENtK057hsfjxqo0+QpZ+6eWyyQpyknXhcBNzwPkzractINyLs4wbJjEiDc2HIVzwEtI8MK4ak2XH2VYK0I3Uca6RUSN0wdP4JbknVgq/ylZxZtSeRFb9QE7/Z+9XmLNr9KkJ5IwfefsffITaZ9luKM2cBzCdKE1QYbp1yHJ5OdIzgrpg4uCbzB0zxaMC7AIaI0iFzu4rRirxw6Sop1oxEE0HeoB3xSESrdiMtlxFh30nl1LfLQm84h5RL0gVWCS7+aY5G0C7oPxrwJxbxV47As33DIIjZ0naIHZzmpZ6+iV+xTS05LCZLT7zPgME0H77GihmG0Iu3xW1W1T645VUg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.112.34) smtp.rcpttodomain=baylibre.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=PhasFYYMko6r/yf2Bx0pW3+kS/oKcu3YuIws4gMaMLQ=;
+ b=C1x27y6oWgcOvdw/w8rvP90I768i+aNa25ATGt9CDFf2keu9Nc2M+6Fgcwy/2DcIWxeqHMXoLKz0W5YqcwuRAo1lFWV1+7KNoXI/sm6AzrZFZEBH4Zxj/5wrFWx4ZrYmcXbCUR3Dwv4iMB+mDQnOtnSApbQFwazAbb5so1NyW27a4zXcXDeWifZcIoSK+kNas/m+ifUG4r2LZsSdC+kgaS5YHRj+olFMn0MI2asFzaL1IUTO4Q9/sA02rw0mQwrlZwHm7deDHlsn348Niby6hCB2jr4sqRLHxTOesKGzC9i7+hNCw40KHhfWLjLk+seMLPr75omnLJeBQ6K96orKfg==
+Received: from BN8PR12CA0002.namprd12.prod.outlook.com (2603:10b6:408:60::15)
+ by MWHPR12MB1184.namprd12.prod.outlook.com (2603:10b6:300:f::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4394.17; Sun, 8 Aug
+ 2021 15:01:14 +0000
+Received: from BN8NAM11FT005.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:408:60:cafe::6e) by BN8PR12CA0002.outlook.office365.com
+ (2603:10b6:408:60::15) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4394.16 via Frontend
+ Transport; Sun, 8 Aug 2021 15:01:14 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.34)
+ smtp.mailfrom=nvidia.com; baylibre.com; dkim=none (message not signed)
+ header.d=none;baylibre.com; dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.112.34 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.112.34; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (216.228.112.34) by
+ BN8NAM11FT005.mail.protection.outlook.com (10.13.176.69) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.4394.16 via Frontend Transport; Sun, 8 Aug 2021 15:01:13 +0000
+Received: from [10.25.99.72] (172.20.187.6) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Sun, 8 Aug
+ 2021 15:01:03 +0000
+Subject: Re: [PATCH v2 39/40] PCI: dwc: Move N_FTS setup to common setup
+To:     Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+CC:     <linux-pci@vger.kernel.org>, Andy Gross <agross@kernel.org>,
+        Binghui Wang <wangbinghui@hisilicon.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Dilip Kota <eswara.kota@linux.intel.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Jesper Nilsson <jesper.nilsson@axis.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Jonathan Chocron <jonnyc@amazon.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        "Kishon Vijay Abraham I" <kishon@ti.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        "Lucas Stach" <l.stach@pengutronix.de>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Murali Karicheri <m-karicheri2@ti.com>,
+        "Neil Armstrong" <narmstrong@baylibre.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Pratyush Anand <pratyush.anand@gmail.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Shawn Guo <shawn.guo@linaro.org>,
+        Stanimir Varbanov <svarbanov@mm-sol.com>,
+        "Thierry Reding" <thierry.reding@gmail.com>,
+        Xiaowei Song <songxiaowei@hisilicon.com>,
+        Yue Wang <yue.wang@Amlogic.com>, Marc Zyngier <maz@kernel.org>,
+        <linux-amlogic@lists.infradead.org>, <linux-arm-kernel@axis.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <linux-samsung-soc@vger.kernel.org>, <linux-tegra@vger.kernel.org>
+References: <20200821035420.380495-1-robh@kernel.org>
+ <20200821035420.380495-40-robh@kernel.org>
+From:   Vidya Sagar <vidyas@nvidia.com>
+Message-ID: <d7146c20-6992-44a0-c390-f801d352cf15@nvidia.com>
+Date:   Sun, 8 Aug 2021 20:31:01 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7f6a2591-c264-e005-18ae-242320d4a22e@nvidia.com>
+In-Reply-To: <20200821035420.380495-40-robh@kernel.org>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [172.20.187.6]
+X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: f893728d-3cda-48d1-c507-08d95a7d5dd0
+X-MS-TrafficTypeDiagnostic: MWHPR12MB1184:
+X-Microsoft-Antispam-PRVS: <MWHPR12MB118457E1D34DC7E2C5FBD411B8F59@MWHPR12MB1184.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:2399;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 7IPaHuRTPKqq+G2IXr1UQ9oQ4pR6yildM9H9UVIK8j0FFe3cAOe4fqlfej7ok24+GlCDMzbBiMQNGZ05RRpuKxRFg79kXTK0zbGW2xxcgwdb72grq8xxIna5tuysqD71YLY8gcdjgLd50bUsRQpzyFVW7AhF8ByX6sQ3oNuNCUODpNmGwc48oi/qX1l51DlLF6LyU5JiZ+KMOzJf53CaNF0gSW+In/26tA5tKEv0FjF9AKhRgSt0foNeZ3y+/dQACXb80ru3JHV4sWv2WUgIHdDhzO2YTTcfjV/pRehXlsZw9OzVuXE9cP/5+CrzfI0WanQw4NBZg+rGbcxyldYYoYporuo+usPiDm55cYP+Fy7tOIuLt4Ldd8+zQmePWVjBSCDUX/XqXW0imeT+8ow4xERS1PKkppyoVgcMKm00TQrru7tXogaArV6TksMLorDV2iakgU9BxoRPzkJI4d3J/O0Ll2k96n41ss7BMS7LVXvgaRdjFMvrXJoKv0QfukOEuPn5KC21VUJqtoNxex4JvmjOh8IiFdjOajwGK/3hDILooqdHOkF6jjnHDhBd02LgjhkdbglpYprmZ2JFva6ZESh+8B/L/v1MNjIkvGdr1lhUPO2mJBiiFaSdiHzc359N7kg2pE+QvWL3FDBG1naiYLlX/Hod5+95B+/by4+491g8Gad+DTsLj1MToSA3+lNTNIVjsLBjxZfDveWComQSCm94mXNPWqOc/ToaJu6X3rc=
+X-Forefront-Antispam-Report: CIP:216.228.112.34;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid03.nvidia.com;CAT:NONE;SFS:(4636009)(396003)(39860400002)(346002)(376002)(136003)(46966006)(36840700001)(54906003)(110136005)(16526019)(186003)(4326008)(2616005)(8676002)(70586007)(7416002)(53546011)(47076005)(5660300002)(16576012)(7406005)(478600001)(70206006)(356005)(30864003)(8936002)(426003)(336012)(316002)(7636003)(36906005)(31696002)(82310400003)(36860700001)(26005)(36756003)(83380400001)(82740400003)(86362001)(2906002)(31686004)(43740500002);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Aug 2021 15:01:13.8732
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: f893728d-3cda-48d1-c507-08d95a7d5dd0
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.34];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT005.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR12MB1184
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, Aug 06, 2021 at 10:35:10PM -0700, Dipen Patel wrote:
-> 
-> On 8/6/21 9:51 PM, Kent Gibson wrote:
-> > On Fri, Aug 06, 2021 at 09:52:54PM -0700, Dipen Patel wrote:
-> >> On 8/6/21 8:07 PM, Kent Gibson wrote:
-> >>> On Fri, Aug 06, 2021 at 07:41:09PM -0700, Dipen Patel wrote:
-> >>>> On 7/31/21 8:43 AM, Kent Gibson wrote:
-> >>>>> On Wed, Jul 28, 2021 at 04:59:08PM -0700, Dipen Patel wrote:
-> >>>>>> Thanks Kent for the review comment. My responses inline.
-> >>>>>>
-> > <snip>
-> >
-> >>>> 2. Does hte handler solution create race between two handlers? i.e. edge_irq_handler and
-> >>>>
-> >>>> hte_handler, for the worst case scenario as below?
-> >>>>
-> >>> No.  If hardware timestamp is selected then no irq is requested from the
-> >>> irq subsystem for that line - only from the hte subsystem instead.
-> >>> So there will be no edge_irq_handler call for that line, so no possible race.
-> >> That is not possible for certain providers, for example the one I am dealing
-> >>
-> >> with which requires GPIO line to be requested as input and IRQ needs to
-> >>
-> >> be enabled on them.
-> >>
-> > So, for your hte subsystem to work, the consumer has to also request
-> > a line from the irq subsystem?
-> 
-> Yes
-> 
-> >   That makes sense to you?
-> Its not me, its peculiarity of the hardware that I am dealing with.
 
-My point is that the peculiarities of the hardware should be hidden from
-the hte API user, especially if it is only necessary for some hardware.
 
-> > Have hte do that, rather than the consumer.
+On 8/21/2020 9:24 AM, Rob Herring wrote:
+> The Designware controller has common registers to set number of fast
+> training sequence ordered sets. The Artpec6, Intel, and Tegra driver
+> initialize these register fields. Let's move the initialization to the
+> common setup code and drivers just have to provide the value.
 > 
-> Sure, for cdev it would mean to duplicate (most of) the edge* or line_create
+> There's a slight change in that the common clock mode N_FTS field is
+> now initialized. Previously only the Intel driver set this. It's not
+> clear from the code if common clock mode is used in the Artpec6 or Tegra
+> driver. It depends on the DWC configuration. Given the field is not
+> initialized while the others are, it seems unlikely common clock mode
+> is used.
 > 
-> code in HTE.
+> Cc: Jesper Nilsson <jesper.nilsson@axis.com>
+> Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+> Cc: Bjorn Helgaas <bhelgaas@google.com>
+> Cc: Jingoo Han <jingoohan1@gmail.com>
+> Cc: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+> Cc: Thierry Reding <thierry.reding@gmail.com>
+> Cc: Jonathan Hunter <jonathanh@nvidia.com>
+> Cc: linux-tegra@vger.kernel.org
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
+>   drivers/pci/controller/dwc/pcie-artpec6.c    | 37 +++-----------------
+>   drivers/pci/controller/dwc/pcie-designware.c | 28 +++++++++------
+>   drivers/pci/controller/dwc/pcie-designware.h |  3 +-
+>   drivers/pci/controller/dwc/pcie-intel-gw.c   | 27 +++++---------
+>   drivers/pci/controller/dwc/pcie-tegra194.c   | 25 ++-----------
+>   5 files changed, 35 insertions(+), 85 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-artpec6.c b/drivers/pci/controller/dwc/pcie-artpec6.c
+> index 86f4d66d8587..929448e9e0bc 100644
+> --- a/drivers/pci/controller/dwc/pcie-artpec6.c
+> +++ b/drivers/pci/controller/dwc/pcie-artpec6.c
+> @@ -44,13 +44,6 @@ struct artpec_pcie_of_data {
+>   
+>   static const struct of_device_id artpec6_pcie_of_match[];
+>   
+> -/* PCIe Port Logic registers (memory-mapped) */
+> -#define PL_OFFSET			0x700
+> -
+> -#define ACK_F_ASPM_CTRL_OFF		(PL_OFFSET + 0xc)
+> -#define ACK_N_FTS_MASK			GENMASK(15, 8)
+> -#define ACK_N_FTS(x)			(((x) << 8) & ACK_N_FTS_MASK)
+> -
+>   /* ARTPEC-6 specific registers */
+>   #define PCIECFG				0x18
+>   #define  PCIECFG_DBG_OEN		BIT(24)
+> @@ -289,30 +282,6 @@ static void artpec6_pcie_init_phy(struct artpec6_pcie *artpec6_pcie)
+>   	}
+>   }
+>   
+> -static void artpec6_pcie_set_nfts(struct artpec6_pcie *artpec6_pcie)
+> -{
+> -	struct dw_pcie *pci = artpec6_pcie->pci;
+> -	u32 val;
+> -
+> -	if (artpec6_pcie->variant != ARTPEC7)
+> -		return;
+> -
+> -	/*
+> -	 * Increase the N_FTS (Number of Fast Training Sequences)
+> -	 * to be transmitted when transitioning from L0s to L0.
+> -	 */
+> -	val = dw_pcie_readl_dbi(pci, ACK_F_ASPM_CTRL_OFF);
+> -	val &= ~ACK_N_FTS_MASK;
+> -	val |= ACK_N_FTS(180);
+> -	dw_pcie_writel_dbi(pci, ACK_F_ASPM_CTRL_OFF, val);
+> -
+> -	/*
+> -	 * Set the Number of Fast Training Sequences that the core
+> -	 * advertises as its N_FTS during Gen2 or Gen3 link training.
+> -	 */
+> -	dw_pcie_link_set_n_fts(pci, 180);
+> -}
+> -
+>   static void artpec6_pcie_assert_core_reset(struct artpec6_pcie *artpec6_pcie)
+>   {
+>   	u32 val;
+> @@ -351,11 +320,14 @@ static int artpec6_pcie_host_init(struct pcie_port *pp)
+>   	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+>   	struct artpec6_pcie *artpec6_pcie = to_artpec6_pcie(pci);
+>   
+> +	if (artpec6_pcie->variant == ARTPEC7) {
+> +		pci->n_fts[0] = 180;
+> +		pci->n_fts[1] = 180;
+> +	}
+>   	artpec6_pcie_assert_core_reset(artpec6_pcie);
+>   	artpec6_pcie_init_phy(artpec6_pcie);
+>   	artpec6_pcie_deassert_core_reset(artpec6_pcie);
+>   	artpec6_pcie_wait_for_phy(artpec6_pcie);
+> -	artpec6_pcie_set_nfts(artpec6_pcie);
+>   	dw_pcie_setup_rc(pp);
+>   	artpec6_pcie_establish_link(pci);
+>   	dw_pcie_wait_for_link(pci);
+> @@ -403,7 +375,6 @@ static void artpec6_pcie_ep_init(struct dw_pcie_ep *ep)
+>   	artpec6_pcie_init_phy(artpec6_pcie);
+>   	artpec6_pcie_deassert_core_reset(artpec6_pcie);
+>   	artpec6_pcie_wait_for_phy(artpec6_pcie);
+> -	artpec6_pcie_set_nfts(artpec6_pcie);
+>   
+>   	for (bar = 0; bar < PCI_STD_NUM_BARS; bar++)
+>   		dw_pcie_ep_reset_bar(pci, bar);
+> diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
+> index 61e1faba15bf..3cb21247619c 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware.c
+> +++ b/drivers/pci/controller/dwc/pcie-designware.c
+> @@ -510,17 +510,6 @@ static void dw_pcie_link_set_max_speed(struct dw_pcie *pci, u32 link_gen)
+>   }
+>   EXPORT_SYMBOL_GPL(dw_pcie_link_set_max_speed);
+>   
+> -void dw_pcie_link_set_n_fts(struct dw_pcie *pci, u32 n_fts)
+> -{
+> -	u32 val;
+> -
+> -	val = dw_pcie_readl_dbi(pci, PCIE_LINK_WIDTH_SPEED_CONTROL);
+> -	val &= ~PORT_LOGIC_N_FTS_MASK;
+> -	val |= n_fts & PORT_LOGIC_N_FTS_MASK;
+> -	dw_pcie_writel_dbi(pci, PCIE_LINK_WIDTH_SPEED_CONTROL, val);
+> -}
+> -EXPORT_SYMBOL_GPL(dw_pcie_link_set_n_fts);
+> -
+>   static u8 dw_pcie_iatu_unroll_enabled(struct dw_pcie *pci)
+>   {
+>   	u32 val;
+> @@ -551,6 +540,23 @@ void dw_pcie_setup(struct dw_pcie *pci)
+>   	if (pci->link_gen > 0)
+>   		dw_pcie_link_set_max_speed(pci, pci->link_gen);
+>   
+> +	/* Configure Gen1 N_FTS */
+> +	if (pci->n_fts[0]) {
+> +		val = dw_pcie_readl_dbi(pci, PCIE_PORT_AFR);
+> +		val &= ~(PORT_AFR_N_FTS_MASK | PORT_AFR_CC_N_FTS_MASK);
+> +		val |= PORT_AFR_N_FTS(pci->n_fts[0]);
+> +		val |= PORT_AFR_CC_N_FTS(pci->n_fts[0]);
+> +		dw_pcie_writel_dbi(pci, PCIE_PORT_AFR, val);
+> +	}
+> +
+> +	/* Configure Gen2+ N_FTS */
+> +	if (pci->n_fts[1]) {
+> +		val = dw_pcie_readl_dbi(pci, PCIE_LINK_WIDTH_SPEED_CONTROL);
+> +		val &= ~PORT_LOGIC_N_FTS_MASK;
+> +		val |= pci->n_fts[pci->link_gen - 1];
+Apologies for getting late to this change given that the change has 
+already been merged.
+I'm wondering why is it that link_gen has to be used in deriving the 
+index instead of directly using '1' as the index?
+Infact the for link speed greater than 2, accesses go beyond n_fts[] 
+array boundaries.
+Since the if() check is done based on a non-zero value of pci->n_fts[1], 
+shouldn't the same be used for programming also?
 
-And your current way every other hte user will have to duplicate the
-gpiolib-cdev code....
+- Vidya Sagar
 
-> For such hardware, my initial doubt remains the same about
+> +		dw_pcie_writel_dbi(pci, PCIE_LINK_WIDTH_SPEED_CONTROL, val);
+> +	}
+> +
+>   	val = dw_pcie_readl_dbi(pci, PCIE_PORT_LINK_CONTROL);
+>   	val &= ~PORT_LINK_FAST_LINK_MODE;
+>   	val |= PORT_LINK_DLL_LINK_EN;
+> diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
+> index 0b48298362cd..d8771db247f4 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware.h
+> +++ b/drivers/pci/controller/dwc/pcie-designware.h
+> @@ -34,6 +34,7 @@
+>   #define PORT_AFR_N_FTS_MASK		GENMASK(15, 8)
+>   #define PORT_AFR_N_FTS(n)		FIELD_PREP(PORT_AFR_N_FTS_MASK, n)
+>   #define PORT_AFR_CC_N_FTS_MASK		GENMASK(23, 16)
+> +#define PORT_AFR_CC_N_FTS(n)		FIELD_PREP(PORT_AFR_CC_N_FTS_MASK, n)
+>   #define PORT_AFR_ENTER_ASPM		BIT(30)
+>   #define PORT_AFR_L0S_ENTRANCE_LAT_SHIFT	24
+>   #define PORT_AFR_L0S_ENTRANCE_LAT_MASK	GENMASK(26, 24)
+> @@ -253,6 +254,7 @@ struct dw_pcie {
+>   	unsigned int		version;
+>   	int			num_lanes;
+>   	int			link_gen;
+> +	u8			n_fts[2];
+>   };
+>   
+>   #define to_dw_pcie_from_pp(port) container_of((port), struct dw_pcie, pp)
+> @@ -271,7 +273,6 @@ void dw_pcie_write_dbi(struct dw_pcie *pci, u32 reg, size_t size, u32 val);
+>   void dw_pcie_write_dbi2(struct dw_pcie *pci, u32 reg, size_t size, u32 val);
+>   int dw_pcie_link_up(struct dw_pcie *pci);
+>   void dw_pcie_upconfig_setup(struct dw_pcie *pci);
+> -void dw_pcie_link_set_n_fts(struct dw_pcie *pci, u32 n_fts);
+>   int dw_pcie_wait_for_link(struct dw_pcie *pci);
+>   void dw_pcie_prog_outbound_atu(struct dw_pcie *pci, int index,
+>   			       int type, u64 cpu_addr, u64 pci_addr,
+> diff --git a/drivers/pci/controller/dwc/pcie-intel-gw.c b/drivers/pci/controller/dwc/pcie-intel-gw.c
+> index 333f11561807..5650cb78acba 100644
+> --- a/drivers/pci/controller/dwc/pcie-intel-gw.c
+> +++ b/drivers/pci/controller/dwc/pcie-intel-gw.c
+> @@ -67,7 +67,6 @@ struct intel_pcie_port {
+>   	void __iomem		*app_base;
+>   	struct gpio_desc	*reset_gpio;
+>   	u32			rst_intrvl;
+> -	u32			n_fts;
+>   	struct clk		*core_clk;
+>   	struct reset_control	*core_rst;
+>   	struct phy		*phy;
+> @@ -138,37 +137,29 @@ static void intel_pcie_link_setup(struct intel_pcie_port *lpp)
+>   	pcie_rc_cfg_wr(lpp, offset + PCI_EXP_LNKCTL, val);
+>   }
+>   
+> -static void intel_pcie_port_logic_setup(struct intel_pcie_port *lpp)
+> +static void intel_pcie_init_n_fts(struct dw_pcie *pci)
+>   {
+> -	u32 val, mask;
+> -	struct dw_pcie *pci = &lpp->pci;
+> -
+> -	switch (pcie_link_speed[pci->link_gen]) {
+> -	case PCIE_SPEED_8_0GT:
+> -		lpp->n_fts = PORT_AFR_N_FTS_GEN3;
+> +	switch (pci->link_gen) {
+> +	case 3:
+> +		pci->n_fts[1] = PORT_AFR_N_FTS_GEN3;
+>   		break;
+> -	case PCIE_SPEED_16_0GT:
+> -		lpp->n_fts = PORT_AFR_N_FTS_GEN4;
+> +	case 4:
+> +		pci->n_fts[1] = PORT_AFR_N_FTS_GEN4;
+>   		break;
+>   	default:
+> -		lpp->n_fts = PORT_AFR_N_FTS_GEN12_DFT;
+> +		pci->n_fts[1] = PORT_AFR_N_FTS_GEN12_DFT;
+>   		break;
+>   	}
+> -
+> -	mask = PORT_AFR_N_FTS_MASK | PORT_AFR_CC_N_FTS_MASK;
+> -	val = FIELD_PREP(PORT_AFR_N_FTS_MASK, lpp->n_fts) |
+> -	       FIELD_PREP(PORT_AFR_CC_N_FTS_MASK, lpp->n_fts);
+> -	pcie_rc_cfg_wr_mask(lpp, PCIE_PORT_AFR, mask, val);
+> +	pci->n_fts[0] = PORT_AFR_N_FTS_GEN12_DFT;
+>   }
+>   
+>   static void intel_pcie_rc_setup(struct intel_pcie_port *lpp)
+>   {
+>   	intel_pcie_ltssm_disable(lpp);
+>   	intel_pcie_link_setup(lpp);
+> +	intel_pcie_init_n_fts(&lpp->pci);
+>   	dw_pcie_setup_rc(&lpp->pci.pp);
+>   	dw_pcie_upconfig_setup(&lpp->pci);
+> -	intel_pcie_port_logic_setup(lpp);
+> -	dw_pcie_link_set_n_fts(&lpp->pci, lpp->n_fts);
+>   }
+>   
+>   static int intel_pcie_ep_rst_init(struct intel_pcie_port *lpp)
+> diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
+> index 91ef4b3e860d..1560c449757d 100644
+> --- a/drivers/pci/controller/dwc/pcie-tegra194.c
+> +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
+> @@ -881,17 +881,6 @@ static void tegra_pcie_prepare_host(struct pcie_port *pp)
+>   
+>   	dw_pcie_writel_dbi(pci, PCI_BASE_ADDRESS_0, 0);
+>   
+> -	/* Configure FTS */
+> -	val = dw_pcie_readl_dbi(pci, PCIE_PORT_AFR);
+> -	val &= ~PORT_AFR_N_FTS_MASK;
+> -	val |= PORT_AFR_N_FTS(N_FTS_VAL);
+> -	dw_pcie_writel_dbi(pci, PCIE_PORT_AFR, val);
+> -
+> -	val = dw_pcie_readl_dbi(pci, PCIE_LINK_WIDTH_SPEED_CONTROL);
+> -	val &= ~PORT_LOGIC_N_FTS_MASK;
+> -	val |= FTS_VAL;
+> -	dw_pcie_writel_dbi(pci, PCIE_LINK_WIDTH_SPEED_CONTROL, val);
+> -
+>   	/* Enable as 0xFFFF0001 response for CRS */
+>   	val = dw_pcie_readl_dbi(pci, PORT_LOGIC_AMBA_ERROR_RESPONSE_DEFAULT);
+>   	val &= ~(AMBA_ERROR_RESPONSE_CRS_MASK << AMBA_ERROR_RESPONSE_CRS_SHIFT);
+> @@ -1794,17 +1783,6 @@ static void pex_ep_event_pex_rst_deassert(struct tegra_pcie_dw *pcie)
+>   	val &= ~GEN3_RELATED_OFF_GEN3_ZRXDC_NONCOMPL;
+>   	dw_pcie_writel_dbi(pci, GEN3_RELATED_OFF, val);
+>   
+> -	/* Configure N_FTS & FTS */
+> -	val = dw_pcie_readl_dbi(pci, PCIE_PORT_AFR);
+> -	val &= ~PORT_AFR_N_FTS_MASK;
+> -	val |= PORT_AFR_N_FTS(FTS_VAL);
+> -	dw_pcie_writel_dbi(pci, PCIE_PORT_AFR, val);
+> -
+> -	val = dw_pcie_readl_dbi(pci, PCIE_LINK_WIDTH_SPEED_CONTROL);
+> -	val &= ~PORT_LOGIC_N_FTS_MASK;
+> -	val |= FTS_VAL;
+> -	dw_pcie_writel_dbi(pci, PCIE_LINK_WIDTH_SPEED_CONTROL, val);
+> -
+>   	pcie->pcie_cap_base = dw_pcie_find_capability(&pcie->pci,
+>   						      PCI_CAP_ID_EXP);
+>   	clk_set_rate(pcie->core_clk, GEN4_CORE_CLK_FREQ);
+> @@ -2033,6 +2011,9 @@ static int tegra_pcie_dw_probe(struct platform_device *pdev)
+>   	pci = &pcie->pci;
+>   	pci->dev = &pdev->dev;
+>   	pci->ops = &tegra_dw_pcie_ops;
+> +	pci->n_fts[0] = N_FTS_VAL;
+> +	pci->n_fts[1] = FTS_VAL;
+> +
+>   	pp = &pci->pp;
+>   	pcie->dev = &pdev->dev;
+>   	pcie->mode = (enum dw_pcie_device_mode)data->mode;
 > 
-> the worst case scenario between two handlers, but perhaps that's
-> 
-> implementation details for hte to handle.
-> 
-
-Indeed.
-
-Cheers,
-Kent.
-
-> >
-> > And another reason it makes sense to integrate this with irq...
-> 
-> Alright, will explore this route as well. I remember both Thierry[1] and
-> 
-> Marc[2] raised some doubts (time to revive that discussion).
-> 
-> 
-> [1]: https://lore.kernel.org/lkml/YFm9r%2FtFkzVlYDEp@orome.fritz.box/
-> 
-> [2]: https://lore.kernel.org/lkml/87h7l1k9yi.wl-maz@kernel.org/
-> 
-> >
-> > Cheers,
-> > Kent.
