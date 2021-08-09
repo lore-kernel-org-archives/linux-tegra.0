@@ -2,99 +2,91 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 652B1C432BE
-	for <linux-tegra@archiver.kernel.org>; Sun,  8 Aug 2021 16:01:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40F44C4320A
+	for <linux-tegra@archiver.kernel.org>; Mon,  9 Aug 2021 13:06:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 390C960F0F
-	for <linux-tegra@archiver.kernel.org>; Sun,  8 Aug 2021 16:01:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1BEA160F93
+	for <linux-tegra@archiver.kernel.org>; Mon,  9 Aug 2021 13:06:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229923AbhHHQBg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 8 Aug 2021 12:01:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55980 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229608AbhHHQBg (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Sun, 8 Aug 2021 12:01:36 -0400
-Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBBB0C061760;
-        Sun,  8 Aug 2021 09:01:15 -0700 (PDT)
-Received: by mail-lj1-x234.google.com with SMTP id a7so19868416ljq.11;
-        Sun, 08 Aug 2021 09:01:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=89d9PFSl6f0XdrabkTEFUnWMev9/DYMfhxE7Q7oaJJk=;
-        b=MniDHjSS9B5A9nu73tOEWjAgw/CPBPDM90KA23b1+Ar51O7svKroSrQmrDwERmHpQQ
-         tvE9Ac/q87TQoMWGWyEe57iuME0Z3zVnLY3uMC0TrUorPRkGZOF9DOKIyQVGIKy+8t4o
-         HXjNf/Xg4t2ZMDt6kDV/TZx3qXiCaYVGbVZggYOxc81XfupVkMXmz6sjjruWEykJacbp
-         i7Gj1qazp1iFm9wo6/vdun0Ux304bPgLMbPSUwxeZxOWkzcruLukO+0kj8vf7AAgGb3M
-         lYg2yxui49sr2l0fxOLwmXFSEs4NQ278T6RAG3vXJxvem0ExFLGXqLXOZwYMr7zbqBel
-         0RPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=89d9PFSl6f0XdrabkTEFUnWMev9/DYMfhxE7Q7oaJJk=;
-        b=FXzHD9ZZhBbLLkPr+TxJms55ep1dRcO2uHEJONQDDTu4yhssBVzoPl0XzbEp+rzCqK
-         Er4uaBDjfm7IKaoLasIZfjM8eQxUGzRv1sjnZC2eHFjuWkhlAOU4nMry0QwsaNuOR4pQ
-         l2CAT0UAAp7Fcyj48g5G+s3dNr1qaJpq8ZBmSJgZHy4KOxyaevLC/YcWyqMmtt4kGvar
-         EukYnYeKADRBnnLYPj/HN4y5O3AB2aCKsMU0HVx90soROQ/Yu8Mzl4615oy8ejFow0tW
-         mY7z45ixundP7CRTAm/M8STukcRMbW/JfYkdFhdttGRXYw2aKTlCvWgx1AyRCrJxXgEr
-         q6Ug==
-X-Gm-Message-State: AOAM5338XZSKlbaGFKll0RzRPUacrNdMK0tlmlwJCqg3Obcg4wSeGYwx
-        6BVquBpEURtWc+xc3btr9JM=
-X-Google-Smtp-Source: ABdhPJw58mlPpK1UuFuNfJjAbFpIieik88LlavD9zcXG2sAS1tM95cpjks5gi3c8HsTz6o8cwoqX9g==
-X-Received: by 2002:a2e:84c7:: with SMTP id q7mr12554184ljh.61.1628438474302;
-        Sun, 08 Aug 2021 09:01:14 -0700 (PDT)
-Received: from localhost.localdomain (46-138-117-53.dynamic.spd-mgts.ru. [46.138.117.53])
-        by smtp.gmail.com with ESMTPSA id a6sm1589014lfs.160.2021.08.08.09.01.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Aug 2021 09:01:13 -0700 (PDT)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Anton Bambura <jenneron@protonmail.com>
-Cc:     linux-rtc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v1] rtc: tps65910: Correct driver module alias
-Date:   Sun,  8 Aug 2021 19:00:30 +0300
-Message-Id: <20210808160030.8556-1-digetx@gmail.com>
-X-Mailer: git-send-email 2.32.0
+        id S234993AbhHINGs (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 9 Aug 2021 09:06:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48174 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S234684AbhHINGs (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 9 Aug 2021 09:06:48 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 6BDA161004;
+        Mon,  9 Aug 2021 13:06:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1628514388;
+        bh=Iq+gT7aGbB5jwY5mIoHM84WkEfnTWJ0Yz9CFdGjS3LQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=j90/GNuhpO/S45HPQO5n+SrZ76G1v5D2A87vUXMDapxRzr0V+aMWqln0KfTIuo/zQ
+         KbT3LgsatHRJSHwkF19znprb6a47Ef5K7lMaLT7ddWXKOVZEF7vWClrLPOLZcy3Hxt
+         IqgJ3GVfWmSXmKNTvfJMZ4qNF1a3wALvNzy4O4yCa+0vW6LThSZWok09ZI25Ciu6lA
+         G3/uYm2/XOXBrt7339peaSQhLatuwCJA5m1jJakCxKhgnqFycGzww8hBQf6PMnEFKE
+         ETWdbyNscFuDCRyFqDo3CksWBQ3MxLU/6fKZsRbLIcQpuEPzEAhq9dKI5OI7vmpqDG
+         qd3GEXnR+kC0A==
+From:   Mark Brown <broonie@kernel.org>
+To:     Jonathan Hunter <jonathanh@nvidia.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Thierry Reding <treding@nvidia.com>
+Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-spi@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] spi: tegra20-slink: Improve runtime PM usage
+Date:   Mon,  9 Aug 2021 14:06:04 +0100
+Message-Id: <162851432638.51983.14201816544596196314.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20210731192731.5869-1-digetx@gmail.com>
+References: <20210731192731.5869-1-digetx@gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The TPS65910 RTC driver module doesn't auto-load because of the wrong
-module alias that doesn't match the device name, fix it.
+On Sat, 31 Jul 2021 22:27:30 +0300, Dmitry Osipenko wrote:
+> The Tegra SPI driver supports runtime PM, which controls the clock
+> enable state, but the clk is also enabled separately from the RPM
+> at the driver probe time, and thus, stays always on. Fix it.
+> 
+> Runtime PM now is always available on Tegra, hence there is no need to
+> check the RPM presence in the driver anymore. Remove these checks.
+> 
+> [...]
 
-Cc: stable@vger.kernel.org
-Reported-by: Anton Bambura <jenneron@protonmail.com>
-Tested-by: Anton Bambura <jenneron@protonmail.com>
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/rtc/rtc-tps65910.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Applied to
 
-diff --git a/drivers/rtc/rtc-tps65910.c b/drivers/rtc/rtc-tps65910.c
-index bc89c62ccb9b..75e4c2d777b9 100644
---- a/drivers/rtc/rtc-tps65910.c
-+++ b/drivers/rtc/rtc-tps65910.c
-@@ -467,6 +467,6 @@ static struct platform_driver tps65910_rtc_driver = {
- };
- 
- module_platform_driver(tps65910_rtc_driver);
--MODULE_ALIAS("platform:rtc-tps65910");
-+MODULE_ALIAS("platform:tps65910-rtc");
- MODULE_AUTHOR("Venu Byravarasu <vbyravarasu@nvidia.com>");
- MODULE_LICENSE("GPL");
--- 
-2.32.0
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
+Thanks!
+
+[1/2] spi: tegra20-slink: Improve runtime PM usage
+      commit: e4bb903fda0e9bbafa1338dcd2ee5e4d3ccc50da
+[2/2] spi: tegra20-slink: Don't use resource-managed spi_register helper
+      commit: 26c863418221344b1cfb8e6c11116b2b81144281
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
