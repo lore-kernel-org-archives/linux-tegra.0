@@ -2,150 +2,233 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 463EEC4338F
-	for <linux-tegra@archiver.kernel.org>; Mon,  9 Aug 2021 13:09:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B5C2C4338F
+	for <linux-tegra@archiver.kernel.org>; Mon,  9 Aug 2021 14:16:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1E7AA61019
-	for <linux-tegra@archiver.kernel.org>; Mon,  9 Aug 2021 13:09:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D23CE6056B
+	for <linux-tegra@archiver.kernel.org>; Mon,  9 Aug 2021 14:16:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234207AbhHINJb (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 9 Aug 2021 09:09:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51290 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233999AbhHINJb (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 9 Aug 2021 09:09:31 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 0177861019;
-        Mon,  9 Aug 2021 13:09:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1628514551;
-        bh=YzG7BnFCln4Yyp6LxrxvxeyUMj5GmzMjIhVfIPMKSYc=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=B8pvYpwPzQ18zhH2+y0BGlUA/OJhSA/B0e0InC/nca080ep3tJvTyYkjw4iA0bIXy
-         YJkfsyL7WJqFEvGlYZsDdfkS8W4gkzs2dxMYwyXUt2VpcSaAsgcNhIj8ai/6CAVUZ2
-         ldHAUzQEOhshkYgfdQv79fOgiKArwiLUzaIB6uXf33e9Dwx6fJNaNUWADrL3Q2AY27
-         Bl9LecINy6PsqQyvEgFzW02xNT9GIlS0Tp9TuaVC5l/yfox0JcJblrMOq9WQey5+Yx
-         UjWS8SLAwRaq9m1jBvtg7XtqOaG9lvGylZ+m8LNCf4Md/cmndcHE0D+U5Qp6wYUHub
-         B20Q3cXMUBSvw==
-Received: by mail-lf1-f51.google.com with SMTP id x8so33826708lfe.3;
-        Mon, 09 Aug 2021 06:09:10 -0700 (PDT)
-X-Gm-Message-State: AOAM5316n5Q6fSgE4xpMZGJ3ifgWZBV90+3ZkWDC4HNdFLIzSkZxLY6c
-        yFo8QwUpkzJExX7zXdxj5aVPLXZNs5UtfjZ3RQ==
-X-Google-Smtp-Source: ABdhPJzottn9lR1w4Ou5tspJmaMhExuHvfqLuRluAKs7dQZoer2iHn4k6bWFWu6HusN3FgH38v3t3o0558IoBlRW8NU=
-X-Received: by 2002:a17:906:4156:: with SMTP id l22mr6919385ejk.75.1628514539014;
- Mon, 09 Aug 2021 06:08:59 -0700 (PDT)
+        id S234478AbhHIOQW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 9 Aug 2021 10:16:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41894 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233274AbhHIOQV (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 9 Aug 2021 10:16:21 -0400
+Received: from mail-ua1-x935.google.com (mail-ua1-x935.google.com [IPv6:2607:f8b0:4864:20::935])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A26C1C0613D3
+        for <linux-tegra@vger.kernel.org>; Mon,  9 Aug 2021 07:16:00 -0700 (PDT)
+Received: by mail-ua1-x935.google.com with SMTP id t25so7052629uar.13
+        for <linux-tegra@vger.kernel.org>; Mon, 09 Aug 2021 07:16:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=t2JS4jX4KVJMm969xuIbIakC/VW6X8llepJsV0geS9M=;
+        b=xKhQTHUoQoEkz2nG4hDGIk2YR5qF2cuL0MXva/HHrc09x2xW7etRm0fmmaiRrmQINl
+         CW5Gi54a+YJYpI10SKFx/DKhsxVFrRv+1JSWObvir9dr99JGouJ4rm1PjR951LC52gVq
+         qf8LFqV/dIzJmosJWmHm+QKTq5FOjclQDtJjD1TNStE1sJnwuL649jH/KB6kVj74+RjA
+         D0tUK5NxWgbCX4uDvv7mzuz7Z3R/lAIJEuFmNOLhZL2S7/aYdwDpwPghA3zjEabLTf2o
+         dWdXyHdGbpd/bfRafYUUqOi76FBqrAJ/TcxbJtxLTsOLd5dkmAmZ3cNPzUer74BGXZ5u
+         1VdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=t2JS4jX4KVJMm969xuIbIakC/VW6X8llepJsV0geS9M=;
+        b=jwIJWHeZfsRIPoDGjbugwDHLeOglRW84UCeIsbojqh+HFt8ubdzKLz0qxAg9lrtexT
+         Q7pOwMKPrgJfjQVGtLxBZ4KuiTLWxixTdQ2boHyfritb6STZmVHTmZD7NH/W6dlHBe71
+         q/mUVmqOF2JwqYfGv4LOV6h3KST3BTldBMdpNJAtX+7KTeJL47VteBjB59ZydleXk7M6
+         ULok9r6XISKXfT5mrZC5VSDywiGp4CSeGVHajn4Szl3JrUXKf9VAUL7h1rdlSyOgvEo2
+         xNJhiYFcfKUiRUVck5sNjNurW5+Rm93N0jzwvGfl+Xix8QvEl1m/5QOui+1vjMyQ4KBU
+         l0Bg==
+X-Gm-Message-State: AOAM533acFHdu7S31oBsxDRKBUAKKfcOHVi5GLTv5bUjVHjEJ6QzrS6p
+        +W4KvHXa5KYdiAdKCdDwNgYU6zaYFtlbfFEuHr/GHA==
+X-Google-Smtp-Source: ABdhPJwUc2DxWbhhzBxKreLdDmySu8RuyfX9ZQYDSbBH2oFtJGj3ctyKbUboWT9zSZ4AsW0BlvGk0WTBojJ8rTp8zc0=
+X-Received: by 2002:a9f:25a7:: with SMTP id 36mr15493853uaf.129.1628518559709;
+ Mon, 09 Aug 2021 07:15:59 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210625082222.3845-1-tzimmermann@suse.de> <20210625082222.3845-14-tzimmermann@suse.de>
-In-Reply-To: <20210625082222.3845-14-tzimmermann@suse.de>
-From:   Chun-Kuang Hu <chunkuang.hu@kernel.org>
-Date:   Mon, 9 Aug 2021 21:08:48 +0800
-X-Gmail-Original-Message-ID: <CAAOTY_8Y7VZm2JWtPXVGfsPQ-j72wMULQJHCHdmQEV+a=TyW1Q@mail.gmail.com>
-Message-ID: <CAAOTY_8Y7VZm2JWtPXVGfsPQ-j72wMULQJHCHdmQEV+a=TyW1Q@mail.gmail.com>
-Subject: Re: [PATCH v4 13/27] drm/mediatek: Don't set struct drm_device.irq_enabled
-To:     Thomas Zimmermann <tzimmermann@suse.de>
-Cc:     Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        Xinhui.Pan@amd.com, james.qian.wang@arm.com, liviu.dudau@arm.com,
-        mihail.atanassov@arm.com, brian.starkey@arm.com,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Inki Dae <inki.dae@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        krzysztof.kozlowski@canonical.com, xinliang.liu@linaro.org,
-        tiantao6@hisilicon.com, john.stultz@linaro.org,
-        kong.kongxinwei@hisilicon.com, puck.chen@hisilicon.com,
-        Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Chun-Kuang Hu <chunkuang.hu@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        Tomi Valkeinen <tomba@kernel.org>,
-        Sandy Huang <hjc@rock-chips.com>,
-        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-        Yannick Fertre <yannick.fertre@foss.st.com>,
-        Philippe Cornu <philippe.cornu@foss.st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        jonathanh@nvidia.com, Jyri Sarha <jyri.sarha@iki.fi>,
-        emma@anholt.net, linux-graphics-maintainer@vmware.com,
-        zackr@vmware.com, hyun.kwon@xilinx.com,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        michal.simek@xilinx.com, jani.nikula@linux.intel.com,
-        rodrigo.vivi@intel.com, Russell King <linux@armlinux.org.uk>,
-        kieran.bingham+renesas@ideasonboard.com,
-        Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
-        Melissa Wen <melissa.srw@gmail.com>,
-        Haneen Mohammed <hamohammed.sa@gmail.com>,
-        amd-gfx@lists.freedesktop.org,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-samsung-soc@vger.kernel.org,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
-        nouveau@lists.freedesktop.org, linux-rockchip@lists.infradead.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
-        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>
+References: <20210701232728.23591-1-digetx@gmail.com> <20210701232728.23591-3-digetx@gmail.com>
+ <CAPDyKFrtWDYJo_NjS8306Z9ykbg7XZ55jC9hKEBMGkcrx1=4kQ@mail.gmail.com>
+ <1034458d-78e0-5036-e278-6fee5d0d75ac@gmail.com> <CAPDyKFoafAk72Kw6X7626Niduaii0V5VM4dGSWmq+e3JTh7VRg@mail.gmail.com>
+ <a5dfdf59-f5b5-d28e-6b02-b0c860ba8d80@gmail.com>
+In-Reply-To: <a5dfdf59-f5b5-d28e-6b02-b0c860ba8d80@gmail.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Mon, 9 Aug 2021 16:15:23 +0200
+Message-ID: <CAPDyKFq+ExjbGrN=yUUXPKfN_fGrwY6EAYn9a6VUFFU_VjhC=g@mail.gmail.com>
+Subject: Re: [PATCH v7 02/37] soc/tegra: pmc: Implement attach_dev() of power
+ domain drivers
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi, Thomas:
+On Wed, 4 Aug 2021 at 23:17, Dmitry Osipenko <digetx@gmail.com> wrote:
+>
+> 04.08.2021 12:59, Ulf Hansson =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > On Mon, 2 Aug 2021 at 20:23, Dmitry Osipenko <digetx@gmail.com> wrote:
+> >>
+> >> 02.08.2021 17:48, Ulf Hansson =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> >> ...
+> >>>> +       if (!list_empty(&genpd->child_links)) {
+> >>>> +               link =3D list_first_entry(&genpd->child_links, struc=
+t gpd_link,
+> >>>> +                                       child_node);
+> >>>> +               core_genpd =3D link->parent;
+> >>>> +       } else {
+> >>>> +               core_genpd =3D genpd;
+> >>>> +       }
+> >>>
+> >>> This looks a bit odd to me. A genpd provider shouldn't need to walk
+> >>> these links as these are considered internals to genpd. Normally this
+> >>> needs lockings, etc.
+> >>>
+> >>> Why exactly do you need this?
+> >>
+> >> We have a chain of PMC domain -> core domain, both domains are created
+> >> and liked together by this PMC driver. Devices are attached to either
+> >> PMC domain or to core domain. PMC domain doesn't handle the performanc=
+e
+> >> changes, performance requests go down to the core domain.
+> >
+> > Did I get this right? The core domain is the parent to the PMC domain?
+>
+> You got this right.
+>
+> >>
+> >> This is needed in order to translate the device's OPP into performance
+> >> state of the core domain, based on the domain to which device is attac=
+hed.
+> >
+> > So, the PMC domain doesn't have an OPP table associated with it, but
+> > some of its attached devices may still have available OPPs, which
+> > should be managed through the parent domain (core domain). Correct?
+>
+> Yes, the OPPs are specified only for the core domain.
+>
+> > Is there a DT patch in the series that I can look at that shows how
+> > this is encoded?
+>
+> See patches which are adding domains and OPPs to DTs:
+>
+> https://patchwork.ozlabs.org/project/linux-tegra/patch/20210701232728.235=
+91-34-digetx@gmail.com/
+>
+> https://patchwork.ozlabs.org/project/linux-tegra/patch/20210701232728.235=
+91-35-digetx@gmail.com/
 
-Thomas Zimmermann <tzimmermann@suse.de> =E6=96=BC 2021=E5=B9=B46=E6=9C=8825=
-=E6=97=A5 =E9=80=B1=E4=BA=94 =E4=B8=8B=E5=8D=884:22=E5=AF=AB=E9=81=93=EF=BC=
-=9A
->
-> The field drm_device.irq_enabled is only used by legacy drivers
-> with userspace modesetting. Don't set it in mediatek.
->
+Thanks, this looks sane to me!
 
-Acked-by: Chun-Kuang Hu <chunkuang.hu@kernel.org>
+>
+> > Hmm, I have the feeling that we should try to manage in some generic
+> > way in genpd, rather than having to deal with it here.
+>
+> Still it requires a platform-specific knowledge. It could be some new
+> genpd hook for the initialization. But I don't know what other platforms
+> may want to initialize, so it's not clear to me how to make it generic.
 
-> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-> ---
->  drivers/gpu/drm/mediatek/mtk_drm_drv.c | 6 ------
->  1 file changed, 6 deletions(-)
+Right. We may need some more thinking around this, if needed at all (see be=
+low).
+
 >
-> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/med=
-iatek/mtk_drm_drv.c
-> index b46bdb8985da..9b60bec33d3b 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-> @@ -270,12 +270,6 @@ static int mtk_drm_kms_init(struct drm_device *drm)
->                 goto err_component_unbind;
->         }
+> >>>> +
+> >>>> +       pd_opp_table =3D dev_pm_opp_get_opp_table(&core_genpd->dev);
+> >>>> +       if (IS_ERR(pd_opp_table)) {
+> >>>> +               dev_err(&genpd->dev, "failed to get OPP table of %s:=
+ %pe\n",
+> >>>> +                       dev_name(&core_genpd->dev), pd_opp_table);
+> >>>> +               ret =3D PTR_ERR(pd_opp_table);
+> >>>> +               goto put_dev_opp;
+> >>>> +       }
+> >>>> +
+> >>>> +       pd_opp =3D dev_pm_opp_xlate_required_opp(opp_table, pd_opp_t=
+able, opp);
+> >>>> +       if (IS_ERR(pd_opp)) {
+> >>>> +               dev_err(&genpd->dev,
+> >>>> +                       "failed to xlate required OPP for %luHz of %=
+s: %pe\n",
+> >>>> +                       rate, dev_name(dev), pd_opp);
+> >>>> +               ret =3D PTR_ERR(pd_opp);
+> >>>> +               goto put_pd_opp_table;
+> >>>> +       }
+> >>>> +
+> >>>> +       /*
+> >>>> +        * The initialized state will be applied by GENPD core on th=
+e first
+> >>>> +        * RPM-resume of the device.  This means that drivers don't =
+need to
+> >>>> +        * explicitly initialize performance state.
+> >>>> +        */
+> >>>> +       state =3D pm_genpd_opp_to_performance_state(&core_genpd->dev=
+, pd_opp);
+> >>>> +       gpd_data->rpm_pstate =3D state;
+> >>>
+> >>> Could the above be replaced with Rajendra's suggestion [1], which
+> >>> changes genpd to internally during attach, to set a default
+> >>> performance state when there is a "required-opp" specified in the
+> >>> device  node?
+> >>
+> >> It's not a "static" performance level here, but any level depending on
+> >> h/w state left from bootloader and etc. The performance level
+> >> corresponds to the voltage of the core domain, hence we need to
+> >> initialize the voltage vote before device is resumed.
+> >
+> > Why not let the driver deal with this instead? It should be able to
+> > probe its device, no matter what state the bootloader has put the
+> > device into.
+> >
+> > To me, it sounds like a call to dev_pm_genpd_set_performance_state()
+> > (perhaps via dev_pm_opp_set_opp() or dev_pm_opp_set_rate()) from the
+> > driver itself, should be sufficient?
 >
-> -       /*
-> -        * We don't use the drm_irq_install() helpers provided by the DRM
-> -        * core, so we need to set this manually in order to allow the
-> -        * DRM_IOCTL_WAIT_VBLANK to operate correctly.
-> -        */
-> -       drm->irq_enabled =3D true;
->         ret =3D drm_vblank_init(drm, MAX_CRTC);
->         if (ret < 0)
->                 goto err_component_unbind;
-> --
-> 2.32.0
+> We did that in a previous versions of this series where drivers were
+> calling devm_tegra_core_dev_init_opp_table() helper during the probe to
+> initialize performance state of the domain. Moving OPP state
+> initialization into central place made drivers cleaner by removing the
+> boilerplate code.
+
+I am not against doing this in a central place, like $subject patch
+suggests. As a matter of fact, it makes perfect sense to me.
+
+However, what I am concerned about, is that you require to use genpd
+internal data structures to do it. I think we should try to avoid
+that.
+
 >
+> I can revert back to the previous variant, although this variant works
+> well too.
+
+I looked at that code and in that path we end up calling
+dev_pm_opp_set_rate(), after it has initialized the opp table for the
+device.
+
+Rather than doing the OF parsing above to find out the current state
+for the device, why can't you just call dev_pm_opp_set_rate() to
+initialize a proper vote instead?
+
+>
+> > I understand that it means the domain may change the OPP during boot,
+> > without respecting a vote for a device that has not been probed yet.
+> > But is there a problem with this?
+>
+> Domains themselves don't change OPP, there is no problem with that. The
+> point is to have cleaner code in the drivers.
+
+Alright, this makes sense to me as well.
+
+Kind regards
+Uffe
