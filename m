@@ -2,233 +2,173 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B5C2C4338F
-	for <linux-tegra@archiver.kernel.org>; Mon,  9 Aug 2021 14:16:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6B62C4338F
+	for <linux-tegra@archiver.kernel.org>; Mon,  9 Aug 2021 14:52:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D23CE6056B
-	for <linux-tegra@archiver.kernel.org>; Mon,  9 Aug 2021 14:16:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9907A60C41
+	for <linux-tegra@archiver.kernel.org>; Mon,  9 Aug 2021 14:52:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234478AbhHIOQW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 9 Aug 2021 10:16:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41894 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233274AbhHIOQV (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 9 Aug 2021 10:16:21 -0400
-Received: from mail-ua1-x935.google.com (mail-ua1-x935.google.com [IPv6:2607:f8b0:4864:20::935])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A26C1C0613D3
-        for <linux-tegra@vger.kernel.org>; Mon,  9 Aug 2021 07:16:00 -0700 (PDT)
-Received: by mail-ua1-x935.google.com with SMTP id t25so7052629uar.13
-        for <linux-tegra@vger.kernel.org>; Mon, 09 Aug 2021 07:16:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=t2JS4jX4KVJMm969xuIbIakC/VW6X8llepJsV0geS9M=;
-        b=xKhQTHUoQoEkz2nG4hDGIk2YR5qF2cuL0MXva/HHrc09x2xW7etRm0fmmaiRrmQINl
-         CW5Gi54a+YJYpI10SKFx/DKhsxVFrRv+1JSWObvir9dr99JGouJ4rm1PjR951LC52gVq
-         qf8LFqV/dIzJmosJWmHm+QKTq5FOjclQDtJjD1TNStE1sJnwuL649jH/KB6kVj74+RjA
-         D0tUK5NxWgbCX4uDvv7mzuz7Z3R/lAIJEuFmNOLhZL2S7/aYdwDpwPghA3zjEabLTf2o
-         dWdXyHdGbpd/bfRafYUUqOi76FBqrAJ/TcxbJtxLTsOLd5dkmAmZ3cNPzUer74BGXZ5u
-         1VdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=t2JS4jX4KVJMm969xuIbIakC/VW6X8llepJsV0geS9M=;
-        b=jwIJWHeZfsRIPoDGjbugwDHLeOglRW84UCeIsbojqh+HFt8ubdzKLz0qxAg9lrtexT
-         Q7pOwMKPrgJfjQVGtLxBZ4KuiTLWxixTdQ2boHyfritb6STZmVHTmZD7NH/W6dlHBe71
-         q/mUVmqOF2JwqYfGv4LOV6h3KST3BTldBMdpNJAtX+7KTeJL47VteBjB59ZydleXk7M6
-         ULok9r6XISKXfT5mrZC5VSDywiGp4CSeGVHajn4Szl3JrUXKf9VAUL7h1rdlSyOgvEo2
-         xNJhiYFcfKUiRUVck5sNjNurW5+Rm93N0jzwvGfl+Xix8QvEl1m/5QOui+1vjMyQ4KBU
-         l0Bg==
-X-Gm-Message-State: AOAM533acFHdu7S31oBsxDRKBUAKKfcOHVi5GLTv5bUjVHjEJ6QzrS6p
-        +W4KvHXa5KYdiAdKCdDwNgYU6zaYFtlbfFEuHr/GHA==
-X-Google-Smtp-Source: ABdhPJwUc2DxWbhhzBxKreLdDmySu8RuyfX9ZQYDSbBH2oFtJGj3ctyKbUboWT9zSZ4AsW0BlvGk0WTBojJ8rTp8zc0=
-X-Received: by 2002:a9f:25a7:: with SMTP id 36mr15493853uaf.129.1628518559709;
- Mon, 09 Aug 2021 07:15:59 -0700 (PDT)
+        id S234143AbhHIOxN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 9 Aug 2021 10:53:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39424 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233926AbhHIOxL (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 9 Aug 2021 10:53:11 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 6543D610CF;
+        Mon,  9 Aug 2021 14:52:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1628520770;
+        bh=Pxvauf7CFHRqwgrPJcBCTzOuC/lUcd4Kz0wvLQ2dWzw=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=k3WUKO9V06mZ0vQ4uCa2lAOUl3YN47JaNN2QCJjIyypAzfPv9JEIECoBjibPRMAls
+         rDKmyyc2n8fED+sdSZ8M5Y6RHWFWOaplP624T/71Aj5CBc59757HNCHYoMCJDiOFdW
+         sx8lqmPZfH9wWQPAkgaYgKnNfq54QpA03qYacOyIVk/oQxdhKT2XHCm4KwMUWYWGHq
+         yJzMD7yYA674d5zvVCMXYMq9mrKDy6pBQi6ysLN+fNwb/Lhd4rW4+j6zRanFgZgBNF
+         JH3Rt9kosR3e07Za60Rdse+IwPPMoWepCqIU+RZzbs8DDNHEIl8jn4kb0T1LhYvn9d
+         q6W6LAtgN8XNw==
+Received: by mail-ed1-f45.google.com with SMTP id n12so1158090edx.8;
+        Mon, 09 Aug 2021 07:52:50 -0700 (PDT)
+X-Gm-Message-State: AOAM530FWLv4HfElgxKYAMLEiyz7uW3cUvdmr3wH6QEoeJ7WBICPQlDz
+        P9v7Xcep7irzWmT1TB8pT0pwNdZedvVx5dZ97Q==
+X-Google-Smtp-Source: ABdhPJzc6XZ8s9ydxQHfxUS1CfauBiPrkQyjudkgpPtRe58+tK6GJ3YbxcrQpiqucK1Zl64RWkT3x4DLs+goMJdOtns=
+X-Received: by 2002:a05:6402:291d:: with SMTP id ee29mr30809324edb.289.1628520768969;
+ Mon, 09 Aug 2021 07:52:48 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210701232728.23591-1-digetx@gmail.com> <20210701232728.23591-3-digetx@gmail.com>
- <CAPDyKFrtWDYJo_NjS8306Z9ykbg7XZ55jC9hKEBMGkcrx1=4kQ@mail.gmail.com>
- <1034458d-78e0-5036-e278-6fee5d0d75ac@gmail.com> <CAPDyKFoafAk72Kw6X7626Niduaii0V5VM4dGSWmq+e3JTh7VRg@mail.gmail.com>
- <a5dfdf59-f5b5-d28e-6b02-b0c860ba8d80@gmail.com>
-In-Reply-To: <a5dfdf59-f5b5-d28e-6b02-b0c860ba8d80@gmail.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Mon, 9 Aug 2021 16:15:23 +0200
-Message-ID: <CAPDyKFq+ExjbGrN=yUUXPKfN_fGrwY6EAYn9a6VUFFU_VjhC=g@mail.gmail.com>
-Subject: Re: [PATCH v7 02/37] soc/tegra: pmc: Implement attach_dev() of power
- domain drivers
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
+References: <20200821035420.380495-1-robh@kernel.org> <20200821035420.380495-4-robh@kernel.org>
+ <68e3adfb-a79d-3b70-87ed-2e5e1bf7fc93@nvidia.com>
+In-Reply-To: <68e3adfb-a79d-3b70-87ed-2e5e1bf7fc93@nvidia.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Mon, 9 Aug 2021 08:52:37 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJZ-BzxnEPeqirrd=yZFSWejP4PBYDgLNEn-kubFzvXCA@mail.gmail.com>
+Message-ID: <CAL_JsqJZ-BzxnEPeqirrd=yZFSWejP4PBYDgLNEn-kubFzvXCA@mail.gmail.com>
+Subject: Re: [PATCH v2 03/40] PCI: dwc: Allow overriding bridge pci_ops
+To:     Vidya Sagar <vidyas@nvidia.com>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        PCI <linux-pci@vger.kernel.org>, Andy Gross <agross@kernel.org>,
+        Binghui Wang <wangbinghui@hisilicon.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Dilip Kota <eswara.kota@linux.intel.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Jesper Nilsson <jesper.nilsson@axis.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Jonathan Chocron <jonnyc@amazon.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>
+        Kevin Hilman <khilman@baylibre.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Murali Karicheri <m-karicheri2@ti.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Pratyush Anand <pratyush.anand@gmail.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Shawn Guo <shawn.guo@linaro.org>,
+        Stanimir Varbanov <svarbanov@mm-sol.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Xiaowei Song <songxiaowei@hisilicon.com>,
+        Yue Wang <yue.wang@amlogic.com>, Marc Zyngier <maz@kernel.org>,
+        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
+        linux-arm-kernel@axis.com,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        linux-omap <linux-omap@vger.kernel.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, 4 Aug 2021 at 23:17, Dmitry Osipenko <digetx@gmail.com> wrote:
+On Sun, Aug 8, 2021 at 9:13 AM Vidya Sagar <vidyas@nvidia.com> wrote:
 >
-> 04.08.2021 12:59, Ulf Hansson =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > On Mon, 2 Aug 2021 at 20:23, Dmitry Osipenko <digetx@gmail.com> wrote:
-> >>
-> >> 02.08.2021 17:48, Ulf Hansson =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> >> ...
-> >>>> +       if (!list_empty(&genpd->child_links)) {
-> >>>> +               link =3D list_first_entry(&genpd->child_links, struc=
-t gpd_link,
-> >>>> +                                       child_node);
-> >>>> +               core_genpd =3D link->parent;
-> >>>> +       } else {
-> >>>> +               core_genpd =3D genpd;
-> >>>> +       }
-> >>>
-> >>> This looks a bit odd to me. A genpd provider shouldn't need to walk
-> >>> these links as these are considered internals to genpd. Normally this
-> >>> needs lockings, etc.
-> >>>
-> >>> Why exactly do you need this?
-> >>
-> >> We have a chain of PMC domain -> core domain, both domains are created
-> >> and liked together by this PMC driver. Devices are attached to either
-> >> PMC domain or to core domain. PMC domain doesn't handle the performanc=
-e
-> >> changes, performance requests go down to the core domain.
+>
+>
+> On 8/21/2020 9:23 AM, Rob Herring wrote:
+> > In preparation to allow drivers to set their own root and child pci_ops
+> > instead of using the DWC specific config space ops, we need to make
+> > the pci_host_bridge pointer available and move setting the bridge->ops
+> > and bridge->child_ops pointer to before the .host_init() hook.
 > >
-> > Did I get this right? The core domain is the parent to the PMC domain?
->
-> You got this right.
->
-> >>
-> >> This is needed in order to translate the device's OPP into performance
-> >> state of the core domain, based on the domain to which device is attac=
-hed.
+> > Cc: Jingoo Han <jingoohan1@gmail.com>
+> > Cc: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+> > Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+> > Cc: Bjorn Helgaas <bhelgaas@google.com>
+> > Signed-off-by: Rob Herring <robh@kernel.org>
+> > ---
+> >   drivers/pci/controller/dwc/pcie-designware-host.c | 15 ++++++++++-----
+> >   drivers/pci/controller/dwc/pcie-designware.h      |  1 +
+> >   2 files changed, 11 insertions(+), 5 deletions(-)
 > >
-> > So, the PMC domain doesn't have an OPP table associated with it, but
-> > some of its attached devices may still have available OPPs, which
-> > should be managed through the parent domain (core domain). Correct?
->
-> Yes, the OPPs are specified only for the core domain.
->
-> > Is there a DT patch in the series that I can look at that shows how
-> > this is encoded?
->
-> See patches which are adding domains and OPPs to DTs:
->
-> https://patchwork.ozlabs.org/project/linux-tegra/patch/20210701232728.235=
-91-34-digetx@gmail.com/
->
-> https://patchwork.ozlabs.org/project/linux-tegra/patch/20210701232728.235=
-91-35-digetx@gmail.com/
-
-Thanks, this looks sane to me!
-
->
-> > Hmm, I have the feeling that we should try to manage in some generic
-> > way in genpd, rather than having to deal with it here.
->
-> Still it requires a platform-specific knowledge. It could be some new
-> genpd hook for the initialization. But I don't know what other platforms
-> may want to initialize, so it's not clear to me how to make it generic.
-
-Right. We may need some more thinking around this, if needed at all (see be=
-low).
-
->
-> >>>> +
-> >>>> +       pd_opp_table =3D dev_pm_opp_get_opp_table(&core_genpd->dev);
-> >>>> +       if (IS_ERR(pd_opp_table)) {
-> >>>> +               dev_err(&genpd->dev, "failed to get OPP table of %s:=
- %pe\n",
-> >>>> +                       dev_name(&core_genpd->dev), pd_opp_table);
-> >>>> +               ret =3D PTR_ERR(pd_opp_table);
-> >>>> +               goto put_dev_opp;
-> >>>> +       }
-> >>>> +
-> >>>> +       pd_opp =3D dev_pm_opp_xlate_required_opp(opp_table, pd_opp_t=
-able, opp);
-> >>>> +       if (IS_ERR(pd_opp)) {
-> >>>> +               dev_err(&genpd->dev,
-> >>>> +                       "failed to xlate required OPP for %luHz of %=
-s: %pe\n",
-> >>>> +                       rate, dev_name(dev), pd_opp);
-> >>>> +               ret =3D PTR_ERR(pd_opp);
-> >>>> +               goto put_pd_opp_table;
-> >>>> +       }
-> >>>> +
-> >>>> +       /*
-> >>>> +        * The initialized state will be applied by GENPD core on th=
-e first
-> >>>> +        * RPM-resume of the device.  This means that drivers don't =
-need to
-> >>>> +        * explicitly initialize performance state.
-> >>>> +        */
-> >>>> +       state =3D pm_genpd_opp_to_performance_state(&core_genpd->dev=
-, pd_opp);
-> >>>> +       gpd_data->rpm_pstate =3D state;
-> >>>
-> >>> Could the above be replaced with Rajendra's suggestion [1], which
-> >>> changes genpd to internally during attach, to set a default
-> >>> performance state when there is a "required-opp" specified in the
-> >>> device  node?
-> >>
-> >> It's not a "static" performance level here, but any level depending on
-> >> h/w state left from bootloader and etc. The performance level
-> >> corresponds to the voltage of the core domain, hence we need to
-> >> initialize the voltage vote before device is resumed.
+> > diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
+> > index 1d98554db009..b626cc7cd43a 100644
+> > --- a/drivers/pci/controller/dwc/pcie-designware-host.c
+> > +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+> > @@ -344,6 +344,8 @@ int dw_pcie_host_init(struct pcie_port *pp)
+> >       if (!bridge)
+> >               return -ENOMEM;
 > >
-> > Why not let the driver deal with this instead? It should be able to
-> > probe its device, no matter what state the bootloader has put the
-> > device into.
+> > +     pp->bridge = bridge;
+> > +
+> >       /* Get the I/O and memory ranges from DT */
+> >       resource_list_for_each_entry(win, &bridge->windows) {
+> >               switch (resource_type(win->res)) {
+> > @@ -445,6 +447,10 @@ int dw_pcie_host_init(struct pcie_port *pp)
+> >               }
+> >       }
 > >
-> > To me, it sounds like a call to dev_pm_genpd_set_performance_state()
-> > (perhaps via dev_pm_opp_set_opp() or dev_pm_opp_set_rate()) from the
-> > driver itself, should be sufficient?
->
-> We did that in a previous versions of this series where drivers were
-> calling devm_tegra_core_dev_init_opp_table() helper during the probe to
-> initialize performance state of the domain. Moving OPP state
-> initialization into central place made drivers cleaner by removing the
-> boilerplate code.
+> > +     /* Set default bus ops */
+> > +     bridge->ops = &dw_pcie_ops;
+> > +     bridge->child_ops = &dw_pcie_ops;
+> > +
+> >       if (pp->ops->host_init) {
+> >               ret = pp->ops->host_init(pp);
+> >               if (ret)
+> > @@ -452,7 +458,6 @@ int dw_pcie_host_init(struct pcie_port *pp)
+> >       }
+> >
+> >       bridge->sysdata = pp;
+> > -     bridge->ops = &dw_pcie_ops;
+> >
+> >       ret = pci_scan_root_bus_bridge(bridge);
+> >       if (ret)
+> > @@ -654,11 +659,11 @@ void dw_pcie_setup_rc(struct pcie_port *pp)
+> >       dw_pcie_writel_dbi(pci, PCI_COMMAND, val);
+> >
+> >       /*
+> > -      * If the platform provides ->rd_other_conf, it means the platform
+> > -      * uses its own address translation component rather than ATU, so
+> > -      * we should not program the ATU here.
+> > +      * If the platform provides its own child bus config accesses, it means
+> > +      * the platform uses its own address translation component rather than
+> > +      * ATU, so we should not program the ATU here.
+> It is possible that a platform can have its own translation for
+> configuration accesses and use DWC's ATU for memory/IO address
+> translations. IMHO, ATU setup for memory/IO address translations
+> shouldn't be skipped based on platform's '->rd_other_conf'
+> implementation. Ex:- A platform can implement configuration space access
+> through the ECAM mechanism yet choose to use ATU for memory/IO address
+> translations.
 
-I am not against doing this in a central place, like $subject patch
-suggests. As a matter of fact, it makes perfect sense to me.
+A platform could, but none of them upstream do that. I'm all for doing
+ECAM setup (in the kernel) if possible. That could be in the DWC core
+with a feature flag the platform can set or something to enable it if
+we do that. It could be based on the config space size as well. I'm
+not sure what else determines whether ECAM can work besides having
+enough address space and at least 3 outbound iATU windows.
 
-However, what I am concerned about, is that you require to use genpd
-internal data structures to do it. I think we should try to avoid
-that.
-
->
-> I can revert back to the previous variant, although this variant works
-> well too.
-
-I looked at that code and in that path we end up calling
-dev_pm_opp_set_rate(), after it has initialized the opp table for the
-device.
-
-Rather than doing the OF parsing above to find out the current state
-for the device, why can't you just call dev_pm_opp_set_rate() to
-initialize a proper vote instead?
-
->
-> > I understand that it means the domain may change the OPP during boot,
-> > without respecting a vote for a device that has not been probed yet.
-> > But is there a problem with this?
->
-> Domains themselves don't change OPP, there is no problem with that. The
-> point is to have cleaner code in the drivers.
-
-Alright, this makes sense to me as well.
-
-Kind regards
-Uffe
+Rob
