@@ -2,254 +2,226 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-9.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C82EEC4320A
-	for <linux-tegra@archiver.kernel.org>; Mon,  9 Aug 2021 15:02:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C747C4338F
+	for <linux-tegra@archiver.kernel.org>; Mon,  9 Aug 2021 23:56:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A57986103B
-	for <linux-tegra@archiver.kernel.org>; Mon,  9 Aug 2021 15:02:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6D67E60F93
+	for <linux-tegra@archiver.kernel.org>; Mon,  9 Aug 2021 23:56:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234729AbhHIPDI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 9 Aug 2021 11:03:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33030 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233910AbhHIPC7 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 9 Aug 2021 11:02:59 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id D8D2D61076;
-        Mon,  9 Aug 2021 15:02:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1628521358;
-        bh=pfjcDfHytZByOLCnRC45esWeBCKweXCcCxBaUgCy7QA=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=IPXWzxQlZRe+At7z1ru23QFRFfPiSAv55/yZ8TgyQcgUUtyUIMrdXwhbo860OElc5
-         Ok/d9xCDFeWiaL8XU6GY4uYjOIxIKHUmEDlXu6LqTr682tAzObKfwUBknaS1BY68+I
-         eBJBCXBvsdVU6awmrz+i4Mb7uKpOfdn9icGGfqfBTZ5Grq486oA5Nr+pvlITSZ5xRk
-         TegaARyCBjzKmDCziFFhUGHM/5CsLGht7leKhw7/Y1PB/nGyLfGDPY9rfTQxf2BJFv
-         anU/XZiHRwxIYBXPuTElmYDYs5aq59sm96U8Y976SBcDOrRz6v8X4kcHitLtNJKunw
-         rKtnwDPhD/puA==
-Received: by mail-ed1-f43.google.com with SMTP id k9so7791900edr.10;
-        Mon, 09 Aug 2021 08:02:38 -0700 (PDT)
-X-Gm-Message-State: AOAM530fS3YIlCqFUU8Yj3hZih/ZiwdTzNJour0/UaX2AjxpTxAjp9g0
-        As3RFo2ABb/crq/SLomCS8LsNuLg093FHQFMaA==
-X-Google-Smtp-Source: ABdhPJzz/fNsZEmnTjGSH+qCz/71Qb2qPNXw5kmiZBCj/bvfBq5zSJOVPr0Lh97VLh2/gf0EMJIAll0PAP2cvH3I8FE=
-X-Received: by 2002:a05:6402:104b:: with SMTP id e11mr13966903edu.62.1628521357363;
- Mon, 09 Aug 2021 08:02:37 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200821035420.380495-1-robh@kernel.org> <20200821035420.380495-40-robh@kernel.org>
- <d7146c20-6992-44a0-c390-f801d352cf15@nvidia.com>
-In-Reply-To: <d7146c20-6992-44a0-c390-f801d352cf15@nvidia.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Mon, 9 Aug 2021 09:02:25 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq+=AyqU-GPvt_cfDPpe0Grs2ez9BH7HvqyiPNgB6QTkYw@mail.gmail.com>
-Message-ID: <CAL_Jsq+=AyqU-GPvt_cfDPpe0Grs2ez9BH7HvqyiPNgB6QTkYw@mail.gmail.com>
-Subject: Re: [PATCH v2 39/40] PCI: dwc: Move N_FTS setup to common setup
-To:     Vidya Sagar <vidyas@nvidia.com>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        PCI <linux-pci@vger.kernel.org>, Andy Gross <agross@kernel.org>,
-        Binghui Wang <wangbinghui@hisilicon.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Dilip Kota <eswara.kota@linux.intel.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Jesper Nilsson <jesper.nilsson@axis.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Jonathan Chocron <jonnyc@amazon.com>,
+        id S233574AbhHIX5Q (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 9 Aug 2021 19:57:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33848 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231127AbhHIX5Q (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 9 Aug 2021 19:57:16 -0400
+Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17ED3C0613D3;
+        Mon,  9 Aug 2021 16:56:55 -0700 (PDT)
+Received: by mail-lf1-x132.google.com with SMTP id n17so12318304lft.13;
+        Mon, 09 Aug 2021 16:56:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=wP2bayLmU+3K18X+SE8nuL9RPrBb9v8I/h7ZwghcHyc=;
+        b=jtBA8OX0piq6L6d+cUYv0qXKlJ00wiGPTtae34YO3dHTzchRsCEFwOseq8Y1d7IdEu
+         ivWSUigsp+2RNnEuh9vO1dYGKD28mbADWlLE5HkfznL/9mgglj7MkgwGer/rA6uNBJtG
+         oJ/p2NO+NwWWTgiFcSVE0J2wA0eoCTDbgyraSFkuEI4+KpKl4USYxPsiGvvijQDC9vTv
+         sFp/Z1eTvS0UW5GsCd8hflafQq91rUce8FJeGbnADp2yQT3qRwy+0QtZFdoVsPjhLb/2
+         roXSLb7yqKAEkb8UIx44+8iMsOtbB07YWAt/UpplU4J0x0eY/ejvXo4ras9YCKzvGxWD
+         QXPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=wP2bayLmU+3K18X+SE8nuL9RPrBb9v8I/h7ZwghcHyc=;
+        b=nqomB4jprrczmnE1wIPV9WEYSCUz29O4FBSsWsjk/RC2x1jLPEp8dkd0IA/8DZW1Gp
+         T/blx2tczY93Q4jaFZDSGMxcegdFYBtlVT4LIxZ14uc39Bo8Ex4qHDCCK48tKsEBh7nY
+         zHAwkrMPlMD0/ptvRRzvBXUQzHUPZm7msblkr1A/HmCBT6LLHf5sIYon82xoa4oC/VP7
+         04aCk2t/D/3Fr+lWYD5DH2tu+5Z4XaIRua3jQPd/tT6VaBIQuKfr97SCQxZqVDR1TQzl
+         FB7Uxbuv4GlgLHYL7SKK8pP9ywQhs5CHygF2Q2Ms1dEI6V41g5UmvSeL0tp7C49YNHMp
+         gV6A==
+X-Gm-Message-State: AOAM533lWDSD7lahH+faH7phO/aIDUzwneGiF93jBHH3bzs/s8zBlqUa
+        DUvUj5vB8TcJHqVsssuN93OMrA5fDR0=
+X-Google-Smtp-Source: ABdhPJxbznr9B+GvA4Ip6tbIHh9Mks/IMZ0ezhi85KAPmj3cZfiR6/1w6WjYu+I0ZOYSZ3svtawpiw==
+X-Received: by 2002:a19:7017:: with SMTP id h23mr20523075lfc.532.1628553413356;
+        Mon, 09 Aug 2021 16:56:53 -0700 (PDT)
+Received: from [192.168.2.145] (46-138-117-53.dynamic.spd-mgts.ru. [46.138.117.53])
+        by smtp.googlemail.com with ESMTPSA id o8sm951395lft.85.2021.08.09.16.56.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Aug 2021 16:56:52 -0700 (PDT)
+Subject: Re: [PATCH v7 02/37] soc/tegra: pmc: Implement attach_dev() of power
+ domain drivers
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Murali Karicheri <m-karicheri2@ti.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Pratyush Anand <pratyush.anand@gmail.com>,
-        Richard Zhu <hongxing.zhu@nxp.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Shawn Guo <shawn.guo@linaro.org>,
-        Stanimir Varbanov <svarbanov@mm-sol.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Xiaowei Song <songxiaowei@hisilicon.com>,
-        Yue Wang <yue.wang@amlogic.com>, Marc Zyngier <maz@kernel.org>,
-        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
-        linux-arm-kernel@axis.com,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        linux-omap <linux-omap@vger.kernel.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Viresh Kumar <vireshk@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>
+References: <20210701232728.23591-1-digetx@gmail.com>
+ <20210701232728.23591-3-digetx@gmail.com>
+ <CAPDyKFrtWDYJo_NjS8306Z9ykbg7XZ55jC9hKEBMGkcrx1=4kQ@mail.gmail.com>
+ <1034458d-78e0-5036-e278-6fee5d0d75ac@gmail.com>
+ <CAPDyKFoafAk72Kw6X7626Niduaii0V5VM4dGSWmq+e3JTh7VRg@mail.gmail.com>
+ <a5dfdf59-f5b5-d28e-6b02-b0c860ba8d80@gmail.com>
+ <CAPDyKFq+ExjbGrN=yUUXPKfN_fGrwY6EAYn9a6VUFFU_VjhC=g@mail.gmail.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <6741262b-386b-7635-fd42-ebd4f877fddd@gmail.com>
+Date:   Tue, 10 Aug 2021 02:56:52 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
+MIME-Version: 1.0
+In-Reply-To: <CAPDyKFq+ExjbGrN=yUUXPKfN_fGrwY6EAYn9a6VUFFU_VjhC=g@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Sun, Aug 8, 2021 at 9:01 AM Vidya Sagar <vidyas@nvidia.com> wrote:
->
->
->
-> On 8/21/2020 9:24 AM, Rob Herring wrote:
-> > The Designware controller has common registers to set number of fast
-> > training sequence ordered sets. The Artpec6, Intel, and Tegra driver
-> > initialize these register fields. Let's move the initialization to the
-> > common setup code and drivers just have to provide the value.
-> >
-> > There's a slight change in that the common clock mode N_FTS field is
-> > now initialized. Previously only the Intel driver set this. It's not
-> > clear from the code if common clock mode is used in the Artpec6 or Tegra
-> > driver. It depends on the DWC configuration. Given the field is not
-> > initialized while the others are, it seems unlikely common clock mode
-> > is used.
-> >
-> > Cc: Jesper Nilsson <jesper.nilsson@axis.com>
-> > Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-> > Cc: Bjorn Helgaas <bhelgaas@google.com>
-> > Cc: Jingoo Han <jingoohan1@gmail.com>
-> > Cc: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-> > Cc: Thierry Reding <thierry.reding@gmail.com>
-> > Cc: Jonathan Hunter <jonathanh@nvidia.com>
-> > Cc: linux-tegra@vger.kernel.org
-> > Signed-off-by: Rob Herring <robh@kernel.org>
-> > ---
-> >   drivers/pci/controller/dwc/pcie-artpec6.c    | 37 +++-----------------
-> >   drivers/pci/controller/dwc/pcie-designware.c | 28 +++++++++------
-> >   drivers/pci/controller/dwc/pcie-designware.h |  3 +-
-> >   drivers/pci/controller/dwc/pcie-intel-gw.c   | 27 +++++---------
-> >   drivers/pci/controller/dwc/pcie-tegra194.c   | 25 ++-----------
-> >   5 files changed, 35 insertions(+), 85 deletions(-)
-> >
-> > diff --git a/drivers/pci/controller/dwc/pcie-artpec6.c b/drivers/pci/controller/dwc/pcie-artpec6.c
-> > index 86f4d66d8587..929448e9e0bc 100644
-> > --- a/drivers/pci/controller/dwc/pcie-artpec6.c
-> > +++ b/drivers/pci/controller/dwc/pcie-artpec6.c
-> > @@ -44,13 +44,6 @@ struct artpec_pcie_of_data {
-> >
-> >   static const struct of_device_id artpec6_pcie_of_match[];
-> >
-> > -/* PCIe Port Logic registers (memory-mapped) */
-> > -#define PL_OFFSET                    0x700
-> > -
-> > -#define ACK_F_ASPM_CTRL_OFF          (PL_OFFSET + 0xc)
-> > -#define ACK_N_FTS_MASK                       GENMASK(15, 8)
-> > -#define ACK_N_FTS(x)                 (((x) << 8) & ACK_N_FTS_MASK)
-> > -
-> >   /* ARTPEC-6 specific registers */
-> >   #define PCIECFG                             0x18
-> >   #define  PCIECFG_DBG_OEN            BIT(24)
-> > @@ -289,30 +282,6 @@ static void artpec6_pcie_init_phy(struct artpec6_pcie *artpec6_pcie)
-> >       }
-> >   }
-> >
-> > -static void artpec6_pcie_set_nfts(struct artpec6_pcie *artpec6_pcie)
-> > -{
-> > -     struct dw_pcie *pci = artpec6_pcie->pci;
-> > -     u32 val;
-> > -
-> > -     if (artpec6_pcie->variant != ARTPEC7)
-> > -             return;
-> > -
-> > -     /*
-> > -      * Increase the N_FTS (Number of Fast Training Sequences)
-> > -      * to be transmitted when transitioning from L0s to L0.
-> > -      */
-> > -     val = dw_pcie_readl_dbi(pci, ACK_F_ASPM_CTRL_OFF);
-> > -     val &= ~ACK_N_FTS_MASK;
-> > -     val |= ACK_N_FTS(180);
-> > -     dw_pcie_writel_dbi(pci, ACK_F_ASPM_CTRL_OFF, val);
-> > -
-> > -     /*
-> > -      * Set the Number of Fast Training Sequences that the core
-> > -      * advertises as its N_FTS during Gen2 or Gen3 link training.
-> > -      */
-> > -     dw_pcie_link_set_n_fts(pci, 180);
-> > -}
-> > -
-> >   static void artpec6_pcie_assert_core_reset(struct artpec6_pcie *artpec6_pcie)
-> >   {
-> >       u32 val;
-> > @@ -351,11 +320,14 @@ static int artpec6_pcie_host_init(struct pcie_port *pp)
-> >       struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-> >       struct artpec6_pcie *artpec6_pcie = to_artpec6_pcie(pci);
-> >
-> > +     if (artpec6_pcie->variant == ARTPEC7) {
-> > +             pci->n_fts[0] = 180;
-> > +             pci->n_fts[1] = 180;
-> > +     }
-> >       artpec6_pcie_assert_core_reset(artpec6_pcie);
-> >       artpec6_pcie_init_phy(artpec6_pcie);
-> >       artpec6_pcie_deassert_core_reset(artpec6_pcie);
-> >       artpec6_pcie_wait_for_phy(artpec6_pcie);
-> > -     artpec6_pcie_set_nfts(artpec6_pcie);
-> >       dw_pcie_setup_rc(pp);
-> >       artpec6_pcie_establish_link(pci);
-> >       dw_pcie_wait_for_link(pci);
-> > @@ -403,7 +375,6 @@ static void artpec6_pcie_ep_init(struct dw_pcie_ep *ep)
-> >       artpec6_pcie_init_phy(artpec6_pcie);
-> >       artpec6_pcie_deassert_core_reset(artpec6_pcie);
-> >       artpec6_pcie_wait_for_phy(artpec6_pcie);
-> > -     artpec6_pcie_set_nfts(artpec6_pcie);
-> >
-> >       for (bar = 0; bar < PCI_STD_NUM_BARS; bar++)
-> >               dw_pcie_ep_reset_bar(pci, bar);
-> > diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
-> > index 61e1faba15bf..3cb21247619c 100644
-> > --- a/drivers/pci/controller/dwc/pcie-designware.c
-> > +++ b/drivers/pci/controller/dwc/pcie-designware.c
-> > @@ -510,17 +510,6 @@ static void dw_pcie_link_set_max_speed(struct dw_pcie *pci, u32 link_gen)
-> >   }
-> >   EXPORT_SYMBOL_GPL(dw_pcie_link_set_max_speed);
-> >
-> > -void dw_pcie_link_set_n_fts(struct dw_pcie *pci, u32 n_fts)
-> > -{
-> > -     u32 val;
-> > -
-> > -     val = dw_pcie_readl_dbi(pci, PCIE_LINK_WIDTH_SPEED_CONTROL);
-> > -     val &= ~PORT_LOGIC_N_FTS_MASK;
-> > -     val |= n_fts & PORT_LOGIC_N_FTS_MASK;
-> > -     dw_pcie_writel_dbi(pci, PCIE_LINK_WIDTH_SPEED_CONTROL, val);
-> > -}
-> > -EXPORT_SYMBOL_GPL(dw_pcie_link_set_n_fts);
-> > -
-> >   static u8 dw_pcie_iatu_unroll_enabled(struct dw_pcie *pci)
-> >   {
-> >       u32 val;
-> > @@ -551,6 +540,23 @@ void dw_pcie_setup(struct dw_pcie *pci)
-> >       if (pci->link_gen > 0)
-> >               dw_pcie_link_set_max_speed(pci, pci->link_gen);
-> >
-> > +     /* Configure Gen1 N_FTS */
-> > +     if (pci->n_fts[0]) {
-> > +             val = dw_pcie_readl_dbi(pci, PCIE_PORT_AFR);
-> > +             val &= ~(PORT_AFR_N_FTS_MASK | PORT_AFR_CC_N_FTS_MASK);
-> > +             val |= PORT_AFR_N_FTS(pci->n_fts[0]);
-> > +             val |= PORT_AFR_CC_N_FTS(pci->n_fts[0]);
-> > +             dw_pcie_writel_dbi(pci, PCIE_PORT_AFR, val);
-> > +     }
-> > +
-> > +     /* Configure Gen2+ N_FTS */
-> > +     if (pci->n_fts[1]) {
-> > +             val = dw_pcie_readl_dbi(pci, PCIE_LINK_WIDTH_SPEED_CONTROL);
-> > +             val &= ~PORT_LOGIC_N_FTS_MASK;
-> > +             val |= pci->n_fts[pci->link_gen - 1];
-> Apologies for getting late to this change given that the change has
-> already been merged.
-> I'm wondering why is it that link_gen has to be used in deriving the
-> index instead of directly using '1' as the index?
-> Infact the for link speed greater than 2, accesses go beyond n_fts[]
-> array boundaries.
-> Since the if() check is done based on a non-zero value of pci->n_fts[1],
-> shouldn't the same be used for programming also?
+09.08.2021 17:15, Ulf Hansson пишет:
+>> We did that in a previous versions of this series where drivers were
+>> calling devm_tegra_core_dev_init_opp_table() helper during the probe to
+>> initialize performance state of the domain. Moving OPP state
+>> initialization into central place made drivers cleaner by removing the
+>> boilerplate code.
+> I am not against doing this in a central place, like $subject patch
+> suggests. As a matter of fact, it makes perfect sense to me.
+> 
+> However, what I am concerned about, is that you require to use genpd
+> internal data structures to do it. I think we should try to avoid
+> that.
 
-Yes, I think you are right.
+Alright, what do you think about this:
 
-Rob
+diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
+index a934c679e6ce..5faed62075e9 100644
+--- a/drivers/base/power/domain.c
++++ b/drivers/base/power/domain.c
+@@ -2669,12 +2669,37 @@ static int __genpd_dev_pm_attach(struct device *dev, struct device *base_dev,
+ 	dev->pm_domain->detach = genpd_dev_pm_detach;
+ 	dev->pm_domain->sync = genpd_dev_pm_sync;
+ 
++	if (pd->default_performance_state) {
++		unsigned int default_pstate;
++
++		ret = pd->default_performance_state(pd, dev);
++		if (ret < 0) {
++			dev_err(dev, "failed to get default performance state for PM domain %s: %d\n",
++				pd->name, ret);
++			goto out;
++		}
++
++		default_pstate = ret;
++
++		if (power_on) {
++			ret = dev_pm_genpd_set_performance_state(dev, default_pstate);
++			if (ret) {
++				dev_err(dev, "failed to set default performance state %u for PM domain %s: %d\n",
++					default_pstate, pd->name, ret);
++				goto out;
++			}
++		} else {
++			dev_gpd_data(dev)->rpm_pstate = default_pstate;
++		}
++	}
++
+ 	if (power_on) {
+ 		genpd_lock(pd);
+ 		ret = genpd_power_on(pd, 0);
+ 		genpd_unlock(pd);
+ 	}
+ 
++out:
+ 	if (ret)
+ 		genpd_remove_device(pd, dev);
+ 
+diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+index 81d1f019fa0c..9efb55f52462 100644
+--- a/drivers/soc/tegra/pmc.c
++++ b/drivers/soc/tegra/pmc.c
+@@ -518,15 +518,14 @@ static const char * const tegra_emc_compats[] = {
+  * We retrieve clock rate of the attached device and initialize domain's
+  * performance state in accordance to the clock rate.
+  */
+-static int tegra_pmc_pd_attach_dev(struct generic_pm_domain *genpd,
+-				   struct device *dev)
++static int tegra_pmc_genpd_default_perf_state(struct generic_pm_domain *genpd,
++					      struct device *dev)
+ {
+-	struct generic_pm_domain_data *gpd_data = dev_gpd_data(dev);
+ 	struct opp_table *opp_table, *pd_opp_table;
+ 	struct generic_pm_domain *core_genpd;
+ 	struct dev_pm_opp *opp, *pd_opp;
+-	unsigned long rate, state;
+ 	struct gpd_link *link;
++	unsigned long rate;
+ 	struct clk *clk;
+ 	u32 hw_version;
+ 	int ret;
+@@ -633,8 +632,7 @@ static int tegra_pmc_pd_attach_dev(struct generic_pm_domain *genpd,
+ 	 * RPM-resume of the device.  This means that drivers don't need to
+ 	 * explicitly initialize performance state.
+ 	 */
+-	state = pm_genpd_opp_to_performance_state(&core_genpd->dev, pd_opp);
+-	gpd_data->rpm_pstate = state;
++	ret = pm_genpd_opp_to_performance_state(&core_genpd->dev, pd_opp);
+ 	dev_pm_opp_put(pd_opp);
+ 
+ put_pd_opp_table:
+@@ -1383,7 +1381,7 @@ static int tegra_powergate_add(struct tegra_pmc *pmc, struct device_node *np)
+ 
+ 	pg->id = id;
+ 	pg->genpd.name = np->name;
+-	pg->genpd.attach_dev = tegra_pmc_pd_attach_dev;
++	pg->genpd.default_performance_state = tegra_pmc_genpd_default_perf_state;
+ 	pg->genpd.power_off = tegra_genpd_power_off;
+ 	pg->genpd.power_on = tegra_genpd_power_on;
+ 	pg->pmc = pmc;
+@@ -1500,7 +1498,7 @@ static int tegra_pmc_core_pd_add(struct tegra_pmc *pmc, struct device_node *np)
+ 		return -ENOMEM;
+ 
+ 	genpd->name = np->name;
+-	genpd->attach_dev = tegra_pmc_pd_attach_dev;
++	genpd->default_performance_state = tegra_pmc_genpd_default_perf_state;
+ 	genpd->set_performance_state = tegra_pmc_core_pd_set_performance_state;
+ 	genpd->opp_to_performance_state = tegra_pmc_core_pd_opp_to_performance_state;
+ 
+diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
+index 21a0577305ef..cd4867817ca5 100644
+--- a/include/linux/pm_domain.h
++++ b/include/linux/pm_domain.h
+@@ -143,6 +143,8 @@ struct generic_pm_domain {
+ 			  struct device *dev);
+ 	void (*detach_dev)(struct generic_pm_domain *domain,
+ 			   struct device *dev);
++	int (*default_performance_state)(struct generic_pm_domain *domain,
++					 struct device *dev);
+ 	unsigned int flags;		/* Bit field of configs for genpd */
+ 	struct genpd_power_state *states;
+ 	void (*free_states)(struct genpd_power_state *states,
+
+>> I can revert back to the previous variant, although this variant works
+>> well too.
+> I looked at that code and in that path we end up calling
+> dev_pm_opp_set_rate(), after it has initialized the opp table for the
+> device.
+> 
+> Rather than doing the OF parsing above to find out the current state
+> for the device, why can't you just call dev_pm_opp_set_rate() to
+> initialize a proper vote instead?
+> 
+
+For some devices clock rate is either preset by bootloader, or by clk driver, or by assigned-clocks in a device-tree. And then I don't see what's the difference in comparison to initialization for the current rate.
+
+For some devices, like memory controller, we can't just change the clock rate because it's a complex procedure and some boards will use fixed rate, but the power vote still must be initialized.
