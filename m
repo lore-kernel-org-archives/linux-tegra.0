@@ -2,290 +2,249 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72AEAC4338F
-	for <linux-tegra@archiver.kernel.org>; Tue, 10 Aug 2021 10:52:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1193FC4320A
+	for <linux-tegra@archiver.kernel.org>; Tue, 10 Aug 2021 15:41:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5332760F41
-	for <linux-tegra@archiver.kernel.org>; Tue, 10 Aug 2021 10:52:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EBECE604AC
+	for <linux-tegra@archiver.kernel.org>; Tue, 10 Aug 2021 15:41:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231905AbhHJKw7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 10 Aug 2021 06:52:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41578 "EHLO
+        id S242183AbhHJPl2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 10 Aug 2021 11:41:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53126 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237675AbhHJKwy (ORCPT
+        with ESMTP id S242153AbhHJPl0 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 10 Aug 2021 06:52:54 -0400
-Received: from mail-vs1-xe31.google.com (mail-vs1-xe31.google.com [IPv6:2607:f8b0:4864:20::e31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C28EC0613D3
-        for <linux-tegra@vger.kernel.org>; Tue, 10 Aug 2021 03:52:32 -0700 (PDT)
-Received: by mail-vs1-xe31.google.com with SMTP id e9so4182499vst.6
-        for <linux-tegra@vger.kernel.org>; Tue, 10 Aug 2021 03:52:32 -0700 (PDT)
+        Tue, 10 Aug 2021 11:41:26 -0400
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFCB4C0613C1;
+        Tue, 10 Aug 2021 08:41:03 -0700 (PDT)
+Received: by mail-wr1-x42f.google.com with SMTP id f5so11106345wrm.13;
+        Tue, 10 Aug 2021 08:41:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=kkC6vw/nIsxxorXLh8xAxP8AQ/juulGmKbgNcn598kM=;
-        b=Wyodofo3ec7HGMQX6ROxwP+EDUe7LkX2JkuC7wrFDWeE5S6f2RBX9C+wsJ67kIdVZ+
-         GUFrVSQE877bA5rQCXfWX4VoCROmqNuHTNnOrbv8Dj1AofW5PZ+PSjoTIiS4OLsd2fFy
-         +HTK6UrqkJaUpYMIeandEufnw4s2/SiLWUWADQLCAZMZ4M5pnmMVQ//pQFvsHYgchN/t
-         1H7sYE0vtYW1qK9nA0pjWVInyPHZZqjzLcQ4ntpuGF8feFmkG3uFDrNChksVg1gUi5dS
-         JQmY+ZMdINzS+EOjXYvVAlMogswniXugiWoHrFgViRHu44QIYysz7ee2xyuoZymUH6Zq
-         64/A==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=5BOjAtYtHBrrUtvvPYpr4CfSwCevXlilQRicwBu3hi4=;
+        b=I8gTYF37Y+yC7IK8bLdzvlfXgxAhLaop9VcjPn7RoGVnP2EFDDZdsEdDkjIk+Vioa4
+         DCRtTnoPznwGMTcDrr+iqkCm/iP/ApXDu2ylupO+xellpqJ0HAcrGTOs7U+F5VNIXAlb
+         hBOZv3+2MiarAGiGkQx2xqCYVNRW/B+ayaqnQVY3X8kX3hULO/r/17govXUP/80TV8n0
+         gjMHSEr+fo7ff4aaA5A7bHk0noGx3ctV/SD+qNsHYQ89smTPMMY/qqWWYWmdyEr0aqRs
+         Vm8TuDo7zBJFT2sDFQdHNKgZ1H543KQLpEAlPmyJlwnStg1nIk+2OYmm4kNe8GM+siFl
+         E0uw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=kkC6vw/nIsxxorXLh8xAxP8AQ/juulGmKbgNcn598kM=;
-        b=ihI0zPkqRfHnt81ZnCMQRvJY64emwguN44M/Ah4xFbDYAKpADkzYnG+WUxZdoUc7W7
-         2aNQ9y5K9KYcuV1G5c5BpqsyQANeIJyKcVhIa1COoB44Usmga1lZwXnib7AFMd05WVFZ
-         /N8CTLOdU+bJCZ4dQhNzPaf7lNyqkRhDMqRFdQ1+crlRQ98XWmRgG6a47jAI8vIZsxlM
-         IHCRIKeSEkbxIJ1c/HU5OSltK0izXSPMGhO/Nu9jWQdbkWmaKphuf6pzlE6losa+m8L3
-         nBRjpHxPZwKExZtOAF3BxqirKXagIEtvksO+c76QtIzapLGoLDNvqGDfYeCQo70g/kez
-         rnGg==
-X-Gm-Message-State: AOAM532rZmM1wOrllv/PkBnRad5JUFGkrYXkrcEfHe29Sea4xiXz0Nmd
-        Urwv4bJOvVMdi5DjMJEYBhoF7czuyyfp9VOS3+KpIA==
-X-Google-Smtp-Source: ABdhPJye8YsENzn2QTr+QGf2ceGs5HIzAA5tCOQptgpVORihDxyhMk/3vtGO4r3gAvsv3bnAwwsAZxlq8qZHgYITBsM=
-X-Received: by 2002:a67:e901:: with SMTP id c1mr4585011vso.42.1628592751731;
- Tue, 10 Aug 2021 03:52:31 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=5BOjAtYtHBrrUtvvPYpr4CfSwCevXlilQRicwBu3hi4=;
+        b=eq2P4k952GvWOTxH/ifi3pKbUN0meF3frCGe4N6i3FJPii6eyqkeOvc+73mbi0rTnl
+         zozMHHbgepf7lCQD778Q4Quz4N/VVKhnBjNW1Vg0oh8EW8IYsS+OaolEB8mkTSpad/tR
+         UOXdycE63X+jBcaStsprVtg62ZQxrFWD4fz9NmukdYsSEKuYKWGGkIx6YS6FZYBAv9c0
+         owb+tz4CjiMpaB8JeYrM9CyP4GGReN8y0Mz0WWrYPa3FmXLXtpqjA0BiIVriNRJPDYvu
+         DZ5mMHG/Z6Rkd+aa1tbYiXL2esyH3mbG6I5s9BrvyDQENc/n0Ca9+40NpSCqoERP+Y5k
+         U4Ug==
+X-Gm-Message-State: AOAM530mHCRg4BMp1H/2js18a/8MK4Az2UIsCEtMVUgLm5XboJQn61YS
+        Us3S6EAzCyfrfFSeFoslrUc=
+X-Google-Smtp-Source: ABdhPJzXStNJ2ulmvPuMUn7ZQqgwF9x6zAtcVsHtXjxfEY23XpgdUZqGSt8xKhIGvGsvqh6My9lj5Q==
+X-Received: by 2002:a5d:488f:: with SMTP id g15mr32377489wrq.98.1628610062372;
+        Tue, 10 Aug 2021 08:41:02 -0700 (PDT)
+Received: from localhost ([217.111.27.204])
+        by smtp.gmail.com with ESMTPSA id c190sm21664343wma.21.2021.08.10.08.41.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Aug 2021 08:41:01 -0700 (PDT)
+Date:   Tue, 10 Aug 2021 17:43:26 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Mikko Perttunen <mperttunen@nvidia.com>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     jonathanh@nvidia.com, airlied@linux.ie, daniel@ffwll.ch,
+        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] dt-bindings: Add YAML bindings for Host1x and
+ NVDEC
+Message-ID: <YRKengKZmFtgsIZy@orome.fritz.box>
+References: <20210806123450.2970777-1-mperttunen@nvidia.com>
+ <20210806123450.2970777-2-mperttunen@nvidia.com>
 MIME-Version: 1.0
-References: <20210701232728.23591-1-digetx@gmail.com> <20210701232728.23591-3-digetx@gmail.com>
- <CAPDyKFrtWDYJo_NjS8306Z9ykbg7XZ55jC9hKEBMGkcrx1=4kQ@mail.gmail.com>
- <1034458d-78e0-5036-e278-6fee5d0d75ac@gmail.com> <CAPDyKFoafAk72Kw6X7626Niduaii0V5VM4dGSWmq+e3JTh7VRg@mail.gmail.com>
- <a5dfdf59-f5b5-d28e-6b02-b0c860ba8d80@gmail.com> <CAPDyKFq+ExjbGrN=yUUXPKfN_fGrwY6EAYn9a6VUFFU_VjhC=g@mail.gmail.com>
- <6741262b-386b-7635-fd42-ebd4f877fddd@gmail.com>
-In-Reply-To: <6741262b-386b-7635-fd42-ebd4f877fddd@gmail.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Tue, 10 Aug 2021 12:51:55 +0200
-Message-ID: <CAPDyKFpJhX51rOnvbYTmj9Akd+xX+b7xcSWt87UDrvMEfYOZ7Q@mail.gmail.com>
-Subject: Re: [PATCH v7 02/37] soc/tegra: pmc: Implement attach_dev() of power
- domain drivers
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="kJH6/96gHwlIk2vB"
+Content-Disposition: inline
+In-Reply-To: <20210806123450.2970777-2-mperttunen@nvidia.com>
+User-Agent: Mutt/2.1.1 (e2a89abc) (2021-07-12)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, 10 Aug 2021 at 01:56, Dmitry Osipenko <digetx@gmail.com> wrote:
->
-> 09.08.2021 17:15, Ulf Hansson =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> >> We did that in a previous versions of this series where drivers were
-> >> calling devm_tegra_core_dev_init_opp_table() helper during the probe t=
-o
-> >> initialize performance state of the domain. Moving OPP state
-> >> initialization into central place made drivers cleaner by removing the
-> >> boilerplate code.
-> > I am not against doing this in a central place, like $subject patch
-> > suggests. As a matter of fact, it makes perfect sense to me.
-> >
-> > However, what I am concerned about, is that you require to use genpd
-> > internal data structures to do it. I think we should try to avoid
-> > that.
->
-> Alright, what do you think about this:
->
-> diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-> index a934c679e6ce..5faed62075e9 100644
-> --- a/drivers/base/power/domain.c
-> +++ b/drivers/base/power/domain.c
-> @@ -2669,12 +2669,37 @@ static int __genpd_dev_pm_attach(struct device *d=
-ev, struct device *base_dev,
->         dev->pm_domain->detach =3D genpd_dev_pm_detach;
->         dev->pm_domain->sync =3D genpd_dev_pm_sync;
->
-> +       if (pd->default_performance_state) {
-> +               unsigned int default_pstate;
+
+--kJH6/96gHwlIk2vB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, Aug 06, 2021 at 03:34:48PM +0300, Mikko Perttunen wrote:
+> Convert the original Host1x bindings to YAML and add new bindings for
+> NVDEC, now in a more appropriate location. The old text bindings
+> for Host1x and engines are still kept at display/tegra/ since they
+> encompass a lot more engines that haven't been converted over yet.
+>=20
+> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+> ---
+> v2:
+> * Fix issues pointed out in v1
+> * Add T194 nvidia,instance property
+> ---
+>  .../gpu/host1x/nvidia,tegra20-host1x.yaml     | 131 ++++++++++++++++++
+>  .../gpu/host1x/nvidia,tegra210-nvdec.yaml     | 109 +++++++++++++++
+>  MAINTAINERS                                   |   1 +
+>  3 files changed, 241 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/gpu/host1x/nvidia,t=
+egra20-host1x.yaml
+>  create mode 100644 Documentation/devicetree/bindings/gpu/host1x/nvidia,t=
+egra210-nvdec.yaml
+
+Can we split off the NVDEC bindings addition into a separate patch? I've
+been working on converting the existing host1x bindings in full to json-
+schema and this partial conversion would conflict with that effort.
+
+I assume that NVDEC itself validates properly even if host1x hasn't been
+converted yet?
+
+> diff --git a/Documentation/devicetree/bindings/gpu/host1x/nvidia,tegra210=
+-nvdec.yaml b/Documentation/devicetree/bindings/gpu/host1x/nvidia,tegra210-=
+nvdec.yaml
+> new file mode 100644
+> index 000000000000..fc535bb7aee0
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/gpu/host1x/nvidia,tegra210-nvdec.=
+yaml
+> @@ -0,0 +1,109 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: "http://devicetree.org/schemas/gpu/host1x/nvidia,tegra210-nvdec.yam=
+l#"
+> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
 > +
-> +               ret =3D pd->default_performance_state(pd, dev);
-> +               if (ret < 0) {
-> +                       dev_err(dev, "failed to get default performance s=
-tate for PM domain %s: %d\n",
-> +                               pd->name, ret);
-> +                       goto out;
-> +               }
-
-Adding a new callback seems reasonable to support this.
-
+> +title: Device tree binding for NVIDIA Tegra NVDEC
 > +
-> +               default_pstate =3D ret;
+> +description: |
+> +  NVDEC is the hardware video decoder present on NVIDIA Tegra210
+> +  and newer chips. It is located on the Host1x bus and typically
+> +  programmed through Host1x channels.
 > +
-> +               if (power_on) {
-> +                       ret =3D dev_pm_genpd_set_performance_state(dev, d=
-efault_pstate);
-
-However, this is more questionable to me.
-
-First, I don't think we should care about whether this is "power_on"
-or not. At this point, performance states are treated orthogonal to
-idle states in genpd. We may decide to change that in some way, but
-that deserves a different change.
-
-Second, I don't think we should call
-dev_pm_genpd_set_performance_state() from here. It's probably better
-handled from the genpd callback itself, if/when needed.
-
-That said, perhaps the new callback should just return a regular error
-code and zero on success, rather than the current performance state.
-See more below.
-
-> +                       if (ret) {
-> +                               dev_err(dev, "failed to set default perfo=
-rmance state %u for PM domain %s: %d\n",
-> +                                       default_pstate, pd->name, ret);
-> +                               goto out;
-> +                       }
-> +               } else {
-> +                       dev_gpd_data(dev)->rpm_pstate =3D default_pstate;
-
-No, this isn't the right thing to do.
-
-It looks like you are trying to use the ->rpm_pstate for
-synchronization with runtime PM for consumer drivers. This is fragile
-as it depends on the runtime PM deployment in the consumer driver. I
-think you should look at ->rpm_pstate as a variable solely for
-managing save/restore of the performance state for the device, during
-runtime suspend/resume in genpd.
-
-Synchronization of a vote for a performance state for a device, needs
-to be managed by calling dev_pm_genpd_set_performance_state() - or by
-calling an OPP function that calls it, like dev_pm_opp_set_rate(), for
-example.
-
-> +               }
-> +       }
+> +maintainers:
+> +  - Thierry Reding <treding@gmail.com>
+> +  - Mikko Perttunen <mperttunen@nvidia.com>
 > +
->         if (power_on) {
->                 genpd_lock(pd);
->                 ret =3D genpd_power_on(pd, 0);
->                 genpd_unlock(pd);
->         }
->
-> +out:
->         if (ret)
->                 genpd_remove_device(pd, dev);
->
-> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-> index 81d1f019fa0c..9efb55f52462 100644
-> --- a/drivers/soc/tegra/pmc.c
-> +++ b/drivers/soc/tegra/pmc.c
-> @@ -518,15 +518,14 @@ static const char * const tegra_emc_compats[] =3D {
->   * We retrieve clock rate of the attached device and initialize domain's
->   * performance state in accordance to the clock rate.
->   */
-> -static int tegra_pmc_pd_attach_dev(struct generic_pm_domain *genpd,
-> -                                  struct device *dev)
-> +static int tegra_pmc_genpd_default_perf_state(struct generic_pm_domain *=
-genpd,
-> +                                             struct device *dev)
->  {
-> -       struct generic_pm_domain_data *gpd_data =3D dev_gpd_data(dev);
->         struct opp_table *opp_table, *pd_opp_table;
->         struct generic_pm_domain *core_genpd;
->         struct dev_pm_opp *opp, *pd_opp;
-> -       unsigned long rate, state;
->         struct gpd_link *link;
-> +       unsigned long rate;
->         struct clk *clk;
->         u32 hw_version;
->         int ret;
-> @@ -633,8 +632,7 @@ static int tegra_pmc_pd_attach_dev(struct generic_pm_=
-domain *genpd,
->          * RPM-resume of the device.  This means that drivers don't need =
-to
->          * explicitly initialize performance state.
->          */
-> -       state =3D pm_genpd_opp_to_performance_state(&core_genpd->dev, pd_=
-opp);
-> -       gpd_data->rpm_pstate =3D state;
-> +       ret =3D pm_genpd_opp_to_performance_state(&core_genpd->dev, pd_op=
-p);
+> +properties:
+> +  $nodename:
+> +    pattern: "^nvdec@[0-9a-f]*$"
+> +
+> +  compatible:
+> +    enum:
+> +      - nvidia,tegra210-nvdec
+> +      - nvidia,tegra186-nvdec
+> +      - nvidia,tegra194-nvdec
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  clock-names:
+> +    items:
+> +      - const: nvdec
+> +
+> +  resets:
+> +    maxItems: 1
+> +
+> +  reset-names:
+> +    items:
+> +      - const: nvdec
+> +
+> +  power-domains:
+> +    maxItems: 1
+> +
+> +  iommus:
+> +    maxItems: 1
+> +
+> +  interconnects:
+> +    items:
+> +      - description: DMA read memory client
+> +      - description: DMA read 2 memory client
+> +      - description: DMA write memory client
+> +
+> +  interconnect-names:
+> +    items:
+> +      - const: dma-mem
+> +      - const: read2
 
-I don't see how this avoids tegra_pmc_genpd_default_perf_state() from
-having to walk &genpd->child_links.
+The convention that we've used so far has been to start numbering these
+at 0 and use a dash, so this would be "read-1".
 
-That's still an issue, right?
+> +      - const: write
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - clock-names
+> +  - resets
+> +  - reset-names
+> +  - power-domains
+> +
+> +if:
+> +  properties:
+> +    compatible:
+> +      contains:
+> +        const: nvidia,tegra194-host1x
+> +then:
+> +  properties:
+> +    nvidia,instance:
+> +      items:
+> +        - description: 0 for NVDEC0, or 1 for NVDEC1
 
->         dev_pm_opp_put(pd_opp);
->
->  put_pd_opp_table:
-> @@ -1383,7 +1381,7 @@ static int tegra_powergate_add(struct tegra_pmc *pm=
-c, struct device_node *np)
->
->         pg->id =3D id;
->         pg->genpd.name =3D np->name;
-> -       pg->genpd.attach_dev =3D tegra_pmc_pd_attach_dev;
-> +       pg->genpd.default_performance_state =3D tegra_pmc_genpd_default_p=
-erf_state;
->         pg->genpd.power_off =3D tegra_genpd_power_off;
->         pg->genpd.power_on =3D tegra_genpd_power_on;
->         pg->pmc =3D pmc;
-> @@ -1500,7 +1498,7 @@ static int tegra_pmc_core_pd_add(struct tegra_pmc *=
-pmc, struct device_node *np)
->                 return -ENOMEM;
->
->         genpd->name =3D np->name;
-> -       genpd->attach_dev =3D tegra_pmc_pd_attach_dev;
-> +       genpd->default_performance_state =3D tegra_pmc_genpd_default_perf=
-_state;
->         genpd->set_performance_state =3D tegra_pmc_core_pd_set_performanc=
-e_state;
->         genpd->opp_to_performance_state =3D tegra_pmc_core_pd_opp_to_perf=
-ormance_state;
->
-> diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
-> index 21a0577305ef..cd4867817ca5 100644
-> --- a/include/linux/pm_domain.h
-> +++ b/include/linux/pm_domain.h
-> @@ -143,6 +143,8 @@ struct generic_pm_domain {
->                           struct device *dev);
->         void (*detach_dev)(struct generic_pm_domain *domain,
->                            struct device *dev);
-> +       int (*default_performance_state)(struct generic_pm_domain *domain=
-,
-> +                                        struct device *dev);
->         unsigned int flags;             /* Bit field of configs for genpd=
- */
->         struct genpd_power_state *states;
->         void (*free_states)(struct genpd_power_state *states,
->
-> >> I can revert back to the previous variant, although this variant works
-> >> well too.
-> > I looked at that code and in that path we end up calling
-> > dev_pm_opp_set_rate(), after it has initialized the opp table for the
-> > device.
-> >
-> > Rather than doing the OF parsing above to find out the current state
-> > for the device, why can't you just call dev_pm_opp_set_rate() to
-> > initialize a proper vote instead?
-> >
->
-> For some devices clock rate is either preset by bootloader, or by clk dri=
-ver, or by assigned-clocks in a device-tree. And then I don't see what's th=
-e difference in comparison to initialization for the current rate.
->
-> For some devices, like memory controller, we can't just change the clock =
-rate because it's a complex procedure and some boards will use fixed rate, =
-but the power vote still must be initialized.
+I know we had discussed this before, but looking at the driver patch, I
+don't actually see this being used now, so I wonder if we still need it.
 
-I am not saying you should change the clock rate. The current code
-path that runs via devm_tegra_core_dev_init_opp_table() just calls
-clk_get_rate and then dev_pm_opp_set_rate() with the current rate to
-vote for the corresponding OPP level. Right?
+> +additionalProperties: true
 
-Isn't this exactly what you want? No?
+Maybe this should have a comment noting that this should really be
+unevaluatedProperties: false, but we can't use that because the tooling
+doesn't support it yet?
 
-Kind regards
-Uffe
+Rob, what's the current best practice for that? I see that there are
+quite a few bindings that use unevaluatedProperties, so I wonder if we
+just ignore errors from that for now? Or do we have some development
+branch of the tooling somewhere that supports this now? I vaguely recall
+reading about work in progress patches for this, but I can't find the
+link now to see if there's been an update since I last looked.
+
+Thierry
+
+--kJH6/96gHwlIk2vB
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmESnpwACgkQ3SOs138+
+s6ESBBAArTK4Z/v/65pDRfwUxUKgE62FylRjAen+dpH9Eh4YSd7oaUN7WzWk+kih
+EFi79BDInfwASxZd5YtrxGuqKNkLS5fsmf+Y89W3OdII9h+JKUKcM2kZk8TUVTKM
++4qXC84/NLCd/GKoo4MTo7Kd7nHAs3ijKvYQOwpiRaNmMmhh0qabC1ONZcz7ZuuB
+u4mmgyWwrL8idfKMK0Zy+SsYo/z5HwRcucXfPiC7fmj11YLANms4TzXPMVCfVcul
+v7qOvTThjn6VH6Sr8WZBuOYWTTOPu3k4a73f4+m4oHh94XUtwjqBN9viyvQbwb08
++q8G+a5fdqX1dIKvfi4leZBPs6wJ4oIXee9cyqB9gw7pD1B1H2ZmnNj3qWBgeFHz
+MYilkaeiADStBTuNS8FcEgWUSji1jUkVRkk04/sYTVtCJ+2WZpljZilKnyq+IhjW
+xFmh+ZP02mpGbe4GBBg62xrnzlLa2mHspFJClh3bK2iMxREG2lQ86XMN1/X/0pHU
+gGe18Z7eIfcAyws4kcV4sjG7V+zJQIE8sreFkHlNhf65Iaz/Pqmw8pJi590zEDpL
+z9Kv+R/Pmk1Sca+pwxbAFHK4M9cy7P6izTBwHOBFgbucfjecF1JqPe5VhspJ6pg6
+du6OIvICKI7Drn/UWIsyZsIa/M6+zV37H39BmVhS9hSJOrXFUjA=
+=+T8a
+-----END PGP SIGNATURE-----
+
+--kJH6/96gHwlIk2vB--
