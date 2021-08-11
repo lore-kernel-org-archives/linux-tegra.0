@@ -2,126 +2,130 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5C4CC4338F
-	for <linux-tegra@archiver.kernel.org>; Wed, 11 Aug 2021 09:49:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BB57C4338F
+	for <linux-tegra@archiver.kernel.org>; Wed, 11 Aug 2021 09:55:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B39706101D
-	for <linux-tegra@archiver.kernel.org>; Wed, 11 Aug 2021 09:49:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DEC1260FC4
+	for <linux-tegra@archiver.kernel.org>; Wed, 11 Aug 2021 09:55:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236432AbhHKJuM (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 11 Aug 2021 05:50:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47172 "EHLO
+        id S236726AbhHKJzl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 11 Aug 2021 05:55:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48440 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231508AbhHKJuL (ORCPT
+        with ESMTP id S236521AbhHKJzk (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 11 Aug 2021 05:50:11 -0400
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BD98C061765;
-        Wed, 11 Aug 2021 02:49:47 -0700 (PDT)
-Received: by mail-wr1-x431.google.com with SMTP id r6so2197829wrt.4;
-        Wed, 11 Aug 2021 02:49:47 -0700 (PDT)
+        Wed, 11 Aug 2021 05:55:40 -0400
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81037C0613D3;
+        Wed, 11 Aug 2021 02:55:17 -0700 (PDT)
+Received: by mail-wr1-x432.google.com with SMTP id z9so2107569wrh.10;
+        Wed, 11 Aug 2021 02:55:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=InP9e9WSss+4zqBvpjB1Gp8No7Ucwrc7WwdGFVYJuz0=;
-        b=CiaLFTJR+kcHgWHKg5doWB9jQVcCR9DmVQ5ocqm+wbnC17KPScsd4ET9T1cSU5xsWd
-         aEbiCsmxUjVcZmcSEB2XZUd6ClT5covp0XCPWPUEufgDuLHKuIJfMept/gYCYfNF2snN
-         s5NHbmnnXQyw0O/T+xQn+qXplvLvISHqqYAoeYGpSJdUZrAeiPZnCvKxUcY/uCD1s786
-         HwiX4ByQUZVQe1s/8XgzfJB/cQMXReR1KuAGjgLMdcp0WKDldD+3eZZAYSUxrU4eIsoN
-         lzZWTYevf18V6wlU1aU4Ud5xuBcltjw7YmWRo2vvG/2Bvt1mwYa2XS22YhLrvRscwgTP
-         y+Ow==
+        bh=2b8psoCPOjX8IdKNBZmOz83qagMGK4KY9ft/nTsgdo4=;
+        b=fJAcfQ1D8JXcTIjMeGD9tdgk6/LB816NpV9NCinQaRhvgzk/b6txUAC+NKj6axgm+N
+         79ix41i7kpX/35D4saWkg3IX4eMqteopA9vNpYuolI1TsC2Bx5e5mQiLyStcSNb9cebB
+         qGBNWgHEO0u4MAFkzw9PzXL72e4kt3ERY4K1JE3LxHf5wlVldXjqqg9lFKq29tbll5d4
+         oiozjU3kjoutc869E91/cW9APC+sIqcvF8axjEBpGgcWWsVlZy5lVZtk6JWCIRcOijPB
+         WPDf2ruLFE0ioV5amg0CWjkhN0kGNcMWt8J/CsHCFxm32iGWevwGbokf+5G/V+l5NWue
+         MOWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=InP9e9WSss+4zqBvpjB1Gp8No7Ucwrc7WwdGFVYJuz0=;
-        b=WWqKq/fLDZjnRmQp1MLiTjK8xlJJMOhoSm+tw3yvmjgfWLCOKDZR+CvTUJyoEZVWg5
-         JLrWxsS2egfIB9gj+vcZdDPTt5/qpq6rWiAgdnFlcg/AWjNjbTKANBW6z60s+5GJ85yH
-         yAFLQzts4+V+WnyJT9wZwi0cMB8OdsRIY84ecP+dv/gN+pP5/PiKnBZeQsrxGYE7CBhq
-         Yym2cw+y+cFs5JCq1OA+Ma4fZXPfaRcUH75q0ixeoUVDPrDls+SWEp0y3NLyPsfoBWYq
-         FbujhdDtE5fGkFFn8NQX5h33XPh+Wx3OreimMF6rYMy3DFNk1Bm3LD7pljyIjpgGhs/i
-         gzFw==
-X-Gm-Message-State: AOAM530DK/JGvBuVUeL2XWrZmJ/Zi6gXW9nzP8FhH6U3UUim1ucSPgrD
-        N1Y2oUmLgxPfOXuscHm4hA0=
-X-Google-Smtp-Source: ABdhPJzcxpNl5KEbAU1AgAatUuCL5jXG9xEZHZlf1qYq7pV03jPHJJNb+AkVZxRFrTsGNJfTVp7ACA==
-X-Received: by 2002:a05:6000:9:: with SMTP id h9mr22221085wrx.396.1628675386236;
-        Wed, 11 Aug 2021 02:49:46 -0700 (PDT)
+        bh=2b8psoCPOjX8IdKNBZmOz83qagMGK4KY9ft/nTsgdo4=;
+        b=Vxm4/Z78umUIbvPBor6AQw5ZAb7jYTMf/PZAmTwzJlFczPA8A1jeIok+TnY6taMimr
+         K/DUggqq4gLx6MHo9juaUr8a3dIBdg8BbS5XH9DjWtvA4mgMEzYatp+dEmZI9fAMZ/Ic
+         xF9pZ/wjJ7DVoXZ8G8eHFrkFymjEwFJlGMOld0rjtr7rQ+i3HGeNFdKnti2MZM792yw+
+         Cd/X/vMPtPOm3ZAIPJ7p3QoGFejDQ72opzFoU7yxt6Brom0rTdEDVNu8qDjuio6ehL/U
+         wbzpELKMBfcmm2TV2Syoq/lPJchZeWUBWshCA1VcDI2aH4ucVUbLi+q1BoVzlYl0sDpH
+         bUKw==
+X-Gm-Message-State: AOAM532jumzN0qQHANasLQ9stz1PpIEjijcW2rzzOnUa925iytAhN0iA
+        JYRkEfaUJqGI/4cfqXc3MfY=
+X-Google-Smtp-Source: ABdhPJzGsuolK0NSYgBXnmXq41P8ksbRMhVA4yumsHabYdPmp//69adHoKLrFxwSKP8EIAItfMy3tg==
+X-Received: by 2002:adf:e4d0:: with SMTP id v16mr7820450wrm.378.1628675716191;
+        Wed, 11 Aug 2021 02:55:16 -0700 (PDT)
 Received: from localhost ([217.111.27.204])
-        by smtp.gmail.com with ESMTPSA id c2sm25828931wrs.60.2021.08.11.02.49.45
+        by smtp.gmail.com with ESMTPSA id r10sm10364291wrq.32.2021.08.11.02.55.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Aug 2021 02:49:45 -0700 (PDT)
-Date:   Wed, 11 Aug 2021 11:52:10 +0200
+        Wed, 11 Aug 2021 02:55:15 -0700 (PDT)
+Date:   Wed, 11 Aug 2021 11:57:40 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Dmitry Osipenko <digetx@gmail.com>
 Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/2] soc/tegra: pmc: Prevent racing with cpuilde driver
-Message-ID: <YROdyssO7qQU5kFR@orome.fritz.box>
-References: <20210718212706.21659-1-digetx@gmail.com>
- <20210718212706.21659-2-digetx@gmail.com>
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-tegra@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 0/4] Tegra FUSE clock improvements for 5.15
+Message-ID: <YROfFBziO7Q0HcsK@orome.fritz.box>
+References: <20210802221336.32016-1-digetx@gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="GO/E5Ljb5DmwgjgQ"
+        protocol="application/pgp-signature"; boundary="j7wCEzsgoH2L1y2m"
 Content-Disposition: inline
-In-Reply-To: <20210718212706.21659-2-digetx@gmail.com>
+In-Reply-To: <20210802221336.32016-1-digetx@gmail.com>
 User-Agent: Mutt/2.1.1 (e2a89abc) (2021-07-12)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---GO/E5Ljb5DmwgjgQ
+--j7wCEzsgoH2L1y2m
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 19, 2021 at 12:27:05AM +0300, Dmitry Osipenko wrote:
-> Both PMC and cpuidle drivers are probed at the same init level and
-> cpuidle depends on the PMC suspend mode. Add new default suspend mode
-> that indicates whether PMC driver has been probed and reset the mode in
-> a case of deferred probe of the PMC driver.
+On Tue, Aug 03, 2021 at 01:13:32AM +0300, Dmitry Osipenko wrote:
+> Hello,
 >=20
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  arch/arm/mach-tegra/pm.c    |  2 +-
->  arch/arm/mach-tegra/pm.h    |  6 ------
->  arch/arm/mach-tegra/tegra.c |  2 --
->  drivers/soc/tegra/pmc.c     | 14 +++++++++++++-
->  include/soc/tegra/pm.h      |  6 ++++++
->  5 files changed, 20 insertions(+), 10 deletions(-)
+> This series improves handling of the FUSE clock by keeping it enabled only
+> when necessary.
+>=20
+> Dmitry Osipenko (4):
+>   soc/tegra: fuse: Clear fuse->clk on driver probe failure
+>   soc/tegra: fuse: Add runtime PM support
+>   soc/tegra: fuse: Enable fuse clock on suspend for Tegra124
+>   clk: tegra: Remove CLK_IS_CRITICAL flag from fuse clock
+>=20
+>  drivers/clk/tegra/clk-tegra-periph.c  |  6 +--
+>  drivers/soc/tegra/fuse/fuse-tegra.c   | 60 +++++++++++++++++++++++++++
+>  drivers/soc/tegra/fuse/fuse-tegra20.c | 11 +++--
+>  drivers/soc/tegra/fuse/fuse-tegra30.c | 16 ++++---
+>  drivers/soc/tegra/fuse/fuse.h         |  2 +
+>  5 files changed, 81 insertions(+), 14 deletions(-)
 
 Applied, thanks.
 
 Thierry
 
---GO/E5Ljb5DmwgjgQ
+--j7wCEzsgoH2L1y2m
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmETncoACgkQ3SOs138+
-s6G1rg/+Nkee2koAygYhXcPkVKL8bYEaz97g0KV6s6NbEJTNWZz3+vJgXx2KNmvZ
-fn0MbmBiF248O+6x6J076aFF3BPZEQ3E7PYpvQfRz6Wcxe7dyDsJkC1e9WsN6+eM
-o+9oSxklTO0GDyWlxAKQcjYBEOMJchxlR+jI40f8h8ex6c0CRUzjddltq4tbkK5g
-tZReiYugPjKRyGeFGavvwGk4YZ6ZIeIdqmPE2EpVwCL+EBIF+gkMsFchGCDtsYxA
-sCohdR9cfh6IfTAKPyz+Hk+LmbzgnFPchKmDV9WG7WAByWBurvF70EBzrB9DgeEM
-7+AlNDBvzpvRcwqaso+Lw895cLJj9ZA6l4OGBg/0wFdqJyG0WZY8p81/K+budNea
-5ReAKyBSFxiZGnU4Ygds4uOBsgk6LNAgXTjRU5hQSwrXy7TIJvlQ9t94zxSSVtuH
-UrwND34ms56cqKxhH3wyV7fmNigymGPy1rurlBNhNwT39nK20IjjK49qoYCKO2IS
-IogQHySphEHIsEh++ESjcb8zurGIwPQ5MS7V/VwTSLI78SJI3xdKoLPEdU51yHjK
-aKyOZ3KVA6eUUYk5qDAmaYxlkSURm5NHSUQt7d+mArMoWopHvZ93GV+UHc+D8thp
-sYZhN+15y2eAY/b1xdU+oXWLQv9EDQxFrvH75J0NVEp00pDgME0=
-=+7DF
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmETnxMACgkQ3SOs138+
+s6HqjQ//dRIixHh39Hyv/oa0+uZZzBFnNlYpMIqr0YjlDlRftAxBsSMmf53LwyDb
+Hq2iN11GAlVwIpUmKyYZPwW7rBdJk7itIp/QUKEjS5VlwOO0DWP7AG22k9x9Hjr6
+TPkbQ/+8mfmoGbyjDchZ2XLqrHj/VY/Tw6OWqocBUOkfXMUMExBoLjuqoR9XUHB/
+KvvZSn73Gjgf9TnGEB/eJh7xdem4dxSbGE95GtYCiOPdluCfrxfY+yZR3zxSIdP8
+yhTvWK+1ZTOIdB5tZZDM6S4VS6nqSOUwV+2LMaGNOzqRAY5oBfR37PlY4s4fQby8
+K53raJhg14npx4DHRCHaL6y4RLhY4E2YN67NNwk8y/KBO+Xa13UgjAzF3cbhfyr5
+EPXRSZXsUFeWmysjB+E87e6MDONBoXs76MaUe6ltUrsrFwIUFF7kunM+jJG31hEK
+Cim/VxDxNYdACEQckgPh000hOgtgu0/VC7B5pbUj/iKeDFCU2VPOP8uT35uKbyE8
+WNb6aG+AvG8iZpZX+EWej+twlB1VaTVXABFlxwr3xGGIOcXbRyXMLf0KfW5QrK35
+xpugfjPWcbofpMeh2zvLOQf4pSYJYNBWfkJ2HBWY+uKU/OWd69FZU9rJSA3DXd5+
+Zorlgv4IXmJdMCkjVtXj6SA6q1VK8hIr14288U5sGiSRAApy7+U=
+=AEwI
 -----END PGP SIGNATURE-----
 
---GO/E5Ljb5DmwgjgQ--
+--j7wCEzsgoH2L1y2m--
