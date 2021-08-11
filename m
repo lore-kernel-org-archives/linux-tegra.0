@@ -2,112 +2,148 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90143C432BE
-	for <linux-tegra@archiver.kernel.org>; Wed, 11 Aug 2021 09:11:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4BB5C4338F
+	for <linux-tegra@archiver.kernel.org>; Wed, 11 Aug 2021 09:47:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 71E0C60FA0
-	for <linux-tegra@archiver.kernel.org>; Wed, 11 Aug 2021 09:11:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 875836101E
+	for <linux-tegra@archiver.kernel.org>; Wed, 11 Aug 2021 09:47:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236622AbhHKJLx (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 11 Aug 2021 05:11:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38432 "EHLO
+        id S236661AbhHKJrz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 11 Aug 2021 05:47:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46640 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236461AbhHKJLx (ORCPT
+        with ESMTP id S236056AbhHKJry (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 11 Aug 2021 05:11:53 -0400
-Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E56BEC061798
-        for <linux-tegra@vger.kernel.org>; Wed, 11 Aug 2021 02:11:29 -0700 (PDT)
-Received: by mail-lj1-x22a.google.com with SMTP id x9so3459735ljj.2
-        for <linux-tegra@vger.kernel.org>; Wed, 11 Aug 2021 02:11:29 -0700 (PDT)
+        Wed, 11 Aug 2021 05:47:54 -0400
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42EDFC061765;
+        Wed, 11 Aug 2021 02:47:31 -0700 (PDT)
+Received: by mail-wm1-x335.google.com with SMTP id m36-20020a05600c3b24b02902e67543e17aso3449060wms.0;
+        Wed, 11 Aug 2021 02:47:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=45L965AHZgo82l4aN2SrSPr1cis24KkD7elj4CXl2IE=;
-        b=tHkB54ySsHx551ghZG3oiWj9E5OW/jA0gsGikYmUj5abrUVPS1pVfN3YxmEs2Txlur
-         ZUKxCfCNrdIg4aTp9DKXjGgZMeKIi7GQEmtRY7jd6QCzL89NhZceOeCtuySmIX8VXHB0
-         +fwB+P1mzXXtfPraNDkgH0mZOQmFtC97CavMsU6Y7KYupLPgkK2B5BYh77cPr/720/ks
-         CK6XjfVWlCWsRwnBexZGmArWthojlDpRrGh4UTWPSanKqLH2ldait5j3KFIvWCI5ji6d
-         67JYZJ2Xm+uVc0Cv6VHJn5x7tGKGvldtq2Kcfk0d1vuVQbKOsUwkjr5fuAm0fDlrX5yC
-         TbXw==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=b/50RZhI1+HYZXoTkYGUW7jpTP3tDgMGWDF5nGMrgbE=;
+        b=boKFJXAcnB/f2IhrphvG693kYgN3xOKCpq7l+H22gOLKtyBknfg5kGaly1k6u0xIXb
+         BFkfbM10WfK1nK5GG6YOXpfnt7WmaYIxSDjekvU0j9H+AJbKQk2Lvg2o65hoLq5X5/gN
+         UUz4KayTVlVR0k0I0D3QbJTd2njWZQhqb0mQmRbe8wwMQvG6z2xkT9GVqSv+UKnV4bDP
+         511c96jaDh11dnS4SNYV3etxN8Vcd5yEJsuINEcWPIFbmUAYpe5aNRJ5Ta9cRigsm1rl
+         t1mGJoCPTVFO2y5SWIgnLKEAA7h4tyVmJi4hkns52wqYoT0XHqA3GI18Hk7+40K9lyw1
+         6Edg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=45L965AHZgo82l4aN2SrSPr1cis24KkD7elj4CXl2IE=;
-        b=dio3/7JnqsDjD6g5u6P7VlR4f21F14qXzm+AYwd6yq11MfzPXt/cNXbyZAJ3tMYN73
-         H32jvZm0FdtZJLANifKMWzjmLQkGh8ze7IxtZtBA40p43T2TAHi7YjlyiTw3BkmXqBhJ
-         QP5C9dkuGebJanG/Amy/HZiT/8kTt+sBerman0AEKT8sJDBa0UPBhP4598pm+ppHEvmN
-         WG6+K9UFKUOBS+OGl6T/M+02Dx2tqUZ8A3B8YSdtqj/Rd0d3X26bLZ8psUdxgqXQ7aAb
-         Tg8fm1j2jSuTXL7u3psn3KtYmFeoa73K7FRQ5v+1PvA92qOlcKTADucx7e54ZT9oCMwF
-         oUWg==
-X-Gm-Message-State: AOAM533KIlWaFBXD30cSFH+Hik+7LetWlNlkB+94IhOGPA/Kx4OG7cjd
-        6XyceyPLiOzG8gE4r62VKNmgQ4yKGeg9NSt76Wt//w==
-X-Google-Smtp-Source: ABdhPJzRqUz/cks6mC/kThItyPh6HXSuFGyiXatmiGVouPLRVCOkyePXj7L3M7v54DYVWz6HfqDUb6kTsZt1fLEjXvo=
-X-Received: by 2002:a2e:9e46:: with SMTP id g6mr2650552ljk.326.1628673088252;
- Wed, 11 Aug 2021 02:11:28 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=b/50RZhI1+HYZXoTkYGUW7jpTP3tDgMGWDF5nGMrgbE=;
+        b=b6F363udYXZd+GpFBFFgsI30ychsIrHYimglpLN5ieTHBwjwh8xuF9P1O0LKo4fAP/
+         0GJD4lBORljVqKZbHxBkxR6TmH0DCUQzDemBVdazNxfGOqKb2EMFXVGR6rwM2zySSqzf
+         ZaF7n/hogx9v37M+dkwLJSz4FHq89hX56L72VHlfJpKRTMQ96N5ldcsroXleiG3rsSmU
+         lADNZa6a1DmLCtp6bTFxtdUHjTmBx6vV83n6M22+RS3ZfsDX40TuDWNRjIwQgbo0PeBs
+         ecnAX1gWsaZx/Z8vaTIB5pNX1PHzj7YDRdcWIupJxnCQhMcCwc5gnDuiudkOtiXJ8LS/
+         JviA==
+X-Gm-Message-State: AOAM532uux3aUfb+6dzygSjQ9+8mAZCTNXphvVLaomLnh11sKiZ3ZyEh
+        aUQVzePCLRvjWpP1PjoipFg=
+X-Google-Smtp-Source: ABdhPJwsPC6MQc/AIkHMzaTLik34/rJmcUUmAgL+QcxYllVVjnX7CwcgpitkBoJgoeDV6L60Y+hBdw==
+X-Received: by 2002:a1c:7214:: with SMTP id n20mr13556931wmc.181.1628675249813;
+        Wed, 11 Aug 2021 02:47:29 -0700 (PDT)
+Received: from localhost ([217.111.27.204])
+        by smtp.gmail.com with ESMTPSA id o17sm25849916wrw.17.2021.08.11.02.47.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Aug 2021 02:47:28 -0700 (PDT)
+Date:   Wed, 11 Aug 2021 11:49:53 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
+        Dmitry Osipenko <digetx@gmail.com>, linux-pm@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 2/2] cpuidle: tegra: Check whether PMC is ready
+Message-ID: <YROdQXO4aVLQ8DkP@orome.fritz.box>
+References: <20210718212706.21659-1-digetx@gmail.com>
+ <20210718212706.21659-3-digetx@gmail.com>
 MIME-Version: 1.0
-References: <20210625235532.19575-1-dipenp@nvidia.com> <20210625235532.19575-10-dipenp@nvidia.com>
- <CACRpkdaqKJLUdf3NiFHaTgu6buyhMb_D1yKyHF4M=eTQ94pe-g@mail.gmail.com>
- <b87fa5d8-bef9-9046-9747-d4428ddf58ea@nvidia.com> <20210731061617.GA12414@sol>
-In-Reply-To: <20210731061617.GA12414@sol>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 11 Aug 2021 11:11:17 +0200
-Message-ID: <CACRpkdab=VhSgWOpBQ2rB4AiQF4zXJ_S20A826ZxufJAvN9cWg@mail.gmail.com>
-Subject: Re: [RFC 09/11] tools: gpio: Add new hardware clock type
-To:     Kent Gibson <warthog618@gmail.com>
-Cc:     Dipen Patel <dipenp@nvidia.com>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="2zif2I7f2WOnASNh"
+Content-Disposition: inline
+In-Reply-To: <20210718212706.21659-3-digetx@gmail.com>
+User-Agent: Mutt/2.1.1 (e2a89abc) (2021-07-12)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Sat, Jul 31, 2021 at 8:16 AM Kent Gibson <warthog618@gmail.com> wrote:
-> On Thu, Jul 29, 2021 at 08:17:22PM -0700, Dipen Patel wrote:
-> >
-> > On 6/27/21 4:36 AM, Linus Walleij wrote:
-> > > On Sat, Jun 26, 2021 at 1:48 AM Dipen Patel <dipenp@nvidia.com> wrote:
-> > >
-> > >> gpiolib-cdev is extended to support hardware clock type, this
-> > >> patch reflects that fact.
-> > >>
-> > >> Signed-off-by: Dipen Patel <dipenp@nvidia.com>
-> > > (...)
-> > >>                 case 'w':
-> > >>                         config.flags |= GPIO_V2_LINE_FLAG_EVENT_CLOCK_REALTIME;
-> > >>                         break;
-> > >> +               case 't':
-> > >> +                       config.flags |= GPIO_V2_LINE_FLAG_EVENT_CLOCK_HARDWARE;
-> > >> +                       break;
-> > > After the checking of the command line options we need a small sanity
-> > > check so we don't try to enable both realtime and hardware clock
-> > > at the same time, we will only be able to request one of them.
-> >
-> > This will any way fail at gpiolib-cdev layer. Do we want to add it here
-> >
-> > as well?
-> >
->
-> I can't speak for Linus, but I'm fine with it as is as it allows the tool
-> to be used to exercise the sanity check in the kernel.
 
-Fair enough, that sounds useful. Go ahead with this as-is.
+--2zif2I7f2WOnASNh
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Yours,
-Linus Walleij
+On Mon, Jul 19, 2021 at 12:27:06AM +0300, Dmitry Osipenko wrote:
+> Check whether PMC is ready before proceeding with the cpuidle registratio=
+n.
+> This fixes racing with the PMC driver probe order, which results in a
+> disabled deepest CC6 idling state if cpuidle driver is probed before the
+> PMC.
+>=20
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/cpuidle/cpuidle-tegra.c | 3 +++
+>  1 file changed, 3 insertions(+)
+
+Rafael, Daniel,
+
+would you mind if I took this into the Tegra tree? It's got a dependency
+on the PMC driver, which usually goes via the Tegra tree already, and
+there's nothing cpuidle-specific in here, it's all Tegra-specific
+integration quirks.
+
+Thierry
+
+>=20
+> diff --git a/drivers/cpuidle/cpuidle-tegra.c b/drivers/cpuidle/cpuidle-te=
+gra.c
+> index 508bd9f23792..9845629aeb6d 100644
+> --- a/drivers/cpuidle/cpuidle-tegra.c
+> +++ b/drivers/cpuidle/cpuidle-tegra.c
+> @@ -337,6 +337,9 @@ static void tegra_cpuidle_setup_tegra114_c7_state(voi=
+d)
+> =20
+>  static int tegra_cpuidle_probe(struct platform_device *pdev)
+>  {
+> +	if (tegra_pmc_get_suspend_mode() =3D=3D TEGRA_SUSPEND_NOT_READY)
+> +		return -EPROBE_DEFER;
+> +
+>  	/* LP2 could be disabled in device-tree */
+>  	if (tegra_pmc_get_suspend_mode() < TEGRA_SUSPEND_LP2)
+>  		tegra_cpuidle_disable_state(TEGRA_CC6);
+> --=20
+> 2.32.0
+>=20
+
+--2zif2I7f2WOnASNh
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmETnT4ACgkQ3SOs138+
+s6GfmRAAtIjuR58BgpKR9AFQHqWiKRZkr0hImMiksmT3JDKPG8pQqNoSwta1c35m
+M9/4OQvR38jsc6egWNF3Ed/t8egKsyDvbbkJdCEQQEUT0fL5mQNFAkDnXBxjbQ27
+twRa5sG5QH77LUP26Tb+J79lf92fRux0pYuSkeZU3viroSmtBGsH78OSi3TYhPE8
+OVWr/PHxllWllnB5YJXXOJ3n22JQpmvuUVhPT0Eipn1PArLsyv+joLBveLss+dsF
+IAcwtI69bich207WwIiCkTQAFjv71WnL9b1hEpTkQpNiPgWd7EcS1mOv6vEL5FGT
+Nj0b8EVcW/8CnFXz67TVZmABUr79Sf2OCiNUKoCtJpUhdYlzwUkFxmetz+acXnr5
+R3bW11Vsgo34iAJ9SthyqKC76/9TsJJaL8QcPGWKeQ5LIS91zWs/JFfhhzvT3hVx
+zYuqWtCHqAEh+LG8gqjorFqcQkuFeC5HFe2yun4JebZLfNtH/o1t5jly1Up2oNe6
+6/tP2H6Cuod5F/gHaTOCDzNjGnKqWvXNldabttnV4zo53maWYVB5FID2jgucHixl
+FCv/Gmy5P51s+lNBUZpHnjgM3RWmZ2CfTOjJUqZW0nE0zfzoFwQlI3pAAVJGQDDq
+jpnrynyZD8LPvVVjlxRM/RrxFYQVR5KWCfhJHLc4j7A1vdZme+k=
+=cB82
+-----END PGP SIGNATURE-----
+
+--2zif2I7f2WOnASNh--
