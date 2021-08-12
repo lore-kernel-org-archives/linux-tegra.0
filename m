@@ -2,101 +2,194 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4172CC4338F
-	for <linux-tegra@archiver.kernel.org>; Thu, 12 Aug 2021 14:17:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DA7EC4338F
+	for <linux-tegra@archiver.kernel.org>; Thu, 12 Aug 2021 16:02:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2095F6023D
-	for <linux-tegra@archiver.kernel.org>; Thu, 12 Aug 2021 14:17:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4466D6103E
+	for <linux-tegra@archiver.kernel.org>; Thu, 12 Aug 2021 16:02:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236487AbhHLORq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 12 Aug 2021 10:17:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45512 "EHLO
+        id S230089AbhHLQCi (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 12 Aug 2021 12:02:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41986 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237290AbhHLORo (ORCPT
+        with ESMTP id S229588AbhHLQCi (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 12 Aug 2021 10:17:44 -0400
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E04BC0617AD
-        for <linux-tegra@vger.kernel.org>; Thu, 12 Aug 2021 07:17:19 -0700 (PDT)
-Received: by mail-wr1-x435.google.com with SMTP id l18so8551449wrv.5
-        for <linux-tegra@vger.kernel.org>; Thu, 12 Aug 2021 07:17:19 -0700 (PDT)
+        Thu, 12 Aug 2021 12:02:38 -0400
+Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DFF01C061756;
+        Thu, 12 Aug 2021 09:02:12 -0700 (PDT)
+Received: by mail-lf1-x132.google.com with SMTP id w20so14359746lfu.7;
+        Thu, 12 Aug 2021 09:02:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Ss/IPfEyG/sp5S2fy/wct6ETV94/967xCU18WTHi7NE=;
-        b=WLXHY1LXd0vdOX98TZcJV5pZmkSRMpaniUAnrY8csLGAD08tz8byvFDtWA17jCQ8d5
-         l6rheA64erFgHJgHXm81s9WG5FQCdabCrWP0sRsfoPqNp1is3XbkScczepSQh/3hQoVC
-         GGenWq0hV71DSazcd4U3j6eMOltdE5YtCWuOR765JADS6SXxzMdoHgABHGuYatbRLLBe
-         f1hqPy+MMrW1v/k2ak27UOoxx6zI1iIHhFlHq0VuYbGgLKGvFbqyp9qzHcEbml7pp6nZ
-         ++OXJH73mokZDKOjlrm897Tr4uFQeI7IMVcOZAoSOyAGMnFHO0OPbGGC0hi//t6Lj8rs
-         Pl8A==
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=CS/Wz0hxjeRuV2qYV+d+qfHRa67sIp1agK0mKi6yjXs=;
+        b=G/04w7wtOmMZZgNy+CxIVz0nxaDfHpD+7kHnrDoRjVIwHAsvkcJREFCPUvXK6sO/DS
+         Bivh5JHOei5dqDLh8D+GOHXGCgQC4aodqLgv6m5REv+/YtBJnMA2WMJASgJ3IcGGxGeo
+         2U8gGoNExAMhVmVmoeE1Vq/quzRTv93y8pZsTEOm/iZ3sXzTWQDcRQP2/G5aosVTGitx
+         JWRKrSY6TYcrYxIYGDhFsyNfWAh/Ffep3QA7PhXEMb7xoOYnrzebIxbUWHWwKQ0wVhXz
+         gvlAcCaBcWwCa803aHAgiQhvWRJJlS4StaXLt3a7fdVgpcbQ11nLaXwTFyVe4e4l5Pzr
+         gwIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=Ss/IPfEyG/sp5S2fy/wct6ETV94/967xCU18WTHi7NE=;
-        b=mfDxOgg1xSriS63QrF4txnzuCCf1aGUThGjsRKYq+Amo2yCLTOAAY4tq4WAgYyqQRG
-         kL0dcV/zEs6RVnrOpb6TsKyXbmp/Ypzemffv6Sd0O2XcR7MKeJN7a5z0nuqUy84iIkCI
-         PvNKHjY/XGPmtlgbPCKQNqyIxD8YgV1i+DrKmShKp2vGTe5RIQI/TnwKpZ/x499MJNxj
-         90r/8EFYIZ2uXFwIjQE3sL6a+wLLkKNPrfUcKk5ZsbXfzniAFhNkVllmCZf1J0gW3dZD
-         P4Fpqa5mUuPds2HQS5VMgnat1zLijiEhfQvw/QO8u1e9nina0YXBctKp9wAaXRpAKuuR
-         LNLg==
-X-Gm-Message-State: AOAM532vUXuwJod7qsTNU/eZOJELE8kgp5WpmgM++xmdQeVNRz2dMFBD
-        LVAvVRTNXetewW13r+3PSkY=
-X-Google-Smtp-Source: ABdhPJzPVbyeiU6ecckxTt8glsOVxxkYMT0artCdZCp76WZ2bbFcw5m4jsHC6avRFcgpuh8O2AqYug==
-X-Received: by 2002:adf:f08e:: with SMTP id n14mr4182943wro.427.1628777837634;
-        Thu, 12 Aug 2021 07:17:17 -0700 (PDT)
-Received: from localhost ([217.111.27.204])
-        by smtp.gmail.com with ESMTPSA id x18sm3099807wrw.19.2021.08.12.07.17.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Aug 2021 07:17:16 -0700 (PDT)
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] arm64: tegra: Add missing interconnects property for USB on Tegra186
-Date:   Thu, 12 Aug 2021 16:17:12 +0200
-Message-Id: <20210812141712.2394152-1-thierry.reding@gmail.com>
-X-Mailer: git-send-email 2.32.0
+        bh=CS/Wz0hxjeRuV2qYV+d+qfHRa67sIp1agK0mKi6yjXs=;
+        b=X9zPW/8hjVuZD25z1NJMdfRxjQgEXhmvHaogmkvgTWp01Udk3oc+txzkrkvXQh7q8C
+         KzxwJB5jHzm8XdjOM2NgqOAru5WBmEP2SbecFAeORbEuM53KzFa81K2ypseRFztho7J8
+         wYA/2X6tznd3ys6bydd4xOiVxvlbx/mHa8/Sd+HJzPT6DPHAeNr6g9CPfjNyPuyIOUF4
+         E8hl7clJtQoqY6SmW0AdXVe35LcETkGncmv9TIrHMcpTSwgmxGnhyzTVgMqb4GkzzBA0
+         aZ8M1uGzeOPgJsAyR7OwoM2zANizxXOQF82P3tCyXAxGT+QBhVVgKUdS0mmSEmIPEzZS
+         oDYw==
+X-Gm-Message-State: AOAM531ruIRBKFQftN0VdyNSRedAM0IiQf9qbSSt6zKXm4Esur6HJABb
+        UREBAd2MB4Oe4mik1yEWUcecl7sduOQ=
+X-Google-Smtp-Source: ABdhPJzK2Sht+mseJfZIZ/v+XP0+TKaOoHv7LK0oG0RYgQRDA+YFv07LFralo6/orE6GD6kTCEZlCg==
+X-Received: by 2002:ac2:5fe3:: with SMTP id s3mr2995322lfg.319.1628784131005;
+        Thu, 12 Aug 2021 09:02:11 -0700 (PDT)
+Received: from [192.168.2.145] (46-138-117-53.dynamic.spd-mgts.ru. [46.138.117.53])
+        by smtp.googlemail.com with ESMTPSA id k14sm299816lfo.262.2021.08.12.09.02.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Aug 2021 09:02:10 -0700 (PDT)
+Subject: Re: [PATCH v7 01/37] soc/tegra: pmc: Temporarily disable PMC state
+ syncing
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-pm@vger.kernel.org
+References: <20210701232728.23591-1-digetx@gmail.com>
+ <20210701232728.23591-2-digetx@gmail.com>
+Message-ID: <9a2fc1f7-5c10-eac3-97ad-303bc86c0666@gmail.com>
+Date:   Thu, 12 Aug 2021 19:02:09 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
+In-Reply-To: <20210701232728.23591-2-digetx@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+02.07.2021 02:26, Dmitry Osipenko пишет:
+> Disable PMC state syncing in order to ensure that we won't break older
+> kernels once device-trees will be updated with the addition of the power
+> domains. Previously this was unnecessary because the plan was to make clk
+> device that will attach to the domain for each clock, but the plan changed
+> and now we're going make a better GENPD implementation that will require
+> to update each device driver with the runtime PM and OPP support before
+> we could safely enable the state syncing.
+> 
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/soc/tegra/pmc.c | 17 +++++++++++++++++
+>  1 file changed, 17 insertions(+)
+> 
+> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+> index ea62f84d1c8b..f63dfb2ca3f9 100644
+> --- a/drivers/soc/tegra/pmc.c
+> +++ b/drivers/soc/tegra/pmc.c
+> @@ -360,6 +360,7 @@ struct tegra_pmc_soc {
+>  	unsigned int num_pmc_clks;
+>  	bool has_blink_output;
+>  	bool has_usb_sleepwalk;
+> +	bool supports_core_domain;
+>  };
+>  
+>  /**
+> @@ -3029,6 +3030,7 @@ static void tegra20_pmc_setup_irq_polarity(struct tegra_pmc *pmc,
+>  }
+>  
+>  static const struct tegra_pmc_soc tegra20_pmc_soc = {
+> +	.supports_core_domain = false,
+>  	.num_powergates = ARRAY_SIZE(tegra20_powergates),
+>  	.powergates = tegra20_powergates,
+>  	.num_cpu_powergates = 0,
+> @@ -3089,6 +3091,7 @@ static const char * const tegra30_reset_sources[] = {
+>  };
+>  
+>  static const struct tegra_pmc_soc tegra30_pmc_soc = {
+> +	.supports_core_domain = false,
+>  	.num_powergates = ARRAY_SIZE(tegra30_powergates),
+>  	.powergates = tegra30_powergates,
+>  	.num_cpu_powergates = ARRAY_SIZE(tegra30_cpu_powergates),
+> @@ -3145,6 +3148,7 @@ static const u8 tegra114_cpu_powergates[] = {
+>  };
+>  
+>  static const struct tegra_pmc_soc tegra114_pmc_soc = {
+> +	.supports_core_domain = false,
+>  	.num_powergates = ARRAY_SIZE(tegra114_powergates),
+>  	.powergates = tegra114_powergates,
+>  	.num_cpu_powergates = ARRAY_SIZE(tegra114_cpu_powergates),
+> @@ -3261,6 +3265,7 @@ static const struct pinctrl_pin_desc tegra124_pin_descs[] = {
+>  };
+>  
+>  static const struct tegra_pmc_soc tegra124_pmc_soc = {
+> +	.supports_core_domain = false,
+>  	.num_powergates = ARRAY_SIZE(tegra124_powergates),
+>  	.powergates = tegra124_powergates,
+>  	.num_cpu_powergates = ARRAY_SIZE(tegra124_cpu_powergates),
+> @@ -3386,6 +3391,7 @@ static const struct tegra_wake_event tegra210_wake_events[] = {
+>  };
+>  
+>  static const struct tegra_pmc_soc tegra210_pmc_soc = {
+> +	.supports_core_domain = false,
+>  	.num_powergates = ARRAY_SIZE(tegra210_powergates),
+>  	.powergates = tegra210_powergates,
+>  	.num_cpu_powergates = ARRAY_SIZE(tegra210_cpu_powergates),
+> @@ -3543,6 +3549,7 @@ static const struct tegra_wake_event tegra186_wake_events[] = {
+>  };
+>  
+>  static const struct tegra_pmc_soc tegra186_pmc_soc = {
+> +	.supports_core_domain = false,
+>  	.num_powergates = 0,
+>  	.powergates = NULL,
+>  	.num_cpu_powergates = 0,
+> @@ -3677,6 +3684,7 @@ static const struct tegra_wake_event tegra194_wake_events[] = {
+>  };
+>  
+>  static const struct tegra_pmc_soc tegra194_pmc_soc = {
+> +	.supports_core_domain = false,
+>  	.num_powergates = 0,
+>  	.powergates = NULL,
+>  	.num_cpu_powergates = 0,
+> @@ -3745,6 +3753,7 @@ static const char * const tegra234_reset_sources[] = {
+>  };
+>  
+>  static const struct tegra_pmc_soc tegra234_pmc_soc = {
+> +	.supports_core_domain = false,
+>  	.num_powergates = 0,
+>  	.powergates = NULL,
+>  	.num_cpu_powergates = 0,
+> @@ -3791,6 +3800,14 @@ static void tegra_pmc_sync_state(struct device *dev)
+>  {
+>  	int err;
+>  
+> +	/*
+> +	 * Newer device-trees have power domains, but we need to prepare all
+> +	 * device drivers with runtime PM and OPP support first, otherwise
+> +	 * state syncing is unsafe.
+> +	 */
+> +	if (!pmc->soc->supports_core_domain)
+> +		return;
+> +
+>  	/*
+>  	 * Older device-trees don't have core PD, and thus, there are
+>  	 * no dependencies that will block the state syncing. We shouldn't
+> 
 
-The device tree node for the XUDC (USB device mode controller) is
-missing the interconnects property that describes the path to memory for
-the controller. Add the property so that the things like the DMA mask
-can be set by the operating system.
-
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- arch/arm64/boot/dts/nvidia/tegra186.dtsi | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-index d1e20dbc5f4b..5c45fab0c9ab 100644
---- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-@@ -826,6 +826,9 @@ usb@3550000 {
- 			 <&bpmp TEGRA186_CLK_XUSB_CORE_SS>,
- 			 <&bpmp TEGRA186_CLK_XUSB_FS>;
- 		clock-names = "dev", "ss", "ss_src", "fs_src";
-+		interconnects = <&mc TEGRA186_MEMORY_CLIENT_XUSB_DEVR &emc>,
-+				<&mc TEGRA186_MEMORY_CLIENT_XUSB_DEVW &emc>;
-+		interconnect-names = "dma-mem", "write";
- 		iommus = <&smmu TEGRA186_SID_XUSB_DEV>;
- 		power-domains = <&bpmp TEGRA186_POWER_DOMAIN_XUSBB>,
- 				<&bpmp TEGRA186_POWER_DOMAIN_XUSBA>;
--- 
-2.32.0
-
+Thierry, could you please take this patch for 5.15? It should ease
+further applying of the rest of the patches, thanks.
