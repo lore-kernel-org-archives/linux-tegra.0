@@ -2,37 +2,37 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8418EC4338F
-	for <linux-tegra@archiver.kernel.org>; Thu, 12 Aug 2021 06:52:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CCF6C4338F
+	for <linux-tegra@archiver.kernel.org>; Thu, 12 Aug 2021 06:52:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6767B61038
-	for <linux-tegra@archiver.kernel.org>; Thu, 12 Aug 2021 06:52:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE6FA61038
+	for <linux-tegra@archiver.kernel.org>; Thu, 12 Aug 2021 06:52:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232676AbhHLGw4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 12 Aug 2021 02:52:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55730 "EHLO mail.kernel.org"
+        id S234717AbhHLGxQ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 12 Aug 2021 02:53:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55912 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231225AbhHLGwz (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 12 Aug 2021 02:52:55 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id A984E6101E;
-        Thu, 12 Aug 2021 06:52:25 +0000 (UTC)
+        id S234718AbhHLGxP (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 12 Aug 2021 02:53:15 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id DBC6F6103A;
+        Thu, 12 Aug 2021 06:52:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1628751149;
-        bh=bqEWfOZN0xk2EuCTwKF5niW1R0IpEsX+S8gvv0lSuj8=;
+        s=k20201202; t=1628751171;
+        bh=7mu4Ipsd06cm4QBrmrbucxTGVRGJN4PzWTMdE9wwbrU=;
         h=References:From:To:Cc:Subject:Date:In-reply-to:From;
-        b=DNwW1miNAufE67B8umgctZbFiTe682bcNz+tC4NrKz96H814QyIeeBnsNeDPEdkaM
-         Kv+xBMuxFGpgwkUSJFjtIbRwNvrmpx+RLkrB9B7O8jZGD1mb1dbTJ/yJUmvZHfY3AC
-         fhDSkGduLPDkILCAd5Ustdcl4RoKlYCeCtAT8v9p6QCvWzXdzldPICLHFA1DyEDwW6
-         tNs/8EmS515RgP6y1tZxihRez6uVNtw8ZVmJ7GmNd39ewHy/rFcUd2EyRpPu7PpXKI
-         lZA9wrEq9mVTKBHoA2L6c/BpuJ7gcPgqc/KX0Z8vX2I7VUq3R+v4oHG9SBP3FCypa6
-         r0UvV5EmhUNXw==
+        b=JXDPas5I8yBxBrn2AxEiGDa3RwNLAXJO9hQlCzbFqbUkaZ0jcCDQowUEDDSqc6Mu8
+         pqRS+6vP4ds0XZaHNGwUhjDC0qgOpsgt9AUTTVM2TFjQogxrIP7jQzhb4o1GJWTavV
+         ywCgbZKghTaMmVpunD4t1w7ooZhrt+Yi8lhVjhe/YBWca/a3mMCL9KboAeQ6BvsHiH
+         l6hOqveJ3aIw3bUxC1xGOZN1nlak+8Zn/QEq8tu0FnXWVU6aLcOxUMYMqpxniHO+AY
+         x/LjYgM53vQGKFWHEd9JZj1xmojz1/e40WNthUUNCCJW/jUdDWyBZ+xL+cjm3tdwX1
+         mRYQGYTtUFzgg==
 References: <1628739182-30089-1-git-send-email-chunfeng.yun@mediatek.com>
- <1628739182-30089-4-git-send-email-chunfeng.yun@mediatek.com>
+ <1628739182-30089-5-git-send-email-chunfeng.yun@mediatek.com>
 User-agent: mu4e 1.6.2; emacs 27.2
 From:   Felipe Balbi <balbi@kernel.org>
 To:     Chunfeng Yun <chunfeng.yun@mediatek.com>
@@ -50,11 +50,11 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org,
         Eddie Hung <eddie.hung@mediatek.com>
-Subject: Re: [PATCH 4/6] usb: gadget: tegra-xudc: fix the wrong mult value
- for HS isoc or intr
-Date:   Thu, 12 Aug 2021 09:51:52 +0300
-In-reply-to: <1628739182-30089-4-git-send-email-chunfeng.yun@mediatek.com>
-Message-ID: <87k0kryx20.fsf@kernel.org>
+Subject: Re: [PATCH 5/6] usb: gadget: bdc: remove unnecessary AND operation
+ when get ep maxp
+Date:   Thu, 12 Aug 2021 09:52:34 +0300
+In-reply-to: <1628739182-30089-5-git-send-email-chunfeng.yun@mediatek.com>
+Message-ID: <87h7fvyx1e.fsf@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain
 Precedence: bulk
@@ -64,40 +64,10 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 Chunfeng Yun <chunfeng.yun@mediatek.com> writes:
 
-> usb_endpoint_maxp() only returns the bit[10:0] of wMaxPacketSize
-> of endpoint descriptor, not includes bit[12:11] anymore, so use
-> usb_endpoint_maxp_mult() instead.
-> Meanwhile no need AND 0x7ff when get maxp, remove it.
+> usb_endpoint_maxp() already returns actual max packet size, no need
+> AND 0x7ff.
 >
 > Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
-> ---
->  drivers/usb/gadget/udc/tegra-xudc.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/usb/gadget/udc/tegra-xudc.c b/drivers/usb/gadget/udc/tegra-xudc.c
-> index a54d1cef17db..40a7417e7ae4 100644
-> --- a/drivers/usb/gadget/udc/tegra-xudc.c
-> +++ b/drivers/usb/gadget/udc/tegra-xudc.c
-> @@ -1610,7 +1610,7 @@ static void tegra_xudc_ep_context_setup(struct tegra_xudc_ep *ep)
->  	u16 maxpacket, maxburst = 0, esit = 0;
->  	u32 val;
->  
-> -	maxpacket = usb_endpoint_maxp(desc) & 0x7ff;
-> +	maxpacket = usb_endpoint_maxp(desc);
->  	if (xudc->gadget.speed == USB_SPEED_SUPER) {
->  		if (!usb_endpoint_xfer_control(desc))
->  			maxburst = comp_desc->bMaxBurst;
-> @@ -1621,7 +1621,7 @@ static void tegra_xudc_ep_context_setup(struct tegra_xudc_ep *ep)
->  		   (usb_endpoint_xfer_int(desc) ||
->  		    usb_endpoint_xfer_isoc(desc))) {
->  		if (xudc->gadget.speed == USB_SPEED_HIGH) {
-> -			maxburst = (usb_endpoint_maxp(desc) >> 11) & 0x3;
-> +			maxburst = usb_endpoint_maxp_mult(desc) - 1;
-
-this looks like a bug fix. Before this change, maxburst was always 0,
-right?
-
-In any case:
 
 Acked-by: Felipe Balbi <balbi@kernel.org>
 
