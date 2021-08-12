@@ -5,33 +5,33 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78208C4320A
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 854F6C432BE
 	for <linux-tegra@archiver.kernel.org>; Thu, 12 Aug 2021 13:12:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 51F7A6109D
+	by mail.kernel.org (Postfix) with ESMTP id 6153060C41
 	for <linux-tegra@archiver.kernel.org>; Thu, 12 Aug 2021 13:12:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236512AbhHLNMs (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 12 Aug 2021 09:12:48 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:32900 "EHLO
+        id S236856AbhHLNMv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 12 Aug 2021 09:12:51 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:33186 "EHLO
         mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S233260AbhHLNMn (ORCPT
+        with ESMTP id S235864AbhHLNMq (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 12 Aug 2021 09:12:43 -0400
-X-UUID: d5307b4361dd4878a60af9207804ea29-20210812
-X-UUID: d5307b4361dd4878a60af9207804ea29-20210812
+        Thu, 12 Aug 2021 09:12:46 -0400
+X-UUID: 32a59205d6df44ff8315ebc737cb39bc-20210812
+X-UUID: 32a59205d6df44ff8315ebc737cb39bc-20210812
 Received: from mtkcas10.mediatek.inc [(172.21.101.39)] by mailgw02.mediatek.com
         (envelope-from <chunfeng.yun@mediatek.com>)
         (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 1367734633; Thu, 12 Aug 2021 21:12:13 +0800
+        with ESMTP id 1465097445; Thu, 12 Aug 2021 21:12:16 +0800
 Received: from mtkcas10.mediatek.inc (172.21.101.39) by
- mtkmbs05n2.mediatek.inc (172.21.101.140) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Thu, 12 Aug 2021 21:12:12 +0800
+ mtkmbs02n2.mediatek.inc (172.21.101.101) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Thu, 12 Aug 2021 21:12:14 +0800
 Received: from localhost.localdomain (10.17.3.153) by mtkcas10.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Thu, 12 Aug 2021 21:12:11 +0800
+ Transport; Thu, 12 Aug 2021 21:12:13 +0800
 From:   Chunfeng Yun <chunfeng.yun@mediatek.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Felipe Balbi <balbi@kernel.org>
@@ -51,10 +51,12 @@ CC:     Pawel Laszczak <pawell@cadence.com>,
         <linux-mediatek@lists.infradead.org>,
         Eddie Hung <eddie.hung@mediatek.com>,
         stable <stable@vger.kernel.org>
-Subject: [PATCH v2 1/7] usb: mtu3: restore HS function when set SS/SSP
-Date:   Thu, 12 Aug 2021 21:11:29 +0800
-Message-ID: <1628773895-304-1-git-send-email-chunfeng.yun@mediatek.com>
+Subject: [PATCH v2 3/7] usb: mtu3: fix the wrong HS mult value
+Date:   Thu, 12 Aug 2021 21:11:31 +0800
+Message-ID: <1628773895-304-3-git-send-email-chunfeng.yun@mediatek.com>
 X-Mailer: git-send-email 1.8.1.1.dirty
+In-Reply-To: <1628773895-304-1-git-send-email-chunfeng.yun@mediatek.com>
+References: <1628773895-304-1-git-send-email-chunfeng.yun@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-MTK:  N
@@ -62,35 +64,46 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Due to HS function is disabled when set as FS, need restore
-it when set as SS/SSP.
+usb_endpoint_maxp() returns actual max packet size, @mult will
+always be zero, fix it by using usb_endpoint_maxp_mult() instead
+to get mult.
 
-Fixes: dc4c1aa7eae9 ("usb: mtu3: add ->udc_set_speed()")
+Fixes: 4d79e042ed8b ("usb: mtu3: add support for usb3.1 IP")
 Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
 ---
-v2: no changes
+v2: split two patch [v2 2/7],[v2 3/7] suggested by Felipe
 ---
- drivers/usb/mtu3/mtu3_core.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/usb/mtu3/mtu3_gadget.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/usb/mtu3/mtu3_core.c b/drivers/usb/mtu3/mtu3_core.c
-index 562f4357831e..6403f01947b2 100644
---- a/drivers/usb/mtu3/mtu3_core.c
-+++ b/drivers/usb/mtu3/mtu3_core.c
-@@ -227,11 +227,13 @@ static void mtu3_set_speed(struct mtu3 *mtu, enum usb_device_speed speed)
- 		mtu3_setbits(mbase, U3D_POWER_MANAGEMENT, HS_ENABLE);
- 		break;
+diff --git a/drivers/usb/mtu3/mtu3_gadget.c b/drivers/usb/mtu3/mtu3_gadget.c
+index 635ad277cb13..a399fd84c71f 100644
+--- a/drivers/usb/mtu3/mtu3_gadget.c
++++ b/drivers/usb/mtu3/mtu3_gadget.c
+@@ -64,14 +64,12 @@ static int mtu3_ep_enable(struct mtu3_ep *mep)
+ 	u32 interval = 0;
+ 	u32 mult = 0;
+ 	u32 burst = 0;
+-	int max_packet;
+ 	int ret;
+ 
+ 	desc = mep->desc;
+ 	comp_desc = mep->comp_desc;
+ 	mep->type = usb_endpoint_type(desc);
+-	max_packet = usb_endpoint_maxp(desc);
+-	mep->maxp = max_packet & GENMASK(10, 0);
++	mep->maxp = usb_endpoint_maxp(desc);
+ 
+ 	switch (mtu->g.speed) {
  	case USB_SPEED_SUPER:
-+		mtu3_setbits(mbase, U3D_POWER_MANAGEMENT, HS_ENABLE);
- 		mtu3_clrbits(mtu->ippc_base, SSUSB_U3_CTRL(0),
- 			     SSUSB_U3_PORT_SSP_SPEED);
- 		break;
- 	case USB_SPEED_SUPER_PLUS:
--			mtu3_setbits(mtu->ippc_base, SSUSB_U3_CTRL(0),
-+		mtu3_setbits(mbase, U3D_POWER_MANAGEMENT, HS_ENABLE);
-+		mtu3_setbits(mtu->ippc_base, SSUSB_U3_CTRL(0),
- 			     SSUSB_U3_PORT_SSP_SPEED);
+@@ -92,7 +90,7 @@ static int mtu3_ep_enable(struct mtu3_ep *mep)
+ 				usb_endpoint_xfer_int(desc)) {
+ 			interval = desc->bInterval;
+ 			interval = clamp_val(interval, 1, 16) - 1;
+-			mult = (max_packet & GENMASK(12, 11)) >> 11;
++			mult = usb_endpoint_maxp_mult(desc) - 1;
+ 		}
  		break;
  	default:
 -- 
