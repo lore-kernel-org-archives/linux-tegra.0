@@ -2,36 +2,37 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C994C4338F
-	for <linux-tegra@archiver.kernel.org>; Thu, 12 Aug 2021 06:50:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED0E4C4338F
+	for <linux-tegra@archiver.kernel.org>; Thu, 12 Aug 2021 06:51:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6C0586101E
-	for <linux-tegra@archiver.kernel.org>; Thu, 12 Aug 2021 06:50:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C8A006103A
+	for <linux-tegra@archiver.kernel.org>; Thu, 12 Aug 2021 06:51:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234519AbhHLGuv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 12 Aug 2021 02:50:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54722 "EHLO mail.kernel.org"
+        id S232459AbhHLGwB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 12 Aug 2021 02:52:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55496 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233567AbhHLGuv (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 12 Aug 2021 02:50:51 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id C19F461019;
-        Thu, 12 Aug 2021 06:50:22 +0000 (UTC)
+        id S230147AbhHLGwB (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 12 Aug 2021 02:52:01 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 5125A60EFE;
+        Thu, 12 Aug 2021 06:51:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1628751026;
-        bh=c+4J0FBEXZ/2tJWPz7C9GfE7YiH9bbjcw8SPYAJS6ro=;
+        s=k20201202; t=1628751096;
+        bh=+JN6XMwjpttxBsTsht8aKrjrIm/lywJ7yWkXDLsRnqA=;
         h=References:From:To:Cc:Subject:Date:In-reply-to:From;
-        b=GJ0TZ7WtpRHEqU1S1DGcFW6ofointi9Ktt2jnsFJ9MuJk9kmCdalPbTE4K+kGUop5
-         TRMDRvP7ty7D4KjrBIteDDIr0Yaq9ei88ekggTyNBe+XCJeom8qz8Y38G6nxGM8iu0
-         4r3mOwaUFy0vE6OZG+vCFrOlDA8mbR6zyUxBZ9pGZiIKJJ3uWzwGzTmimU/14q17RY
-         7RcirRQ7Nq2hx2WFJTVX9d5o2tpsh88QJhItKHtFqiAmPXmyxw/MxRen3f6Kk32oV/
-         W1IePoKNBNSUdIDtg6mU5M+8XQmzj2TZLLUmGTYQcVHQkDlOsbafrMo650ccj2iu/a
-         MSgnM/nyzex3g==
+        b=gDq9oKukKEbWu4mDHhPPopboWr4s0z5Dt70T61olO67EFlTIhHJeKn28sEE/+3W2h
+         e6SrnZGbHnM/GANWf79dpb2RCCPqChKO5b9gMflmxRRJfbrLDeZb6y326injJRzSBp
+         SXXb+UK8dec2x7Lj6/ZbwW0d3LfVrnjjO+hbrTPHQhB2slPbZ/gDbC7L+I+vRH9FVc
+         WpW7Yp/NxKMDSfx3wtPlyIhI9HStbrW3dKkMQ0Z45SObvl6nIyBAHgCzxUtdyAbWVG
+         IHt1jpwsOgdDXSU02CAF2oApzkBqm45e5dKxA6FrOM+DtzeKoYqq3waEFGSGPuk7bM
+         RG3YJGOj/MkGQ==
 References: <1628739182-30089-1-git-send-email-chunfeng.yun@mediatek.com>
- <1628739182-30089-2-git-send-email-chunfeng.yun@mediatek.com>
+ <1628739182-30089-3-git-send-email-chunfeng.yun@mediatek.com>
 User-agent: mu4e 1.6.2; emacs 27.2
 From:   Felipe Balbi <balbi@kernel.org>
 To:     Chunfeng Yun <chunfeng.yun@mediatek.com>
@@ -48,12 +49,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         bcm-kernel-feedback-list@broadcom.com, linux-tegra@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org,
-        Eddie Hung <eddie.hung@mediatek.com>,
-        stable <stable@vger.kernel.org>
-Subject: Re: [PATCH 2/6] usb: mtu3: fix the wrong HS mult value
-Date:   Thu, 12 Aug 2021 09:49:36 +0300
-In-reply-to: <1628739182-30089-2-git-send-email-chunfeng.yun@mediatek.com>
-Message-ID: <87pmujyx5f.fsf@kernel.org>
+        Eddie Hung <eddie.hung@mediatek.com>
+Subject: Re: [PATCH 3/6] usb: cdnsp: fix the wrong mult value for HS isoc or
+ intr
+Date:   Thu, 12 Aug 2021 09:51:03 +0300
+In-reply-to: <1628739182-30089-3-git-send-email-chunfeng.yun@mediatek.com>
+Message-ID: <87mtpnyx3g.fsf@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain
 Precedence: bulk
@@ -63,14 +64,31 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 Chunfeng Yun <chunfeng.yun@mediatek.com> writes:
 
-> Use usb_endpoint_maxp() and usb_endpoint_maxp_mult() seperately
-> to get maxpacket and mult.
-> Meanwhile fix the bug that should use @mult but not @burst
-> to save mult value.
+> usb_endpoint_maxp() only returns the bit[10:0] of wMaxPacketSize
+> of endpoint descriptor, not include bit[12:11] anymore, so use
+> usb_endpoint_maxp_mult() instead.
+>
+> Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
+> ---
+>  drivers/usb/cdns3/cdnsp-mem.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/usb/cdns3/cdnsp-mem.c b/drivers/usb/cdns3/cdnsp-mem.c
+> index a47948a1623f..ad9aee3f1e39 100644
+> --- a/drivers/usb/cdns3/cdnsp-mem.c
+> +++ b/drivers/usb/cdns3/cdnsp-mem.c
+> @@ -882,7 +882,7 @@ static u32 cdnsp_get_endpoint_max_burst(struct usb_gadget *g,
+>  	if (g->speed == USB_SPEED_HIGH &&
+>  	    (usb_endpoint_xfer_isoc(pep->endpoint.desc) ||
+>  	     usb_endpoint_xfer_int(pep->endpoint.desc)))
+> -		return (usb_endpoint_maxp(pep->endpoint.desc) & 0x1800) >> 11;
+> +		return usb_endpoint_maxp_mult(pep->endpoint.desc) - 1;
 
-I really think you should split this into two patches. One which *only*
-fixes the bug and another (patch 2) which *only* corrects the use
-usb_endpoint_maxp()
+this looks like a bugfix. Do we need to Cc stable here?
+
+In any case:
+
+Acked-by: Felipe Balbi <balbi@kernel.org>
 
 -- 
 balbi
