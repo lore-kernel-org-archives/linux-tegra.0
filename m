@@ -8,63 +8,65 @@ X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5930C432BE
-	for <linux-tegra@archiver.kernel.org>; Thu, 12 Aug 2021 12:26:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30552C4338F
+	for <linux-tegra@archiver.kernel.org>; Thu, 12 Aug 2021 12:26:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9C40561077
-	for <linux-tegra@archiver.kernel.org>; Thu, 12 Aug 2021 12:26:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0FB9861038
+	for <linux-tegra@archiver.kernel.org>; Thu, 12 Aug 2021 12:26:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236326AbhHLM0y (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 12 Aug 2021 08:26:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48342 "EHLO
+        id S236607AbhHLM07 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 12 Aug 2021 08:26:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48352 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233613AbhHLM0x (ORCPT
+        with ESMTP id S233613AbhHLM04 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 12 Aug 2021 08:26:53 -0400
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73060C061765;
-        Thu, 12 Aug 2021 05:26:28 -0700 (PDT)
-Received: by mail-wr1-x434.google.com with SMTP id r6so8073754wrt.4;
-        Thu, 12 Aug 2021 05:26:28 -0700 (PDT)
+        Thu, 12 Aug 2021 08:26:56 -0400
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D993DC061765;
+        Thu, 12 Aug 2021 05:26:30 -0700 (PDT)
+Received: by mail-wm1-x32c.google.com with SMTP id l34-20020a05600c1d22b02902573c214807so7004744wms.2;
+        Thu, 12 Aug 2021 05:26:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=odmiuzKPr5jQ/z0qYitTwKpP6yDBIGlDVV/+ilvzSk8=;
-        b=XBfurDaFVTbgVM/50tSJETgdK7DBlYPzpPbedIgPTA5oQhGWUY+fHbSH6PQ22E0Ai0
-         c/0y721bKw9WKYydWDbcYk0AZzUTAXDzcxxdSB1uEa3DVp+LwWDMzteJPu1plkWcsg/I
-         51A9HCRBKzdtehAERljoYsLnQNldyJPBRw9V7/RXMNEluRXBmKpMQ+cRMKGgXixjQRq+
-         GiK7RkiTf33Xn7d56aATStNDA0PbHmYEf1JR+ekJqrLEp+3lyKnrqT3xvchoUyCia9lm
-         lMz8AQMQA1uPse6BSSaLyXX3tJEHS+ey40LFecH9vlr9EZAhK4DIpalx+XBu4WbepdSI
-         uSBA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=0+EmnY4+1z7kfFUVMdVbVYV08tkcPwwbd8e7sst8c3Q=;
+        b=jirXzJ8I9BdKYH3nq4S23MCdS8UdMOST882NEVCO/729Hm6rlDaBM0lKU/8pBEu8Mw
+         Ea/zdfucXlBMD3zYrXnRTZ2yaQSNfYcJ0qu8dc3O3MIyvNG9QsW429ygEI1XJLzpuGRH
+         EioMk+HmzrEzuOvhYTQlfwoqMgSiPGi/f4lvuanqouwa0jC9rxzwBvWKgZ12yErTxsrh
+         KmE0M/FRnKKmWfkgwFh5gt84Hy6WUpdNpan7o92XMZagXBcmUK1U6U2Yfd1EgUJLMVcx
+         HPFfgwN/7bDi/0zJ/fp0VSsU6jQWDmqAQFmpdXBgja95jpgxq8TDcXsJCXoZ3bGYamgr
+         rQTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=odmiuzKPr5jQ/z0qYitTwKpP6yDBIGlDVV/+ilvzSk8=;
-        b=F5EDOaD/OMY75I1j6x4nvQtiJnnMkVGxLBw9+xSF4Swt/taS7YFSOO+7Qf1QyyYPDU
-         +BVRXjGs4++SFDI46wLVmnpC+2ZuXCeo4nnoess8LrHSkcApesWPR7m0mdBAdY4IlZ65
-         CbQWp7KezQaI8zEVgrlovVwL9PyFwl+6XqIstO97n6OM/zFmfF2XbbLv26IAzluqK9hl
-         g0cWQRmym+zAfXJMbC6LS+elck4Z8ZC1DomFrh6G58Vmj/Nk9Dp+KfyYoUtq04GjQdQM
-         dOrFDAjZ8mpFOpTOlqUeQLfz5TppdPJ91jz+4yloCtMlf9pztvIfDLkeB3LI3z23ar/6
-         Kp6Q==
-X-Gm-Message-State: AOAM533PQxyxoVVkBDCLGb1kre7hBR5899t/encQu9dYpHTQcQBUhLn2
-        3bfi80kMS09oIgimbfuEzDw=
-X-Google-Smtp-Source: ABdhPJwiuJC7qV9F0XSoxnL2q1Rl1efC5V7nI5ETcZsebS76c/n2hILJKrBWbGimpQ0E9la/2q25QQ==
-X-Received: by 2002:a05:6000:1a42:: with SMTP id t2mr3709428wry.61.1628771187087;
-        Thu, 12 Aug 2021 05:26:27 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=0+EmnY4+1z7kfFUVMdVbVYV08tkcPwwbd8e7sst8c3Q=;
+        b=sfBSTuevvSzdh9GJPObdX5zw6wzUyK44joE9xRYPJJJ74upBbzIwIwlII0WfUhxmvJ
+         88k9yJdY2ctsFVUvkelaJ8Wlh6xdFmO/PgwdOuvgTb9NydKz2NaM5C0v+yelixYaJ3TA
+         onf/FN+38gAoNy2JFJoObB2RoqEYMI+CCFLvBsSdM8op3Up1FIMBXkMfqgpqFg6CrHCE
+         nZwY8ytABatwz1xb670RIgfePDnF38R3f/tlwlSov+i8rnOrq+vzoYLmQGuDmPRtKziX
+         SZ0Pe5idpCNxDQ7co6YXU++4QPy6bxRlzfo0fMdjIi6xciwLgWb4YQsJYOVbiip1V2Ne
+         oMDQ==
+X-Gm-Message-State: AOAM530w3bAgkvBW5UbhfU46kvd447/kg/SDIdxBIAemqpZPaNejetzd
+        5RqTW8wqMDTD41GsnUJacrI=
+X-Google-Smtp-Source: ABdhPJzVRGyrnv5M50eSJSXWj/CQHqM9HS/rufUyCvZz3HNlDC8aXJjVEfOHjtLpf+KQMmoOp5z26w==
+X-Received: by 2002:a7b:c416:: with SMTP id k22mr15330876wmi.177.1628771189350;
+        Thu, 12 Aug 2021 05:26:29 -0700 (PDT)
 Received: from localhost ([217.111.27.204])
-        by smtp.gmail.com with ESMTPSA id p8sm2756749wrn.79.2021.08.12.05.26.25
+        by smtp.gmail.com with ESMTPSA id k17sm1431608wrn.8.2021.08.12.05.26.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Aug 2021 05:26:26 -0700 (PDT)
+        Thu, 12 Aug 2021 05:26:28 -0700 (PDT)
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>
 Cc:     Jon Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 1/3] dt-bindings: tegra: Document NVIDIA Jetson TX2 NX developer kit
-Date:   Thu, 12 Aug 2021 14:26:15 +0200
-Message-Id: <20210812122617.2378605-1-thierry.reding@gmail.com>
+Subject: [PATCH 2/3] arm64: tegra: Add PWM nodes on Tegra186
+Date:   Thu, 12 Aug 2021 14:26:16 +0200
+Message-Id: <20210812122617.2378605-2-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.32.0
+In-Reply-To: <20210812122617.2378605-1-thierry.reding@gmail.com>
+References: <20210812122617.2378605-1-thierry.reding@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -73,26 +75,122 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-The Jetson TX2 NX Developer Kit is the same form factor as Jetson Nano,
-but uses the more powerful Tegra186 SoC for added performance.
+These PWMs can be used for fan or LED backlight control. Add the device
+tree nodes for all existing controllers found on Tegra186 SoCs. None of
+these are enabled by default, which is left for the board DTS files to
+do when necessary.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- Documentation/devicetree/bindings/arm/tegra.yaml | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/boot/dts/nvidia/tegra186.dtsi | 88 ++++++++++++++++++++++++
+ 1 file changed, 88 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/tegra.yaml b/Documentation/devicetree/bindings/arm/tegra.yaml
-index d99b9d513ecf..53aab932ffd0 100644
---- a/Documentation/devicetree/bindings/arm/tegra.yaml
-+++ b/Documentation/devicetree/bindings/arm/tegra.yaml
-@@ -154,6 +154,7 @@ properties:
-       - items:
-           - enum:
-               - nvidia,p2771-0000
-+              - nvidia,p3509-0000+p3636-0001
-           - const: nvidia,tegra186
-       - items:
-           - enum:
+diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+index 5c45fab0c9ab..cce3db252ea5 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+@@ -548,6 +548,83 @@ gen9_i2c: i2c@31e0000 {
+ 		status = "disabled";
+ 	};
+ 
++	pwm1: pwm@3280000 {
++		compatible = "nvidia,tegra186-pwm";
++		reg = <0x0 0x3280000 0x0 0x10000>;
++		clocks = <&bpmp TEGRA186_CLK_PWM1>;
++		clock-names = "pwm";
++		resets = <&bpmp TEGRA186_RESET_PWM1>;
++		reset-names = "pwm";
++		status = "disabled";
++		#pwm-cells = <2>;
++	};
++
++	pwm2: pwm@3290000 {
++		compatible = "nvidia,tegra186-pwm";
++		reg = <0x0 0x3290000 0x0 0x10000>;
++		clocks = <&bpmp TEGRA186_CLK_PWM2>;
++		clock-names = "pwm";
++		resets = <&bpmp TEGRA186_RESET_PWM2>;
++		reset-names = "pwm";
++		status = "disabled";
++		#pwm-cells = <2>;
++	};
++
++	pwm3: pwm@32a0000 {
++		compatible = "nvidia,tegra186-pwm";
++		reg = <0x0 0x32a0000 0x0 0x10000>;
++		clocks = <&bpmp TEGRA186_CLK_PWM3>;
++		clock-names = "pwm";
++		resets = <&bpmp TEGRA186_RESET_PWM3>;
++		reset-names = "pwm";
++		status = "disabled";
++		#pwm-cells = <2>;
++	};
++
++	pwm5: pwm@32c0000 {
++		compatible = "nvidia,tegra186-pwm";
++		reg = <0x0 0x32c0000 0x0 0x10000>;
++		clocks = <&bpmp TEGRA186_CLK_PWM5>;
++		clock-names = "pwm";
++		resets = <&bpmp TEGRA186_RESET_PWM5>;
++		reset-names = "pwm";
++		status = "disabled";
++		#pwm-cells = <2>;
++	};
++
++	pwm6: pwm@32d0000 {
++		compatible = "nvidia,tegra186-pwm";
++		reg = <0x0 0x32d0000 0x0 0x10000>;
++		clocks = <&bpmp TEGRA186_CLK_PWM6>;
++		clock-names = "pwm";
++		resets = <&bpmp TEGRA186_RESET_PWM6>;
++		reset-names = "pwm";
++		status = "disabled";
++		#pwm-cells = <2>;
++	};
++
++	pwm7: pwm@32e0000 {
++		compatible = "nvidia,tegra186-pwm";
++		reg = <0x0 0x32e0000 0x0 0x10000>;
++		clocks = <&bpmp TEGRA186_CLK_PWM7>;
++		clock-names = "pwm";
++		resets = <&bpmp TEGRA186_RESET_PWM7>;
++		reset-names = "pwm";
++		status = "disabled";
++		#pwm-cells = <2>;
++	};
++
++	pwm8: pwm@32f0000 {
++		compatible = "nvidia,tegra186-pwm";
++		reg = <0x0 0x32f0000 0x0 0x10000>;
++		clocks = <&bpmp TEGRA186_CLK_PWM8>;
++		clock-names = "pwm";
++		resets = <&bpmp TEGRA186_RESET_PWM8>;
++		reset-names = "pwm";
++		status = "disabled";
++		#pwm-cells = <2>;
++	};
++
+ 	sdmmc1: mmc@3400000 {
+ 		compatible = "nvidia,tegra186-sdhci";
+ 		reg = <0x0 0x03400000 0x0 0x10000>;
+@@ -947,6 +1024,17 @@ gpio_aon: gpio@c2f0000 {
+ 		#interrupt-cells = <2>;
+ 	};
+ 
++	pwm4: pwm@c340000 {
++		compatible = "nvidia,tegra186-pwm";
++		reg = <0x0 0xc340000 0x0 0x10000>;
++		clocks = <&bpmp TEGRA186_CLK_PWM4>;
++		clock-names = "pwm";
++		resets = <&bpmp TEGRA186_RESET_PWM4>;
++		reset-names = "pwm";
++		status = "disabled";
++		#pwm-cells = <2>;
++	};
++
+ 	pmc: pmc@c360000 {
+ 		compatible = "nvidia,tegra186-pmc";
+ 		reg = <0 0x0c360000 0 0x10000>,
 -- 
 2.32.0
 
