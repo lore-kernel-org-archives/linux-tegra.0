@@ -2,74 +2,146 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96E89C4320A
-	for <linux-tegra@archiver.kernel.org>; Thu, 12 Aug 2021 06:53:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFE7DC432BE
+	for <linux-tegra@archiver.kernel.org>; Thu, 12 Aug 2021 11:17:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6EDA261058
-	for <linux-tegra@archiver.kernel.org>; Thu, 12 Aug 2021 06:53:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 82FB46103A
+	for <linux-tegra@archiver.kernel.org>; Thu, 12 Aug 2021 11:17:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234744AbhHLGxm (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 12 Aug 2021 02:53:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56140 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232921AbhHLGxm (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 12 Aug 2021 02:53:42 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 0C3E16103E;
-        Thu, 12 Aug 2021 06:53:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1628751197;
-        bh=7mu4Ipsd06cm4QBrmrbucxTGVRGJN4PzWTMdE9wwbrU=;
-        h=References:From:To:Cc:Subject:Date:In-reply-to:From;
-        b=U8hfaaReRKr31YD8Y78F+DecLCcZCKu9GSkI//D7NDFOvKxtPeu2YlwqHTZE+j9i4
-         SJco5frFsk2UVhbLDzXU/Z7qX+gmd/zfUAAw/i7fb1Lk8dyMjukXj57ZmA0Q5pah7a
-         CBD7hUbe5yGaPkj2rigv9WhgwFrTB/i9tt5X+ZfpYPTkFklXFAFymftnGsCcLLyTbQ
-         S5DWtpeAc1zObQC9tGdGmaTOCAL/L7xFzp7RfOdFTiZsEopchH+oJHCR8UDqORD01n
-         1ctSSeRfyWZVxcdUVX8oQOElJj6VAeKN6tSsOgC0XG7CuaS5z5UJ6x2cl5q3rQoSFo
-         Lp8qqOrYp3rZw==
-References: <1628739182-30089-1-git-send-email-chunfeng.yun@mediatek.com>
- <1628739182-30089-6-git-send-email-chunfeng.yun@mediatek.com>
-User-agent: mu4e 1.6.2; emacs 27.2
-From:   Felipe Balbi <balbi@kernel.org>
-To:     Chunfeng Yun <chunfeng.yun@mediatek.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Pawel Laszczak <pawell@cadence.com>,
-        Al Cooper <alcooperx@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Yang Yingliang <yangyingliang@huawei.com>,
-        Rikard Falkeborn <rikard.falkeborn@gmail.com>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com, linux-tegra@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        Eddie Hung <eddie.hung@mediatek.com>
-Subject: Re: [PATCH 6/6] usb: gadget: remove unnecessary AND operation when
- get ep maxp
-Date:   Thu, 12 Aug 2021 09:52:58 +0300
-In-reply-to: <1628739182-30089-6-git-send-email-chunfeng.yun@mediatek.com>
-Message-ID: <87eeazyx0o.fsf@kernel.org>
+        id S236770AbhHLLSG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 12 Aug 2021 07:18:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60626 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236700AbhHLLSE (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 12 Aug 2021 07:18:04 -0400
+Received: from mail-ua1-x933.google.com (mail-ua1-x933.google.com [IPv6:2607:f8b0:4864:20::933])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 172D5C0613D5
+        for <linux-tegra@vger.kernel.org>; Thu, 12 Aug 2021 04:17:38 -0700 (PDT)
+Received: by mail-ua1-x933.google.com with SMTP id b7so2638417uav.11
+        for <linux-tegra@vger.kernel.org>; Thu, 12 Aug 2021 04:17:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=L0gyU3vJVuWPU21UXGdxDw4I761rPxaanXf3QMxUC1A=;
+        b=GR9CTz3qnI0sEDXS4Vz2dqqHPs12gPFKs+J+rdjPq/NqF1uywGom54qf5zP5DspdeQ
+         g7ZkfP/SFrc/cxUPSKthVQsTmV0dFWi2OxuJ+7QlubIPUOEkSyMLF/GBvZ5S1vDWtTGh
+         sa+m5oIMYu+5e9fGhuvZIedBm3enJquHi0Anmq6zHo1T/ms2N2i7FQ/1edif0N8YYffS
+         ue56lhAwZ5qvG46WVvcf4bdbanAVY27pKUsweEg9jnSO07vRfyVLi4xAFIY11bFyeauC
+         BU2lBXgG5d7/ddoZSgzVZEkqrroVUBYlqGeLhAL1cnwf4VXqnRsqK4WqPfko9em7W+mZ
+         dMPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=L0gyU3vJVuWPU21UXGdxDw4I761rPxaanXf3QMxUC1A=;
+        b=iHVHXwGRNL6oBTL7iLj7yVlup2yQSUASKRgS3ZD73SbP5tY/CYMK2nWOj/kVec9qtR
+         OFdfOe7eALkOYgPRuXnQqPyZPGRLh7vXu2iFidGsgBO8ThVyZKDOgJANycQ3ABjSC1Zo
+         VXjYI+P7JeA4HIZec9IbMmxtB51jMjH8h98D5VrSgkyrc95wFN0f/8RKl+1ItPm/P+1u
+         u7V8AaFPE8BP5FzpS2KOvLfuIY7djf4wjx1PEXpcvORw40VXHkMpQmymEfITs4RPK+A/
+         wweP9392nIXcUQy/A9GhOU1ce1CiKUZf9rZ1MF0Uto7Dq6vsu/ju5ZogFLo36Y3qKK7n
+         sr+Q==
+X-Gm-Message-State: AOAM532VuaLQT3UyNtGXUKigFWPaMpEMxqzs7MCiPFE5ALpP8/NWVrnZ
+        +WRTWFe8fmnXVPEb85o2oxThAkKcTxSjl1SUF9tjVw==
+X-Google-Smtp-Source: ABdhPJyv6jhv7hsGxlvOXJ+PV6QFW4oGZxDyU7JGoVmm+PciCTwcwMITfVEp6nsx1+OUCwZN0NL2GzejpGySs3XeGIY=
+X-Received: by 2002:ab0:6695:: with SMTP id a21mr1572928uan.19.1628767057184;
+ Thu, 12 Aug 2021 04:17:37 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20210701232728.23591-1-digetx@gmail.com> <20210701232728.23591-3-digetx@gmail.com>
+ <CAPDyKFrtWDYJo_NjS8306Z9ykbg7XZ55jC9hKEBMGkcrx1=4kQ@mail.gmail.com>
+ <1034458d-78e0-5036-e278-6fee5d0d75ac@gmail.com> <CAPDyKFoafAk72Kw6X7626Niduaii0V5VM4dGSWmq+e3JTh7VRg@mail.gmail.com>
+ <a5dfdf59-f5b5-d28e-6b02-b0c860ba8d80@gmail.com> <CAPDyKFq+ExjbGrN=yUUXPKfN_fGrwY6EAYn9a6VUFFU_VjhC=g@mail.gmail.com>
+ <6741262b-386b-7635-fd42-ebd4f877fddd@gmail.com> <CAPDyKFpJhX51rOnvbYTmj9Akd+xX+b7xcSWt87UDrvMEfYOZ7Q@mail.gmail.com>
+ <aab38f90-f7b2-900f-897b-470b81d473f2@gmail.com> <8e110e08-1268-464c-6edb-0a3f640d43d6@gmail.com>
+ <e21106ab-95ef-fc97-1744-dc58180e321a@gmail.com>
+In-Reply-To: <e21106ab-95ef-fc97-1744-dc58180e321a@gmail.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Thu, 12 Aug 2021 13:17:00 +0200
+Message-ID: <CAPDyKFpgoBsFOiCGEpgAyeYJyEZQAXSN_2iEJcVJbfV+7rvdMw@mail.gmail.com>
+Subject: Re: [PATCH v7 02/37] soc/tegra: pmc: Implement attach_dev() of power
+ domain drivers
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-
-Chunfeng Yun <chunfeng.yun@mediatek.com> writes:
-
-> usb_endpoint_maxp() already returns actual max packet size, no need
-> AND 0x7ff.
+On Thu, 12 Aug 2021 at 03:40, Dmitry Osipenko <digetx@gmail.com> wrote:
 >
-> Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
+> 12.08.2021 01:41, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> >>> I am not saying you should change the clock rate. The current code
+> >>> path that runs via devm_tegra_core_dev_init_opp_table() just calls
+> >>> clk_get_rate and then dev_pm_opp_set_rate() with the current rate to
+> >>> vote for the corresponding OPP level. Right?
+> >>>
+> >>> Isn't this exactly what you want? No?
+> >> I see now what you meant, it's actually a simpler variant and it works
+> >> too. Thank you for the suggestion, I'll prepare v8.
+> >>
+> > My bad, it doesn't work at all. I actually need to use the rpm_pstate o=
+r
+> > something else because performance state is coupled with the enable
+> > state of the device. If device is never rpm-suspended by consumer
+> > driver, then the initialized performance state is never dropped. Hence =
+I
+> > want to initialize the state which is set only when device is resumed.
+> >
+> > I'll need to think more about it.
+>
+> GENPD core has these false assumptions:
+>
+> 1. It assumes that by default all devices are at zero performance level
+> at a boot time. This is not true for Tegra because hardware is
+> pre-initialized independently from GENPD.
 
-Acked-by: Felipe Balbi <balbi@kernel.org>
+Right, which is similar to other SoCs.
 
--- 
-balbi
+>
+> 2. It assumes that nothing depends on performance level and devices can
+> operate at any level at any time. Not true for Tegra and other platforms
+> where performance level is coupled with clocks state of attached
+> devices. OPP framework glues clock and performance level together for
+> us, which works good so far.
+
+Right, OPPs need to be managed differently depending on the SoC.
+That's why genpd is there to help and to model this as "performance
+states" and to allow operations to be set through SoC specific
+callabacks, for example.
+
+More importantly, the assumption is that in general, consumer drivers
+should use the OPP library to vote/set OPP levels, they shouldn't call
+dev_pm_genpd_set_performance_state() - unless they know exactly what
+they are doing.
+
+>
+> Hence I either need to patch every driver to use dev_pm_opp_set_rate in
+> order to sync clk rate with the perf level at device runtime, or I need
+> to preset the rpm perf level to allow GENPD core to set the level before
+> device is resumed.
+
+When the device is getting attached to its genpd (during the probe
+sequence and for a single PM domain case), runtime PM is disabled for
+the device. If you would call dev_pm_opp_set_rate() from a genpd
+callback during attach (without changing the rate), this means you
+would update/synchronize the vote. In this way, the vote is set before
+the device is runtime resumed by the driver, right?
+
+On the other hand, patching the driver should also be quite simple and
+you need to do that anyways, don't you?
+
+Kind regards
+Uffe
