@@ -6,64 +6,66 @@ X-Spam-Status: No, score=-20.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,INCLUDES_PULL_REQUEST,
 	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 251F7C4320A
-	for <linux-tegra@archiver.kernel.org>; Fri, 13 Aug 2021 16:20:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34522C4320A
+	for <linux-tegra@archiver.kernel.org>; Fri, 13 Aug 2021 16:22:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0772D610CF
-	for <linux-tegra@archiver.kernel.org>; Fri, 13 Aug 2021 16:20:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 19167610FF
+	for <linux-tegra@archiver.kernel.org>; Fri, 13 Aug 2021 16:22:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233839AbhHMQUs (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 13 Aug 2021 12:20:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34678 "EHLO
+        id S229471AbhHMQW3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 13 Aug 2021 12:22:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35062 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231503AbhHMQUs (ORCPT
+        with ESMTP id S234367AbhHMQW1 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 13 Aug 2021 12:20:48 -0400
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1509EC061756;
-        Fri, 13 Aug 2021 09:20:21 -0700 (PDT)
-Received: by mail-wr1-x436.google.com with SMTP id r6so14054356wrt.4;
-        Fri, 13 Aug 2021 09:20:21 -0700 (PDT)
+        Fri, 13 Aug 2021 12:22:27 -0400
+Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BECD4C0617AD
+        for <linux-tegra@vger.kernel.org>; Fri, 13 Aug 2021 09:22:00 -0700 (PDT)
+Received: by mail-wm1-x329.google.com with SMTP id o1-20020a05600c5101b02902e676fe1f04so7986874wms.1
+        for <linux-tegra@vger.kernel.org>; Fri, 13 Aug 2021 09:22:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=EtTi82zv1W6qbA1UgdC/JzbU8TMXbWqcbjVmeC8xG5I=;
-        b=HmvF8SfOhclo7FEZpfVLUuS4axHlsQ9YGtRGyljlmK0QHDZB82HAIO/+d3Ni8KMcTq
-         qPiCitdIotYKU8kviggSfzjHh0dITYZ6KjEyFaHicHYzkOxWA3i1gPVgG0BGB3zgY47s
-         Yodtq+wg4CNOPoFx+30qxV1l1GwQ8+/245zGJdNqXnNWsApS4X1SHepn7XtJlnIyBGSW
-         OYkHcoUznr7MLga3ErGWxbUnpnCcan6ipdkanbTqjOaVHss+pcBZbNlobQDBr5p4H3C3
-         viqs0xxr202aj1XK1FkWfw8MwIgPez6WwUkNk+AYa5KlbD9FpfqNS3ohpWWS6fxbSnjR
-         5H7A==
+        bh=cvMCxY97+19NBnX/9se1xiPhL0qxZh2NAax8kyQ2dwo=;
+        b=dUbSPwhvwSjHPMw92H/M1+w9GaV/wRo54rK6vfEWeNEM5Ajh2pCT2OG8xFbmxWMnCf
+         2tUTRHwNcIfsApSO9jYxTE7E6gXiLGRYFWjlnYu4WdQs5OMNKQSDw8WLWlBfVVEOb7BF
+         /pEnKizufa1clufaDdxhNJBqX9MgLmMuCB5x2Ky7b+u0Omw427lGZmx9BIiSeZio+/ZB
+         yVFHvlBl53sEUpf9YmEcMx1xqOiURmTtm6T6sorfxt6fy7DuhZg9x20uJYeJ/gCdDvYV
+         9gLZR2MFU9gr8zBntLqAuLjMewdKGHqjV18al/pUGEgRhn4wgYHuqKQkIN++hlLTXfaC
+         mq5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=EtTi82zv1W6qbA1UgdC/JzbU8TMXbWqcbjVmeC8xG5I=;
-        b=eLfGQX3el7xMJuk3AqTDRJCR64XeOtvYqyuXkq2zkp58ZiFEGvN3883Oa03o/MDiFu
-         mcyHfUlKhYrYDlnwipAi0dH9xptvJAjcQyVIm8p9irE9V3LaraDHIzFIYvfle+qSGplc
-         SRGKd3fnZZ6iD6nVx/n7JAiN5m87k1K46cy4c7acZvH9WtSkO73iE5tzJWwMjEjxdDJB
-         ajHm/H5zKfSoFkxHRFthk/dGoRXP+v3ymNt7Xo02AJOXjs3EJiKwXHQ+p+m9IaybtsjP
-         mCOSq9fJMaEcnGxXhF+VGTfM8pW1BoUjkRxJ5LqBJZTba9/eefSJPdZ577A8mzZtT/k/
-         WFqA==
-X-Gm-Message-State: AOAM531o+UJDmnALrYXqAhqUEcROmlkimLzcI/DioBe8TZU5wS9Xqfth
-        301+achJteNl5Mh8pFCGWyU=
-X-Google-Smtp-Source: ABdhPJzoYyZgkSgAJgJxCrK72my9BHt/tEU/1t4x5U6mELtsJsNRyltJeqvvi/XEkoTM5BzZN/FDAQ==
-X-Received: by 2002:adf:e107:: with SMTP id t7mr4109796wrz.165.1628871619659;
-        Fri, 13 Aug 2021 09:20:19 -0700 (PDT)
+        bh=cvMCxY97+19NBnX/9se1xiPhL0qxZh2NAax8kyQ2dwo=;
+        b=lNHayOa4WaFYLS3A5u6RUaJohw/RzIQzQFNSRb8A6mzM+n0fi6+xSMQ8Ky5o/Tdc0l
+         DOklboWGY4T4w6Bh7LllGF4Ip7i9d1fqH0cCGNQZr9tFQqVjL7XB5ks+L6VOO2yFfjvT
+         EJuKrxtGYVbN1p2rkcl8uLKK9Z0PpLgqM+1F4rqEJaW4fxw0iUdRyXzjRaqTG7f2aLvx
+         4Lify97WqkDiF5fSZyqarclNBh0m0uD7d8eEz33S7kxrSGkSIXryfwCF7FtdnaAIVONP
+         cTrLO+4SBEKJaoy19WWcgbd6fc25qt2rai/rx8urrsivnXUYSOtdJOFwLCTbb+IAsoXQ
+         mkSg==
+X-Gm-Message-State: AOAM531pTfilsV4Rr4nPXwqiyGUO5QpQhm5sw6x3jlwUsu/Bwx8Jx0Ct
+        KCEPYbaf/X7EY/lOK0Yn+UQ=
+X-Google-Smtp-Source: ABdhPJwn/ymZnHrGWDZ5iKAtYE+5ZRurgB6fOyOH3CXkBKWzIk2EWBxsfrai5X2NWibh+8KUsGe2mw==
+X-Received: by 2002:a7b:cf0c:: with SMTP id l12mr3467826wmg.62.1628871719342;
+        Fri, 13 Aug 2021 09:21:59 -0700 (PDT)
 Received: from localhost ([217.111.27.204])
-        by smtp.gmail.com with ESMTPSA id b15sm2000158wrq.5.2021.08.13.09.20.18
+        by smtp.gmail.com with ESMTPSA id l38sm1769106wmp.15.2021.08.13.09.21.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Aug 2021 09:20:18 -0700 (PDT)
+        Fri, 13 Aug 2021 09:21:58 -0700 (PDT)
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: [GIT PULL] clk/tegra: Changes for v5.15-rc1
-Date:   Fri, 13 Aug 2021 18:20:14 +0200
-Message-Id: <20210813162014.2820473-1-thierry.reding@gmail.com>
+List-Id: <soc.lore.kernel.org>
+To:     arm@kernel.org, soc@kernel.org
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [GIT PULL 1/6] dt-bindings: Changes for v5.15-rc1
+Date:   Fri, 13 Aug 2021 18:21:52 +0200
+Message-Id: <20210813162157.2820913-1-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.32.0
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
@@ -72,41 +74,32 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Mike, Stephen,
+Hi ARM SoC maintainers,
 
-The following changes since commit 59c6fceb2ecc382c3d20508a235b539bf23af1f0:
+The following changes since commit e73f0f0ee7541171d89f2e2491130c7771ba58d3:
 
-  soc/tegra: fuse: Enable fuse clock on suspend for Tegra124 (2021-08-11 11:55:56 +0200)
+  Linux 5.14-rc1 (2021-07-11 15:07:40 -0700)
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/for-5.15-clk
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.15-dt-bindings
 
-for you to fetch changes up to faa8605f9f92e36c724ecaf03b466cfe31b04b06:
+for you to fetch changes up to 900a486ac73dfdf9b1629e7e4df6eacc92da7578:
 
-  clk: tegra: Remove CLK_IS_CRITICAL flag from fuse clock (2021-08-11 11:57:01 +0200)
-
-Note that this pulls in a couple of changes from the ARM SoC tree, which
-I haven't explicitly included in the diffstat below. If you prefer I can
-also send this again after v5.15-rc1 which will then already include the
-dependency. It's not a critical patch, merely a clean-up, really.
+  dt-bindings: tegra: Document NVIDIA Jetson TX2 NX developer kit (2021-08-12 15:06:28 +0200)
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-clk/tegra: Changes for v5.15-rc1
+dt-bindings: Changes for v5.15-rc1
 
-The FUSE driver has been updated to take manual control of the FUSE
-clock over suspend/resume cycles, so the CLK_IS_CRITICAL flag can now be
-dropped.
+This contains a single patch that adds the compatible string for the
+NVIDIA Jetson TX2 NX developer kit.
 
 ----------------------------------------------------------------
-Dmitry Osipenko (1):
-      clk: tegra: Remove CLK_IS_CRITICAL flag from fuse clock
-
 Thierry Reding (1):
-      Merge branch 'for-5.15/soc' into for-5.15/clk
+      dt-bindings: tegra: Document NVIDIA Jetson TX2 NX developer kit
 
- drivers/clk/tegra/clk-tegra-periph.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+ Documentation/devicetree/bindings/arm/tegra.yaml | 1 +
+ 1 file changed, 1 insertion(+)
