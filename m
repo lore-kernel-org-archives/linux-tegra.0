@@ -2,88 +2,242 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8427C432BE
-	for <linux-tegra@archiver.kernel.org>; Fri, 13 Aug 2021 17:16:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 487F3C432BE
+	for <linux-tegra@archiver.kernel.org>; Fri, 13 Aug 2021 20:37:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C2F7760F36
-	for <linux-tegra@archiver.kernel.org>; Fri, 13 Aug 2021 17:16:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E34F60F91
+	for <linux-tegra@archiver.kernel.org>; Fri, 13 Aug 2021 20:37:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229535AbhHMRRG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 13 Aug 2021 13:17:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48066 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229528AbhHMRRE (ORCPT
+        id S234078AbhHMUiY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 13 Aug 2021 16:38:24 -0400
+Received: from mail-ot1-f50.google.com ([209.85.210.50]:40768 "EHLO
+        mail-ot1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233915AbhHMUiY (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 13 Aug 2021 13:17:04 -0400
-Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04468C061756
-        for <linux-tegra@vger.kernel.org>; Fri, 13 Aug 2021 10:16:37 -0700 (PDT)
-Received: by mail-lf1-x135.google.com with SMTP id g13so21000750lfj.12
-        for <linux-tegra@vger.kernel.org>; Fri, 13 Aug 2021 10:16:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=k0zJ3rZaNMERSNYqq6URhBvNhvYLmHCNYyswRaf+vtE=;
-        b=XdLodVj8joNQK2AkFGxq5HaWGlGcBNVl+74ce9J2nIQ9ND09Uqrv4KHPFAmvIQUrbT
-         KA3XUzM+xuR4J4bY3inZvasHe1Jmy1s3dYyyWvH2UuK75HauM/nNoxtcO6BXuTVV0OMI
-         VcbsY02OoLfie+s/tZl6R8mjR9JLyoJPrpRW1VS0ZlS31QIlN0ADqaq5FMF7iWv4IKo6
-         APgi+sd+oK3azIGwzEfJ2iq1nP38b2lb4EBS71zAZ5OlSprCAMKiYbskFKxYxaUeUmmc
-         sgvUzdJQ3n3mcoSCdup4tAgCLg7PEgLkB0yao+KfD6Q1ugUl6CvwUk4dcZ29vrYaggjq
-         f3PA==
+        Fri, 13 Aug 2021 16:38:24 -0400
+Received: by mail-ot1-f50.google.com with SMTP id h63-20020a9d14450000b02904ce97efee36so13513037oth.7;
+        Fri, 13 Aug 2021 13:37:57 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=k0zJ3rZaNMERSNYqq6URhBvNhvYLmHCNYyswRaf+vtE=;
-        b=e9vE+E0dcAtoZI7HOu0vJaMRN1HMP9eROTiew7+ZFhSJIQIH3lQYKXiQDiis1+rvbF
-         u7C6HRl5Vx38ApQDiOSS2y/uKtqcxwhhsKqQi4GtwytqDiyQp/pcWQXMcKhFxstRJuhq
-         GYnwi80Mae+Pz7uKKMeaVtBUJiruhLH4PImtbndfTrqFql9Wfusyg8tWW1Tp5RnZm6rc
-         9wUJeDgPfTOtwvogMDWTbKbDp6YRME2ryeNRlMw34f9Tg6wsVisQDXaKaumvDRbYSFnK
-         KksyF3mCIHZ46YVSkc/Q1Tpfd6wR9xHV8c+niyKqS8m+nig42PeonhvCrsbqInGeQTor
-         1qIg==
-X-Gm-Message-State: AOAM533A9mh6VzcTl3Qk9k8kL3T9JbBqwGsMDsBbgpT6HDUM7CZwp7um
-        VF2anvBJAJewYLHii0sI6yc=
-X-Google-Smtp-Source: ABdhPJxBe/FM/ViWF4zdlx94Z2ckuYNmL2dP5iqD5rQNLHUOYfNegEjAtQ0tXm/RaPlvdBLtG2ufLA==
-X-Received: by 2002:a05:6512:4019:: with SMTP id br25mr2467106lfb.494.1628874995428;
-        Fri, 13 Aug 2021 10:16:35 -0700 (PDT)
-Received: from [192.168.2.145] (46-138-117-53.dynamic.spd-mgts.ru. [46.138.117.53])
-        by smtp.googlemail.com with ESMTPSA id d7sm224131ljq.112.2021.08.13.10.16.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Aug 2021 10:16:35 -0700 (PDT)
-Subject: Re: [tegra-drm:drm/tegra/for-next 16/17]
- drivers/gpu/drm/tegra/dc.c:1843:53: warning: variable 'new_dc_state' set but
- not used
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <treding@nvidia.com>
-Cc:     kbuild-all@lists.01.org, dri-devel@lists.freedesktop.org,
-        linux-tegra@vger.kernel.org, kernel test robot <lkp@intel.com>
-References: <202108140028.U2Z9tWIN-lkp@intel.com>
- <6a4b2b81-cf37-5a0b-bb6a-4857d1a4ffc5@gmail.com>
-Message-ID: <167372e5-1d16-9da4-941e-848209d9e828@gmail.com>
-Date:   Fri, 13 Aug 2021 20:16:34 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Uge++jdV8hZVuGx4sX1iqwS2v7HWDBN7pZ3sxa513Os=;
+        b=IT7no11v+H3Xh7oiNiucRSg8ZtvylAEaUfwrS3auvfjk+DX2JbC0CbyEC5mrQPFkP1
+         vsngEPoN+fWSusjYcUllQTjwI6ConfTlBftVKFLxPRAZ2/5fXHY1ZqzLFcY5GNVUCian
+         m2xjsMJZBZlt9wI2m9+fd+7C+FyLf+DLRupoU/JzLCioG9x21SS8Wz4IAwzsa4OyTXK4
+         UFx0oQo2zrPBaL2wnCpflvQIi2l4vcTW74x0w0xV52H+bpIh9tsPyQv6ZVETegBVgv30
+         Z5ipD8OUAo5goTOlIm1Nj1avQ5vyCKdOiA0DCLSDUrAhbDap7iT2vV/QWy91NqPI/Zd7
+         bs6g==
+X-Gm-Message-State: AOAM531P//f7Y6Sm+tz921kpN/WoAvlRMtVTq1dMuXqYRVvoPF37a/2N
+        F/lltLYM6xwTZvLafqNvVg==
+X-Google-Smtp-Source: ABdhPJxkGTxumL5M/sOxVEzvH3QItuiwmNWSlWwzGAvPgpKvViQ6pXGErpUvZNomsJ9KIoggkjynVw==
+X-Received: by 2002:a9d:38f:: with SMTP id f15mr3540263otf.253.1628887076804;
+        Fri, 13 Aug 2021 13:37:56 -0700 (PDT)
+Received: from robh.at.kernel.org (2603-8080-2a06-ed00-7254-0b80-dd3c-00c6.res6.spectrum.com. [2603:8080:2a06:ed00:7254:b80:dd3c:c6])
+        by smtp.gmail.com with ESMTPSA id k2sm529367otp.2.2021.08.13.13.37.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Aug 2021 13:37:55 -0700 (PDT)
+Received: (nullmailer pid 3987020 invoked by uid 1000);
+        Fri, 13 Aug 2021 20:37:54 -0000
+Date:   Fri, 13 Aug 2021 15:37:54 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Mikko Perttunen <mperttunen@nvidia.com>, jonathanh@nvidia.com,
+        airlied@linux.ie, daniel@ffwll.ch, dri-devel@lists.freedesktop.org,
+        linux-tegra@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] dt-bindings: Add YAML bindings for Host1x and
+ NVDEC
+Message-ID: <YRbYImV8V+DElpy7@robh.at.kernel.org>
+References: <20210806123450.2970777-1-mperttunen@nvidia.com>
+ <20210806123450.2970777-2-mperttunen@nvidia.com>
+ <YRKengKZmFtgsIZy@orome.fritz.box>
+ <c06df24f-989b-fdfe-ea04-867de1aa8828@nvidia.com>
+ <YRKlA7aBYOuElXDe@orome.fritz.box>
 MIME-Version: 1.0
-In-Reply-To: <6a4b2b81-cf37-5a0b-bb6a-4857d1a4ffc5@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YRKlA7aBYOuElXDe@orome.fritz.box>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-13.08.2021 20:12, Dmitry Osipenko пишет:
-...
-> I probably should update compiler or set W=1 to get that warning. These variables were used in older versions of the patch and they can be removed now.
-> 
-> Please amend the patch with this:
+On Tue, Aug 10, 2021 at 06:10:43PM +0200, Thierry Reding wrote:
+> On Tue, Aug 10, 2021 at 06:50:26PM +0300, Mikko Perttunen wrote:
+> > On 10.8.2021 18.43, Thierry Reding wrote:
+> > > On Fri, Aug 06, 2021 at 03:34:48PM +0300, Mikko Perttunen wrote:
+> > > > Convert the original Host1x bindings to YAML and add new bindings for
+> > > > NVDEC, now in a more appropriate location. The old text bindings
+> > > > for Host1x and engines are still kept at display/tegra/ since they
+> > > > encompass a lot more engines that haven't been converted over yet.
+> > > > 
+> > > > Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+> > > > ---
+> > > > v2:
+> > > > * Fix issues pointed out in v1
+> > > > * Add T194 nvidia,instance property
+> > > > ---
+> > > >   .../gpu/host1x/nvidia,tegra20-host1x.yaml     | 131 ++++++++++++++++++
+> > > >   .../gpu/host1x/nvidia,tegra210-nvdec.yaml     | 109 +++++++++++++++
+> > > >   MAINTAINERS                                   |   1 +
+> > > >   3 files changed, 241 insertions(+)
+> > > >   create mode 100644 Documentation/devicetree/bindings/gpu/host1x/nvidia,tegra20-host1x.yaml
+> > > >   create mode 100644 Documentation/devicetree/bindings/gpu/host1x/nvidia,tegra210-nvdec.yaml
+> > > 
+> > > Can we split off the NVDEC bindings addition into a separate patch? I've
+> > > been working on converting the existing host1x bindings in full to json-
+> > > schema and this partial conversion would conflict with that effort.
+> > > 
+> > > I assume that NVDEC itself validates properly even if host1x hasn't been
+> > > converted yet?
+> > 
+> > Sure. I thought I had some problems with this before but can't see any now.
+> > 
+> > > 
+> > > > diff --git a/Documentation/devicetree/bindings/gpu/host1x/nvidia,tegra210-nvdec.yaml b/Documentation/devicetree/bindings/gpu/host1x/nvidia,tegra210-nvdec.yaml
+> > > > new file mode 100644
+> > > > index 000000000000..fc535bb7aee0
+> > > > --- /dev/null
+> > > > +++ b/Documentation/devicetree/bindings/gpu/host1x/nvidia,tegra210-nvdec.yaml
+> > > > @@ -0,0 +1,109 @@
+> > > > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> > > > +%YAML 1.2
+> > > > +---
+> > > > +$id: "http://devicetree.org/schemas/gpu/host1x/nvidia,tegra210-nvdec.yaml#"
+> > > > +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+> > > > +
+> > > > +title: Device tree binding for NVIDIA Tegra NVDEC
+> > > > +
+> > > > +description: |
+> > > > +  NVDEC is the hardware video decoder present on NVIDIA Tegra210
+> > > > +  and newer chips. It is located on the Host1x bus and typically
+> > > > +  programmed through Host1x channels.
+> > > > +
+> > > > +maintainers:
+> > > > +  - Thierry Reding <treding@gmail.com>
+> > > > +  - Mikko Perttunen <mperttunen@nvidia.com>
+> > > > +
+> > > > +properties:
+> > > > +  $nodename:
+> > > > +    pattern: "^nvdec@[0-9a-f]*$"
+> > > > +
+> > > > +  compatible:
+> > > > +    enum:
+> > > > +      - nvidia,tegra210-nvdec
+> > > > +      - nvidia,tegra186-nvdec
+> > > > +      - nvidia,tegra194-nvdec
+> > > > +
+> > > > +  reg:
+> > > > +    maxItems: 1
+> > > > +
+> > > > +  clocks:
+> > > > +    maxItems: 1
+> > > > +
+> > > > +  clock-names:
+> > > > +    items:
+> > > > +      - const: nvdec
+> > > > +
+> > > > +  resets:
+> > > > +    maxItems: 1
+> > > > +
+> > > > +  reset-names:
+> > > > +    items:
+> > > > +      - const: nvdec
+> > > > +
+> > > > +  power-domains:
+> > > > +    maxItems: 1
+> > > > +
+> > > > +  iommus:
+> > > > +    maxItems: 1
+> > > > +
+> > > > +  interconnects:
+> > > > +    items:
+> > > > +      - description: DMA read memory client
+> > > > +      - description: DMA read 2 memory client
+> > > > +      - description: DMA write memory client
+> > > > +
+> > > > +  interconnect-names:
+> > > > +    items:
+> > > > +      - const: dma-mem
+> > > > +      - const: read2
+> > > 
+> > > The convention that we've used so far has been to start numbering these
+> > > at 0 and use a dash, so this would be "read-1".
+> > 
+> > Will fix.
+> > 
+> > > 
+> > > > +      - const: write
+> > > > +
+> > > > +required:
+> > > > +  - compatible
+> > > > +  - reg
+> > > > +  - clocks
+> > > > +  - clock-names
+> > > > +  - resets
+> > > > +  - reset-names
+> > > > +  - power-domains
+> > > > +
+> > > > +if:
+> > > > +  properties:
+> > > > +    compatible:
+> > > > +      contains:
+> > > > +        const: nvidia,tegra194-host1x
+> > > > +then:
+> > > > +  properties:
+> > > > +    nvidia,instance:
+> > > > +      items:
+> > > > +        - description: 0 for NVDEC0, or 1 for NVDEC1
+> > > 
+> > > I know we had discussed this before, but looking at the driver patch, I
+> > > don't actually see this being used now, so I wonder if we still need it.
+> > > 
+> > > > +additionalProperties: true
+> > > 
+> > > Maybe this should have a comment noting that this should really be
+> > > unevaluatedProperties: false, but we can't use that because the tooling
+> > > doesn't support it yet?
 
-Perhaps too late already. I'll make patch for that and then also check
-whether the UAPI patches were fixed.
+Use 'unevaluatedProperties: false'. There's support in jsonschema pkg 
+master now, so we should have support working soon. I've run it with the 
+kernel tree as well. I was surprised there weren't many issues...
+
+'additionalProperties: true' should only ever be used for incomplete 
+collections of properties (i.e. common bindings). I haven't come up with 
+a meta-schema to check this. We'd probably need to point to different 
+meta-schemas.
+
+> > 
+> > I can add such a comment if desired. Honestly, I don't really know what
+> > 'unevaluatedProperties' means or does -- the explanation in
+> > example-schema.yaml doesn't seem like it's relevant here and I cannot find
+> > any other documentation.
+> 
+> It's basically like additionalProperties, except that it applies to
+> properties evaluated via if: blocks.
+> 
+> So with additionalProperties: false, the presence of the nvidia,instance
+> property in a Tegra194 DTS file would cause a validation failure because
+> it's a property that was not defined in the properties: block.
+> 
+> With unevaluatedProperties: false, on the other hand, the properties
+> that are defined in the if: block above will become a evaluated
+> properties and therefore a Tegra194 DTS with the nvidia,instance
+> property present would succeed validation. Unless, of course, if it
+> contained additional properties that are not defined in any of the
+> properties: blocks (either unconditional or conditional ones).
+> 
+> So in other words, the additionalProperties schema applies to all
+> unconditionally defined properties, whereas unevaluatedProperties
+> applies to all (conditionally and unconditionally) defined properties.
+
+I generally discourage only defining the properties in an if/then. 
+Partly because unevaluatedProperties wasn't implemented. I guess if a 
+property is only allowed in the 'then' case, it makes sense. But if the 
+property is just different constraints for then and else, then I'd 
+define it in the main section.
+
+Rob 
