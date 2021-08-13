@@ -5,33 +5,33 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDFF3C4338F
-	for <linux-tegra@archiver.kernel.org>; Fri, 13 Aug 2021 06:31:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01E8BC4338F
+	for <linux-tegra@archiver.kernel.org>; Fri, 13 Aug 2021 06:32:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A4723610FF
-	for <linux-tegra@archiver.kernel.org>; Fri, 13 Aug 2021 06:31:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E22C860FBF
+	for <linux-tegra@archiver.kernel.org>; Fri, 13 Aug 2021 06:32:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238915AbhHMGcZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 13 Aug 2021 02:32:25 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:45710 "EHLO
+        id S238929AbhHMGc2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 13 Aug 2021 02:32:28 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:45862 "EHLO
         mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S238909AbhHMGcY (ORCPT
+        with ESMTP id S238926AbhHMGc1 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 13 Aug 2021 02:32:24 -0400
-X-UUID: a34a19c85e5d43e2b5cdca28c41d1cba-20210813
-X-UUID: a34a19c85e5d43e2b5cdca28c41d1cba-20210813
-Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw02.mediatek.com
+        Fri, 13 Aug 2021 02:32:27 -0400
+X-UUID: e7eca9fefe3d420e8045355a7383c041-20210813
+X-UUID: e7eca9fefe3d420e8045355a7383c041-20210813
+Received: from mtkcas11.mediatek.inc [(172.21.101.40)] by mailgw02.mediatek.com
         (envelope-from <chunfeng.yun@mediatek.com>)
         (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 1808529856; Fri, 13 Aug 2021 14:31:56 +0800
+        with ESMTP id 1081387938; Fri, 13 Aug 2021 14:31:58 +0800
 Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Fri, 13 Aug 2021 14:31:54 +0800
+ mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Fri, 13 Aug 2021 14:31:56 +0800
 Received: from localhost.localdomain (10.17.3.153) by mtkcas07.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Fri, 13 Aug 2021 14:31:53 +0800
+ Transport; Fri, 13 Aug 2021 14:31:55 +0800
 From:   Chunfeng Yun <chunfeng.yun@mediatek.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Felipe Balbi <balbi@kernel.org>
@@ -52,9 +52,9 @@ CC:     Pawel Laszczak <pawell@cadence.com>,
         Eddie Hung <eddie.hung@mediatek.com>,
         Sergei Shtylyov <sergei.shtylyov@gmail.com>,
         <stable@vger.kernel.org>
-Subject: [PATCH v3 2/7] usb: mtu3: use @mult for HS isoc or intr
-Date:   Fri, 13 Aug 2021 14:30:48 +0800
-Message-ID: <1628836253-7432-2-git-send-email-chunfeng.yun@mediatek.com>
+Subject: [PATCH v3 4/7] usb: cdnsp: fix the wrong mult value for HS isoc or intr
+Date:   Fri, 13 Aug 2021 14:30:50 +0800
+Message-ID: <1628836253-7432-4-git-send-email-chunfeng.yun@mediatek.com>
 X-Mailer: git-send-email 1.8.1.1.dirty
 In-Reply-To: <1628836253-7432-1-git-send-email-chunfeng.yun@mediatek.com>
 References: <1628836253-7432-1-git-send-email-chunfeng.yun@mediatek.com>
@@ -65,32 +65,34 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-For HS isoc or intr, should use @mult but not @burst
-to save mult value.
+usb_endpoint_maxp() only returns the bit[10:0] of wMaxPacketSize
+of endpoint descriptor, not include bit[12:11] anymore, so use
+usb_endpoint_maxp_mult() instead.
 
-Fixes: 4d79e042ed8b ("usb: mtu3: add support for usb3.1 IP")
+Fixes: 3d82904559f4 ("usb: cdnsp: cdns3 Add main part of Cadence USBSSP DRD Driver")
 Cc: stable@vger.kernel.org
+Acked-by: Felipe Balbi <balbi@kernel.org>
 Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
 ---
 v3: fix invalid email format for stable
-v2: new patch, split from [2/6] suggested by Felipe
+v2: add fixes, cc suggested by Felipe
 ---
- drivers/usb/mtu3/mtu3_gadget.c | 2 +-
+ drivers/usb/cdns3/cdnsp-mem.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/usb/mtu3/mtu3_gadget.c b/drivers/usb/mtu3/mtu3_gadget.c
-index 5e21ba05ebf0..635ad277cb13 100644
---- a/drivers/usb/mtu3/mtu3_gadget.c
-+++ b/drivers/usb/mtu3/mtu3_gadget.c
-@@ -92,7 +92,7 @@ static int mtu3_ep_enable(struct mtu3_ep *mep)
- 				usb_endpoint_xfer_int(desc)) {
- 			interval = desc->bInterval;
- 			interval = clamp_val(interval, 1, 16) - 1;
--			burst = (max_packet & GENMASK(12, 11)) >> 11;
-+			mult = (max_packet & GENMASK(12, 11)) >> 11;
- 		}
- 		break;
- 	default:
+diff --git a/drivers/usb/cdns3/cdnsp-mem.c b/drivers/usb/cdns3/cdnsp-mem.c
+index a47948a1623f..ad9aee3f1e39 100644
+--- a/drivers/usb/cdns3/cdnsp-mem.c
++++ b/drivers/usb/cdns3/cdnsp-mem.c
+@@ -882,7 +882,7 @@ static u32 cdnsp_get_endpoint_max_burst(struct usb_gadget *g,
+ 	if (g->speed == USB_SPEED_HIGH &&
+ 	    (usb_endpoint_xfer_isoc(pep->endpoint.desc) ||
+ 	     usb_endpoint_xfer_int(pep->endpoint.desc)))
+-		return (usb_endpoint_maxp(pep->endpoint.desc) & 0x1800) >> 11;
++		return usb_endpoint_maxp_mult(pep->endpoint.desc) - 1;
+ 
+ 	return 0;
+ }
 -- 
 2.18.0
 
