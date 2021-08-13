@@ -7,31 +7,31 @@ X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 086DEC4320A
-	for <linux-tegra@archiver.kernel.org>; Fri, 13 Aug 2021 06:32:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61019C00144
+	for <linux-tegra@archiver.kernel.org>; Fri, 13 Aug 2021 06:32:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E7D6B610EA
-	for <linux-tegra@archiver.kernel.org>; Fri, 13 Aug 2021 06:32:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4680460FBF
+	for <linux-tegra@archiver.kernel.org>; Fri, 13 Aug 2021 06:32:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238917AbhHMGcb (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 13 Aug 2021 02:32:31 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:45984 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S238952AbhHMGca (ORCPT
+        id S238970AbhHMGcc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 13 Aug 2021 02:32:32 -0400
+Received: from mailgw01.mediatek.com ([60.244.123.138]:48698 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S238951AbhHMGca (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
         Fri, 13 Aug 2021 02:32:30 -0400
-X-UUID: 2192eec2ea19415c9a4af21c2eba88eb-20210813
-X-UUID: 2192eec2ea19415c9a4af21c2eba88eb-20210813
-Received: from mtkcas10.mediatek.inc [(172.21.101.39)] by mailgw02.mediatek.com
+X-UUID: 03665993e6c042f89542f22dcd62869c-20210813
+X-UUID: 03665993e6c042f89542f22dcd62869c-20210813
+Received: from mtkcas10.mediatek.inc [(172.21.101.39)] by mailgw01.mediatek.com
         (envelope-from <chunfeng.yun@mediatek.com>)
         (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 1263130413; Fri, 13 Aug 2021 14:31:59 +0800
+        with ESMTP id 138028215; Fri, 13 Aug 2021 14:32:01 +0800
 Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs02n1.mediatek.inc (172.21.101.77) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Fri, 13 Aug 2021 14:31:57 +0800
+ mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Fri, 13 Aug 2021 14:32:00 +0800
 Received: from localhost.localdomain (10.17.3.153) by mtkcas07.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Fri, 13 Aug 2021 14:31:56 +0800
+ Transport; Fri, 13 Aug 2021 14:31:59 +0800
 From:   Chunfeng Yun <chunfeng.yun@mediatek.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Felipe Balbi <balbi@kernel.org>
@@ -50,11 +50,10 @@ CC:     Pawel Laszczak <pawell@cadence.com>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-mediatek@lists.infradead.org>,
         Eddie Hung <eddie.hung@mediatek.com>,
-        Sergei Shtylyov <sergei.shtylyov@gmail.com>,
-        <stable@vger.kernel.org>
-Subject: [PATCH v3 5/7] usb: gadget: tegra-xudc: fix the wrong mult value for HS isoc or intr
-Date:   Fri, 13 Aug 2021 14:30:51 +0800
-Message-ID: <1628836253-7432-5-git-send-email-chunfeng.yun@mediatek.com>
+        Sergei Shtylyov <sergei.shtylyov@gmail.com>
+Subject: [PATCH v3 7/7] usb: gadget: remove unnecessary AND operation when get ep maxp
+Date:   Fri, 13 Aug 2021 14:30:53 +0800
+Message-ID: <1628836253-7432-7-git-send-email-chunfeng.yun@mediatek.com>
 X-Mailer: git-send-email 1.8.1.1.dirty
 In-Reply-To: <1628836253-7432-1-git-send-email-chunfeng.yun@mediatek.com>
 References: <1628836253-7432-1-git-send-email-chunfeng.yun@mediatek.com>
@@ -65,46 +64,31 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-usb_endpoint_maxp() only returns the bit[10:0] of wMaxPacketSize
-of endpoint descriptor, not includes bit[12:11] anymore, so use
-usb_endpoint_maxp_mult() instead.
-Meanwhile no need AND 0x7ff when get maxp, remove it.
+usb_endpoint_maxp() already returns actual max packet size, no need
+to AND 0x7ff.
 
-Fixes: 49db427232fe ("usb: gadget: Add UDC driver for tegra XUSB device mode controller")
-Cc: stable@vger.kernel.org
 Acked-by: Felipe Balbi <balbi@kernel.org>
 Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
 ---
-v3: fix invalid email format for stable
-v2:
-  add fixes, cc;
-  add acked-by felipe;
+v3: fix typo suggested by Sergei
+v2: add acked-by felipe
 ---
- drivers/usb/gadget/udc/tegra-xudc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ include/linux/usb/gadget.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/usb/gadget/udc/tegra-xudc.c b/drivers/usb/gadget/udc/tegra-xudc.c
-index a54d1cef17db..40a7417e7ae4 100644
---- a/drivers/usb/gadget/udc/tegra-xudc.c
-+++ b/drivers/usb/gadget/udc/tegra-xudc.c
-@@ -1610,7 +1610,7 @@ static void tegra_xudc_ep_context_setup(struct tegra_xudc_ep *ep)
- 	u16 maxpacket, maxburst = 0, esit = 0;
- 	u32 val;
+diff --git a/include/linux/usb/gadget.h b/include/linux/usb/gadget.h
+index 75c7538e350a..f181c84310b6 100644
+--- a/include/linux/usb/gadget.h
++++ b/include/linux/usb/gadget.h
+@@ -491,7 +491,7 @@ extern char *usb_get_gadget_udc_name(void);
+  */
+ static inline size_t usb_ep_align(struct usb_ep *ep, size_t len)
+ {
+-	int max_packet_size = (size_t)usb_endpoint_maxp(ep->desc) & 0x7ff;
++	int max_packet_size = (size_t)usb_endpoint_maxp(ep->desc);
  
--	maxpacket = usb_endpoint_maxp(desc) & 0x7ff;
-+	maxpacket = usb_endpoint_maxp(desc);
- 	if (xudc->gadget.speed == USB_SPEED_SUPER) {
- 		if (!usb_endpoint_xfer_control(desc))
- 			maxburst = comp_desc->bMaxBurst;
-@@ -1621,7 +1621,7 @@ static void tegra_xudc_ep_context_setup(struct tegra_xudc_ep *ep)
- 		   (usb_endpoint_xfer_int(desc) ||
- 		    usb_endpoint_xfer_isoc(desc))) {
- 		if (xudc->gadget.speed == USB_SPEED_HIGH) {
--			maxburst = (usb_endpoint_maxp(desc) >> 11) & 0x3;
-+			maxburst = usb_endpoint_maxp_mult(desc) - 1;
- 			if (maxburst == 0x3) {
- 				dev_warn(xudc->dev,
- 					 "invalid endpoint maxburst\n");
+ 	return round_up(len, max_packet_size);
+ }
 -- 
 2.18.0
 
