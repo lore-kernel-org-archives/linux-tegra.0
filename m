@@ -5,78 +5,72 @@ X-Spam-Level:
 X-Spam-Status: No, score=-20.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD0CDC4320A
-	for <linux-tegra@archiver.kernel.org>; Fri, 13 Aug 2021 16:22:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E781FC4338F
+	for <linux-tegra@archiver.kernel.org>; Fri, 13 Aug 2021 16:36:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C97AB610FD
-	for <linux-tegra@archiver.kernel.org>; Fri, 13 Aug 2021 16:22:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C5E8F60E9B
+	for <linux-tegra@archiver.kernel.org>; Fri, 13 Aug 2021 16:36:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233517AbhHMQWi (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 13 Aug 2021 12:22:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35126 "EHLO
+        id S235059AbhHMQgr (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 13 Aug 2021 12:36:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38532 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234368AbhHMQWh (ORCPT
+        with ESMTP id S233827AbhHMQgq (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 13 Aug 2021 12:22:37 -0400
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA680C0617AD
-        for <linux-tegra@vger.kernel.org>; Fri, 13 Aug 2021 09:22:10 -0700 (PDT)
-Received: by mail-wr1-x432.google.com with SMTP id q10so14062501wro.2
-        for <linux-tegra@vger.kernel.org>; Fri, 13 Aug 2021 09:22:10 -0700 (PDT)
+        Fri, 13 Aug 2021 12:36:46 -0400
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4CC1C061756
+        for <linux-tegra@vger.kernel.org>; Fri, 13 Aug 2021 09:36:19 -0700 (PDT)
+Received: by mail-wm1-x335.google.com with SMTP id g138so7246364wmg.4
+        for <linux-tegra@vger.kernel.org>; Fri, 13 Aug 2021 09:36:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=EwFtsY9WKlIQaf6vBR9fws+JXXBLzo++aqaXVjpQVqs=;
-        b=DNiMu6irbvG49ZtZ4LNvF4KVh8zmgPuzwVytqLq20G775Pc2kP8ZC/0z5yp4TRNXil
-         jBm7rdh6craWwVmCSwK7vp2QwX/lQjFUY2ZGhuvQrXH/DAlE2qiIb1aRTDDpLCdRQ64k
-         4UWkZPn+acvCzFokq1ySG+AayMA7sXstb5+rIaauMvUHc6XN52+UZiR3y+NowfS7IKDY
-         ljiknFIM6f50+qHK3sbrKDBQTB3zfKAVUEgXAyRT7CpOy9s8HAMbmiyfrEx+MzP+0u/y
-         hWtp9m3AJ+W7odsgokhfeCTKLemHlr/41hAsNn3hpTnsg1jv8IRX+9u1Tt0P4ajPFB/t
-         9z3g==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=k/unfGG7boShaQnBZTjeWb6L7ezxIs4AzIdOoHVH6Jk=;
+        b=SjbFbUpYtS+J0ujRt+A5RE1tIn5EziFk+gvUeGZC54fjSuGHHhgWfXe2mlnSIV6/Y1
+         KCQdYeIP86KGtEqzh73p3gLOm/8MgSwa+vhdtN2QMzh5TLbk4usG8iQXIR1CajztHr3X
+         Syzo0nbcCT9nSqS4OFRMwjKk7wDLbGeg6AkutdzRpWWp//9Qef6cFz+enrsaHto+znTC
+         5R4HKkJoKMrwg358k++rvrvXCLrPpp+251+rAerodX+w6FUME/YQPy1C7vlqMXuoDW7w
+         LJhcPePFk6a8xyoG33br5Zml+JfEKFRnLAs3MIYl7LyL7J8VZdczN6NTj2x+Y7z6RX0G
+         UPKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=EwFtsY9WKlIQaf6vBR9fws+JXXBLzo++aqaXVjpQVqs=;
-        b=qxdX5CH2rFPb0V7MCTpxPnG34tiYWil5MQg3Q71aLiqv/+r1r/Qi3YjyH/W2I3TEV3
-         XM9pGuLQNtqCdB5KRhcteA2aPToNqlS+iLyodsAumfodC265bac7m7rqCMZLYl4J/Mu/
-         K+0ER5fWzVbWLdwJqogNYbMvbpCKq6Dq9ARD131oxWQHb3Om42x8dj/mv2fZEkxevva+
-         ReFwiwNwMDy+kwaPKzF3xfR293n+T8zHREPyBKWDSImr3B/6EiL9uvSzhrYwYC4l5IxT
-         BZAtUN5NxJz8qvKyZ/6u/OgZiTuyMCTvPNR/N7yZ4CiXhlZOnB3bXHilzuaATwwlEgcz
-         qJMA==
-X-Gm-Message-State: AOAM530WtUZmo2+piN+qjPGKw1hUZmy+/XbNyvYlHjtMVaxVGGX20acM
-        iqcQrMEXWKRfaSo74QI5XpU=
-X-Google-Smtp-Source: ABdhPJwnOWfP+I35usYEUsx2VvRIg5MxLc+LvcRDXBfbgRrG4h5gDq9y0E9A+/gFBy3D1W0qwaVQTA==
-X-Received: by 2002:adf:e48d:: with SMTP id i13mr4253214wrm.288.1628871729461;
-        Fri, 13 Aug 2021 09:22:09 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=k/unfGG7boShaQnBZTjeWb6L7ezxIs4AzIdOoHVH6Jk=;
+        b=L5X3MVBRoCfWYHQxTwamCxI+q2Kjkbo9H6hl6FsSh1nosFAVW9yqkIeQnTBrguai58
+         oGtYW7diXRhvMH+/ocOdG0i2BNScFNkf944HCCDnPXVKwTsTg8o1kpsXsDU6iwGoqUFT
+         mT0emPP1GkWPfvn3/4EB28rDq0MRu+Be7QogSmz2CwbvJCbc0jzy8n1tvNoDZeV4IF5G
+         EGWk+QAax+raI2o2yT9EbEp1G3iKrX/0v7+J9hAULmZsFPr53I0FmgokREFp7kGKd3zd
+         77q/VA5v1GiGb2OATZ7ftPZTI/7U5gDS82qU6bOa6bg9S13m7I577zPEtrRsMTx4NK14
+         TXSQ==
+X-Gm-Message-State: AOAM531eHrh6z1BRoOJdSUayHALFjO+LNf52k4GM6Uz4v6mvz3zoBbnL
+        ciZ/sjCFzg82U8d5A3x0uxlGnzuxB/k=
+X-Google-Smtp-Source: ABdhPJwHdWd/8g3Q0zoWVubbkpRNTmluDdpLphAT3vZh35G0CtGsmCLit025TiZHZTSRRjAESv3H7g==
+X-Received: by 2002:a1c:7515:: with SMTP id o21mr3566110wmc.150.1628872578279;
+        Fri, 13 Aug 2021 09:36:18 -0700 (PDT)
 Received: from localhost ([217.111.27.204])
-        by smtp.gmail.com with ESMTPSA id y19sm1993919wmq.5.2021.08.13.09.22.08
+        by smtp.gmail.com with ESMTPSA id s12sm2099923wru.41.2021.08.13.09.36.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Aug 2021 09:22:08 -0700 (PDT)
+        Fri, 13 Aug 2021 09:36:17 -0700 (PDT)
 From:   Thierry Reding <thierry.reding@gmail.com>
-List-Id: <soc.lore.kernel.org>
-To:     arm@kernel.org, soc@kernel.org
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [GIT PULL 6/6] arm64: tegra: Device tree changes for v5.15-rc1
-Date:   Fri, 13 Aug 2021 18:21:57 +0200
-Message-Id: <20210813162157.2820913-6-thierry.reding@gmail.com>
+To:     Dave Airlie <airlied@gmail.com>
+Cc:     dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
+Subject: [GIT PULL] drm/tegra: Changes for v5.15-rc1
+Date:   Fri, 13 Aug 2021 18:36:16 +0200
+Message-Id: <20210813163616.2822355-1-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20210813162157.2820913-1-thierry.reding@gmail.com>
-References: <20210813162157.2820913-1-thierry.reding@gmail.com>
-Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi ARM SoC maintainers,
+Hi Dave,
 
 The following changes since commit e73f0f0ee7541171d89f2e2491130c7771ba58d3:
 
@@ -84,39 +78,107 @@ The following changes since commit e73f0f0ee7541171d89f2e2491130c7771ba58d3:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.15-arm64-dt
+  ssh://git.freedesktop.org/git/tegra/linux.git tags/drm/tegra/for-5.15-rc1
 
-for you to fetch changes up to f865d0292ff3c0ca09414436510eb4c815815509:
+for you to fetch changes up to fed0289394173509b3150617e17739d0094ce88e:
 
-  arm64: tegra: Fix compatible string for Tegra132 CPUs (2021-08-13 18:01:01 +0200)
+  gpu: host1x: debug: Dump DMASTART and DMAEND register (2021-08-13 18:23:32 +0200)
+
+Once you've merged these I plan to push the libdrm changes which are
+going to use this new ABI and which also contain some basic sanity tests
+that we want to start running for regression testing.
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-arm64: tegra: Device tree changes for v5.15-rc1
+drm/tegra: Changes for v5.15-rc1
 
-Contains a couple of fixes across the board and adds support for the
-recently released NVIDIA Jetson TX2 NX Developer Kit.
+The bulk of these changes is a more modern ABI that can be efficiently
+used on newer SoCs as well as older ones. The userspace parts for this
+are available here:
+
+  - libdrm support: https://gitlab.freedesktop.org/tagr/drm/-/commits/drm-tegra-uabi-v8
+  - VAAPI driver: https://github.com/cyndis/vaapi-tegra-driver
+
+In addition, existing userspace from the grate reverse-engineering
+project has been updated to use this new ABI:
+
+  - X11 driver: https://github.com/grate-driver/xf86-video-opentegra
+  - 3D driver: https://github.com/grate-driver/grate
+
+Other than that, there's also support for display memory bandwidth
+management for various generations and a bit of cleanup.
 
 ----------------------------------------------------------------
-Dmitry Osipenko (1):
-      arm64: tegra194: p2888: Correct interrupt trigger type of temperature sensor
+Dmitry Osipenko (2):
+      drm/tegra: dc: Support memory bandwidth management
+      drm/tegra: dc: Extend debug stats with total number of events
 
-Thierry Reding (4):
-      arm64: tegra: Add PWM nodes on Tegra186
-      arm64: tegra: Add NVIDIA Jetson TX2 NX Developer Kit support
-      arm64: tegra: Add missing interconnects property for USB on Tegra186
-      arm64: tegra: Fix compatible string for Tegra132 CPUs
+Mikko Perttunen (15):
+      gpu: host1x: Add DMA fence implementation
+      gpu: host1x: Add no-recovery mode
+      gpu: host1x: Add job release callback
+      gpu: host1x: Add support for syncpoint waits in CDMA pushbuffer
+      gpu: host1x: Add option to skip firewall for a job
+      drm/tegra: Extract tegra_gem_lookup()
+      drm/tegra: Add new UAPI to header
+      drm/tegra: Boot VIC during runtime PM resume
+      drm/tegra: Allocate per-engine channel in core code
+      drm/tegra: Implement new UAPI
+      drm/tegra: Implement syncpoint management UAPI
+      drm/tegra: Implement syncpoint wait UAPI
+      drm/tegra: Implement job submission part of new UAPI
+      drm/tegra: Add job firewall
+      drm/tegra: Bump driver version
 
-Vidya Sagar (1):
-      arm64: tegra: Fix Tegra194 PCIe EP compatible string
+Thierry Reding (3):
+      gpu: host1x: debug: Use dma_addr_t more consistently
+      gpu: host1x: debug: Dump only relevant parts of CDMA push buffer
+      gpu: host1x: debug: Dump DMASTART and DMAEND register
 
- arch/arm64/boot/dts/nvidia/Makefile                |   1 +
- arch/arm64/boot/dts/nvidia/tegra132.dtsi           |   4 +-
- .../dts/nvidia/tegra186-p3509-0000+p3636-0001.dts  | 718 +++++++++++++++++++++
- arch/arm64/boot/dts/nvidia/tegra186.dtsi           |  91 +++
- arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi     |   2 +-
- arch/arm64/boot/dts/nvidia/tegra194.dtsi           |   6 +-
- 6 files changed, 816 insertions(+), 6 deletions(-)
- create mode 100644 arch/arm64/boot/dts/nvidia/tegra186-p3509-0000+p3636-0001.dts
+ drivers/gpu/drm/tegra/Kconfig              |   1 +
+ drivers/gpu/drm/tegra/Makefile             |   3 +
+ drivers/gpu/drm/tegra/dc.c                 | 358 ++++++++++++++++-
+ drivers/gpu/drm/tegra/dc.h                 |  17 +
+ drivers/gpu/drm/tegra/drm.c                |  98 +++--
+ drivers/gpu/drm/tegra/drm.h                |  12 +
+ drivers/gpu/drm/tegra/firewall.c           | 254 ++++++++++++
+ drivers/gpu/drm/tegra/gem.c                |  13 +
+ drivers/gpu/drm/tegra/gem.h                |   2 +
+ drivers/gpu/drm/tegra/plane.c              | 117 ++++++
+ drivers/gpu/drm/tegra/plane.h              |  16 +
+ drivers/gpu/drm/tegra/submit.c             | 625 +++++++++++++++++++++++++++++
+ drivers/gpu/drm/tegra/submit.h             |  21 +
+ drivers/gpu/drm/tegra/uapi.c               | 338 ++++++++++++++++
+ drivers/gpu/drm/tegra/uapi.h               |  58 +++
+ drivers/gpu/drm/tegra/vic.c                | 112 +++---
+ drivers/gpu/host1x/Makefile                |   1 +
+ drivers/gpu/host1x/cdma.c                  |  58 ++-
+ drivers/gpu/host1x/fence.c                 | 168 ++++++++
+ drivers/gpu/host1x/fence.h                 |  13 +
+ drivers/gpu/host1x/hw/channel_hw.c         |  87 +++-
+ drivers/gpu/host1x/hw/debug_hw.c           |  32 +-
+ drivers/gpu/host1x/hw/debug_hw_1x01.c      |   8 +-
+ drivers/gpu/host1x/hw/debug_hw_1x06.c      |  16 +-
+ drivers/gpu/host1x/hw/hw_host1x02_uclass.h |  12 +
+ drivers/gpu/host1x/hw/hw_host1x04_uclass.h |  12 +
+ drivers/gpu/host1x/hw/hw_host1x05_uclass.h |  12 +
+ drivers/gpu/host1x/hw/hw_host1x06_uclass.h |  12 +
+ drivers/gpu/host1x/hw/hw_host1x07_uclass.h |  12 +
+ drivers/gpu/host1x/intr.c                  |   9 +
+ drivers/gpu/host1x/intr.h                  |   2 +
+ drivers/gpu/host1x/job.c                   |  98 +++--
+ drivers/gpu/host1x/job.h                   |  16 +
+ drivers/gpu/host1x/syncpt.c                |   2 +
+ drivers/gpu/host1x/syncpt.h                |  12 +
+ include/linux/host1x.h                     |  27 +-
+ include/uapi/drm/tegra_drm.h               | 425 ++++++++++++++++++--
+ 37 files changed, 2882 insertions(+), 197 deletions(-)
+ create mode 100644 drivers/gpu/drm/tegra/firewall.c
+ create mode 100644 drivers/gpu/drm/tegra/submit.c
+ create mode 100644 drivers/gpu/drm/tegra/submit.h
+ create mode 100644 drivers/gpu/drm/tegra/uapi.c
+ create mode 100644 drivers/gpu/drm/tegra/uapi.h
+ create mode 100644 drivers/gpu/host1x/fence.c
+ create mode 100644 drivers/gpu/host1x/fence.h
