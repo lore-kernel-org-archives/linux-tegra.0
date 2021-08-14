@@ -2,107 +2,95 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FB1EC4338F
-	for <linux-tegra@archiver.kernel.org>; Sat, 14 Aug 2021 13:45:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91A74C4338F
+	for <linux-tegra@archiver.kernel.org>; Sat, 14 Aug 2021 20:12:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D7CE860F48
-	for <linux-tegra@archiver.kernel.org>; Sat, 14 Aug 2021 13:45:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 703A260F9F
+	for <linux-tegra@archiver.kernel.org>; Sat, 14 Aug 2021 20:12:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234281AbhHNNqP (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 14 Aug 2021 09:46:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38944 "EHLO
+        id S232930AbhHNUNA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 14 Aug 2021 16:13:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39518 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229974AbhHNNqO (ORCPT
+        with ESMTP id S232602AbhHNUM6 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sat, 14 Aug 2021 09:46:14 -0400
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE622C061764;
-        Sat, 14 Aug 2021 06:45:45 -0700 (PDT)
-Received: by mail-lf1-x12e.google.com with SMTP id x27so25427731lfu.5;
-        Sat, 14 Aug 2021 06:45:45 -0700 (PDT)
+        Sat, 14 Aug 2021 16:12:58 -0400
+Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E877DC061764;
+        Sat, 14 Aug 2021 13:12:29 -0700 (PDT)
+Received: by mail-pj1-x1036.google.com with SMTP id nt11so20455619pjb.2;
+        Sat, 14 Aug 2021 13:12:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=a7ih3Ugr+LdH4vNrW5pl7goeomz6g/rG+9i20GBpsA0=;
-        b=ftd5lAhuQQOBUq+IRvbwAVyohLpNhHTDwDGeba1phOLDwYzp6DfgwXjqyzOOa4QSHs
-         28SzgiQjn4SkwPekOMa5N5OXqFnAThklIFNIk/tn8n9k+Ur6QCom2CUGhRvwnFSLj2pM
-         NmyfdgswrsKGiGmoLu2jH9QETcs9lFnOw3EIxwMPJEOVppVlhrvwukVDpGvavK5KWGOM
-         4hcxkoSknLph6kPva/NZKfhuZykMngzXzR/OI2ejD9Ey7eR3SbRwgdeNiEKoyuY11IY4
-         f1J0azPtg/3e5xyQpgcdyZ2Sar+EKruZneoSXEhBq8pvUMe+PBTRYFWDkQrO28iCCExR
-         s+9g==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=hsd/ckMYl0h9h4jIiEx92sH2iR7qjMVLa0hXRt73XIQ=;
+        b=kmjgE7HU3T7J012XGbvMCrPkrv8tz31/1bn7xqZnje0fVFpSCSwkJfsTbUrMFvOtSV
+         2OSh/1bQViMGnQnOORcR193kJ/eZa5J/YnM1HEkAEMya6chOXLYWYx+Au0X4i1oVDMlW
+         XFxuYCLTSZ1vL0BXPTDgUTA42Mbf/p40tIk9kxtqm4GjvY2GzWTz6l/Hb0pHM32pfgKW
+         Ftty0BCtKttobkgqnfoSKDZnEe1RCLCDWMUvuPWqDq7ueXb8x5l+ZEUOF92mAaFX4cbS
+         UlYbKHKoanVm38K9TnHfk7bJxkyljmuJrenE1yqNg2EVYy4VeaK1TbCCe0IFK0yrgnHO
+         ftrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=a7ih3Ugr+LdH4vNrW5pl7goeomz6g/rG+9i20GBpsA0=;
-        b=cy8ZcoE7ezm5+z0/Xi+p4mB5W4Isp852cNoYRqo5ihKMkJS3gCwUcESMnIowqMswP4
-         TdOeiKP8hZTLM7b5W1LQKAe+27/HgcrstUHrb0WYTPTVpDxfw8gZ8oSnQjS1w13wLdQQ
-         rcZlzqFvbB9HSBeIjsz8gdANXiVvCMd1JFRjv5C5KrTF8H1l4yepdWUALnM/nMREprl4
-         6rXleQnB+/9DkLqviYM04EwP/23MNhlJq3k4QydqU9lfxnXCh/As3xnbOrjojqlRyfsq
-         DvmxCsJjqVa1/TTv3T32V7cczpRUYGHvY3/sJO68ZHqE0gJVLYKtn7Ft+Qy6sM8LzKU5
-         YO7A==
-X-Gm-Message-State: AOAM530zbqfk7aunBzX5oFJ81j8jE7aSOHRlffp85OFI9HdsaLRImjeD
-        aDlcWfXVF9+h4RTxVXKVnZy3MUX2cdU=
-X-Google-Smtp-Source: ABdhPJxvQHlYAKv77KEMcXdT1XGKk7zadvDQOTW2/xSLT0/jZhb2jYoFVwya11JegyHBUF2ksbMGrw==
-X-Received: by 2002:a05:6512:3c8f:: with SMTP id h15mr5368079lfv.440.1628948744181;
-        Sat, 14 Aug 2021 06:45:44 -0700 (PDT)
-Received: from [192.168.2.145] (46-138-117-53.dynamic.spd-mgts.ru. [46.138.117.53])
-        by smtp.googlemail.com with ESMTPSA id y11sm421460lfh.185.2021.08.14.06.45.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 14 Aug 2021 06:45:43 -0700 (PDT)
-Subject: Re: [PATCH v1 2/2] cpuidle: tegra: Check whether PMC is ready
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        bh=hsd/ckMYl0h9h4jIiEx92sH2iR7qjMVLa0hXRt73XIQ=;
+        b=HRAm2KsjrQFIbWuwGNg/jcNs1qs+QUQvWMMfdcU8xShNwJ9HGOBr+yR1larZi9NKBr
+         +dXaUxkMq87tYjx1fq0lLIEhOTdG389mdtkcZC49xMu+vRzZ+nuXeia1KAlvWaTP/WjD
+         AqAKWsJj2kJnf8yhwP6qVKR/1BBnqegUIBiJlHm2P5ZqkUU67ABaKs3a8mJfhrwxcgPY
+         HLW5ei9WgNoZ/8HDf93amjhV+eZJIRc6mOAP3Sh38B18pGYEmA7Ba2fUWfKfIolDR32M
+         2Id4GIuLnFsJQbmSG2j6A7PnuuqQ+VkgdSNDY2JBhcS4TkG/UF8JTbWabdbrnsW6/0Rj
+         xcoQ==
+X-Gm-Message-State: AOAM531/7itSX53DVqrVVIwVOJ0L3nVWC9dR5pwh9BRBcdYRXWLnk/Ak
+        z4y07Wbs4s4O8dszOVb2a1Y=
+X-Google-Smtp-Source: ABdhPJz4l8mdY/4NyQt+T0jscuDbRR0RflmAVmg27o5W1IKFkPgFSYkucKQaGdM4avAmmadZiZ8xSw==
+X-Received: by 2002:a17:90b:104b:: with SMTP id gq11mr8722676pjb.64.1628971949451;
+        Sat, 14 Aug 2021 13:12:29 -0700 (PDT)
+Received: from xps.yggdrasil ([49.207.137.16])
+        by smtp.gmail.com with ESMTPSA id u6sm7309420pgr.3.2021.08.14.13.12.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 14 Aug 2021 13:12:28 -0700 (PDT)
+From:   Aakash Hemadri <aakashhemadri123@gmail.com>
+To:     Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>
+Cc:     Takashi Iwai <tiwai@suse.com>, Jawoslav Kysela <perex@perex.cz>,
         Thierry Reding <thierry.reding@gmail.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc:     Jonathan Hunter <jonathanh@nvidia.com>, linux-pm@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20210718212706.21659-1-digetx@gmail.com>
- <20210718212706.21659-3-digetx@gmail.com> <YROdQXO4aVLQ8DkP@orome.fritz.box>
- <8d61d4d5-8e4b-5c18-923c-eceb954e8d5d@linaro.org>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <8f22c97d-63f7-6d2a-7b1e-92b0b80a5275@gmail.com>
-Date:   Sat, 14 Aug 2021 16:45:42 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Bjorn Helgaas <bjorn@helgaas.com>
+Subject: [PATCH 0/2] ASoC: tegra: Use of_device_get_match_data
+Date:   Sun, 15 Aug 2021 01:42:17 +0530
+Message-Id: <cover.1628971397.git.aakashhemadri123@gmail.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-In-Reply-To: <8d61d4d5-8e4b-5c18-923c-eceb954e8d5d@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-14.08.2021 13:37, Daniel Lezcano пишет:
-> On 11/08/2021 11:49, Thierry Reding wrote:
->> On Mon, Jul 19, 2021 at 12:27:06AM +0300, Dmitry Osipenko wrote:
->>> Check whether PMC is ready before proceeding with the cpuidle registration.
->>> This fixes racing with the PMC driver probe order, which results in a
->>> disabled deepest CC6 idling state if cpuidle driver is probed before the
->>> PMC.
->>>
->>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>> ---
->>>  drivers/cpuidle/cpuidle-tegra.c | 3 +++
->>>  1 file changed, 3 insertions(+)
->>
->> Rafael, Daniel,
->>
->> would you mind if I took this into the Tegra tree? It's got a dependency
->> on the PMC driver, which usually goes via the Tegra tree already, and
->> there's nothing cpuidle-specific in here, it's all Tegra-specific
->> integration quirks.
-> 
-> Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Hi,
+	Prefer `of_device_get_match_data` over `of_match_device`. This patch
+replaces of_match_device with of_device_get_match_data.
 
-I got another thought about how it could be solved. We could move the
-creation of the cpuidle platform device into the PMC driver. Thierry,
-what do you think?
+This patch series will apply cleanly on for-next
+
+Aakash Hemadri (2):
+  ASoC: tegra30: ahub: Use of_device_get_match_data
+  ASoC: tegra30: i2s: Use of_device_get_match_data
+
+ sound/soc/tegra/tegra30_ahub.c | 2 +-
+ sound/soc/tegra/tegra30_i2s.c  | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+-- 
+2.32.0
+
