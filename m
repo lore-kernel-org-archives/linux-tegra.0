@@ -2,107 +2,106 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ED9EC432BE
-	for <linux-tegra@archiver.kernel.org>; Sat, 14 Aug 2021 20:12:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 240C6C4338F
+	for <linux-tegra@archiver.kernel.org>; Sun, 15 Aug 2021 07:24:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 291F560EAF
-	for <linux-tegra@archiver.kernel.org>; Sat, 14 Aug 2021 20:12:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 061D360F46
+	for <linux-tegra@archiver.kernel.org>; Sun, 15 Aug 2021 07:24:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233391AbhHNUNL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 14 Aug 2021 16:13:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39552 "EHLO
+        id S236043AbhHOHZO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 15 Aug 2021 03:25:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45420 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233250AbhHNUND (ORCPT
+        with ESMTP id S235808AbhHOHZN (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sat, 14 Aug 2021 16:13:03 -0400
-Received: from mail-pl1-x62f.google.com (mail-pl1-x62f.google.com [IPv6:2607:f8b0:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6684C0613CF;
-        Sat, 14 Aug 2021 13:12:33 -0700 (PDT)
-Received: by mail-pl1-x62f.google.com with SMTP id a20so16267283plm.0;
-        Sat, 14 Aug 2021 13:12:33 -0700 (PDT)
+        Sun, 15 Aug 2021 03:25:13 -0400
+Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EB89C061764;
+        Sun, 15 Aug 2021 00:24:44 -0700 (PDT)
+Received: by mail-pj1-x1034.google.com with SMTP id gz13-20020a17090b0ecdb0290178c0e0ce8bso16074835pjb.1;
+        Sun, 15 Aug 2021 00:24:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=r7fFFu/BvwqmhomKLq6d7HbwgBUteESf+Ymi2dOxs6A=;
-        b=TWfjWcGJ171Q7ErtMyT3b7xDskqwjeOcH3Ctict/2YtewtMPFRd9MgWWLPBQWDSU1a
-         iydcCHjbZ0YlC9ObYLKxUPxobJTPka9F8xviffsg8BTHZf6gfdKR+8VWxYegFYGtX7RU
-         U24omsL8HeV7FxaP18a2OUiEz5LW/XoyaFsX72aJMisrEtDrNP/inrbWNrhwrZLRgtev
-         j3pFF1o7N5Q9v3ELMXwcuM/vbDG+rPDGQP5LmVsP69HmCPwkI0caGyFMlU6NxyxSqhSl
-         eQqsof2tshXmojeUXFGnBbrpdWMJ+BFwc31NJMUzwd1ZCgkmIfBnBUXwuWJKp0369v7r
-         fusg==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=JJDOH+AsHu2AM+5trq9kiKo9CgyK57KxYI3IwWvbE3M=;
+        b=RKVBuxnf6xQR/pSKO2SpOS4Lo6yWbvzYlN2vrYeM3uoUInGkiTdUEcKTamCVloy6Iu
+         ZA9Exggoimx2UOW0KErLqGMmY0WkwWINOzzwidewuOoNoGSp8vQ+H965y14rWqUP1szV
+         YeHPCkKyFA1Cl9AfjlNiFM2Y66k+g0E5jwTXCdyfpfmn7AZfhiNX69hX4MzurMx1p7UB
+         jO1cDfd2BiMw06dGq0kLS6mxxwXvdMt8BI02AdSUlo/GRsgMQr01g81S7i605nNOB+B3
+         v4euFQpY/eX/sBO6CwpOVDqdKZaccw1UyGOi8jqbIzdgr94kaIeDcnVnsHAcUIs8sjBR
+         qOpw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=r7fFFu/BvwqmhomKLq6d7HbwgBUteESf+Ymi2dOxs6A=;
-        b=gX8HUwPLy0cT7O+pdcwhc1liEwb/jtBE9Bn0nWHZJT1MeqNyokeVNwJiBtAY+GusFM
-         /znfIhS/UdMOWiKYYnZYtV7ehKWyIZU0Mwsx2fk8x954mXhEzHrYJHSppP0NIw3PBR4r
-         g9CPGXNeNaViPro3kageauzrMCS0Q6ttUNck8Os3oIAMYhUHcsVluj9m792oORdZDmHc
-         kAB8vbGRNc3TYC4iOCRMaFMMoER7HqPVpw/bH5tvHQLt3ZUPg0wqyDM0LnL8ZlFIejQN
-         1CYpvPZZHz97WLvCsBgfmGg51U8j9o8Zz2udp+CZeIU5dlHh8/BsyCf1Aveq15sUTn7s
-         GJCg==
-X-Gm-Message-State: AOAM532lIKvrQyttdNjbq+XGpRpraeDZ9aCfXJPEsexOw13SOpGlVr0+
-        m5CDPJny3XgagfOi0olw8Fg=
-X-Google-Smtp-Source: ABdhPJz35Vbq7h6gBPRvLj5w3YPBueKBwz1qlYxtdKhgU93TBD+T428iIStizGGqrAHm1EsQUPxBTQ==
-X-Received: by 2002:a17:90a:f186:: with SMTP id bv6mr8907473pjb.231.1628971953301;
-        Sat, 14 Aug 2021 13:12:33 -0700 (PDT)
-Received: from xps.yggdrasil ([49.207.137.16])
-        by smtp.gmail.com with ESMTPSA id u6sm7309420pgr.3.2021.08.14.13.12.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 14 Aug 2021 13:12:32 -0700 (PDT)
-From:   Aakash Hemadri <aakashhemadri123@gmail.com>
-To:     Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>
-Cc:     Takashi Iwai <tiwai@suse.com>, Jawoslav Kysela <perex@perex.cz>,
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=JJDOH+AsHu2AM+5trq9kiKo9CgyK57KxYI3IwWvbE3M=;
+        b=PIV9MZmkHIhmC3WEB0FWPiYgNwADZ6j47XWy1ccPHjuvQZfcDDtmeANCevBv5WM9iT
+         xbjVwkPNK4c65loZ48/dMJL7zga3aCPMHXw8QEMmnxYvc+KUNeBIHxQY5a3Sl/8LeYAx
+         8h6FBpEtrIVSgC+cpjM9uTrkC8p8tZhcI1garjshiwY6RHeFDdlpwJ61kFK1MvabfHrE
+         8NbApabNzjgiBqpNV/p4u/xKbwD/gg1dXEfWaJyMlJx1qdyxHIdvXa4myJJMw6K0Pv83
+         83ch/xikHg4mWomCbMEAtQ5KOuRQbRKJdbBPKySXh4P6Fk7r+oa8zJhAdkL6nIKfxbvn
+         wbzQ==
+X-Gm-Message-State: AOAM531KVS9U+5VpVxhjROVgtytaiYhzteY4D/R+z8bb3suxnUUpbrTZ
+        EAERY+kDmLZ6FpsBPS2/AUA=
+X-Google-Smtp-Source: ABdhPJzq7sSAhv3mhPPXmyKVf5x9azgnIMZToYUs9eoJVEO0q/kFfEa3Yd9UMtVPm1x4oAezGGF8aw==
+X-Received: by 2002:a17:90b:14b:: with SMTP id em11mr10845400pjb.125.1629012283879;
+        Sun, 15 Aug 2021 00:24:43 -0700 (PDT)
+Received: from [10.230.32.65] ([192.19.148.250])
+        by smtp.gmail.com with ESMTPSA id 16sm7337825pfu.109.2021.08.15.00.24.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 15 Aug 2021 00:24:43 -0700 (PDT)
+Subject: Re: [PATCH v3 6/7] usb: gadget: bdc: remove unnecessary AND operation
+ when get ep maxp
+To:     Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Felipe Balbi <balbi@kernel.org>
+Cc:     Pawel Laszczak <pawell@cadence.com>,
+        Al Cooper <alcooperx@gmail.com>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Bjorn Helgaas <bjorn@helgaas.com>
-Subject: [PATCH 1/2] ASoC: tegra30: ahub: Use of_device_get_match_data
-Date:   Sun, 15 Aug 2021 01:42:18 +0530
-Message-Id: <e568d621c9c05ee23732a6a6f9e3606a780b1707.1628971397.git.aakashhemadri123@gmail.com>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <cover.1628971397.git.aakashhemadri123@gmail.com>
-References: <cover.1628971397.git.aakashhemadri123@gmail.com>
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Yang Yingliang <yangyingliang@huawei.com>,
+        Rikard Falkeborn <rikard.falkeborn@gmail.com>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com, linux-tegra@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        Eddie Hung <eddie.hung@mediatek.com>,
+        Sergei Shtylyov <sergei.shtylyov@gmail.com>
+References: <1628836253-7432-1-git-send-email-chunfeng.yun@mediatek.com>
+ <1628836253-7432-6-git-send-email-chunfeng.yun@mediatek.com>
+From:   Florian Fainelli <f.fainelli@gmail.com>
+Message-ID: <e191402f-69e1-2fb5-f5e1-6fd73e8b0699@gmail.com>
+Date:   Sun, 15 Aug 2021 09:24:24 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1628836253-7432-6-git-send-email-chunfeng.yun@mediatek.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Prefer `of_device_get_match_data` over `of_match_device`
 
-Retrieve OF match data using `of_device_get_match_data`, this is cleaner
-and better expresses intent.
 
-Signed-off-by: Aakash Hemadri <aakashhemadri123@gmail.com>
----
- sound/soc/tegra/tegra30_ahub.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 8/13/2021 8:30 AM, Chunfeng Yun wrote:
+> usb_endpoint_maxp() already returns actual max packet size, no need
+> to AND 0x7ff.
+> 
+> Acked-by: Felipe Balbi <balbi@kernel.org>
+> Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
 
-diff --git a/sound/soc/tegra/tegra30_ahub.c b/sound/soc/tegra/tegra30_ahub.c
-index b3e1df693381..0ac109b32329 100644
---- a/sound/soc/tegra/tegra30_ahub.c
-+++ b/sound/soc/tegra/tegra30_ahub.c
-@@ -518,7 +518,7 @@ static int tegra30_ahub_probe(struct platform_device *pdev)
- 	void __iomem *regs_apbif, *regs_ahub;
- 	int ret = 0;
- 
--	match = of_match_device(tegra30_ahub_of_match, &pdev->dev);
-+	match = of_device_get_match_data(&pdev->dev);
- 	if (!match)
- 		return -EINVAL;
- 	soc_data = match->data;
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
 -- 
-2.32.0
-
+Florian
