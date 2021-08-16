@@ -2,118 +2,98 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3532C4320A
-	for <linux-tegra@archiver.kernel.org>; Mon, 16 Aug 2021 16:22:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 217CAC4338F
+	for <linux-tegra@archiver.kernel.org>; Mon, 16 Aug 2021 17:05:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 877D060FC3
-	for <linux-tegra@archiver.kernel.org>; Mon, 16 Aug 2021 16:22:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0615660F58
+	for <linux-tegra@archiver.kernel.org>; Mon, 16 Aug 2021 17:05:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229833AbhHPQWn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 16 Aug 2021 12:22:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34934 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229542AbhHPQWm (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 16 Aug 2021 12:22:42 -0400
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 364A9C061764;
-        Mon, 16 Aug 2021 09:22:11 -0700 (PDT)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: sre)
-        with ESMTPSA id 86B9B1F412B4
-Received: by earth.universe (Postfix, from userid 1000)
-        id B35603C0C9B; Mon, 16 Aug 2021 18:22:07 +0200 (CEST)
-Date:   Mon, 16 Aug 2021 18:22:07 +0200
-From:   Sebastian Reichel <sebastian.reichel@collabora.com>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Thierry Reding <treding@nvidia.com>,
+        id S229587AbhHPRFl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 16 Aug 2021 13:05:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58138 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229761AbhHPRFk (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 16 Aug 2021 13:05:40 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 206CC60E76;
+        Mon, 16 Aug 2021 17:05:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1629133508;
+        bh=RrPpirxSrKSMhGZJ+QCIH5ubgH4kZX6FvSaNS2s3bXQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=inuI2C2jITpMS8AKBKtJoXTf2zBpon/qSOFvDvMFs9vw9YUxzFHKdDaKaHPn5Qqeh
+         RNBlEGqXdKULxwF2io8nQwSMfq59mOLIGKazvnA6NJqGafauTdoQnyB8XzM/YGyYzD
+         K2QvcSVxWZC2re7K7KmlWLXE6jms0bxjyFVTcOBJgPXTOrHKGESRItexrbXUDyqpw6
+         U9L/R0OqjEfux9335576InPpj9BdcZaeYQ4BYHaSG4IiYP8YeWMLV+0pbxXUdCOCou
+         COvEWGf06XG9WmU77ipHafHzgWNHgAZIECGmsZCEayGWLuz1rdddf1eUbrW+YYOJ9i
+         aKl57NGa3PIpw==
+From:   Mark Brown <broonie@kernel.org>
+To:     Liam Girdwood <lgirdwood@gmail.com>,
+        Aakash Hemadri <aakashhemadri123@gmail.com>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.com>,
+        linux-tegra@vger.kernel.org, Bjorn Helgaas <bjorn@helgaas.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Mark Brown <broonie@kernel.org>,
-        Peter Chen <peter.chen@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Felipe Balbi <balbi@kernel.org>,
-        David Heidelberg <david@ixit.cz>, devicetree@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v6 05/12] dt-bindings: power: supply: smb347-charger:
- Document USB VBUS regulator
-Message-ID: <20210816162207.v4ka4vtuajf5jpb6@earth.universe>
-References: <20210731173842.19643-1-digetx@gmail.com>
- <20210731173842.19643-6-digetx@gmail.com>
- <20210806211314.sfjl5jke27hz3jj7@earth.universe>
- <dce19bb0-216e-bcd7-3db5-b2c074b4ca47@gmail.com>
+        Jawoslav Kysela <perex@perex.cz>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] ASoC: tegra: Use of_device_get_match_data
+Date:   Mon, 16 Aug 2021 18:04:40 +0100
+Message-Id: <162913223312.13582.10888100799475599538.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <cover.1628971397.git.aakashhemadri123@gmail.com>
+References: <cover.1628971397.git.aakashhemadri123@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="erjfwqt7yl2kd7cr"
-Content-Disposition: inline
-In-Reply-To: <dce19bb0-216e-bcd7-3db5-b2c074b4ca47@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On Sun, 15 Aug 2021 01:42:17 +0530, Aakash Hemadri wrote:
+> 	Prefer `of_device_get_match_data` over `of_match_device`. This patch
+> replaces of_match_device with of_device_get_match_data.
+> 
+> This patch series will apply cleanly on for-next
+> 
+> Aakash Hemadri (2):
+>   ASoC: tegra30: ahub: Use of_device_get_match_data
+>   ASoC: tegra30: i2s: Use of_device_get_match_data
+> 
+> [...]
 
---erjfwqt7yl2kd7cr
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Applied to
 
-Hi,
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-On Mon, Aug 16, 2021 at 06:39:09PM +0300, Dmitry Osipenko wrote:
-> 07.08.2021 00:13, Sebastian Reichel =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > Hi,
-> >=20
-> > On Sat, Jul 31, 2021 at 08:38:35PM +0300, Dmitry Osipenko wrote:
-> >> SMB347 can supply power to USB VBUS, which is required by OTG-cable
-> >> devices that want to switch USB port into the host mode. Add USB VBUS
-> >> regulator properties.
-> >>
-> >> Reviewed-by: Rob Herring <robh@kernel.org>
-> >> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> >> ---
-> >=20
-> > Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.com>
->=20
-> Sebastian, you can pick up these patches into the power tree:
->=20
-> dt-bindings: power: supply: smb347-charger: Document USB VBUS
-> regulator
-> power: supply: smb347-charger: Make smb347_set_writable() IRQ-safe
-> power: supply: smb347-charger: Utilize generic regmap caching
-> power: supply: smb347-charger: Add missing pin control activation
-> power: supply: smb347-charger: Implement USB VBUS regulator
->=20
-> The reset of the patches could go via the Tegra tree. It's probably a
-> bit too late for the Tegra patches since Thierry already made 5.15 PR,
-> but should be fine for the power. Thanks in advance!
+Thanks!
 
-Queued now.
+[1/2] ASoC: tegra30: ahub: Use of_device_get_match_data
+      commit: 80165bb8043391f4ef4916bde947a4d805a54aa6
+[2/2] ASoC: tegra30: i2s: Use of_device_get_match_data
+      commit: 356b94a32a75203616e5a7c3cd2b19101bc87086
 
--- Sebastian
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
---erjfwqt7yl2kd7cr
-Content-Type: application/pgp-signature; name="signature.asc"
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
------BEGIN PGP SIGNATURE-----
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmEakJ8ACgkQ2O7X88g7
-+ppCOA//Uim7ycc5jXS9N7YcXL7DOj+86gG/dde8tv/tLAtvEWcyZvRNsJqO/P4q
-jF8rSsiOytZ6PZi7swIU+/lBUIs2sVAY55+GGFAxMAf8ZVWu4b0hUHiMdrCAL3BZ
-CCRP5NNT8HNQOetJ5Xt8zjpiBCZFy5OXim+F+JQF8w9H23co7DS1Fx2IjWJwulAF
-5uwxEB5Hy9FxosI97g7LFKR37Qe2NwNNSxW3q9wDRqNri5HP64frhOut/tT6Wnmn
-t1S1WD9m/JsP1QA9cofXKKF9enhXCdzLnDEWUqcZZol3cDm+LGsMdAnHCPmcsfJ+
-iQpIXtJec6je5pPQpd9nbS/UlriErZSfoGEKrnIVTYLV+qOI+gY1Y0bt33HgChBy
-LOnmVUTuBxGD2Za1pPray1bEeAV5hQI+H5BtWqar5Dk/xFsBMFMnxWymQn/bkD7j
-GzI0daxC2IAaSIexsfoPnv1gM6DMrlV1Zuv1rpmaT3r/XV3Pk+FgnGifwW9R3CEW
-KrDTTTKe48TxtNv92B+8WynRN1y2YBhAjuPtyvBOgVe7ohbphWAqjdYX+dBBi2mC
-kjWfXAMTunUjnIkO3ik06UsC+h8+WMKwIwNb3zLbsp0COv91+bZi/O/gaQokvqmU
-OTEYff6rwW/cuLzKptXhEwT61Q52jdbS44NSBcFv/kpLC9vgVwQ=
-=AMiA
------END PGP SIGNATURE-----
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
---erjfwqt7yl2kd7cr--
+Thanks,
+Mark
