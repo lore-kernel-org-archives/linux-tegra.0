@@ -8,163 +8,119 @@ X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 097E5C4338F
-	for <linux-tegra@archiver.kernel.org>; Mon, 16 Aug 2021 09:53:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8512C4320A
+	for <linux-tegra@archiver.kernel.org>; Mon, 16 Aug 2021 09:54:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D2B6D61B7B
-	for <linux-tegra@archiver.kernel.org>; Mon, 16 Aug 2021 09:53:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9EA8F61B7D
+	for <linux-tegra@archiver.kernel.org>; Mon, 16 Aug 2021 09:54:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235406AbhHPJxn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 16 Aug 2021 05:53:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56806 "EHLO
+        id S235336AbhHPJzR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 16 Aug 2021 05:55:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57162 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235336AbhHPJxn (ORCPT
+        with ESMTP id S235546AbhHPJzQ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 16 Aug 2021 05:53:43 -0400
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2001C061764;
-        Mon, 16 Aug 2021 02:53:11 -0700 (PDT)
-Received: by mail-wr1-x42d.google.com with SMTP id x10so16377088wrt.8;
-        Mon, 16 Aug 2021 02:53:11 -0700 (PDT)
+        Mon, 16 Aug 2021 05:55:16 -0400
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B7A9C061764;
+        Mon, 16 Aug 2021 02:54:45 -0700 (PDT)
+Received: by mail-wr1-x42a.google.com with SMTP id r6so22725475wrt.4;
+        Mon, 16 Aug 2021 02:54:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=JAhbLXhuiKr15f569cp5ZlH29FsUdWP9r+HrMVJpIZI=;
-        b=ZTYDLcpgsR+WBvS9Ay5rkaSI2IDGZJx7bHVphRf9rG25VzfxPWNxwM2FBOQYlksEYJ
-         nkbRT5W4oE6Zb6uSH23FVDcxJ1U6vRGkxonLza7J371J+nFmuF52PzHezn3AJ84/iBfk
-         wLsqHgfC/b0EmBIpmDVTUDi1s/xWEogvnuY2U6Z9heaHoU03aGviK8EG6HDr7cwvWcCS
-         EJT5aur4lYO8970HvvRs88lu3rIv2gXi5Fac5Ux5SufAulQxXsdFx82LbcjbuSm8qnNr
-         7DH/aELVrFdCz9pcz0yP4eDWo7EPDg+lZcewV9DtsPMIKhJbKSqgSLc+k0cxYpa1lnxz
-         kmtw==
+        bh=OVIiXaXt+PNMazqOI2FVcSRJWLlNFOCX48IyWhzo2SE=;
+        b=ER9UOjvpcCe8cps+ZwqPAd/L13LCHSWr7ePe+PGIkWBIviTRId6qN5fHuS/1n4X8uY
+         s1AR6XqZf/OscRAZ6ZLsuv9MIuhK4qhnu1nXnADnc5UJouIVWNw5urML1iDjWxNaXZoZ
+         ksOaN8/cryni9cg0jQDC+qvCJ8YhHhiBO7L9jxJaq1+aJoE2IqxK8PfZUqzcuOR8qrCa
+         1+FyUH61P6/BjU/iQrLPki+I5PJ0KjPVrszUgStU3E3B1J2kbG8Yvk/EWgODW2l13pwY
+         UiVE5Xc5izntFytlVCDjHTsO/21ohg/akLc6YWWM6OihzctxVYrTezb5iVSDBaoc1h1b
+         WnnA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=JAhbLXhuiKr15f569cp5ZlH29FsUdWP9r+HrMVJpIZI=;
-        b=B2xSR/c2gRBqAUhSCm8UA6UrbnLAwPJQQ9DyiwiOBrO5Qvt6k7ToMX5OJmWFRoLkEs
-         1me09sZwfGykfkRLQZmZTVGUqm+m7U1qRFQnvuc7GbwKQvH/aH2TdalbVdl2xjGw/vHz
-         VHmQvEaWYWEEpA8b4LwIp+hDhWVbVEm+41gtt19Z+dV7Pso95bk3BRv/x3git13gVEF9
-         7XoN34RA5rLo1szm9EDSb4+TZcINhJw5rpveGjlaMY34Ya+JzBmF0JsE3ih2YQWnSgcX
-         ZZGZJPrULslDHBfF/g5bsP89WtJzFMceKUm43kKneumICuj/ruZDQ2S59SzLh3IPSmLb
-         XIeQ==
-X-Gm-Message-State: AOAM533steB8XBOLhEWRhjBuO/0X3pooqxkP4Jn5KlO2kWjTNGTrn9go
-        bZHOyooMPdVTJCjAd6+DpkQ=
-X-Google-Smtp-Source: ABdhPJzkq0DMPLKzLvG3MOiFX8IELX/UVhokVOU8VeEoHR+ro93o2BiXPK7pgpZuDyfCQ9CEkmBwlw==
-X-Received: by 2002:a05:6000:186:: with SMTP id p6mr17698437wrx.19.1629107590269;
-        Mon, 16 Aug 2021 02:53:10 -0700 (PDT)
+        bh=OVIiXaXt+PNMazqOI2FVcSRJWLlNFOCX48IyWhzo2SE=;
+        b=sNypIRQSEmnhyo/2M20e1eDkNclYx+xwpNvGeB27H8hMYPvVYRDFN5ufSVaOxfS2NC
+         J16gvx8ahJLZKKfthVA+reDeN19yqCYXpBSFEdMi/ixWmcQk1nFbeToUyt6bRBECWsLt
+         FrRd1gw7ylyJoDnhdZ6ZMnvnS6Wu9K94GOxXKtD4BtiHN525oC/bOtuwfqVdbCPGn5tj
+         hVQI8YU+LaHsiEd3FaF4QSh7nrMTaoxNBPsiQR9p+EnvRlnAN4hXNNPbBIbZvPQUjYul
+         jSwQzJ7kkuC8+wSG8MltGHUajDioLXXGGWPkvBY3iX4Y8ArQcsBAej8PAfyKd/wqbAz9
+         QY6g==
+X-Gm-Message-State: AOAM531uJYb7deDrD6fLh9H6zrzoCpHTZuESS9i9qDt/MWEnvT6xHI0r
+        UAXy5yex3HwXK8fyCwWyTP4=
+X-Google-Smtp-Source: ABdhPJyHV1ltLaoofusnP7m6+Sw8yxHlFYo06zYWZCtvRdcTYPXFyoXEh9LCvs0EL6Gnw3bcnXijzg==
+X-Received: by 2002:a5d:4a52:: with SMTP id v18mr15957821wrs.216.1629107683797;
+        Mon, 16 Aug 2021 02:54:43 -0700 (PDT)
 Received: from localhost (pd9e51807.dip0.t-ipconnect.de. [217.229.24.7])
-        by smtp.gmail.com with ESMTPSA id m6sm3398602wms.42.2021.08.16.02.53.09
+        by smtp.gmail.com with ESMTPSA id l21sm9692957wmh.31.2021.08.16.02.54.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Aug 2021 02:53:09 -0700 (PDT)
-Date:   Mon, 16 Aug 2021 11:53:08 +0200
+        Mon, 16 Aug 2021 02:54:42 -0700 (PDT)
+Date:   Mon, 16 Aug 2021 11:54:42 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+To:     Aakash Hemadri <aakashhemadri123@gmail.com>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Takashi Iwai <tiwai@suse.com>,
+        Jawoslav Kysela <perex@perex.cz>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 2/2] cpuidle: tegra: Check whether PMC is ready
-Message-ID: <YRo1hK/KnS0oA1vj@orome.fritz.box>
-References: <20210718212706.21659-1-digetx@gmail.com>
- <20210718212706.21659-3-digetx@gmail.com>
- <YROdQXO4aVLQ8DkP@orome.fritz.box>
- <8d61d4d5-8e4b-5c18-923c-eceb954e8d5d@linaro.org>
- <8f22c97d-63f7-6d2a-7b1e-92b0b80a5275@gmail.com>
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Bjorn Helgaas <bjorn@helgaas.com>
+Subject: Re: [PATCH 1/2] ASoC: tegra30: ahub: Use of_device_get_match_data
+Message-ID: <YRo14o5XJpMVUDbH@orome.fritz.box>
+References: <cover.1628971397.git.aakashhemadri123@gmail.com>
+ <e568d621c9c05ee23732a6a6f9e3606a780b1707.1628971397.git.aakashhemadri123@gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="/FxjFLhUbsKPIo++"
+        protocol="application/pgp-signature"; boundary="/uNhmtWkYfSYaFoo"
 Content-Disposition: inline
-In-Reply-To: <8f22c97d-63f7-6d2a-7b1e-92b0b80a5275@gmail.com>
+In-Reply-To: <e568d621c9c05ee23732a6a6f9e3606a780b1707.1628971397.git.aakashhemadri123@gmail.com>
 User-Agent: Mutt/2.1.1 (e2a89abc) (2021-07-12)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---/FxjFLhUbsKPIo++
-Content-Type: text/plain; charset=utf-8
+--/uNhmtWkYfSYaFoo
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Aug 14, 2021 at 04:45:42PM +0300, Dmitry Osipenko wrote:
-> 14.08.2021 13:37, Daniel Lezcano =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > On 11/08/2021 11:49, Thierry Reding wrote:
-> >> On Mon, Jul 19, 2021 at 12:27:06AM +0300, Dmitry Osipenko wrote:
-> >>> Check whether PMC is ready before proceeding with the cpuidle registr=
-ation.
-> >>> This fixes racing with the PMC driver probe order, which results in a
-> >>> disabled deepest CC6 idling state if cpuidle driver is probed before =
-the
-> >>> PMC.
-> >>>
-> >>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> >>> ---
-> >>>  drivers/cpuidle/cpuidle-tegra.c | 3 +++
-> >>>  1 file changed, 3 insertions(+)
-> >>
-> >> Rafael, Daniel,
-> >>
-> >> would you mind if I took this into the Tegra tree? It's got a dependen=
-cy
-> >> on the PMC driver, which usually goes via the Tegra tree already, and
-> >> there's nothing cpuidle-specific in here, it's all Tegra-specific
-> >> integration quirks.
-> >=20
-> > Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+On Sun, Aug 15, 2021 at 01:42:18AM +0530, Aakash Hemadri wrote:
+> Prefer `of_device_get_match_data` over `of_match_device`
 >=20
-> I got another thought about how it could be solved. We could move the
-> creation of the cpuidle platform device into the PMC driver. Thierry,
-> what do you think?
+> Retrieve OF match data using `of_device_get_match_data`, this is cleaner
+> and better expresses intent.
+>=20
+> Signed-off-by: Aakash Hemadri <aakashhemadri123@gmail.com>
+> ---
+>  sound/soc/tegra/tegra30_ahub.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Looking around a bit, it looks like we've got two "virtual" platform
-devices related to CPU on Tegra20 and some of the later SoCs. A little
-while ago when we introduced the CPU frequency driver for Tegra194 we
-had a similar discussion. The problem at the time was that there was no
-way to create a virtual platform device from platform code, and adding a
-device tree node for this wasn't really an option either, since it does
-not actually describe the hardware accurately.
+Acked-by: Thierry Reding <treding@nvidia.com>
 
-What we ended up doing for Tegra194 was to add a compatible string to
-the /cpus node ("nvidia,tegra194-ccplex") which was then used for
-matching a CPU frequency driver against.
-
-I imagine we could do something similar for these older chips and
-perhaps even have a single driver for the CCPLEX that either registers
-CPU idle and CPU frequency scaling functionality, or have that driver
-register virtual devices. I slightly prefer the first variant because
-then we associate the driver with the hardware that it's actually
-driving. It's slightly unconventional because now CPU idle and CPU
-frequency drivers would be implemented in the same driver, but it isn't
-all that exotic these days anymore, either.
-
-If the maintainers prefer we could always keep the code split into two
-source files, one per subsystem, and call into that code from the CCPLEX
-driver. I think even then it'd still be the cleanest solution because we
-don't have to "invent" a new device just for the sake of fitting the
-driver model that we happen to have.
-
-Thierry
-
---/FxjFLhUbsKPIo++
+--/uNhmtWkYfSYaFoo
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmEaNYEACgkQ3SOs138+
-s6HT+w//ZI+9IViNuhkUW3Z7Peo91l6nKc6T7XOGIXQfV19555Sj60sEI6t/iVJq
-b3FFliv1NUCr3LgZRD+YzGQbW00GiVunreVgI/EDhXiXDAHAlT8n1dsf4qqoa5lc
-H8frsJOGd0B+nMG13ycwFQYGh1xUVUxU80lPhbdivPucCIDB+1B/XKexN7Leqd82
-idhpaHw+gT6YWBrR8dDxdX2tBYox/9n6Iy8HjIx4G9ErKErVkKk26grNKzmHY07X
-2tUF727WFpunZsnpOKbgdPr3yBmg0MxAvhygG4otqQz92SzY0ZiHFYtVO4nCwDz+
-XmwaklY2NMUeSoNjekCNj7sPhCkGw8cPhYTIgs6twg+xXQgkwSdkHmcDm2WP81D1
-5H5YVNfQznxONIAD9xSqS3EdIAT9wzd7sipcDp/IHzMG3L83pi/DN6tYNyhBdbPO
-1a8/oskfmNWKJ/sx7mRgzrvybGcFaIO3MxTnafRMOnWoVVpAOLFyhnNuKaupdEEs
-K/KvkJEZaTbcxDYP323WTkZ3RMNn4OczQELL7lcJW2TZOikLFLooEu6/lSI4iAVa
-ICoKuQwmA9KLA67AVViFwRlZAvsCHjZi6t2HFErtBpwdvZKLQzoLNdfS5DinL5o3
-OVpk+2IeZ4XSTUd/gn859qgNJMD94gSnJ3uqvdRBNv04etaiQ2U=
-=N2nq
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmEaNeEACgkQ3SOs138+
+s6FCpw/7BlHGOK9ti9B6aeIIOMkVFHwa6ssji99uO3n8SCquZ3gTqWd4VE4Bnlsz
+fI4wit4W8R0dRI896hlaBw6U6b/XkKzajDmA02mo38V27POnqWyTKr3nvUibR7Jo
+ILI8fDHs8G9yenX7BoAraShENnlDkJYtslxInAWoxHrcxOAVuj3CS6PsbbP0Tekg
+1aeOxRidBOVHihOHOixf87HOMlz4hONSYC/791lO/r9B59PwOJV67qdQncLEPBFm
+u6I2thVc1ZIalGW/EUcFGouoEN4IBXXTiLKrp50/5y9+MLnwkBfqYr8PLEZ31CV0
+6rmjeAAkVuao1GuA2I/VRuN8j3gz3ra+rbh0qp1wUCUKf6E9k1SW0Lnu9a3O9ctY
+5NkfgAF9UQ6p9Bn72yOP4UbPIyJIfPoQ7LBZvSbmMtQ88PRNZscfgMvnj3ku3qg0
+2fEY21akncJUbahcEZHwRZamunyQ/UaJIl3nUSXAfjGFccMe3vPGAn8h4BAIlaOV
+9hdmVaCxEuAyL9cO21KVfzvJelfeKGLYXsL2YLf1t9KpElFWDK9SpkcrW8hKnYlk
+a5vz1WHFryX5JqS7g9C+FLKefkVv1RC8mH6BPmObJIQJQ0XU+KbnTtTmxFZMr8TR
+Entg6D805mQuzDE0KdepXexhMklsGGo4HamscCn0mG5SvXVfdzg=
+=jhac
 -----END PGP SIGNATURE-----
 
---/FxjFLhUbsKPIo++--
+--/uNhmtWkYfSYaFoo--
