@@ -2,65 +2,64 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5D8DC4338F
-	for <linux-tegra@archiver.kernel.org>; Mon, 16 Aug 2021 19:58:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4C37C4338F
+	for <linux-tegra@archiver.kernel.org>; Mon, 16 Aug 2021 21:15:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D19E360F58
-	for <linux-tegra@archiver.kernel.org>; Mon, 16 Aug 2021 19:58:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 87A1561053
+	for <linux-tegra@archiver.kernel.org>; Mon, 16 Aug 2021 21:15:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231448AbhHPT7B (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 16 Aug 2021 15:59:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56894 "EHLO
+        id S233075AbhHPVPd (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 16 Aug 2021 17:15:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46536 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229587AbhHPT7A (ORCPT
+        with ESMTP id S231750AbhHPVPd (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 16 Aug 2021 15:59:00 -0400
-Received: from mail-pl1-x62c.google.com (mail-pl1-x62c.google.com [IPv6:2607:f8b0:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33A9BC061764;
-        Mon, 16 Aug 2021 12:58:29 -0700 (PDT)
-Received: by mail-pl1-x62c.google.com with SMTP id c17so16615218plz.2;
-        Mon, 16 Aug 2021 12:58:29 -0700 (PDT)
+        Mon, 16 Aug 2021 17:15:33 -0400
+Received: from mail-pl1-x634.google.com (mail-pl1-x634.google.com [IPv6:2607:f8b0:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87428C061764;
+        Mon, 16 Aug 2021 14:15:01 -0700 (PDT)
+Received: by mail-pl1-x634.google.com with SMTP id u15so6691811plg.13;
+        Mon, 16 Aug 2021 14:15:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=s9l5IsedF/5S4SnJF4fAydWyt7KoVJCD7oSIXdqwVD0=;
-        b=Ue/nsPauk7U6/n3kytH2QA63vMZ7hMlJ6o+jRyIO+TXAAn5Cfyd6nWdtYBbtA3J3Pt
-         gGMXmjbTyBKeY9AzbTy4YzVaR9PQETDQGPWorPB6gHG3IG9zujI1tzKVBlFZwGelsnav
-         of61ongXjhXr7f7H1Qk+p/jqWXgGnwRs59kpdQ1gV4Lix0lkWdjtCJF3URLF/Dr/Ps6G
-         p7OJhTRksVzsrtxSpnUwzBOukJnVsGWpiPYN5iUBKKQ4ybPZDYEgoadJ1wEGvaxoTxti
-         o++Om859MCxZz4jSnVxGTcYmItEURXy2BxxQxigQyKeVOVeSVOwfIbKMLVHssa/9d6wu
-         4UyA==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=kTIbeouKJPHdAuznrwq0D4i093w3WXn0nhVYGisrNLM=;
+        b=SXugE0cX6LQ2/w8x+cnMmQnCLRTZsKsqsydVR6i6J5pyFaG4u+ne6litBLPEqgjZZ9
+         iQ3sGMWPAy8SJApSFdzxLiXGaU4LpmRkIrUlTU7RWGdD01d2TTevS9OIfefGoVgewALS
+         4O/TrCM/BX8cXW5dJjB7yVWtZ1BUeggPK5R6dUcWTS8LkZfW1VUy4VrQp+W/UMleOmr1
+         H/q+2a9av2u0qWtc33F5e8pLNsKW0UucGWuNr/z4SBOp5/HICi+DJxGMaLJJi6J0rL0/
+         2aFwPenfPYYGCdy9ghNI80meLa60jIxfnUf0jh6GjfvYs/+zVJUjNw6xrwSWxAgTkq9P
+         pdDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=s9l5IsedF/5S4SnJF4fAydWyt7KoVJCD7oSIXdqwVD0=;
-        b=r8K2yrGbba9jWqlJVXJKVI2KOtFRYUeAVb4ShzwK6tUDSOPmfss1h8BqjMCseyVFbo
-         enr/sNUcfZ8EGx4qNy80H2eFEBSqC3uG8NT3u8EbOPVFC4N7x0nYPlsRoeadewi0gcrM
-         MMrmZoWJsyJK+f7lR+cxSeCE9yPyUGDEMoRgSxOg13dk9ruX8gJ1YOH76zRboJKYXOMm
-         X+OnInqMdhgYccT3DcvQNVh9CrAIGtakvfw8WqPRJ1DzHZ0UnP15tOg3EpoXq0ndB7SR
-         AXaQ9jiA3dHEzsXh+D8GD8jCVpf7RUCKcRbFnXU1e0Cr/7o/SqkOR9INfcj1kXahlSer
-         KliA==
-X-Gm-Message-State: AOAM533v82dOgXn0NMT/UifnnHRMVxRA5gwboJkupuiHn3Xl8wg9qlb6
-        1cEoXtldH5O2swxS0cLQoLc=
-X-Google-Smtp-Source: ABdhPJy5BO8UPitxBJFGj9SnL787Ml47xibIqz1zp+gWTNa1A1DD/jzJ8/nvqsnSQnuQlY7WyZGZxQ==
-X-Received: by 2002:a17:90a:116:: with SMTP id b22mr239613pjb.97.1629143908577;
-        Mon, 16 Aug 2021 12:58:28 -0700 (PDT)
-Received: from localhost ([49.207.137.16])
-        by smtp.gmail.com with ESMTPSA id l11sm119501pjg.22.2021.08.16.12.58.27
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=kTIbeouKJPHdAuznrwq0D4i093w3WXn0nhVYGisrNLM=;
+        b=IAmWygv68iW3ytd3TN4b90O1wu2IQEURl78a6YI2OIe+pjxv7JQnfpE+pqIS4y+XbM
+         9HBc1yXG0y2ZrQG94ukazV96gjVKrYBqSQeBXuD2JjWW9z7rdogkwb2n0mINdSPW897O
+         vYseUTmRY0OM9eK3l+vP8azcX/Nhvzoksk7ZMWCO8R9jN2HZkmaF9DN7O50Y85lB0da7
+         yYkLf5/Re3ZsRvb+0KvYme3CM/Lh8kag4JI4A+vV1W8rMyNN1QjKh9mKELc+i7lvB9gD
+         ZX4v0zfLQqFVyH60Ak/+jfSENQiBYsJuu+rpQj2Mkg8ixXcGCZ3SaI4H7DXtkfQDofIf
+         xKAA==
+X-Gm-Message-State: AOAM5313dMP+X8dZxcPOSKgR6YHFNpC8DwU3yVmesxqOAx6TOYw5RyvY
+        Vy6w9482q4IeGmIV7a/cw4cA+50qAYJ7zw==
+X-Google-Smtp-Source: ABdhPJwpdHWa60/DF1dYUxouwyIYCy6OM024ogmA763ik20oAiLDxJ1zWG72rU85swQyEzlq9WxbEA==
+X-Received: by 2002:a65:6883:: with SMTP id e3mr76637pgt.90.1629148501070;
+        Mon, 16 Aug 2021 14:15:01 -0700 (PDT)
+Received: from xps.yggdrasil ([49.207.137.16])
+        by smtp.gmail.com with ESMTPSA id b12sm103154pff.63.2021.08.16.14.14.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Aug 2021 12:58:28 -0700 (PDT)
-Date:   Tue, 17 Aug 2021 01:28:24 +0530
+        Mon, 16 Aug 2021 14:15:00 -0700 (PDT)
 From:   Aakash Hemadri <aakashhemadri123@gmail.com>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>, Takashi Iwai <tiwai@suse.com>,
-        Jawoslav Kysela <perex@perex.cz>,
+To:     Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>
+Cc:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Philipp Zabel <p.zabel@pengutronix.de>,
@@ -68,26 +67,30 @@ Cc:     Liam Girdwood <lgirdwood@gmail.com>, Takashi Iwai <tiwai@suse.com>,
         linux-kernel@vger.kernel.org,
         Shuah Khan <skhan@linuxfoundation.org>,
         Bjorn Helgaas <bjorn@helgaas.com>
-Subject: Re: [PATCH 1/2] ASoC: tegra30: ahub: Use of_device_get_match_data
-Message-ID: <20210816195824.ulvnb2kfas4rtpjt@xps.yggdrasil>
-References: <cover.1628971397.git.aakashhemadri123@gmail.com>
- <e568d621c9c05ee23732a6a6f9e3606a780b1707.1628971397.git.aakashhemadri123@gmail.com>
- <20210816183906.GC4253@sirena.org.uk>
- <20210816194621.mrudqykxvkbt3a2w@xps.yggdrasil>
- <20210816194934.GD4253@sirena.org.uk>
+Subject: [PATCH 0/2] ASoC: tegra30: Fix use of of_device_get_match_data
+Date:   Tue, 17 Aug 2021 02:44:50 +0530
+Message-Id: <cover.1629148177.git.aakashhemadri123@gmail.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210816194934.GD4253@sirena.org.uk>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 21/08/16 08:49PM, Mark Brown wrote:
-> Since I applied the patches please send an incremental fix on top of
-> what's been applied rather than a v2.
+Hi,
+This patchset fixes my previous incorrect patches.
 
-Will do Mark!
+356b94a32a75 ("ASoC: tegra30: i2s: Use of_device_get_match_data")
+80165bb80433 ("ASoC: tegra30: ahub: Use of_device_get_match_data")
 
-Thank,
-Aakash Hemadri
+Aakash Hemadri (2):
+  ASoC: tegra30: ahub: Fix incorrect usage of of_device_get_match_data
+  ASoC: tegra30: i2s: Fix incorrect usage of of_device_get_match_data
+
+ sound/soc/tegra/tegra30_ahub.c | 6 ++----
+ sound/soc/tegra/tegra30_i2s.c  | 8 ++++----
+ 2 files changed, 6 insertions(+), 8 deletions(-)
+
+-- 
+2.32.0
+
