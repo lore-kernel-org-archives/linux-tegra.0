@@ -8,56 +8,56 @@ X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8512C4320A
-	for <linux-tegra@archiver.kernel.org>; Mon, 16 Aug 2021 09:54:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31FACC4338F
+	for <linux-tegra@archiver.kernel.org>; Mon, 16 Aug 2021 09:54:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9EA8F61B7D
-	for <linux-tegra@archiver.kernel.org>; Mon, 16 Aug 2021 09:54:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 15CF961B7D
+	for <linux-tegra@archiver.kernel.org>; Mon, 16 Aug 2021 09:54:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235336AbhHPJzR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 16 Aug 2021 05:55:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57162 "EHLO
+        id S235572AbhHPJz2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 16 Aug 2021 05:55:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57224 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235546AbhHPJzQ (ORCPT
+        with ESMTP id S235467AbhHPJz1 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 16 Aug 2021 05:55:16 -0400
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B7A9C061764;
-        Mon, 16 Aug 2021 02:54:45 -0700 (PDT)
-Received: by mail-wr1-x42a.google.com with SMTP id r6so22725475wrt.4;
-        Mon, 16 Aug 2021 02:54:45 -0700 (PDT)
+        Mon, 16 Aug 2021 05:55:27 -0400
+Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15F8AC061764;
+        Mon, 16 Aug 2021 02:54:56 -0700 (PDT)
+Received: by mail-wr1-x42e.google.com with SMTP id h13so22756211wrp.1;
+        Mon, 16 Aug 2021 02:54:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=OVIiXaXt+PNMazqOI2FVcSRJWLlNFOCX48IyWhzo2SE=;
-        b=ER9UOjvpcCe8cps+ZwqPAd/L13LCHSWr7ePe+PGIkWBIviTRId6qN5fHuS/1n4X8uY
-         s1AR6XqZf/OscRAZ6ZLsuv9MIuhK4qhnu1nXnADnc5UJouIVWNw5urML1iDjWxNaXZoZ
-         ksOaN8/cryni9cg0jQDC+qvCJ8YhHhiBO7L9jxJaq1+aJoE2IqxK8PfZUqzcuOR8qrCa
-         1+FyUH61P6/BjU/iQrLPki+I5PJ0KjPVrszUgStU3E3B1J2kbG8Yvk/EWgODW2l13pwY
-         UiVE5Xc5izntFytlVCDjHTsO/21ohg/akLc6YWWM6OihzctxVYrTezb5iVSDBaoc1h1b
-         WnnA==
+        bh=lCtwN1/Tc6AEDBE9eRczuSHPTW+enb9LWBSg2kwIFhY=;
+        b=Mf3YQRamX9s+sXTFIdOG7jDUc/s+1ZxNKTI+YC5bJO8vvn5K2/tvU6nyX5ojwrlkyM
+         Aog6xm+y2goyW+kQx/0mbUEY3KQpYq6U6cQQ5KdIx+TFfTMo+vIVJjiymmpxGsfaQjU4
+         aKlCMt/MZpO89RXC5dGLA0vzjTpT6YqMLTv7jMMQWhhadYP0NzezdJqth9dkAsRIuiyq
+         DBwYoq7f40qMiCyAtEDHpFcyBzQ4m9LHCLfokBuh2Vn2zCLfxnyPtY6Drwbll88dahRX
+         rXEW+psxZTwt8OMEZeygYTg/M80hLUlpVndPrdboma49N+6DNIZbqSSKtX8A8yoYGkGB
+         0zmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=OVIiXaXt+PNMazqOI2FVcSRJWLlNFOCX48IyWhzo2SE=;
-        b=sNypIRQSEmnhyo/2M20e1eDkNclYx+xwpNvGeB27H8hMYPvVYRDFN5ufSVaOxfS2NC
-         J16gvx8ahJLZKKfthVA+reDeN19yqCYXpBSFEdMi/ixWmcQk1nFbeToUyt6bRBECWsLt
-         FrRd1gw7ylyJoDnhdZ6ZMnvnS6Wu9K94GOxXKtD4BtiHN525oC/bOtuwfqVdbCPGn5tj
-         hVQI8YU+LaHsiEd3FaF4QSh7nrMTaoxNBPsiQR9p+EnvRlnAN4hXNNPbBIbZvPQUjYul
-         jSwQzJ7kkuC8+wSG8MltGHUajDioLXXGGWPkvBY3iX4Y8ArQcsBAej8PAfyKd/wqbAz9
-         QY6g==
-X-Gm-Message-State: AOAM531uJYb7deDrD6fLh9H6zrzoCpHTZuESS9i9qDt/MWEnvT6xHI0r
-        UAXy5yex3HwXK8fyCwWyTP4=
-X-Google-Smtp-Source: ABdhPJyHV1ltLaoofusnP7m6+Sw8yxHlFYo06zYWZCtvRdcTYPXFyoXEh9LCvs0EL6Gnw3bcnXijzg==
-X-Received: by 2002:a5d:4a52:: with SMTP id v18mr15957821wrs.216.1629107683797;
-        Mon, 16 Aug 2021 02:54:43 -0700 (PDT)
+        bh=lCtwN1/Tc6AEDBE9eRczuSHPTW+enb9LWBSg2kwIFhY=;
+        b=ssru+U7UDhr9HrIV//+OokrffGRGeGrf7EerOK5Te2kh3cEGWsntxtzuX6dR9s5eez
+         TFhKb5KVr9mU4wzU/tOrrKfY8Y7C5AQ0Tw6t5Z8PlvgNVE8irB0QLMHddzD3844jOkA8
+         urxzNr4tPHEnZHtHHRuVdpSVxfW7u+ZjFAEPlswHGPoKn2VT8b9p9weCXIDb9ALEgxcg
+         Yz/1jSzKOB3hRvK4FfdnzA5K8dgc7/7EQoeDGGZnTqYnN0a7lgu4spWxYgJN2GsNSnk8
+         Eih9OxIMShmEK6ZFmpPBfaM3l/Ub2en/JKrxZmMt7Hh4Zg17dzxDBSh588cXlAVWkHRb
+         kA3g==
+X-Gm-Message-State: AOAM532KAm/ancnsxt/lbHVuYTKThJ2NHDpMQPI7GramoEu91TegJrhg
+        tvLpc0joBTsCxfDon01uV68=
+X-Google-Smtp-Source: ABdhPJxEBkLsdoiB4/f/6VyMSZEXgGP+mDXXiwj3zbRY5rPxacUVx/03TGH5byc572g+lwuM0/loKA==
+X-Received: by 2002:adf:f8c8:: with SMTP id f8mr17928711wrq.204.1629107694713;
+        Mon, 16 Aug 2021 02:54:54 -0700 (PDT)
 Received: from localhost (pd9e51807.dip0.t-ipconnect.de. [217.229.24.7])
-        by smtp.gmail.com with ESMTPSA id l21sm9692957wmh.31.2021.08.16.02.54.42
+        by smtp.gmail.com with ESMTPSA id k17sm10742242wmj.0.2021.08.16.02.54.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Aug 2021 02:54:42 -0700 (PDT)
-Date:   Mon, 16 Aug 2021 11:54:42 +0200
+        Mon, 16 Aug 2021 02:54:53 -0700 (PDT)
+Date:   Mon, 16 Aug 2021 11:54:52 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Aakash Hemadri <aakashhemadri123@gmail.com>
 Cc:     Mark Brown <broonie@kernel.org>,
@@ -70,27 +70,27 @@ Cc:     Mark Brown <broonie@kernel.org>,
         linux-kernel@vger.kernel.org,
         Shuah Khan <skhan@linuxfoundation.org>,
         Bjorn Helgaas <bjorn@helgaas.com>
-Subject: Re: [PATCH 1/2] ASoC: tegra30: ahub: Use of_device_get_match_data
-Message-ID: <YRo14o5XJpMVUDbH@orome.fritz.box>
+Subject: Re: [PATCH 2/2] ASoC: tegra30: i2s: Use of_device_get_match_data
+Message-ID: <YRo17IKkGYEBUCoe@orome.fritz.box>
 References: <cover.1628971397.git.aakashhemadri123@gmail.com>
- <e568d621c9c05ee23732a6a6f9e3606a780b1707.1628971397.git.aakashhemadri123@gmail.com>
+ <f4e632e0023d90c43b2b927e752585142a9d9c26.1628971397.git.aakashhemadri123@gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="/uNhmtWkYfSYaFoo"
+        protocol="application/pgp-signature"; boundary="L8F5rI6YsatuZvBz"
 Content-Disposition: inline
-In-Reply-To: <e568d621c9c05ee23732a6a6f9e3606a780b1707.1628971397.git.aakashhemadri123@gmail.com>
+In-Reply-To: <f4e632e0023d90c43b2b927e752585142a9d9c26.1628971397.git.aakashhemadri123@gmail.com>
 User-Agent: Mutt/2.1.1 (e2a89abc) (2021-07-12)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---/uNhmtWkYfSYaFoo
+--L8F5rI6YsatuZvBz
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Aug 15, 2021 at 01:42:18AM +0530, Aakash Hemadri wrote:
+On Sun, Aug 15, 2021 at 01:42:19AM +0530, Aakash Hemadri wrote:
 > Prefer `of_device_get_match_data` over `of_match_device`
 >=20
 > Retrieve OF match data using `of_device_get_match_data`, this is cleaner
@@ -98,29 +98,29 @@ On Sun, Aug 15, 2021 at 01:42:18AM +0530, Aakash Hemadri wrote:
 >=20
 > Signed-off-by: Aakash Hemadri <aakashhemadri123@gmail.com>
 > ---
->  sound/soc/tegra/tegra30_ahub.c | 2 +-
+>  sound/soc/tegra/tegra30_i2s.c | 2 +-
 >  1 file changed, 1 insertion(+), 1 deletion(-)
 
 Acked-by: Thierry Reding <treding@nvidia.com>
 
---/uNhmtWkYfSYaFoo
+--L8F5rI6YsatuZvBz
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmEaNeEACgkQ3SOs138+
-s6FCpw/7BlHGOK9ti9B6aeIIOMkVFHwa6ssji99uO3n8SCquZ3gTqWd4VE4Bnlsz
-fI4wit4W8R0dRI896hlaBw6U6b/XkKzajDmA02mo38V27POnqWyTKr3nvUibR7Jo
-ILI8fDHs8G9yenX7BoAraShENnlDkJYtslxInAWoxHrcxOAVuj3CS6PsbbP0Tekg
-1aeOxRidBOVHihOHOixf87HOMlz4hONSYC/791lO/r9B59PwOJV67qdQncLEPBFm
-u6I2thVc1ZIalGW/EUcFGouoEN4IBXXTiLKrp50/5y9+MLnwkBfqYr8PLEZ31CV0
-6rmjeAAkVuao1GuA2I/VRuN8j3gz3ra+rbh0qp1wUCUKf6E9k1SW0Lnu9a3O9ctY
-5NkfgAF9UQ6p9Bn72yOP4UbPIyJIfPoQ7LBZvSbmMtQ88PRNZscfgMvnj3ku3qg0
-2fEY21akncJUbahcEZHwRZamunyQ/UaJIl3nUSXAfjGFccMe3vPGAn8h4BAIlaOV
-9hdmVaCxEuAyL9cO21KVfzvJelfeKGLYXsL2YLf1t9KpElFWDK9SpkcrW8hKnYlk
-a5vz1WHFryX5JqS7g9C+FLKefkVv1RC8mH6BPmObJIQJQ0XU+KbnTtTmxFZMr8TR
-Entg6D805mQuzDE0KdepXexhMklsGGo4HamscCn0mG5SvXVfdzg=
-=jhac
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmEaNewACgkQ3SOs138+
+s6FvUg/+Le8sG7K2DpxH02WiNGwIgYIcgcVqtfbXAP9ATobiDSpjt+ts9oIyA4om
+Ztin1Ulmb0GMbDqKcL+A4JmCAmI64mNuF8xWoySoBwyAm/D3TgGYFEpPOcAK3WrR
+OTFs8L6MOmi9cq1gnMwXmskz6Hc3yfO+7Fw8o4h1cfPXk4AZVCo18N2wsCCCs6F6
+wy5mqQF83B/pTofjdKebUEc8wj+JNq4TIgzsGH5oU5Tf32OpEc1KvKfHvwJ4E1T3
+o/n9aNIFy4GrLPVzvKndo/COXm30IEKBjEypnoKEyadm4TwTK6O6jAYrMcJmhHOa
+TpblQXEl22hFWeBURaqW1g6IDvvdsR0tOcjWjDI39RTX3LoGcPkEezJd3RPrbkNC
+u1djqnemvCpLKiaXCeFqaogw/XG/vWwLt6VUergSs6Vstip5GFPtdXO6+dyUYlKK
+Via50ScSCl+G9hxJbJNxglZx4smMcaQdzHvt6VjuUJ3bqGvVkF4ab8Mzqq3SQfvQ
+ngcPoahwY2Zf8DldMFfEnMSQ5psj2ClZq0ve04JWsc5Y+nMizLhp0LSvWN7TDCuB
+VLTI+xxIQj80imx2ONq44YSx+3dbwf8P2mNaKhFS1viw75KwO4yMcf5z18VX2Nil
+fSvXqTmwemWy2GF8YhWDL7GN3MFpCLiwi7vQ1/8dgDT4VG6d5U8=
+=5EZb
 -----END PGP SIGNATURE-----
 
---/uNhmtWkYfSYaFoo--
+--L8F5rI6YsatuZvBz--
