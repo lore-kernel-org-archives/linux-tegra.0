@@ -2,125 +2,143 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-18.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31FACC4338F
-	for <linux-tegra@archiver.kernel.org>; Mon, 16 Aug 2021 09:54:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E564BC4338F
+	for <linux-tegra@archiver.kernel.org>; Mon, 16 Aug 2021 15:32:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 15CF961B7D
-	for <linux-tegra@archiver.kernel.org>; Mon, 16 Aug 2021 09:54:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C275C60F36
+	for <linux-tegra@archiver.kernel.org>; Mon, 16 Aug 2021 15:32:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235572AbhHPJz2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 16 Aug 2021 05:55:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57224 "EHLO
+        id S232181AbhHPPdQ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 16 Aug 2021 11:33:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51270 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235467AbhHPJz1 (ORCPT
+        with ESMTP id S229550AbhHPPdP (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 16 Aug 2021 05:55:27 -0400
-Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15F8AC061764;
-        Mon, 16 Aug 2021 02:54:56 -0700 (PDT)
-Received: by mail-wr1-x42e.google.com with SMTP id h13so22756211wrp.1;
-        Mon, 16 Aug 2021 02:54:56 -0700 (PDT)
+        Mon, 16 Aug 2021 11:33:15 -0400
+Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26230C061764;
+        Mon, 16 Aug 2021 08:32:44 -0700 (PDT)
+Received: by mail-lf1-x130.google.com with SMTP id k5so7425483lfu.4;
+        Mon, 16 Aug 2021 08:32:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=lCtwN1/Tc6AEDBE9eRczuSHPTW+enb9LWBSg2kwIFhY=;
-        b=Mf3YQRamX9s+sXTFIdOG7jDUc/s+1ZxNKTI+YC5bJO8vvn5K2/tvU6nyX5ojwrlkyM
-         Aog6xm+y2goyW+kQx/0mbUEY3KQpYq6U6cQQ5KdIx+TFfTMo+vIVJjiymmpxGsfaQjU4
-         aKlCMt/MZpO89RXC5dGLA0vzjTpT6YqMLTv7jMMQWhhadYP0NzezdJqth9dkAsRIuiyq
-         DBwYoq7f40qMiCyAtEDHpFcyBzQ4m9LHCLfokBuh2Vn2zCLfxnyPtY6Drwbll88dahRX
-         rXEW+psxZTwt8OMEZeygYTg/M80hLUlpVndPrdboma49N+6DNIZbqSSKtX8A8yoYGkGB
-         0zmg==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Jji36Y1LnDODoev0Avwliy2xCTIsB97zZRauZf075VA=;
+        b=mq21gBQ8hLGp/4Yem98VGS4lu+97ERbV+BdyANot4LQDqDEn6yV6pZEgs57D3sBn8i
+         AKhumVMRQWlu3qOa+7tpEimZck8FBr/kBmcU+2n48Q8uoIrV+MMFS123XL05FkUXFxf+
+         /0JYZrlk0tn7e/TMCqzihJV02rInAjFKP9Y6RuET+6LdEogLckQHhRmxR5S4u3ZdBcjs
+         4hC7LfjWHb16c0dtkPcxHJuPtTRthmlm5m5uVc9kaK/Wek6OZfECLD26a2zzVDOJ649r
+         QSb8DuWk2bejZTMCyF6y1QvH2ianxDE/uJHV7XTkHUPWUE6PX4U3XNbtFUvOKAj+sD1f
+         HZ1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=lCtwN1/Tc6AEDBE9eRczuSHPTW+enb9LWBSg2kwIFhY=;
-        b=ssru+U7UDhr9HrIV//+OokrffGRGeGrf7EerOK5Te2kh3cEGWsntxtzuX6dR9s5eez
-         TFhKb5KVr9mU4wzU/tOrrKfY8Y7C5AQ0Tw6t5Z8PlvgNVE8irB0QLMHddzD3844jOkA8
-         urxzNr4tPHEnZHtHHRuVdpSVxfW7u+ZjFAEPlswHGPoKn2VT8b9p9weCXIDb9ALEgxcg
-         Yz/1jSzKOB3hRvK4FfdnzA5K8dgc7/7EQoeDGGZnTqYnN0a7lgu4spWxYgJN2GsNSnk8
-         Eih9OxIMShmEK6ZFmpPBfaM3l/Ub2en/JKrxZmMt7Hh4Zg17dzxDBSh588cXlAVWkHRb
-         kA3g==
-X-Gm-Message-State: AOAM532KAm/ancnsxt/lbHVuYTKThJ2NHDpMQPI7GramoEu91TegJrhg
-        tvLpc0joBTsCxfDon01uV68=
-X-Google-Smtp-Source: ABdhPJxEBkLsdoiB4/f/6VyMSZEXgGP+mDXXiwj3zbRY5rPxacUVx/03TGH5byc572g+lwuM0/loKA==
-X-Received: by 2002:adf:f8c8:: with SMTP id f8mr17928711wrq.204.1629107694713;
-        Mon, 16 Aug 2021 02:54:54 -0700 (PDT)
-Received: from localhost (pd9e51807.dip0.t-ipconnect.de. [217.229.24.7])
-        by smtp.gmail.com with ESMTPSA id k17sm10742242wmj.0.2021.08.16.02.54.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Aug 2021 02:54:53 -0700 (PDT)
-Date:   Mon, 16 Aug 2021 11:54:52 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Aakash Hemadri <aakashhemadri123@gmail.com>
-Cc:     Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Takashi Iwai <tiwai@suse.com>,
-        Jawoslav Kysela <perex@perex.cz>,
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Jji36Y1LnDODoev0Avwliy2xCTIsB97zZRauZf075VA=;
+        b=PFhrLkjU5y7rd3SXMBQ5I85n4FYR0TdMmgGLOwpkTKhQmxZFz8VA21uuxnAj4SN+Sw
+         JLFDOYwlGUiCjWClFTgzewLN9yYeoS6nPh9GN7eQO3MeL46OJKIVZID9jBsb4ApjJs9v
+         fYl9s2BGTrYV7qXsxtao0bW/COdJCB+052XV5di8Lt1YO9B07GgB3Qnec5ToOaI1lFXR
+         wmylTZlhnk/Wq27uJEIfev/tRRoJsl5UVCLF/3qZjdZ1HUbFTcpLnDiRdlEy1VRMCH8i
+         u0+IADuXSrGugsNs8p0zaPc7Sxi4pC/z1P1ASXEeBFk7cNWJweWtyyltMukPG6wXsu+R
+         Ejxw==
+X-Gm-Message-State: AOAM533e990pD+gZjcoEjkyDXRfIGHIZs8nst06KNP2MpGHQSm34kn/b
+        /J9eNgArlM/xZXMlpuCTJUJPJng0kYQ=
+X-Google-Smtp-Source: ABdhPJwrfG+4glx/MIR0iQjCsOWrCk7lJWJpozxMy17cyAj+4ybUrvU9zFV8aaBEA/EiyPngthUS/w==
+X-Received: by 2002:a05:6512:3e06:: with SMTP id i6mr11877182lfv.81.1629127962417;
+        Mon, 16 Aug 2021 08:32:42 -0700 (PDT)
+Received: from [192.168.2.145] (46-138-85-91.dynamic.spd-mgts.ru. [46.138.85.91])
+        by smtp.googlemail.com with ESMTPSA id l26sm974295lfh.247.2021.08.16.08.32.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 16 Aug 2021 08:32:41 -0700 (PDT)
+Subject: Re: [PATCH v1 2/2] cpuidle: tegra: Check whether PMC is ready
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Bjorn Helgaas <bjorn@helgaas.com>
-Subject: Re: [PATCH 2/2] ASoC: tegra30: i2s: Use of_device_get_match_data
-Message-ID: <YRo17IKkGYEBUCoe@orome.fritz.box>
-References: <cover.1628971397.git.aakashhemadri123@gmail.com>
- <f4e632e0023d90c43b2b927e752585142a9d9c26.1628971397.git.aakashhemadri123@gmail.com>
+        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20210718212706.21659-1-digetx@gmail.com>
+ <20210718212706.21659-3-digetx@gmail.com> <YROdQXO4aVLQ8DkP@orome.fritz.box>
+ <8d61d4d5-8e4b-5c18-923c-eceb954e8d5d@linaro.org>
+ <8f22c97d-63f7-6d2a-7b1e-92b0b80a5275@gmail.com>
+ <YRo1hK/KnS0oA1vj@orome.fritz.box>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <1fb32fd0-97c0-9215-6e38-c53c5155f27a@gmail.com>
+Date:   Mon, 16 Aug 2021 18:32:41 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="L8F5rI6YsatuZvBz"
-Content-Disposition: inline
-In-Reply-To: <f4e632e0023d90c43b2b927e752585142a9d9c26.1628971397.git.aakashhemadri123@gmail.com>
-User-Agent: Mutt/2.1.1 (e2a89abc) (2021-07-12)
+In-Reply-To: <YRo1hK/KnS0oA1vj@orome.fritz.box>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+16.08.2021 12:53, Thierry Reding пишет:
+> On Sat, Aug 14, 2021 at 04:45:42PM +0300, Dmitry Osipenko wrote:
+>> 14.08.2021 13:37, Daniel Lezcano пишет:
+>>> On 11/08/2021 11:49, Thierry Reding wrote:
+>>>> On Mon, Jul 19, 2021 at 12:27:06AM +0300, Dmitry Osipenko wrote:
+>>>>> Check whether PMC is ready before proceeding with the cpuidle registration.
+>>>>> This fixes racing with the PMC driver probe order, which results in a
+>>>>> disabled deepest CC6 idling state if cpuidle driver is probed before the
+>>>>> PMC.
+>>>>>
+>>>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>>>>> ---
+>>>>>  drivers/cpuidle/cpuidle-tegra.c | 3 +++
+>>>>>  1 file changed, 3 insertions(+)
+>>>>
+>>>> Rafael, Daniel,
+>>>>
+>>>> would you mind if I took this into the Tegra tree? It's got a dependency
+>>>> on the PMC driver, which usually goes via the Tegra tree already, and
+>>>> there's nothing cpuidle-specific in here, it's all Tegra-specific
+>>>> integration quirks.
+>>>
+>>> Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+>>
+>> I got another thought about how it could be solved. We could move the
+>> creation of the cpuidle platform device into the PMC driver. Thierry,
+>> what do you think?
+> 
+> Looking around a bit, it looks like we've got two "virtual" platform
+> devices related to CPU on Tegra20 and some of the later SoCs. A little
+> while ago when we introduced the CPU frequency driver for Tegra194 we
+> had a similar discussion. The problem at the time was that there was no
+> way to create a virtual platform device from platform code, and adding a
+> device tree node for this wasn't really an option either, since it does
+> not actually describe the hardware accurately.
+> 
+> What we ended up doing for Tegra194 was to add a compatible string to
+> the /cpus node ("nvidia,tegra194-ccplex") which was then used for
+> matching a CPU frequency driver against.
+> 
+> I imagine we could do something similar for these older chips and
+> perhaps even have a single driver for the CCPLEX that either registers
+> CPU idle and CPU frequency scaling functionality, or have that driver
+> register virtual devices. I slightly prefer the first variant because
+> then we associate the driver with the hardware that it's actually
+> driving. It's slightly unconventional because now CPU idle and CPU
+> frequency drivers would be implemented in the same driver, but it isn't
+> all that exotic these days anymore, either.
+> 
+> If the maintainers prefer we could always keep the code split into two
+> source files, one per subsystem, and call into that code from the CCPLEX
+> driver. I think even then it'd still be the cleanest solution because we
+> don't have to "invent" a new device just for the sake of fitting the
+> driver model that we happen to have.
 
---L8F5rI6YsatuZvBz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Sun, Aug 15, 2021 at 01:42:19AM +0530, Aakash Hemadri wrote:
-> Prefer `of_device_get_match_data` over `of_match_device`
->=20
-> Retrieve OF match data using `of_device_get_match_data`, this is cleaner
-> and better expresses intent.
->=20
-> Signed-off-by: Aakash Hemadri <aakashhemadri123@gmail.com>
-> ---
->  sound/soc/tegra/tegra30_i2s.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-
-Acked-by: Thierry Reding <treding@nvidia.com>
-
---L8F5rI6YsatuZvBz
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmEaNewACgkQ3SOs138+
-s6FvUg/+Le8sG7K2DpxH02WiNGwIgYIcgcVqtfbXAP9ATobiDSpjt+ts9oIyA4om
-Ztin1Ulmb0GMbDqKcL+A4JmCAmI64mNuF8xWoySoBwyAm/D3TgGYFEpPOcAK3WrR
-OTFs8L6MOmi9cq1gnMwXmskz6Hc3yfO+7Fw8o4h1cfPXk4AZVCo18N2wsCCCs6F6
-wy5mqQF83B/pTofjdKebUEc8wj+JNq4TIgzsGH5oU5Tf32OpEc1KvKfHvwJ4E1T3
-o/n9aNIFy4GrLPVzvKndo/COXm30IEKBjEypnoKEyadm4TwTK6O6jAYrMcJmhHOa
-TpblQXEl22hFWeBURaqW1g6IDvvdsR0tOcjWjDI39RTX3LoGcPkEezJd3RPrbkNC
-u1djqnemvCpLKiaXCeFqaogw/XG/vWwLt6VUergSs6Vstip5GFPtdXO6+dyUYlKK
-Via50ScSCl+G9hxJbJNxglZx4smMcaQdzHvt6VjuUJ3bqGvVkF4ab8Mzqq3SQfvQ
-ngcPoahwY2Zf8DldMFfEnMSQ5psj2ClZq0ve04JWsc5Y+nMizLhp0LSvWN7TDCuB
-VLTI+xxIQj80imx2ONq44YSx+3dbwf8P2mNaKhFS1viw75KwO4yMcf5z18VX2Nil
-fSvXqTmwemWy2GF8YhWDL7GN3MFpCLiwi7vQ1/8dgDT4VG6d5U8=
-=5EZb
------END PGP SIGNATURE-----
-
---L8F5rI6YsatuZvBz--
+It's doable, but it's a bit too much effort for a little problem we have
+here. It also doesn't solve the root of the problem since PMC isn't a
+part of CCPLEX. Should be better to stick with this patch for now then.
