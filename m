@@ -2,157 +2,125 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31A33C43216
-	for <linux-tegra@archiver.kernel.org>; Tue, 17 Aug 2021 01:33:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD92DC4320A
+	for <linux-tegra@archiver.kernel.org>; Tue, 17 Aug 2021 01:37:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 14FE560EE5
-	for <linux-tegra@archiver.kernel.org>; Tue, 17 Aug 2021 01:33:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B3C4B60EE5
+	for <linux-tegra@archiver.kernel.org>; Tue, 17 Aug 2021 01:37:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239457AbhHQBeK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 16 Aug 2021 21:34:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47924 "EHLO
+        id S235656AbhHQBhg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 16 Aug 2021 21:37:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49586 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236079AbhHQBal (ORCPT
+        with ESMTP id S229773AbhHQBhf (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 16 Aug 2021 21:30:41 -0400
-Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3464C061764;
-        Mon, 16 Aug 2021 18:30:08 -0700 (PDT)
-Received: by mail-lj1-x22a.google.com with SMTP id d16so12086631ljq.4;
-        Mon, 16 Aug 2021 18:30:08 -0700 (PDT)
+        Mon, 16 Aug 2021 21:37:35 -0400
+Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DF90C061764;
+        Mon, 16 Aug 2021 18:37:03 -0700 (PDT)
+Received: by mail-lf1-x131.google.com with SMTP id d4so38130866lfk.9;
+        Mon, 16 Aug 2021 18:37:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=whXbmpiV9uZrIWQEZSp5RRTDQ3TFfbRun1N2tfG7MWk=;
-        b=qVuy6Otl0UWSQ+/nZMjDzykD2sSUZDst3NL/JVapiLI3z3yUfsGAUcncelhMR38Lym
-         1xjVPKDNQoeHSdojhaD4CNMJ2Dgxsx7ya2LEvfAdSM6jyMIhg0fAggQvAzFKMqqVOL9O
-         IPbH29DcWGT56C4Udgprd2zRCBzNWyrc1+xqzNB9hh3j27fQeaGpUX2Jl9g2CjR6dsJE
-         H3f4BOVlgw85yDYhZPvxDoAPPZKXld5HwD4iSdkylVBs+x8a7x/zUr2T15/KjxPp7TBo
-         OcMaTgNBzyb8Gi7/p8ZpOcNZ09XNRqw/14qoRIg6z6RvIG29dGNOEq13dllv4PGdI+NN
-         gRvg==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=y13ssgfr6sKUkeUKlxkE5t/sIHmN7oG9hneGkaoPog4=;
+        b=HTmG7uMHTcKj2CNO6v36hEPhj00NFrlE80NEDH+zHeojdyZkWVuhZQGZEmlNEkvH7g
+         ew1SZpIbNk/bq8iaMwRKJ4v8rhdwFOrZm6RaoPePji0ndGR49VTsJ0UT2P2TvlSgeMhq
+         tXOyB6AATcz9/VTt0yOUotQYEkWUKQbGbG/wuz/+3kwi8gTY73HMpHtZ0XanhQeoS9xA
+         ugXME5zkTuelXZewyXLZ9jGBJSsAqJxxC0mXhV0b9QUtdWxJGxXSd3bKhJmjn8h6V9EQ
+         keOa9wODuQDutNVdQuDqeRwONO5eYpDm46ieeVH9RnvVve/mZErBs47x294li+7Zgnl7
+         jVQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=whXbmpiV9uZrIWQEZSp5RRTDQ3TFfbRun1N2tfG7MWk=;
-        b=tKRONxf/lPDCkWXjIh/cnuGK5Z8tVtnWfeSatE6d060W0vqWsicKIh4CaETF32u1Xj
-         HZzdVHfbOOYQV98BAlqvsjax5e9pi6iZQ0YC9rh3kEYgoZTTKQfgocLcojp5O3cEc29h
-         pccH5oxsS1+M3nL5P6ytI4duBbHtaADX0WHsupeMiS45XsdP7ybto7i4m9Nck03yDU9z
-         zfdCF6+GVCdWgk91QH59NItfZeUlqfFj5QjbOc4xviHw9BPfa/CsxssFja+t6YWBV7KQ
-         vJRGFFGb9xEuD08UJJ3OBWSZqx7zQlNkxstEwOEDtTAypcey4vCQ5MYwpLGSA0rn/nBk
-         pykw==
-X-Gm-Message-State: AOAM531jZCQ3LsBYhtYCovILQcxa5Jk1OLcznavUFSjp6JjSyu8sa7uA
-        +Do/8VPSTXjl8sRT6u/YMKI=
-X-Google-Smtp-Source: ABdhPJx0BGOHbSZlE+uingQVCD7QPlpfvESjI/6O9+jCEZkAPokxg6m3XSjkH1CoIjJ45grVv1YxFQ==
-X-Received: by 2002:a2e:5758:: with SMTP id r24mr870243ljd.432.1629163807370;
-        Mon, 16 Aug 2021 18:30:07 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=y13ssgfr6sKUkeUKlxkE5t/sIHmN7oG9hneGkaoPog4=;
+        b=a0pKftuHZYpDxlDbBXZfj9/23rUmuF1fxJziCeC6gwF2d99pCPD0ftHVrGP0LlGOm7
+         bpY7wvzS2YHde8B7wKpIAee2JSmMNcCjnzQ4XB9MIi3Q36MmvIP7l19x1JlMqgwwiekd
+         R+VucG6ZrEnXxWz0I+3FoI62Y4LVktR2yvF3bdat6K9diZ9eqGpusjZ3LJM8T1srak4D
+         jCuFBq8yPCt7QL166XjkJU3UcxKysD07eNoieslWmfIh0L8pFe05mXT3s1OYSR8i321y
+         2UPbHjMFv7tFHB12vkmb8s4acLZ+KVXjkQ6y2b7EJZhrt9aeijkoGZkB+tB1BmZIT9Lp
+         t5Kw==
+X-Gm-Message-State: AOAM532Vsc9EeIS7fAg3p12XDOYJy8RSL7782GEN1DQGJWxRtZ4SaM9R
+        F4ig+Wpj/uxb64RKXydcN/w=
+X-Google-Smtp-Source: ABdhPJxRPENKda40qWNOWkQl41qMWmI0e+3KTqYXF5TovPBTtKNHJHlY+Pur3Wdx0urrmcdihJX+aw==
+X-Received: by 2002:ac2:4c2a:: with SMTP id u10mr511478lfq.631.1629164221740;
+        Mon, 16 Aug 2021 18:37:01 -0700 (PDT)
 Received: from localhost.localdomain (46-138-85-91.dynamic.spd-mgts.ru. [46.138.85.91])
-        by smtp.gmail.com with ESMTPSA id g30sm46607lfj.298.2021.08.16.18.30.06
+        by smtp.gmail.com with ESMTPSA id br33sm49699lfb.46.2021.08.16.18.37.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Aug 2021 18:30:07 -0700 (PDT)
+        Mon, 16 Aug 2021 18:37:01 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
+To:     Jens Axboe <axboe@kernel.dk>,
+        Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
+        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>,
+        David Heidelberg <david@ixit.cz>,
+        Peter Geis <pgwipeout@gmail.com>,
         Ulf Hansson <ulf.hansson@linaro.org>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Peter Chen <peter.chen@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>, Nishanth Menon <nm@ti.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Richard Weinberger <richard@nod.at>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Lucas Stach <dev@lynxeye.de>, Stefan Agner <stefan@agner.ch>,
         Adrian Hunter <adrian.hunter@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-staging@lists.linux.dev, linux-spi@vger.kernel.org,
-        linux-pwm@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-mmc@vger.kernel.org, linux-media@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: [PATCH v8 05/34] soc/tegra: Use dev_pm_opp_sync()
-Date:   Tue, 17 Aug 2021 04:27:25 +0300
-Message-Id: <20210817012754.8710-6-digetx@gmail.com>
+        Christoph Hellwig <hch@infradead.org>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Ion Agorria <AG0RRIA@yahoo.com>,
+        Svyatoslav Ryhel <clamor95@gmail.com>
+Cc:     linux-tegra@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-efi <linux-efi@vger.kernel.org>
+Subject: [PATCH v4 0/3] Support EFI partition on NVIDIA Tegra devices
+Date:   Tue, 17 Aug 2021 04:36:40 +0300
+Message-Id: <20210817013643.13061-1-digetx@gmail.com>
 X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20210817012754.8710-1-digetx@gmail.com>
-References: <20210817012754.8710-1-digetx@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Use new generic dev_pm_opp_sync() helper which initializes voltage vote
-based on clock rate.
+This series adds the most minimal EFI partition support for NVIDIA Tegra
+consumer devices, like Android tablets and game consoles, making theirs
+EMMC accessible out-of-the-box using downstream bootloader and mainline
+Linux kernel.  EMMC now works on Acer A500 tablet and Ouya game console
+that are already well supported in mainline and internal storage is the
+only biggest thing left to support.
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/soc/tegra/common.c | 30 +-----------------------------
- 1 file changed, 1 insertion(+), 29 deletions(-)
+Changelog:
 
-diff --git a/drivers/soc/tegra/common.c b/drivers/soc/tegra/common.c
-index a42d4f98c078..dab1bacb41ab 100644
---- a/drivers/soc/tegra/common.c
-+++ b/drivers/soc/tegra/common.c
-@@ -39,34 +39,6 @@ bool soc_is_tegra(void)
- 	return match != NULL;
- }
- 
--static int tegra_core_dev_init_opp_state(struct device *dev)
--{
--	unsigned long rate;
--	struct clk *clk;
--	int err;
--
--	clk = devm_clk_get(dev, NULL);
--	if (IS_ERR(clk)) {
--		dev_err(dev, "failed to get clk: %pe\n", clk);
--		return PTR_ERR(clk);
--	}
--
--	rate = clk_get_rate(clk);
--	if (!rate) {
--		dev_err(dev, "failed to get clk rate\n");
--		return -EINVAL;
--	}
--
--	/* first dummy rate-setting initializes voltage vote */
--	err = dev_pm_opp_set_rate(dev, rate);
--	if (err) {
--		dev_err(dev, "failed to initialize OPP clock: %d\n", err);
--		return err;
--	}
--
--	return 0;
--}
--
- /**
-  * devm_tegra_core_dev_init_opp_table() - initialize OPP table
-  * @dev: device for which OPP table is initialized
-@@ -118,7 +90,7 @@ int devm_tegra_core_dev_init_opp_table(struct device *dev,
- 	}
- 
- 	if (params->init_state) {
--		err = tegra_core_dev_init_opp_state(dev);
-+		err = dev_pm_opp_sync(dev);
- 		if (err)
- 			return err;
- 	}
+v4: - Rebased on top of recent linux-next.
+
+v3: - Removed unnecessary v1 hunk that was left by accident in efi.c of v2.
+
+v2: - This is continuation of [1] where Davidlohr Bueso suggested that it
+      should be better to avoid supporting in mainline the custom gpt_sector
+      kernel cmdline parameter that downstream Android kernels use.  We can
+      do this for the devices that are already mainlined, so I dropped the
+      cmdline from the v2 and left only the variant with a fixed GPT address.
+
+[1] https://lore.kernel.org/linux-efi/20210327212100.3834-3-digetx@gmail.com/T/
+
+Dmitry Osipenko (3):
+  mmc: core: Add raw_boot_mult field to mmc_ext_csd
+  mmc: block: Add mmc_bdev_to_card() helper
+  partitions/efi: Support NVIDIA Tegra devices
+
+ block/partitions/Kconfig   |  8 ++++
+ block/partitions/Makefile  |  1 +
+ block/partitions/check.h   |  2 +
+ block/partitions/core.c    |  3 ++
+ block/partitions/efi.c     |  9 +++++
+ block/partitions/tegra.c   | 75 ++++++++++++++++++++++++++++++++++++++
+ drivers/mmc/core/block.c   | 15 ++++++++
+ drivers/mmc/core/mmc.c     |  2 +
+ include/linux/mmc/blkdev.h | 13 +++++++
+ include/linux/mmc/card.h   |  1 +
+ 10 files changed, 129 insertions(+)
+ create mode 100644 block/partitions/tegra.c
+ create mode 100644 include/linux/mmc/blkdev.h
+
 -- 
 2.32.0
 
