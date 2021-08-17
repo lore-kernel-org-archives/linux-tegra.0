@@ -2,127 +2,225 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE25AC4338F
-	for <linux-tegra@archiver.kernel.org>; Mon, 16 Aug 2021 21:15:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6122FC43216
+	for <linux-tegra@archiver.kernel.org>; Tue, 17 Aug 2021 01:30:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9842161052
-	for <linux-tegra@archiver.kernel.org>; Mon, 16 Aug 2021 21:15:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4650E60FD7
+	for <linux-tegra@archiver.kernel.org>; Tue, 17 Aug 2021 01:30:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233357AbhHPVPo (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 16 Aug 2021 17:15:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46588 "EHLO
+        id S235855AbhHQBah (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 16 Aug 2021 21:30:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47896 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231750AbhHPVPo (ORCPT
+        with ESMTP id S230304AbhHQBaf (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 16 Aug 2021 17:15:44 -0400
-Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2B7CC061764;
-        Mon, 16 Aug 2021 14:15:12 -0700 (PDT)
-Received: by mail-pl1-x62e.google.com with SMTP id c4so5922827plh.7;
-        Mon, 16 Aug 2021 14:15:12 -0700 (PDT)
+        Mon, 16 Aug 2021 21:30:35 -0400
+Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EA49C061764;
+        Mon, 16 Aug 2021 18:30:03 -0700 (PDT)
+Received: by mail-lj1-x233.google.com with SMTP id f2so8516229ljn.1;
+        Mon, 16 Aug 2021 18:30:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=g1dC/n65USYYjusFSHlK9vgvBZI+Oht+fJhBix7TCeM=;
-        b=t4xoxQNZT+ddH/5CyxnTOTAsIOrlFK0h8YIrmhdRIIzq6YqwuYzLmD42x5ufOdt2Kh
-         Qjz+yojzhOH+R2Cqvujce8uwq4FQ4yKFuZZ4tWTqbh+Mzm6oOzk485L6ViKdzQRJrK8k
-         vrcOIX6Vi10mJirmOboPGb1aJLkvwNJyPUjquLbdSyOy3w3e/0Sr/kIFfXhu6GFwBqGk
-         B5knjVopEOwgh63nDkMMLz1TrLO+TgsXvnhcM9ZkxQtB7o4pM+A0Q04hKsvcNTLXD6Tr
-         GKVEitBx67K+T66SO1CNCAm61aLGbE6ZsnI2HmOc8bhSzI26WuyNC6Dp/meCt06I+Wfn
-         +FSA==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=bO5VmfaNpjVVREGufhEjpS0RVmiy0+tDrVzrBmR/Klk=;
+        b=DGL5unFzfWW6yGqVG2gtuY8Y7AYqNgW1kYmTAFI1UmotEReGMPQ7+/nurfdNtSw6kX
+         7t41EQ68yYpDkvs9bN8NZdDPqTqVXnPDOJyXnEBa7RaAsCXrib6QePdF4vbI2GIqUGJ/
+         MPRdlcA74ujsVmtLo3Swnwn/AAas5jW+pCF/Ln6WWt5EGHFoZNs+CovnkzUBoMWGJbOR
+         l3cHhI403t5GFk3fPzqdH+uHeSvXbH+QSIOscqju5HtKqtPZlgeiwTgbYFuVwhYOAlz0
+         uy0kJNeVrbzHlxDgJz3intJg8+X3fA1Hn7KHJHdpqaD4aGtti/w8DsC5NTsZ+HxU3PfJ
+         E64Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=g1dC/n65USYYjusFSHlK9vgvBZI+Oht+fJhBix7TCeM=;
-        b=MAJ34ZXbK4QCx9sc0wEIv40qXsRXY1hucRIQ/blGwhJjMOuvUWMYpFXqYkRcJwNCMc
-         wgZ+wEhcYfh9B+hM0WfNVf1Wt7K1+8SLeNXzgs8gBoRu1+JPexYjt9w7ipYhASMpzUMP
-         rpk5X0tJFxGfEtYRni0PLMxLEuKhyqnaDKcUgMViVh4p7Eikd4XSALp+Fu5lmoDest7t
-         DFyF4GxEy2niOc3rDSKxvvhqx5sUP0e6yFVu8HH+z1cRgCXyOzjtzdIOIA3toHYD6qzS
-         u1krdYq5IrW1LrJKxoOS/DN8yHCQGlLTPmLGEnM/Ll5BLF7KMsNrqFM8VrKyOirdgel0
-         PjHw==
-X-Gm-Message-State: AOAM533Ha00Uaiqxwwiv5KKud1Q1MTgdRPELs/1ehFcfyL1yGTeGmsLa
-        1yVdEmAieY9Ic6qhez5D5jE=
-X-Google-Smtp-Source: ABdhPJxjLEm08f2XZOAIRQkKqH3kneBQs/5LROljNjO6HNA+l0EUm6jIrU0DDbEv3pH+REERz2pRUQ==
-X-Received: by 2002:a17:90a:ee91:: with SMTP id i17mr605327pjz.67.1629148512230;
-        Mon, 16 Aug 2021 14:15:12 -0700 (PDT)
-Received: from xps.yggdrasil ([49.207.137.16])
-        by smtp.gmail.com with ESMTPSA id b12sm103154pff.63.2021.08.16.14.15.07
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=bO5VmfaNpjVVREGufhEjpS0RVmiy0+tDrVzrBmR/Klk=;
+        b=hZfvOIsgGrS9H6em1OWnLBGH/l4VYAjafHwT1tRLj6ZvLRqnB2tGIF2m2oyqZxQUsB
+         pG5b7lUbuRrRwQsMOk/EQzuWMQZCb3/U74SrOEDVmPyIrSOD4mXj5LNuB3+vJiTGMNJI
+         DQ5xPdbDHjUl4VHUZArdy0Xe5TZooq/1hPtRWXnfWcjapUtWc0/sgSYYXobv9HWUA3GU
+         0MAQTl0tEoJg5XUacOUQ5BWa0vj7jI54LYZqvx1KC4jE1OjdZhLUtHlS59g/USTuM++v
+         vW9xqEQc2Y9Tho8VXN4STlbE9/+iAarP55Um/OpJfhjpkqdOJueTBMyuPvVtSy6o694A
+         F5FQ==
+X-Gm-Message-State: AOAM532MHNzYZXluzHCdyWthUixU265yXTKOpV86E/QEVs2/dt4WXXD8
+        ii4Z1NAWK50xuxAbysUZMwo=
+X-Google-Smtp-Source: ABdhPJzfD+REHIwuiGYg1fuxQjjlpDVZHYlge+vtvAZqlGgG4tIZ0Of68hupSFQ0Tvw+LsNO5cfhqA==
+X-Received: by 2002:a05:651c:985:: with SMTP id b5mr890013ljq.78.1629163801449;
+        Mon, 16 Aug 2021 18:30:01 -0700 (PDT)
+Received: from localhost.localdomain (46-138-85-91.dynamic.spd-mgts.ru. [46.138.85.91])
+        by smtp.gmail.com with ESMTPSA id g30sm46607lfj.298.2021.08.16.18.30.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Aug 2021 14:15:11 -0700 (PDT)
-From:   Aakash Hemadri <aakashhemadri123@gmail.com>
-To:     Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>
-Cc:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
+        Mon, 16 Aug 2021 18:30:01 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Bjorn Helgaas <bjorn@helgaas.com>
-Subject: [PATCH 2/2] ASoC: tegra30: i2s: Fix incorrect usage of of_device_get_match_data
-Date:   Tue, 17 Aug 2021 02:44:52 +0530
-Message-Id: <4805c7fcd35c8deada63d41cb34d40de80f85a13.1629148177.git.aakashhemadri123@gmail.com>
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Peter Chen <peter.chen@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>, Nishanth Menon <nm@ti.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Richard Weinberger <richard@nod.at>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Lucas Stach <dev@lynxeye.de>, Stefan Agner <stefan@agner.ch>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-staging@lists.linux.dev, linux-spi@vger.kernel.org,
+        linux-pwm@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-mmc@vger.kernel.org, linux-media@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: [PATCH v8 00/34] NVIDIA Tegra power management patches for 5.16
+Date:   Tue, 17 Aug 2021 04:27:20 +0300
+Message-Id: <20210817012754.8710-1-digetx@gmail.com>
 X-Mailer: git-send-email 2.32.0
-In-Reply-To: <cover.1629148177.git.aakashhemadri123@gmail.com>
-References: <cover.1629148177.git.aakashhemadri123@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-const struct of_device_id incorrectly assigned "match->data" using
-    of_device_get_match_data()
+This series adds runtime PM support to Tegra drivers and enables core
+voltage scaling for Tegra20/30 SoCs, resolving overheating troubles.
 
-Instead assign `const struct tegra30_i2s_soc_data *soc_data` with
-const void *of_device_get_match_data(...)
+All patches should go via Tegra tree because they are interdependent,
+please review and ack.
 
-Fixes: 356b94a32a75 ("ASoC: tegra30: i2s: Use of_device_get_match_data")
+If you haven't seen this series before, that's because I wanted to
+finalize the GENPD part at first and didn't bother you previously.
 
-Signed-off-by: Aakash Hemadri <aakashhemadri123@gmail.com>
----
- sound/soc/tegra/tegra30_i2s.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Changelog:
 
-diff --git a/sound/soc/tegra/tegra30_i2s.c b/sound/soc/tegra/tegra30_i2s.c
-index d4c5594efaf1..084a533bf4f2 100644
---- a/sound/soc/tegra/tegra30_i2s.c
-+++ b/sound/soc/tegra/tegra30_i2s.c
-@@ -406,7 +406,7 @@ static const struct of_device_id tegra30_i2s_of_match[] = {
- static int tegra30_i2s_platform_probe(struct platform_device *pdev)
- {
- 	struct tegra30_i2s *i2s;
--	const struct of_device_id *match;
-+	const struct tegra30_i2s_soc_data *soc_data;
- 	u32 cif_ids[2];
- 	void __iomem *regs;
- 	int ret;
-@@ -418,13 +418,13 @@ static int tegra30_i2s_platform_probe(struct platform_device *pdev)
- 	}
- 	dev_set_drvdata(&pdev->dev, i2s);
- 
--	match = of_device_get_match_data(&pdev->dev);
--	if (!match) {
-+	soc_data = of_device_get_match_data(&pdev->dev);
-+	if (!soc_data) {
- 		dev_err(&pdev->dev, "Error: No device match found\n");
- 		ret = -ENODEV;
- 		goto err;
- 	}
--	i2s->soc_data = (struct tegra30_i2s_soc_data *)match->data;
-+	i2s->soc_data = soc_data;
- 
- 	i2s->dai = tegra30_i2s_dai_template;
- 	i2s->dai.name = dev_name(&pdev->dev);
+v8: - Added new generic dev_pm_opp_sync() helper that syncs OPP state with
+      hardware. All drivers changed to use it. This replaces GENPD attach_dev
+      callback hacks that were used in v7.
+
+    - Added new patch patch "soc/tegra: regulators: Prepare for suspend"
+      that fixes dying Tegra20 SoC after enabling VENC power domain during
+      resume from suspend. It matches to what downstream kernel does on
+      suspend/resume.
+
+    - After a second thought, I dropped patches which added RPM to memory
+      drivers since hardware is always-on and RPM not needed.
+
+    - Replaced the "dummy host1x driver" patch with new "Disable unused
+      host1x hardware" patch, since it's a cleaner solution.
+
+Dmitry Osipenko (34):
+  opp: Add dev_pm_opp_sync() helper
+  soc/tegra: pmc: Disable PMC state syncing
+  soc/tegra: Don't print error message when OPPs not available
+  soc/tegra: Add devm_tegra_core_dev_init_opp_table_simple()
+  soc/tegra: Use dev_pm_opp_sync()
+  dt-bindings: clock: tegra-car: Document new tegra-clocks sub-node
+  clk: tegra: Support runtime PM and power domain
+  dt-bindings: host1x: Document OPP and power domain properties
+  dt-bindings: host1x: Document Memory Client resets of Host1x, GR2D and
+    GR3D
+  gpu: host1x: Add host1x_channel_stop()
+  gpu: host1x: Add runtime PM and OPP support
+  drm/tegra: dc: Support OPP and SoC core voltage scaling
+  drm/tegra: hdmi: Add OPP support
+  drm/tegra: gr2d: Support power management
+  drm/tegra: gr3d: Support power management
+  drm/tegra: vic: Support system suspend
+  usb: chipidea: tegra: Add runtime PM and OPP support
+  bus: tegra-gmi: Add runtime PM and OPP support
+  pwm: tegra: Add runtime PM and OPP support
+  mmc: sdhci-tegra: Add runtime PM and OPP support
+  mtd: rawnand: tegra: Add runtime PM and OPP support
+  spi: tegra20-slink: Add OPP support
+  media: dt: bindings: tegra-vde: Convert to schema
+  media: dt: bindings: tegra-vde: Document OPP and power domain
+  media: staging: tegra-vde: Support generic power domain and OPP
+  soc/tegra: fuse: Add OPP support
+  soc/tegra: fuse: Reset hardware
+  soc/tegra: regulators: Prepare for suspend
+  soc/tegra: pmc: Enable core domain support for Tegra20 and Tegra30
+  ARM: tegra: Add OPP tables and power domains to Tegra20 device-trees
+  ARM: tegra: Add OPP tables and power domains to Tegra30 device-trees
+  ARM: tegra: Add Memory Client resets to Tegra20 GR2D, GR3D and Host1x
+  ARM: tegra: Add Memory Client resets to Tegra30 GR2D, GR3D and Host1x
+  ARM: tegra20/30: Disable unused host1x hardware
+
+ .../bindings/clock/nvidia,tegra20-car.yaml    |   51 +
+ .../display/tegra/nvidia,tegra20-host1x.txt   |   53 +
+ .../bindings/media/nvidia,tegra-vde.txt       |   64 -
+ .../bindings/media/nvidia,tegra-vde.yaml      |  119 ++
+ .../boot/dts/tegra20-acer-a500-picasso.dts    |    1 +
+ arch/arm/boot/dts/tegra20-colibri.dtsi        |    3 +-
+ arch/arm/boot/dts/tegra20-harmony.dts         |    3 +-
+ arch/arm/boot/dts/tegra20-paz00.dts           |    1 +
+ .../arm/boot/dts/tegra20-peripherals-opp.dtsi |  941 +++++++++++
+ arch/arm/boot/dts/tegra20-seaboard.dts        |    3 +-
+ arch/arm/boot/dts/tegra20-tamonten.dtsi       |    3 +-
+ arch/arm/boot/dts/tegra20-trimslice.dts       |    9 +
+ arch/arm/boot/dts/tegra20-ventana.dts         |    1 +
+ arch/arm/boot/dts/tegra20.dtsi                |  119 +-
+ .../tegra30-asus-nexus7-grouper-common.dtsi   |    1 +
+ arch/arm/boot/dts/tegra30-beaver.dts          |    1 +
+ arch/arm/boot/dts/tegra30-cardhu.dtsi         |    1 +
+ arch/arm/boot/dts/tegra30-colibri.dtsi        |   17 +-
+ arch/arm/boot/dts/tegra30-ouya.dts            |    1 +
+ .../arm/boot/dts/tegra30-peripherals-opp.dtsi | 1412 +++++++++++++++++
+ arch/arm/boot/dts/tegra30.dtsi                |  181 ++-
+ drivers/bus/tegra-gmi.c                       |   92 +-
+ drivers/clk/tegra/Makefile                    |    1 +
+ drivers/clk/tegra/clk-device.c                |  222 +++
+ drivers/clk/tegra/clk-pll.c                   |    2 +-
+ drivers/clk/tegra/clk-super.c                 |    2 +-
+ drivers/clk/tegra/clk-tegra20.c               |   39 +-
+ drivers/clk/tegra/clk-tegra30.c               |   70 +-
+ drivers/clk/tegra/clk.c                       |   64 +
+ drivers/clk/tegra/clk.h                       |    2 +
+ drivers/gpu/drm/tegra/dc.c                    |   74 +
+ drivers/gpu/drm/tegra/dc.h                    |    2 +
+ drivers/gpu/drm/tegra/gr2d.c                  |  154 +-
+ drivers/gpu/drm/tegra/gr3d.c                  |  393 ++++-
+ drivers/gpu/drm/tegra/hdmi.c                  |   15 +-
+ drivers/gpu/drm/tegra/vic.c                   |    4 +
+ drivers/gpu/host1x/channel.c                  |    8 +
+ drivers/gpu/host1x/debug.c                    |   15 +
+ drivers/gpu/host1x/dev.c                      |  157 +-
+ drivers/gpu/host1x/dev.h                      |    3 +-
+ drivers/gpu/host1x/hw/channel_hw.c            |   44 +-
+ drivers/gpu/host1x/intr.c                     |    3 -
+ drivers/gpu/host1x/syncpt.c                   |    5 +-
+ drivers/mmc/host/sdhci-tegra.c                |  146 +-
+ drivers/mtd/nand/raw/tegra_nand.c             |   62 +-
+ drivers/opp/core.c                            |   42 +-
+ drivers/pwm/pwm-tegra.c                       |  104 +-
+ drivers/soc/tegra/common.c                    |   34 +-
+ drivers/soc/tegra/fuse/fuse-tegra.c           |   36 +
+ drivers/soc/tegra/fuse/fuse.h                 |    1 +
+ drivers/soc/tegra/pmc.c                       |   17 +
+ drivers/soc/tegra/regulators-tegra20.c        |   99 ++
+ drivers/soc/tegra/regulators-tegra30.c        |  122 ++
+ drivers/spi/spi-tegra20-slink.c               |   15 +-
+ drivers/staging/media/tegra-vde/vde.c         |   65 +-
+ drivers/usb/chipidea/ci_hdrc_tegra.c          |   61 +-
+ include/linux/host1x.h                        |    1 +
+ include/linux/pm_opp.h                        |    6 +
+ include/soc/tegra/common.h                    |   13 +
+ 59 files changed, 4796 insertions(+), 384 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/media/nvidia,tegra-vde.txt
+ create mode 100644 Documentation/devicetree/bindings/media/nvidia,tegra-vde.yaml
+ create mode 100644 drivers/clk/tegra/clk-device.c
+
 -- 
 2.32.0
 
