@@ -5,58 +5,58 @@ X-Spam-Level:
 X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8761EC00144
-	for <linux-tegra@archiver.kernel.org>; Tue, 17 Aug 2021 01:32:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A334C19F3F
+	for <linux-tegra@archiver.kernel.org>; Tue, 17 Aug 2021 01:32:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 69DCC60EAF
-	for <linux-tegra@archiver.kernel.org>; Tue, 17 Aug 2021 01:32:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F38B60FA0
+	for <linux-tegra@archiver.kernel.org>; Tue, 17 Aug 2021 01:32:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239276AbhHQBcn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 16 Aug 2021 21:32:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48040 "EHLO
+        id S236836AbhHQBcu (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 16 Aug 2021 21:32:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48036 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236873AbhHQBa6 (ORCPT
+        with ESMTP id S237115AbhHQBbB (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 16 Aug 2021 21:30:58 -0400
-Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70981C0613A3;
-        Mon, 16 Aug 2021 18:30:23 -0700 (PDT)
-Received: by mail-lf1-x131.google.com with SMTP id r9so28747283lfn.3;
-        Mon, 16 Aug 2021 18:30:23 -0700 (PDT)
+        Mon, 16 Aug 2021 21:31:01 -0400
+Received: from mail-lj1-x22e.google.com (mail-lj1-x22e.google.com [IPv6:2a00:1450:4864:20::22e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA757C06129E;
+        Mon, 16 Aug 2021 18:30:26 -0700 (PDT)
+Received: by mail-lj1-x22e.google.com with SMTP id i28so8907203ljm.7;
+        Mon, 16 Aug 2021 18:30:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=RyUAbE2QFBPkAmLeYWIUbN1190eoatB//1STMKYD8E8=;
-        b=FHHkdVALDIC8dyirLf0Z63rRk2CutfNmZs9OsR4qhsaRwNMT/JUhplqAuSsrFSjuJt
-         7zSJwbx7dRC2Y9TwD2ZgLA5WNk42Z5kK0YZGsGNs3gwML8PTM0G7q3O9wFbjuiSMyB0k
-         KGqYd6awr7eVl6/cGTwCB183jYlUcnE+k7hkycg/xusGFpw8VM2zyG04lr4PyeyWYT2s
-         5azXGdQxYI0PqjxHmfPrlOWLRcxdK/wmwF/vC6iJgIsJkfElj58/Nx7y+ML/ZOXDk4uG
-         X7bjcWfPs3d71DI5ydF/R/VhKo+ZQTQ07nPlS36IPVJW1y82YTEYBSTdFfCOPQdw86Td
-         ypTw==
+        bh=gwm4vp8rjsWjjGf8PWBUulpfDpYNBiPAbn25BacEPVI=;
+        b=Fy8KLmK2MoY/leSpwNqjHGVp48kRMOP+zK0R/VkPTKJXa6g4LXq1IAxsbBdgx9XyB2
+         Lm4fBoFQcvh6TRV/uZuzuZrJi61xAAxe5uZzXfbyRE4HzXVVCesvQKmQyKka5icgdAQg
+         MYbGj85PiqGMJ/wZC6EhwGoa6Rat5q0i6TVwuVOVlBnh1N/GcJcDHbYmk84r/2gXwltl
+         fpYjeSZBD7Ghuug6wq9nQLucom+sLNoQszbwctdjOH9VNzyM1rB2+B7VCbl6Wfo5feu9
+         8rNpaujmlpMX+klV4qjnKV2TL7Vip/w2/yIJG8wYoKXgY5BTp+hRDzT8uEsG0CUu+mYz
+         io5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=RyUAbE2QFBPkAmLeYWIUbN1190eoatB//1STMKYD8E8=;
-        b=sYtr9ml4cF6YMacoScA68QfTOEHbWcos5VNNOKMwOXTRJhGc+RMtmRQxTVbKpLlXXr
-         pHKuIdGN7lc59XaM4G/0AgSCMgNMh0F5/uVHomsAsOykQ2Shurhxq+kzjGJhZAEGIYrZ
-         ppj069HmEiq1ain6GAscN2PrshB5jYCSHWxC7bg66PvjN5Z5zhW+mboLaAe6uCSMMFKb
-         PQY+ZdpA20eTtdIE6cG/LBHUU3I4OK3T8fcF/n1RKuJ4YmH9mNP/rMiFdyi9kNIkNZfQ
-         xNBLnzJDVgiWsFvBwlQpdIx16sauljx2LIE7qmvZy63lvPB4kcK4fCxKsy+prrEVYpDb
-         pYAw==
-X-Gm-Message-State: AOAM533/4fkC8FUzKUTYu33vJNilDSvegIkQ7sd4BXFnboyfY2Fh/6ei
-        jgIvrbaZi5LVZ9wcfvAvn+w=
-X-Google-Smtp-Source: ABdhPJyRsAKpO2RcAL+dS1g6qGdkcebzosRG7tO7qBO0N4O3xLiuYgInL89eIUxXQ6XIMR0zalmnVA==
-X-Received: by 2002:a19:6b02:: with SMTP id d2mr510341lfa.522.1629163821862;
-        Mon, 16 Aug 2021 18:30:21 -0700 (PDT)
+        bh=gwm4vp8rjsWjjGf8PWBUulpfDpYNBiPAbn25BacEPVI=;
+        b=tnzAU5xGQjwv5hYueczK+vPdzXDoZz01jdPeqEKPEo4Omm4msBSRFGVlW95IPp5pkD
+         7B4ms1f6bMIPWelDHC2DtmmLXerN4QuU5B+gDGzJzZErXA9aMCnQNHP3QdorBn5JqLV9
+         bUuIutuGFOMTlqYvCenJcosQxgujpK5MF+OysW1O1wFo8S9bmrQ4Mb0WEZwVe93/Cqax
+         OHFw40H5jUtRf+i050v/rKIHwdhkM9k7eV+U7N+eUXy5G2lAWJcXzhBA1sxX1LHiZGaB
+         yujiM1OteWI2IsYOj1DwWL1YsXpntODWgdwA4dCzlGyDU1iGznBKSRsghdwhpKV6oxi/
+         zc7Q==
+X-Gm-Message-State: AOAM532gGFAIq55HKyKoI+GsibUuEiycV1ERwpCW8VG2T6gEiuJ5gCbf
+        k+or+eR/z0AgH3mxKTq0kXg=
+X-Google-Smtp-Source: ABdhPJy+goByVOHZLAqSVCo0afpBXrtrvBCR0ezq6OWZlwehQ2YkImXl+HsmkceKK7965D+ImAdEuQ==
+X-Received: by 2002:a05:651c:118:: with SMTP id a24mr878911ljb.158.1629163825346;
+        Mon, 16 Aug 2021 18:30:25 -0700 (PDT)
 Received: from localhost.localdomain (46-138-85-91.dynamic.spd-mgts.ru. [46.138.85.91])
-        by smtp.gmail.com with ESMTPSA id g30sm46607lfj.298.2021.08.16.18.30.20
+        by smtp.gmail.com with ESMTPSA id g30sm46607lfj.298.2021.08.16.18.30.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Aug 2021 18:30:21 -0700 (PDT)
+        Mon, 16 Aug 2021 18:30:25 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -85,9 +85,9 @@ Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-mmc@vger.kernel.org, linux-media@vger.kernel.org,
         dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
         linux-clk@vger.kernel.org
-Subject: [PATCH v8 17/34] usb: chipidea: tegra: Add runtime PM and OPP support
-Date:   Tue, 17 Aug 2021 04:27:37 +0300
-Message-Id: <20210817012754.8710-18-digetx@gmail.com>
+Subject: [PATCH v8 20/34] mmc: sdhci-tegra: Add runtime PM and OPP support
+Date:   Tue, 17 Aug 2021 04:27:40 +0300
+Message-Id: <20210817012754.8710-21-digetx@gmail.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20210817012754.8710-1-digetx@gmail.com>
 References: <20210817012754.8710-1-digetx@gmail.com>
@@ -97,142 +97,288 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The Tegra USB controller belongs to the core power domain and we're going
-to enable GENPD support for the core domain. Now USB controller must be
-resumed using runtime PM API in order to initialize the USB power state.
-We already support runtime PM for the CI device, but CI's PM is separated
-from the RPM managed by tegra-usb driver. Add runtime PM and OPP support
-to tegra-usb driver.
+The SDHCI on Tegra belongs to the core power domain and we're going to
+enable GENPD support for the core domain. Now SDHCI must be resumed using
+runtime PM API in order to initialize the SDHCI power state. The SDHCI
+clock rate must be changed using OPP API that will reconfigure the power
+domain performance state in accordance to the rate. Add runtime PM and OPP
+support to the SDHCI driver.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/usb/chipidea/ci_hdrc_tegra.c | 61 ++++++++++++++++++++++++----
- 1 file changed, 54 insertions(+), 7 deletions(-)
+ drivers/mmc/host/sdhci-tegra.c | 146 ++++++++++++++++++++++++---------
+ 1 file changed, 105 insertions(+), 41 deletions(-)
 
-diff --git a/drivers/usb/chipidea/ci_hdrc_tegra.c b/drivers/usb/chipidea/ci_hdrc_tegra.c
-index 60361141ac04..09a5e5fc251f 100644
---- a/drivers/usb/chipidea/ci_hdrc_tegra.c
-+++ b/drivers/usb/chipidea/ci_hdrc_tegra.c
-@@ -7,6 +7,8 @@
- #include <linux/io.h>
- #include <linux/module.h>
+diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+index 387ce9cdbd7c..a3583359c972 100644
+--- a/drivers/mmc/host/sdhci-tegra.c
++++ b/drivers/mmc/host/sdhci-tegra.c
+@@ -15,6 +15,8 @@
+ #include <linux/of.h>
  #include <linux/of_device.h>
+ #include <linux/pinctrl/consumer.h>
 +#include <linux/pm_opp.h>
 +#include <linux/pm_runtime.h>
+ #include <linux/regulator/consumer.h>
  #include <linux/reset.h>
- 
- #include <linux/usb.h>
-@@ -15,6 +17,8 @@
- #include <linux/usb/of.h>
- #include <linux/usb/phy.h>
+ #include <linux/mmc/card.h>
+@@ -24,6 +26,8 @@
+ #include <linux/gpio/consumer.h>
+ #include <linux/ktime.h>
  
 +#include <soc/tegra/common.h>
 +
- #include "../host/ehci.h"
+ #include "sdhci-pltfm.h"
+ #include "cqhci.h"
  
- #include "ci.h"
-@@ -278,6 +282,8 @@ static int tegra_usb_probe(struct platform_device *pdev)
- 	if (!usb)
- 		return -ENOMEM;
+@@ -123,6 +127,12 @@
+ 					 SDHCI_TRNS_BLK_CNT_EN | \
+ 					 SDHCI_TRNS_DMA)
  
-+	platform_set_drvdata(pdev, usb);
++enum {
++	TEGRA_CLK_BULK_SDHCI,
++	TEGRA_CLK_BULK_TMCLK,
++	TEGRA_CLK_BULK_NUM,
++};
 +
- 	soc = of_device_get_match_data(&pdev->dev);
- 	if (!soc) {
- 		dev_err(&pdev->dev, "failed to match OF data\n");
-@@ -296,11 +302,14 @@ static int tegra_usb_probe(struct platform_device *pdev)
- 		return err;
+ struct sdhci_tegra_soc_data {
+ 	const struct sdhci_pltfm_data *pdata;
+ 	u64 dma_mask;
+@@ -171,6 +181,8 @@ struct sdhci_tegra {
+ 	bool enable_hwcq;
+ 	unsigned long curr_clk_rate;
+ 	u8 tuned_tap_delay;
++
++	struct clk_bulk_data clocks[TEGRA_CLK_BULK_NUM];
+ };
+ 
+ static u16 tegra_sdhci_readw(struct sdhci_host *host, int reg)
+@@ -758,10 +770,15 @@ static void tegra_sdhci_set_clock(struct sdhci_host *host, unsigned int clock)
+ {
+ 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+ 	struct sdhci_tegra *tegra_host = sdhci_pltfm_priv(pltfm_host);
++	struct device *dev = mmc_dev(host->mmc);
+ 	unsigned long host_clk;
++	int err;
+ 
+-	if (!clock)
+-		return sdhci_set_clock(host, clock);
++	if (!clock) {
++		sdhci_set_clock(host, clock);
++		dev_pm_opp_set_rate(dev, clock);
++		return;
++	}
+ 
+ 	/*
+ 	 * In DDR50/52 modes the Tegra SDHCI controllers require the SDHCI
+@@ -776,7 +793,12 @@ static void tegra_sdhci_set_clock(struct sdhci_host *host, unsigned int clock)
+ 	 * from clk_get_rate() is used.
+ 	 */
+ 	host_clk = tegra_host->ddr_signaling ? clock * 2 : clock;
+-	clk_set_rate(pltfm_host->clk, host_clk);
++
++	err = dev_pm_opp_set_rate(dev, host_clk);
++	if (err)
++		dev_err(dev, "failed to set clk rate to %luHz: %d\n",
++			host_clk, err);
++
+ 	tegra_host->curr_clk_rate = host_clk;
+ 	if (tegra_host->ddr_signaling)
+ 		host->max_clk = host_clk;
+@@ -1653,6 +1675,21 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
+ 		goto err_power_req;
  	}
  
--	err = clk_prepare_enable(usb->clk);
--	if (err < 0) {
--		dev_err(&pdev->dev, "failed to enable clock: %d\n", err);
-+	err = devm_tegra_core_dev_init_opp_table_simple(&pdev->dev);
-+	if (err)
- 		return err;
--	}
++	tegra_host->clocks[TEGRA_CLK_BULK_SDHCI].id = NULL;
++	tegra_host->clocks[TEGRA_CLK_BULK_TMCLK].id = "tmclk";
++
++	rc = devm_clk_bulk_get_optional(&pdev->dev, TEGRA_CLK_BULK_NUM,
++					tegra_host->clocks);
++
++	/* controller clock is mandatory */
++	if (!rc && !tegra_host->clocks[TEGRA_CLK_BULK_SDHCI].clk)
++		rc = -ENOENT;
++
++	if (rc) {
++		dev_err_probe(&pdev->dev, rc, "failed to get clock\n");
++		goto err_power_req;
++	}
++
+ 	/*
+ 	 * Tegra210 has a separate SDMMC_LEGACY_TM clock used for host
+ 	 * timeout clock and SW can choose TMCLK or SDCLK for hardware
+@@ -1669,34 +1706,19 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
+ 	 */
+ 
+ 	if (soc_data->nvquirks & NVQUIRK_HAS_TMCLK) {
+-		clk = devm_clk_get(&pdev->dev, "tmclk");
+-		if (IS_ERR(clk)) {
+-			rc = PTR_ERR(clk);
+-			if (rc == -EPROBE_DEFER)
+-				goto err_power_req;
+-
+-			dev_warn(&pdev->dev, "failed to get tmclk: %d\n", rc);
+-			clk = NULL;
+-		}
++		clk = tegra_host->clocks[TEGRA_CLK_BULK_TMCLK].clk;
++		if (!clk)
++			dev_warn(&pdev->dev, "failed to get tmclk");
+ 
+ 		clk_set_rate(clk, 12000000);
+-		rc = clk_prepare_enable(clk);
+-		if (rc) {
+-			dev_err(&pdev->dev,
+-				"failed to enable tmclk: %d\n", rc);
+-			goto err_power_req;
+-		}
+-
+-		tegra_host->tmclk = clk;
+ 	}
+ 
+-	clk = devm_clk_get(mmc_dev(host->mmc), NULL);
+-	if (IS_ERR(clk)) {
+-		rc = dev_err_probe(&pdev->dev, PTR_ERR(clk),
+-				   "failed to get clock\n");
+-		goto err_clk_get;
++	clk = tegra_host->clocks[TEGRA_CLK_BULK_SDHCI].clk;
++	if (!clk) {
++		dev_err(&pdev->dev, "failed to get sdhci clock\n");
++		rc = -ENOENT;
++		goto err_power_req;
+ 	}
+-	clk_prepare_enable(clk);
+ 	pltfm_host->clk = clk;
+ 
+ 	tegra_host->rst = devm_reset_control_get_exclusive(&pdev->dev,
+@@ -1704,9 +1726,18 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
+ 	if (IS_ERR(tegra_host->rst)) {
+ 		rc = PTR_ERR(tegra_host->rst);
+ 		dev_err(&pdev->dev, "failed to get reset control: %d\n", rc);
+-		goto err_rst_get;
++		goto err_power_req;
+ 	}
+ 
++	rc = devm_tegra_core_dev_init_opp_table_simple(&pdev->dev);
++	if (rc)
++		goto err_power_req;
 +
 +	pm_runtime_enable(&pdev->dev);
-+	err = pm_runtime_resume_and_get(&pdev->dev);
-+	if (err)
-+		goto disable_pm;
- 
- 	if (device_property_present(&pdev->dev, "nvidia,needs-double-reset"))
- 		usb->needs_double_reset = true;
-@@ -320,8 +329,6 @@ static int tegra_usb_probe(struct platform_device *pdev)
- 	if (err)
- 		goto fail_power_off;
- 
--	platform_set_drvdata(pdev, usb);
--
- 	/* setup and register ChipIdea HDRC device */
- 	usb->soc = soc;
- 	usb->data.name = "tegra-usb";
-@@ -350,7 +357,10 @@ static int tegra_usb_probe(struct platform_device *pdev)
- phy_shutdown:
- 	usb_phy_shutdown(usb->phy);
- fail_power_off:
--	clk_disable_unprepare(usb->clk);
-+	pm_runtime_put(&pdev->dev);
-+disable_pm:
-+	pm_runtime_disable(&pdev->dev);
++	rc = pm_runtime_resume_and_get(&pdev->dev);
++	if (rc)
++		goto err_pm_get;
 +
- 	return err;
- }
+ 	rc = reset_control_assert(tegra_host->rst);
+ 	if (rc)
+ 		goto err_rst_get;
+@@ -1728,9 +1759,9 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
+ err_add_host:
+ 	reset_control_assert(tegra_host->rst);
+ err_rst_get:
+-	clk_disable_unprepare(pltfm_host->clk);
+-err_clk_get:
+-	clk_disable_unprepare(tegra_host->tmclk);
++	pm_runtime_put(&pdev->dev);
++err_pm_get:
++	pm_runtime_disable(&pdev->dev);
+ err_power_req:
+ err_parse_dt:
+ 	sdhci_pltfm_free(pdev);
+@@ -1747,19 +1778,44 @@ static int sdhci_tegra_remove(struct platform_device *pdev)
  
-@@ -360,15 +370,52 @@ static int tegra_usb_remove(struct platform_device *pdev)
- 
- 	ci_hdrc_remove_device(usb->dev);
- 	usb_phy_shutdown(usb->phy);
+ 	reset_control_assert(tegra_host->rst);
+ 	usleep_range(2000, 4000);
+-	clk_disable_unprepare(pltfm_host->clk);
+-	clk_disable_unprepare(tegra_host->tmclk);
 +
 +	pm_runtime_put(&pdev->dev);
 +	pm_runtime_disable(&pdev->dev);
-+
-+	return 0;
-+}
-+
-+static int __maybe_unused tegra_usb_runtime_resume(struct device *dev)
-+{
-+	struct tegra_usb *usb = dev_get_drvdata(dev);
-+	int err;
-+
-+	err = dev_pm_opp_sync(dev);
-+	if (err) {
-+		dev_err(dev, "failed to sync OPP: %d\n", err);
-+		return err;
-+	}
-+
-+	err = clk_prepare_enable(usb->clk);
-+	if (err < 0) {
-+		dev_err(dev, "failed to enable clock: %d\n", err);
-+		return err;
-+	}
-+
-+	return 0;
-+}
-+
-+static int __maybe_unused tegra_usb_runtime_suspend(struct device *dev)
-+{
-+	struct tegra_usb *usb = dev_get_drvdata(dev);
-+
- 	clk_disable_unprepare(usb->clk);
+ 
+ 	sdhci_pltfm_free(pdev);
  
  	return 0;
  }
  
-+static const struct dev_pm_ops tegra_usb_pm = {
-+	SET_RUNTIME_PM_OPS(tegra_usb_runtime_suspend, tegra_usb_runtime_resume,
-+			   NULL)
-+};
+-#ifdef CONFIG_PM_SLEEP
+-static int __maybe_unused sdhci_tegra_suspend(struct device *dev)
++static int __maybe_unused sdhci_tegra_runtime_suspend(struct device *dev)
++{
++	struct sdhci_host *host = dev_get_drvdata(dev);
++	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
++	struct sdhci_tegra *tegra_host = sdhci_pltfm_priv(pltfm_host);
 +
- static struct platform_driver tegra_usb_driver = {
- 	.driver = {
- 		.name = "tegra-usb",
- 		.of_match_table = tegra_usb_of_match,
-+		.pm = &tegra_usb_pm,
- 	},
- 	.probe = tegra_usb_probe,
- 	.remove = tegra_usb_remove,
++	clk_bulk_disable_unprepare(TEGRA_CLK_BULK_NUM, tegra_host->clocks);
++
++	return 0;
++}
++
++static int __maybe_unused sdhci_tegra_runtime_resume(struct device *dev)
+ {
+ 	struct sdhci_host *host = dev_get_drvdata(dev);
+ 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
++	struct sdhci_tegra *tegra_host = sdhci_pltfm_priv(pltfm_host);
++	int err;
++
++	err = dev_pm_opp_sync(dev);
++	if (err)
++		return err;
++
++	return clk_bulk_prepare_enable(TEGRA_CLK_BULK_NUM, tegra_host->clocks);
++}
++
++#ifdef CONFIG_PM_SLEEP
++static int sdhci_tegra_suspend(struct device *dev)
++{
++	struct sdhci_host *host = dev_get_drvdata(dev);
+ 	int ret;
+ 
+ 	if (host->mmc->caps2 & MMC_CAP2_CQE) {
+@@ -1774,17 +1830,22 @@ static int __maybe_unused sdhci_tegra_suspend(struct device *dev)
+ 		return ret;
+ 	}
+ 
+-	clk_disable_unprepare(pltfm_host->clk);
++	ret = pm_runtime_force_suspend(dev);
++	if (ret) {
++		sdhci_resume_host(host);
++		cqhci_resume(host->mmc);
++		return ret;
++	}
++
+ 	return 0;
+ }
+ 
+-static int __maybe_unused sdhci_tegra_resume(struct device *dev)
++static int sdhci_tegra_resume(struct device *dev)
+ {
+ 	struct sdhci_host *host = dev_get_drvdata(dev);
+-	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+ 	int ret;
+ 
+-	ret = clk_prepare_enable(pltfm_host->clk);
++	ret = pm_runtime_force_resume(dev);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -1803,13 +1864,16 @@ static int __maybe_unused sdhci_tegra_resume(struct device *dev)
+ suspend_host:
+ 	sdhci_suspend_host(host);
+ disable_clk:
+-	clk_disable_unprepare(pltfm_host->clk);
++	pm_runtime_force_suspend(dev);
+ 	return ret;
+ }
+ #endif
+ 
+-static SIMPLE_DEV_PM_OPS(sdhci_tegra_dev_pm_ops, sdhci_tegra_suspend,
+-			 sdhci_tegra_resume);
++static const struct dev_pm_ops sdhci_tegra_dev_pm_ops = {
++	SET_RUNTIME_PM_OPS(sdhci_tegra_runtime_suspend, sdhci_tegra_runtime_resume,
++			   NULL)
++	SET_SYSTEM_SLEEP_PM_OPS(sdhci_tegra_suspend, sdhci_tegra_resume)
++};
+ 
+ static struct platform_driver sdhci_tegra_driver = {
+ 	.driver		= {
 -- 
 2.32.0
 
