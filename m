@@ -2,183 +2,90 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.0 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0BF1C4338F
-	for <linux-tegra@archiver.kernel.org>; Tue, 17 Aug 2021 07:55:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCF3EC4338F
+	for <linux-tegra@archiver.kernel.org>; Tue, 17 Aug 2021 08:20:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 826F760F5E
-	for <linux-tegra@archiver.kernel.org>; Tue, 17 Aug 2021 07:55:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C462460FC3
+	for <linux-tegra@archiver.kernel.org>; Tue, 17 Aug 2021 08:20:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238669AbhHQHzw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 17 Aug 2021 03:55:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49804 "EHLO
+        id S235093AbhHQIUl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 17 Aug 2021 04:20:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55718 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238436AbhHQHzv (ORCPT
+        with ESMTP id S234907AbhHQIUl (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 17 Aug 2021 03:55:51 -0400
-Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 605DEC061796
-        for <linux-tegra@vger.kernel.org>; Tue, 17 Aug 2021 00:55:19 -0700 (PDT)
-Received: by mail-pj1-x102d.google.com with SMTP id j12-20020a17090aeb0c00b00179530520b3so3872553pjz.0
-        for <linux-tegra@vger.kernel.org>; Tue, 17 Aug 2021 00:55:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=6syxEk4ci6YIB/Nq5OYMmva/mb8yTCwuOVtI6kBv8o4=;
-        b=ACQXwBJ7OYjyZRVhhS/c9nneyhB/7GFHh3dEptJSMrZINFg36aQMQ7Gt7s7mEUBpCw
-         zQlnh/X4OgBYC+KUUJhyCLfP1qSGXkpJPWAGfJpM/INHjdAZ8/L1JkEYsFztN3Yjcf8Y
-         CLx5rb8MRnnLnlOw941FjpRCL/gP5pp6YSMCeI+89Jy/Rd1+N1g4DWNkDQt5p2lrVfbf
-         /2f4gxbIqWPYLcL72Mw6S4MUH55MP9SVIVTvv1bjke3ugxDHQALvD0J7WbGxZqFUjEZx
-         7P1AM3kpvDdhJRiWVIeigZKSst/k+rzUIj9Law8crvuO6T67AGjOgt6Tme7gr0jaocjL
-         3BQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=6syxEk4ci6YIB/Nq5OYMmva/mb8yTCwuOVtI6kBv8o4=;
-        b=ZNM/aXdSO1LCy1WZ2qSZs0UJioCrWRrcURIH0mCIaCOIxaouR2HdIV4/UMNdFi84PS
-         rszV4X6e2oDnJznE5q2mNGKE3M2wzmjPPOXHM2RxmhmaCLW2+x+MU379FM8cmq4zV7/m
-         OwKEM0KQ79NgcvFJVRqwY+98ZN9YUd4k83+JamIb74PjzeAfc61aoaCiyYKKpl24Pt7Z
-         TFOZ3wHOqWwYs/8iZqQiF8LcpgIUr+V6WklwUKHXezlwyGcAMnkwjO+7ThnCAS3WbyuT
-         Iz4nNBXh8nzloFs8w5BSw0tJio07yAVOQYUeGK1iWVoAVNc68Mup92Rq6gZw5GSt9jSv
-         kdzw==
-X-Gm-Message-State: AOAM532rsyoHjMxQLcF7qoMxzRvmpHMnROjVPbH+ryIxuRYMS8cKhW5b
-        K9kooh8zXcwCoLV/ZlVJ8Yo49g==
-X-Google-Smtp-Source: ABdhPJy9z80wO3ZS4ZOBoRu271xrntCgw/Td4lOHD9BJvY7rOCcDAdlvae5dCy1DGcWdIK214rqywQ==
-X-Received: by 2002:a17:90b:4a09:: with SMTP id kk9mr2300035pjb.163.1629186918789;
-        Tue, 17 Aug 2021 00:55:18 -0700 (PDT)
-Received: from localhost ([122.172.201.85])
-        by smtp.gmail.com with ESMTPSA id c12sm1471425pfl.56.2021.08.17.00.55.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Aug 2021 00:55:18 -0700 (PDT)
-Date:   Tue, 17 Aug 2021 13:25:15 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Peter Chen <peter.chen@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>, Nishanth Menon <nm@ti.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Richard Weinberger <richard@nod.at>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Lucas Stach <dev@lynxeye.de>, Stefan Agner <stefan@agner.ch>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-staging@lists.linux.dev, linux-spi@vger.kernel.org,
-        linux-pwm@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-mmc@vger.kernel.org, linux-media@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH v8 01/34] opp: Add dev_pm_opp_sync() helper
-Message-ID: <20210817075515.vyyv7z37e6jcrhsl@vireshk-i7>
-References: <20210817012754.8710-1-digetx@gmail.com>
- <20210817012754.8710-2-digetx@gmail.com>
+        Tue, 17 Aug 2021 04:20:41 -0400
+Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B9D3C061764
+        for <linux-tegra@vger.kernel.org>; Tue, 17 Aug 2021 01:20:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
+         s=20161220; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+        MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=09pE3PiSOeEq5xAeKQfrUFLsZ5sLAO/CSMefAwFhvT4=; b=bmZfjdxzfe1fZoWsA91LRS+H9p
+        aRSINB3hAf/AnwxVzD0Qe353p4ItJTmUFsnEoFgTDoUwcJvXp0Xrc/vG/P2ZAxRcfECpnu3qYCKEh
+        0dGTspwXKxFHfyWdWhdlmyMvMNzaLtgRiOlX+wSY82YMEz/c80NbEMa0CS6c+4skeIpCbrAt8igft
+        wcb8k6gRPJPd53y6whdVFn3/9t6TbSoe+Zy+Saj+cPsDRTSyUpF8A837/QwzyvmyP1etv6dc63oVe
+        b55ngt5RdBHlvhh6vGscyh9KqdlQw16LNCAt07n+oedOMycRx6Mam/hqGXblcw5yr3h4YXmjPRPKu
+        H1l8tpDA==;
+Received: from dsl-hkibng22-54f986-236.dhcp.inet.fi ([84.249.134.236] helo=[192.168.1.10])
+        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <cyndis@kapsi.fi>)
+        id 1mFuKK-0007wF-AX; Tue, 17 Aug 2021 11:20:04 +0300
+Subject: Re: [PATCH v1 0/3] Tegra DRM and Host1x driver fixes
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc:     dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
+References: <20210817020153.25378-1-digetx@gmail.com>
+From:   Mikko Perttunen <cyndis@kapsi.fi>
+Message-ID: <4d161add-89ff-e6d4-8f8c-6467bc306bfe@kapsi.fi>
+Date:   Tue, 17 Aug 2021 11:20:01 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210817012754.8710-2-digetx@gmail.com>
-User-Agent: NeoMutt/20180716-391-311a52
+In-Reply-To: <20210817020153.25378-1-digetx@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 84.249.134.236
+X-SA-Exim-Mail-From: cyndis@kapsi.fi
+X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 17-08-21, 04:27, Dmitry Osipenko wrote:
-> Add dev_pm_opp_sync() helper which syncs OPP table with hardware state
-> and vice versa.
+On 8/17/21 5:01 AM, Dmitry Osipenko wrote:
+> Fix troubles introduced by recent commits.
 > 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/opp/core.c     | 42 +++++++++++++++++++++++++++++++++++++++---
->  include/linux/pm_opp.h |  6 ++++++
->  2 files changed, 45 insertions(+), 3 deletions(-)
+> Dmitry Osipenko (3):
+>    drm/tegra: dc: Remove unused variables
+>    drm/tegra: uapi: Fix wrong mapping end address in case of disabled
+>      IOMMU
+>    gpu/host1x: fence: Make spinlock static
 > 
-> diff --git a/drivers/opp/core.c b/drivers/opp/core.c
-> index 5543c54dacc5..18016e49605f 100644
-> --- a/drivers/opp/core.c
-> +++ b/drivers/opp/core.c
-> @@ -939,7 +939,8 @@ static int _set_required_opps(struct device *dev,
->  	return ret;
->  }
->  
-> -static void _find_current_opp(struct device *dev, struct opp_table *opp_table)
-> +static struct dev_pm_opp *
-> +_find_current_opp(struct device *dev, struct opp_table *opp_table)
->  {
->  	struct dev_pm_opp *opp = ERR_PTR(-ENODEV);
->  	unsigned long freq;
-> @@ -961,7 +962,7 @@ static void _find_current_opp(struct device *dev, struct opp_table *opp_table)
->  		mutex_unlock(&opp_table->lock);
->  	}
->  
-> -	opp_table->current_opp = opp;
-> +	return opp;
->  }
->  
->  static int _disable_opp_table(struct device *dev, struct opp_table *opp_table)
-> @@ -1003,7 +1004,7 @@ static int _set_opp(struct device *dev, struct opp_table *opp_table,
->  
->  	/* Find the currently set OPP if we don't know already */
->  	if (unlikely(!opp_table->current_opp))
-> -		_find_current_opp(dev, opp_table);
-> +		opp_table->current_opp = _find_current_opp(dev, opp_table);
->  
->  	old_opp = opp_table->current_opp;
->  
-> @@ -2931,3 +2932,38 @@ int dev_pm_opp_sync_regulators(struct device *dev)
->  	return ret;
->  }
->  EXPORT_SYMBOL_GPL(dev_pm_opp_sync_regulators);
-> +
-> +/**
-> + * dev_pm_opp_sync() - Sync OPP state
-> + * @dev:	device for which we do this operation
-> + *
-> + * Initialize OPP table accordingly to current clock rate or
-> + * first available OPP if clock not available for this device.
-> + *
-> + * Return: 0 on success or a negative error value.
-> + */
-> +int dev_pm_opp_sync(struct device *dev)
-> +{
-> +	struct opp_table *opp_table;
-> +	struct dev_pm_opp *opp;
-> +	int ret = 0;
-> +
-> +	/* Device may not have OPP table */
-> +	opp_table = _find_opp_table(dev);
-> +	if (IS_ERR(opp_table))
-> +		return 0;
-> +
-> +	if (!_get_opp_count(opp_table))
-> +		goto put_table;
-> +
-> +	opp = _find_current_opp(dev, opp_table);
-> +	ret = _set_opp(dev, opp_table, opp, opp->rate);
+>   drivers/gpu/drm/tegra/dc.c   | 3 ---
+>   drivers/gpu/drm/tegra/dc.h   | 6 ------
+>   drivers/gpu/drm/tegra/uapi.c | 2 +-
+>   drivers/gpu/host1x/fence.c   | 2 +-
+>   4 files changed, 2 insertions(+), 11 deletions(-)
+> 
 
-And I am not sure how this will end up working, since new OPP will be
-equal to old one. Since I see you call this from resume() at many
-places.
+Series
 
-what exactly are you trying to do here ? Those details would be good
-to have in commit log as well, I haven't really followed V7 of your
-series.
+Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
 
--- 
-viresh
+I went through the changes between v6 and v7 and from what I can tell 
+the end address change above is the only one of those missing in what 
+was merged.
+
+Thanks,
+Mikko
