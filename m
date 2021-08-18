@@ -2,147 +2,203 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-17.0 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D0CDC432BE
-	for <linux-tegra@archiver.kernel.org>; Wed, 18 Aug 2021 06:27:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B356C4338F
+	for <linux-tegra@archiver.kernel.org>; Wed, 18 Aug 2021 08:24:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EEF6561056
-	for <linux-tegra@archiver.kernel.org>; Wed, 18 Aug 2021 06:27:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F48261029
+	for <linux-tegra@archiver.kernel.org>; Wed, 18 Aug 2021 08:24:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238878AbhHRG2I (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 18 Aug 2021 02:28:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49132 "EHLO
+        id S239225AbhHRIZJ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 18 Aug 2021 04:25:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48970 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238117AbhHRG2E (ORCPT
+        with ESMTP id S239012AbhHRIZI (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 18 Aug 2021 02:28:04 -0400
-Received: from mail-pg1-x533.google.com (mail-pg1-x533.google.com [IPv6:2607:f8b0:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FEFAC0617AF
-        for <linux-tegra@vger.kernel.org>; Tue, 17 Aug 2021 23:27:26 -0700 (PDT)
-Received: by mail-pg1-x533.google.com with SMTP id c17so1196971pgc.0
-        for <linux-tegra@vger.kernel.org>; Tue, 17 Aug 2021 23:27:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=ynpJGQ+aoMGoVR3/TzuLa6jhj83G7NCnezbFysKyDck=;
-        b=rkMxRzllxsu72p9VoE+F1Y2uNFqfHroY89seElO0F/IF9+njGBhH+JhTjiV6p10xBW
-         RZkVVmBoHTbmBO5qy0Cu5P7Yjfpn+Q0pDbpgd//DyVd9iIE8FToCC+snGEMZelh3paY/
-         +hPtSq0td+yzw80H6HXZomYGW6ujPphQgl+LDlsExLGmraR/J0ZHNe7yOVInyCFXmT/P
-         91wgqIKeFsyocJA7qECcUweDwMNTMng3I+m8yWPcUOWHp3ukJGcj7wwvK4fm1T2uIjDm
-         QM2rYu2cAoeXaM+8hLCXU5bhhQmCXVpZaudJg93f24DbqOKNah/15WaZUn/RqJ/MrtRh
-         mNtg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=ynpJGQ+aoMGoVR3/TzuLa6jhj83G7NCnezbFysKyDck=;
-        b=rMHNOVlM1yWlToaJd6tvWKODzDRX/IWrZlQOZ2GYe1s+35mf6YQ9lOHWER6qYC5I2x
-         aiK7jDdpP9IFCCDqv4X0zNLObwpPEq64dmcQvLXBbYbnPk1hK1itZ/0aXeurB9KYPTta
-         aI07HOwGyUzzBFsik2iDPrVcKS7pp+DY6JlK/2TJQ2tjv7Te2Yk4Gzn62j8KHQw9xlHX
-         9m2jcUoj5qc4cDrxkcJmo2dcTGVCtMJioKCcq2PW1YfaYQZTcb1FCAmpV0XpeGBjOm89
-         g+TKhCiSSsu7jYib/dc8bsnxHTCGdnPNWKg14uTz7KwjPo4Ri5MjZDSrc6r28q85TDga
-         yNvA==
-X-Gm-Message-State: AOAM5300LBTOGq3I3uH0O4nhXPtSkCf7paN6jz1M+V7UxFyHNdtkOg2F
-        YiMeqH4YMGISevx1QOTLcYOpMQ==
-X-Google-Smtp-Source: ABdhPJyUhfdCbjMBESEOiqAS08eZgxAs7V5/0XRqW4UZTe3K4OmwyniXAPYZlVBrx4vmpFlW5lQzVA==
-X-Received: by 2002:a62:ea0f:0:b029:319:8eef:5ff1 with SMTP id t15-20020a62ea0f0000b02903198eef5ff1mr7706167pfh.74.1629268045601;
-        Tue, 17 Aug 2021 23:27:25 -0700 (PDT)
-Received: from localhost ([122.172.201.85])
-        by smtp.gmail.com with ESMTPSA id l12sm4457595pff.182.2021.08.17.23.27.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Aug 2021 23:27:24 -0700 (PDT)
-Date:   Wed, 18 Aug 2021 11:57:23 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Peter Chen <peter.chen@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>, Nishanth Menon <nm@ti.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Richard Weinberger <richard@nod.at>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Lucas Stach <dev@lynxeye.de>, Stefan Agner <stefan@agner.ch>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-staging@lists.linux.dev, linux-spi@vger.kernel.org,
-        linux-pwm@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-mmc@vger.kernel.org, linux-media@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH v8 01/34] opp: Add dev_pm_opp_sync() helper
-Message-ID: <20210818062723.dqamssfkf7lf7cf7@vireshk-i7>
-References: <20210817075515.vyyv7z37e6jcrhsl@vireshk-i7>
- <710261d9-7ae3-5155-c0a2-f8aed2408d0b@gmail.com>
- <20210818035533.ieqkexltfvvf2p4n@vireshk-i7>
- <5b2a80c1-9743-e633-6257-ede94c8a274c@gmail.com>
- <20210818043131.7klajx6drvvkftoc@vireshk-i7>
- <a2a3c41f-c5e4-ee7e-7d48-03af8bac8863@gmail.com>
- <20210818045307.4brb6cafkh3adjth@vireshk-i7>
- <080469b3-612b-3a34-86e5-7037a64de2fe@gmail.com>
- <20210818055849.ybfajzu75ecpdrbn@vireshk-i7>
- <f1c76f23-086d-ef36-54ea-0511b0ebe0e1@gmail.com>
+        Wed, 18 Aug 2021 04:25:08 -0400
+Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 331EEC061764;
+        Wed, 18 Aug 2021 01:24:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
+         s=20161220; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+        MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=TSnCTxSRjTwtgHcmESr4fWXccCLIJFCo0VVdeqHZ2L8=; b=jD5tzdmtd5oxN24uPULbq2bb6q
+        9xWzMjs7gpHr9VBVg+Cu6tuTZI30d0Kzc/Sk1dPF/Wz64qtqZimvmAPB9lincZx1AgUXY2SB+MQ2M
+        fRwSwsYWtqAxLaJbzPMXuJTiE6Z3WcDWo174VJGATmFMF1yx5sRhzpnbAo1hHWQ3RioGA1wPgCuau
+        huLVDQM8qWvd71JCO6Zn5g/M3d+hsr6Mf9Mi6txA9Q4naTtoHtuPEz5YeEaHe/ix8RZxQoyZxdOhl
+        IZJ23DeGBlDp83ddulJuHiosFXYPiCtH8B3NJ+5ACyPL8akoPa7st8T5jpmZR5F8Vq1GqcE9hVKjN
+        HGodTYfA==;
+Received: from dsl-hkibng22-54f986-236.dhcp.inet.fi ([84.249.134.236] helo=[192.168.1.10])
+        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <cyndis@kapsi.fi>)
+        id 1mGGs9-0006a5-9t; Wed, 18 Aug 2021 11:24:29 +0300
+Subject: Re: [PATCH v3 1/3] dt-bindings: Add YAML bindings for NVDEC
+To:     Rob Herring <robh@kernel.org>,
+        Mikko Perttunen <mperttunen@nvidia.com>
+Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com, airlied@linux.ie,
+        daniel@ffwll.ch, dri-devel@lists.freedesktop.org,
+        linux-tegra@vger.kernel.org, devicetree@vger.kernel.org
+References: <20210811105030.3458521-1-mperttunen@nvidia.com>
+ <20210811105030.3458521-2-mperttunen@nvidia.com>
+ <YRwoKW4nOc52MAQV@robh.at.kernel.org>
+From:   Mikko Perttunen <cyndis@kapsi.fi>
+Message-ID: <1dfd5173-5654-9df8-1e8e-d0e365ed914d@kapsi.fi>
+Date:   Wed, 18 Aug 2021 11:24:28 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <f1c76f23-086d-ef36-54ea-0511b0ebe0e1@gmail.com>
-User-Agent: NeoMutt/20180716-391-311a52
+In-Reply-To: <YRwoKW4nOc52MAQV@robh.at.kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 84.249.134.236
+X-SA-Exim-Mail-From: cyndis@kapsi.fi
+X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 18-08-21, 09:22, Dmitry Osipenko wrote:
-> 18.08.2021 08:58, Viresh Kumar пишет:
-> > What about calling dev_pm_opp_set_rate(dev, clk_get_rate(dev)) here
-> > instead ? That will work, right ? The advantage is it works without
-> > any special routine to do so.
+On 8/18/21 12:20 AM, Rob Herring wrote:
+> On Wed, Aug 11, 2021 at 01:50:28PM +0300, Mikko Perttunen wrote:
+>> Add YAML device tree bindings for NVDEC, now in a more appropriate
+>> place compared to the old textual Host1x bindings.
+>>
+>> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+>> ---
+>> v3:
+>> * Drop host1x bindings
+>> * Change read2 to read-1 in interconnect names
+>> v2:
+>> * Fix issues pointed out in v1
+>> * Add T194 nvidia,instance property
+>> ---
+>>   .../gpu/host1x/nvidia,tegra210-nvdec.yaml     | 109 ++++++++++++++++++
+>>   MAINTAINERS                                   |   1 +
+>>   2 files changed, 110 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/gpu/host1x/nvidia,tegra210-nvdec.yaml
+>>
+>> diff --git a/Documentation/devicetree/bindings/gpu/host1x/nvidia,tegra210-nvdec.yaml b/Documentation/devicetree/bindings/gpu/host1x/nvidia,tegra210-nvdec.yaml
+>> new file mode 100644
+>> index 000000000000..571849625da8
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/gpu/host1x/nvidia,tegra210-nvdec.yaml
+>> @@ -0,0 +1,109 @@
+>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: "http://devicetree.org/schemas/gpu/host1x/nvidia,tegra210-nvdec.yaml#"
+>> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+>> +
+>> +title: Device tree binding for NVIDIA Tegra NVDEC
+>> +
+>> +description: |
+>> +  NVDEC is the hardware video decoder present on NVIDIA Tegra210
+>> +  and newer chips. It is located on the Host1x bus and typically
+>> +  programmed through Host1x channels.
+>> +
+>> +maintainers:
+>> +  - Thierry Reding <treding@gmail.com>
+>> +  - Mikko Perttunen <mperttunen@nvidia.com>
+>> +
+>> +properties:
+>> +  $nodename:
+>> +    pattern: "^nvdec@[0-9a-f]*$"
+>> +
+>> +  compatible:
+>> +    enum:
+>> +      - nvidia,tegra210-nvdec
+>> +      - nvidia,tegra186-nvdec
+>> +      - nvidia,tegra194-nvdec
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +  clocks:
+>> +    maxItems: 1
+>> +
+>> +  clock-names:
+>> +    items:
+>> +      - const: nvdec
+>> +
+>> +  resets:
+>> +    maxItems: 1
+>> +
+>> +  reset-names:
+>> +    items:
+>> +      - const: nvdec
+>> +
+>> +  power-domains:
+>> +    maxItems: 1
+>> +
+>> +  iommus:
+>> +    maxItems: 1
+>> +
+>> +  interconnects:
+>> +    items:
+>> +      - description: DMA read memory client
+>> +      - description: DMA read 2 memory client
+>> +      - description: DMA write memory client
+>> +
+>> +  interconnect-names:
+>> +    items:
+>> +      - const: dma-mem
+>> +      - const: read-1
+>> +      - const: write
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +  - clocks
+>> +  - clock-names
+>> +  - resets
+>> +  - reset-names
+>> +  - power-domains
+>> +
+>> +if:
+>> +  properties:
+>> +    compatible:
+>> +      contains:
+>> +        const: nvidia,tegra194-host1x
 > 
-> It will work, but a dedicated helper is nicer.
+> host1x? This will never be true as the schema is only applied to nodes
+> with the nvdec compatible.
+
+Argh, it's a typo indeed. Should be nvidia,tegra194-nvdec.
+
 > 
-> > I also wonder looking at your gr3d.c changes, you set a set-opp
-> > helper, but the driver doesn't call set_opp_rate at all. Who calls it
-> > ?
+>> +then:
+>> +  properties:
+>> +    nvidia,instance:
+>> +      items:
+>> +        - description: 0 for NVDEC0, or 1 for NVDEC1
 > 
-> dev_pm_opp_sync() calls it from _set_opp().
+> What's this for? We generally don't do indices in DT.
 
-Okay, please use dev_pm_opp_set_rate() instead then. New helper just
-adds to the confusion and isn't doing anything special apart from
-doing clk_get_rate() for you.
+When programming the hardware through Host1x, we need to know the "class 
+ID" of the hardware, specific to each instance. So we need to know which 
+instance it is. Technically of course we could derive this from the MMIO 
+address but that seems more confusing.
 
-> > And if it is all about just syncing the genpd core, then can the genpd
-> > core do something like what clk framework does? i.e. allow a new
-> > optional genpd callback, get_performance_state() (just like
-> > set_performance_state()), which can be called initially by the core to
-> > get the performance to something other than zero. opp-set-rate is
-> > there to set the performance state and enable the stuff as well.
-> > That's why it looks incorrect in your case, where the function was
-> > only required to be called once, and you are ending up calling it on
-> > each resume. Limiting that with another local variable is bad as well.
 > 
-> We discussed variant with get_performance_state() previously and Ulf
-> didn't like it either since it still requires to touch 'internals' of GENPD.
+>> +
+>> +additionalProperties: true
+> 
+> This should be false or 'unevaluatedProperties: false'
 
-Hmm, I wonder if that would be a problem since only genpd core is
-going to call that routine anyway.
+I tried that but it resulted in validation failures; please see the 
+discussion in v2.
 
--- 
-viresh
+Thanks,
+Mikko
+
+> 
+> Rob
+> 
