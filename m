@@ -2,102 +2,158 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F30D6C4320A
-	for <linux-tegra@archiver.kernel.org>; Wed, 18 Aug 2021 05:42:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0757AC4338F
+	for <linux-tegra@archiver.kernel.org>; Wed, 18 Aug 2021 05:58:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CD4A06108B
-	for <linux-tegra@archiver.kernel.org>; Wed, 18 Aug 2021 05:42:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DB7916108D
+	for <linux-tegra@archiver.kernel.org>; Wed, 18 Aug 2021 05:58:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237788AbhHRFnd (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 18 Aug 2021 01:43:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39092 "EHLO
+        id S237998AbhHRF71 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 18 Aug 2021 01:59:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42652 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237588AbhHRFnc (ORCPT
+        with ESMTP id S237618AbhHRF70 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 18 Aug 2021 01:43:32 -0400
-Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46DB7C061764;
-        Tue, 17 Aug 2021 22:42:58 -0700 (PDT)
-Received: by mail-lf1-x12a.google.com with SMTP id p38so2228640lfa.0;
-        Tue, 17 Aug 2021 22:42:58 -0700 (PDT)
+        Wed, 18 Aug 2021 01:59:26 -0400
+Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED30FC061764
+        for <linux-tegra@vger.kernel.org>; Tue, 17 Aug 2021 22:58:51 -0700 (PDT)
+Received: by mail-pj1-x102c.google.com with SMTP id fa24-20020a17090af0d8b0290178bfa69d97so1686477pjb.0
+        for <linux-tegra@vger.kernel.org>; Tue, 17 Aug 2021 22:58:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=IXIyKB7rfPwWT1Fxxw+rukLSC6elVsqkHYe6z4cjKsk=;
-        b=mMUV23dMc5APdym+YbqhaoZhRsDr+37FrKjKlpcypQxo7F9TL64TPAsH5Ppij/Z1Cn
-         H6ZHsfIKdUX/sBMb5hM8ZQqMKY9z0/k75n6pEH4hwyulZNv2p6VGDizglp9vAf2pbfhN
-         sAee0gAhApbEXQasZo5N+No1paw7KnAGh5nQFpyObl8HGiUQouvGfl0DT8AdQB4WCarm
-         MLG6j0UrHkwrRUi4DXJ38aoKzkWes42Cb36tHR/j0gJnuGdCHsZNoF97H2wu2iYL/0ne
-         gQ30I4EPuWp/rWbypKy+hMj8cfARv/BMJOwBp22kZ0Byz5DudVwpgnGs7T5HBSE7cJfA
-         HXaw==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=/oqvyX1+fZTz+wtMw2AZVqGvrykbTQj8oIvIXJk4fnQ=;
+        b=BiNyX/6IYojCpnpyPGFzrgnh8ilV1S48JvAdE+mM4BuP7CRu2FKtWLmHb+6pMAnjSh
+         /wfP9QCG/Q2Ukj1ZByvNzYSCb76F2+QCOquffMB7/VgJzMfI6biDam1D93oJFOcKLxY5
+         r0ui6XTLNwvZZ2QgeJ+nHG0xrCIvTYYP76CrkUOXqGHCkZrCx8j9IwfpGrJOMhMeq8y0
+         k2mkEWBfMzJhbTlNZAz6IL2S8V/0dB0U3qYFm8ylkevVbHpEgfdJ2weIyvMA0dAHIkMr
+         BJ+3m2Wz3q/+kbkLCXBH7Ci4zKCVmfsRmjz+f2zh3gygpbMTckDnXDsC8v0GIrUYRu/5
+         PVGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=IXIyKB7rfPwWT1Fxxw+rukLSC6elVsqkHYe6z4cjKsk=;
-        b=C5We+sWylmOnTvx7heG7h6OqRzlI5yFnTTeo7EXLB/3r8zjQWu7+vR56kTb4RnXfUA
-         1+L5SUlLAhDpcY0bN2ahO5g9CKQnArnRm5At506a3YnVV5ByA2uBsBsdlulpJEyAuZST
-         Aei4V8Wmw2AJPTEc8uGIZo3ZFJH09K52Ztz9kKArzatekGKHUvguOXRWvT/MWHTCPPtQ
-         9A5vn9+C34OQ4Cjimx8Y6hUV3Wwq/Ls8njDnkf0/4jOo163PRMNUDk7SmdYE5qosaYE/
-         8w064Sie9+ScmTs+6nAZjcEnuhMdku/HBw5gSQSk4SfD68wyOOoHw0hCHqBFf17mSlYc
-         U85w==
-X-Gm-Message-State: AOAM532CUzNS3IFRlkupUeHElDHZp9m/KmiW7cYdUOl4n0YOmG7Yy1VH
-        9ssz7dcaxHZBOC0DiZqtzJYh4VmNUWg=
-X-Google-Smtp-Source: ABdhPJwX+sFtsbCA3tEO3Tswh5qqboayWRltXktMLW452wZGl6fn3tu2MWY6TuF5WgIS4FmVn+LO3A==
-X-Received: by 2002:a05:6512:ac9:: with SMTP id n9mr5073533lfu.635.1629265376585;
-        Tue, 17 Aug 2021 22:42:56 -0700 (PDT)
-Received: from [192.168.2.145] (46-138-85-91.dynamic.spd-mgts.ru. [46.138.85.91])
-        by smtp.googlemail.com with ESMTPSA id b12sm169974ljf.62.2021.08.17.22.42.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Aug 2021 22:42:56 -0700 (PDT)
-Subject: Re: [PATCH v5 4/5] mmc: sdhci-tegra: Implement
- alternative_gpt_sector()
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Thierry Reding <thierry.reding@gmail.com>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=/oqvyX1+fZTz+wtMw2AZVqGvrykbTQj8oIvIXJk4fnQ=;
+        b=EzEyGWSzK1dYAU++Lo+VX6/8lg+2e0x1CEVi12kJs2zoVwzn9GvMyVC9Z9tLFC9DKX
+         RZDUreE0DWw/LWsCSJsX8RjUjNAdPcW09vfzImdhGUp7gZ2qRkbL7S+m8bm+TV6PwInf
+         xQrEX+Iirkfdd43O27iqDAaYRFNiMQQWcJcTPYeA//7R/xky5fZ/NscVgOnKpWwbRvT8
+         e5cBTxrr7B+H/ZXjCZMAC483kp+bNPlAJpn8SgE/8mBFRwT0hoWgeJXcJgVtD6J4TKTC
+         rcoSA6tN1/oftdb+0m5BU1WMW6AL0muNTS1nX/2zYGCV7brxyNPnW0zO8F6b3yHVC/+N
+         SJ1g==
+X-Gm-Message-State: AOAM532tEM9hHVeSxacy6uiNk7Kid0N7Tj0nUF+CMDrlpe4Sh20Aj6J0
+        Od3/swLgowzZuHkcbj2+Dam1Bw==
+X-Google-Smtp-Source: ABdhPJxmfawJmjScyveR+qRjue44WOBbTuswMGRMZAcW5NbsgTVLKIK8N3zHMPdQxwr8K+gezRoAzQ==
+X-Received: by 2002:a17:90a:db89:: with SMTP id h9mr7820049pjv.214.1629266331439;
+        Tue, 17 Aug 2021 22:58:51 -0700 (PDT)
+Received: from localhost ([122.172.201.85])
+        by smtp.gmail.com with ESMTPSA id g14sm4668532pfr.31.2021.08.17.22.58.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Aug 2021 22:58:51 -0700 (PDT)
+Date:   Wed, 18 Aug 2021 11:28:49 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Micha?? Miros??aw <mirq-linux@rere.qmqm.pl>,
-        David Heidelberg <david@ixit.cz>,
-        Peter Geis <pgwipeout@gmail.com>,
         Ulf Hansson <ulf.hansson@linaro.org>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Peter Chen <peter.chen@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>, Nishanth Menon <nm@ti.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Richard Weinberger <richard@nod.at>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Lucas Stach <dev@lynxeye.de>, Stefan Agner <stefan@agner.ch>,
         Adrian Hunter <adrian.hunter@intel.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Ion Agorria <AG0RRIA@yahoo.com>,
-        Svyatoslav Ryhel <clamor95@gmail.com>,
-        linux-tegra@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-efi <linux-efi@vger.kernel.org>
-References: <20210818005547.14497-1-digetx@gmail.com>
- <20210818005547.14497-5-digetx@gmail.com> <YRybCfUX6/HNcbEs@infradead.org>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <252a91b9-cfca-4ec4-a5ef-841301c24ef0@gmail.com>
-Date:   Wed, 18 Aug 2021 08:42:55 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-staging@lists.linux.dev, linux-spi@vger.kernel.org,
+        linux-pwm@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-mmc@vger.kernel.org, linux-media@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH v8 01/34] opp: Add dev_pm_opp_sync() helper
+Message-ID: <20210818055849.ybfajzu75ecpdrbn@vireshk-i7>
+References: <20210817012754.8710-1-digetx@gmail.com>
+ <20210817012754.8710-2-digetx@gmail.com>
+ <20210817075515.vyyv7z37e6jcrhsl@vireshk-i7>
+ <710261d9-7ae3-5155-c0a2-f8aed2408d0b@gmail.com>
+ <20210818035533.ieqkexltfvvf2p4n@vireshk-i7>
+ <5b2a80c1-9743-e633-6257-ede94c8a274c@gmail.com>
+ <20210818043131.7klajx6drvvkftoc@vireshk-i7>
+ <a2a3c41f-c5e4-ee7e-7d48-03af8bac8863@gmail.com>
+ <20210818045307.4brb6cafkh3adjth@vireshk-i7>
+ <080469b3-612b-3a34-86e5-7037a64de2fe@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <YRybCfUX6/HNcbEs@infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <080469b3-612b-3a34-86e5-7037a64de2fe@gmail.com>
+User-Agent: NeoMutt/20180716-391-311a52
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-18.08.2021 08:30, Christoph Hellwig пишет:
-> On Wed, Aug 18, 2021 at 03:55:46AM +0300, Dmitry Osipenko wrote:
->> Tegra20/30/114/124 Android devices place GPT at a non-standard location.
->> Implement alternative_gpt_sector() callback of the MMC host ops which
->> specifies that GPT location for the partition scanner.
+On 18-08-21, 08:21, Dmitry Osipenko wrote:
+> Yes, GENPD will cache the perf state across suspend/resume and initially
+> cached value is out of sync with h/w.
 > 
-> Just curious:  how do the android kernels deal with this mess?
+> Nothing else. But let me clarify it all again.
 
-They either hack MMC core to cut off the last sector from blk dev or use
-non-standard gpt_sector=<sector> kernel cmdline argument that is passed
-by downstream bootloaders.
+Thanks for your explanation.
+
+> Initially the performance state of all GENPDs is 0 for all devices.
+> 
+> The clock rate is preinitialized for all devices to a some default rate
+> by clk driver, or by bootloader or by assigned-clocks in DT.
+> 
+> When device is rpm-resumed, the resume callback of a device driver
+> enables the clock.
+> 
+> Before clock is enabled, the voltage needs to be configured in
+> accordance to the clk rate.
+> 
+> So now we have a GENPD with pstate=0 on a first rpm-resume, which
+> doesn't match the h/w configuration. Calling dev_pm_opp_sync() sets the
+> pstate in accordance to the h/w config.
+
+What about calling dev_pm_opp_set_rate(dev, clk_get_rate(dev)) here
+instead ? That will work, right ? The advantage is it works without
+any special routine to do so.
+
+I also wonder looking at your gr3d.c changes, you set a set-opp
+helper, but the driver doesn't call set_opp_rate at all. Who calls it
+?
+
+And if it is all about just syncing the genpd core, then can the genpd
+core do something like what clk framework does? i.e. allow a new
+optional genpd callback, get_performance_state() (just like
+set_performance_state()), which can be called initially by the core to
+get the performance to something other than zero. opp-set-rate is
+there to set the performance state and enable the stuff as well.
+That's why it looks incorrect in your case, where the function was
+only required to be called once, and you are ending up calling it on
+each resume. Limiting that with another local variable is bad as well.
+
+> In a previous v7 I proposed to preset the rpm_pstate of GENPD (perf
+> level that is restored before device is rpm-resumed) from PD's
+> attach_dev callback, but Ulf didn't like that because it requires to use
+> and modify GENPD 'private' variables from a PD driver. We decided that
+> will be better to make device drivers to explicitly sync the perf state,
+> which I implemented in this v8.
+
+-- 
+viresh
