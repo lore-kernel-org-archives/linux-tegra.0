@@ -2,140 +2,200 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E1DCC4338F
-	for <linux-tegra@archiver.kernel.org>; Wed, 18 Aug 2021 09:50:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 001C4C4338F
+	for <linux-tegra@archiver.kernel.org>; Wed, 18 Aug 2021 09:55:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 06D1E60EBD
-	for <linux-tegra@archiver.kernel.org>; Wed, 18 Aug 2021 09:50:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D7D8861056
+	for <linux-tegra@archiver.kernel.org>; Wed, 18 Aug 2021 09:55:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232954AbhHRJvY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 18 Aug 2021 05:51:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41356 "EHLO
+        id S232954AbhHRJ4R (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 18 Aug 2021 05:56:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42488 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232995AbhHRJvW (ORCPT
+        with ESMTP id S231910AbhHRJ4Q (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 18 Aug 2021 05:51:22 -0400
-Received: from mail-pf1-x436.google.com (mail-pf1-x436.google.com [IPv6:2607:f8b0:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E8A7C0617AF
-        for <linux-tegra@vger.kernel.org>; Wed, 18 Aug 2021 02:50:48 -0700 (PDT)
-Received: by mail-pf1-x436.google.com with SMTP id g14so1574221pfm.1
-        for <linux-tegra@vger.kernel.org>; Wed, 18 Aug 2021 02:50:48 -0700 (PDT)
+        Wed, 18 Aug 2021 05:56:16 -0400
+Received: from mail-vk1-xa2c.google.com (mail-vk1-xa2c.google.com [IPv6:2607:f8b0:4864:20::a2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3AE77C061764
+        for <linux-tegra@vger.kernel.org>; Wed, 18 Aug 2021 02:55:42 -0700 (PDT)
+Received: by mail-vk1-xa2c.google.com with SMTP id d30so507269vkl.12
+        for <linux-tegra@vger.kernel.org>; Wed, 18 Aug 2021 02:55:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=HyhZskvnkMHQUsBUgjlwBTJK659CA+CwU8djwVBZ2sM=;
-        b=WeXABN/OK1Wr8lx7yIzjEQc22keli5/mPbqOsII32BzwbNTl5ULMEk37J2dJ8WBIc8
-         ZnFr2sJXSoQcvyE/NTKrdgFlaJaQ5o8OxVWXD6PUNqbIuMj7u3RPYczNpQRUfi51aU4K
-         IMg9JXqfomBw0MGOEn5iaKId1Us1CN3Pm6n193v6mGKDxjCswxDgh1VAt9J14Z2xnhK9
-         TjVyhjtcpvAwdRJrWEVMHqX2US4YAz29pKFNe9gxQYZqLn/NPPMrB0GL1Cn9pdhRH215
-         rF0aZ83JvYygnG0uw5U83BQhbi3YsDjTjk/h7pS55RDpk7eJ2g4J4R4IDq7w+OQTfMd1
-         Zzzw==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=UE1ZTunj85bBLaOVPgVzFrgAkXUTIPxal603EckMVls=;
+        b=iKTfgRdRXOmx/sOahVTwCapr7MC/22GQTxOdxPXHtXxX5b1qiVKwohG7Ti03LlgS9P
+         g244S8lqHoLFaLlVuEj2RWmFzy9UO1ZqmnnJ8ygMJs5EbEu2YfdocMyZ9DFfV/U3jXRK
+         p59Gv181SP/LMvSlrFmgvKCl5w24eEe2RvSFnpLcRSRf7SZQciSnZ20J13H0ALLorHFK
+         o0lBY3ebeoy3bpcgvcKZaAiYkA3ST9rEm/9xilT3TqbYlN6NNmhe+oRGCnaCacYpF3NY
+         ZdGAlRZghXZrhvTIeTd3nMZN0+AH9oOxzuGD8DxM4cEKm/2Nq90S8pvqddX3i68GBj9Q
+         mgnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=HyhZskvnkMHQUsBUgjlwBTJK659CA+CwU8djwVBZ2sM=;
-        b=dnBxCXPdkrUbK265rNxPhWKeDavCRtVz0wSBau18Sb6Mp2K0hZPvBA2GqeuXvMck9H
-         5S9Pd+nZQwgapoaA0H2TYrGmX/sDqrxnQ70wYNGUiTGbm0xZb3MTDW4XsaC/n+L+TDHF
-         Fz3RR1lnl8qxSvgppljU/AUy+31o5d2cm7JIjQMGUyMZKBTUZHZKsDcGm+hVXTKouhuA
-         DQ1UWs+0rhOWnl4N6C4tcxG0j3/MDCENoUH9DZUL234Cgz77/MsJV4Cz07oZ472CZ+eC
-         fFGZNTVrhriNmVMmnYrvXhqcCFEZjwfW3z+JdKsUo6mhqtGkZwoHVFUmnsFiXJjBY1R3
-         9E6A==
-X-Gm-Message-State: AOAM531CpOd0E97tpcUujKQDXzdq/jcHPP/hyAG0GaXXDwh9Mp43y+pD
-        CRQkBtjR8q+xDiTiedxoiJ0YSg==
-X-Google-Smtp-Source: ABdhPJzNgodhRJ4P04IWzIYvulf9/hQQBrDCKLc4ZA4G1N3jYvdGFtkpsn+640r5oaGBQ5g20Y+t7Q==
-X-Received: by 2002:a63:3c5d:: with SMTP id i29mr8049824pgn.147.1629280247471;
-        Wed, 18 Aug 2021 02:50:47 -0700 (PDT)
-Received: from localhost ([122.172.201.85])
-        by smtp.gmail.com with ESMTPSA id i11sm6720260pgo.25.2021.08.18.02.50.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Aug 2021 02:50:47 -0700 (PDT)
-Date:   Wed, 18 Aug 2021 15:20:44 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Dmitry Osipenko <digetx@gmail.com>,
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=UE1ZTunj85bBLaOVPgVzFrgAkXUTIPxal603EckMVls=;
+        b=edzSGmKuLdBDlya65BeM0bAAuP+UOnZc5Xi3rMlulziXSYo05+HkHUMeRALajqBlug
+         TDTRdzfg0tgljMMuwWSybwdTIcGiM+pV0zGy78Z2+x9LOFZYbOMRqVm/g1Pxq+Eoa+to
+         Sg0QMeGRQV2SI8V9riiEDydICTnZXzL0jFlkdAFGPC6YCbXG9OFM2SwotcIHGQw53iHq
+         GAr6Y4aZxtw1LVP6K2ffopHxi+v8uivq1JYdYPrXrOSM6/AHJX9qmiMqdCvzyKurk5o1
+         IVJx4ND22cU/H8kYhuZz/Wlv9RvigIi4IJisPZNTah6rVuLwqbQa0d89N+WIhBOGBhLf
+         lssg==
+X-Gm-Message-State: AOAM530WDqe+Uf99LGy8D9NtK3nlEq6C/WwOqcsjjtUWCRI/lp5Xv2Ha
+        JC2xe8wAl0FxhiOwUsnctgoaGd3BJ/wL9xF6xH9Z2w==
+X-Google-Smtp-Source: ABdhPJxqwWxK6SNBwzcoH8hGd0N017XbtcK08OfcWNGrOciAFJMnS0ZaskKVPUDUd3kPJh9u2Nm3zvzottNuF5jxH24=
+X-Received: by 2002:a1f:a555:: with SMTP id o82mr6132378vke.8.1629280541373;
+ Wed, 18 Aug 2021 02:55:41 -0700 (PDT)
+MIME-Version: 1.0
+References: <20210818005547.14497-1-digetx@gmail.com> <20210818005547.14497-5-digetx@gmail.com>
+In-Reply-To: <20210818005547.14497-5-digetx@gmail.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Wed, 18 Aug 2021 11:55:05 +0200
+Message-ID: <CAPDyKFqQbe4k-Sem436Fzsr6mbvwZr83VtEaEZTF8oWYoHHQwg@mail.gmail.com>
+Subject: Re: [PATCH v5 4/5] mmc: sdhci-tegra: Implement alternative_gpt_sector()
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Peter Chen <peter.chen@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>, Nishanth Menon <nm@ti.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Richard Weinberger <richard@nod.at>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Lucas Stach <dev@lynxeye.de>, Stefan Agner <stefan@agner.ch>,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        David Heidelberg <david@ixit.cz>,
+        Peter Geis <pgwipeout@gmail.com>,
         Adrian Hunter <adrian.hunter@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Davidlohr Bueso <dave@stgolabs.net>,
         Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ion Agorria <AG0RRIA@yahoo.com>,
+        Svyatoslav Ryhel <clamor95@gmail.com>,
         linux-tegra <linux-tegra@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux USB List <linux-usb@vger.kernel.org>,
-        linux-staging@lists.linux.dev, linux-spi@vger.kernel.org,
-        linux-pwm@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        DTML <devicetree@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v8 01/34] opp: Add dev_pm_opp_sync() helper
-Message-ID: <20210818095044.e2ntsm45h5cddk7s@vireshk-i7>
-References: <20210818043131.7klajx6drvvkftoc@vireshk-i7>
- <a2a3c41f-c5e4-ee7e-7d48-03af8bac8863@gmail.com>
- <20210818045307.4brb6cafkh3adjth@vireshk-i7>
- <080469b3-612b-3a34-86e5-7037a64de2fe@gmail.com>
- <20210818055849.ybfajzu75ecpdrbn@vireshk-i7>
- <f1c76f23-086d-ef36-54ea-0511b0ebe0e1@gmail.com>
- <20210818062723.dqamssfkf7lf7cf7@vireshk-i7>
- <CAPDyKFrZqWtZOp4MwDN6fShoLLbw5NM039bpE3-shB+fCEZOog@mail.gmail.com>
- <20210818091417.dvlnsxlgybdsn76x@vireshk-i7>
- <CAPDyKFrVxhrWGr2pKduehshpLFd_db2NTPGuD7fSqvuHeyzT4w@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPDyKFrVxhrWGr2pKduehshpLFd_db2NTPGuD7fSqvuHeyzT4w@mail.gmail.com>
-User-Agent: NeoMutt/20180716-391-311a52
+        linux-block <linux-block@vger.kernel.org>,
+        linux-efi <linux-efi@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 18-08-21, 11:41, Ulf Hansson wrote:
-> On Wed, 18 Aug 2021 at 11:14, Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> > What we need here is just configure. So something like this then:
-> >
-> > - genpd->get_performance_state()
-> >   -> dev_pm_opp_get_current_opp() //New API
-> >   -> dev_pm_genpd_set_performance_state(dev, current_opp->pstate);
-> >
-> > This can be done just once from probe() then.
-> 
-> How would dev_pm_opp_get_current_opp() work? Do you have a suggestion?
+On Wed, 18 Aug 2021 at 02:57, Dmitry Osipenko <digetx@gmail.com> wrote:
+>
+> Tegra20/30/114/124 Android devices place GPT at a non-standard location.
+> Implement alternative_gpt_sector() callback of the MMC host ops which
+> specifies that GPT location for the partition scanner.
+>
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/mmc/host/sdhci-tegra.c | 42 ++++++++++++++++++++++++++++++++++
+>  1 file changed, 42 insertions(+)
+>
+> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+> index 387ce9cdbd7c..24a713689d5b 100644
+> --- a/drivers/mmc/host/sdhci-tegra.c
+> +++ b/drivers/mmc/host/sdhci-tegra.c
+> @@ -116,6 +116,8 @@
+>   */
+>  #define NVQUIRK_HAS_TMCLK                              BIT(10)
+>
+> +#define NVQUIRK_HAS_ANDROID_GPT_SECTOR                 BIT(11)
+> +
+>  /* SDMMC CQE Base Address for Tegra Host Ver 4.1 and Higher */
+>  #define SDHCI_TEGRA_CQE_BASE_ADDR                      0xF000
+>
+> @@ -1361,6 +1363,7 @@ static const struct sdhci_tegra_soc_data soc_data_tegra20 = {
+>         .pdata = &sdhci_tegra20_pdata,
+>         .dma_mask = DMA_BIT_MASK(32),
+>         .nvquirks = NVQUIRK_FORCE_SDHCI_SPEC_200 |
+> +                   NVQUIRK_HAS_ANDROID_GPT_SECTOR |
+>                     NVQUIRK_ENABLE_BLOCK_GAP_DET,
+>  };
+>
+> @@ -1390,6 +1393,7 @@ static const struct sdhci_tegra_soc_data soc_data_tegra30 = {
+>         .nvquirks = NVQUIRK_ENABLE_SDHCI_SPEC_300 |
+>                     NVQUIRK_ENABLE_SDR50 |
+>                     NVQUIRK_ENABLE_SDR104 |
+> +                   NVQUIRK_HAS_ANDROID_GPT_SECTOR |
+>                     NVQUIRK_HAS_PADCALIB,
+>  };
+>
+> @@ -1422,6 +1426,7 @@ static const struct sdhci_pltfm_data sdhci_tegra114_pdata = {
+>  static const struct sdhci_tegra_soc_data soc_data_tegra114 = {
+>         .pdata = &sdhci_tegra114_pdata,
+>         .dma_mask = DMA_BIT_MASK(32),
+> +       .nvquirks = NVQUIRK_HAS_ANDROID_GPT_SECTOR,
+>  };
+>
+>  static const struct sdhci_pltfm_data sdhci_tegra124_pdata = {
+> @@ -1438,6 +1443,7 @@ static const struct sdhci_pltfm_data sdhci_tegra124_pdata = {
+>  static const struct sdhci_tegra_soc_data soc_data_tegra124 = {
+>         .pdata = &sdhci_tegra124_pdata,
+>         .dma_mask = DMA_BIT_MASK(34),
+> +       .nvquirks = NVQUIRK_HAS_ANDROID_GPT_SECTOR,
+>  };
+>
+>  static const struct sdhci_ops tegra210_sdhci_ops = {
+> @@ -1590,6 +1596,38 @@ static int sdhci_tegra_add_host(struct sdhci_host *host)
+>         return ret;
+>  }
+>
+> +static int sdhci_tegra_alternative_gpt_sector(struct mmc_card *card,
+> +                                             sector_t *gpt_sector)
+> +{
+> +       unsigned int boot_sectors_num;
+> +
+> +       /* filter out unrelated cards */
+> +       if (card->ext_csd.rev < 3 ||
+> +           !mmc_card_mmc(card) ||
+> +           !mmc_card_is_blockaddr(card) ||
+> +            mmc_card_is_removable(card->host))
+> +               return -ENOENT;
+> +
+> +       /*
+> +        * eMMC storage has two special boot partitions in addition to the
+> +        * main one.  NVIDIA's bootloader linearizes eMMC boot0->boot1->main
+> +        * accesses, this means that the partition table addresses are shifted
+> +        * by the size of boot partitions.  In accordance with the eMMC
+> +        * specification, the boot partition size is calculated as follows:
+> +        *
+> +        *      boot partition size = 128K byte x BOOT_SIZE_MULT
+> +        *
+> +        * Calculate number of sectors occupied by the both boot partitions.
+> +        */
+> +       boot_sectors_num = card->ext_csd.raw_boot_mult * SZ_128K /
+> +                          SZ_512 * MMC_NUM_BOOT_PARTITION;
+> +
+> +       /* Defined by NVIDIA and used by Android devices. */
+> +       *gpt_sector = card->ext_csd.sectors - boot_sectors_num - 1;
+> +
+> +       return 0;
+> +}
 
-The opp core already has a way of finding current OPP, that's what
-Dmitry is trying to use here. It finds it using clk_get_rate(), if
-that is zero, it picks the lowest freq possible.
+I suggest you move this code into the mmc core/block layer instead (it
+better belongs there).
 
-> I am sure I understand the problem. When a device is getting probed,
-> it needs to consume power, how else can the corresponding driver
-> successfully probe it?
+Additionally, let's add a new host cap, MMC_CAP_ALTERNATIVE_GPT, to
+let the core know when it should use the code above.
 
-Dmitry can answer that better, but a device doesn't necessarily need
-to consume energy in probe. It can consume bus clock, like APB we
-have, but the more energy consuming stuff can be left disabled until
-the time a user comes up. Probe will just end up registering the
-driver and initializing it.
+> +
+>  static int sdhci_tegra_probe(struct platform_device *pdev)
+>  {
+>         const struct of_device_id *match;
+> @@ -1616,6 +1654,10 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
+>         tegra_host->pad_control_available = false;
+>         tegra_host->soc_data = soc_data;
+>
+> +       if (soc_data->nvquirks & NVQUIRK_HAS_ANDROID_GPT_SECTOR)
+> +               host->mmc_host_ops.alternative_gpt_sector =
+> +                               sdhci_tegra_alternative_gpt_sector;
+> +
+>         if (soc_data->nvquirks & NVQUIRK_NEEDS_PAD_CONTROL) {
+>                 rc = tegra_sdhci_init_pinctrl_info(&pdev->dev, tegra_host);
+>                 if (rc == 0)
+> --
+> 2.32.0
+>
 
--- 
-viresh
+Kind regards
+Uffe
