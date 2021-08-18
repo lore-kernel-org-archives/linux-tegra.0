@@ -5,347 +5,236 @@ X-Spam-Level:
 X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00A7EC4338F
-	for <linux-tegra@archiver.kernel.org>; Wed, 18 Aug 2021 13:18:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5A7BC432BE
+	for <linux-tegra@archiver.kernel.org>; Wed, 18 Aug 2021 13:35:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CDA0D6109F
-	for <linux-tegra@archiver.kernel.org>; Wed, 18 Aug 2021 13:18:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C1B7E610CB
+	for <linux-tegra@archiver.kernel.org>; Wed, 18 Aug 2021 13:35:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235943AbhHRNTA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 18 Aug 2021 09:19:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33470 "EHLO
+        id S236731AbhHRNgV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 18 Aug 2021 09:36:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37552 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233634AbhHRNTA (ORCPT
+        with ESMTP id S233722AbhHRNgV (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 18 Aug 2021 09:19:00 -0400
-Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D220C061764;
-        Wed, 18 Aug 2021 06:18:25 -0700 (PDT)
-Received: by mail-wm1-x331.google.com with SMTP id h24-20020a1ccc180000b029022e0571d1a0so1753564wmb.5;
-        Wed, 18 Aug 2021 06:18:25 -0700 (PDT)
+        Wed, 18 Aug 2021 09:36:21 -0400
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38B4FC061764;
+        Wed, 18 Aug 2021 06:35:46 -0700 (PDT)
+Received: by mail-wm1-x333.google.com with SMTP id f10so1658554wml.2;
+        Wed, 18 Aug 2021 06:35:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=5SpTN6PLDBd27k57brua63qa9FWkoLAJAlJaGQ6JCUc=;
-        b=O5Wg6elzrDpDe3UUfoSgAun2qCEYEc66qfZtZpUVML4ceySEVyeElfX1BNwJXOq5qP
-         ThnkRnZr30s4GOBGqxRvi5OoLlEmQhTMjyMCb1tzirjT3NdF7zKcnlnAQkY/SCErjevo
-         d3TAuveuJjpSe5IMa9S9055RLubssnF31WDWXPOrCI7f/gPvoD/b18ukG67cwgfhHPPU
-         ndPe3F1L4HXq8iZ+P5kqYDXhhPCMj8zLnZJgZvyW1tGzP3zxn/JKbFfcGDXZuNobmhvA
-         4fPxHKJChgLTdQBLNJwCUcGUff+8881FXs/sms8KhYJwOpK5KKHzE21e/xexdWDIWisb
-         pJZQ==
+        bh=DthKa3X7J67lnJcE+psAH6WMu5xghWQjfpmVnxuXZkY=;
+        b=OWvsLPklkVuXUzGcq4Vn3RTniheuYd18rv8U5574kX+IKGwv1GBfM155sk38FXNsm+
+         rf7GVlZQAtaMVDU8bp33wvLuf5eqKDUgw8WjjuiOHJ/M19p0Bok0vYS+v2/5VIbXfTeh
+         eJgXvVaPKvlzFdOdYvIA12H8JjMcc+nRa7Mtp8c4TyZ55x1k2swUOjkJShmfFoBbJUFF
+         VTt7yzFdD+O1nuy42z2eweiTPZ9NHxOD5L/WAEggh68YUUINHEqeAAZuyM+2srsn2eZp
+         wQ4acy31yprABVEZPaOnRU1h54ETEPbiFt282HD4Ke/Mp7uFNtHSjVf5/y58KqaMjh9k
+         qjWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=5SpTN6PLDBd27k57brua63qa9FWkoLAJAlJaGQ6JCUc=;
-        b=dJBNSCwH4n/5CvdD4IfSRw0Mu900OjM0Z/FvV2cuJ1h2gkp+SofsKj+PUfNA1jgWVY
-         t7kaqrjYM9GdzcZrK+5Bus3+R7NVD8cASomUNg5hX7ad3jeH1ckW9HIWdZmwF0hF9oQr
-         5s8+8RnWAMjDKNg1hD/xUTc8GT9vlo2ZVfhT6yXFAfEcPsrXJP5jfmTTHdrW5UNTWjAy
-         9j8UVQWVNgWwrawffnMzigJ7I1P7Vylvtw5btrgIWZhdJbBHLzX8F2VhDj0eS3X9rwbT
-         +fUBqHUcWpJCmV7n6VERvHKBSB/TPPcevWDh676kvdTEZu73M+uWDmRWJB9OPYWZoene
-         hJeg==
-X-Gm-Message-State: AOAM530hjuQCJ9ko+/oXdOeLmRglZit2hiceKXCkGbla8icbMbznKXiW
-        QVTadOct0KyFv/tW0BuruFg=
-X-Google-Smtp-Source: ABdhPJyKgANX5A0a/Xjx8RDwOuCekgOW86ZvUwH1ITFJ9sI/PqxNlrAWC3uCZXPbkYb9Ioy0SkymaQ==
-X-Received: by 2002:a05:600c:294a:: with SMTP id n10mr8436273wmd.67.1629292703055;
-        Wed, 18 Aug 2021 06:18:23 -0700 (PDT)
+        bh=DthKa3X7J67lnJcE+psAH6WMu5xghWQjfpmVnxuXZkY=;
+        b=al8Oxa0Xd5gjmlDe9mEE/Ovn9+QwTrZJaE+cUlHv07GsK0bywFz+mitrY8hQG4bRoo
+         GJcJ7vC1yY+pEXWkGG1AUJ+FT12tk0j0G+RGvvjcpjHcH1I0wKx1iv6piFSpjBVWudWX
+         CkHW6Kf4Nd+1VAPDUjtexHGQ6q8+u4AXJYpy04o4h3t60QAdBDztGkxesvqjniR4ZzCY
+         Bcl3fRUZ4jb/ZqK06EN+mS19VwA/EXU77/SszT55gXf8U5eNbxOuWj/OkVJEoU6tjUpX
+         Q72twTTCJ337C3THpu+T6/LVTGFF3sfSOxnIBGBt+ySaObQWCYKmbQCjgQUW58OoJPZ0
+         Y8vQ==
+X-Gm-Message-State: AOAM532P8UrzTgRgFIH0qc5kF3rmz1MYgTvns7QbmQ4nW0R4T/r6lHd3
+        byvHvruZV42ZITDA2rDJt1E=
+X-Google-Smtp-Source: ABdhPJyC6Z3pw7oMHgghz75BdjG+2G4bMawsJFPJhR70xadEWmNlssYvZAFSY1W/ckwoxrb/IUBoGA==
+X-Received: by 2002:a1c:23d6:: with SMTP id j205mr8818671wmj.185.1629293744832;
+        Wed, 18 Aug 2021 06:35:44 -0700 (PDT)
 Received: from localhost ([217.111.27.204])
-        by smtp.gmail.com with ESMTPSA id z6sm5093059wmp.1.2021.08.18.06.18.21
+        by smtp.gmail.com with ESMTPSA id r129sm5255234wmr.7.2021.08.18.06.35.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Aug 2021 06:18:21 -0700 (PDT)
-Date:   Wed, 18 Aug 2021 15:18:20 +0200
+        Wed, 18 Aug 2021 06:35:43 -0700 (PDT)
+Date:   Wed, 18 Aug 2021 15:35:42 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Mikko Perttunen <cyndis@kapsi.fi>, Rob Herring <robh@kernel.org>
-Cc:     Mikko Perttunen <mperttunen@nvidia.com>, jonathanh@nvidia.com,
-        airlied@linux.ie, daniel@ffwll.ch, dri-devel@lists.freedesktop.org,
-        linux-tegra@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 1/3] dt-bindings: Add YAML bindings for NVDEC
-Message-ID: <YR0InKtLCO1ohcHW@orome.fritz.box>
-References: <20210811105030.3458521-1-mperttunen@nvidia.com>
- <20210811105030.3458521-2-mperttunen@nvidia.com>
- <YRwoKW4nOc52MAQV@robh.at.kernel.org>
- <1dfd5173-5654-9df8-1e8e-d0e365ed914d@kapsi.fi>
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Dmitry Osipenko <digetx@gmail.com>, Jens Axboe <axboe@kernel.dk>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        David Heidelberg <david@ixit.cz>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Ion Agorria <AG0RRIA@yahoo.com>,
+        Svyatoslav Ryhel <clamor95@gmail.com>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        linux-efi <linux-efi@vger.kernel.org>
+Subject: Re: [PATCH v5 4/5] mmc: sdhci-tegra: Implement
+ alternative_gpt_sector()
+Message-ID: <YR0MrlxFLTpsR628@orome.fritz.box>
+References: <20210818005547.14497-1-digetx@gmail.com>
+ <20210818005547.14497-5-digetx@gmail.com>
+ <CAPDyKFqQbe4k-Sem436Fzsr6mbvwZr83VtEaEZTF8oWYoHHQwg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="WYLvNF6e+2nKSnT5"
+        protocol="application/pgp-signature"; boundary="YsFHapze9CfLadea"
 Content-Disposition: inline
-In-Reply-To: <1dfd5173-5654-9df8-1e8e-d0e365ed914d@kapsi.fi>
+In-Reply-To: <CAPDyKFqQbe4k-Sem436Fzsr6mbvwZr83VtEaEZTF8oWYoHHQwg@mail.gmail.com>
 User-Agent: Mutt/2.1.1 (e2a89abc) (2021-07-12)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---WYLvNF6e+2nKSnT5
+--YsFHapze9CfLadea
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 18, 2021 at 11:24:28AM +0300, Mikko Perttunen wrote:
-> On 8/18/21 12:20 AM, Rob Herring wrote:
-> > On Wed, Aug 11, 2021 at 01:50:28PM +0300, Mikko Perttunen wrote:
-> > > Add YAML device tree bindings for NVDEC, now in a more appropriate
-> > > place compared to the old textual Host1x bindings.
-> > >=20
-> > > Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
-> > > ---
-> > > v3:
-> > > * Drop host1x bindings
-> > > * Change read2 to read-1 in interconnect names
-> > > v2:
-> > > * Fix issues pointed out in v1
-> > > * Add T194 nvidia,instance property
-> > > ---
-> > >   .../gpu/host1x/nvidia,tegra210-nvdec.yaml     | 109 +++++++++++++++=
-+++
-> > >   MAINTAINERS                                   |   1 +
-> > >   2 files changed, 110 insertions(+)
-> > >   create mode 100644 Documentation/devicetree/bindings/gpu/host1x/nvi=
-dia,tegra210-nvdec.yaml
-> > >=20
-> > > diff --git a/Documentation/devicetree/bindings/gpu/host1x/nvidia,tegr=
-a210-nvdec.yaml b/Documentation/devicetree/bindings/gpu/host1x/nvidia,tegra=
-210-nvdec.yaml
-> > > new file mode 100644
-> > > index 000000000000..571849625da8
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/gpu/host1x/nvidia,tegra210-nv=
-dec.yaml
-> > > @@ -0,0 +1,109 @@
-> > > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> > > +%YAML 1.2
-> > > +---
-> > > +$id: "http://devicetree.org/schemas/gpu/host1x/nvidia,tegra210-nvdec=
-=2Eyaml#"
-> > > +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
-> > > +
-> > > +title: Device tree binding for NVIDIA Tegra NVDEC
-> > > +
-> > > +description: |
-> > > +  NVDEC is the hardware video decoder present on NVIDIA Tegra210
-> > > +  and newer chips. It is located on the Host1x bus and typically
-> > > +  programmed through Host1x channels.
-> > > +
-> > > +maintainers:
-> > > +  - Thierry Reding <treding@gmail.com>
-> > > +  - Mikko Perttunen <mperttunen@nvidia.com>
-> > > +
-> > > +properties:
-> > > +  $nodename:
-> > > +    pattern: "^nvdec@[0-9a-f]*$"
-> > > +
-> > > +  compatible:
-> > > +    enum:
-> > > +      - nvidia,tegra210-nvdec
-> > > +      - nvidia,tegra186-nvdec
-> > > +      - nvidia,tegra194-nvdec
-> > > +
-> > > +  reg:
-> > > +    maxItems: 1
-> > > +
-> > > +  clocks:
-> > > +    maxItems: 1
-> > > +
-> > > +  clock-names:
-> > > +    items:
-> > > +      - const: nvdec
-> > > +
-> > > +  resets:
-> > > +    maxItems: 1
-> > > +
-> > > +  reset-names:
-> > > +    items:
-> > > +      - const: nvdec
-> > > +
-> > > +  power-domains:
-> > > +    maxItems: 1
-> > > +
-> > > +  iommus:
-> > > +    maxItems: 1
-> > > +
-> > > +  interconnects:
-> > > +    items:
-> > > +      - description: DMA read memory client
-> > > +      - description: DMA read 2 memory client
-> > > +      - description: DMA write memory client
-> > > +
-> > > +  interconnect-names:
-> > > +    items:
-> > > +      - const: dma-mem
-> > > +      - const: read-1
-> > > +      - const: write
-> > > +
-> > > +required:
-> > > +  - compatible
-> > > +  - reg
-> > > +  - clocks
-> > > +  - clock-names
-> > > +  - resets
-> > > +  - reset-names
-> > > +  - power-domains
-> > > +
-> > > +if:
-> > > +  properties:
-> > > +    compatible:
-> > > +      contains:
-> > > +        const: nvidia,tegra194-host1x
-> >=20
-> > host1x? This will never be true as the schema is only applied to nodes
-> > with the nvdec compatible.
+On Wed, Aug 18, 2021 at 11:55:05AM +0200, Ulf Hansson wrote:
+> On Wed, 18 Aug 2021 at 02:57, Dmitry Osipenko <digetx@gmail.com> wrote:
+> >
+> > Tegra20/30/114/124 Android devices place GPT at a non-standard location.
+> > Implement alternative_gpt_sector() callback of the MMC host ops which
+> > specifies that GPT location for the partition scanner.
+> >
+> > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> > ---
+> >  drivers/mmc/host/sdhci-tegra.c | 42 ++++++++++++++++++++++++++++++++++
+> >  1 file changed, 42 insertions(+)
+> >
+> > diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-te=
+gra.c
+> > index 387ce9cdbd7c..24a713689d5b 100644
+> > --- a/drivers/mmc/host/sdhci-tegra.c
+> > +++ b/drivers/mmc/host/sdhci-tegra.c
+> > @@ -116,6 +116,8 @@
+> >   */
+> >  #define NVQUIRK_HAS_TMCLK                              BIT(10)
+> >
+> > +#define NVQUIRK_HAS_ANDROID_GPT_SECTOR                 BIT(11)
+> > +
+> >  /* SDMMC CQE Base Address for Tegra Host Ver 4.1 and Higher */
+> >  #define SDHCI_TEGRA_CQE_BASE_ADDR                      0xF000
+> >
+> > @@ -1361,6 +1363,7 @@ static const struct sdhci_tegra_soc_data soc_data=
+_tegra20 =3D {
+> >         .pdata =3D &sdhci_tegra20_pdata,
+> >         .dma_mask =3D DMA_BIT_MASK(32),
+> >         .nvquirks =3D NVQUIRK_FORCE_SDHCI_SPEC_200 |
+> > +                   NVQUIRK_HAS_ANDROID_GPT_SECTOR |
+> >                     NVQUIRK_ENABLE_BLOCK_GAP_DET,
+> >  };
+> >
+> > @@ -1390,6 +1393,7 @@ static const struct sdhci_tegra_soc_data soc_data=
+_tegra30 =3D {
+> >         .nvquirks =3D NVQUIRK_ENABLE_SDHCI_SPEC_300 |
+> >                     NVQUIRK_ENABLE_SDR50 |
+> >                     NVQUIRK_ENABLE_SDR104 |
+> > +                   NVQUIRK_HAS_ANDROID_GPT_SECTOR |
+> >                     NVQUIRK_HAS_PADCALIB,
+> >  };
+> >
+> > @@ -1422,6 +1426,7 @@ static const struct sdhci_pltfm_data sdhci_tegra1=
+14_pdata =3D {
+> >  static const struct sdhci_tegra_soc_data soc_data_tegra114 =3D {
+> >         .pdata =3D &sdhci_tegra114_pdata,
+> >         .dma_mask =3D DMA_BIT_MASK(32),
+> > +       .nvquirks =3D NVQUIRK_HAS_ANDROID_GPT_SECTOR,
+> >  };
+> >
+> >  static const struct sdhci_pltfm_data sdhci_tegra124_pdata =3D {
+> > @@ -1438,6 +1443,7 @@ static const struct sdhci_pltfm_data sdhci_tegra1=
+24_pdata =3D {
+> >  static const struct sdhci_tegra_soc_data soc_data_tegra124 =3D {
+> >         .pdata =3D &sdhci_tegra124_pdata,
+> >         .dma_mask =3D DMA_BIT_MASK(34),
+> > +       .nvquirks =3D NVQUIRK_HAS_ANDROID_GPT_SECTOR,
+> >  };
+> >
+> >  static const struct sdhci_ops tegra210_sdhci_ops =3D {
+> > @@ -1590,6 +1596,38 @@ static int sdhci_tegra_add_host(struct sdhci_hos=
+t *host)
+> >         return ret;
+> >  }
+> >
+> > +static int sdhci_tegra_alternative_gpt_sector(struct mmc_card *card,
+> > +                                             sector_t *gpt_sector)
+> > +{
+> > +       unsigned int boot_sectors_num;
+> > +
+> > +       /* filter out unrelated cards */
+> > +       if (card->ext_csd.rev < 3 ||
+> > +           !mmc_card_mmc(card) ||
+> > +           !mmc_card_is_blockaddr(card) ||
+> > +            mmc_card_is_removable(card->host))
+> > +               return -ENOENT;
+> > +
+> > +       /*
+> > +        * eMMC storage has two special boot partitions in addition to =
+the
+> > +        * main one.  NVIDIA's bootloader linearizes eMMC boot0->boot1-=
+>main
+> > +        * accesses, this means that the partition table addresses are =
+shifted
+> > +        * by the size of boot partitions.  In accordance with the eMMC
+> > +        * specification, the boot partition size is calculated as foll=
+ows:
+> > +        *
+> > +        *      boot partition size =3D 128K byte x BOOT_SIZE_MULT
+> > +        *
+> > +        * Calculate number of sectors occupied by the both boot partit=
+ions.
+> > +        */
+> > +       boot_sectors_num =3D card->ext_csd.raw_boot_mult * SZ_128K /
+> > +                          SZ_512 * MMC_NUM_BOOT_PARTITION;
+> > +
+> > +       /* Defined by NVIDIA and used by Android devices. */
+> > +       *gpt_sector =3D card->ext_csd.sectors - boot_sectors_num - 1;
+> > +
+> > +       return 0;
+> > +}
 >=20
-> Argh, it's a typo indeed. Should be nvidia,tegra194-nvdec.
+> I suggest you move this code into the mmc core/block layer instead (it
+> better belongs there).
 >=20
-> >=20
-> > > +then:
-> > > +  properties:
-> > > +    nvidia,instance:
-> > > +      items:
-> > > +        - description: 0 for NVDEC0, or 1 for NVDEC1
-> >=20
-> > What's this for? We generally don't do indices in DT.
->=20
-> When programming the hardware through Host1x, we need to know the "class =
-ID"
-> of the hardware, specific to each instance. So we need to know which
-> instance it is. Technically of course we could derive this from the MMIO
-> address but that seems more confusing.
->=20
-> >=20
-> > > +
-> > > +additionalProperties: true
-> >=20
-> > This should be false or 'unevaluatedProperties: false'
->=20
-> I tried that but it resulted in validation failures; please see the
-> discussion in v2.
+> Additionally, let's add a new host cap, MMC_CAP_ALTERNATIVE_GPT, to
+> let the core know when it should use the code above.
 
-Rob mentioned that there is now support for unevaluatedProperties in
-dt-schema. I was able to test this, though with only limited success. I
-made the following changes on top of this patch:
+Couldn't a generic "alternative GPT" mean pretty much anything? As far
+as I know this is very specific to a series of Tegra chips and firmware
+running on them. On some of these devices you can even replace the OEM
+firmware by something custom that's less quirky.
 
---- >8 ---
-diff --git a/Documentation/devicetree/bindings/gpu/host1x/nvidia,tegra210-n=
-vdec.yaml b/Documentation/devicetree/bindings/gpu/host1x/nvidia,tegra210-nv=
-dec.yaml
-index d2681c98db7e..0bdf05fc8fc7 100644
---- a/Documentation/devicetree/bindings/gpu/host1x/nvidia,tegra210-nvdec.ya=
-ml
-+++ b/Documentation/devicetree/bindings/gpu/host1x/nvidia,tegra210-nvdec.ya=
-ml
-@@ -73,14 +73,18 @@ if:
-   properties:
-     compatible:
-       contains:
--        const: nvidia,tegra194-host1x
-+        const: nvidia,tegra194-nvdec
- then:
-   properties:
-     nvidia,instance:
-+      $ref: /schemas/types.yaml#/definitions/uint32
-       items:
-         - description: 0 for NVDEC0, or 1 for NVDEC1
-=20
--additionalProperties: true
-+  required:
-+    - nvidia,instance
-+
-+unevaluatedProperties: false
-=20
- examples:
-   - |
-@@ -105,3 +109,28 @@ examples:
-             interconnect-names =3D "dma-mem", "read-1", "write";
-             iommus =3D <&smmu TEGRA186_SID_NVDEC>;
-     };
-+
-+  - |
-+    #include <dt-bindings/clock/tegra194-clock.h>
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+    #include <dt-bindings/memory/tegra194-mc.h>
-+    #include <dt-bindings/power/tegra194-powergate.h>
-+    #include <dt-bindings/reset/tegra194-reset.h>
-+
-+    nvdec@15480000 {
-+            compatible =3D "nvidia,tegra194-nvdec";
-+            reg =3D <0x15480000 0x40000>;
-+            clocks =3D <&bpmp TEGRA194_CLK_NVDEC>;
-+            clock-names =3D "nvdec";
-+            resets =3D <&bpmp TEGRA194_RESET_NVDEC>;
-+            reset-names =3D "nvdec";
-+
-+            nvidia,instance =3D <0>;
-+
-+            power-domains =3D <&bpmp TEGRA194_POWER_DOMAIN_NVDECA>;
-+            interconnects =3D <&mc TEGRA194_MEMORY_CLIENT_NVDECSRD &emc>,
-+                            <&mc TEGRA194_MEMORY_CLIENT_NVDECSRD1 &emc>,
-+                            <&mc TEGRA194_MEMORY_CLIENT_NVDECSWR &emc>;
-+            interconnect-names =3D "dma-mem", "read-1", "write";
-+            iommus =3D <&smmu TEGRA194_SID_NVDEC>;
-+    };
---- >8 ---
-
-As I said, this only works partially. One thing I have to do is comment
-out the whole "if:" block in meta-schemas/base.yaml in order to get rid
-of this error:
-
-	Documentation/devicetree/bindings/gpu/host1x/nvidia,tegra210-nvdec.yaml: '=
-additionalProperties' is a required property
-	hint: A schema without a "$ref" to another schema must define all properti=
-es and use "additionalProperties"
-	from schema $id: http://devicetree.org/meta-schemas/base.yaml#
-
-which basically makes the whole file invalid. The reason seems to be
-that dt-schema will only allow unevaluatedProperties if there are any
-$ref references in the schema. Although I'm not sure I understand how
-exactly that works because I tried to inject a dummy $ref but that
-didn't fix the above error.
-
-Once that's worked around, though, I do get the examples to validate
-with just a small caveat: nvidia,instance is recognized as being
-required in the Tegra194 case (if I remove it from the example, I do get
-an error, as expected), but if I add nvidia,instance to the Tegra186
-example, it doesn't actually produce an error and will just accept it as
-valid, even though the compatible is not nvidia,tegra194-nvdec.
-
-I don't have time at the moment to investigate why that is, but just
-thought I'd report this here in the meantime. Perhaps it's already a
-known issue?
-
-We could potentially side-step this by getting rid of the custom
-nvidia,instance property altogether. Unfortunately of_device_id table
-matching only supports matching by name, but not by unit-address, which
-would've been nice in this case. Matching by base address manually is a
-bit suboptimal, but it's not that bad.
-
-In any case, there are other examples I know of which need this type of
-functionality (a bunch of devices where the number and names of power
-supplies change from one generation to another), so this problem isn't
-going entirely away anyway.
+I'm not aware of anyone else employing this kind of quirk, so I don't
+want anyone to get any ideas that this is a good thing. Putting it into
+the core runs the risk of legitimizing this.
 
 Thierry
 
---WYLvNF6e+2nKSnT5
+--YsFHapze9CfLadea
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmEdCJkACgkQ3SOs138+
-s6EyKA//ThgwpGG+hY7+/rPxqlOMWO7DhGhknT8Q2NrJrlq7s0qTh1O51CvOC/IN
-dN9+6EFUGHyuj/h24KocTkJVvBpNXQuJgdoEc1xJiat3z6tr0BjyLxBxZL9Rme2p
-rOY34gn587BUjQjjaibRqB5MPKE8bQbKgvzbaelbbyg8wc8hALiWgbn+7zaYjwnA
-4Rbk4xHEfSFMwTOlANBUgQX+y4/bbpOwdx6yw2CR07N0gyBmnOoWQA9EbIYi8dJ0
-9FGr8NGZ9WFP8GxtEf7ouiO0IZelKlWCDUE2tMD7QmidEGAf3uZIYTymY4Px7ErC
-Bo7C3JjDO8NVvY5l9dI39RrxzVdsVlzadyBv26OLFqRG+TzxLwq5I57SIZZJNJni
-jOHfTfT3joAW50ycdLVmTXNinVlnTVgTPvNSURTAHgf/3BsFYZ0Sx0lpTBnxRZW4
-FEwlgfYEyxj3xoUiqXMlpEuG+XKNH5dPsaWkEynMTj2x+sh5/AuvvPuqBe75x8ku
-FjwTQ3ZlR66ly5foIHvfDQofKfBzjDf3xJt4ypRejoynJSvtCz8K8Z4CAy7+mBMz
-OzIGJIs7hEvFx80IPu2LVd59iQHLe99/bXLmo53IcEbzcPye2ljkbFvD5xHDR1J3
-HO9N3z40NSkKRYTZry6ri6uJ4jDVPJSWRNpppwnnvojmSUhQviI=
-=WWNO
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmEdDKsACgkQ3SOs138+
+s6FtIw//V/GnAyD/VAGosaUf38C4hqMB1AJ4bDuwQT9AT4gX8IoZinxrKlfTv8E1
+qp0MDApPw2Lqivhd2eAVG6RekK34TGTS933ocNPRFgR6W74MrKImmFINIvIFseCy
+X5ZgxP4yjM9YX6kbgUD7DncOzQFcGqjxQoRAlhCBdGd5nO9VyZwWzFqlT3vvvS4t
+GG6gzZH7yieuvzoW2wNNi+Llsn68krvrxNDJo2qzIAtf00l6IGxRuPCNfIRakMMZ
+YrKZ1XIBkZLiYDdu8BzVv99Ng+2CcesPuhiXx41xEf3IkrylFJUNJ1A3KXGzIoPt
+aTseq307wkpKOnRKsfSw4cS0Y8AEbNGjtkDeEuWB5WRhyDzmzzQOVBB++lvZo0vE
+pNsvlwc8p8kdUwKLMRDxqRKbCcl+azla6XSXXDeuzKJLiT0B1gIvrZkcZ5KEGmDs
+0h4nRuhABUuozqVcCRkcDY0DAhhVwC1Z+YLLIjeq0ksi4YC+GSgNr3b3HGQms5nq
+85Kson9ouXaOGMh0rYmxtRjotolxnO0bQxHYbo7sct4Mhv/NTo/QYXXDuAEQ2MvK
+XOP0s5oxcBUH/FGNbIupCVky4SoNnG5EQh9jmm6BmD9jLfCyCt6dAlvFR4nj/DUh
+JHV388UVIqOOexOKvkVYSCTQiD7zueR2KlT6WtG70Bf50pq3/EQ=
+=Ht4G
 -----END PGP SIGNATURE-----
 
---WYLvNF6e+2nKSnT5--
+--YsFHapze9CfLadea--
