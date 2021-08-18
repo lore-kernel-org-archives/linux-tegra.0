@@ -2,117 +2,151 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26D00C4320A
-	for <linux-tegra@archiver.kernel.org>; Wed, 18 Aug 2021 17:24:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67742C4338F
+	for <linux-tegra@archiver.kernel.org>; Wed, 18 Aug 2021 22:19:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 05F4D610FE
-	for <linux-tegra@archiver.kernel.org>; Wed, 18 Aug 2021 17:24:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 470BD6108B
+	for <linux-tegra@archiver.kernel.org>; Wed, 18 Aug 2021 22:19:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231800AbhHRRYm (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 18 Aug 2021 13:24:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34996 "EHLO
+        id S234527AbhHRWUR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 18 Aug 2021 18:20:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46816 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229661AbhHRRYk (ORCPT
+        with ESMTP id S234488AbhHRWUR (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 18 Aug 2021 13:24:40 -0400
-Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BE1EC061764;
-        Wed, 18 Aug 2021 10:24:05 -0700 (PDT)
-Received: by mail-lf1-x12a.google.com with SMTP id y34so6154737lfa.8;
-        Wed, 18 Aug 2021 10:24:05 -0700 (PDT)
+        Wed, 18 Aug 2021 18:20:17 -0400
+Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3E41C061764;
+        Wed, 18 Aug 2021 15:19:41 -0700 (PDT)
+Received: by mail-lf1-x135.google.com with SMTP id r9so7987331lfn.3;
+        Wed, 18 Aug 2021 15:19:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=GAv6SuF4eSj8Jq3W6VuB4wY+Y7DhAYK2C8cvnt48BwA=;
-        b=OfKnmZ3T9Qb8HI5W7GPWXDlieZS0O8KzL+vFnG3wV003wkNIM7zLIcbMPaZV9yYF1Y
-         cMOjm0MheLL2CRrIs8DC2K9N1eVCWCaDsVSSikNKN2DkxTSyD7OhYYBAImKT9/HMCkap
-         Gr9Y+wK7NSOmC8NjxIznaaozosxtoumPvLwtjwYFV2WhONfGechAcboi0jMsRkdmWexs
-         dJkGtU3UNsZlMMt0vkVQBATO80wkY01UPa7V13WGnrzYHtoeNT3GK6eR7oqd5xSSYvpt
-         UbvMRFNwmdAjvxcYwYj5Bn415TPmyl/Gw0zEoqGhTt7a1uBUd5w/QJWfR+p+qExVRY3y
-         fwYQ==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=5BboEvAw/HXnB0UvGjpwIn05vh6cZYmjySlOfPuZwrE=;
+        b=hgZIRiaXwImTjHwfFZuPHRnszNPvCAJDpqC4f1lrhXuxiaT+osmSgA3AmTOfw2Uo5w
+         cQOGhWBaETsWQfDc2RZ8JNL4wGVJrHShTZsQXaYu/wEeU3h2FobGP+meifcvpz2pNrJ1
+         YeGa49uSV8f4yCPh6zOR+BzruY1sTtKRGRC3hL0G1TCJs12Y1dFKKB1KfpF65RzVsBbS
+         /A1RfELqzcdkyz3S+jY0VIBLj4TBRo43UPlRGNos5rMNfyM1fKqMT3pIbMGiHh2MjDvP
+         q7vOVf4/T5mOrCv00Q6+h3DbC2LC4uNxCbLtVd4DIREGQQdlDxpCaosiqTI3P5tKe6dp
+         X9vA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=GAv6SuF4eSj8Jq3W6VuB4wY+Y7DhAYK2C8cvnt48BwA=;
-        b=EQnigRajDLSJu7faMMPZCLt6fD4Tl6/k0yPKZ6Vh0HBFc49XrCTTVHRdppWZZyxBz0
-         ojk2IHKAQUe0Rt2aMQ09/po6MKUZVXiCYm1O2zQSCTbjXJ/0LUx4hNRLoRrMfuAERC8v
-         2v92bIwmufPjbC9ps3FdFC7cvb1yHg2EhqmZvjFmpkgfefXHhy/IjCixbPSUI4gmkAeU
-         G0ap3/D1XMo+UYTf11FXHTydWs5fTJOUc+7+7+9SE93Q36qR1SU81ioFufRAMfGvwrYW
-         cK0MZuYmOKsx0kEIefulTd40ONkpcvc0JyVAXVbReXxaUSaHKXNAqmxAfzYpCcLeeMOG
-         jyag==
-X-Gm-Message-State: AOAM532MsgNXqOevSVwYEfi0KoLu+BC8wxkY2czvtFI101SVLLadbTy5
-        inbvDFi8JSf0pOL6T6n3hkQKK6BWJJI=
-X-Google-Smtp-Source: ABdhPJz2totLY2glZaQrN56jcVR6UJ865rvHiBaSqRD7LPq8+CU52UR+LaQb1/rmqGyWq/hbRnECbg==
-X-Received: by 2002:a05:6512:21d1:: with SMTP id d17mr7501000lft.588.1629307443410;
-        Wed, 18 Aug 2021 10:24:03 -0700 (PDT)
-Received: from [192.168.2.145] (46-138-85-91.dynamic.spd-mgts.ru. [46.138.85.91])
-        by smtp.googlemail.com with ESMTPSA id 3sm47300ljq.136.2021.08.18.10.24.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 18 Aug 2021 10:24:03 -0700 (PDT)
-Subject: Re: [PATCH v8 11/34] gpu: host1x: Add runtime PM and OPP support
-To:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>
-Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Peter Chen <peter.chen@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
-        Nishanth Menon <nm@ti.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Richard Weinberger <richard@nod.at>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Lucas Stach <dev@lynxeye.de>, Stefan Agner <stefan@agner.ch>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux USB List <linux-usb@vger.kernel.org>,
-        linux-staging@lists.linux.dev, linux-spi@vger.kernel.org,
-        linux-pwm@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        DTML <devicetree@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-References: <20210817012754.8710-1-digetx@gmail.com>
- <20210817012754.8710-12-digetx@gmail.com>
- <CAPDyKFrax-EYtO03W5QWM2tcWLWeMM8hHZCRYFcsenuiP2zObQ@mail.gmail.com>
- <YRvBkyfFCqthBIBV@orome.fritz.box>
- <CAPDyKFp+9Bv3EVSnV683ixNXzukJtmG_QrS5C1ZQqLxv9QJ-bQ@mail.gmail.com>
+        bh=5BboEvAw/HXnB0UvGjpwIn05vh6cZYmjySlOfPuZwrE=;
+        b=AtXVozjufvYJLZOXmW+Z9uuhC+vwvx8MkwWvWVbSldSiILxIasHjALpPq5pcgVBWLa
+         FCkxbke9Oiw1YOrD0hcoZ2D7wSye9cDS/IcQ/ddcYJ3eeBj30YSESIzdESst2PocRF0R
+         hIPaIcMuLZu9jJprylLdkPuoEH2p62MbikwICRFxn22h5VxhiLk0C4H6LlOy5n96KXbr
+         LcWjw3b0cqnyoDisdj/G7GXl2/EUDG8WueTgc2w/4zIhABOhO2/SgUpsZM974pMWZ2yI
+         PT3CqD9TzCSo+soaBgEt/vbi9bxuDgwRLqovYiv19pZ3slWMpEmNTcvoojQYOVptfAfh
+         1IVg==
+X-Gm-Message-State: AOAM533zO0822Y2EZUOayV3//2T6xE7CiYKrYQ4lyFtTwsrXYMXFssh1
+        torLUB3AhPQc8GcWmQMY4Fg=
+X-Google-Smtp-Source: ABdhPJw4cjJyL7VSkdfr2ReID0KqC3U9eHuPzSOYpi8CLcoeKk5QqBqylN1F+Y7MMSnPRz7In2yUIA==
+X-Received: by 2002:a05:6512:3d16:: with SMTP id d22mr7938119lfv.132.1629325179946;
+        Wed, 18 Aug 2021 15:19:39 -0700 (PDT)
+Received: from localhost.localdomain (46-138-85-91.dynamic.spd-mgts.ru. [46.138.85.91])
+        by smtp.gmail.com with ESMTPSA id v23sm93300lfr.208.2021.08.18.15.19.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Aug 2021 15:19:39 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <e2ab73d3-c543-5c5d-5b51-6ff42446907c@gmail.com>
-Date:   Wed, 18 Aug 2021 20:24:01 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+To:     Jens Axboe <axboe@kernel.dk>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>,
+        David Heidelberg <david@ixit.cz>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Ion Agorria <AG0RRIA@yahoo.com>,
+        Svyatoslav Ryhel <clamor95@gmail.com>
+Cc:     linux-tegra@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-efi <linux-efi@vger.kernel.org>
+Subject: [PATCH v6 0/5] Support EFI partition on NVIDIA Tegra devices
+Date:   Thu, 19 Aug 2021 01:19:15 +0300
+Message-Id: <20210818221920.3893-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-In-Reply-To: <CAPDyKFp+9Bv3EVSnV683ixNXzukJtmG_QrS5C1ZQqLxv9QJ-bQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-18.08.2021 11:35, Ulf Hansson пишет:
-> Thanks for clarifying! As I said, feel free to ignore my comments then.
-> 
-> For this and the other patches in the series, I assume you only need
-> to care about whether the driver is a cross SoC driver and used on
-> other platforms than Tegra then.
+This series adds the most minimal EFI partition support for NVIDIA Tegra
+consumer devices, like Android tablets and game consoles, making theirs
+eMMC accessible out-of-the-box using downstream bootloader and mainline
+Linux kernel.  eMMC now works on Acer A500 tablet and Ouya game console
+that are already well supported in mainline and internal storage is the
+only biggest thing left to support.
 
-Yes, and all drivers touched by this series are Tegra-only drivers.
+Changelog:
+
+v6: - Added comment for the alternative_gpt_sector() callback, which
+      was asked by Christoph Hellwig.
+
+    - Changed alternative_gpt_sector() to take disk for the argument
+      instead of blkdev. This was asked by Christoph Hellwig.
+
+    - Dropped mmc_bdops check as it was suggested by Christoph Hellwig.
+
+    - Added missing mmc_blk_put() that was spotted by Christoph Hellwig.
+
+    - Moved GPT calculation into MMC core and added MMC_CAP2_ALT_GPT_SECTOR
+      flag, like it was asked by Ulf Hansson. Me and Thierry have concerns
+      about whether it's better to have Tegra-specific function in a core
+      instead of Tegra driver, but it also works, so I decided to try that
+      variant.
+
+v5: - Implemented alternative_gpt_sector() blk/mmc callback that was
+      suggested by Christoph Hellwig in a comment to v4.
+
+    - mmc_bdev_to_card() now checks blk fops instead of the major number,
+      like it was suggested by Christoph Hellwig in a comment to v4.
+
+    - Emailed Rob Herring, which was asked by Ulf Hansson in a comment
+      to v4. Although the of-match change is gone now in v5, the matching
+      is transformed into the new SDHCI quirk of the Tegra driver.
+
+v4: - Rebased on top of recent linux-next.
+
+v3: - Removed unnecessary v1 hunk that was left by accident in efi.c of v2.
+
+v2: - This is continuation of [1] where Davidlohr Bueso suggested that it
+      should be better to avoid supporting in mainline the custom gpt_sector
+      kernel cmdline parameter that downstream Android kernels use.  We can
+      do this for the devices that are already mainlined, so I dropped the
+      cmdline from the v2 and left only the variant with a fixed GPT address.
+
+[1] https://lore.kernel.org/linux-efi/20210327212100.3834-3-digetx@gmail.com/T/
+
+Dmitry Osipenko (5):
+  block: Add alternative_gpt_sector() operation
+  partitions/efi: Support non-standard GPT location
+  mmc: core: Add raw_boot_mult field to mmc_ext_csd
+  mmc: block: Support alternative_gpt_sector() operation
+  mmc: sdhci-tegra: Enable MMC_CAP2_ALT_GPT_SECTOR
+
+ block/partitions/efi.c         | 12 ++++++++++++
+ drivers/mmc/core/block.c       | 21 ++++++++++++++++++++
+ drivers/mmc/core/core.c        | 35 ++++++++++++++++++++++++++++++++++
+ drivers/mmc/core/core.h        |  2 ++
+ drivers/mmc/core/mmc.c         |  2 ++
+ drivers/mmc/host/sdhci-tegra.c |  9 +++++++++
+ include/linux/blkdev.h         |  7 +++++++
+ include/linux/mmc/card.h       |  1 +
+ include/linux/mmc/host.h       |  1 +
+ 9 files changed, 90 insertions(+)
+
+-- 
+2.32.0
+
