@@ -2,152 +2,164 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 119A5C19F3D
-	for <linux-tegra@archiver.kernel.org>; Wed, 18 Aug 2021 22:19:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E982BC41537
+	for <linux-tegra@archiver.kernel.org>; Thu, 19 Aug 2021 06:17:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EE24561106
-	for <linux-tegra@archiver.kernel.org>; Wed, 18 Aug 2021 22:19:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CDCAF6113C
+	for <linux-tegra@archiver.kernel.org>; Thu, 19 Aug 2021 06:17:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234570AbhHRWUV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 18 Aug 2021 18:20:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46846 "EHLO
+        id S229782AbhHSGSG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 19 Aug 2021 02:18:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41436 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234537AbhHRWUV (ORCPT
+        with ESMTP id S230310AbhHSGSF (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 18 Aug 2021 18:20:21 -0400
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC5D2C0613D9;
-        Wed, 18 Aug 2021 15:19:45 -0700 (PDT)
-Received: by mail-lf1-x12e.google.com with SMTP id o10so7914138lfr.11;
-        Wed, 18 Aug 2021 15:19:45 -0700 (PDT)
+        Thu, 19 Aug 2021 02:18:05 -0400
+Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89549C061756
+        for <linux-tegra@vger.kernel.org>; Wed, 18 Aug 2021 23:17:29 -0700 (PDT)
+Received: by mail-pj1-x1029.google.com with SMTP id w13-20020a17090aea0db029017897a5f7bcso4007919pjy.5
+        for <linux-tegra@vger.kernel.org>; Wed, 18 Aug 2021 23:17:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=xtGQgjxMEZMlhC/xeDEiMn9ep1RQCyByheCct7MRol4=;
-        b=fqBqV/qWwyuboVt+vWtn58b/iJu8+z3vqWQuC9BB8si+QCQ3xNbWfZQrGBmGzwfNlk
-         /zil+y5Svz6VxOIOCS8ZCr+tUNCYDLrRi/efgwwsN97hLg/mD9nAZ/L33DWmtEzEw4MT
-         XHVRvEKRgAm1qsuVPbH182NyjXpvJQA9Tl9fw8kwc9gRpX931zIZHhoRMx+utU7Mxu51
-         zMiqsdfGmYpBFOdx/3y8Jq4/zcIoSInKWKYYlSKZ9Z9MgMOFEzqv/f8xnzHkigt5uzBe
-         15KNwSu8ePKYy6AdfLxkBQ5TZn2solVhnQopukQLaA+io7L0nvGY69CMd3u1iNqFR3+F
-         Uf7Q==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=Z7TQEkkTOfvT3y1VcK9cbeGmLxLBDuWce4oY9e31CIQ=;
+        b=n8Z7pceL3Q1hHrYhRGbE2Ft6ysYoV2T29GwsgsIk5zym7iZcje0CXVg1jI36aNnFP1
+         wEt31EiA2dUBQwlv5rK6Pb4jBRjUZnVnX9lq3yYWlZnsAiqoC84b2+sIg5qRcoOEikt2
+         Bl5OLXFHBLycojOK68FIhPW3b2fskqhF3vr/eyYOYKdL7QspG0UOJAgIVnJ/rUe4LZFr
+         9Mx+8O2v0d2rHrH3yazUPQGMQQQiYdzhDIVBgB1HMOdlKqueyQlS0Pa++oE7KDNseaKY
+         ZqQcskpZ4qIHBPun+Nz8BNcPrFRsCGUIgrdD9AWMNWaoX41LuxEow35zOBfD0rRFPHfn
+         o2nQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=xtGQgjxMEZMlhC/xeDEiMn9ep1RQCyByheCct7MRol4=;
-        b=T9Lo/UUwy8//nuislkHzYvYDRjcaycuXA8zQpTPK4vhy0k5Y1r0yB8yefiDZgpb8BK
-         8JxSO9T9SSpbKUPLAzCOW1ljAxaYe5ccW1RBWI6vOISeddqYq5aGYzQiim9HIUh06w+3
-         77Lt3D5u9C63ICo82pAT2nMxGXClxOM82ObfBlYZl9l4nZWjVLPYB7XaQbwTO10MSMmX
-         pRuh+qI75WbtvVo9o0v/UEJ450G7TmUp+WP3IocOovciPUlwnGGlufrSQtkprV9CgoG6
-         i6kiZm54MefyVIzC1UtwpvRHN/VrN5rpypRwU9ShJY3XwbvMChytWDTXxOVZej5kMT61
-         BG2A==
-X-Gm-Message-State: AOAM533zhjq0b/gmfSNVp5fEIlbp46DqnKhVaj5jZ8L+DYhv0bbnUNqd
-        qZr0bLzAku2YSfezZ2hbX7On29sQ74g=
-X-Google-Smtp-Source: ABdhPJzk8Bz3BIudvvqL9aNZo0PYlxdeHsaXV3MzYKZ+EdYIdH7reEaf1RQNTstLluu7sWur6PjKpA==
-X-Received: by 2002:a05:6512:1518:: with SMTP id bq24mr7681150lfb.271.1629325184128;
-        Wed, 18 Aug 2021 15:19:44 -0700 (PDT)
-Received: from localhost.localdomain (46-138-85-91.dynamic.spd-mgts.ru. [46.138.85.91])
-        by smtp.gmail.com with ESMTPSA id v23sm93300lfr.208.2021.08.18.15.19.43
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=Z7TQEkkTOfvT3y1VcK9cbeGmLxLBDuWce4oY9e31CIQ=;
+        b=njPk6WsXgMsTUEIdlER/QsBXhDjWpRBMLXqKOo2gxJqolRk5YLNWHhaXJk6Jbq2yl5
+         KRG56iCzXz0+nVM42sp3HNlHPIwQOEOVP/H4IMNnf0tgJQPj1I287IGSdI5HBGecyYl7
+         VKdQmgl3Sg1PuIUsG0Kwd08MS362oFotWoH6LzIvCfpq4jCG8NS+Fnpw6uOqowZGBCtz
+         bHgehxcSSftLmgjwhOIujghZvjJE5CyTU3scyEl9/bdUsPlEjwJOE+xZbvwCkSlkYMui
+         AE8LHcMrrDyct08VrMyzHZN1rqBDvILLqGrnSZmVHrD4UrGi9wxojwfuhFSa8j8U8o+t
+         jfvw==
+X-Gm-Message-State: AOAM532fvria0MLjWXC421/dIEbfCUrdgzsOPlM+BNpjM6ZBFKijpQrh
+        uUQvt+xQ+q48uxJvYzjPPwkmcw==
+X-Google-Smtp-Source: ABdhPJwi8ECnFjz7ftlBUkQP1U01xvcbaFwYmCvSxRCVadF/ZCBCreA9Xq0KVJGpteNV1tSqbtF8Eg==
+X-Received: by 2002:a17:90a:ce88:: with SMTP id g8mr13456163pju.116.1629353849006;
+        Wed, 18 Aug 2021 23:17:29 -0700 (PDT)
+Received: from localhost ([122.172.201.85])
+        by smtp.gmail.com with ESMTPSA id r18sm2222724pgk.54.2021.08.18.23.16.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Aug 2021 15:19:43 -0700 (PDT)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>,
+        Wed, 18 Aug 2021 23:16:53 -0700 (PDT)
+Date:   Thu, 19 Aug 2021 11:46:17 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>,
-        David Heidelberg <david@ixit.cz>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Peter Chen <peter.chen@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>, Nishanth Menon <nm@ti.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Richard Weinberger <richard@nod.at>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Lucas Stach <dev@lynxeye.de>, Stefan Agner <stefan@agner.ch>,
         Adrian Hunter <adrian.hunter@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Davidlohr Bueso <dave@stgolabs.net>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Ion Agorria <AG0RRIA@yahoo.com>,
-        Svyatoslav Ryhel <clamor95@gmail.com>
-Cc:     linux-tegra@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-efi <linux-efi@vger.kernel.org>
-Subject: [PATCH v6 5/5] mmc: sdhci-tegra: Enable MMC_CAP2_ALT_GPT_SECTOR
-Date:   Thu, 19 Aug 2021 01:19:20 +0300
-Message-Id: <20210818221920.3893-6-digetx@gmail.com>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20210818221920.3893-1-digetx@gmail.com>
-References: <20210818221920.3893-1-digetx@gmail.com>
+        Michael Turquette <mturquette@baylibre.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux USB List <linux-usb@vger.kernel.org>,
+        linux-staging@lists.linux.dev, linux-spi@vger.kernel.org,
+        linux-pwm@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        DTML <devicetree@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v8 01/34] opp: Add dev_pm_opp_sync() helper
+Message-ID: <20210819061617.r4kuqxafjstrv3kt@vireshk-i7>
+References: <a2a3c41f-c5e4-ee7e-7d48-03af8bac8863@gmail.com>
+ <20210818045307.4brb6cafkh3adjth@vireshk-i7>
+ <080469b3-612b-3a34-86e5-7037a64de2fe@gmail.com>
+ <20210818055849.ybfajzu75ecpdrbn@vireshk-i7>
+ <f1c76f23-086d-ef36-54ea-0511b0ebe0e1@gmail.com>
+ <20210818062723.dqamssfkf7lf7cf7@vireshk-i7>
+ <CAPDyKFrZqWtZOp4MwDN6fShoLLbw5NM039bpE3-shB+fCEZOog@mail.gmail.com>
+ <20210818091417.dvlnsxlgybdsn76x@vireshk-i7>
+ <CAPDyKFrVxhrWGr2pKduehshpLFd_db2NTPGuD7fSqvuHeyzT4w@mail.gmail.com>
+ <f1314a47-9e8b-58e1-7c3f-0afb1ec8e70a@gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <f1314a47-9e8b-58e1-7c3f-0afb1ec8e70a@gmail.com>
+User-Agent: NeoMutt/20180716-391-311a52
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Tegra20/30/114/124 Android devices place GPT at a non-standard location.
-Enable GPT entry scanning at that location.
+On 18-08-21, 18:55, Dmitry Osipenko wrote:
+> 18.08.2021 12:41, Ulf Hansson пишет:
+> 
+> Either way gives the equal result. The new callback allows to remove the
+> boilerplate dev_pm_opp_set_rate(clk_get_rate() code from the rpm-resume
+> of consumer devices, that's it.
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/mmc/host/sdhci-tegra.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+It may not be equal, as dev_pm_opp_set_rate() may do additional stuff,
+now or in a later implementation. Currently it only does
+regulator_enable() as a special case, but it can be clk_enable() as
+well. Also, this tries to solve the problem in a tricky/hacky way,
+while all you wanted was to make the genpd aware of what the
+performance state should be.
 
-diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-index 387ce9cdbd7c..39cfbb28ccc3 100644
---- a/drivers/mmc/host/sdhci-tegra.c
-+++ b/drivers/mmc/host/sdhci-tegra.c
-@@ -116,6 +116,8 @@
-  */
- #define NVQUIRK_HAS_TMCLK				BIT(10)
- 
-+#define NVQUIRK_HAS_ANDROID_GPT_SECTOR			BIT(11)
-+
- /* SDMMC CQE Base Address for Tegra Host Ver 4.1 and Higher */
- #define SDHCI_TEGRA_CQE_BASE_ADDR			0xF000
- 
-@@ -1361,6 +1363,7 @@ static const struct sdhci_tegra_soc_data soc_data_tegra20 = {
- 	.pdata = &sdhci_tegra20_pdata,
- 	.dma_mask = DMA_BIT_MASK(32),
- 	.nvquirks = NVQUIRK_FORCE_SDHCI_SPEC_200 |
-+		    NVQUIRK_HAS_ANDROID_GPT_SECTOR |
- 		    NVQUIRK_ENABLE_BLOCK_GAP_DET,
- };
- 
-@@ -1390,6 +1393,7 @@ static const struct sdhci_tegra_soc_data soc_data_tegra30 = {
- 	.nvquirks = NVQUIRK_ENABLE_SDHCI_SPEC_300 |
- 		    NVQUIRK_ENABLE_SDR50 |
- 		    NVQUIRK_ENABLE_SDR104 |
-+		    NVQUIRK_HAS_ANDROID_GPT_SECTOR |
- 		    NVQUIRK_HAS_PADCALIB,
- };
- 
-@@ -1422,6 +1426,7 @@ static const struct sdhci_pltfm_data sdhci_tegra114_pdata = {
- static const struct sdhci_tegra_soc_data soc_data_tegra114 = {
- 	.pdata = &sdhci_tegra114_pdata,
- 	.dma_mask = DMA_BIT_MASK(32),
-+	.nvquirks = NVQUIRK_HAS_ANDROID_GPT_SECTOR,
- };
- 
- static const struct sdhci_pltfm_data sdhci_tegra124_pdata = {
-@@ -1438,6 +1443,7 @@ static const struct sdhci_pltfm_data sdhci_tegra124_pdata = {
- static const struct sdhci_tegra_soc_data soc_data_tegra124 = {
- 	.pdata = &sdhci_tegra124_pdata,
- 	.dma_mask = DMA_BIT_MASK(34),
-+	.nvquirks = NVQUIRK_HAS_ANDROID_GPT_SECTOR,
- };
- 
- static const struct sdhci_ops tegra210_sdhci_ops = {
-@@ -1616,6 +1622,9 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
- 	tegra_host->pad_control_available = false;
- 	tegra_host->soc_data = soc_data;
- 
-+	if (soc_data->nvquirks & NVQUIRK_HAS_ANDROID_GPT_SECTOR)
-+		host->mmc->caps2 |= MMC_CAP2_ALT_GPT_SECTOR;
-+
- 	if (soc_data->nvquirks & NVQUIRK_NEEDS_PAD_CONTROL) {
- 		rc = tegra_sdhci_init_pinctrl_info(&pdev->dev, tegra_host);
- 		if (rc == 0)
+Your driver can break tomorrow if we started to do more stuff from
+this API at another time.
+
+> > dev_pm_opp_set_rate() is best called from consumer drivers, as they
+> > need to be in control.
+> >> What we need here is just configure. So something like this then:
+> The intent wasn't to use dev_pm_opp_set_rate() from
+> __genpd_dev_pm_attach(), but to set genpd->rpm_pstate in accordance to
+> the h/w configuration.
+
+Right.
+
+> On Tegra we have a chain of PDs and it's not trivial to convert the
+> device's OPP into pstate because only the parent domain can translate
+> the required OPP.
+
+The driver should just be required to make a call, and OPP/genpd core
+should return it a value. This is already done today while setting the
+pstate for a device. The same frameworks must be able to supply a
+value to be used for the device.
+
+> Viresh, please take a look at what I did in [1]. Maybe it could be done
+> in another way.
+
+I looked into this and looked like too much trouble. The
+implementation needs to be simple. I am not sure I understand all the
+problems you faced while doing that, would be better to start with a
+simpler implementation of get_performance_state() kind of API for
+genpd, after the domain is attached and its OPP table is initialized.
+
+Note, that the OPP table isn't required to be fully initialized for
+the device at this point, we can parse the DT as well if needed be.
+
 -- 
-2.32.0
-
+viresh
