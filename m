@@ -2,164 +2,70 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E982BC41537
-	for <linux-tegra@archiver.kernel.org>; Thu, 19 Aug 2021 06:17:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D80DC4338F
+	for <linux-tegra@archiver.kernel.org>; Thu, 19 Aug 2021 07:10:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CDCAF6113C
-	for <linux-tegra@archiver.kernel.org>; Thu, 19 Aug 2021 06:17:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 05FB761164
+	for <linux-tegra@archiver.kernel.org>; Thu, 19 Aug 2021 07:10:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229782AbhHSGSG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 19 Aug 2021 02:18:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41436 "EHLO
+        id S236212AbhHSHKj (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 19 Aug 2021 03:10:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53438 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230310AbhHSGSF (ORCPT
+        with ESMTP id S231951AbhHSHKi (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 19 Aug 2021 02:18:05 -0400
-Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89549C061756
-        for <linux-tegra@vger.kernel.org>; Wed, 18 Aug 2021 23:17:29 -0700 (PDT)
-Received: by mail-pj1-x1029.google.com with SMTP id w13-20020a17090aea0db029017897a5f7bcso4007919pjy.5
-        for <linux-tegra@vger.kernel.org>; Wed, 18 Aug 2021 23:17:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=Z7TQEkkTOfvT3y1VcK9cbeGmLxLBDuWce4oY9e31CIQ=;
-        b=n8Z7pceL3Q1hHrYhRGbE2Ft6ysYoV2T29GwsgsIk5zym7iZcje0CXVg1jI36aNnFP1
-         wEt31EiA2dUBQwlv5rK6Pb4jBRjUZnVnX9lq3yYWlZnsAiqoC84b2+sIg5qRcoOEikt2
-         Bl5OLXFHBLycojOK68FIhPW3b2fskqhF3vr/eyYOYKdL7QspG0UOJAgIVnJ/rUe4LZFr
-         9Mx+8O2v0d2rHrH3yazUPQGMQQQiYdzhDIVBgB1HMOdlKqueyQlS0Pa++oE7KDNseaKY
-         ZqQcskpZ4qIHBPun+Nz8BNcPrFRsCGUIgrdD9AWMNWaoX41LuxEow35zOBfD0rRFPHfn
-         o2nQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=Z7TQEkkTOfvT3y1VcK9cbeGmLxLBDuWce4oY9e31CIQ=;
-        b=njPk6WsXgMsTUEIdlER/QsBXhDjWpRBMLXqKOo2gxJqolRk5YLNWHhaXJk6Jbq2yl5
-         KRG56iCzXz0+nVM42sp3HNlHPIwQOEOVP/H4IMNnf0tgJQPj1I287IGSdI5HBGecyYl7
-         VKdQmgl3Sg1PuIUsG0Kwd08MS362oFotWoH6LzIvCfpq4jCG8NS+Fnpw6uOqowZGBCtz
-         bHgehxcSSftLmgjwhOIujghZvjJE5CyTU3scyEl9/bdUsPlEjwJOE+xZbvwCkSlkYMui
-         AE8LHcMrrDyct08VrMyzHZN1rqBDvILLqGrnSZmVHrD4UrGi9wxojwfuhFSa8j8U8o+t
-         jfvw==
-X-Gm-Message-State: AOAM532fvria0MLjWXC421/dIEbfCUrdgzsOPlM+BNpjM6ZBFKijpQrh
-        uUQvt+xQ+q48uxJvYzjPPwkmcw==
-X-Google-Smtp-Source: ABdhPJwi8ECnFjz7ftlBUkQP1U01xvcbaFwYmCvSxRCVadF/ZCBCreA9Xq0KVJGpteNV1tSqbtF8Eg==
-X-Received: by 2002:a17:90a:ce88:: with SMTP id g8mr13456163pju.116.1629353849006;
-        Wed, 18 Aug 2021 23:17:29 -0700 (PDT)
-Received: from localhost ([122.172.201.85])
-        by smtp.gmail.com with ESMTPSA id r18sm2222724pgk.54.2021.08.18.23.16.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Aug 2021 23:16:53 -0700 (PDT)
-Date:   Thu, 19 Aug 2021 11:46:17 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
+        Thu, 19 Aug 2021 03:10:38 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 526F0C061575;
+        Thu, 19 Aug 2021 00:10:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=l2WBiCb5duYJRA9nKpihqrJOH1Qjg6utSrFiu8qAdtc=; b=NVNgO3H3TRQdukK5brtNeeT2j1
+        yhfOYeVfsp7cwPYnuhL6c7MAr/XcNMJbcMIM/+1VS1hsQUaKJmyktM5+9cIO0P51VXmy/k/8MmWzN
+        BFreh8w4AraeaSMd93xIRPCu0PN6kGJMS3JyHKNAtFPwt5CHAxs7lUVnlEYg9aLTr9GklySbh9KGH
+        gVLKLzTtEPH7bWdrmseeT3o21U+D2ALvaHyIz0W5+QRC03XQE8HuPW38h3FFpcjamfLSkvtdbz8O6
+        /1q5QqVsYaK2aZztaxemmQRBlAzzt0GmGNbavCecsbvcCYN9KGH6Oz216GEqOfTenaFffsP0qkMTo
+        vSTT4m+w==;
+Received: from hch by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mGc9v-004l26-55; Thu, 19 Aug 2021 07:08:24 +0000
+Date:   Thu, 19 Aug 2021 08:08:15 +0100
+From:   Christoph Hellwig <hch@infradead.org>
 To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
+Cc:     Jens Axboe <axboe@kernel.dk>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Peter Chen <peter.chen@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>, Nishanth Menon <nm@ti.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Richard Weinberger <richard@nod.at>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Lucas Stach <dev@lynxeye.de>, Stefan Agner <stefan@agner.ch>,
+        Micha?? Miros??aw <mirq-linux@rere.qmqm.pl>,
+        David Heidelberg <david@ixit.cz>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
         Adrian Hunter <adrian.hunter@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Davidlohr Bueso <dave@stgolabs.net>,
         Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux USB List <linux-usb@vger.kernel.org>,
-        linux-staging@lists.linux.dev, linux-spi@vger.kernel.org,
-        linux-pwm@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        DTML <devicetree@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v8 01/34] opp: Add dev_pm_opp_sync() helper
-Message-ID: <20210819061617.r4kuqxafjstrv3kt@vireshk-i7>
-References: <a2a3c41f-c5e4-ee7e-7d48-03af8bac8863@gmail.com>
- <20210818045307.4brb6cafkh3adjth@vireshk-i7>
- <080469b3-612b-3a34-86e5-7037a64de2fe@gmail.com>
- <20210818055849.ybfajzu75ecpdrbn@vireshk-i7>
- <f1c76f23-086d-ef36-54ea-0511b0ebe0e1@gmail.com>
- <20210818062723.dqamssfkf7lf7cf7@vireshk-i7>
- <CAPDyKFrZqWtZOp4MwDN6fShoLLbw5NM039bpE3-shB+fCEZOog@mail.gmail.com>
- <20210818091417.dvlnsxlgybdsn76x@vireshk-i7>
- <CAPDyKFrVxhrWGr2pKduehshpLFd_db2NTPGuD7fSqvuHeyzT4w@mail.gmail.com>
- <f1314a47-9e8b-58e1-7c3f-0afb1ec8e70a@gmail.com>
+        Ion Agorria <AG0RRIA@yahoo.com>,
+        Svyatoslav Ryhel <clamor95@gmail.com>,
+        linux-tegra@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-efi <linux-efi@vger.kernel.org>
+Subject: Re: [PATCH v6 1/5] block: Add alternative_gpt_sector() operation
+Message-ID: <YR4DX5BT2fK3LE0H@infradead.org>
+References: <20210818221920.3893-1-digetx@gmail.com>
+ <20210818221920.3893-2-digetx@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <f1314a47-9e8b-58e1-7c3f-0afb1ec8e70a@gmail.com>
-User-Agent: NeoMutt/20180716-391-311a52
+In-Reply-To: <20210818221920.3893-2-digetx@gmail.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 18-08-21, 18:55, Dmitry Osipenko wrote:
-> 18.08.2021 12:41, Ulf Hansson пишет:
-> 
-> Either way gives the equal result. The new callback allows to remove the
-> boilerplate dev_pm_opp_set_rate(clk_get_rate() code from the rpm-resume
-> of consumer devices, that's it.
+Looks good,
 
-It may not be equal, as dev_pm_opp_set_rate() may do additional stuff,
-now or in a later implementation. Currently it only does
-regulator_enable() as a special case, but it can be clk_enable() as
-well. Also, this tries to solve the problem in a tricky/hacky way,
-while all you wanted was to make the genpd aware of what the
-performance state should be.
-
-Your driver can break tomorrow if we started to do more stuff from
-this API at another time.
-
-> > dev_pm_opp_set_rate() is best called from consumer drivers, as they
-> > need to be in control.
-> >> What we need here is just configure. So something like this then:
-> The intent wasn't to use dev_pm_opp_set_rate() from
-> __genpd_dev_pm_attach(), but to set genpd->rpm_pstate in accordance to
-> the h/w configuration.
-
-Right.
-
-> On Tegra we have a chain of PDs and it's not trivial to convert the
-> device's OPP into pstate because only the parent domain can translate
-> the required OPP.
-
-The driver should just be required to make a call, and OPP/genpd core
-should return it a value. This is already done today while setting the
-pstate for a device. The same frameworks must be able to supply a
-value to be used for the device.
-
-> Viresh, please take a look at what I did in [1]. Maybe it could be done
-> in another way.
-
-I looked into this and looked like too much trouble. The
-implementation needs to be simple. I am not sure I understand all the
-problems you faced while doing that, would be better to start with a
-simpler implementation of get_performance_state() kind of API for
-genpd, after the domain is attached and its OPP table is initialized.
-
-Note, that the OPP table isn't required to be fully initialized for
-the device at this point, we can parse the DT as well if needed be.
-
--- 
-viresh
+Reviewed-by: Christoph Hellwig <hch@lst.de>
