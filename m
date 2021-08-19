@@ -2,205 +2,90 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05F9DC4320A
-	for <linux-tegra@archiver.kernel.org>; Thu, 19 Aug 2021 13:21:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F0E7C4338F
+	for <linux-tegra@archiver.kernel.org>; Thu, 19 Aug 2021 13:32:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E4CEE61158
-	for <linux-tegra@archiver.kernel.org>; Thu, 19 Aug 2021 13:21:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E5C1F610CF
+	for <linux-tegra@archiver.kernel.org>; Thu, 19 Aug 2021 13:31:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240005AbhHSNWM (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 19 Aug 2021 09:22:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55692 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240012AbhHSNWK (ORCPT
+        id S239972AbhHSNcd (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 19 Aug 2021 09:32:33 -0400
+Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:41934
+        "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230136AbhHSNcd (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 19 Aug 2021 09:22:10 -0400
-Received: from mail-vs1-xe36.google.com (mail-vs1-xe36.google.com [IPv6:2607:f8b0:4864:20::e36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CF2DC061756
-        for <linux-tegra@vger.kernel.org>; Thu, 19 Aug 2021 06:21:34 -0700 (PDT)
-Received: by mail-vs1-xe36.google.com with SMTP id s19so3990223vsl.11
-        for <linux-tegra@vger.kernel.org>; Thu, 19 Aug 2021 06:21:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=hf1yJDYIDGADSw5A4tH23JVq6j6wfNQ2ElnJXlKhovQ=;
-        b=cXNkUsEngfNONv9xhaw53/XRtaqkqhBK66EA61+iNDvrWHfa7y28Pylj8ZQ0+Rwv/j
-         h0ftvfRWCFxdFMYqLs6ehB9raQ6lFqFpj9yczIf+Nf5CbB1xoSjOy9c0oPWSvd9fiOS7
-         Bmle4ujkj1j82g8qlJiGbcrkmq63313H9DDNnWvne5YF8l2NampiEg/657xVQsznvvdz
-         bC64D0loGf9OlFmy6X51u3SXmhXrxk4sxvFg6EBnNn6MZDEp75/YMLpR5u5TZjLLgvBC
-         26GPB68eUIaw71qGi5455oTaMtSR3GqKuCETlHwGbzv2IAJAWplW8LsZxSW9IGDzODuP
-         36ag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=hf1yJDYIDGADSw5A4tH23JVq6j6wfNQ2ElnJXlKhovQ=;
-        b=mddjBhd/l+40VXbd/IdqluOxLi1DANHeEUm889hY3EtzdTQBWxWaH0pKlTSBzCNJbz
-         aAehoWoh8cuvrzRmD4vzjT5WSOcZeXPM9ZpaWB793i+PrIUZbZTN3nvi36QINsWTSghm
-         q9I9uu4EAl9uKiHGMVsRsMWr6gfYiS49tZHdh4IDIxj3osAL1fn9jyG4HlbokT2P85yE
-         wEoCzRQyHBAWgYm20BShJyYl5UczfCByGC/zH1AccfipwWQHs0qtIAT9+qp/3CRLMtmO
-         U8RfrabX3BPxWY2j4M69CKevMKDUOVA6pmf17QG4mhxETFjAB0J58qYQlIUw6/mmehrV
-         3WCw==
-X-Gm-Message-State: AOAM5307rqexd/ip9W/dpDQVr0lA7CCA/5Xj6q7VeUI3LJadp7l8O/NY
-        Ayozut89r+rG8tvLUn5RFl7qA1dfiTZH00vFR0x3EA==
-X-Google-Smtp-Source: ABdhPJwuuqiFukYJzvrQOxOwpI3rwad1HDjWXxDECbZgyWZWjHPEUwn3rqOes1yZ/d8dHbJKY0dEKgFucV1GTbcf2lM=
-X-Received: by 2002:a67:f6d8:: with SMTP id v24mr12359854vso.48.1629379293738;
- Thu, 19 Aug 2021 06:21:33 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210818005547.14497-1-digetx@gmail.com> <20210818005547.14497-5-digetx@gmail.com>
- <CAPDyKFqQbe4k-Sem436Fzsr6mbvwZr83VtEaEZTF8oWYoHHQwg@mail.gmail.com> <YR0MrlxFLTpsR628@orome.fritz.box>
-In-Reply-To: <YR0MrlxFLTpsR628@orome.fritz.box>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Thu, 19 Aug 2021 15:20:57 +0200
-Message-ID: <CAPDyKFpObGwWhnwDKG59wdt6Pr35DodogXbDjzPJGoshMD7piQ@mail.gmail.com>
-Subject: Re: [PATCH v5 4/5] mmc: sdhci-tegra: Implement alternative_gpt_sector()
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Dmitry Osipenko <digetx@gmail.com>, Jens Axboe <axboe@kernel.dk>,
+        Thu, 19 Aug 2021 09:32:33 -0400
+Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id DA5F23F044;
+        Thu, 19 Aug 2021 13:31:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1629379915;
+        bh=QNrlCPUm5xY2lORj8En3iXz+Yo+rOOaxovjyl8qzhhU=;
+        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
+        b=onGuGVPIoYamLAqrNVuuvH/3eeZxDBEYyN/NCvX/e2/oJOmv8l1sTnNRA7+91I8MT
+         PF5kQYDC1wAtggkfg31PFUkPecTEfnz0V6HZG+2V9vrbiqsuy7xICtAZfvW65p7Ym+
+         12lNK7I8Gqa6kVgRjjbwoCKONKGCOBgb42K0k7wRZaNbMkJA+2Px/PUnLedKTxHNxi
+         KSQEp8cY7pK/er4i4aQY9zxqq0ktAqspCX87W0CovthZhY9UHTzUPkjx7X7epACfsm
+         wnO76210RGTt1ZHgHQ381huhBQXFruiagzVz/gTaQuVbcJq3pWjw51PTvRDTu8eyBj
+         IpJqnhl0t1AOQ==
+From:   Colin King <colin.king@canonical.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-        David Heidelberg <david@ixit.cz>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Ion Agorria <AG0RRIA@yahoo.com>,
-        Svyatoslav Ryhel <clamor95@gmail.com>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        linux-block <linux-block@vger.kernel.org>,
-        linux-efi <linux-efi@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-kernel@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: [PATCH] memory: tegra: make the array list static const, makes object smaller
+Date:   Thu, 19 Aug 2021 14:31:55 +0100
+Message-Id: <20210819133155.10441-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.32.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, 18 Aug 2021 at 15:35, Thierry Reding <thierry.reding@gmail.com> wrote:
->
-> On Wed, Aug 18, 2021 at 11:55:05AM +0200, Ulf Hansson wrote:
-> > On Wed, 18 Aug 2021 at 02:57, Dmitry Osipenko <digetx@gmail.com> wrote:
-> > >
-> > > Tegra20/30/114/124 Android devices place GPT at a non-standard location.
-> > > Implement alternative_gpt_sector() callback of the MMC host ops which
-> > > specifies that GPT location for the partition scanner.
-> > >
-> > > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> > > ---
-> > >  drivers/mmc/host/sdhci-tegra.c | 42 ++++++++++++++++++++++++++++++++++
-> > >  1 file changed, 42 insertions(+)
-> > >
-> > > diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-> > > index 387ce9cdbd7c..24a713689d5b 100644
-> > > --- a/drivers/mmc/host/sdhci-tegra.c
-> > > +++ b/drivers/mmc/host/sdhci-tegra.c
-> > > @@ -116,6 +116,8 @@
-> > >   */
-> > >  #define NVQUIRK_HAS_TMCLK                              BIT(10)
-> > >
-> > > +#define NVQUIRK_HAS_ANDROID_GPT_SECTOR                 BIT(11)
-> > > +
-> > >  /* SDMMC CQE Base Address for Tegra Host Ver 4.1 and Higher */
-> > >  #define SDHCI_TEGRA_CQE_BASE_ADDR                      0xF000
-> > >
-> > > @@ -1361,6 +1363,7 @@ static const struct sdhci_tegra_soc_data soc_data_tegra20 = {
-> > >         .pdata = &sdhci_tegra20_pdata,
-> > >         .dma_mask = DMA_BIT_MASK(32),
-> > >         .nvquirks = NVQUIRK_FORCE_SDHCI_SPEC_200 |
-> > > +                   NVQUIRK_HAS_ANDROID_GPT_SECTOR |
-> > >                     NVQUIRK_ENABLE_BLOCK_GAP_DET,
-> > >  };
-> > >
-> > > @@ -1390,6 +1393,7 @@ static const struct sdhci_tegra_soc_data soc_data_tegra30 = {
-> > >         .nvquirks = NVQUIRK_ENABLE_SDHCI_SPEC_300 |
-> > >                     NVQUIRK_ENABLE_SDR50 |
-> > >                     NVQUIRK_ENABLE_SDR104 |
-> > > +                   NVQUIRK_HAS_ANDROID_GPT_SECTOR |
-> > >                     NVQUIRK_HAS_PADCALIB,
-> > >  };
-> > >
-> > > @@ -1422,6 +1426,7 @@ static const struct sdhci_pltfm_data sdhci_tegra114_pdata = {
-> > >  static const struct sdhci_tegra_soc_data soc_data_tegra114 = {
-> > >         .pdata = &sdhci_tegra114_pdata,
-> > >         .dma_mask = DMA_BIT_MASK(32),
-> > > +       .nvquirks = NVQUIRK_HAS_ANDROID_GPT_SECTOR,
-> > >  };
-> > >
-> > >  static const struct sdhci_pltfm_data sdhci_tegra124_pdata = {
-> > > @@ -1438,6 +1443,7 @@ static const struct sdhci_pltfm_data sdhci_tegra124_pdata = {
-> > >  static const struct sdhci_tegra_soc_data soc_data_tegra124 = {
-> > >         .pdata = &sdhci_tegra124_pdata,
-> > >         .dma_mask = DMA_BIT_MASK(34),
-> > > +       .nvquirks = NVQUIRK_HAS_ANDROID_GPT_SECTOR,
-> > >  };
-> > >
-> > >  static const struct sdhci_ops tegra210_sdhci_ops = {
-> > > @@ -1590,6 +1596,38 @@ static int sdhci_tegra_add_host(struct sdhci_host *host)
-> > >         return ret;
-> > >  }
-> > >
-> > > +static int sdhci_tegra_alternative_gpt_sector(struct mmc_card *card,
-> > > +                                             sector_t *gpt_sector)
-> > > +{
-> > > +       unsigned int boot_sectors_num;
-> > > +
-> > > +       /* filter out unrelated cards */
-> > > +       if (card->ext_csd.rev < 3 ||
-> > > +           !mmc_card_mmc(card) ||
-> > > +           !mmc_card_is_blockaddr(card) ||
-> > > +            mmc_card_is_removable(card->host))
-> > > +               return -ENOENT;
-> > > +
-> > > +       /*
-> > > +        * eMMC storage has two special boot partitions in addition to the
-> > > +        * main one.  NVIDIA's bootloader linearizes eMMC boot0->boot1->main
-> > > +        * accesses, this means that the partition table addresses are shifted
-> > > +        * by the size of boot partitions.  In accordance with the eMMC
-> > > +        * specification, the boot partition size is calculated as follows:
-> > > +        *
-> > > +        *      boot partition size = 128K byte x BOOT_SIZE_MULT
-> > > +        *
-> > > +        * Calculate number of sectors occupied by the both boot partitions.
-> > > +        */
-> > > +       boot_sectors_num = card->ext_csd.raw_boot_mult * SZ_128K /
-> > > +                          SZ_512 * MMC_NUM_BOOT_PARTITION;
-> > > +
-> > > +       /* Defined by NVIDIA and used by Android devices. */
-> > > +       *gpt_sector = card->ext_csd.sectors - boot_sectors_num - 1;
-> > > +
-> > > +       return 0;
-> > > +}
-> >
-> > I suggest you move this code into the mmc core/block layer instead (it
-> > better belongs there).
-> >
-> > Additionally, let's add a new host cap, MMC_CAP_ALTERNATIVE_GPT, to
-> > let the core know when it should use the code above.
->
-> Couldn't a generic "alternative GPT" mean pretty much anything? As far
-> as I know this is very specific to a series of Tegra chips and firmware
-> running on them. On some of these devices you can even replace the OEM
-> firmware by something custom that's less quirky.
+From: Colin Ian King <colin.king@canonical.com>
 
-Good point!
+Don't populate the array list on the stack but instead it
+static const. Makes the object code smaller by 110 bytes:
 
-Perhaps naming the cap MMC_CAP_TEGRA_GPT would make this more clear.
+Before:
+   text    data     bss     dec     hex filename
+  37713   21992      64   59769    e979 .../tegra/tegra210-emc-cc-r21021.o
 
->
-> I'm not aware of anyone else employing this kind of quirk, so I don't
-> want anyone to get any ideas that this is a good thing. Putting it into
-> the core runs the risk of legitimizing this.
+After:
+   text    data     bss     dec     hex filename
+  37539   22056      64   59659    e90b .../tegra/tegra210-emc-cc-r21021.o
 
-I certainly don't want to legitimize this. But no matter what, that is
-exactly what we are doing, anyways.
+(gcc version 10.3.0)
 
-In summary, I still prefer code to be put in their proper layers, and
-there aren't any host specific things going on here, except for
-parsing a compatible string.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/memory/tegra/tegra210-emc-cc-r21021.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Kind regards
-Uffe
+diff --git a/drivers/memory/tegra/tegra210-emc-cc-r21021.c b/drivers/memory/tegra/tegra210-emc-cc-r21021.c
+index 0ebfa8eccf0c..550d6b2dda30 100644
+--- a/drivers/memory/tegra/tegra210-emc-cc-r21021.c
++++ b/drivers/memory/tegra/tegra210-emc-cc-r21021.c
+@@ -478,7 +478,7 @@ static u32 periodic_compensation_handler(struct tegra210_emc *emc, u32 type,
+ static u32 tegra210_emc_r21021_periodic_compensation(struct tegra210_emc *emc)
+ {
+ 	u32 emc_cfg, emc_cfg_o, emc_cfg_update, del, value;
+-	u32 list[] = {
++	static const u32 list[] = {
+ 		EMC_PMACRO_OB_DDLL_LONG_DQ_RANK0_0,
+ 		EMC_PMACRO_OB_DDLL_LONG_DQ_RANK0_1,
+ 		EMC_PMACRO_OB_DDLL_LONG_DQ_RANK0_2,
+-- 
+2.32.0
+
