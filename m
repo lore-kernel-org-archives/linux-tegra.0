@@ -2,86 +2,99 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A058C4320A
-	for <linux-tegra@archiver.kernel.org>; Thu, 19 Aug 2021 22:27:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98DAEC41537
+	for <linux-tegra@archiver.kernel.org>; Thu, 19 Aug 2021 22:37:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 578B76108E
-	for <linux-tegra@archiver.kernel.org>; Thu, 19 Aug 2021 22:27:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8803F6109E
+	for <linux-tegra@archiver.kernel.org>; Thu, 19 Aug 2021 22:37:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232919AbhHSW1l (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 19 Aug 2021 18:27:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41780 "EHLO
+        id S236479AbhHSWh7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 19 Aug 2021 18:37:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44164 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229532AbhHSW1l (ORCPT
+        with ESMTP id S236420AbhHSWhx (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 19 Aug 2021 18:27:41 -0400
-Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03E34C061575;
-        Thu, 19 Aug 2021 15:27:04 -0700 (PDT)
-Received: by mail-lf1-x12d.google.com with SMTP id x27so16139394lfu.5;
-        Thu, 19 Aug 2021 15:27:03 -0700 (PDT)
+        Thu, 19 Aug 2021 18:37:53 -0400
+Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D45A7C061575;
+        Thu, 19 Aug 2021 15:37:16 -0700 (PDT)
+Received: by mail-lf1-x135.google.com with SMTP id d4so16130573lfk.9;
+        Thu, 19 Aug 2021 15:37:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ArctQfOIhjZxst06RUvgPGOnETI6tONN6GEIYocngV0=;
-        b=HZGb3hQqffUQpm2UygIvPhr7J+CcPe75PvUHZszdG5WQ8+8osFXAOdArU5kbBHvV65
-         V6lrfFz8i9RZSl3R2+snCC5hGr6Q0NEgNgj3Ar/ApLxV+sVN6q23mgnBZqZuaxdQluDF
-         fn52V75hSg5RFjn7PZS8whd0yFzCnigTeuLYe0piov+N7iJiK6Bw0/PN/uCL+XHJuXhE
-         8z1gad0PLfXf6gYdXASTeoUgpd/lotTMJSVwVo/GYsOySnQoCfC7yYXt4eUTch4jASVf
-         8o9PPge+zhQHGXyTEzMerdcgq6M1tYHaDGpAxqgC8B3B/IjsIMfup2XYyzntDtixZg8K
-         Eu9g==
+        bh=nAS9qcnivKqgeAIIut8h1WFAVA13oxF52QRobcHq7Xc=;
+        b=a4XV4VjRWxo1kHnGEwcEOxFKRCM6deOw4lOM9Uon818SGJgn0YPFw4DdKti64wBV9H
+         ZocBdzpcFtuEYqk3Wa8+HUMj2ko6agOMxjv09whIIThddMbYROGGAAS4Plcpv1Z18cgY
+         5sKTsW0BmphWVrS/Tiinzv52JEwYHnlvjz/kC/ONQmk2H2QZrW0O70369IiptcK6UmEd
+         XneH4My93CRKDRkqsBmuCdSoAuWcBI3J8xEuCJKQTSLx7Jnn2Qku3bl3B0b4iwQ7W5+X
+         bMdlKDDR1RyjIOyTN2oZCz5u+iQg+iw/06K9i+IzAB7AjGsFZejlDhk+M4jSdmwerMgk
+         ecRA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=ArctQfOIhjZxst06RUvgPGOnETI6tONN6GEIYocngV0=;
-        b=XGi2k01MMXytJsrlOBxZipynrmChNEiksibmtQgNDaTpKHT9/pmP/ZluF09NEtOIrB
-         xlOYOUjMX23LtrNjkkT2yKOpiObCkhk43h40lv24AFRps45aqzKT716nxco5zs1Zv/+s
-         3uKQ9IXv+Ap4NBPBG0uPhebFFG+ic8/KX63rUUxiSBRU3eDc1bbkOaOhY6TGOvLdVSwB
-         RIEjUeR6+uLcSbs/kg19UHtlN5aOkYSgBGjwEStuVtqzJZ04/Ke0KB8kZAs7TNWAoMQ4
-         EMR5PAXDMPK2Oh2bwUHE38I6Ay78uhzOyKtLaCt9hje3WNVtqziTPMxNFxhxl8U+3ceZ
-         XPBQ==
-X-Gm-Message-State: AOAM5336HmHZ3JH7GVS7b2EdBVInujz+MH8uxq77exOoSsSR9QbqIzhk
-        g4Mfxj3R/97QUxvFUWKVx4nH8dIohTQ=
-X-Google-Smtp-Source: ABdhPJyNXEwOXNdUmb07P+xqn34rOJ9QIDaeZqy8GoElyylu+BjbrOTAADRbeT8TMAVrUTRS9PBRDA==
-X-Received: by 2002:a05:6512:3a90:: with SMTP id q16mr12150830lfu.448.1629412022333;
-        Thu, 19 Aug 2021 15:27:02 -0700 (PDT)
+        bh=nAS9qcnivKqgeAIIut8h1WFAVA13oxF52QRobcHq7Xc=;
+        b=DwiSUa9a4uiiaLqygFuoMgS+IfwNjh4DFWc/E9l+eJnH6ahXnqx2hPvZsxUUoqBRYy
+         MuEK0niGgUgmgC2jyzU1CZvSEW/zgJidGUDFrc67pGb2wt8X2wKRlUC4yVWoJR0eXgee
+         yaAdHbXydQTyywGt+9jP+64bosQlr0+ss61atdmEHjYjj5wxqBPSgCRc3G4juqiWa67j
+         cZEfDrthqICCJoWd25/S/EEH76hKFeE5Tr5/IaYoRfF/BZ/IOTqUYE6HRdT7Sk7L7mQQ
+         Wi6O71sgcip9ACyvC5hUtA2ojdR/dnSjPj3MfMSTUXW9rgzPHd78Yb0LUILIz8UWp5IC
+         ZMBg==
+X-Gm-Message-State: AOAM533j7150g+DhauoY2PMMStGz1biw+CuoZj02oBeERMRt5bOXc9e3
+        PoufT5sJiO7R6hCt1B1LOVOa8FFW1yU=
+X-Google-Smtp-Source: ABdhPJwuMIWgok5xoSqa52pUigQi/FuENEcCid7QFl2xNGsNEC360zffkjPyNHa+eJldf8U6/MOiRQ==
+X-Received: by 2002:a05:6512:b8e:: with SMTP id b14mr12930460lfv.449.1629412634809;
+        Thu, 19 Aug 2021 15:37:14 -0700 (PDT)
 Received: from [192.168.2.145] (46-138-120-72.dynamic.spd-mgts.ru. [46.138.120.72])
-        by smtp.googlemail.com with ESMTPSA id j2sm384140ljc.49.2021.08.19.15.27.01
+        by smtp.googlemail.com with ESMTPSA id b19sm437171lff.121.2021.08.19.15.37.13
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 19 Aug 2021 15:27:01 -0700 (PDT)
-Subject: Re: [PATCH v6 0/5] Support EFI partition on NVIDIA Tegra devices
-To:     Davidlohr Bueso <dave@stgolabs.net>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Micha?? Miros??aw <mirq-linux@rere.qmqm.pl>,
-        David Heidelberg <david@ixit.cz>,
-        Peter Geis <pgwipeout@gmail.com>,
+        Thu, 19 Aug 2021 15:37:14 -0700 (PDT)
+Subject: Re: [PATCH v8 20/34] mmc: sdhci-tegra: Add runtime PM and OPP support
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
         Ulf Hansson <ulf.hansson@linaro.org>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Peter Chen <peter.chen@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
+        Nishanth Menon <nm@ti.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Richard Weinberger <richard@nod.at>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Lucas Stach <dev@lynxeye.de>, Stefan Agner <stefan@agner.ch>,
         Adrian Hunter <adrian.hunter@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Ion Agorria <AG0RRIA@yahoo.com>,
-        Svyatoslav Ryhel <clamor95@gmail.com>,
-        linux-tegra@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-efi <linux-efi@vger.kernel.org>
-References: <20210818221920.3893-1-digetx@gmail.com>
- <20210819171854.hmpycxs5pqiwq4qg@offworld>
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-staging@lists.linux.dev, linux-spi@vger.kernel.org,
+        linux-pwm@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-mmc@vger.kernel.org, linux-media@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org
+References: <20210817012754.8710-1-digetx@gmail.com>
+ <20210817012754.8710-21-digetx@gmail.com> <YR6O9Om+HzMMG8AR@orome.fritz.box>
 From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <cd8db560-a117-3592-57d6-bfd25738e3ae@gmail.com>
-Date:   Fri, 20 Aug 2021 01:27:01 +0300
+Message-ID: <05b7ff28-4c01-fb56-deeb-595a5797394b@gmail.com>
+Date:   Fri, 20 Aug 2021 01:37:13 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.11.0
 MIME-Version: 1.0
-In-Reply-To: <20210819171854.hmpycxs5pqiwq4qg@offworld>
+In-Reply-To: <YR6O9Om+HzMMG8AR@orome.fritz.box>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -89,19 +102,68 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-19.08.2021 20:18, Davidlohr Bueso пишет:
-> On Thu, 19 Aug 2021, Dmitry Osipenko wrote:
+19.08.2021 20:03, Thierry Reding пишет:
+> On Tue, Aug 17, 2021 at 04:27:40AM +0300, Dmitry Osipenko wrote:
+>> The SDHCI on Tegra belongs to the core power domain and we're going to
+>> enable GENPD support for the core domain. Now SDHCI must be resumed using
+>> runtime PM API in order to initialize the SDHCI power state. The SDHCI
+>> clock rate must be changed using OPP API that will reconfigure the power
+>> domain performance state in accordance to the rate. Add runtime PM and OPP
+>> support to the SDHCI driver.
+>>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>>  drivers/mmc/host/sdhci-tegra.c | 146 ++++++++++++++++++++++++---------
+>>  1 file changed, 105 insertions(+), 41 deletions(-)
+>>
+>> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+>> index 387ce9cdbd7c..a3583359c972 100644
+>> --- a/drivers/mmc/host/sdhci-tegra.c
+>> +++ b/drivers/mmc/host/sdhci-tegra.c
+>> @@ -15,6 +15,8 @@
+>>  #include <linux/of.h>
+>>  #include <linux/of_device.h>
+>>  #include <linux/pinctrl/consumer.h>
+>> +#include <linux/pm_opp.h>
+>> +#include <linux/pm_runtime.h>
+>>  #include <linux/regulator/consumer.h>
+>>  #include <linux/reset.h>
+>>  #include <linux/mmc/card.h>
+>> @@ -24,6 +26,8 @@
+>>  #include <linux/gpio/consumer.h>
+>>  #include <linux/ktime.h>
+>>  
+>> +#include <soc/tegra/common.h>
+>> +
+>>  #include "sdhci-pltfm.h"
+>>  #include "cqhci.h"
+>>  
+>> @@ -123,6 +127,12 @@
+>>  					 SDHCI_TRNS_BLK_CNT_EN | \
+>>  					 SDHCI_TRNS_DMA)
+>>  
+>> +enum {
+>> +	TEGRA_CLK_BULK_SDHCI,
+>> +	TEGRA_CLK_BULK_TMCLK,
+>> +	TEGRA_CLK_BULK_NUM,
+>> +};
+>> +
+>>  struct sdhci_tegra_soc_data {
+>>  	const struct sdhci_pltfm_data *pdata;
+>>  	u64 dma_mask;
+>> @@ -171,6 +181,8 @@ struct sdhci_tegra {
+>>  	bool enable_hwcq;
+>>  	unsigned long curr_clk_rate;
+>>  	u8 tuned_tap_delay;
+>> +
+>> +	struct clk_bulk_data clocks[TEGRA_CLK_BULK_NUM];
 > 
->>    - Moved GPT calculation into MMC core and added
->> MMC_CAP2_ALT_GPT_SECTOR
->>      flag, like it was asked by Ulf Hansson. Me and Thierry have concerns
->>      about whether it's better to have Tegra-specific function in a core
->>      instead of Tegra driver, but it also works, so I decided to try that
->>      variant.
+> This doesn't seem worth it to me. There's a lot of churn in this driver
+> that's only needed to convert this to the clk_bulk API and it makes the
+> code a lot more difficult to read, in my opinion.
 > 
-> I think this is better as you had it in v5. This is specific to tegra and
-> shouldn't be in generic code.
+> It looks like the only benefit that this gives us is that runtime
+> suspend and resume become a few lines shorter.
 
-Yeah, but Ulf wants it to be in core. On the other hand, MMC core
-already carries all kinds of quirks for hosts and cards, so it's not
-something extraordinary for the MMC.
+The driver probe code looks cleaner with that. You should be looking at
+the final result and not at the patch to see it.
