@@ -2,152 +2,110 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36A5CC432BE
-	for <linux-tegra@archiver.kernel.org>; Fri, 20 Aug 2021 00:45:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB9A7C4338F
+	for <linux-tegra@archiver.kernel.org>; Fri, 20 Aug 2021 02:46:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2132B610F9
-	for <linux-tegra@archiver.kernel.org>; Fri, 20 Aug 2021 00:45:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 808776103A
+	for <linux-tegra@archiver.kernel.org>; Fri, 20 Aug 2021 02:46:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237095AbhHTAq0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 19 Aug 2021 20:46:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45102 "EHLO
+        id S237618AbhHTCrd (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 19 Aug 2021 22:47:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43692 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237090AbhHTAqZ (ORCPT
+        with ESMTP id S234797AbhHTCrc (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 19 Aug 2021 20:46:25 -0400
-Received: from mail-lj1-x231.google.com (mail-lj1-x231.google.com [IPv6:2a00:1450:4864:20::231])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 870B5C061575;
-        Thu, 19 Aug 2021 17:45:48 -0700 (PDT)
-Received: by mail-lj1-x231.google.com with SMTP id y7so14472352ljp.3;
-        Thu, 19 Aug 2021 17:45:48 -0700 (PDT)
+        Thu, 19 Aug 2021 22:47:32 -0400
+Received: from mail-qk1-x731.google.com (mail-qk1-x731.google.com [IPv6:2607:f8b0:4864:20::731])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FB1EC061575;
+        Thu, 19 Aug 2021 19:46:55 -0700 (PDT)
+Received: by mail-qk1-x731.google.com with SMTP id y144so9477258qkb.6;
+        Thu, 19 Aug 2021 19:46:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=45NSAdZItfn0nrRg1M4dKjbQF5aEU+K3NPHFkyu/0gY=;
-        b=iAf54oxoBaCloDKN+LiOz8wjQ46KiVJzdzZWyUAZFIKdHPqfFkN+MCjoYpug7y0hkp
-         DS29bfX0MD340M9IPxwaxv7onvHpK2V3RBUIXUjyikBUhagI3nzizHBdbhBX2+MpZfCV
-         68AT5iPlirWt64+Ut9GMR948I6DR6QoGwOxFQ/ugmzj5RS0MLB6qvmg+44b2AM5z9TOR
-         vyhiuDCnSYNhPrn1xZfod8yvSjGi1B4EhZ16Y4pxWe609v8plsInX8vG6s3QLB5Wpjtb
-         n9QLBaM0ygKEpPDdj7uJFbJjlHUimGm1jewIhNrC6WeNgGQwrXn+M79JzKNDkk1iKTUG
-         6HZw==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=mEQvc4tlW06aQJqJP5LbK405G6lgqY4IMl+A4wPSBEA=;
+        b=fdhBJocQDNqphrkteBlkeqPku0mlxPINUWl4C8nI4Qr6xfjtjFWLSeIypVajikNdyC
+         jnGQLD+Di4+bX+B0FZws/BcD6Rx5DaIpLUgSFx4fEDKGmeawzrDkkfOZ/bshLdK1jF0F
+         wMb/hkN5fxq730lM+pnJOUE6eFb1cQVgED2RRbogUO9Kry9v4Kr/xwtwykWpDOOemUwf
+         sv4la+9+zD8sU3dT+hdw4qOQDFfmudgDcTWf5d1IPaElYhSsKk8EOsSGptILqUuxkCAo
+         UfUR7xJb4oc0OK8dY5jzUN3LZq57q639S4Tn2bg3hrv5FMWYjlNyW8idUXZBMyGd7JY2
+         rHKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=45NSAdZItfn0nrRg1M4dKjbQF5aEU+K3NPHFkyu/0gY=;
-        b=LfBwnYBSMQACk2OGu1UOBJ6PRXo4eqPZ68lxfyAUCL9qcelow1sAqjAIs7TGRZg0GS
-         uTmix3wFmIe70/DqXzR3TaKscr5Oc3UHAI6QTQBZde6Wcpg6rhfcsd+d3w9tfM2BtMBE
-         X3RnTkvhP5L7zNS17Bk98IIqJK85NbPxpn4Tim455x1pOoDLaduExQBd/Qsz4lSGRB3Y
-         tQWXkt1OMWwbMFSljyL38GFBYzVsznELN3mhOHa5rB57wu1qchMycvGtJ8EL8v98uWM6
-         vo303VEH5l32fXh8V201MPXswuNw/d4+xau2XC28Z8RPAby3rDyRd8Ce9IO6jyHQvAsm
-         hZag==
-X-Gm-Message-State: AOAM530U8KSzNmYnmy9tgqYxyMx5bvdmgzl6rtr2PaNCGDPzYopPjmD+
-        0CJNquZUt9rh0waLQWFOQIY=
-X-Google-Smtp-Source: ABdhPJzypc6AAdhpGF4AhXyJV1DhBOUnecglxgdQO/9GuDqg81TxIV7Je/gIWFi+U/gg9qxgUtkRSQ==
-X-Received: by 2002:a2e:9e4a:: with SMTP id g10mr14513445ljk.54.1629420346956;
-        Thu, 19 Aug 2021 17:45:46 -0700 (PDT)
-Received: from localhost.localdomain (46-138-120-72.dynamic.spd-mgts.ru. [46.138.120.72])
-        by smtp.gmail.com with ESMTPSA id h6sm507244lfu.230.2021.08.19.17.45.46
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=mEQvc4tlW06aQJqJP5LbK405G6lgqY4IMl+A4wPSBEA=;
+        b=i4rAE8l9jaFELfTgC6hWyDBlolblOA3W4BRFZzbX5YyRicvdMGkbSwNjsotfpyju6C
+         UqT4nuWTnV73P6sJHMhEBUYuh+4X/2/5CLfKEx2BZCqVztI6y4HkepVwKxJIgA3d/chg
+         /bdvYAniTx18Pmbzx55zxc3wCDc3m0E1JmM1b1hD9e1weZl6ZzT8r6luKf7afS2l7W6D
+         rnL1drIxvhqGbHx4u/M88+chOWWrAKsAj2dxf3YgSL3HMk6JAFI2DtmP+0ivFhwOzuEP
+         lemLvwJcSNKNWeRjIdxnNWBZfria8gXPmeiFvFq6ne1eodc4WWstMTLvAbeMJoTqPZUm
+         vDMg==
+X-Gm-Message-State: AOAM5318xDbIe3/RB8pLO9htOyHKLQcPldxoNqlc/2XS5T1n/7cweqT8
+        /5xLwXESPZt1pwvfB3NpaDY=
+X-Google-Smtp-Source: ABdhPJyMPt7err59CY9lYfPbUipGcotDfvL8uIT4zyvHaSCmMAXoK153CjrGeS2xi+yTxclElDp2ug==
+X-Received: by 2002:a37:de02:: with SMTP id h2mr6565646qkj.411.1629427614352;
+        Thu, 19 Aug 2021 19:46:54 -0700 (PDT)
+Received: from localhost.localdomain ([193.203.214.57])
+        by smtp.gmail.com with ESMTPSA id u27sm2544108qku.9.2021.08.19.19.46.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Aug 2021 17:45:46 -0700 (PDT)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>,
+        Thu, 19 Aug 2021 19:46:54 -0700 (PDT)
+From:   jing yangyang <cgel.zte@gmail.com>
+X-Google-Original-From: jing yangyang <jing.yangyang@zte.com.cn>
+To:     JC Kuo <jckuo@nvidia.com>
+Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Vinod Koul <vkoul@kernel.org>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>,
-        David Heidelberg <david@ixit.cz>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Ion Agorria <AG0RRIA@yahoo.com>,
-        Svyatoslav Ryhel <clamor95@gmail.com>
-Cc:     linux-tegra@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-efi <linux-efi@vger.kernel.org>
-Subject: [PATCH v7 4/4] mmc: sdhci-tegra: Enable MMC_CAP2_ALT_GPT_TEGRA
-Date:   Fri, 20 Aug 2021 03:45:36 +0300
-Message-Id: <20210820004536.15791-5-digetx@gmail.com>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20210820004536.15791-1-digetx@gmail.com>
-References: <20210820004536.15791-1-digetx@gmail.com>
+        linux-phy@lists.infradead.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        jing yangyang <jing.yangyang@zte.com.cn>,
+        Zeal Robot <zealci@zte.com.cn>
+Subject: [PATCH linux-next] phy/tegra: add put_device() after of_find_device_by_node()
+Date:   Thu, 19 Aug 2021 19:46:33 -0700
+Message-Id: <20210820024633.11757-1-jing.yangyang@zte.com.cn>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Tegra20/30/114/124 Android devices place GPT at a non-standard location.
-Enable GPT entry scanning at that location.
+This was found by coccicheck:
+./drivers/phy/tegra/xusb-tegra210.c:3174: 2-8:ERROR:
+missing put_device;call of_find_device_by_node on line 3167,
+but without a corresponding object release within this function.
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Reported-by: Zeal Robot <zealci@zte.com.cn>
+Signed-off-by: jing yangyang <jing.yangyang@zte.com.cn>
 ---
- drivers/mmc/host/sdhci-tegra.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/phy/tegra/xusb-tegra210.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-index 387ce9cdbd7c..a5001875876b 100644
---- a/drivers/mmc/host/sdhci-tegra.c
-+++ b/drivers/mmc/host/sdhci-tegra.c
-@@ -116,6 +116,8 @@
-  */
- #define NVQUIRK_HAS_TMCLK				BIT(10)
+diff --git a/drivers/phy/tegra/xusb-tegra210.c b/drivers/phy/tegra/xusb-tegra210.c
+index eedfc7c..f26eb5a 100644
+--- a/drivers/phy/tegra/xusb-tegra210.c
++++ b/drivers/phy/tegra/xusb-tegra210.c
+@@ -3170,8 +3170,10 @@ static int tegra210_utmi_port_reset(struct phy *phy)
+ 		goto out;
+ 	}
  
-+#define NVQUIRK_HAS_ANDROID_GPT_SECTOR			BIT(11)
-+
- /* SDMMC CQE Base Address for Tegra Host Ver 4.1 and Higher */
- #define SDHCI_TEGRA_CQE_BASE_ADDR			0xF000
+-	if (!platform_get_drvdata(pdev))
++	if (!platform_get_drvdata(pdev)) {
++		put_device(&pdev->dev);
+ 		return ERR_PTR(-EPROBE_DEFER);
++	}
  
-@@ -1361,6 +1363,7 @@ static const struct sdhci_tegra_soc_data soc_data_tegra20 = {
- 	.pdata = &sdhci_tegra20_pdata,
- 	.dma_mask = DMA_BIT_MASK(32),
- 	.nvquirks = NVQUIRK_FORCE_SDHCI_SPEC_200 |
-+		    NVQUIRK_HAS_ANDROID_GPT_SECTOR |
- 		    NVQUIRK_ENABLE_BLOCK_GAP_DET,
- };
- 
-@@ -1390,6 +1393,7 @@ static const struct sdhci_tegra_soc_data soc_data_tegra30 = {
- 	.nvquirks = NVQUIRK_ENABLE_SDHCI_SPEC_300 |
- 		    NVQUIRK_ENABLE_SDR50 |
- 		    NVQUIRK_ENABLE_SDR104 |
-+		    NVQUIRK_HAS_ANDROID_GPT_SECTOR |
- 		    NVQUIRK_HAS_PADCALIB,
- };
- 
-@@ -1422,6 +1426,7 @@ static const struct sdhci_pltfm_data sdhci_tegra114_pdata = {
- static const struct sdhci_tegra_soc_data soc_data_tegra114 = {
- 	.pdata = &sdhci_tegra114_pdata,
- 	.dma_mask = DMA_BIT_MASK(32),
-+	.nvquirks = NVQUIRK_HAS_ANDROID_GPT_SECTOR,
- };
- 
- static const struct sdhci_pltfm_data sdhci_tegra124_pdata = {
-@@ -1438,6 +1443,7 @@ static const struct sdhci_pltfm_data sdhci_tegra124_pdata = {
- static const struct sdhci_tegra_soc_data soc_data_tegra124 = {
- 	.pdata = &sdhci_tegra124_pdata,
- 	.dma_mask = DMA_BIT_MASK(34),
-+	.nvquirks = NVQUIRK_HAS_ANDROID_GPT_SECTOR,
- };
- 
- static const struct sdhci_ops tegra210_sdhci_ops = {
-@@ -1616,6 +1622,9 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
- 	tegra_host->pad_control_available = false;
- 	tegra_host->soc_data = soc_data;
- 
-+	if (soc_data->nvquirks & NVQUIRK_HAS_ANDROID_GPT_SECTOR)
-+		host->mmc->caps2 |= MMC_CAP2_ALT_GPT_TEGRA;
-+
- 	if (soc_data->nvquirks & NVQUIRK_NEEDS_PAD_CONTROL) {
- 		rc = tegra_sdhci_init_pinctrl_info(&pdev->dev, tegra_host);
- 		if (rc == 0)
+ 	padctl->regmap = dev_get_regmap(&pdev->dev, "usb_sleepwalk");
+ 	if (!padctl->regmap)
 -- 
-2.32.0
+1.8.3.1
+
 
