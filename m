@@ -2,110 +2,147 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB9A7C4338F
-	for <linux-tegra@archiver.kernel.org>; Fri, 20 Aug 2021 02:46:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED37AC19F31
+	for <linux-tegra@archiver.kernel.org>; Fri, 20 Aug 2021 02:51:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 808776103A
-	for <linux-tegra@archiver.kernel.org>; Fri, 20 Aug 2021 02:46:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CFCAE610A5
+	for <linux-tegra@archiver.kernel.org>; Fri, 20 Aug 2021 02:51:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237618AbhHTCrd (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 19 Aug 2021 22:47:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43692 "EHLO
+        id S237933AbhHTCwR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 19 Aug 2021 22:52:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44780 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234797AbhHTCrc (ORCPT
+        with ESMTP id S237636AbhHTCwQ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 19 Aug 2021 22:47:32 -0400
-Received: from mail-qk1-x731.google.com (mail-qk1-x731.google.com [IPv6:2607:f8b0:4864:20::731])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FB1EC061575;
-        Thu, 19 Aug 2021 19:46:55 -0700 (PDT)
-Received: by mail-qk1-x731.google.com with SMTP id y144so9477258qkb.6;
-        Thu, 19 Aug 2021 19:46:55 -0700 (PDT)
+        Thu, 19 Aug 2021 22:52:16 -0400
+Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9915FC061575;
+        Thu, 19 Aug 2021 19:51:38 -0700 (PDT)
+Received: by mail-lf1-x12e.google.com with SMTP id w20so17265865lfu.7;
+        Thu, 19 Aug 2021 19:51:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=mEQvc4tlW06aQJqJP5LbK405G6lgqY4IMl+A4wPSBEA=;
-        b=fdhBJocQDNqphrkteBlkeqPku0mlxPINUWl4C8nI4Qr6xfjtjFWLSeIypVajikNdyC
-         jnGQLD+Di4+bX+B0FZws/BcD6Rx5DaIpLUgSFx4fEDKGmeawzrDkkfOZ/bshLdK1jF0F
-         wMb/hkN5fxq730lM+pnJOUE6eFb1cQVgED2RRbogUO9Kry9v4Kr/xwtwykWpDOOemUwf
-         sv4la+9+zD8sU3dT+hdw4qOQDFfmudgDcTWf5d1IPaElYhSsKk8EOsSGptILqUuxkCAo
-         UfUR7xJb4oc0OK8dY5jzUN3LZq57q639S4Tn2bg3hrv5FMWYjlNyW8idUXZBMyGd7JY2
-         rHKg==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=zboB1Q6i9oYgbkK+DWfMo5HokGy8eox3TcOGLTI8/TQ=;
+        b=MSPObL9gtIfvXhGm8vmuM1WlsX8S9aqUcJKehk6hQXt2kTc0FpmAMpCNdosprR8DEi
+         /yWFr3UlXiFd2ptrMNopWEd4mvb/K8eNekkIVvnlp6AKdEAvU+jGXH5uVDxvGcdGZoGg
+         7d0zSU30Fr03L6Jyi08Us+ikNmam6soR3xc9TnEUbHxYKYK/+DxyeuIlb2H/R67utUeG
+         f8Hx0eRqtRpuLlOkbbDR3VqVNtgKs+C8IJnFlLq0D7i7HgCycFYmI+7YKNlKYZOsIZqi
+         M8cceb7ZJ2VG2spCfJmWhEcSNn6fxBgRnLJwFtl+p9dAcHXGqIRgt1IqsRHAMWfqn/Mz
+         6mnw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=mEQvc4tlW06aQJqJP5LbK405G6lgqY4IMl+A4wPSBEA=;
-        b=i4rAE8l9jaFELfTgC6hWyDBlolblOA3W4BRFZzbX5YyRicvdMGkbSwNjsotfpyju6C
-         UqT4nuWTnV73P6sJHMhEBUYuh+4X/2/5CLfKEx2BZCqVztI6y4HkepVwKxJIgA3d/chg
-         /bdvYAniTx18Pmbzx55zxc3wCDc3m0E1JmM1b1hD9e1weZl6ZzT8r6luKf7afS2l7W6D
-         rnL1drIxvhqGbHx4u/M88+chOWWrAKsAj2dxf3YgSL3HMk6JAFI2DtmP+0ivFhwOzuEP
-         lemLvwJcSNKNWeRjIdxnNWBZfria8gXPmeiFvFq6ne1eodc4WWstMTLvAbeMJoTqPZUm
-         vDMg==
-X-Gm-Message-State: AOAM5318xDbIe3/RB8pLO9htOyHKLQcPldxoNqlc/2XS5T1n/7cweqT8
-        /5xLwXESPZt1pwvfB3NpaDY=
-X-Google-Smtp-Source: ABdhPJyMPt7err59CY9lYfPbUipGcotDfvL8uIT4zyvHaSCmMAXoK153CjrGeS2xi+yTxclElDp2ug==
-X-Received: by 2002:a37:de02:: with SMTP id h2mr6565646qkj.411.1629427614352;
-        Thu, 19 Aug 2021 19:46:54 -0700 (PDT)
-Received: from localhost.localdomain ([193.203.214.57])
-        by smtp.gmail.com with ESMTPSA id u27sm2544108qku.9.2021.08.19.19.46.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Aug 2021 19:46:54 -0700 (PDT)
-From:   jing yangyang <cgel.zte@gmail.com>
-X-Google-Original-From: jing yangyang <jing.yangyang@zte.com.cn>
-To:     JC Kuo <jckuo@nvidia.com>
-Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
+        bh=zboB1Q6i9oYgbkK+DWfMo5HokGy8eox3TcOGLTI8/TQ=;
+        b=Fte0SRty0Uxt3DppV1yP+tZesHgOhbSKOlOlG8XOO4C7v4bn6eRSmMIYCcPFIjQx4Y
+         m9+LEH06oTnnPBpy4iCQ9CihyfKJQ5hKM+y/Yv6DZT6hKzLuU1hR89T0F/KjiI+bHHe+
+         UCKLw8TyX/REKdwNGQ1yZbCjLn8EdsYvg8tiIx2JxUKDoBojSER7AZtFeBkIpXRGQcrD
+         Tp7LffUKVdqVtMgjVQkNl54jE/nNIuum/zFppghEjq3ITApPIL6xZZBpZ7jplj0hHSTJ
+         ipBoU41s8N3k5luR1SZXKyhT1RiDbKfg2g0ljP64isLZ4GYWFjX+qgBJtgduOVBc1oG8
+         o7Iw==
+X-Gm-Message-State: AOAM533Tq8igYXOdZTPeWdpW7U7elfm3hAcEu/JYAyWryyzWbSoavb7T
+        SdUhkP0PPyOoI2gWPzN0HF00eNjcRDk=
+X-Google-Smtp-Source: ABdhPJxyaLUy3vFiucIY3S77FtdQqbUhTA2/WSHmXMHR7V1HqPjJvW4kwuD0WLGfg5N30COber68xA==
+X-Received: by 2002:ac2:4c94:: with SMTP id d20mr12622519lfl.640.1629427896895;
+        Thu, 19 Aug 2021 19:51:36 -0700 (PDT)
+Received: from [192.168.2.145] (46-138-120-72.dynamic.spd-mgts.ru. [46.138.120.72])
+        by smtp.googlemail.com with ESMTPSA id w9sm2965ljo.36.2021.08.19.19.51.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 19 Aug 2021 19:51:36 -0700 (PDT)
+Subject: Re: [PATCH v8 06/34] dt-bindings: clock: tegra-car: Document new
+ tegra-clocks sub-node
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-phy@lists.infradead.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        jing yangyang <jing.yangyang@zte.com.cn>,
-        Zeal Robot <zealci@zte.com.cn>
-Subject: [PATCH linux-next] phy/tegra: add put_device() after of_find_device_by_node()
-Date:   Thu, 19 Aug 2021 19:46:33 -0700
-Message-Id: <20210820024633.11757-1-jing.yangyang@zte.com.cn>
-X-Mailer: git-send-email 2.25.1
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Peter Chen <peter.chen@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
+        Nishanth Menon <nm@ti.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Richard Weinberger <richard@nod.at>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Lucas Stach <dev@lynxeye.de>, Stefan Agner <stefan@agner.ch>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-staging@lists.linux.dev, linux-spi@vger.kernel.org,
+        linux-pwm@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-mmc@vger.kernel.org, linux-media@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org
+References: <20210817012754.8710-1-digetx@gmail.com>
+ <20210817012754.8710-7-digetx@gmail.com> <YR0SSz7KMh7TwaFW@orome.fritz.box>
+ <eff5ef47-e6e0-3e03-cf1a-d931b0f2dc2a@gmail.com>
+ <YR033zuYWWLCeYpM@orome.fritz.box>
+ <a5b942cb-1611-9ae1-6e89-4b68fdaf03e3@gmail.com>
+ <YR6HWMuYcF6NIepi@orome.fritz.box>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <cad7c578-f533-12f8-3dc0-d2854344148c@gmail.com>
+Date:   Fri, 20 Aug 2021 05:51:35 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
+In-Reply-To: <YR6HWMuYcF6NIepi@orome.fritz.box>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-This was found by coccicheck:
-./drivers/phy/tegra/xusb-tegra210.c:3174: 2-8:ERROR:
-missing put_device;call of_find_device_by_node on line 3167,
-but without a corresponding object release within this function.
+19.08.2021 19:31, Thierry Reding пишет:
+>> The "device" representation is internal to the kernel. It's okay to me
+>> to have PLLs represented by a device, it's a distinct h/w by itself.
+>>
+>> CCF supports managing of clock's RPM and it requires to have clock to be
+>> backed by a device. That's what we are using here.
+>>
+>> Please see
+>> https://elixir.bootlin.com/linux/v5.14-rc6/source/drivers/clk/clk.c#L109
+> Looking at the implementation of __clk_register() and where that device
+> pointer typically comes from, I don't think the way this is used here is
+> what was intended. The way I interpret the code is that a clock is
+> registered with a parent device (i.e. its provider) and
+> clk_pm_runtime_get() is then used internally as a way to make sure that
+> when a clock is prepared, it's parent device is runtime resumed. This is
+> presumably to ensure that any registers that the driver might need to
+> access in order to prepare and enable the clock are accessible (i.e. the
+> CAR is not powered off or in reset).
+> 
+> So the struct device that is passed to __clk_register() (or its callers)
+> should be that of the CAR rather than virtual struct devices created by
+> the CAR.
+> 
+> And it's a bit debatable whether or not PLLs represent distinct
+> hardware. Ultimately every transistor on a chip could be considered
+> distinct hardware. But a platform device is a device on a platform bus,
+> which is really just another way of saying it's a hardware block that's
+> accessible from the CPU via a memory-mapped address. A PLL (just like
+> other clocks) is merely a resource exposed by means of access to these
+> registers. So I don't think they should be platform devices. Even making
+> them struct device:s seems a bit of a stretch.
+> 
+> Is there any reason why struct clk can't be used for this? I mean, the
+> whole purpose of that structure is to represent clocks. Why do we need
+> to make them special?
 
-Reported-by: Zeal Robot <zealci@zte.com.cn>
-Signed-off-by: jing yangyang <jing.yangyang@zte.com.cn>
----
- drivers/phy/tegra/xusb-tegra210.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/phy/tegra/xusb-tegra210.c b/drivers/phy/tegra/xusb-tegra210.c
-index eedfc7c..f26eb5a 100644
---- a/drivers/phy/tegra/xusb-tegra210.c
-+++ b/drivers/phy/tegra/xusb-tegra210.c
-@@ -3170,8 +3170,10 @@ static int tegra210_utmi_port_reset(struct phy *phy)
- 		goto out;
- 	}
- 
--	if (!platform_get_drvdata(pdev))
-+	if (!platform_get_drvdata(pdev)) {
-+		put_device(&pdev->dev);
- 		return ERR_PTR(-EPROBE_DEFER);
-+	}
- 
- 	padctl->regmap = dev_get_regmap(&pdev->dev, "usb_sleepwalk");
- 	if (!padctl->regmap)
--- 
-1.8.3.1
-
-
+Because we need to perform DVFS for PLLs. The only way to do it without
+having to reinvent existing frameworks is to use these frameworks and
+they require a device.
