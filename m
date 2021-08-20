@@ -2,172 +2,250 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-20.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3636C19F34
-	for <linux-tegra@archiver.kernel.org>; Fri, 20 Aug 2021 05:18:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EFAAC432BE
+	for <linux-tegra@archiver.kernel.org>; Fri, 20 Aug 2021 08:17:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 97E3861037
-	for <linux-tegra@archiver.kernel.org>; Fri, 20 Aug 2021 05:18:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 23A3A61075
+	for <linux-tegra@archiver.kernel.org>; Fri, 20 Aug 2021 08:17:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235390AbhHTFT1 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 20 Aug 2021 01:19:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49250 "EHLO
+        id S231987AbhHTIR6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 20 Aug 2021 04:17:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33400 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235411AbhHTFTX (ORCPT
+        with ESMTP id S231887AbhHTIRt (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 20 Aug 2021 01:19:23 -0400
-Received: from mail-pg1-x52b.google.com (mail-pg1-x52b.google.com [IPv6:2607:f8b0:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D60FC06179A
-        for <linux-tegra@vger.kernel.org>; Thu, 19 Aug 2021 22:18:46 -0700 (PDT)
-Received: by mail-pg1-x52b.google.com with SMTP id w8so8042269pgf.5
-        for <linux-tegra@vger.kernel.org>; Thu, 19 Aug 2021 22:18:46 -0700 (PDT)
+        Fri, 20 Aug 2021 04:17:49 -0400
+Received: from mail-vk1-xa33.google.com (mail-vk1-xa33.google.com [IPv6:2607:f8b0:4864:20::a33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D3F5C06175F
+        for <linux-tegra@vger.kernel.org>; Fri, 20 Aug 2021 01:17:12 -0700 (PDT)
+Received: by mail-vk1-xa33.google.com with SMTP id k124so2256475vke.5
+        for <linux-tegra@vger.kernel.org>; Fri, 20 Aug 2021 01:17:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=chAct3ipnxxeeUzw3hiYvmSC99rC9KHQnQdo3Qo5wI0=;
-        b=PAK0FwHpNruccQOMJcEETGgiuehcBfGqSXwbOalixpfWmC8iUPHKv0ZRFhT4USGW3L
-         s3ikZix1CXYk8w3jX5LaxfyZfb40GBiPWSjG9bWn3gJp9a9Md0FR48UGizRgXzY9ODgl
-         10gDNc8YxX4abwwur3/2Ib4tR0HK4fxAVz95jdn0g5Bjm1f+zlmZUdf0J4uOmNCA+73o
-         QmFwB0uLKerpVDInoO9o15o02ie64XpCaCSsIImcFb/KjT6Us0KvUWI0KV441DGxP1Gb
-         Qjx6eoerfkbM7U/RrGe2d3xgWfRJJ6PVyX/2MvEkhvBiHXfKbkbdOk6b4KB2LrxPQeQV
-         fLzw==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=y5t+2Oo5yym0OJ3etipsjRBTyv7Vn0GjQI8wMxvms5k=;
+        b=mxFXngFqSxmVJjIcBJy/PJZ2TZWD4D5JgMEkMuzRL0oGlZFRZ9zL5SwmdMPPbE/vma
+         1AO5vPktkKK5CNZ9usJdbW1SXZqYKUV1u08LPaDbkMtiuPINpDQkHiReRpZPx7D0EbQY
+         AU1ZC/2cX+ZExtSdZHMcBho5essfmpQhJC/a9JQNHFoGhaM1IcsP0fRD3H1fbSYqbkwd
+         Pq3YFwLf1qU9W9gP57vSn2z+//1jkgMXqbL83W5GWBPSxtZGnfCH3mzyC2cnjdPojhiZ
+         yQTL5cY980LMxa4KnuBnXmE6o72yA6dNoXoeceG9wooQSrV5DCP//ide8LOdfVNJdLoG
+         quog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=chAct3ipnxxeeUzw3hiYvmSC99rC9KHQnQdo3Qo5wI0=;
-        b=dFHu5/aOLyQ0MTJ9wp9OHGwiy9PoIj6rKusIO/yFIOAdfiUnU/sUcGuPQfZVoHpsg9
-         X4mHOEzaOkdRbQOG2Ge67mNeyrggkKQUU8YblbQ5fFlp5fv9aYDUFjC6vZKHGOKatqZg
-         hdcSfVFdFh3J08cLgm6iCN94oC1WSy+JBsmoQiEpNWjpmcdnJdwnLuU/8GIMjDL+E30g
-         yxf4ymJ4bCwSrqdOzVrrThk7MZZ8rP1IYGs8CTr5qTEFg5YboBDmVvOCEULajk27I6MM
-         tBILqu4iB3zRBpKcJlJeR+KWPlXQCBM/ienK9y5dDbEG/RMfn8DJh1BNDVAzxBa8kXZP
-         OyQg==
-X-Gm-Message-State: AOAM533tP49bfgrgBPW8AS18mFjNyJd4NF3YAqG2O6KEt/O2+Usktt7u
-        xZAUMVOtDVydLdA38gJ7vqoYoA==
-X-Google-Smtp-Source: ABdhPJwH30rFrNGt2fTNK9Na7wrgKwgjGw7543RwntMIs+dfy9PTWNVMu53RFGAQHLSof48YBaglZA==
-X-Received: by 2002:a62:8283:0:b0:3e0:f3f3:839d with SMTP id w125-20020a628283000000b003e0f3f3839dmr17811980pfd.37.1629436725848;
-        Thu, 19 Aug 2021 22:18:45 -0700 (PDT)
-Received: from localhost ([122.172.201.85])
-        by smtp.gmail.com with ESMTPSA id i26sm5582209pfu.6.2021.08.19.22.18.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Aug 2021 22:18:45 -0700 (PDT)
-Date:   Fri, 20 Aug 2021 10:48:43 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Peter Chen <peter.chen@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>, Nishanth Menon <nm@ti.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Richard Weinberger <richard@nod.at>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Lucas Stach <dev@lynxeye.de>, Stefan Agner <stefan@agner.ch>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux USB List <linux-usb@vger.kernel.org>,
-        linux-staging@lists.linux.dev, linux-spi@vger.kernel.org,
-        linux-pwm@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        DTML <devicetree@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v8 01/34] opp: Add dev_pm_opp_sync() helper
-Message-ID: <20210820051843.5mueqpnjbqt3zdzc@vireshk-i7>
-References: <080469b3-612b-3a34-86e5-7037a64de2fe@gmail.com>
- <20210818055849.ybfajzu75ecpdrbn@vireshk-i7>
- <f1c76f23-086d-ef36-54ea-0511b0ebe0e1@gmail.com>
- <20210818062723.dqamssfkf7lf7cf7@vireshk-i7>
- <CAPDyKFrZqWtZOp4MwDN6fShoLLbw5NM039bpE3-shB+fCEZOog@mail.gmail.com>
- <20210818091417.dvlnsxlgybdsn76x@vireshk-i7>
- <CAPDyKFrVxhrWGr2pKduehshpLFd_db2NTPGuD7fSqvuHeyzT4w@mail.gmail.com>
- <f1314a47-9e8b-58e1-7c3f-0afb1ec8e70a@gmail.com>
- <20210819061617.r4kuqxafjstrv3kt@vireshk-i7>
- <CAPDyKFpg8ixT4AEjzVLTwQR7Nn9CctjnLCDS5GwkOrAERquyxw@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=y5t+2Oo5yym0OJ3etipsjRBTyv7Vn0GjQI8wMxvms5k=;
+        b=Udg5sks0EYinSNV3WPDxcGkbxQycJ5RKw9XatLBt28Gzqnn4Xja1KJjYEuS4qUlWb+
+         TVZWSM0qWUMRlqGFqy2j3mZhq3fwjH2RRaezngnK6Wtn5jEOjrwQuN72ccteKTB04r/n
+         502mvsKDYiPr8MGlmSajphnVyb7ejx4h0WGN6DMGW/NVkuukFiPJdPtoEXP7DQsCNgfM
+         DiS38OzNhh9LRcJIMmxadvpxU8yLiJc7086wLMhBgwM3ED1c8Rf40JsEB845WkdBJt3e
+         idJfT/DNBM7TrBh0Xzh4oWfw5Jf997F0Ip+cg4QyiJFc/SwdjVihbM6Pb5jLybspFUIz
+         Qq5w==
+X-Gm-Message-State: AOAM532ezJljU0F/Vg57wluyF+rP9GNfvGcAirdgeyHTJxBlUdeFgjWo
+        +zD4ogjdeydxCZ3092SApOcrSRNqq82ztDDmYDsuwg==
+X-Google-Smtp-Source: ABdhPJwnXcF5jSuimmLI3XIw81d0SDbFuLoIO4o4UILtPyGEj2uz+uCsImanEERqS9WiyHwD5N9GEei+p0qvMLjeqbs=
+X-Received: by 2002:a1f:a555:: with SMTP id o82mr14607010vke.8.1629447430991;
+ Fri, 20 Aug 2021 01:17:10 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPDyKFpg8ixT4AEjzVLTwQR7Nn9CctjnLCDS5GwkOrAERquyxw@mail.gmail.com>
-User-Agent: NeoMutt/20180716-391-311a52
+References: <20210818005547.14497-1-digetx@gmail.com> <20210818005547.14497-5-digetx@gmail.com>
+ <CAPDyKFqQbe4k-Sem436Fzsr6mbvwZr83VtEaEZTF8oWYoHHQwg@mail.gmail.com>
+ <YR0MrlxFLTpsR628@orome.fritz.box> <CAPDyKFpObGwWhnwDKG59wdt6Pr35DodogXbDjzPJGoshMD7piQ@mail.gmail.com>
+ <YR6SuVxJ37IoxyBF@orome.fritz.box>
+In-Reply-To: <YR6SuVxJ37IoxyBF@orome.fritz.box>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Fri, 20 Aug 2021 10:16:34 +0200
+Message-ID: <CAPDyKFoT3Qw47ecnZbhBtGNB=NruWW9VnKPEb+ST3ozX4H+-sA@mail.gmail.com>
+Subject: Re: [PATCH v5 4/5] mmc: sdhci-tegra: Implement alternative_gpt_sector()
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Dmitry Osipenko <digetx@gmail.com>, Jens Axboe <axboe@kernel.dk>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        David Heidelberg <david@ixit.cz>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Ion Agorria <AG0RRIA@yahoo.com>,
+        Svyatoslav Ryhel <clamor95@gmail.com>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        linux-efi <linux-efi@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 19-08-21, 16:55, Ulf Hansson wrote:
-> Right, that sounds reasonable.
-> 
-> We already have pm_genpd_opp_to_performance_state() which translates
-> an OPP to a performance state. This function invokes the
-> ->opp_to_performance_state() for a genpd. Maybe we need to allow a
-> genpd to not have ->opp_to_performance_state() callback assigned
-> though, but continue up in the hierarchy to see if the parent has the
-> callback assigned, to make this work for Tegra?
-> 
-> Perhaps we should add an API dev_pm_genpd_opp_to_performance_state(),
-> allowing us to pass the device instead of the genpd. But that's a
-> minor thing.
-
-I am not concerned a lot about how it gets implemented, and am not
-sure as well, as I haven't looked into these details since sometime.
-Any reasonable thing will be accepted, as simple as that.
-
-> Finally, the precondition to use the above, is to first get a handle
-> to an OPP table. This is where I am struggling to find a generic
-> solution, because I guess that would be platform or even consumer
-> driver specific for how to do this. And at what point should we do
-> this?
-
-Hmm, I am not very clear with the whole picture at this point of time.
-
-Dmitry, can you try to frame a sequence of events/calls/etc that will
-define what kind of devices we are looking at here, and how this can
-be made to work ?
-
-> > > Viresh, please take a look at what I did in [1]. Maybe it could be done
-> > > in another way.
+On Thu, 19 Aug 2021 at 19:19, Thierry Reding <thierry.reding@gmail.com> wrote:
+>
+> On Thu, Aug 19, 2021 at 03:20:57PM +0200, Ulf Hansson wrote:
+> > On Wed, 18 Aug 2021 at 15:35, Thierry Reding <thierry.reding@gmail.com> wrote:
+> > >
+> > > On Wed, Aug 18, 2021 at 11:55:05AM +0200, Ulf Hansson wrote:
+> > > > On Wed, 18 Aug 2021 at 02:57, Dmitry Osipenko <digetx@gmail.com> wrote:
+> > > > >
+> > > > > Tegra20/30/114/124 Android devices place GPT at a non-standard location.
+> > > > > Implement alternative_gpt_sector() callback of the MMC host ops which
+> > > > > specifies that GPT location for the partition scanner.
+> > > > >
+> > > > > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> > > > > ---
+> > > > >  drivers/mmc/host/sdhci-tegra.c | 42 ++++++++++++++++++++++++++++++++++
+> > > > >  1 file changed, 42 insertions(+)
+> > > > >
+> > > > > diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+> > > > > index 387ce9cdbd7c..24a713689d5b 100644
+> > > > > --- a/drivers/mmc/host/sdhci-tegra.c
+> > > > > +++ b/drivers/mmc/host/sdhci-tegra.c
+> > > > > @@ -116,6 +116,8 @@
+> > > > >   */
+> > > > >  #define NVQUIRK_HAS_TMCLK                              BIT(10)
+> > > > >
+> > > > > +#define NVQUIRK_HAS_ANDROID_GPT_SECTOR                 BIT(11)
+> > > > > +
+> > > > >  /* SDMMC CQE Base Address for Tegra Host Ver 4.1 and Higher */
+> > > > >  #define SDHCI_TEGRA_CQE_BASE_ADDR                      0xF000
+> > > > >
+> > > > > @@ -1361,6 +1363,7 @@ static const struct sdhci_tegra_soc_data soc_data_tegra20 = {
+> > > > >         .pdata = &sdhci_tegra20_pdata,
+> > > > >         .dma_mask = DMA_BIT_MASK(32),
+> > > > >         .nvquirks = NVQUIRK_FORCE_SDHCI_SPEC_200 |
+> > > > > +                   NVQUIRK_HAS_ANDROID_GPT_SECTOR |
+> > > > >                     NVQUIRK_ENABLE_BLOCK_GAP_DET,
+> > > > >  };
+> > > > >
+> > > > > @@ -1390,6 +1393,7 @@ static const struct sdhci_tegra_soc_data soc_data_tegra30 = {
+> > > > >         .nvquirks = NVQUIRK_ENABLE_SDHCI_SPEC_300 |
+> > > > >                     NVQUIRK_ENABLE_SDR50 |
+> > > > >                     NVQUIRK_ENABLE_SDR104 |
+> > > > > +                   NVQUIRK_HAS_ANDROID_GPT_SECTOR |
+> > > > >                     NVQUIRK_HAS_PADCALIB,
+> > > > >  };
+> > > > >
+> > > > > @@ -1422,6 +1426,7 @@ static const struct sdhci_pltfm_data sdhci_tegra114_pdata = {
+> > > > >  static const struct sdhci_tegra_soc_data soc_data_tegra114 = {
+> > > > >         .pdata = &sdhci_tegra114_pdata,
+> > > > >         .dma_mask = DMA_BIT_MASK(32),
+> > > > > +       .nvquirks = NVQUIRK_HAS_ANDROID_GPT_SECTOR,
+> > > > >  };
+> > > > >
+> > > > >  static const struct sdhci_pltfm_data sdhci_tegra124_pdata = {
+> > > > > @@ -1438,6 +1443,7 @@ static const struct sdhci_pltfm_data sdhci_tegra124_pdata = {
+> > > > >  static const struct sdhci_tegra_soc_data soc_data_tegra124 = {
+> > > > >         .pdata = &sdhci_tegra124_pdata,
+> > > > >         .dma_mask = DMA_BIT_MASK(34),
+> > > > > +       .nvquirks = NVQUIRK_HAS_ANDROID_GPT_SECTOR,
+> > > > >  };
+> > > > >
+> > > > >  static const struct sdhci_ops tegra210_sdhci_ops = {
+> > > > > @@ -1590,6 +1596,38 @@ static int sdhci_tegra_add_host(struct sdhci_host *host)
+> > > > >         return ret;
+> > > > >  }
+> > > > >
+> > > > > +static int sdhci_tegra_alternative_gpt_sector(struct mmc_card *card,
+> > > > > +                                             sector_t *gpt_sector)
+> > > > > +{
+> > > > > +       unsigned int boot_sectors_num;
+> > > > > +
+> > > > > +       /* filter out unrelated cards */
+> > > > > +       if (card->ext_csd.rev < 3 ||
+> > > > > +           !mmc_card_mmc(card) ||
+> > > > > +           !mmc_card_is_blockaddr(card) ||
+> > > > > +            mmc_card_is_removable(card->host))
+> > > > > +               return -ENOENT;
+> > > > > +
+> > > > > +       /*
+> > > > > +        * eMMC storage has two special boot partitions in addition to the
+> > > > > +        * main one.  NVIDIA's bootloader linearizes eMMC boot0->boot1->main
+> > > > > +        * accesses, this means that the partition table addresses are shifted
+> > > > > +        * by the size of boot partitions.  In accordance with the eMMC
+> > > > > +        * specification, the boot partition size is calculated as follows:
+> > > > > +        *
+> > > > > +        *      boot partition size = 128K byte x BOOT_SIZE_MULT
+> > > > > +        *
+> > > > > +        * Calculate number of sectors occupied by the both boot partitions.
+> > > > > +        */
+> > > > > +       boot_sectors_num = card->ext_csd.raw_boot_mult * SZ_128K /
+> > > > > +                          SZ_512 * MMC_NUM_BOOT_PARTITION;
+> > > > > +
+> > > > > +       /* Defined by NVIDIA and used by Android devices. */
+> > > > > +       *gpt_sector = card->ext_csd.sectors - boot_sectors_num - 1;
+> > > > > +
+> > > > > +       return 0;
+> > > > > +}
+> > > >
+> > > > I suggest you move this code into the mmc core/block layer instead (it
+> > > > better belongs there).
+> > > >
+> > > > Additionally, let's add a new host cap, MMC_CAP_ALTERNATIVE_GPT, to
+> > > > let the core know when it should use the code above.
+> > >
+> > > Couldn't a generic "alternative GPT" mean pretty much anything? As far
+> > > as I know this is very specific to a series of Tegra chips and firmware
+> > > running on them. On some of these devices you can even replace the OEM
+> > > firmware by something custom that's less quirky.
 > >
-> > I looked into this and looked like too much trouble. The
-> > implementation needs to be simple. I am not sure I understand all the
-> > problems you faced while doing that, would be better to start with a
-> > simpler implementation of get_performance_state() kind of API for
-> > genpd, after the domain is attached and its OPP table is initialized.
+> > Good point!
 > >
-> > Note, that the OPP table isn't required to be fully initialized for
-> > the device at this point, we can parse the DT as well if needed be.
-> 
-> Sure, but as I indicated above, you need some kind of input data to
-> figure out what OPP table to pick, before you can translate that into
-> a performance state. Is that always the clock rate, for example?
+> > Perhaps naming the cap MMC_CAP_TEGRA_GPT would make this more clear.
+>
+> Yeah, that sounds like a better name. Or if people are hung up on
+> "alternative", perhaps MMC_CAP_ALTERNATIVE_GPT_TEGRA.
 
-Eventually it can be clock, bandwidth, or pstate of anther genpd, not
-sure what all we are looking for now. It should be just clock right
-now as far as I can imagine :)
+That works too. Dmitry can pick what he prefers.
 
-> Perhaps, we should start with adding a dev_pm_opp_get_from_rate() or
-> what do you think? Do you have other suggestions?
+>
+> > > I'm not aware of anyone else employing this kind of quirk, so I don't
+> > > want anyone to get any ideas that this is a good thing. Putting it into
+> > > the core runs the risk of legitimizing this.
+> >
+> > I certainly don't want to legitimize this. But no matter what, that is
+> > exactly what we are doing, anyways.
+>
+> I think there's a difference between supporting a quirk and legitimizing
+> it. I certainly would hate for anyone to come across this "feature" and
+> then go: "Oh, this is neat, let's implement this on our new platform!".
+>
+> > In summary, I still prefer code to be put in their proper layers, and
+> > there aren't any host specific things going on here, except for
+> > parsing a compatible string.
+>
+> Fair enough. Perhaps if we put enough warnings in the comments
+> surrounding this and are vigilant enough during code review we can
+> prevent this from proliferating. Obviously, once somebody implements
+> this in their flash/boot stack, it can become difficult to change it,
+> so by the time we get to review the kernel bits it might already be
+> set in stone.
 
-We already have similar APIs, so that won't be a problem. We also have
-a mechanism inside the OPP core, frequency based, which is used to
-guess the current OPP. Maybe we can enhance and use that directly
-here.
+Sure, good idea. Some recommendations in the form of comments in the
+code would be nice.
 
--- 
-viresh
+>
+> Then again, like you hinted at already, once we support it, we support
+> it. So no real harm is done if anyone copies this.
+>
+> I don't exactly know how this came about in the first place, but it's
+> pretty exotic, so I doubt that anyone else will come up with something
+> like this anytime soon.
+
+Hopefully, but who knows. :-)
+
+In the end, I think a lot of these homebrewed flash layouts, have been
+invented to store bootbinararies in a robust way, tolerating data loss
+and sudden power failures.
+
+That said, let me take the opportunity to highlight the work
+ARM/Linaro is doing on EBBR [1]. We should have done that many years
+ago, but better late than never.
+
+Kind regards
+Uffe
+
+[1] EBBR - Embedded Base Boot Requirements
+https://github.com/ARM-software/ebbr
