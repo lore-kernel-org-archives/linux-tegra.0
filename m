@@ -2,116 +2,142 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2DE8C432BE
-	for <linux-tegra@archiver.kernel.org>; Fri, 20 Aug 2021 11:00:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53C9FC4338F
+	for <linux-tegra@archiver.kernel.org>; Fri, 20 Aug 2021 11:27:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9467F60FE8
-	for <linux-tegra@archiver.kernel.org>; Fri, 20 Aug 2021 11:00:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E93861051
+	for <linux-tegra@archiver.kernel.org>; Fri, 20 Aug 2021 11:27:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229847AbhHTLBT (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 20 Aug 2021 07:01:19 -0400
-Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:58250
-        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S236783AbhHTLBS (ORCPT
+        id S238769AbhHTL2H (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 20 Aug 2021 07:28:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49198 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232681AbhHTL2H (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 20 Aug 2021 07:01:18 -0400
-X-Greylist: delayed 506 seconds by postgrey-1.27 at vger.kernel.org; Fri, 20 Aug 2021 07:01:18 EDT
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com [209.85.218.72])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id C59C640792
-        for <linux-tegra@vger.kernel.org>; Fri, 20 Aug 2021 10:52:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1629456734;
-        bh=bEY0tLoe24jiwQ1BBwb3ntpzUGXLwmR1QkfqwNeab5Q=;
-        h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-         In-Reply-To:Content-Type;
-        b=NIMqk8+hTRCl41SfiPqxypEjfwN6iwszeo7BvIK4f7272qtohKT6B2D5AFkRQOTg3
-         ZGORwjQF92sypjSB2aupREJRpqyymOJaWpqv2HKeOJm0dE108bwIVvzGpHmwsv9g6R
-         2ZqN9agHeswTUZdb8ucs9OHuFkJNxWkB1pHikAzZAjWR8Vy+uQNYHGBGgxspUPtiEz
-         Vkj7gXtPxBHHX/MgKMtbZu4+SRfqnGldYZAoMLCgfndBXKtdaz3umTRku51yIHXV6d
-         fUUNaXzYTIwBwGrBo2PmPmIHLq2M4M4U3WLwUdqtLSsmlZ+IcSsO+YvpDKmH1b+ZUQ
-         SVitWDqcS75Ag==
-Received: by mail-ej1-f72.google.com with SMTP id r21-20020a1709067055b02904be5f536463so3563308ejj.0
-        for <linux-tegra@vger.kernel.org>; Fri, 20 Aug 2021 03:52:14 -0700 (PDT)
+        Fri, 20 Aug 2021 07:28:07 -0400
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7224DC061575;
+        Fri, 20 Aug 2021 04:27:29 -0700 (PDT)
+Received: by mail-wm1-x331.google.com with SMTP id w24so5708210wmi.5;
+        Fri, 20 Aug 2021 04:27:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=SjDUab6ES3/gB1KniFBQUp8JcOQkZIMPeFbdvqfdXv0=;
+        b=UHWERN8f9quI2rSUCk1WrRW97eftUnzajyYEM3pAovhRjKnbUtDoCXTQ88snOI+9in
+         pwwOimSs5UE5xFdTBxiSPxTxOJ2WdnziXzeqkWHBC3vKkB/gCCs3cfnIe5p43usX8drp
+         VIw9W2HvM9DT+QZoE3I62YBWirejOhst0auA5UlfMPd165AmcYRH+nSCfVF+QNzPaUy0
+         CYjUtJ9bGnj3qzHXD7AfeCXVF1Q8v1NOU4x5h72Cdzmvp6BbJtC3NWb7oufzG8+eV5Lw
+         SMzHbpEfAnUWhQ/kIjlRksYLXGoCiVB31gNhMofNVK7W8aH9fsP0br8xCx/+Tb21UaOk
+         Uqog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=bEY0tLoe24jiwQ1BBwb3ntpzUGXLwmR1QkfqwNeab5Q=;
-        b=Y1a1udjmcKjFO/FBllf1i7tD7UF14PrLxnWi9mHLUTDZWPZGIvF2Rf2f6YCGTmwic3
-         Unzcy02Ar80fZ40vcbkdePcGOyB8a40OXkzRSeLfma22WkldbOSZfo4wUxvTgCZ7o/vq
-         vuZ1cpsIGTNxKGPdCLQYcz2OEo5VDtyVETPu9/qqZYN9ozQExyDYq8urJVonzyiANLvf
-         8jDN/x2N7DvFzisPQim+UwWoqPXtNVi6HZVidaS38zKofYOLMNQaD9opa76az0YRwpjg
-         eb6uIRiM6hVCh+Ixk6CdWaoHfhGaG9HU1T2K6qjpXYu3bF4MXVLnOG3UwvIJqM9HiQtt
-         BC2A==
-X-Gm-Message-State: AOAM532RAxH61DGLpc90499CwNBFOKQAVY3LtNowgmK2Ztnlud9HHFT2
-        HbVuYN5o+TvqbV/slOTN4xk0d8S5zyWjR72ah4CVjpSvhNCd2WfuOv7x/AimWvGgolu/oSrw1/y
-        6rqWo43xbBd73HmJl9sEgtKp/TYSxBHQt4ZbH8c32
-X-Received: by 2002:a50:99d9:: with SMTP id n25mr21936497edb.310.1629456734352;
-        Fri, 20 Aug 2021 03:52:14 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJzwgHZjGv4/G3o//as9FIIt8mx7PidsjndSwA7RNnyaBmG0u7l+H7nGHvlAtxIyexightLogQ==
-X-Received: by 2002:a50:99d9:: with SMTP id n25mr21936486edb.310.1629456734250;
-        Fri, 20 Aug 2021 03:52:14 -0700 (PDT)
-Received: from [192.168.8.102] ([86.32.42.198])
-        by smtp.gmail.com with ESMTPSA id h8sm3269223edv.30.2021.08.20.03.52.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 20 Aug 2021 03:52:13 -0700 (PDT)
-Subject: Re: [PATCH] memory: tegra: make the array list static const, makes
- object smaller
-To:     Colin King <colin.king@canonical.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=SjDUab6ES3/gB1KniFBQUp8JcOQkZIMPeFbdvqfdXv0=;
+        b=U1aFYusnt0rJkFvOpLl+NtkTLfyRtgah0aLgZyYghAa7BpXNRxjci3gFIFGhGHkpAM
+         64euBLK7OQUs5rt+cpi+gLlIdz5M7WFCj1k+zRFXyrqeX058GQI08fQy0YHLC/NVGCcw
+         DugglT5Pa9wV1jqDrABC7zyrwVpvSnmFy58mVS0AvW2Q8/Drr8W2zDqUO7DY+3kDY8T2
+         rDomBdd6wKtHIVgzF8t85ixloK0cQfjUwoWYF7I7sWqqVMzcQaZKmDwliBPSOzmknMPH
+         81cVn3AHkU8qo7b2j6uz8/8rISbe6s46ixe2CWedYCmdpwJoN9entzzLEwY+ZYbCq4Ks
+         9LMg==
+X-Gm-Message-State: AOAM532hy1dRrRuc6Svv1K85d204t+yfdQ4VMqVV60bjpf8VaSu6rVcx
+        EUaJrNylR3S8VGwpbIzU6Kw=
+X-Google-Smtp-Source: ABdhPJz+RA7GGLxzMpCDOim6PSXwiUzFn+BklCCbmBg0rZ/eVC8IfFtPsUdIDQgifT4ZichVAhIcxg==
+X-Received: by 2002:a05:600c:198a:: with SMTP id t10mr3397445wmq.181.1629458848076;
+        Fri, 20 Aug 2021 04:27:28 -0700 (PDT)
+Received: from localhost ([217.111.27.204])
+        by smtp.gmail.com with ESMTPSA id d8sm6007515wrv.20.2021.08.20.04.27.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Aug 2021 04:27:26 -0700 (PDT)
+Date:   Fri, 20 Aug 2021 13:27:25 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-kernel@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-tegra@vger.kernel.org
-References: <20210819133155.10441-1-colin.king@canonical.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Message-ID: <9ecb8f1b-7e2a-7d5a-c176-07459d0c148f@canonical.com>
-Date:   Fri, 20 Aug 2021 12:52:12 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        David Heidelberg <david@ixit.cz>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Ion Agorria <AG0RRIA@yahoo.com>,
+        Svyatoslav Ryhel <clamor95@gmail.com>,
+        linux-tegra@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-efi <linux-efi@vger.kernel.org>
+Subject: Re: [PATCH v7 4/4] mmc: sdhci-tegra: Enable MMC_CAP2_ALT_GPT_TEGRA
+Message-ID: <YR+RnXmtvDHk7mU3@orome.fritz.box>
+References: <20210820004536.15791-1-digetx@gmail.com>
+ <20210820004536.15791-5-digetx@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20210819133155.10441-1-colin.king@canonical.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="P4L/5MMHcPJXc6os"
+Content-Disposition: inline
+In-Reply-To: <20210820004536.15791-5-digetx@gmail.com>
+User-Agent: Mutt/2.1.1 (e2a89abc) (2021-07-12)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 19/08/2021 15:31, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Don't populate the array list on the stack but instead it
-> static const. Makes the object code smaller by 110 bytes:
-> 
-> Before:
->    text    data     bss     dec     hex filename
->   37713   21992      64   59769    e979 .../tegra/tegra210-emc-cc-r21021.o
-> 
-> After:
->    text    data     bss     dec     hex filename
->   37539   22056      64   59659    e90b .../tegra/tegra210-emc-cc-r21021.o
-> 
-> (gcc version 10.3.0)
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+
+--P4L/5MMHcPJXc6os
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, Aug 20, 2021 at 03:45:36AM +0300, Dmitry Osipenko wrote:
+> Tegra20/30/114/124 Android devices place GPT at a non-standard location.
+> Enable GPT entry scanning at that location.
+>=20
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > ---
->  drivers/memory/tegra/tegra210-emc-cc-r21021.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
+>  drivers/mmc/host/sdhci-tegra.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+>=20
+> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegr=
+a.c
+> index 387ce9cdbd7c..a5001875876b 100644
+> --- a/drivers/mmc/host/sdhci-tegra.c
+> +++ b/drivers/mmc/host/sdhci-tegra.c
+> @@ -116,6 +116,8 @@
+>   */
+>  #define NVQUIRK_HAS_TMCLK				BIT(10)
+> =20
+> +#define NVQUIRK_HAS_ANDROID_GPT_SECTOR			BIT(11)
 
-Looks good, it's too late for this cycle, so I'll take it after merge
-window.
+_HAS_ could be taken to imply that it always has that GPT sector,
+whereas it really depends on how the system was flashed. But that's a
+bit pedantic, so I think this is okay:
 
+Acked-by: Thierry Reding <treding@nvidia.com>
 
-Best regards,
-Krzysztof
+--P4L/5MMHcPJXc6os
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmEfkZsACgkQ3SOs138+
+s6F2XhAAjZLI6fstxyhGIOp5rNCJqNDYou4sOxqEn5Lt4KC1XGOIXynv/zEhFeG4
+I8w1fL5oCql8CHpsj+IN/d81K4PkM+tV5nPBt+eMUh8NkDGFhjHBRBrM1T08k7fj
+vFOTJcDG0BnzevEYgY1fX0U5mFnZEOKlkUrcQXGmJRXyb3XBMCY8siuYRurnXRTu
+hQMoM+MFZDQlbP7GBAihc3LY4sCUB8UGvkIpJ3VmTMydgizkv6wfY0ZK2Q3oC6Gr
+lKHQj202ORXX6OTYSiDkGd7jH85viUhVSjiHgtqyy/u4dCLx94V/Zn6GXf9sKusp
+p2WYSGklDiuw7ZtI8D6vllDkvqvFSkOSfLAvstZlfRPkfNweEJfW9Ks28vcp8GkR
+YcOtQ/rt3hin7oArC73G9qLZG0zzoYVrlFWsQLouodS1saIVMCCwvh8xZ1vbFxuM
+HYaBM8qVhGMXM5TDNpx9ALiQjmQriHovyOXi6FAZb/ZS9YH8cIUgwwE6CQMLzFlo
+qOs2NRMqvr+sKW4WeDJvzj7IKg5GReEKp6BEGI0V3H2ySBJ/DC5kT8D6d349F8Pc
+BXvLe7zStMP/FIY1aUH+LBPnfIdEqBXtSwYFkqqAV+iDGgR4qMPrimrASBYu4hMa
+XqdjGmxxDMykYJLygZYwgcL729a0pm15VULpw8Cb+SceMxKM15s=
+=pZM7
+-----END PGP SIGNATURE-----
+
+--P4L/5MMHcPJXc6os--
