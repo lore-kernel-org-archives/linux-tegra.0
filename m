@@ -2,124 +2,91 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E6F6C4338F
-	for <linux-tegra@archiver.kernel.org>; Mon, 23 Aug 2021 20:25:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E284CC4320A
+	for <linux-tegra@archiver.kernel.org>; Mon, 23 Aug 2021 23:40:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3A46860C51
-	for <linux-tegra@archiver.kernel.org>; Mon, 23 Aug 2021 20:25:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B75C9613A7
+	for <linux-tegra@archiver.kernel.org>; Mon, 23 Aug 2021 23:40:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232152AbhHWU0L (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 23 Aug 2021 16:26:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56218 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231569AbhHWU0L (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 23 Aug 2021 16:26:11 -0400
-Received: from mail-lj1-x22d.google.com (mail-lj1-x22d.google.com [IPv6:2a00:1450:4864:20::22d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA33CC061575;
-        Mon, 23 Aug 2021 13:25:27 -0700 (PDT)
-Received: by mail-lj1-x22d.google.com with SMTP id q21so33609913ljj.6;
-        Mon, 23 Aug 2021 13:25:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=TS6xlglVLGeDbAGeYFqIJEG7imj091QkptCAvdSg7xQ=;
-        b=dAvZ/CN92uZ8xeZ1GLlT9gNaX466/UBvXIY2XO7OginCHKsgjtBSQIpxgSzO2OdlqM
-         L2WAHyVJHhPUIuzCbTSiaG3YoWx+ZSDjKtcA4WNAhqiMbQI9WXi+IYcegQsZ3Cw4DqQV
-         Xex5dwdD0svHyZPkK7P/NfhEQHlPZtuKryf4H9umvFTQlVTIEG3QtC774aN+AXyl8HbC
-         DQi2sGbP7Wq99kFuHmPYYkkmqfkKJWFsdXLtC7dFiLrbvg8NKY2psEY3NNY4TpfqTN+h
-         vVcvjK0SkZvDpqtEfq1jVJGZ4F1xjW1Qs4fKQ6ib37YqJFN81B8NKa8EfKgrZ986FQll
-         S9dQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=TS6xlglVLGeDbAGeYFqIJEG7imj091QkptCAvdSg7xQ=;
-        b=jcFWiFsb8ejQ6//i/trzzaB332q+J0NHKpgU397Ym8GQVSrdDnqRUH3ArqnVaL2GDn
-         mk4kxajWANfLKv3eQkN1eiSA0asBiCS1H6FEjMja7mOBbsVNnlVdAxRw6ES5nGsAYHD2
-         2V2q4+f6KNJvWPSScHNP/nmH9Ai0fHuFc+nwFBasSmotn04MKLfjHvk6vKNcj4rzBkly
-         ZrEdOxeT7DN5j93CGi5pMTNmeDTVP+m+iwAogOVknUWET264cmt2WnwlBKTuSngLHnxL
-         GrPuqNvRbGhNG2EfKA6PK9hQ419QjC0XmEq0tapQEbEgQCmB5DB5OWQBTHXIJ+5oQ2Ui
-         XmRQ==
-X-Gm-Message-State: AOAM532te9ig3rUpFwPTGPwTHbDgTr34QTcYEv20MJ+MlMCFghC/OuY2
-        26ZuHvWHHBKoeR25spjo07k=
-X-Google-Smtp-Source: ABdhPJwHJn5Md+n7t8CBGRdqpzKgIhKI5zMB3Js+h+J6VWNt2ClxwJm2bz1AIwFvJajfTU2dDZ9VGg==
-X-Received: by 2002:a2e:86d1:: with SMTP id n17mr22927187ljj.237.1629750326405;
-        Mon, 23 Aug 2021 13:25:26 -0700 (PDT)
-Received: from localhost.localdomain (46-138-120-72.dynamic.spd-mgts.ru. [46.138.120.72])
-        by smtp.gmail.com with ESMTPSA id q25sm1542626lfr.235.2021.08.23.13.25.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Aug 2021 13:25:26 -0700 (PDT)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
+        id S233201AbhHWXkv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 23 Aug 2021 19:40:51 -0400
+Received: from rere.qmqm.pl ([91.227.64.183]:61298 "EHLO rere.qmqm.pl"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233093AbhHWXkv (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 23 Aug 2021 19:40:51 -0400
+Received: from remote.user (localhost [127.0.0.1])
+        by rere.qmqm.pl (Postfix) with ESMTPSA id 4Gtpd03NltzKc;
+        Tue, 24 Aug 2021 01:40:04 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
+        t=1629762006; bh=qwPmxSCbcInO/eyiUPjnhxEQ5MqYKo21su0OGAIP8zk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=DJrSKNpoXRQS5hFI7c50USjwJClWUGt5vZOZp2UAXk0WyKSRzlIg9rrFRN1JqtVue
+         X7V8gCHcP1jjj5XCIMw2Va5XH/DgXiEAcxjru7FbEOEXtVpZgiNUmh3uNZI7/AEMAt
+         Bi5cP8LqxNnvMrcgZLTDUjc5njiamlbwEk03dPWwW/yV3cHxEgURdDHAi06tzXy9Nn
+         wibl6Uy5qScKoW2zHAR+eRuCDS0SPbSYomRn2sL4aLE0w1tHticWo8I6/9/3XPi1sW
+         7pfj1GvOxdNZd8yvqHZU4Jdi5I1t5MKSSZ1+/i2hT2OdzU38OMbjsAX/kWbr4Vq5hx
+         YIHU8R7pXCxrA==
+X-Virus-Status: Clean
+X-Virus-Scanned: clamav-milter 0.103.2 at mail
+Date:   Tue, 24 Aug 2021 01:40:02 +0200
+From:   =?iso-8859-2?Q?Micha=B3_Miros=B3aw?= <mirq-linux@rere.qmqm.pl>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
+        David Heidelberg <david@ixit.cz>,
+        Peter Geis <pgwipeout@gmail.com>,
         Ulf Hansson <ulf.hansson@linaro.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>
-Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-pm@vger.kernel.org
-Subject: [PATCH v1] PM: domains: Improve runtime PM performance state handling
-Date:   Mon, 23 Aug 2021 23:24:12 +0300
-Message-Id: <20210823202412.25716-1-digetx@gmail.com>
-X-Mailer: git-send-email 2.32.0
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Ion Agorria <AG0RRIA@yahoo.com>,
+        Svyatoslav Ryhel <clamor95@gmail.com>,
+        linux-tegra@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-efi <linux-efi@vger.kernel.org>
+Subject: Re: [PATCH v6 0/5] Support EFI partition on NVIDIA Tegra devices
+Message-ID: <YSQx0vRrpIGb4OIj@qmqm.qmqm.pl>
+References: <20210818221920.3893-1-digetx@gmail.com>
+ <YSAvnQb29XlhqY7k@qmqm.qmqm.pl>
+ <e35a9053-a793-d189-ff79-04212e1227c2@gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <e35a9053-a793-d189-ff79-04212e1227c2@gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-GENPD core doesn't support handling performance state changes while
-consumer device is runtime-suspended or when runtime PM is disabled.
-GENPD core may override performance state that was configured by device
-driver while RPM of the device was disabled or device was RPM-suspended.
-Let's close that gap by allowing drivers to control performance state
-while RPM of a consumer device is disabled and to set up performance
-state of RPM-suspended device that will be applied by GENPD core on
-RPM-resume of the device.
+On Sat, Aug 21, 2021 at 08:27:15PM +0300, Dmitry Osipenko wrote:
+> 21.08.2021 01:41, Michał Mirosław пишет:
+> > On Thu, Aug 19, 2021 at 01:19:15AM +0300, Dmitry Osipenko wrote:
+> >> This series adds the most minimal EFI partition support for NVIDIA Tegra
+> >> consumer devices, like Android tablets and game consoles, making theirs
+> >> eMMC accessible out-of-the-box using downstream bootloader and mainline
+> >> Linux kernel.  eMMC now works on Acer A500 tablet and Ouya game console
+> >> that are already well supported in mainline and internal storage is the
+> >> only biggest thing left to support.
+> > [...]
+> > 
+> > Could we provide the GPT sector via DT? As I understand this is for
+> > non-removable eMMC storage. It would remove the need for a cap bit and
+> > hardcoded calculations instead just checking if DT node of the controller
+> > contains a magic entry with a number.
+> 
+> The same device model usually comes in different flavors that have a
+> different eMMC unit and size. So no, it can't be hardcoded in DT.
 
-Fixes: 5937c3ce2122 ("PM: domains: Drop/restore performance state votes for devices at runtime PM")
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/base/power/domain.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+I see. I was thinking how to avoid of going the whole way and creating
+another controller capability (since this is going to be core code) -
+could this workaround be enabled just by a boolean DT property at
+controller's node instead? Or do we expect non-DT platforms to be
+similarly broken?
 
-diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-index e1c8994ae225..3a13a942d012 100644
---- a/drivers/base/power/domain.c
-+++ b/drivers/base/power/domain.c
-@@ -435,7 +435,7 @@ static void genpd_restore_performance_state(struct device *dev,
- int dev_pm_genpd_set_performance_state(struct device *dev, unsigned int state)
- {
- 	struct generic_pm_domain *genpd;
--	int ret;
-+	int ret = 0;
- 
- 	genpd = dev_to_genpd_safe(dev);
- 	if (!genpd)
-@@ -446,7 +446,13 @@ int dev_pm_genpd_set_performance_state(struct device *dev, unsigned int state)
- 		return -EINVAL;
- 
- 	genpd_lock(genpd);
--	ret = genpd_set_performance_state(dev, state);
-+	if (pm_runtime_suspended(dev)) {
-+		dev_gpd_data(dev)->rpm_pstate = state;
-+	} else {
-+		ret = genpd_set_performance_state(dev, state);
-+		if (!ret)
-+			dev_gpd_data(dev)->rpm_pstate = 0;
-+	}
- 	genpd_unlock(genpd);
- 
- 	return ret;
--- 
-2.32.0
-
+Best Regards
+Michał Mirosław
