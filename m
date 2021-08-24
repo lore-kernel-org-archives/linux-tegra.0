@@ -2,125 +2,140 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B862C4320A
-	for <linux-tegra@archiver.kernel.org>; Tue, 24 Aug 2021 12:57:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DEF9C4338F
+	for <linux-tegra@archiver.kernel.org>; Tue, 24 Aug 2021 16:06:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F0AF66138B
-	for <linux-tegra@archiver.kernel.org>; Tue, 24 Aug 2021 12:57:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E828A61247
+	for <linux-tegra@archiver.kernel.org>; Tue, 24 Aug 2021 16:06:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233952AbhHXM6d (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 24 Aug 2021 08:58:33 -0400
-Received: from mail-dm6nam11on2065.outbound.protection.outlook.com ([40.107.223.65]:36160
-        "EHLO NAM11-DM6-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S237234AbhHXM6c (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 24 Aug 2021 08:58:32 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=QbxrO/pPhn5zOVakRF32e5RJFH1EE/ia/duydsTbhwPkP9d14DsqYTp49+NNvGXHyDc+dXGUubc1Oq5QnL25n69M/SBAMWNAOBd61mrztMdmaw6vUFeE6+T5QVGs50femcypEwA6/YfWWh+SsqXYoGw5tjjJqscTimVAqs6DzegyvsXsJImiIkejBtOos0v82jANt0r+XBorh7F5AggMRzkku5Nn3i5owajDdd1VT/2bZ5A4HiaXCECmuT0HxUXRnvu4zX2HfKRJG8JSTnAsfVJiBPHJfT+2BJF3AzzSSerEJWbR8SIfaWetjL6j43F+oXMznjvLgissQ3tbXU5Uiw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=W1wxG1M1/0MJkE6JPDCh1Q1JsgdKdoplqLXN1309bmg=;
- b=Z0ZV4qmBw9V0bvBJE71ZQSdvcVF/NnT4aL1+skZFtWxrbn7SmLO2adBGvYv+8Uq9NYXE27yL7iPsyUatdAA1+QTyiVHgLNL6AaT5Gulxw6AgYMW8ShQG7kmUsEfaN6e42wLtQon1Y6DR2qBKJNkM9ETaEbawn6CDizYX3OfqBRIqwUeAx7bWPhSUFZnbS50TMFNp1tAQXrFSdYifu3u8sy7FIDdvXMggQLq+bdIPTUDKkcKL1Fyn1p7orosU5pJF6wVDuK43XujKmC1/jgNd2aVqzl++Qq6ya+3d4rhSjSAznM0p37tV0z9muJ86TMlmvFRuYLYWRSpHiamlGmJw/A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.112.32) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=W1wxG1M1/0MJkE6JPDCh1Q1JsgdKdoplqLXN1309bmg=;
- b=LGhFrPCsmjYZVUn6cPXNgx8UM2SQm+f3A+tWCvj528zl2x1arPJlJnWHpQ3kqc3+LHbaSeKQo2Q/0leHDHliJOsD5nFHVnw9N+tqg6izVCDLmf49FUbi2syLsoC06FQGEFA1cmXySxo4wdXuJe/ajJweEsCBRcq2l6hH93KO4wgLBhObwF0/DjBBkHpWN5IvSeCoMuF7MLJrAiA9MiU8RM7tkeSfh5GHLeUXX2oN8B/TeZjsBUTolwPt3QPRmtIBL1Bu61GQBDdV8LyB/VKvCJQYe+1xWR5lIBVpD3TD3IYJJSjV4KhhuFhqYzn1N1zaPn6Yn/6yOBLwlbnzVKhe2w==
-Received: from MW2PR16CA0056.namprd16.prod.outlook.com (2603:10b6:907:1::33)
- by DM6PR12MB3899.namprd12.prod.outlook.com (2603:10b6:5:149::32) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4436.19; Tue, 24 Aug
- 2021 12:57:47 +0000
-Received: from CO1NAM11FT066.eop-nam11.prod.protection.outlook.com
- (2603:10b6:907:1:cafe::af) by MW2PR16CA0056.outlook.office365.com
- (2603:10b6:907:1::33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4436.19 via Frontend
- Transport; Tue, 24 Aug 2021 12:57:46 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.32)
- smtp.mailfrom=nvidia.com; vger.kernel.org; dkim=none (message not signed)
- header.d=none;vger.kernel.org; dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.112.32 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.112.32; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (216.228.112.32) by
- CO1NAM11FT066.mail.protection.outlook.com (10.13.175.18) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.4436.19 via Frontend Transport; Tue, 24 Aug 2021 12:57:46 +0000
-Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL109.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Tue, 24 Aug
- 2021 05:57:46 -0700
-Received: from audio.nvidia.com (172.20.187.6) by mail.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Tue, 24 Aug 2021 12:57:44 +0000
-From:   Sameer Pujar <spujar@nvidia.com>
-To:     <thierry.reding@gmail.com>, <robh+dt@kernel.org>,
-        <jonathanh@nvidia.com>
-CC:     <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Sameer Pujar <spujar@nvidia.com>
-Subject: [PATCH 2/2] arm64: tegra: Update HDA card name on TX2 NX
-Date:   Tue, 24 Aug 2021 18:26:10 +0530
-Message-ID: <1629809770-7456-3-git-send-email-spujar@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1629809770-7456-1-git-send-email-spujar@nvidia.com>
-References: <1629809770-7456-1-git-send-email-spujar@nvidia.com>
+        id S231143AbhHXQHI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 24 Aug 2021 12:07:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44256 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231454AbhHXQHH (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 24 Aug 2021 12:07:07 -0400
+Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C53FC061757;
+        Tue, 24 Aug 2021 09:06:23 -0700 (PDT)
+Received: by mail-lf1-x12c.google.com with SMTP id y34so46567024lfa.8;
+        Tue, 24 Aug 2021 09:06:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=D11sK5S4u0k92UmGqoMMxhYoHykBWojrgFuEY2ExXmU=;
+        b=j5oO4YKmEtjSrdR/LRj29FWm7ZWscvf0YAlLIfAbyma3i3xrWYkpvj23lq/s4jKLE+
+         DavhkxNmCpeksmEa9ILWNvefGO5sHEir4OmqgbcJHJOUoMNicjxztDcPvd0W6llZqodk
+         iLM3ma7BKISG56oSvWcS2EkPq41rxN5jwXF6P1godZkgsiOAEGOclX4qjzZq6Kf8Tvnk
+         TAACxyA0bO/whCciVK3/tdeWV5EdbIHK9i0gjc6j4qOZNMx+7Mzls9NTzzBIXwRsvp8U
+         CY4mjXdFvKQG9Z6DEm9VZQETRLwTRkE3aKWkkJygXsUGz/Ob2E4kDB89q2XBS4XuMUKd
+         xwyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=D11sK5S4u0k92UmGqoMMxhYoHykBWojrgFuEY2ExXmU=;
+        b=awXpaQRGL3fw/201gd9DQ0AUqCebv243gaFwe+nbUfqrRVTDDUxoSzf5DB61Ltaiki
+         zIOzD022BZgRdnAh0V8bwDhwNJN+AFvuoeJMgHaufngJsRmTombZmLD66LT5HwZj3abr
+         /KfXTi4R1mh8c8g4Yprydl2fqaB25Vl6bsvTRfoa/Nkr62d1MQwQ+hWRJXtlBySE5eQD
+         JEVU4YJ3YIuS/ZVvC/8WbuxXA5BvOiUSLhfXL7OqfEDhLBYqtk8MEn1441oUx4F+XtgV
+         jOHPIAs7wYzgExw9elgZcn4kRkfytoMTl5fFNcnsHKtI0dPfefaWxrcy13/Zudgm6haL
+         yqow==
+X-Gm-Message-State: AOAM531AQRFY++DmUx9jOmsMeLptFjjg4CvKrDXO53wd06eN2dOuvSs6
+        AFvJIRBe8sx6hmBbsM23tgHUMxEztYU=
+X-Google-Smtp-Source: ABdhPJzA1IM5inZCgPtbYZdKRO7U/f1qher0J7t9nwf9UI0Buk/Ky3hyycBUfekwwW2FBGLU2f9KvA==
+X-Received: by 2002:a05:6512:b09:: with SMTP id w9mr12937661lfu.394.1629821181740;
+        Tue, 24 Aug 2021 09:06:21 -0700 (PDT)
+Received: from [192.168.2.145] (46-138-120-72.dynamic.spd-mgts.ru. [46.138.120.72])
+        by smtp.googlemail.com with ESMTPSA id z7sm1787878lft.302.2021.08.24.09.06.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 24 Aug 2021 09:06:20 -0700 (PDT)
+Subject: Re: [PATCH v6 0/5] Support EFI partition on NVIDIA Tegra devices
+To:     =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        David Heidelberg <david@ixit.cz>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Ion Agorria <AG0RRIA@yahoo.com>,
+        Svyatoslav Ryhel <clamor95@gmail.com>,
+        linux-tegra@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-efi <linux-efi@vger.kernel.org>
+References: <20210818221920.3893-1-digetx@gmail.com>
+ <YSAvnQb29XlhqY7k@qmqm.qmqm.pl>
+ <e35a9053-a793-d189-ff79-04212e1227c2@gmail.com>
+ <YSQx0vRrpIGb4OIj@qmqm.qmqm.pl> <YSTMEM8JwwypL8Me@qmqm.qmqm.pl>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <390673a8-f275-fd96-50a3-15db416aa6e6@gmail.com>
+Date:   Tue, 24 Aug 2021 19:06:18 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: aba32b0a-a0c5-48db-088d-08d966fec55d
-X-MS-TrafficTypeDiagnostic: DM6PR12MB3899:
-X-Microsoft-Antispam-PRVS: <DM6PR12MB38992C6CCCC026F6E11752E4A7C59@DM6PR12MB3899.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:68;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: H7YfxKdrq63WmWrqNTSboj9GRdHs+KoEl1nZLR7deizr73/OMAOCPtmkliTfJcHsfoIO9tdpglNFGEK09f5HblauyzBBsSum4mFnxTcJ2UEZ5n2cmZ9PoVeyVTJIB/TBIg9laIbGThjoiCjueLwAIDp02wL3h3NZdl7Zrv2mlnXEJb5JGw6Dk7Gru+U/4dFORe9alO75j9+YX3BV7QsO1rqZkUlfrJiftHWeUCBGqDg3Uko3UIwbBldDJsQ5IOGPba2MkQ7hWsp7AAAm3eqnBpY3c4syxNJd4mjHu98eksl6/peLxWah0mKkVpciO5smunDEp3VzEHD+FgdTqve2AE31d/fcPy7TK8Ud78WZrQ7S0N+ILhF+InbjcIvKJ9qywBLQmwLC0jJgZ+XxyI/8IzbC3sk2RFcOg7kkkxe6MzA4mdNN2+C+MsDyHZ553/AI2pbwmYWhKVcKDXMuEYnpI1zmHNyLrfMqCcMW5+swYtv2osjT4NHcOkHUlWV4ui2r4r4lmfJVt5UMnDeerDwS9fxUIW8VOFSa+TQMitE+oFEQoYzu7401fOrKyAJEBQ1wBlwdOOyOzB7dibdJXWd+FnjI8UUbk9aZS27mc/jlaEf7pg9Z4ilgqLLBKj8YJuaDN4seX/YlvWC68w3vr2Uixj0Y+Et2xkLXb5vv0+Ti8mICnw0IrIXuPB9v0DO2NOWJnIvcYdN3KoyOabRoCk7nZQ==
-X-Forefront-Antispam-Report: CIP:216.228.112.32;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid01.nvidia.com;CAT:NONE;SFS:(4636009)(346002)(136003)(39860400002)(396003)(376002)(36840700001)(46966006)(15650500001)(26005)(47076005)(36756003)(82740400003)(107886003)(8936002)(110136005)(316002)(54906003)(478600001)(186003)(6666004)(356005)(7696005)(36860700001)(7636003)(86362001)(70586007)(83380400001)(426003)(6636002)(82310400003)(2616005)(336012)(2906002)(4744005)(8676002)(4326008)(5660300002)(70206006);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Aug 2021 12:57:46.7111
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: aba32b0a-a0c5-48db-088d-08d966fec55d
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.32];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT066.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB3899
+In-Reply-To: <YSTMEM8JwwypL8Me@qmqm.qmqm.pl>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Inspired by commit b8928c2b5dba ("arm64: tegra: Consolidate audio card
-names"). Based on this update HDA card name on Jetson TX2 NX platform.
+24.08.2021 13:38, Michał Mirosław пишет:
+> On Tue, Aug 24, 2021 at 01:40:02AM +0200, Michał Mirosław wrote:
+>> On Sat, Aug 21, 2021 at 08:27:15PM +0300, Dmitry Osipenko wrote:
+>>> 21.08.2021 01:41, Michał Mirosław пишет:
+>>>> On Thu, Aug 19, 2021 at 01:19:15AM +0300, Dmitry Osipenko wrote:
+>>>>> This series adds the most minimal EFI partition support for NVIDIA Tegra
+>>>>> consumer devices, like Android tablets and game consoles, making theirs
+>>>>> eMMC accessible out-of-the-box using downstream bootloader and mainline
+>>>>> Linux kernel.  eMMC now works on Acer A500 tablet and Ouya game console
+>>>>> that are already well supported in mainline and internal storage is the
+>>>>> only biggest thing left to support.
+>>>> [...]
+>>>>
+>>>> Could we provide the GPT sector via DT? As I understand this is for
+>>>> non-removable eMMC storage. It would remove the need for a cap bit and
+>>>> hardcoded calculations instead just checking if DT node of the controller
+>>>> contains a magic entry with a number.
+>>>
+>>> The same device model usually comes in different flavors that have a
+>>> different eMMC unit and size. So no, it can't be hardcoded in DT.
+>>
+>> I see. I was thinking how to avoid of going the whole way and creating
+>> another controller capability (since this is going to be core code) -
+>> could this workaround be enabled just by a boolean DT property at
+>> controller's node instead? Or do we expect non-DT platforms to be
+>> similarly broken?
+> 
+> Rewording my concern: I believe that this is platform's and not 
+> a controller's misfeature, so the controller driver feels like wrong
+> place fix. That's why I'd prefer that the enable came from the DT
+> and not from driver's code.
 
-Signed-off-by: Sameer Pujar <spujar@nvidia.com>
----
- arch/arm64/boot/dts/nvidia/tegra186-p3509-0000+p3636-0001.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The alternative GPT entry requires user to add 'gpt' argument to
+kernel's cmdline. If board already uses proper alternative GPT entry at
+the last sector, then nothing changed for that board.
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra186-p3509-0000+p3636-0001.dts b/arch/arm64/boot/dts/nvidia/tegra186-p3509-0000+p3636-0001.dts
-index 17fc179..af33fe9 100644
---- a/arch/arm64/boot/dts/nvidia/tegra186-p3509-0000+p3636-0001.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra186-p3509-0000+p3636-0001.dts
-@@ -124,7 +124,7 @@
- 	};
- 
- 	hda@3510000 {
--		nvidia,model = "jetson-tx2-hda";
-+		nvidia,model = "NVIDIA Jetson TX2 NX HDA";
- 		status = "okay";
- 	};
- 
--- 
-2.7.4
+The case where board uses 'gpt' cmdline + it had stale GPT entry at the
+special location used by Android devices and chance that now suddenly
+that GPT entry will pop up is close to zero.
 
+All old partition table entries should be erased on reparation. If it
+wasn't done, then it's not a kernel's problem, it's much more a user's
+problem. Even though kernel could help that poor user if will be really
+needed.
+
+There is no reason to over-engineer unless somebody will tell that it
+broke the very special board. Neither of currently supported boards
+should require more quirks. Hence, why bother?
