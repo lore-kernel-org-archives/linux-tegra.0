@@ -7,127 +7,167 @@ X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF1A2C4320A
-	for <linux-tegra@archiver.kernel.org>; Tue, 24 Aug 2021 07:52:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5B0FC432BE
+	for <linux-tegra@archiver.kernel.org>; Tue, 24 Aug 2021 08:48:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CD0896135F
-	for <linux-tegra@archiver.kernel.org>; Tue, 24 Aug 2021 07:52:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C2833610FF
+	for <linux-tegra@archiver.kernel.org>; Tue, 24 Aug 2021 08:48:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235043AbhHXHvT (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 24 Aug 2021 03:51:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40552 "EHLO
+        id S235245AbhHXItd (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 24 Aug 2021 04:49:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53974 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235010AbhHXHvJ (ORCPT
+        with ESMTP id S235167AbhHXItc (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 24 Aug 2021 03:51:09 -0400
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC27DC061760
-        for <linux-tegra@vger.kernel.org>; Tue, 24 Aug 2021 00:50:25 -0700 (PDT)
-Received: by mail-lf1-x12e.google.com with SMTP id z2so43582247lft.1
-        for <linux-tegra@vger.kernel.org>; Tue, 24 Aug 2021 00:50:25 -0700 (PDT)
+        Tue, 24 Aug 2021 04:49:32 -0400
+Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 772A1C06175F
+        for <linux-tegra@vger.kernel.org>; Tue, 24 Aug 2021 01:48:48 -0700 (PDT)
+Received: by mail-lf1-x131.google.com with SMTP id r9so43910987lfn.3
+        for <linux-tegra@vger.kernel.org>; Tue, 24 Aug 2021 01:48:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=6QO1D4em1C1nHhx4CrZWdcZbA0xiY6t0RyCdsuKnSIc=;
-        b=J+teq1gJxTGcdDdovG62/xyX0zhT90ekovliPz6FUvv+cDrIGlMWqeec3K5DhZKc9b
-         sKzRTQMDvL7dFH9FPd5CtBuQJg+Yl4y2aHt19H1ZJaWGBeM6vKMdd16e3XeygeCCjpwz
-         NZiY7+ewI6hasOprk90Ru4OtMSeauYeCE98rWJRp1keD1ZA9nOf0sBR2SfnGSQWWzcaj
-         R9KJMY2CwAl6NH5DniF+cYgkyI8g7cQ3kPTvSyUA1+NWay+IXQ63Aovfs1ejma4xWtu/
-         gezld7YZjfEnqsbWHNjvm7FZyx1xsix2sDbJjPRzLGU0RwB0mzKXgXdKc0C05/kRKjdc
-         Vxtg==
+        bh=pgm99jwoWBGP1CQEe7me07S8/wRl0MbrDBEScFG6VFo=;
+        b=BSNop3EpKaJN7lPEWCmVApDYjCHtcC92VxTyXH5Ts1S0TS0QOCHG6DisC9r+ld2VTS
+         Jmp7D1QAN48wp0ttG5QokodIRttfXa1glzP2yjcXyXYB3/OKQPGV+1DRrrNaUpXtEoNS
+         OGy1CItbApT/FKNlRqHvPLIk4IXKs3N3QjrjJEUYNrTcpTUg5OuAjzeWN+TeYevfpEpI
+         EVW3i7CwrHobeeADgloBP8RQPEuZL758YYycP0U/O3YgHOeBqQ5mMx2IqD+QdXxefOvi
+         BXI3W/DgN+iljd5w3ywCVJVo9YsoeAcVFB9/AQ5SxNf3b6hlItFNh2G6cVJzLswUGETc
+         cBMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=6QO1D4em1C1nHhx4CrZWdcZbA0xiY6t0RyCdsuKnSIc=;
-        b=R+MLfDgDvUr8RMmFO3BPURHjogQNUdQJ3gZegRG4bGk65k0wJlTJ/et3pw/mL0vwT6
-         IItWo73iKXZ8RcBLT5vDFmt5V6HWNMgJbOgUHPfnleracid+AYYcazufEiCbau6vrdlG
-         +RrNb/yX3yZul3ZyZdzlwqarl25Jz06tM+QtBgDaImrrkrqSRYU5KJuPPpeYKJdkKMj5
-         RZAlyH2iH/Zw2TnKXsJPH6+sgkSf/jBZIs7G+Fn02qqU/BRNTVb5uwtA5cLYk+IAqG4a
-         zI9mJ4q7a64HPljcqPsNVTmfGg6XEOg1WFNYlv9Tp1mTXxRpr2k99cP2pCeEz7EntL41
-         NyoQ==
-X-Gm-Message-State: AOAM530iHokJQLtxZV+aypzyAYGI1JCd/Yll0aJ3d6RBtHYOHQQNsvE1
-        S24Fii4GjmDo27jKzTr0MjwQ+pRV+RfRySX1CJ9DsA==
-X-Google-Smtp-Source: ABdhPJwx4dKcJvjHiOTt9/eKDcemiVgAnjhvJZRoh7bVIfSjwhVemY3ea6OxjbXR0eqxvl8sAu2ZYiMgikuVkG90MF0=
-X-Received: by 2002:ac2:4d1c:: with SMTP id r28mr287872lfi.584.1629791424267;
- Tue, 24 Aug 2021 00:50:24 -0700 (PDT)
+        bh=pgm99jwoWBGP1CQEe7me07S8/wRl0MbrDBEScFG6VFo=;
+        b=sPVHM/b7QCNx2HvYh9XWUfMpgzS1qMJCg7YiZl3qU27nDFIWytq3xqun7N+ImDQ4qQ
+         E1uCKlPDD2vHZju7MpBVNYMjy5l3mTPOZo2k/yGsH4fSOWsEmFHeA8cI+TeNhKiD3Bd4
+         hDe5E7s+Rf/WPEtwaU4OHt2sBxnbEIngK5Z2MOuWuBoxYso/zmFDFBl6Q18cQt1H78TC
+         xelke19JchO8105EzBArHdQ1TCLOIGZohx/fpc3uTrQGe5nVJqonQVHR140d57oIcUt+
+         VlMoDt4vx4S7rCzyGfO9HD1W7HcDZ9Kk9DeWJrC9ZnBE2dO/2w9FREWXj6JWXKqZdqNx
+         ZPKQ==
+X-Gm-Message-State: AOAM532w9mYgdgh1+6G3ZJyp3sMQmPcTTmrM012+XogO2SPl4tjOXvU0
+        GRUyCXhzTmhTm8JfXBfjAX+TBKJQ3uQYnOoO7hVWMA==
+X-Google-Smtp-Source: ABdhPJzKjnsL/v3XOHZfBiuebUr3QaCSPjRKjZ1MjuNxcSeBa/QJg75GzdG+2eShmPb6QjQyrT+EkMoLbh3vc/oQXrY=
+X-Received: by 2002:a19:655e:: with SMTP id c30mr982035lfj.142.1629794926829;
+ Tue, 24 Aug 2021 01:48:46 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210823202412.25716-1-digetx@gmail.com>
-In-Reply-To: <20210823202412.25716-1-digetx@gmail.com>
+References: <20210820004536.15791-1-digetx@gmail.com>
+In-Reply-To: <20210820004536.15791-1-digetx@gmail.com>
 From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Tue, 24 Aug 2021 09:49:47 +0200
-Message-ID: <CAPDyKFpsEMmuF4XzUX=ko4H3iBSu_77_+vozETg9njC94x8goA@mail.gmail.com>
-Subject: Re: [PATCH v1] PM: domains: Improve runtime PM performance state handling
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Date:   Tue, 24 Aug 2021 10:48:10 +0200
+Message-ID: <CAPDyKFpAbLbHPP1R_iLw380Z8AgonrfC-vLBahHo6tKtQh9Fdg@mail.gmail.com>
+Subject: Re: [PATCH v7 0/4] Support EFI partition on NVIDIA Tegra devices
+To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        David Heidelberg <david@ixit.cz>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Ion Agorria <AG0RRIA@yahoo.com>,
+        Svyatoslav Ryhel <clamor95@gmail.com>,
         linux-tegra <linux-tegra@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>
+        linux-block <linux-block@vger.kernel.org>,
+        linux-efi <linux-efi@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, 23 Aug 2021 at 22:25, Dmitry Osipenko <digetx@gmail.com> wrote:
+On Fri, 20 Aug 2021 at 02:45, Dmitry Osipenko <digetx@gmail.com> wrote:
 >
-> GENPD core doesn't support handling performance state changes while
-> consumer device is runtime-suspended or when runtime PM is disabled.
-> GENPD core may override performance state that was configured by device
-> driver while RPM of the device was disabled or device was RPM-suspended.
-> Let's close that gap by allowing drivers to control performance state
-> while RPM of a consumer device is disabled and to set up performance
-> state of RPM-suspended device that will be applied by GENPD core on
-> RPM-resume of the device.
+> This series adds the most minimal EFI partition support for NVIDIA Tegra
+> consumer devices, like Android tablets and game consoles, making theirs
+> eMMC accessible out-of-the-box using downstream bootloader and mainline
+> Linux kernel.  eMMC now works on Acer A500 tablet and Ouya game console
+> that are already well supported in mainline and internal storage is the
+> only biggest thing left to support.
 >
-> Fixes: 5937c3ce2122 ("PM: domains: Drop/restore performance state votes for devices at runtime PM")
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> Changelog:
+>
+> v7: - Added r-b from Christoph Hellwig.
+>
+>     - Added ack from Davidlohr Bueso.
+>
+>     - Renamed MMC_CAP2_ALT_GPT_SECTOR to MMC_CAP2_ALT_GPT_TEGRA,
+>       like it was suggested by Ulf Hansson and Thierry Reding.
+>
+>     - Squashed MMC raw_boot_mult patch into alternative_gpt_sector()
+>       since both now belong to MMC core and it's cleaner to have them
+>       in a single change.
 
+Jens, these changes looks good to me. If you have no objections, feel
+free to queue them via your tree (I don't think there will be any
+conflicts with my mmc tree).
+
+For the series:
 Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-
-Rafael, if not too late, can you please queue this as a fix for v5.14?
-I haven't heard about any regression, but the error is there.
 
 Kind regards
 Uffe
 
-> ---
->  drivers/base/power/domain.c | 10 ++++++++--
->  1 file changed, 8 insertions(+), 2 deletions(-)
 >
-> diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-> index e1c8994ae225..3a13a942d012 100644
-> --- a/drivers/base/power/domain.c
-> +++ b/drivers/base/power/domain.c
-> @@ -435,7 +435,7 @@ static void genpd_restore_performance_state(struct device *dev,
->  int dev_pm_genpd_set_performance_state(struct device *dev, unsigned int state)
->  {
->         struct generic_pm_domain *genpd;
-> -       int ret;
-> +       int ret = 0;
+> v6: - Added comment for the alternative_gpt_sector() callback, which
+>       was asked by Christoph Hellwig.
 >
->         genpd = dev_to_genpd_safe(dev);
->         if (!genpd)
-> @@ -446,7 +446,13 @@ int dev_pm_genpd_set_performance_state(struct device *dev, unsigned int state)
->                 return -EINVAL;
+>     - Changed alternative_gpt_sector() to take disk for the argument
+>       instead of blkdev. This was asked by Christoph Hellwig.
 >
->         genpd_lock(genpd);
-> -       ret = genpd_set_performance_state(dev, state);
-> +       if (pm_runtime_suspended(dev)) {
-> +               dev_gpd_data(dev)->rpm_pstate = state;
-> +       } else {
-> +               ret = genpd_set_performance_state(dev, state);
-> +               if (!ret)
-> +                       dev_gpd_data(dev)->rpm_pstate = 0;
-> +       }
->         genpd_unlock(genpd);
+>     - Dropped mmc_bdops check as it was suggested by Christoph Hellwig.
 >
->         return ret;
+>     - Added missing mmc_blk_put() that was spotted by Christoph Hellwig.
+>
+>     - Moved GPT calculation into MMC core and added MMC_CAP2_ALT_GPT_SECTOR
+>       flag, like it was asked by Ulf Hansson. Me and Thierry have concerns
+>       about whether it's better to have Tegra-specific function in a core
+>       instead of Tegra driver, but it also works, so I decided to try that
+>       variant.
+>
+> v5: - Implemented alternative_gpt_sector() blk/mmc callback that was
+>       suggested by Christoph Hellwig in a comment to v4.
+>
+>     - mmc_bdev_to_card() now checks blk fops instead of the major number,
+>       like it was suggested by Christoph Hellwig in a comment to v4.
+>
+>     - Emailed Rob Herring, which was asked by Ulf Hansson in a comment
+>       to v4. Although the of-match change is gone now in v5, the matching
+>       is transformed into the new SDHCI quirk of the Tegra driver.
+>
+> v4: - Rebased on top of recent linux-next.
+>
+> v3: - Removed unnecessary v1 hunk that was left by accident in efi.c of v2.
+>
+> v2: - This is continuation of [1] where Davidlohr Bueso suggested that it
+>       should be better to avoid supporting in mainline the custom gpt_sector
+>       kernel cmdline parameter that downstream Android kernels use.  We can
+>       do this for the devices that are already mainlined, so I dropped the
+>       cmdline from the v2 and left only the variant with a fixed GPT address.
+>
+> [1] https://lore.kernel.org/linux-efi/20210327212100.3834-3-digetx@gmail.com/T/
+>
+> Dmitry Osipenko (4):
+>   block: Add alternative_gpt_sector() operation
+>   partitions/efi: Support non-standard GPT location
+>   mmc: block: Support alternative_gpt_sector() operation
+>   mmc: sdhci-tegra: Enable MMC_CAP2_ALT_GPT_TEGRA
+>
+>  block/partitions/efi.c         | 12 ++++++++++++
+>  drivers/mmc/core/block.c       | 21 ++++++++++++++++++++
+>  drivers/mmc/core/core.c        | 35 ++++++++++++++++++++++++++++++++++
+>  drivers/mmc/core/core.h        |  2 ++
+>  drivers/mmc/core/mmc.c         |  2 ++
+>  drivers/mmc/host/sdhci-tegra.c |  9 +++++++++
+>  include/linux/blkdev.h         |  7 +++++++
+>  include/linux/mmc/card.h       |  1 +
+>  include/linux/mmc/host.h       |  1 +
+>  9 files changed, 90 insertions(+)
+>
 > --
 > 2.32.0
 >
