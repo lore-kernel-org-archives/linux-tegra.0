@@ -2,85 +2,120 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8902C4338F
-	for <linux-tegra@archiver.kernel.org>; Wed, 25 Aug 2021 16:37:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9195C432BE
+	for <linux-tegra@archiver.kernel.org>; Wed, 25 Aug 2021 18:17:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9B7B161026
-	for <linux-tegra@archiver.kernel.org>; Wed, 25 Aug 2021 16:37:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7C5A7610C9
+	for <linux-tegra@archiver.kernel.org>; Wed, 25 Aug 2021 18:17:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231297AbhHYQi0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 25 Aug 2021 12:38:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36190 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229791AbhHYQi0 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 25 Aug 2021 12:38:26 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 1563860F5C;
-        Wed, 25 Aug 2021 16:37:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1629909460;
-        bh=N72KKszat2eurPq6Rq0lAoXAPysG/3U7/Mw/+e7I324=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=omCp8M1WBd8MHOqFiIUGp0HkP5mgHlX3wnDg2GdzRdfC46d+zijrDdu+ZkgK7hVZI
-         iM/uog3O6yv+2UOR6CLYIyQ8WdIJDmGS/IzQmavks/9uW1xsFOENSuYW6mpBRnogJ+
-         C39dTfoEVo+iXeciXDYTaPqDhxNkfYQEx/IwtKC36aNpPBwaKiLVY3tKCdHyNDspwN
-         IcfMjgOqN5UVwM2+irGa+rAi/WRNDfSkY4q7j4tbyhi9yVuzyVgaXTVytICyMznu34
-         8ioVnYZdBqBzAW2BQK2fKAvPm8EhTeOtoZRqdbxxDGnG2qrLIRpmYJxQJEonFgSgcv
-         k/vh/srhvHd0Q==
-Date:   Wed, 25 Aug 2021 11:37:38 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Baruch Siach <baruch@tkos.co.il>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Selvam Sathappan Periakaruppan <speriaka@codeaurora.org>,
-        Kathiravan T <kathirav@codeaurora.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
+        id S235823AbhHYSSZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 25 Aug 2021 14:18:25 -0400
+Received: from mail-ot1-f48.google.com ([209.85.210.48]:40852 "EHLO
+        mail-ot1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234629AbhHYSSZ (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 25 Aug 2021 14:18:25 -0400
+Received: by mail-ot1-f48.google.com with SMTP id x9-20020a056830278900b0051b8be1192fso117004otu.7;
+        Wed, 25 Aug 2021 11:17:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=LQ0pZPWQx0ZHOI2wEp9wamWoXIMX5iP3PcetWMvFO/g=;
+        b=dfB5DmEN21Ej4e2EzE1d61MTtzQ1UzHOajh3jWqcdgZ3uXcbotd6p7Q83VZtYRavFY
+         dIWwtHAdLkscnop1FE64benYQHo5qvH4Inj1+7lDKWxklfJLaogeiLb2d0EZQzpRDTKH
+         U1rlXPP1taw15SFJlLBD0+n/jZsOB7En7g8FSL9lTfriPhV7GucTJDH739FbNh0juF9V
+         lv18ksyBZOx5pGFzmfGhEUQD/m4HHUJJR4c5NeC6BhV8ZiQ8tyyyvpvVsvKdboTDNnTs
+         8q3YXxIUX/7wDg1S45cjs9qpoMU8rGLzICuKe27RIE4TlWeaSqPlxO7pGwJYUXqUTYwk
+         Mz6Q==
+X-Gm-Message-State: AOAM5307iXD0Kf80VdOO95AnytkbKpBDClAK80mDxvGRA99Y6oL+HyY8
+        fXN4bSbNbVqJtNGOVBGtXWK+8q4DbXwtM0/isDY=
+X-Google-Smtp-Source: ABdhPJxtNO2eegtOegb2C9Yt03ivbvRBEbfYOPZ5oAJGHuLq2dvU7KBgtu/I+X63rKxNNn7CmbZNRKid1WgYS3JRqPI=
+X-Received: by 2002:a9d:a57:: with SMTP id 81mr24725554otg.260.1629915458885;
+ Wed, 25 Aug 2021 11:17:38 -0700 (PDT)
+MIME-Version: 1.0
+References: <20210823202412.25716-1-digetx@gmail.com> <CAPDyKFpsEMmuF4XzUX=ko4H3iBSu_77_+vozETg9njC94x8goA@mail.gmail.com>
+In-Reply-To: <CAPDyKFpsEMmuF4XzUX=ko4H3iBSu_77_+vozETg9njC94x8goA@mail.gmail.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Wed, 25 Aug 2021 20:17:27 +0200
+Message-ID: <CAJZ5v0hox4Y7pQARTTjMkj5TdDkcuKkyeB3=YR3YFnAcGMUJeA@mail.gmail.com>
+Subject: Re: [PATCH v1] PM: domains: Improve runtime PM performance state handling
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Dmitry Osipenko <digetx@gmail.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Robert Marko <robert.marko@sartura.hr>,
-        devicetree@vger.kernel.org, linux-phy@lists.infradead.org,
-        linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v2 2/6] PCI: qcom: add support for IPQ60xx PCIe controller
-Message-ID: <20210825163738.GA3576149@bjorn-Precision-5520>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e17461407cf4bb79fed5925ec81196a0b84e7827.1620203062.git.baruch@tkos.co.il>
+        Kevin Hilman <khilman@kernel.org>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-In subject:
+On Tue, Aug 24, 2021 at 9:51 AM Ulf Hansson <ulf.hansson@linaro.org> wrote:
+>
+> On Mon, 23 Aug 2021 at 22:25, Dmitry Osipenko <digetx@gmail.com> wrote:
+> >
+> > GENPD core doesn't support handling performance state changes while
+> > consumer device is runtime-suspended or when runtime PM is disabled.
+> > GENPD core may override performance state that was configured by device
+> > driver while RPM of the device was disabled or device was RPM-suspended.
+> > Let's close that gap by allowing drivers to control performance state
+> > while RPM of a consumer device is disabled and to set up performance
+> > state of RPM-suspended device that will be applied by GENPD core on
+> > RPM-resume of the device.
+> >
+> > Fixes: 5937c3ce2122 ("PM: domains: Drop/restore performance state votes for devices at runtime PM")
+> > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>
+> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+>
+> Rafael, if not too late, can you please queue this as a fix for v5.14?
+> I haven't heard about any regression, but the error is there.
 
-s/add support/Add support/ to match previous history.
+Done, thanks!
 
-On Wed, May 05, 2021 at 12:18:30PM +0300, Baruch Siach wrote:
-> From: Selvam Sathappan Periakaruppan <speriaka@codeaurora.org>
-> 
-> IPQ60xx series of SoCs have one port of PCIe gen 3. Add support for that
-> platform.
-> 
-> The code is based on downstream Codeaurora kernel v5.4. Split out the
-> DBI registers access part from .init into .post_init. DBI registers are
-> only accessible after phy_power_on().
 
-The "downstream Codeaurora kernel v5.4" reference would be more useful
-if there were a URL reference to that driver.
-
-> +#define AXI_CLK_RATE				200000000
-> +#define RCHNG_CLK_RATE				100000000
-
-These are unused.
-
-> +	for (i = 0;i < 256;i++)
-
-Add spaces after semicolons.
+> > ---
+> >  drivers/base/power/domain.c | 10 ++++++++--
+> >  1 file changed, 8 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
+> > index e1c8994ae225..3a13a942d012 100644
+> > --- a/drivers/base/power/domain.c
+> > +++ b/drivers/base/power/domain.c
+> > @@ -435,7 +435,7 @@ static void genpd_restore_performance_state(struct device *dev,
+> >  int dev_pm_genpd_set_performance_state(struct device *dev, unsigned int state)
+> >  {
+> >         struct generic_pm_domain *genpd;
+> > -       int ret;
+> > +       int ret = 0;
+> >
+> >         genpd = dev_to_genpd_safe(dev);
+> >         if (!genpd)
+> > @@ -446,7 +446,13 @@ int dev_pm_genpd_set_performance_state(struct device *dev, unsigned int state)
+> >                 return -EINVAL;
+> >
+> >         genpd_lock(genpd);
+> > -       ret = genpd_set_performance_state(dev, state);
+> > +       if (pm_runtime_suspended(dev)) {
+> > +               dev_gpd_data(dev)->rpm_pstate = state;
+> > +       } else {
+> > +               ret = genpd_set_performance_state(dev, state);
+> > +               if (!ret)
+> > +                       dev_gpd_data(dev)->rpm_pstate = 0;
+> > +       }
+> >         genpd_unlock(genpd);
+> >
+> >         return ret;
+> > --
+> > 2.32.0
+> >
