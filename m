@@ -2,145 +2,207 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37E6BC4338F
-	for <linux-tegra@archiver.kernel.org>; Wed, 25 Aug 2021 10:24:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6219C4320A
+	for <linux-tegra@archiver.kernel.org>; Wed, 25 Aug 2021 11:25:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 193DC60FE6
-	for <linux-tegra@archiver.kernel.org>; Wed, 25 Aug 2021 10:24:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B57161153
+	for <linux-tegra@archiver.kernel.org>; Wed, 25 Aug 2021 11:25:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238820AbhHYKYs (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 25 Aug 2021 06:24:48 -0400
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:52256
-        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S237180AbhHYKYs (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 25 Aug 2021 06:24:48 -0400
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com [209.85.128.72])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        id S239022AbhHYL0Z (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 25 Aug 2021 07:26:25 -0400
+Received: from guitar.tcltek.co.il ([192.115.133.116]:43653 "EHLO
+        mx.tkos.co.il" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S236784AbhHYL0Y (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 25 Aug 2021 07:26:24 -0400
+Received: from tarshish (unknown [10.0.8.2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id D01AE4077E
-        for <linux-tegra@vger.kernel.org>; Wed, 25 Aug 2021 10:24:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1629887041;
-        bh=qYITTzx6yoJ6ZEWqnLVDWr60hdYOB+VLMXO/GfrPW6E=;
-        h=To:Cc:References:From:Subject:Message-ID:Date:MIME-Version:
-         In-Reply-To:Content-Type;
-        b=bBDFlLh/FVbPtyzH626a+rWYco4PA6F+ggcREJ3813qbh8SND9LZKTWK4u9UkZjVm
-         XINbDuaR6aFZc6qVYGbcLrKo8wL183daMaoDXfuK7CjCwFpvcqafckSzMs/2DyelyH
-         l4rOEV1hkmBbbEF2710698QHWMjn15+yOtKy+JDt8HLjHI8KWGr5ZrttLzmBU6HBu/
-         +Z3cwp+ckMu5oJOrkzOBfGl5fWRSOaVUt8nEunh7xIYwDZLZ+GDaSbwhDcQIqDrU8l
-         mTqeuYLZwj2KEZA+s0O03x6JkUoEHR8LO8hE5CyMf/+auWkNt3lsiWzF/sY1ANW/F5
-         5Bp2+zaoO5h7g==
-Received: by mail-wm1-f72.google.com with SMTP id y188-20020a1c7dc5000000b002e80e0b2f87so2659986wmc.1
-        for <linux-tegra@vger.kernel.org>; Wed, 25 Aug 2021 03:24:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:from:subject:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=qYITTzx6yoJ6ZEWqnLVDWr60hdYOB+VLMXO/GfrPW6E=;
-        b=gcvnGYo1eRluruV6UhxZmrs+qUEAlHgvYRh7ygHyGk0/JMRrQTsGGQ9I2m7b/83+qO
-         hAc104li5H4fIHXSv6Vd2C0BaItsdTlr1NCcu+MUE6g1kSXuTD7rS3iCfydG7E2IbhhV
-         +6Kx7ncQmdwtM45QPbJHxaTob3Kp3rLYgkeTzN21OVTb/FsxeYP+cSC39zUX5QVRKdpy
-         b7IixV6mJU29BXdcLMNvUWM6SJxjenA/ucDyZs+Ub2TclI7QCUMDADVil9zcNRWAbSXH
-         CC2UVy53+NEtmpt60lZu4u/lW3D5W66nzedhwgHJwdwrYU88zLdZqmfxBwUcBbLt1JkN
-         9Lfg==
-X-Gm-Message-State: AOAM532HciAQvTmtjVmKE4nagBnd13dvWUjcAA8zy1K8wG0ShLE2z9AW
-        R2cx5IbMcCBILdBat8vbc8zcW0ghBqQYqf0pjYor+n2dXyvrUvNHm7V+0pMcwLvT/Elj8WHOxY0
-        33xaqzwRtLvG6UNX/5GbOWBDXGBXRvKdNAW76srSA
-X-Received: by 2002:a05:600c:2186:: with SMTP id e6mr8343928wme.71.1629887041300;
-        Wed, 25 Aug 2021 03:24:01 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJzZl4aXEEOHtVrDkJpoJdrZEGBLxXtojjTiCSLJimIRXhBRaRAZsLhEFLPW4n3A7i3jPsLicw==
-X-Received: by 2002:a05:600c:2186:: with SMTP id e6mr8343908wme.71.1629887041135;
-        Wed, 25 Aug 2021 03:24:01 -0700 (PDT)
-Received: from [192.168.0.103] ([79.98.113.15])
-        by smtp.gmail.com with ESMTPSA id o21sm5225953wms.32.2021.08.25.03.24.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 25 Aug 2021 03:24:00 -0700 (PDT)
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     CGEL <cgel.zte@gmail.com>,
+        by mx.tkos.co.il (Postfix) with ESMTPS id D860E440E17;
+        Wed, 25 Aug 2021 14:25:28 +0300 (IDT)
+References: <cover.1620203062.git.baruch@tkos.co.il>
+ <e17461407cf4bb79fed5925ec81196a0b84e7827.1620203062.git.baruch@tkos.co.il>
+ <CAL_JsqKOGo4eXKA7FZK7AQQ24MDDbg2-ngUQF9CJK=8eH_pxHQ@mail.gmail.com>
+User-agent: mu4e 1.6.3; emacs 27.1
+From:   Baruch Siach <baruch@tkos.co.il>
+To:     Rob Herring <robh+dt@kernel.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Selvam Sathappan Periakaruppan <speriaka@codeaurora.org>,
+        Kathiravan T <kathirav@codeaurora.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Vinod Koul <vkoul@kernel.org>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        Jing Yangyang <jing.yangyang@zte.com.cn>,
-        Zeal Robot <zealci@zte.com.cn>
-References: <20210825063739.70260-1-deng.changcheng@zte.com.cn>
- <344b7b12-4134-883c-1e0a-cdab7800067f@canonical.com>
- <20210825100149.GR7722@kadam>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Subject: Re: [PATCH linux-next] memory:tegra210-emc-core: replace
- DEFINE_SIMPLE_ATTRIBUTE with DEFINE_DEBUGFS_ATTRIBUTE
-Message-ID: <b6d32023-e3ac-3ccc-e683-076768124bde@canonical.com>
-Date:   Wed, 25 Aug 2021 12:23:59 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        Jingoo Han <jingoohan1@gmail.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Robert Marko <robert.marko@sartura.hr>,
+        devicetree@vger.kernel.org, linux-phy@lists.infradead.org,
+        PCI <linux-pci@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH v2 2/6] PCI: qcom: add support for IPQ60xx PCIe controller
+Date:   Wed, 25 Aug 2021 14:15:38 +0300
+In-reply-to: <CAL_JsqKOGo4eXKA7FZK7AQQ24MDDbg2-ngUQF9CJK=8eH_pxHQ@mail.gmail.com>
+Message-ID: <87o89lahqp.fsf@tarshish>
 MIME-Version: 1.0
-In-Reply-To: <20210825100149.GR7722@kadam>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 25/08/2021 12:01, Dan Carpenter wrote:
-> On Wed, Aug 25, 2021 at 11:45:58AM +0200, Krzysztof Kozlowski wrote:
->> On 25/08/2021 08:37, CGEL wrote:
->>> From: Jing Yangyang <jing.yangyang@zte.com.cn>
->>>
->>> Fix the following coccicheck warning:
->>> ./drivers/memory/tegra/tegra210-emc-core.c:1665:0-23:WARNING
->>> tegra210_emc_debug_min_rate_fops should be defined
->>>  with DEFINE_DEBUGFS_ATTRIBUTE
->>> ./drivers/memory/tegra/tegra210-emc-core.c:1726:0-23:WARNING
->>> tegra210_emc_debug_temperature_fops should be defined
->>>  with DEFINE_DEBUGFS_ATTRIBUTE
+Hi Rob,
+
+On Fri, Aug 06 2021, Rob Herring wrote:
+> On Wed, May 5, 2021 at 3:18 AM Baruch Siach <baruch@tkos.co.il> wrote:
 >>
->> Thanks for the patch.
+>> From: Selvam Sathappan Periakaruppan <speriaka@codeaurora.org>
 >>
->> One error message is enough. They are the same.
+>> IPQ60xx series of SoCs have one port of PCIe gen 3. Add support for that
+>> platform.
 >>
->>>
->>> Reported-by: Zeal Robot <zealci@zte.com.cn>
+>> The code is based on downstream Codeaurora kernel v5.4. Split out the
+>> DBI registers access part from .init into .post_init. DBI registers are
+>> only accessible after phy_power_on().
 >>
->> Where is the report? We work here in a public, so if there is a report I
->> assume we can reach it? In case the report does not exist, anyone can
->> run checkpatch, coccinelle, smatch and sparse, so how does this differs
->> from me running checkpatch?
-> 
-> Someone asked for these tags when it was Huawei sending patches from
-> the Hulk Robot so no everyone adds them and Hulk Robot is the #1 bug
-> reporter.  Hulk Robot just crossed the 2000 tag mark recently.
+>> Signed-off-by: Selvam Sathappan Periakaruppan <speriaka@codeaurora.org>
+>> Signed-off-by: Baruch Siach <baruch@tkos.co.il>
+>> ---
+>> v2:
+>>   * Drop ATU configuration; rely on common code instead
+>>
+>>   * Use more common register macros
+>>
+>>   * Use bulk clk and reset APIs
+>> ---
+>>  drivers/pci/controller/dwc/pcie-designware.h |   1 +
+>>  drivers/pci/controller/dwc/pcie-qcom.c       | 150 +++++++++++++++++++
+>>  2 files changed, 151 insertions(+)
+>>
+>> diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
+>> index ceb359b6e6a6..346462c74a3e 100644
+>> --- a/drivers/pci/controller/dwc/pcie-designware.h
+>> +++ b/drivers/pci/controller/dwc/pcie-designware.h
+>> @@ -76,6 +76,7 @@
+>>
+>>  #define GEN3_RELATED_OFF                       0x890
+>>  #define GEN3_RELATED_OFF_GEN3_ZRXDC_NONCOMPL   BIT(0)
+>> +#define GEN3_RELATED_OFF_RXEQ_RGRDLESS_RXTS    BIT(13)
+>>  #define GEN3_RELATED_OFF_GEN3_EQ_DISABLE       BIT(16)
+>>  #define GEN3_RELATED_OFF_RATE_SHADOW_SEL_SHIFT 24
+>>  #define GEN3_RELATED_OFF_RATE_SHADOW_SEL_MASK  GENMASK(25, 24)
+>> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
+>> index 8a7a300163e5..93766aee3e7c 100644
+>> --- a/drivers/pci/controller/dwc/pcie-qcom.c
+>> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
+>> @@ -52,6 +52,10 @@
+>>  #define PCIE20_PARF_DBI_BASE_ADDR              0x168
+>>  #define PCIE20_PARF_SLV_ADDR_SPACE_SIZE                0x16C
+>>  #define PCIE20_PARF_MHI_CLOCK_RESET_CTRL       0x174
+>> +#define AHB_CLK_EN                             BIT(0)
+>> +#define MSTR_AXI_CLK_EN                                BIT(1)
+>> +#define BYPASS                                 BIT(4)
+>> +
+>>  #define PCIE20_PARF_AXI_MSTR_WR_ADDR_HALT      0x178
+>>  #define PCIE20_PARF_AXI_MSTR_WR_ADDR_HALT_V2   0x1A8
+>>  #define PCIE20_PARF_LTSSM                      0x1B0
+>> @@ -94,6 +98,12 @@
+>>  #define SLV_ADDR_SPACE_SZ                      0x10000000
+>>
+>>  #define PCIE20_LNK_CONTROL2_LINK_STATUS2       0xa0
+>> +#define PCIE_CAP_CURR_DEEMPHASIS               BIT(16)
+>
+> Isn't this a standard register field?
 
-Yes, I know, my questions where rather rhetorical. :) Hulk Robot reports
-are ridiculous, in my opinion.
+I don't know. I could not find any reference to this field or the
+registers it's part of.
+n
+>> +#define SPEED_GEN1                             0x1
+>> +#define SPEED_GEN2                             0x2
+>> +#define SPEED_GEN3                             0x3
+>
+> And these?
+>
+> There's already some common DWC code for setting the link speed.
 
-The tool (checkpatch) used to detect warning is public, so from
-community perspective this does not differ from John Smith sending a fix
-for a checkpatch issue.
-However I do not expect tags like:
-  From: John Smith
-  ...
-  Reported-by: John Smith
-  Signed-off-by: John Smith
+dw_pcie_link_set_max_speed() deals with other registers, as far as I can
+see.
 
-How does it look? Neither I expect some unknown, hidden, secret reports
-like:
-  Reported-by: foo bar
-  Signed-off-by: John Smith
+>> +#define AXI_CLK_RATE                           200000000
+>> +#define RCHNG_CLK_RATE                         100000000
+>>
+>>  #define DEVICE_TYPE_RC                         0x4
 
-Simply the credit of running the tool (e.g. checkpatch) is already in
-the patch authorship. The Reported-by is for crediting additional work
-related to the report.
+[snip]
 
-No report, no credit. Otherwise the value of Reported-by cease to exist...
+>> +static int qcom_pcie_post_init_2_9_0(struct qcom_pcie *pcie)
+>> +{
+>> +       struct dw_pcie *pci = pcie->pci;
+>> +       u16 offset = dw_pcie_find_capability(pci, PCI_CAP_ID_EXP);
+>> +       u32 val;
+>> +       int i;
+>> +
+>> +       writel(SLV_ADDR_SPACE_SZ,
+>> +               pcie->parf + PCIE20_v3_PARF_SLV_ADDR_SPACE_SIZE);
+>> +
+>> +       val = readl(pcie->parf + PCIE20_PARF_PHY_CTRL);
+>> +       val &= ~BIT(0);
+>> +       writel(val, pcie->parf + PCIE20_PARF_PHY_CTRL);
+>> +
+>> +       writel(0, pcie->parf + PCIE20_PARF_DBI_BASE_ADDR);
+>> +
+>> +       writel(DEVICE_TYPE_RC, pcie->parf + PCIE20_PARF_DEVICE_TYPE);
+>> +       writel(BYPASS | MSTR_AXI_CLK_EN | AHB_CLK_EN,
+>> +               pcie->parf + PCIE20_PARF_MHI_CLOCK_RESET_CTRL);
+>> +       writel(GEN3_RELATED_OFF_RXEQ_RGRDLESS_RXTS
+>> +               | GEN3_RELATED_OFF_GEN3_ZRXDC_NONCOMPL,
+>> +               pci->dbi_base + GEN3_RELATED_OFF);
+>> +
+>> +       writel(MST_WAKEUP_EN | SLV_WAKEUP_EN | MSTR_ACLK_CGC_DIS
+>> +               | SLV_ACLK_CGC_DIS | CORE_CLK_CGC_DIS |
+>> +               AUX_PWR_DET | L23_CLK_RMV_DIS | L1_CLK_RMV_DIS,
+>> +               pcie->parf + PCIE20_PARF_SYS_CTRL);
+>> +
+>> +       writel(0, pcie->parf + PCIE20_PARF_Q2A_FLUSH);
+>> +
+>> +       dw_pcie_dbi_ro_wr_en(pci);
+>> +       writel(PCIE_CAP_LINK1_VAL, pci->dbi_base + offset + PCI_EXP_SLTCAP);
+>> +
+>> +       /* Configure PCIe link capabilities for ASPM */
+>> +       val = readl(pci->dbi_base + offset + PCI_EXP_LNKCAP);
+>> +       val &= ~PCI_EXP_LNKCAP_ASPMS;
+>> +       writel(val, pci->dbi_base + offset + PCI_EXP_LNKCAP);
+>> +
+>> +       writel(PCI_EXP_DEVCTL2_COMP_TMOUT_DIS, pci->dbi_base + offset +
+>> +                       PCI_EXP_DEVCTL2);
+>> +
+>> +       writel(PCIE_CAP_CURR_DEEMPHASIS | SPEED_GEN3,
+>> +                       pci->dbi_base + offset + PCI_EXP_DEVCTL2);
+>
+> Doesn't this overwrite the prior register write?
 
-Best regards,
-Krzysztof
+It does. There are two mistakes here. The writel() above should set
+PCIE20_DEVICE_CONTROL2_STATUS2 (offset 0x98). This writel() should set
+PCIE20_LNK_CONTROL2_LINK_STATUS2 (offset 0xa0). So both are wrong.
+
+>> +
+>> +       for (i = 0;i < 256;i++)
+>> +               writel(0x0, pcie->parf + PCIE20_PARF_BDF_TO_SID_TABLE_N
+>> +                               + (4 * i));
+>> +
+>> +       return 0;
+>> +}
+
+Thanks,
+baruch
+
+-- 
+                                                     ~. .~   Tk Open Systems
+=}------------------------------------------------ooO--U--Ooo------------{=
+   - baruch@tkos.co.il - tel: +972.52.368.4656, http://www.tkos.co.il -
