@@ -2,139 +2,111 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08A50C432BE
-	for <linux-tegra@archiver.kernel.org>; Thu, 26 Aug 2021 02:55:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DAE0C432BE
+	for <linux-tegra@archiver.kernel.org>; Fri, 27 Aug 2021 01:37:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D9025600CD
-	for <linux-tegra@archiver.kernel.org>; Thu, 26 Aug 2021 02:55:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 63FDB60FC1
+	for <linux-tegra@archiver.kernel.org>; Fri, 27 Aug 2021 01:37:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238016AbhHZC4m (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 25 Aug 2021 22:56:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42534 "EHLO
+        id S243918AbhH0Bio (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 26 Aug 2021 21:38:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43024 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232441AbhHZC4m (ORCPT
+        with ESMTP id S231481AbhH0Bio (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 25 Aug 2021 22:56:42 -0400
-Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF6C9C0613CF
-        for <linux-tegra@vger.kernel.org>; Wed, 25 Aug 2021 19:55:55 -0700 (PDT)
-Received: by mail-pj1-x1034.google.com with SMTP id 28-20020a17090a031cb0290178dcd8a4d1so5117487pje.0
-        for <linux-tegra@vger.kernel.org>; Wed, 25 Aug 2021 19:55:55 -0700 (PDT)
+        Thu, 26 Aug 2021 21:38:44 -0400
+Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36903C061757;
+        Thu, 26 Aug 2021 18:37:56 -0700 (PDT)
+Received: by mail-lf1-x135.google.com with SMTP id x27so10991607lfu.5;
+        Thu, 26 Aug 2021 18:37:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=XZJy3B7m2q1WQYxMFNJqVt+qoddOU66BMzkNgwutOWg=;
-        b=BqMyQF/pRrF5xvz5gMLvg1PjbQE0frktW1h8fThSOxAyiiCfj3dL0xTey26htEbkAU
-         qVk4YC/4pxXxGHnr1GTo9bAoMJ4eX1tti5O7V1wnRrIafIwyVqmUZ2m6I0wxB2W1enrU
-         HYOhVAex2Ke6zlvt61UNmgKkPh0dFb29lz983ZdH0aQ73RTHtAt7M1/VCP+x5TO9AjAI
-         IJ3QFiGrCxXaLSKuBsbiYJZ42RDh74ChanCbedOwOUd6kuh7jO/uAx7AqCUeER3jlnSQ
-         JtlHN1LIH4ywCIyB5pTCzFG5gUqpfLooaOTxS3rQYlWnLCOQf96ZEpwgb/6YUmVVCCWa
-         uEzw==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=IUmWVwWoAUbYJXKv2uQqUajLZbxGXscHex9Izfr6lxE=;
+        b=nmWYP+2B4emQnIRAIpGYgl8CTo3uQOe6MWttJgK1JqN1Sl9p7Ru55pFrEogPMCQCY1
+         +ErDQ7UrQhphvl1jYqfNOV7jPx6nE6MGGSMfG6vf3JTOtUD4JsxqJbBpqq4H8plmLWFB
+         4rDSUVu2q4VZwhriLcJmGw+QMIB3E3NNAoHtkqqfhddlDEjADpICArF9Fc3vilMrT7/Y
+         juVuzCwA+GSqXhmIiFNYU1yGc01myVgz7uLOyJqNd8vvtJjpcbi3SudS79gCDL8ivtwS
+         hw24ncYnHLhKmTIlCkTpPfSypWZ2blZCV5PFZWVhjrWJGfUeU1zA/JROzUXCDqkEkNzF
+         2DZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=XZJy3B7m2q1WQYxMFNJqVt+qoddOU66BMzkNgwutOWg=;
-        b=GnmyJg9+Jo4PsAW+LuJ6lcpciLYFPUZeofdF9tZHmhaDEABM/xG2i2V586vGhaNHU+
-         364ttfhqR/j3ih5CNbA07xwPmeS3693mp3LMuh1iUbVTWsmaNzc8sodpseK9BYk3k4CD
-         N5HtV2mlycPMxP6kXU+1W2/noBh0MX4q6nRpmjhKlqNiUemQcL7Utnai4RaQ0/n7rPxm
-         4iNxbLvcidaFL/WEHrqm2CJX3/n3hWr5r62AzvXGXFrCD4czDM3lsByUwmaF+kSwsz3E
-         o/rT8gzQNbFt8/YRq3Iqe6w+81wdkYRFDMJXRSt/tj+nViRREkgrvOSeH8q4OPY09rYC
-         XyZA==
-X-Gm-Message-State: AOAM530UHP8YXup2q7Yuq0LLxVSi5pObhYUER30DPFN0yPHUDmOnNH2A
-        pAJAvS6NxSfK0UBI5PtKOEu8qA==
-X-Google-Smtp-Source: ABdhPJxp/UrPyXCwFMVDb4P8xsIyAd9gtXZ72kFLG9qw2YDutl/4rgLBxJGBT6WkpyrCaGfD2F0KiA==
-X-Received: by 2002:a17:90b:3144:: with SMTP id ip4mr14265346pjb.22.1629946555282;
-        Wed, 25 Aug 2021 19:55:55 -0700 (PDT)
-Received: from localhost ([122.172.201.85])
-        by smtp.gmail.com with ESMTPSA id 22sm1308517pgn.88.2021.08.25.19.55.54
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=IUmWVwWoAUbYJXKv2uQqUajLZbxGXscHex9Izfr6lxE=;
+        b=EDW+CyjT1LsVORP5RavUB4yl8EmCdCqYR1YPXzlDtFI/WQMiWLdesg3SVC9wpMIIhw
+         3TBcg4OwfmiNyohnljTmEH+q5HzO/d5H6h6uPK5pk1cloISyszbHiJNW7RsDwabbqIcw
+         6ETdN3/ZXA9SHHjxeOOgjMfxLwSNN0BKjN9D1U6ZUB5TgS5JMN4C06jHPy/9dnmb7+Ei
+         LfWeJqX7kZou+5zzZ3TJlhLe+bnSRyNfttWX59eIPZISDSVDPmBb1dNb+RUXEzHBShEa
+         3NwP6drKwWZtKnNgJpnbRUoGHB9sQbbuTeIm+bXYMWl+tCLAYPv6tnBEc4MLZT3tGHJp
+         zV+A==
+X-Gm-Message-State: AOAM533kwh/P5FNNfGG9+OrgVhkiOtq8BxjYss2yGMKtc0vJTruS4YyF
+        fgUHyZbop9dLvBE2Ot0nAgI=
+X-Google-Smtp-Source: ABdhPJyYXSVBc9MTcKidwSkHdYCNlqYYFWeCajI7avxHy44F7pjY++jRR+lVHnqmpB6n1aHNTegLuQ==
+X-Received: by 2002:a05:6512:752:: with SMTP id c18mr4815761lfs.346.1630028274590;
+        Thu, 26 Aug 2021 18:37:54 -0700 (PDT)
+Received: from localhost.localdomain (94-29-17-251.dynamic.spd-mgts.ru. [94.29.17.251])
+        by smtp.gmail.com with ESMTPSA id y3sm494289lfa.240.2021.08.26.18.37.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Aug 2021 19:55:54 -0700 (PDT)
-Date:   Thu, 26 Aug 2021 08:25:50 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
+        Thu, 26 Aug 2021 18:37:54 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
         Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Peter Chen <peter.chen@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>, Nishanth Menon <nm@ti.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Richard Weinberger <richard@nod.at>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Lucas Stach <dev@lynxeye.de>, Stefan Agner <stefan@agner.ch>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux USB List <linux-usb@vger.kernel.org>,
-        linux-staging@lists.linux.dev, linux-spi@vger.kernel.org,
-        linux-pwm@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        DTML <devicetree@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v8 01/34] opp: Add dev_pm_opp_sync() helper
-Message-ID: <20210826025550.sshd7xl3gsuendoi@vireshk-i7>
-References: <CAPDyKFrZqWtZOp4MwDN6fShoLLbw5NM039bpE3-shB+fCEZOog@mail.gmail.com>
- <20210818091417.dvlnsxlgybdsn76x@vireshk-i7>
- <CAPDyKFrVxhrWGr2pKduehshpLFd_db2NTPGuD7fSqvuHeyzT4w@mail.gmail.com>
- <f1314a47-9e8b-58e1-7c3f-0afb1ec8e70a@gmail.com>
- <20210819061617.r4kuqxafjstrv3kt@vireshk-i7>
- <CAPDyKFpg8ixT4AEjzVLTwQR7Nn9CctjnLCDS5GwkOrAERquyxw@mail.gmail.com>
- <20210820051843.5mueqpnjbqt3zdzc@vireshk-i7>
- <b887de8c-a40b-a62e-8abf-698e67cdb70c@gmail.com>
- <ed70e422-e0e9-8c2a-7ce6-e39cb6fd8108@gmail.com>
- <20210826025427.exdinwkuavyfcp3f@vireshk-i7>
+        Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>
+Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-pm@vger.kernel.org
+Subject: [PATCH v9 0/8] NVIDIA Tegra power management patches for 5.16
+Date:   Fri, 27 Aug 2021 04:34:07 +0300
+Message-Id: <20210827013415.24027-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210826025427.exdinwkuavyfcp3f@vireshk-i7>
-User-Agent: NeoMutt/20180716-391-311a52
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 26-08-21, 08:24, Viresh Kumar wrote:
-> On 25-08-21, 18:41, Dmitry Osipenko wrote:
-> > Thinking a bit more about this, I got a nicer variant which actually works in all cases for Tegra.
-> > 
-> > Viresh / Ulf, what do you think about this:
-> 
-> This is what I have been suggesting from day 1 :)
-> 
-> https://lore.kernel.org/linux-staging/20210818055849.ybfajzu75ecpdrbn@vireshk-i7/
-> 
->  "
->   And if it is all about just syncing the genpd core, then can the
->   genpd core do something like what clk framework does? i.e. allow a
->   new optional genpd callback, get_performance_state() (just like
->   set_performance_state()), which can be called initially by the core
->   to get the performance to something other than zero.
->  "
-> 
-> Looks good to me :)
+This is a reduced version of the patchset which adds power management
+support to NVIDIA Tegra drivers. Viresh Kumar asked to send these PD/OPP
+patches separately for now to reduce the noise and finalize the review.
 
-When you refresh this stuff, please send only 3-4 patches to update
-the core stuff and show an example. Once we finalize with the
-interface, you can update all the users. Else this is just noise for
-everyone else.
+I implemented new get_performance_state() GENPD callback as was discussed
+in v8. GR3D driver patch shows how it's used by consumer drivers, which
+is a good example because 3d driver supports both cases of a single and
+multi-domain hardware, it also uses OPP API more extensively than other
+drivers.
+
+Dmitry Osipenko (8):
+  opp: Add dev_pm_opp_from_clk_rate()
+  opp: Allow dev_pm_opp_set_clkname() to replace released clock
+  opp: Change type of dev_pm_opp_attach_genpd(names) argument
+  PM: domains: Add get_performance_state() callback
+  soc/tegra: pmc: Implement get_performance_state() callback
+  soc/tegra: Add devm_tegra_core_dev_init_opp_table_simple()
+  gpu: host1x: Add host1x_channel_stop()
+  drm/tegra: gr3d: Support generic power domain and runtime PM
+
+ drivers/base/power/domain.c  |  32 ++-
+ drivers/gpu/drm/tegra/gr3d.c | 384 ++++++++++++++++++++++++++++++-----
+ drivers/gpu/host1x/channel.c |   8 +
+ drivers/opp/core.c           |  50 ++++-
+ drivers/soc/tegra/pmc.c      |  86 ++++++++
+ include/linux/host1x.h       |   1 +
+ include/linux/pm_domain.h    |   2 +
+ include/linux/pm_opp.h       |  14 +-
+ include/soc/tegra/common.h   |  13 ++
+ 9 files changed, 522 insertions(+), 68 deletions(-)
 
 -- 
-viresh
+2.32.0
+
