@@ -8,61 +8,61 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00C38C432BE
-	for <linux-tegra@archiver.kernel.org>; Fri, 27 Aug 2021 13:23:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6127DC41537
+	for <linux-tegra@archiver.kernel.org>; Fri, 27 Aug 2021 13:23:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D9A1460FC4
-	for <linux-tegra@archiver.kernel.org>; Fri, 27 Aug 2021 13:23:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4BA1860F91
+	for <linux-tegra@archiver.kernel.org>; Fri, 27 Aug 2021 13:23:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245433AbhH0NYh (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 27 Aug 2021 09:24:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33814 "EHLO
+        id S245213AbhH0NYk (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 27 Aug 2021 09:24:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33836 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245172AbhH0NYh (ORCPT
+        with ESMTP id S245438AbhH0NYj (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 27 Aug 2021 09:24:37 -0400
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74E7DC061757
-        for <linux-tegra@vger.kernel.org>; Fri, 27 Aug 2021 06:23:48 -0700 (PDT)
-Received: by mail-wr1-x436.google.com with SMTP id h13so10453771wrp.1
-        for <linux-tegra@vger.kernel.org>; Fri, 27 Aug 2021 06:23:48 -0700 (PDT)
+        Fri, 27 Aug 2021 09:24:39 -0400
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 972FDC061796
+        for <linux-tegra@vger.kernel.org>; Fri, 27 Aug 2021 06:23:50 -0700 (PDT)
+Received: by mail-wm1-x334.google.com with SMTP id g138so3871476wmg.4
+        for <linux-tegra@vger.kernel.org>; Fri, 27 Aug 2021 06:23:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=LbELmXWMHSKxwOrAgarH0W+SEsR9r8MnvJdNy39oRdg=;
-        b=o9G0iOloJd+JvRzjTnGgsRAw9tI7iwnE06qhQJ13YkFcBlSYN6eD3LdpA4Ib/9+91V
-         g4g4fc9Jwh6Z/+aukIAtiLkUWVNdPK+2p7CEJaENUdiEyK7X0K+ruq0L4yC7vYSfnOb7
-         lgFQbCnnhcKXEjuvNmPlWjnVHs3xIb+jIsvqomyOc0jH1tmbmeLz9UjEXUlmcHKwr8EL
-         Xec9YxNjWwVveZVcumEpvXvGpvIRAGZxhhXkCekttC8KRrST2v0fyGeTubmMycg1zCY4
-         BYrUs3zfCoaZeycxi2f5KJ3qJWoKRy2bS77E48V8k53Cx2AbspQUzOfhjfs7XSpVyX8K
-         mOjg==
+        bh=tv1s1DoOrqUJqM4Qc/6Vftm5oyXsPN8pyd5/TCaFDNA=;
+        b=VAYRLRM2SlgJXcCfTHzwE2gJFeFDePT11OnjNULr8945iQU+qz+5pIUec+RJolsuHe
+         xQZ0Yz3fKaaXTaokgx8JgoMi/+N6f1KyzpMd5zX78a9FfJXlGyxLBu63Pv7C/co7HCch
+         vvFq52Km2lumqD1Vz6RJdeckcQbrxZFYxzmnKyMKqU15fxGytm+k8XMchZzqgqi9u8Nr
+         Gi7BoUxOcWC/hZ4Wc8/p6UBC9OcQWanJREm2S+vPFtv1IRNlNVq0VgiI1QyaFQyB8CPG
+         LOzf9Zryyo9lssduzpQLHuZK8ROyQNguTHnV/QN48C0dCqZ5kNKmxRTKLl5gDduu0bAo
+         4gbw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=LbELmXWMHSKxwOrAgarH0W+SEsR9r8MnvJdNy39oRdg=;
-        b=QkUVIMAHfQF7xoY10PM0HhVNfwRRczBvqvB0RiE29TwjQehh32+to02m4P2lGAu60H
-         up9Z9NlOfJR+4M/k2Pf/0IJcl+IMaFdesA0whiRQ5KzpvBkSw4oLR5HC3q+o3Y213Ab8
-         rxGvYzV65oXnEvN6VQns+Q99EQPVSvFyibVFNAdgPRcXC24lLBTCDfD+iKiVJdNOmdPy
-         EQy7YOyLcR+OGDfGNpVrZ65rU01Ff0Ir6emPzANEZZcd4MpFsxvT84kK1azwdH8XqEXL
-         m2N1NoqGe5ZIOlikGjKL6FEwYSfKdB8EnQT9QSH9GZaUkyLvGRxu+yTh0tTxIfppdSTB
-         kDKA==
-X-Gm-Message-State: AOAM531z7Yy/KSzUX1JLyTT2NutzIHlVTOMCiWsjWD/QP8BpUUtU9O0b
-        uc4DhwytwCBn/ApC5wA0kGiFmELMsCc=
-X-Google-Smtp-Source: ABdhPJzjdAShCedkgxVIO9rqBS+5OS3pdycCPXXtI9InTLp4lTJ4mkaJm/MTGCqb1IBCmKGvpuYNMw==
-X-Received: by 2002:adf:e78d:: with SMTP id n13mr10249418wrm.55.1630070627089;
-        Fri, 27 Aug 2021 06:23:47 -0700 (PDT)
+        bh=tv1s1DoOrqUJqM4Qc/6Vftm5oyXsPN8pyd5/TCaFDNA=;
+        b=KoyAJD43GB8pD3Tr1a+U+X1Ar2t6eo6AEN/0RxWLP8dF7GxFo6EE4PYgJzDjF0jVn8
+         zil+g19AzB4P/45nrgwp61lkdVQ1NUo6kM08v+TepfVHoWUUmhldcw7VR1MWXkdQMbwr
+         9eD0G4bWib0XACWJ1RL0TTXdXbr9p71d3zvHoRtf3V2iHHL9ZXQTGOyrCNqccq3wKB+n
+         hTiQnkMuPHSLV0RkodUU0DNree+c6Hf55h4icZ58cKt692uJWkxoR01ohChhzdfin2PZ
+         gnIpeGzfBGjX4KqiX7UwRwJc9r3l6HoqSEUMWJSogkx3bXPviosowcNKrp43robtcYhd
+         /qeg==
+X-Gm-Message-State: AOAM531yhNvOfqczARUYdgAW6Ikbc3t8vzulfqNduZ8KdhBwLoaczJQu
+        toE/wcUIP4pvUxwvRUubKZ4xwxDZ3FM=
+X-Google-Smtp-Source: ABdhPJxbh4Y5jcw80QmuxIRmaJF24Brm74tewvIxUpNJgS3aJ/OOV5JsdgaaVxOoMPWxuHm59b3fHw==
+X-Received: by 2002:a05:600c:c8:: with SMTP id u8mr8873536wmm.47.1630070629123;
+        Fri, 27 Aug 2021 06:23:49 -0700 (PDT)
 Received: from localhost ([217.111.27.204])
-        by smtp.gmail.com with ESMTPSA id d8sm6922081wrv.20.2021.08.27.06.23.45
+        by smtp.gmail.com with ESMTPSA id q11sm11272321wmc.41.2021.08.27.06.23.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Aug 2021 06:23:46 -0700 (PDT)
+        Fri, 27 Aug 2021 06:23:48 -0700 (PDT)
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>
 Cc:     dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
-Subject: [PATCH libdrm 17/25] tests: tegra: Add syncpoint timeout test
-Date:   Fri, 27 Aug 2021 15:22:57 +0200
-Message-Id: <20210827132305.3572077-18-thierry.reding@gmail.com>
+Subject: [PATCH libdrm 18/25] tests: tegra: Add VIC support
+Date:   Fri, 27 Aug 2021 15:22:58 +0200
+Message-Id: <20210827132305.3572077-19-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20210827132305.3572077-1-thierry.reding@gmail.com>
 References: <20210827132305.3572077-1-thierry.reding@gmail.com>
@@ -75,38 +75,81 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-This test can be used to purposefully trigger a job timeout.
+Implement a small abstraction interface to allow different versions of
+VIC to be used transparently. An implementation will be chosen based on
+the VIC version number reported by the DRM_TEGRA_IOCTL_OPEN_CHANNEL
+IOCTL.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- tests/tegra/meson.build      |   9 ++
- tests/tegra/syncpt-timeout.c | 163 +++++++++++++++++++++++++++++++++++
- 2 files changed, 172 insertions(+)
- create mode 100644 tests/tegra/syncpt-timeout.c
+ tests/tegra/host1x.h    |  34 ++++++++
+ tests/tegra/meson.build |   2 +
+ tests/tegra/vic.c       | 152 +++++++++++++++++++++++++++++++++
+ tests/tegra/vic.h       | 181 ++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 369 insertions(+)
+ create mode 100644 tests/tegra/host1x.h
+ create mode 100644 tests/tegra/vic.c
+ create mode 100644 tests/tegra/vic.h
 
+diff --git a/tests/tegra/host1x.h b/tests/tegra/host1x.h
+new file mode 100644
+index 000000000000..902b0c12ee6d
+--- /dev/null
++++ b/tests/tegra/host1x.h
+@@ -0,0 +1,34 @@
++/*
++ * Copyright © 2018 NVIDIA Corporation
++ *
++ * Permission is hereby granted, free of charge, to any person obtaining a
++ * copy of this software and associated documentation files (the "Software"),
++ * to deal in the Software without restriction, including without limitation
++ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
++ * and/or sell copies of the Software, and to permit persons to whom the
++ * Software is furnished to do so, subject to the following conditions:
++ *
++ * The above copyright notice and this permission notice shall be included in
++ * all copies or substantial portions of the Software.
++ *
++ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
++ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
++ * THE COPYRIGHT HOLDER(S) OR AUTHOR(S) BE LIABLE FOR ANY CLAIM, DAMAGES OR
++ * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
++ * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
++ * OTHER DEALINGS IN THE SOFTWARE.
++ */
++
++#ifndef HOST1X_H
++#define HOST1X_H
++
++#define HOST1X_OPCODE_SETCL(offset, classid, mask) \
++    ((0x0 << 28) | (((offset) & 0xfff) << 16) | (((classid) & 0x3ff) << 6) | ((mask) & 0x3f))
++
++#define HOST1X_OPCODE_INCR(offset, count) \
++    ((0x1 << 28) | (((offset) & 0xfff) << 16) | ((count) & 0xffff))
++
++#define HOST1X_CLASS_VIC 0x5d
++
++#endif
 diff --git a/tests/tegra/meson.build b/tests/tegra/meson.build
-index 8b1b8bf58dd1..4b05569e0971 100644
+index 4b05569e0971..55c1c72808e3 100644
 --- a/tests/tegra/meson.build
 +++ b/tests/tegra/meson.build
-@@ -63,3 +63,12 @@ syncpt_wait = executable(
-   link_with : [libdrm, libdrm_tegra, libdrm_test, libdrm_test_tegra],
-   install : with_install_tests,
- )
-+
-+syncpt_timeout = executable(
-+  'tegra-syncpt-timeout',
-+  files('syncpt-timeout.c'),
-+  include_directories : [inc_root, inc_drm, inc_tegra],
-+  c_args : warn_c_args,
-+  link_with : [libdrm, libdrm_tegra, libdrm_test, libdrm_test_tegra],
-+  install : with_install_tests,
-+)
-diff --git a/tests/tegra/syncpt-timeout.c b/tests/tegra/syncpt-timeout.c
+@@ -32,6 +32,8 @@ libdrm_test_tegra = static_library(
+   [files(
+     'drm-test-tegra.c',
+     'drm-test-tegra.h',
++    'vic.c',
++    'vic.h',
+   ), config_file ],
+   include_directories : [inc_root, inc_drm, inc_tegra],
+   link_with : libdrm,
+diff --git a/tests/tegra/vic.c b/tests/tegra/vic.c
 new file mode 100644
-index 000000000000..fea3665cb126
+index 000000000000..02ba4a25ae47
 --- /dev/null
-+++ b/tests/tegra/syncpt-timeout.c
-@@ -0,0 +1,163 @@
++++ b/tests/tegra/vic.c
+@@ -0,0 +1,152 @@
 +/*
 + * Copyright © 2018 NVIDIA Corporation
 + *
@@ -130,146 +173,322 @@ index 000000000000..fea3665cb126
 + */
 +
 +#include <errno.h>
-+#include <fcntl.h>
-+#include <stdio.h>
-+#include <string.h>
-+#include <unistd.h>
++#include <stdio.h> /* XXX remove */
++#include <stdlib.h>
++
++#include "util_math.h"
 +
 +#include "tegra.h"
++#include "host1x.h"
++#include "vic.h"
 +
 +#define ARRAY_SIZE(a) (sizeof(a) / sizeof((a)[0]))
 +
-+static int channel_open(struct drm_tegra *drm,
-+                        struct drm_tegra_channel **channel)
++const struct vic_format_info *vic_format_get_info(unsigned int format)
 +{
-+    static const struct {
-+        enum drm_tegra_class class;
-+        const char *name;
-+    } classes[] = {
-+        { DRM_TEGRA_VIC,  "VIC"  },
-+        { DRM_TEGRA_GR2D, "GR2D" },
++    static const struct vic_format_info formats[] = {
++        { .format = VIC_PIXEL_FORMAT_A8R8G8B8, .cpp = 4 },
 +    };
 +    unsigned int i;
-+    int err;
 +
-+    for (i = 0; i < ARRAY_SIZE(classes); i++) {
-+        err = drm_tegra_channel_open(drm, classes[i].class, channel);
-+        if (err < 0) {
-+            fprintf(stderr, "failed to open channel to %s: %s\n",
-+                    classes[i].name, strerror(-err));
-+            continue;
-+        }
-+
-+        break;
++    for (i = 0; i < ARRAY_SIZE(formats); i++) {
++        if (formats[i].format == format)
++            return &formats[i];
 +    }
-+
-+    return err;
-+}
-+
-+int main(int argc, char *argv[])
-+{
-+    const char *device = "/dev/dri/renderD128";
-+    struct drm_tegra_syncpoint *syncpt;
-+    struct drm_tegra_channel *channel;
-+    struct drm_tegra_pushbuf *pushbuf;
-+    struct drm_tegra_job *job;
-+    struct drm_tegra *drm;
-+    uint32_t *ptr;
-+    int fd, err;
-+
-+    if (argc > 1)
-+        device = argv[1];
-+
-+    fd = open(device, O_RDWR);
-+    if (fd < 0) {
-+        fprintf(stderr, "open() failed: %s\n", strerror(errno));
-+        return 1;
-+    }
-+
-+    err = drm_tegra_new(fd, &drm);
-+    if (err < 0) {
-+        fprintf(stderr, "failed to open Tegra device: %s\n", strerror(-err));
-+        close(fd);
-+        return 1;
-+    }
-+
-+    err = drm_tegra_syncpoint_new(drm, &syncpt);
-+    if (err < 0) {
-+        fprintf(stderr, "failed to allocate syncpoint: %s\n", strerror(-err));
-+        drm_tegra_close(drm);
-+        close(fd);
-+        return 1;
-+    }
-+
-+    err = channel_open(drm, &channel);
-+    if (err < 0) {
-+        fprintf(stderr, "failed to open channel: %s\n", strerror(-err));
-+        return 1;
-+    }
-+
-+    err = drm_tegra_job_new(channel, &job);
-+    if (err < 0) {
-+        fprintf(stderr, "failed to create job: %s\n", strerror(-err));
-+        return 1;
-+    }
-+
-+    err = drm_tegra_job_get_pushbuf(job, &pushbuf);
-+    if (err < 0) {
-+        fprintf(stderr, "failed to create push buffer: %s\n", strerror(-err));
-+        return 1;
-+    }
-+
-+    err = drm_tegra_pushbuf_begin(pushbuf, 8, &ptr);
-+    if (err < 0) {
-+        fprintf(stderr, "failed to prepare push buffer: %s\n", strerror(-err));
-+        return 1;
-+    }
-+
-+    /*
-+     * Empty command streams will be rejected, so we use this as an easy way
-+     * to add something to the command stream. But this could be any other,
-+     * valid command stream.
-+     */
-+    err = drm_tegra_pushbuf_sync_cond(pushbuf, &ptr, syncpt,
-+                                      DRM_TEGRA_SYNC_COND_IMMEDIATE);
-+    if (err < 0) {
-+        fprintf(stderr, "failed to push syncpoint: %s\n", strerror(-err));
-+        return 1;
-+    }
-+
-+    /* pretend that the syncpoint was incremented a second time */
-+    err = drm_tegra_pushbuf_sync(pushbuf, syncpt, 1);
-+    if (err < 0) {
-+        fprintf(stderr, "failed to push syncpoint: %s\n", strerror(-err));
-+        return 1;
-+    }
-+
-+    err = drm_tegra_pushbuf_end(pushbuf, ptr);
-+    if (err < 0) {
-+        fprintf(stderr, "failed to update push buffer: %s\n", strerror(-err));
-+        return 1;
-+    }
-+
-+    err = drm_tegra_job_submit(job, NULL);
-+    if (err < 0) {
-+        fprintf(stderr, "failed to submit job: %s\n", strerror(-err));
-+        return 1;
-+    }
-+
-+    err = drm_tegra_job_wait(job, 250000);
-+    if (err < 0) {
-+        fprintf(stderr, "failed to wait for job: %s\n", strerror(-err));
-+        return 1;
-+    }
-+
-+    drm_tegra_job_free(job);
-+    drm_tegra_channel_close(channel);
-+    drm_tegra_syncpoint_free(syncpt);
-+    drm_tegra_close(drm);
-+    close(fd);
 +
 +    return 0;
 +}
++
++int vic_image_new(struct vic *vic, unsigned int width, unsigned int height,
++                  unsigned int format, unsigned int kind, uint32_t flags,
++                  struct vic_image **imagep)
++{
++    const struct vic_format_info *info = vic_format_get_info(format);
++    struct vic_image *image;
++    int err;
++
++    if (!info)
++        return -EINVAL;
++
++    image = calloc(1, sizeof(*image));
++    if (!image)
++        return -ENOMEM;
++
++    if (kind == VIC_BLK_KIND_PITCH)
++        image->align = 256;
++    else
++        image->align = 256; /* XXX */
++
++    image->width = width;
++    image->stride = ALIGN(width, image->align);
++    image->pitch = image->stride * info->cpp;
++    image->height = height;
++    image->format = format;
++    image->kind = kind;
++
++    image->size = image->pitch * image->height;
++
++    printf("image: %ux%u align: %zu stride: %u pitch: %u size: %zu\n",
++           image->width, image->height, image->align, image->stride,
++           image->pitch, image->size);
++
++    err = drm_tegra_bo_new(vic->drm, 0, image->size, &image->bo);
++    if (err < 0) {
++        free(image);
++        return err;
++    }
++
++    err = drm_tegra_channel_map(vic->channel, image->bo, flags, &image->map);
++    if (err < 0) {
++        drm_tegra_bo_unref(image->bo);
++        free(image);
++        return err;
++    }
++
++    *imagep = image;
++    return 0;
++}
++
++void vic_image_free(struct vic_image *image)
++{
++    if (image) {
++        drm_tegra_channel_unmap(image->map);
++        drm_tegra_bo_unref(image->bo);
++        free(image);
++    }
++}
++
++void vic_image_dump(struct vic_image *image, FILE *fp)
++{
++    unsigned int i, j;
++    void *ptr;
++    int err;
++
++    err = drm_tegra_bo_map(image->bo, &ptr);
++    if (err < 0)
++        return;
++
++    for (j = 0; j < image->height; j++) {
++        uint32_t *pixels = (uint32_t *)((unsigned long)ptr + j * image->pitch);
++
++        printf("   ");
++
++        for (i = 0; i < image->width; i++)
++            printf(" %08x", pixels[i]);
++
++        printf("\n");
++    }
++
++    drm_tegra_bo_unmap(image->bo);
++}
++
++int vic_new(struct drm_tegra *drm, struct drm_tegra_channel *channel,
++            struct vic **vicp)
++{
++    unsigned int version;
++
++    version = drm_tegra_channel_get_version(channel);
++
++    switch (version) {
++    default:
++        break;
++    }
++
++    return -ENOTSUP;
++}
++
++void vic_free(struct vic *vic)
++{
++    if (vic)
++        vic->ops->free(vic);
++}
+diff --git a/tests/tegra/vic.h b/tests/tegra/vic.h
+new file mode 100644
+index 000000000000..64860c84f397
+--- /dev/null
++++ b/tests/tegra/vic.h
+@@ -0,0 +1,181 @@
++/*
++ * Copyright © 2018 NVIDIA Corporation
++ *
++ * Permission is hereby granted, free of charge, to any person obtaining a
++ * copy of this software and associated documentation files (the "Software"),
++ * to deal in the Software without restriction, including without limitation
++ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
++ * and/or sell copies of the Software, and to permit persons to whom the
++ * Software is furnished to do so, subject to the following conditions:
++ *
++ * The above copyright notice and this permission notice shall be included in
++ * all copies or substantial portions of the Software.
++ *
++ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
++ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
++ * THE COPYRIGHT HOLDER(S) OR AUTHOR(S) BE LIABLE FOR ANY CLAIM, DAMAGES OR
++ * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
++ * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
++ * OTHER DEALINGS IN THE SOFTWARE.
++ */
++
++#ifndef VIC_H
++#define VIC_H
++
++#include <stdio.h>
++
++#include "host1x.h"
++
++#define DXVAHD_FRAME_FORMAT_PROGRESSIVE 0
++#define DXVAHD_FRAME_FORMAT_INTERLACED_TOP_FIELD_FIRST 1
++#define DXVAHD_FRAME_FORMAT_INTERLACED_BOTTOM_FIELD_FIRST 2
++#define DXVAHD_FRAME_FORMAT_TOP_FIELD 3
++#define DXVAHD_FRAME_FORMAT_BOTTOM_FIELD 4
++#define DXVAHD_FRAME_FORMAT_SUBPIC_PROGRESSIVE 5
++#define DXVAHD_FRAME_FORMAT_SUBPIC_INTERLACED_TOP_FIELD_FIRST 6
++#define DXVAHD_FRAME_FORMAT_SUBPIC_INTERLACED_BOTTOM_FIELD_FIRST 7
++#define DXVAHD_FRAME_FORMAT_SUBPIC_TOP_FIELD 8
++#define DXVAHD_FRAME_FORMAT_SUBPIC_BOTTOM_FIELD 9
++#define DXVAHD_FRAME_FORMAT_TOP_FIELD_CHROMA_BOTTOM 10
++#define DXVAHD_FRAME_FORMAT_BOTTOM_FIELD_CHROMA_TOP 11
++#define DXVAHD_FRAME_FORMAT_SUBPIC_TOP_FIELD_CHROMA_BOTTOM 12
++#define DXVAHD_FRAME_FORMAT_SUBPIC_BOTTOM_FIELD_CHROMA_TOP 13
++
++#define DXVAHD_ALPHA_FILL_MODE_OPAQUE 0
++#define DXVAHD_ALPHA_FILL_MODE_BACKGROUND 1
++#define DXVAHD_ALPHA_FILL_MODE_DESTINATION 2
++#define DXVAHD_ALPHA_FILL_MODE_SOURCE_STREAM 3
++#define DXVAHD_ALPHA_FILL_MODE_COMPOSITED 4
++#define DXVAHD_ALPHA_FILL_MODE_SOURCE_ALPHA 5
++
++#define VIC_BLEND_SRCFACTC_K1 0
++#define VIC_BLEND_SRCFACTC_K1_TIMES_DST 1
++#define VIC_BLEND_SRCFACTC_NEG_K1_TIMES_DST 2
++#define VIC_BLEND_SRCFACTC_K1_TIMES_SRC 3
++#define VIC_BLEND_SRCFACTC_ZERO 4
++
++#define VIC_BLEND_DSTFACTC_K1 0
++#define VIC_BLEND_DSTFACTC_K2 1
++#define VIC_BLEND_DSTFACTC_K1_TIMES_DST 2
++#define VIC_BLEND_DSTFACTC_NEG_K1_TIMES_DST 3
++#define VIC_BLEND_DSTFACTC_NEG_K1_TIMES_SRC 4
++#define VIC_BLEND_DSTFACTC_ZERO 5
++#define VIC_BLEND_DSTFACTC_ONE 6
++
++#define VIC_BLEND_SRCFACTA_K1 0
++#define VIC_BLEND_SRCFACTA_K2 1
++#define VIC_BLEND_SRCFACTA_NEG_K1_TIMES_DST 2
++#define VIC_BLEND_SRCFACTA_ZERO 3
++
++#define VIC_BLEND_DSTFACTA_K2 0
++#define VIC_BLEND_DSTFACTA_NEG_K1_TIMES_SRC 1
++#define VIC_BLEND_DSTFACTA_ZERO 2
++#define VIC_BLEND_DSTFACTA_ONE 3
++
++#define VIC_BLK_KIND_PITCH 0
++#define VIC_BLK_KIND_GENERIC_16Bx2 1
++
++#define VIC_PIXEL_FORMAT_L8 1
++#define VIC_PIXEL_FORMAT_R8 4
++#define VIC_PIXEL_FORMAT_A8R8G8B8 32
++#define VIC_PIXEL_FORMAT_R8G8B8A8 34
++#define VIC_PIXEL_FORMAT_Y8_U8V8_N420 67
++#define VIC_PIXEL_FORMAT_Y8_V8U8_N420 68
++
++#define VIC_CACHE_WIDTH_16Bx16 0 /* BL16Bx2 */
++#define VIC_CACHE_WIDTH_32Bx8 1 /* BL16Bx2 */
++#define VIC_CACHE_WIDTH_64Bx4 2 /* BL16Bx2, PL */
++#define VIC_CACHE_WIDTH_128Bx2 3 /* BL16Bx2, PL */
++#define VIC_CACHE_WIDTH_256Bx1 4 /* PL */
++
++struct vic_format_info {
++    unsigned int format;
++    unsigned int cpp;
++};
++
++
++#define VIC_UCLASS_INCR_SYNCPT 0x00
++#define VIC_UCLASS_METHOD_OFFSET 0x10
++#define VIC_UCLASS_METHOD_DATA 0x11
++
++static inline void VIC_PUSH_METHOD(struct drm_tegra_pushbuf *pushbuf,
++                                   uint32_t **ptrp, uint32_t method,
++                                   uint32_t value)
++{
++    *(*ptrp)++ = HOST1X_OPCODE_INCR(VIC_UCLASS_METHOD_OFFSET, 2);
++    *(*ptrp)++ = method >> 2;
++    *(*ptrp)++ = value;
++}
++
++static inline void VIC_PUSH_BUFFER(struct drm_tegra_pushbuf *pushbuf,
++                                   uint32_t **ptrp, uint32_t method,
++                                   struct drm_tegra_mapping *map,
++                                   unsigned long offset, unsigned long flags)
++{
++    *(*ptrp)++ = HOST1X_OPCODE_INCR(VIC_UCLASS_METHOD_OFFSET, 2);
++    *(*ptrp)++ = method >> 2;
++
++    drm_tegra_pushbuf_relocate(pushbuf, ptrp, map, offset, 8, flags);
++}
++
++struct vic_image;
++struct vic;
++
++struct vic_ops {
++    int (*clear)(struct vic *vic, struct vic_image *output,
++                 unsigned int alpha, unsigned int red,
++                 unsigned int green, unsigned int blue);
++    int (*fill)(struct vic *vic, struct vic_image *output,
++                unsigned int left, unsigned int top,
++                unsigned int right, unsigned int bottom,
++                unsigned int alpha, unsigned red,
++                unsigned int green, unsigned int blue);
++    int (*blit)(struct vic *vic, struct vic_image *output,
++                struct vic_image *input);
++    int (*flip)(struct vic *vic, struct vic_image *output,
++                struct vic_image *input);
++    int (*execute)(struct vic *vic,
++                   struct drm_tegra_pushbuf *pushbuf,
++                   uint32_t **ptrp,
++                   struct vic_image *output,
++                   struct vic_image **inputs,
++                   unsigned int num_inputs);
++    void (*free)(struct vic *vic);
++};
++
++struct vic {
++    struct drm_tegra *drm;
++    struct drm_tegra_channel *channel;
++    struct drm_tegra_syncpoint *syncpt;
++    const struct vic_ops *ops;
++    unsigned int version;
++};
++
++int vic_new(struct drm_tegra *drm, struct drm_tegra_channel *channel,
++            struct vic **vicp);
++void vic_free(struct vic *vic);
++
++struct vic_image {
++    struct drm_tegra_bo *bo;
++    struct drm_tegra_mapping *map;
++    unsigned int width;
++    unsigned int stride;
++    unsigned int pitch;
++    unsigned int height;
++    unsigned int format;
++    unsigned int kind;
++
++    size_t align;
++    size_t size;
++};
++
++const struct vic_format_info *vic_format_get_info(unsigned int format);
++
++int vic_image_new(struct vic *vic, unsigned int width, unsigned int height,
++                  unsigned int format, unsigned int kind, uint32_t flags,
++                  struct vic_image **imagep);
++void vic_image_free(struct vic_image *image);
++void vic_image_dump(struct vic_image *image, FILE *fp);
++
++#endif
 -- 
 2.32.0
 
