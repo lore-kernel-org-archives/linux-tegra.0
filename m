@@ -5,64 +5,64 @@ X-Spam-Level:
 X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FE1BC4320A
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68962C43214
 	for <linux-tegra@archiver.kernel.org>; Fri, 27 Aug 2021 13:23:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0A41960FC4
+	by mail.kernel.org (Postfix) with ESMTP id 52DB960FE6
 	for <linux-tegra@archiver.kernel.org>; Fri, 27 Aug 2021 13:23:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245407AbhH0NYJ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 27 Aug 2021 09:24:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33554 "EHLO
+        id S245212AbhH0NYK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 27 Aug 2021 09:24:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33564 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245212AbhH0NYH (ORCPT
+        with ESMTP id S245387AbhH0NYJ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 27 Aug 2021 09:24:07 -0400
-Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86177C06179A
-        for <linux-tegra@vger.kernel.org>; Fri, 27 Aug 2021 06:23:18 -0700 (PDT)
-Received: by mail-wr1-x42c.google.com with SMTP id g18so2865184wrc.11
-        for <linux-tegra@vger.kernel.org>; Fri, 27 Aug 2021 06:23:18 -0700 (PDT)
+        Fri, 27 Aug 2021 09:24:09 -0400
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E72AC0613CF
+        for <linux-tegra@vger.kernel.org>; Fri, 27 Aug 2021 06:23:20 -0700 (PDT)
+Received: by mail-wr1-x42f.google.com with SMTP id n5so10329379wro.12
+        for <linux-tegra@vger.kernel.org>; Fri, 27 Aug 2021 06:23:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=mVo6QL2otSkWlz3BNGQoToVxXIroVXY+I539FhGuJc4=;
-        b=VMHuaH6HuSy7nYxCiYjNJIXWyDgMmIEutFTUgYKfoooLBZzoUpo4DTYPC4Vj/vre0u
-         9BilEZ4of81AI8C96idLZjoZoU5/b5QPW5jTTODvUbHaOrCyBZ0u4n2P5fc88i88RUcN
-         be0pEvsQBoGK214sP2wcXpuJREK0UijC9k/HooSmi130SdFxL4TWpN7lzk85thxQYG2G
-         gCvezGNJBW38uomhhNAMpTTPl8p2OPncSeLw+by814f6aAhxwZ8GTFwkPZ3mAQqCJZxX
-         91tmgAE3ylthpOjcJfZQb8CfWrnDWMtLqCn0X3tunzGvIR1gA57aL5UKFownu5YoPxCR
-         RdvA==
+        bh=FBdsYqHeqx6lb5nLRyVgCyGnQTI8xvcildAZAC0FEaE=;
+        b=O81AqUuTZoeZzFSsgdCr0JShVJGZWZQdXULiy2Qe6hkBFinQ3qwYQPAb+76kz70Eob
+         iWplycCT7d6Jm9EduxIAGDrCzfdhL5tFbsiAuhLaHGUuhkUUd1nGAuhoRO/wgLWWWnqc
+         59m+X0nybTywT1bS4aLTkt0j7YbUTyzj31+ENC+/L+3m5E8QYXCzJDaKi3wqO89XaHVf
+         i3HjqBhaLOG0r4HIqLryNPH7mtQcLl++HEsJ/Vivwl0oiIUmHlko75s7tirpcNIVLtkk
+         mQ83e6/osegiUn8jeLh2IQp3SGC5L9axB+iq+M7N7WJxXZQWXk26lRlIzNupOdjftbAD
+         LfRQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=mVo6QL2otSkWlz3BNGQoToVxXIroVXY+I539FhGuJc4=;
-        b=CSLAB8wF+gXN/qD/iXwdgdo8rqNXp5pIM5Ogk5zo5yfS0UUpOsO5LH40MFxA/BivQf
-         qS+TE0PAaMQHyqafelabqx3g+QIQhkekKfSY8wnPeNrraAYeRT6e5jm/FnA1jMgMRlYt
-         dsmJCk5ODZsuL8Y8HE8dVhEpDqt8jfCH1lIK53HjZ7l2f+IBX/KOT1GcEAtM9kCaqCwN
-         dDH/XY5qKeL/h9jymycxgp/Yq1148sMvQPG6QXJpiphJ4EQ20ngJ/pIqf6BFmEY5mGmY
-         kOps2fpXzvwl3Vbw6EVhxl33ejMvuQzQ4Dgp+2rvgS2aA3qAc1nTrVTe1WUpwFt8x7kw
-         f1XA==
-X-Gm-Message-State: AOAM531mz/aI2K8syRd64Tt0IVOsUBAXs1o8R45b7LldZLi1PkeHqum3
-        1sDBNubZIa8I5+M32eFK/Yo=
-X-Google-Smtp-Source: ABdhPJxj9fWPvQT7+wv8J9Cxf6JrAYRu4RsFoZU0mr2BIVBXMeWD8DaRSGY/7wWzNBMgKUBIBPivpA==
-X-Received: by 2002:a5d:6301:: with SMTP id i1mr9969579wru.423.1630070597150;
-        Fri, 27 Aug 2021 06:23:17 -0700 (PDT)
+        bh=FBdsYqHeqx6lb5nLRyVgCyGnQTI8xvcildAZAC0FEaE=;
+        b=EjSRdSu1NU9s+in6tlgOCkeEOaEyMpjcV2xe4yiM9q8KHYT+ZRiHyPPFhDteZIHLgY
+         M8pYP/vQajry5MkwMo/zK0xXW8dfur5Xbry1stt3v091gNPjzwOta8xmGYMfJ7Iq111f
+         pgPdDzfqclFcsdLcictGn3f+InBNqb5v9nkt+eR7jRTHg6+XklvqT+QM6O1I/4hsTUwO
+         upyn0kL1H4zx7RFGItWwvlqdFx2fiO6jZ8jKh0mAoZ5fFDV6jwaOEyr+iH/wS+LHsMYS
+         UrD7nTEtkq6O4zLgjlyElCshloSXCFSAmnh4vDRfFNhU8Hh9Qt8GYVVJ0gPKH/Y8+H9V
+         z2zA==
+X-Gm-Message-State: AOAM533qqCJJelbsxeidcS5yvlMPOf/iOw3N+VPv5+Or8QvRi2bFci66
+        83rL8teQCKno/MmNzhipZEc=
+X-Google-Smtp-Source: ABdhPJzxv6Bj55wCSWTpVkwuk38XzehXa9nn2snemNLVc2gKQiRBtONNITad+Hj2lq3qCehFx/z+yg==
+X-Received: by 2002:adf:9ccc:: with SMTP id h12mr10180484wre.385.1630070599204;
+        Fri, 27 Aug 2021 06:23:19 -0700 (PDT)
 Received: from localhost ([217.111.27.204])
-        by smtp.gmail.com with ESMTPSA id 19sm11331098wmo.39.2021.08.27.06.23.16
+        by smtp.gmail.com with ESMTPSA id y24sm2425114wma.9.2021.08.27.06.23.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Aug 2021 06:23:16 -0700 (PDT)
+        Fri, 27 Aug 2021 06:23:18 -0700 (PDT)
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>
 Cc:     dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
-Subject: [PATCH libdrm 03/25] tegra: Extract common buffer object allocation code
-Date:   Fri, 27 Aug 2021 15:22:43 +0200
-Message-Id: <20210827132305.3572077-4-thierry.reding@gmail.com>
+Subject: [PATCH libdrm 04/25] tegra: Fix mmap() of GEM buffer objects
+Date:   Fri, 27 Aug 2021 15:22:44 +0200
+Message-Id: <20210827132305.3572077-5-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20210827132305.3572077-1-thierry.reding@gmail.com>
 References: <20210827132305.3572077-1-thierry.reding@gmail.com>
@@ -74,80 +74,43 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-All of the buffer object allocation functions use the same boilerplate
-code. Move that code into a separate function that can be reused.
+Store 64-bit offset values and use libdrm's built-in drm_mmap() function
+instead of mmap() to ensure the full 64-bit offset is used.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- tegra/tegra.c | 35 ++++++++++++++++++++++-------------
- 1 file changed, 22 insertions(+), 13 deletions(-)
+ tegra/private.h | 2 +-
+ tegra/tegra.c   | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
+diff --git a/tegra/private.h b/tegra/private.h
+index 215dd3309bce..d0f2944bfb3a 100644
+--- a/tegra/private.h
++++ b/tegra/private.h
+@@ -41,7 +41,7 @@ struct drm_tegra {
+ struct drm_tegra_bo {
+     struct drm_tegra *drm;
+     uint32_t handle;
+-    uint32_t offset;
++    uint64_t offset;
+     uint32_t flags;
+     uint32_t size;
+     atomic_t ref;
 diff --git a/tegra/tegra.c b/tegra/tegra.c
-index 94840ad42795..bf8e5c9213ca 100644
+index bf8e5c9213ca..5225ad052fb3 100644
 --- a/tegra/tegra.c
 +++ b/tegra/tegra.c
-@@ -101,6 +101,26 @@ drm_public void drm_tegra_close(struct drm_tegra *drm)
-     free(drm);
- }
+@@ -215,8 +215,8 @@ drm_public int drm_tegra_bo_map(struct drm_tegra_bo *bo, void **ptr)
  
-+static struct drm_tegra_bo *drm_tegra_bo_alloc(struct drm_tegra *drm,
-+                                               uint32_t handle,
-+                                               uint32_t flags,
-+                                               uint32_t size)
-+{
-+    struct drm_tegra_bo *bo;
-+
-+    bo = calloc(1, sizeof(*bo));
-+    if (!bo)
-+        return NULL;
-+
-+    atomic_set(&bo->ref, 1);
-+    bo->handle = handle;
-+    bo->flags = flags;
-+    bo->size = size;
-+    bo->drm = drm;
-+
-+    return bo;
-+}
-+
- drm_public int
- drm_tegra_bo_new(struct drm_tegra_bo **bop, struct drm_tegra *drm,
-                  uint32_t flags, uint32_t size)
-@@ -112,15 +132,10 @@ drm_tegra_bo_new(struct drm_tegra_bo **bop, struct drm_tegra *drm,
-     if (!drm || size == 0 || !bop)
-         return -EINVAL;
+         bo->offset = args.offset;
  
--    bo = calloc(1, sizeof(*bo));
-+    bo = drm_tegra_bo_alloc(drm, 0, flags, size);
-     if (!bo)
-         return -ENOMEM;
- 
--    atomic_set(&bo->ref, 1);
--    bo->flags = flags;
--    bo->size = size;
--    bo->drm = drm;
--
-     memset(&args, 0, sizeof(args));
-     args.flags = flags;
-     args.size = size;
-@@ -149,16 +164,10 @@ drm_tegra_bo_wrap(struct drm_tegra_bo **bop, struct drm_tegra *drm,
-     if (!drm || !bop)
-         return -EINVAL;
- 
--    bo = calloc(1, sizeof(*bo));
-+    bo = drm_tegra_bo_alloc(drm, handle, flags, size);
-     if (!bo)
-         return -ENOMEM;
- 
--    atomic_set(&bo->ref, 1);
--    bo->handle = handle;
--    bo->flags = flags;
--    bo->size = size;
--    bo->drm = drm;
--
-     *bop = bo;
- 
-     return 0;
+-        bo->map = mmap(0, bo->size, PROT_READ | PROT_WRITE, MAP_SHARED,
+-                       drm->fd, bo->offset);
++        bo->map = drm_mmap(NULL, bo->size, PROT_READ | PROT_WRITE, MAP_SHARED,
++                           drm->fd, bo->offset);
+         if (bo->map == MAP_FAILED) {
+             bo->map = NULL;
+             return -errno;
 -- 
 2.32.0
 
