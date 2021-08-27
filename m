@@ -8,61 +8,61 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 978CAC4320A
-	for <linux-tegra@archiver.kernel.org>; Fri, 27 Aug 2021 13:24:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6858C4320E
+	for <linux-tegra@archiver.kernel.org>; Fri, 27 Aug 2021 13:24:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 868866056C
-	for <linux-tegra@archiver.kernel.org>; Fri, 27 Aug 2021 13:24:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AF7D4604AC
+	for <linux-tegra@archiver.kernel.org>; Fri, 27 Aug 2021 13:24:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245265AbhH0NYy (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 27 Aug 2021 09:24:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33912 "EHLO
+        id S245305AbhH0NY4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 27 Aug 2021 09:24:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33924 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245244AbhH0NYy (ORCPT
+        with ESMTP id S245244AbhH0NY4 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 27 Aug 2021 09:24:54 -0400
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74F5AC061757
-        for <linux-tegra@vger.kernel.org>; Fri, 27 Aug 2021 06:24:05 -0700 (PDT)
-Received: by mail-wr1-x431.google.com with SMTP id d26so10491988wrc.0
-        for <linux-tegra@vger.kernel.org>; Fri, 27 Aug 2021 06:24:05 -0700 (PDT)
+        Fri, 27 Aug 2021 09:24:56 -0400
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C46CC061757
+        for <linux-tegra@vger.kernel.org>; Fri, 27 Aug 2021 06:24:07 -0700 (PDT)
+Received: by mail-wm1-x333.google.com with SMTP id m25-20020a7bcb99000000b002e751bcb5dbso4351170wmi.5
+        for <linux-tegra@vger.kernel.org>; Fri, 27 Aug 2021 06:24:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=gReCx/RYqHeEw0OorNM5z7a0NQpUD6+EvQt/5ylr3mg=;
-        b=pFQ4eAOWG8j4+4HM17sdmKctg+Qzt0K+WJ8L5bialTjOKNbxBqsh5xfUgRmec+7HyN
-         aw2N2PoQnc0Bfub0RefTxubzL12vdlDL4H82WM4dxJa9AcixOL2ZWlrkgg+3USO+brHo
-         HD1pjIIclUWFfgv7/1kafjdGU+3JMd1/dthIKGfj5eRjeaWWTdnXLSEd1NKUuBex+gEO
-         YaWc9fPlSp6ntGM7ilInylEnN8gzsqpeoAA+wHy/7ILEM7ehe0qlJEqx7YQ7QV0ffHw1
-         sg2XeAXFvTX4o/7znsRNKuPr/b1pgGKYRAKOmI0h/PoPmrvqWgOFAIh5IPJw2rK0nYGw
-         tHHA==
+        bh=NpuTsLw4X/8yyoVlGhv/CRTNrFjm7PqCZT162MCNOQg=;
+        b=eY/RbRKRB0oTVhVLS2UhWg2XVSrcxjKmaM7i3K+O/eC6h2fvI8kQxUbnBIhkBc2wWn
+         6TETWU08mJYSdHryD02/kVE94Lg6CjbyJYMyFsqANl1vJ51j6MJpsznAIdrZOL0rVk2e
+         7PjK1oAJlNaaA+zHmM+UqWngcvCRUEbjeZbxFC222yunqybn7c5EFefBKyFeRdDoAztW
+         Q0OP9LQsbrcGXCX7uGAOjED4jKo6O9TPLiifrtDiurkXfDL+5e4vHC3nfRsvf1gacJRZ
+         MSoPzUfA2OhSuNsFRXXDgiq2ftohK1AOfcI3kaLJ2JQK6OIH7RcYBI8t2mjdehbz82Zi
+         oCWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=gReCx/RYqHeEw0OorNM5z7a0NQpUD6+EvQt/5ylr3mg=;
-        b=PKnUyLPPBY46lc90ox+WdTrP8AQcNTHxWcRVrWfGBkdPKPijsN9NcQa9CiYRgZbMDZ
-         xbDPrziHIPUV5kyI1DfwcoEi1cIVsR8GtEJlab8H+Nd2Zn4RarAm9ux5dT4yilx4TRyZ
-         v7dZMlKas2tzpq29UPvrgluWbEIBK8R5N0od3L9/CKy07AKT6Xeke3yaOfOwwMg2j5qg
-         sZ5qYmsRuRBDN5NRaizrAr4iGB9pHxbh6inLRL1Qhr4m5F8xcjBMIbA1J2Pe8Fqw3qYK
-         zamsf+lh5yAreSqaoqXWI0s7A+F4qQ4W8c2y03xxmDrwf0+fujBMrgAq/jpLyoWjZE/U
-         laMw==
-X-Gm-Message-State: AOAM533cfXdVes1fJC5HAILhr/WhPXWo1sSCXJ3oSrQqj3QIfT/VR1xT
-        oEJMtcm+gtYZr3tO08ndtZ0=
-X-Google-Smtp-Source: ABdhPJxzkCO8eIPpjOxZXNbtUwSr2q74f2paen8YhP062jiBDfwUqUVBBWM0ouweQONqA6QRcyAq9Q==
-X-Received: by 2002:a05:6000:343:: with SMTP id e3mr2469187wre.96.1630070644067;
-        Fri, 27 Aug 2021 06:24:04 -0700 (PDT)
+        bh=NpuTsLw4X/8yyoVlGhv/CRTNrFjm7PqCZT162MCNOQg=;
+        b=r7PrDdWarvPAuawCr7mKahaRWFMypjiVyZ1ij6CHpQKl7z31283Wasi93+JheV9wEu
+         3Vi89Pi1B76WZtPJxzcSZ5AbicX24wxcFHFJt3dHrpN6KoKfjRVnOLa83FuCUpnlw9EH
+         znwbONwsx6E3xaWWa+hT2kfywClDcn93Xin12HZgAhXZ1YTbbBheBPBp1TBM5YkF88k1
+         Ta1MH2q+USdTQmbqvGrh2UILEy4e/K5kOaQ+aSWX6H2HnosDEkKjZGhWy5XkwA8zRLUN
+         Lin/dC1eJ4CUnrOMKGU55vnbism9oAVZnoid8mMXD8EUg+CpTz+qO44QqS+JNJPAovcx
+         ECZA==
+X-Gm-Message-State: AOAM53010Ybpec1vUnY9QW9+vBXqZ3aOQwKuhlQG8i/HBIzkYMbf6eWU
+        wFpx+XieIh71oC6xsFJ6jgQ=
+X-Google-Smtp-Source: ABdhPJxyTWESCmd3pf+LGd9hduRMvJmxYP4fjs6vXu2H2qWHT+LuQBDz9EJ8Z3QbBzJdQ7DGIjQseA==
+X-Received: by 2002:a7b:cc07:: with SMTP id f7mr11324077wmh.145.1630070645872;
+        Fri, 27 Aug 2021 06:24:05 -0700 (PDT)
 Received: from localhost ([217.111.27.204])
-        by smtp.gmail.com with ESMTPSA id h11sm7661885wrx.9.2021.08.27.06.24.02
+        by smtp.gmail.com with ESMTPSA id c15sm3007626wmr.8.2021.08.27.06.24.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Aug 2021 06:24:03 -0700 (PDT)
+        Fri, 27 Aug 2021 06:24:05 -0700 (PDT)
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>
 Cc:     dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
-Subject: [PATCH libdrm 23/25] tests: tegra: Add VIC clear test
-Date:   Fri, 27 Aug 2021 15:23:03 +0200
-Message-Id: <20210827132305.3572077-24-thierry.reding@gmail.com>
+Subject: [PATCH libdrm 24/25] tests: tegra: Add VIC blit test
+Date:   Fri, 27 Aug 2021 15:23:04 +0200
+Message-Id: <20210827132305.3572077-25-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20210827132305.3572077-1-thierry.reding@gmail.com>
 References: <20210827132305.3572077-1-thierry.reding@gmail.com>
@@ -75,38 +75,39 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-This test will attempt to use VIC to clear a surface.
+This test will attempt to use the VIC to blit from one surface to
+another.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- tests/tegra/meson.build |   9 +++
- tests/tegra/vic-clear.c | 173 ++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 182 insertions(+)
- create mode 100644 tests/tegra/vic-clear.c
+ tests/tegra/meson.build |   9 ++
+ tests/tegra/vic-blit.c  | 333 ++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 342 insertions(+)
+ create mode 100644 tests/tegra/vic-blit.c
 
 diff --git a/tests/tegra/meson.build b/tests/tegra/meson.build
-index d71d3d564efe..e44bd3a4393d 100644
+index e44bd3a4393d..a9ca09e12f3e 100644
 --- a/tests/tegra/meson.build
 +++ b/tests/tegra/meson.build
-@@ -82,3 +82,12 @@ syncpt_timeout = executable(
+@@ -91,3 +91,12 @@ vic_clear = executable(
    link_with : [libdrm, libdrm_tegra, libdrm_test, libdrm_test_tegra],
    install : with_install_tests,
  )
 +
-+vic_clear = executable(
-+  'tegra-vic-clear',
-+  files('vic-clear.c'),
++vic_blit = executable(
++  'tegra-vic-blit',
++  files('vic-blit.c'),
 +  include_directories : [inc_root, inc_drm, inc_tegra],
 +  c_args : warn_c_args,
 +  link_with : [libdrm, libdrm_tegra, libdrm_test, libdrm_test_tegra],
 +  install : with_install_tests,
 +)
-diff --git a/tests/tegra/vic-clear.c b/tests/tegra/vic-clear.c
+diff --git a/tests/tegra/vic-blit.c b/tests/tegra/vic-blit.c
 new file mode 100644
-index 000000000000..f65a644d398c
+index 000000000000..1b4a3eff87d3
 --- /dev/null
-+++ b/tests/tegra/vic-clear.c
-@@ -0,0 +1,173 @@
++++ b/tests/tegra/vic-blit.c
+@@ -0,0 +1,333 @@
 +/*
 + * Copyright © 2018 NVIDIA Corporation
 + *
@@ -135,14 +136,218 @@ index 000000000000..f65a644d398c
 +#include <string.h>
 +#include <unistd.h>
 +
-+#include "util_math.h"
-+
 +#include "tegra.h"
 +
 +#include "host1x.h"
 +#include "vic.h"
 +
-+#define ARRAY_SIZE(a) (sizeof(a) / sizeof((a)[0]))
++/* clear output image to red */
++static int clear(struct vic *vic, struct drm_tegra_channel *channel,
++                 struct vic_image *output)
++{
++    struct drm_tegra_pushbuf *pushbuf;
++    struct drm_tegra_job *job;
++    uint32_t *ptr;
++    int err;
++
++    err = drm_tegra_job_new(channel, &job);
++    if (err < 0) {
++        fprintf(stderr, "failed to create job: %s\n", strerror(-err));
++        return 1;
++    }
++
++    err = drm_tegra_job_get_pushbuf(job, &pushbuf);
++    if (err < 0) {
++        fprintf(stderr, "failed to create push buffer: %s\n", strerror(-err));
++        return 1;
++    }
++
++    err = vic->ops->clear(vic, output, 1023, 1023, 0, 0);
++    if (err < 0) {
++        fprintf(stderr, "failed to clear surface: %s\n", strerror(-err));
++        return err;
++    }
++
++    err = drm_tegra_pushbuf_begin(pushbuf, 32, &ptr);
++    if (err < 0) {
++        fprintf(stderr, "failed to prepare push buffer: %s\n", strerror(-err));
++        return err;
++    }
++
++    err = vic->ops->execute(vic, pushbuf, &ptr, output, NULL, 0);
++    if (err < 0) {
++        fprintf(stderr, "failed to execute operation: %s\n", strerror(-err));
++        return err;
++    }
++
++    err = drm_tegra_pushbuf_sync_cond(pushbuf, &ptr, vic->syncpt,
++                                      DRM_TEGRA_SYNC_COND_OP_DONE);
++    if (err < 0) {
++        fprintf(stderr, "failed to push syncpoint: %s\n", strerror(-err));
++        return err;
++    }
++
++    err = drm_tegra_pushbuf_end(pushbuf, ptr);
++    if (err < 0) {
++        fprintf(stderr, "failed to update push buffer: %s\n", strerror(-err));
++        return err;
++    }
++
++    err = drm_tegra_job_submit(job, NULL);
++    if (err < 0) {
++        fprintf(stderr, "failed to submit job: %s\n", strerror(-err));
++        return err;
++    }
++
++    err = drm_tegra_job_wait(job, 1000000000);
++    if (err < 0) {
++        fprintf(stderr, "failed to wait for job: %s\n", strerror(-err));
++        return err;
++    }
++
++    drm_tegra_job_free(job);
++
++    return 0;
++}
++
++/* fill bottom half of image to blue */
++static int fill(struct vic *vic, struct drm_tegra_channel *channel,
++                struct vic_image *output)
++{
++    struct drm_tegra_pushbuf *pushbuf;
++    struct drm_tegra_job *job;
++    uint32_t *ptr;
++    int err;
++
++    err = drm_tegra_job_new(channel, &job);
++    if (err < 0) {
++        fprintf(stderr, "failed to create job: %s\n", strerror(-err));
++        return 1;
++    }
++
++    err = drm_tegra_job_get_pushbuf(job, &pushbuf);
++    if (err < 0) {
++        fprintf(stderr, "failed to create push buffer: %s\n", strerror(-err));
++        return 1;
++    }
++
++    err = drm_tegra_pushbuf_begin(pushbuf, 32, &ptr);
++    if (err < 0) {
++        fprintf(stderr, "failed to prepare push buffer: %s\n", strerror(-err));
++        return err;
++    }
++
++    err = vic->ops->fill(vic, output, 0, output->height / 2, output->width - 1,
++                         output->height -1, 1023, 0, 0, 1023);
++    if (err < 0) {
++        fprintf(stderr, "failed to fill surface: %s\n", strerror(-err));
++        return err;
++    }
++
++    err = vic->ops->execute(vic, pushbuf, &ptr, output, NULL, 0);
++    if (err < 0) {
++        fprintf(stderr, "failed to execute operation: %s\n", strerror(-err));
++        return err;
++    }
++
++    err = drm_tegra_pushbuf_sync_cond(pushbuf, &ptr, vic->syncpt,
++                                      DRM_TEGRA_SYNC_COND_OP_DONE);
++    if (err < 0) {
++        fprintf(stderr, "failed to push syncpoint: %s\n", strerror(-err));
++        return err;
++    }
++
++    err = drm_tegra_pushbuf_end(pushbuf, ptr);
++    if (err < 0) {
++        fprintf(stderr, "failed to update push buffer: %s\n", strerror(-err));
++        return err;
++    }
++
++    err = drm_tegra_job_submit(job, NULL);
++    if (err < 0) {
++        fprintf(stderr, "failed to submit job: %s\n", strerror(-err));
++        return err;
++    }
++
++    err = drm_tegra_job_wait(job, 1000000000);
++    if (err < 0) {
++        fprintf(stderr, "failed to wait for job: %s\n", strerror(-err));
++        return err;
++    }
++
++    drm_tegra_job_free(job);
++
++    return 0;
++}
++
++/* blit image */
++static int blit(struct vic *vic, struct drm_tegra_channel *channel,
++                struct vic_image *output, struct vic_image *input)
++{
++    struct drm_tegra_pushbuf *pushbuf;
++    struct drm_tegra_job *job;
++    uint32_t *ptr;
++    int err;
++
++    err = drm_tegra_job_new(channel, &job);
++    if (err < 0) {
++        fprintf(stderr, "failed to create job: %s\n", strerror(-err));
++        return 1;
++    }
++
++    err = drm_tegra_job_get_pushbuf(job, &pushbuf);
++    if (err < 0) {
++        fprintf(stderr, "failed to create push buffer: %s\n", strerror(-err));
++        return 1;
++    }
++
++    err = drm_tegra_pushbuf_begin(pushbuf, 32, &ptr);
++    if (err < 0) {
++        fprintf(stderr, "failed to prepare push buffer: %s\n", strerror(-err));
++        return err;
++    }
++
++    err = vic->ops->blit(vic, output, input);
++    if (err < 0) {
++        fprintf(stderr, "failed to blit surface: %s\n", strerror(-err));
++        return err;
++    }
++
++    err = vic->ops->execute(vic, pushbuf, &ptr, output, &input, 1);
++    if (err < 0) {
++        fprintf(stderr, "failed to execute operation: %s\n", strerror(-err));
++        return err;
++    }
++
++    err = drm_tegra_pushbuf_sync_cond(pushbuf, &ptr, vic->syncpt,
++                                      DRM_TEGRA_SYNC_COND_OP_DONE);
++    if (err < 0) {
++        fprintf(stderr, "failed to push syncpoint: %s\n", strerror(-err));
++        return err;
++    }
++
++    err = drm_tegra_pushbuf_end(pushbuf, ptr);
++    if (err < 0) {
++        fprintf(stderr, "failed to update push buffer: %s\n", strerror(-err));
++        return err;
++    }
++
++    err = drm_tegra_job_submit(job, NULL);
++    if (err < 0) {
++        fprintf(stderr, "failed to submit job: %s\n", strerror(-err));
++        return err;
++    }
++
++    err = drm_tegra_job_wait(job, 1000000000);
++    if (err < 0) {
++        fprintf(stderr, "failed to wait for job: %s\n", strerror(-err));
++        return err;
++    }
++
++    drm_tegra_job_free(job);
++
++    return 0;
++}
 +
 +int main(int argc, char *argv[])
 +{
@@ -151,15 +356,11 @@ index 000000000000..f65a644d398c
 +    const unsigned int width = 16, height = 16;
 +    const char *device = "/dev/dri/renderD128";
 +    struct drm_tegra_channel *channel;
-+    struct drm_tegra_pushbuf *pushbuf;
-+    struct drm_tegra_job *job;
-+    struct vic_image *output;
++    struct vic_image *input, *output;
 +    struct drm_tegra *drm;
 +    unsigned int version;
 +    struct vic *vic;
-+    uint32_t *pb;
 +    int fd, err;
-+    void *ptr;
 +
 +    if (argc > 1)
 +        device = argv[1];
@@ -193,86 +394,46 @@ index 000000000000..f65a644d398c
 +    }
 +
 +    err = vic_image_new(vic, width, height, format, kind, DRM_TEGRA_CHANNEL_MAP_READ_WRITE,
++                        &input);
++    if (err < 0) {
++        fprintf(stderr, "failed to create input image: %d\n", err);
++        return 1;
++    }
++
++    err = vic_image_new(vic, width, height, format, kind, DRM_TEGRA_CHANNEL_MAP_READ_WRITE,
 +                        &output);
 +    if (err < 0) {
 +        fprintf(stderr, "failed to create output image: %d\n", err);
 +        return 1;
 +    }
 +
-+    printf("image: %zu bytes\n", output->size);
-+
-+    err = drm_tegra_bo_map(output->bo, &ptr);
++    err = clear(vic, channel, input);
 +    if (err < 0) {
-+        fprintf(stderr, "failed to map output image: %d\n", err);
++        fprintf(stderr, "failed to clear image: %s\n", strerror(-err));
 +        return 1;
 +    }
 +
-+    memset(ptr, 0xff, output->size);
-+    drm_tegra_bo_unmap(output->bo);
++    err = fill(vic, channel, input);
++    if (err < 0) {
++        fprintf(stderr, "failed to fill rectangle: %s\n", strerror(-err));
++        return 1;
++    }
++
++    err = blit(vic, channel, output, input);
++    if (err < 0) {
++        fprintf(stderr, "failed to blit image: %s\n", strerror(-err));
++        return 1;
++    }
++
++    printf("input: %ux%u\n", input->width, input->height);
++    vic_image_dump(input, stdout);
 +
 +    printf("output: %ux%u\n", output->width, output->height);
 +    vic_image_dump(output, stdout);
 +
-+    err = drm_tegra_job_new(channel, &job);
-+    if (err < 0) {
-+        fprintf(stderr, "failed to create job: %s\n", strerror(-err));
-+        return 1;
-+    }
-+
-+    err = drm_tegra_job_get_pushbuf(job, &pushbuf);
-+    if (err < 0) {
-+        fprintf(stderr, "failed to create push buffer: %s\n", strerror(-err));
-+        return 1;
-+    }
-+
-+    err = drm_tegra_pushbuf_begin(pushbuf, 32, &pb);
-+    if (err < 0) {
-+        fprintf(stderr, "failed to prepare push buffer: %s\n", strerror(-err));
-+        return 1;
-+    }
-+
-+    err = vic->ops->clear(vic, output, 1023, 0, 0, 1023);
-+    if (err < 0) {
-+        fprintf(stderr, "failed to clear surface: %s\n", strerror(-err));
-+        return err;
-+    }
-+
-+    err = vic->ops->execute(vic, pushbuf, &pb, output, NULL, 0);
-+    if (err < 0) {
-+        fprintf(stderr, "failed to execute operation: %s\n", strerror(-err));
-+        return 1;
-+    }
-+
-+    err = drm_tegra_pushbuf_sync_cond(pushbuf, &pb, vic->syncpt,
-+                                      DRM_TEGRA_SYNC_COND_OP_DONE);
-+    if (err < 0) {
-+        fprintf(stderr, "failed to push syncpoint: %s\n", strerror(-err));
-+        return 1;
-+    }
-+
-+    err = drm_tegra_pushbuf_end(pushbuf, pb);
-+    if (err < 0) {
-+        fprintf(stderr, "failed to update push buffer: %s\n", strerror(-err));
-+        return 1;
-+    }
-+
-+    err = drm_tegra_job_submit(job, NULL);
-+    if (err < 0) {
-+        fprintf(stderr, "failed to submit job: %s\n", strerror(-err));
-+        return 1;
-+    }
-+
-+    err = drm_tegra_job_wait(job, 1000000000);
-+    if (err < 0) {
-+        fprintf(stderr, "failed to wait for job: %s\n", strerror(-err));
-+        return 1;
-+    }
-+
-+    printf("output: %ux%u\n", output->width, output->height);
-+    vic_image_dump(output, stdout);
-+
-+    drm_tegra_job_free(job);
 +    vic_image_free(output);
++    vic_image_free(input);
++
 +    vic_free(vic);
 +    drm_tegra_channel_close(channel);
 +    drm_tegra_close(drm);
