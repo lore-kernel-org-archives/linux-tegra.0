@@ -8,61 +8,61 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6858C4320E
-	for <linux-tegra@archiver.kernel.org>; Fri, 27 Aug 2021 13:24:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23535C432BE
+	for <linux-tegra@archiver.kernel.org>; Fri, 27 Aug 2021 13:24:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AF7D4604AC
-	for <linux-tegra@archiver.kernel.org>; Fri, 27 Aug 2021 13:24:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 096C560E93
+	for <linux-tegra@archiver.kernel.org>; Fri, 27 Aug 2021 13:24:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245305AbhH0NY4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 27 Aug 2021 09:24:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33924 "EHLO
+        id S245423AbhH0NY7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 27 Aug 2021 09:24:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33932 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245244AbhH0NY4 (ORCPT
+        with ESMTP id S245446AbhH0NY6 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 27 Aug 2021 09:24:56 -0400
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C46CC061757
-        for <linux-tegra@vger.kernel.org>; Fri, 27 Aug 2021 06:24:07 -0700 (PDT)
-Received: by mail-wm1-x333.google.com with SMTP id m25-20020a7bcb99000000b002e751bcb5dbso4351170wmi.5
-        for <linux-tegra@vger.kernel.org>; Fri, 27 Aug 2021 06:24:07 -0700 (PDT)
+        Fri, 27 Aug 2021 09:24:58 -0400
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61E3AC061757
+        for <linux-tegra@vger.kernel.org>; Fri, 27 Aug 2021 06:24:09 -0700 (PDT)
+Received: by mail-wr1-x436.google.com with SMTP id b6so10359407wrh.10
+        for <linux-tegra@vger.kernel.org>; Fri, 27 Aug 2021 06:24:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=NpuTsLw4X/8yyoVlGhv/CRTNrFjm7PqCZT162MCNOQg=;
-        b=eY/RbRKRB0oTVhVLS2UhWg2XVSrcxjKmaM7i3K+O/eC6h2fvI8kQxUbnBIhkBc2wWn
-         6TETWU08mJYSdHryD02/kVE94Lg6CjbyJYMyFsqANl1vJ51j6MJpsznAIdrZOL0rVk2e
-         7PjK1oAJlNaaA+zHmM+UqWngcvCRUEbjeZbxFC222yunqybn7c5EFefBKyFeRdDoAztW
-         Q0OP9LQsbrcGXCX7uGAOjED4jKo6O9TPLiifrtDiurkXfDL+5e4vHC3nfRsvf1gacJRZ
-         MSoPzUfA2OhSuNsFRXXDgiq2ftohK1AOfcI3kaLJ2JQK6OIH7RcYBI8t2mjdehbz82Zi
-         oCWg==
+        bh=+3kCGUDFoZyN6SnbYt3qQWcFpGlY4Y9NYp4wS5JC9xw=;
+        b=KuzGMvLim7UDg8/PwPM1aaALQnNQmDCZ0kNxcSxZAmUvnyBbrszz4QschJCsZMODSF
+         5vq2tz2zSQdWyfBJKmXfRjK3NWOMmQtoWPfoe68Qt3F7q6ZmU8DDKUkNfAkg+nfZ+flh
+         /4Pxb5f7+YC4RO9Ux9/cMFLGe9QyXKDD2jCefeYI//y8Qk0bO5swvXo4wAwv2C/ScqI+
+         BiiksyKjQxDguvWIEA8hVknMU6HCYKEAQXxRjf4uU9jYmYeiAiA8SIeaJE1D+WfP7pyf
+         B5zFVIMZUr5l5lT3KR4HomrL11/8HwlUl/nOg/9ozY0lI/KOBBoi5aTXI5cYYYX/oOFw
+         sPoA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=NpuTsLw4X/8yyoVlGhv/CRTNrFjm7PqCZT162MCNOQg=;
-        b=r7PrDdWarvPAuawCr7mKahaRWFMypjiVyZ1ij6CHpQKl7z31283Wasi93+JheV9wEu
-         3Vi89Pi1B76WZtPJxzcSZ5AbicX24wxcFHFJt3dHrpN6KoKfjRVnOLa83FuCUpnlw9EH
-         znwbONwsx6E3xaWWa+hT2kfywClDcn93Xin12HZgAhXZ1YTbbBheBPBp1TBM5YkF88k1
-         Ta1MH2q+USdTQmbqvGrh2UILEy4e/K5kOaQ+aSWX6H2HnosDEkKjZGhWy5XkwA8zRLUN
-         Lin/dC1eJ4CUnrOMKGU55vnbism9oAVZnoid8mMXD8EUg+CpTz+qO44QqS+JNJPAovcx
-         ECZA==
-X-Gm-Message-State: AOAM53010Ybpec1vUnY9QW9+vBXqZ3aOQwKuhlQG8i/HBIzkYMbf6eWU
-        wFpx+XieIh71oC6xsFJ6jgQ=
-X-Google-Smtp-Source: ABdhPJxyTWESCmd3pf+LGd9hduRMvJmxYP4fjs6vXu2H2qWHT+LuQBDz9EJ8Z3QbBzJdQ7DGIjQseA==
-X-Received: by 2002:a7b:cc07:: with SMTP id f7mr11324077wmh.145.1630070645872;
-        Fri, 27 Aug 2021 06:24:05 -0700 (PDT)
+        bh=+3kCGUDFoZyN6SnbYt3qQWcFpGlY4Y9NYp4wS5JC9xw=;
+        b=quvOUfB7wV5uqyZQk3SbzZnFUwx5HkdYS8vAHnGdNNaGzzSXvI7OCoktShvKPI1ldn
+         AL7RXfD+k8ZrcPM4KnVfTA/k5StFHXu4vNnsdC/g3aRkHJ0xf1p79HQ9czqDWqtlRmlz
+         87XLDeWK+6rv39uKWeCLYTyj5lzNjyQcjLfPrEJ2n89uoi37XVNT3TPvDzrMw2y3rRZk
+         cOQfqlUzkYkuCp70usuaxuM6YYe9aFRH9XIWQUCYF0gKn9+fA0N4dsJ6T7hcIfpzclt6
+         MazK6pH0vJZwi55Kb2xQpKJcAJ6SpYsNtKoZMKVs42LlnjLRboKr6ztMU4LqC+pW/fMa
+         O1Qw==
+X-Gm-Message-State: AOAM533mWt3iYPuC87waB5GObHeYmsxf/xG56MNzE2kjcXm9o5Q6kX4G
+        f+dEDGFK2AwBhQjRvRWfOc8=
+X-Google-Smtp-Source: ABdhPJzxEx6GuPKCTFtqQjfqqpUCMCFQKGNNxdgqa1LRO6eOIYkEcAwH9KfzoiNb34Ja6jkubI1VVg==
+X-Received: by 2002:adf:f9cb:: with SMTP id w11mr10597420wrr.382.1630070647935;
+        Fri, 27 Aug 2021 06:24:07 -0700 (PDT)
 Received: from localhost ([217.111.27.204])
-        by smtp.gmail.com with ESMTPSA id c15sm3007626wmr.8.2021.08.27.06.24.05
+        by smtp.gmail.com with ESMTPSA id u8sm11724541wmq.45.2021.08.27.06.24.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Aug 2021 06:24:05 -0700 (PDT)
+        Fri, 27 Aug 2021 06:24:07 -0700 (PDT)
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>
 Cc:     dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
-Subject: [PATCH libdrm 24/25] tests: tegra: Add VIC blit test
-Date:   Fri, 27 Aug 2021 15:23:04 +0200
-Message-Id: <20210827132305.3572077-25-thierry.reding@gmail.com>
+Subject: [PATCH libdrm 25/25] tests: tegra: Add VIC flip test
+Date:   Fri, 27 Aug 2021 15:23:05 +0200
+Message-Id: <20210827132305.3572077-26-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20210827132305.3572077-1-thierry.reding@gmail.com>
 References: <20210827132305.3572077-1-thierry.reding@gmail.com>
@@ -75,38 +75,38 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-This test will attempt to use the VIC to blit from one surface to
-another.
+This test will attempt to use the VIC to blit one surface to another
+and perform a vertical flip.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
  tests/tegra/meson.build |   9 ++
- tests/tegra/vic-blit.c  | 333 ++++++++++++++++++++++++++++++++++++++++
+ tests/tegra/vic-flip.c  | 333 ++++++++++++++++++++++++++++++++++++++++
  2 files changed, 342 insertions(+)
- create mode 100644 tests/tegra/vic-blit.c
+ create mode 100644 tests/tegra/vic-flip.c
 
 diff --git a/tests/tegra/meson.build b/tests/tegra/meson.build
-index e44bd3a4393d..a9ca09e12f3e 100644
+index a9ca09e12f3e..d24053265c2f 100644
 --- a/tests/tegra/meson.build
 +++ b/tests/tegra/meson.build
-@@ -91,3 +91,12 @@ vic_clear = executable(
+@@ -100,3 +100,12 @@ vic_blit = executable(
    link_with : [libdrm, libdrm_tegra, libdrm_test, libdrm_test_tegra],
    install : with_install_tests,
  )
 +
-+vic_blit = executable(
-+  'tegra-vic-blit',
-+  files('vic-blit.c'),
++vic_flip = executable(
++  'tegra-vic-flip',
++  files('vic-flip.c'),
 +  include_directories : [inc_root, inc_drm, inc_tegra],
 +  c_args : warn_c_args,
 +  link_with : [libdrm, libdrm_tegra, libdrm_test, libdrm_test_tegra],
 +  install : with_install_tests,
 +)
-diff --git a/tests/tegra/vic-blit.c b/tests/tegra/vic-blit.c
+diff --git a/tests/tegra/vic-flip.c b/tests/tegra/vic-flip.c
 new file mode 100644
-index 000000000000..1b4a3eff87d3
+index 000000000000..2e32d6eb4324
 --- /dev/null
-+++ b/tests/tegra/vic-blit.c
++++ b/tests/tegra/vic-flip.c
 @@ -0,0 +1,333 @@
 +/*
 + * Copyright © 2018 NVIDIA Corporation
@@ -162,15 +162,15 @@ index 000000000000..1b4a3eff87d3
 +        return 1;
 +    }
 +
-+    err = vic->ops->clear(vic, output, 1023, 1023, 0, 0);
-+    if (err < 0) {
-+        fprintf(stderr, "failed to clear surface: %s\n", strerror(-err));
-+        return err;
-+    }
-+
 +    err = drm_tegra_pushbuf_begin(pushbuf, 32, &ptr);
 +    if (err < 0) {
 +        fprintf(stderr, "failed to prepare push buffer: %s\n", strerror(-err));
++        return err;
++    }
++
++    err = vic->ops->clear(vic, output, 1023, 0, 0, 1023);
++    if (err < 0) {
++        fprintf(stderr, "failed to clear surface: %s\n", strerror(-err));
 +        return err;
 +    }
 +
@@ -238,9 +238,9 @@ index 000000000000..1b4a3eff87d3
 +    }
 +
 +    err = vic->ops->fill(vic, output, 0, output->height / 2, output->width - 1,
-+                         output->height -1, 1023, 0, 0, 1023);
++                         output->height - 1, 0, 0, 1023, 1023);
 +    if (err < 0) {
-+        fprintf(stderr, "failed to fill surface: %s\n", strerror(-err));
++        fprintf(stderr, "failed ot fill surface: %s\n", strerror(-err));
 +        return err;
 +    }
 +
@@ -280,8 +280,8 @@ index 000000000000..1b4a3eff87d3
 +    return 0;
 +}
 +
-+/* blit image */
-+static int blit(struct vic *vic, struct drm_tegra_channel *channel,
++/* flip image vertically */
++static int flip(struct vic *vic, struct drm_tegra_channel *channel,
 +                struct vic_image *output, struct vic_image *input)
 +{
 +    struct drm_tegra_pushbuf *pushbuf;
@@ -307,9 +307,9 @@ index 000000000000..1b4a3eff87d3
 +        return err;
 +    }
 +
-+    err = vic->ops->blit(vic, output, input);
++    err = vic->ops->flip(vic, output, input);
 +    if (err < 0) {
-+        fprintf(stderr, "failed to blit surface: %s\n", strerror(-err));
++        fprintf(stderr, "failed to flip: %s\n", strerror(-err));
 +        return err;
 +    }
 +
@@ -419,9 +419,9 @@ index 000000000000..1b4a3eff87d3
 +        return 1;
 +    }
 +
-+    err = blit(vic, channel, output, input);
++    err = flip(vic, channel, output, input);
 +    if (err < 0) {
-+        fprintf(stderr, "failed to blit image: %s\n", strerror(-err));
++        fprintf(stderr, "failed to flip image: %s\n", strerror(-err));
 +        return 1;
 +    }
 +
