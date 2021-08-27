@@ -2,124 +2,98 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41F3BC432BE
-	for <linux-tegra@archiver.kernel.org>; Fri, 27 Aug 2021 01:42:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93E2DC4320A
+	for <linux-tegra@archiver.kernel.org>; Fri, 27 Aug 2021 03:00:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 28EB060F6F
-	for <linux-tegra@archiver.kernel.org>; Fri, 27 Aug 2021 01:42:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7BA3160FE7
+	for <linux-tegra@archiver.kernel.org>; Fri, 27 Aug 2021 03:00:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243978AbhH0BnB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 26 Aug 2021 21:43:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44072 "EHLO
+        id S244077AbhH0DBN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 26 Aug 2021 23:01:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33390 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243941AbhH0BnB (ORCPT
+        with ESMTP id S244075AbhH0DBN (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 26 Aug 2021 21:43:01 -0400
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09D4CC061757;
-        Thu, 26 Aug 2021 18:42:13 -0700 (PDT)
-Received: by mail-lf1-x12e.google.com with SMTP id o10so10905374lfr.11;
-        Thu, 26 Aug 2021 18:42:12 -0700 (PDT)
+        Thu, 26 Aug 2021 23:01:13 -0400
+Received: from mail-pf1-x432.google.com (mail-pf1-x432.google.com [IPv6:2607:f8b0:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F4193C0613CF
+        for <linux-tegra@vger.kernel.org>; Thu, 26 Aug 2021 20:00:24 -0700 (PDT)
+Received: by mail-pf1-x432.google.com with SMTP id m26so4488281pff.3
+        for <linux-tegra@vger.kernel.org>; Thu, 26 Aug 2021 20:00:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=DbfO6q4GXpyBccwxPwmjY0PAuMwlFBkYaU8fNql3Y5I=;
-        b=nuwyVodyulgYm4czoyEH8CnfsucjmsDIbhhVJQubczBBrb+3c5nYUTJDGgP7eLg5Us
-         kqJ9/M6jB4TpQ9CT5jc7nzqqhVHkT5AacFL1o0zzAA+JS48YkQYG5OgGAgVZil0cQGQQ
-         Pi+JxtPcKFIypfqQd5lWX+V6/On+MCjQichjie9DlX1Se2Zt9OsqSHpC6Y2mk47Xobd+
-         kQJBEchshDO/0mPvipGD05R5y3jPixPzjwOUWuklHB4QIt6zkfxW4SCy3Yq5nydl0Hem
-         Ovh6DYw/iTfGvb1mwSEHLKqvtPsto++MecR84ZewEEQ5sySmkeP/s+6kSNhbm5YBJgLl
-         MEnA==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=u9fsl2J395rtxjWdS/JQdfMymBJF011HJL/BAVf+vaQ=;
+        b=wt0+lXQptAtx71d1AaFamencx3yC54vtU0e2RDU3G//q+cU4UTJmPk5Ze8jOIdOj2O
+         Zar5QDY8yJsXtclYlOBeEcPY84jYRevBwIT7HMLg8RWQ/hK5rAsV/dT5LO35FwFjkFeH
+         WztLnYCOTaE/v4IREh3XmSslexYz4jd4LvDJHgyKW8HdfNxG5SP2eyAvllc87DCZa+Dt
+         DQT+yBa76HSX8PzAgAWNnZ7G92gaJhEkPuIS0BTdfZOBDdTe2pZSA5dFawWtGu/hCKzH
+         CnUnKUw/bErS08W0ZQtW6wx1PGl2nHm2kYfHHRH97qKe6S4RhZFACgKZaHZ3VnZovE3m
+         tgBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=DbfO6q4GXpyBccwxPwmjY0PAuMwlFBkYaU8fNql3Y5I=;
-        b=B3WUBA0u6VTc/mqRZTRjmnitswNtgwTTxMNLz/Ot0H5mP3OB72lFfggqsCtcmY+GuG
-         61UQF9BtE3DFx50PxOyR3I9JofgQXIzTYPC69796Vshez2rwgAa6PFitR9WiPFhkVDP6
-         yZqBInC7pUl81erZYuqPAVWR+/CarMPVfWb6OfATr/dEsdZQyIoteUI3FN7IMg4I1B5v
-         8aZrgIrtSl+JCkuSAAs6RsZLFWhQ8VVtuTliqcSbd6i44mLORbmIrKVmsj5azSSJYFqJ
-         TDY8GhO9DNjbQetaPvhn2yxbtetrc+MO6P6DCcJRygV6HL7WvyCDfHGV03BBrF4sweVs
-         asqQ==
-X-Gm-Message-State: AOAM530ZVHWcROcqTcDceBpCOXYf+SYxSA9rm1zjE5IFsTmcL5dUoqAg
-        le1eXlCxJIITorjuiePs6r3fzx7cmqg=
-X-Google-Smtp-Source: ABdhPJwXKANeBz7m7HyS9Ky0XhrHdPodup8uo+ZqGxp0t+fgy4uAdlqcZTBVApfoB+4KYRwK9tSIww==
-X-Received: by 2002:a05:6512:3b14:: with SMTP id f20mr5101489lfv.614.1630028531264;
-        Thu, 26 Aug 2021 18:42:11 -0700 (PDT)
-Received: from [192.168.2.145] (94-29-17-251.dynamic.spd-mgts.ru. [94.29.17.251])
-        by smtp.googlemail.com with ESMTPSA id z11sm515859ljn.114.2021.08.26.18.42.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 26 Aug 2021 18:42:10 -0700 (PDT)
-Subject: Re: [PATCH v9 1/8] opp: Add dev_pm_opp_from_clk_rate()
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=u9fsl2J395rtxjWdS/JQdfMymBJF011HJL/BAVf+vaQ=;
+        b=l5Rt+HtaRPStKvHAYulkdNfP2IvGTnpk/Me7XkjqAhE25gT3kZAghz2VvVxIYFgNcp
+         Kj/MdvfNC5KNN7OAsAsYcJhncUQoa5+RMKLhJrQlLKXFvksfVd6o/Vmh4/ZS/2qJ/v3H
+         nr4NqDuOIU3jZg3ud0iGZ+ux3YpLrCSqCbEC3iz3tjq499tAg2GVxS1XvWYk+r0eD7tI
+         W55MTNiXZQoYRjQH5YHI+kNFDifMUnE/LpmKD+2usIKytZ/HqC9/YldLUQi3XAAPdBhv
+         90NLTrjXhPtcleQQgV1cj3btmge2936za/i/eu8yoWfWBg5qGbdqopbCvubFOTD8wgZr
+         RjiA==
+X-Gm-Message-State: AOAM531bkUE8kAe+BeMRlS90D0n+Hn0/2dGVxCAkD+xh4NAzaW1kxtvC
+        28mMa4UBtMU5nEFLmJ0OEKS+zQ==
+X-Google-Smtp-Source: ABdhPJyTZ9R0K9u4nnfdiatOPsG1Zri2/nz3ZfsEfYSuGeWo5aSKVaFN589cINxjxmSCFfIlqLPt4A==
+X-Received: by 2002:aa7:90cd:0:b029:333:baa9:87b7 with SMTP id k13-20020aa790cd0000b0290333baa987b7mr6680196pfk.23.1630033224126;
+        Thu, 26 Aug 2021 20:00:24 -0700 (PDT)
+Received: from localhost ([122.172.201.85])
+        by smtp.gmail.com with ESMTPSA id x2sm9980708pjq.35.2021.08.26.20.00.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Aug 2021 20:00:23 -0700 (PDT)
+Date:   Fri, 27 Aug 2021 08:30:19 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Ulf Hansson <ulf.hansson@linaro.org>,
         "Rafael J. Wysocki" <rjw@rjwysocki.net>,
         Kevin Hilman <khilman@kernel.org>,
         Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>
-Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-pm@vger.kernel.org
+Subject: Re: [PATCH v9 1/8] opp: Add dev_pm_opp_from_clk_rate()
+Message-ID: <20210827030019.blhfh5wp7iyf53a2@vireshk-i7>
 References: <20210827013415.24027-1-digetx@gmail.com>
  <20210827013415.24027-2-digetx@gmail.com>
-Message-ID: <73ae8568-cd81-08a8-796b-77b88ffce5e8@gmail.com>
-Date:   Fri, 27 Aug 2021 04:42:10 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 In-Reply-To: <20210827013415.24027-2-digetx@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+User-Agent: NeoMutt/20180716-391-311a52
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-27.08.2021 04:34, Dmitry Osipenko пишет:
-> diff --git a/drivers/opp/core.c b/drivers/opp/core.c
-> index 04b4691a8aac..fae5267f5218 100644
-> --- a/drivers/opp/core.c
-> +++ b/drivers/opp/core.c
-> @@ -939,7 +939,8 @@ static int _set_required_opps(struct device *dev,
->  	return ret;
->  }
->  
-> -static void _find_current_opp(struct device *dev, struct opp_table *opp_table)
-> +static struct dev_pm_opp *
-> +_find_current_opp(struct device *dev, struct opp_table *opp_table)
->  {
->  	struct dev_pm_opp *opp = ERR_PTR(-ENODEV);
->  	unsigned long freq;
-> @@ -961,7 +962,7 @@ static void _find_current_opp(struct device *dev, struct opp_table *opp_table)
->  		mutex_unlock(&opp_table->lock);
->  	}
->  
-> -	opp_table->current_opp = opp;
-> +	return opp;
->  }
->  
->  static int _disable_opp_table(struct device *dev, struct opp_table *opp_table)
-> @@ -1003,7 +1004,7 @@ static int _set_opp(struct device *dev, struct opp_table *opp_table,
->  
->  	/* Find the currently set OPP if we don't know already */
->  	if (unlikely(!opp_table->current_opp))
-> -		_find_current_opp(dev, opp_table);
-> +		opp_table->current_opp = _find_current_opp(dev, opp_table);
->  
->  	old_opp = opp_table->current_opp;
->  
-> @@ -2931,3 +2932,38 @@ int dev_pm_opp_sync_regulators(struct device *dev)
->  	return ret;
->  }
+On 27-08-21, 04:34, Dmitry Osipenko wrote:
+> +/**
+> + * dev_pm_opp_from_clk_rate() - Get OPP from current clock rate
+> + * @dev:	device for which we do this operation
+> + *
+> + * Get OPP which corresponds to the current clock rate of a device.
+> + *
+> + * Return: pointer to 'struct dev_pm_opp' on success and errorno otherwise.
+> + */
+> +struct dev_pm_opp *dev_pm_opp_from_clk_rate(struct device *dev)
 
-Please skip these lines. I missed to remove them during rebase and
-haven't noticed until now.
+I will rather call it dev_pm_opp_get_current(), and do the magic to find the
+current OPP here as well. No need to reinvent the wheel.
+
+-- 
+viresh
