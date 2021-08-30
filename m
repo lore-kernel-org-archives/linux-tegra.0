@@ -2,276 +2,120 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6249FC4320A
-	for <linux-tegra@archiver.kernel.org>; Mon, 30 Aug 2021 09:19:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D48D2C432BE
+	for <linux-tegra@archiver.kernel.org>; Mon, 30 Aug 2021 09:37:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3979F6103A
-	for <linux-tegra@archiver.kernel.org>; Mon, 30 Aug 2021 09:19:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B48F961039
+	for <linux-tegra@archiver.kernel.org>; Mon, 30 Aug 2021 09:37:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235263AbhH3JUu (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 30 Aug 2021 05:20:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60680 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235281AbhH3JUu (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 30 Aug 2021 05:20:50 -0400
-Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B682C06175F
-        for <linux-tegra@vger.kernel.org>; Mon, 30 Aug 2021 02:19:56 -0700 (PDT)
-Received: by mail-lf1-x12d.google.com with SMTP id x27so29943961lfu.5
-        for <linux-tegra@vger.kernel.org>; Mon, 30 Aug 2021 02:19:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=Pzw+rQU/7LroOYAK+nS9BT5tTrKS/NZABtpjiR6i+Uw=;
-        b=g4n0e6KkqstYAYXfLtVZ6z8ps9mcdXxZDMemgfR1mW5RcHBXZKTUzzJlaEHHnrpmV4
-         UeVptvlCBTKk4y25Rmgx86kEzCP/NPkNL2ZTBmZhpswN4QV+Rjz5ESvbYCpqk1uL5Fw4
-         zlWkn6orfLBpW5BK5UWjguRL+PfBK8T0oNYKiLf5XpGhy+cdUK4LyflIaLprVKMp1umn
-         YJo0SsY4qIzaaCBM52wYdtanJZMBpPjvcIlJiIS+yzBYHyqyvbdKEjPmy91T9T/NC0lV
-         JN9tPHJE6zBTc0pe+RRZBOPux/wEq08uJCJj0MuOMPWZ1bC8GEnNKvGMBTW/xlA7RH3S
-         E1UA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=Pzw+rQU/7LroOYAK+nS9BT5tTrKS/NZABtpjiR6i+Uw=;
-        b=sSIvbs2nJ6t5OwL8t408fw++tMJ1FsMf9QmXtqTWfy8St/DWrcYVreBLz+FE6BsQSg
-         QAg5BHpILelniqSFtpRZalxadXWapUQWOzvYCE/Ik2lJBnGI/qWSAA8CrNuLTYjB4tgh
-         57aBfLfzUbgaW/iWpCjpavxyF+e6gh3P/Sh/eYfcXT9tDADjqKZBh8RAfGrErOK0WX22
-         BzlGFevYnn6/bL2S1ifhixgNUp+hFjNL4501YlBks+oSj4STOLuLzQnK9TEf694Z8VVE
-         DsAEdGFEiKH7YlS0jPsoSSGDoSRKoI0Hp39a2uAvZVDO700QJxOKdSgVpJehaYGrH2st
-         jWWg==
-X-Gm-Message-State: AOAM530xC8l3cYHcX3KQAXk+3q8b3HkPkhjzDIDhyEOBH2gi1wWp11zK
-        fuNsHMIjj25xQrka9CzYPcOQe2P2wF0VuJy7Fzx93Q==
-X-Google-Smtp-Source: ABdhPJxWT8YcQ5s4ung2OKaPoLPad/GV7TbG07i+HNSy4hgGpxV5yAOOK5PYz6GGvKpQq/NBq+zCJ+CeQG7zx8Bld/Y=
-X-Received: by 2002:a05:6512:3094:: with SMTP id z20mr8728652lfd.584.1630315194536;
- Mon, 30 Aug 2021 02:19:54 -0700 (PDT)
+        id S235597AbhH3JiR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 30 Aug 2021 05:38:17 -0400
+Received: from mail-mw2nam10on2074.outbound.protection.outlook.com ([40.107.94.74]:37251
+        "EHLO NAM10-MW2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S235535AbhH3JiQ (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 30 Aug 2021 05:38:16 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Dkk/31QQR4jCD2L+Y9QVAYsYuy6P7jm48CDS5AK81CtVQQADrcEGfR2YPoWU2YNgy3C0QjNoT4ruQaxx/403YB+L4wp5H0yJtn4gIGMr7PttO8lwCft2bj5zyoR5bjZleqRMX052EVog3zSHbZ9kM4TrsW3C4Ltr79vt/TF0tEoFuTmI57GwM5i6plp5xGkVlzvcUN5BoQ9RoS8fa8LYMLnIhNWK6FAchQqiAw6GwXXTsSPMNaOtMSmXnkqC7GGq0A3LVIFgGKGhYwpQxGbiQoSyb87auVhkxKGvkgoOmHU9yw6shdWBsQ8/SVGKF/Maxzf4zacxLza0MMFLUOi/vA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=gSB1z2ElJ4XPqoNmncT8azt6bqnFqwzuZWI4eJ23Eek=;
+ b=NHR+7sqEYyFYDqwgLBH6+rwnICtnsAeKeZ4BnniqPU9P2DmrAp01KexL8ZBXiiicRZ2ZB7Vf0yLmD4ObQRrXSxwObbppJQDge6X4HQk56BY0WULyEsFXojA1VU41nuIuMhqjU96AIE2qFrgmx6VhukvC+jNvSZYFv0D66mQApSx/WWiVdi4ntYCHr19CUPl73NfvJRXSJ7ts2LBkEDMSzIazPwZ+STUz3U8FlLWrp04mLbfSB53vh12RLVQNE2z/xp6FN6Y3RQWbAytAhd967689Bg3eOO89fD95ivWbI81MK+jXx0SKGNYapGp/SjczzXDsg/SogGlRmLeqHCWWVA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.112.32) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=gSB1z2ElJ4XPqoNmncT8azt6bqnFqwzuZWI4eJ23Eek=;
+ b=q+MVwJlwBetvFwEdjnac9ZbFXEUeKLbvc6aI8BiGABELj43S49k/aL5713itRnIM8yiJ5k+mm1/w5u8wGqKCiAdNuyjnWTEm62fCTFq376QBUlHJ3MupRog856SNsiY2SckF7NyVSZveBRJ2x4R71os+h+6DJ0N2ZOLat3Fy6pT0namG30+M4AGqD4cetOmYXA00U1PUy9v33j2vWY3K96sjoMAFn3/xDB4r6koWJ62Jte6PJBNTQmtGN/LhAUk0xWNeYmHN+Kvk8//U5IQddtBmzjNlxW0lAbJ/fJ+fOK3rJXykYLBIABoQ+RHq/kmUeqVLdd/Cwn0YxzHX8GNHWQ==
+Received: from BN6PR16CA0014.namprd16.prod.outlook.com (2603:10b6:404:f5::24)
+ by BN8PR12MB2897.namprd12.prod.outlook.com (2603:10b6:408:99::25) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4457.24; Mon, 30 Aug
+ 2021 09:37:21 +0000
+Received: from BN8NAM11FT036.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:404:f5:cafe::36) by BN6PR16CA0014.outlook.office365.com
+ (2603:10b6:404:f5::24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4457.18 via Frontend
+ Transport; Mon, 30 Aug 2021 09:37:21 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.32)
+ smtp.mailfrom=nvidia.com; vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.112.32 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.112.32; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (216.228.112.32) by
+ BN8NAM11FT036.mail.protection.outlook.com (10.13.177.168) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.4457.17 via Frontend Transport; Mon, 30 Aug 2021 09:37:21 +0000
+Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL109.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Mon, 30 Aug
+ 2021 02:37:20 -0700
+Received: from audio.nvidia.com (172.20.187.5) by mail.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Mon, 30 Aug 2021 09:37:18 +0000
+From:   Sameer Pujar <spujar@nvidia.com>
+To:     <vkoul@kernel.org>, <jonathanh@nvidia.com>, <ldewangan@nvidia.com>,
+        <thierry.reding@gmail.com>
+CC:     <dmaengine@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Sameer Pujar <spujar@nvidia.com>
+Subject: [PATCH 0/3] Few Tegra210 ADMA fixes
+Date:   Mon, 30 Aug 2021 15:06:58 +0530
+Message-ID: <1630316221-9728-1-git-send-email-spujar@nvidia.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-References: <20210827013415.24027-1-digetx@gmail.com> <20210827013415.24027-5-digetx@gmail.com>
- <CAPDyKFqYWxY9znP1BEzogu0k7J1KRMXoSkUOeN4xHRq=gCHvTw@mail.gmail.com> <de5b2730-3032-f279-671a-b26c256b28f8@gmail.com>
-In-Reply-To: <de5b2730-3032-f279-671a-b26c256b28f8@gmail.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Mon, 30 Aug 2021 11:19:18 +0200
-Message-ID: <CAPDyKFo=SFpm+uJYH4UDfKWLVnkP2cKkBcbOQeVhU5hRxHUMCw@mail.gmail.com>
-Subject: Re: [PATCH v9 4/8] PM: domains: Add get_performance_state() callback
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Rajendra Nayak <rnayak@codeaurora.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 84e2b77e-7060-453c-fd16-08d96b99c451
+X-MS-TrafficTypeDiagnostic: BN8PR12MB2897:
+X-Microsoft-Antispam-PRVS: <BN8PR12MB28971AE6E909208A9F2CAD55A7CB9@BN8PR12MB2897.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:7219;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: fMgpdP19988HF2SPDa6XArlwETXFu1l+ucktbR7i4G7p5EJAIjSeFmTpTGjMU7li2s9qoMEFeT4Xoyg350j34+t7kuTuux2mz45AOX2HeYKLx1oFrm25OawcWiZGlCfpgfe0cRpEv0OtHJSFfpL++P4o3agt+Qri8dA9HUMx8FrrJ/Pn7h9uyDiomtjOaZ6Z3mwU3BWcIkDJLHd/4pPGsNhr5llIrvSq41tiFJ/zKD6q7MMm6EHJbg3xSXYZYpY/uvVJpGhcGqjdM9cvDuya/5g1uzC8LQDoiGTdTs98Hu2tjstPCK4JHXW+c3TFi3KjXEFaw3PQYwsMNmrW7iM0vsUWrqJHHDIoeEUwstRiSVaciO3y/TINC3k8ukFHboh+R/Ht+MyV1BwsB5KqWmgoW57wAUCF4xo2yoGic835f2UKoDTEamBGpUdyN0moO3oWjqjmL3y05Q6SiMAySeTFpRpFYFgL7eVLtuLy7icnU/f81daWiYEu2DbI5D4E4qH5YEel3xB7uiy3zAJlT+06dtUCzoVNkW6XZjSKDDvDJ4Xy8KDs6EelbPz4e/m+ADuTEOFszctSh5J80kxR2+JXRptsuvFzyoNRY2mi4dFkrN+gzHt0omupExcENPzvpBy+dtAUgVnXuYoR7YW/Zi2+QDGK5AujCftTLEsmCWDSHlErp3j5P48tWjWT64Kro6PLxXoUNphT07uKpoWKt7LYQg==
+X-Forefront-Antispam-Report: CIP:216.228.112.32;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid01.nvidia.com;CAT:NONE;SFS:(4636009)(36840700001)(46966006)(83380400001)(47076005)(70586007)(54906003)(2906002)(336012)(5660300002)(8936002)(110136005)(316002)(508600001)(107886003)(8676002)(426003)(4744005)(36860700001)(26005)(36756003)(6666004)(2616005)(70206006)(86362001)(186003)(4326008)(82310400003)(7636003)(7696005)(356005);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Aug 2021 09:37:21.5892
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 84e2b77e-7060-453c-fd16-08d96b99c451
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.32];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT036.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN8PR12MB2897
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-+ Dmitry Baryshkov, Bjorn Andersson
+Following are the fixes in the series:
+ - Couple of minor fixes (non functional fixes)
 
-On Fri, 27 Aug 2021 at 17:50, Dmitry Osipenko <digetx@gmail.com> wrote:
->
-> 27.08.2021 17:23, Ulf Hansson =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > On Fri, 27 Aug 2021 at 03:37, Dmitry Osipenko <digetx@gmail.com> wrote:
-> >>
-> >> Add get_performance_state() callback that retrieves and initializes
-> >> performance state of a device attached to a power domain. This removes
-> >> inconsistency of the performance state with hardware state.
-> >
-> > Can you please try to elaborate a bit more on the use case. Users need
-> > to know when it makes sense to implement the callback - and so far we
-> > tend to document this through detailed commit messages.
-> >
-> > Moreover, please state that implementing the callback is optional.
->
-> Noted
->
-> >> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> >> ---
-> >>  drivers/base/power/domain.c | 32 +++++++++++++++++++++++++++++---
-> >>  include/linux/pm_domain.h   |  2 ++
-> >>  2 files changed, 31 insertions(+), 3 deletions(-)
-> >>
-> >> diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-> >> index 3a13a942d012..8b828dcdf7f8 100644
-> >> --- a/drivers/base/power/domain.c
-> >> +++ b/drivers/base/power/domain.c
-> >> @@ -2700,15 +2700,41 @@ static int __genpd_dev_pm_attach(struct device=
- *dev, struct device *base_dev,
-> >>                 goto err;
-> >>         } else if (pstate > 0) {
-> >>                 ret =3D dev_pm_genpd_set_performance_state(dev, pstate=
-);
-> >> -               if (ret)
-> >> +               if (ret) {
-> >> +                       dev_err(dev, "failed to set required performan=
-ce state for power-domain %s: %d\n",
-> >> +                               pd->name, ret);
-> >
-> > Moving the dev_err() here, leads to that we won't print an error if
-> > of_get_required_opp_performance_state() fails, a few lines above, is
-> > that intentional?
->
-> Not intentional, I'll add another message.
->
-> >>                         goto err;
-> >> +               }
-> >>                 dev_gpd_data(dev)->default_pstate =3D pstate;
-> >>         }
-> >> +
-> >> +       if (pd->get_performance_state && !dev_gpd_data(dev)->default_p=
-state) {
-> >> +               bool dev_suspended =3D false;
-> >> +
-> >> +               ret =3D pd->get_performance_state(pd, base_dev, &dev_s=
-uspended);
-> >> +               if (ret < 0) {
-> >> +                       dev_err(dev, "failed to get performance state =
-for power-domain %s: %d\n",
-> >> +                               pd->name, ret);
-> >> +                       goto err;
-> >> +               }
-> >> +
-> >> +               pstate =3D ret;
-> >> +
-> >> +               if (dev_suspended) {
-> >
-> > The dev_suspended thing looks weird.
-> >
-> > Perhaps it was needed before dev_pm_genpd_set_performance_state()
-> > didn't check pm_runtime_disabled()?
->
-> There are two possible variants here:
->
-> 1. Device is suspended
-> 2. Device is active
->
-> If device is suspended, then it will be activated on RPM-resume and h/w
-> state will require a specific performance state when resumed. Hence only
-> the the rpm_pstate should be set, otherwise SoC may start to consume
-> extra power if device won't be resumed by a consumer driver and
-> performance state is bumped without a real need.
->
-> If device is known to be active, then the performance state should be
-> updated immediately, otherwise we have inconsistent state with hardware.
->
-> For Tegra dev_suspended=3Dtrue because in general it should be safe to
-> assume that hardware is suspended since it's either stopped by the PD
-> driver on initial power_on or it's assumed to be disabled by a consumer
-> driver during probe. Technically it's possible to check clock and reset
-> state of an attached device from the get_performance_state() to find the
-> real state of device, but it's not necessary to do so far.
+ - ADMA FIFO size fix: The slave ADMAIF channels have different default
+   FIFO sizes (ADMAIF FIFO is actually a ring buffer and it is divided
+   amongst all available channels). As per HW recommendation the sizes
+   should match with the corresponding ADMA channels to which ADMAIF
+   channel is mapped to at runtime. Thus program ADMA channel FIFO sizes
+   accordingly. Otherwise FIFO corruption is observed.
 
-I follow your reasoning above, but I fail to understand your point, sorry.
+Sameer Pujar (3):
+  dmaengine: tegra210-adma: Re-order 'has_outstanding_reqs' member
+  dmaengine: tegra210-adma: Add description for 'adma_get_burst_config'
+  dmaengine: tegra210-adma: Override ADMA FIFO size
 
-Your recent patch ("PM: domains: Improve runtime PM performance state
-handling"), made dev_pm_genpd_set_performance_state() to call
-pm_runtime_suspended(), to check whether it should assign
-dev_gpd_data(dev)->rpm_pstate, which postpones the vote until the
-device gets runtime resumed - or call genpd_set_performance_state() to
-immediately vote for a new performance state.
+ drivers/dma/tegra210-adma.c | 55 +++++++++++++++++++++++++++++++--------------
+ 1 file changed, 38 insertions(+), 17 deletions(-)
 
-That updated behaviour of dev_pm_genpd_set_performance_state should be
-sufficient, I think.
+-- 
+2.7.4
 
-In other words, please drop the "dev_suspended" parameter from the
-->get_performance_state() callback, as it doesn't make sense to me.
-
->
-> I'll add comment to the code.
->
-> >> +                       dev_gpd_data(dev)->rpm_pstate =3D pstate;
-> >> +               } else if (pstate > 0) {
-> >> +                       ret =3D dev_pm_genpd_set_performance_state(dev=
-, pstate);
-> >> +                       if (ret) {
-> >> +                               dev_err(dev, "failed to set required p=
-erformance state for power-domain %s: %d\n",
-> >> +                                       pd->name, ret);
-> >> +                               goto err;
-> >> +                       }
-> >> +               }
-> >> +       }
-> >
-> > Overall, what we seem to be doing here, is to retrieve a value for an
-> > initial/default performance state for a device and then we want to set
-> > it to make sure the vote becomes aggregated and finally set for the
-> > genpd.
-> >
-> > With your suggested change, there are now two ways to get the
-> > initial/default state. One is through the existing
-> > of_get_required_opp_performance_state() and the other is by using a
-> > new genpd callback.
-> >
-> > That said, perhaps we would get a bit cleaner code by moving the "get
-> > initial/default performance state" thingy, into a separate function
-> > and then call it from here. If this function returns a valid
-> > performance state, then we should continue to set the state, by
-> > calling dev_pm_genpd_set_performance_state() and update
-> > dev_gpd_data(dev)->default_pstate accordingly.
-> >
-> > Would that work, do you think?
->
-> To be honest, I'm now confused by
-> of_get_required_opp_performance_state(). It assumes that device is
-> active all the time while attached and that device is stopped on detach.
->
-> If hardware is always-on, then it should be wrong to drop the
-> performance state on detach.
->
-> If hardware isn't always-on, then it might be suspended during
-> attachment, and thus, only the rpm_pstate should be set. It's also not
-> guaranteed that consumer driver will suspend device on unbind, leaving
-> it active on detach, thus it should be wrong to drop performance state
-> on detach.
-
-I assume the new behaviour in dev_pm_genpd_set_performance_state()
-should address most of your concerns above, no?
-
-When it comes to the detaching, the best we can do is to drop the
-performance state vote for the device, no matter if it's an always on
-HW or not. Simply because after a detach, genpd loses track of the
-device, which means it can't account for performance states votes for
-it anyway.
-
->
-> Hence I think the default_pstate is a bit out of touch. If this
-> attach/detach behaviour is specific to QCOM driver/hardware, then maybe
-> of_get_required_opp_performance_state() should be moved out to a
-> get_performance_state() of the QCOM PD driver?
-
-That may work, but I hope it's unnecessary.
-
-Overall, the important part is the updated path in
-dev_pm_genpd_set_performance_state() where we now call
-pm_runtime_suspended(). I am pretty sure this should work fine for
-Qcom platforms/drivers too, but let's see if Rajendra, Dmitry or Bjorn
-have some concerns about this.
-
->
-> I added Rajendra Nayak to explain.
->
-> For now we're bailing out if default_pstate is set because it conflicts
-> with get_performance_state().
->
-> But we can factor out the code into a separate function anyways to make
-> it cleaner a tad.
-
-Yes, please.
-
-[...]
-
-Kind regards
-Uffe
