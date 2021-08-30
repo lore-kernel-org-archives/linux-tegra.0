@@ -2,71 +2,95 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAFAEC432BE
-	for <linux-tegra@archiver.kernel.org>; Sun, 29 Aug 2021 18:38:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E720C432BE
+	for <linux-tegra@archiver.kernel.org>; Mon, 30 Aug 2021 08:25:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A740860F44
-	for <linux-tegra@archiver.kernel.org>; Sun, 29 Aug 2021 18:38:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 30E596101C
+	for <linux-tegra@archiver.kernel.org>; Mon, 30 Aug 2021 08:25:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235283AbhH2SjT (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 29 Aug 2021 14:39:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50840 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231919AbhH2SjS (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 29 Aug 2021 14:39:18 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 7EBEB60E73;
-        Sun, 29 Aug 2021 18:38:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1630262306;
-        bh=a+fDHlf5S7w5I7Kq1LzJ90Pr9i1mEOucSlmKNIBkhxY=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=JIMF6VCnq8UV9SR2Pg41OJPBQxtTTac5Ka0SMvW1qcRh3VKJICcbarbmSJ5gcDArI
-         gfuQ8/+E1hWfWJFzAO/xe15I7Dz/4JihMzuxJw9VSdvevjoEt2JFHs6rx4pP2Di/ta
-         K18YlJ/ySpHTrGh1b1ZF1dz22WzUq0ZVdfgCU4VLu312sxpMeGFZ4zLcUM0fVw/t9b
-         u0DqqNtt2L5HDrvSkA+X+33/2frpvZenzMx/U4H6plU1GpMQq5PbKpNVYKPu6rupdQ
-         IxdLGer687yFOd9EBEaelEqADZb/ozu3/xqqdg+SFMgtKUEqEOQ3I08omBpDofRM8w
-         tiNQlLcRlAkfw==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20210322215047.1062540-1-arnd@kernel.org>
-References: <20210322215047.1062540-1-arnd@kernel.org>
-Subject: Re: [PATCH] clk: tegra: fix old-style declaration
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Nicolin Chen <nicoleotsuka@gmail.com>,
-        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-To:     Arnd Bergmann <arnd@kernel.org>,
+        id S234514AbhH3I0B (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 30 Aug 2021 04:26:01 -0400
+Received: from guitar.tcltek.co.il ([192.115.133.116]:50711 "EHLO
+        mx.tkos.co.il" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230216AbhH3I0B (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 30 Aug 2021 04:26:01 -0400
+Received: from tarshish.tkos.co.il (unknown [10.0.8.2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mx.tkos.co.il (Postfix) with ESMTPS id A03B244064E;
+        Mon, 30 Aug 2021 11:24:50 +0300 (IDT)
+From:   Baruch Siach <baruch@tkos.co.il>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Baruch Siach <baruch@tkos.co.il>,
+        Selvam Sathappan Periakaruppan <speriaka@codeaurora.org>,
+        Kathiravan T <kathirav@codeaurora.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>
-Date:   Sun, 29 Aug 2021 11:38:25 -0700
-Message-ID: <163026230526.2676726.10182158463483641713@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9.1
+        Jingoo Han <jingoohan1@gmail.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Robert Marko <robert.marko@sartura.hr>,
+        devicetree@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
+Subject: [PATCH v3 0/3] arm64: IPQ6018 PCIe support
+Date:   Mon, 30 Aug 2021 11:24:49 +0300
+Message-Id: <cover.1630311481.git.baruch@tkos.co.il>
+X-Mailer: git-send-email 2.33.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Quoting Arnd Bergmann (2021-03-22 14:50:41)
-> From: Arnd Bergmann <arnd@arndb.de>
->=20
-> With extra warnings enabled, gcc complains about a slightly odd
-> prototype:
->=20
-> drivers/clk/tegra/clk-dfll.c:1380:1: error: 'inline' is not at beginning =
-of declaration [-Werror=3Dold-style-declaration]
->  1380 | static void inline dfll_debug_init(struct tegra_dfll *td) { }
->=20
-> Move the 'inline' keyword to the start of the line.
->=20
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
+This series adds support for the single PCIe lane on IPQ6018 SoCs. The code is 
+ported from downstream Codeaurora v5.4 kernel. The main difference from 
+downstream code is the split of PCIe registers configuration from .init to 
+.post_init, since it requires phy_power_on().
 
-Applied to clk-next
+Tested on IPQ6010 based hardware.
+
+Changes in v3:
+
+  * Drop applied patches
+
+  * Rely on generic code for speed setup
+
+  * Drop unused macros
+
+  * Formatting fixes
+
+Changes in v2:
+
+  * Add patch moving GEN3_RELATED macros to a common header
+
+  * Drop ATU configuration from pcie-qcom
+
+  * Remove local definition of common registers
+
+  * Use bulk clk and reset APIs
+
+  * Remove msi-parent from device-tree
+
+Baruch Siach (1):
+  PCI: dwc: tegra: move GEN3_RELATED DBI register to common header
+
+Selvam Sathappan Periakaruppan (2):
+  PCI: qcom: add support for IPQ60xx PCIe controller
+  arm64: dts: ipq6018: Add pcie support
+
+ arch/arm64/boot/dts/qcom/ipq6018.dtsi        | 100 +++++++++++++
+ drivers/pci/controller/dwc/pcie-designware.h |   7 +
+ drivers/pci/controller/dwc/pcie-qcom.c       | 141 +++++++++++++++++++
+ drivers/pci/controller/dwc/pcie-tegra194.c   |   6 -
+ 4 files changed, 248 insertions(+), 6 deletions(-)
+
+-- 
+2.33.0
+
