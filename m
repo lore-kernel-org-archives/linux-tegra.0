@@ -2,188 +2,545 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_2 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED0C0C43214
-	for <linux-tegra@archiver.kernel.org>; Tue, 31 Aug 2021 16:15:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44229C4320E
+	for <linux-tegra@archiver.kernel.org>; Tue, 31 Aug 2021 20:21:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CCA3A60FC0
-	for <linux-tegra@archiver.kernel.org>; Tue, 31 Aug 2021 16:15:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1E8F560F23
+	for <linux-tegra@archiver.kernel.org>; Tue, 31 Aug 2021 20:21:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239857AbhHaQQv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 31 Aug 2021 12:16:51 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:40323 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S239842AbhHaQQu (ORCPT
+        id S240094AbhHaUWe (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 31 Aug 2021 16:22:34 -0400
+Received: from mail-ot1-f47.google.com ([209.85.210.47]:46856 "EHLO
+        mail-ot1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230011AbhHaUWb (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 31 Aug 2021 12:16:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1630426554;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=iC/vqrnC8agefEfcK8F2l8XU9S2U0FJkOrhS5FcGFpE=;
-        b=C2U3gFFXnWKCpPsxZEuvCgkzD2JjfmADTfOk1D1dKN3bDJtHeSIvz/dj6dyYvCNwQpzd3n
-        O9WNgJYT9hTG87SKEIJhFzehGeIQ1+Cyoj2PPMRbnIvI7RPYHH1KKm8R8g8HnGizhSUCXc
-        5ABluoVUp8NATVIoQcEi8JHvDTAtvfA=
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com
- [209.85.166.197]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-289-c6kJ0zQmNLOHAWkDwrHShA-1; Tue, 31 Aug 2021 12:15:52 -0400
-X-MC-Unique: c6kJ0zQmNLOHAWkDwrHShA-1
-Received: by mail-il1-f197.google.com with SMTP id j6-20020a056e02014600b00224bde51e20so11641480ilr.5
-        for <linux-tegra@vger.kernel.org>; Tue, 31 Aug 2021 09:15:52 -0700 (PDT)
+        Tue, 31 Aug 2021 16:22:31 -0400
+Received: by mail-ot1-f47.google.com with SMTP id v33-20020a0568300921b0290517cd06302dso634079ott.13;
+        Tue, 31 Aug 2021 13:21:36 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:organization:mime-version:content-transfer-encoding;
-        bh=iC/vqrnC8agefEfcK8F2l8XU9S2U0FJkOrhS5FcGFpE=;
-        b=WohvugfcbWkvgmtg0rw77/llLaYTloSgnzW7QTgMHn3xPcV5ZPrQSLuw9LcW9PoEXB
-         B/6Lqwi5leJ9+KshJEZkdpyU9NwjnzsBGhqofHTIRHB2klcEHvSVLvYjEnH8k59QooqT
-         U0skMiqag17lQay8juJ8BogwohgNgfvXoGjXjM7F1R3flNGbJ1RdfElBUgqtXARDYKdE
-         6i0fLaMAczXX7M8zS/Wtl7MwfUxNfo5vjQzjfIB//QlTPQgtjFzjFsm6szGXPlLTXCXI
-         NCO9s6PA3agMWD8FShQt0UJQ+KTVb8sXJCD310/CQo4ftRUfJclrKcYF6W+9Mog4E3FM
-         DGHQ==
-X-Gm-Message-State: AOAM533wS9gW1lyD0JLoQzw+/MbWZDzA98LAHPN9xF8mFj8w/eQn9Vo0
-        sTRMmkuoM6Z/iASveF8Sr8++YBLLmWPva3snnVBqR6YtsUAQAyQrxmaq2oIXvlXCDHXAciEra0E
-        TrX9lajSbjNishnci/X4cWQQ=
-X-Received: by 2002:a92:1306:: with SMTP id 6mr10977673ilt.183.1630426552022;
-        Tue, 31 Aug 2021 09:15:52 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJyU8Gm8fnWRjCaSBCl5W6DLLHCeLpBofrbxoK/jTZqCPsDHAV1I8o6zW03fTiw16wfuaHsuSQ==
-X-Received: by 2002:a92:1306:: with SMTP id 6mr10977660ilt.183.1630426551786;
-        Tue, 31 Aug 2021 09:15:51 -0700 (PDT)
-Received: from redhat.com ([198.99.80.109])
-        by smtp.gmail.com with ESMTPSA id u13sm9685406iot.29.2021.08.31.09.15.50
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=bU7TZOWBzRdHnk5u7KA0MFnjQQvgfnHsYudfpjDdkdg=;
+        b=d1adeLv5n8KlCimMOYypTBkFYf75iodMTNCKrJP5C7lfJ+O1vVqsS6fUVe1DnE45dv
+         3KSLWpr4bD7XWNaa5R18D18T24mzPmZiDeEE+0EsMEq5DG/WOy3wGuB7bVQd3a7fBDFZ
+         ke6D2L5u9EIgC/EkqR+B5bLgsgFvJevwPhe3FGlVFk5C+3PvpLddEwSUzegkkqwiaHhJ
+         rmB6Gkl6ZVlr6g5mHVSjIA8ZTckavdA3GpHlJgNgH40OwKrnCsvXIwW4/wTT+1FmHdiz
+         frRgugX9/PfZsYEnd+vxTPlhYY+dKewQl7bV6UX6+t4K3dApxN1JQiKmp08V4nd8e7+7
+         ouVw==
+X-Gm-Message-State: AOAM531dvbwDdGrBMh5t0uZMjxXx5bAkF3Nme7zb6RUuHYM+hPm5bhBz
+        bjuC6q63TkSlK2aYnno4IA==
+X-Google-Smtp-Source: ABdhPJwpoOM3fs+y4Ud1Zp79FJet9tP6f4HQm/EXSCPIYe1ZMQSRol2az2XulvfPxUOZMrz2Whg0pw==
+X-Received: by 2002:a9d:894:: with SMTP id 20mr25702438otf.262.1630441295709;
+        Tue, 31 Aug 2021 13:21:35 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
+        by smtp.gmail.com with ESMTPSA id c10sm4259279ots.48.2021.08.31.13.21.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 31 Aug 2021 09:15:51 -0700 (PDT)
-Date:   Tue, 31 Aug 2021 10:15:49 -0600
-From:   Alex Williamson <alex.williamson@redhat.com>
-To:     Nicolin Chen <nicolinc@nvidia.com>
-Cc:     <will@kernel.org>, <robin.murphy@arm.com>, <joro@8bytes.org>,
-        <cohuck@redhat.com>, <corbet@lwn.net>, <nicoleotsuka@gmail.com>,
-        <vdumpa@nvidia.com>, <thierry.reding@gmail.com>,
-        <linux-tegra@vger.kernel.org>, <nwatterson@nvidia.com>,
-        <Jonathan.Cameron@huawei.com>, <jean-philippe@linaro.org>,
-        <song.bao.hua@hisilicon.com>, <eric.auger@redhat.com>,
-        <thunder.leizhen@huawei.com>, <yuzenghui@huawei.com>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <iommu@lists.linux-foundation.org>, <kvm@vger.kernel.org>,
-        <linux-doc@vger.kernel.org>, "Tian, Kevin" <kevin.tian@intel.com>,
-        Jason Gunthorpe <jgg@nvidia.com>
-Subject: Re: [RFC][PATCH v2 00/13] iommu/arm-smmu-v3: Add NVIDIA
- implementation
-Message-ID: <20210831101549.237151fa.alex.williamson@redhat.com>
-In-Reply-To: <20210831025923.15812-1-nicolinc@nvidia.com>
-References: <20210831025923.15812-1-nicolinc@nvidia.com>
-Organization: Red Hat
-X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
+        Tue, 31 Aug 2021 13:21:34 -0700 (PDT)
+Received: (nullmailer pid 588777 invoked by uid 1000);
+        Tue, 31 Aug 2021 20:21:33 -0000
+Date:   Tue, 31 Aug 2021 15:21:33 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Sameer Pujar <spujar@nvidia.com>
+Cc:     broonie@kernel.org, lgirdwood@gmail.com, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, catalin.marinas@arm.com, will@kernel.org,
+        perex@perex.cz, tiwai@suse.com, kuninori.morimoto.gx@renesas.com,
+        sharadg@nvidia.com, alsa-devel@alsa-project.org,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 04/13] ASoC: dt-bindings: tegra: Few more Tegra210 AHUB
+ modules
+Message-ID: <YS6PTYwwu9tU8TWX@robh.at.kernel.org>
+References: <1630056839-6562-1-git-send-email-spujar@nvidia.com>
+ <1630056839-6562-5-git-send-email-spujar@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1630056839-6562-5-git-send-email-spujar@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, 30 Aug 2021 19:59:10 -0700
-Nicolin Chen <nicolinc@nvidia.com> wrote:
+On Fri, Aug 27, 2021 at 03:03:50PM +0530, Sameer Pujar wrote:
+> This patch adds YAML schema for DT bindings of few AHUB modules.
+> These devices will be registered as ASoC components and bindings
+> will be used on Tegra210 and later chips. The bindings for below
+> mentioned modules are added:
+> 
+>  * SFC (Sampling Frequency Converter)
+>  * MVC (Master Volume Control)
+>  * AMX (Audio Multiplexer)
+>  * ADX (Audio Demultiplexer)
+>  * Mixer
+> 
+> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
+> Cc: Rob Herring <robh+dt@kernel.org> 
+> ---
+>  .../bindings/sound/nvidia,tegra210-adx.yaml        | 74 ++++++++++++++++++++
+>  .../bindings/sound/nvidia,tegra210-ahub.yaml       | 20 ++++++
+>  .../bindings/sound/nvidia,tegra210-amx.yaml        | 72 ++++++++++++++++++++
+>  .../bindings/sound/nvidia,tegra210-mixer.yaml      | 67 ++++++++++++++++++
+>  .../bindings/sound/nvidia,tegra210-mvc.yaml        | 79 ++++++++++++++++++++++
+>  .../bindings/sound/nvidia,tegra210-sfc.yaml        | 76 +++++++++++++++++++++
+>  6 files changed, 388 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra210-adx.yaml
+>  create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra210-amx.yaml
+>  create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra210-mixer.yaml
+>  create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra210-mvc.yaml
+>  create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra210-sfc.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra210-adx.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra210-adx.yaml
+> new file mode 100644
+> index 0000000..9950585
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/sound/nvidia,tegra210-adx.yaml
+> @@ -0,0 +1,74 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/sound/nvidia,tegra210-adx.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Tegra210 ADX Device Tree Bindings
+> +
+> +description: |
+> +  The Audio Demultiplexer (ADX) block takes an input stream with   up to
 
-> The SMMUv3 devices implemented in the Grace SoC support NVIDIA's custom
-> CMDQ-Virtualization (CMDQV) hardware. Like the new ECMDQ feature first
-> introduced in the ARM SMMUv3.3 specification, CMDQV adds multiple VCMDQ
-> interfaces to supplement the single architected SMMU_CMDQ in an effort
-> to reduce contention.
-> 
-> This series of patches add CMDQV support with its preparational changes:
-> 
-> * PATCH-1 to PATCH-8 are related to shared VMID feature: they are used
->   first to improve TLB utilization, second to bind a shared VMID with a
->   VCMDQ interface for hardware configuring requirement.
+extra spaces.
 
-The vfio changes would need to be implemented in alignment with the
-/dev/iommu proposals[1].  AIUI, the VMID is essentially binding
-multiple containers together for TLB invalidation, which I expect in
-the proposal below is largely already taken care of in that a single
-iommu-fd can support multiple I/O address spaces and it's largely
-expected that a hypervisor would use a single iommu-fd so this explicit
-connection by userspace across containers wouldn't be necessary.
+> +  16 channels and demultiplexes it into four output streams of up to 16
+> +  channels each. A byte RAM helps to form output frames by any combination
+> +  of bytes from the input frame. Its design is identical to that of byte
+> +  RAM in the AMX except that the data flow direction is reversed.
+> +
+> +maintainers:
+> +  - Jon Hunter <jonathanh@nvidia.com>
+> +  - Mohan Kumar <mkumard@nvidia.com>
+> +  - Sameer Pujar <spujar@nvidia.com>
+> +
+> +properties:
+> +  $nodename:
+> +    pattern: "^adx@[0-9a-f]*$"
+> +
+> +  compatible:
+> +    oneOf:
+> +      - const: nvidia,tegra210-adx
+> +      - items:
+> +          - enum:
+> +              - nvidia,tegra194-adx
+> +              - nvidia,tegra186-adx
+> +          - const: nvidia,tegra210-adx
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  sound-name-prefix:
 
-We're expecting to talk more about the /dev/iommu approach at Plumbers
-in few weeks.  Thanks,
+nvidia,sound-name-prefix
 
-Alex
+> +    pattern: "^ADX[1-9]$"
+> +    $ref: /schemas/types.yaml#/definitions/string
+> +    description:
+> +      used as prefix for sink/source names of the component. Must be a
+> +      unique string among multiple instances of the same component.
+> +      The name can be "ADX1" or "ADX2" ... "ADXx", where x depends on
+> +      the maximum available instances on a Tegra SoC.
+> +
+> +  ports:
+> +    $ref: /schemas/graph.yaml#/properties/ports
+> +    description: |
+> +      ADX has one input and four output. Accordingly ACIF (Audio Client
 
-[1]https://lore.kernel.org/kvm/BN9PR11MB5433B1E4AE5B0480369F97178C189@BN9PR11MB5433.namprd11.prod.outlook.com/
+You need to define the port numbers for the input and each output.
 
- 
-> * PATCH-9 and PATCH-10 are to accommodate the NVIDIA implementation with
->   the existing arm-smmu-v3 driver.
-> 
-> * PATCH-11 borrows the "implementation infrastructure" from the arm-smmu
->   driver so later change can build upon it.
-> 
-> * PATCH-12 adds an initial NVIDIA implementation related to host feature,
->   and also adds implementation specific ->device_reset() and ->get_cmdq()
->   callback functions.
-> 
-> * PATCH-13 adds virtualization features using VFIO mdev interface, which
->   allows user space hypervisor to map and get access to one of the VCMDQ
->   interfaces of CMDQV module.
-> 
-> ( Thinking that reviewers can get a better view of this implementation,
->   I am attaching QEMU changes here for reference purpose:
->       https://github.com/nicolinc/qemu/commits/dev/cmdqv_v6.0.0-rc2
->   The branch has all preparational changes, while I'm still integrating
->   device model and ARM-VIRT changes, and will push them these two days,
->   although they might not be in a good shape of being sent to review yet )
-> 
-> Above all, I marked RFC for this series, as I feel that we may come up
-> some better solution. So please kindly share your reviews and insights.
-> 
-> Thank you!
-> 
-> Changelog
-> v1->v2:
->  * Added mdev interface support for hypervisor and VMs.
->  * Added preparational changes for mdev interface implementation.
->  * PATCH-12 Changed ->issue_cmdlist() to ->get_cmdq() for a better
->    integration with recently merged ECMDQ-related changes.
-> 
-> Nate Watterson (3):
->   iommu/arm-smmu-v3: Add implementation infrastructure
->   iommu/arm-smmu-v3: Add support for NVIDIA CMDQ-Virtualization hw
->   iommu/nvidia-smmu-v3: Add mdev interface support
-> 
-> Nicolin Chen (10):
->   iommu: Add set_nesting_vmid/get_nesting_vmid functions
->   vfio: add VFIO_IOMMU_GET_VMID and VFIO_IOMMU_SET_VMID
->   vfio: Document VMID control for IOMMU Virtualization
->   vfio: add set_vmid and get_vmid for vfio_iommu_type1
->   vfio/type1: Implement set_vmid and get_vmid
->   vfio/type1: Set/get VMID to/from iommu driver
->   iommu/arm-smmu-v3: Add shared VMID support for NESTING
->   iommu/arm-smmu-v3: Add VMID alloc/free helpers
->   iommu/arm-smmu-v3: Pass dev pointer to arm_smmu_detach_dev
->   iommu/arm-smmu-v3: Pass cmdq pointer in arm_smmu_cmdq_issue_cmdlist()
-> 
->  Documentation/driver-api/vfio.rst             |   34 +
->  MAINTAINERS                                   |    2 +
->  drivers/iommu/arm/arm-smmu-v3/Makefile        |    2 +-
->  .../iommu/arm/arm-smmu-v3/arm-smmu-v3-impl.c  |   15 +
->  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c   |  121 +-
->  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h   |   18 +
->  .../iommu/arm/arm-smmu-v3/nvidia-smmu-v3.c    | 1249 +++++++++++++++++
->  drivers/iommu/iommu.c                         |   20 +
->  drivers/vfio/vfio.c                           |   25 +
->  drivers/vfio/vfio_iommu_type1.c               |   37 +
->  include/linux/iommu.h                         |    5 +
->  include/linux/vfio.h                          |    2 +
->  include/uapi/linux/vfio.h                     |   26 +
->  13 files changed, 1537 insertions(+), 19 deletions(-)
->  create mode 100644 drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-impl.c
->  create mode 100644 drivers/iommu/arm/arm-smmu-v3/nvidia-smmu-v3.c
-> 
+> +      Interface) RX and TX port nodes are defined to represent ADX inputs
+> +      and output respectively. These are connected to corresponding ports
+> +      on AHUB.
+> +
+> +    patternProperties:
+> +      '^port@[0-9]':
 
+Per above, this will need to be split at least into input and output 
+ports.
+
+Same issues in the other schemas.
+
+> +        $ref: audio-graph-port.yaml#
+> +        unevaluatedProperties: false
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +
+> +    adx@702d3800 {
+> +        compatible = "nvidia,tegra210-adx";
+> +        reg = <0x702d3800 0x100>;
+> +        sound-name-prefix = "ADX1";
+> +    };
+> +
+> +...
+> diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra210-ahub.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra210-ahub.yaml
+> index 1118a94..4087eeb 100644
+> --- a/Documentation/devicetree/bindings/sound/nvidia,tegra210-ahub.yaml
+> +++ b/Documentation/devicetree/bindings/sound/nvidia,tegra210-ahub.yaml
+> @@ -85,6 +85,26 @@ patternProperties:
+>      type: object
+>      $ref: nvidia,tegra186-dspk.yaml#
+>  
+> +  '^mvc@[0-9a-f]+$':
+> +    type: object
+> +    $ref: nvidia,tegra210-mvc.yaml#
+> +
+> +  '^sfc@[0-9a-f]+$':
+> +    type: object
+> +    $ref: nvidia,tegra210-sfc.yaml#
+> +
+> +  '^amx@[0-9a-f]+$':
+> +    type: object
+> +    $ref: nvidia,tegra210-amx.yaml#
+> +
+> +  '^adx@[0-9a-f]+$':
+> +    type: object
+> +    $ref: nvidia,tegra210-adx.yaml#
+> +
+> +  '^mixer@[0-9a-f]+$':
+> +    type: object
+> +    $ref: nvidia,tegra210-mixer.yaml#
+> +
+>  required:
+>    - compatible
+>    - reg
+> diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra210-amx.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra210-amx.yaml
+> new file mode 100644
+> index 0000000..e6b365b
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/sound/nvidia,tegra210-amx.yaml
+> @@ -0,0 +1,72 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/sound/nvidia,tegra210-amx.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Tegra210 AMX Device Tree Bindings
+> +
+> +description: |
+> +  The Audio Multiplexer (AMX) block can multiplex up to four input streams
+> +  each of which can have maximum 16 channels and generate an output stream
+> +  with maximum 16 channels. A byte RAM helps to form an output frame by
+> +  any combination of bytes from the input frames.
+> +
+> +maintainers:
+> +  - Jon Hunter <jonathanh@nvidia.com>
+> +  - Mohan Kumar <mkumard@nvidia.com>
+> +  - Sameer Pujar <spujar@nvidia.com>
+> +
+> +properties:
+> +  $nodename:
+> +    pattern: "^amx@[0-9a-f]*$"
+> +
+> +  compatible:
+> +    oneOf:
+> +      - const: nvidia,tegra210-amx
+> +      - items:
+> +          - const: nvidia,tegra186-amx
+> +          - const: nvidia,tegra210-amx
+> +      - const: nvidia,tegra194-amx
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  sound-name-prefix:
+> +    pattern: "^AMX[1-9]$"
+> +    $ref: /schemas/types.yaml#/definitions/string
+> +    description:
+> +      used as prefix for sink/source names of the component. Must be a
+> +      unique string among multiple instances of the same component.
+> +      The name can be "AMX1" or "AMX2" ... "AMXx", where x depends on
+> +      the maximum available instances on a Tegra SoC.
+> +
+> +  ports:
+> +    $ref: /schemas/graph.yaml#/properties/ports
+> +    description: |
+> +      AMX has four inputs and one output. Accordingly ACIF (Audio Client
+> +      Interfaces) RX and TX port nodes are defined to represent AMX inputs
+> +      and output respectively. These are connected to corresponding ports
+> +      on AHUB.
+> +
+> +    patternProperties:
+> +      '^port@[0-9]':
+> +        $ref: audio-graph-port.yaml#
+> +        unevaluatedProperties: false
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +
+> +    amx@702d3000 {
+> +        compatible = "nvidia,tegra210-amx";
+> +        reg = <0x702d3000 0x100>;
+> +        sound-name-prefix = "AMX1";
+> +    };
+> +
+> +...
+> diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra210-mixer.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra210-mixer.yaml
+> new file mode 100644
+> index 0000000..0808355
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/sound/nvidia,tegra210-mixer.yaml
+> @@ -0,0 +1,67 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/sound/nvidia,tegra210-mixer.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Tegra210 Mixer Device Tree Bindings
+> +
+> +description: |
+> +  The Mixer supports mixing of up to ten 7.1 audio input streams and
+> +  generate five outputs (each of which can be any combination of the
+> +  ten input streams).
+> +
+> +maintainers:
+> +  - Jon Hunter <jonathanh@nvidia.com>
+> +  - Mohan Kumar <mkumard@nvidia.com>
+> +  - Sameer Pujar <spujar@nvidia.com>
+> +
+> +properties:
+> +  $nodename:
+> +    pattern: "^mixer@[0-9a-f]*$"
+> +
+> +  compatible:
+> +    oneOf:
+> +      - const: nvidia,tegra210-amixer
+> +      - items:
+> +          - enum:
+> +              - nvidia,tegra194-amixer
+> +              - nvidia,tegra186-amixer
+> +          - const: nvidia,tegra210-amixer
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  sound-name-prefix:
+> +    const: "MIXER"
+
+Don't need quotes. A fixed string seems a bit pointless to put into DT.
+
+> +    $ref: /schemas/types.yaml#/definitions/string
+> +
+> +  ports:
+> +    $ref: /schemas/graph.yaml#/properties/ports
+> +    description: |
+> +      Mixer has ten inputs and five outputs. Accordingly ACIF (Audio Client
+> +      Interfaces) RX and TX port nodes are defined to represent MIXER inputs
+> +      and outputs respectively. These are connected to corresponding ports
+> +      on AHUB.
+> +
+> +    patternProperties:
+> +      '^port@[0-9]':
+> +        $ref: audio-graph-port.yaml#
+> +        unevaluatedProperties: false
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +
+> +    mixer@702dbb00 {
+> +        compatible = "nvidia,tegra210-amixer";
+> +        reg = <0x702dbb00 0x800>;
+> +        sound-name-prefix = "MIXER";
+> +    };
+> +
+> +...
+> diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra210-mvc.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra210-mvc.yaml
+> new file mode 100644
+> index 0000000..7d81b11
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/sound/nvidia,tegra210-mvc.yaml
+> @@ -0,0 +1,79 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/sound/nvidia,tegra210-mvc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Tegra210 MVC Device Tree Bindings
+> +
+> +description: |
+> +  The Master Volume Control (MVC) provides gain or attenuation to a digital
+> +  signal path. It can be used in input or output signal path for per-stream
+> +  volume control or it can be used as master volume control. The MVC block
+> +  has one input and one output. The input digital stream can be mono or
+> +  multi-channel (up to 7.1 channels) stream. An independent mute control is
+> +  also included in the MVC block.
+> +
+> +maintainers:
+> +  - Jon Hunter <jonathanh@nvidia.com>
+> +  - Mohan Kumar <mkumard@nvidia.com>
+> +  - Sameer Pujar <spujar@nvidia.com>
+> +
+> +properties:
+> +  $nodename:
+> +    pattern: "^mvc@[0-9a-f]*$"
+> +
+> +  compatible:
+> +    oneOf:
+> +      - const: nvidia,tegra210-mvc
+> +      - items:
+> +          - enum:
+> +              - nvidia,tegra194-mvc
+> +              - nvidia,tegra186-mvc
+> +          - const: nvidia,tegra210-mvc
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  sound-name-prefix:
+> +    pattern: "^MVC[1-9]$"
+> +    $ref: /schemas/types.yaml#/definitions/string
+> +    description:
+> +      used as prefix for sink/source names of the component. Must be a
+> +      unique string among multiple instances of the same component.
+> +      The name can be "MVC1" or "MVC2" ... "MVCx", where x depends on
+> +      the maximum available instances on a Tegra SoC.
+> +
+> +  ports:
+> +    $ref: /schemas/graph.yaml#/properties/ports
+> +    properties:
+> +      port@0:
+> +        $ref: audio-graph-port.yaml#
+> +        unevaluatedProperties: false
+> +        description: |
+> +          ACIF (Audio Client Interface) acting as MVC input (RX) port.
+> +          This is connected to corresponding ACIF port on AHUB.
+> +
+> +      port@1:
+> +        $ref: audio-graph-port.yaml#
+> +        unevaluatedProperties: false
+> +        description: |
+> +          ACIF (Audio Client Interface) acting as MVC output (TX) port.
+> +          This is connected to corresponding ACIF port on AHUB.
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +
+> +    mvc@702da000 {
+> +        compatible = "nvidia,tegra210-mvc";
+> +        reg = <0x702da000 0x200>;
+> +        sound-name-prefix = "MVC1";
+> +    };
+> +
+> +...
+> diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra210-sfc.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra210-sfc.yaml
+> new file mode 100644
+> index 0000000..5f05e2a
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/sound/nvidia,tegra210-sfc.yaml
+> @@ -0,0 +1,76 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/sound/nvidia,tegra210-sfc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Tegra210 SFC Device Tree Bindings
+> +
+> +description: |
+> +  The Sampling Frequency Converter (SFC) converts the sampling frequency
+> +  of the input signal from one frequency to another. It supports sampling
+> +  frequency conversions of streams of up to two channels (stereo).
+> +
+> +maintainers:
+> +  - Jon Hunter <jonathanh@nvidia.com>
+> +  - Mohan Kumar <mkumard@nvidia.com>
+> +  - Sameer Pujar <spujar@nvidia.com>
+> +
+> +properties:
+> +  $nodename:
+> +    pattern: "^sfc@[0-9a-f]*$"
+> +
+> +  compatible:
+> +    oneOf:
+> +      - const: nvidia,tegra210-sfc
+> +      - items:
+> +          - enum:
+> +              - nvidia,tegra194-sfc
+> +              - nvidia,tegra186-sfc
+> +          - const: nvidia,tegra210-sfc
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  sound-name-prefix:
+> +    pattern: "^SFC[1-9]$"
+> +    $ref: /schemas/types.yaml#/definitions/string
+> +    description:
+> +      used as prefix for sink/source names of the component. Must be a
+> +      unique string among multiple instances of the same component.
+> +      The name can be "SFC1" or "SFC2" ... "SFCx", where x depends on
+> +      the maximum available instances on a Tegra SoC.
+> +
+> +  ports:
+> +    $ref: /schemas/graph.yaml#/properties/ports
+> +    properties:
+> +      port@0:
+> +        $ref: audio-graph-port.yaml#
+> +        unevaluatedProperties: false
+> +        description: |
+> +          ACIF (Audio Client Interface) acting as SFC input (RX) port.
+> +          This is connected to corresponding ACIF port on AHUB.
+> +
+> +      port@1:
+> +        $ref: audio-graph-port.yaml#
+> +        unevaluatedProperties: false
+> +        description: |
+> +          ACIF (Audio Client Interface) acting as SFC output (TX) port.
+> +          This is connected to corresponding ACIF port on AHUB.
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +
+> +    sfc@702d2000 {
+> +        compatible = "nvidia,tegra210-sfc";
+> +        reg = <0x702d2000 0x200>;
+> +        sound-name-prefix = "SFC1";
+> +    };
+> +
+> +...
+> -- 
+> 2.7.4
+> 
+> 
