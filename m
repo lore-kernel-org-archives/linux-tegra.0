@@ -2,192 +2,126 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 645DDC432BE
-	for <linux-tegra@archiver.kernel.org>; Tue, 31 Aug 2021 08:13:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A467BC4320E
+	for <linux-tegra@archiver.kernel.org>; Tue, 31 Aug 2021 13:57:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 40FDB60FE8
-	for <linux-tegra@archiver.kernel.org>; Tue, 31 Aug 2021 08:13:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 84B9D60241
+	for <linux-tegra@archiver.kernel.org>; Tue, 31 Aug 2021 13:57:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240170AbhHaIOQ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 31 Aug 2021 04:14:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35916 "EHLO
+        id S232774AbhHaN54 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 31 Aug 2021 09:57:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58168 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240072AbhHaIOO (ORCPT
+        with ESMTP id S231862AbhHaN5y (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 31 Aug 2021 04:14:14 -0400
-Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A4B2C061575;
-        Tue, 31 Aug 2021 01:13:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-         s=20161220; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
-        MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=OorlwylrUxzuzS3cetuLxvIStkxVch93Ik09Q2WOBco=; b=Ph8uDNyrJhv42qZkySPR9kDYDW
-        mwurkuwMjkPZ4uNGaTVorEMctLgKkuv/NMRUFjuixR7fk8lQQflA/JUduqDyUSxfefXyYEZgoOY5/
-        LEzHE976l4sX1rIx0EuLh0WMU8woFkLvUdIPCTunZXg2NJWzT3cBINeyvJgCJF7K61PaSKEMg9qfS
-        vyW1+48z6HBV9XQt9H3eblK3oVBu8YJlVrNbZSe1MHOcTTb54SFG+CbnoJEaBv9NMCdlgawOQPMds
-        eGb8lncw9pY9IldofDjiRM8lLVtWxflIvnphX69awidyA8+8keRKBcUx7QsiSuMQWtuSpFAAhQy8W
-        oyvG42sA==;
-Received: from dsl-hkibng22-54f986-236.dhcp.inet.fi ([84.249.134.236] helo=[192.168.1.10])
-        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <cyndis@kapsi.fi>)
-        id 1mKytP-0001PW-NU; Tue, 31 Aug 2021 11:13:15 +0300
-Subject: Re: [PATCH 1/2] pinctrl: pimux: Add support to save and restore HW
- register
-To:     Prathamesh Shete <pshete@nvidia.com>, linus.walleij@linaro.org,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        ldewangan@nvidia.com, linux-gpio@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     smangipudi@nvidia.com
-References: <20210831052834.4136-1-pshete@nvidia.com>
- <20210831052834.4136-2-pshete@nvidia.com>
-From:   Mikko Perttunen <cyndis@kapsi.fi>
-Message-ID: <36a272b2-1377-aaae-db37-cb40b618274a@kapsi.fi>
-Date:   Tue, 31 Aug 2021 11:13:12 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+        Tue, 31 Aug 2021 09:57:54 -0400
+Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96C4AC061764;
+        Tue, 31 Aug 2021 06:56:59 -0700 (PDT)
+Received: by mail-lj1-x22a.google.com with SMTP id m4so31915857ljq.8;
+        Tue, 31 Aug 2021 06:56:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Vh1dGOF6z3ZHEXOnLNafwuf+KocUmg+Di2EHeSGPS14=;
+        b=ESbQnhfCmCTAv6lQEk+bz2yhb0U05g9NZlMwZTZXxLDXNiktDG3SdJSKPGIRX7CmzQ
+         h5i9e3k2A/SXOkPua8wV4mk/OWd1unmcuUZ0VaGiFzgHkHxt9tB0WSvywwt9ZHDDKoGJ
+         l5n3AmISoacdCW3Zulxp9BTaKBGUOnjLTvPOTR+VCLvFoBcNkC7XQ9dtEQnObj1cBQf0
+         tbrlNB8sXbtvZE1fcx13Pa+XwkRc/QCnme2+J4Yn487svGYnF+qxrLdDlcKMDsIbDsJ6
+         myBCphEvLKIzuN35eED+SwEFlqsvEQQK/n//Bxt97W5z127qNCdOxZi0pQ7h9JuVNyPW
+         vkew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Vh1dGOF6z3ZHEXOnLNafwuf+KocUmg+Di2EHeSGPS14=;
+        b=VkNXxwVa4lnIdPTA8zYPHDgQ4ODBRfRyYW3IybR8VNudHgaadXArqQKpXlHsha1UBU
+         8vaLOd1jPU6dXxARdJ8PDz45HRPh0fbWZP7WvPaMicPjWQvHWg/3qw0p5v6l5iYZ0+S7
+         mUzqdeg4GcAtHr8JFD6bW1jZM66WjlrKkhiYb0LDicGuMyFeOM8yN7U+XXcgJSkgdOeJ
+         1xpGt98o0+H7uysLuMmxH9ZX9foaRgx1eH1fqxfC0pkhceeWrMPiGeQ8ofRolGussJyR
+         ygAM6UIwcOiVJmZ8OicZylAzvFd1q2bX0z2nps09t6mM9lUAG2m11XOCaD/WpgdUSGsE
+         wXJw==
+X-Gm-Message-State: AOAM533nCroX5qo5Oj7wp6Istvh3jh2O9KIxM532xB7lmlkFX4sAZ7bB
+        rgWYp3g3y/hCevI9RmVb8QM=
+X-Google-Smtp-Source: ABdhPJzLG6MDZYE9+tYPEw2ML4qOqYcuZlHRjY8J0I5DsAoQoMQif5isenxdToNxPJBSPojKTTA5Iw==
+X-Received: by 2002:a2e:a7cf:: with SMTP id x15mr25134828ljp.227.1630418217974;
+        Tue, 31 Aug 2021 06:56:57 -0700 (PDT)
+Received: from localhost.localdomain (46-138-26-37.dynamic.spd-mgts.ru. [46.138.26.37])
+        by smtp.gmail.com with ESMTPSA id x4sm2203622ljm.98.2021.08.31.06.56.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 31 Aug 2021 06:56:57 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>
+Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-pm@vger.kernel.org
+Subject: [PATCH v10 0/8] NVIDIA Tegra power management patches for 5.16
+Date:   Tue, 31 Aug 2021 16:54:42 +0300
+Message-Id: <20210831135450.26070-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-In-Reply-To: <20210831052834.4136-2-pshete@nvidia.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 84.249.134.236
-X-SA-Exim-Mail-From: cyndis@kapsi.fi
-X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 8/31/21 8:28 AM, Prathamesh Shete wrote:
-> From: Laxman Dewangan <ldewangan@nvidia.com>
-> 
-> Add support to save and restore the pincontrol HW register
-> for GPIO mode configurations. This helps in changing the
-> pin configure only during suspend and restore in resume.
+This is a reduced version of the patchset which adds power management
+support to NVIDIA Tegra drivers. Viresh Kumar asked to send these PD/OPP
+patches separately for now to reduce the noise and finalize the review.
 
-Aren't we already saving all registers during suspend and restoring 
-during resume?
+I implemented new dev_get_performance_state() GENPD callback as was
+discussed in v8/v9. GR3D driver patch shows how it's used by consumer
+drivers.
 
-> 
-> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-> Signed-off-by: pshete <pshete@nvidia.com>
+v10: - Replaced dev_pm_opp_from_clk_rate() with dev_pm_opp_get_current(),
+       as was requested by Viresh Kumar.
 
-Needs full name. Also, there is a typo in the commit title, and it is 
-quite vague (what HW register?)
+     - Added more comments to the code and extended commit message,
+       as was requested by Viresh Kumar and Ulf Hansson.
 
-Cheers,
-Mikko
+     - Renamed get_performance_state() to dev_get_performance_state(),
+       as was requested by Ulf Hansson.
 
-> ---
->   drivers/pinctrl/pinmux.c       | 24 ++++++++++++++++++++++++
->   drivers/pinctrl/pinmux.h       | 18 ++++++++++++++++++
->   include/linux/pinctrl/pinmux.h |  9 +++++++++
->   3 files changed, 51 insertions(+)
-> 
-> diff --git a/drivers/pinctrl/pinmux.c b/drivers/pinctrl/pinmux.c
-> index 6cdbd9ccf2f0..66fc0ca22623 100644
-> --- a/drivers/pinctrl/pinmux.c
-> +++ b/drivers/pinctrl/pinmux.c
-> @@ -317,6 +317,30 @@ int pinmux_gpio_direction(struct pinctrl_dev *pctldev,
->   	return ret;
->   }
->   
-> +int pinmux_gpio_save_config(struct pinctrl_dev *pctldev,
-> +			    struct pinctrl_gpio_range *range,
-> +			    unsigned pin)
-> +{
-> +	const struct pinmux_ops *ops = pctldev->desc->pmxops;
-> +
-> +	if (ops->gpio_save_config)
-> +		return ops->gpio_save_config(pctldev, range, pin);
-> +
-> +	return 0;
-> +}
-> +
-> +int pinmux_gpio_restore_config(struct pinctrl_dev *pctldev,
-> +			       struct pinctrl_gpio_range *range,
-> +			       unsigned pin)
-> +{
-> +	const struct pinmux_ops *ops = pctldev->desc->pmxops;
-> +
-> +	if (ops->gpio_restore_config)
-> +		return ops->gpio_restore_config(pctldev, range, pin);
-> +
-> +	return 0;
-> +}
-> +
->   static int pinmux_func_name_to_selector(struct pinctrl_dev *pctldev,
->   					const char *function)
->   {
-> diff --git a/drivers/pinctrl/pinmux.h b/drivers/pinctrl/pinmux.h
-> index 78c3a31be882..425c31a0115b 100644
-> --- a/drivers/pinctrl/pinmux.h
-> +++ b/drivers/pinctrl/pinmux.h
-> @@ -31,6 +31,12 @@ int pinmux_map_to_setting(const struct pinctrl_map *map,
->   void pinmux_free_setting(const struct pinctrl_setting *setting);
->   int pinmux_enable_setting(const struct pinctrl_setting *setting);
->   void pinmux_disable_setting(const struct pinctrl_setting *setting);
-> +int pinmux_gpio_save_config(struct pinctrl_dev *pctldev,
-> +			    struct pinctrl_gpio_range *range,
-> +			    unsigned pin);
-> +int pinmux_gpio_restore_config(struct pinctrl_dev *pctldev,
-> +			       struct pinctrl_gpio_range *range,
-> +			       unsigned pin);
->   
->   #else
->   
-> @@ -89,6 +95,18 @@ static inline void pinmux_disable_setting(const struct pinctrl_setting *setting)
->   {
->   }
->   
-> +int pinmux_gpio_save_config(struct pinctrl_dev *pctldev,
-> +			    struct pinctrl_gpio_range *range,
-> +			    unsigned pin)
-> +{
-> +	return 0;
-> +}
-> +int pinmux_gpio_restore_config(struct pinctrl_dev *pctldev,
-> +			       struct pinctrl_gpio_range *range,
-> +			       unsigned pin)
-> +{
-> +	return 0;
-> +}
->   #endif
->   
->   #if defined(CONFIG_PINMUX) && defined(CONFIG_DEBUG_FS)
-> diff --git a/include/linux/pinctrl/pinmux.h b/include/linux/pinctrl/pinmux.h
-> index 9a647fa5c8f1..cca87586d8c1 100644
-> --- a/include/linux/pinctrl/pinmux.h
-> +++ b/include/linux/pinctrl/pinmux.h
-> @@ -53,6 +53,8 @@ struct pinctrl_dev;
->    *	depending on whether the GPIO is configured as input or output,
->    *	a direction selector function may be implemented as a backing
->    *	to the GPIO controllers that need pin muxing.
-> + * @gpio_save_config: Save the GPIo configurations.
-> + * @gpio_restore_config: Restore GPIO configurations.
->    * @strict: do not allow simultaneous use of the same pin for GPIO and another
->    *	function. Check both gpio_owner and mux_owner strictly before approving
->    *	the pin request.
-> @@ -79,6 +81,13 @@ struct pinmux_ops {
->   				   struct pinctrl_gpio_range *range,
->   				   unsigned offset,
->   				   bool input);
-> +	int (*gpio_save_config) (struct pinctrl_dev *pctldev,
-> +				 struct pinctrl_gpio_range *range,
-> +				 unsigned offset);
-> +	int (*gpio_restore_config) (struct pinctrl_dev *pctldev,
-> +				    struct pinctrl_gpio_range *range,
-> +				    unsigned offset);
-> +
->   	bool strict;
->   };
->   
-> 
+     - Factored out 'performance' code out of __genpd_dev_pm_attach() into
+       a separate function genpd_dev_initialize_performance_state(), as was
+       requested by Ulf Hansson.
+
+     - Removed dev_suspended argument from dev_get_performance_state(),
+       as was requested by Ulf Hansson. It's replaced by the usage of
+       pm_runtime_status_suspended(), see genpd_dev_get_current_performance_state().
+
+Dmitry Osipenko (8):
+  opp: Add dev_pm_opp_get_current()
+  opp: Allow dev_pm_opp_set_clkname() to replace released clock
+  opp: Change type of dev_pm_opp_attach_genpd(names) argument
+  PM: domains: Add dev_get_performance_state() callback
+  soc/tegra: pmc: Implement dev_get_performance_state() callback
+  soc/tegra: Add devm_tegra_core_dev_init_opp_table_simple()
+  gpu: host1x: Add host1x_channel_stop()
+  drm/tegra: gr3d: Support generic power domain and runtime PM
+
+ drivers/base/power/domain.c  |  90 ++++++--
+ drivers/gpu/drm/tegra/gr3d.c | 384 ++++++++++++++++++++++++++++++-----
+ drivers/gpu/host1x/channel.c |   8 +
+ drivers/opp/core.c           |  51 ++++-
+ drivers/soc/tegra/pmc.c      | 101 +++++++++
+ include/linux/host1x.h       |   1 +
+ include/linux/pm_domain.h    |   2 +
+ include/linux/pm_opp.h       |  14 +-
+ include/soc/tegra/common.h   |  13 ++
+ 9 files changed, 586 insertions(+), 78 deletions(-)
+
+-- 
+2.32.0
+
