@@ -2,198 +2,120 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-14.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80C00C4320A
-	for <linux-tegra@archiver.kernel.org>; Tue, 31 Aug 2021 03:09:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7810C432BE
+	for <linux-tegra@archiver.kernel.org>; Tue, 31 Aug 2021 05:29:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 64E076102A
-	for <linux-tegra@archiver.kernel.org>; Tue, 31 Aug 2021 03:09:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B548960FF2
+	for <linux-tegra@archiver.kernel.org>; Tue, 31 Aug 2021 05:29:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239486AbhHaDIa (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 30 Aug 2021 23:08:30 -0400
-Received: from mail-dm6nam10on2044.outbound.protection.outlook.com ([40.107.93.44]:12320
-        "EHLO NAM10-DM6-obe.outbound.protection.outlook.com"
+        id S234263AbhHaF3z (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 31 Aug 2021 01:29:55 -0400
+Received: from mail-bn8nam12on2063.outbound.protection.outlook.com ([40.107.237.63]:2400
+        "EHLO NAM12-BN8-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S231944AbhHaDI2 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 30 Aug 2021 23:08:28 -0400
+        id S229526AbhHaF3x (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 31 Aug 2021 01:29:53 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=BrRLCdjAx7sXMidJrZtriRUfubCgLXKNHBQZfavXMXEtcfN7lOyRQFXdwiga9j0sl4ENxB+DwffBP4DE1ywB8CkufZfwPoO8la/9622qaP8orXbk+3Y4lgXyJVu4LRvyyy15wroYRBBI+IqoyVtRINcEtlFMmE9/G9mSqP3KC13L8lE9lQWtQsHvE03bNoQaKpUk4Qsy85iR2LuO/knqtt6GEsyEoYf7gSnFjzFH1llTLbArOBAIlOxIs6z4VzY7hw075NrB23LsbISqW7YZeR4OEaZSD0J5vENNuq059p37tTY+eY8uRFOKsZ05qd7zo8tH/hkYUBOwJJm0kSrvAQ==
+ b=WpI1vtGxCGfFVTjAYZQ/PoHb9zXrNEZed6yjCb+gOuc/zX+7KGb+UK/RDXVVr+mtLvSDjyNg3zEru2MtcYOh8i4bu3Dh17exujg1WS+fKn/8Qh0/2yxU40iRGBFe4jW9S6Olo/kIldw9pLhFlkmjU76GGONFu0wvXajZSy/7vDvS9vpi5YOlzc+VhaD71TyOT/k3DOOs5znMYgxaW/DQMmX2crNdH68+hVnLqDBrMcmfc8i6KTLa3lSRJyDZFnCdrishw6cWFHE07pfhUve0YTysynP2ENgGs8YF060Ga9WY7aBE0rihqndpDg0lGWMcJBUD+PBolZPPXK738zFruQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LPa02YAHGVtjdhyj7ZEuwlxcvKmyjH7cp6BNQPwjXK8=;
- b=f7+zNbGIdnqy6e8DgadauZuFUktR3QRnYMNBcdqwiK6AO5KDBHQnVMEDrksO74s2nH2blia+iogD72qcsTdMd59qiB3YGoI4gLaYtkBl+3L3BD+my0+pc3bjT2r9F2f4rA1qYHN1g/OUxB7t5RL+hHSk/W+7toM0AuIqOaFGYNjAIyQMU+7Z5/db2/BbZWZ8skzK7XBrAKd0GwjRQqLA+v1dOkvhRo5Y9qKNIXNd1V8rHkk4B28/vzuPnWYghwFV9gvDg+Lv1T9o09pdyiWprXKFFqZcZLaalpuHmiXA8dL/RA6umVhdJVu+OcGDbnAgRZIkYoRbbifhhElpGlZF1Q==
+ bh=M75efZuaRpOGftCoZlLD1i8lz6Itdfkg5OKhT0KWOZk=;
+ b=aw13L2khehWhOqE84wz9MHNHNc3gq/H0mEM+1oizEW+K48NqhAxrZz8B55RY2VHpMbYTb+lt34O2XcNLXLAGls88y8/w2keRv+Pjd1Cabxivom1vQHFVJfXjQpCX8xFNBElXGFFeXwPbr/hXJbNlD0TOPuvkc2BXzwh/O7E8JUHwypjycA75hY3TWRr4mVYTEKdWRf5+IegM9JxfZ7h6GBPazM1YDYPOigUT6VTBYMOOShbwOFbuhgT5I0F5XmGmBscUQAs+pcyyMBo+AxQ9zdAtPs7Bg4yeu1ICOuIVobN56hJtBLqGjqiDbYKWyS02qS8qLJwb/d/NZq7wjDdx+g==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.112.32) smtp.rcpttodomain=huawei.com smtp.mailfrom=nvidia.com;
+ 216.228.112.36) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
  dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=nvidia.com;
  dkim=none (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LPa02YAHGVtjdhyj7ZEuwlxcvKmyjH7cp6BNQPwjXK8=;
- b=es2mQuI2JsGozxbBjvHVqi+VeRpySpHEOWjzbDOd6VHzt26Cli45o2kuoLeFwR5FZ7gLNHSti3h9pvehnSdQhW7X4pKEVJUdedZY2IYWNbVfLNrsI+gNPoXc9WptYjIZ3gEDIv1eLPUACXthyPATbjlownVzr2nLBu+PzBXmHQ+EYq2rw/1Le/8smJ9o8hcMqaedj2sgGiCjhgpQS4kb36VSze9lTgvieiUVtjRxCaAkYEbijFJmPweshkaSRMgoSgAXZZ60UPHgqbttQvvwFoxu3zKWyAKRfm4PjBkZSoAXpXySfxSRHgaOvlqkvTTzDThF7q6TmySfCfWr03KX/g==
-Received: from BN6PR16CA0039.namprd16.prod.outlook.com (2603:10b6:405:14::25)
- by BY5PR12MB4856.namprd12.prod.outlook.com (2603:10b6:a03:1d5::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4457.20; Tue, 31 Aug
- 2021 03:07:32 +0000
-Received: from BN8NAM11FT026.eop-nam11.prod.protection.outlook.com
- (2603:10b6:405:14:cafe::7) by BN6PR16CA0039.outlook.office365.com
- (2603:10b6:405:14::25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4457.18 via Frontend
- Transport; Tue, 31 Aug 2021 03:07:31 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.32)
- smtp.mailfrom=nvidia.com; huawei.com; dkim=none (message not signed)
- header.d=none;huawei.com; dmarc=pass action=none header.from=nvidia.com;
+ bh=M75efZuaRpOGftCoZlLD1i8lz6Itdfkg5OKhT0KWOZk=;
+ b=OeQ3m5KewSRy6fzhBYeDyZZrSOnS/ap1xzx99MQ+6KszCay+ZgGFboqjgAirI5orsqBloQctUbrWwF4xqaSlT6ANWRZE5/QznOmsf/pqlBwd+assYbuvvQuCe8XbONY3Q7X1Wcb3lTP21WkxaeejtTecqJ/tn0HkxgM1X3kHPFKAuqq+rcjWOt1VAqq7oUabjIHwQ5s7Ue+TOXz7hw2f5XdhT5YEiXBsA8B+qSFwkj/cK468HyEFXGjBy3bqFGBpR6RgAN015Jr44ztSGBdhtJDs5GFBbWP0MqwHKjIpRV3L0HABGgZqxNFE0i0kKIvJorR1RnJODpUPls0IuiaNKg==
+Received: from DM5PR06CA0061.namprd06.prod.outlook.com (2603:10b6:3:37::23) by
+ MN2PR12MB3648.namprd12.prod.outlook.com (2603:10b6:208:c1::28) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.4457.24; Tue, 31 Aug 2021 05:28:56 +0000
+Received: from DM6NAM11FT008.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:3:37:cafe::53) by DM5PR06CA0061.outlook.office365.com
+ (2603:10b6:3:37::23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4457.20 via Frontend
+ Transport; Tue, 31 Aug 2021 05:28:56 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.36)
+ smtp.mailfrom=nvidia.com; gmail.com; dkim=none (message not signed)
+ header.d=none;gmail.com; dmarc=pass action=none header.from=nvidia.com;
 Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.112.32 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.112.32; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (216.228.112.32) by
- BN8NAM11FT026.mail.protection.outlook.com (10.13.177.51) with Microsoft SMTP
+ 216.228.112.36 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.112.36; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (216.228.112.36) by
+ DM6NAM11FT008.mail.protection.outlook.com (10.13.172.85) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.4457.17 via Frontend Transport; Tue, 31 Aug 2021 03:07:31 +0000
-Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL109.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Mon, 30 Aug
- 2021 20:07:30 -0700
-Received: from Asurada-Nvidia.nvidia.com (172.20.187.5) by mail.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Tue, 31 Aug 2021 03:07:30 +0000
-From:   Nicolin Chen <nicolinc@nvidia.com>
-To:     <will@kernel.org>, <robin.murphy@arm.com>, <joro@8bytes.org>,
-        <alex.williamson@redhat.com>, <cohuck@redhat.com>, <corbet@lwn.net>
-CC:     <nicoleotsuka@gmail.com>, <vdumpa@nvidia.com>,
-        <thierry.reding@gmail.com>, <linux-tegra@vger.kernel.org>,
-        <nwatterson@nvidia.com>, <Jonathan.Cameron@huawei.com>,
-        <jean-philippe@linaro.org>, <song.bao.hua@hisilicon.com>,
-        <eric.auger@redhat.com>, <thunder.leizhen@huawei.com>,
-        <yuzenghui@huawei.com>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <iommu@lists.linux-foundation.org>, <kvm@vger.kernel.org>,
-        <linux-doc@vger.kernel.org>
-Subject: [RFC][PATCH v2 02/13] vfio: add VFIO_IOMMU_GET_VMID and VFIO_IOMMU_SET_VMID
-Date:   Mon, 30 Aug 2021 19:59:12 -0700
-Message-ID: <20210831025923.15812-3-nicolinc@nvidia.com>
+ 15.20.4457.17 via Frontend Transport; Tue, 31 Aug 2021 05:28:56 +0000
+Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Tue, 31 Aug
+ 2021 05:28:54 +0000
+Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Tue, 31 Aug
+ 2021 05:28:52 +0000
+Received: from pshete-ubuntu.nvidia.com (172.20.187.5) by mail.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Tue, 31 Aug 2021 05:28:49 +0000
+From:   Prathamesh Shete <pshete@nvidia.com>
+To:     <linus.walleij@linaro.org>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <ldewangan@nvidia.com>,
+        <linux-gpio@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <smangipudi@nvidia.com>, <pshete@nvidia.com>
+Subject: [PATCH 0/2] pinctrl: support to save and restore GPIO conf.
+Date:   Tue, 31 Aug 2021 10:58:32 +0530
+Message-ID: <20210831052834.4136-1-pshete@nvidia.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20210831025923.15812-1-nicolinc@nvidia.com>
-References: <20210831025923.15812-1-nicolinc@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: d5c4edaf-da3f-4c55-83c9-08d96c2c7944
-X-MS-TrafficTypeDiagnostic: BY5PR12MB4856:
-X-Microsoft-Antispam-PRVS: <BY5PR12MB48560A8CF61A6C804C65F3C8ABCC9@BY5PR12MB4856.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:529;
+X-MS-Office365-Filtering-Correlation-Id: d858a876-435e-40a6-c160-08d96c403aaa
+X-MS-TrafficTypeDiagnostic: MN2PR12MB3648:
+X-Microsoft-Antispam-PRVS: <MN2PR12MB36489A06DB61E254625D3B47B7CC9@MN2PR12MB3648.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:2399;
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 8RbGzxNMkBSwDAvXLUmoG2qI039equ4+dWoQv2k/9DqimgGJrukr+Lc9bMdvJHxUWXVbiINe9Q3YfgAiLO7pSf47KwO5Vt+Twcc5ohBtPlHtT3KB65iBYyvr21b2POR4w/klETJe7uOBdQv3ufUwTPScXKOgkjV6eoNZsSMl43TDDdK7mBw3qVgKvfgmQ3ESwhgZIELvCtb9wUoWMvOQhuiaBD6SlfgTnjCpicd3UH4Fq3cmgxJ6/VekDUpd5a8isplpuJIURk4AXpMtX51M6KD1kxcJT4POU2O/dJB6NaWIXQ3cZet2KMseIgVN/zjQn4QW72Ih3yMKfCd1lzfHXeMtxXrFd76T6Voq6q8x9DJ4uZp61VIcqnZpBn3+oFiN2wYHGHw6RFTVPimFjyp9WJHvAqTwdJZge76mE9daNStjWnTXnf/3Gh/csyLkvuZpms80z1C7NIA0zzdcRf1su6bArRkIycanMzgq0qD7oxMcZZ6NJyfA8W0/9wsY1io1zOPLo4sQTHr6XGBvK3SCGpPWScFigqKQQ4+mGHFJhPrmupxmGsWEwwMxMQp/RQyn7HHmoukSTqw0qtx31JU0gUBTiWF6aHyjexCoLk7sGtaq80WFCudfjQvQO6DweFKqQ9O8DLmwIcZWt4g6VQ6BCBBd/ea11MFQbstmbtce5lZ6IoXb27zCZO6rdS3ZxvdSlsq2r+j2ybfgDHKKHehpXvGTm4vXhsCfXLQyAEVdadQ=
-X-Forefront-Antispam-Report: CIP:216.228.112.32;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid01.nvidia.com;CAT:NONE;SFS:(4636009)(376002)(346002)(396003)(136003)(39860400002)(36840700001)(46966006)(186003)(2906002)(8936002)(4326008)(426003)(86362001)(7416002)(478600001)(54906003)(26005)(110136005)(6666004)(336012)(1076003)(70586007)(7696005)(8676002)(70206006)(316002)(36756003)(7636003)(82740400003)(2616005)(82310400003)(36860700001)(5660300002)(47076005)(83380400001)(356005)(2101003);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: aXPbZNRO6cTkB0pkSHWczj6C1ekeu+jZ985bYI07vO+g4OC/oUxjxkf6J3IZBuGRAZxt4Hl/90kyYq4QfiSKh8wuTG62dD6iJ8Y62frK9JKvhl6FtZ1QCybE2YRC3bpvrBXWJuhUtk5wo2C4/ZKTETF9uVXpupS6EJW4YpwGlLesNeDEZSbXe8+God7kbtohHW4dwsBVgkJmO+13MWPkCmasUmoGkhXgU+w7epaEyMw8ew6ViMoVwKg3/JjI8ZecuV9lUIcneHa4xwrwvDqPJx04q1ziDwGxIK/aTSoQlR2RU1NK+nf0f4U+MDlfHAiIxbi6FZWuPPdetkxDoGr6aY0/8xOl+Ve6tuNp2LhQRggQjGj+ntWDmBF6oMPS9vfM9zKvs6dZE0cMBnfk2LhoNFZXS7vHFPR9Oc6wOFEaiVLsoirvgH5MGC2xN0zjIbzRlcCopvIEEGQjBqT6AY9wWmGOK+e46tMlcDHoziaD0FOluzf5szH4e/udALM0hv4ex6UOF85gMia3Va/JwRleWGcx7fPABmxcOwnawYCS/ueEzE0RA765vcIbrqZoBVlhyilWQ3hKHfJI6x71xVGOZrWE6oBbyXIJTfbvZj758FiPJ4fvBhNWlMEHsIkN4Kr5eC3YtdVev3DaDFarZn/d+DrKguRO9j4+/MXriE0yOqe7ivFqfhXsGlLwDXQSemR/SCgrL5XmOcumLkJ8l1syZHw1zghy67PMOvhvzwwaHC4=
+X-Forefront-Antispam-Report: CIP:216.228.112.36;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid05.nvidia.com;CAT:NONE;SFS:(4636009)(46966006)(36840700001)(7636003)(110136005)(5660300002)(54906003)(7696005)(508600001)(70586007)(8676002)(86362001)(4744005)(316002)(82310400003)(36906005)(356005)(70206006)(36756003)(47076005)(6666004)(8936002)(4326008)(2906002)(26005)(2616005)(83380400001)(426003)(107886003)(186003)(36860700001)(336012)(1076003)(2101003);DIR:OUT;SFP:1101;
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Aug 2021 03:07:31.6940
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Aug 2021 05:28:56.6362
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d5c4edaf-da3f-4c55-83c9-08d96c2c7944
+X-MS-Exchange-CrossTenant-Network-Message-Id: d858a876-435e-40a6-c160-08d96c403aaa
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.32];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT026.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.36];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT008.eop-nam11.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4856
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB3648
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-This patch adds a pair of new ioctl commands to communicate with
-user space (virtual machine hypervisor) to get and set VMID that
-indicates a Virtual Machine Identifier, being used by some IOMMU
-to tag TLB entries -- similar to CPU MMU, using this VMID number
-allows IOMMU to invalidate at the same time TLBs of the same VM.
+From: pshete <pshete@nvidia.com>
 
-Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
----
- drivers/vfio/vfio.c       | 13 +++++++++++++
- include/uapi/linux/vfio.h | 26 ++++++++++++++++++++++++++
- 2 files changed, 39 insertions(+)
+This change adds support to save and restore GPIO configurations
 
-diff --git a/drivers/vfio/vfio.c b/drivers/vfio/vfio.c
-index 3c034fe14ccb..c17b25c127a2 100644
---- a/drivers/vfio/vfio.c
-+++ b/drivers/vfio/vfio.c
-@@ -59,6 +59,7 @@ struct vfio_container {
- 	struct rw_semaphore		group_lock;
- 	struct vfio_iommu_driver	*iommu_driver;
- 	void				*iommu_data;
-+	u32				vmid;
- 	bool				noiommu;
- };
- 
-@@ -1190,6 +1191,16 @@ static long vfio_fops_unl_ioctl(struct file *filep,
- 	case VFIO_SET_IOMMU:
- 		ret = vfio_ioctl_set_iommu(container, arg);
- 		break;
-+	case VFIO_IOMMU_GET_VMID:
-+		ret = copy_to_user((void __user *)arg, &container->vmid,
-+				   sizeof(u32)) ? -EFAULT : 0;
-+		break;
-+	case VFIO_IOMMU_SET_VMID:
-+		if ((u32)arg == VFIO_IOMMU_VMID_INVALID)
-+			return -EINVAL;
-+		container->vmid = (u32)arg;
-+		ret = 0;
-+		break;
- 	default:
- 		driver = container->iommu_driver;
- 		data = container->iommu_data;
-@@ -1213,6 +1224,8 @@ static int vfio_fops_open(struct inode *inode, struct file *filep)
- 	init_rwsem(&container->group_lock);
- 	kref_init(&container->kref);
- 
-+	container->vmid = VFIO_IOMMU_VMID_INVALID;
-+
- 	filep->private_data = container;
- 
- 	return 0;
-diff --git a/include/uapi/linux/vfio.h b/include/uapi/linux/vfio.h
-index ef33ea002b0b..58c5fa6aaca6 100644
---- a/include/uapi/linux/vfio.h
-+++ b/include/uapi/linux/vfio.h
-@@ -1216,6 +1216,32 @@ struct vfio_iommu_type1_dirty_bitmap_get {
- 
- #define VFIO_IOMMU_DIRTY_PAGES             _IO(VFIO_TYPE, VFIO_BASE + 17)
- 
-+/**
-+ * VFIO_IOMMU_GET_VMID - _IOWR(VFIO_TYPE, VFIO_BASE + 22, __u32 *vmid)
-+ * VFIO_IOMMU_SET_VMID - _IOWR(VFIO_TYPE, VFIO_BASE + 23, __u32 vmid)
-+ *
-+ * IOCTLs are used for VMID alignment between Kernel and User Space hypervisor.
-+ * In a virtualization use case, a guest owns the first stage translation, and
-+ * the hypervisor owns the second stage translation. VMID is an Virtual Machine
-+ * Identifier that is to tag TLB entries of a VM. If a VM has multiple physical
-+ * devices being assigned to it, while these devices are under different IOMMU
-+ * domains, the VMIDs in the second stage configurations of these IOMMU domains
-+ * could be aligned to a unified VMID value. This could be achieved by using
-+ * these two IOCTLs.
-+ *
-+ * Caller should get VMID upon its initial value when the first physical device
-+ * is assigned to the VM.
-+ *
-+ * Caller then should set VMID to share the same VMID value with other physical
-+ * devices being assigned to the same VM.
-+ *
-+ */
-+#define VFIO_IOMMU_VMID_INVALID		(-1U)
-+
-+#define VFIO_IOMMU_GET_VMID		_IO(VFIO_TYPE, VFIO_BASE + 22)
-+
-+#define VFIO_IOMMU_SET_VMID		_IO(VFIO_TYPE, VFIO_BASE + 23)
-+
- /* -------- Additional API for SPAPR TCE (Server POWERPC) IOMMU -------- */
- 
- /*
+Laxman Dewangan (2):
+  pinctrl: pimux: Add support to save and restore HW register
+  pinctrl: tegra: Implement pinmux register save and restore
+
+ drivers/pinctrl/pinmux.c              | 24 ++++++++++
+ drivers/pinctrl/pinmux.h              | 18 ++++++++
+ drivers/pinctrl/tegra/pinctrl-tegra.c | 66 +++++++++++++++++++++++++++
+ drivers/pinctrl/tegra/pinctrl-tegra.h |  1 +
+ include/linux/pinctrl/pinmux.h        |  9 ++++
+ 5 files changed, 118 insertions(+)
+
 -- 
 2.17.1
 
