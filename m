@@ -2,282 +2,189 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6D21C432BE
-	for <linux-tegra@archiver.kernel.org>; Wed,  1 Sep 2021 06:57:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EE8BC432BE
+	for <linux-tegra@archiver.kernel.org>; Wed,  1 Sep 2021 07:10:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 86BDF61058
-	for <linux-tegra@archiver.kernel.org>; Wed,  1 Sep 2021 06:57:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3561C61058
+	for <linux-tegra@archiver.kernel.org>; Wed,  1 Sep 2021 07:10:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242433AbhIAG6g (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 1 Sep 2021 02:58:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36710 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242018AbhIAG6f (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 1 Sep 2021 02:58:35 -0400
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 380C2C061575;
-        Tue, 31 Aug 2021 23:57:39 -0700 (PDT)
-Received: by mail-lf1-x12e.google.com with SMTP id l10so4332951lfg.4;
-        Tue, 31 Aug 2021 23:57:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=k+w+OynxrHfvfwLuTstrgFT1O6b5XauALgOqQINm9Ak=;
-        b=k4aTWRkosN+ae6Xj8lo/rXEW9hC41ZIZr2Is9yU2M6huZjdjCaF38TX8GcshAogMiS
-         9s5vHIXdOT1WsJBVqWfFAYgZh/x6w2/XMPkZIXp56ut0Xh39yDbvmuRy/veAA3gEkXrE
-         g4w5igl+9lUfkXfrjzF6cNXpXoYrgf52sXinOWB4B/omXV3mayiv+QB54JW/w9tyUfuO
-         7Na79UtkZ94sDh9pF04o4sM4qtTYA+wCd74VpjlcpTW+wK23YTuuyWCo7oJ5fY3TwW73
-         RdiHbQsDGkQ9W3hRkKvElTWueHdZS1JY0+GK33LE/gqmXqWMXB908QiJ/Q8IYBTPtGbY
-         KErw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=k+w+OynxrHfvfwLuTstrgFT1O6b5XauALgOqQINm9Ak=;
-        b=tv60N+GwBqCUy8jyQ+30WYsoKNO9qyf/TtSzSUVcutrE4/+UBN+Fs2P9D9Xx84WqHb
-         PxnRQ7pfykGGltHvKf99fO68bQgB44oXIiOrUqNZFYqATLcvRAlL+PtP4A5F1knU4msU
-         X2zQKcdyA+nTmMCSdqkRZYzxqKlbjaN1u0velLu+Z681RGynT7BFqojR/CdIrpAsnDNH
-         B4xCSHlNv7QmT64bilFh1Ts/eyoSEWYRd2Ym3Oc/oCkkpGjucfo3WkoRAsqlfjnHbShc
-         b/Vj3WTt8JjkO6v5Na2WMmb6Nm0x903V7OOuI/BGybQyHYsPyp2P4fbf5KDPC1lwd2p3
-         isGA==
-X-Gm-Message-State: AOAM533N9oY6O6wvr7vKFaImqH94zZblB6edgz2hqKgfWFpKV4fApUeI
-        MbTy79/ggKfOqDXkaoq5hdtAznSQS48=
-X-Google-Smtp-Source: ABdhPJxKpnOgRCbzqQeJPlFDY4FFNZgEKSJUonTp0bF9F6QsmL6UT82Ov24BxpNs778mqqbL3uKLBg==
-X-Received: by 2002:a19:f015:: with SMTP id p21mr24276736lfc.32.1630479457330;
-        Tue, 31 Aug 2021 23:57:37 -0700 (PDT)
-Received: from [192.168.2.145] (46-138-26-37.dynamic.spd-mgts.ru. [46.138.26.37])
-        by smtp.googlemail.com with ESMTPSA id c7sm1943322lfk.3.2021.08.31.23.57.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 31 Aug 2021 23:57:36 -0700 (PDT)
-Subject: Re: [PATCH v10 5/8] soc/tegra: pmc: Implement
- dev_get_performance_state() callback
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-pm@vger.kernel.org
-References: <20210831135450.26070-1-digetx@gmail.com>
- <20210831135450.26070-6-digetx@gmail.com>
- <20210901061050.4x3t4cc434zdwx3a@vireshk-i7>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <7f4f5ab0-cf23-3e27-211e-4dcd8903f96f@gmail.com>
-Date:   Wed, 1 Sep 2021 09:57:36 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        id S242533AbhIAHLH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 1 Sep 2021 03:11:07 -0400
+Received: from mail-dm6nam12on2082.outbound.protection.outlook.com ([40.107.243.82]:41920
+        "EHLO NAM12-DM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S242522AbhIAHK7 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 1 Sep 2021 03:10:59 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=cG4RTIUgXTAxhmytBseEuajvWgESjQmu0XTCJJlNOqrDIPf6R3pry+756Oo+kZAnk7KXk2Ayouf2qpBT1xsjMhVnT78uKOM863n3QU0iCJvAgI2L3emjxvaShsBynPCfNkWrC6cP5SAIlgcRGgNg9TQDB0bukALOkhENrGwLof8MPIYwT4VycpoHfnWKEvpSXTIYpIitvt9LylmkFJBrPpRAhwLyBseDgsoQLTNAZk86b/M9lFp0lcO++sQoojBc//U0intp/9sLitRysxWJtn6mfPV6dWvwXme8XDUB0+ctmY1xuypirUhITZ/cob9Jx3z2hWWA/1W/Xgy/xwVw4g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hSdNqYmcDkeAP21Rwh1JHsKOVIxb2RSndOvEOgwdpFg=;
+ b=VjgBpMmWh628BAs861WHJdPmp1RQE+XdJJ9fXDgPlIRGTzAD19o7dayXnPo2n1enY5O23HKeL88x8KfRJlwJxpuDkBsJa25mcONLcDDa1tdiet32KUs5OmPvfZIPMVst6fKl51GZhpfOK9di+LcYX/QpY21K5jQo28oq2x6Y/tgMBB4rmyMJ8u/jYUP3Vc7bDqDQgZSMHhiquC5LmQDoLnkF19LV2SclupewxmrbHGc+O6cUXmkxrlobNEQQ8bRJ0WBKuDTLFEO+BbQJRwBurdki8pgqiU2RyXln50s3+G9Bt6oRuB3u+PYid+8JNIJVv1Scvi8jlFAiC0+TpBw/FA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.112.32) smtp.rcpttodomain=lists.infradead.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=quarantine sp=none pct=100)
+ action=none header.from=nvidia.com; dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hSdNqYmcDkeAP21Rwh1JHsKOVIxb2RSndOvEOgwdpFg=;
+ b=oJR2E+mbJ31T5vL5A2zRkYTHcgcfvOqXz85QDFn0r2Dge+2f0WFS2PS0/cooGern7THyAHaIW089/bYmYyPXjyMxvv5ntcNLHxMX5M1cu628IGsSXGWY3q/htBoDmjP4uQfrnrfN3nfHzf9MN9ZTwz3DC+zPWxkGdpUzChUjiHr59e9bfXasWf+bRmDkrjVDFPw2SA/1oVdMmFCmUloMBcs6IjM6Sk1IgBDYVJTcd9aYxpxfEw6mQJXHS5n0gr4CgctcdMUTpImLuivU0MV8AdN1gbkt6xXrCBlNSdMViUsFSXO1bxFOAJdVGAvxXBXibFdwjKQNJElD5XafBTe2mQ==
+Received: from MW4PR04CA0178.namprd04.prod.outlook.com (2603:10b6:303:85::33)
+ by BN6PR12MB1684.namprd12.prod.outlook.com (2603:10b6:405:6::23) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4457.20; Wed, 1 Sep
+ 2021 07:10:02 +0000
+Received: from CO1NAM11FT017.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:303:85:cafe::ac) by MW4PR04CA0178.outlook.office365.com
+ (2603:10b6:303:85::33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4457.23 via Frontend
+ Transport; Wed, 1 Sep 2021 07:10:02 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.32)
+ smtp.mailfrom=nvidia.com; lists.infradead.org; dkim=none (message not signed)
+ header.d=none;lists.infradead.org; dmarc=pass action=none
+ header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.112.32 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.112.32; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (216.228.112.32) by
+ CO1NAM11FT017.mail.protection.outlook.com (10.13.175.108) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.4478.19 via Frontend Transport; Wed, 1 Sep 2021 07:10:01 +0000
+Received: from DRHQMAIL107.nvidia.com (10.27.9.16) by HQMAIL109.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Wed, 1 Sep
+ 2021 00:10:01 -0700
+Received: from [10.25.98.106] (172.20.187.5) by DRHQMAIL107.nvidia.com
+ (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Wed, 1 Sep 2021
+ 07:09:56 +0000
+Subject: Re: [PATCH 04/13] ASoC: dt-bindings: tegra: Few more Tegra210 AHUB
+ modules
+To:     Rob Herring <robh@kernel.org>
+CC:     <broonie@kernel.org>, <lgirdwood@gmail.com>,
+        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <catalin.marinas@arm.com>, <will@kernel.org>, <perex@perex.cz>,
+        <tiwai@suse.com>, <kuninori.morimoto.gx@renesas.com>,
+        <sharadg@nvidia.com>, <alsa-devel@alsa-project.org>,
+        <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <1630056839-6562-1-git-send-email-spujar@nvidia.com>
+ <1630056839-6562-5-git-send-email-spujar@nvidia.com>
+ <YS6PTYwwu9tU8TWX@robh.at.kernel.org>
+From:   Sameer Pujar <spujar@nvidia.com>
+Message-ID: <47f1d2ad-40a1-4c8f-8658-11328d41ee1e@nvidia.com>
+Date:   Wed, 1 Sep 2021 12:39:54 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 MIME-Version: 1.0
-In-Reply-To: <20210901061050.4x3t4cc434zdwx3a@vireshk-i7>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <YS6PTYwwu9tU8TWX@robh.at.kernel.org>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-GB
+X-Originating-IP: [172.20.187.5]
+X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
+ DRHQMAIL107.nvidia.com (10.27.9.16)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 09f0a398-3217-4ae7-1268-08d96d178433
+X-MS-TrafficTypeDiagnostic: BN6PR12MB1684:
+X-Microsoft-Antispam-PRVS: <BN6PR12MB168410345C4D6333C105BC7BA7CD9@BN6PR12MB1684.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:1186;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: AnJuKOsdnuuFV12bjN/9i1NkCO4689q6Wx1Vr5yndDYSohRyPVDXOumabigQYkwg46NgYjohdiiBfQ4b5bKA0L6KIv7fP/FxJ3Lkzi+JfRke/kXqQEt01jTz0o7hXuHOYJ+D5Qkir4MpES+QR19F1DSdphz+/TW73TyHJFmd1xtXiAJ/fQMKmU8mJMxHaAhcVtswN3qtYFmMXXd6ddiiBWK6Y5bZb80hhQgTkhqU2XPsWHp+Clwt37oW0Nej062UoPSH6mlkzMNEC4EoZy51a9cbXPndFcZyzSEzDvIKcrzvIT1YHJy8C/HnjBbucGQCMcvgTBcJ/L/riMa7DzbaI2AgPehc+z1/JtPvaHFr7XvqwkEwO4bTHU/L2kRwokHidchqKQAfvjbrYlol+wO0R3WwFP12aDooAzkMa/VOQODjjIlmdCZ4LHsEdg7h3lY7ljcPdid9zmLN9dSTeEbcVTwpAocT2OYD1caJU0oW2a1KeTptI2d7Ux1xipOErmbWeEWwyqNpdTZTVu2TMTvgUL6DoX3WP3FviV0GG7YWsbwHKu6+M1JMA8fBkf9ORq7wYkUSLOiP0tHxMph2j78oBr+U0TTb73u0faDN/wsqTC09jNILQQA9Ln4FIlDBEgWq4kzcxj1kAVXkPSM9GQocSXO0JBVfbHW+0miPpFnA/T8u/BJNzRoVuaxjVJXRWfs3dJ62EJYbOdqMtKaWHLdDPAUOh3W6hLV0/wxFTDHiUL4=
+X-Forefront-Antispam-Report: CIP:216.228.112.32;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid01.nvidia.com;CAT:NONE;SFS:(4636009)(136003)(346002)(396003)(376002)(39860400002)(36840700001)(46966006)(186003)(31696002)(26005)(82310400003)(16526019)(6916009)(47076005)(31686004)(2616005)(2906002)(7416002)(36860700001)(4326008)(478600001)(336012)(426003)(16576012)(82740400003)(7636003)(70206006)(5660300002)(70586007)(53546011)(8936002)(86362001)(8676002)(316002)(54906003)(36756003)(356005)(43740500002);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Sep 2021 07:10:01.8001
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 09f0a398-3217-4ae7-1268-08d96d178433
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.32];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT017.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR12MB1684
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-01.09.2021 09:10, Viresh Kumar пишет:
-> On 31-08-21, 16:54, Dmitry Osipenko wrote:
->> +static int
->> +tegra_pmc_pd_dev_get_performance_state(struct generic_pm_domain *genpd,
->> +				       struct device *dev)
->> +{
->> +	struct opp_table *hw_opp_table, *clk_opp_table;
->> +	struct dev_pm_opp *opp;
->> +	u32 hw_version;
->> +	int ret;
+Hi Rob,
+
+Thanks for feedback.
+
+
+On 9/1/2021 1:51 AM, Rob Herring wrote:
+> On Fri, Aug 27, 2021 at 03:03:50PM +0530, Sameer Pujar wrote:
+>> This patch adds YAML schema for DT bindings of few AHUB modules.
+>> These devices will be registered as ASoC components and bindings
+>> will be used on Tegra210 and later chips. The bindings for below
+>> mentioned modules are added:
+>>
+>>   * SFC (Sampling Frequency Converter)
+>>   * MVC (Master Volume Control)
+>>   * AMX (Audio Multiplexer)
+>>   * ADX (Audio Demultiplexer)
+>>   * Mixer
+>>
+>> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
+>> Cc: Rob Herring <robh+dt@kernel.org>
+>> ---
+>>   .../bindings/sound/nvidia,tegra210-adx.yaml        | 74 ++++++++++++++++++++
+>>   .../bindings/sound/nvidia,tegra210-ahub.yaml       | 20 ++++++
+>>   .../bindings/sound/nvidia,tegra210-amx.yaml        | 72 ++++++++++++++++++++
+>>   .../bindings/sound/nvidia,tegra210-mixer.yaml      | 67 ++++++++++++++++++
+>>   .../bindings/sound/nvidia,tegra210-mvc.yaml        | 79 ++++++++++++++++++++++
+>>   .../bindings/sound/nvidia,tegra210-sfc.yaml        | 76 +++++++++++++++++++++
+>>   6 files changed, 388 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra210-adx.yaml
+>>   create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra210-amx.yaml
+>>   create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra210-mixer.yaml
+>>   create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra210-mvc.yaml
+>>   create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra210-sfc.yaml
+
+[...]
+
+>> +  16 channels and demultiplexes it into four output streams of up to 16
+>> +  channels each. A byte RAM helps to form output frames by any combination
+>> +  of bytes from the input frame. Its design is identical to that of byte
+>> +  RAM in the AMX except that the data flow direction is reversed.
 >> +
->> +	/*
->> +	 * The EMC devices are a special case because we have a protection
->> +	 * from non-EMC drivers getting clock handle before EMC driver is
->> +	 * fully initialized.  The goal of the protection is to prevent
->> +	 * devfreq driver from getting failures if it will try to change
->> +	 * EMC clock rate until clock is fully initialized.  The EMC drivers
->> +	 * will initialize the performance state by themselves.
->> +	 *
->> +	 * Display controller also is a special case because only controller
->> +	 * driver could get the clock rate based on configuration of internal
->> +	 * divider.
->> +	 *
->> +	 * Clock driver uses its own state syncing.
->> +	 */
->> +	if (of_device_compatible_match(dev->of_node, tegra_pd_no_perf_compats))
->> +		return 0;
+>> +maintainers:
+>> +  - Jon Hunter <jonathanh@nvidia.com>
+>> +  - Mohan Kumar <mkumard@nvidia.com>
+>> +  - Sameer Pujar <spujar@nvidia.com>
 >> +
->> +	if (of_machine_is_compatible("nvidia,tegra20"))
->> +		hw_version = BIT(tegra_sku_info.soc_process_id);
->> +	else
->> +		hw_version = BIT(tegra_sku_info.soc_speedo_id);
+>> +properties:
+>> +  $nodename:
+>> +    pattern: "^adx@[0-9a-f]*$"
 >> +
->> +	hw_opp_table = dev_pm_opp_set_supported_hw(dev, &hw_version, 1);
->> +	if (IS_ERR(hw_opp_table)) {
->> +		dev_err(dev, "failed to set OPP supported HW: %pe\n",
->> +			hw_opp_table);
->> +		return PTR_ERR(hw_opp_table);
->> +	}
+>> +  compatible:
+>> +    oneOf:
+>> +      - const: nvidia,tegra210-adx
+>> +      - items:
+>> +          - enum:
+>> +              - nvidia,tegra194-adx
+>> +              - nvidia,tegra186-adx
+>> +          - const: nvidia,tegra210-adx
 >> +
->> +	/*
->> +	 * Older device-trees don't have OPPs, meanwhile drivers use
->> +	 * dev_pm_opp_set_rate() and it requires OPP table to be set
->> +	 * up using dev_pm_opp_set_clkname().
->> +	 *
->> +	 * The devm_tegra_core_dev_init_opp_table() is a common helper
->> +	 * that sets up OPP table for Tegra drivers and it sets the clk
->> +	 * for compatibility with older device-tress.  GR3D driver uses that
->> +	 * helper, it also uses devm_pm_opp_attach_genpd() to manually attach
->> +	 * power domains, which now holds the reference to OPP table that
->> +	 * already has clk set up implicitly by OPP core for a newly created
->> +	 * table using dev_pm_opp_of_add_table() invoked below.
->> +	 *
->> +	 * Hence we need to explicitly set/put the clk, otherwise
->> +	 * further dev_pm_opp_set_clkname() will fail with -EBUSY.
->> +	 */
->> +	clk_opp_table = dev_pm_opp_set_clkname(dev, NULL);
->> +	if (IS_ERR(clk_opp_table)) {
->> +		dev_err(dev, "failed to set OPP clk: %pe\n", clk_opp_table);
->> +		ret = PTR_ERR(clk_opp_table);
->> +		goto put_hw;
->> +	}
+>> +  reg:
+>> +    maxItems: 1
 >> +
->> +	ret = dev_pm_opp_of_add_table(dev);
->> +	if (ret) {
->> +		dev_err(dev, "failed to add OPP table: %d\n", ret);
->> +		goto put_clk;
->> +	}
->> +
->> +	opp = dev_pm_opp_get_current(dev);
->> +	if (IS_ERR(opp)) {
->> +		dev_err(dev, "failed to get current OPP: %pe\n", opp);
->> +		ret = PTR_ERR(opp);
->> +	} else {
->> +		ret = dev_pm_opp_get_required_pstate(opp, 0);
->> +		dev_pm_opp_put(opp);
->> +	}
->> +
->> +	dev_pm_opp_of_remove_table(dev);
->> +put_clk:
->> +	dev_pm_opp_put_clkname(clk_opp_table);
->> +put_hw:
->> +	dev_pm_opp_put_supported_hw(hw_opp_table);
-> 
-> So you create the OPP table and just after that you remove it ? Just
-> to get the current OPP and pstate ? This doesn't look okay.
-> 
-> Moreover, this routine must be implemented with the expectation that
-> the genpd core can call it anytime it wants, not just at the
-> beginning. And so if the table is already setup by someone else then,
-> then this all will just fail.
+>> +  sound-name-prefix:
+> nvidia,sound-name-prefix
 
-This is not doable using the current OPP API, it doesn't allow to re-use initialized OPP table. The current limitation is okay because genpd core doesn't call routine anytime.
-
-> I did have a look at the comment you added above regarding
-> devm_tegra_core_dev_init_opp_table(), but I am not sure of the series
-> of events right now. For me, the OPP table should just be added once
-> and for ever. You shouldn't remove and add it again. That is bound to
-> break somewhere later.
-
-I see that the comment about devm_tegra_core_dev_init_opp_table() is outdated now, will update it. There was a refcounting bug in v9 where I accidentally used devm_pm_opp_of_add_table instead of dev_, still it fails similarly, but in a different place now. 
-
-> Can you give the sequence in which the whole thing works out with
-> respect to the OPP core? who calls
-> devm_tegra_core_dev_init_opp_table() and when, and when exactly will
-> this routine get called, etc ?
-> 
-
-gr3d_probe(struct platform_device *pdev)
-{
-	gr3d_init_power(dev)
-	{
-		static const char * const opp_genpd_names[] = { "3d0", "3d1", NULL };
-
-		devm_pm_opp_attach_genpd(dev, opp_genpd_names)
-		{
-			dev_pm_opp_attach_genpd(dev, names, virt_devs)
-			{
-				// takes and holds table reference
-				opp_table = _add_opp_table(dev, false);
-
-				while (*name) {
-					// first attachment succeeds, 
-					// second fails with "tegra-gr3d 54180000.gr3d: failed to set OPP clk: -EBUSY"
-					dev_pm_domain_attach_by_name(dev, *name)
-					{
-						tegra_pmc_pd_dev_get_performance_state(dev)
-						{
-							dev_pm_opp_set_clkname(dev, NULL);
-							dev_pm_opp_of_add_table(dev);
-							opp = dev_pm_opp_get_current(dev);
-							dev_pm_opp_of_remove_table(dev);
-							dev_pm_opp_put_clkname(opp_table);
-							...
-						}
-						// opp_table->clk = ERR_PTR(-EINVAL) after the first attachment
-					}
-				}
-			}
-		}
-	}
-
-	devm_tegra_core_dev_init_opp_table_simple(&pdev->dev);
-
-	return 0;
-}
+It is supposed to be 'sound-name-prefix' for core to parse and apply 
+prefix. May be this needs to be directly referenced from 
+'Documentation/devicetree/bindings/sound/name-prefix.txt' after 
+converting to YAML, which can be a separate commit?
 
 
-WARNING: CPU: 3 PID: 7 at drivers/opp/core.c:2151 dev_pm_opp_set_clkname+0x97/0xb8
-Modules linked in:
-CPU: 3 PID: 7 Comm: kworker/u8:0 Tainted: G        W         5.14.0-next-20210831-00177-g6850c69f8c92-dirty #9371
-Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
-Workqueue: events_unbound deferred_probe_work_func
-[<c010cc91>] (unwind_backtrace) from [<c0108d35>] (show_stack+0x11/0x14)
-[<c0108d35>] (show_stack) from [<c0a6e25d>] (dump_stack_lvl+0x2b/0x34)
-[<c0a6e25d>] (dump_stack_lvl) from [<c011fc7f>] (__warn+0xbb/0x100)
-[<c011fc7f>] (__warn) from [<c0a6b783>] (warn_slowpath_fmt+0x4b/0x80)
-[<c0a6b783>] (warn_slowpath_fmt) from [<c0742613>] (dev_pm_opp_set_clkname+0x97/0xb8)
-[<c0742613>] (dev_pm_opp_set_clkname) from [<c0509815>] (tegra_pmc_pd_dev_get_performance_state+0x85/0x120)
-[<c0509815>] (tegra_pmc_pd_dev_get_performance_state) from [<c05cd3db>] (__genpd_dev_pm_attach+0xe7/0x218)
-[<c05cd3db>] (__genpd_dev_pm_attach) from [<c05cd5d3>] (genpd_dev_pm_attach_by_id+0x8b/0xec)
-[<c05cd5d3>] (genpd_dev_pm_attach_by_id) from [<c074287f>] (dev_pm_opp_attach_genpd+0x97/0x11c)
-[<c074287f>] (dev_pm_opp_attach_genpd) from [<c0742913>] (devm_pm_opp_attach_genpd+0xf/0x6c)
-[<c0742913>] (devm_pm_opp_attach_genpd) from [<c05ac7a5>] (gr3d_probe+0x245/0x348)
-[<c05ac7a5>] (gr3d_probe) from [<c05bc003>] (platform_probe+0x43/0x84)
-[<c05bc003>] (platform_probe) from [<c05ba569>] (really_probe.part.0+0x69/0x200)
-[<c05ba569>] (really_probe.part.0) from [<c05ba773>] (__driver_probe_device+0x73/0xd4)
-[<c05ba773>] (__driver_probe_device) from [<c05ba809>] (driver_probe_device+0x35/0xd0)
-[<c05ba809>] (driver_probe_device) from [<c05bac11>] (__device_attach_driver+0x75/0x98)
-[<c05bac11>] (__device_attach_driver) from [<c05b9005>] (bus_for_each_drv+0x51/0x7c)
-[<c05b9005>] (bus_for_each_drv) from [<c05ba9f7>] (__device_attach+0x8b/0x104)
-[<c05ba9f7>] (__device_attach) from [<c05b9b1b>] (bus_probe_device+0x5b/0x60)
-[<c05b9b1b>] (bus_probe_device) from [<c05b7707>] (device_add+0x293/0x65c)
-[<c05b7707>] (device_add) from [<c07798b7>] (of_platform_device_create_pdata+0x63/0x88)
-[<c07798b7>] (of_platform_device_create_pdata) from [<c07799e5>] (of_platform_bus_create+0xfd/0x26c)
-[<c07799e5>] (of_platform_bus_create) from [<c0779c2d>] (of_platform_populate+0x45/0x84)
-[<c0779c2d>] (of_platform_populate) from [<c0779cc5>] (devm_of_platform_populate+0x41/0x6c)
-[<c0779cc5>] (devm_of_platform_populate) from [<c054aa65>] (host1x_probe+0x1e9/0x2c8)
-[<c054aa65>] (host1x_probe) from [<c05bc003>] (platform_probe+0x43/0x84)
-[<c05bc003>] (platform_probe) from [<c05ba569>] (really_probe.part.0+0x69/0x200)
-[<c05ba569>] (really_probe.part.0) from [<c05ba773>] (__driver_probe_device+0x73/0xd4)
-[<c05ba773>] (__driver_probe_device) from [<c05ba809>] (driver_probe_device+0x35/0xd0)
-[<c05ba809>] (driver_probe_device) from [<c05bac11>] (__device_attach_driver+0x75/0x98)
-[<c05bac11>] (__device_attach_driver) from [<c05b9005>] (bus_for_each_drv+0x51/0x7c)
-[<c05b9005>] (bus_for_each_drv) from [<c05ba9f7>] (__device_attach+0x8b/0x104)
-[<c05ba9f7>] (__device_attach) from [<c05b9b1b>] (bus_probe_device+0x5b/0x60)
-[<c05b9b1b>] (bus_probe_device) from [<c05b9dfb>] (deferred_probe_work_func+0x57/0x78)
-[<c05b9dfb>] (deferred_probe_work_func) from [<c013701f>] (process_one_work+0x147/0x3f8)
-[<c013701f>] (process_one_work) from [<c0137805>] (worker_thread+0x21d/0x3f4)
-[<c0137805>] (worker_thread) from [<c013c1bb>] (kthread+0x123/0x140)
-[<c013c1bb>] (kthread) from [<c0100135>] (ret_from_fork+0x11/0x1c)
-Exception stack(0xc1567fb0 to 0xc1567ff8)
----[ end trace f68728a0d3053b54 ]---
-tegra-gr3d 54180000.gr3d: failed to set OPP clk: -EBUSY
-genpd genpd:1:54180000.gr3d: failed to get performance state of 54180000.gr3d for power-domain 3d1: -16
-tegra-gr3d 54180000.gr3d: Couldn't attach to pm_domain: -16
+Remaining comments will be taken care in next revision.
