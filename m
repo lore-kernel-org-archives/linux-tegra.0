@@ -2,257 +2,137 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCBB6C432BE
-	for <linux-tegra@archiver.kernel.org>; Wed,  1 Sep 2021 16:59:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EE8DC432BE
+	for <linux-tegra@archiver.kernel.org>; Wed,  1 Sep 2021 19:21:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B37F561053
-	for <linux-tegra@archiver.kernel.org>; Wed,  1 Sep 2021 16:59:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0625861056
+	for <linux-tegra@archiver.kernel.org>; Wed,  1 Sep 2021 19:21:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344358AbhIARAs (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 1 Sep 2021 13:00:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36478 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235987AbhIARAs (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 1 Sep 2021 13:00:48 -0400
-Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 291A6C061760
-        for <linux-tegra@vger.kernel.org>; Wed,  1 Sep 2021 09:59:51 -0700 (PDT)
-Received: by mail-lf1-x135.google.com with SMTP id k13so388656lfv.2
-        for <linux-tegra@vger.kernel.org>; Wed, 01 Sep 2021 09:59:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=t8WjY9xngdUy6OvsDh3/CWFvSQy2KcaCN1sVzYIar00=;
-        b=GS9PQ5ZBAKPkQP+GbdP9U8KYEp0JuiDw6ovyYgLIEonW1pM+FuqnDLYZ2cm3pvnwZL
-         yc64UVYyxiF+SC6Ylw/JFukJUMZmNnOebrnE95FYllALz+gIio0GjLywZ/PfRBr+C7Yx
-         0k2SEEWUJX0q9LZSLaxlXyhNESAAFATbY+oXq5dC6WLP1Q28tOK4o4qY0eo9qn7Xc3lv
-         FKyv/A6LWEUYJu5M4S8Zp93EyYDVw98DzqaC0dFGNhiRYzgtPncZFfS7h3xzbPNAqhhp
-         C3IPjUkmJOoITRrQmWj0PI2MwdZxyJ8mCj8hvZavMLBQ7Se3ew8xo/pUOMISbDlu1Zux
-         PQfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=t8WjY9xngdUy6OvsDh3/CWFvSQy2KcaCN1sVzYIar00=;
-        b=bzd71X4lF6WAC7wBpV3quWLvui3rgvko3glwPXBDF5a8L/O3Zm+MP03QPnT/pH1vi2
-         CeekmvnR4GdQWRKyJktfFCsCAxVzn0sOg3aQhf2Bx/sr22bXpVUTYDZX0xyNhqLjAWVv
-         nczFRn2MCJgvHtUEIYtXsQyQi1zEyKMwhTCTrdjsNNJG+Vg6QsLsS+viLYeR/1/bldDx
-         safirZElmivdACvVYYVo1VCaUHBOmHMo0qS0N1aW7GQ+y3MAGnLgd0SFP6pazZitkRJF
-         G96Qo/YEGWahWxkc8wzMukdGXFc1Z1riThLLx7JdLaXZwV31qOpPjwUmymmah74+asLV
-         hF1w==
-X-Gm-Message-State: AOAM5325FJqgSNEhPUvzSvuHdXiMF5NKRUEN62AEgtpHIdc/W6W9rtv7
-        QWYa8c+W98cRIN4rQPErqeqaiTMVeGuy/XJU1V0dDA==
-X-Google-Smtp-Source: ABdhPJyny3XUrz8jbRp3Axy8yyjybmKwnX+mvzOZ21GwLJ+Qmr/zVkOylsu+PJqahnQ7P5+FmIoBXBgYhvv2uqMajGE=
-X-Received: by 2002:a05:6512:1084:: with SMTP id j4mr309860lfg.113.1630515589441;
- Wed, 01 Sep 2021 09:59:49 -0700 (PDT)
+        id S231298AbhIATWV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 1 Sep 2021 15:22:21 -0400
+Received: from mail-bn8nam11on2040.outbound.protection.outlook.com ([40.107.236.40]:24353
+        "EHLO NAM11-BN8-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S229962AbhIATWU (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 1 Sep 2021 15:22:20 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=dvCJj980+K+DcWjAKGUyxk/dRIHA/5StxaJxVmLdoLyOsmL1xx1B3SFuSHMZPtcT9vCs/sYZEzPXNJlAtnAbyey3nMV3EyBdolTlX5E0F7knzs/PAkVpTMYnphZIemxFEwFM8mvUpkLK//r4xova+qPVa+xztEg+IaTfsxg/Gntljih6r6/SbRetd3eIFYDazFB4HPO3IfutdDTImCMbNkxrTibqZep7egy17DKSw1k+lhDrjjIlWoL1JzeK0ej0fPsAQNqjhwt5Ayu2ZEsaDd+/6fcTXmcb1Nfcv8fiTk8u2KmO8UTMpvxWyxWVCL/c+0KxVhCBVYuogPESYbklFg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901; h=From:Date:Subject:Message-ID:Content-Type:MIME-Version;
+ bh=zET26H5U/7FTjExkbxKUHM8b3SMz55sSS7IcdEtOklI=;
+ b=MbYtnRccCsyH7JmuvYcgo9NZoSdfqTyRbixI2egApnx54pHqGkSIkNKHulE9bKhhDNDrHQBa/rLDKkSNdNNx3gZF1M0BuCmaUGqykwJ9q/BG7X/Kw5WkMOAOxH8jURExtJGPB1bn0fZ5l09A8DsQTRTcr4MTOS6IhlD53Y9/tkTKQ0woNAY8pPaFu8V1EhereExEkCorEAgtFRKlkrIgPFAyfTpfVGOzyz8wenWrk6IcJuqpRtSMpfaDR3S/kYdt8dqbXm+siyI7hf1VrxKdjKQ1YvbXqxGHPjQkl7RrkwTSY2Qr2I+kP/ADHxu0z8fekxQy0ypvJ3gpPSoJck7Vng==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.112.35) smtp.rcpttodomain=denx.de smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zET26H5U/7FTjExkbxKUHM8b3SMz55sSS7IcdEtOklI=;
+ b=CYo5IZaVXXwd9+5gtZG/lbjplfyKsASjZKxOdtdueNUcAx26dd0vpc1pH07XAkabCzVcS7Mxf5cWBEywahwAQsDmc+D79EC3WZAfVJNhXXqflkeRVYN1cAI9Cmq2z7cD+Dg2g3Vzl3HkexNyPrhx0obk+34GyyxNGpEyQ999od+gr6JKxMCCkGtvu4VEprIoAi5DyC4DrunLBmwAezPOM+ZyOD6PCUSVuObBrlIYbYRrS7XxyNU7puca7FCHGupC4hpqXl28WTmnYxNGi7U6hHaREoHFn4sv1UouXgWUWhtBhr2jc8RIHL5FgWV4lzs1UpaEv5RS6D52YwC2CWmsUg==
+Received: from MWHPR07CA0016.namprd07.prod.outlook.com (2603:10b6:300:116::26)
+ by SN6PR12MB4704.namprd12.prod.outlook.com (2603:10b6:805:e8::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4478.17; Wed, 1 Sep
+ 2021 19:21:21 +0000
+Received: from CO1NAM11FT008.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:300:116:cafe::9f) by MWHPR07CA0016.outlook.office365.com
+ (2603:10b6:300:116::26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4478.17 via Frontend
+ Transport; Wed, 1 Sep 2021 19:21:21 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.35)
+ smtp.mailfrom=nvidia.com; denx.de; dkim=none (message not signed)
+ header.d=none;denx.de; dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.112.35 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.112.35; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (216.228.112.35) by
+ CO1NAM11FT008.mail.protection.outlook.com (10.13.175.191) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.4478.19 via Frontend Transport; Wed, 1 Sep 2021 19:21:21 +0000
+Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL111.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Wed, 1 Sep
+ 2021 19:21:20 +0000
+Received: from jonathanh-vm-01.nvidia.com (172.20.187.6) by mail.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.2 via Frontend
+ Transport; Wed, 1 Sep 2021 19:21:20 +0000
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
+        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
+        <stable@vger.kernel.org>, <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 4.14 00/23] 4.14.246-rc1 review
+In-Reply-To: <20210901122249.786673285@linuxfoundation.org>
+References: <20210901122249.786673285@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-References: <20210831135450.26070-1-digetx@gmail.com> <20210831135450.26070-5-digetx@gmail.com>
-In-Reply-To: <20210831135450.26070-5-digetx@gmail.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Wed, 1 Sep 2021 18:59:12 +0200
-Message-ID: <CAPDyKFp4M30y9UB5Ss54ZfNjL_a6nqbka6Dq7xtGNzb2Mg8WrA@mail.gmail.com>
-Subject: Re: [PATCH v10 4/8] PM: domains: Add dev_get_performance_state() callback
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Message-ID: <1f20b0d78eb2463c9e1fd385d73852d9@HQMAIL107.nvidia.com>
+Date:   Wed, 1 Sep 2021 19:21:20 +0000
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 3fe1c690-3b16-49d5-bf3f-08d96d7dae5a
+X-MS-TrafficTypeDiagnostic: SN6PR12MB4704:
+X-Microsoft-Antispam-PRVS: <SN6PR12MB47041AD6B8E37AC56690B845D9CD9@SN6PR12MB4704.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: xk/H+JMKUIFh5X05cCbjsKNw4bIFouMrKm+vZtmpTc3YtYTU6T51mqFgsYNScHz0U1Z57TwgWD+aIu5S7z7PaY2uRvbOLVkyOpaAZBTyWdv6GRkJCVho0ubIGeL8w1qkbCoAKIyrrxcnAoJSx0buzRos1Liwvgcd5zOL6slO664JLXFOnMhhzSxgtFWEWOdrMCqgEcnKb6gXk6Jh+1h4rjzxv/Coavpt1+YQQV1xZjJrTJi8pOHTZZfLvf+MJVGOJM+OFSYUP3J2im7Kf53mD97GvSUMHdmQNm28N2CQEkMhX0TWjmrhfKHDYvm8seFds2lS0Oe31AGyR8B+D/FGCjFb7D2TRa5oL0+nKIftxyj7EUdpGhe3Ml3fccEtMn5d217z5ERquIsYbCHq488GVrYaSKHJcJDz2S6TpQ8gDDI+QM1V0/QnWLvhBaaCjpkjcGm2VXwqj+8/1XyUlCi7elFLwB4IAsBryRYWXFrDdi3Pq3swXlnpqQeC07Mh6CJuQWCxP0EjTMom//8+hlNWxXOUG5AF96eNX7O4YS9hmQoiIl2XxRGqdncAD9GhJitZRMkrvx5A8fGmrkdcUqusN+q0LCQ5WC/xpxRa6FHVV4GbkieLCt6n0gZzZ0hH1vCuySrBZUyRwWjRgN58jeq6iK4E3AFch6GDgxPZnUV/8HoNy4ziO5keUjmSMeH7dRduL6FMvYinpADUe+cXlxW0CKUGV2H5NDVXqKE6S13tBCVTh7pmaPSomUbUln9AgwQ68AH+H+hR2qgmDJxeHIO2ado5rbzQyWTA/zW/CbzNB+s=
+X-Forefront-Antispam-Report: CIP:216.228.112.35;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid04.nvidia.com;CAT:NONE;SFS:(4636009)(46966006)(36840700001)(7416002)(8676002)(36906005)(316002)(7636003)(8936002)(86362001)(5660300002)(186003)(2906002)(108616005)(24736004)(54906003)(36860700001)(4326008)(6916009)(356005)(82310400003)(47076005)(70586007)(966005)(426003)(508600001)(70206006)(336012)(26005);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Sep 2021 19:21:21.1209
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3fe1c690-3b16-49d5-bf3f-08d96d7dae5a
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.35];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT008.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR12MB4704
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, 31 Aug 2021 at 15:57, Dmitry Osipenko <digetx@gmail.com> wrote:
->
-> Add optional dev_get_performance_state() callback that retrieves
-> performance state of a device attached to a power domain. The new callback
-> returns performance states of the given device, which should be read out
-> from hardware.
->
-> GENPD core assumes that initially performance state of all devices is
-> zero and consumer device driver is responsible for management of the
-> performance state. GENPD core now manages performance state across RPM
-> suspend/resume of consumer devices by dropping and restoring the state,
-> this allowed to move a part of performance management code into GENPD
-> core out of consumer drivers. The part that hasn't been moved to GENPD
-> core yet is the initialization of the performance state.
->
-> Hardware may be preprogrammed to a specific performance state which
-> isn't zero initially, hence the PD's performance state is inconsistent
-> with hardware at the init time. This requires each consumer driver to
-> explicitly sync the state. For some platforms this is a boilerplate code
-> replicated by each driver.
->
-> The new callback allows GENPD core to initialize the performance state,
-> allowing to remove the remaining boilerplate code from consumer drivers.
-> Now, when consumer device is resumed for the first time, the performance
-> state is either already set by GENPD core or it will be set in accordance
-> to the hardware state that was retrieved using the new callback when device
-> was attached to a power domain. Still, consumer drivers are free to override
-> the initial performance state configured by GENPD, if necessary.
+On Wed, 01 Sep 2021 14:26:45 +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.14.246 release.
+> There are 23 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Fri, 03 Sep 2021 12:22:41 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.246-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-Thanks for improving the commit message, it makes much better sense now!
+All tests passing for Tegra ...
 
->
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/base/power/domain.c | 90 +++++++++++++++++++++++++++++++------
->  include/linux/pm_domain.h   |  2 +
->  2 files changed, 79 insertions(+), 13 deletions(-)
->
-> diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-> index 5db704f02e71..598528abce01 100644
-> --- a/drivers/base/power/domain.c
-> +++ b/drivers/base/power/domain.c
-> @@ -2644,12 +2644,85 @@ static void genpd_dev_pm_sync(struct device *dev)
->         genpd_queue_power_off_work(pd);
->  }
->
-> +static int genpd_dev_get_current_performance_state(struct device *dev,
-> +                                                  struct device *base_dev,
-> +                                                  unsigned int index,
-> +                                                  bool *state_default,
-> +                                                  bool *suspended)
-> +{
-> +       struct generic_pm_domain *pd = dev_to_genpd(dev);
-> +       int ret;
-> +
-> +       ret = of_get_required_opp_performance_state(dev->of_node, index);
-> +       if (ret < 0 && ret != -ENODEV && ret != -EOPNOTSUPP) {
-> +               dev_err(dev, "failed to get required performance state for power-domain %s: %d\n",
-> +                       pd->name, ret);
-> +
-> +               return ret;
-> +       } else if (ret >= 0) {
-> +               *state_default = true;
-> +
-> +               return ret;
-> +       }
-> +
-> +       if (pd->dev_get_performance_state) {
-> +               ret = pd->dev_get_performance_state(pd, base_dev);
-> +               if (ret >= 0)
-> +                       *suspended = pm_runtime_status_suspended(base_dev);
-> +               else
-> +                       dev_err(dev, "failed to get performance state of %s for power-domain %s: %d\n",
-> +                               dev_name(base_dev), pd->name, ret);
-> +
-> +               return ret;
-> +       }
-> +
-> +       return 0;
-> +}
-> +
-> +static int genpd_dev_initialize_performance_state(struct device *dev,
-> +                                                 struct device *base_dev,
-> +                                                 unsigned int index)
-> +{
-> +       struct generic_pm_domain *pd = dev_to_genpd(dev);
-> +       bool state_default = false, suspended = false;
-> +       int pstate, err;
-> +
-> +       pstate = genpd_dev_get_current_performance_state(dev, base_dev, index,
-> +                                                        &state_default,
-> +                                                        &suspended);
-> +       if (pstate <= 0)
-> +               return pstate;
-> +
-> +       /*
-> +        * If device is suspended, then performance state will be applied
-> +        * on RPM-resume. This prevents potential extra power consumption
-> +        * if device won't be resumed soon.
-> +        *
-> +        * If device is known to be active at the moment, then the performance
-> +        * state should be updated immediately to sync state with hardware.
-> +        */
-> +       if (suspended) {
-> +               dev_gpd_data(dev)->rpm_pstate = pstate;
-> +       } else {
-> +               err = dev_pm_genpd_set_performance_state(dev, pstate);
-> +               if (err) {
-> +                       dev_err(dev, "failed to set performance state for power-domain %s: %d\n",
-> +                               pd->name, err);
-> +                       return err;
-> +               }
-> +
-> +               if (state_default)
-> +                       dev_gpd_data(dev)->default_pstate = pstate;
-> +       }
-> +
-> +       return 0;
-> +}
+Test results for stable-v4.14:
+    8 builds:	8 pass, 0 fail
+    16 boots:	16 pass, 0 fail
+    32 tests:	32 pass, 0 fail
 
-As I kind of indicated in my previous reply on the earlier version, I
-think the above code can be made a lot less complicated. Although,
-perhaps I may be missing some points.
+Linux version:	4.14.246-rc1-g8626d0e3c8af
+Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+                tegra210-p2371-2180, tegra30-cardhu-a04
 
-Anyway, I will post a couple patches, later this evening or tomorrow,
-to show more exactly what I had in mind. Let's see if that can work
-for you.
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
-> +
->  static int __genpd_dev_pm_attach(struct device *dev, struct device *base_dev,
->                                  unsigned int index, bool power_on)
->  {
->         struct of_phandle_args pd_args;
->         struct generic_pm_domain *pd;
-> -       int pstate;
->         int ret;
->
->         ret = of_parse_phandle_with_args(dev->of_node, "power-domains",
-> @@ -2693,22 +2766,13 @@ static int __genpd_dev_pm_attach(struct device *dev, struct device *base_dev,
->                 return -EPROBE_DEFER;
->         }
->
-> -       /* Set the default performance state */
-> -       pstate = of_get_required_opp_performance_state(dev->of_node, index);
-> -       if (pstate < 0 && pstate != -ENODEV && pstate != -EOPNOTSUPP) {
-> -               ret = pstate;
-> +       ret = genpd_dev_initialize_performance_state(dev, base_dev, index);
-> +       if (ret)
->                 goto err;
-> -       } else if (pstate > 0) {
-> -               ret = dev_pm_genpd_set_performance_state(dev, pstate);
-> -               if (ret)
-> -                       goto err;
-> -               dev_gpd_data(dev)->default_pstate = pstate;
-> -       }
-> +
->         return 1;
->
->  err:
-> -       dev_err(dev, "failed to set required performance state for power-domain %s: %d\n",
-> -               pd->name, ret);
->         genpd_remove_device(pd, dev);
->         return ret;
->  }
-> diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
-> index 67017c9390c8..0a4dd4986f34 100644
-> --- a/include/linux/pm_domain.h
-> +++ b/include/linux/pm_domain.h
-> @@ -133,6 +133,8 @@ struct generic_pm_domain {
->                                                  struct dev_pm_opp *opp);
->         int (*set_performance_state)(struct generic_pm_domain *genpd,
->                                      unsigned int state);
-> +       int (*dev_get_performance_state)(struct generic_pm_domain *genpd,
-> +                                        struct device *dev);
->         struct gpd_dev_ops dev_ops;
->         s64 max_off_time_ns;    /* Maximum allowed "suspended" time. */
->         ktime_t next_wakeup;    /* Maintained by the domain governor */
-> --
-> 2.32.0
->
-
-Kind regards
-Uffe
+Jon
