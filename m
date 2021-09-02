@@ -2,179 +2,225 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26A57C433F5
-	for <linux-tegra@archiver.kernel.org>; Thu,  2 Sep 2021 22:10:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C998C433F5
+	for <linux-tegra@archiver.kernel.org>; Thu,  2 Sep 2021 22:27:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0411F60FA0
-	for <linux-tegra@archiver.kernel.org>; Thu,  2 Sep 2021 22:10:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2AB1361041
+	for <linux-tegra@archiver.kernel.org>; Thu,  2 Sep 2021 22:27:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239006AbhIBWLT (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 2 Sep 2021 18:11:19 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:58484 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230129AbhIBWLR (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 2 Sep 2021 18:11:17 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20210902221017euoutp01b638406e59c15aae062d5054640572ce~hIM-gmHJr2712127121euoutp01B
-        for <linux-tegra@vger.kernel.org>; Thu,  2 Sep 2021 22:10:17 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20210902221017euoutp01b638406e59c15aae062d5054640572ce~hIM-gmHJr2712127121euoutp01B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1630620617;
-        bh=+cFvhzqtn0hctNTDhhm/VOiBMV5RGPNkUgUXiD3jIK0=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=o0FxlQXixmRpphhR0faJ2ZK1gFlt9GZeVw2Cwl4YIgEIoQVYTu7AZXUoPY/zZSv0+
-         iMvCNNln7a8US9tSzPZqXDDJ5e2sVmLNj/8dDMavfwK1ketN0814IQImT/dd+hirPQ
-         WtfOtayOfBkHTTFrqNoYg1NYlJH5B0FzvZfScaX8=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20210902221016eucas1p146dd1b1577cef73d9ba4381e4bd14fa4~hIM_wvUet2964729647eucas1p1p;
-        Thu,  2 Sep 2021 22:10:16 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 8B.EE.45756.8CB41316; Thu,  2
-        Sep 2021 23:10:16 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20210902221015eucas1p26fae8f6ba4c70087dc7b007a271dce4b~hIM9ditUN1154911549eucas1p26;
-        Thu,  2 Sep 2021 22:10:15 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20210902221015eusmtrp20ae878e47dc423f33a52ecc70a1327aa~hIM9cpaEB1635516355eusmtrp2S;
-        Thu,  2 Sep 2021 22:10:15 +0000 (GMT)
-X-AuditID: cbfec7f2-7bdff7000002b2bc-8a-61314bc8b16f
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id EA.C7.20981.6CB41316; Thu,  2
-        Sep 2021 23:10:14 +0100 (BST)
-Received: from [192.168.0.14] (unknown [106.210.131.79]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20210902221014eusmtip29eaf4ecb5d0517c13a0294299bd3d215~hIM8hETkp1495614956eusmtip2V;
-        Thu,  2 Sep 2021 22:10:14 +0000 (GMT)
-Subject: Re: [PATCH v3 00/16] eDP: Support probing eDP panels dynamically
- instead of hardcoding
-To:     Douglas Anderson <dianders@chromium.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sam Ravnborg <sam@ravnborg.org>
-Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        Maxime Ripard <mripard@kernel.org>,
-        dri-devel@lists.freedesktop.org,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
-        linux-tegra@vger.kernel.org,
-        =?UTF-8?Q?=c5=81ukasz_Stelmach?= <l.stelmach@samsung.com>
-From:   Andrzej Hajda <a.hajda@samsung.com>
-Message-ID: <b1b67791-69b7-a5c0-9e98-73bb82afaeaa@samsung.com>
-Date:   Fri, 3 Sep 2021 00:10:06 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
-        Thunderbird/78.13.0
-MIME-Version: 1.0
-In-Reply-To: <20210901201934.1084250-1-dianders@chromium.org>
+        id S239995AbhIBW2L (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 2 Sep 2021 18:28:11 -0400
+Received: from mga03.intel.com ([134.134.136.65]:20855 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231642AbhIBW2K (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 2 Sep 2021 18:28:10 -0400
+X-IronPort-AV: E=McAfee;i="6200,9189,10095"; a="219321882"
+X-IronPort-AV: E=Sophos;i="5.85,263,1624345200"; 
+   d="scan'208";a="219321882"
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2021 15:27:11 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.85,263,1624345200"; 
+   d="scan'208";a="447326912"
+Received: from orsmsx606.amr.corp.intel.com ([10.22.229.19])
+  by orsmga002.jf.intel.com with ESMTP; 02 Sep 2021 15:27:11 -0700
+Received: from orsmsx607.amr.corp.intel.com (10.22.229.20) by
+ ORSMSX606.amr.corp.intel.com (10.22.229.19) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2242.12; Thu, 2 Sep 2021 15:27:11 -0700
+Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
+ orsmsx607.amr.corp.intel.com (10.22.229.20) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2242.12 via Frontend Transport; Thu, 2 Sep 2021 15:27:11 -0700
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (104.47.56.171)
+ by edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2242.10; Thu, 2 Sep 2021 15:27:11 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=D/pd4o6xu6opOKT6UM+TwBxnZeAjeB02puxV9ccXLTBN0bWchnQ+nWWktj3SsL/mi0wOTlePXzTr4/UE/f3BTirpC0cgrUfaOjvsE10xR5voh0zxqWoIvuInRCEvud7FoCWqhxX3/YW4xRHOxOQqZ4i2AlEpStZLhsY7jTHMkXLtYH4V20PhU6UmAF3Xz198wlS3Njp1coztZFHXM9cphTjr06904vMbFekvCvUJevC4XEwb7n30BHMB+tbgHr8as1isEjhneAeXuyyhwbYY7fwWv4O0hGKiJQxMFoieOvynUMAGYJf2uqNhTg9Yp0RCxqCeodnWL0jLYPQBkp6y2w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=2EtftwsCktq/nQTfmB0WEx1EirUnWiAly/IXZV/V+VY=;
+ b=atoPkJSqeaINWsqfvmmjcXx4imc/hNTi9kjlYtS/U/gKbv9fTUcsGXNVxlQUYxsbZtPGmnsVn0EL6yKfExAR2BOKzn5W+VzE5XLHg1jvRxitrNRAghveeZhDM2eC1GSIDp0V8/DeH1ta3vQSazdk/ZmMQB5bE7DJINgspVhIWlD54y4f2N3LlevuFRuNaV7fmUWvd9VwaikjC9lyfsbgJU/+ii9f2FBeBJTxtX3BFCrnQJUBTJFbpxiAfcJ/xxTdn41p0Oztx+vIGbFHbLIRaotA4p59JMUdAmrn4fql8G1WWjALbUTT7SPYhkNJScU4iXbtXKGPKf3NYEisn2y4zQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=intel.onmicrosoft.com;
+ s=selector2-intel-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=2EtftwsCktq/nQTfmB0WEx1EirUnWiAly/IXZV/V+VY=;
+ b=Kmz5lp+Ohll5iR+FE24yQ9U7gOJ/8wHUWEjNXlNTsII1pX49KdVGt8LDnZLspaRQ6VeIuVJzURvacfBrvGhdlHdkFU5XULV5jmxeJAftQfDmhG//JNE8JY6c/PhQckktCLQoT1XCuuD5Gticz+0iDY7K/bvZZuWJE/jrbvnR6zc=
+Received: from BN9PR11MB5433.namprd11.prod.outlook.com (2603:10b6:408:11e::13)
+ by BN6PR1101MB2289.namprd11.prod.outlook.com (2603:10b6:405:54::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4457.23; Thu, 2 Sep
+ 2021 22:27:06 +0000
+Received: from BN9PR11MB5433.namprd11.prod.outlook.com
+ ([fe80::ddb7:fa7f:2cc:45df]) by BN9PR11MB5433.namprd11.prod.outlook.com
+ ([fe80::ddb7:fa7f:2cc:45df%9]) with mapi id 15.20.4478.022; Thu, 2 Sep 2021
+ 22:27:06 +0000
+From:   "Tian, Kevin" <kevin.tian@intel.com>
+To:     Jason Gunthorpe <jgg@nvidia.com>
+CC:     Alex Williamson <alex.williamson@redhat.com>,
+        Nicolin Chen <nicolinc@nvidia.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        "will@kernel.org" <will@kernel.org>,
+        "jean-philippe@linaro.org" <jean-philippe@linaro.org>,
+        "corbet@lwn.net" <corbet@lwn.net>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "cohuck@redhat.com" <cohuck@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "robin.murphy@arm.com" <robin.murphy@arm.com>
+Subject: RE: [RFC][PATCH v2 00/13] iommu/arm-smmu-v3: Add NVIDIA
+ implementation
+Thread-Topic: [RFC][PATCH v2 00/13] iommu/arm-smmu-v3: Add NVIDIA
+ implementation
+Thread-Index: AQHXnhVovHekE4RvPUm07KSkZdD8O6uNysGAgADuWNCAAh0OAIAAfHFQ
+Date:   Thu, 2 Sep 2021 22:27:06 +0000
+Message-ID: <BN9PR11MB54337332A83176241C984EC58CCE9@BN9PR11MB5433.namprd11.prod.outlook.com>
+References: <20210831025923.15812-1-nicolinc@nvidia.com>
+ <20210831101549.237151fa.alex.williamson@redhat.com>
+ <BN9PR11MB5433E064405A1AFEC50C1C9F8CCD9@BN9PR11MB5433.namprd11.prod.outlook.com>
+ <20210902144524.GU1721383@nvidia.com>
+In-Reply-To: <20210902144524.GU1721383@nvidia.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrNKsWRmVeSWpSXmKPExsWy7djPc7onvA0TDbrmiFrMP3KO1eLssoNs
-        Fle+vmezuHloBaPFpsfXWC0m7j/LbtH1ayWzxeVdc9gsOjdtZbSYvaSfxWLry3dMFjPO72Oy
-        mLJvF1Diyyw2i7bOZawWrXuPsFus+AlU93PXPBYHIY/ZDRdZPHbOusvusWlVJ5vH/e7jTB6b
-        l9R7vNg8k9Fj47sdTB5Lpl1l8+jbsorR4/MmuQCuKC6blNSczLLUIn27BK6Ml5PusBY8FanY
-        NFusgfG8QBcjB4eEgInEyb3BXYxcHEICKxglbtxbzgzhfGGUWHvtMiOE85lRYk/jf7YuRk6w
-        jqMdi1ghEssZJY7PfAPV8pZRoufWMiaQKmGBRInZiyezgtgiAvMYJe48UAApYhZ4zSyx58sa
-        sASbgKbE3803wcbyCthJ/Hi3hRHkKBYBFYmjC6VBwqICkRJ/T+5ihSgRlDg58wkLiM0pYCtx
-        /tlisF3MAuISt57Mh7LlJba/nQN2kITAJU6JbR2tjBBnu0jsvbKSGcIWlnh1fAs7hC0j8X8n
-        RLOEQL3E/RUtUM0djBJbN+yEarCWuHPuFxvIccxAR6/fpQ8RdpT4cmkvKyQg+SRuvBWEuIFP
-        YtK26cwQYV6JjjYhiGpFiftnt0INFJdYeuEr2wRGpVlIPpuF5JtZSL6ZhbB3ASPLKkbx1NLi
-        3PTUYsO81HK94sTc4tK8dL3k/NxNjMD0ePrf8U87GOe++qh3iJGJg/EQowQHs5II7043g0Qh
-        3pTEyqrUovz4otKc1OJDjNIcLErivKtmr4kXEkhPLEnNTk0tSC2CyTJxcEo1MMknlZRt8Tu6
-        PtPnzeroLbr+7/ev2PJS3dnoxrL1Du/Pbd8YPPMmd+DSAOmPL0wdbs6wKzp4Tlb27829ace3
-        JmYVOFrwt11+du2bY8KxSTsOTwm/s/CDVtzl/xoiD1kWTd3sEr9GbH65lsNstr+yvy0nbrMp
-        Wusd8SP2mQETT+efGWaVk172OpU43+tcLstaY6+19ABfefM7zy+LFx7+YM/MLXNT9eKEX2KN
-        5mHL1V04fNatYo/O+GPT9or3U51nUuuqa6yvw3ImT9f40u6a9qrrGqdC2gsjd2FXi2Nupob+
-        Gl4Slbcmh188Lvp+nmHPRWmrU5W1bH9MHtRZJTTV1WdPsd6dLqqwgtFqI8uto0osxRmJhlrM
-        RcWJAOa1PYP+AwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrLIsWRmVeSWpSXmKPExsVy+t/xe7rHvA0TDR7cs7GYf+Qcq8XZZQfZ
-        LK58fc9mcfPQCkaLTY+vsVpM3H+W3aLr10pmi8u75rBZdG7aymgxe0k/i8XWl++YLGac38dk
-        MWXfLqDEl1lsFm2dy1gtWvceYbdY8ROo7ueueSwOQh6zGy6yeOycdZfdY9OqTjaP+93HmTw2
-        L6n3eLF5JqPHxnc7mDyWTLvK5tG3ZRWjx+dNcgFcUXo2RfmlJakKGfnFJbZK0YYWRnqGlhZ6
-        RiaWeobG5rFWRqZK+nY2Kak5mWWpRfp2CXoZLyfdYS14KlKxabZYA+N5gS5GTg4JAROJox2L
-        WLsYuTiEBJYySrSd6WCHSIhL7J7/lhnCFpb4c62LDaLoNaPEu8O9rCAJYYFEidmLJ4PZIgLz
-        GCVOrHQHKWIWeM0ssezZLKBuDqAOG4kbW/VBatgENCX+br7JBmLzCthJ/Hi3hRGkhEVAReLo
-        QmmQsKhApETTia1QJYISJ2c+YQGxOQVsJc4/W8wEYjMLmEnM2/yQGcIWl7j1ZD5UXF5i+9s5
-        zBMYhWYhaZ+FpGUWkpZZSFoWMLKsYhRJLS3OTc8tNtIrTswtLs1L10vOz93ECEwH24793LKD
-        ceWrj3qHGJk4GA8xSnAwK4nw7nQzSBTiTUmsrEotyo8vKs1JLT7EaAr0zkRmKdHkfGBCyiuJ
-        NzQzMDU0MbM0MLU0M1YS5zU5siZeSCA9sSQ1OzW1ILUIpo+Jg1OqgUljjRjr7+UX+yw2LSxJ
-        3JMUtIItWOkDV26vliLf5ZXeKqEZM4U9nzHcC1cvFjpfscAmym5C9Z5JN6+eWOg1mePuVFtl
-        /ou/HzTPzY2vbS5hTelmOOp/VPOtx7bWeT/91P9t/6ByqIprwrGrPbpKlmpHjvx69TFpndfk
-        1I0fH99si3g2cUHS5lYhxojJ9Q8Ed+tIHXiltkAp3Dzfx+6vlqSrdotvyvLZ/YJp6WKXnp7Y
-        zbZerPLMCVvVj00tLPGJNrJCG9V26N6xyvj0O2Km/T/ric+bZrLdz1uvM43rsIlHF9uKjvKv
-        hTvnhLn98X5qwa8vfJ7J+1nL29ueG25cnR0wK7rgj2Pz3i7O6YaTniqxFGckGmoxFxUnAgCo
-        in5UkAMAAA==
-X-CMS-MailID: 20210902221015eucas1p26fae8f6ba4c70087dc7b007a271dce4b
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20210902221015eucas1p26fae8f6ba4c70087dc7b007a271dce4b
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20210902221015eucas1p26fae8f6ba4c70087dc7b007a271dce4b
-References: <20210901201934.1084250-1-dianders@chromium.org>
-        <CGME20210902221015eucas1p26fae8f6ba4c70087dc7b007a271dce4b@eucas1p2.samsung.com>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+dlp-version: 11.5.1.3
+dlp-product: dlpe-windows
+dlp-reaction: no-action
+authentication-results: nvidia.com; dkim=none (message not signed)
+ header.d=none;nvidia.com; dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 62fab0e4-2cff-473e-e136-08d96e60cbf2
+x-ms-traffictypediagnostic: BN6PR1101MB2289:
+x-microsoft-antispam-prvs: <BN6PR1101MB2289107683D11C82467FF4868CCE9@BN6PR1101MB2289.namprd11.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:6430;
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: gZEymyMl/uIo48J3+Eij9MbOx/jIlA+MTMKfGQqSAxayu7aHg2JFAGx8sOKjZVhlyhQS/a546DKUBY/kUek0b9ZlAKatDbNG8k34p3Sp1eLJ5Y92OfTunlsiy6MzbhEtM29dxOuDwPT2zNnFAOIElXu+uJUfOTPf0P/G7vH5UZzmyYohmB28Xb+5K/dA1To/rUwp6hm/MN/xQ71BnFFKEBKlzzilB35LPgndDVDt4ISFM267A+vT7E8iPOwuasM4uSps6+lYf8FQO+Ykd1qzm1lt7e41q8gxXtyhAJqVWzpzOJaSywIEkbIxRV3d6tRRkQDRepKAnhde5qIwL7/ZHKc7kt4uFwCd0vOtlz9SIf5LfDREKSh8sIxqm1/WhefSt1IGEzmtDoJdZtD3Z4HYjNT637k8/8yvxPUEf+Ws/sGi10HD+0uuLuQJ3zStXrQWTl0d5Eh8PB4/cJWOIhoNqBg+/Q1DEcp9SC8g94vB4CywKuprOF8tKMgKqI2DrBPPvWnTFnUSqO6Cbl3yQ8sJHPAo6H0xJ1KCIkSSX7ZGs8nFZ5apqXZgTP4ESReMsBdWUqxplvicn82PB3T/chwSLVtZoykJUAuT7MoE+gNjDZiCsxng7D5LRadyM60VrkFtO81HuMONzJKEhTXmUOv4950yMTfDIpN9LKd1svqHbyRyBIYrLBPVK2XlE6XwYvelpcjm72XJMcd2fHTwGTV5Uw==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR11MB5433.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(83380400001)(66446008)(7696005)(2906002)(316002)(64756008)(186003)(66946007)(76116006)(7416002)(66556008)(122000001)(38100700002)(66476007)(8936002)(6916009)(508600001)(6506007)(5660300002)(9686003)(52536014)(8676002)(4326008)(86362001)(54906003)(26005)(71200400001)(55016002)(33656002)(38070700005);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?ZTQGOze+Jwip6R0Lsz5/0cuV/ixU6GSODW/OBrHzB3Sk/yaCVZEbu1k6aFLB?=
+ =?us-ascii?Q?s182np7akc6NH6dDbq0vegnzx2CDSHdU8maSLkrzQ4v/JFBz2A7n3jUWamxo?=
+ =?us-ascii?Q?t9fb5vbeYW0qoDQDcbWCym3kQlLxPm9ieiAlrFIRiM9UP8d/yDG91NRqs5nd?=
+ =?us-ascii?Q?yNhuGA6iew2JDYW0f/qoXfSvsY3CqpUi13YE688GiyrVwaoWj7cu8DNZaFry?=
+ =?us-ascii?Q?kusI72/5jBQsQ9SxcKVRG9z5XtAfGF9eaEImaMXmJpCx1niIJRVMb/G4QJma?=
+ =?us-ascii?Q?FcfSCsts4IAmxHthoeh0feYiko5ZovqDieBDuhqqw+zroaISmJF4IcosyPOF?=
+ =?us-ascii?Q?03vc+N/UEKA1D/JTmGleZIyH841xd8PZNFB/Guj9h4EFv2agIFwg1n8gDkVC?=
+ =?us-ascii?Q?gdVypSw0OnQOKmnQvbJsRhumWbg1Oke1e6ugFRhXZO+bKoGYmkUK+RMx8G54?=
+ =?us-ascii?Q?HJQt6oChF5QJ043+lPDnwX+nVz9386aftKkXIa37pUqtPCZvbpUGHSPnom8M?=
+ =?us-ascii?Q?RGzEMAWqH1QaWlFqqcODVSc+RPQlc4KlBK62GjsrjxDwI804dH2FXKWSwP/O?=
+ =?us-ascii?Q?mRlJtLfYs+kKLN1pBYsCCAU6gMvn4CO/LQwQJ89F7+HQnIByh98j9HvI9oqc?=
+ =?us-ascii?Q?2g+hmBBpWW8QgtZ3oU/a2qxiD/WEoWNXOrH/JOoIls36UQGufgOE5rxJpRya?=
+ =?us-ascii?Q?gpRdGgbc7APZSQrY75C+L0xLYWlmSnjzRx69UXP6XD99+RHvkpZNHxsHGRPJ?=
+ =?us-ascii?Q?EsKXqGXy9XcD+wT4fJuI7xJI16GWos1/Vf/+A8jCGnDkwyXwtPysCmsW8R6a?=
+ =?us-ascii?Q?JBV5AnDefo/6jpJIwuBAQV556pZO1sCXEumUc2hG0tyGvpxwBQweUgUl+lcZ?=
+ =?us-ascii?Q?Y+QmkLBcSY+ixPgIA7Y3S07cBTX/6cZklJuntVT+K1YsIeT1mwh6Af8a7lsY?=
+ =?us-ascii?Q?f73cWbbDnc5GyuJJLhjBVifXdwUpi8Q2xImuBDwLCDiYJu0EOR2LH5FNq6qo?=
+ =?us-ascii?Q?+sqDHzLmnxcNgzQettsmFM9T1fiImRhmkjbY4pSOvYqllkyZr6mziL0dF0LK?=
+ =?us-ascii?Q?tHCr0F2eMruNHccymX2FCxC+/9vB+pe+byEim2PIncyYVbN00y19Ra5cO+Ze?=
+ =?us-ascii?Q?21Z2E5XRZzApQLb7/EGUkxZo8MrPvQdx6BY3P4glZW7ceKwgZkiWZqfk0oCo?=
+ =?us-ascii?Q?yo8PkTRoktoCQRs+XmITgSVXxaudtw4MbSPFJHALvQ4f3NpRs+JHr+vyKndp?=
+ =?us-ascii?Q?7wEElDI48HJb07RzasSJ0TVRK2Q630F/juInydgb+hnTLC8cIvL3G/fE9twm?=
+ =?us-ascii?Q?+nRm8gV9QvocVBFm6CPKnEmb?=
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BN9PR11MB5433.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 62fab0e4-2cff-473e-e136-08d96e60cbf2
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Sep 2021 22:27:06.5889
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 6+YrMiaF+WhjNpU8CPXJEKRyWz9WVpvP90PU2ZkuiSEFIGiWdYqftJ/ONbIyKHq9hIaqTYM48JFT5GMPYc1FdQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR1101MB2289
+X-OriginatorOrg: intel.com
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+> From: Jason Gunthorpe <jgg@nvidia.com>
+> Sent: Thursday, September 2, 2021 10:45 PM
+>=20
+> On Wed, Sep 01, 2021 at 06:55:55AM +0000, Tian, Kevin wrote:
+> > > From: Alex Williamson
+> > > Sent: Wednesday, September 1, 2021 12:16 AM
+> > >
+> > > On Mon, 30 Aug 2021 19:59:10 -0700
+> > > Nicolin Chen <nicolinc@nvidia.com> wrote:
+> > >
+> > > > The SMMUv3 devices implemented in the Grace SoC support NVIDIA's
+> > > custom
+> > > > CMDQ-Virtualization (CMDQV) hardware. Like the new ECMDQ feature
+> first
+> > > > introduced in the ARM SMMUv3.3 specification, CMDQV adds multiple
+> > > VCMDQ
+> > > > interfaces to supplement the single architected SMMU_CMDQ in an
+> effort
+> > > > to reduce contention.
+> > > >
+> > > > This series of patches add CMDQV support with its preparational
+> changes:
+> > > >
+> > > > * PATCH-1 to PATCH-8 are related to shared VMID feature: they are
+> used
+> > > >   first to improve TLB utilization, second to bind a shared VMID wi=
+th a
+> > > >   VCMDQ interface for hardware configuring requirement.
+> > >
+> > > The vfio changes would need to be implemented in alignment with the
+> > > /dev/iommu proposals[1].  AIUI, the VMID is essentially binding
+> > > multiple containers together for TLB invalidation, which I expect in
+> > > the proposal below is largely already taken care of in that a single
+> > > iommu-fd can support multiple I/O address spaces and it's largely
+> > > expected that a hypervisor would use a single iommu-fd so this explic=
+it
+> > > connection by userspace across containers wouldn't be necessary.
+> >
+> > Agree. VMID is equivalent to DID (domain id) in other vendor iommus.
+> > with /dev/iommu multiple I/O address spaces can share the same VMID
+> > via nesting. No need of exposing VMID to userspace to build the
+> > connection.
+>=20
+> Indeed, this looks like a flavour of the accelerated invalidation
+> stuff we've talked about already.
+>=20
+> I would see it probably exposed as some HW specific IOCTL on the iommu
+> fd to get access to the accelerated invalidation for IOASID's in the
+> FD.
+>=20
+> Indeed, this seems like a further example of why /dev/iommu is looking
+> like a good idea as this RFC is very complicated to do something
+> fairly simple.
+>=20
+> Where are thing on the /dev/iommu work these days?
+>=20
 
-Removed most CC: SMTP server protested.
+We are actively working on the basic skeleton. Our original plan is to send
+out the 1st draft before LPC, with support of vfio type1 semantics and
+and pci dev only (single-device group). But later we realized that adding
+multi-devices group support is also necessary even in the 1st draft to avoi=
+d
+some dirty hacks and build the complete picture. This will add some time
+though. If things go well, we'll still try hit the original plan. If not, i=
+t will be
+soon after LPC.
 
-On 01.09.2021 22:19, Douglas Anderson wrote:
-> The goal of this patch series is to move away from hardcoding exact
-> eDP panels in device tree files. As discussed in the various patches
-> in this series (I'm not repeating everything here), most eDP panels
-> are 99% probable and we can get that last 1% by allowing two "power
-> up" delays to be specified in the device tree file and then using the
-> panel ID (found in the EDID) to look up additional power sequencing
-> delays for the panel.
-> 
-> This patch series is the logical contiunation of a previous patch
-> series where I proposed solving this problem by adding a
-> board-specific compatible string [1]. In the discussion that followed
-> it sounded like people were open to something like the solution
-> proposed in this new series.
-> 
-> In version 2 I got rid of the idea that we could have a "fallback"
-> compatible string that we'd use if we didn't recognize the ID in the
-> EDID. This simplifies the bindings a lot and the implementation
-> somewhat. As a result of not having a "fallback", though, I'm not
-> confident in transitioning any existing boards over to this since
-> we'll have to fallback to very conservative timings if we don't
-> recognize the ID from the EDID and I can't guarantee that I've seen
-> every panel that might have shipped on an existing product. The plan
-> is to use "edp-panel" only on new boards or new revisions of old
-> boards where we can guarantee that every EDID that ships out of the
-> factory has an ID in the table.
-> 
-> Version 3 of this series now splits out all eDP panels to their own
-> driver and adds the generic eDP panel support to this new driver. I
-> believe this is what Sam was looking for [2].
-> 
-> [1] https://lore.kernel.org/r/YFKQaXOmOwYyeqvM@google.com/
-> [2] https://lore.kernel.org/r/YRTsFNTn%2FT8fLxyB@ravnborg.org/
-> 
-I like the idea - if something can be configured dynamically lets do it.
-But I have few questions:
-1. Have you read different real panels id's? In many cases (MIPI DSI, 
-LVDS with EDID) manufacturers often forgot to set proper id fields. I do 
-not know how EDID's ids are reliable in case of edp panels.
-2. You are working with edp panels - beside EDID they have DPCD which 
-contains things like IEEE_OUI and "Device Identification String", I 
-guess they could be also used for detecting panels, have you considered 
-it? I think DPCD Id should be assigned to EDP-Sink interface, and EDID 
-Id to the actual panel behind it. With this assumption one could 
-consider which timings should be property of which entity.
-
-
-Regards
-Andrzej
+Thanks
+Kevin
