@@ -2,175 +2,141 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-14.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B800AC432BE
-	for <linux-tegra@archiver.kernel.org>; Wed,  1 Sep 2021 23:10:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7D6FC432BE
+	for <linux-tegra@archiver.kernel.org>; Thu,  2 Sep 2021 05:54:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 991C5610A2
-	for <linux-tegra@archiver.kernel.org>; Wed,  1 Sep 2021 23:10:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F325610C8
+	for <linux-tegra@archiver.kernel.org>; Thu,  2 Sep 2021 05:54:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344316AbhIAXLi (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 1 Sep 2021 19:11:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38326 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230235AbhIAXLh (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 1 Sep 2021 19:11:37 -0400
-Received: from mail-qv1-xf32.google.com (mail-qv1-xf32.google.com [IPv6:2607:f8b0:4864:20::f32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 420BDC061575
-        for <linux-tegra@vger.kernel.org>; Wed,  1 Sep 2021 16:10:39 -0700 (PDT)
-Received: by mail-qv1-xf32.google.com with SMTP id z2so105180qvl.10
-        for <linux-tegra@vger.kernel.org>; Wed, 01 Sep 2021 16:10:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=1Y+GVokmV9xV7i0Kbyl+zT81HcVIXennIBiGTGbWIfQ=;
-        b=Ss78CZppoDiVB5zdMTBxQWBVResulcnOWqd8Qi3UkjhRlNgSbjSTQDveLQ4owdMFOd
-         mgwlrVIyuyDeGaBwBWxBoZvXlIJfVMzhnF2/tIAtLNZqNqrIQMexqtyQHl+M/z23jDJt
-         /l6kSthz2Kvx8zBGuz1IIWMUwzkcbS3DLX0UM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1Y+GVokmV9xV7i0Kbyl+zT81HcVIXennIBiGTGbWIfQ=;
-        b=a3Jx6MGsE+JFAHLRh21GdznqkPqDjP5wsY9D44t3F/MKBEPl551jESz5X240NpRb6V
-         tkbEb4+pqm1o4CBJb9h14yKcS31a1/d+uQsB22mQnuo8RGcWeK+guDdWOIH2Hc7OmVRq
-         Z0c6IbZjdALAu634yNiqKETqBQNkHkla7uJEI+69o7m5/wCU8zN6Bs28aZ+UcqP5cxuK
-         nOQQSWePNzTI0blRoS9/CVkDIhMIa6GGyGF4gwjW//TIL8vyMeIeELIiO1mtkAaPc3ON
-         hBjsLyTmA85Z4kGSIixL1CH7xeJ1mqHXt4OvPP5gdeYD+MMuUHeTbwGhJaJE5M2Q9u7/
-         xm/A==
-X-Gm-Message-State: AOAM531aIcAYWlmcWKAj4SBN0tBaTBRFrhUpHYVbBIt4qpAHiPHpHOiP
-        6BgbUHaeb3qsUuwBXBdFRiF8VRS3cj8epQ==
-X-Google-Smtp-Source: ABdhPJxzoFQ5XoEQc0nakAYJly4CGWLfQdj4hhuSw5TKdnGLFxFjZXVA907n3z6sadYgQ5IkZaxRDw==
-X-Received: by 2002:a0c:f901:: with SMTP id v1mr19123qvn.45.1630537838342;
-        Wed, 01 Sep 2021 16:10:38 -0700 (PDT)
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com. [209.85.222.176])
-        by smtp.gmail.com with ESMTPSA id o12sm801113qtt.94.2021.09.01.16.10.38
-        for <linux-tegra@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 01 Sep 2021 16:10:38 -0700 (PDT)
-Received: by mail-qk1-f176.google.com with SMTP id w78so85079qkb.4
-        for <linux-tegra@vger.kernel.org>; Wed, 01 Sep 2021 16:10:38 -0700 (PDT)
-X-Received: by 2002:a02:ca0b:: with SMTP id i11mr277172jak.84.1630537827704;
- Wed, 01 Sep 2021 16:10:27 -0700 (PDT)
+        id S236874AbhIBFzF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 2 Sep 2021 01:55:05 -0400
+Received: from mail-bn8nam11on2081.outbound.protection.outlook.com ([40.107.236.81]:7169
+        "EHLO NAM11-BN8-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S231831AbhIBFzF (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 2 Sep 2021 01:55:05 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=l5Z6j+YmiRxHWefOg3kJMDlqvmtH4NysdLwlZo2s7omMfMEolTe4GT7dUmahPMCP/5PTjtio+AUi3N3RDW9+acRr+6ObozBBKfk4cOLfHKC9sZXNpV27m5yFDHmkAIoCqLkCAedAA6I0lQvMeXiHV8hWGceZqsKeDDj/an4qkDVkkvpeJzIL7TVn8Pbkuke4OHTe8M+zz9I6y1YXDWBICRzrRslpT7GlX9+bPhKMgIlHwzV2WaWZ4N4zocvvjoyT3qHk4pc8JixU8Vx8uLOZMOYBVvHEQ1Qg37ia2EuX2LGd3a3IiMP7ikIQL9kz8yKvvzzJl0V4vWsxgF+4x0fiUg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=96pHYFwItkzuDMnI8r+0F4avl46UgcWQ2Z1A/sNrLbE=;
+ b=DPUeIdZnQuLRCWmnoXdV77JP+SJ2sGWFkJu33j3MU3aEGRW3dLAeIjszR/NUjQJf+9MZbchkSoXhYJ0s/Tmxpfz4dIrix4qCJ5Ifyv0LNbsVxVNV5S3r1n2sxOFkds2L5X4BVHN0AcMXHZCkqXynS2CJShmjUs1AokJfiD9rWJrkDrGWRcZW2NmRjDd5Rw8sSKTy/ukz8XYC8y+lSQh2UEOlYOVfwWKB9Qp0ACGG4fODb9Jnsjmz8Py7bCMbbATe4DIIKHE2ZZM1UXrTKCbRH/ed+J9mlKx2y9fKyQzzLd6+DfDxWxYY3o/lgmc0eu5lC021swl2Ah+DBCOa9ytPmw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.112.32) smtp.rcpttodomain=alsa-project.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=96pHYFwItkzuDMnI8r+0F4avl46UgcWQ2Z1A/sNrLbE=;
+ b=YGMr5eocyre/YGTBBhOZ2KDUlfiC63xsndPiSe/9svvG3NacnWd/UhnLVIenjP+rzd94Ul344NRnaKXpO/lHpKTmcSdwihwOMisg+eo778ir4koSAiuJCaS3iYxCedXW4mUcnRyo7NsDIh5d1ha/E2s6ELbnOHyfT8z443PZMET6HHEZh/J70ZMNCfUQaMpvwv+ooR7/zpVjOCWEQ5iyXBW4KIVIhojXr9GWYvP6ouCDg+3oH6O0NWriK4ZbEWXwr697P0IOmFtLok6L2AUKFx/hWXG1u0pf1NmUC4MkdoBJ3X6LI1l4Dn1lDqmBtSNkUPLDjyAKYDC9olx9UPffNA==
+Received: from MW4PR03CA0069.namprd03.prod.outlook.com (2603:10b6:303:b6::14)
+ by BL1PR12MB5317.namprd12.prod.outlook.com (2603:10b6:208:31f::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4457.20; Thu, 2 Sep
+ 2021 05:54:06 +0000
+Received: from CO1NAM11FT059.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:303:b6:cafe::d6) by MW4PR03CA0069.outlook.office365.com
+ (2603:10b6:303:b6::14) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4478.21 via Frontend
+ Transport; Thu, 2 Sep 2021 05:54:05 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.32)
+ smtp.mailfrom=nvidia.com; alsa-project.org; dkim=none (message not signed)
+ header.d=none;alsa-project.org; dmarc=pass action=none
+ header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.112.32 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.112.32; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (216.228.112.32) by
+ CO1NAM11FT059.mail.protection.outlook.com (10.13.174.160) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.4478.19 via Frontend Transport; Thu, 2 Sep 2021 05:54:03 +0000
+Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL109.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Wed, 1 Sep
+ 2021 22:54:03 -0700
+Received: from audio.nvidia.com (172.20.187.5) by mail.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Thu, 2 Sep 2021 05:54:00 +0000
+From:   Sameer Pujar <spujar@nvidia.com>
+To:     <broonie@kernel.org>, <lgirdwood@gmail.com>, <robh+dt@kernel.org>,
+        <thierry.reding@gmail.com>
+CC:     <jonathanh@nvidia.com>, <stephan@gerhold.net>,
+        <jbrunet@baylibre.com>, <alsa-devel@alsa-project.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, Sameer Pujar <spujar@nvidia.com>
+Subject: [PATCH v2 0/3] Convert name-prefix doc to json-schema
+Date:   Thu, 2 Sep 2021 11:23:50 +0530
+Message-ID: <1630562033-13231-1-git-send-email-spujar@nvidia.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-References: <20210901201934.1084250-1-dianders@chromium.org>
- <20210901131531.v3.6.I02250cd7d4799661b068bcc65849a456ed411734@changeid> <CAOesGMjp4pscuxciHZo7br-acgbkZSdRA_mUWNpcz0OfF7zOSA@mail.gmail.com>
-In-Reply-To: <CAOesGMjp4pscuxciHZo7br-acgbkZSdRA_mUWNpcz0OfF7zOSA@mail.gmail.com>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Wed, 1 Sep 2021 16:10:15 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=WPXAUyuAHb1jKx9F_aw+JGX4MWB3or=Eq5rXoKY=OQMw@mail.gmail.com>
-Message-ID: <CAD=FV=WPXAUyuAHb1jKx9F_aw+JGX4MWB3or=Eq5rXoKY=OQMw@mail.gmail.com>
-Subject: Re: [PATCH v3 06/16] ARM: configs: Everyone who had PANEL_SIMPLE now
- gets PANEL_SIMPLE_EDP
-To:     Olof Johansson <olof@lixom.net>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Linus W <linus.walleij@linaro.org>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        DTML <devicetree@vger.kernel.org>,
-        Steev Klimaszewski <steev@kali.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Maxime Ripard <mripard@kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        DRI mailing list <dri-devel@lists.freedesktop.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Andreas Kemnade <andreas@kemnade.info>,
-        Andrey Zhizhikin <andrey.zhizhikin@leica-geosystems.com>,
-        Anson Huang <Anson.Huang@nxp.com>,
-        Arnd Bergmann <arnd@arndb.de>, Chen-Yu Tsai <wens@csie.org>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
-        Corentin Labbe <clabbe@baylibre.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Emil Velikov <emil.velikov@collabora.com>,
-        Eugen Hristev <eugen.hristev@microchip.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Fabrice Gasnier <fabrice.gasnier@st.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Kees Cook <keescook@chromium.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Lionel Debieve <lionel.debieve@st.com>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        =?UTF-8?Q?Martin_J=C3=BCcker?= <martin.juecker@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Olivier Moysan <olivier.moysan@st.com>,
-        Otavio Salvador <otavio@ossystems.com.br>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Razvan Stefanescu <razvan.stefanescu@microchip.com>,
-        Robert Richter <rric@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Tudor Ambarus <tudor.ambarus@microchip.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-omap <linux-omap@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" 
-        <linux-samsung-soc@vger.kernel.org>, linux-sunxi@lists.linux.dev,
-        "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
-        =?UTF-8?Q?=C5=81ukasz_Stelmach?= <l.stelmach@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 53d77e1b-a011-45f2-84b1-08d96dd611e3
+X-MS-TrafficTypeDiagnostic: BL1PR12MB5317:
+X-Microsoft-Antispam-PRVS: <BL1PR12MB53176A5BCE873A7780EB9C37A7CE9@BL1PR12MB5317.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:514;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: uFY1G+QtsLYBnx5nNmMLO19tMRNav4bhQ7yqUvH0esn+FrP5AIaVFyXI7WmM76JXuiBQrpW042a95fSBpVemv1UAGWTUvwPwXmi+/l9GT662KIHXYuBCVa6PzPcpgKe/XmS5tZu7xPIc6VaRT2eiT9RTzIzT2AFv3LB45/CN4zpiNKVb9rPqP5xAkVJ4/78cy/fXtkjA+70MteALwu/4tP1dHdvmkeImA7X2WkzMlCLHzZScuzNkFL2To/ZEfL6LE8Tp/e9yPviMmrnjiPb+KPihtHon4YOrzb55IbIe05WM7dsPYA+Gw0t4pirPdL0pualnaMgZUnMrmnW0iReP2uaFlUWlIDEvwlfqHLFO3WedYJxjdgimLYNe3gj4sjfgkXedZi/m3OJWPG1tKVjvteTDHI2jQmdF2psDI7qoOg0K8tUYypOjj735vplTLCiv/Tl3G/ZZNd5Jn79vAyH5CvX0YdFB3+YtzGMjXL90Te5A+zskyUfq+8hD1jJyZ3xPeRFWpU127uX/UZrlRC3Wui6RQGOoFQJa9++a2P6lWNeh1eTVJth6HFHbyuL+SUWv5ZhDGhsy8PUIOD7BySJsQB6Txg2EcP7zgEafN/UJLCqMmARkzRNnLMMmw0lA47WRgZI/ixxe61QFnBK1Ix1w2zQoeVBcoabg11xg4YU/WTMh9kqWMjUN4JO645YtOSq0vDwU6ICjGTuECkgZIQJqxQ==
+X-Forefront-Antispam-Report: CIP:216.228.112.32;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid01.nvidia.com;CAT:NONE;SFS:(4636009)(396003)(39860400002)(136003)(346002)(376002)(36840700001)(46966006)(107886003)(5660300002)(7696005)(316002)(86362001)(70586007)(70206006)(2616005)(54906003)(2906002)(7416002)(110136005)(36756003)(7636003)(82740400003)(8936002)(426003)(336012)(6666004)(36860700001)(47076005)(82310400003)(26005)(478600001)(4326008)(356005)(83380400001)(8676002)(186003);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Sep 2021 05:54:03.9148
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 53d77e1b-a011-45f2-84b1-08d96dd611e3
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.32];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT059.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5317
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi,
+Following are the changes:
+  - Add json-schema for 'sound-name-prefix' documentation under
+    'name-perfix.yaml'
+  - Use schema references wherever needed.
+  - Remove txt based doc
 
-On Wed, Sep 1, 2021 at 2:12 PM Olof Johansson <olof@lixom.net> wrote:
->
-> On Wed, Sep 1, 2021 at 1:20 PM Douglas Anderson <dianders@chromium.org> wrote:
-> >
-> > In the patch ("drm/panel-simple-edp: Split eDP panels out of
-> > panel-simple") we split the PANEL_SIMPLE driver in 2. By default let's
-> > give everyone who had the old driver enabled the new driver too. If
-> > folks want to opt-out of one or the other they always can later.
-> >
-> > Signed-off-by: Douglas Anderson <dianders@chromium.org>
->
-> Isn't this a case where the new option should just have had the old
-> option as the default value to avoid this kind of churn and possibly
-> broken platforms?
 
-I'm happy to go either way. I guess I didn't do that originally
-because logically there's not any reason to link the two drivers going
-forward. Said another way, someone enabling the "simple panel" driver
-for non-eDP panels wouldn't expect that the "simple panel" driver for
-DP panels would also get enabled by default. They really have nothing
-to do with one another. Enabling by default for something like this
-also seems like it would lead to bloat. I could have sworn that
-periodically people get yelled at for marking drivers on by default
-when it doesn't make sense.
+Changelog
+=========
 
-...that being said, I'm happy to change the default as you suggest.
-Just let me know.
+v1 -> v2
+--------
+ * Provide top reference to name-prefix.yaml as suggested by Rob
+   for patch 2/3
+ * Dropped couple of unreachable email ids from Cc list in commit
+   message of patch 2/3
+ * No changes in remaining patches
+  
 
--Doug
+Sameer Pujar (3):
+  ASoC: Add json-schema documentation for sound-name-prefix
+  ASoC: Use schema reference for sound-name-prefix
+  ASoC: Remove name-prefix.txt
+
+ .../devicetree/bindings/sound/name-prefix.txt      | 24 ---------------
+ .../devicetree/bindings/sound/name-prefix.yaml     | 35 ++++++++++++++++++++++
+ .../bindings/sound/nvidia,tegra186-dspk.yaml       |  9 ++----
+ .../bindings/sound/nvidia,tegra210-dmic.yaml       |  9 ++----
+ .../bindings/sound/nvidia,tegra210-i2s.yaml        |  9 ++----
+ .../devicetree/bindings/sound/nxp,tfa989x.yaml     |  9 ++----
+ Documentation/devicetree/bindings/sound/rt5659.txt |  2 +-
+ .../bindings/sound/simple-audio-mux.yaml           |  9 ++----
+ 8 files changed, 51 insertions(+), 55 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/sound/name-prefix.txt
+ create mode 100644 Documentation/devicetree/bindings/sound/name-prefix.yaml
+
+-- 
+2.7.4
+
