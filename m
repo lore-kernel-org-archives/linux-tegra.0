@@ -2,178 +2,160 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-19.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,SPF_PASS autolearn=no
-	autolearn_force=no version=3.4.0
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42A8FC4320E
-	for <linux-tegra@archiver.kernel.org>; Thu,  2 Sep 2021 14:45:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63EB7C83033
+	for <linux-tegra@archiver.kernel.org>; Thu,  2 Sep 2021 16:30:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 17D946108E
-	for <linux-tegra@archiver.kernel.org>; Thu,  2 Sep 2021 14:45:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C83361A55
+	for <linux-tegra@archiver.kernel.org>; Thu,  2 Sep 2021 16:22:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345389AbhIBOqa (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 2 Sep 2021 10:46:30 -0400
-Received: from mail-mw2nam08on2047.outbound.protection.outlook.com ([40.107.101.47]:32839
-        "EHLO NAM04-MW2-obe.outbound.protection.outlook.com"
+        id S1346256AbhIBQXz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 2 Sep 2021 12:23:55 -0400
+Received: from mail-dm6nam10on2079.outbound.protection.outlook.com ([40.107.93.79]:8929
+        "EHLO NAM10-DM6-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S238334AbhIBOqZ (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 2 Sep 2021 10:46:25 -0400
+        id S1346137AbhIBQXu (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 2 Sep 2021 12:23:50 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=VrxTc6e5Sr2AoMy3DYQ3Ul231PiMtHtaIEW4osTbXNagjapxomOBiTSUVbdwcN9BlgPg9hVfFCaJeBPn7mj7HZekP8Ax5Tpx4pwXWfuPzbYxBfg6TptT1MmoWiRolHpJMXIzKoizxLOYFZ3pBIEudI1rf2tV9N88C+qobB3rU+L9G07X3cdy9bw8Kw6LbjBedxjQFkn9ys77kcatIAmwE1PuP+DkmuaWCkUf2KgTPnlr3PvKG6JHMB8kvHR1w1oZJdnsscJ0BdQq/pnB5HTIsH0rYm57mB0mK5Ck2o6dbie2Cw/C0Uo2V5m/XU9hnMC+Pz0vlNPjIQ2oyZH3BuqlIA==
+ b=FGdbxjVHaKaE0fORRXBQBVTl9z83Fxii7FSFLMdiTpFISfY5S8icDajblrhDAoSp3h/yhHH7ITIw4jQmLBCyFgBK25BmEa+vFeyyQc/4+vtRiX5GCnOZLUbF5aP+kolzauqzwKEff/BCqUnJRanrjZRc/B1HV6X8ettJYsUtU9b/ug6AQPnrw2yCc3o5GgJxOzV+O1Tjm2VNcQ5PKNKdmHg4gXba/ru6vdMhjDdvPkDMB+darypqK7jfoT/a0lScA8Q6ga36jKCOyzN2tAXoDvmqTnbFM8aUJnSZ9F2/2pprX/h0Oa2MrlgNIQsoc//Ls+P9PdTdaM7F7aND7lBnRQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901; h=From:Date:Subject:Message-ID:Content-Type:MIME-Version;
- bh=REc16lldlAUz2MpbSrNHEqKzNEaFnGFyrCtAp5CtkmQ=;
- b=lT0vsc4gUa6Gz3yFA4TD9eSaI5MQKQJwkTf2xGPBfX7UGX0i8ASkSH9BnChfg+pcbEm7QUouQLO7fGBBX0c0NVkBQ+LToKxDRY24euhdJMmZv6Pjt7EaYG4KCq/opRzzV/gnVAGLysfT4j1nnT4Gqc7PF8C8rG4snMgEXUrvCBEDkJpfYjzw/lZjVwI9fitZ0Uls9TV7MweEtLXopveePOmRSIOn3PVC2Fa+9Y4eFFfKtfhypjwO9T3Nsko4UgNw1W8qhZLcEc1yxNOanIRgaXiFRpAEQHahIoHGQajIs53soxrcnWH/COiVUUzBarESlC5C/KaQwlIA5eF4R40k0A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
+ bh=NEMG0WwwVwkn5m22gV7rOkq4gtv/E6Zj0CPDfFmn64g=;
+ b=FSp2wJ0I0qmQzkMKM0fiHfQpSbd1pYWK/3h84c2tncDRz9ppBfAzhyTAP4Evkn3B9J4HSW/VtTai2rqON0Yf56fVDhOM1jEHbxkN46i4kG+0Nfzsow8eJvhbKBtj4CmK78JKxKPVeh9h77HjIy8vLMcEL/8n5TMCsjNHftgLkLKS+/Mp5Dqgyu57RR3VSZDZY5wSgysKcuNwKQxiVYpaDK58+KrhyEEQcnDAwqOqviduviy+fGQfoxVpsAFzbexSoxZWrLgJV5wTTEHWhaceAjbNoY4cMbSW/QNCCvjf1gg97pheu7I8zBjSutCCqUkUNS0kI4u8Cg09Kocp3OnqQg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.112.34) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=REc16lldlAUz2MpbSrNHEqKzNEaFnGFyrCtAp5CtkmQ=;
- b=I3h+L5dFOqDukFQBxoCtLEI0MXCu7aDZSKS+KiOwb3TjseS67UHWLacHU+osBwbHW5IYhHBlW96qJpwz8f4SEVLNYLKnWp6VYjV+JGEYkxcdsgu1JQCqtLR2SNn/EimlBRmPvVSHkOs+DEA2ceuxMLyfYDBTOI/4BMrQCHH6dGTaWumiaEVy1AOXkLjq1XhRKPGaeiQiIhixNmAWe73JJFAhsk8pfOLMCGaw7itmHOzLcNeVPduH06X2NzannRH7p5/QHXAUi7VrkAjDBLazrYP4r+MV3qgUtoTcBXRKh5CBPiltlQQEzAuMvSRptfRF6LTa7cUYMqIuQLE1xCZPjg==
-Authentication-Results: intel.com; dkim=none (message not signed)
- header.d=none;intel.com; dmarc=none action=none header.from=nvidia.com;
-Received: from BL0PR12MB5506.namprd12.prod.outlook.com (2603:10b6:208:1cb::22)
- by BL1PR12MB5206.namprd12.prod.outlook.com (2603:10b6:208:31c::5) with
+ bh=NEMG0WwwVwkn5m22gV7rOkq4gtv/E6Zj0CPDfFmn64g=;
+ b=c0YyddtwO/UtgkmcTHuBDh36j0ofAoRzkNGebS/Pdmlty57cBL9eec68JIGQ7e0agvzoyAbbADcB/VdiMQHlDXoD9i+UOTcfiC5qNavVezJCDM/R6HItG4ZX//U2jNFXL506hZ6cj5b7IR/Vx38USuPwrYkDmtkfZ6d7qVrYKaNjZisB/CRmuANEWR5tmbis8EmJW1+yJdkGD3kuHY2CDMIXdt4VjtJVup4EP1cLpU7BHd/DJ8tBqeJsZrvdqbRcvY3rTNQuhN8nJruGQxocftUhrOIpBHNc0B2MweCRcYA60rQah1qtnQ9IWgkTHR40gip7Tm2VaTmYZQibTD305Q==
+Received: from MWHPR07CA0007.namprd07.prod.outlook.com (2603:10b6:300:116::17)
+ by CH2PR12MB3831.namprd12.prod.outlook.com (2603:10b6:610:29::13) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4478.17; Thu, 2 Sep
- 2021 14:45:25 +0000
-Received: from BL0PR12MB5506.namprd12.prod.outlook.com
- ([fe80::e8af:232:915e:2f95]) by BL0PR12MB5506.namprd12.prod.outlook.com
- ([fe80::e8af:232:915e:2f95%8]) with mapi id 15.20.4478.020; Thu, 2 Sep 2021
- 14:45:25 +0000
-Date:   Thu, 2 Sep 2021 11:45:24 -0300
-From:   Jason Gunthorpe <jgg@nvidia.com>
-To:     "Tian, Kevin" <kevin.tian@intel.com>
-Cc:     Alex Williamson <alex.williamson@redhat.com>,
-        Nicolin Chen <nicolinc@nvidia.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        "will@kernel.org" <will@kernel.org>,
-        "jean-philippe@linaro.org" <jean-philippe@linaro.org>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "cohuck@redhat.com" <cohuck@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "robin.murphy@arm.com" <robin.murphy@arm.com>
-Subject: Re: [RFC][PATCH v2 00/13] iommu/arm-smmu-v3: Add NVIDIA
- implementation
-Message-ID: <20210902144524.GU1721383@nvidia.com>
-References: <20210831025923.15812-1-nicolinc@nvidia.com>
- <20210831101549.237151fa.alex.williamson@redhat.com>
- <BN9PR11MB5433E064405A1AFEC50C1C9F8CCD9@BN9PR11MB5433.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <BN9PR11MB5433E064405A1AFEC50C1C9F8CCD9@BN9PR11MB5433.namprd11.prod.outlook.com>
-X-ClientProxiedBy: BL0PR0102CA0042.prod.exchangelabs.com
- (2603:10b6:208:25::19) To BL0PR12MB5506.namprd12.prod.outlook.com
- (2603:10b6:208:1cb::22)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4478.19; Thu, 2 Sep
+ 2021 16:22:49 +0000
+Received: from CO1NAM11FT022.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:300:116:cafe::3e) by MWHPR07CA0007.outlook.office365.com
+ (2603:10b6:300:116::17) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4478.19 via Frontend
+ Transport; Thu, 2 Sep 2021 16:22:49 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.34)
+ smtp.mailfrom=nvidia.com; vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.112.34 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.112.34; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (216.228.112.34) by
+ CO1NAM11FT022.mail.protection.outlook.com (10.13.175.199) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.4478.19 via Frontend Transport; Thu, 2 Sep 2021 16:22:48 +0000
+Received: from DRHQMAIL107.nvidia.com (10.27.9.16) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Thu, 2 Sep
+ 2021 16:22:48 +0000
+Received: from [10.25.99.244] (172.20.187.5) by DRHQMAIL107.nvidia.com
+ (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Thu, 2 Sep 2021
+ 16:22:44 +0000
+Subject: Re: [PATCH v2 1/3] ASoC: Add json-schema documentation for
+ sound-name-prefix
+To:     Jerome Brunet <jbrunet@baylibre.com>, <broonie@kernel.org>,
+        <lgirdwood@gmail.com>, <robh+dt@kernel.org>,
+        <thierry.reding@gmail.com>
+CC:     <jonathanh@nvidia.com>, <stephan@gerhold.net>,
+        <alsa-devel@alsa-project.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>
+References: <1630562033-13231-1-git-send-email-spujar@nvidia.com>
+ <1630562033-13231-2-git-send-email-spujar@nvidia.com>
+ <1jpmtr5egi.fsf@starbuckisacylon.baylibre.com>
+From:   Sameer Pujar <spujar@nvidia.com>
+Message-ID: <96d847bc-bab6-2d99-66f0-1ca93e0f62a8@nvidia.com>
+Date:   Thu, 2 Sep 2021 21:52:38 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 MIME-Version: 1.0
-Received: from mlx.ziepe.ca (142.162.113.129) by BL0PR0102CA0042.prod.exchangelabs.com (2603:10b6:208:25::19) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4478.17 via Frontend Transport; Thu, 2 Sep 2021 14:45:25 +0000
-Received: from jgg by mlx with local (Exim 4.94)        (envelope-from <jgg@nvidia.com>)        id 1mLny0-00ALYJ-Ax; Thu, 02 Sep 2021 11:45:24 -0300
+In-Reply-To: <1jpmtr5egi.fsf@starbuckisacylon.baylibre.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-GB
+X-Originating-IP: [172.20.187.5]
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+ DRHQMAIL107.nvidia.com (10.27.9.16)
+X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 982289d1-e956-45c3-0584-08d96e204c89
-X-MS-TrafficTypeDiagnostic: BL1PR12MB5206:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <BL1PR12MB52067A798C48DB8EFFC48058C2CE9@BL1PR12MB5206.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:8273;
+X-MS-Office365-Filtering-Correlation-Id: 48420da7-e146-4f1d-ae46-08d96e2de7af
+X-MS-TrafficTypeDiagnostic: CH2PR12MB3831:
+X-Microsoft-Antispam-PRVS: <CH2PR12MB38312847DAE18F613B42D914A7CE9@CH2PR12MB3831.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 45WSgBJotA8Q/DPFSQKsZa9OQeWXBn+lDSMqRI0M1GMLU65ftgDqNguKUKu5dg3nfTbrPrHTl8ZdprDxOgRofKmjrxONBKLyHFGLitwOJ6ZKGuYAxemASgzZtegPor0nIEF674G+UEsmmDpMlBqG07o50VyeE48qZdmsqjYmWCYRJoq+BxCxye27uwYhQz3NlmFOruK+suPqeRkXJfOjQAJ2WnkLuI+C6g6kLgpQRynURX3Un3F3WPsbBrIK8MvX6xsI8C2RBGI1HSz9aeWiUd+taRvEyFopBKSbBPNZ2y4DjP90b6ZyrQQNic4xgYENJB2XW94G7tmncfn16Te76/l0zwFYl1ngpQ8IYHdGTLwdqSWgMcH83P0RyOdpS4KfVcKxuKcR0CO09KPdJ63apFqUcZx/6yDO7CM4eZOqs72c+3iqcq6wtrbc5RqWgOJmwJznP3+uE4SVD4H4ZsP94WT6TUlkCNYKMBlKvaPByJgUJKacvYm65rjMsCZgJ8zMsbntIQBIaXw1wNL1s666JU29aHsLq2SB7IlAUtjI4xRyaz1y5BtWwTsw9TcrYq7CH1i0rvz2YKrYL9zlV4lSIZ91yvbmGMVoLoxlSNYYtB1kJcBiyEJnZ86sfJVOTWK9EsEmfq9YzaYdCR1cmOV5Aw==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL0PR12MB5506.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(2616005)(426003)(2906002)(8676002)(1076003)(38100700002)(7416002)(86362001)(4326008)(6916009)(508600001)(8936002)(316002)(66476007)(54906003)(66946007)(66556008)(83380400001)(26005)(9746002)(36756003)(9786002)(33656002)(186003)(5660300002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?gpFuhGTa6y2KZFFu654L9RIURRmWd4Xty0vQV4gWD8dsv9VzXecwdX5pfLN7?=
- =?us-ascii?Q?mwLoyWzKBEFDcjwsIgIrKip2ESGh1XiLVoyNyOBkh3XIDCjU9MmSibn6nmGM?=
- =?us-ascii?Q?nCIg4d6nQTfiAe9B+NbnlGJ9Xme3TKuYrc7cNI7rMBYOUXDBWG5n2PTC9Aje?=
- =?us-ascii?Q?/fliKmTTINKxDv67zNc+WXAj7WhmUHHjSkeUjcNDeoxXq5/HyBJicfs0mwHp?=
- =?us-ascii?Q?uQIPd+2ep2bUlHijUWM7ZaBvVyhkmui3EXwdPQiJ2tniJ9+lY5uqMU3jtaxw?=
- =?us-ascii?Q?FmSNYQR1yqwpdtCqopVEMTNSNAowHC38m+cDO7qHLTzG8yOduSiqixFd40DO?=
- =?us-ascii?Q?rO+dAzb+VzQAlJsXpSzNObmnbOekoOzFnyl0J6OIByrpWRUe42HdtdNhkN9c?=
- =?us-ascii?Q?3JywAHUprpYYxoXH2EVK3mtRv3xUKpnCUilfHAOPpJsxJtW92PxopaGACa3l?=
- =?us-ascii?Q?NFHFDijihXNncDloocpYFcZH4nZ377YUEqsxWHsApv0ARDc+WNNO7okZJPa0?=
- =?us-ascii?Q?3vowM7NrVGPGZwCZOsaS+bFwUybZZdwxvEJm/HEth4gl23J8jFO9+oltVKUy?=
- =?us-ascii?Q?rfPYVQ7usxelXZ/8qfE3vOjitlyCe2pBPc+wDUzC+u+YKzLQ1weNSx8iopXr?=
- =?us-ascii?Q?d3ZiC9lITJkuAyy9NnznpSHleU8lteM/7feWTnQEPJEvSZ4jXTAAJ7n8LFL/?=
- =?us-ascii?Q?96Vi95HJIQOovacX9Js5lY2/oe6dZALuIWDOc6Dk/CkY29SLMEeQ1jc2r50/?=
- =?us-ascii?Q?Kfzodfigp+HWvBYTqwJQqmZ9q0/I9y6ozBUCDD9tA8wNz/YeHZl61a44Rwmp?=
- =?us-ascii?Q?qFOtGJuNuVFHjW7ae28SwpOzo0WJ0EcQFJjtVTGbL8D2Jo/8MPPxMPAllCAn?=
- =?us-ascii?Q?kxn9keWp85ESdm/m2sCZyxZhA9dYdg8DHhi2nzsnGUulRfazlOzRzTpqQgs2?=
- =?us-ascii?Q?D/1pTwAM+XM1vxbNkmlvb2fGKnUDuiG0oq37pE5ino9Z28qS++sB4t5ZcYh2?=
- =?us-ascii?Q?K68Mloc3ofO8Muc2Jf+0SJYwKFhCTxVXrmq0Sw9dFzJHU5yCGioMiZvkZYam?=
- =?us-ascii?Q?i9FxodPn7K7Vps8DYrslrzJ7VWyNs52ktm4zhUyClOMW2PVaQj6YOCYvcf8E?=
- =?us-ascii?Q?IB5NEloErhU1XtvFqozFKtKTEpqDeTTNwmiGcY2CvpsswoADBFWdNsSzktJy?=
- =?us-ascii?Q?YMIE3VZopQieHCBrV8EyPaPNKIn/lg9KqCNrunPk7TeK2VceNSVngi9C9ES2?=
- =?us-ascii?Q?WnC2wNYFoY6Yvxh/2WLW6wO+IBYHEWAv+dS6wg3nxfKiyKvtT79xVXuucepL?=
- =?us-ascii?Q?rcQh8+xWAVIWWjyhNojSDWFc?=
+X-Microsoft-Antispam-Message-Info: LK0WPGNpKxemN+csvO/nehV2turEBkPphW7y9ck1mlbOQzwW0guQ+cZWDjLurC/ogXTRev00Frc2tpNt6fg913tt+9rggpIm4zP/Z5rHga3zz9c9eFUFSy6zY/c4/BuJqcmSkrrTdNa4dQEi41TPAdt8x7KCRgawWPk4CaHviUzk4QQ27FABVU1PHEZbgy/2avyKbB31+U5gO2sAvp1Osul/y1JtWLRCR/YSE2FbKJpzxbO8tNWTuoAtHoPvvkVomKlmQvSBCTtGuzNg7KggUQcafWnxGvOJrpgSQRSxmQxdLMQJqdC+vD2xWeYTtm3OEDlfNzSUekf8M7wFj1HwwMriR3WPWGHefcgVb5RF2pFNZBE3JQ0FirBchUT6WsY1J9uXEhp7/o9pvEX8rAWa4uiKEf6PtNGLVQjk89ms/TRbHjlM/PFQznjZtHz+gSBw+RL4+f4naIzgHBOxnuJobel2HjgeFv5MbVnU1skvSraAUkYAZMcmNLuuAF9p8k8ecZ8o4nKbUyrgXhdgTamz7PXswC77V9HaFGw+Ltko0C2wQYsVo9lqEEG/Er3/wCSJoDkwI2atOdejyEQq6t90AWkz/oIjKk4ZfXe/FpumJHRSCIlBLHi2WtKPUXprmmZBpouf42D++qh5Wz0aK0qsfeHkC9O8FdhKjCPobrY7lhRlbQ0UocnjF8fGFz3Us5nL2/NJmNc5L35LdvprzQa8D3A/X01Hv+h6pEkyCkVOkzXmYXSQ/X6YGLT6exdFK/XSi5Xs1c70si1xuCvl1min4+bP/Q9H5uFS8/qx9jGKYjkPz4BsbxzZvSNAVyNIGpUc1xw9NUGLTUOPFTNPlhnCcqRZmm8v6MtA7qhC+/0THIU=
+X-Forefront-Antispam-Report: CIP:216.228.112.34;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid03.nvidia.com;CAT:NONE;SFS:(4636009)(136003)(376002)(396003)(39860400002)(346002)(46966006)(36840700001)(2616005)(16526019)(356005)(186003)(36860700001)(7636003)(82310400003)(966005)(47076005)(53546011)(478600001)(26005)(82740400003)(336012)(426003)(31696002)(86362001)(5660300002)(70206006)(6666004)(70586007)(4326008)(8936002)(2906002)(8676002)(36906005)(54906003)(31686004)(16576012)(316002)(110136005)(36756003)(7416002)(43740500002);DIR:OUT;SFP:1101;
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 982289d1-e956-45c3-0584-08d96e204c89
-X-MS-Exchange-CrossTenant-AuthSource: BL0PR12MB5506.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Sep 2021 14:45:25.4600
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Sep 2021 16:22:48.7500
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Network-Message-Id: 48420da7-e146-4f1d-ae46-08d96e2de7af
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: rn6fqNrVairgE2MS69VkZuPpg82xzEzikRVSMUbcWTHGHapOWMN9jbNNmaQv+j7+
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5206
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.34];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT022.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB3831
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, Sep 01, 2021 at 06:55:55AM +0000, Tian, Kevin wrote:
-> > From: Alex Williamson
-> > Sent: Wednesday, September 1, 2021 12:16 AM
-> > 
-> > On Mon, 30 Aug 2021 19:59:10 -0700
-> > Nicolin Chen <nicolinc@nvidia.com> wrote:
-> > 
-> > > The SMMUv3 devices implemented in the Grace SoC support NVIDIA's
-> > custom
-> > > CMDQ-Virtualization (CMDQV) hardware. Like the new ECMDQ feature first
-> > > introduced in the ARM SMMUv3.3 specification, CMDQV adds multiple
-> > VCMDQ
-> > > interfaces to supplement the single architected SMMU_CMDQ in an effort
-> > > to reduce contention.
-> > >
-> > > This series of patches add CMDQV support with its preparational changes:
-> > >
-> > > * PATCH-1 to PATCH-8 are related to shared VMID feature: they are used
-> > >   first to improve TLB utilization, second to bind a shared VMID with a
-> > >   VCMDQ interface for hardware configuring requirement.
-> > 
-> > The vfio changes would need to be implemented in alignment with the
-> > /dev/iommu proposals[1].  AIUI, the VMID is essentially binding
-> > multiple containers together for TLB invalidation, which I expect in
-> > the proposal below is largely already taken care of in that a single
-> > iommu-fd can support multiple I/O address spaces and it's largely
-> > expected that a hypervisor would use a single iommu-fd so this explicit
-> > connection by userspace across containers wouldn't be necessary.
-> 
-> Agree. VMID is equivalent to DID (domain id) in other vendor iommus.
-> with /dev/iommu multiple I/O address spaces can share the same VMID
-> via nesting. No need of exposing VMID to userspace to build the 
-> connection.
 
-Indeed, this looks like a flavour of the accelerated invalidation
-stuff we've talked about already.
 
-I would see it probably exposed as some HW specific IOCTL on the iommu
-fd to get access to the accelerated invalidation for IOASID's in the
-FD.
+On 9/2/2021 6:17 PM, Jerome Brunet wrote:
+> External email: Use caution opening links or attachments
+>
+>
+> On Thu 02 Sep 2021 at 11:23, Sameer Pujar <spujar@nvidia.com> wrote:
+>
+>> The 'sound-name-prefix' is used to prepend suitable strings to a
+>> component widgets or controls. This is helpful when there are
+>> multiple instances of the same component. Add relevant json-schema
+>> and is inspired from sound-name-prefix.txt documentation.
+>>
+>> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
+>> Cc: Jerome Brunet <jbrunet@baylibre.com>
+>> Cc: Rob Herring <robh+dt@kernel.org>
+>> ---
+>>   .../devicetree/bindings/sound/name-prefix.yaml     | 35 ++++++++++++++++++++++
+>>   1 file changed, 35 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/sound/name-prefix.yaml
+>>
+>> diff --git a/Documentation/devicetree/bindings/sound/name-prefix.yaml b/Documentation/devicetree/bindings/sound/name-prefix.yaml
+>> new file mode 100644
+>> index 00000000..b58cc9e
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/sound/name-prefix.yaml
+>> @@ -0,0 +1,35 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/sound/name-prefix.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Component sound name prefix
+>> +
+>> +maintainers:
+>> +  - Jerome Brunet <jbrunet@baylibre.com>
+> Since this file is referenced using "AllOf", am I going to be listed as
+> maintainer of all the drivers using the property below ? I'm not sure I
+> want that ... :P
+>
+> Maybe it would be better to drop the above ?
 
-Indeed, this seems like a further example of why /dev/iommu is looking
-like a good idea as this RFC is very complicated to do something
-fairly simple.
+The 'maintainers' seems to be a mandatory field. To address above may be 
+drop the top level reference and refer the property directly via a 
+definition if the earlier method [in v1] was not appropriate?
 
-Where are thing on the /dev/iommu work these days?
 
-Thanks,
-Jason
