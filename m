@@ -2,120 +2,144 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-21.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F10AC43214
-	for <linux-tegra@archiver.kernel.org>; Thu,  2 Sep 2021 12:52:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 759F1C4320E
+	for <linux-tegra@archiver.kernel.org>; Thu,  2 Sep 2021 14:07:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8369A610E5
-	for <linux-tegra@archiver.kernel.org>; Thu,  2 Sep 2021 12:52:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5739A610E7
+	for <linux-tegra@archiver.kernel.org>; Thu,  2 Sep 2021 14:07:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234290AbhIBMxF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 2 Sep 2021 08:53:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54260 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344670AbhIBMxE (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 2 Sep 2021 08:53:04 -0400
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BDEAC061760
-        for <linux-tegra@vger.kernel.org>; Thu,  2 Sep 2021 05:52:06 -0700 (PDT)
-Received: by mail-wm1-x333.google.com with SMTP id k5-20020a05600c1c8500b002f76c42214bso1354969wms.3
-        for <linux-tegra@vger.kernel.org>; Thu, 02 Sep 2021 05:52:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=references:user-agent:from:to:cc:subject:date:in-reply-to
-         :message-id:mime-version;
-        bh=XUQYJFf0VLoed4JNR3bJk8DdGmygiKizVinf3zNZhJo=;
-        b=QTk5hM6cRX7Vag5fBHfIGeza7Gcb1CrOImwXRWX/tUo4pmpjLmUx9zGHyE/mC3pJPT
-         NwPl+3wafeOiVJQqeXPoo/qK3fM6Xdo83WhZEVjwLWn1EK++PdfKrpWF1feAG02UOamx
-         Qvxjnks2r6bbean2ZB3OiwA8WW7OKO0iO0O8MOIAuKLafEcdSNsFNIpKLCPrKrCvhfFL
-         HGcA7Dg/hEBxAdqHLwQkS5DofZuFFMxF70Ikc0MHAFnfd+aIKsRlHW32pk6cSmJoYUwB
-         eUoDkKJwfd0ychlZhdLxmRkOhCUNHYiebn2sBPtQbiE0KLqY21JHwDzfd9fjiCoO3P0G
-         MhUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:references:user-agent:from:to:cc:subject:date
-         :in-reply-to:message-id:mime-version;
-        bh=XUQYJFf0VLoed4JNR3bJk8DdGmygiKizVinf3zNZhJo=;
-        b=TGYcd//Blvid2sI7abP8YBsBGB6Oyh9VglX1AGDqLpMm9QDz/H8ojQCOR7xPm1dyTF
-         l1HUN+8ECnonQuvWlhXhfGMdlBpV/qdX5WJyZgwV9QqZWyfpPWhIlULWpSzRFKitwzEy
-         rHqgT1eWzgcycYdp10F2h7utCDHwUQRkiHzUa8a8y+N2kAs1U+1oNywBgqBxBGtR/uKW
-         ue1Ekxh1zwX5MfOOqiza+u7u3JP2xZMkqN1ZRYFO16oqQ1ReCSbwp+5YbP9mkzlB4rNh
-         En2Dd7UNyectPB7re6FCbu4/A0xQL865998rxUY0bBojgWn71fe33pMuNXL3FpexmHKQ
-         Nu4A==
-X-Gm-Message-State: AOAM533Nqi9ZvyPDnQkNpzBT3rxoFCMnRK0K6g5wFM9bYhCf/ZQfwV8a
-        T5JBi1GI+EPe9t8Td07lJW8+bA==
-X-Google-Smtp-Source: ABdhPJzPz9XOAIc35pFuBE/Q9Eg6RqNF24BiJ5nOV48yKD7O45stK/C7AYYFgjow2p8m9xr050S43A==
-X-Received: by 2002:a05:600c:259:: with SMTP id 25mr2997861wmj.82.1630587124128;
-        Thu, 02 Sep 2021 05:52:04 -0700 (PDT)
-Received: from localhost (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id n4sm2071215wro.81.2021.09.02.05.52.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Sep 2021 05:52:03 -0700 (PDT)
-References: <1630562033-13231-1-git-send-email-spujar@nvidia.com>
-User-agent: mu4e 1.6.5; emacs 27.1
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Sameer Pujar <spujar@nvidia.com>, broonie@kernel.org,
-        lgirdwood@gmail.com, robh+dt@kernel.org, thierry.reding@gmail.com
-Cc:     jonathanh@nvidia.com, stephan@gerhold.net,
-        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v2 0/3] Convert name-prefix doc to json-schema
-Date:   Thu, 02 Sep 2021 14:44:12 +0200
-In-reply-to: <1630562033-13231-1-git-send-email-spujar@nvidia.com>
-Message-ID: <1jilzj5edo.fsf@starbuckisacylon.baylibre.com>
+        id S234355AbhIBOIk (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 2 Sep 2021 10:08:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38610 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233793AbhIBOIj (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 2 Sep 2021 10:08:39 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 6CD63610D2;
+        Thu,  2 Sep 2021 14:07:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1630591660;
+        bh=0uyA3zWrJBqd0weQzwpY3d7MB0WhyzhkRJg1uFwE5QU=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=lGAj/66cvBAOYjLcuibikgSw71sXFUfVyijPWXoltptJaiAxGplIdREgBUDn5BTWa
+         2BWVGpk21En5mRMYEleyln73qM2QdBeKc1IvkFRXeoPJ4J4MOsoV67cVjbMiQrAjSj
+         oEtlpnY5PcCKlfolgTQz3nq1uGokO3frf7iISsHz5h7d2d0JXPcrhX0UCHAYbqBAma
+         4vLtKBeQkqPJoXTG0AM8r4sAj/5nnilXlwCoBPejFObJI201QsapWLfIpcTahv0CPM
+         cIdVEMds3DwPBDpoJ2QANc/CW3xFEzKj79atktTFVij9LzLiR4COE0t9QGjQvoeJoK
+         h2XONlv2YpZEw==
+Date:   Thu, 2 Sep 2021 09:07:39 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Vidya Sagar <vidyas@nvidia.com>
+Cc:     bhelgaas@google.com, lorenzo.pieralisi@arm.com, treding@nvidia.com,
+        swarren@nvidia.com, jonathanh@nvidia.com,
+        linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org,
+        kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com,
+        Keith Busch <kbusch@kernel.org>
+Subject: Re: [PATCH V3] PCI: tegra: Enable Relaxed Ordering only for Tegra20
+ & Tegra30
+Message-ID: <20210902140739.GA321447@bjorn-Precision-5520>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210901204045.GA236987@bjorn-Precision-5520>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+[+cc Keith]
 
-On Thu 02 Sep 2021 at 11:23, Sameer Pujar <spujar@nvidia.com> wrote:
+On Wed, Sep 01, 2021 at 03:40:47PM -0500, Bjorn Helgaas wrote:
+> On Thu, Jul 04, 2019 at 08:34:28PM +0530, Vidya Sagar wrote:
+> > Currently Relaxed Ordering bit in the configuration space is enabled for
+> > all PCIe devices as the quirk uses PCI_ANY_ID for both Vendor-ID and
+> > Device-ID, but, as per the Technical Reference Manual of Tegra20 which is
+> > available at https://developer.nvidia.com/embedded/downloads#?search=tegra%202
+> > in Sec 34.1, it is mentioned that Relaxed Ordering bit needs to be enabled in
+> > its root ports to avoid deadlock in hardware. The same is applicable for
+> > Tegra30 as well though it is not explicitly mentioned in Tegra30 TRM document,
+> > but the same must not be extended to root ports of other Tegra SoCs or
+> > other hosts as the same issue doesn't exist there.
+> 
+> While researching another thread about RO [1], I got concerned about
+> setting RO for root ports.
+> 
+> Setting RO for *endpoints* makes sense: that allows (but does not
+> require) the endpoint to issue writes that don't require strong
+> ordering.
+> 
+> Setting RO for *root ports* seems more problematic.  It allows the
+> root port to issue PCIe writes that don't require strong ordering.
+> These would be CPU MMIO writes to devices.  But Linux currently does
+> not have a way for drivers to indicate that some MMIO writes need to
+> be ordered while others do not, and I think drivers assume that all
+> MMIO writes are performed in order. 
+> 
+> We merged this patch as 7be142caabc4 ("PCI: tegra: Enable Relaxed
+> Ordering only for Tegra20 & Tegra30") [2], so Tegra20 and Tegra30 root
+> ports are allowed (but again, not required) to set the RO bit for MMIO
+> writes initiated by a CPU.
+> 
+> Because I think drivers *rely* on MMIO writes being strongly ordered,
+> this is a potential problem.  I think we should probably consider
+> explicitly *disabling* RO in all root ports (with exceptions for
+> quirks like this) in case it's set by any firmware.
+> 
+> So the question is, how do Tegra20 and Tegra30 actually work?  Do they
+> ever actually set the RO bit for these MMIO writes?  If so, I think
+> drivers are really at risk, and we probably should log some kind of
+> warning.
 
-> Following are the changes:
->   - Add json-schema for 'sound-name-prefix' documentation under
->     'name-perfix.yaml'
->   - Use schema references wherever needed.
->   - Remove txt based doc
->
->
-> Changelog
-> =========
->
-> v1 -> v2
-> --------
->  * Provide top reference to name-prefix.yaml as suggested by Rob
->    for patch 2/3
->  * Dropped couple of unreachable email ids from Cc list in commit
->    message of patch 2/3
->  * No changes in remaining patches
->   
->
-> Sameer Pujar (3):
->   ASoC: Add json-schema documentation for sound-name-prefix
->   ASoC: Use schema reference for sound-name-prefix
->   ASoC: Remove name-prefix.txt
+Keith reminded me that writel_relaxed() is a way for drivers to
+specify that they don't need strong ordering.  So I think the question
+really is whether Tegra20 and Tegra30 set the RO bit for normal
+writel() writes.  If they set RO for writel_relaxed() writes, that
+should be perfectly fine.
 
-Thanks a lot for this Sameer.
-With the small update required by Rob's bot and the comment on patch #1
-taken care of, you may add:
-
-Reviewed-by: Jerome Brunet <jbrunet@baylibre.com>
-
->
->  .../devicetree/bindings/sound/name-prefix.txt      | 24 ---------------
->  .../devicetree/bindings/sound/name-prefix.yaml     | 35 ++++++++++++++++++++++
->  .../bindings/sound/nvidia,tegra186-dspk.yaml       |  9 ++----
->  .../bindings/sound/nvidia,tegra210-dmic.yaml       |  9 ++----
->  .../bindings/sound/nvidia,tegra210-i2s.yaml        |  9 ++----
->  .../devicetree/bindings/sound/nxp,tfa989x.yaml     |  9 ++----
->  Documentation/devicetree/bindings/sound/rt5659.txt |  2 +-
->  .../bindings/sound/simple-audio-mux.yaml           |  9 ++----
->  8 files changed, 51 insertions(+), 55 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/sound/name-prefix.txt
->  create mode 100644 Documentation/devicetree/bindings/sound/name-prefix.yaml
-
+> But if Tegra20 and Tegra30 just need "Enable Relaxed Ordering" set as
+> a bug workaround and they never actually initiate PCIe writes with the
+> RO bit set, maybe we should add a comment to that effect, but there
+> should be no actual problem.
+> 
+> [1] https://lore.kernel.org/r/20210830123704.221494-2-verdre@v0yd.nl
+> [2] https://git.kernel.org/linus/7be142caabc4
+> 
+> > Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+> > ---
+> > V3:
+> > * Modified commit message to make it more precise and explicit
+> > 
+> > V2:
+> > * Modified commit message to include reference to Tegra20 TRM document.
+> > 
+> >  drivers/pci/controller/pci-tegra.c | 7 +++++--
+> >  1 file changed, 5 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/pci/controller/pci-tegra.c b/drivers/pci/controller/pci-tegra.c
+> > index 9cc03a2549c0..241760aa15bd 100644
+> > --- a/drivers/pci/controller/pci-tegra.c
+> > +++ b/drivers/pci/controller/pci-tegra.c
+> > @@ -787,12 +787,15 @@ DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_NVIDIA, 0x0bf1, tegra_pcie_fixup_class);
+> >  DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_NVIDIA, 0x0e1c, tegra_pcie_fixup_class);
+> >  DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_NVIDIA, 0x0e1d, tegra_pcie_fixup_class);
+> >  
+> > -/* Tegra PCIE requires relaxed ordering */
+> > +/* Tegra20 and Tegra30 PCIE requires relaxed ordering */
+> >  static void tegra_pcie_relax_enable(struct pci_dev *dev)
+> >  {
+> >  	pcie_capability_set_word(dev, PCI_EXP_DEVCTL, PCI_EXP_DEVCTL_RELAX_EN);
+> >  }
+> > -DECLARE_PCI_FIXUP_FINAL(PCI_ANY_ID, PCI_ANY_ID, tegra_pcie_relax_enable);
+> > +DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_NVIDIA, 0x0bf0, tegra_pcie_relax_enable);
+> > +DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_NVIDIA, 0x0bf1, tegra_pcie_relax_enable);
+> > +DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_NVIDIA, 0x0e1c, tegra_pcie_relax_enable);
+> > +DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_NVIDIA, 0x0e1d, tegra_pcie_relax_enable);
+> >  
+> >  static int tegra_pcie_request_resources(struct tegra_pcie *pcie)
+> >  {
+> > -- 
+> > 2.17.1
+> > 
