@@ -2,51 +2,51 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-21.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
+X-Spam-Status: No, score=-16.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E81A5C433F5
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C961DC433EF
 	for <linux-tegra@archiver.kernel.org>; Fri,  3 Sep 2021 08:32:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CFCF660FDA
+	by mail.kernel.org (Postfix) with ESMTP id ADD2F60FDA
 	for <linux-tegra@archiver.kernel.org>; Fri,  3 Sep 2021 08:32:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348377AbhICIdg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 3 Sep 2021 04:33:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41440 "EHLO
+        id S1348359AbhICIdi (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 3 Sep 2021 04:33:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41444 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348371AbhICIdf (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 3 Sep 2021 04:33:35 -0400
+        with ESMTP id S1348380AbhICIdh (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 3 Sep 2021 04:33:37 -0400
 Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4277FC0613CF;
-        Fri,  3 Sep 2021 01:32:34 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E9DBC061575;
+        Fri,  3 Sep 2021 01:32:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
          s=20161220; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
         Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
         Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
         :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
         List-Post:List-Owner:List-Archive;
-        bh=Tr0ddP4NgNhsSZnuHub7Y4GakNla0tVT7enxei0s1S0=; b=Q/nHAd5T8WYrSTxrSIy328lNo3
-        DI+wrnGaWxfe8kh/npvZbiPE7STAqTWJWyfNIx1Raowk/5M8rysxsEqJ+5YFclEbtlAynNFH67Jo7
-        NE1hhIX6eckDq+Psa+Wdf42Aa6NbIJBP8APcJ/ZRxrVQulpUKveOG0qJ+ouh1TAlkE2v6QZLT7LGk
-        RkKd9OKoG9D8sK7PRewsg2fPymBRVjROfpATQhov8ZB6baAerAS2unP79TMdNVMXXg89JYfV8QVBf
-        mzsUoD9ySlIRjXhGRA0edbFBJZAyG9gDp30pp7bnyDh6RPhL0roRSJnxjm7+DXys7L+EmHMJI0/+O
-        EKxlUkGQ==;
+        bh=NE5mAHcrj1IJAYZ95LRX0hMV617qeoGKRFly82wATCI=; b=LXh9ZDsql5UIFvOMJLJNLcTsyg
+        ARHkl0+yGmzRWoLTmOUvcRb1WCPDrOoA2uGrSj0w7Yn/ctbg6RiAqEn5ZL9YSiGBgaV9rofO44Ali
+        wghwhnkLStz1rGEd5ZdrSWZCWjfRO3kMqqS4sd7G33ZFGm7DD4ifYiMpcAaVfNGZCW1vuEIoW19s3
+        Snz1soh472W8rvZiIQHoEg5frRArogtwSpoM/p0R8ZBOl7auoj05dqxuuIR+ZxSVkfjzqLPmPoSyi
+        4RIp7gSamEqas0xmTBCViOLhXsAZoG3PHSFPkjDL+6/1kNE3POMoGqTrHaOpXNBH6dwfPYvjK4mZA
+        ydANJYGw==;
 Received: from dsl-hkibng22-54f986-236.dhcp.inet.fi ([84.249.134.236] helo=toshino.localdomain)
         by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.89)
         (envelope-from <mperttunen@nvidia.com>)
-        id 1mM4cI-0004xK-R5; Fri, 03 Sep 2021 11:32:06 +0300
+        id 1mM4cI-0004xK-VI; Fri, 03 Sep 2021 11:32:07 +0300
 From:   Mikko Perttunen <mperttunen@nvidia.com>
 To:     thierry.reding@gmail.com, jonathanh@nvidia.com, airlied@linux.ie,
         daniel@ffwll.ch, robh+dt@kernel.org
 Cc:     dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
         devicetree@vger.kernel.org, Mikko Perttunen <mperttunen@nvidia.com>
-Subject: [PATCH v4 1/3] dt-bindings: Add YAML bindings for NVDEC
-Date:   Fri,  3 Sep 2021 11:31:53 +0300
-Message-Id: <20210903083155.690022-2-mperttunen@nvidia.com>
+Subject: [PATCH v4 3/3] drm/tegra: Add NVDEC driver
+Date:   Fri,  3 Sep 2021 11:31:55 +0300
+Message-Id: <20210903083155.690022-4-mperttunen@nvidia.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20210903083155.690022-1-mperttunen@nvidia.com>
 References: <20210903083155.690022-1-mperttunen@nvidia.com>
@@ -59,152 +59,616 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Add YAML device tree bindings for NVDEC, now in a more appropriate
-place compared to the old textual Host1x bindings.
+Add support for booting and using NVDEC on Tegra210, Tegra186
+and Tegra194 to the Host1x and TegraDRM drivers. Booting in
+secure mode is not currently supported.
 
 Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
 ---
-v4:
-* Fix incorrect compatibility string in 'if' condition
 v3:
-* Drop host1x bindings
-* Change read2 to read-1 in interconnect names
+* Change num_instances to unsigned int
+* Remove unnecessary '= 0' initializer
+* Populate num_instances data
+* Fix instance number check
 v2:
-* Fix issues pointed out in v1
-* Add T194 nvidia,instance property
+* Use devm_platform_get_and_ioremap_resource
+* Remove reset handling, done by power domain code
+* Assume runtime PM is enabled
 ---
- .../gpu/host1x/nvidia,tegra210-nvdec.yaml     | 109 ++++++++++++++++++
- MAINTAINERS                                   |   1 +
- 2 files changed, 110 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/gpu/host1x/nvidia,tegra210-nvdec.yaml
+ drivers/gpu/drm/tegra/Makefile |   3 +-
+ drivers/gpu/drm/tegra/drm.c    |   4 +
+ drivers/gpu/drm/tegra/drm.h    |   1 +
+ drivers/gpu/drm/tegra/nvdec.c  | 474 +++++++++++++++++++++++++++++++++
+ drivers/gpu/host1x/dev.c       |  18 ++
+ include/linux/host1x.h         |   2 +
+ 6 files changed, 501 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/gpu/drm/tegra/nvdec.c
 
-diff --git a/Documentation/devicetree/bindings/gpu/host1x/nvidia,tegra210-nvdec.yaml b/Documentation/devicetree/bindings/gpu/host1x/nvidia,tegra210-nvdec.yaml
+diff --git a/drivers/gpu/drm/tegra/Makefile b/drivers/gpu/drm/tegra/Makefile
+index 5d2039f0c734..b248c631f790 100644
+--- a/drivers/gpu/drm/tegra/Makefile
++++ b/drivers/gpu/drm/tegra/Makefile
+@@ -24,7 +24,8 @@ tegra-drm-y := \
+ 	gr2d.o \
+ 	gr3d.o \
+ 	falcon.o \
+-	vic.o
++	vic.o \
++	nvdec.o
+ 
+ tegra-drm-y += trace.o
+ 
+diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
+index b20fd0833661..5f5afd7ba37e 100644
+--- a/drivers/gpu/drm/tegra/drm.c
++++ b/drivers/gpu/drm/tegra/drm.c
+@@ -1337,15 +1337,18 @@ static const struct of_device_id host1x_drm_subdevs[] = {
+ 	{ .compatible = "nvidia,tegra210-sor", },
+ 	{ .compatible = "nvidia,tegra210-sor1", },
+ 	{ .compatible = "nvidia,tegra210-vic", },
++	{ .compatible = "nvidia,tegra210-nvdec", },
+ 	{ .compatible = "nvidia,tegra186-display", },
+ 	{ .compatible = "nvidia,tegra186-dc", },
+ 	{ .compatible = "nvidia,tegra186-sor", },
+ 	{ .compatible = "nvidia,tegra186-sor1", },
+ 	{ .compatible = "nvidia,tegra186-vic", },
++	{ .compatible = "nvidia,tegra186-nvdec", },
+ 	{ .compatible = "nvidia,tegra194-display", },
+ 	{ .compatible = "nvidia,tegra194-dc", },
+ 	{ .compatible = "nvidia,tegra194-sor", },
+ 	{ .compatible = "nvidia,tegra194-vic", },
++	{ .compatible = "nvidia,tegra194-nvdec", },
+ 	{ /* sentinel */ }
+ };
+ 
+@@ -1369,6 +1372,7 @@ static struct platform_driver * const drivers[] = {
+ 	&tegra_gr2d_driver,
+ 	&tegra_gr3d_driver,
+ 	&tegra_vic_driver,
++	&tegra_nvdec_driver,
+ };
+ 
+ static int __init host1x_drm_init(void)
+diff --git a/drivers/gpu/drm/tegra/drm.h b/drivers/gpu/drm/tegra/drm.h
+index 8b28327c931c..fc0a19554eac 100644
+--- a/drivers/gpu/drm/tegra/drm.h
++++ b/drivers/gpu/drm/tegra/drm.h
+@@ -202,5 +202,6 @@ extern struct platform_driver tegra_sor_driver;
+ extern struct platform_driver tegra_gr2d_driver;
+ extern struct platform_driver tegra_gr3d_driver;
+ extern struct platform_driver tegra_vic_driver;
++extern struct platform_driver tegra_nvdec_driver;
+ 
+ #endif /* HOST1X_DRM_H */
+diff --git a/drivers/gpu/drm/tegra/nvdec.c b/drivers/gpu/drm/tegra/nvdec.c
 new file mode 100644
-index 000000000000..33d01c7dc759
+index 000000000000..e8e7ebbea53e
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/gpu/host1x/nvidia,tegra210-nvdec.yaml
-@@ -0,0 +1,109 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: "http://devicetree.org/schemas/gpu/host1x/nvidia,tegra210-nvdec.yaml#"
-+$schema: "http://devicetree.org/meta-schemas/core.yaml#"
++++ b/drivers/gpu/drm/tegra/nvdec.c
+@@ -0,0 +1,474 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Copyright (c) 2015-2021, NVIDIA Corporation.
++ */
 +
-+title: Device tree binding for NVIDIA Tegra NVDEC
++#include <linux/clk.h>
++#include <linux/delay.h>
++#include <linux/host1x.h>
++#include <linux/iommu.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/of_device.h>
++#include <linux/of_platform.h>
++#include <linux/platform_device.h>
++#include <linux/pm_runtime.h>
++#include <linux/reset.h>
 +
-+description: |
-+  NVDEC is the hardware video decoder present on NVIDIA Tegra210
-+  and newer chips. It is located on the Host1x bus and typically
-+  programmed through Host1x channels.
++#include <soc/tegra/pmc.h>
 +
-+maintainers:
-+  - Thierry Reding <treding@gmail.com>
-+  - Mikko Perttunen <mperttunen@nvidia.com>
++#include "drm.h"
++#include "falcon.h"
++#include "vic.h"
 +
-+properties:
-+  $nodename:
-+    pattern: "^nvdec@[0-9a-f]*$"
++struct nvdec_config {
++	const char *firmware;
++	unsigned int version;
++	bool supports_sid;
++	unsigned int num_instances;
++};
 +
-+  compatible:
-+    enum:
-+      - nvidia,tegra210-nvdec
-+      - nvidia,tegra186-nvdec
-+      - nvidia,tegra194-nvdec
++struct nvdec {
++	struct falcon falcon;
 +
-+  reg:
-+    maxItems: 1
++	void __iomem *regs;
++	struct tegra_drm_client client;
++	struct host1x_channel *channel;
++	struct device *dev;
++	struct clk *clk;
 +
-+  clocks:
-+    maxItems: 1
++	/* Platform configuration */
++	const struct nvdec_config *config;
++};
 +
-+  clock-names:
-+    items:
-+      - const: nvdec
++static inline struct nvdec *to_nvdec(struct tegra_drm_client *client)
++{
++	return container_of(client, struct nvdec, client);
++}
 +
-+  resets:
-+    maxItems: 1
++static void nvdec_writel(struct nvdec *nvdec, u32 value, unsigned int offset)
++{
++	writel(value, nvdec->regs + offset);
++}
 +
-+  reset-names:
-+    items:
-+      - const: nvdec
++static int nvdec_boot(struct nvdec *nvdec)
++{
++#ifdef CONFIG_IOMMU_API
++	struct iommu_fwspec *spec = dev_iommu_fwspec_get(nvdec->dev);
++#endif
++	int err;
 +
-+  power-domains:
-+    maxItems: 1
++#ifdef CONFIG_IOMMU_API
++	if (nvdec->config->supports_sid && spec) {
++		u32 value;
 +
-+  iommus:
-+    maxItems: 1
++		value = TRANSCFG_ATT(1, TRANSCFG_SID_FALCON) | TRANSCFG_ATT(0, TRANSCFG_SID_HW);
++		nvdec_writel(nvdec, value, VIC_TFBIF_TRANSCFG);
 +
-+  interconnects:
-+    items:
-+      - description: DMA read memory client
-+      - description: DMA read 2 memory client
-+      - description: DMA write memory client
++		if (spec->num_ids > 0) {
++			value = spec->ids[0] & 0xffff;
 +
-+  interconnect-names:
-+    items:
-+      - const: dma-mem
-+      - const: read-1
-+      - const: write
++			nvdec_writel(nvdec, value, VIC_THI_STREAMID0);
++			nvdec_writel(nvdec, value, VIC_THI_STREAMID1);
++		}
++	}
++#endif
 +
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - clock-names
-+  - resets
-+  - reset-names
-+  - power-domains
++	err = falcon_boot(&nvdec->falcon);
++	if (err < 0)
++		return err;
 +
-+if:
-+  properties:
-+    compatible:
-+      contains:
-+        const: nvidia,tegra194-nvdec
-+then:
-+  properties:
-+    nvidia,instance:
-+      items:
-+        - description: 0 for NVDEC0, or 1 for NVDEC1
++	err = falcon_wait_idle(&nvdec->falcon);
++	if (err < 0) {
++		dev_err(nvdec->dev, "falcon boot timed out\n");
++		return err;
++	}
 +
-+additionalProperties: true
++	return 0;
++}
 +
-+examples:
-+  - |
-+    #include <dt-bindings/clock/tegra186-clock.h>
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+    #include <dt-bindings/memory/tegra186-mc.h>
-+    #include <dt-bindings/power/tegra186-powergate.h>
-+    #include <dt-bindings/reset/tegra186-reset.h>
++static int nvdec_init(struct host1x_client *client)
++{
++	struct tegra_drm_client *drm = host1x_to_drm_client(client);
++	struct drm_device *dev = dev_get_drvdata(client->host);
++	struct tegra_drm *tegra = dev->dev_private;
++	struct nvdec *nvdec = to_nvdec(drm);
++	int err;
 +
-+    nvdec@15480000 {
-+            compatible = "nvidia,tegra186-nvdec";
-+            reg = <0x15480000 0x40000>;
-+            clocks = <&bpmp TEGRA186_CLK_NVDEC>;
-+            clock-names = "nvdec";
-+            resets = <&bpmp TEGRA186_RESET_NVDEC>;
-+            reset-names = "nvdec";
++	err = host1x_client_iommu_attach(client);
++	if (err < 0 && err != -ENODEV) {
++		dev_err(nvdec->dev, "failed to attach to domain: %d\n", err);
++		return err;
++	}
 +
-+            power-domains = <&bpmp TEGRA186_POWER_DOMAIN_NVDEC>;
-+            interconnects = <&mc TEGRA186_MEMORY_CLIENT_NVDECSRD &emc>,
-+                            <&mc TEGRA186_MEMORY_CLIENT_NVDECSRD1 &emc>,
-+                            <&mc TEGRA186_MEMORY_CLIENT_NVDECSWR &emc>;
-+            interconnect-names = "dma-mem", "read-1", "write";
-+            iommus = <&smmu TEGRA186_SID_NVDEC>;
-+    };
++	nvdec->channel = host1x_channel_request(client);
++	if (!nvdec->channel) {
++		err = -ENOMEM;
++		goto detach;
++	}
++
++	client->syncpts[0] = host1x_syncpt_request(client, 0);
++	if (!client->syncpts[0]) {
++		err = -ENOMEM;
++		goto free_channel;
++	}
++
++	err = tegra_drm_register_client(tegra, drm);
++	if (err < 0)
++		goto free_syncpt;
++
++	/*
++	 * Inherit the DMA parameters (such as maximum segment size) from the
++	 * parent host1x device.
++	 */
++	client->dev->dma_parms = client->host->dma_parms;
++
++	return 0;
++
++free_syncpt:
++	host1x_syncpt_put(client->syncpts[0]);
++free_channel:
++	host1x_channel_put(nvdec->channel);
++detach:
++	host1x_client_iommu_detach(client);
++
++	return err;
++}
++
++static int nvdec_exit(struct host1x_client *client)
++{
++	struct tegra_drm_client *drm = host1x_to_drm_client(client);
++	struct drm_device *dev = dev_get_drvdata(client->host);
++	struct tegra_drm *tegra = dev->dev_private;
++	struct nvdec *nvdec = to_nvdec(drm);
++	int err;
++
++	/* avoid a dangling pointer just in case this disappears */
++	client->dev->dma_parms = NULL;
++
++	err = tegra_drm_unregister_client(tegra, drm);
++	if (err < 0)
++		return err;
++
++	host1x_syncpt_put(client->syncpts[0]);
++	host1x_channel_put(nvdec->channel);
++	host1x_client_iommu_detach(client);
++
++	if (client->group) {
++		dma_unmap_single(nvdec->dev, nvdec->falcon.firmware.phys,
++				 nvdec->falcon.firmware.size, DMA_TO_DEVICE);
++		tegra_drm_free(tegra, nvdec->falcon.firmware.size,
++			       nvdec->falcon.firmware.virt,
++			       nvdec->falcon.firmware.iova);
++	} else {
++		dma_free_coherent(nvdec->dev, nvdec->falcon.firmware.size,
++				  nvdec->falcon.firmware.virt,
++				  nvdec->falcon.firmware.iova);
++	}
++
++	return 0;
++}
++
++static const struct host1x_client_ops nvdec_client_ops = {
++	.init = nvdec_init,
++	.exit = nvdec_exit,
++};
++
++static int nvdec_load_firmware(struct nvdec *nvdec)
++{
++	struct host1x_client *client = &nvdec->client.base;
++	struct tegra_drm *tegra = nvdec->client.drm;
++	dma_addr_t iova;
++	size_t size;
++	void *virt;
++	int err;
++
++	if (nvdec->falcon.firmware.virt)
++		return 0;
++
++	err = falcon_read_firmware(&nvdec->falcon, nvdec->config->firmware);
++	if (err < 0)
++		return err;
++
++	size = nvdec->falcon.firmware.size;
++
++	if (!client->group) {
++		virt = dma_alloc_coherent(nvdec->dev, size, &iova, GFP_KERNEL);
++
++		err = dma_mapping_error(nvdec->dev, iova);
++		if (err < 0)
++			return err;
++	} else {
++		virt = tegra_drm_alloc(tegra, size, &iova);
++	}
++
++	nvdec->falcon.firmware.virt = virt;
++	nvdec->falcon.firmware.iova = iova;
++
++	err = falcon_load_firmware(&nvdec->falcon);
++	if (err < 0)
++		goto cleanup;
++
++	/*
++	 * In this case we have received an IOVA from the shared domain, so we
++	 * need to make sure to get the physical address so that the DMA API
++	 * knows what memory pages to flush the cache for.
++	 */
++	if (client->group) {
++		dma_addr_t phys;
++
++		phys = dma_map_single(nvdec->dev, virt, size, DMA_TO_DEVICE);
++
++		err = dma_mapping_error(nvdec->dev, phys);
++		if (err < 0)
++			goto cleanup;
++
++		nvdec->falcon.firmware.phys = phys;
++	}
++
++	return 0;
++
++cleanup:
++	if (!client->group)
++		dma_free_coherent(nvdec->dev, size, virt, iova);
++	else
++		tegra_drm_free(tegra, size, virt, iova);
++
++	return err;
++}
 +
 +
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 69932194e1ba..ce9e360639d5 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -6230,6 +6230,7 @@ L:	linux-tegra@vger.kernel.org
- S:	Supported
- T:	git git://anongit.freedesktop.org/tegra/linux.git
- F:	Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
-+F:	Documentation/devicetree/bindings/gpu/host1x/
- F:	drivers/gpu/drm/tegra/
- F:	drivers/gpu/host1x/
- F:	include/linux/host1x.h
++static int nvdec_runtime_resume(struct device *dev)
++{
++	struct nvdec *nvdec = dev_get_drvdata(dev);
++	int err;
++
++	err = clk_prepare_enable(nvdec->clk);
++	if (err < 0)
++		return err;
++
++	usleep_range(10, 20);
++
++	err = nvdec_load_firmware(nvdec);
++	if (err < 0)
++		goto disable;
++
++	err = nvdec_boot(nvdec);
++	if (err < 0)
++		goto disable;
++
++	return 0;
++
++disable:
++	clk_disable_unprepare(nvdec->clk);
++	return err;
++}
++
++static int nvdec_runtime_suspend(struct device *dev)
++{
++	struct nvdec *nvdec = dev_get_drvdata(dev);
++
++	clk_disable_unprepare(nvdec->clk);
++
++	return 0;
++}
++
++static int nvdec_open_channel(struct tegra_drm_client *client,
++			    struct tegra_drm_context *context)
++{
++	struct nvdec *nvdec = to_nvdec(client);
++	int err;
++
++	err = pm_runtime_get_sync(nvdec->dev);
++	if (err < 0) {
++		pm_runtime_put(nvdec->dev);
++		return err;
++	}
++
++	context->channel = host1x_channel_get(nvdec->channel);
++	if (!context->channel) {
++		pm_runtime_put(nvdec->dev);
++		return -ENOMEM;
++	}
++
++	return 0;
++}
++
++static void nvdec_close_channel(struct tegra_drm_context *context)
++{
++	struct nvdec *nvdec = to_nvdec(context->client);
++
++	host1x_channel_put(context->channel);
++	pm_runtime_put(nvdec->dev);
++}
++
++static const struct tegra_drm_client_ops nvdec_ops = {
++	.open_channel = nvdec_open_channel,
++	.close_channel = nvdec_close_channel,
++	.submit = tegra_drm_submit,
++};
++
++#define NVIDIA_TEGRA_210_NVDEC_FIRMWARE "nvidia/tegra210/nvdec.bin"
++
++static const struct nvdec_config nvdec_t210_config = {
++	.firmware = NVIDIA_TEGRA_210_NVDEC_FIRMWARE,
++	.version = 0x21,
++	.supports_sid = false,
++	.num_instances = 1,
++};
++
++#define NVIDIA_TEGRA_186_NVDEC_FIRMWARE "nvidia/tegra186/nvdec.bin"
++
++static const struct nvdec_config nvdec_t186_config = {
++	.firmware = NVIDIA_TEGRA_186_NVDEC_FIRMWARE,
++	.version = 0x18,
++	.supports_sid = true,
++	.num_instances = 1,
++};
++
++#define NVIDIA_TEGRA_194_NVDEC_FIRMWARE "nvidia/tegra194/nvdec.bin"
++
++static const struct nvdec_config nvdec_t194_config = {
++	.firmware = NVIDIA_TEGRA_194_NVDEC_FIRMWARE,
++	.version = 0x19,
++	.supports_sid = true,
++	.num_instances = 2,
++};
++
++static const struct of_device_id tegra_nvdec_of_match[] = {
++	{ .compatible = "nvidia,tegra210-nvdec", .data = &nvdec_t210_config },
++	{ .compatible = "nvidia,tegra186-nvdec", .data = &nvdec_t186_config },
++	{ .compatible = "nvidia,tegra194-nvdec", .data = &nvdec_t194_config },
++	{ },
++};
++MODULE_DEVICE_TABLE(of, tegra_nvdec_of_match);
++
++static int nvdec_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct host1x_syncpt **syncpts;
++	struct nvdec *nvdec;
++	u32 instance;
++	int err;
++
++	/* inherit DMA mask from host1x parent */
++	err = dma_coerce_mask_and_coherent(dev, *dev->parent->dma_mask);
++	if (err < 0) {
++		dev_err(&pdev->dev, "failed to set DMA mask: %d\n", err);
++		return err;
++	}
++
++	nvdec = devm_kzalloc(dev, sizeof(*nvdec), GFP_KERNEL);
++	if (!nvdec)
++		return -ENOMEM;
++
++	nvdec->config = of_device_get_match_data(dev);
++
++	syncpts = devm_kzalloc(dev, sizeof(*syncpts), GFP_KERNEL);
++	if (!syncpts)
++		return -ENOMEM;
++
++	nvdec->regs = devm_platform_get_and_ioremap_resource(pdev, 0, NULL);
++	if (IS_ERR(nvdec->regs))
++		return PTR_ERR(nvdec->regs);
++
++	nvdec->clk = devm_clk_get(dev, NULL);
++	if (IS_ERR(nvdec->clk)) {
++		dev_err(&pdev->dev, "failed to get clock\n");
++		return PTR_ERR(nvdec->clk);
++	}
++
++	err = of_property_read_u32(dev->of_node, "nvidia,instance", &instance);
++	if (err < 0)
++		instance = 0;
++
++	if (instance >= nvdec->config->num_instances)
++		return -EINVAL;
++
++	nvdec->falcon.dev = dev;
++	nvdec->falcon.regs = nvdec->regs;
++
++	err = falcon_init(&nvdec->falcon);
++	if (err < 0)
++		return err;
++
++	platform_set_drvdata(pdev, nvdec);
++
++	INIT_LIST_HEAD(&nvdec->client.base.list);
++	nvdec->client.base.ops = &nvdec_client_ops;
++	nvdec->client.base.dev = dev;
++	if (instance == 0)
++		nvdec->client.base.class = HOST1X_CLASS_NVDEC;
++	else
++		nvdec->client.base.class = HOST1X_CLASS_NVDEC1;
++	nvdec->client.base.syncpts = syncpts;
++	nvdec->client.base.num_syncpts = 1;
++	nvdec->dev = dev;
++
++	INIT_LIST_HEAD(&nvdec->client.list);
++	nvdec->client.version = nvdec->config->version;
++	nvdec->client.ops = &nvdec_ops;
++
++	err = host1x_client_register(&nvdec->client.base);
++	if (err < 0) {
++		dev_err(dev, "failed to register host1x client: %d\n", err);
++		goto exit_falcon;
++	}
++
++	pm_runtime_enable(&pdev->dev);
++	pm_runtime_set_autosuspend_delay(&pdev->dev, 500);
++	pm_runtime_use_autosuspend(&pdev->dev);
++
++	return 0;
++
++exit_falcon:
++	falcon_exit(&nvdec->falcon);
++
++	return err;
++}
++
++static int nvdec_remove(struct platform_device *pdev)
++{
++	struct nvdec *nvdec = platform_get_drvdata(pdev);
++	int err;
++
++	err = host1x_client_unregister(&nvdec->client.base);
++	if (err < 0) {
++		dev_err(&pdev->dev, "failed to unregister host1x client: %d\n",
++			err);
++		return err;
++	}
++
++	if (pm_runtime_enabled(&pdev->dev))
++		pm_runtime_disable(&pdev->dev);
++	else
++		nvdec_runtime_suspend(&pdev->dev);
++
++	falcon_exit(&nvdec->falcon);
++
++	return 0;
++}
++
++static const struct dev_pm_ops nvdec_pm_ops = {
++	SET_RUNTIME_PM_OPS(nvdec_runtime_suspend, nvdec_runtime_resume, NULL)
++};
++
++struct platform_driver tegra_nvdec_driver = {
++	.driver = {
++		.name = "tegra-nvdec",
++		.of_match_table = tegra_nvdec_of_match,
++		.pm = &nvdec_pm_ops
++	},
++	.probe = nvdec_probe,
++	.remove = nvdec_remove,
++};
++
++#if IS_ENABLED(CONFIG_ARCH_TEGRA_210_SOC)
++MODULE_FIRMWARE(NVIDIA_TEGRA_210_NVDEC_FIRMWARE);
++#endif
++#if IS_ENABLED(CONFIG_ARCH_TEGRA_186_SOC)
++MODULE_FIRMWARE(NVIDIA_TEGRA_186_NVDEC_FIRMWARE);
++#endif
++#if IS_ENABLED(CONFIG_ARCH_TEGRA_194_SOC)
++MODULE_FIRMWARE(NVIDIA_TEGRA_194_NVDEC_FIRMWARE);
++#endif
+diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
+index fbb6447b8659..e2ddf3fcaa9a 100644
+--- a/drivers/gpu/host1x/dev.c
++++ b/drivers/gpu/host1x/dev.c
+@@ -132,6 +132,12 @@ static const struct host1x_sid_entry tegra186_sid_table[] = {
+ 		.offset = 0x30,
+ 		.limit = 0x34
+ 	},
++	{
++		/* NVDEC */
++		.base = 0x1b00,
++		.offset = 0x30,
++		.limit = 0x34
++	},
+ };
+ 
+ static const struct host1x_info host1x06_info = {
+@@ -156,6 +162,18 @@ static const struct host1x_sid_entry tegra194_sid_table[] = {
+ 		.offset = 0x30,
+ 		.limit = 0x34
+ 	},
++	{
++		/* NVDEC */
++		.base = 0x1b00,
++		.offset = 0x30,
++		.limit = 0x34
++	},
++	{
++		/* NVDEC1 */
++		.base = 0x1bc0,
++		.offset = 0x30,
++		.limit = 0x34
++	},
+ };
+ 
+ static const struct host1x_info host1x07_info = {
+diff --git a/include/linux/host1x.h b/include/linux/host1x.h
+index 9b6784708f2e..d7d415bcf78b 100644
+--- a/include/linux/host1x.h
++++ b/include/linux/host1x.h
+@@ -15,6 +15,8 @@ enum host1x_class {
+ 	HOST1X_CLASS_GR2D_SB = 0x52,
+ 	HOST1X_CLASS_VIC = 0x5D,
+ 	HOST1X_CLASS_GR3D = 0x60,
++	HOST1X_CLASS_NVDEC = 0xF0,
++	HOST1X_CLASS_NVDEC1 = 0xF5,
+ };
+ 
+ struct host1x;
 -- 
 2.32.0
 
