@@ -2,157 +2,97 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE519C433EF
-	for <linux-tegra@archiver.kernel.org>; Fri,  3 Sep 2021 08:30:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3D92C433EF
+	for <linux-tegra@archiver.kernel.org>; Fri,  3 Sep 2021 08:31:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C695361058
-	for <linux-tegra@archiver.kernel.org>; Fri,  3 Sep 2021 08:30:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D9D9A60FC4
+	for <linux-tegra@archiver.kernel.org>; Fri,  3 Sep 2021 08:31:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348322AbhICIbp (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 3 Sep 2021 04:31:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40968 "EHLO
+        id S1348229AbhICIc0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 3 Sep 2021 04:32:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41118 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348290AbhICIbp (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 3 Sep 2021 04:31:45 -0400
-Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73333C061760
-        for <linux-tegra@vger.kernel.org>; Fri,  3 Sep 2021 01:30:45 -0700 (PDT)
-Received: by mail-wm1-x335.google.com with SMTP id u15so2965317wmj.1
-        for <linux-tegra@vger.kernel.org>; Fri, 03 Sep 2021 01:30:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=references:user-agent:from:to:cc:subject:date:in-reply-to
-         :message-id:mime-version;
-        bh=tSBoI24rmmAo/WWLDhLND6YxNYncWnjj1r5sALynAJ4=;
-        b=K4wGE5iP441yxWa+TAQZ1VZZMZnv6OfvJKWEzE+MCQj7K2oMTS8aHeDQgL7IlCV5+r
-         II5rICDjfU5wlQZmioHZXxoVszg5g1wTZIPmZf+V7KOVQKYfmuoowJ602eTn6HBmdjhR
-         40Z5W0mxAnYB/D/m3H3U18iiaEtRB1XAs6OsSrvD75MTsAFVEgpJuvIWB45lquL4eZPg
-         WHGJylo9CiP3ELxpw7rat1Y5lK4ARxd2H5aZyiP/QOH5s9LmA5oPmoO04VDfHoMMtTxu
-         mwZcDDhHJY/GZrwjRiCTfmJmArcJ97MVfnRwjnpryjB2B5p2fewYpM6VuJPJjmAlvb6U
-         L/FQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:references:user-agent:from:to:cc:subject:date
-         :in-reply-to:message-id:mime-version;
-        bh=tSBoI24rmmAo/WWLDhLND6YxNYncWnjj1r5sALynAJ4=;
-        b=UnJ1eCyEx1p2s7Y+hyrBvcP1jmQu+1LhitHFr5GbtroP0i8AwojS/0uwlShBgTwm6I
-         fDLIILt8zdRTnqdjgWmT2Ltf6ldZofKcAHcJ5joNZ2eoYn8VseLvXYoi5TvMLj/RVHQY
-         1J6W0QeIHaeDGQsFB4k9LOgG8zNgEuzg0TAnXXfR3r7dMKumI58Na5CNCtHJNim9zdfx
-         UXFyUYMeLBEF2M+dZ1rC/IeWXLzPxAl7lVbFOe3UXa8mf/ui1+1XVv6qgyiekpJ/9sLe
-         0iicFsr9N0L+WJ7vpKMlXAmZ4md2U8c4mD0vA7xOkZc7TqhOy73dsMcjtJ1+ZG4bMPHG
-         jewg==
-X-Gm-Message-State: AOAM530O9Dadry+iB5wrJQ1hVfMZC1OI0Cy1DXC2j/4jt2dYlaWkqWWU
-        D6M/CABvbKAqrRsDqoSdvsGdMA==
-X-Google-Smtp-Source: ABdhPJzIVzeO9objMjNkGGwltqZ/D3PN/vMifRhZaWUZqUx5iRpM6g1pt+vfuZhIf9TYGOJSBH5HPA==
-X-Received: by 2002:a05:600c:4ece:: with SMTP id g14mr2177689wmq.6.1630657843920;
-        Fri, 03 Sep 2021 01:30:43 -0700 (PDT)
-Received: from localhost (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id r12sm4323542wrv.96.2021.09.03.01.30.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Sep 2021 01:30:43 -0700 (PDT)
-References: <1630562033-13231-1-git-send-email-spujar@nvidia.com>
- <1630562033-13231-2-git-send-email-spujar@nvidia.com>
- <1jpmtr5egi.fsf@starbuckisacylon.baylibre.com>
- <YTElQBgwF6xBFH9l@robh.at.kernel.org>
-User-agent: mu4e 1.6.5; emacs 27.1
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Sameer Pujar <spujar@nvidia.com>, broonie@kernel.org,
-        lgirdwood@gmail.com, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, stephan@gerhold.net,
-        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] ASoC: Add json-schema documentation for
- sound-name-prefix
-Date:   Fri, 03 Sep 2021 10:29:37 +0200
-In-reply-to: <YTElQBgwF6xBFH9l@robh.at.kernel.org>
-Message-ID: <1jk0jyt617.fsf@starbuckisacylon.baylibre.com>
+        with ESMTP id S1348150AbhICIcZ (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 3 Sep 2021 04:32:25 -0400
+X-Greylist: delayed 478 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 03 Sep 2021 01:31:24 PDT
+Received: from mail.kmu-office.ch (mail.kmu-office.ch [IPv6:2a02:418:6a02::a2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B5B3C061760;
+        Fri,  3 Sep 2021 01:31:24 -0700 (PDT)
+Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
+        by mail.kmu-office.ch (Postfix) with ESMTPSA id 40DB15C0222;
+        Fri,  3 Sep 2021 10:23:46 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
+        t=1630657426;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=fjLOEiXgMndi2Q7uZCMxj1Uu2i4mPZJaKSRzdIFBuTQ=;
+        b=T/cjSSjNuV1c5iAHsIX3UEBP41pp58INL2FhGpdroivJwC/W88r2CIGqkTVc5KHRp2gflq
+        fXGWBSJgRnR+n8v4eFDJcqT2GWdgSjge9OEX0+1cDnxr9zQF19kle6KCZxVtvArhFbOHJP
+        zevChd2TLYExLz8D8f/TXTpkdjYxTYI=
 MIME-Version: 1.0
-Content-Type: text/plain
+Date:   Fri, 03 Sep 2021 10:23:45 +0200
+From:   Stefan Agner <stefan@agner.ch>
+To:     Cai Huoqing <caihuoqing@baidu.com>
+Cc:     Lucas Stach <dev@lynxeye.de>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mtd: rawnand: tegra: Make use of the helper function
+ devm_platform_ioremap_resource()
+In-Reply-To: <20210901074230.9483-1-caihuoqing@baidu.com>
+References: <20210901074230.9483-1-caihuoqing@baidu.com>
+User-Agent: Roundcube Webmail/1.4.9
+Message-ID: <fb7aec944e72f91a9a33d7d37d0cbb44@agner.ch>
+X-Sender: stefan@agner.ch
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On 2021-09-01 09:42, Cai Huoqing wrote:
+> Use the devm_platform_ioremap_resource() helper instead of
+> calling platform_get_resource() and devm_ioremap_resource()
+> separately
+> 
+> Signed-off-by: Cai Huoqing <caihuoqing@baidu.com>
 
-On Thu 02 Sep 2021 at 14:25, Rob Herring <robh@kernel.org> wrote:
+Acked-by: Stefan Agner <stefan@agner.ch>
 
-> On Thu, Sep 02, 2021 at 02:47:27PM +0200, Jerome Brunet wrote:
->> 
->> On Thu 02 Sep 2021 at 11:23, Sameer Pujar <spujar@nvidia.com> wrote:
->> 
->> > The 'sound-name-prefix' is used to prepend suitable strings to a
->> > component widgets or controls. This is helpful when there are
->> > multiple instances of the same component. Add relevant json-schema
->> > and is inspired from sound-name-prefix.txt documentation.
->> >
->> > Signed-off-by: Sameer Pujar <spujar@nvidia.com>
->> > Cc: Jerome Brunet <jbrunet@baylibre.com>
->> > Cc: Rob Herring <robh+dt@kernel.org>
->> > ---
->> >  .../devicetree/bindings/sound/name-prefix.yaml     | 35 ++++++++++++++++++++++
->> >  1 file changed, 35 insertions(+)
->> >  create mode 100644 Documentation/devicetree/bindings/sound/name-prefix.yaml
->> >
->> > diff --git a/Documentation/devicetree/bindings/sound/name-prefix.yaml b/Documentation/devicetree/bindings/sound/name-prefix.yaml
->> > new file mode 100644
->> > index 00000000..b58cc9e
->> > --- /dev/null
->> > +++ b/Documentation/devicetree/bindings/sound/name-prefix.yaml
->> > @@ -0,0 +1,35 @@
->> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> > +%YAML 1.2
->> > +---
->> > +$id: http://devicetree.org/schemas/sound/name-prefix.yaml#
->> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> > +
->> > +title: Component sound name prefix
->> > +
->> > +maintainers:
->> > +  - Jerome Brunet <jbrunet@baylibre.com>
->> 
->> Since this file is referenced using "AllOf", am I going to be listed as
->> maintainer of all the drivers using the property below ? I'm not sure I
->> want that ... :P
->
-> No. That's not how it works. You're maintainer of files that list you as 
-> maintainer.
-
-Thanks for clarifying.
-You can ignore my comment then Sameer. 
-
->
->> Maybe it would be better to drop the above ?
->> 
->> > +
->> > +properties:
->> > +  sound-name-prefix:
->> > +    $ref: /schemas/types.yaml#/definitions/string
->> > +    description: |
->> > +      Card implementing the routing property define the connection between
->> > +      audio components as list of string pair. Component using the same
->> > +      sink/source names may use this property to prepend the name of their
->> > +      sinks/sources with the provided string.
->> > +
->> > +additionalProperties: true
->> > +
->> > +examples:
->> > +  - |
->> > +    analog-amplifier@0 {
->> > +        compatible = "simple-audio-amplifier";
->> > +        sound-name-prefix = "FRONT";
->> > +    };
->> > +
->> > +    analog-amplifier@1 {
->> > +        compatible = "simple-audio-amplifier";
->> > +        sound-name-prefix = "BACK";
->> > +    };
->> > +
->> > +...
->> 
->> 
-
+> ---
+>  drivers/mtd/nand/raw/tegra_nand.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+> 
+> diff --git a/drivers/mtd/nand/raw/tegra_nand.c
+> b/drivers/mtd/nand/raw/tegra_nand.c
+> index fbf67722a049..32431bbe69b8 100644
+> --- a/drivers/mtd/nand/raw/tegra_nand.c
+> +++ b/drivers/mtd/nand/raw/tegra_nand.c
+> @@ -1144,7 +1144,6 @@ static int tegra_nand_probe(struct platform_device *pdev)
+>  {
+>  	struct reset_control *rst;
+>  	struct tegra_nand_controller *ctrl;
+> -	struct resource *res;
+>  	int err = 0;
+>  
+>  	ctrl = devm_kzalloc(&pdev->dev, sizeof(*ctrl), GFP_KERNEL);
+> @@ -1155,8 +1154,7 @@ static int tegra_nand_probe(struct platform_device *pdev)
+>  	nand_controller_init(&ctrl->controller);
+>  	ctrl->controller.ops = &tegra_nand_controller_ops;
+>  
+> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -	ctrl->regs = devm_ioremap_resource(&pdev->dev, res);
+> +	ctrl->regs = devm_platform_ioremap_resource(pdev, 0);
+>  	if (IS_ERR(ctrl->regs))
+>  		return PTR_ERR(ctrl->regs);
