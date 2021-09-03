@@ -2,54 +2,52 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FF1BC433EF
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0755C4332F
 	for <linux-tegra@archiver.kernel.org>; Fri,  3 Sep 2021 08:32:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 38F9460F92
+	by mail.kernel.org (Postfix) with ESMTP id B9D6660FDA
 	for <linux-tegra@archiver.kernel.org>; Fri,  3 Sep 2021 08:32:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348374AbhICIdf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 3 Sep 2021 04:33:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41434 "EHLO
+        id S1348353AbhICIdg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 3 Sep 2021 04:33:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41422 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348367AbhICIde (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 3 Sep 2021 04:33:34 -0400
+        with ESMTP id S1348365AbhICIdc (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 3 Sep 2021 04:33:32 -0400
 Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15676C0613C1;
-        Fri,  3 Sep 2021 01:32:34 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2BBFC061760;
+        Fri,  3 Sep 2021 01:32:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-         s=20161220; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
-        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+         s=20161220; h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject
+        :Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+        Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+        In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
         List-Post:List-Owner:List-Archive;
-        bh=xumpG5bdJ6JHyeqDg54dzOohzCoOB77KJvu1LpdRNRE=; b=ZRJ+/xs5HJ+DjeWFbDS4e2/lmT
-        UsfZrRLyTApuCP527YY36+o5EZ5BkT5q+8cX72fuBYd2XYM0Jw54YRa+OXv1tAKKDtSn6I5JWr06Y
-        JkvJU9hjLMKT3brJBKE2NmaweIfOqEOUN/H/UeBctMWfEHibwfQ+pSCxQuf38A0L5gC26dRBSU4M3
-        SSENrJaK9ZwOoIpGEFfnU2yp946w8i2xm9aAAP8f/K7CxiYWQ7FuGfA4Gq73KDeIMyOURVkNA01gl
-        U0lblITE/d1pPLZV4h9d2TGp07N8ZWwnVYr2ksKB11FfYrvUZ41Oi+Bb57SDdDxd7B688Gn0AcMiJ
-        c5CWBBCg==;
+        bh=yIBwTHrxp84ixqgSkq1V60EPaiT6pI6qDFH70zKMtvs=; b=sFZLss2fkyD6vRr5zCodgasiKU
+        HH0TPNjsKtWFFd1Ref+X1eTl/ZJY6AGLSxVuFNTDurnMUeMqZhzAR1kEFaF1ZblTppxjiCdoAq6jl
+        uhyXwa+b/LQwHp73Axdv6DFA0AxzCbWPEz6f5Chqrzjh3dXV3Vbke73SVonNvl7xAe9vnyi3YJZqC
+        uN5jtvvrMZs9VaNTpKA5HVGNOQG/9lNzHsHvHGLk1BoAJ8VZoJL/hLf7q8A98tY/+YzE2JtSXkqT0
+        WwXLCSG7aLdmQdzwMREWO8glhvKnljuninLqRiqR7i1WgGxCciLOeTNRjIIy6xFYfu6q/pQdwAIbn
+        W/Phly2w==;
 Received: from dsl-hkibng22-54f986-236.dhcp.inet.fi ([84.249.134.236] helo=toshino.localdomain)
         by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.89)
         (envelope-from <mperttunen@nvidia.com>)
-        id 1mM4cI-0004xK-TM; Fri, 03 Sep 2021 11:32:06 +0300
+        id 1mM4cI-0004xK-P4; Fri, 03 Sep 2021 11:32:06 +0300
 From:   Mikko Perttunen <mperttunen@nvidia.com>
 To:     thierry.reding@gmail.com, jonathanh@nvidia.com, airlied@linux.ie,
         daniel@ffwll.ch, robh+dt@kernel.org
 Cc:     dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
         devicetree@vger.kernel.org, Mikko Perttunen <mperttunen@nvidia.com>
-Subject: [PATCH v4 2/3] arm64: tegra: Add NVDEC to Tegra186/194 device trees
-Date:   Fri,  3 Sep 2021 11:31:54 +0300
-Message-Id: <20210903083155.690022-3-mperttunen@nvidia.com>
+Subject: [PATCH v4 0/3] NVIDIA Tegra NVDEC support
+Date:   Fri,  3 Sep 2021 11:31:52 +0300
+Message-Id: <20210903083155.690022-1-mperttunen@nvidia.com>
 X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20210903083155.690022-1-mperttunen@nvidia.com>
-References: <20210903083155.690022-1-mperttunen@nvidia.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 84.249.134.236
@@ -59,106 +57,40 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Add a device tree node for NVDEC on Tegra186, and
-device tree nodes for NVDEC and NVDEC1 on Tegra194.
+Here's the v4 of the NVDEC support series, containing two fixes
+compared to v3:
 
-Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
----
-v4:
-* Add dma-coherent markers
-v3:
-* Change read2 to read-1
-v2:
-* Add NVDECSRD1 memory client
-* Add also to T194 (both NVDEC0/1)
----
- arch/arm64/boot/dts/nvidia/tegra186.dtsi | 16 ++++++++++
- arch/arm64/boot/dts/nvidia/tegra194.dtsi | 38 ++++++++++++++++++++++++
- 2 files changed, 54 insertions(+)
+* Fixed incorrect compatibility string in bindings YAML
+* Added dma-coherent markers to Tegra194 device trees.
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-index d02f6bf3e2ca..4f2f21242b2c 100644
---- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-@@ -1342,6 +1342,22 @@ dsib: dsi@15400000 {
- 			power-domains = <&bpmp TEGRA186_POWER_DOMAIN_DISP>;
- 		};
- 
-+		nvdec@15480000 {
-+			compatible = "nvidia,tegra186-nvdec";
-+			reg = <0x15480000 0x40000>;
-+			clocks = <&bpmp TEGRA186_CLK_NVDEC>;
-+			clock-names = "nvdec";
-+			resets = <&bpmp TEGRA186_RESET_NVDEC>;
-+			reset-names = "nvdec";
-+
-+			power-domains = <&bpmp TEGRA186_POWER_DOMAIN_NVDEC>;
-+			interconnects = <&mc TEGRA186_MEMORY_CLIENT_NVDECSRD &emc>,
-+					<&mc TEGRA186_MEMORY_CLIENT_NVDECSRD1 &emc>,
-+					<&mc TEGRA186_MEMORY_CLIENT_NVDECSWR &emc>;
-+			interconnect-names = "dma-mem", "read-1", "write";
-+			iommus = <&smmu TEGRA186_SID_NVDEC>;
-+		};
-+
- 		sor0: sor@15540000 {
- 			compatible = "nvidia,tegra186-sor";
- 			reg = <0x15540000 0x10000>;
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-index 5ba7a4519b95..0e9713814583 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-@@ -1412,6 +1412,25 @@ host1x@13e00000 {
- 			interconnect-names = "dma-mem";
- 			iommus = <&smmu TEGRA194_SID_HOST1X>;
- 
-+			nvdec@15140000 {
-+				compatible = "nvidia,tegra194-nvdec";
-+				reg = <0x15140000 0x00040000>;
-+				clocks = <&bpmp TEGRA194_CLK_NVDEC1>;
-+				clock-names = "nvdec";
-+				resets = <&bpmp TEGRA194_RESET_NVDEC1>;
-+				reset-names = "nvdec";
-+
-+				power-domains = <&bpmp TEGRA194_POWER_DOMAIN_NVDECB>;
-+				interconnects = <&mc TEGRA194_MEMORY_CLIENT_NVDEC1SRD &emc>,
-+						<&mc TEGRA194_MEMORY_CLIENT_NVDEC1SRD1 &emc>,
-+						<&mc TEGRA194_MEMORY_CLIENT_NVDEC1SWR &emc>;
-+				interconnect-names = "dma-mem", "read-1", "write";
-+				iommus = <&smmu TEGRA194_SID_NVDEC1>;
-+				dma-coherent;
-+
-+				nvidia,instance = <1>;
-+			};
-+
- 			display-hub@15200000 {
- 				compatible = "nvidia,tegra194-display";
- 				reg = <0x15200000 0x00040000>;
-@@ -1525,6 +1544,25 @@ vic@15340000 {
- 				iommus = <&smmu TEGRA194_SID_VIC>;
- 			};
- 
-+			nvdec@15480000 {
-+				compatible = "nvidia,tegra194-nvdec";
-+				reg = <0x15480000 0x00040000>;
-+				clocks = <&bpmp TEGRA194_CLK_NVDEC>;
-+				clock-names = "nvdec";
-+				resets = <&bpmp TEGRA194_RESET_NVDEC>;
-+				reset-names = "nvdec";
-+
-+				power-domains = <&bpmp TEGRA194_POWER_DOMAIN_NVDECA>;
-+				interconnects = <&mc TEGRA194_MEMORY_CLIENT_NVDECSRD &emc>,
-+						<&mc TEGRA194_MEMORY_CLIENT_NVDECSRD1 &emc>,
-+						<&mc TEGRA194_MEMORY_CLIENT_NVDECSWR &emc>;
-+				interconnect-names = "dma-mem", "read-1", "write";
-+				iommus = <&smmu TEGRA194_SID_NVDEC>;
-+				dma-coherent;
-+
-+				nvidia,instance = <0>;
-+			};
-+
- 			dpaux0: dpaux@155c0000 {
- 				compatible = "nvidia,tegra194-dpaux";
- 				reg = <0x155c0000 0x10000>;
+NVDEC hardware documentation can be found at
+https://github.com/NVIDIA/open-gpu-doc/tree/master/classes/video
+
+and example userspace can be found at
+https://github.com/cyndis/vaapi-tegra-driver
+
+Thanks,
+Mikko
+
+Mikko Perttunen (3):
+  dt-bindings: Add YAML bindings for NVDEC
+  arm64: tegra: Add NVDEC to Tegra186/194 device trees
+  drm/tegra: Add NVDEC driver
+
+ .../gpu/host1x/nvidia,tegra210-nvdec.yaml     | 109 ++++
+ MAINTAINERS                                   |   1 +
+ arch/arm64/boot/dts/nvidia/tegra186.dtsi      |  16 +
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi      |  38 ++
+ drivers/gpu/drm/tegra/Makefile                |   3 +-
+ drivers/gpu/drm/tegra/drm.c                   |   4 +
+ drivers/gpu/drm/tegra/drm.h                   |   1 +
+ drivers/gpu/drm/tegra/nvdec.c                 | 474 ++++++++++++++++++
+ drivers/gpu/host1x/dev.c                      |  18 +
+ include/linux/host1x.h                        |   2 +
+ 10 files changed, 665 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/gpu/host1x/nvidia,tegra210-nvdec.yaml
+ create mode 100644 drivers/gpu/drm/tegra/nvdec.c
+
 -- 
 2.32.0
 
