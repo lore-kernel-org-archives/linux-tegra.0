@@ -2,139 +2,169 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44BBBC433F5
-	for <linux-tegra@archiver.kernel.org>; Tue,  7 Sep 2021 15:54:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A665EC433FE
+	for <linux-tegra@archiver.kernel.org>; Tue,  7 Sep 2021 16:58:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1DFEE61051
-	for <linux-tegra@archiver.kernel.org>; Tue,  7 Sep 2021 15:54:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A3E960EBA
+	for <linux-tegra@archiver.kernel.org>; Tue,  7 Sep 2021 16:58:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345481AbhIGPzS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 7 Sep 2021 11:55:18 -0400
-Received: from mail-dm6nam11on2060.outbound.protection.outlook.com ([40.107.223.60]:20832
-        "EHLO NAM11-DM6-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S232935AbhIGPzN (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 7 Sep 2021 11:55:13 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=dCdgQjdP8p3SPrb8qqRG4nk1QTAbQfzrT65ySRxlIcO8zsY0AVkx3nC0VuLSXCnF8hQcI/0EI8qB2gj5Yu7JgI0qVVrZsvFC6cC5YgArVg2OZ+juSQWxi9T1cdiAENG/6ySstUFHEi17q1RzvQaFpesFDdMtrTgE/34dgJF4qIR3MnLYLJu47BQxaufzHq33h1c+eDtN1FidYhGnvV0DvolhYmfKWHRYT+bCbGoFeEYtnph65NlsycC+JmDcxlLABIzkmY66sDyo1KecvYgXiJKxXQ6JdAN9LD57lUYRhM5ykYWPpyuMQsirloF+/llo/pCRj+ZK8XG5f7vOCwnu4Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901; h=From:Date:Subject:Message-ID:Content-Type:MIME-Version;
- bh=KBAhqjR9wkPvPlG6UwLwHEmTfcE2ipn5rYpmk0L0IoU=;
- b=j40RhvSATno8i8gzujZKNdECg5DNDJrue5/sB0LCiYyuY3BVfnUErBzbHJ4WWr+e3DHeooBEWbs6S/g548OknNNIGUo9YTz8xYOwzbptnUOOjfDERmsCIhKh19IV9dXJ+3Er5+7/6mUqIC1YQwxbxj064nfEup03VjNhIgxKUIvNRyiNo4P0ZgeowMFQH4jAajDb8gd3d6FErQ5ep3DvCXNf8cmXVNCS/nfTRn0Tk6HfCcEFuWU7YqWus352YqbnmAJ/TAK1ErXBkhfE/zbxvJAt5K7sJDxQQs3d952vbnXXSj7b8LPK8AZQSSDRF/8Zov5bC0pEgQvVAH/UZ9cZFw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.112.34) smtp.rcpttodomain=denx.de smtp.mailfrom=nvidia.com;
- dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KBAhqjR9wkPvPlG6UwLwHEmTfcE2ipn5rYpmk0L0IoU=;
- b=CwiF7E6PBeM6mONx19B9BNdHFdTcjdCXwUkalrOQjAIAjFPiwOTQ2WTfTHpxSm2SQrFvaoz6BRTPyxkZ/aJ3Kd6R9PA+TH4dEe6hrQ1uAn9rvSmQaY6jrk6Vypa53IlXirXChvoB1e2iwnz3ic2FwWO0vOCD0UuORaJ79O6qIGl7jhjElw69McAH+nVawf7MDFcVVapkM5A5U0qefqx4+zNPdeDqhDzcfBpsNUrl00UF2nsN5VhNPSLrGBWfwbSzq+Cwd1F/XM0SbUyZby8KcfAsO+6UIYFnXYxbt/TX/r9lrpxIinZaoTqZaW0y1/SpcTvzUYAuoYNjekoGr2JYiw==
-Received: from DM6PR05CA0061.namprd05.prod.outlook.com (2603:10b6:5:335::30)
- by DM5PR1201MB0121.namprd12.prod.outlook.com (2603:10b6:4:56::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4478.22; Tue, 7 Sep
- 2021 15:54:06 +0000
-Received: from DM6NAM11FT011.eop-nam11.prod.protection.outlook.com
- (2603:10b6:5:335:cafe::dd) by DM6PR05CA0061.outlook.office365.com
- (2603:10b6:5:335::30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4500.7 via Frontend
- Transport; Tue, 7 Sep 2021 15:54:06 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.34)
- smtp.mailfrom=nvidia.com; denx.de; dkim=none (message not signed)
- header.d=none;denx.de; dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.112.34 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.112.34; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (216.228.112.34) by
- DM6NAM11FT011.mail.protection.outlook.com (10.13.172.108) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.4478.19 via Frontend Transport; Tue, 7 Sep 2021 15:54:05 +0000
-Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Tue, 7 Sep
- 2021 15:54:05 +0000
-Received: from jonathanh-vm-01.nvidia.com (172.20.187.5) by mail.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1497.18 via Frontend
- Transport; Tue, 7 Sep 2021 08:54:04 -0700
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
-        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
-        <stable@vger.kernel.org>, <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 5.14 00/14] 5.14.2-rc1 review
-In-Reply-To: <20210906125448.160263393@linuxfoundation.org>
-References: <20210906125448.160263393@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        id S1345481AbhIGQ7t (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 7 Sep 2021 12:59:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49814 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1345314AbhIGQ7t (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 7 Sep 2021 12:59:49 -0400
+Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F21DC061575;
+        Tue,  7 Sep 2021 09:58:42 -0700 (PDT)
+Received: by mail-wr1-x42b.google.com with SMTP id q11so15474686wrr.9;
+        Tue, 07 Sep 2021 09:58:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=QOvPnmUsLHR2ePcx/VDpvZbJYRDmRyZEnoWkG5O40CA=;
+        b=JQd9jMgMO73LlAPc/I61qpuzM7alrLRWzAGsCnuzjJPHGcshaPZKq5BUYFgsDAqocf
+         Xos6T4xCNhOsThojP4G/SeWPAzwggsvpmHLWhmKJJJp/t7Z5/zbj2VCLt/UPULBca1j7
+         KEGt3bTJEwSbxeXwVYDWU7CNgUSvGhFh6LCePtzSKduNQOxddBYfH66DICH0NfJY/XLX
+         yltKL9T14ePvyX1rqsNb1RZIwfIwk70HMkzoIkkSxHuiZPNPhID7TEEr9Jh2+mYc4CuG
+         K/mUGACppGhBuG+ZIqr5J4oGaHH+skY1zc+6tyycg3q1dJY+JzIy+F9L/mkGhLXo7k0V
+         /jdw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=QOvPnmUsLHR2ePcx/VDpvZbJYRDmRyZEnoWkG5O40CA=;
+        b=kO+lMXSrCJ4vVSnwlBCwsk5LfFTUUpBQHAnJG/Tk+mgpCVxPbDLJ/SbcFF1SNfZqP9
+         DaVodAEzZAue/vw1Cm5HRDEZHtITkhchv34VYPFvB27yXztNTAXEIfIDnDR0KQjFt7Jj
+         3CvO1JYqqNAmbcAHnrPmpNIHB/xex/LW0MtuipVeY6oS1X0uLSh4MawN5v5Nv1JEuuQo
+         IfEOr2cPHkvYyhzpZxlMN1pZxigaxRhj271ER2ZL4mojWLmEyQlzQuRQWTh+3b8KWGkb
+         0dAQxVnYwy6eYZcBlxz845oddNxNmqcgd48cbPOqGzwq/43KbdiF+PFT05A3g0U/h+zT
+         zNvA==
+X-Gm-Message-State: AOAM531Uda5WmLF1IKOx8mA529GDFllGSiWjuugbBWaKrJ4YFx0IJYzT
+        XSzuZOwlMvLtQG0101uTXFo=
+X-Google-Smtp-Source: ABdhPJxUpZEg5VjevA3LTacU1KoAqbnsaJciaWYIIQzfgbuVKLvgKanSXJWznVLvvxVSeZDHIji3rA==
+X-Received: by 2002:adf:f552:: with SMTP id j18mr18845200wrp.273.1631033920629;
+        Tue, 07 Sep 2021 09:58:40 -0700 (PDT)
+Received: from localhost ([217.111.27.204])
+        by smtp.gmail.com with ESMTPSA id r27sm2216242wrr.70.2021.09.07.09.58.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Sep 2021 09:58:39 -0700 (PDT)
+Date:   Tue, 7 Sep 2021 18:58:38 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     Laxman Dewangan <ldewangan@nvidia.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] spi: tegra20-slink: Declare runtime suspend and resume
+ functions conditionally
+Message-ID: <YTeaPnxDhmia4/OB@orome.fritz.box>
+References: <20210907045358.2138282-1-linux@roeck-us.net>
 MIME-Version: 1.0
-Message-ID: <625f0b5354c4485abcddd0e99a083c78@HQMAIL109.nvidia.com>
-Date:   Tue, 7 Sep 2021 08:54:04 -0700
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: fddec7e8-0118-4786-7bbc-08d97217b8dd
-X-MS-TrafficTypeDiagnostic: DM5PR1201MB0121:
-X-Microsoft-Antispam-PRVS: <DM5PR1201MB0121C62A3DBD3BAFCB034D3FD9D39@DM5PR1201MB0121.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: Ex44pd+X9dcdqC4IRHoTHkWOstDvpkmD1Sa5qKfQzKnfEmDEeAWiqCMTUYICerUFkLdIIw3ndvJkBWA5HrpQTMhN3uptPno6Y4sIoFxL0FlN5eEL5kcl/YOLRw+lgzzXiAR0FBeA3oqhRAw8O2iceG/w2zr/PbxFXd/PaSb4AVzjDJ9SYp5A/ALkctHCCR7tC60QUAMp62USp7YsT9g2jNA+imClr9z4fXDDWJc2BAfh0Sz/B+QS9PCNDiYPp2APd1VCI3qNtK5rmLG0Zy/tWbmaRLvTrUtWPaE4D8f18BMuqiK+zZTx5lKXEikNd3QmJY04VkhntR5xDluPl2/O6m2wIex7xpGv7ZGIEHkS0uZNJ7HrsN/S2js8xrxGfwXNb+tn/tIZZWdu2MTclKsHxIh9ER1BfQWt95VA4TvRnCcWevudHGxbI3QcKVJMFR9iDtQ5LULcRL/ij+a/YCCzSI0f2bWN0c7U4Ks9mYpcoU2gvhdPKbrUrrHRJzu/xfPgThIcdoulN5wqQFtbGuHILXkoQrwSxip5Opmcl8JuaNA1wOSxlvtCMP/mdHdBk2uVZkVuC9xTtdroo/1IiPuuSVBeL48u7OdzvyD3NMJ9IEbAavmLQBOIIvb6ujkSfhYm6Br+8E/xQ8w3twjG7O1HOxaIzSBqce7Wue6c++pAkdDM9TK76BJMYZYLxIUqBwY4zT3htl9QE/N9O7Vi7+pcwH46hvaLJ2yzxKSZAwBXI8LGtboMmZUKx3f/t3QArKMPy3TScmPlBfc83KKYTs+8cur9dNwflqy0MyBjtmpZjBE=
-X-Forefront-Antispam-Report: CIP:216.228.112.34;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid03.nvidia.com;CAT:NONE;SFS:(4636009)(39860400002)(346002)(376002)(136003)(396003)(36840700001)(46966006)(7636003)(2906002)(82310400003)(86362001)(7416002)(5660300002)(316002)(356005)(70206006)(36906005)(54906003)(70586007)(8676002)(8936002)(47076005)(478600001)(26005)(6916009)(966005)(82740400003)(36860700001)(4326008)(186003)(336012)(108616005)(24736004)(426003);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Sep 2021 15:54:05.9783
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: fddec7e8-0118-4786-7bbc-08d97217b8dd
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.34];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT011.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR1201MB0121
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="L1EJoNpK+VemqDAB"
+Content-Disposition: inline
+In-Reply-To: <20210907045358.2138282-1-linux@roeck-us.net>
+User-Agent: Mutt/2.1.2 (9a92dba0) (2021-08-24)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, 06 Sep 2021 14:55:46 +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.14.2 release.
-> There are 14 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Wed, 08 Sep 2021 12:54:40 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.14.2-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.14.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
 
-All tests passing for Tegra ...
+--L1EJoNpK+VemqDAB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Test results for stable-v5.14:
-    10 builds:	10 pass, 0 fail
-    28 boots:	28 pass, 0 fail
-    114 tests:	114 pass, 0 fail
+On Mon, Sep 06, 2021 at 09:53:58PM -0700, Guenter Roeck wrote:
+> The following build error is seen with CONFIG_PM=3Dn.
+>=20
+> drivers/spi/spi-tegra20-slink.c:1188:12: error:
+> 	'tegra_slink_runtime_suspend' defined but not used
+> drivers/spi/spi-tegra20-slink.c:1200:12: error:
+> 	'tegra_slink_runtime_resume' defined but not used
+>=20
+> Declare the functions only if PM is enabled. While at it, remove the
+> unnecessary forward declarations.
+>=20
+> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+> ---
+>  drivers/spi/spi-tegra20-slink.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/drivers/spi/spi-tegra20-slink.c b/drivers/spi/spi-tegra20-sl=
+ink.c
+> index ebd27f883033..8ce840c7ecc8 100644
+> --- a/drivers/spi/spi-tegra20-slink.c
+> +++ b/drivers/spi/spi-tegra20-slink.c
+> @@ -204,9 +204,6 @@ struct tegra_slink_data {
+>  	struct dma_async_tx_descriptor		*tx_dma_desc;
+>  };
+> =20
+> -static int tegra_slink_runtime_suspend(struct device *dev);
+> -static int tegra_slink_runtime_resume(struct device *dev);
+> -
+>  static inline u32 tegra_slink_readl(struct tegra_slink_data *tspi,
+>  		unsigned long reg)
+>  {
+> @@ -1185,6 +1182,7 @@ static int tegra_slink_resume(struct device *dev)
+>  }
+>  #endif
+> =20
+> +#ifdef CONFIG_PM
+>  static int tegra_slink_runtime_suspend(struct device *dev)
+>  {
+>  	struct spi_master *master =3D dev_get_drvdata(dev);
+> @@ -1210,6 +1208,7 @@ static int tegra_slink_runtime_resume(struct device=
+ *dev)
+>  	}
+>  	return 0;
+>  }
+> +#endif /* CONFIG_PM */
+> =20
+>  static const struct dev_pm_ops slink_pm_ops =3D {
+>  	SET_RUNTIME_PM_OPS(tegra_slink_runtime_suspend,
 
-Linux version:	5.14.2-rc1-gafbaa4bb4e04
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
-                tegra20-ventana, tegra210-p2371-2180,
-                tegra210-p3450-0000, tegra30-cardhu-a04
+Looks like this is mostly leftover from commit e4bb903fda0e ("spi:
+tegra20-slink: Improve runtime PM usage"). That's likely going to go
+into v5.15 since it's been in linux-next for a couple of weeks, so this
+one should go there as well.
 
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
+But yeah, looks correct. On a side-note: ARCH_TEGRA always selects PM,
+so we typically assume that these guards are not needed. However, since
+SPI's Kconfig has these two symbols || COMPILE_TEST, that assumption is
+obviously no longer true.
 
-Jon
+Anyway, this looks correct, so:
+
+Acked-by: Thierry Reding <treding@nvidia.com>
+
+--L1EJoNpK+VemqDAB
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmE3mjwACgkQ3SOs138+
+s6F12w/+NoQME2r+r4vwCE2N55IVSsRTdKiTGpqM+Efen8JBWkcq66FZMbZIUZkB
+E/+IVm0NcPAxziikeDJ6PrAN+95QHpqMKHb4X7AKTzXKO3LikLhgq7Sdk9TJLKdl
+MA+s6UUX7N/+k2/ittrgoolI+l44+i0UXjRiRCiiquLui9p7p3hrLMWx8ZXNoOdy
+3NaY9jk8AnVAvHLSAsd8TbexCiQ4HRDPiH2LpLxDsRXwr2gyPtkFwFYnR/ZZdDnw
+NEijSyLhG71ixlY5Mn39MaeDrX0w08y2SoVvHLjGLODL1byvTqXHI4JI8gl1RfcR
+6Dycj7X7XZP6WcSUrzgm/lslcm9xDESLcmxGxf6cExiN38KhdJBORfhTB8htn8Xm
+Q/QIR+TZvAItTVOjeEo8gFjVIjrwEKR9oPHVSp43MUslLW8G3kMOoloIlnfaswPX
+9O8Ako6NUK7/m45NKNYpSJtLZDNBgSHPTKJLViSfpd+44k+90BKVNbMNFG/hG6Mx
+LOV0FqA2bZ4TmwHWdEshA94Mdnn1h3Eo+l5gigRGESlbGoZUf0pdwYqh4yxaSGEp
+EgbynKLiEluOXhy4KEmSADZ1aZsIsaWeOH15m86GZnJ3MgPcmB7UmzEcbtyIH0qW
+nO52jLL6SUlkHIYjy0Sb94qzTMcLA3qjFi1pArvBHPFKSxNVXrU=
+=fjmd
+-----END PGP SIGNATURE-----
+
+--L1EJoNpK+VemqDAB--
