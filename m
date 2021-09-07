@@ -2,580 +2,143 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 978C1C433EF
-	for <linux-tegra@archiver.kernel.org>; Tue,  7 Sep 2021 15:33:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34F69C433EF
+	for <linux-tegra@archiver.kernel.org>; Tue,  7 Sep 2021 15:53:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 77A9E610D0
-	for <linux-tegra@archiver.kernel.org>; Tue,  7 Sep 2021 15:33:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 04F4061052
+	for <linux-tegra@archiver.kernel.org>; Tue,  7 Sep 2021 15:53:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345302AbhIGPer (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 7 Sep 2021 11:34:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52328 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231443AbhIGPep (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 7 Sep 2021 11:34:45 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 6BBDE60F5E;
-        Tue,  7 Sep 2021 15:33:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1631028819;
-        bh=3Yea4Fr5Ie1toQUOmtVyym4O0BP/K2DsqPqAKPtX2uU=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=X/95N0Xyk4A1gqz4COgG1SLU8Dh9u8q+EIJbFBjWYGEKRiY2VtodQfNzJptu9aRdZ
-         DgrTj0b/7uOeVunKIsoV4baMwxgKFzo+os1nImbadj0N8c+mdxfZDbNUfzU4+NS287
-         3DEbz2WzypPu0kXC/0sLG8NRCH5yb8AW3wUfhqbw6glfdzqrIQb151bFFX7DNN7PBZ
-         FfHAVWGbd82aUAWDzfTWl406sc+QFDCYkbu8l32Vy9y2+02UVSynjW3e5kIZb/i3Pe
-         p1Bbo/DhTH2GC3kAcvLCrSMgpc4nwKrk9T+aJZ1kVW8RElqFjns8g0aaxbzjHbkRHA
-         2lrENgC+RRYog==
-Received: by mail-ed1-f51.google.com with SMTP id g8so13243289edt.7;
-        Tue, 07 Sep 2021 08:33:39 -0700 (PDT)
-X-Gm-Message-State: AOAM531SlPKdpWMP0hrgNyVnWJUPlsnrrl8Aonx/xMvAvihARf1AQwe6
-        niQYuWdybMuE2USnIF2Yc7cQTNReeAddB2mG8A==
-X-Google-Smtp-Source: ABdhPJyNnVMwWe1w7fHUzZYDF0H9Cf/1MvTGVSkKcOPxOQNj1Ah381CVuzMBB2RBkTKbbgZk42Z40AjczLRFC4tlCWQ=
-X-Received: by 2002:aa7:de09:: with SMTP id h9mr2254edv.271.1631028817727;
- Tue, 07 Sep 2021 08:33:37 -0700 (PDT)
+        id S1345443AbhIGPyn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 7 Sep 2021 11:54:43 -0400
+Received: from mail-dm6nam10on2073.outbound.protection.outlook.com ([40.107.93.73]:12256
+        "EHLO NAM10-DM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S232935AbhIGPym (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 7 Sep 2021 11:54:42 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=cuVcK/9w86fT33QeUasrbY/iqkaNhLTNSDNoBy6Gno3rExgNOvwPMBU+rSEZnIbPiAVUpjZovU688Lcij9N+BOSJhZJtUYNzBSuYDdfnG0W8CwUBTq/qFhn5RitpuKrrrqh9xbOge0r+bfqH0QnF2Wwni0P9efsfFrilbUwoP74FeDYuNjG2uFmu/ki4Ax+uBpN2CK1Lw66zbP8SogDIIUOzMvcpB0i5brSvc89C7+I+y7MqnkmRONHbrBfUjZ6DLXkbFeZv76Yp5OEKAtfwCPh2nYOryUJSB5x7SO9xn7qFngdBCM0OVQ9Xi5HT6u0Nl4eTRcyWkqPBHyamKqn7YA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901; h=From:Date:Subject:Message-ID:Content-Type:MIME-Version;
+ bh=p5tEHObkrWnIKMoi8zUCwfhsvpFydVrSh8w7dwk6ojo=;
+ b=CdFcx5GDCsWhVbDrxv1wbJ32mwvLAAUGh2sWpldbjIm+PGragPND2VCIF1Ohb/0C0U2svBhx0vf96T8s89tWYdIi3YxBzNO470R+ziQvyE+Hz6Zrhak8+CK4QuN7ajo2YGGzLoNC9yh8+1xyhR+YzdAkyfTfMb1WLyJhV99IuEGBan5ZY1x7Z/LGtXxWOvGYgTSzokc2VE6RK76NrGkUufopG+zBYgBOupEDdot0+LN0X5awjRL8czwuNuUA5n2zB0LoUyVrhGSJd5wSpWMCVmpetwBX0emquxAwvMCr2hQiTkQgPD6115o0TaXsQ7BvU8V8pH+bszXKtliK8Cod4A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.112.32) smtp.rcpttodomain=linuxfoundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=quarantine sp=none pct=100)
+ action=none header.from=nvidia.com; dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=p5tEHObkrWnIKMoi8zUCwfhsvpFydVrSh8w7dwk6ojo=;
+ b=d/5KagAUZoRvcAhmIay+U15VT6TH+jMWM3jbLp5WmEbOX4ccyMYflnrh2Hkk1+dLfvUllOjAqqQGhXyKiJbfx1KUw7bls7yREQ11UxXkAbwNaFMhb5aK5nziLaQLBd979lhXkHMU2pDJ9mJL/lHWuDDAu2YGwb/sJ37l3R0QylBIczGNWxW7cPJ9MLabvYN1owKpZnjx1BDyvxT6kwg+RbyFvtjf+1sSKVfuaYBq5+KSITpHDIbXHwhhqxkEYpsLDDZo38BQaYT4To5PqRRx4OVspDnSins5qIxtbiEZuXjTIkzUdNDdPmOzclwzUW16CmUGK1brETPLMIztaiCatg==
+Received: from DM6PR11CA0044.namprd11.prod.outlook.com (2603:10b6:5:14c::21)
+ by BN8PR12MB2994.namprd12.prod.outlook.com (2603:10b6:408:42::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4500.14; Tue, 7 Sep
+ 2021 15:53:32 +0000
+Received: from DM6NAM11FT067.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:5:14c:cafe::f) by DM6PR11CA0044.outlook.office365.com
+ (2603:10b6:5:14c::21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4478.19 via Frontend
+ Transport; Tue, 7 Sep 2021 15:53:32 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.32)
+ smtp.mailfrom=nvidia.com; linuxfoundation.org; dkim=none (message not signed)
+ header.d=none;linuxfoundation.org; dmarc=pass action=none
+ header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.112.32 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.112.32; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (216.228.112.32) by
+ DM6NAM11FT067.mail.protection.outlook.com (10.13.172.76) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.4478.19 via Frontend Transport; Tue, 7 Sep 2021 15:53:31 +0000
+Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL109.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Tue, 7 Sep
+ 2021 08:53:30 -0700
+Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Tue, 7 Sep
+ 2021 15:53:29 +0000
+Received: from jonathanh-vm-01.nvidia.com (172.20.187.5) by mail.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1497.18 via Frontend
+ Transport; Tue, 7 Sep 2021 15:53:29 +0000
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
+        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
+        <stable@vger.kernel.org>, <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 5.10 00/29] 5.10.63-rc1 review
+In-Reply-To: <20210906125449.756437409@linuxfoundation.org>
+References: <20210906125449.756437409@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-References: <20210423163234.3651547-2-thierry.reding@gmail.com>
- <20210520220306.GA1976116@robh.at.kernel.org> <YLEgXyLBF8PEFNw2@orome.fritz.box>
- <YL+gHN4YZ4vt1vPk@orome.fritz.box> <YN4F/nH/9tDuWDnQ@orome.fritz.box>
- <7995b0ed-a277-ced1-b3d0-e0e7e02817a6@gmail.com> <YS+Ke4Ip0InHSnHR@orome.fritz.box>
- <CAL_Jsq+TQeb56UbrO1xKFSb1yo0d8U29DPynw3_jQ6gH6Peatw@mail.gmail.com>
- <YTIogpQDJjqJUTkG@orome.fritz.box> <CAL_JsqKG4+n_eNj+at3m7WuAbeJ1Kyi0mYD=8-MaVjfhzdPwkA@mail.gmail.com>
- <YTJA2xARFuNUMgMc@orome.fritz.box>
-In-Reply-To: <YTJA2xARFuNUMgMc@orome.fritz.box>
-From:   Rob Herring <robh@kernel.org>
-Date:   Tue, 7 Sep 2021 10:33:24 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqJWt6ZELEpMi+tS6S6S4MYyMHysAC2ce_CfDQFqjfgnGQ@mail.gmail.com>
-Message-ID: <CAL_JsqJWt6ZELEpMi+tS6S6S4MYyMHysAC2ce_CfDQFqjfgnGQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/5] dt-bindings: reserved-memory: Document memory
- region specifier
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
-        Sven Peter <sven@svenpeter.dev>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Nicolin Chen <nicolinc@nvidia.com>,
-        Krishna Reddy <vdumpa@nvidia.com>, devicetree@vger.kernel.org,
-        Linux IOMMU <iommu@lists.linux-foundation.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Message-ID: <0168d6f8f3644f008e36ee8a6bef708f@HQMAIL105.nvidia.com>
+Date:   Tue, 7 Sep 2021 15:53:29 +0000
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: cdd61339-db1a-409c-ebea-08d97217a48b
+X-MS-TrafficTypeDiagnostic: BN8PR12MB2994:
+X-Microsoft-Antispam-PRVS: <BN8PR12MB299409785AD9A6FEFA3C30CDD9D39@BN8PR12MB2994.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: ybRlIa86Z9tu7h40ptOB0c6v/PT2YTa9c1blwdSFflRVWI+3/svKfS/iBd2UkA2RYnkHEwMGze/SoI8Mbmr4rERrShBi5b3a0zdYcgpfb5pMr3flvs+cITZ1l7bkJSU4E3TbsHLOOPeaZtXL75bhtRKHU8+YoeSLzBhaejE0br5B3QbBurzcnEw0rSEYxsr1Xe8bEDByRENpQcR+ZUKC1YGbU/5w2Q+PRVlmq588Ggl30c0dV7epil1MXE2J6ciPijwmfPsI/oX9TvfC495hgoNnqSX2yqotEHRWKSptVIQFHwszWrBcls/gnsM9Hvmeufc+gqtJyNW4VfKx8PKz5DFzJ8iW1Tz8+6Z1Brp5oC7uRr5HHAw1f4uY4AoK36wggxv48qWkYYl5Ee6SdwsYK5AVyDhBHNo9w58w8qqqvq06vEg3XKd2Q2Hpz8qbU9GdsZ9ZfgyrYYrRA/02OSHAemqYjJYN4gpvHwdSXYMiQbEtUO/TxU0dNDNFUyVzYG7zgJQS+r7Co7Vz5Snl/bkZ0ZB0B9e92x6mMjD6zlZW/MN9KjFNw5jigX9r3iLQ7HT5Vk8JLSwekHbSHQh5+4q05UEwO7ZGmU/LjWOzTgcP84sv4Aw5ZvbBBbrtTYzHDoL7K4Ibu4QRNasLjbl4bYBPOGU3GILiSsSW2vHMjMwQU7VlGfCrvK15BHF+p50t7T1oxDmGquBWEuSH/5MxCcZ6yVvyPo0DzSBrm5jcLUqq6T1dtIf1PyVTf3rMSAM6jGvxBhCGFann9uLkoIN/sEvbQpJRYK4AoSqKCOxoqYgse4k=
+X-Forefront-Antispam-Report: CIP:216.228.112.32;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid01.nvidia.com;CAT:NONE;SFS:(4636009)(46966006)(36840700001)(186003)(70586007)(86362001)(5660300002)(82310400003)(316002)(8936002)(7416002)(356005)(336012)(24736004)(70206006)(6916009)(36860700001)(108616005)(47076005)(7636003)(508600001)(4326008)(2906002)(54906003)(26005)(966005)(426003)(8676002);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Sep 2021 15:53:31.8984
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: cdd61339-db1a-409c-ebea-08d97217a48b
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.32];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT067.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN8PR12MB2994
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, Sep 3, 2021 at 10:36 AM Thierry Reding <thierry.reding@gmail.com> w=
-rote:
->
-> On Fri, Sep 03, 2021 at 09:36:33AM -0500, Rob Herring wrote:
-> > On Fri, Sep 3, 2021 at 8:52 AM Thierry Reding <thierry.reding@gmail.com=
-> wrote:
-> > >
-> > > On Fri, Sep 03, 2021 at 08:20:55AM -0500, Rob Herring wrote:
-> > > > On Wed, Sep 1, 2021 at 9:13 AM Thierry Reding <thierry.reding@gmail=
-.com> wrote:
-> > > > >
-> > > > > On Fri, Jul 02, 2021 at 05:16:25PM +0300, Dmitry Osipenko wrote:
-> > > > > > 01.07.2021 21:14, Thierry Reding =D0=BF=D0=B8=D1=88=D0=B5=D1=82=
-:
-> > > > > > > On Tue, Jun 08, 2021 at 06:51:40PM +0200, Thierry Reding wrot=
-e:
-> > > > > > >> On Fri, May 28, 2021 at 06:54:55PM +0200, Thierry Reding wro=
-te:
-> > > > > > >>> On Thu, May 20, 2021 at 05:03:06PM -0500, Rob Herring wrote=
-:
-> > > > > > >>>> On Fri, Apr 23, 2021 at 06:32:30PM +0200, Thierry Reding w=
-rote:
-> > > > > > >>>>> From: Thierry Reding <treding@nvidia.com>
-> > > > > > >>>>>
-> > > > > > >>>>> Reserved memory region phandle references can be accompan=
-ied by a
-> > > > > > >>>>> specifier that provides additional information about how =
-that specific
-> > > > > > >>>>> reference should be treated.
-> > > > > > >>>>>
-> > > > > > >>>>> One use-case is to mark a memory region as needing an ide=
-ntity mapping
-> > > > > > >>>>> in the system's IOMMU for the device that references the =
-region. This is
-> > > > > > >>>>> needed for example when the bootloader has set up hardwar=
-e (such as a
-> > > > > > >>>>> display controller) to actively access a memory region (e=
-.g. a boot
-> > > > > > >>>>> splash screen framebuffer) during boot. The operating sys=
-tem can use the
-> > > > > > >>>>> identity mapping flag from the specifier to make sure an =
-IOMMU identity
-> > > > > > >>>>> mapping is set up for the framebuffer before IOMMU transl=
-ations are
-> > > > > > >>>>> enabled for the display controller.
-> > > > > > >>>>>
-> > > > > > >>>>> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> > > > > > >>>>> ---
-> > > > > > >>>>>  .../reserved-memory/reserved-memory.txt       | 21 +++++=
-++++++++++++++
-> > > > > > >>>>>  include/dt-bindings/reserved-memory.h         |  8 +++++=
-++
-> > > > > > >>>>>  2 files changed, 29 insertions(+)
-> > > > > > >>>>>  create mode 100644 include/dt-bindings/reserved-memory.h
-> > > > > > >>>>
-> > > > > > >>>> Sorry for being slow on this. I have 2 concerns.
-> > > > > > >>>>
-> > > > > > >>>> First, this creates an ABI issue. A DT with cells in 'memo=
-ry-region'
-> > > > > > >>>> will not be understood by an existing OS. I'm less concern=
-ed about this
-> > > > > > >>>> if we address that with a stable fix. (Though I'm pretty s=
-ure we've
-> > > > > > >>>> naively added #?-cells in the past ignoring this issue.)
-> > > > > > >>>
-> > > > > > >>> A while ago I had proposed adding memory-region*s* as an al=
-ternative
-> > > > > > >>> name for memory-region to make the naming more consistent w=
-ith other
-> > > > > > >>> types of properties (think clocks, resets, gpios, ...). If =
-we added
-> > > > > > >>> that, we could easily differentiate between the "legacy" ca=
-ses where
-> > > > > > >>> no #memory-region-cells was allowed and the new cases where=
- it was.
-> > > > > > >>>
-> > > > > > >>>> Second, it could be the bootloader setting up the reserved=
- region. If a
-> > > > > > >>>> node already has 'memory-region', then adding more regions=
- is more
-> > > > > > >>>> complicated compared to adding new properties. And definin=
-g what each
-> > > > > > >>>> memory-region entry is or how many in schemas is impossibl=
-e.
-> > > > > > >>>
-> > > > > > >>> It's true that updating the property gets a bit complicated=
-, but it's
-> > > > > > >>> not exactly rocket science. We really just need to splice t=
-he array. I
-> > > > > > >>> have a working implemention for this in U-Boot.
-> > > > > > >>>
-> > > > > > >>> For what it's worth, we could run into the same issue with =
-any new
-> > > > > > >>> property that we add. Even if we renamed this to iommu-memo=
-ry-region,
-> > > > > > >>> it's still possible that a bootloader may have to update th=
-is property
-> > > > > > >>> if it already exists (it could be hard-coded in DT, or it c=
-ould have
-> > > > > > >>> been added by some earlier bootloader or firmware).
-> > > > > > >>>
-> > > > > > >>>> Both could be addressed with a new property. Perhaps somet=
-hing like
-> > > > > > >>>> 'iommu-memory-region =3D <&phandle>;'. I think the 'iommu'=
- prefix is
-> > > > > > >>>> appropriate given this is entirely because of the IOMMU be=
-ing in the
-> > > > > > >>>> mix. I might feel differently if we had other uses for cel=
-ls, but I
-> > > > > > >>>> don't really see it in this case.
-> > > > > > >>>
-> > > > > > >>> I'm afraid that down the road we'll end up with other cases=
- and then we
-> > > > > > >>> might proliferate a number of *-memory-region properties wi=
-th varying
-> > > > > > >>> prefixes.
-> > > > > > >>>
-> > > > > > >>> I am aware of one other case where we might need something =
-like this: on
-> > > > > > >>> some Tegra SoCs we have audio processors that will access m=
-emory buffers
-> > > > > > >>> using a DMA engine. These processors are booted from early =
-firmware
-> > > > > > >>> using firmware from system memory. In order to avoid trashi=
-ng the
-> > > > > > >>> firmware, we need to reserve memory. We can do this using r=
-eserved
-> > > > > > >>> memory nodes. However, the audio DMA engine also uses the S=
-MMU, so we
-> > > > > > >>> need to make sure that the firmware memory is marked as res=
-erved within
-> > > > > > >>> the SMMU. This is similar to the identity mapping case, but=
- not exactly
-> > > > > > >>> the same. Instead of creating a 1:1 mapping, we just want t=
-hat IOVA
-> > > > > > >>> region to be reserved (i.e. IOMMU_RESV_RESERVED instead of
-> > > > > > >>> IOMMU_RESV_DIRECT{,_RELAXABLE}).
-> > > > > > >>>
-> > > > > > >>> That would also fall into the IOMMU domain, but we can't re=
-use the
-> > > > > > >>> iommu-memory-region property for that because then we don't=
- have enough
-> > > > > > >>> information to decide which type of reservation we need.
-> > > > > > >>>
-> > > > > > >>> We could obviously make iommu-memory-region take a specifie=
-r, but we
-> > > > > > >>> could just as well use memory-regions in that case since we=
- have
-> > > > > > >>> something more generic anyway.
-> > > > > > >>>
-> > > > > > >>> With the #memory-region-cells proposal, we can easily exten=
-d the cell in
-> > > > > > >>> the specifier with an additional MEMORY_REGION_IOMMU_RESERV=
-E flag to
-> > > > > > >>> take that other use case into account. If we than also chan=
-ge to the new
-> > > > > > >>> memory-regions property name, we avoid the ABI issue (and w=
-e gain a bit
-> > > > > > >>> of consistency while at it).
-> > > > > > >>
-> > > > > > >> Ping? Rob, do you want me to add this second use-case to the=
- patch
-> > > > > > >> series to make it more obvious that this isn't just a one-of=
-f thing? Or
-> > > > > > >> how do we proceed?
-> > > > > > >
-> > > > > > > Rob, given that additional use-case, do you want me to run wi=
-th this
-> > > > > > > proposal and send out an updated series?
-> > > > > >
-> > > > > >
-> > > > > > What about variant with a "descriptor" properties that will des=
-cribe
-> > > > > > each region:
-> > > > > >
-> > > > > > fb_desc: display-framebuffer-memory-descriptor {
-> > > > > >       needs-identity-mapping;
-> > > > > > }
-> > > > > >
-> > > > > > display@52400000 {
-> > > > > >       memory-region =3D <&fb ...>;
-> > > > > >       memory-region-descriptor =3D <&fb_desc ...>;
-> > > > > > };
-> > > > > >
-> > > > > > It could be a more flexible/extendible variant.
-> > > > >
-> > > > > This problem recently came up on #dri-devel again. Adding Alyssa =
-and
-> > > > > Sven who are facing a similar challenge on their work on Apple M1=
- (if I
-> > > > > understood correctly). Also adding dri-devel for visibility since=
- this
-> > > > > is a very common problem for display in particular.
-> > > > >
-> > > > > On M1 the situation is slightly more complicated: the firmware wi=
-ll
-> > > > > allocate a couple of buffers (including the framebuffer) in high =
-memory
-> > > > > (> 4 GiB) and use the IOMMU to map that into an IOVA region below=
- 4 GiB
-> > > > > so that the display hardware can access it. This makes it impossi=
-ble to
-> > > > > bypass the IOMMU like we do on other chips (in particular to work=
- around
-> > > > > the fault-by-default policy of the ARM SMMU driver). It also mean=
-s that
-> > > > > in addition to the simple reserved regions I mentioned we need fo=
-r audio
-> > > > > use-cases and identity mapping use-cases we need for display on T=
-egra,
-> > > > > we now also need to be able to convey physical to IOVA mappings.
-> > > > >
-> > > > > Fitting the latter into the original proposal sounds difficult. A=
- quick
-> > > > > fix would've been to generate a mapping table in memory and pass =
-that to
-> > > > > the kernel using a reserved-memory node (similar to what's done f=
-or
-> > > > > example on Tegra for the EMC frequency table on Tegra210) and mar=
-k it as
-> > > > > such using a special flag. But that then involves two layers of p=
-arsing,
-> > > > > which seems a bit suboptimal. Another way to shoehorn that into t=
-he
-> > > > > original proposal would've been to add flags for physical and vir=
-tual
-> > > > > address regions and use pairs to pass them using special flags. A=
-gain,
-> > > > > this is a bit wonky because it needs these to be carefully parsed=
- and
-> > > > > matched up.
-> > > > >
-> > > > > Another downside is that we now have a situation where some of th=
-ese
-> > > > > regions are no longer "reserved-memory regions" in the traditiona=
-l
-> > > > > sense. This would require an additional flag in the reserved-memo=
-ry
-> > > > > region nodes to prevent the IOVA regions from being reserved. By =
-the
-> > > > > way, this is something that would also be needed for the audio us=
-e-case
-> > > > > I mentioned before, because the physical memory at that address c=
-an
-> > > > > still be used by an operating system.
-> > > > >
-> > > > > A more general solution would be to draw a bit from Dmitry's prop=
-osal
-> > > > > and introduce a new top-level "iov-reserved-memory" node. This co=
-uld be
-> > > > > modelled on the existing reserved-memory node, except that the ph=
-ysical
-> > > > > memory pages for regions represented by child nodes would not be =
-marked
-> > > > > as reserved. Only the IOVA range described by the region would be
-> > > > > reserved subsequently by the IOMMU framework and/or IOMMU driver.
-> > > > >
-> > > > > The simplest case where we just want to reserve some IOVA region =
-could
-> > > > > then be done like this:
-> > > > >
-> > > > >         iov-reserved-memory {
-> > > > >                 /*
-> > > > >                  * Probably safest to default to <2>, <2> here gi=
-ven
-> > > > >                  * that most IOMMUs support either > 32 bits of I=
-AS
-> > > > >                  * or OAS.
-> > > > >                  */
-> > > > >                 #address-cells =3D <2>;
-> > > > >                 #size-cells =3D <2>;
-> > > > >
-> > > > >                 firmware: firmware@80000000 {
-> > > > >                         reg =3D <0 0x80000000 0 0x01000000>;
-> > > > >                 };
-> > > > >         };
-> > > > >
-> > > > >         audio@30000000 {
-> > > > >                 ...
-> > > > >                 iov-memory-regions =3D <&firmware>;
-> > > > >                 ...
-> > > > >         };
-> > > > >
-> > > > > Mappings could be represented by an IOV reserved region taking a
-> > > > > reference to the reserved-region that they map:
-> > > > >
-> > > > >         reserved-memory {
-> > > > >                 #address-cells =3D <2>;
-> > > > >                 #size-cells =3D <2>;
-> > > > >
-> > > > >                 /* 16 MiB of framebuffer at top-of-memory */
-> > > > >                 framebuffer: framebuffer@1,ff000000 {
-> > > > >                         reg =3D <0x1 0xff000000 0 0x01000000>;
-> > > > >                         no-map;
-> > > > >                 };
-> > > > >         };
-> > > > >
-> > > > >         iov-reserved-memory {
-> > > > >                 /* IOMMU supports only 32-bit output address spac=
-e */
-> > > > >                 #address-cells =3D <1>;
-> > > > >                 #size-cells =3D <1>;
-> > > > >
-> > > > >                 /* 16 MiB of framebuffer mapped to top of IOVA */
-> > > > >                 fb: fb@ff000000 {
-> > > > >                         reg =3D <0 0xff000000 0 0x01000000>;
-> > > > >                         memory-region =3D <&framebuffer>;
-> > > > >                 };
-> > > > >         };
-> > > > >
-> > > > >         display@40000000 {
-> > > > >                 ...
-> > > > >                 /* optional? */
-> > > > >                 memory-region =3D <&framebuffer>;
-> > > > >                 iov-memory-regions =3D <&fb>;
-> > > > >                 ...
-> > > > >         };
-> > > > >
-> > > > > It's interesting how identity mapped regions now become a trivial
-> > > > > special case of mappings. All that is needed is to make the reg p=
-roperty
-> > > > > of the IOV reserved region correspond to the reg property of the =
-normal
-> > > > > reserved region. Alternatively, as a small optimization for lazy =
-people
-> > > > > like me, we could just allow these cases to omit the reg property=
- and
-> > > > > instead inherit it from the referenced reserved region.
-> > > > >
-> > > > > As the second example shows it might be convenient if memory-regi=
-on
-> > > > > could be derived from iov-memory-regions. This could be useful fo=
-r cases
-> > > > > where the driver wants to do something with the physical pages of=
- the
-> > > > > reserved region (such as mapping them and copying out the framebu=
-ffer
-> > > > > data to another buffer so that the reserved memory can be recycle=
-d). If
-> > > > > we have the IOV reserved region, we could provide an API to extra=
-ct the
-> > > > > physical reserved region (if it exists). That way we could avoid
-> > > > > referencing it twice in DT. Then again, there's something elegant=
- about
-> > > > > the explicit second reference to. It indicates the intent that we=
- may
-> > > > > want to use the region for something other than just the IOV mapp=
-ing.
-> > > > >
-> > > > > Anyway, this has been long enough. Let me know what you think. Al=
-yssa,
-> > > > > Sven, it'd be interesting to hear if you think this could work as=
- a
-> > > > > solution to the problem on M1.
-> > > > >
-> > > > > Rob, I think you might like this alternative because it basically=
- gets
-> > > > > rid of all the points in the original proposal that you were conc=
-erned
-> > > > > about. Let me know what you think.
-> > > >
-> > > > Couldn't we keep this all in /reserved-memory? Just add an iova
-> > > > version of reg. Perhaps abuse 'assigned-address' for this purpose. =
-The
-> > > > issue I see would be handling reserved iova areas without a physica=
-l
-> > > > area. That can be handled with just a iova and no reg. We already h=
-ave
-> > > > a no reg case.
-> > >
-> > > I had thought about that initially. One thing I'm worried about is th=
-at
-> > > every child node in /reserved-memory will effectively cause the memor=
-y
-> > > that it described to be reserved. But we don't want that for regions
-> > > that are "virtual only" (i.e. IOMMU reservations).
-> >
-> > By virtual only, you mean no physical mapping, just a region of
-> > virtual space, right? For that we'd have no 'reg' and therefore no
-> > (physical) reservation by the OS. It's similar to non-static regions.
-> > You need a specific handler for them. We'd probably want a compatible
-> > as well for these virtual reservations.
->
-> Yeah, these would be purely used for reserving regions in the IOVA so
-> that they won't be used by the IOVA allocator. Typically these would be
-> used for cases where those addresses have some special meaning.
->
-> Do we want something like:
->
->         compatible =3D "iommu-reserved";
->
-> for these? Or would that need to be:
->
->         compatible =3D "linux,iommu-reserved";
->
-> ? There seems to be a mix of vendor-prefix vs. non-vendor-prefix
-> compatible strings in the reserved-memory DT bindings directory.
+On Mon, 06 Sep 2021 14:55:15 +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.10.63 release.
+> There are 29 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Wed, 08 Sep 2021 12:54:40 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.63-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-I would not use 'linux,' here.
+All tests passing for Tegra ...
 
->
-> On the other hand, do we actually need the compatible string? Because we
-> don't really want to associate much extra information with this like we
-> do for example with "shared-dma-pool". The logic to handle this would
-> all be within the IOMMU framework. All we really need is for the
-> standard reservation code to skip nodes that don't have a reg property
-> so we don't reserve memory for "virtual-only" allocations.
+Test results for stable-v5.10:
+    10 builds:	10 pass, 0 fail
+    28 boots:	28 pass, 0 fail
+    75 tests:	75 pass, 0 fail
 
-It doesn't hurt to have one and I can imagine we might want to iterate
-over all the nodes. It's slightly easier and more common to iterate
-over compatible nodes rather than nodes with some property.
+Linux version:	5.10.63-rc1-g49a2bcaf11be
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
+                tegra20-ventana, tegra210-p2371-2180,
+                tegra210-p3450-0000, tegra30-cardhu-a04
 
-> > Are these being global in DT going to be a problem? Presumably we have
-> > a virtual space per IOMMU. We'd know which IOMMU based on a device's
-> > 'iommus' and 'memory-region' properties, but within /reserved-memory
-> > we wouldn't be able to distinguish overlapping addresses from separate
-> > address spaces. Or we could have 2 different IOVAs for 1 physical
-> > space. That could be solved with something like this:
-> >
-> > iommu-addresses =3D <&iommu1 <address cells> <size cells>>;
->
-> The only case that would be problematic would be if we have overlapping
-> physical regions, because that will probably trip up the standard code.
->
-> But this could also be worked around by looking at iommu-addresses. For
-> example, if we had something like this:
->
->         reserved-memory {
->                 fb_dc0: fb@80000000 {
->                         reg =3D <0x80000000 0x01000000>;
->                         iommu-addresses =3D <0xa0000000 0x01000000>;
->                 };
->
->                 fb_dc1: fb@80000000 {
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
-You can't have 2 nodes with the same name (actually, you can, they
-just get merged together). Different names with the same unit-address
-is a dtc warning. I'd really like to make that a full blown
-overlapping region check.
-
->                         reg =3D <0x80000000 0x01000000>;
->                         iommu-addresses =3D <0xb0000000 0x01000000>;
->                 };
->         };
->
-> We could make the code identify that this is for the same physical
-> reservation (maybe make it so that reg needs to match exactly for this
-> to be recognized) but with different virtual allocations.
->
-> On a side-note: do we really need to repeat the size? I'd think if we
-> want mappings then we'd likely want them for the whole reservation.
-
-Humm, I suppose not, but dropping it paints us into a corner if we
-come up with wanting a different size later. You could have a carveout
-for double/triple buffering your framebuffer, but the bootloader
-framebuffer is only single buffered. So would you want actual size?
-
-> I'd like to keep references to IOMMUs out of this because they would be
-> duplicated. We will only use these nodes if they are referenced by a
-> device node that also has an iommus property. Also, the IOMMU reference
-> itself isn't enough. We'd also need to support the complete specifier
-> because you can have things like SIDs in there to specify the exact
-> address space that a device uses.
->
-> Also, for some of these they may be reused independently of the IOMMU
-> address space. For example the Tegra framebuffer identity mapping can
-> be used by either of the 2-4 display controllers, each with (at least
-> potentially) their own address space. But we don't want to have to
-> describe the identity mapping separately for each display controller.
-
-Okay, but I'd rather have to duplicate things in your case than not be
-able to express some other case.
-
-> Another thing to consider is that these nodes will often be added by
-> firmware (e.g. firmware will allocate the framebuffer and set up the
-> corresponding reserved memory region in DT). Wiring up references like
-> this would get very complicated very quickly.
-
-Yes.
-
-The using 'iommus' property option below can be optional and doesn't
-have to be defined/supported now. Just trying to think ahead and not
-be stuck with something that can't be extended.
-
-> > Or the other way to do this is reuse 'iommus' property to define the
-> > mapping of each address entry to iommu.
-> >
-> > > Obviously we can fix that in Linux, but what about other operating
-> > > systems? Currently "reg" is a required property for statically alloca=
-ted
-> > > regions (which all of these would be). Do you have an idea of how wid=
-ely
-> > > that's used? What about other OSes, or bootloaders, what if they
-> > > encounter these nodes that don't have a "reg" property?
-> >
-> > Without 'reg', there must be a compatible that the client understands
-> > or the node should be ignored.
-> >
-> > My suspicion is that /reserved-memory is abused for all sorts of
-> > things downstream, but that's not really relevant here.
->
-> Yeah, my only concern was that we might break users of this that are not
-> sophisticated enough to handle the nuances that we'd introduce here. If
-> we can assume that nodes without a reg property will be ignored, then I
-> think that's good enough.
-
-I'm pretty sure we should be okay, but check the code.
-
-Rob
+Jon
