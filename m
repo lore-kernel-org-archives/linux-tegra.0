@@ -7,65 +7,44 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C2FBC433FE
-	for <linux-tegra@archiver.kernel.org>; Wed,  8 Sep 2021 07:11:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9B1FC433F5
+	for <linux-tegra@archiver.kernel.org>; Wed,  8 Sep 2021 07:17:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 475F161164
-	for <linux-tegra@archiver.kernel.org>; Wed,  8 Sep 2021 07:11:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B7334610E9
+	for <linux-tegra@archiver.kernel.org>; Wed,  8 Sep 2021 07:17:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348777AbhIHHNB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 8 Sep 2021 03:13:01 -0400
-Received: from mx21.baidu.com ([220.181.3.85]:58284 "EHLO baidu.com"
+        id S1349488AbhIHHSp (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 8 Sep 2021 03:18:45 -0400
+Received: from mx21.baidu.com ([220.181.3.85]:36536 "EHLO baidu.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1348733AbhIHHNA (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 8 Sep 2021 03:13:00 -0400
-Received: from BC-Mail-Ex27.internal.baidu.com (unknown [172.31.51.21])
-        by Forcepoint Email with ESMTPS id 6A44F5619AF682181CA5;
-        Wed,  8 Sep 2021 15:11:48 +0800 (CST)
+        id S1349429AbhIHHSj (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 8 Sep 2021 03:18:39 -0400
+Received: from BJHW-Mail-Ex12.internal.baidu.com (unknown [10.127.64.35])
+        by Forcepoint Email with ESMTPS id DA100B9B5FCAC040B773;
+        Wed,  8 Sep 2021 15:17:30 +0800 (CST)
 Received: from BJHW-MAIL-EX27.internal.baidu.com (10.127.64.42) by
- BC-Mail-Ex27.internal.baidu.com (172.31.51.21) with Microsoft SMTP Server
+ BJHW-Mail-Ex12.internal.baidu.com (10.127.64.35) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.2176.2; Wed, 8 Sep 2021 15:11:48 +0800
+ 15.1.2308.14; Wed, 8 Sep 2021 15:17:30 +0800
 Received: from LAPTOP-UKSR4ENP.internal.baidu.com (172.31.63.8) by
  BJHW-MAIL-EX27.internal.baidu.com (10.127.64.42) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.2308.14; Wed, 8 Sep 2021 15:11:47 +0800
+ 15.1.2308.14; Wed, 8 Sep 2021 15:17:30 +0800
 From:   Cai Huoqing <caihuoqing@baidu.com>
 To:     <caihuoqing@baidu.com>
-CC:     Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        "Martin Blumenstingl" <martin.blumenstingl@googlemail.com>,
-        =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Li Yang <leoyang.li@nxp.com>,
-        Krzysztof Halasa <khalasa@piap.pl>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
+CC:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        "Santosh Shilimkar" <ssantosh@kernel.org>,
-        Nishanth Menon <nm@ti.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-amlogic@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-        <linux-mips@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-sunxi@lists.linux.dev>, <linux-tegra@vger.kernel.org>
-Subject: [PATCH] soc: sunxi_sram: Make use of the helper function devm_platform_ioremap_resource()
-Date:   Wed, 8 Sep 2021 15:11:16 +0800
-Message-ID: <20210908071123.348-6-caihuoqing@baidu.com>
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] soc: tegra: pmc: Make use of the helper function devm_platform_ioremap_resource()
+Date:   Wed, 8 Sep 2021 15:17:24 +0800
+Message-ID: <20210908071724.823-1-caihuoqing@baidu.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20210908071123.348-1-caihuoqing@baidu.com>
-References: <20210908071123.348-1-caihuoqing@baidu.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [172.31.63.8]
 X-ClientProxiedBy: BJHW-Mail-Ex11.internal.baidu.com (10.127.64.34) To
  BJHW-MAIL-EX27.internal.baidu.com (10.127.64.42)
+X-Baidu-BdMsfe-DateCheck: 1_BJHW-Mail-Ex12_2021-09-08 15:17:30:915
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -76,25 +55,17 @@ separately
 
 Signed-off-by: Cai Huoqing <caihuoqing@baidu.com>
 ---
- drivers/soc/sunxi/sunxi_sram.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/soc/tegra/pmc.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/soc/sunxi/sunxi_sram.c b/drivers/soc/sunxi/sunxi_sram.c
-index 42833e33a96c..a8f3876963a0 100644
---- a/drivers/soc/sunxi/sunxi_sram.c
-+++ b/drivers/soc/sunxi/sunxi_sram.c
-@@ -331,7 +331,6 @@ static struct regmap_config sunxi_sram_emac_clock_regmap = {
+diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+index 50091c4ec948..24683e11ac9b 100644
+--- a/drivers/soc/tegra/pmc.c
++++ b/drivers/soc/tegra/pmc.c
+@@ -2815,8 +2815,7 @@ static int tegra_pmc_probe(struct platform_device *pdev)
+ 		return err;
  
- static int sunxi_sram_probe(struct platform_device *pdev)
- {
--	struct resource *res;
- 	struct dentry *d;
- 	struct regmap *emac_clock;
- 	const struct sunxi_sramc_variant *variant;
-@@ -342,8 +341,7 @@ static int sunxi_sram_probe(struct platform_device *pdev)
- 	if (!variant)
- 		return -EINVAL;
- 
+ 	/* take over the memory region from the early initialization */
 -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
 -	base = devm_ioremap_resource(&pdev->dev, res);
 +	base = devm_platform_ioremap_resource(pdev, 0);
