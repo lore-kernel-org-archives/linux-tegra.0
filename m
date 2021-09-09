@@ -4,43 +4,42 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-19.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17343C433F5
-	for <linux-tegra@archiver.kernel.org>; Thu,  9 Sep 2021 11:50:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E132CC43217
+	for <linux-tegra@archiver.kernel.org>; Thu,  9 Sep 2021 11:51:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ED0ED61A8A
-	for <linux-tegra@archiver.kernel.org>; Thu,  9 Sep 2021 11:50:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CEC1A61AFE
+	for <linux-tegra@archiver.kernel.org>; Thu,  9 Sep 2021 11:51:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241305AbhIILvN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 9 Sep 2021 07:51:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54744 "EHLO mail.kernel.org"
+        id S242927AbhIILw5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 9 Sep 2021 07:52:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55048 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S242198AbhIILse (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 9 Sep 2021 07:48:34 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 86B7D611C7;
-        Thu,  9 Sep 2021 11:43:27 +0000 (UTC)
+        id S240935AbhIILux (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 9 Sep 2021 07:50:53 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 025E461269;
+        Thu,  9 Sep 2021 11:43:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1631187808;
-        bh=Mgk6zcJV3cp/1FnKDc4HTUGsqHEyT0cD/bodCBNyz7k=;
+        s=k20201202; t=1631187838;
+        bh=e4DRZx/VtfqC41DV1FiYS0p26W6OqaMolJo8boE3nZU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iG6rARMSQtBOWvymGnKcrEgjGkDxxLtw2IWBxaKqjTRjypaBCzaUYNkRtdvFssm5t
-         ZJ6H9WMzy9QrZP6Ao0AOceb4v5OTMl0fyaFVCBjnrZ8VjyqwNC/ipWZmFBb0jm4VFs
-         hm3oUdkWF8vfl1QzPsvCPwyU5EblzfQTr761iF5Qyh5Z7OnWjhjcEbsd/hzlt3ZW57
-         gk7wlv5xP3+pSJfYIpfvo2yoZ0mbyM/0nlZhO59YHkAKhGTljNkUB+aF2zT+qnbkBw
-         Gl/ALdcTRmS5vJxQJoQcODsL60tE7QdEVmCYbVODqvoovZQkwT3oJwhaUItdm5Lqfh
-         FARjaSvSYL0mg==
+        b=B8GadA162D80QEQ3n6e4wZmwjLNQQM0T8vqn+6bfpGM8baknHcL5M9xQDg2aj7LJW
+         3GzZpIupJCrGfBxae0uQuuzUN/Oc7VLe6KwhUI7xf1vPtZpeh0lDMN1fDguVqtRahz
+         uEwx6r244KlYua4px2dga4T2vLFGnrl3o2p9Gz5JZG0nLqGkG4kp59WM5P7kZfusMe
+         A85X/g0Ovh+K3Lc6CIQRqh7YEzYalOtBJV8lCGICY8yiyKao1z/ZNof7DBDoAMhGqC
+         NMJuQ8tYKJOL2B+YL8xLCD6UymylG/tMCmMnVtJfe8XnkJ43QY6VqgIXXWOfn3WdxY
+         0vy0e/g2o9uYQ==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Evgeny Novikov <novikov@ispras.ru>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-tegra@vger.kernel.org,
-        linux-media@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.14 110/252] media: tegra-cec: Handle errors of clk_prepare_enable()
-Date:   Thu,  9 Sep 2021 07:38:44 -0400
-Message-Id: <20210909114106.141462-110-sashal@kernel.org>
+Cc:     Dmitry Osipenko <digetx@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-spi@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.14 133/252] spi: tegra20-slink: Improve runtime PM usage
+Date:   Thu,  9 Sep 2021 07:39:07 -0400
+Message-Id: <20210909114106.141462-133-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210909114106.141462-1-sashal@kernel.org>
 References: <20210909114106.141462-1-sashal@kernel.org>
@@ -52,50 +51,166 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Evgeny Novikov <novikov@ispras.ru>
+From: Dmitry Osipenko <digetx@gmail.com>
 
-[ Upstream commit 38367073c796a37a61549b1f66a71b3adb03802d ]
+[ Upstream commit e4bb903fda0e9bbafa1338dcd2ee5e4d3ccc50da ]
 
-tegra_cec_probe() and tegra_cec_resume() ignored possible errors of
-clk_prepare_enable(). The patch fixes this.
+The Tegra SPI driver supports runtime PM, which controls the clock
+enable state, but the clk is also enabled separately from the RPM
+at the driver probe time, and thus, stays always on. Fix it.
 
-Found by Linux Driver Verification project (linuxtesting.org).
+Runtime PM now is always available on Tegra, hence there is no need to
+check the RPM presence in the driver anymore. Remove these checks.
 
-Signed-off-by: Evgeny Novikov <novikov@ispras.ru>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Link: https://lore.kernel.org/r/20210731192731.5869-1-digetx@gmail.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/cec/platform/tegra/tegra_cec.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ drivers/spi/spi-tegra20-slink.c | 73 +++++++++++----------------------
+ 1 file changed, 25 insertions(+), 48 deletions(-)
 
-diff --git a/drivers/media/cec/platform/tegra/tegra_cec.c b/drivers/media/cec/platform/tegra/tegra_cec.c
-index 1ac0c70a5981..5e907395ca2e 100644
---- a/drivers/media/cec/platform/tegra/tegra_cec.c
-+++ b/drivers/media/cec/platform/tegra/tegra_cec.c
-@@ -366,7 +366,11 @@ static int tegra_cec_probe(struct platform_device *pdev)
- 		return -ENOENT;
+diff --git a/drivers/spi/spi-tegra20-slink.c b/drivers/spi/spi-tegra20-slink.c
+index 6a726c95ac7a..501eca1d0f89 100644
+--- a/drivers/spi/spi-tegra20-slink.c
++++ b/drivers/spi/spi-tegra20-slink.c
+@@ -1061,33 +1061,12 @@ static int tegra_slink_probe(struct platform_device *pdev)
+ 		dev_err(&pdev->dev, "Can not get clock %d\n", ret);
+ 		goto exit_free_master;
+ 	}
+-	ret = clk_prepare(tspi->clk);
+-	if (ret < 0) {
+-		dev_err(&pdev->dev, "Clock prepare failed %d\n", ret);
+-		goto exit_free_master;
+-	}
+-	ret = clk_enable(tspi->clk);
+-	if (ret < 0) {
+-		dev_err(&pdev->dev, "Clock enable failed %d\n", ret);
+-		goto exit_clk_unprepare;
+-	}
+-
+-	spi_irq = platform_get_irq(pdev, 0);
+-	tspi->irq = spi_irq;
+-	ret = request_threaded_irq(tspi->irq, tegra_slink_isr,
+-			tegra_slink_isr_thread, IRQF_ONESHOT,
+-			dev_name(&pdev->dev), tspi);
+-	if (ret < 0) {
+-		dev_err(&pdev->dev, "Failed to register ISR for IRQ %d\n",
+-					tspi->irq);
+-		goto exit_clk_disable;
+-	}
+ 
+ 	tspi->rst = devm_reset_control_get_exclusive(&pdev->dev, "spi");
+ 	if (IS_ERR(tspi->rst)) {
+ 		dev_err(&pdev->dev, "can not get reset\n");
+ 		ret = PTR_ERR(tspi->rst);
+-		goto exit_free_irq;
++		goto exit_free_master;
  	}
  
--	clk_prepare_enable(cec->clk);
-+	ret = clk_prepare_enable(cec->clk);
-+	if (ret) {
-+		dev_err(&pdev->dev, "Unable to prepare clock for CEC\n");
-+		return ret;
-+	}
+ 	tspi->max_buf_size = SLINK_FIFO_DEPTH << 2;
+@@ -1095,7 +1074,7 @@ static int tegra_slink_probe(struct platform_device *pdev)
  
- 	/* set context info. */
- 	cec->dev = &pdev->dev;
-@@ -446,9 +450,7 @@ static int tegra_cec_resume(struct platform_device *pdev)
+ 	ret = tegra_slink_init_dma_param(tspi, true);
+ 	if (ret < 0)
+-		goto exit_free_irq;
++		goto exit_free_master;
+ 	ret = tegra_slink_init_dma_param(tspi, false);
+ 	if (ret < 0)
+ 		goto exit_rx_dma_free;
+@@ -1106,16 +1085,9 @@ static int tegra_slink_probe(struct platform_device *pdev)
+ 	init_completion(&tspi->xfer_completion);
  
- 	dev_notice(&pdev->dev, "Resuming\n");
- 
--	clk_prepare_enable(cec->clk);
+ 	pm_runtime_enable(&pdev->dev);
+-	if (!pm_runtime_enabled(&pdev->dev)) {
+-		ret = tegra_slink_runtime_resume(&pdev->dev);
+-		if (ret)
+-			goto exit_pm_disable;
+-	}
 -
--	return 0;
-+	return clk_prepare_enable(cec->clk);
+-	ret = pm_runtime_get_sync(&pdev->dev);
+-	if (ret < 0) {
++	ret = pm_runtime_resume_and_get(&pdev->dev);
++	if (ret) {
+ 		dev_err(&pdev->dev, "pm runtime get failed, e = %d\n", ret);
+-		pm_runtime_put_noidle(&pdev->dev);
+ 		goto exit_pm_disable;
+ 	}
+ 
+@@ -1123,33 +1095,43 @@ static int tegra_slink_probe(struct platform_device *pdev)
+ 	udelay(2);
+ 	reset_control_deassert(tspi->rst);
+ 
++	spi_irq = platform_get_irq(pdev, 0);
++	tspi->irq = spi_irq;
++	ret = request_threaded_irq(tspi->irq, tegra_slink_isr,
++				   tegra_slink_isr_thread, IRQF_ONESHOT,
++				   dev_name(&pdev->dev), tspi);
++	if (ret < 0) {
++		dev_err(&pdev->dev, "Failed to register ISR for IRQ %d\n",
++			tspi->irq);
++		goto exit_pm_put;
++	}
++
+ 	tspi->def_command_reg  = SLINK_M_S;
+ 	tspi->def_command2_reg = SLINK_CS_ACTIVE_BETWEEN;
+ 	tegra_slink_writel(tspi, tspi->def_command_reg, SLINK_COMMAND);
+ 	tegra_slink_writel(tspi, tspi->def_command2_reg, SLINK_COMMAND2);
+-	pm_runtime_put(&pdev->dev);
+ 
+ 	master->dev.of_node = pdev->dev.of_node;
+ 	ret = devm_spi_register_master(&pdev->dev, master);
+ 	if (ret < 0) {
+ 		dev_err(&pdev->dev, "can not register to master err %d\n", ret);
+-		goto exit_pm_disable;
++		goto exit_free_irq;
+ 	}
++
++	pm_runtime_put(&pdev->dev);
++
+ 	return ret;
+ 
++exit_free_irq:
++	free_irq(spi_irq, tspi);
++exit_pm_put:
++	pm_runtime_put(&pdev->dev);
+ exit_pm_disable:
+ 	pm_runtime_disable(&pdev->dev);
+-	if (!pm_runtime_status_suspended(&pdev->dev))
+-		tegra_slink_runtime_suspend(&pdev->dev);
++
+ 	tegra_slink_deinit_dma_param(tspi, false);
+ exit_rx_dma_free:
+ 	tegra_slink_deinit_dma_param(tspi, true);
+-exit_free_irq:
+-	free_irq(spi_irq, tspi);
+-exit_clk_disable:
+-	clk_disable(tspi->clk);
+-exit_clk_unprepare:
+-	clk_unprepare(tspi->clk);
+ exit_free_master:
+ 	spi_master_put(master);
+ 	return ret;
+@@ -1162,8 +1144,7 @@ static int tegra_slink_remove(struct platform_device *pdev)
+ 
+ 	free_irq(tspi->irq, tspi);
+ 
+-	clk_disable(tspi->clk);
+-	clk_unprepare(tspi->clk);
++	pm_runtime_disable(&pdev->dev);
+ 
+ 	if (tspi->tx_dma_chan)
+ 		tegra_slink_deinit_dma_param(tspi, false);
+@@ -1171,10 +1152,6 @@ static int tegra_slink_remove(struct platform_device *pdev)
+ 	if (tspi->rx_dma_chan)
+ 		tegra_slink_deinit_dma_param(tspi, true);
+ 
+-	pm_runtime_disable(&pdev->dev);
+-	if (!pm_runtime_status_suspended(&pdev->dev))
+-		tegra_slink_runtime_suspend(&pdev->dev);
+-
+ 	return 0;
  }
- #endif
  
 -- 
 2.30.2
