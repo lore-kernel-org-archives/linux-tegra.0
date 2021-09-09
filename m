@@ -5,44 +5,44 @@ X-Spam-Level:
 X-Spam-Status: No, score=-19.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B18BC433F5
-	for <linux-tegra@archiver.kernel.org>; Thu,  9 Sep 2021 13:35:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1DFDC433F5
+	for <linux-tegra@archiver.kernel.org>; Thu,  9 Sep 2021 13:40:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 56A80611CE
-	for <linux-tegra@archiver.kernel.org>; Thu,  9 Sep 2021 13:35:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B51F161207
+	for <linux-tegra@archiver.kernel.org>; Thu,  9 Sep 2021 13:40:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353147AbhIINgx (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 9 Sep 2021 09:36:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57774 "EHLO mail.kernel.org"
+        id S1354135AbhIINlK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 9 Sep 2021 09:41:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42404 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1354412AbhIIM47 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 9 Sep 2021 08:56:59 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id E768F63258;
-        Thu,  9 Sep 2021 11:58:24 +0000 (UTC)
+        id S245686AbhIIMrh (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 9 Sep 2021 08:47:37 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id BD139613DA;
+        Thu,  9 Sep 2021 11:56:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1631188705;
+        s=k20201202; t=1631188590;
         bh=QkUSZWF79udlGYXr1PSAkxMxyJa+bYoV6bXDGcox3SE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nWvDEuCLVjlbMN+BKsAtrDAWLHe584WaGS8miKUuOe9180FxeGjh0wPCR3nmUg1nz
-         QpKFWuTH/T7TiXAaTTR3Npn276EXOlPle/aFw3gEyo+w8qTPDg7QNhELLBRRI3x2nv
-         YXGWagUPAjFPgG1HPxrTFsFc9TvsFBOn+jaRQitC0JoxOjizUuvTXt9ebxWe12WnSd
-         IDxdATg2WKrUfNGhtjGHQLkzC8NGzRt37PTPQKbdrriWYj8EojvGmsjpLGeNPddsdj
-         gIhyS4okpiWJ3Y4vwXj21EgpGQMl5LhLEL4gc838Zi3c6dQzgKF8NQ7HG15KH1ro4Q
-         l/LGbIplbfwNw==
+        b=X9Rq3CU67Jf61H2PZJ0L+xnidgcyCDCpUwTGCkEMLjV80Cb8IInLkV93bieX02vSd
+         cNL2bpdnCZyQicgd0S3bvDzT+B9ChhYbJlRei5xIxJ+wTkMn0ov9iXVB4E0r54BzQ+
+         DEMCZBFodAzPQezwkurVeaHEvKLs4qaGGSvxpT5YUYudndAnijq4xtiXKQVKguwfVi
+         I3YnHe/+f8uikQ2QGTQxd/dG1TLWNuMj0wcc6Oc0vt4zlaTVyNjAWbhx4C8Em0eBac
+         xxmlSKMoYXK58VUm+o/ddAwQx1jqvyvXMA2C2YszLTGwPHCWUaXFxXhLOfQSH7o2Ny
+         mxrQMUYvfAs4w==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Andreas Obergschwandtner <andreas.obergschwandtner@gmail.com>,
         Thierry Reding <treding@nvidia.com>,
         Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org,
         linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 47/74] ARM: tegra: tamonten: Fix UART pad setting
-Date:   Thu,  9 Sep 2021 07:56:59 -0400
-Message-Id: <20210909115726.149004-47-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.4 065/109] ARM: tegra: tamonten: Fix UART pad setting
+Date:   Thu,  9 Sep 2021 07:54:22 -0400
+Message-Id: <20210909115507.147917-65-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210909115726.149004-1-sashal@kernel.org>
-References: <20210909115726.149004-1-sashal@kernel.org>
+In-Reply-To: <20210909115507.147917-1-sashal@kernel.org>
+References: <20210909115507.147917-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
