@@ -2,201 +2,284 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-11.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94C0AC433F5
-	for <linux-tegra@archiver.kernel.org>; Wed,  8 Sep 2021 16:45:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5AD8C433F5
+	for <linux-tegra@archiver.kernel.org>; Thu,  9 Sep 2021 00:24:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7AB34610C8
-	for <linux-tegra@archiver.kernel.org>; Wed,  8 Sep 2021 16:45:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CBEAD610F8
+	for <linux-tegra@archiver.kernel.org>; Thu,  9 Sep 2021 00:24:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349995AbhIHQqS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 8 Sep 2021 12:46:18 -0400
-Received: from mail-dm3nam07on2076.outbound.protection.outlook.com ([40.107.95.76]:42240
-        "EHLO NAM02-DM3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1346619AbhIHQqS (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 8 Sep 2021 12:46:18 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=b3ItZzFYmX4VT85nfbCalrc2gRALSAZ8D0vSMMR/O93iGCcbKoagzJqKpHAlM0mjwumlcsS/HIz30VkuINTAAW1NSxDgRN8D2ktV3jkCoVhur32zuerxCGt31Ia5dzgR2W4M6Pdq8sXgrryNAteHMwqZALDYyj3lDaIVSB63R/b+q559UfgCnUQ3JqxIERKyOa+2sw/8XHZs9uriVH5OqSq89US4RA38cd5sIhDbRsSE8a5JFa2GJViIpq+ARdSCE7JUtfALPJjZfLCcw59OOg5RpOxOrOM0AA312OiOKm/o2qCUXKX84tHl35gqg7H/j30k1r/YFGRJQzuTeWNa1Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901; h=From:Date:Subject:Message-ID:Content-Type:MIME-Version;
- bh=YbAkEjjHE97kyI38nYY/30bFY28bUsuVbbSkTq+HNc0=;
- b=kzrAMzoUvWMkUpdVS4ESEd+gpPww+RmohpEodfxBK5dN5wXtWxmT7eHC8pjNLLGT2NgNO9fiBJ/pP8Af+a94/q4CIAT/ilHRD2jdQWKFw/wB2cFefkesrzHSS8VIR6CfXds/Oibi4alUWgT0GHM1NckxDaIoP5RmhK/GNhk+o35AE3hyUszkhAWUMrIn1jdQBKyLLqDVQXbi5rZoUpMW05LVvaxWr1pkAO8eQUWjTBbb6S+oiaKgwABmUBwyiIqd4pssAezhXxFvIgq5lK02cd//ft/GI8wqKPWp/uW+Iwc88OvCwF/BIGCampufDB7X9Vew0HPL/GKXTQl4SHuLKQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.112.32) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YbAkEjjHE97kyI38nYY/30bFY28bUsuVbbSkTq+HNc0=;
- b=oWFaNnZks4WHlKoJD6BmxpEHhirCkatP+KlMQZiT8ewhz5XIM30/Rk9J3SBt3Ix+IRh8wko5bwMSi9m/vXnQPaGjfDSXW3+bG/xGuBFYc5OZFLPg+eXu8sDvNLJ7YFDvyxX7mSlR1uclX7++uWWAiJIFI0HiwDntOFGSGblMLacqwJazl+A0VJWbSJJosjqeNFPm3E6YkCNB+An5F6F3DpdBbmuvYfikJvM6nvZxMv+YzjxzrLf5PO4J8Zyfc5v1zVTvVf3Z+ZHS24WJX8RFKYTNZ/ek03dbgonETHya7SRgIYS2Bdr+epg7pSSh9pw/eYDazMwd3H2C+5sqTGXxMw==
-Received: from BN6PR11CA0005.namprd11.prod.outlook.com (2603:10b6:405:2::15)
- by MN2PR12MB3360.namprd12.prod.outlook.com (2603:10b6:208:c7::30) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4478.19; Wed, 8 Sep
- 2021 16:45:08 +0000
-Received: from BN8NAM11FT065.eop-nam11.prod.protection.outlook.com
- (2603:10b6:405:2:cafe::b1) by BN6PR11CA0005.outlook.office365.com
- (2603:10b6:405:2::15) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4500.14 via Frontend
- Transport; Wed, 8 Sep 2021 16:45:08 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.32)
- smtp.mailfrom=nvidia.com; kernel.org; dkim=none (message not signed)
- header.d=none;kernel.org; dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.112.32 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.112.32; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (216.228.112.32) by
- BN8NAM11FT065.mail.protection.outlook.com (10.13.177.63) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.4500.14 via Frontend Transport; Wed, 8 Sep 2021 16:45:08 +0000
-Received: from DRHQMAIL107.nvidia.com (10.27.9.16) by HQMAIL109.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Wed, 8 Sep
- 2021 09:45:07 -0700
-Received: from [10.26.49.12] (172.20.187.5) by DRHQMAIL107.nvidia.com
- (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Wed, 8 Sep
- 2021 16:45:04 +0000
-Subject: Re: [PATCH v4 4/4] arm64: tegra: Add GPCDMA node for tegra186 and
- tegra194
-To:     Akhil R <akhilrajeev@nvidia.com>
-CC:     <dan.j.williams@intel.com>, <dmaengine@vger.kernel.org>,
-        <kyarlagadda@nvidia.com>, <ldewangan@nvidia.com>,
-        <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <p.zabel@pengutronix.de>, <rgumasta@nvidia.com>,
-        <thierry.reding@gmail.com>, <vkoul@kernel.org>
-References: <1630044294-21169-1-git-send-email-akhilrajeev@nvidia.com>
- <1631111538-31467-1-git-send-email-akhilrajeev@nvidia.com>
- <1631111538-31467-5-git-send-email-akhilrajeev@nvidia.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <81fb8278-a01d-c557-5080-6f5115f4682b@nvidia.com>
-Date:   Wed, 8 Sep 2021 17:45:01 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+        id S1348475AbhIIA0B (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 8 Sep 2021 20:26:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53522 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1348278AbhIIA0B (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 8 Sep 2021 20:26:01 -0400
+Received: from mail-pf1-x42f.google.com (mail-pf1-x42f.google.com [IPv6:2607:f8b0:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4B69C061575
+        for <linux-tegra@vger.kernel.org>; Wed,  8 Sep 2021 17:24:52 -0700 (PDT)
+Received: by mail-pf1-x42f.google.com with SMTP id x7so187698pfa.8
+        for <linux-tegra@vger.kernel.org>; Wed, 08 Sep 2021 17:24:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=5TYYBxc50K8ZMZBZ7awprT/bOkKTiGesfrb7WFjJZ+A=;
+        b=KCg85QMP/OVnq6/fqe2waVZlGw1gFTsTbflgSC3G8O1iDp1IJHUm3MOwpZoQjxxDR7
+         Atw25rhjAEpmxxhj1rRyXedydjURMxf4JnVSadGKtWgcyetFjVG75upvVHgaoqHaOe7Q
+         i7ClThKtbyUxOILSABwytp3A6HENqxe+XgPEA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5TYYBxc50K8ZMZBZ7awprT/bOkKTiGesfrb7WFjJZ+A=;
+        b=B9CxCkwzaTAtvDvdLVDjT7bR4Vzi0UbYRTRVsSWMlOGEtEupzBhDB23vH+kWIwImAV
+         zHE0mvbb1HyYWgQeejxBc3LyCbZuKUawYeqUhqTmdGKwGyW1FqcNGhrS8llsTE/MFLkJ
+         rgp9UDLlJkA3nxAyKBvWUzNMjSnFSZUhmPEWTAxBqAt1H+YED5O8Qkn4ZnsfdNSUyjQs
+         JiMWq3aMrXcZaRgHEbn3hIocfzgnoMDLnvE+rkYv1ewUcZJRWAoxA6vp1dlcxPWqmeYi
+         dl30dwkCxAhooNWZ0k+3QprYaAN06xJGZwof6TRkpU/YCRdaHT4lUiqFwNU15pK3TYWr
+         N/Ig==
+X-Gm-Message-State: AOAM5306zbmysrzV9Uv1dCZvfm0BncEGHRzeCpTPF7GcqxkmETbG1LEI
+        EuUOBlohBKNNgfFGyRqT+uKC/CI0bS/mjA==
+X-Google-Smtp-Source: ABdhPJz0G5hTLtW4hIPpzLfyILLl8keJCY7bzCC9mOc6CZhX6WUs7+4Yo9DIMPJSBUTlBWYVtii0ng==
+X-Received: by 2002:a62:920b:0:b0:3ec:7912:82be with SMTP id o11-20020a62920b000000b003ec791282bemr377178pfd.34.1631147091706;
+        Wed, 08 Sep 2021 17:24:51 -0700 (PDT)
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com. [209.85.210.175])
+        by smtp.gmail.com with ESMTPSA id y5sm98245pgs.27.2021.09.08.17.24.50
+        for <linux-tegra@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 08 Sep 2021 17:24:50 -0700 (PDT)
+Received: by mail-pf1-f175.google.com with SMTP id x19so195885pfu.4
+        for <linux-tegra@vger.kernel.org>; Wed, 08 Sep 2021 17:24:50 -0700 (PDT)
+X-Received: by 2002:a05:6e02:214e:: with SMTP id d14mr150446ilv.142.1631147079713;
+ Wed, 08 Sep 2021 17:24:39 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1631111538-31467-5-git-send-email-akhilrajeev@nvidia.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [172.20.187.5]
-X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
- DRHQMAIL107.nvidia.com (10.27.9.16)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: d7237c22-ccf4-4820-5afa-08d972e80472
-X-MS-TrafficTypeDiagnostic: MN2PR12MB3360:
-X-Microsoft-Antispam-PRVS: <MN2PR12MB3360FCE820F0F82A902A9B07D9D49@MN2PR12MB3360.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:4125;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: CGK7HZCsUyz25sjN728+C3crSHIelVgg7547zxYQC8x/O3AT49N6fgHLhfSL45L+HmXukqkOmdm+lQvsSatt5zhc9ZCJNauGxYKQ8DMSvmNSGL4WvTSnTP1w30kJAnZbOor81AuVmKnKR0IcHA3uW027Jsg1/4uDP94yzGQDHgh8rNSZfexHyQG4oq2BmxG1UPBqjwWQZwlSOuphqaJH1DQm7zMpGDbPaQc9LQ/BNZ+yy66j+dPYeoYjraWC7L9tbmycuNpgDzIz0X1VDA4j5XjBqCkAZuPGcYWAqUXQidN0j3ZCdJxp+ZpFl5TiYnVMPhckzexidhUJ2+2QaBHcLm2/gwdEgMIYwm6krO82vdVxvSEw/p7WtrwxuU7Cztl02+CJDXK0qhMKXb/D0zR+DiE78oXnb3nJFORWi3sjlOnXLdrjRq5/PGFDb8WbfEVXSi9UIEsCftGj3Eh6dOQ0DXAFAFDNNyMND06suQpgvs5Qic4eKr07veXa+ptl9p/t0U2ESKfL9BT5A+OkYvzW6pfydPkS3CkluDBYSeV6qLOH/x+a+yrNNqxRvF2+BsSKU96IHPAEe5DsemMalVnydRGyAvrJfcEFXYwH6JzVaBBf+ZyjJUuEODwLAqbypAhZs2D4PNSyv94tg+3ghQcuGQydda9sShk+9GpviOvUBVP3WpTuIR+452Gg7QS0BFmsvxsp1HA/SNVeD4f9M3YL9gtFQF9hQZ2YNdbuUY0yxlw=
-X-Forefront-Antispam-Report: CIP:216.228.112.32;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid01.nvidia.com;CAT:NONE;SFS:(4636009)(46966006)(36840700001)(5660300002)(31696002)(508600001)(2906002)(86362001)(36860700001)(26005)(6666004)(8676002)(4326008)(54906003)(316002)(83380400001)(336012)(70206006)(16576012)(6636002)(37006003)(82310400003)(70586007)(8936002)(186003)(6862004)(47076005)(2616005)(426003)(31686004)(36756003)(53546011)(356005)(16526019)(7636003)(43740500002);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Sep 2021 16:45:08.0619
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d7237c22-ccf4-4820-5afa-08d972e80472
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.32];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT065.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB3360
+References: <20210901201934.1084250-1-dianders@chromium.org> <YTUSiHiCgihz1AcO@ravnborg.org>
+In-Reply-To: <YTUSiHiCgihz1AcO@ravnborg.org>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Wed, 8 Sep 2021 17:24:28 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=U+dnyuGc9OuvMJpYWVx1x6yYQPJgi6fh+6Ne37+veedw@mail.gmail.com>
+Message-ID: <CAD=FV=U+dnyuGc9OuvMJpYWVx1x6yYQPJgi6fh+6Ne37+veedw@mail.gmail.com>
+Subject: Re: [PATCH v3 00/16] eDP: Support probing eDP panels dynamically
+ instead of hardcoding
+To:     Sam Ravnborg <sam@ravnborg.org>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Linus W <linus.walleij@linaro.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, Steev Klimaszewski <steev@kali.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Maxime Ripard <mripard@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Andreas Kemnade <andreas@kemnade.info>,
+        Andrey Zhizhikin <andrey.zhizhikin@leica-geosystems.com>,
+        Anson Huang <Anson.Huang@nxp.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
+        Corentin Labbe <clabbe@baylibre.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Emil Velikov <emil.velikov@collabora.com>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Eugen Hristev <eugen.hristev@microchip.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Fabrice Gasnier <fabrice.gasnier@st.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        =?UTF-8?Q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Kees Cook <keescook@chromium.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Lionel Debieve <lionel.debieve@st.com>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        =?UTF-8?Q?Martin_J=C3=BCcker?= <martin.juecker@gmail.com>,
+        Michael Walle <michael@walle.cc>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Nishanth Menon <nm@ti.com>,
+        Olivier Moysan <olivier.moysan@st.com>,
+        Olof Johansson <olof@lixom.net>,
+        Otavio Salvador <otavio@ossystems.com.br>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Razvan Stefanescu <razvan.stefanescu@microchip.com>,
+        Robert Richter <rric@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Tony Lindgren <tony@atomide.com>,
+        Tudor Ambarus <tudor.ambarus@microchip.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Will Deacon <will@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-mips <linux-mips@vger.kernel.org>,
+        linux-omap <linux-omap@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        linux-sunxi@lists.linux.dev,
+        "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
+        =?UTF-8?Q?=C5=81ukasz_Stelmach?= <l.stelmach@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+Hi,
 
-On 08/09/2021 15:32, Akhil R wrote:
-> Add device tree node for GPCDMA controller on Tegra186 target
-> and Tegra194 target.
-> 
-> Signed-off-by: Rajesh Gumasta <rgumasta@nvidia.com>
-> Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
-> ---
->   arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi |  4 +++
->   arch/arm64/boot/dts/nvidia/tegra186.dtsi       | 46 ++++++++++++++++++++++++++
->   arch/arm64/boot/dts/nvidia/tegra194.dtsi       | 46 ++++++++++++++++++++++++++
->   3 files changed, 96 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi b/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
-> index fcd71bf..71dd10e 100644
-> --- a/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
-> +++ b/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
-> @@ -56,6 +56,10 @@
->   		};
->   	};
->   
-> +	dma@2600000 {
-> +		status = "okay";
-> +	};
-> +
->   	memory-controller@2c00000 {
->   		status = "okay";
->   	};
-> diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-> index d02f6bf..f68291c 100644
-> --- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-> +++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-> @@ -73,6 +73,52 @@
->   		snps,rxpbl = <8>;
->   	};
->   
-> +	gpcdma: dma@2600000 {
-> +			compatible = "nvidia,tegra186-gpcdma";
-> +			reg = <0x2600000 0x210000>;
-> +			resets = <&bpmp TEGRA186_RESET_GPCDMA>;
-> +			reset-names = "gpcdma";
-> +			interrupts = <GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 76 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 79 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 81 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 82 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 83 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 89 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 90 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 91 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 92 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 93 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 94 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 95 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 96 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 99 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 101 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 102 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>,
-> +				      <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
-> +			#dma-cells = <1>;
-> +			iommus = <&smmu TEGRA186_SID_GPCDMA_0>;
-> +			dma-coherent;
-> +			nvidia,start-dma-channel-index = <1>;
-> +			dma-channels = <31>;
-> +			status = "disabled";
+On Sun, Sep 5, 2021 at 11:55 AM Sam Ravnborg <sam@ravnborg.org> wrote:
+>
+> Hi Douglas,
+>
+> On Wed, Sep 01, 2021 at 01:19:18PM -0700, Douglas Anderson wrote:
+> > The goal of this patch series is to move away from hardcoding exact
+> > eDP panels in device tree files. As discussed in the various patches
+> > in this series (I'm not repeating everything here), most eDP panels
+> > are 99% probable and we can get that last 1% by allowing two "power
+> > up" delays to be specified in the device tree file and then using the
+> > panel ID (found in the EDID) to look up additional power sequencing
+> > delays for the panel.
+> >
+> > This patch series is the logical contiunation of a previous patch
+> > series where I proposed solving this problem by adding a
+> > board-specific compatible string [1]. In the discussion that followed
+> > it sounded like people were open to something like the solution
+> > proposed in this new series.
+> >
+> > In version 2 I got rid of the idea that we could have a "fallback"
+> > compatible string that we'd use if we didn't recognize the ID in the
+> > EDID. This simplifies the bindings a lot and the implementation
+> > somewhat. As a result of not having a "fallback", though, I'm not
+> > confident in transitioning any existing boards over to this since
+> > we'll have to fallback to very conservative timings if we don't
+> > recognize the ID from the EDID and I can't guarantee that I've seen
+> > every panel that might have shipped on an existing product. The plan
+> > is to use "edp-panel" only on new boards or new revisions of old
+> > boards where we can guarantee that every EDID that ships out of the
+> > factory has an ID in the table.
+> >
+> > Version 3 of this series now splits out all eDP panels to their own
+> > driver and adds the generic eDP panel support to this new driver. I
+> > believe this is what Sam was looking for [2].
+> >
+> > [1] https://lore.kernel.org/r/YFKQaXOmOwYyeqvM@google.com/
+> > [2] https://lore.kernel.org/r/YRTsFNTn%2FT8fLxyB@ravnborg.org/
+> >
+> > Changes in v3:
+> > - Decode hex product ID w/ same endianness as everyone else.
+> > - ("Reorder logicpd_type_28...") patch new for v3.
+> > - Split eDP panels patch new for v3.
+> > - Move wayward panels patch new for v3.
+> > - ("Non-eDP panels don't need "HPD" handling") new for v3.
+> > - Split the delay structure out patch just on eDP now.
+> > - ("Better describe eDP panel delays") new for v3.
+> > - Fix "prepare_to_enable" patch new for v3.
+> > - ("Don't re-read the EDID every time") moved to eDP only patch.
+> > - Generic "edp-panel" handled by the eDP panel driver now.
+> > - Change init order to we power at the end.
+> > - Adjust endianness of product ID.
+> > - Fallback to conservative delays if panel not recognized.
+> > - Add Sharp LQ116M1JW10 to table.
+> > - Add AUO B116XAN06.1 to table.
+> > - Rename delays more generically so they can be reused.
+> >
+> > Changes in v2:
+> > - No longer allow fallback to panel-simple.
+> > - Add "-ms" suffix to delays.
+> > - Don't support a "fallback" panel. Probed panels must be probed.
+> > - Not based on patch to copy "desc"--just allocate for probed panels.
+> > - Add "-ms" suffix to delays.
+> >
+> > Douglas Anderson (16):
+> >   dt-bindings: drm/panel-simple-edp: Introduce generic eDP panels
+> >   drm/edid: Break out reading block 0 of the EDID
+> >   drm/edid: Allow the querying/working with the panel ID from the EDID
+> >   drm/panel-simple: Reorder logicpd_type_28 / mitsubishi_aa070mc01
+> >   drm/panel-simple-edp: Split eDP panels out of panel-simple
+> >   ARM: configs: Everyone who had PANEL_SIMPLE now gets PANEL_SIMPLE_EDP
+> >   arm64: defconfig: Everyone who had PANEL_SIMPLE now gets
+> >     PANEL_SIMPLE_EDP
+> >   MIPS: configs: Everyone who had PANEL_SIMPLE now gets PANEL_SIMPLE_EDP
+> >   drm/panel-simple-edp: Move some wayward panels to the eDP driver
+> >   drm/panel-simple: Non-eDP panels don't need "HPD" handling
+> >   drm/panel-simple-edp: Split the delay structure out
+> >   drm/panel-simple-edp: Better describe eDP panel delays
+> >   drm/panel-simple-edp: hpd_reliable shouldn't be subtraced from
+> >     hpd_absent
+> >   drm/panel-simple-edp: Fix "prepare_to_enable" if panel doesn't handle
+> >     HPD
+> >   drm/panel-simple-edp: Don't re-read the EDID every time we power off
+> >     the panel
+> >   drm/panel-simple-edp: Implement generic "edp-panel"s probed by EDID
+>
+> Thanks for looking into this. I really like the outcome.
+> We have panel-simple that now (mostly) handle simple panels,
+> and thus all the eDP functionality is in a separate driver.
+>
+> I have provided a few nits.
+> My only take on this is the naming - as we do not want to confuse
+> panel-simple and panel-edp I strongly suggest renaming the driver to
+> panel-edp.
+
+Sure, I'll do that. I was trying to express the fact that the new
+"panel-edp" driver won't actually handle _all_ eDP panels, only the
+eDP panels that are (comparatively) simpler. For instance, I'm not
+planning to handle panel-samsung-atna33xc20.c in "panel-edp". I guess
+people will figure it out, though.
 
 
-Looks like the comments from the previous version are not addressed in 
-this version.
+> And then rename the corresponding Kconfig entry.
+>
+> With these few changes all patches are:
+> Acked-by: Sam Ravnborg <sam@ravnborg.org>
 
-Jon
+Thanks, I'll add it to the patches. If there's anything major I need
+to change I'll give you a yell to make sure you see it.
 
--- 
-nvpublic
+
+> For bisectability I suggest to move the defconfig patches up before you
+> introduce the new Kconfig symbol. Or maybe they will be added via
+> another tree and then this is not possible to control
+
+Yup, I'll do that. There was some question about the defconfig patch
+but they are hopefully cleared up now.
+
+
+> I assume you will apply the patches yourself.
+
+Sure, I can do that with your Ack. I'll also make sure that patches
+that Jani commented on get resolved.
+
+
+-Doug
