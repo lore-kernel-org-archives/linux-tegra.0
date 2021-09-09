@@ -4,42 +4,41 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-19.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E132CC43217
-	for <linux-tegra@archiver.kernel.org>; Thu,  9 Sep 2021 11:51:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4066CC433F5
+	for <linux-tegra@archiver.kernel.org>; Thu,  9 Sep 2021 11:54:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CEC1A61AFE
-	for <linux-tegra@archiver.kernel.org>; Thu,  9 Sep 2021 11:51:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 29F8061BD1
+	for <linux-tegra@archiver.kernel.org>; Thu,  9 Sep 2021 11:54:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242927AbhIILw5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 9 Sep 2021 07:52:57 -0400
+        id S242520AbhIILzo (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 9 Sep 2021 07:55:44 -0400
 Received: from mail.kernel.org ([198.145.29.99]:55048 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S240935AbhIILux (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 9 Sep 2021 07:50:53 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 025E461269;
-        Thu,  9 Sep 2021 11:43:57 +0000 (UTC)
+        id S242885AbhIILwx (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 9 Sep 2021 07:52:53 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id AFD5E61284;
+        Thu,  9 Sep 2021 11:44:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1631187838;
-        bh=e4DRZx/VtfqC41DV1FiYS0p26W6OqaMolJo8boE3nZU=;
+        s=k20201202; t=1631187865;
+        bh=coTEE2e2se+Ci9VeyJk1DGFCnuhSlS+Wd/wPEjybggM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=B8GadA162D80QEQ3n6e4wZmwjLNQQM0T8vqn+6bfpGM8baknHcL5M9xQDg2aj7LJW
-         3GzZpIupJCrGfBxae0uQuuzUN/Oc7VLe6KwhUI7xf1vPtZpeh0lDMN1fDguVqtRahz
-         uEwx6r244KlYua4px2dga4T2vLFGnrl3o2p9Gz5JZG0nLqGkG4kp59WM5P7kZfusMe
-         A85X/g0Ovh+K3Lc6CIQRqh7YEzYalOtBJV8lCGICY8yiyKao1z/ZNof7DBDoAMhGqC
-         NMJuQ8tYKJOL2B+YL8xLCD6UymylG/tMCmMnVtJfe8XnkJ43QY6VqgIXXWOfn3WdxY
-         0vy0e/g2o9uYQ==
+        b=NQkBTxu450BAzdrGWaZWFVZSQMC/CjLyNaIImFQ70Yaw0Lr5dcOxjM64BnriM8S/A
+         vpHYKOo6Oociv3W27vOlbVbYtg5kLErnMAwNMbu2PgnKoVpC9pfDB+M09KtbA472Ul
+         8YG/MJwe0gdS6fniwRxaxlzuYG3Uo13o4p9IiG/HlTzJA7R9j3RQC+4x1WT37sqX8d
+         lk8stCBFe9GfcKy7TPP6UZUDPmQVT3Wbh9138OG6lQNADtoZK9JfRPaIoUPagFx8Wo
+         cyI8DsIpVPeCRF2cyXLH4YDjwDf4RsLBQ48+fZDUVHEghthRJgtfvdNbE8jXjCvBpF
+         nEsAmwX2Cv5Jg==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Dmitry Osipenko <digetx@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-spi@vger.kernel.org,
+Cc:     Thierry Reding <treding@nvidia.com>,
+        Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org,
         linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.14 133/252] spi: tegra20-slink: Improve runtime PM usage
-Date:   Thu,  9 Sep 2021 07:39:07 -0400
-Message-Id: <20210909114106.141462-133-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.14 152/252] arm64: tegra: Fix compatible string for Tegra132 CPUs
+Date:   Thu,  9 Sep 2021 07:39:26 -0400
+Message-Id: <20210909114106.141462-152-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210909114106.141462-1-sashal@kernel.org>
 References: <20210909114106.141462-1-sashal@kernel.org>
@@ -51,167 +50,40 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Dmitry Osipenko <digetx@gmail.com>
+From: Thierry Reding <treding@nvidia.com>
 
-[ Upstream commit e4bb903fda0e9bbafa1338dcd2ee5e4d3ccc50da ]
+[ Upstream commit f865d0292ff3c0ca09414436510eb4c815815509 ]
 
-The Tegra SPI driver supports runtime PM, which controls the clock
-enable state, but the clk is also enabled separately from the RPM
-at the driver probe time, and thus, stays always on. Fix it.
+The documented compatible string for the CPUs found on Tegra132 is
+"nvidia,tegra132-denver", rather than the previously used compatible
+string "nvidia,denver".
 
-Runtime PM now is always available on Tegra, hence there is no need to
-check the RPM presence in the driver anymore. Remove these checks.
-
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-Link: https://lore.kernel.org/r/20210731192731.5869-1-digetx@gmail.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/spi/spi-tegra20-slink.c | 73 +++++++++++----------------------
- 1 file changed, 25 insertions(+), 48 deletions(-)
+ arch/arm64/boot/dts/nvidia/tegra132.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/spi/spi-tegra20-slink.c b/drivers/spi/spi-tegra20-slink.c
-index 6a726c95ac7a..501eca1d0f89 100644
---- a/drivers/spi/spi-tegra20-slink.c
-+++ b/drivers/spi/spi-tegra20-slink.c
-@@ -1061,33 +1061,12 @@ static int tegra_slink_probe(struct platform_device *pdev)
- 		dev_err(&pdev->dev, "Can not get clock %d\n", ret);
- 		goto exit_free_master;
- 	}
--	ret = clk_prepare(tspi->clk);
--	if (ret < 0) {
--		dev_err(&pdev->dev, "Clock prepare failed %d\n", ret);
--		goto exit_free_master;
--	}
--	ret = clk_enable(tspi->clk);
--	if (ret < 0) {
--		dev_err(&pdev->dev, "Clock enable failed %d\n", ret);
--		goto exit_clk_unprepare;
--	}
--
--	spi_irq = platform_get_irq(pdev, 0);
--	tspi->irq = spi_irq;
--	ret = request_threaded_irq(tspi->irq, tegra_slink_isr,
--			tegra_slink_isr_thread, IRQF_ONESHOT,
--			dev_name(&pdev->dev), tspi);
--	if (ret < 0) {
--		dev_err(&pdev->dev, "Failed to register ISR for IRQ %d\n",
--					tspi->irq);
--		goto exit_clk_disable;
--	}
+diff --git a/arch/arm64/boot/dts/nvidia/tegra132.dtsi b/arch/arm64/boot/dts/nvidia/tegra132.dtsi
+index 9928a87f593a..b0bcda8cc51f 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra132.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra132.dtsi
+@@ -1227,13 +1227,13 @@ cpus {
  
- 	tspi->rst = devm_reset_control_get_exclusive(&pdev->dev, "spi");
- 	if (IS_ERR(tspi->rst)) {
- 		dev_err(&pdev->dev, "can not get reset\n");
- 		ret = PTR_ERR(tspi->rst);
--		goto exit_free_irq;
-+		goto exit_free_master;
- 	}
+ 		cpu@0 {
+ 			device_type = "cpu";
+-			compatible = "nvidia,denver";
++			compatible = "nvidia,tegra132-denver";
+ 			reg = <0>;
+ 		};
  
- 	tspi->max_buf_size = SLINK_FIFO_DEPTH << 2;
-@@ -1095,7 +1074,7 @@ static int tegra_slink_probe(struct platform_device *pdev)
- 
- 	ret = tegra_slink_init_dma_param(tspi, true);
- 	if (ret < 0)
--		goto exit_free_irq;
-+		goto exit_free_master;
- 	ret = tegra_slink_init_dma_param(tspi, false);
- 	if (ret < 0)
- 		goto exit_rx_dma_free;
-@@ -1106,16 +1085,9 @@ static int tegra_slink_probe(struct platform_device *pdev)
- 	init_completion(&tspi->xfer_completion);
- 
- 	pm_runtime_enable(&pdev->dev);
--	if (!pm_runtime_enabled(&pdev->dev)) {
--		ret = tegra_slink_runtime_resume(&pdev->dev);
--		if (ret)
--			goto exit_pm_disable;
--	}
--
--	ret = pm_runtime_get_sync(&pdev->dev);
--	if (ret < 0) {
-+	ret = pm_runtime_resume_and_get(&pdev->dev);
-+	if (ret) {
- 		dev_err(&pdev->dev, "pm runtime get failed, e = %d\n", ret);
--		pm_runtime_put_noidle(&pdev->dev);
- 		goto exit_pm_disable;
- 	}
- 
-@@ -1123,33 +1095,43 @@ static int tegra_slink_probe(struct platform_device *pdev)
- 	udelay(2);
- 	reset_control_deassert(tspi->rst);
- 
-+	spi_irq = platform_get_irq(pdev, 0);
-+	tspi->irq = spi_irq;
-+	ret = request_threaded_irq(tspi->irq, tegra_slink_isr,
-+				   tegra_slink_isr_thread, IRQF_ONESHOT,
-+				   dev_name(&pdev->dev), tspi);
-+	if (ret < 0) {
-+		dev_err(&pdev->dev, "Failed to register ISR for IRQ %d\n",
-+			tspi->irq);
-+		goto exit_pm_put;
-+	}
-+
- 	tspi->def_command_reg  = SLINK_M_S;
- 	tspi->def_command2_reg = SLINK_CS_ACTIVE_BETWEEN;
- 	tegra_slink_writel(tspi, tspi->def_command_reg, SLINK_COMMAND);
- 	tegra_slink_writel(tspi, tspi->def_command2_reg, SLINK_COMMAND2);
--	pm_runtime_put(&pdev->dev);
- 
- 	master->dev.of_node = pdev->dev.of_node;
- 	ret = devm_spi_register_master(&pdev->dev, master);
- 	if (ret < 0) {
- 		dev_err(&pdev->dev, "can not register to master err %d\n", ret);
--		goto exit_pm_disable;
-+		goto exit_free_irq;
- 	}
-+
-+	pm_runtime_put(&pdev->dev);
-+
- 	return ret;
- 
-+exit_free_irq:
-+	free_irq(spi_irq, tspi);
-+exit_pm_put:
-+	pm_runtime_put(&pdev->dev);
- exit_pm_disable:
- 	pm_runtime_disable(&pdev->dev);
--	if (!pm_runtime_status_suspended(&pdev->dev))
--		tegra_slink_runtime_suspend(&pdev->dev);
-+
- 	tegra_slink_deinit_dma_param(tspi, false);
- exit_rx_dma_free:
- 	tegra_slink_deinit_dma_param(tspi, true);
--exit_free_irq:
--	free_irq(spi_irq, tspi);
--exit_clk_disable:
--	clk_disable(tspi->clk);
--exit_clk_unprepare:
--	clk_unprepare(tspi->clk);
- exit_free_master:
- 	spi_master_put(master);
- 	return ret;
-@@ -1162,8 +1144,7 @@ static int tegra_slink_remove(struct platform_device *pdev)
- 
- 	free_irq(tspi->irq, tspi);
- 
--	clk_disable(tspi->clk);
--	clk_unprepare(tspi->clk);
-+	pm_runtime_disable(&pdev->dev);
- 
- 	if (tspi->tx_dma_chan)
- 		tegra_slink_deinit_dma_param(tspi, false);
-@@ -1171,10 +1152,6 @@ static int tegra_slink_remove(struct platform_device *pdev)
- 	if (tspi->rx_dma_chan)
- 		tegra_slink_deinit_dma_param(tspi, true);
- 
--	pm_runtime_disable(&pdev->dev);
--	if (!pm_runtime_status_suspended(&pdev->dev))
--		tegra_slink_runtime_suspend(&pdev->dev);
--
- 	return 0;
- }
- 
+ 		cpu@1 {
+ 			device_type = "cpu";
+-			compatible = "nvidia,denver";
++			compatible = "nvidia,tegra132-denver";
+ 			reg = <1>;
+ 		};
+ 	};
 -- 
 2.30.2
 
