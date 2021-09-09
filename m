@@ -7,40 +7,38 @@ X-Spam-Status: No, score=-19.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3962C433F5
-	for <linux-tegra@archiver.kernel.org>; Thu,  9 Sep 2021 12:50:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0165CC433EF
+	for <linux-tegra@archiver.kernel.org>; Thu,  9 Sep 2021 12:50:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BD01E604E9
-	for <linux-tegra@archiver.kernel.org>; Thu,  9 Sep 2021 12:50:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DCA5A604E9
+	for <linux-tegra@archiver.kernel.org>; Thu,  9 Sep 2021 12:50:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354850AbhIIMvt (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 9 Sep 2021 08:51:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40848 "EHLO mail.kernel.org"
+        id S1355010AbhIIMvy (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 9 Sep 2021 08:51:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42504 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1353691AbhIIMrF (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 9 Sep 2021 08:47:05 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id AD33563217;
-        Thu,  9 Sep 2021 11:56:13 +0000 (UTC)
+        id S1344941AbhIIMrj (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 9 Sep 2021 08:47:39 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id F379663222;
+        Thu,  9 Sep 2021 11:56:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1631188574;
-        bh=zSV7DOOWFw3nSUmyFh+zYk2R/S1ll/DHgGt+nt/QXng=;
+        s=k20201202; t=1631188591;
+        bh=yxYUSrgywU7Lb2n1z5YWmFZNy3ZpxmtpTFWAF0xA7Bk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=W+mUvfoGqshRSZVZ37KPwz4xf2+3KecnPNwhHQnquMwdT2x/DNIPTYR7vMyOWhpLO
-         Ni33msmQuQadiptEZC8FTIDozTKd2qb2MoEALP0rQpW5ZrYaVgS4RDiyD79JIoyLV8
-         g/y08ubyxtsMPpBk/oI0wbK0A5G7Is4jrRNhaIJ4Xpm14YDqwJHc84rVYRajcNqz/u
-         d6OgDUJTInOmdwUoxCXUUMZ1PXt9XwinuqaR8rDygyKqWnPG7PQhtMRBtLRdrmE59w
-         1lNk2O0WyoshQ+Ci5afVyZO+41kVpxSLp6RPX5F/v0Xmu7O03ss0D+izzx/IrMLnPn
-         rHdmtQa5xuY0Q==
+        b=WhspqtAalEA46XceKpK3nMX7yVzMRKK9BjWmvZl5RD6nh7mPKYfGyo+gogzck9hZt
+         +TZyNFbvc6gRDGXdESHnwsCd8RjDa/nis4cc63waMtHk+OSiXq8P3mOEcJyyE2JlVB
+         ZuAGa651eKv/S0WKFqC0ZmiGtX1eYp84Va+hH03oB3V40MpTVdgM8fmP3G9code8L1
+         jPM8bxWq8yZwBZcLjuRnHKeMIvkIgZGuM8VvHHhKuTm8XBCKheJgxmERgVnD+QCVqx
+         c6q3Dn7YFs1WGD3TRWg3PHh1tWjp4mWhOpByu1sWwbm9G7URP66M0ae/bSkN3DjmwL
+         IIoZj77t7Ar5w==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Evgeny Novikov <novikov@ispras.ru>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org,
+Cc:     Thierry Reding <treding@nvidia.com>,
+        Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org,
         linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 053/109] media: tegra-cec: Handle errors of clk_prepare_enable()
-Date:   Thu,  9 Sep 2021 07:54:10 -0400
-Message-Id: <20210909115507.147917-53-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.4 066/109] arm64: tegra: Fix compatible string for Tegra132 CPUs
+Date:   Thu,  9 Sep 2021 07:54:23 -0400
+Message-Id: <20210909115507.147917-66-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210909115507.147917-1-sashal@kernel.org>
 References: <20210909115507.147917-1-sashal@kernel.org>
@@ -52,51 +50,40 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Evgeny Novikov <novikov@ispras.ru>
+From: Thierry Reding <treding@nvidia.com>
 
-[ Upstream commit 38367073c796a37a61549b1f66a71b3adb03802d ]
+[ Upstream commit f865d0292ff3c0ca09414436510eb4c815815509 ]
 
-tegra_cec_probe() and tegra_cec_resume() ignored possible errors of
-clk_prepare_enable(). The patch fixes this.
+The documented compatible string for the CPUs found on Tegra132 is
+"nvidia,tegra132-denver", rather than the previously used compatible
+string "nvidia,denver".
 
-Found by Linux Driver Verification project (linuxtesting.org).
-
-Signed-off-by: Evgeny Novikov <novikov@ispras.ru>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/platform/tegra-cec/tegra_cec.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ arch/arm64/boot/dts/nvidia/tegra132.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/platform/tegra-cec/tegra_cec.c b/drivers/media/platform/tegra-cec/tegra_cec.c
-index a632602131f2..efb80a78d2fa 100644
---- a/drivers/media/platform/tegra-cec/tegra_cec.c
-+++ b/drivers/media/platform/tegra-cec/tegra_cec.c
-@@ -366,7 +366,11 @@ static int tegra_cec_probe(struct platform_device *pdev)
- 		return -ENOENT;
- 	}
+diff --git a/arch/arm64/boot/dts/nvidia/tegra132.dtsi b/arch/arm64/boot/dts/nvidia/tegra132.dtsi
+index 631a7f77c386..0b3eb8c0b8df 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra132.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra132.dtsi
+@@ -1082,13 +1082,13 @@ cpus {
  
--	clk_prepare_enable(cec->clk);
-+	ret = clk_prepare_enable(cec->clk);
-+	if (ret) {
-+		dev_err(&pdev->dev, "Unable to prepare clock for CEC\n");
-+		return ret;
-+	}
+ 		cpu@0 {
+ 			device_type = "cpu";
+-			compatible = "nvidia,denver";
++			compatible = "nvidia,tegra132-denver";
+ 			reg = <0>;
+ 		};
  
- 	/* set context info. */
- 	cec->dev = &pdev->dev;
-@@ -446,9 +450,7 @@ static int tegra_cec_resume(struct platform_device *pdev)
- 
- 	dev_notice(&pdev->dev, "Resuming\n");
- 
--	clk_prepare_enable(cec->clk);
--
--	return 0;
-+	return clk_prepare_enable(cec->clk);
- }
- #endif
- 
+ 		cpu@1 {
+ 			device_type = "cpu";
+-			compatible = "nvidia,denver";
++			compatible = "nvidia,tegra132-denver";
+ 			reg = <1>;
+ 		};
+ 	};
 -- 
 2.30.2
 
