@@ -2,101 +2,90 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F7A5C433EF
-	for <linux-tegra@archiver.kernel.org>; Thu,  9 Sep 2021 13:40:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AE44C433FE
+	for <linux-tegra@archiver.kernel.org>; Thu,  9 Sep 2021 14:08:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 66E1A611C9
-	for <linux-tegra@archiver.kernel.org>; Thu,  9 Sep 2021 13:40:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 09BBC611AD
+	for <linux-tegra@archiver.kernel.org>; Thu,  9 Sep 2021 14:08:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353070AbhIINlL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 9 Sep 2021 09:41:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59100 "EHLO mail.kernel.org"
+        id S1346662AbhIIOJd (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 9 Sep 2021 10:09:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60816 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1356711AbhIIMzm (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 9 Sep 2021 08:55:42 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id CCE8163259;
-        Thu,  9 Sep 2021 11:58:15 +0000 (UTC)
+        id S1344135AbhIIOJa (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 9 Sep 2021 10:09:30 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id CB87C610CE;
+        Thu,  9 Sep 2021 14:08:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1631188696;
-        bh=bbwQ7qaaek0b1eGHS5zbSzr0sQq1cumGAQxaFHr5mcc=;
+        s=k20201202; t=1631196501;
+        bh=BsTmdX5bO+FmxT3XZKgWd5tSrIJfiR3FHnshKEPMjMU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gduyxzLiaSrhds+fM8KxHIgUBpi4BaPql133RXHxlJ1U2LXUmpn/nThzly1jA3opJ
-         Gc69lw2jSiyOZXcq0G9TWWZO2DWcx1ugllOfnq6939Ag4kW+N2L9nHPFi7pg1qTcO2
-         cO+70HvAD3zteWO74FUtDa1H1IgBg+WfEEmoxVREtEE2wZ0NpP+BMDJa/Teu30ZSaH
-         XOSZ65YJiGyQdWFB7sQtYg0G4GKJpRxTPx3vqUDzQueaPT7pDUunA+8tGfFSPlW10d
-         cBX8UXOPjejarSkwW0XB3vjMMmwTPO+c73zRPQSh7qH1zcLf7pcetru+wRGx4slk1Y
-         27c3mJ/wIHhVQ==
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Evgeny Novikov <novikov@ispras.ru>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 40/74] media: tegra-cec: Handle errors of clk_prepare_enable()
-Date:   Thu,  9 Sep 2021 07:56:52 -0400
-Message-Id: <20210909115726.149004-40-sashal@kernel.org>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210909115726.149004-1-sashal@kernel.org>
-References: <20210909115726.149004-1-sashal@kernel.org>
+        b=Cs8Ak0xUucXNGp1hLxMoq9eFtjJaqxiPE1CGY4rxPctngW8jvHcnHP89kswLZVOqU
+         SfR1h1d5vrE6pLtInQBQZ2zycrpdVeWDiikRL6r8iWl8onoY81FMpSbv/oLUVuashE
+         U1FAJ2bPTp1YzNzKuIjFwCh7xbCteH+iat8OMdI53VBYYh7obxWFWdjiJGA6By/YOa
+         B8FFTO20k4qD0Ql5KcW0+Em1Pqjk2j+l9IbtntBDhJe4Pnj4APYAk7kFKKZ5LJNdWq
+         3smunlQE+d4vb9g4QQEuFcTH2hfa9Lg7BaZE4fPiAbGgBg3x2Le6MFU1FRnGKxvs7R
+         y38WTWoQzwqzw==
+From:   Mark Brown <broonie@kernel.org>
+To:     Guenter Roeck <linux@roeck-us.net>,
+        Laxman Dewangan <ldewangan@nvidia.com>
+Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-spi@vger.kernel.org
+Subject: Re: [PATCH] spi: tegra20-slink: Declare runtime suspend and resume functions conditionally
+Date:   Thu,  9 Sep 2021 15:07:44 +0100
+Message-Id: <163119634904.38811.4267330416570346420.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20210907045358.2138282-1-linux@roeck-us.net>
+References: <20210907045358.2138282-1-linux@roeck-us.net>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Evgeny Novikov <novikov@ispras.ru>
+On Mon, 6 Sep 2021 21:53:58 -0700, Guenter Roeck wrote:
+> The following build error is seen with CONFIG_PM=n.
+> 
+> drivers/spi/spi-tegra20-slink.c:1188:12: error:
+> 	'tegra_slink_runtime_suspend' defined but not used
+> drivers/spi/spi-tegra20-slink.c:1200:12: error:
+> 	'tegra_slink_runtime_resume' defined but not used
+> 
+> [...]
 
-[ Upstream commit 38367073c796a37a61549b1f66a71b3adb03802d ]
+Applied to
 
-tegra_cec_probe() and tegra_cec_resume() ignored possible errors of
-clk_prepare_enable(). The patch fixes this.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
-Found by Linux Driver Verification project (linuxtesting.org).
+Thanks!
 
-Signed-off-by: Evgeny Novikov <novikov@ispras.ru>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/media/platform/tegra-cec/tegra_cec.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+[1/1] spi: tegra20-slink: Declare runtime suspend and resume functions conditionally
+      commit: 2bab94090b01bc593d8bc25f68df41f198721173
 
-diff --git a/drivers/media/platform/tegra-cec/tegra_cec.c b/drivers/media/platform/tegra-cec/tegra_cec.c
-index aba488cd0e64..a2c20ca799c4 100644
---- a/drivers/media/platform/tegra-cec/tegra_cec.c
-+++ b/drivers/media/platform/tegra-cec/tegra_cec.c
-@@ -383,7 +383,11 @@ static int tegra_cec_probe(struct platform_device *pdev)
- 		return -ENOENT;
- 	}
- 
--	clk_prepare_enable(cec->clk);
-+	ret = clk_prepare_enable(cec->clk);
-+	if (ret) {
-+		dev_err(&pdev->dev, "Unable to prepare clock for CEC\n");
-+		return ret;
-+	}
- 
- 	/* set context info. */
- 	cec->dev = &pdev->dev;
-@@ -462,9 +466,7 @@ static int tegra_cec_resume(struct platform_device *pdev)
- 
- 	dev_notice(&pdev->dev, "Resuming\n");
- 
--	clk_prepare_enable(cec->clk);
--
--	return 0;
-+	return clk_prepare_enable(cec->clk);
- }
- #endif
- 
--- 
-2.30.2
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
