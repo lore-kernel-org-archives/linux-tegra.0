@@ -2,88 +2,108 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-19.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D50CC4332F
-	for <linux-tegra@archiver.kernel.org>; Thu,  9 Sep 2021 13:21:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B18BC433F5
+	for <linux-tegra@archiver.kernel.org>; Thu,  9 Sep 2021 13:35:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 54BB360E94
-	for <linux-tegra@archiver.kernel.org>; Thu,  9 Sep 2021 13:21:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 56A80611CE
+	for <linux-tegra@archiver.kernel.org>; Thu,  9 Sep 2021 13:35:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346627AbhIINW7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 9 Sep 2021 09:22:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38868 "EHLO mail.kernel.org"
+        id S1353147AbhIINgx (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 9 Sep 2021 09:36:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57774 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1357723AbhIINPZ (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 9 Sep 2021 09:15:25 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id C472F61051;
-        Thu,  9 Sep 2021 13:05:26 +0000 (UTC)
+        id S1354412AbhIIM47 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 9 Sep 2021 08:56:59 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id E768F63258;
+        Thu,  9 Sep 2021 11:58:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1631192727;
-        bh=nzbSQqsPS5FcwzRSALz3d74l1Nj0HIR4mATqTsW+N68=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=PFOpPWYY9dyEvy3fwZeTSNhsetGczhzX8WirNeICmuj3QyY0hQe3oq6njlMJr4sJv
-         rngIuwSqLv5IisBtMjsbmdG9EYpptVO1y6g/r/Ql68xaZwIT3l8HrsaYpkWzp0p/Zq
-         BQ3eYjfvmU7c2TEY142j1a09uAmBnj4EG0SfqWtlDkoDpvgd17d4Bb0kviH6N8Fsrv
-         2WHQ09JixxBWO/YrwJGJtusBjXsp4rDPcKj/UGlXjLCe1G2tH6n4HWoRlTqRLTO3Yx
-         oN+GuKnawQjYmhYtBGDjpZGA3VnXGdwGdUpC4u4ZlEctbfDHqZ828ZIF4q1o4zZdiM
-         49X4cHTDUQQ9g==
-Date:   Thu, 9 Sep 2021 14:04:50 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, linux-spi@vger.kernel.org,
+        s=k20201202; t=1631188705;
+        bh=QkUSZWF79udlGYXr1PSAkxMxyJa+bYoV6bXDGcox3SE=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=nWvDEuCLVjlbMN+BKsAtrDAWLHe584WaGS8miKUuOe9180FxeGjh0wPCR3nmUg1nz
+         QpKFWuTH/T7TiXAaTTR3Npn276EXOlPle/aFw3gEyo+w8qTPDg7QNhELLBRRI3x2nv
+         YXGWagUPAjFPgG1HPxrTFsFc9TvsFBOn+jaRQitC0JoxOjizUuvTXt9ebxWe12WnSd
+         IDxdATg2WKrUfNGhtjGHQLkzC8NGzRt37PTPQKbdrriWYj8EojvGmsjpLGeNPddsdj
+         gIhyS4okpiWJ3Y4vwXj21EgpGQMl5LhLEL4gc838Zi3c6dQzgKF8NQ7HG15KH1ro4Q
+         l/LGbIplbfwNw==
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Andreas Obergschwandtner <andreas.obergschwandtner@gmail.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org,
         linux-tegra@vger.kernel.org
-Subject: Re: [PATCH AUTOSEL 5.14 133/252] spi: tegra20-slink: Improve runtime
- PM usage
-Message-ID: <20210909130450.GB5176@sirena.org.uk>
-References: <20210909114106.141462-1-sashal@kernel.org>
- <20210909114106.141462-133-sashal@kernel.org>
- <20210909123751.GA5176@sirena.org.uk>
- <f75c5c9c-8430-f650-5d0a-3490ac6aa3de@gmail.com>
+Subject: [PATCH AUTOSEL 4.19 47/74] ARM: tegra: tamonten: Fix UART pad setting
+Date:   Thu,  9 Sep 2021 07:56:59 -0400
+Message-Id: <20210909115726.149004-47-sashal@kernel.org>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20210909115726.149004-1-sashal@kernel.org>
+References: <20210909115726.149004-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="QTprm0S8XgL7H0Dt"
-Content-Disposition: inline
-In-Reply-To: <f75c5c9c-8430-f650-5d0a-3490ac6aa3de@gmail.com>
-X-Cookie: I have become me without my consent.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+From: Andreas Obergschwandtner <andreas.obergschwandtner@gmail.com>
 
---QTprm0S8XgL7H0Dt
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+[ Upstream commit 2270ad2f4e123336af685ecedd1618701cb4ca1e ]
 
-On Thu, Sep 09, 2021 at 03:45:45PM +0300, Dmitry Osipenko wrote:
-> 09.09.2021 15:37, Mark Brown =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+This patch fixes the tristate and pullup configuration for UART 1 to 3
+on the Tamonten SOM.
 
-> > This feels new featureish to me - it'll give you runtime PM where
-> > previously there was none.
+Signed-off-by: Andreas Obergschwandtner <andreas.obergschwandtner@gmail.com>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ arch/arm/boot/dts/tegra20-tamonten.dtsi | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-> Apparently all patches which have a word 'fix' in commit message are
-> auto-selected. I agree that it's better not to port this patch.
+diff --git a/arch/arm/boot/dts/tegra20-tamonten.dtsi b/arch/arm/boot/dts/tegra20-tamonten.dtsi
+index 20137fc578b1..394a6b4dc69d 100644
+--- a/arch/arm/boot/dts/tegra20-tamonten.dtsi
++++ b/arch/arm/boot/dts/tegra20-tamonten.dtsi
+@@ -185,8 +185,9 @@ conf_ata {
+ 				nvidia,pins = "ata", "atb", "atc", "atd", "ate",
+ 					"cdev1", "cdev2", "dap1", "dtb", "gma",
+ 					"gmb", "gmc", "gmd", "gme", "gpu7",
+-					"gpv", "i2cp", "pta", "rm", "slxa",
+-					"slxk", "spia", "spib", "uac";
++					"gpv", "i2cp", "irrx", "irtx", "pta",
++					"rm", "slxa", "slxk", "spia", "spib",
++					"uac";
+ 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+ 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+ 			};
+@@ -211,7 +212,7 @@ conf_crtp {
+ 			conf_ddc {
+ 				nvidia,pins = "ddc", "dta", "dtd", "kbca",
+ 					"kbcb", "kbcc", "kbcd", "kbce", "kbcf",
+-					"sdc";
++					"sdc", "uad", "uca";
+ 				nvidia,pull = <TEGRA_PIN_PULL_UP>;
+ 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+ 			};
+@@ -221,10 +222,9 @@ conf_hdint {
+ 					"lvp0", "owc", "sdb";
+ 				nvidia,tristate = <TEGRA_PIN_ENABLE>;
+ 			};
+-			conf_irrx {
+-				nvidia,pins = "irrx", "irtx", "sdd", "spic",
+-					"spie", "spih", "uaa", "uab", "uad",
+-					"uca", "ucb";
++			conf_sdd {
++				nvidia,pins = "sdd", "spic", "spie", "spih",
++					"uaa", "uab", "ucb";
+ 				nvidia,pull = <TEGRA_PIN_PULL_UP>;
+ 				nvidia,tristate = <TEGRA_PIN_ENABLE>;
+ 			};
+-- 
+2.30.2
 
-Yeah, it's a fairly common source of false positives :/
-
---QTprm0S8XgL7H0Dt
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmE6BnEACgkQJNaLcl1U
-h9Cdrgf9E78HM3YH3HOA9i4ZNOnPUQjItYOxxsBBBniZXXz5oIpT9MVSFkNL9mXD
-4440XtsdeGNpdZyoiFPmkUQzUvpLymgvRbcEkh+aTODZvb6ZeLhU+GJBs2Ua0Q0w
-yNfV29Kp7sfi9rKLE7s+8Xm1N3ODy11i4zn2LmmWFsH+ImB5+CWdw2wXqYJLo0c8
-yhSqpszFYf/OhkUt16wR72lGVUPymHEGao8sd42X8tPf2dLH3rHZxdc1zSWhdcjT
-W53YcSMcPIqanpGa23LKQS2Ut6TtCoUlfvsR3x6bTVCRSS1+a0xlc8xdD4GikFHp
-w1JOxc50IcCGugd55WOrqdnsf9t6DA==
-=6meK
------END PGP SIGNATURE-----
-
---QTprm0S8XgL7H0Dt--
