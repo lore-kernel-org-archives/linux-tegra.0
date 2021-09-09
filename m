@@ -7,42 +7,42 @@ X-Spam-Status: No, score=-19.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDE6CC433EF
-	for <linux-tegra@archiver.kernel.org>; Thu,  9 Sep 2021 13:12:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 882C2C433F5
+	for <linux-tegra@archiver.kernel.org>; Thu,  9 Sep 2021 13:13:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A75856120D
-	for <linux-tegra@archiver.kernel.org>; Thu,  9 Sep 2021 13:12:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 71D7D611CA
+	for <linux-tegra@archiver.kernel.org>; Thu,  9 Sep 2021 13:13:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353430AbhIINOC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 9 Sep 2021 09:14:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42434 "EHLO mail.kernel.org"
+        id S1353248AbhIINOH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 9 Sep 2021 09:14:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53482 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1357665AbhIINDP (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 9 Sep 2021 09:03:15 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id D773F63298;
-        Thu,  9 Sep 2021 11:59:46 +0000 (UTC)
+        id S1358653AbhIINJN (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 9 Sep 2021 09:09:13 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id BF0A2632C2;
+        Thu,  9 Sep 2021 12:00:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1631188787;
-        bh=Bi3WETzN51HufuWv6N46T1KgUw5xB/9dbiMDTx5rleY=;
+        s=k20201202; t=1631188857;
+        bh=Fu6AtivubNfjB5qEBuEjYVKCXg6JBi7tagMajJtLjaY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ivq/RDgDc3jPKr6h2+vl1DZMiIG/N1bglqONB2NYbtkH/7QpbHaPMAln/K5XAlSvh
-         2Q3zn5V/XGn+55lV4Xnuoe2LNxIbL+E7QiiamA98lG2e1J8ZqsboNenYj7S3GwhU5K
-         to5FJnd1+4OHnwkV0xEPMsX3AZjVo1BCpQAUu+KwUvUkdPiKmqd2zNQiYGmWp5VaWT
-         xo3FkLfgyddC+OmGqTIkx/1hgtV45sbMqOxL/A7XjALLxHwZ27raMIHpM05DRKwOkV
-         8lZBAmVQjHjg7s9/t/DfA6E1WNH9oNerDioeCUsnqeHKnLk0RXIQLGquoCpfvTeAFi
-         AEc53AiNsYACw==
+        b=lyLimCsui4n2/Fa2PTexoaAWoQEl+O17O3NpKuFeBvhMfrY5FPdX1wpRvqCVBcR7C
+         cOJ9z8ic5/CPWkYBSscYzA1tyXvzjIaSm8VwekbidB/Er5l12kMJMWPWUp8XPPlvwN
+         TXjSpBMIiOVWKwVaZtP0tz8Vbh46W4UoEMg4sbUUuqyPrCZpEWrlaaKWJ9AVHBROC+
+         MktJ+i9x63ZzfPafS5VUUZqzFqzfXu8zaUvaMVtpLSHD62cBVknKGuPK5+vYjuFtOg
+         C3KyNDFMugbKVSZS27SIiWG00+iH4i8Vd5FJCBI+evxSh2+U6VBulBc+Dw1OWdvUU6
+         UTJ0V7FH8KabA==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Andreas Obergschwandtner <andreas.obergschwandtner@gmail.com>,
         Thierry Reding <treding@nvidia.com>,
         Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org,
         linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 37/59] ARM: tegra: tamonten: Fix UART pad setting
-Date:   Thu,  9 Sep 2021 07:58:38 -0400
-Message-Id: <20210909115900.149795-37-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 33/48] ARM: tegra: tamonten: Fix UART pad setting
+Date:   Thu,  9 Sep 2021 08:00:00 -0400
+Message-Id: <20210909120015.150411-33-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210909115900.149795-1-sashal@kernel.org>
-References: <20210909115900.149795-1-sashal@kernel.org>
+In-Reply-To: <20210909120015.150411-1-sashal@kernel.org>
+References: <20210909120015.150411-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -66,10 +66,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 7 insertions(+), 7 deletions(-)
 
 diff --git a/arch/arm/boot/dts/tegra20-tamonten.dtsi b/arch/arm/boot/dts/tegra20-tamonten.dtsi
-index 872046d48709..4d69d67792d1 100644
+index 27d2bbbf1eae..a613e3b85b45 100644
 --- a/arch/arm/boot/dts/tegra20-tamonten.dtsi
 +++ b/arch/arm/boot/dts/tegra20-tamonten.dtsi
-@@ -185,8 +185,9 @@ conf_ata {
+@@ -184,8 +184,9 @@ conf_ata {
  				nvidia,pins = "ata", "atb", "atc", "atd", "ate",
  					"cdev1", "cdev2", "dap1", "dtb", "gma",
  					"gmb", "gmc", "gmd", "gme", "gpu7",
@@ -81,7 +81,7 @@ index 872046d48709..4d69d67792d1 100644
  				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
  				nvidia,tristate = <TEGRA_PIN_DISABLE>;
  			};
-@@ -211,7 +212,7 @@ conf_crtp {
+@@ -210,7 +211,7 @@ conf_crtp {
  			conf_ddc {
  				nvidia,pins = "ddc", "dta", "dtd", "kbca",
  					"kbcb", "kbcc", "kbcd", "kbce", "kbcf",
@@ -90,7 +90,7 @@ index 872046d48709..4d69d67792d1 100644
  				nvidia,pull = <TEGRA_PIN_PULL_UP>;
  				nvidia,tristate = <TEGRA_PIN_DISABLE>;
  			};
-@@ -221,10 +222,9 @@ conf_hdint {
+@@ -220,10 +221,9 @@ conf_hdint {
  					"lvp0", "owc", "sdb";
  				nvidia,tristate = <TEGRA_PIN_ENABLE>;
  			};
