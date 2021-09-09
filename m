@@ -7,39 +7,40 @@ X-Spam-Status: No, score=-19.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76CDBC433EF
-	for <linux-tegra@archiver.kernel.org>; Thu,  9 Sep 2021 12:36:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E450C433EF
+	for <linux-tegra@archiver.kernel.org>; Thu,  9 Sep 2021 12:36:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5AF9661100
-	for <linux-tegra@archiver.kernel.org>; Thu,  9 Sep 2021 12:36:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DF65360E94
+	for <linux-tegra@archiver.kernel.org>; Thu,  9 Sep 2021 12:36:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242031AbhIIMh4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 9 Sep 2021 08:37:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38594 "EHLO mail.kernel.org"
+        id S1352515AbhIIMh5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 9 Sep 2021 08:37:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38732 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1354436AbhIIMa5 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 9 Sep 2021 08:30:57 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 6ED0961B47;
-        Thu,  9 Sep 2021 11:52:46 +0000 (UTC)
+        id S1354468AbhIIMbE (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 9 Sep 2021 08:31:04 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id B39A961B55;
+        Thu,  9 Sep 2021 11:52:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1631188367;
-        bh=aEmmNDItKKfIvYWiPzZzc9Ik6tR4WWo7PiWkhXxbDw0=;
+        s=k20201202; t=1631188377;
+        bh=Mgk6zcJV3cp/1FnKDc4HTUGsqHEyT0cD/bodCBNyz7k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=W1pkAQa8U29FvI7G3+tNLO0Xjhhf8g9vDyaMjnAB+fbX9Lo/qevlp2Zq5nYlPXh67
-         lZ95o98BfaM1BBAL9C7H8Di6bduJPtdHrcUurRbb57elSPAxdZsajxpEb0/Lou67Ts
-         EZ3udN+IWZbGI/Fn2Ez8QtXXb0jeeWRS/762fFT0elEjXX+VeXWCqgt6IOJyHunaGL
-         xRRkmXpWDcUSbqAwbTuEZd7IJP+oPGYWKenHKEH/e7X6jsB298AiFOt524Zt4BSBm2
-         VNbkdsYGiGzu/Gy2lRht78R4CYzfzkJH690B39HpzMSABx5NolExfj0mvvqRDxUowN
-         xyXRkA0KkUGmA==
+        b=YcUU9ARKd0x33gVzN690Gqss1NWcVlYqkYeUzQllKesYjQ66A3NKA5K9C2J1ihnnS
+         MAGQ4nv2lZAgRfonJuAE2e2jO8baojKx9V0rSeksxyKa3Wb3tGMQSIFSK4wiJlV999
+         /WCdW8PGfgKfixPQo6Nn2kn14Ilj58gmlGWiSoNeMBoxhnvYY4VZ8pI0PmdS3wzD0f
+         gv4qsrP90Zxbwikb1uJHFufuFd1oIn5Leit5ZlqfZHHexx0RfvP+oK4NTKnWDvVD2U
+         mr7B3Ey7hlLgn9Ln4aqs0KdGMhUwCPTjWnH+ibS0APDxQHWu1qA8amaBN5Sd47I+2X
+         kT9fyflmUf4ZQ==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Vidya Sagar <vidyas@nvidia.com>, Jon Hunter <jonathanh@nvidia.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.10 069/176] arm64: tegra: Fix Tegra194 PCIe EP compatible string
-Date:   Thu,  9 Sep 2021 07:49:31 -0400
-Message-Id: <20210909115118.146181-69-sashal@kernel.org>
+Cc:     Evgeny Novikov <novikov@ispras.ru>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-tegra@vger.kernel.org,
+        linux-media@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.10 077/176] media: tegra-cec: Handle errors of clk_prepare_enable()
+Date:   Thu,  9 Sep 2021 07:49:39 -0400
+Message-Id: <20210909115118.146181-77-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210909115118.146181-1-sashal@kernel.org>
 References: <20210909115118.146181-1-sashal@kernel.org>
@@ -51,56 +52,51 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Vidya Sagar <vidyas@nvidia.com>
+From: Evgeny Novikov <novikov@ispras.ru>
 
-[ Upstream commit bf2942a8b7c38e8cc2d5157b4f0323d7f4e5ec71 ]
+[ Upstream commit 38367073c796a37a61549b1f66a71b3adb03802d ]
 
-The initialization sequence performed by the generic platform driver
-pcie-designware-plat.c for a DWC based implementation doesn't work for
-Tegra194. Tegra194 has a different initialization sequence requirement
-which can only be satisfied by the Tegra194 specific platform driver
-pcie-tegra194.c. So, remove the generic compatible string "snps,dw-pcie-ep"
-from Tegra194's endpoint controller nodes.
+tegra_cec_probe() and tegra_cec_resume() ignored possible errors of
+clk_prepare_enable(). The patch fixes this.
 
-Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
-Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
+Found by Linux Driver Verification project (linuxtesting.org).
+
+Signed-off-by: Evgeny Novikov <novikov@ispras.ru>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/boot/dts/nvidia/tegra194.dtsi | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/media/cec/platform/tegra/tegra_cec.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-index 6946fb210e48..9b5007e5f790 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-@@ -1976,7 +1976,7 @@ pcie@141a0000 {
- 	};
+diff --git a/drivers/media/cec/platform/tegra/tegra_cec.c b/drivers/media/cec/platform/tegra/tegra_cec.c
+index 1ac0c70a5981..5e907395ca2e 100644
+--- a/drivers/media/cec/platform/tegra/tegra_cec.c
++++ b/drivers/media/cec/platform/tegra/tegra_cec.c
+@@ -366,7 +366,11 @@ static int tegra_cec_probe(struct platform_device *pdev)
+ 		return -ENOENT;
+ 	}
  
- 	pcie_ep@14160000 {
--		compatible = "nvidia,tegra194-pcie-ep", "snps,dw-pcie-ep";
-+		compatible = "nvidia,tegra194-pcie-ep";
- 		power-domains = <&bpmp TEGRA194_POWER_DOMAIN_PCIEX4A>;
- 		reg = <0x00 0x14160000 0x0 0x00020000>, /* appl registers (128K)      */
- 		      <0x00 0x36040000 0x0 0x00040000>, /* iATU_DMA reg space (256K)  */
-@@ -2008,7 +2008,7 @@ pcie_ep@14160000 {
- 	};
+-	clk_prepare_enable(cec->clk);
++	ret = clk_prepare_enable(cec->clk);
++	if (ret) {
++		dev_err(&pdev->dev, "Unable to prepare clock for CEC\n");
++		return ret;
++	}
  
- 	pcie_ep@14180000 {
--		compatible = "nvidia,tegra194-pcie-ep", "snps,dw-pcie-ep";
-+		compatible = "nvidia,tegra194-pcie-ep";
- 		power-domains = <&bpmp TEGRA194_POWER_DOMAIN_PCIEX8B>;
- 		reg = <0x00 0x14180000 0x0 0x00020000>, /* appl registers (128K)      */
- 		      <0x00 0x38040000 0x0 0x00040000>, /* iATU_DMA reg space (256K)  */
-@@ -2040,7 +2040,7 @@ pcie_ep@14180000 {
- 	};
+ 	/* set context info. */
+ 	cec->dev = &pdev->dev;
+@@ -446,9 +450,7 @@ static int tegra_cec_resume(struct platform_device *pdev)
  
- 	pcie_ep@141a0000 {
--		compatible = "nvidia,tegra194-pcie-ep", "snps,dw-pcie-ep";
-+		compatible = "nvidia,tegra194-pcie-ep";
- 		power-domains = <&bpmp TEGRA194_POWER_DOMAIN_PCIEX8A>;
- 		reg = <0x00 0x141a0000 0x0 0x00020000>, /* appl registers (128K)      */
- 		      <0x00 0x3a040000 0x0 0x00040000>, /* iATU_DMA reg space (256K)  */
+ 	dev_notice(&pdev->dev, "Resuming\n");
+ 
+-	clk_prepare_enable(cec->clk);
+-
+-	return 0;
++	return clk_prepare_enable(cec->clk);
+ }
+ #endif
+ 
 -- 
 2.30.2
 
