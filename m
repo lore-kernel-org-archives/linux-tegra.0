@@ -2,108 +2,90 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6A63C43217
-	for <linux-tegra@archiver.kernel.org>; Thu,  9 Sep 2021 13:21:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C545DC433EF
+	for <linux-tegra@archiver.kernel.org>; Thu,  9 Sep 2021 13:21:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BEB3960F4A
-	for <linux-tegra@archiver.kernel.org>; Thu,  9 Sep 2021 13:21:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B3B1860F4A
+	for <linux-tegra@archiver.kernel.org>; Thu,  9 Sep 2021 13:21:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1356198AbhIINW4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 9 Sep 2021 09:22:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35414 "EHLO mail.kernel.org"
+        id S1354937AbhIINW6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 9 Sep 2021 09:22:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36126 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1354834AbhIINNS (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 9 Sep 2021 09:13:18 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id D97E9632DB;
-        Thu,  9 Sep 2021 12:01:44 +0000 (UTC)
+        id S1355407AbhIINNm (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 9 Sep 2021 09:13:42 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id B4EF260E94;
+        Thu,  9 Sep 2021 12:38:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1631188905;
-        bh=1JINktgnYkIx9flt3GMxH5/EGkHKXoLR3wMW1k15x/o=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VEfn2VzAAaI0n33IwkZ/zqHsBY6zMqLUd/J8fEzZk8ss9WfoAcz6rOMgn2Wn/XGwJ
-         ++2rC4xFZlxnHOjTwIWUGNuj+q7YXAutW0WnKVLzMDuvU59CRfFo+UpVnAKpAKT+Oq
-         pcRyVIj1CJGHGzJ2PL+USMmd2rFVJLBIGqe7+iPVywoZ6dIb0NTQe0HZyiTTjS9sRp
-         +rfQD17y94og9cWf5mePDu4d2UqUUz1Gn0l65M/34khcGYjhAw7NWdnlQp47hntLxj
-         annSIt5n5HNZ4cbVuGne4qrcAJrwBHFX2o41cEb8hrp7pd3tPbVQuR4pxn+mgxUtT+
-         i0Khyt+pOYxkg==
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Andreas Obergschwandtner <andreas.obergschwandtner@gmail.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org,
+        s=k20201202; t=1631191108;
+        bh=O8KrY2v/SV5IrfzHUe+Isyg8Inb36F5FzqeXHCuk3Kk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=uRoT8EZGuLQ3NDPWvnMgDME2AHbezyRDqTxQ0y2DwR+M/MYdfMUPVUTIfWqn/rrgS
+         qnhBYi0lxy2tUw27e+coP/c0YqnVJGmMF/ogTRuibFkm7fDKmkvBDb+Ci5tygyoYDr
+         JpGxqktq3QKBtGuOrPx+7FzGOjId5l4PY80w/KvO6k60rq8cG7gHFggLOGjsRBiOlY
+         I49Rzue2+rdaIni2jjMs+lXNc/oxiHEID/iQcJsqDNF02CadoQbWkq6kng5PWRaM/X
+         16A4l8uO4NguyTvTiFtMuk+kAooA86T0E2O4HCL+QV8ROVRWrWyEhKYBuv5ptZAW+Y
+         x2AoioaRdv47Q==
+Date:   Thu, 9 Sep 2021 13:37:51 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Sasha Levin <sashal@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Dmitry Osipenko <digetx@gmail.com>, linux-spi@vger.kernel.org,
         linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 23/35] ARM: tegra: tamonten: Fix UART pad setting
-Date:   Thu,  9 Sep 2021 08:01:04 -0400
-Message-Id: <20210909120116.150912-23-sashal@kernel.org>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210909120116.150912-1-sashal@kernel.org>
-References: <20210909120116.150912-1-sashal@kernel.org>
+Subject: Re: [PATCH AUTOSEL 5.14 133/252] spi: tegra20-slink: Improve runtime
+ PM usage
+Message-ID: <20210909123751.GA5176@sirena.org.uk>
+References: <20210909114106.141462-1-sashal@kernel.org>
+ <20210909114106.141462-133-sashal@kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="azLHFNyN32YCQGCU"
+Content-Disposition: inline
+In-Reply-To: <20210909114106.141462-133-sashal@kernel.org>
+X-Cookie: I have become me without my consent.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Andreas Obergschwandtner <andreas.obergschwandtner@gmail.com>
 
-[ Upstream commit 2270ad2f4e123336af685ecedd1618701cb4ca1e ]
+--azLHFNyN32YCQGCU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This patch fixes the tristate and pullup configuration for UART 1 to 3
-on the Tamonten SOM.
+On Thu, Sep 09, 2021 at 07:39:07AM -0400, Sasha Levin wrote:
+> From: Dmitry Osipenko <digetx@gmail.com>
+>=20
+> [ Upstream commit e4bb903fda0e9bbafa1338dcd2ee5e4d3ccc50da ]
+>=20
+> The Tegra SPI driver supports runtime PM, which controls the clock
+> enable state, but the clk is also enabled separately from the RPM
+> at the driver probe time, and thus, stays always on. Fix it.
+>=20
+> Runtime PM now is always available on Tegra, hence there is no need to
+> check the RPM presence in the driver anymore. Remove these checks.
 
-Signed-off-by: Andreas Obergschwandtner <andreas.obergschwandtner@gmail.com>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- arch/arm/boot/dts/tegra20-tamonten.dtsi | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+This feels new featureish to me - it'll give you runtime PM where
+previously there was none.
 
-diff --git a/arch/arm/boot/dts/tegra20-tamonten.dtsi b/arch/arm/boot/dts/tegra20-tamonten.dtsi
-index 13d4e6185275..c70d1ec02957 100644
---- a/arch/arm/boot/dts/tegra20-tamonten.dtsi
-+++ b/arch/arm/boot/dts/tegra20-tamonten.dtsi
-@@ -180,8 +180,9 @@ conf_ata {
- 				nvidia,pins = "ata", "atb", "atc", "atd", "ate",
- 					"cdev1", "cdev2", "dap1", "dtb", "gma",
- 					"gmb", "gmc", "gmd", "gme", "gpu7",
--					"gpv", "i2cp", "pta", "rm", "slxa",
--					"slxk", "spia", "spib", "uac";
-+					"gpv", "i2cp", "irrx", "irtx", "pta",
-+					"rm", "slxa", "slxk", "spia", "spib",
-+					"uac";
- 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
- 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
- 			};
-@@ -206,7 +207,7 @@ conf_crtp {
- 			conf_ddc {
- 				nvidia,pins = "ddc", "dta", "dtd", "kbca",
- 					"kbcb", "kbcc", "kbcd", "kbce", "kbcf",
--					"sdc";
-+					"sdc", "uad", "uca";
- 				nvidia,pull = <TEGRA_PIN_PULL_UP>;
- 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
- 			};
-@@ -216,10 +217,9 @@ conf_hdint {
- 					"lvp0", "owc", "sdb";
- 				nvidia,tristate = <TEGRA_PIN_ENABLE>;
- 			};
--			conf_irrx {
--				nvidia,pins = "irrx", "irtx", "sdd", "spic",
--					"spie", "spih", "uaa", "uab", "uad",
--					"uca", "ucb";
-+			conf_sdd {
-+				nvidia,pins = "sdd", "spic", "spie", "spih",
-+					"uaa", "uab", "ucb";
- 				nvidia,pull = <TEGRA_PIN_PULL_UP>;
- 				nvidia,tristate = <TEGRA_PIN_ENABLE>;
- 			};
--- 
-2.30.2
+--azLHFNyN32YCQGCU
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmE6AB4ACgkQJNaLcl1U
+h9Cchwf8DoVbaphM4/DvCMTyzvIjvMGgt9G5IEM7YoZ5MuLTwLLKGro700hLsyx7
+KH7AJpbIFX4AZulur/hC3Uri/22blXfb6yw6Lo7UeJyMmYeIWBQLwP5UoQblrNmV
+Ag9EFPlJ+DbXWLAS5vhrzMJuFevT5BYJT+c5v8963F6wsm0OuF8wosXeDC25Nha7
+vKXfgkut2ab1PSwWjK/lMg0MCRfAQKcOlnIFND0s6q6q0tcYBbiO3XP/OlnKKmGp
+VXW5ssYFEYqRPP2fLbRQ5k9LHVbwPyTM3jvv1HyYLv2aI6OVto39vaL7djOcQWd2
+4R4z5w77yTNV2zxXnS5CeJrLobklxA==
+=kpf8
+-----END PGP SIGNATURE-----
+
+--azLHFNyN32YCQGCU--
