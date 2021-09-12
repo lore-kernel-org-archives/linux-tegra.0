@@ -2,99 +2,97 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7F78C433F5
-	for <linux-tegra@archiver.kernel.org>; Sun, 12 Sep 2021 20:29:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF909C433EF
+	for <linux-tegra@archiver.kernel.org>; Sun, 12 Sep 2021 21:57:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D0FC961050
-	for <linux-tegra@archiver.kernel.org>; Sun, 12 Sep 2021 20:29:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A57F7610A6
+	for <linux-tegra@archiver.kernel.org>; Sun, 12 Sep 2021 21:57:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236574AbhILUau (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 12 Sep 2021 16:30:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58246 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236390AbhILUai (ORCPT
+        id S236550AbhILV7M (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 12 Sep 2021 17:59:12 -0400
+Received: from tartarus.angband.pl ([51.83.246.204]:39914 "EHLO
+        tartarus.angband.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236320AbhILV7L (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 12 Sep 2021 16:30:38 -0400
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6BDEC06175F;
-        Sun, 12 Sep 2021 13:29:22 -0700 (PDT)
-Received: by mail-wr1-x429.google.com with SMTP id t18so11411505wrb.0;
-        Sun, 12 Sep 2021 13:29:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=a0H54VcaSkULvQ0XfRhbooC/ZXW5WM4Ks5Bh/dzSIL8=;
-        b=Hm8kwc9+ak0NQvURspJVzZlnw2P1MvUPDLATWgiisBkeG2XJTi+80RgVDkxolXnBPR
-         CrVUDcXylOqzqU20VLb/ba+VYwJnCjQHeRJ8zWpUOYC0S9X6Gq+C111DBQyMZPOnJlWj
-         bExfAMWsXn3D2tAwuzp/vhBFQQQyX/syil99wuC9M/WyXlFczDSXykBQENS4yWjZ2Zb3
-         Xad8W3kR1vK81VSVkQQkx7CG22w9mKEEG8HW59hVEHtur5PRVITiylNUJQUSnuEn000b
-         vbIgfhJteFP3AYgir4m6tp/ZW2DdIYTqp0aYDV3BplUtPSyAuwgafhGEmz26t1UdHGiZ
-         fG+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=a0H54VcaSkULvQ0XfRhbooC/ZXW5WM4Ks5Bh/dzSIL8=;
-        b=BsWQ7TnhD96u1Xby3+faTLSBnGbZ8MNfn1g/4WawyfQ4NZOjSMTQGXamSWxJkdDbBC
-         LIxV/LL0q+pFW/Y/ObOBwGcuGcJsB6bhbVii547CZw8WarZqnvNjb65Vne5RznjSBQ0Z
-         NA/aoGk1B12uuyLu8XhuBie9EDYcpiNb+zxnwHwYIbrmtxg+vH57YUe6wAy9zTsEI/FE
-         OFamrfbAnZbN4HnqGAR2KjCt+gluUYyF6Xt/2sKp1i5JjAfu0asseE+EyvuZRt/haCzM
-         VloQHlW7cnPUzvo/oa2nw0KgDLwucBD4jqwL5P9ddGujJjkwE7V/Pp6T/ktokQMjSg+A
-         3BCg==
-X-Gm-Message-State: AOAM5309NUvfWzk/m1M0//DBgAIeiHyydA17QD627M3mNp++iV5ZxOxD
-        fZiQEugT5+3bQX/HncbRtJsBWQhs9XY=
-X-Google-Smtp-Source: ABdhPJwh2PUp3Py6hlk1c6sbav2J9iqh9ayK+eVHYQ9Or7wUlnyUeeZgVt0FRJMgGwLgO+R2wWNCCQ==
-X-Received: by 2002:adf:f789:: with SMTP id q9mr8868994wrp.367.1631478561454;
-        Sun, 12 Sep 2021 13:29:21 -0700 (PDT)
-Received: from localhost.localdomain (46-138-83-36.dynamic.spd-mgts.ru. [46.138.83.36])
-        by smtp.gmail.com with ESMTPSA id k29sm4847466wms.24.2021.09.12.13.29.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 12 Sep 2021 13:29:21 -0700 (PDT)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
+        Sun, 12 Sep 2021 17:59:11 -0400
+X-Greylist: delayed 1816 seconds by postgrey-1.27 at vger.kernel.org; Sun, 12 Sep 2021 17:59:10 EDT
+Received: from 89-73-149-240.dynamic.chello.pl ([89.73.149.240] helo=barad-dur.angband.pl)
+        by tartarus.angband.pl with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <kilobyte@angband.pl>)
+        id 1mPWyY-00C2a9-07; Sun, 12 Sep 2021 23:25:23 +0200
+Received: from [2a02:a31c:8245:f980::4] (helo=valinor.angband.pl)
+        by barad-dur.angband.pl with esmtp (Exim 4.94.2)
+        (envelope-from <kilobyte@angband.pl>)
+        id 1mPWyX-0003D0-7N; Sun, 12 Sep 2021 23:25:21 +0200
+Received: from kilobyte by valinor.angband.pl with local (Exim 4.95-RC2)
+        (envelope-from <kilobyte@valinor.angband.pl>)
+        id 1mPWyW-00034n-IF;
+        Sun, 12 Sep 2021 23:25:20 +0200
+From:   Adam Borowski <kilobyte@angband.pl>
+To:     Laxman Dewangan <ldewangan@nvidia.com>,
+        Mark Brown <broonie@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v1 5/6] cpuidle: tegra: Enable compile testing
-Date:   Sun, 12 Sep 2021 23:29:06 +0300
-Message-Id: <20210912202907.28471-6-digetx@gmail.com>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20210912202907.28471-1-digetx@gmail.com>
-References: <20210912202907.28471-1-digetx@gmail.com>
+        linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org
+Cc:     Adam Borowski <kilobyte@angband.pl>
+Date:   Sun, 12 Sep 2021 23:25:19 +0200
+Message-Id: <20210912212519.11797-1-kilobyte@angband.pl>
+X-Mailer: git-send-email 2.33.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 89.73.149.240
+X-SA-Exim-Mail-From: kilobyte@angband.pl
+Subject: [PATCH] spi: tegra20-slink: fix "defined but not used" if !CONFIG_PM
+X-SA-Exim-Version: 4.2.1 (built Sat, 13 Feb 2021 17:57:42 +0000)
+X-SA-Exim-Scanned: Yes (on tartarus.angband.pl)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Enable compile testing of tegra-cpuidle driver.
+Because of warnings, esp. with new default -Werror.
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Signed-off-by: Adam Borowski <kilobyte@angband.pl>
 ---
- drivers/cpuidle/Kconfig.arm | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/spi/spi-tegra20-slink.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/cpuidle/Kconfig.arm b/drivers/cpuidle/Kconfig.arm
-index 334f83e56120..599286fc0b08 100644
---- a/drivers/cpuidle/Kconfig.arm
-+++ b/drivers/cpuidle/Kconfig.arm
-@@ -99,7 +99,7 @@ config ARM_MVEBU_V7_CPUIDLE
+diff --git a/drivers/spi/spi-tegra20-slink.c b/drivers/spi/spi-tegra20-slink.c
+index ebd27f883033..c8b54c7c53d0 100644
+--- a/drivers/spi/spi-tegra20-slink.c
++++ b/drivers/spi/spi-tegra20-slink.c
+@@ -204,8 +204,10 @@ struct tegra_slink_data {
+ 	struct dma_async_tx_descriptor		*tx_dma_desc;
+ };
  
- config ARM_TEGRA_CPUIDLE
- 	bool "CPU Idle Driver for NVIDIA Tegra SoCs"
--	depends on ARCH_TEGRA && !ARM64
-+	depends on (ARCH_TEGRA || COMPILE_TEST) && !ARM64 && MMU
- 	select ARCH_NEEDS_CPU_IDLE_COUPLED if SMP
- 	select ARM_CPU_SUSPEND
- 	help
++#ifdef CONFIG_PM
+ static int tegra_slink_runtime_suspend(struct device *dev);
+ static int tegra_slink_runtime_resume(struct device *dev);
++#endif
+ 
+ static inline u32 tegra_slink_readl(struct tegra_slink_data *tspi,
+ 		unsigned long reg)
+@@ -1185,6 +1187,7 @@ static int tegra_slink_resume(struct device *dev)
+ }
+ #endif
+ 
++#ifdef CONFIG_PM
+ static int tegra_slink_runtime_suspend(struct device *dev)
+ {
+ 	struct spi_master *master = dev_get_drvdata(dev);
+@@ -1210,6 +1213,7 @@ static int tegra_slink_runtime_resume(struct device *dev)
+ 	}
+ 	return 0;
+ }
++#endif
+ 
+ static const struct dev_pm_ops slink_pm_ops = {
+ 	SET_RUNTIME_PM_OPS(tegra_slink_runtime_suspend,
 -- 
-2.32.0
+2.33.0
 
