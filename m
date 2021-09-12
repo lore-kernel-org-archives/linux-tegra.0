@@ -8,55 +8,55 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AE5CC43217
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8666C4321E
 	for <linux-tegra@archiver.kernel.org>; Sun, 12 Sep 2021 18:19:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0BF4C61211
+	by mail.kernel.org (Postfix) with ESMTP id 91248610CE
 	for <linux-tegra@archiver.kernel.org>; Sun, 12 Sep 2021 18:19:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235752AbhILSUm (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        id S235826AbhILSUm (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
         Sun, 12 Sep 2021 14:20:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57856 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57864 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235203AbhILSUh (ORCPT
+        with ESMTP id S235350AbhILSUi (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 12 Sep 2021 14:20:37 -0400
-Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69954C061574;
-        Sun, 12 Sep 2021 11:19:22 -0700 (PDT)
-Received: by mail-lf1-x136.google.com with SMTP id s10so16053320lfr.11;
-        Sun, 12 Sep 2021 11:19:22 -0700 (PDT)
+        Sun, 12 Sep 2021 14:20:38 -0400
+Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A397C061760;
+        Sun, 12 Sep 2021 11:19:23 -0700 (PDT)
+Received: by mail-lf1-x12c.google.com with SMTP id bq5so16053011lfb.9;
+        Sun, 12 Sep 2021 11:19:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=iJA+09/oXBeGyThFH4rEakTMnaSOIHFJRqu4fOZYzzI=;
-        b=B3k+OKm0m/Wtale4/820UBG+UWO2AJnxzxRu+wHjIoAxQ+pxlIMGGJ8sERReYs4UQ+
-         xLXlLUzDwj51Pes0cdGtDqlNbhYoEAaz4wGjeymxPRYXvIUM8IXoLKNilsGKLH1iFnC0
-         uyGgQXU1pBAWVi43COL38jUY8iPWXvqMg5XC/aMiNd9kGubLB8nlEzdUw5h7v5GJw46c
-         6S+uA74dsl3XfBy9vqeCXDiB0N4XW0nUP131Vf5auzj9k9bDDIKPex5EsgAQvuJs/bnO
-         Sm7Fl0nSScUQjx5NUOIZF7KEp/PJpOmf8OSI0HWkILD03XcdO0S/zm3XsWDGQl5NtaFI
-         3KFw==
+        bh=uTGt0I4KYHUC6QbBXj1LfTICcqG/2/qc3BYFTyDmLO4=;
+        b=Nf8CAuJp6mUR8BJUjHqgG3e2S8wRI6nkTQg8O3S0d4lz8IyNU0h9m/s2biPcnbCje1
+         2XD9Bzl/qGewhNbc1pYQC+vC5yN+8CA0dSbIbdhd0hYLKTyLWUbsOB/F3ub0u4/Yi/V3
+         tNk/PGsnGukPetzgN+cSqoyIsQkg+yRw1cN6gF5/1IcPWNmk6GfY3846Gkd1DBShkqE0
+         VwdPM0QnN/dyJ2BB42YBGevFHWUNJ4wNPtjLig4OqlqP6LLSSNtbbLhHCgNrLWAd+AHx
+         Jcphgxw2moX8qdPOLORMNqfSyqG8ilAslIfus6YrnMcia7cQGCOljEm8zrz7LlK9nYAM
+         MlCA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=iJA+09/oXBeGyThFH4rEakTMnaSOIHFJRqu4fOZYzzI=;
-        b=25ugii2ACDyUDeiVksw4ffyfSUQAU9qGm5luUfFuN8JI/CgKKCaAK89SnEic7PqffA
-         UlxVUBcKibGz1uVsk+VvevPTv6E2t0k0QHsAbDcD93Kg5Yg7iRKKctcItflidKOp0glv
-         v16fea3XA8uAniLknyWBafJp8/aHY4/o7oYPINhb5tg4rU7GCCDetbFEfvR4PE5xw63x
-         vT5I7H6wBfrH/OAQnL+WrRpGukVXcrLEupTVwjxbmsIOyjuLqCrseMrgCLtBZnOWdqKZ
-         7ssqE75bec4fmpAscovcunHO89mzdYqgqCmnZ/PSDa5SMBgw/1CVn9DMreKKbwiNVLye
-         2Nag==
-X-Gm-Message-State: AOAM533xL2Pmhu0wmKcpiU5YBDU8kD+xr/409c2p0ERhSm7ocfHa43j/
-        9UyzkywD1QpSeLNIznV0OcY=
-X-Google-Smtp-Source: ABdhPJwygAeBk2CcGdhtkA5jidcv4TEv4rdLCKbZbIznaOWOdK5jVchunRJzC5UdY7MMOxLwaNtOKw==
-X-Received: by 2002:a05:6512:318a:: with SMTP id i10mr6373355lfe.444.1631470760788;
-        Sun, 12 Sep 2021 11:19:20 -0700 (PDT)
+        bh=uTGt0I4KYHUC6QbBXj1LfTICcqG/2/qc3BYFTyDmLO4=;
+        b=wA1eY2CsMx/abiDaCv8Ou324DpZbIZ0pz4kGN66qwB0ENCx2wb2XHCyJWxK5jDe4ne
+         CaN5duuimscrPWwtXap1hRVtEsGjT+s8CCevZK4eM2nwqNxukwjmKhgbbMB00p/gtv3L
+         AFkeoiBCaaXNZ7jYHAj2EgfY8PIJiwjOAb+HAU3YOL+0byzNT4BzUfU9nN5D2ab+JoKm
+         /78zt8C5uuXuIi+awlmOyqj+vRrmyhIApwpk4nRWbAJaIOcxz0Ln9QJSv7ny0pzfZyy2
+         2KS/lf0R9Wuqde3yGoyc+0pUxkyR8l80iGkvxRfZU63cDrg61g1eQl+Dn56X2f8TkdcD
+         hpOA==
+X-Gm-Message-State: AOAM5332okzynGS3zha7/cWeadRY9oggepcmsYS99KECO/kDdMLHwF/B
+        7i28EHWxyN0i8JN74dznKPCiph2Mg4c=
+X-Google-Smtp-Source: ABdhPJxRoiPwKXQm6YL2Xm9jb4tDnZGB+HWw5UIcCXjl3nS6z4Ish1OW8v2FuK1odevuecme0Na3WA==
+X-Received: by 2002:ac2:483a:: with SMTP id 26mr6083474lft.684.1631470761696;
+        Sun, 12 Sep 2021 11:19:21 -0700 (PDT)
 Received: from localhost.localdomain (46-138-83-36.dynamic.spd-mgts.ru. [46.138.83.36])
-        by smtp.gmail.com with ESMTPSA id a18sm664556ljd.4.2021.09.12.11.19.19
+        by smtp.gmail.com with ESMTPSA id a18sm664556ljd.4.2021.09.12.11.19.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 12 Sep 2021 11:19:20 -0700 (PDT)
+        Sun, 12 Sep 2021 11:19:21 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <treding@nvidia.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -66,9 +66,9 @@ To:     Thierry Reding <treding@nvidia.com>,
         David Heidelberg <david@ixit.cz>
 Cc:     devicetree@vger.kernel.org, linux-usb@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: [PATCH v7 3/7] soc/tegra: pmc: Expose USB regmap to all SoCs
-Date:   Sun, 12 Sep 2021 21:17:14 +0300
-Message-Id: <20210912181718.1328-4-digetx@gmail.com>
+Subject: [PATCH v7 4/7] usb: phy: tegra: Support OTG mode programming
+Date:   Sun, 12 Sep 2021 21:17:15 +0300
+Message-Id: <20210912181718.1328-5-digetx@gmail.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20210912181718.1328-1-digetx@gmail.com>
 References: <20210912181718.1328-1-digetx@gmail.com>
@@ -78,46 +78,367 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-All Tegra SoCs prior to Tegra186 have USB power controls within the Power
-Management controller. These controls need to be configured by USB driver.
-Expose the regmap to these SoCs.
+Support programming USB PHY into OTG mode.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/soc/tegra/pmc.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/usb/phy/phy-tegra-usb.c   | 198 +++++++++++++++++++++++++++++-
+ include/linux/usb/tegra_usb_phy.h |   5 +
+ 2 files changed, 198 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index 74de84a014e9..7c9bc93147f1 100644
---- a/drivers/soc/tegra/pmc.c
-+++ b/drivers/soc/tegra/pmc.c
-@@ -3067,7 +3067,7 @@ static const struct tegra_pmc_soc tegra20_pmc_soc = {
- 	.pmc_clks_data = NULL,
- 	.num_pmc_clks = 0,
- 	.has_blink_output = true,
--	.has_usb_sleepwalk = false,
-+	.has_usb_sleepwalk = true,
+diff --git a/drivers/usb/phy/phy-tegra-usb.c b/drivers/usb/phy/phy-tegra-usb.c
+index c0f432d509aa..68cd4b68e3a2 100644
+--- a/drivers/usb/phy/phy-tegra-usb.c
++++ b/drivers/usb/phy/phy-tegra-usb.c
+@@ -63,6 +63,10 @@
+ #define   A_VBUS_VLD_WAKEUP_EN			BIT(30)
+ 
+ #define USB_PHY_VBUS_WAKEUP_ID			0x408
++#define   ID_INT_EN				BIT(0)
++#define   ID_CHG_DET				BIT(1)
++#define   VBUS_WAKEUP_INT_EN			BIT(8)
++#define   VBUS_WAKEUP_CHG_DET			BIT(9)
+ #define   VBUS_WAKEUP_STS			BIT(10)
+ #define   VBUS_WAKEUP_WAKEUP_EN			BIT(30)
+ 
+@@ -158,6 +162,10 @@
+ #define   USB_USBMODE_HOST			(3 << 0)
+ #define   USB_USBMODE_DEVICE			(2 << 0)
+ 
++#define PMC_USB_AO				0xf0
++#define   VBUS_WAKEUP_PD_P0			BIT(2)
++#define   ID_PD_P0				BIT(3)
++
+ static DEFINE_SPINLOCK(utmip_pad_lock);
+ static unsigned int utmip_pad_count;
+ 
+@@ -533,13 +541,14 @@ static int utmi_phy_power_on(struct tegra_usb_phy *phy)
+ 	val &= ~USB_WAKE_ON_RESUME_EN;
+ 	writel_relaxed(val, base + USB_SUSP_CTRL);
+ 
+-	if (phy->mode == USB_DR_MODE_PERIPHERAL) {
++	if (phy->mode != USB_DR_MODE_HOST) {
+ 		val = readl_relaxed(base + USB_SUSP_CTRL);
+ 		val &= ~(USB_WAKE_ON_CNNT_EN_DEV | USB_WAKE_ON_DISCON_EN_DEV);
+ 		writel_relaxed(val, base + USB_SUSP_CTRL);
+ 
+ 		val = readl_relaxed(base + USB_PHY_VBUS_WAKEUP_ID);
+ 		val &= ~VBUS_WAKEUP_WAKEUP_EN;
++		val &= ~(ID_CHG_DET | VBUS_WAKEUP_CHG_DET);
+ 		writel_relaxed(val, base + USB_PHY_VBUS_WAKEUP_ID);
+ 
+ 		val = readl_relaxed(base + USB_PHY_VBUS_SENSORS);
+@@ -687,9 +696,10 @@ static int utmi_phy_power_off(struct tegra_usb_phy *phy)
+ 		 * Ask VBUS sensor to generate wake event once cable is
+ 		 * connected.
+ 		 */
+-		if (phy->mode == USB_DR_MODE_PERIPHERAL) {
++		if (phy->mode != USB_DR_MODE_HOST) {
+ 			val = readl_relaxed(base + USB_PHY_VBUS_WAKEUP_ID);
+ 			val |= VBUS_WAKEUP_WAKEUP_EN;
++			val &= ~(ID_CHG_DET | VBUS_WAKEUP_CHG_DET);
+ 			writel_relaxed(val, base + USB_PHY_VBUS_WAKEUP_ID);
+ 
+ 			val = readl_relaxed(base + USB_PHY_VBUS_SENSORS);
+@@ -893,6 +903,7 @@ static void tegra_usb_phy_shutdown(struct usb_phy *u_phy)
+ 	if (WARN_ON(!phy->freq))
+ 		return;
+ 
++	usb_phy_set_wakeup(u_phy, false);
+ 	tegra_usb_phy_power_off(phy);
+ 
+ 	if (!phy->is_ulpi_phy)
+@@ -904,26 +915,146 @@ static void tegra_usb_phy_shutdown(struct usb_phy *u_phy)
+ 	phy->freq = NULL;
+ }
+ 
++static irqreturn_t tegra_usb_phy_isr(int irq, void *data)
++{
++	u32 val, int_mask = ID_CHG_DET | VBUS_WAKEUP_CHG_DET;
++	struct tegra_usb_phy *phy = data;
++	void __iomem *base = phy->regs;
++
++	/*
++	 * The PHY interrupt also wakes the USB controller driver since
++	 * interrupt is shared. We don't do anything in the PHY driver,
++	 * so just clear the interrupt.
++	 */
++	val = readl_relaxed(base + USB_PHY_VBUS_WAKEUP_ID);
++	writel_relaxed(val, base + USB_PHY_VBUS_WAKEUP_ID);
++
++	return val & int_mask ? IRQ_HANDLED : IRQ_NONE;
++}
++
+ static int tegra_usb_phy_set_wakeup(struct usb_phy *u_phy, bool enable)
+ {
+ 	struct tegra_usb_phy *phy = to_tegra_usb_phy(u_phy);
++	void __iomem *base = phy->regs;
++	int ret = 0;
++	u32 val;
++
++	if (phy->wakeup_enabled && phy->mode != USB_DR_MODE_HOST &&
++	    phy->irq > 0) {
++		disable_irq(phy->irq);
++
++		val = readl_relaxed(base + USB_PHY_VBUS_WAKEUP_ID);
++		val &= ~(ID_INT_EN | VBUS_WAKEUP_INT_EN);
++		writel_relaxed(val, base + USB_PHY_VBUS_WAKEUP_ID);
++
++		enable_irq(phy->irq);
++
++		free_irq(phy->irq, phy);
++
++		phy->wakeup_enabled = false;
++	}
++
++	if (enable && phy->mode != USB_DR_MODE_HOST && phy->irq > 0) {
++		ret = request_irq(phy->irq, tegra_usb_phy_isr, IRQF_SHARED,
++				  dev_name(phy->u_phy.dev), phy);
++		if (!ret) {
++			disable_irq(phy->irq);
++
++			/*
++			 * USB clock will be resumed once wake event will be
++			 * generated.  The ID-change event requires to have
++			 * interrupts enabled, otherwise it won't be generated.
++			 */
++			val = readl_relaxed(base + USB_PHY_VBUS_WAKEUP_ID);
++			val |= ID_INT_EN | VBUS_WAKEUP_INT_EN;
++			writel_relaxed(val, base + USB_PHY_VBUS_WAKEUP_ID);
++
++			enable_irq(phy->irq);
++		} else {
++			dev_err(phy->u_phy.dev,
++				"Failed to request interrupt: %d", ret);
++			enable = false;
++		}
++	}
+ 
+ 	phy->wakeup_enabled = enable;
+ 
+-	return 0;
++	return ret;
+ }
+ 
+ static int tegra_usb_phy_set_suspend(struct usb_phy *u_phy, int suspend)
+ {
+ 	struct tegra_usb_phy *phy = to_tegra_usb_phy(u_phy);
++	int ret;
+ 
+ 	if (WARN_ON(!phy->freq))
+ 		return -EINVAL;
+ 
++	/*
++	 * PHY is sharing IRQ with the CI driver, hence here we either
++	 * disable interrupt for both PHY and CI or for CI only.  The
++	 * interrupt needs to be disabled while hardware is reprogrammed
++	 * because interrupt touches the programmed registers, and thus,
++	 * there could be a race condition.
++	 */
++	if (phy->irq > 0)
++		disable_irq(phy->irq);
++
+ 	if (suspend)
+-		return tegra_usb_phy_power_off(phy);
++		ret = tegra_usb_phy_power_off(phy);
+ 	else
+-		return tegra_usb_phy_power_on(phy);
++		ret = tegra_usb_phy_power_on(phy);
++
++	if (phy->irq > 0)
++		enable_irq(phy->irq);
++
++	return ret;
++}
++
++static int tegra_usb_phy_configure_pmc(struct tegra_usb_phy *phy)
++{
++	int err, val = 0;
++
++	/* older device-trees don't have PMC regmap */
++	if (!phy->pmc_regmap)
++		return 0;
++
++	/*
++	 * Tegra20 has a different layout of PMC USB register bits and AO is
++	 * enabled by default after system reset on Tegra20, so assume nothing
++	 * to do on Tegra20.
++	 */
++	if (!phy->soc_config->requires_pmc_ao_power_up)
++		return 0;
++
++	/* enable VBUS wake-up detector */
++	if (phy->mode != USB_DR_MODE_HOST)
++		val |= VBUS_WAKEUP_PD_P0 << phy->instance * 4;
++
++	/* enable ID-pin ACC detector for OTG mode switching */
++	if (phy->mode == USB_DR_MODE_OTG)
++		val |= ID_PD_P0 << phy->instance * 4;
++
++	/* disable detectors to reset them */
++	err = regmap_set_bits(phy->pmc_regmap, PMC_USB_AO, val);
++	if (err) {
++		dev_err(phy->u_phy.dev, "Failed to disable PMC AO: %d\n", err);
++		return err;
++	}
++
++	usleep_range(10, 100);
++
++	/* enable detectors */
++	err = regmap_clear_bits(phy->pmc_regmap, PMC_USB_AO, val);
++	if (err) {
++		dev_err(phy->u_phy.dev, "Failed to enable PMC AO: %d\n", err);
++		return err;
++	}
++
++	/* detectors starts to work after 10ms */
++	usleep_range(10000, 15000);
++
++	return 0;
+ }
+ 
+ static int tegra_usb_phy_init(struct usb_phy *u_phy)
+@@ -967,6 +1098,10 @@ static int tegra_usb_phy_init(struct usb_phy *u_phy)
+ 			goto disable_vbus;
+ 	}
+ 
++	err = tegra_usb_phy_configure_pmc(phy);
++	if (err)
++		goto close_phy;
++
+ 	err = tegra_usb_phy_power_on(phy);
+ 	if (err)
+ 		goto close_phy;
+@@ -1135,11 +1270,56 @@ static int utmi_phy_probe(struct tegra_usb_phy *tegra_phy,
+ 	return 0;
+ }
+ 
++static void tegra_usb_phy_put_pmc_device(void *dev)
++{
++	put_device(dev);
++}
++
++static int tegra_usb_phy_parse_pmc(struct device *dev,
++				   struct tegra_usb_phy *phy)
++{
++	struct platform_device *pmc_pdev;
++	struct of_phandle_args args;
++	int err;
++
++	err = of_parse_phandle_with_fixed_args(dev->of_node, "nvidia,pmc",
++					       1, 0, &args);
++	if (err) {
++		if (err != -ENOENT)
++			return err;
++
++		dev_warn_once(dev, "nvidia,pmc is missing, please update your device-tree\n");
++		return 0;
++	}
++
++	pmc_pdev = of_find_device_by_node(args.np);
++	of_node_put(args.np);
++	if (!pmc_pdev)
++		return -ENODEV;
++
++	err = devm_add_action_or_reset(dev, tegra_usb_phy_put_pmc_device,
++				       &pmc_pdev->dev);
++	if (err)
++		return err;
++
++	if (!platform_get_drvdata(pmc_pdev))
++		return -EPROBE_DEFER;
++
++	phy->pmc_regmap = dev_get_regmap(&pmc_pdev->dev, "usb_sleepwalk");
++	if (!phy->pmc_regmap)
++		return -EINVAL;
++
++	phy->instance = args.args[0];
++
++	return 0;
++}
++
+ static const struct tegra_phy_soc_config tegra20_soc_config = {
+ 	.utmi_pll_config_in_car_module = false,
+ 	.has_hostpc = false,
+ 	.requires_usbmode_setup = false,
+ 	.requires_extra_tuning_parameters = false,
++	.requires_pmc_ao_power_up = false,
  };
  
- static const char * const tegra30_powergates[] = {
-@@ -3128,7 +3128,7 @@ static const struct tegra_pmc_soc tegra30_pmc_soc = {
- 	.pmc_clks_data = tegra_pmc_clks_data,
- 	.num_pmc_clks = ARRAY_SIZE(tegra_pmc_clks_data),
- 	.has_blink_output = true,
--	.has_usb_sleepwalk = false,
-+	.has_usb_sleepwalk = true,
+ static const struct tegra_phy_soc_config tegra30_soc_config = {
+@@ -1147,6 +1327,7 @@ static const struct tegra_phy_soc_config tegra30_soc_config = {
+ 	.has_hostpc = true,
+ 	.requires_usbmode_setup = true,
+ 	.requires_extra_tuning_parameters = true,
++	.requires_pmc_ao_power_up = true,
  };
  
- static const char * const tegra114_powergates[] = {
-@@ -3185,7 +3185,7 @@ static const struct tegra_pmc_soc tegra114_pmc_soc = {
- 	.pmc_clks_data = tegra_pmc_clks_data,
- 	.num_pmc_clks = ARRAY_SIZE(tegra_pmc_clks_data),
- 	.has_blink_output = true,
--	.has_usb_sleepwalk = false,
-+	.has_usb_sleepwalk = true,
+ static const struct of_device_id tegra_usb_phy_id_table[] = {
+@@ -1172,6 +1353,7 @@ static int tegra_usb_phy_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 
+ 	tegra_phy->soc_config = of_device_get_match_data(&pdev->dev);
++	tegra_phy->irq = platform_get_irq_optional(pdev, 0);
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	if (!res) {
+@@ -1215,6 +1397,12 @@ static int tegra_usb_phy_probe(struct platform_device *pdev)
+ 		return err;
+ 	}
+ 
++	err = tegra_usb_phy_parse_pmc(&pdev->dev, tegra_phy);
++	if (err) {
++		dev_err_probe(&pdev->dev, err, "Failed to get PMC regmap\n");
++		return err;
++	}
++
+ 	phy_type = of_usb_get_phy_mode(np);
+ 	switch (phy_type) {
+ 	case USBPHY_INTERFACE_MODE_UTMI:
+diff --git a/include/linux/usb/tegra_usb_phy.h b/include/linux/usb/tegra_usb_phy.h
+index fd1c9f6a4e37..d3e65eb9e16f 100644
+--- a/include/linux/usb/tegra_usb_phy.h
++++ b/include/linux/usb/tegra_usb_phy.h
+@@ -18,6 +18,7 @@
+ 
+ #include <linux/clk.h>
+ #include <linux/gpio.h>
++#include <linux/regmap.h>
+ #include <linux/reset.h>
+ #include <linux/usb/otg.h>
+ 
+@@ -30,6 +31,7 @@
+  *      enter host mode
+  * requires_extra_tuning_parameters: true if xcvr_hsslew, hssquelch_level
+  *      and hsdiscon_level should be set for adequate signal quality
++ * requires_pmc_ao_power_up: true if USB AO is powered down by default
+  */
+ 
+ struct tegra_phy_soc_config {
+@@ -37,6 +39,7 @@ struct tegra_phy_soc_config {
+ 	bool has_hostpc;
+ 	bool requires_usbmode_setup;
+ 	bool requires_extra_tuning_parameters;
++	bool requires_pmc_ao_power_up;
  };
  
- static const char * const tegra124_powergates[] = {
+ struct tegra_utmip_config {
+@@ -62,6 +65,7 @@ enum tegra_usb_phy_port_speed {
+ struct tegra_xtal_freq;
+ 
+ struct tegra_usb_phy {
++	int irq;
+ 	int instance;
+ 	const struct tegra_xtal_freq *freq;
+ 	void __iomem *regs;
+@@ -70,6 +74,7 @@ struct tegra_usb_phy {
+ 	struct clk *pll_u;
+ 	struct clk *pad_clk;
+ 	struct regulator *vbus;
++	struct regmap *pmc_regmap;
+ 	enum usb_dr_mode mode;
+ 	void *config;
+ 	const struct tegra_phy_soc_config *soc_config;
 -- 
 2.32.0
 
