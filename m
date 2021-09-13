@@ -2,97 +2,221 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E862C433EF
-	for <linux-tegra@archiver.kernel.org>; Mon, 13 Sep 2021 14:50:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 152FBC433EF
+	for <linux-tegra@archiver.kernel.org>; Mon, 13 Sep 2021 16:42:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 04A4360698
-	for <linux-tegra@archiver.kernel.org>; Mon, 13 Sep 2021 14:50:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E271660EFF
+	for <linux-tegra@archiver.kernel.org>; Mon, 13 Sep 2021 16:42:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345731AbhIMOv5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 13 Sep 2021 10:51:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34776 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1346721AbhIMOrm (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 13 Sep 2021 10:47:42 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 3BF8960C51;
-        Mon, 13 Sep 2021 14:23:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1631543026;
-        bh=Z6j0LTCb/0Fx5pxLfWQP2iaIBaU+rx32o1y6TgwxBf8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=MU3y9lQuvncRuxjepqLqkpJUzPPrYF1sGflnKzj/heuTwTgCN2oNNAs23fggxVkTI
-         SAJJTyaiBjgQRaDV37IIVo3TBX6/pRgLJBSRVK+p6AZE8/p0AZ0ClN/l2wERwsr08e
-         ZK+t0tQObmMvi3NvViHiwLgD/7Hn6EBQdRpGn+P+w2fQyfNrVuAsSDhjSpJhHlKvEh
-         VRnEwO+o3S7UB09yT9HlUXq94DNsRj+WtZyJ6fdb9gHLV2FBqziv4gzSvKSwLGoGed
-         XR4Lx9PEzHDqaq7/WoM+A7Oqtzy39yurrcScsemlk7ouYCJQqPgTcuvTy2Agqiu4eG
-         IIVYWobHBYlIA==
-Date:   Mon, 13 Sep 2021 15:23:07 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Sameer Pujar <spujar@nvidia.com>
-Cc:     lgirdwood@gmail.com, robh+dt@kernel.org, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, catalin.marinas@arm.com, will@kernel.org,
-        perex@perex.cz, tiwai@suse.com, kuninori.morimoto.gx@renesas.com,
-        sharadg@nvidia.com, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 06/13] ASoC: tegra: Add Tegra210 based MVC driver
-Message-ID: <20210913142307.GF4283@sirena.org.uk>
-References: <1630056839-6562-1-git-send-email-spujar@nvidia.com>
- <1630056839-6562-7-git-send-email-spujar@nvidia.com>
- <20210903181326.GP4932@sirena.org.uk>
- <29c785d0-cc70-7cce-c205-77059c11e0e1@nvidia.com>
+        id S238219AbhIMQoC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 13 Sep 2021 12:44:02 -0400
+Received: from mail-dm6nam10on2075.outbound.protection.outlook.com ([40.107.93.75]:28033
+        "EHLO NAM10-DM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S233005AbhIMQoC (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 13 Sep 2021 12:44:02 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=QwwKtUHAfiZS+pu55/j6zepd2dC18A8dnZBha5iB/eAmBzSQOdU8jtaD5MWvBg8FcdC7HGQKyTvnf6QuFYSa5A22tD/yoozXgwuSeFFb74um3R+VIAoYvxwJbl5aUHDG7pKmzh6qsj6oCej+a9jAbThfSmbgU8u2p2e1Q+nWSQLVQw3+zdHJHFxvAEaGBXPINzPU0FhCdSlcj1P7NGKjtXmeSmVvEByUSn+zkNbarW6F+3DkiMuWC4+vMEBO70VJPvl/yKx1YsH/yjPbgk3fxE4BlhTz6Wr/LODqytg9vpCmM1hzY3Oy+jD7liYdBICsx34uNzrD8PuNUuruZyyBcA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901; h=From:Date:Subject:Message-ID:Content-Type:MIME-Version;
+ bh=Y24GIzHycxe8CiX91vmuqVr/0cXOQ3faa/wvaD8XkpQ=;
+ b=gxz8qH0dxA0OxM5iwfVb2+yqyAQ2pJLjYnrMqniia9oQLVFcwhkzsrK9bZ9iDtfex72RI3zATzTdQ+IqEoJ7QxK+Oz3sQqzVeqRR439Ufnw3BHXKHjxyVGKgDvIj1cIPyp3ird2OK6ZndQ4pOb2WCm90r5WGvKYaqbdsE69af74XXe1J8zgSM9/Q43JHJWj8wYN35s++EgE6Uctxs4L60AxN2UVay04ImQbk7Yx6HBx3Kofgh9B3S0Oha0GY3478X15xN5WrAdyUYOm8uaDwAWH+4xRwoqaisSXpSw57yXMHNW6b6ZQB6s+d8kSZ+xihy9i82pSlEDRRvNYcs6zqKw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.112.32) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Y24GIzHycxe8CiX91vmuqVr/0cXOQ3faa/wvaD8XkpQ=;
+ b=nb3xkboUBC7WxeITQSVyldq+RoWAJ2npkGeL2MQ8MUPx64qHAjn3FkJczcEsnBj3Gl8HLye93NfWgPaptNvInC9iwgDpNZrpRx21YDYtZu6JM7w53BosYRQrODU1U+eVzG+YJqiHgjuVHGoY2q0WaQq0YktM/oHfaLr9UBJuaaUpnf6hkbe+iXtwJAwHRFbxGErkXqERXnzZZncjO1JiqkA87aEuGdvPRydvqbctqBYjtS8o2pZiAgdVDKYVLxeyTTGfQdT1AM/28XBQe8k5P3naOThdZ/T6lt5LOuE3E4zkrKwvs8I/uMvOT5ig/x3f6c9aKewxladXtzyhloYd+w==
+Received: from DM5PR21CA0022.namprd21.prod.outlook.com (2603:10b6:3:ac::32) by
+ BYAPR12MB2663.namprd12.prod.outlook.com (2603:10b6:a03:72::21) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.4478.20; Mon, 13 Sep 2021 16:42:43 +0000
+Received: from DM6NAM11FT032.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:3:ac:cafe::ef) by DM5PR21CA0022.outlook.office365.com
+ (2603:10b6:3:ac::32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4544.1 via Frontend
+ Transport; Mon, 13 Sep 2021 16:42:43 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.32)
+ smtp.mailfrom=nvidia.com; kernel.org; dkim=none (message not signed)
+ header.d=none;kernel.org; dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.112.32 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.112.32; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (216.228.112.32) by
+ DM6NAM11FT032.mail.protection.outlook.com (10.13.173.93) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.4500.14 via Frontend Transport; Mon, 13 Sep 2021 16:42:43 +0000
+Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL109.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Mon, 13 Sep
+ 2021 09:42:42 -0700
+Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Mon, 13 Sep
+ 2021 16:42:42 +0000
+Received: from audio.nvidia.com (172.20.187.6) by mail.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server id 15.0.1497.18 via Frontend
+ Transport; Mon, 13 Sep 2021 16:42:38 +0000
+From:   Sameer Pujar <spujar@nvidia.com>
+To:     <broonie@kernel.org>, <lgirdwood@gmail.com>, <robh+dt@kernel.org>,
+        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <catalin.marinas@arm.com>, <will@kernel.org>, <perex@perex.cz>,
+        <tiwai@suse.com>, <kuninori.morimoto.gx@renesas.com>
+CC:     <sharadg@nvidia.com>, <alsa-devel@alsa-project.org>,
+        <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Sameer Pujar <spujar@nvidia.com>
+Subject: [PATCH v2 00/13] Extend AHUB audio support for Tegra210 and later
+Date:   Mon, 13 Sep 2021 22:12:08 +0530
+Message-ID: <1631551342-25469-1-git-send-email-spujar@nvidia.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="i3lJ51RuaGWuFYNw"
-Content-Disposition: inline
-In-Reply-To: <29c785d0-cc70-7cce-c205-77059c11e0e1@nvidia.com>
-X-Cookie: Above all else -- sky.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 2ec0df9e-0139-43b5-61dc-08d976d58244
+X-MS-TrafficTypeDiagnostic: BYAPR12MB2663:
+X-Microsoft-Antispam-PRVS: <BYAPR12MB2663D989D838F68D5264A847A7D99@BYAPR12MB2663.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: JRWORCnXtULT4Uiv+jSnxbLnvKMoMa3YDNHVpjqYfEvF6W1hCSP37r9gXDtzbM6VMRtfHPRyYFJFX3xX94ZvuWEFzu0QEHfSYRSXGPnmmNVWA+dW0nUgm517fdJbMNfdIxRbynoKVoZhibZXKRlRY84Mb0fFk/7l+ut13KtPu5iXuHNURnrZJAVQFScTNsj1xvLG2p2yY11jOiZVDPHTWb+7PEPMkXwbDPRrzE4CbgX36mlaYWDKHq60w8ITErfrDF9R4aEFDK8EPawze1Lz6pVzTnw++flZJ1GMbfSEy3J87zCKJ2hRGs04vNCm29UTVm4iu24Yzzkjpku8qTkl57yPVwqtqxrgEGt1w+hB1EMYvyCDsDD7irlw+Y/YxUpRhDGyhQ9t3bV9zEdrmLooYHMCMTruTKvyWgKG3DEs9MyI23bWuQ2KlKRFxf4cjpk72AQ3Qn/Nvj3Iy7C/keVEU/G6y+nzDy74o/VUhZy32splO5dUfpwhi8mxojtHQHWORZ+SrxYv80gbY+RCocUrp8EzDbCMrhA1mLCZgHpNtCYYA5Se2gx5S7Npapf3M/FbPDxIBKF1npuva53S4v9LU1NIpCpqVkV5mpxsxkFRS+0QdVL0mEH3MWYf+gllWtyI0NKwTyrInOfBWVksJu7hKUBCC4pylwJsJRJ+df0R8YCEmjSh6/vXR3qsrxiIaVBaA+A/KqTIDgRfvoqNr9y4kAmetvhL5q3TMRgJx9piDEdkwSKjMgrivxx7KM3jE5f8CfvLXQ4KGsCqVZA5YlhwLKU7IZDAQHf7JBKSSkexeCXoBVNbGJPMu7XtmMsBwQ1eseezy0zgFwdPUp9fpQopNQ==
+X-Forefront-Antispam-Report: CIP:216.228.112.32;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid01.nvidia.com;CAT:NONE;SFS:(4636009)(46966006)(36840700001)(356005)(82310400003)(8676002)(70586007)(508600001)(107886003)(6666004)(86362001)(5660300002)(47076005)(316002)(110136005)(26005)(7696005)(2906002)(336012)(36860700001)(966005)(426003)(54906003)(36756003)(2616005)(921005)(186003)(83380400001)(7636003)(7416002)(70206006)(4326008)(8936002)(21314003);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Sep 2021 16:42:43.4027
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2ec0df9e-0139-43b5-61dc-08d976d58244
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.32];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT032.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR12MB2663
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+Earlier as part of series [0], support for ADMAIF and I/O modules (such
+as I2S, DMIC and DSPK) was added. This series aims at exposing some of
+the AHUB internal modules (listed below), which can be used for audio
+pre or post processing.
 
---i3lJ51RuaGWuFYNw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+  * SFC (Sampling Frequency Converter)
+  * MVC (Master Volume Control)
+  * AMX (Audio Multiplexer)
+  * ADX (Audio Demultiplexer)
+  * Mixer
 
-On Mon, Sep 13, 2021 at 10:32:32AM +0530, Sameer Pujar wrote:
-> On 9/3/2021 11:43 PM, Mark Brown wrote:
+These modules can be plugged into audio paths and relevant processing
+can be done. The MUX routes are extended to allow add or remove above
+modules in the path via mixer controls. This is similar to how specific
+ADMAIF channels are connected to relevant I/O module instances at the
+moment.
 
-> > > +	err |= regmap_update_bits(mvc->regmap, TEGRA210_MVC_SWITCH,
-> > > +			TEGRA210_MVC_VOLUME_SWITCH_MASK,
-> > > +			TEGRA210_MVC_VOLUME_SWITCH_TRIGGER);
-> > > +
-> > > +end:
-> > > +	pm_runtime_put(cmpnt->dev);
-> > > +	return err;
-> > > +}
+Some of these modules can alter PCM parameters. Consider example of
+resampler (44.1 -> 48 kHz) in the path.
 
-> > _put() should return 0 if there's no change or 1 for a change.
+  aplay(44.1 kHz) -> ADMAIF -> SFC -> (48 kHz) I2S -> (48kHz) Codec
 
-> So this means, no need to return any error value and just return 0 in such
-> cases?
+The modules following SFC should be using converted sample rate and DAIs
+need to be configured accordingly. The audio-graph driver provides a
+mechanism to fixup the new parameters which can be specified in DT for a
+given DAI. Then core uses these new values via fixup callback and then
+pass it to respective DAIs hw_param() callback. The "convert-rate",
+described in [1], property can be used when there is rate conversion in
+the audio path. Similarly "convert-channels" can be used when there is
+channel conversion in the path. There is no "convert-xxx" property for
+sample size conversions. It can be added if necessary.
 
-If there's an error you should return that instead.
+[0] https://www.lkml.org/lkml/2020/7/21/1357
+[1] Documentation/devicetree/bindings/sound/audio-graph-port.yaml
 
---i3lJ51RuaGWuFYNw
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
+Changelog
+=========
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmE/XsoACgkQJNaLcl1U
-h9Aeywf+L19DUp0pquR8XpAdjcB8vCJFQ8bpY19O2MoHi1ytdVvLaesU9Hd+lPBc
-hvbcsNlfBqDuH2EGjUqPFkRKDevu6YiF+UsAYldN6011XNMjbyo5GtPnLSQbtFY0
-55lL43iJ4KqIZDIYwgdoz5f/kEDfuhAFP1GUvo31JnSRRqcsooD/0YWnKx3rOmvF
-EA3QmaFxjp46zpSp+U92iKEMDi3rkJNpqgBiL/vpQRgLQ4xov5nBxzMHx+AmH/hl
-89lvssVBxEV6+waoi1STpaAdHR5ynuhBctdoBh0UgEGg1T+l477TFZ/dCHFQd5OF
-zHcyS9EQ2akuFsPlpZA9FqtaxNTN+w==
-=rm21
------END PGP SIGNATURE-----
+v1 -> v2
+--------
+ * Put comments for soft reset application in the drivers.
+ * Split out mute/volume control logic in put() calls of MVC driver and
+   use separate callbacks for the respective kcontrols.
+ * Update kcontrol put() callback in MVC driver to return 1 whenever
+   there is change. Similar change is done in other drivers too.
+ * Use name-prefix.yaml reference for the driver documentation now.
+ * Add sound-name-prefix pattern for MIXER driver and use prefix
+   accordingly in DT.
 
---i3lJ51RuaGWuFYNw--
+Sameer Pujar (13):
+  ASoC: soc-pcm: Don't reconnect an already active BE
+  ASoC: simple-card-utils: Increase maximum DAI links limit to 512
+  ASoC: audio-graph: Fixup CPU endpoint hw_params in a BE<->BE link
+  ASoC: dt-bindings: tegra: Few more Tegra210 AHUB modules
+  ASoC: tegra: Add routes for few AHUB modules
+  ASoC: tegra: Add Tegra210 based MVC driver
+  ASoC: tegra: Add Tegra210 based SFC driver
+  ASoC: tegra: Add Tegra210 based AMX driver
+  ASoC: tegra: Add Tegra210 based ADX driver
+  ASoC: tegra: Add Tegra210 based Mixer driver
+  arm64: defconfig: Enable few Tegra210 based AHUB drivers
+  arm64: tegra: Add few AHUB devices for Tegra210 and later
+  arm64: tegra: Extend APE audio support on Jetson platforms
+
+ .../bindings/sound/nvidia,tegra210-adx.yaml        |   76 +
+ .../bindings/sound/nvidia,tegra210-ahub.yaml       |   20 +
+ .../bindings/sound/nvidia,tegra210-amx.yaml        |   76 +
+ .../bindings/sound/nvidia,tegra210-mixer.yaml      |   74 +
+ .../bindings/sound/nvidia,tegra210-mvc.yaml        |   76 +
+ .../bindings/sound/nvidia,tegra210-sfc.yaml        |   73 +
+ arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts | 1554 ++++++++-
+ arch/arm64/boot/dts/nvidia/tegra186.dtsi           |  120 +
+ arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts | 1493 +++++++-
+ .../arm64/boot/dts/nvidia/tegra194-p3509-0000.dtsi | 1520 ++++++++-
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi           |  116 +
+ arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts |  876 +++++
+ arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts |  876 +++++
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi           |   77 +
+ arch/arm64/configs/defconfig                       |    5 +
+ include/sound/simple_card_utils.h                  |    2 +-
+ sound/soc/generic/audio-graph-card.c               |    4 +-
+ sound/soc/soc-pcm.c                                |    4 +
+ sound/soc/tegra/Kconfig                            |   48 +
+ sound/soc/tegra/Makefile                           |   10 +
+ sound/soc/tegra/tegra210_adx.c                     |  531 +++
+ sound/soc/tegra/tegra210_adx.h                     |   72 +
+ sound/soc/tegra/tegra210_ahub.c                    |  511 ++-
+ sound/soc/tegra/tegra210_amx.c                     |  600 ++++
+ sound/soc/tegra/tegra210_amx.h                     |   93 +
+ sound/soc/tegra/tegra210_mixer.c                   |  674 ++++
+ sound/soc/tegra/tegra210_mixer.h                   |  100 +
+ sound/soc/tegra/tegra210_mvc.c                     |  645 ++++
+ sound/soc/tegra/tegra210_mvc.h                     |  117 +
+ sound/soc/tegra/tegra210_sfc.c                     | 3549 ++++++++++++++++++++
+ sound/soc/tegra/tegra210_sfc.h                     |   78 +
+ 31 files changed, 13647 insertions(+), 423 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra210-adx.yaml
+ create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra210-amx.yaml
+ create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra210-mixer.yaml
+ create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra210-mvc.yaml
+ create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra210-sfc.yaml
+ create mode 100644 sound/soc/tegra/tegra210_adx.c
+ create mode 100644 sound/soc/tegra/tegra210_adx.h
+ create mode 100644 sound/soc/tegra/tegra210_amx.c
+ create mode 100644 sound/soc/tegra/tegra210_amx.h
+ create mode 100644 sound/soc/tegra/tegra210_mixer.c
+ create mode 100644 sound/soc/tegra/tegra210_mixer.h
+ create mode 100644 sound/soc/tegra/tegra210_mvc.c
+ create mode 100644 sound/soc/tegra/tegra210_mvc.h
+ create mode 100644 sound/soc/tegra/tegra210_sfc.c
+ create mode 100644 sound/soc/tegra/tegra210_sfc.h
+
+-- 
+2.7.4
+
