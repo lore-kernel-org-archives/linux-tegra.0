@@ -6,46 +6,50 @@ X-Spam-Status: No, score=-7.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2BE2C433FE
-	for <linux-tegra@archiver.kernel.org>; Mon, 13 Sep 2021 11:12:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E862C433EF
+	for <linux-tegra@archiver.kernel.org>; Mon, 13 Sep 2021 14:50:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A63D96044F
-	for <linux-tegra@archiver.kernel.org>; Mon, 13 Sep 2021 11:12:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 04A4360698
+	for <linux-tegra@archiver.kernel.org>; Mon, 13 Sep 2021 14:50:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239429AbhIMLNz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 13 Sep 2021 07:13:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58020 "EHLO mail.kernel.org"
+        id S1345731AbhIMOv5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 13 Sep 2021 10:51:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34776 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S238383AbhIMLNy (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 13 Sep 2021 07:13:54 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id CDFA660F46;
-        Mon, 13 Sep 2021 11:12:38 +0000 (UTC)
+        id S1346721AbhIMOrm (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 13 Sep 2021 10:47:42 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 3BF8960C51;
+        Mon, 13 Sep 2021 14:23:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1631531559;
-        bh=irBxJIzmiNaODmEF43yC4HXVnVYmzMRm6KYesasJvOs=;
+        s=k20201202; t=1631543026;
+        bh=Z6j0LTCb/0Fx5pxLfWQP2iaIBaU+rx32o1y6TgwxBf8=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ESj2sOHsdmhoBytephZ0saAgQxkz345/DM+OKLcMB6Cs/QO8YPmjZh1JgLcUyEc/d
-         M5G8vxHuKKHxyjoRw8kC4snOCBn9JOZ5iy3F1LOySGLs03kocBts1UgD/ol6Q6VXX1
-         dWACxLcPfI/+Xb6CPpNXNYL7iPxmsxBkjihKLZc3yGHFhsbGAwWEQaeMvPMzzyaEsE
-         HUtvpPGkSggqd1te3OcniXBKGvzd/SOqQ8CsAdKC0jBrAXXFMb0PNt8lLAwa3d4Jx0
-         vJTPMZg6fgsNRaf2yAN2Q1ezvWOcL60LPBfNLvazi4Yg0xN+p/GdIfIu5bS0hcUxbr
-         Y7trh+PSaX4Vw==
-Date:   Mon, 13 Sep 2021 12:12:00 +0100
+        b=MU3y9lQuvncRuxjepqLqkpJUzPPrYF1sGflnKzj/heuTwTgCN2oNNAs23fggxVkTI
+         SAJJTyaiBjgQRaDV37IIVo3TBX6/pRgLJBSRVK+p6AZE8/p0AZ0ClN/l2wERwsr08e
+         ZK+t0tQObmMvi3NvViHiwLgD/7Hn6EBQdRpGn+P+w2fQyfNrVuAsSDhjSpJhHlKvEh
+         VRnEwO+o3S7UB09yT9HlUXq94DNsRj+WtZyJ6fdb9gHLV2FBqziv4gzSvKSwLGoGed
+         XR4Lx9PEzHDqaq7/WoM+A7Oqtzy39yurrcScsemlk7ouYCJQqPgTcuvTy2Agqiu4eG
+         IIVYWobHBYlIA==
+Date:   Mon, 13 Sep 2021 15:23:07 +0100
 From:   Mark Brown <broonie@kernel.org>
-To:     Adam Borowski <kilobyte@angband.pl>
-Cc:     Laxman Dewangan <ldewangan@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH] spi: tegra20-slink: fix "defined but not used" if
- !CONFIG_PM
-Message-ID: <20210913111200.GC4283@sirena.org.uk>
-References: <20210912212519.11797-1-kilobyte@angband.pl>
+To:     Sameer Pujar <spujar@nvidia.com>
+Cc:     lgirdwood@gmail.com, robh+dt@kernel.org, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, catalin.marinas@arm.com, will@kernel.org,
+        perex@perex.cz, tiwai@suse.com, kuninori.morimoto.gx@renesas.com,
+        sharadg@nvidia.com, alsa-devel@alsa-project.org,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 06/13] ASoC: tegra: Add Tegra210 based MVC driver
+Message-ID: <20210913142307.GF4283@sirena.org.uk>
+References: <1630056839-6562-1-git-send-email-spujar@nvidia.com>
+ <1630056839-6562-7-git-send-email-spujar@nvidia.com>
+ <20210903181326.GP4932@sirena.org.uk>
+ <29c785d0-cc70-7cce-c205-77059c11e0e1@nvidia.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="QRj9sO5tAVLaXnSD"
+        protocol="application/pgp-signature"; boundary="i3lJ51RuaGWuFYNw"
 Content-Disposition: inline
-In-Reply-To: <20210912212519.11797-1-kilobyte@angband.pl>
+In-Reply-To: <29c785d0-cc70-7cce-c205-77059c11e0e1@nvidia.com>
 X-Cookie: Above all else -- sky.
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
@@ -53,32 +57,42 @@ List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---QRj9sO5tAVLaXnSD
+--i3lJ51RuaGWuFYNw
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Sun, Sep 12, 2021 at 11:25:19PM +0200, Adam Borowski wrote:
+On Mon, Sep 13, 2021 at 10:32:32AM +0530, Sameer Pujar wrote:
+> On 9/3/2021 11:43 PM, Mark Brown wrote:
 
-> +#ifdef CONFIG_PM
->  static int tegra_slink_runtime_suspend(struct device *dev);
->  static int tegra_slink_runtime_resume(struct device *dev);
-> +#endif
+> > > +	err |= regmap_update_bits(mvc->regmap, TEGRA210_MVC_SWITCH,
+> > > +			TEGRA210_MVC_VOLUME_SWITCH_MASK,
+> > > +			TEGRA210_MVC_VOLUME_SWITCH_TRIGGER);
+> > > +
+> > > +end:
+> > > +	pm_runtime_put(cmpnt->dev);
+> > > +	return err;
+> > > +}
 
-ifdefs are not an idiomatic fix, use __maybe_unused if you have to.
+> > _put() should return 0 if there's no change or 1 for a change.
 
---QRj9sO5tAVLaXnSD
+> So this means, no need to return any error value and just return 0 in such
+> cases?
+
+If there's an error you should return that instead.
+
+--i3lJ51RuaGWuFYNw
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmE/Mf8ACgkQJNaLcl1U
-h9CPSgf/a2nQENkOP9ZoeKFY8Jf4kU+EegzYYSHAmvq28sq4bKi43AZVprthoUnD
-7AQpVc+/2RP3kYLDGRujc0aW2P84lmpyJ01HrXidt/CTx0uWjzpNvo/+VMbYiKsq
-5tVpcpi3mNMF67IrbqWlEovuVAR99B7476Q0eA3eH/q6goahR63j+u9vGdZ0se02
-twbjDgdBIva3NbczBm+HD7FW0ifadKo/eOX5i6fqxvcP9oNCaukA3wdaEcqy3t1Y
-W8J8AFW2jaV8op2BK+1NsGxe6B0wv4TuC5vdsPm4/h7yx2n5UFg73E4Qbvvn9FjY
-ioyVWY5cxPwk5IuPMZBrCnYD3P3W3A==
-=XIqu
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmE/XsoACgkQJNaLcl1U
+h9Aeywf+L19DUp0pquR8XpAdjcB8vCJFQ8bpY19O2MoHi1ytdVvLaesU9Hd+lPBc
+hvbcsNlfBqDuH2EGjUqPFkRKDevu6YiF+UsAYldN6011XNMjbyo5GtPnLSQbtFY0
+55lL43iJ4KqIZDIYwgdoz5f/kEDfuhAFP1GUvo31JnSRRqcsooD/0YWnKx3rOmvF
+EA3QmaFxjp46zpSp+U92iKEMDi3rkJNpqgBiL/vpQRgLQ4xov5nBxzMHx+AmH/hl
+89lvssVBxEV6+waoi1STpaAdHR5ynuhBctdoBh0UgEGg1T+l477TFZ/dCHFQd5OF
+zHcyS9EQ2akuFsPlpZA9FqtaxNTN+w==
+=rm21
 -----END PGP SIGNATURE-----
 
---QRj9sO5tAVLaXnSD--
+--i3lJ51RuaGWuFYNw--
