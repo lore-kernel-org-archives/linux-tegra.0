@@ -2,108 +2,278 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C50EC433F5
-	for <linux-tegra@archiver.kernel.org>; Tue, 14 Sep 2021 19:20:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82554C433F5
+	for <linux-tegra@archiver.kernel.org>; Tue, 14 Sep 2021 20:22:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7D7BE61262
-	for <linux-tegra@archiver.kernel.org>; Tue, 14 Sep 2021 19:20:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6433161183
+	for <linux-tegra@archiver.kernel.org>; Tue, 14 Sep 2021 20:22:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234153AbhINTWF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 14 Sep 2021 15:22:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51184 "EHLO
+        id S233817AbhINUXg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 14 Sep 2021 16:23:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37596 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234321AbhINTV5 (ORCPT
+        with ESMTP id S233775AbhINUXf (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 14 Sep 2021 15:21:57 -0400
-Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33A3DC0613D8;
-        Tue, 14 Sep 2021 12:20:34 -0700 (PDT)
-Received: by mail-lf1-x12f.google.com with SMTP id p29so603438lfa.11;
-        Tue, 14 Sep 2021 12:20:34 -0700 (PDT)
+        Tue, 14 Sep 2021 16:23:35 -0400
+Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC6B2C061766
+        for <linux-tegra@vger.kernel.org>; Tue, 14 Sep 2021 13:22:17 -0700 (PDT)
+Received: by mail-pj1-x102b.google.com with SMTP id lb1-20020a17090b4a4100b001993f863df2so503713pjb.5
+        for <linux-tegra@vger.kernel.org>; Tue, 14 Sep 2021 13:22:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=sWUveR2st8W0vI/cjNjCZ7SFinSkJr9hz3+NwIh5zpw=;
-        b=QK8y3w5xbn/XH3R6Lh0goR3B1q+DKq37YdfrTgzs8oOf1GLlRm2xfOPYfMyZhG3wx4
-         O1RuuYiQNIIiCMWRzlpTWPY4Ngq4KW3zJvySWMYGGU42D900bBPxJTkhM0WqyyJksZMM
-         UoUkEGgvTRYRS2qvVmR0JB4qwKzxMKZOsUhXPlioGZi1r5AgJ3crLYgH0wRmAHD97pTq
-         yHWbUn01auG+e2mMFTej9B0R9POqdEkYQSPNeo2Rs32TD75Kwn3zKqqZJTzh8HVu+EHi
-         7azgZjW5KVW5pPHkGk80S54JdZXUCxOTeZgkuGMyibKF1XHik9T4HSnNQr0pLQ9wrJLX
-         oYwg==
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=29glUktI+TgFcu0s/snTaCZqtPLPWr2Rvd/8CIHFfUI=;
+        b=cfcIKIVYpE12XwL7GHkvoewGDjTUKq7LX1i1W01aOLR2X0kcbmmtIty6rTJxAE+UtB
+         EXZxeVBBlW0eOxly76fpGdXjzLRCH4txhTigfbfrX8f/zh/8A7hgaqNAM5UUtMVWefkw
+         ptV8EFOYK9tU6rzbt9T1ncBVfQuDJ/F5eB0Hw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=sWUveR2st8W0vI/cjNjCZ7SFinSkJr9hz3+NwIh5zpw=;
-        b=cz1+k7sw+Cr5UaVS+VTxVoXiIHxEObU3tcLbfzXVmmTDIlFPKN8oRyeSOnN8LOSk86
-         H7bEYFmIgWknYzkje3fQ/DjAumLWENqTB1rGhUdS91FbQY8b0CXFJQj8u6yMPoRG5voq
-         9wnRXIonS/7n6+sc6K8z2Xm1FPUvSXw09pfIL7FE3VHOhXtr83BNmNvPhboQAFJ/PAfO
-         pKp7Hlss7p1lMAPrW1Nkry4ONV0NC085/6uth7iZ61MyYY6uZdRGkCFnfyHBLGzOBf95
-         MiKa1osi7SoNcXZqjCoSc/rCePlyLYwLnpojP3pXx1hqc0ZC09yIqdz3heWgoT+x8PlU
-         1AKw==
-X-Gm-Message-State: AOAM533VR8ycVcMyc8/dkYsJItqt8FRJCUAsSUF1WfihNv3drAbJN/2R
-        /A/FirpJned6NZG5KK4gLD6kyOIfuH0=
-X-Google-Smtp-Source: ABdhPJyY4q+Rms2R5q4yuEjNMcWE8zHzIgYnjvP4+9Cip3MQivqsHDeOuAYhpmFlejWFO+AL7aKTjQ==
-X-Received: by 2002:ac2:5e9c:: with SMTP id b28mr14190756lfq.405.1631647232471;
-        Tue, 14 Sep 2021 12:20:32 -0700 (PDT)
-Received: from [192.168.2.145] (46-138-83-36.dynamic.spd-mgts.ru. [46.138.83.36])
-        by smtp.googlemail.com with ESMTPSA id p14sm1405436ljj.140.2021.09.14.12.20.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Sep 2021 12:20:31 -0700 (PDT)
-Subject: Re: [PATCH v6 6/6] iommu/tegra-smmu: Add pagetable mappings to
- debugfs
-To:     Nicolin Chen <nicoleotsuka@gmail.com>
-Cc:     thierry.reding@gmail.com, joro@8bytes.org, will@kernel.org,
-        vdumpa@nvidia.com, jonathanh@nvidia.com,
-        linux-tegra@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org
-References: <20210914013858.31192-1-nicoleotsuka@gmail.com>
- <20210914013858.31192-7-nicoleotsuka@gmail.com>
- <31501a62-3312-9f04-3bb8-790d0481746c@gmail.com>
- <20210914184933.GA32705@Asurada-Nvidia>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <25d68aff-323a-df54-45f9-55b22f3089e0@gmail.com>
-Date:   Tue, 14 Sep 2021 22:20:30 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        bh=29glUktI+TgFcu0s/snTaCZqtPLPWr2Rvd/8CIHFfUI=;
+        b=ewYl4+AdnZkTj632QwLwR6IjNcGEjelECaP3bq1JlGjLgTV+TRBXN7g2F0j1frQQnT
+         u7ATePPHmtk46WFJSP7T/4KevmKxnZ80GieT/ZXVaG03XKyQRjg3NyCPuoJssV3jbrbc
+         sCM3Ckg5TLc2jRfX7WyxWlLBkHg6U3jy123RRX0T7crln3N3cuxZh7TR2gE/rwvSXjxq
+         x1wMONM6JIROLt2EBI0x+ZkYngYC9+VRsyto8cIrb8/bxuZ4OosyNOxImGmyCTiThOan
+         L3XG+k9XkipfmrdUnrnZpVP4wHz5djg6jzLFsKvdY0x/lLhtaFfcEZsFXiMIDGpQjS55
+         nvqg==
+X-Gm-Message-State: AOAM532XRpbSu32MacnMJZd38asVJsIcWUE/WtWK3JX0AZYrSjvKMNjq
+        iZ6turlccSFpmA8cHGPJgw1QiQ==
+X-Google-Smtp-Source: ABdhPJy2EEe19ESWg5bxUnradbRUCA2EQ+Ty9mf2FrxoWf30CMjk9tPMo/WXlF/y4jzWF/N4QIc6ZA==
+X-Received: by 2002:a17:902:9682:b0:138:e2f9:720d with SMTP id n2-20020a170902968200b00138e2f9720dmr16562742plp.57.1631650937237;
+        Tue, 14 Sep 2021 13:22:17 -0700 (PDT)
+Received: from tictac2.mtv.corp.google.com ([2620:15c:202:201:f38f:9d0f:3eba:f8c4])
+        by smtp.gmail.com with ESMTPSA id 141sm12185393pgg.16.2021.09.14.13.22.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Sep 2021 13:22:16 -0700 (PDT)
+From:   Douglas Anderson <dianders@chromium.org>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sam Ravnborg <sam@ravnborg.org>
+Cc:     devicetree@vger.kernel.org, Steev Klimaszewski <steev@kali.org>,
+        dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+        David Airlie <airlied@linux.ie>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Linus W <linus.walleij@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Maxime Ripard <mripard@kernel.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Adam Ford <aford173@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Andreas Kemnade <andreas@kemnade.info>,
+        Andrey Zhizhikin <andrey.zhizhikin@leica-geosystems.com>,
+        Anson Huang <Anson.Huang@nxp.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Corentin Labbe <clabbe@baylibre.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Emil Velikov <emil.velikov@collabora.com>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Eugen Hristev <eugen.hristev@microchip.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Fabrice Gasnier <fabrice.gasnier@st.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        =?UTF-8?q?Guido=20G=C3=BCnther?= <agx@sigxcpu.org>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Kees Cook <keescook@chromium.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Lionel Debieve <lionel.debieve@st.com>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        =?UTF-8?q?Martin=20J=C3=BCcker?= <martin.juecker@gmail.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Michael Walle <michael@walle.cc>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Nishanth Menon <nm@ti.com>,
+        Olivier Moysan <olivier.moysan@st.com>,
+        Otavio Salvador <otavio@ossystems.com.br>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Razvan Stefanescu <razvan.stefanescu@microchip.com>,
+        Robert Richter <rric@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Will Deacon <will@kernel.org>,
+        William Cohen <wcohen@redhat.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
+        linux-tegra@vger.kernel.org,
+        =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>
+Subject: [PATCH v5 00/15] eDP: Support probing eDP panels dynamically instead of hardcoding
+Date:   Tue, 14 Sep 2021 13:21:47 -0700
+Message-Id: <20210914202202.1702601-1-dianders@chromium.org>
+X-Mailer: git-send-email 2.33.0.309.g3052b89438-goog
 MIME-Version: 1.0
-In-Reply-To: <20210914184933.GA32705@Asurada-Nvidia>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-14.09.2021 21:49, Nicolin Chen пишет:
-> On Tue, Sep 14, 2021 at 04:29:15PM +0300, Dmitry Osipenko wrote:
->> 14.09.2021 04:38, Nicolin Chen пишет:
->>> +static unsigned long pd_pt_index_iova(unsigned int pd_index, unsigned int pt_index)
->>> +{
->>> +	return ((dma_addr_t)pd_index & (SMMU_NUM_PDE - 1)) << SMMU_PDE_SHIFT |
->>> +	       ((dma_addr_t)pt_index & (SMMU_NUM_PTE - 1)) << SMMU_PTE_SHIFT;
->>> +}
->>
->> We know that IOVA is fixed to u32 for this controller. Can we avoid all
->> these dma_addr_t castings? It should make code cleaner a tad, IMO.
-> 
-> Tegra210 actually supports 34-bit IOVA...
-> 
+The goal of this patch series is to move away from hardcoding exact
+eDP panels in device tree files. As discussed in the various patches
+in this series (I'm not repeating everything here), most eDP panels
+are 99% probable and we can get that last 1% by allowing two "power
+up" delays to be specified in the device tree file and then using the
+panel ID (found in the EDID) to look up additional power sequencing
+delays for the panel.
 
-It doesn't. 34-bit is PA, 32-bit is VA.
+This patch series is the logical contiunation of a previous patch
+series where I proposed solving this problem by adding a
+board-specific compatible string [1]. In the discussion that followed
+it sounded like people were open to something like the solution
+proposed in this new series.
 
-Quote from T210 TRM:
+In version 2 I got rid of the idea that we could have a "fallback"
+compatible string that we'd use if we didn't recognize the ID in the
+EDID. This simplifies the bindings a lot and the implementation
+somewhat. As a result of not having a "fallback", though, I'm not
+confident in transitioning any existing boards over to this since
+we'll have to fallback to very conservative timings if we don't
+recognize the ID from the EDID and I can't guarantee that I've seen
+every panel that might have shipped on an existing product. The plan
+is to use "edp-panel" only on new boards or new revisions of old
+boards where we can guarantee that every EDID that ships out of the
+factory has an ID in the table.
 
-"The SMMU is a centralized virtual-to-physical translation for MSS. It
-maps a 32-bit virtual address to a 34-bit physical address. If the
-client address is 40 bits then bits 39:32 are ignored."
+Version 3 of this series now splits out all eDP panels to their own
+driver and adds the generic eDP panel support to this new driver. I
+believe this is what Sam was looking for [2].
 
-Even if it supported more than 32bit, then the returned ulong is 32bit,
-which doesn't make sense.
+Version 4 of this series is mostly small fixes / renames from review
+feedback. It's largely the same as v3. Other than naming /
+description / comment changes, the differences are:
+- Dropped the MIPS config patch as per request.
+- Reorder config patches first.
+- Added a new patch to use the panel ID scheme for quirks.
+- Landed the reorder of logicpd_type_28 / mitsubishi_aa070mc01
+
+Version 5 of this series just fixes the panel ID encode macro to be
+cleaner and adds Jani's review tags.
+
+It could possibly be ready to land?
+
+[1] https://lore.kernel.org/r/YFKQaXOmOwYyeqvM@google.com/
+[2] https://lore.kernel.org/r/YRTsFNTn%2FT8fLxyB@ravnborg.org/
+
+Changes in v5:
+- Prettier encode panel ID function (thanks Andrzej!)
+- Probable => Probeable
+
+Changes in v4:
+- "u8 *edid" => "void *edid" to avoid cast.
+- ("Use new encoded panel id style for quirks matching") new for v4.
+- Don't put kmalloc() in the "if" test even if the old code did.
+- Don't refer to "panel-simple" in commit message.
+- PANEL_SIMPLE_EDP => PANEL_EDP
+- Remove "non-eDP" in panel-simple description.
+- Reordered config patches to be before code patch
+- decode_edid_id() => drm_edid_decode_panel_id()
+- drm_do_get_edid_blk0() => drm_do_get_edid_base_block()
+- drm_get_panel_id() => drm_edid_get_panel_id()
+- encode_edid_id() => drm_edid_encode_panel_id()
+- panel-simple-edp => panel-edp
+- split panel id extraction out to its own function.
+
+Changes in v3:
+- ("Better describe eDP panel delays") new for v3.
+- ("Don't re-read the EDID every time") moved to eDP only patch.
+- ("Non-eDP panels don't need "HPD" handling") new for v3.
+- Add AUO B116XAN06.1 to table.
+- Add Sharp LQ116M1JW10 to table.
+- Adjust endianness of product ID.
+- Change init order to we power at the end.
+- Decode hex product ID w/ same endianness as everyone else.
+- Fallback to conservative delays if panel not recognized.
+- Fix "prepare_to_enable" patch new for v3.
+- Generic "edp-panel" handled by the eDP panel driver now.
+- Move wayward panels patch new for v3.
+- Rename delays more generically so they can be reused.
+- Split eDP panels patch new for v3.
+- Split the delay structure out patch just on eDP now.
+
+Changes in v2:
+- Add "-ms" suffix to delays.
+- Don't support a "fallback" panel. Probed panels must be probed.
+- No longer allow fallback to panel-simple.
+- Not based on patch to copy "desc"--just allocate for probed panels.
+
+Douglas Anderson (15):
+  dt-bindings: drm/panel-simple-edp: Introduce generic eDP panels
+  drm/edid: Break out reading block 0 of the EDID
+  drm/edid: Allow querying/working with the panel ID from the EDID
+  drm/edid: Use new encoded panel id style for quirks matching
+  ARM: configs: Everyone who had PANEL_SIMPLE now gets PANEL_EDP
+  arm64: defconfig: Everyone who had PANEL_SIMPLE now gets PANEL_EDP
+  drm/panel-edp: Split eDP panels out of panel-simple
+  drm/panel-edp: Move some wayward panels to the eDP driver
+  drm/panel-simple: Non-eDP panels don't need "HPD" handling
+  drm/panel-edp: Split the delay structure out
+  drm/panel-edp: Better describe eDP panel delays
+  drm/panel-edp: hpd_reliable shouldn't be subtraced from hpd_absent
+  drm/panel-edp: Fix "prepare_to_enable" if panel doesn't handle HPD
+  drm/panel-edp: Don't re-read the EDID every time we power off the
+    panel
+  drm/panel-edp: Implement generic "edp-panel"s probed by EDID
+
+ .../bindings/display/panel/panel-edp.yaml     |  188 ++
+ arch/arm/configs/at91_dt_defconfig            |    1 +
+ arch/arm/configs/exynos_defconfig             |    1 +
+ arch/arm/configs/imx_v6_v7_defconfig          |    1 +
+ arch/arm/configs/lpc32xx_defconfig            |    1 +
+ arch/arm/configs/multi_v5_defconfig           |    1 +
+ arch/arm/configs/multi_v7_defconfig           |    1 +
+ arch/arm/configs/omap2plus_defconfig          |    1 +
+ arch/arm/configs/qcom_defconfig               |    1 +
+ arch/arm/configs/realview_defconfig           |    1 +
+ arch/arm/configs/sama5_defconfig              |    1 +
+ arch/arm/configs/shmobile_defconfig           |    1 +
+ arch/arm/configs/sunxi_defconfig              |    1 +
+ arch/arm/configs/tegra_defconfig              |    1 +
+ arch/arm/configs/versatile_defconfig          |    1 +
+ arch/arm/configs/vexpress_defconfig           |    1 +
+ arch/arm64/configs/defconfig                  |    1 +
+ drivers/gpu/drm/drm_edid.c                    |  280 ++-
+ drivers/gpu/drm/panel/Kconfig                 |   16 +-
+ drivers/gpu/drm/panel/Makefile                |    1 +
+ drivers/gpu/drm/panel/panel-edp.c             | 1895 +++++++++++++++++
+ drivers/gpu/drm/panel/panel-simple.c          | 1072 +---------
+ include/drm/drm_edid.h                        |   45 +
+ 23 files changed, 2351 insertions(+), 1162 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/display/panel/panel-edp.yaml
+ create mode 100644 drivers/gpu/drm/panel/panel-edp.c
+
+-- 
+2.33.0.309.g3052b89438-goog
+
