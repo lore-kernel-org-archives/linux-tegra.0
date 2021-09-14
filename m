@@ -2,106 +2,169 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3453BC433F5
-	for <linux-tegra@archiver.kernel.org>; Tue, 14 Sep 2021 13:44:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1170AC433F5
+	for <linux-tegra@archiver.kernel.org>; Tue, 14 Sep 2021 15:39:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0CADE6112D
-	for <linux-tegra@archiver.kernel.org>; Tue, 14 Sep 2021 13:44:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E770861056
+	for <linux-tegra@archiver.kernel.org>; Tue, 14 Sep 2021 15:39:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232682AbhINNqI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 14 Sep 2021 09:46:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55782 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232079AbhINNqI (ORCPT
+        id S234356AbhINPlJ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 14 Sep 2021 11:41:09 -0400
+Received: from mail-oi1-f172.google.com ([209.85.167.172]:35348 "EHLO
+        mail-oi1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233969AbhINPlJ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 14 Sep 2021 09:46:08 -0400
-Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B63AC061574;
-        Tue, 14 Sep 2021 06:44:50 -0700 (PDT)
-Received: by mail-lf1-x12b.google.com with SMTP id a4so28939687lfg.8;
-        Tue, 14 Sep 2021 06:44:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=LiLFG3jsLAnjnyRijL4uVe0GMRh42AXtUakCNsayxDQ=;
-        b=ox3Ob1BWKW9EHiBA6DLTWNQHG6Ri8fNwCj46D8Mn9LQtvLlDjcOQdnELXnRL/Aovpm
-         +nT/Eau3mAtAQolDEXBOV1xTdwRNtEoo7g0a1kYcxyxf9lhT1qZE5JgbsR1/OqJiG8o9
-         6f3CPWvYdYDwF1Zq9qqkaOMZHzGSFpCDJlZCCi/1T+vn3NJsNsy7OtNp+GRSIQnU2Guy
-         +hju6kS3WvmVLnVrrNBK2ssDY+e+/xM7wbmBbtjQJfRlqIESSkPjjlIRa1zqi0fgtV7e
-         MxhPJ2MWxpoVvtedazb436UsS1IyVncEA2aJ1nQJFD8T1NomN7QBDlPAURUVgAXJXkYx
-         b6rw==
+        Tue, 14 Sep 2021 11:41:09 -0400
+Received: by mail-oi1-f172.google.com with SMTP id r26so19593670oij.2;
+        Tue, 14 Sep 2021 08:39:51 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=LiLFG3jsLAnjnyRijL4uVe0GMRh42AXtUakCNsayxDQ=;
-        b=rLdQ75Ju1E88ncz/Qles0ofr/yasYzYc5okIOGI1Fg8eSrQzSxidyi3iFmdppmmVMy
-         FemZjuHfN3RcNyagOxoHjIaAnpWusEFSMotIqrWNzRbmIsV7+eO8FDxE7arVxD4YcwoS
-         wLT150x/pPd1maspxRZTq+ZImNW+i8mWmZg/lwswXsM/D5sYoqCODFHdPvQw0DIoFNeB
-         AzA9qjbILk7I802fmWFOifFQojWNBVYvhLmbqi9kDngsj8bSewnsbop4BcuiWCBTr1gv
-         6boHSPZDlHSYkkvk6CiFxPJYKZY9/khvvMXJvmjr8V5XKWjfkpfNvfAlLLZMkUSMGV4W
-         M/Tg==
-X-Gm-Message-State: AOAM530CA4XYmbK1QyhFjL3FCoaNeZvcnDZ9QE9+KGUpgxGXq6fuxBu2
-        9wtzn7S7kQmBFHJ4LZLYYHaeNi8ShlA=
-X-Google-Smtp-Source: ABdhPJxiYS4pffxw5IF8csizK0wbDOGl1IRJGoO7qlkdQqSwq85+R+U51gQaI7oEpxY96waJhJZYzQ==
-X-Received: by 2002:ac2:4116:: with SMTP id b22mr13278085lfi.587.1631627088517;
-        Tue, 14 Sep 2021 06:44:48 -0700 (PDT)
-Received: from [192.168.2.145] (46-138-83-36.dynamic.spd-mgts.ru. [46.138.83.36])
-        by smtp.googlemail.com with ESMTPSA id g24sm1350578ljm.6.2021.09.14.06.44.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Sep 2021 06:44:48 -0700 (PDT)
-Subject: Re: [PATCH AUTOSEL 5.14 133/252] spi: tegra20-slink: Improve runtime
- PM usage
-To:     Sasha Levin <sashal@kernel.org>, Mark Brown <broonie@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org
-References: <20210909114106.141462-1-sashal@kernel.org>
- <20210909114106.141462-133-sashal@kernel.org>
- <20210909123751.GA5176@sirena.org.uk>
- <f75c5c9c-8430-f650-5d0a-3490ac6aa3de@gmail.com>
- <20210909130450.GB5176@sirena.org.uk> <YT+HCdNjfQxQayYH@sashalap>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <b5bf22e8-09bb-4d69-9112-ad4f29e0361a@gmail.com>
-Date:   Tue, 14 Sep 2021 16:44:47 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=pytaBeGbluvK54KH1JDN0ESm8pJSOqwJ8yT+Ker1A6w=;
+        b=sIebQQrzFb/OCPXclR9KFrdFGM3rtg1ua1pARjboJEqN1CsaaD+MVx12Y5PSKOifXi
+         PgmRZL0ebeWfd73gtcB19bIEhO8rLCso0ohQW93hiDB31/9VW/tpglKSK8keuk8GWVxq
+         iDvGOJXN7QZCqQDoVUt1Rxd59B+HNykteVGccDX9gbf6K9Nx5qXNwKUi10jz7/6OOJf6
+         HHklEJ2PyWkJR0H85J/3bmaMJlbZmRkdO+NsrtJsB7Prv3O7OvTXjK8lgrRVivs7u2an
+         8BRxe6xDTQQY6EfIqAltTsRL2cIAnOA7c8qLmGAnpEHYFURK9nlcenN7sU1JNXJ17rhk
+         oc1g==
+X-Gm-Message-State: AOAM531l3EO+iRhJWLyF8qQlNJJhLRtEJrhO9xz6JfyrrSo++RGZThvY
+        +YPHdw+yQEl+Ltc0CBaOLfRzd/3EPQ==
+X-Google-Smtp-Source: ABdhPJzVFOZqi98MrTq7YmWqyehx/3UeShkeAOC/YJdLh4OxDeJKN67Sh0NUcHVM1M6Q5MBJQclOFg==
+X-Received: by 2002:a54:4383:: with SMTP id u3mr1830193oiv.149.1631633991440;
+        Tue, 14 Sep 2021 08:39:51 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
+        by smtp.gmail.com with ESMTPSA id r31sm2735905otv.45.2021.09.14.08.39.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Sep 2021 08:39:50 -0700 (PDT)
+Received: (nullmailer pid 3404699 invoked by uid 1000);
+        Tue, 14 Sep 2021 15:39:49 -0000
+Date:   Tue, 14 Sep 2021 10:39:49 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Mikko Perttunen <mperttunen@nvidia.com>
+Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com, airlied@linux.ie,
+        daniel@ffwll.ch, dri-devel@lists.freedesktop.org,
+        linux-tegra@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v5 1/3] dt-bindings: Add YAML bindings for NVDEC
+Message-ID: <YUDCRb75pIqGZX1S@robh.at.kernel.org>
+References: <20210910104247.1206716-1-mperttunen@nvidia.com>
+ <20210910104247.1206716-2-mperttunen@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <YT+HCdNjfQxQayYH@sashalap>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210910104247.1206716-2-mperttunen@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-13.09.2021 20:14, Sasha Levin пишет:
-> On Thu, Sep 09, 2021 at 02:04:50PM +0100, Mark Brown wrote:
->> On Thu, Sep 09, 2021 at 03:45:45PM +0300, Dmitry Osipenko wrote:
->>> 09.09.2021 15:37, Mark Brown пишет:
->>
->>> > This feels new featureish to me - it'll give you runtime PM where
->>> > previously there was none.
->>
->>> Apparently all patches which have a word 'fix' in commit message are
->>> auto-selected. I agree that it's better not to port this patch.
->>
->> Yeah, it's a fairly common source of false positives :/
+On Fri, Sep 10, 2021 at 01:42:45PM +0300, Mikko Perttunen wrote:
+> Add YAML device tree bindings for NVDEC, now in a more appropriate
+> place compared to the old textual Host1x bindings.
 > 
-> And some of that falls on me: if it's obvious that the "fix" isn't a
-> real fix, I won't take it. In cases like this it's not clear to me
-> whether it's purely a better behaviour, or whether the devices staying
-> on/off/etc causes an actual problem.
+> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+> ---
+> v5:
+> * Changed from nvidia,instance to nvidia,host1x-class optional
+>   property.
+> * Added dma-coherent
+> v4:
+> * Fix incorrect compatibility string in 'if' condition
+> v3:
+> * Drop host1x bindings
+> * Change read2 to read-1 in interconnect names
+> v2:
+> * Fix issues pointed out in v1
+> * Add T194 nvidia,instance property
+> ---
+>  .../gpu/host1x/nvidia,tegra210-nvdec.yaml     | 104 ++++++++++++++++++
+>  MAINTAINERS                                   |   1 +
+>  2 files changed, 105 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/gpu/host1x/nvidia,tegra210-nvdec.yaml
 > 
+> diff --git a/Documentation/devicetree/bindings/gpu/host1x/nvidia,tegra210-nvdec.yaml b/Documentation/devicetree/bindings/gpu/host1x/nvidia,tegra210-nvdec.yaml
+> new file mode 100644
+> index 000000000000..f1f8d083d736
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/gpu/host1x/nvidia,tegra210-nvdec.yaml
+> @@ -0,0 +1,104 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: "http://devicetree.org/schemas/gpu/host1x/nvidia,tegra210-nvdec.yaml#"
+> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+> +
+> +title: Device tree binding for NVIDIA Tegra NVDEC
+> +
+> +description: |
+> +  NVDEC is the hardware video decoder present on NVIDIA Tegra210
+> +  and newer chips. It is located on the Host1x bus and typically
+> +  programmed through Host1x channels.
+> +
+> +maintainers:
+> +  - Thierry Reding <treding@gmail.com>
+> +  - Mikko Perttunen <mperttunen@nvidia.com>
+> +
+> +properties:
+> +  $nodename:
+> +    pattern: "^nvdec@[0-9a-f]*$"
+> +
+> +  compatible:
+> +    enum:
+> +      - nvidia,tegra210-nvdec
+> +      - nvidia,tegra186-nvdec
+> +      - nvidia,tegra194-nvdec
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  clock-names:
+> +    items:
+> +      - const: nvdec
+> +
+> +  resets:
+> +    maxItems: 1
+> +
+> +  reset-names:
+> +    items:
+> +      - const: nvdec
+> +
+> +  power-domains:
+> +    maxItems: 1
+> +
+> +  iommus:
+> +    maxItems: 1
+> +
+> +  dma-coherent: true
+> +
+> +  interconnects:
+> +    items:
+> +      - description: DMA read memory client
+> +      - description: DMA read 2 memory client
+> +      - description: DMA write memory client
+> +
+> +  interconnect-names:
+> +    items:
+> +      - const: dma-mem
+> +      - const: read-1
+> +      - const: write
+> +
+> +  nvidia,host1x-class:
+> +    description: Host1x class of the engine. If not specified, defaults to 0xf0.
 
-You made the right choice. It's indeed not obvious from commit message
-what is achieved with this change. This patch shouldn't have any visible
-effect on older kernels which don't support power management in a case
-of Tegra SoCs. It will have effect using the upcoming kernels, once the
-full set of in-progress power management patches will be merged.
+Define what this is with more than just repeating what is in the 
+property name.
+
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+
+default: 0xf0
+
+Is there a range or set of valid values you specify as schema?
+
+Rob
