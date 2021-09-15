@@ -2,122 +2,107 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BE0EC433EF
-	for <linux-tegra@archiver.kernel.org>; Wed, 15 Sep 2021 04:46:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B63DC433EF
+	for <linux-tegra@archiver.kernel.org>; Wed, 15 Sep 2021 07:37:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2331961212
-	for <linux-tegra@archiver.kernel.org>; Wed, 15 Sep 2021 04:46:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B2CF60F6F
+	for <linux-tegra@archiver.kernel.org>; Wed, 15 Sep 2021 07:37:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230174AbhIOErR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 15 Sep 2021 00:47:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39054 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230144AbhIOErR (ORCPT
+        id S231425AbhIOHiw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 15 Sep 2021 03:38:52 -0400
+Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:44390
+        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231382AbhIOHiw (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 15 Sep 2021 00:47:17 -0400
-Received: from mail-pf1-x42b.google.com (mail-pf1-x42b.google.com [IPv6:2607:f8b0:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBF8AC061574;
-        Tue, 14 Sep 2021 21:45:58 -0700 (PDT)
-Received: by mail-pf1-x42b.google.com with SMTP id 18so1515099pfh.9;
-        Tue, 14 Sep 2021 21:45:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=yYShYH6c0JsEIbmuevIokeH+p63SJCkzU1KxDMZrMRU=;
-        b=aVR0vKEEBl2GkFmYWgRMWkkIFywwAeHQ0uBq8YJMAzsGLSKzr8YECn3UeO9udZCnXh
-         aPLZiHwVMZM6Or8t1xICwUm8hzLMnfakbvKdtm7bms2+tKnfez98inzHo8axZhR3VXcx
-         XcWQYlgeZBpOyO2dWdRSM3GDk0ookjU3pcLyzDmq7+Oh0gGSzeB0hS0wSxumGreJZhin
-         dEv/Qj404C0H2XXci+wjczU5GId2LIHpCskxHSX2JJK+pLGNvMlqJ3OkDhtUQDGuric2
-         7SfrAMjjz8J/PLU2FVBQfESAmdfPXs+eSS/EQm+WRDo9NILTFLiAsOE69KlWR9WP+fJo
-         XmJw==
+        Wed, 15 Sep 2021 03:38:52 -0400
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com [209.85.218.69])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 5CAA54025A
+        for <linux-tegra@vger.kernel.org>; Wed, 15 Sep 2021 07:37:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1631691453;
+        bh=9Jsg/Zb9vOxmr47H6Dck9hmK7mt/XUSoX3CVPDrTxZw=;
+        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+         MIME-Version:Content-Type;
+        b=m6YsJANSRk0dr2my2IPIyexXMfu4iOEjS4AI0vbzeyugKwlCRtssnfvR/VOUejA7d
+         NtznAp0yg99gWqUJG9Zg/VCpYGa49eNhmEm4+2QQflzyPDRlpP6QRb6xOO4ieaHgIG
+         abZ7TmV7HsEB9U5XZr2Cz/JTrg2A57YcRgR+lliyJ9DwjB2Q+SNe7sKucrbcWLxbsB
+         a22NFdHtVIJDw3ANzkx4hALiyI2UbpLr7vFc06ZhF8CIsVNnjqVFYOx9GG/JFN/vin
+         xh4kPTL+DScCFsekr57InpDuYGGHBS8lHB36fWdSg1M/TBpJE80kUvXHKau818Q57l
+         o6MdP/2EDnvRQ==
+Received: by mail-ej1-f69.google.com with SMTP id dt18-20020a170907729200b005c701c9b87cso1039599ejc.8
+        for <linux-tegra@vger.kernel.org>; Wed, 15 Sep 2021 00:37:33 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=yYShYH6c0JsEIbmuevIokeH+p63SJCkzU1KxDMZrMRU=;
-        b=Z7cJMvELqOXqNWCSpP8ViJBOC8aNj6trRm84LZsTHYU5+HGal35PJ7KQYGxIMZ/Z0S
-         2ahd9I/2R3KTooN7TSaL4cR4IDYA8EaiUkTNchdxMjA6SUWuE4HJnSVY6Cyla7lkFmlW
-         1SXkNEtUi+ocoStan+sRnDthYd7VF4cdQS5PtG76wYw+9+fz6raBJYICOG+6zvddduZO
-         6H8XhFlMpFBQvId3UxtwCtcVnTDj7Q5NPEV4zkU1poCbl/eMsPAcYLzXDPgrpvi+T6Q7
-         FRzgSJAsLOzgY0Zow8+Gjf5jb7vYOukKLH/L29kJUVPauJ2R/0u5nAd5LLyi6V0r9Bg5
-         AE1w==
-X-Gm-Message-State: AOAM5304XYDMYzKs5oc2VpPLOMHKWbzwuhJ29XGbQEkExXHGJ0cfcRhp
-        6itq5VzZiDghdRtAGk20LZ0=
-X-Google-Smtp-Source: ABdhPJyqFB4fVQvokDCtCWklgerVzTHYVn9Fge2j83Lu7zNRFhIjFFh4VRitlCs91WHLWNkIFeAAUQ==
-X-Received: by 2002:a05:6a00:2184:b0:3f4:cac4:cf41 with SMTP id h4-20020a056a00218400b003f4cac4cf41mr8442290pfi.6.1631681158262;
-        Tue, 14 Sep 2021 21:45:58 -0700 (PDT)
-Received: from Asurada-Nvidia (thunderhill.nvidia.com. [216.228.112.22])
-        by smtp.gmail.com with ESMTPSA id 132sm11758750pfy.190.2021.09.14.21.45.57
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 14 Sep 2021 21:45:58 -0700 (PDT)
-Date:   Tue, 14 Sep 2021 21:38:06 -0700
-From:   Nicolin Chen <nicoleotsuka@gmail.com>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     thierry.reding@gmail.com, joro@8bytes.org, will@kernel.org,
-        vdumpa@nvidia.com, jonathanh@nvidia.com,
-        linux-tegra@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 6/6] iommu/tegra-smmu: Add pagetable mappings to
- debugfs
-Message-ID: <20210915043806.GA19185@Asurada-Nvidia>
-References: <20210914013858.31192-1-nicoleotsuka@gmail.com>
- <20210914013858.31192-7-nicoleotsuka@gmail.com>
- <31501a62-3312-9f04-3bb8-790d0481746c@gmail.com>
- <20210914184933.GA32705@Asurada-Nvidia>
- <25d68aff-323a-df54-45f9-55b22f3089e0@gmail.com>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=9Jsg/Zb9vOxmr47H6Dck9hmK7mt/XUSoX3CVPDrTxZw=;
+        b=u2ei1+r6p/OgSEY+/aMMM9oh5ZzPHTGJG+pZ0lVztQQ8L6Cl04bzylZbB6R0mNT8GI
+         aNDN5CIKWALo4eN0l/Ur7CPYURA3Hanoiu/ImwDeP0q2Pwtwsj54GFP5H++MvGw5rUgi
+         Cx9PWZmKVN0HgQFKzowYfW9tp7/XEjyqiCgL7BVECZ7wKgoeCX/1iOTf/lkuQKLgeVuV
+         ocPrNc8tuNxy+G23j9ZlXpIVKWArHNH+ofblwwS0pDAkv9yMskN5k2l55cugZs5ZSs0N
+         KRmVqK+bmuqUgPb8czDFEgaMKGQEQipyeJUIa9KY7HGNF/4M8WsgSEdlDggYeC7njCfP
+         blpw==
+X-Gm-Message-State: AOAM5318J6F4KNi5LoGxMx3ApyZJ+FinUPK140wl2jzB+EUF08jak7GL
+        WVXfWW1M0ENaUohmHX7l/cOKd4WykKWOKpbOKCjSY1vlOiI3WWe1afMrYJ3s7QK1eWwP6/oTGcM
+        HyMjlPT2ofncwD3fsaeBtc1SYBxwhl2EJFeOeUvws
+X-Received: by 2002:a05:6402:2da:: with SMTP id b26mr23729106edx.160.1631691453112;
+        Wed, 15 Sep 2021 00:37:33 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJy9KNnHVSLzmWN5khTacRj2yNehERLh21SPyQ+lDhUrMrfW6xrVidKaH9YbxB7KxkhxkN1q5Q==
+X-Received: by 2002:a05:6402:2da:: with SMTP id b26mr23729082edx.160.1631691452928;
+        Wed, 15 Sep 2021 00:37:32 -0700 (PDT)
+Received: from kozik-lap.lan (lk.84.20.244.219.dc.cable.static.lj-kabel.net. [84.20.244.219])
+        by smtp.gmail.com with ESMTPSA id d22sm5871832ejk.5.2021.09.15.00.37.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Sep 2021 00:37:32 -0700 (PDT)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+To:     CGEL <cgel.zte@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Jing Yangyang <jing.yangyang@zte.com.cn>,
+        Zeal Robot <zealci@zte.com.cn>
+Subject: Re: [PATCH linux-next] memory:tegra210-emc-core: replace DEFINE_SIMPLE_ATTRIBUTE with DEFINE_DEBUGFS_ATTRIBUTE
+Date:   Wed, 15 Sep 2021 09:37:24 +0200
+Message-Id: <163169144170.13297.3862081658679258253.b4-ty@canonical.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20210825063739.70260-1-deng.changcheng@zte.com.cn>
+References: <20210825063739.70260-1-deng.changcheng@zte.com.cn>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <25d68aff-323a-df54-45f9-55b22f3089e0@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Sep 14, 2021 at 10:20:30PM +0300, Dmitry Osipenko wrote:
-> 14.09.2021 21:49, Nicolin Chen пишет:
-> > On Tue, Sep 14, 2021 at 04:29:15PM +0300, Dmitry Osipenko wrote:
-> >> 14.09.2021 04:38, Nicolin Chen пишет:
-> >>> +static unsigned long pd_pt_index_iova(unsigned int pd_index, unsigned int pt_index)
-> >>> +{
-> >>> +	return ((dma_addr_t)pd_index & (SMMU_NUM_PDE - 1)) << SMMU_PDE_SHIFT |
-> >>> +	       ((dma_addr_t)pt_index & (SMMU_NUM_PTE - 1)) << SMMU_PTE_SHIFT;
-> >>> +}
-> >>
-> >> We know that IOVA is fixed to u32 for this controller. Can we avoid all
-> >> these dma_addr_t castings? It should make code cleaner a tad, IMO.
-> > 
-> > Tegra210 actually supports 34-bit IOVA...
-> > 
+On Tue, 24 Aug 2021 23:37:39 -0700, CGEL wrote:
+> From: Jing Yangyang <jing.yangyang@zte.com.cn>
 > 
-> It doesn't. 34-bit is PA, 32-bit is VA.
+> Fix the following coccicheck warning:
+> ./drivers/memory/tegra/tegra210-emc-core.c:1665:0-23:WARNING
+> tegra210_emc_debug_min_rate_fops should be defined
+>  with DEFINE_DEBUGFS_ATTRIBUTE
+> ./drivers/memory/tegra/tegra210-emc-core.c:1726:0-23:WARNING
+> tegra210_emc_debug_temperature_fops should be defined
+>  with DEFINE_DEBUGFS_ATTRIBUTE
 > 
-> Quote from T210 TRM:
-> 
-> "The SMMU is a centralized virtual-to-physical translation for MSS. It
-> maps a 32-bit virtual address to a 34-bit physical address. If the
-> client address is 40 bits then bits 39:32 are ignored."
+> [...]
 
-If you scroll down by a couple of sections, you can see 34-bit
-virtual addresses in section 18.6.1.2; and if checking one ASID
-register, you can see it mention the extra two bits va[33:32].
+Applied, thanks!
 
-However, the driver currently sets its geometry.aperture_end to
-32-bit, and we can only get 32-bit IOVAs using PDE and PTE only,
-so I think it should be safe to remove the castings here. I'll
-wait for a couple of days and see if there'd be other comments
-for me to address in next version.
+[1/1] memory:tegra210-emc-core: replace DEFINE_SIMPLE_ATTRIBUTE with DEFINE_DEBUGFS_ATTRIBUTE
+      commit: 6fc5f1adf5a11422d748aa71e43e7c979208b8f2
 
-> Even if it supported more than 32bit, then the returned ulong is 32bit,
-> which doesn't make sense.
-
-On ARM64 (Tegra210), isn't ulong 64-bit?
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
