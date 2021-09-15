@@ -4,79 +4,77 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0576AC433FE
-	for <linux-tegra@archiver.kernel.org>; Wed, 15 Sep 2021 07:37:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2E1AC433EF
+	for <linux-tegra@archiver.kernel.org>; Wed, 15 Sep 2021 07:37:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DEB8C6113E
-	for <linux-tegra@archiver.kernel.org>; Wed, 15 Sep 2021 07:37:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D293B6113E
+	for <linux-tegra@archiver.kernel.org>; Wed, 15 Sep 2021 07:37:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236611AbhIOHiy (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 15 Sep 2021 03:38:54 -0400
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:44414
+        id S236701AbhIOHjE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 15 Sep 2021 03:39:04 -0400
+Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:44436
         "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S236584AbhIOHiy (ORCPT
+        by vger.kernel.org with ESMTP id S236629AbhIOHiz (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 15 Sep 2021 03:38:54 -0400
-Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com [209.85.208.70])
+        Wed, 15 Sep 2021 03:38:55 -0400
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com [209.85.218.72])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 2993F4028B
-        for <linux-tegra@vger.kernel.org>; Wed, 15 Sep 2021 07:37:35 +0000 (UTC)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id A829940194
+        for <linux-tegra@vger.kernel.org>; Wed, 15 Sep 2021 07:37:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1631691455;
-        bh=cHrA0t4OvyS9O74tgTKsLCE0NsldZp8H2NvCrYH6FSE=;
+        s=20210705; t=1631691456;
+        bh=VNhuMSVYlZ4RBI+HKhhCa21E7CHalYPb5KZF4Ga++fk=;
         h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
          MIME-Version:Content-Type;
-        b=fS0zPR3i6i1ZKVkF/pAXpBVfMi1V5Z3Cy99NhnjbYecwc3zf3pkey1LxMX3sQpRBA
-         TcxQ8d4kJA9b5uxCqvZdg/b98sd/TgoYNbSDfqqcO0E9odOsautb3IRnQbG6Xzyud9
-         kn0cM0V+iYQz5ziAoyoU+n/Mh5fnSeXkxl9eAwQ8mD/ienwAd017+VpXMskXi4QeSm
-         Pd4OYl1gSCtfnyZPVSLi2k6+izZFUVPNiucE8Fk07Wy+nf/ZXHF9X+98GhLmqRTsg+
-         3OJiK3migTR0GTbD/orkmNP3119TLFABMi96L4PQdI6OktuKuav4NOX19iU6JoCzIr
-         kHbSAq3rZz06w==
-Received: by mail-ed1-f70.google.com with SMTP id v13-20020a056402174d00b003c25d6b2f13so1090706edx.4
-        for <linux-tegra@vger.kernel.org>; Wed, 15 Sep 2021 00:37:35 -0700 (PDT)
+        b=d4PhT/B/Withgs/PtbcwedTYKqwZ+96+rmurQFdSzd2whvlt5fXix0ddUHA9eC3HV
+         3+zM55Fx5wsGSZ4plwhQI2GbpSwx/G4r3d+xMqnAQufhaHUN230mxjbKRECSTsbRUG
+         0GBDyH/p2n+4Z/vtCmEefKejx3W4PGvOjHSxy8G4VlEd6pGfwMjXlaawZdD2UaYBSW
+         80hGv5VyCxF62VuUbAaheVfDM8MJzRG7MglRlqslA5wZvYHarloOKhjRX5fxJ4GyfP
+         2z+Sx+HMss0SOPsWjUJhaTqI3GSX1RvCb7iyZbEnoNi/emY+XxtLPuU8A2bxCUSLaF
+         OoeWSqcYCgtUw==
+Received: by mail-ej1-f72.google.com with SMTP id b9-20020a1709063ca900b005f38ffec200so588449ejh.14
+        for <linux-tegra@vger.kernel.org>; Wed, 15 Sep 2021 00:37:36 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=cHrA0t4OvyS9O74tgTKsLCE0NsldZp8H2NvCrYH6FSE=;
-        b=0Csqnyl1zOgWiQqvlgdGCiPBUU3r2kHc9uK8neHuqthmicjg8xEGRyvfs7VRyFujLq
-         VEhjudbeR42nf2fttFO/8KY72KxptN2FWqhTD7bIres2Z2kJMc5lTNAb2DhDagYAiAbC
-         QwF+JAhrailDg056uR2LiDn4KLEJD/25SjCWh5usfATZa+mJUL3cJwYPqNRLdCen5Cc0
-         uCEg5qht75dHPkKmcyDOAOy0lqGgF8qv1OdJ22hzgWqwu2i8RguhKbfG9ykfAXBR4fmI
-         wUnivtJ0IXYdxO73f4QnORCG3vBB6U3ItbTZTZU/BdOFlMf8rYdNeMAjBl/O39Jexao9
-         ESEA==
-X-Gm-Message-State: AOAM5310H3vmsFc2xArckJCEE4xFH3U/OjiM7ZxbySwWDaVPyzOu10sL
-        CaS0HuGSXrdmIoG/UdWje7zSWJedvkt5Tl3a25iPWGnOpF6z8xg3l8PHzzcWbpOP8R5EP8j8uHE
-        PhhWinuPDoSOvEg+krJ2qY5FsD5cNL9HVanOQZ1Ag
-X-Received: by 2002:a05:6402:4cd:: with SMTP id n13mr24254861edw.215.1631691454646;
-        Wed, 15 Sep 2021 00:37:34 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJzMD6sXSY58Em4BfFpuRoLn6u9XwZwLgRmzd1JZFLU/po7hEkeRep9kGZoggT8/YhNM0E/c6g==
-X-Received: by 2002:a05:6402:4cd:: with SMTP id n13mr24254849edw.215.1631691454524;
-        Wed, 15 Sep 2021 00:37:34 -0700 (PDT)
+        bh=VNhuMSVYlZ4RBI+HKhhCa21E7CHalYPb5KZF4Ga++fk=;
+        b=HKhHNFCLV/oWmFbyvbRNSh478bVDpEjqGvflOF7FNZaGPWQLA+FOygnmfCFS9TtWUv
+         3LyCaYK2KAatcLVnzpVkb9gkMb3MjPZ9MN0xUOkNHPYMJvbjwRnyjk52BG9eXy7nRI8W
+         8rkPjOeFZqeleqL40/iShbs1ltJ6qB3B1zlcqmoFZaBuB5RSEqq6F4ww126TGit+QhFB
+         MvN2KjkAf30wjCXBdtBcwg4jNAIKYdx6weBpKvc8Y83lm9XlVPf1yR0B1ssVMRGyUPGM
+         Bn5mYTS70CZi7UBcLTHKGdsNpwFfa7K7NLcfut63PDekXGOWXhN3ualo7XVjY1itknpf
+         a4fw==
+X-Gm-Message-State: AOAM532sZZrzaKkZGhBYjaYzyRDkqWgsO6qJvdNARYhuMEplh3XoU0fQ
+        aMPxVu4m7t8RS8Fpkjtmi7FprXAlS66BtwkoEGg9mUwzPhhTczn7cQzZIOX4of/tjCjcvHJB5qZ
+        atQg38447SFJ1A2g/XNd9Zfk96rRRzpHFWPSArLGg
+X-Received: by 2002:a05:6402:104a:: with SMTP id e10mr24334297edu.139.1631691455980;
+        Wed, 15 Sep 2021 00:37:35 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxSzwU3Zeg/51JAZYchT+uOWuELdhcjWBmcCJ7x2Vabn8Iq1N66iQvk09tApR5D6ty9v5slQA==
+X-Received: by 2002:a05:6402:104a:: with SMTP id e10mr24334288edu.139.1631691455872;
+        Wed, 15 Sep 2021 00:37:35 -0700 (PDT)
 Received: from kozik-lap.lan (lk.84.20.244.219.dc.cable.static.lj-kabel.net. [84.20.244.219])
-        by smtp.gmail.com with ESMTPSA id d22sm5871832ejk.5.2021.09.15.00.37.33
+        by smtp.gmail.com with ESMTPSA id d22sm5871832ejk.5.2021.09.15.00.37.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Sep 2021 00:37:34 -0700 (PDT)
+        Wed, 15 Sep 2021 00:37:35 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-To:     CGEL <cgel.zte@gmail.com>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+To:     linux-kernel@vger.kernel.org,
         Thierry Reding <thierry.reding@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        jing yangyang <jing.yangyang@zte.com.cn>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Zeal Robot <zealci@zte.com.cn>
-Subject: Re: [PATCH linux-next] memory:tegra30-emc: replace DEFINE_SIMPLE_ATTRIBUTE with DEFINE_DEBUGFS_ATTRIBUTE
-Date:   Wed, 15 Sep 2021 09:37:25 +0200
-Message-Id: <163169144170.13297.7126347319834595881.b4-ty@canonical.com>
+        Colin King <colin.king@canonical.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        linux-tegra@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] memory: tegra: make the array list static const, makes object smaller
+Date:   Wed, 15 Sep 2021 09:37:26 +0200
+Message-Id: <163169144169.13297.295852962982920269.b4-ty@canonical.com>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210821035223.28282-1-jing.yangyang@zte.com.cn>
-References: <20210821035223.28282-1-jing.yangyang@zte.com.cn>
+In-Reply-To: <20210819133155.10441-1-colin.king@canonical.com>
+References: <20210819133155.10441-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -84,20 +82,22 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, 20 Aug 2021 20:52:23 -0700, CGEL wrote:
-> From: jing yangyang <jing.yangyang@zte.com.cn>
+On Thu, 19 Aug 2021 14:31:55 +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> Fix the following coccicheck warning:
-> ./drivers/memory/tegra/tegra30-emc.c:1322:0-23:WARNING:
-> tegra_emc_debug_max_rate_fops should be defined
-> with DEFINE_DEBUGFS_ATTRIBUTE
+> Don't populate the array list on the stack but instead it
+> static const. Makes the object code smaller by 110 bytes:
+> 
+> Before:
+>    text    data     bss     dec     hex filename
+>   37713   21992      64   59769    e979 .../tegra/tegra210-emc-cc-r21021.o
 > 
 > [...]
 
 Applied, thanks!
 
-[1/1] memory:tegra30-emc: replace DEFINE_SIMPLE_ATTRIBUTE with DEFINE_DEBUGFS_ATTRIBUTE
-      commit: e12bc3540ad79b2cfc0b801ed16c93b13741d32e
+[1/1] memory: tegra: make the array list static const, makes object smaller
+      commit: d71b90e3633ff4af8e915ba7adc3c26f7f5edcfe
 
 Best regards,
 -- 
