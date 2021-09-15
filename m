@@ -2,160 +2,123 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99E41C433EF
-	for <linux-tegra@archiver.kernel.org>; Tue, 14 Sep 2021 22:12:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18707C433F5
+	for <linux-tegra@archiver.kernel.org>; Wed, 15 Sep 2021 03:51:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 718466113B
-	for <linux-tegra@archiver.kernel.org>; Tue, 14 Sep 2021 22:12:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE62B61214
+	for <linux-tegra@archiver.kernel.org>; Wed, 15 Sep 2021 03:51:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235358AbhINWNy (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 14 Sep 2021 18:13:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34912 "EHLO
+        id S230127AbhIODwi (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 14 Sep 2021 23:52:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55170 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229874AbhINWNx (ORCPT
+        with ESMTP id S230107AbhIODwg (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 14 Sep 2021 18:13:53 -0400
-Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81632C061574
-        for <linux-tegra@vger.kernel.org>; Tue, 14 Sep 2021 15:12:35 -0700 (PDT)
-Received: by mail-lf1-x134.google.com with SMTP id g1so1545443lfj.12
-        for <linux-tegra@vger.kernel.org>; Tue, 14 Sep 2021 15:12:35 -0700 (PDT)
+        Tue, 14 Sep 2021 23:52:36 -0400
+Received: from mail-pf1-x42e.google.com (mail-pf1-x42e.google.com [IPv6:2607:f8b0:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A58FC061574;
+        Tue, 14 Sep 2021 20:51:18 -0700 (PDT)
+Received: by mail-pf1-x42e.google.com with SMTP id x7so1414673pfa.8;
+        Tue, 14 Sep 2021 20:51:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=LAvaIUH5OlRWAZQfOb+bWm3uVreewxT3eR+cClts1uI=;
-        b=VLrCs/+hNIGuWHNfFM8FPpo9MdASxRdZfjTQbnUJQyNoarhnB48pzOHj92Uv+amr9p
-         ixzRcYtYvH4tHeMTkq392YF521gX9qRP6RXpjY/MbnIpiM/U1DAP4rT3mhItZ+smgYPC
-         HAnvOKCP691XE//yBgTqBGfOzo3Xk8LHh+rXW30yKTdtiIQEgJZOMlPkWV+fJ3uxpW4R
-         nToOeYf0EHRW6z3YX/fLoUtleulbtYB1Liz6pppbcIZmFmkKstGWGpmXGDPpdxxXQDOO
-         To6zI2pt1uDGWX1qSHzdUDUBiwjbHPMgxHrVOk9ocyyjcFoQBRhXrj0omC1wbF+Moi96
-         n6BQ==
+        d=gmail.com; s=20210112;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=WY/GfQ6Rqj3YqcjxHunRfD2akCMAESTt8w8d4Zhvv5w=;
+        b=cidkH9uNAQVLWGXkGqup50kNyFpt9UfpsxbDMxH4DEWVoSOKCTkJP/9p3l5/DO1wM5
+         6td4Vdmgew2BjUtOCCsxOTSAhsonJGb9pE/r1SI56ZDFDLea3/fSIKUCkQAvoB+OsV5+
+         QjSAzx3IXZ6KuhmgiB1gpvYO8/6siBifHz37BuqW8099S9xdd7Nk5jWFw6fCDlqTC8aH
+         NyONlBFplS9uaHiQZfkTgNCMshDOd4EnjngmGlbFjnF9qvOQb2iXKdgp131w/7ghyxOM
+         SspDxoLm19L9tDIaIn9hgSTQhM+i+29m9whyL44T3HDc6ozEk4+IFtOEpZ16qu+lZtBR
+         Zgvw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=LAvaIUH5OlRWAZQfOb+bWm3uVreewxT3eR+cClts1uI=;
-        b=nPz+TeA9L7RZ62iT9YiF808Jkmr1AEKWmO0WWgn0B/trX0YwdLa9GZUfcv8vJg5QQD
-         FuMi/LQT6FM/ODv6JQAHLy2MPTJk0xWN1DNZCbBt1ixYN8IMH9rUTihvfGP0oQhrBhWm
-         DN2HDWzo6z/lj2XrV35bGw0DnCw2fmUKXuDPZxdOB9dDGKJDuTHIyvfyhyur06cDbepH
-         x3BE1BxJbY3cI2cDC9nWhzVtdZXop5Gl4l9wq3gSTxrQ+pN19erz05Oi+UU7MpeZG+LM
-         8nJK0XoKqMFRyXeqH5k0yPSVtppjDp4kd3u4kkIPdY1foveBGd8uaFyCgNA3oWIRM/Pa
-         u2/g==
-X-Gm-Message-State: AOAM531YfxGqL/nvcagdhA6JBgIXv3CJcha0fWE7IE85vFrM18YpEhld
-        9uqlXt+P5bmOvk553c/bOHM4H9um6pB9AHIFMwNuFw==
-X-Google-Smtp-Source: ABdhPJwu3ztXRgAHEffeDYZFOfptVugQFO781IvsJ0Ym9L4qfm8T9QJBx3b1mwEoJsYA+Z6NYJX/ewEtSqtF71Fz60g=
-X-Received: by 2002:a05:6512:132a:: with SMTP id x42mr14797863lfu.291.1631657553855;
- Tue, 14 Sep 2021 15:12:33 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210914202202.1702601-1-dianders@chromium.org>
-In-Reply-To: <20210914202202.1702601-1-dianders@chromium.org>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 15 Sep 2021 00:12:22 +0200
-Message-ID: <CACRpkdaTb4_UfFzCqw=fiAnQhHD+1sDDua529KdGQbgMVfjYBw@mail.gmail.com>
-Subject: Re: [PATCH v5 00/15] eDP: Support probing eDP panels dynamically
- instead of hardcoding
-To:     Douglas Anderson <dianders@chromium.org>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, Steev Klimaszewski <steev@kali.org>,
-        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
-        MSM <linux-arm-msm@vger.kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Maxime Ripard <mripard@kernel.org>,
-        Adam Ford <aford173@gmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Andreas Kemnade <andreas@kemnade.info>,
-        Andrey Zhizhikin <andrey.zhizhikin@leica-geosystems.com>,
-        Anson Huang <Anson.Huang@nxp.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Corentin Labbe <clabbe@baylibre.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Emil Velikov <emil.velikov@collabora.com>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Eugen Hristev <eugen.hristev@microchip.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Fabrice Gasnier <fabrice.gasnier@st.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        =?UTF-8?Q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Joel Stanley <joel@jms.id.au>,
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=WY/GfQ6Rqj3YqcjxHunRfD2akCMAESTt8w8d4Zhvv5w=;
+        b=dXSVnf2VkfVexZ5gMvvBLZrbWzF0z2jFp0/dt38LKzZAjUJyab0Dt+5doSqpB5tlw2
+         Skq+yM178I6CjxYkmyGMCle4ck4+5Q9esmiLXLfGp69w8a4TWX6e4SbImiegZcu/geB+
+         1IN4imLbIkKuKzDpJ7C+n6Gu+Vwe6ZVPUPnGAJQPhmQkI3NMs24Tt2txmt+4HPfr35dS
+         ia71VLXk7yhkbbhhhF4QFWXpECEsYPMSP2Pk8tdJIMlgvO2lORUaenA2jkf3+1GuBUV2
+         b/2WlYSodPsZK8IQVTV1x0kNnpRc9keZpwOPrBxju4PwsOEUVATqxOF7c748x9aBl348
+         U34A==
+X-Gm-Message-State: AOAM531u+upPYhKhMF/dXZyoRPfnzrnB9kukz+nStXQvtRvLq8NY5RXA
+        6p7efhYoKvrI1H0/14O3Inn+nW/ZE8Y=
+X-Google-Smtp-Source: ABdhPJxWW7TCDRwjHxpafjz7AYg5hmkid5cCZqZxbl30Qs1pvrqYrInkK8WG54ZWYHUP4u1AlY+C5A==
+X-Received: by 2002:a63:1259:: with SMTP id 25mr18628737pgs.48.1631677877500;
+        Tue, 14 Sep 2021 20:51:17 -0700 (PDT)
+Received: from [172.30.1.2] ([14.32.163.5])
+        by smtp.gmail.com with ESMTPSA id q20sm13131648pgu.31.2021.09.14.20.51.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 14 Sep 2021 20:51:17 -0700 (PDT)
+Subject: Re: [PATCH v1 4/4] PM / devfreq: tegra30: Check whether
+ clk_round_rate() returns zero rate
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Kees Cook <keescook@chromium.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Lionel Debieve <lionel.debieve@st.com>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        =?UTF-8?Q?Martin_J=C3=BCcker?= <martin.juecker@gmail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Michael Walle <michael@walle.cc>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Nishanth Menon <nm@ti.com>,
-        Olivier Moysan <olivier.moysan@st.com>,
-        Otavio Salvador <otavio@ossystems.com.br>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Razvan Stefanescu <razvan.stefanescu@microchip.com>,
-        Robert Richter <rric@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Will Deacon <will@kernel.org>,
-        William Cohen <wcohen@redhat.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Linux-OMAP <linux-omap@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        linux-sunxi@lists.linux.dev,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        =?UTF-8?Q?=C5=81ukasz_Stelmach?= <l.stelmach@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>
+Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org
+References: <20210912184458.17995-1-digetx@gmail.com>
+ <20210912184458.17995-5-digetx@gmail.com>
+From:   Chanwoo Choi <cwchoi00@gmail.com>
+Message-ID: <9fa66405-883a-3653-eb5d-3cd7eee07a0a@gmail.com>
+Date:   Wed, 15 Sep 2021 12:51:11 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
+MIME-Version: 1.0
+In-Reply-To: <20210912184458.17995-5-digetx@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Sep 14, 2021 at 10:22 PM Douglas Anderson <dianders@chromium.org> wrote:
+Hi,
 
-> Version 5 of this series just fixes the panel ID encode macro to be
-> cleaner and adds Jani's review tags.
->
-> It could possibly be ready to land?
+On 21. 9. 13. 오전 3:44, Dmitry Osipenko wrote:
+> EMC clock is always-on and can't be zero. Check whether clk_round_rate()
+> returns zero rate and error out if it does. It can return zero if clock
+> tree isn't initialized properly.
+> 
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>   drivers/devfreq/tegra30-devfreq.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
+> index d83fdc2713ed..65ecf17a36f4 100644
+> --- a/drivers/devfreq/tegra30-devfreq.c
+> +++ b/drivers/devfreq/tegra30-devfreq.c
+> @@ -891,9 +891,9 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
+>   		return err;
+>   
+>   	rate = clk_round_rate(tegra->emc_clock, ULONG_MAX);
+> -	if (rate < 0) {
+> +	if (rate <= 0) {
+>   		dev_err(&pdev->dev, "Failed to round clock rate: %ld\n", rate);
+> -		return rate;
+> +		return rate ?: -EINVAL;
+>   	}
+>   
+>   	tegra->max_freq = rate / KHZ;
+> 
 
-Definitely IMO, the kernel look so much better after this change,
-so for the series:
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
 
-Yours,
-Linus Walleij
+-- 
+Best Regards,
+Samsung Electronics
+Chanwoo Choi
