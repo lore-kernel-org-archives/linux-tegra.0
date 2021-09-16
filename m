@@ -4,32 +4,33 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ABD8C433F5
-	for <linux-tegra@archiver.kernel.org>; Thu, 16 Sep 2021 10:56:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78171C433F5
+	for <linux-tegra@archiver.kernel.org>; Thu, 16 Sep 2021 10:56:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7F42B60F92
-	for <linux-tegra@archiver.kernel.org>; Thu, 16 Sep 2021 10:56:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6438060EE4
+	for <linux-tegra@archiver.kernel.org>; Thu, 16 Sep 2021 10:56:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237319AbhIPK6J (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 16 Sep 2021 06:58:09 -0400
-Received: from mx24.baidu.com ([111.206.215.185]:35380 "EHLO baidu.com"
+        id S237365AbhIPK6R (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 16 Sep 2021 06:58:17 -0400
+Received: from mx22.baidu.com ([220.181.50.185]:35486 "EHLO baidu.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S237193AbhIPK6I (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 16 Sep 2021 06:58:08 -0400
-Received: from BC-Mail-Ex06.internal.baidu.com (unknown [172.31.51.46])
-        by Forcepoint Email with ESMTPS id AF4DADDC8FB14D99E4C4;
-        Thu, 16 Sep 2021 18:56:46 +0800 (CST)
+        id S237193AbhIPK6Q (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 16 Sep 2021 06:58:16 -0400
+X-Greylist: delayed 11965 seconds by postgrey-1.27 at vger.kernel.org; Thu, 16 Sep 2021 06:58:16 EDT
+Received: from BC-Mail-Ex07.internal.baidu.com (unknown [172.31.51.47])
+        by Forcepoint Email with ESMTPS id 4FD7C11E238CA96FD37D;
+        Thu, 16 Sep 2021 18:56:54 +0800 (CST)
 Received: from BJHW-MAIL-EX27.internal.baidu.com (10.127.64.42) by
- BC-Mail-Ex06.internal.baidu.com (172.31.51.46) with Microsoft SMTP Server
+ BC-Mail-EX07.internal.baidu.com (172.31.51.47) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.2242.12; Thu, 16 Sep 2021 18:56:46 +0800
+ 15.1.2242.12; Thu, 16 Sep 2021 18:56:54 +0800
 Received: from LAPTOP-UKSR4ENP.internal.baidu.com (172.31.63.8) by
  BJHW-MAIL-EX27.internal.baidu.com (10.127.64.42) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.2308.14; Thu, 16 Sep 2021 18:56:45 +0800
+ 15.1.2308.14; Thu, 16 Sep 2021 18:56:53 +0800
 From:   Cai Huoqing <caihuoqing@baidu.com>
 To:     <caihuoqing@baidu.com>
 CC:     Thierry Reding <thierry.reding@gmail.com>,
@@ -38,9 +39,9 @@ CC:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         <dri-devel@lists.freedesktop.org>, <linux-tegra@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>
-Subject: [PATCH] drm/tegra: dsi: Make use of the helper function dev_err_probe()
-Date:   Thu, 16 Sep 2021 18:56:40 +0800
-Message-ID: <20210916105641.12215-1-caihuoqing@baidu.com>
+Subject: [PATCH] drm/tegra: sor: Make use of the helper function dev_err_probe()
+Date:   Thu, 16 Sep 2021 18:56:47 +0800
+Message-ID: <20210916105648.12268-1-caihuoqing@baidu.com>
 X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
 Content-Type: text/plain
@@ -59,53 +60,57 @@ gets printed.
 
 Signed-off-by: Cai Huoqing <caihuoqing@baidu.com>
 ---
- drivers/gpu/drm/tegra/dsi.c | 28 ++++++++++++----------------
- 1 file changed, 12 insertions(+), 16 deletions(-)
+ drivers/gpu/drm/tegra/sor.c | 24 +++++++++---------------
+ 1 file changed, 9 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/gpu/drm/tegra/dsi.c b/drivers/gpu/drm/tegra/dsi.c
-index f46d377f0c30..a836fcb49b02 100644
---- a/drivers/gpu/drm/tegra/dsi.c
-+++ b/drivers/gpu/drm/tegra/dsi.c
-@@ -1587,28 +1587,24 @@ static int tegra_dsi_probe(struct platform_device *pdev)
+diff --git a/drivers/gpu/drm/tegra/sor.c b/drivers/gpu/drm/tegra/sor.c
+index 0ea320c1092b..d7964e498da9 100644
+--- a/drivers/gpu/drm/tegra/sor.c
++++ b/drivers/gpu/drm/tegra/sor.c
+@@ -2964,11 +2964,9 @@ static int tegra_sor_hdmi_probe(struct tegra_sor *sor)
+ 	int err;
+ 
+ 	sor->avdd_io_supply = devm_regulator_get(sor->dev, "avdd-io-hdmi-dp");
+-	if (IS_ERR(sor->avdd_io_supply)) {
+-		dev_err(sor->dev, "cannot get AVDD I/O supply: %ld\n",
+-			PTR_ERR(sor->avdd_io_supply));
+-		return PTR_ERR(sor->avdd_io_supply);
+-	}
++	if (IS_ERR(sor->avdd_io_supply))
++		return dev_err_probe(sor->dev, PTR_ERR(sor->avdd_io_supply),
++				     "cannot get AVDD I/O supply\n")
+ 
+ 	err = tegra_sor_enable_regulator(sor, sor->avdd_io_supply);
+ 	if (err < 0) {
+@@ -2978,11 +2976,9 @@ static int tegra_sor_hdmi_probe(struct tegra_sor *sor)
  	}
  
- 	dsi->clk = devm_clk_get(&pdev->dev, NULL);
--	if (IS_ERR(dsi->clk)) {
--		dev_err(&pdev->dev, "cannot get DSI clock\n");
--		return PTR_ERR(dsi->clk);
+ 	sor->vdd_pll_supply = devm_regulator_get(sor->dev, "vdd-hdmi-dp-pll");
+-	if (IS_ERR(sor->vdd_pll_supply)) {
+-		dev_err(sor->dev, "cannot get VDD PLL supply: %ld\n",
+-			PTR_ERR(sor->vdd_pll_supply));
+-		return PTR_ERR(sor->vdd_pll_supply);
 -	}
-+	if (IS_ERR(dsi->clk))
-+		return dev_err_probe(&pdev->dev, PTR_ERR(dsi->clk),
-+				     "cannot get DSI clock\n");
++	if (IS_ERR(sor->vdd_pll_supply))
++		return dev_err_probe(sor->dev, PTR_ERR(sor->vdd_pll_supply),
++				     "cannot get VDD PLL supply\n");
  
- 	dsi->clk_lp = devm_clk_get(&pdev->dev, "lp");
--	if (IS_ERR(dsi->clk_lp)) {
--		dev_err(&pdev->dev, "cannot get low-power clock\n");
--		return PTR_ERR(dsi->clk_lp);
+ 	err = tegra_sor_enable_regulator(sor, sor->vdd_pll_supply);
+ 	if (err < 0) {
+@@ -2992,11 +2988,9 @@ static int tegra_sor_hdmi_probe(struct tegra_sor *sor)
+ 	}
+ 
+ 	sor->hdmi_supply = devm_regulator_get(sor->dev, "hdmi");
+-	if (IS_ERR(sor->hdmi_supply)) {
+-		dev_err(sor->dev, "cannot get HDMI supply: %ld\n",
+-			PTR_ERR(sor->hdmi_supply));
+-		return PTR_ERR(sor->hdmi_supply);
 -	}
-+	if (IS_ERR(dsi->clk_lp))
-+		return dev_err_probe(&pdev->dev, PTR_ERR(dsi->clk_lp),
-+				     "cannot get low-power clock\n");
++	if (IS_ERR(sor->hdmi_supply))
++		return dev_err_probe(sor->dev, PTR_ERR(sor->hdmi_supply),
++				     "cannot get HDMI supply\n");
  
- 	dsi->clk_parent = devm_clk_get(&pdev->dev, "parent");
--	if (IS_ERR(dsi->clk_parent)) {
--		dev_err(&pdev->dev, "cannot get parent clock\n");
--		return PTR_ERR(dsi->clk_parent);
--	}
-+	if (IS_ERR(dsi->clk_parent))
-+		return dev_err_probe(&pdev->dev, PTR_ERR(dsi->clk_parent),
-+				     "cannot get parent clock\n");
- 
- 	dsi->vdd = devm_regulator_get(&pdev->dev, "avdd-dsi-csi");
--	if (IS_ERR(dsi->vdd)) {
--		dev_err(&pdev->dev, "cannot get VDD supply\n");
--		return PTR_ERR(dsi->vdd);
--	}
-+	if (IS_ERR(dsi->vdd))
-+		return dev_err_probe(&pdev->dev, PTR_ERR(dsi->vdd),
-+				     "cannot get VDD supply\n");
- 
- 	err = tegra_dsi_setup_clocks(dsi);
+ 	err = tegra_sor_enable_regulator(sor, sor->hdmi_supply);
  	if (err < 0) {
 -- 
 2.25.1
