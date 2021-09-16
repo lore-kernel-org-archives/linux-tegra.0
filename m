@@ -2,106 +2,93 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A2C5C433F5
-	for <linux-tegra@archiver.kernel.org>; Thu, 16 Sep 2021 15:09:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BA91C433EF
+	for <linux-tegra@archiver.kernel.org>; Thu, 16 Sep 2021 15:34:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 135386112E
-	for <linux-tegra@archiver.kernel.org>; Thu, 16 Sep 2021 15:09:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F05BF61246
+	for <linux-tegra@archiver.kernel.org>; Thu, 16 Sep 2021 15:34:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238483AbhIPPKv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 16 Sep 2021 11:10:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57894 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231351AbhIPPKu (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 16 Sep 2021 11:10:50 -0400
-Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B57B8C061574;
-        Thu, 16 Sep 2021 08:09:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-         s=20161220; h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject
-        :Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
-        Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-        In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=1Qt8eZVGXXPoJliytaxomQR7Nt9R4Kd4tnZSMiZb234=; b=ITEDWgRTX8u92noycsKy8kC8zW
-        uoEBd5MsebiVz5tfHkaj0h/NVe5yN6qVj9xdeMloF3SzbGxhzvvEFvA/p5bVo0vfKR1PlvpNo/X4h
-        RnBPVRHAkEXzdUtXlDuxqrEc7gv5PyPIi+5r5tvicgbruONp0h0fX0wxEQ1BG2so6mYTerCz28jBJ
-        j3XpBj98nEHwI2xz3NJyRehLYA+hDt5qRpfTFqN/mVPzQSGlnJ8MmR4Iit18PS4s2M+zRx+la9NFY
-        gR0MMCMCSy4SXWBvbc/0oGRDhvQo26e9shKfz8hXFSN0nSbh69za6N4ugOzFhgEvMxgHu3Ij778pA
-        qbyx0F4A==;
-Received: from dsl-hkibng22-54f986-236.dhcp.inet.fi ([84.249.134.236] helo=toshino.localdomain)
-        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <mperttunen@nvidia.com>)
-        id 1mQt0v-0006by-QU; Thu, 16 Sep 2021 18:09:25 +0300
-From:   Mikko Perttunen <mperttunen@nvidia.com>
-To:     thierry.reding@gmail.com, jonathanh@nvidia.com
-Cc:     dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Mikko Perttunen <mperttunen@nvidia.com>
-Subject: [PATCH] drm/tegra: Bump VIC/NVDEC clock rates to Fmax
-Date:   Thu, 16 Sep 2021 18:09:20 +0300
-Message-Id: <20210916150920.2136180-1-mperttunen@nvidia.com>
-X-Mailer: git-send-email 2.32.0
+        id S239442AbhIPPgK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 16 Sep 2021 11:36:10 -0400
+Received: from mx22.baidu.com ([220.181.50.185]:35528 "EHLO baidu.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S237406AbhIPPgJ (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 16 Sep 2021 11:36:09 -0400
+Received: from BJHW-Mail-Ex01.internal.baidu.com (unknown [10.127.64.11])
+        by Forcepoint Email with ESMTPS id 96758C8386240ECA0D2D;
+        Thu, 16 Sep 2021 23:34:46 +0800 (CST)
+Received: from BJHW-MAIL-EX27.internal.baidu.com (10.127.64.42) by
+ BJHW-Mail-Ex01.internal.baidu.com (10.127.64.11) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.2308.14; Thu, 16 Sep 2021 23:34:46 +0800
+Received: from LAPTOP-UKSR4ENP.internal.baidu.com (172.31.63.8) by
+ BJHW-MAIL-EX27.internal.baidu.com (10.127.64.42) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.2308.14; Thu, 16 Sep 2021 23:34:45 +0800
+From:   Cai Huoqing <caihuoqing@baidu.com>
+To:     <caihuoqing@baidu.com>
+CC:     Laxman Dewangan <ldewangan@nvidia.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        <linux-input@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH] Input: tegra-kbc - Make use of the helper function dev_err_probe()
+Date:   Thu, 16 Sep 2021 23:34:40 +0800
+Message-ID: <20210916153440.15264-1-caihuoqing@baidu.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 84.249.134.236
-X-SA-Exim-Mail-From: mperttunen@nvidia.com
-X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
+Content-Type: text/plain
+X-Originating-IP: [172.31.63.8]
+X-ClientProxiedBy: BC-Mail-Ex09.internal.baidu.com (172.31.51.49) To
+ BJHW-MAIL-EX27.internal.baidu.com (10.127.64.42)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-To get full performance out of these engines, bump their clock rates
-to maximum. In the future we may want something smarter but this
-should be fine for now.
+When possible use dev_err_probe help to properly deal with the
+PROBE_DEFER error, the benefit is that DEFER issue will be logged
+in the devices_deferred debugfs file.
+Using dev_err_probe() can reduce code size, and the error value
+gets printed.
 
-Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+Signed-off-by: Cai Huoqing <caihuoqing@baidu.com>
 ---
- drivers/gpu/drm/tegra/nvdec.c | 6 ++++++
- drivers/gpu/drm/tegra/vic.c   | 6 ++++++
- 2 files changed, 12 insertions(+)
+ drivers/input/keyboard/tegra-kbc.c | 14 ++++++--------
+ 1 file changed, 6 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/gpu/drm/tegra/nvdec.c b/drivers/gpu/drm/tegra/nvdec.c
-index c3b6fe7fb454..48c90e26e90a 100644
---- a/drivers/gpu/drm/tegra/nvdec.c
-+++ b/drivers/gpu/drm/tegra/nvdec.c
-@@ -374,6 +374,12 @@ static int nvdec_probe(struct platform_device *pdev)
- 		return PTR_ERR(nvdec->clk);
- 	}
+diff --git a/drivers/input/keyboard/tegra-kbc.c b/drivers/input/keyboard/tegra-kbc.c
+index 570fe18c0ce9..7f8958dcc76d 100644
+--- a/drivers/input/keyboard/tegra-kbc.c
++++ b/drivers/input/keyboard/tegra-kbc.c
+@@ -648,16 +648,14 @@ static int tegra_kbc_probe(struct platform_device *pdev)
+ 		return PTR_ERR(kbc->mmio);
  
-+	err = clk_set_rate(nvdec->clk, ULONG_MAX);
-+	if (err < 0) {
-+		dev_err(&pdev->dev, "failed to set clock rate\n");
-+		return err;
-+	}
-+
- 	err = of_property_read_u32(dev->of_node, "nvidia,host1x-class", &host_class);
- 	if (err < 0)
- 		host_class = HOST1X_CLASS_NVDEC;
-diff --git a/drivers/gpu/drm/tegra/vic.c b/drivers/gpu/drm/tegra/vic.c
-index c02010ff2b7f..dec5e56f6780 100644
---- a/drivers/gpu/drm/tegra/vic.c
-+++ b/drivers/gpu/drm/tegra/vic.c
-@@ -441,6 +441,12 @@ static int vic_probe(struct platform_device *pdev)
- 		return PTR_ERR(vic->clk);
- 	}
+ 	kbc->clk = devm_clk_get(&pdev->dev, NULL);
+-	if (IS_ERR(kbc->clk)) {
+-		dev_err(&pdev->dev, "failed to get keyboard clock\n");
+-		return PTR_ERR(kbc->clk);
+-	}
++	if (IS_ERR(kbc->clk))
++		return dev_err_probe(&pdev->dev, PTR_ERR(kbc->clk),
++				     "failed to get keyboard clock\n");
  
-+	err = clk_set_rate(vic->clk, ULONG_MAX);
-+	if (err < 0) {
-+		dev_err(&pdev->dev, "failed to set clock rate\n");
-+		return err;
-+	}
-+
- 	if (!dev->pm_domain) {
- 		vic->rst = devm_reset_control_get(dev, "vic");
- 		if (IS_ERR(vic->rst)) {
+ 	kbc->rst = devm_reset_control_get(&pdev->dev, "kbc");
+-	if (IS_ERR(kbc->rst)) {
+-		dev_err(&pdev->dev, "failed to get keyboard reset\n");
+-		return PTR_ERR(kbc->rst);
+-	}
++	if (IS_ERR(kbc->rst))
++		return dev_err_probe(&pdev->dev, PTR_ERR(kbc->rst),
++			       "failed to get keyboard reset\n");
+ 
+ 	/*
+ 	 * The time delay between two consecutive reads of the FIFO is
 -- 
-2.32.0
+2.25.1
 
