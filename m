@@ -2,145 +2,133 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-15.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AC7AC433F5
-	for <linux-tegra@archiver.kernel.org>; Wed, 15 Sep 2021 22:27:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55D2CC433F5
+	for <linux-tegra@archiver.kernel.org>; Thu, 16 Sep 2021 01:28:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 22356610A6
-	for <linux-tegra@archiver.kernel.org>; Wed, 15 Sep 2021 22:27:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2D6C7611C4
+	for <linux-tegra@archiver.kernel.org>; Thu, 16 Sep 2021 01:28:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232557AbhIOW2j (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 15 Sep 2021 18:28:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56760 "EHLO
+        id S233696AbhIPB3d (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 15 Sep 2021 21:29:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40740 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231969AbhIOW2i (ORCPT
+        with ESMTP id S233688AbhIPB3c (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 15 Sep 2021 18:28:38 -0400
-Received: from mail-pf1-x42e.google.com (mail-pf1-x42e.google.com [IPv6:2607:f8b0:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E69CC061574;
-        Wed, 15 Sep 2021 15:27:19 -0700 (PDT)
-Received: by mail-pf1-x42e.google.com with SMTP id w19so3985221pfn.12;
-        Wed, 15 Sep 2021 15:27:19 -0700 (PDT)
+        Wed, 15 Sep 2021 21:29:32 -0400
+Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D221C061574;
+        Wed, 15 Sep 2021 18:28:11 -0700 (PDT)
+Received: by mail-lf1-x133.google.com with SMTP id x27so11857749lfu.5;
+        Wed, 15 Sep 2021 18:28:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=Xjyd5hMkpqMPk7OhcHiCF4/y/tnGWYGZ0keB+odd2Ng=;
-        b=PlXQITEvZmBc1n7tRBdgd+gUsoQd7z+WeqSbwCW0Y6fVI8yT/SQH/gZOWj1rEd5PGH
-         swNw22KZC8xoIpuwIOQB0qBuBZBZVQWgdu04NyU6/ozEYdI57WYsUCIzwUwa/fXkskfb
-         Alz/fQ0BjBNdtF+77mNK0GKHlJt/0rPr36QxGX+0/Gyr17UmSRlTyBf9gjrH2asTZyW/
-         gBPr3uUgJJ/xedmcsnp7l2LPZ4ZTqdm51B1jx6lrUzYPnij2Wz8OZIQrhM6EroN8hPM3
-         /F/NaGZD2ImE0QW0yTglhOgYeRTL9MoYcjhqUOgNuIyemHOGS5JDWeTfwft4goXa85x5
-         gfvg==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=nn45bUIl96WIFsT4CN3x7DghHPbrAhKFSaIduPWSZkU=;
+        b=D8DU4mSw6cSYFQ8suIyp64R0VVAZh6DQCoxHnANYkUTfVZiEEyVKQ+yqiou/6fQ5Qm
+         vkTu7PInawFreqF8g4x91QuV7ppLmVabWqAguheLpb0FFTDxs5bekaBqMe492Ws3v4LM
+         YYQpIW00z///2b2I9Jca54Q1yhdNCrLD+fPPAV6XCOtA0yBi/2AyuLRE0P+30+6LYjQC
+         68yzExokhqLpcT/KhCmFV2d9/ZKHpDTswSjQHddq58MjMELZTx2akWj18YzOzAWaUF1G
+         W36Zys7m7RQCoASklp67URZIo7p6eeRtZT8Lv4cxud3KxPDsvC3hIrOQsULYHjDMk4gq
+         jP9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=Xjyd5hMkpqMPk7OhcHiCF4/y/tnGWYGZ0keB+odd2Ng=;
-        b=Y225gL00UyvafN3CHhLEq2RPdF2NAE11ibzq7FBZbil+84ckG/PcQnH4crlHCGFrZS
-         6zBe4J8SyvT0sdVc3s28rxdJ4lgkCHAigC8HhCYw17GIXIBB0hqEgFb10hx8jSpUxnI1
-         Qxthfc1Dg1gxdPISd1f1F9nZlSBB+b/FQUaP3dbB797tchieWd5GP4ziBNi9gD1EJPAq
-         yEGQ8Sqtfq1vecrL/Y1LJ6k+mbDk1zefdIhQc6J2xwqv71dKHwCVLuptW2IzzIPmZkmh
-         y4SSIAOVaHJRWHo86JEal+SbVvJoBqLSiQCdre7B0fZOkc0oiBI8z7T38dixgR12qh1s
-         0FxA==
-X-Gm-Message-State: AOAM532/V6GMGFaV5pZ2/8dLF9hH1dcBsrXrzCBqJU9AdTkX7LijHE6C
-        hhIg1GKbBKEjbU/uKY8FXjc=
-X-Google-Smtp-Source: ABdhPJw3biDmUuN9v1ueAp+vI6CP+EYWCLxdUEgAvtkkJ6srbsFEnvpRNyy9gQ4borOgaHrubiOtQg==
-X-Received: by 2002:a63:555c:: with SMTP id f28mr1943370pgm.340.1631744838735;
-        Wed, 15 Sep 2021 15:27:18 -0700 (PDT)
-Received: from Asurada-Nvidia (thunderhill.nvidia.com. [216.228.112.22])
-        by smtp.gmail.com with ESMTPSA id m12sm556664pjv.29.2021.09.15.15.27.17
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 15 Sep 2021 15:27:18 -0700 (PDT)
-Date:   Wed, 15 Sep 2021 15:19:27 -0700
-From:   Nicolin Chen <nicoleotsuka@gmail.com>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     thierry.reding@gmail.com, joro@8bytes.org, will@kernel.org,
-        vdumpa@nvidia.com, jonathanh@nvidia.com,
-        linux-tegra@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 6/6] iommu/tegra-smmu: Add pagetable mappings to
- debugfs
-Message-ID: <20210915221902.GA20845@Asurada-Nvidia>
-References: <20210914013858.31192-1-nicoleotsuka@gmail.com>
- <20210914013858.31192-7-nicoleotsuka@gmail.com>
- <31501a62-3312-9f04-3bb8-790d0481746c@gmail.com>
- <20210914184933.GA32705@Asurada-Nvidia>
- <25d68aff-323a-df54-45f9-55b22f3089e0@gmail.com>
- <20210915043806.GA19185@Asurada-Nvidia>
- <a5a77169-8711-2983-d2cb-4b94061741b9@gmail.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=nn45bUIl96WIFsT4CN3x7DghHPbrAhKFSaIduPWSZkU=;
+        b=ActXdSq1jjZ1t7cmI46rmXzIf3Pg1FaXUZNw5uJSqxIzdKPNdEYpyxepT/83BA9x7J
+         Z98z0kzeG8ES0PpKiFW55sWKT+2iNEXoHtJ0a5wFaOWbQLCSiG/rY7anuYseQBTgiIK9
+         oqwYLBO6UubPujj1aiYXNxznrzPo4aLw6swzwX6UnNWJulvDBr76gt5qdixq0VzfrN1L
+         7AOUAr/Iik2UaqtxNBjdymHicnwmT+ek7qmZ66Ohye4KEzP5aVdcgsG/qZt1IPKPrlKL
+         TVHtH34F1HWAJntet8v/5jvHii7CF3+ryDyo8XB7VMrE7qGg9jc4atvtsIIsQZvPikgc
+         SW2g==
+X-Gm-Message-State: AOAM532om5Ked8JxiPGajfvO30HqUFd15bY1Se+viiEh5PjPmBosz6zP
+        Qg2HyDPWnTePh1q5ITU1bjs=
+X-Google-Smtp-Source: ABdhPJzbUSUXPW9or3AwwwZSR/K3KohU1VLv2sABEALCC/gpyM3zULJdOtF7UOBfYYrMwSl4YhDk7w==
+X-Received: by 2002:a05:6512:3fa8:: with SMTP id x40mr2051116lfa.536.1631755689417;
+        Wed, 15 Sep 2021 18:28:09 -0700 (PDT)
+Received: from [192.168.2.145] (94-29-62-67.dynamic.spd-mgts.ru. [94.29.62.67])
+        by smtp.googlemail.com with ESMTPSA id x192sm121892lff.154.2021.09.15.18.28.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 15 Sep 2021 18:28:08 -0700 (PDT)
+Subject: Re: [PATCH v1 4/4] PM / devfreq: tegra30: Check whether
+ clk_round_rate() returns zero rate
+To:     Chanwoo Choi <cwchoi00@gmail.com>
+Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>
+References: <20210912184458.17995-1-digetx@gmail.com>
+ <20210912184458.17995-5-digetx@gmail.com>
+ <9fa66405-883a-3653-eb5d-3cd7eee07a0a@gmail.com>
+ <e9233eeb-6780-b390-dffa-8de9315effa3@gmail.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <26d90b01-13d5-3bd8-da0a-b9ff61c7845a@gmail.com>
+Date:   Thu, 16 Sep 2021 04:28:07 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
+In-Reply-To: <e9233eeb-6780-b390-dffa-8de9315effa3@gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <a5a77169-8711-2983-d2cb-4b94061741b9@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, Sep 15, 2021 at 03:09:48PM +0300, Dmitry Osipenko wrote:
-> 15.09.2021 07:38, Nicolin Chen пишет:
-> > On Tue, Sep 14, 2021 at 10:20:30PM +0300, Dmitry Osipenko wrote:
-> >> 14.09.2021 21:49, Nicolin Chen пишет:
-> >>> On Tue, Sep 14, 2021 at 04:29:15PM +0300, Dmitry Osipenko wrote:
-> >>>> 14.09.2021 04:38, Nicolin Chen пишет:
-> >>>>> +static unsigned long pd_pt_index_iova(unsigned int pd_index, unsigned int pt_index)
-> >>>>> +{
-> >>>>> +	return ((dma_addr_t)pd_index & (SMMU_NUM_PDE - 1)) << SMMU_PDE_SHIFT |
-> >>>>> +	       ((dma_addr_t)pt_index & (SMMU_NUM_PTE - 1)) << SMMU_PTE_SHIFT;
-> >>>>> +}
-> >>>>
-> >>>> We know that IOVA is fixed to u32 for this controller. Can we avoid all
-> >>>> these dma_addr_t castings? It should make code cleaner a tad, IMO.
-> >>>
-> >>> Tegra210 actually supports 34-bit IOVA...
-> >>>
-> >>
-> >> It doesn't. 34-bit is PA, 32-bit is VA.
-> >>
-> >> Quote from T210 TRM:
-> >>
-> >> "The SMMU is a centralized virtual-to-physical translation for MSS. It
-> >> maps a 32-bit virtual address to a 34-bit physical address. If the
-> >> client address is 40 bits then bits 39:32 are ignored."
-> > 
-> > If you scroll down by a couple of sections, you can see 34-bit
-> > virtual addresses in section 18.6.1.2; and if checking one ASID
-> > register, you can see it mention the extra two bits va[33:32].
+15.09.2021 21:31, Chanwoo Choi пишет:
+> On 21. 9. 15. 오후 12:51, Chanwoo Choi wrote:
+>> Hi,
+>>
+>> On 21. 9. 13. 오전 3:44, Dmitry Osipenko wrote:
+>>> EMC clock is always-on and can't be zero. Check whether clk_round_rate()
+>>> returns zero rate and error out if it does. It can return zero if clock
+>>> tree isn't initialized properly.
+>>>
+>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>>> ---
+>>>   drivers/devfreq/tegra30-devfreq.c | 4 ++--
+>>>   1 file changed, 2 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/drivers/devfreq/tegra30-devfreq.c
+>>> b/drivers/devfreq/tegra30-devfreq.c
+>>> index d83fdc2713ed..65ecf17a36f4 100644
+>>> --- a/drivers/devfreq/tegra30-devfreq.c
+>>> +++ b/drivers/devfreq/tegra30-devfreq.c
+>>> @@ -891,9 +891,9 @@ static int tegra_devfreq_probe(struct
+>>> platform_device *pdev)
+>>>           return err;
+>>>       rate = clk_round_rate(tegra->emc_clock, ULONG_MAX);
+>>> -    if (rate < 0) {
+>>> +    if (rate <= 0) {
+>>>           dev_err(&pdev->dev, "Failed to round clock rate: %ld\n",
+>>> rate);
+>>> -        return rate;
+>>> +        return rate ?: -EINVAL;
 > 
-> Thanks for the pointer. It says that only certain memory clients allow
-> to combine 4 ASIDs to form 34bit VA space. In this case the PA space is
-> split into 4GB areas and there are additional bitfields which configure
-> the ASID mapping of each 4GB area. Still each ASID is 32bit.
+> If rate is 0, It doesn't return and fall-through? even if print the
+> error message. 'return rate ?: -EINVAL;' style is strange for me
+> because it doesn't specify the 'return value' when rate is true.
 
-True.
+It's not clear to me what do you mean by "return and fall-through".
 
-> This is what TRM says:
-> 
-> "For the GPU and other clients with 34-bit address interfaces, the ASID
-> registers are extended to point to four ASIDs. The SMMU supports 4GB of
-> virtual address space per ASID, so mapping addr[33:32] into ASID[1:0]
-> extends the virtual address space of a client to 16GB."
-> 
-> > However, the driver currently sets its geometry.aperture_end to
-> > 32-bit, and we can only get 32-bit IOVAs using PDE and PTE only,
-> > so I think it should be safe to remove the castings here. I'll
-> > wait for a couple of days and see if there'd be other comments
-> > for me to address in next version.
-> 
-> You will need to read the special "ASID Assignment Register" which
-> supports 4 sub-ASIDs to translate the PA address into the actual VA. By
-> default all clients are limited to a single ASID and upstream kernel
-> doesn't support programming of 34bit VAs. So doesn't worth the effort to
-> fully translate the VA, IMO.
+It specifies the 'return value' when rate is true. It's a short form of
+"rate ? rate : -EINVAL".
 
-Yea. It'd be easier to just stay in 32-bit. I will remove those
-castings in the next version, waiting for Thierry taking a look
-at this v6 first.
+The final returned value will be printed by the driver's core. The value
+returned by clk_round_rate() is important here since it tells the reason
+of the error.
+
+https://elixir.bootlin.com/linux/v5.15-rc1/source/drivers/base/dd.c#L533
