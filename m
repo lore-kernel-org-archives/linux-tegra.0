@@ -4,24 +4,24 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E671C43219
-	for <linux-tegra@archiver.kernel.org>; Thu, 16 Sep 2021 14:33:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1B01C433FE
+	for <linux-tegra@archiver.kernel.org>; Thu, 16 Sep 2021 14:33:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7F1546120C
-	for <linux-tegra@archiver.kernel.org>; Thu, 16 Sep 2021 14:33:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 84C1961241
+	for <linux-tegra@archiver.kernel.org>; Thu, 16 Sep 2021 14:33:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238405AbhIPOex (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 16 Sep 2021 10:34:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49308 "EHLO
+        id S235983AbhIPOew (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 16 Sep 2021 10:34:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49312 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237511AbhIPOeu (ORCPT
+        with ESMTP id S238358AbhIPOeu (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
         Thu, 16 Sep 2021 10:34:50 -0400
 Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 552E8C061768;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 657EBC0613CF;
         Thu, 16 Sep 2021 07:33:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
          s=20161220; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
@@ -29,17 +29,17 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
         Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
         :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
         List-Post:List-Owner:List-Archive;
-        bh=a3a4L0LcNyFb0WDaiZP/DECRKX/+dZPtlE+JRRYd/sc=; b=lhvw4BQDLFbnvMtFtX0H1kPI0N
-        SUaXvrBEUJmHO60VFUTvPdcKPvqXqZ+OQaDwXXGGHDtkERj2W6adRCdabonPWgJX+6rreR8Pqnajo
-        I0a3OKFjmzTiAPgLjCx/Al7T7V6li2zqDcUPTTbhLFg+d9+FchaQZyoSbwBdGt2qRWdNYODbUuOJw
-        44HY3bQAgM/1NFti8sGJZUV3R5mvmhgZCIr4s0fHvGhVHE+QifuleS8cSOfRPzKiVhcOB1vYvU3k4
-        COiXnmhQ2/N0PUoC1Hl7KFXnnEM7s3HxDJGFw6Fg7v+cz18ah1XFjqrX9KI3lxbVtGIx07TS3XyCt
-        C6Ik1vrw==;
+        bh=t+oHArRUKruNtF6t61P+0fcL7ssYanvgJ9B45e9Pkj4=; b=0O8TbBVBtcDHchatTwlfnryVWX
+        o8jromUvev4SAbdpKyDsmc+Qn8G1ZhhYWvjqYtBn0X4MB7ZvBKQ/e7zCZZ0CFgjtfT0ywB0rFdLlD
+        V4sK5qCg4DEz7lP8HsrebVp3JIv5FS2YdZ+XAy9WvHERPBdPXqf+gT19OXYArq1XUbJ1yOcUr3Cfx
+        +5uyfdDxivZ03ZB29i1q8B2ykNosEhaZPP/lGnAjOeNSyLg7ieKvJcIkXfWmp4BsVIc77rOuLWzFA
+        P+65x7Nbhh/0RS6gLV6ZNoWSy6Mq8r8+XZ3eKClx9wKACeJ1kh1lZW81+kNB40Mloy8NV7GSL7lBD
+        MjwE70Aw==;
 Received: from dsl-hkibng22-54f986-236.dhcp.inet.fi ([84.249.134.236] helo=toshino.localdomain)
         by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.89)
         (envelope-from <mperttunen@nvidia.com>)
-        id 1mQsRw-0005Xx-3z; Thu, 16 Sep 2021 17:33:16 +0300
+        id 1mQsRv-0005Xx-QQ; Thu, 16 Sep 2021 17:33:15 +0300
 From:   Mikko Perttunen <mperttunen@nvidia.com>
 To:     thierry.reding@gmail.com, jonathanh@nvidia.com, joro@8bytes.org,
         will@kernel.org, robh+dt@kernel.org, robin.murphy@arm.com
@@ -47,9 +47,9 @@ Cc:     linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
         iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         Mikko Perttunen <mperttunen@nvidia.com>
-Subject: [PATCH v2 4/8] iommu/arm-smmu: Attach to host1x context device bus
-Date:   Thu, 16 Sep 2021 17:32:58 +0300
-Message-Id: <20210916143302.2024933-5-mperttunen@nvidia.com>
+Subject: [PATCH v2 1/8] gpu: host1x: Add context bus
+Date:   Thu, 16 Sep 2021 17:32:55 +0300
+Message-Id: <20210916143302.2024933-2-mperttunen@nvidia.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20210916143302.2024933-1-mperttunen@nvidia.com>
 References: <20210916143302.2024933-1-mperttunen@nvidia.com>
@@ -62,47 +62,121 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Set itself as the IOMMU for the host1x context device bus, containing
-"dummy" devices used for Host1x context isolation.
+The context bus is a "dummy" bus that contains struct devices that
+correspond to IOMMU contexts assigned through Host1x to processes.
+
+Even when host1x itself is built as a module, the bus is registered
+in built-in code so that the built-in ARM SMMU driver is able to
+reference it.
 
 Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
 ---
- drivers/iommu/arm/arm-smmu/arm-smmu.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ drivers/gpu/Makefile               |  3 +--
+ drivers/gpu/host1x/Kconfig         |  5 +++++
+ drivers/gpu/host1x/Makefile        |  1 +
+ drivers/gpu/host1x/context_bus.c   | 31 ++++++++++++++++++++++++++++++
+ include/linux/host1x_context_bus.h | 15 +++++++++++++++
+ 5 files changed, 53 insertions(+), 2 deletions(-)
+ create mode 100644 drivers/gpu/host1x/context_bus.c
+ create mode 100644 include/linux/host1x_context_bus.h
 
-diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu.c b/drivers/iommu/arm/arm-smmu/arm-smmu.c
-index 4bc75c4ce402..23082675d542 100644
---- a/drivers/iommu/arm/arm-smmu/arm-smmu.c
-+++ b/drivers/iommu/arm/arm-smmu/arm-smmu.c
-@@ -39,6 +39,7 @@
+diff --git a/drivers/gpu/Makefile b/drivers/gpu/Makefile
+index 835c88318cec..8997f0096545 100644
+--- a/drivers/gpu/Makefile
++++ b/drivers/gpu/Makefile
+@@ -2,7 +2,6 @@
+ # drm/tegra depends on host1x, so if both drivers are built-in care must be
+ # taken to initialize them in the correct order. Link order is the only way
+ # to ensure this currently.
+-obj-$(CONFIG_TEGRA_HOST1X)	+= host1x/
+-obj-y			+= drm/ vga/
++obj-y			+= host1x/ drm/ vga/
+ obj-$(CONFIG_IMX_IPUV3_CORE)	+= ipu-v3/
+ obj-$(CONFIG_TRACE_GPU_MEM)		+= trace/
+diff --git a/drivers/gpu/host1x/Kconfig b/drivers/gpu/host1x/Kconfig
+index 6dab94adf25e..8546dde3acc8 100644
+--- a/drivers/gpu/host1x/Kconfig
++++ b/drivers/gpu/host1x/Kconfig
+@@ -1,7 +1,12 @@
+ # SPDX-License-Identifier: GPL-2.0-only
++
++config TEGRA_HOST1X_CONTEXT_BUS
++	bool
++
+ config TEGRA_HOST1X
+ 	tristate "NVIDIA Tegra host1x driver"
+ 	depends on ARCH_TEGRA || (ARM && COMPILE_TEST)
++	select TEGRA_HOST1X_CONTEXT_BUS
+ 	select IOMMU_IOVA
+ 	help
+ 	  Driver for the NVIDIA Tegra host1x hardware.
+diff --git a/drivers/gpu/host1x/Makefile b/drivers/gpu/host1x/Makefile
+index d2b6f7de0498..c891a3e33844 100644
+--- a/drivers/gpu/host1x/Makefile
++++ b/drivers/gpu/host1x/Makefile
+@@ -18,3 +18,4 @@ host1x-y = \
+ 	hw/host1x07.o
  
- #include <linux/amba/bus.h>
- #include <linux/fsl/mc.h>
-+#include <linux/host1x_context_bus.h>
- 
- #include "arm-smmu.h"
- 
-@@ -2051,8 +2052,20 @@ static int arm_smmu_bus_init(struct iommu_ops *ops)
- 			goto err_reset_pci_ops;
- 	}
- #endif
-+#ifdef CONFIG_TEGRA_HOST1X_CONTEXT_BUS
-+	if (!iommu_present(&host1x_context_device_bus_type)) {
-+		err = bus_set_iommu(&host1x_context_device_bus_type, ops);
-+		if (err)
-+			goto err_reset_fsl_mc_ops;
+ obj-$(CONFIG_TEGRA_HOST1X) += host1x.o
++obj-$(CONFIG_TEGRA_HOST1X_CONTEXT_BUS) += context_bus.o
+diff --git a/drivers/gpu/host1x/context_bus.c b/drivers/gpu/host1x/context_bus.c
+new file mode 100644
+index 000000000000..2625914f3c7d
+--- /dev/null
++++ b/drivers/gpu/host1x/context_bus.c
+@@ -0,0 +1,31 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Copyright (c) 2021, NVIDIA Corporation.
++ */
++
++#include <linux/device.h>
++#include <linux/of.h>
++
++struct bus_type host1x_context_device_bus_type = {
++	.name = "host1x-context",
++};
++EXPORT_SYMBOL(host1x_context_device_bus_type);
++
++static int __init host1x_context_device_bus_init(void)
++{
++	int err;
++
++	if (!of_machine_is_compatible("nvidia,tegra186") &&
++	    !of_machine_is_compatible("nvidia,tegra194") &&
++	    !of_machine_is_compatible("nvidia,tegra234"))
++		return 0;
++
++	err = bus_register(&host1x_context_device_bus_type);
++	if (err < 0) {
++		pr_err("bus type registration failed: %d\n", err);
++		return err;
 +	}
++
++	return 0;
++}
++postcore_initcall(host1x_context_device_bus_init);
+diff --git a/include/linux/host1x_context_bus.h b/include/linux/host1x_context_bus.h
+new file mode 100644
+index 000000000000..72462737a6db
+--- /dev/null
++++ b/include/linux/host1x_context_bus.h
+@@ -0,0 +1,15 @@
++/* SPDX-License-Identifier: GPL-2.0-or-later */
++/*
++ * Copyright (c) 2021, NVIDIA Corporation. All rights reserved.
++ */
++
++#ifndef __LINUX_HOST1X_CONTEXT_BUS_H
++#define __LINUX_HOST1X_CONTEXT_BUS_H
++
++#include <linux/device.h>
++
++#ifdef CONFIG_TEGRA_HOST1X_CONTEXT_BUS
++extern struct bus_type host1x_context_device_bus_type;
 +#endif
 +
- 	return 0;
- 
-+err_reset_fsl_mc_ops: __maybe_unused;
-+#ifdef CONFIG_FSL_MC_BUS
-+	bus_set_iommu(&fsl_mc_bus_type, NULL);
 +#endif
- err_reset_pci_ops: __maybe_unused;
- #ifdef CONFIG_PCI
- 	bus_set_iommu(&pci_bus_type, NULL);
 -- 
 2.32.0
 
