@@ -2,101 +2,157 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32AC5C43219
-	for <linux-tegra@archiver.kernel.org>; Thu, 16 Sep 2021 19:49:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9E1CC433EF
+	for <linux-tegra@archiver.kernel.org>; Thu, 16 Sep 2021 21:16:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1FA3A61268
-	for <linux-tegra@archiver.kernel.org>; Thu, 16 Sep 2021 19:49:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A8C276120F
+	for <linux-tegra@archiver.kernel.org>; Thu, 16 Sep 2021 21:16:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234900AbhIPTuj (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 16 Sep 2021 15:50:39 -0400
-Received: from mail-ot1-f53.google.com ([209.85.210.53]:44940 "EHLO
-        mail-ot1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233659AbhIPTuh (ORCPT
+        id S232308AbhIPVRV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 16 Sep 2021 17:17:21 -0400
+Received: from wnew3-smtp.messagingengine.com ([64.147.123.17]:60809 "EHLO
+        wnew3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230243AbhIPVRV (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 16 Sep 2021 15:50:37 -0400
-Received: by mail-ot1-f53.google.com with SMTP id y63-20020a9d22c5000000b005453f95356cso2874995ota.11;
-        Thu, 16 Sep 2021 12:49:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=0KsoWtKkhaXMiBJDC0/XxZwnXXQWFGw8B4mYJMIPHr0=;
-        b=SpxCjz1AW/J5PsTvzRCCmPvXqxsy2xGpwFm86c/Vd9vbTwvcR4iNTA4o8ZoXZVqMXO
-         XLxJNJ//imPrevRkKbeFs4T4DJDbFeMGJRxVnlCpnJlIjvtHlSy4T+bmF8ZP+XlLUAky
-         Drb5qdsWDgZf2P7EcB6PrmhGjm9KJcI+gaqIKgWS79+WfTfJjibFkBD61FawGjUuoRDj
-         6aYq8H+Uhc6PsYQnbtYW8DYp+uh3LoMJXnwTZWMfvL1qwpkdLuzMncu+u3CkCfPEhBjP
-         DisHrTMNBbYs4idMLZJ/E5wgURRcMU1VnpdlvcmYkc20Ve8BhWhP8atlAEr9RjFfz3+5
-         63Gw==
-X-Gm-Message-State: AOAM5302EB0H4T3gp1DNrZ8N/gvT83IHzyspEArfQWIAOnIjztPuyXVK
-        DKUiIZhQcg85kvcCUc880g==
-X-Google-Smtp-Source: ABdhPJxEEp/Qsw3alHt8zhmxwHRpVnbr0IilY/Bi03MDyZNTmeQPJrTz7p+nPBP14eKxCi6oX/vdRA==
-X-Received: by 2002:a9d:70cc:: with SMTP id w12mr6143201otj.306.1631821755916;
-        Thu, 16 Sep 2021 12:49:15 -0700 (PDT)
-Received: from robh.at.kernel.org (107-211-252-53.lightspeed.cicril.sbcglobal.net. [107.211.252.53])
-        by smtp.gmail.com with ESMTPSA id z7sm948074oti.65.2021.09.16.12.49.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Sep 2021 12:49:15 -0700 (PDT)
-Received: (nullmailer pid 1377102 invoked by uid 1000);
-        Thu, 16 Sep 2021 19:49:11 -0000
-Date:   Thu, 16 Sep 2021 14:49:11 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Lucas Stach <dev@lynxeye.de>, linux-mmc@vger.kernel.org,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter Chen <peter.chen@kernel.org>,
-        Richard Weinberger <richard@nod.at>,
-        Nishanth Menon <nm@ti.com>, linux-pwm@vger.kernel.org,
-        Lee Jones <lee.jones@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        linux-tegra@vger.kernel.org,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        linux-staging@lists.linux.dev, dri-devel@lists.freedesktop.org,
-        linux-clk@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-        linux-mtd@lists.infradead.org, Mark Brown <broonie@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        devicetree@vger.kernel.org, Stefan Agner <stefan@agner.ch>,
-        linux-spi@vger.kernel.org,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-pm@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-usb@vger.kernel.org
-Subject: Re: [PATCH v11 08/34] dt-bindings: host1x: Document Memory Client
- resets of Host1x, GR2D and GR3D
-Message-ID: <YUOftwuVt7EqtA5I@robh.at.kernel.org>
-References: <20210912200832.12312-1-digetx@gmail.com>
- <20210912200832.12312-9-digetx@gmail.com>
+        Thu, 16 Sep 2021 17:17:21 -0400
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
+        by mailnew.west.internal (Postfix) with ESMTP id 1BAF52B011D0;
+        Thu, 16 Sep 2021 17:15:59 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute2.internal (MEProxy); Thu, 16 Sep 2021 17:15:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=u92.eu; h=from
+        :to:cc:subject:date:message-id:mime-version
+        :content-transfer-encoding; s=fm3; bh=v45RiqZN/i6oiIGNrZzNEXsh+f
+        6NSgjMOWlZQrk26uM=; b=dxfey06DfqMg90n/+BtczlPU39glJAkDJIV7LMm06M
+        m8BCYqXT72dMAQ+Khc41PNOMmUgC0ajzA/6ezi2HNPUd983XJTTW5dBR1vH2wuco
+        nYvIr3r6/09L09j7eElkKgfHT19wwhi8QplgSS3j3UXmSptXTb6eIZ3p3NBTiVTT
+        T5aql7+bz8wgJesu4F+COmS1DjH8KVQyERJqkQZOEKU+VYjCnicJ+kWceSFg53MP
+        qhpBxwVVzaJB6T0SrPJTOptA/IdINjwyI7FdboH4CmoUTkRpoYNdreHHyFFi7inP
+        zbxP0vZ3BGcRW95PcjCIls4bJJQpzJee2YajrXRCiNTw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:date:from
+        :message-id:mime-version:subject:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=v45RiqZN/i6oiIGNr
+        ZzNEXsh+f6NSgjMOWlZQrk26uM=; b=IYPiGcVe1V5ahNOjZHFtPOqQZDa1XkRIy
+        RzHMh6lWCr6RTHexSYUBUja/QS1VoEPBXA6TXH6AOtI2iD8xEhWAvlQ16TwQkls4
+        4RagJ2Natj7UX1ccLlPx/vsOxc8j554vF1s27SfFBcOSnNZEcG3kkSEjn2AtxogS
+        7O185Eo6QVy3ChKtaRQpx91otiONpnpZ6M1DIUmnZOh5YhDsNnlRkzzk4XBi7m2k
+        z0d/Rqe2I9wySThumhWl36kOBAyw/AdtmomTSB45E0qI8m9PP2co4em/gpHjU8XR
+        Nl+rNLlbLQrjuPsO0AivDyHFfQX9NHJfJPBZOFjlAbGYjvlvZtwSA==
+X-ME-Sender: <xms:DrRDYS2YBBhC0muLD5cxiMUOIJrQxDCqFtrn1lTj7RiYEB1B49WyCw>
+    <xme:DrRDYVFVH_IvVBSD9kC8ums35IM1hr2LEztXYPfUJlZK4J45fh7LZ4Zzhdu3_rs3d
+    rDhakEox1dteuaOJw>
+X-ME-Received: <xmr:DrRDYa5xChptJGJBVStNset8NVN8nR-xwwVJ9psf1GbDfe6gnJ5MXS7dKpYCnB4CF_8M>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrudehgedgudehvdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecunecujfgurhephffvufffkffoggfgsedtkeertd
+    ertddtnecuhfhrohhmpefhvghrnhgrnhguohcutfgrmhhoshcuoehgrhgvvghnfhhoohes
+    uhelvddrvghuqeenucggtffrrghtthgvrhhnpeeiueevtdegtdffgeeggfeuteejkeekvd
+    dvkeeiueekgfefgfeuueffgeelvdeggeenucevlhhushhtvghrufhiiigvpedtnecurfgr
+    rhgrmhepmhgrihhlfhhrohhmpehgrhgvvghnfhhoohesuhelvddrvghu
+X-ME-Proxy: <xmx:DrRDYT0n4G0IUQlTXvjeSyD0-Lrv2Pwm9g3_-WefWJQCreB9NnDi9Q>
+    <xmx:DrRDYVFHMXp3SYuyB_NQi3348HnS15JlQSB9tHw3ICJ-gCcChO6YJg>
+    <xmx:DrRDYc-_oMpbbkvdnJyBWXH6WZurqNHcGB81qLgmDUpTqv7G5Q2LBQ>
+    <xmx:DrRDYUCR8Wr9Fu8JLjjRoaFZbJEAF63ayA3Z3UvSTMWGs3MfkZd7BRDzrIA>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 16 Sep 2021 17:15:55 -0400 (EDT)
+From:   Fernando Ramos <greenfoo@u92.eu>
+To:     dri-devel@lists.freedesktop.org
+Cc:     linux-kernel@vger.kernel.org, sean@poorly.run,
+        linux-doc@vger.kernel.org, amd-gfx@lists.freedesktop.org,
+        intel-gfx@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+        linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: [PATCH 00/15] drm: cleanup: Use DRM_MODESET_LOCK_ALL_* helpers where possible
+Date:   Thu, 16 Sep 2021 23:15:37 +0200
+Message-Id: <20210916211552.33490-1-greenfoo@u92.eu>
+X-Mailer: git-send-email 2.33.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210912200832.12312-9-digetx@gmail.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Sun, 12 Sep 2021 23:08:06 +0300, Dmitry Osipenko wrote:
-> Memory Client should be blocked before hardware reset is asserted in order
-> to prevent memory corruption and hanging of memory controller.
-> 
-> Document Memory Client resets of Host1x, GR2D and GR3D hardware units.
-> 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  .../bindings/display/tegra/nvidia,tegra20-host1x.txt          | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
+Hi all,
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+One of the things in the DRM TODO list ("Documentation/gpu/todo.rst") was to
+"use DRM_MODESET_LOCAL_ALL_* helpers instead of boilerplate". That's what this
+patch series is about.
+
+You will find two types of changes here:
+
+  - Replacing "drm_modeset_lock_all_ctx()" (and surrounding boilerplate) with
+    "DRM_MODESET_LOCK_ALL_BEGIN()/END()" in the remaining places (as it has
+    already been done in previous commits such as b7ea04d2)
+
+  - Replacing "drm_modeset_lock_all()" with "DRM_MODESET_LOCK_ALL_BEGIN()/END()"
+    in the remaining places (as it has already been done in previous commits
+    such as 57037094)
+    
+Most of the changes are straight forward, except for a few cases in the "amd"
+and "i915" drivers where some extra dancing was needed to overcome the
+limitation that the DRM_MODESET_LOCK_ALL_BEGIN()/END() macros can only be used
+once inside the same function (the reason being that the macro expansion
+includes *labels*, and you can not have two labels named the same inside one
+function)
+
+Notice that, even after this patch series, some places remain where
+"drm_modeset_lock_all()" and "drm_modeset_lock_all_ctx()" are still present,
+all inside drm core (which makes sense), except for two (in "amd" and "i915")
+which cannot be replaced due to the way they are being used.
+
+Fernando Ramos (15):
+  dmr: cleanup: drm_modeset_lock_all_ctx() --> DRM_MODESET_LOCK_ALL_BEGIN()
+  dmr/i915: cleanup: drm_modeset_lock_all_ctx() --> DRM_MODESET_LOCK_ALL_BEGIN()
+  dmr/msm: cleanup: drm_modeset_lock_all_ctx() --> DRM_MODESET_LOCK_ALL_BEGIN()
+  drm: cleanup: drm_modeset_lock_all() --> DRM_MODESET_LOCK_ALL_BEGIN()
+  drm/vmwgfx: cleanup: drm_modeset_lock_all() --> DRM_MODESET_LOCK_ALL_BEGIN()
+  drm/tegra: cleanup: drm_modeset_lock_all() --> DRM_MODESET_LOCK_ALL_BEGIN()
+  drm/shmobile: cleanup: drm_modeset_lock_all() --> DRM_MODESET_LOCK_ALL_BEGIN()
+  drm/radeon: cleanup: drm_modeset_lock_all() --> DRM_MODESET_LOCK_ALL_BEGIN()
+  drm/omapdrm: cleanup: drm_modeset_lock_all() --> DRM_MODESET_LOCK_ALL_BEGIN()
+  drm/nouveau: cleanup: drm_modeset_lock_all() --> DRM_MODESET_LOCK_ALL_BEGIN()
+  drm/msm: cleanup: drm_modeset_lock_all() --> DRM_MODESET_LOCK_ALL_BEGIN()
+  drm/i915: cleanup: drm_modeset_lock_all() --> DRM_MODESET_LOCK_ALL_BEGIN()
+  drm/gma500: cleanup: drm_modeset_lock_all() --> DRM_MODESET_LOCK_ALL_BEGIN()
+  drm/amd: cleanup: drm_modeset_lock_all() --> DRM_MODESET_LOCK_ALL_BEGIN()
+  doc: drm: remove TODO entry regarding DRM_MODSET_LOCK_ALL cleanup
+
+ Documentation/gpu/todo.rst                    | 17 -------
+ Documentation/locking/ww-mutex-design.rst     |  2 +-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_display.c   | 13 +++--
+ .../gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 50 +++++++++----------
+ .../amd/display/amdgpu_dm/amdgpu_dm_debugfs.c | 23 +++++----
+ drivers/gpu/drm/drm_client_modeset.c          | 14 +++---
+ drivers/gpu/drm/drm_crtc_helper.c             | 18 ++++---
+ drivers/gpu/drm/drm_fb_helper.c               | 10 ++--
+ drivers/gpu/drm/drm_framebuffer.c             |  6 ++-
+ drivers/gpu/drm/gma500/psb_device.c           | 14 ++++--
+ drivers/gpu/drm/i915/display/intel_audio.c    | 12 +++--
+ drivers/gpu/drm/i915/display/intel_display.c  | 22 +++-----
+ .../drm/i915/display/intel_display_debugfs.c  | 35 ++++++++-----
+ drivers/gpu/drm/i915/display/intel_overlay.c  | 45 ++++++++---------
+ drivers/gpu/drm/i915/display/intel_pipe_crc.c |  5 +-
+ drivers/gpu/drm/i915/i915_drv.c               | 12 +++--
+ drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c      |  6 ++-
+ .../gpu/drm/msm/disp/msm_disp_snapshot_util.c | 10 ++--
+ drivers/gpu/drm/nouveau/dispnv50/disp.c       | 12 +++--
+ drivers/gpu/drm/omapdrm/omap_fb.c             |  6 ++-
+ drivers/gpu/drm/radeon/radeon_device.c        | 13 +++--
+ drivers/gpu/drm/radeon/radeon_dp_mst.c        |  7 ++-
+ drivers/gpu/drm/shmobile/shmob_drm_drv.c      |  6 ++-
+ drivers/gpu/drm/tegra/dsi.c                   |  6 ++-
+ drivers/gpu/drm/tegra/hdmi.c                  |  5 +-
+ drivers/gpu/drm/tegra/sor.c                   | 10 ++--
+ drivers/gpu/drm/vmwgfx/vmwgfx_ioctl.c         | 11 ++--
+ drivers/gpu/drm/vmwgfx/vmwgfx_kms.c           | 12 +++--
+ 28 files changed, 222 insertions(+), 180 deletions(-)
+
+-- 
+2.33.0
+
