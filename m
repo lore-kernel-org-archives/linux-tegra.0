@@ -2,147 +2,75 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50228C4332F
-	for <linux-tegra@archiver.kernel.org>; Fri, 17 Sep 2021 15:56:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3994EC433EF
+	for <linux-tegra@archiver.kernel.org>; Fri, 17 Sep 2021 21:03:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2A6C560F58
-	for <linux-tegra@archiver.kernel.org>; Fri, 17 Sep 2021 15:56:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 14D8761056
+	for <linux-tegra@archiver.kernel.org>; Fri, 17 Sep 2021 21:03:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242857AbhIQP6R (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 17 Sep 2021 11:58:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57364 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241787AbhIQP6Q (ORCPT
+        id S236226AbhIQVEw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 17 Sep 2021 17:04:52 -0400
+Received: from mail-ot1-f47.google.com ([209.85.210.47]:46762 "EHLO
+        mail-ot1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235643AbhIQVEw (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 17 Sep 2021 11:58:16 -0400
-Received: from mail-qt1-x82b.google.com (mail-qt1-x82b.google.com [IPv6:2607:f8b0:4864:20::82b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B75FC061768
-        for <linux-tegra@vger.kernel.org>; Fri, 17 Sep 2021 08:56:54 -0700 (PDT)
-Received: by mail-qt1-x82b.google.com with SMTP id g11so9145654qtk.5
-        for <linux-tegra@vger.kernel.org>; Fri, 17 Sep 2021 08:56:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=poorly.run; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=0sCoJcMzph8m7gHdWZKN3dp454V4z1+jmuXCQGYY1eU=;
-        b=UX6GzuE3DTpJzHN/aIeG3aCWzhBV+fCkDtBgEsxVhOm3+8K8AyENBXdIjuOYPRQKxs
-         CTuel8m/m8KvyUEtzzp6eSepsKHiz/6oQvR50EcDMCZsQ3D7ykraTZ1895PCkIJHaqP5
-         sfVz/lJFm7SXIqu1gLW50masMo1/nUD/Q4NJaqleeYLk/IDnaaWJNf0YBugq8do4COrv
-         tgciBCa4sJznbQ680HUkBOi8azZ7pZjDQk932tTjNeS8fwuKs1XZMUEsUQPyod+7kBIn
-         PX4L5mBmBUGYZaIWPqPbQt+e/XskkfcMsuLlF5APW7WdqHZcqEAGziGAp2Q4K1+CChVa
-         kfMA==
+        Fri, 17 Sep 2021 17:04:52 -0400
+Received: by mail-ot1-f47.google.com with SMTP id c8-20020a9d6c88000000b00517cd06302dso14563361otr.13;
+        Fri, 17 Sep 2021 14:03:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=0sCoJcMzph8m7gHdWZKN3dp454V4z1+jmuXCQGYY1eU=;
-        b=f4Zk6pumzprxfoJolXZSlTM/5WmZBpmsQP9gW+xh2a2ULHmN+iRvgM+yWTOrFOO3R0
-         TkbqOg/bdHb7zk3h1rCdYXPlaJ2pdf0keY1iaU4CsA4DyMHLl0zi6oZ7GpvQ0SkN908R
-         WJULxj6AeKr8UjHB7dQGR+/e7iGZaOKk66BOgZnuI3j+9tXj8nEKx3sX5KRwlO0KAVc0
-         mF0nIyPgGS+2BGDGZo3R8pEAlmVc3DY22GMvjqP8Lttd4bmvgcdlTdeGJsr8bkECoJE9
-         MP+P+3PuvjFIGa/RYWzBq9OGMVKWgerwB1HboMAEZ+zBpemt+4IEcdacgFTiOdIqMQHh
-         t0MQ==
-X-Gm-Message-State: AOAM531ye5QfioHdUnsfpr6MFSWhHNE8PjXVVP00rnP/M3g3A6oZiu0I
-        DfhnVOeOlJ8bJtoBSNdsKc2/BQ==
-X-Google-Smtp-Source: ABdhPJy2rUDs6BeN9kdSRBI5w9E4e4qiGJ6kgMTqOz5qaJIsLmkzMmZBlXt+Y/EFA7itiDo5nxOSnA==
-X-Received: by 2002:ac8:4a90:: with SMTP id l16mr5492592qtq.154.1631894213604;
-        Fri, 17 Sep 2021 08:56:53 -0700 (PDT)
-Received: from localhost ([167.100.64.199])
-        by smtp.gmail.com with ESMTPSA id a8sm4075889qtx.39.2021.09.17.08.56.53
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 17 Sep 2021 08:56:53 -0700 (PDT)
-Date:   Fri, 17 Sep 2021 11:56:52 -0400
-From:   Sean Paul <sean@poorly.run>
-To:     Fernando Ramos <greenfoo@u92.eu>
-Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        sean@poorly.run, linux-doc@vger.kernel.org,
-        amd-gfx@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
-        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
-        nouveau@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 15/15] doc: drm: remove TODO entry regarding
- DRM_MODSET_LOCK_ALL cleanup
-Message-ID: <20210917155652.GP2515@art_vandelay>
-References: <20210916211552.33490-1-greenfoo@u92.eu>
- <20210916211552.33490-16-greenfoo@u92.eu>
+         :mime-version:content-disposition:in-reply-to;
+        bh=bSRL/HAt3gwwiTvd49CidfkDbJhDEQUk/H1eOxq58lw=;
+        b=MaT0eS7993DozhC+TsLR780om+hQVHyfJ2Fit7cbBNulKjkvaa1Hox2rKqzb7RgJQl
+         lcMbIZdPfeDBH79S/tccBvgUFkzTFjjM3rK4g4D76me7fCUk0xZv1alj6owBJ1lNoA1T
+         IdomnIUk6O+rBVGzf63HVKwPOOsiz9KeG4U24OcWwFYWXoGk9tJ0by9KEqT2STuyPD1n
+         Bnzm5DJUEJeS6ncnms4uC9A2AZsaYG4xK+SzjbqF82fD0tNWXXTwhgqpVG7GLRKQGJ8m
+         6Sm36WWpbFiK0jBupBDZNJ/JDz/omKARa6eDazwIdNDAXMABAD2PMEEveS7fywgvDAXv
+         14Qg==
+X-Gm-Message-State: AOAM5313TALfXV7Kl4TTs+kiThNAFfC5dsAimOGl+58EVCNRQxI7nLk4
+        oYcyDB5lhsU4hr2JEipJVTcdp9FUlA==
+X-Google-Smtp-Source: ABdhPJyHEghgsCONkiA8TV/Uz/eGEB9pKxLPy0qAHmlMAmYXUJtC22LiPuviROkj6Xo/ikbU3cn/3A==
+X-Received: by 2002:a05:6830:1b78:: with SMTP id d24mr11253229ote.197.1631912609355;
+        Fri, 17 Sep 2021 14:03:29 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
+        by smtp.gmail.com with ESMTPSA id a11sm1714818oiw.36.2021.09.17.14.03.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Sep 2021 14:03:27 -0700 (PDT)
+Received: (nullmailer pid 2156706 invoked by uid 1000);
+        Fri, 17 Sep 2021 21:03:26 -0000
+Date:   Fri, 17 Sep 2021 16:03:26 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     David Heidelberg <david@ixit.cz>
+Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Peter Geis <pgwipeout@gmail.com>
+Subject: Re: [PATCH] dt-bindings: arm: Fix Toradex compatible typo
+Message-ID: <YUUCnosxz7uK4jaJ@robh.at.kernel.org>
+References: <20210912165120.188490-1-david@ixit.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210916211552.33490-16-greenfoo@u92.eu>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20210912165120.188490-1-david@ixit.cz>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, Sep 16, 2021 at 11:15:52PM +0200, Fernando Ramos wrote:
-> The previous commits do exactly what this entry in the TODO file asks
-> for, thus we can remove it now as it is no longer applicable.
-
-Thanks for doing this work!
-
-Can we remove drm_modeset_lock_all[_ctx] now? If so, let's queue that up as part
-of the set.
-
-
-Reviewed-by: Sean Paul <sean@poorly.run>
-
-
+On Sun, 12 Sep 2021 18:51:20 +0200, David Heidelberg wrote:
+> Fixes: f4d1577e9bc6 ("dt-bindings: arm: Convert Tegra board/soc bindings to json-schema")
 > 
-> Signed-off-by: Fernando Ramos <greenfoo@u92.eu>
+> Signed-off-by: David Heidelberg <david@ixit.cz>
 > ---
->  Documentation/gpu/todo.rst                | 17 -----------------
->  Documentation/locking/ww-mutex-design.rst |  2 +-
->  2 files changed, 1 insertion(+), 18 deletions(-)
-> 
-> diff --git a/Documentation/gpu/todo.rst b/Documentation/gpu/todo.rst
-> index 12e61869939e..6613543955e9 100644
-> --- a/Documentation/gpu/todo.rst
-> +++ b/Documentation/gpu/todo.rst
-> @@ -353,23 +353,6 @@ converted, except for struct drm_driver.gem_prime_mmap.
->  
->  Level: Intermediate
->  
-> -Use DRM_MODESET_LOCK_ALL_* helpers instead of boilerplate
-> ----------------------------------------------------------
-> -
-> -For cases where drivers are attempting to grab the modeset locks with a local
-> -acquire context. Replace the boilerplate code surrounding
-> -drm_modeset_lock_all_ctx() with DRM_MODESET_LOCK_ALL_BEGIN() and
-> -DRM_MODESET_LOCK_ALL_END() instead.
-> -
-> -This should also be done for all places where drm_modeset_lock_all() is still
-> -used.
-> -
-> -As a reference, take a look at the conversions already completed in drm core.
-> -
-> -Contact: Sean Paul, respective driver maintainers
-> -
-> -Level: Starter
-> -
->  Rename CMA helpers to DMA helpers
->  ---------------------------------
->  
-> diff --git a/Documentation/locking/ww-mutex-design.rst b/Documentation/locking/ww-mutex-design.rst
-> index 6a4d7319f8f0..6a8f8beb9ec4 100644
-> --- a/Documentation/locking/ww-mutex-design.rst
-> +++ b/Documentation/locking/ww-mutex-design.rst
-> @@ -60,7 +60,7 @@ Concepts
->  Compared to normal mutexes two additional concepts/objects show up in the lock
->  interface for w/w mutexes:
->  
-> -Acquire context: To ensure eventual forward progress it is important the a task
-> +Acquire context: To ensure eventual forward progress it is important that a task
->  trying to acquire locks doesn't grab a new reservation id, but keeps the one it
->  acquired when starting the lock acquisition. This ticket is stored in the
->  acquire context. Furthermore the acquire context keeps track of debugging state
-> -- 
-> 2.33.0
+>  Documentation/devicetree/bindings/arm/tegra.yaml | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
 
--- 
-Sean Paul, Software Engineer, Google / Chromium OS
+Added Dmitry's commit msg suggestion and applied, thanks!
