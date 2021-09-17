@@ -2,259 +2,176 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA3A0C433FE
-	for <linux-tegra@archiver.kernel.org>; Fri, 17 Sep 2021 14:12:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99D2EC4332F
+	for <linux-tegra@archiver.kernel.org>; Fri, 17 Sep 2021 15:24:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 977F761130
-	for <linux-tegra@archiver.kernel.org>; Fri, 17 Sep 2021 14:12:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7EA4060E08
+	for <linux-tegra@archiver.kernel.org>; Fri, 17 Sep 2021 15:24:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237255AbhIQOOG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 17 Sep 2021 10:14:06 -0400
-Received: from mail-bn8nam11on2086.outbound.protection.outlook.com ([40.107.236.86]:60160
-        "EHLO NAM11-BN8-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S242733AbhIQOOD (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 17 Sep 2021 10:14:03 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=U9MjCxGSi3kQ364AxOjlSMcAVQSCwM+gxwIJ1h0a+kZn0SP0jibZMsTNYA7Ja4cOSBZEENyi4AfhZWm8kfE/tTieUnUETGRBLpGnC2DdjlBg/4JcVCEm1RAaaUMDf+0SKRG60SYdqDm4Pg74OafWs2ITvjI8jPBR/6apy0qGoHGFo4eLgMN+A4twZYgpwc2Yx42kg9vgylis/Ck/LNpSdoB6xqEbx+7wiODQyQCSiZsNpRMXn0lh5Mrk1DWPpJTlpaJO4knGGeep4wDt/twMAVNc47KioJKIp2MzvGzSU7WVAhTy3Cam6BAN1NQ1xXpjDYIOEbgshEJTF000D0igrw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901; h=From:Date:Subject:Message-ID:Content-Type:MIME-Version;
- bh=3J1tAZk7DhIvhVQ3FthKnBJ7f38K82GmmmDqVy3jA9E=;
- b=QVbtAY+RQNjW0YTu3q8McM+4A9cVgxYpXJS6zI84D7jxG5miC6KZeGGqToEYgi/0Te3vXAKlR9wZeF2oPWXhVu8ug8tJ7EreHiUno0DCoQRp5760/xt6QaGxDeosM08AysAPhJXBW5eZ1oDLVMtvnHQlTGW4EIWhZN3tMqFJiY/mAK6P2kMYfUzSGkCsLHXPHVCF8ib5qww3hg5uc++1RfIxsSL09Fmg5I3iDiQNVtz4gm6YYKeshLTtWjXi9UlAzFODqfKX4KbhcL9vy5vu9grOzHcUJ6EEXoypmNIUXuEUKO/hWYICHWHLriqOQ0ABgetbGZV54C3idYGvbAn/pw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.112.32) smtp.rcpttodomain=pengutronix.de smtp.mailfrom=nvidia.com;
- dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3J1tAZk7DhIvhVQ3FthKnBJ7f38K82GmmmDqVy3jA9E=;
- b=C8Fbu42gk0mRFPH6l9wNEd09NtxlOgQIF6wF5ubE8A7VpqQmUb1lp8Ka/23hqJXvke/pd5AjSwxp8mvZo2X0kDbAPVXmiNPSjwJ3GeQuc0zZPGnB5tjV/iUfRE22EDLY0WbUAh3QgDCdLZ8V3j16BAKXEewXTYDGFEN3/QooBYxgPZiyq8cL6QAV+HJoTJ7fC9RkAGRoLYoVn/gdwtHggyM0pjWpZB5HJ9sQ8+Kx/LWVEgJjDFRGjj5s5dOnm47kGxzXcQILdll3xs/Mhg0aVdfphxFNuWtWzIJ+eaZvalCCkQGIzxPpYsrRfg5qSeyQanhXKh0l57JQSoNbbe0Wrw==
-Received: from BN9PR03CA0977.namprd03.prod.outlook.com (2603:10b6:408:109::22)
- by DM5PR12MB1898.namprd12.prod.outlook.com (2603:10b6:3:10d::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4523.14; Fri, 17 Sep
- 2021 14:12:38 +0000
-Received: from BN8NAM11FT062.eop-nam11.prod.protection.outlook.com
- (2603:10b6:408:109:cafe::f1) by BN9PR03CA0977.outlook.office365.com
- (2603:10b6:408:109::22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4523.16 via Frontend
- Transport; Fri, 17 Sep 2021 14:12:38 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.32)
- smtp.mailfrom=nvidia.com; pengutronix.de; dkim=none (message not signed)
- header.d=none;pengutronix.de; dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.112.32 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.112.32; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (216.228.112.32) by
- BN8NAM11FT062.mail.protection.outlook.com (10.13.177.34) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.4523.14 via Frontend Transport; Fri, 17 Sep 2021 14:12:38 +0000
-Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL109.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Fri, 17 Sep
- 2021 07:12:37 -0700
-Received: from kyarlagadda-linux.nvidia.com (172.20.187.6) by mail.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server id 15.0.1497.18 via Frontend
- Transport; Fri, 17 Sep 2021 07:12:34 -0700
-From:   Akhil R <akhilrajeev@nvidia.com>
-To:     <akhilrajeev@nvidia.com>
-CC:     <dan.j.williams@intel.com>, <dmaengine@vger.kernel.org>,
-        <jonathanh@nvidia.com>, <kyarlagadda@nvidia.com>,
-        <ldewangan@nvidia.com>, <linux-kernel@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <p.zabel@pengutronix.de>,
-        <rgumasta@nvidia.com>, <thierry.reding@gmail.com>,
-        <vkoul@kernel.org>
-Subject: [PATCH v6 4/4] arm64: tegra: Add GPCDMA node for tegra186 and tegra194
-Date:   Fri, 17 Sep 2021 19:41:27 +0530
-Message-ID: <1631887887-18967-5-git-send-email-akhilrajeev@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1631887887-18967-1-git-send-email-akhilrajeev@nvidia.com>
-References: <1631887887-18967-1-git-send-email-akhilrajeev@nvidia.com>
-X-NVConfidentiality: public
+        id S230313AbhIQPZz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 17 Sep 2021 11:25:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49354 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230435AbhIQPZy (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Fri, 17 Sep 2021 11:25:54 -0400
+Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3178C061767
+        for <linux-tegra@vger.kernel.org>; Fri, 17 Sep 2021 08:24:31 -0700 (PDT)
+Received: by mail-wm1-x32d.google.com with SMTP id s24so7632506wmh.4
+        for <linux-tegra@vger.kernel.org>; Fri, 17 Sep 2021 08:24:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=date:from:to:cc:subject:message-id:mail-followup-to:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=UUmIc1Zm6f0TtwRpO+dF5pS2Y2cDE7pjg0cLbOF+M+E=;
+        b=Rzn08IPZenhQ6bvtAtCZFtUgcNOadCOdu78eHBCqYGv/hV+L9cluJaEyplz5gcBA7R
+         38wK30kV3P5we6pC4sOpGFJx71Gq1+1ryDNONUjrKLim7Yfc3dXqvMmu3/gJm1MKY0gs
+         TcW6XWN+ON+jrkBcBdm/eQYlZqOq4Sg4Mar8E=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to;
+        bh=UUmIc1Zm6f0TtwRpO+dF5pS2Y2cDE7pjg0cLbOF+M+E=;
+        b=Y8p7y9Xnax48+xc6HpuICRADZS59LX7BmBSfVB7gyR9JPE5QTdW/FfM7FC/cxtDj9c
+         Ld3zoDBoS4yELmVB2W+aTdZsjJCW1MrbGwaKKzszEoQZxGV4hwIu69Tju6nU4mvn0SE3
+         iDjQK84ctxj7yV92NUgdDJe2zwmhsO+CXetFfFZmDwcGTvn/ZoW3g9rLl4VzLWtdwMxo
+         y7peirhUcxVA4CY2WVQruNB5Z6SXmxQLItdLssxvkJX/1HFqsqwmqWtkfTT6oITydFAM
+         tYsHTF2L+3aHO2ogpUz/7ty6LQvZjZMFl7C3peJuWYvcQjvrJM8R6e5RxMY8hq3OxTHV
+         fAWw==
+X-Gm-Message-State: AOAM5301qOUkgidhJb9mcJQbFAo3VS+j3PXF+/UjopMXFF+Yqx4MrySJ
+        oRQfY3XyQv0OICAsFRoOBMkfdw==
+X-Google-Smtp-Source: ABdhPJy9S40vw/exT9dD330IOj7yv3V6vas+VLUTS5747KBqEVcQ3/55Lywp40+PNtXXNtDS+CHl4w==
+X-Received: by 2002:a1c:7e12:: with SMTP id z18mr16190125wmc.60.1631892270408;
+        Fri, 17 Sep 2021 08:24:30 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
+        by smtp.gmail.com with ESMTPSA id r5sm6880779wrm.79.2021.09.17.08.24.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Sep 2021 08:24:29 -0700 (PDT)
+Date:   Fri, 17 Sep 2021 17:24:27 +0200
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Fernando Ramos <greenfoo@u92.eu>
+Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        sean@poorly.run, linux-doc@vger.kernel.org,
+        amd-gfx@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+        nouveau@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: Re: [PATCH 00/15] drm: cleanup: Use DRM_MODESET_LOCK_ALL_* helpers
+ where possible
+Message-ID: <YUSzKxZwW8C29dLV@phenom.ffwll.local>
+Mail-Followup-To: Fernando Ramos <greenfoo@u92.eu>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        sean@poorly.run, linux-doc@vger.kernel.org,
+        amd-gfx@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+        nouveau@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+References: <20210916211552.33490-1-greenfoo@u92.eu>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: ff24ac67-843d-4014-bf56-08d979e5346e
-X-MS-TrafficTypeDiagnostic: DM5PR12MB1898:
-X-Microsoft-Antispam-PRVS: <DM5PR12MB189845268C71F22425755E3BC0DD9@DM5PR12MB1898.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:1227;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: D6m9ophROBrkHr3v3jZ2Mzx9XekNBxRUpDeiujiy3kaK/VZZWWMi5ea1Q+P31mnd4Pze9VXwRL7vIdSlQcqZAoNvwM3wROVlVKeFWPw4BwNoUlYxcucvkEMzzR5WpXInxFC6JG7vyx1nJAs+LtKBCG7/WfIBnizq6PaQDIZh1eCAQdHwzzstHNuJ9AOfrLaN6PtdR0acTnR6t7v865JJX+MozqM1DS6mn6FTd/hLuBhCOU/jySRN9oMJ2xuMR7S1/EyrYDtNEDV0f7otjV9gT3DjJjHz63Bw1cxZ/pfE49Bs302dF+Hd6TRbsGGWi0wgxfWwTpXODLqKemVolYFqqnWYYWQCowHT9sz+5U/q3V495kmMHV2EmuWmpKBNxJi5VpwiHMLDhS/93dDqdKPk6k3p3lzus6qEGalpMHiIS9idQZ3T3Eh/XByOz4/+Tip4m4v+E5YtitUTWn8xK/xHLzDuiyKZb5SiSOrYeFZyd3R1E/IOOoSzMzZg6z//VWY1pkrgiw9KpNRVpWjuT58Wsagn2wsed2yBToVKyyBxOHG0FYoMagQYZEmP5qBSdrJYMr2NgfInbpapNxtHdL7wW8lNoa4v/vSG0cpaCyrRMqXUZBn2+wF9rT+Ao5JGSNq3Wpwjwu2KpAIieBLysyNHiImJGbNXWKxOZuMU6kYSlgHbPwYWunGoTluiPyjeFfa1OMDwLQfruNbQgDdMvulbGw==
-X-Forefront-Antispam-Report: CIP:216.228.112.32;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid01.nvidia.com;CAT:NONE;SFS:(4636009)(46966006)(36840700001)(47076005)(6862004)(356005)(316002)(2906002)(86362001)(83380400001)(7696005)(82310400003)(2616005)(70206006)(70586007)(7049001)(36860700001)(426003)(336012)(8936002)(8676002)(508600001)(6666004)(26005)(37006003)(5660300002)(6200100001)(7636003)(36756003)(4326008)(186003)(54906003);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Sep 2021 14:12:38.1801
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: ff24ac67-843d-4014-bf56-08d979e5346e
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.32];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT062.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB1898
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210916211552.33490-1-greenfoo@u92.eu>
+X-Operating-System: Linux phenom 5.10.0-8-amd64 
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Add device tree node for GPCDMA controller on Tegra186 target
-and Tegra194 target.
+On Thu, Sep 16, 2021 at 11:15:37PM +0200, Fernando Ramos wrote:
+> Hi all,
+> 
+> One of the things in the DRM TODO list ("Documentation/gpu/todo.rst") was to
+> "use DRM_MODESET_LOCAL_ALL_* helpers instead of boilerplate". That's what this
+> patch series is about.
+> 
+> You will find two types of changes here:
+> 
+>   - Replacing "drm_modeset_lock_all_ctx()" (and surrounding boilerplate) with
+>     "DRM_MODESET_LOCK_ALL_BEGIN()/END()" in the remaining places (as it has
+>     already been done in previous commits such as b7ea04d2)
+> 
+>   - Replacing "drm_modeset_lock_all()" with "DRM_MODESET_LOCK_ALL_BEGIN()/END()"
+>     in the remaining places (as it has already been done in previous commits
+>     such as 57037094)
+>     
+> Most of the changes are straight forward, except for a few cases in the "amd"
+> and "i915" drivers where some extra dancing was needed to overcome the
+> limitation that the DRM_MODESET_LOCK_ALL_BEGIN()/END() macros can only be used
+> once inside the same function (the reason being that the macro expansion
+> includes *labels*, and you can not have two labels named the same inside one
+> function)
+> 
+> Notice that, even after this patch series, some places remain where
+> "drm_modeset_lock_all()" and "drm_modeset_lock_all_ctx()" are still present,
+> all inside drm core (which makes sense), except for two (in "amd" and "i915")
+> which cannot be replaced due to the way they are being used.
 
-Signed-off-by: Rajesh Gumasta <rgumasta@nvidia.com>
-Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
----
- arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi |  4 +++
- arch/arm64/boot/dts/nvidia/tegra186.dtsi       | 44 ++++++++++++++++++++++++++
- arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi |  4 +++
- arch/arm64/boot/dts/nvidia/tegra194.dtsi       | 44 ++++++++++++++++++++++++++
- 4 files changed, 96 insertions(+)
+Can we at least replace those with drm_modeset_lock_all_ctx and delete
+drm_modeset_lock_all? That would be really nice goal to make sure these
+don't spread further.
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi b/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
-index fcd71bf..71dd10e 100644
---- a/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
-@@ -56,6 +56,10 @@
- 		};
- 	};
- 
-+	dma@2600000 {
-+		status = "okay";
-+	};
-+
- 	memory-controller@2c00000 {
- 		status = "okay";
- 	};
-diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-index d02f6bf..3f9c4c4 100644
---- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-@@ -73,6 +73,50 @@
- 		snps,rxpbl = <8>;
- 	};
- 
-+	gpcdma: dma@2600000 {
-+			compatible = "nvidia,tegra186-gpcdma";
-+			reg = <0x2600000 0x210000>;
-+			resets = <&bpmp TEGRA186_RESET_GPCDMA>;
-+			reset-names = "gpcdma";
-+			interrupts = <GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 76 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 79 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 81 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 82 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 83 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 89 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 90 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 91 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 92 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 93 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 94 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 95 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 96 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 99 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 101 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 102 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
-+			#dma-cells = <1>;
-+			iommus = <&smmu TEGRA186_SID_GPCDMA_0>;
-+			dma-coherent;
-+			status = "disabled";
-+		};
-+
- 	aconnect@2900000 {
- 		compatible = "nvidia,tegra186-aconnect",
- 			     "nvidia,tegra210-aconnect";
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi b/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi
-index 7e7b0eb..2d4ead1 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi
-@@ -49,6 +49,10 @@
- 			};
- 		};
- 
-+		dma@2600000 {
-+			status = "okay";
-+		};
-+
- 		memory-controller@2c00000 {
- 			status = "okay";
- 		};
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-index b7d5328..3ce4b8d 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-@@ -72,6 +72,50 @@
- 			snps,rxpbl = <8>;
- 		};
- 
-+	gpcdma: dma@2600000 {
-+			compatible = "nvidia,tegra194-gpcdma";
-+			reg = <0x2600000 0x210000>;
-+			resets = <&bpmp TEGRA194_RESET_GPCDMA>;
-+			reset-names = "gpcdma";
-+			interrupts = <GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 76 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 79 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 81 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 82 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 83 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 89 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 90 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 91 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 92 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 93 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 94 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 95 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 96 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 99 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 101 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 102 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
-+			#dma-cells = <1>;
-+			iommus = <&smmu TEGRA194_SID_GPCDMA_0>;
-+			dma-coherent;
-+			status = "disabled";
-+		};
-+
- 		aconnect@2900000 {
- 			compatible = "nvidia,tegra194-aconnect",
- 				     "nvidia,tegra210-aconnect";
+Otherwise great stuff, I'm trying to volunteer a few reviewers.
+-Daniel
+
+> 
+> Fernando Ramos (15):
+>   dmr: cleanup: drm_modeset_lock_all_ctx() --> DRM_MODESET_LOCK_ALL_BEGIN()
+>   dmr/i915: cleanup: drm_modeset_lock_all_ctx() --> DRM_MODESET_LOCK_ALL_BEGIN()
+>   dmr/msm: cleanup: drm_modeset_lock_all_ctx() --> DRM_MODESET_LOCK_ALL_BEGIN()
+>   drm: cleanup: drm_modeset_lock_all() --> DRM_MODESET_LOCK_ALL_BEGIN()
+>   drm/vmwgfx: cleanup: drm_modeset_lock_all() --> DRM_MODESET_LOCK_ALL_BEGIN()
+>   drm/tegra: cleanup: drm_modeset_lock_all() --> DRM_MODESET_LOCK_ALL_BEGIN()
+>   drm/shmobile: cleanup: drm_modeset_lock_all() --> DRM_MODESET_LOCK_ALL_BEGIN()
+>   drm/radeon: cleanup: drm_modeset_lock_all() --> DRM_MODESET_LOCK_ALL_BEGIN()
+>   drm/omapdrm: cleanup: drm_modeset_lock_all() --> DRM_MODESET_LOCK_ALL_BEGIN()
+>   drm/nouveau: cleanup: drm_modeset_lock_all() --> DRM_MODESET_LOCK_ALL_BEGIN()
+>   drm/msm: cleanup: drm_modeset_lock_all() --> DRM_MODESET_LOCK_ALL_BEGIN()
+>   drm/i915: cleanup: drm_modeset_lock_all() --> DRM_MODESET_LOCK_ALL_BEGIN()
+>   drm/gma500: cleanup: drm_modeset_lock_all() --> DRM_MODESET_LOCK_ALL_BEGIN()
+>   drm/amd: cleanup: drm_modeset_lock_all() --> DRM_MODESET_LOCK_ALL_BEGIN()
+>   doc: drm: remove TODO entry regarding DRM_MODSET_LOCK_ALL cleanup
+> 
+>  Documentation/gpu/todo.rst                    | 17 -------
+>  Documentation/locking/ww-mutex-design.rst     |  2 +-
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_display.c   | 13 +++--
+>  .../gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 50 +++++++++----------
+>  .../amd/display/amdgpu_dm/amdgpu_dm_debugfs.c | 23 +++++----
+>  drivers/gpu/drm/drm_client_modeset.c          | 14 +++---
+>  drivers/gpu/drm/drm_crtc_helper.c             | 18 ++++---
+>  drivers/gpu/drm/drm_fb_helper.c               | 10 ++--
+>  drivers/gpu/drm/drm_framebuffer.c             |  6 ++-
+>  drivers/gpu/drm/gma500/psb_device.c           | 14 ++++--
+>  drivers/gpu/drm/i915/display/intel_audio.c    | 12 +++--
+>  drivers/gpu/drm/i915/display/intel_display.c  | 22 +++-----
+>  .../drm/i915/display/intel_display_debugfs.c  | 35 ++++++++-----
+>  drivers/gpu/drm/i915/display/intel_overlay.c  | 45 ++++++++---------
+>  drivers/gpu/drm/i915/display/intel_pipe_crc.c |  5 +-
+>  drivers/gpu/drm/i915/i915_drv.c               | 12 +++--
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c      |  6 ++-
+>  .../gpu/drm/msm/disp/msm_disp_snapshot_util.c | 10 ++--
+>  drivers/gpu/drm/nouveau/dispnv50/disp.c       | 12 +++--
+>  drivers/gpu/drm/omapdrm/omap_fb.c             |  6 ++-
+>  drivers/gpu/drm/radeon/radeon_device.c        | 13 +++--
+>  drivers/gpu/drm/radeon/radeon_dp_mst.c        |  7 ++-
+>  drivers/gpu/drm/shmobile/shmob_drm_drv.c      |  6 ++-
+>  drivers/gpu/drm/tegra/dsi.c                   |  6 ++-
+>  drivers/gpu/drm/tegra/hdmi.c                  |  5 +-
+>  drivers/gpu/drm/tegra/sor.c                   | 10 ++--
+>  drivers/gpu/drm/vmwgfx/vmwgfx_ioctl.c         | 11 ++--
+>  drivers/gpu/drm/vmwgfx/vmwgfx_kms.c           | 12 +++--
+>  28 files changed, 222 insertions(+), 180 deletions(-)
+> 
+> -- 
+> 2.33.0
+> 
+
 -- 
-2.7.4
-
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
