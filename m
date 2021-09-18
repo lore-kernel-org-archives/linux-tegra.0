@@ -6,49 +6,49 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
 	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C305AC433F5
-	for <linux-tegra@archiver.kernel.org>; Fri, 17 Sep 2021 23:21:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E11FFC433FE
+	for <linux-tegra@archiver.kernel.org>; Sat, 18 Sep 2021 09:42:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9F3EB61130
-	for <linux-tegra@archiver.kernel.org>; Fri, 17 Sep 2021 23:21:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C8F9360F9C
+	for <linux-tegra@archiver.kernel.org>; Sat, 18 Sep 2021 09:42:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343782AbhIQXXR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 17 Sep 2021 19:23:17 -0400
-Received: from wnew3-smtp.messagingengine.com ([64.147.123.17]:56721 "EHLO
+        id S238420AbhIRJoQ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 18 Sep 2021 05:44:16 -0400
+Received: from wnew3-smtp.messagingengine.com ([64.147.123.17]:33631 "EHLO
         wnew3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232079AbhIQXXR (ORCPT
+        by vger.kernel.org with ESMTP id S242443AbhIRJoM (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 17 Sep 2021 19:23:17 -0400
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailnew.west.internal (Postfix) with ESMTP id 863CF2B00971;
-        Fri, 17 Sep 2021 19:21:53 -0400 (EDT)
+        Sat, 18 Sep 2021 05:44:12 -0400
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailnew.west.internal (Postfix) with ESMTP id 3B3CE2B011CB;
+        Sat, 18 Sep 2021 05:42:47 -0400 (EDT)
 Received: from mailfrontend2 ([10.202.2.163])
-  by compute4.internal (MEProxy); Fri, 17 Sep 2021 19:21:54 -0400
+  by compute5.internal (MEProxy); Sat, 18 Sep 2021 05:42:47 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=u92.eu; h=date
         :from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm3; bh=9D1TvVjqqwgGetcBxSubPdthhs2
-        qP2/L39fbHUN1dhg=; b=icvXUUhsZiTbYQL+UTHGxJkFbsfkRzRd9zXqXNqF0Pq
-        Yyft55LMFcsAjXmAMRyF1A6r97yyo/ATgGnQ59ZOA56zNetCyoSLOWWsV1X+v6K9
-        qnPiyKZ6sscWFQI7BDKzyd07QA3Gbj6ALlxL5osSZp3P1EdTw7N+zQkSfRAu2rn3
-        GlZ0uhOh4KveCTJRPk+LpWSfgQ1Xy+tmDq4u4ZwRd/lTvV9RMDAs/pvnJQc0SQZE
-        42JeBDnQeeSYQnKLBBUbr3wasz+N6txMrAsilyaLR7hdYtgup5LC8n77giNJFKM/
-        7DkW0bManZUgEdGpTxv4iU4+ZXBnnIXgR3bdpbSrMAQ==
+        :content-type:in-reply-to; s=fm3; bh=iQMJviYlb4ZEn676riwj+ykMcaY
+        gM3Bpxtt9O2JGErE=; b=WDwHHQXezEJe3XzQX3Em61caD1JOywMykQAjQo9+FvS
+        BAUw0ysziTYQHd2JcCD0Bk8z0AXCgaxpNkpKZQLKoYJ1OqQBcoFQ33Qgu5/ta31z
+        DyByahRv0mE53Ony+dsf9vdzav7TkXvnoNMK9J+5jBpTqlb9TTjAdddlmlrRrTqr
+        Yf6gJ7BLyxE0uyTPoJtiPyFjieupdONy4OEcmHP6qj5k/GfsUOqHapmuJhhnj03u
+        aNQMVgCiAY4CTWJmetOTs/5AqGukMpQkXerlp7nEGlI0rsksg0Xiyj8h6lzqpt5F
+        kGOaxLJK9jw+z2uqeAdy7jRYyyLk3cfoC3lOSyJK4ZQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-type:date:from:in-reply-to
         :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=9D1TvV
-        jqqwgGetcBxSubPdthhs2qP2/L39fbHUN1dhg=; b=LLSUGVTj888HafrCp5tZJ4
-        OjpyCTAHfGymnGaJ95AGUkK9Vsn+Y44XkW1cDGf9h9YE+tCX5ePjPp++CVIXrlJv
-        OtWIf2wbSVDdxr24UPC3fnxs0AKUtK9GAY+MTIrRglK+TlvByFXYYA8cFsXcLP0l
-        Zs46gC19S75xYiRiondJMTMklM3GHx2FcvFcsggljO7cEdHzyaM57vbRys7CoYQt
-        IYNsZyH9BgSgzyKA2NiIQHNeETN7+jNJAU994bUe6UzpTCxjAAKzSFlRJxUKpZjd
-        XGfTNFRTkFBbro4lsZBRfMfOVlUemK86Hh1xgpEojdvTfAQMosFceT9UNGM3HwBw
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=iQMJvi
+        Ylb4ZEn676riwj+ykMcaYgM3Bpxtt9O2JGErE=; b=NQPv4xozCXDNOuWW95l8r0
+        wqgyyHyXfB+TEZFR29p5hrSTv1MyvPh8hK33MLJE8IkeC7FBi0cuYZiJYqFoOouk
+        N1SMt7gdmUOFX7+6dS0zB2EDvB6PtfJ+RXPRE6Xm8Yv6zbnwvVa6/DoxXhlvqsiV
+        DiPPdP8iqD22W7bL33bjydi/YElws4Ckpr/ugaxvRzvclMAOlkEEUlIc955FTNr+
+        MRHnTWDFICCu6KCQ4D+EyAmzhwMruzmoz98VLdiUyE9IpnmcGdvH0hhH/n8X3vhI
+        fEDavwtqAGgk1//zVUmRJDSgl5exPhNz4+P4Pt8zN7dvnYLXClZYKlaWnCVGwsuA
         ==
-X-ME-Sender: <xms:ECNFYf2AeexzJ6ACMFSdIfbY5eEbF_Cc2EBmJioiwerfS3sbWHbBzQ>
-    <xme:ECNFYeFV0XB_kyVZuIL3gDCkHlJKA9oliZNRs61PT1ws_tH5DWJZAun9WeeTqNuin
-    AJeRfpLH24gVdio9w>
-X-ME-Received: <xmr:ECNFYf4OFl0ohAw5b9lAH_NTdUEi83EiO-abc1np6ih4MqktclUsqhSqo-HsvHvmK8tY7E-n>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrudehjedgvdduucetufdoteggodetrfdotf
+X-ME-Sender: <xms:lrRFYfbjRE-L4f3Nfyw9rN67HO9pJVZbRLl_BAWGbVpLMk1TuqfX0g>
+    <xme:lrRFYeYv4mcID7VMTZfIPCn8tDGxqPm2ySOv1G-A0NKEFUBuK3A-ve84o5-867vr0
+    mX6PcSXDWBC1Grk_A>
+X-ME-Received: <xmr:lrRFYR9hvwXVM79X0a8T4DolehjhDAUODuSF4_ucBL_MRX00TWXEJTRAqvy--tKCLhHOxX8g>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrudehkedgudejucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
     uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
     cujfgurhepfffhvffukfhfgggtuggjsehttdertddttdejnecuhfhrohhmpefhvghrnhgr
@@ -56,13 +56,13 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrudehjedgvdduucetufdoteggod
     gvrhhnpedvjeeifeelhfetiefhhfdthfefkefhhfeutdetvdfgvefgveefheffgfekjeef
     heenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehgrh
     gvvghnfhhoohesuhelvddrvghu
-X-ME-Proxy: <xmx:ECNFYU0C6M7ROTHINOrKLFicmRrOc54MXpjbCNB8W9v1C-Y_mHtUCg>
-    <xmx:ECNFYSHtGazCRU7_Mh9D32hqGosKvR1D0_Kf7ZhDAscX5QIleiVMTg>
-    <xmx:ECNFYV85aEvgfkcDgBu137LQFDm1UK7ytQb-FPgMLALM_VFKarLYJQ>
-    <xmx:ESNFYVBQ5mCdH7PoNQ4187ntV2s52SA_JVha30z4b_KwS6hENpVY6pR7JZ8>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 17 Sep 2021 19:21:49 -0400 (EDT)
-Date:   Sat, 18 Sep 2021 01:21:47 +0200
+X-ME-Proxy: <xmx:lrRFYVqgNRMK_pamLceVRt2VyFRqwtZ2Qcb5LGQOAC_FeeRGMnNf5g>
+    <xmx:lrRFYarmIXc0_KRWqyzkrnne4mGC_Rk6K5ND2K3AeQUIKytJ04dpkA>
+    <xmx:lrRFYbSOSsDAnV7UWjB8L5nXiW3YpBe6JQMbwEeiJuzXn7eXbd_4lg>
+    <xmx:lrRFYZ2Lu9EzyIqd7DyRxbU3UzqW3Goj4jk6MyoI0oEwokzv5BiUmX82bJc>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
+ 18 Sep 2021 05:42:43 -0400 (EDT)
+Date:   Sat, 18 Sep 2021 11:42:40 +0200
 From:   Fernando Ramos <greenfoo@u92.eu>
 To:     Sean Paul <sean@poorly.run>
 Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
@@ -70,29 +70,47 @@ Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
         intel-gfx@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
         freedreno@lists.freedesktop.org, nouveau@lists.freedesktop.org,
         linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 15/15] doc: drm: remove TODO entry regarding
- DRM_MODSET_LOCK_ALL cleanup
-Message-ID: <YUUjC5MhADgMs3aw@zacax395.localdomain>
+Subject: Re: [PATCH 14/15] drm/amd: cleanup: drm_modeset_lock_all() -->
+ DRM_MODESET_LOCK_ALL_BEGIN()
+Message-ID: <YUW0kJr1XoqCENhl@zacax395.localdomain>
 References: <20210916211552.33490-1-greenfoo@u92.eu>
- <20210916211552.33490-16-greenfoo@u92.eu>
- <20210917155652.GP2515@art_vandelay>
+ <20210916211552.33490-15-greenfoo@u92.eu>
+ <20210917155548.GO2515@art_vandelay>
+ <YUUh7X+Ft7vKHlcT@zacax395.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20210917155652.GP2515@art_vandelay>
+In-Reply-To: <YUUh7X+Ft7vKHlcT@zacax395.localdomain>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-> Can we remove drm_modeset_lock_all[_ctx] now? If so, let's queue that up as part
-> of the set.
+On 21/09/18 01:17AM, Fernando Ramos wrote:
+
+> > > +#include <drm/drm_drv.h>
+> > 
+> > Top-level headers generally come above the driver headers. Also, now that I think
+> > about this a bit more, all of the new includes in this set should probably be
+> > for 'drm_modeset_lock.h' instead of 'drm_drv.h'.
 > 
+> Ok. Let me try that.
 
-drm_modeset_lock_all() and drm_modeset_unlock_all() can be removed (I'll do that
-on v2 of this patch series).
+Turns out that the DRM_MODESET_LOCK_ALL_*() macros expansion includes a call
+to drm_drv_uses_atomic_modeset() which is defined in "drm_drv.h".
 
-drm_modset_lock_all_ctx() is a different story and there are still two places
-(one in the i915 driver and another one in the amd driver) where they are
-needed.
+Thus, #include'ing <drm/drm_drv.h> cannot be avoided.
 
-I would need to understand the code better before trying to remove those :)
+This makes me wonder...
+
+  1. "drm_drv.h" includes "drm_device.h", which includes "drm_mode_config.h",
+     which includes "drm_modeset_lock.h"
+
+  2. "drm_modeset_lock.h" defines DRM_MODESET_LOCK_ALL_*() which expands into
+     drm_drv_uses_atomic_modeset()
+
+  3. drm_drv_uses_atomic_modeset() is declared in "drm_drv.h"
+
+There seems to be a circular dependency here.
+
+We can try to fix this, but I suggest to do it in a different patch series.
+
