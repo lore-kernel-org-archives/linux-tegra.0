@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16279C433F5
-	for <linux-tegra@archiver.kernel.org>; Sun, 19 Sep 2021 19:41:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B179C433EF
+	for <linux-tegra@archiver.kernel.org>; Sun, 19 Sep 2021 19:42:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DF31760FED
-	for <linux-tegra@archiver.kernel.org>; Sun, 19 Sep 2021 19:41:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 28A6261052
+	for <linux-tegra@archiver.kernel.org>; Sun, 19 Sep 2021 19:42:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231859AbhISTmz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 19 Sep 2021 15:42:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55870 "EHLO
+        id S231887AbhISTn1 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 19 Sep 2021 15:43:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56012 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231839AbhISTmx (ORCPT
+        with ESMTP id S231854AbhISTn1 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 19 Sep 2021 15:42:53 -0400
-Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABC7AC06175F
-        for <linux-tegra@vger.kernel.org>; Sun, 19 Sep 2021 12:41:26 -0700 (PDT)
-Received: by mail-lf1-x136.google.com with SMTP id c8so57758670lfi.3
-        for <linux-tegra@vger.kernel.org>; Sun, 19 Sep 2021 12:41:26 -0700 (PDT)
+        Sun, 19 Sep 2021 15:43:27 -0400
+Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BA27C061574
+        for <linux-tegra@vger.kernel.org>; Sun, 19 Sep 2021 12:42:01 -0700 (PDT)
+Received: by mail-lf1-x12e.google.com with SMTP id i4so58212688lfv.4
+        for <linux-tegra@vger.kernel.org>; Sun, 19 Sep 2021 12:42:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=LYTzOdcrX47mnET/O6IbbirI1g0RFSgGZ65Y7f58LeQ=;
-        b=spwp/KpEFJhDnqy54onPk162/G5pw8dUturgYEWZX1FMOfciExMa+ChSfIm0Gy8Tp7
-         RNSSNAW0C+T4WiMO9tsEYzDiJxApm2db0Lb18vFiJkAV7CXWDtn1ZQIUcel6NuhM6XO0
-         E2sfuU7GPsSaC3q+V8/6z/J+CXq3s+xXYp7LsdlTVP7y5Kljis25gsYra++pXnn8PUFN
-         Hr0J0gZOrwJKACWnGNs2mThrmdJ4MVHy+kRHw674eHZZ7d419xVC3Uq1nhQ3jvAackV9
-         0yw9zsy+BNOq6NecZQqOLfpn/7rax4qcEgSGCOrJyTaNhjGQBZked2iOG8LBCcWpqwkZ
-         zyOg==
+        bh=267Y5GG4wv3jBVNFLCjYNg4eEpoY547mjd1IsPwkZZ4=;
+        b=aCEfsATQGKUcZ6Gbf07F1Ad396sTKdrW+S3XJ9iraG9sqiyz/afeQxWCIk/lwOXWWu
+         vmHOByZNuk5iXVZOfH39JWTuJ43DVu5kYyEflMaLVzqKsLtvGXOT5Z5MH7JYhHgR2Vg7
+         0+uN2m38f58OtVTQBeetop+lFeFnf9ATVg1sHCh9OsjFUIHSd7e/f33b171Sch/cqbQ1
+         5KdGzTp0kNomZzOClhbZFDzi0Cf8L3whqyfMhoIe9RgyAuYV3bA5/j3l4kQhBIkCgIWm
+         kvE825n+8A0Ad3rA/rnww53FxHBs6uWAoPA6JCYRETNN/Sn0KDQ3VuyQV314Qby5eqZ1
+         dAOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=LYTzOdcrX47mnET/O6IbbirI1g0RFSgGZ65Y7f58LeQ=;
-        b=CdreiCkIiksJlTLdf1QSTXx8gUWq3v7vavORGNK7DQIU3CclJTkus0uwEcwmml+Hiu
-         2DOHriJf6fJOsj16gA8N8lnq4CvDdJQlavpTbu/lv0HNqe3fTe2+BBxD19DGLVGKnsqT
-         Nwwfpe1Av6Oizenn1tRsOsrB7g1rmFkBoZkZJbujSG2wUL7aNLR1RnjavEbw+xTsYuKE
-         fYGTziLzGTnaUYHcejpukvmUCAhGT4ND1DDM9fM2v444RS1/2ElF/YZfte9EDwJewYJm
-         jqcdO+paEWFRa7I2dysEZDkiyy84bUSxqFmtB4ITv7qjyiaK797vPuGGE6ucDICK1Awv
-         ga4Q==
-X-Gm-Message-State: AOAM531lsXJ9x7+W0ARw4O/j4A97/5f8JZBF9js1PkgsYU+jKe2FbXNk
-        d5cSwH5VET7utwO7DqaYHfHE99E+jfadxxap2cQOEj1P/RA=
-X-Google-Smtp-Source: ABdhPJw+a+RYqW7LREzMJdZrkeqv0faFTmrJBsxG9VYISXMESJvXoq5ic1siEmlwm2VnTvDad1sJr+wxcffypYWMwso=
-X-Received: by 2002:a05:651c:11c7:: with SMTP id z7mr18829959ljo.288.1632080484878;
- Sun, 19 Sep 2021 12:41:24 -0700 (PDT)
+        bh=267Y5GG4wv3jBVNFLCjYNg4eEpoY547mjd1IsPwkZZ4=;
+        b=O1rlbgxq1BxBv2SChjJEU8guxaCaWgYfMcR2yFTFVgZLmwyWgmubby5n1DB92lCWLj
+         XSS2b/ZjmdBFfdpPWT2jl0y91ZNV6H1ClKeA8uaI3aBYax190F4lB6EJldH8sCtX2DhP
+         zxiLVwTvVIyeVVgRwXEZY0XU3ZgyCH8QvZIHQbzrDCj1vRpBu3J041mYBIShdTL88g29
+         9SsmGpPvmKG5xhiIG09Pr4ZQhVhstesZ0bs2EExf2IauLLRfQvqR42vDyJ99nXHTvMQX
+         /7dD+j9tf3oTgT5DcD4a0welrEMni5h3zoN/rk1qnsV4IkXCh5jdiEdMaVN7m9JZko5a
+         JbqQ==
+X-Gm-Message-State: AOAM531lkgahonPevufUj1f2k8RVKbPs1V7gEDkswnCnZeo1fjlj59cH
+        sGRIIthaw2hUJWpaaY07V0bNV44Z+lDPonOebXVi1A==
+X-Google-Smtp-Source: ABdhPJyOo0GRxViJevniGs7x1CN7wVCSU7UZCda+WhFRVhOAhvLyfjPAJB50V+BaC7FyiDJ/fYxFy0KgzWfbWa2BcZw=
+X-Received: by 2002:a2e:4c19:: with SMTP id z25mr13156944lja.145.1632080520043;
+ Sun, 19 Sep 2021 12:42:00 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210917105412.595539-1-thierry.reding@gmail.com>
-In-Reply-To: <20210917105412.595539-1-thierry.reding@gmail.com>
+References: <20210917105412.595539-1-thierry.reding@gmail.com> <20210917105412.595539-2-thierry.reding@gmail.com>
+In-Reply-To: <20210917105412.595539-2-thierry.reding@gmail.com>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Sun, 19 Sep 2021 21:41:14 +0200
-Message-ID: <CACRpkdb+-6dQ4F-asb0K+_9d2JtP7LXyMgjC45V=C0kpBiuAJA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] gpio: tegra186: Force one interrupt per bank
+Date:   Sun, 19 Sep 2021 21:41:49 +0200
+Message-ID: <CACRpkdboaxpVhLHRmWw8vtuXNZB8z5okSYLCBae-WzNjpbyK-Q@mail.gmail.com>
+Subject: Re: [PATCH 2/2] gpio: tegra186: Support multiple interrupts per bank
 To:     Thierry Reding <thierry.reding@gmail.com>
 Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         Jon Hunter <jonathanh@nvidia.com>,
@@ -76,11 +76,13 @@ On Fri, Sep 17, 2021 at 12:54 PM Thierry Reding
 
 > From: Thierry Reding <treding@nvidia.com>
 >
-> Newer chips support up to 8 interrupts per bank, which can be useful to
-> balance the load and decrease latency. However, it also required a very
-> complicated interrupt routing to be set up. To keep things simple for
-> now, ensure that a single interrupt per bank is enforced, even if all
-> possible interrupts are described in device tree.
+> Tegra194 and later support more than a single interrupt per bank. This
+> is primarily useful for virtualization but can also be helpful for more
+> fine-grained CPU affinity control. To keep things simple for now, route
+> all pins to the first interrupt.
+>
+> For backwards-compatibility, support old device trees that specify only
+> one interrupt per bank by counting the interrupts at probe time.
 >
 > Signed-off-by: Thierry Reding <treding@nvidia.com>
 
