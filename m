@@ -2,138 +2,90 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8A1BC433F5
-	for <linux-tegra@archiver.kernel.org>; Sun, 19 Sep 2021 09:44:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B7BEC433EF
+	for <linux-tegra@archiver.kernel.org>; Sun, 19 Sep 2021 15:28:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 80FB2610A8
-	for <linux-tegra@archiver.kernel.org>; Sun, 19 Sep 2021 09:44:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4589D61268
+	for <linux-tegra@archiver.kernel.org>; Sun, 19 Sep 2021 15:28:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237813AbhISJpW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 19 Sep 2021 05:45:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39346 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237818AbhISJpQ (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 19 Sep 2021 05:45:16 -0400
-Received: from mail-pg1-x52f.google.com (mail-pg1-x52f.google.com [IPv6:2607:f8b0:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68CCDC061574;
-        Sun, 19 Sep 2021 02:43:46 -0700 (PDT)
-Received: by mail-pg1-x52f.google.com with SMTP id n18so14378973pgm.12;
-        Sun, 19 Sep 2021 02:43:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ujZYCN2hNIBT5RbdU8R3eOc6j6lEG3PQETpYdg9DbBc=;
-        b=MRfUZHjikWvtbxL9OaHghlwj40Fx/p2cDFvuKXkLmqdBPDvOSgx9Rmhuayid1vNXcD
-         GlGdc+shfLUDhFE4jaPnEWlCa/OZ9cQRpY8i9ewKdbC4V08O6D2INQvVvHFKlK1qMGNq
-         Xw9niYzj5ddgEtVfkrOMt7NNQpNO6/pmhVtwzpMbtWYD/+FtkZjBWRUcLj30SfpUxTlF
-         dZ4N/WQhGchhvzTBixOhZ0RSlz5+c3dqdBzUMQ891gcS6ukQGrUMfnlcWVrCNf6PJyU2
-         RQ5mKVGbGyCVcp5ugIv7nq36a31GaNsfnuMaCX+IFrwlOjSqcHq0Yn+Zuz8ca9EQ8CXf
-         RQ1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ujZYCN2hNIBT5RbdU8R3eOc6j6lEG3PQETpYdg9DbBc=;
-        b=MtAKbHGjJUEwxOzneet4gbgGLd6no3KD6WBp3DxHAqsioiKJpYeIrBjbCt4UT9GeSJ
-         lxc5ekZBySuWMwRdjqtUdI2p8/ZdRvmq/bJyFdHsrjTnTCRFRs1xXjJhSH8gscb346AW
-         1yl6lT1Eur68KfMw3suIp/KMdX8xtHdq0WX4fgeK5mYriiTPggOHWN1L6IJh9QWp54HR
-         KF9kpPY2DywgwwxyFhARinIBOLoFeomI+/4tkhJW6CfJ7EC0BAeZ1TeFUInUuH2Pi/Z9
-         ymZtLqY2XYx0WMakp12sLibJZMb2TX0b8vDXO3tjGDBvdi+saMcUefk7ydGS48XMOm4E
-         9dBg==
-X-Gm-Message-State: AOAM531tDdrw8f9IY7cH1pNKGSGBfc77S9lbbKDSY/F2YKJEmXBluUz5
-        5TsV9ks2THg+on5U5p65OqGFO2nkVj4=
-X-Google-Smtp-Source: ABdhPJxbbHzNmfgc5i6PcrHjAWEr1DMvwBIs+hDKpJBTdjeXbNpu+gig3MhSpK+FL8ySD6H3hcMnOw==
-X-Received: by 2002:a63:ce57:: with SMTP id r23mr18549344pgi.271.1632044625811;
-        Sun, 19 Sep 2021 02:43:45 -0700 (PDT)
-Received: from [172.30.1.2] ([14.32.163.5])
-        by smtp.gmail.com with ESMTPSA id y80sm6403104pfb.196.2021.09.19.02.43.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 19 Sep 2021 02:43:45 -0700 (PDT)
-Subject: Re: [PATCH v1 4/4] PM / devfreq: tegra30: Check whether
- clk_round_rate() returns zero rate
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org,
+        id S233199AbhISPaJ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 19 Sep 2021 11:30:09 -0400
+Received: from ixit.cz ([94.230.151.217]:43342 "EHLO ixit.cz"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233114AbhISPaJ (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Sun, 19 Sep 2021 11:30:09 -0400
+Received: from newone.lan (ixit.cz [94.230.151.217])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ixit.cz (Postfix) with ESMTPSA id CE37123B26;
+        Sun, 19 Sep 2021 17:28:41 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ixit.cz; s=dkim;
+        t=1632065322;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=QI4FPjhypojGCEGbwnN4o9VsS0NIGjkdFUqs4+dbCeo=;
+        b=JfbJelLhxR7R0G3cDe5XmrSAQ5/Bqf7Idp3PNIlWAuqT2sips46n+P3o0Zf2UNHupVYAwB
+        BXSuQwI9e2VR3mZuJ163FkiH9SkdV0pso55FE3JdlN8f7D0CDPlpH7HdD59Y3GdlzQkz5f
+        UYhLbWKZXWW1PZsInENUP3Q/Dfsy3Ic=
+From:   David Heidelberg <david@ixit.cz>
+To:     Rob Herring <robh+dt@kernel.org>,
         Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>
-References: <20210912184458.17995-1-digetx@gmail.com>
- <20210912184458.17995-5-digetx@gmail.com>
- <9fa66405-883a-3653-eb5d-3cd7eee07a0a@gmail.com>
- <e9233eeb-6780-b390-dffa-8de9315effa3@gmail.com>
- <26d90b01-13d5-3bd8-da0a-b9ff61c7845a@gmail.com>
-From:   Chanwoo Choi <cwchoi00@gmail.com>
-Message-ID: <4b5faca8-c0fc-e7bb-5a0b-c66714bc5f61@gmail.com>
-Date:   Sun, 19 Sep 2021 18:43:41 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, David Heidelberg <david@ixit.cz>
+Subject: [PATCH] ARM: tegra: dts: remove unused backlight-boot-off
+Date:   Sun, 19 Sep 2021 17:27:20 +0200
+Message-Id: <20210919152720.72748-1-david@ixit.cz>
+X-Mailer: git-send-email 2.33.0
 MIME-Version: 1.0
-In-Reply-To: <26d90b01-13d5-3bd8-da0a-b9ff61c7845a@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 21. 9. 16. 오전 10:28, Dmitry Osipenko wrote:
-> 15.09.2021 21:31, Chanwoo Choi пишет:
->> On 21. 9. 15. 오후 12:51, Chanwoo Choi wrote:
->>> Hi,
->>>
->>> On 21. 9. 13. 오전 3:44, Dmitry Osipenko wrote:
->>>> EMC clock is always-on and can't be zero. Check whether clk_round_rate()
->>>> returns zero rate and error out if it does. It can return zero if clock
->>>> tree isn't initialized properly.
->>>>
->>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>>> ---
->>>>    drivers/devfreq/tegra30-devfreq.c | 4 ++--
->>>>    1 file changed, 2 insertions(+), 2 deletions(-)
->>>>
->>>> diff --git a/drivers/devfreq/tegra30-devfreq.c
->>>> b/drivers/devfreq/tegra30-devfreq.c
->>>> index d83fdc2713ed..65ecf17a36f4 100644
->>>> --- a/drivers/devfreq/tegra30-devfreq.c
->>>> +++ b/drivers/devfreq/tegra30-devfreq.c
->>>> @@ -891,9 +891,9 @@ static int tegra_devfreq_probe(struct
->>>> platform_device *pdev)
->>>>            return err;
->>>>        rate = clk_round_rate(tegra->emc_clock, ULONG_MAX);
->>>> -    if (rate < 0) {
->>>> +    if (rate <= 0) {
->>>>            dev_err(&pdev->dev, "Failed to round clock rate: %ld\n",
->>>> rate);
->>>> -        return rate;
->>>> +        return rate ?: -EINVAL;
->>
->> If rate is 0, It doesn't return and fall-through? even if print the
->> error message. 'return rate ?: -EINVAL;' style is strange for me
->> because it doesn't specify the 'return value' when rate is true.
-> 
-> It's not clear to me what do you mean by "return and fall-through".
-> 
-> It specifies the 'return value' when rate is true. It's a short form of
-> "rate ? rate : -EINVAL".
+backlight-boot-off was proposed as a patch, but ended not being accepted
+since different solution was already in the place:
+https://patchwork.kernel.org/project/linux-arm-kernel/patch/1406806970-12561-1-git-send-email-thierry.reding@gmail.com/#21327479
 
-I has not known this short form. Thanks for comment. I understand.
+Signed-off-by: David Heidelberg <david@ixit.cz>
+---
+ arch/arm/boot/dts/tegra20-paz00.dts            | 2 --
+ arch/arm64/boot/dts/nvidia/tegra132-norrin.dts | 2 --
+ 2 files changed, 4 deletions(-)
 
-
-
+diff --git a/arch/arm/boot/dts/tegra20-paz00.dts b/arch/arm/boot/dts/tegra20-paz00.dts
+index 916d29183af7..ad8a659f8c80 100644
+--- a/arch/arm/boot/dts/tegra20-paz00.dts
++++ b/arch/arm/boot/dts/tegra20-paz00.dts
+@@ -615,8 +615,6 @@ backlight: backlight {
+ 
+ 		brightness-levels = <0 16 32 48 64 80 96 112 128 144 160 176 192 208 224 240 255>;
+ 		default-brightness-level = <10>;
+-
+-		backlight-boot-off;
+ 	};
+ 
+ 	clk32k_in: clock-32k {
+diff --git a/arch/arm64/boot/dts/nvidia/tegra132-norrin.dts b/arch/arm64/boot/dts/nvidia/tegra132-norrin.dts
+index 6e5f8465669e..8a51751526ee 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra132-norrin.dts
++++ b/arch/arm64/boot/dts/nvidia/tegra132-norrin.dts
+@@ -1021,8 +1021,6 @@ backlight: backlight {
+ 
+ 		brightness-levels = <0 4 8 16 32 64 128 255>;
+ 		default-brightness-level = <6>;
+-
+-		backlight-boot-off;
+ 	};
+ 
+ 	clk32k_in: clock@0 {
 -- 
-Best Regards,
-Samsung Electronics
-Chanwoo Choi
+2.33.0
+
