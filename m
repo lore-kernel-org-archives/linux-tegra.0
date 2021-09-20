@@ -2,91 +2,100 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B179C433EF
-	for <linux-tegra@archiver.kernel.org>; Sun, 19 Sep 2021 19:42:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D04C3C433F5
+	for <linux-tegra@archiver.kernel.org>; Mon, 20 Sep 2021 08:34:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 28A6261052
-	for <linux-tegra@archiver.kernel.org>; Sun, 19 Sep 2021 19:42:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ACA3B6109E
+	for <linux-tegra@archiver.kernel.org>; Mon, 20 Sep 2021 08:34:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231887AbhISTn1 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 19 Sep 2021 15:43:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56012 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231854AbhISTn1 (ORCPT
+        id S235919AbhITIgA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 20 Sep 2021 04:36:00 -0400
+Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:51676
+        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S235887AbhITIf6 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 19 Sep 2021 15:43:27 -0400
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BA27C061574
-        for <linux-tegra@vger.kernel.org>; Sun, 19 Sep 2021 12:42:01 -0700 (PDT)
-Received: by mail-lf1-x12e.google.com with SMTP id i4so58212688lfv.4
-        for <linux-tegra@vger.kernel.org>; Sun, 19 Sep 2021 12:42:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=267Y5GG4wv3jBVNFLCjYNg4eEpoY547mjd1IsPwkZZ4=;
-        b=aCEfsATQGKUcZ6Gbf07F1Ad396sTKdrW+S3XJ9iraG9sqiyz/afeQxWCIk/lwOXWWu
-         vmHOByZNuk5iXVZOfH39JWTuJ43DVu5kYyEflMaLVzqKsLtvGXOT5Z5MH7JYhHgR2Vg7
-         0+uN2m38f58OtVTQBeetop+lFeFnf9ATVg1sHCh9OsjFUIHSd7e/f33b171Sch/cqbQ1
-         5KdGzTp0kNomZzOClhbZFDzi0Cf8L3whqyfMhoIe9RgyAuYV3bA5/j3l4kQhBIkCgIWm
-         kvE825n+8A0Ad3rA/rnww53FxHBs6uWAoPA6JCYRETNN/Sn0KDQ3VuyQV314Qby5eqZ1
-         dAOg==
+        Mon, 20 Sep 2021 04:35:58 -0400
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com [209.85.221.72])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 083EB3F338
+        for <linux-tegra@vger.kernel.org>; Mon, 20 Sep 2021 08:34:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1632126871;
+        bh=QOuDhjEYBpbLsCkja2E5kIg84mTo7Mp3bww45iwZuuc=;
+        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+         MIME-Version:Content-Type;
+        b=g6JzfbbWEYxZz5ei2fucQV+VI0c0khFzhk07yLSYQtm8jvpeLkcnqhpOd1nahbCBz
+         c/gOVi6jRd3aDRVkdbJIPOcgs5rLbl/9jgTyMwD0+sgvwlTKpMvpbPSpWuaCHlvUoR
+         lsvy5EttoMxjdNiGKHjoJVnKdxSE8pkgQVvXVwI/fLhf1B+QwoiYU0Mzqw9sNp/17Z
+         VaKKApmuLrO54yen2Uu5aW+hpwxdc/EXRP3LR569TozsIPKFMxlUv6qrG4qajLZJyj
+         nTIxn0fA9z03PY0QfRC9J3zBl2nkF7ulK4wNkjdTgzzXQ67p3zF7Zwwgqt7n4g2boG
+         gk4Dui88ZIcFg==
+Received: by mail-wr1-f72.google.com with SMTP id z2-20020a5d4c82000000b0015b140e0562so5562431wrs.7
+        for <linux-tegra@vger.kernel.org>; Mon, 20 Sep 2021 01:34:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=267Y5GG4wv3jBVNFLCjYNg4eEpoY547mjd1IsPwkZZ4=;
-        b=O1rlbgxq1BxBv2SChjJEU8guxaCaWgYfMcR2yFTFVgZLmwyWgmubby5n1DB92lCWLj
-         XSS2b/ZjmdBFfdpPWT2jl0y91ZNV6H1ClKeA8uaI3aBYax190F4lB6EJldH8sCtX2DhP
-         zxiLVwTvVIyeVVgRwXEZY0XU3ZgyCH8QvZIHQbzrDCj1vRpBu3J041mYBIShdTL88g29
-         9SsmGpPvmKG5xhiIG09Pr4ZQhVhstesZ0bs2EExf2IauLLRfQvqR42vDyJ99nXHTvMQX
-         /7dD+j9tf3oTgT5DcD4a0welrEMni5h3zoN/rk1qnsV4IkXCh5jdiEdMaVN7m9JZko5a
-         JbqQ==
-X-Gm-Message-State: AOAM531lkgahonPevufUj1f2k8RVKbPs1V7gEDkswnCnZeo1fjlj59cH
-        sGRIIthaw2hUJWpaaY07V0bNV44Z+lDPonOebXVi1A==
-X-Google-Smtp-Source: ABdhPJyOo0GRxViJevniGs7x1CN7wVCSU7UZCda+WhFRVhOAhvLyfjPAJB50V+BaC7FyiDJ/fYxFy0KgzWfbWa2BcZw=
-X-Received: by 2002:a2e:4c19:: with SMTP id z25mr13156944lja.145.1632080520043;
- Sun, 19 Sep 2021 12:42:00 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=QOuDhjEYBpbLsCkja2E5kIg84mTo7Mp3bww45iwZuuc=;
+        b=p94bAjeipK6cJp+8iJ8oILQTez+51oP9bwsP2a6IKrIEWntMXyrN7ggBPzSlEhXn4v
+         pRtdW9LJoiZzHGphaOzmygXA8Ziz7Njsaa96UvqHufMsvMSLXml6/2yvQ5aczddBW2B7
+         5pXPEaypmlppeGT6RoDBlf3RnCRFBKqnr+4tR+Hd3ZfekWFAOSStvj4FgOryL7wiba1Z
+         4/vzvhg91Hpm5Lw/C2kP8r8qfEWSy+zFunTmYSRqC5UbeS3lcicQgq991Xu10UFH4ArV
+         afHqQC2y5XwN1VK+GeWg5hhnHIXhNGROjrvgNrS6uaI+w3QzmrW+JHfjTP9ca5NELUYI
+         2ikg==
+X-Gm-Message-State: AOAM530b01l07s2ysapSM3XFcheu3W3DvFe+lm/EwhIHQkCcqkkaYqtH
+        G09wqyNLftX8tVks487d522VuCcuRxSXAXUZqISbYNVqQGmRGJBK73zkVWz6lND2nOwWEn3TvkB
+        Ywsqsf4zq1Spvveyer2V0GVFPj1KjKJBsm9nmF3PP
+X-Received: by 2002:a7b:c0d1:: with SMTP id s17mr28624764wmh.139.1632126870728;
+        Mon, 20 Sep 2021 01:34:30 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJz/Z8xXI2Qq35LGBSF3xaoKtEJihngmysxU/0sHU8yCajr8fdzEoTawRUZVVBarprNDrWcgkA==
+X-Received: by 2002:a7b:c0d1:: with SMTP id s17mr28624744wmh.139.1632126870473;
+        Mon, 20 Sep 2021 01:34:30 -0700 (PDT)
+Received: from kozik-lap.lan (lk.84.20.244.219.dc.cable.static.lj-kabel.net. [84.20.244.219])
+        by smtp.gmail.com with ESMTPSA id v188sm4658891wme.38.2021.09.20.01.34.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Sep 2021 01:34:30 -0700 (PDT)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] memory: tegra: Remove interconnect state syncing hack
+Date:   Mon, 20 Sep 2021 10:34:26 +0200
+Message-Id: <163212685894.112070.3043725946674605837.b4-ty@canonical.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20210912183009.6400-1-digetx@gmail.com>
+References: <20210912183009.6400-1-digetx@gmail.com>
 MIME-Version: 1.0
-References: <20210917105412.595539-1-thierry.reding@gmail.com> <20210917105412.595539-2-thierry.reding@gmail.com>
-In-Reply-To: <20210917105412.595539-2-thierry.reding@gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Sun, 19 Sep 2021 21:41:49 +0200
-Message-ID: <CACRpkdboaxpVhLHRmWw8vtuXNZB8z5okSYLCBae-WzNjpbyK-Q@mail.gmail.com>
-Subject: Re: [PATCH 2/2] gpio: tegra186: Support multiple interrupts per bank
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Prathamesh Shete <pshete@nvidia.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, Sep 17, 2021 at 12:54 PM Thierry Reding
-<thierry.reding@gmail.com> wrote:
+On Sun, 12 Sep 2021 21:30:09 +0300, Dmitry Osipenko wrote:
+> State syncing works properly now, previously the sync callback was never
+> invoked. Apparently it was fixed in drivers core, so let's remove the
+> hack. The state won't be synced until all consumer drivers of devices
+> that reference memory controller in a device-tree are probed, i.e. keeping
+> bandwidth at maximum until both display and devfreq drivers are probed.
+> 
+> 
+> [...]
 
-> From: Thierry Reding <treding@nvidia.com>
->
-> Tegra194 and later support more than a single interrupt per bank. This
-> is primarily useful for virtualization but can also be helpful for more
-> fine-grained CPU affinity control. To keep things simple for now, route
-> all pins to the first interrupt.
->
-> For backwards-compatibility, support old device trees that specify only
-> one interrupt per bank by counting the interrupts at probe time.
->
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
+Applied, thanks!
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+[1/1] memory: tegra: Remove interconnect state syncing hack
+      commit: 77b14c9d05bd72d6a3f11b4982591d6cb0090ffe
 
-Yours,
-Linus Walleij
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
