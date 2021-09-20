@@ -2,189 +2,94 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D96B3C433F5
-	for <linux-tegra@archiver.kernel.org>; Mon, 20 Sep 2021 17:22:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5997C433F5
+	for <linux-tegra@archiver.kernel.org>; Mon, 20 Sep 2021 20:31:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BD0EF632A1
-	for <linux-tegra@archiver.kernel.org>; Mon, 20 Sep 2021 17:22:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AD613611ED
+	for <linux-tegra@archiver.kernel.org>; Mon, 20 Sep 2021 20:31:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349540AbhITRX5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 20 Sep 2021 13:23:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35018 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345305AbhITRVw (ORCPT
+        id S230142AbhITUdM (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 20 Sep 2021 16:33:12 -0400
+Received: from mail-oi1-f178.google.com ([209.85.167.178]:34791 "EHLO
+        mail-oi1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230176AbhITUbL (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 20 Sep 2021 13:21:52 -0400
-Received: from mail-il1-x12e.google.com (mail-il1-x12e.google.com [IPv6:2607:f8b0:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99178C05BD19
-        for <linux-tegra@vger.kernel.org>; Mon, 20 Sep 2021 09:51:01 -0700 (PDT)
-Received: by mail-il1-x12e.google.com with SMTP id a20so19404125ilq.7
-        for <linux-tegra@vger.kernel.org>; Mon, 20 Sep 2021 09:51:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=qwTJ7Ad7zVwW8MXijFTCxqxIz/INuyLU038X6Cl8cX8=;
-        b=gEpnnaWNfeGWV1YEfOrXuq+LS+LgPIPsf1DgmGFv9Am5IX4FzgUCAAz9kv6Wok3gcj
-         hyqxFa0fPyvhfifyDUGVN6FUhXjQr5JBt69GUObZUMETluh34krbCh9RfSG3gJ2vz7WU
-         m2sKlwAIdi+n4v1ByPZGwiF865i2wURG5Xvpg=
+        Mon, 20 Sep 2021 16:31:11 -0400
+Received: by mail-oi1-f178.google.com with SMTP id p2so26552242oif.1;
+        Mon, 20 Sep 2021 13:29:44 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qwTJ7Ad7zVwW8MXijFTCxqxIz/INuyLU038X6Cl8cX8=;
-        b=VHd2FXH6esy1+CRISkcry6eJq3Z52q5yJAKvwUZvMySE3e7M6zgKJw3fRBjOViEl8m
-         Gk5Gibfw2EmiDORJp4CKE81tJOT2EhRmpU1e0d6EWcuu/DNXSdTfm3kGlv4hRk5VgPo1
-         Gptxnx+0sl6RkzyvhV71RUbzx+VO4+z/GRL4EoP28ljxJz4k8o797eJjSN4L16KjCVsa
-         ry4r+2u2aZQ8+A/AA/9IMvZGr7NLQlcInU2XksOIzgRr94bcO5YK7kWILIZmoVB3RXX0
-         z0X63upRyZ4VQ8YYxeRlvTipAK88y2ZGwjiFXurKxh6BPTImJDo0GHyj+VJ2qX5id2Uv
-         v1sw==
-X-Gm-Message-State: AOAM532KuxP+sQOb5fN4ojfUSTiFoy5jb1/rLoDUp7IqunzrjobRNrsL
-        jjXAOGP9YkX4vq3LZainqtS1q7G6hEVxHg==
-X-Google-Smtp-Source: ABdhPJxdngJvpV3r5KPa24osKQdYoXeqfXuw74qO80jAx3jEo2jBxb7OKkIGIVmAugthK+G0Bt95xA==
-X-Received: by 2002:a92:7302:: with SMTP id o2mr18334126ilc.44.1632156660353;
-        Mon, 20 Sep 2021 09:51:00 -0700 (PDT)
-Received: from mail-il1-f182.google.com (mail-il1-f182.google.com. [209.85.166.182])
-        by smtp.gmail.com with ESMTPSA id z20sm7817375ill.2.2021.09.20.09.51.00
-        for <linux-tegra@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 Sep 2021 09:51:00 -0700 (PDT)
-Received: by mail-il1-f182.google.com with SMTP id m4so19418858ilj.9
-        for <linux-tegra@vger.kernel.org>; Mon, 20 Sep 2021 09:51:00 -0700 (PDT)
-X-Received: by 2002:a05:6e02:1847:: with SMTP id b7mr18604550ilv.180.1632156161095;
- Mon, 20 Sep 2021 09:42:41 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=AH19fZDa3RGD1bXp8KensKJGxcb/KKL33WSHbuvr/mU=;
+        b=RsTzGM/RHDUcfDk0n6rh6cdHqOzfTD0me4EqPjZKLDFx9r0imLpeEiAkJWft9N4z/8
+         Y+stkzXEaJJg272KDsu37pOIqiyWF1/BViLxq48hLhfR2DMnSTGsHXnKj3c4RGyde7qy
+         qqHGab1gGqyX7R1oQDcUi2fI+s/1tjf3wYDDGN6L1VngTgRELgZ0uef/3tImXeHZrqMY
+         K7NPdTSgr//3c216C0Bd0EB38tPFl/OkCxabnUn6HZT7qi2+MmJvtypLv0V80reIj3tE
+         iKLBBK7ytddY6ZOj9itRwBTbvho7yPej9eVYEItrF7KGex47cjrMi4bsJvtq1pXjLTwi
+         SK7Q==
+X-Gm-Message-State: AOAM532+quMTtKwchOjdHs7Wx/3hBOwFNGtImHapg3vJp+V5/V2fL5An
+        7GIEBYguD6SaLyJo5oh4jg==
+X-Google-Smtp-Source: ABdhPJxbK/iL/HBM5wgfss+lB7OVXLSTbwGo6rZFtSZ7S8wUZy7rjh4eYLbR2TGSaErAnOS1tB3eIw==
+X-Received: by 2002:a05:6808:1a29:: with SMTP id bk41mr733432oib.167.1632169784453;
+        Mon, 20 Sep 2021 13:29:44 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
+        by smtp.gmail.com with ESMTPSA id p21sm3431243oip.28.2021.09.20.13.29.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Sep 2021 13:29:43 -0700 (PDT)
+Received: (nullmailer pid 697302 invoked by uid 1000);
+        Mon, 20 Sep 2021 20:29:42 -0000
+Date:   Mon, 20 Sep 2021 15:29:42 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Mikko Perttunen <mperttunen@nvidia.com>
+Cc:     thierry.reding@gmail.com, linux-tegra@vger.kernel.org,
+        airlied@linux.ie, robh+dt@kernel.org,
+        dri-devel@lists.freedesktop.org, daniel@ffwll.ch,
+        devicetree@vger.kernel.org, jonathanh@nvidia.com
+Subject: Re: [PATCH v6 1/3] dt-bindings: Add YAML bindings for NVDEC
+Message-ID: <YUjvNmsPEBZHVDw/@robh.at.kernel.org>
+References: <20210916145517.2047351-1-mperttunen@nvidia.com>
+ <20210916145517.2047351-2-mperttunen@nvidia.com>
 MIME-Version: 1.0
-References: <20210914202202.1702601-1-dianders@chromium.org> <CACRpkdaTb4_UfFzCqw=fiAnQhHD+1sDDua529KdGQbgMVfjYBw@mail.gmail.com>
-In-Reply-To: <CACRpkdaTb4_UfFzCqw=fiAnQhHD+1sDDua529KdGQbgMVfjYBw@mail.gmail.com>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Mon, 20 Sep 2021 09:42:28 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=VPgFRBLgOGvt4a4afDr80aQL64L7=H3kqeRf2ffiusPg@mail.gmail.com>
-Message-ID: <CAD=FV=VPgFRBLgOGvt4a4afDr80aQL64L7=H3kqeRf2ffiusPg@mail.gmail.com>
-Subject: Re: [PATCH v5 00/15] eDP: Support probing eDP panels dynamically
- instead of hardcoding
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, Steev Klimaszewski <steev@kali.org>,
-        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
-        MSM <linux-arm-msm@vger.kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Maxime Ripard <mripard@kernel.org>,
-        Adam Ford <aford173@gmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Andreas Kemnade <andreas@kemnade.info>,
-        Andrey Zhizhikin <andrey.zhizhikin@leica-geosystems.com>,
-        Anson Huang <Anson.Huang@nxp.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Corentin Labbe <clabbe@baylibre.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Emil Velikov <emil.velikov@collabora.com>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Eugen Hristev <eugen.hristev@microchip.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Fabrice Gasnier <fabrice.gasnier@st.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        =?UTF-8?Q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Kees Cook <keescook@chromium.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Lionel Debieve <lionel.debieve@st.com>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        =?UTF-8?Q?Martin_J=C3=BCcker?= <martin.juecker@gmail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Michael Walle <michael@walle.cc>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Nishanth Menon <nm@ti.com>,
-        Olivier Moysan <olivier.moysan@st.com>,
-        Otavio Salvador <otavio@ossystems.com.br>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Razvan Stefanescu <razvan.stefanescu@microchip.com>,
-        Robert Richter <rric@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Will Deacon <will@kernel.org>,
-        William Cohen <wcohen@redhat.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Linux-OMAP <linux-omap@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        linux-sunxi@lists.linux.dev,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        =?UTF-8?Q?=C5=81ukasz_Stelmach?= <l.stelmach@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210916145517.2047351-2-mperttunen@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi,
+On Thu, 16 Sep 2021 17:55:15 +0300, Mikko Perttunen wrote:
+> Add YAML device tree bindings for NVDEC, now in a more appropriate
+> place compared to the old textual Host1x bindings.
+> 
+> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+> ---
+> v6:
+> * Elaborated description for nvidia,host1x-class.
+> * Added default value for nvidia,host1x-class.
+> v5:
+> * Changed from nvidia,instance to nvidia,host1x-class optional
+>   property.
+> * Added dma-coherent
+> v4:
+> * Fix incorrect compatibility string in 'if' condition
+> v3:
+> * Drop host1x bindings
+> * Change read2 to read-1 in interconnect names
+> v2:
+> * Fix issues pointed out in v1
+> * Add T194 nvidia,instance property
+> ---
+>  .../gpu/host1x/nvidia,tegra210-nvdec.yaml     | 108 ++++++++++++++++++
+>  MAINTAINERS                                   |   1 +
+>  2 files changed, 109 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/gpu/host1x/nvidia,tegra210-nvdec.yaml
+> 
 
-On Tue, Sep 14, 2021 at 3:12 PM Linus Walleij <linus.walleij@linaro.org> wrote:
->
-> On Tue, Sep 14, 2021 at 10:22 PM Douglas Anderson <dianders@chromium.org> wrote:
->
-> > Version 5 of this series just fixes the panel ID encode macro to be
-> > cleaner and adds Jani's review tags.
-> >
-> > It could possibly be ready to land?
->
-> Definitely IMO, the kernel look so much better after this change,
-> so for the series:
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+With the yamllint warning fixed,
 
-Pushed all 15 to drm-misc-next.
-
-5540cf8f3e8d drm/panel-edp: Implement generic "edp-panel"s probed by EDID
-24e27de11560 drm/panel-edp: Don't re-read the EDID every time we power
-off the panel
-a64ad9c3e4a5 drm/panel-edp: Fix "prepare_to_enable" if panel doesn't handle HPD
-c46a4cc1403e drm/panel-edp: hpd_reliable shouldn't be subtraced from hpd_absent
-52824ca4502d drm/panel-edp: Better describe eDP panel delays
-9ea10a500045 drm/panel-edp: Split the delay structure out
-b6d5ffce11dd drm/panel-simple: Non-eDP panels don't need "HPD" handling
-3fd68b7b13c2 drm/panel-edp: Move some wayward panels to the eDP driver
-5f04e7ce392d drm/panel-edp: Split eDP panels out of panel-simple
-c0c11c70a6d0 arm64: defconfig: Everyone who had PANEL_SIMPLE now gets PANEL_EDP
-310720875efa ARM: configs: Everyone who had PANEL_SIMPLE now gets PANEL_EDP
-e8de4d55c259 drm/edid: Use new encoded panel id style for quirks matching
-d9f91a10c3e8 drm/edid: Allow querying/working with the panel ID from the EDID
-bac9c2948224 drm/edid: Break out reading block 0 of the EDID
-29145a566873 dt-bindings: drm/panel-simple-edp: Introduce generic eDP panels
-
--Doug
+Reviewed-by: Rob Herring <robh@kernel.org>
