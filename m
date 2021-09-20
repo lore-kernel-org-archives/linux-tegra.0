@@ -2,101 +2,154 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06030C433FE
-	for <linux-tegra@archiver.kernel.org>; Mon, 20 Sep 2021 08:34:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B795C433F5
+	for <linux-tegra@archiver.kernel.org>; Mon, 20 Sep 2021 12:57:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E1D1F6109E
-	for <linux-tegra@archiver.kernel.org>; Mon, 20 Sep 2021 08:34:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 231C9610A8
+	for <linux-tegra@archiver.kernel.org>; Mon, 20 Sep 2021 12:57:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235951AbhITIgC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 20 Sep 2021 04:36:02 -0400
-Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:56108
-        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235907AbhITIgA (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 20 Sep 2021 04:36:00 -0400
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com [209.85.128.70])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id EF3EF40267
-        for <linux-tegra@vger.kernel.org>; Mon, 20 Sep 2021 08:34:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1632126872;
-        bh=GlnCPL/n2TbFZ5lKXBBdaGTEcyYQg+Xe+TKmdfu9J3o=;
-        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-         MIME-Version:Content-Type;
-        b=k3NQkMTJCzpxEaXtrsQYxD1tozAA27mjEdZTmW8rk2xphZA2q53u+aisx5jCsSlnV
-         32HtqlBG3ASoJMNCJav+Ga7Oat1H/j0aC9XJysVHR/YgqT0TCpC1jvne0VDdfZlhHe
-         zSX344WdjePs97xnJ6rMZZe8z/sWyK7gM9ZMpHYYDKH5VYAaasTQZCmLNGSN9de+es
-         4V0tJuS884SmGNfKFVTTxbIgowIM6ff6vJ4vhyj3nc90A+ndZYUoAYm3I1dFclVwDX
-         qFswYj2TCAb6C0ZmkusmkbXm/Rgg29DLJttiZHTPCbYKfx122UJvBJ1rsDfFh6oyhx
-         G+l0mueS42WBw==
-Received: by mail-wm1-f70.google.com with SMTP id c2-20020a7bc8420000b0290238db573ab7so5466737wml.5
-        for <linux-tegra@vger.kernel.org>; Mon, 20 Sep 2021 01:34:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=GlnCPL/n2TbFZ5lKXBBdaGTEcyYQg+Xe+TKmdfu9J3o=;
-        b=d6IIUL1EPNMW7JuU/vzDZMRTekFQ0JczkSCKYuQ7So2BhPyb+YLBdJ9uwob2m1xMBR
-         i1avF77tYWsjn4z12gXbze5+dOq5bjzgVFA+CTZ8N3lmVVBEqCK428q33Db1yDfRljvE
-         2yYb4uRiN1sjya/flUr2jF0O/zUNE6b7Kg4I1vo/0AGDqmxfffc9TCXM8EiMgmWDYZ72
-         8f3FalJoUjjvo/gCqHBLXgpycr2ynZkTRnhxeVBAloWsuQQD0rB4SuhjUsm+gc6Gbh/O
-         WRHxuFdd36KM+wZshl4B3+QCud85C7CDyyFTnVJvEhWfhmlkCINmCylWbbpgy9UnEyTv
-         co+A==
-X-Gm-Message-State: AOAM531lizfDWKVKiGtULWzfJtx2NSZ+FxSDVaL8wXWv9sQMMc4qCFcO
-        lpebBlv/P36bGjHtWIWmeYVT9nIt60Xe0cjbQVqCP690Mk6pkb0XWUqE3EkMZNO4RA/R82t0WQk
-        WBLBGAOwF6Z4FjeFL4jHAhvVTtE2oDG6IMnSOUh60
-X-Received: by 2002:a1c:2056:: with SMTP id g83mr27578659wmg.27.1632126872640;
-        Mon, 20 Sep 2021 01:34:32 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJxZ9ERCT7KUv6zwsHvcBjFyA/Y/awEBukLBanBzL4Ra5L9b9at0dRM9wxlTaF4DW/RU0R/XQw==
-X-Received: by 2002:a1c:2056:: with SMTP id g83mr27578645wmg.27.1632126872454;
-        Mon, 20 Sep 2021 01:34:32 -0700 (PDT)
-Received: from kozik-lap.lan (lk.84.20.244.219.dc.cable.static.lj-kabel.net. [84.20.244.219])
-        by smtp.gmail.com with ESMTPSA id v188sm4658891wme.38.2021.09.20.01.34.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Sep 2021 01:34:31 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-To:     p.zabel@pengutronix.de, viresh.kumar@linaro.org, robh@kernel.org,
-        Mikko Perttunen <mperttunen@nvidia.com>, amitk@kernel.org,
-        kw@linux.com, rafael@kernel.org, thierry.reding@gmail.com,
-        lorenzo.pieralisi@arm.com, daniel.lezcano@linaro.org,
-        rui.zhang@intel.com, jonathanh@nvidia.com
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        linux-pm@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: (subset) [PATCH 3/5] memory: tegra186-emc: Handle errors in BPMP response
-Date:   Mon, 20 Sep 2021 10:34:27 +0200
-Message-Id: <163212685894.112070.7948621267940223581.b4-ty@canonical.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210915085517.1669675-3-mperttunen@nvidia.com>
-References: <20210915085517.1669675-1-mperttunen@nvidia.com> <20210915085517.1669675-3-mperttunen@nvidia.com>
+        id S231124AbhITM6w (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 20 Sep 2021 08:58:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58228 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229719AbhITM6v (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 20 Sep 2021 08:58:51 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 2DAE96109D;
+        Mon, 20 Sep 2021 12:57:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1632142645;
+        bh=3Y4gQvacVMDsvloS8gj8JrRb56U+3j+/P9qgEmbnLxQ=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=t1/6VbpWrRN93zO/7PLoh+fho0IqhrImeOpjdU4IY33UR2RAo7KLD276fmnMAqpg8
+         jCF6414qDCbijwCEbh81qJABpbSW3o1mSNMt+CitGM2rzApfyMATlyU3QFE4BoEArv
+         R6FKYy/zO//2UHZgqUlfWafI78znpa+tbcapZu+vLR/lfXcqteI6kLj2ANMBlncaW5
+         Ui37uFBr0wFioz20MQzDVrJnIAhTN7NUMZFYBt0mWrniRdWQWCeEW2OzX9EHbyW7x7
+         TZWwQjqDLn81DMH9k4YnT/5wVaC+QtBcwDo6qwbQ7VO56O2zlqYW3UlhGkFhwOpyJn
+         S1Hl8sOxy1YNQ==
+Received: by mail-ed1-f51.google.com with SMTP id dj4so4947047edb.5;
+        Mon, 20 Sep 2021 05:57:25 -0700 (PDT)
+X-Gm-Message-State: AOAM532RAds5bAaN7qhvT36q0eww3Y2EF7DoaTxiH4KBWYoiY7Al2O+a
+        O6lD7jTFW2dPaQeBfy6Zhja6yVzJEJGq+cTSKw==
+X-Google-Smtp-Source: ABdhPJwxl4M7JwIYLhEMizLmntOnoBCcnFt6nsvNmWy/WrfKk4jbby+1tLrXqVYlYpjSu+es0W80TyrsSkRSdBrRY+s=
+X-Received: by 2002:a50:e004:: with SMTP id e4mr29223066edl.164.1632142643564;
+ Mon, 20 Sep 2021 05:57:23 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <1630686919-19495-1-git-send-email-spujar@nvidia.com> <1630686919-19495-3-git-send-email-spujar@nvidia.com>
+In-Reply-To: <1630686919-19495-3-git-send-email-spujar@nvidia.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Mon, 20 Sep 2021 07:57:12 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqJbbDiOAr5-3_JwVMWxdkeGRoPYZuc_8fHp_iGEvH7AWA@mail.gmail.com>
+Message-ID: <CAL_JsqJbbDiOAr5-3_JwVMWxdkeGRoPYZuc_8fHp_iGEvH7AWA@mail.gmail.com>
+Subject: Re: [PATCH v3 2/3] ASoC: Use schema reference for sound-name-prefix
+To:     Sameer Pujar <spujar@nvidia.com>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Stephan Gerhold <stephan@gerhold.net>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, 15 Sep 2021 11:55:15 +0300, Mikko Perttunen wrote:
-> The return value from tegra_bpmp_transfer indicates the success or
-> failure of the IPC transaction with BPMP. If the transaction
-> succeeded, we also need to check the actual command's result code.
-> Add code to do this.
-> 
-> 
+On Fri, Sep 3, 2021 at 11:36 AM Sameer Pujar <spujar@nvidia.com> wrote:
+>
+> Use schema reference for 'sound-name-prefix' property wherever
+> necessary.
+>
+> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
+> Cc: Jerome Brunet <jbrunet@baylibre.com>
+> Cc: Stephan Gerhold <stephan@gerhold.net>
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Reviewed-by: Jerome Brunet <jbrunet@baylibre.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> ---
 
-Applied, thanks!
+[...]
 
-[3/5] memory: tegra186-emc: Handle errors in BPMP response
-      commit: 13324edbe9269e6fbca4d0f5146b18ef8478c958
+> diff --git a/Documentation/devicetree/bindings/sound/nxp,tfa989x.yaml b/Documentation/devicetree/bindings/sound/nxp,tfa989x.yaml
+> index ffb8fcf..68e5ad2 100644
+> --- a/Documentation/devicetree/bindings/sound/nxp,tfa989x.yaml
+> +++ b/Documentation/devicetree/bindings/sound/nxp,tfa989x.yaml
+> @@ -9,6 +9,9 @@ title: NXP/Goodix TFA989X (TFA1) Audio Amplifiers
+>  maintainers:
+>    - Stephan Gerhold <stephan@gerhold.net>
+>
+> +allOf:
+> +  - $ref: name-prefix.yaml#
+> +
+>  properties:
+>    compatible:
+>      enum:
+> @@ -21,12 +24,6 @@ properties:
+>    '#sound-dai-cells':
+>      const: 0
+>
+> -  sound-name-prefix:
 
-Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+You can't remove the property. This is now a warning in linux-next:
+
+Documentation/devicetree/bindings/sound/nxp,tfa989x.example.dt.yaml:
+audio-codec@34: 'sound-name-prefix' does not match any of the regexes:
+'pinctrl-[0-9]+'
+ From schema: /builds/robherring/linux-dt/Documentation/devicetree/bindings/sound/nxp,tfa989x.yaml
+Documentation/devicetree/bindings/sound/nxp,tfa989x.example.dt.yaml:
+audio-codec@36: 'sound-name-prefix' does not match any of the regexes:
+'pinctrl-[0-9]+'
+ From schema: /builds/robherring/linux-dt/Documentation/devicetree/bindings/sound/nxp,tfa989x.yaml
+
+
+Just 'sound-name-prefix: true' is fine
+
+> -    $ref: /schemas/types.yaml#/definitions/string
+> -    description:
+> -      Used as prefix for sink/source names of the component. Must be a
+> -      unique string among multiple instances of the same component.
+> -
+>    vddd-supply:
+>      description: regulator phandle for the VDDD power supply.
+>
+> diff --git a/Documentation/devicetree/bindings/sound/rt5659.txt b/Documentation/devicetree/bindings/sound/rt5659.txt
+> index c473df5..013f534 100644
+> --- a/Documentation/devicetree/bindings/sound/rt5659.txt
+> +++ b/Documentation/devicetree/bindings/sound/rt5659.txt
+> @@ -42,7 +42,7 @@ Optional properties:
+>  - realtek,ldo1-en-gpios : The GPIO that controls the CODEC's LDO1_EN pin.
+>  - realtek,reset-gpios : The GPIO that controls the CODEC's RESET pin.
+>
+> -- sound-name-prefix: Please refer to name-prefix.txt
+> +- sound-name-prefix: Please refer to name-prefix.yaml
+>
+>  - ports: A Codec may have a single or multiple I2S interfaces. These
+>    interfaces on Codec side can be described under 'ports' or 'port'.
+> diff --git a/Documentation/devicetree/bindings/sound/simple-audio-mux.yaml b/Documentation/devicetree/bindings/sound/simple-audio-mux.yaml
+> index 5986d1f..c597d9d 100644
+> --- a/Documentation/devicetree/bindings/sound/simple-audio-mux.yaml
+> +++ b/Documentation/devicetree/bindings/sound/simple-audio-mux.yaml
+> @@ -13,6 +13,9 @@ description: |
+>    Simple audio multiplexers are driven using gpios, allowing to select which of
+>    their input line is connected to the output line.
+>
+> +allOf:
+> +  - $ref: name-prefix.yaml#
+> +
+>  properties:
+>    compatible:
+>      const: simple-audio-mux
+> @@ -21,12 +24,6 @@ properties:
+>      description: |
+>        GPIOs used to select the input line.
+>
+> -  sound-name-prefix:
+
+Here too, but I guess we don't have any example to throw a warning?
