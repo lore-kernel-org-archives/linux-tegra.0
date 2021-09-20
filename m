@@ -2,94 +2,142 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5997C433F5
-	for <linux-tegra@archiver.kernel.org>; Mon, 20 Sep 2021 20:31:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62C85C433F5
+	for <linux-tegra@archiver.kernel.org>; Mon, 20 Sep 2021 21:03:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AD613611ED
-	for <linux-tegra@archiver.kernel.org>; Mon, 20 Sep 2021 20:31:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 40F0561019
+	for <linux-tegra@archiver.kernel.org>; Mon, 20 Sep 2021 21:03:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230142AbhITUdM (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 20 Sep 2021 16:33:12 -0400
-Received: from mail-oi1-f178.google.com ([209.85.167.178]:34791 "EHLO
-        mail-oi1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230176AbhITUbL (ORCPT
+        id S233374AbhITVEc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 20 Sep 2021 17:04:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54672 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233028AbhITVCb (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 20 Sep 2021 16:31:11 -0400
-Received: by mail-oi1-f178.google.com with SMTP id p2so26552242oif.1;
-        Mon, 20 Sep 2021 13:29:44 -0700 (PDT)
+        Mon, 20 Sep 2021 17:02:31 -0400
+Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 574F7C05935F;
+        Mon, 20 Sep 2021 10:23:17 -0700 (PDT)
+Received: by mail-lf1-x136.google.com with SMTP id b15so52295267lfe.7;
+        Mon, 20 Sep 2021 10:23:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=lpp5P4ugre+3Bt1zcMzEqxuMaP87lFqCuB5qRKv8mNk=;
+        b=g3edkwtY6cLRoMAGjN5XX0Eogof/sYH0pouYGJGAMIpVwVxrHnbU4bKCPFvhqm8Lln
+         MzFnpLDKXQgZNLUCeMJLABIlHoqcBURqrq+iBx00KOWsuYsniwYvBqtXRLfjxG/QSPln
+         iJ0Hyiq3zG3lNjYFwV23+MEXGkp1rLhUIh65x59MFBXBBx48BntuqL3txS25dD0I0HvX
+         6yYzC1ik6n0cDV25c++olY61/6ExeysD604qpmumlSRuYbLasVwKmgKyqJpfNlURWAUp
+         cWhEElCveRwYlbrrhFWIDINK6DtxqID2L3PKQjBWlPBaLjkewn+GR7gC5I8hnEa1RXqI
+         L2gg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=AH19fZDa3RGD1bXp8KensKJGxcb/KKL33WSHbuvr/mU=;
-        b=RsTzGM/RHDUcfDk0n6rh6cdHqOzfTD0me4EqPjZKLDFx9r0imLpeEiAkJWft9N4z/8
-         Y+stkzXEaJJg272KDsu37pOIqiyWF1/BViLxq48hLhfR2DMnSTGsHXnKj3c4RGyde7qy
-         qqHGab1gGqyX7R1oQDcUi2fI+s/1tjf3wYDDGN6L1VngTgRELgZ0uef/3tImXeHZrqMY
-         K7NPdTSgr//3c216C0Bd0EB38tPFl/OkCxabnUn6HZT7qi2+MmJvtypLv0V80reIj3tE
-         iKLBBK7ytddY6ZOj9itRwBTbvho7yPej9eVYEItrF7KGex47cjrMi4bsJvtq1pXjLTwi
-         SK7Q==
-X-Gm-Message-State: AOAM532+quMTtKwchOjdHs7Wx/3hBOwFNGtImHapg3vJp+V5/V2fL5An
-        7GIEBYguD6SaLyJo5oh4jg==
-X-Google-Smtp-Source: ABdhPJxbK/iL/HBM5wgfss+lB7OVXLSTbwGo6rZFtSZ7S8wUZy7rjh4eYLbR2TGSaErAnOS1tB3eIw==
-X-Received: by 2002:a05:6808:1a29:: with SMTP id bk41mr733432oib.167.1632169784453;
-        Mon, 20 Sep 2021 13:29:44 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id p21sm3431243oip.28.2021.09.20.13.29.43
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=lpp5P4ugre+3Bt1zcMzEqxuMaP87lFqCuB5qRKv8mNk=;
+        b=KoVmRtK+5HvluyhiOAjLdBM5XSjqgSryFHxkaf43ViFhlYXTBK1kFNrYNMuL2EukZy
+         f/RfrO7mrVXyvzmtiz7ZPOIkyndTBal4YF/ZayIcQ56OgH79jYO7lyOM1y1cnvYuvhWm
+         4BWxSN7mqI/HSHpyKjSknB9HJtZTVq6mZhYCrhkNLIi8WGGl0m/k2E+JLOJ3O1dyFbWN
+         kBWyI+WcymvKIIZd93f2e0LpcPCIrLa/19hVoJc10PW0RVc5G9EapKi36Hui5aK41VWz
+         G8nYtSMrLH7I0KDFhMOfhgisnjMnGjwlkUbDmkhq+V9PhIDI9gDOvZVscB6U4kADcAvc
+         ZbDA==
+X-Gm-Message-State: AOAM531V+rkxQW+Fi4qZSfK8OogsalrCxFQ5e6eLw97Ea8WjM2gMMxkx
+        h1E/fevQI8rrEVmho98khQc=
+X-Google-Smtp-Source: ABdhPJz9soTFZ2UwBv5pkLAGxgJ1zX159icqD41ZzvHls7eFDm0AN6gTPaTc9tL9vUH5voN27nbaGA==
+X-Received: by 2002:a05:6512:344d:: with SMTP id j13mr20795746lfr.47.1632158595633;
+        Mon, 20 Sep 2021 10:23:15 -0700 (PDT)
+Received: from localhost.localdomain (46-138-151-206.dynamic.spd-mgts.ru. [46.138.151.206])
+        by smtp.gmail.com with ESMTPSA id t13sm1311038lff.279.2021.09.20.10.23.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Sep 2021 13:29:43 -0700 (PDT)
-Received: (nullmailer pid 697302 invoked by uid 1000);
-        Mon, 20 Sep 2021 20:29:42 -0000
-Date:   Mon, 20 Sep 2021 15:29:42 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Mikko Perttunen <mperttunen@nvidia.com>
-Cc:     thierry.reding@gmail.com, linux-tegra@vger.kernel.org,
-        airlied@linux.ie, robh+dt@kernel.org,
-        dri-devel@lists.freedesktop.org, daniel@ffwll.ch,
-        devicetree@vger.kernel.org, jonathanh@nvidia.com
-Subject: Re: [PATCH v6 1/3] dt-bindings: Add YAML bindings for NVDEC
-Message-ID: <YUjvNmsPEBZHVDw/@robh.at.kernel.org>
-References: <20210916145517.2047351-1-mperttunen@nvidia.com>
- <20210916145517.2047351-2-mperttunen@nvidia.com>
+        Mon, 20 Sep 2021 10:23:15 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>
+Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org
+Subject: [PATCH v2 2/4] PM / devfreq: Add devm_devfreq_add_governor()
+Date:   Mon, 20 Sep 2021 20:22:47 +0300
+Message-Id: <20210920172249.28206-3-digetx@gmail.com>
+X-Mailer: git-send-email 2.32.0
+In-Reply-To: <20210920172249.28206-1-digetx@gmail.com>
+References: <20210920172249.28206-1-digetx@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210916145517.2047351-2-mperttunen@nvidia.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, 16 Sep 2021 17:55:15 +0300, Mikko Perttunen wrote:
-> Add YAML device tree bindings for NVDEC, now in a more appropriate
-> place compared to the old textual Host1x bindings.
-> 
-> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
-> ---
-> v6:
-> * Elaborated description for nvidia,host1x-class.
-> * Added default value for nvidia,host1x-class.
-> v5:
-> * Changed from nvidia,instance to nvidia,host1x-class optional
->   property.
-> * Added dma-coherent
-> v4:
-> * Fix incorrect compatibility string in 'if' condition
-> v3:
-> * Drop host1x bindings
-> * Change read2 to read-1 in interconnect names
-> v2:
-> * Fix issues pointed out in v1
-> * Add T194 nvidia,instance property
-> ---
->  .../gpu/host1x/nvidia,tegra210-nvdec.yaml     | 108 ++++++++++++++++++
->  MAINTAINERS                                   |   1 +
->  2 files changed, 109 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/gpu/host1x/nvidia,tegra210-nvdec.yaml
-> 
+Add resource-managed variant of devfreq_add_governor().
 
-With the yamllint warning fixed,
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ drivers/devfreq/devfreq.c  | 26 ++++++++++++++++++++++++++
+ drivers/devfreq/governor.h |  3 +++
+ 2 files changed, 29 insertions(+)
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
+index 85faa7a5c7d1..4579eefb8fe7 100644
+--- a/drivers/devfreq/devfreq.c
++++ b/drivers/devfreq/devfreq.c
+@@ -1301,6 +1301,32 @@ int devfreq_add_governor(struct devfreq_governor *governor)
+ }
+ EXPORT_SYMBOL(devfreq_add_governor);
+ 
++static void devm_devfreq_remove_governor(void *governor)
++{
++	WARN_ON(devfreq_remove_governor(governor));
++}
++
++/**
++ * devm_devfreq_add_governor() - Add devfreq governor
++ * @dev:	device which adds devfreq governor
++ * @governor:	the devfreq governor to be added
++ *
++ * This is a resource-managed variant of devfreq_add_governor().
++ */
++int devm_devfreq_add_governor(struct device *dev,
++			      struct devfreq_governor *governor)
++{
++	int err;
++
++	err = devfreq_add_governor(governor);
++	if (err)
++		return err;
++
++	return devm_add_action_or_reset(dev, devm_devfreq_remove_governor,
++					governor);
++}
++EXPORT_SYMBOL(devm_devfreq_add_governor);
++
+ /**
+  * devfreq_remove_governor() - Remove devfreq feature from a device.
+  * @governor:	the devfreq governor to be removed
+diff --git a/drivers/devfreq/governor.h b/drivers/devfreq/governor.h
+index 2d69a0ce6291..002a7d67e39d 100644
+--- a/drivers/devfreq/governor.h
++++ b/drivers/devfreq/governor.h
+@@ -84,6 +84,9 @@ void devfreq_update_interval(struct devfreq *devfreq, unsigned int *delay);
+ int devfreq_add_governor(struct devfreq_governor *governor);
+ int devfreq_remove_governor(struct devfreq_governor *governor);
+ 
++int devm_devfreq_add_governor(struct device *dev,
++			      struct devfreq_governor *governor);
++
+ int devfreq_update_status(struct devfreq *devfreq, unsigned long freq);
+ int devfreq_update_target(struct devfreq *devfreq, unsigned long freq);
+ 
+-- 
+2.32.0
+
