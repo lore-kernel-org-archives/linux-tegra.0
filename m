@@ -2,131 +2,189 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35052C433FE
-	for <linux-tegra@archiver.kernel.org>; Mon, 20 Sep 2021 16:43:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D96B3C433F5
+	for <linux-tegra@archiver.kernel.org>; Mon, 20 Sep 2021 17:22:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 178ED60F38
-	for <linux-tegra@archiver.kernel.org>; Mon, 20 Sep 2021 16:43:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD0EF632A1
+	for <linux-tegra@archiver.kernel.org>; Mon, 20 Sep 2021 17:22:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238573AbhITQot (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 20 Sep 2021 12:44:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55092 "EHLO
+        id S1349540AbhITRX5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 20 Sep 2021 13:23:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35018 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237709AbhITQos (ORCPT
+        with ESMTP id S1345305AbhITRVw (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 20 Sep 2021 12:44:48 -0400
-Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDA9FC061574
-        for <linux-tegra@vger.kernel.org>; Mon, 20 Sep 2021 09:43:21 -0700 (PDT)
-Received: by mail-lf1-x136.google.com with SMTP id t10so63902010lfd.8
-        for <linux-tegra@vger.kernel.org>; Mon, 20 Sep 2021 09:43:21 -0700 (PDT)
+        Mon, 20 Sep 2021 13:21:52 -0400
+Received: from mail-il1-x12e.google.com (mail-il1-x12e.google.com [IPv6:2607:f8b0:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99178C05BD19
+        for <linux-tegra@vger.kernel.org>; Mon, 20 Sep 2021 09:51:01 -0700 (PDT)
+Received: by mail-il1-x12e.google.com with SMTP id a20so19404125ilq.7
+        for <linux-tegra@vger.kernel.org>; Mon, 20 Sep 2021 09:51:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Ktbwkhy3rbgHFFQkdiJBYVtvpT8HovLT4b4l+npAGPY=;
-        b=Nh50tnKdv84V3ZH13m/5EugbkPkw6ob9DNK0VYQ9JoZZRC4H3Z1k7esuLHEUCxo1f4
-         MGm3VlUyGuDU2UFrH1iOSGN4VSFnKfsJYns6KzACGeXOs9KFYqzcx5Zwxppxzlyrnh5e
-         gVEEj+5b8uwMlyzCZdWnS8iLn/AtygQgpffak1fnqiUEBXB3pR5ir7BeDlMCnvltaBqF
-         PuMznbFCRdkoAjf+VgFWVRZXZxnMVc04IOwtiFmYUmcXRbjSKrepK6M6z5Iw9TQLgL7X
-         Tprvje23cnnutuONA9fezjv8IRkFlEJ04sGZwbQ8wzENWeOySK97IkAeIgEw+AjtYlIp
-         UNZQ==
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qwTJ7Ad7zVwW8MXijFTCxqxIz/INuyLU038X6Cl8cX8=;
+        b=gEpnnaWNfeGWV1YEfOrXuq+LS+LgPIPsf1DgmGFv9Am5IX4FzgUCAAz9kv6Wok3gcj
+         hyqxFa0fPyvhfifyDUGVN6FUhXjQr5JBt69GUObZUMETluh34krbCh9RfSG3gJ2vz7WU
+         m2sKlwAIdi+n4v1ByPZGwiF865i2wURG5Xvpg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Ktbwkhy3rbgHFFQkdiJBYVtvpT8HovLT4b4l+npAGPY=;
-        b=Opb0RNzWlTAZOVtI4WV7p6ZgUL8H/kvx/WbzP6xujCsTZ3Nu+03/HIjrEvkSMg8eqG
-         8xRzqDfNF0Gt/lug+y1593gy/DRF4OnIYGqJ2TyQJjuMJFSBoXQAtV2Unu06GPC5ut/f
-         Leej56WoRuZDS+gBdj0FamRAERQtjXJOl2veNJhrBLn/78382Q/gWAvpBzJVtgttuOOs
-         OwnTGuDi74z7CPW4Yj0ae/SRdxkiqk40CB1pC4HCvLvH7PCVcYQ7CyATdq92g73aDYVl
-         Qmbst2/0loxJs4VNjWhg2B1l/2xf4eY9xY9Tk0p4ZRZf2yasb+05QKhtdlIkJ9XfmxSL
-         FA9Q==
-X-Gm-Message-State: AOAM533zxc9Ty2sfJPD/D3P8hKgTTp03NnZNa4osrxjCZLkHtgRueTDL
-        FxYiGRyCOzsPwZnvdWPB8tY+rs5R0FI=
-X-Google-Smtp-Source: ABdhPJxxi3zhkrKnK0e6UqV9MLL71sHdRrsqPl2nOa2d6w6pzbMEX4j1pwOONAP1ppUtqCAgKN0wmQ==
-X-Received: by 2002:a2e:2a06:: with SMTP id q6mr22809575ljq.424.1632156199788;
-        Mon, 20 Sep 2021 09:43:19 -0700 (PDT)
-Received: from [192.168.2.145] (46-138-151-206.dynamic.spd-mgts.ru. [46.138.151.206])
-        by smtp.googlemail.com with ESMTPSA id e17sm1817583ljk.133.2021.09.20.09.43.19
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qwTJ7Ad7zVwW8MXijFTCxqxIz/INuyLU038X6Cl8cX8=;
+        b=VHd2FXH6esy1+CRISkcry6eJq3Z52q5yJAKvwUZvMySE3e7M6zgKJw3fRBjOViEl8m
+         Gk5Gibfw2EmiDORJp4CKE81tJOT2EhRmpU1e0d6EWcuu/DNXSdTfm3kGlv4hRk5VgPo1
+         Gptxnx+0sl6RkzyvhV71RUbzx+VO4+z/GRL4EoP28ljxJz4k8o797eJjSN4L16KjCVsa
+         ry4r+2u2aZQ8+A/AA/9IMvZGr7NLQlcInU2XksOIzgRr94bcO5YK7kWILIZmoVB3RXX0
+         z0X63upRyZ4VQ8YYxeRlvTipAK88y2ZGwjiFXurKxh6BPTImJDo0GHyj+VJ2qX5id2Uv
+         v1sw==
+X-Gm-Message-State: AOAM532KuxP+sQOb5fN4ojfUSTiFoy5jb1/rLoDUp7IqunzrjobRNrsL
+        jjXAOGP9YkX4vq3LZainqtS1q7G6hEVxHg==
+X-Google-Smtp-Source: ABdhPJxdngJvpV3r5KPa24osKQdYoXeqfXuw74qO80jAx3jEo2jBxb7OKkIGIVmAugthK+G0Bt95xA==
+X-Received: by 2002:a92:7302:: with SMTP id o2mr18334126ilc.44.1632156660353;
+        Mon, 20 Sep 2021 09:51:00 -0700 (PDT)
+Received: from mail-il1-f182.google.com (mail-il1-f182.google.com. [209.85.166.182])
+        by smtp.gmail.com with ESMTPSA id z20sm7817375ill.2.2021.09.20.09.51.00
+        for <linux-tegra@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 Sep 2021 09:43:19 -0700 (PDT)
-Subject: Re: [PATCH libdrm 00/25] Update Tegra support
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Mikko Perttunen <cyndis@kapsi.fi>
-Cc:     dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
-References: <20210827132305.3572077-1-thierry.reding@gmail.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <c0d43222-2d45-fee7-f96b-2ab511b94d88@gmail.com>
-Date:   Mon, 20 Sep 2021 19:43:18 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        Mon, 20 Sep 2021 09:51:00 -0700 (PDT)
+Received: by mail-il1-f182.google.com with SMTP id m4so19418858ilj.9
+        for <linux-tegra@vger.kernel.org>; Mon, 20 Sep 2021 09:51:00 -0700 (PDT)
+X-Received: by 2002:a05:6e02:1847:: with SMTP id b7mr18604550ilv.180.1632156161095;
+ Mon, 20 Sep 2021 09:42:41 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20210827132305.3572077-1-thierry.reding@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20210914202202.1702601-1-dianders@chromium.org> <CACRpkdaTb4_UfFzCqw=fiAnQhHD+1sDDua529KdGQbgMVfjYBw@mail.gmail.com>
+In-Reply-To: <CACRpkdaTb4_UfFzCqw=fiAnQhHD+1sDDua529KdGQbgMVfjYBw@mail.gmail.com>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Mon, 20 Sep 2021 09:42:28 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=VPgFRBLgOGvt4a4afDr80aQL64L7=H3kqeRf2ffiusPg@mail.gmail.com>
+Message-ID: <CAD=FV=VPgFRBLgOGvt4a4afDr80aQL64L7=H3kqeRf2ffiusPg@mail.gmail.com>
+Subject: Re: [PATCH v5 00/15] eDP: Support probing eDP panels dynamically
+ instead of hardcoding
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, Steev Klimaszewski <steev@kali.org>,
+        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
+        MSM <linux-arm-msm@vger.kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Maxime Ripard <mripard@kernel.org>,
+        Adam Ford <aford173@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Andreas Kemnade <andreas@kemnade.info>,
+        Andrey Zhizhikin <andrey.zhizhikin@leica-geosystems.com>,
+        Anson Huang <Anson.Huang@nxp.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Corentin Labbe <clabbe@baylibre.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Emil Velikov <emil.velikov@collabora.com>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Eugen Hristev <eugen.hristev@microchip.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Fabrice Gasnier <fabrice.gasnier@st.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        =?UTF-8?Q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Kees Cook <keescook@chromium.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Lionel Debieve <lionel.debieve@st.com>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        =?UTF-8?Q?Martin_J=C3=BCcker?= <martin.juecker@gmail.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Michael Walle <michael@walle.cc>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Nishanth Menon <nm@ti.com>,
+        Olivier Moysan <olivier.moysan@st.com>,
+        Otavio Salvador <otavio@ossystems.com.br>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Razvan Stefanescu <razvan.stefanescu@microchip.com>,
+        Robert Richter <rric@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Will Deacon <will@kernel.org>,
+        William Cohen <wcohen@redhat.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Linux-OMAP <linux-omap@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        linux-sunxi@lists.linux.dev,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        =?UTF-8?Q?=C5=81ukasz_Stelmach?= <l.stelmach@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-27.08.2021 16:22, Thierry Reding пишет:
-> From: Thierry Reding <treding@nvidia.com>
-> 
-> Hi all,
-> 
-> this is the userspace part of the kernel patches that were recently
-> merged into drm-next:
-> 
->   https://patchwork.freedesktop.org/series/92378/
-> 
-> The goal is to provide a userspace implementation of the UAPI exposed by
-> the kernel and show its usage in some test programs that can also be
-> used for basic sanity testing. More complete userspace implementations
-> are available here:
-> 
->   * https://github.com/cyndis/vaapi-tegra-driver
->   * https://github.com/grate-driver/xf86-video-opentegra
->   * https://github.com/grate-driver/grate
-> 
-> Thierry
-> 
-> Thierry Reding (25):
->   tegra: Indent according to .editorconfig
->   tegra: Remove unused IOCTL implementations
->   tegra: Extract common buffer object allocation code
->   tegra: Fix mmap() of GEM buffer objects
->   tegra: Add flink helpers
->   tegra: Add PRIME support helpers
->   tegra: Make API more consistent
->   tegra: Install tegra-openclose test
->   tegra: Update for new UABI
->   tegra: Include private.h in list of source files
->   tegra: Add channel APIs
->   tegra: Add job and push buffer APIs
->   tegra: Add syncpoint APIs
->   tests: tegra: Add helper library for tests
->   tests: tegra: Add gr2d-fill test
->   tests: tegra: Add syncpt-wait test
->   tests: tegra: Add syncpoint timeout test
->   tests: tegra: Add VIC support
->   tests: tegra: Add VIC 3.0 support
->   tests: tegra: Add VIC 4.0 support
->   tests: tegra: Add VIC 4.1 support
->   tests: tegra: Add VIC 4.2 support
->   tests: tegra: Add VIC clear test
->   tests: tegra: Add VIC blit test
->   tests: tegra: Add VIC flip test
+Hi,
 
-Have you thought about moving tests into IGT? Wouldn't it be a more
-appropriate place for the tests?
+On Tue, Sep 14, 2021 at 3:12 PM Linus Walleij <linus.walleij@linaro.org> wrote:
+>
+> On Tue, Sep 14, 2021 at 10:22 PM Douglas Anderson <dianders@chromium.org> wrote:
+>
+> > Version 5 of this series just fixes the panel ID encode macro to be
+> > cleaner and adds Jani's review tags.
+> >
+> > It could possibly be ready to land?
+>
+> Definitely IMO, the kernel look so much better after this change,
+> so for the series:
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
-Perhaps we can add/move Mikko's UAPI tests there too, for complicity.
-Although, I'd prefer it all to be written in a plain C or C++.
+Pushed all 15 to drm-misc-next.
+
+5540cf8f3e8d drm/panel-edp: Implement generic "edp-panel"s probed by EDID
+24e27de11560 drm/panel-edp: Don't re-read the EDID every time we power
+off the panel
+a64ad9c3e4a5 drm/panel-edp: Fix "prepare_to_enable" if panel doesn't handle HPD
+c46a4cc1403e drm/panel-edp: hpd_reliable shouldn't be subtraced from hpd_absent
+52824ca4502d drm/panel-edp: Better describe eDP panel delays
+9ea10a500045 drm/panel-edp: Split the delay structure out
+b6d5ffce11dd drm/panel-simple: Non-eDP panels don't need "HPD" handling
+3fd68b7b13c2 drm/panel-edp: Move some wayward panels to the eDP driver
+5f04e7ce392d drm/panel-edp: Split eDP panels out of panel-simple
+c0c11c70a6d0 arm64: defconfig: Everyone who had PANEL_SIMPLE now gets PANEL_EDP
+310720875efa ARM: configs: Everyone who had PANEL_SIMPLE now gets PANEL_EDP
+e8de4d55c259 drm/edid: Use new encoded panel id style for quirks matching
+d9f91a10c3e8 drm/edid: Allow querying/working with the panel ID from the EDID
+bac9c2948224 drm/edid: Break out reading block 0 of the EDID
+29145a566873 dt-bindings: drm/panel-simple-edp: Introduce generic eDP panels
+
+-Doug
