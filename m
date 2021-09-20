@@ -2,154 +2,114 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-15.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B795C433F5
-	for <linux-tegra@archiver.kernel.org>; Mon, 20 Sep 2021 12:57:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4733FC433EF
+	for <linux-tegra@archiver.kernel.org>; Mon, 20 Sep 2021 15:31:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 231C9610A8
-	for <linux-tegra@archiver.kernel.org>; Mon, 20 Sep 2021 12:57:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F96861107
+	for <linux-tegra@archiver.kernel.org>; Mon, 20 Sep 2021 15:31:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231124AbhITM6w (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 20 Sep 2021 08:58:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58228 "EHLO mail.kernel.org"
+        id S241568AbhITPdR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 20 Sep 2021 11:33:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57268 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229719AbhITM6v (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 20 Sep 2021 08:58:51 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 2DAE96109D;
-        Mon, 20 Sep 2021 12:57:25 +0000 (UTC)
+        id S237965AbhITPdQ (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 20 Sep 2021 11:33:16 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 9FD9C60F58;
+        Mon, 20 Sep 2021 15:31:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1632142645;
-        bh=3Y4gQvacVMDsvloS8gj8JrRb56U+3j+/P9qgEmbnLxQ=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=t1/6VbpWrRN93zO/7PLoh+fho0IqhrImeOpjdU4IY33UR2RAo7KLD276fmnMAqpg8
-         jCF6414qDCbijwCEbh81qJABpbSW3o1mSNMt+CitGM2rzApfyMATlyU3QFE4BoEArv
-         R6FKYy/zO//2UHZgqUlfWafI78znpa+tbcapZu+vLR/lfXcqteI6kLj2ANMBlncaW5
-         Ui37uFBr0wFioz20MQzDVrJnIAhTN7NUMZFYBt0mWrniRdWQWCeEW2OzX9EHbyW7x7
-         TZWwQjqDLn81DMH9k4YnT/5wVaC+QtBcwDo6qwbQ7VO56O2zlqYW3UlhGkFhwOpyJn
-         S1Hl8sOxy1YNQ==
-Received: by mail-ed1-f51.google.com with SMTP id dj4so4947047edb.5;
-        Mon, 20 Sep 2021 05:57:25 -0700 (PDT)
-X-Gm-Message-State: AOAM532RAds5bAaN7qhvT36q0eww3Y2EF7DoaTxiH4KBWYoiY7Al2O+a
-        O6lD7jTFW2dPaQeBfy6Zhja6yVzJEJGq+cTSKw==
-X-Google-Smtp-Source: ABdhPJwxl4M7JwIYLhEMizLmntOnoBCcnFt6nsvNmWy/WrfKk4jbby+1tLrXqVYlYpjSu+es0W80TyrsSkRSdBrRY+s=
-X-Received: by 2002:a50:e004:: with SMTP id e4mr29223066edl.164.1632142643564;
- Mon, 20 Sep 2021 05:57:23 -0700 (PDT)
+        s=k20201202; t=1632151910;
+        bh=WuJaW14p30CONeviIi8PVh2hp7lvuyYTd8An3xHCrc0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=lrTJiQ9IsLIexvDtk4XoAIlGqX/6GEqAFb2y81bpFrM8MAMzj4XnaEYtp7sm5MMBh
+         KwBJcX019F6NODhE6hUZNt/WXCnVrLoiNuGidO9qbQuL6seDtkUldotb4kU2fBud8I
+         fg20Jz6uDiS959RTKQxwcjdontSmHoQWU94wN7uG0fgyp7lNLTjWSPbctROM1khiNC
+         aDpqAIscgdGY+WqOtDS0spF2ZZNQMIupLk1MpLsMPpYw7NXXSPo/9eqqbIX6DX5jVZ
+         NGN+GdL9QgMbHHjnM+pex2UI57y2qCW//Zc4HINmrFut/zzhSkthfdU3VPub6KfCLP
+         b3ladC51bLKkA==
+From:   Mark Brown <broonie@kernel.org>
+To:     tiwai@suse.com, Sameer Pujar <spujar@nvidia.com>,
+        lgirdwood@gmail.com, will@kernel.org,
+        kuninori.morimoto.gx@renesas.com, catalin.marinas@arm.com,
+        jonathanh@nvidia.com, thierry.reding@gmail.com, perex@perex.cz,
+        robh+dt@kernel.org
+Cc:     Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        alsa-devel@alsa-project.org, sharadg@nvidia.com,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: (subset) [PATCH v2 00/13] Extend AHUB audio support for Tegra210 and later
+Date:   Mon, 20 Sep 2021 16:30:48 +0100
+Message-Id: <163215150719.38322.16495204170646582113.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <1631551342-25469-1-git-send-email-spujar@nvidia.com>
+References: <1631551342-25469-1-git-send-email-spujar@nvidia.com>
 MIME-Version: 1.0
-References: <1630686919-19495-1-git-send-email-spujar@nvidia.com> <1630686919-19495-3-git-send-email-spujar@nvidia.com>
-In-Reply-To: <1630686919-19495-3-git-send-email-spujar@nvidia.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Mon, 20 Sep 2021 07:57:12 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqJbbDiOAr5-3_JwVMWxdkeGRoPYZuc_8fHp_iGEvH7AWA@mail.gmail.com>
-Message-ID: <CAL_JsqJbbDiOAr5-3_JwVMWxdkeGRoPYZuc_8fHp_iGEvH7AWA@mail.gmail.com>
-Subject: Re: [PATCH v3 2/3] ASoC: Use schema reference for sound-name-prefix
-To:     Sameer Pujar <spujar@nvidia.com>
-Cc:     Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Stephan Gerhold <stephan@gerhold.net>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, Sep 3, 2021 at 11:36 AM Sameer Pujar <spujar@nvidia.com> wrote:
->
-> Use schema reference for 'sound-name-prefix' property wherever
-> necessary.
->
-> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
-> Cc: Jerome Brunet <jbrunet@baylibre.com>
-> Cc: Stephan Gerhold <stephan@gerhold.net>
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Reviewed-by: Jerome Brunet <jbrunet@baylibre.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> ---
+On Mon, 13 Sep 2021 22:12:08 +0530, Sameer Pujar wrote:
+> Earlier as part of series [0], support for ADMAIF and I/O modules (such
+> as I2S, DMIC and DSPK) was added. This series aims at exposing some of
+> the AHUB internal modules (listed below), which can be used for audio
+> pre or post processing.
+> 
+>   * SFC (Sampling Frequency Converter)
+>   * MVC (Master Volume Control)
+>   * AMX (Audio Multiplexer)
+>   * ADX (Audio Demultiplexer)
+>   * Mixer
+> 
+> [...]
 
-[...]
+Applied to
 
-> diff --git a/Documentation/devicetree/bindings/sound/nxp,tfa989x.yaml b/Documentation/devicetree/bindings/sound/nxp,tfa989x.yaml
-> index ffb8fcf..68e5ad2 100644
-> --- a/Documentation/devicetree/bindings/sound/nxp,tfa989x.yaml
-> +++ b/Documentation/devicetree/bindings/sound/nxp,tfa989x.yaml
-> @@ -9,6 +9,9 @@ title: NXP/Goodix TFA989X (TFA1) Audio Amplifiers
->  maintainers:
->    - Stephan Gerhold <stephan@gerhold.net>
->
-> +allOf:
-> +  - $ref: name-prefix.yaml#
-> +
->  properties:
->    compatible:
->      enum:
-> @@ -21,12 +24,6 @@ properties:
->    '#sound-dai-cells':
->      const: 0
->
-> -  sound-name-prefix:
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-You can't remove the property. This is now a warning in linux-next:
+Thanks!
 
-Documentation/devicetree/bindings/sound/nxp,tfa989x.example.dt.yaml:
-audio-codec@34: 'sound-name-prefix' does not match any of the regexes:
-'pinctrl-[0-9]+'
- From schema: /builds/robherring/linux-dt/Documentation/devicetree/bindings/sound/nxp,tfa989x.yaml
-Documentation/devicetree/bindings/sound/nxp,tfa989x.example.dt.yaml:
-audio-codec@36: 'sound-name-prefix' does not match any of the regexes:
-'pinctrl-[0-9]+'
- From schema: /builds/robherring/linux-dt/Documentation/devicetree/bindings/sound/nxp,tfa989x.yaml
+[01/13] ASoC: soc-pcm: Don't reconnect an already active BE
+        commit: 0c25db3f7621ce39e959e95b8fea240ea2bfff6a
+[02/13] ASoC: simple-card-utils: Increase maximum DAI links limit to 512
+        commit: 7a226f2eabdc2e839d8f07c5ce087136f9c0f35c
+[03/13] ASoC: audio-graph: Fixup CPU endpoint hw_params in a BE<->BE link
+        commit: 30b428d02cbc9888d84407306d54dce8c2b8bfbf
+[04/13] ASoC: dt-bindings: tegra: Few more Tegra210 AHUB modules
+        commit: aa56a9dedf9940a85fcfcc09d838334b2f219424
+[05/13] ASoC: tegra: Add routes for few AHUB modules
+        commit: 94d486c2e5e72f62b4320288c0e69393326e14a9
+[06/13] ASoC: tegra: Add Tegra210 based MVC driver
+        commit: e539891f968722d632234ac942c4749ad8ca189a
+[07/13] ASoC: tegra: Add Tegra210 based SFC driver
+        commit: b2f74ec53a6cc0f2bb6cdb61d430828337d0e069
+[08/13] ASoC: tegra: Add Tegra210 based AMX driver
+        commit: 77f7df346c4533b91d0dcc2b549eb7c98abd198b
+[09/13] ASoC: tegra: Add Tegra210 based ADX driver
+        commit: a99ab6f395a9e45ca3f9047e9b88d6e02737419f
+[10/13] ASoC: tegra: Add Tegra210 based Mixer driver
+        commit: 05bb3d5ec64a632acebdb62779dd4c9d7dc495d2
 
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
-Just 'sound-name-prefix: true' is fine
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-> -    $ref: /schemas/types.yaml#/definitions/string
-> -    description:
-> -      Used as prefix for sink/source names of the component. Must be a
-> -      unique string among multiple instances of the same component.
-> -
->    vddd-supply:
->      description: regulator phandle for the VDDD power supply.
->
-> diff --git a/Documentation/devicetree/bindings/sound/rt5659.txt b/Documentation/devicetree/bindings/sound/rt5659.txt
-> index c473df5..013f534 100644
-> --- a/Documentation/devicetree/bindings/sound/rt5659.txt
-> +++ b/Documentation/devicetree/bindings/sound/rt5659.txt
-> @@ -42,7 +42,7 @@ Optional properties:
->  - realtek,ldo1-en-gpios : The GPIO that controls the CODEC's LDO1_EN pin.
->  - realtek,reset-gpios : The GPIO that controls the CODEC's RESET pin.
->
-> -- sound-name-prefix: Please refer to name-prefix.txt
-> +- sound-name-prefix: Please refer to name-prefix.yaml
->
->  - ports: A Codec may have a single or multiple I2S interfaces. These
->    interfaces on Codec side can be described under 'ports' or 'port'.
-> diff --git a/Documentation/devicetree/bindings/sound/simple-audio-mux.yaml b/Documentation/devicetree/bindings/sound/simple-audio-mux.yaml
-> index 5986d1f..c597d9d 100644
-> --- a/Documentation/devicetree/bindings/sound/simple-audio-mux.yaml
-> +++ b/Documentation/devicetree/bindings/sound/simple-audio-mux.yaml
-> @@ -13,6 +13,9 @@ description: |
->    Simple audio multiplexers are driven using gpios, allowing to select which of
->    their input line is connected to the output line.
->
-> +allOf:
-> +  - $ref: name-prefix.yaml#
-> +
->  properties:
->    compatible:
->      const: simple-audio-mux
-> @@ -21,12 +24,6 @@ properties:
->      description: |
->        GPIOs used to select the input line.
->
-> -  sound-name-prefix:
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-Here too, but I guess we don't have any example to throw a warning?
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
