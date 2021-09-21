@@ -5,62 +5,66 @@ X-Spam-Level:
 X-Spam-Status: No, score=-20.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B29FDC433EF
-	for <linux-tegra@archiver.kernel.org>; Tue, 21 Sep 2021 11:28:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16E57C433F5
+	for <linux-tegra@archiver.kernel.org>; Tue, 21 Sep 2021 11:28:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9B0CF61178
-	for <linux-tegra@archiver.kernel.org>; Tue, 21 Sep 2021 11:28:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EC7EE611EF
+	for <linux-tegra@archiver.kernel.org>; Tue, 21 Sep 2021 11:28:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232405AbhIUL3s (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 21 Sep 2021 07:29:48 -0400
-Received: from mail-mw2nam10on2052.outbound.protection.outlook.com ([40.107.94.52]:65312
-        "EHLO NAM10-MW2-obe.outbound.protection.outlook.com"
+        id S232484AbhIULaA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 21 Sep 2021 07:30:00 -0400
+Received: from mail-dm6nam10on2051.outbound.protection.outlook.com ([40.107.93.51]:7713
+        "EHLO NAM10-DM6-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S232400AbhIUL3r (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 21 Sep 2021 07:29:47 -0400
+        id S232414AbhIUL3x (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 21 Sep 2021 07:29:53 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=cjmpvqJ2wi+Ebe0c7BDCqPXDJeFWX/qrXE/XosJ1tS6X+T6/tDgzezej+MLUKZUQZvJDkhhPEdP5fHpBqEe/n31OMjPSttHcPqsmRTqwnfqHUfItJOow8KjAqHAQFmCnjRqw7pojzfOTp5c0P1PIAY4XzPoZP7/APi3jkIKxMPpJpdM9LcLfermXd1txasSycLVlvcGPko7BtCK+I8QK+Y1TttqkrMyWD/4s5nRGAJkxGJ4oZD9I4+S9+CDm0nHfYuTu5SnZfDy93/+AsrEw6TD1YT6alUJ/aBGtzpqSJMGzBAhnOhUVSuUM0B8gLeV6cNmKSyNqSek16I16DWoHbQ==
+ b=REJwaw3yYcYPLpFTA0PBAISSWrUPM/PekFrhMv8joXxpfWDmvuc4ZtK1MwhbwkVtkZouXjt0LRqn7/lwfKCknl65vTmyx42KQ77nHA6qOgG5NJhXLncIL5KDvbnHJ1+DAxvE6LYczkNSGgA273XooK+JU9VmmO5jInjERBzek63CoZuY7gmora+0PsdLZXFci9DQh3SVpDb3RYIVS+U39FSO6XGnCA6t1dTtcnve1/ivQ4oqDC0+moErrSXBL0n33vtBsLeee8YX94zENPkNS8BTTlq5RGi+3SL3xhndd7QhLT+AsBc0aLgOnp6w/bAEdWAYkC+zBMoTgt1em1u7JA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901; h=From:Date:Subject:Message-ID:Content-Type:MIME-Version;
- bh=aEM1hiM1LgwuBPUy3ufcBIIWJrxp0sMzFMdtiFi26UM=;
- b=lcyN1yeu6A6ZZnhl/36qcqzSUJuO/WjQx/0fAYGi8eM8lcpOEytfMtl+J9mNaNKka2bf7S/IMMIyi/fl+c6RTxQWYkrx2N77abO1jRczM4swrlQ3rlZkEQydWdTfjjiYR5ME/uGCPmbYkkNtSguGh7rRitC6Npu4VV+XQf4o6WZGHpEe0EYgAlJTChSKGHtCbJLJIA+R7QpPVJdKYwnLWbo5MkrZTkhaHSD2JwrCwQERZXX3yQ87AQZVnvBmeTURCVpZAUB74cfvpRlMd/ScqAg7LxYQdEIOZZcsA5AxqyH40vkcWy7zbOzXM4DMyIWKRRy/MnAT5fSXrmuIXicoww==
+ bh=cdL+ucw765YydZvZncLSXIWbVQBqF5vIlmC9GirlczI=;
+ b=Apxcoyw9sW/nDtxVXki6lX+RbXhRZjOq+0vZsibtfVd2/JG5LDyAdoyGL/QluwjG8zBDfJeikifkJny8bg88kgm/tzX4rLfG7azkxAdNlULuvojBhhW3n6AUfRJYgsifAnAmjDEPSaB6d9jRZvoP6dUUfsI9Nj/MpV/K7ZpEKc76/7Va0GQBuXObosAVR448wBuYbTe8lUKJWck3xaWMEEcN6LqXQIda599aQEnQkgyXyN3I3eJYtB3LCTo+bauuJvSybKFUr7Ucx2rhUhU2VFNB2+8zwJLWfd7i3y/jkFIgMcwDhZQzGc4952RRIwEJWYy1Vg2EcnonJ5Vmxkgw4w==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.112.32) smtp.rcpttodomain=linaro.org smtp.mailfrom=nvidia.com;
+ 216.228.112.32) smtp.rcpttodomain=canonical.com smtp.mailfrom=nvidia.com;
  dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=nvidia.com;
  dkim=none (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aEM1hiM1LgwuBPUy3ufcBIIWJrxp0sMzFMdtiFi26UM=;
- b=OtEwLJdQ8tuV8bwrCadWiQWuc/xwVRAcVXudsqlU9UHmy6+T5DsXeM5gbMuDMYezZDCYHTH5x8L4l8Niqd+9wAaGSKJKe6g1RtlLg5yEhFYQmN269apFMpGgDNNYf5zmRrA7HsDAhx7vG14sXt/Sr+qq+qly8CbuXbxAI2eAGoSK+Y3NegZ1wUk2BbxnqSFRwMBR7YX01dRRee92yvEqKcxEbOU9Xod0g1v9i369BDS2EQOYxt4cb1gOpkd2dcgEm75MsXqrtdELDns8G0OxdoMB8PDaHALa5NH3pzyAKVwn1jUJ3mY3KIDNOSceDPbOO99XOfv+miT7/u5fLoWTyw==
-Received: from MWHPR07CA0004.namprd07.prod.outlook.com (2603:10b6:300:116::14)
- by DM5PR12MB2549.namprd12.prod.outlook.com (2603:10b6:4:bb::22) with
+ bh=cdL+ucw765YydZvZncLSXIWbVQBqF5vIlmC9GirlczI=;
+ b=SYOVtFNkbHtt2dHIYzap2APL0nu3Hb6nVUYOdgKWcf/5uat+2bvaCVSW4FIQWryh6YTSyVxsjDST66eq+d615XXemZ3ILNY5wjSbfgWTLIRc7UZzfkCNvbouvPPSylFdojCpTw3BH9siCZnYQGybaigdy6LqTaj26TeaEUvaHqwsDFkRUmkgjkuirsRiZDVQlIYJJzVg3A1fpaEJyz1enQGIz54qV5nrw0DFzBOfUyCVphkDXpp12hukyYEzmVAyMzB9sbRzv1k+8YjaCOGAQz2yw7/TwfNRe/60WoKLb8whbH2z+ykRrHD5oOuDGfZWmZW61QDRqRkWzuJXigVLVw==
+Received: from BN6PR17CA0027.namprd17.prod.outlook.com (2603:10b6:405:75::16)
+ by BN8PR12MB3108.namprd12.prod.outlook.com (2603:10b6:408:40::20) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4523.16; Tue, 21 Sep
- 2021 11:28:18 +0000
-Received: from CO1NAM11FT040.eop-nam11.prod.protection.outlook.com
- (2603:10b6:300:116:cafe::a9) by MWHPR07CA0004.outlook.office365.com
- (2603:10b6:300:116::14) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4544.13 via Frontend
- Transport; Tue, 21 Sep 2021 11:28:18 +0000
+ 2021 11:28:24 +0000
+Received: from BN8NAM11FT054.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:405:75:cafe::75) by BN6PR17CA0027.outlook.office365.com
+ (2603:10b6:405:75::16) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4523.14 via Frontend
+ Transport; Tue, 21 Sep 2021 11:28:24 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.32)
- smtp.mailfrom=nvidia.com; linaro.org; dkim=none (message not signed)
- header.d=none;linaro.org; dmarc=pass action=none header.from=nvidia.com;
+ smtp.mailfrom=nvidia.com; canonical.com; dkim=none (message not signed)
+ header.d=none;canonical.com; dmarc=pass action=none header.from=nvidia.com;
 Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
  216.228.112.32 as permitted sender) receiver=protection.outlook.com;
  client-ip=216.228.112.32; helo=mail.nvidia.com;
 Received: from mail.nvidia.com (216.228.112.32) by
- CO1NAM11FT040.mail.protection.outlook.com (10.13.174.140) with Microsoft SMTP
+ BN8NAM11FT054.mail.protection.outlook.com (10.13.177.102) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.4523.14 via Frontend Transport; Tue, 21 Sep 2021 11:28:17 +0000
-Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL109.nvidia.com
+ 15.20.4523.14 via Frontend Transport; Tue, 21 Sep 2021 11:28:23 +0000
+Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL109.nvidia.com
  (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Tue, 21 Sep
- 2021 04:28:16 -0700
+ 2021 04:28:23 -0700
+Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Tue, 21 Sep
+ 2021 11:28:22 +0000
 Received: from dhcp-10-19-66-63.nvidia.com (172.20.187.5) by mail.nvidia.com
  (172.20.187.15) with Microsoft SMTP Server id 15.0.1497.18 via Frontend
- Transport; Tue, 21 Sep 2021 04:28:12 -0700
+ Transport; Tue, 21 Sep 2021 04:28:18 -0700
 From:   Bitan Biswas <bbiswas@nvidia.com>
 To:     <krzysztof.kozlowski@canonical.com>, <robh+dt@kernel.org>,
         <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
@@ -70,9 +74,9 @@ CC:     <skomatineni@nvidia.com>, <broonie@kernel.org>,
         <linus.walleij@linaro.org>, <linux-kernel@vger.kernel.org>,
         <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
         Bitan Biswas <bbiswas@nvidia.com>
-Subject: [PATCH V1 2/3] trace: events: tegra_apb_dma: add SPDX license identifier
-Date:   Tue, 21 Sep 2021 04:27:15 -0700
-Message-ID: <20210921112716.3007-3-bbiswas@nvidia.com>
+Subject: [PATCH V1 3/3] dt-bindings: tegra: clock,memory,thermal: add header Copyright
+Date:   Tue, 21 Sep 2021 04:27:16 -0700
+Message-ID: <20210921112716.3007-4-bbiswas@nvidia.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20210921112716.3007-1-bbiswas@nvidia.com>
 References: <20210921112716.3007-1-bbiswas@nvidia.com>
@@ -81,44 +85,379 @@ MIME-Version: 1.0
 Content-Type: text/plain
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: d9941ab0-0599-4f0e-13c0-08d97cf2e8dd
-X-MS-TrafficTypeDiagnostic: DM5PR12MB2549:
-X-Microsoft-Antispam-PRVS: <DM5PR12MB25495C7DC938EFFCA425A810D7A19@DM5PR12MB2549.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:1060;
+X-MS-Office365-Filtering-Correlation-Id: 816df949-4e5f-44f9-ba99-08d97cf2ec76
+X-MS-TrafficTypeDiagnostic: BN8PR12MB3108:
+X-Microsoft-Antispam-PRVS: <BN8PR12MB3108D3DFD267C2CD7DB7A82AD7A19@BN8PR12MB3108.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:5797;
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: S1d3mdHBS3A8tZXX91NuvQqVVV5yfPQQcjoGWH005tXN/Aa80AjjxUzMGVXAJYuTZ3aISypwMHFPpQ2XvT329Lc5/KyRfj7hjMnwqvRuEv9x7b2mvdiDD0oHPf9TV6qt5TWNFELVTnb7kKVm6rzIC4HdCuh+eHlneZneMHw9J7hoxjfKODNVp6qv1P4SCZnb6YRiYlA2TtsY6QuygdfoPiVkQJVQXELSnelxdz+CECynoFpT19E+EP2K7ZA1IFt+b0+GKPT4paeh4KksYap326Cyn6pBu+bfAYbQEjlLR6BoII6oL12h6Kj9V6zHb643FcSOieQ9R/wMtxQF8+jTw1oOlZIz217mNY4XbznRZdyHKIosxWNIhUhpsEKOaLPnZB7lP8LwCO1L++8L3edhYp6IornEMdRrXlMxa0yVlJGfeNiaaeLn3oFooOhxatj1FWBMzzbdQ0ZnUQ9mbHIyZg/DRtm8z/rAk+C6XG4cNhAJpqVl3ffpO5t6jkHTQpzP2X0owsULoq+GaqlLdDeREn83cRLfQ42tWEmY+55VEhASi4PHLTu3kE3RYro5Q0hPGsq4Vqvgm56/xOk6j8gqkDk2dR9ur6wdWOnYrrkOkbbFtAQlq+0gaqRhqEE2oABEYdTuowMinLRJLM04KuWsfr6RtudvjLOiv8nfqSpP8ugGc/B9L7yeMDnXsch8CjXjkpUiJDDMig8x+3yDo3R0pg==
-X-Forefront-Antispam-Report: CIP:216.228.112.32;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid01.nvidia.com;CAT:NONE;SFS:(4636009)(36840700001)(46966006)(2906002)(186003)(7416002)(7636003)(508600001)(86362001)(47076005)(8676002)(36756003)(426003)(110136005)(316002)(336012)(107886003)(82310400003)(356005)(1076003)(4326008)(5660300002)(7696005)(2616005)(70206006)(36860700001)(70586007)(54906003)(8936002)(4744005)(26005);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: a6MwCtU6Wah/jXFeVnlp1YVuKFlYENiJAl31lfd0DGxaGMyNQDgUoTV/gVGTP7++kBvDAoAn3J+Lr5b/BK2ZRVz3nrGRGEltQpQ6ngLGqvUBd4aUC2m2HgYXNq76f7GA+bXJiQxytKoqsfn3FTc+sjvM6+b/ArOYKEAIP/tl5xP4C3BsEA/+u59XSjg0sgwYHm3bMRUuI5/P+jS4GOeqEUs74jXbU5z+iVqekFyh83mPl5whuTIcUIYsPuolV+xkd5tAoWiIY/UzIinx45bLYteWga6w3doz5B3qqXSYanfv759OwD4s7FARlV0jrwI+OaxNZbMkvq6nYKCX0BFNqYGihtgajuXFN1sba9UlctM0myhollgwuh6cN7suBIRd1sxdxJUX2+YCERfZjHNDqGpF6lsCnxWnwUN4Y/+N66WiM5IS0v4Lk+v2SwJceJfnfFqWTR3rvywVxD/+ykw1in6lHJr+AkafBY3rEtB8HeNGQGCoMcs4sf6r+fWndhnwiiIiC4YolvTX/CBi4sFrF2T7D2DiueslZgitaXojwF4xCSpJFEvU0h4fo6BRBOuF09o8rff0P+PKKgqXaFVmNRIvnrPZqqM+6ci6Qwt66f0qBif08HCDKoYvbPHT8rahLV3OclQ8CaWdc+xBikjSrHqj1HiK9uFVrnr+PPEGFTyhFoV8p6cYqvIOtgoBDXAhQk/ZyjEQ8ZxmDO0AL7VGTg==
+X-Forefront-Antispam-Report: CIP:216.228.112.32;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid01.nvidia.com;CAT:NONE;SFS:(4636009)(36840700001)(46966006)(7636003)(1076003)(426003)(2616005)(107886003)(36860700001)(83380400001)(110136005)(356005)(508600001)(47076005)(54906003)(316002)(7696005)(86362001)(4326008)(2906002)(336012)(70206006)(30864003)(5660300002)(36756003)(186003)(70586007)(26005)(8936002)(7416002)(8676002)(82310400003);DIR:OUT;SFP:1101;
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Sep 2021 11:28:17.9209
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Sep 2021 11:28:23.8510
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d9941ab0-0599-4f0e-13c0-08d97cf2e8dd
+X-MS-Exchange-CrossTenant-Network-Message-Id: 816df949-4e5f-44f9-ba99-08d97cf2ec76
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.32];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT040.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT054.eop-nam11.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB2549
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN8PR12MB3108
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Add GPL license in Tegra apb dma trace header file.
+Add Copyright for below Tegra dt-bindings headers:
+1. clock
+2. gpio
+3. mailbox
+4. memory
+5. thermal
+6. reset
+7. pinctrl
 
 Signed-off-by: Bitan Biswas <bbiswas@nvidia.com>
 ---
- include/trace/events/tegra_apb_dma.h | 1 +
- 1 file changed, 1 insertion(+)
+ include/dt-bindings/clock/tegra114-car.h            | 4 ++++
+ include/dt-bindings/clock/tegra124-car-common.h     | 4 ++++
+ include/dt-bindings/clock/tegra124-car.h            | 4 ++++
+ include/dt-bindings/clock/tegra186-clock.h          | 6 ++++++
+ include/dt-bindings/clock/tegra20-car.h             | 4 ++++
+ include/dt-bindings/clock/tegra210-car.h            | 4 ++++
+ include/dt-bindings/clock/tegra30-car.h             | 4 ++++
+ include/dt-bindings/gpio/tegra-gpio.h               | 4 ++++
+ include/dt-bindings/gpio/tegra186-gpio.h            | 4 ++++
+ include/dt-bindings/mailbox/tegra186-hsp.h          | 4 ++++
+ include/dt-bindings/memory/tegra114-mc.h            | 6 ++++++
+ include/dt-bindings/memory/tegra124-mc.h            | 6 ++++++
+ include/dt-bindings/memory/tegra186-mc.h            | 6 ++++++
+ include/dt-bindings/memory/tegra194-mc.h            | 6 ++++++
+ include/dt-bindings/memory/tegra210-mc.h            | 6 ++++++
+ include/dt-bindings/memory/tegra30-mc.h             | 6 ++++++
+ include/dt-bindings/pinctrl/pinctrl-tegra-xusb.h    | 6 ++++++
+ include/dt-bindings/reset/tegra124-car.h            | 4 ++++
+ include/dt-bindings/reset/tegra210-car.h            | 4 ++++
+ include/dt-bindings/thermal/tegra124-soctherm.h     | 4 ++++
+ include/dt-bindings/thermal/tegra186-bpmp-thermal.h | 4 ++++
+ include/dt-bindings/thermal/tegra194-bpmp-thermal.h | 4 ++++
+ 22 files changed, 104 insertions(+)
 
-diff --git a/include/trace/events/tegra_apb_dma.h b/include/trace/events/tegra_apb_dma.h
-index 971cd02d2daf..fe10897b00b8 100644
---- a/include/trace/events/tegra_apb_dma.h
-+++ b/include/trace/events/tegra_apb_dma.h
-@@ -1,3 +1,4 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
- #if !defined(_TRACE_TEGRA_APB_DMA_H) || defined(TRACE_HEADER_MULTI_READ)
- #define _TRACE_TEGRA_APB_DMA_H
+diff --git a/include/dt-bindings/clock/tegra114-car.h b/include/dt-bindings/clock/tegra114-car.h
+index a93426f008ac..baff21e53a7d 100644
+--- a/include/dt-bindings/clock/tegra114-car.h
++++ b/include/dt-bindings/clock/tegra114-car.h
+@@ -1,5 +1,9 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
+ /*
++ * Copyright (c) 2013-2021, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++ *
++ * Author: Hiroshi Doyu <hdoyu@nvidia.com>
++ *
+  * This header provides constants for binding nvidia,tegra114-car.
+  *
+  * The first 160 clocks are numbered to match the bits in the CAR's CLK_OUT_ENB
+diff --git a/include/dt-bindings/clock/tegra124-car-common.h b/include/dt-bindings/clock/tegra124-car-common.h
+index c59f9de01b4d..67fd0310284a 100644
+--- a/include/dt-bindings/clock/tegra124-car-common.h
++++ b/include/dt-bindings/clock/tegra124-car-common.h
+@@ -1,5 +1,9 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
+ /*
++ * Copyright (c) 2015-2021, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++ *
++ * Author: Paul Walmsley <paul@pwsan.com>
++ *
+  * This header provides constants for binding nvidia,tegra124-car or
+  * nvidia,tegra132-car.
+  *
+diff --git a/include/dt-bindings/clock/tegra124-car.h b/include/dt-bindings/clock/tegra124-car.h
+index c520ee231950..65cbc62ae1bb 100644
+--- a/include/dt-bindings/clock/tegra124-car.h
++++ b/include/dt-bindings/clock/tegra124-car.h
+@@ -1,5 +1,9 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
+ /*
++ * Copyright (c) 2013-2021, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++ *
++ * Author: Peter De Schrijver <pdeschrijver@nvidia.com>
++ *
+  * This header provides Tegra124-specific constants for binding
+  * nvidia,tegra124-car.
+  */
+diff --git a/include/dt-bindings/clock/tegra186-clock.h b/include/dt-bindings/clock/tegra186-clock.h
+index d6b525f4566f..10ef3eda17f6 100644
+--- a/include/dt-bindings/clock/tegra186-clock.h
++++ b/include/dt-bindings/clock/tegra186-clock.h
+@@ -1,4 +1,10 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (c) 2016-2021, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++ *
++ * Author: Joseph Lo <josephl@nvidia.com>
++ *
++ */
+ /** @file */
+ 
+ #ifndef _MACH_T186_CLK_T186_H
+diff --git a/include/dt-bindings/clock/tegra20-car.h b/include/dt-bindings/clock/tegra20-car.h
+index fe541f627965..85b3930bcae7 100644
+--- a/include/dt-bindings/clock/tegra20-car.h
++++ b/include/dt-bindings/clock/tegra20-car.h
+@@ -1,5 +1,9 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
+ /*
++ * Copyright (c) 2013-2021, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++ *
++ * Author: Hiroshi Doyu <hdoyu@nvidia.com>
++ *
+  * This header provides constants for binding nvidia,tegra20-car.
+  *
+  * The first 96 clocks are numbered to match the bits in the CAR's CLK_OUT_ENB
+diff --git a/include/dt-bindings/clock/tegra210-car.h b/include/dt-bindings/clock/tegra210-car.h
+index 9cfcc3baa52c..34cd79c35b36 100644
+--- a/include/dt-bindings/clock/tegra210-car.h
++++ b/include/dt-bindings/clock/tegra210-car.h
+@@ -1,5 +1,9 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
+ /*
++ * Copyright (c) 2015-2021, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++ *
++ * Author: Thierry Reding <treding@nvidia.com>
++ *
+  * This header provides constants for binding nvidia,tegra210-car.
+  *
+  * The first 224 clocks are numbered to match the bits in the CAR's CLK_OUT_ENB
+diff --git a/include/dt-bindings/clock/tegra30-car.h b/include/dt-bindings/clock/tegra30-car.h
+index f193663e6f28..707f2de4f0b1 100644
+--- a/include/dt-bindings/clock/tegra30-car.h
++++ b/include/dt-bindings/clock/tegra30-car.h
+@@ -1,5 +1,9 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
+ /*
++ * Copyright (c) 2013-2021, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++ *
++ * Author: Hiroshi Doyu <hdoyu@nvidia.com>
++ *
+  * This header provides constants for binding nvidia,tegra30-car.
+  *
+  * The first 130 clocks are numbered to match the bits in the CAR's CLK_OUT_ENB
+diff --git a/include/dt-bindings/gpio/tegra-gpio.h b/include/dt-bindings/gpio/tegra-gpio.h
+index 7625dbc577c2..bf62c1194ae2 100644
+--- a/include/dt-bindings/gpio/tegra-gpio.h
++++ b/include/dt-bindings/gpio/tegra-gpio.h
+@@ -1,5 +1,9 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
+ /*
++ * Copyright (c) 2013-2021, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++ *
++ * Author: Stephen Warren <swarren@nvidia.com>
++ *
+  * This header provides constants for binding nvidia,tegra*-gpio.
+  *
+  * The first cell in Tegra's GPIO specifier is the GPIO ID. The macros below
+diff --git a/include/dt-bindings/gpio/tegra186-gpio.h b/include/dt-bindings/gpio/tegra186-gpio.h
+index af0d9583be70..5e08cb581a00 100644
+--- a/include/dt-bindings/gpio/tegra186-gpio.h
++++ b/include/dt-bindings/gpio/tegra186-gpio.h
+@@ -1,5 +1,9 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
+ /*
++ * Copyright (c) 2016-2021, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++ *
++ * Author: Stephen Warren <swarren@nvidia.com>
++ *
+  * This header provides constants for binding nvidia,tegra186-gpio*.
+  *
+  * The first cell in Tegra's GPIO specifier is the GPIO ID. The macros below
+diff --git a/include/dt-bindings/mailbox/tegra186-hsp.h b/include/dt-bindings/mailbox/tegra186-hsp.h
+index 3bdec7a84d35..dbfeab92068b 100644
+--- a/include/dt-bindings/mailbox/tegra186-hsp.h
++++ b/include/dt-bindings/mailbox/tegra186-hsp.h
+@@ -1,5 +1,9 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
+ /*
++ * Copyright (c) 2016-2021, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++ *
++ * Author: Joseph Lo <josephl@nvidia.com>
++ *
+  * This header provides constants for binding nvidia,tegra186-hsp.
+  */
+ 
+diff --git a/include/dt-bindings/memory/tegra114-mc.h b/include/dt-bindings/memory/tegra114-mc.h
+index dfe99c8a5ba5..1a2d16853847 100644
+--- a/include/dt-bindings/memory/tegra114-mc.h
++++ b/include/dt-bindings/memory/tegra114-mc.h
+@@ -1,4 +1,10 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (c) 2014-2021, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++ *
++ * Author: Thierry Reding <treding@nvidia.com>
++ *
++ */
+ #ifndef DT_BINDINGS_MEMORY_TEGRA114_MC_H
+ #define DT_BINDINGS_MEMORY_TEGRA114_MC_H
+ 
+diff --git a/include/dt-bindings/memory/tegra124-mc.h b/include/dt-bindings/memory/tegra124-mc.h
+index 7e73bb400eca..8a7abf2325b6 100644
+--- a/include/dt-bindings/memory/tegra124-mc.h
++++ b/include/dt-bindings/memory/tegra124-mc.h
+@@ -1,4 +1,10 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (c) 2014-2021, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++ *
++ * Author: Thierry Reding <treding@nvidia.com>
++ *
++ */
+ #ifndef DT_BINDINGS_MEMORY_TEGRA124_MC_H
+ #define DT_BINDINGS_MEMORY_TEGRA124_MC_H
+ 
+diff --git a/include/dt-bindings/memory/tegra186-mc.h b/include/dt-bindings/memory/tegra186-mc.h
+index be313d3790ae..283ea29bf426 100644
+--- a/include/dt-bindings/memory/tegra186-mc.h
++++ b/include/dt-bindings/memory/tegra186-mc.h
+@@ -1,4 +1,10 @@
+ /* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++/*
++ * Copyright (c) 2017-2021, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++ *
++ * Author: Thierry Reding <treding@nvidia.com>
++ *
++ */
+ #ifndef DT_BINDINGS_MEMORY_TEGRA186_MC_H
+ #define DT_BINDINGS_MEMORY_TEGRA186_MC_H
+ 
+diff --git a/include/dt-bindings/memory/tegra194-mc.h b/include/dt-bindings/memory/tegra194-mc.h
+index 16bb62bf8166..30182fd94f0f 100644
+--- a/include/dt-bindings/memory/tegra194-mc.h
++++ b/include/dt-bindings/memory/tegra194-mc.h
+@@ -1,4 +1,10 @@
+ /* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++/*
++ * Copyright (c) 2020-2021, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++ *
++ * Author: Thierry Reding <treding@nvidia.com>
++ *
++ */
+ #ifndef DT_BINDINGS_MEMORY_TEGRA194_MC_H
+ #define DT_BINDINGS_MEMORY_TEGRA194_MC_H
+ 
+diff --git a/include/dt-bindings/memory/tegra210-mc.h b/include/dt-bindings/memory/tegra210-mc.h
+index 5e082547f179..c4e3ba88f77b 100644
+--- a/include/dt-bindings/memory/tegra210-mc.h
++++ b/include/dt-bindings/memory/tegra210-mc.h
+@@ -1,4 +1,10 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (c) 2015-2021, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++ *
++ * Author: Thierry Reding <treding@nvidia.com>
++ *
++ */
+ #ifndef DT_BINDINGS_MEMORY_TEGRA210_MC_H
+ #define DT_BINDINGS_MEMORY_TEGRA210_MC_H
+ 
+diff --git a/include/dt-bindings/memory/tegra30-mc.h b/include/dt-bindings/memory/tegra30-mc.h
+index 930f708aca17..4972cf7e3cf2 100644
+--- a/include/dt-bindings/memory/tegra30-mc.h
++++ b/include/dt-bindings/memory/tegra30-mc.h
+@@ -1,4 +1,10 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (c) 2014-2021, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++ *
++ * Author: Thierry Reding <treding@nvidia.com>
++ *
++ */
+ #ifndef DT_BINDINGS_MEMORY_TEGRA30_MC_H
+ #define DT_BINDINGS_MEMORY_TEGRA30_MC_H
+ 
+diff --git a/include/dt-bindings/pinctrl/pinctrl-tegra-xusb.h b/include/dt-bindings/pinctrl/pinctrl-tegra-xusb.h
+index ac63c399b4b6..a3ee0772fa36 100644
+--- a/include/dt-bindings/pinctrl/pinctrl-tegra-xusb.h
++++ b/include/dt-bindings/pinctrl/pinctrl-tegra-xusb.h
+@@ -1,4 +1,10 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (c) 2014-2021, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++ *
++ * Author: Thierry Reding <treding@nvidia.com>
++ *
++ */
+ #ifndef _DT_BINDINGS_PINCTRL_TEGRA_XUSB_H
+ #define _DT_BINDINGS_PINCTRL_TEGRA_XUSB_H 1
+ 
+diff --git a/include/dt-bindings/reset/tegra124-car.h b/include/dt-bindings/reset/tegra124-car.h
+index 97d2f3db82bf..7e050ccad994 100644
+--- a/include/dt-bindings/reset/tegra124-car.h
++++ b/include/dt-bindings/reset/tegra124-car.h
+@@ -1,5 +1,9 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
+ /*
++ * Copyright (c) 2015-2021, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++ *
++ * Author: Paul Walmsley <pwalmsley@nvidia.com>
++ *
+  * This header provides Tegra124-specific constants for binding
+  * nvidia,tegra124-car.
+  */
+diff --git a/include/dt-bindings/reset/tegra210-car.h b/include/dt-bindings/reset/tegra210-car.h
+index 9dc84ec76301..70388558fb6c 100644
+--- a/include/dt-bindings/reset/tegra210-car.h
++++ b/include/dt-bindings/reset/tegra210-car.h
+@@ -1,5 +1,9 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
+ /*
++ * Copyright (c) 2017-2021, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++ *
++ * Author: Peter De Schrijver <pdeschrijver@nvidia.com>
++ *
+  * This header provides Tegra210-specific constants for binding
+  * nvidia,tegra210-car.
+  */
+diff --git a/include/dt-bindings/thermal/tegra124-soctherm.h b/include/dt-bindings/thermal/tegra124-soctherm.h
+index 444c7bdde146..9eae79d61b6d 100644
+--- a/include/dt-bindings/thermal/tegra124-soctherm.h
++++ b/include/dt-bindings/thermal/tegra124-soctherm.h
+@@ -1,5 +1,9 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
+ /*
++ * Copyright (c) 2014-2021, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++ *
++ * Author: Mikko Perttunen <mperttunen@nvidia.com>
++ *
+  * This header provides constants for binding nvidia,tegra124-soctherm.
+  */
+ 
+diff --git a/include/dt-bindings/thermal/tegra186-bpmp-thermal.h b/include/dt-bindings/thermal/tegra186-bpmp-thermal.h
+index fe9f5043c7b9..77e98b083424 100644
+--- a/include/dt-bindings/thermal/tegra186-bpmp-thermal.h
++++ b/include/dt-bindings/thermal/tegra186-bpmp-thermal.h
+@@ -1,5 +1,9 @@
+ /* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+ /*
++ * Copyright (c) 2017-2021, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++ *
++ * Author: Mikko Perttunen <mperttunen@nvidia.com>
++ *
+  * This header provides constants for binding nvidia,tegra186-bpmp-thermal.
+  */
+ 
+diff --git a/include/dt-bindings/thermal/tegra194-bpmp-thermal.h b/include/dt-bindings/thermal/tegra194-bpmp-thermal.h
+index debea44bf115..fdaf5f3af2b2 100644
+--- a/include/dt-bindings/thermal/tegra194-bpmp-thermal.h
++++ b/include/dt-bindings/thermal/tegra194-bpmp-thermal.h
+@@ -1,5 +1,9 @@
+ /* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+ /*
++ * Copyright (c) 2018-2021, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++ *
++ * Author: Thierry Reding <treding@nvidia.com>
++ *
+  * This header provides constants for binding nvidia,tegra194-bpmp-thermal.
+  */
  
 -- 
 2.17.1
