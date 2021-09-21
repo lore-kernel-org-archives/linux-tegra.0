@@ -2,65 +2,66 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-20.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0E88C433F5
-	for <linux-tegra@archiver.kernel.org>; Tue, 21 Sep 2021 09:42:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29CD7C433F5
+	for <linux-tegra@archiver.kernel.org>; Tue, 21 Sep 2021 09:42:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 74E4261175
-	for <linux-tegra@archiver.kernel.org>; Tue, 21 Sep 2021 09:42:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 034E661181
+	for <linux-tegra@archiver.kernel.org>; Tue, 21 Sep 2021 09:42:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231301AbhIUJoA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 21 Sep 2021 05:44:00 -0400
-Received: from mail-dm6nam11on2042.outbound.protection.outlook.com ([40.107.223.42]:38817
-        "EHLO NAM11-DM6-obe.outbound.protection.outlook.com"
+        id S231426AbhIUJoL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 21 Sep 2021 05:44:11 -0400
+Received: from mail-mw2nam08on2071.outbound.protection.outlook.com ([40.107.101.71]:6625
+        "EHLO NAM04-MW2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S229894AbhIUJoA (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 21 Sep 2021 05:44:00 -0400
+        id S231428AbhIUJoK (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 21 Sep 2021 05:44:10 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=bzSbIsaI4qVH3FhCPHfgv/A9iDKXpX4CnwsSVHzUreOD47l+BLS5VdmCmpN6wqh0kswKEF+r9uUpSEL0H/vRbz57sTikmtQTv+zrRof2+J5KQXg596VOIC9sMDmBluy7xzLAJuoyaVRcBrbbCFHxRVeo2xPdgE/wx7XcREbMlP5WfCw8J2LgJXT9xeuaOwh8RsLKqp2bxPrPHCGcN7vk7wlwv2ZjYpUctpfcc26KmePTxL5yM/1x5bxbtleXonVpNrgHrRtFjoNnQyLCANrtmoLmgVhkdzNBgT/NLmeG1BlDNcvh0dAhsU/vcGcj7iMrO3YDKPFbmqN+9Pxa5a+IMQ==
+ b=JDtfjFOu2LigEyzsrlQ6xAXwqgksUdFvFEMAxYIhKevGusvHJusr0dVfoGOxiQ5Xg/kTDlb+07EFgcgvVDuV8HCkIAFiZqd/LPDhln1gwISpUEarjqWpHVWoLDJvUf4IgC4vr2DFplfNtI+dOLe0g5hW0Ypu7GXPDtr9Q8R4PFc+5adbSOrE74upcn2xmjJz96eGztre//pwYQ+MBRk42vaLxUxo9WK4o/h6IXMnzYcfebz2FGa94XByxF9+8Uv4wRjweOA+7ZRScNLJkBvPVnEWePaJx5Q+N41aBjYuE0S+CkxbeQjsLBbdajjCetkoyLo0RXzYYmOmFozIsitcMg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901; h=From:Date:Subject:Message-ID:Content-Type:MIME-Version;
- bh=gLgBtsa3wJ8t/xKjueaEyvy68Tw8OHCzmqn1dq+7GDE=;
- b=n6oX3CP7VMpHWubYChUSkDdTsdhhgmPG0KguI7BbfzriBUJTm4nEgQrePK2yA27te7n7N4uJ2Xqz3NNP+/6A+vsyXOpEeAe8x3J0Zj0TjXaUYaGNzB5gfoDga89sVkIsS1l4YmcdNism1RzELNUYMJQ7O4/J5A7V2GUbglDTdyhutuDIoXjevQj+DOnI5figCC2TW6ZgZ5iJaLRrp3iwxzJVNulhw02QSXo8qLBjxI0Xa2roLD8b440m6lIf7n5nvJSOravkL0ADbR3CNxIsntSQOpzuuSMhdTncViZWcZbjEsytTWY76HMP/5Ye+6UVXNJZDJzpKV0lL+i8iMfT5g==
+ bh=cR8d6s2kWfaIES57q6kvQOAP1mbLKSTdIyeHhXG/VI0=;
+ b=oMZfGlaEVrcCRx9BHK1xw4VXwQPaWywJMaGKqUfUfScesabkvCB69psaQB+7cQz9y8zvg2hJxleEtg0YXC1Wjf+iydDscz7pE6ESIHTORy2khM6DjVl6G6aqenMC4GqBsxMqyaysVvouXAqu65V4GRdofDD9UebqRCIKvvfIe4zXm6ZSj2DkOWv1cuDYojhg2fB7GJ+RNKYQM77m4rXTm68BK23V6mlsJrCYQw19DiWpaMVOvFwO14wcxiyE+5BOJrAG+SFXVx6LdFz0sqgWW8f2FfpA28cm0OflMYktVP/G5gEgVtoqn1HYTI+hfIe2r00sR0wzlcJCHwzX7ytlMA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.112.36) smtp.rcpttodomain=linaro.org smtp.mailfrom=nvidia.com;
+ 216.228.112.34) smtp.rcpttodomain=linaro.org smtp.mailfrom=nvidia.com;
  dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=nvidia.com;
  dkim=none (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gLgBtsa3wJ8t/xKjueaEyvy68Tw8OHCzmqn1dq+7GDE=;
- b=ClNAI+o1K+QWJ9BQVVznSrfFuVdEC/ThOAdr3zPsSVt4BzZkbbn8QGTtwL4UarNHRpgE/6jFtH0ggHdzj2kDXLUD/NsdVZyF6fZn5/vJEWs1xdN7kPyiLxE8IwKbBSPUYS3sBetaSSndXOqrRgzeICQo+KfkdctCXTmy2RpkIOzZ7+zdgLUMBKwzIMQbAprMkUcvRuJjffwuByEsYJ31zjnq/swmFmWyZemKMSYDNJI9PgFnKm0p+7AETUiUzUszwEuxsvgU3nrL/bxbhRRQuNQSLsHKRX/nsaINMvnNZ9XMnf5XUg8xtxzGNk0TF1Z3iZBIYh3/9uFzzR64l9nPkQ==
-Received: from DM6PR06CA0024.namprd06.prod.outlook.com (2603:10b6:5:120::37)
- by BY5PR12MB5541.namprd12.prod.outlook.com (2603:10b6:a03:1c6::23) with
+ bh=cR8d6s2kWfaIES57q6kvQOAP1mbLKSTdIyeHhXG/VI0=;
+ b=n5O2h8jPuCGOAUK4rHTjt0M3Mahq6/+r0qX87V0DSdDnLvKJiI/M0LYEOMgD6R+hC1SbMYDDsOMLESdXwUU/VgrHxHkv3IBxh1edqaE63HLXVlbdHmw6609cygTyYKSiCwz6IkP3zw377h1ajkJnwlnR0HX+NIjjx2WT/kx4AGwST0wzxPYuTADZnoS8WkqWFAYwAzwTkfXHsfdQ785l1J1EnuW0vaTkJGEgaKayMVhpIm2ea87IFZY3PV4pGQMDZqNIANiBReq2N86vCjH1qAvjxdow3b2A7RDE1eTZ1pLtXGhNtPMqjOfPMk0SdY8Pl+9VcuFPejU/8W79G9W0TA==
+Received: from DM6PR11CA0063.namprd11.prod.outlook.com (2603:10b6:5:14c::40)
+ by MN2PR12MB4581.namprd12.prod.outlook.com (2603:10b6:208:260::11) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4523.14; Tue, 21 Sep
- 2021 09:42:29 +0000
-Received: from DM6NAM11FT038.eop-nam11.prod.protection.outlook.com
- (2603:10b6:5:120:cafe::ff) by DM6PR06CA0024.outlook.office365.com
- (2603:10b6:5:120::37) with Microsoft SMTP Server (version=TLS1_2,
+ 2021 09:42:40 +0000
+Received: from DM6NAM11FT014.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:5:14c:cafe::51) by DM6PR11CA0063.outlook.office365.com
+ (2603:10b6:5:14c::40) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4523.14 via Frontend
- Transport; Tue, 21 Sep 2021 09:42:29 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.36)
+ Transport; Tue, 21 Sep 2021 09:42:40 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.34)
  smtp.mailfrom=nvidia.com; linaro.org; dkim=none (message not signed)
  header.d=none;linaro.org; dmarc=pass action=none header.from=nvidia.com;
 Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.112.36 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.112.36; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (216.228.112.36) by
- DM6NAM11FT038.mail.protection.outlook.com (10.13.173.137) with Microsoft SMTP
+ 216.228.112.34 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.112.34; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (216.228.112.34) by
+ DM6NAM11FT014.mail.protection.outlook.com (10.13.173.132) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.4523.14 via Frontend Transport; Tue, 21 Sep 2021 09:42:29 +0000
-Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Tue, 21 Sep
- 2021 09:42:29 +0000
+ 15.20.4523.14 via Frontend Transport; Tue, 21 Sep 2021 09:42:40 +0000
+Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Tue, 21 Sep
+ 2021 09:42:39 +0000
 Received: from dhcp-10-19-66-63.nvidia.com (172.20.187.5) by mail.nvidia.com
  (172.20.187.13) with Microsoft SMTP Server id 15.0.1497.18 via Frontend
- Transport; Tue, 21 Sep 2021 09:42:25 +0000
+ Transport; Tue, 21 Sep 2021 09:42:36 +0000
 From:   Bitan Biswas <bbiswas@nvidia.com>
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
         Rob Herring <robh+dt@kernel.org>,
@@ -75,71 +76,87 @@ CC:     Sowjanya Komatineni <skomatineni@nvidia.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-tegra@vger.kernel.org>, Bitan Biswas <bbiswas@nvidia.com>
-Subject: [PATCH V1 0/3] Add tegra header license and dt-bindings Copyright
-Date:   Tue, 21 Sep 2021 02:42:03 -0700
-Message-ID: <20210921094206.2632-1-bbiswas@nvidia.com>
+Subject: [PATCH V1 1/3] dt-bindings: tegra: memory,bpmp-thermal: add SPDX license
+Date:   Tue, 21 Sep 2021 02:42:04 -0700
+Message-ID: <20210921094206.2632-2-bbiswas@nvidia.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20210921094206.2632-1-bbiswas@nvidia.com>
+References: <20210921094206.2632-1-bbiswas@nvidia.com>
+X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: e6f7d421-1af9-4224-6188-08d97ce42102
-X-MS-TrafficTypeDiagnostic: BY5PR12MB5541:
-X-Microsoft-Antispam-PRVS: <BY5PR12MB55415F312B546B36651F9CCED7A19@BY5PR12MB5541.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:2449;
+X-MS-Office365-Filtering-Correlation-Id: 667b3f56-f6fd-45e4-45e0-08d97ce42760
+X-MS-TrafficTypeDiagnostic: MN2PR12MB4581:
+X-Microsoft-Antispam-PRVS: <MN2PR12MB4581BA5537FDCE5F75543E08D7A19@MN2PR12MB4581.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:1079;
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 6hMQLreX30COxM3N4mJtcDDvjyzgHYK4We4SvB4orro3KcZQZFVzd8VxlxdAzic548sABBn57+dIJWsQZF6EQ0801O7Ea70OMT/aNL/4H0KUuHvK+q556i+aTzwvRypV8yJZmuObfwuTYKkkWijaJVCHKk25etwxL1BjBjGzWmKXC8bDC4KNAEs6UY3f96WKnEsekX7UFdw/XjKb2BG7zCOyazmHSOlfBKKddjvWaaucabsD/I9EkrGr4taJ10CZPZ+eGMHPuVlS0lgdf+sQgzUInRf7jrW1jDYFT/ZtVHyhmGCsPUWo0kOMLcZTMusJmcghc+AWP/9RhjrDYAmnLBCK5CMn4WWPJmpZ99wcmL2BS5dnyaucq+gqVGdZBkGKjhqk3eanqFWXWY/kX7sCOUH4Riy0JHIwx8/yPFuV4QNrwss6vBZvQujXgkHZgxxRSTiBNvmwdDaDDSzwWcn9owlmT2d4b1Q1cCXqgtQmhvPVDc40j7Iz8uVFags0vhdwlXeGJ76C+GCKFpYKW/DRHD5XVkOGm9inPbNgn7f3/ioPBJJbVmiYnud5UMsWuQ7D0a9Y8v1aFVwnOjcXEhLHuqIoTaxBX3T7lYyQKYuGSfwnoZcX0Idk6R01h1vlMJJxTCJHMrFNgjRH30C3/9GRx7UTViQ7euIytQIENNZ1m6D3UNmUW5NBrpqihgBRlQUDoberhDIfrJ1I2NW+EJLPtA==
-X-Forefront-Antispam-Report: CIP:216.228.112.36;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid05.nvidia.com;CAT:NONE;SFS:(4636009)(36840700001)(46966006)(5660300002)(508600001)(36756003)(186003)(7636003)(47076005)(70206006)(54906003)(2616005)(107886003)(6666004)(1076003)(2906002)(36906005)(7696005)(82310400003)(4326008)(110136005)(83380400001)(70586007)(26005)(316002)(86362001)(36860700001)(8936002)(7416002)(356005)(8676002)(426003)(336012);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: hscyb3tzWvbRwAPkAxQ6DMzrxDbzjvXqfStdZL+SWrJ4mivnLpPMzfnYpUcDalwCitlUN6eC8zpQjOZx/1fQH24cuybNEJpM/ap2jn3HXdg5WAHT6rD1k18FrfGPVJ69RIrdZuDijApPfhCKrJH4MWdjDYC2weth3MMPLFLicUgIWffTF/uBKrxkyjNOsUYwaM1fg2TOO1m75ghe6XDa93rsM/Wp+ArK/D8mb74CNZTcoWvRMKfy/nTKMYARv9jRsMp6QAAztfYJXYHFgJSmsu+ySCWnCQtcdIm2yQZNIx0v9eWNQA4rPjR3e/htD1iK0GXFqxUR7bVzLPkjEetef7iAnKl92ruU7v4lr9NiCnujD8EQG0KgMsEPGQvgK5dF8+B9hj3hN+vHp/vSrC6yHpeUICp5WlicflxOP+n9+jXkO/B8nqSO3b/cwQCQ3LMEvZcGWGs+17SaevmOX1a9l3NRm4MaUBcdt2/s3i5LUy+iIxPp8tdWTMt4hKvYONFid5X7jJAF4KVZvvetymQQuHShYrHI1DJOh/DENQJfDLaBVLQTvogIdMiF5prZSGkzKR5NDG77o4Gu3IEAL8eOgHHh86wRvJfJmun0Uvikpb9I4Yv/b3wqbeTi1fWqnsd+I24J2ZEvjZ82AyWlZRdb8pcvJyM1E2avNnqisJj3OiKltZteBmgj3KO3HfEetaupC69yl3NcRGezsOVNv5K4qQ==
+X-Forefront-Antispam-Report: CIP:216.228.112.34;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid03.nvidia.com;CAT:NONE;SFS:(4636009)(36840700001)(46966006)(36860700001)(47076005)(1076003)(110136005)(26005)(86362001)(356005)(7636003)(70586007)(70206006)(336012)(5660300002)(7696005)(7416002)(4326008)(186003)(36756003)(36906005)(8676002)(426003)(508600001)(6666004)(8936002)(107886003)(54906003)(2906002)(2616005)(82310400003)(316002);DIR:OUT;SFP:1101;
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Sep 2021 09:42:29.6588
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Sep 2021 09:42:40.2852
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e6f7d421-1af9-4224-6188-08d97ce42102
+X-MS-Exchange-CrossTenant-Network-Message-Id: 667b3f56-f6fd-45e4-45e0-08d97ce42760
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.36];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT038.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.34];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT014.eop-nam11.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB5541
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4581
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Few Tegra header file are missing license text.
-Some Tegra dt-bindings header do not have Copyright.
-Add license and Copyright for such Tegra header files.
+Add Dual licensing SPDX license identifier for tegra186,tegra194
+memory and bpmp-thermal headers.
 
-Bitan Biswas (3):
-  dt-bindings: tegra: memory,bpmp-thermal: add SPDX license
-  trace: events: tegra_apb_dma: add SPDX license identifier
-  dt-bindings: tegra: clock,memory,thermal: add header Copyright
+Signed-off-by: Bitan Biswas <bbiswas@nvidia.com>
+---
+ include/dt-bindings/memory/tegra186-mc.h            | 1 +
+ include/dt-bindings/memory/tegra194-mc.h            | 1 +
+ include/dt-bindings/thermal/tegra186-bpmp-thermal.h | 1 +
+ include/dt-bindings/thermal/tegra194-bpmp-thermal.h | 1 +
+ 4 files changed, 4 insertions(+)
 
- include/dt-bindings/clock/tegra114-car.h            | 4 ++++
- include/dt-bindings/clock/tegra124-car-common.h     | 4 ++++
- include/dt-bindings/clock/tegra124-car.h            | 4 ++++
- include/dt-bindings/clock/tegra186-clock.h          | 6 ++++++
- include/dt-bindings/clock/tegra20-car.h             | 4 ++++
- include/dt-bindings/clock/tegra210-car.h            | 4 ++++
- include/dt-bindings/clock/tegra30-car.h             | 4 ++++
- include/dt-bindings/gpio/tegra-gpio.h               | 4 ++++
- include/dt-bindings/gpio/tegra186-gpio.h            | 4 ++++
- include/dt-bindings/mailbox/tegra186-hsp.h          | 4 ++++
- include/dt-bindings/memory/tegra114-mc.h            | 6 ++++++
- include/dt-bindings/memory/tegra124-mc.h            | 6 ++++++
- include/dt-bindings/memory/tegra186-mc.h            | 7 +++++++
- include/dt-bindings/memory/tegra194-mc.h            | 7 +++++++
- include/dt-bindings/memory/tegra210-mc.h            | 6 ++++++
- include/dt-bindings/memory/tegra30-mc.h             | 6 ++++++
- include/dt-bindings/pinctrl/pinctrl-tegra-xusb.h    | 6 ++++++
- include/dt-bindings/reset/tegra124-car.h            | 4 ++++
- include/dt-bindings/reset/tegra210-car.h            | 4 ++++
- include/dt-bindings/thermal/tegra124-soctherm.h     | 4 ++++
- include/dt-bindings/thermal/tegra186-bpmp-thermal.h | 5 +++++
- include/dt-bindings/thermal/tegra194-bpmp-thermal.h | 5 +++++
- include/trace/events/tegra_apb_dma.h                | 1 +
- 23 files changed, 109 insertions(+)
-
+diff --git a/include/dt-bindings/memory/tegra186-mc.h b/include/dt-bindings/memory/tegra186-mc.h
+index 82a1e27f7357..be313d3790ae 100644
+--- a/include/dt-bindings/memory/tegra186-mc.h
++++ b/include/dt-bindings/memory/tegra186-mc.h
+@@ -1,3 +1,4 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+ #ifndef DT_BINDINGS_MEMORY_TEGRA186_MC_H
+ #define DT_BINDINGS_MEMORY_TEGRA186_MC_H
+ 
+diff --git a/include/dt-bindings/memory/tegra194-mc.h b/include/dt-bindings/memory/tegra194-mc.h
+index eed48b746bc9..16bb62bf8166 100644
+--- a/include/dt-bindings/memory/tegra194-mc.h
++++ b/include/dt-bindings/memory/tegra194-mc.h
+@@ -1,3 +1,4 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+ #ifndef DT_BINDINGS_MEMORY_TEGRA194_MC_H
+ #define DT_BINDINGS_MEMORY_TEGRA194_MC_H
+ 
+diff --git a/include/dt-bindings/thermal/tegra186-bpmp-thermal.h b/include/dt-bindings/thermal/tegra186-bpmp-thermal.h
+index a96b8fa31aab..fe9f5043c7b9 100644
+--- a/include/dt-bindings/thermal/tegra186-bpmp-thermal.h
++++ b/include/dt-bindings/thermal/tegra186-bpmp-thermal.h
+@@ -1,3 +1,4 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+ /*
+  * This header provides constants for binding nvidia,tegra186-bpmp-thermal.
+  */
+diff --git a/include/dt-bindings/thermal/tegra194-bpmp-thermal.h b/include/dt-bindings/thermal/tegra194-bpmp-thermal.h
+index aa7fb08135ca..debea44bf115 100644
+--- a/include/dt-bindings/thermal/tegra194-bpmp-thermal.h
++++ b/include/dt-bindings/thermal/tegra194-bpmp-thermal.h
+@@ -1,3 +1,4 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+ /*
+  * This header provides constants for binding nvidia,tegra194-bpmp-thermal.
+  */
 -- 
 2.17.1
 
