@@ -2,111 +2,154 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-14.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CEE2C433EF
-	for <linux-tegra@archiver.kernel.org>; Tue, 21 Sep 2021 18:00:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE463C433EF
+	for <linux-tegra@archiver.kernel.org>; Wed, 22 Sep 2021 07:50:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 34BFC61214
-	for <linux-tegra@archiver.kernel.org>; Tue, 21 Sep 2021 18:00:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C2ED61178
+	for <linux-tegra@archiver.kernel.org>; Wed, 22 Sep 2021 07:50:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232063AbhIUSB1 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 21 Sep 2021 14:01:27 -0400
-Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:33322
-        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231946AbhIUSB1 (ORCPT
+        id S233290AbhIVHvd (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 22 Sep 2021 03:51:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47564 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233283AbhIVHvc (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 21 Sep 2021 14:01:27 -0400
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com [209.85.221.70])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 9931540267
-        for <linux-tegra@vger.kernel.org>; Tue, 21 Sep 2021 17:59:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1632247197;
-        bh=vxTn3AIJPvzmFzuzSalXPUTXovZGNuRBodVQ9rplWBQ=;
-        h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-         In-Reply-To:Content-Type;
-        b=ZOQx6/ymu1Q9rft9adUiDale7NFnDUhMukfWpDb34KzA8yz4+CM5VBvpfdx1g1eiI
-         yPgoBeFi+cUZLVkiRYe1C5TRDZ52Xf3xVLkwBO0gNShc4rdd3HZm/8Sk9GG4Kp3ASn
-         6qSLO6ig6smtvILIRT/LOyzHTpFv6Ky2PL2AhffpItFdGhIAgi/rwfoiL16W/BMKYN
-         FuDDjJFzDUYM5bC/qcAmT47c4QabugBWd0mgrdsweEnnGvOOur/4aKB84w3GxDHIqD
-         lU5qZ0MR0gzfpnI0jThF+wzDkXh++QDn8cIx6NH4LVdIPnls+fyrlPWINE1ZQj0NDu
-         RV+tE34wYkLFw==
-Received: by mail-wr1-f70.google.com with SMTP id j16-20020adfa550000000b0016012acc443so4143839wrb.14
-        for <linux-tegra@vger.kernel.org>; Tue, 21 Sep 2021 10:59:57 -0700 (PDT)
+        Wed, 22 Sep 2021 03:51:32 -0400
+Received: from mail-pg1-x531.google.com (mail-pg1-x531.google.com [IPv6:2607:f8b0:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06CFAC061574;
+        Wed, 22 Sep 2021 00:50:03 -0700 (PDT)
+Received: by mail-pg1-x531.google.com with SMTP id r2so1784265pgl.10;
+        Wed, 22 Sep 2021 00:50:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=TuwMBP3lxjZDIIIkKMBUehWeZnhQg+0jQoxtba7Hh9I=;
+        b=hXvMvZ6eOBZgNmCdzYTcl+fJpAXjGcrpcqPyIpdNC4uEmypCDQLvizzSoJZi9hCCbp
+         PRW5QSi3xfeqR27vOD8R6M2uaD3gmmXA5LzvgJFa0qCdJKbosCxZSKk62Q1u2H9VMkd3
+         +XmrZ7YO7V26K/V45nvINrCp606jItpb6SbEDGt2fj5i5HeFOQRGp8dwKzAe2T+OH7k4
+         6+wtTwy/7o1ebrYGmFnTPc9vst6Asxlw+iRan5z761Y9yUe5es40AbGMCKJebGR2hPMc
+         eK3lJmhF0rnqkL/Q3yonydEjxnTcY1N05xt5DPLg26CA/YYExkkETH7Zv/ku1X5Xrt9S
+         iPig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=vxTn3AIJPvzmFzuzSalXPUTXovZGNuRBodVQ9rplWBQ=;
-        b=s6vvKSBtwOPZKgmRCJu8CA7RwYZ9+06UEcz1FbZ7H7Grphonp20IbmWXneMAEAWORG
-         chzD/sbxQ7Z3wBAp2VKyz6ZmlB5YZHaDnaNcV7r0ux55WVTwJ27dCPe9bCpubWkNztnp
-         vHRf0LqcPGIus5XsaCx/QSB+VODhRFxwVxDKmPkLH9QGgpTmCz7GYSDkNTvBj07T5wI/
-         4I3VJ4yh8xvcwHZjJDF1bQtKny6llDD03EeXN8TFL87ex7wPixmYNKsgkSy8gHFOjte+
-         +M6wN/t1edfsJ8sM+NJFnYukweUsWwVzVNm8+9NBb3+32Ym/FGPkP3ot7V1yLzkIMQ2I
-         a/zA==
-X-Gm-Message-State: AOAM533FwIFUojR17YuMNWqQ0eKU8BGYpbUYDmIfXkUYc9V3u+Cm4IFt
-        ywMCsfmsRrOzpYaGHu813ajGlaJ9pySbiHQr+ErxfJFH0YeIZT6aqpF49UfaNFN6zNN68w89nwS
-        6KnHZs+Y4uaBhg0jeIkl257qaCANzuBXNqEg02LJa
-X-Received: by 2002:adf:fe0b:: with SMTP id n11mr36975800wrr.371.1632247197106;
-        Tue, 21 Sep 2021 10:59:57 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJxetWpEyd4foGqozh84S/hmjt8R/AjjI8+NlE7R2fWtuMsQjyQTEpWYMzYqt+5l14nTxi03oA==
-X-Received: by 2002:adf:fe0b:: with SMTP id n11mr36975779wrr.371.1632247196967;
-        Tue, 21 Sep 2021 10:59:56 -0700 (PDT)
-Received: from [192.168.0.134] (lk.84.20.244.219.dc.cable.static.lj-kabel.net. [84.20.244.219])
-        by smtp.gmail.com with ESMTPSA id u29sm17466170wru.34.2021.09.21.10.59.55
+        bh=TuwMBP3lxjZDIIIkKMBUehWeZnhQg+0jQoxtba7Hh9I=;
+        b=j+IBKcEwPe0uh4Nnks+tppJ+6C34I3SEsB7Yh7fkjVwN/9r3BS/JzrsPejdWpLBsKe
+         1hlLf3HRjKaGAd5eKY0hE9UlZBbcGMO41j/w3yIt6oUk7ZpvP1OZvEvT3+I8hviEIgy+
+         2HMhChqfMIuWW2muwc8SvgFpzygo8Qwi9qcXK6VypudCDUEIsxiISyVEtnj3T7vTFrYy
+         ropL+6n+oBbRU6qiwnCG8tVVZPUGx+ELdyzT/+22E8I+7flupO8Nu1BHkHyXFpswLx6t
+         f2+lgO2Jc/yBq1wxI1UQY+q4nbsCJkCp6D9UcRa2IyiSqE58Hr7ifvcRuGGxGRaJsgZM
+         E2sA==
+X-Gm-Message-State: AOAM530CQjYZnunYzsZJ53WfKj4r+h2NZq8vieqhBRIJwaaXor+up3JW
+        3xJo53m00Oigrkxl/ox2FYTulmkIc8Q=
+X-Google-Smtp-Source: ABdhPJzpBPdqWkBZslTDJ4YwznbRa3wkyEY3vk9O0PqfEos3Nwntzh+fraHr3XZl3fmaUznxxKludw==
+X-Received: by 2002:a62:1a09:0:b0:435:61bd:2d09 with SMTP id a9-20020a621a09000000b0043561bd2d09mr34578837pfa.71.1632297001840;
+        Wed, 22 Sep 2021 00:50:01 -0700 (PDT)
+Received: from [172.30.1.2] ([14.32.163.5])
+        by smtp.gmail.com with ESMTPSA id f127sm1387197pfa.25.2021.09.22.00.49.58
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Sep 2021 10:59:56 -0700 (PDT)
-Subject: Re: [PATCH V1 1/3] dt-bindings: tegra: memory,bpmp-thermal: add SPDX
- license
-To:     Bitan Biswas <bbiswas@nvidia.com>, robh+dt@kernel.org,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        rostedt@goodmis.org, mingo@redhat.com, jassisinghbrar@gmail.com,
-        p.zabel@pengutronix.de
-Cc:     skomatineni@nvidia.com, broonie@kernel.org,
-        linus.walleij@linaro.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
-References: <20210921174434.4839-1-bbiswas@nvidia.com>
- <20210921174434.4839-2-bbiswas@nvidia.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Message-ID: <195c460c-9fb9-f435-4fa8-6d5632f62a5a@canonical.com>
-Date:   Tue, 21 Sep 2021 19:59:54 +0200
+        Wed, 22 Sep 2021 00:50:01 -0700 (PDT)
+Subject: Re: [PATCH v2 2/4] PM / devfreq: Add devm_devfreq_add_governor()
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>
+Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org
+References: <20210920172249.28206-1-digetx@gmail.com>
+ <20210920172249.28206-3-digetx@gmail.com>
+From:   Chanwoo Choi <cwchoi00@gmail.com>
+Message-ID: <780208e2-911c-87a0-f97c-0147c6f11c5d@gmail.com>
+Date:   Wed, 22 Sep 2021 16:49:58 +0900
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.13.0
 MIME-Version: 1.0
-In-Reply-To: <20210921174434.4839-2-bbiswas@nvidia.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20210920172249.28206-3-digetx@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 21/09/2021 19:44, Bitan Biswas wrote:
-> Add Dual licensing SPDX license identifier for tegra186,tegra194
-> memory and bpmp-thermal headers.
+On 21. 9. 21. 오전 2:22, Dmitry Osipenko wrote:
+> Add resource-managed variant of devfreq_add_governor().
 > 
-> Signed-off-by: Bitan Biswas <bbiswas@nvidia.com>
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > ---
->  include/dt-bindings/memory/tegra186-mc.h            | 1 +
->  include/dt-bindings/memory/tegra194-mc.h            | 1 +
->  include/dt-bindings/thermal/tegra186-bpmp-thermal.h | 1 +
->  include/dt-bindings/thermal/tegra194-bpmp-thermal.h | 1 +
->  4 files changed, 4 insertions(+)
+>   drivers/devfreq/devfreq.c  | 26 ++++++++++++++++++++++++++
+>   drivers/devfreq/governor.h |  3 +++
+>   2 files changed, 29 insertions(+)
+> 
+> diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
+> index 85faa7a5c7d1..4579eefb8fe7 100644
+> --- a/drivers/devfreq/devfreq.c
+> +++ b/drivers/devfreq/devfreq.c
+> @@ -1301,6 +1301,32 @@ int devfreq_add_governor(struct devfreq_governor *governor)
+>   }
+>   EXPORT_SYMBOL(devfreq_add_governor);
+>   
+> +static void devm_devfreq_remove_governor(void *governor)
+> +{
+> +	WARN_ON(devfreq_remove_governor(governor));
+> +}
+> +
+> +/**
+> + * devm_devfreq_add_governor() - Add devfreq governor
+> + * @dev:	device which adds devfreq governor
+> + * @governor:	the devfreq governor to be added
+> + *
+> + * This is a resource-managed variant of devfreq_add_governor().
+> + */
+> +int devm_devfreq_add_governor(struct device *dev,
+> +			      struct devfreq_governor *governor)
+> +{
+> +	int err;
+> +
+> +	err = devfreq_add_governor(governor);
+> +	if (err)
+> +		return err;
+> +
+> +	return devm_add_action_or_reset(dev, devm_devfreq_remove_governor,
+> +					governor);
+> +}
+> +EXPORT_SYMBOL(devm_devfreq_add_governor);
+> +
+>   /**
+>    * devfreq_remove_governor() - Remove devfreq feature from a device.
+>    * @governor:	the devfreq governor to be removed
+> diff --git a/drivers/devfreq/governor.h b/drivers/devfreq/governor.h
+> index 2d69a0ce6291..002a7d67e39d 100644
+> --- a/drivers/devfreq/governor.h
+> +++ b/drivers/devfreq/governor.h
+> @@ -84,6 +84,9 @@ void devfreq_update_interval(struct devfreq *devfreq, unsigned int *delay);
+>   int devfreq_add_governor(struct devfreq_governor *governor);
+>   int devfreq_remove_governor(struct devfreq_governor *governor);
+>   
+> +int devm_devfreq_add_governor(struct device *dev,
+> +			      struct devfreq_governor *governor);
+> +
+>   int devfreq_update_status(struct devfreq *devfreq, unsigned long freq);
+>   int devfreq_update_target(struct devfreq *devfreq, unsigned long freq);
+>   
 > 
 
-Now we got the same v1 patchset for the third time. I think you need to
-check your mail agent...
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
 
-https://lore.kernel.org/lkml/?q=bbiswas%40nvidia.com
-
-
-Best regards,
-Krzysztof
+-- 
+Best Regards,
+Samsung Electronics
+Chanwoo Choi
