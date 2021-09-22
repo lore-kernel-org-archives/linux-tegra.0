@@ -2,220 +2,156 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24837C433EF
-	for <linux-tegra@archiver.kernel.org>; Wed, 22 Sep 2021 13:25:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AAC7C433EF
+	for <linux-tegra@archiver.kernel.org>; Wed, 22 Sep 2021 14:46:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E3C0160FC1
-	for <linux-tegra@archiver.kernel.org>; Wed, 22 Sep 2021 13:25:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C96F60FC1
+	for <linux-tegra@archiver.kernel.org>; Wed, 22 Sep 2021 14:46:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231534AbhIVN1A (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 22 Sep 2021 09:27:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42484 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230512AbhIVN1A (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 22 Sep 2021 09:27:00 -0400
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68C6DC061574;
-        Wed, 22 Sep 2021 06:25:30 -0700 (PDT)
-Received: by mail-wr1-x42a.google.com with SMTP id t8so6901043wri.1;
-        Wed, 22 Sep 2021 06:25:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Y36K6bPDxpy/zwfLP47l15jg47JT44a6c0meP9UjwOg=;
-        b=Oi0Vk/H4LR+Mt1fhkW1VciGkU3+lAL1M/G9hlORMYYPJJtP+0mgmDUjKaaQFSZNyJ2
-         NExaWa4D2yKwnWvcIw18vw4WZeE8DyTxgBvZ8tkz7dccCzMoXsTZ0ZYyco0Bc0VQPZOW
-         yNhBfmcGaJoW306ElKF1AbPgCWmOxzqHA4uA1sk8DuBhtShOcZFeAe5C+OMZYK25/O4n
-         EB2V3oJZlxNqZAtn0FsRhie7GYQryaAvKed24kBsChZweXmCTCwHa0wkQYV5ra9e/Pzw
-         ib8+S5KzxlDpAlwDSjQJAEIWaox6/fgVpxfx8/6lg2RdQu+C7enEdUN/ObQK8rBg/TBG
-         ar2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Y36K6bPDxpy/zwfLP47l15jg47JT44a6c0meP9UjwOg=;
-        b=lqD6GTkKhy6L85PPEPTn2lOVaJJtdbQXLTgIgbVAm0r/V2s0ud+gIDZv9N5xUS2Uf8
-         12PB7he4AE480eS1LihogQ3/wU73ZCRBms6TxjF8uCa/EqRFKW+6JCsjEDxcaSiQpUZi
-         quODCOxNJ9InvmEF3SlXXU+THFz9VzPbNgb9DxjkiyriQzHstNNdQInEqUt/KcZcFqxn
-         6od6VPM/52b1CeW6yD18sLoVwNdTBSBg+LW2zKC59ns4mJvjle9WggkXZaRb3u8EOLbW
-         uQLVD/TiU4Gft8ueMFfrsNF9hYv1cPZymo9AKY+ZnLRkimHd5e5LO2zD3Kd7NtZIWRF1
-         F/zw==
-X-Gm-Message-State: AOAM530m+pa2W8B1rRimzSNeQXH/HyfFXKEhJXVXSnMavWYkENNE3G+l
-        3xZ6eWdPRLY2DpcolZHOjcc=
-X-Google-Smtp-Source: ABdhPJxklTnpEoamKeDaCyghdtkVhqfhVkLVAeKdHXtzzEL72GVxr1UfMNwcYhs/cXc6CEN2M0hjxQ==
-X-Received: by 2002:adf:ec4b:: with SMTP id w11mr41734333wrn.389.1632317128992;
-        Wed, 22 Sep 2021 06:25:28 -0700 (PDT)
-Received: from localhost ([217.111.27.204])
-        by smtp.gmail.com with ESMTPSA id k22sm2290355wrd.59.2021.09.22.06.25.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Sep 2021 06:25:27 -0700 (PDT)
-Date:   Wed, 22 Sep 2021 15:25:26 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc:     Prathamesh Shete <pshete@nvidia.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-gpio <linux-gpio@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, smangipudi@nvidia.com
-Subject: Re: [PATCH v3 2/2] arm64: tegra: GPIO Interrupt entries
-Message-ID: <YUsuxvLWgVZpjNpE@orome.fritz.box>
-References: <YTWeSJ7jGamxx9Uu@orome.fritz.box>
- <20210907073224.3070-1-pshete@nvidia.com>
- <20210907073224.3070-3-pshete@nvidia.com>
- <CAMpxmJWyepTvUQEAVDB2b=uocFTq49=yRiCXrxnwyLMe7LY_1Q@mail.gmail.com>
+        id S236207AbhIVOsW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 22 Sep 2021 10:48:22 -0400
+Received: from mail-dm6nam12on2077.outbound.protection.outlook.com ([40.107.243.77]:53600
+        "EHLO NAM12-DM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S236199AbhIVOsW (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 22 Sep 2021 10:48:22 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=PzdSxQm1Wkl8+GG+mELxV3rLcgZDfiblTnXL9y812Qo7XJ8xE+jKk4DEaxvwRAD6RQJ5BeYwhh3tfe8JOlJDxYjLy4VQp+3Ex5D1kMt/ORUK3vjblf+c+XMD8NaaMr0N78Rj7Xm9n5aJfOUAaadVP75HZzmaKAKqZFajyFGg3aFkmzt8a5BXn/tql4C1wD6R/qiSuXL2qA/TNTvIvQw+RSPUr2TmHiTPSgGBioOtLX+4drhn5wKmi5qeEfV/RMKGi9hg7SX9KFbPeNr5OQd0NfcxnlpaNSdW4UzzJAqbpEbcQg6q8Fs5f0dFQCP/Ot0D7A7m32YLjKxjF8FpWjRZjg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901; h=From:Date:Subject:Message-ID:Content-Type:MIME-Version;
+ bh=Fv0F4RdQLwOyLPpl0c0t1gdNR9HgcOmZj73BzhnR8sc=;
+ b=LJtWAuktDo5kP9fOyUY8Sx0hSauLbKWlg47gsWZ8Gjgs8lHcQLQfY0xwUiItMv/wCsPedSdVzF3C2wnNBBtlAWBkSMLaVaYmQ4PDrKy/IPVYcUpzXPc0lWhxZmiy6Ep0wb+6aIMahkVnS/pfiPbbImcupFCXyICE54i5jv/8rdbbw1jbbTL4YYPg3otNZiwn0dXQSD0He+vg77whNwiES2lRzP/tf9sxOr+our027oqQolJoK6emX6aQK/ulUU0C5DJmz6r1b/ilQhrVb8hV3W2f5mieOe4TxIxjCtiW3tcUChy84c3WgAy58PneOSP0cTXawWn3Pwy0dJmqTcMCeA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Fv0F4RdQLwOyLPpl0c0t1gdNR9HgcOmZj73BzhnR8sc=;
+ b=qPEzO9bvw7S1E9fwdXbWIu8ELtdgl6elvJrSfKFnMZ9zNyses3bX/8YK4aIXRWyKA2osYdUtb0xWmWv6U22yDcHk4TEOpzG/rjOLQBrKSn9LjkL03Cv98W6775NxVRIDabQl/u4TAzXqHFRR3oW7Hy3bVfQRlpVffHuiw0zZxRJ+RH82CmYET8JCjSrfVrb4lGckOhuGoC3FbflzlC3FqysqRIL6hZgS6bdyztNJ9TO/CuOD12RxtQQdtVuHo1TMb6NkY5gm5oHKNHioqF0g/cFQMWAKVQI3rMfyGRcKdWnrAocoCTqW/RxpsyWD00OnZ2uB6RoLmdZVOagWkNg3Tw==
+Received: from BN9PR12MB5273.namprd12.prod.outlook.com (2603:10b6:408:11e::22)
+ by BN9PR12MB5065.namprd12.prod.outlook.com (2603:10b6:408:132::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4544.13; Wed, 22 Sep
+ 2021 14:46:50 +0000
+Received: from BN9PR12MB5273.namprd12.prod.outlook.com
+ ([fe80::b54f:5a6c:caf8:7445]) by BN9PR12MB5273.namprd12.prod.outlook.com
+ ([fe80::b54f:5a6c:caf8:7445%3]) with mapi id 15.20.4544.014; Wed, 22 Sep 2021
+ 14:46:50 +0000
+From:   Akhil R <akhilrajeev@nvidia.com>
+To:     Jonathan Hunter <jonathanh@nvidia.com>
+CC:     "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
+        Krishna Yarlagadda <kyarlagadda@nvidia.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+        Rajesh Gumasta <rgumasta@nvidia.com>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        "vkoul@kernel.org" <vkoul@kernel.org>,
+        Pavan Kunapuli <pkunapuli@nvidia.com>
+Subject: RE: [PATCH v6 2/4] dmaengine: tegra: Add tegra gpcdma driver
+Thread-Topic: [PATCH v6 2/4] dmaengine: tegra: Add tegra gpcdma driver
+Thread-Index: AQHXq84I1y/KN/E0g0SFzWdA4cvLWquoW/uAgAep6BA=
+Date:   Wed, 22 Sep 2021 14:46:50 +0000
+Message-ID: <BN9PR12MB5273F667288F7DEE99BA275DC0A29@BN9PR12MB5273.namprd12.prod.outlook.com>
+References: <1631887887-18967-1-git-send-email-akhilrajeev@nvidia.com>
+ <1631887887-18967-3-git-send-email-akhilrajeev@nvidia.com>
+ <fe8b4d60-0051-a11a-50e5-c188a9e9b346@nvidia.com>
+In-Reply-To: <fe8b4d60-0051-a11a-50e5-c188a9e9b346@nvidia.com>
+Accept-Language: en-IN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: nvidia.com; dkim=none (message not signed)
+ header.d=none;nvidia.com; dmarc=none action=none header.from=nvidia.com;
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: d5428adf-8036-4be9-2613-08d97dd7cfd7
+x-ms-traffictypediagnostic: BN9PR12MB5065:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <BN9PR12MB50656B04EBEFBADA1845A638C0A29@BN9PR12MB5065.namprd12.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8882;
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: s7AdOPbbkMM7zuo2WJ3jeUa1dvQHY7w2RBMhB0CiHJkHJ7GYFWWeM3vAlofk9wxmqhgGCMUrJafx4EnLz9Lc7+X1efOck3/t3Nm6E94GX7CgbVl2uV57YFa9JYkxKlF1hwQx6q60J+07TGDAcQWOIl+aRzXCBavIVvEbXmE9AXknQh21qn6zwjDWpEOYFDoPVpT68lnB54I1L6+YnvIUYEzmIwZuF1w+U/EsS8BcLrePFfXOBkEK3ZYyqgpwaRfmIXdMyiJF1x6IMMdl9I/ZYBSCt/a1PhnK3lLQBUzVavVC52ED15dqJeXcWZ14VEdlYb6GGBhz4H9Zpn1Py0qZOfyPX/DV9UdczbCO/Xt/P7tFMb8EgVBIYEoN8jsoSpUalEO8lCIzmCyngnHZ9N9QB0APEfvzj3gaz6gvLqug6pS7TULgmtIH9OEPEZ5VF9bbLbee9W3o90fwc42IWQPRWClz0x7xSE4t5q8uL7oPrP7tghuGYNMQ78BiVv7u80UWxLL7cnrFc3s6vVjG+Lh9ZQ/5OWgoRCgQVODTKvTmQUN0HPhSBEp91MorPd6k+cfItIaIIP2qVrqf3RM5zlPTO2VKkq+0Lnby2xb4Yc1r1MPee/sIX3NtP+lPjtSncw3PvkQhex3WdQ9ThGN0N/Hn/8afg8YLEjRo30dBm2NVi6NGXcjG5zPh/bEZqucC9aJIXefAGUFJffskxsBDWv0VsQ==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR12MB5273.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(86362001)(33656002)(6636002)(52536014)(2906002)(55016002)(122000001)(26005)(9686003)(38100700002)(186003)(76116006)(7696005)(508600001)(66946007)(6862004)(66446008)(66556008)(316002)(66476007)(64756008)(54906003)(38070700005)(8676002)(6506007)(107886003)(83380400001)(71200400001)(8936002)(53546011)(4326008)(5660300002);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?dlZicm00OGo3dHZUdHJuZUhCWjRIMzVtL2UyMTloa0RGT2F2TFpwbmdObWph?=
+ =?utf-8?B?RWxGL0g4S1djZTgvd20ySjB1VWxMWUNNZXJ5d0RsdU44ZllwaGVLSHl2Tk4v?=
+ =?utf-8?B?Z3pzY3k0aEdybjJXT0hyNzJHcVZqVE9YWVpuN2R5bWFGdGJpbGUvV3FQM3dG?=
+ =?utf-8?B?YlVObXl4clNtTnJkWWpBVFFXY25qOHBrbzR2YkR0aDkvSFlMby9sbExlWjcw?=
+ =?utf-8?B?Z2lubDF1THpnR201d29CeWtzR2NxQUZkRWM2c1JaYm52RnBBM1NkNnBFQkZI?=
+ =?utf-8?B?SWl6eHZ4blpOWTgrT1U0bTBFMmpRd0JnYUtaQVpjckNZaHZiSFlETm1tNTA5?=
+ =?utf-8?B?WEtiOTBqR0RXemh1YnAzdFVkZGZWMW1wQ2JmaGMvQXZWSC9CN0NTUlpWMk5v?=
+ =?utf-8?B?d0EvRVp0VGhTdmtCYmFCS2RidzJ4ZWMvSk5uS3F3NEtNTE1Pb3h1d1lVVlY2?=
+ =?utf-8?B?WnlJM0ZiTDVWdEJMcDQ5TUl3V1JEdm5yUUxGUCtBZk51bURmSUxhQSs0MHlY?=
+ =?utf-8?B?WnhpU0lJdTdhS3NnaGdZY1hKRldEenhwY1I1ekVOSGtnVEtYV3JpalZVN3hj?=
+ =?utf-8?B?RExOaWgzWUw2c1VrWkVIWmZPYWk2aVJ2NS9sbUVmc05zRlJZR01CbExYTnBU?=
+ =?utf-8?B?K05HbWZsVXlJQlJ5ZzFpMWQ1NHdXTm5vemVqOGs3WFZRb1VPN1FHLzFPVDFF?=
+ =?utf-8?B?TFFzR091QXR1Zko0a0toY241SWlGRW11K0JQSHd1djNGb2lZelNWMTIxRUhN?=
+ =?utf-8?B?WkZNenZGdEFYaVhKcUpGRzlGSkZPc3dWV0VRUGdkcThuaGtrREtNWG5lZWhK?=
+ =?utf-8?B?S0Y3emtsQWsvcm5qdkt3c3daNkY1UlF1djlyZXk3QzZHN3hlbG9aTzkxSDdt?=
+ =?utf-8?B?aitXSDZxek4vbTI5R2lnK2RJYmN5bHFwREFEVEptbmhmdWxWdTlETDd0VXNU?=
+ =?utf-8?B?MWY2QytsajJjMUNzVlg0a3hvNFF5WEpFSlRXWW9MQkpZV0V5ZmRKMnlhcW5X?=
+ =?utf-8?B?ZFcwNU5RSVpBN3RLSENqME9FNDFzU1ZJWmNzc1dGaEFiR2EvTGNQeUI0a25F?=
+ =?utf-8?B?cU1ISUVycVRCVzAybkJmd1NvY3psVjEraVlWWExkeElScmtyMWpIb0pHMzBo?=
+ =?utf-8?B?QkRnOEtXbm5zVHlvNnJqbUQvUFVVbDF4ZGhuMHppNzZHOWJvWG1VTmhHTCtM?=
+ =?utf-8?B?S1FJbGw0cUdnbGNJN3lvRDJHUWNUK2JGUWFxQnA3VUZyYTFPUHlNQURSQVFi?=
+ =?utf-8?B?YVlUNVduMjZKME9Tb2w3a1VKbEhLQlpwaUJJdVgrSkVaTGF6UzNNdWZHdXll?=
+ =?utf-8?B?dlV3SDgvcFBCZHJ2RWl5MzV6VGI4a0k5VWFkc1lTTFZaSmhyaUhHQnRWR3Ju?=
+ =?utf-8?B?T2FxcncrYWorOTRWRFVPbmdldjZ5VU5YQm5ncSs1L3RpSmRoZ0NTb21YYjZK?=
+ =?utf-8?B?VlJneGZTUmdOdFdod0p2Q2t2Vm9pSEJBQTdoM2s1bGcyTFllSUw0WkVYV09P?=
+ =?utf-8?B?ODY0YkJJVDlqbk50WFJZMWpzTzJHT1B1Ny93ZVJ4WE0yekhkTlBqNVVPcUo1?=
+ =?utf-8?B?N1FyZE0zL3JFUUMydlh1RTFrUS9WclcxT2MxWWJ6WFV1TjNEQTdnYWNWdVVp?=
+ =?utf-8?B?ZUxqV2RPdnZMUFRiSklxWEcrN2VoQ3N6Qlo5VEw2bjhRNDhyNjhURi9Nay9p?=
+ =?utf-8?B?MW1CMHlwN3N5Ly9TMytmNUJrb2RMb3ljTG1qU0VzdDFjUG5mRmZCbGxUOXBG?=
+ =?utf-8?Q?U13gpbJHolCYqtWZGU/wXpmYMXnRqgaPy1/1WLk?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="TZWXuD58jiQlRBqH"
-Content-Disposition: inline
-In-Reply-To: <CAMpxmJWyepTvUQEAVDB2b=uocFTq49=yRiCXrxnwyLMe7LY_1Q@mail.gmail.com>
-User-Agent: Mutt/2.1.3 (987dde4c) (2021-09-10)
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BN9PR12MB5273.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d5428adf-8036-4be9-2613-08d97dd7cfd7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Sep 2021 14:46:50.6755
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: u0k/DyydDgTTJaE5zC1oxOys9Xgtlp88Mw7rmsV4ciaBM0BK/mWOYdju8Vc62SDNtGPHtxMxmvunQknyyK5mzw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN9PR12MB5065
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-
---TZWXuD58jiQlRBqH
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Sep 22, 2021 at 11:29:21AM +0200, Bartosz Golaszewski wrote:
-> On Tue, Sep 7, 2021 at 9:32 AM Prathamesh Shete <pshete@nvidia.com> wrote:
-> >
-> > From: pshete <pshete@nvidia.com>
-> >
-> > Tegra19x supports 8 entries for GPIO controller.
-> > This change adds the required interrupt entires for all GPIO controller=
-s.
-> >
-> > Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
-> > ---
-> >  arch/arm64/boot/dts/nvidia/tegra194.dtsi | 49 +++++++++++++++++++++++-
-> >  1 file changed, 47 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot=
-/dts/nvidia/tegra194.dtsi
-> > index b7d532841390..c681a79c44ec 100644
-> > --- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-> > +++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-> > @@ -34,11 +34,53 @@
-> >                         reg =3D <0x2200000 0x10000>,
-> >                               <0x2210000 0x10000>;
-> >                         interrupts =3D <GIC_SPI 288 IRQ_TYPE_LEVEL_HIGH=
->,
-> > +                                    <GIC_SPI 289 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                    <GIC_SPI 290 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                    <GIC_SPI 291 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                    <GIC_SPI 292 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                    <GIC_SPI 293 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                    <GIC_SPI 294 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                    <GIC_SPI 295 IRQ_TYPE_LEVEL_HIGH>,
-> >                                      <GIC_SPI 296 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                    <GIC_SPI 297 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                    <GIC_SPI 298 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                    <GIC_SPI 299 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                    <GIC_SPI 300 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                    <GIC_SPI 301 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                    <GIC_SPI 302 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                    <GIC_SPI 303 IRQ_TYPE_LEVEL_HIGH>,
-> >                                      <GIC_SPI 304 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                    <GIC_SPI 305 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                    <GIC_SPI 306 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                    <GIC_SPI 307 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                    <GIC_SPI 308 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                    <GIC_SPI 309 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                    <GIC_SPI 310 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                    <GIC_SPI 311 IRQ_TYPE_LEVEL_HIGH>,
-> >                                      <GIC_SPI 312 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                    <GIC_SPI 313 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                    <GIC_SPI 314 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                    <GIC_SPI 315 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                    <GIC_SPI 316 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                    <GIC_SPI 317 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                    <GIC_SPI 318 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                    <GIC_SPI 319 IRQ_TYPE_LEVEL_HIGH>,
-> >                                      <GIC_SPI 320 IRQ_TYPE_LEVEL_HIGH>,
-> > -                                    <GIC_SPI 328 IRQ_TYPE_LEVEL_HIGH>;
-> > +                                    <GIC_SPI 321 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                    <GIC_SPI 322 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                    <GIC_SPI 323 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                    <GIC_SPI 324 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                    <GIC_SPI 325 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                    <GIC_SPI 326 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                    <GIC_SPI 327 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                    <GIC_SPI 328 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                    <GIC_SPI 329 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                    <GIC_SPI 330 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                    <GIC_SPI 331 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                    <GIC_SPI 332 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                    <GIC_SPI 333 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                    <GIC_SPI 334 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                    <GIC_SPI 335 IRQ_TYPE_LEVEL_HIGH>;
-> >                         #interrupt-cells =3D <2>;
-> >                         interrupt-controller;
-> >                         #gpio-cells =3D <2>;
-> > @@ -1273,7 +1315,10 @@
-> >                         reg-names =3D "security", "gpio";
-> >                         reg =3D <0xc2f0000 0x1000>,
-> >                               <0xc2f1000 0x1000>;
-> > -                       interrupts =3D <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>;
-> > +                       interrupts =3D <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                    <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                    <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                    <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>;
-> >                         gpio-controller;
-> >                         #gpio-cells =3D <2>;
-> >                         interrupt-controller;
-> > --
-> > 2.17.1
-> >
->=20
-> Prathamesh: what are the changes between the three versions of this
-> patch I have in my inbox? Please always include a brief list of
-> updates when resending.
->=20
-> Thierry: does this make sense to you?
-
-Hi Bartosz,
-
-the following patches from me that you applied earlier:
-
-	[PATCH 1/2] gpio: tegra186: Force one interrupt per bank
-	[PATCH 2/2] gpio: tegra186: Support multiple interrupts per bank
-
-are replacements for patch 1 in this series, so that should no longer be
-needed. Patch 2 of this series (the DT change) I plan to pick up into
-the Tegra tree for v5.16.
-
-Thierry
-
---TZWXuD58jiQlRBqH
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmFLLsQACgkQ3SOs138+
-s6H1IxAAs2MG8Sjg2u/ML2lglBekLE+MEl+e+TGzJPTVmckSesk/sbcdkPqenHso
-frfGukBgQy4nBeYaF0sYcuAvBctIdiRjJSG33P0SOUDM5eihF9PcEvZQNXY+rLl6
-HquKqkz1qhyDTHv0jaooSWStOyittpSL2hZ2jSJ3HETMPOZyiuNy9IOWc61J78yB
-HgKGHSKvZsHDk1vcH+hn+NAD4k4lKlut6D0Ijf+KLqQGjc8Z7QEUyXf5ipXVt7Bh
-/+yxTHW9lQBpwb7jlekD0fPa88g5UyFcS1vwgD7zLNsCx0tk5W5FPtJxa+Vlso1q
-zDqxAmlUoYOnlgr2zepIksv7Yv+ga/Bej+sibjrkd4gOcTuXyrQ7Nn10JC0Ja3Vo
-Go9nDcT8a8v9UkM1o2WhuJM8S2dawvykIsq47eT9vF5cmJKUErNfQ0EnW8ZtaDg9
-Xk6ScDbAD/nEGBefrWF7dyGrciHZI8PEgE5ZBqkn0HY1+7KWxVo9/mtsuPKh3oNt
-3np+BwPRtOgYT49I72Y7FeGwUVBISPW6pd9F1cpk9yM/pTceG52r+ycbtsT0JhXL
-ef2T99e5Mr/TOb9G8Ck4hoAc/sRopShby8kPuSpw6MtEEr/x13f+u9YRCypStgIG
-vOQyCDNl8QLYMiE0pqTWf5G2R9Sh0vmyJ1NAIkUu97Mmj9hli4M=
-=zlYR
------END PGP SIGNATURE-----
-
---TZWXuD58jiQlRBqH--
+DQo+IE9uIDE3LzA5LzIwMjEgMTU6MTEsIEFraGlsIFIgd3JvdGU6DQo+ID4gK3N0YXRpYyBpbnQg
+dGVncmFfZG1hX3NsYXZlX2NvbmZpZyhzdHJ1Y3QgZG1hX2NoYW4gKmRjLA0KPiA+ICsJCQkJICBz
+dHJ1Y3QgZG1hX3NsYXZlX2NvbmZpZyAqc2NvbmZpZykgew0KPiA+ICsJc3RydWN0IHRlZ3JhX2Rt
+YV9jaGFubmVsICp0ZGMgPSB0b190ZWdyYV9kbWFfY2hhbihkYyk7DQo+ID4gKw0KPiA+ICsJaWYg
+KHRkYy0+ZG1hX2Rlc2MpIHsNCj4gPiArCQlkZXZfZXJyKHRkYzJkZXYodGRjKSwgIkNvbmZpZ3Vy
+YXRpb24gbm90IGFsbG93ZWRcbiIpOw0KPiA+ICsJCXJldHVybiAtRUJVU1k7DQo+ID4gKwl9DQo+
+ID4gKw0KPiA+ICsJbWVtY3B5KCZ0ZGMtPmRtYV9zY29uZmlnLCBzY29uZmlnLCBzaXplb2YoKnNj
+b25maWcpKTsNCj4gPiArCWlmICh0ZGMtPnNsYXZlX2lkID09IC0xKQ0KPiA+ICsJCXRkYy0+c2xh
+dmVfaWQgPSBzY29uZmlnLT5zbGF2ZV9pZDsNCj4gPiArDQo+ID4gKwl0ZGMtPmNvbmZpZ19pbml0
+ID0gdHJ1ZTsNCj4gPiArCXJldHVybiAwOw0KPiA+ICt9DQo+IA0KPiBTbyB5b3UgaGF2ZSBhIGZ1
+bmN0aW9uIHRvIHJlc2VydmUgYSBzbGF2ZSBJRCwgYnV0IHlvdSBkb24ndCBjaGVjayBoZXJlIGlm
+IGl0IGlzDQo+IGFscmVhZHkgcmVzZXJ2ZWQuDQpzbGF2ZS1pZCBpcyByZXNlcnZlZCBjb25zaWRl
+cmluZyB0aGUgZGlyZWN0aW9uIGFzIHdlbGwuDQonZGlyZWN0aW9uJyBpcyBhdmFpbGFibGUgb25s
+eSBkdXJpbmcgcHJlcF9zbGF2ZV9zZyBmdW5jdGlvbiwgSSBndWVzcy4NCj4NCj4gLi4uDQo+DQo+
+ID4gKw0KPiA+ICsJaW9tbXVfc3BlYyA9IGRldl9pb21tdV9md3NwZWNfZ2V0KCZwZGV2LT5kZXYp
+Ow0KPiA+ICsJaWYgKCFpb21tdV9zcGVjKSB7DQo+ID4gKwkJZGV2X2VycigmcGRldi0+ZGV2LCAi
+TWlzc2luZyBpb21tdSBzdHJlYW0taWRcbiIpOw0KPiA+ICsJCXJldHVybiAtRUlOVkFMOw0KPiA+
+ICsJfQ0KPiA+ICsJc3RyZWFtX2lkID0gaW9tbXVfc3BlYy0+aWRzWzBdICYgMHhmZmZmOw0KPiAN
+Cj4gSXMgaXQgYW4gZXJyb3IgaWYgdGhlIElEIGlzIGdyZWF0ZXIgdGhhbiAweGZmZmY/DQpUaGUg
+dmFsdWUgc2hvdWxkIGNvcnJlc3BvbmQgdG8gb25lIG9mIHRoZSBHUEMgRE1BIENsaWVudHMgbGlz
+dGVkIGluDQppbmNsdWRlL2R0LWJpbmRpbmdzL21lbW9yeS90ZWdyYTE4Ni1tYy5oLg0KSSBzYXcg
+c2ltaWxhciBtYXNraW5nIGluIG90aGVyIHRlZ3JhIGRyaXZlcnMgYWxzbyBmb3Igc3RyZWFtLWlk
+Lg0KDQpXb3VsZCBhZGQgZml4ZXMgZm9yIG90aGVyIGNvbW1lbnRzIGluIHRoZSBuZXh0IHZlcnNp
+b24uDQoNClRoYW5rcywNCkFraGlsDQoNCi0tDQogbnZwdWJsaWMNCg==
