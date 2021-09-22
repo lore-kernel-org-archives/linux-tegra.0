@@ -2,271 +2,89 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E7A1C433EF
-	for <linux-tegra@archiver.kernel.org>; Wed, 22 Sep 2021 08:11:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE547C433FE
+	for <linux-tegra@archiver.kernel.org>; Wed, 22 Sep 2021 09:27:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5BDA36124A
-	for <linux-tegra@archiver.kernel.org>; Wed, 22 Sep 2021 08:11:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 92DD461268
+	for <linux-tegra@archiver.kernel.org>; Wed, 22 Sep 2021 09:27:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233438AbhIVINY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 22 Sep 2021 04:13:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52630 "EHLO
+        id S234327AbhIVJ2h (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 22 Sep 2021 05:28:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41930 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233383AbhIVINX (ORCPT
+        with ESMTP id S234323AbhIVJ2g (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 22 Sep 2021 04:13:23 -0400
-Received: from mail-pg1-x52c.google.com (mail-pg1-x52c.google.com [IPv6:2607:f8b0:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5BC12C061574;
-        Wed, 22 Sep 2021 01:11:54 -0700 (PDT)
-Received: by mail-pg1-x52c.google.com with SMTP id h3so1855747pgb.7;
-        Wed, 22 Sep 2021 01:11:54 -0700 (PDT)
+        Wed, 22 Sep 2021 05:28:36 -0400
+Received: from mail-qk1-x72e.google.com (mail-qk1-x72e.google.com [IPv6:2607:f8b0:4864:20::72e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2997C061756
+        for <linux-tegra@vger.kernel.org>; Wed, 22 Sep 2021 02:27:06 -0700 (PDT)
+Received: by mail-qk1-x72e.google.com with SMTP id 72so7392811qkk.7
+        for <linux-tegra@vger.kernel.org>; Wed, 22 Sep 2021 02:27:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Hl+l5LFSpIDeQUEySt0GHF3c1F9KFKOw7mjaQzOrdXI=;
-        b=I1YF2aKIleMUXgQ9iHtUTpphruTuxaIDUcAZ0pHyK4YspkVeMSCRDsibG1yWpRuAiS
-         9/6bFmDD8RfSGPPjNiYGXaC8iKGZTPYIW2MutyJdJ8zQhJ0AakfYvheE4J5ZwJnjkC5S
-         rPQW+W8yGkGVOxrf6DAzksnHx2dtA+dsRM5HG/jvMGTXV4LKFOy+XMKiEsUSVyCKO7Ak
-         6sRU8pEeFPgDTf4cywnnZj23T4yrSgY5X+1F2+uolWawvpvTdJWH9kYqKg6gAEemJ+yL
-         zUGV2l1cOs62MMZG/1PZS3gL2TxtChlPlvTPShq8+kNgJRV9NZ+QTvIEnH23CkUHfepO
-         de1Q==
+        d=baylibre-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Q5r+ZHmLBKiHQX70H5Ts56LudGzMirgnfs/7sEqKhoI=;
+        b=bVtsQFphxv+PMBaFYpCnAOxW+4TF/zNObKBiv3jRnZJdKhXF+sN8iULpqlK7nv2udy
+         EFb/O1TB3/yIDF4rt46bIctXU6lPtU6iMvapZQmNuvknsnEDRnHgSWodFUUGViCMXghP
+         1OzvUxhpmggDrW2jiODD41+Dzdk54eUo2x+FRmoYy2myVV5x4bPNVjs5RJ2RqJieRDfk
+         3a9GgMgnnNVwWw+TWLF3ueERRzIHuEXN/MqGTYOJaQhhwNlOs95vBIKE5CYhR9rxL91c
+         O2KJJbKrbsU8N8ypJhrTM0lI6dxSxjzYVumuURPCeYmmV7vUHm94aFDIYwsGQ5gKVBSQ
+         HagA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Hl+l5LFSpIDeQUEySt0GHF3c1F9KFKOw7mjaQzOrdXI=;
-        b=0AFOD9LJNVYCpudcuQoN7ocJecDZ5R0FYq6E/id2ZVwOIPK/FSI7k2XHH+vlVhgsXZ
-         EyvLeXf6ukemmGUw1ldqgC8PMBAXIsDttQmUt5bDTb/mp0CHF9L3ZAYiwXPaEi1oYJHE
-         6bTze80mAJttYnjlTRqzX2tDEnb3mOTYGhncXJiXyKoBmon3fiXAUt7nzHrvOw9DJ3hj
-         l4xetsfmcrpKGvoGnLlL3QbUHn76IABy+AhIWVp5GQ/MFXKYv+UPpoY22KgovOYn2kmo
-         TFcegPCmQfn1qinkepNLI/ReVKrViqkjy95o0ZdgKvZcuoUiY3xSQuzYAjFSpl57svje
-         uJ7Q==
-X-Gm-Message-State: AOAM533hOE3qqGbESE/951uylNGSNb4dTpy+awERUtDPg50fjWSnAo6F
-        ANnHSDE0NZl41eO++6ft7AGTn9kXBHs=
-X-Google-Smtp-Source: ABdhPJySdvkwKodKuedOd9YnaeTKwiWEaTtE8BOdl3CGeD88OFl53NdTvbqCHmMgygrX+cJ3jUA4Ug==
-X-Received: by 2002:a62:5803:0:b0:447:d62d:161a with SMTP id m3-20020a625803000000b00447d62d161amr10300663pfb.85.1632298313379;
-        Wed, 22 Sep 2021 01:11:53 -0700 (PDT)
-Received: from [172.30.1.2] ([14.32.163.5])
-        by smtp.gmail.com with ESMTPSA id j9sm4785067pjb.33.2021.09.22.01.11.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 Sep 2021 01:11:52 -0700 (PDT)
-Subject: Re: [PATCH v2 3/4] PM / devfreq: tegra30: Use resource-managed
- helpers
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>
-Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org
-References: <20210920172249.28206-1-digetx@gmail.com>
- <20210920172249.28206-4-digetx@gmail.com>
-From:   Chanwoo Choi <cwchoi00@gmail.com>
-Message-ID: <6acf32f7-99d2-af23-758d-14d503cfdc61@gmail.com>
-Date:   Wed, 22 Sep 2021 17:11:50 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Q5r+ZHmLBKiHQX70H5Ts56LudGzMirgnfs/7sEqKhoI=;
+        b=oXF1k1YMoSnGa3qbXi/W5MUyg8Cg0/HIwI74gk5aORSb/IRnfKBoDjVhkAZFq8HJBe
+         RnoxcIZ0C78cWiNGWPs09LXhNW9AQfUEs/5qTixE28QjSci3z8y2JOJ2EdWFBABoSBu2
+         cwjRSUejmbyIr0CPosJTPz8ZVxqa7nazJOoPdHE76ixF2MLPMrYogRpBDvexhRWcZ36j
+         9c1d/wG0UuSTbOtm3n3+Zy94FPN+IBjlIR9q5gLpil+85zy6ZtZ3GywNWZadi4mAeFMZ
+         KN2i11ypgzo8Rmx6D/Du4IRQpZdIhYlXp55aJJ42am8Y3tKZUH4RSHELCPPuBVgLNjHQ
+         cWoA==
+X-Gm-Message-State: AOAM53003zSNUcdnOMMbyqLg9uSz9DV3Ng+h38B7MYXqhCtNtY+Ty1BH
+        zoYBymJbWtJeh50FaeLQ41ZhWV89xC4yCbelHygqIwrzBaU=
+X-Google-Smtp-Source: ABdhPJwH8elDXf5KgspL13jX2tuE0QijykSs4P2ooWi/01P1LoJpz19UTo89aNkMG8go0fKysFrVB+WfuWILVnzwYu4=
+X-Received: by 2002:a25:cbc3:: with SMTP id b186mr42620852ybg.199.1632302826203;
+ Wed, 22 Sep 2021 02:27:06 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20210920172249.28206-4-digetx@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20210917105412.595539-1-thierry.reding@gmail.com>
+In-Reply-To: <20210917105412.595539-1-thierry.reding@gmail.com>
+From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date:   Wed, 22 Sep 2021 11:26:55 +0200
+Message-ID: <CAMpxmJVhmeiE7vR4T+U7zDeqounqRNdTh9sZ6SEdqtyVM3E+og@mail.gmail.com>
+Subject: Re: [PATCH 1/2] gpio: tegra186: Force one interrupt per bank
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Prathamesh Shete <pshete@nvidia.com>,
+        linux-gpio <linux-gpio@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 21. 9. 21. 오전 2:22, Dmitry Osipenko wrote:
-> Use resource-managed API helpers to simplify driver's probe() function,
-> making code cleaner.
-> 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+On Fri, Sep 17, 2021 at 12:54 PM Thierry Reding
+<thierry.reding@gmail.com> wrote:
+>
+> From: Thierry Reding <treding@nvidia.com>
+>
+> Newer chips support up to 8 interrupts per bank, which can be useful to
+> balance the load and decrease latency. However, it also required a very
+> complicated interrupt routing to be set up. To keep things simple for
+> now, ensure that a single interrupt per bank is enforced, even if all
+> possible interrupts are described in device tree.
+>
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
 > ---
->   drivers/devfreq/tegra30-devfreq.c | 107 +++++++++++++-----------------
->   1 file changed, 46 insertions(+), 61 deletions(-)
-> 
-> diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
-> index 10661eb2aed8..d83fdc2713ed 100644
-> --- a/drivers/devfreq/tegra30-devfreq.c
-> +++ b/drivers/devfreq/tegra30-devfreq.c
-> @@ -178,7 +178,6 @@ struct tegra_devfreq_soc_data {
->   
->   struct tegra_devfreq {
->   	struct devfreq		*devfreq;
-> -	struct opp_table	*opp_table;
->   
->   	struct reset_control	*reset;
->   	struct clk		*clock;
-> @@ -789,6 +788,39 @@ static struct devfreq_governor tegra_devfreq_governor = {
->   	.event_handler = tegra_governor_event_handler,
->   };
->   
-> +static void devm_tegra_devfreq_deinit_hw(void *data)
-> +{
-> +	struct tegra_devfreq *tegra = data;
-> +
-> +	reset_control_reset(tegra->reset);
-> +	clk_disable_unprepare(tegra->clock);
-> +}
-> +
-> +static int devm_tegra_devfreq_init_hw(struct device *dev,
-> +				      struct tegra_devfreq *tegra)
-> +{
-> +	int err;
-> +
-> +	err = clk_prepare_enable(tegra->clock);
-> +	if (err) {
-> +		dev_err(dev, "Failed to prepare and enable ACTMON clock\n");
-> +		return err;
-> +	}
-> +
-> +	err = devm_add_action_or_reset(dev, devm_tegra_devfreq_deinit_hw,
-> +				       tegra);
-> +	if (err)
-> +		return err;
-> +
-> +	err = reset_control_reset(tegra->reset);
-> +	if (err) {
-> +		dev_err(dev, "Failed to reset hardware: %d\n", err);
-> +		return err;
-> +	}
-> +
-> +	return err;
-> +}
-> +
->   static int tegra_devfreq_probe(struct platform_device *pdev)
->   {
->   	u32 hw_version = BIT(tegra_sku_info.soc_speedo_id);
-> @@ -842,38 +874,26 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
->   		return err;
->   	}
->   
-> -	tegra->opp_table = dev_pm_opp_set_supported_hw(&pdev->dev,
-> -						       &hw_version, 1);
-> -	err = PTR_ERR_OR_ZERO(tegra->opp_table);
-> +	err = devm_pm_opp_set_supported_hw(&pdev->dev, &hw_version, 1);
->   	if (err) {
->   		dev_err(&pdev->dev, "Failed to set supported HW: %d\n", err);
->   		return err;
->   	}
->   
-> -	err = dev_pm_opp_of_add_table_noclk(&pdev->dev, 0);
-> +	err = devm_pm_opp_of_add_table_noclk(&pdev->dev, 0);
->   	if (err) {
->   		dev_err(&pdev->dev, "Failed to add OPP table: %d\n", err);
-> -		goto put_hw;
-> -	}
-> -
-> -	err = clk_prepare_enable(tegra->clock);
-> -	if (err) {
-> -		dev_err(&pdev->dev,
-> -			"Failed to prepare and enable ACTMON clock\n");
-> -		goto remove_table;
-> +		return err;
->   	}
->   
-> -	err = reset_control_reset(tegra->reset);
-> -	if (err) {
-> -		dev_err(&pdev->dev, "Failed to reset hardware: %d\n", err);
-> -		goto disable_clk;
-> -	}
-> +	err = devm_tegra_devfreq_init_hw(&pdev->dev, tegra);
-> +	if (err)
-> +		return err;
->   
->   	rate = clk_round_rate(tegra->emc_clock, ULONG_MAX);
->   	if (rate < 0) {
->   		dev_err(&pdev->dev, "Failed to round clock rate: %ld\n", rate);
-> -		err = rate;
-> -		goto disable_clk;
-> +		return rate;
->   	}
->   
->   	tegra->max_freq = rate / KHZ;
-> @@ -892,52 +912,18 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
->   	INIT_DELAYED_WORK(&tegra->cpufreq_update_work,
->   			  tegra_actmon_delayed_update);
->   
-> -	err = devfreq_add_governor(&tegra_devfreq_governor);
-> +	err = devm_devfreq_add_governor(&pdev->dev, &tegra_devfreq_governor);
->   	if (err) {
->   		dev_err(&pdev->dev, "Failed to add governor: %d\n", err);
-> -		goto remove_opps;
-> +		return err;
->   	}
->   
->   	tegra_devfreq_profile.initial_freq = clk_get_rate(tegra->emc_clock);
->   
-> -	devfreq = devfreq_add_device(&pdev->dev, &tegra_devfreq_profile,
-> -				     "tegra_actmon", NULL);
-> -	if (IS_ERR(devfreq)) {
-> -		err = PTR_ERR(devfreq);
-> -		goto remove_governor;
-> -	}
-> -
-> -	return 0;
-> -
-> -remove_governor:
-> -	devfreq_remove_governor(&tegra_devfreq_governor);
-> -
-> -remove_opps:
-> -	dev_pm_opp_remove_all_dynamic(&pdev->dev);
-> -
-> -	reset_control_reset(tegra->reset);
-> -disable_clk:
-> -	clk_disable_unprepare(tegra->clock);
-> -remove_table:
-> -	dev_pm_opp_of_remove_table(&pdev->dev);
-> -put_hw:
-> -	dev_pm_opp_put_supported_hw(tegra->opp_table);
-> -
-> -	return err;
-> -}
-> -
-> -static int tegra_devfreq_remove(struct platform_device *pdev)
-> -{
-> -	struct tegra_devfreq *tegra = platform_get_drvdata(pdev);
-> -
-> -	devfreq_remove_device(tegra->devfreq);
-> -	devfreq_remove_governor(&tegra_devfreq_governor);
-> -
-> -	reset_control_reset(tegra->reset);
-> -	clk_disable_unprepare(tegra->clock);
-> -
-> -	dev_pm_opp_of_remove_table(&pdev->dev);
-> -	dev_pm_opp_put_supported_hw(tegra->opp_table);
-> +	devfreq = devm_devfreq_add_device(&pdev->dev, &tegra_devfreq_profile,
-> +					  "tegra_actmon", NULL);
-> +	if (IS_ERR(devfreq))
-> +		return PTR_ERR(devfreq);
->   
->   	return 0;
->   }
-> @@ -967,7 +953,6 @@ MODULE_DEVICE_TABLE(of, tegra_devfreq_of_match);
->   
->   static struct platform_driver tegra_devfreq_driver = {
->   	.probe	= tegra_devfreq_probe,
-> -	.remove	= tegra_devfreq_remove,
->   	.driver = {
->   		.name = "tegra-devfreq",
->   		.of_match_table = tegra_devfreq_of_match,
-> 
 
-It is more readable than before. Thanks.
+Applied, thanks!
 
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
-
--- 
-Best Regards,
-Samsung Electronics
-Chanwoo Choi
+Bart
