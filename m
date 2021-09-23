@@ -2,105 +2,131 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-20.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 007C0C433F5
-	for <linux-tegra@archiver.kernel.org>; Thu, 23 Sep 2021 03:45:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA781C433F5
+	for <linux-tegra@archiver.kernel.org>; Thu, 23 Sep 2021 04:20:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D9E586103C
-	for <linux-tegra@archiver.kernel.org>; Thu, 23 Sep 2021 03:45:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 91CB46109E
+	for <linux-tegra@archiver.kernel.org>; Thu, 23 Sep 2021 04:20:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239771AbhIWDqf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 22 Sep 2021 23:46:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42924 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S239741AbhIWDoa (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 22 Sep 2021 23:44:30 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 148626135A;
-        Thu, 23 Sep 2021 03:41:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1632368475;
-        bh=uyIjuT+4JR6/En6HSFZak4qsxmwjzchBwls2cvImhoY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BxbEyPZRlkeLaApBUXeYiyVrJ+9PRUeZUh0+Zb/X+kcqAX+/8c+Ej+jm4x9rs+bzE
-         bbh5EMDI1dtjHz9kNb8Zvu+27SqOWa53GB8lFURZWmcGNUsPB135v8pI3TpdHVyZG4
-         03jUSLPEMnHA+DO3ESYH6Eecg0lIJpCT6zUT24SkixVVO59m84Ym5Q4fAz5/rnXa6J
-         N51l5CRhy8a8n1QsFS2zvjp5d7luI8u5GqM49RKJJ8S01O/FhEFCBqxVQHEyyYZqCq
-         MW18/+v5/oWkqoWfsRl+1BjuAIR2PpKUQKwLXiKSWwrb32aSB8OJAy4bcufk3ocVYR
-         5KZ/IdLEU4aqQ==
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Sasha Levin <sashal@kernel.org>, ldewangan@nvidia.com,
-        broonie@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com,
-        linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 10/10] spi: Fix tegra20 build with CONFIG_PM=n
-Date:   Wed, 22 Sep 2021 23:40:53 -0400
-Message-Id: <20210923034055.1422059-10-sashal@kernel.org>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210923034055.1422059-1-sashal@kernel.org>
-References: <20210923034055.1422059-1-sashal@kernel.org>
+        id S229583AbhIWEWU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 23 Sep 2021 00:22:20 -0400
+Received: from mail-bn7nam10on2056.outbound.protection.outlook.com ([40.107.92.56]:32993
+        "EHLO NAM10-BN7-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S229504AbhIWEWU (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 23 Sep 2021 00:22:20 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=MRs8+EJhY91KpYhRt0sgOiImQScEqeRR+loMXF+RbacO/zsolO+IYtkJql680RTYIEyCywZxKti/ok0YnzEGhLW1oCoAAbbvosP1V29+T9JI/fyDzUfONJQms9K24wL1YoBIcUuONHyC3L2YI7VACrPsP3dg/wPu8El/ugeoXeoWy+9S5+oG9JqvmkfG0/N3PIJwYISrLKbaoP7CCuI5525GdidICL6b0x5KSuUvbUo5MVy7m10ZwVRka9IYy6trIIEXk+xEhErhPhUnU8W+uVp0BeuNhKsE1E8mW/O1wLvhmHNLxLJIUzO2uEqU6Xjbo8plQoUZDBIxBIXeCkXa8w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901; h=From:Date:Subject:Message-ID:Content-Type:MIME-Version;
+ bh=rDgtMoUhboKCGPVyaqJEv7sHDX1Hjp3948zFYjy7JM0=;
+ b=iU8TFSAGEULPNhq/xH1xAaw9YGyuwWfGhxbKTwch4OTDuAsU8ohGd3BcNKgOuT+TrZzjrUcBr+Opohk1xsc75BW980Aw7uTU03NpbdXsp1DvtaRPHElFgbLTA/ZVYPAv0eMESiATMahYi6i9+VgBpx+5TbuVDojDlpWq4T2XooPRtoBxmDtnpThh/ruSM6QNtjPPAiDTDmg6D71lGIXy8XBeSTHEYS4LnbCen7uQl0lZxntLNy9yVXwmBfW9NO1fq8+z/lOdq2eh5xjV1V61mHZn2zXwkO/TrnvdGY9LBhM7otN35ri7VB2uQ/ZwSkgjwbjx+oUlohNW3BnRs79e1g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.112.32) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rDgtMoUhboKCGPVyaqJEv7sHDX1Hjp3948zFYjy7JM0=;
+ b=iYIe6YFmUy5NkfotHD2oNsyqbIocjAsaHKaivX6lmT1JPjw/lGJ7OZGD5OJnZ8SUV+Fris9wL9+q7eA0uZnyrMMqEisTLRS/RxUqaK6+Yr8lvr3DmO2a8nQeE2SGsCG8T32S86xo7fuWcV8xDsW4mydiatig/zHQi5NJBO4bDAeGTfdlvPwIB5RPBo1tLjOulTeQZCpsUAFfjeCPAXgzLDc2q68omKM9T/lKND2wKTuSEmUWzxfHpA5F3XgX8G5PwQ+3orXTglVOj7LtJvUYdJY06hUWRF5btWNn2O/rX7UIcNVeT+Q+AvRvvbsW8pXY7IdRvcsKqui+hStT9ZpAkw==
+Received: from BN6PR16CA0011.namprd16.prod.outlook.com (2603:10b6:404:f5::21)
+ by CH2PR12MB4152.namprd12.prod.outlook.com (2603:10b6:610:a7::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4544.14; Thu, 23 Sep
+ 2021 04:20:46 +0000
+Received: from BN8NAM11FT068.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:404:f5:cafe::13) by BN6PR16CA0011.outlook.office365.com
+ (2603:10b6:404:f5::21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4544.13 via Frontend
+ Transport; Thu, 23 Sep 2021 04:20:46 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.32)
+ smtp.mailfrom=nvidia.com; vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.112.32 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.112.32; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (216.228.112.32) by
+ BN8NAM11FT068.mail.protection.outlook.com (10.13.177.69) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.4544.13 via Frontend Transport; Thu, 23 Sep 2021 04:20:46 +0000
+Received: from DRHQMAIL107.nvidia.com (10.27.9.16) by HQMAIL109.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Wed, 22 Sep
+ 2021 21:20:45 -0700
+Received: from [10.25.97.189] (172.20.187.5) by DRHQMAIL107.nvidia.com
+ (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Thu, 23 Sep
+ 2021 04:20:42 +0000
+Subject: Re: [PATCH] ASoC: tegra: Constify static snd_soc_dai_ops structs
+To:     Rikard Falkeborn <rikard.falkeborn@gmail.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>
+CC:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        "Thierry Reding" <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        <alsa-devel@alsa-project.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20210922205438.34519-1-rikard.falkeborn@gmail.com>
+From:   Sameer Pujar <spujar@nvidia.com>
+Message-ID: <73afcb2c-3ab3-8fe9-2d66-ee6ab9497089@nvidia.com>
+Date:   Thu, 23 Sep 2021 09:50:40 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210922205438.34519-1-rikard.falkeborn@gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-GB
+X-Originating-IP: [172.20.187.5]
+X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
+ DRHQMAIL107.nvidia.com (10.27.9.16)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 9ef6aaa2-c64c-4db4-42da-08d97e498424
+X-MS-TrafficTypeDiagnostic: CH2PR12MB4152:
+X-Microsoft-Antispam-PRVS: <CH2PR12MB41525C6F0A28B36FC9650CE4A7A39@CH2PR12MB4152.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:5236;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: OcEqd/LFKvooqYxeEENPOujhHss+GHC+Vc95QAbf7QOxzavKWguPllQyRK5W8Xy5FrlGfHNxVHqJuDHpBsEWdbrMwlx+pMlQyYZqWypjoz7AxWLBsFtg8jgmwm2TBOmqchgmbWUplENSccBP3sxvMwwXh8ubFZxrHTyOcO/sQFsDxi4LZK/ylodKtXWH1uGeUvrE8pwsnEK88tjJfMI5W+W+FaCR4/kqtoU2oBU4VoWHzEpWISuvi4lwVHcWtsO+sB5blAz6ISfJBr18NoNzWraM/EtL3AeGbOuf4n6xi9yvjKq1X5vb+SxiopDZcZKT1hhxaE3WxhXNRKIBJHiP/wWKFZYFe31GkyEQCwuPpKKLA5PQqongFYriC+h+TU6gKsuTiTQDkulj73B2FvchYkRYRGca+lHdbt9N7oM0uMtsIN8+UsgnrbM0aK91/+6TxuD5TJx2N+Cjq5oyOK/YSg5qYzs/AW+rMs371xCR/poaMwYLIcqEGOVN1oBS6XScpKJ5fsQLyALSrCxnXBZwkWkDIF39QxYL+HxcpVtb+mWjWuYif6gVAYPEu5NjkL2HBbx4fyMn4dl/jzpQ9Vs5WS4iwTIKewtkNpNlpAyfk6p63gJwrCWUlsKGh1udqM09wTSS2TuW2TiUxg8CYNNti/5oqXQhb1KPygy53ZlslPwQAD9WbtZpixCsJE5slofWOtEoPCFqb4WqWzgm8R85zpOGiqA9tbJwrodNqr+BlGM=
+X-Forefront-Antispam-Report: CIP:216.228.112.32;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid01.nvidia.com;CAT:NONE;SFS:(4636009)(36840700001)(46966006)(5660300002)(16526019)(16576012)(110136005)(2906002)(54906003)(8936002)(426003)(336012)(186003)(316002)(31686004)(36860700001)(26005)(4744005)(4326008)(47076005)(53546011)(82310400003)(508600001)(70206006)(36756003)(356005)(83380400001)(86362001)(31696002)(7636003)(2616005)(70586007)(8676002)(43740500002);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Sep 2021 04:20:46.2708
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9ef6aaa2-c64c-4db4-42da-08d97e498424
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.32];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT068.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4152
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Linus Torvalds <torvalds@linux-foundation.org>
 
-[ Upstream commit efafec27c5658ed987e720130772f8933c685e87 ]
 
-Without CONFIG_PM enabled, the SET_RUNTIME_PM_OPS() macro ends up being
-empty, and the only use of tegra_slink_runtime_{resume,suspend} goes
-away, resulting in
+On 9/23/2021 2:24 AM, Rikard Falkeborn wrote:
+> The only usage of these is to assign their address to the ops field in
+> the snd_soc_dai_driver struct, which is a pointer to const. Make them
+> const to allow the compiler to put them in read-only memory.
+>
+> Signed-off-by: Rikard Falkeborn <rikard.falkeborn@gmail.com>
+> ---
+>   sound/soc/tegra/tegra210_adx.c   | 4 ++--
+>   sound/soc/tegra/tegra210_amx.c   | 4 ++--
+>   sound/soc/tegra/tegra210_mixer.c | 4 ++--
+>   sound/soc/tegra/tegra210_mvc.c   | 2 +-
+>   sound/soc/tegra/tegra210_sfc.c   | 4 ++--
+>   5 files changed, 9 insertions(+), 9 deletions(-)
+>
 
-  drivers/spi/spi-tegra20-slink.c:1200:12: error: ‘tegra_slink_runtime_resume’ defined but not used [-Werror=unused-function]
-   1200 | static int tegra_slink_runtime_resume(struct device *dev)
-        |            ^~~~~~~~~~~~~~~~~~~~~~~~~~
-  drivers/spi/spi-tegra20-slink.c:1188:12: error: ‘tegra_slink_runtime_suspend’ defined but not used [-Werror=unused-function]
-   1188 | static int tegra_slink_runtime_suspend(struct device *dev)
-        |            ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+Thank you Rikard for the patch.
 
-mark the functions __maybe_unused to make the build happy.
-
-This hits the alpha allmodconfig build (and others).
-
-Reported-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/spi/spi-tegra20-slink.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/spi/spi-tegra20-slink.c b/drivers/spi/spi-tegra20-slink.c
-index 9f14560686b6..88bfe7682a9e 100644
---- a/drivers/spi/spi-tegra20-slink.c
-+++ b/drivers/spi/spi-tegra20-slink.c
-@@ -1210,7 +1210,7 @@ static int tegra_slink_resume(struct device *dev)
- }
- #endif
- 
--static int tegra_slink_runtime_suspend(struct device *dev)
-+static int __maybe_unused tegra_slink_runtime_suspend(struct device *dev)
- {
- 	struct spi_master *master = dev_get_drvdata(dev);
- 	struct tegra_slink_data *tspi = spi_master_get_devdata(master);
-@@ -1222,7 +1222,7 @@ static int tegra_slink_runtime_suspend(struct device *dev)
- 	return 0;
- }
- 
--static int tegra_slink_runtime_resume(struct device *dev)
-+static int __maybe_unused tegra_slink_runtime_resume(struct device *dev)
- {
- 	struct spi_master *master = dev_get_drvdata(dev);
- 	struct tegra_slink_data *tspi = spi_master_get_devdata(master);
--- 
-2.30.2
-
+Acked-by: Sameer Pujar <spujar@nvidia.com>
