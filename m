@@ -5,63 +5,63 @@ X-Spam-Level:
 X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3949EC064F9
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2BC9C05032
 	for <linux-tegra@archiver.kernel.org>; Fri, 24 Sep 2021 06:44:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 257AB61279
+	by mail.kernel.org (Postfix) with ESMTP id 98B876124F
 	for <linux-tegra@archiver.kernel.org>; Fri, 24 Sep 2021 06:44:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244492AbhIXGp6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 24 Sep 2021 02:45:58 -0400
-Received: from new3-smtp.messagingengine.com ([66.111.4.229]:36035 "EHLO
+        id S244305AbhIXGp7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 24 Sep 2021 02:45:59 -0400
+Received: from new3-smtp.messagingengine.com ([66.111.4.229]:58455 "EHLO
         new3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S244408AbhIXGpr (ORCPT
+        by vger.kernel.org with ESMTP id S244267AbhIXGpz (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 24 Sep 2021 02:45:47 -0400
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 4413858107C;
-        Fri, 24 Sep 2021 02:44:14 -0400 (EDT)
+        Fri, 24 Sep 2021 02:45:55 -0400
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailnew.nyi.internal (Postfix) with ESMTP id B396058107F;
+        Fri, 24 Sep 2021 02:44:19 -0400 (EDT)
 Received: from mailfrontend1 ([10.202.2.162])
-  by compute3.internal (MEProxy); Fri, 24 Sep 2021 02:44:14 -0400
+  by compute4.internal (MEProxy); Fri, 24 Sep 2021 02:44:19 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=u92.eu; h=from
         :to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=fm3; bh=tQ7fPMA+k/ful
-        DlgZN6bcVcmaKq9X2y5rvMhwSoX/o0=; b=Zjst53zsynbvx1z5/4T4LviMKVeKW
-        vSC+kRVtIHeybzjgB+cm9w/lvtMJGgdtROr2NWXXaYUEIs5m8VZMR9kDBLWCb2gz
-        MFhR6iVtu+rcoyNVbmz4uu3Ayknb7wVMUz9vkv9TH9nav7ZYmmfCR4lUH1zgErso
-        QHdmTZSaACSwYGlLlZLuNUcUsQBqTy/+TVrv7jkYPUVX1Of7LONV+MS5P1dMxQ6P
-        MZbmwLOaWgFbUBJotmads7AjYL6rgrxlZArQLFHIanrJUv7D5XqZA7jhOkSLi7zC
-        R5upFM9rZq7BMbrvegw08bqzfv6gF5Dj81g33DEqB4o0vB7IhkC8YCkdA==
+        :mime-version:content-transfer-encoding; s=fm3; bh=xpHw3dVyitCss
+        wUBuUby/MBpmwaRe7OGtFviC33KSf0=; b=Obavd4dRrAcTjE8izX7By+AWxmPWR
+        sd95TNPTS45RoGX2YsI6pu4O4eW+14r+bNIq8ZgKpBqUqTDAV0DNIGCyKbPvEdxN
+        J6K9f9vY4rVSQxDd3wds8VBLr3f4qAL9wxCnNByKNcMwVG0LvZD46WP/yexfLSPg
+        ++HlaWjxBFjjwfkmKQ7sA0Lx014/SIZ0pauKFc1avmVyx46sMPBgwnv3SeYGfZ6d
+        3rY8SirosES4grZEVNbqh72rh3StVe580etPIsMqQWkQLB96NpWCcVz65r+S0TIb
+        k2birgSYUEA/bBuPeaIaZJ+3DQuk0DM6BKPdEGMf4lQhyYBCKW8NkTpqg==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-transfer-encoding:date:from
         :in-reply-to:message-id:mime-version:references:subject:to
         :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm3; bh=tQ7fPMA+k/fulDlgZN6bcVcmaKq9X2y5rvMhwSoX/o0=; b=W2Ye1ny1
-        QKoj5Jt/dQhTo7C4XzB6salMQJKiE5nauB7UXTWM64IoHf23jukyusjXfHpU0UM4
-        llYAmIGZwbEBm8skIP9icUjOebCsovkiCFX8dA52riG0AqXZjJlP0xkb4SVziPSn
-        UFpoKae70R3SYDv3UxgHGMXun6YORySUTpV+vLccihm9hvyhZhPHQCxRlmVC87+t
-        fbglziisIhXleHOUrC0rzcV7K+HPr9pizny1T1krt3ItE5q4ji8csSCtYWjcy+ol
-        cRMV7tgPM/hMvSNp6ctH/gyP72K/CABo4P1WnJJS1gpmVueF8wdXlPnc/6aJ1noc
-        DBy/8E8KfbnVDw==
-X-ME-Sender: <xms:vnNNYbm1jTKs7Aq4lrklHXINIeSeRLMVmHYY5hFEiSAiHciMcGt0dw>
-    <xme:vnNNYe2xHBR2nJtoo5BnzWtF5H9rcumwVV4sE4SLezR4v4LjOfiyneWUI7QSUVp2a
-    zs3bL-fhj5E3ioRWg>
-X-ME-Received: <xmr:vnNNYRoI79uipGk4KcbIZOmj9fZmstWB5tThEvmnN5W86obaXW2SqLdUaWfcVoA0J-Fl>
+        fm3; bh=xpHw3dVyitCsswUBuUby/MBpmwaRe7OGtFviC33KSf0=; b=KKbu+FcI
+        qy/KmSy9fpXR+JUQxncRr4s1/ih7MSXWTbtu500gdkxQiDPlwjTrlHdz11R6N2wn
+        Nhj9yoDh1V0R98KNMbTp1A87y7DmgBihS9wo1h6vpy2kTfoEItzIrVJkeniPP+zH
+        i3XeJ4NPH/IZPHrdjuANggPDMppckBJMSZncjHm/h+S3USAeuJz9sorE1ITiAzNq
+        3aOOiJdY3c6N9kWWbIcdKhhm918XQ0MOT32MW1lX6K1d4lN+Xkoz0ocy1MB4W2kE
+        PVQloOsYAFF+A4ygMGzaBTK3vOP+rc8rEAwU934oNsuSpFY0eexZhIDkhReQ0IfH
+        R2JQsOheFX8iWQ==
+X-ME-Sender: <xms:w3NNYZbKJPz8mzYSYBvo7-ZTV7oWimulnFe3_tK5DJ9ieqwT_JG3_A>
+    <xme:w3NNYQYi64eIHF3wC_E-jGWVmViv_V5baeELplOZ2e73MjqzouM2lCwOHdorxcPiR
+    x0vsNq2BkUkggQR_g>
+X-ME-Received: <xmr:w3NNYb84l6iRJJ1CLp7rGSgpsZINnndDrJ-wdK1j7hxSHFtIvIDQmOU7lkkKYDZtHU1w>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrudejtddguddtlecutefuodetggdotefrod
     ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
     necuuegrihhlohhuthemuceftddtnecunecujfgurhephffvufffkffojghfggfgsedtke
     ertdertddtnecuhfhrohhmpefhvghrnhgrnhguohcutfgrmhhoshcuoehgrhgvvghnfhho
     ohesuhelvddrvghuqeenucggtffrrghtthgvrhhnpeekleekjedtheejheekfefggeevvd
-    fgueegffeuveduhfehueegkeeijedvvdejfeenucevlhhushhtvghrufhiiigvpedvnecu
+    fgueegffeuveduhfehueegkeeijedvvdejfeenucevlhhushhtvghrufhiiigvpedunecu
     rfgrrhgrmhepmhgrihhlfhhrohhmpehgrhgvvghnfhhoohesuhelvddrvghu
-X-ME-Proxy: <xmx:vnNNYTk76a6ZLVjhh6gKZzP5H-5Q18_LjJjoUVoA6mLzjacZeuGiYg>
-    <xmx:vnNNYZ0xU0ceU1JsVlJFYEegl8M5k7kQlGclYluwM8v821xLhEcSuQ>
-    <xmx:vnNNYSvKoYAP4UuwwGMZAjiokCsah3Axt5kw-MbFzDvmnfhS4ZgYhQ>
-    <xmx:vnNNYTycl45hqojThniP9QUh6zcO1m2T4GpgbYF0Si5YDM7dgt9rqQ>
+X-ME-Proxy: <xmx:w3NNYXovVtyZ4y8LR8CM83Egi624L2YfqgXJcGIh9NRrw6lr7CjPtA>
+    <xmx:w3NNYUqXFQw70sypI0sfdCMfqG6_H8e3cUv00thuYY166VyinySyVA>
+    <xmx:w3NNYdSCPLBQuCh2cmc9VY-_vdwfp7XQ_WPVKb-RjXW5o7xdkGcw8w>
+    <xmx:w3NNYb0inv4xpxoiFdX9SibNlPZstkWhkvwsUYFGd9DHyK5xBAg2iA>
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 24 Sep 2021 02:44:11 -0400 (EDT)
+ 24 Sep 2021 02:44:16 -0400 (EDT)
 From:   Fernando Ramos <greenfoo@u92.eu>
 To:     dri-devel@lists.freedesktop.org
 Cc:     linux-kernel@vger.kernel.org, sean@poorly.run,
@@ -69,9 +69,9 @@ Cc:     linux-kernel@vger.kernel.org, sean@poorly.run,
         intel-gfx@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
         freedreno@lists.freedesktop.org, nouveau@lists.freedesktop.org,
         linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: [PATCH v2 14/17] drm/gma500: cleanup: drm_modeset_lock_all() --> DRM_MODESET_LOCK_ALL_BEGIN()
-Date:   Fri, 24 Sep 2021 08:43:21 +0200
-Message-Id: <20210924064324.229457-15-greenfoo@u92.eu>
+Subject: [PATCH v2 16/17] drm: cleanup: remove drm_modeset_(un)lock_all()
+Date:   Fri, 24 Sep 2021 08:43:23 +0200
+Message-Id: <20210924064324.229457-17-greenfoo@u92.eu>
 X-Mailer: git-send-email 2.33.0
 In-Reply-To: <20210924064324.229457-1-greenfoo@u92.eu>
 References: <20210924064324.229457-1-greenfoo@u92.eu>
@@ -81,90 +81,140 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-As requested in Documentation/gpu/todo.rst, replace driver calls to
-drm_modeset_lock_all() with DRM_MODESET_LOCK_ALL_BEGIN() and
-DRM_MODESET_LOCK_ALL_END()
+Functions drm_modeset_lock_all() and drm_modeset_unlock_all() are no
+longer used anywhere and can be removed.
 
 Signed-off-by: Fernando Ramos <greenfoo@u92.eu>
 ---
- drivers/gpu/drm/gma500/psb_device.c | 18 ++++++++++++------
- 1 file changed, 12 insertions(+), 6 deletions(-)
+ drivers/gpu/drm/drm_modeset_lock.c | 94 +-----------------------------
+ include/drm/drm_modeset_lock.h     |  2 -
+ 2 files changed, 3 insertions(+), 93 deletions(-)
 
-diff --git a/drivers/gpu/drm/gma500/psb_device.c b/drivers/gpu/drm/gma500/psb_device.c
-index 951725a0f7a3..98d06736dbaa 100644
---- a/drivers/gpu/drm/gma500/psb_device.c
-+++ b/drivers/gpu/drm/gma500/psb_device.c
-@@ -8,6 +8,7 @@
- #include <linux/backlight.h>
+diff --git a/drivers/gpu/drm/drm_modeset_lock.c b/drivers/gpu/drm/drm_modeset_lock.c
+index fcfe1a03c4a1..afd1351749a5 100644
+--- a/drivers/gpu/drm/drm_modeset_lock.c
++++ b/drivers/gpu/drm/drm_modeset_lock.c
+@@ -77,93 +77,6 @@
  
- #include <drm/drm.h>
-+#include <drm/drm_drv.h>
+ static DEFINE_WW_CLASS(crtc_ww_class);
  
- #include "gma_device.h"
- #include "intel_bios.h"
-@@ -169,8 +170,10 @@ static int psb_save_display_registers(struct drm_device *dev)
- {
- 	struct drm_psb_private *dev_priv = dev->dev_private;
- 	struct drm_crtc *crtc;
-+	struct drm_modeset_acquire_ctx ctx;
- 	struct gma_connector *connector;
- 	struct psb_state *regs = &dev_priv->regs.psb;
-+	int ret;
- 
- 	/* Display arbitration control + watermarks */
- 	regs->saveDSPARB = PSB_RVDC32(DSPARB);
-@@ -183,7 +186,7 @@ static int psb_save_display_registers(struct drm_device *dev)
- 	regs->saveCHICKENBIT = PSB_RVDC32(DSPCHICKENBIT);
- 
- 	/* Save crtc and output state */
--	drm_modeset_lock_all(dev);
-+	DRM_MODESET_LOCK_ALL_BEGIN(dev, ctx, 0, ret);
- 	list_for_each_entry(crtc, &dev->mode_config.crtc_list, head) {
- 		if (drm_helper_crtc_in_use(crtc))
- 			dev_priv->ops->save_crtc(crtc);
-@@ -193,8 +196,9 @@ static int psb_save_display_registers(struct drm_device *dev)
- 		if (connector->save)
- 			connector->save(&connector->base);
- 
--	drm_modeset_unlock_all(dev);
--	return 0;
-+	DRM_MODESET_LOCK_ALL_END(dev, ctx, ret);
-+
-+	return ret;
- }
- 
+-/**
+- * drm_modeset_lock_all - take all modeset locks
+- * @dev: DRM device
+- *
+- * This function takes all modeset locks, suitable where a more fine-grained
+- * scheme isn't (yet) implemented. Locks must be dropped by calling the
+- * drm_modeset_unlock_all() function.
+- *
+- * This function is deprecated. It allocates a lock acquisition context and
+- * stores it in &drm_device.mode_config. This facilitate conversion of
+- * existing code because it removes the need to manually deal with the
+- * acquisition context, but it is also brittle because the context is global
+- * and care must be taken not to nest calls. New code should use the
+- * drm_modeset_lock_all_ctx() function and pass in the context explicitly.
+- */
+-void drm_modeset_lock_all(struct drm_device *dev)
+-{
+-	struct drm_mode_config *config = &dev->mode_config;
+-	struct drm_modeset_acquire_ctx *ctx;
+-	int ret;
+-
+-	ctx = kzalloc(sizeof(*ctx), GFP_KERNEL | __GFP_NOFAIL);
+-	if (WARN_ON(!ctx))
+-		return;
+-
+-	mutex_lock(&config->mutex);
+-
+-	drm_modeset_acquire_init(ctx, 0);
+-
+-retry:
+-	ret = drm_modeset_lock_all_ctx(dev, ctx);
+-	if (ret < 0) {
+-		if (ret == -EDEADLK) {
+-			drm_modeset_backoff(ctx);
+-			goto retry;
+-		}
+-
+-		drm_modeset_acquire_fini(ctx);
+-		kfree(ctx);
+-		return;
+-	}
+-	ww_acquire_done(&ctx->ww_ctx);
+-
+-	WARN_ON(config->acquire_ctx);
+-
+-	/*
+-	 * We hold the locks now, so it is safe to stash the acquisition
+-	 * context for drm_modeset_unlock_all().
+-	 */
+-	config->acquire_ctx = ctx;
+-
+-	drm_warn_on_modeset_not_all_locked(dev);
+-}
+-EXPORT_SYMBOL(drm_modeset_lock_all);
+-
+-/**
+- * drm_modeset_unlock_all - drop all modeset locks
+- * @dev: DRM device
+- *
+- * This function drops all modeset locks taken by a previous call to the
+- * drm_modeset_lock_all() function.
+- *
+- * This function is deprecated. It uses the lock acquisition context stored
+- * in &drm_device.mode_config. This facilitates conversion of existing
+- * code because it removes the need to manually deal with the acquisition
+- * context, but it is also brittle because the context is global and care must
+- * be taken not to nest calls. New code should pass the acquisition context
+- * directly to the drm_modeset_drop_locks() function.
+- */
+-void drm_modeset_unlock_all(struct drm_device *dev)
+-{
+-	struct drm_mode_config *config = &dev->mode_config;
+-	struct drm_modeset_acquire_ctx *ctx = config->acquire_ctx;
+-
+-	if (WARN_ON(!ctx))
+-		return;
+-
+-	config->acquire_ctx = NULL;
+-	drm_modeset_drop_locks(ctx);
+-	drm_modeset_acquire_fini(ctx);
+-
+-	kfree(ctx);
+-
+-	mutex_unlock(&dev->mode_config.mutex);
+-}
+-EXPORT_SYMBOL(drm_modeset_unlock_all);
+-
  /**
-@@ -207,8 +211,10 @@ static int psb_restore_display_registers(struct drm_device *dev)
- {
- 	struct drm_psb_private *dev_priv = dev->dev_private;
- 	struct drm_crtc *crtc;
-+	struct drm_modeset_acquire_ctx ctx;
- 	struct gma_connector *connector;
- 	struct psb_state *regs = &dev_priv->regs.psb;
-+	int ret;
+  * drm_warn_on_modeset_not_all_locked - check that all modeset locks are locked
+  * @dev: device
+@@ -380,10 +293,9 @@ EXPORT_SYMBOL(drm_modeset_unlock);
+  * This function takes all modeset locks, suitable where a more fine-grained
+  * scheme isn't (yet) implemented.
+  *
+- * Unlike drm_modeset_lock_all(), it doesn't take the &drm_mode_config.mutex
+- * since that lock isn't required for modeset state changes. Callers which
+- * need to grab that lock too need to do so outside of the acquire context
+- * @ctx.
++ * It doesn't take the &drm_mode_config.mutex since that lock isn't required for
++ * modeset state changes. Callers which need to grab that lock too need to do so
++ * outside of the acquire context @ctx.
+  *
+  * Locks acquired with this function should be released by calling the
+  * drm_modeset_drop_locks() function on @ctx.
+diff --git a/include/drm/drm_modeset_lock.h b/include/drm/drm_modeset_lock.h
+index aafd07388eb7..865e64bcc4cb 100644
+--- a/include/drm/drm_modeset_lock.h
++++ b/include/drm/drm_modeset_lock.h
+@@ -132,8 +132,6 @@ struct drm_device;
+ struct drm_crtc;
+ struct drm_plane;
  
- 	/* Display arbitration + watermarks */
- 	PSB_WVDC32(regs->saveDSPARB, DSPARB);
-@@ -223,7 +229,7 @@ static int psb_restore_display_registers(struct drm_device *dev)
- 	/*make sure VGA plane is off. it initializes to on after reset!*/
- 	PSB_WVDC32(0x80000000, VGACNTRL);
+-void drm_modeset_lock_all(struct drm_device *dev);
+-void drm_modeset_unlock_all(struct drm_device *dev);
+ void drm_warn_on_modeset_not_all_locked(struct drm_device *dev);
  
--	drm_modeset_lock_all(dev);
-+	DRM_MODESET_LOCK_ALL_BEGIN(dev, ctx, 0, ret);
- 	list_for_each_entry(crtc, &dev->mode_config.crtc_list, head)
- 		if (drm_helper_crtc_in_use(crtc))
- 			dev_priv->ops->restore_crtc(crtc);
-@@ -232,8 +238,8 @@ static int psb_restore_display_registers(struct drm_device *dev)
- 		if (connector->restore)
- 			connector->restore(&connector->base);
- 
--	drm_modeset_unlock_all(dev);
--	return 0;
-+	DRM_MODESET_LOCK_ALL_END(dev, ctx, ret);
-+	return ret;
- }
- 
- static int psb_power_down(struct drm_device *dev)
+ int drm_modeset_lock_all_ctx(struct drm_device *dev,
 -- 
 2.33.0
 
