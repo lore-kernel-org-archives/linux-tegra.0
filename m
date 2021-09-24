@@ -2,104 +2,167 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B40F0C433EF
-	for <linux-tegra@archiver.kernel.org>; Fri, 24 Sep 2021 07:43:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 035D8C43217
+	for <linux-tegra@archiver.kernel.org>; Fri, 24 Sep 2021 08:04:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 90F5B60E9B
-	for <linux-tegra@archiver.kernel.org>; Fri, 24 Sep 2021 07:43:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E309B60F48
+	for <linux-tegra@archiver.kernel.org>; Fri, 24 Sep 2021 08:04:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244407AbhIXHog (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 24 Sep 2021 03:44:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52270 "EHLO mail.kernel.org"
+        id S244529AbhIXIGA convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 24 Sep 2021 04:06:00 -0400
+Received: from mga12.intel.com ([192.55.52.136]:37593 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235134AbhIXHof (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 24 Sep 2021 03:44:35 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 36D2760E94;
-        Fri, 24 Sep 2021 07:43:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1632469383;
-        bh=XPvIGBX447PGQFkMF+ZWZcUB+7WxQwFocq16XNv9k4g=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=VdPohMY0sCZED8WVOCiLOigJ4j5armmGaRr2/b8k68R4qEHwWjX6F520gkv7w/Nv4
-         ZFZypgrQ7iYPpuvrYJayrLTwlFCZLaUTWkg65Fp63qI/YPDyxzoanubaWEEd+UmZwb
-         5oxQseqbS1KeFmXQGhOKWIPpRL3kQq6bLqhQ5+/UddQvkfPNzVeBgQF+qO6cjkDceO
-         mWWfyw2td1plE0zc5eqYcjx1LKal0YC2yGNSbI6tMOLiwiILS3LuRXxGDKNdNYdIu2
-         P3mGTz0z3lhuJft1Oi4sbv8AIE3JXmwV90AeWS4WJov9onS1yDxDjWboyb45uJxbA2
-         +05hq7w4wSfog==
-Received: by mail-pl1-f172.google.com with SMTP id t4so5953490plo.0;
-        Fri, 24 Sep 2021 00:43:03 -0700 (PDT)
-X-Gm-Message-State: AOAM530zEpPzmBR9x1n4pl5yvlKSx43a7nlvmCNJcmPz8K1Jn3QSet08
-        bAjDDde4rwf6snKFJUnCBC7KiMYCOI9ZoXfPCEQ=
-X-Google-Smtp-Source: ABdhPJyvlEDjFLktDmLeK06UX7dZjnb+oXRGTUwNhya5oCn7bjA+Tt3jIjNy46RhpplhpX1VSn5duvUv8Vd/z9VPeuA=
-X-Received: by 2002:a17:90a:c982:: with SMTP id w2mr631785pjt.30.1632469382884;
- Fri, 24 Sep 2021 00:43:02 -0700 (PDT)
+        id S244471AbhIXIF6 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Fri, 24 Sep 2021 04:05:58 -0400
+X-IronPort-AV: E=McAfee;i="6200,9189,10116"; a="203519850"
+X-IronPort-AV: E=Sophos;i="5.85,319,1624345200"; 
+   d="scan'208";a="203519850"
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2021 01:04:04 -0700
+X-IronPort-AV: E=Sophos;i="5.85,319,1624345200"; 
+   d="scan'208";a="551488631"
+Received: from avanhout-mobl.ger.corp.intel.com (HELO localhost) ([10.249.37.153])
+  by fmsmga003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2021 01:03:37 -0700
+From:   Jani Nikula <jani.nikula@linux.intel.com>
+To:     Doug Anderson <dianders@chromium.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        "open list\:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, Steev Klimaszewski <steev@kali.org>,
+        "open list\:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
+        MSM <linux-arm-msm@vger.kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Maxime Ripard <mripard@kernel.org>,
+        Adam Ford <aford173@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Andreas Kemnade <andreas@kemnade.info>,
+        Andrey Zhizhikin <andrey.zhizhikin@leica-geosystems.com>,
+        Anson Huang <Anson.Huang@nxp.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Corentin Labbe <clabbe@baylibre.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Emil Velikov <emil.velikov@collabora.com>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Eugen Hristev <eugen.hristev@microchip.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Fabrice Gasnier <fabrice.gasnier@st.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Guido =?utf-8?Q?G=C3=BCnther?= <agx@sigxcpu.org>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Kees Cook <keescook@chromium.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Lionel Debieve <lionel.debieve@st.com>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Martin =?utf-8?Q?J=C3=BCcker?= <martin.juecker@gmail.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Michael Walle <michael@walle.cc>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Nishanth Menon <nm@ti.com>,
+        Olivier Moysan <olivier.moysan@st.com>,
+        Otavio Salvador <otavio@ossystems.com.br>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Razvan Stefanescu <razvan.stefanescu@microchip.com>,
+        Robert Richter <rric@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Will Deacon <will@kernel.org>,
+        William Cohen <wcohen@redhat.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Linux-OMAP <linux-omap@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        linux-sunxi@lists.linux.dev,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        =?utf-8?Q?=C5=81ukasz?= Stelmach <l.stelmach@samsung.com>,
+        Stanislav Lisovskiy <stanislav.lisovskiy@intel.com>
+Subject: Re: [PATCH v5 00/15] eDP: Support probing eDP panels dynamically instead of hardcoding
+In-Reply-To: <CAD=FV=VPgFRBLgOGvt4a4afDr80aQL64L7=H3kqeRf2ffiusPg@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20210914202202.1702601-1-dianders@chromium.org> <CACRpkdaTb4_UfFzCqw=fiAnQhHD+1sDDua529KdGQbgMVfjYBw@mail.gmail.com> <CAD=FV=VPgFRBLgOGvt4a4afDr80aQL64L7=H3kqeRf2ffiusPg@mail.gmail.com>
+Date:   Fri, 24 Sep 2021 11:03:34 +0300
+Message-ID: <874kaabdt5.fsf@intel.com>
 MIME-Version: 1.0
-References: <20210921174434.4839-1-bbiswas@nvidia.com> <20210921174434.4839-4-bbiswas@nvidia.com>
-In-Reply-To: <20210921174434.4839-4-bbiswas@nvidia.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Fri, 24 Sep 2021 09:42:51 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPeKP6RiGh+VaD=QzcXrjPWU+8JL7=PjFqCM7HtwA2XSog@mail.gmail.com>
-Message-ID: <CAJKOXPeKP6RiGh+VaD=QzcXrjPWU+8JL7=PjFqCM7HtwA2XSog@mail.gmail.com>
-Subject: Re: [PATCH V1 3/3] dt-bindings: tegra: clock,memory,thermal: add
- header Copyright
-To:     Bitan Biswas <bbiswas@nvidia.com>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        robh+dt@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com,
-        rostedt@goodmis.org, mingo@redhat.com, jassisinghbrar@gmail.com,
-        p.zabel@pengutronix.de, skomatineni@nvidia.com, broonie@kernel.org,
-        linus.walleij@linaro.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, 21 Sept 2021 at 19:46, Bitan Biswas <bbiswas@nvidia.com> wrote:
->
-> Add Copyright for below Tegra dt-bindings headers:
-> 1. clock
-> 2. gpio
-> 3. mailbox
-> 4. memory
-> 5. thermal
-> 6. reset
-> 7. pinctrl
->
-> Signed-off-by: Bitan Biswas <bbiswas@nvidia.com>
-> ---
->  include/dt-bindings/clock/tegra114-car.h            | 4 ++++
->  include/dt-bindings/clock/tegra124-car-common.h     | 4 ++++
->  include/dt-bindings/clock/tegra124-car.h            | 4 ++++
->  include/dt-bindings/clock/tegra186-clock.h          | 6 ++++++
->  include/dt-bindings/clock/tegra20-car.h             | 4 ++++
->  include/dt-bindings/clock/tegra210-car.h            | 4 ++++
->  include/dt-bindings/clock/tegra30-car.h             | 4 ++++
->  include/dt-bindings/gpio/tegra-gpio.h               | 4 ++++
->  include/dt-bindings/gpio/tegra186-gpio.h            | 4 ++++
->  include/dt-bindings/mailbox/tegra186-hsp.h          | 4 ++++
->  include/dt-bindings/memory/tegra114-mc.h            | 6 ++++++
->  include/dt-bindings/memory/tegra124-mc.h            | 6 ++++++
->  include/dt-bindings/memory/tegra186-mc.h            | 6 ++++++
->  include/dt-bindings/memory/tegra194-mc.h            | 6 ++++++
->  include/dt-bindings/memory/tegra210-mc.h            | 6 ++++++
->  include/dt-bindings/memory/tegra30-mc.h             | 6 ++++++
->  include/dt-bindings/pinctrl/pinctrl-tegra-xusb.h    | 6 ++++++
->  include/dt-bindings/reset/tegra124-car.h            | 4 ++++
->  include/dt-bindings/reset/tegra210-car.h            | 4 ++++
->  include/dt-bindings/thermal/tegra124-soctherm.h     | 4 ++++
->  include/dt-bindings/thermal/tegra186-bpmp-thermal.h | 4 ++++
->  include/dt-bindings/thermal/tegra194-bpmp-thermal.h | 4 ++++
->  22 files changed, 104 insertions(+)
+On Mon, 20 Sep 2021, Doug Anderson <dianders@chromium.org> wrote:
+> Pushed all 15 to drm-misc-next.
+...
+> e8de4d55c259 drm/edid: Use new encoded panel id style for quirks matching
+> d9f91a10c3e8 drm/edid: Allow querying/working with the panel ID from the EDID
 
-This is the third email (same), so to avoid the confusion and applying
-before answering my comments from the first submission: NAK for this
-series. Please respond to the comments before sending it again.
+Hi Doug, Stan's reporting "initializer element is not constant" issues
+here that were discussed before [1]. I wonder what gives, you said you'd
+hit them on a draft version, but not with what was merged, and I can't
+reproduce this either. Curious.
 
-Best regards,
-Krzysztof
+BR,
+Jani.
+
+
+In file included from drivers/gpu/drm/drm_edid.c:42:0:
+./include/drm/drm_edid.h:525:2: error: initializer element is not constant
+  ((((u32)((vend)[0]) - '@') & 0x1f) << 26 | \
+  ^
+drivers/gpu/drm/drm_edid.c:111:14: note: in expansion of macro ‘drm_edid_encode_panel_id’
+  .panel_id = drm_edid_encode_panel_id(vend, product_id), \
+	      ^~~~~~~~~~~~~~~~~~~~~~~~
+drivers/gpu/drm/drm_edid.c:120:2: note: in expansion of macro ‘EDID_QUIRK’
+  EDID_QUIRK("ACR", 44358, EDID_QUIRK_PREFER_LARGE_60),
+  ^~~~~~~~~~
+./include/drm/drm_edid.h:525:2: note: (near initialization for ‘edid_quirk_list[0].panel_id’)
+  ((((u32)((vend)[0]) - '@') & 0x1f) << 26 | \
+  ^
+drivers/gpu/drm/drm_edid.c:111:14: note: in expansion of macro ‘drm_edid_encode_panel_id’
+  .panel_id = drm_edid_encode_panel_id(vend, product_id), \
+	      ^~~~~~~~~~~~~~~~~~~~~~~~
+drivers/gpu/drm/drm_edid.c:120:2: note: in expansion of macro ‘EDID_QUIRK’
+  EDID_QUIRK("ACR", 44358, EDID_QUIRK_PREFER_LARGE_60),
+  ^~~~~~~~~~
+
+
+[1] https://lore.kernel.org/all/CAD=FV=XHvFq5+Rtax7WNq2-BieQr-BM4UnmOcma_eTzkX2ZtNA@mail.gmail.com/
+
+
+-- 
+Jani Nikula, Intel Open Source Graphics Center
