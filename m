@@ -2,116 +2,119 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7714DC433F5
-	for <linux-tegra@archiver.kernel.org>; Fri, 24 Sep 2021 14:37:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3A66C433F5
+	for <linux-tegra@archiver.kernel.org>; Fri, 24 Sep 2021 14:45:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5B77161251
-	for <linux-tegra@archiver.kernel.org>; Fri, 24 Sep 2021 14:37:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7DF6C61038
+	for <linux-tegra@archiver.kernel.org>; Fri, 24 Sep 2021 14:45:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346731AbhIXOj1 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 24 Sep 2021 10:39:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40212 "EHLO
+        id S1346792AbhIXOrR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 24 Sep 2021 10:47:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42030 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346185AbhIXOj1 (ORCPT
+        with ESMTP id S231627AbhIXOrR (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 24 Sep 2021 10:39:27 -0400
-Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C179CC061571;
-        Fri, 24 Sep 2021 07:37:53 -0700 (PDT)
-Received: by mail-wr1-x42b.google.com with SMTP id r23so2843146wra.6;
-        Fri, 24 Sep 2021 07:37:53 -0700 (PDT)
+        Fri, 24 Sep 2021 10:47:17 -0400
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDF77C061571;
+        Fri, 24 Sep 2021 07:45:43 -0700 (PDT)
+Received: by mail-wr1-x42f.google.com with SMTP id t8so28396643wri.1;
+        Fri, 24 Sep 2021 07:45:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=b+6Mk3O7LpVdzp5Jb5p0whL8l/VrfgCZuRXRsXVkwZE=;
-        b=i3qU+iuA/ReBGuS0SfEgPyfrdU1H6FQ4xyvt+bVxEWVdN7UT7vrM4IB5kz7OrGAPRm
-         PMWQ2t6ZB8uyRoZtmb16UVO6GcVr6MFEGzfpphgsoOJN3Ql+bLjpHG4puHuWU34Ye689
-         cQrtVbxsExeSl3h3wnYC3AYDthfsD5rAaIV6mJE/SBiWLgFJeUPUvgHOzhTgZsN9MlFy
-         uspPCYUPAazmxKd8r7kH4NAHOiaNgrPbqdIGOy3mJjD2s/p0gEFXwlixTPTeNYBir9U2
-         VC6OVNZmE11lRgwXX11CMMqQKEZjENKONNzhvwNqSyhUt4dXnBwi/EfsfnyTbTSw0C6i
-         0UsA==
+        bh=Av3zDDdFclAJ+F3cYjMxG9S2t2QZDbTVI1TKO+ZOq0U=;
+        b=qzTQPLx2pQ7IPYH1fZk3RYVZ3m7w1uxl01fD8LeZpjwMoKzjli/RQialtHZFNgDBiT
+         9iSSG91zp0kgluN17z8mmZd/TkYJ9O1MzEbgOWZmz0tuBJWn7Eu+wlVqUW11+walr7y9
+         knysK4Xj+CyJbap2IbmEEphC0Oxs+Gm8pLTND5/hgt6gsPVmMr1nuoWBATURPSjBM8PA
+         0hu1wtLgIXJUuMCUtE7hN/Gov6jAAGyY9gnnb+J5L5xTxwCZqZUVVX2oYv3Am6Jx/ElD
+         +crwwzJg3koza9y7be5aDwo5iDch8I4Rdczd8PrdmA8IlUNPdfKNuvTkzVmCXZZN2OXB
+         2ACQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=b+6Mk3O7LpVdzp5Jb5p0whL8l/VrfgCZuRXRsXVkwZE=;
-        b=dZa88oJpxqGQzzDJSSh80h3anUkbYlB6N2Tik/aO4000j8CnWLrGXwaIKTOnIrADas
-         DIayDtoPkl3f2SEHHfFoZKXX6vRmRjtznlye+GRT1wlkV4pJSA6zlQZmRamYEkOcL0nk
-         Cr85HQDfY1NdtAdeD65/Xr31orDe8AZnA53aASy9Gokq88WvWUIc1DDdvPF1bcV3g4vD
-         v9/zvnGzKYs8tnKTNbSgCyqOOhIzZbVA/nR7NlW1DNKfKD07vPAR6W11erBRn1YjDn08
-         U+LxhhbMMmU00QIwAX+fbpDtKUzxZ/gMGN6BhOBEQEShdC6qgPsXgkcuf46u85ImFfS5
-         u3Pw==
-X-Gm-Message-State: AOAM530bfvKJ1OBJFD5PAgQyFmU7NZpRr9lQNLpfr6fB0EzSnJWSAxS0
-        6r8JcecFAkjhaLgoPcGovGPDbI+rj1M=
-X-Google-Smtp-Source: ABdhPJzy0zekgBXJ6u39ExWd89d/LJ97M4KvnMkSsWSgjsAFIrlfRK2lJNuShJDhodXLGAoDsAuGAQ==
-X-Received: by 2002:a7b:ce93:: with SMTP id q19mr2489521wmj.195.1632494272206;
-        Fri, 24 Sep 2021 07:37:52 -0700 (PDT)
+        bh=Av3zDDdFclAJ+F3cYjMxG9S2t2QZDbTVI1TKO+ZOq0U=;
+        b=0R6xeQw+fLa3fY5Kf/qmcnw7AUA0cgNR1QBBlN7+/v6Lykjgl2yI0QELoSM/l7MQPj
+         Nug0jwcs30OifJC5iQ/p/Njl4JiADmIvK5+7qXHunfk/uEobDyBr1kdXzWtGjAANR9j9
+         lSiM5Y7WUDbw7fkttb6tEu+Y/DVzrQ3Qfc6sZeK+na5A6yyc1Iu1uTVwdjEqu4udGZN3
+         KYC9BHxfyLhUlCW4mramaYOQDyKhpOO2Q9WHDF4Kuo2YT7nMceLfPkRglV40S9yDCu1f
+         33yS/X4ji9wVIYAdwn3M1RsIlYF0FTevjIgOFRf1d8lL1K0yWZ1lEoDE8Q7uLkYOntyb
+         174g==
+X-Gm-Message-State: AOAM530XCzJBsNQFCwBVU1rhky87i1wYsq6qE7TzhNI8W9QXRFcHzzql
+        wN0+YZsVsSYtpz2A4PboNxU=
+X-Google-Smtp-Source: ABdhPJwHjtoFD+Em8zF6DgZZeR4AHAuHQ16zsehQw1pH91pQnp/t+obC1c5ieSc6Ox36UZ4ogR2Z+g==
+X-Received: by 2002:a05:6000:1889:: with SMTP id a9mr12076973wri.300.1632494742467;
+        Fri, 24 Sep 2021 07:45:42 -0700 (PDT)
 Received: from localhost ([217.111.27.204])
-        by smtp.gmail.com with ESMTPSA id u25sm9751265wmm.5.2021.09.24.07.37.50
+        by smtp.gmail.com with ESMTPSA id 131sm12249784wmc.20.2021.09.24.07.45.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Sep 2021 07:37:51 -0700 (PDT)
-Date:   Fri, 24 Sep 2021 16:37:49 +0200
+        Fri, 24 Sep 2021 07:45:41 -0700 (PDT)
+Date:   Fri, 24 Sep 2021 16:45:40 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Prathamesh Shete <pshete@nvidia.com>
-Cc:     linus.walleij@linaro.org, bgolaszewski@baylibre.com,
-        jonathanh@nvidia.com, linux-gpio@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        smangipudi@nvidia.com
-Subject: Re: [PATCH v3 2/2] arm64: tegra: GPIO Interrupt entries
-Message-ID: <YU3ivcSPEo9sf0ux@orome.fritz.box>
-References: <YTWeSJ7jGamxx9Uu@orome.fritz.box>
- <20210907073224.3070-1-pshete@nvidia.com>
- <20210907073224.3070-3-pshete@nvidia.com>
+To:     Sameer Pujar <spujar@nvidia.com>
+Cc:     robh+dt@kernel.org, jonathanh@nvidia.com,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] Audio support on Jetson TX2 NX
+Message-ID: <YU3klOTbfIeUzw6W@orome.fritz.box>
+References: <1629809770-7456-1-git-send-email-spujar@nvidia.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="/wSlbaGMGvM3Cnsl"
+        protocol="application/pgp-signature"; boundary="dVMhuQ+ZlCXbwm9U"
 Content-Disposition: inline
-In-Reply-To: <20210907073224.3070-3-pshete@nvidia.com>
+In-Reply-To: <1629809770-7456-1-git-send-email-spujar@nvidia.com>
 User-Agent: Mutt/2.1.3 (987dde4c) (2021-09-10)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---/wSlbaGMGvM3Cnsl
+--dVMhuQ+ZlCXbwm9U
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 07, 2021 at 01:02:24PM +0530, Prathamesh Shete wrote:
-> From: pshete <pshete@nvidia.com>
+On Tue, Aug 24, 2021 at 06:26:08PM +0530, Sameer Pujar wrote:
+> Add support for APE (Audio Processing Engine) audio on Jetson TX2 NX.
+> As part of this exposed I/O interfaces of I2S and DMIC are enabled.
+> Similar to previous generations of Jetson platforms, audio-graph based
+> sound card driver is used.
 >=20
-> Tegra19x supports 8 entries for GPIO controller.
-> This change adds the required interrupt entires for all GPIO controllers.
+> HDA sound card is already enaled. Update the sound card name as part
+> of this series to be consistent with other Jetson platforms.
 >=20
-> Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
-> ---
->  arch/arm64/boot/dts/nvidia/tegra194.dtsi | 49 +++++++++++++++++++++++-
->  1 file changed, 47 insertions(+), 2 deletions(-)
+> Sameer Pujar (2):
+>   arm64: tegra: Audio graph sound card for Jetson TX2 NX
+>   arm64: tegra: Update HDA card name on TX2 NX
+>=20
+>  .../dts/nvidia/tegra186-p3509-0000+p3636-0001.dts  | 506 +++++++++++++++=
++++++-
+>  1 file changed, 505 insertions(+), 1 deletion(-)
 
-I've applied this now to the Tegra tree, thanks.
+Both patches applied, thanks.
 
 Thierry
 
---/wSlbaGMGvM3Cnsl
+--dVMhuQ+ZlCXbwm9U
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmFN4r0ACgkQ3SOs138+
-s6EOlxAAhG2mBwZxm8ebPAcd2JAcutuyLwtTVU2fNk7MhbxnNsU4XtNZsc4s0cB1
-GzUqyiafMVBZ0fTsEQYNsP56M2akjLy7eU/W7sMb2Gh42nJ4+iSGq3BplBXFYMEY
-pFQogzsvFm7CIkWMh7jXEBtzM2ipg52tcBRwOHRj/YAkV5a5ASdIJdq/C+/JNFg5
-wIFWuT5gbWZBmTfgh6g5oIPj5+I6OnnFzxCq6yqUzlVzHIhhrs0Sd88u3USPefeC
-WhV4XDowiS2csNKHVOfcZI91tssC55sSy5OzturyqA+Dh4ojzniqLzmv43AR5Zie
-4GeW0HhNxWFZgAxYPBzAYy0EIE/5gJLdGFbw1V2S5iV+alIP+iFMU27iNzLnXKg1
-YMluPpcSyZMs4lVYO50fWEOKsXB2C6Vph0yCBRlwUPLXKh/0cOwIjrpI051muU5O
-OepyODSmjjfIosTquGIIlxrcDJEmClw7OKL5/RS5d+irBmjlBc65Crd+RdKta2Am
-SDVFm88jsE9OLA5K32Bi6XW0qIxNDRQZUr3oEyyN6aVI6gT373+6NkVU/qsYCYH5
-PRwSdVIPsxbdwO+eGsH0g5RblzlZBtzi4KH/L7QEPdNHxNwosd+A/07RrkRhU4G9
-hxpnatgLfnecj+DtMY8c/PEZGr0dYnk/QoBi8w8ijn8GuYO6WqU=
-=XpD7
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmFN5JMACgkQ3SOs138+
+s6HPUg//bpmXGozlR4xs+n2kA19SbxK0oc7LsiYh7o9c6R81QMedLmRfdDo3Sb7r
+XvwpXBdxTG5BWUmnmlMwIg8gmHACZQ9lZKj1sk3HeuNMhezdmrkVGquybFSMP4Vh
+5B1DiSQdaQLX0rRgDKnQLYWDiIOXI5PvOUAeLP01CW9Hg2I8c+hxcb9I1Dg/ldNx
+YXNbCS4Mm3JKuIBTRjCsa6F+OafjzwPXh0g/gBO6VyZ7+dzJHEO8AbB2UEeEjde5
+o0r/dxA6RhCAvFr9GxioLYNo8j13nqpJ14y6l3mLj5HjeWLZ7Z6K3eDzMPMxNvcZ
+5CxQ74OqO8dALV/JPlQkGQR1q1vqxwVe35aCvGzGygzJ0nuGendU9XstuwpON3Qf
+J0kmJIf10WyTmVmJ5uI9kBK0Kx4A5ejEdwse5JXSeHWoYLSwv4i8AcAl5iZraQuR
+6/tVrjrw7LMqn+nt0cGmauK06qoSYWed1dbN6SqPEePw9PGMccj60nwD0OR5EY2B
+WZ6/D4m7qF3gB6DDcsf3P9lx5ZTdrW2QFqtQW/FfdZGAIZ6uAZZpBqEekuMLHz3/
+wXCyZvz1xia/KogCZZsIxs6X1+LGKEUj4ah96S8g3kpseobyJ/EJeAzlRB4Cjr1C
+NeqUkuHGpVDNKz1hwxklJY+cVuhC7XXF70KqyH+JyOILlYU1jM8=
+=ImHS
 -----END PGP SIGNATURE-----
 
---/wSlbaGMGvM3Cnsl--
+--dVMhuQ+ZlCXbwm9U--
