@@ -2,129 +2,152 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-7.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DB6AC4332F
-	for <linux-tegra@archiver.kernel.org>; Fri, 24 Sep 2021 12:57:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B406C43219
+	for <linux-tegra@archiver.kernel.org>; Fri, 24 Sep 2021 13:59:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8BFC96124B
-	for <linux-tegra@archiver.kernel.org>; Fri, 24 Sep 2021 12:57:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7CC4861164
+	for <linux-tegra@archiver.kernel.org>; Fri, 24 Sep 2021 13:59:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344481AbhIXM7L (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 24 Sep 2021 08:59:11 -0400
-Received: from mail-dm3nam07on2053.outbound.protection.outlook.com ([40.107.95.53]:64481
-        "EHLO NAM02-DM3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1345227AbhIXM5i (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 24 Sep 2021 08:57:38 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=feDLSGDOolYdJi9hA71riymlSxICPwtsz9YZE0P1ANIQe2Vnwv/76tol443A0n5o2uEMFMZdL+jf+0YQUrysqLOWUdgEeXDH/U0K6boLYNOjKu3kmancC474AA0m/nX1VzLKqhEv9gwZHLEdaf1fQApLmzTICQJIU6tH1qWWgSVhPIa0f72hQoCbOs6ziDzIwWOS9x/3XKruaLXxBBJAPWe1TJ19vBGBNEKtYRXtRIdeDdf5GUYDWdNKtpBS5PI18q0E9Izg6m/xKqgUzskWQViL8p9C33Oa4HwHCHg8f/dKe1CX7nkgkU19vzGdfy8Frvr95K1Nbsx469azrQHgTA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901; h=From:Date:Subject:Message-ID:Content-Type:MIME-Version;
- bh=8du3U5j3cA2b3kkqZO6l9gm04IN93r2lMHekEhv60z0=;
- b=gB/u1YDlUPkqJ82pTLGh2tIXo4PWKMnWMm1cUib6FMgnmfB2nPq6FO/n2GadMJhg2cGYDpw+0VRTjaLGgEw7sbSxCV6f55zwidyASpGj/ouixfBkzI5+oart+0uujdtxBbD/6WmNPznCYTYRWHYZVX4CTZM90biowPWaewUFlEfkqPU0SSkYEtjmbnGnZV8XGp1OPwFwUVm2JA16VBgIOiEdg/eYddmwpUAZPJV/QT2YzkR3qKF0FLNpvf1yi8zuVYEjuWTOlv/t6KatnJXCBw2qpC/Q+nt4X3YNWnPAG2/NocX3YPOeGzXl6RlOXt56cOQQdKrHIxvtRe8Fab83JQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.112.32) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8du3U5j3cA2b3kkqZO6l9gm04IN93r2lMHekEhv60z0=;
- b=mc5cSd0+kTO1/d7VO9z2nl9Rjnp8CkM/vTFH8pwRAMUFLthCB+l3nMGAkRLr77YKA6P2w8x0qN5Cc10LIAqCNiQM0fIJD9n2e3e2geBpRk+IVLDH16p525IU1UzQIot71MaaZtQUlXqIHopMH6KWsH+AxM4703+qkDL5n5IsmDL1avMiaGQE2R4qsiGWPwrUIDt7HTzDG+ordrq5wxSxDGd4hh1yOrN6fQM6Fn9hzNdoPs5tPOqvCsbXlZb/3awuG35qGSli/B8RlyeY3NK0zXEjd+6/4a5U7BK/vypupEvNsDgjOFbV8j6x4xPsE3/A524CZr8zTmAkZCEXtxZlIg==
-Received: from MW4PR04CA0365.namprd04.prod.outlook.com (2603:10b6:303:81::10)
- by BYAPR12MB4982.namprd12.prod.outlook.com (2603:10b6:a03:106::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4544.13; Fri, 24 Sep
- 2021 12:56:03 +0000
-Received: from CO1NAM11FT028.eop-nam11.prod.protection.outlook.com
- (2603:10b6:303:81:cafe::54) by MW4PR04CA0365.outlook.office365.com
- (2603:10b6:303:81::10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4544.13 via Frontend
- Transport; Fri, 24 Sep 2021 12:56:03 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.32)
- smtp.mailfrom=nvidia.com; vger.kernel.org; dkim=none (message not signed)
- header.d=none;vger.kernel.org; dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.112.32 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.112.32; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (216.228.112.32) by
- CO1NAM11FT028.mail.protection.outlook.com (10.13.175.214) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.4544.13 via Frontend Transport; Fri, 24 Sep 2021 12:56:03 +0000
-Received: from DRHQMAIL107.nvidia.com (10.27.9.16) by HQMAIL109.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Fri, 24 Sep
- 2021 05:56:03 -0700
-Received: from [10.26.49.14] (172.20.187.6) by DRHQMAIL107.nvidia.com
- (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Fri, 24 Sep
- 2021 12:56:01 +0000
-Subject: =?UTF-8?B?UmU6IEJ1aWxkIGVycm9yOiDigJhFTV9SSVNDVuKAmSB1bmRlY2xhcmVk?=
-To:     <miles.chen@mediatek.com>, Stefan Wahren <stefan.wahren@i2se.com>,
-        Jisheng Zhang <jszhang@kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Palmer Dabbelt <palmerdabbelt@google.com>
-CC:     <linux-tegra@vger.kernel.org>
-References: <e8965b25-f15b-c7b4-748c-d207dda9c8e8@i2se.com>
- <78cf3af71e035a79d021d17c6fd8a09dd1e4984d.camel@mediatek.com>
- <cf7eea1d-a628-c6c4-270f-fa9895192b24@nvidia.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <277d1f76-c105-5fc4-6658-058286f503f0@nvidia.com>
-Date:   Fri, 24 Sep 2021 13:55:59 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+        id S1346540AbhIXOBV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 24 Sep 2021 10:01:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59328 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1346605AbhIXOBE (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Fri, 24 Sep 2021 10:01:04 -0400
+Received: from mail-il1-x12d.google.com (mail-il1-x12d.google.com [IPv6:2607:f8b0:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40F0EC061764
+        for <linux-tegra@vger.kernel.org>; Fri, 24 Sep 2021 06:59:31 -0700 (PDT)
+Received: by mail-il1-x12d.google.com with SMTP id q14so10459300ils.5
+        for <linux-tegra@vger.kernel.org>; Fri, 24 Sep 2021 06:59:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=vH2YhvPec36tzF9CqFvv48FWCLMK8cS6dcfU+nnIHyY=;
+        b=MULBtZwJXLYw882PNkC1wdIC6xsntlfC3Jqk68hXwFyDrHTB+5MPik7dimveBvicK9
+         czoHkx9kG9TCx/Q0u/mXNOVOnge0HpxCKoo9h1TN4Th3MREoijDCtzjsI9IzhTeV8JJL
+         vRiuoKD8opz3Gwxmjxn7QjH6rynmXpiiqOlLM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=vH2YhvPec36tzF9CqFvv48FWCLMK8cS6dcfU+nnIHyY=;
+        b=LdvDJXhLuvFJ0vUqkB5yOkIrUXuGgFLGzJo1amReJGWp8mvfy7UudR62ODbm2SkAmN
+         wGYvKLHz7JZKGw8NNoctd8Tv590wj92CaUxfY4eFh/7fMnjS2KY19b1cEqC8LLufnbvL
+         q4tj30Okv9c5MzEaii+u8LMJnz5t4NGvKS4HrNv/OCYD2QMfggX82Dyw78Um3koK0uM5
+         3apYer0jRbe+l3WGyq36tegymWjC82MslH1sSPWGYu1M3zoZn6bYRWDzMrbdmCosBxRa
+         WCF+3xhino+GN88eUxthHTOqypuLaDgARrVxxx4D52/7/27KLQZ0ysfKXMMqHoSWCYbj
+         N8gA==
+X-Gm-Message-State: AOAM530DvkFaskIGVDvrevCQrkBsw+oZxbP6XQhY1BRTJujWfW2g4L+U
+        c6cd19ZIP0hc6EmOm7+noF+fPgjW3P5rNQ==
+X-Google-Smtp-Source: ABdhPJwrIScCI/+AXq0FOsDC4lK5lePaqcgVZbwx0uQXh38MWaldgHZeAZkdQ2HORWAoK2AiFAycJA==
+X-Received: by 2002:a05:6e02:144c:: with SMTP id p12mr8907102ilo.292.1632491970370;
+        Fri, 24 Sep 2021 06:59:30 -0700 (PDT)
+Received: from mail-il1-f180.google.com (mail-il1-f180.google.com. [209.85.166.180])
+        by smtp.gmail.com with ESMTPSA id p73sm3965924iod.43.2021.09.24.06.59.29
+        for <linux-tegra@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 24 Sep 2021 06:59:29 -0700 (PDT)
+Received: by mail-il1-f180.google.com with SMTP id h20so10400044ilj.13
+        for <linux-tegra@vger.kernel.org>; Fri, 24 Sep 2021 06:59:29 -0700 (PDT)
+X-Received: by 2002:a05:6e02:1bad:: with SMTP id n13mr8008800ili.142.1632491957963;
+ Fri, 24 Sep 2021 06:59:17 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <cf7eea1d-a628-c6c4-270f-fa9895192b24@nvidia.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [172.20.187.6]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
- DRHQMAIL107.nvidia.com (10.27.9.16)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 808fe0fa-b40f-4030-16b5-08d97f5aaab7
-X-MS-TrafficTypeDiagnostic: BYAPR12MB4982:
-X-Microsoft-Antispam-PRVS: <BYAPR12MB4982F080D28755A1E5430D2ED9A49@BYAPR12MB4982.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: diIfLQ8OQIJ0h93C4Z9SkpXEsn2rVVT9ACGE0JI2esqoCsLQKI5I2XohGjLDpAok+832xjOv2NnE/gv1V+oC2XqeGEROeV/yrzCvs0+IZm5/xN3XHV9oZOp8LtxWbbcFuuv1VE7WLVgXCy6dsl7K/QD0/fm53ahyoXbjpbIaLOun9rAqbNf5wHPzcJuVNTFc5Hzio9gogpxBnIcXqleac2d/Ox2CGyquuySyfiZFTETzQLRDV1ExCppK25t1tHMdnJxlCqwfFZuUP3qbdYgyHwHRBl4D0Ds6tj1QnNm5Szsg4jU/s2h8V74zizyxpttUUDBlDo2WyTLYbVx6x/bDTF3itD7HKc9q1mE2JS3DkGAR4y2SDAKCXoZkW1yF6EExrCnp5Zbi+lTDFsQYduxDXPK46J/DyRBPYFssCD64BaNPfYzsKI44T49hN3xscpim6QL7qwKZVTvxsHZO46NVlFu9XEnAx1DkwQXsUit6Ctlts4FidkM3Q7oeK6SgaqkOLtOTR6ByhmS9VlfkZmT55y3e/YZtlGLfdKQdaZkm8BUNdH5MXsrBw03G81Oke7e1wGLeCJ+DZwna7xUxgJk5UGVNj419XVxL1kCngvH+Jfa67PYbpC1Sb0MeiatlG0KggeqD4Wd45tQO4ECo4aoTxStFZHikiL7zP9X9gIVjQPhSwpo8nbP4NhdrTGkvZp+OTpVlgvWrelHPJGGJ+Jb040Q5MXoz7bHrB0Aln/qehiE=
-X-Forefront-Antispam-Report: CIP:216.228.112.32;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid01.nvidia.com;CAT:NONE;SFS:(4636009)(36840700001)(46966006)(36756003)(336012)(83380400001)(31696002)(47076005)(4744005)(2906002)(5660300002)(508600001)(426003)(2616005)(86362001)(4326008)(31686004)(70206006)(70586007)(356005)(36860700001)(110136005)(82310400003)(16526019)(26005)(186003)(53546011)(7636003)(316002)(16576012)(8936002)(43740500002);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2021 12:56:03.6506
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 808fe0fa-b40f-4030-16b5-08d97f5aaab7
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.32];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT028.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR12MB4982
+References: <20210914202202.1702601-1-dianders@chromium.org>
+ <CACRpkdaTb4_UfFzCqw=fiAnQhHD+1sDDua529KdGQbgMVfjYBw@mail.gmail.com>
+ <CAD=FV=VPgFRBLgOGvt4a4afDr80aQL64L7=H3kqeRf2ffiusPg@mail.gmail.com>
+ <CGME20210924080417eucas1p209819b105dc64faf1f2a7140c5c1389b@eucas1p2.samsung.com>
+ <874kaabdt5.fsf@intel.com> <68c3f798-a18d-fe8d-2925-2686716a985b@samsung.com>
+In-Reply-To: <68c3f798-a18d-fe8d-2925-2686716a985b@samsung.com>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Fri, 24 Sep 2021 06:59:05 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=XEb-jx81inK8hGvdJeRqTLmmBKz7U-m+9=CHbNRSa16g@mail.gmail.com>
+Message-ID: <CAD=FV=XEb-jx81inK8hGvdJeRqTLmmBKz7U-m+9=CHbNRSa16g@mail.gmail.com>
+Subject: Re: [PATCH v5 00/15] eDP: Support probing eDP panels dynamically
+ instead of hardcoding
+To:     Andrzej Hajda <a.hajda@samsung.com>
+Cc:     Jani Nikula <jani.nikula@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
+        MSM <linux-arm-msm@vger.kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Maxime Ripard <mripard@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Emil Velikov <emil.velikov@collabora.com>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Will Deacon <will@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Linux-OMAP <linux-omap@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        linux-sunxi@lists.linux.dev,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        Stanislav Lisovskiy <stanislav.lisovskiy@intel.com>,
+        smyakam@microsoft.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+Hi,
 
+On Fri, Sep 24, 2021 at 2:10 AM Andrzej Hajda <a.hajda@samsung.com> wrote:
+>
+> Hi
+>
+> removed most cc, due to server limitation
+>
+>
+> W dniu 24.09.2021 o 10:03, Jani Nikula pisze:
+> > On Mon, 20 Sep 2021, Doug Anderson <dianders@chromium.org> wrote:
+> >> Pushed all 15 to drm-misc-next.
+> > ...
+> >> e8de4d55c259 drm/edid: Use new encoded panel id style for quirks matching
+> >> d9f91a10c3e8 drm/edid: Allow querying/working with the panel ID from
+> >> the EDID
+> > Hi Doug, Stan's reporting "initializer element is not constant" issues
+> > here that were discussed before [1]. I wonder what gives, you said you'd
+> > hit them on a draft version, but not with what was merged, and I can't
+> > reproduce this either. Curious.
+>
+>
+> Apparently this is grey area of unclear specification.
+>
+> gcc version below 8 reports error, above 8.1+ should work [1]. I am not
+> sure if there is nice workaround for older gcc.
+>
+>
+> [1]: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=69960#c18
 
-On 24/09/2021 13:15, miles.chen@mediatek.com wrote:
-> From: Jon Hunter <jonathanh@nvidia.com>
-> 
-> 
->> This is still broken in the mainline. Any plans to get this fix merged 
->> there? I believe it has now been broken for nearly 2 weeks.
-> 
-> the fix [1] is in linux-next now, thanks.
+So I think the only solution is to go back to the character-at-a-time
+version. It's slightly uglier but functionality trumps form.
 
-Yes I know that. However, we need it in the mainline. It has been broken 
-for nearly 2 weeks now and all our automation for mainline is not 
-running because we cannot build. Please get this fix into mainline as 
-soon as possible.
+I'll post something today though it might need to wait a few hours
+before I can manage it.
 
-Jon
-
--- 
-nvpublic
+-Doug
