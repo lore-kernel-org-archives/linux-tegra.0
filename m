@@ -2,222 +2,161 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC567C43219
-	for <linux-tegra@archiver.kernel.org>; Fri, 24 Sep 2021 09:10:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FDE4C433EF
+	for <linux-tegra@archiver.kernel.org>; Fri, 24 Sep 2021 09:31:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B6C6A6103B
-	for <linux-tegra@archiver.kernel.org>; Fri, 24 Sep 2021 09:10:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8364C6124B
+	for <linux-tegra@archiver.kernel.org>; Fri, 24 Sep 2021 09:31:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244727AbhIXJLt (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 24 Sep 2021 05:11:49 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:49089 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244510AbhIXJLr (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 24 Sep 2021 05:11:47 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20210924091011euoutp017d64020bbd298fcd3207857f5a7e067a~ntwKmwOUW2400624006euoutp01c;
-        Fri, 24 Sep 2021 09:10:11 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20210924091011euoutp017d64020bbd298fcd3207857f5a7e067a~ntwKmwOUW2400624006euoutp01c
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1632474612;
-        bh=GDIYSu/OY2EFkD7/7XvXSG2UL3GneP5U91ko+jcNozQ=;
-        h=Date:From:Subject:To:Cc:In-Reply-To:References:From;
-        b=BhmXmEphHN2PW7grFTMUq3yHrG4IR8JYqqER6Q5rzMRtj1voVonQM6cZF3RIqYKgL
-         TDXg+Vc4g1sbgGrq/WnIok6KbJUWT1Yb/yqLwNxaC487iJk0lnO2MeybrKl1zvRMkS
-         x8zN3vue9oM6LlCukdYsVzHMom+JVMdeBiX1SD8c=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20210924091011eucas1p1b2d6107118f1e24a80b7c9be02e7fce7~ntwJ_5oNC0534605346eucas1p1M;
-        Fri, 24 Sep 2021 09:10:11 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 3F.53.45756.3F59D416; Fri, 24
-        Sep 2021 10:10:11 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20210924091010eucas1p21a6b28ce9866385d25ade5b854d9c110~ntwJOuvk21198011980eucas1p20;
-        Fri, 24 Sep 2021 09:10:10 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20210924091010eusmtrp158c1fd12553683e07b5cb268591a7897~ntwJK-xUr3000630006eusmtrp1Y;
-        Fri, 24 Sep 2021 09:10:10 +0000 (GMT)
-X-AuditID: cbfec7f2-7bdff7000002b2bc-0f-614d95f32ade
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 9A.E8.20981.2F59D416; Fri, 24
-        Sep 2021 10:10:10 +0100 (BST)
-Received: from [106.210.131.79] (unknown [106.210.131.79]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20210924091008eusmtip1d03be791cbb29065d8b3415cff78ff10~ntwHanPJO3170131701eusmtip1V;
-        Fri, 24 Sep 2021 09:10:08 +0000 (GMT)
-Message-ID: <68c3f798-a18d-fe8d-2925-2686716a985b@samsung.com>
-Date:   Fri, 24 Sep 2021 11:10:08 +0200
+        id S245091AbhIXJcs (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 24 Sep 2021 05:32:48 -0400
+Received: from mail-mw2nam12on2049.outbound.protection.outlook.com ([40.107.244.49]:30232
+        "EHLO NAM12-MW2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S243849AbhIXJcs (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Fri, 24 Sep 2021 05:32:48 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Wjy3FUSqrQpzU/qN5LkGL6h2c7WRBZG0DOdwJt30DXnVme2u5/L5+9O/uTr+QLI9QHCw1jYIkoX7AE0EQzCZiMNCrrntZMI0l9lyZTNxEoz9TB6aTRdmsroaT2LjSQM8XdjcqtncUMb6gYh/PanomNjtMs5YQHEnd+Svr92PtmzOriWyHYE4VZ0dWPmGHajyB2NczGmRN1SVQCzHn7uJx/l93R+kvMG8DvnO/aigLLYvXHD44hYgp9y/kp1YnGHBPmvgvJg041tcoU5Zttrt0gjwMqL6q2mcNAsSa+momf887Rkm/MoTTk0GTj2/+Xc/dcU7eox7SOU8lPtkB+Q5rg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901; h=From:Date:Subject:Message-ID:Content-Type:MIME-Version;
+ bh=z6+7Z11PwbYetnv8wMlAVmhl+OXlCwHBpXoibbDGxfE=;
+ b=TuMmp7C6FO7SREI9744ZSiAePHbHSgsP7WFDtOSRRuQrdafbQNSwWh+jqxZJRFcUtOJkDT/yP57qABzEimar7+AaZi5ommaLc5ARTpF9ScGsrciK2ZHwoEzVZv+xPZBLySaVNWrjyhMnZrxJPFQOQLFbJGIoq1Sl/8zcKFrEgSnrAYxYP6NbHoIPCtdQuodJBdhO8/RfbYZksCksqZuimACQGFnZJlUHuc8neaKz11U7Ipydpv/ovRTuplsNnbtCmzFQOcZN7XBPYyMHFQbu7ycor6ewGeENcRQ2Y8bgXn/P7rWXdH/P3zM9Ew/piXWhBFu6RMu7Vjhr+OXy1HBc9g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.112.36) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=z6+7Z11PwbYetnv8wMlAVmhl+OXlCwHBpXoibbDGxfE=;
+ b=RrdEx8Cd7Q/nwItPbtge4p/HwmAHqRtUpzMOcmxrGqIx7IQS8ZrbjL7G+7Owqkvt/puuJOswmP5xkpcukyNE8MBgdV5MeVT1PTtUug9rqNAlCQVMdGP32Ci/7wK3v995X4SDf9Yf+Da2Zi/ZWWB8oNByn5o0hs3PmgtZzTHziN/jcWmOiJf+cBS26F3Q0UJKWNVXiOnR7x5btKltSAoaV+S8vaU8BVptvEZs2yWWicpiFNsCpKws084+jNKHRxSjRUSZmIxQQ05MvnfcOkVBQjrVnBaL2H52wy2lR9clGsxVgiu4VyL+nU+K1tY2Ysqp6GI81/N83QUuX7leqw38fQ==
+Received: from BN6PR21CA0018.namprd21.prod.outlook.com (2603:10b6:404:8e::28)
+ by DM5PR12MB2344.namprd12.prod.outlook.com (2603:10b6:4:b2::24) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4544.15; Fri, 24 Sep
+ 2021 09:31:14 +0000
+Received: from BN8NAM11FT017.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:404:8e:cafe::a0) by BN6PR21CA0018.outlook.office365.com
+ (2603:10b6:404:8e::28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4566.4 via Frontend
+ Transport; Fri, 24 Sep 2021 09:31:14 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.36)
+ smtp.mailfrom=nvidia.com; vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.112.36 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.112.36; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (216.228.112.36) by
+ BN8NAM11FT017.mail.protection.outlook.com (10.13.177.93) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.4544.13 via Frontend Transport; Fri, 24 Sep 2021 09:31:13 +0000
+Received: from DRHQMAIL107.nvidia.com (10.27.9.16) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Fri, 24 Sep
+ 2021 09:30:35 +0000
+Received: from [10.26.49.14] (172.20.187.6) by DRHQMAIL107.nvidia.com
+ (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Fri, 24 Sep
+ 2021 09:30:33 +0000
+Subject: =?UTF-8?B?UmU6IEJ1aWxkIGVycm9yOiDigJhFTV9SSVNDVuKAmSB1bmRlY2xhcmVk?=
+To:     Miles Chen <miles.chen@mediatek.com>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Jisheng Zhang <jszhang@kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Palmer Dabbelt <palmerdabbelt@google.com>
+References: <e8965b25-f15b-c7b4-748c-d207dda9c8e8@i2se.com>
+ <78cf3af71e035a79d021d17c6fd8a09dd1e4984d.camel@mediatek.com>
+CC:     "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <cf7eea1d-a628-c6c4-270f-fa9895192b24@nvidia.com>
+Date:   Fri, 24 Sep 2021 10:30:30 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:93.0)
-        Gecko/20100101 Thunderbird/93.0
-From:   Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH v5 00/15] eDP: Support probing eDP panels dynamically
- instead of hardcoding
-To:     Jani Nikula <jani.nikula@linux.intel.com>,
-        Doug Anderson <dianders@chromium.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
-        MSM <linux-arm-msm@vger.kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Maxime Ripard <mripard@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Emil Velikov <emil.velikov@collabora.com>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Will Deacon <will@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Linux-OMAP <linux-omap@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        linux-sunxi@lists.linux.dev,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Stanislav Lisovskiy <stanislav.lisovskiy@intel.com>
-Content-Language: pl
-In-Reply-To: <874kaabdt5.fsf@intel.com>
+In-Reply-To: <78cf3af71e035a79d021d17c6fd8a09dd1e4984d.camel@mediatek.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Te0xTVxzO6b29ve2sXh6TMyB7MA2TKeiEeOYq6rKR65JNiWMPyYJFbhBH
-        gbTiNrZFCIz3xBZQaQXRsZZHRdNZoAhsa7p2iMBKJ48IY9MtjPIaUNhgtI5ya8Z/3/ed7/u9
-        kkNi3qOEP5mUcpqRpoiTgwgB3mRe6t0xX/6meOeUgUBf9nRyUN60moecCjMPzaiLAXrUJMfQ
-        FVMPF3WrvyfQzwszBPqjcIpA2vtGgCpVCoAcuvME0thuADR2pRGgu0US1Nt7k4fKVjQcpHvY
-        z0Xyb7t5yNZ6mUCqmhIc6cenOehSbwcHlXW0EqjAoSSQsbwdoOumER66OqvHUW6Bmou+aDfx
-        UO2SHqC8QhFaaq3C0a1JORf1Oi1clDMccWALfX12lEtrq7SAtvVbMfrfZQWgq7Sf0qpMK063
-        jNQAun2xGqfl3Ttog3KER3/VNs6hdfUFBD3c30bQzYu/cumqzmh6tMjCOeJ3TCBKYJKTzjDS
-        sMjjgpPZBjytjvo467cL3ExgFRYCkoRUOMzJEhcCAelN1QLocFZyWeIA8O873wGWzAPY32DG
-        HieG76ezugbAc3NZHtMMgE366dU4nxRSkfBSvZVwY5zaCvNdeRire8HOit9xN36SOg4nftGt
-        eQhqG3R+M0S4G/hQYtieS7hr+lKZAJZ0lWBuglF9T0CnyrAWwChfOPggB7gxnwqGFYt2wOrP
-        wGy9ai0AKYcA3u0cX+sMqddgX/ayB/tAu+UWj8WBsKu0GGfxWTham+MJ5wOov2nwBF6Bwz3L
-        a+Nhq6PeaA1j5YNwYNCEs2fZCAenvNgZNkJF00XPtYQwP9ebdT8HR7v1noJ+8OufFojzIEi5
-        7izKdZsp122j/L9vNcDrgR+TLpMkMrJdKcxHoTKxRJaekhh6IlWiA6t/oMtlmWsBlfbZUCPg
-        kMAIIIkF+QrnB98QewsTxJ9kMNLUOGl6MiMzggASD/IT1qu0cd5Uovg08yHDpDHSx68cku+f
-        yXm2bkIX/eehTntSze59FS1Pk0VR5oM/FGlcDxUbTn22cFvKtZ8Z78NctpdXdAOwp6u9o9h+
-        4LAxWhIVv+ns9nKfmlArCL/3zu2rph/zE0TVAWRkbfFmL1fAwJgg1Gn7q2/Iq+B5dMyyP2Iv
-        uCh769S190pjXLIM0+EPds/RpG1zwyag3PBCmlJU5vuq4fMQs9Oxde+hqH1b1KK3G+UZZdEN
-        s6UXdu45ERccFfFUYOCkzT8Gb9sefadf/3rf/lgm/sjEnlTJ5aOTlpJETVhwo+rdugePcvj3
-        VsKaV/5RhMWGv8iPFyXGvj9lGR48WlesHsNGQvTN14YCfGLwAZ6imr/tpSBcdlK8KwSTysT/
-        AZvrFYdyBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0yTZxjN2+/SwmzyUWB9BzPbCmaZCYUihReC7JLGfdG5bH+2OEaggw+K
-        vbm2dF4SB8pgVNgoImI7Ck4EwTK0UNByMasNyAbWjq2iQBgqM7CBoyoLCDKgW8K/k3Oec86T
-        Jw8H4/mIME6uSsdoVFKFgAzEf37ePx7lO7VXGrO8ilDZzQEWKp5rYKOVij42etRQCtBqhxFD
-        ta6bBBpq+JFEvz59RKIpwyyJrKNOgGrMFQA9sZWTqHG4FaCHtT8ANHhCidzuS2xUudzIQrb7
-        XgIZrw2x0bDjOxKZ67/FkX16joWq3b0sVNnrIFHJExOJnKd6AGpxjbPR2Xk7jopKGgj0VY+L
-        jS4s2gEqNiSjRYcFR+1/GQnkXuknUOGY+K1IumV+gqCtFiugh70ejH62VAFoi/UIbc734PSV
-        8XpA9yzU4bRxKIq+ahpn0+e6p1m0rbmEpMe83STdufA7QVsGPqQnTvSzPuB/IkzWqPN0zKsy
-        tVa3U5AqQrFCUSISxsYlCkU7EtKSYsWC6JTkLEaRq2c00SkZQtnxq/iBJupgwWQVkQ88XAPg
-        cCAVB8dG8wwgkMOjzgNoablNGEDAGs+HXbWzmB8Hw2WvgfQPzQI4U2kH6wKXSoHVzR5yHePU
-        Nvj182LMzwfBgTMP8HUcSmXAk3csG6Ek9QZcabtDrhcHU1LYU7SRGUIdA/CftqqNGYwaeQF2
-        zYT7y7pY8MbYfcwvhMCRe4UbxQHU6/DMwgzw8/HQYDf8h1+Bx+1mrBzwTJv2MG2ymzZZTJss
-        dQBvBiFMnlaZo9TGCrVSpTZPlSPMVCttYO35OvoW26+Appl5oROwOMAJIAcThHAfj+yW8rhZ
-        0kOHGY06XZOnYLROIF47hhELC81Ur32vSpcuio8Ri+LiE2PEifE7BHxunMuazqNypDpGzjAH
-        GM3/PhYnICyfldV0sWxLaue2BJ3+8UsJ2d9Eqo9mfTn39o0m7qFgH86vz12VLdEF1wW70qvD
-        dzpqCH3l3mtpW3kdu80PJv/MTmp9/+xS4e3kW6vnHMqncHtUfFzrw46Rzjf3l1+Qy1Xez0ym
-        j/Y825OUkDU5uSz5rUrPj/BIsk2OX4olitLejhej77UbJ0QHy/QRW3UnJUHqjLRZj0L16Wsv
-        V/P5g/KAoLsjdWyVIrLEvSX0ls3dN5g2+u47so9lRdlTR8rEvZenHZ/v0vwh79p3ubS0MIKc
-        dl3K/KLm7t/HrO99n6ossOWev94d7TrsW6TDwvcXmn+anG8M3Hd67KKmwX20TRI5NVzhcwpw
-        rUwq2o5ptNJ/AZQIyjoFBAAA
-X-CMS-MailID: 20210924091010eucas1p21a6b28ce9866385d25ade5b854d9c110
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20210924080417eucas1p209819b105dc64faf1f2a7140c5c1389b
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20210924080417eucas1p209819b105dc64faf1f2a7140c5c1389b
-References: <20210914202202.1702601-1-dianders@chromium.org>
-        <CACRpkdaTb4_UfFzCqw=fiAnQhHD+1sDDua529KdGQbgMVfjYBw@mail.gmail.com>
-        <CAD=FV=VPgFRBLgOGvt4a4afDr80aQL64L7=H3kqeRf2ffiusPg@mail.gmail.com>
-        <CGME20210924080417eucas1p209819b105dc64faf1f2a7140c5c1389b@eucas1p2.samsung.com>
-        <874kaabdt5.fsf@intel.com>
+X-Originating-IP: [172.20.187.6]
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+ DRHQMAIL107.nvidia.com (10.27.9.16)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 27c9d70d-3ba6-440c-80d9-08d97f3e0d8c
+X-MS-TrafficTypeDiagnostic: DM5PR12MB2344:
+X-Microsoft-Antispam-PRVS: <DM5PR12MB2344E4A6BC2E4078F975514CD9A49@DM5PR12MB2344.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:8882;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: jcCAKbKFOsd9n0bimuWdjwd4md6zuI63RzGTBk8JSqpXjN7gGHdrogt6eWLcYzyjUTaPfkP/DY9RYNXusbTOgLokmDojPR5QyZP3ZLG6qBzQldpHr3qEtIBWkPlD28yY3k51YgRmhbekDBTyQtXvPHoktslIbLLc5u7Wl3iPZ4aj+9m4/XpZZ1mgesw4wVi5/4mfRy34WsuWINCD6luy46IyyWsoDJTeot6R65FnWAhkdhk/RsEHIlgj1B2UuSSpMus2HNYXUYHg9/HcNrV2AxTTm56WfgXfQkPcDM6JnRGTq957RrS4vZw6EJX+CFNXDq624ylt3v5tztIRyUn++06XFATUPz52RyxH06s0wg+VBVutrh1d6FlrzqR7TruNZ1CSnUL+urbsUyx5O5Bugt9DzGTNTaSXC1ry5kRB4Qt3gYxm057y/uwvkcF3obnsuNqQCVW5ZVV2PlQqn+LcZtykcHlNDtOZQ6OTPe2vQslzIem+kBsTgPSX8MRYXQXyn3GLOI8dVqp8QmMyUTxgdBMqaC5W/3LOf8PfZxVCsonBlagCdhfg2dcnGa79kRMUeqTNv0rqZG3Y0AutHFpYLGoA3354MmZ7nE/lNBL5eX3XkSeYHG4I6JFluGR+IhF0uH2BU3DpimF7u7Oa7IXv5s7UPkn4CjkeTocyk4Ked8kNUEeCxz65xNFhFyoxLjPUqid8s6WRVigzaZ/sZpvcvkjo/h1KeqMP3cbdJT4NRZs=
+X-Forefront-Antispam-Report: CIP:216.228.112.36;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid05.nvidia.com;CAT:NONE;SFS:(4636009)(36840700001)(46966006)(36860700001)(82310400003)(2906002)(70586007)(53546011)(4326008)(86362001)(110136005)(356005)(36906005)(316002)(186003)(47076005)(8936002)(16576012)(426003)(16526019)(7636003)(336012)(508600001)(2616005)(31696002)(5660300002)(26005)(70206006)(31686004)(36756003)(43740500002);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2021 09:31:13.9848
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 27c9d70d-3ba6-440c-80d9-08d97f3e0d8c
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.36];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT017.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB2344
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi
 
-removed most cc, due to server limitation
+On 13/09/2021 03:49, Miles Chen wrote:
+> On Sun, 2021-09-12 at 12:29 +0200, Stefan Wahren wrote:
+>> Hi,
+>>
+>> i tried to compile current torvalds tree
+>> ("78e709522d2c012cb0daad2e668506637bffb7c2") for
+>> arm/multi_v7_defconfig
+>> and get the following build issue:
+>>
+>>    UPD     include/generated/utsrelease.h
+>> scripts/sorttable.c: In function ‘do_file’:
+>> scripts/sorttable.c:352:7: error: ‘EM_RISCV’ undeclared (first use in
+>> this function)
+>>    case EM_RISCV:
+>>         ^
+>> scripts/sorttable.c:352:7: note: each undeclared identifier is
+>> reported
+>> only once for each function it appears in
+>>
+>> I assume this is caused by:
+>>
+>> 54fed35fd3939398be292e4090b0b1c5ff2238b4 ("riscv: Enable
+>> BUILDTIME_TABLE_SORT")
+> 
+> I hit this error too. I add the follow conditional EM_RISCV
+> definition in sorttable.c to build pass (arm64/defconfig).
+> 
+> I will submit a patch out.
+> 
+> diff --git a/scripts/sorttable.c b/scripts/sorttable.c
+> index f355869c65cd..6ee4fa882919 100644
+> --- a/scripts/sorttable.c
+> +++ b/scripts/sorttable.c
+> @@ -54,6 +54,10 @@
+>   #define EM_ARCV2       195
+>   #endif
+> 
+> +#ifndef EM_RISCV
+> +#define EM_RISCV       243
+> +#endif
+> +
 
 
-W dniu 24.09.2021 o 10:03, Jani Nikula pisze:
-> On Mon, 20 Sep 2021, Doug Anderson <dianders@chromium.org> wrote:
->> Pushed all 15 to drm-misc-next.
-> ...
->> e8de4d55c259 drm/edid: Use new encoded panel id style for quirks matching
->> d9f91a10c3e8 drm/edid: Allow querying/working with the panel ID from 
->> the EDID
-> Hi Doug, Stan's reporting "initializer element is not constant" issues
-> here that were discussed before [1]. I wonder what gives, you said you'd
-> hit them on a draft version, but not with what was merged, and I can't
-> reproduce this either. Curious.
+This is still broken in the mainline. Any plans to get this fix merged 
+there? I believe it has now been broken for nearly 2 weeks.
 
+Thanks!
+Jon
 
-Apparently this is grey area of unclear specification.
-
-gcc version below 8 reports error, above 8.1+ should work [1]. I am not 
-sure if there is nice workaround for older gcc.
-
-
-[1]: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=69960#c18
-
-
-Regards
-
-Andrzej
-
-
-> BR,
-> Jani.
->
->
-> In file included from drivers/gpu/drm/drm_edid.c:42:0:
-> ./include/drm/drm_edid.h:525:2: error: initializer element is not constant
-> ((((u32)((vend)[0]) - '@') & 0x1f) << 26 | \
-> ^
-> drivers/gpu/drm/drm_edid.c:111:14: note: in expansion of macro 
-> ‘drm_edid_encode_panel_id’
-> .panel_id = drm_edid_encode_panel_id(vend, product_id), \
-> ^~~~~~~~~~~~~~~~~~~~~~~~
-> drivers/gpu/drm/drm_edid.c:120:2: note: in expansion of macro ‘EDID_QUIRK’
-> EDID_QUIRK("ACR", 44358, EDID_QUIRK_PREFER_LARGE_60),
-> ^~~~~~~~~~
-> ./include/drm/drm_edid.h:525:2: note: (near initialization for 
-> ‘edid_quirk_list[0].panel_id’)
-> ((((u32)((vend)[0]) - '@') & 0x1f) << 26 | \
-> ^
-> drivers/gpu/drm/drm_edid.c:111:14: note: in expansion of macro 
-> ‘drm_edid_encode_panel_id’
-> .panel_id = drm_edid_encode_panel_id(vend, product_id), \
-> ^~~~~~~~~~~~~~~~~~~~~~~~
-> drivers/gpu/drm/drm_edid.c:120:2: note: in expansion of macro ‘EDID_QUIRK’
-> EDID_QUIRK("ACR", 44358, EDID_QUIRK_PREFER_LARGE_60),
-> ^~~~~~~~~~
->
->
-> [1] 
-> https://lore.kernel.org/all/CAD=FV=XHvFq5+Rtax7WNq2-BieQr-BM4UnmOcma_eTzkX2ZtNA@mail.gmail.com/
->
->
+-- 
+nvpublic
