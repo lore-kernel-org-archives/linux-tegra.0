@@ -2,55 +2,55 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DE32C4332F
-	for <linux-tegra@archiver.kernel.org>; Sun, 26 Sep 2021 22:44:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDA2DC43219
+	for <linux-tegra@archiver.kernel.org>; Sun, 26 Sep 2021 22:44:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7AF9860E76
-	for <linux-tegra@archiver.kernel.org>; Sun, 26 Sep 2021 22:44:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BAAFA60F91
+	for <linux-tegra@archiver.kernel.org>; Sun, 26 Sep 2021 22:44:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231374AbhIZWoQ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 26 Sep 2021 18:44:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43268 "EHLO
+        id S232832AbhIZWqZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 26 Sep 2021 18:46:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43328 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230463AbhIZWoH (ORCPT
+        with ESMTP id S231586AbhIZWoR (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 26 Sep 2021 18:44:07 -0400
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4B9DC061570;
-        Sun, 26 Sep 2021 15:42:30 -0700 (PDT)
-Received: by mail-lf1-x129.google.com with SMTP id z24so69309940lfu.13;
-        Sun, 26 Sep 2021 15:42:30 -0700 (PDT)
+        Sun, 26 Sep 2021 18:44:17 -0400
+Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F08AC061714;
+        Sun, 26 Sep 2021 15:42:40 -0700 (PDT)
+Received: by mail-lf1-x131.google.com with SMTP id u18so67075922lfd.12;
+        Sun, 26 Sep 2021 15:42:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=+whg/vR1lDDJUCWuilT5Vzp2lbX9lxYPieEOT99+gTQ=;
-        b=oLWO/vyJTTDlVSPydjP6AYwkxAlr5iy/JlDt/BbqS2lo6hlZ0KNz/gRTRZMVQMNioh
-         r5RcVUqdWSzdO0lxxF9KtGbegUFjhhrCk9P0rWeO2PerhFEKe2aboHJQPDzuab4ph1c0
-         Rf5BdnU2fVLsbsUkmx+w3l4wDfbekTni6Uxy5ycqAb58A1dHRJR1pEpPAgs+0LIJKX/z
-         LuabDfkxB1YypmB/U+MK1kmHxsyOpVlw2B1ID+Efp9rvDOxySvk9xAFgdkoIwGc8yJnk
-         fe9QIotDuDDvzaTVA8SnOkMqz+HXxGziXFx5DVCCTSaNmdXkG3Cyr5Gdv6P8E52hK/Fe
-         zwZw==
+        bh=/zMh2dDaVZoZ4vzZE2pUwfpWmCYNgWoI5eKmTR6g/gI=;
+        b=TPVB0RwXRq+rEkqkQlF6J4GHXH1GJ2ps+9nqJhXZuAGPkdneX7lgZuMNPHZr9uOeCF
+         dMj/G90iS8n1h0BxUFJswCHIquqpp82e9naspyqhTxfpW3x9FhiJ/owb+AixyuWg8GLe
+         TWOUnwO2ds1VKPPejGI6OoP/uUq2mDVATQbKZiPoka3DdoHWrTx6WjVTX4YGSNxrYkue
+         vN3VFRxoB1lFyV3P0fTncx8UAABQvDzR3y8baSAIQB9q5oMRygNb8uY4V3RtnRrznk7j
+         XycZtegYbiU5CvXUsgfUqlWqevOL5wnkN0fgPRg+mnkxN7kKOHEmp1pu0Mmy99ySSek5
+         VnMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=+whg/vR1lDDJUCWuilT5Vzp2lbX9lxYPieEOT99+gTQ=;
-        b=T+ZfdGgPV/F8KXnemEgO+JDAjrH9zoTpEiEyDBCFuiZEoz+ENMAhAc8odHD6TsN28r
-         TVCKv/4ehN3IOAak0sJm3X7pLETyWxcKes8aDuv3CITOIIl78bcK0sjrGNwldGsWe5Hk
-         TcZkP6q1VoWvSUUwr5n1pbVZ3i0I3Mpp4Iy983RCBnc7cPvSiWQSklDt7XyEoyf0Zu1J
-         +CD1SUZjqXJ8iCRmvC/frv7ic/9U5CHgGqCuFxk5pt/REEYtZt2Zuvgked8Bwk0mCibg
-         0tGTtFjNe1jn8wWVGWRNrHyApglI/RcTxNmhmlNhxHWcLZ1xpNCa0/OiY3ZHyls7MU3Q
-         Gc5Q==
-X-Gm-Message-State: AOAM533Ql0lbcgyQmppOYIT0Ue5Q95nCya2NgNf0HG46wETb+X2kZfzx
-        DYW9idi1NfyZv3tQlPkm9TU=
-X-Google-Smtp-Source: ABdhPJz3XYdDBXG91bqXj0hDSBRKOWWLM6fxt9rVwzqDlgF9wZeNbMEbj7czzXrnV4JtevuwcX+/SA==
-X-Received: by 2002:a2e:7d07:: with SMTP id y7mr25887502ljc.406.1632696149001;
-        Sun, 26 Sep 2021 15:42:29 -0700 (PDT)
+        bh=/zMh2dDaVZoZ4vzZE2pUwfpWmCYNgWoI5eKmTR6g/gI=;
+        b=QeumLFSda+V8KX/Vu9YkKfZIW5E4Jfi8M9jmhPuo/YC+eFdjcNPCZtEizZtDjDE635
+         glhrM/fvzOpkaDouJpZLemk/kw+DtvJnbe4IgIFKfbvRJN+K9CDCef24UXCqexNf/LKp
+         4qWhtYmgd6X2h6Fo8h5X4LXUTT5K70KUXvHPc6P6kL5mVtBjyPvvRZdwbk4r2V0l1+1W
+         rwygq7bAGf2OkUhb2PQoonWRDMxZauF5qFfI8iud5qp/1OqZX7AkzpGpaMin4u1LExgg
+         w4VovYLJZdjTFmkkbac26QbkrnCWuw+jQoIGO1VNQ88PHLQipwlNj9tK5k0k8k4oyX0Y
+         QThg==
+X-Gm-Message-State: AOAM531krrODrRgy6UHWseVncKPrbngHs7ZM08B2lKJv9bCCi5GkTKZr
+        ev5wumuwZWsM/93opTDoYQc=
+X-Google-Smtp-Source: ABdhPJxEMLq7ow3WW976CzO5l2U8Li6ZCoWzv72//m9E/QCjgNTeV0WpPTFXp1IrhjC8MsOozgPH6Q==
+X-Received: by 2002:ac2:4a6e:: with SMTP id q14mr21845996lfp.685.1632696158985;
+        Sun, 26 Sep 2021 15:42:38 -0700 (PDT)
 Received: from localhost.localdomain (46-138-80-108.dynamic.spd-mgts.ru. [46.138.80.108])
-        by smtp.gmail.com with ESMTPSA id m10sm1408899lfr.272.2021.09.26.15.42.27
+        by smtp.gmail.com with ESMTPSA id m10sm1408899lfr.272.2021.09.26.15.42.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 26 Sep 2021 15:42:28 -0700 (PDT)
+        Sun, 26 Sep 2021 15:42:38 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -77,9 +77,9 @@ Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
         Lucas Stach <dev@lynxeye.de>, Stefan Agner <stefan@agner.ch>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
         David Heidelberg <david@ixit.cz>
-Subject: [PATCH v13 03/35] soc/tegra: pmc: Disable PMC state syncing
-Date:   Mon, 27 Sep 2021 01:40:26 +0300
-Message-Id: <20210926224058.1252-4-digetx@gmail.com>
+Subject: [PATCH v13 11/35] drm/tegra: dc: Support OPP and SoC core voltage scaling
+Date:   Mon, 27 Sep 2021 01:40:34 +0300
+Message-Id: <20210926224058.1252-12-digetx@gmail.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20210926224058.1252-1-digetx@gmail.com>
 References: <20210926224058.1252-1-digetx@gmail.com>
@@ -89,107 +89,156 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Disable PMC state syncing in order to ensure that we won't break older
-kernels once device-trees will be updated with the addition of the power
-domains. This also allows to apply device-tree PM patches independently
-from the driver patches.
+Add OPP and SoC core voltage scaling support to the display controller
+driver. This is required for enabling system-wide DVFS on pre-Tegra186
+SoCs.
 
+Tested-by: Peter Geis <pgwipeout@gmail.com> # Ouya T30
+Tested-by: Paul Fertser <fercerpav@gmail.com> # PAZ00 T20
+Tested-by: Nicolas Chauvet <kwizart@gmail.com> # PAZ00 T20 and TK1 T124
+Tested-by: Matt Merhar <mattmerhar@protonmail.com> # Ouya T30
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/soc/tegra/pmc.c | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ drivers/gpu/drm/tegra/dc.c | 74 ++++++++++++++++++++++++++++++++++++++
+ drivers/gpu/drm/tegra/dc.h |  2 ++
+ 2 files changed, 76 insertions(+)
 
-diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index 50091c4ec948..fb8faf7b226a 100644
---- a/drivers/soc/tegra/pmc.c
-+++ b/drivers/soc/tegra/pmc.c
-@@ -360,6 +360,7 @@ struct tegra_pmc_soc {
- 	unsigned int num_pmc_clks;
- 	bool has_blink_output;
- 	bool has_usb_sleepwalk;
-+	bool supports_core_domain;
- };
+diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
+index a29d64f87563..d4047a14e2b6 100644
+--- a/drivers/gpu/drm/tegra/dc.c
++++ b/drivers/gpu/drm/tegra/dc.c
+@@ -11,9 +11,12 @@
+ #include <linux/interconnect.h>
+ #include <linux/module.h>
+ #include <linux/of_device.h>
++#include <linux/pm_domain.h>
++#include <linux/pm_opp.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/reset.h>
  
- /**
-@@ -3041,6 +3042,7 @@ static void tegra20_pmc_setup_irq_polarity(struct tegra_pmc *pmc,
++#include <soc/tegra/common.h>
+ #include <soc/tegra/pmc.h>
+ 
+ #include <drm/drm_atomic.h>
+@@ -1762,6 +1765,47 @@ int tegra_dc_state_setup_clock(struct tegra_dc *dc,
+ 	return 0;
  }
  
- static const struct tegra_pmc_soc tegra20_pmc_soc = {
-+	.supports_core_domain = false,
- 	.num_powergates = ARRAY_SIZE(tegra20_powergates),
- 	.powergates = tegra20_powergates,
- 	.num_cpu_powergates = 0,
-@@ -3101,6 +3103,7 @@ static const char * const tegra30_reset_sources[] = {
- };
- 
- static const struct tegra_pmc_soc tegra30_pmc_soc = {
-+	.supports_core_domain = false,
- 	.num_powergates = ARRAY_SIZE(tegra30_powergates),
- 	.powergates = tegra30_powergates,
- 	.num_cpu_powergates = ARRAY_SIZE(tegra30_cpu_powergates),
-@@ -3157,6 +3160,7 @@ static const u8 tegra114_cpu_powergates[] = {
- };
- 
- static const struct tegra_pmc_soc tegra114_pmc_soc = {
-+	.supports_core_domain = false,
- 	.num_powergates = ARRAY_SIZE(tegra114_powergates),
- 	.powergates = tegra114_powergates,
- 	.num_cpu_powergates = ARRAY_SIZE(tegra114_cpu_powergates),
-@@ -3273,6 +3277,7 @@ static const struct pinctrl_pin_desc tegra124_pin_descs[] = {
- };
- 
- static const struct tegra_pmc_soc tegra124_pmc_soc = {
-+	.supports_core_domain = false,
- 	.num_powergates = ARRAY_SIZE(tegra124_powergates),
- 	.powergates = tegra124_powergates,
- 	.num_cpu_powergates = ARRAY_SIZE(tegra124_cpu_powergates),
-@@ -3398,6 +3403,7 @@ static const struct tegra_wake_event tegra210_wake_events[] = {
- };
- 
- static const struct tegra_pmc_soc tegra210_pmc_soc = {
-+	.supports_core_domain = false,
- 	.num_powergates = ARRAY_SIZE(tegra210_powergates),
- 	.powergates = tegra210_powergates,
- 	.num_cpu_powergates = ARRAY_SIZE(tegra210_cpu_powergates),
-@@ -3555,6 +3561,7 @@ static const struct tegra_wake_event tegra186_wake_events[] = {
- };
- 
- static const struct tegra_pmc_soc tegra186_pmc_soc = {
-+	.supports_core_domain = false,
- 	.num_powergates = 0,
- 	.powergates = NULL,
- 	.num_cpu_powergates = 0,
-@@ -3689,6 +3696,7 @@ static const struct tegra_wake_event tegra194_wake_events[] = {
- };
- 
- static const struct tegra_pmc_soc tegra194_pmc_soc = {
-+	.supports_core_domain = false,
- 	.num_powergates = 0,
- 	.powergates = NULL,
- 	.num_cpu_powergates = 0,
-@@ -3757,6 +3765,7 @@ static const char * const tegra234_reset_sources[] = {
- };
- 
- static const struct tegra_pmc_soc tegra234_pmc_soc = {
-+	.supports_core_domain = false,
- 	.num_powergates = 0,
- 	.powergates = NULL,
- 	.num_cpu_powergates = 0,
-@@ -3803,6 +3812,14 @@ static void tegra_pmc_sync_state(struct device *dev)
- {
- 	int err;
- 
-+	/*
-+	 * Newer device-trees have power domains, but we need to prepare all
-+	 * device drivers with runtime PM and OPP support first, otherwise
-+	 * state syncing is unsafe.
-+	 */
-+	if (!pmc->soc->supports_core_domain)
++static void tegra_dc_update_voltage_state(struct tegra_dc *dc,
++					  struct tegra_dc_state *state)
++{
++	unsigned long rate, pstate;
++	struct dev_pm_opp *opp;
++	int err;
++
++	if (!dc->has_opp_table)
 +		return;
 +
- 	/*
- 	 * Older device-trees don't have core PD, and thus, there are
- 	 * no dependencies that will block the state syncing. We shouldn't
++	/* calculate actual pixel clock rate which depends on internal divider */
++	rate = DIV_ROUND_UP(clk_get_rate(dc->clk) * 2, state->div + 2);
++
++	/* find suitable OPP for the rate */
++	opp = dev_pm_opp_find_freq_ceil(dc->dev, &rate);
++
++	if (opp == ERR_PTR(-ERANGE))
++		opp = dev_pm_opp_find_freq_floor(dc->dev, &rate);
++
++	if (IS_ERR(opp)) {
++		dev_err(dc->dev, "failed to find OPP for %luHz: %pe\n",
++			rate, opp);
++		return;
++	}
++
++	pstate = dev_pm_opp_get_required_pstate(opp, 0);
++	dev_pm_opp_put(opp);
++
++	/*
++	 * The minimum core voltage depends on the pixel clock rate (which
++	 * depends on internal clock divider of the CRTC) and not on the
++	 * rate of the display controller clock. This is why we're not using
++	 * dev_pm_opp_set_rate() API and instead controlling the power domain
++	 * directly.
++	 */
++	err = dev_pm_genpd_set_performance_state(dc->dev, pstate);
++	if (err)
++		dev_err(dc->dev, "failed to set power domain state to %lu: %d\n",
++			pstate, err);
++}
++
+ static void tegra_dc_commit_state(struct tegra_dc *dc,
+ 				  struct tegra_dc_state *state)
+ {
+@@ -1801,6 +1845,8 @@ static void tegra_dc_commit_state(struct tegra_dc *dc,
+ 		value = SHIFT_CLK_DIVIDER(state->div) | PIXEL_CLK_DIVIDER_PCD1;
+ 		tegra_dc_writel(dc, value, DC_DISP_DISP_CLOCK_CONTROL);
+ 	}
++
++	tegra_dc_update_voltage_state(dc, state);
+ }
+ 
+ static void tegra_dc_stop(struct tegra_dc *dc)
+@@ -1991,6 +2037,13 @@ static void tegra_crtc_atomic_disable(struct drm_crtc *crtc,
+ 	err = host1x_client_suspend(&dc->client);
+ 	if (err < 0)
+ 		dev_err(dc->dev, "failed to suspend: %d\n", err);
++
++	if (dc->has_opp_table) {
++		err = dev_pm_genpd_set_performance_state(dc->dev, 0);
++		if (err)
++			dev_err(dc->dev,
++				"failed to clear power domain state: %d\n", err);
++	}
+ }
+ 
+ static void tegra_crtc_atomic_enable(struct drm_crtc *crtc,
+@@ -2973,6 +3026,23 @@ static int tegra_dc_couple(struct tegra_dc *dc)
+ 	return 0;
+ }
+ 
++static int tegra_dc_init_opp_table(struct tegra_dc *dc)
++{
++	struct tegra_core_opp_params opp_params = {};
++	int err;
++
++	err = devm_tegra_core_dev_init_opp_table(dc->dev, &opp_params);
++	if (err && err != -ENODEV)
++		return err;
++
++	if (err)
++		dc->has_opp_table = false;
++	else
++		dc->has_opp_table = true;
++
++	return 0;
++}
++
+ static int tegra_dc_probe(struct platform_device *pdev)
+ {
+ 	u64 dma_mask = dma_get_mask(pdev->dev.parent);
+@@ -3038,6 +3108,10 @@ static int tegra_dc_probe(struct platform_device *pdev)
+ 		tegra_powergate_power_off(dc->powergate);
+ 	}
+ 
++	err = tegra_dc_init_opp_table(dc);
++	if (err < 0)
++		return err;
++
+ 	dc->regs = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(dc->regs))
+ 		return PTR_ERR(dc->regs);
+diff --git a/drivers/gpu/drm/tegra/dc.h b/drivers/gpu/drm/tegra/dc.h
+index 40378308d527..871cfb0cd31c 100644
+--- a/drivers/gpu/drm/tegra/dc.h
++++ b/drivers/gpu/drm/tegra/dc.h
+@@ -100,6 +100,8 @@ struct tegra_dc {
+ 	struct drm_info_list *debugfs_files;
+ 
+ 	const struct tegra_dc_soc_info *soc;
++
++	bool has_opp_table;
+ };
+ 
+ static inline struct tegra_dc *
 -- 
 2.32.0
 
