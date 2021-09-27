@@ -2,69 +2,89 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1182C433EF
-	for <linux-tegra@archiver.kernel.org>; Mon, 27 Sep 2021 07:46:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A12F1C433EF
+	for <linux-tegra@archiver.kernel.org>; Mon, 27 Sep 2021 08:52:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7FAA860F4F
-	for <linux-tegra@archiver.kernel.org>; Mon, 27 Sep 2021 07:46:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7C41861157
+	for <linux-tegra@archiver.kernel.org>; Mon, 27 Sep 2021 08:52:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233298AbhI0Hru (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 27 Sep 2021 03:47:50 -0400
-Received: from szxga02-in.huawei.com ([45.249.212.188]:21354 "EHLO
-        szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233223AbhI0Hrt (ORCPT
+        id S233568AbhI0Iye (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 27 Sep 2021 04:54:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36042 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233495AbhI0Iyd (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 27 Sep 2021 03:47:49 -0400
-Received: from dggemv711-chm.china.huawei.com (unknown [172.30.72.56])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4HHvjG6grSzRXBm;
-        Mon, 27 Sep 2021 15:41:54 +0800 (CST)
-Received: from dggpeml500017.china.huawei.com (7.185.36.243) by
- dggemv711-chm.china.huawei.com (10.1.198.66) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.8; Mon, 27 Sep 2021 15:46:10 +0800
-Received: from huawei.com (10.175.103.91) by dggpeml500017.china.huawei.com
- (7.185.36.243) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2308.8; Mon, 27 Sep
- 2021 15:46:10 +0800
-From:   Yang Yingliang <yangyingliang@huawei.com>
-To:     <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>
-CC:     <krzysztof.kozlowski@canonical.com>, <mperttunen@nvidia.com>
-Subject: [PATCH -next] memory: tegra186-emc: Fix error return code in tegra186_emc_probe()
-Date:   Mon, 27 Sep 2021 15:51:07 +0800
-Message-ID: <20210927075107.2882569-1-yangyingliang@huawei.com>
-X-Mailer: git-send-email 2.25.1
+        Mon, 27 Sep 2021 04:54:33 -0400
+Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B035EC061575;
+        Mon, 27 Sep 2021 01:52:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
+         s=20161220; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+        MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=TcyusGOPUsXGG6IViMHWfWJUjG8E0+ATdI6E3Zdg0BI=; b=FiUkBae+5naVlKsgX8Ipfw0PPL
+        g8FFUo9x52sUeMrKC9W3/VAYn0tmy43R+YxSwdCbwcLWJ6HO1+0dsZgVC16my9NZA9MCUQc8lmW0W
+        Lrz7fiESybL9qUPdGIjHCTfvI5OBOm6RQ3IG8+rPc9ZW+ZbCWk5xsNUMt7HJEvC9a5+7S1to7zSp0
+        Prig+1s7IWCwbe4DSzKYQTEFhlhr1ZVkaSbT3XXPWKxodTLL3sWJTspB4PUjGpOLWBSOMX8MFxbz8
+        6D5JridswqK28SVHhOD5/OoZC8mTL4s0Wul92aKWbgqxrfPlaLrwjuaIVfjBxPd5xXMF5HfcAfK+Z
+        oJDrwGIw==;
+Received: from dsl-hkibng22-54f986-236.dhcp.inet.fi ([84.249.134.236] helo=[192.168.1.10])
+        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <cyndis@kapsi.fi>)
+        id 1mUmNV-0003dq-CM; Mon, 27 Sep 2021 11:52:49 +0300
+Subject: Re: [PATCH -next] memory: tegra186-emc: Fix error return code in
+ tegra186_emc_probe()
+To:     Yang Yingliang <yangyingliang@huawei.com>,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Cc:     krzysztof.kozlowski@canonical.com, mperttunen@nvidia.com
+References: <20210927075107.2882569-1-yangyingliang@huawei.com>
+From:   Mikko Perttunen <cyndis@kapsi.fi>
+Message-ID: <09e28d31-881f-acd0-33d0-565bdc9475ae@kapsi.fi>
+Date:   Mon, 27 Sep 2021 11:52:48 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.103.91]
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- dggpeml500017.china.huawei.com (7.185.36.243)
-X-CFilter-Loop: Reflected
+In-Reply-To: <20210927075107.2882569-1-yangyingliang@huawei.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 84.249.134.236
+X-SA-Exim-Mail-From: cyndis@kapsi.fi
+X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Return the error code when command fails.
+On 9/27/21 10:51 AM, Yang Yingliang wrote:
+> Return the error code when command fails.
+> 
+> Fixes: 13324edbe926 ("memory: tegra186-emc: Handle errors in BPMP response")
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
+> ---
+>   drivers/memory/tegra/tegra186-emc.c | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/memory/tegra/tegra186-emc.c b/drivers/memory/tegra/tegra186-emc.c
+> index abc0c2eeaab7..16351840b187 100644
+> --- a/drivers/memory/tegra/tegra186-emc.c
+> +++ b/drivers/memory/tegra/tegra186-emc.c
+> @@ -198,6 +198,7 @@ static int tegra186_emc_probe(struct platform_device *pdev)
+>   		goto put_bpmp;
+>   	}
+>   	if (msg.rx.ret < 0) {
+> +		err = msg.rx.ret;
+>   		dev_err(&pdev->dev, "EMC DVFS MRQ failed: %d (BPMP error code)\n", msg.rx.ret);
+>   		goto put_bpmp;
+>   	}
+> 
 
-Fixes: 13324edbe926 ("memory: tegra186-emc: Handle errors in BPMP response")
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
----
- drivers/memory/tegra/tegra186-emc.c | 1 +
- 1 file changed, 1 insertion(+)
+Good catch, but we shouldn't return msg.rx.ret since it is a BPMP error 
+code that doesn't necessarily map directly to a Linux error code. So we 
+should set err to something like -EINVAL instead. Please update, or if 
+you'd prefer, I can fix it.
 
-diff --git a/drivers/memory/tegra/tegra186-emc.c b/drivers/memory/tegra/tegra186-emc.c
-index abc0c2eeaab7..16351840b187 100644
---- a/drivers/memory/tegra/tegra186-emc.c
-+++ b/drivers/memory/tegra/tegra186-emc.c
-@@ -198,6 +198,7 @@ static int tegra186_emc_probe(struct platform_device *pdev)
- 		goto put_bpmp;
- 	}
- 	if (msg.rx.ret < 0) {
-+		err = msg.rx.ret;
- 		dev_err(&pdev->dev, "EMC DVFS MRQ failed: %d (BPMP error code)\n", msg.rx.ret);
- 		goto put_bpmp;
- 	}
--- 
-2.25.1
-
+Mikko
