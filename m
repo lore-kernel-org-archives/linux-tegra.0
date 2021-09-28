@@ -2,134 +2,84 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C11B2C433F5
-	for <linux-tegra@archiver.kernel.org>; Tue, 28 Sep 2021 11:20:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17CAAC433EF
+	for <linux-tegra@archiver.kernel.org>; Tue, 28 Sep 2021 12:30:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 949C86113E
-	for <linux-tegra@archiver.kernel.org>; Tue, 28 Sep 2021 11:20:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F23A1611CA
+	for <linux-tegra@archiver.kernel.org>; Tue, 28 Sep 2021 12:30:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235628AbhI1LVn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 28 Sep 2021 07:21:43 -0400
-Received: from mail-dm6nam08on2080.outbound.protection.outlook.com ([40.107.102.80]:56033
-        "EHLO NAM04-DM6-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S231202AbhI1LVm (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 28 Sep 2021 07:21:42 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=SpMsZkIAWs34MbtLo6pAWVys5iN9aLe+/FR1VVksg9Xc0h/HMnzb62m6lmj+MtcsT8lNQ6Hk3gki8v6ZKVQIcVmhn4UB/UFk6JEWG5t4+9O8e18fyZ3PP75UCBdypIbVXXpE98K3YWWDjRkhxXWfiFpSlYJDe5740RdPMgD6cBd59qezNdWtqx63NO+mUS3YCOk8LVCW3sFgBqUEALC5rdXe48oqJyJHqQD6a89St5nXTLX6JIm4G97A5ko27SvjYViuTcDVPVXRnbCrT5mNYZYdrDuW7shyUw73Mx0MPtych1AU6G7eMc3XMVYxHMaUOVY4VMpLN8yPv1VO0bj/RQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901; h=From:Date:Subject:Message-ID:Content-Type:MIME-Version;
- bh=8VFUUYNvNenteMhBvlADSDTGVKVT/6wlYS8elewM5RY=;
- b=OQ59WLDzK438vDfpL4AzGcx77RyunJf1+Ilz8R/WzoTpVgyFnpBtGweTJ9VmuxgnnLg2mIgnmMUeCXivkpvZjIxZ79PR3y/5aUWAQeCPxYogbj5S0AbiUGDiV9Nl4tJuVW6P0OlXbkFI3WeJxMUC8N7lFrLNbuFQbksOz5Gk7+BPX5PyZb1sp5iKrHZgMtxB9yLzAdYXFE4aS2g/Vkjuwbmfqcgu8PiGSpLeHN1WfV2Fcgdqj0FPucyYoZaATJKCFhK8bE3HOMF68QJAw0uttwUPhKBhWeNeTgMfjFlcxDgCY1o+knzWeSZIMmQHZgRfwTtSiPMqFr14t2Q+im9uww==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.112.32) smtp.rcpttodomain=denx.de smtp.mailfrom=nvidia.com;
- dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8VFUUYNvNenteMhBvlADSDTGVKVT/6wlYS8elewM5RY=;
- b=AxpYFxdKWmMxoU/v4kDoPsjllyVwrCWNBB6mdM4qW64O7O8WvfoW71EkUoZKhlXFHVYq/fsN4BlgwChEBBckB2wnACI6yRfS7XqG1jyzoZCwR+Ah2pNGMokEPTAoBUDnRaNpcUpOd8AhmxqA/Eyx2QEz7T4p4g0nF1mFtABj08PtyMOUD677gb4Oeb/Wa7ebWj8RPKlfWpMK1EOSOiJp83w2/OCEgIkGzUiN7ZC+PsJanASdnrezz1+esmGraoIQCKQd3PGrFzCRc83edq1bl4NNIDbn+Q1P3gDDx6DVazKMITG2RmEx/QYF7myNUXBli2r71JHimBpJTSz8TopOFw==
-Received: from BN0PR04CA0144.namprd04.prod.outlook.com (2603:10b6:408:ed::29)
- by BN9PR12MB5367.namprd12.prod.outlook.com (2603:10b6:408:104::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4544.15; Tue, 28 Sep
- 2021 11:20:01 +0000
-Received: from BN8NAM11FT052.eop-nam11.prod.protection.outlook.com
- (2603:10b6:408:ed:cafe::f9) by BN0PR04CA0144.outlook.office365.com
- (2603:10b6:408:ed::29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4566.13 via Frontend
- Transport; Tue, 28 Sep 2021 11:20:01 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.32)
- smtp.mailfrom=nvidia.com; denx.de; dkim=none (message not signed)
- header.d=none;denx.de; dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.112.32 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.112.32; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (216.228.112.32) by
- BN8NAM11FT052.mail.protection.outlook.com (10.13.177.210) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.4544.13 via Frontend Transport; Tue, 28 Sep 2021 11:19:59 +0000
-Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL109.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Tue, 28 Sep
- 2021 04:19:58 -0700
-Received: from jonathanh-vm-01.nvidia.com (172.20.187.5) by mail.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.18 via Frontend
- Transport; Tue, 28 Sep 2021 11:19:58 +0000
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
-        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
-        <stable@vger.kernel.org>, <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 5.14 000/161] 5.14.9-rc2 review
-In-Reply-To: <20210928071739.782455217@linuxfoundation.org>
-References: <20210928071739.782455217@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        id S240706AbhI1Mbr (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 28 Sep 2021 08:31:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51990 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S240526AbhI1Mbr (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 28 Sep 2021 08:31:47 -0400
+Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3BE5C061575;
+        Tue, 28 Sep 2021 05:30:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
+         s=20161220; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+        MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=yF1lWcH2qjndVjno9oL2GGiLBEO3Zc/VEOg/LYKD2Zw=; b=pZ1FyoI9SmTcmf2eZPSWQ3fJk4
+        1+u2M1qKaoebPofrBylcAMGuLhkJDQMwn6KxxRQTmq4UnrtBzY9nhdD1J4tU3Va+nfTCmHULJWFA8
+        x1xzp0CQubwEDl0UQYsaEhvENaTFyJqLxLHV7PgQfnCGN6BeMcKhkbCGnveCHh81Urls4vT+Z4R8J
+        94ytDvUot3QCjQDlJHsRC6CuMFTvXnB7HtfTUpOP3c/Ne/KqAfw6p8e4Ks9EHn8Coiu0uL8l97ZOW
+        7H48RAShYAU0uP8oMAb1r4SSGKc5zt+kAVlHQUd8yAaueUmPeAXjNMi1E/GRklyR5Nj4+kHsD1CQr
+        8YXbGVrw==;
+Received: from dsl-hkibng22-54f986-236.dhcp.inet.fi ([84.249.134.236] helo=[192.168.1.10])
+        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <cyndis@kapsi.fi>)
+        id 1mVCFG-0004La-Ms; Tue, 28 Sep 2021 15:30:02 +0300
+Subject: Re: [PATCH -next v2] memory: tegra186-emc: Fix error return code in
+ tegra186_emc_probe()
+To:     Yang Yingliang <yangyingliang@huawei.com>,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Cc:     krzysztof.kozlowski@canonical.com, mperttunen@nvidia.com
+References: <20210928021545.3774677-1-yangyingliang@huawei.com>
+From:   Mikko Perttunen <cyndis@kapsi.fi>
+Message-ID: <9080ad2f-e01b-5c7a-333e-6039a8824ae5@kapsi.fi>
+Date:   Tue, 28 Sep 2021 15:30:01 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 MIME-Version: 1.0
-Message-ID: <489252aec90b4349888111d708da612b@HQMAIL107.nvidia.com>
-Date:   Tue, 28 Sep 2021 11:19:58 +0000
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 00269847-a630-4fb9-08a9-08d98271e943
-X-MS-TrafficTypeDiagnostic: BN9PR12MB5367:
-X-Microsoft-Antispam-PRVS: <BN9PR12MB5367800370EE0CC6C372773AD9A89@BN9PR12MB5367.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: ZTM4NUcN2yD9HQfUKCWRyyCYxanS+e8GiyLAHC3b9Muh5LZL7VWNZHFkfrsoRxv0xdptINYE8N4w5K3uznPpOJx6poNx+sTBAWgjE29KGbBSaBzQy1w0SumuyBiRXf6Khb1eNyKQSLXjLp0wej6n2fJhKMNVq0VOy+sZC01TZHh4R17U1PjQS3ePBK8X3aFzPdUI9gIwMPAImu1a0TdjYNtIQzetE0lh8FUzRKR3IwSpaXC1+5gCvqh2mUgZmyqqYgl9LrvxfzGaws+eoLMjocn/7IherCq/5imsF+PAw0ixUCtkv7oI+CEM/ViZG/s+SUzcPNxr/uNtMloWoit9VHPlZv6zOBGWeN6SiXL9wf5tkOYAFbC45zDFMMsiCIbOBkyjyuJBbEofbIjaThRPx7BhHK3sdxH2TBJHmaJ/JgDyybJpBIRhzVV/Zh8n/dL6O2v4aFBLOYjuHNxHmXgSHBxwqW37alpEmsYrG5J6d8Dnz8Yr8L9L/5UmwvPPiCHk+uvc6Qy890qU0S1nDObp7hJi0gsOGfPAHdFGEAHh9PJ2nFwsckVZ+9ux8MUVZp+rkpaXD5vCVDxocfuF9/FDcpVXDcY0KNud9FVY/qNZqJHddUk8kk3EshICuSHhyd30JkFqHUbOe7xXnDswch2/FOzU/mdwrcGXOo1brv+Avgu2NRW72g2b+w+QDM9nhDPNO5GMA4dXKzaVWycaZOd6CMi6OsGXdtzBe6a3QLivpDZOAjCRuPSF19F+/KHKN/HA7UlQuuLw59sVSV2F5xDo6W1sQUqGmzJOJpRndbVzryQ=
-X-Forefront-Antispam-Report: CIP:216.228.112.32;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid01.nvidia.com;CAT:NONE;SFS:(4636009)(46966006)(36840700001)(70206006)(316002)(70586007)(8676002)(36860700001)(54906003)(82310400003)(336012)(426003)(7416002)(8936002)(24736004)(508600001)(356005)(26005)(7636003)(2906002)(4326008)(6916009)(5660300002)(966005)(186003)(86362001)(108616005)(47076005);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Sep 2021 11:19:59.2673
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 00269847-a630-4fb9-08a9-08d98271e943
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.32];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT052.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN9PR12MB5367
+In-Reply-To: <20210928021545.3774677-1-yangyingliang@huawei.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 84.249.134.236
+X-SA-Exim-Mail-From: cyndis@kapsi.fi
+X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, 28 Sep 2021 09:19:04 +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.14.9 release.
-> There are 161 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On 9/28/21 5:15 AM, Yang Yingliang wrote:
+> Return the error code when command fails.
 > 
-> Responses should be made by Thu, 30 Sep 2021 07:17:13 +0000.
-> Anything received after that time might be too late.
+> Fixes: 13324edbe926 ("memory: tegra186-emc: Handle errors in BPMP response")
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
+> ---
+>   drivers/memory/tegra/tegra186-emc.c | 1 +
+>   1 file changed, 1 insertion(+)
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.14.9-rc2.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.14.y
-> and the diffstat can be found below.
+> diff --git a/drivers/memory/tegra/tegra186-emc.c b/drivers/memory/tegra/tegra186-emc.c
+> index abc0c2eeaab7..746c4ef2c0af 100644
+> --- a/drivers/memory/tegra/tegra186-emc.c
+> +++ b/drivers/memory/tegra/tegra186-emc.c
+> @@ -198,6 +198,7 @@ static int tegra186_emc_probe(struct platform_device *pdev)
+>   		goto put_bpmp;
+>   	}
+>   	if (msg.rx.ret < 0) {
+> +		err = -EINVAL;
+>   		dev_err(&pdev->dev, "EMC DVFS MRQ failed: %d (BPMP error code)\n", msg.rx.ret);
+>   		goto put_bpmp;
+>   	}
 > 
-> thanks,
-> 
-> greg k-h
 
-All tests passing for Tegra ...
-
-Test results for stable-v5.14:
-    10 builds:	10 pass, 0 fail
-    28 boots:	28 pass, 0 fail
-    114 tests:	114 pass, 0 fail
-
-Linux version:	5.14.9-rc2-g6ee566ecf238
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
-                tegra20-ventana, tegra210-p2371-2180,
-                tegra210-p3450-0000, tegra30-cardhu-a04
-
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
-
-Jon
+Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
