@@ -2,84 +2,76 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17CAAC433EF
-	for <linux-tegra@archiver.kernel.org>; Tue, 28 Sep 2021 12:30:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F98AC433EF
+	for <linux-tegra@archiver.kernel.org>; Tue, 28 Sep 2021 16:15:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F23A1611CA
-	for <linux-tegra@archiver.kernel.org>; Tue, 28 Sep 2021 12:30:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 36E4F60FE3
+	for <linux-tegra@archiver.kernel.org>; Tue, 28 Sep 2021 16:15:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240706AbhI1Mbr (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 28 Sep 2021 08:31:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51990 "EHLO
+        id S241645AbhI1QRP (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 28 Sep 2021 12:17:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49120 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240526AbhI1Mbr (ORCPT
+        with ESMTP id S241523AbhI1QRO (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 28 Sep 2021 08:31:47 -0400
-Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3BE5C061575;
-        Tue, 28 Sep 2021 05:30:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-         s=20161220; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
-        MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=yF1lWcH2qjndVjno9oL2GGiLBEO3Zc/VEOg/LYKD2Zw=; b=pZ1FyoI9SmTcmf2eZPSWQ3fJk4
-        1+u2M1qKaoebPofrBylcAMGuLhkJDQMwn6KxxRQTmq4UnrtBzY9nhdD1J4tU3Va+nfTCmHULJWFA8
-        x1xzp0CQubwEDl0UQYsaEhvENaTFyJqLxLHV7PgQfnCGN6BeMcKhkbCGnveCHh81Urls4vT+Z4R8J
-        94ytDvUot3QCjQDlJHsRC6CuMFTvXnB7HtfTUpOP3c/Ne/KqAfw6p8e4Ks9EHn8Coiu0uL8l97ZOW
-        7H48RAShYAU0uP8oMAb1r4SSGKc5zt+kAVlHQUd8yAaueUmPeAXjNMi1E/GRklyR5Nj4+kHsD1CQr
-        8YXbGVrw==;
-Received: from dsl-hkibng22-54f986-236.dhcp.inet.fi ([84.249.134.236] helo=[192.168.1.10])
-        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <cyndis@kapsi.fi>)
-        id 1mVCFG-0004La-Ms; Tue, 28 Sep 2021 15:30:02 +0300
-Subject: Re: [PATCH -next v2] memory: tegra186-emc: Fix error return code in
- tegra186_emc_probe()
-To:     Yang Yingliang <yangyingliang@huawei.com>,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Cc:     krzysztof.kozlowski@canonical.com, mperttunen@nvidia.com
-References: <20210928021545.3774677-1-yangyingliang@huawei.com>
-From:   Mikko Perttunen <cyndis@kapsi.fi>
-Message-ID: <9080ad2f-e01b-5c7a-333e-6039a8824ae5@kapsi.fi>
-Date:   Tue, 28 Sep 2021 15:30:01 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+        Tue, 28 Sep 2021 12:17:14 -0400
+Received: from mail-yb1-xb36.google.com (mail-yb1-xb36.google.com [IPv6:2607:f8b0:4864:20::b36])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9EC72C06161C
+        for <linux-tegra@vger.kernel.org>; Tue, 28 Sep 2021 09:15:33 -0700 (PDT)
+Received: by mail-yb1-xb36.google.com with SMTP id m70so32918535ybm.5
+        for <linux-tegra@vger.kernel.org>; Tue, 28 Sep 2021 09:15:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=SS56s1Nm4wcCF7mLNIAXRUKXVLxKzviCYlc6632WMvc=;
+        b=elvFL0/xzb7AfAA7Q11iMoqmqVU2UHAeQPKOefpxBC2j3kRZHS7x4iOzItc8TY3XOB
+         xcRSc6chobQ7mWlK7t1C0cnPvbFKbKUE5p8c3frnaGUlLInzg1kE4z9Kcuuq6esbvR5b
+         ooSEyvB5/vnPW7WYymDxGOXGZV62qrAUoE7koH5UEQuj1GTp4/zHKHzGD5zQFpv7sNd+
+         1L4xPXRVhK6/9bAvZHPuDM0Eq9uCLTRLPlis7JziTdNSIro81ahmRuK0v+5U/S9dpFQJ
+         fbZiZUmr5ocoutnPdO+W/fIHNiX8TuG1TZvUXLxB37pfsgYHyiOFtAKi2HDhOXalNDbj
+         G0Ww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=SS56s1Nm4wcCF7mLNIAXRUKXVLxKzviCYlc6632WMvc=;
+        b=oyoaqwoVO3rTJgdkCjbYAmlKcqYhyTJYYZ5bjTZ+aVgNr10m+pkfZDMOKVvlL2+jZ2
+         NkUNZWAjYCS80WTQ2q6xMAGxRsVt0pRB56MrFV4ToIledRC6nhIE1yotV09Z3Z2AAZRi
+         9QYF69a+takeQfGCkYtd5+uSowQeSQIcyguHHk/UZvIv3JDna7czt1NfGH04aago9FJJ
+         rKVs3vJOQULCj+RE9xQaaQsk9ZsB/d7/HJ+mUEHvraTHJW7E5TJrmCjQ+et6BreQtw8H
+         BmtVJMueV7Qlu9RyBM4qRyVmdB07+/E4WvMWze3YAGXYibxIggBwvoVufsC58P0sbEi3
+         1Tsg==
+X-Gm-Message-State: AOAM532V+Zw7sBjbtzsofSKL6CckFmTusyGSnrho8lCCxsrtVGEpcXE/
+        b8zs+2sCS8Lh3wMvbjnIEzONd9Vt42aIoQDjVJkrCpepPaA=
+X-Google-Smtp-Source: ABdhPJxzBoElmjzhJhA1k7PA8RJXs75VUlrdEIyzpoCp4LWYUV2SCbd+HTWcSq3K8JGviRfOaBYWwmLgZNw/H77aahI=
+X-Received: by 2002:a25:59d5:: with SMTP id n204mr3266450ybb.189.1632845732874;
+ Tue, 28 Sep 2021 09:15:32 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20210928021545.3774677-1-yangyingliang@huawei.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 84.249.134.236
-X-SA-Exim-Mail-From: cyndis@kapsi.fi
-X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
+Reply-To: xlazom00@gmail.com
+From:   Michal Lazo <xlazom00@gmail.com>
+Date:   Tue, 28 Sep 2021 18:15:22 +0200
+Message-ID: <CAPoNHOedRjPz_RmpZNEg8UDV-WhpkTAKpfVq6=nYgfq2bQkysg@mail.gmail.com>
+Subject: tegra_drm: Display end in stand-by mode on jetson nano board
+To:     linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 9/28/21 5:15 AM, Yang Yingliang wrote:
-> Return the error code when command fails.
-> 
-> Fixes: 13324edbe926 ("memory: tegra186-emc: Handle errors in BPMP response")
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
-> ---
->   drivers/memory/tegra/tegra186-emc.c | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/memory/tegra/tegra186-emc.c b/drivers/memory/tegra/tegra186-emc.c
-> index abc0c2eeaab7..746c4ef2c0af 100644
-> --- a/drivers/memory/tegra/tegra186-emc.c
-> +++ b/drivers/memory/tegra/tegra186-emc.c
-> @@ -198,6 +198,7 @@ static int tegra186_emc_probe(struct platform_device *pdev)
->   		goto put_bpmp;
->   	}
->   	if (msg.rx.ret < 0) {
-> +		err = -EINVAL;
->   		dev_err(&pdev->dev, "EMC DVFS MRQ failed: %d (BPMP error code)\n", msg.rx.ret);
->   		goto put_bpmp;
->   	}
-> 
+Hello
+I have NVIDIA Jetson Nano Developer Kit
+Monitor 2560x1440 connected with displayport or HDMI
+OS Armbian(armbian.com) ubuntu 21.04
+linux 5.15.0-rc2
+and tegra_drm driver isn't working from time to time (after cold boot
+or restart)
+All works fine with L4T
+kernel log
+https://pastebin.com/raw/U9AYq5Vg
 
-Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
+I also made issue on gitlab
+https://gitlab.freedesktop.org/drm/nouveau/-/issues/117
+
+Best regards
+Michal Lazo
+xlazom00@gmail.com
