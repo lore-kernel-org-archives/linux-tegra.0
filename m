@@ -2,160 +2,113 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A8F8C433F5
-	for <linux-tegra@archiver.kernel.org>; Wed, 29 Sep 2021 07:43:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A03F7C433F5
+	for <linux-tegra@archiver.kernel.org>; Wed, 29 Sep 2021 10:32:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 32188613A0
-	for <linux-tegra@archiver.kernel.org>; Wed, 29 Sep 2021 07:43:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7E986611C0
+	for <linux-tegra@archiver.kernel.org>; Wed, 29 Sep 2021 10:32:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244622AbhI2HpL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 29 Sep 2021 03:45:11 -0400
-Received: from mail-bn8nam12on2075.outbound.protection.outlook.com ([40.107.237.75]:55360
-        "EHLO NAM12-BN8-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S243252AbhI2HpK (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 29 Sep 2021 03:45:10 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=oWspvIjuNodJ3guQKiF+r1fVuSMHDYCahBwMvRzhOwXeKqiXAXTjVcLNy1pEJK5v38tgXvfXrXHHBgJtCjuBnWWKA1lzwsr1YLMdhAvnNp2SBLsZY6xDt+skTGHk4RrOpc61MwJUwxHmSiWT7OibUuJvN/m+FBjMwKTXPcL4AANUomqP0Sa4cdMyE4G8JbbBxCi9hgble+7yPShdH90nDDR8tl074GhiQU00USKBPlyYf1sh2Ojz7J2E4eIG2X9ogNzWmr91VDoQWy/Ev8A+BrhEiFbhvs3LdABivl5t9d8mbr0nZuD/U6LCpx6Msqi+UJRQh4tGuxsTKHSmN3/KIQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901; h=From:Date:Subject:Message-ID:Content-Type:MIME-Version;
- bh=JRgW6tpG1ufXex/XtDOEJsOCf3pNHD4BhIX3F6yGQFA=;
- b=b9GmkAWy5Dpi8Ka48mB+Qe7nCybVjcDkOA60p+FUgrSv8lNvh+wV/30/nFnxZElvHahjNbAuzarM5OOMSio6WzwnMjZMe1qifNDcsix2Hde8heVBlYobsxAZA209KnOBNexuCf0DVMe3SgVJzUJRtdUKtN0EzBL3OWnAL0LpSTS6Ph+H3YpBkB8PgRMfvSm52DXBLeZXGIk9lUyZ9usNBAKpIFOPr+2gBLsTgOB1Gs0n8d114cox8K6DKM/hOPnUo7hXIUix0EJKTfCyO52NeZVTscuKe6ydbj+HCa4gRIoliToezsr4AbAo4dZzjXOPkO3IyThrSi3xN5nuDK1nSg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.112.35) smtp.rcpttodomain=lists.infradead.org
- smtp.mailfrom=nvidia.com; dmarc=pass (p=quarantine sp=none pct=100)
- action=none header.from=nvidia.com; dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JRgW6tpG1ufXex/XtDOEJsOCf3pNHD4BhIX3F6yGQFA=;
- b=MY5UGHaG02v39lxKcwjsiwFIwTlctLCs4rAYYpAraPSAuUyqS5Z3woXDm8b+rX8E62nUNslrSVYPRpC4af3TyxAJzF/Y+aR8RDsc9MAHF985OmUwmD50q+ZLNVd4vC7+TgzxWbqyE9iNJxfYY7yPqn1kJEUp8K6w9EmjU7fDF6G0TqMm1YuF2QG6WaWDbU3ZKrVEwqZOvO9VTOmvSOem/OHjl/0TsgJ5UNEfIkkMqsdBxX6jSbMTN1uSB8qLLblHm4dnQeeYLNmM3DY/rre2kE+Why2E6VYCPO/B91ZmAL1YE9mFCwrBimMD/UyyoqguqhwdCIZtpDgKFqAKbp1f4A==
-Received: from CO1PR15CA0085.namprd15.prod.outlook.com (2603:10b6:101:20::29)
- by DM8PR12MB5399.namprd12.prod.outlook.com (2603:10b6:8:34::5) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.4566.14; Wed, 29 Sep 2021 07:43:28 +0000
-Received: from CO1NAM11FT051.eop-nam11.prod.protection.outlook.com
- (2603:10b6:101:20:cafe::8c) by CO1PR15CA0085.outlook.office365.com
- (2603:10b6:101:20::29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4566.13 via Frontend
- Transport; Wed, 29 Sep 2021 07:43:28 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.35)
- smtp.mailfrom=nvidia.com; lists.infradead.org; dkim=none (message not signed)
- header.d=none;lists.infradead.org; dmarc=pass action=none
- header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.112.35 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.112.35; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (216.228.112.35) by
- CO1NAM11FT051.mail.protection.outlook.com (10.13.174.114) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.4566.14 via Frontend Transport; Wed, 29 Sep 2021 07:43:27 +0000
-Received: from DRHQMAIL107.nvidia.com (10.27.9.16) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Wed, 29 Sep
- 2021 07:43:27 +0000
-Received: from [10.25.99.231] (172.20.187.6) by DRHQMAIL107.nvidia.com
- (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Wed, 29 Sep
- 2021 07:43:22 +0000
-Subject: Re: [PATCH 01/13] ASoC: soc-pcm: Don't reconnect an already active BE
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        <broonie@kernel.org>, <lgirdwood@gmail.com>, <robh+dt@kernel.org>,
-        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <catalin.marinas@arm.com>, <will@kernel.org>, <perex@perex.cz>,
-        <tiwai@suse.com>, <kuninori.morimoto.gx@renesas.com>
-CC:     <devicetree@vger.kernel.org>, <alsa-devel@alsa-project.org>,
-        <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <sharadg@nvidia.com>, <linux-arm-kernel@lists.infradead.org>
-References: <1630056839-6562-1-git-send-email-spujar@nvidia.com>
- <1630056839-6562-2-git-send-email-spujar@nvidia.com>
- <be6290d1-0682-3d93-98a6-ad0be3ca42c1@linux.intel.com>
-From:   Sameer Pujar <spujar@nvidia.com>
-Message-ID: <70422e52-89d2-d926-b3f9-be59780d464e@nvidia.com>
-Date:   Wed, 29 Sep 2021 13:13:19 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+        id S245436AbhI2KeG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 29 Sep 2021 06:34:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44858 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S245325AbhI2KeF (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 29 Sep 2021 06:34:05 -0400
+Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7191EC061753
+        for <linux-tegra@vger.kernel.org>; Wed, 29 Sep 2021 03:32:24 -0700 (PDT)
+Received: by mail-wr1-x430.google.com with SMTP id d26so3390504wrb.6
+        for <linux-tegra@vger.kernel.org>; Wed, 29 Sep 2021 03:32:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=B8SE4Qs07Uj8vFUKjSYmRnx/7zYgPDRQFm1myf4KWAI=;
+        b=nf5GiGAKzev1xN1vrud4xGU9j2XxjHGOIiV+9E1hL+YkANLeMX2wCYudAl4Qm7okDJ
+         eIP25dvJdgjvtqmAVA1avQSm1pGX7C5xLJ/K1rjBNpLz1fbaDWncW+odv2O3CWAndCvV
+         sZM2zXpIcLhqoyEbqaSKbqW+E6ORSS6SfZSfh21rBqG8aT7/CbBkCBGAyk48gU+9Oac3
+         yGAWBvKQOgOKhNWz3yu4DKsIq0qlKjkhyxajrNnUKa7D2MrTkmayKnseyA5b43WREpYl
+         C2Xsu0vQuv/jNu3iFAQclqmOpLhbyw6s0YxBm/9KL1zf0Zu18sPMok1IupIlQ0U80bw1
+         NdMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=B8SE4Qs07Uj8vFUKjSYmRnx/7zYgPDRQFm1myf4KWAI=;
+        b=Uft4vanVeEwGZYVzLtGZREqSlryjGq6HiUJGUbUWqaCOG4kkRNY02aONG1Q/YjeKz7
+         OEvpLq3U0Lv6uyN0tO+2+J7wMNeC+P4KUFO7UlSyh7Wx6+bm0k6hsWkT4sht85vHnrmk
+         4/CJQsrI8whxjyix321gU/gUaQv+EcYUqhD/1l+9yZQ1nt+6hBVjHExowL8SnloQoeUY
+         TLn8yi/g6NQx6U2NyqbczFuUkkuYgDzPMf8I6gcRa19MaBMoaDhp9HhQ9WvpU50kEFCZ
+         /4EP3JoaTsLyqm5QdBG5YbikyxL+qWScSFmpXCsZ/T2AX1heaH33kezfQzEju21W7tkZ
+         r4aQ==
+X-Gm-Message-State: AOAM530L/fl1KRrwEALSss6GcxeE2yKEdy2JjGZZPjnqLX/UwrjGMuch
+        qXc5dQ/HEQo51qQ8x5UhBL6fgA==
+X-Google-Smtp-Source: ABdhPJy3+m/OgwLuTvKCUes1YQGjkq06sRokD0MvaXBPUIOtxk4VJvcEiUYehspd34ToAcvRq9X8ZA==
+X-Received: by 2002:a5d:5255:: with SMTP id k21mr5926487wrc.421.1632911542769;
+        Wed, 29 Sep 2021 03:32:22 -0700 (PDT)
+Received: from [192.168.0.46] ([82.142.20.44])
+        by smtp.googlemail.com with ESMTPSA id k17sm1857232wrq.7.2021.09.29.03.32.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 29 Sep 2021 03:32:22 -0700 (PDT)
+Subject: Re: [PATCH v1 5/6] cpuidle: tegra: Enable compile testing
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc:     linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20210912202907.28471-1-digetx@gmail.com>
+ <20210912202907.28471-6-digetx@gmail.com>
+ <8610c371-b670-8336-07b9-3ea673d3c5bc@gmail.com>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <d86a8449-71ce-eb03-f93d-39dec10c034d@linaro.org>
+Date:   Wed, 29 Sep 2021 12:32:21 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-In-Reply-To: <be6290d1-0682-3d93-98a6-ad0be3ca42c1@linux.intel.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+In-Reply-To: <8610c371-b670-8336-07b9-3ea673d3c5bc@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-Content-Language: en-GB
-X-Originating-IP: [172.20.187.6]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- DRHQMAIL107.nvidia.com (10.27.9.16)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: bd6ae3ec-5093-4aad-9366-08d9831cd36a
-X-MS-TrafficTypeDiagnostic: DM8PR12MB5399:
-X-Microsoft-Antispam-PRVS: <DM8PR12MB5399E291591ACC1320354493A7A99@DM8PR12MB5399.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:7219;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: ELPoJionqhUIrWNjEfQ2Jyjsel5Apr2qE492pZUguaxqw72ObFXln5rjJR7Xqtyxy8OI4bkLOX4ux6ZdjTvAX8Q2fVIcV9Ek0+tLJ6r2+Za4uD23oUXuupvjWnLg1S63i8vHB7oNBFdh4DzL+iGKLd4ssTPDfUF5kUBSiM4YP/dPJiOXiP/vsAhjk20RELI03M6aJIzorTRNWc0ED/tNEYv2VhIVbfvzhLB3eOo9j+MTPZq6WUsDUxLFyeu+jQC2KhhLlRNtpE3WSndtlGmHj8D+w5wCTGMhitEzhYA+JM7uwb0ffpkbKDSHPt3yPnRT0361mC9aZDEukN3P1FsPA/RtasRx+ta0l97KxQjZzdSQ28mMaNCxAZfan/fz6BQyWocLWIskZkOkfm7HxqM7zPwiRqB78YBINgLiskUtQumX1APJBGpvPtaMdmma17gEOYg77+JiPB5iCAMbakBb6JkkBKSDHGftmU4IVXT+oESMPgE/7qmxMWVvcQfLDlmOElH/i1b7lI9Hsf31PD0WQsBIYXXK8UzG4FCmP96EZvRG8ajOSZdvS3kXJDLrVpwMCdlIr+hAzgrsoeESbEUopaixDMv0TTkmOyIWMZCxTWgLOXKDvoZuzmMj9ucFOwO4c4Qqvabr1RXQ9J/2M5RtM6E3KKclx4xn9uwHKeyskT8UfTVXZlpQAJ+FQNBkje+PpzQeWMtMVeaiA0eKsGSSUri/e1u++ltjPUUy9GQKuxwhn0UHHQ5TVRqw7YqQsuEO
-X-Forefront-Antispam-Report: CIP:216.228.112.35;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid02.nvidia.com;CAT:NONE;SFS:(4636009)(46966006)(36840700001)(5660300002)(83380400001)(426003)(36860700001)(31696002)(70586007)(70206006)(47076005)(6666004)(31686004)(86362001)(8936002)(54906003)(186003)(508600001)(8676002)(16526019)(36756003)(2616005)(4326008)(7416002)(336012)(26005)(921005)(316002)(53546011)(16576012)(110136005)(82310400003)(356005)(2906002)(7636003)(43740500002);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Sep 2021 07:43:27.7778
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: bd6ae3ec-5093-4aad-9366-08d9831cd36a
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.35];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT051.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM8PR12MB5399
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On 27/09/2021 18:33, Dmitry Osipenko wrote:
+> 12.09.2021 23:29, Dmitry Osipenko пишет:
+>> Enable compile testing of tegra-cpuidle driver.
+>>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>>  drivers/cpuidle/Kconfig.arm | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/cpuidle/Kconfig.arm b/drivers/cpuidle/Kconfig.arm
+>> index 334f83e56120..599286fc0b08 100644
+>> --- a/drivers/cpuidle/Kconfig.arm
+>> +++ b/drivers/cpuidle/Kconfig.arm
+>> @@ -99,7 +99,7 @@ config ARM_MVEBU_V7_CPUIDLE
+>>  
+>>  config ARM_TEGRA_CPUIDLE
+>>  	bool "CPU Idle Driver for NVIDIA Tegra SoCs"
+>> -	depends on ARCH_TEGRA && !ARM64
+>> +	depends on (ARCH_TEGRA || COMPILE_TEST) && !ARM64 && MMU
+>>  	select ARCH_NEEDS_CPU_IDLE_COUPLED if SMP
+>>  	select ARM_CPU_SUSPEND
+>>  	help
+>>
+> 
+> Daniel / Rafael, could you please ack this patch to allow Thierry to
+> take this whole series via the Tegra tree?
+> 
 
+Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 
-On 9/29/2021 2:55 AM, Pierre-Louis Bossart wrote:
-> On 8/27/21 4:33 AM, Sameer Pujar wrote:
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
-[...]
-
-> But in addition we'd need to agree on what an 'active BE' is. Why can't
-> we connect a second stream while the first one is already in HW_PARAMS
-> or PAUSED or STOP? It's perfectly legal in ALSA/ASoC to have multiple
-> HW_PARAMS calls, and when we reach STOP we have to do a prepare again.
->
-> And more fundamentally, the ability to add a second FE on a 'active' BE
-> in START state is a basic requirement for a mixer, e.g. to play a
-> notification on one FE while listening to music on another. What needs
-> to happen is only to make sure that the FE and BE are compatible in
-> terms of HW_PARAMS and not sending a second TRIGGER_STOP, only checking
-> the BE NEW or CLOSE state is way too restrictive.
-
-Sorry for the trouble to your system.
-
-Idea was to avoid reconfiguration of the same BE DAI again, but not to 
-stop the provision to add a subsequent FE. In fact I had tested mixing 
-of streams coming from 10 different FEs.
-
-In your case, because of this patch, looks like the subsequent FE is not 
-finding a BE DAI since it is already active due to a prior FE. The 
-reason it works at my end is because the mixer input and output DAIs are 
-separated. Any new FE would just configure the mixer input DAI to which 
-it is attached and skip already running/configured output DAI. I am just 
-curious to know, if originally you were reconfiguring the BE DAI again 
-with same parameters (for a second FE) or some additional configuration 
-is done?
-
-
-> I can send a revert with the explanations in the commit message if there
-> is a consensus that this patch needs to be revisited.
-
-May be this can be revisited since it appears to be a critical problem 
-for your system. But I hope this discussion can be alive on following 
-points for a better fix.
-
-1. The original issue at my end was not just a configuration redundancy. 
-I realize now that with more stream addition following error print is seen.
-    "ASoC: too many users playback at open 4"
-
-    This is because the max DPCM users is capped at 8. Increasing this 
-may help (need to see what number is better), but does not address the 
-redundancy problem.
-
-2. If reconfiguration of the same BE is not necessary for a subsequent 
-FE run, shouldn't we avoid the reconfig itself and somehow avoid FE failure?
-
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
