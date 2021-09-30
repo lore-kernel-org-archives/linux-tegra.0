@@ -2,92 +2,51 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91D94C43217
-	for <linux-tegra@archiver.kernel.org>; Thu, 30 Sep 2021 14:09:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8C15C433FE
+	for <linux-tegra@archiver.kernel.org>; Thu, 30 Sep 2021 14:34:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 78E5661A0B
-	for <linux-tegra@archiver.kernel.org>; Thu, 30 Sep 2021 14:09:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CDBC46162E
+	for <linux-tegra@archiver.kernel.org>; Thu, 30 Sep 2021 14:34:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351783AbhI3OKm (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 30 Sep 2021 10:10:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59456 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240149AbhI3OKl (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 30 Sep 2021 10:10:41 -0400
-Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B1A0C06176A;
-        Thu, 30 Sep 2021 07:08:58 -0700 (PDT)
-Received: by mail-lf1-x12c.google.com with SMTP id b15so25730137lfe.7;
-        Thu, 30 Sep 2021 07:08:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=FbYwtZf63HA1feBdReYPazjfCwECYf7J/LcnagkS5eU=;
-        b=qRQIo8RwUav2UmTra9oF6epGn59qVcbfkWvdDGVDc/I3VvWeddwr1dqwKGHN43kWcO
-         DaknpPTwDGNSY0qj/vuZMQ+EkFjjT/DDyA8yAVbb5t8+cbMVH3ESCPkcYm04Ck8YWr43
-         zrplPFlPo+zCWrz4Vd8LF+IXnAG5rtwSZu7cV47thKqF865BwfegPZ11umUl0wvxpi3u
-         69cI9QAnuHM4T4curizIUlc+msZ3JMRXmJ23U1OoUXyP/pCpqx5znnf8RaSyTf/Iij/X
-         R01C7FPFx014oNqZOzPeCr4tdIky5Bmc4sGwQxivsb0fd368heHcy8U6CVbuaHa44hXZ
-         JOrg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=FbYwtZf63HA1feBdReYPazjfCwECYf7J/LcnagkS5eU=;
-        b=6510RLwK4zaHnLALzQPRb0fZ+jorJGzDatK7CXwDY9b1RcOwBxjZs7DyYa1SW6hfvm
-         NEGOcBL7VqUM9q3PVlA1rIan8r1Rz2pMgzMrHDCiiyXTcMJMJWCJBZxdPGZFfkDvYTm4
-         0Pq0whB+bTFhUOtBg5t4ikc5S/y+DELxnDA2UlowqMU6ULT8E59xOOiVx5qJL5ahl7zz
-         wausMrfD/z/RPsEtitd5lETeRuNBCht6cmsWQeDppOtpkhKDShxuf3lG1IdpXvZ2Xw0j
-         /bns4RO6yly2xe/UlyBaPlhrXknmzgbU7tCKxcOXEj3x8hM+YJW4tZ7sSetfpvqnGa4Y
-         UO4A==
-X-Gm-Message-State: AOAM532RfvOoTB/pMV4xxJhBxRMAYcg5gRdF4lI6uYoL3/mCPi007YSY
-        dhxVHCcwRGgvtExMVPBmNbI=
-X-Google-Smtp-Source: ABdhPJw2MpyVxuwrGHjgPVIzNI4sHyolChi3D2RfJQLhexFRsDLjbr061I9VfMnIzN8pIMuESKq7Kw==
-X-Received: by 2002:a2e:5046:: with SMTP id v6mr6445920ljd.368.1633010931799;
-        Thu, 30 Sep 2021 07:08:51 -0700 (PDT)
-Received: from [192.168.2.145] (46-138-80-108.dynamic.spd-mgts.ru. [46.138.80.108])
-        by smtp.googlemail.com with ESMTPSA id r22sm357824lji.5.2021.09.30.07.08.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 Sep 2021 07:08:51 -0700 (PDT)
-Subject: Re: [PATCH v13 16/35] usb: chipidea: tegra: Add runtime PM and OPP
- support
-To:     Peter Chen <peter.chen@kernel.org>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
-        Nishanth Menon <nm@ti.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-staging@lists.linux.dev, linux-pwm@vger.kernel.org,
-        linux-mmc@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Richard Weinberger <richard@nod.at>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Lucas Stach <dev@lynxeye.de>, Stefan Agner <stefan@agner.ch>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        David Heidelberg <david@ixit.cz>
-References: <20210926224058.1252-1-digetx@gmail.com>
- <20210926224058.1252-17-digetx@gmail.com> <20210930140630.GA6697@Peter>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <e8eb0f29-2ffb-b1d8-34bf-7dff1e8ba1f8@gmail.com>
-Date:   Thu, 30 Sep 2021 17:08:50 +0300
+        id S1349440AbhI3Ogd (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 30 Sep 2021 10:36:33 -0400
+Received: from mga18.intel.com ([134.134.136.126]:4129 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1348440AbhI3Ogd (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 30 Sep 2021 10:36:33 -0400
+X-IronPort-AV: E=McAfee;i="6200,9189,10122"; a="212277417"
+X-IronPort-AV: E=Sophos;i="5.85,336,1624345200"; 
+   d="scan'208";a="212277417"
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2021 07:34:50 -0700
+X-IronPort-AV: E=Sophos;i="5.85,336,1624345200"; 
+   d="scan'208";a="521230778"
+Received: from lcalx-mobl1.amr.corp.intel.com (HELO [10.212.88.180]) ([10.212.88.180])
+  by orsmga001-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2021 07:34:48 -0700
+Subject: Re: [PATCH 01/13] ASoC: soc-pcm: Don't reconnect an already active BE
+To:     Sameer Pujar <spujar@nvidia.com>,
+        =?UTF-8?Q?P=c3=a9ter_Ujfalusi?= <peter.ujfalusi@linux.intel.com>,
+        broonie@kernel.org, lgirdwood@gmail.com, robh+dt@kernel.org,
+        thierry.reding@gmail.com, jonathanh@nvidia.com,
+        catalin.marinas@arm.com, will@kernel.org, perex@perex.cz,
+        tiwai@suse.com, kuninori.morimoto.gx@renesas.com
+Cc:     devicetree@vger.kernel.org, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org, sharadg@nvidia.com,
+        linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <1630056839-6562-1-git-send-email-spujar@nvidia.com>
+ <1630056839-6562-2-git-send-email-spujar@nvidia.com>
+ <be6290d1-0682-3d93-98a6-ad0be3ca42c1@linux.intel.com>
+ <70422e52-89d2-d926-b3f9-be59780d464e@nvidia.com>
+ <2f96f1aa-74f2-8ea8-3f43-e4da97400fde@linux.intel.com>
+ <647b1d54-dbd7-ce91-291d-d677ce908398@linux.intel.com>
+ <94861852-29ba-be9e-8c63-a70a01550b3a@nvidia.com>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <b68d3c04-07b5-966c-5cd3-8cc715cc470e@linux.intel.com>
+Date:   Thu, 30 Sep 2021 09:34:45 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+ Firefox/78.0 Thunderbird/78.13.0
 MIME-Version: 1.0
-In-Reply-To: <20210930140630.GA6697@Peter>
+In-Reply-To: <94861852-29ba-be9e-8c63-a70a01550b3a@nvidia.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -95,32 +54,216 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-30.09.2021 17:06, Peter Chen пишет:
-> On 21-09-27 01:40:39, Dmitry Osipenko wrote:
->> The Tegra USB controller belongs to the core power domain and we're going
->> to enable GENPD support for the core domain. Now USB controller must be
->> resumed using runtime PM API in order to initialize the USB power state.
->> We already support runtime PM for the CI device, but CI's PM is separated
->> from the RPM managed by tegra-usb driver. Add runtime PM and OPP support
->> to the driver.
->>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> ---
->>  drivers/usb/chipidea/ci_hdrc_tegra.c | 53 ++++++++++++++++++++++++----
->>  1 file changed, 46 insertions(+), 7 deletions(-)
-...
-> 
-> I got below compile error if only compile this file, I think previous patches
-> should include the definition, if that, feel free to add my ack to this
-> patch.
-> 
-> Acked-by: Peter Chen <peter.chen@kernel.org>
-> 
-> drivers/usb/chipidea/ci_hdrc_tegra.c:308:8: error: implicit declaration of function ‘devm_tegra_core_dev_init_opp_table_common’;
-> did you mean ‘devm_tegra_core_dev_init_opp_table’? [-Werror=implicit-function-declaration]
->   308 |  err = devm_tegra_core_dev_init_opp_table_common(&pdev->dev);
->       |        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->       |        devm_tegra_core_dev_init_opp_table
 
-That's correct, devm_tegra_core_dev_init_opp_table_common() is added by
-an earlier patch of this series. Thank you!
+>>>>> But in addition we'd need to agree on what an 'active BE' is. Why
+>>>>> can't
+>>>>> we connect a second stream while the first one is already in HW_PARAMS
+>>>>> or PAUSED or STOP? It's perfectly legal in ALSA/ASoC to have multiple
+>>>>> HW_PARAMS calls, and when we reach STOP we have to do a prepare again.
+>>>>>
+>>>>> And more fundamentally, the ability to add a second FE on a
+>>>>> 'active' BE
+>>>>> in START state is a basic requirement for a mixer, e.g. to play a
+>>>>> notification on one FE while listening to music on another. What needs
+>>>>> to happen is only to make sure that the FE and BE are compatible in
+>>>>> terms of HW_PARAMS and not sending a second TRIGGER_STOP, only
+>>>>> checking
+>>>>> the BE NEW or CLOSE state is way too restrictive.
+>>>> Sorry for the trouble to your system.
+>>>>
+>>>> Idea was to avoid reconfiguration of the same BE DAI again, but not to
+>>>> stop the provision to add a subsequent FE. In fact I had tested mixing
+>>>> of streams coming from 10 different FEs.
+>> Can you describe the sequence that you used to start them? That may be
+>> useful to understand the criteria you used?
+> 
+> I have something like this:
+> 
+> FE1  --> Crossbar -> Mixer Input1    |
+> FE2  --> Crossbar -> Mixer Input2    |
+> ...                                  | --> Mixer Output -->
+> ... |
+> FE10 --> Crossbar -> Mixer Input10   |
+> 
+> All these FEs are started one after the other. This is an example of
+> 10x1. Similarly we can have 2x1, 3x1 etc.,
+> In our system, the crossbar [0] and mixer [1] are separate ASoC
+> components. Basically audio paths consist of a group of ASoC components
+> which are connected back to back.
+
+Not following. Can you explain how starting FE1 does not change the
+state of the mixer output then?
+
+Or is each 'Crossbar' instance a full-blown BE? In that case you have a
+1:1 mapping between FE and BE, a *really* simple topology...
+
+>> I don't fully understand the notion of mixer input DAI, in our case we
+>> have a bunch of PCM devices connected to a mixer. The mixer is not
+>> directly connected to a DAI.
+> 
+> Please see above mixer example. Since mixer is a separate ASoC
+> component, it exposes 10 inputs (or DAIs) and outputs. Originally what I
+> wanted to do was, for subsequent FE runs (FE2, FE3 ...) mixer output
+> need not be configured again and again.
+> 
+>>> The problem as I see is that with this patch one can not connect a new
+>>> FE to a BE which is _not_ in NEW or CLOSE state.
+>>>
+>>> The FE and BE needs to be connected to have DPCM working and this patch
+>>> makes the code to skip the dpcm_be_connect().
+>>>
+>>> Consider this simple setup:
+>>>
+>>> FE1 -->|
+>>>         | --> BE -->
+>>> FE2- ->|
+>>>
+>>> First we start FE1, dpcm_be_connect(FE1, BE, stream) is made.
+>>>
+>>> Later FE2 is started but dpcm_be_connect(FE2, BE, stream) would be not
+>>> made because BE is no longer in NEW/CLOSE state.
+>> I share Peter's analysis, there cannot be any restrictions on
+>> connections - at any time. A mixer input might become active and be
+>> added to the mix. We might have a temporary lock to delay new
+>> connections but cannot not reject them outright based on BE state.
+> 
+> Yes, I understand how this affects a system like yours. As per mixer
+> example above, in our case subsequent FEs always find BE from Crossbar.
+> That is why I don't see similar error.
+
+Not following either.
+
+>>>> I am just
+>>>> curious to know, if originally you were reconfiguring the BE DAI again
+>>>> with same parameters (for a second FE) or some additional configuration
+>>>> is done?
+>> That's a different question - and a good one.
+>>
+>> In the case of a mixer, the propagation of hw_params is a broken
+>> concept. It leads to the first FE configuring the BE to define its
+>> preferred parameters, e.g. S16_LE format. If later on a second FE is
+>> started which could play S24_LE, the mixer and BE are already configured
+>> to a lower resolution. A mixer should really have its own parameters and
+>> be the start of a new 'domain' - as Lars described it several years ago
+>> at the audio miniconference.
+> 
+> Propagation is one of the problems we want to address and require help
+> from DPCM experts. But the scenario you mentioned is a special case
+> which need not be supported, because mixer can operate in one
+> configuration at a given time and subsequent FEs should agree to the
+> already running configuration. However mixer should support both S16_LE
+> and S24_LE (whenever possible), but not simultaneously. At least this is
+> the expecation from our systems. Yes mixer may require fixup of a
+> specific config (we earlier had proposed mixer controls to configure
+> mixer parameters, but the idea was disliked), but propagation may help
+> avoid fixing up everywhere in the audio path where it is not really
+> required. But I don't know how this can be done at the moment.
+
+What I am saying is that the mixer should be pre-configured with the
+desired resolution/sample rate, and some adaptation needs to happen if
+the FE provides data in a different format.
+
+This is similar to what sound servers typically do on their sinks, they
+define ONE configuration. Dynamic changes are annoying and result in
+corner cases where the quality can vary depending on which FE is started
+first.
+
+>>>> For now, the only restriction that we could enforce is that the BE
+>> cannot be reconfigured after the prepare step.
+>>
+>> Note that our DAIs tolerate multiple calls to hw_params. If you have a
+>> case where the hw_params allocates resources, maybe you should consider
+>> moving that allocation to the prepare step, or free them if you detect a
+>> reconfiguration. That would be something needed even outside of the DPCM
+>> scope. Similarly you need to support the case where the DAI hw_free is
+>> called without hw_params ever being called, it's a known sequence that
+>> can happen if the FE hw-params fails.
+> 
+> Currently this does not seem to be a problem for us. Patch was to avoid
+> reconfiguration which was felt to be redundant for our system.
+> 
+>>>>> I can send a revert with the explanations in the commit message if
+>>>>> there
+>>>>> is a consensus that this patch needs to be revisited.
+>>>> May be this can be revisited since it appears to be a critical problem
+>>>> for your system. But I hope this discussion can be alive on following
+>>>> points for a better fix.
+>>>>
+>>>> 1. The original issue at my end was not just a configuration
+>>>> redundancy.
+>>>> I realize now that with more stream addition following error print
+>>>> is seen.
+>>>>     "ASoC: too many users playback at open 4"
+>>>>
+>>>>     This is because the max DPCM users is capped at 8. Increasing this
+>>>> may help (need to see what number is better), but does not address the
+>>>> redundancy problem.
+>> we haven't used more than 2 users, but it's already broken at 2 with
+>> race conditions left and right. I am really surprised you managed to
+>> have more than 2 without hitting inconsistent states - our automated
+>> play/stop/pause monkey tests reliably break DPCM in less than 20s.
+> 
+> I am not sure what is the exact difference, may be DPCM usage in our
+> case is different from what you have. I have mixer tests for different
+> combinations (2x1, 3x1 ...), which seem to pass. In general, we want to
+> have path like this.
+> 
+> FE -> BE1 -> BE2 -> ... -> BEx
+> 
+> Each BEx could be a mixer, resampler etc., Currently DPCM core sees this
+> as multiple BEs for a given FE and that is why multiple "users" are
+> reported.
+
+This sort of flow vastly exceeds the capabilities of DPCM, which is
+already badly broken with one BE and 2 FEs... I think what you want is
+what Lars described at the audio miniconf with 'domains'.
+
+> In the interim, may be we can have following patch to keep both systems
+> working and keep the discussion going to address the oustanding
+> requirements/issues?
+> 
+> diff --git a/sound/soc/soc-pcm.c b/sound/soc/soc-pcm.c
+> index ab25f99..0fbab50 100644
+> --- a/sound/soc/soc-pcm.c
+> +++ b/sound/soc/soc-pcm.c
+> @@ -1395,7 +1395,13 @@ static int dpcm_add_paths(struct
+> snd_soc_pcm_runtime *fe, int stream,
+>                 if (!fe->dpcm[stream].runtime && !fe->fe_compr)
+>                         continue;
+> 
+> -               if ((be->dpcm[stream].state != SND_SOC_DPCM_STATE_NEW) &&
+> +               /*
+> +                * Filter for systems with 'component_chaining' enabled.
+> +                * This helps to avoid unnecessary re-configuration of an
+> +                * already active BE on such systems.
+> +                */
+> +               if (fe->card->component_chaining &&
+> +                   (be->dpcm[stream].state != SND_SOC_DPCM_STATE_NEW) &&
+>                     (be->dpcm[stream].state != SND_SOC_DPCM_STATE_CLOSE))
+>                         continue;
+
+that wouldn't work. We need to support the STOP and START cases as well.
+
+
+>>>> 2. If reconfiguration of the same BE is not necessary for a subsequent
+>>>> FE run, shouldn't we avoid the reconfig itself and somehow avoid FE
+>>>> failure?
+>>> I'm not sure, but it might be possible to just skip the
+>>> dpcm_set_be_update_state(be, stream, SND_SOC_DPCM_UPDATE_BE);
+>>> call at the end of the loop, but the question is under which condition?
+>>> Can a BE asked to be reconfigured when STOP/OPEN/HW_PARAMS?
+>>>
+>>> Skipping the connect does not sound right for a new FE-BE connection.
+>> The reconfiguration is one problem, but what also happens is that the BE
+>> dailink will see multiple triggers. I've been playing with refcounts to
+>> force consistency and make sure there is only one TRIGGER_START send to
+>> the dailink, and conversely there are cases where the TRIGGER_STOP is
+>> never sent...
+> Just a thought. FE links have dummy codec DAI and core wants to find a
+> real BE when FE is started. May be don't fail a FE when no back end DAI
+> is found (and/or find if the same BE is already connected to some FE)
+> and the above problem becomes simpler?
+
+That would be just moving the problem. In our case we would be silently
+playing on a dummy output just because the correct output was not found
+due to state handling issues.
