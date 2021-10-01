@@ -2,122 +2,133 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53B07C43219
-	for <linux-tegra@archiver.kernel.org>; Fri,  1 Oct 2021 21:25:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70E03C433FE
+	for <linux-tegra@archiver.kernel.org>; Fri,  1 Oct 2021 22:06:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3AE0561AF7
-	for <linux-tegra@archiver.kernel.org>; Fri,  1 Oct 2021 21:25:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 50B9A61A8E
+	for <linux-tegra@archiver.kernel.org>; Fri,  1 Oct 2021 22:06:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355166AbhJAV1U (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 1 Oct 2021 17:27:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37970 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229820AbhJAV1T (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 1 Oct 2021 17:27:19 -0400
-Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF876C061775;
-        Fri,  1 Oct 2021 14:25:34 -0700 (PDT)
-Received: by mail-lf1-x12d.google.com with SMTP id x27so43719879lfu.5;
-        Fri, 01 Oct 2021 14:25:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=PCx+Mv1g2fXDWZ1yxKCufXcb8CGDrVVRus80Eavv7Ms=;
-        b=AoOrU/vzFMh0SeboIlXMtpNDGkYKn1nagDBoSx7YjB/QehXjY148G9jNUrxWmj+VLS
-         thqf3WTWyv2KgzuCKJgAZtvLfuVTKHVZvxZ6W/v3MpnV1knnxoAKmsgMXbYc8hQX6L4m
-         27bTEIknYqodxO1P46g5y8th3QuIbfdgGpCEWEBjBEI0bRGm4qAhzegrULVaAiivY+Mh
-         x+t6HwqOhcQgQuTMWHPo+FtI3bPeA65O68izCkj0O0dmOktC4XPdYvSp/C5mg+rlwHvZ
-         baqhRxdt1w4rGWw9l8GTpQxhVXx3W19ivPNG/b+kFePi3tvLX4ZgYZ2jb6Li8kajTdY4
-         hAdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=PCx+Mv1g2fXDWZ1yxKCufXcb8CGDrVVRus80Eavv7Ms=;
-        b=NIlFTU4KZtSGaa9ROP2zLnktTBr/rp2DmU0rRs8E2DLYGP7aVREEAbriZ6E9t6lTZ1
-         6zNPFZWVm0/FtRLDec3rSSNpMWWualS2/faz/qB2919hfgTkhqCSIwLMvwOaRt52rZrp
-         sMfgy1RJHaJnj7lax3lUqh49zOYvS+5tp3tYeoCxgkMxRiSpLFAzeUP/3R7IGdll9bR8
-         EzubxedCGYwHZTyp9htLuGjNHVH/GrbE9gYWiwzD6TtT5Y1qcZdjdV8me1bABMEVtE6c
-         /hQWiK4mSefPTSt4WJ3hVgitFEVs8oW0xg1l526zgVrlrIeScfnLPSY08poGu1cxHXhY
-         jLpg==
-X-Gm-Message-State: AOAM531/ORymA41U1r9ewl+QvHpG02Kv2l1zgCJaO9vvlWHioi7r7Ycp
-        k4jxrjMnxcxiOsJ6dHIuURk=
-X-Google-Smtp-Source: ABdhPJyBKnVQGEy++56pE3HiXi9tWCycvRfw9hdTpeQ3zwv+9sj//Y/axLqWUGErfO2svv3m5cLJIA==
-X-Received: by 2002:ac2:51a6:: with SMTP id f6mr310738lfk.150.1633123533086;
-        Fri, 01 Oct 2021 14:25:33 -0700 (PDT)
-Received: from [192.168.2.145] (79-139-163-198.dynamic.spd-mgts.ru. [79.139.163.198])
-        by smtp.googlemail.com with ESMTPSA id u4sm927755lfu.200.2021.10.01.14.25.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 01 Oct 2021 14:25:32 -0700 (PDT)
-Subject: Re: [PATCH v13 14/35] drm/tegra: gr3d: Support generic power domain
- and runtime PM
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Peter Chen <peter.chen@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
-        Nishanth Menon <nm@ti.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux USB List <linux-usb@vger.kernel.org>,
-        linux-staging@lists.linux.dev, linux-pwm@vger.kernel.org,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        DTML <devicetree@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Richard Weinberger <richard@nod.at>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Lucas Stach <dev@lynxeye.de>, Stefan Agner <stefan@agner.ch>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        David Heidelberg <david@ixit.cz>
-References: <20210926224058.1252-1-digetx@gmail.com>
- <20210926224058.1252-15-digetx@gmail.com>
- <CAPDyKFoZdmnmcdoWsD36uQesSjz8KJOq0JxY5tNbHgO_xMy+_g@mail.gmail.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <4281a6db-9875-7266-268a-a1639e7d01ff@gmail.com>
-Date:   Sat, 2 Oct 2021 00:25:31 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        id S230246AbhJAWH4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 1 Oct 2021 18:07:56 -0400
+Received: from mga12.intel.com ([192.55.52.136]:16946 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230171AbhJAWHz (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Fri, 1 Oct 2021 18:07:55 -0400
+X-IronPort-AV: E=McAfee;i="6200,9189,10124"; a="205080223"
+X-IronPort-AV: E=Sophos;i="5.85,340,1624345200"; 
+   d="scan'208";a="205080223"
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2021 15:05:52 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.85,340,1624345200"; 
+   d="scan'208";a="556591182"
+Received: from stinkbox.fi.intel.com (HELO stinkbox) ([10.237.72.171])
+  by FMSMGA003.fm.intel.com with SMTP; 01 Oct 2021 15:05:47 -0700
+Received: by stinkbox (sSMTP sendmail emulation); Sat, 02 Oct 2021 01:05:47 +0300
+Date:   Sat, 2 Oct 2021 01:05:47 +0300
+From:   Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+To:     Sean Paul <sean@poorly.run>
+Cc:     Fernando Ramos <greenfoo@u92.eu>, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        amd-gfx@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+        nouveau@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v2 00/17] drm: cleanup: Use DRM_MODESET_LOCK_ALL_*
+ helpers where possible
+Message-ID: <YVeGOyLzuhN7zzV7@intel.com>
+References: <20210924064324.229457-1-greenfoo@u92.eu>
+ <20211001183655.GW2515@art_vandelay>
+ <YVda4jNSGuQf50JV@intel.com>
+ <20211001204815.GA2515@art_vandelay>
 MIME-Version: 1.0
-In-Reply-To: <CAPDyKFoZdmnmcdoWsD36uQesSjz8KJOq0JxY5tNbHgO_xMy+_g@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20211001204815.GA2515@art_vandelay>
+X-Patchwork-Hint: comment
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-01.10.2021 17:06, Ulf Hansson Ð¿Ð¸ÑˆÐµÑ‚:
-> On Mon, 27 Sept 2021 at 00:42, Dmitry Osipenko <digetx@gmail.com> wrote:
->> Add runtime power management and support generic power domains.
->>
->> Tested-by: Peter Geis <pgwipeout@gmail.com> # Ouya T30
->> Tested-by: Paul Fertser <fercerpav@gmail.com> # PAZ00 T20
->> Tested-by: Nicolas Chauvet <kwizart@gmail.com> # PAZ00 T20 and TK1 T124
->> Tested-by: Matt Merhar <mattmerhar@protonmail.com> # Ouya T30
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> ---
->>  drivers/gpu/drm/tegra/gr3d.c | 388 ++++++++++++++++++++++++++++++-----
-> [...]
-
+On Fri, Oct 01, 2021 at 04:48:15PM -0400, Sean Paul wrote:
+> On Fri, Oct 01, 2021 at 10:00:50PM +0300, Ville Syrjälä wrote:
+> > On Fri, Oct 01, 2021 at 02:36:55PM -0400, Sean Paul wrote:
+> > > On Fri, Sep 24, 2021 at 08:43:07AM +0200, Fernando Ramos wrote:
+> > > > Hi all,
+> > > > 
+> > > > One of the things in the DRM TODO list ("Documentation/gpu/todo.rst") was to
+> > > > "use DRM_MODESET_LOCAL_ALL_* helpers instead of boilerplate". That's what this
+> > > > patch series is about.
+> > > > 
+> > > > You will find two types of changes here:
+> > > > 
+> > > >   - Replacing "drm_modeset_lock_all_ctx()" (and surrounding boilerplate) with
+> > > >     "DRM_MODESET_LOCK_ALL_BEGIN()/END()" in the remaining places (as it has
+> > > >     already been done in previous commits such as b7ea04d2)
+> > > > 
+> > > >   - Replacing "drm_modeset_lock_all()" with "DRM_MODESET_LOCK_ALL_BEGIN()/END()"
+> > > >     in the remaining places (as it has already been done in previous commits
+> > > >     such as 57037094)
+> > > >     
+> > > > Most of the changes are straight forward, except for a few cases in the "amd"
+> > > > and "i915" drivers where some extra dancing was needed to overcome the
+> > > > limitation that the DRM_MODESET_LOCK_ALL_BEGIN()/END() macros can only be used
+> > > > once inside the same function (the reason being that the macro expansion
+> > > > includes *labels*, and you can not have two labels named the same inside one
+> > > > function)
+> > > > 
+> > > > Notice that, even after this patch series, some places remain where
+> > > > "drm_modeset_lock_all()" and "drm_modeset_lock_all_ctx()" are still present,
+> > > > all inside drm core (which makes sense), except for two (in "amd" and "i915")
+> > > > which cannot be replaced due to the way they are being used.
+> > > > 
+> > > > Changes in v2:
+> > > > 
+> > > >   - Fix commit message typo
+> > > >   - Use the value returned by DRM_MODESET_LOCK_ALL_END when possible
+> > > >   - Split drm/i915 patch into two simpler ones
+> > > >   - Remove drm_modeset_(un)lock_all()
+> > > >   - Fix build problems in non-x86 platforms
+> > > > 
+> > > > Fernando Ramos (17):
+> > > >   drm: cleanup: drm_modeset_lock_all_ctx() --> DRM_MODESET_LOCK_ALL_BEGIN()
+> > > >   drm/i915: cleanup: drm_modeset_lock_all_ctx() --> DRM_MODESET_LOCK_ALL_BEGIN()
+> > > >   drm/msm: cleanup: drm_modeset_lock_all_ctx() --> DRM_MODESET_LOCK_ALL_BEGIN()
+> > > >   drm: cleanup: drm_modeset_lock_all() --> DRM_MODESET_LOCK_ALL_BEGIN() drm/vmwgfx: cleanup: drm_modeset_lock_all() --> DRM_MODESET_LOCK_ALL_BEGIN()
+> > > >   drm/tegra: cleanup: drm_modeset_lock_all() --> DRM_MODESET_LOCK_ALL_BEGIN()
+> > > >   drm/shmobile: cleanup: drm_modeset_lock_all() --> DRM_MODESET_LOCK_ALL_BEGIN()
+> > > >   drm/radeon: cleanup: drm_modeset_lock_all() --> DRM_MODESET_LOCK_ALL_BEGIN()
+> > > >   drm/omapdrm: cleanup: drm_modeset_lock_all() --> DRM_MODESET_LOCK_ALL_BEGIN()
+> > > >   drm/nouveau: cleanup: drm_modeset_lock_all() --> DRM_MODESET_LOCK_ALL_BEGIN()
+> > > >   drm/msm: cleanup: drm_modeset_lock_all() --> DRM_MODESET_LOCK_ALL_BEGIN()
+> > > >   drm/i915: cleanup: drm_modeset_lock_all() --> DRM_MODESET_LOCK_ALL_BEGIN()
+> > > >   drm/i915: cleanup: drm_modeset_lock_all() --> DRM_MODESET_LOCK_ALL_BEGIN() part 2
+> > > >   drm/gma500: cleanup: drm_modeset_lock_all() --> DRM_MODESET_LOCK_ALL_BEGIN()
+> > > >   drm/amd: cleanup: drm_modeset_lock_all() --> DRM_MODESET_LOCK_ALL_BEGIN()
+> > > >   drm: cleanup: remove drm_modeset_(un)lock_all()
+> > > >   doc: drm: remove TODO entry regarding DRM_MODSET_LOCK_ALL cleanup
+> > > > 
+> > > 
+> > > Thank you for revising, Fernando! I've pushed the set to drm-misc-next (along
+> > > with the necessary drm-tip conflict resolutions).
+> > 
+> > Ugh. Did anyone actually review the locking changes this does?
+> > I shot the previous i915 stuff down because the commit messages
+> > did not address any of it.
 > 
-> I was looking for a call to dev_pm_opp_set_rate(), but couldn't find
-> it. Isn't that needed when changing the rate of the clock?
+> I reviewed the set on 9/17, I didn't see your feedback on that thread.
 
-That is another good catch! Previous versions of this patch were
-changing the rate, while the current version not. So the
-set_opp_helper() isn't needed for this patch anymore. It may become
-needed sometime later, but not for this series. I'll remove it in the
-next version, thanks!
+It was much earlir than that.
+https://lists.freedesktop.org/archives/dri-devel/2021-June/313193.html
+
+And I think I might have also shot down a similar thing earlier.
+
+I was actually half considering sending a patch to nuke that
+misleading TODO item. I don't think anything which changes
+which locks are taken should be considred a starter level task.
+And the commit messages here don't seem to address any of it.
+
+-- 
+Ville Syrjälä
+Intel
