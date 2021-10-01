@@ -2,117 +2,166 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AA81C433F5
-	for <linux-tegra@archiver.kernel.org>; Fri,  1 Oct 2021 19:01:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 377A7C43219
+	for <linux-tegra@archiver.kernel.org>; Fri,  1 Oct 2021 19:15:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1D3B661A57
-	for <linux-tegra@archiver.kernel.org>; Fri,  1 Oct 2021 19:01:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B93461ABE
+	for <linux-tegra@archiver.kernel.org>; Fri,  1 Oct 2021 19:15:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355954AbhJATDO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 1 Oct 2021 15:03:14 -0400
-Received: from mga04.intel.com ([192.55.52.120]:30129 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1355327AbhJATDO (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 1 Oct 2021 15:03:14 -0400
-X-IronPort-AV: E=McAfee;i="6200,9189,10124"; a="223640002"
-X-IronPort-AV: E=Sophos;i="5.85,339,1624345200"; 
-   d="scan'208";a="223640002"
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2021 12:00:55 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.85,339,1624345200"; 
-   d="scan'208";a="619340954"
-Received: from stinkbox.fi.intel.com (HELO stinkbox) ([10.237.72.171])
-  by fmsmga001.fm.intel.com with SMTP; 01 Oct 2021 12:00:51 -0700
-Received: by stinkbox (sSMTP sendmail emulation); Fri, 01 Oct 2021 22:00:50 +0300
-Date:   Fri, 1 Oct 2021 22:00:50 +0300
-From:   Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-To:     Sean Paul <sean@poorly.run>
-Cc:     Fernando Ramos <greenfoo@u92.eu>, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        amd-gfx@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
-        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
-        nouveau@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v2 00/17] drm: cleanup: Use DRM_MODESET_LOCK_ALL_*
- helpers where possible
-Message-ID: <YVda4jNSGuQf50JV@intel.com>
-References: <20210924064324.229457-1-greenfoo@u92.eu>
- <20211001183655.GW2515@art_vandelay>
+        id S1354640AbhJATRS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 1 Oct 2021 15:17:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36494 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231897AbhJATRR (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 1 Oct 2021 15:17:17 -0400
+Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7CBDEC061775;
+        Fri,  1 Oct 2021 12:15:32 -0700 (PDT)
+Received: by mail-lf1-x12f.google.com with SMTP id g41so42283748lfv.1;
+        Fri, 01 Oct 2021 12:15:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=niNmxAk0ssHAm3Elvv3RJuw0kSncCioQpK+Dv1hLMfQ=;
+        b=ompAaqfUP2nwflwfZymbIWdbQcFcOFoC+2uqB/pw0Y1WeA0ZFgZBrXXroc1D9iZE/3
+         r+IPUa14hP8aLxdvlyxUGLG/sRpD1eVdY6HINGphhODSA8qi/WKmBF/Y4qJmjtqG9i5c
+         QteCTEwJ3FXZQIQOvZg/gr4YarMpWJqOQByuYB3PUiBYUJEXrfcuahtdb4hIBH9fyTNN
+         mNv1yfewQHiWqoHrX0awqEd0Tl6wD/YvrU5uk1BErj6tECORNnLLUEEmHb+sWMY3uVV3
+         Di3gYCH1EFMU7aOskMvk2sJ93QZxwOrUh/JeZf7kFffGHX478Gg8fj5Vh9nZ5d15M/9/
+         cQ9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=niNmxAk0ssHAm3Elvv3RJuw0kSncCioQpK+Dv1hLMfQ=;
+        b=jgiltYdEn9VV6EpxeD3Cc9Ww0mRwmqcceWht5OiYSwz2br8hlK+/uiFnDGiVpx+bEg
+         bbmUrJO7YWE6BSyyDCkBn5uovhjOuiN1v0GYhTDOONcGrH7ZD4Rp0LZdwPJra9BY2bAj
+         tF8trH6Ut8GDSRJ+Uf/TES9vHatzHZRGCEgH7RVo/kiPLt+u7J15hD3esmma2BOCoWSo
+         Kura87ogU+bWGoqJxeqixAOcMowu25ZSt8y9saAknWf8vwq9nYYv9kkvykoffv9U6nDf
+         RlqZn8NKHcIw2jb+eRroFsfDiPEnt76oOeXA3AXucTjZ32GPFDrtaeSx15TWAms83L3R
+         uk+w==
+X-Gm-Message-State: AOAM531yEm8Wt7gzw65anzwhic/CpnA5wvmhYwNH4rdhLFTSNZrCwmfq
+        d92qTPMYHjolrwHJbqjny6o=
+X-Google-Smtp-Source: ABdhPJy3ghoTNAi0Jb2SiS3hsWYw15h3Vk93zN4ib7q8hKhDd5DWUUMwX4Q7U3/o0nn9oofd85xS+Q==
+X-Received: by 2002:a2e:4e11:: with SMTP id c17mr13093513ljb.19.1633115730771;
+        Fri, 01 Oct 2021 12:15:30 -0700 (PDT)
+Received: from [192.168.2.145] (79-139-163-198.dynamic.spd-mgts.ru. [79.139.163.198])
+        by smtp.googlemail.com with ESMTPSA id d6sm820684lfi.137.2021.10.01.12.15.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 01 Oct 2021 12:15:30 -0700 (PDT)
+Subject: Re: [PATCH v13 02/35] soc/tegra: Add
+ devm_tegra_core_dev_init_opp_table_common()
+To:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Viresh Kumar <vireshk@kernel.org>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Peter Chen <peter.chen@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
+        Nishanth Menon <nm@ti.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux USB List <linux-usb@vger.kernel.org>,
+        linux-staging@lists.linux.dev, linux-pwm@vger.kernel.org,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        DTML <devicetree@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Richard Weinberger <richard@nod.at>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Lucas Stach <dev@lynxeye.de>, Stefan Agner <stefan@agner.ch>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        David Heidelberg <david@ixit.cz>
+References: <20210926224058.1252-1-digetx@gmail.com>
+ <20210926224058.1252-3-digetx@gmail.com>
+ <CAPDyKFrtE75Tf-vefM0isj52PJ5_v525AjqU2TMUpc4__rYLhA@mail.gmail.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <ab874e0c-903a-fc3b-d33b-54a7a9f0e109@gmail.com>
+Date:   Fri, 1 Oct 2021 22:15:29 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+In-Reply-To: <CAPDyKFrtE75Tf-vefM0isj52PJ5_v525AjqU2TMUpc4__rYLhA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20211001183655.GW2515@art_vandelay>
-X-Patchwork-Hint: comment
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, Oct 01, 2021 at 02:36:55PM -0400, Sean Paul wrote:
-> On Fri, Sep 24, 2021 at 08:43:07AM +0200, Fernando Ramos wrote:
-> > Hi all,
-> > 
-> > One of the things in the DRM TODO list ("Documentation/gpu/todo.rst") was to
-> > "use DRM_MODESET_LOCAL_ALL_* helpers instead of boilerplate". That's what this
-> > patch series is about.
-> > 
-> > You will find two types of changes here:
-> > 
-> >   - Replacing "drm_modeset_lock_all_ctx()" (and surrounding boilerplate) with
-> >     "DRM_MODESET_LOCK_ALL_BEGIN()/END()" in the remaining places (as it has
-> >     already been done in previous commits such as b7ea04d2)
-> > 
-> >   - Replacing "drm_modeset_lock_all()" with "DRM_MODESET_LOCK_ALL_BEGIN()/END()"
-> >     in the remaining places (as it has already been done in previous commits
-> >     such as 57037094)
-> >     
-> > Most of the changes are straight forward, except for a few cases in the "amd"
-> > and "i915" drivers where some extra dancing was needed to overcome the
-> > limitation that the DRM_MODESET_LOCK_ALL_BEGIN()/END() macros can only be used
-> > once inside the same function (the reason being that the macro expansion
-> > includes *labels*, and you can not have two labels named the same inside one
-> > function)
-> > 
-> > Notice that, even after this patch series, some places remain where
-> > "drm_modeset_lock_all()" and "drm_modeset_lock_all_ctx()" are still present,
-> > all inside drm core (which makes sense), except for two (in "amd" and "i915")
-> > which cannot be replaced due to the way they are being used.
-> > 
-> > Changes in v2:
-> > 
-> >   - Fix commit message typo
-> >   - Use the value returned by DRM_MODESET_LOCK_ALL_END when possible
-> >   - Split drm/i915 patch into two simpler ones
-> >   - Remove drm_modeset_(un)lock_all()
-> >   - Fix build problems in non-x86 platforms
-> > 
-> > Fernando Ramos (17):
-> >   drm: cleanup: drm_modeset_lock_all_ctx() --> DRM_MODESET_LOCK_ALL_BEGIN()
-> >   drm/i915: cleanup: drm_modeset_lock_all_ctx() --> DRM_MODESET_LOCK_ALL_BEGIN()
-> >   drm/msm: cleanup: drm_modeset_lock_all_ctx() --> DRM_MODESET_LOCK_ALL_BEGIN()
-> >   drm: cleanup: drm_modeset_lock_all() --> DRM_MODESET_LOCK_ALL_BEGIN() drm/vmwgfx: cleanup: drm_modeset_lock_all() --> DRM_MODESET_LOCK_ALL_BEGIN()
-> >   drm/tegra: cleanup: drm_modeset_lock_all() --> DRM_MODESET_LOCK_ALL_BEGIN()
-> >   drm/shmobile: cleanup: drm_modeset_lock_all() --> DRM_MODESET_LOCK_ALL_BEGIN()
-> >   drm/radeon: cleanup: drm_modeset_lock_all() --> DRM_MODESET_LOCK_ALL_BEGIN()
-> >   drm/omapdrm: cleanup: drm_modeset_lock_all() --> DRM_MODESET_LOCK_ALL_BEGIN()
-> >   drm/nouveau: cleanup: drm_modeset_lock_all() --> DRM_MODESET_LOCK_ALL_BEGIN()
-> >   drm/msm: cleanup: drm_modeset_lock_all() --> DRM_MODESET_LOCK_ALL_BEGIN()
-> >   drm/i915: cleanup: drm_modeset_lock_all() --> DRM_MODESET_LOCK_ALL_BEGIN()
-> >   drm/i915: cleanup: drm_modeset_lock_all() --> DRM_MODESET_LOCK_ALL_BEGIN() part 2
-> >   drm/gma500: cleanup: drm_modeset_lock_all() --> DRM_MODESET_LOCK_ALL_BEGIN()
-> >   drm/amd: cleanup: drm_modeset_lock_all() --> DRM_MODESET_LOCK_ALL_BEGIN()
-> >   drm: cleanup: remove drm_modeset_(un)lock_all()
-> >   doc: drm: remove TODO entry regarding DRM_MODSET_LOCK_ALL cleanup
-> > 
+01.10.2021 15:50, Ulf Hansson пишет:
+> On Mon, 27 Sept 2021 at 00:42, Dmitry Osipenko <digetx@gmail.com> wrote:
+>>
+>> Only couple drivers need to get the -ENODEV error code and majority of
+>> drivers need to explicitly initialize the performance state. Add new
+>> common helper which sets up OPP table for these drivers.
+>>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>>  include/soc/tegra/common.h | 24 ++++++++++++++++++++++++
+>>  1 file changed, 24 insertions(+)
+>>
+>> diff --git a/include/soc/tegra/common.h b/include/soc/tegra/common.h
+>> index af41ad80ec21..5b4a042f60fb 100644
+>> --- a/include/soc/tegra/common.h
+>> +++ b/include/soc/tegra/common.h
+>> @@ -39,4 +39,28 @@ devm_tegra_core_dev_init_opp_table(struct device *dev,
+>>  }
+>>  #endif
+>>
+>> +/*
+>> + * This function should be invoked with the enabled runtime PM of the device
+>> + * in order to initialize performance state properly. Most of Tegra devices
+>> + * are assumed to be suspended at a probe time and GENPD require RPM to be
+>> + * enabled to set up the rpm-resume state, otherwise device is active and
+>> + * performance state is applied immediately. Note that it will initialize
+>> + * OPP bandwidth if it's wired in a device-tree for this device, which is
+>> + * undesirable for a suspended device.
+>> + */
+>> +static inline int
+>> +devm_tegra_core_dev_init_opp_table_common(struct device *dev)
+>> +{
+>> +       struct tegra_core_opp_params opp_params = {};
+>> +       int err;
+>> +
+>> +       opp_params.init_state = true;
+>> +
+>> +       err = devm_tegra_core_dev_init_opp_table(dev, &opp_params);
+>> +       if (err != -ENODEV)
+>> +               return err;
+>> +
+>> +       return 0;
+>> +}
 > 
-> Thank you for revising, Fernando! I've pushed the set to drm-misc-next (along
-> with the necessary drm-tip conflict resolutions).
+> Just want to share a few thoughts around these functions.
+> 
+> So, I assume it's fine to call
+> devm_tegra_core_dev_init_opp_table_common() or
+> devm_tegra_core_dev_init_opp_table() from consumer drivers during
+> ->probe(), as long as those drivers are tegra specific, which I assume
+> all are in the series!?
 
-Ugh. Did anyone actually review the locking changes this does?
-I shot the previous i915 stuff down because the commit messages
-did not address any of it.
+That is correct, all drivers are tegra-specific in this series. External
+devices are attached to the internal SoC devices and this series is
+about the SoC power management.
 
--- 
-Ville Syrj�l�
-Intel
+> My point is, a cross SoC consumer driver that needs to initiate OPP
+> tables can get rather messy, if it would need to make one specific
+> function call per SoC.
+> 
+> That said, I hope we can tackle this as a separate/future problem, so
+> the series can get merged as is.
+
+Yes, as we already have seen, it's not an easy problem to make PD core
+to handle it in a generic way. If there will be a similar demand from
+other SoCs, then we may try to solve that problem again.
