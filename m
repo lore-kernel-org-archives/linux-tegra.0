@@ -2,58 +2,58 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B594BC433FE
-	for <linux-tegra@archiver.kernel.org>; Fri,  1 Oct 2021 15:02:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F6C6C4332F
+	for <linux-tegra@archiver.kernel.org>; Fri,  1 Oct 2021 15:02:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A45B36126A
-	for <linux-tegra@archiver.kernel.org>; Fri,  1 Oct 2021 15:02:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 57A8F61ACE
+	for <linux-tegra@archiver.kernel.org>; Fri,  1 Oct 2021 15:02:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354738AbhJAPDo (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 1 Oct 2021 11:03:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33392 "EHLO
+        id S1354787AbhJAPEj (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 1 Oct 2021 11:04:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33642 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354766AbhJAPDk (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 1 Oct 2021 11:03:40 -0400
-Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB7FFC0613E6
-        for <linux-tegra@vger.kernel.org>; Fri,  1 Oct 2021 08:01:53 -0700 (PDT)
-Received: by mail-lf1-x130.google.com with SMTP id i25so39864849lfg.6
-        for <linux-tegra@vger.kernel.org>; Fri, 01 Oct 2021 08:01:53 -0700 (PDT)
+        with ESMTP id S1354765AbhJAPEi (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 1 Oct 2021 11:04:38 -0400
+Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 203E2C061775
+        for <linux-tegra@vger.kernel.org>; Fri,  1 Oct 2021 08:02:54 -0700 (PDT)
+Received: by mail-lf1-x133.google.com with SMTP id y23so633697lfb.0
+        for <linux-tegra@vger.kernel.org>; Fri, 01 Oct 2021 08:02:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc:content-transfer-encoding;
-        bh=Wl3ZMyIoq68XUN9ZysEDdbNyOTOcWVKDq09iuCEsZmc=;
-        b=nc/wRiOyNThsvZAoZqrqxfcMp5xM4+z3v5LBnRr7cDxfQB3CuDz+w9I+DrmCVjWOKl
-         np27NqLQZ/GN1BOsQnTqAa2UnIwF19eGxu64prAseFDGzGs8fstw8HcPfShlYRQ0qE1c
-         WBjvqHBepPh7/S1osWRA5oJkTk2LMoL8V+Rr/1CAVQRt+OOzX2VJn6rhiBggeGf0jaLd
-         I5s3lo9wgue1e92EUCmCI977jDYPuMA5YYpLfqE1ZPhrxcH8sAmJV+ED8ef6hVn8S0D5
-         bD46sji6e0iHnnK6F4WHN2ijZ4ehxPr5Lmm8HNBreW4wKt5dklt3O1Dh0kW0EnVCwAx4
-         w7NQ==
+        bh=RRYA+dwntp7uVySc4zhYcXxMP7m3tm96xWjdtz/hFGQ=;
+        b=wEpKAHyG/Z2DV3VekAfpccfohS6GuleXT+sluDZqrLWc4fVXO49fTrUqrSvxv8Zw8s
+         RcDa8OGQoiU5NceOwJQxZmdavoBpaLp5cpZxOY6F+bufDOZ4FaXS7oneoiRNEd91hAaQ
+         fi0ahFYRT+uLqfme/EMkPYKyQOUjJfW1EYU/EWc5+MnERt9ifHnZPT0xlsv79INHvAVa
+         n5iBrHjvoImw38ZK0VwfsIEQXxUdGrUEBOEe3mKZSU/NxPY46J9bjQ5D+37CLL9HCmlI
+         03umH+yMd9J3zUrj55H5Ndk+MkCDMyLMUCaV6SGBRA2cOlVqS1jw5smxfm9J/cnyAziI
+         nodg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc:content-transfer-encoding;
-        bh=Wl3ZMyIoq68XUN9ZysEDdbNyOTOcWVKDq09iuCEsZmc=;
-        b=xB9DHQLJb4tR5Vqfe8gsUemXcCr56TpjHxhKYrJBYtpKouSkeAeyQy8uGzhKl4iTTp
-         liJ2oKVe14d0furaLlfpzVwehx1/qSgdlmIjPDTxNoi7pZFdbev3hR6fTjQCoqomMLBd
-         wgsB57OUG7dn+1nzQQLVeL/gjpG3SnQknHbE30VZhFbff9CAkiucRzqSbYKgWLQcqnvz
-         tuGL7nIrKu7nuWWrsdZIUn6IAy7MnFdVtY4gOnJ+xQeV0jgGLwBPdVfEbbS34KDk68E3
-         XbTLUbqRFsta9rqYderHTNXfo6qDipOUd/PcMEkUlkjrLuTyDvbSxiJJXbQSfw/aJUXM
-         Hegg==
-X-Gm-Message-State: AOAM531m1BOuA6hczj/N8lodsWZNXXqJevpCq5UQ9Ev20eIu2EHVOcfk
-        cvLvGKLaq4MvdJW1hsu83QCg0PrJXZ2C8qObr9NRZQ==
-X-Google-Smtp-Source: ABdhPJzMALxdSFVvKbncpXSAkoeLVU4WvZ1aDrH/nsBIXY0lecURQDTr7J6h8lUkTNpeSwp11syRcpWCl/bNnJtDs94=
-X-Received: by 2002:a05:6512:2397:: with SMTP id c23mr5737854lfv.358.1633100509099;
- Fri, 01 Oct 2021 08:01:49 -0700 (PDT)
+        bh=RRYA+dwntp7uVySc4zhYcXxMP7m3tm96xWjdtz/hFGQ=;
+        b=wKpKUCXz1P2rTn5vFYEMIfX3GAcjeMqvEd1csH0QRFb5qWbCHGj7x7zN35Wqi6Vcaa
+         eC6XrNEaGN9OWbDU4GRUFWUzEJ/yimNhqeoNrtGJZBCbtAiZ6jQjAqyAbStS0dgDqCWx
+         5CB17bxSabYassULIN49U2/F8tSAsSll2poVpriZFbr/FGokX4VPCJxtwQs4+Mcmgy6M
+         zNxX7wOkHNjevlxvh14GzTrSM1PQq7tVS9Ijrbv1YBiixVjmLXYjH11jPA4OVQyEqnzJ
+         jcDLEaVteO8NqZeXKS+7j2X1rWTC8jeDVOzukTsuDYuA7p38LDv8kVrlyNyJLfRCBpME
+         WcdQ==
+X-Gm-Message-State: AOAM530c56L3RGQimPSU8SPKrD/9ZJb2B4bDe2SD22CDIstTBJFq753d
+        zTTG+irPMftn/yYJVIyuSV6T+f/jtsSHaO4zsgB05Q==
+X-Google-Smtp-Source: ABdhPJxxMpC0sB/h1irGfplTvjCJzB8zxjxG16OKRPTRKR56TwhoKCfQgSz0EgtJooAfO/BDyR8+6WRX6Wl2uWGM0Ow=
+X-Received: by 2002:a05:6512:3095:: with SMTP id z21mr5969378lfd.167.1633100572233;
+ Fri, 01 Oct 2021 08:02:52 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210926224058.1252-1-digetx@gmail.com> <20210926224058.1252-21-digetx@gmail.com>
- <CAPDyKFoF2QxZss_h9B1NFqOqgeF=TQ6LajCedGiJ9_P8X5M0NA@mail.gmail.com> <0bcbcd3d-2154-03d2-f572-dc9032125c26@gmail.com>
-In-Reply-To: <0bcbcd3d-2154-03d2-f572-dc9032125c26@gmail.com>
+References: <20210926224058.1252-1-digetx@gmail.com> <CAPDyKFog31OatzU0fHUMfN5FRsX+8Thm8TfipA4QisgFepU+rA@mail.gmail.com>
+ <662251e0-d1e4-97ce-16f9-703521cc2600@gmail.com>
+In-Reply-To: <662251e0-d1e4-97ce-16f9-703521cc2600@gmail.com>
 From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Fri, 1 Oct 2021 17:01:12 +0200
-Message-ID: <CAPDyKFohA9iu2UQfwoc0pCrCGupdwnUTWjKOtP09_C2KaFSo8w@mail.gmail.com>
-Subject: Re: [PATCH v13 20/35] mtd: rawnand: tegra: Add runtime PM and OPP support
+Date:   Fri, 1 Oct 2021 17:02:15 +0200
+Message-ID: <CAPDyKFoEbemYawwKW_muUKt9W+pGx_pncXvT57K2k4o68Z3P7g@mail.gmail.com>
+Subject: Re: [PATCH v13 00/35] NVIDIA Tegra power management patches for 5.16
 To:     Dmitry Osipenko <digetx@gmail.com>
 Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -89,135 +89,47 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, 1 Oct 2021 at 16:35, Dmitry Osipenko <digetx@gmail.com> wrote:
+On Fri, 1 Oct 2021 at 16:41, Dmitry Osipenko <digetx@gmail.com> wrote:
 >
-> 01.10.2021 17:24, Ulf Hansson =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> 01.10.2021 17:36, Ulf Hansson =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
 > > On Mon, 27 Sept 2021 at 00:42, Dmitry Osipenko <digetx@gmail.com> wrote=
 :
 > >>
-> >> The NAND on Tegra belongs to the core power domain and we're going to
-> >> enable GENPD support for the core domain. Now NAND must be resumed usi=
-ng
-> >> runtime PM API in order to initialize the NAND power state. Add runtim=
-e PM
-> >> and OPP support to the NAND driver.
+> >> This series adds runtime PM support to Tegra drivers and enables core
+> >> voltage scaling for Tegra20/30 SoCs, resolving overheating troubles.
 > >>
-> >> Acked-by: Miquel Raynal <miquel.raynal@bootlin.com>
-> >> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> >> ---
-> >>  drivers/mtd/nand/raw/tegra_nand.c | 55 ++++++++++++++++++++++++++----=
--
-> >>  1 file changed, 47 insertions(+), 8 deletions(-)
+> >> All patches in this series are interdependent and should go via Tegra =
+tree.
 > >>
-> >> diff --git a/drivers/mtd/nand/raw/tegra_nand.c b/drivers/mtd/nand/raw/=
-tegra_nand.c
-> >> index 32431bbe69b8..098fcc9cb9df 100644
-> >> --- a/drivers/mtd/nand/raw/tegra_nand.c
-> >> +++ b/drivers/mtd/nand/raw/tegra_nand.c
-> >> @@ -17,8 +17,11 @@
-> >>  #include <linux/mtd/rawnand.h>
-> >>  #include <linux/of.h>
-> >>  #include <linux/platform_device.h>
-> >> +#include <linux/pm_runtime.h>
-> >>  #include <linux/reset.h>
+> >> Changelog:
 > >>
-> >> +#include <soc/tegra/common.h>
-> >> +
-> >>  #define COMMAND                                        0x00
-> >>  #define   COMMAND_GO                           BIT(31)
-> >>  #define   COMMAND_CLE                          BIT(30)
-> >> @@ -1151,6 +1154,7 @@ static int tegra_nand_probe(struct platform_devi=
-ce *pdev)
-> >>                 return -ENOMEM;
+> >> v13: - Fixed compile-test error reported by build bot by reverting the
+> >>        mmc/ patch to v11. The sdhci_suspend/resume_host() functions ar=
+en't
+> >>        available with the disabled CONFIG_PM_SLEEP, some code needs th=
+e
+> >>        ifdef.
 > >>
-> >>         ctrl->dev =3D &pdev->dev;
-> >> +       platform_set_drvdata(pdev, ctrl);
-> >>         nand_controller_init(&ctrl->controller);
-> >>         ctrl->controller.ops =3D &tegra_nand_controller_ops;
+> >>      - Added last r-b from Rob Herring for the DT patches.
 > >>
-> >> @@ -1166,14 +1170,22 @@ static int tegra_nand_probe(struct platform_de=
-vice *pdev)
-> >>         if (IS_ERR(ctrl->clk))
-> >>                 return PTR_ERR(ctrl->clk);
-> >>
-> >> -       err =3D clk_prepare_enable(ctrl->clk);
-> >> +       err =3D devm_pm_runtime_enable(&pdev->dev);
-> >> +       if (err)
-> >> +               return err;
-> >> +
-> >> +       err =3D devm_tegra_core_dev_init_opp_table_common(&pdev->dev);
-> >> +       if (err)
-> >> +               return err;
-> >> +
-> >> +       err =3D pm_runtime_resume_and_get(&pdev->dev);
-> >>         if (err)
-> >>                 return err;
-> >>
-> >>         err =3D reset_control_reset(rst);
-> >>         if (err) {
-> >>                 dev_err(ctrl->dev, "Failed to reset HW: %d\n", err);
-> >> -               goto err_disable_clk;
-> >> +               goto err_put_pm;
-> >>         }
-> >>
-> >>         writel_relaxed(HWSTATUS_CMD_DEFAULT, ctrl->regs + HWSTATUS_CMD=
-);
-> >> @@ -1188,21 +1200,19 @@ static int tegra_nand_probe(struct platform_de=
-vice *pdev)
-> >>                                dev_name(&pdev->dev), ctrl);
-> >>         if (err) {
-> >>                 dev_err(ctrl->dev, "Failed to get IRQ: %d\n", err);
-> >> -               goto err_disable_clk;
-> >> +               goto err_put_pm;
-> >>         }
-> >>
-> >>         writel_relaxed(DMA_MST_CTRL_IS_DONE, ctrl->regs + DMA_MST_CTRL=
-);
-> >>
-> >>         err =3D tegra_nand_chips_init(ctrl->dev, ctrl);
-> >>         if (err)
-> >> -               goto err_disable_clk;
-> >> -
-> >> -       platform_set_drvdata(pdev, ctrl);
-> >> +               goto err_put_pm;
-> >>
+> >>      - Corrected clk/ PM domain-support patch by not using the
+> >>        devm_tegra_core_dev_init_opp_table_common() helper, which I
+> >>        utilized in v12. The clk driver implements its own power domain
+> >>        state syncing and common helper shouldn't be used. This fixes d=
+river
+> >>        probing for some clocks on some devices. It was reported by
+> >>        Svyatoslav Ryhel for PLLE OPP error on T30 Asus Transformer tab=
+let.
 > >
-> > There is no corresponding call pm_runtime_put() here. Is it
-> > intentional to always leave the device runtime resumed after ->probe()
-> > has succeeded?
-> >
-> > I noticed you included some comments about this for some other
-> > drivers, as those needed more tweaks. Is that also the case for this
-> > driver?
+> > Dmitry, I have looked through the series and besides those comments
+> > that I have posted, I have nothing more to add. Overall it looks good
+> > to me.
 >
-> Could you please clarify? There is pm_runtime_put() in both probe-error
-> and remove() code paths here.
+> Ulf, thank you very much! Yours input is invaluable. I'm happy that this
+> series moving steadily to the final stage.
 
-I was not considering the error path of ->probe() (or ->remove()), but
-was rather thinking about when ->probe() completes successfully. Then
-you keep the device runtime resumed, because you have called
-pm_runtime_resume_and_get() for it.
-
-Shouldn't you have a corresponding pm_runtime_put() in ->probe(),
-allowing it to be runtime suspended, until the device is really needed
-later on. No?
-
->
-> I assume you're meaning pm_runtime_disable(), but this patch uses
-> resource-managed devm_pm_runtime_enable(), and thus, explicit disable
-> isn't needed.
->
-> >>         return 0;
-> >>
-> >> -err_disable_clk:
-> >> -       clk_disable_unprepare(ctrl->clk);
-> >> +err_put_pm:
-> >> +       pm_runtime_put(ctrl->dev);
-> >>         return err;
-> >>  }
-> >>
-
-[...]
+My pleasure. Let's get the final pieces fixed so we can get this merged! :-=
+)
 
 Kind regards
 Uffe
