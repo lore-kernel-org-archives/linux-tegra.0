@@ -2,58 +2,57 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CF3CC433EF
-	for <linux-tegra@archiver.kernel.org>; Fri,  1 Oct 2021 14:07:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1239DC43217
+	for <linux-tegra@archiver.kernel.org>; Fri,  1 Oct 2021 14:19:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6ACCC61A07
-	for <linux-tegra@archiver.kernel.org>; Fri,  1 Oct 2021 14:07:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E682D61AAB
+	for <linux-tegra@archiver.kernel.org>; Fri,  1 Oct 2021 14:19:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353565AbhJAOJ0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 1 Oct 2021 10:09:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48794 "EHLO
+        id S1354392AbhJAOVX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 1 Oct 2021 10:21:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51574 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231438AbhJAOJY (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 1 Oct 2021 10:09:24 -0400
-Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF891C061775
-        for <linux-tegra@vger.kernel.org>; Fri,  1 Oct 2021 07:07:39 -0700 (PDT)
-Received: by mail-lf1-x12b.google.com with SMTP id e15so39305223lfr.10
-        for <linux-tegra@vger.kernel.org>; Fri, 01 Oct 2021 07:07:39 -0700 (PDT)
+        with ESMTP id S1354377AbhJAOVW (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 1 Oct 2021 10:21:22 -0400
+Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFED1C0613E2
+        for <linux-tegra@vger.kernel.org>; Fri,  1 Oct 2021 07:19:37 -0700 (PDT)
+Received: by mail-lf1-x131.google.com with SMTP id i25so39377436lfg.6
+        for <linux-tegra@vger.kernel.org>; Fri, 01 Oct 2021 07:19:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=Ccy11Z40KixrI11cltYn5ZcJWVQJimHuRt26MAfNhAc=;
-        b=mmVOZyqaAUMBtkBBuhdoApFSqfWX3cINwimlNhKZZQP7bUFuplZ9/aIK4LLMO7vJCr
-         qyOqhGyIhI6KCEeiPZLwsC2b07LxNGLnpuzcmV6qFpBXMzpeNGktITcYb5/i+tzmqwrz
-         7cx5/5peX588jl+VQ6N9Q3TMW7Iyn5I2zgmwHgFqykeahAizRFvqAC2iniw39z6abLEf
-         On4jq92Ck02U2dkeqDjvca7VUTt4ZNUqTok0sAkszvDNL97AkFeYH3gKMQAjfU2Ojvja
-         rqUwI5xXgPNFICuQzirzLNc0KSzY72zsy/ztBJ8fxgCLJn6zrD/25W2AyKPQmJOLsPTv
-         M6rQ==
+        bh=TmYkpMVtb1uSKsqX5euv7WOyLfzbmtOSlOndqVN+8j0=;
+        b=duQY39xT4Fb3Hr1PnbXTs56tkaQqjpQAgYJH7QSZorCPxuVu1w1xjBo4K+zxv2eT/i
+         Gv8vFaPicQua766hZYd2Z4sFxKAhudSPsUf76DMai8U3Fw5bbvcx7fO5WW1P2A848bGM
+         ZQq9OG2u50UNu3Jjx5+mQA6VDCrE6ml8Fh35xGIGRw6EE6eRYolYKa9p+8rWD2ZvBilp
+         uWVK4oDlCgf7DxNBdPej6J24qlMnSVWJnHXL2sfU57hu2pnNnIEFwtPnFm56+42awhNu
+         cSD+lRwaEeSCzPyePp37ympdEiAHaEdnn7LGs+wYp5tVdUW4CxRCTuk1HbDpdUV4ipuJ
+         BGrA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Ccy11Z40KixrI11cltYn5ZcJWVQJimHuRt26MAfNhAc=;
-        b=Y3OJZMAwxCfWzEmuh4CktaYQ65R3++EtO+cyjA4Hs+PkEoPsMQNfwDrLzcUcba7LnW
-         ArS+KRh9gXVNAlvBLPDA7LoNzBYP3z7AdBPGj/p/tbwVI2LWa1exMmLc5FaW01BGvr8H
-         42ZJv268+qR2wEza9O/8rwcO6bacGrx9SoDUId/igOPhjM1TLpwPpxVqoEX5CkPgpupW
-         armKwFuLGbYtg8KZpqb03vEpp3Ey5NHYEDrmyJsWabQLGyJ9MBFap/wYo6jnRuuJpqvp
-         d1ThwPsqfvn9RZmr2wnsOoAuJ0722ctGa83Xe2QPa4ca/8mQEXPboi5AWCfFNoZO1tdp
-         fXfA==
-X-Gm-Message-State: AOAM531tKVT2Wn3Mosc9TPRmEpRIrywWRQve/Iqzo4VXa7/QGl0zO2kQ
-        MWaZ4qxAZ52TNV2CWEFkJWWq+W5macFuiCp3QiTM1KK4Gt6s3A==
-X-Google-Smtp-Source: ABdhPJxCT1fIjn0eX7h16hKPoCW6SQiHV9gFT4j/a+Ne56Lp+H5G5HrNrutb2Cfj1iLro5ZcopboLjBeTUlfzWnHMBA=
-X-Received: by 2002:a2e:898c:: with SMTP id c12mr12102788lji.16.1633097254789;
- Fri, 01 Oct 2021 07:07:34 -0700 (PDT)
+        bh=TmYkpMVtb1uSKsqX5euv7WOyLfzbmtOSlOndqVN+8j0=;
+        b=MmBNDA78F/eOedcewerPq5DpNa4wbZEBiTprmSumOzUJcrLhAXUO4SmBl1MwFnZqZW
+         md8dmSaDilhzopIscTyzjmOG7aVHNVrg58NdNzwwu46H9ePajfSHWeiD/ymzgcUjrRMn
+         wTgsQmB4xpJaytn17xYRXI1zv6Ap+QiGwMckSC9/kvBChp9Ww9aa2P/OCuXuSSsrDbXW
+         TSq/8jOnqQhMdPIuYkiggmfe01xaJup/I3Ua483OxemJqE/qhLJNZrXKMNW1R9kwQytu
+         fZyA5w1i+hzgO7CipR+RXEepZrc4CR/sw2mJko7dGcBhDO+3a7Bv+DnC2A6o+wUlMXvu
+         Kyng==
+X-Gm-Message-State: AOAM5310ByceIToylkYHzXMyWKQsvptB0vKMISQFzct4Fwr1H67afEDo
+        Z22hXlN9O0kjFfxid+sAE+ANUEmGGtfKQf7xTfPQsw==
+X-Google-Smtp-Source: ABdhPJykzVLbDQqRsm8qwArsDUIjqMsOFjOioC0Mnou3m3mAAqwDg9NoSSc7iCu+AIdRWsUjvdPXt+LHd7gC+IctUuw=
+X-Received: by 2002:a05:6512:2397:: with SMTP id c23mr5560648lfv.358.1633097975362;
+ Fri, 01 Oct 2021 07:19:35 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210926224058.1252-1-digetx@gmail.com> <20210926224058.1252-15-digetx@gmail.com>
-In-Reply-To: <20210926224058.1252-15-digetx@gmail.com>
+References: <20210926224058.1252-1-digetx@gmail.com> <20210926224058.1252-18-digetx@gmail.com>
+In-Reply-To: <20210926224058.1252-18-digetx@gmail.com>
 From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Fri, 1 Oct 2021 16:06:58 +0200
-Message-ID: <CAPDyKFoZdmnmcdoWsD36uQesSjz8KJOq0JxY5tNbHgO_xMy+_g@mail.gmail.com>
-Subject: Re: [PATCH v13 14/35] drm/tegra: gr3d: Support generic power domain
- and runtime PM
+Date:   Fri, 1 Oct 2021 16:18:59 +0200
+Message-ID: <CAPDyKFoC7Kn9FPjAZLisSKWyYaXr1j2GnyQGNTVg_Dsuku-muA@mail.gmail.com>
+Subject: Re: [PATCH v13 17/35] bus: tegra-gmi: Add runtime PM and OPP support
 To:     Dmitry Osipenko <digetx@gmail.com>
 Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -90,118 +89,96 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 On Mon, 27 Sept 2021 at 00:42, Dmitry Osipenko <digetx@gmail.com> wrote:
 >
-> Add runtime power management and support generic power domains.
+> The GMI bus on Tegra belongs to the core power domain and we're going to
+> enable GENPD support for the core domain. Now GMI must be resumed using
+> runtime PM API in order to initialize the GMI power state. Add runtime PM
+> and OPP support to the GMI driver.
 >
-> Tested-by: Peter Geis <pgwipeout@gmail.com> # Ouya T30
-> Tested-by: Paul Fertser <fercerpav@gmail.com> # PAZ00 T20
-> Tested-by: Nicolas Chauvet <kwizart@gmail.com> # PAZ00 T20 and TK1 T124
-> Tested-by: Matt Merhar <mattmerhar@protonmail.com> # Ouya T30
 > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > ---
->  drivers/gpu/drm/tegra/gr3d.c | 388 ++++++++++++++++++++++++++++++-----
-
-[...]
-
-> +
-> +static int gr3d_probe(struct platform_device *pdev)
-> +{
-> +       struct host1x_syncpt **syncpts;
-> +       struct gr3d *gr3d;
-> +       unsigned int i;
-> +       int err;
-> +
-> +       gr3d = devm_kzalloc(&pdev->dev, sizeof(*gr3d), GFP_KERNEL);
-> +       if (!gr3d)
-> +               return -ENOMEM;
-> +
-> +       platform_set_drvdata(pdev, gr3d);
-> +
-> +       gr3d->soc = of_device_get_match_data(&pdev->dev);
-> +
-> +       syncpts = devm_kzalloc(&pdev->dev, sizeof(*syncpts), GFP_KERNEL);
-> +       if (!syncpts)
-> +               return -ENOMEM;
-> +
-> +       err = gr3d_get_clocks(&pdev->dev, gr3d);
-> +       if (err)
-> +               return err;
-> +
-> +       err = gr3d_get_resets(&pdev->dev, gr3d);
-> +       if (err)
-> +               return err;
-> +
-> +       err = gr3d_init_power(&pdev->dev, gr3d);
-> +       if (err)
-> +               return err;
-> +
->         INIT_LIST_HEAD(&gr3d->client.base.list);
->         gr3d->client.base.ops = &gr3d_client_ops;
->         gr3d->client.base.dev = &pdev->dev;
-> @@ -352,20 +552,36 @@ static int gr3d_probe(struct platform_device *pdev)
->         gr3d->client.version = gr3d->soc->version;
->         gr3d->client.ops = &gr3d_ops;
+>  drivers/bus/tegra-gmi.c | 52 ++++++++++++++++++++++++++++++++++++-----
+>  1 file changed, 46 insertions(+), 6 deletions(-)
 >
-> +       pm_runtime_enable(&pdev->dev);
-> +       pm_runtime_use_autosuspend(&pdev->dev);
-> +       pm_runtime_set_autosuspend_delay(&pdev->dev, 200);
-> +
-> +       err = devm_pm_opp_register_set_opp_helper(&pdev->dev, gr3d_set_opp);
-> +       if (err)
-> +               goto disable_rpm;
-> +
-> +       err = devm_tegra_core_dev_init_opp_table_common(&pdev->dev);
-> +       if (err)
-> +               goto disable_rpm;
-> +
->         err = host1x_client_register(&gr3d->client.base);
->         if (err < 0) {
->                 dev_err(&pdev->dev, "failed to register host1x client: %d\n",
->                         err);
-> -               return err;
-> +               goto disable_rpm;
->         }
+> diff --git a/drivers/bus/tegra-gmi.c b/drivers/bus/tegra-gmi.c
+> index a6570789f7af..72ef8a8c236b 100644
+> --- a/drivers/bus/tegra-gmi.c
+> +++ b/drivers/bus/tegra-gmi.c
+> @@ -13,8 +13,11 @@
+>  #include <linux/io.h>
+>  #include <linux/module.h>
+>  #include <linux/of_device.h>
+> +#include <linux/pm_runtime.h>
+>  #include <linux/reset.h>
 >
->         /* initialize address register map */
->         for (i = 0; i < ARRAY_SIZE(gr3d_addr_regs); i++)
->                 set_bit(gr3d_addr_regs[i], gr3d->addr_regs);
->
-> -       platform_set_drvdata(pdev, gr3d);
-> -
->         return 0;
+> +#include <soc/tegra/common.h>
 > +
-> +disable_rpm:
-> +       pm_runtime_dont_use_autosuspend(&pdev->dev);
-> +       pm_runtime_disable(&pdev->dev);
-
-Similar comment as for patch13.
-
-> +
-> +       return err;
->  }
+>  #define TEGRA_GMI_CONFIG               0x00
+>  #define TEGRA_GMI_CONFIG_GO            BIT(31)
+>  #define TEGRA_GMI_BUS_WIDTH_32BIT      BIT(30)
+> @@ -54,9 +57,9 @@ static int tegra_gmi_enable(struct tegra_gmi *gmi)
+>  {
+>         int err;
 >
->  static int gr3d_remove(struct platform_device *pdev)
-> @@ -380,23 +596,83 @@ static int gr3d_remove(struct platform_device *pdev)
+> -       err = clk_prepare_enable(gmi->clk);
+> -       if (err < 0) {
+> -               dev_err(gmi->dev, "failed to enable clock: %d\n", err);
+> +       err = pm_runtime_resume_and_get(gmi->dev);
+> +       if (err) {
+> +               pm_runtime_disable(gmi->dev);
 >                 return err;
 >         }
 >
-> -       if (gr3d->clk_secondary) {
-> -               reset_control_assert(gr3d->rst_secondary);
-> -               tegra_powergate_power_off(TEGRA_POWERGATE_3D1);
-> -               clk_disable_unprepare(gr3d->clk_secondary);
-> +       pm_runtime_dont_use_autosuspend(&pdev->dev);
-> +       pm_runtime_disable(&pdev->dev);
-
-Similar comment as for patch13. You may want to use
-pm_runtime_force_suspend() in favor of pm_runtime_disable().
-
+> @@ -83,7 +86,8 @@ static void tegra_gmi_disable(struct tegra_gmi *gmi)
+>         writel(config, gmi->base + TEGRA_GMI_CONFIG);
+>
+>         reset_control_assert(gmi->rst);
+> -       clk_disable_unprepare(gmi->clk);
 > +
-> +       return 0;
-> +}
+> +       pm_runtime_put(gmi->dev);
+>  }
+>
+>  static int tegra_gmi_parse_dt(struct tegra_gmi *gmi)
+> @@ -213,6 +217,7 @@ static int tegra_gmi_probe(struct platform_device *pdev)
+>         if (!gmi)
+>                 return -ENOMEM;
+>
+> +       platform_set_drvdata(pdev, gmi);
+>         gmi->dev = dev;
+>
+>         res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> @@ -232,6 +237,14 @@ static int tegra_gmi_probe(struct platform_device *pdev)
+>                 return PTR_ERR(gmi->rst);
+>         }
+>
+> +       err = devm_pm_runtime_enable(gmi->dev);
+> +       if (err)
+> +               return err;
+> +
+> +       err = devm_tegra_core_dev_init_opp_table_common(&pdev->dev);
+> +       if (err)
+> +               return err;
+> +
+>         err = tegra_gmi_parse_dt(gmi);
+>         if (err)
+>                 return err;
+> @@ -247,8 +260,6 @@ static int tegra_gmi_probe(struct platform_device *pdev)
+>                 return err;
+>         }
+>
+> -       platform_set_drvdata(pdev, gmi);
+> -
+>         return 0;
+>  }
+>
+> @@ -262,6 +273,34 @@ static int tegra_gmi_remove(struct platform_device *pdev)
 
-[...]
+Similar comment as for patch13, for the ->remove() callback.
 
-I was looking for a call to dev_pm_opp_set_rate(), but couldn't find
-it. Isn't that needed when changing the rate of the clock?
+This problem, which sometimes also exists in the error path in
+->probe() (according to my comments in patch13), seems to be a common
+issue in the series. I will therefore not continue to repeat my
+comment on this for the remaining patches in the series, I think I
+have made my point. :-)
 
 Kind regards
 Uffe
