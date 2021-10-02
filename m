@@ -2,77 +2,126 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A353FC433F5
-	for <linux-tegra@archiver.kernel.org>; Sat,  2 Oct 2021 04:06:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C6C9C433FE
+	for <linux-tegra@archiver.kernel.org>; Sat,  2 Oct 2021 07:13:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 732CB61AE1
-	for <linux-tegra@archiver.kernel.org>; Sat,  2 Oct 2021 04:06:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6BCDE61A56
+	for <linux-tegra@archiver.kernel.org>; Sat,  2 Oct 2021 07:13:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229636AbhJBEIA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 2 Oct 2021 00:08:00 -0400
-Received: from smtprelay0163.hostedemail.com ([216.40.44.163]:50444 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S229560AbhJBEIA (ORCPT
+        id S232520AbhJBHPT (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 2 Oct 2021 03:15:19 -0400
+Received: from new2-smtp.messagingengine.com ([66.111.4.224]:53327 "EHLO
+        new2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232355AbhJBHPT (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sat, 2 Oct 2021 00:08:00 -0400
-X-Greylist: delayed 324 seconds by postgrey-1.27 at vger.kernel.org; Sat, 02 Oct 2021 00:07:59 EDT
-Received: from smtprelay.hostedemail.com (10.5.19.251.rfc1918.com [10.5.19.251])
-        by smtpgrave04.hostedemail.com (Postfix) with ESMTP id 99FE9180782A4;
-        Sat,  2 Oct 2021 04:00:51 +0000 (UTC)
-Received: from omf12.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay01.hostedemail.com (Postfix) with ESMTP id 51090100E7B52;
-        Sat,  2 Oct 2021 04:00:49 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf12.hostedemail.com (Postfix) with ESMTPA id 1ED57240235;
-        Sat,  2 Oct 2021 04:00:46 +0000 (UTC)
-Message-ID: <fbab80553b993421e064b61814a7e5c634f62e6e.camel@perches.com>
-Subject: Re: [RFC v2 11/11] MAINTAINERS: Added HTE Subsystem
-From:   Joe Perches <joe@perches.com>
-To:     Randy Dunlap <rdunlap@infradead.org>,
-        Dipen Patel <dipenp@nvidia.com>, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
-        warthog618@gmail.com, devicetree@vger.kernel.org,
-        linux-doc@vger.kernel.org, robh+dt@kernel.org
-Date:   Fri, 01 Oct 2021 21:00:45 -0700
-In-Reply-To: <b6a968cb-1d7b-887c-8995-6e6b9fef03bf@infradead.org>
-References: <20210930232617.6396-1-dipenp@nvidia.com>
-         <20210930232617.6396-12-dipenp@nvidia.com>
-         <b6a968cb-1d7b-887c-8995-6e6b9fef03bf@infradead.org>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.40.0-1 
+        Sat, 2 Oct 2021 03:15:19 -0400
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailnew.nyi.internal (Postfix) with ESMTP id EFE27581013;
+        Sat,  2 Oct 2021 03:13:30 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute4.internal (MEProxy); Sat, 02 Oct 2021 03:13:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=u92.eu; h=date
+        :from:to:cc:subject:message-id:references:mime-version
+        :content-type:content-transfer-encoding:in-reply-to; s=fm3; bh=h
+        kdwWmElPEdAAxaQYiaUG9iDPW9L8k80trrD6uyRPLo=; b=b+qy2lC7OANZhdcFY
+        lTuHru7sN/+DtcqTrF4SpXic1GmtM7cUT2qmnPzpzBoOwlJLK+z7eh8TFrUFqSQD
+        TQ8jkhtPZqfnj2vBf+fDgE4RoYWo8WlREzgRC0Kgkb5u5KRBrrNW9I+jLw68qq5K
+        nR1QEz/T3vXeMOnlNj/Kte72tUeYYrYxUq90NqOZhz8H/aQau8o3YqPwNJNR9p51
+        IjEDlpgp6u3tl97X5eFyj1ScaFTQnCPDxidv6nerNdEjj30tannDQtOgGzaF9LP9
+        ywzRJBQ3oe9A57JmpNxlJeehLxTyoJAGbhhjUtwcTPnRaupVb4E9JI7Bx0avudQu
+        wU7Zw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm1; bh=hkdwWmElPEdAAxaQYiaUG9iDPW9L8k80trrD6uyRP
+        Lo=; b=D/XRLalTmeWLNXMgGrYTT36Ur+ARcjhRea20l1zZycriBriaimr4jYDvH
+        Y/163WSY2WWorF7d3pv3hpERLm6NZDJlTk//5jLEVXcIMWmMoPJNQxbhgBi1BWBn
+        Cya7cwjtn+FBF1NZP0fA4N1ZLelGM6CeBzY0yS2wBDAcnYs2k7uqp2sBcpzNWjb6
+        i2zLNiZLVqztUinKNFfAh4HmJdPap30w+S9jG7OBxVgGj0AGGzwot5oYlTBmBwa3
+        wt4cnG/tw8mgyWw7yKANX9GzEEYCNUrYCiZAngxSNFSdx9IvgQwTnhE894+IssxT
+        TFpzih5gWDYejAq9jm76uBihYwVjQ==
+X-ME-Sender: <xms:mQZYYR7VpWIekz5jKw9rfJZPtY7gObW-Ps2HK3WAeJ6thHYPvyedzQ>
+    <xme:mQZYYe7NssF99qddped0Oz3y0xvsSlXqyEN9IInl1E0lXOHMmNnU3P09OPy6-VZVV
+    Kq6QxkN1Uw7cqd15Q>
+X-ME-Received: <xmr:mQZYYYfa7VDv6N19FC4M0Vettj4NdhNIg1PrJFkZXVaEfhz91yBv0dzwZCvP5KfF1YQRSpIl>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrudekjedgudduhecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpeffhffvuffkfhggtggugfgjsehtkeertddttdejnecuhfhrohhmpefhvghr
+    nhgrnhguohcutfgrmhhoshcuoehgrhgvvghnfhhoohesuhelvddrvghuqeenucggtffrrg
+    htthgvrhhnpeffleelfeejkefgfffhvdffjedvteelhefgvdfftdehfefghfdtgeevgfek
+    keeuleenucffohhmrghinhepfhhrvggvuggvshhkthhophdrohhrghdptddurdhorhhgne
+    cuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepghhrvggv
+    nhhfohhosehuledvrdgvuh
+X-ME-Proxy: <xmx:mgZYYaLB8vJT6HmaAyecptRqqdECxDA3-U7v-ucSTdOqaK0yFO0hbA>
+    <xmx:mgZYYVLC78TXBxqTVCuTBFhpEgbixvlFTNJh-8rLG1dppSYC7Y77OQ>
+    <xmx:mgZYYTwFKgNks0BLJyv6wDGWqMfiEngurGR3Api93phNOr_Ls8Qtcg>
+    <xmx:mgZYYSCN8z0NaX2WnaxUXdRraVDUxKHnoPfZ_ydCt_0QpVQB9btRYQ>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
+ 2 Oct 2021 03:13:26 -0400 (EDT)
+Date:   Sat, 2 Oct 2021 09:13:22 +0200
+From:   Fernando Ramos <greenfoo@u92.eu>
+To:     Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
+Cc:     Sean Paul <sean@poorly.run>, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        amd-gfx@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+        nouveau@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: Re: [Intel-gfx] [PATCH v2 00/17] drm: cleanup: Use
+ DRM_MODESET_LOCK_ALL_* helpers where possible
+Message-ID: <YVgGklsHT5fkavDL@zacax395.localdomain>
+References: <20210924064324.229457-1-greenfoo@u92.eu>
+ <20211001183655.GW2515@art_vandelay>
+ <YVda4jNSGuQf50JV@intel.com>
+ <20211001204815.GA2515@art_vandelay>
+ <YVeGOyLzuhN7zzV7@intel.com>
+ <YVfEWaLfYWdhezCa@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 1ED57240235
-X-Stat-Signature: hgk6z5sz6jieutxqdrx7yuux4xd3imtu
-X-Rspamd-Server: rspamout02
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Session-ID: U2FsdGVkX19mvdfNloEqShYZNn11H8x47SYY6vDcqBg=
-X-HE-Tag: 1633147246-448701
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <YVfEWaLfYWdhezCa@intel.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, 2021-10-01 at 17:08 -0700, Randy Dunlap wrote:
-> On 9/30/21 4:26 PM, Dipen Patel wrote:
-> > Added myself as a maintainer for this new Hardware Timestamping Engine
-> > (HTE) subsystem.
-[]
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-[]
-> > +S:	Maintained
-> > +F:	drivers/hte/*
-> > +F:	include/linux/hte.h
-> > +F:	Documentation/hte/*
-> > +F:	Documentation/devicetree/bindings/hte/*
+On 21/10/02 05:30AM, Ville Syrjälä wrote:
+> On Sat, Oct 02, 2021 at 01:05:47AM +0300, Ville Syrjälä wrote:
+> > On Fri, Oct 01, 2021 at 04:48:15PM -0400, Sean Paul wrote:
+> > > On Fri, Oct 01, 2021 at 10:00:50PM +0300, Ville Syrjälä wrote:
+> > > > On Fri, Oct 01, 2021 at 02:36:55PM -0400, Sean Paul wrote:
+> > > > > 
+> > > > > Thank you for revising, Fernando! I've pushed the set to drm-misc-next (along
+> > > > > with the necessary drm-tip conflict resolutions).
+> > > > 
+> > > > Ugh. Did anyone actually review the locking changes this does?
+> > > > I shot the previous i915 stuff down because the commit messages
+> > > > did not address any of it.
+> > > 
+> > > I reviewed the set on 9/17, I didn't see your feedback on that thread.
+> > 
+> > It was much earlir than that.
+> > https://lists.freedesktop.org/archives/dri-devel/2021-June/313193.html
+> > 
+> > And I think I might have also shot down a similar thing earlier.
+> > 
+> > I was actually half considering sending a patch to nuke that
+> > misleading TODO item. I don't think anything which changes
+> > which locks are taken should be considred a starter level task.
+> > And the commit messages here don't seem to address any of it.
+> 
+> And i915 is now broken :(
+> 
+> https://intel-gfx-ci.01.org/tree/drm-tip/CI_DRM_10680/fi-bwr-2160/boot.html
 
-And using * does not support any possible subdirectory
+I completely overlooked the side effects of not having a global context anymore.
+Sorry for all the trouble.
 
-Likely these should be:
+Sean, could you revert the whole patch series? I'll have a deeper look into the
+patch set and come up with a v3 where all these issues will be addressed.
 
-F:	drivers/hte/
-F:	include/linux/hte.h
-F:	Documentation/hte/
-F:	Documentation/devicetree/bindings/hte/
+Thanks and sorry once again for the extra overhead this might have caused.
 
 
