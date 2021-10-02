@@ -2,204 +2,139 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42BDEC43219
-	for <linux-tegra@archiver.kernel.org>; Sat,  2 Oct 2021 00:18:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0962CC433FE
+	for <linux-tegra@archiver.kernel.org>; Sat,  2 Oct 2021 02:30:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2205361B1F
-	for <linux-tegra@archiver.kernel.org>; Sat,  2 Oct 2021 00:18:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E352E61A03
+	for <linux-tegra@archiver.kernel.org>; Sat,  2 Oct 2021 02:30:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231515AbhJBAU1 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 1 Oct 2021 20:20:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49028 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230259AbhJBAU1 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 1 Oct 2021 20:20:27 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A22C4C061775;
-        Fri,  1 Oct 2021 17:18:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:
-        Subject:Sender:Reply-To:Cc:Content-ID:Content-Description;
-        bh=RqX8/wclMPh8rdKmPHIqwNBBYNDwMU8vPuFzjp1ZKig=; b=RVvzTboaKRM1qFIDREl9FccXN8
-        U9jmnJ4h6Zg6gnVkYw1Aui63VaCOXtf/4dd3UAAvWDMjQMDQG5aCKykfzsV0/lpmpr1x4pc8Q0Ekx
-        CJ33ImURpLylkWsOdwvDfIZjCOjuzARAX1eEwIIdGRWWs7VOy9DqAwKYid6ND8BROeNljGLRG+x7U
-        eFNSchp2R2gNMRoBA5oNhyaXwDch6/FvC3EmDEoYII0emZ8JKw/G/4epmUfPsO6n2KUQJh8n2IECl
-        A3u50OmYNI8z7U/8Ji9NjcfRgFKby4m5FArnDrJIITZtKtv6yQbI0JQj/t+TQjaXsCBZO87gaYiJz
-        E0Tz9EvA==;
-Received: from [2601:1c0:6280:3f0::aa0b]
-        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mWSji-001XMM-2a; Sat, 02 Oct 2021 00:18:42 +0000
-Subject: Re: [RFC v2 01/11] Documentation: Add HTE subsystem guide
-To:     Dipen Patel <dipenp@nvidia.com>, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
-        warthog618@gmail.com, devicetree@vger.kernel.org,
-        linux-doc@vger.kernel.org, robh+dt@kernel.org
-References: <20210930232617.6396-1-dipenp@nvidia.com>
- <20210930232617.6396-2-dipenp@nvidia.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <70321686-276c-b972-302a-e649f28412de@infradead.org>
-Date:   Fri, 1 Oct 2021 17:18:39 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+        id S232465AbhJBCcj (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 1 Oct 2021 22:32:39 -0400
+Received: from mga17.intel.com ([192.55.52.151]:57897 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230386AbhJBCcj (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Fri, 1 Oct 2021 22:32:39 -0400
+X-IronPort-AV: E=McAfee;i="6200,9189,10124"; a="205792401"
+X-IronPort-AV: E=Sophos;i="5.85,340,1624345200"; 
+   d="scan'208";a="205792401"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2021 19:30:54 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.85,340,1624345200"; 
+   d="scan'208";a="521577655"
+Received: from stinkbox.fi.intel.com (HELO stinkbox) ([10.237.72.171])
+  by fmsmga008.fm.intel.com with SMTP; 01 Oct 2021 19:30:49 -0700
+Received: by stinkbox (sSMTP sendmail emulation); Sat, 02 Oct 2021 05:30:49 +0300
+Date:   Sat, 2 Oct 2021 05:30:49 +0300
+From:   Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+To:     Sean Paul <sean@poorly.run>
+Cc:     Fernando Ramos <greenfoo@u92.eu>, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        amd-gfx@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+        nouveau@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: Re: [Intel-gfx] [PATCH v2 00/17] drm: cleanup: Use
+ DRM_MODESET_LOCK_ALL_* helpers where possible
+Message-ID: <YVfEWaLfYWdhezCa@intel.com>
+References: <20210924064324.229457-1-greenfoo@u92.eu>
+ <20211001183655.GW2515@art_vandelay>
+ <YVda4jNSGuQf50JV@intel.com>
+ <20211001204815.GA2515@art_vandelay>
+ <YVeGOyLzuhN7zzV7@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20210930232617.6396-2-dipenp@nvidia.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <YVeGOyLzuhN7zzV7@intel.com>
+X-Patchwork-Hint: comment
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 9/30/21 4:26 PM, Dipen Patel wrote:
-> Adding hte document which can help understand various APIs implemented
-> in HTE framework for the HTE producers and the consumers.
+On Sat, Oct 02, 2021 at 01:05:47AM +0300, Ville Syrjälä wrote:
+> On Fri, Oct 01, 2021 at 04:48:15PM -0400, Sean Paul wrote:
+> > On Fri, Oct 01, 2021 at 10:00:50PM +0300, Ville Syrjälä wrote:
+> > > On Fri, Oct 01, 2021 at 02:36:55PM -0400, Sean Paul wrote:
+> > > > On Fri, Sep 24, 2021 at 08:43:07AM +0200, Fernando Ramos wrote:
+> > > > > Hi all,
+> > > > > 
+> > > > > One of the things in the DRM TODO list ("Documentation/gpu/todo.rst") was to
+> > > > > "use DRM_MODESET_LOCAL_ALL_* helpers instead of boilerplate". That's what this
+> > > > > patch series is about.
+> > > > > 
+> > > > > You will find two types of changes here:
+> > > > > 
+> > > > >   - Replacing "drm_modeset_lock_all_ctx()" (and surrounding boilerplate) with
+> > > > >     "DRM_MODESET_LOCK_ALL_BEGIN()/END()" in the remaining places (as it has
+> > > > >     already been done in previous commits such as b7ea04d2)
+> > > > > 
+> > > > >   - Replacing "drm_modeset_lock_all()" with "DRM_MODESET_LOCK_ALL_BEGIN()/END()"
+> > > > >     in the remaining places (as it has already been done in previous commits
+> > > > >     such as 57037094)
+> > > > >     
+> > > > > Most of the changes are straight forward, except for a few cases in the "amd"
+> > > > > and "i915" drivers where some extra dancing was needed to overcome the
+> > > > > limitation that the DRM_MODESET_LOCK_ALL_BEGIN()/END() macros can only be used
+> > > > > once inside the same function (the reason being that the macro expansion
+> > > > > includes *labels*, and you can not have two labels named the same inside one
+> > > > > function)
+> > > > > 
+> > > > > Notice that, even after this patch series, some places remain where
+> > > > > "drm_modeset_lock_all()" and "drm_modeset_lock_all_ctx()" are still present,
+> > > > > all inside drm core (which makes sense), except for two (in "amd" and "i915")
+> > > > > which cannot be replaced due to the way they are being used.
+> > > > > 
+> > > > > Changes in v2:
+> > > > > 
+> > > > >   - Fix commit message typo
+> > > > >   - Use the value returned by DRM_MODESET_LOCK_ALL_END when possible
+> > > > >   - Split drm/i915 patch into two simpler ones
+> > > > >   - Remove drm_modeset_(un)lock_all()
+> > > > >   - Fix build problems in non-x86 platforms
+> > > > > 
+> > > > > Fernando Ramos (17):
+> > > > >   drm: cleanup: drm_modeset_lock_all_ctx() --> DRM_MODESET_LOCK_ALL_BEGIN()
+> > > > >   drm/i915: cleanup: drm_modeset_lock_all_ctx() --> DRM_MODESET_LOCK_ALL_BEGIN()
+> > > > >   drm/msm: cleanup: drm_modeset_lock_all_ctx() --> DRM_MODESET_LOCK_ALL_BEGIN()
+> > > > >   drm: cleanup: drm_modeset_lock_all() --> DRM_MODESET_LOCK_ALL_BEGIN() drm/vmwgfx: cleanup: drm_modeset_lock_all() --> DRM_MODESET_LOCK_ALL_BEGIN()
+> > > > >   drm/tegra: cleanup: drm_modeset_lock_all() --> DRM_MODESET_LOCK_ALL_BEGIN()
+> > > > >   drm/shmobile: cleanup: drm_modeset_lock_all() --> DRM_MODESET_LOCK_ALL_BEGIN()
+> > > > >   drm/radeon: cleanup: drm_modeset_lock_all() --> DRM_MODESET_LOCK_ALL_BEGIN()
+> > > > >   drm/omapdrm: cleanup: drm_modeset_lock_all() --> DRM_MODESET_LOCK_ALL_BEGIN()
+> > > > >   drm/nouveau: cleanup: drm_modeset_lock_all() --> DRM_MODESET_LOCK_ALL_BEGIN()
+> > > > >   drm/msm: cleanup: drm_modeset_lock_all() --> DRM_MODESET_LOCK_ALL_BEGIN()
+> > > > >   drm/i915: cleanup: drm_modeset_lock_all() --> DRM_MODESET_LOCK_ALL_BEGIN()
+> > > > >   drm/i915: cleanup: drm_modeset_lock_all() --> DRM_MODESET_LOCK_ALL_BEGIN() part 2
+> > > > >   drm/gma500: cleanup: drm_modeset_lock_all() --> DRM_MODESET_LOCK_ALL_BEGIN()
+> > > > >   drm/amd: cleanup: drm_modeset_lock_all() --> DRM_MODESET_LOCK_ALL_BEGIN()
+> > > > >   drm: cleanup: remove drm_modeset_(un)lock_all()
+> > > > >   doc: drm: remove TODO entry regarding DRM_MODSET_LOCK_ALL cleanup
+> > > > > 
+> > > > 
+> > > > Thank you for revising, Fernando! I've pushed the set to drm-misc-next (along
+> > > > with the necessary drm-tip conflict resolutions).
+> > > 
+> > > Ugh. Did anyone actually review the locking changes this does?
+> > > I shot the previous i915 stuff down because the commit messages
+> > > did not address any of it.
+> > 
+> > I reviewed the set on 9/17, I didn't see your feedback on that thread.
 > 
-> Signed-off-by: Dipen Patel <dipenp@nvidia.com>
-> ---
-> Changes in v2:
-> - Removed explanation, instead added kernel-doc references.
+> It was much earlir than that.
+> https://lists.freedesktop.org/archives/dri-devel/2021-June/313193.html
 > 
->   Documentation/hte/hte.rst | 83 +++++++++++++++++++++++++++++++++++++++
->   1 file changed, 83 insertions(+)
->   create mode 100644 Documentation/hte/hte.rst
+> And I think I might have also shot down a similar thing earlier.
 > 
-> diff --git a/Documentation/hte/hte.rst b/Documentation/hte/hte.rst
-> new file mode 100644
-> index 000000000000..c9b1badae601
-> --- /dev/null
-> +++ b/Documentation/hte/hte.rst
-> @@ -0,0 +1,83 @@
-> +============================================
-> +The Linux Hardware Timestamping Engine (HTE)
-> +============================================
-> +
-> +:Author: Dipen Patel
-> +
-> +Introduction
-> +------------
-> +
-> +Certain devices have built in hardware timestamping engines which can
-> +monitor sets of system signals, lines, buses etc... in realtime for state
-> +change; upon detecting the change they can automatically store the timestamp at
-> +the moment of occurrence. Such functionality may help achieve better accuracy
-> +in obtaining timestamp than using software counterparts i.e. ktime and friends.
+> I was actually half considering sending a patch to nuke that
+> misleading TODO item. I don't think anything which changes
+> which locks are taken should be considred a starter level task.
+> And the commit messages here don't seem to address any of it.
 
-                 timestamps
+And i915 is now broken :(
 
-> +
-> +This document describes the API that can be used by hardware timestamping
-> +engine provider and consumer drivers that want to use the hardware timestamping
-> +engine (HTE) framework. Both consumers and providers must
-> +#include <linux/hte.h>.
-> +
-> +The HTE framework APIs for the providers
-> +----------------------------------------
-> +
-> +.. kernel-doc:: drivers/hte/hte.c
-> +   :functions: devm_hte_register_chip hte_push_ts_ns
-> +
-> +The HTE framework APIs for the consumers
-> +----------------------------------------
-> +
-> +.. kernel-doc:: drivers/hte/hte.c
-> +   :functions: devm_of_hte_request_ts hte_req_ts_by_hte_name hte_release_ts hte_enable_ts hte_disable_ts hte_get_clk_src_info
-> +
-> +The HTE framework public structures
-> +-----------------------------------
-> +.. kernel-doc:: include/linux/hte.h
-> +
-> +
-> +More on the HTE timestamp data
-> +------------------------------
-> +The struct hte_ts_data is used to pass timestamp details between the consumers
-> +and the providers. It expresses timestamp data in nano second in u64 data
-
-                                                      nanosesconds
-                                              possibly:           in a __u64 data
-
-> +type. For now all the HTE APIs using struct hte_ts_data requires tsc to be in
-
-                                                            require tsc to be in
-
-> +nano seconds. An example of the typical hte_ts_data data life cycle, for the
-
-    nanoseconds.
-
-> +GPIO line is as follows::
-> +
-> + - Monitors GPIO line change.
-> + - Detects the state change on GPIO line.
-> + - Converts timestamps in nano seconds and stores it in tsc.
-
-                              nanoseconds
-
-> + - Stores GPIO direction in dir variable if the provider has that hardware
-> + capability.
-> + - Pushes this hte_ts_data object to HTE subsystem.
-> + - HTE subsystem increments seq counter and invokes consumer provided callback.
-> + Based on callback return value, the HTE starts kernel thread and invokes
-
-                                             starts a kernel thread
-
-> + secondary callback in the thread context.
-> +
-> +HTE subsystem debugfs attributes
-> +--------------------------------
-> +HTE subsystem creates debugfs attributes at ``/sys/kernel/debug/hte/``.
-> +It also creates line/signal related debugfs attributes at
-
-                         signal-related
-
-> +``/sys/kernel/debug/hte/<provider>/<label or line id>/``.
-> +
-> +`ts_requested`
-> +		The total number of entities requested from the given provider,
-> +		where entity is the provider specific and could represent
-
-		             is specified by the provider and could
-(just guessing here; I could not parse it.)
-
-> +		lines, GPIO, chip signals, buses etc...
-> +                The attribute will be availble at
-
-		                         available
-
-> +		``/sys/kernel/debug/hte/<provider>/``.
-> +
-> +		Read only value
-
-		Read-only value
-
-> +
-> +`total_ts`
-> +		The total number of entities supported by the provider.
-> +                The attribute will be availble at
-
-		                         available
-
-> +		``/sys/kernel/debug/hte/<provider>/``.
-> +
-> +		Read only value
-
-		Read-only value
-
-> +
-> +`dropped_timestamps`
-> +		The dropped timestamps for a given line.
-> +                The attribute will be availble at
-
-		                         available
-
-> +		``/sys/kernel/debug/hte/<provider>/<label or line id>/``.
-> +
-> +		Read only value
-
-		Read-only value
-> 
-
+https://intel-gfx-ci.01.org/tree/drm-tip/CI_DRM_10680/fi-bwr-2160/boot.html
 
 -- 
-~Randy
+Ville Syrjälä
+Intel
