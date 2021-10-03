@@ -2,54 +2,54 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2499C433F5
-	for <linux-tegra@archiver.kernel.org>; Sun,  3 Oct 2021 00:35:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13B54C433FE
+	for <linux-tegra@archiver.kernel.org>; Sun,  3 Oct 2021 00:35:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 90C6D61439
-	for <linux-tegra@archiver.kernel.org>; Sun,  3 Oct 2021 00:35:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F27D361AF7
+	for <linux-tegra@archiver.kernel.org>; Sun,  3 Oct 2021 00:35:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234326AbhJCAhZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 2 Oct 2021 20:37:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56056 "EHLO
+        id S234333AbhJCAh0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 2 Oct 2021 20:37:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56060 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234321AbhJCAhZ (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Sat, 2 Oct 2021 20:37:25 -0400
-Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3D24C0613EC;
-        Sat,  2 Oct 2021 17:35:38 -0700 (PDT)
-Received: by mail-wm1-x330.google.com with SMTP id b192-20020a1c1bc9000000b0030cfaf18864so9609091wmb.4;
-        Sat, 02 Oct 2021 17:35:38 -0700 (PDT)
+        with ESMTP id S234329AbhJCAh0 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Sat, 2 Oct 2021 20:37:26 -0400
+Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86451C0613EC;
+        Sat,  2 Oct 2021 17:35:39 -0700 (PDT)
+Received: by mail-wr1-x42b.google.com with SMTP id d6so22276900wrc.11;
+        Sat, 02 Oct 2021 17:35:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=W/CLM3NjFJ+jE/VoO2ncG57+jK2RKmooryYVNTnraoQ=;
-        b=bXPGd1AnrQOyMEa60VkCBPHFO3ZFSaCQWEqUT5DtR1rCpkvvhvbtOYtXO6vp69GQaU
-         mDuSBaAQFezNYSI4gYisrBhUH3rohSBLjBlTtbKNm7f+mTKDyzWutrbboMmDnUKzs/2y
-         v5UJ8VN8eR8giJC07h/jbitgWOjNDUzw7WgjxXSHenLYpQ0/o9OqCRKwNraMGP3en7Nc
-         bCRFGSg12PwaN/ItCMVQ0NOpb0FjBeFROfpwqwkASO0oQomWrEE3SSB526DM/kYngGe4
-         0BmuJ9sFHn+dfoVgALdbPgh6npaxYicHqcXVX1YX2FCakkhnbRFpRMK8LC6DUMFQv6Nm
-         sKXQ==
+        bh=06X1Vk3GxFqTpRd48mMK6pMRz0jC31eJOzUfk6a0210=;
+        b=ZXNw8fvKxZq71+q02IvAUKhST+IiJ3INpMDzgfg54m8TAqh9a0/8wNdbVOZBVP19ME
+         9yjf4ZjA6FqatoXueFn7SRSsNAOJ97LWy6fcclZbJcAbP/iMD0afRwr2ovG5WpbZgr4f
+         bJzD6ViyfA0BcUeDwJ559OVl6KtO+O/S+DoTx3m4gogF7KND00uc1QI482HUDnI5dcog
+         D+06fIsv7tp82KQ74A2bd1YYsiy0owj7AT2oJ3HgNPfSXkGHz8VN0WzT4vPa1GDJmPQW
+         hGwydk2fyMBoXXMqo22i+ClVMWTnU3jFN9K6smnim5OUawJAlSmoar59gyI8CNtDx6Vw
+         2sQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=W/CLM3NjFJ+jE/VoO2ncG57+jK2RKmooryYVNTnraoQ=;
-        b=c0HvbCjSj3qINF0KtYsOd68ky7Wlmtazja1o4NQ6mUqOmTIG69gOHY8lMvqroKwTDN
-         Q1dUhQv+61+PD5a7GGeDOvFeWxb3ipeAKqSOls3bjhuXsyZzFRZW2rj+YCQZJNVQ6X1Q
-         XAtJUs+ZZyH9k8VSLB6GsPgxmIAp4abSVJoP8SsvYT3SfRAT4o8CaSLesYg2mOx5Jt2/
-         lxm0lc85MguCvtzt/DD+S3Zih3eTVPW4gSa7ReN+p1GVNs8pizUVzRUIx3mkVrkn6EG5
-         Npq/HAAprsn5D572TxT8d3+8s2UPArTAYkv3irwbtEVpjsKrsGom6wDKWZeO+uEpiIEy
-         GZ+w==
-X-Gm-Message-State: AOAM530AQDwL/N8dHBsvEb+M1iXziZa/Dak3XgKXEYvVcfRzbzjDE6zi
-        zHwltO3FP73clLgXMjZ9aDzS0VnHVwM=
-X-Google-Smtp-Source: ABdhPJxvS4gwmsX9I9gs4RCuZH5FoJMTLY1Nnx4ifXiKf8L82fe3aJNpEVw5Ds20WVcF8q3CXf8fPw==
-X-Received: by 2002:a7b:c113:: with SMTP id w19mr11463397wmi.124.1633221337430;
-        Sat, 02 Oct 2021 17:35:37 -0700 (PDT)
+        bh=06X1Vk3GxFqTpRd48mMK6pMRz0jC31eJOzUfk6a0210=;
+        b=LHit1BFviZF0G2tz7PBPSgnjbxnsmjxEFmz9doxhFjAsFW5+5d6UaWWkHQWF/6C/so
+         f+tImMo2Bggl5jyP71GJsNJoRRNuo3It8xYzNfPE7CkbgzNaZISwFmbGcNyCoC+AOOCL
+         Zzgfa0ZKnj8kNGkwnyUXuhFHMGLoFcp0I7HIYP6dkzQdxQdO6pkVUqffOyLnNApbGEXM
+         /TXoFMQJT0CHPAq7DiwR/Dubrxgwbe/hFJNhwAuBjYvIn056t9lBfjWn5XkTrBzO+pQn
+         IhKUgVJmKABGtNQx9ZMj4wvw5J8NaYFUQgeBbmdAwnMLqsLxTk/avHlg2uSXc1Lex8jF
+         +pew==
+X-Gm-Message-State: AOAM530WLTiSSyre88YA7gT+E3cKL86n54uFoTzbC+tG9xY8FU1Goigu
+        6UAjniLvH1hZDhS4rEWtLHo=
+X-Google-Smtp-Source: ABdhPJxsN4vaEYden/l22P6h9eKf53Ia1JHhW3mNFZziqZBl4X7NnaVs1XPHqsk23xzm6zPr3MzZIg==
+X-Received: by 2002:a5d:564f:: with SMTP id j15mr5614321wrw.336.1633221338210;
+        Sat, 02 Oct 2021 17:35:38 -0700 (PDT)
 Received: from localhost.localdomain (94-29-54-195.dynamic.spd-mgts.ru. [94.29.54.195])
-        by smtp.gmail.com with ESMTPSA id m21sm10981445wmq.37.2021.10.02.17.35.36
+        by smtp.gmail.com with ESMTPSA id m21sm10981445wmq.37.2021.10.02.17.35.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 02 Oct 2021 17:35:37 -0700 (PDT)
+        Sat, 02 Oct 2021 17:35:38 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -57,9 +57,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Rob Herring <robh+dt@kernel.org>
 Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-tegra@vger.kernel.org
-Subject: [PATCH v2 1/4] dt-bindings: memory: Add LPDDR2 binding
-Date:   Sun,  3 Oct 2021 03:35:06 +0300
-Message-Id: <20211003003509.28241-2-digetx@gmail.com>
+Subject: [PATCH v2 2/4] dt-bindings: memory: tegra20: emc: Document new LPDDR2 sub-node
+Date:   Sun,  3 Oct 2021 03:35:07 +0300
+Message-Id: <20211003003509.28241-3-digetx@gmail.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20211003003509.28241-1-digetx@gmail.com>
 References: <20211003003509.28241-1-digetx@gmail.com>
@@ -69,133 +69,64 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Add binding for standard LPDDR2 memory chip properties.
+Some Tegra20 boards don't have RAM code stored in NVMEM, which is used for
+the memory chip identification and the identity information should be read
+out from LPDDR2 chip in this case. Document new sub-node containing generic
+LPDDR2 properties that will be used for the memory chip identification if
+RAM code isn't available. The identification is done by reading out memory
+configuration values from generic LPDDR2 mode registers of SDRAM chip and
+comparing them with the values of device-tree sub-node's.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- .../memory-controllers/jedec,lpddr2.yaml      | 80 +++++++++++++++++++
- include/dt-bindings/memory/lpddr2.h           | 25 ++++++
- 2 files changed, 105 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/memory-controllers/jedec,lpddr2.yaml
- create mode 100644 include/dt-bindings/memory/lpddr2.h
+ .../memory-controllers/nvidia,tegra20-emc.yaml  | 17 ++++++++++++++---
+ 1 file changed, 14 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/memory-controllers/jedec,lpddr2.yaml b/Documentation/devicetree/bindings/memory-controllers/jedec,lpddr2.yaml
-new file mode 100644
-index 000000000000..ef227eba1e4a
---- /dev/null
-+++ b/Documentation/devicetree/bindings/memory-controllers/jedec,lpddr2.yaml
-@@ -0,0 +1,80 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/memory-controllers/jedec,lpddr2.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-emc.yaml b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-emc.yaml
+index cac6842dc8f1..2741333591bf 100644
+--- a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-emc.yaml
++++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-emc.yaml
+@@ -164,13 +164,14 @@ patternProperties:
+       "#size-cells":
+         const: 0
+ 
++      lpddr2-configuration:
++        $ref: "jedec,lpddr2.yaml#"
++        type: object
 +
-+title: JEDEC LPDDR2 SDRAM
-+
-+maintainers:
-+  - Krzysztof Kozlowski <krzk@kernel.org>
-+
-+properties:
-+  jedec,lpddr2-manufacturer-id:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    maximum: 255
-+    description: |
-+      Unique manufacturer ID of SDRAM chip. See MR5 description in JESD209-2.
-+
-+  jedec,lpddr2-revision-id1:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    maximum: 255
-+    description: |
-+      Revision 1 value of SDRAM chip.
-+      See MR6 description in chip vendor specification.
-+
-+  jedec,lpddr2-revision-id2:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    maximum: 255
-+    description: |
-+      Revision 2 value of SDRAM chip.
-+      See MR7 description in chip vendor specification.
-+
-+  jedec,lpddr2-density-mbits:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description: |
-+      Density in megabits of SDRAM chip. See MR8 description in JESD209-2.
-+    enum:
-+      - 64
-+      - 128
-+      - 256
-+      - 512
-+      - 1024
-+      - 2048
-+      - 4096
-+      - 8192
-+      - 16384
-+      - 32768
-+
-+  jedec,lpddr2-io-width-bits:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description: |
-+      IO bus width in bits of SDRAM chip. See MR8 description in JESD209-2.
-+    enum:
-+      - 32
-+      - 16
-+      - 8
-+
-+  jedec,lpddr2-type:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description: |
-+      LPDDR type which corresponds to a number of words SDRAM pre-fetches
-+      per column request. See MR8 description in JESD209-2.
-+    enum:
-+      - 0 # S4 (4 words prefetch architecture)
-+      - 1 # S2 (2 words prefetch architecture)
-+      - 2 # NVM (Non-volatile memory)
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
+     patternProperties:
+       "^emc-table@[0-9]+$":
+         $ref: "#/$defs/emc-table"
+ 
+-    required:
+-      - nvidia,ram-code
+-
+     additionalProperties: false
+ 
+ required:
+@@ -186,6 +187,8 @@ additionalProperties: false
+ 
+ examples:
+   - |
 +    #include <dt-bindings/memory/lpddr2.h>
 +
-+    lpddr2 {
-+        jedec,lpddr2-manufacturer-id = <LPDDR2_MANID_ELPIDA>;
-+        jedec,lpddr2-revision-id1 = <1>;
-+        jedec,lpddr2-density-mbits = <2048>;
-+        jedec,lpddr2-io-width-bits = <16>;
-+        jedec,lpddr2-type = <LPDDR2_TYPE_S4>;
-+    };
-diff --git a/include/dt-bindings/memory/lpddr2.h b/include/dt-bindings/memory/lpddr2.h
-new file mode 100644
-index 000000000000..e837b0d8a11e
---- /dev/null
-+++ b/include/dt-bindings/memory/lpddr2.h
-@@ -0,0 +1,25 @@
-+/* SPDX-License-Identifier: GPL-2.0 OR BSD-2-Clause */
-+#ifndef _DT_BINDINGS_LPDDR2_H
-+#define _DT_BINDINGS_LPDDR2_H
+     external-memory-controller@7000f400 {
+         compatible = "nvidia,tegra20-emc";
+         reg = <0x7000f400 0x400>;
+@@ -226,5 +229,13 @@ examples:
+                         0x007fe010 0x00001414 0x00000000 0x00000000
+                         0x00000000 0x00000000 0x00000000 0x00000000>;
+             };
 +
-+#define LPDDR2_MANID_SAMSUNG		1
-+#define LPDDR2_MANID_QIMONDA		2
-+#define LPDDR2_MANID_ELPIDA		3
-+#define LPDDR2_MANID_ETRON		4
-+#define LPDDR2_MANID_NANYA		5
-+#define LPDDR2_MANID_HYNIX		6
-+#define LPDDR2_MANID_MOSEL		7
-+#define LPDDR2_MANID_WINBOND		8
-+#define LPDDR2_MANID_ESMT		9
-+#define LPDDR2_MANID_SPANSION		11
-+#define LPDDR2_MANID_SST		12
-+#define LPDDR2_MANID_ZMOS		13
-+#define LPDDR2_MANID_INTEL		14
-+#define LPDDR2_MANID_NUMONYX		254
-+#define LPDDR2_MANID_MICRON		255
-+
-+#define LPDDR2_TYPE_S4			0
-+#define LPDDR2_TYPE_S2			1
-+#define LPDDR2_TYPE_NVM			2
-+
-+#endif /*_DT_BINDINGS_LPDDR2_H */
++            lpddr2-config {
++                jedec,lpddr2-manufacturer-id = <LPDDR2_MANID_ELPIDA>;
++                jedec,lpddr2-revision-id1 = <1>;
++                jedec,lpddr2-density-mbits = <2048>;
++                jedec,lpddr2-io-width-bits = <16>;
++                jedec,lpddr2-type = <LPDDR2_TYPE_S4>;
++            };
+         };
+     };
 -- 
 2.32.0
 
