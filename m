@@ -2,104 +2,109 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 074D4C433F5
-	for <linux-tegra@archiver.kernel.org>; Sat,  2 Oct 2021 23:35:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF8BEC433EF
+	for <linux-tegra@archiver.kernel.org>; Sun,  3 Oct 2021 00:35:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E76B261AF7
-	for <linux-tegra@archiver.kernel.org>; Sat,  2 Oct 2021 23:35:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BCA9361AF7
+	for <linux-tegra@archiver.kernel.org>; Sun,  3 Oct 2021 00:35:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234238AbhJBXhm (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 2 Oct 2021 19:37:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43004 "EHLO
+        id S234316AbhJCAhY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 2 Oct 2021 20:37:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56048 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234235AbhJBXhk (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Sat, 2 Oct 2021 19:37:40 -0400
-Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CC55C061714;
-        Sat,  2 Oct 2021 16:35:54 -0700 (PDT)
-Received: by mail-wm1-x335.google.com with SMTP id l18-20020a05600c4f1200b002f8cf606262so14663752wmq.1;
-        Sat, 02 Oct 2021 16:35:53 -0700 (PDT)
+        with ESMTP id S234287AbhJCAhY (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Sat, 2 Oct 2021 20:37:24 -0400
+Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD054C0613EC;
+        Sat,  2 Oct 2021 17:35:37 -0700 (PDT)
+Received: by mail-wr1-x42b.google.com with SMTP id r7so6835885wrc.10;
+        Sat, 02 Oct 2021 17:35:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=MztqkJ6kEnYY3QY22MZAhVkiyYz8DlYPtSLS1AAw8jM=;
-        b=GPP3XEmUpER7Jifk5aXhGuB2IdZ9dYWM7+4gi3WqJEH0myRrgZSbhORhiJGETOErNO
-         mqiKtnBml/30gMd08kYdCh1ITAopXUgMmrNU05m0QyrMaQawNbEULfg78peHFVn7jZOE
-         subtmm/xR+gUDM9TvJt/cLXR23UM/l6oBT+Q3i28zmodk0PSrFdwMRxnhxBYfbckoRV8
-         1JRgVdlAyt0u24m0dyghSDKj45c8fODPcR4oDTawtLgetjbncU/z2BJuRKG3ruXEENmW
-         UslJfT8iZPJR3mAbdDEOLZxPU4x5NG/awjGmjVwyn0eOOu4fqpNWm5fhcONrIMwlvJ63
-         i8fw==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=g6IgKgTeOPn2kSgL3hUWPhBdd8ZQiQNCWpf+x3vkmn4=;
+        b=StEygmgG9jKOWu/dcN1kETNu3JvN1iXbTU72tC0RMT37kCtIjPri4ZjrWFmpSXvmG+
+         Dwe6TndDZ15Rs16xd44StTKc3eoreTaIr797kwMUDS9VNkojKwKAzasNTvTl6ZrGfAfk
+         EsgOxeey9eLnfNningerBWfzqGBZ/GLiij5O3+tFQaD6bK9GKg6An47hcWWJFbAbZ5Qi
+         Tsvi0XWcsvQOA3YUwmqVntp4vuzxq6pmbQtHi5qIL5Jl2BHms95SQ3WKNgaX+/HaEGqq
+         HMOwtrFIMU9MeM3F9rbJci7ewtcDKMzHLhpVUuLeARYhvHKHM8GzW4XanZxl/647VAq9
+         srAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=MztqkJ6kEnYY3QY22MZAhVkiyYz8DlYPtSLS1AAw8jM=;
-        b=emTg21jcCHWgOEE+hC7UA5PkbgZnNFQ/TSsxIlE2+FfGhh7X9FK/dFl7LWsMTUM5XM
-         /eUj57NQKptJ4nLSb4BL9WaGonaGFVLqcNMi/sImfpDi9QR9PaHecqd2vnJ37neUeC47
-         VN55MHeIlkRFDe8nmlozEw5pLPsb2PLMDtbnvNyetsCpKjgFo+xYIQkEhY0UbmCXkTR/
-         PzA0hXv1EKYtgNf6dKI3hylA3POUE1xEEZBrt9t/HiXIshZcjnEPSOmr4Pk9Tnaolsmr
-         wh2ODksM5HoNxEodnRIq1B6CvTEfaCoe0ncryqwAVbWF7b7sbM1hki9+9Frz/bnVs+eD
-         c2mQ==
-X-Gm-Message-State: AOAM532oWIS9semYolqBJPuf58nVDVOHdtSpKealg0WrSNbkoRYhNoZU
-        JhLwZTaVI6GdxbWYf1V2UFI=
-X-Google-Smtp-Source: ABdhPJzXoDtZo5DdB8DYLuVGO2v//b+Wp15T0u3Fxi7NnZxoVEihQFQ01yI49bal4m2C9c/LPmWnuw==
-X-Received: by 2002:a05:600c:1d0b:: with SMTP id l11mr11350453wms.46.1633217752661;
-        Sat, 02 Oct 2021 16:35:52 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=g6IgKgTeOPn2kSgL3hUWPhBdd8ZQiQNCWpf+x3vkmn4=;
+        b=p5kPQlk0pKNXVCdS2XspTxLjgo8fReHRm1ynMIirIIzqdPEV0B7RqJOVvmOVRXTKlk
+         aES7tT8NqrdajXt03i4L0Zlxmv2WFThZGDK+loHA8Tjku3P/CO/PiXhlsTBz7z2dtDMu
+         UX2AzpQs/KKAsVGooFAfRLZ8kJhuLAF0Z7+duqfaOCpi5D67jd4Ab31/sIj3nnTfAsba
+         E/aS3qxA+qAZvqMqQOn+1jnwrguTll2/9akK8IbGqZbjjb2udqid5FmxszX0HjuhOlHv
+         vG0Ds/d7hDlPWyCXgOW+LvMC0w/Yo5jHiDEIVmp6Rz+jRUcJk9pgpK17W1RV90inIPwI
+         QFow==
+X-Gm-Message-State: AOAM533YpgbUft71GLA5KNqX5i834d0FKf5TTLo1dnG/jioPzPqKYk2l
+        r8QfnStZQh0HIfqwPb5ymOdS1MgQbms=
+X-Google-Smtp-Source: ABdhPJwmRbqUE5DfLscEMV9Ey47bDq8RZudZp6oKsFIGvCypW0ysEfvxyV4mEpgvbMm5zNQSafzd6w==
+X-Received: by 2002:adf:a147:: with SMTP id r7mr5793018wrr.52.1633221336366;
+        Sat, 02 Oct 2021 17:35:36 -0700 (PDT)
 Received: from localhost.localdomain (94-29-54-195.dynamic.spd-mgts.ru. [94.29.54.195])
-        by smtp.gmail.com with ESMTPSA id r2sm10487089wmq.28.2021.10.02.16.35.51
+        by smtp.gmail.com with ESMTPSA id m21sm10981445wmq.37.2021.10.02.17.35.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 02 Oct 2021 16:35:52 -0700 (PDT)
+        Sat, 02 Oct 2021 17:35:36 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Robert Foss <robert.foss@linaro.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Maxim Schwalm <maxim.schwalm@gmail.com>,
-        Andreas Westman Dorcsak <hedmoo@yahoo.com>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>
-Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v1 5/5] drm/bridge: tc358768: Correct BTACNTRL1 programming
-Date:   Sun,  3 Oct 2021 02:34:47 +0300
-Message-Id: <20211002233447.1105-6-digetx@gmail.com>
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: [PATCH v2 0/4] tegra20-emc: Identify memory chip by LPDDR configuration
+Date:   Sun,  3 Oct 2021 03:35:05 +0300
+Message-Id: <20211003003509.28241-1-digetx@gmail.com>
 X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20211002233447.1105-1-digetx@gmail.com>
-References: <20211002233447.1105-1-digetx@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-TXTAGOCNT and RXTASURECNT bitfields of BTACNTRL1 register are swapped in
-the code, correct them. Driver doesn't implement low power mode for now,
-so this change doesn't make a practical difference yet.
+Support memory chip identification by LPDDR2 configuration, which is
+needed by ASUS Transformer TF101 tablet device that doesn't store RAMCODE
+in Tegra's NVMEM.
 
-Tested-by: Andreas Westman Dorcsak <hedmoo@yahoo.com> # Asus TF700T
-Tested-by: Maxim Schwalm <maxim.schwalm@gmail.com> #TF700T
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/gpu/drm/bridge/tc358768.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changelog:
 
-diff --git a/drivers/gpu/drm/bridge/tc358768.c b/drivers/gpu/drm/bridge/tc358768.c
-index cfceba5ef3b8..fd585bf925fe 100644
---- a/drivers/gpu/drm/bridge/tc358768.c
-+++ b/drivers/gpu/drm/bridge/tc358768.c
-@@ -790,7 +790,7 @@ static void tc358768_bridge_pre_enable(struct drm_bridge *bridge)
- 	val = tc358768_ns_to_cnt(val, dsibclk_nsk) - 1;
- 	val2 = tc358768_ns_to_cnt(tc358768_to_ns((lptxcnt + 1) * dsibclk_nsk),
- 				  dsibclk_nsk) - 2;
--	val |= val2 << 16;
-+	val = val << 16 | val2;
- 	dev_dbg(priv->dev, "BTACNTRL1: 0x%x\n", val);
- 	tc358768_write(priv, TC358768_BTACNTRL1, val);
- 
+v2: - Added separate binding for standard LPDDR2 properties, like it
+      was suggested by Krzysztof Kozlowski.
+
+    - Switched Tegra binding to use new lpddr2-configuration sub-node
+      that contains the standard properties.
+
+    - Extended commit message of the "emc: Document new LPDDR2 sub-node"
+      patch, telling how the properties are supposed to be used, which
+      was requested by Krzysztof Kozlowski.
+
+    - Added new common helpers for parsing LPDDR2 properties and made
+      tegra20-emc driver to use these helpers.
+
+Dmitry Osipenko (4):
+  dt-bindings: memory: Add LPDDR2 binding
+  dt-bindings: memory: tegra20: emc: Document new LPDDR2 sub-node
+  memory: Add LPDDR2 configuration helpers
+  memory: tegra20-emc: Support matching timings by LPDDR2 configuration
+
+ .../memory-controllers/jedec,lpddr2.yaml      |  80 ++++++++
+ .../nvidia,tegra20-emc.yaml                   |  17 +-
+ drivers/memory/jedec_ddr.h                    |  21 ++
+ drivers/memory/jedec_ddr_data.c               |  42 ++++
+ drivers/memory/of_memory.c                    |  34 ++++
+ drivers/memory/of_memory.h                    |   9 +
+ drivers/memory/tegra/Kconfig                  |   1 +
+ drivers/memory/tegra/tegra20-emc.c            | 191 ++++++++++++++++--
+ include/dt-bindings/memory/lpddr2.h           |  25 +++
+ 9 files changed, 404 insertions(+), 16 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/memory-controllers/jedec,lpddr2.yaml
+ create mode 100644 include/dt-bindings/memory/lpddr2.h
+
 -- 
 2.32.0
 
