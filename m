@@ -2,52 +2,52 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13B54C433FE
-	for <linux-tegra@archiver.kernel.org>; Sun,  3 Oct 2021 00:35:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8CD9C433FE
+	for <linux-tegra@archiver.kernel.org>; Sun,  3 Oct 2021 00:35:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F27D361AF7
-	for <linux-tegra@archiver.kernel.org>; Sun,  3 Oct 2021 00:35:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D032361439
+	for <linux-tegra@archiver.kernel.org>; Sun,  3 Oct 2021 00:35:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234333AbhJCAh0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 2 Oct 2021 20:37:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56060 "EHLO
+        id S234354AbhJCAha (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 2 Oct 2021 20:37:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56066 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234329AbhJCAh0 (ORCPT
+        with ESMTP id S234334AbhJCAh0 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>); Sat, 2 Oct 2021 20:37:26 -0400
-Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86451C0613EC;
-        Sat,  2 Oct 2021 17:35:39 -0700 (PDT)
-Received: by mail-wr1-x42b.google.com with SMTP id d6so22276900wrc.11;
-        Sat, 02 Oct 2021 17:35:39 -0700 (PDT)
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61CB5C0613EC;
+        Sat,  2 Oct 2021 17:35:40 -0700 (PDT)
+Received: by mail-wm1-x335.google.com with SMTP id g193-20020a1c20ca000000b0030d55f1d984so3549481wmg.3;
+        Sat, 02 Oct 2021 17:35:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=06X1Vk3GxFqTpRd48mMK6pMRz0jC31eJOzUfk6a0210=;
-        b=ZXNw8fvKxZq71+q02IvAUKhST+IiJ3INpMDzgfg54m8TAqh9a0/8wNdbVOZBVP19ME
-         9yjf4ZjA6FqatoXueFn7SRSsNAOJ97LWy6fcclZbJcAbP/iMD0afRwr2ovG5WpbZgr4f
-         bJzD6ViyfA0BcUeDwJ559OVl6KtO+O/S+DoTx3m4gogF7KND00uc1QI482HUDnI5dcog
-         D+06fIsv7tp82KQ74A2bd1YYsiy0owj7AT2oJ3HgNPfSXkGHz8VN0WzT4vPa1GDJmPQW
-         hGwydk2fyMBoXXMqo22i+ClVMWTnU3jFN9K6smnim5OUawJAlSmoar59gyI8CNtDx6Vw
-         2sQQ==
+        bh=ytSrPE+NR12lrZWB6vcJD04bouRj97mzjhJl6l3sCao=;
+        b=l8Yx0um3jmeASydaOyWXo2hWvJnHCW5Fk90mu1ak954R+wf2fOeLZdlGH5QkU6XaBn
+         0GSpem9dKA3o1X4BbCTaE3GIQUV/GxpY9NK5VNtz6US6Lq8gFyB9gKoMI3iWtrhPrjX5
+         DVaULvISJDUvPYSo/nPWA7qh9a17g9lil0Mj2G8cBVORNtM3U76faN19ApEbjQLL9KW4
+         FDF9RJJVWGasjtjR5aWEvnOssjtR6gCLNspQCp47lSQnEbdAnI3ZuU9Np5n8la/VOvnQ
+         doyJFh/0Ef+GE6enIEKyrL2gu5alGieRLgV2yhg8V/PykPtI4yzmz6mGr/vws0e06w8p
+         O1bw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=06X1Vk3GxFqTpRd48mMK6pMRz0jC31eJOzUfk6a0210=;
-        b=LHit1BFviZF0G2tz7PBPSgnjbxnsmjxEFmz9doxhFjAsFW5+5d6UaWWkHQWF/6C/so
-         f+tImMo2Bggl5jyP71GJsNJoRRNuo3It8xYzNfPE7CkbgzNaZISwFmbGcNyCoC+AOOCL
-         Zzgfa0ZKnj8kNGkwnyUXuhFHMGLoFcp0I7HIYP6dkzQdxQdO6pkVUqffOyLnNApbGEXM
-         /TXoFMQJT0CHPAq7DiwR/Dubrxgwbe/hFJNhwAuBjYvIn056t9lBfjWn5XkTrBzO+pQn
-         IhKUgVJmKABGtNQx9ZMj4wvw5J8NaYFUQgeBbmdAwnMLqsLxTk/avHlg2uSXc1Lex8jF
-         +pew==
-X-Gm-Message-State: AOAM530WLTiSSyre88YA7gT+E3cKL86n54uFoTzbC+tG9xY8FU1Goigu
-        6UAjniLvH1hZDhS4rEWtLHo=
-X-Google-Smtp-Source: ABdhPJxsN4vaEYden/l22P6h9eKf53Ia1JHhW3mNFZziqZBl4X7NnaVs1XPHqsk23xzm6zPr3MzZIg==
-X-Received: by 2002:a5d:564f:: with SMTP id j15mr5614321wrw.336.1633221338210;
-        Sat, 02 Oct 2021 17:35:38 -0700 (PDT)
+        bh=ytSrPE+NR12lrZWB6vcJD04bouRj97mzjhJl6l3sCao=;
+        b=j5mat2hUgOtD6487DFJeFB7qGtoxiRtj8EzMvPvEkE5E6UkVu5s/vqcNZGQSNdlg25
+         5lcyCM1k6NBRb9dH9tvGyN34L/zhxqS/lOUS4Qa0eURb+i5muREhv2viI6RAEtaRgwK1
+         5aHdD+zByT6i+u1iMZzbsOW1J48ZgHg58O+DOFzIy1OS2CuIoeGg6hoFt1syriSzGcp7
+         9yC1rdllg3Z5Gl1O15ovD4dBrKuQnQ7pyAEmpmnvOVQ4zM6WQ9RBUQAFWjWeWZyUln/D
+         bgmWK4Phnq6T4lvUIL8j82HG1Yd8EI9Eq50Is0oKUZVdw2mYzPqa+Fr92QvcgnMHatn9
+         DY3w==
+X-Gm-Message-State: AOAM531ukr2PgZNSV6mzOTSe2tWjoWOxasF7SIdTGjO2CeE6aUJJiJdq
+        tDyKxg+Cl0ux2j7K22MzXvXGah4WUoE=
+X-Google-Smtp-Source: ABdhPJw4MeKesqh9+tkoGdVYZPTdgPqTW0+f8g+Xekhi2lgf4v1p5LB64/D5bRsygEbkkR5ZvifZrQ==
+X-Received: by 2002:a7b:c30c:: with SMTP id k12mr11442924wmj.38.1633221339010;
+        Sat, 02 Oct 2021 17:35:39 -0700 (PDT)
 Received: from localhost.localdomain (94-29-54-195.dynamic.spd-mgts.ru. [94.29.54.195])
-        by smtp.gmail.com with ESMTPSA id m21sm10981445wmq.37.2021.10.02.17.35.37
+        by smtp.gmail.com with ESMTPSA id m21sm10981445wmq.37.2021.10.02.17.35.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Sat, 02 Oct 2021 17:35:38 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
@@ -57,9 +57,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Rob Herring <robh+dt@kernel.org>
 Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-tegra@vger.kernel.org
-Subject: [PATCH v2 2/4] dt-bindings: memory: tegra20: emc: Document new LPDDR2 sub-node
-Date:   Sun,  3 Oct 2021 03:35:07 +0300
-Message-Id: <20211003003509.28241-3-digetx@gmail.com>
+Subject: [PATCH v2 3/4] memory: Add LPDDR2 configuration helpers
+Date:   Sun,  3 Oct 2021 03:35:08 +0300
+Message-Id: <20211003003509.28241-4-digetx@gmail.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20211003003509.28241-1-digetx@gmail.com>
 References: <20211003003509.28241-1-digetx@gmail.com>
@@ -69,64 +69,172 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Some Tegra20 boards don't have RAM code stored in NVMEM, which is used for
-the memory chip identification and the identity information should be read
-out from LPDDR2 chip in this case. Document new sub-node containing generic
-LPDDR2 properties that will be used for the memory chip identification if
-RAM code isn't available. The identification is done by reading out memory
-configuration values from generic LPDDR2 mode registers of SDRAM chip and
-comparing them with the values of device-tree sub-node's.
+Add helpers for reading and parsing standard LPDDR2 properties.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- .../memory-controllers/nvidia,tegra20-emc.yaml  | 17 ++++++++++++++---
- 1 file changed, 14 insertions(+), 3 deletions(-)
+ drivers/memory/jedec_ddr.h      | 21 +++++++++++++++++
+ drivers/memory/jedec_ddr_data.c | 42 +++++++++++++++++++++++++++++++++
+ drivers/memory/of_memory.c      | 34 ++++++++++++++++++++++++++
+ drivers/memory/of_memory.h      |  9 +++++++
+ 4 files changed, 106 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-emc.yaml b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-emc.yaml
-index cac6842dc8f1..2741333591bf 100644
---- a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-emc.yaml
-+++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-emc.yaml
-@@ -164,13 +164,14 @@ patternProperties:
-       "#size-cells":
-         const: 0
+diff --git a/drivers/memory/jedec_ddr.h b/drivers/memory/jedec_ddr.h
+index e59ccbd982d0..14cef272559e 100644
+--- a/drivers/memory/jedec_ddr.h
++++ b/drivers/memory/jedec_ddr.h
+@@ -230,4 +230,25 @@ struct lpddr3_min_tck {
+ 	u32 tMRD;
+ };
  
-+      lpddr2-configuration:
-+        $ref: "jedec,lpddr2.yaml#"
-+        type: object
++union lpddr2_basic_config4 {
++	u32 value;
 +
-     patternProperties:
-       "^emc-table@[0-9]+$":
-         $ref: "#/$defs/emc-table"
- 
--    required:
--      - nvidia,ram-code
--
-     additionalProperties: false
- 
- required:
-@@ -186,6 +187,8 @@ additionalProperties: false
- 
- examples:
-   - |
-+    #include <dt-bindings/memory/lpddr2.h>
++	struct {
++		unsigned int arch_type : 2;
++		unsigned int density : 4;
++		unsigned int io_width : 2;
++	} __packed;
++};
 +
-     external-memory-controller@7000f400 {
-         compatible = "nvidia,tegra20-emc";
-         reg = <0x7000f400 0x400>;
-@@ -226,5 +229,13 @@ examples:
-                         0x007fe010 0x00001414 0x00000000 0x00000000
-                         0x00000000 0x00000000 0x00000000 0x00000000>;
-             };
++struct lpddr2_configuration {
++	int arch_type;
++	int density;
++	int io_width;
++	int manufacturer_id;
++	int revision_id1;
++	int revision_id2;
++};
 +
-+            lpddr2-config {
-+                jedec,lpddr2-manufacturer-id = <LPDDR2_MANID_ELPIDA>;
-+                jedec,lpddr2-revision-id1 = <1>;
-+                jedec,lpddr2-density-mbits = <2048>;
-+                jedec,lpddr2-io-width-bits = <16>;
-+                jedec,lpddr2-type = <LPDDR2_TYPE_S4>;
-+            };
-         };
-     };
++const char *lpddr2_jedec_manufacturer(unsigned int manufacturer_id);
++
+ #endif /* __JEDEC_DDR_H */
+diff --git a/drivers/memory/jedec_ddr_data.c b/drivers/memory/jedec_ddr_data.c
+index ed601d813175..1f214716ac45 100644
+--- a/drivers/memory/jedec_ddr_data.c
++++ b/drivers/memory/jedec_ddr_data.c
+@@ -7,6 +7,7 @@
+  * Aneesh V <aneesh@ti.com>
+  */
+ 
++#include <dt-bindings/memory/lpddr2.h>
+ #include <linux/export.h>
+ 
+ #include "jedec_ddr.h"
+@@ -131,3 +132,44 @@ const struct lpddr2_min_tck lpddr2_jedec_min_tck = {
+ 	.tFAW		= 8
+ };
+ EXPORT_SYMBOL_GPL(lpddr2_jedec_min_tck);
++
++const char *lpddr2_jedec_manufacturer(unsigned int manufacturer_id)
++{
++	switch (manufacturer_id) {
++	case LPDDR2_MANID_SAMSUNG:
++		return "Samsung";
++	case LPDDR2_MANID_QIMONDA:
++		return "Qimonda";
++	case LPDDR2_MANID_ELPIDA:
++		return "Elpida";
++	case LPDDR2_MANID_ETRON:
++		return "Etron";
++	case LPDDR2_MANID_NANYA:
++		return "Nanya";
++	case LPDDR2_MANID_HYNIX:
++		return "Hynix";
++	case LPDDR2_MANID_MOSEL:
++		return "Mosel";
++	case LPDDR2_MANID_WINBOND:
++		return "Winbond";
++	case LPDDR2_MANID_ESMT:
++		return "ESMT";
++	case LPDDR2_MANID_SPANSION:
++		return "Spansion";
++	case LPDDR2_MANID_SST:
++		return "SST";
++	case LPDDR2_MANID_ZMOS:
++		return "ZMOS";
++	case LPDDR2_MANID_INTEL:
++		return "Intel";
++	case LPDDR2_MANID_NUMONYX:
++		return "Numonyx";
++	case LPDDR2_MANID_MICRON:
++		return "Micron";
++	default:
++		break;
++	}
++
++	return "invalid";
++}
++EXPORT_SYMBOL_GPL(lpddr2_jedec_manufacturer);
+diff --git a/drivers/memory/of_memory.c b/drivers/memory/of_memory.c
+index d9f5437d3bce..8aa777f2a090 100644
+--- a/drivers/memory/of_memory.c
++++ b/drivers/memory/of_memory.c
+@@ -298,3 +298,37 @@ const struct lpddr3_timings
+ 	return NULL;
+ }
+ EXPORT_SYMBOL(of_lpddr3_get_ddr_timings);
++
++/**
++ * of_lpddr2_get_config() - extracts the lpddr2 chip configuration.
++ * @np: Pointer to device tree node containing configuration
++ * @conf: Configuration updated by this function
++ *
++ * Populates lpddr2_configuration structure by extracting data from device
++ * tree node. Returns 0 on success or error code on failure. If property
++ * is missing in device-tree, then the corresponding @conf value is set to
++ * -ENOENT.
++ */
++int of_lpddr2_get_config(struct device_node *np,
++			 struct lpddr2_configuration *conf)
++{
++	int err, ret = -ENOENT;
++
++#define OF_LPDDR2_READ_U32(prop, dtprop) \
++	err = of_property_read_u32(np, dtprop, &conf->prop); \
++	if (err) \
++		conf->prop = -ENOENT; \
++	else \
++		ret = 0
++
++	/* at least one property should be parsed */
++	OF_LPDDR2_READ_U32(manufacturer_id, "jedec,lpddr2-manufacturer-id");
++	OF_LPDDR2_READ_U32(revision_id1, "jedec,lpddr2-revision-id1");
++	OF_LPDDR2_READ_U32(revision_id2, "jedec,lpddr2-revision-id2");
++	OF_LPDDR2_READ_U32(io_width, "jedec,lpddr2-io-width-bits");
++	OF_LPDDR2_READ_U32(density, "jedec,lpddr2-density-mbits");
++	OF_LPDDR2_READ_U32(arch_type, "jedec,lpddr2-type");
++
++	return ret;
++}
++EXPORT_SYMBOL(of_lpddr2_get_config);
+diff --git a/drivers/memory/of_memory.h b/drivers/memory/of_memory.h
+index 4a99b232ab0a..95eccc251b04 100644
+--- a/drivers/memory/of_memory.h
++++ b/drivers/memory/of_memory.h
+@@ -20,6 +20,9 @@ const struct lpddr3_min_tck *of_lpddr3_get_min_tck(struct device_node *np,
+ const struct lpddr3_timings *
+ of_lpddr3_get_ddr_timings(struct device_node *np_ddr,
+ 			  struct device *dev, u32 device_type, u32 *nr_frequencies);
++
++int of_lpddr2_get_config(struct device_node *np,
++			 struct lpddr2_configuration *conf);
+ #else
+ static inline const struct lpddr2_min_tck
+ 	*of_get_min_tck(struct device_node *np, struct device *dev)
+@@ -46,6 +49,12 @@ static inline const struct lpddr3_timings
+ {
+ 	return NULL;
+ }
++
++static int of_lpddr2_get_config(struct device_node *np,
++				struct lpddr2_configuration *conf)
++{
++	return -ENOENT;
++}
+ #endif /* CONFIG_OF && CONFIG_DDR */
+ 
+ #endif /* __LINUX_MEMORY_OF_REG_ */
 -- 
 2.32.0
 
