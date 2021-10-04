@@ -2,182 +2,106 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40EE6C433EF
-	for <linux-tegra@archiver.kernel.org>; Mon,  4 Oct 2021 20:02:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 880FFC433EF
+	for <linux-tegra@archiver.kernel.org>; Mon,  4 Oct 2021 20:32:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2AC6E613C8
-	for <linux-tegra@archiver.kernel.org>; Mon,  4 Oct 2021 20:02:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 695EE61165
+	for <linux-tegra@archiver.kernel.org>; Mon,  4 Oct 2021 20:32:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235660AbhJDUEq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 4 Oct 2021 16:04:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44856 "EHLO
+        id S236330AbhJDUeL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 4 Oct 2021 16:34:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51530 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235282AbhJDUEq (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 4 Oct 2021 16:04:46 -0400
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE684C061745;
-        Mon,  4 Oct 2021 13:02:56 -0700 (PDT)
-Received: by mail-wr1-x435.google.com with SMTP id j8so2497447wro.7;
-        Mon, 04 Oct 2021 13:02:56 -0700 (PDT)
+        with ESMTP id S233934AbhJDUeK (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 4 Oct 2021 16:34:10 -0400
+Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A55D6C061745;
+        Mon,  4 Oct 2021 13:32:20 -0700 (PDT)
+Received: by mail-lf1-x136.google.com with SMTP id n8so21110946lfk.6;
+        Mon, 04 Oct 2021 13:32:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=+qrvAAluq1oh1qyGb464LHUD6CDa6kJ5yA87KqgX3GE=;
-        b=TWSJhc1N2t/9O+XqQnQOhAz0Gf6JC2eUFCgMhTlm4ouSQCMkk0QMkdbiiaTM5KMApW
-         ZuD06bnjoysCU1V0NuApgMNmj9yLKUjO2H46ugilDzEK1Zedx6+8mTwlWROEwyfaym7h
-         Q+DL5XbrecCz8WpJPLi4TUzuE+bLn1QfYHgo9JYei1PE7VihWZaXpLtz0lTfdTtL3VLM
-         WA2bgSWjW8/uCABAon4u7/eTdXXP3vFgRw+ay8CvqtAGf9SAFHvfaqabD1VtWadUHPku
-         g7Z6AULBK0ijFXrEG/UOogH0+WAeEpyS4ewVJj4eHB00zApFZfw3A9oyOKaRouPvwVcP
-         a1tg==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=9++LVbb1ZgVmL4thX9K4PQNAQ2NBkN+QYbEP+4ptnH4=;
+        b=V84IwbKWTotGIBqNXF2nkUgsADhmRFOGZVunhqZTJ6RtYtB8Z/FiCkaFAxjv3zjmuw
+         YXHgph8NGFOvN+GpVeQ1Vcyytw/Kcdded/YAu3rr4U4T6P/A1E8HL4DxrQ4Zfszva0lX
+         OYgZ2ZlBiCWJ0NBV6AW6F/y8SK44ZtO+lIj+42T6O9fAb3vJiH2HH6Mhv6quyEx+497l
+         eVJAniwQmeIxG6Kv7JS6oZaYeixGmXQwuU0cXWahQ5VUNhvAQd4w9smpv9c/JlqJITHD
+         /Xs2LX2tj+2thofc8yzrLgBed7Wpds8pym2PHbUcw2Q7LzsjTVCGzAI6WNkTf06xNqrh
+         rIEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=+qrvAAluq1oh1qyGb464LHUD6CDa6kJ5yA87KqgX3GE=;
-        b=tt4z/zPrxKFhMoRqCsTJcP8QPlZpj1t1b5csg9axjDzKPRdYk1XfQxi6tprwoU228s
-         TMKwRYAYWpMMT7mEqtTguMXpmRuX14GTXwF1yI+GXjFbpDgKnKQP5IZzwCUM9VGvCVdL
-         BWWf7BivO3syAOUBEnFYb46Rp16boRaRm4vOOul//M6I/Cehi3fjx4eKqVWBHj+B7YQ3
-         ZBndUixDhgBPnBm4tKtwr1FNp+Y2b70bpEUyUq4M/mXLHMDM4b/9DDEIgFaFgARvs+ve
-         ZCDYW5lms7c+2ghV7pc3/4N9D6h1cJJVFis+g+WAr8qRv//DZLhivBEv/ebL54BjvuKf
-         hlrQ==
-X-Gm-Message-State: AOAM532Y1Xo+3UjMa8PljH/62RyNUubVcdWblBehf1/zCyEYm1C2xiSq
-        GALhNr5CcspToU1as4mgd5Ly29mf5+Y=
-X-Google-Smtp-Source: ABdhPJzF59HS0bN+f1Y21r9Hf/bVwODQvwfvpKxL3IWXCj0WX5d8eUbdEDf8V8Gz4CdtLTSFI61ZHg==
-X-Received: by 2002:adf:b304:: with SMTP id j4mr17033978wrd.160.1633377775427;
-        Mon, 04 Oct 2021 13:02:55 -0700 (PDT)
-Received: from localhost ([217.111.27.204])
-        by smtp.gmail.com with ESMTPSA id n68sm17664460wmn.13.2021.10.04.13.02.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Oct 2021 13:02:54 -0700 (PDT)
-Date:   Mon, 4 Oct 2021 22:02:51 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 4/6] clk: tegra: Add stubs needed for compile testing
-Message-ID: <YVtd67B0Ac+ChBEA@orome.fritz.box>
-References: <20210912202907.28471-1-digetx@gmail.com>
- <20210912202907.28471-5-digetx@gmail.com>
- <YVtXJVeK2qdy8E1q@orome.fritz.box>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=9++LVbb1ZgVmL4thX9K4PQNAQ2NBkN+QYbEP+4ptnH4=;
+        b=G7MFXXhWaURWjm6wFRs/gDw4vHvvs8PaxPevkBMkTF+2IY2F/rPxqb0LX2Q1rdbxPw
+         qcYfIwamRCTJzqmYNtqSpFjA6DvfaZK3sb2qbRvp5eg1GV60wggUk1ONCyZoDUKRlEKI
+         oimSre6J5CXjnS81MqwQf/cJz/61Hkal4e+yNwp7Yuum6I/Pr3K8v1p6qKWWYOVLfvZY
+         nAzR67WOTYTyvcfUglI6QGxvZy7zKFoBHoylKCPUjoZC3Oce3ARlMLLXiO4Qb8QpF8yQ
+         5X8scMN4a7+KEAjhJ3UGbEFINeu04YOpQK84xFFWLRtCh4rGyirk00/Y91zQMHgVXRoC
+         EG3g==
+X-Gm-Message-State: AOAM533NtaIIug/3TF9tynnw6uFguK39xk80IzhKcCkUo8MUGs0l2nCS
+        lu++A7EVeJ5C+p6ryQiVnnU1ijcDos0=
+X-Google-Smtp-Source: ABdhPJy1IMBj+UoXvSNdaYO2FdaApa8G9+VkflvO9WSPaNeDF1mm5hubzT+oIwR97eBUaJ3C9BWfSw==
+X-Received: by 2002:a19:4344:: with SMTP id m4mr15742299lfj.155.1633379538372;
+        Mon, 04 Oct 2021 13:32:18 -0700 (PDT)
+Received: from [192.168.2.145] (79-139-163-57.dynamic.spd-mgts.ru. [79.139.163.57])
+        by smtp.googlemail.com with ESMTPSA id j12sm756247lfk.246.2021.10.04.13.32.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 04 Oct 2021 13:32:18 -0700 (PDT)
+Subject: Re: [PATCH v2 0/5] iommu: Support identity mappings of
+ reserved-memory regions
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Joerg Roedel <joro@8bytes.org>, Rob Herring <robh+dt@kernel.org>,
+        Will Deacon <will@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Nicolin Chen <nicolinc@nvidia.com>,
+        Krishna Reddy <vdumpa@nvidia.com>, devicetree@vger.kernel.org,
+        iommu@lists.linux-foundation.org, linux-tegra@vger.kernel.org
+References: <20210423163234.3651547-1-thierry.reding@gmail.com>
+ <95e4c23e-4700-ef7e-d8ae-17693b65e121@gmail.com>
+ <YVtUrTdI9kUSScui@orome.fritz.box>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <4f1fadc7-119e-0fad-f597-0cea99cd9095@gmail.com>
+Date:   Mon, 4 Oct 2021 23:32:17 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="UHyHC4/eKtymABGG"
-Content-Disposition: inline
-In-Reply-To: <YVtXJVeK2qdy8E1q@orome.fritz.box>
-User-Agent: Mutt/2.1.3 (987dde4c) (2021-09-10)
+In-Reply-To: <YVtUrTdI9kUSScui@orome.fritz.box>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+04.10.2021 22:23, Thierry Reding пишет:
+> On Sun, Oct 03, 2021 at 04:09:56AM +0300, Dmitry Osipenko wrote:
+>> 23.04.2021 19:32, Thierry Reding пишет:
+>>> I've made corresponding changes in the proprietary bootloader, added a
+>>> compatibility shim in U-Boot (which forwards information created by the
+>>> proprietary bootloader to the kernel) and the attached patches to test
+>>> this on Jetson TX1, Jetson TX2 and Jetson AGX Xavier.
+>>
+>> Could you please tell what downstream kernel does for coping with the
+>> identity mappings in conjunction with the original proprietary bootloader?
+>>
+>> If there is some other method of passing mappings to kernel, could it be
+>> supported by upstream? Putting burden on users to upgrade bootloader
+>> feels a bit inconvenient.
+> 
+> It depends on the chip generation. As far as I know there have been
+> several iterations. The earliest was to pass this information via a
+> command-line option, but more recent versions use device tree to pass
+> this information in a similar way as described here. However, these
+> use non-standard DT bindings, so I don't think we can just implement
+> them as-is.
 
---UHyHC4/eKtymABGG
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Is it possible to boot upstream kernel with that original bootloader?
 
-On Mon, Oct 04, 2021 at 09:33:57PM +0200, Thierry Reding wrote:
-> On Sun, Sep 12, 2021 at 11:29:05PM +0300, Dmitry Osipenko wrote:
-> > Add stubs needed for compile-testing of tegra-cpuidle driver.
-> >=20
-> > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> > ---
-> >  include/linux/clk/tegra.h | 4 ++++
-> >  1 file changed, 4 insertions(+)
-> >=20
-> > diff --git a/include/linux/clk/tegra.h b/include/linux/clk/tegra.h
-> > index d128ad1570aa..9bd06d8a5436 100644
-> > --- a/include/linux/clk/tegra.h
-> > +++ b/include/linux/clk/tegra.h
-> > @@ -42,7 +42,11 @@ struct tegra_cpu_car_ops {
-> >  #endif
-> >  };
-> > =20
-> > +#ifdef CONFIG_ARCH_TEGRA
-> >  extern struct tegra_cpu_car_ops *tegra_cpu_car_ops;
-> > +#else
-> > +static struct tegra_cpu_car_ops *tegra_cpu_car_ops __maybe_unused;
-> > +#endif
->=20
-> Ugh... this one seems a bit over the top, to be honest. The only place
-> where this seems to be used is in arch/arm/mach-tegra/pm.c, but that
-> already uses one of the stubs from include/linux/clk/tegra.h, so I'm
-> wondering if we can't define that latter stub in a way to make it
-> unnecessary to declare this bogus pointer.
->=20
-> I'll play around with this a little bit.
-
-The below does the trick for me as well:
-
---- >8 ---
-diff --git a/include/linux/clk/tegra.h b/include/linux/clk/tegra.h
-index d128ad1570aa..d261db7e6060 100644
---- a/include/linux/clk/tegra.h
-+++ b/include/linux/clk/tegra.h
-@@ -42,6 +42,7 @@ struct tegra_cpu_car_ops {
- #endif
- };
-
-+#ifdef CONFIG_ARCH_TEGRA
- extern struct tegra_cpu_car_ops *tegra_cpu_car_ops;
-
- static inline void tegra_wait_cpu_in_reset(u32 cpu)
-@@ -83,6 +84,27 @@ static inline void tegra_disable_cpu_clock(u32 cpu)
-
- 	tegra_cpu_car_ops->disable_clock(cpu);
- }
-+#else
-+static inline void tegra_wait_cpu_in_reset(u32 cpu)
-+{
-+}
-+
-+static inline void tegra_put_cpu_in_reset(u32 cpu)
-+{
-+}
-+
-+static inline void tegra_cpu_out_of_reset(u32 cpu)
-+{
-+}
-+
-+static inline void tegra_enable_cpu_clock(u32 cpu)
-+{
-+}
-+
-+static inline void tegra_disable_cpu_clock(u32 cpu)
-+{
-+}
-+#endif
-
- #ifdef CONFIG_PM_SLEEP
- static inline bool tegra_cpu_rail_off_ready(void)
---- >8 ---
-
-Do you mind if I replace your version with that? I think that's a little
-bit cleaner because it should be easier for the compiler to completely
-compile it out.
-
-Thierry
-
---UHyHC4/eKtymABGG
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmFbXbgACgkQ3SOs138+
-s6FBZw/9EAf+4DRkBO0hIhFxz4e4w9Vz23kZ0xT5YXEYt0CngFYlggXD5PQuCfZH
-g4/qBIezgMbMPB15f+8myIc4f1sJ3n/h2GUiKRyITDUo8J2zLE6GeD5pKqHABGMu
-EuBGkDiVNJySIIvj1JwzyO1QACM+s9UaUhJDcmyytBkxYbzjUTz3fjFz2DfV/ROp
-FfRdGk7Ql/5iDRuRff9lwPA+Aqmre8ntWlOFZKPtShnvqt565mjsJRCX7P+Q85ra
-el80zpmqIaCKNeTyly3IgH7Ju7XlC/VH26IqWEvmr2Se9P7/u0vGUtWTVJGyLiV2
-MonsrHV6i44zwEoQPdAj0pxkNENMvNVlkLNav9gutO62iqI6i2m3uOTuqa9B+63G
-jGb+oFcl+cDRHOdiLK44WrkIKQOWvEftPdD3ppQW27H7lavGWInzuaP6Xg67wTmi
-H/9ah+xWluN8Zmz8vTgQV030ttiuYDEO9tsugc7QpRwUm0TYyr3A1Hpnrdfv6iBg
-mTm/wFZLqXGEV1BhkD3iGYhQ6sL+g3XqsH9F4apLkxfbYhp0D9VypUHrrKuTPWm8
-F3fN1XQwqepDqrr7iSt4KC5UBzBbauuayq/0l8Zb3T2ypuqWypQ6bAUQB3apYJXL
-RuJAOfHe6mbtFYA8MjdGFxSwMnSrMONcXqBYXcdSdXcHAyDT83Y=
-=w26+
------END PGP SIGNATURE-----
-
---UHyHC4/eKtymABGG--
+I remember seeing other platforms, like QCOM, supporting downstream
+quirks in upstream kernel on a side, i.e. they are undocumented, but the
+additional support code is there. That is what "normal" people want. You
+should consider doing that for Tegra too, if possible.
