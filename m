@@ -2,168 +2,94 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E288C433FE
-	for <linux-tegra@archiver.kernel.org>; Mon,  4 Oct 2021 04:38:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3D46C433EF
+	for <linux-tegra@archiver.kernel.org>; Mon,  4 Oct 2021 06:37:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 65ADA6136F
-	for <linux-tegra@archiver.kernel.org>; Mon,  4 Oct 2021 04:38:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A72576120F
+	for <linux-tegra@archiver.kernel.org>; Mon,  4 Oct 2021 06:37:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232438AbhJDEkD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 4 Oct 2021 00:40:03 -0400
-Received: from mail-dm6nam10on2079.outbound.protection.outlook.com ([40.107.93.79]:22113
-        "EHLO NAM10-DM6-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S230193AbhJDEkD (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 4 Oct 2021 00:40:03 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=iD8B7JY1A3bZ+20t9hlVLTku7LNZFGVp32Y3i8RXiEL1JRM3/P97S3VlOr8fl8DtNpkv5UoZA0m/0Fqhlyosfhf6rxF8sNtnEZylUgPih4Tvfeh9feqVXSw5YAg4rrv/as2Q8FLJYnUn3mD8UOVh+Y2cMbUbHlGHZ65c2bZB6nAM+iGi9VTS9dQQvUgG3K0HjBqH3yk8ApeEwZBjyvicehEBnHBTZZp1IQ/w/tfQTpFIBGeWZYZs+exNzOpGFFo0oLeggQzUPYtafmXtLGl9+qXNr5oJtqkX+cyg9HPHHc94WpxhBF4ZHVMbdH4ig4M555tuU04xKjdIUDDQdjdEgg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=o00UeLM5clt/TA+X3EzsH8aAFezHinbMI4D7UWXkz3A=;
- b=aTBK6LfdlD5yQcebCD9xgvmf4KDeAcL9IX3zvLbR5O+vFtriNDDPapE1IFvJO7ExiH1dfQpAAoTEIIINphSTy8GwIqdTrfY1lFoiOOmAPvz6g20vF4gFHfcvIVi2uS06Y0DkSt3UQ1sAQ5/yvHwy1d2Fe/Jx4KCYENO4dtZN0BWoRpKE1Vc/u2AfeIMaZh7wMxSgR9pSe0yfsNal/HySRz06ThDbQ3auNRYKAzSldCwP4p/iWpTkysQoGXHNPWmNe1sQ1/0Wswv2upwPWMEKcwjiZUQO9Z5RLmqWVTFQ5i80zMekOKAoXERc6cQnmM5xennrKI84Wo6joLZQ3scMtQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.112.34) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=o00UeLM5clt/TA+X3EzsH8aAFezHinbMI4D7UWXkz3A=;
- b=UOzFCfu3KecqMElpIoH8obsedfQ0Y/nvYuiHms84Oc+5j3vY3RrfPnN7xlXIDUh0H+VWymu7Q1+gKUmsDE8iW1HFFqcYXIvCS5AMZ6e9rrYpBfKGvaLsEkii0Dhzv1K067cVhya0YBWccMCknmPCzCmYDWJ0vPiVpokBXEmiqlHQUrx9nDp9n4VDL2c3c2Z1CQlNC4VgPgImWJRoPlEHhS9MCtRvkd97qbS7z1eTWQptRtMm/aD2Ijz0+pS9SWUFNnJ9Ys917dHQBDHOxM9phHYD9wRyhVs8Lz64Hg5dvS8CaFbrhQFxiQxNpuPpqkfU8TzTx1D4W7kFvq7M/xPaPQ==
-Received: from MW4PR04CA0277.namprd04.prod.outlook.com (2603:10b6:303:89::12)
- by CY4PR12MB1509.namprd12.prod.outlook.com (2603:10b6:910:8::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4566.17; Mon, 4 Oct
- 2021 04:38:12 +0000
-Received: from CO1NAM11FT043.eop-nam11.prod.protection.outlook.com
- (2603:10b6:303:89:cafe::ec) by MW4PR04CA0277.outlook.office365.com
- (2603:10b6:303:89::12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4566.15 via Frontend
- Transport; Mon, 4 Oct 2021 04:38:12 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.34)
- smtp.mailfrom=nvidia.com; gmail.com; dkim=none (message not signed)
- header.d=none;gmail.com; dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.112.34 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.112.34; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (216.228.112.34) by
- CO1NAM11FT043.mail.protection.outlook.com (10.13.174.193) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.4566.14 via Frontend Transport; Mon, 4 Oct 2021 04:38:11 +0000
-Received: from [10.25.99.17] (172.20.187.6) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Mon, 4 Oct
- 2021 04:38:05 +0000
-Subject: Re: [PATCH 01/13] ASoC: soc-pcm: Don't reconnect an already active BE
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        <broonie@kernel.org>, <lgirdwood@gmail.com>, <robh+dt@kernel.org>,
-        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <catalin.marinas@arm.com>, <will@kernel.org>, <perex@perex.cz>,
-        <tiwai@suse.com>, <kuninori.morimoto.gx@renesas.com>
-CC:     <devicetree@vger.kernel.org>, <alsa-devel@alsa-project.org>,
-        <linux-kernel@vger.kernel.org>, <sharadg@nvidia.com>,
-        <linux-tegra@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <1630056839-6562-1-git-send-email-spujar@nvidia.com>
- <1630056839-6562-2-git-send-email-spujar@nvidia.com>
- <be6290d1-0682-3d93-98a6-ad0be3ca42c1@linux.intel.com>
- <70422e52-89d2-d926-b3f9-be59780d464e@nvidia.com>
- <40f098c8-b9e3-8da6-849a-eb9a39fefdb0@linux.intel.com>
-From:   Sameer Pujar <spujar@nvidia.com>
-Message-ID: <ce796f36-11df-7f9c-55aa-9c0833f28b93@nvidia.com>
-Date:   Mon, 4 Oct 2021 10:08:01 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+        id S232739AbhJDGjH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 4 Oct 2021 02:39:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52964 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232585AbhJDGjG (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 4 Oct 2021 02:39:06 -0400
+Received: from mail-pf1-x433.google.com (mail-pf1-x433.google.com [IPv6:2607:f8b0:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E658FC0613EC
+        for <linux-tegra@vger.kernel.org>; Sun,  3 Oct 2021 23:37:17 -0700 (PDT)
+Received: by mail-pf1-x433.google.com with SMTP id k26so13631541pfi.5
+        for <linux-tegra@vger.kernel.org>; Sun, 03 Oct 2021 23:37:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=bo1AfZo2B0G6Qf7w5hIV2g2F/2qOqHeUUj32w/8pRyc=;
+        b=J3FCPjvQ91Zm759hElGSstImuWo8dJLPQDskX+6fCdq3JReSGPzaXKZXpW3MNeqWKX
+         16MDjPnmnbrgXjqL/fV39uX8nNjZ+UTYivCHqN0/2e2fXYC0YLiphn0Mb+eM+nRoWBW0
+         /bUNr/naX+9Fwm2wqSRwg3bppRTkGdPjl534m7oTPeAvljymvWRUKWNDjK0g0ZD9AamN
+         Z0rQ3+Gwahr0TY32w0/VpP3EcpnghufANXZ8IGhyjX4uCskP7buX//DwX8cPD9k8O9Cd
+         9cfsBrPXeGAtXX1m6acV0+nXxcLM5ZRB/vXjfUF0F4sNbxUfJB6Mq+vC54JKfXmGRfbR
+         W93w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=bo1AfZo2B0G6Qf7w5hIV2g2F/2qOqHeUUj32w/8pRyc=;
+        b=MAb36YK1qoSmUSbK3R67i3dp9wDa8Vy/6YxEyHfUozus+7VDHAENwbDRXXg1ddr2n5
+         xVev4KmA816q6uR/VY5NKuMBPuOFBoETeTSW1VlqFVDRVqFFJXcSuMVkjPW/fYd/FAS5
+         YNGwS6i3buXUqLh2IW8El06CRyyQZyR9dwzBsAFzaGWKiC3jtUjxPjHjiVoTNsJpM44F
+         NC61sKmIyXgc7gdip/JRi8MNw5e1xLfRNZInJT06f6lTbjR+PKtsONYHld4cmNx4oeeu
+         2aa9myj90AssvSbZbk7/PXEUFPisOHAyN2nFfBdOFABWNO5NsZxfWfihKuYm3K3x4YCl
+         s4Hw==
+X-Gm-Message-State: AOAM533Qz3si+PdpROmDq9U5DGXZBjg51QuIc2dbGQ73zr/MakBJtvsC
+        ry9pNg6LxNvVuefbxiONESYKkA==
+X-Google-Smtp-Source: ABdhPJy2PwdNkXBTM1trCwQuWiBzmQKtgRp85HM5DKtIzNpf5iMj9DZTHKHrtExQWgDfVT9U3l1Dfg==
+X-Received: by 2002:aa7:914d:0:b0:44c:61e3:99b9 with SMTP id 13-20020aa7914d000000b0044c61e399b9mr3417268pfi.65.1633329437232;
+        Sun, 03 Oct 2021 23:37:17 -0700 (PDT)
+Received: from localhost ([122.171.247.18])
+        by smtp.gmail.com with ESMTPSA id n9sm13233203pjk.3.2021.10.03.23.37.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 03 Oct 2021 23:37:16 -0700 (PDT)
+Date:   Mon, 4 Oct 2021 12:07:14 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Mikko Perttunen <mperttunen@nvidia.com>
+Cc:     rafael@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com,
+        krzysztof.kozlowski@canonical.com, lorenzo.pieralisi@arm.com,
+        robh@kernel.org, kw@linux.com, p.zabel@pengutronix.de,
+        rui.zhang@intel.com, daniel.lezcano@linaro.org, amitk@kernel.org,
+        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+Subject: Re: [PATCH 4/5] cpufreq: tegra186/tegra194: Handle errors in BPMP
+ response
+Message-ID: <20211004063714.5bux4hwv3lchibnn@vireshk-i7>
+References: <20210915085517.1669675-1-mperttunen@nvidia.com>
+ <20210915085517.1669675-4-mperttunen@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <40f098c8-b9e3-8da6-849a-eb9a39fefdb0@linux.intel.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-GB
-X-Originating-IP: [172.20.187.6]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL107.nvidia.com (172.20.187.13)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: a99df673-8960-4e8c-a829-08d986f0c5c7
-X-MS-TrafficTypeDiagnostic: CY4PR12MB1509:
-X-Microsoft-Antispam-PRVS: <CY4PR12MB15097C2A48B44099FBB8FF7DA7AE9@CY4PR12MB1509.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:2512;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: LOq7SyReVsxVRDBFt9kpcm0evdEUGuxL3AwOnYfHPqMgDVSBMgraMRykKPQqrhJozrDFP7ffMHZ9hBIGIWKZf3y2KBcrKQeW+CBvl6gbIonMW6RqIRaU98uIPEUxfR5d71VMRRRvkGOtJ/94cKrK1bOlpRjSXNQJ+pqQSFWOzxtB+0H0+Dv+quFxtozjrHg4OkDG8h0IXKmYSaUDxLRe47EPeZnQa8+8PqGykk0rw1u+X3BUNIIrzR0Jk9wXYPURWrDz0jbpuLxG9etPsm700tzi+airxVAeZNxiMyH566BcKYoutha+G9XS/+nH0gOe7nABtgjjJeRZHEGVWHieBcFEVVqhM8PzMNy96Y14xcp4iK3sGcVzyS0AMd1x9khkFe6+SAOBXp1aQlfjAYg2/MUhyJ60xtQtPrGXjXulCKhd9yNLOgPvpfy1pX7f4MEQvyoCftKDDNNWUk2utl9AZbR0abgEwAyRKljP1zTMzoSwmTuBsGan00J0Af41HOSMLreNpBz0ncfombRMJKunYkFeHca3NuyweJFkhvNIIYoxXilR519DwadKdFdL3+3lqG2VyYKK7rnjyDQiwNjps8A+UK8jPSP7Z+uWZbA851rdpcn1ks1bNV6vCMiTqR3VI4HGa6Xm6durAMm1FasO9TC9+w6Vx6EoP06LE+8U2+4/w/WoZk3bzHpps1zzH/M78QkGLLuGXS7e9N8AvCimEkAMXpnFHJR4AraIe0t+wZQgny4YxDSN1v/lwJI7J1OI
-X-Forefront-Antispam-Report: CIP:216.228.112.34;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid03.nvidia.com;CAT:NONE;SFS:(4636009)(36840700001)(46966006)(31696002)(8936002)(426003)(2616005)(16576012)(336012)(186003)(86362001)(26005)(83380400001)(54906003)(2906002)(5660300002)(6666004)(8676002)(316002)(4326008)(110136005)(356005)(7636003)(16526019)(36756003)(53546011)(82310400003)(36860700001)(921005)(70206006)(7416002)(70586007)(47076005)(508600001)(31686004)(43740500002);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Oct 2021 04:38:11.7077
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a99df673-8960-4e8c-a829-08d986f0c5c7
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.34];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT043.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR12MB1509
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210915085517.1669675-4-mperttunen@nvidia.com>
+User-Agent: NeoMutt/20180716-391-311a52
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On 15-09-21, 11:55, Mikko Perttunen wrote:
+> The return value from tegra_bpmp_transfer indicates the success or
+> failure of the IPC transaction with BPMP. If the transaction
+> succeeded, we also need to check the actual command's result code.
+> Add code to do this.
+> 
+> While at it, explicitly handle missing CPU clusters, which can
+> occur on floorswept chips. This worked before as well, but
+> possibly only by accident.
+> 
+> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+> ---
+>  drivers/cpufreq/tegra186-cpufreq.c | 4 ++++
+>  drivers/cpufreq/tegra194-cpufreq.c | 8 +++++++-
+>  2 files changed, 11 insertions(+), 1 deletion(-)
 
+Should I apply it alone ?
 
-On 10/1/2021 12:30 AM, Pierre-Louis Bossart wrote:
->> 1. The original issue at my end was not just a configuration redundancy.
->> I realize now that with more stream addition following error print is seen.
->>     "ASoC: too many users playback at open 4"
->>
->>     This is because the max DPCM users is capped at 8. Increasing this
->> may help (need to see what number is better), but does not address the
->> redundancy problem.
-> Going back to this DPCM_MAX_BE_USERS definition, it seems rather
-> arbitrary and not so useful indeed.
-
->          /* first time the dpcm is open ? */
->          if (be->dpcm[stream].users == DPCM_MAX_BE_USERS) {
->                  dev_err(be->dev, "ASoC: too many users %s at open %d\n",
->                          stream ? "capture" : "playback",
->                          be->dpcm[stream].state);
->                  continue;
->          }
->
-> The comment is no longer aligned with the code, wondering if this is a
-> feature or a bug.
-
-Looks like the comment is misplaced and the intention might have been to 
-place it like below?
-
-diff --git a/sound/soc/soc-pcm.c b/sound/soc/soc-pcm.c
-index e30cb5a..5cb5019 100644
---- a/sound/soc/soc-pcm.c
-+++ b/sound/soc/soc-pcm.c
-@@ -1508,7 +1508,6 @@ int dpcm_be_dai_startup(struct snd_soc_pcm_runtime 
-*fe, int stream)
-                 if (!snd_soc_dpcm_be_can_update(fe, be, stream))
-                         continue;
-
--               /* first time the dpcm is open ? */
-                 if (be->dpcm[stream].users == DPCM_MAX_BE_USERS) {
-                         dev_err(be->dev, "ASoC: too many users %s at 
-open %d\n",
-                                 stream ? "capture" : "playback",
-@@ -1516,6 +1515,7 @@ int dpcm_be_dai_startup(struct snd_soc_pcm_runtime 
-*fe, int stream)
-                         continue;
-                 }
-
-+               /* first time the dpcm is open ? */
-                 if (be->dpcm[stream].users++ != 0)
-                         continue;
-
->   There's no reason to arbitrarily restrict the number
-> of users of a BE, or the check would need to use platform-specific
-> information such as the number of inputs/outputs supported by a mixer/demux.
->
-> Maybe Morimoto-san can comment since this was added in:
->
-> 1db19c151819 ('ASoC: soc-pcm: fixup dpcm_be_dai_startup() user count')
->
-> We're not done with soc-pcm.c cleanups :-)
-
+-- 
+viresh
