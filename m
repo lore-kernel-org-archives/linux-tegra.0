@@ -2,106 +2,115 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 880FFC433EF
-	for <linux-tegra@archiver.kernel.org>; Mon,  4 Oct 2021 20:32:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DD1BC433F5
+	for <linux-tegra@archiver.kernel.org>; Mon,  4 Oct 2021 20:40:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 695EE61165
-	for <linux-tegra@archiver.kernel.org>; Mon,  4 Oct 2021 20:32:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F20E56140B
+	for <linux-tegra@archiver.kernel.org>; Mon,  4 Oct 2021 20:40:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236330AbhJDUeL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 4 Oct 2021 16:34:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51530 "EHLO
+        id S236620AbhJDUm0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 4 Oct 2021 16:42:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53408 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233934AbhJDUeK (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 4 Oct 2021 16:34:10 -0400
-Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A55D6C061745;
-        Mon,  4 Oct 2021 13:32:20 -0700 (PDT)
-Received: by mail-lf1-x136.google.com with SMTP id n8so21110946lfk.6;
-        Mon, 04 Oct 2021 13:32:20 -0700 (PDT)
+        with ESMTP id S236660AbhJDUmU (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 4 Oct 2021 16:42:20 -0400
+Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0346AC06174E;
+        Mon,  4 Oct 2021 13:40:31 -0700 (PDT)
+Received: by mail-wm1-x332.google.com with SMTP id b136-20020a1c808e000000b0030d60716239so534709wmd.4;
+        Mon, 04 Oct 2021 13:40:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=9++LVbb1ZgVmL4thX9K4PQNAQ2NBkN+QYbEP+4ptnH4=;
-        b=V84IwbKWTotGIBqNXF2nkUgsADhmRFOGZVunhqZTJ6RtYtB8Z/FiCkaFAxjv3zjmuw
-         YXHgph8NGFOvN+GpVeQ1Vcyytw/Kcdded/YAu3rr4U4T6P/A1E8HL4DxrQ4Zfszva0lX
-         OYgZ2ZlBiCWJ0NBV6AW6F/y8SK44ZtO+lIj+42T6O9fAb3vJiH2HH6Mhv6quyEx+497l
-         eVJAniwQmeIxG6Kv7JS6oZaYeixGmXQwuU0cXWahQ5VUNhvAQd4w9smpv9c/JlqJITHD
-         /Xs2LX2tj+2thofc8yzrLgBed7Wpds8pym2PHbUcw2Q7LzsjTVCGzAI6WNkTf06xNqrh
-         rIEg==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=vG87OCwnXSPMYtQkYwrtLZv1vZrY8VfZISdt1Z3NF5I=;
+        b=UY/css+MqoYM8aW/DZ1qUQx6l2gO4CaulGjZA9s6lRKOZPjM6/S5oRNWepWf+icGin
+         ZvXp51uvcqjL2GPv3E9ubGum0ghtmpb3i+r9Jzu8rNj5f3K2uxFZQzMLkWRvabzAxglf
+         Bmz3hkk1RnG+Kkr8Jo+7G4uCy9rj4GDak887pUMnhYTI21X4i6YsqOOqA+h4Pi/uGYr2
+         zwcuzvt59ZUhbrBek3xhL2RU8wHuHXk60z5x4n33CMzAjLr2bpTKIQjZtiWbx5N+tT3s
+         +Ns8B185esiKJvreMPA8TkYpwzrVD41SskRCwfhvdE++3VMW4da3/N78xz6d/csLYEVp
+         LeAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=9++LVbb1ZgVmL4thX9K4PQNAQ2NBkN+QYbEP+4ptnH4=;
-        b=G7MFXXhWaURWjm6wFRs/gDw4vHvvs8PaxPevkBMkTF+2IY2F/rPxqb0LX2Q1rdbxPw
-         qcYfIwamRCTJzqmYNtqSpFjA6DvfaZK3sb2qbRvp5eg1GV60wggUk1ONCyZoDUKRlEKI
-         oimSre6J5CXjnS81MqwQf/cJz/61Hkal4e+yNwp7Yuum6I/Pr3K8v1p6qKWWYOVLfvZY
-         nAzR67WOTYTyvcfUglI6QGxvZy7zKFoBHoylKCPUjoZC3Oce3ARlMLLXiO4Qb8QpF8yQ
-         5X8scMN4a7+KEAjhJ3UGbEFINeu04YOpQK84xFFWLRtCh4rGyirk00/Y91zQMHgVXRoC
-         EG3g==
-X-Gm-Message-State: AOAM533NtaIIug/3TF9tynnw6uFguK39xk80IzhKcCkUo8MUGs0l2nCS
-        lu++A7EVeJ5C+p6ryQiVnnU1ijcDos0=
-X-Google-Smtp-Source: ABdhPJy1IMBj+UoXvSNdaYO2FdaApa8G9+VkflvO9WSPaNeDF1mm5hubzT+oIwR97eBUaJ3C9BWfSw==
-X-Received: by 2002:a19:4344:: with SMTP id m4mr15742299lfj.155.1633379538372;
-        Mon, 04 Oct 2021 13:32:18 -0700 (PDT)
-Received: from [192.168.2.145] (79-139-163-57.dynamic.spd-mgts.ru. [79.139.163.57])
-        by smtp.googlemail.com with ESMTPSA id j12sm756247lfk.246.2021.10.04.13.32.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Oct 2021 13:32:18 -0700 (PDT)
-Subject: Re: [PATCH v2 0/5] iommu: Support identity mappings of
- reserved-memory regions
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Joerg Roedel <joro@8bytes.org>, Rob Herring <robh+dt@kernel.org>,
-        Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Nicolin Chen <nicolinc@nvidia.com>,
-        Krishna Reddy <vdumpa@nvidia.com>, devicetree@vger.kernel.org,
-        iommu@lists.linux-foundation.org, linux-tegra@vger.kernel.org
-References: <20210423163234.3651547-1-thierry.reding@gmail.com>
- <95e4c23e-4700-ef7e-d8ae-17693b65e121@gmail.com>
- <YVtUrTdI9kUSScui@orome.fritz.box>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <4f1fadc7-119e-0fad-f597-0cea99cd9095@gmail.com>
-Date:   Mon, 4 Oct 2021 23:32:17 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=vG87OCwnXSPMYtQkYwrtLZv1vZrY8VfZISdt1Z3NF5I=;
+        b=beGRDBdoeZtpADsDAk/PxK+2GmX62ANRoFjazyFpgDt8pIFB8QO3OAUVmRUBNFyCeb
+         2OBLcGOVQCJTV+PGwsVISKklpivtWgrXmGXcs7a2Mual6NgNOt4aoq8nZB/glZkoxA8e
+         eteCxcT2M1dqJ0zLin+49+RZ4AZbKBibghB88wK5owa+jzbFp66q1mPBcVM+E3WQelJZ
+         mMtP9uk/xDmZG496g9RVTIF6QcHscDN9jDEjhcbq7qRESJvohL9BeEvrUZ5P4UfYA71V
+         6lKnL93oLUGVgKEVrqFOi7KPHRWHDlUxd6YErGhBjYkeNibEcE5EV1aGNHT+V7kjV/Cc
+         ewzA==
+X-Gm-Message-State: AOAM530cHilLUIp4/wH89NOe6v8ILjoWlBcXE16Lxe7yuWP0VrdQ0MdY
+        bG+rVazJu0QTB5ll5XVmrlK47CBpa9s=
+X-Google-Smtp-Source: ABdhPJzVpha5Ni5pusrZDT3otbLYn1fm44rFD90xeRT0PJEr4YZFWzn7RFHWSB1q/YeVtprzyd2R/A==
+X-Received: by 2002:a7b:c359:: with SMTP id l25mr20550758wmj.84.1633380029643;
+        Mon, 04 Oct 2021 13:40:29 -0700 (PDT)
+Received: from localhost ([217.111.27.204])
+        by smtp.gmail.com with ESMTPSA id s3sm15410307wrm.40.2021.10.04.13.40.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Oct 2021 13:40:28 -0700 (PDT)
+Date:   Mon, 4 Oct 2021 22:40:27 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Thierry Reding <treding@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        David Heidelberg <david@ixit.cz>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v1 1/3] ARM: tegra: acer-a500: Correct compatible of
+ ak8975 magnetometer
+Message-ID: <YVtmuxnL0NVpWYGv@orome.fritz.box>
+References: <20210926233704.10164-1-digetx@gmail.com>
+ <20210926233704.10164-2-digetx@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <YVtUrTdI9kUSScui@orome.fritz.box>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="H5wIIOU660FrYBkJ"
+Content-Disposition: inline
+In-Reply-To: <20210926233704.10164-2-digetx@gmail.com>
+User-Agent: Mutt/2.1.3 (987dde4c) (2021-09-10)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-04.10.2021 22:23, Thierry Reding пишет:
-> On Sun, Oct 03, 2021 at 04:09:56AM +0300, Dmitry Osipenko wrote:
->> 23.04.2021 19:32, Thierry Reding пишет:
->>> I've made corresponding changes in the proprietary bootloader, added a
->>> compatibility shim in U-Boot (which forwards information created by the
->>> proprietary bootloader to the kernel) and the attached patches to test
->>> this on Jetson TX1, Jetson TX2 and Jetson AGX Xavier.
->>
->> Could you please tell what downstream kernel does for coping with the
->> identity mappings in conjunction with the original proprietary bootloader?
->>
->> If there is some other method of passing mappings to kernel, could it be
->> supported by upstream? Putting burden on users to upgrade bootloader
->> feels a bit inconvenient.
-> 
-> It depends on the chip generation. As far as I know there have been
-> several iterations. The earliest was to pass this information via a
-> command-line option, but more recent versions use device tree to pass
-> this information in a similar way as described here. However, these
-> use non-standard DT bindings, so I don't think we can just implement
-> them as-is.
 
-Is it possible to boot upstream kernel with that original bootloader?
+--H5wIIOU660FrYBkJ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I remember seeing other platforms, like QCOM, supporting downstream
-quirks in upstream kernel on a side, i.e. they are undocumented, but the
-additional support code is there. That is what "normal" people want. You
-should consider doing that for Tegra too, if possible.
+On Mon, Sep 27, 2021 at 02:37:02AM +0300, Dmitry Osipenko wrote:
+> From: David Heidelberg <david@ixit.cz>
+>=20
+> The "ak,ak8975" compatible is not recognized by dt-bindings, it's
+> deprecated. Use supported "asahi-kasei,ak8975" compatible.
+>=20
+> Signed-off-by: David Heidelberg <david@ixit.cz>
+> ---
+>  arch/arm/boot/dts/tegra20-acer-a500-picasso.dts | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+
+Applied, thanks.
+
+Thierry
+
+--H5wIIOU660FrYBkJ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmFbZrkACgkQ3SOs138+
+s6HfJA/8DcxpvIzz6e1sOS0l/gfSgBRJS8cOshg1CdDic9Jzv14b6AOpa1YoFzIZ
+DylZAT5gFPV0GpmQGyPNvaat55vDivNxqWzecgbeLW243/NiniLG2dHIiqMYnXzl
+OqaAlgi6CWAY9qmCfQBFXDj665No0G/vHsWz6VvwxY/5h7ah/BsKStQVI5T3lp9T
+HD+lUx9nX3ZrTT5s54bRMAymtCc7neIv3GwWKjSiTN1UIqOlDJXSB6sR+VDH2Z/a
+s5QjI037SurX1MAIs+G5Aurvcm1yuLJpGS7bPl6NjvDDoXcBswkyfM7RJUgfBL1z
+/UWMhQpnDDoR6yy3lfghGDw6eR3m8tI/uHX4glLO8U2TZO6m4N6S2t0IGRuUwK0q
+LF7ShhY7trzL90mmJOElkxoM9RH27ryZUibNj9lAV2AVMI1awRAE4K8NpzyXpipL
+a8lr/1lUGPggQPlkAH2SGCmd8ONFZ8zCFE76S7YjkWc9BAX5nTu7bQg+8RVWyRGf
+rqI0O2rQ4InGOCk9if+N6jaQ9rGWAstRnM7/npRt3rbEGRXRu3UWS/EvAO33R927
+YLad3r/ippFBdhY/5x4j1gHUSOq5VHEbiSwQqwnTH/8O2cmBlWEgFe36JIUaM8Ce
+Ti/ZuQ0IYSA+4lDtEWgJmyQWBgApyzK0Q0QANGyo8CmHKoROPdM=
+=fcvv
+-----END PGP SIGNATURE-----
+
+--H5wIIOU660FrYBkJ--
