@@ -2,118 +2,164 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D812C433FE
-	for <linux-tegra@archiver.kernel.org>; Mon,  4 Oct 2021 21:13:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD163C433EF
+	for <linux-tegra@archiver.kernel.org>; Mon,  4 Oct 2021 21:13:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8616461501
-	for <linux-tegra@archiver.kernel.org>; Mon,  4 Oct 2021 21:13:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A5F7861501
+	for <linux-tegra@archiver.kernel.org>; Mon,  4 Oct 2021 21:13:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233853AbhJDVPl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 4 Oct 2021 17:15:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33010 "EHLO
+        id S234657AbhJDVPs (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 4 Oct 2021 17:15:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33050 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232999AbhJDVPk (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 4 Oct 2021 17:15:40 -0400
-Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10DF0C061745;
-        Mon,  4 Oct 2021 14:13:51 -0700 (PDT)
-Received: by mail-lf1-x130.google.com with SMTP id b20so77806260lfv.3;
-        Mon, 04 Oct 2021 14:13:50 -0700 (PDT)
+        with ESMTP id S232999AbhJDVPr (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 4 Oct 2021 17:15:47 -0400
+Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09E40C061745;
+        Mon,  4 Oct 2021 14:13:58 -0700 (PDT)
+Received: by mail-wm1-x32f.google.com with SMTP id k21-20020a05600c0b5500b0030d6ac87a80so700652wmr.0;
+        Mon, 04 Oct 2021 14:13:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=uNTJy4nyoFNjcMWJJxtBf5MiY7MfgIk5KPCbms68E8M=;
-        b=l7gRmUHnIwmF6sQ0/DgS1G2mAZTSwwqPkFQaxe4bhL/A67SeGWE8+Zp6mrr5pSJs96
-         juUlNkgnIW1shN9vqNYyw5hS4BWg/vCbMBsDPdqBo0Bpf7M3NSo4tkhf0QS6x/kCUNP8
-         UhxbRvdYuqPOz+n37B8e72W+CjA5L7CfHrkUvFqusfBMw61Ih4rPE019Em2HabZDHQVk
-         yg1IirczuSveAJUE6o9zTmBbycFLzzQ04His+0Xy+PF/0MC3Dom8zwvTZbrjPUGSFWgs
-         zQs4kL8sEj5VrAQHZTQvugX7hHHXdOlvk9+g8NOIEKAQ2Oj0YIvaYurphLX6Qrsvmkm0
-         kQmA==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=xqLfGx4HO+69QDr34tHSvG78VaiFucDFHMEYDpayico=;
+        b=PQNy0rjRnW7QHX4zii0QmF1MFK7bAn8wXAecXKMigUtl5Vlg+hv1mfdE01jqxt/Jfs
+         XGrN7eWReMB/sLejNWSYEDLPXoXXvKNZN50Kk9gaj6NGjw1NxNA3ngU/hB2p5x+Ru0Il
+         Uo7ZdsmXIaw+WGS/QTcb3ws0yeeOl8WQKCMttSUcIz1mF/W4UHGCjhmljmeUUtBElybf
+         DHlmZLDseoM7FK02hcXnemK0IJMasNZcz+fVJlJKC1k3w4ZJA6P/TAu/9vJa6gmo0pwv
+         ZzLn4NNxbkxEPa78HPeoVIlPh64AGgbA2aY1NnGSAv+Tu9+T6P303tUKBXQa2n6VYnEA
+         5RTg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=uNTJy4nyoFNjcMWJJxtBf5MiY7MfgIk5KPCbms68E8M=;
-        b=j1paJIaLrTCeiOyAY0DaqBYsaHjaIeWyGVv6TmiD+0PiBOBgp37qTcAEe8v9P5kkar
-         YrjW+qmwY4FD0aKgL92JVsHSlosf0Aq2R6CpjxCF2UCkhzkmQp8IoAYPNIDSBHWfBeEy
-         TCgyYKUY5ULv+c4mcCHdBhu+c1mpZFhDxIMFIg0KI8gxwptZ5ql8T94mMFjMSw3D///F
-         HZn7D9GJq/sIgMRvCmtcNGAWUaYREW3eTmiqimH0hIcF4BkhQFvP9OEN83Yb7LFpmfF0
-         hKXrOpuLsvZtj8q06cGJByLuUa0BpuwdBmuHaVUfE05fuCRb4EzXPK2LFlXrNqhaYa0A
-         p8dQ==
-X-Gm-Message-State: AOAM533vzOD2ByIBKhEDv2AURcNrKIRnKaWsUa+Q327e4/s+GY9bhuCK
-        fzKbmLRc981Qwf/7r0LlsZs=
-X-Google-Smtp-Source: ABdhPJxBoF2cwQ30/HndDVE2Yae4znnGxgecHl9ljWnLdvT9fnxOTnrHVg/3nRh4ZGk6/c40VFYgWQ==
-X-Received: by 2002:a2e:80ca:: with SMTP id r10mr18767211ljg.347.1633382029254;
-        Mon, 04 Oct 2021 14:13:49 -0700 (PDT)
-Received: from [192.168.2.145] (79-139-163-57.dynamic.spd-mgts.ru. [79.139.163.57])
-        by smtp.googlemail.com with ESMTPSA id l23sm1866167ljg.99.2021.10.04.14.13.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Oct 2021 14:13:48 -0700 (PDT)
-Subject: Re: [PATCH v7 4/7] usb: phy: tegra: Support OTG mode programming
-To:     Thierry Reding <thierry.reding@gmail.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=xqLfGx4HO+69QDr34tHSvG78VaiFucDFHMEYDpayico=;
+        b=Cf/9nRzS7D4uqBHPeI5QWvp74PMtb5M+uWszBovSb89B2qPleETjkF7yUiS4DaJpL9
+         90WFUAdakzFIxWMtSfkFFS5fpKAAdhZPUa2Cn/PQiT4N6bvksERB7ghmak4gKss+UGKJ
+         XDBkebReluS0fGze2OVF7Uv0gSsUwZhQtf54BQC5y0wD2U2XNcUKFz6lSGtjxY7sGB0j
+         Ogim2QTaqi/yBM44XZEQMf8MPeJnGLS3hX5EntIfrmmLIgkhHGE4jfIADEAbsq4lszWc
+         8AeHVB35lWxzl+CemB2iZ0nagEcdTOekQFPi7Mua7iBglty1AGdterX4kkiMyBozHQV3
+         4qxA==
+X-Gm-Message-State: AOAM530gcehonxvFXfv4XlGHaLrGjI7MKN3pzkkuC4YRmfIdisVST2fm
+        sPqIVnZX7cVPeUVLXcgF7Kg=
+X-Google-Smtp-Source: ABdhPJzuq0pyuuT0KTWOuerq1COGLWxrmAACAW/M9YGgKrbUTX2PaDQzpXZlOcn4HZxyZArx/fa4Pw==
+X-Received: by 2002:a1c:2282:: with SMTP id i124mr4075933wmi.164.1633382036526;
+        Mon, 04 Oct 2021 14:13:56 -0700 (PDT)
+Received: from localhost ([217.111.27.204])
+        by smtp.gmail.com with ESMTPSA id g144sm13605942wmg.5.2021.10.04.14.13.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Oct 2021 14:13:55 -0700 (PDT)
+Date:   Mon, 4 Oct 2021 23:13:54 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Dmitry Osipenko <digetx@gmail.com>
 Cc:     Thierry Reding <treding@nvidia.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter Chen <peter.chen@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Felipe Balbi <balbi@kernel.org>, devicetree@vger.kernel.org,
+        Felipe Balbi <balbi@kernel.org>,
+        David Heidelberg <david@ixit.cz>, devicetree@vger.kernel.org,
         linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org, Peter Chen <peter.chen@kernel.org>,
-        David Heidelberg <david@ixit.cz>
+        linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v7 0/7] Add OTG mode support to Tegra USB PHY and Nexus 7
+Message-ID: <YVtukiURJBTbP6G2@orome.fritz.box>
 References: <20210912181718.1328-1-digetx@gmail.com>
- <20210912181718.1328-5-digetx@gmail.com>
- <29ae631d-cc8d-663e-3ce2-db00f3470365@gmail.com>
- <YVtslrGXStvdO2IS@orome.fritz.box>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <94949858-6089-06df-1226-f7974a3ae6bf@gmail.com>
-Date:   Tue, 5 Oct 2021 00:13:48 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
 MIME-Version: 1.0
-In-Reply-To: <YVtslrGXStvdO2IS@orome.fritz.box>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="hRqufI3Tuell20As"
+Content-Disposition: inline
+In-Reply-To: <20210912181718.1328-1-digetx@gmail.com>
+User-Agent: Mutt/2.1.3 (987dde4c) (2021-09-10)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-05.10.2021 00:05, Thierry Reding пишет:
-> On Mon, Sep 27, 2021 at 07:36:52PM +0300, Dmitry Osipenko wrote:
->> 12.09.2021 21:17, Dmitry Osipenko пишет:
->>> Support programming USB PHY into OTG mode.
->>>
->>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>> ---
->>>  drivers/usb/phy/phy-tegra-usb.c   | 198 +++++++++++++++++++++++++++++-
->>>  include/linux/usb/tegra_usb_phy.h |   5 +
->>>  2 files changed, 198 insertions(+), 5 deletions(-)
->>
->> Greg / Felipe, could you please ack this patch to allow Thierry to take
->> this series via the Tegra tree? It depends on the soc/tegra patch of
->> this patchset.
-> 
-> Looking at the series, I don't think this necessarily needs to go
-> through the Tegra tree. Given that you have backwards-compatibility with
-> older device trees, applying this separately to the USB tree should work
-> fine. Once the soc/tegra and DT bits and the USB bits get combined they
-> should enable the new functionality, but nothing should break if things
-> are applied separately.
-> 
-> If so, I can just pick up the rest and let Felipe or Greg pick this one
-> up.
-> 
-> Dmitry, can you confirm that this patch should be applicable separately?
-> If so:
-> 
-> Acked-by: Thierry Reding <treding@nvidia.com>
-> 
 
-This PHY patch has this hunk:
+--hRqufI3Tuell20As
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-+	phy->pmc_regmap = dev_get_regmap(&pmc_pdev->dev, "usb_sleepwalk");
-+	if (!phy->pmc_regmap)
-+		return -EINVAL;
+On Sun, Sep 12, 2021 at 09:17:11PM +0300, Dmitry Osipenko wrote:
+> This series adds USB OTG mode support to the NVIDIA Tegra USB PHY driver
+> and Nexus 7 tablet.
+>=20
+> Changelog:
+>=20
+> v7: - v6 partially missed 5.15 kernel, only the power/supply patches has
+>       been merged. Re-sending the remaining patches for 5.16. The usb/phy
+>       patch needs ack from the subsystem maintainer.
+>=20
+> v6: - Added r-b from Rob Herring to the OTG properties DT binding patch.
+>=20
+>     - Corrected "smb347-charger: generic regmap caching" patch, it now
+>       sets the .num_reg_defaults_raw, initializing cache properly.
+>=20
+>     - Added new patch "smb347-charger: Add missing pin control activation=
+",
+>       which prevents never-enabled charging on Nexus 7.
+>=20
+>     - The "otg-fsm: Fix hrtimer list corruption" patch of v5 was already
+>       applied to next, so it's not included anymore.
+>=20
+> v5: - Replaced "Remove caching of charger state" patch with "Utilize
+>       generic regmap caching" after Sebastian's notice about disabled
+>       regmap caching.
+>=20
+> v4: - Added r-b from Rob Herring.
+>=20
+>     - Added unevaluatedProperties into SMB binding for VBUS regulator,
+>       which was Requested by Rob Herring.
+>=20
+>     - Added cell to nvidia,pmc phandle instead of explicit h/w ID
+>       property. Requested by Rob Herring.
+>=20
+>     - Added stack trace to commit message and ack from Peter Chen to
+>       OTG FSM patch.
+>=20
+> v3: - Further improved interrupt handling in the PHY driver by removing
+>       assumption that interrupt is enabled by the CI driver at the time
+>       of set_wakeup() invocation, which makes this function a bit more
+>       universal.
+>=20
+> v2: - The PHY's interrupt is now enabled from PHY's set_wakeup() callback.
+>       It prevents getting a spurious interrupt during the CI driver probe
+>       time.
+>=20
+>=20
+> Dmitry Osipenko (7):
+>   dt-bindings: phy: tegra20-usb-phy: Convert to schema
+>   dt-bindings: phy: tegra20-usb-phy: Document properties needed for OTG
+>     mode
+>   soc/tegra: pmc: Expose USB regmap to all SoCs
+>   usb: phy: tegra: Support OTG mode programming
+>   ARM: tegra: Add new properties to USB PHY device-tree nodes
+>   ARM: tegra: nexus7: Enable USB OTG mode
+>   arm64: tegra132: Add new properties to USB PHY device-tree node
 
-If this patch and the DT patches will be applied before the soc/tegra
-patch, then USB PHY driver will fail to probe.
+I've applied patches 3 and 5-7 to the Tegra tree.
+
+Thanks,
+Thierry
+
+--hRqufI3Tuell20As
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmFbbpIACgkQ3SOs138+
+s6EYGhAArBkqypXKqUdKbUHYbkzJ8ew3lE/NYi7lpYIEWO/Cnzicm+1iFL7LqRbt
+7TabOYWgmVcqxHkKhTTHw0r8QnQt7gvxUJGQvgPC3AiVmEXhJ5oBr2xCYiVK/jqu
+Ux32r7P/KDjW46fIc+0OYWYS1cbTFrXlJ9ffsvbEg6J9MySCJxHW26b+ru8tSvSz
+hWtO+wOZ57EQ5UrGAK0/BNT9QvQr6ruHSIy0FPoNmBGtEcWLJELcSYSupnSkI+uU
+9CGjEnbgggOuo3K8ic0Ma5EVKymjc8jk5z0hCUnvmYiyEmKWAh1u1LmsdZ0wb3U3
+bBnw2jDKb9bOXcbAkxipOx3VrGW6oa8n6m5aoKBP5DjVayU0KWkT2CrqzvLYciQT
+IeStZg+t6/198LtK0JKj+grml29IfJkoVQARhgVbva3QKX6Y2tiXHXsMQfueAkWd
+YQgMR8U73AyWwRK1eoUQS4N9mHiRnYkNNW+VW42ffPs0dbmO08lkgpiHEGFKz+Uw
+3yYYOR42WdI84R+Jv/47b3h+pL7mIgaMdu44GoSGsDRAw3PZ4cWB2ptldgA24oKX
+c/4bp6btUR7hHno53DMDgKVgu2PMji6kP8axnWaX6q5flRhCtV1taFSQwx1sFnvz
+0Xbh2qGyB39rxSLQAvP3oRs3ma16NnbS6dtiAS4U93DPHXRfrCk=
+=5Zam
+-----END PGP SIGNATURE-----
+
+--hRqufI3Tuell20As--
