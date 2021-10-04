@@ -2,120 +2,118 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6150C433EF
-	for <linux-tegra@archiver.kernel.org>; Mon,  4 Oct 2021 21:08:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D812C433FE
+	for <linux-tegra@archiver.kernel.org>; Mon,  4 Oct 2021 21:13:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B23F7613A3
-	for <linux-tegra@archiver.kernel.org>; Mon,  4 Oct 2021 21:08:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8616461501
+	for <linux-tegra@archiver.kernel.org>; Mon,  4 Oct 2021 21:13:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234573AbhJDVKG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 4 Oct 2021 17:10:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60016 "EHLO
+        id S233853AbhJDVPl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 4 Oct 2021 17:15:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33010 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233373AbhJDVKD (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 4 Oct 2021 17:10:03 -0400
-Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6B80C061745;
-        Mon,  4 Oct 2021 14:08:13 -0700 (PDT)
-Received: by mail-wm1-x329.google.com with SMTP id a131-20020a1c7f89000000b0030d4c90fa87so1076483wmd.2;
-        Mon, 04 Oct 2021 14:08:13 -0700 (PDT)
+        with ESMTP id S232999AbhJDVPk (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 4 Oct 2021 17:15:40 -0400
+Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10DF0C061745;
+        Mon,  4 Oct 2021 14:13:51 -0700 (PDT)
+Received: by mail-lf1-x130.google.com with SMTP id b20so77806260lfv.3;
+        Mon, 04 Oct 2021 14:13:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ExpNAyWtxfRkOyLgK6OlAfk7qe6BMUPwRZV46lDYHcE=;
-        b=hb8jWPpZFR4heOnocdeksnz2zZJPLhcVrFELpv/R21PfY05WtrxjAK8rBndwxQxbTR
-         1rxpujlybysSb1w/pJYWeOEB6DnyoOKZH7y19y581y9IB5cPMLDHwai8z3FH3iHZvNyC
-         r65BXKnPRB9XmmCH8ZV9XXXWduqPUoB+LqJRAcWg7J4j901lHnpBjy7soP10BYcNScyx
-         G02dJBCbm8Y5+IkrTwUspWwc3XmUggFCNnVthUPtHDrnvt/rcdH3scJUASUyE0XBMkxr
-         2syG6Kj7tLSfK2ii+dIMF/VuJ+MRWftL5lIQlwAGssa2+FLq3No/g1yDQylM3eAhxAOv
-         UmqA==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=uNTJy4nyoFNjcMWJJxtBf5MiY7MfgIk5KPCbms68E8M=;
+        b=l7gRmUHnIwmF6sQ0/DgS1G2mAZTSwwqPkFQaxe4bhL/A67SeGWE8+Zp6mrr5pSJs96
+         juUlNkgnIW1shN9vqNYyw5hS4BWg/vCbMBsDPdqBo0Bpf7M3NSo4tkhf0QS6x/kCUNP8
+         UhxbRvdYuqPOz+n37B8e72W+CjA5L7CfHrkUvFqusfBMw61Ih4rPE019Em2HabZDHQVk
+         yg1IirczuSveAJUE6o9zTmBbycFLzzQ04His+0Xy+PF/0MC3Dom8zwvTZbrjPUGSFWgs
+         zQs4kL8sEj5VrAQHZTQvugX7hHHXdOlvk9+g8NOIEKAQ2Oj0YIvaYurphLX6Qrsvmkm0
+         kQmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ExpNAyWtxfRkOyLgK6OlAfk7qe6BMUPwRZV46lDYHcE=;
-        b=zJRVtgqdsIEtmtWrfTOPknl4pT2p4Rz6jrOJcFXOJ/Y0pI30tCz4+lc8WjscBgHgnS
-         RNQP5WAXB1Cuc95cAFSWsE4m946hDM3HsItq7glOm7sH6W8vlfeKQSxlAQOMZ8+7IRrj
-         WAKVwoeUxjn5WaikO9kNl4hs5bZU0vnZbif8zbtiOvZ4WuUSLXTt/U8A+oDg2ljpvYgh
-         wh3mxUJCStwVO82gnbRUIIZgGcukNaKWDF1i/9WVG4hCC3uZoS0i3DwYejgJgXO5gDOt
-         zOdzTGU5Tf0/FtgyLMuDNN2FzAkKZQxj3GFY0sowDKPvxBsLB4PdviB84v/lK6sCrS/E
-         /y8g==
-X-Gm-Message-State: AOAM533tg499XKpi1j5TjWxoVp0dF06X9mJz1l3iHTyQT9QlZPfGMkxE
-        iWzWCCg+y45fbDIczV+kRl4=
-X-Google-Smtp-Source: ABdhPJwX5lJDMvteY95tpaZB8pZG4/3NpvDNL9LwxZCgE3IcKc1/BtGNoEcSgY2xQK5mkyfoUavFXA==
-X-Received: by 2002:a1c:80c8:: with SMTP id b191mr800519wmd.36.1633381692538;
-        Mon, 04 Oct 2021 14:08:12 -0700 (PDT)
-Received: from localhost ([217.111.27.204])
-        by smtp.gmail.com with ESMTPSA id h18sm15164938wrs.75.2021.10.04.14.08.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Oct 2021 14:08:11 -0700 (PDT)
-Date:   Mon, 4 Oct 2021 23:08:10 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Dmitry Osipenko <digetx@gmail.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=uNTJy4nyoFNjcMWJJxtBf5MiY7MfgIk5KPCbms68E8M=;
+        b=j1paJIaLrTCeiOyAY0DaqBYsaHjaIeWyGVv6TmiD+0PiBOBgp37qTcAEe8v9P5kkar
+         YrjW+qmwY4FD0aKgL92JVsHSlosf0Aq2R6CpjxCF2UCkhzkmQp8IoAYPNIDSBHWfBeEy
+         TCgyYKUY5ULv+c4mcCHdBhu+c1mpZFhDxIMFIg0KI8gxwptZ5ql8T94mMFjMSw3D///F
+         HZn7D9GJq/sIgMRvCmtcNGAWUaYREW3eTmiqimH0hIcF4BkhQFvP9OEN83Yb7LFpmfF0
+         hKXrOpuLsvZtj8q06cGJByLuUa0BpuwdBmuHaVUfE05fuCRb4EzXPK2LFlXrNqhaYa0A
+         p8dQ==
+X-Gm-Message-State: AOAM533vzOD2ByIBKhEDv2AURcNrKIRnKaWsUa+Q327e4/s+GY9bhuCK
+        fzKbmLRc981Qwf/7r0LlsZs=
+X-Google-Smtp-Source: ABdhPJxBoF2cwQ30/HndDVE2Yae4znnGxgecHl9ljWnLdvT9fnxOTnrHVg/3nRh4ZGk6/c40VFYgWQ==
+X-Received: by 2002:a2e:80ca:: with SMTP id r10mr18767211ljg.347.1633382029254;
+        Mon, 04 Oct 2021 14:13:49 -0700 (PDT)
+Received: from [192.168.2.145] (79-139-163-57.dynamic.spd-mgts.ru. [79.139.163.57])
+        by smtp.googlemail.com with ESMTPSA id l23sm1866167ljg.99.2021.10.04.14.13.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 04 Oct 2021 14:13:48 -0700 (PDT)
+Subject: Re: [PATCH v7 4/7] usb: phy: tegra: Support OTG mode programming
+To:     Thierry Reding <thierry.reding@gmail.com>
 Cc:     Thierry Reding <treding@nvidia.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter Chen <peter.chen@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Felipe Balbi <balbi@kernel.org>,
-        David Heidelberg <david@ixit.cz>, devicetree@vger.kernel.org,
+        Felipe Balbi <balbi@kernel.org>, devicetree@vger.kernel.org,
         linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v7 2/7] dt-bindings: phy: tegra20-usb-phy: Document
- properties needed for OTG mode
-Message-ID: <YVttOi4pd9edd481@orome.fritz.box>
+        linux-tegra@vger.kernel.org, Peter Chen <peter.chen@kernel.org>,
+        David Heidelberg <david@ixit.cz>
 References: <20210912181718.1328-1-digetx@gmail.com>
- <20210912181718.1328-3-digetx@gmail.com>
+ <20210912181718.1328-5-digetx@gmail.com>
+ <29ae631d-cc8d-663e-3ce2-db00f3470365@gmail.com>
+ <YVtslrGXStvdO2IS@orome.fritz.box>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <94949858-6089-06df-1226-f7974a3ae6bf@gmail.com>
+Date:   Tue, 5 Oct 2021 00:13:48 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="vK21ZnETKhpCC7zZ"
-Content-Disposition: inline
-In-Reply-To: <20210912181718.1328-3-digetx@gmail.com>
-User-Agent: Mutt/2.1.3 (987dde4c) (2021-09-10)
+In-Reply-To: <YVtslrGXStvdO2IS@orome.fritz.box>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+05.10.2021 00:05, Thierry Reding пишет:
+> On Mon, Sep 27, 2021 at 07:36:52PM +0300, Dmitry Osipenko wrote:
+>> 12.09.2021 21:17, Dmitry Osipenko пишет:
+>>> Support programming USB PHY into OTG mode.
+>>>
+>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>>> ---
+>>>  drivers/usb/phy/phy-tegra-usb.c   | 198 +++++++++++++++++++++++++++++-
+>>>  include/linux/usb/tegra_usb_phy.h |   5 +
+>>>  2 files changed, 198 insertions(+), 5 deletions(-)
+>>
+>> Greg / Felipe, could you please ack this patch to allow Thierry to take
+>> this series via the Tegra tree? It depends on the soc/tegra patch of
+>> this patchset.
+> 
+> Looking at the series, I don't think this necessarily needs to go
+> through the Tegra tree. Given that you have backwards-compatibility with
+> older device trees, applying this separately to the USB tree should work
+> fine. Once the soc/tegra and DT bits and the USB bits get combined they
+> should enable the new functionality, but nothing should break if things
+> are applied separately.
+> 
+> If so, I can just pick up the rest and let Felipe or Greg pick this one
+> up.
+> 
+> Dmitry, can you confirm that this patch should be applicable separately?
+> If so:
+> 
+> Acked-by: Thierry Reding <treding@nvidia.com>
+> 
 
---vK21ZnETKhpCC7zZ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This PHY patch has this hunk:
 
-On Sun, Sep 12, 2021 at 09:17:13PM +0300, Dmitry Osipenko wrote:
-> In order to support OTG mode we need these new properties:
->=20
-> 	- interrupt
-> 	- nvidia,pmc
->=20
-> Add the new properties to the binding.
->=20
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  .../bindings/phy/nvidia,tegra20-usb-phy.yaml     | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
++	phy->pmc_regmap = dev_get_regmap(&pmc_pdev->dev, "usb_sleepwalk");
++	if (!phy->pmc_regmap)
++		return -EINVAL;
 
-Acked-by: Thierry Reding <treding@nvidia.com>
-
---vK21ZnETKhpCC7zZ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmFbbToACgkQ3SOs138+
-s6ENVQ/9FU5WfmJN9bUqZjMXfl5Lc5KMWTsOD43CkASRJJ6wZFLPfAztJKo6tprG
-/sfW6iZFRWiEimPuuiku3YWPvoLUDxBuMCrYnVM8BQC0kDyI8MCedBK9pPulEN+I
-yP4s63ksl+Xnp2/kgStHG61gW26clu4S88yx4cIEyvzKlO/vnNt4BjeEHe05D/pa
-/4NBCImfk7XIPyFeBmmO5oRqXeSceXPYaUfHbTM7EVhq1KwoHtd+QN2R/Wd8Cgn4
-nBBBNAJHbB7+IOhyAyaegw8AA6Rvd+lQRTSg6bNtX2Yle9yKcZcaTqwAGF9UZklo
-YGCsBK6E92+6oWaS2aLDluspquqbwzT7jmb2+pQISUE73IOTZcC0kaLhCMrdZgqD
-FsshNl0aFdaym91b2SLnHsaseTNCAy43gizFophOkewV73H0KWo/dB9ViMJd4/L4
-18K9eStTXTkpsEGRSxAj+EwzuFHUpyQ8TX4SehRBWe6GmLf/rTtBIbVa1wZRCTHU
-7kSkrq9MD7/KEc9DW2UddYicFZWcBn7Tc+1nEdD9yrP/rsmu6QEySLuNHMBi/GuM
-wjXe1digHo2YCK4op7JPe/HZnDalLYzMiI1B9fbNaKfZgwquxrur2CLExcWI7nBT
-4nir3eONy7TnE6zWWbtE5CY46MaEue3HHstbR/DRi2a2DkpDq84=
-=8etT
------END PGP SIGNATURE-----
-
---vK21ZnETKhpCC7zZ--
+If this patch and the DT patches will be applied before the soc/tegra
+patch, then USB PHY driver will fail to probe.
