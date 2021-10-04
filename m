@@ -2,116 +2,168 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33AEBC433EF
-	for <linux-tegra@archiver.kernel.org>; Mon,  4 Oct 2021 02:22:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E288C433FE
+	for <linux-tegra@archiver.kernel.org>; Mon,  4 Oct 2021 04:38:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1273061278
-	for <linux-tegra@archiver.kernel.org>; Mon,  4 Oct 2021 02:22:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 65ADA6136F
+	for <linux-tegra@archiver.kernel.org>; Mon,  4 Oct 2021 04:38:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232228AbhJDCYW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 3 Oct 2021 22:24:22 -0400
-Received: from mail-oi1-f172.google.com ([209.85.167.172]:36767 "EHLO
-        mail-oi1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232213AbhJDCYV (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Sun, 3 Oct 2021 22:24:21 -0400
-Received: by mail-oi1-f172.google.com with SMTP id y201so19746832oie.3;
-        Sun, 03 Oct 2021 19:22:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
-         :message-id;
-        bh=ushgit0mjUfKyHoADqKH5l5MXksAnFZZ1AfG5dgrz5o=;
-        b=KavC6goRMlIqYawnF0c6rDjtUiZLCGomJELy84TPlotH5ENKP6xbIyLKZxa3Mwp08i
-         k7sKpbhsBXUiTNtqOfATzoM9foTt4azfd6tj/wx7GkLgU9ddu2Xf7GPPOO2xhhVEFtWg
-         hPdBxorWCbDc5MGGI2qMMro9lCur8lRTUhaslgp31TrndVn/ftachMCWuqb7JLe4cD1p
-         WjRearT2vvBhvpUtVhJf4VfxkgAmZpC7pHGYKdB9H/73mJmlrJhGU/pjSSU307wejbQY
-         X4lG1KSqqoIx9G0J54W8ZCdRlE0y5RLOqsnzPHpS+qRDdJasXvGpdhwSDmEJ2TPcISY6
-         l8ng==
-X-Gm-Message-State: AOAM530f4p5Q8D35WsrHkotMfa2/iaxlCJJDDALpo4fPeTjllKKqWd+z
-        NPEmABs7Rh8fYSmQKGrVFw==
-X-Google-Smtp-Source: ABdhPJy86dvc9vfTKpEFg++eA1EydHmuKP0dyaBvrqugtku1lZKymqE4572adTJMvNNBVNFt4ors8Q==
-X-Received: by 2002:aca:5909:: with SMTP id n9mr11877042oib.130.1633314151746;
-        Sun, 03 Oct 2021 19:22:31 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id e2sm2612613ooa.20.2021.10.03.19.22.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 03 Oct 2021 19:22:31 -0700 (PDT)
-Received: (nullmailer pid 116315 invoked by uid 1000);
-        Mon, 04 Oct 2021 02:22:30 -0000
-From:   Rob Herring <robh@kernel.org>
-To:     David Heidelberg <david@ixit.cz>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        devicetree@vger.kernel.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <treding@nvidia.com>, linux-clk@vger.kernel.org,
-        Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20211003192529.29615-1-david@ixit.cz>
-References: <20211003192529.29615-1-david@ixit.cz>
-Subject: Re: [PATCH] [v2] dt-bindings: clock: tegra: Fix USB controller nodes in examples
-Date:   Sun, 03 Oct 2021 21:22:30 -0500
-Message-Id: <1633314150.313988.116314.nullmailer@robh.at.kernel.org>
+        id S232438AbhJDEkD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 4 Oct 2021 00:40:03 -0400
+Received: from mail-dm6nam10on2079.outbound.protection.outlook.com ([40.107.93.79]:22113
+        "EHLO NAM10-DM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S230193AbhJDEkD (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 4 Oct 2021 00:40:03 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=iD8B7JY1A3bZ+20t9hlVLTku7LNZFGVp32Y3i8RXiEL1JRM3/P97S3VlOr8fl8DtNpkv5UoZA0m/0Fqhlyosfhf6rxF8sNtnEZylUgPih4Tvfeh9feqVXSw5YAg4rrv/as2Q8FLJYnUn3mD8UOVh+Y2cMbUbHlGHZ65c2bZB6nAM+iGi9VTS9dQQvUgG3K0HjBqH3yk8ApeEwZBjyvicehEBnHBTZZp1IQ/w/tfQTpFIBGeWZYZs+exNzOpGFFo0oLeggQzUPYtafmXtLGl9+qXNr5oJtqkX+cyg9HPHHc94WpxhBF4ZHVMbdH4ig4M555tuU04xKjdIUDDQdjdEgg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=o00UeLM5clt/TA+X3EzsH8aAFezHinbMI4D7UWXkz3A=;
+ b=aTBK6LfdlD5yQcebCD9xgvmf4KDeAcL9IX3zvLbR5O+vFtriNDDPapE1IFvJO7ExiH1dfQpAAoTEIIINphSTy8GwIqdTrfY1lFoiOOmAPvz6g20vF4gFHfcvIVi2uS06Y0DkSt3UQ1sAQ5/yvHwy1d2Fe/Jx4KCYENO4dtZN0BWoRpKE1Vc/u2AfeIMaZh7wMxSgR9pSe0yfsNal/HySRz06ThDbQ3auNRYKAzSldCwP4p/iWpTkysQoGXHNPWmNe1sQ1/0Wswv2upwPWMEKcwjiZUQO9Z5RLmqWVTFQ5i80zMekOKAoXERc6cQnmM5xennrKI84Wo6joLZQ3scMtQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.112.34) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=o00UeLM5clt/TA+X3EzsH8aAFezHinbMI4D7UWXkz3A=;
+ b=UOzFCfu3KecqMElpIoH8obsedfQ0Y/nvYuiHms84Oc+5j3vY3RrfPnN7xlXIDUh0H+VWymu7Q1+gKUmsDE8iW1HFFqcYXIvCS5AMZ6e9rrYpBfKGvaLsEkii0Dhzv1K067cVhya0YBWccMCknmPCzCmYDWJ0vPiVpokBXEmiqlHQUrx9nDp9n4VDL2c3c2Z1CQlNC4VgPgImWJRoPlEHhS9MCtRvkd97qbS7z1eTWQptRtMm/aD2Ijz0+pS9SWUFNnJ9Ys917dHQBDHOxM9phHYD9wRyhVs8Lz64Hg5dvS8CaFbrhQFxiQxNpuPpqkfU8TzTx1D4W7kFvq7M/xPaPQ==
+Received: from MW4PR04CA0277.namprd04.prod.outlook.com (2603:10b6:303:89::12)
+ by CY4PR12MB1509.namprd12.prod.outlook.com (2603:10b6:910:8::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4566.17; Mon, 4 Oct
+ 2021 04:38:12 +0000
+Received: from CO1NAM11FT043.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:303:89:cafe::ec) by MW4PR04CA0277.outlook.office365.com
+ (2603:10b6:303:89::12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4566.15 via Frontend
+ Transport; Mon, 4 Oct 2021 04:38:12 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.34)
+ smtp.mailfrom=nvidia.com; gmail.com; dkim=none (message not signed)
+ header.d=none;gmail.com; dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.112.34 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.112.34; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (216.228.112.34) by
+ CO1NAM11FT043.mail.protection.outlook.com (10.13.174.193) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.4566.14 via Frontend Transport; Mon, 4 Oct 2021 04:38:11 +0000
+Received: from [10.25.99.17] (172.20.187.6) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Mon, 4 Oct
+ 2021 04:38:05 +0000
+Subject: Re: [PATCH 01/13] ASoC: soc-pcm: Don't reconnect an already active BE
+To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        <broonie@kernel.org>, <lgirdwood@gmail.com>, <robh+dt@kernel.org>,
+        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <catalin.marinas@arm.com>, <will@kernel.org>, <perex@perex.cz>,
+        <tiwai@suse.com>, <kuninori.morimoto.gx@renesas.com>
+CC:     <devicetree@vger.kernel.org>, <alsa-devel@alsa-project.org>,
+        <linux-kernel@vger.kernel.org>, <sharadg@nvidia.com>,
+        <linux-tegra@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <1630056839-6562-1-git-send-email-spujar@nvidia.com>
+ <1630056839-6562-2-git-send-email-spujar@nvidia.com>
+ <be6290d1-0682-3d93-98a6-ad0be3ca42c1@linux.intel.com>
+ <70422e52-89d2-d926-b3f9-be59780d464e@nvidia.com>
+ <40f098c8-b9e3-8da6-849a-eb9a39fefdb0@linux.intel.com>
+From:   Sameer Pujar <spujar@nvidia.com>
+Message-ID: <ce796f36-11df-7f9c-55aa-9c0833f28b93@nvidia.com>
+Date:   Mon, 4 Oct 2021 10:08:01 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
+MIME-Version: 1.0
+In-Reply-To: <40f098c8-b9e3-8da6-849a-eb9a39fefdb0@linux.intel.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-GB
+X-Originating-IP: [172.20.187.6]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: a99df673-8960-4e8c-a829-08d986f0c5c7
+X-MS-TrafficTypeDiagnostic: CY4PR12MB1509:
+X-Microsoft-Antispam-PRVS: <CY4PR12MB15097C2A48B44099FBB8FF7DA7AE9@CY4PR12MB1509.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:2512;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: LOq7SyReVsxVRDBFt9kpcm0evdEUGuxL3AwOnYfHPqMgDVSBMgraMRykKPQqrhJozrDFP7ffMHZ9hBIGIWKZf3y2KBcrKQeW+CBvl6gbIonMW6RqIRaU98uIPEUxfR5d71VMRRRvkGOtJ/94cKrK1bOlpRjSXNQJ+pqQSFWOzxtB+0H0+Dv+quFxtozjrHg4OkDG8h0IXKmYSaUDxLRe47EPeZnQa8+8PqGykk0rw1u+X3BUNIIrzR0Jk9wXYPURWrDz0jbpuLxG9etPsm700tzi+airxVAeZNxiMyH566BcKYoutha+G9XS/+nH0gOe7nABtgjjJeRZHEGVWHieBcFEVVqhM8PzMNy96Y14xcp4iK3sGcVzyS0AMd1x9khkFe6+SAOBXp1aQlfjAYg2/MUhyJ60xtQtPrGXjXulCKhd9yNLOgPvpfy1pX7f4MEQvyoCftKDDNNWUk2utl9AZbR0abgEwAyRKljP1zTMzoSwmTuBsGan00J0Af41HOSMLreNpBz0ncfombRMJKunYkFeHca3NuyweJFkhvNIIYoxXilR519DwadKdFdL3+3lqG2VyYKK7rnjyDQiwNjps8A+UK8jPSP7Z+uWZbA851rdpcn1ks1bNV6vCMiTqR3VI4HGa6Xm6durAMm1FasO9TC9+w6Vx6EoP06LE+8U2+4/w/WoZk3bzHpps1zzH/M78QkGLLuGXS7e9N8AvCimEkAMXpnFHJR4AraIe0t+wZQgny4YxDSN1v/lwJI7J1OI
+X-Forefront-Antispam-Report: CIP:216.228.112.34;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid03.nvidia.com;CAT:NONE;SFS:(4636009)(36840700001)(46966006)(31696002)(8936002)(426003)(2616005)(16576012)(336012)(186003)(86362001)(26005)(83380400001)(54906003)(2906002)(5660300002)(6666004)(8676002)(316002)(4326008)(110136005)(356005)(7636003)(16526019)(36756003)(53546011)(82310400003)(36860700001)(921005)(70206006)(7416002)(70586007)(47076005)(508600001)(31686004)(43740500002);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Oct 2021 04:38:11.7077
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: a99df673-8960-4e8c-a829-08d986f0c5c7
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.34];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT043.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR12MB1509
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Sun, 03 Oct 2021 21:25:30 +0200, David Heidelberg wrote:
-> From: Thierry Reding <treding@nvidia.com>
-> 
-> A subsequent patch will convert the USB controller device tree bindings
-> to json-schema, which will cause the DT validation to point out various
-> issues with the examples in the clock and reset controller bindings.
-> 
-> Fix these issues so that the subsequent patch will not cause validation
-> warnings.
-> 
-> v2:
->  - add missing usb-ehci compatible (David)
-> 
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> Signed-off-by: David Heidelberg <david@ixit.cz>
-> ---
->  .../bindings/clock/nvidia,tegra124-car.yaml           | 11 ++++++++---
->  .../devicetree/bindings/clock/nvidia,tegra20-car.yaml |  5 +++++
->  2 files changed, 13 insertions(+), 3 deletions(-)
-> 
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
 
-yamllint warnings/errors:
+On 10/1/2021 12:30 AM, Pierre-Louis Bossart wrote:
+>> 1. The original issue at my end was not just a configuration redundancy.
+>> I realize now that with more stream addition following error print is seen.
+>>     "ASoC: too many users playback at open 4"
+>>
+>>     This is because the max DPCM users is capped at 8. Increasing this
+>> may help (need to see what number is better), but does not address the
+>> redundancy problem.
+> Going back to this DPCM_MAX_BE_USERS definition, it seems rather
+> arbitrary and not so useful indeed.
 
-dtschema/dtc warnings/errors:
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/nvidia,tegra124-car.example.dt.yaml: usb-controller@7d000000: compatible: 'oneOf' conditional failed, one must be fixed:
-	['nvidia,tegra124-ehci', 'nvidia,tegra30-ehci', 'usb-ehci'] is too long
-	Additional items are not allowed ('usb-ehci' was unexpected)
-	Additional items are not allowed ('nvidia,tegra30-ehci', 'usb-ehci' were unexpected)
-	'nvidia,tegra124-ehci' is not one of ['allwinner,sun4i-a10-ehci', 'allwinner,sun50i-a64-ehci', 'allwinner,sun50i-h6-ehci', 'allwinner,sun5i-a13-ehci', 'allwinner,sun6i-a31-ehci', 'allwinner,sun7i-a20-ehci', 'allwinner,sun8i-a23-ehci', 'allwinner,sun8i-a83t-ehci', 'allwinner,sun8i-h3-ehci', 'allwinner,sun8i-r40-ehci', 'allwinner,sun9i-a80-ehci', 'aspeed,ast2400-ehci', 'aspeed,ast2500-ehci', 'aspeed,ast2600-ehci', 'brcm,bcm3384-ehci', 'brcm,bcm63268-ehci', 'brcm,bcm6328-ehci', 'brcm,bcm6358-ehci', 'brcm,bcm6362-ehci', 'brcm,bcm6368-ehci', 'brcm,bcm7125-ehci', 'brcm,bcm7346-ehci', 'brcm,bcm7358-ehci', 'brcm,bcm7360-ehci', 'brcm,bcm7362-ehci', 'brcm,bcm7420-ehci', 'brcm,bcm7425-ehci', 'brcm,bcm7435-ehci', 'ibm,476gtr-ehci', 'nxp,lpc1850-ehci', 'qca,ar7100-ehci', 'snps,hsdk-v1.0-ehci', 'socionext,uniphier-ehci']
-	'nvidia,tegra124-ehci' is not one of ['cavium,octeon-6335-ehci', 'ibm,usb-ehci-440epx', 'ibm,usb-ehci-460ex', 'nintendo,hollywood-usb-ehci', 'st,spear600-ehci']
-	'nvidia,tegra124-ehci' is not one of ['generic-ehci', 'usb-ehci']
-	'generic-ehci' was expected
-	'usb-ehci' was expected
-	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/usb/generic-ehci.yaml
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/nvidia,tegra124-car.example.dt.yaml: usb-controller@7d000000: 'nvidia,phy', 'phy_type', 'reset-names' do not match any of the regexes: 'pinctrl-[0-9]+'
-	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/usb/generic-ehci.yaml
-Documentation/devicetree/bindings/clock/nvidia,tegra124-car.example.dt.yaml:0:0: /example-0/usb-controller@7d000000: failed to match any schema with compatible: ['nvidia,tegra124-ehci', 'nvidia,tegra30-ehci', 'usb-ehci']
-Documentation/devicetree/bindings/clock/nvidia,tegra124-car.example.dt.yaml:0:0: /example-0/usb-controller@7d000000: failed to match any schema with compatible: ['nvidia,tegra124-ehci', 'nvidia,tegra30-ehci', 'usb-ehci']
+>          /* first time the dpcm is open ? */
+>          if (be->dpcm[stream].users == DPCM_MAX_BE_USERS) {
+>                  dev_err(be->dev, "ASoC: too many users %s at open %d\n",
+>                          stream ? "capture" : "playback",
+>                          be->dpcm[stream].state);
+>                  continue;
+>          }
+>
+> The comment is no longer aligned with the code, wondering if this is a
+> feature or a bug.
 
-doc reference errors (make refcheckdocs):
+Looks like the comment is misplaced and the intention might have been to 
+place it like below?
 
-See https://patchwork.ozlabs.org/patch/1535873
+diff --git a/sound/soc/soc-pcm.c b/sound/soc/soc-pcm.c
+index e30cb5a..5cb5019 100644
+--- a/sound/soc/soc-pcm.c
++++ b/sound/soc/soc-pcm.c
+@@ -1508,7 +1508,6 @@ int dpcm_be_dai_startup(struct snd_soc_pcm_runtime 
+*fe, int stream)
+                 if (!snd_soc_dpcm_be_can_update(fe, be, stream))
+                         continue;
 
-This check can fail if there are any dependencies. The base for a patch
-series is generally the most recent rc1.
+-               /* first time the dpcm is open ? */
+                 if (be->dpcm[stream].users == DPCM_MAX_BE_USERS) {
+                         dev_err(be->dev, "ASoC: too many users %s at 
+open %d\n",
+                                 stream ? "capture" : "playback",
+@@ -1516,6 +1515,7 @@ int dpcm_be_dai_startup(struct snd_soc_pcm_runtime 
+*fe, int stream)
+                         continue;
+                 }
 
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
++               /* first time the dpcm is open ? */
+                 if (be->dpcm[stream].users++ != 0)
+                         continue;
 
-pip3 install dtschema --upgrade
-
-Please check and re-submit.
+>   There's no reason to arbitrarily restrict the number
+> of users of a BE, or the check would need to use platform-specific
+> information such as the number of inputs/outputs supported by a mixer/demux.
+>
+> Maybe Morimoto-san can comment since this was added in:
+>
+> 1db19c151819 ('ASoC: soc-pcm: fixup dpcm_be_dai_startup() user count')
+>
+> We're not done with soc-pcm.c cleanups :-)
 
