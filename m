@@ -2,257 +2,167 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D48CC433F5
-	for <linux-tegra@archiver.kernel.org>; Mon,  4 Oct 2021 07:42:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFA79C433F5
+	for <linux-tegra@archiver.kernel.org>; Mon,  4 Oct 2021 08:01:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 388ED61207
-	for <linux-tegra@archiver.kernel.org>; Mon,  4 Oct 2021 07:42:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ABF6061360
+	for <linux-tegra@archiver.kernel.org>; Mon,  4 Oct 2021 08:01:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230004AbhJDHn5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 4 Oct 2021 03:43:57 -0400
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:40714
-        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230185AbhJDHn4 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 4 Oct 2021 03:43:56 -0400
-Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com [209.85.167.72])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id A1F1C402D6
-        for <linux-tegra@vger.kernel.org>; Mon,  4 Oct 2021 07:42:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1633333327;
-        bh=e714NVWVScI0+yjdvUNrvtSFupcv664MYMHWSpxcxMo=;
-        h=To:Cc:References:From:Subject:Message-ID:Date:MIME-Version:
-         In-Reply-To:Content-Type;
-        b=fxmqJbG0nE9sOnkZMUmLGzzspYDtu0XNidN/HrgIt1hm9xKusY2FNT77rT68o1nxy
-         IG+FAiStp6vDArhH6If7plJckPPZdu5cJQzai8RanBUXLtf+luIgbqL93p39LC1J/M
-         1CTztxDw7fNDXRAZSL5iFBNsYw4IExDpGjXDj8QcblT1sbRAQj6Gn7AIFFGfperUDS
-         1wL0kKKayv9JVVVCM9hnpVvBC4Ji8wcuTISLFhGSMM7pzXPah3nz4CpW/gG0kVr7kF
-         U0hMY6jzk1t2GaH4Us3wJSzTmzqB32PH0kgrnVLOirctmd9QGoafIb5CoAq/JSwWCA
-         ElGhO3/SQTwlg==
-Received: by mail-lf1-f72.google.com with SMTP id g9-20020a0565123b8900b003f33a027130so13459979lfv.18
-        for <linux-tegra@vger.kernel.org>; Mon, 04 Oct 2021 00:42:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:to:cc:references:from:subject:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=e714NVWVScI0+yjdvUNrvtSFupcv664MYMHWSpxcxMo=;
-        b=OndeIM/kEpuS/jLhN55Jc2PAhE8m5KsCQF0XhOoY7NDEY8R0elcXikizBVrciHTjG2
-         ckVEaStwRhPQ8ulPTMy+Psx0ioQReovjjDAQILnokRTTaW7BKSZ5PMjBSHc34U5W6htz
-         7V+KYkQY5/Bcg1CQQNIjjwNJFkkb/ozXTWgMp9seLBQ+Zy6ttKBYxp1fHwr8I/yDfYvS
-         A+rOUK6f9bv5F3XZc8z1k52uo9vKjPZAqb98zonXoUcyjA7ylpDdDtFcsf4OQaxsFnxI
-         0ZR7UWVY51n8hx4no31m206GNe5ea0672DU9zLZFAUqFiEGk+ZXkkutfVPXS8oKFYbtO
-         v3eQ==
-X-Gm-Message-State: AOAM532mcQHqVHbttCuA4C8SQgpvKXD0HyevaBmuGM6+hYDRAgiRkw03
-        mdPKvnIQN2RoCaNYypTtNdN2WAVSzhDZTHQa938vplGfRlpYn5nb9e6vHtZ32p2GqzSzKGOkfxv
-        ApYBTV3Bc53p828Sf4TXaQDyNJwelxz8z5KDGYr02
-X-Received: by 2002:a2e:7d15:: with SMTP id y21mr13936973ljc.70.1633333326583;
-        Mon, 04 Oct 2021 00:42:06 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJzRJspKI6Vl7ZMdGxUQeATfKQIB9Bmf0vo2F7KLIpoe6VCVE+oWZXaAY8PDuK8/hw5UWEtJVA==
-X-Received: by 2002:a2e:7d15:: with SMTP id y21mr13936948ljc.70.1633333326351;
-        Mon, 04 Oct 2021 00:42:06 -0700 (PDT)
-Received: from [192.168.0.197] ([193.178.187.25])
-        by smtp.gmail.com with ESMTPSA id l24sm1532183lfh.8.2021.10.04.00.42.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Oct 2021 00:42:05 -0700 (PDT)
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        id S229848AbhJDIDJ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 4 Oct 2021 04:03:09 -0400
+Received: from mga04.intel.com ([192.55.52.120]:11362 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229487AbhJDIDH (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 4 Oct 2021 04:03:07 -0400
+X-IronPort-AV: E=McAfee;i="6200,9189,10126"; a="224091266"
+X-IronPort-AV: E=Sophos;i="5.85,345,1624345200"; 
+   d="scan'208";a="224091266"
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Oct 2021 01:01:12 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.85,345,1624345200"; 
+   d="scan'208";a="482808264"
+Received: from stinkbox.fi.intel.com (HELO stinkbox) ([10.237.72.171])
+  by fmsmga007.fm.intel.com with SMTP; 04 Oct 2021 01:01:02 -0700
+Received: by stinkbox (sSMTP sendmail emulation); Mon, 04 Oct 2021 11:01:01 +0300
+Date:   Mon, 4 Oct 2021 11:01:01 +0300
+From:   Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+To:     Fernando Ramos <greenfoo@u92.eu>
+Cc:     Sean Paul <sean@poorly.run>, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        amd-gfx@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+        nouveau@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
         linux-tegra@vger.kernel.org
-References: <20211003013235.2357-1-digetx@gmail.com>
- <20211003013235.2357-2-digetx@gmail.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Subject: Re: [PATCH v3 1/4] dt-bindings: memory: Add LPDDR2 binding
-Message-ID: <4c5643de-d39d-2b1a-12ae-ec5247fe2976@canonical.com>
-Date:   Mon, 4 Oct 2021 09:42:04 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+Subject: Re: [Intel-gfx] [PATCH v2 00/17] drm: cleanup: Use
+ DRM_MODESET_LOCK_ALL_* helpers where possible
+Message-ID: <YVq0vZgFUpSXEBFh@intel.com>
+References: <20210924064324.229457-1-greenfoo@u92.eu>
+ <20211001183655.GW2515@art_vandelay>
+ <YVda4jNSGuQf50JV@intel.com>
+ <20211001204815.GA2515@art_vandelay>
+ <YVeGOyLzuhN7zzV7@intel.com>
+ <YVfEWaLfYWdhezCa@intel.com>
+ <YVgGklsHT5fkavDL@zacax395.localdomain>
+ <YViWomXZWdy/81uT@zacax395.localdomain>
 MIME-Version: 1.0
-In-Reply-To: <20211003013235.2357-2-digetx@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <YViWomXZWdy/81uT@zacax395.localdomain>
+X-Patchwork-Hint: comment
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 03/10/2021 03:32, Dmitry Osipenko wrote:
-> Add binding for standard LPDDR2 memory chip properties.
+On Sat, Oct 02, 2021 at 07:28:02PM +0200, Fernando Ramos wrote:
+> On 21/10/02 09:13AM, Fernando Ramos wrote:
+> > On 21/10/02 05:30AM, Ville Syrjälä wrote:
+> > > On Sat, Oct 02, 2021 at 01:05:47AM +0300, Ville Syrjälä wrote:
+> > > > On Fri, Oct 01, 2021 at 04:48:15PM -0400, Sean Paul wrote:
+> > > > > On Fri, Oct 01, 2021 at 10:00:50PM +0300, Ville Syrjälä wrote:
+> > > > > > On Fri, Oct 01, 2021 at 02:36:55PM -0400, Sean Paul wrote:
+> > > > > > > 
+> > > > > > > Thank you for revising, Fernando! I've pushed the set to drm-misc-next (along
+> > > > > > > with the necessary drm-tip conflict resolutions).
+> > > > > > 
+> > > > > > Ugh. Did anyone actually review the locking changes this does?
+> > > > > > I shot the previous i915 stuff down because the commit messages
+> > > > > > did not address any of it.
+> > > > > 
+> > > > > I reviewed the set on 9/17, I didn't see your feedback on that thread.
+> > > > 
+> > > > It was much earlir than that.
+> > > > https://lists.freedesktop.org/archives/dri-devel/2021-June/313193.html
 > 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  .../memory-controllers/jedec,lpddr2.yaml      | 80 +++++++++++++++++++
->  include/dt-bindings/memory/lpddr2.h           | 25 ++++++
-
-Hi Dmitry,
-
-Thanks for doing this. I think I should be slightly more descriptive in
-my previous comment. What I meant, is to use existing DDR bindings
-(which might include or require converting them to YAML):
-Documentation/devicetree/bindings/ddr/
-
-The bindings are already used:
-arch/arm/boot/dts/elpida_ecb240abacn.dtsi
-arch/arm/boot/dts/exynos5422-odroid-core.dtsi
-drivers/memory/samsung/exynos5422-dmc.c
-
-You can remove the Documentation/devicetree/bindings/ddr/lpddr2.txt
-after full conversion, so also including AC timings and AC timing
-parameters. The timing parameters could be a separate YAML, if you want
-to convert everything. You can also skip it, because it is not necessary
-for your work.
-
-
-Rob,
-Any advice from your side where to put LPDDR2 dtschema bindings? The
-existing location was bindings/ddr/ but maybe this should be part of
-memory-controllers (although it is not actually a controller but rather
-used by the controller)?
-
->  2 files changed, 105 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/memory-controllers/jedec,lpddr2.yaml
->  create mode 100644 include/dt-bindings/memory/lpddr2.h
+> Sorry, I'm new to this and it did not occur to me to search for similar patches
+> in the mailing list archives in case there were additional comments that applied
+> to my change set.
 > 
-> diff --git a/Documentation/devicetree/bindings/memory-controllers/jedec,lpddr2.yaml b/Documentation/devicetree/bindings/memory-controllers/jedec,lpddr2.yaml
-> new file mode 100644
-> index 000000000000..ef227eba1e4a
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/memory-controllers/jedec,lpddr2.yaml
-> @@ -0,0 +1,80 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/memory-controllers/jedec,lpddr2.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: JEDEC LPDDR2 SDRAM
-> +
-> +maintainers:
-> +  - Krzysztof Kozlowski <krzk@kernel.org>
-> +
-> +properties:
-
-You need compatible (see lpddr2.txt)
-
-> +  jedec,lpddr2-manufacturer-id:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    maximum: 255
-> +    description: |
-> +      Unique manufacturer ID of SDRAM chip. See MR5 description in JESD209-2.
-
-Plus:
-"See include/dt-bindings/memory/lpddr2.h for known manufactured IDs."
-
-However I wonder whether we need it. It should be taken from the vendor
-part of compatible.
-
-> +
-> +  jedec,lpddr2-revision-id1:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    maximum: 255
-> +    description: |
-> +      Revision 1 value of SDRAM chip.
-> +      See MR6 description in chip vendor specification.
-> +
-> +  jedec,lpddr2-revision-id2:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    maximum: 255
-> +    description: |
-> +      Revision 2 value of SDRAM chip.
-> +      See MR7 description in chip vendor specification.
-> +
-> +  jedec,lpddr2-density-mbits:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description: |
-> +      Density in megabits of SDRAM chip. See MR8 description in JESD209-2.
-> +    enum:
-> +      - 64
-> +      - 128
-> +      - 256
-> +      - 512
-> +      - 1024
-> +      - 2048
-> +      - 4096
-> +      - 8192
-> +      - 16384
-> +      - 32768
-> +
-> +  jedec,lpddr2-io-width-bits:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description: |
-> +      IO bus width in bits of SDRAM chip. See MR8 description in JESD209-2.
-> +    enum:
-> +      - 32
-> +      - 16
-> +      - 8
-> +
-> +  jedec,lpddr2-type:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description: |
-> +      LPDDR type which corresponds to a number of words SDRAM pre-fetches
-> +      per column request. See MR8 description in JESD209-2.
-> +    enum:
-> +      - 0 # S4 (4 words prefetch architecture)
-> +      - 1 # S2 (2 words prefetch architecture)
-> +      - 2 # NVM (Non-volatile memory)
-
-Type should not be needed but instead taken from compatible. Unless Rob
-has here preference and maybe change the DDR bindings?
-
-requiredProperties for compatible, density, io-width.
-
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/memory/lpddr2.h>
-> +
-> +    lpddr2 {
-> +        jedec,lpddr2-manufacturer-id = <LPDDR2_MANID_ELPIDA>;
-> +        jedec,lpddr2-revision-id1 = <1>;
-> +        jedec,lpddr2-density-mbits = <2048>;
-> +        jedec,lpddr2-io-width-bits = <16>;
-> +        jedec,lpddr2-type = <LPDDR2_TYPE_S4>;
-> +    };
-> diff --git a/include/dt-bindings/memory/lpddr2.h b/include/dt-bindings/memory/lpddr2.h
-> new file mode 100644
-> index 000000000000..e837b0d8a11e
-> --- /dev/null
-> +++ b/include/dt-bindings/memory/lpddr2.h
-> @@ -0,0 +1,25 @@
-> +/* SPDX-License-Identifier: GPL-2.0 OR BSD-2-Clause */
-> +#ifndef _DT_BINDINGS_LPDDR2_H
-> +#define _DT_BINDINGS_LPDDR2_H
-> +
-> +#define LPDDR2_MANID_SAMSUNG		1
-> +#define LPDDR2_MANID_QIMONDA		2
-> +#define LPDDR2_MANID_ELPIDA		3
-> +#define LPDDR2_MANID_ETRON		4
-> +#define LPDDR2_MANID_NANYA		5
-> +#define LPDDR2_MANID_HYNIX		6
-> +#define LPDDR2_MANID_MOSEL		7
-> +#define LPDDR2_MANID_WINBOND		8
-> +#define LPDDR2_MANID_ESMT		9
-> +#define LPDDR2_MANID_SPANSION		11
-> +#define LPDDR2_MANID_SST		12
-> +#define LPDDR2_MANID_ZMOS		13
-> +#define LPDDR2_MANID_INTEL		14
-> +#define LPDDR2_MANID_NUMONYX		254
-> +#define LPDDR2_MANID_MICRON		255
-> +
-> +#define LPDDR2_TYPE_S4			0
-> +#define LPDDR2_TYPE_S2			1
-> +#define LPDDR2_TYPE_NVM			2
-> +
-> +#endif /*_DT_BINDINGS_LPDDR2_H */
+> In case I had done that I would have found that, as you mentioned, you had
+> already raised two issues back in June:
 > 
+>     On Tue, Jun 29, 2021, Ville Syrjälä wrote:
+>     >
+>     > That looks wrong. You're using a private ctx here, but still
+>     > passing dev->mode_config.acquire_ctx to the lower level stuff.
+>     > 
+>     > Also DRM_MODESET_LOCK_ALL_{BEGIN,END}() do not seem to be
+>     > equivalent to drm_modeset_{lock,unlock}_all() when it comes to 
+>     > mode_config.mutex. So would need a proper review whether we
+>     > actually need that lock or not.
+> 
+> The first one was pointing out the same error I would later repeat in my patch
+> series (ups).
+> 
+> After further inspection of the code it looks to me that changing this:
+> 
+>     intel_modeset_setup_hw_state(dev, dev->mode_config.acquire_ctx);
+> 
+> ...into this:
+> 
+>     intel_modeset_setup_hw_state(dev, &ctx);
+> 
+> ...would be enough.
 
+Yes.
 
-Best regards,
-Krzysztof
+> 
+> Why? The only difference between the old drm_modeset_{lock,unlock}_all()
+> functions and the new DRM_MODESET_LOCK_ALL_{BEGIN,END}() macros is that the
+> former use a global context stored in dev->mode_config.acquire_ctx while the
+> latter depend on a user provided one (typically in the stack).
+> 
+> In the old (working) code the global context structure is freed in
+> drm_modeset_unlock_all() thus we are sure no one is holding a reference to it at
+> that point. This means that as long as no one accesses the global
+> dev->mode_config.acquire_ctx context in the block that runs between lock/BEGIN
+> and unlock/END, the code should be equivalent before and after my changes.
+> 
+> In fact, now that my patch series removes the drm_modeset_{lock,unlock}_all()
+> functions, the acquire_ctx field of the drm_mode_config structure should be
+> deleted:
+> 
+>     /**
+>      * @acquire_ctx:
+>      *
+>      * Global implicit acquire context used by atomic drivers for legacy
+>      * IOCTLs. Deprecated, since implicit locking contexts make it
+>      * impossible to use driver-private &struct drm_modeset_lock. Users of
+>      * this must hold @mutex.
+>      */
+>     struct drm_modeset_acquire_ctx *acquire_ctx;
+> 
+> If I had done that (ie. removing this field) I would have detected the problem
+> when compiling.
+> 
+> There is another place (in the amdgpu driver) where this field is still being
+> referenced, but before I investigate that I would like to know if you agree that
+> this is a good path to follow.
+
+Yeah, removing the mode_config.acquire_ctx is a good idea if it's
+no longer needed.
+
+> 
+> Regarding the second issue you raised...
+> 
+>     > Also DRM_MODESET_LOCK_ALL_{BEGIN,END}() do not seem to be
+>     > equivalent to drm_modeset_{lock,unlock}_all() when it comes to 
+>     > mode_config.mutex. So would need a proper review whether we
+>     > actually need that lock or not.
+> 
+> ...the only difference regarding mode_config.mutex I see is that in the new
+> macros the mutex is locked only under this condition:
+> 
+>     if (!drm_drv_uses_atomic_modeset(dev))
+> 
+> ...which seems reasonable, right? Is this what you were referring to or is it
+> something else?
+
+In order to eliminate the lock one first has to determine what that lock
+might be protecting here, and then prove that such protection is not
+actually needed.
+
+-- 
+Ville Syrjälä
+Intel
