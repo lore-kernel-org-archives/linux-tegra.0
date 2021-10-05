@@ -2,180 +2,133 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1EF7C433EF
-	for <linux-tegra@archiver.kernel.org>; Tue,  5 Oct 2021 13:11:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FC4CC4332F
+	for <linux-tegra@archiver.kernel.org>; Tue,  5 Oct 2021 13:50:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 94BE261354
-	for <linux-tegra@archiver.kernel.org>; Tue,  5 Oct 2021 13:11:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 69839615A4
+	for <linux-tegra@archiver.kernel.org>; Tue,  5 Oct 2021 13:50:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235008AbhJENNC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 5 Oct 2021 09:13:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54580 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234926AbhJENNA (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 5 Oct 2021 09:13:00 -0400
-Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45357C06174E
-        for <linux-tegra@vger.kernel.org>; Tue,  5 Oct 2021 06:11:10 -0700 (PDT)
-Received: by mail-lf1-x12b.google.com with SMTP id g41so85888053lfv.1
-        for <linux-tegra@vger.kernel.org>; Tue, 05 Oct 2021 06:11:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=jjr/5gs80cWEm3vhyk3aM1mKvl135EXltar2PLrRZ/k=;
-        b=P2GJcTPd6Kk45HZ8Ezt3mOStexgciMfR/ERjqn7quus9WPj7c0pgJ31TVKDyKIyFGw
-         Y+F7WGFBzXS/vp5jDxxMyzTz/hmBB5xPYGuEv6qEQ23KVdyCACYcfsWUkcNmRV/ofYHS
-         vE4LfuNllox/XGETXWlqstK2Q0L/vr7oXCynROhlgtpi4vvXnVvj6wEyBllh0eoIaYn8
-         f40td9gch4cO2Jp1h51EkJPAQ6/xwpwREWWIr5YIzLYLVQSBM9my6mb9NpueANAdQfBZ
-         CLGXLy2HZcaqGOasKeUtPNXPs47D7ubFHOmVm/lx2TuvCwySuEvv9iGf+AtaMpafWnSk
-         y69w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=jjr/5gs80cWEm3vhyk3aM1mKvl135EXltar2PLrRZ/k=;
-        b=mVxmy6PIZs4BC3LNbJkrTOYw3WKgKCgBf4rx42Hr/Iq+pxluYhS7R9Tt/xl07DSIFg
-         sD9xI01ST9NmibEy/8ks1Mi+P/03LZunReGkyDxCLvkPhko1eCIZHOdZeu1DKdFUc91v
-         vWHpJwZRoZyl/townE+NIbSHFcWE/mAeQYd7aNu4oFXbz+AS+gTOv3MHmeYWRUDVvzXz
-         D6PVBGSKdjK0h8nChqVKEqfKqxel8rQOmTJFGoDacdhC6b7JTPHpr85Wg2yFPvScLJ3B
-         BdSHTl058QHBXUmfis2pj7eLeHrSb2biaN+jXQe4DermYnGIK2sdmYFMO4gffj1KyYJv
-         Oyfg==
-X-Gm-Message-State: AOAM533qMIE8fU4mnHnTe16p6NArMJjWtrEwtykumlAU4JGGF6e0gE5X
-        MwTMRxawCAzaQK/GmDv2cSmSk/IrrvQozQ6e7GkUng==
-X-Google-Smtp-Source: ABdhPJzhN75cYX0QdxPZZrVkTo8LNm3eo8IzoivQ7mSAH2J9FquztKwBCIMLaRlaWOOdBUUox7ZGcX1wvMYGNrjgk1w=
-X-Received: by 2002:a05:651c:20b:: with SMTP id y11mr22911109ljn.463.1633439466354;
- Tue, 05 Oct 2021 06:11:06 -0700 (PDT)
+        id S235301AbhJENwQ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 5 Oct 2021 09:52:16 -0400
+Received: from mail-co1nam11on2046.outbound.protection.outlook.com ([40.107.220.46]:20321
+        "EHLO NAM11-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S235259AbhJENwO (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 5 Oct 2021 09:52:14 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=BVzVtVd6gQADftCVtNqzOgWkqNmBHPNMAdy23G41fif6pvJ5d5B+ct2/uiERGZ/z1S/B+HXL6hQptVnpKZ9uGzfstJ8QFySrpAew1FqdbH5s3yF0RsE0GKLzO35Um+v1DZ93f779mvML+9eueV9s6jtaRFxWNG4cHwBs5+uTmdva/XXSLcvr6X7bJtGr5dL/jhd7zeVGZIjVXF9Lfj4gkST2JxvDvflYta0t/An748v3lDI3rGvH9fuiwWMZpa6X0SmCXkMApqnt/puAA7zLyuYovbs5uZlZcx5Qc6h49OlQ/X0xZx3WOuXGE/Vi+cGU5M9V67wwzJkzsFmNmqOt5A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=BFNaxRADeCi6YMDUPDV/QG5SjFRTlcpvvHAyy7rkHR0=;
+ b=msuj6q/7a+R0hfQs7tB1RX8jEcwOz9XpcD7zJ8P9BgfA0YNOJGodpgWjFVqb6sVknn10wZNuj68jDWLb+0klA9NAvKoYsMIHgVslGIFJifs4bD06J4EFdtTGvH4NcOxlQN91mB3oLtDxWJBBOMhX09Vh+SfO96obSciH+havH5b3rLKBoYkYFK/NiTlJiEISTAXelyhV1UMgdaZFM+RCDa+ohiXUPuazGFJyzQMdIApcZy9ex4hnOrOFL/5iefpSFgOMeuqspYPi1Y4JIsPKKd5d0wDdFCI9m8ty5DZhhkjxQHfsJqxhwOeonfoTeQ3hh7Vrnwyp74hHLauzQizulw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.112.36) smtp.rcpttodomain=denx.de smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=BFNaxRADeCi6YMDUPDV/QG5SjFRTlcpvvHAyy7rkHR0=;
+ b=j5Jeiu1LXQDWazoelpDYC6EHkf+eOL0BV3BjIgYsiHtNHrV+nAlPOTl/77ZS5yWq7GChKuLOtRE8OG1PYOmVKFlaeOLenKBFRt1aJcSno5kjKQwfcexsWy/boUw4yehi7Ld8S5KNLpT3CxHhTYZkHvUpqqqkaCxLGAvlbIBZo3m75WQd3ZBelE8JgyaoehZa28d3wWbKzQqO+5S6MxaQf5vCSLu1VfcyWIHZfZMsdgUPTsYWxcY0CYj1ZKRGoitN3fzt7IcosRJGzRAsHIRcmvd0rXuVLHNr45RKVJJs2yZ+YfArJWK22rCnfGCEKuOADJmuGcOhrtrJ+FzJHciLjw==
+Received: from BN9PR03CA0288.namprd03.prod.outlook.com (2603:10b6:408:f5::23)
+ by BN9PR12MB5113.namprd12.prod.outlook.com (2603:10b6:408:136::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4566.16; Tue, 5 Oct
+ 2021 13:50:21 +0000
+Received: from BN8NAM11FT031.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:408:f5:cafe::9) by BN9PR03CA0288.outlook.office365.com
+ (2603:10b6:408:f5::23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4566.22 via Frontend
+ Transport; Tue, 5 Oct 2021 13:50:21 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.36)
+ smtp.mailfrom=nvidia.com; denx.de; dkim=none (message not signed)
+ header.d=none;denx.de; dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.112.36 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.112.36; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (216.228.112.36) by
+ BN8NAM11FT031.mail.protection.outlook.com (10.13.177.25) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.4566.14 via Frontend Transport; Tue, 5 Oct 2021 13:50:21 +0000
+Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Tue, 5 Oct
+ 2021 13:50:20 +0000
+Received: from jonathanh-vm-01.nvidia.com (172.20.187.5) by mail.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1497.18 via Frontend
+ Transport; Tue, 5 Oct 2021 13:50:20 +0000
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
+        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
+        <stable@vger.kernel.org>, <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 4.4 00/41] 4.4.286-rc2 review
+In-Reply-To: <20211005083253.853051879@linuxfoundation.org>
+References: <20211005083253.853051879@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-References: <20210926224058.1252-1-digetx@gmail.com> <20210926224058.1252-7-digetx@gmail.com>
- <CAPDyKFq+LS4Jr1GyC-a-tGWPzGH0JxfJ9wKY=uQEBGYm952azw@mail.gmail.com> <24101cd6-d3f5-1e74-db39-145ecd30418b@gmail.com>
-In-Reply-To: <24101cd6-d3f5-1e74-db39-145ecd30418b@gmail.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Tue, 5 Oct 2021 15:10:30 +0200
-Message-ID: <CAPDyKFreK7976PJL-1zySoza_yXM7rMQ64aODWUZ+U3L-uCa0w@mail.gmail.com>
-Subject: Re: [PATCH v13 06/35] clk: tegra: Support runtime PM and power domain
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Peter Chen <peter.chen@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>, Nishanth Menon <nm@ti.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux USB List <linux-usb@vger.kernel.org>,
-        linux-staging@lists.linux.dev, linux-pwm@vger.kernel.org,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        DTML <devicetree@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Richard Weinberger <richard@nod.at>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Lucas Stach <dev@lynxeye.de>, Stefan Agner <stefan@agner.ch>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        David Heidelberg <david@ixit.cz>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Message-ID: <3fb77fbfdba94969b582af4c951c330e@HQMAIL105.nvidia.com>
+Date:   Tue, 5 Oct 2021 13:50:20 +0000
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 2e0f39f2-7528-46e1-1a98-08d9880712fe
+X-MS-TrafficTypeDiagnostic: BN9PR12MB5113:
+X-Microsoft-Antispam-PRVS: <BN9PR12MB5113FD5D943675E6D3ED8166D9AF9@BN9PR12MB5113.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: K4qD+zLH6JIkJaK6zPrB1ffFY2TZA44VtAW6ideq3wWUUscL+xFeq370iA3Xwo5nAkw+lm2wj6Coy6lCou/ruY2cucUjMyqdQTz66J+Q0fG5S2/86G9sznHtUmppKEMSqjq0vvKQTGJlImbeht/js+PxcEpFykwAXcayUAtF45Iek+rIRxbYbiqT8XbJtjkWyEmvdhXkuKeG1WhKk7d1bZBb2JKDZsjkv91r5/IDPUISMcAmWDaHk8MyEiBfwQxwtPhlV0O75TwvCyjnzhF9drbtr9HtzVZTcO0W78UXnNMpPek/XFqTswF2ABYNbRIHgYAgYfY9Dk7g+jp+PeLL1PinMq1O0hpI7b3ZztGRcauUkMM2w64/twe8BojPeLoI+1EjiQD7ApiEIyXBI17D9+zVTDdWxWiX2Z/x5+MdF/vSzYgrurYD0nEtcnJJuowa+clETVsDfFIKAwx55Uq9xjaeTkgeQ60YI4c5Sse6BOzMzVwfVJU/WxYIV2iaPillaLPcRzn6c6dDhURQAd4CgS+FNEIh4lu98x3lQjCzwL8iqWovEisWe1oizOK9UZirk4lgh7jykuVTwBLKdJwvBD3EzvTjpSiR8yogq3c5XSWknhtCZ//o/w9xyBenGMxelqhyavJCEGx/n7swjqmBMPICoQNOryWSkiL+Z0TEGLFuov2WyuwKv7Aj5egqu5+h/ONKAQTB7OWe0LIKM7zHgVCSssAd/TSDVVXcFnjTd68uSz3MS2fFguySKsmI3QCsFqjrMU6INtW0Y+kDY/0cawc3IU904sHHi2oi4eZIsUw=
+X-Forefront-Antispam-Report: CIP:216.228.112.36;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid05.nvidia.com;CAT:NONE;SFS:(4636009)(46966006)(36840700001)(7416002)(26005)(36860700001)(426003)(24736004)(6916009)(86362001)(186003)(70586007)(70206006)(7636003)(8676002)(316002)(356005)(108616005)(47076005)(2906002)(508600001)(82310400003)(5660300002)(336012)(8936002)(4326008)(54906003)(966005);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Oct 2021 13:50:21.2758
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2e0f39f2-7528-46e1-1a98-08d9880712fe
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.36];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT031.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN9PR12MB5113
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Sat, 2 Oct 2021 at 22:44, Dmitry Osipenko <digetx@gmail.com> wrote:
->
-> 01.10.2021 15:32, Ulf Hansson =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> >> +static __maybe_unused int tegra_clock_pm_suspend(struct device *dev)
-> >> +{
-> >> +       struct tegra_clk_device *clk_dev =3D dev_get_drvdata(dev);
-> >> +
-> >> +       /*
-> >> +        * Power management of the clock is entangled with the Tegra P=
-MC
-> >> +        * GENPD because PMC driver enables/disables clocks for toggli=
-ng
-> >> +        * of the PD's on/off state.
-> >> +        *
-> >> +        * The PMC GENPD is resumed in NOIRQ phase, before RPM of the =
-clocks
-> >> +        * becomes available, hence PMC can't use clocks at the early =
-resume
-> >> +        * phase if RPM is involved. For example when 3d clock is enab=
-led,
-> >> +        * it may enable the parent PLL clock that needs to be RPM-res=
-umed.
-> >> +        *
-> >> +        * Secondly, the PLL clocks may be enabled by the low level su=
-spend
-> >> +        * code, so we need to assume that PLL is in enabled state dur=
-ing
-> >> +        * suspend.
-> >> +        *
-> >> +        * We will keep PLLs and system clock resumed during suspend t=
-ime.
-> >> +        * All PLLs on all SoCs are low power and system clock is alwa=
-ys-on,
-> >> +        * so practically not much is changed here.
-> >> +        */
-> >> +
-> >> +       return clk_prepare(clk_dev->hw->clk);
-> > I am trying to understand, more exactly, what you intend to achieve
-> > with the clk_prepare() here. It looks a bit weird, to me. Can you try
-> > to elaborate a bit more on the use case?
->
-> The Tegra GENPD driver enable/disable clocks when domain is turned on.
+On Tue, 05 Oct 2021 10:37:55 +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.4.286 release.
+> There are 41 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Thu, 07 Oct 2021 08:32:44 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.286-rc2.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-Okay. I noticed that in tegra_genpd_power_on(). And the same clocks
-are enabled/disabled also in tegra_genpd_power_off(), when powering
-off the PM domain.
+All tests passing for Tegra ...
 
-So I guess the problem kind of exists for tegra_genpd_power_off() too?
+Test results for stable-v4.4:
+    6 builds:	6 pass, 0 fail
+    12 boots:	12 pass, 0 fail
+    30 tests:	30 pass, 0 fail
 
-> This can't be done during early system resume, when domains are getting
-> turned on by the drivers core, because when clock is enabled, it's
-> getting prepared (RPM-resumed) and this preparation fails because
-> performance state of the clock goes up and it doesn't work during the
-> early resume time since I2C, which applies the state to hardware, is
-> suspended and can't work at that early time.
+Linux version:	4.4.286-rc2-g72b93c725842
+Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+                tegra30-cardhu-a04
 
-This sounds complicated and I still don't quite follow all of it, sorry.
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
-So, tegra_genpd_power_on() gets called from genpd_resume_noirq(), when
-the first device of the attached devices to genpd gets resumed. And
-vice versa for tegra_genpd_power_off() and genpd_suspend_noirq().
-
-Are you saying that trying to enable/disable clocks from
-tegra_genpd_power_on|off() in these paths doesn't work, because it
-would also require the performance state to be changed, which would
-fail because the I2C bus/driver is suspended?
-
->
-> Secondly, Tegra has arch-specific low level assembly which touches
-> clocks during last phase of system suspend and in the beginning of
-> resume. Hence, clocks should stay prepared during suspend just because
-> technically clock should be prepared before it can be enabled.
-
-So the low level code is gating and ungating the clock behind the back
-of the clock driver then? Why is that done like that, more exactly?
-
->
-> > Is this rather about making sure that the clock's corresponding PM
-> > domain stays powered on during system suspend? In that case, I think
-> > there may be an alternative option....
-> >
->
-> This is not about domain staying powered on, this is about keeping the
-> performance state of the domain high during suspend.
-
-Right, so the PM domain managed in tegra_genpd_power_on|off() can
-still be powered on/off, as long as the clock remains ungated?
-
-Kind regards
-Uffe
+Jon
