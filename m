@@ -2,91 +2,132 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34476C433EF
-	for <linux-tegra@archiver.kernel.org>; Tue,  5 Oct 2021 11:13:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E6E7C433EF
+	for <linux-tegra@archiver.kernel.org>; Tue,  5 Oct 2021 11:21:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1086D60F93
-	for <linux-tegra@archiver.kernel.org>; Tue,  5 Oct 2021 11:13:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 77C5D614C8
+	for <linux-tegra@archiver.kernel.org>; Tue,  5 Oct 2021 11:21:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233705AbhJELPV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 5 Oct 2021 07:15:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47128 "EHLO mail.kernel.org"
+        id S233727AbhJELWx (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 5 Oct 2021 07:22:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48858 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232658AbhJELPV (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 5 Oct 2021 07:15:21 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id B9D3161251;
-        Tue,  5 Oct 2021 11:13:30 +0000 (UTC)
+        id S234217AbhJELWw (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 5 Oct 2021 07:22:52 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 6D25261425;
+        Tue,  5 Oct 2021 11:21:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1633432410;
-        bh=MP0zBtemtkQdqL8OmFU92hKaTF3Fwa0EJ8Ni7xN2MQQ=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=p5SeEDKNWmorB1aERVWlJrUJFNy/bgmsyZlYjmB3i1z8diKCJrkTeRRXXsDR1DVom
-         vA/MJE/AFcPSB7aY81e7aJIyYyDZYDHj7qs+vd91HSgxU0eKGET9tmmoJ6i3ANm9FM
-         jdxd8XKbujTchHiCgeDtVOAdYyH6EpZRsbfZRwWkq55cn3sjzFFM3cQdj4Aqbj94C/
-         omvocXtmtHPl9IdL5aCe5H/JJr8e1Njtxj9H/+gIxaSAOsgabAiB3+hwOuZYIus8J0
-         /7CIUdFgGFw4g1Rx+dsQCOAipwswntmJVk///9p/yAakrUZ7zUuNqOizGigR12U11B
-         1AbpqgAb0iRow==
-Received: by mail-wr1-f41.google.com with SMTP id t8so36773293wri.1;
-        Tue, 05 Oct 2021 04:13:30 -0700 (PDT)
-X-Gm-Message-State: AOAM5321zMsOUB6n9ABYt9RYXqEqIvoJcdgO5bDcnBSpnVn93vYRablm
-        YxYV5JxiKgMirfGB7ONVvZLRhFsv9xZSB69h5S4=
-X-Google-Smtp-Source: ABdhPJxm8Hkv+U2qTgwd7JgG4bmf7LJ55i18N0rZnyQafyKdjpcuy+trai2GX3XtqF4Cbb2Tz/frlo0hsiDd1SJyDKE=
-X-Received: by 2002:adf:a3da:: with SMTP id m26mr965033wrb.336.1633432409306;
- Tue, 05 Oct 2021 04:13:29 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210927142258.1863321-1-arnd@kernel.org> <YVwxxywC5iSGSaXM@kroah.com>
-In-Reply-To: <YVwxxywC5iSGSaXM@kroah.com>
+        s=k20201202; t=1633432862;
+        bh=fvJpMHHEet+MaQV3Zx/ytB8336I76r/NnwK/oIOSVQg=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Eu4FspsPS6S0lAkM8OXIpTWEuaWMOKYH8hGAEjkmHlox0ju828ZBmYSFq8cVKdhXi
+         rOXXJqoPeLfDUtz6ZWW62u1qbyCLQhlFie34tILjIfW1L+x5K82lR1JeT246u0WdAF
+         snOcyfvK8a3nal06gmex7k+cV4VwzbkvvdFYZV7oX0e8UzufkR/3jF7V76WUv99M/W
+         qRP8tTz8gV2P6ctjnhCtzqqmAvqywPyFZs2cXCP95VTYlAPnRJBccVHee2p26BGIe5
+         dZrb4vSCzE5zLhBdBX1CK9ZY/R2EgCNvIaqD5z0DIakK3MgF/nW4XUNhRmOjL4pUzv
+         tNN0wxt5ooNxg==
 From:   Arnd Bergmann <arnd@kernel.org>
-Date:   Tue, 5 Oct 2021 13:13:13 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a3nmutn8ZHQkzH99mht9RPAUCTOvqTfEGPUKLoeqTs-pA@mail.gmail.com>
-Message-ID: <CAK8P3a3nmutn8ZHQkzH99mht9RPAUCTOvqTfEGPUKLoeqTs-pA@mail.gmail.com>
-Subject: Re: [PATCH] [RESEND] usb: xhci: tegra: mark PM functions as __maybe_unused
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Mathias Nyman <mathias.nyman@intel.com>,
+To:     Mathias Nyman <mathias.nyman@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>, JC Kuo <jckuo@nvidia.com>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        JC Kuo <jckuo@nvidia.com>, Arnd Bergmann <arnd@arndb.de>,
         Yang Yingliang <yangyingliang@huawei.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        USB list <linux-usb@vger.kernel.org>,
-        "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] [v3] usb: xhci: tegra: mark PM functions as __maybe_unused
+Date:   Tue,  5 Oct 2021 13:20:28 +0200
+Message-Id: <20211005112057.2700888-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.29.2
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Oct 5, 2021 at 1:07 PM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> On Mon, Sep 27, 2021 at 04:22:52PM +0200, Arnd Bergmann wrote:
-> > From: Arnd Bergmann <arnd@arndb.de>
-> >
-> > The added #ifdefs in the PM rework were almost correct, but still
-> > cause warnings in some randconfig builds:
-> >
-> > drivers/usb/host/xhci-tegra.c:2147:12: error: 'tegra_xusb_resume' defined but not used [-Werror=unused-function]
-> >  2147 | static int tegra_xusb_resume(struct device *dev)
-> >       |            ^~~~~~~~~~~~~~~~~
-> > drivers/usb/host/xhci-tegra.c:2105:12: error: 'tegra_xusb_suspend' defined but not used [-Werror=unused-function]
-> >  2105 | static int tegra_xusb_suspend(struct device *dev)
-> >
-> > Replace the #ifdef checks with simpler __maybe_unused annotations to
-> > reliably shut up these warnings.
-> >
-> > Fixes: d64d362f1d8b ("usb: xhci: tegra: Enable ELPG for runtime/system PM")
->
-> What tree does this commit come in from?  I don't see it in my usb tree
-> :(
+From: Arnd Bergmann <arnd@arndb.de>
 
-I don't know, I originally created the patch back in April when the
-problem first
-showed up in my randconfig build tree, and picked up the commit now when I saw
-the bug still exists in v5.15-rc.
+The added #ifdefs in the PM rework were almost correct, but still
+cause warnings in some randconfig builds:
 
-Apparently the commit ID that has made it into mainline through your tree was
-971ee247060d ("usb: xhci: tegra: Enable ELPG for runtime/system PM").
-I'll resend with that reference fixed.
+drivers/usb/host/xhci-tegra.c:2147:12: error: 'tegra_xusb_resume' defined but not used [-Werror=unused-function]
+ 2147 | static int tegra_xusb_resume(struct device *dev)
+      |            ^~~~~~~~~~~~~~~~~
+drivers/usb/host/xhci-tegra.c:2105:12: error: 'tegra_xusb_suspend' defined but not used [-Werror=unused-function]
+ 2105 | static int tegra_xusb_suspend(struct device *dev)
 
-      Arnd
+Replace the #ifdef checks with simpler __maybe_unused annotations to
+reliably shut up these warnings.
+
+Fixes: 971ee247060d ("usb: xhci: tegra: Enable ELPG for runtime/system PM")
+Reviewed-by: JC Kuo <jckuo@nvidia.com>
+Link: https://lore.kernel.org/all/20210421135613.3560777-2-arnd@kernel.org/
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+v3: fix reference to original commit.
+---
+ drivers/usb/host/xhci-tegra.c | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
+index 575fa89a783f..1bf494b649bd 100644
+--- a/drivers/usb/host/xhci-tegra.c
++++ b/drivers/usb/host/xhci-tegra.c
+@@ -1787,7 +1787,6 @@ static int tegra_xusb_remove(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
+-#if IS_ENABLED(CONFIG_PM) || IS_ENABLED(CONFIG_PM_SLEEP)
+ static bool xhci_hub_ports_suspended(struct xhci_hub *hub)
+ {
+ 	struct device *dev = hub->hcd->self.controller;
+@@ -2102,7 +2101,7 @@ static int tegra_xusb_exit_elpg(struct tegra_xusb *tegra, bool runtime)
+ 	return err;
+ }
+ 
+-static int tegra_xusb_suspend(struct device *dev)
++static __maybe_unused int tegra_xusb_suspend(struct device *dev)
+ {
+ 	struct tegra_xusb *tegra = dev_get_drvdata(dev);
+ 	int err;
+@@ -2144,7 +2143,7 @@ static int tegra_xusb_suspend(struct device *dev)
+ 	return err;
+ }
+ 
+-static int tegra_xusb_resume(struct device *dev)
++static __maybe_unused int tegra_xusb_resume(struct device *dev)
+ {
+ 	struct tegra_xusb *tegra = dev_get_drvdata(dev);
+ 	int err;
+@@ -2174,10 +2173,8 @@ static int tegra_xusb_resume(struct device *dev)
+ 
+ 	return 0;
+ }
+-#endif
+ 
+-#ifdef CONFIG_PM
+-static int tegra_xusb_runtime_suspend(struct device *dev)
++static __maybe_unused int tegra_xusb_runtime_suspend(struct device *dev)
+ {
+ 	struct tegra_xusb *tegra = dev_get_drvdata(dev);
+ 	int ret;
+@@ -2190,7 +2187,7 @@ static int tegra_xusb_runtime_suspend(struct device *dev)
+ 	return ret;
+ }
+ 
+-static int tegra_xusb_runtime_resume(struct device *dev)
++static __maybe_unused int tegra_xusb_runtime_resume(struct device *dev)
+ {
+ 	struct tegra_xusb *tegra = dev_get_drvdata(dev);
+ 	int err;
+@@ -2201,7 +2198,6 @@ static int tegra_xusb_runtime_resume(struct device *dev)
+ 
+ 	return err;
+ }
+-#endif
+ 
+ static const struct dev_pm_ops tegra_xusb_pm_ops = {
+ 	SET_RUNTIME_PM_OPS(tegra_xusb_runtime_suspend,
+-- 
+2.29.2
+
