@@ -2,75 +2,72 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41EE0C433FE
-	for <linux-tegra@archiver.kernel.org>; Tue,  5 Oct 2021 06:33:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4798AC433EF
+	for <linux-tegra@archiver.kernel.org>; Tue,  5 Oct 2021 07:02:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2964261354
-	for <linux-tegra@archiver.kernel.org>; Tue,  5 Oct 2021 06:33:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1FB026159A
+	for <linux-tegra@archiver.kernel.org>; Tue,  5 Oct 2021 07:02:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231967AbhJEGe7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 5 Oct 2021 02:34:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59092 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230526AbhJEGe7 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 5 Oct 2021 02:34:59 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 9244661251;
-        Tue,  5 Oct 2021 06:33:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1633415589;
-        bh=QFHAeDRRSiQyrtHsYxia9CmhBdGDJKJLZc5S01XcQWI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=VYMQdaGZCHaGOSxekgQOpfwZS4fA8PeVUETCQ9P0v0TpMTw5jRM4AFMjOBII4WjXQ
-         r4tZIqZlZKewHNzBdg95E0KacIxrCkrjLMR75xB9Txnj6TbckNCjrLH4rb9S1C/71Q
-         gDrnxC2i6Hijnkmg8CN+bpadCkpGBFlISSLMdic/yThYfMh1Xf+q2nr/hVNmGOoHGr
-         XTFtjVsyMI5GdyeLJV1l7xJj0wTjXtEJyQ1SdbTGs8tytq9V1HUPC6ASwg4oP356oJ
-         SmXHfNQHgwC92gWpX3elE/Yk8WinBz6MddVTatu+XhdEVCj9+1MuMB8gtLHVkYvD9l
-         /jp84T94POfEQ==
-Date:   Tue, 5 Oct 2021 12:03:05 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Sameer Pujar <spujar@nvidia.com>
-Cc:     jonathanh@nvidia.com, ldewangan@nvidia.com,
-        thierry.reding@gmail.com, dmaengine@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RESEND PATCH 0/3] Few Tegra210 ADMA fixes
-Message-ID: <YVvxoSChGm0lN4rZ@matsya>
-References: <1631722025-19873-1-git-send-email-spujar@nvidia.com>
- <564a850a-41e4-31fc-9ebe-51ac6b859f62@nvidia.com>
+        id S230526AbhJEHEd (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 5 Oct 2021 03:04:33 -0400
+Received: from unicom146.biz-email.net ([210.51.26.146]:4600 "EHLO
+        unicom146.biz-email.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231816AbhJEHEc (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 5 Oct 2021 03:04:32 -0400
+Received: from ([60.208.111.195])
+        by unicom146.biz-email.net ((LNX1044)) with ASMTP (SSL) id YHH00035;
+        Tue, 05 Oct 2021 15:02:35 +0800
+Received: from localhost.localdomain (10.200.104.119) by
+ jtjnmail201606.home.langchao.com (10.100.2.6) with Microsoft SMTP Server id
+ 15.1.2308.14; Tue, 5 Oct 2021 15:02:36 +0800
+From:   Kai Song <songkai01@inspur.com>
+To:     <krzysztof.kozlowski@canonical.com>
+CC:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        Kai Song <songkai01@inspur.com>
+Subject: [PATCH] memory: tegra210-emc: replace DEFINE_SIMPLE_ATTRIBUTE with
+Date:   Tue, 5 Oct 2021 12:35:14 +0800
+Message-ID: <20211005043514.9650-1-songkai01@inspur.com>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <564a850a-41e4-31fc-9ebe-51ac6b859f62@nvidia.com>
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.200.104.119]
+tUid:   20211005150235d31e8fdc29e23751e046cbafe63ded92
+X-Abuse-Reports-To: service@corp-email.com
+Abuse-Reports-To: service@corp-email.com
+X-Complaints-To: service@corp-email.com
+X-Report-Abuse-To: service@corp-email.com
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 04-10-21, 21:19, Sameer Pujar wrote:
-> Hi Vinod,
-> 
-> On 9/15/2021 9:37 PM, Sameer Pujar wrote:
-> > Following are the fixes in the series:
-> >   - Couple of minor fixes (non functional fixes)
-> > 
-> >   - ADMA FIFO size fix: The slave ADMAIF channels have different default
-> >     FIFO sizes (ADMAIF FIFO is actually a ring buffer and it is divided
-> >     amongst all available channels). As per HW recommendation the sizes
-> >     should match with the corresponding ADMA channels to which ADMAIF
-> >     channel is mapped to at runtime. Thus program ADMA channel FIFO sizes
-> >     accordingly. Otherwise FIFO corruption is observed.
-> > 
-> > Sameer Pujar (3):
-> >    dmaengine: tegra210-adma: Re-order 'has_outstanding_reqs' member
-> >    dmaengine: tegra210-adma: Add description for 'adma_get_burst_config'
-> >    dmaengine: tegra210-adma: Override ADMA FIFO size
-> > 
-> >   drivers/dma/tegra210-adma.c | 55 +++++++++++++++++++++++++++++++--------------
-> >   1 file changed, 38 insertions(+), 17 deletions(-)
-> > 
-> 
-> Are these patches good to be picked up? or I need to resend these?
+fix debugfs_simple_attr.cocci warning:
+drivers/memory/tegra/tegra210-emc-core.c:1665:0-23: WARNING:tegra210_emc_debug_min_rate_fops 
+should be defined with DEFINE_DEBUGFS_ATTRIBUTE
 
-Pls do not send unnecessary pings, I was on vacation, back now and going
-thru the queue!
+Fixes: 6fc5f1adf5a1 ("memory: tegra210-emc: replace DEFINE_SIMPLE_ATTRIBUTE 
+with DEFINE_DEBUGFS_ATTRIBUTE"):It reports the same warning, but didn't 
+fix all matches in this file at once.
+
+Signed-off-by: Kai Song <songkai01@inspur.com>
+---
+ drivers/memory/tegra/tegra210-emc-core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/memory/tegra/tegra210-emc-core.c b/drivers/memory/tegra/tegra210-emc-core.c
+index 3b8284c6678e..13584f9317a4 100644
+--- a/drivers/memory/tegra/tegra210-emc-core.c
++++ b/drivers/memory/tegra/tegra210-emc-core.c
+@@ -1662,7 +1662,7 @@ static int tegra210_emc_debug_min_rate_set(void *data, u64 rate)
+ 	return 0;
+ }
+ 
+-DEFINE_SIMPLE_ATTRIBUTE(tegra210_emc_debug_min_rate_fops,
++DEFINE_DEBUGFS_ATTRIBUTE(tegra210_emc_debug_min_rate_fops,
+ 			tegra210_emc_debug_min_rate_get,
+ 			tegra210_emc_debug_min_rate_set, "%llu\n");
  
 -- 
-~Vinod
+2.27.0
+
