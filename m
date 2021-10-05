@@ -2,75 +2,75 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF4D2C433F5
-	for <linux-tegra@archiver.kernel.org>; Tue,  5 Oct 2021 05:37:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41EE0C433FE
+	for <linux-tegra@archiver.kernel.org>; Tue,  5 Oct 2021 06:33:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D03FA60F5D
-	for <linux-tegra@archiver.kernel.org>; Tue,  5 Oct 2021 05:37:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2964261354
+	for <linux-tegra@archiver.kernel.org>; Tue,  5 Oct 2021 06:33:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231364AbhJEFjS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 5 Oct 2021 01:39:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33096 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231142AbhJEFjS (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 5 Oct 2021 01:39:18 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81722C061745;
-        Mon,  4 Oct 2021 22:37:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
-        Content-ID:Content-Description:In-Reply-To:References;
-        bh=fBUNICS3Pwixz65i7Q16asMz+5dJwJkx8E+lnKdL6pM=; b=NOGKtj/TuRDL8tYrGmh5tKGLad
-        0vcYwUc4cBC0yi8/RJmof0ZhcYYxvGr5GBgZvKonrwPnMCQzQelqr+gOlf7SGA8gW3dw0I/lhqUON
-        8wEw1pMABWdvE09WdVSXtHtz9ISinJBow4dxvnO6/3zzPlHdIIzSZ4iBf13+l34dUyaLI5TKpAv2M
-        XHIdwZA1V9SdTXbDGzCnnp50QPL4vuI5XCwtXHtOLEF7hteu7Z/vMTYWkCB83KqFiHva7oWg25/Fx
-        0kaezQ8liuZQStVfWhYzDdycuwXzxdqCB8XV77XGFwgx+AEH7fo6KIZILNzG02X5C5cnU3Ylc7STI
-        skhpPPzw==;
-Received: from [2601:1c0:6280:3f0::aa0b] (helo=bombadil.infradead.org)
-        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mXd8p-008zfR-BN; Tue, 05 Oct 2021 05:37:27 +0000
-From:   Randy Dunlap <rdunlap@infradead.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Randy Dunlap <rdunlap@infradead.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>
-Subject: [PATCH v2] host1x: bus.c: drop excess kernel-doc entry @key
-Date:   Mon,  4 Oct 2021 22:37:26 -0700
-Message-Id: <20211005053726.14738-1-rdunlap@infradead.org>
-X-Mailer: git-send-email 2.31.1
+        id S231967AbhJEGe7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 5 Oct 2021 02:34:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59092 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230526AbhJEGe7 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 5 Oct 2021 02:34:59 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 9244661251;
+        Tue,  5 Oct 2021 06:33:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1633415589;
+        bh=QFHAeDRRSiQyrtHsYxia9CmhBdGDJKJLZc5S01XcQWI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=VYMQdaGZCHaGOSxekgQOpfwZS4fA8PeVUETCQ9P0v0TpMTw5jRM4AFMjOBII4WjXQ
+         r4tZIqZlZKewHNzBdg95E0KacIxrCkrjLMR75xB9Txnj6TbckNCjrLH4rb9S1C/71Q
+         gDrnxC2i6Hijnkmg8CN+bpadCkpGBFlISSLMdic/yThYfMh1Xf+q2nr/hVNmGOoHGr
+         XTFtjVsyMI5GdyeLJV1l7xJj0wTjXtEJyQ1SdbTGs8tytq9V1HUPC6ASwg4oP356oJ
+         SmXHfNQHgwC92gWpX3elE/Yk8WinBz6MddVTatu+XhdEVCj9+1MuMB8gtLHVkYvD9l
+         /jp84T94POfEQ==
+Date:   Tue, 5 Oct 2021 12:03:05 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Sameer Pujar <spujar@nvidia.com>
+Cc:     jonathanh@nvidia.com, ldewangan@nvidia.com,
+        thierry.reding@gmail.com, dmaengine@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RESEND PATCH 0/3] Few Tegra210 ADMA fixes
+Message-ID: <YVvxoSChGm0lN4rZ@matsya>
+References: <1631722025-19873-1-git-send-email-spujar@nvidia.com>
+ <564a850a-41e4-31fc-9ebe-51ac6b859f62@nvidia.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <564a850a-41e4-31fc-9ebe-51ac6b859f62@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Fix kernel-doc warning in host1x:
+On 04-10-21, 21:19, Sameer Pujar wrote:
+> Hi Vinod,
+> 
+> On 9/15/2021 9:37 PM, Sameer Pujar wrote:
+> > Following are the fixes in the series:
+> >   - Couple of minor fixes (non functional fixes)
+> > 
+> >   - ADMA FIFO size fix: The slave ADMAIF channels have different default
+> >     FIFO sizes (ADMAIF FIFO is actually a ring buffer and it is divided
+> >     amongst all available channels). As per HW recommendation the sizes
+> >     should match with the corresponding ADMA channels to which ADMAIF
+> >     channel is mapped to at runtime. Thus program ADMA channel FIFO sizes
+> >     accordingly. Otherwise FIFO corruption is observed.
+> > 
+> > Sameer Pujar (3):
+> >    dmaengine: tegra210-adma: Re-order 'has_outstanding_reqs' member
+> >    dmaengine: tegra210-adma: Add description for 'adma_get_burst_config'
+> >    dmaengine: tegra210-adma: Override ADMA FIFO size
+> > 
+> >   drivers/dma/tegra210-adma.c | 55 +++++++++++++++++++++++++++++++--------------
+> >   1 file changed, 38 insertions(+), 17 deletions(-)
+> > 
+> 
+> Are these patches good to be picked up? or I need to resend these?
 
-../drivers/gpu/host1x/bus.c:774: warning: Excess function parameter 'key' description in '__host1x_client_register'
-
-Fixes: 0cfe5a6e758f ("gpu: host1x: Split up client initalization and registration")
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>
-Cc: dri-devel@lists.freedesktop.org
-Cc: linux-tegra@vger.kernel.org
-Cc: David Airlie <airlied@linux.ie>
-Cc: Daniel Vetter <daniel@ffwll.ch>
----
-v2: rebase and resend
-
- drivers/gpu/host1x/bus.c |    1 -
- 1 file changed, 1 deletion(-)
-
---- lnx-515-rc4.orig/drivers/gpu/host1x/bus.c
-+++ lnx-515-rc4/drivers/gpu/host1x/bus.c
-@@ -761,7 +761,6 @@ EXPORT_SYMBOL(host1x_client_exit);
- /**
-  * __host1x_client_register() - register a host1x client
-  * @client: host1x client
-- * @key: lock class key for the client-specific mutex
-  *
-  * Registers a host1x client with each host1x controller instance. Note that
-  * each client will only match their parent host1x controller and will only be
+Pls do not send unnecessary pings, I was on vacation, back now and going
+thru the queue!
+ 
+-- 
+~Vinod
