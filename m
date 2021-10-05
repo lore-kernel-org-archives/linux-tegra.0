@@ -2,132 +2,135 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E6E7C433EF
-	for <linux-tegra@archiver.kernel.org>; Tue,  5 Oct 2021 11:21:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89210C433EF
+	for <linux-tegra@archiver.kernel.org>; Tue,  5 Oct 2021 12:55:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 77C5D614C8
-	for <linux-tegra@archiver.kernel.org>; Tue,  5 Oct 2021 11:21:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6BBEB61357
+	for <linux-tegra@archiver.kernel.org>; Tue,  5 Oct 2021 12:55:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233727AbhJELWx (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 5 Oct 2021 07:22:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48858 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234217AbhJELWw (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 5 Oct 2021 07:22:52 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 6D25261425;
-        Tue,  5 Oct 2021 11:21:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1633432862;
-        bh=fvJpMHHEet+MaQV3Zx/ytB8336I76r/NnwK/oIOSVQg=;
-        h=From:To:Cc:Subject:Date:From;
-        b=Eu4FspsPS6S0lAkM8OXIpTWEuaWMOKYH8hGAEjkmHlox0ju828ZBmYSFq8cVKdhXi
-         rOXXJqoPeLfDUtz6ZWW62u1qbyCLQhlFie34tILjIfW1L+x5K82lR1JeT246u0WdAF
-         snOcyfvK8a3nal06gmex7k+cV4VwzbkvvdFYZV7oX0e8UzufkR/3jF7V76WUv99M/W
-         qRP8tTz8gV2P6ctjnhCtzqqmAvqywPyFZs2cXCP95VTYlAPnRJBccVHee2p26BGIe5
-         dZrb4vSCzE5zLhBdBX1CK9ZY/R2EgCNvIaqD5z0DIakK3MgF/nW4XUNhRmOjL4pUzv
-         tNN0wxt5ooNxg==
-From:   Arnd Bergmann <arnd@kernel.org>
-To:     Mathias Nyman <mathias.nyman@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>, JC Kuo <jckuo@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Yang Yingliang <yangyingliang@huawei.com>,
-        linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] [v3] usb: xhci: tegra: mark PM functions as __maybe_unused
-Date:   Tue,  5 Oct 2021 13:20:28 +0200
-Message-Id: <20211005112057.2700888-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.29.2
+        id S234746AbhJEM5l (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 5 Oct 2021 08:57:41 -0400
+Received: from mail-mw2nam12on2059.outbound.protection.outlook.com ([40.107.244.59]:5047
+        "EHLO NAM12-MW2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S233762AbhJEM5k (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 5 Oct 2021 08:57:40 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=SZcGF747XkG6+F6nqX4EIhS2jIySwdCufYjmG/YybUULtl4L0lIqMAebcKujlgHz9wJQw2ga6i4qW4CXbH3/d/Y2axtM0gKYaq5wi2yV6wlTTKGNuiv0CuSPpV15A9oITOfLgUhE9rm7191BZ7JruGkedYE0PUJMsu4Zr3jMg5345djAiAzZIiH1gfkyPKqm1GWeQrwWeJB4R51eAqhbrva7Jk5OpP7tOi+5dKg88mR3L/lzz/v1q4PpMR3SMbuiviVErjrWveXy3P6Upz6F/uBrNbMwtIiAI3fQH9JirmTnWtKrQtBPR8ybj5XC3TBGwOv0WOdnkwnM+iRVSwfduw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=iX4fBdbNIDzO7dhe9uMRmacG/IbbqXQhfOtINp1k+jg=;
+ b=cDmODM9BdOd3lreI+N66w1NVuBb0epTaPzQY1KbCE0HXIEawMenbD2lb0PfIW/Y0zBwvXqJRxUjWNzspZrgEV9l5lNFoV5fp9zUrQ9Tj1MzlUWUExaDGFqxVEmUNHVohnLFloFki/OHEiNQ4WArHQWqhTijVHmlykR8zyMbebCfuOVC0pyevOAP6trHS3NntL9d5ucNP82IH0gGwO/JI2j1uiNNQuynesneE5E4fSfJ6kjqZokwNNfmkZXcfXh4oQyE5wVDoKUR2V/bsdnzRnakKevoyWFNONAMGVFtLu8waVqRpIQ/mXR0NQa4P8B1Fo//tPmfaPBWSdTXJENcwBQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.112.36) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=iX4fBdbNIDzO7dhe9uMRmacG/IbbqXQhfOtINp1k+jg=;
+ b=mqHc9VWFFopZj5eSK9PjZZs7wFrggUac7oNDYjgBmRwLoGCfzHEXvb/dgS8eRnsulF/A5Q5yE+0/9G61/kD7pcU2cVEGyP5OwYLFKQCbsMnXb2MnOMj7JiFeoyX2oLU0bbwVmyAgq4OGsxTdDo063FsecpLESIUouAOMiBf7I9Qo+LGGE21WNh0v4+t7wZmiR4Ml40hsYO07Ol87KYVGOAPHIKYdgSHWJvWRTVHTOmqhIkFc/7vNzxZfznqp4YX1rjIlCT2Nd1hxcVvnWXPKRfsu+2mLmEFRddENhzjDVXAlRJb0UytLmQIN9HIlW1Kci5H5a+27AQ4b9b0R4xjVdw==
+Received: from BN9PR03CA0439.namprd03.prod.outlook.com (2603:10b6:408:113::24)
+ by DM6PR12MB4514.namprd12.prod.outlook.com (2603:10b6:5:2a7::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4566.13; Tue, 5 Oct
+ 2021 12:55:48 +0000
+Received: from BN8NAM11FT004.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:408:113:cafe::54) by BN9PR03CA0439.outlook.office365.com
+ (2603:10b6:408:113::24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4566.17 via Frontend
+ Transport; Tue, 5 Oct 2021 12:55:47 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.36)
+ smtp.mailfrom=nvidia.com; gmail.com; dkim=none (message not signed)
+ header.d=none;gmail.com; dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.112.36 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.112.36; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (216.228.112.36) by
+ BN8NAM11FT004.mail.protection.outlook.com (10.13.176.164) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.4566.14 via Frontend Transport; Tue, 5 Oct 2021 12:55:46 +0000
+Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Tue, 5 Oct
+ 2021 12:55:46 +0000
+Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Tue, 5 Oct
+ 2021 12:55:45 +0000
+Received: from kyarlagadda-linux.nvidia.com (172.20.187.5) by mail.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server id 15.0.1497.18 via Frontend
+ Transport; Tue, 5 Oct 2021 12:55:41 +0000
+From:   Akhil R <akhilrajeev@nvidia.com>
+To:     <jonathanh@nvidia.com>
+CC:     <akhilrajeev@nvidia.com>, <dan.j.williams@intel.com>,
+        <dmaengine@vger.kernel.org>, <kyarlagadda@nvidia.com>,
+        <ldewangan@nvidia.com>, <linux-kernel@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <p.zabel@pengutronix.de>,
+        <rgumasta@nvidia.com>, <thierry.reding@gmail.com>,
+        <vkoul@kernel.org>
+Subject: [PATCH v9 0/4] Add NVIDIA Tegra GPC-DMA driver
+Date:   Tue, 5 Oct 2021 18:25:32 +0530
+Message-ID: <1633438536-11399-1-git-send-email-akhilrajeev@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+X-NVConfidentiality: public
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: e361395e-e1a7-474f-2879-08d987ff7351
+X-MS-TrafficTypeDiagnostic: DM6PR12MB4514:
+X-Microsoft-Antispam-PRVS: <DM6PR12MB4514336FA47892737B80DE79C0AF9@DM6PR12MB4514.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:2958;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: GCHlvET/3Y4+k//iEfZUG1NMxlifWvwy4uYnezjq2RIEOiI+judCT9XSQXsG5TN30Xszynf6YeT2KAF/MBos013CMfFAPlTQE+gq9rTMNgRmcGa7/tWTsZWgFDT6yEWXrXW0hN3Q9PdnnF6WLYp7SlgOaKstn9WClOu1qZAXj9p9ipkLubfnC3G+Xs+XN9niJRSfWMui4EAsfImjOmdkoQ2YK5yTdNXJ5hxZGdX9ETpSVmnnKWqr1diGNClgWSjs2AEjg+GclrbFOlYumsLeDkkxfzE+IEsWqiNSpgaMkQY7O5GUwaD9RX42OZBjac+BfA5ZFpCNnCp4qAH5TmtZUhRXkZ5b9MyKqg6anE4YyVJpjVcZ8gEMHgs0sjz2SKX96Ym1mw3rIv005Hv7MYi2VPXkWgVu/ehhZNRsma0nno5sVfJDxYcxDiDhFZPHU0YuM+SET4U/Kdjps8lzStXGm+/T23w3ujaFBnqA8+byLrofIwkLV7C35K3gD5CDt65+m8cEzPK1tf84KyCHysj5sE+735TBZXzyUR/zOEBIXWJv+42A0R4YkSNBeXSkhzFROhwGxGSmHteICSuB5K1RObf4t/Il2mj8udpYjUDtg0b1rWlxKXl4lg3zfHMScFnF4xUIc5L5dW7wTurYiASs+QzYsR2rVKHiTtDl60YHCavmT2DflSyrSm54yiQJ2Dy4YCNiNByQUV5+UGGRl9MtdyH49PUX5Abdw/YqL4x5BTLlv7sTE9xkhSELVYZGZZkSDbWRg47A5r9O+wAh4Yy7GSUWLtElzK41FoNYZ6JgFOyBk+99g/TNEWmdqS3NURfyMFdqYssKnFpRqnG+3uZZGw==
+X-Forefront-Antispam-Report: CIP:216.228.112.36;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid05.nvidia.com;CAT:NONE;SFS:(4636009)(36840700001)(46966006)(4326008)(82310400003)(5660300002)(356005)(8676002)(2906002)(7636003)(8936002)(36860700001)(37006003)(70586007)(6862004)(70206006)(86362001)(6666004)(6636002)(186003)(7696005)(316002)(426003)(54906003)(966005)(26005)(36756003)(2616005)(47076005)(336012)(508600001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Oct 2021 12:55:46.9075
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: e361395e-e1a7-474f-2879-08d987ff7351
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.36];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT004.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4514
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+Add support for NVIDIA Tegra general purpose DMA driver for
+Tegra186 and Tegra194 platform.
 
-The added #ifdefs in the PM rework were almost correct, but still
-cause warnings in some randconfig builds:
+Changes in patch v9:
+  * Indentation corrections
+  * removed redundant check for tdc->dma_desc in tegra_dma_terminate_all
 
-drivers/usb/host/xhci-tegra.c:2147:12: error: 'tegra_xusb_resume' defined but not used [-Werror=unused-function]
- 2147 | static int tegra_xusb_resume(struct device *dev)
-      |            ^~~~~~~~~~~~~~~~~
-drivers/usb/host/xhci-tegra.c:2105:12: error: 'tegra_xusb_suspend' defined but not used [-Werror=unused-function]
- 2105 | static int tegra_xusb_suspend(struct device *dev)
+v8 - https://lkml.org/lkml/2021/9/27/668
+v6..v7 - https://lkml.org/lkml/2021/9/17/652
+v2..v5 - https://lkml.org/lkml/2021/9/16/455
+v1 - https://lkml.org/lkml/2020/7/20/96
 
-Replace the #ifdef checks with simpler __maybe_unused annotations to
-reliably shut up these warnings.
+Akhil R (4):
+  dt-bindings: dmaengine: Add doc for tegra gpcdma
+  dmaengine: tegra: Add tegra gpcdma driver
+  arm64: defconfig: tegra: Enable GPCDMA
+  arm64: tegra: Add GPCDMA node for tegra186 and tegra194
 
-Fixes: 971ee247060d ("usb: xhci: tegra: Enable ELPG for runtime/system PM")
-Reviewed-by: JC Kuo <jckuo@nvidia.com>
-Link: https://lore.kernel.org/all/20210421135613.3560777-2-arnd@kernel.org/
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
-v3: fix reference to original commit.
----
- drivers/usb/host/xhci-tegra.c | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
+ .../bindings/dma/nvidia,tegra186-gpc-dma.yaml      |  108 ++
+ arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi     |    4 +
+ arch/arm64/boot/dts/nvidia/tegra186.dtsi           |   44 +
+ arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi     |    4 +
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi           |   44 +
+ arch/arm64/configs/defconfig                       |    1 +
+ drivers/dma/Kconfig                                |   12 +
+ drivers/dma/Makefile                               |    1 +
+ drivers/dma/tegra186-gpc-dma.c                     | 1297 ++++++++++++++++++++
+ 9 files changed, 1515 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/dma/nvidia,tegra186-gpc-dma.yaml
+ create mode 100644 drivers/dma/tegra186-gpc-dma.c
 
-diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
-index 575fa89a783f..1bf494b649bd 100644
---- a/drivers/usb/host/xhci-tegra.c
-+++ b/drivers/usb/host/xhci-tegra.c
-@@ -1787,7 +1787,6 @@ static int tegra_xusb_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
--#if IS_ENABLED(CONFIG_PM) || IS_ENABLED(CONFIG_PM_SLEEP)
- static bool xhci_hub_ports_suspended(struct xhci_hub *hub)
- {
- 	struct device *dev = hub->hcd->self.controller;
-@@ -2102,7 +2101,7 @@ static int tegra_xusb_exit_elpg(struct tegra_xusb *tegra, bool runtime)
- 	return err;
- }
- 
--static int tegra_xusb_suspend(struct device *dev)
-+static __maybe_unused int tegra_xusb_suspend(struct device *dev)
- {
- 	struct tegra_xusb *tegra = dev_get_drvdata(dev);
- 	int err;
-@@ -2144,7 +2143,7 @@ static int tegra_xusb_suspend(struct device *dev)
- 	return err;
- }
- 
--static int tegra_xusb_resume(struct device *dev)
-+static __maybe_unused int tegra_xusb_resume(struct device *dev)
- {
- 	struct tegra_xusb *tegra = dev_get_drvdata(dev);
- 	int err;
-@@ -2174,10 +2173,8 @@ static int tegra_xusb_resume(struct device *dev)
- 
- 	return 0;
- }
--#endif
- 
--#ifdef CONFIG_PM
--static int tegra_xusb_runtime_suspend(struct device *dev)
-+static __maybe_unused int tegra_xusb_runtime_suspend(struct device *dev)
- {
- 	struct tegra_xusb *tegra = dev_get_drvdata(dev);
- 	int ret;
-@@ -2190,7 +2187,7 @@ static int tegra_xusb_runtime_suspend(struct device *dev)
- 	return ret;
- }
- 
--static int tegra_xusb_runtime_resume(struct device *dev)
-+static __maybe_unused int tegra_xusb_runtime_resume(struct device *dev)
- {
- 	struct tegra_xusb *tegra = dev_get_drvdata(dev);
- 	int err;
-@@ -2201,7 +2198,6 @@ static int tegra_xusb_runtime_resume(struct device *dev)
- 
- 	return err;
- }
--#endif
- 
- static const struct dev_pm_ops tegra_xusb_pm_ops = {
- 	SET_RUNTIME_PM_OPS(tegra_xusb_runtime_suspend,
 -- 
-2.29.2
+2.7.4
 
