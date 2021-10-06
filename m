@@ -2,54 +2,54 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06E2AC433FE
-	for <linux-tegra@archiver.kernel.org>; Wed,  6 Oct 2021 22:48:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16DC0C433F5
+	for <linux-tegra@archiver.kernel.org>; Wed,  6 Oct 2021 22:49:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DE17C6103D
-	for <linux-tegra@archiver.kernel.org>; Wed,  6 Oct 2021 22:48:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E448D61090
+	for <linux-tegra@archiver.kernel.org>; Wed,  6 Oct 2021 22:49:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239933AbhJFWtw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 6 Oct 2021 18:49:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41018 "EHLO
+        id S239733AbhJFWvK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 6 Oct 2021 18:51:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40930 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239937AbhJFWtv (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 6 Oct 2021 18:49:51 -0400
-Received: from mail-qt1-x832.google.com (mail-qt1-x832.google.com [IPv6:2607:f8b0:4864:20::832])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 097D0C061746;
-        Wed,  6 Oct 2021 15:47:59 -0700 (PDT)
-Received: by mail-qt1-x832.google.com with SMTP id e16so4396416qts.4;
-        Wed, 06 Oct 2021 15:47:59 -0700 (PDT)
+        with ESMTP id S239794AbhJFWti (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 6 Oct 2021 18:49:38 -0400
+Received: from mail-qk1-x72a.google.com (mail-qk1-x72a.google.com [IPv6:2607:f8b0:4864:20::72a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 997D1C061764;
+        Wed,  6 Oct 2021 15:47:45 -0700 (PDT)
+Received: by mail-qk1-x72a.google.com with SMTP id b65so4180214qkc.13;
+        Wed, 06 Oct 2021 15:47:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=wutDD2lE1c9tdavCZUxMDse3d2oFG2g7M0e7JKOr2FM=;
-        b=e0v1SLAkQ23cx8EkZ5QjR7AiqHZ+iS8g5K9ttW3evZTNbuzdXIBo+P6I+E3NBBjRK2
-         wcOcKy/2pb3Ay+P2SWcusEycYhe56GAgyiQsA4eEt12/5h0ruwDytIRvUgzrMoP/MQF1
-         NjEBMgTwRwxSN8pB+OB+lLq20o4YRhsnQXxlSBQMTaNVQ5589FQvjDinGv+K/7ldT1D4
-         XUOLXqiwF9BHLT0Piwt0LD6pnIlN8lzsgchydwq77tyyR2mYh2DWBSf2cRAmMEBUQxnA
-         Bvkb7xKIYRqKw+0gMLcRgA9jJc1Zuy1QQQ7rHfcgFW6WIjzyKejD7nLGjkP69974UHSf
-         TqGA==
+        bh=8w8i+occt62gTrQveuARNGY9wHRKGULr3p5+LKeShiM=;
+        b=bMfrgW4Pbohe7CUUL9rb9E4p+JpRrnDy4nsoxepUyRye31isUqbyqhosVlZQXOTHdy
+         KuGfuG2N/uPgUunfvMponEVpygEp9cxjL704KE6hbdgSGiVvoCsDQxVDJLXZPtfc1TL5
+         btxChpCJZHI/6RPL1rPQrDiI2sl2yAUa0TRSqfIZDRnVZ20bn0Cj2dxQTABzilJ3NuJW
+         78iiJo53weE5lNhOr6c0tcdgDNIh8GJoUbgEGFFfexgW2TyrsDbZnHv4GHzgtOK4bpG4
+         423Wl8ueR3A4CXPdksXHsp4CUdyyyfQwPyxQMf0V8b3d/95/qwfUi0vX+hGKPY+66g/E
+         so0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=wutDD2lE1c9tdavCZUxMDse3d2oFG2g7M0e7JKOr2FM=;
-        b=gRr5rllGLqnv4TwUH1jVF0pI9FHXYdVlfGR2Bd1s0pMe+Brkq41eqVGDMKYuQYaLuI
-         5TtokcyJY4yEyCibl7WVNXDQv07AfEMQFCAldWJMXg+CPQ9cHAVupfsJiTcMZP9WZ3pc
-         yTI6ZZtHxqeC0NkIbKk2y5VWYlB3qvWU17XjrxpLmNJPPbE7u27ivno3CZJF9BJcq0cy
-         PEGfaax10JTJooKUZHPK1mTvMHq7gC8alddk66z3xOrsafbIu4s5dODZYvVWAlIixFJa
-         6Oci6gk4GSAAgKHj6fRm+yyygJUINbkA83IHCiCEsaL9Kt+BLXm2AvcgnDFnA5K0NZ6U
-         ht4A==
-X-Gm-Message-State: AOAM533SYmvk/1pMppQTcpBnywMwSmFpDoTM6uuM8koTQ1MEAEPniODO
-        Egn+J9Ld3Bx57xxZfNgJOWI=
-X-Google-Smtp-Source: ABdhPJxrgroP8djPvirnpfmsKC7K369URcslN8UMkPL5BgvLexIWz0dbf6oYGq24nyj9dH0f+REgpw==
-X-Received: by 2002:ac8:7f4a:: with SMTP id g10mr1067738qtk.150.1633560478211;
-        Wed, 06 Oct 2021 15:47:58 -0700 (PDT)
+        bh=8w8i+occt62gTrQveuARNGY9wHRKGULr3p5+LKeShiM=;
+        b=rupn5YDnjbq8X6nwsfZk1LFJ50EsyQVqU/HqzGAMI0SOSOhB6K4QQAAZIn6AEOzKpx
+         B+WUN/QA4pnwW9VOZCNjvq2Oi2uXBaNEWMajJI5ZbwWQauu4Bz0y1XDlNnd2IzuIRuH6
+         l0M3ZkHVO/jc4NllCwwcyR4dXNZhjzDHlFGCy0Au01rXzSYHv3UdkZhrr/kxN4+xziFb
+         uIFIRPRlQsVwYv1TuLK3E7BYbi3suhCmB/zQcLiopMeZ3pWYLZJ7yHvO+R53DUqYt1VX
+         J+Xt6MjYOXLBjsHp5Hb36DtrNEd/833xMF3IsRCbkN9RGPZGWU3Hv3UrcR3PQujz+lhE
+         1ZlQ==
+X-Gm-Message-State: AOAM533im98RGkm5/XQGjUedPuV/UWnUCGycpyOoOC1PtnWFT0Xkuv1u
+        gMqT/ivHVn+wQVYBVzP2b031bFBWt48=
+X-Google-Smtp-Source: ABdhPJw80lIzBx+6SkJDJhaxokCT7zo9yUsM2cDlfsVp4HpjlcJbvh29oA0iUm5yXGN18c38q5/mDw==
+X-Received: by 2002:a37:bc47:: with SMTP id m68mr662112qkf.115.1633560464743;
+        Wed, 06 Oct 2021 15:47:44 -0700 (PDT)
 Received: from localhost.localdomain (79-139-163-57.dynamic.spd-mgts.ru. [79.139.163.57])
-        by smtp.gmail.com with ESMTPSA id n11sm14738166qtk.92.2021.10.06.15.47.56
+        by smtp.gmail.com with ESMTPSA id n11sm14738166qtk.92.2021.10.06.15.47.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Oct 2021 15:47:57 -0700 (PDT)
+        Wed, 06 Oct 2021 15:47:44 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -57,9 +57,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Rob Herring <robh+dt@kernel.org>
 Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-tegra@vger.kernel.org
-Subject: [PATCH v5 9/9] memory: tegra20-emc: Support matching timings by LPDDR2 configuration
-Date:   Thu,  7 Oct 2021 01:46:59 +0300
-Message-Id: <20211006224659.21434-10-digetx@gmail.com>
+Subject: [PATCH v5 2/9] dt-bindings: memory: lpddr2: Convert to schema
+Date:   Thu,  7 Oct 2021 01:46:52 +0300
+Message-Id: <20211006224659.21434-3-digetx@gmail.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20211006224659.21434-1-digetx@gmail.com>
 References: <20211006224659.21434-1-digetx@gmail.com>
@@ -69,348 +69,341 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-ASUS Transformer TF101 doesn't provide RAM code and in this case memory
-timings should be selected based on identity information read out from
-SDRAM chip. Support matching timings by LPDDR2 configuration.
+Convert LPDDR2 binding to schema. I removed obsolete ti,jedec-lpddr2-*
+compatibles since they were never used by device-trees and by the code.
+I also changed "Elpida" compatible prefix to lowercase "elpida".
 
+Suggested-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/memory/tegra/Kconfig       |   1 +
- drivers/memory/tegra/tegra20-emc.c | 199 +++++++++++++++++++++++++++--
- 2 files changed, 186 insertions(+), 14 deletions(-)
+ .../memory-controllers/ddr/jedec,lpddr2.yaml  | 208 ++++++++++++++++++
+ .../memory-controllers/ddr/lpddr2.txt         | 102 ---------
+ 2 files changed, 208 insertions(+), 102 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/memory-controllers/ddr/jedec,lpddr2.yaml
+ delete mode 100644 Documentation/devicetree/bindings/memory-controllers/ddr/lpddr2.txt
 
-diff --git a/drivers/memory/tegra/Kconfig b/drivers/memory/tegra/Kconfig
-index f9bae36c03a3..7951764b4efe 100644
---- a/drivers/memory/tegra/Kconfig
-+++ b/drivers/memory/tegra/Kconfig
-@@ -16,6 +16,7 @@ config TEGRA20_EMC
- 	depends on ARCH_TEGRA_2x_SOC || COMPILE_TEST
- 	select DEVFREQ_GOV_SIMPLE_ONDEMAND
- 	select PM_DEVFREQ
-+	select DDR
- 	help
- 	  This driver is for the External Memory Controller (EMC) found on
- 	  Tegra20 chips. The EMC controls the external DRAM on the board.
-diff --git a/drivers/memory/tegra/tegra20-emc.c b/drivers/memory/tegra/tegra20-emc.c
-index c3462dbc8c22..77c5cd52d1a2 100644
---- a/drivers/memory/tegra/tegra20-emc.c
-+++ b/drivers/memory/tegra/tegra20-emc.c
-@@ -5,6 +5,7 @@
-  * Author: Dmitry Osipenko <digetx@gmail.com>
-  */
- 
-+#include <linux/bitfield.h>
- #include <linux/clk.h>
- #include <linux/clk/tegra.h>
- #include <linux/debugfs.h>
-@@ -27,11 +28,15 @@
- #include <soc/tegra/common.h>
- #include <soc/tegra/fuse.h>
- 
-+#include "../jedec_ddr.h"
-+#include "../of_memory.h"
+diff --git a/Documentation/devicetree/bindings/memory-controllers/ddr/jedec,lpddr2.yaml b/Documentation/devicetree/bindings/memory-controllers/ddr/jedec,lpddr2.yaml
+new file mode 100644
+index 000000000000..f931fe910ce5
+--- /dev/null
++++ b/Documentation/devicetree/bindings/memory-controllers/ddr/jedec,lpddr2.yaml
+@@ -0,0 +1,208 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/memory-controllers/ddr/jedec,lpddr2.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
- #include "mc.h"
- 
- #define EMC_INTSTATUS				0x000
- #define EMC_INTMASK				0x004
- #define EMC_DBG					0x008
-+#define EMC_ADR_CFG_0				0x010
- #define EMC_TIMING_CONTROL			0x028
- #define EMC_RC					0x02c
- #define EMC_RFC					0x030
-@@ -68,6 +73,7 @@
- #define EMC_QUSE_EXTRA				0x0ac
- #define EMC_ODT_WRITE				0x0b0
- #define EMC_ODT_READ				0x0b4
-+#define EMC_MRR					0x0ec
- #define EMC_FBIO_CFG5				0x104
- #define EMC_FBIO_CFG6				0x114
- #define EMC_STAT_CONTROL			0x160
-@@ -94,6 +100,7 @@
- 
- #define EMC_REFRESH_OVERFLOW_INT		BIT(3)
- #define EMC_CLKCHANGE_COMPLETE_INT		BIT(4)
-+#define EMC_MRR_DIVLD_INT			BIT(5)
- 
- #define EMC_DBG_READ_MUX_ASSEMBLY		BIT(0)
- #define EMC_DBG_WRITE_MUX_ACTIVE		BIT(1)
-@@ -102,11 +109,25 @@
- #define EMC_DBG_CFG_PRIORITY			BIT(24)
- 
- #define EMC_FBIO_CFG5_DRAM_WIDTH_X16		BIT(4)
-+#define EMC_FBIO_CFG5_DRAM_TYPE			GENMASK(1, 0)
++title: LPDDR2 SDRAM compliant to JEDEC JESD209-2
 +
-+#define EMC_MRR_DEV_SELECTN			GENMASK(31, 30)
-+#define EMC_MRR_MRR_MA				GENMASK(23, 16)
-+#define EMC_MRR_MRR_DATA			GENMASK(15, 0)
++maintainers:
++  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 +
-+#define EMC_ADR_CFG_0_EMEM_NUMDEV		GENMASK(25, 24)
- 
- #define EMC_PWR_GATHER_CLEAR			(1 << 8)
- #define EMC_PWR_GATHER_DISABLE			(2 << 8)
- #define EMC_PWR_GATHER_ENABLE			(3 << 8)
- 
-+enum emc_dram_type {
-+	DRAM_TYPE_RESERVED,
-+	DRAM_TYPE_DDR1,
-+	DRAM_TYPE_LPDDR2,
-+	DRAM_TYPE_DDR2,
-+};
++properties:
++  compatible:
++    oneOf:
++      - items:
++          - enum:
++              - elpida,ECB240ABACN
++          - enum:
++              - jedec,lpddr2-s4
++      - items:
++          - enum:
++              - jedec,lpddr2-s2
++      - items:
++          - enum:
++              - jedec,lpddr2-nvm
 +
- static const u16 emc_timing_registers[] = {
- 	EMC_RC,
- 	EMC_RFC,
-@@ -201,6 +222,14 @@ struct tegra_emc {
- 	struct mutex rate_lock;
- 
- 	struct devfreq_simple_ondemand_data ondemand_data;
++  density:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description: |
++      Density in megabits of SDRAM chip. Obtained from device datasheet.
++    enum:
++      - 64
++      - 128
++      - 256
++      - 512
++      - 1024
++      - 2048
++      - 4096
++      - 8192
++      - 16384
++      - 32768
 +
-+	/* memory chip identity information */
-+	union lpddr2_basic_config4 basic_conf4;
-+	unsigned int manufacturer_id;
-+	unsigned int revision_id1;
-+	unsigned int revision_id2;
++  io-width:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description: |
++      IO bus width in bits of SDRAM chip. Obtained from device datasheet.
++    enum:
++      - 32
++      - 16
++      - 8
 +
-+	bool mrr_error;
- };
- 
- static irqreturn_t tegra_emc_isr(int irq, void *data)
-@@ -397,15 +426,19 @@ static int tegra_emc_load_timings_from_dt(struct tegra_emc *emc,
- 	if (!emc->timings)
- 		return -ENOMEM;
- 
--	emc->num_timings = child_count;
- 	timing = emc->timings;
- 
- 	for_each_child_of_node(node, child) {
-+		if (of_node_name_eq(child, "lpddr2"))
-+			continue;
++  tRRD-min-tck:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    maximum: 16
++    description: |
++      Active bank a to active bank b in terms of number of clock cycles.
++      Obtained from device datasheet.
 +
- 		err = load_one_timing_from_dt(emc, timing++, child);
- 		if (err) {
- 			of_node_put(child);
- 			return err;
- 		}
++  tWTR-min-tck:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    maximum: 16
++    description: |
++      Internal WRITE-to-READ command delay in terms of number of clock cycles.
++      Obtained from device datasheet.
 +
-+		emc->num_timings++;
- 	}
- 
- 	sort(emc->timings, emc->num_timings, sizeof(*timing), cmp_timings,
-@@ -422,12 +455,18 @@ static int tegra_emc_load_timings_from_dt(struct tegra_emc *emc,
- }
- 
- static struct device_node *
--tegra_emc_find_node_by_ram_code(struct device *dev)
-+tegra_emc_find_node_by_ram_code(struct tegra_emc *emc)
- {
-+	struct device *dev = emc->dev;
- 	struct device_node *np;
- 	u32 value, ram_code;
- 	int err;
- 
-+	if (emc->mrr_error) {
-+		dev_warn(dev, "memory timings skipped due to MRR error\n");
-+		return NULL;
-+	}
++  tXP-min-tck:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    maximum: 16
++    description: |
++      Exit power-down to next valid command delay in terms of number of clock
++      cycles. Obtained from device datasheet.
 +
- 	if (of_get_child_count(dev->of_node) == 0) {
- 		dev_info_once(dev, "device-tree doesn't have memory timings\n");
- 		return NULL;
-@@ -442,8 +481,49 @@ tegra_emc_find_node_by_ram_code(struct device *dev)
- 	     np = of_find_node_by_name(np, "emc-tables")) {
- 		err = of_property_read_u32(np, "nvidia,ram-code", &value);
- 		if (err || value != ram_code) {
--			of_node_put(np);
--			continue;
-+			struct device_node *lpddr2_np;
-+			bool cfg_mismatches = false;
++  tRTP-min-tck:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    maximum: 16
++    description: |
++      Internal READ to PRECHARGE command delay in terms of number of clock
++      cycles. Obtained from device datasheet.
 +
-+			lpddr2_np = of_find_node_by_name(np, "lpddr2");
-+			if (lpddr2_np) {
-+				const struct lpddr2_info *info;
++  tCKE-min-tck:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    maximum: 16
++    description: |
++      CKE minimum pulse width (HIGH and LOW pulse width) in terms of number
++      of clock cycles. Obtained from device datasheet.
 +
-+				info = of_lpddr2_get_info(lpddr2_np, dev);
-+				if (info) {
-+					if (info->manufacturer_id >= 0 &&
-+					    info->manufacturer_id != emc->manufacturer_id)
-+						cfg_mismatches = true;
++  tRPab-min-tck:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    maximum: 16
++    description: |
++      Row precharge time (all banks) in terms of number of clock cycles.
++      Obtained from device datasheet.
 +
-+					if (info->revision_id1 >= 0 &&
-+					    info->revision_id1 != emc->revision_id1)
-+						cfg_mismatches = true;
++  tRCD-min-tck:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    maximum: 16
++    description: |
++      RAS-to-CAS delay in terms of number of clock cycles. Obtained from
++      device datasheet.
 +
-+					if (info->revision_id2 >= 0 &&
-+					    info->revision_id2 != emc->revision_id2)
-+						cfg_mismatches = true;
++  tWR-min-tck:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    maximum: 16
++    description: |
++      WRITE recovery time in terms of number of clock cycles. Obtained from
++      device datasheet.
 +
-+					if (info->density != emc->basic_conf4.density)
-+						cfg_mismatches = true;
++  tRASmin-min-tck:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    maximum: 16
++    description: |
++      Row active time in terms of number of clock cycles. Obtained from device
++      datasheet.
 +
-+					if (info->io_width != emc->basic_conf4.io_width)
-+						cfg_mismatches = true;
++  tCKESR-min-tck:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    maximum: 16
++    description: |
++      CKE minimum pulse width during SELF REFRESH (low pulse width during
++      SELF REFRESH) in terms of number of clock cycles. Obtained from device
++      datasheet.
 +
-+					if (info->arch_type != emc->basic_conf4.arch_type)
-+						cfg_mismatches = true;
-+				} else {
-+					dev_err(dev, "failed to parse %pOF\n", lpddr2_np);
-+					cfg_mismatches = true;
-+				}
++  tFAW-min-tck:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    maximum: 16
++    description: |
++      Four-bank activate window in terms of number of clock cycles. Obtained
++      from device datasheet.
 +
-+				of_node_put(lpddr2_np);
-+			} else {
-+				cfg_mismatches = true;
-+			}
++patternProperties:
++  "^lpddr2-timings":
++    type: object
++    description: |
++      The lpddr2 node may have one or more child nodes of type "lpddr2-timings".
++      "lpddr2-timings" provides AC timing parameters of the device for
++      a given speed-bin. The user may provide the timings for as many
++      speed-bins as is required. Please see Documentation/devicetree/
++      bindings/memory-controllers/ddr/lpddr2-timings.txt for more information
++      on "lpddr2-timings".
 +
-+			if (cfg_mismatches) {
-+				of_node_put(np);
-+				continue;
-+			}
- 		}
- 
- 		return np;
-@@ -455,10 +535,72 @@ tegra_emc_find_node_by_ram_code(struct device *dev)
- 	return NULL;
- }
- 
-+static int emc_read_lpddr_mode_register(struct tegra_emc *emc,
-+					unsigned int emem_dev,
-+					unsigned int register_addr,
-+					unsigned int *register_data)
-+{
-+	u32 memory_dev = emem_dev + 1;
-+	u32 val, mr_mask = 0xff;
-+	int err;
++required:
++  - compatible
++  - density
++  - io-width
 +
-+	/* clear data-valid interrupt status */
-+	writel_relaxed(EMC_MRR_DIVLD_INT, emc->regs + EMC_INTSTATUS);
++additionalProperties: false
 +
-+	/* issue mode register read request */
-+	val  = FIELD_PREP(EMC_MRR_DEV_SELECTN, memory_dev);
-+	val |= FIELD_PREP(EMC_MRR_MRR_MA, register_addr);
++examples:
++  - |
++    elpida_ECB240ABACN: lpddr2 {
++        compatible = "elpida,ECB240ABACN", "jedec,lpddr2-s4";
++        density = <2048>;
++        io-width = <32>;
 +
-+	writel_relaxed(val, emc->regs + EMC_MRR);
++        tRPab-min-tck = <3>;
++        tRCD-min-tck = <3>;
++        tWR-min-tck = <3>;
++        tRASmin-min-tck = <3>;
++        tRRD-min-tck = <2>;
++        tWTR-min-tck = <2>;
++        tXP-min-tck = <2>;
++        tRTP-min-tck = <2>;
++        tCKE-min-tck = <3>;
++        tCKESR-min-tck = <3>;
++        tFAW-min-tck = <8>;
 +
-+	/* wait for the LPDDR2 data-valid interrupt */
-+	err = readl_relaxed_poll_timeout_atomic(emc->regs + EMC_INTSTATUS, val,
-+						val & EMC_MRR_DIVLD_INT,
-+						1, 100);
-+	if (err) {
-+		dev_err(emc->dev, "mode register %u read failed: %d\n",
-+			register_addr, err);
-+		emc->mrr_error = true;
-+		return err;
-+	}
++        timings_elpida_ECB240ABACN_400mhz: lpddr2-timings0 {
++            compatible = "jedec,lpddr2-timings";
++            min-freq = <10000000>;
++            max-freq = <400000000>;
++            tRPab = <21000>;
++            tRCD = <18000>;
++            tWR = <15000>;
++            tRAS-min = <42000>;
++            tRRD = <10000>;
++            tWTR = <7500>;
++            tXP = <7500>;
++            tRTP = <7500>;
++            tCKESR = <15000>;
++            tDQSCK-max = <5500>;
++            tFAW = <50000>;
++            tZQCS = <90000>;
++            tZQCL = <360000>;
++            tZQinit = <1000000>;
++            tRAS-max-ns = <70000>;
++        };
 +
-+	/* read out mode register data */
-+	val = readl_relaxed(emc->regs + EMC_MRR);
-+	*register_data = FIELD_GET(EMC_MRR_MRR_DATA, val) & mr_mask;
-+
-+	return 0;
-+}
-+
-+static void emc_read_lpddr_sdram_info(struct tegra_emc *emc,
-+				      unsigned int emem_dev,
-+				      bool print_out)
-+{
-+	/* these registers are standard for all LPDDR JEDEC memory chips */
-+	emc_read_lpddr_mode_register(emc, emem_dev, 5, &emc->manufacturer_id);
-+	emc_read_lpddr_mode_register(emc, emem_dev, 6, &emc->revision_id1);
-+	emc_read_lpddr_mode_register(emc, emem_dev, 7, &emc->revision_id2);
-+	emc_read_lpddr_mode_register(emc, emem_dev, 8, &emc->basic_conf4.value);
-+
-+	if (!print_out)
-+		return;
-+
-+	dev_info(emc->dev, "SDRAM[dev%u]: manufacturer: 0x%x (%s) rev1: 0x%x rev2: 0x%x prefetch: S%u density: %uMbit iowidth: %ubit\n",
-+		 emem_dev, emc->manufacturer_id,
-+		 lpddr2_jedec_manufacturer(emc->manufacturer_id),
-+		 emc->revision_id1, emc->revision_id2,
-+		 4 >> emc->basic_conf4.arch_type,
-+		 64 << emc->basic_conf4.density,
-+		 32 >> emc->basic_conf4.io_width);
-+}
-+
- static int emc_setup_hw(struct tegra_emc *emc)
- {
-+	u32 emc_cfg, emc_dbg, emc_fbio, emc_adr_cfg;
- 	u32 intmask = EMC_REFRESH_OVERFLOW_INT;
--	u32 emc_cfg, emc_dbg, emc_fbio;
-+	static bool print_sdram_info_once;
-+	enum emc_dram_type dram_type;
-+	const char *dram_type_str;
-+	unsigned int emem_numdev;
- 
- 	emc_cfg = readl_relaxed(emc->regs + EMC_CFG_2);
- 
-@@ -496,7 +638,36 @@ static int emc_setup_hw(struct tegra_emc *emc)
- 	else
- 		emc->dram_bus_width = 32;
- 
--	dev_info_once(emc->dev, "%ubit DRAM bus\n", emc->dram_bus_width);
-+	dram_type = FIELD_GET(EMC_FBIO_CFG5_DRAM_TYPE, emc_fbio);
-+
-+	switch (dram_type) {
-+	case DRAM_TYPE_RESERVED:
-+		dram_type_str = "INVALID";
-+		break;
-+	case DRAM_TYPE_DDR1:
-+		dram_type_str = "DDR1";
-+		break;
-+	case DRAM_TYPE_LPDDR2:
-+		dram_type_str = "LPDDR2";
-+		break;
-+	case DRAM_TYPE_DDR2:
-+		dram_type_str = "DDR2";
-+		break;
-+	}
-+
-+	emc_adr_cfg = readl_relaxed(emc->regs + EMC_ADR_CFG_0);
-+	emem_numdev = FIELD_GET(EMC_ADR_CFG_0_EMEM_NUMDEV, emc_adr_cfg) + 1;
-+
-+	dev_info_once(emc->dev, "%ubit DRAM bus, %u %s %s attached\n",
-+		      emc->dram_bus_width, emem_numdev, dram_type_str,
-+		      emem_numdev == 2 ? "devices" : "device");
-+
-+	if (dram_type == DRAM_TYPE_LPDDR2) {
-+		while (emem_numdev--)
-+			emc_read_lpddr_sdram_info(emc, emem_numdev,
-+						  !print_sdram_info_once);
-+		print_sdram_info_once = true;
-+	}
- 
- 	return 0;
- }
-@@ -1049,14 +1220,6 @@ static int tegra_emc_probe(struct platform_device *pdev)
- 	emc->clk_nb.notifier_call = tegra_emc_clk_change_notify;
- 	emc->dev = &pdev->dev;
- 
--	np = tegra_emc_find_node_by_ram_code(&pdev->dev);
--	if (np) {
--		err = tegra_emc_load_timings_from_dt(emc, np);
--		of_node_put(np);
--		if (err)
--			return err;
--	}
++        timings_elpida_ECB240ABACN_200mhz: lpddr2-timings1 {
++            compatible = "jedec,lpddr2-timings";
++            min-freq = <10000000>;
++            max-freq = <200000000>;
++            tRPab = <21000>;
++            tRCD = <18000>;
++            tWR = <15000>;
++            tRAS-min = <42000>;
++            tRRD = <10000>;
++            tWTR = <10000>;
++            tXP = <7500>;
++            tRTP = <7500>;
++            tCKESR = <15000>;
++            tDQSCK-max = <5500>;
++            tFAW = <50000>;
++            tZQCS = <90000>;
++            tZQCL = <360000>;
++            tZQinit = <1000000>;
++            tRAS-max-ns = <70000>;
++        };
++    };
+diff --git a/Documentation/devicetree/bindings/memory-controllers/ddr/lpddr2.txt b/Documentation/devicetree/bindings/memory-controllers/ddr/lpddr2.txt
+deleted file mode 100644
+index ddd40121e6f6..000000000000
+--- a/Documentation/devicetree/bindings/memory-controllers/ddr/lpddr2.txt
++++ /dev/null
+@@ -1,102 +0,0 @@
+-* LPDDR2 SDRAM memories compliant to JEDEC JESD209-2
 -
- 	emc->regs = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(emc->regs))
- 		return PTR_ERR(emc->regs);
-@@ -1065,6 +1228,14 @@ static int tegra_emc_probe(struct platform_device *pdev)
- 	if (err)
- 		return err;
- 
-+	np = tegra_emc_find_node_by_ram_code(emc);
-+	if (np) {
-+		err = tegra_emc_load_timings_from_dt(emc, np);
-+		of_node_put(np);
-+		if (err)
-+			return err;
-+	}
-+
- 	err = devm_request_irq(&pdev->dev, irq, tegra_emc_isr, 0,
- 			       dev_name(&pdev->dev), emc);
- 	if (err) {
+-Required properties:
+-- compatible : Should be one of - "jedec,lpddr2-nvm", "jedec,lpddr2-s2",
+-  "jedec,lpddr2-s4"
+-
+-  "ti,jedec-lpddr2-s2" should be listed if the memory part is LPDDR2-S2 type
+-
+-  "ti,jedec-lpddr2-s4" should be listed if the memory part is LPDDR2-S4 type
+-
+-  "ti,jedec-lpddr2-nvm" should be listed if the memory part is LPDDR2-NVM type
+-
+-- density  : <u32> representing density in Mb (Mega bits)
+-
+-- io-width : <u32> representing bus width. Possible values are 8, 16, and 32
+-
+-Optional properties:
+-
+-The following optional properties represent the minimum value of some AC
+-timing parameters of the DDR device in terms of number of clock cycles.
+-These values shall be obtained from the device data-sheet.
+-- tRRD-min-tck
+-- tWTR-min-tck
+-- tXP-min-tck
+-- tRTP-min-tck
+-- tCKE-min-tck
+-- tRPab-min-tck
+-- tRCD-min-tck
+-- tWR-min-tck
+-- tRASmin-min-tck
+-- tCKESR-min-tck
+-- tFAW-min-tck
+-
+-Child nodes:
+-- The lpddr2 node may have one or more child nodes of type "lpddr2-timings".
+-  "lpddr2-timings" provides AC timing parameters of the device for
+-  a given speed-bin. The user may provide the timings for as many
+-  speed-bins as is required. Please see Documentation/devicetree/
+-  bindings/ddr/lpddr2-timings.txt for more information on "lpddr2-timings"
+-
+-Example:
+-
+-elpida_ECB240ABACN : lpddr2 {
+-	compatible	= "Elpida,ECB240ABACN","jedec,lpddr2-s4";
+-	density		= <2048>;
+-	io-width	= <32>;
+-
+-	tRPab-min-tck	= <3>;
+-	tRCD-min-tck	= <3>;
+-	tWR-min-tck	= <3>;
+-	tRASmin-min-tck	= <3>;
+-	tRRD-min-tck	= <2>;
+-	tWTR-min-tck	= <2>;
+-	tXP-min-tck	= <2>;
+-	tRTP-min-tck	= <2>;
+-	tCKE-min-tck	= <3>;
+-	tCKESR-min-tck	= <3>;
+-	tFAW-min-tck	= <8>;
+-
+-	timings_elpida_ECB240ABACN_400mhz: lpddr2-timings@0 {
+-		compatible	= "jedec,lpddr2-timings";
+-		min-freq	= <10000000>;
+-		max-freq	= <400000000>;
+-		tRPab		= <21000>;
+-		tRCD		= <18000>;
+-		tWR		= <15000>;
+-		tRAS-min	= <42000>;
+-		tRRD		= <10000>;
+-		tWTR		= <7500>;
+-		tXP		= <7500>;
+-		tRTP		= <7500>;
+-		tCKESR		= <15000>;
+-		tDQSCK-max	= <5500>;
+-		tFAW		= <50000>;
+-		tZQCS		= <90000>;
+-		tZQCL		= <360000>;
+-		tZQinit		= <1000000>;
+-		tRAS-max-ns	= <70000>;
+-	};
+-
+-	timings_elpida_ECB240ABACN_200mhz: lpddr2-timings@1 {
+-		compatible	= "jedec,lpddr2-timings";
+-		min-freq	= <10000000>;
+-		max-freq	= <200000000>;
+-		tRPab		= <21000>;
+-		tRCD		= <18000>;
+-		tWR		= <15000>;
+-		tRAS-min	= <42000>;
+-		tRRD		= <10000>;
+-		tWTR		= <10000>;
+-		tXP		= <7500>;
+-		tRTP		= <7500>;
+-		tCKESR		= <15000>;
+-		tDQSCK-max	= <5500>;
+-		tFAW		= <50000>;
+-		tZQCS		= <90000>;
+-		tZQCL		= <360000>;
+-		tZQinit		= <1000000>;
+-		tRAS-max-ns	= <70000>;
+-	};
+-
+-}
 -- 
 2.32.0
 
