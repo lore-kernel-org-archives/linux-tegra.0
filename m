@@ -2,124 +2,108 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB1BDC433F5
-	for <linux-tegra@archiver.kernel.org>; Wed,  6 Oct 2021 18:19:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08F81C433EF
+	for <linux-tegra@archiver.kernel.org>; Wed,  6 Oct 2021 18:27:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9A61D610E6
-	for <linux-tegra@archiver.kernel.org>; Wed,  6 Oct 2021 18:19:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E275E6113A
+	for <linux-tegra@archiver.kernel.org>; Wed,  6 Oct 2021 18:27:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239090AbhJFSU5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 6 Oct 2021 14:20:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35866 "EHLO
+        id S239080AbhJFS3r (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 6 Oct 2021 14:29:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38088 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239093AbhJFSUu (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 6 Oct 2021 14:20:50 -0400
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDE9AC061755;
-        Wed,  6 Oct 2021 11:18:57 -0700 (PDT)
-Received: by mail-wr1-x42a.google.com with SMTP id o20so11449700wro.3;
-        Wed, 06 Oct 2021 11:18:57 -0700 (PDT)
+        with ESMTP id S238769AbhJFS3r (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 6 Oct 2021 14:29:47 -0400
+Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70A25C061746
+        for <linux-tegra@vger.kernel.org>; Wed,  6 Oct 2021 11:27:54 -0700 (PDT)
+Received: by mail-lf1-x136.google.com with SMTP id b20so14484601lfv.3
+        for <linux-tegra@vger.kernel.org>; Wed, 06 Oct 2021 11:27:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=l37z0MKyCQi5WzX8pvIE+axWaJnGib7YY31xgkAbYag=;
-        b=YMxKk5GokJKkD+1QU2aKCqmbK17C//8UkeEj3P3drE7UjQbiNVqnChd9R/DfMW/3L8
-         7gV+9dsaDmo5ug03qv/w8QXuwQyV5+pftkzlFNt2kdPk77EcrBWINy/dHNgMBH757Ewg
-         LQjH+PVgsw9nVM2HTW18xHDkdNk24GjE8SzruBn0bwUixX483L6wkVV9bjWuGoxdCZ7j
-         4JSLbPBNDYEA+Svldw0K2F2CT2WOSzWxWDJqC6BeCv2Zc7yh3EQLTdbFU7NeF5J/J0PT
-         FeTOH2jMDpxWQcjcKsQn4sRQQINoYYYyIL1eE0EP0lzAHDKzIF8/Zoak5f/HazTrLAIU
-         ytxQ==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=IDlvGZDQuR/GYFKsZGJADO2TntxwNUfXL/xPWdPIsUg=;
+        b=bPQRG2MMIrokrZ17bTXBKjvGpu/gXkVc8DSIVMGkgIocOp2MJLKOcArtWKqKb7ZnaY
+         VkBMnTZJ4ENPLNeQQ9yIXgqPgjdxVwdpAXwkYuirkKKvbLSV/jT6/YsX2JmeBTMpLlVg
+         Jhzhn3ikjrMWqQGn/mx6SsdddSpitq7CE/EuMW5a5GbCAqGHSVsPIc07bnHXByQhV1Ab
+         wogOjx9SPC0whJTKrZiVyeDPoXASyaaGFsCR4L7X0BYlcWCIXHLmjDO9qiT6GOhOlAg9
+         mP/+lDo7PnUYBsNjnIgdCfSb0wQu/0qSodo9j7XEZQyQ9oiVTmGcvvPCxIYu3YHK8Xqh
+         pj9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=l37z0MKyCQi5WzX8pvIE+axWaJnGib7YY31xgkAbYag=;
-        b=xEbTPMcnpa/5/4LLMB04aWkrXGRvPuzh4YGOXbIFemsy9fhVf/SRyToQdy3TtkgU+3
-         oYnSnu0Lzlz3Kz+Gk/rVRWilPI05R9+geSTRg4jEzpXpnUN/P439+LA1Qq2xBr+23qYp
-         AninqWPxx7cmOvKQJSJP0tJSSDsYsjNrX9QQpxtBNUjjbV5rw23qQzK+xk91wbKsgt86
-         FwbJxfu0xVxK8Pjolv7U13PQrC4UbiYQwYw2WnvkFsHcltKgU474TEL+PWwKx14HumHe
-         JPn39nCk1wOUC0QvxGUpkbW66AGTp/relhiwElvjBnLwMzGNkbad5YsOMjkNWGg6/gWS
-         +NTQ==
-X-Gm-Message-State: AOAM532GYf9DP3vZbJ4J4kna+BDZanafXm4KUjp+wuuHGDJiBYMr5dL+
-        l/98vK9+mQUr96KBawChnTfcu2URwK0=
-X-Google-Smtp-Source: ABdhPJwnwubEDrHTBkqhdLoABazk+jRR7YeJ5lT4vhfHV6igYkdGI/zT6Y5HhkkFuYmacU+/G1KpRQ==
-X-Received: by 2002:a05:6000:18aa:: with SMTP id b10mr3280919wri.270.1633544336554;
-        Wed, 06 Oct 2021 11:18:56 -0700 (PDT)
-Received: from localhost ([217.111.27.204])
-        by smtp.gmail.com with ESMTPSA id e8sm5771913wme.46.2021.10.06.11.18.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Oct 2021 11:18:55 -0700 (PDT)
-Date:   Wed, 6 Oct 2021 20:18:53 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Mikko Perttunen <mperttunen@nvidia.com>
-Cc:     jonathanh@nvidia.com, airlied@linux.ie, daniel@ffwll.ch,
-        robh+dt@kernel.org, dri-devel@lists.freedesktop.org,
-        linux-tegra@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v6 2/3] arm64: tegra: Add NVDEC to Tegra186/194 device
- trees
-Message-ID: <YV3ojTpZuH9HU5DU@orome.fritz.box>
-References: <20210916145517.2047351-1-mperttunen@nvidia.com>
- <20210916145517.2047351-3-mperttunen@nvidia.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=IDlvGZDQuR/GYFKsZGJADO2TntxwNUfXL/xPWdPIsUg=;
+        b=rlwWUWxJmLN3iBpNP+Um/X+UdFQLS538cmFLP/RBp+fkAw8lcx3DfFZZDVNulu/0aO
+         uKiETSartKWWOh4BMnXntV1Yckvc6dQgZP1tG1BVNG25FImbsRML2ro32yoI/35q4Nrq
+         FGjAtFzS1ecwTOAEF3qQCsHNis4TqGBdxer0lT2C0AaBo1ufkW3VRy6g3hHdHmNq2z21
+         4Se+ng5+V6TCsrqr5C5YyP3yVCYNGr6H6obGeSDcFF6bFo9lupI7D5GzXcNHGz8k8xA4
+         MqKy9xqsdsfJEfZY7TfyXqqDQ4aeInTTekcj26qFcFbH2kPkMvUG7Aask6IWj8qXZvnw
+         ARyA==
+X-Gm-Message-State: AOAM53229+1mBQgBW+pyQVrswP1qPl4yOMPtdjWBhkFzw83558uTp/83
+        BYlN5IS4XQ0ZDxRaJZxyRko/8I+lLTc=
+X-Google-Smtp-Source: ABdhPJwYVM5BtfJ+DbI675xHRlMlHS+vnmoHPOiyW0NMw96E7yu8uBeibCGOYaYVP0xDa/2OdFb4Dg==
+X-Received: by 2002:a05:651c:4c7:: with SMTP id e7mr31268390lji.386.1633544872713;
+        Wed, 06 Oct 2021 11:27:52 -0700 (PDT)
+Received: from [192.168.2.145] (79-139-163-57.dynamic.spd-mgts.ru. [79.139.163.57])
+        by smtp.googlemail.com with ESMTPSA id d27sm2357848ljo.119.2021.10.06.11.27.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 06 Oct 2021 11:27:52 -0700 (PDT)
+Subject: Re: [PATCH v1 2/2] drm/tegra: dc: rgb: Allow changing PLLD rate on
+ Tegra30+
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
+        Maxim Schwalm <maxim.schwalm@gmail.com>,
+        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
+References: <20210929222805.16511-1-digetx@gmail.com>
+ <20210929222805.16511-3-digetx@gmail.com> <YV3nQuo7eG6dkl0f@orome.fritz.box>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <b858348a-698e-c22b-da9a-83cd2f00e668@gmail.com>
+Date:   Wed, 6 Oct 2021 21:27:51 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="FpULcs2kzJzavYtS"
-Content-Disposition: inline
-In-Reply-To: <20210916145517.2047351-3-mperttunen@nvidia.com>
-User-Agent: Mutt/2.1.3 (987dde4c) (2021-09-10)
+In-Reply-To: <YV3nQuo7eG6dkl0f@orome.fritz.box>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+06.10.2021 21:13, Thierry Reding пишет:
+> On Thu, Sep 30, 2021 at 01:28:05AM +0300, Dmitry Osipenko wrote:
+>> Asus Transformer TF700T is a Tegra30 tablet device which uses RGB->DSI
+>> bridge that requires a precise clock rate in order to operate properly.
+>> Tegra30 has a dedicated PLL for each display controller, hence the PLL
+>> rate can be changed freely. Allow PLL rate changes on Tegra30+ for RGB
+>> output. Configure the clock rate before display controller is enabled
+>> since DC itself may be running off this PLL and it's not okay to change
+>> the rate of the active PLL that doesn't support dynamic frequency
+>> switching since hardware will hang.
+>>
+>> Tested-by: Maxim Schwalm <maxim.schwalm@gmail.com> #TF700T
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>>  drivers/gpu/drm/tegra/dc.c  | 27 ++++++++++++--------
+>>  drivers/gpu/drm/tegra/dc.h  |  1 +
+>>  drivers/gpu/drm/tegra/rgb.c | 49 +++++++++++++++++++++++++++++++++++--
+>>  3 files changed, 65 insertions(+), 12 deletions(-)
+> 
+> This seems overly complicated. I especially don't like the way how
+> clocks are looked up with clk_get_sys() and then used in the comparison.
+> Could this not be achieved by using assigned-clocks and friends
+> properties in DT?
 
---FpULcs2kzJzavYtS
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Assigned-clocks have nothing to do with this patch. We need to check
+whether PLLD *is* already pre-assigned as the parent.
 
-On Thu, Sep 16, 2021 at 05:55:16PM +0300, Mikko Perttunen wrote:
-> Add a device tree node for NVDEC on Tegra186, and
-> device tree nodes for NVDEC and NVDEC1 on Tegra194.
->=20
-> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
-> ---
-> v5:
-> * Change from nvidia,instance to nvidia,host1x-class
-> v4:
-> * Add dma-coherent markers
-> v3:
-> * Change read2 to read-1
-> v2:
-> * Add NVDECSRD1 memory client
-> * Add also to T194 (both NVDEC0/1)
-> ---
->  arch/arm64/boot/dts/nvidia/tegra186.dtsi | 16 ++++++++++
->  arch/arm64/boot/dts/nvidia/tegra194.dtsi | 38 ++++++++++++++++++++++++
->  2 files changed, 54 insertions(+)
+Adding properties for describing the clk parents is overly complicated,
+clk_get_sys() is a much simpler solution that doesn't involve extra DT
+changes.
 
-The driver patch adds support for Tegra210, so could we also add NVDEC
-entries for that?
-
-Thierry
-
---FpULcs2kzJzavYtS
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmFd6I0ACgkQ3SOs138+
-s6EF7hAAtjDqnfA0BIjpUwLKkQRm7q+hc3m6K5LsNmRSiQSUXP44LcnP62Bt3NIS
-FkcljathUGw+tGjvKZp9wIpVKRniEPaDilx0doggljLByDhzaWeGXTjrEmrD/feI
-GtPaUbEgJZKOaxvdbwBAcxDc4Q0/c4k1I7OwDi6VT0vTQg0Sj9jqF3Kg9NJkbPRj
-xsBthVuCiEfoqcrdwCVbH6SpJkDUT2fAgeTaIuXtmV+5RxHqHhEzSW7QHyShmR1z
-QUEc+84hflRHc8Q03QcmQCjh0hYi3CC7dnInFlMydvKg9O8TGyRr4mSZ7zFMMWlN
-tZ2vf0wN20HEzmdfNJ2HDzuTJ8Cm6SUQltBv/5pxCBDwStkA81ceEyG0AV8qXl8Y
-11/Qbg8KYyiroOY08TYHCsDoHoUEESKRzet6JhhI7Krzx6q5Cw3kC+DoitCzwgU6
-X/mcDciehOe2dsW97trt1CdgpVINX4Sw3JWaU3iMBYim+acDwpF9okAwLuWf1a3n
-rnPqUK7o7GigWmhKCp0+KjN9uagT5kYiREsSbD+M1vXIBDoz66557WRmF7Gyhi8l
-BdGltBpsorFZlgS+EQOenfN+w02ZCgxlYbnBfl+Cpi1acwadceRbt3rjMkOg9gdj
-OV2kNAvwfjAKwgsVkX2neOAE3rvd1LTl2KmlF1XOqVrHx0ue0k0=
-=Wi7B
------END PGP SIGNATURE-----
-
---FpULcs2kzJzavYtS--
+BTW, assigned-clocks can't be used for display controller  because
+controller is usually turned on during boot and reparenting of active DC
+will hang machine.
