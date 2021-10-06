@@ -2,131 +2,119 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64978C433F5
-	for <linux-tegra@archiver.kernel.org>; Wed,  6 Oct 2021 18:09:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAC0FC433EF
+	for <linux-tegra@archiver.kernel.org>; Wed,  6 Oct 2021 18:10:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4826461039
-	for <linux-tegra@archiver.kernel.org>; Wed,  6 Oct 2021 18:09:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 890DA610C9
+	for <linux-tegra@archiver.kernel.org>; Wed,  6 Oct 2021 18:10:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239019AbhJFSK4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 6 Oct 2021 14:10:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33546 "EHLO
+        id S232165AbhJFSMm (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 6 Oct 2021 14:12:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33950 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229633AbhJFSK4 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 6 Oct 2021 14:10:56 -0400
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A6E8C061746;
-        Wed,  6 Oct 2021 11:09:04 -0700 (PDT)
-Received: by mail-wr1-x435.google.com with SMTP id t8so11504442wri.1;
-        Wed, 06 Oct 2021 11:09:03 -0700 (PDT)
+        with ESMTP id S232060AbhJFSMl (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 6 Oct 2021 14:12:41 -0400
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D3DCC061746
+        for <linux-tegra@vger.kernel.org>; Wed,  6 Oct 2021 11:10:49 -0700 (PDT)
+Received: by mail-wr1-x434.google.com with SMTP id r10so11388469wra.12
+        for <linux-tegra@vger.kernel.org>; Wed, 06 Oct 2021 11:10:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=exwhG0nzdIAjIFVVMDdmFwiX7lQiq4OxdoroCkKUsS0=;
-        b=HuBuqtsZ+euCw1ibUy7yAKa+Hak+XIku86FHIPqir12RLDyJ8vjP0N+s2u54z6Wwj0
-         JcSLGsqpIQpakWP9eR4TEsirwOYl92zJAcZ9hK0euGCd53ljF53ndJ2UZ6CtlXCAC9WG
-         w93UQnH9aU9Hstk3LgKXxIiP9NNw00rViiSe2tk/QVXTOx1eBKqQ6PvazYVP8aXjnh3/
-         y21NxWOb9Mk04uvm6VqNJgqruoXtibq5lAWwIqADF5rIJS+n/LXfT03J1We+a6V8RJpK
-         P/OHdiRKaQz/jX9wBPFY3YTgeQQwn0SlJwbRR2+PXfMWyLmdRDMfASiOn0+8xDczBlW1
-         YInw==
+        bh=GspgEi7gEA8HlC3vcceIad74+YyXqZ7ccjt2Iv6I88k=;
+        b=X/t65arTQ2h0TfkDWG9Fb9j5ihqzi7S7LGTmzM7Puv5SS9IKNQUdXRnd3gfHV4xMaA
+         z4FdKO623Tfx+pF0cPHurvpZI0ZXfseBCmvjpR4l51hpIX5zXUCaTyJs14uq9Om1nOXa
+         cUPDrEV+YlD1IWzmIRxE3sD3iv5JSd3aevHFuJ3jugIGgfJbR7YV28zbfB9LnymE+Y1m
+         gqAjviDJ5460hOb5zgTI40CjjpU60za0MqmdaZBcH/og97CFwS7C5Ntfr1JtogmL1/lG
+         hhtEFta+5IvjHxjr0odeEVeoza8v7BRU8in8/DHD6ygexz9kiDW4RoAZW/uTsXi61m42
+         vq5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=exwhG0nzdIAjIFVVMDdmFwiX7lQiq4OxdoroCkKUsS0=;
-        b=xpKO5mln89eD1ifXpMkrUA6jCbl4Gat8tpvS4O6e+Hy6FqNjxPb7BFt97W2FdWgKtT
-         JyZ+IorzJSNSOcgQvpSL4KGcqG86U4bvbOUO3GhqyOA8w4bE5i4jbSLkNrQzMKJ986T1
-         qiiLM1jg+Hed8fbaBo/FSjB6JhApDgd69hPGdMqkxnkdFJ0y2h8Dyyd2mP0iKWCFa2ni
-         4bz/8vYQU9mv6HxRIN8NgJNQPayEy58RLXtmAEAG4zEXzCz2b87nskfmRZySWqSDp+52
-         yR1R1tfG2wUCAK9ya6Nsh/bcol10jcTkedatUsVIyWK97R0FiRWJV2dgobvcHQ34+Myz
-         1TZQ==
-X-Gm-Message-State: AOAM530bBHsIzAHKyOSj3k65eomByfNG2QTE48p0PacCIDknlLPz7UOE
-        8ar18l+aNCxsDSQfEQtTHH8=
-X-Google-Smtp-Source: ABdhPJwuJVzlA2zZrzmKkCJqJ0rvYjsVMXs5bz21h9cCHXSbpi0DpBAwGG9MHqAc+lyYhyt5VrMNUQ==
-X-Received: by 2002:a1c:f703:: with SMTP id v3mr11035782wmh.177.1633543742600;
-        Wed, 06 Oct 2021 11:09:02 -0700 (PDT)
+        bh=GspgEi7gEA8HlC3vcceIad74+YyXqZ7ccjt2Iv6I88k=;
+        b=WeGl8HSgnTpct9NXpkFVgEpgPtA6na24LxzoypfSNWC9dFZeCMo3h7fxJX0sig/XNv
+         71WJkxzD7qiZBzQ+0vy1+K/RyeqIJKNGSSLbsGC2S1+eUoP1WixomNN8o2VYTOP5kCO3
+         1F6mpoDneLDVv+w9zzTt5S1OBXosW80kfkBU0uLkD9050vRn0nHF3/x4BcQWekshkdhl
+         UombJXVI0EzoW+ki0EftDVETYtIxfpABUXPQmO+H0g3Bv64ynszMthvcwJEEJNQMI3kp
+         1FNMHyzn5Cnqoc0mJl8uRGsXus6KmRbTPklkRGv2QIZtLZ7xqThSO93c7HH1flnARjYP
+         JFuQ==
+X-Gm-Message-State: AOAM532ywbkAjfDPqUOhWlzwCpHXMEt8IeaqD6UJYLUazmA1heAWk8qr
+        nwz8/uLdqFKXcUZi/Ft8kpY=
+X-Google-Smtp-Source: ABdhPJy3Ettrmaaq8Pz0c7di0tGBE+rNhEfv6yZG1nMmES+tYBawVl7ZQOsmqdiH8iNl71KqTC4TOQ==
+X-Received: by 2002:adf:b19b:: with SMTP id q27mr30754701wra.125.1633543847935;
+        Wed, 06 Oct 2021 11:10:47 -0700 (PDT)
 Received: from localhost ([217.111.27.204])
-        by smtp.gmail.com with ESMTPSA id c9sm6115710wmb.41.2021.10.06.11.09.01
+        by smtp.gmail.com with ESMTPSA id g2sm22717368wrb.20.2021.10.06.11.10.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Oct 2021 11:09:01 -0700 (PDT)
-Date:   Wed, 6 Oct 2021 20:09:00 +0200
+        Wed, 06 Oct 2021 11:10:47 -0700 (PDT)
+Date:   Wed, 6 Oct 2021 20:10:45 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Mikko Perttunen <mperttunen@nvidia.com>
-Cc:     jonathanh@nvidia.com, airlied@linux.ie, daniel@ffwll.ch,
-        robh+dt@kernel.org, dri-devel@lists.freedesktop.org,
-        linux-tegra@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v6 3/3] drm/tegra: Add NVDEC driver
-Message-ID: <YV3mPD8z47LmB4x8@orome.fritz.box>
-References: <20210916145517.2047351-1-mperttunen@nvidia.com>
- <20210916145517.2047351-4-mperttunen@nvidia.com>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
+        Maxim Schwalm <maxim.schwalm@gmail.com>,
+        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v1 1/2] drm/tegra: dc: rgb: Move PCLK shifter programming
+ to CRTC
+Message-ID: <YV3mpcyZH3gox1Sl@orome.fritz.box>
+References: <20210929222805.16511-1-digetx@gmail.com>
+ <20210929222805.16511-2-digetx@gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="7stmA90g+iXPADGV"
+        protocol="application/pgp-signature"; boundary="hcR3Tid0854ooTCd"
 Content-Disposition: inline
-In-Reply-To: <20210916145517.2047351-4-mperttunen@nvidia.com>
+In-Reply-To: <20210929222805.16511-2-digetx@gmail.com>
 User-Agent: Mutt/2.1.3 (987dde4c) (2021-09-10)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---7stmA90g+iXPADGV
+--hcR3Tid0854ooTCd
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 16, 2021 at 05:55:17PM +0300, Mikko Perttunen wrote:
-> Add support for booting and using NVDEC on Tegra210, Tegra186
-> and Tegra194 to the Host1x and TegraDRM drivers. Booting in
-> secure mode is not currently supported.
+On Thu, Sep 30, 2021 at 01:28:04AM +0300, Dmitry Osipenko wrote:
+> Asus TF700T tablet uses TC358768 DPI->DSI bridge that sits between Tegra's
+> DPI output and display panel input. Bridge requires to have stable PCLK
+> output before RGB encoder is enabled because it uses PCLK by itself to
+> clock internal logic and bridge is programmed before Tegra's encoder is
+> enabled. Hence the PCLK clock shifter must be programmed when CRTC is
+> enabled, otherwise clock is unstable and bridge hangs because of it.
+> Move the shifter programming from RGB encoder into CRTC.
 >=20
-> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+> Tested-by: Maxim Schwalm <maxim.schwalm@gmail.com> #TF700T
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > ---
-> v5:
-> * Remove num_instances
-> * Change from nvidia,instance to nvidia,host1x-class
-> v3:
-> * Change num_instances to unsigned int
-> * Remove unnecessary '=3D 0' initializer
-> * Populate num_instances data
-> * Fix instance number check
-> v2:
-> * Use devm_platform_get_and_ioremap_resource
-> * Remove reset handling, done by power domain code
-> * Assume runtime PM is enabled
-> ---
->  drivers/gpu/drm/tegra/Makefile |   3 +-
->  drivers/gpu/drm/tegra/drm.c    |   4 +
->  drivers/gpu/drm/tegra/drm.h    |   1 +
->  drivers/gpu/drm/tegra/nvdec.c  | 464 +++++++++++++++++++++++++++++++++
->  drivers/gpu/host1x/dev.c       |  18 ++
->  include/linux/host1x.h         |   2 +
->  6 files changed, 491 insertions(+), 1 deletion(-)
->  create mode 100644 drivers/gpu/drm/tegra/nvdec.c
+>  drivers/gpu/drm/tegra/dc.c  | 6 ++++++
+>  drivers/gpu/drm/tegra/rgb.c | 4 ----
+>  2 files changed, 6 insertions(+), 4 deletions(-)
 
 Applied, thanks.
 
 Thierry
 
---7stmA90g+iXPADGV
+--hcR3Tid0854ooTCd
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmFd5jwACgkQ3SOs138+
-s6GcNRAAwJpwl7dN6LBRZAB+8sJ4ax0GeNoqf4WMs3ZyWrVQE2IuNuKjZhUi68jD
-rpCc8XkK1m5x3loTMpXaA0HyUiAVb7rmTFtR0Kcqim+0qULcQALmix4M/Ax5dd56
-PgyaOCMQm5ORBt5JA9yYswqFB22eRpZKhssN7BVO4SBYeR7J9lMmwFnH5w8SrIs3
-XfW+V4/h4YiB1eEqsEKKUyqrb5IXYuAT5A6xqvZVmEB9YY7Mxut56Eu98Wdxb/yL
-ceQ6IGnl4JTkMAZWCGnZIZRHdq192GmtxKO6ZLNPH/fLArxZipkMJ8YZfbUjbw4z
-GTadAj5sPTAbuM1CdYmyehIX9gJOV+kUY5fAP2kxbDggmgdLapNCAd9YXY3N+JV6
-yse6kXXugv+A87Moose05WX+oTw0NFer2DohEWOO+YoqSqDMOgkx/3efhiuhQvw+
-Ze/NSrGkxsgyvHYM5YFTHfZInpgntRo0XudfkLeR3HqKQfg6DT6f49HuqCsZKQMc
-QAbkXMlAmRcZE5nwiz69xaRQrvkjrb9T25vI3/MHfbFOo0PM8MYFe2Zgoqyr+Vsj
-pp5+s9QQe3ycttvgjQEX/wQwDcXAeOw2yPFjKx6HKeAzt3Ybyi+xXM8DHhWs9Qg7
-AbHHiE9j/60PiOPiOQdrD0mwvGuLIyrpUS6sfKhT6LY1ubD3uEw=
-=qSJm
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmFd5qUACgkQ3SOs138+
+s6FR/A/+NGf2CguKRUKNp8H/sTRc+RzTtuFEDFqFF+U19zdqVnoefpEUeMA2PPHl
+NUya5kmyfmVGKY6ZgEl19dkbWM+QKJpbFez2u8bdBGIsvga9V14xQujvoLuyH37L
+PGFtjNiZvgOiij2Mzz2iQIoBByOJX3a0rX6yvJ9HGiAUQINI55t8yVCEBE81OEsQ
+wPeyTny/Je7vAZMw3lbwrv4zcozeOtDOKWJUL2+fbSeCz/KWXGbIxr5aTQY2do/O
+cilgeCIJ5/FIEAT/l4v0ov8RNi4j4SbQM1KtzsM6UI5W8Ej90mgSk1djZzFoQ1BR
+Evn9/5Ub73rw/5sQSZAVVcLSyDqHf5JXnIxNoNSDRHaXc3dJEEFI8PmA3D+VlHqP
+A5ohpG3qxXHC//O2GDYRwchyu1rdZzLC06qzTYKsPhWriR50muw9E/Z8U2aXXqrW
+D62dIv/EA6F3b+Zj1XqVVDjABtXO83UvPx1vHYZd+nBGdyfsSGPrN2YSlheQ2uKt
+PEUSE5NwbIbUhUmlvvGePv5a88T0rJ2F3A6JgNQwANO8lAfFpGEgQUaMD9QGQPkV
+V5oBSoXxkFdQaFLKnpgBAjMfIQCba4HsCu22hcTf7cxwmQ7gj8XCfcsckBG0RacK
+6FN3qfe+IRmLcA9rB6FvkePsLTgrqeRL9IbfHFokOG3zh7jJpXk=
+=Gm1s
 -----END PGP SIGNATURE-----
 
---7stmA90g+iXPADGV--
+--hcR3Tid0854ooTCd--
