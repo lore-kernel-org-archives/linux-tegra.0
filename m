@@ -2,135 +2,179 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2612EC433EF
-	for <linux-tegra@archiver.kernel.org>; Wed,  6 Oct 2021 10:38:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A685C433FE
+	for <linux-tegra@archiver.kernel.org>; Wed,  6 Oct 2021 10:57:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0B65C6115A
-	for <linux-tegra@archiver.kernel.org>; Wed,  6 Oct 2021 10:38:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 68775611C6
+	for <linux-tegra@archiver.kernel.org>; Wed,  6 Oct 2021 10:57:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238097AbhJFKj6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 6 Oct 2021 06:39:58 -0400
-Received: from mail-dm6nam11on2073.outbound.protection.outlook.com ([40.107.223.73]:15200
-        "EHLO NAM11-DM6-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S231571AbhJFKj5 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 6 Oct 2021 06:39:57 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=oDweKsAu8ypFtmL3GsgC7+m6GOh81S3fCR2Pk47QgD76QalLJNSxw2030BSyhHkueKTN8eigH0k19dQvHKlepM+7+zZ4+QuQv++aJauKt0qjIQSIuh0pZ0gMrXbQnvYSfoy6rzFkuHmU0jTgG6K5/V41jECFGBozqIzDEbQ/YsVH6mPakRV/BVHMHGv/YVY8jntsiPE1UwS/ZcOd2BHEknXRJgrJgHnwsgtQvWWWpMSEa4RXth3XssZOuoPxMoNEvneQiUVGiS4kerU1swCFvUYnIPeasy7FSdiIofxvW9/RxU51pHz/DlInPEHuV6z4mFdC9//EwUKYLrqp8Jnq8A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=mcesywnx2xFii3JhX3RuXG+m3XQ6Gl8UlvhXloy6VT4=;
- b=m0JJt0NHWYGV9bGl8qgoTplKz8NWh+QjKGCD7gSym+wU/cyeT02NjKT7MLEjtcXMmN+rLMVoYDCIeBbrEgQaVQhZ5BRLRBAVlLFNQfsUICJKZB4eGIclISoCt/xAW+SzCH9Y1RhgnXKIvZ6q+7DQX/74aLZQ/26HfRUe1dB2ynX9UGCZHdD19XN+6eT8vXn8SKdp/VMvTN+QAFzBaiybhiNJQuLuNcCfdDa/B+sEPnys5QjrY01Fv7C11XO4/9g7RkjhlgEXaKNnHZ/6BIpme44sAgLcsUDlasqcuchQGt6OsW4B5Koe5ovI/C1E2eHVrYLFXQsf+BzXg9OBlYX7tg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.112.35) smtp.rcpttodomain=denx.de smtp.mailfrom=nvidia.com;
- dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mcesywnx2xFii3JhX3RuXG+m3XQ6Gl8UlvhXloy6VT4=;
- b=pYp7Vp1RhifpHmmK09UA/z5XTLJNOZ/6/30rfal+oRMfJKq/w+yq9UpuawlKmrzaC/YPm/ln9JiTzCZVGEnG6o6Lopjxm7so+sbEEW4oPopKNSRR3/kTzHvpIw0Xrlu69ytQiW7595vc5exponQNzHrUqYwynOzDu/eNs8yJi3Wxu6qTGB9qondljuQCv7gfpS1boEInhWcm1IjcYCXS077Yg/YHFoCWUOx+aHkgj1Jmo7EKTH/5ZjOPYyJV88hg0J9L5j+Z3KxlDeHWr1BrbOdRkxrKpkyTZRmfP1/yXipBhfdRTAxJgFBJVlHM7NUlaZp1FCCSbgu77PWLtwLGwQ==
-Received: from MW4PR03CA0079.namprd03.prod.outlook.com (2603:10b6:303:b6::24)
- by DM6PR12MB4044.namprd12.prod.outlook.com (2603:10b6:5:21d::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4566.15; Wed, 6 Oct
- 2021 10:38:03 +0000
-Received: from CO1NAM11FT046.eop-nam11.prod.protection.outlook.com
- (2603:10b6:303:b6:cafe::b3) by MW4PR03CA0079.outlook.office365.com
- (2603:10b6:303:b6::24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4566.22 via Frontend
- Transport; Wed, 6 Oct 2021 10:38:03 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.35)
- smtp.mailfrom=nvidia.com; denx.de; dkim=none (message not signed)
- header.d=none;denx.de; dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.112.35 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.112.35; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (216.228.112.35) by
- CO1NAM11FT046.mail.protection.outlook.com (10.13.174.203) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.4587.18 via Frontend Transport; Wed, 6 Oct 2021 10:38:02 +0000
-Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Wed, 6 Oct
- 2021 10:38:00 +0000
-Received: from jonathanh-vm-01.nvidia.com (172.20.187.6) by mail.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1497.18 via Frontend
- Transport; Wed, 6 Oct 2021 10:38:00 +0000
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
-        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
-        <stable@vger.kernel.org>, <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 5.14 000/172] 5.14.10-rc3 review
-In-Reply-To: <20211006073100.650368172@linuxfoundation.org>
-References: <20211006073100.650368172@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        id S237843AbhJFK65 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 6 Oct 2021 06:58:57 -0400
+Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:59646
+        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S237982AbhJFK64 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 6 Oct 2021 06:58:56 -0400
+Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com [209.85.167.71])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 2ABED3F32D
+        for <linux-tegra@vger.kernel.org>; Wed,  6 Oct 2021 10:57:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1633517824;
+        bh=lyiS2gzwV3aL5tiUb/AbiuQ32zpcsPqknffpCI5B3YU=;
+        h=To:Cc:References:From:Subject:Message-ID:Date:MIME-Version:
+         In-Reply-To:Content-Type;
+        b=h3Ipz+kiQ4OhVi6i6b1vw/DiWQZiplPKEYML1TTcVwJeWcrTDZf/MEdRGReUkMCcp
+         p3UQe/6YOrvbgaSWIDWe1ga788111IVFcd/maBhKbGsv5nqTeAie2acOj5hHXsAv7M
+         iAGCem0kkQBzI0KtsqtLmHz4OnzVJjYG4wUw9eH4Uok6aHp4f9Pv9CgbjKe4yBoxco
+         eZoZM7U3termd2q3BDZmKEj0iwJjOsQQGgPshBvhARYmDh+lMkglPqWLgZnXWxRK+V
+         ttHL3MHI15adXY6UdbI0Aj3BoFKXLm2J1ESaMe5lELBQ93cCRm8EkPgCdPcmr5ZWih
+         d9nQ3taHx4WyA==
+Received: by mail-lf1-f71.google.com with SMTP id bq35-20020a056512152300b003fd45087a72so1673812lfb.9
+        for <linux-tegra@vger.kernel.org>; Wed, 06 Oct 2021 03:57:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:to:cc:references:from:subject:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=lyiS2gzwV3aL5tiUb/AbiuQ32zpcsPqknffpCI5B3YU=;
+        b=kOe0CNCdIh5Txh5uakrVUbEtN0x1PSy0/S5GFbTdVAI8FISKm8QCvIsMopemjQf/Ow
+         lDFAbX9m8KaEafwANQWhuSOX5VcBwzyjmcHHiZEKfCTIeFS5ORhJOONAceBHFZURR0oG
+         m4gnUZc/m9F9pNknaqopzj4v1K8JMTZt6umneJKX+GdhF8uAX9bhyyFPQFG/LmqN7yDN
+         nbnAg2qS21MnOqsS8LFORgpp8++0+xmRzhEhdmIjBtjl+N3nh/TT0R3JnV3DELVp1SaP
+         mwi2GzG1GSioKDLIZzU2XPjv7aalX+4xaD20TJXsZ7WFk9lXBjHZN0TawmoLyyp3MpF6
+         daMQ==
+X-Gm-Message-State: AOAM532uaF8QOkgoUaMVXx2KjeITXE9Xbj87uC049OWJ2Gv6R8qNm6Wn
+        gnrskNGExCAKNaniCLFaCLScHi0xjgDi1qtt24nZ1d4o7msaHZnzq6a0ISd9d+qFlwSWSGSk4s1
+        d8M+14xOB5Cm+j9evwSITcGhbCjlESKoQhLBnQV8n
+X-Received: by 2002:a2e:a367:: with SMTP id i7mr29225024ljn.435.1633517823223;
+        Wed, 06 Oct 2021 03:57:03 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJy0ybYQ7M5dUd0pO4EK9DU+QoPo9Dd8A/gKrWWPoQzw+dP3SEbSn9uqn0MbLXq/NaPnshLEPw==
+X-Received: by 2002:a2e:a367:: with SMTP id i7mr29225005ljn.435.1633517823047;
+        Wed, 06 Oct 2021 03:57:03 -0700 (PDT)
+Received: from [192.168.0.20] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
+        by smtp.gmail.com with ESMTPSA id e5sm2248255ljj.129.2021.10.06.03.57.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 06 Oct 2021 03:57:02 -0700 (PDT)
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+References: <20211005230009.3635-1-digetx@gmail.com>
+ <20211005230009.3635-3-digetx@gmail.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Subject: Re: [PATCH v4 2/7] dt-bindings: memory: lpddr2: Convert to schema
+Message-ID: <6b8f6ef7-cfc5-3a8b-d44d-f4080a85ecf3@canonical.com>
+Date:   Wed, 6 Oct 2021 12:57:01 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-Message-ID: <7261347fb4c04ac4be7da64886e3326d@HQMAIL111.nvidia.com>
-Date:   Wed, 6 Oct 2021 10:38:00 +0000
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 3c315aa1-1c56-42b1-22c1-08d988b55ff3
-X-MS-TrafficTypeDiagnostic: DM6PR12MB4044:
-X-Microsoft-Antispam-PRVS: <DM6PR12MB4044B9A61295A5D309365A12D9B09@DM6PR12MB4044.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: EvNFhvpCX44HVtuexvpP2adp2u7kZSMnJPcVNg1mupQ335+TFpB3HvYWw16TSIPhT+qR3w488CTs6LcD+tZfsDRaFpgZgL7Ag0OiGsbmqFK+WHQ9M6FduLQLkB2Mu3hXI5gnITsch6ryMhtzeeCgDHgpTMZVNzdKUWto+ERzmapoejRedxlZeMVJhK7cDv+rSD0SrpXDHWwQx0r68ZSJWQzgB1mN4GF5FRJfFhFB0Cxg7t1ivqIsb+l0RE0MzIFYH5V0uloCttO+rFr351FYNNKMUFgsLBuox/Md/vrmsG6Toh3Qx+0cIAGnCfYgSku8vlMtBU7p64Nb7aGdWJd1lMWY5Wji/N7XGHO/tfCJ6uFuFAO2KHn963cgOO9HDdtY68wPZPdAe+nBZg+v0nGhetWGUirlF/0799m34+HPeQmOPJgLJXyZQwQCLqLuATZiqsgiCnUMqZoALWZpvbiIaCPNRbJOQJ3eyfWSx1zWpjmflszswqYnjGLA3GYBnsSTtsBwHu0U8x85A2RcZiddE13lLDYdfU54FZDRi58Nk+mU/nssLbJrcExky9bMe3gZIXiCIW/kaQHtr+WHi62GUw/MzTrQA+OnCapTsUYlKXtucJHpH+2bDDgcAwAABTN5YHzIhfCjGt3Xu7tRaYVo7u2jSf1x/WBsgA/90lgNUetu9cb+3tlTSxCdz/OLHOke0QgLjoeoBTceNwocOZ9rhlixdsQOKmc5z/Ckf9VBSuBop2V5jte5/CGBTdefqO09wdVP8XfjH+2/cyqojJOPVWGbzYiUjzvMIrDvnJxEEag=
-X-Forefront-Antispam-Report: CIP:216.228.112.35;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid02.nvidia.com;CAT:NONE;SFS:(4636009)(36840700001)(46966006)(966005)(5660300002)(426003)(24736004)(70586007)(108616005)(36860700001)(2906002)(6916009)(70206006)(8936002)(47076005)(508600001)(54906003)(4326008)(86362001)(26005)(186003)(7636003)(82310400003)(8676002)(316002)(356005)(336012)(7416002);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Oct 2021 10:38:02.8714
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3c315aa1-1c56-42b1-22c1-08d988b55ff3
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.35];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT046.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4044
+In-Reply-To: <20211005230009.3635-3-digetx@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, 06 Oct 2021 10:19:58 +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.14.10 release.
-> There are 172 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On 06/10/2021 01:00, Dmitry Osipenko wrote:
+> Convert LPDDR2 binding to schema. I removed obsolete ti,jedec-lpddr2-*
+> compatibles since they were never used by device-trees and by the code.
 > 
-> Responses should be made by Fri, 08 Oct 2021 07:30:34 +0000.
-> Anything received after that time might be too late.
+> Suggested-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  .../memory-controllers/ddr/jedec,lpddr2.yaml  | 195 ++++++++++++++++++
+>  .../memory-controllers/ddr/lpddr2.txt         | 102 ---------
+>  2 files changed, 195 insertions(+), 102 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/memory-controllers/ddr/jedec,lpddr2.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/memory-controllers/ddr/lpddr2.txt
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.14.10-rc3.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.14.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+> diff --git a/Documentation/devicetree/bindings/memory-controllers/ddr/jedec,lpddr2.yaml b/Documentation/devicetree/bindings/memory-controllers/ddr/jedec,lpddr2.yaml
+> new file mode 100644
+> index 000000000000..d99ccad54938
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/memory-controllers/ddr/jedec,lpddr2.yaml
+> @@ -0,0 +1,195 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/memory-controllers/ddr/jedec,lpddr2.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: LPDDR2 SDRAM compliant to JEDEC JESD209-2
+> +
+> +maintainers:
+> +  - Krzysztof Kozlowski <krzk@kernel.org>
 
-All tests passing for Tegra ...
+My Canonical address please, so:
+Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 
-Test results for stable-v5.14:
-    10 builds:	10 pass, 0 fail
-    28 boots:	28 pass, 0 fail
-    114 tests:	114 pass, 0 fail
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - items:
+> +          - enum:
+> +              - Elpida,ECB240ABACN
+> +          - enum:
+> +              - jedec,lpddr2-s4
+> +      - items:
+> +          - enum:
+> +              - jedec,lpddr2-s2
+> +      - items:
+> +          - enum:
+> +              - jedec,lpddr2-nvm
+> +
+> +  density:
+> +    description: |
+> +      Density in megabits of SDRAM chip. Obtained from device datasheet.
 
-Linux version:	5.14.10-rc3-gd1d4d31a257c
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
-                tegra20-ventana, tegra210-p2371-2180,
-                tegra210-p3450-0000, tegra30-cardhu-a04
+You need here a type/ref, so uint32.
 
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
+> +    enum:
+> +      - 64
+> +      - 128
+> +      - 256
+> +      - 512
+> +      - 1024
+> +      - 2048
+> +      - 4096
+> +      - 8192
+> +      - 16384
+> +      - 32768
+> +
+> +  io-width:
+> +    description: |
+> +      IO bus width in bits of SDRAM chip. Obtained from device datasheet.
 
-Jon
+You need here a type/ref, so uint32.
+
+> +    enum:
+> +      - 32
+> +      - 16
+> +      - 8
+> +
+> +  tRRD-min-tck:
+> +    maximum: 16
+
+Here and further type is needed.
+
+
+> +    description: |
+> +      Active bank a to active bank b in terms of number of clock cycles.
+> +      Obtained from device datasheet.
+> +
+> +  tWTR-min-tck:
+> +    maximum: 16
+> +    description: |
+> +      Internal WRITE-to-READ command delay in terms of number of clock cycles.
+> +      Obtained from device datasheet.
+> +
+
+Best regards,
+Krzysztof
