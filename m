@@ -2,111 +2,156 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E276C433F5
-	for <linux-tegra@archiver.kernel.org>; Thu,  7 Oct 2021 18:51:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66070C433F5
+	for <linux-tegra@archiver.kernel.org>; Thu,  7 Oct 2021 19:23:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 08B3D610A5
-	for <linux-tegra@archiver.kernel.org>; Thu,  7 Oct 2021 18:51:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C1CF610CC
+	for <linux-tegra@archiver.kernel.org>; Thu,  7 Oct 2021 19:23:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233884AbhJGSxg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 7 Oct 2021 14:53:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34458 "EHLO
+        id S243896AbhJGTZI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 7 Oct 2021 15:25:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41574 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233866AbhJGSxf (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 7 Oct 2021 14:53:35 -0400
-Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 086AFC061570;
-        Thu,  7 Oct 2021 11:51:41 -0700 (PDT)
-Received: by mail-wr1-x42e.google.com with SMTP id t8so22194540wri.1;
-        Thu, 07 Oct 2021 11:51:40 -0700 (PDT)
+        with ESMTP id S243891AbhJGTZI (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 7 Oct 2021 15:25:08 -0400
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF417C061570;
+        Thu,  7 Oct 2021 12:23:13 -0700 (PDT)
+Received: by mail-wr1-x435.google.com with SMTP id u18so22330092wrg.5;
+        Thu, 07 Oct 2021 12:23:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=aik39+wylsu4agnF9oCbwL/UHnQpdxsbSZh9y97MRWk=;
-        b=ip8yN7hBtrCnajgq6bhlXelU0GSEkMPNwGWZKF1mKx++uVJMIFL78IGdXu3ADtAFNA
-         j8Dmn6+QjublPgQkW/lAblVwq1cEGcgpkj9LF9gHVzUSb9Gyhm+oEfEwBMOk3maSg5rx
-         Jp+MkIQ4Rxb9e0yKphGYWjxxb8+cNU5LQXxFayNmTOlKyHOWhFImH0CsAbRAAZoIk20L
-         UGV6J2MsKgN+tYgJrJsCgHjubhJYaeUR13zUkzps+uyapfV/5i5SjaOxTwACDoQcS/FA
-         AMOhoZ7tPhdZF+EAjcrCbSlfmUTCLXQCA7IntO073P29HxOvLKDjnaU5ZsTq9LHJQLNo
-         VPCg==
+        bh=jKCYo7elbfN+8Lo9BJJiNFtvdPlRlQgGyDD+hhfOf40=;
+        b=d0dkuNNipB4R+OTaIs1kQfjnZ24jPRymUVjwKt4l6BIgSLjdhH30LPkaG6S9ik5axn
+         Biu2rz5ZCzOVw5gTs+1IZd97T7gUR1otVgyjL+ndg8/kVF3arFWi8qqVRKjhRsgF+M62
+         ketDfIfLDywghXB1AGHBlkRG4V+3h7X9vioozBPllV2YbsdaCqKv++N7Fwi4wSuiwVRc
+         ZXw5O4EfOocbF4cEIQ+CM2Vc48Ky/E5QxkAagZbsp3Qvx6Y5wOlue1pl5CASf4KA+ISW
+         CcsCkR4A5Wwnh8FLHbRLKYz+L1I+9SG+QhjF3IByCRi0bzjtfG3zhf1glEH9QGNsU2aJ
+         HQAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=aik39+wylsu4agnF9oCbwL/UHnQpdxsbSZh9y97MRWk=;
-        b=RN0t6DTRKpXSsYxDG2+XJXnWgLr1RXmxqVPY5239mYrnQcNYj+4a5M+MT0uaIldzT0
-         iimDh+srMPJPDxThuLHvWesF2Hot146OzA3AEZF/YHEFJVkv0EFMBndI83O7dQW5Glth
-         0JkFsZZ8lEr49makHTyev+mQwUVVDKZvVWaRNCeoVeQGdMOCxhIZ2KI/MEao67oiUAzz
-         xx+4zvraRrJSVGtHEXetBlRTsvmAxkkqAKa7A8D4ZQZRI/cRvvdB0lPXy6qEto/SK0Bu
-         zv63fg5rMbCLgnO6qWNCDX6373CBCnnsDVL3N4dWM2/qSAXG3GX/PyJ3kKlP8+LTLZXu
-         PpWQ==
-X-Gm-Message-State: AOAM532HjmeCNrmRFXegrIEasfGoLDQ/sB+UbhVuiZ3XQnugJLjxTB+e
-        6uFkdZvJTO7ZXtZVIbwylagem0mZDeM=
-X-Google-Smtp-Source: ABdhPJwZbgRiFX2i+LWGNXvebM7kjPIQrS5JeGxi/aYZI/RdHI0cSHuaUGjRPNyIkj4+/4wPYUaubQ==
-X-Received: by 2002:a1c:2b04:: with SMTP id r4mr18649489wmr.89.1633632699672;
-        Thu, 07 Oct 2021 11:51:39 -0700 (PDT)
+        bh=jKCYo7elbfN+8Lo9BJJiNFtvdPlRlQgGyDD+hhfOf40=;
+        b=Af1jiIVE4dCWfBG1QOnaH1YjIanU1OgfF8aCZ7ERqSfTlsKw5bkkxYHhf97cNXvVWT
+         0rFwpRgd0TiDMDzN9J2Uxrdkcc5eBAMaUAzLkmIiCy3Sv4PTMTVgxfnQIUcn2Wwr2CNp
+         nH4hYHcmCAsi06FWYtGXho0iQ0U/m4IY9cXmRpzqdY2MKQ0RWadfuHwCDpoUFWg4TBkA
+         reLbm8gBe7LFAz3WwZqb33knK2mzK+0MjiMVaZ2D/L4Z5gOjPsiMDRq0z3Nvt5GqSuUu
+         zBbxqoxIYzfrN27MX7ZIXJBibbYzVCT5GzeQ/xc04UKFiVmWhAjqovVINS0n1VYQGgTt
+         dQjA==
+X-Gm-Message-State: AOAM532J/trbOB9D/nRgABoN4AdEdcdavDb0Cxh6ytWCAlGuIK1y/RJW
+        BAgNHdcMKZvZSxg4a/jhLFA=
+X-Google-Smtp-Source: ABdhPJyqOVTW/HIi/ICquQaOPPDSGWhlYbd6fygN3jqI+8q43cGrGaR+0T8etAnCTt4TF7FXO+kDJg==
+X-Received: by 2002:a1c:cc0f:: with SMTP id h15mr6528641wmb.37.1633634592523;
+        Thu, 07 Oct 2021 12:23:12 -0700 (PDT)
 Received: from localhost ([217.111.27.204])
-        by smtp.gmail.com with ESMTPSA id c14sm147781wrd.50.2021.10.07.11.51.38
+        by smtp.gmail.com with ESMTPSA id i3sm245065wrn.34.2021.10.07.12.23.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Oct 2021 11:51:38 -0700 (PDT)
-Date:   Thu, 7 Oct 2021 20:51:37 +0200
+        Thu, 07 Oct 2021 12:23:11 -0700 (PDT)
+Date:   Thu, 7 Oct 2021 21:23:10 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Cai Huoqing <caihuoqing@baidu.com>
-Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] soc: tegra: pmc: Make use of the helper function
- devm_platform_ioremap_resource()
-Message-ID: <YV9BuYSOHUwxcEjS@orome.fritz.box>
-References: <20210908071724.823-1-caihuoqing@baidu.com>
+To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc:     Rob Herring <robh@kernel.org>, linuxarm@huawei.com,
+        mauro.chehab@huawei.com, Bjorn Helgaas <bhelgaas@google.com>,
+        JC Kuo <jckuo@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sameer Pujar <spujar@nvidia.com>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>,
+        Vidya Sagar <vidyas@nvidia.com>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v5 5/5] dt-bindings: arm64: tegra: fix pcie-ep DT nodes
+Message-ID: <YV9JHsFyu+zTxrcN@orome.fritz.box>
+References: <cover.1626608375.git.mchehab+huawei@kernel.org>
+ <15cf5067c0567614d5b186d006ebd88395d56b63.1626608375.git.mchehab+huawei@kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="s/kDtRDvbdOd/bXs"
+        protocol="application/pgp-signature"; boundary="hvtSaJRi+eMRsZbD"
 Content-Disposition: inline
-In-Reply-To: <20210908071724.823-1-caihuoqing@baidu.com>
+In-Reply-To: <15cf5067c0567614d5b186d006ebd88395d56b63.1626608375.git.mchehab+huawei@kernel.org>
 User-Agent: Mutt/2.1.3 (987dde4c) (2021-09-10)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---s/kDtRDvbdOd/bXs
+--hvtSaJRi+eMRsZbD
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 08, 2021 at 03:17:24PM +0800, Cai Huoqing wrote:
-> Use the devm_platform_ioremap_resource() helper instead of
-> calling platform_get_resource() and devm_ioremap_resource()
-> separately
+On Sun, Jul 18, 2021 at 01:40:52PM +0200, Mauro Carvalho Chehab wrote:
+> As defined by Documentation/devicetree/bindings/pci/pci-ep.yaml,
+> PCIe endpoints match this pattern:
 >=20
-> Signed-off-by: Cai Huoqing <caihuoqing@baidu.com>
+> 	properties:
+> 	  $nodename:
+> 	    pattern: "^pcie-ep@"
+>=20
+> Change the existing ones in order to avoid those warnings:
+>=20
+> 	arch/arm64/boot/dts/nvidia/tegra194-p3509-0000+p3668-0001.dt.yaml: pcie_=
+ep@14160000: $nodename:0: 'pcie_ep@14160000' does not match '^pcie-ep@'
+> 		From schema: Documentation/devicetree/bindings/pci/snps,dw-pcie-ep.yaml
+> 	arch/arm64/boot/dts/nvidia/tegra194-p3509-0000+p3668-0001.dt.yaml: pcie_=
+ep@14180000: $nodename:0: 'pcie_ep@14180000' does not match '^pcie-ep@'
+> 		From schema: Documentation/devicetree/bindings/pci/snps,dw-pcie-ep.yaml
+> 	arch/arm64/boot/dts/nvidia/tegra194-p3509-0000+p3668-0001.dt.yaml: pcie_=
+ep@141a0000: $nodename:0: 'pcie_ep@141a0000' does not match '^pcie-ep@'
+> 		From schema: Documentation/devicetree/bindings/pci/snps,dw-pcie-ep.yaml
+> 	arch/arm64/boot/dts/nvidia/tegra194-p3509-0000+p3668-0000.dt.yaml: pcie_=
+ep@14160000: $nodename:0: 'pcie_ep@14160000' does not match '^pcie-ep@'
+> 		From schema: Documentation/devicetree/bindings/pci/snps,dw-pcie-ep.yaml
+> 	arch/arm64/boot/dts/nvidia/tegra194-p3509-0000+p3668-0000.dt.yaml: pcie_=
+ep@14180000: $nodename:0: 'pcie_ep@14180000' does not match '^pcie-ep@'
+> 		From schema: Documentation/devicetree/bindings/pci/snps,dw-pcie-ep.yaml
+> 	arch/arm64/boot/dts/nvidia/tegra194-p3509-0000+p3668-0000.dt.yaml: pcie_=
+ep@141a0000: $nodename:0: 'pcie_ep@141a0000' does not match '^pcie-ep@'
+> 		From schema: Documentation/devicetree/bindings/pci/snps,dw-pcie-ep.yaml
+> 	arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dt.yaml: pcie_ep@14160000=
+: $nodename:0: 'pcie_ep@14160000' does not match '^pcie-ep@'
+> 		From schema: Documentation/devicetree/bindings/pci/snps,dw-pcie-ep.yaml
+> 	arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dt.yaml: pcie_ep@14180000=
+: $nodename:0: 'pcie_ep@14180000' does not match '^pcie-ep@'
+> 		From schema: Documentation/devicetree/bindings/pci/snps,dw-pcie-ep.yaml
+> 	arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dt.yaml: pcie_ep@141a0000=
+: $nodename:0: 'pcie_ep@141a0000' does not match '^pcie-ep@'
+> 		From schema: Documentation/devicetree/bindings/pci/snps,dw-pcie-ep.yaml
+>=20
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 > ---
->  drivers/soc/tegra/pmc.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+>  .../devicetree/bindings/pci/nvidia,tegra194-pcie.txt        | 2 +-
+>  arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts          | 2 +-
+>  arch/arm64/boot/dts/nvidia/tegra194-p3509-0000.dtsi         | 2 +-
+>  arch/arm64/boot/dts/nvidia/tegra194.dtsi                    | 6 +++---
+>  4 files changed, 6 insertions(+), 6 deletions(-)
 
-Applied, thanks.
+Sorry for the delayed response, this fell through the cracks. Applied
+now, thanks.
 
 Thierry
 
---s/kDtRDvbdOd/bXs
+--hvtSaJRi+eMRsZbD
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmFfQbkACgkQ3SOs138+
-s6Ekqw/9G41RefFYldQIatVwmLAW4BVON+YyGpzsvnyPpc0csriuFvsZwgh+9DoD
-KtuzTCrM60SefcZpB5TJac+r9kpLs6zbQoNLZc6mQjAk0uRGmltaMtiv/kz5PYss
-W7hww4gr1CE5R4TR6UVMyxBIJn0poF4zCNgMx9Q3b1Q+/fY1t3yUBiyREWX1hBPr
-cw0XfdYOFQEcgbIT7WsNnD2MYoUXIIAhr65Gmo3Sze5DggwlhaeupCptLw8sK5GB
-bHpLr+OSvehypzibNK1te43ldH/FGrkfmWAOSC63vaDXhG3e+8PPMTsK6U6eSLm1
-pnvM/hoDQfnGHHQi6SqzAiQ88SfrL+kPGo0y5VvQZuxVfd9fIBxSbLah5j3UZ/CP
-4pWDzu8C8tMdATLBg01z/mDprqNqT8RJCUFsGumtnMUbIA3ZOohllvQ9BN2IZdR8
-DOD5d/bri6fci4SEMMvhrYlJDfVs3VZDQVaaLBJKoPYUmf3eLKfceNQGd78NRtgB
-XjeeYN/yv0tnHpwyaUSMPxjZ7U0B1oSp/IxrabK3MYSjJkShBG70AeyBDVGsG++C
-bszd9EXlOpPObWOINdbqFzZJxVT2EAMSVPDfnF8K1TZAEL6xqbPHxb4zmMMpPFeO
-v3k1CG74DF7mRGycVn06B3ErgIwE2rKF5S4qt6ijXwLMnIddEyk=
-=7DnC
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmFfSRwACgkQ3SOs138+
+s6FMVg//VA84RbAyFnRKV7Qf21suROrf13xD4bw8a6iFEvSedSMiqMJupJ6cW5Df
+xAdQxmivmNfwEtsVgrO7bw0MR6yrIU6eRxWPV89qAoIAOFMpIupcu6I+MZSNLin/
+vDBRvVw+R+zN95mHW7W4Edf76NwVjsFcLpDyxpTgdBYGc4CmTuUi15yGcfsnLWj1
+8phTiwa/U7/cf7qWTAy2PMhtseEoVRjXZT2FtubC9Y6YSfAE3gz86rKBUxE8ZZIg
+WcqO92HeOLtXxs/TAGkEkOfQWkRe4aHHzpC61V+c4ECs0emhbrXjQmePmcEWzW9n
+9zEjUANnaEiYbYcSGx1m34TtCWVuGtaIaHQZur/ClgB0FjwWV9k4MxbWnfU/2+ww
+M3LZgDLQh5wtx2wzq304FT1Jyoo1ekrBRHh5+jqVCcHKCTUMJquwpA1oDp9PI50W
+il6Ju775R2Q/Dj6p4P2c0YU6ZJ4qMK9JFuwLb7JBxDGNTvdJh2bGv63DZ+g86Mwq
+YCAKf5aQfcWf12GdRU04ttJ/n8rW6+33dw+iELC+HvxZChX/Yp3zwn4HbDt9Do/9
+lfW4QVBrF0QneD2zqEAmknoog7dU7MOih1RND/lZPF1rwRafxRGGZm7ys3rWZkVJ
+/U1CuNlPkdeEzLBHEvDSIVxKZgA81BxWRDSiiSs+Wg+AXSomY5I=
+=8l0Y
 -----END PGP SIGNATURE-----
 
---s/kDtRDvbdOd/bXs--
+--hvtSaJRi+eMRsZbD--
