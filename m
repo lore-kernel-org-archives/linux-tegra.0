@@ -2,114 +2,116 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9D4FC433EF
-	for <linux-tegra@archiver.kernel.org>; Thu,  7 Oct 2021 18:21:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FE14C433FE
+	for <linux-tegra@archiver.kernel.org>; Thu,  7 Oct 2021 18:32:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A216260F4C
-	for <linux-tegra@archiver.kernel.org>; Thu,  7 Oct 2021 18:21:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E12F961058
+	for <linux-tegra@archiver.kernel.org>; Thu,  7 Oct 2021 18:32:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243655AbhJGSXM (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 7 Oct 2021 14:23:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55424 "EHLO
+        id S243678AbhJGSeu (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 7 Oct 2021 14:34:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58208 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233844AbhJGSXJ (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 7 Oct 2021 14:23:09 -0400
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2BAAC061570;
-        Thu,  7 Oct 2021 11:21:14 -0700 (PDT)
-Received: by mail-wr1-x433.google.com with SMTP id t8so21956462wri.1;
-        Thu, 07 Oct 2021 11:21:14 -0700 (PDT)
+        with ESMTP id S233598AbhJGSet (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 7 Oct 2021 14:34:49 -0400
+Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7616C061570;
+        Thu,  7 Oct 2021 11:32:55 -0700 (PDT)
+Received: by mail-wr1-x430.google.com with SMTP id r7so21864821wrc.10;
+        Thu, 07 Oct 2021 11:32:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=eS5l5u8+Tk1mYVZJCj81/uOAKA7hO8DSQEcw2KahanU=;
-        b=Aqh1NVC9X02IZBff+Y2fVgaNXtq7LJr2Cffbg2WfNn/nxN22OU7uiiO4eG7FutWVhH
-         QRcPYXj+1KOvlBszW3ALiv3iIlBv/1TIe86sCMiuY1/ezhdrUJM+1Zf4YsesgzqGUD9R
-         OhDDnadyRA2mXCLv1kUad+/PmxNiHPtv6l8p+9a4pLgDKhPvwc2FcRlTpYs6XWHt/l4x
-         IDq/TsTnsfwAPongKHkADEqnXXClygQl5r/bYOZHjFCgT0YMaI3ZUycB4LwZb5gyTl8z
-         WzxQ7ZerOJdIJj51S4zOx/gOEb32AGwCliXSez2SHbJPoQKMB4TgbvYLtCcm/mPPleLa
-         94kQ==
+        bh=BrYFk3n3wKlXA8WLTss5loXYswBXAXQcm0uu3iwx1oI=;
+        b=MsmiKmM5Xym6tqTIRo1kiphYf5bA1ylKLWS+V/xinVqK4hzPC6mYF8MnSUtIlH6DNV
+         RIt82LI/xZTYqZXJO01GpviNeRI6Yw3JUYGSFseeu4zog29LlNXUMl/MLCG2idIB5L8D
+         CjOaOzo5oK1/HTA3mta6bMF3wMn6I2nCtBEzeqPPyLan6c0TGMJ891xn0ivvqjMI6LDV
+         4nDF78xt+yP/1sOYDwWuE0jxCSwpiu0a91gBt6FPa3wl9P4HJ+5aI/AioM2SQ7SsGXj7
+         hN2kY88SrcJu6IYemiXcWBF6B9IjS6YXa9iSUfcNlvRM1+232yIm9u5nl8kM0WoTkEVi
+         T4ng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=eS5l5u8+Tk1mYVZJCj81/uOAKA7hO8DSQEcw2KahanU=;
-        b=Q0oh9KyuoMW+c+L8LETYjbgrnTwk72dKDrr4RCtIahER0FHURPaTPg8/Zu/C6/FYnN
-         nXph+kxO6K1tbiiOIsrkC5TsxxrN5PlJWjpNj9wYI1g5F4GepNz52xaUnj40XxrLCmax
-         wTUT4GJdq+o4/Gus9BAdo7/fTQOAHlm6DpKrf94xR9Jq+8addICfMQBkm8fVc5y3tiyC
-         8ms886b9t9NKh/R2XofUmmjJF7rmTHrDNj3ZozmisJVadkLfjAyfRIcKMAwNoRWH2teZ
-         EnrLfyx95xzZ3sZN7SBNZ66MUpB8+u41S18AIk+ArAh/C3ucoiYEgZiUVlEm4U0xagD+
-         PbgA==
-X-Gm-Message-State: AOAM532JPsDX4cuCFk0V8hu9L7X770sAM6n/LT7ol4e0760Z9QhZxEti
-        cDyrbs04XrtMHZifNj5caMM=
-X-Google-Smtp-Source: ABdhPJzwTcFatw6/sTe7GgwZ8BP0NH/upuFhBMqxDL6/Mqrqgx3lhSRIq/brVJdjM5NLMwB5o1k3mA==
-X-Received: by 2002:adf:a1d7:: with SMTP id v23mr7467729wrv.171.1633630873247;
-        Thu, 07 Oct 2021 11:21:13 -0700 (PDT)
+        bh=BrYFk3n3wKlXA8WLTss5loXYswBXAXQcm0uu3iwx1oI=;
+        b=MeE60+B5mMgXwecBazz/3953iXdKndIwEr93377CQPVZ797EhReOloCmc9Fk2sUQ1o
+         SBnOlgV5BOdvHgWEnBPEFYLahaG5uAGmK8PupmnhCWSN9yg2n7NmbY6DLlkETg/ox50c
+         5HVKpnIj4nqFw4dHOJwTTkJhmrdf0JHvQNORVf1cVhT+RbziPccCBTd2KYh5jVqPKPq/
+         fyvlPn3KEIBf6zuKopTd7wHEPal1x8jf3xuzqU/vKxAjFt5+Mq/hjIPzRrCWqpxBUsDk
+         XBpm8F3We7mrFvk69qUkKnVV5mHQMOKBse/DfP+ug6Oj9qA8p4othmm6rwhxT7Hz23uc
+         3YUw==
+X-Gm-Message-State: AOAM533g3isLpJ0BCQnMJbOm8l6IpXc9ubVzX3cCR305sXnEf+c62eqN
+        v5rOUBGVuWRCzR6d5sfDgu76ID8lqdU=
+X-Google-Smtp-Source: ABdhPJxeMJ5V8OljD6sv6Bq3GPMYA2a4B9MI4IhMi5Wn4JY1Rjt7i54TrwpzsJgm+Ic44xKq6+7YZQ==
+X-Received: by 2002:a1c:7917:: with SMTP id l23mr1740719wme.36.1633631574175;
+        Thu, 07 Oct 2021 11:32:54 -0700 (PDT)
 Received: from localhost ([217.111.27.204])
-        by smtp.gmail.com with ESMTPSA id b15sm76170wrr.90.2021.10.07.11.21.12
+        by smtp.gmail.com with ESMTPSA id r205sm180356wma.3.2021.10.07.11.32.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Oct 2021 11:21:12 -0700 (PDT)
-Date:   Thu, 7 Oct 2021 20:21:11 +0200
+        Thu, 07 Oct 2021 11:32:53 -0700 (PDT)
+Date:   Thu, 7 Oct 2021 20:32:52 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Mikko Perttunen <mperttunen@nvidia.com>
-Cc:     rafael@kernel.org, viresh.kumar@linaro.org, jonathanh@nvidia.com,
-        krzysztof.kozlowski@canonical.com, lorenzo.pieralisi@arm.com,
-        robh@kernel.org, kw@linux.com, p.zabel@pengutronix.de,
-        rui.zhang@intel.com, daniel.lezcano@linaro.org, amitk@kernel.org,
-        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Subject: Re: [PATCH 5/5] PCI: tegra194: Handle errors in BPMP response
-Message-ID: <YV86l4OhqKN0AkMN@orome.fritz.box>
-References: <20210915085517.1669675-1-mperttunen@nvidia.com>
- <20210915085517.1669675-5-mperttunen@nvidia.com>
+To:     David Heidelberg <david@ixit.cz>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ARM: tegra: dts: remove unused backlight-boot-off
+Message-ID: <YV89VEW8TlT2DaKF@orome.fritz.box>
+References: <20210919152720.72748-1-david@ixit.cz>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="tFSCm+qk1Uyu+TSl"
+        protocol="application/pgp-signature"; boundary="LPO8ZLWxFwBYEdel"
 Content-Disposition: inline
-In-Reply-To: <20210915085517.1669675-5-mperttunen@nvidia.com>
+In-Reply-To: <20210919152720.72748-1-david@ixit.cz>
 User-Agent: Mutt/2.1.3 (987dde4c) (2021-09-10)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---tFSCm+qk1Uyu+TSl
+--LPO8ZLWxFwBYEdel
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 15, 2021 at 11:55:17AM +0300, Mikko Perttunen wrote:
-> The return value from tegra_bpmp_transfer indicates the success or
-> failure of the IPC transaction with BPMP. If the transaction
-> succeeded, we also need to check the actual command's result code.
-> Add code to do this.
+On Sun, Sep 19, 2021 at 05:27:20PM +0200, David Heidelberg wrote:
+> backlight-boot-off was proposed as a patch, but ended not being accepted
+> since different solution was already in the place:
+> https://patchwork.kernel.org/project/linux-arm-kernel/patch/1406806970-12=
+561-1-git-send-email-thierry.reding@gmail.com/#21327479
 >=20
-> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+> Signed-off-by: David Heidelberg <david@ixit.cz>
 > ---
->  drivers/pci/controller/dwc/pcie-tegra194.c | 9 ++++++++-
->  1 file changed, 8 insertions(+), 1 deletion(-)
+>  arch/arm/boot/dts/tegra20-paz00.dts            | 2 --
+>  arch/arm64/boot/dts/nvidia/tegra132-norrin.dts | 2 --
+>  2 files changed, 4 deletions(-)
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+I've split these into two (one for arm/dt and another for arm64/dt) and
+applied them.
 
---tFSCm+qk1Uyu+TSl
+Thanks,
+Thierry
+
+--LPO8ZLWxFwBYEdel
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmFfOpcACgkQ3SOs138+
-s6HiLQ//QBasV3sip7PQxWdzfgJL74Ctwh7OfExUCBSd1PhakUoyS+m9sk8Tieqm
-FxVvU6tJjLci5HoRkYwh9Xmat6Gxn14YR7NI2LsofCuh2DD1huc9WbxyoNzuzMl0
-ASLP4qY2a3jDoaAQEyVhsl+yIYqW2xzt1R+/WcMKVrwfOlbc7GkQGHM1WmbOssZ/
-e82MUvIiQOlKzH7EfNHONZMlAj4puk4n27ho3pDGqGgZKYzhUhIdx+hl+QfQwsvy
-LfMuYghB3Khz+f6u8oJoVMfNJxEs/jr+bjsKinYY1QsB0UefOd/1SPFkyQznBLG6
-wzSTHPKL02/WVsIO5urOXomFCp2iDaP6xLdpmS1pnw89KD4/d6HoAmi0rW2T5fXK
-91TYp0U9Vg951AtK8vCWaP14qPgdlb8hZtl25OBut1UJBLwfnRUwNP+t+ng/r6aZ
-12NtV0TTTLeP5z9e/R9FDzD6Grmm3CuVCNpZqrZyv6a7PD+xaN/wvklDzPnRf0Cj
-t1C40n+j2Tu+BYOZCE9wRD1o5vErXhhkA6lKQI8EyuO8YR/EimQa7hvzoaFGkamY
-R2x4v0MLy7ql8seZnX0rPVh3RGSUtWjXZMOzAfnWdLYGMBwIu8VVeLwtDFgpw+b9
-gMTrX+6AvdyhqqqNpWZhOo4XyfbUpyiDgizZn7m0n0o0eomxf0A=
-=Esys
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmFfPVEACgkQ3SOs138+
+s6HofhAAkHuFOoH9Xs9hJuwIyoJHZq0Z/CzqUIl2ORpr3Id7qQs1uIrrFFE8MzAB
+2lNS4r6XgU3ze2TH97G+Np740zqUvSw4fU/P5Iu+sIzOKwB+Fn2dICXBpkftSDGI
+h6RYBXbABAEl7iYB3rvOZDZWlV7q0mFAhNbBOz+UpaUEYUHuEE4f92o9r39mR8QO
+gL6FYs8FAnBHcaMXajeMF5ZDxCRnSn3XgJBj8pCMsjXz1RRRXX+tkL8b4p0fv2E6
+TkXjAGc/m9V98qdK7p4/ZvTM5K97TIJ6dzT9SU7TKwIVnRlwaCrQb6+obVhGi/Zh
+4pja71t1tNgKH65fwuhwvQ9Gozw0AUa/R8DcC58BAw8z0hZNx48nBLIFIELizttJ
+FD/cGkKCr7q+zFnfV23tTYrMourUuWVGIdy6YBj5CHIs7nNaq57Pw8M/PT4GtLdI
+ZuKqGWwwqlopQJ2xeFeNCtUM8Bba7Ho3dKbdPZEBieGZR8+sTu1htuwzME0wfRZD
+JO1WE1kn755LJaMQ2DMMYcTFp0IqzIx6RqsVEvcX5Wshj3fcQnCCKbsL/cVZVa/p
+7TsJl/YeWFUL8qLo+FvJFBGQytRVqGiGss/c49v4RIT6O+BnGdGSMjJfo8AdYa/w
+/BhUQG8BPkFg8IKTKFM1+xhV0Ij8hy5zlCy0ZtL6w0k14BIdMAU=
+=khHq
 -----END PGP SIGNATURE-----
 
---tFSCm+qk1Uyu+TSl--
+--LPO8ZLWxFwBYEdel--
