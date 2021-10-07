@@ -2,261 +2,121 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8424C433F5
-	for <linux-tegra@archiver.kernel.org>; Thu,  7 Oct 2021 17:13:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F6B9C433EF
+	for <linux-tegra@archiver.kernel.org>; Thu,  7 Oct 2021 17:51:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9FC1661139
-	for <linux-tegra@archiver.kernel.org>; Thu,  7 Oct 2021 17:13:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7C39E6103B
+	for <linux-tegra@archiver.kernel.org>; Thu,  7 Oct 2021 17:51:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243202AbhJGRPZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 7 Oct 2021 13:15:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39034 "EHLO
+        id S243335AbhJGRxi (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 7 Oct 2021 13:53:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48296 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243193AbhJGRPX (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 7 Oct 2021 13:15:23 -0400
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2661EC061570;
-        Thu,  7 Oct 2021 10:13:29 -0700 (PDT)
-Received: by mail-wr1-x42f.google.com with SMTP id o20so21185137wro.3;
-        Thu, 07 Oct 2021 10:13:29 -0700 (PDT)
+        with ESMTP id S242934AbhJGRxi (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 7 Oct 2021 13:53:38 -0400
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E94AC061570;
+        Thu,  7 Oct 2021 10:51:44 -0700 (PDT)
+Received: by mail-wr1-x436.google.com with SMTP id u18so21606595wrg.5;
+        Thu, 07 Oct 2021 10:51:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=vLFoMp+dlaZHfsMQ3K2u0QNFyHL+HsxnT/5AaQm7BNg=;
-        b=RX/pQlBUL5wUWRsIZYj7FNselOa0r9QLUJ72MouaPravOCTozOjwEuHD3CC8b4JL2q
-         YJ1CJkz2gjw1DWnplJVhFsQ+rIZlS/hl1mXDf0rBb6PnZ/4lwW3wa/uuGSoWgeSksk5g
-         l7/mLXdZqBKH7IhdA5odSJn3OxrkDDflMCyvab7jpgm4RtBECKLyKCR3aVBJXnYcxBjO
-         sNfcyTIL2wzbHX2/XYlLwL4YLJl1KIHJkLWUq1n7SCKrVS55v24FT/H1f5PyzVGBJIa/
-         fSzhN0/saTGfVU/5A5suk6STEvOELjSIntCHKPAFTc82vjMJHc5n59t7322fL1VNzk28
-         5QnA==
+        bh=qr9MDwBMzsyNipMpKSvmO1rGtnLhU3br6C9ogb2fBw8=;
+        b=l0gf8IrjazvORWdZh1xkbtoa0c0CKoUv4AKMehcFzvJQheuGcGirYhPyuyx7+hNTgI
+         s/7zGlnozqfQpeqd3vdzzNELUBwjwZVJwm23vLAT5AfQtTpys1t6Pu64Au9fq17Fvrds
+         +cr2luV22MzghTXwbPilEE2wvhdgWwNvPSRbKYOgjdnju/617H1R1SfDTg8zdTZjPkL6
+         zld5VpxrcX0+oY+gfbAStKRm/yjXp5GugPCK9xEAIggNMIaFuOOLlA99V1WvN7ibTnjB
+         FoNjYUaGaqApga+RajhPFk5VpnfDb7hOMiSLU8TCP255JHX/m+r1DwZGlBW8VKlj3LdZ
+         CTYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=vLFoMp+dlaZHfsMQ3K2u0QNFyHL+HsxnT/5AaQm7BNg=;
-        b=PhCvLSo+Lnxa6zOj1E6Gatdlms+qUliDceZVorSspTaCwLL8f0Arvt9D752Jbxdvs2
-         NNN/vt0sHJTUoYy3z2J4g+6w0bjtQks7tQzviMjAlQVFolNG0K35F+pIGZUI1/mrinPE
-         YXq4Y+0UOQTYNzhW2bqCN3fTusS5ZOw0BFyfTqhjPDCTCIxOVe/iy7ZIl/pgkVUE+IA4
-         tHJmWVpXYbrPzVL3jmSK8Z7M97ENo9FASRSdD9vRGpUAhVrFUY9qGfmAUpzKPc2+/osd
-         dYL811Tig6k9EwrPMCmLyFHd5WCHJeQG9v3Rbh+LlZiZpguU/U1JKzCOQegoNjsBKZle
-         C6SQ==
-X-Gm-Message-State: AOAM5324O4Qy099olAO+Ky5rS2Vo1jJOD+drzPcZZrgIaYzQIOSLJoi0
-        RvnhzKkRcxmY6UvJvZVaL04=
-X-Google-Smtp-Source: ABdhPJzTHTG6kt6OPq07bFUSFJruW8YZ4QMMQf5MkN/9aUgfa60VV/R1Jbf4CIUi4YJBMcgwIkwoTA==
-X-Received: by 2002:adf:ab43:: with SMTP id r3mr7062988wrc.225.1633626807587;
-        Thu, 07 Oct 2021 10:13:27 -0700 (PDT)
+        bh=qr9MDwBMzsyNipMpKSvmO1rGtnLhU3br6C9ogb2fBw8=;
+        b=woyKso1HKShQTr/Le1DxEMvoUTSnra7Ai9bSYxMIsHWDmPiccqq0x5fud1XD7p5Yzp
+         a+XRTXSr7dG5uhkJvn3JQo2mpdFga0erN+4lxgVK8rF93X7AUujJokG4tEXZ2CoNykit
+         gH+9aapgwDk93vinGcUWMX3cHh3G/rUYArry7QiVWoc5OnuLKWlRqvgYlZBULkVk7uUq
+         mEAFRbs9+XK3rWHylZvNg2J7F7rGAOYBaqZX2H00pKhdi9mGytCizaEXYtttHMbDV87f
+         efw2Udc0J9ZBz5NFniXequqYcDD9ctoflXZX/VHk1zwPZXaeE/IPfHxuBK/t2aULAZm9
+         t8Aw==
+X-Gm-Message-State: AOAM530pWUJMeSDoxgt4BSjCBZ5zhq/NflHgveWvDHdmM7nmERpinlJ5
+        PiKxz2B4UFy+PzwNRhbpXnuFXT7v1Cw=
+X-Google-Smtp-Source: ABdhPJzGYc6hxjff2pYBQkacMQj+RBkk0ySzdS5FILQml6vO4E7nfSEeog+342kYjoBnnZFmyPmmRg==
+X-Received: by 2002:a1c:1b89:: with SMTP id b131mr17756682wmb.71.1633629102798;
+        Thu, 07 Oct 2021 10:51:42 -0700 (PDT)
 Received: from localhost ([217.111.27.204])
-        by smtp.gmail.com with ESMTPSA id p8sm1318wmg.15.2021.10.07.10.13.26
+        by smtp.gmail.com with ESMTPSA id b19sm7506386wmb.1.2021.10.07.10.51.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Oct 2021 10:13:26 -0700 (PDT)
-Date:   Thu, 7 Oct 2021 19:13:25 +0200
+        Thu, 07 Oct 2021 10:51:41 -0700 (PDT)
+Date:   Thu, 7 Oct 2021 19:51:39 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Nicolin Chen <nicoleotsuka@gmail.com>
-Cc:     joro@8bytes.org, will@kernel.org, vdumpa@nvidia.com,
-        jonathanh@nvidia.com, linux-tegra@vger.kernel.org,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        digetx@gmail.com
-Subject: Re: [PATCH v6 6/6] iommu/tegra-smmu: Add pagetable mappings to
- debugfs
-Message-ID: <YV8qtdicr4+PcIAf@orome.fritz.box>
-References: <20210914013858.31192-1-nicoleotsuka@gmail.com>
- <20210914013858.31192-7-nicoleotsuka@gmail.com>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-tegra@vger.kernel.org, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH v2] host1x: bus.c: drop excess kernel-doc entry @key
+Message-ID: <YV8zqwBiAhOFh9r0@orome.fritz.box>
+References: <20211005053726.14738-1-rdunlap@infradead.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="D2ajDYzQb2RUipRA"
+        protocol="application/pgp-signature"; boundary="kXhwAqbeq5nO1IC+"
 Content-Disposition: inline
-In-Reply-To: <20210914013858.31192-7-nicoleotsuka@gmail.com>
+In-Reply-To: <20211005053726.14738-1-rdunlap@infradead.org>
 User-Agent: Mutt/2.1.3 (987dde4c) (2021-09-10)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---D2ajDYzQb2RUipRA
+--kXhwAqbeq5nO1IC+
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 13, 2021 at 06:38:58PM -0700, Nicolin Chen wrote:
-> This patch dumps all active mapping entries from pagetable
-> to a debugfs directory named "mappings".
+On Mon, Oct 04, 2021 at 10:37:26PM -0700, Randy Dunlap wrote:
+> Fix kernel-doc warning in host1x:
 >=20
-> Attaching an example:
+> ../drivers/gpu/host1x/bus.c:774: warning: Excess function parameter 'key'=
+ description in '__host1x_client_register'
 >=20
-> SWGROUP: hc
-> as->id: 0
-> as->attr: R|W|N
-> as->pd_dma: 0x0000000080c03000
-> {
->         [index: 1023] 0xf0080c3e (count: 2)
->         {
->                 PTE RANGE      | ATTR | PHYS               | IOVA        =
-       | SIZE
->                 [#1022, #1023] | 0x5  | 0x000000010bbf1000 | 0x00000000ff=
-ffe000 | 0x2000
->         }
-> }
-> Total PDE count: 1
-> Total PTE count: 2
->=20
-> Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
+> Fixes: 0cfe5a6e758f ("gpu: host1x: Split up client initalization and regi=
+stration")
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> Cc: Thierry Reding <thierry.reding@gmail.com>
+> Cc: dri-devel@lists.freedesktop.org
+> Cc: linux-tegra@vger.kernel.org
+> Cc: David Airlie <airlied@linux.ie>
+> Cc: Daniel Vetter <daniel@ffwll.ch>
 > ---
->  drivers/iommu/tegra-smmu.c | 145 +++++++++++++++++++++++++++++++++++++
->  1 file changed, 145 insertions(+)
+> v2: rebase and resend
 >=20
-> diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
-> index 68c34a4a0ecc..aac977e181f6 100644
-> --- a/drivers/iommu/tegra-smmu.c
-> +++ b/drivers/iommu/tegra-smmu.c
-> @@ -46,6 +46,7 @@ struct tegra_smmu {
->  	struct list_head list;
-> =20
->  	struct dentry *debugfs;
-> +	struct dentry *debugfs_mappings;
-> =20
->  	struct iommu_device iommu;	/* IOMMU Core code handle */
->  };
-> @@ -153,6 +154,9 @@ static inline u32 smmu_readl(struct tegra_smmu *smmu,=
- unsigned long offset)
-> =20
->  #define SMMU_PDE_ATTR		(SMMU_PDE_READABLE | SMMU_PDE_WRITABLE | \
->  				 SMMU_PDE_NONSECURE)
-> +#define SMMU_PTE_ATTR		(SMMU_PTE_READABLE | SMMU_PTE_WRITABLE | \
-> +				 SMMU_PTE_NONSECURE)
-> +#define SMMU_PTE_ATTR_SHIFT	29
-> =20
->  static unsigned int iova_pd_index(unsigned long iova)
->  {
-> @@ -164,6 +168,12 @@ static unsigned int iova_pt_index(unsigned long iova)
->  	return (iova >> SMMU_PTE_SHIFT) & (SMMU_NUM_PTE - 1);
->  }
-> =20
-> +static unsigned long pd_pt_index_iova(unsigned int pd_index, unsigned in=
-t pt_index)
-> +{
-> +	return ((dma_addr_t)pd_index & (SMMU_NUM_PDE - 1)) << SMMU_PDE_SHIFT |
-> +	       ((dma_addr_t)pt_index & (SMMU_NUM_PTE - 1)) << SMMU_PTE_SHIFT;
-> +}
-> +
->  static bool smmu_dma_addr_valid(struct tegra_smmu *smmu, dma_addr_t addr)
->  {
->  	addr >>=3D 12;
-> @@ -496,6 +506,8 @@ static void tegra_smmu_as_unprepare(struct tegra_smmu=
- *smmu,
->  	mutex_unlock(&smmu->lock);
->  }
-> =20
-> +static const struct file_operations tegra_smmu_debugfs_mappings_fops;
+>  drivers/gpu/host1x/bus.c |    1 -
+>  1 file changed, 1 deletion(-)
 
-Could the implementation be moved up here to avoid the forward
-declaration?
-
-> +
->  static void tegra_smmu_attach_as(struct tegra_smmu *smmu,
->  				 struct tegra_smmu_as *as,
->  				 unsigned int swgroup)
-> @@ -517,6 +529,12 @@ static void tegra_smmu_attach_as(struct tegra_smmu *=
-smmu,
->  			dev_warn(smmu->dev,
->  				 "overwriting group->as for swgroup: %s\n", swgrp->name);
->  		group->as =3D as;
-> +
-> +		if (smmu->debugfs_mappings)
-> +			debugfs_create_file(group->swgrp->name, 0444,
-> +					    smmu->debugfs_mappings, group,
-> +					    &tegra_smmu_debugfs_mappings_fops);
-> +
->  		break;
->  	}
-> =20
-> @@ -541,6 +559,12 @@ static void tegra_smmu_detach_as(struct tegra_smmu *=
-smmu,
->  		if (group->swgrp !=3D swgrp)
->  			continue;
->  		group->as =3D NULL;
-> +
-> +		if (smmu->debugfs_mappings) {
-> +			d =3D debugfs_lookup(group->swgrp->name, smmu->debugfs_mappings);
-> +			debugfs_remove(d);
-> +		}
-> +
->  		break;
->  	}
-> =20
-> @@ -1124,6 +1148,125 @@ static int tegra_smmu_clients_show(struct seq_fil=
-e *s, void *data)
-> =20
->  DEFINE_SHOW_ATTRIBUTE(tegra_smmu_clients);
-> =20
-> +static int tegra_smmu_debugfs_mappings_show(struct seq_file *s, void *da=
-ta)
-> +{
-> +	struct tegra_smmu_group *group =3D s->private;
-> +	const struct tegra_smmu_swgroup *swgrp;
-> +	struct tegra_smmu_as *as;
-> +	struct tegra_smmu *smmu;
-> +	unsigned int pd_index;
-> +	unsigned int pt_index;
-> +	unsigned long flags;
-> +	u64 pte_count =3D 0;
-> +	u32 pde_count =3D 0;
-> +	u32 *pd, val;
-> +
-> +	if (!group || !group->as || !group->swgrp)
-> +		return 0;
-> +
-> +	swgrp =3D group->swgrp;
-> +	smmu =3D group->smmu;
-> +	as =3D group->as;
-> +
-> +	mutex_lock(&smmu->lock);
-> +
-> +	val =3D smmu_readl(smmu, swgrp->reg) & SMMU_ASID_ENABLE;
-> +	if (!val)
-> +		goto unlock;
-> +
-> +	pd =3D page_address(as->pd);
-> +	if (!pd)
-> +		goto unlock;
-> +
-> +	seq_printf(s, "\nSWGROUP: %s\n", swgrp->name);
-> +	seq_printf(s, "as->id: %d\nas->attr: %c|%c|%s\nas->pd_dma: %pad\n", as-=
->id,
-> +		   as->attr & SMMU_PD_READABLE ? 'R' : '-',
-> +		   as->attr & SMMU_PD_WRITABLE ? 'W' : '-',
-> +		   as->attr & SMMU_PD_NONSECURE ? "NS" : "S",
-> +		   &as->pd_dma);
-> +	seq_puts(s, "{\n");
-
-Maybe this can be more compact by putting the name, ID, attributes and
-base address onto a single line? Maybe also use "'-' : 'S'" for the
-non-secure attribute to keep in line with what you've done for readable
-and writable attributes.
-
-Then again, this is going to be very verbose output anyway, so maybe it
-isn't worth it.
+Applied, thanks.
 
 Thierry
 
---D2ajDYzQb2RUipRA
+--kXhwAqbeq5nO1IC+
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmFfKrMACgkQ3SOs138+
-s6GirA/8Cfx05/2MiogduRWFZTD9SO62n3CnaxfIXdaSXcZYSiqlhygq0iAZXs42
-4VEauSkFFGjhS/oREagxAarQzz2P0UWCKK8N5FT3rByEVF5hrL/EPvw3UVnqLLWC
-PoiCZITRyQaAuI84r/j0ppiLoVd8p4DaGIPQc2zGgGx9R8Swvwi3+gckJvAixpDW
-86EVz4P61liUKkbqxBO4FIueZJydOJcqY3498bZiQ6bKdGItyh8fLxMScqfI5Ejw
-MZB9lR9mMdMJxEZwG6ghCH1BVuCMachdscYSWkoqJI3d3jdgecOMcLRaV0tJYSLP
-8vQIEPx/zDuYlxKgL9pIcfnhAEwydeaLJt0jS38Lff19jt8yyuJXcGuk0EwWU86f
-4YIOmIRiFMPkqbTenptIreZDY//D0EjGRs0T4/5TZ4ln/zmhXwO01RdOBG2aNj4k
-oprwCq1zKnmGmjFJTx+NqfiLwhjKX7EpH8OkFCNKXPhb7vOw9ihvKPwiriLhvXGy
-OZQbJENISYlJ1yCrRgvxoXQDX1JF6Qfz15m6yTJJT+8Tm4ujKGlNeiOmux0p/Epv
-Mpd5+a5k5YYb12+jtZjMTy3Hn75Ma/9cHwavM6xD6LmyppP4MXC6XRPWSVKCjUrs
-5H36g9nwEfIhOlYhosC/jp4jH4AQhebHInqjQLrZn0iBxLcBP8k=
-=Xb3q
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmFfM6kACgkQ3SOs138+
+s6FAVA//cxr3VWWOyxBD5qYYXmO+ZdMi5MeIZUI7hR7+Ure9SOXLlzZ7BOCU6vvh
+Mv2VxIUEExKVLlYrUEVlR4G/WfuQHCml/FQeR1PY9CE8uub2zNYorD/ct30hfTeK
+nmdxlK8SeQWldwfKxmuK0bL6sw/3riCFj5c2QruEjWDe3qNoeSS9+BHw/3h4PeNf
+bx9UdF8vdjnz6Vu4WfIHDTbEZYtpIPuFXvdVyqknGh7CA25yBHf4sdZANQnP45CU
+XMtJSvCDV75qTQNuJj5fpFxbuFAAhLCPoCWWrE2IvUluU3Q0wICrq7e5IuhzGBn9
+3+Ar6S46NL/VMfRUJuDLNYzNzqNr/APZqh1J9/D+oDvBP2HIkHTBN76nT0IwklKB
+j+pfdcFKD8qa4k1yelMznTSFlf9n4pYER3x4xezdl6jqsQtU0BAK88hy5tUP1M08
+fRlErL7N71P1KG2izQa8zbIH/slaYgNd4Rqm4pbLYvfel3rt0FHqPXv6JFQrACMY
+8Oub0cvReNN5YrVz1Qo2M0IkdPqHlhSTdvnXc4y3YdMkBsDhzLEULrp9cy7cqw4/
+olreNada5aP0ANRylBC5tidRK3wOoGFEhBxa7WNXfN8riW3TIcAC0jdoTlr0KYx2
+9rmf/oo/MvjnlKrXtb45xeVlVOLrqpwBO01xUZI7keSMbc7m5cA=
+=NJUt
 -----END PGP SIGNATURE-----
 
---D2ajDYzQb2RUipRA--
+--kXhwAqbeq5nO1IC+--
