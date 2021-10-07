@@ -2,139 +2,95 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 233A3C433EF
-	for <linux-tegra@archiver.kernel.org>; Thu,  7 Oct 2021 18:38:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D446DC433F5
+	for <linux-tegra@archiver.kernel.org>; Thu,  7 Oct 2021 18:43:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0C38D6120D
-	for <linux-tegra@archiver.kernel.org>; Thu,  7 Oct 2021 18:38:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B86A66109F
+	for <linux-tegra@archiver.kernel.org>; Thu,  7 Oct 2021 18:43:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243737AbhJGSj6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 7 Oct 2021 14:39:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59582 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229490AbhJGSj5 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 7 Oct 2021 14:39:57 -0400
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD4DEC061570;
-        Thu,  7 Oct 2021 11:38:03 -0700 (PDT)
-Received: by mail-wr1-x430.google.com with SMTP id v17so21923793wrv.9;
-        Thu, 07 Oct 2021 11:38:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=0T4sFmsFD4jLWnAWeMtgvLVvevwwzto8DJfNckqAtjk=;
-        b=DH6fzr+IIzvip9zeeAFecwpDyaHALa4B1Oe0c/V/M91O7gttobD0SPdeyjx95lbLJL
-         W+XMI7LFo1/Yb718Lz5oI6G+nenZ1v4SAKbLSpheS/IMWMAJMQTrgMSP5oUOm5sLNJVD
-         66SXUtnopJLlySa9fWdXU9f06q1GfGykRH4QZezgx1aHDXlRJZORvhUT0p0s0xYOZy0+
-         U0NPIQtE818CunbhYVeyd5/Tx9ElijJBBRhACr9dVw0KCU4BGhOLwezRm0pSZtKTm7Sw
-         lY/R5JldsmD29j9U8/y1Lf96e9XpYnVNnksLNAE4PKvFr8SVR0AmxV0P6a753XU58SUn
-         F8kQ==
+        id S243731AbhJGSpN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 7 Oct 2021 14:45:13 -0400
+Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:38652
+        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233837AbhJGSpM (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 7 Oct 2021 14:45:12 -0400
+Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com [209.85.208.70])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 982BB4000F
+        for <linux-tegra@vger.kernel.org>; Thu,  7 Oct 2021 18:43:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1633632197;
+        bh=vfsKCtHamD4S3RgzBMbdALXMRfkICpF4yk/yRZF5360=;
+        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+         MIME-Version:Content-Type;
+        b=hgUTj7vEJQ37fd4FxdS+Kwnub5Bq3LWyMt+O7ucxgeV+5gmtJ9R+gSsgC6nAG+BG5
+         cqL2RaADGwupQMGSmEMHwcUiuzXpXMwZGdO6yO3B4zVaQ5/kMRyZNDP306iNHRD/FJ
+         UvvXdkALH7tT6Ui2Mum6G+Pt+b0sGRDnzuUQ7+Red9YWdpUVYyw4nqyCS0+MW1oIDw
+         fNHNoH9yJ85+5pZHEpzQYd7HIhsKXWVjbj3yfqAu5jm/Z8Zea+FoWH0sskqY+0jjrl
+         EC9nM2/MiBaCXN7BqP0ZBsvlauTrSjjcWMKL14gRT1iVMxLv2fQXo6NaMHvPnYzjBP
+         6TXBL91Euj3WQ==
+Received: by mail-ed1-f70.google.com with SMTP id i7-20020a50d747000000b003db0225d219so6844489edj.0
+        for <linux-tegra@vger.kernel.org>; Thu, 07 Oct 2021 11:43:17 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=0T4sFmsFD4jLWnAWeMtgvLVvevwwzto8DJfNckqAtjk=;
-        b=Euzoy1mIDKzi0HXgvPFYYvQ35khSOkhNGS4pkZZi+ye+3H7oGKXeqqio6yHe2DzapK
-         oVtIRTs4wtTOzbhgWB+C++ZFW1wHJpycT+e8RhxGnvFPP6LwAHOIx1yglrOYuqO0j6/P
-         U3zzA1HYhLbiuE422dl/eNFrScjr8rF63j4bhElou1ya38ICzkU+NWPK6cWKLM4MKIG7
-         8M0tYrhfxbZPQWR1KBL8Z/s0sjvUxASVH7dYU1lkScSjghPVpgUB05x8TeU/JLF/Kh1w
-         Bb1h5NWHZgucXBrChrYbWdfBY8HkikiHIUx8RJZYrq9os6XljXp1F9nuP2u+yf8bEGZs
-         ZtKQ==
-X-Gm-Message-State: AOAM533k4Z3lzelYuL1Z5wxnyZ7T+pFZbACOuDd+xgl1Au8G88rgLxIa
-        ANIRRBWm/GW/R+w2OTzOUXM=
-X-Google-Smtp-Source: ABdhPJzJfuDW9EQbVCHx1gflY1tLjMExzGosRt6WHhIO2MXUwwvJLhDGBqt/htKqf6iSgvJNqqHdww==
-X-Received: by 2002:adf:b19b:: with SMTP id q27mr7627454wra.125.1633631882331;
-        Thu, 07 Oct 2021 11:38:02 -0700 (PDT)
-Received: from localhost ([217.111.27.204])
-        by smtp.gmail.com with ESMTPSA id w5sm102868wrq.86.2021.10.07.11.38.01
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=vfsKCtHamD4S3RgzBMbdALXMRfkICpF4yk/yRZF5360=;
+        b=Jhu2B3sARpsnrvVTtVig2tA1tgfMpeKBbLjHpk4mKDQJDmhzY2GLp/hKMxkZsiDigv
+         RA9HTam2WfSgdFhw3nSW0Nj+b9BU6SGLetut4Vdtr/CG2vCPpWdFfVH5ZYtx/co+aVlx
+         FkYdvA8EdRWovduWUpmxCy8EfWhmtYEydyEz/NZTKYVM/X5QqUqVCbH2iI4jZ/UK9V3o
+         uKVtdE7d1FfunX5y4VcCdjfdW/9yqayXS1wT85E30saTxrLIjeI0l2Y0wEsKUWHGycD9
+         yI8FGInzrhxgq/UmavQ0qEagP4S3xUnzm0nrZmfabbZ0t1M2rMZdluIGAqc+63wlDWuM
+         kShA==
+X-Gm-Message-State: AOAM5310CH/i0e6KcCKn2U8MKZAVG21t1kxitol+ZPPeJ0gS2PozeF7N
+        zF0LCmmlawi+unrSDJTZaA1W+DRph2TsTa3QhKnvKgWhKM7FV7g8ZmwvN8IMCrpu37QoGW56x6x
+        I4blOssg3Dymap1xLHzVryNkVvIV7kxr0xsSvVRKP
+X-Received: by 2002:a17:906:1510:: with SMTP id b16mr7881124ejd.332.1633632197306;
+        Thu, 07 Oct 2021 11:43:17 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJw4kY+mbxK6ilTZrzFtN+OPqz5dEOJWYNcxVplXkKWB4WtY+GQCCkJjPtV4yihXgAFBEC9pMw==
+X-Received: by 2002:a17:906:1510:: with SMTP id b16mr7881100ejd.332.1633632197145;
+        Thu, 07 Oct 2021 11:43:17 -0700 (PDT)
+Received: from localhost.localdomain (xdsl-188-155-186-13.adslplus.ch. [188.155.186.13])
+        by smtp.gmail.com with ESMTPSA id t19sm70612ejb.115.2021.10.07.11.43.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Oct 2021 11:38:01 -0700 (PDT)
-Date:   Thu, 7 Oct 2021 20:38:00 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Sameer Pujar <spujar@nvidia.com>
-Cc:     broonie@kernel.org, lgirdwood@gmail.com, robh+dt@kernel.org,
-        jonathanh@nvidia.com, catalin.marinas@arm.com, will@kernel.org,
-        perex@perex.cz, tiwai@suse.com, kuninori.morimoto.gx@renesas.com,
-        sharadg@nvidia.com, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 13/13] arm64: tegra: Extend APE audio support on
- Jetson platforms
-Message-ID: <YV8+iNu+BFWtUi0k@orome.fritz.box>
-References: <1631551342-25469-1-git-send-email-spujar@nvidia.com>
- <1631551342-25469-14-git-send-email-spujar@nvidia.com>
+        Thu, 07 Oct 2021 11:43:16 -0700 (PDT)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+To:     Kai Song <songkai01@inspur.com>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        jonathanh@nvidia.com, thierry.reding@gmail.com
+Subject: Re: [PATCH] memory: tegra210-emc: replace DEFINE_SIMPLE_ATTRIBUTE with
+Date:   Thu,  7 Oct 2021 20:42:45 +0200
+Message-Id: <163363216363.76978.16578482171279957424.b4-ty@canonical.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20211005043514.9650-1-songkai01@inspur.com>
+References: <20211005043514.9650-1-songkai01@inspur.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="WYOR3Bx3yFK/LlLF"
-Content-Disposition: inline
-In-Reply-To: <1631551342-25469-14-git-send-email-spujar@nvidia.com>
-User-Agent: Mutt/2.1.3 (987dde4c) (2021-09-10)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On Tue, 5 Oct 2021 12:35:14 +0800, Kai Song wrote:
+> fix debugfs_simple_attr.cocci warning:
+> drivers/memory/tegra/tegra210-emc-core.c:1665:0-23: WARNING:tegra210_emc_debug_min_rate_fops
+> should be defined with DEFINE_DEBUGFS_ATTRIBUTE
+> 
+> Fixes: 6fc5f1adf5a1 ("memory: tegra210-emc: replace DEFINE_SIMPLE_ATTRIBUTE
+> with DEFINE_DEBUGFS_ATTRIBUTE"):It reports the same warning, but didn't
+> fix all matches in this file at once.
+> 
+> [...]
 
---WYOR3Bx3yFK/LlLF
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Applied, thanks!
 
-On Mon, Sep 13, 2021 at 10:12:21PM +0530, Sameer Pujar wrote:
-> Extend APE audio support by adding more audio components such as SFC,
-> MVC, AMX, ADX and Mixer. These components can be plugged into an audio
-> path and required processing can be done. ASoC audio-graph based sound
-> driver is used to facilitate this and thus extend sound bindings as
-> well.
->=20
-> The components in the path may require different PCM parameters (such
-> as sample rate, channels or sample size). Depending on the pre-defined
-> audio paths, these can be statically configured with "convert-xxx" DT
-> properties in endpoint subnode. The support for the rate and channel
-> conversion is already available in generic audio-graph driver. Sample
-> size conversion support can be added based on the need in future.
->=20
-> The support is extended for following platforms:
->  * Jertson TX1
->  * Jetson Nano
->  * Jetson TX2
->  * Jetson AGX Xavier
->  * Jetson Xavier NX
->=20
-> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
-> ---
->  arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts | 1554 ++++++++++++++=
-++++--
->  arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts | 1493 ++++++++++++++=
-+++--
->  .../arm64/boot/dts/nvidia/tegra194-p3509-0000.dtsi | 1520 ++++++++++++++=
-+++--
->  arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts |  876 +++++++++++
->  arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts |  876 +++++++++++
->  5 files changed, 5900 insertions(+), 419 deletions(-)
+[1/1] memory: tegra210-emc: replace DEFINE_SIMPLE_ATTRIBUTE with
+      commit: 31b88d85f0432e1c0738fe0714191e8504f505c3
 
-Applied, thanks.
-
-Thierry
-
---WYOR3Bx3yFK/LlLF
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmFfPogACgkQ3SOs138+
-s6E0BA//V/eXDLK/uGRMAQbd9X+wxshlGqYWKNNJgBMMyoAm0pmjd9zMOsHzZEZi
-0lgEL7Bdy2BvzUF2KG79yQfyggFZPNLG8eGtSmSrbTtJresRXXHO0R75vN071bF7
-KFYG4rVvYiucFakXV56UaqesjPUJLWW6Gp9XmTkkyBIA+UA4IpOJHoIxF8NZ4Kb5
-37yQfqqweQf9B/eblz699rnZMYlZHKRQh4TXlyav3HiMUOb2JcowF3wLF+nac7mj
-6QsV48xa0gFSgMy9k9KeiAmhS4EYEAsGKbxyrf594U6cfLpXgKFhZv4QJ3w3UZHJ
-mrY9ktzkjDj2fbOqtQ/U5/pMGBa71IJWgdc1/HZbXcvzxQ9y4A6p3143XFLHdw0z
-s7VDJ4teuu4lPaE+LocpWVqXepIUNlvKZzQZOdFMMJSlXOwI+Git+wBT4vS9+tDX
-VDMLvjf+0LOhGtw0gPuFxr3GBnWy+3gwakqVnSnCHZoEvdCo49TPbWOA8GUjfOve
-YWrFw7Om6iQspODn/uNTrtg47sTonx9+6iITIC/o4Ie3+kZHWqm6OxOz5Bx2hQ7T
-dqC2WqbjRCGvYzdAY7fGo+wycz4gGihabgEQ/sjs8J9J/+Pv5Zezwrkda7kc1Al/
-jNG5ZgbLb74oHlXwPtQFtF5DuQ1NCYo25GSOevRXj4fDx24vLro=
-=B2Sx
------END PGP SIGNATURE-----
-
---WYOR3Bx3yFK/LlLF--
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
