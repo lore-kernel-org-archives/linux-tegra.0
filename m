@@ -2,65 +2,80 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A8C4C433EF
-	for <linux-tegra@archiver.kernel.org>; Wed, 13 Oct 2021 13:00:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDC70C4332F
+	for <linux-tegra@archiver.kernel.org>; Wed, 13 Oct 2021 14:41:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0A6DF610CB
-	for <linux-tegra@archiver.kernel.org>; Wed, 13 Oct 2021 13:00:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D83566115C
+	for <linux-tegra@archiver.kernel.org>; Wed, 13 Oct 2021 14:41:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233852AbhJMNCH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 13 Oct 2021 09:02:07 -0400
-Received: from foss.arm.com ([217.140.110.172]:38748 "EHLO foss.arm.com"
+        id S237143AbhJMOnR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 13 Oct 2021 10:43:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50538 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233368AbhJMNCH (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 13 Oct 2021 09:02:07 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7F1451FB;
-        Wed, 13 Oct 2021 06:00:03 -0700 (PDT)
-Received: from lpieralisi (e121166-lin.cambridge.arm.com [10.1.196.255])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 753CE3F66F;
-        Wed, 13 Oct 2021 06:00:01 -0700 (PDT)
-Date:   Wed, 13 Oct 2021 13:59:56 +0100
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Mikko Perttunen <mperttunen@nvidia.com>, rafael@kernel.org,
-        viresh.kumar@linaro.org, jonathanh@nvidia.com,
-        krzysztof.kozlowski@canonical.com, robh@kernel.org, kw@linux.com,
-        p.zabel@pengutronix.de, rui.zhang@intel.com,
-        daniel.lezcano@linaro.org, amitk@kernel.org,
-        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Subject: Re: [PATCH 5/5] PCI: tegra194: Handle errors in BPMP response
-Message-ID: <20211013125956.GA11036@lpieralisi>
-References: <20210915085517.1669675-1-mperttunen@nvidia.com>
- <20210915085517.1669675-5-mperttunen@nvidia.com>
- <YV86l4OhqKN0AkMN@orome.fritz.box>
+        id S237036AbhJMOnQ (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 13 Oct 2021 10:43:16 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id BA91061154;
+        Wed, 13 Oct 2021 14:41:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1634136073;
+        bh=tDFfvQ6Y5Er/PsDNRRoutIE4JMdB/Lr2Di5tJToSVvk=;
+        h=From:To:Cc:Subject:Date:From;
+        b=RVsTrvhG2JPVsb2kL67NK9nvOavH9u6hPDSZZXXb+A+TD04Ou9LEd6tqVnLgh/s35
+         qgVPLdBBbb+XRmfpJ+zeh0hCSx6SMSKFe9s7l0ILjNRb1Tor6f7VEyxJMFPSGNV6Ur
+         RjoG470646xpDDPt0dqE9ybNvv9sZ3CGyytIGy9XLalbYQvpcRlBr3xdlrCgEpUx0Z
+         eKz1rrZApZr359084SX81RkFAH8NckRZPX7M96dLQzu4iw8IUW7dow1qn8xtyHZpNm
+         PEhSzMJhW2iiW4ksUiHlMIzAuIg6ZVXzeUaMWFHWWtj+230AK0LCRjqWJ7XS/4ltUA
+         OUXDoqcs4kVeg==
+From:   Arnd Bergmann <arnd@kernel.org>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>, dri-devel@lists.freedesktop.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/tegra: mark nvdec_writel as inline
+Date:   Wed, 13 Oct 2021 16:40:58 +0200
+Message-Id: <20211013144109.2191071-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YV86l4OhqKN0AkMN@orome.fritz.box>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, Oct 07, 2021 at 08:21:11PM +0200, Thierry Reding wrote:
-> On Wed, Sep 15, 2021 at 11:55:17AM +0300, Mikko Perttunen wrote:
-> > The return value from tegra_bpmp_transfer indicates the success or
-> > failure of the IPC transaction with BPMP. If the transaction
-> > succeeded, we also need to check the actual command's result code.
-> > Add code to do this.
-> > 
-> > Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
-> > ---
-> >  drivers/pci/controller/dwc/pcie-tegra194.c | 9 ++++++++-
-> >  1 file changed, 8 insertions(+), 1 deletion(-)
-> 
-> Acked-by: Thierry Reding <treding@nvidia.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-Hi Thierry,
+Without CONFIG_IOMMU_API, the nvdec_writel() function is
+unused, causing a warning:
 
-can I pull this patch into the PCI tree ? Or if you want the series
-to go via another tree:
+drivers/gpu/drm/tegra/nvdec.c:48:13: error: 'nvdec_writel' defined but not used [-Werror=unused-function]
+   48 | static void nvdec_writel(struct nvdec *nvdec, u32 value, unsigned int offset)
+      |             ^~~~~~~~~~~~
 
-Acked-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+As this is a trivial wrapper around an inline function, mark
+it as inline itself, which avoids the warning as well.
+
+Fixes: e76599df354d ("drm/tegra: Add NVDEC driver")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/gpu/drm/tegra/nvdec.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/tegra/nvdec.c b/drivers/gpu/drm/tegra/nvdec.c
+index 410333e05de8..791bf1acf5f0 100644
+--- a/drivers/gpu/drm/tegra/nvdec.c
++++ b/drivers/gpu/drm/tegra/nvdec.c
+@@ -45,7 +45,8 @@ static inline struct nvdec *to_nvdec(struct tegra_drm_client *client)
+ 	return container_of(client, struct nvdec, client);
+ }
+ 
+-static void nvdec_writel(struct nvdec *nvdec, u32 value, unsigned int offset)
++static inline void nvdec_writel(struct nvdec *nvdec, u32 value,
++				unsigned int offset)
+ {
+ 	writel(value, nvdec->regs + offset);
+ }
+-- 
+2.29.2
+
