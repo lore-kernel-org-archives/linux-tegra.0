@@ -2,308 +2,152 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8796C4332F
-	for <linux-tegra@archiver.kernel.org>; Thu, 14 Oct 2021 06:10:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4212EC433EF
+	for <linux-tegra@archiver.kernel.org>; Thu, 14 Oct 2021 18:26:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A3F7961156
-	for <linux-tegra@archiver.kernel.org>; Thu, 14 Oct 2021 06:10:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 23910611C7
+	for <linux-tegra@archiver.kernel.org>; Thu, 14 Oct 2021 18:26:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229672AbhJNGMg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 14 Oct 2021 02:12:36 -0400
-Received: from guitar.tcltek.co.il ([192.115.133.116]:44220 "EHLO
-        mx.tkos.co.il" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229502AbhJNGMf (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 14 Oct 2021 02:12:35 -0400
-Received: from tarshish (unknown [10.0.8.2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mx.tkos.co.il (Postfix) with ESMTPS id 47495440E8C;
-        Thu, 14 Oct 2021 09:09:38 +0300 (IDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tkos.co.il;
-        s=default; t=1634191778;
-        bh=b3FjnC6Y05E5hG5u3UIiVVSTKHITQy5TaKb0+qkPMHo=;
-        h=References:From:To:Cc:Subject:Date:In-reply-to:From;
-        b=EkK+bQ6dLelKGXty+O3shrKajc+SRM/F8Tov9GQE0qKKNc2QWqNDqqct473FiT6Ej
-         iWF1hLf5jhG6LtEoatWX8avuipSwNr0+EXp5aNedq3Gq2shLqJDYmXPrjHUW2L1M5o
-         CFcnJJDRNsFOiQtSDEXUhEM93wWyfV51K79rzbI9AiWEQCVmSGEddAq2iZF0+KNq7l
-         gv0EnOhcB/FhGxK27QhsxZ6dzKcycEK+Ao3/OwkWuFtHyq0NnLeCV97qOHILyHpX2N
-         PVhgsTlcJhF2WawXtBaM4hzD10TO8QGeXxWotIa1tnMbZp+SDgrXsNlacAa96o3PPQ
-         Uj2aOobOk/twQ==
-References: <cover.1630311481.git.baruch@tkos.co.il>
- <af067a193527e8d2bdbcc8b76e256eef87f6db06.1630311481.git.baruch@tkos.co.il>
-User-agent: mu4e 1.6.6; emacs 27.1
-From:   Baruch Siach <baruch@tkos.co.il>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Selvam Sathappan Periakaruppan <speriaka@codeaurora.org>,
-        Kathiravan T <kathirav@codeaurora.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Robert Marko <robert.marko@sartura.hr>,
-        devicetree@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 2/3] PCI: qcom: add support for IPQ60xx PCIe controller
-Date:   Thu, 14 Oct 2021 09:02:32 +0300
-In-reply-to: <af067a193527e8d2bdbcc8b76e256eef87f6db06.1630311481.git.baruch@tkos.co.il>
-Message-ID: <87lf2wkugd.fsf@tarshish>
+        id S229899AbhJNS2y (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 14 Oct 2021 14:28:54 -0400
+Received: from mail-dm6nam11on2082.outbound.protection.outlook.com ([40.107.223.82]:21224
+        "EHLO NAM11-DM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S229690AbhJNS2x (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 14 Oct 2021 14:28:53 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=isiry+FBu2XprRRieNM93VDEyQ8lBMeNJcgAfztDngM0B8dhoqe/TCMgsgcj8rHTJCgExhWaubjiO6e+h5Lrc1s2qnKjDdewsiGrbIJg4Og6es6D6r2QKFpTSnpUqgsn2LZWoH8bGqF2W1vvEAErb2ypV9OKEemkehZQoky920eLK9/Vw1lllGqPyEwQGHGnxjJhJUyOwG7tPePTSJusxamsCiRWBjy54xEoZlPkTOn/Iw9jnOu2VzCc0QsXrMsU6u/pLaj1JHB6UqoSIUdU3aJyyeBW3yKGcU/ZecQr3UR+Ojq72OFrowug5SgUDPAJ8PHVom7XwcAsErajXNm4ig==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=BHswdgeioY2kLaG0gFWRzVnk0QVfAVUq+yPpL55n0Ag=;
+ b=iNjurXssalBvKqvZjcPOujja/Lw/afVwfFRHuZATvGpSlNrO8dsWh4OAifQLNbeii+Do92LJ0ArRmzZacYeosER7ukRRhJxGllB1x2tTWBikB2VTCsaTS6AWe0CaBAXLUBLzl7fESbUyI6uN6OuXxSiX6XIhmTCGeB9dnT+PE+mI088MHDmy7xeoLmO9bBCrvjj8bhUlv6g7zv1evxk0u8TwTIiSpuiyPaAzKdwGrPam30NBENVfVZSlLgrjtjuWzWnju1ZBB7tiZ9KX+Ai9ogyT+Y0HMIbK9IkIq8pZMOIsmuECP2zWNqD3mxaMzBgl7r0RXIzbBTsPaRcNWAecfw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.112.34) smtp.rcpttodomain=arndb.de smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=BHswdgeioY2kLaG0gFWRzVnk0QVfAVUq+yPpL55n0Ag=;
+ b=WNzxLACXfViHBeOdfYBRfnUOaZoSCKVqGhKEdutYCCrOwcBJX/4BnFsokQG1IUQCGwA2JXSpTvLqHUa+MY1t6khLpWimYrQVsUY/GcJOvAFhL9s0nClOpOtFWqcotPe+dOB9fD29G84qtXJmdpJKp+BeRE5TL5jHPSWamsimIKsU/q5KyG5afpX+hJAjBwgWmvtQIfKVx3LeUauowG8u7apm3zM2BFdoxLMLKK7mYKy3i/OWiZcEm4lteoOJjqoiMBwoEB7i/sqUiiEL6C0lReUwQsiAt3L9Y2E7hErRRsL/giZxoTjTrdafbT4rt/vWjGdpihzmNLYEpylSP4qVkA==
+Received: from BN9PR03CA0353.namprd03.prod.outlook.com (2603:10b6:408:f6::28)
+ by BL0PR12MB4995.namprd12.prod.outlook.com (2603:10b6:208:1c7::23) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4608.16; Thu, 14 Oct
+ 2021 18:26:46 +0000
+Received: from BN8NAM11FT049.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:408:f6:cafe::87) by BN9PR03CA0353.outlook.office365.com
+ (2603:10b6:408:f6::28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4608.14 via Frontend
+ Transport; Thu, 14 Oct 2021 18:26:46 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.34)
+ smtp.mailfrom=nvidia.com; arndb.de; dkim=none (message not signed)
+ header.d=none;arndb.de; dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.112.34 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.112.34; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (216.228.112.34) by
+ BN8NAM11FT049.mail.protection.outlook.com (10.13.177.157) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.4608.15 via Frontend Transport; Thu, 14 Oct 2021 18:26:46 +0000
+Received: from [10.26.49.14] (172.20.187.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Thu, 14 Oct
+ 2021 18:26:42 +0000
+Subject: Re: [PATCH V1] firmware: tegra: fix error application of sizeof to
+ pointer
+To:     <cgel.zte@gmail.com>, <thierry.reding@gmail.com>, <arnd@arndb.de>
+CC:     <lv.ruyi@zte.com.cn>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Zeal Robot <zealci@zte.com.cn>
+References: <20211009085900.509697-1-lv.ruyi@zte.com.cn>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <10dd0afe-432e-4798-1680-3edbd2b07bcb@nvidia.com>
+Date:   Thu, 14 Oct 2021 19:26:40 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20211009085900.509697-1-lv.ruyi@zte.com.cn>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [172.20.187.5]
+X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 5363ab74-fe3f-4036-cced-08d98f402e14
+X-MS-TrafficTypeDiagnostic: BL0PR12MB4995:
+X-Microsoft-Antispam-PRVS: <BL0PR12MB49950F9C99A18F32B0326EC9D9B89@BL0PR12MB4995.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:7691;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: GmL/eiQl+YyMPyH6bS7BZ7FEyE1VO93Za2HUtzD+3CXLlHtT7khDUTembkQ8UfqJ4S+UxVOUBISYgwy8dVHgZIQc+hPb7XpGRhYZjXmts26gbfSVisSSJo/tcBE2Q/OVrs5zTHvtOVxGCKAfKryXlcWOJMNmClsdT2h/GvxUfMCJ98HYxAol+oVwdOd8uRvFfGOKmMma5G2KrUPukpp9qKhm7JwLyCGkA0ish8zkPUzaOXTOXnc4gZnK0lBGL0q3laYqUQ5lwzgFVQvStQ3xbRmcROUvv9WhrK2ClkmbMGGctSWWliXIWpP0k1xTH4WZ0Y1msvPjqNWMGJS+GqTBNU7V4q4BA6R6LjSOiENM/+y2NfyaSif2YrGBLWlafh0qTPu8ljaL5oQnFDrR+5e22YksApU42kkUq7acvsJ8x/h/KrKquYNA97JD0zvyqRiVj98TRLdfMI2DiCeP+SBYlN3KtKNYAiEVwGLmC+2aVhxsOikpEjsddnsui7+XJPmMjBbUAN3+GxnvIC3rnolvYbozuX0SX8RmvSSjdazIdWkSRSctL6YuUfwn2MvwVhr698LjjjM0ff4Ue9NfKMj0wLQLymN6Yw/JvfP6fT5H3I5P2thEwziwU6u0zLdyxmDZXhjG2Ai46NmopBXhKBkVQShthBk5Y8pJ08bEeoASseP6/q8pD7i22WZgl3G90aL1llpcpE0wkVSnBCvJ1ezQHaOXQrws356ItBeEdIFmgCY=
+X-Forefront-Antispam-Report: CIP:216.228.112.34;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid03.nvidia.com;CAT:NONE;SFS:(4636009)(36840700001)(46966006)(36860700001)(31696002)(70586007)(70206006)(426003)(86362001)(2616005)(2906002)(356005)(5660300002)(508600001)(54906003)(47076005)(316002)(16576012)(7636003)(53546011)(36756003)(8676002)(16526019)(83380400001)(31686004)(4326008)(186003)(82310400003)(110136005)(336012)(8936002)(26005)(43740500002);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Oct 2021 18:26:46.1181
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5363ab74-fe3f-4036-cced-08d98f402e14
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.34];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT049.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL0PR12MB4995
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Andy, Bjorn,
+Hi Lv,	
 
-On Mon, Aug 30 2021, Baruch Siach wrote:
-> From: Selvam Sathappan Periakaruppan <speriaka@codeaurora.org>
->
-> IPQ60xx series of SoCs have one port of PCIe gen 3. Add support for that
-> platform.
->
-> The code is based on downstream[1] Codeaurora kernel v5.4 (branch
-> win.linuxopenwrt.2.0).
->
-> Split out the DBI registers access part from .init into .post_init. DBI
-> registers are only accessible after phy_power_on().
->
-> [1] https://source.codeaurora.org/quic/qsdk/oss/kernel/linux-ipq-5.4/
-
-Can I get your ack on this? DT bits are already in Linus' tree, as well
-as the PHY. So this is the only missing part for IPQ60xx PCIe support.
-
-Thanks,
-baruch
-
->
-> Signed-off-by: Selvam Sathappan Periakaruppan <speriaka@codeaurora.org>
-> Signed-off-by: Baruch Siach <baruch@tkos.co.il>
+On 09/10/2021 09:59, cgel.zte@gmail.com wrote:
+> From: Lv Ruyi <lv.ruyi@zte.com.cn>
+> 
+> Application of sizeof to pointer yields the number of bytes of the pointer,
+> but it should use the length of buffer in the code.
+> 
+> Reported-by: Zeal Robot <zealci@zte.com.cn>
+> Signed-off-by: Lv Ruyi <lv.ruyi@zte.com.cn>
 > ---
-> v3:
->   * Drop speed setup; rely on generic code (Rob Herring)
->
->   * Drop unused CLK_RATE macros (Bjorn Helgaas)
->
->   * Minor formatting fixes (Bjorn Helgaas)
->
->   * Add reference to downstream Codeaurora kernel tree (Bjorn Helgaas)
->
-> v2:
->   * Drop ATU configuration; rely on common code instead
->
->   * Use more common register macros
->
->   * Use bulk clk and reset APIs
-> ---
->  drivers/pci/controller/dwc/pcie-designware.h |   1 +
->  drivers/pci/controller/dwc/pcie-qcom.c       | 141 +++++++++++++++++++
->  2 files changed, 142 insertions(+)
->
-> diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
-> index ea87809ee298..279c3778a13b 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware.h
-> +++ b/drivers/pci/controller/dwc/pcie-designware.h
-> @@ -76,6 +76,7 @@
->  
->  #define GEN3_RELATED_OFF			0x890
->  #define GEN3_RELATED_OFF_GEN3_ZRXDC_NONCOMPL	BIT(0)
-> +#define GEN3_RELATED_OFF_RXEQ_RGRDLESS_RXTS	BIT(13)
->  #define GEN3_RELATED_OFF_GEN3_EQ_DISABLE	BIT(16)
->  #define GEN3_RELATED_OFF_RATE_SHADOW_SEL_SHIFT	24
->  #define GEN3_RELATED_OFF_RATE_SHADOW_SEL_MASK	GENMASK(25, 24)
-> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
-> index 8a7a300163e5..cb53fd574621 100644
-> --- a/drivers/pci/controller/dwc/pcie-qcom.c
-> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
-> @@ -52,6 +52,10 @@
->  #define PCIE20_PARF_DBI_BASE_ADDR		0x168
->  #define PCIE20_PARF_SLV_ADDR_SPACE_SIZE		0x16C
->  #define PCIE20_PARF_MHI_CLOCK_RESET_CTRL	0x174
-> +#define AHB_CLK_EN				BIT(0)
-> +#define MSTR_AXI_CLK_EN				BIT(1)
-> +#define BYPASS					BIT(4)
-> +
->  #define PCIE20_PARF_AXI_MSTR_WR_ADDR_HALT	0x178
->  #define PCIE20_PARF_AXI_MSTR_WR_ADDR_HALT_V2	0x1A8
->  #define PCIE20_PARF_LTSSM			0x1B0
-> @@ -168,6 +172,11 @@ struct qcom_pcie_resources_2_7_0 {
->  	struct clk *pipe_clk;
->  };
->  
-> +struct qcom_pcie_resources_2_9_0 {
-> +	struct clk_bulk_data clks[5];
-> +	struct reset_control *rst;
-> +};
-> +
->  union qcom_pcie_resources {
->  	struct qcom_pcie_resources_1_0_0 v1_0_0;
->  	struct qcom_pcie_resources_2_1_0 v2_1_0;
-> @@ -175,6 +184,7 @@ union qcom_pcie_resources {
->  	struct qcom_pcie_resources_2_3_3 v2_3_3;
->  	struct qcom_pcie_resources_2_4_0 v2_4_0;
->  	struct qcom_pcie_resources_2_7_0 v2_7_0;
-> +	struct qcom_pcie_resources_2_9_0 v2_9_0;
->  };
->  
->  struct qcom_pcie;
-> @@ -1266,6 +1276,127 @@ static void qcom_pcie_post_deinit_2_7_0(struct qcom_pcie *pcie)
->  	clk_disable_unprepare(res->pipe_clk);
->  }
->  
-> +static int qcom_pcie_get_resources_2_9_0(struct qcom_pcie *pcie)
-> +{
-> +	struct qcom_pcie_resources_2_9_0 *res = &pcie->res.v2_9_0;
-> +	struct dw_pcie *pci = pcie->pci;
-> +	struct device *dev = pci->dev;
-> +	int ret;
-> +
-> +	res->clks[0].id = "iface";
-> +	res->clks[1].id = "axi_m";
-> +	res->clks[2].id = "axi_s";
-> +	res->clks[3].id = "axi_bridge";
-> +	res->clks[4].id = "rchng";
-> +
-> +	ret = devm_clk_bulk_get(dev, ARRAY_SIZE(res->clks), res->clks);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	res->rst = devm_reset_control_array_get_exclusive(dev);
-> +	if (IS_ERR(res->rst))
-> +		return PTR_ERR(res->rst);
-> +
-> +	return 0;
-> +}
-> +
-> +static void qcom_pcie_deinit_2_9_0(struct qcom_pcie *pcie)
-> +{
-> +	struct qcom_pcie_resources_2_9_0 *res = &pcie->res.v2_9_0;
-> +
-> +	clk_bulk_disable_unprepare(ARRAY_SIZE(res->clks), res->clks);
-> +}
-> +
-> +static int qcom_pcie_init_2_9_0(struct qcom_pcie *pcie)
-> +{
-> +	struct qcom_pcie_resources_2_9_0 *res = &pcie->res.v2_9_0;
-> +	struct device *dev = pcie->pci->dev;
-> +	int ret;
-> +
-> +	ret = reset_control_assert(res->rst);
-> +	if (ret) {
-> +		dev_err(dev, "reset assert failed (%d)\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	usleep_range(2000, 2500);
-> +
-> +	ret = reset_control_deassert(res->rst);
-> +	if (ret) {
-> +		dev_err(dev, "reset deassert failed (%d)\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	/*
-> +	 * Don't have a way to see if the reset has completed.
-> +	 * Wait for some time.
-> +	 */
-> +	usleep_range(2000, 2500);
-> +
-> +	ret = clk_bulk_prepare_enable(ARRAY_SIZE(res->clks), res->clks);
-> +	if (ret)
-> +		goto err_reset;
-> +
-> +	return 0;
-> +
-> +	/*
-> +	 * Not checking for failure, will anyway return
-> +	 * the original failure in 'ret'.
-> +	 */
-> +err_reset:
-> +	reset_control_assert(res->rst);
-> +
-> +	return ret;
-> +}
-> +
-> +static int qcom_pcie_post_init_2_9_0(struct qcom_pcie *pcie)
-> +{
-> +	struct dw_pcie *pci = pcie->pci;
-> +	u16 offset = dw_pcie_find_capability(pci, PCI_CAP_ID_EXP);
-> +	u32 val;
-> +	int i;
-> +
-> +	writel(SLV_ADDR_SPACE_SZ,
-> +		pcie->parf + PCIE20_v3_PARF_SLV_ADDR_SPACE_SIZE);
-> +
-> +	val = readl(pcie->parf + PCIE20_PARF_PHY_CTRL);
-> +	val &= ~BIT(0);
-> +	writel(val, pcie->parf + PCIE20_PARF_PHY_CTRL);
-> +
-> +	writel(0, pcie->parf + PCIE20_PARF_DBI_BASE_ADDR);
-> +
-> +	writel(DEVICE_TYPE_RC, pcie->parf + PCIE20_PARF_DEVICE_TYPE);
-> +	writel(BYPASS | MSTR_AXI_CLK_EN | AHB_CLK_EN,
-> +		pcie->parf + PCIE20_PARF_MHI_CLOCK_RESET_CTRL);
-> +	writel(GEN3_RELATED_OFF_RXEQ_RGRDLESS_RXTS
-> +		| GEN3_RELATED_OFF_GEN3_ZRXDC_NONCOMPL,
-> +		pci->dbi_base + GEN3_RELATED_OFF);
-> +
-> +	writel(MST_WAKEUP_EN | SLV_WAKEUP_EN | MSTR_ACLK_CGC_DIS
-> +		| SLV_ACLK_CGC_DIS | CORE_CLK_CGC_DIS |
-> +		AUX_PWR_DET | L23_CLK_RMV_DIS | L1_CLK_RMV_DIS,
-> +		pcie->parf + PCIE20_PARF_SYS_CTRL);
-> +
-> +	writel(0, pcie->parf + PCIE20_PARF_Q2A_FLUSH);
-> +
-> +	dw_pcie_dbi_ro_wr_en(pci);
-> +	writel(PCIE_CAP_LINK1_VAL, pci->dbi_base + offset + PCI_EXP_SLTCAP);
-> +
-> +	/* Configure PCIe link capabilities for ASPM */
-> +	val = readl(pci->dbi_base + offset + PCI_EXP_LNKCAP);
-> +	val &= ~PCI_EXP_LNKCAP_ASPMS;
-> +	writel(val, pci->dbi_base + offset + PCI_EXP_LNKCAP);
-> +
-> +	writel(PCI_EXP_DEVCTL2_COMP_TMOUT_DIS, pci->dbi_base + offset +
-> +			PCI_EXP_DEVCTL2);
-> +
-> +	for (i = 0; i < 256; i++)
-> +		writel(0x0, pcie->parf + PCIE20_PARF_BDF_TO_SID_TABLE_N
-> +				+ (4 * i));
-> +
-> +	return 0;
-> +}
-> +
->  static int qcom_pcie_link_up(struct dw_pcie *pci)
->  {
->  	u16 offset = dw_pcie_find_capability(pci, PCI_CAP_ID_EXP);
-> @@ -1456,6 +1587,15 @@ static const struct qcom_pcie_ops ops_1_9_0 = {
->  	.config_sid = qcom_pcie_config_sid_sm8250,
->  };
->  
-> +/* Qcom IP rev.: 2.9.0  Synopsys IP rev.: 5.00a */
-> +static const struct qcom_pcie_ops ops_2_9_0 = {
-> +	.get_resources = qcom_pcie_get_resources_2_9_0,
-> +	.init = qcom_pcie_init_2_9_0,
-> +	.post_init = qcom_pcie_post_init_2_9_0,
-> +	.deinit = qcom_pcie_deinit_2_9_0,
-> +	.ltssm_enable = qcom_pcie_2_3_2_ltssm_enable,
-> +};
-> +
->  static const struct dw_pcie_ops dw_pcie_ops = {
->  	.link_up = qcom_pcie_link_up,
->  	.start_link = qcom_pcie_start_link,
-> @@ -1555,6 +1695,7 @@ static const struct of_device_id qcom_pcie_match[] = {
->  	{ .compatible = "qcom,pcie-qcs404", .data = &ops_2_4_0 },
->  	{ .compatible = "qcom,pcie-sdm845", .data = &ops_2_7_0 },
->  	{ .compatible = "qcom,pcie-sm8250", .data = &ops_1_9_0 },
-> +	{ .compatible = "qcom,pcie-ipq6018", .data = &ops_2_9_0 },
->  	{ }
->  };
+>   drivers/firmware/tegra/bpmp-debugfs.c | 5 +++--
+>   1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/firmware/tegra/bpmp-debugfs.c b/drivers/firmware/tegra/bpmp-debugfs.c
+> index 6d66fe03fb6a..fd89899aeeed 100644
+> --- a/drivers/firmware/tegra/bpmp-debugfs.c
+> +++ b/drivers/firmware/tegra/bpmp-debugfs.c
+> @@ -77,13 +77,14 @@ static const char *get_filename(struct tegra_bpmp *bpmp,
+>   	const char *root_path, *filename = NULL;
+>   	char *root_path_buf;
+>   	size_t root_len;
+> +	size_t root_path_buf_len = 512;
+>   
+> -	root_path_buf = kzalloc(512, GFP_KERNEL);
+> +	root_path_buf = kzalloc(root_path_buf_len, GFP_KERNEL);
+>   	if (!root_path_buf)
+>   		goto out;
+>   
+>   	root_path = dentry_path(bpmp->debugfs_mirror, root_path_buf,
+> -				sizeof(root_path_buf));
+> +				root_path_buf_len);
+>   	if (IS_ERR(root_path))
+>   		goto out;
+>   
+> 
 
+Thanks for fixing this! I just noticed that the debugfs for BPMP is 
+broken on -next right now and this fixes it. We should add the fixes tag ...
+
+Fixes: 06c2d9a078ab ("firmware: tegra: Reduce stack usage")
+
+Otherwise ...
+
+Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+
+Arnd, do you want to pick this up?
+
+Jon
 
 -- 
-                                                     ~. .~   Tk Open Systems
-=}------------------------------------------------ooO--U--Ooo------------{=
-   - baruch@tkos.co.il - tel: +972.52.368.4656, http://www.tkos.co.il -
+nvpublic
