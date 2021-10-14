@@ -2,214 +2,308 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2D9AC10F09
-	for <linux-tegra@archiver.kernel.org>; Wed, 13 Oct 2021 20:50:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8796C4332F
+	for <linux-tegra@archiver.kernel.org>; Thu, 14 Oct 2021 06:10:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9C06261151
-	for <linux-tegra@archiver.kernel.org>; Wed, 13 Oct 2021 20:50:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A3F7961156
+	for <linux-tegra@archiver.kernel.org>; Thu, 14 Oct 2021 06:10:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230517AbhJMUwS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 13 Oct 2021 16:52:18 -0400
-Received: from new3-smtp.messagingengine.com ([66.111.4.229]:49011 "EHLO
-        new3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230246AbhJMUvx (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 13 Oct 2021 16:51:53 -0400
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 6382758117B;
-        Wed, 13 Oct 2021 16:49:49 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Wed, 13 Oct 2021 16:49:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=u92.eu; h=from
-        :to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=fm3; bh=u+zwLxcZ69Jq4
-        9MVAvz8TDTzcn5nvEKAlwdjPR/i2e4=; b=NEaScgCU7wtbl3SvTcTTAEV+p1JSn
-        QrrVT4PYz67sYKP2gprqQCm3+w5crktcGclNsCsAzB4Z/lEfndarbEIu0RAEF0D1
-        qTFTwKV4OKiso+C1NJThfALD7i/EWKgDHHfcNMUNmmcDob/fKaHwcRdD8iCo+PEN
-        GbsPfJFfgDCR04Fcam8IQTRFeZnxuN6L3mvDzLAOOipYElByTp++8uYrejyAJfmS
-        Ce/w9zMFUkke94FOB5STrrkl7yDcXRWy64qpQizF83EIbcwCLpwh/ATKEqpDHRGi
-        emPZShksi6/vt/vTG3x8ByplA7Nu8edjbwtWbxJxBfzRX9ECzioZF4ejw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:date:from
-        :in-reply-to:message-id:mime-version:references:subject:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm1; bh=u+zwLxcZ69Jq49MVAvz8TDTzcn5nvEKAlwdjPR/i2e4=; b=JeeT7BKE
-        X3uiLZhmU9SUoAO/f2UatIX3fQPg3pR3/vJSzqE2XOWEnJc6qVL7f3/4XETfAxkx
-        jrEJGPJY+OYf5mPzx9HqFd55VsdtOwAZ6PnXM0OQm4ne/NRaLmEw/PBMNMfMC/ag
-        SlMAzq8cNemoHIaoQe94TO599XwWrEmyejuejMkLmHL73CIGfRoECjTvag/oqTCL
-        /R4yWoSZZdjlgnEh343aSUy4CnUCVNLxi6XxYef1VhayM8sLwNvvYv1EHd6J4h5s
-        ZbchtvJeQDuCH8p7NagSq1Hul2IA0+fuN8k/y1XCgujVzeqfn5BaKNWJsi0eSjzC
-        VohtOeMMQFn44g==
-X-ME-Sender: <xms:bUZnYV3yr5UcPn9chDXTTM0-H_mPst2e6B1T8R7c_rKZgaNezRWFfQ>
-    <xme:bUZnYcHbWysbaiQQs46uKi6hvu6nLWULtrJlbGqXWKa1fMbwtYR9iXWUvf_rdH00W
-    OyZxtZ7tRNQF4iiRQ>
-X-ME-Received: <xmr:bUZnYV5P2OikOlMayWTy0fW_vomVRabjz5CzqpBMRrF3JQGJ0sVtJpXXaSqG3mIMAmVK>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrvddutddgudehudcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecunecujfgurhephffvufffkffojghfggfgsedtke
-    ertdertddtnecuhfhrohhmpefhvghrnhgrnhguohcutfgrmhhoshcuoehgrhgvvghnfhho
-    ohesuhelvddrvghuqeenucggtffrrghtthgvrhhnpeekleekjedtheejheekfefggeevvd
-    fgueegffeuveduhfehueegkeeijedvvdejfeenucevlhhushhtvghrufhiiigvpeegnecu
-    rfgrrhgrmhepmhgrihhlfhhrohhmpehgrhgvvghnfhhoohesuhelvddrvghu
-X-ME-Proxy: <xmx:bUZnYS2r826WmePUz_zE3EMW88bvPcHrvF8wY3KWsPkKAWCcUXpEhA>
-    <xmx:bUZnYYEUSjnxSNp7m536M4skPqa51Yn4-4eXcwn3CdtqbchdPWiEPA>
-    <xmx:bUZnYT89yThTkU702A1rAQBCiCMNzkc-YhyaJaTB5NaCA4pXkSPZTg>
-    <xmx:bUZnYTDxraDKCjf74u4xmpekyT0IHlSQJpeQ1nuIjElRxilE5HXE4g>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 13 Oct 2021 16:49:46 -0400 (EDT)
-From:   Fernando Ramos <greenfoo@u92.eu>
-To:     dri-devel@lists.freedesktop.org
-Cc:     linux-kernel@vger.kernel.org, sean@poorly.run,
-        linux-doc@vger.kernel.org, amd-gfx@lists.freedesktop.org,
-        intel-gfx@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
-        freedreno@lists.freedesktop.org, nouveau@lists.freedesktop.org,
-        linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: [PATCH v4 19/20] drm: cleanup: remove drm_modeset_(un)lock_all()
-Date:   Wed, 13 Oct 2021 22:48:45 +0200
-Message-Id: <20211013204846.90026-20-greenfoo@u92.eu>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20211013204846.90026-1-greenfoo@u92.eu>
-References: <20211013204846.90026-1-greenfoo@u92.eu>
+        id S229672AbhJNGMg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 14 Oct 2021 02:12:36 -0400
+Received: from guitar.tcltek.co.il ([192.115.133.116]:44220 "EHLO
+        mx.tkos.co.il" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229502AbhJNGMf (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 14 Oct 2021 02:12:35 -0400
+Received: from tarshish (unknown [10.0.8.2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mx.tkos.co.il (Postfix) with ESMTPS id 47495440E8C;
+        Thu, 14 Oct 2021 09:09:38 +0300 (IDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tkos.co.il;
+        s=default; t=1634191778;
+        bh=b3FjnC6Y05E5hG5u3UIiVVSTKHITQy5TaKb0+qkPMHo=;
+        h=References:From:To:Cc:Subject:Date:In-reply-to:From;
+        b=EkK+bQ6dLelKGXty+O3shrKajc+SRM/F8Tov9GQE0qKKNc2QWqNDqqct473FiT6Ej
+         iWF1hLf5jhG6LtEoatWX8avuipSwNr0+EXp5aNedq3Gq2shLqJDYmXPrjHUW2L1M5o
+         CFcnJJDRNsFOiQtSDEXUhEM93wWyfV51K79rzbI9AiWEQCVmSGEddAq2iZF0+KNq7l
+         gv0EnOhcB/FhGxK27QhsxZ6dzKcycEK+Ao3/OwkWuFtHyq0NnLeCV97qOHILyHpX2N
+         PVhgsTlcJhF2WawXtBaM4hzD10TO8QGeXxWotIa1tnMbZp+SDgrXsNlacAa96o3PPQ
+         Uj2aOobOk/twQ==
+References: <cover.1630311481.git.baruch@tkos.co.il>
+ <af067a193527e8d2bdbcc8b76e256eef87f6db06.1630311481.git.baruch@tkos.co.il>
+User-agent: mu4e 1.6.6; emacs 27.1
+From:   Baruch Siach <baruch@tkos.co.il>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Selvam Sathappan Periakaruppan <speriaka@codeaurora.org>,
+        Kathiravan T <kathirav@codeaurora.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Robert Marko <robert.marko@sartura.hr>,
+        devicetree@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 2/3] PCI: qcom: add support for IPQ60xx PCIe controller
+Date:   Thu, 14 Oct 2021 09:02:32 +0300
+In-reply-to: <af067a193527e8d2bdbcc8b76e256eef87f6db06.1630311481.git.baruch@tkos.co.il>
+Message-ID: <87lf2wkugd.fsf@tarshish>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Functions drm_modeset_lock_all() and drm_modeset_unlock_all() are no
-longer used anywhere and can be removed.
+Hi Andy, Bjorn,
 
-Signed-off-by: Fernando Ramos <greenfoo@u92.eu>
----
- drivers/gpu/drm/drm_modeset_lock.c | 94 +-----------------------------
- include/drm/drm_modeset_lock.h     |  2 -
- 2 files changed, 3 insertions(+), 93 deletions(-)
+On Mon, Aug 30 2021, Baruch Siach wrote:
+> From: Selvam Sathappan Periakaruppan <speriaka@codeaurora.org>
+>
+> IPQ60xx series of SoCs have one port of PCIe gen 3. Add support for that
+> platform.
+>
+> The code is based on downstream[1] Codeaurora kernel v5.4 (branch
+> win.linuxopenwrt.2.0).
+>
+> Split out the DBI registers access part from .init into .post_init. DBI
+> registers are only accessible after phy_power_on().
+>
+> [1] https://source.codeaurora.org/quic/qsdk/oss/kernel/linux-ipq-5.4/
 
-diff --git a/drivers/gpu/drm/drm_modeset_lock.c b/drivers/gpu/drm/drm_modeset_lock.c
-index 4d32b61fa1fd..b2b84ca2b738 100644
---- a/drivers/gpu/drm/drm_modeset_lock.c
-+++ b/drivers/gpu/drm/drm_modeset_lock.c
-@@ -117,93 +117,6 @@ static void __stack_depot_print(depot_stack_handle_t stack_depot)
- }
- #endif /* CONFIG_DRM_DEBUG_MODESET_LOCK */
- 
--/**
-- * drm_modeset_lock_all - take all modeset locks
-- * @dev: DRM device
-- *
-- * This function takes all modeset locks, suitable where a more fine-grained
-- * scheme isn't (yet) implemented. Locks must be dropped by calling the
-- * drm_modeset_unlock_all() function.
-- *
-- * This function is deprecated. It allocates a lock acquisition context and
-- * stores it in &drm_device.mode_config. This facilitate conversion of
-- * existing code because it removes the need to manually deal with the
-- * acquisition context, but it is also brittle because the context is global
-- * and care must be taken not to nest calls. New code should use the
-- * drm_modeset_lock_all_ctx() function and pass in the context explicitly.
-- */
--void drm_modeset_lock_all(struct drm_device *dev)
--{
--	struct drm_mode_config *config = &dev->mode_config;
--	struct drm_modeset_acquire_ctx *ctx;
--	int ret;
--
--	ctx = kzalloc(sizeof(*ctx), GFP_KERNEL | __GFP_NOFAIL);
--	if (WARN_ON(!ctx))
--		return;
--
--	mutex_lock(&config->mutex);
--
--	drm_modeset_acquire_init(ctx, 0);
--
--retry:
--	ret = drm_modeset_lock_all_ctx(dev, ctx);
--	if (ret < 0) {
--		if (ret == -EDEADLK) {
--			drm_modeset_backoff(ctx);
--			goto retry;
--		}
--
--		drm_modeset_acquire_fini(ctx);
--		kfree(ctx);
--		return;
--	}
--	ww_acquire_done(&ctx->ww_ctx);
--
--	WARN_ON(config->acquire_ctx);
--
--	/*
--	 * We hold the locks now, so it is safe to stash the acquisition
--	 * context for drm_modeset_unlock_all().
--	 */
--	config->acquire_ctx = ctx;
--
--	drm_warn_on_modeset_not_all_locked(dev);
--}
--EXPORT_SYMBOL(drm_modeset_lock_all);
--
--/**
-- * drm_modeset_unlock_all - drop all modeset locks
-- * @dev: DRM device
-- *
-- * This function drops all modeset locks taken by a previous call to the
-- * drm_modeset_lock_all() function.
-- *
-- * This function is deprecated. It uses the lock acquisition context stored
-- * in &drm_device.mode_config. This facilitates conversion of existing
-- * code because it removes the need to manually deal with the acquisition
-- * context, but it is also brittle because the context is global and care must
-- * be taken not to nest calls. New code should pass the acquisition context
-- * directly to the drm_modeset_drop_locks() function.
-- */
--void drm_modeset_unlock_all(struct drm_device *dev)
--{
--	struct drm_mode_config *config = &dev->mode_config;
--	struct drm_modeset_acquire_ctx *ctx = config->acquire_ctx;
--
--	if (WARN_ON(!ctx))
--		return;
--
--	config->acquire_ctx = NULL;
--	drm_modeset_drop_locks(ctx);
--	drm_modeset_acquire_fini(ctx);
--
--	kfree(ctx);
--
--	mutex_unlock(&dev->mode_config.mutex);
--}
--EXPORT_SYMBOL(drm_modeset_unlock_all);
--
- /**
-  * drm_warn_on_modeset_not_all_locked - check that all modeset locks are locked
-  * @dev: device
-@@ -425,10 +338,9 @@ EXPORT_SYMBOL(drm_modeset_unlock);
-  * This function takes all modeset locks, suitable where a more fine-grained
-  * scheme isn't (yet) implemented.
-  *
-- * Unlike drm_modeset_lock_all(), it doesn't take the &drm_mode_config.mutex
-- * since that lock isn't required for modeset state changes. Callers which
-- * need to grab that lock too need to do so outside of the acquire context
-- * @ctx.
-+ * It doesn't take the &drm_mode_config.mutex since that lock isn't required for
-+ * modeset state changes. Callers which need to grab that lock too need to do so
-+ * outside of the acquire context @ctx.
-  *
-  * Locks acquired with this function should be released by calling the
-  * drm_modeset_drop_locks() function on @ctx.
-diff --git a/include/drm/drm_modeset_lock.h b/include/drm/drm_modeset_lock.h
-index b84693fbd2b5..96b853530120 100644
---- a/include/drm/drm_modeset_lock.h
-+++ b/include/drm/drm_modeset_lock.h
-@@ -140,8 +140,6 @@ struct drm_device;
- struct drm_crtc;
- struct drm_plane;
- 
--void drm_modeset_lock_all(struct drm_device *dev);
--void drm_modeset_unlock_all(struct drm_device *dev);
- void drm_warn_on_modeset_not_all_locked(struct drm_device *dev);
- 
- int drm_modeset_lock_all_ctx(struct drm_device *dev,
+Can I get your ack on this? DT bits are already in Linus' tree, as well
+as the PHY. So this is the only missing part for IPQ60xx PCIe support.
+
+Thanks,
+baruch
+
+>
+> Signed-off-by: Selvam Sathappan Periakaruppan <speriaka@codeaurora.org>
+> Signed-off-by: Baruch Siach <baruch@tkos.co.il>
+> ---
+> v3:
+>   * Drop speed setup; rely on generic code (Rob Herring)
+>
+>   * Drop unused CLK_RATE macros (Bjorn Helgaas)
+>
+>   * Minor formatting fixes (Bjorn Helgaas)
+>
+>   * Add reference to downstream Codeaurora kernel tree (Bjorn Helgaas)
+>
+> v2:
+>   * Drop ATU configuration; rely on common code instead
+>
+>   * Use more common register macros
+>
+>   * Use bulk clk and reset APIs
+> ---
+>  drivers/pci/controller/dwc/pcie-designware.h |   1 +
+>  drivers/pci/controller/dwc/pcie-qcom.c       | 141 +++++++++++++++++++
+>  2 files changed, 142 insertions(+)
+>
+> diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
+> index ea87809ee298..279c3778a13b 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware.h
+> +++ b/drivers/pci/controller/dwc/pcie-designware.h
+> @@ -76,6 +76,7 @@
+>  
+>  #define GEN3_RELATED_OFF			0x890
+>  #define GEN3_RELATED_OFF_GEN3_ZRXDC_NONCOMPL	BIT(0)
+> +#define GEN3_RELATED_OFF_RXEQ_RGRDLESS_RXTS	BIT(13)
+>  #define GEN3_RELATED_OFF_GEN3_EQ_DISABLE	BIT(16)
+>  #define GEN3_RELATED_OFF_RATE_SHADOW_SEL_SHIFT	24
+>  #define GEN3_RELATED_OFF_RATE_SHADOW_SEL_MASK	GENMASK(25, 24)
+> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
+> index 8a7a300163e5..cb53fd574621 100644
+> --- a/drivers/pci/controller/dwc/pcie-qcom.c
+> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
+> @@ -52,6 +52,10 @@
+>  #define PCIE20_PARF_DBI_BASE_ADDR		0x168
+>  #define PCIE20_PARF_SLV_ADDR_SPACE_SIZE		0x16C
+>  #define PCIE20_PARF_MHI_CLOCK_RESET_CTRL	0x174
+> +#define AHB_CLK_EN				BIT(0)
+> +#define MSTR_AXI_CLK_EN				BIT(1)
+> +#define BYPASS					BIT(4)
+> +
+>  #define PCIE20_PARF_AXI_MSTR_WR_ADDR_HALT	0x178
+>  #define PCIE20_PARF_AXI_MSTR_WR_ADDR_HALT_V2	0x1A8
+>  #define PCIE20_PARF_LTSSM			0x1B0
+> @@ -168,6 +172,11 @@ struct qcom_pcie_resources_2_7_0 {
+>  	struct clk *pipe_clk;
+>  };
+>  
+> +struct qcom_pcie_resources_2_9_0 {
+> +	struct clk_bulk_data clks[5];
+> +	struct reset_control *rst;
+> +};
+> +
+>  union qcom_pcie_resources {
+>  	struct qcom_pcie_resources_1_0_0 v1_0_0;
+>  	struct qcom_pcie_resources_2_1_0 v2_1_0;
+> @@ -175,6 +184,7 @@ union qcom_pcie_resources {
+>  	struct qcom_pcie_resources_2_3_3 v2_3_3;
+>  	struct qcom_pcie_resources_2_4_0 v2_4_0;
+>  	struct qcom_pcie_resources_2_7_0 v2_7_0;
+> +	struct qcom_pcie_resources_2_9_0 v2_9_0;
+>  };
+>  
+>  struct qcom_pcie;
+> @@ -1266,6 +1276,127 @@ static void qcom_pcie_post_deinit_2_7_0(struct qcom_pcie *pcie)
+>  	clk_disable_unprepare(res->pipe_clk);
+>  }
+>  
+> +static int qcom_pcie_get_resources_2_9_0(struct qcom_pcie *pcie)
+> +{
+> +	struct qcom_pcie_resources_2_9_0 *res = &pcie->res.v2_9_0;
+> +	struct dw_pcie *pci = pcie->pci;
+> +	struct device *dev = pci->dev;
+> +	int ret;
+> +
+> +	res->clks[0].id = "iface";
+> +	res->clks[1].id = "axi_m";
+> +	res->clks[2].id = "axi_s";
+> +	res->clks[3].id = "axi_bridge";
+> +	res->clks[4].id = "rchng";
+> +
+> +	ret = devm_clk_bulk_get(dev, ARRAY_SIZE(res->clks), res->clks);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	res->rst = devm_reset_control_array_get_exclusive(dev);
+> +	if (IS_ERR(res->rst))
+> +		return PTR_ERR(res->rst);
+> +
+> +	return 0;
+> +}
+> +
+> +static void qcom_pcie_deinit_2_9_0(struct qcom_pcie *pcie)
+> +{
+> +	struct qcom_pcie_resources_2_9_0 *res = &pcie->res.v2_9_0;
+> +
+> +	clk_bulk_disable_unprepare(ARRAY_SIZE(res->clks), res->clks);
+> +}
+> +
+> +static int qcom_pcie_init_2_9_0(struct qcom_pcie *pcie)
+> +{
+> +	struct qcom_pcie_resources_2_9_0 *res = &pcie->res.v2_9_0;
+> +	struct device *dev = pcie->pci->dev;
+> +	int ret;
+> +
+> +	ret = reset_control_assert(res->rst);
+> +	if (ret) {
+> +		dev_err(dev, "reset assert failed (%d)\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	usleep_range(2000, 2500);
+> +
+> +	ret = reset_control_deassert(res->rst);
+> +	if (ret) {
+> +		dev_err(dev, "reset deassert failed (%d)\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	/*
+> +	 * Don't have a way to see if the reset has completed.
+> +	 * Wait for some time.
+> +	 */
+> +	usleep_range(2000, 2500);
+> +
+> +	ret = clk_bulk_prepare_enable(ARRAY_SIZE(res->clks), res->clks);
+> +	if (ret)
+> +		goto err_reset;
+> +
+> +	return 0;
+> +
+> +	/*
+> +	 * Not checking for failure, will anyway return
+> +	 * the original failure in 'ret'.
+> +	 */
+> +err_reset:
+> +	reset_control_assert(res->rst);
+> +
+> +	return ret;
+> +}
+> +
+> +static int qcom_pcie_post_init_2_9_0(struct qcom_pcie *pcie)
+> +{
+> +	struct dw_pcie *pci = pcie->pci;
+> +	u16 offset = dw_pcie_find_capability(pci, PCI_CAP_ID_EXP);
+> +	u32 val;
+> +	int i;
+> +
+> +	writel(SLV_ADDR_SPACE_SZ,
+> +		pcie->parf + PCIE20_v3_PARF_SLV_ADDR_SPACE_SIZE);
+> +
+> +	val = readl(pcie->parf + PCIE20_PARF_PHY_CTRL);
+> +	val &= ~BIT(0);
+> +	writel(val, pcie->parf + PCIE20_PARF_PHY_CTRL);
+> +
+> +	writel(0, pcie->parf + PCIE20_PARF_DBI_BASE_ADDR);
+> +
+> +	writel(DEVICE_TYPE_RC, pcie->parf + PCIE20_PARF_DEVICE_TYPE);
+> +	writel(BYPASS | MSTR_AXI_CLK_EN | AHB_CLK_EN,
+> +		pcie->parf + PCIE20_PARF_MHI_CLOCK_RESET_CTRL);
+> +	writel(GEN3_RELATED_OFF_RXEQ_RGRDLESS_RXTS
+> +		| GEN3_RELATED_OFF_GEN3_ZRXDC_NONCOMPL,
+> +		pci->dbi_base + GEN3_RELATED_OFF);
+> +
+> +	writel(MST_WAKEUP_EN | SLV_WAKEUP_EN | MSTR_ACLK_CGC_DIS
+> +		| SLV_ACLK_CGC_DIS | CORE_CLK_CGC_DIS |
+> +		AUX_PWR_DET | L23_CLK_RMV_DIS | L1_CLK_RMV_DIS,
+> +		pcie->parf + PCIE20_PARF_SYS_CTRL);
+> +
+> +	writel(0, pcie->parf + PCIE20_PARF_Q2A_FLUSH);
+> +
+> +	dw_pcie_dbi_ro_wr_en(pci);
+> +	writel(PCIE_CAP_LINK1_VAL, pci->dbi_base + offset + PCI_EXP_SLTCAP);
+> +
+> +	/* Configure PCIe link capabilities for ASPM */
+> +	val = readl(pci->dbi_base + offset + PCI_EXP_LNKCAP);
+> +	val &= ~PCI_EXP_LNKCAP_ASPMS;
+> +	writel(val, pci->dbi_base + offset + PCI_EXP_LNKCAP);
+> +
+> +	writel(PCI_EXP_DEVCTL2_COMP_TMOUT_DIS, pci->dbi_base + offset +
+> +			PCI_EXP_DEVCTL2);
+> +
+> +	for (i = 0; i < 256; i++)
+> +		writel(0x0, pcie->parf + PCIE20_PARF_BDF_TO_SID_TABLE_N
+> +				+ (4 * i));
+> +
+> +	return 0;
+> +}
+> +
+>  static int qcom_pcie_link_up(struct dw_pcie *pci)
+>  {
+>  	u16 offset = dw_pcie_find_capability(pci, PCI_CAP_ID_EXP);
+> @@ -1456,6 +1587,15 @@ static const struct qcom_pcie_ops ops_1_9_0 = {
+>  	.config_sid = qcom_pcie_config_sid_sm8250,
+>  };
+>  
+> +/* Qcom IP rev.: 2.9.0  Synopsys IP rev.: 5.00a */
+> +static const struct qcom_pcie_ops ops_2_9_0 = {
+> +	.get_resources = qcom_pcie_get_resources_2_9_0,
+> +	.init = qcom_pcie_init_2_9_0,
+> +	.post_init = qcom_pcie_post_init_2_9_0,
+> +	.deinit = qcom_pcie_deinit_2_9_0,
+> +	.ltssm_enable = qcom_pcie_2_3_2_ltssm_enable,
+> +};
+> +
+>  static const struct dw_pcie_ops dw_pcie_ops = {
+>  	.link_up = qcom_pcie_link_up,
+>  	.start_link = qcom_pcie_start_link,
+> @@ -1555,6 +1695,7 @@ static const struct of_device_id qcom_pcie_match[] = {
+>  	{ .compatible = "qcom,pcie-qcs404", .data = &ops_2_4_0 },
+>  	{ .compatible = "qcom,pcie-sdm845", .data = &ops_2_7_0 },
+>  	{ .compatible = "qcom,pcie-sm8250", .data = &ops_1_9_0 },
+> +	{ .compatible = "qcom,pcie-ipq6018", .data = &ops_2_9_0 },
+>  	{ }
+>  };
+
+
 -- 
-2.33.0
-
+                                                     ~. .~   Tk Open Systems
+=}------------------------------------------------ooO--U--Ooo------------{=
+   - baruch@tkos.co.il - tel: +972.52.368.4656, http://www.tkos.co.il -
