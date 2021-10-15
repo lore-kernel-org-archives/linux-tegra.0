@@ -2,29 +2,29 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 675F4C433EF
-	for <linux-tegra@archiver.kernel.org>; Fri, 15 Oct 2021 12:20:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 941F1C433EF
+	for <linux-tegra@archiver.kernel.org>; Fri, 15 Oct 2021 12:20:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4DD5F61090
-	for <linux-tegra@archiver.kernel.org>; Fri, 15 Oct 2021 12:20:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 700D26109E
+	for <linux-tegra@archiver.kernel.org>; Fri, 15 Oct 2021 12:20:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238737AbhJOMWl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 15 Oct 2021 08:22:41 -0400
-Received: from ip-15.mailobj.net ([213.182.54.15]:41498 "EHLO msg-4.mailo.com"
+        id S238738AbhJOMWr (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 15 Oct 2021 08:22:47 -0400
+Received: from msg-1.mailo.com ([213.182.54.11]:35030 "EHLO msg-1.mailo.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S238683AbhJOMWl (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 15 Oct 2021 08:22:41 -0400
+        id S238683AbhJOMWq (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Fri, 15 Oct 2021 08:22:46 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=net-c.es; s=mailo;
-        t=1634297909; bh=fAZBlXdW20V7B6rubts4j3AhP0Cl8xUukv0+rRfZYFI=;
+        t=1634297970; bh=6p2skKGWkI2yoe8q/snsKOOPULE5TaV4S6l4Tircry8=;
         h=X-EA-Auth:From:To:Cc:Subject:Date:Message-Id:X-Mailer:In-Reply-To:
          References:MIME-Version:Content-Transfer-Encoding;
-        b=gjj37Aixv5xJdN58Ez1/fLCHxq7IFh3PlJe4msG5FsS23Wlrs3CswwaZb1Lq5FcZj
-         xwrYQsjQokQprkoJuQ8xBtagk1qQun0mnsT9dHbHpSWg9m8Kfr5VwMNOGRFGWPVs+c
-         n1w5TYiDkaC6HyPf0alj19blCCzxnIUMN66EBoYg=
-Received: by b-1.in.mailobj.net [192.168.90.11] with ESMTP
+        b=FLMAbgmNOclatyVfLrubMipst8epUwKiLBqVLj/9Tep1vbkXaE6g2LuQLSyEnOkF7
+         oRRJX3c+Y96Lbo4+TNq0cZmbPRbnWM4bFkh0ctNZcyU2n7H5EoOy4SCeJkgTb2rzC4
+         LiuQtHl7ymr+cwLx7aj8Ufi/mPZM6fSJmUMF9K6I=
+Received: by b-3.in.mailobj.net [192.168.90.13] with ESMTP
         via ip-206.mailobj.net [213.182.55.206]
-        Fri, 15 Oct 2021 13:38:00 +0200 (CEST)
-X-EA-Auth: OpAPpDuk34NEqFBHIsNujJj7mQbAW8f0DOXirFzmZTzf1PSJRw7ClxBxkO3zsoMj96sFauyhyJABJq4/MLscESRqo1iPiuuz
+        Fri, 15 Oct 2021 13:39:01 +0200 (CEST)
+X-EA-Auth: OZPle6yVEn1PbKiIgQ+ZdJOFPwEq4ONL1b5AGSgltQfAi29jPY1oShZAJ3ztW8lNIfrmOljqX/zwwCtwja+43ZwMNAWmZKLt
 From:   Claudio Suarez <cssk@net-c.es>
 To:     dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
         linux-tegra@vger.kernel.org, intel-gfx@lists.freedesktop.org,
@@ -51,9 +51,9 @@ To:     dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
         Robert Foss <robert.foss@linaro.org>,
         Ben Skeggs <bskeggs@redhat.com>, nouveau@lists.freedesktop.org
 Cc:     Claudio Suarez <cssk@net-c.es>
-Subject: [PATCH 06/15] drm/gma500: replace drm_detect_hdmi_monitor() with drm_display_info.is_hdmi
-Date:   Fri, 15 Oct 2021 13:37:04 +0200
-Message-Id: <20211015113713.630119-7-cssk@net-c.es>
+Subject: [PATCH 15/15] drm/i915: replace drm_detect_hdmi_monitor() with drm_display_info.is_hdmi
+Date:   Fri, 15 Oct 2021 13:37:13 +0200
+Message-Id: <20211015113713.630119-16-cssk@net-c.es>
 X-Mailer: git-send-email 2.33.0
 In-Reply-To: <20211015113713.630119-1-cssk@net-c.es>
 References: <20211015113713.630119-1-cssk@net-c.es>
@@ -66,49 +66,71 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 Once EDID is parsed, the monitor HDMI support information is available
 through drm_display_info.is_hdmi. Retriving the same information with
 drm_detect_hdmi_monitor() is less efficient. Change to
-drm_display_info.is_hdmi
+drm_display_info.is_hdmi where possible.
+
+This is a TODO task in Documentation/gpu/todo.rst
 
 Signed-off-by: Claudio Suarez <cssk@net-c.es>
 ---
- drivers/gpu/drm/gma500/cdv_intel_hdmi.c | 3 ++-
- drivers/gpu/drm/gma500/psb_intel_sdvo.c | 6 ++++--
- 2 files changed, 6 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/i915/display/intel_connector.c | 5 +++++
+ drivers/gpu/drm/i915/display/intel_connector.h | 1 +
+ drivers/gpu/drm/i915/display/intel_hdmi.c      | 2 +-
+ drivers/gpu/drm/i915/display/intel_sdvo.c      | 3 ++-
+ 4 files changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/gma500/cdv_intel_hdmi.c b/drivers/gpu/drm/gma500/cdv_intel_hdmi.c
-index e525689f84f0..d9db5d52d52e 100644
---- a/drivers/gpu/drm/gma500/cdv_intel_hdmi.c
-+++ b/drivers/gpu/drm/gma500/cdv_intel_hdmi.c
-@@ -130,6 +130,7 @@ static enum drm_connector_status cdv_hdmi_detect(
- 	struct edid *edid = NULL;
- 	enum drm_connector_status status = connector_status_disconnected;
+diff --git a/drivers/gpu/drm/i915/display/intel_connector.c b/drivers/gpu/drm/i915/display/intel_connector.c
+index 9bed1ccecea0..3346b55df6e1 100644
+--- a/drivers/gpu/drm/i915/display/intel_connector.c
++++ b/drivers/gpu/drm/i915/display/intel_connector.c
+@@ -213,6 +213,11 @@ int intel_ddc_get_modes(struct drm_connector *connector,
+ 	return ret;
+ }
  
-+	/* This updates connector->display_info */
- 	edid = drm_get_edid(connector, &gma_encoder->i2c_bus->adapter);
++bool intel_connector_is_hdmi_monitor(struct drm_connector *connector)
++{
++	return connector->display_info.is_hdmi;
++}
++
+ static const struct drm_prop_enum_list force_audio_names[] = {
+ 	{ HDMI_AUDIO_OFF_DVI, "force-dvi" },
+ 	{ HDMI_AUDIO_OFF, "off" },
+diff --git a/drivers/gpu/drm/i915/display/intel_connector.h b/drivers/gpu/drm/i915/display/intel_connector.h
+index 661a37a3c6d8..ceda6e72ece6 100644
+--- a/drivers/gpu/drm/i915/display/intel_connector.h
++++ b/drivers/gpu/drm/i915/display/intel_connector.h
+@@ -27,6 +27,7 @@ enum pipe intel_connector_get_pipe(struct intel_connector *connector);
+ int intel_connector_update_modes(struct drm_connector *connector,
+ 				 struct edid *edid);
+ int intel_ddc_get_modes(struct drm_connector *c, struct i2c_adapter *adapter);
++bool intel_connector_is_hdmi_monitor(struct drm_connector *connector);
+ void intel_attach_force_audio_property(struct drm_connector *connector);
+ void intel_attach_broadcast_rgb_property(struct drm_connector *connector);
+ void intel_attach_aspect_ratio_property(struct drm_connector *connector);
+diff --git a/drivers/gpu/drm/i915/display/intel_hdmi.c b/drivers/gpu/drm/i915/display/intel_hdmi.c
+index b04685bb6439..2b1d7c5bebdd 100644
+--- a/drivers/gpu/drm/i915/display/intel_hdmi.c
++++ b/drivers/gpu/drm/i915/display/intel_hdmi.c
+@@ -2355,7 +2355,7 @@ intel_hdmi_set_edid(struct drm_connector *connector)
+ 	to_intel_connector(connector)->detect_edid = edid;
+ 	if (edid && edid->input & DRM_EDID_INPUT_DIGITAL) {
+ 		intel_hdmi->has_audio = drm_detect_monitor_audio(edid);
+-		intel_hdmi->has_hdmi_sink = drm_detect_hdmi_monitor(edid);
++		intel_hdmi->has_hdmi_sink = intel_connector_is_hdmi_monitor(connector);
  
- 	hdmi_priv->has_hdmi_sink = false;
-@@ -138,7 +139,7 @@ static enum drm_connector_status cdv_hdmi_detect(
+ 		connected = true;
+ 	}
+diff --git a/drivers/gpu/drm/i915/display/intel_sdvo.c b/drivers/gpu/drm/i915/display/intel_sdvo.c
+index 6cb27599ea03..a32279e4fee8 100644
+--- a/drivers/gpu/drm/i915/display/intel_sdvo.c
++++ b/drivers/gpu/drm/i915/display/intel_sdvo.c
+@@ -2060,8 +2060,9 @@ intel_sdvo_tmds_sink_detect(struct drm_connector *connector)
  		if (edid->input & DRM_EDID_INPUT_DIGITAL) {
  			status = connector_status_connected;
- 			hdmi_priv->has_hdmi_sink =
--						drm_detect_hdmi_monitor(edid);
-+						connector->display_info.is_hdmi;
- 			hdmi_priv->has_hdmi_audio =
- 						drm_detect_monitor_audio(edid);
- 		}
-diff --git a/drivers/gpu/drm/gma500/psb_intel_sdvo.c b/drivers/gpu/drm/gma500/psb_intel_sdvo.c
-index 355da2856389..5ef49d17de98 100644
---- a/drivers/gpu/drm/gma500/psb_intel_sdvo.c
-+++ b/drivers/gpu/drm/gma500/psb_intel_sdvo.c
-@@ -1266,8 +1266,10 @@ psb_intel_sdvo_hdmi_sink_detect(struct drm_connector *connector)
- 		if (edid->input & DRM_EDID_INPUT_DIGITAL) {
- 			status = connector_status_connected;
- 			if (psb_intel_sdvo->is_hdmi) {
--				psb_intel_sdvo->has_hdmi_monitor = drm_detect_hdmi_monitor(edid);
--				psb_intel_sdvo->has_hdmi_audio = drm_detect_monitor_audio(edid);
-+				psb_intel_sdvo->has_hdmi_monitor =
-+						connector->display_info.is_hdmi;
-+				psb_intel_sdvo->has_hdmi_audio =
-+						drm_detect_monitor_audio(edid);
+ 			if (intel_sdvo_connector->is_hdmi) {
+-				intel_sdvo->has_hdmi_monitor = drm_detect_hdmi_monitor(edid);
+ 				intel_sdvo->has_hdmi_audio = drm_detect_monitor_audio(edid);
++				intel_sdvo->has_hdmi_monitor =
++					intel_connector_is_hdmi_monitor(connector);
  			}
  		} else
  			status = connector_status_disconnected;
