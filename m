@@ -2,30 +2,29 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89829C433F5
-	for <linux-tegra@archiver.kernel.org>; Fri, 15 Oct 2021 12:20:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 675F4C433EF
+	for <linux-tegra@archiver.kernel.org>; Fri, 15 Oct 2021 12:20:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 61A0A61090
-	for <linux-tegra@archiver.kernel.org>; Fri, 15 Oct 2021 12:20:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4DD5F61090
+	for <linux-tegra@archiver.kernel.org>; Fri, 15 Oct 2021 12:20:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238732AbhJOMWj (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 15 Oct 2021 08:22:39 -0400
-Received: from ip-8.mailobj.net ([213.182.54.8]:43694 "EHLO msg-3.mailo.com"
+        id S238737AbhJOMWl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 15 Oct 2021 08:22:41 -0400
+Received: from ip-15.mailobj.net ([213.182.54.15]:41498 "EHLO msg-4.mailo.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S238683AbhJOMWj (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 15 Oct 2021 08:22:39 -0400
-X-Greylist: delayed 2573 seconds by postgrey-1.27 at vger.kernel.org; Fri, 15 Oct 2021 08:22:38 EDT
+        id S238683AbhJOMWl (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Fri, 15 Oct 2021 08:22:41 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=net-c.es; s=mailo;
-        t=1634297909; bh=QBcYM19WYIft9nyGf96kprXPvyWbRp1gWatVdt76c0U=;
+        t=1634297909; bh=fAZBlXdW20V7B6rubts4j3AhP0Cl8xUukv0+rRfZYFI=;
         h=X-EA-Auth:From:To:Cc:Subject:Date:Message-Id:X-Mailer:In-Reply-To:
          References:MIME-Version:Content-Transfer-Encoding;
-        b=ZztwFt1HtLz+ROpeY1J85VZapMqZASbFXSmZ5GB2VcMYc+cvCiJ7KBgU1gFpJX4HE
-         e8M7Bq80v1n3fWMxiP1aUngoTSQ27V96sbW+CInQ6SLSdZKJACWmEGA9pvmJPHzdqW
-         1wzCOEExSVWdFicxjEbti5/MrJNxigsElB5z6prE=
+        b=gjj37Aixv5xJdN58Ez1/fLCHxq7IFh3PlJe4msG5FsS23Wlrs3CswwaZb1Lq5FcZj
+         xwrYQsjQokQprkoJuQ8xBtagk1qQun0mnsT9dHbHpSWg9m8Kfr5VwMNOGRFGWPVs+c
+         n1w5TYiDkaC6HyPf0alj19blCCzxnIUMN66EBoYg=
 Received: by b-1.in.mailobj.net [192.168.90.11] with ESMTP
         via ip-206.mailobj.net [213.182.55.206]
-        Fri, 15 Oct 2021 13:38:02 +0200 (CEST)
-X-EA-Auth: poGc6xz6ZqqEJXNZ9UjzI5MiSKkhrUJ4AW0hkIeTezxOINaMqijrue2rwcYd3CC4y3eESmyNBCSifR1JG/ltACbh1gPUm7js
+        Fri, 15 Oct 2021 13:38:00 +0200 (CEST)
+X-EA-Auth: OpAPpDuk34NEqFBHIsNujJj7mQbAW8f0DOXirFzmZTzf1PSJRw7ClxBxkO3zsoMj96sFauyhyJABJq4/MLscESRqo1iPiuuz
 From:   Claudio Suarez <cssk@net-c.es>
 To:     dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
         linux-tegra@vger.kernel.org, intel-gfx@lists.freedesktop.org,
@@ -52,9 +51,9 @@ To:     dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
         Robert Foss <robert.foss@linaro.org>,
         Ben Skeggs <bskeggs@redhat.com>, nouveau@lists.freedesktop.org
 Cc:     Claudio Suarez <cssk@net-c.es>
-Subject: [PATCH 07/15] drm/exynos: replace drm_detect_hdmi_monitor() with drm_display_info.is_hdmi
-Date:   Fri, 15 Oct 2021 13:37:05 +0200
-Message-Id: <20211015113713.630119-8-cssk@net-c.es>
+Subject: [PATCH 06/15] drm/gma500: replace drm_detect_hdmi_monitor() with drm_display_info.is_hdmi
+Date:   Fri, 15 Oct 2021 13:37:04 +0200
+Message-Id: <20211015113713.630119-7-cssk@net-c.es>
 X-Mailer: git-send-email 2.33.0
 In-Reply-To: <20211015113713.630119-1-cssk@net-c.es>
 References: <20211015113713.630119-1-cssk@net-c.es>
@@ -71,30 +70,48 @@ drm_display_info.is_hdmi
 
 Signed-off-by: Claudio Suarez <cssk@net-c.es>
 ---
- drivers/gpu/drm/exynos/exynos_hdmi.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/gma500/cdv_intel_hdmi.c | 3 ++-
+ drivers/gpu/drm/gma500/psb_intel_sdvo.c | 6 ++++--
+ 2 files changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
-index 7655142a4651..a563d6386abe 100644
---- a/drivers/gpu/drm/exynos/exynos_hdmi.c
-+++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
-@@ -893,12 +893,14 @@ static int hdmi_get_modes(struct drm_connector *connector)
- 	if (!edid)
- 		return -ENODEV;
+diff --git a/drivers/gpu/drm/gma500/cdv_intel_hdmi.c b/drivers/gpu/drm/gma500/cdv_intel_hdmi.c
+index e525689f84f0..d9db5d52d52e 100644
+--- a/drivers/gpu/drm/gma500/cdv_intel_hdmi.c
++++ b/drivers/gpu/drm/gma500/cdv_intel_hdmi.c
+@@ -130,6 +130,7 @@ static enum drm_connector_status cdv_hdmi_detect(
+ 	struct edid *edid = NULL;
+ 	enum drm_connector_status status = connector_status_disconnected;
  
--	hdata->dvi_mode = !drm_detect_hdmi_monitor(edid);
 +	/* This updates connector->display_info */
-+	drm_connector_update_edid_property(connector, edid);
-+
-+	hdata->dvi_mode = !connector->display_info.is_hdmi;
- 	DRM_DEV_DEBUG_KMS(hdata->dev, "%s : width[%d] x height[%d]\n",
- 			  (hdata->dvi_mode ? "dvi monitor" : "hdmi monitor"),
- 			  edid->width_cm, edid->height_cm);
+ 	edid = drm_get_edid(connector, &gma_encoder->i2c_bus->adapter);
  
--	drm_connector_update_edid_property(connector, edid);
- 	cec_notifier_set_phys_addr_from_edid(hdata->notifier, edid);
- 
- 	ret = drm_add_edid_modes(connector, edid);
+ 	hdmi_priv->has_hdmi_sink = false;
+@@ -138,7 +139,7 @@ static enum drm_connector_status cdv_hdmi_detect(
+ 		if (edid->input & DRM_EDID_INPUT_DIGITAL) {
+ 			status = connector_status_connected;
+ 			hdmi_priv->has_hdmi_sink =
+-						drm_detect_hdmi_monitor(edid);
++						connector->display_info.is_hdmi;
+ 			hdmi_priv->has_hdmi_audio =
+ 						drm_detect_monitor_audio(edid);
+ 		}
+diff --git a/drivers/gpu/drm/gma500/psb_intel_sdvo.c b/drivers/gpu/drm/gma500/psb_intel_sdvo.c
+index 355da2856389..5ef49d17de98 100644
+--- a/drivers/gpu/drm/gma500/psb_intel_sdvo.c
++++ b/drivers/gpu/drm/gma500/psb_intel_sdvo.c
+@@ -1266,8 +1266,10 @@ psb_intel_sdvo_hdmi_sink_detect(struct drm_connector *connector)
+ 		if (edid->input & DRM_EDID_INPUT_DIGITAL) {
+ 			status = connector_status_connected;
+ 			if (psb_intel_sdvo->is_hdmi) {
+-				psb_intel_sdvo->has_hdmi_monitor = drm_detect_hdmi_monitor(edid);
+-				psb_intel_sdvo->has_hdmi_audio = drm_detect_monitor_audio(edid);
++				psb_intel_sdvo->has_hdmi_monitor =
++						connector->display_info.is_hdmi;
++				psb_intel_sdvo->has_hdmi_audio =
++						drm_detect_monitor_audio(edid);
+ 			}
+ 		} else
+ 			status = connector_status_disconnected;
 -- 
 2.33.0
 
