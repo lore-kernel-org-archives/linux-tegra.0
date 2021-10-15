@@ -2,29 +2,29 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A80FC433FE
-	for <linux-tegra@archiver.kernel.org>; Fri, 15 Oct 2021 12:22:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60DD7C4332F
+	for <linux-tegra@archiver.kernel.org>; Fri, 15 Oct 2021 12:22:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5F9506109E
-	for <linux-tegra@archiver.kernel.org>; Fri, 15 Oct 2021 12:22:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C68F6109E
+	for <linux-tegra@archiver.kernel.org>; Fri, 15 Oct 2021 12:22:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238764AbhJOMYZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 15 Oct 2021 08:24:25 -0400
-Received: from ip-16.mailobj.net ([213.182.54.16]:45904 "EHLO msg-6.mailo.com"
+        id S238767AbhJOMYi (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 15 Oct 2021 08:24:38 -0400
+Received: from msg-2.mailo.com ([213.182.54.12]:55306 "EHLO msg-2.mailo.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S238730AbhJOMYZ (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 15 Oct 2021 08:24:25 -0400
+        id S238730AbhJOMYh (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Fri, 15 Oct 2021 08:24:37 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=net-c.es; s=mailo;
-        t=1634297878; bh=6xsMxrnlNAEGEZg8rndfdmRmdX7OzFdxIK93N1Vj41A=;
+        t=1634297850; bh=MQRO/l+EHR9JU1ioWJjmqgB8WWkE+yYekXTuFOswj+Y=;
         h=X-EA-Auth:From:To:Cc:Subject:Date:Message-Id:X-Mailer:In-Reply-To:
          References:MIME-Version:Content-Transfer-Encoding;
-        b=we7kd11KwZdcLgjjMJ1n8lRK3fDo19zH5H+Og0L2UPlokGtiTJopm6QnuLH4EOJht
-         5HKLpcVo/mrtaM9O2pFNc33mi87Z4mE8ojMtrKoX5FL/aMy8x0EaKcRuy6pmDm38xd
-         3hp0rY2XF9DIZ7sekQiL4y9PNSj7QVLoGHQK6q1I=
-Received: by b-1.in.mailobj.net [192.168.90.11] with ESMTP
+        b=jmT7oe5w+8xJbJXvZiIKSkGCnKwIGnx+OzsvamxSx19qKwX6ySAQrusi6hQ37z92i
+         ZxGtIFs9CEN43l6goAAmH750nfknm0dvTVWpD/lHCBBBFtxKXcvnxqpP3JCHDiyROE
+         Lb4lVrjrvj0ZJjMXVo44k7a/k1h4hVZvKMkQcxPw=
+Received: by b-5.in.mailobj.net [192.168.90.15] with ESMTP
         via ip-206.mailobj.net [213.182.55.206]
-        Fri, 15 Oct 2021 13:37:58 +0200 (CEST)
-X-EA-Auth: I5yQV9m0ki9AV0UNNSJrv4h5p+a5jWS8S9ncIuKRt6xVG9l52oNHyLPXAl57MxkXxJHTp5hqDR4r6ZsIbzO0j0sAaB99p+vk
+        Fri, 15 Oct 2021 13:37:30 +0200 (CEST)
+X-EA-Auth: CRtTSwtUbuh6isJJX0SnV6erXuiGBUr2v9cRBqySyoMsALEn+um5ogs//XEthBHR+BYiHx6j1z6ycPjZkYdI84IPSn2OY8gV
 From:   Claudio Suarez <cssk@net-c.es>
 To:     dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
         linux-tegra@vger.kernel.org, intel-gfx@lists.freedesktop.org,
@@ -51,9 +51,9 @@ To:     dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
         Robert Foss <robert.foss@linaro.org>,
         Ben Skeggs <bskeggs@redhat.com>, nouveau@lists.freedesktop.org
 Cc:     Claudio Suarez <cssk@net-c.es>
-Subject: [PATCH 05/15] drm/tegra: replace drm_detect_hdmi_monitor() with drm_display_info.is_hdmi
-Date:   Fri, 15 Oct 2021 13:37:03 +0200
-Message-Id: <20211015113713.630119-6-cssk@net-c.es>
+Subject: [PATCH 01/15] gpu/drm: make drm_add_edid_modes() consistent when updating connector->display_info
+Date:   Fri, 15 Oct 2021 13:36:59 +0200
+Message-Id: <20211015113713.630119-2-cssk@net-c.es>
 X-Mailer: git-send-email 2.33.0
 In-Reply-To: <20211015113713.630119-1-cssk@net-c.es>
 References: <20211015113713.630119-1-cssk@net-c.es>
@@ -63,36 +63,38 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Once EDID is parsed, the monitor HDMI support information is available
-through drm_display_info.is_hdmi. Retriving the same information with
-drm_detect_hdmi_monitor() is less efficient. Change to
-drm_display_info.is_hdmi
+According to the documentation, drm_add_edid_modes
+"... Also fills out the &drm_display_info structure and ELD in @connector
+with any information which can be derived from the edid."
+
+drm_add_edid_modes accepts a struct edid *edid parameter which may have a
+value or may be null. When it is not null, connector->display_info and
+connector->eld are updated according to the edid. When edid=NULL, only
+connector->eld is reset. Reset connector->display_info to be consistent
+and accurate.
 
 Signed-off-by: Claudio Suarez <cssk@net-c.es>
 ---
- drivers/gpu/drm/tegra/hdmi.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+ drivers/gpu/drm/drm_edid.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/gpu/drm/tegra/hdmi.c b/drivers/gpu/drm/tegra/hdmi.c
-index e5d2a4026028..21571221b49b 100644
---- a/drivers/gpu/drm/tegra/hdmi.c
-+++ b/drivers/gpu/drm/tegra/hdmi.c
-@@ -831,14 +831,10 @@ static void tegra_hdmi_setup_tmds(struct tegra_hdmi *hdmi,
+diff --git a/drivers/gpu/drm/drm_edid.c b/drivers/gpu/drm/drm_edid.c
+index 6325877c5fd6..6cbe09b2357c 100644
+--- a/drivers/gpu/drm/drm_edid.c
++++ b/drivers/gpu/drm/drm_edid.c
+@@ -5358,10 +5358,12 @@ int drm_add_edid_modes(struct drm_connector *connector, struct edid *edid)
  
- static bool tegra_output_is_hdmi(struct tegra_output *output)
- {
--	struct edid *edid;
--
- 	if (!output->connector.edid_blob_ptr)
- 		return false;
- 
--	edid = (struct edid *)output->connector.edid_blob_ptr->data;
--
--	return drm_detect_hdmi_monitor(edid);
-+	return output->connector.display_info.is_hdmi;
- }
- 
- static enum drm_connector_status
+ 	if (edid == NULL) {
+ 		clear_eld(connector);
++		drm_reset_display_info(connector);
+ 		return 0;
+ 	}
+ 	if (!drm_edid_is_valid(edid)) {
+ 		clear_eld(connector);
++		drm_reset_display_info(connector);
+ 		drm_warn(connector->dev, "%s: EDID invalid.\n",
+ 			 connector->name);
+ 		return 0;
 -- 
 2.33.0
 
