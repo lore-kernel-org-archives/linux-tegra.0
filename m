@@ -2,144 +2,115 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BD8BC4321E
-	for <linux-tegra@archiver.kernel.org>; Fri, 15 Oct 2021 01:02:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 188FEC433EF
+	for <linux-tegra@archiver.kernel.org>; Fri, 15 Oct 2021 07:20:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F02C760FDA
-	for <linux-tegra@archiver.kernel.org>; Fri, 15 Oct 2021 01:02:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F14A460EDF
+	for <linux-tegra@archiver.kernel.org>; Fri, 15 Oct 2021 07:20:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231575AbhJOBEZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 14 Oct 2021 21:04:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42064 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229912AbhJOBEV (ORCPT
+        id S234514AbhJOHW1 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 15 Oct 2021 03:22:27 -0400
+Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:40590
+        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230371AbhJOHW0 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 14 Oct 2021 21:04:21 -0400
-Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87BCDC061753;
-        Thu, 14 Oct 2021 18:02:14 -0700 (PDT)
-Received: by mail-lf1-x134.google.com with SMTP id x27so34830638lfu.5;
-        Thu, 14 Oct 2021 18:02:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=mv5Z6Sdks/z0PRafNWu7V1r7LCkQQrDbmE+ZfMmHLqw=;
-        b=H60RnvlX2azwNGf02ab1Oyj8wVvv7xw4MWUErTGrxY7uhb1rctVozCIO8sCS81VzVS
-         hOZVQcmidgo6srorYYEKXtrCX+uka5RufIHO9FB8YjYtosAd1tV7yduYszwn7XqHY8T3
-         P2XSvit2SOy5d04RRrtHtjjy0pTszcQ+avWKslDagv90QnM8kxz9GqKKNEWsuZkwk0oG
-         RI0hyWIS7l6XKbWqVyVn0ypJq/EzThrBHBqQNDqP1p+HoYYDahsR4SOJzmb7tEtGttAs
-         Wv2t95lbRv4BVqh+KbIj7b+IMF63pQ6o3e7MjI+Qa1vL14XEfbtvpEfBnM3DX3ZKeOzd
-         j7Xw==
+        Fri, 15 Oct 2021 03:22:26 -0400
+Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com [209.85.167.69])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id D4A553FFFD
+        for <linux-tegra@vger.kernel.org>; Fri, 15 Oct 2021 07:20:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1634282419;
+        bh=jPoFv7RX4zxC2hKTIcuot+gzhC8n3whHEgMFsK0pfdk=;
+        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+         MIME-Version:Content-Type;
+        b=aP1ADcGzlY2tDCksY57P7p94kegH8hf0urXUZprTdQwOv2o9ZyVH/38LsG7t6IZPu
+         4jCHdIs0kY1V2ICwtHCHFifYb3gb6lqMAQcem3OEtoNN3Y4e72D7LFphtHyKhMYfXT
+         IQ/1Yz+TL90qUdk4V1cezZHUS8rQ+QzQHZA+CcKuu/xcm7ddAymJHS/4yTkGpc3/n+
+         4SxLgKbsF8f6eVS2GcMSvQgFZJFXaj2bLYep561BY2B3sO7P6OHLlzNjbUYnoj95HU
+         G3Zuz61fM+frxsZZg7W3Y5hQr3AvgYN7rkPCKFsMUqYfoGbsY3uretwMBrKURgzM7S
+         rbHv6pCSDnhqA==
+Received: by mail-lf1-f69.google.com with SMTP id x7-20020a056512130700b003fd1a7424a8so6008827lfu.5
+        for <linux-tegra@vger.kernel.org>; Fri, 15 Oct 2021 00:20:19 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=mv5Z6Sdks/z0PRafNWu7V1r7LCkQQrDbmE+ZfMmHLqw=;
-        b=KG9b7jUsnSLEQL22bKZ75gAPD8cDejEMNuEyAj+5pM1X85J0/dAuhtagheoTmF3li4
-         /nqMAJFDIDb09ZYin+8GOyNmo98+SHn7ITC39b82zi8i7rxEnLXS2MkR7rANv9F+vyjA
-         YPtU0W82GXXmxOrIUjh14mSmY3zyQFBQmo3hsjy9BsQSnfsvLmYcYEcMpPSjZEccL61A
-         wbfqAmXwxYggSHZb8YjTp2YymxiOjqlul6E0OLVKa+gapsy4U3jowm5YejWagVnsSRbB
-         pxGOlelSX6r9W3dU+i3ySFZy8eGPi8zik0viaVgDKvxSyQ3g0RxGDeVcRWBqGRL3WIzK
-         sNBQ==
-X-Gm-Message-State: AOAM532+eBifjjMJKcvqhvgI4IzR6gzKfHGVJUWgHyiwCEl4I0X34QWu
-        feIGuA5b07Vpy4Uc0k8cuUfh3pomKo0=
-X-Google-Smtp-Source: ABdhPJwI0m+5o/4/ErJJ6urO1/gJpgb5iHK/zkQpI7uZEJJsVGNazonwuMOVf2cdk0laSZAgpG/4Tw==
-X-Received: by 2002:ac2:443b:: with SMTP id w27mr8198374lfl.63.1634259732934;
-        Thu, 14 Oct 2021 18:02:12 -0700 (PDT)
-Received: from [192.168.2.145] (79-139-176-16.dynamic.spd-mgts.ru. [79.139.176.16])
-        by smtp.googlemail.com with ESMTPSA id x145sm357902lff.155.2021.10.14.18.02.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Oct 2021 18:02:12 -0700 (PDT)
-Subject: Re: [PATCH v12 05/35] dt-bindings: clock: tegra-car: Document new
- clock sub-nodes
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=jPoFv7RX4zxC2hKTIcuot+gzhC8n3whHEgMFsK0pfdk=;
+        b=7rzo+Ft+z3Tw5N/b2L9W6yaXSe0ZY2OBUGxuf7S2dniapfOpC+xs+h3N/drHtpUpN8
+         x+TdRghpu8BE+vOcyODXFKotNqQwhvkYrcM16Yvw8i+Rd0yp3MIaWrVF3T/Ff89ZSijV
+         JQz29Oh4hkV/aOXcTp4ugBibPzOJ+Ue9Sh0gLZc7eTsP67i0Pk6CyxjOEN2dL+fR5gNv
+         W7P3jbjPDKlRIczyAeYHNRY7p7VZ9CRE2oIlb7h/1oqlU0VLahrdjVL2/XR1kcdRb1wN
+         fyQt9dHdGp7c3st9VoLZ6SBWKrlVjTqEbcvbRgIvp8XpWciTq3v2vKMo/L37YNAnabOY
+         Sg5w==
+X-Gm-Message-State: AOAM532YGBY/Cjb+zDZbHREYcqS9EIhL2HaFQb8nnsRJsgoQlvaXi4ls
+        r8xRHHrVhmNT6Puc4CwY0Z/DNydtC5dPG5/VBsAQjNmIbM0JH9DH+Zh/jZCM99UB9DRa2hNyTQB
+        EqjpyzEqLAdmAbvIKxa4YIv+ATySAcxTkLe/fHODc
+X-Received: by 2002:ac2:5c06:: with SMTP id r6mr9962984lfp.103.1634282418692;
+        Fri, 15 Oct 2021 00:20:18 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzwVsjS33QPbqSHZteu5iA8nRklnWLz0E6WPJnIYimgt0bCA7/8aqX4UtJxAL/759Ranc5EOw==
+X-Received: by 2002:ac2:5c06:: with SMTP id r6mr9962963lfp.103.1634282418487;
+        Fri, 15 Oct 2021 00:20:18 -0700 (PDT)
+Received: from kozik-lap.lan (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
+        by smtp.gmail.com with ESMTPSA id 5sm428200lfy.156.2021.10.15.00.20.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Oct 2021 00:20:18 -0700 (PDT)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Nishanth Menon <nm@ti.com>, Peter Chen <peter.chen@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
-        Viresh Kumar <vireshk@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-staging@lists.linux.dev, linux-pwm@vger.kernel.org,
-        linux-mmc@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Richard Weinberger <richard@nod.at>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Lucas Stach <dev@lynxeye.de>, Stefan Agner <stefan@agner.ch>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        David Heidelberg <david@ixit.cz>
-References: <20210920181145.19543-1-digetx@gmail.com>
- <20210920181145.19543-6-digetx@gmail.com>
- <163425700766.1688384.4481739110941660602@swboyd.mtv.corp.google.com>
- <4090acf8-c8af-d98c-2121-9fd105365e55@gmail.com>
- <163425874534.1688384.5636050222516713710@swboyd.mtv.corp.google.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <97b2e36d-b380-8565-8409-3884ab4ca11e@gmail.com>
-Date:   Fri, 15 Oct 2021 04:02:11 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        Dmitry Osipenko <digetx@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v5 0/9] tegra20-emc: Identify memory chip by LPDDR configuration
+Date:   Fri, 15 Oct 2021 09:20:13 +0200
+Message-Id: <163428239295.5772.13742394976706710476.b4-ty@canonical.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20211006224659.21434-1-digetx@gmail.com>
+References: <20211006224659.21434-1-digetx@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <163425874534.1688384.5636050222516713710@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-15.10.2021 03:45, Stephen Boyd пишет:
-> Quoting Dmitry Osipenko (2021-10-14 17:43:49)
->> 15.10.2021 03:16, Stephen Boyd пишет:
->>> Quoting Dmitry Osipenko (2021-09-20 11:11:15)
->>>> diff --git a/Documentation/devicetree/bindings/clock/nvidia,tegra20-car.yaml b/Documentation/devicetree/bindings/clock/nvidia,tegra20-car.yaml
->>>> index 459d2a525393..f832abb7f11a 100644
->>>> --- a/Documentation/devicetree/bindings/clock/nvidia,tegra20-car.yaml
->>>> +++ b/Documentation/devicetree/bindings/clock/nvidia,tegra20-car.yaml
->>>> @@ -42,6 +42,36 @@ properties:
->>>>    "#reset-cells":
->>>>      const: 1
->>>>  
->>>> +patternProperties:
->>>> +  "^(sclk)|(pll-[cem])$":
->>>> +    type: object
->>>> +    properties:
->>>> +      compatible:
->>>> +        enum:
->>>> +          - nvidia,tegra20-sclk
->>>> +          - nvidia,tegra30-sclk
->>>> +          - nvidia,tegra30-pllc
->>>> +          - nvidia,tegra30-plle
->>>> +          - nvidia,tegra30-pllm
->>>> +
->>>> +      operating-points-v2: true
->>>> +
->>>> +      clocks:
->>>> +        items:
->>>> +          - description: node's clock
->>>> +
->>>> +      power-domains:
->>>> +        maxItems: 1
->>>> +        description: phandle to the core SoC power domain
->>>
->>> Is this done to associate the power domain with a particular clk? And an
->>> OPP table with a particular clk?
->>
->> Yes
->>
+On Thu, 7 Oct 2021 01:46:50 +0300, Dmitry Osipenko wrote:
+> Support memory chip identification by LPDDR2 configuration, which is
+> needed by ASUS Transformer TF101 tablet device that doesn't store RAMCODE
+> in Tegra's NVMEM.
 > 
-> Ok. Can Ulf/Viresh review this patch series?
+> Changelog:
+> 
+> v5: - Added new patch which adds vendor prefix for Elpida Inc.
+> 
+> [...]
 
-They already did, please see v13 [1].
+Applied, thanks!
 
-[1] https://lore.kernel.org/lkml/20210926224058.1252-1-digetx@gmail.com/
+[1/9] dt-bindings: Relocate DDR bindings
+      (no commit info)
+[2/9] dt-bindings: memory: lpddr2: Convert to schema
+      commit: 8a3294b74ac621ab03ef88cb964c13089ffdf015
+[3/9] dt-bindings: memory: lpddr2: Add revision-id properties
+      commit: 3c1a1b4b191978559cae5c626da012ef897c1139
+[4/9] dt-bindings: memory: lpddr2: Document Elpida B8132B2PB-6D-F
+      commit: 624f42157b99d253e6a52a7f93123eb0dbe1b26c
+[5/9] dt-bindings: Add vendor prefix for Elpida Memory
+      commit: 8712faaf12106bc70fcaef2cb89f7958faddbe59
+[7/9] dt-bindings: memory: tegra20: emc: Document new LPDDR2 sub-node
+      commit: ab4dd82cf5f8dd1943acf9243058262bc33c5af6
+[8/9] memory: Add LPDDR2-info helpers
+      commit: 5c767f684651e74f81c4d6a363e3779af3a77cc0
+[9/9] memory: tegra20-emc: Support matching timings by LPDDR2 configuration
+      commit: 4964b3e5c9ad4ad85b44f826a12c008af826545c
+
+
+(dts patch not applied)
+
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
