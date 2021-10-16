@@ -2,32 +2,32 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51589C433EF
-	for <linux-tegra@archiver.kernel.org>; Fri, 15 Oct 2021 19:47:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E183C433FE
+	for <linux-tegra@archiver.kernel.org>; Sat, 16 Oct 2021 08:25:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 302C8611C1
-	for <linux-tegra@archiver.kernel.org>; Fri, 15 Oct 2021 19:47:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EDDA560F93
+	for <linux-tegra@archiver.kernel.org>; Sat, 16 Oct 2021 08:25:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242779AbhJOTtf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 15 Oct 2021 15:49:35 -0400
-Received: from mga03.intel.com ([134.134.136.65]:37291 "EHLO mga03.intel.com"
+        id S239865AbhJPI11 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 16 Oct 2021 04:27:27 -0400
+Received: from ip-15.mailobj.net ([213.182.54.15]:59748 "EHLO msg-4.mailo.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S242743AbhJOTte (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 15 Oct 2021 15:49:34 -0400
-X-IronPort-AV: E=McAfee;i="6200,9189,10138"; a="227928991"
-X-IronPort-AV: E=Sophos;i="5.85,376,1624345200"; 
-   d="scan'208";a="227928991"
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2021 12:47:09 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.85,376,1624345200"; 
-   d="scan'208";a="461666479"
-Received: from stinkbox.fi.intel.com (HELO stinkbox) ([10.237.72.171])
-  by orsmga002.jf.intel.com with SMTP; 15 Oct 2021 12:47:00 -0700
-Received: by stinkbox (sSMTP sendmail emulation); Fri, 15 Oct 2021 22:46:59 +0300
-Date:   Fri, 15 Oct 2021 22:46:59 +0300
-From:   Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-To:     Claudio Suarez <cssk@net-c.es>
+        id S239443AbhJPI1Z (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Sat, 16 Oct 2021 04:27:25 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=net-c.es; s=mailo;
+        t=1634372706; bh=yZzgPykl4Bs+bjn8VyGJS4/uveNfNvHA1+ZdWhCtElE=;
+        h=X-EA-Auth:Date:From:To:Cc:Subject:Message-ID:References:
+         MIME-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To;
+        b=wWMsPosvxYC0hUTuNskQtjaK4A0OSCkYJLfNsRREaPprBWK5/hFofHtPAM+pf+mFw
+         A8v6EwrivfPxjx2zz5g7sjcn2k6+1RMH1RIDAtESrMwq18LSo8OpckCitXvzPsCyeF
+         7Lyg0wwMrnehjqaNydEV5nmunSRisHnMLDQjhizo=
+Received: by b-2.in.mailobj.net [192.168.90.12] with ESMTP
+        via ip-206.mailobj.net [213.182.55.206]
+        Sat, 16 Oct 2021 10:25:06 +0200 (CEST)
+X-EA-Auth: NRS5ipq4PdTt+JAH6bHxz4H2hBw4isFILYBvQU7UNrUFLZTxbjQJHTD8I+F5D0UsnPjvvuhUpwJExaACHSHoV/oeR/31d9wx
+Date:   Sat, 16 Oct 2021 10:25:03 +0200
+From:   Claudio Suarez <cssk@net-c.es>
+To:     Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
 Cc:     dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
         linux-tegra@vger.kernel.org, intel-gfx@lists.freedesktop.org,
         David Airlie <airlied@linux.ie>,
@@ -49,9 +49,9 @@ Cc:     dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
         heiko@sntech.de, Neil Armstrong <narmstrong@baylibre.com>,
         Robert Foss <robert.foss@linaro.org>,
         Ben Skeggs <bskeggs@redhat.com>, nouveau@lists.freedesktop.org
-Subject: Re: [Intel-gfx] [PATCH 01/15] gpu/drm: make drm_add_edid_modes()
+Subject: Re: [Freedreno] [PATCH 01/15] gpu/drm: make drm_add_edid_modes()
  consistent when updating connector->display_info
-Message-ID: <YWnas70UYAdjZFKo@intel.com>
+Message-ID: <YWqMX+EOjk++HPOe@gineta.localdomain>
 References: <20211015113713.630119-1-cssk@net-c.es>
  <20211015113713.630119-2-cssk@net-c.es>
  <YWluAX6LA2DupE+E@intel.com>
@@ -62,7 +62,6 @@ Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 In-Reply-To: <YWnXierh4TSXpDMc@intel.com>
-X-Patchwork-Hint: comment
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -145,9 +144,30 @@ On Fri, Oct 15, 2021 at 10:33:29PM +0300, Ville Syrjälä wrote:
 > Hmm. Another option is to just move all these NULL/invalid edid
 > checks into drm_edid_to_eld() and drm_add_display_info().
 
-But maybe that's not so easy. Would still need to bail out
-from drm_add_edid_modes() I guess.
+I was thinking about this. We can use a boolean variable:
+===============
+        bool edid_is_invalid;
 
--- 
-Ville Syrjälä
-Intel
+	edid_is_invalid = !drm_edid_is_valid(edid);
+
+        if (edid == NULL || edid_is_invalid) {
+                clear_eld(connector);
+                drm_reset_display_info(connector);
+                if (edid_is_invalid)
+                         drm_warn(connector->dev, "%s: EDID invalid.\n",
+                                  connector->name);
+                return 0;
+        }
+
+        drm_edid_to_eld(connector, edid);
+...
+===============
+Internally, drm_edid_is_valid() handles NULL pointers properly.
+It is a quite elegant solution with a small change in the original
+design, and it improves this part in the way you pointed out.
+
+Best regards,
+Claudio Suarez
+
+
+
