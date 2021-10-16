@@ -2,29 +2,29 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88C0BC433F5
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1C75C433FE
 	for <linux-tegra@archiver.kernel.org>; Sat, 16 Oct 2021 19:18:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 73E4961163
+	by mail.kernel.org (Postfix) with ESMTP id AD25460F35
 	for <linux-tegra@archiver.kernel.org>; Sat, 16 Oct 2021 19:18:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240916AbhJPTUq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 16 Oct 2021 15:20:46 -0400
-Received: from msg-2.mailo.com ([213.182.54.12]:51972 "EHLO msg-2.mailo.com"
+        id S240911AbhJPTUr (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 16 Oct 2021 15:20:47 -0400
+Received: from msg-1.mailo.com ([213.182.54.11]:53752 "EHLO msg-1.mailo.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S240911AbhJPTUo (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Sat, 16 Oct 2021 15:20:44 -0400
+        id S240944AbhJPTUp (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Sat, 16 Oct 2021 15:20:45 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=net-c.es; s=mailo;
-        t=1634409871; bh=jLUq6oGrOGn4w7bDrYmKsRIuapPzeZOwLUULZBLAFxo=;
+        t=1634409817; bh=ZmCRcmXfOn4brch3sFsuOuXp9yHp219e3PYR0mVapZM=;
         h=X-EA-Auth:From:To:Cc:Subject:Date:Message-Id:X-Mailer:In-Reply-To:
          References:MIME-Version:Content-Transfer-Encoding;
-        b=r4oSv+IrKTA3ShNBB1wV9dy2gWLCJMBvuF9OLT/nFIpzEVpcBR/6fxOD7k3sqGdup
-         DUj2OrkQKP52u7k37VSKns9SJiMgRaivvLZp0py6ia3IzZBjwvMtABm4BAMs+djgx2
-         rjMtf2y6WE9KIdqZDkKk62eJ5jG7f8iTquZkcWq4=
-Received: by b-6.in.mailobj.net [192.168.90.16] with ESMTP
+        b=rljxmyj0IrzWjJEZhtHkuZ5kKfyDeKlD2uPtd0sZ5b8xYuXy8yFNMSY/sTJFdIciy
+         cTJ4G5MWFK7WsnC/M+h+OE4jDJn4o60mSnKW5stzmme9KeLcYpvtJeUEc3jYjLJJFU
+         nE6iF+Zlu+eDNaM/eM2d5hgF8uPwvXCSYczoFeq8=
+Received: by b-2.in.mailobj.net [192.168.90.12] with ESMTP
         via ip-206.mailobj.net [213.182.55.206]
-        Sat, 16 Oct 2021 20:44:03 +0200 (CEST)
-X-EA-Auth: MMyhc0qBMvcFUjzQeQalt796U20LXx/W6vSX1zWFmT3OeIPryVtaWeP6qD+hsFcHRFRmzWHOZwb29SPRZb1fvnP+PpHaaaQX
+        Sat, 16 Oct 2021 20:43:34 +0200 (CEST)
+X-EA-Auth: IbIiNW/0NCb1fjsuAO9oo//00h6X9/vtgHnLMRK0Dh+QuhMgo9s3GIoWiwDVwcp8NHt0WzykDFkyFO31LEaRnzjiuVzewoCp
 From:   Claudio Suarez <cssk@net-c.es>
 To:     dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
         linux-tegra@vger.kernel.org, intel-gfx@lists.freedesktop.org,
@@ -49,9 +49,9 @@ To:     dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
         Ben Skeggs <bskeggs@redhat.com>, nouveau@lists.freedesktop.org,
         ville.syrjala@linux.intel.com
 Cc:     Claudio Suarez <cssk@net-c.es>
-Subject: [PATCH v2 12/13] drm/nouveau: replace drm_detect_hdmi_monitor() with drm_display_info.is_hdmi
-Date:   Sat, 16 Oct 2021 20:42:25 +0200
-Message-Id: <20211016184226.3862-13-cssk@net-c.es>
+Subject: [PATCH v2 08/13] drm/sun4i: replace drm_detect_hdmi_monitor() with drm_display_info.is_hdmi
+Date:   Sat, 16 Oct 2021 20:42:21 +0200
+Message-Id: <20211016184226.3862-9-cssk@net-c.es>
 X-Mailer: git-send-email 2.33.0
 In-Reply-To: <20211016184226.3862-1-cssk@net-c.es>
 References: <20211016184226.3862-1-cssk@net-c.es>
@@ -68,60 +68,27 @@ drm_display_info.is_hdmi
 
 Signed-off-by: Claudio Suarez <cssk@net-c.es>
 ---
- drivers/gpu/drm/nouveau/dispnv50/disp.c | 4 ++--
- drivers/gpu/drm/nouveau/dispnv50/head.c | 8 +-------
- 2 files changed, 3 insertions(+), 9 deletions(-)
+ drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/nouveau/dispnv50/disp.c b/drivers/gpu/drm/nouveau/dispnv50/disp.c
-index d7b9f7f8c9e3..b3c7199aa63d 100644
---- a/drivers/gpu/drm/nouveau/dispnv50/disp.c
-+++ b/drivers/gpu/drm/nouveau/dispnv50/disp.c
-@@ -844,7 +844,7 @@ nv50_hdmi_enable(struct drm_encoder *encoder, struct nouveau_crtc *nv_crtc,
- 	int ret;
- 	int size;
+diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c b/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
+index 2f2c9f0a1071..f57bedbbeeb8 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
++++ b/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
+@@ -215,11 +215,11 @@ static int sun4i_hdmi_get_modes(struct drm_connector *connector)
+ 	if (!edid)
+ 		return 0;
  
--	if (!drm_detect_hdmi_monitor(nv_connector->edid))
-+	if (!nv_connector->base.display_info.is_hdmi)
- 		return;
+-	hdmi->hdmi_monitor = drm_detect_hdmi_monitor(edid);
++	drm_connector_update_edid_property(connector, edid);
++	hdmi->hdmi_monitor = connector->display_info.is_hdmi;
+ 	DRM_DEBUG_DRIVER("Monitor is %s monitor\n",
+ 			 hdmi->hdmi_monitor ? "an HDMI" : "a DVI");
  
- 	hdmi = &nv_connector->base.display_info.hdmi;
-@@ -1745,7 +1745,7 @@ nv50_sor_atomic_enable(struct drm_encoder *encoder, struct drm_atomic_state *sta
- 			 */
- 			if (mode->clock >= 165000 &&
- 			    nv_encoder->dcb->duallink_possible &&
--			    !drm_detect_hdmi_monitor(nv_connector->edid))
-+			    !nv_connector->base.display_info.is_hdmi)
- 				proto = NV507D_SOR_SET_CONTROL_PROTOCOL_DUAL_TMDS;
- 		} else {
- 			proto = NV507D_SOR_SET_CONTROL_PROTOCOL_SINGLE_TMDS_B;
-diff --git a/drivers/gpu/drm/nouveau/dispnv50/head.c b/drivers/gpu/drm/nouveau/dispnv50/head.c
-index d66f97280282..29d6c010ac13 100644
---- a/drivers/gpu/drm/nouveau/dispnv50/head.c
-+++ b/drivers/gpu/drm/nouveau/dispnv50/head.c
-@@ -127,14 +127,8 @@ nv50_head_atomic_check_view(struct nv50_head_atom *armh,
- 	struct drm_display_mode *omode = &asyh->state.adjusted_mode;
- 	struct drm_display_mode *umode = &asyh->state.mode;
- 	int mode = asyc->scaler.mode;
--	struct edid *edid;
- 	int umode_vdisplay, omode_hdisplay, omode_vdisplay;
- 
--	if (connector->edid_blob_ptr)
--		edid = (struct edid *)connector->edid_blob_ptr->data;
--	else
--		edid = NULL;
--
- 	if (!asyc->scaler.full) {
- 		if (mode == DRM_MODE_SCALE_NONE)
- 			omode = umode;
-@@ -162,7 +156,7 @@ nv50_head_atomic_check_view(struct nv50_head_atom *armh,
- 	 */
- 	if ((asyc->scaler.underscan.mode == UNDERSCAN_ON ||
- 	    (asyc->scaler.underscan.mode == UNDERSCAN_AUTO &&
--	     drm_detect_hdmi_monitor(edid)))) {
-+	     connector->display_info.is_hdmi))) {
- 		u32 bX = asyc->scaler.underscan.hborder;
- 		u32 bY = asyc->scaler.underscan.vborder;
- 		u32 r = (asyh->view.oH << 19) / asyh->view.oW;
+-	drm_connector_update_edid_property(connector, edid);
+ 	cec_s_phys_addr_from_edid(hdmi->cec_adap, edid);
+ 	ret = drm_add_edid_modes(connector, edid);
+ 	kfree(edid);
 -- 
 2.33.0
 
