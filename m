@@ -2,189 +2,106 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00C94C4332F
-	for <linux-tegra@archiver.kernel.org>; Sat, 16 Oct 2021 15:36:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FC24C4332F
+	for <linux-tegra@archiver.kernel.org>; Sat, 16 Oct 2021 18:42:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DC3EC61108
-	for <linux-tegra@archiver.kernel.org>; Sat, 16 Oct 2021 15:36:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0617E6120A
+	for <linux-tegra@archiver.kernel.org>; Sat, 16 Oct 2021 18:42:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238009AbhJPPis (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 16 Oct 2021 11:38:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51094 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234575AbhJPPir (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Sat, 16 Oct 2021 11:38:47 -0400
-Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8CE1FC061570;
-        Sat, 16 Oct 2021 08:36:39 -0700 (PDT)
-Received: by mail-lf1-x12d.google.com with SMTP id i24so54405169lfj.13;
-        Sat, 16 Oct 2021 08:36:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=iXmHQbdUUEj7iD9UdLGIRExPe2SbeX0x9hgeURTYmuQ=;
-        b=gy+a/5BSaOUZjjMeREUgCptM2ybr7PF148YGvG+CqztuyGq8LBhigc7vHDIIyQZ4RR
-         nCkxVRmxG6APD0+J/FGkfKxkl0tNsjzP7W5/HDgmaFfOHmvbOI3WCtMY70n8umX8yEJV
-         FJGDPXjLDrI9pGt9cpA+/Wo5Ds2dyHODEA9wSoRG9q3PsnHlqMpubsdtzMh+a+j199o6
-         sBrVM5rVaDlfadaBelsLV+JFBxj2s8A9ruw+Th0rjBkgDfinqABq4j1GP6WbYKhHhnWW
-         e25hnD271Cbz3yMZERuOiAdnU4nILxFmsh9aOU6cSv/0XCWbnrMGgN49CuZqdBiLmYgo
-         PhGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=iXmHQbdUUEj7iD9UdLGIRExPe2SbeX0x9hgeURTYmuQ=;
-        b=77+wQh5JSBvSRipG4bflGBZadMuOCKuoPz4zRYjNOoM7i83MvqLsfzFxgYPTFYB2y5
-         pEVKasO991N6S89jOoOhZ1zKa5cycPk4n7ZaQbjnBP5HCTgzkDHkToC4ndG8nMb4AMe5
-         d5KSiVukiDXNPJ+J71wnoFelNHkmln40qArHEg0yZVc5H0L0OydIDbwJqU7lIH8C792I
-         DKohOws2kGx5oq1wqohQdEvGzKSgpzMyYJTzNE2LkZogzrMHlyxLAuekJ79fVZ4R+gTt
-         HOD2KjDopLVtWKsWdKTzwM+gvr+Q2s7esoUeDi0sNggCPwp92j0gjW2FLrcEDUVFh/sX
-         9iVw==
-X-Gm-Message-State: AOAM531yzIB82WTrmLXDn7gN8ShM1V5KzzFPf+UtrAbkMDKNMihZmVDy
-        X7qs26TZ4lsOA+7HCF/tF+o=
-X-Google-Smtp-Source: ABdhPJxtvgN0MWJt4cva3KTlHcgZzj89zboYkD6ihnqr+bNLevlFAbbJkDz7ATXU/w01SNAG8MS09Q==
-X-Received: by 2002:a2e:a544:: with SMTP id e4mr15585258ljn.225.1634398597937;
-        Sat, 16 Oct 2021 08:36:37 -0700 (PDT)
-Received: from [192.168.2.145] (46-138-48-94.dynamic.spd-mgts.ru. [46.138.48.94])
-        by smtp.googlemail.com with ESMTPSA id w26sm1021100ljh.18.2021.10.16.08.36.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 16 Oct 2021 08:36:37 -0700 (PDT)
-Subject: Re: [PATCH v13 11/35] drm/tegra: dc: Support OPP and SoC core voltage
- scaling
-To:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Viresh Kumar <vireshk@kernel.org>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Peter Chen <peter.chen@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
-        Nishanth Menon <nm@ti.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux USB List <linux-usb@vger.kernel.org>,
-        linux-staging@lists.linux.dev, linux-pwm@vger.kernel.org,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        DTML <devicetree@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Richard Weinberger <richard@nod.at>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Lucas Stach <dev@lynxeye.de>, Stefan Agner <stefan@agner.ch>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        David Heidelberg <david@ixit.cz>
-References: <20210926224058.1252-1-digetx@gmail.com>
- <20210926224058.1252-12-digetx@gmail.com>
- <CAPDyKFobSsFOnmFc4BG353uYgECGD1U1U020oQwB7pX0mfCfvw@mail.gmail.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <9bb95684-de30-697a-139c-1e3e54dade2a@gmail.com>
-Date:   Sat, 16 Oct 2021 18:36:35 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        id S244565AbhJPSo6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 16 Oct 2021 14:44:58 -0400
+Received: from msg-1.mailo.com ([213.182.54.11]:51830 "EHLO msg-1.mailo.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S240331AbhJPSo4 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Sat, 16 Oct 2021 14:44:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=net-c.es; s=mailo;
+        t=1634409760; bh=uuIT5sIGiM41ZxesdxWnWDZbyFiOv+uiIKfgEAa+79g=;
+        h=X-EA-Auth:From:To:Cc:Subject:Date:Message-Id:X-Mailer:In-Reply-To:
+         References:MIME-Version:Content-Transfer-Encoding;
+        b=IPIoKFx0JxVdsmzJPgBTvp6QG6KTtYTPJ7FOH9QHT8JCko3JXW8wBt0Y9GQMPgmT/
+         FJiNf3KB1I56GHgZcgPxghVdtS98Hxxq0mv4+WyBq+oh3pabDHL5Vy8dxix4dtYa90
+         vsoFDglbVlDzDBoSw/bmcFcZ1L61FCkvKuHaXHd8=
+Received: by b-1.in.mailobj.net [192.168.90.11] with ESMTP
+        via ip-206.mailobj.net [213.182.55.206]
+        Sat, 16 Oct 2021 20:42:40 +0200 (CEST)
+X-EA-Auth: XgZ+C9JXLspqcHF7gvV4o69gypOR8PoGzuWho0tgdXFOzw77zQtKGq6mnlQ6WYFfnvD7kDmgRao0vHJ/+OHWE4uibMILq82P
+From:   Claudio Suarez <cssk@net-c.es>
+To:     dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+        linux-tegra@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        Pan Xinhui <Xinhui.Pan@amd.com>, Emma Anholt <emma@anholt.net>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+        Chen-Yu Tsai <wens@csie.org>, Sandy Huang <hjc@rock-chips.com>,
+        heiko@sntech.de, Neil Armstrong <narmstrong@baylibre.com>,
+        Robert Foss <robert.foss@linaro.org>,
+        Ben Skeggs <bskeggs@redhat.com>, nouveau@lists.freedesktop.org,
+        ville.syrjala@linux.intel.com
+Cc:     Claudio Suarez <cssk@net-c.es>
+Subject: [PATCH v2 01/13] gpu/drm: make drm_add_edid_modes() consistent when updating connector->display_info
+Date:   Sat, 16 Oct 2021 20:42:14 +0200
+Message-Id: <20211016184226.3862-2-cssk@net-c.es>
+X-Mailer: git-send-email 2.33.0
+In-Reply-To: <20211016184226.3862-1-cssk@net-c.es>
+References: <20211016184226.3862-1-cssk@net-c.es>
 MIME-Version: 1.0
-In-Reply-To: <CAPDyKFobSsFOnmFc4BG353uYgECGD1U1U020oQwB7pX0mfCfvw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-01.10.2021 16:27, Ulf Hansson пишет:
-> On Mon, 27 Sept 2021 at 00:42, Dmitry Osipenko <digetx@gmail.com> wrote:
->>
->> Add OPP and SoC core voltage scaling support to the display controller
->> driver. This is required for enabling system-wide DVFS on pre-Tegra186
->> SoCs.
->>
->> Tested-by: Peter Geis <pgwipeout@gmail.com> # Ouya T30
->> Tested-by: Paul Fertser <fercerpav@gmail.com> # PAZ00 T20
->> Tested-by: Nicolas Chauvet <kwizart@gmail.com> # PAZ00 T20 and TK1 T124
->> Tested-by: Matt Merhar <mattmerhar@protonmail.com> # Ouya T30
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> ---
->>  drivers/gpu/drm/tegra/dc.c | 74 ++++++++++++++++++++++++++++++++++++++
->>  drivers/gpu/drm/tegra/dc.h |  2 ++
->>  2 files changed, 76 insertions(+)
->>
->> diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
->> index a29d64f87563..d4047a14e2b6 100644
->> --- a/drivers/gpu/drm/tegra/dc.c
->> +++ b/drivers/gpu/drm/tegra/dc.c
->> @@ -11,9 +11,12 @@
->>  #include <linux/interconnect.h>
->>  #include <linux/module.h>
->>  #include <linux/of_device.h>
->> +#include <linux/pm_domain.h>
->> +#include <linux/pm_opp.h>
->>  #include <linux/pm_runtime.h>
->>  #include <linux/reset.h>
->>
->> +#include <soc/tegra/common.h>
->>  #include <soc/tegra/pmc.h>
->>
->>  #include <drm/drm_atomic.h>
->> @@ -1762,6 +1765,47 @@ int tegra_dc_state_setup_clock(struct tegra_dc *dc,
->>         return 0;
->>  }
->>
->> +static void tegra_dc_update_voltage_state(struct tegra_dc *dc,
->> +                                         struct tegra_dc_state *state)
->> +{
->> +       unsigned long rate, pstate;
->> +       struct dev_pm_opp *opp;
->> +       int err;
->> +
->> +       if (!dc->has_opp_table)
->> +               return;
->> +
->> +       /* calculate actual pixel clock rate which depends on internal divider */
->> +       rate = DIV_ROUND_UP(clk_get_rate(dc->clk) * 2, state->div + 2);
->> +
->> +       /* find suitable OPP for the rate */
->> +       opp = dev_pm_opp_find_freq_ceil(dc->dev, &rate);
->> +
->> +       if (opp == ERR_PTR(-ERANGE))
->> +               opp = dev_pm_opp_find_freq_floor(dc->dev, &rate);
->> +
->> +       if (IS_ERR(opp)) {
->> +               dev_err(dc->dev, "failed to find OPP for %luHz: %pe\n",
->> +                       rate, opp);
->> +               return;
->> +       }
->> +
->> +       pstate = dev_pm_opp_get_required_pstate(opp, 0);
->> +       dev_pm_opp_put(opp);
->> +
->> +       /*
->> +        * The minimum core voltage depends on the pixel clock rate (which
->> +        * depends on internal clock divider of the CRTC) and not on the
->> +        * rate of the display controller clock. This is why we're not using
->> +        * dev_pm_opp_set_rate() API and instead controlling the power domain
->> +        * directly.
->> +        */
->> +       err = dev_pm_genpd_set_performance_state(dc->dev, pstate);
->> +       if (err)
->> +               dev_err(dc->dev, "failed to set power domain state to %lu: %d\n",
->> +                       pstate, err);
-> 
-> Yeah, the above code looks very similar to the code I pointed to in
-> patch6. Perhaps we need to discuss with Viresh, whether it makes sense
-> to fold in a patch adding an opp helper function after all, to avoid
-> the open coding.
-> 
-> Viresh?
+According to the documentation, drm_add_edid_modes
+"... Also fills out the &drm_display_info structure and ELD in @connector
+with any information which can be derived from the edid."
 
-I'll keep it open-coded for now. This code is specific to Tegra because
-normally ceil error shouldn't fall back to the floor, but for Tegra it's
-expected to happen and it's a normal condition.
+drm_add_edid_modes accepts a struct edid *edid parameter which may have a
+value or may be null. When it is not null, connector->display_info and
+connector->eld are updated according to the edid. When edid=NULL, only
+connector->eld is reset. Reset connector->display_info to be consistent
+and accurate.
+
+Signed-off-by: Claudio Suarez <cssk@net-c.es>
+---
+ drivers/gpu/drm/drm_edid.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/gpu/drm/drm_edid.c b/drivers/gpu/drm/drm_edid.c
+index 6325877c5fd6..c643db17782c 100644
+--- a/drivers/gpu/drm/drm_edid.c
++++ b/drivers/gpu/drm/drm_edid.c
+@@ -5356,14 +5356,13 @@ int drm_add_edid_modes(struct drm_connector *connector, struct edid *edid)
+ 	int num_modes = 0;
+ 	u32 quirks;
+ 
+-	if (edid == NULL) {
+-		clear_eld(connector);
+-		return 0;
+-	}
+ 	if (!drm_edid_is_valid(edid)) {
++		/* edid == NULL or invalid here */
+ 		clear_eld(connector);
+-		drm_warn(connector->dev, "%s: EDID invalid.\n",
+-			 connector->name);
++		drm_reset_display_info(connector);
++		if (edid)
++			drm_warn(connector->dev, "%s: EDID invalid.\n",
++				 connector->name);
+ 		return 0;
+ 	}
+ 
+-- 
+2.33.0
+
+
+
