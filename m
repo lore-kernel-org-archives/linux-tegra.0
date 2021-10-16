@@ -2,29 +2,29 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28158C433EF
-	for <linux-tegra@archiver.kernel.org>; Sat, 16 Oct 2021 19:17:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8F5CC433EF
+	for <linux-tegra@archiver.kernel.org>; Sat, 16 Oct 2021 19:17:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0CF9260F56
-	for <linux-tegra@archiver.kernel.org>; Sat, 16 Oct 2021 19:17:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D06DC61040
+	for <linux-tegra@archiver.kernel.org>; Sat, 16 Oct 2021 19:17:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234609AbhJPTTg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 16 Oct 2021 15:19:36 -0400
-Received: from msg-2.mailo.com ([213.182.54.12]:51892 "EHLO msg-2.mailo.com"
+        id S240676AbhJPTTy (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 16 Oct 2021 15:19:54 -0400
+Received: from msg-1.mailo.com ([213.182.54.11]:53638 "EHLO msg-1.mailo.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232336AbhJPTTg (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Sat, 16 Oct 2021 15:19:36 -0400
+        id S232336AbhJPTTy (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Sat, 16 Oct 2021 15:19:54 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=net-c.es; s=mailo;
-        t=1634409786; bh=6xsMxrnlNAEGEZg8rndfdmRmdX7OzFdxIK93N1Vj41A=;
+        t=1634409871; bh=N1FC6bbFpWwj5uck3C6Zh9AXCf70UfpiuPwfacUawG4=;
         h=X-EA-Auth:From:To:Cc:Subject:Date:Message-Id:X-Mailer:In-Reply-To:
          References:MIME-Version:Content-Transfer-Encoding;
-        b=PC2arG0iCmgN9npSiZyfe1uXZp3wuUf7cXpxdOml6WnORNv9CU98c7+me5rp2BPB5
-         qPSbk04EHsbYLMo9aM8PaHZ0q6XdZ2GUH85nQUQdFIna0N3VovbJ/7auPhuwReg1DT
-         remxd9D7jwfIcXwupesqoA5854muAhoQy4CCVKm8=
+        b=FLOaxtDKxrOCwaN2JUieLWpNeRShro/11cgee3OVr3lIP5s4CTt9MXuXvaYj36UA5
+         0/snJ6pYPwHtaIjUJxCOJuz26rFBNFNrGOBnOdHR0Um1T1AxOWFJaDGavf3Rx2BWIZ
+         h5DYJy1YTumxpWNOlRIaRqlUzRA6RKfyZ482Ph9w=
 Received: by b-2.in.mailobj.net [192.168.90.12] with ESMTP
         via ip-206.mailobj.net [213.182.55.206]
-        Sat, 16 Oct 2021 20:43:06 +0200 (CEST)
-X-EA-Auth: zdke9kpqLbMJIvo6khoMzB9zFloV/UNCB4tBlpT2RLT4oBLt+Cye6DSWBrqSv1I5fHSGkM4ym6zzQ6PnR7B/mDnuah9YPqjU
+        Sat, 16 Oct 2021 20:43:41 +0200 (CEST)
+X-EA-Auth: 1mwmR8XS1gsbmKJszXM4LJ28aURnXGIiZWNfGxwQ0dQwNiPmg9b5MpRHrpcm8447xbI+VC+IOpuWtCLJ5eqq3Zopng2hk4C8
 From:   Claudio Suarez <cssk@net-c.es>
 To:     dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
         linux-tegra@vger.kernel.org, intel-gfx@lists.freedesktop.org,
@@ -49,9 +49,9 @@ To:     dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
         Ben Skeggs <bskeggs@redhat.com>, nouveau@lists.freedesktop.org,
         ville.syrjala@linux.intel.com
 Cc:     Claudio Suarez <cssk@net-c.es>
-Subject: [PATCH v2 04/13] drm/tegra: replace drm_detect_hdmi_monitor() with drm_display_info.is_hdmi
-Date:   Sat, 16 Oct 2021 20:42:17 +0200
-Message-Id: <20211016184226.3862-5-cssk@net-c.es>
+Subject: [PATCH v2 11/13] drm/bridge: replace drm_detect_hdmi_monitor() with drm_display_info.is_hdmi
+Date:   Sat, 16 Oct 2021 20:42:24 +0200
+Message-Id: <20211016184226.3862-12-cssk@net-c.es>
 X-Mailer: git-send-email 2.33.0
 In-Reply-To: <20211016184226.3862-1-cssk@net-c.es>
 References: <20211016184226.3862-1-cssk@net-c.es>
@@ -64,35 +64,55 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 Once EDID is parsed, the monitor HDMI support information is available
 through drm_display_info.is_hdmi. Retriving the same information with
 drm_detect_hdmi_monitor() is less efficient. Change to
-drm_display_info.is_hdmi
+drm_display_info.is_hdmi where possible
 
 Signed-off-by: Claudio Suarez <cssk@net-c.es>
 ---
- drivers/gpu/drm/tegra/hdmi.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+ drivers/gpu/drm/bridge/adv7511/adv7511_drv.c | 2 +-
+ drivers/gpu/drm/bridge/sii902x.c             | 2 +-
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi.c    | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/tegra/hdmi.c b/drivers/gpu/drm/tegra/hdmi.c
-index e5d2a4026028..21571221b49b 100644
---- a/drivers/gpu/drm/tegra/hdmi.c
-+++ b/drivers/gpu/drm/tegra/hdmi.c
-@@ -831,14 +831,10 @@ static void tegra_hdmi_setup_tmds(struct tegra_hdmi *hdmi,
+diff --git a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c b/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
+index 76555ae64e9c..f6891280a58d 100644
+--- a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
++++ b/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
+@@ -617,7 +617,7 @@ static struct edid *adv7511_get_edid(struct adv7511 *adv7511,
+ 		__adv7511_power_off(adv7511);
  
- static bool tegra_output_is_hdmi(struct tegra_output *output)
- {
--	struct edid *edid;
--
- 	if (!output->connector.edid_blob_ptr)
- 		return false;
+ 	adv7511_set_config_csc(adv7511, connector, adv7511->rgb,
+-			       drm_detect_hdmi_monitor(edid));
++			       connector->display_info.is_hdmi);
  
--	edid = (struct edid *)output->connector.edid_blob_ptr->data;
--
--	return drm_detect_hdmi_monitor(edid);
-+	return output->connector.display_info.is_hdmi;
- }
+ 	cec_s_phys_addr_from_edid(adv7511->cec_adap, edid);
  
- static enum drm_connector_status
+diff --git a/drivers/gpu/drm/bridge/sii902x.c b/drivers/gpu/drm/bridge/sii902x.c
+index 89558e581530..5719be0a03c7 100644
+--- a/drivers/gpu/drm/bridge/sii902x.c
++++ b/drivers/gpu/drm/bridge/sii902x.c
+@@ -283,7 +283,7 @@ static int sii902x_get_modes(struct drm_connector *connector)
+ 	edid = drm_get_edid(connector, sii902x->i2cmux->adapter[0]);
+ 	drm_connector_update_edid_property(connector, edid);
+ 	if (edid) {
+-		if (drm_detect_hdmi_monitor(edid))
++		if (connector->display_info.is_hdmi)
+ 			output_mode = SII902X_SYS_CTRL_OUTPUT_HDMI;
+ 
+ 		num = drm_add_edid_modes(connector, edid);
+diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+index f08d0fded61f..33f0afb6b646 100644
+--- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
++++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+@@ -2359,7 +2359,7 @@ static struct edid *dw_hdmi_get_edid(struct dw_hdmi *hdmi,
+ 	dev_dbg(hdmi->dev, "got edid: width[%d] x height[%d]\n",
+ 		edid->width_cm, edid->height_cm);
+ 
+-	hdmi->sink_is_hdmi = drm_detect_hdmi_monitor(edid);
++	hdmi->sink_is_hdmi = connector->display_info.is_hdmi;
+ 	hdmi->sink_has_audio = drm_detect_monitor_audio(edid);
+ 
+ 	return edid;
 -- 
 2.33.0
-
 
 
