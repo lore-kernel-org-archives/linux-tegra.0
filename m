@@ -2,116 +2,109 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FA61C433EF
-	for <linux-tegra@archiver.kernel.org>; Mon, 18 Oct 2021 14:17:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FE10C433EF
+	for <linux-tegra@archiver.kernel.org>; Mon, 18 Oct 2021 14:28:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1305A60ED5
-	for <linux-tegra@archiver.kernel.org>; Mon, 18 Oct 2021 14:17:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7BF3E60FC3
+	for <linux-tegra@archiver.kernel.org>; Mon, 18 Oct 2021 14:28:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231982AbhJROT3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 18 Oct 2021 10:19:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44236 "EHLO
+        id S231899AbhJROa1 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 18 Oct 2021 10:30:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48118 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232046AbhJROTY (ORCPT
+        with ESMTP id S231874AbhJROa1 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 18 Oct 2021 10:19:24 -0400
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22A38C061771;
-        Mon, 18 Oct 2021 07:06:26 -0700 (PDT)
-Received: by mail-wr1-x436.google.com with SMTP id y3so41804973wrl.1;
-        Mon, 18 Oct 2021 07:06:26 -0700 (PDT)
+        Mon, 18 Oct 2021 10:30:27 -0400
+Received: from mail-oi1-x236.google.com (mail-oi1-x236.google.com [IPv6:2607:f8b0:4864:20::236])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63E5FC061745;
+        Mon, 18 Oct 2021 07:28:16 -0700 (PDT)
+Received: by mail-oi1-x236.google.com with SMTP id o83so66072oif.4;
+        Mon, 18 Oct 2021 07:28:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ctO4zq8IpgYTVh72xzk49ULxst8DyrJanX/KNIyApso=;
-        b=hX1AyJeT1N3FIefr7T2nh7wiUp3BCiHO8A6cawxFS17fnt6IUGFNq5vSsV+gghucwl
-         +5pUm+9r32DOcvm25mTN61/3PSdADo2QPkuqdfwdYNqJlk12J6EyJD/6UIGBHmPnYNSH
-         VFU1pmVV7uyGgKfMjElIMGknUqWkJdCE5BrKjE4u+Sn73nFYHV6eKo4njYrdRGeVT7CU
-         KqBaS4RYlp1UvEtdmjCoeNI7zqeNAJNf79vuhL96T4gPZ4U148CZqnFxKfzlSUzfxpmC
-         kViwnwvvKu3AS4tCR6pPROzzaK9RZrznyOe6Z+n+PYnES9aZTgT8pR+KUpoPThVNMptw
-         WmBw==
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=ZGg9iP3770g2EGM+xsq5tq0SBh55t8OHrqyNWoeF1KQ=;
+        b=DDc/pT68TnGI66oQeUqELRZOvhwwhtzr1x2skL2VX4yOtc4uzTosySLReAhhEnEJ1q
+         xxgxdXyK2MSg/KiiLNe9Ey5H0YIB9oE7rGTAKDbTx8XJqlFIx9z9N8uKXBaRKaNylD6F
+         YTsqqCyVXSq74xJgOgTG0etfSZ/AbG0MJ5Iz3h3/oMjJ9vEFaxlY2q8Vp8eDdeBM5LSR
+         2Q6JmXQMFuT7FWY1birPg3HyzNguXYPn+ImMq0flOwj2Zzkwsq4VFaLQS5TJiXtyEhXY
+         qlYFCvfEsGMIuZV4jJJGhU6RrJGmtiR6jkl991ZWhry4fT5SL26+eFpbSqVvHtbGKTVC
+         vdWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ctO4zq8IpgYTVh72xzk49ULxst8DyrJanX/KNIyApso=;
-        b=sT/NXDaaTcL2wdqxzRza6ivpaSAdMXcUwxF1XAsL9hr1I7n0n9coXcULNhmC+dA1ki
-         T1X5HmFW+vhcSSBtioHJvg/qVNqa2KhLogoPDUBkvT+eHUXOlFt2x6c3VUAgQ/t9A65G
-         net4S45zGtuHvWv6IlEQPIkesUPvbI7DHvNtwOyNvtKntvo+tbfdUwxyH4FxV4mc9tzz
-         Id9V7vYADuhlU6UECUAz25xZhXofDZNcrx87dZJHeGAyvBRaP1jIsCgo/XTp6wXxCn7K
-         1L84l18zUkXBy/pJjGXRCkT+Nm1hBhN34HsrfnmvSlKo3bLNC/nlQs+IOdUbtgJGVnPp
-         Hpvw==
-X-Gm-Message-State: AOAM531wH1r0GL7koUqhfk3B7PL2NPqnLjmTD9Gu3+K1jOzutHhpVsyK
-        kK6hb3GQd7Pzflz/1ATAQDk=
-X-Google-Smtp-Source: ABdhPJzzpP9Fn0rtRda1JhGlAPlfwa2XUJKIzjIzxbcMGSV2EZC5m0LzPqXgNPD466hRMQxe6d/I7w==
-X-Received: by 2002:adf:ba87:: with SMTP id p7mr9642381wrg.282.1634565984751;
-        Mon, 18 Oct 2021 07:06:24 -0700 (PDT)
-Received: from localhost ([217.111.27.204])
-        by smtp.gmail.com with ESMTPSA id r128sm12122508wma.44.2021.10.18.07.06.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Oct 2021 07:06:24 -0700 (PDT)
-Date:   Mon, 18 Oct 2021 16:06:23 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     cgel.zte@gmail.com
-Cc:     jonathanh@nvidia.com, arnd@arndb.de, lv.ruyi@zte.com.cn,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Zeal Robot <zealci@zte.com.cn>
-Subject: Re: [PATCH V1] firmware: tegra: fix error application of sizeof to
- pointer
-Message-ID: <YW1/X73f99H6g5sY@orome.fritz.box>
-References: <20211009085900.509697-1-lv.ruyi@zte.com.cn>
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ZGg9iP3770g2EGM+xsq5tq0SBh55t8OHrqyNWoeF1KQ=;
+        b=P31AwcFoQW/4XYy1JLMky4kRtkEl+jBXhz0/mBwUp7vxjK+bbRsgDZsDJJcF5ml2/9
+         4XYSEmvdu9hE7CENyt0x18iSbK+aPGf+wpvqKbg1NUas7nq8iO3cUA7H0Ss2NI9kB1hn
+         hxWivSH/sZwtC8yLn0mm3DCaA3FFVEn10+M5IgmJogI5e52Kipg45nqHsrYWnit6J2Bk
+         /vWNDJF1LfSX0nBvmanHVxFk57369Ck8maGryoYzgQWSqyDF6R3GYZ8j/6uSuKSNywGJ
+         iT9Qt2JDcoOsuMoCjusPLW0zvL++Nr4ANZRE7eJHTdkrRWVKpQ8MNS4xxVJuYlTIJ0CM
+         /oXg==
+X-Gm-Message-State: AOAM533G+uDuYxPZ0NUtiYSFw81GLa5y6y1Mqr5L9/oOYT/ki683KBu2
+        kFNBTGqjRN2Pbni1rs4BPB4VwJN8YpY=
+X-Google-Smtp-Source: ABdhPJy6QZ2bMZfw8u+3hxNFxr+P3pasdzH+Flb/Ln2wIhbN5Ax9kr1tYOufKGG6BhyqWoHkNc7bhw==
+X-Received: by 2002:aca:6142:: with SMTP id v63mr19374oib.58.1634567295508;
+        Mon, 18 Oct 2021 07:28:15 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id f8sm3004112otp.63.2021.10.18.07.28.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 18 Oct 2021 07:28:15 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Subject: Re: [PATCH] spi: tegra20: fix build with CONFIG_PM_SLEEP=n
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Arnd Bergmann <arnd@kernel.org>
+Cc:     Laxman Dewangan <ldewangan@nvidia.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Zhang Qilong <zhangqilong3@huawei.com>,
+        Yang Yingliang <yangyingliang@huawei.com>,
+        linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20211013144538.2346533-1-arnd@kernel.org>
+ <YW19Z4gF7UCECF1H@orome.fritz.box>
+From:   Guenter Roeck <linux@roeck-us.net>
+Message-ID: <65625987-9b8b-d0bc-5413-b8cd1f8ed14f@roeck-us.net>
+Date:   Mon, 18 Oct 2021 07:28:12 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="9EZvROls9+qhIkmG"
-Content-Disposition: inline
-In-Reply-To: <20211009085900.509697-1-lv.ruyi@zte.com.cn>
-User-Agent: Mutt/2.1.3 (987dde4c) (2021-09-10)
+In-Reply-To: <YW19Z4gF7UCECF1H@orome.fritz.box>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On 10/18/21 6:57 AM, Thierry Reding wrote:
+> On Wed, Oct 13, 2021 at 04:45:23PM +0200, Arnd Bergmann wrote:
+>> From: Arnd Bergmann <arnd@arndb.de>
+>>
+>> There is another one of these warnings:
+>>
+>> drivers/spi/spi-tegra20-slink.c:1197:12: error: 'tegra_slink_runtime_resume' defined but not used [-Werror=unused-function]
+>>   1197 | static int tegra_slink_runtime_resume(struct device *dev)
+>>        |            ^~~~~~~~~~~~~~~~~~~~~~~~~~
+>>
+>> Give it the same treatment as the other functions in this file.
+>>
+>> Fixes: efafec27c565 ("spi: Fix tegra20 build with CONFIG_PM=n")
+>> Fixes: 2bab94090b01 ("spi: tegra20-slink: Declare runtime suspend and resume functions conditionally")
+>> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+>> ---
+>>   drivers/spi/spi-tegra20-slink.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> Acked-by: Thierry Reding <treding@nvidia.com>
+> 
 
---9EZvROls9+qhIkmG
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The problem has now been (re-)introduced into the mainline kernel
+and causes various test build failures there.
 
-On Sat, Oct 09, 2021 at 08:59:00AM +0000, cgel.zte@gmail.com wrote:
-> From: Lv Ruyi <lv.ruyi@zte.com.cn>
->=20
-> Application of sizeof to pointer yields the number of bytes of the pointe=
-r,
-> but it should use the length of buffer in the code.
->=20
-> Reported-by: Zeal Robot <zealci@zte.com.cn>
-> Signed-off-by: Lv Ruyi <lv.ruyi@zte.com.cn>
-> ---
->  drivers/firmware/tegra/bpmp-debugfs.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-
-Applied, thanks.
-
-Thierry
-
---9EZvROls9+qhIkmG
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmFtf14ACgkQ3SOs138+
-s6H5ug/9FLj5zhORL6+b+QtAk9HD10Jn8WWme8mWgqSWf+IsMVDVY1+LAN2cmQIh
-/Es1ztKAMAFwhhAG2+CO1YETaXsNQ5HkNLdQ7B5qOQ9a9NqxVmqpGCmPp4roPuR7
-4kjaIFA/2RwaOoFpZB3+kq6mQ24UYVpfTy4OnBo1K2z/nZFBCevvUOHjnffwUnPn
-efNauvv9zwdVZdMfOn4wdNl5tBQMR6Wqe8BJkIdbTBJ0425h9aursjBY/Fmufxjt
-FrLNpumxOpZwxa3xqwEWyR3uGQa+NTORASSOKCwSUDw1SL3CE/2yEYL3XljYGC5A
-TbjvqAMTIVxlfJPq+iVcj+AItzmLrzJ+5BuOnDHj6cyZ3QMe5mTkLgGFgDb/hlMA
-pkDn39nXUPm9BXtC8Sqc/XQMskYp1K9jsl07XE0clefRIBEPHeefiuPCGUlkn3e3
-kMcEZ4bk9FSrsHD2Wia9J0K7mbmRAfFx5+crxhm4SYUnd+w3cYhIkC2PYCU0DqOf
-QR4e9HHOh4Ywo9+BpEmywlm1MNr7ww60rwXE6n70oBiRBlHujmtl9ahMc3akbe9D
-s3/ppPm0enKBhc3JBPA43XryURSmArJ/Qx/XXoa5usANKD++bilbKBwShsxa1ADk
-7hERG1AFrjvAUjTbfz6/pReU05axtEMLKuiWV9xo8sikzKedDFI=
-=xxjN
------END PGP SIGNATURE-----
-
---9EZvROls9+qhIkmG--
+Guenter
