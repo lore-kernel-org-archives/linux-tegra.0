@@ -2,123 +2,128 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F43BC43219
-	for <linux-tegra@archiver.kernel.org>; Mon, 18 Oct 2021 14:15:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D3D7C43217
+	for <linux-tegra@archiver.kernel.org>; Mon, 18 Oct 2021 14:15:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 882AE6103D
-	for <linux-tegra@archiver.kernel.org>; Mon, 18 Oct 2021 14:15:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5BF8E60FC2
+	for <linux-tegra@archiver.kernel.org>; Mon, 18 Oct 2021 14:15:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232764AbhJRORd (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 18 Oct 2021 10:17:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44280 "EHLO
+        id S232410AbhJRORu (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 18 Oct 2021 10:17:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44384 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232417AbhJROR3 (ORCPT
+        with ESMTP id S232376AbhJRORc (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 18 Oct 2021 10:17:29 -0400
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D0BFC03545A;
-        Mon, 18 Oct 2021 06:56:43 -0700 (PDT)
-Received: by mail-wr1-x42f.google.com with SMTP id r18so41585784wrg.6;
-        Mon, 18 Oct 2021 06:56:43 -0700 (PDT)
+        Mon, 18 Oct 2021 10:17:32 -0400
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 560FDC033E82;
+        Mon, 18 Oct 2021 06:58:02 -0700 (PDT)
+Received: by mail-wm1-x334.google.com with SMTP id s198-20020a1ca9cf000000b0030d6986ea9fso59125wme.1;
+        Mon, 18 Oct 2021 06:58:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=ooh8xy1o0eZVm8LodhjQadtOCGvJsUvk+tIL6iaJCMA=;
-        b=WX2YlDanFpIyfDOAFuLOlEXPyJ2WruxRZCsiJ1nZj5KKKf8dhrWYG3EM3lpbjQHg7J
-         Wnz0pA5IJU32V0S8hipRY9Zow56ZkdfYALwT6MtdZ1R+4YKrdFkLZ1L4KqeqiJJJWdPa
-         8atnOMS3pgEs2d/bfg5TujZB/mr8wipLcFIfhzlNDQx7ND1NsBWcriwuoe5KKtjcu+/x
-         OAPHo6S0cueNtQs5/EeoXokooXD7H19j4hAEXR+7L7oYum+d2YtTcW7U7hht32YF980o
-         4e82FbRpEr0WjTTL2IH/bNGAeuqcuG3W/ja7nJ5JRGLKtDyJWOpCDuj6doVFMU4x2xBY
-         cEDg==
+        bh=gmfdgk1KBwEw+jip0D/cZORe1mhCVma1JLoP3pnRO1E=;
+        b=airSlPzPEhy8OjDPISz+E8PFQaxTRHnofa0yBIyJKrXJTTMeblKrGnqBxcoVxZaRyv
+         mya7il1HuLsAZcQoAepY9P6Qb9JXtcmOnchEuxnHNVaGEJuV+zji4kOeWWdBjm4DL7Od
+         QEgBcyfFDktTU7fHy5R+sW2IeXYkTFr0T+SX5Vt2fz6C57ZYXmi80R/DjQy6jVQv5Xin
+         T0UJe8rva3lI9J8de1QgZTwu3WCHThgMdc48V6Kxu7kTJnbXbEgFSvm22iDxpOVvmtjI
+         /m0TdI2svD2C531IZQ9ixsxf7G67zcz9MZn0+O3VJoPmg50i8rClbFLfn7uQdUDsCRWw
+         nAAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ooh8xy1o0eZVm8LodhjQadtOCGvJsUvk+tIL6iaJCMA=;
-        b=v/tka9b5HxxvakfQ8tYo/TgZT7sWAZhsOTVp2YQ2xwBv8QPP/+NWX+7srZNMWzm1gs
-         oVNX/fEJohMWtRVT8RMem6KThdW4yD1guwObe3yCXTfJoGn0CTwHCugh96Rgpd7SAo/x
-         ZoJAMLNYPqtlAChATojMdm4Aba5AW5u8qDXKiGvZmdbN1RpQuT1hZx+AEgRFfFlzzEns
-         RY3Erpe7chClGc8t2ROTcuC2/CRv+KuqYPzHtY3jjU9KrQQhMw4MCjpwQNNZ/n8Lg+2V
-         DOo2RSu+wN70lL+tdb6gvZhf1DNDlNCUzxtuWdIi3AgjoHvGuhwVm3lBlWugNRzjYwE7
-         Jm2Q==
-X-Gm-Message-State: AOAM533G6flM3u1XhSBJlxIlQoZpzJhq6dbOKusKMrgFcC6/K7YA4uTQ
-        JB3PKO35O3z5/9uDGQ3Hh0s=
-X-Google-Smtp-Source: ABdhPJzOa0iEN935FLwUlLzFLgjTTp636rZR321KHGh8ALm9P+znqwL1m5XfaswuUMqAtFGzd4LncQ==
-X-Received: by 2002:a5d:6410:: with SMTP id z16mr11753421wru.354.1634565401896;
-        Mon, 18 Oct 2021 06:56:41 -0700 (PDT)
+        bh=gmfdgk1KBwEw+jip0D/cZORe1mhCVma1JLoP3pnRO1E=;
+        b=ul87atj5DI+BmvEkucpCWgq0o+7UZEw+/oXBZje7HikkAhr+BGFOxwG6/Y6po3hdG3
+         RTqJr++VeKwKLb/5tefwV+LyzgayJ/WbHwcPK+chWPGED7Z2cxL9lSTLAZpSzis/pah6
+         aX4tGVFgpznXWEs5HsziI4MoG115jLCk7druwZuU6CM2wZovEdNAq9FhrLdyBF2n2fxZ
+         rm6vFOLu4c+37vxTn6fQY5bb0/+5DMSOgzlRLxYrVOpXHjkNq7bqxJs5AGl5FSqetM4v
+         B4OJpKdcer4VuTXC8/3lLWhCDCey8bYSPbcUmk8qPxkLWm5hjF9hmiMIviKBPLK524lM
+         AJag==
+X-Gm-Message-State: AOAM530KSDboV1VkIUChHhJ7XWtj7OaOPVksV1UmA/cOcqK+IQ45saco
+        YZxGAiLd9yvgdi8NmWuJKk4=
+X-Google-Smtp-Source: ABdhPJyVJQZPgb+/HJBe4TVTCkre6KUXxLoXSLUBGWUKI25QBzF6BdI0n7exDTua0kn5VdPhiUQZpQ==
+X-Received: by 2002:a1c:808e:: with SMTP id b136mr43991536wmd.178.1634565480911;
+        Mon, 18 Oct 2021 06:58:00 -0700 (PDT)
 Received: from localhost ([217.111.27.204])
-        by smtp.gmail.com with ESMTPSA id j206sm15639001wmj.23.2021.10.18.06.56.40
+        by smtp.gmail.com with ESMTPSA id e9sm12409688wme.37.2021.10.18.06.57.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Oct 2021 06:56:41 -0700 (PDT)
-Date:   Mon, 18 Oct 2021 15:56:40 +0200
+        Mon, 18 Oct 2021 06:58:00 -0700 (PDT)
+Date:   Mon, 18 Oct 2021 15:57:59 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Arnd Bergmann <arnd@kernel.org>
-Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+Cc:     Laxman Dewangan <ldewangan@nvidia.com>,
+        Mark Brown <broonie@kernel.org>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Arnd Bergmann <arnd@arndb.de>, dri-devel@lists.freedesktop.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/tegra: mark nvdec PM functions as __maybe_unused
-Message-ID: <YW19GAWY5ERnSZ7Q@orome.fritz.box>
-References: <20211013144148.2208472-1-arnd@kernel.org>
+        Arnd Bergmann <arnd@arndb.de>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Zhang Qilong <zhangqilong3@huawei.com>,
+        Yang Yingliang <yangyingliang@huawei.com>,
+        linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] spi: tegra20: fix build with CONFIG_PM_SLEEP=n
+Message-ID: <YW19Z4gF7UCECF1H@orome.fritz.box>
+References: <20211013144538.2346533-1-arnd@kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="SIz/mzrlb6EwMjfb"
+        protocol="application/pgp-signature"; boundary="CsoytHH9WhaclONB"
 Content-Disposition: inline
-In-Reply-To: <20211013144148.2208472-1-arnd@kernel.org>
+In-Reply-To: <20211013144538.2346533-1-arnd@kernel.org>
 User-Agent: Mutt/2.1.3 (987dde4c) (2021-09-10)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---SIz/mzrlb6EwMjfb
+--CsoytHH9WhaclONB
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 13, 2021 at 04:41:36PM +0200, Arnd Bergmann wrote:
+On Wed, Oct 13, 2021 at 04:45:23PM +0200, Arnd Bergmann wrote:
 > From: Arnd Bergmann <arnd@arndb.de>
 >=20
-> The resume helper is called conditionally and causes a harmless
-> warning when stubbed out:
+> There is another one of these warnings:
 >=20
-> drivers/gpu/drm/tegra/nvdec.c:240:12: error: 'nvdec_runtime_resume' defin=
-ed but not used [-Werror=3Dunused-function]
->   240 | static int nvdec_runtime_resume(struct device *dev)
+> drivers/spi/spi-tegra20-slink.c:1197:12: error: 'tegra_slink_runtime_resu=
+me' defined but not used [-Werror=3Dunused-function]
+>  1197 | static int tegra_slink_runtime_resume(struct device *dev)
+>       |            ^~~~~~~~~~~~~~~~~~~~~~~~~~
 >=20
-> Mark both suspend and resume as __maybe_unused for consistency
-> to avoid this warning.
+> Give it the same treatment as the other functions in this file.
 >=20
-> Fixes: e76599df354d ("drm/tegra: Add NVDEC driver")
+> Fixes: efafec27c565 ("spi: Fix tegra20 build with CONFIG_PM=3Dn")
+> Fixes: 2bab94090b01 ("spi: tegra20-slink: Declare runtime suspend and res=
+ume functions conditionally")
 > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 > ---
->  drivers/gpu/drm/tegra/nvdec.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  drivers/spi/spi-tegra20-slink.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied, thanks.
+Acked-by: Thierry Reding <treding@nvidia.com>
 
-Thierry
-
---SIz/mzrlb6EwMjfb
+--CsoytHH9WhaclONB
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmFtfRgACgkQ3SOs138+
-s6F41hAAnsX3GlRbrAKlFAvpLqbBgE62IAisdMeL1RKwu0HpkBBhKqdo5dqjui+r
-P1B9e+DP2HxvICgbje3wAWU11Xh2HG8YefdA9QBZpwGH5SVRQRsteKVom39vdB2f
-YjZusbsMD0cucypBW3EOdw7UXsy64v0Vg5dvv3TfXR4WYkQCOacCzQrxLMp81tPw
-0Zb1xjkPLMpkevZwTuV7cBJB7lVQS+JuvyXxKiRgbHjqm5YnErlA5KFFXRp+jxAC
-c1qHKx5UG9a3Lmp8Rt4BIQCEX7nFDUxQYBRb212Mx2EvFzEvM5uQO1u6SkMK9Iw5
-ZRaFD3TmcAVOTQ9vrfQ8HWq5n5jCGHx2FynjqJeQC+qxRtx2iXjO/MPWxyLKbMbs
-6KamG04yYmdICx3VCLEijSBMwkpjGju1xPCyd83GGVawRm7pzqLqlw4rVoyz3RE4
-i6W0N4spcamHgK+3sOR6wz2I8cp9jYKFqijecenS/RBc85kbcH4BhnCyxL1fXDbS
-nJRIDfSJj/K8WkTxnYQ6nWMFMwwXsyEllR4X4JGugxwGRfWJNfNmgJxpOyHGxQc+
-o72AtLYyUJaJWE9Jf0OGIoI7EoZ/OIsxcHUQt+WiIpswl6u0qVxEclfsr34jpyaJ
-MTDtJ7zFO7ML5Vb/6smNbkpWkTh6uzlHAsId9eU1Uk5311F3VQA=
-=NRLn
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmFtfWcACgkQ3SOs138+
+s6H54w/+KFibTIp68qtY887YsBRoL+r4ojZYMgigAPsUx+1Zr+VODGSFVIBTCMjJ
+hw5Li/0uOf/mgKEP64f6Q84RqbjKvgJqKXsnNoTU+b3XsZC94TyjUFoO0cGVLSp2
+QHXx90aUYQAuGVIapEVGJc3qZJX5JOQ8P5+UJSifM8SjCJm2/IGlZhguetI9MQf1
+VZywdlCpDf8yINSw1zEIytmGE9x4BwqqGrRSt/EBA2VfkReL0o7O+lYo+Dn29xbZ
+T+pVqP3hKvLzDexGLM6Xe1Z3wFWln27SW6RFNFK8+SMMyJ4Ff4YU6pILxQR3GEtO
+5Ynoz/Osj4BZ0qe8JOe2ujeC6ajjQ/mMBOTeEehr2yLeEurR0DB1+DZHNRsQ4kJW
+Plx9+XcK7OP/GIb7pSYvS7DRzLjG+AaMpipwcCevIT0UfXQfRL1TQZyyNJ8y2feh
+0rZ38CNd2lZWrI+bhhMJYNSyFaJJZjhECA1pXLXAVVz7JvThkjuFTNN8FEJiwWSo
+5cbwwk4mxBwTCJxAqGzrlk0WgC7MJJDW6WuH+tmKCz5hYv8ulTEZ1HHlE7ZZAkhx
+9IgbBErOhDspomCJYDFpJuUEPz3XUod/xzZQwaWgrtyCN0+7MNk/gfsrIeTBHo0b
+qUBVSAfQSksWa4GjN8L389EoY7+r5DtDxDFCyP48y65vqp3ruIA=
+=kVAR
 -----END PGP SIGNATURE-----
 
---SIz/mzrlb6EwMjfb--
+--CsoytHH9WhaclONB--
