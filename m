@@ -2,30 +2,30 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 739ECC433F5
-	for <linux-tegra@archiver.kernel.org>; Tue, 19 Oct 2021 22:43:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 482DFC433FE
+	for <linux-tegra@archiver.kernel.org>; Tue, 19 Oct 2021 22:50:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 57549610E6
-	for <linux-tegra@archiver.kernel.org>; Tue, 19 Oct 2021 22:43:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2AC60610A1
+	for <linux-tegra@archiver.kernel.org>; Tue, 19 Oct 2021 22:50:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229888AbhJSWqI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 19 Oct 2021 18:46:08 -0400
-Received: from msg-2.mailo.com ([213.182.54.12]:43540 "EHLO msg-2.mailo.com"
+        id S229784AbhJSWwV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 19 Oct 2021 18:52:21 -0400
+Received: from msg-1.mailo.com ([213.182.54.11]:34928 "EHLO msg-1.mailo.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229803AbhJSWqH (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 19 Oct 2021 18:46:07 -0400
+        id S229683AbhJSWwV (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 19 Oct 2021 18:52:21 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=net-c.es; s=mailo;
-        t=1634683253; bh=wO90rGU6MhdAHFHZM4DSTSVrgFBdt+grYWoEJdFQb5o=;
+        t=1634683799; bh=B8LQmlRdF9ncKQSpnP77MkDRJmIEn4moaxcLLUFH4W4=;
         h=X-EA-Auth:Date:From:To:Cc:Subject:Message-ID:References:
-         MIME-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To;
-        b=LcyS7cA+lr21Qf2IXkL+iVBukZ+htLmi/0EnuDi8za6fmtPBBmhu3358Sy9SxuDtl
-         pxOT3e4q8mYLTcaeJAg7BIpaj4RLxnUbjtBlvw4e1kkdpV2gezQoOlUAd9Ro6nqpER
-         iYuXXnjek58793jA/WM/LFYxFkKwsB6nfpNunp+o=
-Received: by b-2.in.mailobj.net [192.168.90.12] with ESMTP
+         MIME-Version:Content-Type:In-Reply-To;
+        b=DIcymrRArUVV4ghrssaHMWO42DOrRosYIfwShkRGMlKMDWJLH9UZLyMuEHqVEZ1EV
+         MxixJFR/yHiAPxUVvES8T9bUUTUXy803y91aDHGu6LfG0qZ5xYPzeI2gFv5dTKg332
+         jaYQZ/jrf3YtyBurz/eP7u36f1eUEnHm1vd9WHYo=
+Received: by b-3.in.mailobj.net [192.168.90.13] with ESMTP
         via ip-206.mailobj.net [213.182.55.206]
-        Wed, 20 Oct 2021 00:40:23 +0200 (CEST)
-X-EA-Auth: rjXwpQ396seHTSefM986rJ+z/3H3+BzurlzyNXwUfcqw/AEL5XVBNOJkTIPVCCi7ulQ2bi9qCPxsXZRs0J5aCF77eKqTbF9k
-Date:   Wed, 20 Oct 2021 00:40:20 +0200
+        Wed, 20 Oct 2021 00:49:59 +0200 (CEST)
+X-EA-Auth: Gqmelh1z59r5Y/teXUuGjwLkTdFO4P1lStrknWdQCUl83L+iKO5FB4qUvKx2giDZRV6Y3kTGKgikHtys/cxDXS+S/2OAaVRI
+Date:   Wed, 20 Oct 2021 00:49:56 +0200
 From:   Claudio Suarez <cssk@net-c.es>
 To:     Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
 Cc:     dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
@@ -49,82 +49,66 @@ Cc:     dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
         heiko@sntech.de, Neil Armstrong <narmstrong@baylibre.com>,
         Robert Foss <robert.foss@linaro.org>,
         Ben Skeggs <bskeggs@redhat.com>, nouveau@lists.freedesktop.org
-Subject: Re: [PATCH v2 01/13] gpu/drm: make drm_add_edid_modes() consistent
+Subject: Re: [PATCH v3 01/13] gpu/drm: make drm_add_edid_modes() consistent
  when updating connector->display_info
-Message-ID: <YW9JVOUrG0Ubnvtf@gineta.localdomain>
+Message-ID: <YW9LlBHoOaSOeVjk@gineta.localdomain>
 References: <20211016184226.3862-1-cssk@net-c.es>
  <20211016184226.3862-2-cssk@net-c.es>
  <YW8P3GPGezUhoBcW@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
 In-Reply-To: <YW8P3GPGezUhoBcW@intel.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Oct 19, 2021 at 09:35:08PM +0300, Ville Syrjälä wrote:
-> On Sat, Oct 16, 2021 at 08:42:14PM +0200, Claudio Suarez wrote:
-> > According to the documentation, drm_add_edid_modes
-> > "... Also fills out the &drm_display_info structure and ELD in @connector
-> > with any information which can be derived from the edid."
-> > 
-> > drm_add_edid_modes accepts a struct edid *edid parameter which may have a
-> > value or may be null. When it is not null, connector->display_info and
-> > connector->eld are updated according to the edid. When edid=NULL, only
-> > connector->eld is reset. Reset connector->display_info to be consistent
-> > and accurate.
-> > 
-> > Signed-off-by: Claudio Suarez <cssk@net-c.es>
-> > ---
-> >  drivers/gpu/drm/drm_edid.c | 11 +++++------
-> >  1 file changed, 5 insertions(+), 6 deletions(-)
-> > 
-> > diff --git a/drivers/gpu/drm/drm_edid.c b/drivers/gpu/drm/drm_edid.c
-> > index 6325877c5fd6..c643db17782c 100644
-> > --- a/drivers/gpu/drm/drm_edid.c
-> > +++ b/drivers/gpu/drm/drm_edid.c
-> > @@ -5356,14 +5356,13 @@ int drm_add_edid_modes(struct drm_connector *connector, struct edid *edid)
-> >  	int num_modes = 0;
-> >  	u32 quirks;
-> >  
-> > -	if (edid == NULL) {
-> > -		clear_eld(connector);
-> > -		return 0;
-> > -	}
-> >  	if (!drm_edid_is_valid(edid)) {
-> 
-> OK, so drm_edid_is_valid() will happily accept NULL and considers
-> it invalid. You may want to mention that explicitly in the commit
-> message.
 
-Thank you for your comments, I appreciate :)
-I'm sending new mails with the new commit messages.
+According to the documentation, drm_add_edid_modes
+"... Also fills out the &drm_display_info structure and ELD in @connector
+with any information which can be derived from the edid."
 
-> > +		/* edid == NULL or invalid here */
-> >  		clear_eld(connector);
-> > -		drm_warn(connector->dev, "%s: EDID invalid.\n",
-> > -			 connector->name);
-> > +		drm_reset_display_info(connector);
-> > +		if (edid)
-> > +			drm_warn(connector->dev, "%s: EDID invalid.\n",
-> > +				 connector->name);
-> 
-> Could you respin this to use the standard [CONNECTOR:%d:%s] form
-> while at it? Or I guess a patch to mass convert the whole drm_edid.c
-> might be another option.
+drm_add_edid_modes accepts a struct edid *edid parameter which may have a
+value or may be null. When it is not null, connector->display_info and
+connector->eld are updated according to the edid. When edid=NULL, only
+connector->eld is reset. Reset connector->display_info to be consistent
+and accurate.
 
-Good point.
-I like the idea of a new patch. I'll start working on it. I can change
-this drm_warn here to avoid merge conflicts.
+Since drm_edid_is_valid() considers NULL as an invalid EDID, simplify the
+code to avoid duplicating code in the case of NULL/error.
 
-> Patch looks good.
-> Reviewed-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
+Signed-off-by: Claudio Suarez <cssk@net-c.es>
+---
+ drivers/gpu/drm/drm_edid.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-Thanks!
+diff --git a/drivers/gpu/drm/drm_edid.c b/drivers/gpu/drm/drm_edid.c
+index 6325877c5fd6..a019a26ede7a 100644
+--- a/drivers/gpu/drm/drm_edid.c
++++ b/drivers/gpu/drm/drm_edid.c
+@@ -5356,14 +5356,14 @@ int drm_add_edid_modes(struct drm_connector *connector, struct edid *edid)
+ 	int num_modes = 0;
+ 	u32 quirks;
+ 
+-	if (edid == NULL) {
+-		clear_eld(connector);
+-		return 0;
+-	}
+ 	if (!drm_edid_is_valid(edid)) {
++		/* edid == NULL or invalid here */
+ 		clear_eld(connector);
+-		drm_warn(connector->dev, "%s: EDID invalid.\n",
+-			 connector->name);
++		drm_reset_display_info(connector);
++		if (edid)
++			drm_warn(connector->dev,
++				 "[CONNECTOR:%d:%s] EDID invalid.\n",
++				 connector->base.id, connector->name);
+ 		return 0;
+ 	}
+ 
+-- 
+2.33.0
 
-BR
-Claudio Suarez.
 
 
