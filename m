@@ -2,64 +2,65 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40876C433EF
-	for <linux-tegra@archiver.kernel.org>; Tue, 19 Oct 2021 23:16:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6414C433EF
+	for <linux-tegra@archiver.kernel.org>; Tue, 19 Oct 2021 23:29:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1B65D60C4B
-	for <linux-tegra@archiver.kernel.org>; Tue, 19 Oct 2021 23:16:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 89C096115B
+	for <linux-tegra@archiver.kernel.org>; Tue, 19 Oct 2021 23:29:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229554AbhJSXSn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 19 Oct 2021 19:18:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44042 "EHLO
+        id S229707AbhJSXcC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 19 Oct 2021 19:32:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47132 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229498AbhJSXSn (ORCPT
+        with ESMTP id S229554AbhJSXbx (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 19 Oct 2021 19:18:43 -0400
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D10E0C06161C;
-        Tue, 19 Oct 2021 16:16:29 -0700 (PDT)
-Received: by mail-wm1-x32e.google.com with SMTP id o24so7564186wms.0;
-        Tue, 19 Oct 2021 16:16:29 -0700 (PDT)
+        Tue, 19 Oct 2021 19:31:53 -0400
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 839DCC06161C;
+        Tue, 19 Oct 2021 16:29:39 -0700 (PDT)
+Received: by mail-wm1-x330.google.com with SMTP id b189-20020a1c1bc6000000b0030da052dd4fso6187525wmb.3;
+        Tue, 19 Oct 2021 16:29:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=irTv5TiOSZ/Hvhv+R6lTxY2eZG4GvO0YoQObjdDBNH8=;
-        b=SWV35HIxDuZ77zB4+OKvo5EvdfdLIgkJs9B1ZQUSqNfEibPA5L+Ez/c2gX71zoPZpF
-         rjP2IY0h+svVBllnXi67c7xhg2BEg9CVbFZ6nEBvH9O26mAsMw87ZcVkZTjjqaPuZV8d
-         e2dEW009zaA9Ramzat6Qco3ePTKLBAxGTb/W2uSIE5f1kDZ4EuWACJydj6wwNJ5uQ+Fv
-         t9Vr8mKAUfliYcC883YTiKhd8HOG7yG7HpAe3eyHf+3X5dfOOv8idkEDj9xJTUmViWPI
-         C8aAj93nW1LiDeNgG5qv99qoS40V7d8qczFuaREWP3rVqtElQT7nPB9jpCjrcgHfUVix
-         B1nw==
+        bh=vBSiNPduoSl/3dS/PeDAYLiDuGpiUawD5d8DGFmi4A4=;
+        b=ofCgOOKjfcK0SwKfzc2jleNX62a8I7prLfQu89LB4zQXuKe3eKGwEbIkKO4OTmFPpa
+         JCpMSxvIFq/owtQHQ5pnbneV4+k2S3ckjWWhysfcu2gMO+YXPnnOqmpjgTEo1gRvzDcR
+         /E6cXjrvjad7eCvx98SEKaRPa0rIJuMp4WqJl64zLRuJCg2BIxKk3owEv6HdxDWCikBE
+         nXnIcgSH+lHYCuknL51qBwf5ADiwpHu3DvylJ00q2VorAiWh+l1l/dj3SjBC0PTDK6g/
+         9GnxvqNxRXuyOsj9Jyb1KqCjl6wUYvo7QHmozcHTqJW4Qv/337Xa1nmNcORVipKS+uuc
+         QE/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=irTv5TiOSZ/Hvhv+R6lTxY2eZG4GvO0YoQObjdDBNH8=;
-        b=SBPBGsUQ1GxHIpC4ouBBKooBwUSHy7CQrR0K8tRW+sJnBJ/Azd226gt1nAxMMHCHY3
-         Hn2ESWCICz5k2ZTiheAEf8DPN7h7LLfT8nypNfoUtszG0GknUOEWXAnuTu6ive3pQnTU
-         IWKc9qfK4j5J+Ci+xSh4mbUoF/55Dl/6t9qFZsZofOJjeZIP5jrE0Ed5KVu3xDVTWPGa
-         xu6Dp2QR5043OsEKHNUDLtjnuV+rnAqXjjeTNAQI2FXTYF/8XZ5R7h9vErV2k5H/X3HI
-         l5tJ5O0wGVSE1dQB21xE2/1EeyNUamdrcgi3R5RBmJ3i0Zje6ansKQB9NM0F/nwxNip1
-         LwPg==
-X-Gm-Message-State: AOAM530PE7VpxOTgiAn6g9IMlfdbaL/5Wd2AlCayXuRSgOFMac3Oh0HG
-        qGOp5jgaS77pzwKVZTOji5c=
-X-Google-Smtp-Source: ABdhPJxu/lK53sY6QzpBywQ95fKffShUdHHjqWiBa7SLhjPtJOFlCOBvvzCVo+L0kJbVNM2AsrXE8Q==
-X-Received: by 2002:adf:a1d7:: with SMTP id v23mr47123821wrv.171.1634685388431;
-        Tue, 19 Oct 2021 16:16:28 -0700 (PDT)
+        bh=vBSiNPduoSl/3dS/PeDAYLiDuGpiUawD5d8DGFmi4A4=;
+        b=mnZMV40Xj8Mu2rN7oTVm5V3vgsc8dYmIUlwICctDMypEzCcBvDneGcTzSJSUblWDDv
+         NV74P+GWrdtW+/MmW+SkNiTDc7qwpPDAc6cDr5QfITv6x3CUWGvUGlNxNls32H9ZMRMO
+         ESbFTHYCtPjnQuwgJuB6vXO0qOUucO8DyHfEjkD0lMTvSDdwV0SjKoH7KbTNT+GaqVLd
+         FhGpNmGHou++PjZHshqVxfuVLLddokyQ40Vuu+exNScLHz6ndSZBCQeFEHF5tXu7baEn
+         Q5WYPmmfNuY7ZA4C3xKvQsk3NLGAVC67RVZkDTdEKlVfPANcqkwxsauAjrIkRMEc9nxU
+         I6Lw==
+X-Gm-Message-State: AOAM531z1IT5xPtdHXFLznrmvG2I20Q9Hx4iwtJy6Vxw5faf6KW3g1ui
+        zUxvb8LqI+D/3W4q60yBqvx+r1T6ThY=
+X-Google-Smtp-Source: ABdhPJwR9WqvRq7opWdel7UQ+UDnmPhEWhsJjDJT9iEURmi8tHAcu789lxv2IguriPSCljfVUdBXEw==
+X-Received: by 2002:a05:6000:1565:: with SMTP id 5mr47441418wrz.305.1634686177714;
+        Tue, 19 Oct 2021 16:29:37 -0700 (PDT)
 Received: from localhost.localdomain (94-29-39-10.dynamic.spd-mgts.ru. [94.29.39.10])
-        by smtp.gmail.com with ESMTPSA id r205sm426497wma.3.2021.10.19.16.16.27
+        by smtp.gmail.com with ESMTPSA id r3sm324799wrw.55.2021.10.19.16.29.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Oct 2021 16:16:28 -0700 (PDT)
+        Tue, 19 Oct 2021 16:29:37 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Nicolas Chauvet <kwizart@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: [PATCH v1] memory: tegra20-emc: Add runtime dependency on devfreq governor module
-Date:   Wed, 20 Oct 2021 02:15:24 +0300
-Message-Id: <20211019231524.888-1-digetx@gmail.com>
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Wolfram Sang <wsa@the-dreams.de>
+Cc:     linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v1] i2c: tegra: Ensure that device is suspended before driver is removed
+Date:   Wed, 20 Oct 2021 02:29:19 +0300
+Message-Id: <20211019232919.21916-1-digetx@gmail.com>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -67,28 +68,43 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Tegra20 EMC driver uses simple devfreq governor. Add simple devfreq
-governor to the list of the Tegra20 EMC driver module softdeps to allow
-userspace initramfs tools like dracut to automatically pull the devfreq
-module into ramfs image together with the EMC module.
+Tegra I2C device isn't guaranteed to be suspended after removal of
+the driver since driver uses pm_runtime_put() that is asynchronous and
+pm_runtime_disable() cancels pending power-change requests. This means
+that potentially refcount of the clocks may become unbalanced after
+removal of the driver. This a very minor problem which unlikely to
+happen in practice and won't cause any visible problems, nevertheless
+let's replace pm_runtime_disable() with pm_runtime_force_suspend() and
+use pm_runtime_put_sync() which disables RPM of the device and puts it
+into suspend before driver is removed.
 
-Reported-by: Nicolas Chauvet <kwizart@gmail.com>
-Suggested-by: Nicolas Chauvet <kwizart@gmail.com>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/memory/tegra/tegra20-emc.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/i2c/busses/i2c-tegra.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/memory/tegra/tegra20-emc.c b/drivers/memory/tegra/tegra20-emc.c
-index 77c5cd52d1a2..497b6edbf3ca 100644
---- a/drivers/memory/tegra/tegra20-emc.c
-+++ b/drivers/memory/tegra/tegra20-emc.c
-@@ -1288,4 +1288,5 @@ module_platform_driver(tegra_emc_driver);
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index c883044715f3..b3184c422826 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -1700,7 +1700,7 @@ static int tegra_i2c_init_hardware(struct tegra_i2c_dev *i2c_dev)
+ 	else
+ 		ret = tegra_i2c_init(i2c_dev);
  
- MODULE_AUTHOR("Dmitry Osipenko <digetx@gmail.com>");
- MODULE_DESCRIPTION("NVIDIA Tegra20 EMC driver");
-+MODULE_SOFTDEP("pre: governor_simpleondemand");
- MODULE_LICENSE("GPL v2");
+-	pm_runtime_put(i2c_dev->dev);
++	pm_runtime_put_sync(i2c_dev->dev);
+ 
+ 	return ret;
+ }
+@@ -1819,7 +1819,7 @@ static int tegra_i2c_remove(struct platform_device *pdev)
+ 	struct tegra_i2c_dev *i2c_dev = platform_get_drvdata(pdev);
+ 
+ 	i2c_del_adapter(&i2c_dev->adapter);
+-	pm_runtime_disable(i2c_dev->dev);
++	pm_runtime_force_suspend(i2c_dev->dev);
+ 
+ 	tegra_i2c_release_dma(i2c_dev);
+ 	tegra_i2c_release_clocks(i2c_dev);
 -- 
 2.32.0
 
