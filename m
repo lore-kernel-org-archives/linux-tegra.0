@@ -2,98 +2,223 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D118BC433EF
-	for <linux-tegra@archiver.kernel.org>; Tue, 19 Oct 2021 09:47:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D56B9C433FE
+	for <linux-tegra@archiver.kernel.org>; Tue, 19 Oct 2021 11:40:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BC3A860F93
-	for <linux-tegra@archiver.kernel.org>; Tue, 19 Oct 2021 09:47:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB2796137C
+	for <linux-tegra@archiver.kernel.org>; Tue, 19 Oct 2021 11:40:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235107AbhJSJtn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 19 Oct 2021 05:49:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56146 "EHLO
+        id S235449AbhJSLnJ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 19 Oct 2021 07:43:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53990 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235098AbhJSJtm (ORCPT
+        with ESMTP id S235356AbhJSLnI (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 19 Oct 2021 05:49:42 -0400
-Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CE22C061745
-        for <linux-tegra@vger.kernel.org>; Tue, 19 Oct 2021 02:47:29 -0700 (PDT)
-Received: by mail-pj1-x102e.google.com with SMTP id oa12-20020a17090b1bcc00b0019f715462a8so2198122pjb.3
-        for <linux-tegra@vger.kernel.org>; Tue, 19 Oct 2021 02:47:29 -0700 (PDT)
+        Tue, 19 Oct 2021 07:43:08 -0400
+Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03733C061769
+        for <linux-tegra@vger.kernel.org>; Tue, 19 Oct 2021 04:40:55 -0700 (PDT)
+Received: by mail-lf1-x129.google.com with SMTP id n8so6779744lfk.6
+        for <linux-tegra@vger.kernel.org>; Tue, 19 Oct 2021 04:40:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=AW90+0ECu0jFh8CdzlWHccywuwAGlUm3CUlVVFXdqic=;
-        b=fyP+7f/LVSu4Rs1PK5OiJMYlJXG9EEqWapYe/TDCTrJuP9To2ZJGCDg53mMkw/gxmM
-         Fs9rJ1aGjQOmebk7RZuHNnhP6ABDlUjI7cyHSPd5SnRleJCceeF45ffEdhrIT2rs0nx7
-         qMGITGCV00y6jzAQ/zaXQDqp+hoC3wGQEu4NVXEBOQHzSErshgK8R4q+RqvuFEeMcj44
-         mt89gEcQ+XCXuCpsmT+9MNLSQnKxciyM6wyrtkE3XokIvdFofa4RxI47sJH5ToFPrXJF
-         xLrPO0Ajp2XmD/ZAqDlfWvhDAPYEXLghaAGoVidVf0R0UIa2RKvk/noKjZx1hJ+E6QDz
-         A7rw==
+         :cc:content-transfer-encoding;
+        bh=p/y6DgAZycykowwrleZpy70Yak++qIhNqJ9ImugcYMs=;
+        b=gbZb/rIEkq16uEpMdDfbn531uPXxDE2vXRTZ1At7zc8FyijjHf+TaWP9WSCNsx9CRl
+         Ax+uAwkmd3zCdbRdDaM3dpQ6QH2wtz6LdoMLA6+gjkzDI8FsGa3Gg4WLu7V9K5SrUrby
+         y6A+UktAxyprVLbdSpurxxaZ8mnWtv03QgVC25vrqwdz6F5CjpkyH0G67ZL5o2xSalbx
+         z2YLwvEkGXJDZVRENSUyiANgZXnd7Hl65An187cV1TSi/tcYxCoWRVEqIP0BwzqCyQr0
+         hoZBxk1g0lrSFu4sw+cYxe+pvM8G9j1I2iiX+c9B9ryltLhmQtiX2zDR77yR1QolGdKK
+         MOng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=AW90+0ECu0jFh8CdzlWHccywuwAGlUm3CUlVVFXdqic=;
-        b=U0/JGC6nNmNLChoZVY7oiYWRo8x3pUNx2efXK9asbfN71P4fbuN0uv/826iUu1X7Dw
-         0WfhdX8VqvDWzMGarfdBTArg1dkErogc0bg2hpn4dtBso7a/ZNv2+mqwj3j78DuTKlM4
-         0R4LEj5/xOXtpuDkfixqusfa6mNm/KRTQW0Uw1rQKZk/8ZBSPXjdSS3OcJF+XXQMDRCw
-         DwnYmFUDb+Re331xFT4jWSG0oLSSndvATnJ+PC4Hn/WfTEWF+zKm4mrOb82GKXxiyaVk
-         WxhOl5WhQUPeqwX+2j1BCyPggpVMYa6xBQiVLiAsQykRh/vP9NTGitLL0CA8ulFAYEZ+
-         a21w==
-X-Gm-Message-State: AOAM530cqiVR3u7YRbjt1CFx9+VNpbkZXekn2B8TnPCvKeLlGZeRYjU1
-        a3EDOL0+wTMWjK+us8aRmc8RsFYBU3npIFexpsUCuA==
-X-Google-Smtp-Source: ABdhPJwP1HHCKcZxy6X+e0Bms/h1VpcsmX+KoWgwv5qu2dKntHFdMmYf/e2mEICECkUkU1kdjL37Qs8iz/0it4SvqNQ=
-X-Received: by 2002:a17:902:c94e:b0:13f:1b02:e539 with SMTP id
- i14-20020a170902c94e00b0013f1b02e539mr32133251pla.72.1634636848802; Tue, 19
- Oct 2021 02:47:28 -0700 (PDT)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=p/y6DgAZycykowwrleZpy70Yak++qIhNqJ9ImugcYMs=;
+        b=v2niaogkxiGxSKjf/XPeE32Uji76VA1VyQIcq0E2Bfhm6gsGJ3GsMZ2dzOp+hTDt6r
+         GRHDcaI9r0Jd1Pfz/ZHL5c/dyYbR5mghl3RhedDOj8RbO9KWOlKXlLZ3s3xcXV2Fktd1
+         FK9GAmuUoEkHw3k+PoKGMQEtUDKFd4lg8pS/sm+YCMRY4gvs+aRm5/UufLA4rw6UxxyN
+         E0xMTk4ocooEh3Hya75iQDB0P8P9priQJjZo2BeiegRIMXBhYN/BIvwmHy30PKZEmHTo
+         IuZoHTzL9JC4sxmYhhQWPVi+iue+XAmRGYQBNWjf6z9LbhlWGKB9I6mBh5B4k9unemup
+         KHKQ==
+X-Gm-Message-State: AOAM5311X5PLOMOTZCP17VcaM7jLTYZcDf+xNr6Frz1fbpZDzQaCbR8L
+        JYu+SScYEnuOt6JVV6hiK1Iob7+qx3JhROdxUI67rw==
+X-Google-Smtp-Source: ABdhPJyiZ8hxPaWs5ZGwktR/58DXEHsnrg2iCZG7+dtLEFQZezq+DvEjCTIwbhL0fm341kLJAfk/05h60QX3kuXQ9G4=
+X-Received: by 2002:a05:6512:3084:: with SMTP id z4mr5314051lfd.167.1634643653278;
+ Tue, 19 Oct 2021 04:40:53 -0700 (PDT)
 MIME-Version: 1.0
-References: <20211002233447.1105-1-digetx@gmail.com>
-In-Reply-To: <20211002233447.1105-1-digetx@gmail.com>
-From:   Robert Foss <robert.foss@linaro.org>
-Date:   Tue, 19 Oct 2021 11:47:17 +0200
-Message-ID: <CAG3jFysa8G_fuGDfSLze-ovft3=gc5PXLaPtwTkC2_e0itQYNw@mail.gmail.com>
-Subject: Re: [PATCH v1 0/5] Improvements for TC358768 DSI bridge driver
+References: <20210926224058.1252-1-digetx@gmail.com> <20210926224058.1252-21-digetx@gmail.com>
+ <CAPDyKFoF2QxZss_h9B1NFqOqgeF=TQ6LajCedGiJ9_P8X5M0NA@mail.gmail.com>
+ <0bcbcd3d-2154-03d2-f572-dc9032125c26@gmail.com> <CAPDyKFohA9iu2UQfwoc0pCrCGupdwnUTWjKOtP09_C2KaFSo8w@mail.gmail.com>
+ <073114ea-490b-89a9-e82d-852b34cb11df@gmail.com>
+In-Reply-To: <073114ea-490b-89a9-e82d-852b34cb11df@gmail.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Tue, 19 Oct 2021 13:40:16 +0200
+Message-ID: <CAPDyKFoOMvEW0o6=-_bYKhwUcbfeTD4qu-K2tfkdXiR0bErHsw@mail.gmail.com>
+Subject: Re: [PATCH v13 20/35] mtd: rawnand: tegra: Add runtime PM and OPP support
 To:     Dmitry Osipenko <digetx@gmail.com>
 Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Maxim Schwalm <maxim.schwalm@gmail.com>,
-        Andreas Westman Dorcsak <hedmoo@yahoo.com>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Peter Chen <peter.chen@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>, Nishanth Menon <nm@ti.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux USB List <linux-usb@vger.kernel.org>,
+        linux-staging@lists.linux.dev, linux-pwm@vger.kernel.org,
+        linux-mmc <linux-mmc@vger.kernel.org>,
         dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-tegra@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
+        DTML <devicetree@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Richard Weinberger <richard@nod.at>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Lucas Stach <dev@lynxeye.de>, Stefan Agner <stefan@agner.ch>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        David Heidelberg <david@ixit.cz>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Applied to drm-misc-next
+On Sun, 17 Oct 2021 at 10:38, Dmitry Osipenko <digetx@gmail.com> wrote:
+>
+> 01.10.2021 18:01, Ulf Hansson =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > On Fri, 1 Oct 2021 at 16:35, Dmitry Osipenko <digetx@gmail.com> wrote:
+> >>
+> >> 01.10.2021 17:24, Ulf Hansson =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> >>> On Mon, 27 Sept 2021 at 00:42, Dmitry Osipenko <digetx@gmail.com> wro=
+te:
+> >>>>
+> >>>> The NAND on Tegra belongs to the core power domain and we're going t=
+o
+> >>>> enable GENPD support for the core domain. Now NAND must be resumed u=
+sing
+> >>>> runtime PM API in order to initialize the NAND power state. Add runt=
+ime PM
+> >>>> and OPP support to the NAND driver.
+> >>>>
+> >>>> Acked-by: Miquel Raynal <miquel.raynal@bootlin.com>
+> >>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> >>>> ---
+> >>>>  drivers/mtd/nand/raw/tegra_nand.c | 55 ++++++++++++++++++++++++++--=
+---
+> >>>>  1 file changed, 47 insertions(+), 8 deletions(-)
+> >>>>
+> >>>> diff --git a/drivers/mtd/nand/raw/tegra_nand.c b/drivers/mtd/nand/ra=
+w/tegra_nand.c
+> >>>> index 32431bbe69b8..098fcc9cb9df 100644
+> >>>> --- a/drivers/mtd/nand/raw/tegra_nand.c
+> >>>> +++ b/drivers/mtd/nand/raw/tegra_nand.c
+> >>>> @@ -17,8 +17,11 @@
+> >>>>  #include <linux/mtd/rawnand.h>
+> >>>>  #include <linux/of.h>
+> >>>>  #include <linux/platform_device.h>
+> >>>> +#include <linux/pm_runtime.h>
+> >>>>  #include <linux/reset.h>
+> >>>>
+> >>>> +#include <soc/tegra/common.h>
+> >>>> +
+> >>>>  #define COMMAND                                        0x00
+> >>>>  #define   COMMAND_GO                           BIT(31)
+> >>>>  #define   COMMAND_CLE                          BIT(30)
+> >>>> @@ -1151,6 +1154,7 @@ static int tegra_nand_probe(struct platform_de=
+vice *pdev)
+> >>>>                 return -ENOMEM;
+> >>>>
+> >>>>         ctrl->dev =3D &pdev->dev;
+> >>>> +       platform_set_drvdata(pdev, ctrl);
+> >>>>         nand_controller_init(&ctrl->controller);
+> >>>>         ctrl->controller.ops =3D &tegra_nand_controller_ops;
+> >>>>
+> >>>> @@ -1166,14 +1170,22 @@ static int tegra_nand_probe(struct platform_=
+device *pdev)
+> >>>>         if (IS_ERR(ctrl->clk))
+> >>>>                 return PTR_ERR(ctrl->clk);
+> >>>>
+> >>>> -       err =3D clk_prepare_enable(ctrl->clk);
+> >>>> +       err =3D devm_pm_runtime_enable(&pdev->dev);
+> >>>> +       if (err)
+> >>>> +               return err;
+> >>>> +
+> >>>> +       err =3D devm_tegra_core_dev_init_opp_table_common(&pdev->dev=
+);
+> >>>> +       if (err)
+> >>>> +               return err;
+> >>>> +
+> >>>> +       err =3D pm_runtime_resume_and_get(&pdev->dev);
+> >>>>         if (err)
+> >>>>                 return err;
+> >>>>
+> >>>>         err =3D reset_control_reset(rst);
+> >>>>         if (err) {
+> >>>>                 dev_err(ctrl->dev, "Failed to reset HW: %d\n", err);
+> >>>> -               goto err_disable_clk;
+> >>>> +               goto err_put_pm;
+> >>>>         }
+> >>>>
+> >>>>         writel_relaxed(HWSTATUS_CMD_DEFAULT, ctrl->regs + HWSTATUS_C=
+MD);
+> >>>> @@ -1188,21 +1200,19 @@ static int tegra_nand_probe(struct platform_=
+device *pdev)
+> >>>>                                dev_name(&pdev->dev), ctrl);
+> >>>>         if (err) {
+> >>>>                 dev_err(ctrl->dev, "Failed to get IRQ: %d\n", err);
+> >>>> -               goto err_disable_clk;
+> >>>> +               goto err_put_pm;
+> >>>>         }
+> >>>>
+> >>>>         writel_relaxed(DMA_MST_CTRL_IS_DONE, ctrl->regs + DMA_MST_CT=
+RL);
+> >>>>
+> >>>>         err =3D tegra_nand_chips_init(ctrl->dev, ctrl);
+> >>>>         if (err)
+> >>>> -               goto err_disable_clk;
+> >>>> -
+> >>>> -       platform_set_drvdata(pdev, ctrl);
+> >>>> +               goto err_put_pm;
+> >>>>
+> >>>
+> >>> There is no corresponding call pm_runtime_put() here. Is it
+> >>> intentional to always leave the device runtime resumed after ->probe(=
+)
+> >>> has succeeded?
+> >>>
+> >>> I noticed you included some comments about this for some other
+> >>> drivers, as those needed more tweaks. Is that also the case for this
+> >>> driver?
+> >>
+> >> Could you please clarify? There is pm_runtime_put() in both probe-erro=
+r
+> >> and remove() code paths here.
+> >
+> > I was not considering the error path of ->probe() (or ->remove()), but
+> > was rather thinking about when ->probe() completes successfully. Then
+> > you keep the device runtime resumed, because you have called
+> > pm_runtime_resume_and_get() for it.
+> >
+> > Shouldn't you have a corresponding pm_runtime_put() in ->probe(),
+> > allowing it to be runtime suspended, until the device is really needed
+> > later on. No?
+>
+> This driver doesn't support active power management. I don't have Tegra
+> hardware that uses NAND storage for testing, so it's up to somebody else
+> to implement dynamic power management. NAND doesn't require high
+> voltages, so it's fine to keep the old driver behaviour by keeping
+> hardware resumed since the probe time.
 
-On Sun, 3 Oct 2021 at 01:35, Dmitry Osipenko <digetx@gmail.com> wrote:
->
-> This series adds couple improvements to the TC358768 DSI bridge driver,
-> enabling Panasonic VVX10F004B00 DSI panel support. This panel is used by
-> ASUS Transformer TF700T tablet, which is ready for upstream kernel and
-> display panel support is the biggest missing part.
->
-> Dmitry Osipenko (5):
->   drm/bridge: tc358768: Enable reference clock
->   drm/bridge: tc358768: Support pulse mode
->   drm/bridge: tc358768: Calculate video start delay
->   drm/bridge: tc358768: Disable non-continuous clock mode
->   drm/bridge: tc358768: Correct BTACNTRL1 programming
->
->  drivers/gpu/drm/bridge/tc358768.c | 94 +++++++++++++++++++++++--------
->  1 file changed, 71 insertions(+), 23 deletions(-)
->
-> --
-> 2.32.0
->
+Alright, fair enough and thanks for clarifying!
+
+Kind regards
+Uffe
