@@ -2,71 +2,133 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06715C433EF
-	for <linux-tegra@archiver.kernel.org>; Mon, 18 Oct 2021 18:49:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F6E1C433F5
+	for <linux-tegra@archiver.kernel.org>; Tue, 19 Oct 2021 06:08:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DACA961263
-	for <linux-tegra@archiver.kernel.org>; Mon, 18 Oct 2021 18:49:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F166160F25
+	for <linux-tegra@archiver.kernel.org>; Tue, 19 Oct 2021 06:08:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232813AbhJRSvo (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 18 Oct 2021 14:51:44 -0400
-Received: from mxout03.lancloud.ru ([45.84.86.113]:36442 "EHLO
-        mxout03.lancloud.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231739AbhJRSvn (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 18 Oct 2021 14:51:43 -0400
-X-Greylist: delayed 588 seconds by postgrey-1.27 at vger.kernel.org; Mon, 18 Oct 2021 14:51:43 EDT
-Received: from LanCloud
-DKIM-Filter: OpenDKIM Filter v2.11.0 mxout03.lancloud.ru 66278206F618
-Received: from LanCloud
-Received: from LanCloud
-Received: from LanCloud
-From:   Sergey Shtylyov <s.shtylyov@omp.ru>
-To:     <linux-usb@vger.kernel.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
-CC:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        <linux-tegra@vger.kernel.org>
-Subject: [PATCH 22/22] usb: host: xhci-tegra: deny IRQ0
-Date:   Mon, 18 Oct 2021 21:39:30 +0300
-Message-ID: <20211018183930.8448-23-s.shtylyov@omp.ru>
-X-Mailer: git-send-email 2.26.3
-In-Reply-To: <20211018183930.8448-1-s.shtylyov@omp.ru>
-References: <20211018183930.8448-1-s.shtylyov@omp.ru>
+        id S229755AbhJSGKp (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 19 Oct 2021 02:10:45 -0400
+Received: from mail-dm6nam10on2069.outbound.protection.outlook.com ([40.107.93.69]:39361
+        "EHLO NAM10-DM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S229742AbhJSGKo (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 19 Oct 2021 02:10:44 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=PTbF089UFfjTTIZ12anGfUev2tGox1eQIH5gM+H/5zx7x3Magmd02Sd01ZocJBFh9brajnKle0iSHij6gnOsVK/7g9vsUkeb0L7fqiuUuF/onXTo39EUgW5ry3HDwD617faMx/sRAX0X51mFNFjCVXXmLZO9P4PLyxP1v1zV9QoFyBZoPaRawdmoj+QfXqqYeEFHHw30j8E+/uYzKoFU5aFX8y0MGrI3YLiij2GpzGxPUIkkJg22srPx71aVL300oLu1D6cDk4ZucKvZ87Nl/LfQma+ZoZOcLNc4QyXeGQz5x+7PFkuaQxPo/wFSMVccMViuipw20Artqe3FfGgntQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=8typdrtiMULmw6WTRP42FtPmsHPybPUD74mDPAL2E6w=;
+ b=FpKSbbIlnOQDztTKNFCPXX5Wo8QfBjdRi9Plf/HFzqXZBwWWKHp/TPhj9D+hX2d2A2EQEPMHIR8ZgpTVjoq1wtMHEwGt72LXLyMQw3jr9ET7CV+wuCA/APnllcZwSHL+8fypqI1zBSIfGdTe+zB1D8lbsbsqIXrBcr9FESerylrA1mW/sXQRnEyTDhMym7VvlxuodvUelloB46sIoN/APhddSh2E5JPKT7z2UO4zzAUZi64cxNjQUvQlFGQVQgc0ffCPX0QkWfllPN0nRYpkfz3+OpBMoQjc45NoX0hcm7DxLAoI0ZN1wX1aIKC7yytC9m7jolIheZOUz7nChTZ2sg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.112.34) smtp.rcpttodomain=denx.de smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=8typdrtiMULmw6WTRP42FtPmsHPybPUD74mDPAL2E6w=;
+ b=n9iqmvXbEQ8qHXymY814tx+pVTTc0hmhlP5OgyTR+AoKd/8pokFkT8Qe0jaUi9d+37THeTi1IMRFA4mmlRp2i9Won6D2Mjyn4/lL+qgm8Ubz/CNNdKKIZagD+pr5b8/7e2PfXOwShF9HP4ckXA6k4V2VZPn71HwRm1g8zLdYWsBFPtIfQA4ZfWw2udOYq+/x72RSmiWXE1pNqfrQqBFd/PGfRdOT9q4VzhXSirx0fZ0g0uCEpbIY6s7T+x7P+rhNetJnBXvSppOX/7dENqYdsW92YFzMKdDSGH8EFGPKYnHXWIFdiEbLv9VoownAM1x84G3QnnMmKd8MWD6SKPSi7Q==
+Received: from BN9PR03CA0346.namprd03.prod.outlook.com (2603:10b6:408:f6::21)
+ by DM6PR12MB4636.namprd12.prod.outlook.com (2603:10b6:5:161::32) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4608.18; Tue, 19 Oct
+ 2021 06:08:30 +0000
+Received: from BN8NAM11FT025.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:408:f6:cafe::ed) by BN9PR03CA0346.outlook.office365.com
+ (2603:10b6:408:f6::21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4608.17 via Frontend
+ Transport; Tue, 19 Oct 2021 06:08:30 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.34)
+ smtp.mailfrom=nvidia.com; denx.de; dkim=none (message not signed)
+ header.d=none;denx.de; dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.112.34 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.112.34; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (216.228.112.34) by
+ BN8NAM11FT025.mail.protection.outlook.com (10.13.177.136) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.4608.15 via Frontend Transport; Tue, 19 Oct 2021 06:08:29 +0000
+Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Tue, 19 Oct
+ 2021 06:08:26 +0000
+Received: from jonathanh-vm-01.nvidia.com (172.20.187.5) by mail.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1497.18 via Frontend
+ Transport; Tue, 19 Oct 2021 06:08:26 +0000
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
+        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
+        <stable@vger.kernel.org>, <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 4.14 00/39] 4.14.252-rc1 review
+In-Reply-To: <20211018132325.426739023@linuxfoundation.org>
+References: <20211018132325.426739023@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [192.168.11.198]
-X-ClientProxiedBy: LFEXT01.lancloud.ru (fd00:f066::141) To
- LFEX1907.lancloud.ru (fd00:f066::207)
+Message-ID: <e0755150259d406a8ef8e91754140b17@HQMAIL105.nvidia.com>
+Date:   Tue, 19 Oct 2021 06:08:26 +0000
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 039da1f6-cd34-4ab4-1153-08d992c6df72
+X-MS-TrafficTypeDiagnostic: DM6PR12MB4636:
+X-Microsoft-Antispam-PRVS: <DM6PR12MB4636D909ED0491264E9C4105D9BD9@DM6PR12MB4636.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: XpvfvYo6X6Ld+gk9hDjjp6QQ5gAns8wZ64l6sHP/An+LwvsGAJhBW/yf/BN7zWypucy/8BUnevSSECgg8PXQfpqfYGMlgArNYFGvBXyyNXVkkdyWj2GQq166VFufi83bnjID92QQ9ve+USvCOJ42d+C1L1dNXLMRqHqfvklWvbFPnYUqARX3kENVS5/XzfWPlf4a6/aKjGh7HWM/B4VwdGUZJ34GnmyLpf6zWzuaGEimOsAdD8Z4BrRdWbQrkOx4N/abbYWWGTTn0HwACIok5gc2WKgZwL6R5nqMtwD0MNINhGiDpeok5MBl8sfCWh3y4xfFNHFNkptIHBhUt3WlC2GHlv6f041oonxafbldzaOjjqLsSu6a82LxP5UQALUl7j7DtZXxD4q80xfAN51MH+6dIG5g87fKsU1kZI85n+WzVRlhPuYNTREgLC/inQkOsOCBWyB+dI7P8MDbK+ps8QGcnJr4EIZYgRagYBVov2HtboJtomPjuapCWEjbJXL/roYFsS5X0LbFNZceuUcXvlikD7zjua2SW8O1SR7P1qmpJTksrDW+LzGi2ssNVpncCEBmr1cXwCEBteQsCX94dRWEbWN8rhdM06kQdLl1wgQQPJK3y+glDaU1x6HI7REvWIlxSe0pNVMc4rKGg4agGpl0qYgcxI0Ftps+9N/iAjD3SjPwKjcpMwmEHVFEj15ZvjvE6RyrHDwQcOR8SFbp7RO+B4Ccwpa4uS8CAO1QLz+2droRPquzQa47+XcEc0+9sUQxQjTMnevIEKwZ+WsOejttsBFXCsfQVJACjdT787w=
+X-Forefront-Antispam-Report: CIP:216.228.112.34;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid03.nvidia.com;CAT:NONE;SFS:(4636009)(46966006)(36840700001)(26005)(5660300002)(4326008)(36860700001)(54906003)(316002)(82310400003)(47076005)(108616005)(7636003)(356005)(2906002)(86362001)(426003)(6916009)(336012)(7416002)(8676002)(508600001)(24736004)(8936002)(186003)(966005)(70586007)(70206006);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Oct 2021 06:08:29.4193
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 039da1f6-cd34-4ab4-1153-08d992c6df72
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.34];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT025.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4636
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-If platform_get_irq() returns IRQ0 (considered invalid according to Linus)
-the driver blithely passes it to usb_add_hcd() that treats IRQ0 as no IRQ
-at all. Deny IRQ0 right away, returning -EINVAL from the probe() method...
+On Mon, 18 Oct 2021 15:24:09 +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.14.252 release.
+> There are 39 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Wed, 20 Oct 2021 13:23:15 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.252-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-Fixes: e84fce0f8837 ("usb: xhci: Add NVIDIA Tegra XUSB controller driver")
-Signed-off-by: Sergey Shtylyov <s.shtylyov@omp.ru>
----
- drivers/usb/host/xhci-tegra.c | 2 ++
- 1 file changed, 2 insertions(+)
+All tests passing for Tegra ...
 
-diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
-index 1bf494b649bd..7151b1d4f876 100644
---- a/drivers/usb/host/xhci-tegra.c
-+++ b/drivers/usb/host/xhci-tegra.c
-@@ -1439,6 +1439,8 @@ static int tegra_xusb_probe(struct platform_device *pdev)
- 	tegra->xhci_irq = platform_get_irq(pdev, 0);
- 	if (tegra->xhci_irq < 0)
- 		return tegra->xhci_irq;
-+	if (!tegra->xhci_irq)
-+		return -ENIVAL;
- 
- 	tegra->mbox_irq = platform_get_irq(pdev, 1);
- 	if (tegra->mbox_irq < 0)
--- 
-2.26.3
+Test results for stable-v4.14:
+    8 builds:	8 pass, 0 fail
+    16 boots:	16 pass, 0 fail
+    32 tests:	32 pass, 0 fail
 
+Linux version:	4.14.252-rc1-gf772f5cdea86
+Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+                tegra210-p2371-2180, tegra30-cardhu-a04
+
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+
+Jon
