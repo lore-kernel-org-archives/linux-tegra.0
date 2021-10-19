@@ -2,178 +2,127 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B49FC433EF
-	for <linux-tegra@archiver.kernel.org>; Tue, 19 Oct 2021 15:31:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5592DC433F5
+	for <linux-tegra@archiver.kernel.org>; Tue, 19 Oct 2021 18:35:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1AC2061154
-	for <linux-tegra@archiver.kernel.org>; Tue, 19 Oct 2021 15:31:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 254EE61038
+	for <linux-tegra@archiver.kernel.org>; Tue, 19 Oct 2021 18:35:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231460AbhJSPdr (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 19 Oct 2021 11:33:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51022 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230168AbhJSPdq (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 19 Oct 2021 11:33:46 -0400
-Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62854C061749
-        for <linux-tegra@vger.kernel.org>; Tue, 19 Oct 2021 08:31:33 -0700 (PDT)
-Received: by mail-wm1-x32f.google.com with SMTP id n7-20020a05600c4f8700b00323023159e1so3340444wmq.2
-        for <linux-tegra@vger.kernel.org>; Tue, 19 Oct 2021 08:31:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=hWPE/Y/ECpv7Nj8NIi2n9F0tYkWU75xKYRtFUZ6yu9s=;
-        b=cXlmp7HR3xEDoFJWVos0V9Jwf9q4NPIIzfiDylFcxk4jSANGoVNmWY8OhtlMtn1ZRf
-         jmcULs5B+rgkm9KmyKpFc+KQh+uTCu/G6xym7RP+EyjChNKrOYOTo2pQs8bpPryXSA49
-         PhkQe3WiON7NbBNPvpiWYUGHQr2H8TBe1OEBPXHsjLgQv+VW4LEwVBHpPqm97NT3RMKT
-         rXw1IHaPrxdibHGpIzN24IZxVYQZDTmKeNI5Uercj1qtVscydAgF+uz5RFiu0eLB8CJr
-         m7FsjmdImme4i7w0zj1VePOBGg9DogBOQWQSkx4XuNcJ0MrJC0wgR4AgxbUQfTdPe27i
-         GZwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=hWPE/Y/ECpv7Nj8NIi2n9F0tYkWU75xKYRtFUZ6yu9s=;
-        b=e3GyNXU1Ql1obuTdxao6z1mmfCtRg4TkgaDoJKxVWIf7O/pyVlpTDo39egTH6XO5Bc
-         yYUkKNm2vWB+S2XtF/tU6alLsYAz1rkMd0IeInQOwCCWgP31ZSuVC2eybOQYns2gF93w
-         zBHmlzZDrINsGKF16+iIFiov1HxpzKb5ZHNiXkeY1EQF8lJNjI7R8jXMwyIACjC2lw+8
-         kyWJPYC1gnIVxkK+RiCkSDwuKmDiSqFP3y/arTEMy65hJgGgyFgzA9n9yTZX2gGClqzC
-         N9WguxWyyhFlNdCQT8kTyDSDFN+6sus9JiyjrdplwGPFgV6gXLkVHfEyGwV5m0zf38nH
-         42LQ==
-X-Gm-Message-State: AOAM531Y9ifGJnMtzpwfsP5oybgriOnk40U6btzD+DkuRFF5xNR4AEEC
-        K57RLBMvK9C/GgIbVhSM86v5O9bP7mVxAw==
-X-Google-Smtp-Source: ABdhPJwE++nuRUOafKF1FDx4c8fEJkumkcgktNXraYcUxFliyvGucR0udxGE/SIQDOsvk3Ceiioy2Q==
-X-Received: by 2002:a7b:cf03:: with SMTP id l3mr6819075wmg.25.1634657491936;
-        Tue, 19 Oct 2021 08:31:31 -0700 (PDT)
-Received: from google.com ([95.148.6.207])
-        by smtp.gmail.com with ESMTPSA id n9sm2650947wmq.6.2021.10.19.08.31.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Oct 2021 08:31:31 -0700 (PDT)
-Date:   Tue, 19 Oct 2021 16:31:29 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Russell King <linux@armlinux.org.uk>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v1 4/6] mfd: max77620: Use power off call chain API
-Message-ID: <YW7k0SW73kcvyo2W@google.com>
-References: <20211007060253.17049-1-digetx@gmail.com>
- <20211007060253.17049-5-digetx@gmail.com>
+        id S232144AbhJSShe (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 19 Oct 2021 14:37:34 -0400
+Received: from mga09.intel.com ([134.134.136.24]:32802 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231783AbhJSShe (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 19 Oct 2021 14:37:34 -0400
+X-IronPort-AV: E=McAfee;i="6200,9189,10142"; a="228473969"
+X-IronPort-AV: E=Sophos;i="5.87,164,1631602800"; 
+   d="scan'208";a="228473969"
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Oct 2021 11:35:20 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.87,164,1631602800"; 
+   d="scan'208";a="526760120"
+Received: from stinkbox.fi.intel.com (HELO stinkbox) ([10.237.72.171])
+  by orsmga001.jf.intel.com with SMTP; 19 Oct 2021 11:35:09 -0700
+Received: by stinkbox (sSMTP sendmail emulation); Tue, 19 Oct 2021 21:35:08 +0300
+Date:   Tue, 19 Oct 2021 21:35:08 +0300
+From:   Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+To:     Claudio Suarez <cssk@net-c.es>
+Cc:     dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+        linux-tegra@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        Pan Xinhui <Xinhui.Pan@amd.com>, Emma Anholt <emma@anholt.net>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+        Chen-Yu Tsai <wens@csie.org>, Sandy Huang <hjc@rock-chips.com>,
+        heiko@sntech.de, Neil Armstrong <narmstrong@baylibre.com>,
+        Robert Foss <robert.foss@linaro.org>,
+        Ben Skeggs <bskeggs@redhat.com>, nouveau@lists.freedesktop.org
+Subject: Re: [PATCH v2 01/13] gpu/drm: make drm_add_edid_modes() consistent
+ when updating connector->display_info
+Message-ID: <YW8P3GPGezUhoBcW@intel.com>
+References: <20211016184226.3862-1-cssk@net-c.es>
+ <20211016184226.3862-2-cssk@net-c.es>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20211007060253.17049-5-digetx@gmail.com>
+In-Reply-To: <20211016184226.3862-2-cssk@net-c.es>
+X-Patchwork-Hint: comment
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, 07 Oct 2021, Dmitry Osipenko wrote:
-
-> Use new power off call chain API which allows multiple power off handlers
-> to coexist. Nexus 7 Android tablet can be powered off using MAX77663 PMIC
-> and using a special bootloader command. At first the bootloader option
-> should be tried, it will have a higher priority than the PMIC.
+On Sat, Oct 16, 2021 at 08:42:14PM +0200, Claudio Suarez wrote:
+> According to the documentation, drm_add_edid_modes
+> "... Also fills out the &drm_display_info structure and ELD in @connector
+> with any information which can be derived from the edid."
 > 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> drm_add_edid_modes accepts a struct edid *edid parameter which may have a
+> value or may be null. When it is not null, connector->display_info and
+> connector->eld are updated according to the edid. When edid=NULL, only
+> connector->eld is reset. Reset connector->display_info to be consistent
+> and accurate.
+> 
+> Signed-off-by: Claudio Suarez <cssk@net-c.es>
 > ---
->  drivers/mfd/max77620.c       | 22 +++++++++++++++-------
->  include/linux/mfd/max77620.h |  2 ++
->  2 files changed, 17 insertions(+), 7 deletions(-)
+>  drivers/gpu/drm/drm_edid.c | 11 +++++------
+>  1 file changed, 5 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/drm_edid.c b/drivers/gpu/drm/drm_edid.c
+> index 6325877c5fd6..c643db17782c 100644
+> --- a/drivers/gpu/drm/drm_edid.c
+> +++ b/drivers/gpu/drm/drm_edid.c
+> @@ -5356,14 +5356,13 @@ int drm_add_edid_modes(struct drm_connector *connector, struct edid *edid)
+>  	int num_modes = 0;
+>  	u32 quirks;
+>  
+> -	if (edid == NULL) {
+> -		clear_eld(connector);
+> -		return 0;
+> -	}
+>  	if (!drm_edid_is_valid(edid)) {
 
-I don't have a problem with the approach in general.
+OK, so drm_edid_is_valid() will happily accept NULL and considers
+it invalid. You may want to mention that explicitly in the commit
+message.
 
-I guess it's up to the relevant maintainers to decide.
+> +		/* edid == NULL or invalid here */
+>  		clear_eld(connector);
+> -		drm_warn(connector->dev, "%s: EDID invalid.\n",
+> -			 connector->name);
+> +		drm_reset_display_info(connector);
+> +		if (edid)
+> +			drm_warn(connector->dev, "%s: EDID invalid.\n",
+> +				 connector->name);
 
-> diff --git a/drivers/mfd/max77620.c b/drivers/mfd/max77620.c
-> index fec2096474ad..ad40eed1f0c6 100644
-> --- a/drivers/mfd/max77620.c
-> +++ b/drivers/mfd/max77620.c
-> @@ -31,11 +31,10 @@
->  #include <linux/init.h>
->  #include <linux/of.h>
->  #include <linux/of_device.h>
-> +#include <linux/reboot.h>
->  #include <linux/regmap.h>
->  #include <linux/slab.h>
->  
-> -static struct max77620_chip *max77620_scratch;
-> -
->  static const struct resource gpio_resources[] = {
->  	DEFINE_RES_IRQ(MAX77620_IRQ_TOP_GPIO),
->  };
-> @@ -483,13 +482,17 @@ static int max77620_read_es_version(struct max77620_chip *chip)
->  	return ret;
->  }
->  
-> -static void max77620_pm_power_off(void)
-> +static int max77620_pm_power_off(struct notifier_block *nb,
-> +				 unsigned long reboot_mode, void *data)
->  {
-> -	struct max77620_chip *chip = max77620_scratch;
-> +	struct max77620_chip *chip = container_of(nb, struct max77620_chip,
-> +						  pm_off_nb);
->  
->  	regmap_update_bits(chip->rmap, MAX77620_REG_ONOFFCNFG1,
->  			   MAX77620_ONOFFCNFG1_SFT_RST,
->  			   MAX77620_ONOFFCNFG1_SFT_RST);
-> +
-> +	return NOTIFY_DONE;
->  }
->  
->  static int max77620_probe(struct i2c_client *client,
-> @@ -566,9 +569,14 @@ static int max77620_probe(struct i2c_client *client,
+Could you respin this to use the standard [CONNECTOR:%d:%s] form
+while at it? Or I guess a patch to mass convert the whole drm_edid.c
+might be another option.
+
+Patch looks good.
+Reviewed-by: Ville Syrj‰l‰ <ville.syrjala@linux.intel.com>
+
+
+>  		return 0;
 >  	}
 >  
->  	pm_off = of_device_is_system_power_controller(client->dev.of_node);
-> -	if (pm_off && !pm_power_off) {
-> -		max77620_scratch = chip;
-> -		pm_power_off = max77620_pm_power_off;
-> +	if (pm_off) {
-> +		chip->pm_off_nb.notifier_call = max77620_pm_power_off;
-> +		chip->pm_off_nb.priority = 128;
-> +
-> +		ret = devm_register_poweroff_handler(chip->dev, &chip->pm_off_nb);
-> +		if (ret < 0)
-> +			dev_err(chip->dev,
-> +				"Failed to register poweroff handler: %d\n", ret);
->  	}
->  
->  	return 0;
-> diff --git a/include/linux/mfd/max77620.h b/include/linux/mfd/max77620.h
-> index f552ef5b1100..99de4f8c9cbf 100644
-> --- a/include/linux/mfd/max77620.h
-> +++ b/include/linux/mfd/max77620.h
-> @@ -8,6 +8,7 @@
->  #ifndef _MFD_MAX77620_H_
->  #define _MFD_MAX77620_H_
->  
-> +#include <linux/notifier.h>
->  #include <linux/types.h>
->  
->  /* GLOBAL, PMIC, GPIO, FPS, ONOFFC, CID Registers */
-> @@ -327,6 +328,7 @@ enum max77620_chip_id {
->  struct max77620_chip {
->  	struct device *dev;
->  	struct regmap *rmap;
-> +	struct notifier_block pm_off_nb;
->  
->  	int chip_irq;
->  
+> -- 
+> 2.33.0
+> 
+> 
 
 -- 
-Lee Jones [ÊùéÁêºÊñØ]
-Senior Technical Lead - Developer Services
-Linaro.org ‚îÇ Open source software for Arm SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Ville Syrj‰l‰
+Intel
