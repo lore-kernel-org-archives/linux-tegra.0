@@ -2,223 +2,178 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D56B9C433FE
-	for <linux-tegra@archiver.kernel.org>; Tue, 19 Oct 2021 11:40:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B49FC433EF
+	for <linux-tegra@archiver.kernel.org>; Tue, 19 Oct 2021 15:31:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BB2796137C
-	for <linux-tegra@archiver.kernel.org>; Tue, 19 Oct 2021 11:40:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1AC2061154
+	for <linux-tegra@archiver.kernel.org>; Tue, 19 Oct 2021 15:31:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235449AbhJSLnJ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 19 Oct 2021 07:43:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53990 "EHLO
+        id S231460AbhJSPdr (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 19 Oct 2021 11:33:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51022 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235356AbhJSLnI (ORCPT
+        with ESMTP id S230168AbhJSPdq (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 19 Oct 2021 07:43:08 -0400
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03733C061769
-        for <linux-tegra@vger.kernel.org>; Tue, 19 Oct 2021 04:40:55 -0700 (PDT)
-Received: by mail-lf1-x129.google.com with SMTP id n8so6779744lfk.6
-        for <linux-tegra@vger.kernel.org>; Tue, 19 Oct 2021 04:40:54 -0700 (PDT)
+        Tue, 19 Oct 2021 11:33:46 -0400
+Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62854C061749
+        for <linux-tegra@vger.kernel.org>; Tue, 19 Oct 2021 08:31:33 -0700 (PDT)
+Received: by mail-wm1-x32f.google.com with SMTP id n7-20020a05600c4f8700b00323023159e1so3340444wmq.2
+        for <linux-tegra@vger.kernel.org>; Tue, 19 Oct 2021 08:31:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=p/y6DgAZycykowwrleZpy70Yak++qIhNqJ9ImugcYMs=;
-        b=gbZb/rIEkq16uEpMdDfbn531uPXxDE2vXRTZ1At7zc8FyijjHf+TaWP9WSCNsx9CRl
-         Ax+uAwkmd3zCdbRdDaM3dpQ6QH2wtz6LdoMLA6+gjkzDI8FsGa3Gg4WLu7V9K5SrUrby
-         y6A+UktAxyprVLbdSpurxxaZ8mnWtv03QgVC25vrqwdz6F5CjpkyH0G67ZL5o2xSalbx
-         z2YLwvEkGXJDZVRENSUyiANgZXnd7Hl65An187cV1TSi/tcYxCoWRVEqIP0BwzqCyQr0
-         hoZBxk1g0lrSFu4sw+cYxe+pvM8G9j1I2iiX+c9B9ryltLhmQtiX2zDR77yR1QolGdKK
-         MOng==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=hWPE/Y/ECpv7Nj8NIi2n9F0tYkWU75xKYRtFUZ6yu9s=;
+        b=cXlmp7HR3xEDoFJWVos0V9Jwf9q4NPIIzfiDylFcxk4jSANGoVNmWY8OhtlMtn1ZRf
+         jmcULs5B+rgkm9KmyKpFc+KQh+uTCu/G6xym7RP+EyjChNKrOYOTo2pQs8bpPryXSA49
+         PhkQe3WiON7NbBNPvpiWYUGHQr2H8TBe1OEBPXHsjLgQv+VW4LEwVBHpPqm97NT3RMKT
+         rXw1IHaPrxdibHGpIzN24IZxVYQZDTmKeNI5Uercj1qtVscydAgF+uz5RFiu0eLB8CJr
+         m7FsjmdImme4i7w0zj1VePOBGg9DogBOQWQSkx4XuNcJ0MrJC0wgR4AgxbUQfTdPe27i
+         GZwg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=p/y6DgAZycykowwrleZpy70Yak++qIhNqJ9ImugcYMs=;
-        b=v2niaogkxiGxSKjf/XPeE32Uji76VA1VyQIcq0E2Bfhm6gsGJ3GsMZ2dzOp+hTDt6r
-         GRHDcaI9r0Jd1Pfz/ZHL5c/dyYbR5mghl3RhedDOj8RbO9KWOlKXlLZ3s3xcXV2Fktd1
-         FK9GAmuUoEkHw3k+PoKGMQEtUDKFd4lg8pS/sm+YCMRY4gvs+aRm5/UufLA4rw6UxxyN
-         E0xMTk4ocooEh3Hya75iQDB0P8P9priQJjZo2BeiegRIMXBhYN/BIvwmHy30PKZEmHTo
-         IuZoHTzL9JC4sxmYhhQWPVi+iue+XAmRGYQBNWjf6z9LbhlWGKB9I6mBh5B4k9unemup
-         KHKQ==
-X-Gm-Message-State: AOAM5311X5PLOMOTZCP17VcaM7jLTYZcDf+xNr6Frz1fbpZDzQaCbR8L
-        JYu+SScYEnuOt6JVV6hiK1Iob7+qx3JhROdxUI67rw==
-X-Google-Smtp-Source: ABdhPJyiZ8hxPaWs5ZGwktR/58DXEHsnrg2iCZG7+dtLEFQZezq+DvEjCTIwbhL0fm341kLJAfk/05h60QX3kuXQ9G4=
-X-Received: by 2002:a05:6512:3084:: with SMTP id z4mr5314051lfd.167.1634643653278;
- Tue, 19 Oct 2021 04:40:53 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210926224058.1252-1-digetx@gmail.com> <20210926224058.1252-21-digetx@gmail.com>
- <CAPDyKFoF2QxZss_h9B1NFqOqgeF=TQ6LajCedGiJ9_P8X5M0NA@mail.gmail.com>
- <0bcbcd3d-2154-03d2-f572-dc9032125c26@gmail.com> <CAPDyKFohA9iu2UQfwoc0pCrCGupdwnUTWjKOtP09_C2KaFSo8w@mail.gmail.com>
- <073114ea-490b-89a9-e82d-852b34cb11df@gmail.com>
-In-Reply-To: <073114ea-490b-89a9-e82d-852b34cb11df@gmail.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Tue, 19 Oct 2021 13:40:16 +0200
-Message-ID: <CAPDyKFoOMvEW0o6=-_bYKhwUcbfeTD4qu-K2tfkdXiR0bErHsw@mail.gmail.com>
-Subject: Re: [PATCH v13 20/35] mtd: rawnand: tegra: Add runtime PM and OPP support
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=hWPE/Y/ECpv7Nj8NIi2n9F0tYkWU75xKYRtFUZ6yu9s=;
+        b=e3GyNXU1Ql1obuTdxao6z1mmfCtRg4TkgaDoJKxVWIf7O/pyVlpTDo39egTH6XO5Bc
+         yYUkKNm2vWB+S2XtF/tU6alLsYAz1rkMd0IeInQOwCCWgP31ZSuVC2eybOQYns2gF93w
+         zBHmlzZDrINsGKF16+iIFiov1HxpzKb5ZHNiXkeY1EQF8lJNjI7R8jXMwyIACjC2lw+8
+         kyWJPYC1gnIVxkK+RiCkSDwuKmDiSqFP3y/arTEMy65hJgGgyFgzA9n9yTZX2gGClqzC
+         N9WguxWyyhFlNdCQT8kTyDSDFN+6sus9JiyjrdplwGPFgV6gXLkVHfEyGwV5m0zf38nH
+         42LQ==
+X-Gm-Message-State: AOAM531Y9ifGJnMtzpwfsP5oybgriOnk40U6btzD+DkuRFF5xNR4AEEC
+        K57RLBMvK9C/GgIbVhSM86v5O9bP7mVxAw==
+X-Google-Smtp-Source: ABdhPJwE++nuRUOafKF1FDx4c8fEJkumkcgktNXraYcUxFliyvGucR0udxGE/SIQDOsvk3Ceiioy2Q==
+X-Received: by 2002:a7b:cf03:: with SMTP id l3mr6819075wmg.25.1634657491936;
+        Tue, 19 Oct 2021 08:31:31 -0700 (PDT)
+Received: from google.com ([95.148.6.207])
+        by smtp.gmail.com with ESMTPSA id n9sm2650947wmq.6.2021.10.19.08.31.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Oct 2021 08:31:31 -0700 (PDT)
+Date:   Tue, 19 Oct 2021 16:31:29 +0100
+From:   Lee Jones <lee.jones@linaro.org>
 To:     Dmitry Osipenko <digetx@gmail.com>
 Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Peter Chen <peter.chen@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>, Nishanth Menon <nm@ti.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux USB List <linux-usb@vger.kernel.org>,
-        linux-staging@lists.linux.dev, linux-pwm@vger.kernel.org,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        DTML <devicetree@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
         Mark Brown <broonie@kernel.org>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Richard Weinberger <richard@nod.at>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Lucas Stach <dev@lynxeye.de>, Stefan Agner <stefan@agner.ch>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        David Heidelberg <david@ixit.cz>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Russell King <linux@armlinux.org.uk>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v1 4/6] mfd: max77620: Use power off call chain API
+Message-ID: <YW7k0SW73kcvyo2W@google.com>
+References: <20211007060253.17049-1-digetx@gmail.com>
+ <20211007060253.17049-5-digetx@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20211007060253.17049-5-digetx@gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Sun, 17 Oct 2021 at 10:38, Dmitry Osipenko <digetx@gmail.com> wrote:
->
-> 01.10.2021 18:01, Ulf Hansson =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > On Fri, 1 Oct 2021 at 16:35, Dmitry Osipenko <digetx@gmail.com> wrote:
-> >>
-> >> 01.10.2021 17:24, Ulf Hansson =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> >>> On Mon, 27 Sept 2021 at 00:42, Dmitry Osipenko <digetx@gmail.com> wro=
-te:
-> >>>>
-> >>>> The NAND on Tegra belongs to the core power domain and we're going t=
-o
-> >>>> enable GENPD support for the core domain. Now NAND must be resumed u=
-sing
-> >>>> runtime PM API in order to initialize the NAND power state. Add runt=
-ime PM
-> >>>> and OPP support to the NAND driver.
-> >>>>
-> >>>> Acked-by: Miquel Raynal <miquel.raynal@bootlin.com>
-> >>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> >>>> ---
-> >>>>  drivers/mtd/nand/raw/tegra_nand.c | 55 ++++++++++++++++++++++++++--=
----
-> >>>>  1 file changed, 47 insertions(+), 8 deletions(-)
-> >>>>
-> >>>> diff --git a/drivers/mtd/nand/raw/tegra_nand.c b/drivers/mtd/nand/ra=
-w/tegra_nand.c
-> >>>> index 32431bbe69b8..098fcc9cb9df 100644
-> >>>> --- a/drivers/mtd/nand/raw/tegra_nand.c
-> >>>> +++ b/drivers/mtd/nand/raw/tegra_nand.c
-> >>>> @@ -17,8 +17,11 @@
-> >>>>  #include <linux/mtd/rawnand.h>
-> >>>>  #include <linux/of.h>
-> >>>>  #include <linux/platform_device.h>
-> >>>> +#include <linux/pm_runtime.h>
-> >>>>  #include <linux/reset.h>
-> >>>>
-> >>>> +#include <soc/tegra/common.h>
-> >>>> +
-> >>>>  #define COMMAND                                        0x00
-> >>>>  #define   COMMAND_GO                           BIT(31)
-> >>>>  #define   COMMAND_CLE                          BIT(30)
-> >>>> @@ -1151,6 +1154,7 @@ static int tegra_nand_probe(struct platform_de=
-vice *pdev)
-> >>>>                 return -ENOMEM;
-> >>>>
-> >>>>         ctrl->dev =3D &pdev->dev;
-> >>>> +       platform_set_drvdata(pdev, ctrl);
-> >>>>         nand_controller_init(&ctrl->controller);
-> >>>>         ctrl->controller.ops =3D &tegra_nand_controller_ops;
-> >>>>
-> >>>> @@ -1166,14 +1170,22 @@ static int tegra_nand_probe(struct platform_=
-device *pdev)
-> >>>>         if (IS_ERR(ctrl->clk))
-> >>>>                 return PTR_ERR(ctrl->clk);
-> >>>>
-> >>>> -       err =3D clk_prepare_enable(ctrl->clk);
-> >>>> +       err =3D devm_pm_runtime_enable(&pdev->dev);
-> >>>> +       if (err)
-> >>>> +               return err;
-> >>>> +
-> >>>> +       err =3D devm_tegra_core_dev_init_opp_table_common(&pdev->dev=
-);
-> >>>> +       if (err)
-> >>>> +               return err;
-> >>>> +
-> >>>> +       err =3D pm_runtime_resume_and_get(&pdev->dev);
-> >>>>         if (err)
-> >>>>                 return err;
-> >>>>
-> >>>>         err =3D reset_control_reset(rst);
-> >>>>         if (err) {
-> >>>>                 dev_err(ctrl->dev, "Failed to reset HW: %d\n", err);
-> >>>> -               goto err_disable_clk;
-> >>>> +               goto err_put_pm;
-> >>>>         }
-> >>>>
-> >>>>         writel_relaxed(HWSTATUS_CMD_DEFAULT, ctrl->regs + HWSTATUS_C=
-MD);
-> >>>> @@ -1188,21 +1200,19 @@ static int tegra_nand_probe(struct platform_=
-device *pdev)
-> >>>>                                dev_name(&pdev->dev), ctrl);
-> >>>>         if (err) {
-> >>>>                 dev_err(ctrl->dev, "Failed to get IRQ: %d\n", err);
-> >>>> -               goto err_disable_clk;
-> >>>> +               goto err_put_pm;
-> >>>>         }
-> >>>>
-> >>>>         writel_relaxed(DMA_MST_CTRL_IS_DONE, ctrl->regs + DMA_MST_CT=
-RL);
-> >>>>
-> >>>>         err =3D tegra_nand_chips_init(ctrl->dev, ctrl);
-> >>>>         if (err)
-> >>>> -               goto err_disable_clk;
-> >>>> -
-> >>>> -       platform_set_drvdata(pdev, ctrl);
-> >>>> +               goto err_put_pm;
-> >>>>
-> >>>
-> >>> There is no corresponding call pm_runtime_put() here. Is it
-> >>> intentional to always leave the device runtime resumed after ->probe(=
-)
-> >>> has succeeded?
-> >>>
-> >>> I noticed you included some comments about this for some other
-> >>> drivers, as those needed more tweaks. Is that also the case for this
-> >>> driver?
-> >>
-> >> Could you please clarify? There is pm_runtime_put() in both probe-erro=
-r
-> >> and remove() code paths here.
-> >
-> > I was not considering the error path of ->probe() (or ->remove()), but
-> > was rather thinking about when ->probe() completes successfully. Then
-> > you keep the device runtime resumed, because you have called
-> > pm_runtime_resume_and_get() for it.
-> >
-> > Shouldn't you have a corresponding pm_runtime_put() in ->probe(),
-> > allowing it to be runtime suspended, until the device is really needed
-> > later on. No?
->
-> This driver doesn't support active power management. I don't have Tegra
-> hardware that uses NAND storage for testing, so it's up to somebody else
-> to implement dynamic power management. NAND doesn't require high
-> voltages, so it's fine to keep the old driver behaviour by keeping
-> hardware resumed since the probe time.
+On Thu, 07 Oct 2021, Dmitry Osipenko wrote:
 
-Alright, fair enough and thanks for clarifying!
+> Use new power off call chain API which allows multiple power off handlers
+> to coexist. Nexus 7 Android tablet can be powered off using MAX77663 PMIC
+> and using a special bootloader command. At first the bootloader option
+> should be tried, it will have a higher priority than the PMIC.
+> 
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/mfd/max77620.c       | 22 +++++++++++++++-------
+>  include/linux/mfd/max77620.h |  2 ++
+>  2 files changed, 17 insertions(+), 7 deletions(-)
 
-Kind regards
-Uffe
+I don't have a problem with the approach in general.
+
+I guess it's up to the relevant maintainers to decide.
+
+> diff --git a/drivers/mfd/max77620.c b/drivers/mfd/max77620.c
+> index fec2096474ad..ad40eed1f0c6 100644
+> --- a/drivers/mfd/max77620.c
+> +++ b/drivers/mfd/max77620.c
+> @@ -31,11 +31,10 @@
+>  #include <linux/init.h>
+>  #include <linux/of.h>
+>  #include <linux/of_device.h>
+> +#include <linux/reboot.h>
+>  #include <linux/regmap.h>
+>  #include <linux/slab.h>
+>  
+> -static struct max77620_chip *max77620_scratch;
+> -
+>  static const struct resource gpio_resources[] = {
+>  	DEFINE_RES_IRQ(MAX77620_IRQ_TOP_GPIO),
+>  };
+> @@ -483,13 +482,17 @@ static int max77620_read_es_version(struct max77620_chip *chip)
+>  	return ret;
+>  }
+>  
+> -static void max77620_pm_power_off(void)
+> +static int max77620_pm_power_off(struct notifier_block *nb,
+> +				 unsigned long reboot_mode, void *data)
+>  {
+> -	struct max77620_chip *chip = max77620_scratch;
+> +	struct max77620_chip *chip = container_of(nb, struct max77620_chip,
+> +						  pm_off_nb);
+>  
+>  	regmap_update_bits(chip->rmap, MAX77620_REG_ONOFFCNFG1,
+>  			   MAX77620_ONOFFCNFG1_SFT_RST,
+>  			   MAX77620_ONOFFCNFG1_SFT_RST);
+> +
+> +	return NOTIFY_DONE;
+>  }
+>  
+>  static int max77620_probe(struct i2c_client *client,
+> @@ -566,9 +569,14 @@ static int max77620_probe(struct i2c_client *client,
+>  	}
+>  
+>  	pm_off = of_device_is_system_power_controller(client->dev.of_node);
+> -	if (pm_off && !pm_power_off) {
+> -		max77620_scratch = chip;
+> -		pm_power_off = max77620_pm_power_off;
+> +	if (pm_off) {
+> +		chip->pm_off_nb.notifier_call = max77620_pm_power_off;
+> +		chip->pm_off_nb.priority = 128;
+> +
+> +		ret = devm_register_poweroff_handler(chip->dev, &chip->pm_off_nb);
+> +		if (ret < 0)
+> +			dev_err(chip->dev,
+> +				"Failed to register poweroff handler: %d\n", ret);
+>  	}
+>  
+>  	return 0;
+> diff --git a/include/linux/mfd/max77620.h b/include/linux/mfd/max77620.h
+> index f552ef5b1100..99de4f8c9cbf 100644
+> --- a/include/linux/mfd/max77620.h
+> +++ b/include/linux/mfd/max77620.h
+> @@ -8,6 +8,7 @@
+>  #ifndef _MFD_MAX77620_H_
+>  #define _MFD_MAX77620_H_
+>  
+> +#include <linux/notifier.h>
+>  #include <linux/types.h>
+>  
+>  /* GLOBAL, PMIC, GPIO, FPS, ONOFFC, CID Registers */
+> @@ -327,6 +328,7 @@ enum max77620_chip_id {
+>  struct max77620_chip {
+>  	struct device *dev;
+>  	struct regmap *rmap;
+> +	struct notifier_block pm_off_nb;
+>  
+>  	int chip_irq;
+>  
+
+-- 
+Lee Jones [李琼斯]
+Senior Technical Lead - Developer Services
+Linaro.org │ Open source software for Arm SoCs
+Follow Linaro: Facebook | Twitter | Blog
