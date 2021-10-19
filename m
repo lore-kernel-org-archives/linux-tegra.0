@@ -2,115 +2,93 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF9D4C433F5
-	for <linux-tegra@archiver.kernel.org>; Tue, 19 Oct 2021 22:51:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 496ECC433EF
+	for <linux-tegra@archiver.kernel.org>; Tue, 19 Oct 2021 23:00:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C42D4610A1
-	for <linux-tegra@archiver.kernel.org>; Tue, 19 Oct 2021 22:51:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 25D0361156
+	for <linux-tegra@archiver.kernel.org>; Tue, 19 Oct 2021 23:00:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229483AbhJSWxo (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 19 Oct 2021 18:53:44 -0400
-Received: from msg-1.mailo.com ([213.182.54.11]:35038 "EHLO msg-1.mailo.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229668AbhJSWxo (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 19 Oct 2021 18:53:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=net-c.es; s=mailo;
-        t=1634683884; bh=uLgAv1p7Y5vFTzwdvlZ68d33po02FUVGhb3Gh9W3kqQ=;
-        h=X-EA-Auth:Date:From:To:Cc:Subject:Message-ID:References:
-         MIME-Version:Content-Type:In-Reply-To;
-        b=vns70Kl8DSbTwbUcSPaxMZF/Stw7H+QwnFRH1PNJYuA8cR8ixZgUVXeQaSHKl1/77
-         x31AQ5lZmK/q5m//b8s8lqplRvmbnegfkcUhs4dyY05R+NpTLtBdtQKnDV5E3ntffb
-         a2zFlybSUZkYLRF6OfBMC4Y3TVY+UzsXeOKnnhoY=
-Received: by b-5.in.mailobj.net [192.168.90.15] with ESMTP
-        via ip-206.mailobj.net [213.182.55.206]
-        Wed, 20 Oct 2021 00:51:24 +0200 (CEST)
-X-EA-Auth: ZuVWjeezfcGUIMbofDm7p16bf3OEGxFPAHSY4J1oGSl3bKR0h2C0x8lwXIpvuoo0aO/EFjSNxFlgjYSFEsj4bmMb6X5vgGBM
-Date:   Wed, 20 Oct 2021 00:51:21 +0200
-From:   Claudio Suarez <cssk@net-c.es>
-To:     Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-Cc:     dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
-        linux-tegra@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        Pan Xinhui <Xinhui.Pan@amd.com>, Emma Anholt <emma@anholt.net>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
-        Chen-Yu Tsai <wens@csie.org>, Sandy Huang <hjc@rock-chips.com>,
-        heiko@sntech.de, Neil Armstrong <narmstrong@baylibre.com>,
-        Robert Foss <robert.foss@linaro.org>,
-        Ben Skeggs <bskeggs@redhat.com>, nouveau@lists.freedesktop.org
-Subject: Re: [PATCH v3 13/13] drm/i915: replace drm_detect_hdmi_monitor()
- with drm_display_info.is_hdmi
-Message-ID: <YW9L6d7e+RO29VJu@gineta.localdomain>
-References: <20211016184226.3862-1-cssk@net-c.es>
- <20211016184226.3862-14-cssk@net-c.es>
- <YW8QYsmkm3ZrBAx3@intel.com>
+        id S229533AbhJSXCY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 19 Oct 2021 19:02:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40514 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229483AbhJSXCY (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 19 Oct 2021 19:02:24 -0400
+Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B994C06161C;
+        Tue, 19 Oct 2021 16:00:10 -0700 (PDT)
+Received: by mail-lf1-x129.google.com with SMTP id n8so10870689lfk.6;
+        Tue, 19 Oct 2021 16:00:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=a88qg38+MHwgayXwRxD5MdpDf9+mfzp1qVrL1oByJeU=;
+        b=kA9EsuhL3/N3fKQjjy5KKGYwd4taVPf179Wy+M3axYvPRLCCJcaLmysu6/zyCbQhPY
+         JOMV6FyN+fi6SGd70PfKtIooF4IGfcGjaY80N9cMr3cvf6MkmQa+G1Dgk0NfRfvh8rbY
+         ZzVnxHjWnvVIurVWTH1023W/zht1mYpe8X9kDoudvDipkRu2c4kHO98tvU6BdcyHaLQb
+         9cgue9aF/a17Bxmv2+DoXk1wt7hSHY+UEiMxnGhbjrO+HKAs+CLXY8d7Wajbt/w+qQLo
+         cXIEjIM6A9ZkRnK5wZ2V8KnGY2K1CjQJSuu0kCLTQ1+4NiakCSvC3DbSHc1PmKhLBMiD
+         i4sw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=a88qg38+MHwgayXwRxD5MdpDf9+mfzp1qVrL1oByJeU=;
+        b=5cgwULuFmjjG2B6Jj4IYUtQivqWXh+nbhKN9GQNGriu+UL4JmpX+AQo2pffN5JaY/M
+         ou2s0kZH9R2qYDmlLb0tVr1lxeDed4w7aVB7GtppYaKGBIs7ll2e7TRyX8I3K0AlSmer
+         Mohsbe6yE3+NUkt1an7bXbQoDx44dgtbDha+0uKNM7pAkhWCCSNloASvXGKvzQGBUPm1
+         C3PBzWZHl9wvCoFKAGmeYEuoJ9/bDheEgiIbMPukMEkjkAyPflfs4vXhcU+7LQ0wfmml
+         4B56zl+FDWGM46f1tB6eEdq8MhLsiCdh0vbVu5gUYHStc0PcsiE+4kgzzU+zcCnCYwcy
+         k6Jw==
+X-Gm-Message-State: AOAM532SRUetFkzUcZJUG3OmHQ2Qk40Dpc9ZzUJMNDchZ4UKYD4KqGB+
+        jFiy7T3bWC/EV8PJ7cxWimq9VsMyA2I=
+X-Google-Smtp-Source: ABdhPJxX3C4sQ0bUdp8xWbdoxRUTy9FTgsKWNE0hAgaj65a+zHXQMp6ARMP8QSubzwEoZCoP0cqVdg==
+X-Received: by 2002:a05:6512:2344:: with SMTP id p4mr8606274lfu.324.1634684408827;
+        Tue, 19 Oct 2021 16:00:08 -0700 (PDT)
+Received: from [192.168.2.145] (94-29-39-10.dynamic.spd-mgts.ru. [94.29.39.10])
+        by smtp.googlemail.com with ESMTPSA id v3sm41462lfr.61.2021.10.19.16.00.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 19 Oct 2021 16:00:08 -0700 (PDT)
+Subject: Re: [PATCH 1/2] pinctrl: tegra: include lpdr pin properties
+To:     Prathamesh Shete <pshete@nvidia.com>, linus.walleij@linaro.org,
+        thierry.reding@gmail.com, jonathanh@nvidia.com,
+        linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     smangipudi@nvidia.com
+References: <20211018121815.3017-1-pshete@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <742eef64-c607-451b-3a28-171c628a44d4@gmail.com>
+Date:   Wed, 20 Oct 2021 02:00:07 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YW8QYsmkm3ZrBAx3@intel.com>
+In-Reply-To: <20211018121815.3017-1-pshete@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-drm_get_edid() internally calls to drm_connector_update_edid_property()
-and then drm_add_display_info(), which parses the EDID.
-This happens in the function intel_hdmi_set_edid() and
-intel_sdvo_tmds_sink_detect() (via intel_sdvo_get_edid()).
+18.10.2021 15:18, Prathamesh Shete пишет:
+> From: Suresh Mangipudi <smangipudi@nvidia.com>
+> 
+> Update lpdr pin-property for supported pins.
+> 
+> lpdr property help disable most basic driver fingers
+> leaving only minimal base driver finger.
+> 
+> Signed-off-by: Suresh Mangipudi <smangipudi@nvidia.com>
+> Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
+> ---
+>  drivers/pinctrl/tegra/pinctrl-tegra.h    |   2 +
+>  drivers/pinctrl/tegra/pinctrl-tegra210.c | 330 ++++++++++++-----------
+>  2 files changed, 168 insertions(+), 164 deletions(-)
 
-Once EDID is parsed, the monitor HDMI support information is available
-through drm_display_info.is_hdmi. Retriving the same information with
-drm_detect_hdmi_monitor() is less efficient. Change to
-drm_display_info.is_hdmi
+The code of this driver was generated by [1]. Have you considered
+updating the generator?
 
-This is a TODO task in Documentation/gpu/todo.rst
-
-Signed-off-by: Claudio Suarez <cssk@net-c.es>
----
- drivers/gpu/drm/i915/display/intel_hdmi.c | 2 +-
- drivers/gpu/drm/i915/display/intel_sdvo.c | 3 ++-
- 2 files changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/i915/display/intel_hdmi.c b/drivers/gpu/drm/i915/display/intel_hdmi.c
-index b04685bb6439..008e5b0ba408 100644
---- a/drivers/gpu/drm/i915/display/intel_hdmi.c
-+++ b/drivers/gpu/drm/i915/display/intel_hdmi.c
-@@ -2355,7 +2355,7 @@ intel_hdmi_set_edid(struct drm_connector *connector)
- 	to_intel_connector(connector)->detect_edid = edid;
- 	if (edid && edid->input & DRM_EDID_INPUT_DIGITAL) {
- 		intel_hdmi->has_audio = drm_detect_monitor_audio(edid);
--		intel_hdmi->has_hdmi_sink = drm_detect_hdmi_monitor(edid);
-+		intel_hdmi->has_hdmi_sink = connector->display_info.is_hdmi;
- 
- 		connected = true;
- 	}
-diff --git a/drivers/gpu/drm/i915/display/intel_sdvo.c b/drivers/gpu/drm/i915/display/intel_sdvo.c
-index 6cb27599ea03..b4065e4df644 100644
---- a/drivers/gpu/drm/i915/display/intel_sdvo.c
-+++ b/drivers/gpu/drm/i915/display/intel_sdvo.c
-@@ -2060,8 +2060,9 @@ intel_sdvo_tmds_sink_detect(struct drm_connector *connector)
- 		if (edid->input & DRM_EDID_INPUT_DIGITAL) {
- 			status = connector_status_connected;
- 			if (intel_sdvo_connector->is_hdmi) {
--				intel_sdvo->has_hdmi_monitor = drm_detect_hdmi_monitor(edid);
- 				intel_sdvo->has_hdmi_audio = drm_detect_monitor_audio(edid);
-+				intel_sdvo->has_hdmi_monitor =
-+							    connector->display_info.is_hdmi;
- 			}
- 		} else
- 			status = connector_status_disconnected;
--- 
-2.33.0
-
-
-
+[1] https://github.com/NVIDIA/tegra-pinmux-scripts
