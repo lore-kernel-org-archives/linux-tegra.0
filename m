@@ -2,157 +2,174 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74905C433F5
-	for <linux-tegra@archiver.kernel.org>; Thu, 21 Oct 2021 11:55:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14864C433EF
+	for <linux-tegra@archiver.kernel.org>; Thu, 21 Oct 2021 12:30:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5B749610CB
-	for <linux-tegra@archiver.kernel.org>; Thu, 21 Oct 2021 11:55:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E8E83610EA
+	for <linux-tegra@archiver.kernel.org>; Thu, 21 Oct 2021 12:30:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230508AbhJUL5u (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 21 Oct 2021 07:57:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59290 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230523AbhJUL5s (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 21 Oct 2021 07:57:48 -0400
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4563EC06161C;
-        Thu, 21 Oct 2021 04:55:32 -0700 (PDT)
-Received: by mail-lf1-x132.google.com with SMTP id g36so276740lfv.3;
-        Thu, 21 Oct 2021 04:55:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=V1jEJHNy1rpIMC1prko3vAzn6yRQlR45J0vSd88M0Wc=;
-        b=XOMAHUJx0i/12kKJAXzxVziVwGKqGOSnAI1TsCe02UCieVeT5TKeDLmXlDLyDxpPdH
-         SKeavDKLW8GV/KarRKogZt01hDZtJVr+ejkVRSCu+6iaDB4g8xLkW6ZVFM/DcDwO/J88
-         WF2swpt7wLMziMbmB7NWpZvLgF3B+VDLcryOF6y5C019tMAI0P5bO7fKHwOytCZRivIy
-         KJEkIeEwEjhufc6CwZEImW8gHgCgoMJ2fFE7Dgh58Nl8A8/MxNzSW21/Taho0QyVHcJZ
-         K7zXlx5fYU9CBej/2QANlERqlDsUbcxt7bciF+I0GeV/Xt5SBWMOWvXZPnd4va5C7+/c
-         qs4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=V1jEJHNy1rpIMC1prko3vAzn6yRQlR45J0vSd88M0Wc=;
-        b=fmODIC4sIeGgfdmfVm+ewCLa0ujeEkiA+9MSDecxVXjhJciAe5DBalqdJ1MWfsPcQA
-         Tof3xKPAVLVB/VTo9XhxeAAb1HVFjF1YaLiowTcJsC0A2iU8q9WayVg3+TBCmvbTFs0r
-         XrYoJy44lQdHEAVGJDSuad26KkR2OG0HsdPfknTRLkq9F21MsewbLLlmG7MjmIGswtYH
-         KB1mmCdH8BxSaWYrbgYQV+Ov11k2bzhqD9AgkV5jyJ/1vLGh81scBhlGbFIpw1xq3Aje
-         jlHN84QqsmUKfqCo0ztaMeMGnnv3GAZWolm/fnUVHF6d8bVdrfP2H9a3HgWQGiNuvZiH
-         H24w==
-X-Gm-Message-State: AOAM532fK6WGR0XqZrW+Dl4cA3XT2J0LvY++EzXrI8BM6u8QtEd2aPb5
-        vZN/Ej1BURcCTIWM/19Dbz5NHuKNCf0=
-X-Google-Smtp-Source: ABdhPJyt3bxMyhH+ZwiH/BUspV4Vdc1aLduwGkpeVI69xJqU2kMcBQppVdxrb4d6Cw2tkqL31P37Bg==
-X-Received: by 2002:ac2:5f06:: with SMTP id 6mr5065587lfq.516.1634817330659;
-        Thu, 21 Oct 2021 04:55:30 -0700 (PDT)
-Received: from localhost.localdomain (94-29-39-10.dynamic.spd-mgts.ru. [94.29.39.10])
-        by smtp.gmail.com with ESMTPSA id b30sm440565lfv.288.2021.10.21.04.55.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Oct 2021 04:55:30 -0700 (PDT)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <treding@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mathias Nyman <mathias.nyman@intel.com>,
-        JC Kuo <jckuo@nvidia.com>, Nicolas Chauvet <kwizart@gmail.com>
-Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: [PATCH v1] usb: xhci: tegra: Check padctrl interrupt presence in device tree
-Date:   Thu, 21 Oct 2021 14:55:01 +0300
-Message-Id: <20211021115501.14932-1-digetx@gmail.com>
-X-Mailer: git-send-email 2.32.0
+        id S231559AbhJUMcz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 21 Oct 2021 08:32:55 -0400
+Received: from mail-bn8nam12on2047.outbound.protection.outlook.com ([40.107.237.47]:65238
+        "EHLO NAM12-BN8-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S230231AbhJUMcs (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 21 Oct 2021 08:32:48 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=RvnDfXZdTJdPwygMyg84D5JBuI5WrxHtnEf1uCPfAVzGKTDbTuGq/H/mvDzfeCxeFoHbSiKJK5vR7Cjom6ENBwLp55RKmmTHZuGLuPYDktO5zm2dWTtPiT7Sfb9TxSSX0+9QGWfmRevBG1G8IxTqrBXxm0/FX1VjrJ2FFtZM2R0+uIMM69E642qRckkecVWL+/c24eVArTmzMa5l1O9nuud6FcI2BdeqAYpj/kOCALCEfZZwovbY7JnZI6UU4azh/EndMHN5sZjy4Wr5WMpfdVpm1CH9XXz3wZvm/rPAzlXa4Iy6udqZPi460pnvnilgNyJWueE2hbnqOIm73ky+gA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7VVd9I5MzFSB5L6x/zPzgdk+ZRUlZH43zbMdpegbcyc=;
+ b=BrdvjwDIr7LRy+otqVPiF9Gj1dgl1bUf8c2cXLLXxHYWiuV2F+wlgEQkksbbxQOLw8RztEjv5ZDzYfwwcrxu6ghwY7pI/2Gn4wOb0yrJX10BmF3yjVfCiNWd1CbJ0ZAqQM4YCFsQlXuvOh4dv2qVxCWzmlyBMBp9D+PorH8f8dWt9J6RI9ldZ1t7jmPBuYPOiPxu5aN5GeBQ+/i9CC/PACSDUv2tw24ob0SERmX4pnNMoL+xrWvk6VmIdyChpvKsNNP0XU9vqWcOj2JAFNXS7ZfxpjpzoaPENhptmIPooRUhtTPSn+cREGsCdWp+CTLHt4oubejK0DLoNnifMjOK0A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.112.34) smtp.rcpttodomain=baylibre.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7VVd9I5MzFSB5L6x/zPzgdk+ZRUlZH43zbMdpegbcyc=;
+ b=udiACvuE7agtg/RTrP5r7aP/5u1C1mBv3pGhyacTUwDtGsr4RozvG+ocZbqTnWpjcPg1/GyVJ0AoP40iK2PyhRYLsQFBB4HlN1oruG4FIyVlFcxNJBdt+UDi60hBLAbLGG893xRQeP59tyndc5Th6MFNnqeOBA+AU/GHymmrdsSSEPI2GYHVTa+DgGjJTPBlEuJ7swPoi/ifB5wfd7xoflkMn5nhWSkC4j/IByqWLSsZINexKc39+vGvVOmHndXZ0bRbtOAww1dXkb+cnVlxtREjWd03DRj2WEF7dMirWL+lEhU/PBWKoGKl75HKehkNN5jKzHdGJN7vAo9H3G4mDw==
+Received: from BN6PR12CA0029.namprd12.prod.outlook.com (2603:10b6:405:70::15)
+ by CH2PR12MB3975.namprd12.prod.outlook.com (2603:10b6:610:2f::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4628.16; Thu, 21 Oct
+ 2021 12:30:30 +0000
+Received: from BN8NAM11FT003.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:405:70:cafe::c0) by BN6PR12CA0029.outlook.office365.com
+ (2603:10b6:405:70::15) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4628.15 via Frontend
+ Transport; Thu, 21 Oct 2021 12:30:30 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.34)
+ smtp.mailfrom=nvidia.com; baylibre.com; dkim=none (message not signed)
+ header.d=none;baylibre.com; dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.112.34 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.112.34; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (216.228.112.34) by
+ BN8NAM11FT003.mail.protection.outlook.com (10.13.177.90) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.4628.16 via Frontend Transport; Thu, 21 Oct 2021 12:30:29 +0000
+Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Thu, 21 Oct
+ 2021 12:30:27 +0000
+Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Thu, 21 Oct
+ 2021 12:30:26 +0000
+Received: from pshete-ubuntu.nvidia.com (172.20.187.6) by mail.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server id 15.0.1497.18 via Frontend
+ Transport; Thu, 21 Oct 2021 05:30:24 -0700
+From:   Prathamesh Shete <pshete@nvidia.com>
+To:     <linus.walleij@linaro.org>, <bgolaszewski@baylibre.com>,
+        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <linux-gpio@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <smangipudi@nvidia.com>, <pshete@nvidia.com>
+Subject: [PATCH 1/2] dt-bindings: tegra186-gpio: Add Tegra234 ports
+Date:   Thu, 21 Oct 2021 18:00:20 +0530
+Message-ID: <20211021123021.9602-1-pshete@nvidia.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 6b530077-9d41-408b-0389-08d9948e91be
+X-MS-TrafficTypeDiagnostic: CH2PR12MB3975:
+X-Microsoft-Antispam-PRVS: <CH2PR12MB3975C64F9A423E227369168FB7BF9@CH2PR12MB3975.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:4125;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: LnsnnbyZBrOp/oWGNn3ShgEQlaFLFC0Ybw4SkxDr79r64B0eKzbfdQ29hYWcHdvW5/GDgkfD8PGj6YJNwE9mq1HmgAjOTmgJ4p9UqxcUC4fubls4eDuLEIKsYOt6GGjBRJ3kxsMQ1i9ax+PP2/o/uQH2d16yh1+Ji7Yvjafiur3n8+b/xTJQbumG1rv4NNYA86FfAeeuGBb7gKZRCsDPKowqF8Na1P3f1WyRxYwvwdTw4DRVHzdNJTDpKthCbMuxwbHcAyUWX15nhb0jGUyZ9bNHIO1cDTkHX+eUQccTq92NrpgWZTOQ7kCHLEoXwLyI5f+uVRpIrO+yofsDNJXOyEpBOzZQOVnNr+NTB5VWCoV6hYiZeVxnL16566NgU26LHDPzjAPJ4BJ2NqU0LRGC619uAIkWvN1JOncPWeQfSwNtFWrUm2iUZJX6wea5EHhmZ90S2xsu5af7w/KFxIpz5F8EYhrNTp8OCZo8F89nMBSCSjMJDMR3w00hKY6S1EIbF+fcU9rS3nBdy6+T6zTZCzTOcG8v906aj946hyz77BJmYgETezCa/BSisDWbeOUL8DmyPHutiJJ4G+rXEO6PEC4VzPcF8HFhE0oIYJli/Te3c0i4OfidVha8YVRe/7rAlu0em2hk6/nbvzAaDeJk33AlJO6miA+L8A0U5VumAJj2RwOgW7IOPyM/fcxKtioJA4agyvc8wiV/GrNhVmvtdg==
+X-Forefront-Antispam-Report: CIP:216.228.112.34;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid03.nvidia.com;CAT:NONE;SFS:(4636009)(36840700001)(46966006)(5660300002)(316002)(8676002)(356005)(7696005)(70206006)(47076005)(336012)(186003)(36860700001)(26005)(4326008)(110136005)(86362001)(6666004)(2906002)(107886003)(8936002)(70586007)(36756003)(82310400003)(54906003)(426003)(508600001)(2616005)(7636003)(1076003);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Oct 2021 12:30:29.9362
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6b530077-9d41-408b-0389-08d9948e91be
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.34];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT003.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB3975
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Older device-trees don't specify padctrl interrupt and xhci-tegra driver
-now fails to probe with -EINVAL using those device-trees. Check interrupt
-presence and disallow runtime PM suspension if it's missing to fix the
-trouble.
+Add Tegra234 GPIO ports in dt-bindings.
 
-Fixes: 971ee247060d ("usb: xhci: tegra: Enable ELPG for runtime/system PM")
-Reported-by: Nicolas Chauvet <kwizart@gmail.com>
-Tested-by: Nicolas Chauvet <kwizart@gmail.com>
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
 ---
- drivers/usb/host/xhci-tegra.c | 32 +++++++++++++++++++++-----------
- 1 file changed, 21 insertions(+), 11 deletions(-)
+ include/dt-bindings/gpio/tegra234-gpio.h | 59 ++++++++++++++++++++++++
+ 1 file changed, 59 insertions(+)
+ create mode 100644 include/dt-bindings/gpio/tegra234-gpio.h
 
-diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
-index 1bf494b649bd..47927a1df3dc 100644
---- a/drivers/usb/host/xhci-tegra.c
-+++ b/drivers/usb/host/xhci-tegra.c
-@@ -1454,10 +1454,13 @@ static int tegra_xusb_probe(struct platform_device *pdev)
- 		goto put_padctl;
- 	}
- 
--	tegra->padctl_irq = of_irq_get(np, 0);
--	if (tegra->padctl_irq <= 0) {
--		err = (tegra->padctl_irq == 0) ? -ENODEV : tegra->padctl_irq;
--		goto put_padctl;
-+	/* Older device-trees don't specify padctrl interrupt */
-+	if (of_property_read_bool(np, "interrupts")) {
-+		tegra->padctl_irq = of_irq_get(np, 0);
-+		if (tegra->padctl_irq <= 0) {
-+			err = (tegra->padctl_irq == 0) ? -ENODEV : tegra->padctl_irq;
-+			goto put_padctl;
-+		}
- 	}
- 
- 	tegra->host_clk = devm_clk_get(&pdev->dev, "xusb_host");
-@@ -1696,11 +1699,15 @@ static int tegra_xusb_probe(struct platform_device *pdev)
- 		goto remove_usb3;
- 	}
- 
--	err = devm_request_threaded_irq(&pdev->dev, tegra->padctl_irq, NULL, tegra_xusb_padctl_irq,
--					IRQF_ONESHOT, dev_name(&pdev->dev), tegra);
--	if (err < 0) {
--		dev_err(&pdev->dev, "failed to request padctl IRQ: %d\n", err);
--		goto remove_usb3;
-+	if (tegra->padctl_irq) {
-+		err = devm_request_threaded_irq(&pdev->dev, tegra->padctl_irq,
-+						NULL, tegra_xusb_padctl_irq,
-+						IRQF_ONESHOT, dev_name(&pdev->dev),
-+						tegra);
-+		if (err < 0) {
-+			dev_err(&pdev->dev, "failed to request padctl IRQ: %d\n", err);
-+			goto remove_usb3;
-+		}
- 	}
- 
- 	err = tegra_xusb_enable_firmware_messages(tegra);
-@@ -2132,7 +2139,7 @@ static __maybe_unused int tegra_xusb_suspend(struct device *dev)
- 		tegra->suspended = true;
- 		pm_runtime_disable(dev);
- 
--		if (device_may_wakeup(dev)) {
-+		if (device_may_wakeup(dev) && tegra->padctl_irq) {
- 			if (enable_irq_wake(tegra->padctl_irq))
- 				dev_err(dev, "failed to enable padctl wakes\n");
- 		}
-@@ -2161,7 +2168,7 @@ static __maybe_unused int tegra_xusb_resume(struct device *dev)
- 		return err;
- 	}
- 
--	if (device_may_wakeup(dev)) {
-+	if (device_may_wakeup(dev) && tegra->padctl_irq) {
- 		if (disable_irq_wake(tegra->padctl_irq))
- 			dev_err(dev, "failed to disable padctl wakes\n");
- 	}
-@@ -2179,6 +2186,9 @@ static __maybe_unused int tegra_xusb_runtime_suspend(struct device *dev)
- 	struct tegra_xusb *tegra = dev_get_drvdata(dev);
- 	int ret;
- 
-+	if (!tegra->padctl_irq)
-+		return -EOPNOTSUPP;
+diff --git a/include/dt-bindings/gpio/tegra234-gpio.h b/include/dt-bindings/gpio/tegra234-gpio.h
+new file mode 100644
+index 000000000000..0f59afabfe80
+--- /dev/null
++++ b/include/dt-bindings/gpio/tegra234-gpio.h
+@@ -0,0 +1,59 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/* Copyright (c) 2020, NVIDIA CORPORATION. All rights reserved. */
 +
- 	synchronize_irq(tegra->mbox_irq);
- 	mutex_lock(&tegra->lock);
- 	ret = tegra_xusb_enter_elpg(tegra, true);
++/*
++ * This header provides constants for binding nvidia,tegra234-gpio*.
++ *
++ * The first cell in Tegra's GPIO specifier is the GPIO ID. The macros below
++ * provide names for this.
++ *
++ * The second cell contains standard flag values specified in gpio.h.
++ */
++
++#ifndef _DT_BINDINGS_GPIO_TEGRA234_GPIO_H
++#define _DT_BINDINGS_GPIO_TEGRA234_GPIO_H
++
++#include <dt-bindings/gpio/gpio.h>
++
++/* GPIOs implemented by main GPIO controller */
++#define TEGRA234_MAIN_GPIO_PORT_A 0
++#define TEGRA234_MAIN_GPIO_PORT_B 1
++#define TEGRA234_MAIN_GPIO_PORT_C 2
++#define TEGRA234_MAIN_GPIO_PORT_D 3
++#define TEGRA234_MAIN_GPIO_PORT_E 4
++#define TEGRA234_MAIN_GPIO_PORT_F 5
++#define TEGRA234_MAIN_GPIO_PORT_G 6
++#define TEGRA234_MAIN_GPIO_PORT_H 7
++#define TEGRA234_MAIN_GPIO_PORT_I 8
++#define TEGRA234_MAIN_GPIO_PORT_J 9
++#define TEGRA234_MAIN_GPIO_PORT_K 10
++#define TEGRA234_MAIN_GPIO_PORT_L 11
++#define TEGRA234_MAIN_GPIO_PORT_M 12
++#define TEGRA234_MAIN_GPIO_PORT_N 13
++#define TEGRA234_MAIN_GPIO_PORT_P 14
++#define TEGRA234_MAIN_GPIO_PORT_Q 15
++#define TEGRA234_MAIN_GPIO_PORT_R 16
++#define TEGRA234_MAIN_GPIO_PORT_X 17
++#define TEGRA234_MAIN_GPIO_PORT_Y 18
++#define TEGRA234_MAIN_GPIO_PORT_Z 19
++#define TEGRA234_MAIN_GPIO_PORT_AC 20
++#define TEGRA234_MAIN_GPIO_PORT_AD 21
++#define TEGRA234_MAIN_GPIO_PORT_AE 22
++#define TEGRA234_MAIN_GPIO_PORT_AF 23
++#define TEGRA234_MAIN_GPIO_PORT_AG 24
++
++#define TEGRA234_MAIN_GPIO(port, offset) \
++	((TEGRA234_MAIN_GPIO_PORT_##port * 8) + offset)
++
++/* GPIOs implemented by AON GPIO controller */
++#define TEGRA234_AON_GPIO_PORT_AA 0
++#define TEGRA234_AON_GPIO_PORT_BB 1
++#define TEGRA234_AON_GPIO_PORT_CC 2
++#define TEGRA234_AON_GPIO_PORT_DD 3
++#define TEGRA234_AON_GPIO_PORT_EE 4
++#define TEGRA234_AON_GPIO_PORT_GG 5
++
++#define TEGRA234_AON_GPIO(port, offset) \
++	((TEGRA234_AON_GPIO_PORT_##port * 8) + offset)
++
++#endif
 -- 
-2.32.0
+2.17.1
 
