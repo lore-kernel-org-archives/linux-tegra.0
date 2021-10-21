@@ -2,104 +2,110 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15339C433FE
-	for <linux-tegra@archiver.kernel.org>; Thu, 21 Oct 2021 18:33:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B98A3C433F5
+	for <linux-tegra@archiver.kernel.org>; Thu, 21 Oct 2021 19:14:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E8AD86109F
-	for <linux-tegra@archiver.kernel.org>; Thu, 21 Oct 2021 18:33:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9CC3C610EA
+	for <linux-tegra@archiver.kernel.org>; Thu, 21 Oct 2021 19:14:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231216AbhJUSgF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 21 Oct 2021 14:36:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40518 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232223AbhJUSgC (ORCPT
+        id S231858AbhJUTRO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 21 Oct 2021 15:17:14 -0400
+Received: from netrider.rowland.org ([192.131.102.5]:47033 "HELO
+        netrider.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S231862AbhJUTRN (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 21 Oct 2021 14:36:02 -0400
-Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1BAAC061348;
-        Thu, 21 Oct 2021 11:33:45 -0700 (PDT)
-Received: by mail-lj1-x22c.google.com with SMTP id o11so808026ljg.10;
-        Thu, 21 Oct 2021 11:33:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=KmzJ7Fldl3+PHFFkx5m6zHtzRZgb1z6Rpjy5yivMyhk=;
-        b=SsRjBzuzNgZK0pi5JPfQQS1rBrw3o5x5SSvhGTzCm5gvBiq5w7uxf6W+/jWPecNv4z
-         CiHuIPQbw3LWsqmex1c8jdEBcJbXDykbM6yhLe8PKAoMrPGLUSQuXZ0oWbb/rToDyH5l
-         1YnQeYy1muWraB4CqDPsvyQn+QypeCO4bRXhT5S6zfneEGfAEsHXbODWRYxdAy3pjxBT
-         8NzJQ54TJhlAVgWR3u+mXaj1MaejaSgct+bk0vfETHC7tV5pZURg48x43Hy9L9gi1QA8
-         4v+VZPlSPSzwgztXdsMCzFaUGy5RXQjfbJ9/NbGe12XQDTn1wMfeTNqY58vKTo6bT1Iu
-         zGTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=KmzJ7Fldl3+PHFFkx5m6zHtzRZgb1z6Rpjy5yivMyhk=;
-        b=cYN5pmp/DACcP7oBHg4Se/WuO5aFfI9gjnU2e5G3Y9T3ochzbwG5SrDzz1eroVJGjL
-         ygpZsZcS2bTh9GMe9m9KdOw33EJf3Rwr5oSW0TJ/eR67Dng5qVGSkz2pjaKaSD+/VL9l
-         1qYZJ9HpuX49OGX4B4M9e/Co8iNpRC3d7e36moDiptJFcMQTc/XPpFEmxYQVsDbe4MO9
-         MLNQlXVYudbCBq3ecRGGnkbYxi1ACKd3spPxBGZBYg/z6qlS6Za9zEE3cc6X6t0n1HmU
-         Yqxd7dXwLrU+AgKTbCpMb9xjAacVGl7XawE6dkv1pURejyFbhbP1kHy6d6gYdnzQbKxt
-         1UUg==
-X-Gm-Message-State: AOAM533r9a2Myf8OM76IQhFhNjoVMGI3HYjPKRjap4RRX/rIo3gzBVLx
-        a6DrnFi7oCca4JS/ljBxBow=
-X-Google-Smtp-Source: ABdhPJxyjpATbRFufA6DS49KfB6fTMpZpQf4+tLYIocvMyAHTd+KAnU0/c/IwTO1HpWe/KfuInyXYw==
-X-Received: by 2002:a2e:a364:: with SMTP id i4mr7829985ljn.326.1634841224114;
-        Thu, 21 Oct 2021 11:33:44 -0700 (PDT)
-Received: from localhost.localdomain (94-29-61-202.dynamic.spd-mgts.ru. [94.29.61.202])
-        by smtp.gmail.com with ESMTPSA id e29sm520894lfc.141.2021.10.21.11.33.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Oct 2021 11:33:43 -0700 (PDT)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <treding@nvidia.com>,
+        Thu, 21 Oct 2021 15:17:13 -0400
+Received: (qmail 1170333 invoked by uid 1000); 21 Oct 2021 15:14:52 -0400
+Date:   Thu, 21 Oct 2021 15:14:52 -0400
+From:   Alan Stern <stern@rowland.harvard.edu>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Thierry Reding <treding@nvidia.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Mark Brown <broonie@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: [PATCH v2] regulator: Don't error out fixed regulator in regulator_sync_voltage()
-Date:   Thu, 21 Oct 2021 21:33:08 +0300
-Message-Id: <20211021183308.27786-1-digetx@gmail.com>
-X-Mailer: git-send-email 2.32.0
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mathias Nyman <mathias.nyman@intel.com>,
+        JC Kuo <jckuo@nvidia.com>, Nicolas Chauvet <kwizart@gmail.com>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v1] usb: xhci: tegra: Check padctrl interrupt presence in
+ device tree
+Message-ID: <20211021191452.GA1170019@rowland.harvard.edu>
+References: <20211021115501.14932-1-digetx@gmail.com>
+ <YXFyu+Q5ifG8Au9w@orome.fritz.box>
+ <5f122caa-c810-534d-b2a1-53edef313ff0@gmail.com>
+ <32694811-8768-8e77-f188-4ed1a1fb93da@gmail.com>
+ <20211021152028.GB1161262@rowland.harvard.edu>
+ <82a02e70-33bc-7faf-e085-a25884e48844@gmail.com>
+ <44567c4f-0f0f-6995-b48f-c427cedb6755@gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <44567c4f-0f0f-6995-b48f-c427cedb6755@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Fixed regulator can't change voltage and regulator_sync_voltage()
-returns -EINVAL in this case. Make regulator_sync_voltage() to succeed
-for regulators that are incapable to change voltage.
+On Thu, Oct 21, 2021 at 08:16:40PM +0300, Dmitry Osipenko wrote:
+> 21.10.2021 20:13, Dmitry Osipenko пишет:
+> > 21.10.2021 18:20, Alan Stern пишет:
+> >> On Thu, Oct 21, 2021 at 06:08:41PM +0300, Dmitry Osipenko wrote:
+> >>> 21.10.2021 17:57, Dmitry Osipenko пишет:
+> >>>> It might be wrong to disable device_may_wakeup() because it will change
+> >>>> the system suspend-resume behaviour, i.e. you won't be able to resume by
+> >>>> USB event, see [1].
+> >>>>
+> >>>> [1]
+> >>>> https://elixir.bootlin.com/linux/v5.15-rc6/source/drivers/usb/host/xhci-tegra.c#L1962
+> >>>>
+> >>>> Although, I'm not sure whether this is a correct behaviour to start
+> >>>> with. Previously, before the offending commit, device_wakeup was never
+> >>>> enabled for tegra-xusb. Commit message doesn't explain why wakeup is now
+> >>>> enabled unconditionally, wakeup checks aren't needed at all then. This
+> >>>> makes no sense, please check it with JC Kuo.
+> >>>
+> >>> Although, wakeup could be disabled via sysfs, so it makes sense. Still
+> >>> it's not clear whether it's a correct behaviour to enable wakeup during
+> >>> system suspend by default. If it wakes machine from suspend when USB
+> >>> device is plugged/unplugged, then it's a wrong behaviour.
+> >>
+> >> It depends on the details of how the device works.  In most cases we do 
+> >> want to enable wakeup by default for host controller devices.  The 
+> >> reason is simple enough: If some USB device attached to the HC is 
+> >> enabled for wakeup and sends a wakeup request, we don't want the request 
+> >> to get lost because the HC isn't allowed to forward the request on to 
+> >> the CPU.
+> >>
+> >> But we do not want to enable wakeup for root hubs.  In particular, we 
+> >> don't want to wake up a suspended system merely because a USB device has 
+> >> been plugged or unplugged.
+> >>
+> >> Clearly this arrangement depends on the hardware making a distinction 
+> >> between wakeup requests originating from the root hub and those simply 
+> >> passing through the HC.
+> > 
+> > Should USB keyboard be able to wake up every HC or it's a
+> > machine-specific feature?
+> 
+> I mean whether key press should wake up HC if wake-up is enabled for the
+> keyboard device.
 
-On NVIDIA Tegra power management driver needs to sync voltage and we have
-one device (Trimslice) that uses fixed regulator which is getting synced.
-The syncing error isn't treated as fatal, but produces a noisy error
-message. This patch silences that error.
+Yes, it should.  More specifically, if the keyboard is capable of 
+generating wakeup requests, and wakeup is enabled for both the keyboard 
+device and the HC, then the keyboard should be able to wake up the 
+system from suspend.  Some HCs or systems might not support this 
+capability, however.
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
+> > I'm asking because wakeup works on a typical
+> > Intel hardware, but doesn't work on older Tegra SoCs that use Chipidea
+> > controller. It's not obvious to me whether this is something that
+> > firmware handles for Intel or it's broken on Tegra. Could you please
+> > clarify? If it should work for every HC, then I may try to take a closer
+> > look.
 
-Changelog:
+If the hardware/firmware can support it then it should work.  I don't 
+know what's going on with your older Tegra SoCs; it's possible there is 
+a bug in the driver.
 
-v2: - Check regulator's voltage-change capability instead of checking
-      whether it's a fixed regulator.
-
- drivers/regulator/core.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index 26bee444fc70..86aa4141efa9 100644
---- a/drivers/regulator/core.c
-+++ b/drivers/regulator/core.c
-@@ -4249,6 +4249,9 @@ int regulator_sync_voltage(struct regulator *regulator)
- 	struct regulator_voltage *voltage = &regulator->voltage[PM_SUSPEND_ON];
- 	int ret, min_uV, max_uV;
- 
-+	if (!regulator_ops_is_valid(rdev, REGULATOR_CHANGE_VOLTAGE))
-+		return 0;
-+
- 	regulator_lock(rdev);
- 
- 	if (!rdev->desc->ops->set_voltage &&
--- 
-2.32.0
-
+Alan Stern
