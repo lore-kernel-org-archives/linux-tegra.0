@@ -2,110 +2,94 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6322C4332F
-	for <linux-tegra@archiver.kernel.org>; Thu, 21 Oct 2021 09:10:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22198C433EF
+	for <linux-tegra@archiver.kernel.org>; Thu, 21 Oct 2021 09:19:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8FE9F61183
-	for <linux-tegra@archiver.kernel.org>; Thu, 21 Oct 2021 09:10:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF1A061052
+	for <linux-tegra@archiver.kernel.org>; Thu, 21 Oct 2021 09:19:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231336AbhJUJMP (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 21 Oct 2021 05:12:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49568 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231153AbhJUJMP (ORCPT
+        id S231326AbhJUJV4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 21 Oct 2021 05:21:56 -0400
+Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:44256
+        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231321AbhJUJV4 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 21 Oct 2021 05:12:15 -0400
-Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F0D9C06161C;
-        Thu, 21 Oct 2021 02:09:59 -0700 (PDT)
-Received: by mail-lj1-x22b.google.com with SMTP id o11so422229ljg.10;
-        Thu, 21 Oct 2021 02:09:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=B2/DWXCeFbHX/OGE3yyFkSIIERoFalVJHY7XHc7ZSkM=;
-        b=N+nQfJeeZylX1aKOGQqy+fn8zDXOpedwLRHwLl8mN6COKHer7edfyLyInnS2TQ7bhA
-         KAvKSQlVwx0s9BwBRKCp5hMsIX351DIBeAvXac6l3dzl3HKY0BTeLGBGVAqxn1iptpXQ
-         OsE1f+PKrmNtew+x5M8x8uUus6Q+QmujQTraY5Sn39D3wqErDYS4SHI7Ir/Q613xfyUN
-         zGrlxAc1PLjB+IphvRt2tJsNTYjvpvaJFJxcijhgyQQGj1t4+saM0ljOwWvJTCHPev9p
-         F7j559hrPE/z14VNT5HARPza40W/7u4TMFX+FEaMqEkSq9XpzmRwdhbuiH0yhUILuFEE
-         rkew==
+        Thu, 21 Oct 2021 05:21:56 -0400
+Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com [209.85.167.72])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id D941F3FFF3
+        for <linux-tegra@vger.kernel.org>; Thu, 21 Oct 2021 09:19:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1634807979;
+        bh=/HhisqVm7ErOFfWC76qHpvI3z/SiF8V4VeJo7KglsS4=;
+        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+         MIME-Version:Content-Type;
+        b=bhnnia1v4hyhShqI2/oEnNwGHMSZDzlGHbx0pXZTsgvvJTi+2KG3qBNarScG+jPpY
+         Md980FtoUC5nFpRwYg5fcSoP9dM4nRRv5kYMQ9ayZ2HmRskvZYDpR4b4ThEqFWSl+M
+         3r62gitibWOAYgWk+QdumqYQaNetw4rNEEusffLaDKoniNvopsEZO6YhEh6GEgEeVp
+         8Oozkbb6Kjj9NpipSt7TC/OU46XYMZakz32It1jUQjx84iVJK8w5EzjAj3eSl6CQzD
+         b0lTR8oC+05Z3P4y6hpnJKIAeHySjDzUSu6G6jwqOfYekj1H1v4vC6fCWv+JWiR8zq
+         U/aN8edEZnbCg==
+Received: by mail-lf1-f72.google.com with SMTP id z18-20020a0565120c1200b003fd76d7ca21so4362032lfu.13
+        for <linux-tegra@vger.kernel.org>; Thu, 21 Oct 2021 02:19:39 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=B2/DWXCeFbHX/OGE3yyFkSIIERoFalVJHY7XHc7ZSkM=;
-        b=AZDHdTD7ZDIuog3kxw7Z4YsXlBQvAtU9wl2FNhFuFtXkYKR3meMwylECotNrcmrftO
-         gFE8fLIpIAgxSPOh9LLSIXLPV9xHb1Dk2aJoYIfg+Rw8oG0Vcaj0OJxV7FxJjnlJGW5Q
-         aJ4InhjmS4kSYarGxLYtVKTTZpTKxGbrp/Xg6yAVnGgxN1+OUxmeiXd5nZJiiZbZJRJk
-         meIVI1UzhhXwckZXNNzVirYzeM91p9nx8DQaNrrgkqENj6kzU+TCDVVzbqh2pmsw7aZS
-         lLZgPjOLwUgMlSqikPT+JLvLexdbwBxodc6iJQA+3lqGO3XvP1spxshw96bGgxM7sPad
-         zlbA==
-X-Gm-Message-State: AOAM5325W8Px4Vd3VuOlgvWqqDn4752I+SSwi2zHPMvyPAc4WQmZfjGH
-        HV8zdzpd8ZfhE0TEhrIl4yuibyt7WmY=
-X-Google-Smtp-Source: ABdhPJw2MM9A4EcWFlzTMKCL/297o/tlDH8gXWYhn54HzIhZKFnLpIElx+fol1uRYlkg6b4x9A44ig==
-X-Received: by 2002:a2e:750e:: with SMTP id q14mr4676979ljc.338.1634807397388;
-        Thu, 21 Oct 2021 02:09:57 -0700 (PDT)
-Received: from [192.168.2.145] (94-29-39-10.dynamic.spd-mgts.ru. [94.29.39.10])
-        by smtp.googlemail.com with ESMTPSA id p18sm475713ljc.114.2021.10.21.02.09.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 Oct 2021 02:09:56 -0700 (PDT)
-Subject: Re: [PATCH 22/22] usb: host: xhci-tegra: deny IRQ0
-To:     Sergey Shtylyov <s.shtylyov@omp.ru>, linux-usb@vger.kernel.org,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-tegra@vger.kernel.org
-References: <20211018183930.8448-1-s.shtylyov@omp.ru>
- <20211018183930.8448-23-s.shtylyov@omp.ru>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <415d1410-5b5f-3de4-1973-998528481c0f@gmail.com>
-Date:   Thu, 21 Oct 2021 12:09:56 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=/HhisqVm7ErOFfWC76qHpvI3z/SiF8V4VeJo7KglsS4=;
+        b=kZ2c9lZxZfMe60iHNYAff3ICt5gSGqJkzUF1E6A+rf3wlv1St9FtmOY/WfC0x8DkzP
+         zuqLCbP1dvTujN22PeOOUgmi0P3tuuFtjriSOo274ychpLDq//lm4NmN+zFr5o+N5LrC
+         pSjhJK+cmaT+uplCzdmnVjkhKAf6UDhhjnxn9E33SJnzQmgKA53XAvmuTERrZAfl2KbR
+         oC7VH64K14P19x81d3u5w9QqQEnhgpURqJXetLuJ9FAvThuPhg/ilOYweogF6XRPCure
+         XdmVk4Tm5+flSCIc7+BjXL/HxvlCr+aqj++V9Qgm5QGHhEfpBqJ0GwK3fHDZchiar/Fr
+         fHgQ==
+X-Gm-Message-State: AOAM532/8Ta6H8Hz/VyrXMc9QIYmDyAncqsJ234/weGOU/T3W71b2741
+        varCnTQyaRsAXDkGLe5WM0ZUhfZw0o2duES3zw28cF2NA+HPPuhckb4/QFlS/Cf8W65kSc0anmL
+        yTX9qz14kSvEXVXZb0DCH4C1EXET1L6rFHB9vUehB
+X-Received: by 2002:a2e:b690:: with SMTP id l16mr4659206ljo.112.1634807979277;
+        Thu, 21 Oct 2021 02:19:39 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJwdzRKJjtYj2xHphNZ4bIpTswp0KtXkQNgkEirsg/0cvp1UuxKjql3APB0/TtZWJcS+F+gEnA==
+X-Received: by 2002:a2e:b690:: with SMTP id l16mr4659192ljo.112.1634807979122;
+        Thu, 21 Oct 2021 02:19:39 -0700 (PDT)
+Received: from kozik-lap.lan (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
+        by smtp.gmail.com with ESMTPSA id r15sm106713ljp.88.2021.10.21.02.19.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Oct 2021 02:19:38 -0700 (PDT)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+To:     Nicolas Chauvet <kwizart@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] memory: tegra20-emc: Add runtime dependency on devfreq governor module
+Date:   Thu, 21 Oct 2021 11:19:36 +0200
+Message-Id: <163480797353.116816.12374753555350703241.b4-ty@canonical.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20211019231524.888-1-digetx@gmail.com>
+References: <20211019231524.888-1-digetx@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20211018183930.8448-23-s.shtylyov@omp.ru>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-18.10.2021 21:39, Sergey Shtylyov пишет:
-> If platform_get_irq() returns IRQ0 (considered invalid according to Linus)
-> the driver blithely passes it to usb_add_hcd() that treats IRQ0 as no IRQ
-> at all. Deny IRQ0 right away, returning -EINVAL from the probe() method...
+On Wed, 20 Oct 2021 02:15:24 +0300, Dmitry Osipenko wrote:
+> Tegra20 EMC driver uses simple devfreq governor. Add simple devfreq
+> governor to the list of the Tegra20 EMC driver module softdeps to allow
+> userspace initramfs tools like dracut to automatically pull the devfreq
+> module into ramfs image together with the EMC module.
 > 
-> Fixes: e84fce0f8837 ("usb: xhci: Add NVIDIA Tegra XUSB controller driver")
-> Signed-off-by: Sergey Shtylyov <s.shtylyov@omp.ru>
-> ---
->  drivers/usb/host/xhci-tegra.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
-> index 1bf494b649bd..7151b1d4f876 100644
-> --- a/drivers/usb/host/xhci-tegra.c
-> +++ b/drivers/usb/host/xhci-tegra.c
-> @@ -1439,6 +1439,8 @@ static int tegra_xusb_probe(struct platform_device *pdev)
->  	tegra->xhci_irq = platform_get_irq(pdev, 0);
->  	if (tegra->xhci_irq < 0)
->  		return tegra->xhci_irq;
-> +	if (!tegra->xhci_irq)
-> +		return -ENIVAL;
->  
->  	tegra->mbox_irq = platform_get_irq(pdev, 1);
->  	if (tegra->mbox_irq < 0)
 > 
 
-platform_get_irq() never returns zero in accordance to [1], but I see
-that it can return it [2]. Should be better to fix [2] and return -EINVAL.
+Applied, thanks!
 
-[1]
-https://elixir.bootlin.com/linux/v5.15-rc6/source/drivers/base/platform.c#L254
+[1/1] memory: tegra20-emc: Add runtime dependency on devfreq governor module
+      commit: 14b43c20c283de36131da0cb44f3170b9ffa7630
 
-[2]
-https://elixir.bootlin.com/linux/v5.15-rc6/source/drivers/base/platform.c#L226
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
