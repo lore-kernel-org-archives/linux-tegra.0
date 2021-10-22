@@ -2,134 +2,98 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75E0BC4332F
-	for <linux-tegra@archiver.kernel.org>; Fri, 22 Oct 2021 09:35:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69724C433EF
+	for <linux-tegra@archiver.kernel.org>; Fri, 22 Oct 2021 11:36:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5E47B61163
-	for <linux-tegra@archiver.kernel.org>; Fri, 22 Oct 2021 09:35:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5218C60FE7
+	for <linux-tegra@archiver.kernel.org>; Fri, 22 Oct 2021 11:36:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231563AbhJVJh5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 22 Oct 2021 05:37:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44664 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229545AbhJVJh5 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 22 Oct 2021 05:37:57 -0400
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1F3BC061764;
-        Fri, 22 Oct 2021 02:35:39 -0700 (PDT)
-Received: by mail-lf1-x132.google.com with SMTP id t9so1260157lfd.1;
-        Fri, 22 Oct 2021 02:35:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=0l4MQzSwkdGxy2ppxiCW5Dsfgm74PP5ogUQqLKW3vJg=;
-        b=gNkYbMzFFsjcC6xEuuDMBSwcDE9B5Bj6NOmfd0ZiujPlWZsiwbqLtX6G4l/bOC8uRQ
-         jnjyoMijkDezlz/nnD122dbAvTUiPt9W71vgtZCbosRynih0xU63vkJTI1MhVCMTQWuU
-         pSd42Cil36KvXUCja99g5A50V8LS60TubUo+hapcoUKSmTD9JoqzM83AQQO3JPPKrUXt
-         rGH9xogtEv1hjF1Ya5tr+xNORqHVSpeb8hY0r/j2grG9rh6947jDvK3prfmNmsBrCbZj
-         umzMHLoiwEjB2z3rjLYnCUlx9Slw2x8XQcVD8vdVqA6f6YP6R21qXzSqCy00PXEUX6lE
-         8oww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=0l4MQzSwkdGxy2ppxiCW5Dsfgm74PP5ogUQqLKW3vJg=;
-        b=6Q+bbTqBYCdrw8ODeIsxl5idGkI7D5/9N6jLHFxLjDlUGmLaTNXfgxtzRzN8IRcGcL
-         mnF8/7/x8y5uyEiylpnEqTYOlPSjGCu1ClV69lQDnMdH1EcrK/lurCJtOPRq2fnmoLLY
-         1ucYC9Eyzq1ZeoUO4pjQxLA8rqN/gOOxkxZO/nw7rUAq2yRPTN2eHFBFQX5uFMfvygX+
-         +sXRBSMWDXbYj58KpQ6b4EVRF344jwPHkcQAqqKaihsyD/VZg6Af971z5WPOBf0bq/nP
-         NxqykVaSqGzW6jrfA7sRVxdg3YYhQiuffbv+gZ3otDnKtq4lMRfMD8sErfUm3Fa7Pnej
-         imDw==
-X-Gm-Message-State: AOAM532+BusBQwLqtracef7lbd1s6zUGFERyQPyvXS8z2NGIYKT5bndC
-        NOL/XOeqSj4TSjTFZojbWM9en98gqfc=
-X-Google-Smtp-Source: ABdhPJxkPtWyKpFEIkNqU0DOqb3wcrVzrx69BUxDv6IXvsamp9jkOpG6g7KqNsRw6koW80rTQED63g==
-X-Received: by 2002:a05:6512:3da9:: with SMTP id k41mr10668488lfv.359.1634895338103;
-        Fri, 22 Oct 2021 02:35:38 -0700 (PDT)
-Received: from [192.168.2.145] (94-29-61-202.dynamic.spd-mgts.ru. [94.29.61.202])
-        by smtp.googlemail.com with ESMTPSA id l9sm685749lfh.36.2021.10.22.02.35.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 22 Oct 2021 02:35:37 -0700 (PDT)
-Subject: Re: [PATCH v1] usb: xhci: tegra: Check padctrl interrupt presence in
- device tree
-To:     =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
-Cc:     Thierry Reding <treding@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mathias Nyman <mathias.nyman@intel.com>,
-        JC Kuo <jckuo@nvidia.com>, Nicolas Chauvet <kwizart@gmail.com>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-References: <20211021115501.14932-1-digetx@gmail.com>
- <YXHdoFAgGlxoI0Jx@qmqm.qmqm.pl>
- <29b38423-631e-192e-b006-aa0d258c8030@gmail.com>
- <YXHmOT+inPg7as0x@qmqm.qmqm.pl>
- <0a48c38e-1841-0dc9-473e-5dbe67ce04d5@gmail.com>
- <YXKEZyweVxvNyl8K@qmqm.qmqm.pl>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <2e40f008-7a46-e6ec-a2d5-a5e6501bff78@gmail.com>
-Date:   Fri, 22 Oct 2021 12:35:37 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        id S232736AbhJVLjM (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 22 Oct 2021 07:39:12 -0400
+Received: from ip-8.mailobj.net ([213.182.54.8]:42534 "EHLO msg-3.mailo.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232539AbhJVLjM (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Fri, 22 Oct 2021 07:39:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=net-c.es; s=mailo;
+        t=1634898358; bh=qXTIz9NUZOX9AJLI0EfpCFCuPKutlkzQauklWJ1ZdII=;
+        h=X-EA-Auth:Date:From:To:Cc:Subject:Message-ID:References:
+         MIME-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To;
+        b=CDMwG+cYraiCkOvqWNoXRIOQdd1SKnLC6HrdHC95WxmidMkx+VnAsy2hnJqIKzTzu
+         FEtdjZUf6XU2V9+66nVczdfj8AX/zERhEb1ooKV1f1ToGqd9ubuQgXMALLiCPlSACK
+         XGc2B/eNeFQHv6UGVfpbYVPnwzAUmBX65vye7TSQ=
+Received: by b-6.in.mailobj.net [192.168.90.16] with ESMTP
+        via ip-206.mailobj.net [213.182.55.206]
+        Fri, 22 Oct 2021 12:25:37 +0200 (CEST)
+X-EA-Auth: ZUkw32usS9GpQ95qw4isUA4Qn5D5k42ZU4ER4OtDUnr2ExZFz+AjbHpLkWo4vIllva24n6AgDPqBGMsl893/BqHzRs7jwkE6
+Date:   Fri, 22 Oct 2021 12:25:33 +0200
+From:   Claudio Suarez <cssk@net-c.es>
+To:     Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+Cc:     dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+        linux-tegra@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        Pan Xinhui <Xinhui.Pan@amd.com>, Emma Anholt <emma@anholt.net>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+        Chen-Yu Tsai <wens@csie.org>, Sandy Huang <hjc@rock-chips.com>,
+        heiko@sntech.de, Neil Armstrong <narmstrong@baylibre.com>,
+        Robert Foss <robert.foss@linaro.org>,
+        Ben Skeggs <bskeggs@redhat.com>, nouveau@lists.freedesktop.org
+Subject: Re: [PATCH v3 13/13] drm/i915: replace drm_detect_hdmi_monitor()
+ with drm_display_info.is_hdmi
+Message-ID: <YXKRnUHWuboQKBF1@zorro.micasa>
+References: <20211016184226.3862-1-cssk@net-c.es>
+ <20211016184226.3862-14-cssk@net-c.es>
+ <YW8QYsmkm3ZrBAx3@intel.com>
+ <YW9L6d7e+RO29VJu@gineta.localdomain>
+ <YXFwB7rN4bvR0Z+m@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <YXKEZyweVxvNyl8K@qmqm.qmqm.pl>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <YXFwB7rN4bvR0Z+m@intel.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-22.10.2021 12:29, Michał Mirosław пишет:
-> On Fri, Oct 22, 2021 at 08:58:02AM +0300, Dmitry Osipenko wrote:
->> 22.10.2021 01:14, Michał Mirosław пишет:
->>> On Fri, Oct 22, 2021 at 12:46:23AM +0300, Dmitry Osipenko wrote:
->>>> 22.10.2021 00:37, Michał Mirosław пишет:
->>>>> On Thu, Oct 21, 2021 at 02:55:01PM +0300, Dmitry Osipenko wrote:
->>>>>> Older device-trees don't specify padctrl interrupt and xhci-tegra driver
->>>>>> now fails to probe with -EINVAL using those device-trees. Check interrupt
->>>>>> presence and disallow runtime PM suspension if it's missing to fix the
->>>>>> trouble.
->>>>> [...]
->>>>>> --- a/drivers/usb/host/xhci-tegra.c
->>>>>> +++ b/drivers/usb/host/xhci-tegra.c
->>>>>> @@ -1454,10 +1454,13 @@ static int tegra_xusb_probe(struct platform_device *pdev)
->>>>>>  		goto put_padctl;
->>>>>>  	}
->>>>>>  
->>>>>> -	tegra->padctl_irq = of_irq_get(np, 0);
->>>>>> -	if (tegra->padctl_irq <= 0) {
->>>>>> -		err = (tegra->padctl_irq == 0) ? -ENODEV : tegra->padctl_irq;
->>>>>> -		goto put_padctl;
->>>>>> +	/* Older device-trees don't specify padctrl interrupt */
->>>>>> +	if (of_property_read_bool(np, "interrupts")) {
->>>>>
->>>>> Does this catch "interrupts-extended"?
->>>>
->>>> No, Tegra doesn't use interrupts-extended.
->>>
->>> I believe it is generic and equivalent to "interrupt-parent" +
->>> "interrupts" properties, so people might as well put this in
->>> the DT to save (or loose) a few bytes.
->>>
->>> You could just check if of_irq_get() returned -EINVAL instead of
->>> matching "interrupts" property.
->>
->> It should be a bad idea to rely on -EINVAL since it's ambiguous error code.
->>
->> Perhaps it's fine to assume that today of_irq_get() may only return
->> -EINVAL in a case of a missing DT property, but then it should be two
->> patches here:
->>
->> 1. Use -EINVAL and backport this fix to stable kernel.
->> 2. Change of_irq_get() to return -ENOENT for a missing property and
->> change tegra_xusb_probe() accordingly.
+On Thu, Oct 21, 2021 at 04:49:59PM +0300, Ville Syrj�l� wrote:
+> On Wed, Oct 20, 2021 at 12:51:21AM +0200, Claudio Suarez wrote:
+> > drm_get_edid() internally calls to drm_connector_update_edid_property()
+> > and then drm_add_display_info(), which parses the EDID.
+> > This happens in the function intel_hdmi_set_edid() and
+> > intel_sdvo_tmds_sink_detect() (via intel_sdvo_get_edid()).
+> > 
+> > Once EDID is parsed, the monitor HDMI support information is available
+> > through drm_display_info.is_hdmi. Retriving the same information with
+> > drm_detect_hdmi_monitor() is less efficient. Change to
+> > drm_display_info.is_hdmi
 > 
-> I would love to see the part 2 done, but I'm afraid you will need to
-> change a lot of callsites before that can happen.
+> I meant we need to examine all call chains that can lead to
+> .detect() to make sure all of them do in fact update the
+> display_info beforehand.
 
-At a quick glance there are only couple drivers which explicitly check
-for -EINVAL, others only check whether returned value is negative. Seems
-not that bad.
+Well, I studied it carefully and, yes, all call chains that can lead to
+drm_display_info.is_hdmi / drm_detect_hdmi_monitor() update display_info
+beforehand. In the case that this doesn't happen, the code is unchanged.
+
+Do you want I explain the changes in the code here again ? Or do you want
+to me change the commit message to be more clear ? In the first case, I can
+write here a detailed explanation. In the second case I can make a longer commit
+message.
+
+Or both?
+
+Best Regards,
+Claudio Suarez.
+
+
