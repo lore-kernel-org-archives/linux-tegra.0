@@ -2,32 +2,32 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69724C433EF
-	for <linux-tegra@archiver.kernel.org>; Fri, 22 Oct 2021 11:36:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8C8EC433FE
+	for <linux-tegra@archiver.kernel.org>; Fri, 22 Oct 2021 12:02:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5218C60FE7
-	for <linux-tegra@archiver.kernel.org>; Fri, 22 Oct 2021 11:36:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BC96A60560
+	for <linux-tegra@archiver.kernel.org>; Fri, 22 Oct 2021 12:02:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232736AbhJVLjM (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 22 Oct 2021 07:39:12 -0400
-Received: from ip-8.mailobj.net ([213.182.54.8]:42534 "EHLO msg-3.mailo.com"
+        id S230105AbhJVMEU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 22 Oct 2021 08:04:20 -0400
+Received: from mga14.intel.com ([192.55.52.115]:32750 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232539AbhJVLjM (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 22 Oct 2021 07:39:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=net-c.es; s=mailo;
-        t=1634898358; bh=qXTIz9NUZOX9AJLI0EfpCFCuPKutlkzQauklWJ1ZdII=;
-        h=X-EA-Auth:Date:From:To:Cc:Subject:Message-ID:References:
-         MIME-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To;
-        b=CDMwG+cYraiCkOvqWNoXRIOQdd1SKnLC6HrdHC95WxmidMkx+VnAsy2hnJqIKzTzu
-         FEtdjZUf6XU2V9+66nVczdfj8AX/zERhEb1ooKV1f1ToGqd9ubuQgXMALLiCPlSACK
-         XGc2B/eNeFQHv6UGVfpbYVPnwzAUmBX65vye7TSQ=
-Received: by b-6.in.mailobj.net [192.168.90.16] with ESMTP
-        via ip-206.mailobj.net [213.182.55.206]
-        Fri, 22 Oct 2021 12:25:37 +0200 (CEST)
-X-EA-Auth: ZUkw32usS9GpQ95qw4isUA4Qn5D5k42ZU4ER4OtDUnr2ExZFz+AjbHpLkWo4vIllva24n6AgDPqBGMsl893/BqHzRs7jwkE6
-Date:   Fri, 22 Oct 2021 12:25:33 +0200
-From:   Claudio Suarez <cssk@net-c.es>
-To:     Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+        id S229771AbhJVMET (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Fri, 22 Oct 2021 08:04:19 -0400
+X-IronPort-AV: E=McAfee;i="6200,9189,10144"; a="229559407"
+X-IronPort-AV: E=Sophos;i="5.87,172,1631602800"; 
+   d="scan'208";a="229559407"
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2021 05:02:01 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.87,172,1631602800"; 
+   d="scan'208";a="464025771"
+Received: from stinkbox.fi.intel.com (HELO stinkbox) ([10.237.72.171])
+  by orsmga002.jf.intel.com with SMTP; 22 Oct 2021 05:01:52 -0700
+Received: by stinkbox (sSMTP sendmail emulation); Fri, 22 Oct 2021 15:01:52 +0300
+Date:   Fri, 22 Oct 2021 15:01:52 +0300
+From:   Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+To:     Claudio Suarez <cssk@net-c.es>
 Cc:     dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
         linux-tegra@vger.kernel.org, intel-gfx@lists.freedesktop.org,
         David Airlie <airlied@linux.ie>,
@@ -51,49 +51,55 @@ Cc:     dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
         Ben Skeggs <bskeggs@redhat.com>, nouveau@lists.freedesktop.org
 Subject: Re: [PATCH v3 13/13] drm/i915: replace drm_detect_hdmi_monitor()
  with drm_display_info.is_hdmi
-Message-ID: <YXKRnUHWuboQKBF1@zorro.micasa>
+Message-ID: <YXKoMEF/gU98cL9n@intel.com>
 References: <20211016184226.3862-1-cssk@net-c.es>
  <20211016184226.3862-14-cssk@net-c.es>
  <YW8QYsmkm3ZrBAx3@intel.com>
  <YW9L6d7e+RO29VJu@gineta.localdomain>
  <YXFwB7rN4bvR0Z+m@intel.com>
+ <YXKRnUHWuboQKBF1@zorro.micasa>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <YXFwB7rN4bvR0Z+m@intel.com>
+In-Reply-To: <YXKRnUHWuboQKBF1@zorro.micasa>
+X-Patchwork-Hint: comment
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, Oct 21, 2021 at 04:49:59PM +0300, Ville Syrjälä wrote:
-> On Wed, Oct 20, 2021 at 12:51:21AM +0200, Claudio Suarez wrote:
-> > drm_get_edid() internally calls to drm_connector_update_edid_property()
-> > and then drm_add_display_info(), which parses the EDID.
-> > This happens in the function intel_hdmi_set_edid() and
-> > intel_sdvo_tmds_sink_detect() (via intel_sdvo_get_edid()).
+On Fri, Oct 22, 2021 at 12:25:33PM +0200, Claudio Suarez wrote:
+> On Thu, Oct 21, 2021 at 04:49:59PM +0300, Ville Syrjälä wrote:
+> > On Wed, Oct 20, 2021 at 12:51:21AM +0200, Claudio Suarez wrote:
+> > > drm_get_edid() internally calls to drm_connector_update_edid_property()
+> > > and then drm_add_display_info(), which parses the EDID.
+> > > This happens in the function intel_hdmi_set_edid() and
+> > > intel_sdvo_tmds_sink_detect() (via intel_sdvo_get_edid()).
+> > > 
+> > > Once EDID is parsed, the monitor HDMI support information is available
+> > > through drm_display_info.is_hdmi. Retriving the same information with
+> > > drm_detect_hdmi_monitor() is less efficient. Change to
+> > > drm_display_info.is_hdmi
 > > 
-> > Once EDID is parsed, the monitor HDMI support information is available
-> > through drm_display_info.is_hdmi. Retriving the same information with
-> > drm_detect_hdmi_monitor() is less efficient. Change to
-> > drm_display_info.is_hdmi
+> > I meant we need to examine all call chains that can lead to
+> > .detect() to make sure all of them do in fact update the
+> > display_info beforehand.
 > 
-> I meant we need to examine all call chains that can lead to
-> .detect() to make sure all of them do in fact update the
-> display_info beforehand.
+> Well, I studied it carefully and, yes, all call chains that can lead to
+> drm_display_info.is_hdmi / drm_detect_hdmi_monitor() update display_info
+> beforehand. In the case that this doesn't happen, the code is unchanged.
+> 
+> Do you want I explain the changes in the code here again ? Or do you want
+> to me change the commit message to be more clear ? In the first case, I can
+> write here a detailed explanation. In the second case I can make a longer commit
+> message.
+> 
+> Or both?
 
-Well, I studied it carefully and, yes, all call chains that can lead to
-drm_display_info.is_hdmi / drm_detect_hdmi_monitor() update display_info
-beforehand. In the case that this doesn't happen, the code is unchanged.
+I want all those call chains explained in the commit message,
+otherwise I have no easy way to confirm whether the change
+is correct or not.
 
-Do you want I explain the changes in the code here again ? Or do you want
-to me change the commit message to be more clear ? In the first case, I can
-write here a detailed explanation. In the second case I can make a longer commit
-message.
-
-Or both?
-
-Best Regards,
-Claudio Suarez.
-
-
+-- 
+Ville Syrjälä
+Intel
