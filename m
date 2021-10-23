@@ -2,85 +2,106 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D736C433F5
-	for <linux-tegra@archiver.kernel.org>; Sat, 23 Oct 2021 19:58:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB89EC433EF
+	for <linux-tegra@archiver.kernel.org>; Sat, 23 Oct 2021 23:00:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3639E60F6F
-	for <linux-tegra@archiver.kernel.org>; Sat, 23 Oct 2021 19:58:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8B19B60F48
+	for <linux-tegra@archiver.kernel.org>; Sat, 23 Oct 2021 23:00:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231186AbhJWUAh (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 23 Oct 2021 16:00:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34046 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230230AbhJWUAd (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Sat, 23 Oct 2021 16:00:33 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 407BF60F4B;
-        Sat, 23 Oct 2021 19:58:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1635019093;
-        bh=UE0nSct8AkiwiOVgXjSj4Xe/BOGvGKgkpKvTHjkG/I4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rWpEpinV6kSP5Yw/e+aAyeCvcZjUyNb+u5aEQbNPKdzNOtfJQqPoQ5Za4em5HIOwb
-         V/NuKRpnupioJn3Whl4O7tqI3G2SS58DudTDWKFwHUaBIZGBPnS1Ce0TQ3radZCGM8
-         EQRV1FnNV3Qic9sg1qktA0USPy0GV2TifnUqSgzYj0y3axS5vT9FywzEQrM//ovN07
-         oABbuFS8Of+3/xU3rCkqSsUc+8kVmzho94yg4/G9GeF+vng3eRQ6u7Q2AFrmd8nonH
-         u98vm8VIbxUNkBLJSC4/SjaDfrjE40KSJguillSWax7GXf7ani6BCLy+K238A5VRS4
-         Bx+H52GI5hCsg==
-From:   Mark Brown <broonie@kernel.org>
-To:     Dmitry Osipenko <digetx@gmail.com>,
+        id S231186AbhJWXCl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 23 Oct 2021 19:02:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56152 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230463AbhJWXCl (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Sat, 23 Oct 2021 19:02:41 -0400
+Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23DC1C061714;
+        Sat, 23 Oct 2021 16:00:21 -0700 (PDT)
+Received: by mail-lf1-x12f.google.com with SMTP id g36so2640847lfv.3;
+        Sat, 23 Oct 2021 16:00:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=dWZMWYws+qLbMxadT98BwAMzcAf3eobJXXw6PfAeB+Q=;
+        b=hm1iwmgfkAXp0qzrGDCRbvkPGVppB3lOLzpMM9u4fhyS4nZK4Pinx9ax5jKi59oFv5
+         cUK3bYL4R/DICDoqjXOr21ER1X3MHrHPCZhn6V1XFSskw72IewXnTqo8D1UELHv8SXrb
+         8DqfDvnPgbvBMaNyGA+ZlWWYlbsC9DF4MA8+U6PE1UY6vnzg+we+wO4HEn0c+FvxEBYC
+         YCtKKnSHl2BKVARSPX9Elt1ShP6OVvigfguyVCa4s+B0LVt0vK+z+OIMB3cQ7sUR+/XC
+         L4HPlKkgibOQ/iII7w5+4jnbqkk+nIfblH8qPG8IggEy+Xr7EGojbhjW44XnGKTeSdk4
+         qIhw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=dWZMWYws+qLbMxadT98BwAMzcAf3eobJXXw6PfAeB+Q=;
+        b=IWDHTs5zUs02JXL4ycWqX4Rxzx1B7CS0plOp8g/GisvbflhIRXCl4V4BheCJGliKx0
+         6QPjY6n6x5F/IvIoYDvW8+SH1n9h6fD9IthtK13TOHsu3auKh2RSDqiUm7wNN1B4GBHM
+         iI6lCzBWjsyxJthObedFrxQH9f4ldv3QDDqb1OQK7ChgxWICE7K3QqIA+bsOM95MAkGV
+         U21DlBf1hOnkn1Fm+mdpOSnheco0fJsUQu63TABSd/0VsNO9C4gS/pQxav4bVrTVuK9N
+         3EVGZNEe8Ld+PyJ+WROkpnr2fEw8c8gQtvq42SLCsdv2t0I267QFWkVEGM3/15XvlpID
+         Hs8w==
+X-Gm-Message-State: AOAM530sLxccSGQ1jHfbEaspEQn7ad6bxHM32l4VbptAcEAY0AwWDpez
+        OH2+sWoA0y6qK0DRn1GzB1Nu8Uq3xOU=
+X-Google-Smtp-Source: ABdhPJxKcL2gKjlAMa8Jnf8V/mtADt7cZAksbicD8f17xDM6gGOHfXxntEcy21aeesgAhdxb3H2L3w==
+X-Received: by 2002:a05:6512:907:: with SMTP id e7mr8360674lft.671.1635030019245;
+        Sat, 23 Oct 2021 16:00:19 -0700 (PDT)
+Received: from localhost.localdomain (46-138-31-183.dynamic.spd-mgts.ru. [46.138.31.183])
+        by smtp.gmail.com with ESMTPSA id z3sm1161020lfh.17.2021.10.23.16.00.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 23 Oct 2021 16:00:19 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <treding@nvidia.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Thierry Reding <treding@nvidia.com>
-Cc:     Mark Brown <broonie@kernel.org>, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] regulator: Don't error out fixed regulator in regulator_sync_voltage()
-Date:   Sat, 23 Oct 2021 20:58:02 +0100
-Message-Id: <163501903135.919198.6701017250560518879.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20211021183308.27786-1-digetx@gmail.com>
-References: <20211021183308.27786-1-digetx@gmail.com>
+        Mark Brown <broonie@kernel.org>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc:     linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: [PATCH v1 1/2] spi: tegra20-slink: Put device into suspend on driver removal
+Date:   Sun, 24 Oct 2021 01:59:50 +0300
+Message-Id: <20211023225951.14253-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, 21 Oct 2021 21:33:08 +0300, Dmitry Osipenko wrote:
-> Fixed regulator can't change voltage and regulator_sync_voltage()
-> returns -EINVAL in this case. Make regulator_sync_voltage() to succeed
-> for regulators that are incapable to change voltage.
-> 
-> On NVIDIA Tegra power management driver needs to sync voltage and we have
-> one device (Trimslice) that uses fixed regulator which is getting synced.
-> The syncing error isn't treated as fatal, but produces a noisy error
-> message. This patch silences that error.
-> 
-> [...]
+pm_runtime_disable() cancels all pending power requests, while they
+should be completed for the Tegra SPI driver. Otherwise SPI clock won't
+be disabled ever again because clk refcount will become unbalanced.
+Enforce runtime PM suspension to put device into expected state before
+driver is unbound and device's RPM state is reset by driver's core.
 
-Applied to
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ drivers/spi/spi-tegra20-slink.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+diff --git a/drivers/spi/spi-tegra20-slink.c b/drivers/spi/spi-tegra20-slink.c
+index 33302f6b42d7..e6b16131edc2 100644
+--- a/drivers/spi/spi-tegra20-slink.c
++++ b/drivers/spi/spi-tegra20-slink.c
+@@ -1124,7 +1124,7 @@ static int tegra_slink_probe(struct platform_device *pdev)
+ exit_pm_put:
+ 	pm_runtime_put(&pdev->dev);
+ exit_pm_disable:
+-	pm_runtime_disable(&pdev->dev);
++	pm_runtime_force_suspend(&pdev->dev);
+ 
+ 	tegra_slink_deinit_dma_param(tspi, false);
+ exit_rx_dma_free:
+@@ -1143,7 +1143,7 @@ static int tegra_slink_remove(struct platform_device *pdev)
+ 
+ 	free_irq(tspi->irq, tspi);
+ 
+-	pm_runtime_disable(&pdev->dev);
++	pm_runtime_force_suspend(&pdev->dev);
+ 
+ 	if (tspi->tx_dma_chan)
+ 		tegra_slink_deinit_dma_param(tspi, false);
+-- 
+2.32.0
 
-Thanks!
-
-[1/1] regulator: Don't error out fixed regulator in regulator_sync_voltage()
-      commit: 400d5a5da43c0e84e5aa75151082ea91f0fae3c9
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
