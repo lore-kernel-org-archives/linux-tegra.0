@@ -2,86 +2,108 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C09CEC433EF
-	for <linux-tegra@archiver.kernel.org>; Sun, 24 Oct 2021 21:25:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 194A1C433FE
+	for <linux-tegra@archiver.kernel.org>; Sun, 24 Oct 2021 21:57:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 99E5360EE9
-	for <linux-tegra@archiver.kernel.org>; Sun, 24 Oct 2021 21:25:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DDDBC61039
+	for <linux-tegra@archiver.kernel.org>; Sun, 24 Oct 2021 21:57:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231706AbhJXV1t (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 24 Oct 2021 17:27:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36604 "EHLO
+        id S231658AbhJXWAF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 24 Oct 2021 18:00:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43722 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229537AbhJXV1s (ORCPT
+        with ESMTP id S229641AbhJXWAF (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 24 Oct 2021 17:27:48 -0400
-Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F8B1C061745
-        for <linux-tegra@vger.kernel.org>; Sun, 24 Oct 2021 14:25:27 -0700 (PDT)
-Received: by mail-lf1-x12c.google.com with SMTP id u21so9010416lff.8
-        for <linux-tegra@vger.kernel.org>; Sun, 24 Oct 2021 14:25:27 -0700 (PDT)
+        Sun, 24 Oct 2021 18:00:05 -0400
+Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C783EC061745;
+        Sun, 24 Oct 2021 14:57:43 -0700 (PDT)
+Received: by mail-lf1-x133.google.com with SMTP id j21so6906349lfe.0;
+        Sun, 24 Oct 2021 14:57:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=oJzHF/Z5fjP27mQA1nxiLi/yTI4xtj61op5B1TuJ3fM=;
-        b=JUH7zF8hHI+MToSfVcMh/cTdGxkOximv7meXju66VAwbJSkiZLFr16B736nOIVlCpa
-         c1HSZBPsypTgwn4o6WPBFkkPZjyNvt7grmfFmm2opWqCQv0TXW7Myq0F8QJxz+yHz8mI
-         R5VhK2W/NU2dmp15mTmO6rPh9qgPhBz7Ezjrv5/b7SrO3R11PJAtR+IlNHuQIs5mTodn
-         a40cOvriUHccOc19z4iLZoodLBPILC1qxTiW5yWaJa7KwgqI9zruLo6QNoT32JahzGLK
-         Gb45S0Jew+xgl5GGVp5ri8fODC2YvxxGr76eb5aZG6uwg3Osntie2arMB0DoSDtY2kxn
-         jgMw==
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=+OPNFjQ0wVzkY1u6XnIDimYIJnCs2bgrAf6ProT42W0=;
+        b=IrnQq0Ym/QnKoKVI7edsx4cAuDrzOkiqVEgNPjETSF4ydD9jJn6qC8iQNp5gwwrzUg
+         dNNnNXC+8Io5c01EKUT5xLEY87PYxvuchZqE2tLsjro2P/0ruUOs3QTK8oEcQaEDVS8a
+         4K15OGXLosRivPeDIFB/d2alg4MIMSBFtz4X5NWWhzs+mUO0so5S5Nuzw9pJHuRVLxMH
+         xQLdySugfdoXNV+eiO9zi8952p6k246DuFaD5BW1qS+wPWMc1pxPjcXJB16cVvdakNRm
+         8oUP3kaydN4Pb3m5EGwErpjIaqkZC3xiNDJtOPqVkosue4F+r2hJBaA1Luz/Z6L2xKKN
+         eDfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=oJzHF/Z5fjP27mQA1nxiLi/yTI4xtj61op5B1TuJ3fM=;
-        b=ZM6lfJSJnL7YrCNDR4k/YlVeXIJgEQi78CQHyrsgRKWKZ8UkGxflG7odlMUPe/Jt9M
-         7kwtt0/EA2ipVRM3/RIv3OPQA0BhVpTPdyMB6jHY8aHmdKkf9b+N7baRsXuhWvC50wLt
-         ADFllNmIgcF+JApVf46x0G8aRlIfdlUqi6jdNciROYudZvoaAQtUqhKGPinEWoPaXoDM
-         slWP2zXh6EUfDKqt3/ZhlxaxChpGa/b+IJXODykeklv2bJYAe4l/9UrJ9e1tBNpw+EAm
-         QNtR18Lq7Vm4L+SaEQyvASP8tyAltOQOJIZfbt97fIB+HROD7IG0mQH8ePtARvE3J33g
-         2VqA==
-X-Gm-Message-State: AOAM530W7GWY/26T1Vu92VS3/smeeGCLXhTxVa+PQAtJR3CkIS99H9PK
-        h8JqO9wJMzm1ciMnEqdSpqsz6MjqXTWhrgfsjHzGNHJ1QX7tPQ==
-X-Google-Smtp-Source: ABdhPJwt8o9K1DIszxN50TffhxTaQ1oO3M2G1LgnK0x2wMJGhMOsGef7TeP/cw6Sisz5Ih7aFrtZZE9PxXNMs3rMAek=
-X-Received: by 2002:a19:c10d:: with SMTP id r13mr13151970lff.339.1635110726022;
- Sun, 24 Oct 2021 14:25:26 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=+OPNFjQ0wVzkY1u6XnIDimYIJnCs2bgrAf6ProT42W0=;
+        b=PMNUdAKsvhAszevU8M/jhrDNlz3jnB/c7OMs2S9Q0aEEUTIUkGw4VIYx5omnFmVXAi
+         dFkqYP2INo11NFm6M/nHcyGtAAyftVDChzgsMCnUBw9i2UJOW37U35zbiLtpNc4XiP1Y
+         DZ6zCjesWuUc/cxNuWbTXZhKibUU6Yt7vGkvSV6doDskqEq1ZEogBPzgowJtK5H7mpF1
+         uGCdCVflqVB6HnRRrApQEh8FBj1xnrGx7zAoj1vWiP+7xL6E+Gjx9sP9GAj3ILIvAq7V
+         tlOCVaNrO9WLgL6qU06SPB4iEnsm92os9R1ce8Ms0NsUGH52wbFMrUr5PPtK8wbFYZgT
+         GbLw==
+X-Gm-Message-State: AOAM530C4U4eNF7fRJnGuXyyzxmHfkAzEdQBoZsb+A/AaP3eNXEmxMV9
+        4SWxg8Mifp6BGbm1Z/NIWfo=
+X-Google-Smtp-Source: ABdhPJwzKtqJ08WOIh+DpB8KaTx7RH+I+2hakfvKl8cIVp2e+hPQrUdsJaAcL3p90wdPlomH4G2dEw==
+X-Received: by 2002:a05:6512:33c8:: with SMTP id d8mr12823570lfg.621.1635112662112;
+        Sun, 24 Oct 2021 14:57:42 -0700 (PDT)
+Received: from localhost.localdomain (46-138-41-28.dynamic.spd-mgts.ru. [46.138.41.28])
+        by smtp.gmail.com with ESMTPSA id d27sm1577364ljo.15.2021.10.24.14.57.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 24 Oct 2021 14:57:41 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Viresh Kumar <vireshk@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
+        David Heidelberg <david@ixit.cz>,
+        Thierry Reding <treding@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: [PATCH v3] dt-bindings: opp: Allow multi-worded OPP entry names
+Date:   Mon, 25 Oct 2021 00:57:18 +0300
+Message-Id: <20211024215718.28969-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.33.1
 MIME-Version: 1.0
-References: <20211018121815.3017-1-pshete@nvidia.com> <20211018121815.3017-2-pshete@nvidia.com>
-In-Reply-To: <20211018121815.3017-2-pshete@nvidia.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Sun, 24 Oct 2021 23:25:14 +0200
-Message-ID: <CACRpkdYQMOAPdQaOb9TXtQmr5ez-xhwDguYusiGxK4DCHHX92A@mail.gmail.com>
-Subject: Re: [PATCH 2/2] pinctrl: tegra: Add pinmux support for Tegra194
-To:     Prathamesh Shete <pshete@nvidia.com>
-Cc:     "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Suresh Mangipudi <smangipudi@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Prathamesh,
+Not all OPP entries fit into a single word. In particular NVIDIA Tegra OPP
+tables use multi-word names where first part is freq and second voltage
+because different hardware versions use different voltages for the same
+freqs. Allow OPP entry to have multi-worded name separated by hyphen.
+This silences DT checker warnings about wrong naming scheme.
 
-I don't have a maintainer for the Tegra pin control driver
-in MAINTAINERS, and I have seen different people contribute
-to it over the years. Definitely Tegra 194 should be fixed up
-now as it's been around for a while and it's great that you're
-dealing with it.
+Reviewed-by: David Heidelberg <david@ixit.cz>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
 
-Anyways I applied these two patches for now and let's see
-what happens.
+Changelog:
 
-If you're working with this extensively maybe you should
-simply list yourself (and Suresh?) as maintainer(s) in
-MAINTAINERS for this driver? You can add Thierry or
-Jonathan as comaintainer maybe since they made some
-patches the last year or two.
+v3: - Viresh Kumar suggested that we shouldn't support postfix variant.
+      I dropped variant with postfix naming scheme and multi-wording
+      support of table names.
 
-Yours,
-Linus Walleij
+v2: - In addition to a multi-wording support, support of the postfix
+      *-opp-table naming scheme is added to the updated pattern.
+
+ Documentation/devicetree/bindings/opp/opp-v2-base.yaml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Documentation/devicetree/bindings/opp/opp-v2-base.yaml b/Documentation/devicetree/bindings/opp/opp-v2-base.yaml
+index ae3ae4d39843..f79343960539 100644
+--- a/Documentation/devicetree/bindings/opp/opp-v2-base.yaml
++++ b/Documentation/devicetree/bindings/opp/opp-v2-base.yaml
+@@ -33,7 +33,7 @@ properties:
+     type: boolean
+ 
+ patternProperties:
+-  '^opp-?[0-9]+$':
++  '^opp(-[0-9]+)*$':
+     type: object
+     description:
+       One or more OPP nodes describing voltage-current-frequency combinations.
+-- 
+2.33.1
+
