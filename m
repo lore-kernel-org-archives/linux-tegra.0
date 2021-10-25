@@ -2,257 +2,784 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 337E5C433EF
-	for <linux-tegra@archiver.kernel.org>; Mon, 25 Oct 2021 16:41:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D608AC433EF
+	for <linux-tegra@archiver.kernel.org>; Mon, 25 Oct 2021 17:20:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 17D4760F9B
-	for <linux-tegra@archiver.kernel.org>; Mon, 25 Oct 2021 16:41:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB1EC60F92
+	for <linux-tegra@archiver.kernel.org>; Mon, 25 Oct 2021 17:20:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234054AbhJYQoM (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 25 Oct 2021 12:44:12 -0400
-Received: from mail-mw2nam10on2080.outbound.protection.outlook.com ([40.107.94.80]:12320
-        "EHLO NAM10-MW2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S234041AbhJYQoM (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 25 Oct 2021 12:44:12 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=E26QcATDbn+co/7UIkbQbJek8CbTwVeSbu+PIs+F3f2OJwd0y88o50KUXk86PIPcE3eAe14NcbRKtj4hJFBY/4nzwCEKQ0aX27RnZFuDHEjwCvkzveQRafNGwPzVnHh1g8yqqmnVpoHfvnbITRnRCyPhszQcpTnRcIW9PBeX7RWqusqOSiUARgHNEMEvMiiGkJh2BfRtyETWkKjIGGXtHqDoKv4HjeM+y5AqMhgnaCyXogdXjVIuTQs3cH1HLfjvgiQ86ok4r/FpPjWqFEfrqxMPIULt5oLa7IYc2f64WyvV3P2fygUAIsCAVWMvuorbgwSifQEKn8C4M+oPk2c3KQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=20MveK7sVwd2JrPI0zpbfnZXP3ZJLMt/qlT0+rA0v/4=;
- b=YlXXBWNIaJLgA8VbD4khRC8HAGplsytaBh3FAJgGggT4ef+Z7JAff6qf2uQFL7UlMAv2URT0o65vSwbUJPgAU8B1y8JYRDEyPNyT0J9GcOMqO9fA6jFGxRcU7P1bdBM8sNsSJh1wFkyTKBcZfvMcXQfKiavOSGG3qCA5b1slTh2lGl2ll62Jeq5rIYDlODQjCSIXs1F1u60fDv9YcTbHCeOzx9EADtzWaY4HfL2fWOh+zp9yxGyloTAdf2PFoCgMC0p0+0g9PkB5gzCFlPMx64LvsuznLwcDTPIsCyVfCV3bC6+d50JAXj5fliRTcn0t4+0Lu6onFsLVuo27Xr6Ovw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.112.35) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=20MveK7sVwd2JrPI0zpbfnZXP3ZJLMt/qlT0+rA0v/4=;
- b=CpHVeZoEuDmISQ/jR7+LJiJ50htRHRZL+K6SDGTMoX+pacO/bMIy+xdHv4M2j6tipJ/A4t74SOmiippGAyo0MaL/VH9zkr+5daEoiaQlgDmzrLgRGJMuzwUMfuwbJWtAFGA2uuHVgOMKmh0WqBPZVFKy66Sf2H7kPIs0t/pER6yk7gERZzn9bOF06nZPDsMTfqfUMHv5pSi14WALJdFG9SjR4Ic1kor1vyBFMtAd0VXPOf4YBk0kQfUEex3a0nxw94IWIrD/MIDqi0/gg0nztw/fHcauGeRF4lkULpySw2XxDV4jJ/i37KUmvK4wUEvIOi7WWFfV7QW8fe8s07IzTQ==
-Received: from MWHPR04CA0068.namprd04.prod.outlook.com (2603:10b6:300:6c::30)
- by MWHPR1201MB0238.namprd12.prod.outlook.com (2603:10b6:301:57::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4628.16; Mon, 25 Oct
- 2021 16:41:38 +0000
-Received: from CO1NAM11FT063.eop-nam11.prod.protection.outlook.com
- (2603:10b6:300:6c:cafe::f7) by MWHPR04CA0068.outlook.office365.com
- (2603:10b6:300:6c::30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4628.15 via Frontend
- Transport; Mon, 25 Oct 2021 16:41:38 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.35)
- smtp.mailfrom=nvidia.com; kernel.org; dkim=none (message not signed)
- header.d=none;kernel.org; dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.112.35 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.112.35; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (216.228.112.35) by
- CO1NAM11FT063.mail.protection.outlook.com (10.13.175.37) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.4628.16 via Frontend Transport; Mon, 25 Oct 2021 16:41:35 +0000
-Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Mon, 25 Oct
- 2021 16:41:31 +0000
-Received: from kyarlagadda-linux.nvidia.com (172.20.187.5) by mail.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server id 15.0.1497.18 via Frontend
- Transport; Mon, 25 Oct 2021 09:41:26 -0700
-From:   Akhil R <akhilrajeev@nvidia.com>
-To:     <akhilrajeev@nvidia.com>
-CC:     <dan.j.williams@intel.com>, <dmaengine@vger.kernel.org>,
-        <jonathanh@nvidia.com>, <kyarlagadda@nvidia.com>,
-        <ldewangan@nvidia.com>, <linux-kernel@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <p.zabel@pengutronix.de>,
-        <rgumasta@nvidia.com>, <thierry.reding@gmail.com>,
-        <vkoul@kernel.org>, <robh+dt@kernel.org>,
-        <devicetree@vger.kernel.org>
-Subject: [PATCH v10 4/4] arm64: tegra: Add GPCDMA node for tegra186 and tegra194
-Date:   Mon, 25 Oct 2021 22:10:46 +0530
-Message-ID: <1635180046-15276-5-git-send-email-akhilrajeev@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1635180046-15276-1-git-send-email-akhilrajeev@nvidia.com>
-References: <1635180046-15276-1-git-send-email-akhilrajeev@nvidia.com>
-X-NVConfidentiality: public
+        id S231220AbhJYRWW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 25 Oct 2021 13:22:22 -0400
+Received: from ixit.cz ([94.230.151.217]:59308 "EHLO ixit.cz"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230183AbhJYRWV (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 25 Oct 2021 13:22:21 -0400
+Received: from localhost.localdomain (unknown [213.151.89.154])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ixit.cz (Postfix) with ESMTPSA id D0D9720064;
+        Mon, 25 Oct 2021 19:19:55 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ixit.cz; s=dkim;
+        t=1635182396;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=/jbaolPJ0zM8p0YTf5FD7MePAwSxF59+vBDYT9wbfxE=;
+        b=LWr0yaLnWYoNpVxzIOybF0AHuXR6j6ZiKpSBWfQ4/IGDK9BEYcv2thZidy1io0sfuDFrgD
+        XmuP9eGbRdyuspMtB1nljLnISQQXVWLS8/U1Eu6rIv7I5CwKJioUXCPJ5qk8Xsae/gOv8O
+        z9TRHwJBxh4do6KkEhwY58AXhKyuYxk=
+From:   David Heidelberg <david@ixit.cz>
+To:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc:     ~okias/devicetree@lists.sr.ht, David Heidelberg <david@ixit.cz>,
+        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: sound: nvidia,tegra-audio: Convert multiple txt bindings to yaml
+Date:   Mon, 25 Oct 2021 19:19:25 +0200
+Message-Id: <20211025171927.92332-1-david@ixit.cz>
+X-Mailer: git-send-email 2.33.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 6f5c450f-2800-4f3c-5283-08d997d64f02
-X-MS-TrafficTypeDiagnostic: MWHPR1201MB0238:
-X-Microsoft-Antispam-PRVS: <MWHPR1201MB0238528741C8DF4191018ABBC0839@MWHPR1201MB0238.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:1227;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: /MTeOaowm6T0iCZegb4TyZkkI7xXaJsOoWMhvyva7NMtlGIP3IZ8ElPK1QA6zypfhzAUp5EA4HhWjrK/GC792bYCUUiWVCTKNqlN7uwJqyokVW+6y5dokDHKqJYTbD1CM28va1btkep4jKaCbacT+Ik7Z9VNsEZKFtwb2l6+b664xJrF0jVYAXGPrE6U/wseFbx7cyUZ0uDehab/eRjMobjqLmrLHexNy0wri+Fjbpv4SdaSI2IDQtSeRJuxLgTCf+AzXiShHY+oTd4GxErqefjnZmGoeeqQcFU/+QR/IkkTP/+KkSmSvgfpyuGYO+DiqqPoOPj/QHtSLRp6tZAOT2MAzrMjLbB9BTH0brpH+alzET1bBccY+j1T+To2APj7E4ZElSffXFrywjSC/Adh98ESb2TaaDWfsYvY1Hvs9NVcOD0ZV9fMkv6MeOXmM8hSQX6bmzO//WnjTFePOT+RlxbOi9CMILSMLbn6Z02b8SYFT1sHoMRzR778UpRCY3YpaX/ebRfhCWslyTxB3BUW4TX1Wdlu9XN8qNhYvYI/FOm+zfXRZqZJ+w7Z2JmPTg7bGVEsnGgDyxfhoEnGqT2NMROVkVhHHf5NP0LVmrlb3+GqX+v3VNzXMOS20hL0VqQx4596U98UG8nSAshKs7PJLyslzlM6WAhqDXdNiM3BXJVXZQ07mc76txMWXqcve8fjOuI5LYmpsNATVqd5m3BdtQ==
-X-Forefront-Antispam-Report: CIP:216.228.112.35;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid04.nvidia.com;CAT:NONE;SFS:(4636009)(36840700001)(46966006)(2616005)(6862004)(426003)(83380400001)(7049001)(508600001)(7636003)(336012)(8676002)(6666004)(47076005)(186003)(36860700001)(82310400003)(70206006)(26005)(36756003)(5660300002)(37006003)(4326008)(70586007)(316002)(7696005)(54906003)(86362001)(6200100001)(2906002)(356005)(8936002);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Oct 2021 16:41:35.2914
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6f5c450f-2800-4f3c-5283-08d997d64f02
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.35];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT063.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR1201MB0238
+Content-Transfer-Encoding: 8bit
+X-Spam: Yes
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Add device tree node for GPCDMA controller on Tegra186 target
-and Tegra194 target.
+Convert Tegra audio complex with the
+ * ALC5632
+ * MAX98090
+ * RT5640
+ * RT5677
+ * SGTL5000
+ * TrimSlice
+ * WM8753
+ * WM8903
+ * WM9712
+codec to the YAML format.
 
-Signed-off-by: Rajesh Gumasta <rgumasta@nvidia.com>
-Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
-Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
+Signed-off-by: David Heidelberg <david@ixit.cz>
 ---
- arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi |  4 +++
- arch/arm64/boot/dts/nvidia/tegra186.dtsi       | 44 ++++++++++++++++++++++++++
- arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi |  4 +++
- arch/arm64/boot/dts/nvidia/tegra194.dtsi       | 44 ++++++++++++++++++++++++++
- 4 files changed, 96 insertions(+)
+ .../sound/nvidia,tegra-audio-alc5632.txt      |  48 -----
+ .../sound/nvidia,tegra-audio-max98090.txt     |  53 -----
+ .../sound/nvidia,tegra-audio-rt5640.txt       |  52 -----
+ .../sound/nvidia,tegra-audio-rt5677.txt       |  67 ------
+ .../sound/nvidia,tegra-audio-sgtl5000.txt     |  42 ----
+ .../sound/nvidia,tegra-audio-trimslice.txt    |  21 --
+ .../sound/nvidia,tegra-audio-wm8753.txt       |  40 ----
+ .../sound/nvidia,tegra-audio-wm8903.txt       |  62 ------
+ .../sound/nvidia,tegra-audio-wm9712.txt       |  60 ------
+ .../bindings/sound/nvidia,tegra-audio.yaml    | 190 ++++++++++++++++++
+ 10 files changed, 190 insertions(+), 445 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra-audio-alc5632.txt
+ delete mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra-audio-max98090.txt
+ delete mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra-audio-rt5640.txt
+ delete mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra-audio-rt5677.txt
+ delete mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra-audio-sgtl5000.txt
+ delete mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra-audio-trimslice.txt
+ delete mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra-audio-wm8753.txt
+ delete mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra-audio-wm8903.txt
+ delete mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra-audio-wm9712.txt
+ create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra-audio.yaml
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi b/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
-index fcd71bf..f5ef04d3 100644
---- a/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
-@@ -56,6 +56,10 @@
- 		};
- 	};
- 
-+	dma-controller@2600000 {
-+		status = "okay";
-+	};
+diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-alc5632.txt b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-alc5632.txt
+deleted file mode 100644
+index 57f40f93453e..000000000000
+--- a/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-alc5632.txt
++++ /dev/null
+@@ -1,48 +0,0 @@
+-NVIDIA Tegra audio complex
+-
+-Required properties:
+-- compatible : "nvidia,tegra-audio-alc5632"
+-- clocks : Must contain an entry for each entry in clock-names.
+-  See ../clocks/clock-bindings.txt for details.
+-- clock-names : Must include the following entries:
+-  - pll_a
+-  - pll_a_out0
+-  - mclk (The Tegra cdev1/extern1 clock, which feeds the CODEC's mclk)
+-- nvidia,model : The user-visible name of this sound complex.
+-- nvidia,audio-routing : A list of the connections between audio components.
+-  Each entry is a pair of strings, the first being the connection's sink,
+-  the second being the connection's source. Valid names for sources and
+-  sinks are the ALC5632's pins as documented in the binding for the device
+-  and:
+-
+-  * Headset Stereophone
+-  * Int Spk
+-  * Headset Mic
+-  * Digital Mic
+-
+-- nvidia,i2s-controller : The phandle of the Tegra I2S controller
+-- nvidia,audio-codec : The phandle of the ALC5632 audio codec
+-
+-Example:
+-
+-sound {
+-	compatible = "nvidia,tegra-audio-alc5632-paz00",
+-				 "nvidia,tegra-audio-alc5632";
+-
+-	nvidia,model = "Compal PAZ00";
+-
+-	nvidia,audio-routing =
+-				"Int Spk", "SPK_OUTP",
+-				"Int Spk", "SPK_OUTN",
+-				"Headset Mic","MICBIAS1",
+-				"MIC1_N", "Headset Mic",
+-				"MIC1_P", "Headset Mic",
+-				"Headset Stereophone", "HP_OUT_R",
+-				"Headset Stereophone", "HP_OUT_L";
+-
+-	nvidia,i2s-controller = <&tegra_i2s1>;
+-	nvidia,audio-codec = <&alc5632>;
+-
+-	clocks = <&tegra_car 112>, <&tegra_car 113>, <&tegra_car 93>;
+-	clock-names = "pll_a", "pll_a_out0", "mclk";
+-};
+diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-max98090.txt b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-max98090.txt
+deleted file mode 100644
+index c3495beba358..000000000000
+--- a/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-max98090.txt
++++ /dev/null
+@@ -1,53 +0,0 @@
+-NVIDIA Tegra audio complex, with MAX98090 CODEC
+-
+-Required properties:
+-- compatible : "nvidia,tegra-audio-max98090"
+-- clocks : Must contain an entry for each entry in clock-names.
+-  See ../clocks/clock-bindings.txt for details.
+-- clock-names : Must include the following entries:
+-  - pll_a
+-  - pll_a_out0
+-  - mclk (The Tegra cdev1/extern1 clock, which feeds the CODEC's mclk)
+-- nvidia,model : The user-visible name of this sound complex.
+-- nvidia,audio-routing : A list of the connections between audio components.
+-  Each entry is a pair of strings, the first being the connection's sink,
+-  the second being the connection's source. Valid names for sources and
+-  sinks are the MAX98090's pins (as documented in its binding), and the jacks
+-  on the board:
+-
+-  * Headphones
+-  * Speakers
+-  * Mic Jack
+-  * Int Mic
+-
+-- nvidia,i2s-controller : The phandle of the Tegra I2S controller that's
+-  connected to the CODEC.
+-- nvidia,audio-codec : The phandle of the MAX98090 audio codec.
+-
+-Optional properties:
+-- nvidia,hp-det-gpios : The GPIO that detect headphones are plugged in
+-- nvidia,mic-det-gpios : The GPIO that detect microphones are plugged in
+-
+-Example:
+-
+-sound {
+-	compatible = "nvidia,tegra-audio-max98090-venice2",
+-		     "nvidia,tegra-audio-max98090";
+-	nvidia,model = "NVIDIA Tegra Venice2";
+-
+-	nvidia,audio-routing =
+-		"Headphones", "HPR",
+-		"Headphones", "HPL",
+-		"Speakers", "SPKR",
+-		"Speakers", "SPKL",
+-		"Mic Jack", "MICBIAS",
+-		"IN34", "Mic Jack";
+-
+-	nvidia,i2s-controller = <&tegra_i2s1>;
+-	nvidia,audio-codec = <&acodec>;
+-
+-	clocks = <&tegra_car TEGRA124_CLK_PLL_A>,
+-		 <&tegra_car TEGRA124_CLK_PLL_A_OUT0>,
+-		 <&tegra_car TEGRA124_CLK_EXTERN1>;
+-	clock-names = "pll_a", "pll_a_out0", "mclk";
+-};
+diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-rt5640.txt b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-rt5640.txt
+deleted file mode 100644
+index 7788808dcd0b..000000000000
+--- a/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-rt5640.txt
++++ /dev/null
+@@ -1,52 +0,0 @@
+-NVIDIA Tegra audio complex, with RT5640 CODEC
+-
+-Required properties:
+-- compatible : "nvidia,tegra-audio-rt5640"
+-- clocks : Must contain an entry for each entry in clock-names.
+-  See ../clocks/clock-bindings.txt for details.
+-- clock-names : Must include the following entries:
+-  - pll_a
+-  - pll_a_out0
+-  - mclk (The Tegra cdev1/extern1 clock, which feeds the CODEC's mclk)
+-- nvidia,model : The user-visible name of this sound complex.
+-- nvidia,audio-routing : A list of the connections between audio components.
+-  Each entry is a pair of strings, the first being the connection's sink,
+-  the second being the connection's source. Valid names for sources and
+-  sinks are the RT5640's pins (as documented in its binding), and the jacks
+-  on the board:
+-
+-  * Headphones
+-  * Speakers
+-  * Mic Jack
+-
+-- nvidia,i2s-controller : The phandle of the Tegra I2S controller that's
+-  connected to the CODEC.
+-- nvidia,audio-codec : The phandle of the RT5640 audio codec. This binding
+-  assumes that AIF1 on the CODEC is connected to Tegra.
+-
+-Optional properties:
+-- nvidia,hp-det-gpios : The GPIO that detects headphones are plugged in
+-
+-Example:
+-
+-sound {
+-	compatible = "nvidia,tegra-audio-rt5640-dalmore",
+-			"nvidia,tegra-audio-rt5640";
+-	nvidia,model = "NVIDIA Tegra Dalmore";
+-
+-	nvidia,audio-routing =
+-		"Headphones", "HPOR",
+-		"Headphones", "HPOL",
+-		"Speakers", "SPORP",
+-		"Speakers", "SPORN",
+-		"Speakers", "SPOLP",
+-		"Speakers", "SPOLN";
+-
+-	nvidia,i2s-controller = <&tegra_i2s1>;
+-	nvidia,audio-codec = <&rt5640>;
+-
+-	nvidia,hp-det-gpios = <&gpio 143 0>; /* GPIO PR7 */
+-
+-	clocks = <&tegra_car 216>, <&tegra_car 217>, <&tegra_car 120>;
+-	clock-names = "pll_a", "pll_a_out0", "mclk";
+-};
+diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-rt5677.txt b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-rt5677.txt
+deleted file mode 100644
+index a4589cda214e..000000000000
+--- a/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-rt5677.txt
++++ /dev/null
+@@ -1,67 +0,0 @@
+-NVIDIA Tegra audio complex, with RT5677 CODEC
+-
+-Required properties:
+-- compatible : "nvidia,tegra-audio-rt5677"
+-- clocks : Must contain an entry for each entry in clock-names.
+-  See ../clocks/clock-bindings.txt for details.
+-- clock-names : Must include the following entries:
+-  - pll_a
+-  - pll_a_out0
+-  - mclk (The Tegra cdev1/extern1 clock, which feeds the CODEC's mclk)
+-- nvidia,model : The user-visible name of this sound complex.
+-- nvidia,audio-routing : A list of the connections between audio components.
+-  Each entry is a pair of strings, the first being the connection's sink,
+-  the second being the connection's source. Valid names for sources and
+-  sinks are the RT5677's pins (as documented in its binding), and the jacks
+-  on the board:
+-
+-  * Headphone
+-  * Speaker
+-  * Headset Mic
+-  * Internal Mic 1
+-  * Internal Mic 2
+-
+-- nvidia,i2s-controller : The phandle of the Tegra I2S controller that's
+-  connected to the CODEC.
+-- nvidia,audio-codec : The phandle of the RT5677 audio codec. This binding
+-  assumes that AIF1 on the CODEC is connected to Tegra.
+-
+-Optional properties:
+-- nvidia,hp-det-gpios : The GPIO that detects headphones are plugged in
+-- nvidia,hp-en-gpios : The GPIO that enables headphone amplifier
+-- nvidia,mic-present-gpios: The GPIO that mic jack is plugged in
+-- nvidia,dmic-clk-en-gpios : The GPIO that gates DMIC clock signal
+-
+-Example:
+-
+-sound {
+-	compatible = "nvidia,tegra-audio-rt5677-ryu",
+-	        "nvidia,tegra-audio-rt5677";
+-	nvidia,model = "NVIDIA Tegra Ryu";
+-
+-	nvidia,audio-routing =
+-		"Headphone", "LOUT2",
+-		"Headphone", "LOUT1",
+-		"Headset Mic", "MICBIAS1",
+-		"IN1P", "Headset Mic",
+-		"IN1N", "Headset Mic",
+-		"DMIC L1", "Internal Mic 1",
+-		"DMIC R1", "Internal Mic 1",
+-		"DMIC L2", "Internal Mic 2",
+-		"DMIC R2", "Internal Mic 2",
+-		"Speaker", "PDM1L",
+-		"Speaker", "PDM1R";
+-
+-	nvidia,i2s-controller = <&tegra_i2s1>;
+-	nvidia,audio-codec = <&rt5677>;
+-
+-	nvidia,hp-det-gpios = <&gpio TEGRA_GPIO(R, 7) GPIO_ACTIVE_HIGH>;
+-	nvidia,mic-present-gpios = <&gpio TEGRA_GPIO(O, 5) GPIO_ACTIVE_LOW>;
+-	nvidia,hp-en-gpios = <&rt5677 1 GPIO_ACTIVE_HIGH>;
+-	nvidia,dmic-clk-en-gpios = <&rt5677 2 GPIO_ACTIVE_HIGH>;
+-
+-	clocks = <&tegra_car TEGRA124_CLK_PLL_A>,
+-	         <&tegra_car TEGRA124_CLK_PLL_A_OUT0>,
+-	         <&tegra_car TEGRA124_CLK_EXTERN1>;
+-	clock-names = "pll_a", "pll_a_out0", "mclk";
+-};
+diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-sgtl5000.txt b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-sgtl5000.txt
+deleted file mode 100644
+index 5da7da4ea07a..000000000000
+--- a/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-sgtl5000.txt
++++ /dev/null
+@@ -1,42 +0,0 @@
+-NVIDIA Tegra audio complex, with SGTL5000 CODEC
+-
+-Required properties:
+-- compatible : "nvidia,tegra-audio-sgtl5000"
+-- clocks : Must contain an entry for each entry in clock-names.
+-  See ../clocks/clock-bindings.txt for details.
+-- clock-names : Must include the following entries:
+-  - pll_a
+-  - pll_a_out0
+-  - mclk (The Tegra cdev1/extern1 clock, which feeds the CODEC's mclk)
+-- nvidia,model : The user-visible name of this sound complex.
+-- nvidia,audio-routing : A list of the connections between audio components.
+-  Each entry is a pair of strings, the first being the connection's sink,
+-  the second being the connection's source. Valid names for sources and
+-  sinks are the SGTL5000's pins (as documented in its binding), and the jacks
+-  on the board:
+-
+-  * Headphone Jack
+-  * Line In Jack
+-  * Mic Jack
+-
+-- nvidia,i2s-controller : The phandle of the Tegra I2S controller that's
+-  connected to the CODEC.
+-- nvidia,audio-codec : The phandle of the SGTL5000 audio codec.
+-
+-Example:
+-
+-sound {
+-	compatible = "toradex,tegra-audio-sgtl5000-apalis_t30",
+-		     "nvidia,tegra-audio-sgtl5000";
+-	nvidia,model = "Toradex Apalis T30";
+-	nvidia,audio-routing =
+-		"Headphone Jack", "HP_OUT",
+-		"LINE_IN", "Line In Jack",
+-		"MIC_IN", "Mic Jack";
+-	nvidia,i2s-controller = <&tegra_i2s2>;
+-	nvidia,audio-codec = <&sgtl5000>;
+-	clocks = <&tegra_car TEGRA30_CLK_PLL_A>,
+-		 <&tegra_car TEGRA30_CLK_PLL_A_OUT0>,
+-		 <&tegra_car TEGRA30_CLK_EXTERN1>;
+-	clock-names = "pll_a", "pll_a_out0", "mclk";
+-};
+diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-trimslice.txt b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-trimslice.txt
+deleted file mode 100644
+index ef1fe7358279..000000000000
+--- a/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-trimslice.txt
++++ /dev/null
+@@ -1,21 +0,0 @@
+-NVIDIA Tegra audio complex for TrimSlice
+-
+-Required properties:
+-- compatible : "nvidia,tegra-audio-trimslice"
+-- clocks : Must contain an entry for each entry in clock-names.
+-- clock-names : Must include the following entries:
+-  "pll_a" (The Tegra clock of that name),
+-  "pll_a_out0" (The Tegra clock of that name),
+-  "mclk" (The Tegra cdev1/extern1 clock, which feeds the CODEC's mclk)
+-- nvidia,i2s-controller : The phandle of the Tegra I2S1 controller
+-- nvidia,audio-codec : The phandle of the WM8903 audio codec
+-
+-Example:
+-
+-sound {
+-	compatible = "nvidia,tegra-audio-trimslice";
+-	nvidia,i2s-controller = <&tegra_i2s1>;
+-	nvidia,audio-codec = <&codec>;
+-	clocks = <&tegra_car 112>, <&tegra_car 113>, <&tegra_car 93>;
+-	clock-names = "pll_a", "pll_a_out0", "mclk";
+-};
+diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-wm8753.txt b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-wm8753.txt
+deleted file mode 100644
+index 96f6a57dd6b4..000000000000
+--- a/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-wm8753.txt
++++ /dev/null
+@@ -1,40 +0,0 @@
+-NVIDIA Tegra audio complex
+-
+-Required properties:
+-- compatible : "nvidia,tegra-audio-wm8753"
+-- clocks : Must contain an entry for each entry in clock-names.
+-  See ../clocks/clock-bindings.txt for details.
+-- clock-names : Must include the following entries:
+-  - pll_a
+-  - pll_a_out0
+-  - mclk (The Tegra cdev1/extern1 clock, which feeds the CODEC's mclk)
+-- nvidia,model : The user-visible name of this sound complex.
+-- nvidia,audio-routing : A list of the connections between audio components.
+-  Each entry is a pair of strings, the first being the connection's sink,
+-  the second being the connection's source. Valid names for sources and
+-  sinks are the WM8753's pins as documented in the binding for the WM8753,
+-  and the jacks on the board:
+-
+-  * Headphone Jack
+-  * Mic Jack
+-
+-- nvidia,i2s-controller : The phandle of the Tegra I2S1 controller
+-- nvidia,audio-codec : The phandle of the WM8753 audio codec
+-Example:
+-
+-sound {
+-	compatible = "nvidia,tegra-audio-wm8753-whistler",
+-		     "nvidia,tegra-audio-wm8753"
+-	nvidia,model = "tegra-wm8753-harmony";
+-
+-	nvidia,audio-routing =
+-		"Headphone Jack", "LOUT1",
+-		"Headphone Jack", "ROUT1";
+-
+-	nvidia,i2s-controller = <&i2s1>;
+-	nvidia,audio-codec = <&wm8753>;
+-
+-	clocks = <&tegra_car 112>, <&tegra_car 113>, <&tegra_car 93>;
+-	clock-names = "pll_a", "pll_a_out0", "mclk";
+-};
+-
+diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-wm8903.txt b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-wm8903.txt
+deleted file mode 100644
+index bbd581a8c5bc..000000000000
+--- a/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-wm8903.txt
++++ /dev/null
+@@ -1,62 +0,0 @@
+-NVIDIA Tegra audio complex
+-
+-Required properties:
+-- compatible : "nvidia,tegra-audio-wm8903"
+-- clocks : Must contain an entry for each entry in clock-names.
+-  See ../clocks/clock-bindings.txt for details.
+-- clock-names : Must include the following entries:
+-  - pll_a
+-  - pll_a_out0
+-  - mclk (The Tegra cdev1/extern1 clock, which feeds the CODEC's mclk)
+-- nvidia,model : The user-visible name of this sound complex.
+-- nvidia,audio-routing : A list of the connections between audio components.
+-  Each entry is a pair of strings, the first being the connection's sink,
+-  the second being the connection's source. Valid names for sources and
+-  sinks are the WM8903's pins (documented in the WM8903 binding document),
+-  and the jacks on the board:
+-
+-  * Headphone Jack
+-  * Int Spk
+-  * Mic Jack
+-  * Int Mic
+-
+-- nvidia,i2s-controller : The phandle of the Tegra I2S1 controller
+-- nvidia,audio-codec : The phandle of the WM8903 audio codec
+-
+-Optional properties:
+-- nvidia,spkr-en-gpios : The GPIO that enables the speakers
+-- nvidia,hp-mute-gpios : The GPIO that mutes the headphones
+-- nvidia,hp-det-gpios : The GPIO that detect headphones are plugged in
+-- nvidia,int-mic-en-gpios : The GPIO that enables the internal microphone
+-- nvidia,ext-mic-en-gpios : The GPIO that enables the external microphone
+-- nvidia,headset : The Mic Jack represents state of the headset microphone pin
+-
+-Example:
+-
+-sound {
+-	compatible = "nvidia,tegra-audio-wm8903-harmony",
+-		     "nvidia,tegra-audio-wm8903"
+-	nvidia,model = "tegra-wm8903-harmony";
+-
+-	nvidia,audio-routing =
+-		"Headphone Jack", "HPOUTR",
+-		"Headphone Jack", "HPOUTL",
+-		"Int Spk", "ROP",
+-		"Int Spk", "RON",
+-		"Int Spk", "LOP",
+-		"Int Spk", "LON",
+-		"Mic Jack", "MICBIAS",
+-		"IN1L", "Mic Jack";
+-
+-	nvidia,i2s-controller = <&i2s1>;
+-	nvidia,audio-codec = <&wm8903>;
+-
+-	nvidia,spkr-en-gpios = <&codec 2 0>;
+-	nvidia,hp-det-gpios = <&gpio 178 0>; /* gpio PW2 */
+-	nvidia,int-mic-en-gpios = <&gpio 184 0>; /*gpio PX0 */
+-	nvidia,ext-mic-en-gpios = <&gpio 185 0>; /* gpio PX1 */
+-
+-	clocks = <&tegra_car 112>, <&tegra_car 113>, <&tegra_car 93>;
+-	clock-names = "pll_a", "pll_a_out0", "mclk";
+-};
+-
+diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-wm9712.txt b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-wm9712.txt
+deleted file mode 100644
+index 436f6cd9d07c..000000000000
+--- a/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-wm9712.txt
++++ /dev/null
+@@ -1,60 +0,0 @@
+-NVIDIA Tegra audio complex
+-
+-Required properties:
+-- compatible : "nvidia,tegra-audio-wm9712"
+-- clocks : Must contain an entry for each entry in clock-names.
+-  See ../clocks/clock-bindings.txt for details.
+-- clock-names : Must include the following entries:
+-  - pll_a
+-  - pll_a_out0
+-  - mclk (The Tegra cdev1/extern1 clock, which feeds the CODEC's mclk)
+-- nvidia,model : The user-visible name of this sound complex.
+-- nvidia,audio-routing : A list of the connections between audio components.
+-  Each entry is a pair of strings, the first being the connection's sink,
+-  the second being the connection's source. Valid names for sources and
+-  sinks are the WM9712's pins, and the jacks on the board:
+-
+-  WM9712 pins:
+-
+-  * MONOOUT
+-  * HPOUTL
+-  * HPOUTR
+-  * LOUT2
+-  * ROUT2
+-  * OUT3
+-  * LINEINL
+-  * LINEINR
+-  * PHONE
+-  * PCBEEP
+-  * MIC1
+-  * MIC2
+-  * Mic Bias
+-
+-  Board connectors:
+-
+-  * Headphone
+-  * LineIn
+-  * Mic
+-
+-- nvidia,ac97-controller : The phandle of the Tegra AC97 controller
+-
+-
+-Example:
+-
+-sound {
+-	compatible = "nvidia,tegra-audio-wm9712-colibri_t20",
+-		         "nvidia,tegra-audio-wm9712";
+-	nvidia,model = "Toradex Colibri T20";
+-
+-	nvidia,audio-routing =
+-		"Headphone", "HPOUTL",
+-		"Headphone", "HPOUTR",
+-		"LineIn", "LINEINL",
+-		"LineIn", "LINEINR",
+-		"Mic", "MIC1";
+-
+-	nvidia,ac97-controller = <&ac97>;
+-
+-	clocks = <&tegra_car 112>, <&tegra_car 113>, <&tegra_car 93>;
+-	clock-names = "pll_a", "pll_a_out0", "mclk";
+-};
+diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra-audio.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio.yaml
+new file mode 100644
+index 000000000000..6b8876bfa40f
+--- /dev/null
++++ b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio.yaml
+@@ -0,0 +1,190 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: "http://devicetree.org/schemas/sound/nvidia,tegra-audio.yaml#"
++$schema: "http://devicetree.org/meta-schemas/core.yaml#"
 +
- 	memory-controller@2c00000 {
- 		status = "okay";
- 	};
-diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-index e94f8ad..646efa1 100644
---- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-@@ -73,6 +73,50 @@
- 		snps,rxpbl = <8>;
- 	};
- 
-+	gpcdma: dma-controller@2600000 {
-+		compatible = "nvidia,tegra186-gpcdma";
-+		reg = <0x2600000 0x210000>;
-+		resets = <&bpmp TEGRA186_RESET_GPCDMA>;
-+		reset-names = "gpcdma";
-+		interrupts = <GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 76 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 79 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 81 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 82 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 83 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 89 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 90 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 91 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 92 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 93 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 94 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 95 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 96 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 99 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 101 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 102 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
-+		#dma-cells = <1>;
-+		iommus = <&smmu TEGRA186_SID_GPCDMA_0>;
-+		dma-coherent;
-+		status = "disabled";
-+	};
++title: NVIDIA Tegra audio complex
 +
- 	aconnect@2900000 {
- 		compatible = "nvidia,tegra186-aconnect",
- 			     "nvidia,tegra210-aconnect";
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi b/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi
-index c4058ee..5bc74af 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi
-@@ -49,6 +49,10 @@
- 			};
- 		};
- 
-+		dma-controller@2600000 {
-+			status = "okay";
-+		};
++maintainers:
++  - Jon Hunter <jonathanh@nvidia.com>
++  - Thierry Reding <thierry.reding@gmail.com>
 +
- 		memory-controller@2c00000 {
- 			status = "okay";
- 		};
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-index c8250a3..6627edd 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-@@ -72,6 +72,50 @@
- 			snps,rxpbl = <8>;
- 		};
- 
-+		gpcdma: dma-controller@2600000 {
-+			compatible = "nvidia,tegra194-gpcdma";
-+			reg = <0x2600000 0x210000>;
-+			resets = <&bpmp TEGRA194_RESET_GPCDMA>;
-+			reset-names = "gpcdma";
-+			interrupts = <GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 76 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 79 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 81 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 82 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 83 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 89 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 90 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 91 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 92 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 93 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 94 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 95 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 96 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 99 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 101 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 102 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
-+			#dma-cells = <1>;
-+			iommus = <&smmu TEGRA194_SID_GPCDMA_0>;
-+			dma-coherent;
-+			status = "disabled";
-+		};
++properties:
++  compatible:
++    oneOf:
++      - items:
++          - pattern: '^[a-z0-9]+,tegra-audio-alc5632(-[a-z0-9])+'
++          - const: nvidia,tegra-audio-alc5632
++      - items:
++          - enum:
++              - nvidia,tegra-audio-max98090-nyan-big
++              - nvidia,tegra-audio-max98090-nyan-blaze
++          - const: nvidia,tegra-audio-max98090-nyan
++          - const: nvidia,tegra-audio-max98090
++      - items:
++          - pattern: '^[a-z0-9]+,tegra-audio-max98090(-[a-z0-9])+'
++          - const: nvidia,tegra-audio-max98090
++      - items:
++          - pattern: '^[a-z0-9]+,tegra-audio-rt56(39|40)(-[a-z0-9])+'
++          - const: nvidia,tegra-audio-rt5640
++      - items:
++          - pattern: '^[a-z0-9]+,tegra-audio-rt5677(-[a-z0-9])+'
++          - const: nvidia,tegra-audio-rt5677
++      - items:
++          - enum:
++              - toradex,tegra-audio-sgtl5000-apalis_t30
++              - toradex,tegra-audio-sgtl5000-colibri_t30
++              - toradex,tegra-audio-sgtl5000-apalis_tk1
++          - const: nvidia,tegra-audio-sgtl5000
++      - const: nvidia,tegra-audio-trimslice
++      - items:
++          - pattern: '^[a-z0-9]+,tegra-audio-wm8753(-[a-z0-9])+'
++          - const: nvidia,tegra-audio-wm8753
++      - items:
++          - pattern: '^[a-z0-9]+,tegra-audio-(plutux|wm8903(-[a-z0-9])+)'
++          - const: nvidia,tegra-audio-wm8903
++      - items:
++          - pattern: '^[a-z0-9]+,tegra-audio-wm9712(-[a-z0-9])+'
++          - const: nvidia,tegra-audio-wm9712
 +
- 		aconnect@2900000 {
- 			compatible = "nvidia,tegra194-aconnect",
- 				     "nvidia,tegra210-aconnect";
++  clocks:
++    items:
++      - description: PLL A clock
++      - description: PLL A OUT0 clock
++      - description: The Tegra cdev1/extern1 clock, which feeds the card's mclk
++
++  clock-names:
++    items:
++      - const: pll_a
++      - const: pll_a_out0
++      - const: mclk
++
++  assigned-clocks: true
++
++  assigned-clock-parents: true
++
++  assigned-clock-rates: true
++
++  nvidia,model:
++    $ref: /schemas/types.yaml#/definitions/string
++    description: The user-visible name of this sound complex.
++
++  nvidia,audio-routing:
++    $ref: /schemas/types.yaml#/definitions/non-unique-string-array
++    description: |
++      A list of the connections between audio components.
++      Each entry is a pair of strings, the first being the connection's sink,
++      the second being the connection's source. Valid names for sources and
++      sinks are the pins (documented in the binding document),
++      and the jacks on the board:
++        ALC5632:
++          * Headset Stereophone
++          * Int Spk
++          * Headset Mic
++          * Digital Mic
++        MAXX98090:
++          * Headphones
++          * SPeakers
++          * Mic Jack
++          * Int Mic
++        RT5640:
++          * Headphones
++          * Speakers
++          * Mic Jack
++        RT5677:
++          * Headphone
++          * Speaker
++          * Headset Mic
++          * Internal Mic 1
++          * Internal Mic 2
++        SGTL5000:
++          * Headphone Jack
++          * Line In Jack
++          * Mic Jack
++        WM8753:
++          * Headphone Jack
++          * Mic Jack
++        WM8903:
++          * Headphone Jack
++          * Int Spk
++          * Mic Jack
++          * Int Mic
++        WM9712:
++          * Headphone
++          * LineIn
++          * Mic
++
++  nvidia,ac97-controller:
++    $ref: /schemas/types.yaml#/definitions/phandle
++    description: The phandle of the AC97 controller
++
++  nvidia,i2s-controller:
++    $ref: /schemas/types.yaml#/definitions/phandle
++    description: The phandle of the Tegra I2S controller
++
++  nvidia,audio-codec:
++    $ref: /schemas/types.yaml#/definitions/phandle
++    description: The phandle of audio codec
++
++  nvidia,spkr-en-gpios:
++    maxItems: 1
++    description: The GPIO that enables the speakers
++
++  nvidia,hp-mute-gpios:
++    maxItems: 1
++    description: The GPIO that mutes the headphones
++
++  nvidia,hp-det-gpios:
++    maxItems: 1
++    description: The GPIO that detect headphones are plugged in
++
++  nvidia,mic-det-gpios:
++    maxItems: 1
++    description: The GPIO that detect microphone is plugged in
++
++  nvidia,int-mic-en-gpios:
++    maxItems: 1
++    description: The GPIO that enables the internal microphone
++
++  nvidia,ext-mic-en-gpios:
++    maxItems: 1
++    description: The GPIO that enables the external microphone
++
++  nvidia,headset:
++    type: boolean
++    description: The Mic Jack represents state of the headset microphone pin
++
++additionalProperties: false
++
++required:
++  - compatible
++  - clocks
++  - clock-names
++
++oneOf:
++  - required:
++      - nvidia,audio-codec
++      - nvidia,i2s-controller
++  - required:
++      - nvidia,ac97-controller
++
++examples:
++  - |
++    #include <dt-bindings/clock/tegra30-car.h>
++
++    sound {
++      compatible = "toradex,tegra-audio-sgtl5000-apalis_t30",
++                   "nvidia,tegra-audio-sgtl5000";
++      nvidia,model = "Toradex Apalis T30 SGTL5000";
++      nvidia,audio-routing =
++              "Headphone Jack", "HP_OUT",
++              "LINE_IN", "Line In Jack",
++              "MIC_IN", "Mic Jack";
++      nvidia,i2s-controller = <&tegra_i2s2>;
++      nvidia,audio-codec = <&codec>;
++      clocks = <&tegra_car TEGRA30_CLK_PLL_A>,
++               <&tegra_car TEGRA30_CLK_PLL_A_OUT0>,
++               <&tegra_car TEGRA30_CLK_EXTERN1>;
++      clock-names = "pll_a", "pll_a_out0", "mclk";
++    };
 -- 
-2.7.4
+2.33.0
 
