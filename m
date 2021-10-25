@@ -2,169 +2,74 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81BACC433EF
-	for <linux-tegra@archiver.kernel.org>; Mon, 25 Oct 2021 11:10:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5395DC433F5
+	for <linux-tegra@archiver.kernel.org>; Mon, 25 Oct 2021 13:04:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5FBC760EFF
-	for <linux-tegra@archiver.kernel.org>; Mon, 25 Oct 2021 11:10:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 32D2A6023E
+	for <linux-tegra@archiver.kernel.org>; Mon, 25 Oct 2021 13:04:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231133AbhJYLMb (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 25 Oct 2021 07:12:31 -0400
-Received: from mail-mw2nam10on2044.outbound.protection.outlook.com ([40.107.94.44]:9185
-        "EHLO NAM10-MW2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S230232AbhJYLMb (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 25 Oct 2021 07:12:31 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Qh99nV+2MRV4Iep9WDM4hbNIVgBPzfmWJIEpz9xKDlTddx4fMZFoWH5pl9r9bORIb9wV1SV2jf7FlVEXHq02L03WPmTuSDrzS04lUWOwmBszrUqIqdXmHfYxbsyarXUmqYpU06NNf7a51ihAb/EPWSronYtRWQfMla3c+rNEf89zeEKYE7AcqDkB0wpP4Nqh6ln4/BP8qMbfEMLYJASzBFLaQRKG2ioJoK6O6t2Bj9MvakwEfa+C4XD1E5QkzKxIEKYtYXzipdSw55H/GGd6imzFCL43zm6gJRy4qXgjwlrrNsJUV4dkDQFPEUVgfawCV+cG2rGQMvuzElcUjMb+GQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3wbMqnvEuftumSowFp0/lqXyFQ70G1jQiR0UZBVe2Hw=;
- b=S2zoOov45VKRbu+pMKwZmdpZ6DUP7f3Zso8Y85OEOaDf/f0Pbu8eRnc1TwREmAImsfiHFASytMqzTAphGuIDS0p6XNw+wMSZ3v3PiTKxOWjvJE3CPEgNEIwSR1LAMEx7aAT/H1/4fGcdKqhArMPh0WMWC+lFQGsWE7kNUQNixmH9QVdDxlTDGixV8o08vh6sjFyTgOTVLJvoNJldQD4b7ktrEOTt1X7wyY1LNyXzQSivvcByzYeObzLyBzrPiaMXgvWmLviKcK+YntNI7YGZTvHMSq2TeLyK5rk2XWJymrbbYONrQ4pITWvZqobXbgJE7dONw9AxzjeLjyXb/NpgLw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.112.32) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3wbMqnvEuftumSowFp0/lqXyFQ70G1jQiR0UZBVe2Hw=;
- b=YWY3G8T2JNxLHcT1vxv8UZ5NhfcKI6J6hPdYchek//SmbHv6Oxs1b+IfPBfVnFDCUnBBpQAvVlZu4Kn0wNzk3diz31Hs72sOulgrLfh0h7HvXDkCDqj+Osg5wUWCeHtclnZBMZts5fc8B5BfmlPEdBwjM0iXnMszn1JIGaD+CtnLOtPoHbfgo4GABumdY1HZeYSX4QZbOTPqKiQJ8ZGcS1HbE2wpx3hLmYQC6mQFrRD3WJ6YEjytHr+Hoi1TnK8IfgfLt2nHiF1qpW0x+l/ah9AARduwiOSvFVPWOfJazoaMDYq8fI73rFz6u7Ept/na2HMgpY9J2bBtcAnjUkrWwQ==
-Received: from MW4PR04CA0124.namprd04.prod.outlook.com (2603:10b6:303:84::9)
- by DM6PR12MB2682.namprd12.prod.outlook.com (2603:10b6:5:42::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4628.18; Mon, 25 Oct
- 2021 11:10:07 +0000
-Received: from CO1NAM11FT043.eop-nam11.prod.protection.outlook.com
- (2603:10b6:303:84:cafe::89) by MW4PR04CA0124.outlook.office365.com
- (2603:10b6:303:84::9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4628.18 via Frontend
- Transport; Mon, 25 Oct 2021 11:10:07 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.32)
- smtp.mailfrom=nvidia.com; vger.kernel.org; dkim=none (message not signed)
- header.d=none;vger.kernel.org; dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.112.32 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.112.32; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (216.228.112.32) by
- CO1NAM11FT043.mail.protection.outlook.com (10.13.174.193) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.4628.16 via Frontend Transport; Mon, 25 Oct 2021 11:10:07 +0000
-Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL109.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Mon, 25 Oct
- 2021 04:10:06 -0700
-Received: from pshete-ubuntu.nvidia.com (172.20.187.6) by mail.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server id 15.0.1497.18 via Frontend
- Transport; Mon, 25 Oct 2021 04:10:03 -0700
-From:   Prathamesh Shete <pshete@nvidia.com>
-To:     <linus.walleij@linaro.org>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <linux-gpio@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC:     <smangipudi@nvidia.com>, <pshete@nvidia.com>, <kkartik@nvidia.com>
-Subject: [PATCH] pinctrl: tegra: Use correct offset for pin group
-Date:   Mon, 25 Oct 2021 16:39:59 +0530
-Message-ID: <20211025110959.27751-1-pshete@nvidia.com>
-X-Mailer: git-send-email 2.17.1
+        id S233438AbhJYNHL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 25 Oct 2021 09:07:11 -0400
+Received: from mail1.perex.cz ([77.48.224.245]:35534 "EHLO mail1.perex.cz"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233391AbhJYNHK (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 25 Oct 2021 09:07:10 -0400
+X-Greylist: delayed 383 seconds by postgrey-1.27 at vger.kernel.org; Mon, 25 Oct 2021 09:07:10 EDT
+Received: from mail1.perex.cz (localhost [127.0.0.1])
+        by smtp1.perex.cz (Perex's E-mail Delivery System) with ESMTP id 5B1D5A003F;
+        Mon, 25 Oct 2021 14:58:22 +0200 (CEST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 smtp1.perex.cz 5B1D5A003F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=perex.cz; s=default;
+        t=1635166702; bh=2eZ26/VaEzftwu3ZmYsfOCPTwZ9yZoE3hgkj1VEFB+I=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=BHt3MaR/tnH1YLlX0CxYPQLb0TApnFbI0kfh54oCDK9UYHer4A5PCYcG7fNDlI9Wl
+         l/rAVmzVS+aGmJ4bJnEpVBj4S8+Ub5Xqkq1fW4Tar5TF0/zuRCsbSOMsJdgCWNlEhi
+         hZMMBpuIDsoRSFlTW5nddFWLYAwb1aOChP6N3TgM=
+Received: from [192.168.100.98] (unknown [192.168.100.98])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: perex)
+        by mail1.perex.cz (Perex's E-mail Delivery System) with ESMTPSA;
+        Mon, 25 Oct 2021 14:58:13 +0200 (CEST)
+Message-ID: <79541c76-2c2b-fd4b-60c8-67ee6b8ea3fa@perex.cz>
+Date:   Mon, 25 Oct 2021 14:58:13 +0200
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: c21dd8dc-38fb-445f-d1ce-08d997a800ab
-X-MS-TrafficTypeDiagnostic: DM6PR12MB2682:
-X-Microsoft-Antispam-PRVS: <DM6PR12MB2682C06A920376A77078E8C0B7839@DM6PR12MB2682.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:3968;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: I4V6Q0SNlOHDijUjE2PFdohqbk3FuHwzv5uzoRXjaiAFwDu2WauZS0BYT7dB9lUI2sV8ajrT6dx/nrio6Eq2Y2JV2Lx6CbXT3BOjhfM4xYy2kUjUVTlGefP6IiGXPPG7kGv0YmL9WhUuVjPiLvA0ajcCzwG2fE+UMrI+C2nz4vSoafoRoZLnhDGLa8yoHagLLryIaNjn9nNy2j6hsGRri2t+2mRoOEA2PBQibi3J2ZWBt49MKHHoLWcK+K2pjdvRJVwtrbO0Fw2b0OKRSUMwzWJseRzpmIhx3t7l88ZV739aFl4VCUmtdZHHtxAoC/Rh76sBU5CU0tpLgDNYLWxQg5RdpMbCVNidsmE5dK/dEea+hL81Dq+Y7EdnKG3cTKXbOExQTBEkWmQHnQ/d6GLrQzC3RNvWnTP8PGdagKEQpOJ4SeMqzIT/GWOJOzRTBTZFaOiLu1t2botqI44tQTkasDUaxjq2lvn0vgwkvp/Z+U4tzpjV0VVZcCQlsat7j74yuVOJ/vV+xfeeXGfOGZuNEq7CyWjuMpKbo+chEr01XFW+uTc03Dp8C4uv32FhCZl1/fCpXo9BpObptykczYMFwCznEVV/5y3Nx6ELMr0OuiQ6f1jclVUxe/LE2h4fF2W3JJIU1pDisSH8sT1oixq7bscgPR0k3biwsdL0NneTf7pDegQmNj1GuIRBUH9nPtIc1Lr8MxqI5YSaeeO8s77dxg==
-X-Forefront-Antispam-Report: CIP:216.228.112.32;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid01.nvidia.com;CAT:NONE;SFS:(4636009)(36840700001)(46966006)(7636003)(86362001)(47076005)(4326008)(186003)(316002)(336012)(70206006)(83380400001)(356005)(8676002)(2906002)(82310400003)(26005)(426003)(1076003)(54906003)(8936002)(2616005)(110136005)(5660300002)(6666004)(36860700001)(508600001)(70586007)(36756003)(107886003)(7696005);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Oct 2021 11:10:07.0126
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: c21dd8dc-38fb-445f-d1ce-08d997a800ab
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.32];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT043.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB2682
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.1.0
+Subject: Re: [PATCH] ASoC: tegra: Add master volume/mute control support
+Content-Language: en-US
+To:     Sameer Pujar <spujar@nvidia.com>, broonie@kernel.org,
+        lgirdwood@gmail.com, tiwai@suse.com
+Cc:     jonathanh@nvidia.com, thierry.reding@gmail.com,
+        alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1635159976-17355-1-git-send-email-spujar@nvidia.com>
+From:   Jaroslav Kysela <perex@perex.cz>
+In-Reply-To: <1635159976-17355-1-git-send-email-spujar@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Function tegra_pinctrl_gpio_request_enable() and
-tegra_pinctrl_gpio_disable_free() uses pin offset instead
-of group offset, causing the driver to use wrong offset
-to enable gpio.
+On 25. 10. 21 13:06, Sameer Pujar wrote:
 
-Add a helper function tegra_pinctrl_get_group() to parse the
-pin group and determine correct offset.
+> @@ -150,11 +186,22 @@ static int tegra210_mvc_put_mute(struct snd_kcontrol *kcontrol,
 
-Signed-off-by: Kartik K <kkartik@nvidia.com>
-Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
----
- drivers/pinctrl/tegra/pinctrl-tegra.c | 33 +++++++++++++++++++++++++--
- 1 file changed, 31 insertions(+), 2 deletions(-)
+...
+>   
+>   	return 1;
 
-diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegra/pinctrl-tegra.c
-index 195cfe557511..0471d9c7f0ba 100644
---- a/drivers/pinctrl/tegra/pinctrl-tegra.c
-+++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
-@@ -275,6 +275,29 @@ static int tegra_pinctrl_set_mux(struct pinctrl_dev *pctldev,
- 	return 0;
- }
- 
-+static struct tegra_pingroup *tegra_pinctrl_get_group(struct pinctrl_dev *pctldev,
-+					unsigned int offset)
-+{
-+	struct tegra_pmx *pmx = pinctrl_dev_get_drvdata(pctldev);
-+	struct tegra_pingroup *g;
-+	unsigned int group, num_pins, j;
-+	const unsigned int *pins;
-+	int ret;
-+
-+	for (group = 0; group < pmx->soc->ngroups; ++group) {
-+		ret = tegra_pinctrl_get_group_pins(pctldev, group, &pins, &num_pins);
-+		if (ret < 0)
-+			continue;
-+		for (j = 0; j < num_pins; j++) {
-+			if (offset == pins[j])
-+				return &pmx->soc->groups[group];
-+		}
-+	}
-+
-+	dev_err(pctldev->dev, "Pingroup not found for pin %u\n", offset);
-+	return NULL;
-+}
-+
- static int tegra_pinctrl_gpio_request_enable(struct pinctrl_dev *pctldev,
- 					     struct pinctrl_gpio_range *range,
- 					     unsigned int offset)
-@@ -286,7 +309,10 @@ static int tegra_pinctrl_gpio_request_enable(struct pinctrl_dev *pctldev,
- 	if (!pmx->soc->sfsel_in_mux)
- 		return 0;
- 
--	group = &pmx->soc->groups[offset];
-+	group = tegra_pinctrl_get_group(pctldev, offset);
-+
-+	if (!group)
-+		return -EINVAL;
- 
- 	if (group->mux_reg < 0 || group->sfsel_bit < 0)
- 		return -EINVAL;
-@@ -309,7 +335,10 @@ static void tegra_pinctrl_gpio_disable_free(struct pinctrl_dev *pctldev,
- 	if (!pmx->soc->sfsel_in_mux)
- 		return;
- 
--	group = &pmx->soc->groups[offset];
-+	group = tegra_pinctrl_get_group(pctldev, offset);
-+
-+	if (!group)
-+		return -EINVAL;
- 
- 	if (group->mux_reg < 0 || group->sfsel_bit < 0)
- 		return;
+It's a bit unrelated comment to this change, but it may be worth to verify all 
+kcontrol put callbacks in the tegra code. Ensure that value 1 is returned only 
+when something was really changed in hardware.
+
+The tegra210_i2s_put_control() has opposite problem for example - returns 
+always 0 which means that the change notifications are not send to subscribed 
+applications.
+
+						Jaroslav
+
 -- 
-2.17.1
-
+Jaroslav Kysela <perex@perex.cz>
+Linux Sound Maintainer; ALSA Project; Red Hat, Inc.
