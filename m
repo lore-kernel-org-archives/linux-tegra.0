@@ -2,171 +2,84 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BDFCC43217
-	for <linux-tegra@archiver.kernel.org>; Mon, 25 Oct 2021 22:50:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72915C433EF
+	for <linux-tegra@archiver.kernel.org>; Mon, 25 Oct 2021 23:28:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 739F06103C
-	for <linux-tegra@archiver.kernel.org>; Mon, 25 Oct 2021 22:50:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A77D60F46
+	for <linux-tegra@archiver.kernel.org>; Mon, 25 Oct 2021 23:28:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235381AbhJYWwz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 25 Oct 2021 18:52:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41696 "EHLO
+        id S234411AbhJYXak (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 25 Oct 2021 19:30:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50956 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235277AbhJYWvG (ORCPT
+        with ESMTP id S233816AbhJYXah (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 25 Oct 2021 18:51:06 -0400
-Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4DA5C0432CE;
-        Mon, 25 Oct 2021 15:46:23 -0700 (PDT)
-Received: by mail-lj1-x236.google.com with SMTP id u5so15045497ljo.8;
-        Mon, 25 Oct 2021 15:46:23 -0700 (PDT)
+        Mon, 25 Oct 2021 19:30:37 -0400
+Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77D12C061348
+        for <linux-tegra@vger.kernel.org>; Mon, 25 Oct 2021 16:28:14 -0700 (PDT)
+Received: by mail-lf1-x12b.google.com with SMTP id j9so12955666lfu.7
+        for <linux-tegra@vger.kernel.org>; Mon, 25 Oct 2021 16:28:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=KUl5NgtppOXN7aMrj+VJMJxgtwwCvjbf2LUP4ZJTZHk=;
-        b=dM8HQOakT9lKwnlzX8oDz69wX5j1TjDnrC8XDQpJ3/grT/a5UOQT72pKmmWOeA+nw5
-         hwS1AaicnlAS+Q3JuF+ijqvdVe4Un6yYFhFplrdKyeGItVsGKKcqDiC/7fQHeHpKybn0
-         mi8KXBeDO3NELpLv4ar+VQwjOxNzn0V1FHmGK4K54a2y92lJV8T2Xs4iQadhxe1H5kx8
-         949C5LowvQw9vTNqSPVd5lnBVNk3LEVCdQxC2NHFJOFUZ6q/S9pksA16cLzksRcTmCPm
-         sc8c3tPIr72zAsfojA2oE0GaEnvZY0XTwZQWzo9WhpgugqOWsN43BXToZPztYXToBEiP
-         J7QQ==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=2jLfqODImegdyXeqCFCRv0DRtHzswCpaP9EDsnOhsqE=;
+        b=VkRwmFs+UC+5N5+Lua5QAFc9GjTeu4QhnyQCxzTQ97C3wCgU+kd950IiKTmkTRxnkc
+         XSrU++KPuOTDAIT2ASvNw1clCKGSMQmhx91oENhD2wcbgbkmVCAuQQdhBt2sSI/dDTzX
+         wJKYmTg1MIC1mGbhrn27nZt8jRxB8TC4qVgCiS6aTJXZnAEO/Wb4hRD4GGgY1F5siYq1
+         D93ac0jCKtPLMzH8wjP1oualVDceCiNk+A4ejfMtQH2dwu3nV8aXALkMzB9jDJT1IKzW
+         kWZ+OZyD+80inmcrO/OAX71C25wYHf9mqp4UPLYpfOhkW9daC9EwaGY93JNZl3koj/ga
+         xeQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=KUl5NgtppOXN7aMrj+VJMJxgtwwCvjbf2LUP4ZJTZHk=;
-        b=0zg2zSDegl4tp7i+bvht8eXRQpkx8U53cgDudvdOkMBVGOQlxZEdQ2mUXFXJQeEcML
-         50ppoJEJ54N9ul3m3eOBC5KQs1e4lrFsz9svAvMcb4opz8US+end7skFpporsPAJMbUB
-         b+zc66X90Ro8aumET6vQgIZ/tosR/OMLhMIqlZWPc5r8tBr4pYsUEycK1wGY29ML9mMo
-         dw+jKnlEkyvskuMBd1sAVsjBeMGGW0jo9mbiHbNWGK7JYdQ2YPhe8nNzNg53DNWVNnUU
-         xCVs4IqntNJuWCCatpaEKvIE5hsHV/ctiKSbY1AtexWrtGz5ozZEipX+yw4Ep5HVSgFO
-         W9YQ==
-X-Gm-Message-State: AOAM531homEru0Tl/zg2GDlz5rmSslwx8+VgXb0x0/VNWMSdH4ArGLP2
-        8/+dolnOpJmUQ4yZW7dsbLU=
-X-Google-Smtp-Source: ABdhPJznfzGWMyl02ihP30IcAisfmZn0lCnSMUeLm2QIKB/p5f1vAU2HQg628QiAR5z1U8DIPh6cDw==
-X-Received: by 2002:a05:651c:556:: with SMTP id q22mr21587546ljp.314.1635201982105;
-        Mon, 25 Oct 2021 15:46:22 -0700 (PDT)
-Received: from localhost.localdomain (46-138-41-28.dynamic.spd-mgts.ru. [46.138.41.28])
-        by smtp.gmail.com with ESMTPSA id t20sm2040956lft.240.2021.10.25.15.46.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Oct 2021 15:46:21 -0700 (PDT)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>, Nishanth Menon <nm@ti.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-pwm@vger.kernel.org,
-        linux-mmc@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-clk@vger.kernel.org, David Heidelberg <david@ixit.cz>
-Subject: [PATCH v14 39/39] ARM: tegra20/30: Disable unused host1x hardware
-Date:   Tue, 26 Oct 2021 01:40:32 +0300
-Message-Id: <20211025224032.21012-40-digetx@gmail.com>
-X-Mailer: git-send-email 2.33.1
-In-Reply-To: <20211025224032.21012-1-digetx@gmail.com>
-References: <20211025224032.21012-1-digetx@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=2jLfqODImegdyXeqCFCRv0DRtHzswCpaP9EDsnOhsqE=;
+        b=3KEl+6FhV+q0hSIkm+im/K3nfkHGOveRUUcWZvdPx2MT/+p3cbw3lDszGFFEV9Rcpw
+         q0q+ly4rNZIUNuKDTanW3vmozkVMQr8VdnDDT44SioPq9UuREq9KdkklCbAFvsR9emS9
+         dgZFFNntoo3yVyWECJpWUavq9ekBAnJj+KQYinUCUNEdpw9lKOh6ElyhVXnGeaGA+YIN
+         uah5jfeyCZ0pwkeN2MXJaHnzb8YJEghBHofMYOY2ZIaNpD/ge4dLObweDhugZAI1uvLU
+         uQA7AfZZFnrC38vTDO9qb7HCczbcFtYqeO63uCfzVxERGgqbTPRUA6mTHNf/79a7brqh
+         grCg==
+X-Gm-Message-State: AOAM532+4dHpxU7WlHTYMHG9pITH3mUyAwZE1BU47vYFzlvFypV6mfO4
+        pkMW4j2YL2/NRKtslRow0X2eDdldZ7LMK0hM9brBHA==
+X-Google-Smtp-Source: ABdhPJzkOPHytZhWgL6j0wryzg6V/Il2HFi9TqQx7KnlVfV4W2fcE4lNTTk9skbA4uLwH+eFc0IoKOaLk5HckUncqQg=
+X-Received: by 2002:a05:6512:3d22:: with SMTP id d34mr6400800lfv.229.1635204492715;
+ Mon, 25 Oct 2021 16:28:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20211025110959.27751-1-pshete@nvidia.com>
+In-Reply-To: <20211025110959.27751-1-pshete@nvidia.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 26 Oct 2021 01:28:01 +0200
+Message-ID: <CACRpkdapa8ReOf3Tfdi9LruatJO_GLEJaX8c6YuHooXDpreyEA@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: tegra: Use correct offset for pin group
+To:     Prathamesh Shete <pshete@nvidia.com>
+Cc:     "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Suresh Mangipudi <smangipudi@nvidia.com>, kkartik@nvidia.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-MPE, VI, EPP and ISP were never used and we don't have drivers for them.
-Since these modules are enabled by default in a device-tree, a device is
-created for them, blocking voltage scaling because there is no driver to
-bind, and thus, state of PMC driver is never synced. Disable them.
+On Mon, Oct 25, 2021 at 1:10 PM Prathamesh Shete <pshete@nvidia.com> wrote:
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- arch/arm/boot/dts/tegra20.dtsi | 4 ++++
- arch/arm/boot/dts/tegra30.dtsi | 8 ++++++++
- 2 files changed, 12 insertions(+)
+> Function tegra_pinctrl_gpio_request_enable() and
+> tegra_pinctrl_gpio_disable_free() uses pin offset instead
+> of group offset, causing the driver to use wrong offset
+> to enable gpio.
+>
+> Add a helper function tegra_pinctrl_get_group() to parse the
+> pin group and determine correct offset.
+>
+> Signed-off-by: Kartik K <kkartik@nvidia.com>
+> Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
 
-diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
-index 7b69ffc57abe..8010b40d7377 100644
---- a/arch/arm/boot/dts/tegra20.dtsi
-+++ b/arch/arm/boot/dts/tegra20.dtsi
-@@ -59,6 +59,7 @@ mpe@54040000 {
- 			reset-names = "mpe";
- 			power-domains = <&pd_mpe>;
- 			operating-points-v2 = <&mpe_dvfs_opp_table>;
-+			status = "disabled";
- 		};
- 
- 		vi@54080000 {
-@@ -70,6 +71,7 @@ vi@54080000 {
- 			reset-names = "vi";
- 			power-domains = <&pd_venc>;
- 			operating-points-v2 = <&vi_dvfs_opp_table>;
-+			status = "disabled";
- 		};
- 
- 		epp@540c0000 {
-@@ -81,6 +83,7 @@ epp@540c0000 {
- 			reset-names = "epp";
- 			power-domains = <&pd_core>;
- 			operating-points-v2 = <&epp_dvfs_opp_table>;
-+			status = "disabled";
- 		};
- 
- 		isp@54100000 {
-@@ -91,6 +94,7 @@ isp@54100000 {
- 			resets = <&tegra_car 23>;
- 			reset-names = "isp";
- 			power-domains = <&pd_venc>;
-+			status = "disabled";
- 		};
- 
- 		gr2d@54140000 {
-diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
-index c1be136aac7d..d961ce3761e6 100644
---- a/arch/arm/boot/dts/tegra30.dtsi
-+++ b/arch/arm/boot/dts/tegra30.dtsi
-@@ -145,6 +145,8 @@ mpe@54040000 {
- 			operating-points-v2 = <&mpe_dvfs_opp_table>;
- 
- 			iommus = <&mc TEGRA_SWGROUP_MPE>;
-+
-+			status = "disabled";
- 		};
- 
- 		vi@54080000 {
-@@ -158,6 +160,8 @@ vi@54080000 {
- 			operating-points-v2 = <&vi_dvfs_opp_table>;
- 
- 			iommus = <&mc TEGRA_SWGROUP_VI>;
-+
-+			status = "disabled";
- 		};
- 
- 		epp@540c0000 {
-@@ -171,6 +175,8 @@ epp@540c0000 {
- 			operating-points-v2 = <&epp_dvfs_opp_table>;
- 
- 			iommus = <&mc TEGRA_SWGROUP_EPP>;
-+
-+			status = "disabled";
- 		};
- 
- 		isp@54100000 {
-@@ -183,6 +189,8 @@ isp@54100000 {
- 			power-domains = <&pd_venc>;
- 
- 			iommus = <&mc TEGRA_SWGROUP_ISP>;
-+
-+			status = "disabled";
- 		};
- 
- 		gr2d@54140000 {
--- 
-2.33.1
+Patch applied.
 
+Yours,
+Linus Walleij
