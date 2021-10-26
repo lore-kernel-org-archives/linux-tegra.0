@@ -2,84 +2,153 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72915C433EF
-	for <linux-tegra@archiver.kernel.org>; Mon, 25 Oct 2021 23:28:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 950AEC433F5
+	for <linux-tegra@archiver.kernel.org>; Tue, 26 Oct 2021 06:23:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4A77D60F46
-	for <linux-tegra@archiver.kernel.org>; Mon, 25 Oct 2021 23:28:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6A62561074
+	for <linux-tegra@archiver.kernel.org>; Tue, 26 Oct 2021 06:23:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234411AbhJYXak (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 25 Oct 2021 19:30:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50956 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233816AbhJYXah (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 25 Oct 2021 19:30:37 -0400
-Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77D12C061348
-        for <linux-tegra@vger.kernel.org>; Mon, 25 Oct 2021 16:28:14 -0700 (PDT)
-Received: by mail-lf1-x12b.google.com with SMTP id j9so12955666lfu.7
-        for <linux-tegra@vger.kernel.org>; Mon, 25 Oct 2021 16:28:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=2jLfqODImegdyXeqCFCRv0DRtHzswCpaP9EDsnOhsqE=;
-        b=VkRwmFs+UC+5N5+Lua5QAFc9GjTeu4QhnyQCxzTQ97C3wCgU+kd950IiKTmkTRxnkc
-         XSrU++KPuOTDAIT2ASvNw1clCKGSMQmhx91oENhD2wcbgbkmVCAuQQdhBt2sSI/dDTzX
-         wJKYmTg1MIC1mGbhrn27nZt8jRxB8TC4qVgCiS6aTJXZnAEO/Wb4hRD4GGgY1F5siYq1
-         D93ac0jCKtPLMzH8wjP1oualVDceCiNk+A4ejfMtQH2dwu3nV8aXALkMzB9jDJT1IKzW
-         kWZ+OZyD+80inmcrO/OAX71C25wYHf9mqp4UPLYpfOhkW9daC9EwaGY93JNZl3koj/ga
-         xeQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=2jLfqODImegdyXeqCFCRv0DRtHzswCpaP9EDsnOhsqE=;
-        b=3KEl+6FhV+q0hSIkm+im/K3nfkHGOveRUUcWZvdPx2MT/+p3cbw3lDszGFFEV9Rcpw
-         q0q+ly4rNZIUNuKDTanW3vmozkVMQr8VdnDDT44SioPq9UuREq9KdkklCbAFvsR9emS9
-         dgZFFNntoo3yVyWECJpWUavq9ekBAnJj+KQYinUCUNEdpw9lKOh6ElyhVXnGeaGA+YIN
-         uah5jfeyCZ0pwkeN2MXJaHnzb8YJEghBHofMYOY2ZIaNpD/ge4dLObweDhugZAI1uvLU
-         uQA7AfZZFnrC38vTDO9qb7HCczbcFtYqeO63uCfzVxERGgqbTPRUA6mTHNf/79a7brqh
-         grCg==
-X-Gm-Message-State: AOAM532+4dHpxU7WlHTYMHG9pITH3mUyAwZE1BU47vYFzlvFypV6mfO4
-        pkMW4j2YL2/NRKtslRow0X2eDdldZ7LMK0hM9brBHA==
-X-Google-Smtp-Source: ABdhPJzkOPHytZhWgL6j0wryzg6V/Il2HFi9TqQx7KnlVfV4W2fcE4lNTTk9skbA4uLwH+eFc0IoKOaLk5HckUncqQg=
-X-Received: by 2002:a05:6512:3d22:: with SMTP id d34mr6400800lfv.229.1635204492715;
- Mon, 25 Oct 2021 16:28:12 -0700 (PDT)
+        id S230192AbhJZG0I (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 26 Oct 2021 02:26:08 -0400
+Received: from mail-bn8nam12on2076.outbound.protection.outlook.com ([40.107.237.76]:29056
+        "EHLO NAM12-BN8-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S229635AbhJZG0H (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 26 Oct 2021 02:26:07 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=JFn1v5NiTbhY5vSisiiBjMuPYu25kHX2G7EXuIUP3EgDuoEzasyvVXpgF0gc3+jve73mVMqYDKDvxWajFhzY9NMaP3SXxrwxpfdmZx7ATt4MKOEWx3AJBmXakfsl8I19lEo++M4l4dqEHQjvjRX3xbDvA6+ZOD/TCHl2e7fGNXBbWfeA2UWLc1Jg5V4St5Ckv8/T0JmeXNagsUKltQJNjpizIdSQiQWyVGvB42W7FGGJ5jg+lqH5d3/aUro9k6wb/Vxsn++fdzVPSNybq4oTpo29rPdPQvEeDrjkrlaj7NZq9rDA44p6FELrNBl0BTgR8aQjcIi6th8tQJtxtpFeqA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=CSKBOQ2ZQnih3tCt7D9ziiP5YfOwT9CPJAmq4mgzZzc=;
+ b=l1SozSX+kNi3IFensuI26X1qq09TsPG7fidP4t65UQbAsl0Itr1uSiZT7SOcn5tq7NOHhz6iDABOOsUbJjIwWPwA0gk4iTApp/QMqOHIwiac/XvZFHyjovTvZGIqiuPdGLpdcTCgdYDkUzl/PeNqamQEoxYh6T7PtjYCJ360PlFNmzZ0mXwqtf/XmOjaGdn4bUCYlsKLM2ALkQ3OREz2YxuHos6z/ldEwxP6harA/F34EPpipx/sbet4lvqdqA9WQOxl6iIoXLFI6y0OaZlh7jolJOTXS5ZuQpZON1nvnrnI7d0lSroQMhVdGgF6zRAz+SpkctwYsTanfGjcj7+ssQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CSKBOQ2ZQnih3tCt7D9ziiP5YfOwT9CPJAmq4mgzZzc=;
+ b=JVVRLvqKsbp6I31YFqh0Joyd1gaugQz9cvIk84t7kjfwuUyRHF82qAda6iPjpOlcR0dhY0jVVJ2QyV+FfVb1OHFVF1mzriwa/jVtxFposg8vskeaR1ZXbKjoaz9yzurZJeLFTlxA1cf+5xQzQgPYjJ45gNYWrikQyzvR4YJlmcbkfrr2qoMSM1ohshEnDNh/1tCO0zk9ieSjuWxnlKUJNi4Vo8EtRsW4V9t2rHxmsPrs/StaDFLrwz38IRztpK2Apa4qizWDnEOW/dtjWOg55YKAdqGooG1HLetaG9cbzHC7WmtCG/NlGF1E6UdT7GW452UDnt/yadaFIog+2a3MUQ==
+Authentication-Results: vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=none action=none header.from=nvidia.com;
+Received: from BN9PR12MB5324.namprd12.prod.outlook.com (2603:10b6:408:105::15)
+ by BN9PR12MB5368.namprd12.prod.outlook.com (2603:10b6:408:105::24) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4628.18; Tue, 26 Oct
+ 2021 06:23:42 +0000
+Received: from BN9PR12MB5324.namprd12.prod.outlook.com
+ ([fe80::bd5d:72c9:f3ea:f171]) by BN9PR12MB5324.namprd12.prod.outlook.com
+ ([fe80::bd5d:72c9:f3ea:f171%7]) with mapi id 15.20.4628.020; Tue, 26 Oct 2021
+ 06:23:42 +0000
+Subject: Re: [PATCH] ASoC: tegra: Add master volume/mute control support
+To:     Jaroslav Kysela <perex@perex.cz>, broonie@kernel.org,
+        lgirdwood@gmail.com, tiwai@suse.com
+Cc:     jonathanh@nvidia.com, thierry.reding@gmail.com,
+        alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1635159976-17355-1-git-send-email-spujar@nvidia.com>
+ <79541c76-2c2b-fd4b-60c8-67ee6b8ea3fa@perex.cz>
+From:   Sameer Pujar <spujar@nvidia.com>
+Message-ID: <8cb777f9-b73b-136c-f560-de4c31af931e@nvidia.com>
+Date:   Tue, 26 Oct 2021 11:53:30 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
+In-Reply-To: <79541c76-2c2b-fd4b-60c8-67ee6b8ea3fa@perex.cz>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-GB
+X-ClientProxiedBy: MAXPR0101CA0053.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:a00:e::15) To BN9PR12MB5324.namprd12.prod.outlook.com
+ (2603:10b6:408:105::15)
 MIME-Version: 1.0
-References: <20211025110959.27751-1-pshete@nvidia.com>
-In-Reply-To: <20211025110959.27751-1-pshete@nvidia.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 26 Oct 2021 01:28:01 +0200
-Message-ID: <CACRpkdapa8ReOf3Tfdi9LruatJO_GLEJaX8c6YuHooXDpreyEA@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: tegra: Use correct offset for pin group
-To:     Prathamesh Shete <pshete@nvidia.com>
-Cc:     "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Suresh Mangipudi <smangipudi@nvidia.com>, kkartik@nvidia.com
-Content-Type: text/plain; charset="UTF-8"
+Received: from [10.25.98.39] (202.164.25.5) by MAXPR0101CA0053.INDPRD01.PROD.OUTLOOK.COM (2603:1096:a00:e::15) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4628.18 via Frontend Transport; Tue, 26 Oct 2021 06:23:39 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 639fcfb4-1a29-4b46-5736-08d9984927d4
+X-MS-TrafficTypeDiagnostic: BN9PR12MB5368:
+X-Microsoft-Antispam-PRVS: <BN9PR12MB5368A15B7C76944BC23CBA08A7849@BN9PR12MB5368.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:8882;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 4Z/K1rNK/SDHwpbTk/RbsLj9LCTyrP+YuT/YNWZ55h99arQ/fBdahOTmDxD/NadfrkAgJvWYMYYM9F82r1uHKwpnoY6FI9uvIPWKlk5qDIqV97GI2TDCD6r57G17F1dNbyUqsX1cXOW8sMyZRZgK7lZSjWcYeEuL6GLSAW93HEMPzyYzcwnBaYKuN1Qd7r47eu/k2ySujdob1EKjXvP1gXidAMnvea0SP5Y/Kqwb6eGxNVejcjnlEz7OmLWVrD0PqaKZHFibjUw3x8cTS6AcfHZxOuCXHskrI0yHareI8OVdB4HlB+hpfGNDpjrFfH+jiZORmp4UCtu7QoIYw+6neXWoyBdXXhfeEcBiC7j4i5CA689gIBbAReF/wxCGUQKTAQ5w3sJ3Jmi9ZxL1tDRN+SlFjw5gK33vBwWwG3xaZWkHMn2xPJXuECZ3SV+PBCcxQI0eMPy27qpAKCmK3eEUFJXM2gQGpVzrQoOqqph0O144wP+nujel0W6ncGCStZeZ/M4a0/O/rNiksYv+h3MnOaQw+mlFQDb7lcy2KtCDiUHyvoVM3PiPGBknkDXOONJSRGV88IupNusbXTOA9iyBhW+qv0Qyl5E4fTPrtPD3yvPJdrXOyRb9ormAEN8IExeljnUvuwSWohaZBrrBsqLidnHBoZDg8LpC96pcbEJGDd72dRCbg0rjYxK/9TPDd8eaW8q7R9asBnteNzRZF64apDii0C3Do4tk893CNAoGCIk=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR12MB5324.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(66476007)(66556008)(36756003)(508600001)(8936002)(83380400001)(4744005)(66946007)(186003)(86362001)(31696002)(2906002)(26005)(2616005)(16576012)(4326008)(38100700002)(956004)(8676002)(5660300002)(316002)(31686004)(6486002)(53546011)(6666004)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?SERlZHJnMHB5NkxndmZLY2l3SU9tM0xZeFljZG00Y3VHdjQ0VHhUZjBEOWQy?=
+ =?utf-8?B?cSthZFhYZXdQMk1uaTkwbzJoRXkyeTJrVklUL1RyclhhK0ZlZ1M4VXVOVmpX?=
+ =?utf-8?B?M0dqQWxxM1FTWU8vcjU0OWc0UDVmME43MExYeG5KdWNUTzZ4SUxNYW1YQXVy?=
+ =?utf-8?B?d05Pa05DM3lhcXJKa1Y0WnFqWHhiUGlBeEwwdHZMazZTUld0V0FpNzc3OUI3?=
+ =?utf-8?B?VENtZXVRM1g2ZnJvSUdjTlk4L0RzTjFGaG1hSzNHSHd2Y1p4M2pVRHRlUHBC?=
+ =?utf-8?B?NW9IRmtnTXNjNGhLZ1Z6ZUFUR3MxMzhIc2hMMFo0U1ZmYmpVSVo4ZktaUUJK?=
+ =?utf-8?B?cTJQY2RaNW9Fazl6dmtUNDdYZXdnL2JSUjNjWThwNVJQdkhqN3RnT2lNZ0Zs?=
+ =?utf-8?B?cnIxUkF1blNYMU9SUzV6enB6MmY3VDdaQlJBSnVHam9pdnJxQmp1NWJXL0pS?=
+ =?utf-8?B?c2JJZkIrV0NPc29BN0lsYzNOZlJVS0YyT0VDRnNUZFkyUzhzWk5YckI5VFVk?=
+ =?utf-8?B?UUViVVNZajdxMzhJZzRZVEJocVBWN0VEMk5UOWtKSDdSdHp3amcwTHZCWUhl?=
+ =?utf-8?B?WGRjSFM2Mk93RlBhaTdPQ0FxeFlUM2EzWkNFcTM2dmVVV08zcUgzRi85RHpy?=
+ =?utf-8?B?OC9XckhmaWcyQTZtMlFMTnpDeEVTSFhJaXpRSjl0aEN2M2owTEJlWWJjZGNC?=
+ =?utf-8?B?WmM1cVhFVHNkTEI2SnNHd0RpR2xPYVdHOGk1SlVaTmxxV21qaWpsZjNnbTVE?=
+ =?utf-8?B?aWJTWElldFNBcVMyd083b04yYW44RWIxMnlLU3RVcDhob2dvaG1ZWDVsNGVa?=
+ =?utf-8?B?cHN0eDZaRmdJM1NnVldsbmgzRzhTMU1kRUcrd1daNXB3WjhHMlFyTmdEWGhB?=
+ =?utf-8?B?WUpqYXE0ejZIT242dEFjZy8zTWJFZklrQUJuelZZL2FNRVgwaHVmUVhGZXRJ?=
+ =?utf-8?B?THNwMWFaSEE4ZHZXR0pZcjFtNDhZTWpXVEVLV05oRXowcGxtYUx4L21XUkhk?=
+ =?utf-8?B?a1dIYkRKVkppR3QxTVlBRUdtdDNNZzcyWldEdncwUnFicVNZWWh3MmdzcHBy?=
+ =?utf-8?B?SjdyeG04OTlUcmd0Y09FcWpOTlFNMHl5VHMrUzhkWW5MVHdTOXlXSFZ6K2Ry?=
+ =?utf-8?B?MlN5UkV1TXYzM2pkYjM0amlCSVIvRGFhdDJ4UWNXSXJSQ0ozbWdSQjBKbE9M?=
+ =?utf-8?B?djAwSVY0K1h1c1hBekNDUkNYR2dHc1Njd2hWWUhNTmVCNzlKbUVoN095d1Fh?=
+ =?utf-8?B?cXArYWI0bFdMMklaODdMV1haN093VHNUK3dtOFcrR0M4ZGhITEkwZEpNZHJP?=
+ =?utf-8?B?QXpndzMzU2xMTVowZTZPemQ5bXRveW85ekgxRFJxampPR285TnhDNTZxeWow?=
+ =?utf-8?B?T0JRSDh4NG85UmUrWlU3cytEZW5jRlVhb0l1MUEyYmMwcE5qN1lFK1gxR1lx?=
+ =?utf-8?B?OG9BRmNRd0srd01ZM2trRU1GNTRzTDFHaUF0bFpRMnkvaUlFU2U3VGRHUXNT?=
+ =?utf-8?B?bGxJSFMwaW9jVkRNZVY5ZGlSRnUrUVZOamtUVDcxZjVwNWRPS1JUcFBxbW9j?=
+ =?utf-8?B?MGlrdmY3SExtWnA0MnZBY2hKNU9Gbm5DbGNRcitwaW1vcmkzM05LOXE5MHRG?=
+ =?utf-8?B?b3JoR2JTLzZuajR3Z0lVWTJYV1RLNGNYd0ZpUWZtblhEVnZoRjRMN0FlYTlY?=
+ =?utf-8?B?ZTJZcVd1SWEwQzRvRHZKRXJMUEc4aEdjUTR1dzlzMUpZK0I2eUNCN2kvVnhW?=
+ =?utf-8?B?NGNSM29NWEpBaEtFTnA4ZUxwK21xNmFKS3dRZVlvZjF3cWNsemJ6cXFBTGto?=
+ =?utf-8?B?TytERHBWME1UTElaVGpEU0w2VzZ3Zk0wRzRYTDZoejhHalliMUNkYjREV3hm?=
+ =?utf-8?B?cmM2dnBpWG1vemMvN20rNVp3Yi9MdWlSS3NTTGNVM0xSTFA1TXlCU3ZqUTB3?=
+ =?utf-8?B?bStCN3h2MDJnb0cvdS9kYkxaQzhicHJhU2FoaXFTNUFEcGJ1Z2lTNFhpK0RP?=
+ =?utf-8?B?OFo1dnRoWmtIc1RNdWlXL255RjFBM3JiamE3ckRBM3QwU20xT1JSalNwczky?=
+ =?utf-8?B?dnVSbFlDMzB0RTdWTDFUY1F3NkNTdzR6MVM2RExZUDhJczZpRUVVaFMyNXNt?=
+ =?utf-8?B?TkhuTk5FMkhCVlZrZVpTNzB3aXRaNTZRUlBMUmIySXpHTlJRK01iaFRINnBo?=
+ =?utf-8?Q?RC9hvnrAf+cxo6hF0zg0OFE=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 639fcfb4-1a29-4b46-5736-08d9984927d4
+X-MS-Exchange-CrossTenant-AuthSource: BN9PR12MB5324.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Oct 2021 06:23:41.9182
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Ghp/4GudO3G25Enw1gLZr7U4dIor+VBtQzIOj7dl0UnZ8km/amQk1L7sNqUxXdHBDwilkBPK3JpQoGa0SzFTfg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN9PR12MB5368
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, Oct 25, 2021 at 1:10 PM Prathamesh Shete <pshete@nvidia.com> wrote:
 
-> Function tegra_pinctrl_gpio_request_enable() and
-> tegra_pinctrl_gpio_disable_free() uses pin offset instead
-> of group offset, causing the driver to use wrong offset
-> to enable gpio.
+
+On 10/25/2021 6:28 PM, Jaroslav Kysela wrote:
+> On 25. 10. 21 13:06, Sameer Pujar wrote:
 >
-> Add a helper function tegra_pinctrl_get_group() to parse the
-> pin group and determine correct offset.
+>> @@ -150,11 +186,22 @@ static int tegra210_mvc_put_mute(struct 
+>> snd_kcontrol *kcontrol,
 >
-> Signed-off-by: Kartik K <kkartik@nvidia.com>
-> Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
+> ...
+>>
+>>       return 1;
+>
+> It's a bit unrelated comment to this change, but it may be worth to 
+> verify all
+> kcontrol put callbacks in the tegra code. Ensure that value 1 is 
+> returned only
+> when something was really changed in hardware.
+>
+> The tegra210_i2s_put_control() has opposite problem for example - returns
+> always 0 which means that the change notifications are not send to 
+> subscribed
+> applications.
+>
 
-Patch applied.
-
-Yours,
-Linus Walleij
+Thanks Jaroslav for review. I will keep a note to review put() calls in 
+Tegra drivers and send fixes accordingly.
