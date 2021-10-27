@@ -2,100 +2,151 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA660C4332F
-	for <linux-tegra@archiver.kernel.org>; Wed, 27 Oct 2021 21:21:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85950C4332F
+	for <linux-tegra@archiver.kernel.org>; Wed, 27 Oct 2021 21:21:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C35B1610F8
-	for <linux-tegra@archiver.kernel.org>; Wed, 27 Oct 2021 21:21:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 73C1661106
+	for <linux-tegra@archiver.kernel.org>; Wed, 27 Oct 2021 21:21:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231764AbhJ0VXt (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 27 Oct 2021 17:23:49 -0400
-Received: from mail-oo1-f44.google.com ([209.85.161.44]:35688 "EHLO
-        mail-oo1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241171AbhJ0VVv (ORCPT
+        id S238819AbhJ0VYE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 27 Oct 2021 17:24:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53814 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S244461AbhJ0VVw (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 27 Oct 2021 17:21:51 -0400
-Received: by mail-oo1-f44.google.com with SMTP id 64-20020a4a0d43000000b002b866fa13eeso1408719oob.2;
-        Wed, 27 Oct 2021 14:19:25 -0700 (PDT)
+        Wed, 27 Oct 2021 17:21:52 -0400
+Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75C0AC07978D;
+        Wed, 27 Oct 2021 14:18:35 -0700 (PDT)
+Received: by mail-lf1-x12c.google.com with SMTP id c28so8887472lfv.13;
+        Wed, 27 Oct 2021 14:18:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=4OWbCpLiTrW70NMTPpPUNVkhVF3RKPzG5GTofMVph+0=;
+        b=nyjF7CMTiXZTknDCkjxSlwBlmez3wFeA+zehsvTRn8HWRCKWBbu+VeqUVL44ms69wV
+         nnBlf5yP21RTavxXaqxcjkZ3KCf591eZC6XUlLgNrDZoqwAeG0e8waWDmBuDqGJPa/ia
+         TWGnRhqwCJRO6ZHGrxxDEuuBCRuC8gitnwXoBy6yPn2yaI52p7BdBoMEudji1fyrvZ7s
+         jQQkx67Vh3JRx01BzNxvLauTbUeZkFSOIEd8jQMxIMky+FUXABFowKrpCYCop+RjKrYK
+         44VAj9OlGjdC9id5DEzvny9pb4y7eTDKQL+s4i3zBATQTR5zvjDC+NzhG9GB4CVWfx2z
+         vHjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=FyelOIZ97OsIbI5HBi7o/appj9ec6FKJkiVDLu2gRJA=;
-        b=bej/YQ/F0MJBnlOM/+8mBUIHRTXxKvB9MeybgjsApPd/ytwWClSsB1EzeY9WfD5LnX
-         FiGSbf3uUpBw2jv791COCcOvGMa7CzPMzvcoCaTym6uHmkTMscm9TEEqorTaqH/Rgeyc
-         FByOhJnLOiEAPG+oY1oBfjjjZnnVLeH8BN2gG5XGLRgPSi4nDwpA79psDkVOemko/tD+
-         DpcDiOLFqYyabvvDJuYm3g/a1U15gF32IJaSFZDTwLskqlP60tc6qf6d5BR/CZOqnXLD
-         j88l9wQywF0vSaVthydAFyFLO8N+AEwVKMT9VfaKh1SzX5itf+w8JkKhbOu6EfqtlGt5
-         tnUA==
-X-Gm-Message-State: AOAM531TPCHufxW378SiBG/BxVGZEtk0OFLKb3QWAJ8vV5MXt+gCIOZo
-        CpJfgYZN11Z0DBG/r99mTg==
-X-Google-Smtp-Source: ABdhPJyz8qbGMscp1wt9cyF+o674ZtRUtlxyhur7dLM8bkeJYMZTonnu3UxlXbMxfyrsIoOI8LoNhg==
-X-Received: by 2002:a4a:430c:: with SMTP id k12mr85400ooj.43.1635369565454;
-        Wed, 27 Oct 2021 14:19:25 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id n17sm401101oic.21.2021.10.27.14.19.24
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=4OWbCpLiTrW70NMTPpPUNVkhVF3RKPzG5GTofMVph+0=;
+        b=RQdarPVv8BgXWVqYfAUFSDDspyuRd5pXaItCuokMKbzh0Hwal7PPa8LWxYco1qEVbP
+         9+rBO+LMCX1ZE4GyBCDcdh9AGXsZIOy2n4zrELDcDIjqqsXnzVdHh8xagMgbl2Pt3Pdn
+         VuzQweTTrjYSOsKl42rL9vPA1Myb5PSef1OFeSN1LQ24pDcXYTeAGk3jJhbavyUTxUxG
+         l7tB30jhdTWgUnxdVtBiwMnmOOiGxT5y482h2iCXQP9nW7rtCiHmKJKtI+XF5M+XfcvD
+         B6Kj29MHLl+ONGkuMFz4JKNp0rvwRyH/4GWwAZKRAHjca7FZU/s5a/hrtOepcT/W8poi
+         4+ag==
+X-Gm-Message-State: AOAM532Mjqqr58wwGgYnH57GFEX2GjoUQwBsRciB5Gfqjo+dCQq5p9M8
+        QoN5M68/e/PccpB5eRpxNig=
+X-Google-Smtp-Source: ABdhPJy61JBdPHWehe+0JZDFDtaEYRkwyYUuH0JZUFf3l53X5Ds5OQvvxR8PRHj15LQUp0FSRiIF9w==
+X-Received: by 2002:ac2:53a5:: with SMTP id j5mr141454lfh.130.1635369513848;
+        Wed, 27 Oct 2021 14:18:33 -0700 (PDT)
+Received: from localhost.localdomain (46-138-41-28.dynamic.spd-mgts.ru. [46.138.41.28])
+        by smtp.gmail.com with ESMTPSA id d7sm104336ljl.18.2021.10.27.14.18.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Oct 2021 14:19:24 -0700 (PDT)
-Received: (nullmailer pid 2181423 invoked by uid 1000);
-        Wed, 27 Oct 2021 21:19:23 -0000
-Date:   Wed, 27 Oct 2021 16:19:23 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Viresh Kumar <vireshk@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        Nishanth Menon <nm@ti.com>, David Heidelberg <david@ixit.cz>,
-        Thierry Reding <treding@nvidia.com>,
+        Wed, 27 Oct 2021 14:18:33 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v3] dt-bindings: opp: Allow multi-worded OPP entry names
-Message-ID: <YXnCW1KSg2RBIdDy@robh.at.kernel.org>
-References: <20211024215718.28969-1-digetx@gmail.com>
+        Lee Jones <lee.jones@linaro.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Russell King <linux@armlinux.org.uk>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Guo Ren <guoren@kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Joshua Thompson <funaho@jurai.org>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Nick Hu <nickhu@andestech.com>,
+        Greentime Hu <green.hu@gmail.com>,
+        Vincent Chen <deanbo422@gmail.com>,
+        "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+        Helge Deller <deller@gmx.de>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        Len Brown <lenb@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+        Tony Lindgren <tony@atomide.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Patrick Venture <venture@google.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Pavel Machek <pavel@ucw.cz>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-csky@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-riscv@lists.infradead.org, linux-sh@vger.kernel.org,
+        xen-devel@lists.xenproject.org, linux-acpi@vger.kernel.org,
+        linux-omap@vger.kernel.org, openbmc@lists.ozlabs.org,
+        linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: [PATCH v2 22/45] memory: emif: Use kernel_can_power_off()
+Date:   Thu, 28 Oct 2021 00:16:52 +0300
+Message-Id: <20211027211715.12671-23-digetx@gmail.com>
+X-Mailer: git-send-email 2.33.1
+In-Reply-To: <20211027211715.12671-1-digetx@gmail.com>
+References: <20211027211715.12671-1-digetx@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211024215718.28969-1-digetx@gmail.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, Oct 25, 2021 at 12:57:18AM +0300, Dmitry Osipenko wrote:
-> Not all OPP entries fit into a single word. In particular NVIDIA Tegra OPP
-> tables use multi-word names where first part is freq and second voltage
-> because different hardware versions use different voltages for the same
-> freqs. Allow OPP entry to have multi-worded name separated by hyphen.
-> This silences DT checker warnings about wrong naming scheme.
-> 
-> Reviewed-by: David Heidelberg <david@ixit.cz>
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
-> 
-> Changelog:
-> 
-> v3: - Viresh Kumar suggested that we shouldn't support postfix variant.
->       I dropped variant with postfix naming scheme and multi-wording
->       support of table names.
-> 
-> v2: - In addition to a multi-wording support, support of the postfix
->       *-opp-table naming scheme is added to the updated pattern.
-> 
->  Documentation/devicetree/bindings/opp/opp-v2-base.yaml | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/opp/opp-v2-base.yaml b/Documentation/devicetree/bindings/opp/opp-v2-base.yaml
-> index ae3ae4d39843..f79343960539 100644
-> --- a/Documentation/devicetree/bindings/opp/opp-v2-base.yaml
-> +++ b/Documentation/devicetree/bindings/opp/opp-v2-base.yaml
-> @@ -33,7 +33,7 @@ properties:
->      type: boolean
->  
->  patternProperties:
-> -  '^opp-?[0-9]+$':
-> +  '^opp(-[0-9]+)*$':
+Replace legacy pm_power_off with kernel_can_power_off() helper that
+is aware about chained power-off handlers.
 
-This drops support for cases like 'opp1' which there are a ton of. It 
-should be '^opp(-?[0-9]+)*$' if we want to keep that support.
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ drivers/memory/emif.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I'd love to be stricter, but trying to find a balance.
+diff --git a/drivers/memory/emif.c b/drivers/memory/emif.c
+index 762d0c0f0716..cab10d5274a0 100644
+--- a/drivers/memory/emif.c
++++ b/drivers/memory/emif.c
+@@ -630,7 +630,7 @@ static irqreturn_t emif_threaded_isr(int irq, void *dev_id)
+ 		dev_emerg(emif->dev, "SDRAM temperature exceeds operating limit.. Needs shut down!!!\n");
+ 
+ 		/* If we have Power OFF ability, use it, else try restarting */
+-		if (pm_power_off) {
++		if (kernel_can_power_off()) {
+ 			kernel_power_off();
+ 		} else {
+ 			WARN(1, "FIXME: NO pm_power_off!!! trying restart\n");
+-- 
+2.33.1
 
-Rob
