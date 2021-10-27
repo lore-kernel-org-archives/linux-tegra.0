@@ -2,144 +2,306 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3600C43219
-	for <linux-tegra@archiver.kernel.org>; Wed, 27 Oct 2021 19:42:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F15F6C433EF
+	for <linux-tegra@archiver.kernel.org>; Wed, 27 Oct 2021 21:17:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C75B360FC0
-	for <linux-tegra@archiver.kernel.org>; Wed, 27 Oct 2021 19:42:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D0EF3610EA
+	for <linux-tegra@archiver.kernel.org>; Wed, 27 Oct 2021 21:17:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243734AbhJ0TpJ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 27 Oct 2021 15:45:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59994 "EHLO
+        id S244281AbhJ0VUW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 27 Oct 2021 17:20:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53682 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231656AbhJ0TpI (ORCPT
+        with ESMTP id S235594AbhJ0VUU (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 27 Oct 2021 15:45:08 -0400
-Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A307C061570;
-        Wed, 27 Oct 2021 12:42:42 -0700 (PDT)
-Received: by mail-lj1-x236.google.com with SMTP id 17so3423091ljq.0;
-        Wed, 27 Oct 2021 12:42:42 -0700 (PDT)
+        Wed, 27 Oct 2021 17:20:20 -0400
+Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35012C061570;
+        Wed, 27 Oct 2021 14:17:54 -0700 (PDT)
+Received: by mail-lf1-x12a.google.com with SMTP id bq11so8952736lfb.10;
+        Wed, 27 Oct 2021 14:17:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=lMrIGDyxX8Zy9n5Qfaorgc1V0f7+eeLTleV6gBWprQs=;
-        b=EpcfosP+IsCdHIOo4g9lQWA3Dt1mvkaa2S1lXNcMJ+wAv70XvIlAza40HBE97tgQSR
-         IkfIOp4xJgtTffYGkAODDYFJUZj25zWXktUjS8WptldLXdmHDvPyX9mlbT0mLS1M3dXX
-         vUj4Del4y/UjFwXSQBiS0m51FgS+KELr7DJbgRJsAD/6braCFNhttH/KC80FJLOUhVUT
-         XfbMBVd+oQ2hJle6n3br/BePBAtqcauPVqovMypm7aya3CAfvvL8qtYTm6PKzR8w5vVX
-         22lLwx9nfxESrOYG2VjBRQJktOLAAIQCePAjr6ylcuwqDGPz2+ysUeVsBLBoQzGs0iWt
-         nJuQ==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=HanWLUgUF9ofZz0QDrpGI0FWc48M0ufWpqHp0nt1b2E=;
+        b=a1C0lJ0gvckIcvrduJKizBVznyKnv2//TCPoPAKkXD5DGkkQrqb/ViKHcln36NfZVY
+         ISxWYKFK39QVsDuVPSlu1LT5SZ/nBBGFDz/uufiZqdO/sZQ/qKfQbI2KUPqf8Q5RxkHA
+         MqrWECpWx+g/FtcgYyau3zztbhU+vtw2w2aCc+udZXZ6rXXp+WIwUtGzuFURsYXqbmre
+         UplyFnSR1G34j0+8EfYoJdUe8oXvIadmEQEw4Cs4f6QOILfUENf3Exk7blXkIQnIkrzz
+         fkcmzAmhEcuM9KSNxc0P3MxX2C8tZcNnFx2+J321vEf5QsS8Rq276nN8ZpOlB8JNgrdd
+         UeOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=lMrIGDyxX8Zy9n5Qfaorgc1V0f7+eeLTleV6gBWprQs=;
-        b=u8oweZ26UHmgHHGh/v81E2HTEa0EJGrShkUbfkEDLE/H8x/L9VCiPjcbj5C+KeCnmN
-         mbIyaSHSr+PaNMftdbtexOz0R2U9Yw67yjDERe1ajmtzXmwsijd0KTfHdXTel3EvHByz
-         0DXbkg2ysx/mUNWwUAsOiwGtA/7zAqRIrvNmlx2NZRpvZZ2hC/tQc8ZgO1WxowU4he6/
-         um56cwS5s+JhkKugQ2muHjVnuq506dqlrN38W+Gqd8ncWdrvcvs9X6mO1slURrEQ8Q+G
-         PhbPRPGVJTiN4ti+2jqBQs9hgOsex1b5q3Moh4YKVE5CwOFgUiWk2bMvX6VGWApOsn5D
-         RDcA==
-X-Gm-Message-State: AOAM532Xx3TFi7QdHOMnFEe4BmN/dfQaqsW151rv/1ztjnd988eIvr0o
-        YjRKZnXeSykQA94b34dUvds=
-X-Google-Smtp-Source: ABdhPJxS+SO4cZo9cpkl8K0LznK+P9fYpGRd1oswPP0T1GAwpmwlx8un9r9DrfnHA/QNv1WaeAvq9A==
-X-Received: by 2002:a05:651c:4cf:: with SMTP id e15mr34624456lji.139.1635363760555;
-        Wed, 27 Oct 2021 12:42:40 -0700 (PDT)
-Received: from [192.168.2.145] (46-138-41-28.dynamic.spd-mgts.ru. [46.138.41.28])
-        by smtp.googlemail.com with ESMTPSA id o14sm71771ljh.62.2021.10.27.12.42.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Oct 2021 12:42:40 -0700 (PDT)
-Subject: Re: [PATCH v14 00/39] NVIDIA Tegra power management patches for 5.17
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
-        Nishanth Menon <nm@ti.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-pwm@vger.kernel.org,
-        linux-mmc@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-clk@vger.kernel.org, David Heidelberg <david@ixit.cz>
-References: <20211025224032.21012-1-digetx@gmail.com>
- <CAPDyKFrA2Jcb5BmaFmajtdUCmpwoPjAAvPC_MhoWwjDXJynD=w@mail.gmail.com>
+        bh=HanWLUgUF9ofZz0QDrpGI0FWc48M0ufWpqHp0nt1b2E=;
+        b=2DBntz91cSzQN0hRaF2E2r81j/aTuNe4fWfUbZrLjhLoW8iksFUvDeW7fS/UzDKebm
+         mtVXi4Xj24A9qUUK+3V+XwL1thd7HsWfor75K1v75Yo+w6TMWXhYeX5Uml/ctT758X/o
+         T1MvUYvL3hljnFUylZLyu3CkLhlhJDtcl9HVo3W0b8mx1E26Z9uOJlpHS8KvbojLMTfk
+         hsv9Wz7SwIMBMyhTEd3R7oH3SYFJgkJzLtB6ouRuP7L/1u/OZC3lyAs6ILDk5nzkG/qA
+         Qm0Ix5LNU+2mAdbZgE3HWIRziutrX2FoIEdewSaAyk8SQ04aKVXTLMdiUTa+nwqG8FDA
+         juQg==
+X-Gm-Message-State: AOAM531GISKMTlxyJl2aqX0gN8gj0vwq+ULZblzv2Id05X36+NwQ+7wQ
+        826MJLuq2Y6L+xRgUTIoU3s=
+X-Google-Smtp-Source: ABdhPJwziuHQfMqUpY6gmZyMY580K8cBL+Vix4M/+v/UKEXvEr1gkREZREaCQS2oC15RMdaQR1Q4+A==
+X-Received: by 2002:a05:6512:31a:: with SMTP id t26mr121977lfp.280.1635369472536;
+        Wed, 27 Oct 2021 14:17:52 -0700 (PDT)
+Received: from localhost.localdomain (46-138-41-28.dynamic.spd-mgts.ru. [46.138.41.28])
+        by smtp.gmail.com with ESMTPSA id d7sm104336ljl.18.2021.10.27.14.17.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Oct 2021 14:17:52 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <98072124-c196-5a5a-7fa6-9c8e465f9878@gmail.com>
-Date:   Wed, 27 Oct 2021 22:42:39 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Russell King <linux@armlinux.org.uk>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Guo Ren <guoren@kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Joshua Thompson <funaho@jurai.org>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Nick Hu <nickhu@andestech.com>,
+        Greentime Hu <green.hu@gmail.com>,
+        Vincent Chen <deanbo422@gmail.com>,
+        "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+        Helge Deller <deller@gmx.de>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        Len Brown <lenb@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+        Tony Lindgren <tony@atomide.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Patrick Venture <venture@google.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Pavel Machek <pavel@ucw.cz>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-csky@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-riscv@lists.infradead.org, linux-sh@vger.kernel.org,
+        xen-devel@lists.xenproject.org, linux-acpi@vger.kernel.org,
+        linux-omap@vger.kernel.org, openbmc@lists.ozlabs.org,
+        linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: [PATCH v2 00/45] Introduce power-off+restart call chain API
+Date:   Thu, 28 Oct 2021 00:16:30 +0300
+Message-Id: <20211027211715.12671-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.33.1
 MIME-Version: 1.0
-In-Reply-To: <CAPDyKFrA2Jcb5BmaFmajtdUCmpwoPjAAvPC_MhoWwjDXJynD=w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-27.10.2021 19:01, Ulf Hansson пишет:
-> On Tue, 26 Oct 2021 at 00:45, Dmitry Osipenko <digetx@gmail.com> wrote:
->>
->> This series adds runtime PM support to Tegra drivers and enables core
->> voltage scaling for Tegra20/30 SoCs, resolving overheating troubles.
->>
->> All patches in this series are interdependent and should go via Tegra tree
->> for simplicity.
->>
->> Changelog:
->>
->> v14: - Fixed missing runtime PM syncing on removal of drivers, which was
->>        spotted by Ulf Hansson in v13.
->>
->>      - clk-device driver now resumes RPM on system suspend instead of
->>        preparing clock which it backs. This was suggested by Ulf Hansson.
->>
->>      - clk-device driver now syncs power domain performance unconditionally
->>        during driver's probe time since GENPD API allows to do this now.
->>        It was spotted by Ulf Hansson.
->>
->>      - Added new "Enable runtime PM during OPP state-syncing" patch, which
->>        allows drivers to sync state at any time. Previously drivers were
->>        obligated to take care of enabling RPM at the "right" time.
->>
->>      - Moved runtime PM initialization/uninitialization of DRM drivers that
->>        use host1x channel to host1x client init/deinit phase. I noticed that
->>        there is UAF problem because RPM-suspend callback waits until channel
->>        is idling and channel is already released/freed during driver's removal
->>        phase.
->>
->>      - Added system suspend support to the new NVDEC DRM driver.
->>
->>      - Added missing pm_runtime_mark_last_busy() to DRM driver.
->>
->>      - Corrected VDE GENPD patch which previously made video decoder clock
->>        always-enabled by mistake if legacy PD code path was used. It was
->>        spotted while we were testing VDE on Tegra114 that doesn't support
->>        GENPD yet.
->>
->>      - Added ack from Peter Chen to the USB patch that he gave to v13.
->>
->>      - Changed OPP table names in accordance to the new naming scheme
->>        required by the recent core OPP binding.
->>
->>      - Added 500MHz memory OPP entry used by ASUS Transformer tablets.
-> 
-> Besides those minor nitpicks/questions that I have sent for patch1 and
-> patch29, the series looks good to me!
-> 
-> Feel free to add, for the whole series:
-> 
-> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+Problem
+-------
 
-Thank you, Ulf!
+SoC devices require power-off call chaining functionality from kernel.
+We have a widely used restart chaining provided by restart notifier API,
+but nothing for power-off.
 
-I'll wait for more comments and re-spin v15 with minor improvements
-around the end of the upcoming merge window.
+Solution
+--------
+
+Introduce new API that provides both restart and power-off call chains.
+
+Why combine restart with power-off? Because drivers often do both.
+More practical to have API that provides both under the same roof.
+
+The new API is designed with simplicity and extensibility in mind.
+It's built upon the existing restart and reboot APIs. The simplicity
+is in new helper functions that are convenient for drivers. The
+extensibility is in the design that doesn't hardcode callback
+arguments, making easy to add new parameters and remove old.
+
+This is a third attempt to introduce the new API. First was made by
+Guenter Roeck back in 2014, second was made by Thierry Reding in 2017.
+In fact the work didn't stop and recently arm_pm_restart() was removed
+from v5.14 kernel, which was a part of preparatory work started by
+Guenter Roeck. I took into account experience and ideas from the
+previous attempts, extended and polished them.
+
+Adoption plan
+-------------
+
+This patchset introduces the new API. It also converts multiple drivers
+and arch code to the new API to demonstrate how it all looks in practice.
+
+The plan is:
+
+1. Merge new API (patches 1-8). This API will co-exist with the old APIs.
+
+2. Convert arch code to do_kernel_power_off() (patches 9-21).
+
+3. Convert drivers and platform code to the new API.
+
+4. Remove obsolete pm_power_off and pm_power_off_prepare variables.
+
+5. Make restart-notifier API private to kernel/reboot.c once no users left.
+
+Results
+-------
+
+1. Devices can be powered off properly.
+
+2. Global variables are removed from drivers.
+
+3. Global pm_power_off and pm_power_off_prepare callback variables are
+removed once all users are converted to the new API. The latter callback
+is removed by patch #25 of this series.
+
+4. Ambiguous call chain ordering is prohibited. See patch #5 which adds
+verification of restart handlers priorities, ensuring that they are unique.
+
+Changelog:
+
+v2: - Replaced standalone power-off call chain demo-API with the combined
+      power-off+restart API because this is what drivers want. It's a more
+      comprehensive solution.
+
+    - Converted multiple drivers and arch code to the new API. Suggested by
+      Andy Shevchenko. I skimmed through the rest of drivers, verifying that
+      new API suits them. The rest of the drivers will be converted once we
+      will settle on the new API, otherwise will be too many patches here.
+
+    - v2 API doesn't expose notifier to users and require handlers to
+      have unique priority. Suggested by Guenter Roeck.
+
+    - v2 API has power-off chaining disabled by default and require
+      drivers to explicitly opt-in to the chaining. This preserves old
+      behaviour for existing drivers once they are converted to the new
+      API.
+
+Dmitry Osipenko (45):
+  notifier: Remove extern annotation from function prototypes
+  notifier: Add blocking_notifier_call_chain_empty()
+  notifier: Add atomic/blocking_notifier_has_unique_priority()
+  reboot: Correct typo in a comment
+  reboot: Warn if restart handler has duplicated priority
+  reboot: Warn if unregister_restart_handler() fails
+  reboot: Remove extern annotation from function prototypes
+  kernel: Add combined power-off+restart handler call chain API
+  xen/x86: Use do_kernel_power_off()
+  ARM: Use do_kernel_power_off()
+  arm64: Use do_kernel_power_off()
+  csky: Use do_kernel_power_off()
+  ia64: Use do_kernel_power_off()
+  mips: Use do_kernel_power_off()
+  nds32: Use do_kernel_power_off()
+  parisc: Use do_kernel_power_off()
+  powerpc: Use do_kernel_power_off()
+  riscv: Use do_kernel_power_off()
+  sh: Use do_kernel_power_off()
+  x86: Use do_kernel_power_off()
+  m68k: Switch to new power-handler API
+  memory: emif: Use kernel_can_power_off()
+  ACPI: power: Switch to power-handler API
+  regulator: pfuze100: Use devm_register_power_handler()
+  reboot: Remove pm_power_off_prepare()
+  soc/tegra: pmc: Utilize power-handler API to power off Nexus 7
+    properly
+  mfd: ntxec: Use devm_register_power_handler()
+  mfd: rn5t618: Use devm_register_power_handler()
+  mfd: acer-a500: Use devm_register_power_handler()
+  mfd: ene-kb3930: Use devm_register_power_handler()
+  mfd: axp20x: Use register_simple_power_off_handler()
+  mfd: retu: Use devm_register_simple_power_off_handler()
+  mfd: rk808: Use devm_register_simple_power_off_handler()
+  mfd: palmas: Use devm_register_simple_power_off_handler()
+  mfd: max8907: Use devm_register_simple_power_off_handler()
+  mfd: tps6586x: Use devm_register_simple_power_off_handler()
+  mfd: tps65910: Use devm_register_simple_power_off_handler()
+  mfd: max77620: Use devm_register_simple_power_off_handler()
+  mfd: dm355evm_msp: Use devm_register_trivial_power_off_handler()
+  mfd: twl4030: Use devm_register_trivial_power_off_handler()
+  mfd: ab8500: Use devm_register_trivial_power_off_handler()
+  reset: ath79: Use devm_register_simple_restart_handler()
+  reset: intel-gw: Use devm_register_simple_restart_handler()
+  reset: lpc18xx: Use devm_register_prioritized_restart_handler()
+  reset: npcm: Use devm_register_prioritized_restart_handler()
+
+ arch/arm/kernel/reboot.c               |   4 +-
+ arch/arm64/kernel/process.c            |   3 +-
+ arch/csky/kernel/power.c               |   6 +-
+ arch/ia64/kernel/process.c             |   4 +-
+ arch/m68k/emu/natfeat.c                |   3 +-
+ arch/m68k/include/asm/machdep.h        |   1 -
+ arch/m68k/kernel/process.c             |   5 +-
+ arch/m68k/kernel/setup_mm.c            |   1 -
+ arch/m68k/kernel/setup_no.c            |   1 -
+ arch/m68k/mac/config.c                 |   4 +-
+ arch/mips/kernel/reset.c               |   3 +-
+ arch/nds32/kernel/process.c            |   3 +-
+ arch/parisc/kernel/process.c           |   4 +-
+ arch/powerpc/kernel/setup-common.c     |   4 +-
+ arch/powerpc/xmon/xmon.c               |   3 +-
+ arch/riscv/kernel/reset.c              |  12 +-
+ arch/sh/kernel/reboot.c                |   3 +-
+ arch/x86/kernel/reboot.c               |   4 +-
+ arch/x86/xen/enlighten_pv.c            |   4 +-
+ drivers/acpi/sleep.c                   |  25 +-
+ drivers/memory/emif.c                  |   2 +-
+ drivers/mfd/ab8500-sysctrl.c           |  17 +-
+ drivers/mfd/acer-ec-a500.c             |  52 +--
+ drivers/mfd/axp20x.c                   |  22 +-
+ drivers/mfd/dm355evm_msp.c             |  20 +-
+ drivers/mfd/ene-kb3930.c               |  45 +-
+ drivers/mfd/max77620.c                 |  21 +-
+ drivers/mfd/max8907.c                  |  22 +-
+ drivers/mfd/ntxec.c                    |  50 +-
+ drivers/mfd/palmas.c                   |  24 +-
+ drivers/mfd/retu-mfd.c                 |  31 +-
+ drivers/mfd/rk808.c                    |  23 +-
+ drivers/mfd/rn5t618.c                  |  56 +--
+ drivers/mfd/tps6586x.c                 |  21 +-
+ drivers/mfd/tps65910.c                 |  17 +-
+ drivers/mfd/twl4030-power.c            |  10 +-
+ drivers/regulator/pfuze100-regulator.c |  39 +-
+ drivers/reset/reset-ath79.c            |  15 +-
+ drivers/reset/reset-intel-gw.c         |  13 +-
+ drivers/reset/reset-lpc18xx.c          |  14 +-
+ drivers/reset/reset-npcm.c             |  14 +-
+ drivers/soc/tegra/pmc.c                |  54 ++-
+ include/linux/mfd/axp20x.h             |   1 +
+ include/linux/notifier.h               |  37 +-
+ include/linux/pm.h                     |   1 -
+ include/linux/reboot.h                 | 216 ++++++++-
+ kernel/notifier.c                      |  88 ++++
+ kernel/power/hibernate.c               |   2 +-
+ kernel/reboot.c                        | 615 ++++++++++++++++++++++++-
+ 49 files changed, 1209 insertions(+), 430 deletions(-)
+
+-- 
+2.33.1
+
