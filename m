@@ -2,183 +2,222 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CEF5C433EF
-	for <linux-tegra@archiver.kernel.org>; Tue, 26 Oct 2021 22:18:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A0DBC433EF
+	for <linux-tegra@archiver.kernel.org>; Wed, 27 Oct 2021 11:01:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F3E3760D43
-	for <linux-tegra@archiver.kernel.org>; Tue, 26 Oct 2021 22:18:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 408FA61040
+	for <linux-tegra@archiver.kernel.org>; Wed, 27 Oct 2021 11:01:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239891AbhJZWUj (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 26 Oct 2021 18:20:39 -0400
-Received: from mailout1.samsung.com ([203.254.224.24]:46406 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232718AbhJZWUi (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 26 Oct 2021 18:20:38 -0400
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20211026221812epoutp0114cf88ba4448b457f12ee53bdb5ca6d0~xtJUSxmwq0846108461epoutp01c;
-        Tue, 26 Oct 2021 22:18:12 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20211026221812epoutp0114cf88ba4448b457f12ee53bdb5ca6d0~xtJUSxmwq0846108461epoutp01c
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1635286692;
-        bh=YpSE6qnCQzEz7yZwtDVd9ekJ3kJ9xV2pwDRmKtQvlR4=;
-        h=Subject:To:From:Date:In-Reply-To:References:From;
-        b=DhIdexF5Qxadf1IqNPjtsOWb7/Y7QHnx89wa6eXwXBxVo03KJYHIrz9TdfHU1tPgt
-         cIJD05A2SydOmY1DfZHkZHz1esctGkA93syd/Jas2NozFPWIEC37TzwwBOHzi+lhF1
-         CyRPLKtjymnGDIigHPXwnNcusSFmmt483XcYM4Ls=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20211026221811epcas1p1a5cfec876e41534f9d27ea252974a422~xtJUBusaL0988809888epcas1p1L;
-        Tue, 26 Oct 2021 22:18:11 +0000 (GMT)
-Received: from epsmges1p3.samsung.com (unknown [182.195.38.235]) by
-        epsnrtp4.localdomain (Postfix) with ESMTP id 4Hf5ms65Wpz4x9Pv; Tue, 26 Oct
-        2021 22:18:05 +0000 (GMT)
-Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
-        epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-        E2.DB.09592.D9E78716; Wed, 27 Oct 2021 07:18:05 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-        20211026221804epcas1p398bd502c4f4a0479d79e700e1368d645~xtJNr7oq32900529005epcas1p3Y;
-        Tue, 26 Oct 2021 22:18:04 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20211026221804epsmtrp20a474ddc52a5261c65af9e99586b041b~xtJNqjiSR0527705277epsmtrp2L;
-        Tue, 26 Oct 2021 22:18:04 +0000 (GMT)
-X-AuditID: b6c32a37-2a5ff70000002578-dd-61787e9d1960
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        89.D3.29871.C9E78716; Wed, 27 Oct 2021 07:18:04 +0900 (KST)
-Received: from [10.113.221.211] (unknown [10.113.221.211]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20211026221804epsmtip1a2d7b68c6a675cea8adda7e9be2ead61~xtJNSXFDn2682326823epsmtip1i;
-        Tue, 26 Oct 2021 22:18:04 +0000 (GMT)
-Subject: Re: [PATCH v2 06/13] drm/exynos: replace drm_detect_hdmi_monitor()
- with drm_display_info.is_hdmi
-To:     Claudio Suarez <cssk@net-c.es>, dri-devel@lists.freedesktop.org,
-        amd-gfx@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-        intel-gfx@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        Pan Xinhui <Xinhui.Pan@amd.com>, Emma Anholt <emma@anholt.net>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
-        Chen-Yu Tsai <wens@csie.org>, Sandy Huang <hjc@rock-chips.com>,
-        heiko@sntech.de, Neil Armstrong <narmstrong@baylibre.com>,
-        Robert Foss <robert.foss@linaro.org>,
-        Ben Skeggs <bskeggs@redhat.com>, nouveau@lists.freedesktop.org,
-        ville.syrjala@linux.intel.com
-From:   Inki Dae <inki.dae@samsung.com>
-Message-ID: <ee6b3bac-4762-fd8f-c12a-c0a7ea7b56e9@samsung.com>
-Date:   Wed, 27 Oct 2021 07:28:45 +0900
+        id S241568AbhJ0LD6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 27 Oct 2021 07:03:58 -0400
+Received: from mail-bn1nam07on2069.outbound.protection.outlook.com ([40.107.212.69]:65252
+        "EHLO NAM02-BN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S241560AbhJ0LD5 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 27 Oct 2021 07:03:57 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=HGxvulHfy8TwbKdAnbA2fi6H7Qsgxvb5onQNIOTTVdHvV/Y9+GE+qH0THiGt/8ZRZwIyqRyFl5H7rD+jK4I1H+NQDGs+G0YW6EdwCeyaiBf+jxTaXprPiSXypBlZhTLlvDWEqGpehCeJ1xjaRBB4xiebJp01fXKPTRE9a4W5jxwyohn+xbOpTHf1QxxXoNWuAFLOaEqwkn/LEIq7+ZfQfwlhvTLhSD8afnUybZyECz7YlkL04bnaJC9E3e/OQ02/cuTUk2YrRy+m/GI8jODSWdovq8yXKVRLA1xdPOn+Ws54RarQBmtkSKJ4ZTmVBJmYJPL+23D2JLH8DueUM8lblg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=i4GSp+WGpYtcdppod3vUcKJUQhrLAfLCoTgfa/DjAu0=;
+ b=G7PoWkSPittG/IdSqP6I6bJxC0+xF+z1h3FdjPRNKwYChVs6GKTtfPnKsEzYIHNt2lELETp0iuJSeLz7KdqbavFDCbdVCZJHhXIEka0gJfrSpadjSzLNJD+lR6EUXGJ3MiWK1xr8CQNH9ZUdJnm3KXq05VDh+WY528gXAYgoESLFRE1nW4O7tFPruP/GrPWQSEOVfKHSuqABStAywXkcgaPP0/fKtK40US52PMqIcxVOA4H6gwZzPa/Ug0XPt6o1Cd+bJvyTAEpfNMpZR2l055RREdY5ei/T/qwq5D9/Y5UARO77/Yl+flxjXH3wyLGfWkm9xPyXSqzKtMkHC27OgQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.112.34) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=i4GSp+WGpYtcdppod3vUcKJUQhrLAfLCoTgfa/DjAu0=;
+ b=K7atSKjyb/A0BA6eUGQAachXx4gF4xm2Ujv8f5Zr50QolZ8ofKnJ0bPvwadcNZeFDtVXSAk24xyhjlQhpfqcoaqESUMUJfE1B1CAQoKl5u9Fssym0SsyehMI/uDEUynUTmEB6Doi3SUWGvvpZBIlRYrl7C5l+JXdaIjq9IVSnOu/jC7ddQt/pWz/It8uNSBkNDkheY/yRIpoqFwFX+cAy2rv76Nj1A27qsaVAoGMPRRghvYcAxo8CCFb5YTeR6n1hVsvp1VEie3hnCD1JWGLjAX5bH2NPLvHjPyrMHMssP6652/hPIcWV1lNP6KUCoQFILSVmfrDE1ZG8pDALetoEw==
+Received: from MW4PR04CA0183.namprd04.prod.outlook.com (2603:10b6:303:86::8)
+ by BN6PR12MB1858.namprd12.prod.outlook.com (2603:10b6:404:fe::23) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4628.20; Wed, 27 Oct
+ 2021 11:01:30 +0000
+Received: from CO1NAM11FT040.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:303:86:cafe::ee) by MW4PR04CA0183.outlook.office365.com
+ (2603:10b6:303:86::8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4628.18 via Frontend
+ Transport; Wed, 27 Oct 2021 11:01:30 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.34)
+ smtp.mailfrom=nvidia.com; kernel.org; dkim=none (message not signed)
+ header.d=none;kernel.org; dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.112.34 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.112.34; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (216.228.112.34) by
+ CO1NAM11FT040.mail.protection.outlook.com (10.13.174.140) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.4649.14 via Frontend Transport; Wed, 27 Oct 2021 11:01:30 +0000
+Received: from [10.26.49.14] (172.20.187.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Wed, 27 Oct
+ 2021 11:01:06 +0000
+Subject: Re: [PATCH 2/5] PCI/VPD: Use pci_read_vpd_any() in pci_vpd_size()
+To:     Heiner Kallweit <hkallweit1@gmail.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        David Miller <davem@davemloft.net>,
+        Raju Rangoju <rajur@chelsio.com>
+CC:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+References: <ba0b18a3-64d8-d72f-9e9f-ad3e4d7ae3b8@gmail.com>
+ <049fa71c-c7af-9c69-51c0-05c1bc2bf660@gmail.com>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <88bfd6ed-f5c6-b9f9-c331-643eb0d37289@nvidia.com>
+Date:   Wed, 27 Oct 2021 12:01:04 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
-        Thunderbird/78.13.0
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-In-Reply-To: <20211016184226.3862-7-cssk@net-c.es>
+In-Reply-To: <049fa71c-c7af-9c69-51c0-05c1bc2bf660@gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01TaVBTVxTufUneS7DRlKXcoRUhlDpgwYT1asGtFF9bW6l2uoAdfIU3wJDN
-        JLQKYwehIogFIkgg7LJZoGyCStjBilhorVRwWAZlGQc6QEXZxoINPGz5933nfOee75w7h8sy
-        7iAsuCEyNa2UURIhbsS+1m4ncsj6/iQlmiyzQz/+1omh1MF6DiqsOEOgieJYgKaGDVS79AKg
-        F9c0LPTn3AyOspoeYijzcbchNvIXB2VdPI0ykq5iqLinAqArz9IJ1JiHoThNAYE0zd0Einum
-        w1FMXBEHtSX4oYWEBA766fIcjh7nLbLQrO4RCzXregk0lHwToCV9NhstrBjql9p+x1DJVQ2+
-        bxt59t4yTkbN3MLJmQdnCbJypJRDNs7nssk63RBBZsSmc8j8hgmMrC6Jw8nB3gacvD7/kENm
-        d35KDsd3YGTVaBFGduj7CXKm6T7uY+Ib6hFMU4G00oqWBcgDQ2RBnsKPjvq/5+/qJhI7iHch
-        d6GVjJLSnkKvQz4O3iESw8qEVt9SkjBDyIdSqYQ793go5WFq2ipYrlJ7CmlFoEThqnBUUVJV
-        mCzIUUard4tFIidXg/B4aHB9fzehSOGfzCgbJCKBdtN5wONCgQucaS4Aq9hYcAPA1mrReWBk
-        wLMAPslYZDFkHsDExU7iZUWkZpBgEo0A3m6pZDNkBsD2Ze3aWyaCUHimZ3ZNZSo4x4NRFTGs
-        1QQusIWaK8P4KuYL9sDIwg72KmYb4l35NdgqNhN8BZc79RxG8xrsTB9b0/AETnAx8cKahiUw
-        h/1jOet4G4yuzVjzCgXzPHi9ZggwXr1gTV8mi8EmcLKjZn0GC/h0uhFnCqIB1KT9ijEkFsCh
-        0T42o3KGzYXJhgTX0MIOVuh3MmFrWPc8CzCdN8PpuQucVQkU8GFsjDEjEcJbfzxY9wDh3QIN
-        zmASjpfVr6/rZwDjb+fhScBKt2FQ3YbhdBuG0/3vIhewS8DrtEIlDaJVYoXzfx8eIJdWg7WL
-        sne/AVKn/nZsAxgXtAHIZQlN+T3Z31HG/EDqVDitlPsrwyS0qg24GlavYVmYBcgNJylT+4td
-        dolc3JycXZDYTSw05z+1PEEZC4IoNR1K0wpa+bIO4/IsIjHJgLdvqvKtkPzE4eZj8dbvf5kz
-        UCN/O6/+6MIRo+2dmJ7zZEv5m35tuZuSa9Vq89Nkq80n3+iPKHmXVFUlfuG24vDn7M0BlViC
-        tst0JSL5IJV3+PLox7vr3tUOWO7H0ix2eET8Y/tZmeXkeHTW/Szfz6W+DaWzd17pc48sKfCI
-        vHuOP+4wvlfYf3xyaV9TDPdQK9u5vEVRb190aW/3vuWKEwfSL2Zq26NDqkPe6bLZX1m81f9e
-        lSjph9qRafZAsGzLL+U7Ppj48PByjnW6zRdbtamPjn3dPDVPd2wv8n4jn3WTa5bSbbei6z3o
-        NZaWZ3IHBA23LJa6SF9NkSorayI4VVVRS6eEbFUwJbZnKVXUvwc1qyXaBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SbUxTZxiG957T89G6zkNBeQUysyLZdBtapvFN5nCE6E6y/UCjcXOLtdGT
-        QqSl60Gl4kfBQdq6gdVNpHwJFZAyxlexIkpNa4ZlVBdwhBUUrDhnwKAEsV2mrhSX8O9+7vu6
-        /j00LikhYugMdTanVSsypaRIcNEtffvD8qM5ijVVeR+hH256MHRmpItAtc15FHpUbwDo8Wjo
-        LAm+AujVRTOObj+bIlFF9xiGyh96Q51/gkAVp46gspPtGKofaAbowkwpha5WY8hoPk8hs9NL
-        IeOMhUSFxjoCuYq+Rs+LigjUUPOMRA+rAziattzDkdMySKE7p68DFLxcKUDPX4b8oOsWhmzt
-        ZvLT5WxB/wuSzZ/6lWSnhgootsXfSLBXZ88J2E7LHYotM5QSrPXKI4xtsxlJdmTwCsk6ZscI
-        ttKzhR090YOxrffrMLbnso9ip7r/INMid4o27OUyMw5w2tXJu0XpXT4vpflRnFP28wilByWL
-        TEBIQ2Yt1JtHKBMQ0RKmC8C/88eACdChAUJ7Bz0fI6Hbzc8jjwEMNDvxOTeS2QfzBqbDbhRz
-        QgjPuq34PNUEYI/VJ5ijSCYBmi+MknNZzCRDfW1PuBeE+j6rHZvLS5ivYP6NjtdMBPSUjocZ
-        IZMEA8XfhxmceRf+W9mPz+do6Buvet0vh8c7yvCTIMKyQLcsUCwLFMsC5RwQ2MAyTsOrlCpe
-        ppGpuYOJvELF71crE/dkqdpA+HdWrbwEHLYniS6A0cAFII1Lo8QDlQcVEvFehe4Qp82Sa/dn
-        crwLxNICabT4d5NHLmGUimxuH8dpOO3/K0YLY/RY9yzeH9GbJLvd6Z8R7ey/5dZZ7/rL5dO+
-        jGDuxzdPp9bXv7P+/vZJZ8K2ztq4Pseu6jhV07eUXSIvSmhnPosyBNbQQ3GdvU9Seye2LI1V
-        jha7vtCtO7P4l8D5+IH1Zx+88YHtmxx+46AsOSvlk2HM42gojW8pVC5Ne5qyYVOFSf3+KSBb
-        9934IeZa9LFJed1PrmvKt3QRb9JdwtxgjVPoTd0omRQP/+NpuFdeoMtpGi7O1fR5Dif6uCXS
-        xibKo3HyLfZUo8GJTBNJjPFzdYZ9R4rWG9t2Pe944+YVhUb/Vv1uwvFezZcH0lodf2qH0/9a
-        1DFjiLmxGmG/tQ5lZ96VCvh0hWwVruUV/wEmvDQhqgMAAA==
-X-CMS-MailID: 20211026221804epcas1p398bd502c4f4a0479d79e700e1368d645
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20211016193513epcas1p4e354183520df0aa4c381b19eb2863262
-References: <20211016184226.3862-1-cssk@net-c.es>
-        <CGME20211016193513epcas1p4e354183520df0aa4c381b19eb2863262@epcas1p4.samsung.com>
-        <20211016184226.3862-7-cssk@net-c.es>
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [172.20.187.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 52b44a87-7abb-4dc8-88a8-08d99939216a
+X-MS-TrafficTypeDiagnostic: BN6PR12MB1858:
+X-Microsoft-Antispam-PRVS: <BN6PR12MB1858A98008941BF1486B7FC1D9859@BN6PR12MB1858.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:7219;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: P4sFPlH8dIovYxX1t2Ecvbu/2xFxm5F1t21AUKb8gj22L4rX0brlvgYbvM44wNj8///Tptaf8PaOZPV7rh1PTWTrD2PqRObvNqJ5lln/WnvQJxLitENTObbbOjy3R3mIftu8i3z8tjWK5ERzFFepqoSCKuP2QjrrwESGa7QmzNu47X0sr7R8shVDiC6trV0BX6ZB/z3BOq2wWtd+B63aexNlrtrnd9wp+QlPjrfPzdy+BQD1exxVSz1NTBUC6tq22sn3L6pnHe3X2FDqiGpyuicQJyn6rhnI6VFs7tzZU64YPJ6HJHY+O/5kBwcLOxO1HW0Dkx1vG1Y8tMFShPPwuto/MNGAsd9DRoZ37tDqM7i3UuN4C3eajlYnzB3JdcaNEIooyR/MImme2EC02m3OyG1nFBl1kfNtHSrJzf++Wu5f6yZb/473nEmFrnHgd/gFwaAskW05VONCTyTYFnv+GPCfPxPZLsPijZX5C6B+PhEI4zyAu6O524qWVNdZVFj68I0gD/ut86K0wynIbTS7jeGyK7SqP3btgBre+SOfL88oBpdPRTP8zQ4fK7OCaNdotCLMMuxyZFdXjXadOXUFMyV0laAqaHVF7GGxD6b5cecINw80ctWPArQ66ZRixG0EEnw3+/WG43zK7C5qqL5CMza065OBPx9gE+7MhvQ/fX+hSYpQCt7vOTFIg5f9NS1ljpFx+MJ9FbXAjGN/1iEPL/hXCiXh9FmUz7XlDBzxDxc=
+X-Forefront-Antispam-Report: CIP:216.228.112.34;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid03.nvidia.com;CAT:NONE;SFS:(4636009)(36840700001)(46966006)(83380400001)(2906002)(70206006)(31686004)(70586007)(16526019)(82310400003)(426003)(47076005)(31696002)(7636003)(4326008)(54906003)(2616005)(508600001)(45080400002)(356005)(36756003)(316002)(110136005)(36860700001)(186003)(86362001)(8676002)(336012)(26005)(8936002)(53546011)(16576012)(5660300002)(43740500002);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Oct 2021 11:01:30.1441
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 52b44a87-7abb-4dc8-88a8-08d99939216a
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.34];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT040.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR12MB1858
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi,
 
-21. 10. 17. 오전 3:42에 Claudio Suarez 이(가) 쓴 글:
-> Once EDID is parsed, the monitor HDMI support information is available
-> through drm_display_info.is_hdmi. Retriving the same information with
-> drm_detect_hdmi_monitor() is less efficient. Change to
-> drm_display_info.is_hdmi
+On 10/09/2021 07:22, Heiner Kallweit wrote:
+> Use new function pci_read_vpd_any() to simplify the code.
 > 
-> Signed-off-by: Claudio Suarez <cssk@net-c.es>
+> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
 > ---
->  drivers/gpu/drm/exynos/exynos_hdmi.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(
+>   drivers/pci/vpd.c | 7 ++-----
+>   1 file changed, 2 insertions(+), 5 deletions(-)
 > 
-> diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
-> index 7655142a4651..a563d6386abe 100644
-> --- a/drivers/gpu/drm/exynos/exynos_hdmi.c
-> +++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
-> @@ -893,12 +893,14 @@ static int hdmi_get_modes(struct drm_connector *connector)
->  	if (!edid)
->  		return -ENODEV;
->  
-> -	hdata->dvi_mode = !drm_detect_hdmi_monitor(edid);
-> +	/* This updates connector->display_info */
-> +	drm_connector_update_edid_property(connector, edid);
-> +
-> +	hdata->dvi_mode = !connector->display_info.is_hdmi;
-
-Thanks for correcting this. Yeah, we should use drm_display_info.is_hdmi parsed from EDID.
-https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/drivers/gpu/drm/drm_edid.c?h=v5.14.14#n4725
-
-Signed-off-by: Inki Dae <inki.dae@samsung.com>
-
-Thanks,
-Inki Dae
-
->  	DRM_DEV_DEBUG_KMS(hdata->dev, "%s : width[%d] x height[%d]\n",
->  			  (hdata->dvi_mode ? "dvi monitor" : "hdmi monitor"),
->  			  edid->width_cm, edid->height_cm);
->  
-> -	drm_connector_update_edid_property(connector, edid);
->  	cec_notifier_set_phys_addr_from_edid(hdata->notifier, edid);
->  
->  	ret = drm_add_edid_modes(connector, edid);
+> diff --git a/drivers/pci/vpd.c b/drivers/pci/vpd.c
+> index 286cad2a6..517789205 100644
+> --- a/drivers/pci/vpd.c
+> +++ b/drivers/pci/vpd.c
+> @@ -57,10 +57,7 @@ static size_t pci_vpd_size(struct pci_dev *dev)
+>   	size_t off = 0, size;
+>   	unsigned char tag, header[1+2];	/* 1 byte tag, 2 bytes length */
+>   
+> -	/* Otherwise the following reads would fail. */
+> -	dev->vpd.len = PCI_VPD_MAX_SIZE;
+> -
+> -	while (pci_read_vpd(dev, off, 1, header) == 1) {
+> +	while (pci_read_vpd_any(dev, off, 1, header) == 1) {
+>   		size = 0;
+>   
+>   		if (off == 0 && (header[0] == 0x00 || header[0] == 0xff))
+> @@ -68,7 +65,7 @@ static size_t pci_vpd_size(struct pci_dev *dev)
+>   
+>   		if (header[0] & PCI_VPD_LRDT) {
+>   			/* Large Resource Data Type Tag */
+> -			if (pci_read_vpd(dev, off + 1, 2, &header[1]) != 2) {
+> +			if (pci_read_vpd_any(dev, off + 1, 2, &header[1]) != 2) {
+>   				pci_warn(dev, "failed VPD read at offset %zu\n",
+>   					 off + 1);
+>   				return off ?: PCI_VPD_SZ_INVALID;
 > 
+
+
+This change is breaking a PCI test that we are running on Tegra124
+Jetson TK1. The test is parsing the various PCI devices by running
+'lspci -vvv' and for one device I am seeing a NULL pointer
+dereference crash. Reverting this change or just adding the line
+'dev->vpd.len = PCI_VPD_MAX_SIZE;' back fixes the problem.
+
+I have taken a quick look but have not found why this is failing
+so far. Let me know if you have any thoughts.
+
+Cheers
+Jon
+
+[   56.577644] 8<--- cut here ---
+[   56.580714] Unable to handle kernel NULL pointer dereference at virtual address 00000000
+[   56.588836] pgd = da85f9ea
+[   56.591545] [00000000] *pgd=00000000
+[   56.595124] Internal error: Oops: 80000005 [#1] PREEMPT SMP ARM
+[   56.601029] Modules linked in: nouveau drm_ttm_helper ttm tegra_soctherm
+[   56.607725] CPU: 0 PID: 0 Comm: swapper/0 Not tainted 5.15.0-rc2-00004-g7724d929fdde-dirty #5
+[   56.616231] Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
+[   56.622482] PC is at 0x0
+[   56.625007] LR is at rcu_core+0x368/0xc5c
+[   56.629011] pc : [<00000000>]    lr : [<c01a3384>]    psr: 60000113
+[   56.635261] sp : c1201dc8  ip : c35f4b80  fp : c1201df0
+[   56.640472] r10: ffffe000  r9 : 00000007  r8 : c135d3a0
+[   56.645683] r7 : 0000000a  r6 : c1204f0c  r5 : 00000008  r4 : 00000000
+[   56.652193] r3 : c3c33850  r2 : 00000000  r1 : 00000000  r0 : c3c33850
+[   56.658703] Flags: nZCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
+[   56.665821] Control: 10c5387d  Table: 82e0806a  DAC: 00000051
+[   56.671551] Register r0 information: slab kmalloc-64 start c3c33840 pointer offset 16 size 64
+[   56.680066] Register r1 information: NULL pointer
+[   56.684759] Register r2 information: NULL pointer
+[   56.689451] Register r3 information: slab kmalloc-64 start c3c33840 pointer offset 16 size 64
+[   56.697964] Register r4 information: NULL pointer
+[   56.702655] Register r5 information: non-paged memory
+[   56.707693] Register r6 information: non-slab/vmalloc memory
+[   56.713338] Register r7 information: non-paged memory
+[   56.718375] Register r8 information: non-slab/vmalloc memory
+[   56.724020] Register r9 information: non-paged memory
+[   56.729057] Register r10 information: non-paged memory
+[   56.734183] Register r11 information: non-slab/vmalloc memory
+[   56.739914] Register r12 information: slab kmalloc-64 start c35f4b80 pointer offset 0 size 64
+[   56.748428] Process swapper/0 (pid: 0, stack limit = 0x54fa894a)
+[   56.754419] Stack: (0xc1201dc8 to 0xc1202000)
+[   56.758762] 1dc0:                   ???????? ???????? ???????? ???????? ???????? ????????
+[   56.766919] 1de0: ???????? ???????? ???????? ???????? ???????? ???????? ???????? ????????
+[   56.775076] 1e00: ???????? ???????? ???????? ???????? ???????? ???????? ???????? ????????
+[   56.783232] 1e20: ???????? ???????? ???????? ???????? ???????? ???????? ???????? ????????
+[   56.791389] 1e40: ???????? ???????? ???????? ???????? ???????? ???????? ???????? ????????
+[   56.799545] 1e60: ???????? ???????? ???????? ???????? ???????? ???????? ???????? ????????
+[   56.807701] 1e80: ???????? ???????? ???????? ???????? ???????? ???????? ???????? ????????
+[   56.815857] 1ea0: ???????? ???????? ???????? ???????? ???????? ???????? ???????? ????????
+[   56.824014] 1ec0: ???????? ???????? ???????? ???????? ???????? ???????? ???????? ????????
+[   56.832170] 1ee0: ???????? ???????? ???????? ???????? ???????? ???????? ???????? ????????
+[   56.840326] 1f00: ???????? ???????? ???????? ???????? ???????? ???????? ???????? ????????
+[   56.848482] 1f20: ???????? ???????? ???????? ???????? ???????? ???????? ???????? ????????
+[   56.856639] 1f40: ???????? ???????? ???????? ???????? ???????? ???????? ???????? ????????
+[   56.864795] 1f60: ???????? ???????? ???????? ???????? ???????? ???????? ???????? ????????
+[   56.872951] 1f80: ???????? ???????? ???????? ???????? ???????? ???????? ???????? ????????
+[   56.881108] 1fa0: ???????? ???????? ???????? ???????? ???????? ???????? ???????? ????????
+[   56.889264] 1fc0: ???????? ???????? ???????? ???????? ???????? ???????? ???????? ????????
+[   56.897420] 1fe0: ???????? ???????? ???????? ???????? ???????? ???????? ???????? ????????
+[   56.905580] [<c01a3384>] (rcu_core) from [<c0101358>] (__do_softirq+0x130/0x42c)
+[   56.912966] [<c0101358>] (__do_softirq) from [<c012bcec>] (irq_exit+0xbc/0x100)
+[   56.920262] [<c012bcec>] (irq_exit) from [<c0189388>] (handle_domain_irq+0x60/0x78)
+[   56.927906] [<c0189388>] (handle_domain_irq) from [<c051445c>] (gic_handle_irq+0x7c/0x90)
+[   56.936071] [<c051445c>] (gic_handle_irq) from [<c0100b7c>] (__irq_svc+0x5c/0x90)
+[   56.943538] Exception stack(0xc1201ec0 to 0xc1201f08)
+[   56.948574] 1ec0: ???????? ???????? ???????? ???????? ???????? ???????? ???????? ????????
+[   56.956731] 1ee0: ???????? ???????? ???????? ???????? ???????? ???????? ???????? ????????
+[   56.964888] 1f00: ???????? ????????
+[   56.968364] [<c0100b7c>] (__irq_svc) from [<c0865fb8>] (cpuidle_enter_state+0x258/0x4c0)
+[   56.976441] [<c0865fb8>] (cpuidle_enter_state) from [<c0866270>] (cpuidle_enter+0x3c/0x54)
+[   56.984687] [<c0866270>] (cpuidle_enter) from [<c015c568>] (do_idle+0x200/0x27c)
+[   56.992069] [<c015c568>] (do_idle) from [<c015c93c>] (cpu_startup_entry+0x18/0x1c)
+[   56.999623] [<c015c93c>] (cpu_startup_entry) from [<c1100fa8>] (start_kernel+0x664/0x6b0)
+[   57.007786] Code: bad PC value
+[   57.010968] 8<--- cut here ---
+
+-- 
+nvpublic
