@@ -2,59 +2,59 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3134C433F5
-	for <linux-tegra@archiver.kernel.org>; Wed, 27 Oct 2021 16:01:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A087C4332F
+	for <linux-tegra@archiver.kernel.org>; Wed, 27 Oct 2021 19:32:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 96E14610C7
-	for <linux-tegra@archiver.kernel.org>; Wed, 27 Oct 2021 16:01:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 18B6660EFE
+	for <linux-tegra@archiver.kernel.org>; Wed, 27 Oct 2021 19:32:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242893AbhJ0QEF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 27 Oct 2021 12:04:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37348 "EHLO
+        id S243703AbhJ0TfF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 27 Oct 2021 15:35:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57714 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235480AbhJ0QEE (ORCPT
+        with ESMTP id S243694AbhJ0TfD (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 27 Oct 2021 12:04:04 -0400
-Received: from mail-lj1-x22f.google.com (mail-lj1-x22f.google.com [IPv6:2a00:1450:4864:20::22f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C3BEC061570
-        for <linux-tegra@vger.kernel.org>; Wed, 27 Oct 2021 09:01:39 -0700 (PDT)
-Received: by mail-lj1-x22f.google.com with SMTP id o26so5545053ljj.2
-        for <linux-tegra@vger.kernel.org>; Wed, 27 Oct 2021 09:01:39 -0700 (PDT)
+        Wed, 27 Oct 2021 15:35:03 -0400
+Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA123C061570;
+        Wed, 27 Oct 2021 12:32:37 -0700 (PDT)
+Received: by mail-lf1-x135.google.com with SMTP id x27so8447098lfu.5;
+        Wed, 27 Oct 2021 12:32:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=tkCgQJkUSUXPKa9PPaG98xGW8ORLrJoeUL+lFNuAKlI=;
-        b=JuXVzxzuz+qv/oGJh4H3FGcoT4i1PRfFmZGPc6lEW/N9sVUHQywzVSA6QOXoew8eMN
-         2VuWytyylFxvVVv4NHBnyfc0Qf66xZSXHV0PNkrxsRogr/txx31V1QIsqMYUDW3/lS/Q
-         puLCWl/i68QH+uN4xJWqYNAHxq8s/ABltDsTffJInX/ueXsemQ/gPVFmTZ93Ha2IFRxA
-         fbB3/Ci3reBmhbmZLY5Agp3ldPGxwIMR97E/B9IL/d5CWC5Xg4LcOyrcEsyeLsDfw7q4
-         1r0gIxWuTyvt/wIwtmEfq/EQYkL7wpbE/0EDTKaVxaRJS8WIN0jvlGqgTJ1Igaa+L78p
-         ZceQ==
+        d=gmail.com; s=20210112;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=OTBdPJFa+ah3P9FuQhKUL9RznqjaKHz1+CuZIYV3wsc=;
+        b=agih9qYZmYcntiWOtjjpqFInO/NVgVrWGE905q2yfSEyyV2BoggudSRC0uWF+1avff
+         7h8uADNMgxE72KU5FMyuapAtk8t88XRt2jfl54CZfqYvfnhCV75du+zNwvIkpk3yCgVL
+         5o9kX2dk8r96+D9juLvJdGhh7jbf4BxzAJXKAEQRsRoc3C6FmbCmEAsyjnlucSt2pWtU
+         83u5VeuC3bsmPi7byNO1u5d3lYPRedAvTMiCRtXBDeyQCqpUwvSHd2PVm0VgcshYs06T
+         bsc+rK79JJB2gmNcE8cTUf426Ht1SndEa2i1Np6mV8Ss5aEDyzIPzgP6y8adlqO2cjBC
+         Qp1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=tkCgQJkUSUXPKa9PPaG98xGW8ORLrJoeUL+lFNuAKlI=;
-        b=bQJKvgMXGHmMSVTGK+wIREGoU9YAhfC254HDhep/2qB2DoApc6ODshv0rclpGokErp
-         QYQSuVO4imQs4f9Pnva21rysx23qikUFACShmfp7Pc8l5ivHO+OwAvShq496T5fC9n+P
-         ugwOyA36RWLTXFHFttcjB9G7YNtrwWgKXafoG1wiq+vsuhkSHY+Vi28YJu8DJwm5PQwx
-         Pq8bs6JkUTqIRHrVdf51UxvBZlvJQDX2KKPmVuC0o6xsFeQVSV5DIwae1fL63KlqjOSV
-         LySTnL3k1Jr7W8BDBHWaaLWtfImQgmKB9ZTktVEWVyrO/Io+AbRO4KgotyD16NfVgbur
-         z7tA==
-X-Gm-Message-State: AOAM532D3fy3nfuFSSGa6FbC7aSxIK/xjjEYdNsWGYbUywNdP8iN9/hO
-        tuc+dtY0bxeV48CJAPvS2zUBJsjVSZdy2b1VIHUB6A==
-X-Google-Smtp-Source: ABdhPJyLTmxvQZ0j5lQGHsFYcydy71+PhRmg+SxpLEXAm87AnzbFNmKI1TyiM271I2tAbjx+BOKyohjDU7jCER0qQM4=
-X-Received: by 2002:a2e:5c45:: with SMTP id q66mr22976435ljb.273.1635350497549;
- Wed, 27 Oct 2021 09:01:37 -0700 (PDT)
-MIME-Version: 1.0
-References: <20211025224032.21012-1-digetx@gmail.com>
-In-Reply-To: <20211025224032.21012-1-digetx@gmail.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Wed, 27 Oct 2021 18:01:01 +0200
-Message-ID: <CAPDyKFrA2Jcb5BmaFmajtdUCmpwoPjAAvPC_MhoWwjDXJynD=w@mail.gmail.com>
-Subject: Re: [PATCH v14 00/39] NVIDIA Tegra power management patches for 5.17
-To:     Dmitry Osipenko <digetx@gmail.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=OTBdPJFa+ah3P9FuQhKUL9RznqjaKHz1+CuZIYV3wsc=;
+        b=swytmm9GqTNoiVEB0sjt8W1+egJtPJWbQlQQ+sgQGn414UHhJljPu3+4A0QgiX2nL8
+         qcPVDUqRkOiAJ0lmpJdQzDGyMXMH0bTdh8rLYoBoLU4Fd4VCaid51z68mjFH1JLEE2BZ
+         8drkT9jab2dwT76tT7SxEfnv0WkKwoXo/BHJP6aFo1VwlK3vCYY6TkHJeXtZSKifHz70
+         IrkEl7v7yu0at4dvkU/sPVUztIk/GjpK1aTN9rHfe+qYxIsjQJRuUxnlVm2RW7+lodOy
+         KHvBQITrRd1zMBEGay9y0afhUqaLG3LrKCBhZFGjb9lM3M+renxA05LUS8Qbe/IUeFA5
+         s/+g==
+X-Gm-Message-State: AOAM533JRFbYKM07uXdLww7TrNVEsJj78b53DFNv+nRkbzGv0CuAgPGv
+        Mu+Fmyfrhsp4YlCfF1HprWk=
+X-Google-Smtp-Source: ABdhPJyaiRz/Ui6iA1xiTx91a3t+RwtvYGxJT3StDDfm32LrCKRStVdKsTDTbJW/siFtx98e9FjJ2w==
+X-Received: by 2002:a05:6512:1510:: with SMTP id bq16mr31326351lfb.268.1635363156058;
+        Wed, 27 Oct 2021 12:32:36 -0700 (PDT)
+Received: from [192.168.2.145] (46-138-41-28.dynamic.spd-mgts.ru. [46.138.41.28])
+        by smtp.googlemail.com with ESMTPSA id t3sm81030lfc.216.2021.10.27.12.32.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 Oct 2021 12:32:35 -0700 (PDT)
+Subject: Re: [PATCH v14 01/39] soc/tegra: Enable runtime PM during OPP
+ state-syncing
+To:     Ulf Hansson <ulf.hansson@linaro.org>
 Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Viresh Kumar <vireshk@kernel.org>,
@@ -62,71 +62,106 @@ Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Peter De Schrijver <pdeschrijver@nvidia.com>,
         Mikko Perttunen <mperttunen@nvidia.com>,
         Lee Jones <lee.jones@linaro.org>,
-        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>, Nishanth Menon <nm@ti.com>,
+        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
+        Nishanth Menon <nm@ti.com>,
         Adrian Hunter <adrian.hunter@intel.com>,
         Michael Turquette <mturquette@baylibre.com>,
         linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-pm@vger.kernel.org, linux-pwm@vger.kernel.org,
         linux-mmc@vger.kernel.org, dri-devel@lists.freedesktop.org,
         linux-clk@vger.kernel.org, David Heidelberg <david@ixit.cz>
-Content-Type: text/plain; charset="UTF-8"
+References: <20211025224032.21012-1-digetx@gmail.com>
+ <20211025224032.21012-2-digetx@gmail.com>
+ <CAPDyKFr7VY73cQugSA5n-p_oXf43o1M-7s3-M+fnk0656h25UA@mail.gmail.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <8076eee8-ac8b-90a7-b87a-35e40d7300fb@gmail.com>
+Date:   Wed, 27 Oct 2021 22:32:34 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
+MIME-Version: 1.0
+In-Reply-To: <CAPDyKFr7VY73cQugSA5n-p_oXf43o1M-7s3-M+fnk0656h25UA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, 26 Oct 2021 at 00:45, Dmitry Osipenko <digetx@gmail.com> wrote:
->
-> This series adds runtime PM support to Tegra drivers and enables core
-> voltage scaling for Tegra20/30 SoCs, resolving overheating troubles.
->
-> All patches in this series are interdependent and should go via Tegra tree
-> for simplicity.
->
-> Changelog:
->
-> v14: - Fixed missing runtime PM syncing on removal of drivers, which was
->        spotted by Ulf Hansson in v13.
->
->      - clk-device driver now resumes RPM on system suspend instead of
->        preparing clock which it backs. This was suggested by Ulf Hansson.
->
->      - clk-device driver now syncs power domain performance unconditionally
->        during driver's probe time since GENPD API allows to do this now.
->        It was spotted by Ulf Hansson.
->
->      - Added new "Enable runtime PM during OPP state-syncing" patch, which
->        allows drivers to sync state at any time. Previously drivers were
->        obligated to take care of enabling RPM at the "right" time.
->
->      - Moved runtime PM initialization/uninitialization of DRM drivers that
->        use host1x channel to host1x client init/deinit phase. I noticed that
->        there is UAF problem because RPM-suspend callback waits until channel
->        is idling and channel is already released/freed during driver's removal
->        phase.
->
->      - Added system suspend support to the new NVDEC DRM driver.
->
->      - Added missing pm_runtime_mark_last_busy() to DRM driver.
->
->      - Corrected VDE GENPD patch which previously made video decoder clock
->        always-enabled by mistake if legacy PD code path was used. It was
->        spotted while we were testing VDE on Tegra114 that doesn't support
->        GENPD yet.
->
->      - Added ack from Peter Chen to the USB patch that he gave to v13.
->
->      - Changed OPP table names in accordance to the new naming scheme
->        required by the recent core OPP binding.
->
->      - Added 500MHz memory OPP entry used by ASUS Transformer tablets.
+27.10.2021 18:06, Ulf Hansson пишет:
+> On Tue, 26 Oct 2021 at 00:45, Dmitry Osipenko <digetx@gmail.com> wrote:
+>>
+>> GENPD core now can set up domain's performance state properly while device
+>> is RPM-suspended. Runtime PM of a device must be enabled during setup
+>> because GENPD checks whether device is suspended and check doesn't work
+>> while RPM is disabled. Instead of replicating the boilerplate RPM-enable
+>> code around OPP helper for each driver, let's make OPP helper to take care
+>> of enabling it.
+>>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> 
+> Just a minor nitpick, see below. Nevertheless feel free to add:
+> 
+> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+> 
+> Kind regards
+> Uffe
+> 
+>> ---
+>>  drivers/soc/tegra/common.c | 16 ++++++++++++++++
+>>  1 file changed, 16 insertions(+)
+>>
+>> diff --git a/drivers/soc/tegra/common.c b/drivers/soc/tegra/common.c
+>> index cd33e99249c3..d930a2b4facc 100644
+>> --- a/drivers/soc/tegra/common.c
+>> +++ b/drivers/soc/tegra/common.c
+>> @@ -10,6 +10,7 @@
+>>  #include <linux/export.h>
+>>  #include <linux/of.h>
+>>  #include <linux/pm_opp.h>
+>> +#include <linux/pm_runtime.h>
+>>
+>>  #include <soc/tegra/common.h>
+>>  #include <soc/tegra/fuse.h>
+>> @@ -43,6 +44,7 @@ static int tegra_core_dev_init_opp_state(struct device *dev)
+>>  {
+>>         unsigned long rate;
+>>         struct clk *clk;
+>> +       bool rpm_enabled;
+>>         int err;
+>>
+>>         clk = devm_clk_get(dev, NULL);
+>> @@ -57,8 +59,22 @@ static int tegra_core_dev_init_opp_state(struct device *dev)
+>>                 return -EINVAL;
+>>         }
+>>
+>> +       /*
+>> +        * Runtime PM of the device must be enabled in order to set up
+>> +        * GENPD's performance properly because GENPD core checks whether
+>> +        * device is suspended and this check doesn't work while RPM is
+>> +        * disabled.
+>> +        */
+>> +       rpm_enabled = pm_runtime_enabled(dev);
+>> +       if (!rpm_enabled)
+>> +               pm_runtime_enable(dev);
+> 
+> This makes sure the OPP vote below gets cached in genpd for the
+> device. Instead, the vote is done the next time the device gets
+> runtime resumed.
 
-Besides those minor nitpicks/questions that I have sent for patch1 and
-patch29, the series looks good to me!
+Thanks, I'll extend the code's comment with this text in v15.
 
-Feel free to add, for the whole series:
+I also noticed that won't hurt to add extra sanity check of whether RPM
+indeed got enabled since it could be disabled multiple times in a
+nesting fashion.
 
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+> I don't have an issue doing it like this, but at the same time it does
+> remove some flexibility for the drivers/subsystem that calls
+> tegra_core_dev_init_opp_state().
+> 
+> Isn't it better to leave this to be flexible - or you prefer to have
+> it done like this for everybody?
 
-Kind regards
-Uffe
+All the current users of the helper function want this behaviour by
+default. It's unlikely that we will ever have a user that will want
+different bahaviour, but even then it won't be a problem to add extra
+flag to struct tegra_core_opp_params to specify that special case.
