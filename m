@@ -2,140 +2,110 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B426FC433F5
-	for <linux-tegra@archiver.kernel.org>; Thu, 28 Oct 2021 22:10:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C07DDC433F5
+	for <linux-tegra@archiver.kernel.org>; Thu, 28 Oct 2021 22:16:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9F36F60E8B
-	for <linux-tegra@archiver.kernel.org>; Thu, 28 Oct 2021 22:10:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A432560E8B
+	for <linux-tegra@archiver.kernel.org>; Thu, 28 Oct 2021 22:16:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231449AbhJ1WMz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 28 Oct 2021 18:12:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52422 "EHLO
+        id S230264AbhJ1WTN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 28 Oct 2021 18:19:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53996 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231368AbhJ1WMu (ORCPT
+        with ESMTP id S231417AbhJ1WTM (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 28 Oct 2021 18:12:50 -0400
-Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8CE6C061745;
-        Thu, 28 Oct 2021 15:10:22 -0700 (PDT)
-Received: by mail-lj1-x230.google.com with SMTP id d23so11860785ljj.10;
-        Thu, 28 Oct 2021 15:10:22 -0700 (PDT)
+        Thu, 28 Oct 2021 18:19:12 -0400
+Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2957FC061570;
+        Thu, 28 Oct 2021 15:16:45 -0700 (PDT)
+Received: by mail-lj1-x229.google.com with SMTP id i26so11320386ljg.7;
+        Thu, 28 Oct 2021 15:16:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=oJ/0ZuzBVjUo38Wh85+gleqyoNxUo2tupcS3OG//HMk=;
-        b=oyp+4ZpoBN8sNbj4o8xY6UXK7DWV+2AXCzvhz53IZDVW7yBXuU0WcYtlG9nrr26Gko
-         pspAZNzk5nSawwOoCboqqIBx1NtwU9YP7ClGYgBOs5f5QS+oYjdLS6Chq+lHwnAJsaRE
-         aw808EWXPhfWuOImaYWLgQPkx/4+EXGI76qDso1CJ2aKNZ2aChJYUzNXxoU4wlUL2Pxg
-         oy7RsSyXKkJJvyMzgbQsMkVQ26q7g1vnPJco9ifX2k6oVsTB9g0J3QdHglNbFRrrT6c8
-         P9uyPf++7eB6LV3eSwFOc5BxbfYBVDwZrUUANM1FlvuP72N8IokbXokq1o8sSzQ34LI5
-         dsGQ==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=zccR1Tq2hhAOkM8nx/fMHIfFzwGXSXLaETWpnFro8HM=;
+        b=eZn3kUXN9Nt3/bN2zLGP9h5JktbC5d8/qFxl6rGy4PINL8CGIYT7YsvvIiHorRWnGx
+         +PfmZ8Ymu4Q4RLycU7jQcbW1u03IvhkMhjS427UEQ3lwcDsxqtwtFskI6Ea5oqmIHC5k
+         JKBtHNR3EPsTvXTYpHyIMyWTfri+CYRD0NwZILNDfMwe2R8F7HkKfxwCHiyMED3piZ7t
+         /PwHXKIH/uGRNPFS6E4U+Lbphpu/sF/7WZJovpM6xvoCdu0TCIY/SDQ+/i8rit4aZULv
+         VvUI5Q/C8H2JE0rNVpxtqiz0gXy/c8dMMIdybUv7t5i2rycALvRknx9BkFQwcYaXPNOC
+         RKEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=oJ/0ZuzBVjUo38Wh85+gleqyoNxUo2tupcS3OG//HMk=;
-        b=MTHRbrM9miWhpDv3S4ohBdxiL0k5FXKagXCD7o2/OXFmkUr3QPxPkFEA/VZtwN0Ors
-         IfrKlaFoe9B+8pe/4dMrVPebFb7WPBNqdTv6UeF0komMG6oTitrmMtSARMYQpQX3O67j
-         /YwkAgyv1ad7oTCgYYZJ2eD3ApfOnIROAS1tvWhscHbdmmkQI7UOY+BfH8VCAftQMhJg
-         ISfYG2Jh1iIh5dao/Ci5sQb0n9PvqVnxcOiBAgUXkiAMSb0/86ih62g5Z33YTWQoOlEg
-         z62Q3Vc0BB/02GyGbxtIBRADqYIXr9oMsPiB5N8rV0J9xFd9wYy0xUx9iEFDnVVNrc5D
-         186Q==
-X-Gm-Message-State: AOAM532y01YfBEk+ZN6Hwrig4x0kKrQqxyF9kOYOpWKMdafzt2PPsDo5
-        8lvgoOiDq8KeEJTYS8v4Jei9mOnjyYA=
-X-Google-Smtp-Source: ABdhPJykwIAUVmO5wKdpzX+/iWk6pBH4AnIAWbvXPbs4nxxBZpydFbV5fsYhpk8QZgUr9D29NxqkEQ==
-X-Received: by 2002:a2e:361a:: with SMTP id d26mr7788286lja.104.1635459020939;
-        Thu, 28 Oct 2021 15:10:20 -0700 (PDT)
-Received: from [192.168.2.145] (46-138-44-18.dynamic.spd-mgts.ru. [46.138.44.18])
-        by smtp.googlemail.com with ESMTPSA id x26sm406331ljh.24.2021.10.28.15.10.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 28 Oct 2021 15:10:20 -0700 (PDT)
-Subject: Re: [PATCH v2 03/45] notifier: Add
- atomic/blocking_notifier_has_unique_priority()
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Russell King <linux@armlinux.org.uk>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Guo Ren <guoren@kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        Joshua Thompson <funaho@jurai.org>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Nick Hu <nickhu@andestech.com>,
-        Greentime Hu <green.hu@gmail.com>,
-        Vincent Chen <deanbo422@gmail.com>,
-        "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-        Helge Deller <deller@gmx.de>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        Len Brown <lenb@kernel.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        =?UTF-8?Q?Jonathan_Neusch=c3=a4fer?= <j.neuschaefer@gmx.net>,
-        Tony Lindgren <tony@atomide.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Patrick Venture <venture@google.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Pavel Machek <pavel@ucw.cz>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-csky@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-riscv@lists.infradead.org, linux-sh@vger.kernel.org,
-        xen-devel@lists.xenproject.org, linux-acpi@vger.kernel.org,
-        linux-omap@vger.kernel.org, openbmc@lists.ozlabs.org,
-        linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org
-References: <20211027211715.12671-1-digetx@gmail.com>
- <20211027211715.12671-4-digetx@gmail.com>
- <YXqCz/utp2DFJJ45@smile.fi.intel.com>
+        bh=zccR1Tq2hhAOkM8nx/fMHIfFzwGXSXLaETWpnFro8HM=;
+        b=AxvU6da5ELuPsooFzvePJpGP1AAlp27wdzyCL35UQMaDhL88AO1Da3WfhEUiN3lqUw
+         U4wBWlrNQ9wOf5Of3nOIMQ5ZQ5jgYmUsnBX84HKU2SxL58Mf+TH6ElIhS4SsCIa9ZEN1
+         RPzlYT1LB5MYvEKn+GIAGRzg6v5cIcRF1icOvPCIlORN6lpdIB4MY+Ht20if6jqTK7Me
+         4QhVnKxtMfd4eg1p75vbFJcgj+n20ddzNQTY9v4rPtw2/5Au9cq/JT/G77kZopj1OS3I
+         8KjuHllYelM12i23L5jWAo96U16CPca855s6hMxcQytWGuuEkVMt1ej3yLU4xrm+/8Mo
+         FWAg==
+X-Gm-Message-State: AOAM530LjtWc/oiahVbo8PGDTB0V0IRfwsjlPdX+X/nzT4qwgu0b91JT
+        wT3RggVnZJCCBHL+YYV6tYg=
+X-Google-Smtp-Source: ABdhPJyalJUYRYJip4v8rzWeYJluHz+c9NGgYD3IPDSAitpycpPooq4FbSIruhkvebXV6HHBFm9Glg==
+X-Received: by 2002:a2e:8846:: with SMTP id z6mr7523700ljj.277.1635459403581;
+        Thu, 28 Oct 2021 15:16:43 -0700 (PDT)
+Received: from localhost.localdomain (46-138-44-18.dynamic.spd-mgts.ru. [46.138.44.18])
+        by smtp.gmail.com with ESMTPSA id 9sm404598lfz.157.2021.10.28.15.16.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Oct 2021 15:16:43 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <ba9d1a3f-c3e4-7060-9859-97014aa633b4@gmail.com>
-Date:   Fri, 29 Oct 2021 01:10:18 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+To:     Viresh Kumar <vireshk@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
+        David Heidelberg <david@ixit.cz>,
+        Thierry Reding <treding@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: [PATCH v4] dt-bindings: opp: Allow multi-worded OPP entry name
+Date:   Fri, 29 Oct 2021 01:15:47 +0300
+Message-Id: <20211028221547.22601-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.33.1
 MIME-Version: 1.0
-In-Reply-To: <YXqCz/utp2DFJJ45@smile.fi.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-28.10.2021 14:00, Andy Shevchenko пишет:
->> +	while ((*nl) != NULL && (*nl)->priority >= n->priority) {
-> ' != NULL' is not needed.
-> 
+Not all OPP entries fit into a single word. In particular NVIDIA Tegra OPP
+tables use multi-word names. Allow OPP entry to have multi-worded name
+separated by hyphen. This silences DT checker warnings about wrong naming
+scheme.
 
-I'll change it in v3, thanks.
+Reviewed-by: David Heidelberg <david@ixit.cz>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+
+Changelog:
+
+v4: - Corrected pattern to retain matching of variants like 'opp1'.
+      Was spotted by Rob Herring.
+
+v3: - Viresh Kumar suggested that we shouldn't support postfix variant.
+      I dropped variant with postfix naming scheme and multi-wording
+      support of table names.
+
+v2: - In addition to a multi-wording support, support of the postfix
+      *-opp-table naming scheme is added to the updated pattern.
+
+ Documentation/devicetree/bindings/opp/opp-v2-base.yaml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Documentation/devicetree/bindings/opp/opp-v2-base.yaml b/Documentation/devicetree/bindings/opp/opp-v2-base.yaml
+index ae3ae4d39843..15a76bcd6d42 100644
+--- a/Documentation/devicetree/bindings/opp/opp-v2-base.yaml
++++ b/Documentation/devicetree/bindings/opp/opp-v2-base.yaml
+@@ -33,7 +33,7 @@ properties:
+     type: boolean
+ 
+ patternProperties:
+-  '^opp-?[0-9]+$':
++  '^opp(-?[0-9]+)*$':
+     type: object
+     description:
+       One or more OPP nodes describing voltage-current-frequency combinations.
+-- 
+2.33.1
+
