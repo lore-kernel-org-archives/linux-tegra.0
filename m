@@ -2,257 +2,159 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61B54C433FE
-	for <linux-tegra@archiver.kernel.org>; Thu, 28 Oct 2021 13:28:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2930C433F5
+	for <linux-tegra@archiver.kernel.org>; Thu, 28 Oct 2021 14:47:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4499E610F8
-	for <linux-tegra@archiver.kernel.org>; Thu, 28 Oct 2021 13:28:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D33836108F
+	for <linux-tegra@archiver.kernel.org>; Thu, 28 Oct 2021 14:47:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230410AbhJ1Nao (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 28 Oct 2021 09:30:44 -0400
-Received: from mail-dm6nam11on2079.outbound.protection.outlook.com ([40.107.223.79]:24377
-        "EHLO NAM11-DM6-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S230445AbhJ1Nal (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 28 Oct 2021 09:30:41 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=J8IROdNULhQydZQtuFGdHzZXxDHNZ3VoVZPuqr8eXfZWtcLvJDAqafNnIdJrU5+KEMGfzftsufpeBuAMi8AlynhKTxDsokmEQnWSNzgwbSEYjYR2r1GesAnrR2XpRyzhdIz4k7Zal5zCY+jGMCs0O9HQLerH6Jzt5vRv8MYqXhnxYrk8Yh2ZSLhcxKLJJoLuIsn9PAp0epKXdOMTkdmH0fymxCHZ2FxPyxMbuHiZhJj/QZQ9+vcVQco8LT57pt54VW9BF9DYkrHfdiyXcb87t1Z96QLqpBmeX4MK6W1ze3p7yGQXmwn1WO88qpet3D1yHm4w6jUAlOa0AWCpC6u4DA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=RxUTRP1liNDyjHVFnt3LTW8J+Co3Z9glzukOc0gNp1A=;
- b=S/d+D4rQ9adZl11oQ7mrInZuFmddPxKuK44iEyPHinB06yTu2zXZRGU8T7hOk0x7rmHIHtK2thhpnpD86dnUhzq16WqQGjoHj8fPtDyXLjOHKo1PbApGzWR8L/3ZQdB8mMpEN8c1uHQZFMDbhgXwfHubOrdMwPgZeXvQSUlO9GEtzmKyNJbeUv29qFn286iKnzrH9XT5gxg+ynImGlebZeUMD+OwPGUC14rZPVRdzpO/fvI+UtJ7i0RQVk1rxU7QXz910uLgS6YqH6nKuPbOWRQ0Sl2a+mKIA/EZLI6Q1wIwPJUpGifw8eWIgog0/xS3KudhtBY55DpHfkLkUGBy2A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.112.34) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RxUTRP1liNDyjHVFnt3LTW8J+Co3Z9glzukOc0gNp1A=;
- b=PLuJqohufLjWTbHFPTAG6I/EdcNTWmVZRnsKRapftEeEPow3LDQHTHIxMGq8AovL31dnrwHbyly9DgzXfm+R7DgUje3mDxPiJfF7JUK1u09UhHW2XuaiijY+x1DRg39Lk6F2qeJeRGNchZWIE5RdzyDkXcO2xTJquPNFPSxAFaQEgl4XgpshfkxG0KdaDjMV4VDEXDm1vb2a/6Nbfs0nXvs10Z2dHelTGt60RWJgMVulUligeeUAC2dHnMw30VVp11abAPZmWQH1N8O0DoQJcA+26tgkJYzvuxC9z7JadUqQ/yPPTpmh3weANeOL349G1vsY0vvoKdjaYaG2cP1mHw==
-Received: from DM6PR05CA0045.namprd05.prod.outlook.com (2603:10b6:5:335::14)
- by SN1PR12MB2525.namprd12.prod.outlook.com (2603:10b6:802:29::28) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4649.14; Thu, 28 Oct
- 2021 13:28:11 +0000
-Received: from DM6NAM11FT054.eop-nam11.prod.protection.outlook.com
- (2603:10b6:5:335:cafe::cf) by DM6PR05CA0045.outlook.office365.com
- (2603:10b6:5:335::14) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4669.4 via Frontend
- Transport; Thu, 28 Oct 2021 13:28:11 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.34)
- smtp.mailfrom=nvidia.com; kernel.org; dkim=none (message not signed)
- header.d=none;kernel.org; dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.112.34 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.112.34; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (216.228.112.34) by
- DM6NAM11FT054.mail.protection.outlook.com (10.13.173.95) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.4649.14 via Frontend Transport; Thu, 28 Oct 2021 13:28:11 +0000
-Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Thu, 28 Oct
- 2021 13:28:10 +0000
-Received: from kyarlagadda-linux.nvidia.com (172.20.187.6) by mail.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server id 15.0.1497.18 via Frontend
- Transport; Thu, 28 Oct 2021 13:28:07 +0000
-From:   Akhil R <akhilrajeev@nvidia.com>
-CC:     <dan.j.williams@intel.com>, <devicetree@vger.kernel.org>,
-        <dmaengine@vger.kernel.org>, <jonathanh@nvidia.com>,
-        <kyarlagadda@nvidia.com>, <ldewangan@nvidia.com>,
-        <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <p.zabel@pengutronix.de>, <rgumasta@nvidia.com>,
-        <robh+dt@kernel.org>, <thierry.reding@gmail.com>,
-        <vkoul@kernel.org>, Akhil R <akhilrajeev@nvidia.com>
-Subject: [PATCH v11 4/4] arm64: tegra: Add GPCDMA node for tegra186 and tegra194
-Date:   Thu, 28 Oct 2021 18:53:39 +0530
-Message-ID: <1635427419-22478-5-git-send-email-akhilrajeev@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1635427419-22478-1-git-send-email-akhilrajeev@nvidia.com>
-References: <1635427419-22478-1-git-send-email-akhilrajeev@nvidia.com>
-X-NVConfidentiality: public
+        id S231372AbhJ1OuA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 28 Oct 2021 10:50:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36046 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231357AbhJ1OuA (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 28 Oct 2021 10:50:00 -0400
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1E8AC061570;
+        Thu, 28 Oct 2021 07:47:32 -0700 (PDT)
+Received: by mail-wm1-x331.google.com with SMTP id g191-20020a1c9dc8000000b0032fbf912885so1238641wme.4;
+        Thu, 28 Oct 2021 07:47:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=I5Bet0R+OjkCRvvzkiFO2gNiYpCesc+RRed2o3q0Pn4=;
+        b=R1P5A1TDoPIGnG87dMlW5m/mvpF2ouGzMdwUb7B/d9IT8y5r9NGAhuf5h4scr0U3Aa
+         RSsCncvbuHPhKJYC118/e7TnusfF4QAJmACgbPzBP+5HDiNz0NyGM3LMGG4iNh5PEw6/
+         rJnypNV6ld2msVdpYCIVtekmEtcBjRNRy5OxCBHbTKNR3pqbvbuVrhwyp38W75tleXoM
+         h9LrRq9DmD0drcmPOfxHrHj1bW9dixm8uTgWNLvQypR+97zoAaQC77GTNp6aFHapGKvb
+         wwjNzyE4vaBJqI/qRqA7qH0d95cgE/1obz3rLj+iX6/+XcOnZVsNIM/clCA/h4D6wxE8
+         PlYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=I5Bet0R+OjkCRvvzkiFO2gNiYpCesc+RRed2o3q0Pn4=;
+        b=v0MV1p/F6LbKa17/8p0lBOr2AD/mfCRlm/aIXjM03KSDoY2xy/epRJiNpSFfS0xwFj
+         0m9IIvFH7twpb1Nk6c8o/xEFc5X/EDrx9IrBa6eDA6i0xhGmdyS45GtYMWIM0/QFetjo
+         cxGlnjJnh/kl4y9NzX1kTvjj0k4e5nJop01p89E5/0NXqEH8z+JRUa7sz2BTmLAk7C+A
+         yyFOFdaF65jimO/wHLDxyoLLr0SINoi5wGNjR5OckVoqa9GIWTnCnJf3fRBfUGrhH1Wo
+         DK6GtBxBwA8mRpUFQnJEgZA8++7Z0fDuatY3vHIDfAPcLZqCg5gBoELmvhNipBhueO8Q
+         f75A==
+X-Gm-Message-State: AOAM532ps6DdhFBdmP3n3rcdv4G8MZNWc1q0DLyrmRtiroKdUWUMkFZp
+        Lcu5X3kYAcbFSuzuykujypEc/BYAbtwwRQ==
+X-Google-Smtp-Source: ABdhPJz5eF/l7nbotdTvE8haTa2LL+jlt98/1RN9rhkfWlMmOAMzzZstKJL+mkabMBsD+mh6LWIOdg==
+X-Received: by 2002:a1c:2b81:: with SMTP id r123mr5152097wmr.136.1635432451444;
+        Thu, 28 Oct 2021 07:47:31 -0700 (PDT)
+Received: from orome.fritz.box ([193.209.96.43])
+        by smtp.gmail.com with ESMTPSA id l124sm6881388wml.8.2021.10.28.07.47.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Oct 2021 07:47:30 -0700 (PDT)
+Date:   Thu, 28 Oct 2021 16:47:27 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Prathamesh Shete <pshete@nvidia.com>
+Cc:     linus.walleij@linaro.org, bgolaszewski@baylibre.com,
+        jonathanh@nvidia.com, linux-gpio@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        smangipudi@nvidia.com
+Subject: Re: [PATCH 2/2] gpio: tegra186: Add support for Tegra234 gpio
+Message-ID: <YXq3/1AXX7KiwpTy@orome.fritz.box>
+References: <20211021123021.9602-1-pshete@nvidia.com>
+ <20211021123021.9602-2-pshete@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: dc4ae478-4080-4e7a-19ea-08d99a16c9b4
-X-MS-TrafficTypeDiagnostic: SN1PR12MB2525:
-X-Microsoft-Antispam-PRVS: <SN1PR12MB25254752780483727136954BC0869@SN1PR12MB2525.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:1227;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: Zz884K6EPbTbJj1T8yuEe5UyFYwJX9X5Xj+nbhJqnEApTDvaW6J3nGMnCI9pxbozMSjS1q+Olbpm/T0K2uN+d8v0a79YNMLklkWO4Px/3ySt6Qo3Gfzn/DMadCJaGf+key836G0ZkCZCI263VCZZdMrPZVT9BetoqidlZJfgHz1SqyCJjdJrK/yLyHoMlulxqRENJtHZon7LTEJbAJQw47Z0wsuYuug9mFdaLWXVClk66cDTpEQjipaKjhH6e1JG/Frz1ZJqj7lQxX9GkxeV75lkWI2G5rA/5I+WWnbNdvLtI8Piv6o57lPgkEFBcmTh+iYVB2WvV7+agZyi7HNn9TzidOJZtSyIpU78j7hzCqp7FVDLF86YjX82QHhGmZwaZlSCnFB68qhQT9FGrsVayylawASfrEL1H3Yhvphhj10Gio/6nmqTN4KI7UM6OhOwKzSROi6llRLv1pKlsn2BWgEBCO6IR9O9iyMD9LUEUfPxvk1OAi9ShkBo0JBCabf1fwu9MlBeDaAeMJMHgcSpK9hGwb7553MJWW6UolY2K3WwnuH8zUdF4pAUADV8iteO3Q6qhGJFs2Yi6uYG016kIxa1OUmIw3zBUIDvxFaEIZcs3+6EoHtAr9NPXclPndzsktRNu4dQO3gLm4RuPUXFS8uCEACrHXH2hO52BNJ7SfhSg0O02PXIEMQnu8tf+YorUYAUyAps5JTHIYZZ/5OW/x9OiCkj/L4D7kAf75+ZUKI=
-X-Forefront-Antispam-Report: CIP:216.228.112.34;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid03.nvidia.com;CAT:NONE;SFS:(4636009)(36840700001)(46966006)(36756003)(356005)(4326008)(2906002)(8936002)(508600001)(82310400003)(54906003)(6666004)(2616005)(36860700001)(316002)(26005)(7696005)(70586007)(47076005)(70206006)(107886003)(186003)(336012)(83380400001)(109986005)(7636003)(426003)(86362001)(8676002)(5660300002)(266003);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2021 13:28:11.1988
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: dc4ae478-4080-4e7a-19ea-08d99a16c9b4
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.34];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT054.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN1PR12MB2525
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="iS6lgSRrM0W6rQOm"
+Content-Disposition: inline
+In-Reply-To: <20211021123021.9602-2-pshete@nvidia.com>
+User-Agent: Mutt/2.1.3 (987dde4c) (2021-09-10)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Add device tree node for GPCDMA controller on Tegra186 target
-and Tegra194 target.
 
-Signed-off-by: Rajesh Gumasta <rgumasta@nvidia.com>
-Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
-Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
----
- arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi |  4 +++
- arch/arm64/boot/dts/nvidia/tegra186.dtsi       | 44 ++++++++++++++++++++++++++
- arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi |  4 +++
- arch/arm64/boot/dts/nvidia/tegra194.dtsi       | 44 ++++++++++++++++++++++++++
- 4 files changed, 96 insertions(+)
+--iS6lgSRrM0W6rQOm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi b/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
-index fcd71bf..f5ef04d3 100644
---- a/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
-@@ -56,6 +56,10 @@
- 		};
- 	};
- 
-+	dma-controller@2600000 {
-+		status = "okay";
-+	};
-+
- 	memory-controller@2c00000 {
- 		status = "okay";
- 	};
-diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-index e94f8ad..355d53c 100644
---- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-@@ -73,6 +73,50 @@
- 		snps,rxpbl = <8>;
- 	};
- 
-+	dma-controller@2600000 {
-+		compatible = "nvidia,tegra186-gpcdma";
-+		reg = <0x2600000 0x210000>;
-+		resets = <&bpmp TEGRA186_RESET_GPCDMA>;
-+		reset-names = "gpcdma";
-+		interrupts = <GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 76 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 79 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 81 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 82 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 83 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 89 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 90 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 91 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 92 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 93 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 94 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 95 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 96 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 99 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 101 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 102 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
-+		#dma-cells = <1>;
-+		iommus = <&smmu TEGRA186_SID_GPCDMA_0>;
-+		dma-coherent;
-+		status = "disabled";
-+	};
-+
- 	aconnect@2900000 {
- 		compatible = "nvidia,tegra186-aconnect",
- 			     "nvidia,tegra210-aconnect";
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi b/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi
-index c4058ee..5bc74af 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi
-@@ -49,6 +49,10 @@
- 			};
- 		};
- 
-+		dma-controller@2600000 {
-+			status = "okay";
-+		};
-+
- 		memory-controller@2c00000 {
- 			status = "okay";
- 		};
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-index c8250a3..94094f3 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-@@ -72,6 +72,50 @@
- 			snps,rxpbl = <8>;
- 		};
- 
-+		dma-controller@2600000 {
-+			compatible = "nvidia,tegra194-gpcdma";
-+			reg = <0x2600000 0x210000>;
-+			resets = <&bpmp TEGRA194_RESET_GPCDMA>;
-+			reset-names = "gpcdma";
-+			interrupts = <GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 76 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 79 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 81 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 82 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 83 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 89 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 90 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 91 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 92 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 93 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 94 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 95 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 96 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 99 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 101 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 102 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
-+			#dma-cells = <1>;
-+			iommus = <&smmu TEGRA194_SID_GPCDMA_0>;
-+			dma-coherent;
-+			status = "disabled";
-+		};
-+
- 		aconnect@2900000 {
- 			compatible = "nvidia,tegra194-aconnect",
- 				     "nvidia,tegra210-aconnect";
--- 
-2.7.4
+On Thu, Oct 21, 2021 at 06:00:21PM +0530, Prathamesh Shete wrote:
+> Add support for the Tegra234 GPIO bank configuration.
+>=20
+> Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
+> ---
+>  drivers/gpio/gpio-tegra186.c | 74 ++++++++++++++++++++++++++++++++++++
+>  1 file changed, 74 insertions(+)
+>=20
+> diff --git a/drivers/gpio/gpio-tegra186.c b/drivers/gpio/gpio-tegra186.c
+> index d38980b9923a..edcc91b35e1e 100644
+> --- a/drivers/gpio/gpio-tegra186.c
+> +++ b/drivers/gpio/gpio-tegra186.c
+> @@ -14,6 +14,7 @@
+> =20
+>  #include <dt-bindings/gpio/tegra186-gpio.h>
+>  #include <dt-bindings/gpio/tegra194-gpio.h>
+> +#include <dt-bindings/gpio/tegra234-gpio.h>
+> =20
+>  /* security registers */
+>  #define TEGRA186_GPIO_CTL_SCR 0x0c
+> @@ -877,6 +878,73 @@ static const struct tegra_gpio_soc tegra194_aon_soc =
+=3D {
+>  	.instance =3D 1,
+>  };
+> =20
+> +#define TEGRA234_MAIN_GPIO_PORT(_name, _bank, _port, _pins)	\
+> +	[TEGRA234_MAIN_GPIO_PORT_##_name] =3D {			\
+> +		.name =3D #_name,					\
+> +		.bank =3D _bank,					\
+> +		.port =3D _port,					\
+> +		.pins =3D _pins,					\
+> +	}
+> +
+> +static const struct tegra_gpio_port tegra234_main_ports[] =3D {
+> +	TEGRA234_MAIN_GPIO_PORT(A, 0, 0, 8),
+> +	TEGRA234_MAIN_GPIO_PORT(B, 0, 3, 1),
+> +	TEGRA234_MAIN_GPIO_PORT(C, 5, 1, 8),
+> +	TEGRA234_MAIN_GPIO_PORT(D, 5, 2, 4),
+> +	TEGRA234_MAIN_GPIO_PORT(E, 5, 3, 8),
+> +	TEGRA234_MAIN_GPIO_PORT(F, 5, 4, 6),
+> +	TEGRA234_MAIN_GPIO_PORT(G, 4, 0, 8),
+> +	TEGRA234_MAIN_GPIO_PORT(H, 4, 1, 8),
+> +	TEGRA234_MAIN_GPIO_PORT(I, 4, 2, 7),
+> +	TEGRA234_MAIN_GPIO_PORT(J, 5, 0, 6),
+> +	TEGRA234_MAIN_GPIO_PORT(K, 3, 0, 8),
+> +	TEGRA234_MAIN_GPIO_PORT(L, 3, 1, 4),
+> +	TEGRA234_MAIN_GPIO_PORT(M, 2, 0, 8),
+> +	TEGRA234_MAIN_GPIO_PORT(N, 2, 1, 8),
+> +	TEGRA234_MAIN_GPIO_PORT(P, 2, 2, 8),
+> +	TEGRA234_MAIN_GPIO_PORT(Q, 2, 3, 8),
+> +	TEGRA234_MAIN_GPIO_PORT(R, 2, 4, 6),
 
+I stumbled across an old patch I had created a couple of months ago that
+is very similar to this one. However, at the time I had added a couple
+more ports here, namely S, T, U and V. Is there a reason why you're not
+including those here?
+
+Thierry
+
+--iS6lgSRrM0W6rQOm
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmF6t/sACgkQ3SOs138+
+s6GDkhAAjPsr2qma9X2pR1YFSFis3qLvOKm1liz8t4WqKFI+AbWHi551aqi+gvDb
+E+U8g3kxdwpEa0xRPc6HAGmP+SJR3PYsXHUt6g6GCMohDSASMZJnPxqX4Lks7FHq
+Si247nbXJHeFuhJC6EGtW8b8gNKYfLW9A2J3i34X9hVn4Aq3XkV83IMSrATczvgQ
+UD2CKY+cVsBYnu/F3y9mObzuKxscyLJsRweryiwqMk99RaYPW5n9zklIfsSeBOcl
+HOjEaFTxgAN4wT3G1yjeRIhjov9mLHS3SHK+GY19l0sYRkelvpE3U9hOivoOYX+Z
+JQbYEhtk3GhL2ulxxOBNkkpnq0uBoqwTYrVkfK90wgMQ2WgmFs30tqkaZ8keIGxa
+r/v0YTtSdj11p+E4r5f9fkD6Z040vl44AgHZomrDuYrxiZUXW5+I13yYXxVKcAyu
+/hKE3CC5Z5byT3V7msTPSqAXRfhZb31jiORaMuCoLTDORvbW5vORx09FH5JYz8lv
+eb1nIS2BOMrkUgzXNQ2TEtiw7gAHWorzPbIsV6EZPAZ0ksvQ9gH+QXq7FXAzCN8S
+8mlLJq8N+mNz/Va69QZH/0VyqLnWl4VY/rurIN57WUU0p5i2/wZBPzdq/ugaVRou
+xzeyi87WkQpiekYuyV2MM+BtOzu1w3B1aCpB+HrOYhdEF/PwRe0=
+=p+Cd
+-----END PGP SIGNATURE-----
+
+--iS6lgSRrM0W6rQOm--
