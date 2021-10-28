@@ -2,161 +2,163 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D00A5C43219
-	for <linux-tegra@archiver.kernel.org>; Thu, 28 Oct 2021 12:22:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92797C433EF
+	for <linux-tegra@archiver.kernel.org>; Thu, 28 Oct 2021 13:22:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B2067610FC
-	for <linux-tegra@archiver.kernel.org>; Thu, 28 Oct 2021 12:22:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7534F60F92
+	for <linux-tegra@archiver.kernel.org>; Thu, 28 Oct 2021 13:22:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230406AbhJ1MY3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 28 Oct 2021 08:24:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58220 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229578AbhJ1MY0 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 28 Oct 2021 08:24:26 -0400
-Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C27A2C061570;
-        Thu, 28 Oct 2021 05:21:59 -0700 (PDT)
-Received: by mail-pj1-x1034.google.com with SMTP id ls14-20020a17090b350e00b001a00e2251c8so4527788pjb.4;
-        Thu, 28 Oct 2021 05:21:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=sEQTGe1SdVzMEvdAS+JHzGs+s//rKDLb3zrHBeoZhQ4=;
-        b=iTF+KxXEUPxEL0X/A/h2gzR6rfhKbueZtpV43T9ecbwhzi0t+l3q/o5Ua3AWvU+Enc
-         ByGkTqENMRntgh3iznFMDxu2CMYcinTkd+zVseDqmIBVqNiOOl7jtDTN28tXnXeh/eHS
-         f+SIvvi2YC7tI22dM3EDibcHeQLa3iIqsv5H8CiejoyVxtmYKOA3VOetskmtU4Lx+Pqb
-         LjWvbMeTK5pVAec3h6exgixTZBuA0b6b4pLrHZnH5EOvWXMCcJgTfSDot7PpiFpwOrmA
-         UDe0Zf8yyrgR8VQIYltC0W9ualVYljq6alX4ZkNWzu2NeGmBPW3wY5ZPA2p2XVSWoIe3
-         jylQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=sEQTGe1SdVzMEvdAS+JHzGs+s//rKDLb3zrHBeoZhQ4=;
-        b=7UqHXmGC7VkoA7cxNiyG2I8GDN5WsK6Och2jEsorg2xs71y3Lkvwssk0SnKFNsdplI
-         dh9gh/HtHNCaNWgyruD7azzfURKvRfLsCaTyz9yZltjXJSlQyCToBnvvsxfVbOODZFr1
-         0wIvD84ktyB1DQHE8VDXMyPpiurY55RzfEWrwCyYVtM0NfgY59IdfXSur/j+Aq1nOT9G
-         lKDHoMFXwSJ5xSZiLuhkYkgZ3T6qAj4biP00/S633Lw5Lo0dcLdjjP3YvCiSk0Jc1F0E
-         CCaB4QjYRIQgb/RS24uT+cGediLLJq+3iuGafwAUTWqWyHj6Yo/1zTlZHINhmPpdTB5k
-         e1mA==
-X-Gm-Message-State: AOAM5325AblF+P/V0liVZGz7oMHsAm7WzDnbJwgCDC6XrUpk4VtHIxIc
-        /oggQY6Bo6nw0nQ1Ep511ihPaMOHnJ4PPNxL890=
-X-Google-Smtp-Source: ABdhPJwgRG6Z5IlQAMmxkEb7xwk/3DRskWOoc9lq5s+Jze0PB67uqVa13ZU9GrnI44E+cb/61DiEpYjC8sFDBN8RSYA=
-X-Received: by 2002:a17:902:b716:b0:13f:b2d1:f316 with SMTP id
- d22-20020a170902b71600b0013fb2d1f316mr3644234pls.24.1635423719258; Thu, 28
- Oct 2021 05:21:59 -0700 (PDT)
+        id S230240AbhJ1NY1 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 28 Oct 2021 09:24:27 -0400
+Received: from ixit.cz ([94.230.151.217]:35134 "EHLO ixit.cz"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229981AbhJ1NY1 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 28 Oct 2021 09:24:27 -0400
+Received: from localhost.localdomain (ip-89-176-96-70.net.upcbroadband.cz [89.176.96.70])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ixit.cz (Postfix) with ESMTPSA id 6675D20064;
+        Thu, 28 Oct 2021 15:21:58 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ixit.cz; s=dkim;
+        t=1635427318;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=tRtvLsIyTzl1Po9E5wDOrSjeOosw5eO3XZEpRHlLuvo=;
+        b=UiHtoW68Y5aQXo7yUDPn3YqqEXayTa44ULi0V79pXd25hc7dw86Md4dGdAt4pT/ourOMvx
+        JVHNpaEYDtEdhiC26vs5biOCowMVOCUm5kZmqCPCFsRoMzlCcSTi+V+FXPQQgeKbF+c+Dt
+        cU2I/nRvDOnamwcOBUMUrqeBRftjAQE=
+From:   David Heidelberg <david@ixit.cz>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc:     Dmitry Osipenko <digetx@gmail.com>,
+        David Heidelberg <david@ixit.cz>, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ARM: tegra: add -hog to gpios hogs
+Date:   Thu, 28 Oct 2021 15:21:52 +0200
+Message-Id: <20211028132152.44232-1-david@ixit.cz>
+X-Mailer: git-send-email 2.33.0
 MIME-Version: 1.0
-References: <20211027211715.12671-1-digetx@gmail.com> <20211027211715.12671-16-digetx@gmail.com>
-In-Reply-To: <20211027211715.12671-16-digetx@gmail.com>
-From:   Greentime Hu <green.hu@gmail.com>
-Date:   Thu, 28 Oct 2021 20:20:00 +0800
-Message-ID: <CAEbi=3eTruN6rYvEHCtyhTEZ=Ep8n6g75UMpHffc=0UrVTGbdQ@mail.gmail.com>
-Subject: Re: [PATCH v2 15/45] nds32: Use do_kernel_power_off()
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Russell King <linux@armlinux.org.uk>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Guo Ren <guoren@kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        Joshua Thompson <funaho@jurai.org>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Nick Hu <nickhu@andestech.com>,
-        Vincent Chen <deanbo422@gmail.com>,
-        "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-        Helge Deller <deller@gmx.de>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        Len Brown <lenb@kernel.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-        Tony Lindgren <tony@atomide.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Patrick Venture <venture@google.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Pavel Machek <pavel@ucw.cz>,
-        linux-arm-kernel@lists.infradead.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-csky@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-        linux-parisc@vger.kernel.org,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-riscv@lists.infradead.org, linux-sh@vger.kernel.org,
-        xen-devel@lists.xenproject.org, linux-acpi@vger.kernel.org,
-        linux-omap@vger.kernel.org, openbmc@lists.ozlabs.org,
-        linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
-        Alan Kao <alankao@andestech.com>,
-        =?UTF-8?B?Sy5DLiBLdWVuLUNoZXJuIExpbijmnpflnaTmiJAp?= 
-        <kclin@andestech.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Dmitry Osipenko <digetx@gmail.com> =E6=96=BC 2021=E5=B9=B410=E6=9C=8828=E6=
-=97=A5 =E9=80=B1=E5=9B=9B =E4=B8=8A=E5=8D=885:18=E5=AF=AB=E9=81=93=EF=BC=9A
->
-> Kernel now supports chained power-off handlers. Use do_kernel_power_off()
-> that invokes chained power-off handlers. It also invokes legacy
-> pm_power_off() for now, which will be removed once all drivers will
-> be converted to the new power-off API.
->
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  arch/nds32/kernel/process.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/arch/nds32/kernel/process.c b/arch/nds32/kernel/process.c
-> index 49fab9e39cbf..0936dcd7db1b 100644
-> --- a/arch/nds32/kernel/process.c
-> +++ b/arch/nds32/kernel/process.c
-> @@ -54,8 +54,7 @@ EXPORT_SYMBOL(machine_halt);
->
->  void machine_power_off(void)
->  {
-> -       if (pm_power_off)
-> -               pm_power_off();
-> +       do_kernel_power_off();
->  }
->
->  EXPORT_SYMBOL(machine_power_off);
-> --
-> 2.33.1
->
+Comply with dt-schema, fixes warnings as:
+$ make dtbs_check
+...
+arch/arm/boot/dts/tegra30-apalis-eval.dt.yaml: pex-perst-n: $nodename:0: 'pex-perst-n' does not match '^(hog-[0-9]+|.+-hog(-[0-9]+)?)$'
+	From schema: /home/runner/.local/lib/python3.8/site-packages/dtschema/schemas/gpio/gpio-hog.yaml
+...
 
-Loop in Alan and KC
+Signed-off-by: David Heidelberg <david@ixit.cz>
+---
+ arch/arm/boot/dts/tegra124-apalis-eval.dts      | 2 +-
+ arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts | 2 +-
+ arch/arm/boot/dts/tegra20-colibri.dtsi          | 6 +++---
+ arch/arm/boot/dts/tegra30-apalis-eval.dts       | 2 +-
+ arch/arm/boot/dts/tegra30-apalis-v1.1-eval.dts  | 2 +-
+ arch/arm/boot/dts/tegra30-colibri.dtsi          | 2 +-
+ 6 files changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/arch/arm/boot/dts/tegra124-apalis-eval.dts b/arch/arm/boot/dts/tegra124-apalis-eval.dts
+index 28c29b6813a7..3209554ec7e6 100644
+--- a/arch/arm/boot/dts/tegra124-apalis-eval.dts
++++ b/arch/arm/boot/dts/tegra124-apalis-eval.dts
+@@ -246,7 +246,7 @@ reg_usbh_vbus: regulator-usbh-vbus {
+ 
+ &gpio {
+ 	/* Apalis GPIO7 MXM3 pin 15 PLX PEX 8605 PCIe Switch Reset */
+-	pex-perst-n {
++	pex-perst-n-hog {
+ 		gpio-hog;
+ 		gpios = <TEGRA_GPIO(DD, 1) GPIO_ACTIVE_HIGH>;
+ 		output-high;
+diff --git a/arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts b/arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts
+index f3afde410615..814257c79bf1 100644
+--- a/arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts
++++ b/arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts
+@@ -248,7 +248,7 @@ reg_usbh_vbus: regulator-usbh-vbus {
+ 
+ &gpio {
+ 	/* Apalis GPIO7 MXM3 pin 15 PLX PEX 8605 PCIe Switch Reset */
+-	pex-perst-n {
++	pex-perst-n-hog {
+ 		gpio-hog;
+ 		gpios = <TEGRA_GPIO(DD, 1) GPIO_ACTIVE_HIGH>;
+ 		output-high;
+diff --git a/arch/arm/boot/dts/tegra20-colibri.dtsi b/arch/arm/boot/dts/tegra20-colibri.dtsi
+index 375b60eb03af..618d35647a43 100644
+--- a/arch/arm/boot/dts/tegra20-colibri.dtsi
++++ b/arch/arm/boot/dts/tegra20-colibri.dtsi
+@@ -749,7 +749,7 @@ &emc_icc_dvfs_opp_table {
+ };
+ 
+ &gpio {
+-	lan-reset-n {
++	lan-reset-n-hog {
+ 		gpio-hog;
+ 		gpios = <TEGRA_GPIO(V, 4) GPIO_ACTIVE_HIGH>;
+ 		output-high;
+@@ -757,7 +757,7 @@ lan-reset-n {
+ 	};
+ 
+ 	/* Tri-stating GMI_WR_N on SODIMM pin 99 nPWE */
+-	npwe {
++	npwe-hog {
+ 		gpio-hog;
+ 		gpios = <TEGRA_GPIO(T, 5) GPIO_ACTIVE_HIGH>;
+ 		output-high;
+@@ -765,7 +765,7 @@ npwe {
+ 	};
+ 
+ 	/* Not tri-stating GMI_WR_N on SODIMM pin 93 RDnWR */
+-	rdnwr {
++	rdnwr-hog {
+ 		gpio-hog;
+ 		gpios = <TEGRA_GPIO(T, 6) GPIO_ACTIVE_HIGH>;
+ 		output-low;
+diff --git a/arch/arm/boot/dts/tegra30-apalis-eval.dts b/arch/arm/boot/dts/tegra30-apalis-eval.dts
+index 9f653ef41da4..93b83b3c5655 100644
+--- a/arch/arm/boot/dts/tegra30-apalis-eval.dts
++++ b/arch/arm/boot/dts/tegra30-apalis-eval.dts
+@@ -239,7 +239,7 @@ reg_usbh_vbus: regulator-usbh-vbus {
+ 
+ &gpio {
+ 	/* Apalis GPIO7 MXM3 pin 15 PLX PEX 8605 PCIe Switch Reset */
+-	pex-perst-n {
++	pex-perst-n-hog {
+ 		gpio-hog;
+ 		gpios = <TEGRA_GPIO(S, 7) GPIO_ACTIVE_HIGH>;
+ 		output-high;
+diff --git a/arch/arm/boot/dts/tegra30-apalis-v1.1-eval.dts b/arch/arm/boot/dts/tegra30-apalis-v1.1-eval.dts
+index 86e138e8c7f0..fbfa75e53f32 100644
+--- a/arch/arm/boot/dts/tegra30-apalis-v1.1-eval.dts
++++ b/arch/arm/boot/dts/tegra30-apalis-v1.1-eval.dts
+@@ -257,7 +257,7 @@ reg_vddio_sdmmc3: regulator-vddio-sdmmc3 {
+ 
+ &gpio {
+ 	/* Apalis GPIO7 MXM3 pin 15 PLX PEX 8605 PCIe Switch Reset */
+-	pex-perst-n {
++	pex-perst-n-hog {
+ 		gpio-hog;
+ 		gpios = <TEGRA_GPIO(S, 7) GPIO_ACTIVE_HIGH>;
+ 		output-high;
+diff --git a/arch/arm/boot/dts/tegra30-colibri.dtsi b/arch/arm/boot/dts/tegra30-colibri.dtsi
+index 64e4a375bfb1..9cfc6c7d2065 100644
+--- a/arch/arm/boot/dts/tegra30-colibri.dtsi
++++ b/arch/arm/boot/dts/tegra30-colibri.dtsi
+@@ -1056,7 +1056,7 @@ sound {
+ };
+ 
+ &gpio {
+-	lan-reset-n {
++	lan-reset-n-hog {
+ 		gpio-hog;
+ 		gpios = <TEGRA_GPIO(DD, 0) GPIO_ACTIVE_HIGH>;
+ 		output-high;
+-- 
+2.33.0
+
