@@ -2,131 +2,242 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CFD8C433F5
-	for <linux-tegra@archiver.kernel.org>; Thu, 28 Oct 2021 08:45:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1439C4321E
+	for <linux-tegra@archiver.kernel.org>; Thu, 28 Oct 2021 09:53:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0EFEE6103B
-	for <linux-tegra@archiver.kernel.org>; Thu, 28 Oct 2021 08:45:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AC0DD60FF2
+	for <linux-tegra@archiver.kernel.org>; Thu, 28 Oct 2021 09:53:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230030AbhJ1Irr (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 28 Oct 2021 04:47:47 -0400
-Received: from mail-dm6nam10on2054.outbound.protection.outlook.com ([40.107.93.54]:11425
-        "EHLO NAM10-DM6-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S229993AbhJ1Irr (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 28 Oct 2021 04:47:47 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=nBdiyRb1aHsmlloFZtzZYUyF/NUDJrJKzrf6x6p/dzntYqSw9VbB1ihQ7Txvcys5qrBsNEZP9TKhTgmU+dwaE1+wMYHVfjfve4PQWkGBK/Qu9RXk5C3DslrNo2YxsF0nk96rVrLB/NPDoUpB7snB5Qd9BaTZxPFruLVh/8EzsmKOnNOVoLJBsTxYsZMhcHvsNL7U2yfGzy3LwlBCySmb+ARJxWQlZsGLY2/g+3ihuwJfV2qMX+zEcptl6wlOQd1mgunCEOKddFxvTHNj9KekJ4g+RSDt//588wQHV5YbFvsXIWLpCEq3RmVYZ6C4p1hzmV9s9wrHUe/X6Wc5o6CHlw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=QBWICISfARMm+/g6Wys21wHqxuDLnv7FkDWfN/FFKGQ=;
- b=NdNIUmpNp9rGAdJizGahdF+tb60MJ2P5l8Z7xHpnHT1+q6PpwF5RbFJGhltLSiRjNguM40mWPavRAcaGaXg3A2ZRrufSqKvIg3F+T7Kt4YTfbCIM4lfhrj4Fm3qfbiyKxZ7E4keZzb8eZVWRFes5qJFHQ7MgVidn1SXsP2wnttntgWaLPF2rvmUbIRUCHhZtAiKeUAzI3f2z6DVb/XnQmSg6nlHxGVyVfkRFauPF/iHUXA7x/EHOsnUDWEF1BE5kmN5DQp0pVCPIsFSUFJnffQ3IR04/p/XJ+F7kzhbMPmTHmCdb/i5vAG5spGD/Zj5CYCNfRUMDmczEqwzie+bIRg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.112.34) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=QBWICISfARMm+/g6Wys21wHqxuDLnv7FkDWfN/FFKGQ=;
- b=MQayY0FGF/q1F8mLblmwCMX3oPfCsX8QjYO+XeJwKo39uS9rEzpPuCrnuHDHuZ2C8naKlkmQ6vz4FURBfhHgogRCzfuaSN6qqzrnxes/+dZS645c5M6XQkiXcbcos11bXjboPyxGKDRn4Ajy48M+iyELLTuwFPdy10E7oBy38lTXKnbbCXvv+dMU+eKLd/lt2UYfuECsw0x5GzWTIY7AsQUr+ngiEZzAZfVwP3zp03LZ8B5gvTPRQqX7A8LMp66kJfETH7R9Wt0eqbXJ/L3o6zvSSDqurSw8LujoIH1qxONUvmdZwPBMcqBYAW7BQgkCvXYq4n4Lt+Kb2RQw8km0zg==
-Received: from DS7PR03CA0303.namprd03.prod.outlook.com (2603:10b6:8:2b::19) by
- BYAPR12MB2726.namprd12.prod.outlook.com (2603:10b6:a03:66::17) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.4628.16; Thu, 28 Oct 2021 08:45:18 +0000
-Received: from DM6NAM11FT004.eop-nam11.prod.protection.outlook.com
- (2603:10b6:8:2b:cafe::84) by DS7PR03CA0303.outlook.office365.com
- (2603:10b6:8:2b::19) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4649.13 via Frontend
- Transport; Thu, 28 Oct 2021 08:45:18 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.34)
- smtp.mailfrom=nvidia.com; kernel.org; dkim=none (message not signed)
- header.d=none;kernel.org; dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.112.34 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.112.34; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (216.228.112.34) by
- DM6NAM11FT004.mail.protection.outlook.com (10.13.172.217) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.4649.14 via Frontend Transport; Thu, 28 Oct 2021 08:45:18 +0000
-Received: from [10.26.49.14] (172.20.187.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Thu, 28 Oct
- 2021 08:45:15 +0000
-Subject: Re: [PATCH 2/5] PCI/VPD: Use pci_read_vpd_any() in pci_vpd_size()
-To:     Heiner Kallweit <hkallweit1@gmail.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        David Miller <davem@davemloft.net>,
-        Raju Rangoju <rajur@chelsio.com>
-CC:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-References: <ba0b18a3-64d8-d72f-9e9f-ad3e4d7ae3b8@gmail.com>
- <049fa71c-c7af-9c69-51c0-05c1bc2bf660@gmail.com>
- <88bfd6ed-f5c6-b9f9-c331-643eb0d37289@nvidia.com>
- <84956be9-f9d1-d416-5af9-664d7c4831ce@gmail.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <62ebbb68-8cd5-65a8-0ef0-82e257216ac5@nvidia.com>
-Date:   Thu, 28 Oct 2021 09:45:13 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+        id S230115AbhJ1J4D (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 28 Oct 2021 05:56:03 -0400
+Received: from mail-ot1-f44.google.com ([209.85.210.44]:34581 "EHLO
+        mail-ot1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229775AbhJ1J4A (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 28 Oct 2021 05:56:00 -0400
+Received: by mail-ot1-f44.google.com with SMTP id t17-20020a056830083100b00553ced10177so7601568ots.1;
+        Thu, 28 Oct 2021 02:53:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=uz31be5RzrXoa4uAxe1xyKZoIQd0wtsVVy1gZjyOGeo=;
+        b=jdFl/je3Je6T/jpCHs04XX6ITK/a6Yki3Je6sLTq60sPpv8KU3wjQzb7JSWZUuh8Ea
+         E1WhkuHpY/SLaMOFwPpIcpW+Xb3w8MOgphjjDRjOU6zRKQFs8LWQJUPrEduBRmASipAM
+         bPQUtTZoRe6qAUaZfPajlfft820o9J3COt+JFiSYvJxs2d4XftSLrXqkmtZ+12DcunbJ
+         R0+L1t0K7JjQ4QBEcwn3s7kcGoMHl0l1ysAYkvJ1fQYEdg6YvFOJgKQ+vtBH0LIbABle
+         Pi8Go4QlHquNyrdGZuRIvAtfYxXcaGp+h8VTW0DD1Xmtsuutpo61grFpw7QhkgzyqvZu
+         MFlQ==
+X-Gm-Message-State: AOAM532in2NVxr1p+JR32IP/S7/gtP+PmtkbO4WLA3C9ycT+YBthrKNW
+        o2W8Dkq0sIqWcv54+iwf4+qJ56qK90vujKrPxmc=
+X-Google-Smtp-Source: ABdhPJzOhFRTFEQQ+n5tEP/bBwTFb0889hJMVw20FWNyFAcerxAE3whFQ+5AhX1ip3T9ogNIhdu7wA8+/uN9VNCEoX8=
+X-Received: by 2002:a9d:65c1:: with SMTP id z1mr2411564oth.198.1635414812552;
+ Thu, 28 Oct 2021 02:53:32 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <84956be9-f9d1-d416-5af9-664d7c4831ce@gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [172.20.187.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL107.nvidia.com (172.20.187.13)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 73d2474b-ed68-43da-2afd-08d999ef44fb
-X-MS-TrafficTypeDiagnostic: BYAPR12MB2726:
-X-Microsoft-Antispam-PRVS: <BYAPR12MB27266F7161D4E187D799D6C8D9869@BYAPR12MB2726.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:10000;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: v9a5QQnPxWNw+L7pQ9U0c51553N7AF7P70MAEIOxh8xSAEn+w4L5uHG4C5QLnhFt5eb+Q5EAaw0arc32o3OqvGtSXV+ayDVmB3An9W70WP+anLwk8OD4Mbht/WHVNiFIxjmHtNCusGCkbLMdVAYqdXZm6CRvlO17kFwMx8jHwy6K9FcvVTufp0aMor/0WnW4Eztrz2ju9uRyRI3qA1BC2FScDTrbw3fFLnrLg/bsrgM6fUyT/okGJc2bzxeIrt9xfVaU15kPvdPg6UAECkY7R6RMN6mP0s/hpsI0VYtpZ5dWYVTh4Te4TBMISjkAjMIrrqc8gicY6smMAie/3QC0LW/9ajWvnsvEZK94NzYIco6t7AsKzlYde5IWZLuYSRe7odEEq4KJsTS/Z7lEJfLScMoTWcXtmyXlryyXn8FUVTkpPxn+vmnUeMSeY+hsiM4lXV3ZRFGeqZLfrQuyioZ/Zp4SHk1e6aF0OUT/e+ikxYfSQm1yG/aTZW1rV9IAKYj0XuVsws2YLJ3Q5NF6mDn8d/DgaWxrcFB20W6NEAYlPmrrNZib4vzlxxLacCwEYNkoYPMD6vgkg1E8cxgwBP70xUYioOaCgQVQUvStgQvurmxBZ3YWI3yO/EsptKFi8T6+L6Yec8xxddeD7RKFB1N0E9pm5HYvzo6DcMdZ93xfXuAcUd/dVmA8EOGGTIOtzI4RfzSZaH3aCPlw29StoCGdBtRrIQNdixbgSe5dmcaYg3w=
-X-Forefront-Antispam-Report: CIP:216.228.112.34;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid03.nvidia.com;CAT:NONE;SFS:(4636009)(36840700001)(46966006)(83380400001)(4326008)(508600001)(426003)(8936002)(70206006)(16576012)(26005)(31686004)(86362001)(186003)(36906005)(54906003)(316002)(8676002)(110136005)(5660300002)(82310400003)(336012)(53546011)(36756003)(36860700001)(31696002)(47076005)(16526019)(70586007)(7636003)(2616005)(356005)(4744005)(2906002)(43740500002);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2021 08:45:18.2011
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 73d2474b-ed68-43da-2afd-08d999ef44fb
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.34];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT004.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR12MB2726
+References: <20211027211715.12671-1-digetx@gmail.com> <20211027211715.12671-9-digetx@gmail.com>
+In-Reply-To: <20211027211715.12671-9-digetx@gmail.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Thu, 28 Oct 2021 11:53:20 +0200
+Message-ID: <CAJZ5v0jMdSjmkswzu18LSxcNk+k92Oz5XFFXmu-h=W8aPP4Oig@mail.gmail.com>
+Subject: Re: [PATCH v2 08/45] kernel: Add combined power-off+restart handler
+ call chain API
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Russell King <linux@armlinux.org.uk>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Guo Ren <guoren@kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Joshua Thompson <funaho@jurai.org>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Nick Hu <nickhu@andestech.com>,
+        Greentime Hu <green.hu@gmail.com>,
+        Vincent Chen <deanbo422@gmail.com>,
+        "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+        Helge Deller <deller@gmx.de>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        Len Brown <lenb@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+        Tony Lindgren <tony@atomide.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Patrick Venture <venture@google.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Pavel Machek <pavel@ucw.cz>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-csky@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-riscv@lists.infradead.org,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        xen-devel@lists.xenproject.org,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux OMAP Mailing List <linux-omap@vger.kernel.org>,
+        openbmc@lists.ozlabs.org,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On Wed, Oct 27, 2021 at 11:18 PM Dmitry Osipenko <digetx@gmail.com> wrote:
+>
+> SoC platforms often have multiple options of how to perform system's
+> power-off and restart operations. Meanwhile today's kernel is limited to
+> a single option. Add combined power-off+restart handler call chain API,
+> which is inspired by the restart API. The new API provides both power-off
+> and restart functionality.
+>
+> The old pm_power_off method will be kept around till all users are
+> converted to the new API.
+>
+> Current restart API will be replaced by the new unified API since
+> new API is its superset. The restart functionality of the power-handler
+> API is built upon the existing restart-notifier APIs.
+>
+> In order to ease conversion to the new API, convenient helpers are added
+> for the common use-cases. They will reduce amount of boilerplate code and
+> remove global variables. These helpers preserve old behaviour for cases
+> where only one power-off handler is executed, this is what existing
+> drivers want, and thus, they could be easily converted to the new API.
+> Users of the new API should explicitly enable power-off chaining by
+> setting corresponding flag of the power_handler structure.
+>
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  include/linux/reboot.h   | 176 +++++++++++-
+>  kernel/power/hibernate.c |   2 +-
+>  kernel/reboot.c          | 601 ++++++++++++++++++++++++++++++++++++++-
+>  3 files changed, 768 insertions(+), 11 deletions(-)
+>
+> diff --git a/include/linux/reboot.h b/include/linux/reboot.h
+> index b7fa25726323..0ec835338c27 100644
+> --- a/include/linux/reboot.h
+> +++ b/include/linux/reboot.h
+> @@ -8,10 +8,16 @@
+>
+>  struct device;
+>
+> -#define SYS_DOWN       0x0001  /* Notify of system down */
+> -#define SYS_RESTART    SYS_DOWN
+> -#define SYS_HALT       0x0002  /* Notify of system halt */
+> -#define SYS_POWER_OFF  0x0003  /* Notify of system power off */
+> +enum reboot_prepare_mode {
+> +       SYS_DOWN = 1,           /* Notify of system down */
+> +       SYS_RESTART = SYS_DOWN,
+> +       SYS_HALT,               /* Notify of system halt */
+> +       SYS_POWER_OFF,          /* Notify of system power off */
+> +};
+> +
+> +#define RESTART_PRIO_RESERVED          0
+> +#define RESTART_PRIO_DEFAULT           128
+> +#define RESTART_PRIO_HIGH              192
+>
+>  enum reboot_mode {
+>         REBOOT_UNDEFINED = -1,
+> @@ -49,6 +55,167 @@ int register_restart_handler(struct notifier_block *);
+>  int unregister_restart_handler(struct notifier_block *);
+>  void do_kernel_restart(char *cmd);
+>
+> +/*
+> + * Unified poweroff + restart API.
+> + */
+> +
+> +#define POWEROFF_PRIO_RESERVED         0
+> +#define POWEROFF_PRIO_PLATFORM         1
+> +#define POWEROFF_PRIO_DEFAULT          128
+> +#define POWEROFF_PRIO_HIGH             192
+> +#define POWEROFF_PRIO_FIRMWARE         224
+> +
+> +enum poweroff_mode {
+> +       POWEROFF_NORMAL = 0,
+> +       POWEROFF_PREPARE,
+> +};
+> +
+> +struct power_off_data {
+> +       void *cb_data;
+> +};
+> +
+> +struct power_off_prep_data {
+> +       void *cb_data;
+> +};
+> +
+> +struct restart_data {
+> +       void *cb_data;
+> +       const char *cmd;
+> +       enum reboot_mode mode;
+> +};
+> +
+> +struct reboot_prep_data {
+> +       void *cb_data;
+> +       const char *cmd;
+> +       enum reboot_prepare_mode mode;
+> +};
+> +
+> +struct power_handler_private_data {
+> +       struct notifier_block reboot_prep_nb;
+> +       struct notifier_block power_off_nb;
+> +       struct notifier_block restart_nb;
+> +       void (*trivial_power_off_cb)(void);
+> +       void (*simple_power_off_cb)(void *data);
+> +       void *simple_power_off_cb_data;
+> +       bool registered;
+> +};
+> +
+> +/**
+> + * struct power_handler - Machine power-off + restart handler
+> + *
+> + * Describes power-off and restart handlers which are invoked by kernel
+> + * to power off or restart this machine.  Supports prioritized chaining for
+> + * both restart and power-off handlers.  Callback's priority must be unique.
+> + * Intended to be used by device drivers that are responsible for restarting
+> + * and powering off hardware which kernel is running on.
+> + *
+> + * Struct power_handler can be static.  Members of this structure must not be
+> + * altered while handler is registered.
+> + *
+> + * Fill the structure members and pass it to register_power_handler().
+> + */
+> +struct power_handler {
 
-On 27/10/2021 12:32, Heiner Kallweit wrote:
+The name of this structure is too generic IMV.  There are many things
+that it might apply to in principle.
 
-...
-
->> This change is breaking a PCI test that we are running on Tegra124
->> Jetson TK1. The test is parsing the various PCI devices by running
->> 'lspci -vvv' and for one device I am seeing a NULL pointer
->> dereference crash. Reverting this change or just adding the line
->> 'dev->vpd.len = PCI_VPD_MAX_SIZE;' back fixes the problem.
->>
->> I have taken a quick look but have not found why this is failing
->> so far. Let me know if you have any thoughts.
->>
-> 
-> There's a known issue with this change, the fix has just been applied to
-> linux-next. Can you please re-test with linux-next from today?
-
-
-Thanks. Looking at yesterday's -next, I do see that it is now working again.
-
-Cheers
-Jon
-
--- 
-nvpublic
+What about calling power_off_handler or sys_off_handler as it need not
+be about power at all?
