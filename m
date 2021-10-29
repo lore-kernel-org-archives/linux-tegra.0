@@ -2,90 +2,90 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6DC3C433F5
-	for <linux-tegra@archiver.kernel.org>; Fri, 29 Oct 2021 15:22:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E00FC433EF
+	for <linux-tegra@archiver.kernel.org>; Fri, 29 Oct 2021 15:26:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AE58360F9B
-	for <linux-tegra@archiver.kernel.org>; Fri, 29 Oct 2021 15:22:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 50D2160F93
+	for <linux-tegra@archiver.kernel.org>; Fri, 29 Oct 2021 15:26:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229607AbhJ2PYo (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 29 Oct 2021 11:24:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43392 "EHLO mail.kernel.org"
+        id S229527AbhJ2P3P (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 29 Oct 2021 11:29:15 -0400
+Received: from mail1.perex.cz ([77.48.224.245]:39126 "EHLO mail1.perex.cz"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229641AbhJ2PYm (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 29 Oct 2021 11:24:42 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 5B48B60F55;
-        Fri, 29 Oct 2021 15:22:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1635520934;
-        bh=K3N5Az/gCC0BKAsrlVXDoRH6GnWNwjX21xmwxUaiu4k=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=tBBp5TysnpZ7a3l8x+KecThcE6UPsz1Yy5AaHXezyrazZv6bk1dm0HM47XK1rv/B+
-         R4bGIYF0UGrY0f9OpnZZAKztniaDQ6e51sYkwXAcvLvoL/SDZT8a0bjoXfxK/mZUHn
-         /A/yqMQV2oopFAEAPiesebYEL1DQQIYDTDGKOuabxBbO6lyQqQKge1IHNtDXiPW03o
-         b+pZoU/1o0HdiVIJpJbQox7Hm0jJ0zifortCdbj53jjcdP027cg7Gg+TKQQQckd3pf
-         kF2G3swH+3BcQmsSE+lpjxz9QaM4WIH8RZ0aVOVbq89eKuJBDG5wJkxAq6mp59G4OB
-         edUELgF64F0ug==
-Date:   Fri, 29 Oct 2021 16:22:09 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Sameer Pujar <spujar@nvidia.com>
-Cc:     Jaroslav Kysela <perex@perex.cz>, lgirdwood@gmail.com,
-        tiwai@suse.com, jonathanh@nvidia.com, thierry.reding@gmail.com,
+        id S229868AbhJ2P3O (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Fri, 29 Oct 2021 11:29:14 -0400
+Received: from mail1.perex.cz (localhost [127.0.0.1])
+        by smtp1.perex.cz (Perex's E-mail Delivery System) with ESMTP id F345FA0049;
+        Fri, 29 Oct 2021 17:26:43 +0200 (CEST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 smtp1.perex.cz F345FA0049
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=perex.cz; s=default;
+        t=1635521204; bh=34OOJZeF7fIOonM6ercXMgmUTe4EfYzKs0a5zkCpoYc=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=dXwLqXlpGfaHehXGmpIoYdksLlU+13fd773929LyRw7lINOI4EqkJa7kmapPRce49
+         G61m9UNfn2srSKxqQNJOY5gNdaZPv0ne+/4n7smc1xjAHKe01G23CK+s+ibNH8s3y2
+         EgBCWmtld7RksURsJu1cYNEWpOvVyU8/kRne/yts=
+Received: from [192.168.100.98] (unknown [192.168.100.98])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: perex)
+        by mail1.perex.cz (Perex's E-mail Delivery System) with ESMTPSA;
+        Fri, 29 Oct 2021 17:26:34 +0200 (CEST)
+Message-ID: <f709fcff-1bd4-1251-1471-aad01fdfdedd@perex.cz>
+Date:   Fri, 29 Oct 2021 17:26:34 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.1.0
+Subject: Re: [PATCH] ASoC: tegra: Add master volume/mute control support
+Content-Language: en-US
+To:     Sameer Pujar <spujar@nvidia.com>, broonie@kernel.org,
+        lgirdwood@gmail.com, tiwai@suse.com
+Cc:     jonathanh@nvidia.com, thierry.reding@gmail.com,
         alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ASoC: tegra: Add master volume/mute control support
-Message-ID: <YXwRoWPF+ctNJRyp@sirena.org.uk>
 References: <1635159976-17355-1-git-send-email-spujar@nvidia.com>
  <79541c76-2c2b-fd4b-60c8-67ee6b8ea3fa@perex.cz>
  <8cb777f9-b73b-136c-f560-de4c31af931e@nvidia.com>
  <18b61046-ac0b-0fb3-669c-6524a03eecf0@nvidia.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="FzXysqnWhsplUAtn"
-Content-Disposition: inline
+From:   Jaroslav Kysela <perex@perex.cz>
 In-Reply-To: <18b61046-ac0b-0fb3-669c-6524a03eecf0@nvidia.com>
-X-Cookie: "Just the facts, Ma'am"
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-
---FzXysqnWhsplUAtn
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Fri, Oct 29, 2021 at 08:38:54PM +0530, Sameer Pujar wrote:
+On 29. 10. 21 17:08, Sameer Pujar wrote:
+> 
+> 
 > On 10/26/2021 11:53 AM, Sameer Pujar wrote:
-> > On 10/25/2021 6:28 PM, Jaroslav Kysela wrote:
+>>
+>>
+>> On 10/25/2021 6:28 PM, Jaroslav Kysela wrote:
+>>> On 25. 10. 21 13:06, Sameer Pujar wrote:
+>>>
+>>>> @@ -150,11 +186,22 @@ static int tegra210_mvc_put_mute(struct
+>>>> snd_kcontrol *kcontrol,
+>>>
+>>> ...
+>>>>
+>>>>        return 1;
+>>>
+>>> It's a bit unrelated comment to this change, but it may be worth to
+>>> verify all
+>>> kcontrol put callbacks in the tegra code. Ensure that value 1 is
+>>> returned only
+>>> when something was really changed in hardware.
+> 
+> There are cases when the mixer control update is not immediately written
+> to HW, instead the update is ACKed (stored in variable) and writen to HW
+> at a later point of time. Do these cases qualify for "return 1" as well?
 
-> > > It's a bit unrelated comment to this change, but it may be worth to
-> > > verify all
-> > > kcontrol put callbacks in the tegra code. Ensure that value 1 is
-> > > returned only
-> > > when something was really changed in hardware.
+Yes - assuming that the get callback returns the cached value. The get/put 
+implementation should be consistent from the caller view. The driver 
+implementation (delayed write) is a separate thing.
 
-> There are cases when the mixer control update is not immediately written to
-> HW, instead the update is ACKed (stored in variable) and writen to HW at a
-> later point of time. Do these cases qualify for "return 1" as well?
+						Jaroslav
 
-What matters is the user visible effect.  It doesn't matter when the
-change gets written to the hardware, the important thing is that an
-applicaton will read back a new value and users will observe whatver
-change the control change caused.
-
---FzXysqnWhsplUAtn
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmF8EaAACgkQJNaLcl1U
-h9AF8wf6Au6TOBbNtZfeRJ7HMsQ6sHTIYNis+bR/zS8cVSqlPF4sFhOLkx1Vk921
-mFw6qqrRgTXdq5mJSUXqgQwgl1KFxfFiJyzI2b8j7sz+AEhTzcx51ZFD+teKzejw
-QWoiOHtK6cS7fq9PAXVMaLnq0zA1EPCTU7sMDPb0xaJS1G+sFBULEEXnucT4UFPi
-+aoQQ4SY8C1OCdT5MOFjhr79jeH0WTUa6RgkmhE5/mdqUF+6+yg7TTSwVETcaMk9
-3muMn/+qPURk/qT7wZ6KxQVkut5/5hhPHh23MuusFzM+SkAchrIgeho+nvrsKWDZ
-Zb3dE2wfxyWISHnG+Bo0iIepB8PrwA==
-=QxNz
------END PGP SIGNATURE-----
-
---FzXysqnWhsplUAtn--
+-- 
+Jaroslav Kysela <perex@perex.cz>
+Linux Sound Maintainer; ALSA Project; Red Hat, Inc.
