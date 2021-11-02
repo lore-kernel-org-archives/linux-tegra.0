@@ -2,113 +2,205 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80D1CC433FE
-	for <linux-tegra@archiver.kernel.org>; Tue,  2 Nov 2021 13:11:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35D7FC4332F
+	for <linux-tegra@archiver.kernel.org>; Tue,  2 Nov 2021 13:20:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 69486610A3
-	for <linux-tegra@archiver.kernel.org>; Tue,  2 Nov 2021 13:11:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 14EDC610D2
+	for <linux-tegra@archiver.kernel.org>; Tue,  2 Nov 2021 13:20:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230336AbhKBNNi convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 2 Nov 2021 09:13:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52070 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230282AbhKBNNh (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 2 Nov 2021 09:13:37 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24888C061714
-        for <linux-tegra@vger.kernel.org>; Tue,  2 Nov 2021 06:11:02 -0700 (PDT)
-Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1mhtYt-0004rh-Fm; Tue, 02 Nov 2021 14:10:47 +0100
-Received: from pza by lupine with local (Exim 4.94.2)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1mhtYp-004CFx-W3; Tue, 02 Nov 2021 14:10:44 +0100
-Message-ID: <276db30d95bf84cb31f9d9a6c029593fb0ccec21.camel@pengutronix.de>
-Subject: Re: [PATCH 2/5] reset: tegra-bpmp: Handle errors in BPMP response
-From:   Philipp Zabel <p.zabel@pengutronix.de>
-To:     Jon Hunter <jonathanh@nvidia.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>, rafael@kernel.org,
-        viresh.kumar@linaro.org, thierry.reding@gmail.com,
-        krzysztof.kozlowski@canonical.com, lorenzo.pieralisi@arm.com,
-        robh@kernel.org, kw@linux.com, rui.zhang@intel.com,
-        daniel.lezcano@linaro.org, amitk@kernel.org
-Cc:     linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Date:   Tue, 02 Nov 2021 14:10:43 +0100
-In-Reply-To: <397003f8-bf3c-68a4-828c-1254710f714b@nvidia.com>
-References: <20210915085517.1669675-1-mperttunen@nvidia.com>
-         <20210915085517.1669675-2-mperttunen@nvidia.com>
-         <397003f8-bf3c-68a4-828c-1254710f714b@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-User-Agent: Evolution 3.38.3-1 
+        id S231314AbhKBNWx (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 2 Nov 2021 09:22:53 -0400
+Received: from mail-ot1-f44.google.com ([209.85.210.44]:42514 "EHLO
+        mail-ot1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231284AbhKBNWw (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 2 Nov 2021 09:22:52 -0400
+Received: by mail-ot1-f44.google.com with SMTP id v19-20020a9d69d3000000b00555a7318f31so17848440oto.9;
+        Tue, 02 Nov 2021 06:20:17 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Wzh03PSR5cG30V8z75lqhDgLPLd/dGpZFScd2ass+5k=;
+        b=o1nExjEX/2rXNoqeDMPekc6/YrOE/nf5NzwvXK+S+Xf7I7kjn6pjdqgnpqcN4pQglp
+         OAkI+t+Yw2DkpejTEwhBmZQPrqJxs5KdFnqFpppb973mwZLwmKZDPJTC5d3WG76nkfRv
+         UTTA/7cA2on1FejSTeNwWcMJBgPcKMMqouWJk0IbtueKj8yvRuWXN8zWx9I/OXxxGsUh
+         /T1R0v0CKr/w66SNPZYuBzfUJ6Yli9w8htGQ4EFTkcXwrYzRzkK1A17oTZxFJ2pi5FIN
+         c/Fm4MvX17QelfvZr3fHXQnIQbS0L6xehdp8qrmbYiOuw3bcHSzRovUvdJ54gRYlXG+1
+         TH4g==
+X-Gm-Message-State: AOAM5336Fz/qY0J87rxMQmRhypORgMeqbZcoXndLriX17QcNIs6dk0dm
+        14c1Zz21c5/vtMWvM/n64Q==
+X-Google-Smtp-Source: ABdhPJylcpLZGGhjNZtShUe5v5UatdNYwEtQFFpIY7evw1cIgDGu/sW4FpuuHD6AA0I7V7iuV9K/eQ==
+X-Received: by 2002:a9d:490e:: with SMTP id e14mr26734803otf.194.1635859217009;
+        Tue, 02 Nov 2021 06:20:17 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
+        by smtp.gmail.com with ESMTPSA id p133sm4848317oia.11.2021.11.02.06.20.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Nov 2021 06:20:16 -0700 (PDT)
+Received: (nullmailer pid 2712189 invoked by uid 1000);
+        Tue, 02 Nov 2021 13:20:15 -0000
+Date:   Tue, 2 Nov 2021 08:20:15 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Akhil R <akhilrajeev@nvidia.com>
+Cc:     dan.j.williams@intel.com, devicetree@vger.kernel.org,
+        dmaengine@vger.kernel.org, jonathanh@nvidia.com,
+        kyarlagadda@nvidia.com, ldewangan@nvidia.com,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        p.zabel@pengutronix.de, rgumasta@nvidia.com,
+        thierry.reding@gmail.com, vkoul@kernel.org
+Subject: Re: [PATCH v11 1/4] dt-bindings: dmaengine: Add doc for tegra gpcdma
+Message-ID: <YYE7D2W721a1L4Mb@robh.at.kernel.org>
+References: <1635427419-22478-1-git-send-email-akhilrajeev@nvidia.com>
+ <1635427419-22478-2-git-send-email-akhilrajeev@nvidia.com>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1635427419-22478-2-git-send-email-akhilrajeev@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Jon,
-
-On Thu, 2021-10-28 at 12:54 +0100, Jon Hunter wrote:
-> Hi Philipp,
+On Thu, Oct 28, 2021 at 06:53:36PM +0530, Akhil R wrote:
+> Add DT binding document for Nvidia Tegra GPCDMA controller.
 > 
-> On 15/09/2021 09:55, Mikko Perttunen wrote:
-> > The return value from tegra_bpmp_transfer indicates the success or
-> > failure of the IPC transaction with BPMP. If the transaction
-> > succeeded, we also need to check the actual command's result code.
-> > Add code to do this.
-> > 
-> > Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
-> > ---
-> >   drivers/reset/tegra/reset-bpmp.c | 9 ++++++++-
-> >   1 file changed, 8 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/reset/tegra/reset-bpmp.c b/drivers/reset/tegra/reset-bpmp.c
-> > index 24d3395964cc..4c5bba52b105 100644
-> > --- a/drivers/reset/tegra/reset-bpmp.c
-> > +++ b/drivers/reset/tegra/reset-bpmp.c
-> > @@ -20,6 +20,7 @@ static int tegra_bpmp_reset_common(struct reset_controller_dev *rstc,
-> >   	struct tegra_bpmp *bpmp = to_tegra_bpmp(rstc);
-> >   	struct mrq_reset_request request;
-> >   	struct tegra_bpmp_message msg;
-> > +	int err;
-> >   
-> > 
-> >   	memset(&request, 0, sizeof(request));
-> >   	request.cmd = command;
-> > @@ -30,7 +31,13 @@ static int tegra_bpmp_reset_common(struct reset_controller_dev *rstc,
-> >   	msg.tx.data = &request;
-> >   	msg.tx.size = sizeof(request);
-> >   
-> > 
-> > -	return tegra_bpmp_transfer(bpmp, &msg);
-> > +	err = tegra_bpmp_transfer(bpmp, &msg);
-> > +	if (err)
-> > +		return err;
-> > +	if (msg.rx.ret)
-> > +		return -EINVAL;
-> > +
-> > +	return 0;
-> >   }
-> >   
-> > 
-> >   static int tegra_bpmp_reset_module(struct reset_controller_dev *rstc,
+> Signed-off-by: Rajesh Gumasta <rgumasta@nvidia.com>
+> Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
+> Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
+> ---
+>  .../bindings/dma/nvidia,tegra186-gpc-dma.yaml      | 115 +++++++++++++++++++++
+>  1 file changed, 115 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/dma/nvidia,tegra186-gpc-dma.yaml
 > 
-> I see that you have pulled this into the mainline for v5.15. 
-> Unfortunately, this is causing a regression for the Tegra HDA 
-> controller. We need to fix the Tegra HDA driver but this is too late now 
-> for v5.15 and so we need to revert this change for v5.15. Sorry about 
-> this, but I did not expect this to be pulled in so late.
+> diff --git a/Documentation/devicetree/bindings/dma/nvidia,tegra186-gpc-dma.yaml b/Documentation/devicetree/bindings/dma/nvidia,tegra186-gpc-dma.yaml
+> new file mode 100644
+> index 0000000..bc97efc
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/dma/nvidia,tegra186-gpc-dma.yaml
+> @@ -0,0 +1,115 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/dma/nvidia,tegra186-gpc-dma.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: NVIDIA Tegra GPC DMA Controller Device Tree Bindings
+> +
+> +description: |
+> +  The Tegra General Purpose Central (GPC) DMA controller is used for faster
+> +  data transfers between memory to memory, memory to device and device to
+> +  memory.
+> +
+> +maintainers:
+> +  - Jon Hunter <jonathanh@nvidia.com>
+> +  - Rajesh Gumasta <rgumasta@nvidia.com>
+> +
+> +allOf:
+> +  - $ref: "dma-controller.yaml#"
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - enum:
+> +          - nvidia,tegra186-gpcdma
+> +          - nvidia,tegra194-gpcdma
+> +      - items:
+> +          - const: nvidia,tegra186-gpcdma
+> +          - const: nvidia,tegra194-gpcdma
 
-I'm sorry, I picked this up as a fix and went on vacation. Now that
-v5.15 has already been released, could you send a revert for stable?
+One of these is wrong. Either 186 has a fallback to 194 or it doesn't.
 
-regards
-Philipp
+> +
+> +  "#dma-cells":
+> +    const: 1
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    description: |
+
+Don't need '|' if there's no formatting.
+
+> +      Should contain all of the per-channel DMA interrupts in
+> +      ascending order with respect to the DMA channel index.
+> +    minItems: 1
+> +    maxItems: 32
+> +
+> +  resets:
+> +    description: |
+> +      Should contain the reset phandle for gpcdma.
+
+Not really a useful description. Drop.
+
+> +    maxItems: 1
+> +
+> +  reset-names:
+> +    const: gpcdma
+> +
+> +  iommus:
+> +    maxItems: 1
+> +
+> +  dma-coherent: true
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - resets
+> +  - reset-names
+> +  - "#dma-cells"
+> +  - iommus
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/memory/tegra186-mc.h>
+> +    #include <dt-bindings/reset/tegra186-reset.h>
+> +
+> +    dma-controller@2600000 {
+> +        compatible = "nvidia,tegra186-gpcdma";
+> +        reg = <0x2600000 0x0>;
+> +        resets = <&bpmp TEGRA186_RESET_GPCDMA>;
+> +        reset-names = "gpcdma";
+> +        interrupts = <GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 76 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 79 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 81 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 82 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 83 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 89 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 90 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 91 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 92 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 93 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 95 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 96 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 99 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 101 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 102 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
+> +        #dma-cells = <1>;
+> +        iommus = <&smmu TEGRA186_SID_GPCDMA_0>;
+> +        dma-coherent;
+> +    };
+> +...
+> -- 
+> 2.7.4
+> 
+> 
