@@ -2,170 +2,107 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6312C433EF
-	for <linux-tegra@archiver.kernel.org>; Tue,  2 Nov 2021 13:21:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC268C433F5
+	for <linux-tegra@archiver.kernel.org>; Tue,  2 Nov 2021 14:01:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C9EE5610A8
-	for <linux-tegra@archiver.kernel.org>; Tue,  2 Nov 2021 13:21:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9846361053
+	for <linux-tegra@archiver.kernel.org>; Tue,  2 Nov 2021 14:01:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231365AbhKBNY0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 2 Nov 2021 09:24:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54552 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230175AbhKBNY0 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 2 Nov 2021 09:24:26 -0400
-Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40A1DC061714;
-        Tue,  2 Nov 2021 06:21:51 -0700 (PDT)
-Received: by mail-wm1-x334.google.com with SMTP id 67-20020a1c1946000000b0030d4c90fa87so2071335wmz.2;
-        Tue, 02 Nov 2021 06:21:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=vnyxukz472xPvVYh68ZaE0H9Apcd9cWOc5YchYaiUR0=;
-        b=g24U6lQnAL/NXrSO+wnGtkLj9FJmYfaz7I+qLHIbh8fhPVRzki3sIGovnW5QmhziUu
-         g4xaXIUB1ETgkKCjE8JQ5Rlbb+Hm4kLDVzMJgpTht41MRXjgkFkOusRH770WV7ykB2d7
-         IJw712bwHZTmvXsglRfJzOmuh8z0aiAD96h4TqODIwoJ5/N0XFfQHF4QFXfKY3VBzkKZ
-         0vY88vEaIC+KtTRwP9Co6BTIuLWdxxC+R56UJvyotXe/w4vnpn1bwVRbUGm0W4IEwfsZ
-         XYAXf6S1KiO6HYTnS9TTHkSsZVBjVssY5s9X+38Zx91wuysgniJS5QXT3keQjyQUrHo9
-         qHMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=vnyxukz472xPvVYh68ZaE0H9Apcd9cWOc5YchYaiUR0=;
-        b=be19A3mqTfNJz1Xh5ptSphZ5DwoJZt7csLSU/FZKgZ4UsY3i3XSlEnuMlkqQVmbdUl
-         R8GVqQaVVGU+JUSIbBOM7JNQeFRvOH4ZGCohEQikPKAH4D+b/murQas1X9McmLF8NW6e
-         AuAsErEselCtOsrdzQIdGSpyVjqccUgcFZy9qocnmyGBeYjgD4wJTet5+zTTgCQv9XPf
-         ag6uam933o0o9KmzWDPABLQVrC6kA5KN1nbvRgOQEeYlcMc3VGLTGDLS5KMrhSOiOUfY
-         en5g3y/gFDVls/WIRKWeVlpHdMIVlYI8AVDIYfveJ/PRol6KT73PwNmnX03kb4JRxQBt
-         DnwQ==
-X-Gm-Message-State: AOAM532Y+60egd+OEIK279cbqYCx5nlwbDRWrL6G/GGvhb25aLRnIKJF
-        HLfHVrIMPF+Ns9i72Gm0Lla9U8rKqBi5lQ==
-X-Google-Smtp-Source: ABdhPJxbeEJNBn8Q9KyjG71Smim1fbb9OKxe4RGUERMxcHgAEmcBg0E1MKmod+/Rloc7LPPLcXbvpw==
-X-Received: by 2002:a05:600c:17c3:: with SMTP id y3mr6916963wmo.136.1635859309626;
-        Tue, 02 Nov 2021 06:21:49 -0700 (PDT)
-Received: from orome.fritz.box ([193.209.96.43])
-        by smtp.gmail.com with ESMTPSA id o11sm7795606wrw.13.2021.11.02.06.21.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Nov 2021 06:21:48 -0700 (PDT)
-Date:   Tue, 2 Nov 2021 14:21:45 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Prathamesh Shete <pshete@nvidia.com>
-Cc:     linus.walleij@linaro.org, bgolaszewski@baylibre.com,
-        jonathanh@nvidia.com, linux-gpio@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        smangipudi@nvidia.com
-Subject: Re: [PATCH 2/2] gpio: tegra186: Add support for Tegra234 gpio
-Message-ID: <YYE7aXo0mfCfCqGF@orome.fritz.box>
-References: <20211021123021.9602-1-pshete@nvidia.com>
- <20211021123021.9602-2-pshete@nvidia.com>
- <YXq3/1AXX7KiwpTy@orome.fritz.box>
+        id S230419AbhKBODs (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 2 Nov 2021 10:03:48 -0400
+Received: from msg-2.mailo.com ([213.182.54.12]:45724 "EHLO msg-2.mailo.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230257AbhKBODs (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 2 Nov 2021 10:03:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=net-c.es; s=mailo;
+        t=1635856506; bh=86oBTMpnXN2rssnmOQ7LA61tTu8gU4eFEfOZP78RisE=;
+        h=X-EA-Auth:Date:From:To:Cc:Subject:Message-ID:References:
+         MIME-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To;
+        b=arAXsp3pJle1r6nOqeqtDf2GduQBJSJKdxquDfPAglkotW2p8bd9ev6Y1hBR3zQtg
+         IuyMT4zYDmmlvKXOVjKcAlGccOqgCOyTr7jvZCiwWUwgT/UAfqSpkdsL+5jWMX7OiY
+         9iniW7IyoDqfGYNxRqVLIjAV6dqoTLdd5QORxuSQ=
+Received: by b-1.in.mailobj.net [192.168.90.11] with ESMTP
+        via ip-206.mailobj.net [213.182.55.206]
+        Tue,  2 Nov 2021 13:34:38 +0100 (CET)
+X-EA-Auth: FKr0z78nEI7fK18kQiJqc8cm6AQzx1MLFVMzYMgk3A7ptvyPhNNicmEOsJfefFwiU43Mj4ZkxeU8iS9dGsGDy7tpZekUHCqR
+Date:   Tue, 2 Nov 2021 13:34:35 +0100
+From:   Claudio Suarez <cssk@net-c.es>
+To:     Inki Dae <inki.dae@samsung.com>
+Cc:     dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+        linux-tegra@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        Pan Xinhui <Xinhui.Pan@amd.com>, Emma Anholt <emma@anholt.net>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+        Chen-Yu Tsai <wens@csie.org>, Sandy Huang <hjc@rock-chips.com>,
+        heiko@sntech.de, Neil Armstrong <narmstrong@baylibre.com>,
+        Robert Foss <robert.foss@linaro.org>,
+        Ben Skeggs <bskeggs@redhat.com>, nouveau@lists.freedesktop.org,
+        ville.syrjala@linux.intel.com
+Subject: Re: [PATCH v2 06/13] drm/exynos: replace drm_detect_hdmi_monitor()
+ with drm_display_info.is_hdmi
+Message-ID: <YYEwWwZY/D7ylVuN@gineta.localdomain>
+References: <20211016184226.3862-1-cssk@net-c.es>
+ <CGME20211016193513epcas1p4e354183520df0aa4c381b19eb2863262@epcas1p4.samsung.com>
+ <20211016184226.3862-7-cssk@net-c.es>
+ <ee6b3bac-4762-fd8f-c12a-c0a7ea7b56e9@samsung.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="Uf8nR5L+sGbA8gQE"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <YXq3/1AXX7KiwpTy@orome.fritz.box>
-User-Agent: Mutt/2.1.3 (987dde4c) (2021-09-10)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ee6b3bac-4762-fd8f-c12a-c0a7ea7b56e9@samsung.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-
---Uf8nR5L+sGbA8gQE
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Oct 28, 2021 at 04:47:27PM +0200, Thierry Reding wrote:
-> On Thu, Oct 21, 2021 at 06:00:21PM +0530, Prathamesh Shete wrote:
-> > Add support for the Tegra234 GPIO bank configuration.
-> >=20
-> > Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
+On Wed, Oct 27, 2021 at 07:28:45AM +0900, Inki Dae wrote:
+> Hi,
+> 
+> 21. 10. 17. 오전 3:42에 Claudio Suarez 이(가) 쓴 글:
+> > Once EDID is parsed, the monitor HDMI support information is available
+> > through drm_display_info.is_hdmi. Retriving the same information with
+> > drm_detect_hdmi_monitor() is less efficient. Change to
+> > drm_display_info.is_hdmi
+> > 
+> > Signed-off-by: Claudio Suarez <cssk@net-c.es>
 > > ---
-> >  drivers/gpio/gpio-tegra186.c | 74 ++++++++++++++++++++++++++++++++++++
-> >  1 file changed, 74 insertions(+)
-> >=20
-> > diff --git a/drivers/gpio/gpio-tegra186.c b/drivers/gpio/gpio-tegra186.c
-> > index d38980b9923a..edcc91b35e1e 100644
-> > --- a/drivers/gpio/gpio-tegra186.c
-> > +++ b/drivers/gpio/gpio-tegra186.c
-> > @@ -14,6 +14,7 @@
-> > =20
-> >  #include <dt-bindings/gpio/tegra186-gpio.h>
-> >  #include <dt-bindings/gpio/tegra194-gpio.h>
-> > +#include <dt-bindings/gpio/tegra234-gpio.h>
-> > =20
-> >  /* security registers */
-> >  #define TEGRA186_GPIO_CTL_SCR 0x0c
-> > @@ -877,6 +878,73 @@ static const struct tegra_gpio_soc tegra194_aon_so=
-c =3D {
-> >  	.instance =3D 1,
-> >  };
-> > =20
-> > +#define TEGRA234_MAIN_GPIO_PORT(_name, _bank, _port, _pins)	\
-> > +	[TEGRA234_MAIN_GPIO_PORT_##_name] =3D {			\
-> > +		.name =3D #_name,					\
-> > +		.bank =3D _bank,					\
-> > +		.port =3D _port,					\
-> > +		.pins =3D _pins,					\
-> > +	}
+> >  drivers/gpu/drm/exynos/exynos_hdmi.c | 6 ++++--
+> >  1 file changed, 4 insertions(+), 2 deletions(
+> > 
+> > diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+> > index 7655142a4651..a563d6386abe 100644
+> > --- a/drivers/gpu/drm/exynos/exynos_hdmi.c
+> > +++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+> > @@ -893,12 +893,14 @@ static int hdmi_get_modes(struct drm_connector *connector)
+> >  	if (!edid)
+> >  		return -ENODEV;
+> >  
+> > -	hdata->dvi_mode = !drm_detect_hdmi_monitor(edid);
+> > +	/* This updates connector->display_info */
+> > +	drm_connector_update_edid_property(connector, edid);
 > > +
-> > +static const struct tegra_gpio_port tegra234_main_ports[] =3D {
-> > +	TEGRA234_MAIN_GPIO_PORT(A, 0, 0, 8),
-> > +	TEGRA234_MAIN_GPIO_PORT(B, 0, 3, 1),
-> > +	TEGRA234_MAIN_GPIO_PORT(C, 5, 1, 8),
-> > +	TEGRA234_MAIN_GPIO_PORT(D, 5, 2, 4),
-> > +	TEGRA234_MAIN_GPIO_PORT(E, 5, 3, 8),
-> > +	TEGRA234_MAIN_GPIO_PORT(F, 5, 4, 6),
-> > +	TEGRA234_MAIN_GPIO_PORT(G, 4, 0, 8),
-> > +	TEGRA234_MAIN_GPIO_PORT(H, 4, 1, 8),
-> > +	TEGRA234_MAIN_GPIO_PORT(I, 4, 2, 7),
-> > +	TEGRA234_MAIN_GPIO_PORT(J, 5, 0, 6),
-> > +	TEGRA234_MAIN_GPIO_PORT(K, 3, 0, 8),
-> > +	TEGRA234_MAIN_GPIO_PORT(L, 3, 1, 4),
-> > +	TEGRA234_MAIN_GPIO_PORT(M, 2, 0, 8),
-> > +	TEGRA234_MAIN_GPIO_PORT(N, 2, 1, 8),
-> > +	TEGRA234_MAIN_GPIO_PORT(P, 2, 2, 8),
-> > +	TEGRA234_MAIN_GPIO_PORT(Q, 2, 3, 8),
-> > +	TEGRA234_MAIN_GPIO_PORT(R, 2, 4, 6),
->=20
-> I stumbled across an old patch I had created a couple of months ago that
-> is very similar to this one. However, at the time I had added a couple
-> more ports here, namely S, T, U and V. Is there a reason why you're not
-> including those here?
+> > +	hdata->dvi_mode = !connector->display_info.is_hdmi;
+> 
+> Thanks for correcting this. Yeah, we should use drm_display_info.is_hdmi parsed from EDID.
+> https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/drivers/gpu/drm/drm_edid.c?h=v5.14.14#n4725
+> 
+> Signed-off-by: Inki Dae <inki.dae@samsung.com>
 
-Nevermind, looks like my patch had been based on out-of-date
-documentation, so the table here is correct.
 
-That said, I noticed that you didn't include an update to the device
-tree bindings documentation. I do have that, in addition to a conversion
-to the new json-schema format. Do you mind if I resend your two patches
-here along with the DT documentatino update that I have? I've also got
-the DTS changes for Tegra234 to expose these, which I would also like to
-include for completeness.
+Thank you, Inki.
 
-Thierry
+Best regards
+Claudio Suarez
 
---Uf8nR5L+sGbA8gQE
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmGBO2kACgkQ3SOs138+
-s6ERMhAAqKD5qym7G+BML2GexG7qta8zEEk72ntv3yNThnGOTs4hPTz15b/Ww03M
-uMWf4RZ+bqT622Ks94949itAmrYol3vHcqiuqc0DailUjN4P1veAKwR0b2iEQIg+
-ViLhuyzG+Vp46Mv1M75NE2cfwafRFCr+3C0K2Uwyyy3RTa41qfBq9IuiHFQsGO+O
-y/msa2UC2XKUNyIO8w5LELKMNTI7srqO9kJGReNT8jR8jRqtj/2qGLE2gb0hN48L
-qpd+QMgrgZ365xgiKZT1e4wa/MU35ORc0uGPNcN4os94VpHhUtXVVZssJpedccb1
-nPMWe0L5/EdxTKM4gqdAm/uV0jbzIwVqTe9Ys05MClDicBnIxSomsNM+RfRs5xsj
-4q/laWwE4Dzus0dB15kyNRlFdYhaFT3WDe8l3wMN0WNtJIbUcRHEx8zxUStz5HIt
-nEUQ4SpIL9UFh+7p9B55CLcUYfXmD4typXgkt9R7lFP9fuALbOLnRs7xKY4TBT4p
-uavclFFl4rI8oAnmU5QVfIPoX5/pjFh+lEfzl3nNMVYbqIvjPFLEmiypo3QwsFRg
-o9uM56q3U3KFxT3ELFOBkOOFPVBRDjgSOp6LNnb2oj2MrXhOhh0Tu9N/JoHNYrpV
-vmL8Q+Qj3n5uX05eW5Va3ot+fydYf17jez4RGqtX3YrSv9w+Cco=
-=vpbn
------END PGP SIGNATURE-----
-
---Uf8nR5L+sGbA8gQE--
