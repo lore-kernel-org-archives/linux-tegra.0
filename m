@@ -2,205 +2,170 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35D7FC4332F
-	for <linux-tegra@archiver.kernel.org>; Tue,  2 Nov 2021 13:20:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6312C433EF
+	for <linux-tegra@archiver.kernel.org>; Tue,  2 Nov 2021 13:21:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 14EDC610D2
-	for <linux-tegra@archiver.kernel.org>; Tue,  2 Nov 2021 13:20:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C9EE5610A8
+	for <linux-tegra@archiver.kernel.org>; Tue,  2 Nov 2021 13:21:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231314AbhKBNWx (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 2 Nov 2021 09:22:53 -0400
-Received: from mail-ot1-f44.google.com ([209.85.210.44]:42514 "EHLO
-        mail-ot1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231284AbhKBNWw (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 2 Nov 2021 09:22:52 -0400
-Received: by mail-ot1-f44.google.com with SMTP id v19-20020a9d69d3000000b00555a7318f31so17848440oto.9;
-        Tue, 02 Nov 2021 06:20:17 -0700 (PDT)
+        id S231365AbhKBNY0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 2 Nov 2021 09:24:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54552 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230175AbhKBNY0 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 2 Nov 2021 09:24:26 -0400
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40A1DC061714;
+        Tue,  2 Nov 2021 06:21:51 -0700 (PDT)
+Received: by mail-wm1-x334.google.com with SMTP id 67-20020a1c1946000000b0030d4c90fa87so2071335wmz.2;
+        Tue, 02 Nov 2021 06:21:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=vnyxukz472xPvVYh68ZaE0H9Apcd9cWOc5YchYaiUR0=;
+        b=g24U6lQnAL/NXrSO+wnGtkLj9FJmYfaz7I+qLHIbh8fhPVRzki3sIGovnW5QmhziUu
+         g4xaXIUB1ETgkKCjE8JQ5Rlbb+Hm4kLDVzMJgpTht41MRXjgkFkOusRH770WV7ykB2d7
+         IJw712bwHZTmvXsglRfJzOmuh8z0aiAD96h4TqODIwoJ5/N0XFfQHF4QFXfKY3VBzkKZ
+         0vY88vEaIC+KtTRwP9Co6BTIuLWdxxC+R56UJvyotXe/w4vnpn1bwVRbUGm0W4IEwfsZ
+         XYAXf6S1KiO6HYTnS9TTHkSsZVBjVssY5s9X+38Zx91wuysgniJS5QXT3keQjyQUrHo9
+         qHMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Wzh03PSR5cG30V8z75lqhDgLPLd/dGpZFScd2ass+5k=;
-        b=o1nExjEX/2rXNoqeDMPekc6/YrOE/nf5NzwvXK+S+Xf7I7kjn6pjdqgnpqcN4pQglp
-         OAkI+t+Yw2DkpejTEwhBmZQPrqJxs5KdFnqFpppb973mwZLwmKZDPJTC5d3WG76nkfRv
-         UTTA/7cA2on1FejSTeNwWcMJBgPcKMMqouWJk0IbtueKj8yvRuWXN8zWx9I/OXxxGsUh
-         /T1R0v0CKr/w66SNPZYuBzfUJ6Yli9w8htGQ4EFTkcXwrYzRzkK1A17oTZxFJ2pi5FIN
-         c/Fm4MvX17QelfvZr3fHXQnIQbS0L6xehdp8qrmbYiOuw3bcHSzRovUvdJ54gRYlXG+1
-         TH4g==
-X-Gm-Message-State: AOAM5336Fz/qY0J87rxMQmRhypORgMeqbZcoXndLriX17QcNIs6dk0dm
-        14c1Zz21c5/vtMWvM/n64Q==
-X-Google-Smtp-Source: ABdhPJylcpLZGGhjNZtShUe5v5UatdNYwEtQFFpIY7evw1cIgDGu/sW4FpuuHD6AA0I7V7iuV9K/eQ==
-X-Received: by 2002:a9d:490e:: with SMTP id e14mr26734803otf.194.1635859217009;
-        Tue, 02 Nov 2021 06:20:17 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id p133sm4848317oia.11.2021.11.02.06.20.15
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=vnyxukz472xPvVYh68ZaE0H9Apcd9cWOc5YchYaiUR0=;
+        b=be19A3mqTfNJz1Xh5ptSphZ5DwoJZt7csLSU/FZKgZ4UsY3i3XSlEnuMlkqQVmbdUl
+         R8GVqQaVVGU+JUSIbBOM7JNQeFRvOH4ZGCohEQikPKAH4D+b/murQas1X9McmLF8NW6e
+         AuAsErEselCtOsrdzQIdGSpyVjqccUgcFZy9qocnmyGBeYjgD4wJTet5+zTTgCQv9XPf
+         ag6uam933o0o9KmzWDPABLQVrC6kA5KN1nbvRgOQEeYlcMc3VGLTGDLS5KMrhSOiOUfY
+         en5g3y/gFDVls/WIRKWeVlpHdMIVlYI8AVDIYfveJ/PRol6KT73PwNmnX03kb4JRxQBt
+         DnwQ==
+X-Gm-Message-State: AOAM532Y+60egd+OEIK279cbqYCx5nlwbDRWrL6G/GGvhb25aLRnIKJF
+        HLfHVrIMPF+Ns9i72Gm0Lla9U8rKqBi5lQ==
+X-Google-Smtp-Source: ABdhPJxbeEJNBn8Q9KyjG71Smim1fbb9OKxe4RGUERMxcHgAEmcBg0E1MKmod+/Rloc7LPPLcXbvpw==
+X-Received: by 2002:a05:600c:17c3:: with SMTP id y3mr6916963wmo.136.1635859309626;
+        Tue, 02 Nov 2021 06:21:49 -0700 (PDT)
+Received: from orome.fritz.box ([193.209.96.43])
+        by smtp.gmail.com with ESMTPSA id o11sm7795606wrw.13.2021.11.02.06.21.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Nov 2021 06:20:16 -0700 (PDT)
-Received: (nullmailer pid 2712189 invoked by uid 1000);
-        Tue, 02 Nov 2021 13:20:15 -0000
-Date:   Tue, 2 Nov 2021 08:20:15 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Akhil R <akhilrajeev@nvidia.com>
-Cc:     dan.j.williams@intel.com, devicetree@vger.kernel.org,
-        dmaengine@vger.kernel.org, jonathanh@nvidia.com,
-        kyarlagadda@nvidia.com, ldewangan@nvidia.com,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        p.zabel@pengutronix.de, rgumasta@nvidia.com,
-        thierry.reding@gmail.com, vkoul@kernel.org
-Subject: Re: [PATCH v11 1/4] dt-bindings: dmaengine: Add doc for tegra gpcdma
-Message-ID: <YYE7D2W721a1L4Mb@robh.at.kernel.org>
-References: <1635427419-22478-1-git-send-email-akhilrajeev@nvidia.com>
- <1635427419-22478-2-git-send-email-akhilrajeev@nvidia.com>
+        Tue, 02 Nov 2021 06:21:48 -0700 (PDT)
+Date:   Tue, 2 Nov 2021 14:21:45 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Prathamesh Shete <pshete@nvidia.com>
+Cc:     linus.walleij@linaro.org, bgolaszewski@baylibre.com,
+        jonathanh@nvidia.com, linux-gpio@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        smangipudi@nvidia.com
+Subject: Re: [PATCH 2/2] gpio: tegra186: Add support for Tegra234 gpio
+Message-ID: <YYE7aXo0mfCfCqGF@orome.fritz.box>
+References: <20211021123021.9602-1-pshete@nvidia.com>
+ <20211021123021.9602-2-pshete@nvidia.com>
+ <YXq3/1AXX7KiwpTy@orome.fritz.box>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="Uf8nR5L+sGbA8gQE"
 Content-Disposition: inline
-In-Reply-To: <1635427419-22478-2-git-send-email-akhilrajeev@nvidia.com>
+In-Reply-To: <YXq3/1AXX7KiwpTy@orome.fritz.box>
+User-Agent: Mutt/2.1.3 (987dde4c) (2021-09-10)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, Oct 28, 2021 at 06:53:36PM +0530, Akhil R wrote:
-> Add DT binding document for Nvidia Tegra GPCDMA controller.
-> 
-> Signed-off-by: Rajesh Gumasta <rgumasta@nvidia.com>
-> Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
-> Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
-> ---
->  .../bindings/dma/nvidia,tegra186-gpc-dma.yaml      | 115 +++++++++++++++++++++
->  1 file changed, 115 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/dma/nvidia,tegra186-gpc-dma.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/dma/nvidia,tegra186-gpc-dma.yaml b/Documentation/devicetree/bindings/dma/nvidia,tegra186-gpc-dma.yaml
-> new file mode 100644
-> index 0000000..bc97efc
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/dma/nvidia,tegra186-gpc-dma.yaml
-> @@ -0,0 +1,115 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/dma/nvidia,tegra186-gpc-dma.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: NVIDIA Tegra GPC DMA Controller Device Tree Bindings
-> +
-> +description: |
-> +  The Tegra General Purpose Central (GPC) DMA controller is used for faster
-> +  data transfers between memory to memory, memory to device and device to
-> +  memory.
-> +
-> +maintainers:
-> +  - Jon Hunter <jonathanh@nvidia.com>
-> +  - Rajesh Gumasta <rgumasta@nvidia.com>
-> +
-> +allOf:
-> +  - $ref: "dma-controller.yaml#"
-> +
-> +properties:
-> +  compatible:
-> +    oneOf:
-> +      - enum:
-> +          - nvidia,tegra186-gpcdma
-> +          - nvidia,tegra194-gpcdma
-> +      - items:
-> +          - const: nvidia,tegra186-gpcdma
-> +          - const: nvidia,tegra194-gpcdma
 
-One of these is wrong. Either 186 has a fallback to 194 or it doesn't.
+--Uf8nR5L+sGbA8gQE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> +
-> +  "#dma-cells":
-> +    const: 1
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    description: |
+On Thu, Oct 28, 2021 at 04:47:27PM +0200, Thierry Reding wrote:
+> On Thu, Oct 21, 2021 at 06:00:21PM +0530, Prathamesh Shete wrote:
+> > Add support for the Tegra234 GPIO bank configuration.
+> >=20
+> > Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
+> > ---
+> >  drivers/gpio/gpio-tegra186.c | 74 ++++++++++++++++++++++++++++++++++++
+> >  1 file changed, 74 insertions(+)
+> >=20
+> > diff --git a/drivers/gpio/gpio-tegra186.c b/drivers/gpio/gpio-tegra186.c
+> > index d38980b9923a..edcc91b35e1e 100644
+> > --- a/drivers/gpio/gpio-tegra186.c
+> > +++ b/drivers/gpio/gpio-tegra186.c
+> > @@ -14,6 +14,7 @@
+> > =20
+> >  #include <dt-bindings/gpio/tegra186-gpio.h>
+> >  #include <dt-bindings/gpio/tegra194-gpio.h>
+> > +#include <dt-bindings/gpio/tegra234-gpio.h>
+> > =20
+> >  /* security registers */
+> >  #define TEGRA186_GPIO_CTL_SCR 0x0c
+> > @@ -877,6 +878,73 @@ static const struct tegra_gpio_soc tegra194_aon_so=
+c =3D {
+> >  	.instance =3D 1,
+> >  };
+> > =20
+> > +#define TEGRA234_MAIN_GPIO_PORT(_name, _bank, _port, _pins)	\
+> > +	[TEGRA234_MAIN_GPIO_PORT_##_name] =3D {			\
+> > +		.name =3D #_name,					\
+> > +		.bank =3D _bank,					\
+> > +		.port =3D _port,					\
+> > +		.pins =3D _pins,					\
+> > +	}
+> > +
+> > +static const struct tegra_gpio_port tegra234_main_ports[] =3D {
+> > +	TEGRA234_MAIN_GPIO_PORT(A, 0, 0, 8),
+> > +	TEGRA234_MAIN_GPIO_PORT(B, 0, 3, 1),
+> > +	TEGRA234_MAIN_GPIO_PORT(C, 5, 1, 8),
+> > +	TEGRA234_MAIN_GPIO_PORT(D, 5, 2, 4),
+> > +	TEGRA234_MAIN_GPIO_PORT(E, 5, 3, 8),
+> > +	TEGRA234_MAIN_GPIO_PORT(F, 5, 4, 6),
+> > +	TEGRA234_MAIN_GPIO_PORT(G, 4, 0, 8),
+> > +	TEGRA234_MAIN_GPIO_PORT(H, 4, 1, 8),
+> > +	TEGRA234_MAIN_GPIO_PORT(I, 4, 2, 7),
+> > +	TEGRA234_MAIN_GPIO_PORT(J, 5, 0, 6),
+> > +	TEGRA234_MAIN_GPIO_PORT(K, 3, 0, 8),
+> > +	TEGRA234_MAIN_GPIO_PORT(L, 3, 1, 4),
+> > +	TEGRA234_MAIN_GPIO_PORT(M, 2, 0, 8),
+> > +	TEGRA234_MAIN_GPIO_PORT(N, 2, 1, 8),
+> > +	TEGRA234_MAIN_GPIO_PORT(P, 2, 2, 8),
+> > +	TEGRA234_MAIN_GPIO_PORT(Q, 2, 3, 8),
+> > +	TEGRA234_MAIN_GPIO_PORT(R, 2, 4, 6),
+>=20
+> I stumbled across an old patch I had created a couple of months ago that
+> is very similar to this one. However, at the time I had added a couple
+> more ports here, namely S, T, U and V. Is there a reason why you're not
+> including those here?
 
-Don't need '|' if there's no formatting.
+Nevermind, looks like my patch had been based on out-of-date
+documentation, so the table here is correct.
 
-> +      Should contain all of the per-channel DMA interrupts in
-> +      ascending order with respect to the DMA channel index.
-> +    minItems: 1
-> +    maxItems: 32
-> +
-> +  resets:
-> +    description: |
-> +      Should contain the reset phandle for gpcdma.
+That said, I noticed that you didn't include an update to the device
+tree bindings documentation. I do have that, in addition to a conversion
+to the new json-schema format. Do you mind if I resend your two patches
+here along with the DT documentatino update that I have? I've also got
+the DTS changes for Tegra234 to expose these, which I would also like to
+include for completeness.
 
-Not really a useful description. Drop.
+Thierry
 
-> +    maxItems: 1
-> +
-> +  reset-names:
-> +    const: gpcdma
-> +
-> +  iommus:
-> +    maxItems: 1
-> +
-> +  dma-coherent: true
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - resets
-> +  - reset-names
-> +  - "#dma-cells"
-> +  - iommus
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    #include <dt-bindings/memory/tegra186-mc.h>
-> +    #include <dt-bindings/reset/tegra186-reset.h>
-> +
-> +    dma-controller@2600000 {
-> +        compatible = "nvidia,tegra186-gpcdma";
-> +        reg = <0x2600000 0x0>;
-> +        resets = <&bpmp TEGRA186_RESET_GPCDMA>;
-> +        reset-names = "gpcdma";
-> +        interrupts = <GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>,
-> +                     <GIC_SPI 76 IRQ_TYPE_LEVEL_HIGH>,
-> +                     <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>,
-> +                     <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>,
-> +                     <GIC_SPI 79 IRQ_TYPE_LEVEL_HIGH>,
-> +                     <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>,
-> +                     <GIC_SPI 81 IRQ_TYPE_LEVEL_HIGH>,
-> +                     <GIC_SPI 82 IRQ_TYPE_LEVEL_HIGH>,
-> +                     <GIC_SPI 83 IRQ_TYPE_LEVEL_HIGH>,
-> +                     <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>,
-> +                     <GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>,
-> +                     <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>,
-> +                     <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>,
-> +                     <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>,
-> +                     <GIC_SPI 89 IRQ_TYPE_LEVEL_HIGH>,
-> +                     <GIC_SPI 90 IRQ_TYPE_LEVEL_HIGH>,
-> +                     <GIC_SPI 91 IRQ_TYPE_LEVEL_HIGH>,
-> +                     <GIC_SPI 92 IRQ_TYPE_LEVEL_HIGH>,
-> +                     <GIC_SPI 93 IRQ_TYPE_LEVEL_HIGH>,
-> +                     <GIC_SPI 95 IRQ_TYPE_LEVEL_HIGH>,
-> +                     <GIC_SPI 96 IRQ_TYPE_LEVEL_HIGH>,
-> +                     <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>,
-> +                     <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>,
-> +                     <GIC_SPI 99 IRQ_TYPE_LEVEL_HIGH>,
-> +                     <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>,
-> +                     <GIC_SPI 101 IRQ_TYPE_LEVEL_HIGH>,
-> +                     <GIC_SPI 102 IRQ_TYPE_LEVEL_HIGH>,
-> +                     <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>,
-> +                     <GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>,
-> +                     <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>,
-> +                     <GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>,
-> +                     <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
-> +        #dma-cells = <1>;
-> +        iommus = <&smmu TEGRA186_SID_GPCDMA_0>;
-> +        dma-coherent;
-> +    };
-> +...
-> -- 
-> 2.7.4
-> 
-> 
+--Uf8nR5L+sGbA8gQE
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmGBO2kACgkQ3SOs138+
+s6ERMhAAqKD5qym7G+BML2GexG7qta8zEEk72ntv3yNThnGOTs4hPTz15b/Ww03M
+uMWf4RZ+bqT622Ks94949itAmrYol3vHcqiuqc0DailUjN4P1veAKwR0b2iEQIg+
+ViLhuyzG+Vp46Mv1M75NE2cfwafRFCr+3C0K2Uwyyy3RTa41qfBq9IuiHFQsGO+O
+y/msa2UC2XKUNyIO8w5LELKMNTI7srqO9kJGReNT8jR8jRqtj/2qGLE2gb0hN48L
+qpd+QMgrgZ365xgiKZT1e4wa/MU35ORc0uGPNcN4os94VpHhUtXVVZssJpedccb1
+nPMWe0L5/EdxTKM4gqdAm/uV0jbzIwVqTe9Ys05MClDicBnIxSomsNM+RfRs5xsj
+4q/laWwE4Dzus0dB15kyNRlFdYhaFT3WDe8l3wMN0WNtJIbUcRHEx8zxUStz5HIt
+nEUQ4SpIL9UFh+7p9B55CLcUYfXmD4typXgkt9R7lFP9fuALbOLnRs7xKY4TBT4p
+uavclFFl4rI8oAnmU5QVfIPoX5/pjFh+lEfzl3nNMVYbqIvjPFLEmiypo3QwsFRg
+o9uM56q3U3KFxT3ELFOBkOOFPVBRDjgSOp6LNnb2oj2MrXhOhh0Tu9N/JoHNYrpV
+vmL8Q+Qj3n5uX05eW5Va3ot+fydYf17jez4RGqtX3YrSv9w+Cco=
+=vpbn
+-----END PGP SIGNATURE-----
+
+--Uf8nR5L+sGbA8gQE--
