@@ -2,170 +2,203 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBA0FC433F5
-	for <linux-tegra@archiver.kernel.org>; Wed,  3 Nov 2021 13:53:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8F25C433F5
+	for <linux-tegra@archiver.kernel.org>; Wed,  3 Nov 2021 14:16:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B57A9611C0
-	for <linux-tegra@archiver.kernel.org>; Wed,  3 Nov 2021 13:53:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CDBF8604DA
+	for <linux-tegra@archiver.kernel.org>; Wed,  3 Nov 2021 14:16:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232045AbhKCN4A (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 3 Nov 2021 09:56:00 -0400
-Received: from mail-mw2nam10on2051.outbound.protection.outlook.com ([40.107.94.51]:30912
-        "EHLO NAM10-MW2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S232012AbhKCNzi (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 3 Nov 2021 09:55:38 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=FzNAnq5tJYpW+GabYnIJdre+Di39kWGAUI/Aemb+ZwhndtAc1zj4m5JB9hm5gOzzsiXqcyGM6rOGtvZFc45WKqACG8aNdJlODwkDOKlm7l1mGE4AGTisCAebDWvEbwjVsFpDUT2LeaoK8XrJa/wluNl0hJylWPULB3mXaC484FxotqtWLZ4XUXj/NyK43DPZx0MJoC9zYQLWNMLepgz2cJ95flJLKTz6RDqTDfqqmef/02fk9VH5FU5QMHbQ1DXgg/URDmiGJVXTUuuybiKPUrSjdQspuhsgw54/WJ0a0YlL0Lvfl4qm7Pcy7+ruxi/GyO6xUQUlASqk3kogLlCP/g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Da/l8PVvKRGSZfJXUHeP98sIkpbFJjyuoTqRvSa0D1E=;
- b=XjwNTttILjET1+LppJ6jrMYjI8r2Tuy1fCffhcVsdjGFghorWDV02nHelFeyakvEAl6YP6fIkI9snuyGn7QtPFWaG7xDMTpf7/Md7QZ6vafkwSBRFwDxcRbdhTKR9mVHh4miRi4iPLHP2EFJnI666+Mgik0Vv3eAgUTBy4F3GuqdUbRo41/49Fhcl6OD6T17/sb5Oya+DvnHsqXxM4jqxEQX+OH0E5bEAZunjIu7Mw/BtjgjmpqQp2gxGDo2yk3GA3mBViZQxi7/msUS6Fa9o2RwmnXnQS9/SaegflayT57X6WTlpAIf4h/mYAOBHgidIQKCiHr2xZu5QD26a+mIyw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.112.34) smtp.rcpttodomain=alsa-project.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Da/l8PVvKRGSZfJXUHeP98sIkpbFJjyuoTqRvSa0D1E=;
- b=SEW9Vc2522BUqsvuYSAXR01dudYATO1Wcx70KKWdNvygIQtFk7DmBG2Bfeb1lR7m7JS+8kBWAt4aNbHsEFyC80y5AcFDTbME7ueN06Go7lwOR7KwJ/PQvxPAJWP9AgWCnlf1szVi6aq9+G4Yu0r0tCNgKCOStGhirLHRUcyDh3WlrqO+xGwzcHbCpfDc3bHS1EEV3SEPq5vh1XVGmjflNPEinaYbr9iWrEdM/7weS2hwJBkOdWdkp6UMa1SrIV8C5X5LIvaGkrFzAp4eBGXTXQjT/nRQVw+ID4s4VsdgAaZjhxHwvbJKDm7Qa7ByEWBBQ0NUTsBV8nQdEZou7DXqbA==
-Received: from BN9PR03CA0168.namprd03.prod.outlook.com (2603:10b6:408:f4::23)
- by DM6PR12MB2844.namprd12.prod.outlook.com (2603:10b6:5:45::32) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4649.15; Wed, 3 Nov
- 2021 13:53:00 +0000
-Received: from BN8NAM11FT013.eop-nam11.prod.protection.outlook.com
- (2603:10b6:408:f4:cafe::b3) by BN9PR03CA0168.outlook.office365.com
- (2603:10b6:408:f4::23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4669.10 via Frontend
- Transport; Wed, 3 Nov 2021 13:53:00 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.34)
- smtp.mailfrom=nvidia.com; alsa-project.org; dkim=none (message not signed)
- header.d=none;alsa-project.org; dmarc=pass action=none
- header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.112.34 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.112.34; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (216.228.112.34) by
- BN8NAM11FT013.mail.protection.outlook.com (10.13.176.182) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.4669.10 via Frontend Transport; Wed, 3 Nov 2021 13:52:58 +0000
-Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Wed, 3 Nov
- 2021 13:52:57 +0000
-Received: from audio.nvidia.com (172.20.187.6) by mail.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server id 15.0.1497.18 via Frontend
- Transport; Wed, 3 Nov 2021 06:52:55 -0700
-From:   Sameer Pujar <spujar@nvidia.com>
-To:     <broonie@kernel.org>, <lgirdwood@gmail.com>, <perex@perex.cz>,
-        <tiwai@suse.com>
-CC:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <alsa-devel@alsa-project.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Sameer Pujar <spujar@nvidia.com>
-Subject: [PATCH v2 06/10] ASoC: tegra: Fix kcontrol put callback in MVC
-Date:   Wed, 3 Nov 2021 19:22:22 +0530
-Message-ID: <1635947547-24391-7-git-send-email-spujar@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1635947547-24391-1-git-send-email-spujar@nvidia.com>
+        id S231712AbhKCOTC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 3 Nov 2021 10:19:02 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:55764 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231131AbhKCOTC (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 3 Nov 2021 10:19:02 -0400
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id C070F218ED;
+        Wed,  3 Nov 2021 14:16:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1635948984; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=IyCOQbcy3kmJ3VHhwgirT3uI+66g9isWYZuWQVudD5U=;
+        b=s6zdvMx6f15tKA0FclGGivM0XIvPj1DwF8r2EbGbsl6aIJgm/4GxnTmHK7nfNmCLyYcaY+
+        Ez4/kY2SxZaC8lIx0dKyXw+P1+2ySFL/Bdx+i5+rsD2bRtDBQ5r2am1sNFI4IEQss+nX29
+        ko4nCuqO7sY8kXs8lN2aXOZpxY0kXqw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1635948984;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=IyCOQbcy3kmJ3VHhwgirT3uI+66g9isWYZuWQVudD5U=;
+        b=WXN/danrABGacO1mjCDSSCRV3P4J6huxkSkgR4N5BAM0fpxTaZEVsotRP6ihIjqJn1WKfv
+        aIliMgpB2D7XBsAQ==
+Received: from alsa1.suse.de (alsa1.suse.de [10.160.4.42])
+        by relay2.suse.de (Postfix) with ESMTP id AF6D62C150;
+        Wed,  3 Nov 2021 14:16:24 +0000 (UTC)
+Date:   Wed, 03 Nov 2021 15:16:24 +0100
+Message-ID: <s5ha6ilmiiv.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     Sameer Pujar <spujar@nvidia.com>
+Cc:     <broonie@kernel.org>, <lgirdwood@gmail.com>, <perex@perex.cz>,
+        <tiwai@suse.com>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <alsa-devel@alsa-project.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 01/10] ASoC: tegra: Fix kcontrol put callback in ADMAIF
+In-Reply-To: <1635947547-24391-2-git-send-email-spujar@nvidia.com>
 References: <1635947547-24391-1-git-send-email-spujar@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 0a811b01-e71a-4a51-6d02-08d99ed13f13
-X-MS-TrafficTypeDiagnostic: DM6PR12MB2844:
-X-Microsoft-Antispam-PRVS: <DM6PR12MB28442EC06E63EFA52EAFD005A78C9@DM6PR12MB2844.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:5797;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: IJyOw7zHA2nMn33OtUVfZnXMenuUDcscnP6y1Jo7THC5awv95rQMmroJbST4UPhuqS9c5xlTjf96lpnUrHWY7z93kQePU90k0rlPV2f/dLOxLKIDjjIt0Ig9mW/qGUJT6tU3pUy6FPfKHQTyflSEdIJzi9p/I7hXxKp5WFfYAb562NZ33qlhUCcp9iDKvh/DypWfNJ8GFRoLPFS12GaRZpwMhzXBtp5StB1VuonR2rVvqmwEQrH7fmjCxB+xUfNwo4gje3mU4lzQdumTbo9cRvcXO4bJ/WrTZfKBJpvWAp1p/iP84AGbC0fxshlrEACDgKNpywC1zL43wPr5QNszviWr0zDtBTjCNKz880tCzlxbgBLDk7C1GuSmYGNctdqHRlsLKfoHQZLqsPxMna40xCZc6YL01tHAybGmxaRsgbRFDymyOEL8hZpjxWLiswQMcj26qeBMOQYnqNsAHmvIA1bulSWClfVzmhmTc8nQpPE1I1XLr966koX6HjAQUYF8gGzSw4ro2Fo/NvA5u/9yuaQF7zcLrvZk6VtoRAmbE5VKcI3NksVcHAqo37zkBjkDxMwfJD6M5ECBSuhoZ80bq8pgy4Uw2Wh1nKIK0ZOj88oVUshgOyujYDGkZ0ymexr3JPyi/gQuXgsb8oJR56VxVYYWWJLFJmFHGOaHBrIaHO7O/riDCU1Dh1lyfkACQquUypE+A8AiUBi2QGrWWDXMOA==
-X-Forefront-Antispam-Report: CIP:216.228.112.34;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid03.nvidia.com;CAT:NONE;SFS:(4636009)(36840700001)(46966006)(426003)(356005)(7696005)(2616005)(8936002)(4326008)(508600001)(54906003)(86362001)(36756003)(47076005)(336012)(26005)(7636003)(70206006)(316002)(6666004)(70586007)(107886003)(5660300002)(110136005)(186003)(82310400003)(8676002)(2906002)(83380400001)(36860700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Nov 2021 13:52:58.8559
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0a811b01-e71a-4a51-6d02-08d99ed13f13
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.34];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT013.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB2844
+        <1635947547-24391-2-git-send-email-spujar@nvidia.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/25.3
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The kcontrol put callback is expected to return 1 when there is change
-in HW or when the update is acknowledged by driver. This would ensure
-that change notifications are sent to subscribed applications. Filter
-out duplicate updates in MVC driver.
+On Wed, 03 Nov 2021 14:52:17 +0100,
+Sameer Pujar wrote:
+> 
+> The kcontrol put callback is expected to return 1 when there is change
+> in HW or when the update is acknowledged by driver. This would ensure
+> that change notifications are sent to subscribed applications. Update
+> the ADMAIF driver accordingly
+> 
+> Fixes: f74028e159bb ("ASoC: tegra: Add Tegra210 based ADMAIF driver")
+> Suggested-by: Jaroslav Kysela <perex@perex.cz>
+> Suggested-by: Mark Brown <broonie@kernel.org>
+> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
+> ---
+>  sound/soc/tegra/tegra210_admaif.c | 23 ++++++++++++++++++-----
+>  1 file changed, 18 insertions(+), 5 deletions(-)
+> 
+> diff --git a/sound/soc/tegra/tegra210_admaif.c b/sound/soc/tegra/tegra210_admaif.c
+> index bcccdf3..dc71075 100644
+> --- a/sound/soc/tegra/tegra210_admaif.c
+> +++ b/sound/soc/tegra/tegra210_admaif.c
+> @@ -452,16 +452,29 @@ static int tegra_admaif_put_control(struct snd_kcontrol *kcontrol,
+>  	struct tegra_admaif *admaif = snd_soc_component_get_drvdata(cmpnt);
+>  	int value = ucontrol->value.integer.value[0];
+>  
+> -	if (strstr(kcontrol->id.name, "Playback Mono To Stereo"))
+> +	if (strstr(kcontrol->id.name, "Playback Mono To Stereo")) {
+> +		if (admaif->mono_to_stereo[ADMAIF_TX_PATH][ec->reg] == value)
+> +			return 0;
+> +
+>  		admaif->mono_to_stereo[ADMAIF_TX_PATH][ec->reg] = value;
+> -	else if (strstr(kcontrol->id.name, "Capture Mono To Stereo"))
+> +	} else if (strstr(kcontrol->id.name, "Capture Mono To Stereo")) {
+> +		if (admaif->mono_to_stereo[ADMAIF_RX_PATH][ec->reg] == value)
+> +			return 0;
+> +
+>  		admaif->mono_to_stereo[ADMAIF_RX_PATH][ec->reg] = value;
+> -	else if (strstr(kcontrol->id.name, "Playback Stereo To Mono"))
+> +	} else if (strstr(kcontrol->id.name, "Playback Stereo To Mono")) {
+> +		if (admaif->stereo_to_mono[ADMAIF_TX_PATH][ec->reg] == value)
+> +			return 0;
+> +
+>  		admaif->stereo_to_mono[ADMAIF_TX_PATH][ec->reg] = value;
+> -	else if (strstr(kcontrol->id.name, "Capture Stereo To Mono"))
+> +	} else if (strstr(kcontrol->id.name, "Capture Stereo To Mono")) {
+> +		if (admaif->stereo_to_mono[ADMAIF_RX_PATH][ec->reg] == value)
+> +			return 0;
+> +
+>  		admaif->stereo_to_mono[ADMAIF_RX_PATH][ec->reg] = value;
+> +	}
+>  
+> -	return 0;
+> +	return 1;
 
-Fixes: e539891f9687 ("ASoC: tegra: Add Tegra210 based MVC driver")
-Signed-off-by: Sameer Pujar <spujar@nvidia.com>
-Suggested-by: Jaroslav Kysela <perex@perex.cz>
-Suggested-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/tegra/tegra210_mvc.c | 18 ++++++++++++++++--
- 1 file changed, 16 insertions(+), 2 deletions(-)
+Hrm, that looks too redundant.  The similar checks are seen in the get
+part, so we may have a better helper function to reduce the string
+checks, something like below.
 
-diff --git a/sound/soc/tegra/tegra210_mvc.c b/sound/soc/tegra/tegra210_mvc.c
-index 7b9c700..380686c 100644
---- a/sound/soc/tegra/tegra210_mvc.c
-+++ b/sound/soc/tegra/tegra210_mvc.c
-@@ -136,7 +136,7 @@ static int tegra210_mvc_put_mute(struct snd_kcontrol *kcontrol,
+
+BTW, independent from this patch set, I noticed that those get/put
+callbacks handle the wrong type.  For enum ctls, you have to use 
+ucontrol->value.enumerated.value instead of
+ucontrol->value.integer.value.  The former is long while the latter is
+int, hence they may have different sizes.
+
+Such a bug could be caught if you test once with
+CONFIG_SND_CTL_VALIDATION=y.  It's recommended to test with that
+config once for a new driver code.
+
+So, please submit the fix patch(es) for correcting the ctl value
+types, too.
+
+
+thanks,
+
+Takashi
+
+--- a/sound/soc/tegra/tegra210_admaif.c
++++ b/sound/soc/tegra/tegra210_admaif.c
+@@ -424,44 +424,46 @@ static const struct snd_soc_dai_ops tegra_admaif_dai_ops = {
+ 	.trigger	= tegra_admaif_trigger,
+ };
+ 
+-static int tegra_admaif_get_control(struct snd_kcontrol *kcontrol,
+-				    struct snd_ctl_elem_value *ucontrol)
++static unsigned int *tegra_admaif_route_val(struct snd_kcontrol *kcontrol)
+ {
  	struct snd_soc_component *cmpnt = snd_soc_kcontrol_component(kcontrol);
- 	struct tegra210_mvc *mvc = snd_soc_component_get_drvdata(cmpnt);
- 	unsigned int value;
--	u8 mute_mask;
-+	u8 mute_mask, old_mask;
- 	int err;
+ 	struct soc_enum *ec = (struct soc_enum *)kcontrol->private_value;
+ 	struct tegra_admaif *admaif = snd_soc_component_get_drvdata(cmpnt);
+-	long *uctl_val = &ucontrol->value.integer.value[0];
  
- 	pm_runtime_get_sync(cmpnt->dev);
-@@ -148,8 +148,16 @@ static int tegra210_mvc_put_mute(struct snd_kcontrol *kcontrol,
- 	if (err < 0)
- 		goto end;
+ 	if (strstr(kcontrol->id.name, "Playback Mono To Stereo"))
+-		*uctl_val = admaif->mono_to_stereo[ADMAIF_TX_PATH][ec->reg];
++		return &admaif->mono_to_stereo[ADMAIF_TX_PATH][ec->reg];
+ 	else if (strstr(kcontrol->id.name, "Capture Mono To Stereo"))
+-		*uctl_val = admaif->mono_to_stereo[ADMAIF_RX_PATH][ec->reg];
++		return &admaif->mono_to_stereo[ADMAIF_RX_PATH][ec->reg];
+ 	else if (strstr(kcontrol->id.name, "Playback Stereo To Mono"))
+-		*uctl_val = admaif->stereo_to_mono[ADMAIF_TX_PATH][ec->reg];
++		return &admaif->stereo_to_mono[ADMAIF_TX_PATH][ec->reg];
+ 	else if (strstr(kcontrol->id.name, "Capture Stereo To Mono"))
+-		*uctl_val = admaif->stereo_to_mono[ADMAIF_RX_PATH][ec->reg];
++		return &admaif->stereo_to_mono[ADMAIF_RX_PATH][ec->reg];
++	return NULL;
++}
  
-+	regmap_read(mvc->regmap, TEGRA210_MVC_CTRL, &value);
++static int tegra_admaif_get_control(struct snd_kcontrol *kcontrol,
++				    struct snd_ctl_elem_value *ucontrol)
++{
++	unsigned int *valp = tegra_admaif_route_val(admaif, kcontrol);
 +
-+	old_mask = (value >> TEGRA210_MVC_MUTE_SHIFT) & TEGRA210_MUTE_MASK_EN;
- 	mute_mask = ucontrol->value.integer.value[0];
++	if (!valp)
++		return -EINVAL;
++	ucontrol->value.integer.value[0] = *valp;
+ 	return 0;
+ }
  
-+	if (mute_mask == old_mask) {
-+		err = 0;
-+		goto end;
-+	}
-+
- 	err = regmap_update_bits(mvc->regmap, mc->reg,
- 				 TEGRA210_MVC_MUTE_MASK,
- 				 mute_mask << TEGRA210_MVC_MUTE_SHIFT);
-@@ -195,7 +203,7 @@ static int tegra210_mvc_put_vol(struct snd_kcontrol *kcontrol,
- 	unsigned int reg = mc->reg;
- 	unsigned int value;
- 	u8 chan;
--	int err;
-+	int err, old_volume;
+ static int tegra_admaif_put_control(struct snd_kcontrol *kcontrol,
+ 				    struct snd_ctl_elem_value *ucontrol)
+ {
+-	struct snd_soc_component *cmpnt = snd_soc_kcontrol_component(kcontrol);
+-	struct soc_enum *ec = (struct soc_enum *)kcontrol->private_value;
+-	struct tegra_admaif *admaif = snd_soc_component_get_drvdata(cmpnt);
++	unsigned int *valp = tegra_admaif_route_val(admaif, kcontrol);
+ 	int value = ucontrol->value.integer.value[0];
  
- 	pm_runtime_get_sync(cmpnt->dev);
+-	if (strstr(kcontrol->id.name, "Playback Mono To Stereo"))
+-		admaif->mono_to_stereo[ADMAIF_TX_PATH][ec->reg] = value;
+-	else if (strstr(kcontrol->id.name, "Capture Mono To Stereo"))
+-		admaif->mono_to_stereo[ADMAIF_RX_PATH][ec->reg] = value;
+-	else if (strstr(kcontrol->id.name, "Playback Stereo To Mono"))
+-		admaif->stereo_to_mono[ADMAIF_TX_PATH][ec->reg] = value;
+-	else if (strstr(kcontrol->id.name, "Capture Stereo To Mono"))
+-		admaif->stereo_to_mono[ADMAIF_RX_PATH][ec->reg] = value;
+-
+-	return 0;
++	if (!valp)
++		return -EINVAL;
++	if (value == *valp)
++		return 0;
++	*valp = value;
++	return 1;
+ }
  
-@@ -207,10 +215,16 @@ static int tegra210_mvc_put_vol(struct snd_kcontrol *kcontrol,
- 		goto end;
- 
- 	chan = (reg - TEGRA210_MVC_TARGET_VOL) / REG_SIZE;
-+	old_volume = mvc->volume[chan];
- 
- 	tegra210_mvc_conv_vol(mvc, chan,
- 			      ucontrol->value.integer.value[0]);
- 
-+	if (mvc->volume[chan] == old_volume) {
-+		err = 0;
-+		goto end;
-+	}
-+
- 	/* Configure init volume same as target volume */
- 	regmap_write(mvc->regmap,
- 		TEGRA210_MVC_REG_OFFSET(TEGRA210_MVC_INIT_VOL, chan),
--- 
-2.7.4
-
+ static int tegra_admaif_dai_probe(struct snd_soc_dai *dai)
