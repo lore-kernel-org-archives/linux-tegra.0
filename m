@@ -2,190 +2,219 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72376C433EF
-	for <linux-tegra@archiver.kernel.org>; Wed,  3 Nov 2021 10:34:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D67B3C433F5
+	for <linux-tegra@archiver.kernel.org>; Wed,  3 Nov 2021 11:01:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5BD2661157
-	for <linux-tegra@archiver.kernel.org>; Wed,  3 Nov 2021 10:34:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B1805610E7
+	for <linux-tegra@archiver.kernel.org>; Wed,  3 Nov 2021 11:01:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231925AbhKCKhO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 3 Nov 2021 06:37:14 -0400
-Received: from mail-dm6nam11on2061.outbound.protection.outlook.com ([40.107.223.61]:29793
-        "EHLO NAM11-DM6-obe.outbound.protection.outlook.com"
+        id S230250AbhKCLE0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 3 Nov 2021 07:04:26 -0400
+Received: from mail-bn8nam08on2048.outbound.protection.outlook.com ([40.107.100.48]:53729
+        "EHLO NAM04-BN8-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S231913AbhKCKhO (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 3 Nov 2021 06:37:14 -0400
+        id S229506AbhKCLEZ (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 3 Nov 2021 07:04:25 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=FCd7sKLk8v8T4+b/6q1GBakQ26sjzwYWmFjiHpXiHRMIGuZnwG37BBNnF6t+/CA7YwHfZZ/t8tnCD/oy6vWdPgy4gQyJDUedpUbLPnqGQlLG4E1ZsmzLJbITjJaY/NuEVEDvIkT64+jDJS0Cb0nDQmNV6p3x0q4JtkQC2qlXBGMP+Fcem7f9BUlPLNtrj2a3cq3wTPrZ/AHrWG/giUQ6uGpp/HUj8Ob7fZKa79OT5md21pLCupvS5XEwR7CNCiONR69HucLEE7PR415EGZ/iEK+vJIx1VmbGtR4Ak65l/3zDzTLioc111nW5Y5ZWsJcYjWmSbuglxn0HhAAVQN9YLg==
+ b=GYdVNMyvUiAE0ud16/UHPEXU3tlncZJtunQ7AEwlij0OxYMIrHi/BBrPwrwX5TEuOa6EFsuF2aFClqHedeeWQQ8GFMg1ACqQJHBH9UCqRW6TCLZgZ8oEn6lSRMZwuh8y23Fk2VJO0YHtHH6AWDCyFRbh3w+XgDeL3Zt01085a2co5EkhfF/WcHe+PnMyUo5Y3MLdw72veKwQYWNwM+dTNXDdxVZC2hSvmgLsi1uC5K85PC0ICiWiV1EgaSAvima3W9SXh9vYbm+obO+s3o4wM2J5e3Ot+2WFWnom+AeXR50CeZsqdgNAnKksslxG+qURJqF8xpq1dYRFKA/mkkI5YA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=UHaFgZyCmMvqNMzR70znBy6jMR0odfFZPxpXIDZ2prM=;
- b=ewrj0fXDbKW89kAtJpjl1hu+AbVeRbY2LE+efyhWLVeYKuVeeNk1EdHOEGajW0t5WMypr3A10/C451EsPABC24xkJhgGHmLTyeBdDU1TCBd4pfRLAYteQwQa0jxJ6k+Q8yY6jYI8GtodZx9gopTXF3cjjxhVMm16Q1qQcw8jqKVBQD/+d5TPi1xZiEELdmNB9IMa05iAJEL/hZ1x6CUEE+XBOWmoC3q1/rptE/JmndJxO7Kn0Cslh59/t1+P107Y7PRqW37S8fiGqQjBa7lz1Oe0TuhSxkzPpBNUEmlJG7unXynrwVacbbJgVDf2QhoOZAr6CunSQK6cPTJ8dnW20g==
+ bh=LJYOq1fGGG7EijPhbIETj0CH/0j6TxZGZzFI9vodAtI=;
+ b=jrI/aoc7Q+BnalDyofMhz7HlAaaiJUslG5dnZlJqP4aGQPYc7zHQStMr4bWAqjnvCK2S+46c/6T3Wb1rZ4OnCBPdO6sKHFIIO5CcYF87EGyGhnyeKHPcDgcODVi8+3ucuuSe7/FveJiQhUBCAAi+KBInzRcHVGXhhhlCPdRHSI5aK5ISIM0CZOT1P0ElLN6A+SHcEKJthj6Ires7VR18LmXH2TgO+C27D9H5dNWZBoe1s3fQtJqHzZVucMf3xLRO0CiLBNfbeHu9tN2n2UOQPEadl/H4Ggli5gAFn99eJ5NRb+VQz4sdia8zqtTccxI3/+OkRcoYeZ/SNjUxiRc2RA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
  dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=UHaFgZyCmMvqNMzR70znBy6jMR0odfFZPxpXIDZ2prM=;
- b=SasJKjADhC8BJoEv2fx1NaLaIwahxMb29U11LGExBmbdM67LKHiN6DDATwU0FuJLlZjP+N5xsfoMn8GRtnNkIWpzsXYODPQOX+JxLmKemeZ3i51n4g9pOktjGHtoOnpIbPbs1MpBHUayyMX9pEy0Jl1I/MIb4rFG8tztiNMNAiy4beRD+VCP6o0gC7UGhodP9eaN155v+Iz7sRLCFbkHs/UV4dAHrKIV6PPGeWwPvTsyznrXkBfLiHFXTIWQO80oWLdPKw/GtHDVLF24ht7uerwsKANhhyL+pG5EaDiCBn3oKXbO/OGA4l6bvE3yxHU7lMDS0MAlAmLmWJXq8YgHvQ==
-Received: from BN9PR12MB5273.namprd12.prod.outlook.com (2603:10b6:408:11e::22)
- by BN9PR12MB5228.namprd12.prod.outlook.com (2603:10b6:408:101::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4669.10; Wed, 3 Nov
- 2021 10:34:33 +0000
-Received: from BN9PR12MB5273.namprd12.prod.outlook.com
- ([fe80::98a0:161b:7aeb:de15]) by BN9PR12MB5273.namprd12.prod.outlook.com
- ([fe80::98a0:161b:7aeb:de15%8]) with mapi id 15.20.4669.010; Wed, 3 Nov 2021
- 10:34:33 +0000
-From:   Akhil R <akhilrajeev@nvidia.com>
-To:     Rob Herring <robh@kernel.org>
-CC:     "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
+ bh=LJYOq1fGGG7EijPhbIETj0CH/0j6TxZGZzFI9vodAtI=;
+ b=uXW4Qzt8NxqS3Hr5AJhTO3k02aNLBflWw1c0xpTkhJnyDlzq4zd5VzGhvrL4SvMKVRtaRjmiIftO7lwfokbLYn6cluY1Ou5mA7pzfKXZnHRD6iw4DTuQLkKQjuQ3cNC0oz3OxyKLDSdNXX9oRAArTQ9aRVuvC6fXdcovk1Gdm36iZM0kZwOSx/GgTX44ZqQBjxZTOKXyFprk0MUg3fEZUfaYiwVRDtBbAaTmmhpX2J8exkbfaodARf/lG0Y/vnJqXini47Cte2gNER9JHUJpp/hJSR9jtS+9BqM6ISScEosvHKwe9NdMfx8MNQZDDk4IbqIzIoVePJp0W6Xwtz33pw==
+Received: from DM5PR12MB2406.namprd12.prod.outlook.com (2603:10b6:4:b7::23) by
+ DM5PR1201MB2538.namprd12.prod.outlook.com (2603:10b6:3:de::8) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.4649.18; Wed, 3 Nov 2021 11:01:47 +0000
+Received: from DM5PR12MB2406.namprd12.prod.outlook.com
+ ([fe80::5926:d2bb:5b4b:1b99]) by DM5PR12MB2406.namprd12.prod.outlook.com
+ ([fe80::5926:d2bb:5b4b:1b99%6]) with mapi id 15.20.4649.019; Wed, 3 Nov 2021
+ 11:01:47 +0000
+From:   Prathamesh Shete <pshete@nvidia.com>
+To:     Thierry Reding <thierry.reding@gmail.com>
+CC:     "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Krishna Yarlagadda <kyarlagadda@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
         "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
-        Rajesh Gumasta <rgumasta@nvidia.com>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        "vkoul@kernel.org" <vkoul@kernel.org>
-Subject: RE: [PATCH v11 1/4] dt-bindings: dmaengine: Add doc for tegra gpcdma
-Thread-Topic: [PATCH v11 1/4] dt-bindings: dmaengine: Add doc for tegra gpcdma
-Thread-Index: AQHXy/+hmi4aF0a7zk6tx0wdX3F4kavwQL+AgAFgwOA=
-Date:   Wed, 3 Nov 2021 10:34:33 +0000
-Message-ID: <BN9PR12MB5273887DC5A3153A434432ADC08C9@BN9PR12MB5273.namprd12.prod.outlook.com>
-References: <1635427419-22478-1-git-send-email-akhilrajeev@nvidia.com>
- <1635427419-22478-2-git-send-email-akhilrajeev@nvidia.com>
- <YYE7D2W721a1L4Mb@robh.at.kernel.org>
-In-Reply-To: <YYE7D2W721a1L4Mb@robh.at.kernel.org>
-Accept-Language: en-IN, en-US
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Suresh Mangipudi <smangipudi@nvidia.com>
+Subject: RE: [PATCH 2/2] gpio: tegra186: Add support for Tegra234 gpio
+Thread-Topic: [PATCH 2/2] gpio: tegra186: Add support for Tegra234 gpio
+Thread-Index: AQHXxnecSkoS2QpObEy0hpbT1IQXN6voiISAgAfDtoCAAWszwA==
+Date:   Wed, 3 Nov 2021 11:01:46 +0000
+Message-ID: <DM5PR12MB240697948C6DFF64E45AFF00B78C9@DM5PR12MB2406.namprd12.prod.outlook.com>
+References: <20211021123021.9602-1-pshete@nvidia.com>
+ <20211021123021.9602-2-pshete@nvidia.com> <YXq3/1AXX7KiwpTy@orome.fritz.box>
+ <YYE7aXo0mfCfCqGF@orome.fritz.box>
+In-Reply-To: <YYE7aXo0mfCfCqGF@orome.fritz.box>
+Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-authentication-results: kernel.org; dkim=none (message not signed)
- header.d=none;kernel.org; dmarc=none action=none header.from=nvidia.com;
+authentication-results: gmail.com; dkim=none (message not signed)
+ header.d=none;gmail.com; dmarc=none action=none header.from=nvidia.com;
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 020e994c-60f4-4aca-f86d-08d99eb586d0
-x-ms-traffictypediagnostic: BN9PR12MB5228:
-x-microsoft-antispam-prvs: <BN9PR12MB5228243C82481D15960A77F5C08C9@BN9PR12MB5228.namprd12.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8273;
+x-ms-office365-filtering-correlation-id: 00d98a4b-569d-4d48-cc3b-08d99eb9544d
+x-ms-traffictypediagnostic: DM5PR1201MB2538:
+x-microsoft-antispam-prvs: <DM5PR1201MB2538F0CAF320590F3F5AADD6B78C9@DM5PR1201MB2538.namprd12.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:9508;
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: BM9lk4X/EM937MdARJ5U2kUi/WSFCus3urQanuhZmnlTKsiCGCEFQ1F5BWBBcwZ5VC/R6nP5jWrspeFwZAcKqz0DUWYyN8+pcVNhB/canRB1C3v6R/lWc33kFJ3qimWh0ESzz0+7RbSMlsxux0KdX1fzZCurHgI1JpMpvs4r0LqkLDU+EuDERsfppcvjDgInd9zUfjGju9Ft7WBshdnOYwUR0mzPZAYSf05BHjNKGTnxMUuKOmFAyM1IJYXY7WWOnctfAdhqE770M/APktUTpcD7q0oeOECMK/2b9fc24NJ+PAnkkaA/HOdW8ouOELHhqWCeVq6bS5mtWgvxeHDuX2S29hJBQrTiLAwpm3QpeVJpjQRfzyPOQoxDhuU4YH18oo4YpViZAK/NL8x0MCnjqmQlzMQ5Zf6zjgwW/e4bTs2hFq7Z2hX+ZEbyysPzv3k85FzopJF8sl1Bi45Hk30SExi1yEvfEZ/rXhUia61o/76jOxFnaXiFAAmc6eU6wd1bwoSY0WgfTs30ya6Yw/9x4n93rFsVlXR3ReQ+WCtOjT5KVPfyF3Nf3TJcgVyCZpsnXQM7/OLPcvSMt1V2W5DuUIdf2V/QnFglXDPykrv3L74QaSG+9TSy+yKldmfl6TGRRwarMXj3YdM6kG3ERehXRM/lw6UdYaRrywLBHon3jGdOsAn6UvX+/ca2RUq2KkuDnqYG0JWvmFUkFX7gpdGmdbaH6N7gdsEl0Jw4bm+9AwUwlH+6gIGIgRQbEI7VhwmKL+KQv5zShPXd8HjPyrkAs8HnW6A7FssVBdSQuu/9JD3e1YPzrUtx34qHA1KGWvHwsYUOoSLsh9UQm3pwssZ/qw==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR12MB5273.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(316002)(5660300002)(26005)(2906002)(966005)(52536014)(186003)(9686003)(6506007)(8936002)(71200400001)(76116006)(55016002)(38070700005)(66946007)(66476007)(4326008)(66446008)(66556008)(64756008)(7696005)(86362001)(33656002)(508600001)(6916009)(54906003)(38100700002)(8676002)(122000001);DIR:OUT;SFP:1101;
+x-microsoft-antispam-message-info: aCCPQjmGt5lEsasq6X9V6BjshJmukwBAtEhHddrgv4XnXdjDX9MBppDNHBpHZU7xwj6zToL0JvTta2oSCFy8tvZYCoxcdDELY2rMHloZJZF7yDXEie54e6kt0UjN0dK8+jrFkrH2wVKDvQJThKp77mj3zuNcChuEzCEd8XEc5NDQpbI+x9iHWhbv2Ux9zT3MzNRFoOoVV9o0leNIq9f+i1LkWNvBcQaACfMqsZaGtyTFaZ9cFwJHmTaNXMpPBDNw6LavgitpIAQWIgg/JsPgFVzpJu775AxuWcO7k0kRfmkDwHd76LbSrQ+xhivUj9XGCvxZoLorRGthGXxp/IryaObwcskiTcYFcDoVUywKYjOr2nfs0gpQo7k5WwuSSJwNvubefA4OAOMvEDae27biNmDAgoKTPR9aZ2oY0/onh+/813Om7RkDpTZiUKeUVZUxQKEjD7qNzkzDR5Y4lyow9FNs2ej6D29aTgF0wPksvXP78NGmqWjLnHgnXEja7iZwu0eYVrDYfWhIpeq/f23ojopx6Fyw2z07D7rUSArtH0HunYTcGBbesuCQuqbYgkFf9qSNGoQLiwo90VvCkNFvx1vMeHe8ykXeqK0/zZAUdvYMZUnASYMH8TKRR0FJPvI1FhofVNirn3YIbq/WaZ3Ec0jRJr8idHQQTs2OggIyOsV/Mu1pr448/385ga1oEQEWAXFWs83XHIVXxGNoXuhMsw==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM5PR12MB2406.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(122000001)(9686003)(2906002)(7696005)(5660300002)(38070700005)(6506007)(86362001)(6916009)(8936002)(107886003)(26005)(55016002)(38100700002)(53546011)(508600001)(66476007)(66556008)(8676002)(316002)(186003)(71200400001)(66446008)(66946007)(64756008)(54906003)(83380400001)(33656002)(52536014)(4326008)(76116006);DIR:OUT;SFP:1101;
 x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?puO0FuM3PUv22HhPmgcjdE943JTPyIK9lWYOoIqQhccJz3B8e64CXcHoKVAo?=
- =?us-ascii?Q?lKX19BH2UJERUg/pXR8MUbWi3juu5WUCH4MAMGci6NYXvG5ISkV4WreOyttc?=
- =?us-ascii?Q?dyIEaJ/dSnafNsIwBM/DsvjthlSB+TllfrvJw0+KE7o3w/f/El6zHJB7P4og?=
- =?us-ascii?Q?ZlC5xpknrSWwZB3VS55EHtMpq7h91vymcLqZAAg9OlqRwpibNls9agpS4SXa?=
- =?us-ascii?Q?TCeWl8bcHmdchtQNTVl9cfm7IccEsRM7NR12VTc3WXPdBrlShT6EGi7WMAty?=
- =?us-ascii?Q?FoAg1JoiPG5yWcf0p+d5VqRcXlmr0D1/L5BKkT2Kg+gJ/d1H4fydzF1/6guR?=
- =?us-ascii?Q?yL+P0y3XHfGp2Jauq4BorbULjerYV9NKqB7YmvtzS0vBtNs4qJ5oiZKU8VUh?=
- =?us-ascii?Q?cK6Q2v6hBPf4cARUeDpw7J+rgVnl86LgZ13EZuxdpfYko3sGeDhcW0ijUwyE?=
- =?us-ascii?Q?F7yOFfC9cu3CBv5l0JOWmIha4MolaD1KFqqKEhsTbG1ZvuqRQ6Rx1GWXqX2R?=
- =?us-ascii?Q?i3dhADPwrNOKcc5Pf/poY64uk7i7eqHu3G8+nMFUhwnzm+zw7CwUBRi3Dxm+?=
- =?us-ascii?Q?dOVap3ydZSWXS0bH3lxiRNWM3tHMEoV991ZzliThqep9gNpRW4VVmCtCHMrK?=
- =?us-ascii?Q?JcWfUeOlpvPMXzmTYuL/Ckhh3lvpLXxQAKSVPji2uUQGamOpwpk9BBeE33JS?=
- =?us-ascii?Q?TrNqg8c3BWwBqbdxmi2ecSgZPfN0yG6gchaLbdoh+lZda3LI2Hq75XjMHstn?=
- =?us-ascii?Q?hS4dbR1cJiP/WGuEfmEk+Nnt86iNRtQaCtOXeYcWmSu2Xn4dQ+mZ1Va6KJwU?=
- =?us-ascii?Q?7xZ23zKVmrYEWJ6/Y5xPzlKPtxq/zj89Fbh8TUInHzC3oX/jbRibpUr0PwU9?=
- =?us-ascii?Q?XR33CgeHWq9pM9rO+WbCmfnlKj8pQ1FZW8J6mboEFoPdVM58r7bBpCTijhLJ?=
- =?us-ascii?Q?HQ5EwICltCeZRpuMtW/uzVQVrv9zhmUPdHwPeuQ0LwvHiGTq3z9IXlApiJN0?=
- =?us-ascii?Q?WFHN5SsVsYMA8JwtSvmhqCyckqhivpE12CJaZBvprQtqvDvbQqNZBZLK8yhD?=
- =?us-ascii?Q?xuvs5jP/ZaGriW0GHLVR1Bn5kMlJ6Anf4OvaQ49Sf9RmqrX7MND/vinp1Au5?=
- =?us-ascii?Q?rge75Y3cfwnae2xs3cR9dWxq1CvlaJMYoo+/u5mDQsDDfEUZl4H0vnMSP6DD?=
- =?us-ascii?Q?bf+mA70gWkj9WCpvM/qo3SjT3HVieRNWA6Fda2hPYOlZ67yFqHxywWRcwcil?=
- =?us-ascii?Q?J2sePe3+87AfQ7+GWooSo8ey1NHSTQU4BvZlgsxLD521NoexjXKaJYdmcPom?=
- =?us-ascii?Q?2et2KYVCs76edN7Q4dnmB615zhKhMtX+JAQogFo6+CuxMOkg0T1GyRm1kA1p?=
- =?us-ascii?Q?28s4+YBc/w22xpbenC6yiGBTdH7iv1RmR0jY3RXmlBFnhAigkXfESRA6Yfi2?=
- =?us-ascii?Q?90RFNHgh0ZdQwokQsGFBx+43bFIJ+vqriI/vk23um1Z4T3lG27QUl5y7oYyB?=
- =?us-ascii?Q?Rlz+9jIRnmkbAawSixmiD9sbOXPf5Kels81/dKL3fAzMwkGnx6tsKWWJld3A?=
- =?us-ascii?Q?lgYkrhNJqsbnutQhRb9MiQM5b3o4av0u8M6MY74kgLcjNqsOKcVyvBMyxU6u?=
- =?us-ascii?Q?ag=3D=3D?=
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?EoF8WEu7HjxiJ3dpjIAeQtwO/ekVrCaqgZNRA6VozPZSpce+uun6oYMTaI5P?=
+ =?us-ascii?Q?8JLFHzrZJ1n3+mf85ORlLVRKBQEECOtsDSv0klH4GdE4Jm8s1BgW4EAcuMYO?=
+ =?us-ascii?Q?S5OTCnyL2EzYlgWz8nvjQbwBIhIvuPp73S5ugimkSefbSxkpMzSgjNYsNUjV?=
+ =?us-ascii?Q?63PwLv1fT7+3z0v2RcrDJ07/kbbBAEsHqtD9GAObN+ejwsqYU9TKxPWZF+uy?=
+ =?us-ascii?Q?DE9fGtkzvpPoUi+b9eGLwtnYZkzP0IcN9o+r7lvP8OX1ioa6xeeOByASa6jO?=
+ =?us-ascii?Q?uAicVzxD8lTED/lnv+O0FcmPASwe6OeFhyGI97PU6iCcznW6Ne0+UKq9lzjZ?=
+ =?us-ascii?Q?FMdAjuhQVTC8MpBQ2nmTlYUAdx9w9wHa9M64itN5/LtX0H1hRiRiL20WcsqP?=
+ =?us-ascii?Q?FotWfjA0hfYIr7kcVKjbe8eZPwV0RNO3167ldK/zQaeFL7KYyRvqn8pbH+ka?=
+ =?us-ascii?Q?thoRrgqIzeNzubfeW2+ePCBmmIJ83ePvfPCFLkA0oEJWvBT3QzH5gb/vu/Gx?=
+ =?us-ascii?Q?5MeMnPjtVqY22QnSvOaUfPoXLMMuAc5OnvhyvE680c2NN/boINEKKCR90Mbn?=
+ =?us-ascii?Q?N3RM1lUyZR3gOV5yLsnkMLhqkqZg4VEniKXiosD0/KRhTW6gXG5w67LDotV6?=
+ =?us-ascii?Q?1hL4S3XVOfA7FuV/7csRo8UlYK6JGxPSnxmL0kdil8OcIOseYbOQZcWu2dIg?=
+ =?us-ascii?Q?ciiQNmSyf04/4Qoiwt6lLfbNwqYmg0NmzGA3uvyxwOnSLj5dfyLT++PSR+7Z?=
+ =?us-ascii?Q?O07IOEuwvvYIlpYmUUsjmThzS8Umi6gvnAA5IggpImDl9s5CZcTXmammAqPV?=
+ =?us-ascii?Q?ZQ3C76Xy57e36BSTMUeRarsNS3zsgKnfongV+yY+sCG10v+rLFegO9xefeQ+?=
+ =?us-ascii?Q?ri14qx1pdOaiVKM8wbUfQR+x7uONZhItRleka7Ja9B0C8QyKGGahRlM1M1pe?=
+ =?us-ascii?Q?iyFmrNjAaSJVeRarpeBzA1yBVpLF54Z4ZjGPkEFK/CJkOUb6qXRVTivOZhnH?=
+ =?us-ascii?Q?tL8GtCdHUCT8hdZhY4BvpvHHhHpbjZbwY23tZOKcCnkE44VIl2rcgW2eg8Lt?=
+ =?us-ascii?Q?SgvxqBV0n1xm/5rqsWOclj83Nj2bFRdvicdn3rdZWhEWQ9gk+KLYu5dUIC/+?=
+ =?us-ascii?Q?dVE4xXlZYL80py2r5IhKVTyTaGaxGC8mWhbMFoW6oALtuVa9xWBsCpWk1ECX?=
+ =?us-ascii?Q?Jm2Ddcd2vOH2iCLOe7V/SN0Rq6mlHLug1zd5gZnrl0jWy+lLhy/AqNKit3DK?=
+ =?us-ascii?Q?C9cLZ2wYezPIAVc37XziN7ruC0lPNj8gzM/iXRgESdRNqqLNgpfYixq8L9z/?=
+ =?us-ascii?Q?1eO12qCrtujl6+F//OnT0wlMkMFYnZP31HAoAbtlLpR6+rPTrjcfGnzpLXj/?=
+ =?us-ascii?Q?LK6J1lXRrpXQbRSe1n6Rl2dsU/EkbNNxggbxYQ9laaVkxwFIbdpHtqO+b/Mo?=
+ =?us-ascii?Q?5XGuHLTTLi4bgMwOctiOJmmNcHhGHKKU6QXGfsjGv2eb5sEFAECuGZ22BETD?=
+ =?us-ascii?Q?lWOeny4BJnWMs2NWy/MlR9uKKcuKRWF7B5eOGRLIsrwpMDyoSS/ixIUBbZ1R?=
+ =?us-ascii?Q?8NE6wKoNZih19amYHp0JCXISZ2UQ1G3myoZNXINry9kBntlOY6+7rRE+aEot?=
+ =?us-ascii?Q?4g=3D=3D?=
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: Nvidia.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BN9PR12MB5273.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 020e994c-60f4-4aca-f86d-08d99eb586d0
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Nov 2021 10:34:33.6751
+X-MS-Exchange-CrossTenant-AuthSource: DM5PR12MB2406.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 00d98a4b-569d-4d48-cc3b-08d99eb9544d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Nov 2021 11:01:46.8389
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: hw5j/W/C6ApEflwoynQ+3pOGP0VWl/kqagRwqDMDxWT00n1UKuWeo+I0UG5Hwi64ATMivG2m0fgCP4pYMfGEvQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN9PR12MB5228
+X-MS-Exchange-CrossTenant-userprincipalname: /JXFcmVV66uiit/9WGBZQkIjCCAcb2HvGlbiJQ7ThgxZH0km+WWX/PaTSfBwt8jJmB9sZTrpwSepmWKT9ThlGw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR1201MB2538
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-> On Thu, Oct 28, 2021 at 06:53:36PM +0530, Akhil R wrote:
-> > Add DT binding document for Nvidia Tegra GPCDMA controller.
-> >
-> > Signed-off-by: Rajesh Gumasta <rgumasta@nvidia.com>
-> > Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
-> > Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
+Hi Thierry,
+
+>>That said, I noticed that you didn't include an update to the device tree=
+ bindings documentation. I do have that, in addition to a conversion to the=
+ new json-schema format. Do you mind if I resend your two patches here alon=
+g with the DT >>documentatino update that I have? I've also got the DTS cha=
+nges for Tegra234 to expose these, which I would also like to include for c=
+ompleteness.
+
+It would be helpful if you share the update to the device tree bindings doc=
+umentation patch with me I will push all the changes together.
+OR=20
+Can you please resend these patches along with device tree binding document=
+ patch that you have.
+Anything is fine for me.
+
+Thanks
+Prathamesh.
+
+-----Original Message-----
+From: Thierry Reding <thierry.reding@gmail.com>=20
+Sent: Tuesday, November 2, 2021 6:52 PM
+To: Prathamesh Shete <pshete@nvidia.com>
+Cc: linus.walleij@linaro.org; bgolaszewski@baylibre.com; Jonathan Hunter <j=
+onathanh@nvidia.com>; linux-gpio@vger.kernel.org; linux-tegra@vger.kernel.o=
+rg; linux-kernel@vger.kernel.org; Suresh Mangipudi <smangipudi@nvidia.com>
+Subject: Re: [PATCH 2/2] gpio: tegra186: Add support for Tegra234 gpio
+
+On Thu, Oct 28, 2021 at 04:47:27PM +0200, Thierry Reding wrote:
+> On Thu, Oct 21, 2021 at 06:00:21PM +0530, Prathamesh Shete wrote:
+> > Add support for the Tegra234 GPIO bank configuration.
+> >=20
+> > Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
 > > ---
-> >  .../bindings/dma/nvidia,tegra186-gpc-dma.yaml      | 115
-> +++++++++++++++++++++
-> >  1 file changed, 115 insertions(+)
-> >  create mode 100644
-> > Documentation/devicetree/bindings/dma/nvidia,tegra186-gpc-dma.yaml
-> >
-> > diff --git
-> > a/Documentation/devicetree/bindings/dma/nvidia,tegra186-gpc-dma.yaml
-> > b/Documentation/devicetree/bindings/dma/nvidia,tegra186-gpc-dma.yaml
-> > new file mode 100644
-> > index 0000000..bc97efc
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/dma/nvidia,tegra186-gpc-dma.ya
-> > +++ ml
-> > @@ -0,0 +1,115 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) %YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/dma/nvidia,tegra186-gpc-dma.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> >  drivers/gpio/gpio-tegra186.c | 74=20
+> > ++++++++++++++++++++++++++++++++++++
+> >  1 file changed, 74 insertions(+)
+> >=20
+> > diff --git a/drivers/gpio/gpio-tegra186.c=20
+> > b/drivers/gpio/gpio-tegra186.c index d38980b9923a..edcc91b35e1e=20
+> > 100644
+> > --- a/drivers/gpio/gpio-tegra186.c
+> > +++ b/drivers/gpio/gpio-tegra186.c
+> > @@ -14,6 +14,7 @@
+> > =20
+> >  #include <dt-bindings/gpio/tegra186-gpio.h>
+> >  #include <dt-bindings/gpio/tegra194-gpio.h>
+> > +#include <dt-bindings/gpio/tegra234-gpio.h>
+> > =20
+> >  /* security registers */
+> >  #define TEGRA186_GPIO_CTL_SCR 0x0c
+> > @@ -877,6 +878,73 @@ static const struct tegra_gpio_soc tegra194_aon_so=
+c =3D {
+> >  	.instance =3D 1,
+> >  };
+> > =20
+> > +#define TEGRA234_MAIN_GPIO_PORT(_name, _bank, _port, _pins)	\
+> > +	[TEGRA234_MAIN_GPIO_PORT_##_name] =3D {			\
+> > +		.name =3D #_name,					\
+> > +		.bank =3D _bank,					\
+> > +		.port =3D _port,					\
+> > +		.pins =3D _pins,					\
+> > +	}
 > > +
-> > +title: NVIDIA Tegra GPC DMA Controller Device Tree Bindings
-> > +
-> > +description: |
-> > +  The Tegra General Purpose Central (GPC) DMA controller is used for
-> > +faster
-> > +  data transfers between memory to memory, memory to device and
-> > +device to
-> > +  memory.
-> > +
-> > +maintainers:
-> > +  - Jon Hunter <jonathanh@nvidia.com>
-> > +  - Rajesh Gumasta <rgumasta@nvidia.com>
-> > +
-> > +allOf:
-> > +  - $ref: "dma-controller.yaml#"
-> > +
-> > +properties:
-> > +  compatible:
-> > +    oneOf:
-> > +      - enum:
-> > +          - nvidia,tegra186-gpcdma
-> > +          - nvidia,tegra194-gpcdma
-> > +      - items:
-> > +          - const: nvidia,tegra186-gpcdma
-> > +          - const: nvidia,tegra194-gpcdma
+> > +static const struct tegra_gpio_port tegra234_main_ports[] =3D {
+> > +	TEGRA234_MAIN_GPIO_PORT(A, 0, 0, 8),
+> > +	TEGRA234_MAIN_GPIO_PORT(B, 0, 3, 1),
+> > +	TEGRA234_MAIN_GPIO_PORT(C, 5, 1, 8),
+> > +	TEGRA234_MAIN_GPIO_PORT(D, 5, 2, 4),
+> > +	TEGRA234_MAIN_GPIO_PORT(E, 5, 3, 8),
+> > +	TEGRA234_MAIN_GPIO_PORT(F, 5, 4, 6),
+> > +	TEGRA234_MAIN_GPIO_PORT(G, 4, 0, 8),
+> > +	TEGRA234_MAIN_GPIO_PORT(H, 4, 1, 8),
+> > +	TEGRA234_MAIN_GPIO_PORT(I, 4, 2, 7),
+> > +	TEGRA234_MAIN_GPIO_PORT(J, 5, 0, 6),
+> > +	TEGRA234_MAIN_GPIO_PORT(K, 3, 0, 8),
+> > +	TEGRA234_MAIN_GPIO_PORT(L, 3, 1, 4),
+> > +	TEGRA234_MAIN_GPIO_PORT(M, 2, 0, 8),
+> > +	TEGRA234_MAIN_GPIO_PORT(N, 2, 1, 8),
+> > +	TEGRA234_MAIN_GPIO_PORT(P, 2, 2, 8),
+> > +	TEGRA234_MAIN_GPIO_PORT(Q, 2, 3, 8),
+> > +	TEGRA234_MAIN_GPIO_PORT(R, 2, 4, 6),
 >=20
-> One of these is wrong. Either 186 has a fallback to 194 or it doesn't.
-Not sure if I understood this correctly. Tegra186 and 194 have different ch=
-ip data
-inside driver based on the compatible. I guess, it then needs to be one of =
-these.
-Or is the mistake something related to formatting?
+> I stumbled across an old patch I had created a couple of months ago=20
+> that is very similar to this one. However, at the time I had added a=20
+> couple more ports here, namely S, T, U and V. Is there a reason why=20
+> you're not including those here?
 
-Agreed with other comments.
+Nevermind, looks like my patch had been based on out-of-date documentation,=
+ so the table here is correct.
 
---
-nvpublic
+That said, I noticed that you didn't include an update to the device tree b=
+indings documentation. I do have that, in addition to a conversion to the n=
+ew json-schema format. Do you mind if I resend your two patches here along =
+with the DT documentatino update that I have? I've also got the DTS changes=
+ for Tegra234 to expose these, which I would also like to include for compl=
+eteness.
+
+Thierry
