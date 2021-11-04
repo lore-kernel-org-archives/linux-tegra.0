@@ -2,103 +2,85 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2B3BC433EF
-	for <linux-tegra@archiver.kernel.org>; Thu,  4 Nov 2021 13:36:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9418EC433F5
+	for <linux-tegra@archiver.kernel.org>; Thu,  4 Nov 2021 15:37:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A5177611EF
-	for <linux-tegra@archiver.kernel.org>; Thu,  4 Nov 2021 13:36:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7659B611EE
+	for <linux-tegra@archiver.kernel.org>; Thu,  4 Nov 2021 15:37:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231365AbhKDNj2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 4 Nov 2021 09:39:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38980 "EHLO mail.kernel.org"
+        id S231189AbhKDPkU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 4 Nov 2021 11:40:20 -0400
+Received: from mga18.intel.com ([134.134.136.126]:5996 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231332AbhKDNj1 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 4 Nov 2021 09:39:27 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 06CF4604DC;
-        Thu,  4 Nov 2021 13:36:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1636033009;
-        bh=LL6MZq3ANzbnT8B6kNDsWFF+dSyrJdaXeAPKgIfe79Y=;
-        h=From:To:Cc:Subject:Date:From;
-        b=hmaO4gSO5+Y0cYnIoou/71k59ALarjvmPkvhEgE6BmMqsJuhgv49NaA5Clg4llPzZ
-         ukjfCTKoWIZVR1ai8okRR/yJWpRxekvZT3ioItVnr5zO3rV47gcMIJY3fg6LBQVdYH
-         nnZwSVfLmBMEjGkdSfzQyQBxqqEp+aMx0WOtKc0PPxIJvsAz2jgMRQyVNlldfmfxFL
-         IPt+PB+TUW58wMPlzh8TdySZxqZVxE7UcMXbvlrEcNXLuTYt7NTGj+LsGTTgzu9g4X
-         XnrgqJoX7SPRO/rVf2ByFM7ADLhwopw59qT44le6K1emh71B15GSSIqYiMybK5/CmI
-         X43oeSBrxaDkw==
-From:   Arnd Bergmann <arnd@kernel.org>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
+        id S229770AbhKDPkU (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 4 Nov 2021 11:40:20 -0400
+X-IronPort-AV: E=McAfee;i="6200,9189,10157"; a="218630732"
+X-IronPort-AV: E=Sophos;i="5.87,209,1631602800"; 
+   d="scan'208";a="218630732"
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2021 08:37:29 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.87,209,1631602800"; 
+   d="scan'208";a="490000002"
+Received: from stinkbox.fi.intel.com (HELO stinkbox) ([10.237.72.171])
+  by orsmga007.jf.intel.com with SMTP; 04 Nov 2021 08:37:22 -0700
+Received: by stinkbox (sSMTP sendmail emulation); Thu, 04 Nov 2021 17:37:21 +0200
+Date:   Thu, 4 Nov 2021 17:37:21 +0200
+From:   Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+To:     Maxime Ripard <maxime@cerno.tech>
+Cc:     Daniel Vetter <daniel.vetter@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        Phil Elwell <phil@raspberrypi.com>,
+        Tim Gover <tim.gover@raspberrypi.com>,
+        Dom Cobley <dom@raspberrypi.com>,
+        dri-devel@lists.freedesktop.org, Emma Anholt <emma@anholt.net>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Prathamesh Shete <pshete@nvidia.com>,
-        Lee Jones <lee.jones@linaro.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>, linux-gpio@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] pinctrl: tegra194: remove duplicate initializer again
-Date:   Thu,  4 Nov 2021 14:36:39 +0100
-Message-Id: <20211104133645.1186968-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.29.2
+        linux-tegra@vger.kernel.org,
+        Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH 02/13] drm/connector: Add helper to check if a mode
+ requires scrambling
+Message-ID: <YYP+MX9gxZVafhKk@intel.com>
+References: <20211102145944.259181-1-maxime@cerno.tech>
+ <20211102145944.259181-3-maxime@cerno.tech>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20211102145944.259181-3-maxime@cerno.tech>
+X-Patchwork-Hint: comment
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+On Tue, Nov 02, 2021 at 03:59:33PM +0100, Maxime Ripard wrote:
+> --- a/include/drm/drm_modes.h
+> +++ b/include/drm/drm_modes.h
+> @@ -424,6 +424,21 @@ static inline bool drm_mode_is_stereo(const struct drm_display_mode *mode)
+>  	return mode->flags & DRM_MODE_FLAG_3D_MASK;
+>  }
+>  
+> +/**
+> + * drm_mode_hdmi_requires_scrambling - Checks if a mode requires HDMI Scrambling
+> + * @mode: DRM display mode
+> + *
+> + * Checks if a given display mode requires the scrambling to be enabled.
+> + *
+> + * Returns:
+> + * A boolean stating whether it's required or not.
+> + */
+> +static inline bool
+> +drm_mode_hdmi_requires_scrambling(const struct drm_display_mode *mode)
+> +{
+> +	return mode->clock > DRM_HDMI_14_MAX_TMDS_CLK_KHZ;
+> +}
 
-An earlier bugfix removed a duplicate field initializer in
-a macro, but it seems that this came back with the following
-update:
+That's only correct for 8bpc. The actual limit is on the TMDS clock (or
+rather TMDS character rate as HDMI 2.0 calls it due to the 1/1 vs. 1/4
+magic for the actually transmitted TMDS clock).
 
-drivers/pinctrl/tegra/pinctrl-tegra194.c:1341:28: error: initialized field overwritten [-Werror=override-init]
- 1341 |                 .drv_reg = ((r)),                               \
-      |                            ^
-drivers/pinctrl/tegra/pinctrl-tegra194.c:1392:41: note: in expansion of macro 'DRV_PINGROUP_ENTRY_Y'
- 1392 | #define drive_touch_clk_pcc4            DRV_PINGROUP_ENTRY_Y(0x2004,    12,     5,      20,     5,      -1,     -1,     -1,     -1,     1)
-      |                                         ^~~~~~~~~~~~~~~~~~~~
-drivers/pinctrl/tegra/pinctrl-tegra194.c:1631:17: note: in expansion of macro 'drive_touch_clk_pcc4'
- 1631 |                 drive_##pg_name,                                \
-      |                 ^~~~~~
-drivers/pinctrl/tegra/pinctrl-tegra194.c:1636:9: note: in expansion of macro 'PINGROUP'
- 1636 |         PINGROUP(touch_clk_pcc4,        GP,             TOUCH,          RSVD2,          RSVD3,          0x2000,         1,      Y,      -1,     -1,     6,      8,      -1,     10,     11,     12,     N,      -1,     -1,     N,      "vddio_ao"),
-      |         ^~~~~~~~
-drivers/pinctrl/tegra/pinctrl-tegra194.c:1341:28: note: (near initialization for 'tegra194_groups[0].drv_reg')
- 1341 |                 .drv_reg = ((r)),                               \
-      |                            ^
-drivers/pinctrl/tegra/pinctrl-tegra194.c:1392:41: note: in expansion of macro 'DRV_PINGROUP_ENTRY_Y'
- 1392 | #define drive_touch_clk_pcc4            DRV_PINGROUP_ENTRY_Y(0x2004,    12,     5,      20,     5,      -1,     -1,     -1,     -1,     1)
-      |                                         ^~~~~~~~~~~~~~~~~~~~
-drivers/pinctrl/tegra/pinctrl-tegra194.c:1631:17: note: in expansion of macro 'drive_touch_clk_pcc4'
- 1631 |                 drive_##pg_name,                                \
-      |                 ^~~~~~
-drivers/pinctrl/tegra/pinctrl-tegra194.c:1636:9: note: in expansion of macro 'PINGROUP'
- 1636 |         PINGROUP(touch_clk_pcc4,        GP,             TOUCH,          RSVD2,          RSVD3,          0x2000,         1,      Y,      -1,     -1,     6,      8,      -1,     10,     11,     12,     N,      -1,     -1,     N,      "vddio_ao"),
-      |         ^~~~~~~~
-
-Remove it again.
-
-Fixes: 613c0826081b ("pinctrl: tegra: Add pinmux support for Tegra194")
-Fixes: 92cadf68e50a ("pinctrl: tegra: pinctrl-tegra194: Do not initialise field twice")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
-The two initializers are different, please double-check that I
-remove the right one here.
----
- drivers/pinctrl/tegra/pinctrl-tegra194.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/pinctrl/tegra/pinctrl-tegra194.c b/drivers/pinctrl/tegra/pinctrl-tegra194.c
-index b4fef9185d88..5c1dfcb46749 100644
---- a/drivers/pinctrl/tegra/pinctrl-tegra194.c
-+++ b/drivers/pinctrl/tegra/pinctrl-tegra194.c
-@@ -1387,7 +1387,6 @@ static struct tegra_function tegra194_functions[] = {
- 		.schmitt_bit = schmitt_b,			\
- 		.drvtype_bit = 13,				\
- 		.lpdr_bit = e_lpdr,				\
--		.drv_reg = -1,					\
- 
- #define drive_touch_clk_pcc4            DRV_PINGROUP_ENTRY_Y(0x2004,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
- #define drive_uart3_rx_pcc6             DRV_PINGROUP_ENTRY_Y(0x200c,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
 -- 
-2.29.2
-
+Ville Syrjälä
+Intel
