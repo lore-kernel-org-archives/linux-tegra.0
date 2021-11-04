@@ -2,250 +2,184 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10655C433EF
-	for <linux-tegra@archiver.kernel.org>; Thu,  4 Nov 2021 08:29:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FD24C433F5
+	for <linux-tegra@archiver.kernel.org>; Thu,  4 Nov 2021 08:48:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EDC40610A8
-	for <linux-tegra@archiver.kernel.org>; Thu,  4 Nov 2021 08:29:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 556566112D
+	for <linux-tegra@archiver.kernel.org>; Thu,  4 Nov 2021 08:48:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230152AbhKDIcV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 4 Nov 2021 04:32:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46336 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230084AbhKDIcV (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 4 Nov 2021 04:32:21 -0400
-Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E404C061714;
-        Thu,  4 Nov 2021 01:29:43 -0700 (PDT)
-Received: by mail-wr1-x42b.google.com with SMTP id b12so7359409wrh.4;
-        Thu, 04 Nov 2021 01:29:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=pcwd8GDYliHD4EuN9qh2enVI/ZU5CIFHUNJvQUBYilI=;
-        b=dGUbbax9kMiAJm1Pwhzjm3VGm1knzly+h1/Fephby+5bqqt/Mz30E5nEmcI7IvpB+B
-         1zb44ty9JLoyAnBs+DN9Gr8pkW7lHwmJdcUmptUo3MNcK7kmoVzGeSD1uZtVBHW661sY
-         kGuWRij3/l5fQQ5nY8b/XbRMHUdRwxNa4cCqWFdTXK6gb1lDSyzcM97Gjk1JAUHrjfjU
-         CJfaOgncKZfgsy5khYD5YZcrLtWOmMrUEmrVNlrt/gK59gge9568416eaeUBfLdRXq40
-         YErhxvGgcSFLTH06z+eYOHaO7A9pZZ9sHrpXlWGZydQjBnLGUhOS2eR9i8Sdb9rsVK01
-         X0Sw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=pcwd8GDYliHD4EuN9qh2enVI/ZU5CIFHUNJvQUBYilI=;
-        b=Qd8zezkBeU6WfW57TaEG47dj5BRIlB6lf6d7IXTRPTD/lbeUy4PeZnDDV/F0SH4IkV
-         le5p16OuIOzlZtWb+MztE9xksosueZYQTZlqw2GhTKodqrMxwXqLFLZyX1y92lbLQBg/
-         aENSIY0Xf/0S8WLDHN+caRteQlBkQe7HjYIMHoBKNdskzlFukFPS1bUk2fH1/PKOth8w
-         ff14M6jMcnozl4wob+coqitB2lihOZAfg5lH/TT1Gqa1LBlpcLX6xGYP+1jFIcfY8zvd
-         dbhPx4OV0JETpSls9xU6hDsyZAqGCFTvdWjuBRvWFPtEKBOu10gcvjHKrLHMJWIaL/qo
-         DIJA==
-X-Gm-Message-State: AOAM533DpsihJ2ecUn5UxQHxV00F6o38EpuAJGHiWdWO1CTYn7l1AULl
-        soUdz2v0E/JMi526+rv1EaE=
-X-Google-Smtp-Source: ABdhPJwDLiXTSPiambILjtqwczoTMpJV8US3YrI7+PEySnF9sH1GZDt1S0qfQU+l3YSZ3lAZr5uj+w==
-X-Received: by 2002:adf:f551:: with SMTP id j17mr61148688wrp.392.1636014581916;
-        Thu, 04 Nov 2021 01:29:41 -0700 (PDT)
-Received: from orome.fritz.box ([193.209.96.43])
-        by smtp.gmail.com with ESMTPSA id e3sm4242898wrp.8.2021.11.04.01.29.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Nov 2021 01:29:41 -0700 (PDT)
-Date:   Thu, 4 Nov 2021 09:29:38 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Thierry Reding <treding@nvidia.com>,
+        id S230445AbhKDIvX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 4 Nov 2021 04:51:23 -0400
+Received: from new3-smtp.messagingengine.com ([66.111.4.229]:58571 "EHLO
+        new3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230467AbhKDIvW (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 4 Nov 2021 04:51:22 -0400
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 2D585580876;
+        Thu,  4 Nov 2021 04:48:44 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute6.internal (MEProxy); Thu, 04 Nov 2021 04:48:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm1; bh=trsPLTuX5eN1+6357zkP5w+4wv/
+        ep/5Bf7nUaNCCfvk=; b=N6qNGXwP4tfhBg/RWUGBNA1sWDjOx7qLK/hiogyEOQv
+        Jj1b+xa3+cboDAo7kVwCYkf3pyYcnPo+VEeZJRtjLBNiqQ+TGV53dj5uqoYgTbOO
+        o1x17aLxL2gPcbxCkkf+ffuY+3GXKZwDiJK9NSzcnHhJdmrDCBD4cxq9DO6pVdZM
+        EAg76+zQ4ysijBUxJNowIojZ7HmrxIpedGACWqdBXfiieZSZK6Sbyk6EnHhcNjDK
+        I149cd67WwCrX6OCnf4oYORCa2lJGOueYeQB5o6/it1nXWTi0s/7lHJYZbaOnQEl
+        fyhIYUE+PMxiBkdVpv2YihTmCKgwkwD5x1SJv1mSDLA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=trsPLT
+        uX5eN1+6357zkP5w+4wv/ep/5Bf7nUaNCCfvk=; b=ECmjANenJrnyee/dKXXG1k
+        rFFMtu6U9KJ/jnEqf+3TIoPRUyvBrP9QAMyWxLtAaWCUjI0zMlmYMSxox9TJMv9z
+        3IpcFsVxQ2DfHxXNTfZRufbmgEL9vV6zGu8aYTGD0/yjG6VeGv0H/cjmACoLEs//
+        cOMRM8mGs3g7n1i+xHK9IgEH/yqOpSW+EFvRcUThlyVqDEWKVk5QeS0ms5eg+uT4
+        VN+LNwIh0tbZlWXSCSDKMi7V6Gn45Rd8K22xSsTQIgqr7cJkkKsLHFWkNd1b2+DT
+        DXWG3SaWQQBdV1Q6tfEzFBswqUbJ/W64O4hEftRAOp1bcqzp7V1a7wqTMfQC6uXA
+        ==
+X-ME-Sender: <xms:ap6DYWBNnUrK0DttOvLMBq6bVTj8lRIKO_7wsMAY-7ScoyjxTM8yFA>
+    <xme:ap6DYQhO9PQCfa22jTUW4ydwUHTmJ6Lj2jDgrVhRkrfLjEvBt2quEiuMKwgaZYkLk
+    UP5lFKWfgjxGEKbfwQ>
+X-ME-Received: <xmr:ap6DYZnB4KDcIbQ2m_dgDt7el6TPmeluFpYpIeXHGvy-Yf4Il-XuXbPRzv-F3R6SpXG-TfUQZ3GGPm-Fe85sc6_0nrXa7Fcs22S5xe-Q>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvuddrtdefgdduvddtucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvffukfhfgggtuggjsehgtderredttddunecuhfhrohhmpeforgigihhm
+    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
+    htvghrnhepuddvudfhkeekhefgffetffelgffftdehffduffegveetffehueeivddvjedv
+    gfevnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmh
+    grgihimhgvsegtvghrnhhordhtvggthh
+X-ME-Proxy: <xmx:ap6DYUxQkdnWKHij88goigB1gNaPih8O-SV_9Clra1AVcSQczOBqWA>
+    <xmx:ap6DYbQ8V1so-0Gf2rnVuCVkRspOHmiNxWrQSd2sWQUNc6b1qSBxuA>
+    <xmx:ap6DYfYshdOufsOktbkss3UCz9o-gJ4qY_5vKX972e28nu6r4Ghnbw>
+    <xmx:bJ6DYfK0uiuzUY798_6Z0VnOIXii53fYN6IzaJwXXo3GHZ5xhlOr-Q>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 4 Nov 2021 04:48:42 -0400 (EDT)
+Date:   Thu, 4 Nov 2021 09:48:41 +0100
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
+Cc:     Emma Anholt <emma@anholt.net>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        amd-gfx@lists.freedesktop.org,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Phil Elwell <phil@raspberrypi.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Tim Gover <tim.gover@raspberrypi.com>,
+        Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mathias Nyman <mathias.nyman@intel.com>,
-        JC Kuo <jckuo@nvidia.com>, Nicolas Chauvet <kwizart@gmail.com>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v2] usb: xhci: tegra: Check padctrl interrupt presence in
- device tree
-Message-ID: <YYOZ8sYB94hZlncn@orome.fritz.box>
-References: <20211102184801.7229-1-digetx@gmail.com>
+        Jonas Karlman <jonas@kwiboo.se>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        intel-gfx@lists.freedesktop.org,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        linux-tegra@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        Dom Cobley <dom@raspberrypi.com>,
+        "Pan, Xinhui" <Xinhui.Pan@amd.com>,
+        Robert Foss <robert.foss@linaro.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH 01/13] drm/connector: Add define for HDMI 1.4 Maximum
+ Pixel Rate
+Message-ID: <20211104084841.mjnennxgelacleaj@gilmour>
+References: <20211102145944.259181-1-maxime@cerno.tech>
+ <20211102145944.259181-2-maxime@cerno.tech>
+ <YYJsM6/hZ43b1tm9@intel.com>
+ <YYLPXJoC7TZcwejb@intel.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="Qycldy+Ti1hSw7yP"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="pxndx3anvyrc7z43"
 Content-Disposition: inline
-In-Reply-To: <20211102184801.7229-1-digetx@gmail.com>
-User-Agent: Mutt/2.1.3 (987dde4c) (2021-09-10)
+In-Reply-To: <YYLPXJoC7TZcwejb@intel.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---Qycldy+Ti1hSw7yP
-Content-Type: text/plain; charset=us-ascii
+--pxndx3anvyrc7z43
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 02, 2021 at 09:48:01PM +0300, Dmitry Osipenko wrote:
-> Older device-trees don't specify padctrl interrupt and xhci-tegra driver
-> now fails to probe with -EINVAL using those device-trees. Check interrupt
-> presence and keep runtime PM disabled if it's missing to fix the trouble.
+Hi Ville,
+
+On Wed, Nov 03, 2021 at 08:05:16PM +0200, Ville Syrj=E4l=E4 wrote:
+> On Wed, Nov 03, 2021 at 01:02:11PM +0200, Ville Syrj=E4l=E4 wrote:
+> > On Tue, Nov 02, 2021 at 03:59:32PM +0100, Maxime Ripard wrote:
+> > > --- a/drivers/gpu/drm/drm_edid.c
+> > > +++ b/drivers/gpu/drm/drm_edid.c
+> > > @@ -4966,7 +4966,7 @@ static void drm_parse_hdmi_forum_vsdb(struct dr=
+m_connector *connector,
+> > >  		u32 max_tmds_clock =3D hf_vsdb[5] * 5000;
+> > >  		struct drm_scdc *scdc =3D &hdmi->scdc;
+> > > =20
+> > > -		if (max_tmds_clock > 340000) {
+> > > +		if (max_tmds_clock > DRM_HDMI_14_MAX_TMDS_CLK_KHZ) {
+> > >  			display->max_tmds_clock =3D max_tmds_clock;
+> > >  			DRM_DEBUG_KMS("HF-VSDB: max TMDS clock %d kHz\n",
+> > >  				display->max_tmds_clock);
+> > > diff --git a/drivers/gpu/drm/i915/display/intel_hdmi.c b/drivers/gpu/=
+drm/i915/display/intel_hdmi.c
+> > > index d2e61f6c6e08..0666203d52b7 100644
+> > > --- a/drivers/gpu/drm/i915/display/intel_hdmi.c
+> > > +++ b/drivers/gpu/drm/i915/display/intel_hdmi.c
+> > > @@ -2226,7 +2226,7 @@ int intel_hdmi_compute_config(struct intel_enco=
+der *encoder,
+> > >  		if (scdc->scrambling.low_rates)
+> > >  			pipe_config->hdmi_scrambling =3D true;
+> > > =20
+> > > -		if (pipe_config->port_clock > 340000) {
+> > > +		if (pipe_config->port_clock > DRM_HDMI_14_MAX_TMDS_CLK_KHZ) {
+> > >  			pipe_config->hdmi_scrambling =3D true;
+> > >  			pipe_config->hdmi_high_tmds_clock_ratio =3D true;
+> > >  		}
+> >=20
+> > All of that is HDMI 2.0 stuff. So this just makes it all super
+> > confusing IMO. Nak.
 >=20
-> Fixes: 971ee247060d ("usb: xhci: tegra: Enable ELPG for runtime/system PM=
-")
-> Cc: <stable@vger.kernel.org> # 5.14+
-> Tested-by: Nicolas Chauvet <kwizart@gmail.com>
-> Reported-by: Nicolas Chauvet <kwizart@gmail.com>
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
+> So reading throgh HDMI 1.4 again it does specify 340 MHz as some kind
+> of upper limit for the physical cable. But nowhere else is that number
+> really mentioned AFAICS. HDMI 2.0 does talk quite a bit about the 340
+> Mcsc limit in various places.
 >=20
-> Changelog:
->=20
-> v2: - Use of_irq_parse_one() to check interrupt presence status in device=
--tree,
->       instead of checking interrupt properties directly.
->=20
->     - USB wakeup and runtime PM are kept disabled if interrupt is missing,
->       instead of returning -EOPNOTSUPP from RPM-suspend callback.
->=20
->     - Added debug message, telling about the missing interrupt.
->=20
->  drivers/usb/host/xhci-tegra.c | 40 ++++++++++++++++++++++++-----------
->  1 file changed, 28 insertions(+), 12 deletions(-)
+> I wonder what people would think of a couple of helpers like:
+> - drm_hdmi_{can,must}_use_scrambling()
+> - drm_hdmi_is_high_tmds_clock_ratio()
+> or something along those lines? At least with those the code would
+> read decently and I wouldn't have to wonder what this HDMI 1.4 TMDS
+> clock limit really is.
 
-I like this version much better. Two minor nits:
+Patch 2 introduces something along those lines.
 
->=20
-> diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
-> index 1bf494b649bd..0a7ab596be85 100644
-> --- a/drivers/usb/host/xhci-tegra.c
-> +++ b/drivers/usb/host/xhci-tegra.c
-> @@ -1400,6 +1400,7 @@ static void tegra_xusb_deinit_usb_phy(struct tegra_=
-xusb *tegra)
-> =20
->  static int tegra_xusb_probe(struct platform_device *pdev)
->  {
-> +	struct of_phandle_args irq_arg;
+It doesn't cover everything though, we're using this define in vc4 to
+limit the available modes in mode_valid on HDMI controllers not
+4k-capable
 
-Could've been just "args". There's no other "arg" variable here, so no
-need for an irq_ prefix to differentiate.
+We could probably do better on the name, but I still believe a define
+like this would be valuable.
 
->  	struct tegra_xusb *tegra;
->  	struct device_node *np;
->  	struct resource *regs;
-> @@ -1454,10 +1455,16 @@ static int tegra_xusb_probe(struct platform_devic=
-e *pdev)
->  		goto put_padctl;
->  	}
-> =20
-> -	tegra->padctl_irq =3D of_irq_get(np, 0);
-> -	if (tegra->padctl_irq <=3D 0) {
-> -		err =3D (tegra->padctl_irq =3D=3D 0) ? -ENODEV : tegra->padctl_irq;
-> -		goto put_padctl;
-> +	/* Older device-trees don't have padctrl interrupt */
-> +	err =3D of_irq_parse_one(np, 0, &irq_arg);
-> +	if (!err) {
-> +		tegra->padctl_irq =3D of_irq_get(np, 0);
-> +		if (tegra->padctl_irq <=3D 0) {
-> +			err =3D (tegra->padctl_irq =3D=3D 0) ? -ENODEV : tegra->padctl_irq;
-> +			goto put_padctl;
-> +		}
-> +	} else {
-> +		dev_dbg(&pdev->dev, "%pOF doesn't have interrupt\n", np);
+Maxime
 
-This seems a bit vague. I think it'd be better to include information
-about the consequence of this interrupt being missing and/or some hint
-about what should be done about it. Perhaps something like:
-
-		dev_dbg(&pdev->dev, "%pOF is missing an interrupt, disabling PM support\n=
-", np);
-
-With that fixed:
-
-Acked-by: Thierry Reding <treding@nvidia.com>
-
-
-I've also run this through our GVS test farm, and didn't spot any
-regressions, so:
-
-Tested-by: Thierry Reding <treding@nvidia.com>
-
-Thierry
-
->  	}
-> =20
->  	tegra->host_clk =3D devm_clk_get(&pdev->dev, "xusb_host");
-> @@ -1696,11 +1703,15 @@ static int tegra_xusb_probe(struct platform_devic=
-e *pdev)
->  		goto remove_usb3;
->  	}
-> =20
-> -	err =3D devm_request_threaded_irq(&pdev->dev, tegra->padctl_irq, NULL, =
-tegra_xusb_padctl_irq,
-> -					IRQF_ONESHOT, dev_name(&pdev->dev), tegra);
-> -	if (err < 0) {
-> -		dev_err(&pdev->dev, "failed to request padctl IRQ: %d\n", err);
-> -		goto remove_usb3;
-> +	if (tegra->padctl_irq) {
-> +		err =3D devm_request_threaded_irq(&pdev->dev, tegra->padctl_irq,
-> +						NULL, tegra_xusb_padctl_irq,
-> +						IRQF_ONESHOT, dev_name(&pdev->dev),
-> +						tegra);
-> +		if (err < 0) {
-> +			dev_err(&pdev->dev, "failed to request padctl IRQ: %d\n", err);
-> +			goto remove_usb3;
-> +		}
->  	}
-> =20
->  	err =3D tegra_xusb_enable_firmware_messages(tegra);
-> @@ -1718,13 +1729,16 @@ static int tegra_xusb_probe(struct platform_devic=
-e *pdev)
->  	/* Enable wake for both USB 2.0 and USB 3.0 roothubs */
->  	device_init_wakeup(&tegra->hcd->self.root_hub->dev, true);
->  	device_init_wakeup(&xhci->shared_hcd->self.root_hub->dev, true);
-> -	device_init_wakeup(tegra->dev, true);
-> =20
->  	pm_runtime_use_autosuspend(tegra->dev);
->  	pm_runtime_set_autosuspend_delay(tegra->dev, 2000);
->  	pm_runtime_mark_last_busy(tegra->dev);
->  	pm_runtime_set_active(tegra->dev);
-> -	pm_runtime_enable(tegra->dev);
-> +
-> +	if (tegra->padctl_irq) {
-> +		device_init_wakeup(tegra->dev, true);
-> +		pm_runtime_enable(tegra->dev);
-> +	}
-> =20
->  	return 0;
-> =20
-> @@ -1772,7 +1786,9 @@ static int tegra_xusb_remove(struct platform_device=
- *pdev)
->  	dma_free_coherent(&pdev->dev, tegra->fw.size, tegra->fw.virt,
->  			  tegra->fw.phys);
-> =20
-> -	pm_runtime_disable(&pdev->dev);
-> +	if (tegra->padctl_irq)
-> +		pm_runtime_disable(&pdev->dev);
-> +
->  	pm_runtime_put(&pdev->dev);
-> =20
->  	tegra_xusb_powergate_partitions(tegra);
-> --=20
-> 2.33.1
->=20
-
---Qycldy+Ti1hSw7yP
+--pxndx3anvyrc7z43
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmGDme8ACgkQ3SOs138+
-s6GevxAAvkTTp7npOtsuFJy7thXLlayo+hsSGRMPEEatIEM8UPncC9OM4ljiBVWY
-3nCRClCxbxrr+FS6ChXsDwh1QOKZuYJdLQk5Hwny3prfp2mH7Ibzgp+vU4RXQlKw
-zByURJ4FdwFUk+avxtT/N20jzgkEy0gaVPm7aLajInXeRXcmZ9wQZY0TmTadcB5p
-cRj1czJDa7tWmkIEvSjLUHb1X+yyMiEq151VUxI8/NzWcXSQmnCN16hV6d0D6MZ9
-eK89pk3/RiBoRDK2yfv33I1tIwdRLvXi9gOQuN/4tSbf1Y94a8+Zq2FuRKfWGSB4
-XSasfrDxdpUchELjlapcHjV8JEF5EyGhaVCOByv6k2QtBjG/SU+S+LpDQPY4KwzO
-mJqRJdvgSSJDRp0A6629p/ciyiey30CJN24WIMMnTXpjefn53/stQVlSlfT3vnq3
-4hsCm3l508oAqqohdnFaThWjF5KqM5wWAO7FQqBLi2xPW5LvHeve6METUlQA+SFm
-nSwafHVqrbtoPGWBBUAZZaQjpLdVWIC5mXfsVfvtAj3po7gwf7z7tAuUEHpEjfrS
-pR+UD/qtgedI8VTKo2eaO0eIqnzI+ZCA2hL0iDB+F+2q5iXOPqdI5Wji9FDwMD5d
-SXK60cUYla7TUnCsXwLHzL4Es4CQv1aXPgdSBQVMc5BMmOJdIlk=
-=NQzK
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYYOeaAAKCRDj7w1vZxhR
+xW31AP9ZrW1GZ894aQ+2PZr6HfCImm0k5/+iLzGrkzoNuAj3BwD/fm55lGcssQw+
+lhcuuMOafgTMwGbj7Dw+tHaTcMYN7w4=
+=8Jzs
 -----END PGP SIGNATURE-----
 
---Qycldy+Ti1hSw7yP--
+--pxndx3anvyrc7z43--
