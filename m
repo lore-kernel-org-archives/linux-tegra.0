@@ -2,130 +2,135 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1041CC433EF
-	for <linux-tegra@archiver.kernel.org>; Fri,  5 Nov 2021 08:59:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16E23C433EF
+	for <linux-tegra@archiver.kernel.org>; Fri,  5 Nov 2021 11:23:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E5AC861268
-	for <linux-tegra@archiver.kernel.org>; Fri,  5 Nov 2021 08:59:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E58CC61279
+	for <linux-tegra@archiver.kernel.org>; Fri,  5 Nov 2021 11:23:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229601AbhKEJCL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 5 Nov 2021 05:02:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37364 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231946AbhKEJCK (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 5 Nov 2021 05:02:10 -0400
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B19ACC061714
-        for <linux-tegra@vger.kernel.org>; Fri,  5 Nov 2021 01:59:29 -0700 (PDT)
-Received: by mail-wm1-x32e.google.com with SMTP id 77-20020a1c0450000000b0033123de3425so9086494wme.0
-        for <linux-tegra@vger.kernel.org>; Fri, 05 Nov 2021 01:59:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=QPslnKsFyR02C7DZhk2yfhXwOIAiWBPx0Yn6206b6Z4=;
-        b=qWXLuSEgXB1oAPm85i5w0lXxLpDHnSP/NA3OtleaComjA/rMqbUQ1EzfwJSlVq1lqv
-         6FPm/48+iKH5AhAnhtEznI2hfFh7PmdlevJCgaYJ3eHVs87lUKAdynpjFGADeYbpj33o
-         inawwwK9CKL6VntGq9l2iVKSABi3sh9jBEfrsB5ym8h1FhLJV97CQsQzUj5itCv3eXOA
-         uQo/XD+tjEe3k7Upi4GpX3f8Xyk1+F7d5LxOT+HemSY5Mh8d4PtLx9qwOEB9XYWQui1C
-         oPlOS9bzg1oCPo1r5ctaE100Qt+pnU5Og7GoUOW6KpdIbDRJLnFg/cRw2tQgmIjpl7gU
-         E00w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=QPslnKsFyR02C7DZhk2yfhXwOIAiWBPx0Yn6206b6Z4=;
-        b=ihO360ZLgbj8OXmFVhql/mPeYQY8pgnnDwKRXHzq9C+dU4tCK1oDnmKZnNyYD4sGJv
-         tUJWmcyb6viILkKM+LudZBRbnMewLBoAmO1v8iR+rcKxMpcqOI5TIOAvfKaSf9kD2lKU
-         f4IXvw4RmyBEPW3CGADyzp2RFr0oy9vNaeUKNgb67qHa0/CNozkxsW3yEgK+8UBrpmZa
-         4Gqbl64yrPGYZYaWVI+mwqUx9o4qqTdlnKzs6PCaSFXI8kjK4ogPDAZHKdu1cqClrk92
-         jfk1iwN/bcHPGqlPSc7DeCTSHm9QBnthSOBBIbGRcdnc3vy+/VXxWAE4N18jeLDToQCe
-         IcmA==
-X-Gm-Message-State: AOAM531EgMYp+fbXKyq/A7J4VMaUZbAu6aIS6jnOqlFAZpmrNofwjipI
-        3jAd60bx/jLVqQrcx59yHJ4qg7txzbzz5A==
-X-Google-Smtp-Source: ABdhPJwYAJdSpbPa+WXOwJHCU5Bk3EKdxQqhmIUpojZpB6gZCgnwErhhY+v3ZxrJIq3kH18STzkPmw==
-X-Received: by 2002:a1c:4306:: with SMTP id q6mr28815923wma.29.1636102768298;
-        Fri, 05 Nov 2021 01:59:28 -0700 (PDT)
-Received: from orome.fritz.box ([193.209.96.43])
-        by smtp.gmail.com with ESMTPSA id f7sm459611wri.74.2021.11.05.01.59.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Nov 2021 01:59:27 -0700 (PDT)
-Date:   Fri, 5 Nov 2021 09:59:24 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Dave Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
-Cc:     dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
-Subject: Re: [GIT PULL] drm/tegra: Changes for v5.16-rc1
-Message-ID: <YYTybH9cEcmJUaVc@orome.fritz.box>
-References: <20211008202334.1679411-1-thierry.reding@gmail.com>
+        id S232304AbhKEL0f (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 5 Nov 2021 07:26:35 -0400
+Received: from mail-mw2nam10on2063.outbound.protection.outlook.com ([40.107.94.63]:46112
+        "EHLO NAM10-MW2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S232115AbhKEL0f (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Fri, 5 Nov 2021 07:26:35 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=XOoIRY5EPXqQgEbTubZ7Azov+/bxHdwi4Ws1cdlVK08kW8KPS8k0Ks9pdVllhSz9WQ7q3NtRDP5qhJITBfF2hvcF9TXp6IHSjU+xcR4moMY6i46SnNgehix4nUUWvC1dt2G9oL/DvsrZaW2Wg74ohfJwZYAd8cwJBRDRTHTPvgIbxEfGmZ0SCbSmVtIYPTDEIMBFvKPrJyLQd+2JXdIG0MHEYYP8TadI6q2PMOwoQxtz3Fdi7dcNseTJgYtplL5CkFbZYBuqwGPSGkK/jJ4S1F0UMJ03aFLWl39mMIrvmcmu3r6RLt1ee5Zp1wvzfAQK2FPECMrYKGX6Uj3ysXqQqQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=E2xtk4co7ursdHqK1aqaLnszC+6D6C8aiDj8b9eVoyg=;
+ b=QUC+Hv7L7k4i2w3+tPluzqHxMiOOsHYNAAiIslRTmhjZo6Ni+k6bp0I281jwiF2BkkxMgHS/tHBRowo1W+CXu5zf3ojmdfD3tWnqgBK3qWB0fQ0uuqB/vDtbli4xTXlHC0H77HI9KY6Q1uLRsHp+OIMquqfkgxTd8+kuR+EFzpd/FUpNaUYt8x9rFJdjnbjuHOee+uCk7WDscK4u4Fi7pT5h9OS7UW3GbEYmOkprQlgnPeRYoxPntL7t8fIXGK1N6f+9XQT4qWHWF1/3uFH0esQm4o3fo5LGqP9gCD4bSluvX3nzMQG1tcwgcAsmU42VGCLF8KEB/Wks44F4pS6b7g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.112.35) smtp.rcpttodomain=denx.de smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=E2xtk4co7ursdHqK1aqaLnszC+6D6C8aiDj8b9eVoyg=;
+ b=IZQA20e1veBk7AMtjRlUYBLATrYFuObezFixZFC6NASjy4ECimb0PcWCXc0u1bacA3/1ucV2cdrzWa1aWFqFfdhd1uEUrOxon7nRv9mGpiW1izID9/oYxMH90rORbZWVW2RjdQBGEIknlyVi0YsA1yqDbEo9J5NmWcym6wOSgy4aJ7S7u5DpIefMCyC/lhTgKA5dsGXKjR5R5xkygIBeT1GQ+35TN6sEga7MuIsdXtkxyZNbeS9x/XWk4va7zSQ4D21yrO+bYkld7nONBII9Pp96atkbw+1FOk0zO8e7mabpdJTj5nauW5ywbbigY2gCAC4xtlBTwZbrqIH8AOs96w==
+Received: from MW4PR03CA0278.namprd03.prod.outlook.com (2603:10b6:303:b5::13)
+ by DM8PR12MB5480.namprd12.prod.outlook.com (2603:10b6:8:24::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4669.10; Fri, 5 Nov
+ 2021 11:23:53 +0000
+Received: from CO1NAM11FT013.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:303:b5:cafe::f2) by MW4PR03CA0278.outlook.office365.com
+ (2603:10b6:303:b5::13) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4669.11 via Frontend
+ Transport; Fri, 5 Nov 2021 11:23:53 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.35)
+ smtp.mailfrom=nvidia.com; denx.de; dkim=none (message not signed)
+ header.d=none;denx.de; dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.112.35 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.112.35; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (216.228.112.35) by
+ CO1NAM11FT013.mail.protection.outlook.com (10.13.174.227) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.4669.10 via Frontend Transport; Fri, 5 Nov 2021 11:23:52 +0000
+Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL111.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Fri, 5 Nov
+ 2021 11:23:52 +0000
+Received: from jonathanh-vm-01.nvidia.com (172.20.187.5) by mail.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1497.18 via Frontend
+ Transport; Fri, 5 Nov 2021 11:23:51 +0000
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
+        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
+        <stable@vger.kernel.org>, <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 5.14 00/16] 5.14.17-rc1 review
+In-Reply-To: <20211104141159.863820939@linuxfoundation.org>
+References: <20211104141159.863820939@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="pIOV3bZo7l6jpjwc"
-Content-Disposition: inline
-In-Reply-To: <20211008202334.1679411-1-thierry.reding@gmail.com>
-User-Agent: Mutt/2.1.3 (987dde4c) (2021-09-10)
+Message-ID: <fa39e5ea54ee4bf9ba325bb6a5cf9eb4@HQMAIL105.nvidia.com>
+Date:   Fri, 5 Nov 2021 11:23:51 +0000
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 2943c083-4f08-424a-e7b3-08d9a04ebf7b
+X-MS-TrafficTypeDiagnostic: DM8PR12MB5480:
+X-Microsoft-Antispam-PRVS: <DM8PR12MB5480DCAF657FFB1649B8BDF3D98E9@DM8PR12MB5480.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: gsfSqFlckmWERSwkSoHEZvw1XuFib+4mXqwaFGnPv8cnkpn4b8Ltc8iTGZB8RubiGHWIx5Lv5XQvB7rWgoJLCMa/JpqnU5iK+TbDMwt+UM/T8DMkG1gOLCAxUPEA9E7TXG0oG+mgkZ8flFT9rqw+IjMJu3mdNJbgLWhximv7hUGi3xnEhsnkpyRewMvmx6S7EEwQETSajiU814epa/axDc383vZXAdTnzG+lAahSRJK3jcYG+8f5stXDu1WEgy0dH2PL/3Y37JDVfzbfVtNmXTUchEq6vXR8KesAW0aFkuBQqBORQGpbkBcXYd8LEQmn0eXFE9ihe0xF/LJGG3ubXcEY4cjP570PgwcC8pusB/p9VzaAwDJi+9giV5eCGedV4sPDTR/ShAV5VN0O5AuKKHt13AS71E8Kql+Yh151S0JQhmtKZUGZBnC02BNkOXvXurUiHRtolq15tmYQERhttWBKqY3EgtM/R5CiFbjbNFjzjlekO0Oyr0df4eKSWoEFXdxMElrglEcMbrRr6dWYG5+svAzWx8/d2Nsb8rpWbBTDY4RpBorXhB73iowN4dW5LuOX7ejT2sHOZvLogSr6jVgvrGll7vnql105bmiSW2wflPYsAUh8byzV7BWd7cXiwX9ph6/c89KX88Ua7/iRzIlsa7+za7CLewBplp/QksiXXqAvXWe3r/BXf+Igu6rYSjUVqQFpAsq/7uyby+X+qcVcErTSji4+3mDRwQfz7GOYkNjpyDKv7dlb64VLkmmOYNkrg1FIGriDl3L7997Q07aczv+5kY2Yw2AlX7yhrwg=
+X-Forefront-Antispam-Report: CIP:216.228.112.35;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid02.nvidia.com;CAT:NONE;SFS:(4636009)(46966006)(36840700001)(2906002)(6916009)(186003)(26005)(7416002)(8936002)(4326008)(70206006)(108616005)(24736004)(70586007)(86362001)(82310400003)(426003)(316002)(54906003)(7636003)(8676002)(356005)(336012)(47076005)(508600001)(966005)(5660300002)(36860700001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Nov 2021 11:23:52.8908
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2943c083-4f08-424a-e7b3-08d9a04ebf7b
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.35];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT013.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM8PR12MB5480
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On Thu, 04 Nov 2021 15:12:31 +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.14.17 release.
+> There are 16 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sat, 06 Nov 2021 14:11:51 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.14.17-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.14.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
---pIOV3bZo7l6jpjwc
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+All tests passing for Tegra ...
 
-On Fri, Oct 08, 2021 at 10:23:34PM +0200, Thierry Reding wrote:
-> Hi Dave, Daniel,
->=20
-> The following changes since commit c3dbfb9c49eef7d07904e5fd5e158dd6688bba=
-b3:
->=20
->   gpu: host1x: Plug potential memory leak (2021-09-16 18:06:52 +0200)
->=20
-> are available in the Git repository at:
->=20
->   ssh://git.freedesktop.org/git/tegra/linux.git tags/drm/tegra/for-5.16-r=
-c1
->=20
-> for you to fetch changes up to 5dccbc9de8f0071eb731b4de81d0638ea6c06a53:
->=20
->   drm/tegra: dc: rgb: Allow changing PLLD rate on Tegra30+ (2021-10-08 21=
-:17:38 +0200)
->=20
-> This is based on the drm/tegra/for-5.15-rc3 tag that you pulled a couple
-> of weeks ago. As mentioned last time already, the userspace for the new
-> NVDEC driver can be found here:
->=20
->   https://github.com/cyndis/vaapi-tegra-driver
->=20
-> I'm sending this a week earlier than usual because I'm out of office
-> next week.
+Test results for stable-v5.14:
+    10 builds:	10 pass, 0 fail
+    28 boots:	28 pass, 0 fail
+    114 tests:	114 pass, 0 fail
 
-Hi guys,
+Linux version:	5.14.17-rc1-g05ed8d6b833a
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
+                tegra20-ventana, tegra210-p2371-2180,
+                tegra210-p3450-0000, tegra30-cardhu-a04
 
-I haven't seen this show up in drm-next yet. Did this fall through the
-cracks or was there something that you wanted to see addressed?
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
-Thanks,
-Thierry
-
---pIOV3bZo7l6jpjwc
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmGE8mwACgkQ3SOs138+
-s6GxNQ//TR4n3eXSeF2KWCvPn48lnO6gz0mEHoagTDqEyfRyI3vkgTfp//OPhb3V
-aZ8QEMZQ3XlO/DCpxz9jAwBiSoPJdn0fjjtv4vuWHg1XDv6pbWS5Kn6JJ86gl/cZ
-k+1iU2WGh8zQucjLN2uNN+j6N4XmJLRidsMJfXwfnZCadAKF58CSMQwurC5bM73y
-6Rk7i720Sbd1dBWMcUCIR4flNMOlpD7xXLuAQcaonfaJVoqdOSDoz/z/3Q0r9x5C
-mswYCQnoOEhz7P6IC7SvzaCQk2c+vPd1lulv3Jzsq0OyHbAJhOrGxLtwDGECD5w4
-HomBetLJh74ZS7N3WsvzWeK3tQG6xdW6NNYCkvAKHPnbp3f0wAyPQerrl/JneT/e
-7QLbpY09gBLYUYf83j8vIlspY32R+4XeViEbAMZRjfsrLm/EI77pP5GIjv116Ivl
-MlLwCQURXpZJlI7Q3QiHxagluPFW2K53OhzQPdcv2yhvO9aOFLcmZVEfxyv3T1Wh
-xHivtOp58rCM/3ZJr1YU00x0GNxIpG88hw6ILwYCYCbKiO+9VRJxpljw3X9V5ReG
-LFUzTbSrr6TRupCZYr1O4dqkT2BM+QMLzgLZOS0E+0vHOTxK4cXn4KZJHhcMazCc
-3LGjr9umuLLZTRr1i06HcnrAkXSYeqDLwkAt6jPDLOvgYrmUWHg=
-=YbHt
------END PGP SIGNATURE-----
-
---pIOV3bZo7l6jpjwc--
+Jon
