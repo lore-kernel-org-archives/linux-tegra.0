@@ -2,54 +2,54 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26109C433F5
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 530DEC4332F
 	for <linux-tegra@archiver.kernel.org>; Sun,  7 Nov 2021 23:08:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 09CB6613B3
+	by mail.kernel.org (Postfix) with ESMTP id 177FC613D3
 	for <linux-tegra@archiver.kernel.org>; Sun,  7 Nov 2021 23:08:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235404AbhKGXLN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        id S235861AbhKGXLN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
         Sun, 7 Nov 2021 18:11:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33656 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33658 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235374AbhKGXLM (ORCPT
+        with ESMTP id S235375AbhKGXLM (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>); Sun, 7 Nov 2021 18:11:12 -0500
-Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09EB2C061570;
-        Sun,  7 Nov 2021 15:08:27 -0800 (PST)
-Received: by mail-lj1-x232.google.com with SMTP id e11so6674020ljo.13;
-        Sun, 07 Nov 2021 15:08:27 -0800 (PST)
+Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EEB9C061714;
+        Sun,  7 Nov 2021 15:08:28 -0800 (PST)
+Received: by mail-lj1-x230.google.com with SMTP id d11so4725431ljg.8;
+        Sun, 07 Nov 2021 15:08:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=qGOrZCQywxePXMyyV3xpg2iW/dZ+roDb4z6xkvFvUoY=;
-        b=EiM+IbH8j98z1wguhWYYd5JqExuh5ON5QCwPhIaCpBDMipg6z3/DN7JGi6HZ2z63AG
-         +KkfdvQnTdnxf6VJKNmOWUvW416Ac/fbaY66RK6EYDFpRQCjZG7tBFqzFh2dTXYuutDn
-         cLO6EZsguyj2Wm4WNvGzFZZyJLaIfbPjjRAwgQiJo/aenoKE2MR2PzSMlYvMkxQfDGZ7
-         DgKR74EqhS2qf5RXElMXxlakWenQ/fhSZVIMKc5WvIkc3hvJoWhcciglOoJEO6LgiuAe
-         7Rw77SIJuoQf1ydHtdQYUUgxK5HU4CXjVbmWbc4jwhc8qOicAGOsiGJIWVTzGpI20K6X
-         VjtA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=9v5NLsd56QrV5nZJkQ+d7hO2Yd8PMU4HBZ61bzljSys=;
+        b=f4839dAeeTsiZ8mj63AV5j5utFMeJpPEnDERo1l0hCv1MW8oGkf8ONuBsSPkuqxYNK
+         E335rYXB8bC9uffWBpf5yKOqcRj33o9Ffruv6Gcbp6Afkl6ZzMBzKMX+zxTP3T+a6cqn
+         FmMouQVK2kGAci5Kx2+bWF6KKyLnTN4iMgtlMVxONaMLyu1OgvC64Na4PVHDXLHVsOCe
+         XhtS0qXxZXfIi6Yh80VDaO32de7dzSD5+AkQu0/Ry5FS6I1rXz0DT2lDdwSkhk/3TR02
+         cElQ+InWWLrLJzeJ7soPDG28VGWWcbFYS0xcrUiKf+8MgK+y1xkxBdPZy+wOWd2UraMO
+         zEmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=qGOrZCQywxePXMyyV3xpg2iW/dZ+roDb4z6xkvFvUoY=;
-        b=gSDH3x/pIXYCRpRDpKpc26OU3iV4ia3hW95YrYMeczKhZPW47341tAaOL9VyuzM1wR
-         PgSY6wvaCtOxNrVWYACcGIQ9ahPv/5UMCoUPHTivXFyabwM97cKvNq6uSth8bUIo+1eL
-         ZdCcY0Cem4v2r32dbPufYF6alEKTFSWDrBdvRGaJAFCcveu0nkx2+ie9EPpLTAU/M0aQ
-         wI/9y66WzQiKgCIw2beyxCeCdAB2WgvAv45luJI0aKbpSnisL58J6dnHdtbi03+QTG62
-         vUOnV7Bh5k/6FuVbfAS9EXPLjtNfMurrxq8c7edU5Gl1KV5LzKSbRLwOl+pp17wSTR/b
-         JrUQ==
-X-Gm-Message-State: AOAM531aVKtu9rvAGPrttAXwaR3Id73eTdXxKuFjXlD2BIvqjYnWNrwO
-        +Yy3e/V5iDGehj3vOJr1XE0=
-X-Google-Smtp-Source: ABdhPJy4/Df640Vef4HLnif11/7zqgy/ojOfe0tndbPkjgXzZT7lqwhgDvrv4V3a8S1TzAhivylyHQ==
-X-Received: by 2002:a2e:b5b7:: with SMTP id f23mr51742411ljn.458.1636326505752;
-        Sun, 07 Nov 2021 15:08:25 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=9v5NLsd56QrV5nZJkQ+d7hO2Yd8PMU4HBZ61bzljSys=;
+        b=0wskY4AGlu+2Lb95J+UfwCE09da7Zothrgig+gflw/31HLQ2vIO3Esipy6mwsSr4Es
+         t6IhNxxlMahvjkApya7M+ojhGo0y2CXc48s3dr4KYo3urP8V7TfRNxYCfx6/bNgV7mEi
+         AbgCbS1kERY9YgrsbKSiZ9f/kmbnZ8YyKoaOE/zvNu6Bg+YR0fx20a3E4XL52yIoKxbx
+         tZ+j/BF94rDSJzdUwc1jHljptUGwLLjiM6QdvZvIUUlxt8M8H0qPyKaZ40kue90SsFRt
+         LuOCbS3JMFs3VPlLBQKuVjLyx9YxK8h8tmMIYFvM4TS4wjQHEejKazOIJLW5TXfib83S
+         aWJw==
+X-Gm-Message-State: AOAM531tOqTMycM9nVuw4B9d+lLu5DfWCTWnWFQ5QheUbQrpDeSsLyuA
+        pQT2abhuvg8CLVox7VoXVhU=
+X-Google-Smtp-Source: ABdhPJwYMReUcW/m+iND89XbkH7e/3YwLyLnc+Op38AjupihC25kL8XmQ80YSeO1/5ALAPUOmI9uHw==
+X-Received: by 2002:a2e:4e1a:: with SMTP id c26mr76325410ljb.27.1636326506483;
+        Sun, 07 Nov 2021 15:08:26 -0800 (PST)
 Received: from localhost.localdomain (79-139-188-96.dynamic.spd-mgts.ru. [79.139.188.96])
-        by smtp.gmail.com with ESMTPSA id l13sm1785694lfh.270.2021.11.07.15.08.24
+        by smtp.gmail.com with ESMTPSA id l13sm1785694lfh.270.2021.11.07.15.08.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 07 Nov 2021 15:08:25 -0800 (PST)
+        Sun, 07 Nov 2021 15:08:26 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -62,201 +62,79 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Thomas Graichen <thomas.graichen@gmail.com>
 Cc:     dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v1 1/2] drm/dp: Add drm_dp_aux_register_ddc/chardev() helpers
-Date:   Mon,  8 Nov 2021 02:08:20 +0300
-Message-Id: <20211107230821.13511-1-digetx@gmail.com>
+Subject: [PATCH v1 2/2] drm/tegra: Use drm_dp_aux_register_ddc/chardev() helpers
+Date:   Mon,  8 Nov 2021 02:08:21 +0300
+Message-Id: <20211107230821.13511-2-digetx@gmail.com>
 X-Mailer: git-send-email 2.33.1
+In-Reply-To: <20211107230821.13511-1-digetx@gmail.com>
+References: <20211107230821.13511-1-digetx@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Add drm_dp_aux_register_ddc/chardev() helpers that allow DP drivers
-to register I2C DDC adapter and character device separately.
+Use drm_dp_aux_register_ddc/chardev() helpers that allow to register I2C
+adapter separately from the character device. This fixes broken display
+panel driver of Acer Chromebook CB5-311 that fails to probe starting with
+v5.13 kernel when DP AUX registration order was changed. Tegra SOR driver
+is never probed now using the new registration order because tegra-output
+always fails with -EPROBE_DEFER due to missing display panel that requires
+DP AUX DDC to be registered first. The offending commit made DDC to be
+registered after SOR's output, which can't ever happen. Use new helpers
+to restore the registration order and revive display panel.
 
 Cc: <stable@vger.kernel.org> # 5.13+
+Fixes: 39c17ae60ea9 ("drm/tegra: Don't register DP AUX channels before connectors")
 Reported-by: Thomas Graichen <thomas.graichen@gmail.com> # T124 Nyan Big
 Tested-by: Thomas Graichen <thomas.graichen@gmail.com> # T124 Nyan Big
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/gpu/drm/drm_dp_helper.c | 112 +++++++++++++++++++++++++++-----
- include/drm/drm_dp_helper.h     |   4 ++
- 2 files changed, 99 insertions(+), 17 deletions(-)
+ drivers/gpu/drm/tegra/dpaux.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_dp_helper.c b/drivers/gpu/drm/drm_dp_helper.c
-index 4d0d1e8e51fa..56e3e57e6dc7 100644
---- a/drivers/gpu/drm/drm_dp_helper.c
-+++ b/drivers/gpu/drm/drm_dp_helper.c
-@@ -1775,7 +1775,7 @@ EXPORT_SYMBOL(drm_dp_remote_aux_init);
-  * drm_dp_aux_init() - minimally initialise an aux channel
-  * @aux: DisplayPort AUX channel
-  *
-- * If you need to use the drm_dp_aux's i2c adapter prior to registering it with
-+ * If you need to use the drm_dp_aux handle prior to registering it with
-  * the outside world, call drm_dp_aux_init() first. For drivers which are
-  * grandparents to their AUX adapters (e.g. the AUX adapter is parented by a
-  * &drm_connector), you must still call drm_dp_aux_register() once the connector
-@@ -1790,6 +1790,9 @@ EXPORT_SYMBOL(drm_dp_remote_aux_init);
-  */
- void drm_dp_aux_init(struct drm_dp_aux *aux)
- {
-+	if (aux->ddc.algo)
-+		return;
+diff --git a/drivers/gpu/drm/tegra/dpaux.c b/drivers/gpu/drm/tegra/dpaux.c
+index 1f96e416fa08..e0d675c7c2e5 100644
+--- a/drivers/gpu/drm/tegra/dpaux.c
++++ b/drivers/gpu/drm/tegra/dpaux.c
+@@ -532,7 +532,9 @@ static int tegra_dpaux_probe(struct platform_device *pdev)
+ 	dpaux->aux.transfer = tegra_dpaux_transfer;
+ 	dpaux->aux.dev = &pdev->dev;
+ 
+-	drm_dp_aux_init(&dpaux->aux);
++	err = drm_dp_aux_register_ddc(&dpaux->aux);
++	if (err < 0)
++		return err;
+ 
+ 	/*
+ 	 * Assume that by default the DPAUX/I2C pads will be used for HDMI,
+@@ -585,6 +587,8 @@ static int tegra_dpaux_remove(struct platform_device *pdev)
+ 	pm_runtime_put_sync(&pdev->dev);
+ 	pm_runtime_disable(&pdev->dev);
+ 
++	drm_dp_aux_unregister_ddc(&dpaux->aux);
 +
- 	mutex_init(&aux->hw_mutex);
- 	mutex_init(&aux->cec.lock);
- 	INIT_WORK(&aux->crc_work, drm_dp_aux_crc_work);
-@@ -1827,31 +1830,23 @@ EXPORT_SYMBOL(drm_dp_aux_init);
-  * mentioned above need to call drm_dp_aux_init() in order to use the AUX
-  * channel before registration.
-  *
-+ * Don't mix drm_dp_aux_register() with drm_dp_aux_register_chardev/ddc().
-+ *
-  * Returns 0 on success or a negative error code on failure.
-  */
- int drm_dp_aux_register(struct drm_dp_aux *aux)
- {
- 	int ret;
+ 	mutex_lock(&dpaux_lock);
+ 	list_del(&dpaux->list);
+ 	mutex_unlock(&dpaux_lock);
+@@ -718,7 +722,7 @@ int drm_dp_aux_attach(struct drm_dp_aux *aux, struct tegra_output *output)
+ 	int err;
  
--	WARN_ON_ONCE(!aux->drm_dev);
--
--	if (!aux->ddc.algo)
--		drm_dp_aux_init(aux);
--
--	aux->ddc.class = I2C_CLASS_DDC;
--	aux->ddc.owner = THIS_MODULE;
--	aux->ddc.dev.parent = aux->dev;
-+	drm_dp_aux_init(aux);
+ 	aux->drm_dev = output->connector.dev;
+-	err = drm_dp_aux_register(aux);
++	err = drm_dp_aux_register_chardev(aux);
+ 	if (err < 0)
+ 		return err;
  
--	strlcpy(aux->ddc.name, aux->name ? aux->name : dev_name(aux->dev),
--		sizeof(aux->ddc.name));
--
--	ret = drm_dp_aux_register_devnode(aux);
-+	ret = drm_dp_aux_register_ddc(aux);
- 	if (ret)
- 		return ret;
+@@ -759,7 +763,7 @@ int drm_dp_aux_detach(struct drm_dp_aux *aux)
+ 	unsigned long timeout;
+ 	int err;
  
--	ret = i2c_add_adapter(&aux->ddc);
-+	ret = drm_dp_aux_register_chardev(aux);
- 	if (ret) {
--		drm_dp_aux_unregister_devnode(aux);
-+		drm_dp_aux_unregister_ddc(aux);
- 		return ret;
- 	}
- 
-@@ -1865,11 +1860,94 @@ EXPORT_SYMBOL(drm_dp_aux_register);
-  */
- void drm_dp_aux_unregister(struct drm_dp_aux *aux)
- {
--	drm_dp_aux_unregister_devnode(aux);
--	i2c_del_adapter(&aux->ddc);
+-	drm_dp_aux_unregister(aux);
 +	drm_dp_aux_unregister_chardev(aux);
-+	drm_dp_aux_unregister_ddc(aux);
- }
- EXPORT_SYMBOL(drm_dp_aux_unregister);
+ 	disable_irq(dpaux->irq);
  
-+/**
-+ * drm_dp_aux_register_ddc() -  initialise and register I2C DDC part of AUX channel
-+ * @aux: DisplayPort AUX channel
-+ *
-+ * Automatically calls drm_dp_aux_init() if this hasn't been done yet.
-+ * If you need to use the drm_dp_aux's I2C adapter prior to registering it with
-+ * the outside world, call drm_dp_aux_register_ddc() first. For drivers which
-+ * are grandparents to their AUX adapters (e.g. the AUX adapter is parented by a
-+ * &drm_connector), you must still call drm_dp_aux_register_chardev() once the
-+ * connector has been registered to allow userspace access to the auxiliary DP
-+ * channel.
-+ *
-+ * For devices which use a separate platform device for their AUX adapters, this
-+ * may be called as early as required by the driver.
-+ *
-+ * Returns 0 on success or a negative error code on failure.
-+ */
-+int drm_dp_aux_register_ddc(struct drm_dp_aux *aux)
-+{
-+	drm_dp_aux_init(aux);
-+
-+	if (WARN_ON(aux->ddc.class == I2C_CLASS_DDC))
-+		return -EBUSY;
-+
-+	aux->ddc.class = I2C_CLASS_DDC;
-+	aux->ddc.owner = THIS_MODULE;
-+	aux->ddc.dev.parent = aux->dev;
-+
-+	strlcpy(aux->ddc.name, aux->name ? aux->name : dev_name(aux->dev),
-+		sizeof(aux->ddc.name));
-+
-+	return i2c_add_adapter(&aux->ddc);
-+}
-+EXPORT_SYMBOL(drm_dp_aux_register_ddc);
-+
-+/**
-+ * drm_dp_aux_unregister_ddc() - unregister I2C DDC part of AUX channel
-+ * @aux: DisplayPort AUX channel
-+ */
-+void drm_dp_aux_unregister_ddc(struct drm_dp_aux *aux)
-+{
-+	i2c_del_adapter(&aux->ddc);
-+
-+	aux->ddc.class = 0;
-+}
-+EXPORT_SYMBOL(drm_dp_aux_unregister_ddc);
-+
-+/**
-+ * drm_dp_aux_register_chardev() - initialise and register userspace part of AUX channel
-+ * @aux: DisplayPort AUX channel
-+ *
-+ * Automatically calls drm_dp_aux_init() if this hasn't been done yet. This
-+ * should only be called once the parent of @aux, &drm_dp_aux.dev, is
-+ * initialized. For devices which are grandparents of their AUX channels,
-+ * &drm_dp_aux.dev will typically be the &drm_connector &device which
-+ * corresponds to @aux. For these devices, it's advised to call
-+ * drm_dp_aux_register_chardev() in &drm_connector_funcs.late_register, and
-+ * likewise to call drm_dp_aux_unregister_chardev() in
-+ * &drm_connector_funcs.early_unregister. Functions which don't follow this
-+ * will likely Oops when %CONFIG_DRM_DP_AUX_CHARDEV is enabled.
-+ *
-+ * Returns 0 on success or a negative error code on failure.
-+ */
-+int drm_dp_aux_register_chardev(struct drm_dp_aux *aux)
-+{
-+	WARN_ON_ONCE(!aux->drm_dev);
-+
-+	drm_dp_aux_init(aux);
-+
-+	return drm_dp_aux_register_devnode(aux);
-+}
-+EXPORT_SYMBOL(drm_dp_aux_register_chardev);
-+
-+/**
-+ * drm_dp_aux_unregister() - unregister userspace part of AUX channel
-+ * @aux: DisplayPort AUX channel
-+ */
-+void drm_dp_aux_unregister_chardev(struct drm_dp_aux *aux)
-+{
-+	drm_dp_aux_unregister_devnode(aux);
-+}
-+EXPORT_SYMBOL(drm_dp_aux_unregister_chardev);
-+
- #define PSR_SETUP_TIME(x) [DP_PSR_SETUP_TIME_ ## x >> DP_PSR_SETUP_TIME_SHIFT] = (x)
- 
- /**
-diff --git a/include/drm/drm_dp_helper.h b/include/drm/drm_dp_helper.h
-index b52df4db3e8f..80130458188d 100644
---- a/include/drm/drm_dp_helper.h
-+++ b/include/drm/drm_dp_helper.h
-@@ -2130,6 +2130,10 @@ void drm_dp_remote_aux_init(struct drm_dp_aux *aux);
- void drm_dp_aux_init(struct drm_dp_aux *aux);
- int drm_dp_aux_register(struct drm_dp_aux *aux);
- void drm_dp_aux_unregister(struct drm_dp_aux *aux);
-+int drm_dp_aux_register_ddc(struct drm_dp_aux *aux);
-+void drm_dp_aux_unregister_ddc(struct drm_dp_aux *aux);
-+int drm_dp_aux_register_chardev(struct drm_dp_aux *aux);
-+void drm_dp_aux_unregister_chardev(struct drm_dp_aux *aux);
- 
- int drm_dp_start_crc(struct drm_dp_aux *aux, struct drm_crtc *crtc);
- int drm_dp_stop_crc(struct drm_dp_aux *aux);
+ 	if (dpaux->output->panel) {
 -- 
 2.33.1
 
