@@ -2,178 +2,117 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 909B6C433F5
-	for <linux-tegra@archiver.kernel.org>; Mon,  8 Nov 2021 15:58:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29991C433FE
+	for <linux-tegra@archiver.kernel.org>; Mon,  8 Nov 2021 15:59:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6FF5361178
-	for <linux-tegra@archiver.kernel.org>; Mon,  8 Nov 2021 15:58:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 19CFF61352
+	for <linux-tegra@archiver.kernel.org>; Mon,  8 Nov 2021 15:59:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241111AbhKHQBX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 8 Nov 2021 11:01:23 -0500
-Received: from new4-smtp.messagingengine.com ([66.111.4.230]:32919 "EHLO
-        new4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S239202AbhKHQBW (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 8 Nov 2021 11:01:22 -0500
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailnew.nyi.internal (Postfix) with ESMTP id D491D58079C;
-        Mon,  8 Nov 2021 10:58:37 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute6.internal (MEProxy); Mon, 08 Nov 2021 10:58:37 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm1; bh=GDGBKLqsXucgJZv4oQj5QE89wMt
-        W+wTyGvv0GI+MQ18=; b=cNFW3T8QTDTcwFKSUJTTabtY0ynmIQFuznxeO1WXlFV
-        nwtPMasTYLWRFRVlJqyFWfZRrzDJk7w3RtuuB+j4Gq/RYABSOHML+zhivtpTO3Q7
-        kW/K9lNHDghyFsz/KUQTpb3/rfWc6GKJ5XFv+SIDxSowgh6xsimRhLXyZaqW8bMd
-        tzV+dRUfFTeWA8Lcl3Whsh1PN2sqHauADBzuFw0B5vDZe33z9hVrsvW68GKzjHH7
-        /7X1yWRBgRw/wcU71wWmw3UIusw1ia7V0FK5B59IMy8IM3+ietGBZUcXttviUmfs
-        v81JI9vciRT3ExjD4OzWnJsIANGD0FwbBMplTlXt5RQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=GDGBKL
-        qsXucgJZv4oQj5QE89wMtW+wTyGvv0GI+MQ18=; b=NkeqNIi7j8NIhjl56GOWHP
-        jOu7vHwsYsRPOApzDR8DD56iq1wS4MmKa6YMpV18KW+9sm7ApIh3Gj10BFmj0kUP
-        oHEkNjv5rEDxQYmkkm9a9Pk/kSWWWkZmVLuMAO+M34iibt6+72e05I8uXFUXH/NJ
-        srjJn6hNW6MT7DkHTpgfBorpvS2+OKc1avge2NbiMurjUOiMkDTlQ6IHlseE3hZY
-        iVwITwt/S9VYkwvgZK+bUI52HuF4H2EMRPB27UsVcWxaM10wZiZ2bRtbOW6yGrYr
-        gHSg5IXLX+IFLvt/mvWiarjSHGpLkBGBuUu0AB6JtvHrnPA+NKRzrfoBChtWLA4A
-        ==
-X-ME-Sender: <xms:LUmJYUXuRsgqG5Q-UGyYKpYye25-8Bb0ZSoToh2V_LanPdIpo-Hu4g>
-    <xme:LUmJYYmN18XSYXuZPtHLfApgACvrCLqhv4Hlu_deuVtReao6w2FO6r38gzDq1Ok-u
-    SD1GRmhDIPjb70km2g>
-X-ME-Received: <xmr:LUmJYYaxnCWgVUAFhRvHx-SzbmwxUkg8dYt-QsneG8Acfu-j-x6Rj5eTChezj1JuQcXa5lcTEXDrOKYDqCtbYDQxkGfp0yHA0k7ZOoG_>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvuddruddvgdekudcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvuffkfhggtggujgesghdtreertddtudenucfhrhhomhepofgrgihimhgv
-    ucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrghtth
-    gvrhhnpeduvdduhfekkeehgffftefflefgffdtheffudffgeevteffheeuiedvvdejvdfg
-    veenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmrg
-    igihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:LUmJYTVmoetK1Ep2e8AbUi-HO_HuoMhnsNL8vsV23x23E4Vp85iu-Q>
-    <xmx:LUmJYenmq8BkTfW_t_4kkojdCnEQ7DHuYC4ra6a2-m25_x797VkQkA>
-    <xmx:LUmJYYdDWegTkDFdMBGrYc-e4q-xKjD5I8X4Awjz3g1gPhrUd0D1yw>
-    <xmx:LUmJYZ-evYnevbPchgf_HML44I9PSPX5agZpKUBuPre6hI3YdKF--A>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 8 Nov 2021 10:58:36 -0500 (EST)
-Date:   Mon, 8 Nov 2021 16:58:34 +0100
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
-Cc:     Daniel Vetter <daniel@ffwll.ch>, Emma Anholt <emma@anholt.net>,
-        Dom Cobley <dom@raspberrypi.com>,
-        Tim Gover <tim.gover@raspberrypi.com>,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        linux-tegra@vger.kernel.org,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Phil Elwell <phil@raspberrypi.com>
-Subject: Re: [PATCH 02/13] drm/connector: Add helper to check if a mode
- requires scrambling
-Message-ID: <20211108155834.6zz236ll75bxwcrk@gilmour>
-References: <20211102145944.259181-1-maxime@cerno.tech>
- <20211102145944.259181-3-maxime@cerno.tech>
- <YYP+MX9gxZVafhKk@intel.com>
- <YYVxtp9PZiR3ZOjp@phenom.ffwll.local>
- <YYV0bArjRbvYJ2K2@intel.com>
+        id S241154AbhKHQB5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 8 Nov 2021 11:01:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33440 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236850AbhKHQBy (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 8 Nov 2021 11:01:54 -0500
+Received: from mail.skyhub.de (mail.skyhub.de [IPv6:2a01:4f8:190:11c2::b:1457])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBA6DC061570;
+        Mon,  8 Nov 2021 07:59:09 -0800 (PST)
+Received: from zn.tnic (p200300ec2f331100b486bab6e60d7aaf.dip0.t-ipconnect.de [IPv6:2003:ec:2f33:1100:b486:bab6:e60d:7aaf])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 341131EC04DE;
+        Mon,  8 Nov 2021 16:59:08 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1636387148;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=JALJsenIQCt4BletZS/B+Zq0YBxBp6L9Ch45cvOw8XQ=;
+        b=LCBDSZEhct23FIVquhfAlhIS3MpLXm84rotG+ppp99dGMPWi9iJHGgKkfiFg0DoLQ+NSWf
+        ixY2Bl+WafqAknd6kFkKb4q9SvLPR/pI4iyCTMD6S/zki4CWzqH6/1ZBq8awazUNWt4Xi0
+        idSLz3mdlao9wfI9n1SzGKhLH2sR0dI=
+Date:   Mon, 8 Nov 2021 16:58:57 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Ayush Sawal <ayush.sawal@chelsio.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rohit Maheshwari <rohitm@chelsio.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Vinay Kumar Yadav <vinay.yadav@chelsio.com>,
+        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
+        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
+        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
+        intel-gvt-dev@lists.freedesktop.org,
+        alpha <linux-alpha@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        linux-edac@vger.kernel.org,
+        Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
+        linux-hyperv@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-leds <linux-leds@vger.kernel.org>,
+        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
+        Parisc List <linux-parisc@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        "open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM" 
+        <linux-remoteproc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        scsi <linux-scsi@vger.kernel.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        linux-staging@lists.linux.dev,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        linux-um <linux-um@lists.infradead.org>,
+        USB list <linux-usb@vger.kernel.org>,
+        "open list:TENSILICA XTENSA PORT (xtensa)" 
+        <linux-xtensa@linux-xtensa.org>, netdev <netdev@vger.kernel.org>,
+        openipmi-developer@lists.sourceforge.net, rcu@vger.kernel.org,
+        sparclinux <sparclinux@vger.kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        xen-devel@lists.xenproject.org
+Subject: Re: [PATCH v0 42/42] notifier: Return an error when callback is
+ already registered
+Message-ID: <YYlJQYLiIrhjwOmT@zn.tnic>
+References: <20211108101157.15189-1-bp@alien8.de>
+ <20211108101157.15189-43-bp@alien8.de>
+ <CAMuHMdWH+txiSP_d7Jc4f_bU8Lf9iWpT4E3o5o7BJr-YdA6-VA@mail.gmail.com>
+ <YYkyUEqcsOwQMb1S@zn.tnic>
+ <CAMuHMdXiBEQyEXJagSfpH44hxVA2t0sDH7B7YubLGHrb2MJLLA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="xgtaknx57htu4h3l"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <YYV0bArjRbvYJ2K2@intel.com>
+In-Reply-To: <CAMuHMdXiBEQyEXJagSfpH44hxVA2t0sDH7B7YubLGHrb2MJLLA@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On Mon, Nov 08, 2021 at 04:25:47PM +0100, Geert Uytterhoeven wrote:
+> I'm not against returning proper errors codes.  I'm against forcing
+> callers to check things that cannot fail and to add individual error
+> printing to each and every caller.
 
---xgtaknx57htu4h3l
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+If you're against checking things at the callers, then the registration
+function should be void. IOW, those APIs are not optimally designed atm.
 
-On Fri, Nov 05, 2021 at 08:14:04PM +0200, Ville Syrj=E4l=E4 wrote:
-> On Fri, Nov 05, 2021 at 07:02:30PM +0100, Daniel Vetter wrote:
-> > On Thu, Nov 04, 2021 at 05:37:21PM +0200, Ville Syrj=E4l=E4 wrote:
-> > > On Tue, Nov 02, 2021 at 03:59:33PM +0100, Maxime Ripard wrote:
-> > > > --- a/include/drm/drm_modes.h
-> > > > +++ b/include/drm/drm_modes.h
-> > > > @@ -424,6 +424,21 @@ static inline bool drm_mode_is_stereo(const st=
-ruct drm_display_mode *mode)
-> > > >  	return mode->flags & DRM_MODE_FLAG_3D_MASK;
-> > > >  }
-> > > > =20
-> > > > +/**
-> > > > + * drm_mode_hdmi_requires_scrambling - Checks if a mode requires H=
-DMI Scrambling
-> > > > + * @mode: DRM display mode
-> > > > + *
-> > > > + * Checks if a given display mode requires the scrambling to be en=
-abled.
-> > > > + *
-> > > > + * Returns:
-> > > > + * A boolean stating whether it's required or not.
-> > > > + */
-> > > > +static inline bool
-> > > > +drm_mode_hdmi_requires_scrambling(const struct drm_display_mode *m=
-ode)
-> > > > +{
-> > > > +	return mode->clock > DRM_HDMI_14_MAX_TMDS_CLK_KHZ;
-> > > > +}
-> > >=20
-> > > That's only correct for 8bpc. The actual limit is on the TMDS clock (=
-or
-> > > rather TMDS character rate as HDMI 2.0 calls it due to the 1/1 vs. 1/4
-> > > magic for the actually transmitted TMDS clock).
-> >=20
-> > Yeah we might need to add the bus format for the cable here too, to make
-> > this complete.
->=20
-> I don't think we have a usable thing for that on the drm level, so
-> would need to invent something. Oh, and the mode->clock vs.=20
-> mode->crtc_clock funny business also limits the usability of this
-> approach. So probably just easiest to pass in the the driver calculated
-> TMDS clock instead.
+> Note that in other areas, we are moving in the other direction,
+> to a centralized printing of error messages, cfr. e.g. commit
+> 7723f4c5ecdb8d83 ("driver core: platform: Add an error message to
+> platform_get_irq*()").
 
-If we look at all (I think?) the existing users of scrambling in KMS as
-of 5.15, only i915 seems to use crtc_clock (which, in retrospect, seems
-to be the right thing to do), and only i915 and dw-hdmi use an output
-format, i915 rolling its own, and dw-hdmi using the mbus formats.
+Yes, thus my other idea to add a lower level __notifier_chain_register()
+to do the checking.
 
-I think using the mbus format here makes the most sense: i915 already is
-rolling a whole bunch of other code, and we use the mbus defines for the
-bridge format enumeration as well which is probably going to have some
-interaction.
+I'll see if I can convert those notifier registration functions to
+return void, in the process. But let's see what the others think first.
 
-I'm not quite sure what to do next though. The whole point of that
-series is to streamline as much as possible the scrambling and TMDS
-ratio setup to avoid the duplication we already have in the drivers that
-support it, every one using the mostly-the-same-but-slightly-different
-logic to configure it.
+Thanks for taking the time.
 
-The mode is fortunately stored in generic structures so it's easy to
-make that decision. Having to take into account the output format
-however makes it mandatory to move the bus format in the
-drm_connector_state(?) structure too.
+-- 
+Regards/Gruss,
+    Boris.
 
-It's already in the bridge_state though, so should we take the final
-bridge format as the cable format if it's tied to a bridge?
-
-Maxime
-
---xgtaknx57htu4h3l
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYYlJKgAKCRDj7w1vZxhR
-xdTmAQCYyR6ooj+GVU69Oh06Ug442R0aK7g89ZBZBwxfGLt8SgEA3fw21eNOtPUv
-orlcPTbMxfPcjs2s5i12xUsUgWY+vww=
-=bsEq
------END PGP SIGNATURE-----
-
---xgtaknx57htu4h3l--
+https://people.kernel.org/tglx/notes-about-netiquette
