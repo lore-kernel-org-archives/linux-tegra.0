@@ -2,146 +2,168 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84E24C433F5
-	for <linux-tegra@archiver.kernel.org>; Mon,  8 Nov 2021 10:37:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8710C433EF
+	for <linux-tegra@archiver.kernel.org>; Mon,  8 Nov 2021 11:25:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 685F1611C4
-	for <linux-tegra@archiver.kernel.org>; Mon,  8 Nov 2021 10:37:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C3435610A6
+	for <linux-tegra@archiver.kernel.org>; Mon,  8 Nov 2021 11:25:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238272AbhKHKjq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 8 Nov 2021 05:39:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44222 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238180AbhKHKjo (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 8 Nov 2021 05:39:44 -0500
-Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5AA6EC061570;
-        Mon,  8 Nov 2021 02:37:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-         s=20161220; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
-        MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=i/cmFLJWXjRGackmQbyW+VCsyR/4I0WIJ6EqrdSA6JY=; b=TgVDqLVO+s5RobZKj0e0tc5fNy
-        sQ7s4SFC8WtG6elM+NAEv4mjxfpoy7JVFvonGPrL7zQr/ez3Zy+k/cZUaqJiRecRCcNi2P7VbkE8F
-        ka3tcQvpeAovYzNEd+HkVHsCfpaMi0A8MmEWp93+1bfLdOoI1b6w4GoA214JujO2mNRUBzstQdeGa
-        bLpBKQN1PyJKDS+X8rDt5TmKrMO9LNSjG+242s85JwTjTX7Vrv0uE+3eFdT/Lgf1H4RdXtzWOLNPt
-        n83LDUWPlVc+rTMI2qPSbTvt1fc9jEFAk7Sd+yh6crFCPnwJUgWt/1tb+cKxoGcaWvVttLk2IRflv
-        xP/M3HYw==;
-Received: from dsl-hkibng22-54f986-236.dhcp.inet.fi ([84.249.134.236] helo=[192.168.1.10])
-        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <cyndis@kapsi.fi>)
-        id 1mk21D-0008PS-Od; Mon, 08 Nov 2021 12:36:51 +0200
-Subject: Re: [PATCH v2 0/8] Host1x context isolation support
-To:     Mikko Perttunen <mperttunen@nvidia.com>, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, joro@8bytes.org, will@kernel.org,
-        robh+dt@kernel.org, robin.murphy@arm.com
-Cc:     linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20210916143302.2024933-1-mperttunen@nvidia.com>
-From:   Mikko Perttunen <cyndis@kapsi.fi>
-Message-ID: <10de82cf-27a5-8890-93a5-0e58c74e5bcc@kapsi.fi>
-Date:   Mon, 8 Nov 2021 12:36:51 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+        id S239250AbhKHL1u (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 8 Nov 2021 06:27:50 -0500
+Received: from mout.gmx.net ([212.227.17.22]:41875 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S239220AbhKHL1r (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 8 Nov 2021 06:27:47 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1636370563;
+        bh=K79wqPStqcTfK5nLIvxLt2yDFN8raIwyDHqiPgY+PHc=;
+        h=X-UI-Sender-Class:Date:From:To:Cc:Subject:References:In-Reply-To;
+        b=Iil8zKbQDwR3Nlg+ymOUpymQS9X1Mc+jbLXtA+yVF4SDdcwftUD6iVyibZ6wTz7fb
+         Qc0Hcteal9dThlbJ/iNZLRdm5NTkZeKDClDySSPytppBB80v28nV6u18LsDpLiHQir
+         Ny1SVC50YGwrAIYi9pHquhjsrGZ1aixItLj5nI/g=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from longitude ([5.146.194.160]) by mail.gmx.net (mrgmx104
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MBDj4-1msKD70Bvq-00CkHo; Mon, 08
+ Nov 2021 12:22:43 +0100
+Date:   Mon, 8 Nov 2021 12:22:32 +0100
+From:   Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Guenter Roeck <linux@roeck-us.net>,
+        Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Guo Ren <guoren@kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Joshua Thompson <funaho@jurai.org>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Nick Hu <nickhu@andestech.com>,
+        Greentime Hu <green.hu@gmail.com>,
+        Vincent Chen <deanbo422@gmail.com>,
+        Helge Deller <deller@gmx.de>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        Len Brown <lenb@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Chen-Yu Tsai <wens@csie.org>, Tony Lindgren <tony@atomide.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Patrick Venture <venture@google.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Pavel Machek <pavel@ucw.cz>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-csky@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-riscv@lists.infradead.org, linux-sh@vger.kernel.org,
+        xen-devel@lists.xenproject.org, linux-acpi@vger.kernel.org,
+        linux-omap@vger.kernel.org, openbmc@lists.ozlabs.org,
+        linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH v2 27/45] mfd: ntxec: Use devm_register_power_handler()
+Message-ID: <YYkIeBSCFka9yrqC@latitude>
+References: <20211027211715.12671-1-digetx@gmail.com>
+ <20211027211715.12671-28-digetx@gmail.com>
+ <YYbqlmOM95q7Hbjo@latitude>
+ <be0c74c6-05a9-cad5-c285-6626d05f8860@gmail.com>
+ <9a22c22d-94b1-f519-27a2-ae0b8bbf6e99@roeck-us.net>
+ <658cf796-e3b1-f816-1e15-9e9e08b8ade0@gmail.com>
+ <5a17fee3-4214-c2b9-abc1-ab9d6071591b@roeck-us.net>
+ <c0b52994-51f5-806b-b07e-3e70d8217ffc@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20210916143302.2024933-1-mperttunen@nvidia.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 84.249.134.236
-X-SA-Exim-Mail-From: cyndis@kapsi.fi
-X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="SrzUzzmYivmDpJiW"
+Content-Disposition: inline
+In-Reply-To: <c0b52994-51f5-806b-b07e-3e70d8217ffc@gmail.com>
+X-Provags-ID: V03:K1:7qbQ+qoRzv7lpS+bZXlBkiHc8d3ndyzVjxZiUEx4fWU8LOwR4tV
+ sJ6wX31cULMNt4suZs8Fc9nNWwTvT28rf28Ux8jItr0YArRnxNHgajX8j3pR27WJ8X4+rN1
+ P6mwBUOnAtBBxh5xjfJsjiXu6SboLYbT6DrsS8jQkTim87V5oSocZwSYV15yBIZybWDcxi2
+ yhhXSfTVo1fjkR9G3NiNg==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:yjkPkKMrbPg=:X1ZiIBM9wmN7jnP9s16Cfb
+ sBqYerCPdYu35MyKm/gIqDt8Gw/FOK/47i1VNVZ2GZyzu2N+w6bq5umB4vcv2LdlVvVXasJFU
+ hHItgn4p2+gcrIXW8dm47/l7t1HQaw7UgtUqyeXqDu69ghAqCYZXx0eX60EUrsUOpoEgYDyVn
+ oP9a1XYVWqB1j9J0R0WURMEfCLIEiPQoq7Rbx4EPDsJbUZtdggotJ5Zu652F4YThXYIsp6IMf
+ gllsRU1HwQ6JjxuK8cXPPYaD+LLKehorJRlrq+y8qXUM6ylWXrOoGKNZLGsZkAONax4WYMqIW
+ d3FGkGXLV4f+esApgI7PsCMvrwTK22lrWu5ViPmU4x2nHZP+ZTPAZuJtgSimwyu20amazZwYK
+ Z4vpwY5CSzJZCDfMI5DZ0Ptk/Ztz1Q6g/A3jF9otZwKjtdDGI+4EVCvameWf3xn488EZ8v6YU
+ At13Fas5vppLSoa/xpMWgEaXqdhRWW3BWFKDkwwIzAy8iepAVZKdxWuiNZ5V838e4pssIjwOP
+ b9I/WUoeoSIjaVUx2uwI4jdditk+sE4UWUM/0QolX7ispKs/G3XyXxRQRgZ6B7X3V60FM1FjB
+ RAlEp0a5931lWVr5xqZfoR1dAUpRgm1O9Vjh40HLSfiunbwWOc0bQ0ONdbOPoSLykjVMQhxlP
+ xtpeZidtvOHYL9oWOJQZIFjHLJGmJNbSfzBBXrzNQMUN8I0KHFPgGMy1RqdguPf3PUJKELugu
+ Nk3jRxSbdt395Sseo31kU92jjNpYb9PTuVNaM1aWS4Q4yTc9cIXxk1+LRFP9bIgg/V6iwob0M
+ 2xQWxNH/EiCfUWEHwJvuTGBqhgThj/glAo/CZxZAe/L3n3D6849ukZO9fYf8H8Nk2y5a5UHWh
+ pvbdLd9gXcXQ6r/K+x80Dm4oeeZ7NvEbfgA19DwbuESar56ohW+JqsXIhz3AyR62ShQOe3+FE
+ 5fRkZdNNItdvlDY7CkW9kJ0ItIF7cQw1aNvt9OvV6ho/I2LuKv3w1ibUywvt8uxjpQ795s++f
+ LtodIi5u3n67HADZypUokVR2nausSwp0lMroUVKyNyJ3Q2D2RhV5rxgHndlU1/Jjw3Lcz380m
+ nnoGWxFp59yGiw=
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 9/16/21 5:32 PM, Mikko Perttunen wrote:
-> Hi all,
-> 
-> ***
-> New in v2:
-> 
-> Added support for Tegra194
-> Use standard iommu-map property instead of custom mechanism
-> ***
-> 
-> this series adds support for Host1x 'context isolation'. Since
-> when programming engines through Host1x, userspace can program in
-> any addresses it wants, we need some way to isolate the engines'
-> memory spaces. Traditionally this has either been done imperfectly
-> with a single shared IOMMU domain, or by copying and verifying the
-> programming command stream at submit time (Host1x firewall).
-> 
-> Since Tegra186 there is a privileged (only usable by kernel)
-> Host1x opcode that allows setting the stream ID sent by the engine
-> to the SMMU. So, by allocating a number of context banks and stream
-> IDs for this purpose, and using this opcode at the beginning of
-> each job, we can implement isolation. Due to the limited number of
-> context banks only each process gets its own context, and not
-> each channel.
-> 
-> This feature also allows sharing engines among multiple VMs when
-> used with Host1x's hardware virtualization support - up to 8 VMs
-> can be configured with a subset of allowed stream IDs, enforced
-> at hardware level.
-> 
-> To implement this, this series adds a new host1x context bus, which
-> will contain the 'struct device's corresponding to each context
-> bank / stream ID, changes to device tree and SMMU code to allow
-> registering the devices and using the bus, as well as the Host1x
-> stream ID programming code and support in TegraDRM.
-> 
-> Device tree bindings are not updated yet pending consensus that the
-> proposed changes make sense.
-> 
-> Thanks,
-> Mikko
-> 
-> Mikko Perttunen (8):
->    gpu: host1x: Add context bus
->    gpu: host1x: Add context device management code
->    gpu: host1x: Program context stream ID on submission
->    iommu/arm-smmu: Attach to host1x context device bus
->    arm64: tegra: Add Host1x context stream IDs on Tegra186+
->    drm/tegra: falcon: Set DMACTX field on DMA transactions
->    drm/tegra: vic: Implement get_streamid_offset
->    drm/tegra: Support context isolation
-> 
->   arch/arm64/boot/dts/nvidia/tegra186.dtsi  |  12 ++
->   arch/arm64/boot/dts/nvidia/tegra194.dtsi  |  12 ++
->   drivers/gpu/Makefile                      |   3 +-
->   drivers/gpu/drm/tegra/drm.h               |   2 +
->   drivers/gpu/drm/tegra/falcon.c            |   8 +
->   drivers/gpu/drm/tegra/falcon.h            |   1 +
->   drivers/gpu/drm/tegra/submit.c            |  13 ++
->   drivers/gpu/drm/tegra/uapi.c              |  34 ++++-
->   drivers/gpu/drm/tegra/vic.c               |  38 +++++
->   drivers/gpu/host1x/Kconfig                |   5 +
->   drivers/gpu/host1x/Makefile               |   2 +
->   drivers/gpu/host1x/context.c              | 174 ++++++++++++++++++++++
->   drivers/gpu/host1x/context.h              |  27 ++++
->   drivers/gpu/host1x/context_bus.c          |  31 ++++
->   drivers/gpu/host1x/dev.c                  |  12 +-
->   drivers/gpu/host1x/dev.h                  |   2 +
->   drivers/gpu/host1x/hw/channel_hw.c        |  52 ++++++-
->   drivers/gpu/host1x/hw/host1x06_hardware.h |  10 ++
->   drivers/gpu/host1x/hw/host1x07_hardware.h |  10 ++
->   drivers/iommu/arm/arm-smmu/arm-smmu.c     |  13 ++
->   include/linux/host1x.h                    |  21 +++
->   include/linux/host1x_context_bus.h        |  15 ++
->   22 files changed, 488 insertions(+), 9 deletions(-)
->   create mode 100644 drivers/gpu/host1x/context.c
->   create mode 100644 drivers/gpu/host1x/context.h
->   create mode 100644 drivers/gpu/host1x/context_bus.c
->   create mode 100644 include/linux/host1x_context_bus.h
-> 
 
-IOMMU/DT folks, any thoughts about this approach? The patches that are 
-of interest outside of Host1x/TegraDRM specifics are patches 1, 2, 4, and 5.
+--SrzUzzmYivmDpJiW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Thanks,
-Mikko
+On Sun, Nov 07, 2021 at 08:42:33PM +0300, Dmitry Osipenko wrote:
+[...]
+> EC drivers tend to use higher priority in general. Jonathan, could you
+> please confirm that NTXEC driver is a more preferable restart method
+> than the watchdog?
+
+Yes. The original firmware uses the NTXEC to restart, and it works well,
+so I do think it's preferable.
+
+
+Best regards,
+Jonathan
+
+--SrzUzzmYivmDpJiW
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEvHAHGBBjQPVy+qvDCDBEmo7zX9sFAmGJCE4ACgkQCDBEmo7z
+X9vVoBAAyZoJJUbTWWKI6c/HY4wq3sRDukultq5nSNIOH4RAFsTFD2FbiBB7LDaG
+v/9oOqoTUDuR3AkaHFnk5+h5gLRqeePoH1KU8fa7bc7NPatTUVt54SqhQSRfUfrF
++0eRt3WHt2lZpZjaY8kj/vz5AkubzCmwVqSKoLUdCW/qi+UphZHp75E2XXypK/o3
+dt1dmPA1D0pXB1WdwLSZjtCn5lIOucdssKLl1UyXQzFmuKBPkjOcuuQqwm5Ietoz
+T4EEl/js2iIbui0e5ml9611nZoTLhVYMkxRcLi7gRHWTn9NmVzzJdubJH6Ajwp8E
+M9TOi2NtYbSk+pGvTwawfKaw+aROUuKqGOGc+9TFeu+V5pCMAIZ1wybNExZph5jp
+/o58QQUdszFwjMq7A4zdXSufKug8CpsYILhtcSx57wtGJ/OW7ZDtmX679x4jAvgX
+XeMWuW8x08UFauDBHsvw9aIIgKg7ZlJ+bQ5WdgtsiuXrZEEbTNbW1kjbKAvHS9dP
+o3MB/Lbi/rN/448ImnHtShmihh7ug6s+oUDbW6wFzCFvcfLbOs/Sfz35f5wNTHQW
+ReNPRgH+pTvzZvulDdrSA6GAnH8mfFE7IkC/3BP6BJE28ug1GvJrRtvylwp29ZW/
+Qu0z+FCaFjPu5yOr8rspC9YUdGolKnMg1msMwjgbe58vH9+EDDQ=
+=fkgc
+-----END PGP SIGNATURE-----
+
+--SrzUzzmYivmDpJiW--
