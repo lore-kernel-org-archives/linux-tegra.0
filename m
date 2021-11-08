@@ -2,155 +2,251 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE233C433FE
-	for <linux-tegra@archiver.kernel.org>; Mon,  8 Nov 2021 16:03:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C915DC433FE
+	for <linux-tegra@archiver.kernel.org>; Mon,  8 Nov 2021 16:03:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 99B1B61186
-	for <linux-tegra@archiver.kernel.org>; Mon,  8 Nov 2021 16:03:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE5F361279
+	for <linux-tegra@archiver.kernel.org>; Mon,  8 Nov 2021 16:03:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239480AbhKHQGW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 8 Nov 2021 11:06:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34446 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231755AbhKHQGV (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 8 Nov 2021 11:06:21 -0500
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C3BEC061570
-        for <linux-tegra@vger.kernel.org>; Mon,  8 Nov 2021 08:03:37 -0800 (PST)
-Received: by mail-wr1-x430.google.com with SMTP id t30so27761969wra.10
-        for <linux-tegra@vger.kernel.org>; Mon, 08 Nov 2021 08:03:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=SAkB/tCYgd7u4P/VlCiK9DERKVcmTqRHK823UX0ZX0U=;
-        b=dVYMpL394eNyQcrt+B98aAH2Ph/lR8Tgtfc5TDaWJaCDFzjPFDFMohUq5+Qras6Yui
-         ShYX8uwOoc97uyOX/rWZlbpbNx/6o9Ybu4urTIlAoct0Xy9O0PqVV8GQ6aHNwoQNzY2V
-         LKCq9vbg31e5UAGRUGzqRlGqvZb0sGVWcWVJI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=SAkB/tCYgd7u4P/VlCiK9DERKVcmTqRHK823UX0ZX0U=;
-        b=h0GcpXIh91IuYCbv5tiYXunlqbIkfk1PDa9jErLGzcMmbn+Cv4+MYxLYB6jHTVKrPx
-         V8r90z5X5rJPLdNg62dvs7aNTJ5UAucP7b4huwuTMDpn3GyZZZOZ0y4NakPJKz8vcbwA
-         TsWXEphtZMetmqxAY+UvpionkfGOsgsPPfg/W0GDVCBG1p6eTNvFOrxNh7wReHBt0MIx
-         P2wHwRKw6T9AY18QbP6en3lnJxRPgFEPNw2yka+HYKLeCJvpEoc3gMdkpg3mz6Ipq+tk
-         jirA4E7T0JNFYRiwhrHWh2szot8xStfmJXCMqo1io5X24XxeVZjDqV64d8qTLqRakVLG
-         yk5w==
-X-Gm-Message-State: AOAM530LlAVSqq0XibBOje+MKvPqv7a9nLIpnS8dmoBrxBKuZKzP9AYU
-        J0sy5SF7EeFXam6F3r8vJkU3cKlFpN7y1JM/
-X-Google-Smtp-Source: ABdhPJxFTAlkKSGysv1YzwDpBOacKqf7EWgZ8Hsxygpmn9FAvsCPyOjtWf9njWcnFA2VPRt6x7+h7A==
-X-Received: by 2002:adf:ee0c:: with SMTP id y12mr332651wrn.82.1636387415679;
-        Mon, 08 Nov 2021 08:03:35 -0800 (PST)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id f7sm11489864wri.74.2021.11.08.08.03.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Nov 2021 08:03:34 -0800 (PST)
-Date:   Mon, 8 Nov 2021 17:03:32 +0100
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Maxime Ripard <maxime@cerno.tech>
-Cc:     Ville =?iso-8859-1?Q?Syrj=E4l=E4?= 
-        <ville.syrjala@linux.intel.com>, Daniel Vetter <daniel@ffwll.ch>,
-        Emma Anholt <emma@anholt.net>,
-        Dom Cobley <dom@raspberrypi.com>,
-        Tim Gover <tim.gover@raspberrypi.com>,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        linux-tegra@vger.kernel.org,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Phil Elwell <phil@raspberrypi.com>
-Subject: Re: [PATCH 02/13] drm/connector: Add helper to check if a mode
- requires scrambling
-Message-ID: <YYlKVFhOCWLCXu+X@phenom.ffwll.local>
-References: <20211102145944.259181-1-maxime@cerno.tech>
- <20211102145944.259181-3-maxime@cerno.tech>
- <YYP+MX9gxZVafhKk@intel.com>
- <YYVxtp9PZiR3ZOjp@phenom.ffwll.local>
- <YYV0bArjRbvYJ2K2@intel.com>
- <20211108155834.6zz236ll75bxwcrk@gilmour>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+        id S238340AbhKHQGZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 8 Nov 2021 11:06:25 -0500
+Received: from mail-bn1nam07on2051.outbound.protection.outlook.com ([40.107.212.51]:64750
+        "EHLO NAM02-BN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S238035AbhKHQGY (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 8 Nov 2021 11:06:24 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=jTOY3o/rSMKcOAuLEchPpdRdyhj/V37Xb9fWQT5A6Ors2t+PInlF5PIEb4tWSDLAXPHtdg6WJRtLjFZtgUluP0F6wPCzqoGSBxG+J7QXufIZYGLYkQuI/Up3T23mtSGRobGgOc/blp51YwzuqbW7H7BuBbt8bJFxCu58PF/2Ex0kAdiDxTh45qr9xuTxyU4f75yjKKIOprg3Jm5UxCK862WOz11J4FtG8urjURTGf/2vsa5hdXQiwADLrbuzV1TMJbkigDqPm4gCU9yq1btcd6h6JKs8NLBUmehJxe9GGdRiBiPg4VIyamwDHkh7F3qZKNrIkZ9bf7sbO5+3QxgUfg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hdrYN8ZSaU9GY89OfU+n5ZPvieEQK9V7YevR8cWlj08=;
+ b=iQkrp0Hhx/+tG9qIbgvBJS01Vi5TEBYA0B94ho4CvCEMFUiZm3OnX/Cvmm3cvuEHPe36l7q2YQ51DOndlzUyCheRA9CjDCHl2E8qNZJZgpEgQF2g4gBQSsPCGUdN//r0/29Qm7JwWcsGZjwAQcq/FPE8rmPT/qeR2W+QDGmhKTVvFDehOjsxq4qi8yEagb8WzDLterF+9iyyu7765gZC0TsSVyJWZPJVzarZIOuZnbtiOmUaxm8fqoijJzRHi3cpbPQ05F2mhdcFSVTwxJDggRz3kdrZLdMATn3TIO1SMsSiysNRg+TYdCnw5AgAyajCo4qprEkgzJ0/wo+RrXrX8A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hdrYN8ZSaU9GY89OfU+n5ZPvieEQK9V7YevR8cWlj08=;
+ b=qcB/8CWiuofOfLYrjfbfgXQ5HU55X8bbZOoj00XO2QrTLOK/pGilGV4pawlyXY/pQeRJSUppY4HH5ya+/jQM1HoF/V4C2IxtSbYKrSP3nJMVHcX1EI0F2kUFxMkFooA6KiPygDTm+TxuhgnmovRiU7sY/VH/xINM5nkMfKMgV84IVzO7yH44gHtSXg4EiPiCtPnRv+OK82w2Q3jVOHgJwFrYCBGgX2HOTFeSCZfo4GEMxLms7uhfGVmM1T5FgOHbLIghlxZWKa8LQEMFhc4GH/SW/9oBWenVbm/9uCpTNJDeFbZtdXm+6Hhfg2gX1qOGtBlV5P/5hlMYLQiBkWshXA==
+Authentication-Results: vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=none action=none header.from=nvidia.com;
+Received: from BL1PR12MB5317.namprd12.prod.outlook.com (2603:10b6:208:31f::17)
+ by BL1PR12MB5302.namprd12.prod.outlook.com (2603:10b6:208:31d::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4669.10; Mon, 8 Nov
+ 2021 16:03:38 +0000
+Received: from BL1PR12MB5317.namprd12.prod.outlook.com
+ ([fe80::64ed:2ae1:6659:2878]) by BL1PR12MB5317.namprd12.prod.outlook.com
+ ([fe80::64ed:2ae1:6659:2878%3]) with mapi id 15.20.4669.013; Mon, 8 Nov 2021
+ 16:03:38 +0000
+Subject: Re: [PATCH v2 01/10] ASoC: tegra: Fix kcontrol put callback in ADMAIF
+To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>
+Cc:     broonie@kernel.org, lgirdwood@gmail.com, tiwai@suse.com,
+        thierry.reding@gmail.com, jonathanh@nvidia.com,
+        alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1635947547-24391-1-git-send-email-spujar@nvidia.com>
+ <1635947547-24391-2-git-send-email-spujar@nvidia.com>
+ <s5ha6ilmiiv.wl-tiwai@suse.de>
+ <0e2d89ca-84e3-9427-5ce1-c0224d4db089@perex.cz>
+From:   Sameer Pujar <spujar@nvidia.com>
+Message-ID: <d27bf513-6f16-5ad6-59cb-79fad5cc951c@nvidia.com>
+Date:   Mon, 8 Nov 2021 21:33:25 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
+In-Reply-To: <0e2d89ca-84e3-9427-5ce1-c0224d4db089@perex.cz>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20211108155834.6zz236ll75bxwcrk@gilmour>
-X-Operating-System: Linux phenom 5.10.0-8-amd64 
+Content-Language: en-GB
+X-ClientProxiedBy: MA1PR0101CA0044.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:a00:22::30) To BL1PR12MB5317.namprd12.prod.outlook.com
+ (2603:10b6:208:31f::17)
+MIME-Version: 1.0
+Received: from [10.25.97.218] (202.164.25.5) by MA1PR0101CA0044.INDPRD01.PROD.OUTLOOK.COM (2603:1096:a00:22::30) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4669.10 via Frontend Transport; Mon, 8 Nov 2021 16:03:35 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 53766302-41f6-4b39-8b7f-08d9a2d15392
+X-MS-TrafficTypeDiagnostic: BL1PR12MB5302:
+X-Microsoft-Antispam-PRVS: <BL1PR12MB53029E7BC3D58C829261DCA1A7919@BL1PR12MB5302.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 5Ps90anzUJz0ITH3WzV6XX1ZJFHsmG31xiMTd7uA92Sl6wvhijgH1n0T0T5oegycF5SmSxOenkFFamnhqU3Lp3DwMld9uTETJ+qyxErUxJXaSpVoJ89vxmJe8eC8E/GUy4r03A9Qo5cZDbfcXsrKvCRBJ6ixm6FdceG4rZrWuRy4KGw+SG0NUZb4dTXm7kuzKWbiJpj4GDWTNFI8RaurCzQ1Ya58XG4Ez694yzIFMfJC5lPqxSCn43jREaw3UeIt/xmdTTWOcZ4U3QIDDXq+fbiIeGqXcEIIov9I9KkFmv4qP3CSyMPFLJuEmKI4xEZCBUCjDQWGEr3FPEqdc6yD2Gr7/l5Xs0T/2XJofvpqg8i2vRpVUi+TGJ+nN3+izIurbnBc0I0hauMPRyK6khZi/kgGM1P45O03veR85tL48QzkYcucKaeL+AxFv/zKeZjcsnJyM86OimfwJg798aSgXFjKyvniYcSSD+SzBcrGxFykn1vPhlN2xp170+ISNKJ1nakyozJBJjtcAA8qfqyd3xvNZrKTaUdhLjx8aa5pzguNnunqX2MbXmalhQ/zAt/9w4rqnAr1Zn/mjIHmbGAW/+fDeQNPNJpkFCwTBjqJgD0rAm049W2x79zVTDKjUFaI3AnqosEDSQvOY+Tk5DSQxETSEaS7QJ3nqfdkHN0dtlCh2b0Upt3fSIX50phddCeIdo7XHqGUlAHlVrsp4YJXkSkCK61zM6whf3/ZVV7np+s=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR12MB5317.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(508600001)(66946007)(38100700002)(66556008)(66476007)(4326008)(16576012)(6486002)(86362001)(316002)(2906002)(83380400001)(956004)(110136005)(31686004)(2616005)(8676002)(186003)(8936002)(5660300002)(53546011)(26005)(36756003)(6666004)(31696002)(43740500002)(45980500001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?a2srMmNvSy9UelI2UzN4VTdPd3NTUFhndk1WZGZsM2Z6WXVYbzdBWmUzNkVq?=
+ =?utf-8?B?QUtXUzZnakRET1prTG1IVnNicmt3Z3NselNXWExFNUJ3eXhCenZnN2FPNExV?=
+ =?utf-8?B?R21UYkpncGhEYVRDUi9QeHFhbDRzNDdMWVhzRWJrdmloeGtPVnpZSllkbkc4?=
+ =?utf-8?B?eXI1UUFPM1g1dERBU05wdmFNMUhPRUYwL2V5K1Z3OEFPZ0VVcjdLMTYzaStT?=
+ =?utf-8?B?TVZpWmJFbHVaVlJBRFloVzdrYVVZQ0pGUFVCeE10bmRvdXJvdTUrL3djbVVI?=
+ =?utf-8?B?WVdtb3pJTmg3bzJWTWV6bUI1ZU9RdDdnSGc0RTRVZWFkU1Zzam9OS09MLzgz?=
+ =?utf-8?B?M0xxMUlWZUk0b1RGdGMrSVdVWER6QStVS2JMQlVUS0phVkh3UVZzVi9JUmlU?=
+ =?utf-8?B?OGJvazl2d1hMRVZBUE0rUmtWK3VEVXByZDVQZ1MzQTl4ODBwNitNZzJiL0lS?=
+ =?utf-8?B?NDJCRUs0R29VM0RGY3VaNkh4Z1NCSTRzaitsbWZMVTZmVytoMzFpM09XN3pp?=
+ =?utf-8?B?c0J6di9YMk1NNlJZTDRQK29SYUJ3MDJXY1BxL3dEWGZaWTNBL2V0TVBKS1BO?=
+ =?utf-8?B?SlZibFNXZ2VCNWpwRUpJRmxiU3BYYUsxb05oSFNLeEw5aVFmNFlMTktqczNi?=
+ =?utf-8?B?WllMc0pPM1haVnRaT3B6cC9XTE1FMzlmeDJ0YWhJYnh5alVUNzh5MmprQ0V5?=
+ =?utf-8?B?dnhEWjNJSFZQbVhuVlZwVUFHTUZ6UHZ5RVgxaUY1WWRHT1NnRkVLMGpWNnhs?=
+ =?utf-8?B?V2t4R0pFRXdNZVV6M1AzOHFvTk4vR3lTOC82N24zV05xdDhQYzlXT1Rzbjdj?=
+ =?utf-8?B?ZDA5LzlMc3UzZmFXNDVIa2dTL2t6OWtBc25IRGdvSEo2NWpMOGQ3Z3ZsWW9B?=
+ =?utf-8?B?eC9yN0NLTXNOYWZXOEQxaE1RcWYrSUd4Qy9HTGg2bFU1VlZ5enVrVVBRdlNW?=
+ =?utf-8?B?MUpKZjBjMlV1NXIxQzQ1YzlmcXBoTTgzZHFaRWZFa3ZTaHBLYlgwMzcxMjJu?=
+ =?utf-8?B?Sml0UjBBTm1DaEttSXF0WUtKYXVxcVJXaS9TVWVKejVBaXBCcU9nN3A5OS84?=
+ =?utf-8?B?YldXTzU4L0xlaFhzMUFVc2N1ZGVUU213SWJqbnB0cS9wSnNIbGJHR0xIVlV0?=
+ =?utf-8?B?MW9tNTB1dTNxcy80MjJ4TS9qZ2RtanVraFR5dWNoNTMxa0JObGpvcXBjSWFT?=
+ =?utf-8?B?MlI0eDhnd1ZENiswQmRCQllxOUd2cDRGYU54aktOdC9qWUQyRzZ1SVA4dW9Z?=
+ =?utf-8?B?WU1hMVBZQUw4Zzkyc1pMa0h1ZG0vOVJEczFVREVwOXJwaHg4VFpBOWQ2ZjU4?=
+ =?utf-8?B?LzdWTFlza2NsOUY3YkhOTitmL1h3OWtlT3krQTNyaGdONk03UFBmUFBYMjkz?=
+ =?utf-8?B?VnlEb29sTEQ1Y2M2Z1U4anhjb09OZktZTmhvK25KMG9wclc0SkI1OUZVbzA4?=
+ =?utf-8?B?ZjU3SlhXdFoyOVlLM3B4emdlTzVRV1MxMEdmdTF4enFsYTZEelZydERoUC9H?=
+ =?utf-8?B?NUFCTHVzUnJ4alVTLzBwMm0ydzIwRitGbEFrUW53d0hCSU1OSEFORWtyUDAv?=
+ =?utf-8?B?cVF6aU85Q0RYN0JyQ050bERTUVNIdFpjUFVSQlI1YUN2dmZTZG40NW5oUW9E?=
+ =?utf-8?B?dVRmV09wM1kyaUlsclVSYjJSWHpTZG5SVVBiSFBnR2JKSXB1d1RBRzZ3MHBT?=
+ =?utf-8?B?SDNMajNoTmViREZUZytxb3FDaE5waVFHbjZ0SXJlcXRZcGo2YWRBRVZQK3Q2?=
+ =?utf-8?B?WW13b09EQzU4TFNEVTZGdmFIK1BGalhJRHlyMXU4THdSMno4bmNnSTNUc2Qr?=
+ =?utf-8?B?eUVob0YwTTN3dUFzTWZCbzdobllJQzlvcTk3NXhVSm80WGRSS0VOV0I1YllT?=
+ =?utf-8?B?cXM4eFNSWitJV1JTMndqd0k2VklmeGdmSGlCYjNmWHBWOVcwdEs4VHYyV29O?=
+ =?utf-8?B?akdURWE1anhITjlwNjE3L2NYaTFRY1UwdGhzYmZPa0VtMXJDbFFvclFwZW54?=
+ =?utf-8?B?VWIrNFJFRyt2cXBORmhUYmlTOHJsRjRhemdlZDl4U09DYWREZkJ4ekVaOW1p?=
+ =?utf-8?B?RkZyeE9sUzZobWRLVmRWcUFyejVDNTJsam1WcFZJek9sT0F4L2V3YW01b244?=
+ =?utf-8?B?M1k4SUFRY3psbmdCTXprNUF0RTZlcXhvM09PQmNxc3l0bW8ybjFPOG5xRzdF?=
+ =?utf-8?Q?eTo5sEeLcOTgaYhwS1Wo/OQ=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 53766302-41f6-4b39-8b7f-08d9a2d15392
+X-MS-Exchange-CrossTenant-AuthSource: BL1PR12MB5317.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Nov 2021 16:03:38.5694
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: +77ZJGhrwFlwUXMgf7jGID1EhA9Elm/oQ+6fndxmIV+0U0tut3jNpiS+1LpT2AQmTNg5ryngGNWo1bwx7as7pA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5302
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, Nov 08, 2021 at 04:58:34PM +0100, Maxime Ripard wrote:
-> On Fri, Nov 05, 2021 at 08:14:04PM +0200, Ville Syrj�l� wrote:
-> > On Fri, Nov 05, 2021 at 07:02:30PM +0100, Daniel Vetter wrote:
-> > > On Thu, Nov 04, 2021 at 05:37:21PM +0200, Ville Syrj�l� wrote:
-> > > > On Tue, Nov 02, 2021 at 03:59:33PM +0100, Maxime Ripard wrote:
-> > > > > --- a/include/drm/drm_modes.h
-> > > > > +++ b/include/drm/drm_modes.h
-> > > > > @@ -424,6 +424,21 @@ static inline bool drm_mode_is_stereo(const struct drm_display_mode *mode)
-> > > > >  	return mode->flags & DRM_MODE_FLAG_3D_MASK;
-> > > > >  }
-> > > > >  
-> > > > > +/**
-> > > > > + * drm_mode_hdmi_requires_scrambling - Checks if a mode requires HDMI Scrambling
-> > > > > + * @mode: DRM display mode
-> > > > > + *
-> > > > > + * Checks if a given display mode requires the scrambling to be enabled.
-> > > > > + *
-> > > > > + * Returns:
-> > > > > + * A boolean stating whether it's required or not.
-> > > > > + */
-> > > > > +static inline bool
-> > > > > +drm_mode_hdmi_requires_scrambling(const struct drm_display_mode *mode)
-> > > > > +{
-> > > > > +	return mode->clock > DRM_HDMI_14_MAX_TMDS_CLK_KHZ;
-> > > > > +}
-> > > > 
-> > > > That's only correct for 8bpc. The actual limit is on the TMDS clock (or
-> > > > rather TMDS character rate as HDMI 2.0 calls it due to the 1/1 vs. 1/4
-> > > > magic for the actually transmitted TMDS clock).
-> > > 
-> > > Yeah we might need to add the bus format for the cable here too, to make
-> > > this complete.
-> > 
-> > I don't think we have a usable thing for that on the drm level, so
-> > would need to invent something. Oh, and the mode->clock vs. 
-> > mode->crtc_clock funny business also limits the usability of this
-> > approach. So probably just easiest to pass in the the driver calculated
-> > TMDS clock instead.
-> 
-> If we look at all (I think?) the existing users of scrambling in KMS as
-> of 5.15, only i915 seems to use crtc_clock (which, in retrospect, seems
-> to be the right thing to do), and only i915 and dw-hdmi use an output
-> format, i915 rolling its own, and dw-hdmi using the mbus formats.
-> 
-> I think using the mbus format here makes the most sense: i915 already is
-> rolling a whole bunch of other code, and we use the mbus defines for the
-> bridge format enumeration as well which is probably going to have some
-> interaction.
-> 
-> I'm not quite sure what to do next though. The whole point of that
-> series is to streamline as much as possible the scrambling and TMDS
-> ratio setup to avoid the duplication we already have in the drivers that
-> support it, every one using the mostly-the-same-but-slightly-different
-> logic to configure it.
-> 
-> The mode is fortunately stored in generic structures so it's easy to
-> make that decision. Having to take into account the output format
-> however makes it mandatory to move the bus format in the
-> drm_connector_state(?) structure too.
-> 
-> It's already in the bridge_state though, so should we take the final
-> bridge format as the cable format if it's tied to a bridge?
 
-Maybe as a default, it nothing is set. Also if nothing is set in the
-connector then just assume 8bpc rgb, and drivers can be fixed as we go.
--Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+
+On 11/3/2021 10:55 PM, Jaroslav Kysela wrote:
+> On 03. 11. 21 15:16, Takashi Iwai wrote:
+>> On Wed, 03 Nov 2021 14:52:17 +0100,
+>> Sameer Pujar wrote:
+>>>
+>>> The kcontrol put callback is expected to return 1 when there is change
+>>> in HW or when the update is acknowledged by driver. This would ensure
+>>> that change notifications are sent to subscribed applications. Update
+>>> the ADMAIF driver accordingly
+>>>
+>>> Fixes: f74028e159bb ("ASoC: tegra: Add Tegra210 based ADMAIF driver")
+>>> Suggested-by: Jaroslav Kysela <perex@perex.cz>
+>>> Suggested-by: Mark Brown <broonie@kernel.org>
+>>> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
+>>> ---
+>>>   sound/soc/tegra/tegra210_admaif.c | 23 ++++++++++++++++++-----
+>>>   1 file changed, 18 insertions(+), 5 deletions(-)
+>>>
+>>> diff --git a/sound/soc/tegra/tegra210_admaif.c 
+>>> b/sound/soc/tegra/tegra210_admaif.c
+>>> index bcccdf3..dc71075 100644
+>>> --- a/sound/soc/tegra/tegra210_admaif.c
+>>> +++ b/sound/soc/tegra/tegra210_admaif.c
+>>> @@ -452,16 +452,29 @@ static int tegra_admaif_put_control(struct 
+>>> snd_kcontrol *kcontrol,
+>>>      struct tegra_admaif *admaif = 
+>>> snd_soc_component_get_drvdata(cmpnt);
+>>>      int value = ucontrol->value.integer.value[0];
+>>>
+>>> -    if (strstr(kcontrol->id.name, "Playback Mono To Stereo"))
+>>> +    if (strstr(kcontrol->id.name, "Playback Mono To Stereo")) {
+>>> +            if (admaif->mono_to_stereo[ADMAIF_TX_PATH][ec->reg] == 
+>>> value)
+>>> +                    return 0;
+>>> +
+>>> admaif->mono_to_stereo[ADMAIF_TX_PATH][ec->reg] = value;
+>>> -    else if (strstr(kcontrol->id.name, "Capture Mono To Stereo"))
+>>> +    } else if (strstr(kcontrol->id.name, "Capture Mono To Stereo")) {
+>>> +            if (admaif->mono_to_stereo[ADMAIF_RX_PATH][ec->reg] == 
+>>> value)
+>>> +                    return 0;
+>>> +
+>>> admaif->mono_to_stereo[ADMAIF_RX_PATH][ec->reg] = value;
+>>> -    else if (strstr(kcontrol->id.name, "Playback Stereo To Mono"))
+>>> +    } else if (strstr(kcontrol->id.name, "Playback Stereo To Mono")) {
+>>> +            if (admaif->stereo_to_mono[ADMAIF_TX_PATH][ec->reg] == 
+>>> value)
+>>> +                    return 0;
+>>> +
+>>> admaif->stereo_to_mono[ADMAIF_TX_PATH][ec->reg] = value;
+>>> -    else if (strstr(kcontrol->id.name, "Capture Stereo To Mono"))
+>>> +    } else if (strstr(kcontrol->id.name, "Capture Stereo To Mono")) {
+>>> +            if (admaif->stereo_to_mono[ADMAIF_RX_PATH][ec->reg] == 
+>>> value)
+>>> +                    return 0;
+>>> +
+>>> admaif->stereo_to_mono[ADMAIF_RX_PATH][ec->reg] = value;
+>>> +    }
+>>>
+>>> -    return 0;
+>>> +    return 1;
+>>
+>> Hrm, that looks too redundant.  The similar checks are seen in the get
+>> part, so we may have a better helper function to reduce the string
+>> checks, something like below.
+>
+
+Thanks Takashi for your inputs. This would make the get/put callbacks 
+simpler. But in some cases, for few controls additional handling is 
+required (tegra210_i2s.c driver for example). In such cases additional 
+checks would be required if the callback is common.
+
+> While proposing such cleanups, I would create separate get/put 
+> callbacks for
+> all four ops instead using strstr(). The callbacks may put the common 
+> code to
+> one function. It may reduce the code size (and the text segment size).
+
+With separate callbacks, the string checks can be removed. However for 
+most of the controls, the common part is minimal. So there would be 
+multiple independent small functions depending on the number of controls 
+and the local variables are duplicated that many times. Would there be 
+any concern on the space these local variables take? One pair of 
+callbacks for a control may look like this.
+
+static int kctl_pget_mono_to_stereo(struct snd_kcontrol *kcontrol,
+                                     struct snd_ctl_elem_value *ucontrol)
+{
+         struct snd_soc_component *cmpnt = 
+snd_soc_kcontrol_component(kcontrol);
+         struct soc_enum *ec = (struct soc_enum *)kcontrol->private_value;
+         struct tegra_admaif *admaif = snd_soc_component_get_drvdata(cmpnt);
+
+         ucontrol->value.integer.value[0] =
+admaif->mono_to_stereo[ADMAIF_TX_PATH][ec->reg];
+
+         return 0;
+}
+
+static int kctl_pput_mono_to_stereo(struct snd_kcontrol *kcontrol,
+                                     struct snd_ctl_elem_value *ucontrol)
+{
+         struct snd_soc_component *cmpnt = 
+snd_soc_kcontrol_component(kcontrol);
+         struct soc_enum *ec = (struct soc_enum *)kcontrol->private_value;
+         struct tegra_admaif *admaif = snd_soc_component_get_drvdata(cmpnt);
+         int value = ucontrol->value.integer.value[0];
+
+         if (value == admaif->mono_to_stereo[ADMAIF_TX_PATH][ec->reg])
+                 return 0;
+
+         admaif->mono_to_stereo[ADMAIF_TX_PATH][ec->reg] = value;
+
+         return 1;
+}
+
+
+Looks like having separate callbacks make it look more cleaner. If this 
+appears fine, I can send next revision.
+
