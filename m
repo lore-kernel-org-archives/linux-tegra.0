@@ -2,92 +2,112 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B8DFC433F5
-	for <linux-tegra@archiver.kernel.org>; Mon,  8 Nov 2021 16:16:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4177C43217
+	for <linux-tegra@archiver.kernel.org>; Mon,  8 Nov 2021 16:21:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E68BA61361
-	for <linux-tegra@archiver.kernel.org>; Mon,  8 Nov 2021 16:16:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 981EA61503
+	for <linux-tegra@archiver.kernel.org>; Mon,  8 Nov 2021 16:21:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239155AbhKHQSx (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 8 Nov 2021 11:18:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58658 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S236829AbhKHQSx (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 8 Nov 2021 11:18:53 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 91AAF61360;
-        Mon,  8 Nov 2021 16:16:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1636388168;
-        bh=ZViGquAcSREf+WCVyvRS1/EQ7NWLBVKUIUxVQpvu/Vk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=qDbi4k8q9+LR+6Xqi95afw3Ov2XCJtgQsoPXbqWGwgqOO6qNkaFhBAl0mvjhMmCUc
-         BIcFHDyB5TiDpg1vGgCQ7hfumwZCLduUiFoBOWwJa67ftfBNYrveblFgfDRkuqVWrj
-         o9qJQiXy4gqxwoCDF2AQUvtXpeVlQTJbSP3ychXOQeQg/YhtD6Irk2DGPcvxh6j9OB
-         HsZ+l8XDu+dG9hs7vV6m0+3RpxH36DzeEMzxZk6F3krj5wp77OKAHG6pvchC+qywhv
-         W6ESPfwY1BKiFDk8KzELS3xm/wqc+0iyR6Ey3SWiPKPOx492ubZEYx41nQZCbBprrD
-         Y0L0GtuSI1aBQ==
-Date:   Mon, 8 Nov 2021 16:16:03 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Sameer Pujar <spujar@nvidia.com>
-Cc:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>,
-        lgirdwood@gmail.com, tiwai@suse.com, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, alsa-devel@alsa-project.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 01/10] ASoC: tegra: Fix kcontrol put callback in ADMAIF
-Message-ID: <YYlNQya+YVg1JCRq@sirena.org.uk>
-References: <1635947547-24391-1-git-send-email-spujar@nvidia.com>
- <1635947547-24391-2-git-send-email-spujar@nvidia.com>
- <s5ha6ilmiiv.wl-tiwai@suse.de>
- <0e2d89ca-84e3-9427-5ce1-c0224d4db089@perex.cz>
- <d27bf513-6f16-5ad6-59cb-79fad5cc951c@nvidia.com>
+        id S241228AbhKHQYl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 8 Nov 2021 11:24:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38612 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239990AbhKHQYh (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 8 Nov 2021 11:24:37 -0500
+Received: from mail.skyhub.de (mail.skyhub.de [IPv6:2a01:4f8:190:11c2::b:1457])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A331C061570;
+        Mon,  8 Nov 2021 08:21:52 -0800 (PST)
+Received: from zn.tnic (p200300ec2f331100181cb4ce2fe9e1de.dip0.t-ipconnect.de [IPv6:2003:ec:2f33:1100:181c:b4ce:2fe9:e1de])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 071501EC0503;
+        Mon,  8 Nov 2021 17:21:51 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1636388511;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=BmhP/O36y2kgWhY9wVesOsCT3VZHRN0l2HSALpf1H38=;
+        b=PwrrR1/9r0PtkEkx8l94Lq5o8cthN3NxILevAwj1LoIRoN/B58W84rM+iyPPtwIBmVMRtG
+        8jlUd2DAmGqQe7+sK0xny6az8RzdndQG0jeU2pdwyReIQXuaywQhQg+JKE/uRG6ku5v9jN
+        K5y81X7+5Pp2iJVW5AZDozV+KOdqQTY=
+Date:   Mon, 8 Nov 2021 17:21:45 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Ayush Sawal <ayush.sawal@chelsio.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rohit Maheshwari <rohitm@chelsio.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Vinay Kumar Yadav <vinay.yadav@chelsio.com>,
+        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
+        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
+        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
+        intel-gvt-dev@lists.freedesktop.org,
+        alpha <linux-alpha@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        linux-edac@vger.kernel.org,
+        Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
+        linux-hyperv@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-leds <linux-leds@vger.kernel.org>,
+        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
+        Parisc List <linux-parisc@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        "open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM" 
+        <linux-remoteproc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        scsi <linux-scsi@vger.kernel.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        linux-staging@lists.linux.dev,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        linux-um <linux-um@lists.infradead.org>,
+        USB list <linux-usb@vger.kernel.org>,
+        "open list:TENSILICA XTENSA PORT (xtensa)" 
+        <linux-xtensa@linux-xtensa.org>, netdev <netdev@vger.kernel.org>,
+        openipmi-developer@lists.sourceforge.net, rcu@vger.kernel.org,
+        sparclinux <sparclinux@vger.kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        xen-devel@lists.xenproject.org
+Subject: Re: [PATCH v0 42/42] notifier: Return an error when callback is
+ already registered
+Message-ID: <YYlOmd0AeA8DSluD@zn.tnic>
+References: <20211108101157.15189-1-bp@alien8.de>
+ <20211108101157.15189-43-bp@alien8.de>
+ <CAMuHMdWH+txiSP_d7Jc4f_bU8Lf9iWpT4E3o5o7BJr-YdA6-VA@mail.gmail.com>
+ <YYkyUEqcsOwQMb1S@zn.tnic>
+ <CAMuHMdXiBEQyEXJagSfpH44hxVA2t0sDH7B7YubLGHrb2MJLLA@mail.gmail.com>
+ <YYlJQYLiIrhjwOmT@zn.tnic>
+ <CAMuHMdXHikGrmUzuq0WG5JRHUUE=5zsaVCTF+e4TiHpM5tc5kA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="hSCBKJ2X0AP7XGaR"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <d27bf513-6f16-5ad6-59cb-79fad5cc951c@nvidia.com>
-X-Cookie: Kleeneness is next to Godelness.
+In-Reply-To: <CAMuHMdXHikGrmUzuq0WG5JRHUUE=5zsaVCTF+e4TiHpM5tc5kA@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On Mon, Nov 08, 2021 at 05:12:16PM +0100, Geert Uytterhoeven wrote:
+> Returning void is the other extreme ;-)
+> 
+> There are 3 levels (ignoring BUG_ON()/panic () inside the callee):
+>   1. Return void: no one can check success or failure,
+>   2. Return an error code: up to the caller to decide,
+>   3. Return a __must_check error code: every caller must check.
+> 
+> I'm in favor of 2, as there are several places where it cannot fail.
 
---hSCBKJ2X0AP7XGaR
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Makes sense to me. I'll do that in the next iteration.
 
-On Mon, Nov 08, 2021 at 09:33:25PM +0530, Sameer Pujar wrote:
+Thx.
 
-> With separate callbacks, the string checks can be removed. However for most
-> of the controls, the common part is minimal. So there would be multiple
-> independent small functions depending on the number of controls and the
-> local variables are duplicated that many times. Would there be any concern
-> on the space these local variables take? One pair of callbacks for a control
-> may look like this.
+-- 
+Regards/Gruss,
+    Boris.
 
-...
-
-> Looks like having separate callbacks make it look more cleaner. If this
-> appears fine, I can send next revision.
-
-Looks fine.  It'll result in more code but hopefully they should be
-smaller, especially if you're using substrings rather than the full
-control name to identify the control and we need to store all them
-separately to the copy used to identify the control to userspace (I
-didn't go check).
-
---hSCBKJ2X0AP7XGaR
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmGJTUIACgkQJNaLcl1U
-h9A7OAf/crR93uqsfMvOX0QdbKKWE3VrliVv3O3XEdi19d7/wUTGNbdqm0547n4L
-oyi9HGmFL/pXYpGncL5V+UIqWRftYJ9oy2GIYxRe/eH6RFGM0vthFI+Z8ZJw3D+i
-Rtx7WX9gFANilArMSXwILu4K8CsAeoDF8Tibjh4K1+k5IcO2tNcTnSNA5xlT7OVc
-uzpDDAe9c6c1X0mP2D42MoHJ4RtEcKvue0GxpN+/PKkCAgmpGMsQb+RQ25n9npHv
-8w7lMDaddhi2MQMuBPYDmAHboFkhsCVyVJFKJOPgMzF55SC17iDFHW6QyxT4FimW
-0p60A9ZtmDNkiKXjOo2tj3JEpqQmgw==
-=Xs1h
------END PGP SIGNATURE-----
-
---hSCBKJ2X0AP7XGaR--
+https://people.kernel.org/tglx/notes-about-netiquette
