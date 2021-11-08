@@ -2,205 +2,167 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7095C433FE
-	for <linux-tegra@archiver.kernel.org>; Mon,  8 Nov 2021 14:59:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2D2AC433EF
+	for <linux-tegra@archiver.kernel.org>; Mon,  8 Nov 2021 15:17:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ACCFD6115A
-	for <linux-tegra@archiver.kernel.org>; Mon,  8 Nov 2021 14:59:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 73B676125F
+	for <linux-tegra@archiver.kernel.org>; Mon,  8 Nov 2021 15:17:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229627AbhKHPCa (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 8 Nov 2021 10:02:30 -0500
-Received: from new1-smtp.messagingengine.com ([66.111.4.221]:54101 "EHLO
-        new1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S237176AbhKHPC1 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 8 Nov 2021 10:02:27 -0500
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 8C3A858089B;
-        Mon,  8 Nov 2021 09:59:40 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute1.internal (MEProxy); Mon, 08 Nov 2021 09:59:40 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm1; bh=8xAnXR5M2pgccDxgDHcsQoFJ3dq
-        VROc3kmDiRvdyHNQ=; b=L379N1g3L7WdacAQbBZ35pwsOUT4J/NwnX7dQSv5CzB
-        CbhnBtNRvRXkjJjvHDoQ5Xb7cIElF3AsaDvNqQZQZj6x54hdg1ll4clajo4KNaNu
-        gNg4VYqn1CKm6vJL3JK9UWL6SkjKmzovn/Pfr853xq3r3ZdELHFxCU0Zi99ZBnrv
-        /hdo12cbs2fB32BnGW8U4QJDfN6tTfF+x0eHRm8DiUhSEn8h1PLUBNTFxy4aXEkn
-        nb3iTOsrdGFBwMRyWDGR5idREHoLI6qH09C+IHajLEPWYPLBMmWEYpAD3ydNC3Cz
-        ZzRxKd0t0GAcy818VLAVOP3REr7ZcF4wK6lQl4So/hQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=8xAnXR
-        5M2pgccDxgDHcsQoFJ3dqVROc3kmDiRvdyHNQ=; b=fNm9LxqPCTaxt99wM+CUko
-        RDuEO0HozN8rDzL4wcLliLpROmzodqXfMOdBgrrHl9OWMQiPUfn9tI65ZmyQeh5/
-        J6ydhFP1E9kjYAicN7fcHD0+iCILDqb+F6Sj3wzHYCBjtaEx1w3Acb7oQfeXlrdI
-        iU00l1s26k4uqM2TkXslIbukJtF7628kaTO9mJUZ0doTroPbF8ht1oVywdtaodDM
-        tf5G7Uj/h5mPyhPWmkXV7RQrHWzWIKIcjsTxwjCoG153UN7dZ0oZ46amp4x+WuoW
-        /sDAu20CPxybVmhAyZ7WZ0/DFeEy7MqF9fdyRhEJOHA3Cn8Gw3Ap4+HtvDr+ooXQ
-        ==
-X-ME-Sender: <xms:WjuJYc-ZZGz5uWz5jiDkVnmgMlJ5KfLApDSVlbtw-Tk-pDVue06tKw>
-    <xme:WjuJYUuTzx3GISHDitCuXdWvgamMfQqyiupSQzGztISxyyOFSndwUvUZZPVSuNZKU
-    5-rzKj0-TP1gxZgHHU>
-X-ME-Received: <xmr:WjuJYSBxO_ougqacmWHx6-HW-NP0TFXA94qNFur3VdO5XopelVsiUcQDmwBxzdit-8JH4GDh8Ky_DiLAGAvmYTVXJyP2JhjIkVJSP-f2>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvuddruddvgdeilecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvuffkfhggtggujgesghdtreertddtudenucfhrhhomhepofgrgihimhgv
-    ucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrghtth
-    gvrhhnpeejkeekffdtfffhhfevvddutefgtdeljeevffevvddvteegledtgfeghfehvdei
-    ffenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptd
-    enucfrrghrrghmpehmrghilhhfrhhomhepmhgrgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:WzuJYcdWVUFVvYX0rJZQLxBHN8LDdaWmvc_85zYzibgOusN8cr8_ow>
-    <xmx:WzuJYROBBEtQ4nNudlGzcUoCkPiLoXZjMUD3aemO3G9O6rSIb3kwag>
-    <xmx:WzuJYWmjTPVOLA19362ptztU0oB0iZ7E3e1momGhzU6HDTmn6S0Gmw>
-    <xmx:XDuJYZ25ok5xUHmQO20sN5bDqtdXlsvaZcO6Owy3wKHPFRmhvMenjA>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 8 Nov 2021 09:59:38 -0500 (EST)
-Date:   Mon, 8 Nov 2021 15:59:35 +0100
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
-Cc:     Emma Anholt <emma@anholt.net>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        amd-gfx@lists.freedesktop.org,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Phil Elwell <phil@raspberrypi.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Tim Gover <tim.gover@raspberrypi.com>,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        id S237811AbhKHPUX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 8 Nov 2021 10:20:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52146 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231127AbhKHPUW (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 8 Nov 2021 10:20:22 -0500
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F87FC061714
+        for <linux-tegra@vger.kernel.org>; Mon,  8 Nov 2021 07:17:37 -0800 (PST)
+Received: by mail-wm1-x335.google.com with SMTP id r9-20020a7bc089000000b00332f4abf43fso87997wmh.0
+        for <linux-tegra@vger.kernel.org>; Mon, 08 Nov 2021 07:17:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=date:from:to:cc:subject:message-id:mail-followup-to:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=hBEGhoX5YuNLFtwj0iZldxCPL/IU1JHW309UHcbi6N0=;
+        b=L8/zB7BSBqyEz55VvZb2onr/HFN94h4kOWeL7YKHsOsT6aNM9jUhR/4oD9HwZJ4vNL
+         CrsZGGjPrY/EtdG2BuMc6FD6fiT05/iN3LeAelAyxYKbBQigeQTjqjw9wGhX+50L0qz1
+         MpjojiscjFDkUXddHTcuRAa2J1CAvkLAJWlMI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to;
+        bh=hBEGhoX5YuNLFtwj0iZldxCPL/IU1JHW309UHcbi6N0=;
+        b=rcbwpo2mIU1Te0RRTb6Jk1b+MdN6Z82P/bEupEYEDCPiTm7/ctvNxrHRnp8AG3HTY2
+         LnL6euRSEZhVBnRfl/QqFjfK3czIiv5f0jwZWHXftDtXDBMO5bBR77y4oO9pbQpDYW9y
+         UbQvmOzDgvygkLVG3NfuQzSv0cWx/sokU/7CVA0etWY15gRzPqoppU8T2Cl3RNryKEj/
+         IpIMvaOLINjfRqdqOLH6nkb7s1Sbt2ABpDXa2FVJG9TC7DK6zstnOq1qxAQ/aMfVmpX4
+         TkjZK5/h8zV1WJJxA4HMBejQ72yIBZ5Ht/qDpXCFOO2xdRi7Y7gyWZRKpzWGWxrbrUIZ
+         4y2w==
+X-Gm-Message-State: AOAM533yooSCM61PKmggQg3FNYNDTpr/sklHka9OkVsUg5s68DopuDfB
+        Irlp0CDydoYn8Bz9kjxsXfAVVQ==
+X-Google-Smtp-Source: ABdhPJyp7OwRHBxwCBRfEWA+tElkasv2jnP+G3zoYuHxViLc/uz2nRtyKPxBmH9BvrPQOAu7OmBUOw==
+X-Received: by 2002:a1c:1fcf:: with SMTP id f198mr93457wmf.66.1636384656073;
+        Mon, 08 Nov 2021 07:17:36 -0800 (PST)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
+        by smtp.gmail.com with ESMTPSA id l8sm22202895wmc.40.2021.11.08.07.17.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Nov 2021 07:17:35 -0800 (PST)
+Date:   Mon, 8 Nov 2021 16:17:33 +0100
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        intel-gfx@lists.freedesktop.org,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        linux-tegra@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        Dom Cobley <dom@raspberrypi.com>,
-        "Pan, Xinhui" <Xinhui.Pan@amd.com>,
-        Robert Foss <robert.foss@linaro.org>,
+        Lyude Paul <lyude@redhat.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
         Thomas Zimmermann <tzimmermann@suse.de>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH 01/13] drm/connector: Add define for HDMI 1.4 Maximum
- Pixel Rate
-Message-ID: <20211108145935.fhvq72k5bnrjeb3b@gilmour>
-References: <20211102145944.259181-1-maxime@cerno.tech>
- <20211102145944.259181-2-maxime@cerno.tech>
- <YYJsM6/hZ43b1tm9@intel.com>
- <YYLPXJoC7TZcwejb@intel.com>
- <20211104084841.mjnennxgelacleaj@gilmour>
- <YYP/GWqbcvVFIrAj@intel.com>
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Thomas Graichen <thomas.graichen@gmail.com>,
+        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 2/2] drm/tegra: Use drm_dp_aux_register_ddc/chardev()
+ helpers
+Message-ID: <YYk/jfcceun/Qleq@phenom.ffwll.local>
+Mail-Followup-To: Dmitry Osipenko <digetx@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Lyude Paul <lyude@redhat.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@linux.ie>,
+        Thomas Graichen <thomas.graichen@gmail.com>,
+        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20211107230821.13511-1-digetx@gmail.com>
+ <20211107230821.13511-2-digetx@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="u5n44bpbocthx4et"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YYP/GWqbcvVFIrAj@intel.com>
+In-Reply-To: <20211107230821.13511-2-digetx@gmail.com>
+X-Operating-System: Linux phenom 5.10.0-8-amd64 
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On Mon, Nov 08, 2021 at 02:08:21AM +0300, Dmitry Osipenko wrote:
+> Use drm_dp_aux_register_ddc/chardev() helpers that allow to register I2C
+> adapter separately from the character device. This fixes broken display
+> panel driver of Acer Chromebook CB5-311 that fails to probe starting with
+> v5.13 kernel when DP AUX registration order was changed. Tegra SOR driver
+> is never probed now using the new registration order because tegra-output
+> always fails with -EPROBE_DEFER due to missing display panel that requires
+> DP AUX DDC to be registered first. The offending commit made DDC to be
+> registered after SOR's output, which can't ever happen. Use new helpers
+> to restore the registration order and revive display panel.
 
---u5n44bpbocthx4et
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This feels a bit backward, I think the clean solution would be to untangle
+the SOR loading from the panel driver loading, and then only block
+registering the overall drm_device on both drivers having loaded.
 
-On Thu, Nov 04, 2021 at 05:41:13PM +0200, Ville Syrj=E4l=E4 wrote:
-> On Thu, Nov 04, 2021 at 09:48:41AM +0100, Maxime Ripard wrote:
-> > Hi Ville,
-> >=20
-> > On Wed, Nov 03, 2021 at 08:05:16PM +0200, Ville Syrj=E4l=E4 wrote:
-> > > On Wed, Nov 03, 2021 at 01:02:11PM +0200, Ville Syrj=E4l=E4 wrote:
-> > > > On Tue, Nov 02, 2021 at 03:59:32PM +0100, Maxime Ripard wrote:
-> > > > > --- a/drivers/gpu/drm/drm_edid.c
-> > > > > +++ b/drivers/gpu/drm/drm_edid.c
-> > > > > @@ -4966,7 +4966,7 @@ static void drm_parse_hdmi_forum_vsdb(struc=
-t drm_connector *connector,
-> > > > >  		u32 max_tmds_clock =3D hf_vsdb[5] * 5000;
-> > > > >  		struct drm_scdc *scdc =3D &hdmi->scdc;
-> > > > > =20
-> > > > > -		if (max_tmds_clock > 340000) {
-> > > > > +		if (max_tmds_clock > DRM_HDMI_14_MAX_TMDS_CLK_KHZ) {
-> > > > >  			display->max_tmds_clock =3D max_tmds_clock;
-> > > > >  			DRM_DEBUG_KMS("HF-VSDB: max TMDS clock %d kHz\n",
-> > > > >  				display->max_tmds_clock);
-> > > > > diff --git a/drivers/gpu/drm/i915/display/intel_hdmi.c b/drivers/=
-gpu/drm/i915/display/intel_hdmi.c
-> > > > > index d2e61f6c6e08..0666203d52b7 100644
-> > > > > --- a/drivers/gpu/drm/i915/display/intel_hdmi.c
-> > > > > +++ b/drivers/gpu/drm/i915/display/intel_hdmi.c
-> > > > > @@ -2226,7 +2226,7 @@ int intel_hdmi_compute_config(struct intel_=
-encoder *encoder,
-> > > > >  		if (scdc->scrambling.low_rates)
-> > > > >  			pipe_config->hdmi_scrambling =3D true;
-> > > > > =20
-> > > > > -		if (pipe_config->port_clock > 340000) {
-> > > > > +		if (pipe_config->port_clock > DRM_HDMI_14_MAX_TMDS_CLK_KHZ) {
-> > > > >  			pipe_config->hdmi_scrambling =3D true;
-> > > > >  			pipe_config->hdmi_high_tmds_clock_ratio =3D true;
-> > > > >  		}
-> > > >=20
-> > > > All of that is HDMI 2.0 stuff. So this just makes it all super
-> > > > confusing IMO. Nak.
-> > >=20
-> > > So reading throgh HDMI 1.4 again it does specify 340 MHz as some kind
-> > > of upper limit for the physical cable. But nowhere else is that number
-> > > really mentioned AFAICS. HDMI 2.0 does talk quite a bit about the 340
-> > > Mcsc limit in various places.
-> > >=20
-> > > I wonder what people would think of a couple of helpers like:
-> > > - drm_hdmi_{can,must}_use_scrambling()
-> > > - drm_hdmi_is_high_tmds_clock_ratio()
-> > > or something along those lines? At least with those the code would
-> > > read decently and I wouldn't have to wonder what this HDMI 1.4 TMDS
-> > > clock limit really is.
-> >=20
-> > Patch 2 introduces something along those lines.
-> >=20
-> > It doesn't cover everything though, we're using this define in vc4 to
-> > limit the available modes in mode_valid on HDMI controllers not
-> > 4k-capable
->=20
-> I wouldn't want to use this kind of define for those kinds of checks
-> anyway. If the hardware has specific limits in what kind of clocks it
-> can generate (or what it was validated for) IMO you should spell
-> those out explicitly instead of assuming they happen to match
-> some standard defined max value.
+This here at least feels like a game of whack-a-mole, if like every driver
+needs its own careful staging of everything.
+-Daniel
 
-AFAIK, in the vc4 case, this is the hardware limit.
+> 
+> Cc: <stable@vger.kernel.org> # 5.13+
+> Fixes: 39c17ae60ea9 ("drm/tegra: Don't register DP AUX channels before connectors")
+> Reported-by: Thomas Graichen <thomas.graichen@gmail.com> # T124 Nyan Big
+> Tested-by: Thomas Graichen <thomas.graichen@gmail.com> # T124 Nyan Big
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/gpu/drm/tegra/dpaux.c | 10 +++++++---
+>  1 file changed, 7 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/tegra/dpaux.c b/drivers/gpu/drm/tegra/dpaux.c
+> index 1f96e416fa08..e0d675c7c2e5 100644
+> --- a/drivers/gpu/drm/tegra/dpaux.c
+> +++ b/drivers/gpu/drm/tegra/dpaux.c
+> @@ -532,7 +532,9 @@ static int tegra_dpaux_probe(struct platform_device *pdev)
+>  	dpaux->aux.transfer = tegra_dpaux_transfer;
+>  	dpaux->aux.dev = &pdev->dev;
+>  
+> -	drm_dp_aux_init(&dpaux->aux);
+> +	err = drm_dp_aux_register_ddc(&dpaux->aux);
+> +	if (err < 0)
+> +		return err;
+>  
+>  	/*
+>  	 * Assume that by default the DPAUX/I2C pads will be used for HDMI,
+> @@ -585,6 +587,8 @@ static int tegra_dpaux_remove(struct platform_device *pdev)
+>  	pm_runtime_put_sync(&pdev->dev);
+>  	pm_runtime_disable(&pdev->dev);
+>  
+> +	drm_dp_aux_unregister_ddc(&dpaux->aux);
+> +
+>  	mutex_lock(&dpaux_lock);
+>  	list_del(&dpaux->list);
+>  	mutex_unlock(&dpaux_lock);
+> @@ -718,7 +722,7 @@ int drm_dp_aux_attach(struct drm_dp_aux *aux, struct tegra_output *output)
+>  	int err;
+>  
+>  	aux->drm_dev = output->connector.dev;
+> -	err = drm_dp_aux_register(aux);
+> +	err = drm_dp_aux_register_chardev(aux);
+>  	if (err < 0)
+>  		return err;
+>  
+> @@ -759,7 +763,7 @@ int drm_dp_aux_detach(struct drm_dp_aux *aux)
+>  	unsigned long timeout;
+>  	int err;
+>  
+> -	drm_dp_aux_unregister(aux);
+> +	drm_dp_aux_unregister_chardev(aux);
+>  	disable_irq(dpaux->irq);
+>  
+>  	if (dpaux->output->panel) {
+> -- 
+> 2.33.1
+> 
 
-And there's other cases where it still seems to make sense to have that
-define:
-
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/dri=
-vers/gpu/drm/drm_edid.c#n4978
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/dri=
-vers/gpu/drm/radeon/radeon_encoders.c#n385
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/dri=
-vers/gpu/drm/amd/amdgpu/amdgpu_connectors.c#n1174
-
-etc..
-
-Maxime
-
---u5n44bpbocthx4et
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYYk7VwAKCRDj7w1vZxhR
-xXMgAQDnhMqR+evxrKBoJpC1Nd4kEZ4dT6uhRIbk5B86PNJztQD/c9fOYpIMx9ID
-px7xLl3B61kKbIVKVlnQO4kdunKyJw8=
-=VxQ1
------END PGP SIGNATURE-----
-
---u5n44bpbocthx4et--
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
