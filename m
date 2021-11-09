@@ -2,44 +2,44 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79DDEC433EF
-	for <linux-tegra@archiver.kernel.org>; Tue,  9 Nov 2021 22:29:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DBE9C433FE
+	for <linux-tegra@archiver.kernel.org>; Tue,  9 Nov 2021 22:33:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6462261208
-	for <linux-tegra@archiver.kernel.org>; Tue,  9 Nov 2021 22:29:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 253DA61151
+	for <linux-tegra@archiver.kernel.org>; Tue,  9 Nov 2021 22:33:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344506AbhKIWc2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 9 Nov 2021 17:32:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50856 "EHLO mail.kernel.org"
+        id S1344956AbhKIWfw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 9 Nov 2021 17:35:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56192 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1344618AbhKIWaa (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 9 Nov 2021 17:30:30 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 8C75761A78;
-        Tue,  9 Nov 2021 22:20:47 +0000 (UTC)
+        id S1345346AbhKIWdv (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 9 Nov 2021 17:33:51 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id E249761AE4;
+        Tue,  9 Nov 2021 22:21:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1636496448;
-        bh=DYyIzSGTQ8W6spGmBqd+117i5tD1eiwjX3gTuBDc7F4=;
+        s=k20201202; t=1636496516;
+        bh=2xIC4RW/7+34GK6xmB3u03swd/O3KlxuJtrTuGNn2wg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VPqaUXvUDMvlmbE99Nj2taaIRsSXyORfr0DA20jU8Ej5lPTfj3Ph1NDQFsxQb+3B4
-         EsnCqVTyLLilkjkOvjGJBpqciQlv/fG3VRpEtmdY8U0+1uHi9s3mv23k7MiX/qZjqP
-         GjgshVkSh+lDGD7gx8trfm5llc7+CyVUpwk/0eKmdvw0QX6gmu0lg7Tb/m3Iz4pLXT
-         Bryh6U1Bues9rNo3e+935e91iExKBmD6aS7jOLlpi86WhbQNMeWrpdFpu6xczUqqwU
-         gBW6NxXExHgvdYnzLcw3PkobIFSTH+AJMsu6qxq6z9YTTDSscdm+ckm6HA/ZI2oQYY
-         MKFmLya1w6/Bg==
+        b=o9aK8oM0UyNxOxkV6TDj0p53OJy5aXgRd1L/hiqUpjV7SD3tRSRAvz5Bt8byHHKdx
+         wNlnmlYbKYOoBC7Wwvq34yidrFQMopu/yhqQ5NMm36B86bVFlEFExfcw61JflirK5k
+         JBIAmOe1TVF/2Vj2X25kEyv+cwSrVasECG4bIPo+KZt2JxR+am5ukhadEvkEFt5dtE
+         NP0mSi23AsoXCa9h9458vpchonj7/Vir2RGSHGen/5ZbWxFYKpj5ARMLHbCzCiI76w
+         0vdHCrVmJZRnjk3McVS0Vfl+br4JPmt148DljtS5PzgIIBovcXw3Bdvlyo2firRz/f
+         E99kpLQIhEp3A==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Dmitry Osipenko <digetx@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Sasha Levin <sashal@kernel.org>, swarren@wwwdotorg.org,
-        thierry.reding@gmail.com, gnurou@gmail.com,
-        linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.14 66/75] memory: tegra20-emc: Add runtime dependency on devfreq governor module
-Date:   Tue,  9 Nov 2021 17:18:56 -0500
-Message-Id: <20211109221905.1234094-66-sashal@kernel.org>
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thierry Reding <treding@nvidia.com>,
+        Sasha Levin <sashal@kernel.org>, rjw@rjwysocki.net,
+        swarren@wwwdotorg.org, thierry.reding@gmail.com, gnurou@gmail.com,
+        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.10 32/50] cpuidle: tegra: Check whether PMC is ready
+Date:   Tue,  9 Nov 2021 17:20:45 -0500
+Message-Id: <20211109222103.1234885-32-sashal@kernel.org>
 X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20211109221905.1234094-1-sashal@kernel.org>
-References: <20211109221905.1234094-1-sashal@kernel.org>
+In-Reply-To: <20211109222103.1234885-1-sashal@kernel.org>
+References: <20211109222103.1234885-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -50,33 +50,35 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Dmitry Osipenko <digetx@gmail.com>
 
-[ Upstream commit 14b43c20c283de36131da0cb44f3170b9ffa7630 ]
+[ Upstream commit bdb1ffdad3b73e4d0538098fc02e2ea87a6b27cd ]
 
-Tegra20 EMC driver uses simple devfreq governor. Add simple devfreq
-governor to the list of the Tegra20 EMC driver module softdeps to allow
-userspace initramfs tools like dracut to automatically pull the devfreq
-module into ramfs image together with the EMC module.
+Check whether PMC is ready before proceeding with the cpuidle registration.
+This fixes racing with the PMC driver probe order, which results in a
+disabled deepest CC6 idling state if cpuidle driver is probed before the
+PMC.
 
-Reported-by: Nicolas Chauvet <kwizart@gmail.com>
-Suggested-by: Nicolas Chauvet <kwizart@gmail.com>
+Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-Link: https://lore.kernel.org/r/20211019231524.888-1-digetx@gmail.com
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/memory/tegra/tegra20-emc.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/cpuidle/cpuidle-tegra.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/memory/tegra/tegra20-emc.c b/drivers/memory/tegra/tegra20-emc.c
-index c3462dbc8c22b..6fc90f2160e93 100644
---- a/drivers/memory/tegra/tegra20-emc.c
-+++ b/drivers/memory/tegra/tegra20-emc.c
-@@ -1117,4 +1117,5 @@ module_platform_driver(tegra_emc_driver);
+diff --git a/drivers/cpuidle/cpuidle-tegra.c b/drivers/cpuidle/cpuidle-tegra.c
+index 29c5e83500d33..e6f96d272d240 100644
+--- a/drivers/cpuidle/cpuidle-tegra.c
++++ b/drivers/cpuidle/cpuidle-tegra.c
+@@ -346,6 +346,9 @@ static void tegra_cpuidle_setup_tegra114_c7_state(void)
  
- MODULE_AUTHOR("Dmitry Osipenko <digetx@gmail.com>");
- MODULE_DESCRIPTION("NVIDIA Tegra20 EMC driver");
-+MODULE_SOFTDEP("pre: governor_simpleondemand");
- MODULE_LICENSE("GPL v2");
+ static int tegra_cpuidle_probe(struct platform_device *pdev)
+ {
++	if (tegra_pmc_get_suspend_mode() == TEGRA_SUSPEND_NOT_READY)
++		return -EPROBE_DEFER;
++
+ 	/* LP2 could be disabled in device-tree */
+ 	if (tegra_pmc_get_suspend_mode() < TEGRA_SUSPEND_LP2)
+ 		tegra_cpuidle_disable_state(TEGRA_CC6);
 -- 
 2.33.0
 
