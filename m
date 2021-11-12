@@ -2,68 +2,65 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A8B4C433F5
-	for <linux-tegra@archiver.kernel.org>; Fri, 12 Nov 2021 13:02:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23466C433EF
+	for <linux-tegra@archiver.kernel.org>; Fri, 12 Nov 2021 13:06:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 34BDE61078
-	for <linux-tegra@archiver.kernel.org>; Fri, 12 Nov 2021 13:02:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 01B1A610A0
+	for <linux-tegra@archiver.kernel.org>; Fri, 12 Nov 2021 13:06:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235009AbhKLNFH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 12 Nov 2021 08:05:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49272 "EHLO
+        id S234942AbhKLNJY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 12 Nov 2021 08:09:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50196 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234998AbhKLNFG (ORCPT
+        with ESMTP id S231652AbhKLNJW (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 12 Nov 2021 08:05:06 -0500
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1E48C061766;
-        Fri, 12 Nov 2021 05:02:15 -0800 (PST)
-Received: by mail-wm1-x32a.google.com with SMTP id v127so7630938wme.5;
-        Fri, 12 Nov 2021 05:02:15 -0800 (PST)
+        Fri, 12 Nov 2021 08:09:22 -0500
+Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98B5AC061766;
+        Fri, 12 Nov 2021 05:06:31 -0800 (PST)
+Received: by mail-wr1-x42e.google.com with SMTP id s13so15445553wrb.3;
+        Fri, 12 Nov 2021 05:06:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=4mZKtwqreQjIFFGIVCaqNbBHLsMC83WDXTYa/9FKmow=;
-        b=gq4MlO43nd3Q+MWjpz0Sh60rjqH7AvG+WB2UYBs/fZgL4ctv3veRW/M/a7/zwHZT0V
-         8PRu6LlkRlvSAZZdn2Dcek/TjAWZpUZHCr5MfyAD/yyFY/8ketUXKFAfCBVJjm77QZCx
-         R/fGve0Y61O0hZSlrn/QRV2M73XoihjfK4o+ruDZyLjT7yeseMRyfVVkIXNNiEkzc5z0
-         rklI5NoTQjkt6nF0LuVrGIs9SZD2Gr1ew2ZANoJup6BbLP9MDza1ZXJu246h0VR1werU
-         0k/LmX9luOYI7u9EYsV2i7jqjjZo+x96jIzzDNq5CPtm+ZqoZVj/0XhArSdBhXRmET3K
-         orKg==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=8Yrfd/ijTqnwsVY0AsIgyAz4+oo/Nt1kqDk4QVJjw1A=;
+        b=Jvhp3tqpaMCssceziTTb044FnhBOR+aHEZh+gECgv1H6MZqm3k3hDR8kBzYnmCR142
+         85hR/qVOvWuehXjL14CZyRsvBMR0/PXLX/CEcCY+zOC9dhgRma7U19cbEeeA356Tt8Sz
+         m1dUlwsbKzTun+Q8WpsTqyU4YW85g35OIYfmqpS5fFdIWmLcpF4yvLtPr8Aig+XEMHjw
+         XmkYeeTrqH58D3x0dRLb77Yvj0wldCD36n5aDXJIw0JfpGXa6WbOs+mcs7s+S2Z86gjw
+         F32J1rrEgTn1OQ28aJMrevDvve4lLySk582dL24RnB3Twyh4drwgrwgobz6AZ9PfmqLC
+         uAmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=4mZKtwqreQjIFFGIVCaqNbBHLsMC83WDXTYa/9FKmow=;
-        b=jl9hq8pZOoMgFFU31qbPXmJETI6X01Um7QpV9jHR5V6S01PkLr6ff5HtTkc8olU9Hk
-         vA1K9JSPuML3UGgaJvDOJsuu3MBaGZDlR3AKXG0dsrLm6gFQZVwa9g3dAFOTAt0IMQbJ
-         yYvKT3Uj3Gz6uLhs5wlxamVwcDGhqDlQwNHXYU6Kxaxd/b99Xc6wPm1aK4DOLDava8V/
-         J4zwbiISBgzmjpWdBA7OpR11O5t45JZ+r8u2BIyA9/4lZmSEFxfkC58u30chm+QLRocF
-         MmIV/9mj5GnUto472d6d++q8mHu9SQprF3pHBiaq+L0ikbu8JgcsOm8qWtOIdjeijFao
-         16Wg==
-X-Gm-Message-State: AOAM532/4ER2754sj7wXUArc44jcCvLCVpHIkTC+8iO9oPvPebZVCiIR
-        8KGvOdauUrjFhxwVXqYcZAk=
-X-Google-Smtp-Source: ABdhPJwUN+673vHEsqQImvV9PWFbdV917AXNP4LKKIiovuQuBkS/uZKE6FT9pzZch/niKIYDZDLXTg==
-X-Received: by 2002:a7b:c94e:: with SMTP id i14mr16431254wml.85.1636722134490;
-        Fri, 12 Nov 2021 05:02:14 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=8Yrfd/ijTqnwsVY0AsIgyAz4+oo/Nt1kqDk4QVJjw1A=;
+        b=HlrfHth3FPW5qa175bonFgON/EkcwW3is3Cg42hkQW144sL5spK1Dnj0pg3rQ7KtC1
+         PGduNLS0QulQMZbwEwW/vAbrfHVHTqY1Ab0AFKQ5lkephO7AgmqjbG0SncWO4bLA1nps
+         FlExoJQpcraRU/gR+Eqvt2Hbu/Q0sveZCSzZGat6ik2gui0sK4ELIOkuPHuDfmSgvjCe
+         ryHpLOT8A7hcShDxYCESChy9zd98XxKtnFfrs2ihdIaL2C2QoHtji9qypRFxqw5+aixh
+         /yAG+bZNHm2bD+CwkX3kYtYupttCJn5PsLvqBwL4ZVGzpv+v1CA8SI9Y74vIQpsbXolC
+         w4cw==
+X-Gm-Message-State: AOAM533FSJu7/8ANxCMox+sYyUoZF0WatERPlj8YsrrKcsEhfp0TSyCi
+        3roku+u1fLlZUgfwjldAVqQl9B1982Sanw==
+X-Google-Smtp-Source: ABdhPJwLcB4mQF84pkJgqXGTyb3auYnMOC1x6fc19EOw78pFtAg4mHlrY/+DFBNdYFeKmMDuRuXX1A==
+X-Received: by 2002:a5d:69c5:: with SMTP id s5mr17837746wrw.283.1636722390119;
+        Fri, 12 Nov 2021 05:06:30 -0800 (PST)
 Received: from localhost ([193.209.96.43])
-        by smtp.gmail.com with ESMTPSA id k187sm8532784wme.0.2021.11.12.05.02.13
+        by smtp.gmail.com with ESMTPSA id g13sm5354445wmk.37.2021.11.12.05.06.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Nov 2021 05:02:13 -0800 (PST)
+        Fri, 12 Nov 2021 05:06:29 -0800 (PST)
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Rob Herring <robh+dt@kernel.org>
 Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Prathamesh Shete <pshete@nvidia.com>,
-        linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: [PATCH v2 5/5] arm64: tegra: Enable gpio-keys on Jetson AGX Orin Developer Kit
-Date:   Fri, 12 Nov 2021 14:01:52 +0100
-Message-Id: <20211112130152.3682556-6-thierry.reding@gmail.com>
+        Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/5] memory: tegra: Add Tegra234 support
+Date:   Fri, 12 Nov 2021 14:06:22 +0100
+Message-Id: <20211112130627.3682795-1-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.33.1
-In-Reply-To: <20211112130152.3682556-1-thierry.reding@gmail.com>
-References: <20211112130152.3682556-1-thierry.reding@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -72,76 +69,42 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-Expose power, force-recovery and sleep buttons via a gpio-keys device so
-that userspace can receive events from them.
+Hi,
 
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- .../nvidia/tegra234-p3737-0000+p3701-0000.dts | 31 +++++++++++++++++++
- arch/arm64/boot/dts/nvidia/tegra234.dtsi      |  1 +
- 2 files changed, 32 insertions(+)
+this series adds support to the Tegra memory controller driver for the
+version found on the new Tegra234 SoC. It is mostly similar to that on
+earlier chips, except that the memory clients differ.
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dts b/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dts
-index e3bb874869df..699eaa66824d 100644
---- a/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dts
-@@ -1,6 +1,9 @@
- // SPDX-License-Identifier: GPL-2.0
- /dts-v1/;
- 
-+#include <dt-bindings/input/linux-event-codes.h>
-+#include <dt-bindings/input/gpio-keys.h>
-+
- #include "tegra234-p3701-0000.dtsi"
- #include "tegra234-p3737-0000.dtsi"
- 
-@@ -18,6 +21,34 @@ chosen {
- 		stdout-path = "serial0:115200n8";
- 	};
- 
-+	gpio-keys {
-+		compatible = "gpio-keys";
-+		status = "okay";
-+
-+		force-recovery {
-+			label = "Force Recovery";
-+			gpios = <&gpio TEGRA234_MAIN_GPIO(G, 0) GPIO_ACTIVE_LOW>;
-+			linux,input-type = <EV_KEY>;
-+			linux,code = <BTN_1>;
-+		};
-+
-+		power-key {
-+			label = "Power";
-+			gpios = <&gpio_aon TEGRA234_AON_GPIO(EE, 4) GPIO_ACTIVE_LOW>;
-+			linux,input-type = <EV_KEY>;
-+			linux,code = <KEY_POWER>;
-+			wakeup-event-action = <EV_ACT_ASSERTED>;
-+			wakeup-source;
-+		};
-+
-+		suspend {
-+			label = "Suspend";
-+			gpios = <&gpio TEGRA234_MAIN_GPIO(G, 2) GPIO_ACTIVE_LOW>;
-+			linux,input-type = <EV_KEY>;
-+			linux,code = <KEY_SLEEP>;
-+		};
-+	};
-+
- 	tcu {
- 		status = "okay";
- 	};
-diff --git a/arch/arm64/boot/dts/nvidia/tegra234.dtsi b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-index 33523f7a9aaa..ad6978ca7162 100644
---- a/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-@@ -1,6 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0
- 
- #include <dt-bindings/clock/tegra234-clock.h>
-+#include <dt-bindings/gpio/tegra234-gpio.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/mailbox/tegra186-hsp.h>
- #include <dt-bindings/reset/tegra234-reset.h>
+This also updates the device tree binding with a missing property and
+ensures that all versions of the memory controller device tree nodes can
+be properly validated.
+
+Finally, the device trees for Tegra234 are updated and memory client
+nodes are hooked up to the memory controller via interconnect
+properties.
+
+Thierry
+
+Thierry Reding (5):
+  dt-bindings: memory: tegra: Document #interconnect-cells property
+  dt-bindings: memory: tegra: Add Tegra234 support
+  memory: tegra: Add Tegra234 support
+  arm64: tegra: Add memory controller on Tegra234
+  arm64: tegra: Hook up MMC and BPMP to memory controller
+
+ .../nvidia,tegra186-mc.yaml                   | 14 +++-
+ arch/arm64/boot/dts/nvidia/tegra234.dtsi      | 57 +++++++++++++
+ drivers/memory/tegra/Makefile                 |  1 +
+ drivers/memory/tegra/mc.c                     |  3 +
+ drivers/memory/tegra/mc.h                     |  7 +-
+ drivers/memory/tegra/tegra186-emc.c           |  3 +
+ drivers/memory/tegra/tegra234.c               | 81 +++++++++++++++++++
+ include/dt-bindings/clock/tegra234-clock.h    |  9 +++
+ include/dt-bindings/memory/tegra234-mc.h      | 32 ++++++++
+ 9 files changed, 203 insertions(+), 4 deletions(-)
+ create mode 100644 drivers/memory/tegra/tegra234.c
+ create mode 100644 include/dt-bindings/memory/tegra234-mc.h
+
 -- 
 2.33.1
 
