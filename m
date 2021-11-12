@@ -2,138 +2,162 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B0BAC433EF
-	for <linux-tegra@archiver.kernel.org>; Fri, 12 Nov 2021 10:39:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9F92C433F5
+	for <linux-tegra@archiver.kernel.org>; Fri, 12 Nov 2021 10:52:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3641F60F8F
-	for <linux-tegra@archiver.kernel.org>; Fri, 12 Nov 2021 10:39:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B2E3160EFD
+	for <linux-tegra@archiver.kernel.org>; Fri, 12 Nov 2021 10:52:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233441AbhKLKmT (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 12 Nov 2021 05:42:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45036 "EHLO
+        id S233593AbhKLKzm (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 12 Nov 2021 05:55:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48038 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233189AbhKLKmT (ORCPT
+        with ESMTP id S233441AbhKLKzm (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 12 Nov 2021 05:42:19 -0500
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3040C061766
-        for <linux-tegra@vger.kernel.org>; Fri, 12 Nov 2021 02:39:28 -0800 (PST)
-Received: by mail-wr1-x432.google.com with SMTP id s13so14720459wrb.3
-        for <linux-tegra@vger.kernel.org>; Fri, 12 Nov 2021 02:39:28 -0800 (PST)
+        Fri, 12 Nov 2021 05:55:42 -0500
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68C51C061766;
+        Fri, 12 Nov 2021 02:52:51 -0800 (PST)
+Received: by mail-wr1-x42d.google.com with SMTP id r8so14689569wra.7;
+        Fri, 12 Nov 2021 02:52:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=/tA4etxuhyZBgW9hixmUCCrsSg6AvdasJmoLdAaIxQE=;
-        b=EdAdow6Os4lIv6e3u3TttIhB1XB0+uMDKb6eoD58JhAxKwJeRoWozD00Z5qM/iUBxt
-         2hlBwSMZa+2UXkAU5tZkTFCFm5O1Z/G0pFcp/WXucu6Vx9QJf8lOGqBt515CgDZXqnl3
-         UUNPAE8CI2KBwfOp5UXM3nYdqI8mPCZH86I3X08WbLHYCCfuJ+SmnGhjAWfxO5xRdECh
-         k0hinCoIh9EyJ1IWmjFp9WIeyc1c0VcWIo3nHWrBiZ1RK5yE+Rni9NzPyK0KmUpqIHYJ
-         W0Zh8gJhHiuLuMa0I22+ujwQv7C4rJItjJgPQbtA3He0HWWT8n4POCuKPNyqNLh0oyAL
-         Gdkw==
+        bh=iNVobpr0uSF9aM9qI8/4Nu4IxqJVNye+v3UuU2+MbT0=;
+        b=KkWO70vZ7PLKt0/KuFir4VGCEYlhRVgf2jHw+rYjjdeM/PPVghco/53xbbQFYOA1PW
+         VYgxgLzJtByyhexpkTzDZ3vGdog9Nu6IsU8bhNcIH4+vlxKIrPSIM6qLM0NdDtamzPVd
+         q2I9xhG1QmD6KukfS7Jr5gmp3j5o/ZELjfuDDd/HoHEEZ6Y0ETC4WJqGL8JqoH5eIMf7
+         uCU/7cGtq0I3wgRSv4lHcReCfWGIl2V+7WY51sW6hls3rs9cqUXfKSIkSaLPa6hfQ+xx
+         +mbByXUxbVkrE3e7LJWJop0IOn5Rmls+h0e0pjeYylvlCBGjg1eI0BLd4ybMFj8bzgBw
+         +3Yg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=/tA4etxuhyZBgW9hixmUCCrsSg6AvdasJmoLdAaIxQE=;
-        b=2vvvdhaXC7TuFq7m7RiNsaI+mgHnaNYr4VbUzlZpn/qVj9Fbn93PXLnzdijR72D3EI
-         8j84xPBhf0BPm9xjEIFznzm4MO8herfgbfWUU0VRqWzLgU4K1kwQHJ26/wvp1lxP3FR4
-         u0skW4Ir6ciwCceBQB5z1E+Zhpr8SYFCeP0JgLF4x8d1rJ5b0lLuUNUsnbM2QfeiprjF
-         HgptguBqFSLjIxzOhuFzHwx5Ax328DPEN073A1LQrCRnMc/Fy1minwG4aCzijCAAm4mG
-         uSMTQWz/ATCEsDCmHNA5DfttwQlk4dEKz+PxDvMLgEpppC1M4dDKYR3Ni+t/HaFd8wSM
-         06gA==
-X-Gm-Message-State: AOAM532spRhfha6oy8ff3Byn+lqfgv93Myr13J/7BW4/Y6ppWlNur31q
-        h4BX+tjZ8TISqxEOfCv2zmk=
-X-Google-Smtp-Source: ABdhPJzD9b36/vyCl7zzuYTxH7IlwYQNh3wC3vx69x0dRHzwbgOGgweC2PFs479G/M8675bUXnWqzw==
-X-Received: by 2002:a5d:47aa:: with SMTP id 10mr17957650wrb.50.1636713567440;
-        Fri, 12 Nov 2021 02:39:27 -0800 (PST)
+        bh=iNVobpr0uSF9aM9qI8/4Nu4IxqJVNye+v3UuU2+MbT0=;
+        b=mnqWUpWQNJSoSVrqnAn+DLL7yYIG2zTuKC9jT6FhQT3cSThNW37IU7zVAO556DSx7I
+         HsTxFol7EEh5xQeQZo89lMUhuYMWTHG4Vb1b5ZE413fypaIBCDw+GLr/zghyRNTsOHnT
+         W9CRSogwtrvxa/AvUHw0nJQvqqR3gyVhpqR6mjnF/XyJxXbuVnD1+V/ZJsRki7D/Wr5E
+         FKrXK4QNgKDV2whhUQ0d9YmcTc8VJ1job4zWciNw+oyx7EzRN7JeRnh5nGtx0NKKydZM
+         wvHAECsnh6DqOD871saY77OncwWKxK0I4rGpLQmht/JAVzrybYgczNxbFxZAOOc8unjT
+         FMAQ==
+X-Gm-Message-State: AOAM531/RThdu2C5JmMTAUJtzp5nIfwbibobiYV4p8guE2MjHT7PSVqS
+        aFkV+Kwntt3ip3sU8/wUEp0=
+X-Google-Smtp-Source: ABdhPJxt8hmwkoNxAkljX6wwnFaU6kzsqjStqBPrz83FM5iRJqxpjlAEBUOF2MaReZmhy5IknMdJrA==
+X-Received: by 2002:adf:d1e2:: with SMTP id g2mr18045252wrd.346.1636714369976;
+        Fri, 12 Nov 2021 02:52:49 -0800 (PST)
 Received: from orome.fritz.box ([193.209.96.43])
-        by smtp.gmail.com with ESMTPSA id n13sm5421483wrt.44.2021.11.12.02.39.25
+        by smtp.gmail.com with ESMTPSA id f133sm5426527wmf.31.2021.11.12.02.52.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Nov 2021 02:39:26 -0800 (PST)
-Date:   Fri, 12 Nov 2021 11:39:23 +0100
+        Fri, 12 Nov 2021 02:52:49 -0800 (PST)
+Date:   Fri, 12 Nov 2021 11:52:45 +0100
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Dave Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
-Cc:     dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
-Subject: Re: [GIT PULL] drm/tegra: Changes for v5.16-rc1
-Message-ID: <YY5EWyMaGcZjdmvQ@orome.fritz.box>
-References: <20211008202334.1679411-1-thierry.reding@gmail.com>
- <YYTybH9cEcmJUaVc@orome.fritz.box>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
+        Lyude Paul <lyude@redhat.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@linux.ie>,
+        Thomas Graichen <thomas.graichen@gmail.com>,
+        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 2/2] drm/tegra: Use drm_dp_aux_register_ddc/chardev()
+ helpers
+Message-ID: <YY5HfUUSmnr6qQSU@orome.fritz.box>
+References: <20211107230821.13511-1-digetx@gmail.com>
+ <20211107230821.13511-2-digetx@gmail.com>
+ <YYk/jfcceun/Qleq@phenom.ffwll.local>
+ <0a2c02ae-3fe1-e384-28d3-13e13801d675@gmail.com>
+ <YYo9IXjevmstSREu@phenom.ffwll.local>
+ <857a48ae-9ff4-89fe-11ce-5f1573763941@gmail.com>
+ <efdc184a-5aa3-1141-7d74-23d29da41f2d@gmail.com>
+ <71fcbc09-5b60-ee76-49b2-94adc965eda5@gmail.com>
+ <49ffd29b-eb64-e0ca-410c-44074673d740@gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="kmATN04C7Jh6sTdw"
+        protocol="application/pgp-signature"; boundary="S/soAJF3g9rQohRZ"
 Content-Disposition: inline
-In-Reply-To: <YYTybH9cEcmJUaVc@orome.fritz.box>
+In-Reply-To: <49ffd29b-eb64-e0ca-410c-44074673d740@gmail.com>
 User-Agent: Mutt/2.1.3 (987dde4c) (2021-09-10)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---kmATN04C7Jh6sTdw
-Content-Type: text/plain; charset=us-ascii
+--S/soAJF3g9rQohRZ
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 05, 2021 at 09:59:24AM +0100, Thierry Reding wrote:
-> On Fri, Oct 08, 2021 at 10:23:34PM +0200, Thierry Reding wrote:
-> > Hi Dave, Daniel,
+On Tue, Nov 09, 2021 at 05:39:02PM +0300, Dmitry Osipenko wrote:
+> 09.11.2021 17:17, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > 09.11.2021 17:08, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> >>> +static void host1x_drm_dev_deinit(struct host1x_device *dev)
+> >>> +{
+> >>> +	struct drm_device *drm =3D dev_get_drvdata(&dev->dev);
+> >> And platform_unregister_drivers() should be moved here.
+> >>
 > >=20
-> > The following changes since commit c3dbfb9c49eef7d07904e5fd5e158dd6688b=
-bab3:
-> >=20
-> >   gpu: host1x: Plug potential memory leak (2021-09-16 18:06:52 +0200)
-> >=20
-> > are available in the Git repository at:
-> >=20
-> >   ssh://git.freedesktop.org/git/tegra/linux.git tags/drm/tegra/for-5.16=
--rc1
-> >=20
-> > for you to fetch changes up to 5dccbc9de8f0071eb731b4de81d0638ea6c06a53:
-> >=20
-> >   drm/tegra: dc: rgb: Allow changing PLLD rate on Tegra30+ (2021-10-08 =
-21:17:38 +0200)
-> >=20
-> > This is based on the drm/tegra/for-5.15-rc3 tag that you pulled a couple
-> > of weeks ago. As mentioned last time already, the userspace for the new
-> > NVDEC driver can be found here:
-> >=20
-> >   https://github.com/cyndis/vaapi-tegra-driver
-> >=20
-> > I'm sending this a week earlier than usual because I'm out of office
-> > next week.
+> > Nah, that should cause deadlock. This ad-hoc is too lame.
 >=20
-> Hi guys,
+> Actually, there is no problem here as I see now. The host1x driver
+> populates DT nodes after host1x_register() [1], meaning that Host1x DRM
+> will be always inited first.
 >=20
-> I haven't seen this show up in drm-next yet. Did this fall through the
-> cracks or was there something that you wanted to see addressed?
+> [1]
+> https://elixir.bootlin.com/linux/v5.15/source/drivers/gpu/host1x/dev.c#L4=
+75
+>=20
+> Still I'm not a fan of the ad-hoc solution.
 
-Dave, Daniel,
+Could we not fix this by making the panel "hot-pluggable"? I don't think
+there's anything inherent to the driver that would prevent doing so. The
+original reason for why things are as intertwined as they are now is
+because back at the time deferred framebuffer creation didn't exist. In
+fact I added deferred framebuffer support with Daniel's help precisely
+to fix a similar issue for things like HDMI and DP.
 
-v5.16-rc1 is due in a couple of days, but I still don't see this in
-drm/next. I'm assuming it's too late now, but is there anything I can do
-to avoid this in the future?
+With HDMI and DP it's slightly less critical, because a lack of mode
+support would've created a 1024x768 framebuffer, which most HDMI/DP
+monitors support. However, with panels we need to ensure that the exact
+mode from the panel is used to create the framebuffer, so it can only be
+created when the panel is available.
+
+But, given that deferred framebuffer creation works now (which allows
+the framebuffer console to show up at the preferred resolution for HDMI
+and DP), even if a monitor is attached only after the driver has probed
+already, we should be able to make something like that work with panels
+as well.
 
 Thierry
 
---kmATN04C7Jh6sTdw
+> > Another solution is to defer probing of DP AUX driver while
+> > tegra_drm_device() returns NULL, but it's icky.
+> >=20
+> > Reverting the original DP AUX DDC registration order is the best option
+> > so far, IMO.
+> >=20
+
+--S/soAJF3g9rQohRZ
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmGORFsACgkQ3SOs138+
-s6GhIw/+KFsP6gkqMlksVuM3Hwhuxb527bTc92IQ3KwYgjV1SAK5OVVFTagU6Y/T
-Cg40hp/C1vPcihHG84AOj2mnAqyLd74JaNEgIR7Z49Yf0YWZcz+OZQ41d9Pb+XnZ
-9X4VYJGJ9HPzQENLvFQUBfvwSAfxP6559t53f0yrRyCRh2grhKSMYKOwxRc3sjf0
-oOqdVLZvomPaGDKHR+hmr2D3jCYyfKfGua5H2BYAduu14I765ELte/DRBc68XQ8w
-lzfXEi4ifvUjgI87oHGi6vQBlY3BPfAElP5hA+Y/hKT2qDz0KeydHUn95D4PxFno
-i09+/77nIGV8S9e2clPu64tdn1gnasf9/6PvxR6JHMqyP6zm27OocXpOb/moHdDm
-v14iv/y0xlmb8d6aBD9Fl8cp0I6r9EV04Oys4A0WfNZzSgpK1R6dL86FneVi0f1O
-tA4s7pdD+FyhmpuPYM3pp7WVc1tccXn7bE+CskHbC2QFbxfi9SghRBKMop/Z2KGp
-F6HOjyVfI7hI7cd468/cprs+s5eP7kfUFlHrFxk/G9F20e7/J6DbFNKFcgYZwBxh
-+7+cBRD35kRAWW755cJNhEwiHPIeOOHUsowHsxI0jky/dMYMXyrsxC7Rjy43kXrm
-iTv9LmqWT13ylK2qPqB+nX3N+yjauzRhWSFl/uh2iODmHAWxAFU=
-=8pZQ
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmGOR3sACgkQ3SOs138+
+s6EHgRAAoIDj2P+UNQ4T3bSA3g7NyqrteKqplIUSd3ratHZCAh6cqSte/7oLo/kd
+VKYOMALWSy/I2FFVqQAQjGhRa/YnAt1e7BF7fMYf2dNTPlxwBBOoVscqWUxxR+Dr
+XDmYvWL8zcZDe2bMObMTKlp6SDn9wSjFLyNCYcvqq6qcK9fdskWw66tgXyEAL/8J
+AffMB9etD7Ubb3HzFV/NHyBfFi4qlYoGeQvE91thQqS+QXvkb399usoNg8jQDUXS
+ThEdURRNr2zXe72EWlPACFP1E1kMG3hY60PYXfN3C7+4wcCOcuhCI1LomZQKuQhA
+F6A6o2NTVLpPOR47u+id+TKkIiMZ7kAuNfdElZS4Sw1LsD63wYswf4GZjTJ/iyG5
+e2Typ6BQ5LCQnuOb/RNxiUlVKa3w1V44pSvxaOgtYT6SE6LgaRTbdUOGIPnlWtHI
+F/sVXmY1mDtOzTkgw6CxUD32OkNVmPxfnU9qmNbXEQuON8NESK+lo5y6/H1l/Mvb
+TB1WeWwZgKjoNWl1IEzxyMQUSTpRWwjiytWKgRbobK1JpxX+wkoeVc7mrZ2rvkG3
+S44iqZprimUvBTtgk1rblCrr2laqBHeEwesUcpHpDIi6AL3BeVy4J1lpBdRcJF4+
+2/WmeTrxSt8YDkz73CzPR/oN5SLoUXaDD/kMMEiWGZZLF9myW1I=
+=1siM
 -----END PGP SIGNATURE-----
 
---kmATN04C7Jh6sTdw--
+--S/soAJF3g9rQohRZ--
