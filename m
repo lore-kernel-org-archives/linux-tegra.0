@@ -2,91 +2,96 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4E86C433F5
-	for <linux-tegra@archiver.kernel.org>; Fri, 12 Nov 2021 13:48:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D2DBC433EF
+	for <linux-tegra@archiver.kernel.org>; Fri, 12 Nov 2021 13:49:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C7E4E60F93
-	for <linux-tegra@archiver.kernel.org>; Fri, 12 Nov 2021 13:48:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 23982610FF
+	for <linux-tegra@archiver.kernel.org>; Fri, 12 Nov 2021 13:49:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235096AbhKLNvi (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 12 Nov 2021 08:51:38 -0500
-Received: from mail-ot1-f41.google.com ([209.85.210.41]:37689 "EHLO
-        mail-ot1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235090AbhKLNve (ORCPT
+        id S235172AbhKLNvy (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 12 Nov 2021 08:51:54 -0500
+Received: from mail-oi1-f171.google.com ([209.85.167.171]:33421 "EHLO
+        mail-oi1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235111AbhKLNvi (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 12 Nov 2021 08:51:34 -0500
-Received: by mail-ot1-f41.google.com with SMTP id h19-20020a9d3e53000000b0056547b797b2so13051991otg.4;
-        Fri, 12 Nov 2021 05:48:44 -0800 (PST)
+        Fri, 12 Nov 2021 08:51:38 -0500
+Received: by mail-oi1-f171.google.com with SMTP id q25so12412637oiw.0;
+        Fri, 12 Nov 2021 05:48:47 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
          :message-id;
-        bh=3cZuvoICaeE/9iFk5pqpv0JHNWT+JNnUw/yYONM5mkU=;
-        b=4alRKhZsrXkAvW4ZUmzGH5GS3mdcuhfnSrxcbTRw+alATuQ5QCDas4c1wUwAUQGACS
-         MAlLGHLW1jAvZCRguqT/iMCm0MUxdRPl/o9LvyGoe1ttV1LPivSjdKwbieIZMOdQXOhF
-         Sv2QtNmyffWzX7VEzm6Hdx8Umo9/+jgSFFdNOHhGfZSuioQpGur0KXMDKeTmSjyvouIl
-         Am2iMss4TYjqcVLc/Y4UZDfO1m5voEac83QJa9pqPtwrKg0hgMkE6HNeDj+gcYMPw8Ch
-         D+wg6ABXc+v5pIFtYcDAoNaGc49prP65ExZ6QJv4Dfq9z3B5izkDIE0bu2fEf5exB+a4
-         mDwg==
-X-Gm-Message-State: AOAM532iEMcbTt2TqBu8IYg7nR6YsZmRo8ZG/ItRimfssejs33Us3+0j
-        1ifCy9+RDc8+R8RRUn+fUw==
-X-Google-Smtp-Source: ABdhPJzqRYPvyQX523O2yZES64vi8GvkQZW8Q/m3SS6pNMGB0StXY0TKAEKerANLaAud+vxtp8a32A==
-X-Received: by 2002:a9d:f45:: with SMTP id 63mr8919604ott.350.1636724923663;
-        Fri, 12 Nov 2021 05:48:43 -0800 (PST)
+        bh=0EE4KsF+OgiJSD3HtrRh5W0ABKfJTM6vicTgTPUjLh8=;
+        b=3hjCd+1qljRYhXDiWzWtsyeGLrkuXNhg0czQcV96fVGoIIyb8owVbe5T7SPZ7l0IQG
+         3e2XXgUmcPzJ8sRCO2+Pyn7QE2ByobF3G2KNgQNW5i37KMrFzQNWJNUqmX/Fjd+zlOPj
+         YvJLNw4c34pfxrCAou4nQjQLTTjxxra5v1pryHDxWdpJMtgdVBEaeC6Vm6nMbmmLXqfh
+         Z6LILnIYUv+N9LJ7CBnllU9GQhK8gdn1oaWjiNGC6hWeTOk04oLWnSMS2EXlGNC/jph7
+         dwt6NNSkxvxetmRe+XWrHrgrB6cd0Zy4TBvgvdUDdVo3CA82weEpjsqyo5ldIOm8pD5d
+         xzDw==
+X-Gm-Message-State: AOAM530QcFAK5M1ukMV82yWntaNPQu9n0dDLX6zux4zw1Y06JOxoPb2/
+        uE9fZsJJu8YyB16vS8LsVw==
+X-Google-Smtp-Source: ABdhPJzf8gAJai4ZfK0FkvJvtMTJ0PWPG81aKnLD+BaMcYYaFn9ZWOOWnEO/l8QCvNWTRIGNuDM2+A==
+X-Received: by 2002:a05:6808:bc2:: with SMTP id o2mr8218384oik.115.1636724926982;
+        Fri, 12 Nov 2021 05:48:46 -0800 (PST)
 Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id q9sm1197151oti.32.2021.11.12.05.48.42
+        by smtp.gmail.com with ESMTPSA id 16sm1325675oix.46.2021.11.12.05.48.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Nov 2021 05:48:43 -0800 (PST)
-Received: (nullmailer pid 2463379 invoked by uid 1000);
+        Fri, 12 Nov 2021 05:48:46 -0800 (PST)
+Received: (nullmailer pid 2463369 invoked by uid 1000);
         Fri, 12 Nov 2021 13:48:37 -0000
 From:   Rob Herring <robh@kernel.org>
 To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Jon Hunter <jonathanh@nvidia.com>,
-        Rob Herring <robh+dt@kernel.org>, linux-tegra@vger.kernel.org,
-        devicetree@vger.kernel.org
-In-Reply-To: <20211112120518.3679793-3-thierry.reding@gmail.com>
-References: <20211112120518.3679793-1-thierry.reding@gmail.com> <20211112120518.3679793-3-thierry.reding@gmail.com>
-Subject: Re: [PATCH 02/15] dt-bindings: mmc: tegra: Convert to json-schema
+Cc:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
+In-Reply-To: <20211112120518.3679793-6-thierry.reding@gmail.com>
+References: <20211112120518.3679793-1-thierry.reding@gmail.com> <20211112120518.3679793-6-thierry.reding@gmail.com>
+Subject: Re: [PATCH 05/15] dt-bindings: rtc: tegra: Convert to json-schema
 Date:   Fri, 12 Nov 2021 07:48:37 -0600
-Message-Id: <1636724917.184348.2463378.nullmailer@robh.at.kernel.org>
+Message-Id: <1636724917.117688.2463368.nullmailer@robh.at.kernel.org>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, 12 Nov 2021 13:05:05 +0100, Thierry Reding wrote:
+On Fri, 12 Nov 2021 13:05:08 +0100, Thierry Reding wrote:
 > From: Thierry Reding <treding@nvidia.com>
 > 
-> Convert the NVIDIA Tegra SDHCI bindings from the free-form text format
-> to json-schema.
+> Convert the NVIDIA Tegra RTC bindings from the free-form text format to
+> json-schema.
 > 
 > Signed-off-by: Thierry Reding <treding@nvidia.com>
 > ---
-> Changes in v2:
-> - drop redundant $ref properties, add missing maxItems
-> 
->  .../bindings/mmc/nvidia,tegra20-sdhci.txt     | 143 ---------
->  .../bindings/mmc/nvidia,tegra20-sdhci.yaml    | 294 ++++++++++++++++++
->  2 files changed, 294 insertions(+), 143 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt
->  create mode 100644 Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.yaml
+>  .../bindings/rtc/nvidia,tegra20-rtc.txt       | 24 ---------
+>  .../bindings/rtc/nvidia,tegra20-rtc.yaml      | 54 +++++++++++++++++++
+>  2 files changed, 54 insertions(+), 24 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/rtc/nvidia,tegra20-rtc.txt
+>  create mode 100644 Documentation/devicetree/bindings/rtc/nvidia,tegra20-rtc.yaml
 > 
 
-Running 'make dtbs_check' with the schema in this patch gives the
-following warnings. Consider if they are expected or the schema is
-incorrect. These may not be new warnings.
+My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+on your patch (DT_CHECKER_FLAGS is new in v5.13):
 
-Note that it is not yet a requirement to have 0 warnings for dtbs_check.
-This will change in the future.
+yamllint warnings/errors:
 
-Full log is available here: https://patchwork.ozlabs.org/patch/1554296
+dtschema/dtc warnings/errors:
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/rtc/nvidia,tegra20-rtc.yaml: 'additionalProperties' is a required property
+	hint: A schema without a "$ref" to another schema must define all properties and use "additionalProperties"
+	from schema $id: http://devicetree.org/meta-schemas/base.yaml#
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/rtc/nvidia,tegra20-rtc.yaml: ignoring, error in schema: 
+warning: no schema found in file: ./Documentation/devicetree/bindings/rtc/nvidia,tegra20-rtc.yaml
+Documentation/devicetree/bindings/rtc/nvidia,tegra20-rtc.example.dt.yaml:0:0: /example-0/timer@7000e000: failed to match any schema with compatible: ['nvidia,tegra20-rtc']
 
+doc reference errors (make refcheckdocs):
 
-mmc@3460000: clock-names: ['sdhci'] is too short
-	arch/arm64/boot/dts/nvidia/tegra234-sim-vdk.dt.yaml
+See https://patchwork.ozlabs.org/patch/1554301
 
-mmc@3460000: clocks: [[2, 123]] is too short
-	arch/arm64/boot/dts/nvidia/tegra234-sim-vdk.dt.yaml
+This check can fail if there are any dependencies. The base for a patch
+series is generally the most recent rc1.
 
-mmc@3460000: compatible: 'oneOf' conditional failed, one must be fixed:
-	arch/arm64/boot/dts/nvidia/tegra234-sim-vdk.dt.yaml
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit.
 
