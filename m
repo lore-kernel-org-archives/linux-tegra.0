@@ -2,162 +2,139 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9F92C433F5
-	for <linux-tegra@archiver.kernel.org>; Fri, 12 Nov 2021 10:52:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFD90C433F5
+	for <linux-tegra@archiver.kernel.org>; Fri, 12 Nov 2021 11:27:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B2E3160EFD
-	for <linux-tegra@archiver.kernel.org>; Fri, 12 Nov 2021 10:52:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE14E604AC
+	for <linux-tegra@archiver.kernel.org>; Fri, 12 Nov 2021 11:27:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233593AbhKLKzm (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 12 Nov 2021 05:55:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48038 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233441AbhKLKzm (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 12 Nov 2021 05:55:42 -0500
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68C51C061766;
-        Fri, 12 Nov 2021 02:52:51 -0800 (PST)
-Received: by mail-wr1-x42d.google.com with SMTP id r8so14689569wra.7;
-        Fri, 12 Nov 2021 02:52:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=iNVobpr0uSF9aM9qI8/4Nu4IxqJVNye+v3UuU2+MbT0=;
-        b=KkWO70vZ7PLKt0/KuFir4VGCEYlhRVgf2jHw+rYjjdeM/PPVghco/53xbbQFYOA1PW
-         VYgxgLzJtByyhexpkTzDZ3vGdog9Nu6IsU8bhNcIH4+vlxKIrPSIM6qLM0NdDtamzPVd
-         q2I9xhG1QmD6KukfS7Jr5gmp3j5o/ZELjfuDDd/HoHEEZ6Y0ETC4WJqGL8JqoH5eIMf7
-         uCU/7cGtq0I3wgRSv4lHcReCfWGIl2V+7WY51sW6hls3rs9cqUXfKSIkSaLPa6hfQ+xx
-         +mbByXUxbVkrE3e7LJWJop0IOn5Rmls+h0e0pjeYylvlCBGjg1eI0BLd4ybMFj8bzgBw
-         +3Yg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=iNVobpr0uSF9aM9qI8/4Nu4IxqJVNye+v3UuU2+MbT0=;
-        b=mnqWUpWQNJSoSVrqnAn+DLL7yYIG2zTuKC9jT6FhQT3cSThNW37IU7zVAO556DSx7I
-         HsTxFol7EEh5xQeQZo89lMUhuYMWTHG4Vb1b5ZE413fypaIBCDw+GLr/zghyRNTsOHnT
-         W9CRSogwtrvxa/AvUHw0nJQvqqR3gyVhpqR6mjnF/XyJxXbuVnD1+V/ZJsRki7D/Wr5E
-         FKrXK4QNgKDV2whhUQ0d9YmcTc8VJ1job4zWciNw+oyx7EzRN7JeRnh5nGtx0NKKydZM
-         wvHAECsnh6DqOD871saY77OncwWKxK0I4rGpLQmht/JAVzrybYgczNxbFxZAOOc8unjT
-         FMAQ==
-X-Gm-Message-State: AOAM531/RThdu2C5JmMTAUJtzp5nIfwbibobiYV4p8guE2MjHT7PSVqS
-        aFkV+Kwntt3ip3sU8/wUEp0=
-X-Google-Smtp-Source: ABdhPJxt8hmwkoNxAkljX6wwnFaU6kzsqjStqBPrz83FM5iRJqxpjlAEBUOF2MaReZmhy5IknMdJrA==
-X-Received: by 2002:adf:d1e2:: with SMTP id g2mr18045252wrd.346.1636714369976;
-        Fri, 12 Nov 2021 02:52:49 -0800 (PST)
-Received: from orome.fritz.box ([193.209.96.43])
-        by smtp.gmail.com with ESMTPSA id f133sm5426527wmf.31.2021.11.12.02.52.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Nov 2021 02:52:49 -0800 (PST)
-Date:   Fri, 12 Nov 2021 11:52:45 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
-        Lyude Paul <lyude@redhat.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@linux.ie>,
-        Thomas Graichen <thomas.graichen@gmail.com>,
-        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 2/2] drm/tegra: Use drm_dp_aux_register_ddc/chardev()
- helpers
-Message-ID: <YY5HfUUSmnr6qQSU@orome.fritz.box>
-References: <20211107230821.13511-1-digetx@gmail.com>
- <20211107230821.13511-2-digetx@gmail.com>
- <YYk/jfcceun/Qleq@phenom.ffwll.local>
- <0a2c02ae-3fe1-e384-28d3-13e13801d675@gmail.com>
- <YYo9IXjevmstSREu@phenom.ffwll.local>
- <857a48ae-9ff4-89fe-11ce-5f1573763941@gmail.com>
- <efdc184a-5aa3-1141-7d74-23d29da41f2d@gmail.com>
- <71fcbc09-5b60-ee76-49b2-94adc965eda5@gmail.com>
- <49ffd29b-eb64-e0ca-410c-44074673d740@gmail.com>
+        id S234144AbhKLLaN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 12 Nov 2021 06:30:13 -0500
+Received: from mail-dm6nam08on2075.outbound.protection.outlook.com ([40.107.102.75]:18432
+        "EHLO NAM04-DM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S233883AbhKLLaM (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Fri, 12 Nov 2021 06:30:12 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=eIG8O9pND/l+Zydho84Ge++6aADhiVxR7QLKHsy0ZlvxaO2GjtV1xNbDdiwk7jJii4R0EYOsLe1eUuux37tRQNP9BmJBwQpfgZuVKKjIoiX2kUKukcytzApz1vz2yAJYh+M+FrXyzOsMDU5AIQzRjem4yuiKqsIxDXsE0HasGVKj8OPXnCU1GOynqCPy6ID7D68oHt4sgJRLjZjWIBSWLRm6M2QWSIElce/S6DH+ceZSeJXUAeYA+LyZvXkO9DuzKPsm8MIvkTA+il84CWFbNQJ1t5pb19X7LfpCidDZB0sQTj+mF+a++QUcyKM01NvfsTXtrpUA3NzB3vzOHdoB7Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7StyRgFxb0S2BWfe3n4zRAzjeWcQ8Fjbc18iAhY0wRg=;
+ b=nKf3a749pFkYSgjurt9JbYP2zQ7eyQFZHWk0hRL2XQnuRZ4kZG8WcCFvKPDGjgAawOAdGIc4tOei51XvgHwFKtcGcyyG0ZweSV+sG1GPMJbfH3osI3WlmdzB0sNURt9MI8gwwCSnk8zZ/y/1VtcAQI9CYu4sLehkXDwjwwvcKIhd2CkaiIW1svnf+gSnWoniS1yJipzXoEICbGZwV/+DthkpjzVV0uiavq5fayYq0/AM11YewWm1Z+RutTGaRIEQlJCks3hQJg59mc6f4lvmr2mhFlrN+R5x8nCBiZEZW2MIo5ZLm99EnsJBFy6IPFM5QUekUQpNyNbbDgrZJyNcrA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.112.35) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7StyRgFxb0S2BWfe3n4zRAzjeWcQ8Fjbc18iAhY0wRg=;
+ b=ugigoE7Q3n6MK8jZHXuEcGqCZdGtg5E54T9P+V2LSV3ZB6+Zo0Qeu5m/wE9otWBqQ54juhElyRcvban4Vrq6r2M3KAxLW/l4Leb2H2hkNOi24/IRdRQ577l/Yawi22qCkx4NW8YetJKlclbgguVvXMefNTOLFHgT2q3bp14sxEAijdvpqxxLnCieWl1z8oG0yKa/9YJlopFfLmsyupDeHo0/xv7MgebQ+NjLtQXzvS81XiWxZ7R+BlkqZU9OQZcYAICveq6L4dWwI2FjNQJt19F5P7w0ZQM/SSru7Z7bmJLLEHzlquvYPr0rdYgRQnD9zHUhd8R5AIfrBpG2KNhOwg==
+Received: from DM5PR13CA0033.namprd13.prod.outlook.com (2603:10b6:3:7b::19) by
+ SN1PR12MB2479.namprd12.prod.outlook.com (2603:10b6:802:29::18) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.4669.10; Fri, 12 Nov 2021 11:27:19 +0000
+Received: from DM6NAM11FT025.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:3:7b:cafe::2e) by DM5PR13CA0033.outlook.office365.com
+ (2603:10b6:3:7b::19) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4690.14 via Frontend
+ Transport; Fri, 12 Nov 2021 11:27:19 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.35)
+ smtp.mailfrom=nvidia.com; vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.112.35 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.112.35; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (216.228.112.35) by
+ DM6NAM11FT025.mail.protection.outlook.com (10.13.172.197) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.4690.19 via Frontend Transport; Fri, 12 Nov 2021 11:27:19 +0000
+Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL111.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Fri, 12 Nov
+ 2021 11:27:18 +0000
+Received: from moonraker.nvidia.com (172.20.187.5) by mail.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server id 15.0.1497.18 via Frontend
+ Transport; Fri, 12 Nov 2021 11:27:16 +0000
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Philipp Zabel <p.zabel@pengutronix.de>,
+        Thierry Reding <thierry.reding@gmail.com>
+CC:     Mikko Perttunen <mperttunen@nvidia.com>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Jon Hunter <jonathanh@nvidia.com>
+Subject: [PATCH] reset: tegra-bpmp: Revert Handle errors in BPMP response
+Date:   Fri, 12 Nov 2021 11:27:12 +0000
+Message-ID: <20211112112712.21587-1-jonathanh@nvidia.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="S/soAJF3g9rQohRZ"
-Content-Disposition: inline
-In-Reply-To: <49ffd29b-eb64-e0ca-410c-44074673d740@gmail.com>
-User-Agent: Mutt/2.1.3 (987dde4c) (2021-09-10)
+X-NVConfidentiality: public
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 3efc7103-1cb0-4cdd-f565-08d9a5cf636d
+X-MS-TrafficTypeDiagnostic: SN1PR12MB2479:
+X-Microsoft-Antispam-PRVS: <SN1PR12MB24792883BB4D025F0CF30E67D9959@SN1PR12MB2479.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:773;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: ij60eO6wRl+8RqHJ6YAYf0Jx0MmuxpMjJKM5PWVWHa69SnwLhzM+SYQRKQzSoR8Jd2JCwHtbc3qEQfoT2jcNdZoxcooaixQIme/w+CyXbM8KjvY24O/ot9xH2KNxy4QsdawsrCt3xvQEsSX/kmXeCdbUVPzzqi53AclOxJFRMuvQTMD5bDuFZeb6hxPjItJvBsfF/D5+34E66LM9EZwOB7S41GzaJxWCEfGCYoNqyFxFgHCV5zfD/mk4YWML7K2zOr4iUNjnsSjEau9gmmLP2JvdC1yB3qYJzQ+K+NaoC+UWC3GM5Qb65Q1qYkx5MkfDyh8YKz3TGRd1tqcOEYPRSwYpTmYGVeOm82L0C6iNLOTBoaQzkPgJZUdQSagsBY2TNoMLOB5Ter4mPWz8MPKSG2rYMsBoENvPNRwSE4iG0107NCMybmWo05vouH04XKTIpZgfIhyBHKc+JoGyzxIDtHV4LGd3P0HvLbT6IKIaMD4a3kBeht4djRvI2cyJoKO83gqe7HOXp6PnewSrUH06Nlnk1lDVUHuTjVzBKKDl/dMazRi5H5KnBL/OFkZqv5pi2LPlI8mRm23ixYshzPWmj5LtOd0AVGqr/7BjzRbGPKLLLE14sIJuwyUlan98e58ZwUXeoM7JwqdhGjnPJm3dMOpOnwLSFJ7JcZzjzP/9w2nXlAAQobN3T0fYdr6/eHVIdqIkmnj5pHxL7iNPfhSNBQ==
+X-Forefront-Antispam-Report: CIP:216.228.112.35;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid02.nvidia.com;CAT:NONE;SFS:(4636009)(36840700001)(46966006)(1076003)(356005)(7636003)(110136005)(107886003)(54906003)(508600001)(8676002)(426003)(186003)(82310400003)(70586007)(36756003)(5660300002)(336012)(4326008)(70206006)(47076005)(36860700001)(26005)(7696005)(36906005)(2616005)(86362001)(2906002)(316002)(8936002)(83380400001)(6666004);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2021 11:27:19.3600
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3efc7103-1cb0-4cdd-f565-08d9a5cf636d
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.35];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT025.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN1PR12MB2479
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+Commit c045ceb5a145 ("reset: tegra-bpmp: Handle errors in BPMP
+response") fixed an issue in the Tegra BPMP error handling but has
+exposed an issue in the Tegra194 HDA driver and now resetting the
+Tegra194 HDA controller is failing. For now revert the commit
+c045ceb5a145 ("reset: tegra-bpmp: Handle errors in BPMP response")
+while a fix for the Tegra HDA driver is created.
 
---S/soAJF3g9rQohRZ
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Fixes: c045ceb5a145 ("reset: tegra-bpmp: Handle errors in BPMP response")
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+---
+ drivers/reset/tegra/reset-bpmp.c | 9 +--------
+ 1 file changed, 1 insertion(+), 8 deletions(-)
 
-On Tue, Nov 09, 2021 at 05:39:02PM +0300, Dmitry Osipenko wrote:
-> 09.11.2021 17:17, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > 09.11.2021 17:08, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> >>> +static void host1x_drm_dev_deinit(struct host1x_device *dev)
-> >>> +{
-> >>> +	struct drm_device *drm =3D dev_get_drvdata(&dev->dev);
-> >> And platform_unregister_drivers() should be moved here.
-> >>
-> >=20
-> > Nah, that should cause deadlock. This ad-hoc is too lame.
->=20
-> Actually, there is no problem here as I see now. The host1x driver
-> populates DT nodes after host1x_register() [1], meaning that Host1x DRM
-> will be always inited first.
->=20
-> [1]
-> https://elixir.bootlin.com/linux/v5.15/source/drivers/gpu/host1x/dev.c#L4=
-75
->=20
-> Still I'm not a fan of the ad-hoc solution.
+diff --git a/drivers/reset/tegra/reset-bpmp.c b/drivers/reset/tegra/reset-bpmp.c
+index 4c5bba52b105..24d3395964cc 100644
+--- a/drivers/reset/tegra/reset-bpmp.c
++++ b/drivers/reset/tegra/reset-bpmp.c
+@@ -20,7 +20,6 @@ static int tegra_bpmp_reset_common(struct reset_controller_dev *rstc,
+ 	struct tegra_bpmp *bpmp = to_tegra_bpmp(rstc);
+ 	struct mrq_reset_request request;
+ 	struct tegra_bpmp_message msg;
+-	int err;
+ 
+ 	memset(&request, 0, sizeof(request));
+ 	request.cmd = command;
+@@ -31,13 +30,7 @@ static int tegra_bpmp_reset_common(struct reset_controller_dev *rstc,
+ 	msg.tx.data = &request;
+ 	msg.tx.size = sizeof(request);
+ 
+-	err = tegra_bpmp_transfer(bpmp, &msg);
+-	if (err)
+-		return err;
+-	if (msg.rx.ret)
+-		return -EINVAL;
+-
+-	return 0;
++	return tegra_bpmp_transfer(bpmp, &msg);
+ }
+ 
+ static int tegra_bpmp_reset_module(struct reset_controller_dev *rstc,
+-- 
+2.25.1
 
-Could we not fix this by making the panel "hot-pluggable"? I don't think
-there's anything inherent to the driver that would prevent doing so. The
-original reason for why things are as intertwined as they are now is
-because back at the time deferred framebuffer creation didn't exist. In
-fact I added deferred framebuffer support with Daniel's help precisely
-to fix a similar issue for things like HDMI and DP.
-
-With HDMI and DP it's slightly less critical, because a lack of mode
-support would've created a 1024x768 framebuffer, which most HDMI/DP
-monitors support. However, with panels we need to ensure that the exact
-mode from the panel is used to create the framebuffer, so it can only be
-created when the panel is available.
-
-But, given that deferred framebuffer creation works now (which allows
-the framebuffer console to show up at the preferred resolution for HDMI
-and DP), even if a monitor is attached only after the driver has probed
-already, we should be able to make something like that work with panels
-as well.
-
-Thierry
-
-> > Another solution is to defer probing of DP AUX driver while
-> > tegra_drm_device() returns NULL, but it's icky.
-> >=20
-> > Reverting the original DP AUX DDC registration order is the best option
-> > so far, IMO.
-> >=20
-
---S/soAJF3g9rQohRZ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmGOR3sACgkQ3SOs138+
-s6EHgRAAoIDj2P+UNQ4T3bSA3g7NyqrteKqplIUSd3ratHZCAh6cqSte/7oLo/kd
-VKYOMALWSy/I2FFVqQAQjGhRa/YnAt1e7BF7fMYf2dNTPlxwBBOoVscqWUxxR+Dr
-XDmYvWL8zcZDe2bMObMTKlp6SDn9wSjFLyNCYcvqq6qcK9fdskWw66tgXyEAL/8J
-AffMB9etD7Ubb3HzFV/NHyBfFi4qlYoGeQvE91thQqS+QXvkb399usoNg8jQDUXS
-ThEdURRNr2zXe72EWlPACFP1E1kMG3hY60PYXfN3C7+4wcCOcuhCI1LomZQKuQhA
-F6A6o2NTVLpPOR47u+id+TKkIiMZ7kAuNfdElZS4Sw1LsD63wYswf4GZjTJ/iyG5
-e2Typ6BQ5LCQnuOb/RNxiUlVKa3w1V44pSvxaOgtYT6SE6LgaRTbdUOGIPnlWtHI
-F/sVXmY1mDtOzTkgw6CxUD32OkNVmPxfnU9qmNbXEQuON8NESK+lo5y6/H1l/Mvb
-TB1WeWwZgKjoNWl1IEzxyMQUSTpRWwjiytWKgRbobK1JpxX+wkoeVc7mrZ2rvkG3
-S44iqZprimUvBTtgk1rblCrr2laqBHeEwesUcpHpDIi6AL3BeVy4J1lpBdRcJF4+
-2/WmeTrxSt8YDkz73CzPR/oN5SLoUXaDD/kMMEiWGZZLF9myW1I=
-=1siM
------END PGP SIGNATURE-----
-
---S/soAJF3g9rQohRZ--
