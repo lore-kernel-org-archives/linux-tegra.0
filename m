@@ -2,140 +2,129 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63A5AC433EF
-	for <linux-tegra@archiver.kernel.org>; Fri, 12 Nov 2021 14:32:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 743C1C433F5
+	for <linux-tegra@archiver.kernel.org>; Fri, 12 Nov 2021 14:56:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4C0DE60FE7
-	for <linux-tegra@archiver.kernel.org>; Fri, 12 Nov 2021 14:32:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C32C61039
+	for <linux-tegra@archiver.kernel.org>; Fri, 12 Nov 2021 14:56:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234942AbhKLOfi (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 12 Nov 2021 09:35:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42414 "EHLO
+        id S235142AbhKLO7R (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 12 Nov 2021 09:59:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47826 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232403AbhKLOfh (ORCPT
+        with ESMTP id S235246AbhKLO7Q (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 12 Nov 2021 09:35:37 -0500
-Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8EE9AC061766;
-        Fri, 12 Nov 2021 06:32:46 -0800 (PST)
-Received: by mail-lj1-x234.google.com with SMTP id e11so18834482ljo.13;
-        Fri, 12 Nov 2021 06:32:46 -0800 (PST)
+        Fri, 12 Nov 2021 09:59:16 -0500
+Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EAB1EC061766;
+        Fri, 12 Nov 2021 06:56:25 -0800 (PST)
+Received: by mail-wm1-x32d.google.com with SMTP id 133so7982908wme.0;
+        Fri, 12 Nov 2021 06:56:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Jt2s5eE/KZv2f777KX1QTyz+OLPwPl/PkMsoEbWrCGs=;
-        b=i23UwZ6HE1MO8waAeRtHPEn5k2yNK9USGUt+trHLji3BvDimp03/SrKGm5JUcuPans
-         V2/TQzharlHbqb+MaQ1aMV27Gs8R3tAuLPvDAjlf/zDn20Fbec0kYackzhXzZLqy8xn9
-         aKXx/PgK0jKx1h/u7Wym5icG4tk83l0fRUIOBrGhQgv/KOoNf4W+SwqcmBWdaoEUpDeD
-         EOQQbi+V7qBN2WeS2dUcCBnvlxlHnlJ6YTJWP0TxpLJp9L8HZaKDePAwt9caVX2rmlro
-         K7Cf9DvOJ5Om9RDx7yiHFE1+L9udwpYmvO4rC29zzz8XQ0/qmvrn3wH/gZsH0UTAVs4P
-         Vopw==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=JCqVUzOzEGA4JkXqmf2+cqP3C2tmsy0AnOVF6rZCuc4=;
+        b=m4kSxAI2d8o+9qJr6+UPuYzZjtwofpmxkWdXwVzXo3doQFfYkWLbKIzzXdAoNuRN0B
+         3UBxeSWsDlVB4JHJvK7oXSSuqxlhBK+UMXMTaUuES9E+8TSR6uTL5LOHALc6s7KIQRpA
+         f+5822Yz4gckl0F58hz+LmttUQHHQMM9HasiW5IAmNuDnzxN+oUsqTx9JSbRWnxNFvDA
+         uk8D3fBS5Zaj+124/+mCW6g31JhGKbiFs4ct0gQgN4I8glN43nOQHoyAl1y/29Dcbkez
+         /NRlNakTdv+R47uhXUd8nWDBt/DQNAV5P1b71WwzlyRxc1typXvR2/pyw0hs9DPSF866
+         tr6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Jt2s5eE/KZv2f777KX1QTyz+OLPwPl/PkMsoEbWrCGs=;
-        b=L3lJZlUd4de/FFDOzxhMp8+zaKEojbIvxwzPWg2jzik2eVLpJCjGD8wJffNrnurVFh
-         4y5Yyj+32R17wxnGM26nwFUVcyRuSeK0FYDXU1Z2W1RTBVOX7AIBX7U+6vJ0cz7UBPgr
-         AcWbkXwRu0a1jKfbD0qlreoKz2kVRT07IwjwOFb4g/Z3tI0S+gR/qzz6ceOEgqBUwtFA
-         Ke0T7fhVyLvzy09mHAnIspUVTCdXGSvxYsjOEGjP5Dc1Pfkca2Zjuyqw34HSIfYbxQzW
-         IuFkuHi+0RnQUhCqXDku9oS4FrdRtL+JO+ovSKIscG17mLOZyAfBYo2jGBcUwfBf6aQs
-         FCKw==
-X-Gm-Message-State: AOAM532tSoKe1ShooFHFXLhWnQoWZ+VUcgl7FK2KSA6trsM/IJjoGPmq
-        dTPuq9G7fHuNgmrCNLGGUgiVxMd3ujI=
-X-Google-Smtp-Source: ABdhPJxBQ423Ld/XMxX+l3TnJVKv96QnKYPBK0REIsPD1NSxn+CW9FihZYNXZBK1woVGv7zwysv0DA==
-X-Received: by 2002:a2e:a376:: with SMTP id i22mr15560272ljn.201.1636727564749;
-        Fri, 12 Nov 2021 06:32:44 -0800 (PST)
-Received: from [192.168.2.145] (79-139-177-117.dynamic.spd-mgts.ru. [79.139.177.117])
-        by smtp.googlemail.com with ESMTPSA id bn3sm573660ljb.7.2021.11.12.06.32.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 12 Nov 2021 06:32:44 -0800 (PST)
-Subject: Re: [PATCH v1 2/2] drm/tegra: Use drm_dp_aux_register_ddc/chardev()
- helpers
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
-        Lyude Paul <lyude@redhat.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@linux.ie>,
-        Thomas Graichen <thomas.graichen@gmail.com>,
-        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20211107230821.13511-1-digetx@gmail.com>
- <20211107230821.13511-2-digetx@gmail.com>
- <YYk/jfcceun/Qleq@phenom.ffwll.local>
- <0a2c02ae-3fe1-e384-28d3-13e13801d675@gmail.com>
- <YYo9IXjevmstSREu@phenom.ffwll.local>
- <857a48ae-9ff4-89fe-11ce-5f1573763941@gmail.com>
- <efdc184a-5aa3-1141-7d74-23d29da41f2d@gmail.com>
- <71fcbc09-5b60-ee76-49b2-94adc965eda5@gmail.com>
- <49ffd29b-eb64-e0ca-410c-44074673d740@gmail.com>
- <YY5HfUUSmnr6qQSU@orome.fritz.box>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <5ee3f964-39ec-f6e2-5a01-230532a8b17e@gmail.com>
-Date:   Fri, 12 Nov 2021 17:32:43 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=JCqVUzOzEGA4JkXqmf2+cqP3C2tmsy0AnOVF6rZCuc4=;
+        b=jRgLAH35d2y9YDGxubCH5SLEoTh+HbrXWJ5pvZY8wNZeD9GmFIan1VKdQS48UWMxK1
+         xQDWACq4cNnM/gq3bmniAOHYZBeNzEA9dqnt0nbE5xDwDnKYXZgMJXkJbf2WV+2FKcK5
+         d4ryUo6H8M8EyVlvPqtptOpkJfaqd91F5whPZTjqLERrbXms8Jycdjy8Bbd8cMU2sGni
+         rJ/fm5RR1xQw9N/xQqtFBt1AnGiNyZln7IiGPAWuff2wIZCMPCdbNgco08hr+Iu0CSJd
+         8HXsG0XihpdjuR6nlhaCsml/6ohac72ZtY4uAPb/FXVKtHVWHWXFj1R1SuoqwQPUaEXn
+         USKA==
+X-Gm-Message-State: AOAM530T3Uby6ZeVQnZWvG944AFbCZreTfGFhTbskas/qWHq2/TuM0c2
+        4o4aktkVH9AXVIk/dVEUL1k=
+X-Google-Smtp-Source: ABdhPJxksw1qU0cW8bIxV9dRicQ97DWaZ82PYF74HlxiYdecbV5alqNSZosmQkAhil1NpGWpUXPz3w==
+X-Received: by 2002:a05:600c:4308:: with SMTP id p8mr11848789wme.132.1636728984574;
+        Fri, 12 Nov 2021 06:56:24 -0800 (PST)
+Received: from orome.fritz.box ([193.209.96.43])
+        by smtp.gmail.com with ESMTPSA id a12sm5819733wrm.62.2021.11.12.06.56.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Nov 2021 06:56:23 -0800 (PST)
+Date:   Fri, 12 Nov 2021 15:56:20 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Robin Murphy <robin.murphy@arm.com>
+Cc:     Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 0/4] iommu/arm-smmu: Support Tegra234 SMMU
+Message-ID: <YY6AlFhZFaUoIkBM@orome.fritz.box>
+References: <20211112131231.3683098-1-thierry.reding@gmail.com>
+ <e19479d9-f0b4-5347-1a43-2fcf5224a090@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <YY5HfUUSmnr6qQSU@orome.fritz.box>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="YzV9+/LPAQG+ci/z"
+Content-Disposition: inline
+In-Reply-To: <e19479d9-f0b4-5347-1a43-2fcf5224a090@arm.com>
+User-Agent: Mutt/2.1.3 (987dde4c) (2021-09-10)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-12.11.2021 13:52, Thierry Reding пишет:
-> On Tue, Nov 09, 2021 at 05:39:02PM +0300, Dmitry Osipenko wrote:
->> 09.11.2021 17:17, Dmitry Osipenko пишет:
->>> 09.11.2021 17:08, Dmitry Osipenko пишет:
->>>>> +static void host1x_drm_dev_deinit(struct host1x_device *dev)
->>>>> +{
->>>>> +	struct drm_device *drm = dev_get_drvdata(&dev->dev);
->>>> And platform_unregister_drivers() should be moved here.
->>>>
->>>
->>> Nah, that should cause deadlock. This ad-hoc is too lame.
->>
->> Actually, there is no problem here as I see now. The host1x driver
->> populates DT nodes after host1x_register() [1], meaning that Host1x DRM
->> will be always inited first.
->>
->> [1]
->> https://elixir.bootlin.com/linux/v5.15/source/drivers/gpu/host1x/dev.c#L475
->>
->> Still I'm not a fan of the ad-hoc solution.
-> 
-> Could we not fix this by making the panel "hot-pluggable"? I don't think
-> there's anything inherent to the driver that would prevent doing so. The
-> original reason for why things are as intertwined as they are now is
-> because back at the time deferred framebuffer creation didn't exist. In
-> fact I added deferred framebuffer support with Daniel's help precisely
-> to fix a similar issue for things like HDMI and DP.
 
-I don't understand what do you mean by "hot-pluggable", panel is static.
-Please either clarify more or type the patch.
+--YzV9+/LPAQG+ci/z
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Keep in mind that fix should be simple and portable because stable
-kernels are wrecked.
+On Fri, Nov 12, 2021 at 01:43:54PM +0000, Robin Murphy wrote:
+> On 12/11/2021 1:12 pm, Thierry Reding wrote:
+> > From: Thierry Reding <treding@nvidia.com>
+> >=20
+> > Hi,
+> >=20
+> > this series of patches adds and enables support for the ARM SMMU
+> > instances found on the new Tegra234 SoC. This is mostly similar to what
+> > can be found on Tegra194 except that there are a few more instances to
+> > meet increased bandwidth needs.
+> >=20
+> > In addition to adding support for the new Tegra234 compatible string,
+> > this also adds a missing description for the nvidia,memory-controller
+> > property to the ARM SMMU device tree binding.
+>=20
+> Besides a nitpick about the inconsistent enum ordering in patch #2,
 
-> With HDMI and DP it's slightly less critical, because a lack of mode
-> support would've created a 1024x768 framebuffer, which most HDMI/DP
-> monitors support. However, with panels we need to ensure that the exact
-> mode from the panel is used to create the framebuffer, so it can only be
-> created when the panel is available.
-> 
-> But, given that deferred framebuffer creation works now (which allows
-> the framebuffer console to show up at the preferred resolution for HDMI
-> and DP), even if a monitor is attached only after the driver has probed
-> already, we should be able to make something like that work with panels
-> as well.
+Heh, yeah, I'll go fix that up so it's consistent in both the top-level
+compatible property description and the conditionals.
 
-BTW, I see now that DPAUX I2C transfer helper may access
-aux->drm_device. Hence v1 patch isn't correct anyways.
+>=20
+> Acked-by: Robin Murphy <robin.murphy@arm.com>
+>=20
+> for patches #1-3.
 
-For now I'll try to test more the ad-hoc variant with Thomas and send it
-as v2 if we won't have a better solution.
+Thanks!
+Thierry
+
+--YzV9+/LPAQG+ci/z
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmGOgJQACgkQ3SOs138+
+s6FPbw//abAd6QKSSqbcGCDl8InqWLdNRjR3JNpKWAM8Dvib8JJ2NSbRGaveExqJ
+7xLI556MCIJzuX9DEFW+ay1SeVnW/KZwANl1Y/DSq29n8W+makepo523s04TsIBE
+VpwsgHlvoVIslWvex0n31M+EjKy+udR6/lQpTbBmuMDIG6ETH/cZ6XBkqwGRPbau
+EnCi55JSXQWujbOgKrCSAajqSt5AgqXgIzFzZBqbPnWnZf8ESOicTfQwdwpwOeCS
+IQqYbPfh0vdZ7C6wnTC4CFXqv4//WXjTPALh5tz0qi3eKP6nCOVO9psh9eVMbHGs
+949MghRv0hrTf2V815Au2fqlf+Gf0LMizWgbi6EP9mRQkKd9nXFhHKa0ime86Ryd
+V5QzTfcHQBuW7+qv8uQNHRn8cBxsmoMxIkpaoGRoW0Okt920c2SkXXGzOZ37d/lK
+joea6gwnJj/rEb6xy2Vbn0oEkaX2HpzHEDB0aB6N+/mKx7ZGXesNafW4nSW+xaPD
+VYmjx74Hv6vL+cw0idLkR9ifU5MLVdcJiLwevuHy/bOdH8K11nopo4uM/MigWGEd
+8UhcDrbq6cPGof9zSf7T/noyNHW7+G/uaGaE3SSDvBleQGS1iWho7rp7mxO37Kf1
+9jbfBjI4PQMqkKKE6y/U5UqrMCxiatKJPlhpQrR7dZNuPJvKyqQ=
+=imbm
+-----END PGP SIGNATURE-----
+
+--YzV9+/LPAQG+ci/z--
