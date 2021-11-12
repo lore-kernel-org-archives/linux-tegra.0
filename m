@@ -2,63 +2,63 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 990B0C433EF
-	for <linux-tegra@archiver.kernel.org>; Fri, 12 Nov 2021 12:06:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C2ECC433F5
+	for <linux-tegra@archiver.kernel.org>; Fri, 12 Nov 2021 12:06:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 85D2F6103C
-	for <linux-tegra@archiver.kernel.org>; Fri, 12 Nov 2021 12:06:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 851EC61038
+	for <linux-tegra@archiver.kernel.org>; Fri, 12 Nov 2021 12:06:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235048AbhKLMI5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 12 Nov 2021 07:08:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36330 "EHLO
+        id S234927AbhKLMI6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 12 Nov 2021 07:08:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36346 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234975AbhKLMIt (ORCPT
+        with ESMTP id S235010AbhKLMIw (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 12 Nov 2021 07:08:49 -0500
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA60CC06120F;
-        Fri, 12 Nov 2021 04:05:58 -0800 (PST)
-Received: by mail-wr1-x42f.google.com with SMTP id t30so15066997wra.10;
-        Fri, 12 Nov 2021 04:05:58 -0800 (PST)
+        Fri, 12 Nov 2021 07:08:52 -0500
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61251C06120D;
+        Fri, 12 Nov 2021 04:06:01 -0800 (PST)
+Received: by mail-wm1-x330.google.com with SMTP id i12so6673669wmq.4;
+        Fri, 12 Nov 2021 04:06:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=joTkd7AQdgoW1ygDvjsIMjwJvcE8sGgdUMeUY7smjNc=;
-        b=n8a9FsByB6jj4DK6/v+ChG7EUQJyGMG66Tsc3+tQ9pkSOjLxiUXzCJ8eLz33aME1MW
-         WXv3+3OgZ6FOYtV6d5gs0a3twdtttYCdvx1lopiCaGzQ8WmZEyCsJ1WXF4Iq2QD3nRFY
-         Nd7HDd9ywT/dHRQ6iRwz7Swutkuodgsoc/Br6GGiGC0nEhu4/2TWss0kvC1u7oY0GW28
-         ifFlM5D5we0lXRnXlH+It/zZYs+0fhKtwMn9H1MCxjGUOuUxViqjsGYF8bOgFa4r4ktZ
-         yfHPbFUYxSuxQGmqjd561sK4dYgT3NOS3XzzmAoHD1mSSWRxkz+mB7QYrfzx3Wib9kEZ
-         avqw==
+        bh=VVYIZDn15I2C0Kl4HGeX5Mb3P/WZc0xghwN4nBOMhp4=;
+        b=OeQ8/gsLJ8MMh9ILlCTcGkDdF7c6XocR8cbeJDOWbCV6vFFV+rXKI5taJdR2hIjrbe
+         rHfTtsaPZFdWnIu38FxAXH1VhANGhmviAnXCkO/Y8aLWUBpRTjSr466JH46tmQEI/+3B
+         k0QQ2fNkNhJYAK/tVpC6yMtyvgzS4rIpLBJhQuer8yFHBh42HFvZ9t1OeW84JDWN0Y+0
+         tgz+CfF+s0ABC4XvnVuPmenXeLk8u7V3JvNbHnSoysiBHDXMxFQ0/QzoBLikp0g4jKbh
+         ssIAjwxNENznvGok4k/p7DXoTnDzccWEcIkk5a//Q6rQEcXGS8pflv8U5ClN1IkJyyV2
+         QfHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=joTkd7AQdgoW1ygDvjsIMjwJvcE8sGgdUMeUY7smjNc=;
-        b=thQ1OTWvNGdEDzf3O3XZKRbEtUsHGa1v0NxVdxtN4tM7mMkoGyYAb282pFu7hgOo70
-         EFRYAefD1082QdOJkeWqvfdYm81fm1LIT+2lAvh5aB5240cGTPZ1VHqzUcX6NpQgSpHk
-         bQb1Gv+GunfHMvtpCAVWFLYPTw90wCk712Fz2pol/RjTHfs0MmRmeXHXI8lBWVt69SpF
-         GuEsojRN/NmudnjEmpfMODccWM686t30NWjeRVa1Z/OhDCVkK83ocyBl+wJIc7xveAIc
-         IyqzQqEc9kP2RsqzyuErt08R5MbKxBvAGvVAXZUbKjCNm4y9tb0CwS+5TkszengdMXHm
-         7e5g==
-X-Gm-Message-State: AOAM53172oDVCSTgap6EfL5WJ/svjb78fuppaldAZl1qV38Hv1g8CaEb
-        WYZTP+aPQiVYt9d7/a2G+sY0ZxXMMzPxZg==
-X-Google-Smtp-Source: ABdhPJxZ1TyZ5hj5DN7IaPVoenJ0QLxmdy6bAykmppaLPx8Kg50QkITnQaI4WS50k318OxqLUd5XAQ==
-X-Received: by 2002:a5d:47aa:: with SMTP id 10mr18617317wrb.50.1636718757157;
-        Fri, 12 Nov 2021 04:05:57 -0800 (PST)
+        bh=VVYIZDn15I2C0Kl4HGeX5Mb3P/WZc0xghwN4nBOMhp4=;
+        b=ME1rEhHbuYtEBfE40XW2uktFpTIM7xdacAlMplnOI4RN2gIcXUa56m2LVOq8CUbnZL
+         oVv3P1tZ9MqP5DNEHbnTmJUELTD8DNV18JLjNYmXYqAyKYR6k46TdsZaoNGMnCn+Kj5h
+         UrdlalCPyBIobs2U0BtxGi5sSxsq0HpSxB38D27FMu2vU89kEDNGclm0EmmEyVPg7Yop
+         royEgKFNL4kLxQA8hED+CRfTR+Sfhtlrmn60OO6QXjXlTj6+V3SMfIysCrHAOxjXxWdG
+         rOQW7+Pp31fEFeC1IFMjjzmI0LeBzWSSLuo+PBXsEVwWULmYbJYzVP2wmTirgWLl9/iH
+         HMCQ==
+X-Gm-Message-State: AOAM53228qef1tLdLAJd9WSrrfVAlKQKBYm6VZ735SaOPDSQeSJKb79O
+        N+eTub0oUphZFWLm+9knV14=
+X-Google-Smtp-Source: ABdhPJxRsF6Lpc/hbUzmWYDdRZP35gv+Atfdc3c4G+60IPhEE7qMqWoM6W33O0V0tH3OqraqcgPOkA==
+X-Received: by 2002:a1c:a905:: with SMTP id s5mr34762056wme.150.1636718759957;
+        Fri, 12 Nov 2021 04:05:59 -0800 (PST)
 Received: from localhost ([193.209.96.43])
-        by smtp.gmail.com with ESMTPSA id q84sm13294335wme.3.2021.11.12.04.05.56
+        by smtp.gmail.com with ESMTPSA id j17sm6491201wmq.41.2021.11.12.04.05.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Nov 2021 04:05:56 -0800 (PST)
+        Fri, 12 Nov 2021 04:05:59 -0800 (PST)
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Rob Herring <robh+dt@kernel.org>
 Cc:     Jon Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
         linux-tegra@vger.kernel.org
-Subject: [PATCH 12/15] dt-bindings: firmware: tegra: Convert to json-schema
-Date:   Fri, 12 Nov 2021 13:05:15 +0100
-Message-Id: <20211112120518.3679793-13-thierry.reding@gmail.com>
+Subject: [PATCH 13/15] dt-bindings: i2c: tegra-bpmp: Convert to json-schema
+Date:   Fri, 12 Nov 2021 13:05:16 +0100
+Message-Id: <20211112120518.3679793-14-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.33.1
 In-Reply-To: <20211112120518.3679793-1-thierry.reding@gmail.com>
 References: <20211112120518.3679793-1-thierry.reding@gmail.com>
@@ -70,297 +70,111 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-Convert the NVIDIA Tegra186 (and later) BPMP bindings from the free-form
-text format to json-schema.
+Convert the NVIDIA Tegra186 (and later) BPMP I2C bindings from the
+free-form text format to json-schema.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- .../firmware/nvidia,tegra186-bpmp.txt         | 107 ------------
- .../firmware/nvidia,tegra186-bpmp.yaml        | 161 ++++++++++++++++++
- 2 files changed, 161 insertions(+), 107 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.txt
- create mode 100644 Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.yaml
+ .../bindings/i2c/nvidia,tegra186-bpmp-i2c.txt | 42 -------------------
+ .../i2c/nvidia,tegra186-bpmp-i2c.yaml         | 40 ++++++++++++++++++
+ 2 files changed, 40 insertions(+), 42 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/i2c/nvidia,tegra186-bpmp-i2c.txt
+ create mode 100644 Documentation/devicetree/bindings/i2c/nvidia,tegra186-bpmp-i2c.yaml
 
-diff --git a/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.txt b/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.txt
+diff --git a/Documentation/devicetree/bindings/i2c/nvidia,tegra186-bpmp-i2c.txt b/Documentation/devicetree/bindings/i2c/nvidia,tegra186-bpmp-i2c.txt
 deleted file mode 100644
-index e44a13bc06ed..000000000000
---- a/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.txt
+index ab240e10debc..000000000000
+--- a/Documentation/devicetree/bindings/i2c/nvidia,tegra186-bpmp-i2c.txt
 +++ /dev/null
-@@ -1,107 +0,0 @@
--NVIDIA Tegra Boot and Power Management Processor (BPMP)
+@@ -1,42 +0,0 @@
+-NVIDIA Tegra186 BPMP I2C controller
 -
--The BPMP is a specific processor in Tegra chip, which is designed for
--booting process handling and offloading the power management, clock
--management, and reset control tasks from the CPU. The binding document
--defines the resources that would be used by the BPMP firmware driver,
--which can create the interprocessor communication (IPC) between the CPU
--and BPMP.
+-In Tegra186, the BPMP (Boot and Power Management Processor) owns certain HW
+-devices, such as the I2C controller for the power management I2C bus. Software
+-running on other CPUs must perform IPC to the BPMP in order to execute
+-transactions on that I2C bus. This binding describes an I2C bus that is
+-accessed in such a fashion.
+-
+-The BPMP I2C node must be located directly inside the main BPMP node. See
+-../firmware/nvidia,tegra186-bpmp.txt for details of the BPMP binding.
+-
+-This node represents an I2C controller. See ../i2c/i2c.txt for details of the
+-core I2C binding.
 -
 -Required properties:
--- compatible
--    Array of strings
+-- compatible:
+-    Array of strings.
 -    One of:
--    - "nvidia,tegra186-bpmp"
--- mboxes : The phandle of mailbox controller and the mailbox specifier.
--- shmem : List of the phandle of the TX and RX shared memory area that
--	  the IPC between CPU and BPMP is based on.
--- #clock-cells : Should be 1.
--- #power-domain-cells : Should be 1.
--- #reset-cells : Should be 1.
--
--This node is a mailbox consumer. See the following files for details of
--the mailbox subsystem, and the specifiers implemented by the relevant
--provider(s):
--
--- .../mailbox/mailbox.txt
--- .../mailbox/nvidia,tegra186-hsp.txt
--
--This node is a clock, power domain, and reset provider. See the following
--files for general documentation of those features, and the specifiers
--implemented by this node:
--
--- .../clock/clock-bindings.txt
--- <dt-bindings/clock/tegra186-clock.h>
--- ../power/power-domain.yaml
--- <dt-bindings/power/tegra186-powergate.h>
--- .../reset/reset.txt
--- <dt-bindings/reset/tegra186-reset.h>
--
--The BPMP implements some services which must be represented by separate nodes.
--For example, it can provide access to certain I2C controllers, and the I2C
--bindings represent each I2C controller as a device tree node. Such nodes should
--be nested directly inside the main BPMP node.
--
--Software can determine whether a child node of the BPMP node represents a device
--by checking for a compatible property. Any node with a compatible property
--represents a device that can be instantiated. Nodes without a compatible
--property may be used to provide configuration information regarding the BPMP
--itself, although no such configuration nodes are currently defined by this
--binding.
--
--The BPMP firmware defines no single global name-/numbering-space for such
--services. Put another way, the numbering scheme for I2C buses is distinct from
--the numbering scheme for any other service the BPMP may provide (e.g. a future
--hypothetical SPI bus service). As such, child device nodes will have no reg
--property, and the BPMP node will have no #address-cells or #size-cells property.
--
--The shared memory bindings for BPMP
-------------------------------------
--
--The shared memory area for the IPC TX and RX between CPU and BPMP are
--predefined and work on top of sysram, which is an SRAM inside the chip.
--
--See ".../sram/sram.txt" for the bindings.
+-    - "nvidia,tegra186-bpmp-i2c".
+-- #address-cells: Address cells for I2C device address.
+-    Single-cell integer.
+-    Must be <1>.
+-- #size-cells:
+-    Single-cell integer.
+-    Must be <0>.
+-- nvidia,bpmp-bus-id:
+-    Single-cell integer.
+-    Indicates the I2C bus number this DT node represent, as defined by the
+-    BPMP firmware.
 -
 -Example:
 -
--hsp_top0: hsp@3c00000 {
--	...
--	#mbox-cells = <2>;
--};
--
--sysram@30000000 {
--	compatible = "nvidia,tegra186-sysram", "mmio-sram";
--	reg = <0x0 0x30000000 0x0 0x50000>;
--	#address-cells = <2>;
--	#size-cells = <2>;
--	ranges = <0 0x0 0x0 0x30000000 0x0 0x50000>;
--
--	cpu_bpmp_tx: shmem@4e000 {
--		compatible = "nvidia,tegra186-bpmp-shmem";
--		reg = <0x0 0x4e000 0x0 0x1000>;
--		label = "cpu-bpmp-tx";
--		pool;
--	};
--
--	cpu_bpmp_rx: shmem@4f000 {
--		compatible = "nvidia,tegra186-bpmp-shmem";
--		reg = <0x0 0x4f000 0x0 0x1000>;
--		label = "cpu-bpmp-rx";
--		pool;
--	};
--};
--
 -bpmp {
--	compatible = "nvidia,tegra186-bpmp";
--	mboxes = <&hsp_top0 TEGRA_HSP_MBOX_TYPE_DB TEGRA_HSP_DB_MASTER_BPMP>;
--	shmem = <&cpu_bpmp_tx &cpu_bpmp_rx>;
--	#clock-cells = <1>;
--	#power-domain-cells = <1>;
--	#reset-cells = <1>;
+-	...
 -
 -	i2c {
--		compatible = "...";
--		...
+-		compatible = "nvidia,tegra186-bpmp-i2c";
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-		nvidia,bpmp-bus-id = <5>;
 -	};
 -};
-diff --git a/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.yaml b/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.yaml
+diff --git a/Documentation/devicetree/bindings/i2c/nvidia,tegra186-bpmp-i2c.yaml b/Documentation/devicetree/bindings/i2c/nvidia,tegra186-bpmp-i2c.yaml
 new file mode 100644
-index 000000000000..b1dacb8953cd
+index 000000000000..f3a68097dd6d
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.yaml
-@@ -0,0 +1,161 @@
++++ b/Documentation/devicetree/bindings/i2c/nvidia,tegra186-bpmp-i2c.yaml
+@@ -0,0 +1,40 @@
 +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/firmware/nvidia,tegra186-bpmp.yaml#
++$id: http://devicetree.org/schemas/i2c/nvidia,tegra186-bpmp-i2c.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: NVIDIA Tegra Boot and Power Management Processor (BPMP)
++title: NVIDIA Tegra186 (and later) BPMP I2C controller
 +
 +maintainers:
 +  - Thierry Reding <thierry.reding@gmail.com>
 +  - Jon Hunter <jonathanh@nvidia.com>
 +
 +description: |
-+  The BPMP is a specific processor in Tegra chip, which is designed for
-+  booting process handling and offloading the power management, clock
-+  management, and reset control tasks from the CPU. The binding document
-+  defines the resources that would be used by the BPMP firmware driver,
-+  which can create the interprocessor communication (IPC) between the
-+  CPU and BPMP.
++  In Tegra186 and later, the BPMP (Boot and Power Management Processor)
++  owns certain HW devices, such as the I2C controller for the power
++  management I2C bus. Software running on other CPUs must perform IPC to
++  the BPMP in order to execute transactions on that I2C bus. This
++  binding describes an I2C bus that is accessed in such a fashion.
 +
-+  This node is a mailbox consumer. See the following files for details
-+  of the mailbox subsystem, and the specifiers implemented by the
-+  relevant provider(s):
++  The BPMP I2C node must be located directly inside the main BPMP node.
++  See ../firmware/nvidia,tegra186-bpmp.yaml for details of the BPMP
++  binding.
 +
-+    - .../mailbox/mailbox.txt
-+    - .../mailbox/nvidia,tegra186-hsp.yaml
-+
-+  This node is a clock, power domain, and reset provider. See the
-+  following files for general documentation of those features, and the
-+  specifiers implemented by this node:
-+
-+    - .../clock/clock-bindings.txt
-+    - <dt-bindings/clock/tegra186-clock.h>
-+    - ../power/power-domain.yaml
-+    - <dt-bindings/power/tegra186-powergate.h>
-+    - .../reset/reset.txt
-+    - <dt-bindings/reset/tegra186-reset.h>
-+
-+  The BPMP implements some services which must be represented by
-+  separate nodes. For example, it can provide access to certain I2C
-+  controllers, and the I2C bindings represent each I2C controller as a
-+  device tree node. Such nodes should be nested directly inside the main
-+  BPMP node.
-+
-+  Software can determine whether a child node of the BPMP node
-+  represents a device by checking for a compatible property. Any node
-+  with a compatible property represents a device that can be
-+  instantiated. Nodes without a compatible property may be used to
-+  provide configuration information regarding the BPMP itself, although
-+  no such configuration nodes are currently defined by this binding.
-+
-+  The BPMP firmware defines no single global name-/numbering-space for
-+  such services. Put another way, the numbering scheme for I2C buses is
-+  distinct from the numbering scheme for any other service the BPMP may
-+  provide (e.g. a future hypothetical SPI bus service). As such, child
-+  device nodes will have no reg property, and the BPMP node will have no
-+  "#address-cells" or "#size-cells" property.
-+
-+  The shared memory area for the IPC TX and RX between CPU and BPMP are
-+  predefined and work on top of sysram, which is an SRAM inside the
-+  chip. See ".../sram/sram.yaml" for the bindings.
++  This node represents an I2C controller. See ../i2c/i2c.txt for details
++  of the core I2C binding.
 +
 +properties:
 +  compatible:
-+    oneOf:
-+      - items:
-+          - enum:
-+              - nvidia,tegra194-bpmp
-+              - nvidia,tegra234-bpmp
-+          - const: nvidia,tegra186-bpmp
-+      - const: nvidia,tegra186-bpmp
++    const: nvidia,tegra186-bpmp-i2c
 +
-+  mboxes:
-+    description: A phandle and channel specifier for the mailbox used to
-+      communicate with the BPMP.
-+    maxItems: 1
-+
-+  shmem:
-+    description: List of the phandle to the TX and RX shared memory area
-+      that the IPC between CPU and BPMP is based on.
-+    minItems: 2
-+    maxItems: 2
-+
-+  "#clock-cells":
++  "#address-cells":
 +    const: 1
 +
-+  "#power-domain-cells":
-+    const: 1
++  "#size-cells":
++    const: 0
 +
-+  "#reset-cells":
-+    const: 1
-+
-+required:
-+  - compatible
-+  - mboxes
-+  - shmem
-+  - "#clock-cells"
-+  - "#power-domain-cells"
-+  - "#reset-cells"
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+    #include <dt-bindings/mailbox/tegra186-hsp.h>
-+    #include <dt-bindings/memory/tegra186-mc.h>
-+
-+    hsp_top0: hsp@3c00000 {
-+        compatible = "nvidia,tegra186-hsp";
-+        reg = <0x03c00000 0xa0000>;
-+        interrupts = <GIC_SPI 176 IRQ_TYPE_LEVEL_HIGH>;
-+        interrupt-names = "doorbell";
-+        #mbox-cells = <2>;
-+    };
-+
-+    sram@30000000 {
-+        compatible = "nvidia,tegra186-sysram", "mmio-sram";
-+        reg = <0x30000000 0x50000>;
-+        #address-cells = <1>;
-+        #size-cells = <1>;
-+        ranges = <0x0 0x30000000 0x50000>;
-+
-+        cpu_bpmp_tx: sram@4e000 {
-+            reg = <0x4e000 0x1000>;
-+            label = "cpu-bpmp-tx";
-+            pool;
-+        };
-+
-+        cpu_bpmp_rx: sram@4f000 {
-+            reg = <0x4f000 0x1000>;
-+            label = "cpu-bpmp-rx";
-+            pool;
-+        };
-+    };
-+
-+    bpmp {
-+        compatible = "nvidia,tegra186-bpmp";
-+        interconnects = <&mc TEGRA186_MEMORY_CLIENT_BPMPR &emc>,
-+                        <&mc TEGRA186_MEMORY_CLIENT_BPMPW &emc>,
-+                        <&mc TEGRA186_MEMORY_CLIENT_BPMPDMAR &emc>,
-+                        <&mc TEGRA186_MEMORY_CLIENT_BPMPDMAW &emc>;
-+        interconnect-names = "read", "write", "dma-mem", "dma-write";
-+        iommus = <&smmu TEGRA186_SID_BPMP>;
-+        mboxes = <&hsp_top0 TEGRA_HSP_MBOX_TYPE_DB
-+                            TEGRA_HSP_DB_MASTER_BPMP>;
-+        shmem = <&cpu_bpmp_tx>, <&cpu_bpmp_rx>;
-+        #clock-cells = <1>;
-+        #power-domain-cells = <1>;
-+        #reset-cells = <1>;
-+
-+        i2c {
-+            compatible = "nvidia,tegra186-bpmp-i2c";
-+            nvidia,bpmp-bus-id = <5>;
-+            #address-cells = <1>;
-+            #size-cells = <0>;
-+        };
-+
-+        thermal {
-+            compatible = "nvidia,tegra186-bpmp-thermal";
-+            #thermal-sensor-cells = <1>;
-+        };
-+    };
++  nvidia,bpmp-bus-id:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description: Indicates the I2C bus number this DT node represents,
++      as defined by the BPMP firmware.
 -- 
 2.33.1
 
