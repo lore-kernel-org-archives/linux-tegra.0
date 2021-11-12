@@ -2,64 +2,66 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1C74C433F5
-	for <linux-tegra@archiver.kernel.org>; Fri, 12 Nov 2021 12:35:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5302C433EF
+	for <linux-tegra@archiver.kernel.org>; Fri, 12 Nov 2021 12:35:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B51C160F70
-	for <linux-tegra@archiver.kernel.org>; Fri, 12 Nov 2021 12:35:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CB13760F93
+	for <linux-tegra@archiver.kernel.org>; Fri, 12 Nov 2021 12:35:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234894AbhKLMim (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 12 Nov 2021 07:38:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43170 "EHLO
+        id S234980AbhKLMip (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 12 Nov 2021 07:38:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43182 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234881AbhKLMim (ORCPT
+        with ESMTP id S234957AbhKLMio (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 12 Nov 2021 07:38:42 -0500
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6CB51C061766;
-        Fri, 12 Nov 2021 04:35:51 -0800 (PST)
-Received: by mail-wr1-x430.google.com with SMTP id w29so15198961wra.12;
-        Fri, 12 Nov 2021 04:35:51 -0800 (PST)
+        Fri, 12 Nov 2021 07:38:44 -0500
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 158AFC061766;
+        Fri, 12 Nov 2021 04:35:54 -0800 (PST)
+Received: by mail-wm1-x336.google.com with SMTP id f7-20020a1c1f07000000b0032ee11917ceso6687914wmf.0;
+        Fri, 12 Nov 2021 04:35:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=PBEHoURKIBaY3X5BAcdBbjQ4Zu1VyqdYU7IZMgF72QU=;
-        b=KRgXGMgbEMCOvx7Q2K9d8BSZW9Jkvl0qYNWkPalWccSZy70bYf+/UzTAluzPl0jrkN
-         9zskR1dYQLKAjjEznnG/aVLc/5xjh1ZTcFyursONeDyAmKtX60VVRxAcjwtQy6Ik7b9G
-         5vHlZW/H75nrOQWHUeCcNRocJj/y2s7062Q6oc3fs4fveKfrcJxnS6hO9/4wrJm7tn4K
-         cYi/PX8wgzEwBSJZb+OCImRgolXcw6xKRp4BZuUOwnWsxIlWfMOxCPxTq5T/R9lRYlGY
-         2c4479QZBtbUm7dg2LIwnFRXXvh4LkTbClujHDC2WzlqtjIRmfjSvEwLSTEYSXDuMUuy
-         x+hA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=pbgWBw0F4ihDl2JiKxjBpympL3NHKzsqjTlTX6/jcOM=;
+        b=TgT1GPVM2imsCkUXYDzqIiRL2BFzCV86xyIDpG6AMjINteOK3JZZ+rQnPelUrY7PGm
+         1TpLEoS11rJpJiRB72jWhqIFy0j2xfU9WmBGOro51Xr1scZsYt2QFaNpbFVe4QnNMeo0
+         P4TpLDAVBWHZjEmcdgHbZTMsVvy3j8MJwhjlGnie2d2d7ed9HfHea6IEC0wYUxSRWoYk
+         vJ6f0mGWGlrJMsMaX575pp6AX02uXokuPejmDslCfr4TrN2An+UvkNF3BTmX11oVsDnY
+         6TTnie8yfJeKXkFCzLgbOeP6egrVZCNh7Zp5fcebb2NWyuOMQvsuuCWUK0uQ6tZBhz9O
+         rfTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=PBEHoURKIBaY3X5BAcdBbjQ4Zu1VyqdYU7IZMgF72QU=;
-        b=TyrsdYAKpc4hiCBedwf3Uaw4C3sH1le8TnQX1/SlEbJ4NLRchGSyWGFjURz6ulmzJb
-         bN5Dvebg6ZUUPO6g9Ghhaw8QJQefSnqVEhhuXaLZYxjpFt/XmkNtP88NuPrTCxR5lgqF
-         8fG3GUT9AMzIYKdKfiLR3xGHXjBq+Z9tOlGRb7t/3aqFMjerebohvD8ToDRpQFNokXKY
-         BUEW88iEOsxvelTtKM1mSyUmJQlFRM7TcEVwGv+eHHkQyMwkfi5AoBlYDTJmU6ygbcTk
-         6ZFOpgoUD5D/0uu8RJl97/LAQusaHkQ0PKiWyuZX+Z/aAoN3gxtwFOpK5oYHy6UQAHID
-         71Yg==
-X-Gm-Message-State: AOAM533+r79EPhWPBV4n1A5/pkg5RDKEmk+Ynor46UfKkPtmWfczN23l
-        gk4sbTZjbMNdnUbai3MJN5I=
-X-Google-Smtp-Source: ABdhPJyw2VM2tsSURj3/dtDnvRn1uWyrNMElohylC0CqsZ9EAIEJdjtJUSQzaseLyEAlhGiCGsP1fQ==
-X-Received: by 2002:adf:dec9:: with SMTP id i9mr18310621wrn.18.1636720550013;
-        Fri, 12 Nov 2021 04:35:50 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=pbgWBw0F4ihDl2JiKxjBpympL3NHKzsqjTlTX6/jcOM=;
+        b=D+NogTn8EImaYjIKqe13mxFM7aFR1JRlpQrJg23lpL4MpqzqQs9R7mkPRAb27p0BO1
+         ZOkY/KPFaMn6E1N6IOH2V2fSz93gMTb/eKtpBR55rI4HzZFkgXef6hrtAMJZWPmyIlXF
+         3EEW7mPcZWRFvp6hbtKVWrGPxTljMeKMPGZ8Neha8zH9fBywhvW3/OnIjvM5/fldW+dj
+         qk23fBN8+mvxcpdwLOCN3mSHIDR5Yp1WeNECLuktB+mHRKz6QrzHAA19WlkFBZaKVl5V
+         z7OMqx4kJSPX0jI08menmOMfsraehC6Un4DiO03VSmEchBaIKRSRhNUtdby6wdjQWXJN
+         K/rA==
+X-Gm-Message-State: AOAM530pp8FcP1fRrYEc8sscFy9WGLNBffK/BHp/kEqs/pfex5jLow/l
+        XosYmpvwwy6J7i20/nGMv2I=
+X-Google-Smtp-Source: ABdhPJwlfGN6eW1HR4iexTaF1FPWoEgULRPDx/0ulEj3FZBx6M89oHHBeSDactSRfDxMxPpxtS72rQ==
+X-Received: by 2002:a05:600c:6d2:: with SMTP id b18mr17233324wmn.98.1636720552717;
+        Fri, 12 Nov 2021 04:35:52 -0800 (PST)
 Received: from localhost ([193.209.96.43])
-        by smtp.gmail.com with ESMTPSA id z6sm7183458wmp.1.2021.11.12.04.35.48
+        by smtp.gmail.com with ESMTPSA id 126sm11146152wmz.28.2021.11.12.04.35.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Nov 2021 04:35:48 -0800 (PST)
+        Fri, 12 Nov 2021 04:35:51 -0800 (PST)
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Rob Herring <robh+dt@kernel.org>
 Cc:     linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 00/11] arm64: tegra: Add NVIDIA Jetson AGX Orin support
-Date:   Fri, 12 Nov 2021 13:35:31 +0100
-Message-Id: <20211112123542.3680629-1-thierry.reding@gmail.com>
+Subject: [PATCH 01/11] dt-bindings: tegra: Describe recent developer kits consistently
+Date:   Fri, 12 Nov 2021 13:35:32 +0100
+Message-Id: <20211112123542.3680629-2-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.33.1
+In-Reply-To: <20211112123542.3680629-1-thierry.reding@gmail.com>
+References: <20211112123542.3680629-1-thierry.reding@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -68,50 +70,53 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-Hi,
+Add descriptions to entries that were missing one and don't try to
+combine multiple entries into one to avoid confusion.
 
-This set of patches adds support for the new NVIDIA Jetson AGX Orin
-module and the corresponding developer kit. It builds on the existing
-Tegra234 support introduced a while ago for the simulation VDK platform
-and updates a couple of details and adds a few more things that have
-changed since then.
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ .../devicetree/bindings/arm/tegra.yaml        | 20 ++++++++++---------
+ 1 file changed, 11 insertions(+), 9 deletions(-)
 
-Most of this work was done by Mikko Perttunen.
-
-Thierry
-
-Mikko Perttunen (7):
-  dt-bindings: Update headers for Tegra234
-  misc: sram: Add compatible string for Tegra234 SYSRAM
-  arm64: tegra: Add clock for Tegra234 RTC
-  arm64: tegra: Update Tegra234 BPMP channel addresses
-  arm64: tegra: Fill in properties for Tegra234 eMMC
-  arm64: tegra: Add Tegra234 TCU device
-  arm64: tegra: Add NVIDIA Jetson AGX Orin Developer Kit support
-
-Thierry Reding (4):
-  dt-bindings: tegra: Describe recent developer kits consistently
-  dt-bindings: tegra: Document Jetson AGX Orin (and devkit)
-  dt-bindings: sram: Document NVIDIA Tegra SYSRAM
-  arm64: tegra: Fixup SYSRAM references
-
- .../devicetree/bindings/arm/tegra.yaml        | 29 ++++++++----
- .../devicetree/bindings/sram/sram.yaml        |  3 ++
- arch/arm64/boot/dts/nvidia/Makefile           |  1 +
- arch/arm64/boot/dts/nvidia/tegra186.dtsi      |  2 +-
- arch/arm64/boot/dts/nvidia/tegra194.dtsi      |  2 +-
- .../boot/dts/nvidia/tegra234-p3701-0000.dtsi  | 25 +++++++++++
- .../nvidia/tegra234-p3737-0000+p3701-0000.dts | 24 ++++++++++
- .../boot/dts/nvidia/tegra234-p3737-0000.dtsi  |  5 +++
- arch/arm64/boot/dts/nvidia/tegra234.dtsi      | 45 ++++++++++++++-----
- drivers/misc/sram.c                           |  1 +
- include/dt-bindings/clock/tegra234-clock.h    | 17 +++++--
- include/dt-bindings/reset/tegra234-reset.h    | 12 ++++-
- 12 files changed, 139 insertions(+), 27 deletions(-)
- create mode 100644 arch/arm64/boot/dts/nvidia/tegra234-p3701-0000.dtsi
- create mode 100644 arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dts
- create mode 100644 arch/arm64/boot/dts/nvidia/tegra234-p3737-0000.dtsi
-
+diff --git a/Documentation/devicetree/bindings/arm/tegra.yaml b/Documentation/devicetree/bindings/arm/tegra.yaml
+index d79d36ac0c44..0235b510e0b0 100644
+--- a/Documentation/devicetree/bindings/arm/tegra.yaml
++++ b/Documentation/devicetree/bindings/arm/tegra.yaml
+@@ -108,14 +108,17 @@ properties:
+               - nvidia,p2571
+               - nvidia,p2894-0050-a08
+           - const: nvidia,tegra210
+-      - items:
+-          - enum:
+-              - nvidia,p2771-0000
+-              - nvidia,p3509-0000+p3636-0001
++      - description: Jetson TX2 Developer Kit
++        items:
++          - const: nvidia,p2771-0000
+           - const: nvidia,tegra186
+-      - items:
+-          - enum:
+-              - nvidia,p2972-0000
++      - description: Jetson TX2 NX Developer Kit
++        items:
++          - const: nvidia,p3509-0000+p3636-0001
++          - const: nvidia,tegra186
++      - description: Jetson AGX Xavier Developer Kit
++        items:
++          - const: nvidia,p2972-0000
+           - const: nvidia,tegra194
+       - description: Jetson Xavier NX
+         items:
+@@ -134,8 +137,7 @@ properties:
+           - const: nvidia,p3509-0000+p3668-0001
+           - const: nvidia,tegra194
+       - items:
+-          - enum:
+-              - nvidia,tegra234-vdk
++          - const: nvidia,tegra234-vdk
+           - const: nvidia,tegra234
+ 
+ additionalProperties: true
 -- 
 2.33.1
 
