@@ -2,100 +2,91 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4560FC433F5
-	for <linux-tegra@archiver.kernel.org>; Fri, 12 Nov 2021 13:48:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4E86C433F5
+	for <linux-tegra@archiver.kernel.org>; Fri, 12 Nov 2021 13:48:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 268946108B
-	for <linux-tegra@archiver.kernel.org>; Fri, 12 Nov 2021 13:48:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C7E4E60F93
+	for <linux-tegra@archiver.kernel.org>; Fri, 12 Nov 2021 13:48:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235078AbhKLNvd (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 12 Nov 2021 08:51:33 -0500
-Received: from mail-ot1-f49.google.com ([209.85.210.49]:36430 "EHLO
-        mail-ot1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235074AbhKLNvc (ORCPT
+        id S235096AbhKLNvi (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 12 Nov 2021 08:51:38 -0500
+Received: from mail-ot1-f41.google.com ([209.85.210.41]:37689 "EHLO
+        mail-ot1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235090AbhKLNve (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 12 Nov 2021 08:51:32 -0500
-Received: by mail-ot1-f49.google.com with SMTP id w6-20020a9d77c6000000b0055e804fa524so13939488otl.3;
-        Fri, 12 Nov 2021 05:48:41 -0800 (PST)
+        Fri, 12 Nov 2021 08:51:34 -0500
+Received: by mail-ot1-f41.google.com with SMTP id h19-20020a9d3e53000000b0056547b797b2so13051991otg.4;
+        Fri, 12 Nov 2021 05:48:44 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
          :message-id;
-        bh=jxmVxwVEIODsUz5cmQZGbjxDZQfY0Nw513i0hXKcGII=;
-        b=ERxj3hi8q+QXpUSernFfBvHIXsEc+DwI+RWeMWEAvbCj2qPPeRDtd1xgkDlhmgwz4F
-         NiTeLyWEjK4IW3qfBShk55euZKHdo+/YD+v7bCWYjltWZKDU2TeBhnpZ0+4UC0eFs2Tg
-         2IcfsNYU1x45Oa7DxVBxYakYgyjtb61Lggfb1xzUouDCAEBLD79fe4FTdbxm74avkuiI
-         jyEJDWlWalOWYVQ4YPVVjQrB5vuiYCST+RUciH1+K5bTMBkPVuqsPlw8CkNwITnoarv2
-         ACu/8D8dnwBl3zVCpno0FY+23bpfAshAuX5FaaQ3Gm0NJeLz34aOWjDWWEhZwNrvp8iM
-         KLeA==
-X-Gm-Message-State: AOAM532hz+eotNWnkOmEVgOkkZj+tIinUVUg+wa3N3ojbkHlbKFMar77
-        d8urOA5p4c+05l2HNR9GjC1BQr6U2Q==
-X-Google-Smtp-Source: ABdhPJz80ATDrF4RPUbdjx4SU03fMnowayCqKTca1SIIyrBu7+tXWUedFcxGs/KXDkApzfvbZ9Ebwg==
-X-Received: by 2002:a9d:62ce:: with SMTP id z14mr12325812otk.56.1636724920972;
-        Fri, 12 Nov 2021 05:48:40 -0800 (PST)
+        bh=3cZuvoICaeE/9iFk5pqpv0JHNWT+JNnUw/yYONM5mkU=;
+        b=4alRKhZsrXkAvW4ZUmzGH5GS3mdcuhfnSrxcbTRw+alATuQ5QCDas4c1wUwAUQGACS
+         MAlLGHLW1jAvZCRguqT/iMCm0MUxdRPl/o9LvyGoe1ttV1LPivSjdKwbieIZMOdQXOhF
+         Sv2QtNmyffWzX7VEzm6Hdx8Umo9/+jgSFFdNOHhGfZSuioQpGur0KXMDKeTmSjyvouIl
+         Am2iMss4TYjqcVLc/Y4UZDfO1m5voEac83QJa9pqPtwrKg0hgMkE6HNeDj+gcYMPw8Ch
+         D+wg6ABXc+v5pIFtYcDAoNaGc49prP65ExZ6QJv4Dfq9z3B5izkDIE0bu2fEf5exB+a4
+         mDwg==
+X-Gm-Message-State: AOAM532iEMcbTt2TqBu8IYg7nR6YsZmRo8ZG/ItRimfssejs33Us3+0j
+        1ifCy9+RDc8+R8RRUn+fUw==
+X-Google-Smtp-Source: ABdhPJzqRYPvyQX523O2yZES64vi8GvkQZW8Q/m3SS6pNMGB0StXY0TKAEKerANLaAud+vxtp8a32A==
+X-Received: by 2002:a9d:f45:: with SMTP id 63mr8919604ott.350.1636724923663;
+        Fri, 12 Nov 2021 05:48:43 -0800 (PST)
 Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id j5sm1219479ots.68.2021.11.12.05.48.39
+        by smtp.gmail.com with ESMTPSA id q9sm1197151oti.32.2021.11.12.05.48.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Nov 2021 05:48:40 -0800 (PST)
-Received: (nullmailer pid 2463367 invoked by uid 1000);
+        Fri, 12 Nov 2021 05:48:43 -0800 (PST)
+Received: (nullmailer pid 2463379 invoked by uid 1000);
         Fri, 12 Nov 2021 13:48:37 -0000
 From:   Rob Herring <robh@kernel.org>
 To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Jon Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-In-Reply-To: <20211112120518.3679793-4-thierry.reding@gmail.com>
-References: <20211112120518.3679793-1-thierry.reding@gmail.com> <20211112120518.3679793-4-thierry.reding@gmail.com>
-Subject: Re: [PATCH 03/15] dt-bindings: mailbox: tegra: Convert to json-schema
+Cc:     Jon Hunter <jonathanh@nvidia.com>,
+        Rob Herring <robh+dt@kernel.org>, linux-tegra@vger.kernel.org,
+        devicetree@vger.kernel.org
+In-Reply-To: <20211112120518.3679793-3-thierry.reding@gmail.com>
+References: <20211112120518.3679793-1-thierry.reding@gmail.com> <20211112120518.3679793-3-thierry.reding@gmail.com>
+Subject: Re: [PATCH 02/15] dt-bindings: mmc: tegra: Convert to json-schema
 Date:   Fri, 12 Nov 2021 07:48:37 -0600
-Message-Id: <1636724917.104467.2463366.nullmailer@robh.at.kernel.org>
+Message-Id: <1636724917.184348.2463378.nullmailer@robh.at.kernel.org>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, 12 Nov 2021 13:05:06 +0100, Thierry Reding wrote:
+On Fri, 12 Nov 2021 13:05:05 +0100, Thierry Reding wrote:
 > From: Thierry Reding <treding@nvidia.com>
 > 
-> Convert the NVIDIA Tegra HSP bindings from the free-form text format to
-> json-schema.
+> Convert the NVIDIA Tegra SDHCI bindings from the free-form text format
+> to json-schema.
 > 
 > Signed-off-by: Thierry Reding <treding@nvidia.com>
 > ---
->  .../bindings/mailbox/nvidia,tegra186-hsp.txt  |  72 ------------
->  .../bindings/mailbox/nvidia,tegra186-hsp.yaml | 109 ++++++++++++++++++
->  2 files changed, 109 insertions(+), 72 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/mailbox/nvidia,tegra186-hsp.txt
->  create mode 100644 Documentation/devicetree/bindings/mailbox/nvidia,tegra186-hsp.yaml
+> Changes in v2:
+> - drop redundant $ref properties, add missing maxItems
+> 
+>  .../bindings/mmc/nvidia,tegra20-sdhci.txt     | 143 ---------
+>  .../bindings/mmc/nvidia,tegra20-sdhci.yaml    | 294 ++++++++++++++++++
+>  2 files changed, 294 insertions(+), 143 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt
+>  create mode 100644 Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.yaml
 > 
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
+Running 'make dtbs_check' with the schema in this patch gives the
+following warnings. Consider if they are expected or the schema is
+incorrect. These may not be new warnings.
 
-yamllint warnings/errors:
+Note that it is not yet a requirement to have 0 warnings for dtbs_check.
+This will change in the future.
 
-dtschema/dtc warnings/errors:
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/mailbox/nvidia,tegra186-hsp.yaml: properties:compatible:oneOf: [{'const': 'nvidia,tegra186-hsp'}, {'const': 'nvidia,tegra194-hsp'}] should not be valid under {'items': {'propertyNames': {'const': 'const'}, 'required': ['const']}}
-	hint: Use 'enum' rather than 'oneOf' + 'const' entries
-	from schema $id: http://devicetree.org/meta-schemas/keywords.yaml#
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/mailbox/nvidia,tegra186-hsp.yaml: 'additionalProperties' is a required property
-	hint: A schema without a "$ref" to another schema must define all properties and use "additionalProperties"
-	from schema $id: http://devicetree.org/meta-schemas/base.yaml#
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/mailbox/nvidia,tegra186-hsp.yaml: ignoring, error in schema: properties: compatible: oneOf
-warning: no schema found in file: ./Documentation/devicetree/bindings/mailbox/nvidia,tegra186-hsp.yaml
-Documentation/devicetree/bindings/mailbox/nvidia,tegra186-hsp.example.dt.yaml:0:0: /example-0/hsp@3c00000: failed to match any schema with compatible: ['nvidia,tegra186-hsp']
+Full log is available here: https://patchwork.ozlabs.org/patch/1554296
 
-doc reference errors (make refcheckdocs):
 
-See https://patchwork.ozlabs.org/patch/1554298
+mmc@3460000: clock-names: ['sdhci'] is too short
+	arch/arm64/boot/dts/nvidia/tegra234-sim-vdk.dt.yaml
 
-This check can fail if there are any dependencies. The base for a patch
-series is generally the most recent rc1.
+mmc@3460000: clocks: [[2, 123]] is too short
+	arch/arm64/boot/dts/nvidia/tegra234-sim-vdk.dt.yaml
 
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit.
+mmc@3460000: compatible: 'oneOf' conditional failed, one must be fixed:
+	arch/arm64/boot/dts/nvidia/tegra234-sim-vdk.dt.yaml
 
