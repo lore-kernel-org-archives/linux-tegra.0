@@ -2,96 +2,140 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D2DBC433EF
-	for <linux-tegra@archiver.kernel.org>; Fri, 12 Nov 2021 13:49:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63A5AC433EF
+	for <linux-tegra@archiver.kernel.org>; Fri, 12 Nov 2021 14:32:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 23982610FF
-	for <linux-tegra@archiver.kernel.org>; Fri, 12 Nov 2021 13:49:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C0DE60FE7
+	for <linux-tegra@archiver.kernel.org>; Fri, 12 Nov 2021 14:32:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235172AbhKLNvy (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 12 Nov 2021 08:51:54 -0500
-Received: from mail-oi1-f171.google.com ([209.85.167.171]:33421 "EHLO
-        mail-oi1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235111AbhKLNvi (ORCPT
+        id S234942AbhKLOfi (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 12 Nov 2021 09:35:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42414 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232403AbhKLOfh (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 12 Nov 2021 08:51:38 -0500
-Received: by mail-oi1-f171.google.com with SMTP id q25so12412637oiw.0;
-        Fri, 12 Nov 2021 05:48:47 -0800 (PST)
+        Fri, 12 Nov 2021 09:35:37 -0500
+Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8EE9AC061766;
+        Fri, 12 Nov 2021 06:32:46 -0800 (PST)
+Received: by mail-lj1-x234.google.com with SMTP id e11so18834482ljo.13;
+        Fri, 12 Nov 2021 06:32:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Jt2s5eE/KZv2f777KX1QTyz+OLPwPl/PkMsoEbWrCGs=;
+        b=i23UwZ6HE1MO8waAeRtHPEn5k2yNK9USGUt+trHLji3BvDimp03/SrKGm5JUcuPans
+         V2/TQzharlHbqb+MaQ1aMV27Gs8R3tAuLPvDAjlf/zDn20Fbec0kYackzhXzZLqy8xn9
+         aKXx/PgK0jKx1h/u7Wym5icG4tk83l0fRUIOBrGhQgv/KOoNf4W+SwqcmBWdaoEUpDeD
+         EOQQbi+V7qBN2WeS2dUcCBnvlxlHnlJ6YTJWP0TxpLJp9L8HZaKDePAwt9caVX2rmlro
+         K7Cf9DvOJ5Om9RDx7yiHFE1+L9udwpYmvO4rC29zzz8XQ0/qmvrn3wH/gZsH0UTAVs4P
+         Vopw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
-         :message-id;
-        bh=0EE4KsF+OgiJSD3HtrRh5W0ABKfJTM6vicTgTPUjLh8=;
-        b=3hjCd+1qljRYhXDiWzWtsyeGLrkuXNhg0czQcV96fVGoIIyb8owVbe5T7SPZ7l0IQG
-         3e2XXgUmcPzJ8sRCO2+Pyn7QE2ByobF3G2KNgQNW5i37KMrFzQNWJNUqmX/Fjd+zlOPj
-         YvJLNw4c34pfxrCAou4nQjQLTTjxxra5v1pryHDxWdpJMtgdVBEaeC6Vm6nMbmmLXqfh
-         Z6LILnIYUv+N9LJ7CBnllU9GQhK8gdn1oaWjiNGC6hWeTOk04oLWnSMS2EXlGNC/jph7
-         dwt6NNSkxvxetmRe+XWrHrgrB6cd0Zy4TBvgvdUDdVo3CA82weEpjsqyo5ldIOm8pD5d
-         xzDw==
-X-Gm-Message-State: AOAM530QcFAK5M1ukMV82yWntaNPQu9n0dDLX6zux4zw1Y06JOxoPb2/
-        uE9fZsJJu8YyB16vS8LsVw==
-X-Google-Smtp-Source: ABdhPJzf8gAJai4ZfK0FkvJvtMTJ0PWPG81aKnLD+BaMcYYaFn9ZWOOWnEO/l8QCvNWTRIGNuDM2+A==
-X-Received: by 2002:a05:6808:bc2:: with SMTP id o2mr8218384oik.115.1636724926982;
-        Fri, 12 Nov 2021 05:48:46 -0800 (PST)
-Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id 16sm1325675oix.46.2021.11.12.05.48.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Nov 2021 05:48:46 -0800 (PST)
-Received: (nullmailer pid 2463369 invoked by uid 1000);
-        Fri, 12 Nov 2021 13:48:37 -0000
-From:   Rob Herring <robh@kernel.org>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Jt2s5eE/KZv2f777KX1QTyz+OLPwPl/PkMsoEbWrCGs=;
+        b=L3lJZlUd4de/FFDOzxhMp8+zaKEojbIvxwzPWg2jzik2eVLpJCjGD8wJffNrnurVFh
+         4y5Yyj+32R17wxnGM26nwFUVcyRuSeK0FYDXU1Z2W1RTBVOX7AIBX7U+6vJ0cz7UBPgr
+         AcWbkXwRu0a1jKfbD0qlreoKz2kVRT07IwjwOFb4g/Z3tI0S+gR/qzz6ceOEgqBUwtFA
+         Ke0T7fhVyLvzy09mHAnIspUVTCdXGSvxYsjOEGjP5Dc1Pfkca2Zjuyqw34HSIfYbxQzW
+         IuFkuHi+0RnQUhCqXDku9oS4FrdRtL+JO+ovSKIscG17mLOZyAfBYo2jGBcUwfBf6aQs
+         FCKw==
+X-Gm-Message-State: AOAM532tSoKe1ShooFHFXLhWnQoWZ+VUcgl7FK2KSA6trsM/IJjoGPmq
+        dTPuq9G7fHuNgmrCNLGGUgiVxMd3ujI=
+X-Google-Smtp-Source: ABdhPJxBQ423Ld/XMxX+l3TnJVKv96QnKYPBK0REIsPD1NSxn+CW9FihZYNXZBK1woVGv7zwysv0DA==
+X-Received: by 2002:a2e:a376:: with SMTP id i22mr15560272ljn.201.1636727564749;
+        Fri, 12 Nov 2021 06:32:44 -0800 (PST)
+Received: from [192.168.2.145] (79-139-177-117.dynamic.spd-mgts.ru. [79.139.177.117])
+        by smtp.googlemail.com with ESMTPSA id bn3sm573660ljb.7.2021.11.12.06.32.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 12 Nov 2021 06:32:44 -0800 (PST)
+Subject: Re: [PATCH v1 2/2] drm/tegra: Use drm_dp_aux_register_ddc/chardev()
+ helpers
 To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
-In-Reply-To: <20211112120518.3679793-6-thierry.reding@gmail.com>
-References: <20211112120518.3679793-1-thierry.reding@gmail.com> <20211112120518.3679793-6-thierry.reding@gmail.com>
-Subject: Re: [PATCH 05/15] dt-bindings: rtc: tegra: Convert to json-schema
-Date:   Fri, 12 Nov 2021 07:48:37 -0600
-Message-Id: <1636724917.117688.2463368.nullmailer@robh.at.kernel.org>
+Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
+        Lyude Paul <lyude@redhat.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@linux.ie>,
+        Thomas Graichen <thomas.graichen@gmail.com>,
+        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20211107230821.13511-1-digetx@gmail.com>
+ <20211107230821.13511-2-digetx@gmail.com>
+ <YYk/jfcceun/Qleq@phenom.ffwll.local>
+ <0a2c02ae-3fe1-e384-28d3-13e13801d675@gmail.com>
+ <YYo9IXjevmstSREu@phenom.ffwll.local>
+ <857a48ae-9ff4-89fe-11ce-5f1573763941@gmail.com>
+ <efdc184a-5aa3-1141-7d74-23d29da41f2d@gmail.com>
+ <71fcbc09-5b60-ee76-49b2-94adc965eda5@gmail.com>
+ <49ffd29b-eb64-e0ca-410c-44074673d740@gmail.com>
+ <YY5HfUUSmnr6qQSU@orome.fritz.box>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <5ee3f964-39ec-f6e2-5a01-230532a8b17e@gmail.com>
+Date:   Fri, 12 Nov 2021 17:32:43 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
+MIME-Version: 1.0
+In-Reply-To: <YY5HfUUSmnr6qQSU@orome.fritz.box>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, 12 Nov 2021 13:05:08 +0100, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
+12.11.2021 13:52, Thierry Reding пишет:
+> On Tue, Nov 09, 2021 at 05:39:02PM +0300, Dmitry Osipenko wrote:
+>> 09.11.2021 17:17, Dmitry Osipenko пишет:
+>>> 09.11.2021 17:08, Dmitry Osipenko пишет:
+>>>>> +static void host1x_drm_dev_deinit(struct host1x_device *dev)
+>>>>> +{
+>>>>> +	struct drm_device *drm = dev_get_drvdata(&dev->dev);
+>>>> And platform_unregister_drivers() should be moved here.
+>>>>
+>>>
+>>> Nah, that should cause deadlock. This ad-hoc is too lame.
+>>
+>> Actually, there is no problem here as I see now. The host1x driver
+>> populates DT nodes after host1x_register() [1], meaning that Host1x DRM
+>> will be always inited first.
+>>
+>> [1]
+>> https://elixir.bootlin.com/linux/v5.15/source/drivers/gpu/host1x/dev.c#L475
+>>
+>> Still I'm not a fan of the ad-hoc solution.
 > 
-> Convert the NVIDIA Tegra RTC bindings from the free-form text format to
-> json-schema.
+> Could we not fix this by making the panel "hot-pluggable"? I don't think
+> there's anything inherent to the driver that would prevent doing so. The
+> original reason for why things are as intertwined as they are now is
+> because back at the time deferred framebuffer creation didn't exist. In
+> fact I added deferred framebuffer support with Daniel's help precisely
+> to fix a similar issue for things like HDMI and DP.
+
+I don't understand what do you mean by "hot-pluggable", panel is static.
+Please either clarify more or type the patch.
+
+Keep in mind that fix should be simple and portable because stable
+kernels are wrecked.
+
+> With HDMI and DP it's slightly less critical, because a lack of mode
+> support would've created a 1024x768 framebuffer, which most HDMI/DP
+> monitors support. However, with panels we need to ensure that the exact
+> mode from the panel is used to create the framebuffer, so it can only be
+> created when the panel is available.
 > 
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> ---
->  .../bindings/rtc/nvidia,tegra20-rtc.txt       | 24 ---------
->  .../bindings/rtc/nvidia,tegra20-rtc.yaml      | 54 +++++++++++++++++++
->  2 files changed, 54 insertions(+), 24 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/rtc/nvidia,tegra20-rtc.txt
->  create mode 100644 Documentation/devicetree/bindings/rtc/nvidia,tegra20-rtc.yaml
-> 
+> But, given that deferred framebuffer creation works now (which allows
+> the framebuffer console to show up at the preferred resolution for HDMI
+> and DP), even if a monitor is attached only after the driver has probed
+> already, we should be able to make something like that work with panels
+> as well.
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
+BTW, I see now that DPAUX I2C transfer helper may access
+aux->drm_device. Hence v1 patch isn't correct anyways.
 
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/rtc/nvidia,tegra20-rtc.yaml: 'additionalProperties' is a required property
-	hint: A schema without a "$ref" to another schema must define all properties and use "additionalProperties"
-	from schema $id: http://devicetree.org/meta-schemas/base.yaml#
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/rtc/nvidia,tegra20-rtc.yaml: ignoring, error in schema: 
-warning: no schema found in file: ./Documentation/devicetree/bindings/rtc/nvidia,tegra20-rtc.yaml
-Documentation/devicetree/bindings/rtc/nvidia,tegra20-rtc.example.dt.yaml:0:0: /example-0/timer@7000e000: failed to match any schema with compatible: ['nvidia,tegra20-rtc']
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/patch/1554301
-
-This check can fail if there are any dependencies. The base for a patch
-series is generally the most recent rc1.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit.
-
+For now I'll try to test more the ad-hoc variant with Thomas and send it
+as v2 if we won't have a better solution.
