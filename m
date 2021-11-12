@@ -2,129 +2,97 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 743C1C433F5
-	for <linux-tegra@archiver.kernel.org>; Fri, 12 Nov 2021 14:56:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B604C433F5
+	for <linux-tegra@archiver.kernel.org>; Fri, 12 Nov 2021 15:02:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5C32C61039
-	for <linux-tegra@archiver.kernel.org>; Fri, 12 Nov 2021 14:56:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 617506023F
+	for <linux-tegra@archiver.kernel.org>; Fri, 12 Nov 2021 15:02:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235142AbhKLO7R (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 12 Nov 2021 09:59:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47826 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235246AbhKLO7Q (ORCPT
+        id S235219AbhKLPEx (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 12 Nov 2021 10:04:53 -0500
+Received: from mail-oi1-f181.google.com ([209.85.167.181]:38737 "EHLO
+        mail-oi1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235215AbhKLPEw (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 12 Nov 2021 09:59:16 -0500
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EAB1EC061766;
-        Fri, 12 Nov 2021 06:56:25 -0800 (PST)
-Received: by mail-wm1-x32d.google.com with SMTP id 133so7982908wme.0;
-        Fri, 12 Nov 2021 06:56:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=JCqVUzOzEGA4JkXqmf2+cqP3C2tmsy0AnOVF6rZCuc4=;
-        b=m4kSxAI2d8o+9qJr6+UPuYzZjtwofpmxkWdXwVzXo3doQFfYkWLbKIzzXdAoNuRN0B
-         3UBxeSWsDlVB4JHJvK7oXSSuqxlhBK+UMXMTaUuES9E+8TSR6uTL5LOHALc6s7KIQRpA
-         f+5822Yz4gckl0F58hz+LmttUQHHQMM9HasiW5IAmNuDnzxN+oUsqTx9JSbRWnxNFvDA
-         uk8D3fBS5Zaj+124/+mCW6g31JhGKbiFs4ct0gQgN4I8glN43nOQHoyAl1y/29Dcbkez
-         /NRlNakTdv+R47uhXUd8nWDBt/DQNAV5P1b71WwzlyRxc1typXvR2/pyw0hs9DPSF866
-         tr6Q==
+        Fri, 12 Nov 2021 10:04:52 -0500
+Received: by mail-oi1-f181.google.com with SMTP id r26so18365751oiw.5;
+        Fri, 12 Nov 2021 07:02:02 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=JCqVUzOzEGA4JkXqmf2+cqP3C2tmsy0AnOVF6rZCuc4=;
-        b=jRgLAH35d2y9YDGxubCH5SLEoTh+HbrXWJ5pvZY8wNZeD9GmFIan1VKdQS48UWMxK1
-         xQDWACq4cNnM/gq3bmniAOHYZBeNzEA9dqnt0nbE5xDwDnKYXZgMJXkJbf2WV+2FKcK5
-         d4ryUo6H8M8EyVlvPqtptOpkJfaqd91F5whPZTjqLERrbXms8Jycdjy8Bbd8cMU2sGni
-         rJ/fm5RR1xQw9N/xQqtFBt1AnGiNyZln7IiGPAWuff2wIZCMPCdbNgco08hr+Iu0CSJd
-         8HXsG0XihpdjuR6nlhaCsml/6ohac72ZtY4uAPb/FXVKtHVWHWXFj1R1SuoqwQPUaEXn
-         USKA==
-X-Gm-Message-State: AOAM530T3Uby6ZeVQnZWvG944AFbCZreTfGFhTbskas/qWHq2/TuM0c2
-        4o4aktkVH9AXVIk/dVEUL1k=
-X-Google-Smtp-Source: ABdhPJxksw1qU0cW8bIxV9dRicQ97DWaZ82PYF74HlxiYdecbV5alqNSZosmQkAhil1NpGWpUXPz3w==
-X-Received: by 2002:a05:600c:4308:: with SMTP id p8mr11848789wme.132.1636728984574;
-        Fri, 12 Nov 2021 06:56:24 -0800 (PST)
-Received: from orome.fritz.box ([193.209.96.43])
-        by smtp.gmail.com with ESMTPSA id a12sm5819733wrm.62.2021.11.12.06.56.22
+        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
+         :message-id;
+        bh=06bAv2t9XDrmmCetkJ5sV2Z8yQvwYBjJ4MdmkjNUBLA=;
+        b=p8N5BQYsbidWHN/vfdFRcpLfzi9GoqNPih1C2KGwa5Xddro45OiptnkckHtM90temi
+         G51mFIqXxwUUt9JRm5hFFL90X6GNcfsyahEADy9aZkYmiIE5vI/CZKo4KSpzS3w9qEaj
+         qW2xl6nFsG2tHLlp0syY2fYYJHTfPw1QxLglTPfcwOFNuRqT21hzSazd579m/QXOiYon
+         mbKa1iYUcDaXqeWmaIIR/UpW2c/YcIV/2Fm/1WODu2TjfnVPW5Or4DwPGiEaKmIc+VqJ
+         9s9Q+XtrQNlzgp/PplRqVLe4VMe9XERQOesEUHw9kGcjRUvcq4ezOzfcaNTILxjY+8zN
+         5XPw==
+X-Gm-Message-State: AOAM533WvHU6OzP5OUd4waA95/J58hiRPS/pwcMWoIsLBwHCfh5OU/Xs
+        pSWL3xu0q7mRdyitoGwuFl1cim5KgQ==
+X-Google-Smtp-Source: ABdhPJxPm+KtMKh3K/klUNMPLY51VavqhtGQy9mnwQ2O6mzyPPuK+anB5yezIyozJulweCeuRi4tIQ==
+X-Received: by 2002:aca:3e8a:: with SMTP id l132mr12658902oia.95.1636729321510;
+        Fri, 12 Nov 2021 07:02:01 -0800 (PST)
+Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
+        by smtp.gmail.com with ESMTPSA id j20sm1401103oig.52.2021.11.12.07.02.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Nov 2021 06:56:23 -0800 (PST)
-Date:   Fri, 12 Nov 2021 15:56:20 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Robin Murphy <robin.murphy@arm.com>
-Cc:     Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 0/4] iommu/arm-smmu: Support Tegra234 SMMU
-Message-ID: <YY6AlFhZFaUoIkBM@orome.fritz.box>
-References: <20211112131231.3683098-1-thierry.reding@gmail.com>
- <e19479d9-f0b4-5347-1a43-2fcf5224a090@arm.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="YzV9+/LPAQG+ci/z"
-Content-Disposition: inline
-In-Reply-To: <e19479d9-f0b4-5347-1a43-2fcf5224a090@arm.com>
-User-Agent: Mutt/2.1.3 (987dde4c) (2021-09-10)
+        Fri, 12 Nov 2021 07:02:00 -0800 (PST)
+Received: (nullmailer pid 2842408 invoked by uid 1000);
+        Fri, 12 Nov 2021 15:01:59 -0000
+From:   Rob Herring <robh@kernel.org>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
+In-Reply-To: <20211112120518.3679793-12-thierry.reding@gmail.com>
+References: <20211112120518.3679793-1-thierry.reding@gmail.com> <20211112120518.3679793-12-thierry.reding@gmail.com>
+Subject: Re: [PATCH 11/15] dt-bindings: tegra: pmc: Convert to json-schema
+Date:   Fri, 12 Nov 2021 09:01:59 -0600
+Message-Id: <1636729319.935341.2842407.nullmailer@robh.at.kernel.org>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On Fri, 12 Nov 2021 13:05:14 +0100, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
+> 
+> Convert the NVIDIA Tegra186 (and later) PMC bindings from the free-form
+> text format to json-schema.
+> 
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
+>  .../arm/tegra/nvidia,tegra186-pmc.txt         | 133 ------------
+>  .../arm/tegra/nvidia,tegra186-pmc.yaml        | 199 ++++++++++++++++++
+>  2 files changed, 199 insertions(+), 133 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.txt
+>  create mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.yaml
+> 
 
---YzV9+/LPAQG+ci/z
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+on your patch (DT_CHECKER_FLAGS is new in v5.13):
 
-On Fri, Nov 12, 2021 at 01:43:54PM +0000, Robin Murphy wrote:
-> On 12/11/2021 1:12 pm, Thierry Reding wrote:
-> > From: Thierry Reding <treding@nvidia.com>
-> >=20
-> > Hi,
-> >=20
-> > this series of patches adds and enables support for the ARM SMMU
-> > instances found on the new Tegra234 SoC. This is mostly similar to what
-> > can be found on Tegra194 except that there are a few more instances to
-> > meet increased bandwidth needs.
-> >=20
-> > In addition to adding support for the new Tegra234 compatible string,
-> > this also adds a missing description for the nvidia,memory-controller
-> > property to the ARM SMMU device tree binding.
->=20
-> Besides a nitpick about the inconsistent enum ordering in patch #2,
+yamllint warnings/errors:
 
-Heh, yeah, I'll go fix that up so it's consistent in both the top-level
-compatible property description and the conditionals.
+dtschema/dtc warnings/errors:
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.yaml: properties:reg-names: {'minItems': 4, 'maxItems': 5, 'items': [{'const': 'pmc'}, {'const': 'wake'}, {'const': 'aotag'}, {'const': 'scratch'}, {'const': 'misc'}]} should not be valid under {'required': ['maxItems']}
+	hint: "maxItems" is not needed with an "items" list
+	from schema $id: http://devicetree.org/meta-schemas/items.yaml#
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.yaml: ignoring, error in schema: properties: reg-names
+warning: no schema found in file: ./Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.yaml
+Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.example.dt.yaml:0:0: /example-0/pmc@c3600000: failed to match any schema with compatible: ['nvidia,tegra186-pmc']
+Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.example.dt.yaml:0:0: /example-0/mmc@3400000: failed to match any schema with compatible: ['nvidia,tegra186-sdhci']
 
->=20
-> Acked-by: Robin Murphy <robin.murphy@arm.com>
->=20
-> for patches #1-3.
+doc reference errors (make refcheckdocs):
 
-Thanks!
-Thierry
+See https://patchwork.ozlabs.org/patch/1554314
 
---YzV9+/LPAQG+ci/z
-Content-Type: application/pgp-signature; name="signature.asc"
+This check can fail if there are any dependencies. The base for a patch
+series is generally the most recent rc1.
 
------BEGIN PGP SIGNATURE-----
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmGOgJQACgkQ3SOs138+
-s6FPbw//abAd6QKSSqbcGCDl8InqWLdNRjR3JNpKWAM8Dvib8JJ2NSbRGaveExqJ
-7xLI556MCIJzuX9DEFW+ay1SeVnW/KZwANl1Y/DSq29n8W+makepo523s04TsIBE
-VpwsgHlvoVIslWvex0n31M+EjKy+udR6/lQpTbBmuMDIG6ETH/cZ6XBkqwGRPbau
-EnCi55JSXQWujbOgKrCSAajqSt5AgqXgIzFzZBqbPnWnZf8ESOicTfQwdwpwOeCS
-IQqYbPfh0vdZ7C6wnTC4CFXqv4//WXjTPALh5tz0qi3eKP6nCOVO9psh9eVMbHGs
-949MghRv0hrTf2V815Au2fqlf+Gf0LMizWgbi6EP9mRQkKd9nXFhHKa0ime86Ryd
-V5QzTfcHQBuW7+qv8uQNHRn8cBxsmoMxIkpaoGRoW0Okt920c2SkXXGzOZ37d/lK
-joea6gwnJj/rEb6xy2Vbn0oEkaX2HpzHEDB0aB6N+/mKx7ZGXesNafW4nSW+xaPD
-VYmjx74Hv6vL+cw0idLkR9ifU5MLVdcJiLwevuHy/bOdH8K11nopo4uM/MigWGEd
-8UhcDrbq6cPGof9zSf7T/noyNHW7+G/uaGaE3SSDvBleQGS1iWho7rp7mxO37Kf1
-9jbfBjI4PQMqkKKE6y/U5UqrMCxiatKJPlhpQrR7dZNuPJvKyqQ=
-=imbm
------END PGP SIGNATURE-----
+pip3 install dtschema --upgrade
 
---YzV9+/LPAQG+ci/z--
+Please check and re-submit.
+
