@@ -2,63 +2,63 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26956C433EF
-	for <linux-tegra@archiver.kernel.org>; Fri, 12 Nov 2021 12:36:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5B08C433F5
+	for <linux-tegra@archiver.kernel.org>; Fri, 12 Nov 2021 12:36:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 10B0761027
-	for <linux-tegra@archiver.kernel.org>; Fri, 12 Nov 2021 12:36:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B07CD60F93
+	for <linux-tegra@archiver.kernel.org>; Fri, 12 Nov 2021 12:36:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234978AbhKLMjE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 12 Nov 2021 07:39:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43322 "EHLO
+        id S234989AbhKLMjH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 12 Nov 2021 07:39:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43340 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234957AbhKLMjE (ORCPT
+        with ESMTP id S234894AbhKLMjH (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 12 Nov 2021 07:39:04 -0500
-Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96922C061767;
-        Fri, 12 Nov 2021 04:36:13 -0800 (PST)
-Received: by mail-wr1-x42e.google.com with SMTP id u1so15214494wru.13;
-        Fri, 12 Nov 2021 04:36:13 -0800 (PST)
+        Fri, 12 Nov 2021 07:39:07 -0500
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55B8BC061766;
+        Fri, 12 Nov 2021 04:36:16 -0800 (PST)
+Received: by mail-wr1-x42d.google.com with SMTP id d27so15263642wrb.6;
+        Fri, 12 Nov 2021 04:36:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=ojds7uoTrXBLCO1H2MYmLZ4nSe7NxxdQakvrVqtQ3RE=;
-        b=hwwBk2QZDR/NziyD3Xe1C4hppuXJVGLMkrC/mDiGumcaNCjlXJyniamyq9c+kGs6fz
-         KsfmvGRkiA/lUWhbDRrsGYGGayK4C6Pd90ZoT1Z9Qhbt7oBIfcAm52LsmUwME430d+0I
-         jwj2fkjCqrJT+Lat5nXUMR1HXHLH4kMuMuT6d80WINlfy8yct0VPa4lvAuHab9vvmzi1
-         DOENga+dNFLvumna+1ZlHqgHkqP42+5jnuIZhjEnXHXYUWREthH87lmZVPM/BSgBMhLr
-         zdV+KcUSNgxIPgGs+cIBScpPjB1XSjEMmc6vPPazDjjY4maPNPg4PbqiMZYLjf/s07es
-         NNGQ==
+        bh=eMtyUZCPe3jI4M/02lrSTujHXoLLOzIpEv5CqhrxJIA=;
+        b=ORYwHrY6Cluvd4is2krIsmv0j4cZ/F8qk1Ip1HBnGLT6F0bttmB2y+YD/1+A3BK3G+
+         rZVgy0C6Dnv/5b1QQeLJXxXiOagJhwKUrYn6Q3DV8pf2Hme44HLKM4PeOTSyGVGLAEqS
+         JTFAhvySZzjV3cgiyYz0tiQtz34R0FVxtDKa9qC9w0RMSXKU7NkIueyL+8BkOe9jCEck
+         NrVM/ILDDa2mg3P6GLblJgLbsdO4Uteaf+nxbo+kUThW1HPSI7aShCmFLAqyVmqiInOX
+         U7vaqUDZ2G5cpRGVAjxZXWOkdfB8GUCq85pzwY/wPKQyYpP0hyE6J8optwW3z5ONFCzO
+         zGTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=ojds7uoTrXBLCO1H2MYmLZ4nSe7NxxdQakvrVqtQ3RE=;
-        b=7Eyd0cWZ95oT48dZbXLMXNujbmFq/aHeCHcAlgQl2jy3zJpyFBQfoGob0mszJhhw6H
-         BvtEqvbU1GAUetIGhEaV23whUbw2cvlTbP2PFaQ9LV+240ca1qIoyZHFpKE95s+r3kYa
-         g84Kmfan/aSWDGHcL3e92xiXvgLQjkLCvBL5zF+H5fdx0wkXp8utFnZStk+5sagvfBGn
-         BmdhWat6whgd9FomJs0VXYOWThrha9nLwc2Qi8m/Bb6+Lagr0ds773L/5bm2dj/9iDI7
-         cZMjtfALB6p/XfjgtgS+bdwUe7jGobxjGCo4GpWGFnZlXalItWx+Y4HODSxxzYZIc4F+
-         lk5w==
-X-Gm-Message-State: AOAM531GfQC4aWaiTTlUNYMGQtkEnIFKYWF5CmZFIc7+6majoXxV/wfv
-        0CidWa4w4OeMN/P83aTY3m103i2SxzjYtw==
-X-Google-Smtp-Source: ABdhPJyxV1vHoZOMQNPSjOtmt3c6HXHqPIq3WDPyzlEQgipZttT3+ww3S2cMmk61QlvHdq8Biuy1ig==
-X-Received: by 2002:adf:ba87:: with SMTP id p7mr17842753wrg.282.1636720572181;
-        Fri, 12 Nov 2021 04:36:12 -0800 (PST)
+        bh=eMtyUZCPe3jI4M/02lrSTujHXoLLOzIpEv5CqhrxJIA=;
+        b=0NlyDhsgXO2+mMDkBYh4k4uTbp+Zu4BFv9UpYP8DAD8RrDsNKZGERjthdBAUxMoTwk
+         NlJ7My0ks/QUZnjL4ydXaRCiFWcuGTKyMFrWalXUI+Q8CJETuOjaGJDavincoWTqm+Hl
+         hwD0vK5EAJs9/VHnyFyePNFPAm09rznb9RNgUqy2K9+K3ka4XTVAofh3XyVFsxUOe6YV
+         c5uZHVflkv7P5YNDTgu6k6RRaFXVhlpaTSZ21pH6av/pfrj8fAgTh5UqmJib1/PcCPW0
+         61kD6NmyYdjfyCmLSUMSd4lI86+IRBMX+EY2Z4rQMzOXZWEgl7IPq70UW8SK5Dd6ISUN
+         Z1Fg==
+X-Gm-Message-State: AOAM531OtKia4VubDmHXqiAji5kZQZH4jh4lT/nOj5j9/tY2u8j3N3dr
+        CsUjjHTHo6KBZHdhZIXS97c=
+X-Google-Smtp-Source: ABdhPJyJAvRYR+npp+ec2spwLMLoe4eT3HeKLQOT95hE3RoP9Z7HgsKggh/XbIrvFEnMq3MVkPy2VA==
+X-Received: by 2002:a5d:5151:: with SMTP id u17mr18274967wrt.126.1636720574971;
+        Fri, 12 Nov 2021 04:36:14 -0800 (PST)
 Received: from localhost ([193.209.96.43])
-        by smtp.gmail.com with ESMTPSA id q84sm13373795wme.3.2021.11.12.04.36.11
+        by smtp.gmail.com with ESMTPSA id d8sm5751109wrm.76.2021.11.12.04.36.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Nov 2021 04:36:11 -0800 (PST)
+        Fri, 12 Nov 2021 04:36:14 -0800 (PST)
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Rob Herring <robh+dt@kernel.org>
 Cc:     linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 08/11] arm64: tegra: Update Tegra234 BPMP channel addresses
-Date:   Fri, 12 Nov 2021 13:35:39 +0100
-Message-Id: <20211112123542.3680629-9-thierry.reding@gmail.com>
+Subject: [PATCH 09/11] arm64: tegra: Fill in properties for Tegra234 eMMC
+Date:   Fri, 12 Nov 2021 13:35:40 +0100
+Message-Id: <20211112123542.3680629-10-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.33.1
 In-Reply-To: <20211112123542.3680629-1-thierry.reding@gmail.com>
 References: <20211112123542.3680629-1-thierry.reding@gmail.com>
@@ -70,45 +70,47 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Mikko Perttunen <mperttunen@nvidia.com>
 
-On final Tegra234 systems, shared memory for communication with BPMP is
-located at offset 0x70000 in SYSRAM.
+Add missing properties to the eMMC controller, as required to use it on
+actual hardware.
 
 Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- arch/arm64/boot/dts/nvidia/tegra234.dtsi | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ arch/arm64/boot/dts/nvidia/tegra234.dtsi | 19 ++++++++++++++++---
+ 1 file changed, 16 insertions(+), 3 deletions(-)
 
 diff --git a/arch/arm64/boot/dts/nvidia/tegra234.dtsi b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-index 400c01acc19f..844cab44aee6 100644
+index 844cab44aee6..ffe300356e85 100644
 --- a/arch/arm64/boot/dts/nvidia/tegra234.dtsi
 +++ b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-@@ -126,19 +126,19 @@ gic: interrupt-controller@f400000 {
- 
- 	sram@40000000 {
- 		compatible = "nvidia,tegra234-sysram", "mmio-sram";
--		reg = <0x0 0x40000000 0x0 0x50000>;
-+		reg = <0x0 0x40000000 0x0 0x80000>;
- 		#address-cells = <1>;
- 		#size-cells = <1>;
--		ranges = <0x0 0x0 0x40000000 0x50000>;
-+		ranges = <0x0 0x0 0x40000000 0x80000>;
- 
--		cpu_bpmp_tx: sram@4e000 {
--			reg = <0x4e000 0x1000>;
-+		cpu_bpmp_tx: sram@70000 {
-+			reg = <0x70000 0x1000>;
- 			label = "cpu-bpmp-tx";
- 			pool;
+@@ -40,11 +40,24 @@ mmc@3460000 {
+ 			compatible = "nvidia,tegra234-sdhci", "nvidia,tegra186-sdhci";
+ 			reg = <0x03460000 0x20000>;
+ 			interrupts = <GIC_SPI 65 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&bpmp TEGRA234_CLK_SDMMC4>;
+-			clock-names = "sdhci";
++			clocks = <&bpmp TEGRA234_CLK_SDMMC4>,
++				 <&bpmp TEGRA234_CLK_SDMMC_LEGACY_TM>;
++			clock-names = "sdhci", "tmclk";
++			assigned-clocks = <&bpmp TEGRA234_CLK_SDMMC4>,
++					  <&bpmp TEGRA234_CLK_PLLC4>;
++			assigned-clock-parents = <&bpmp TEGRA234_CLK_PLLC4>;
+ 			resets = <&bpmp TEGRA234_RESET_SDMMC4>;
+ 			reset-names = "sdhci";
+-			dma-coherent;
++			nvidia,pad-autocal-pull-up-offset-hs400 = <0x00>;
++			nvidia,pad-autocal-pull-down-offset-hs400 = <0x00>;
++			nvidia,pad-autocal-pull-up-offset-1v8-timeout = <0x0a>;
++			nvidia,pad-autocal-pull-down-offset-1v8-timeout = <0x0a>;
++			nvidia,pad-autocal-pull-up-offset-3v3-timeout = <0x0a>;
++			nvidia,pad-autocal-pull-down-offset-3v3-timeout = <0x0a>;
++			nvidia,default-tap = <0x8>;
++			nvidia,default-trim = <0x14>;
++			nvidia,dqs-trim = <40>;
++			supports-cqe;
+ 			status = "disabled";
  		};
  
--		cpu_bpmp_rx: sram@4f000 {
--			reg = <0x4f000 0x1000>;
-+		cpu_bpmp_rx: sram@71000 {
-+			reg = <0x71000 0x1000>;
- 			label = "cpu-bpmp-rx";
- 			pool;
- 		};
 -- 
 2.33.1
 
