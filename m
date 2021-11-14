@@ -2,53 +2,53 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEA01C433EF
-	for <linux-tegra@archiver.kernel.org>; Sun, 14 Nov 2021 22:04:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CA67C433F5
+	for <linux-tegra@archiver.kernel.org>; Sun, 14 Nov 2021 22:04:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BBE8E60C40
-	for <linux-tegra@archiver.kernel.org>; Sun, 14 Nov 2021 22:04:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D9D2C60FE8
+	for <linux-tegra@archiver.kernel.org>; Sun, 14 Nov 2021 22:04:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236276AbhKNWF7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 14 Nov 2021 17:05:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33092 "EHLO
+        id S236345AbhKNWF5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 14 Nov 2021 17:05:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33090 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236226AbhKNWFj (ORCPT
+        with ESMTP id S236191AbhKNWFj (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
         Sun, 14 Nov 2021 17:05:39 -0500
-Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C40CBC06121E;
-        Sun, 14 Nov 2021 14:02:09 -0800 (PST)
-Received: by mail-lf1-x135.google.com with SMTP id l22so38142847lfg.7;
-        Sun, 14 Nov 2021 14:02:09 -0800 (PST)
+Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9FDCC06121D;
+        Sun, 14 Nov 2021 14:02:08 -0800 (PST)
+Received: by mail-lf1-x129.google.com with SMTP id f18so38200867lfv.6;
+        Sun, 14 Nov 2021 14:02:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=z+2i2S1W26dZ7VgKg6S5rlGKr4ZHMsx/PFUfrnnRofM=;
-        b=ml0J0tMgZcF3PFcv+WgJ8G2i3OK38mfIvBSe1YkPQgQzWRkqQpEKlUS94aX5MLAf1q
-         Zu7oGmLI96Ci8pRAuf5XLkk/w0kbLBgdNXlvgVVEXtih0cG4vxszkAxFzX1xyISKK3Js
-         B8aNm0nRGeYIsSGi5sRNLhndvdd2zu9Kblp2Jjp48R2mu894sePWKi62vTbadVVMCJUl
-         sm0hmJ+8eB2pxlHWhHXZWPRPieTK1dUUWnL/js5TbIlhm18gldoPF6X77ZrVAhgYDisx
-         vVJy2chgCIwPNGxR81CR6Gqb8YC11LG1JzYzPtcnA9tEpakTykeYfd9zv1UF+Ju3uoIw
-         RK7A==
+        bh=MVMeO5TsjpG7X103IJ0vtCcKisfNOPmQ/M/aYmMnN4k=;
+        b=L6sswe3/Zz0LvUC8wTQh34U0cJhZewXYzQNh13PJBoaOE1xiIPA6T7AWtP2dgVQNa4
+         1eyEmMEHXROiUJxIsFDXtyMlzyYaZ+4I/xiueslnAGQ7lFOKvUtjjv3K/2+bSQexSDfD
+         YeSjp3dpj8SbkmDuuWwj1gJbcy5qPBKithxNk8zKcs37+2licxf6TIJuASBZ3zh58Zuh
+         gMdcq/3GojuTRl3Gp3lWFtZRbJ3Kt+j4OPN3rZNDSJKIHn4Eg2H0/GV3FLJ1Gh7tp3jt
+         0UMYMmg2WzCzYki7bHacHsogPzQi8U+GRJOZlmBHuE11cJReisE1NSqonPu4gSRp/kT0
+         I7HA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=z+2i2S1W26dZ7VgKg6S5rlGKr4ZHMsx/PFUfrnnRofM=;
-        b=ZfV0y+aYURk0i2+lReIn9JAmp9B3EENTqHEkLhm2AhoNG1sKzpg4EqU3vbtCtGgrAl
-         Qc0sq1xLgXu79XuJQWiNp43XxFd3WUPexp8EIP+DF3p0rb/oBmkS0Okf1mPwLEsjX5AK
-         3swvC5rRmikhmq/zse408o2TX3bS6S5KpMp/jMzahX5p4IRcKXLxjY3WVHGwaRj0O6Ck
-         hI36TJickAAMwy2q/IV93gaZj3KnH5t3vpiECLMoO4KKy6UozdrK6xPBA2BYM9gz65R+
-         WGaBkgzhwz7OfJ8IpAkL7In1A4S2QSU6vy2ZymHtpPAAPtdJAfjvagF9qb7s0j3FJd8o
-         p2WQ==
-X-Gm-Message-State: AOAM532Jya/50AygKxWKTzxJlPwyl5ZkKQIWEDYRfiatLclwJONCy8gw
-        y3QYogZeW4f9oG8H4uOA8X4=
-X-Google-Smtp-Source: ABdhPJx3NXWPyjm3WDEUY8rjJZV4QE5SX/fDMs2diV4puRAnxUyAH7i2dIonFsrlYtJPCgAc0hHNUg==
-X-Received: by 2002:a05:6512:1284:: with SMTP id u4mr31653403lfs.342.1636927328204;
-        Sun, 14 Nov 2021 14:02:08 -0800 (PST)
+        bh=MVMeO5TsjpG7X103IJ0vtCcKisfNOPmQ/M/aYmMnN4k=;
+        b=bnPdXGZAkU5DlaW5FnG7dJiarTopUoDhfIxL4yKsQOtYsaB4gerBrr7Vxg7DnH9mpz
+         jTLsjnbaetx3gCy+CWefulelm1Wk8JXFWWmWqClkq31xt7fIRmlZXqNK/PkJOzGsX6hQ
+         9KkIjw9Vkbof/riuAXuGEyHBOOYo76YVcXkb/dsmLvT3e3uPdCsCq2LLgJ/ATHQoSwS0
+         xG5ISJdu1wfmGWpX62EdogPTPM57YfRWwpydAkH/f7Cf5E29XQR4WL/FF6BrewCJtUSM
+         ZNU7JQie6rsfTdTSZh8zb7lS2to55Bxvp2/aWqX6LTf48OuG15+92ZO4AgHeC6rJEFys
+         UBFQ==
+X-Gm-Message-State: AOAM532/8fLULQpkw609dCVwHX2DIkU09edyF6zoAIhzRf3WgsotzaKz
+        PqaIvJw+PooxL05IdL4k3CE=
+X-Google-Smtp-Source: ABdhPJw2Ifp+ZZ4lDe7Ny6nGB0diJjuR0av8WUhdWFR5Bkzxgr31fS/BwRuRN8pTdK/skWG2mJ8XJg==
+X-Received: by 2002:a05:6512:2216:: with SMTP id h22mr30748366lfu.383.1636927327272;
+        Sun, 14 Nov 2021 14:02:07 -0800 (PST)
 Received: from localhost.localdomain (46-138-46-211.dynamic.spd-mgts.ru. [46.138.46.211])
-        by smtp.gmail.com with ESMTPSA id t5sm1353842lfd.80.2021.11.14.14.02.07
+        by smtp.gmail.com with ESMTPSA id t5sm1353842lfd.80.2021.11.14.14.02.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Sun, 14 Nov 2021 14:02:07 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
@@ -70,9 +70,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Thomas Graichen <thomas.graichen@gmail.com>
 Cc:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v1 14/14] ARM: tegra: Enable video decoder on Tegra114
-Date:   Mon, 15 Nov 2021 01:01:19 +0300
-Message-Id: <20211114220119.18909-15-digetx@gmail.com>
+Subject: [PATCH v1 13/14] ARM: tegra: nexus7: Drop clock-frequency from NFC node
+Date:   Mon, 15 Nov 2021 01:01:18 +0300
+Message-Id: <20211114220119.18909-14-digetx@gmail.com>
 X-Mailer: git-send-email 2.33.1
 In-Reply-To: <20211114220119.18909-1-digetx@gmail.com>
 References: <20211114220119.18909-1-digetx@gmail.com>
@@ -82,78 +82,42 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Anton Bambura <jenneron@protonmail.com>
+From: David Heidelberg <david@ixit.cz>
 
-Add Video Decoder Engine node to Tegra114 device-tree.
+The clock-frequency property was never used and is deprecated now.
+Remove it from Nexus 7 device-tree.
 
-Signed-off-by: Anton Bambura <jenneron@protonmail.com>
+Signed-off-by: David Heidelberg <david@ixit.cz>
 ---
- arch/arm/boot/dts/tegra114.dtsi | 38 +++++++++++++++++++++++++++++++++
- 1 file changed, 38 insertions(+)
+ arch/arm/boot/dts/tegra30-asus-nexus7-grouper.dtsi | 1 -
+ arch/arm/boot/dts/tegra30-asus-nexus7-tilapia.dtsi | 2 --
+ 2 files changed, 3 deletions(-)
 
-diff --git a/arch/arm/boot/dts/tegra114.dtsi b/arch/arm/boot/dts/tegra114.dtsi
-index 563ee262f41d..3d08764401ce 100644
---- a/arch/arm/boot/dts/tegra114.dtsi
-+++ b/arch/arm/boot/dts/tegra114.dtsi
-@@ -17,6 +17,19 @@ memory@80000000 {
- 		reg = <0x80000000 0x0>;
- 	};
+diff --git a/arch/arm/boot/dts/tegra30-asus-nexus7-grouper.dtsi b/arch/arm/boot/dts/tegra30-asus-nexus7-grouper.dtsi
+index a044dbd200a9..564cfcde21a9 100644
+--- a/arch/arm/boot/dts/tegra30-asus-nexus7-grouper.dtsi
++++ b/arch/arm/boot/dts/tegra30-asus-nexus7-grouper.dtsi
+@@ -137,7 +137,6 @@ i2c@7000c500 {
+ 		nfc@28 {
+ 			compatible = "nxp,pn544-i2c";
+ 			reg = <0x28>;
+-			clock-frequency = <100000>;
  
-+	sram@40000000 {
-+		compatible = "mmio-sram";
-+		reg = <0x40000000 0x40000>;
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges = <0 0x40000000 0x40000>;
-+
-+		vde_pool: sram@400 {
-+			reg = <0x400 0x3fc00>;
-+			pool;
-+		};
-+	};
-+
- 	host1x@50000000 {
- 		compatible = "nvidia,tegra114-host1x";
- 		reg = <0x50000000 0x00028000>;
-@@ -253,6 +266,30 @@ gpio: gpio@6000d000 {
- 		*/
- 	};
+ 			interrupt-parent = <&gpio>;
+ 			interrupts = <TEGRA_GPIO(X, 0) IRQ_TYPE_EDGE_RISING>;
+diff --git a/arch/arm/boot/dts/tegra30-asus-nexus7-tilapia.dtsi b/arch/arm/boot/dts/tegra30-asus-nexus7-tilapia.dtsi
+index a681ad51fddd..cd63e0ef7445 100644
+--- a/arch/arm/boot/dts/tegra30-asus-nexus7-tilapia.dtsi
++++ b/arch/arm/boot/dts/tegra30-asus-nexus7-tilapia.dtsi
+@@ -223,8 +223,6 @@ nfc@2a {
+ 			compatible = "nxp,pn544-i2c";
+ 			reg = <0x2a>;
  
-+	vde@6001a000 {
-+		compatible = "nvidia,tegra114-vde";
-+		reg = <0x6001a000 0x1000>, /* Syntax Engine */
-+		      <0x6001b000 0x1000>, /* Video Bitstream Engine */
-+		      <0x6001c000  0x100>, /* Macroblock Engine */
-+		      <0x6001c200  0x100>, /* Post-processing Engine */
-+		      <0x6001c400  0x100>, /* Motion Compensation Engine */
-+		      <0x6001c600  0x100>, /* Transform Engine */
-+		      <0x6001c800  0x100>, /* Pixel prediction block */
-+		      <0x6001ca00  0x100>, /* Video DMA */
-+		      <0x6001d800  0x400>; /* Video frame controls */
-+		reg-names = "sxe", "bsev", "mbe", "ppe", "mce",
-+			    "tfe", "ppb", "vdma", "frameid";
-+		iram = <&vde_pool>; /* IRAM region */
-+		interrupts = <GIC_SPI  9 IRQ_TYPE_LEVEL_HIGH>, /* Sync token interrupt */
-+			     <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>, /* BSE-V interrupt */
-+			     <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>; /* SXE interrupt */
-+		interrupt-names = "sync-token", "bsev", "sxe";
-+		clocks = <&tegra_car TEGRA114_CLK_VDE>;
-+		reset-names = "vde", "mc";
-+		resets = <&tegra_car 61>, <&mc TEGRA114_MC_RESET_VDE>;
-+		iommus = <&mc TEGRA_SWGROUP_VDE>;
-+	};
-+
- 	apbmisc@70000800 {
- 		compatible = "nvidia,tegra114-apbmisc", "nvidia,tegra20-apbmisc";
- 		reg = <0x70000800 0x64>, /* Chip revision */
-@@ -543,6 +580,7 @@ mc: memory-controller@70019000 {
- 		interrupts = <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>;
+-			clock-frequency = <100000>;
+-
+ 			interrupt-parent = <&gpio>;
+ 			interrupts = <TEGRA_GPIO(S, 7) IRQ_TYPE_EDGE_RISING>;
  
- 		#iommu-cells = <1>;
-+		#reset-cells = <1>;
- 	};
- 
- 	ahub@70080000 {
 -- 
 2.33.1
 
