@@ -2,122 +2,98 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CA67C433F5
-	for <linux-tegra@archiver.kernel.org>; Sun, 14 Nov 2021 22:04:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74085C433EF
+	for <linux-tegra@archiver.kernel.org>; Sun, 14 Nov 2021 22:09:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D9D2C60FE8
-	for <linux-tegra@archiver.kernel.org>; Sun, 14 Nov 2021 22:04:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4FDF860EB9
+	for <linux-tegra@archiver.kernel.org>; Sun, 14 Nov 2021 22:09:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236345AbhKNWF5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 14 Nov 2021 17:05:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33090 "EHLO
+        id S236281AbhKNWLq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 14 Nov 2021 17:11:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34716 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236191AbhKNWFj (ORCPT
+        with ESMTP id S233335AbhKNWLh (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 14 Nov 2021 17:05:39 -0500
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9FDCC06121D;
-        Sun, 14 Nov 2021 14:02:08 -0800 (PST)
-Received: by mail-lf1-x129.google.com with SMTP id f18so38200867lfv.6;
-        Sun, 14 Nov 2021 14:02:08 -0800 (PST)
+        Sun, 14 Nov 2021 17:11:37 -0500
+Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24E7DC061210;
+        Sun, 14 Nov 2021 14:08:33 -0800 (PST)
+Received: by mail-lj1-x22b.google.com with SMTP id e7so16697709ljq.12;
+        Sun, 14 Nov 2021 14:08:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=MVMeO5TsjpG7X103IJ0vtCcKisfNOPmQ/M/aYmMnN4k=;
-        b=L6sswe3/Zz0LvUC8wTQh34U0cJhZewXYzQNh13PJBoaOE1xiIPA6T7AWtP2dgVQNa4
-         1eyEmMEHXROiUJxIsFDXtyMlzyYaZ+4I/xiueslnAGQ7lFOKvUtjjv3K/2+bSQexSDfD
-         YeSjp3dpj8SbkmDuuWwj1gJbcy5qPBKithxNk8zKcs37+2licxf6TIJuASBZ3zh58Zuh
-         gMdcq/3GojuTRl3Gp3lWFtZRbJ3Kt+j4OPN3rZNDSJKIHn4Eg2H0/GV3FLJ1Gh7tp3jt
-         0UMYMmg2WzCzYki7bHacHsogPzQi8U+GRJOZlmBHuE11cJReisE1NSqonPu4gSRp/kT0
-         I7HA==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=lypIbzMAdKowQS1+HnRTSDwp19bsKifrMWVI3aerImY=;
+        b=GIyy8Bd20lA9Se8HAyleCJsBw3VqLDo4vkKWFbWV/DUOJBrZGzVjkLu4DIZb/YUL2F
+         aTXCWRfjjI3enkdZib/z7ccPslKKB2CU5u0peDBRan+09h8qsZgzHY/tUQffcR1uNeYC
+         tl7SIML8qmJQlj94gw44scY88Uw+aIqUdYSpxeufrRTiH6DrMQmxG6oIwRz/36XU23o1
+         znCPGrtAzuGF33sgfRF4GgXAT8/NzLwMqv50cKenVWT3JW+gMgxvY+r6gZ+UR5xBs78L
+         H+T6BfYsQ4IuY5CGk/vhNQTUZIEYFY7tqxS7Q33RaYyXFujU8KrbFpW5KR6s0139gIL+
+         fadg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=MVMeO5TsjpG7X103IJ0vtCcKisfNOPmQ/M/aYmMnN4k=;
-        b=bnPdXGZAkU5DlaW5FnG7dJiarTopUoDhfIxL4yKsQOtYsaB4gerBrr7Vxg7DnH9mpz
-         jTLsjnbaetx3gCy+CWefulelm1Wk8JXFWWmWqClkq31xt7fIRmlZXqNK/PkJOzGsX6hQ
-         9KkIjw9Vkbof/riuAXuGEyHBOOYo76YVcXkb/dsmLvT3e3uPdCsCq2LLgJ/ATHQoSwS0
-         xG5ISJdu1wfmGWpX62EdogPTPM57YfRWwpydAkH/f7Cf5E29XQR4WL/FF6BrewCJtUSM
-         ZNU7JQie6rsfTdTSZh8zb7lS2to55Bxvp2/aWqX6LTf48OuG15+92ZO4AgHeC6rJEFys
-         UBFQ==
-X-Gm-Message-State: AOAM532/8fLULQpkw609dCVwHX2DIkU09edyF6zoAIhzRf3WgsotzaKz
-        PqaIvJw+PooxL05IdL4k3CE=
-X-Google-Smtp-Source: ABdhPJw2Ifp+ZZ4lDe7Ny6nGB0diJjuR0av8WUhdWFR5Bkzxgr31fS/BwRuRN8pTdK/skWG2mJ8XJg==
-X-Received: by 2002:a05:6512:2216:: with SMTP id h22mr30748366lfu.383.1636927327272;
-        Sun, 14 Nov 2021 14:02:07 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=lypIbzMAdKowQS1+HnRTSDwp19bsKifrMWVI3aerImY=;
+        b=otojN/Nva07us/ehfJUum1y/Qi8RKtHv+FZ0rs6LaDpZStD5LCLIDtyfFjSkI2rSeo
+         KOS9ALZk2RnY1z0iRIZOzbg5qB4x3tyB5Z0EUIMtvphHT9CKm3XP3gE+3vCdy9pQE/8+
+         08gZDhhmF06S9fVTXJW5WjmXH4bWrAjQfJjm+mir/U6SvooxDro+O2EvPQKOd1IEF9Y7
+         c/x0hgwcAbkGIGKlh0Mjg6N0pcQriDhlO3jG46GVrYLYa2C41W5TZVaIYbqhKlC9FmIc
+         IGFO/v2MZLQhMRbxSJTVNIpBnSLpZ64yTEbb56z0FLx2P3rBiQAnPesiNZ8OuTvI20PB
+         JFUg==
+X-Gm-Message-State: AOAM530XuqbTLxZHWnsOADg/5GKEuN0SMVEYtQRUk+CxsiHXkgky1zOw
+        ahrEJPtI9FyviSH5gUccNQbGuUZfvWM=
+X-Google-Smtp-Source: ABdhPJwxu8a+VBshOpGvA1zOzu8EJS0UGis8jXtFU42wc6iO/LEKUG51NSMkpJ0pRD30OsoS/3KONA==
+X-Received: by 2002:a2e:9dd5:: with SMTP id x21mr33433722ljj.459.1636927711577;
+        Sun, 14 Nov 2021 14:08:31 -0800 (PST)
 Received: from localhost.localdomain (46-138-46-211.dynamic.spd-mgts.ru. [46.138.46.211])
-        by smtp.gmail.com with ESMTPSA id t5sm1353842lfd.80.2021.11.14.14.02.06
+        by smtp.gmail.com with ESMTPSA id bp22sm1219807lfb.93.2021.11.14.14.08.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 14 Nov 2021 14:02:07 -0800 (PST)
+        Sun, 14 Nov 2021 14:08:31 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        David Heidelberg <david@ixit.cz>,
-        Svyatoslav Ryhel <clamor95@gmail.com>,
-        Anton Bambura <jenneron@protonmail.com>,
-        Antoni Aloy Torrens <aaloytorrens@gmail.com>,
-        Nikola Milosavljevic <mnidza@outlook.com>,
-        Ion Agorria <ion@agorria.com>,
-        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>,
-        Ihor Didenko <tailormoon@rambler.ru>,
-        Andreas Westman Dorcsak <hedmoo@yahoo.com>,
-        Maxim Schwalm <maxim.schwalm@gmail.com>,
-        Raffaele Tranquillini <raffaele.tranquillini@gmail.com>,
-        Jasper Korten <jja2000@gmail.com>,
-        Thomas Graichen <thomas.graichen@gmail.com>
-Cc:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v1 13/14] ARM: tegra: nexus7: Drop clock-frequency from NFC node
-Date:   Mon, 15 Nov 2021 01:01:18 +0300
-Message-Id: <20211114220119.18909-14-digetx@gmail.com>
+Subject: [PATCH v1] clk: tegra: Make vde a child of pll_p on tegra114
+Date:   Mon, 15 Nov 2021 01:07:58 +0300
+Message-Id: <20211114220758.20224-1-digetx@gmail.com>
 X-Mailer: git-send-email 2.33.1
-In-Reply-To: <20211114220119.18909-1-digetx@gmail.com>
-References: <20211114220119.18909-1-digetx@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: David Heidelberg <david@ixit.cz>
+The current default is to leave the VDE clock's parent at the default,
+which is clk_m. However, that is not a configuration that will allow the
+VDE to function. Reparent it to pll_p instead to make sure the hardware
+can actually decode video content.
 
-The clock-frequency property was never used and is deprecated now.
-Remove it from Nexus 7 device-tree.
-
-Signed-off-by: David Heidelberg <david@ixit.cz>
+Tested-by: Anton Bambura <jenneron@protonmail.com> # ASUS TF701T
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- arch/arm/boot/dts/tegra30-asus-nexus7-grouper.dtsi | 1 -
- arch/arm/boot/dts/tegra30-asus-nexus7-tilapia.dtsi | 2 --
- 2 files changed, 3 deletions(-)
+ drivers/clk/tegra/clk-tegra114.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/tegra30-asus-nexus7-grouper.dtsi b/arch/arm/boot/dts/tegra30-asus-nexus7-grouper.dtsi
-index a044dbd200a9..564cfcde21a9 100644
---- a/arch/arm/boot/dts/tegra30-asus-nexus7-grouper.dtsi
-+++ b/arch/arm/boot/dts/tegra30-asus-nexus7-grouper.dtsi
-@@ -137,7 +137,6 @@ i2c@7000c500 {
- 		nfc@28 {
- 			compatible = "nxp,pn544-i2c";
- 			reg = <0x28>;
--			clock-frequency = <100000>;
- 
- 			interrupt-parent = <&gpio>;
- 			interrupts = <TEGRA_GPIO(X, 0) IRQ_TYPE_EDGE_RISING>;
-diff --git a/arch/arm/boot/dts/tegra30-asus-nexus7-tilapia.dtsi b/arch/arm/boot/dts/tegra30-asus-nexus7-tilapia.dtsi
-index a681ad51fddd..cd63e0ef7445 100644
---- a/arch/arm/boot/dts/tegra30-asus-nexus7-tilapia.dtsi
-+++ b/arch/arm/boot/dts/tegra30-asus-nexus7-tilapia.dtsi
-@@ -223,8 +223,6 @@ nfc@2a {
- 			compatible = "nxp,pn544-i2c";
- 			reg = <0x2a>;
- 
--			clock-frequency = <100000>;
--
- 			interrupt-parent = <&gpio>;
- 			interrupts = <TEGRA_GPIO(S, 7) IRQ_TYPE_EDGE_RISING>;
- 
+diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
+index bc9e47a4cb60..ef718c4b3826 100644
+--- a/drivers/clk/tegra/clk-tegra114.c
++++ b/drivers/clk/tegra/clk-tegra114.c
+@@ -1158,7 +1158,7 @@ static struct tegra_clk_init_table init_table[] __initdata = {
+ 	{ TEGRA114_CLK_XUSB_HS_SRC, TEGRA114_CLK_XUSB_SS_DIV2, 61200000, 0 },
+ 	{ TEGRA114_CLK_XUSB_FALCON_SRC, TEGRA114_CLK_PLL_P, 204000000, 0 },
+ 	{ TEGRA114_CLK_XUSB_HOST_SRC, TEGRA114_CLK_PLL_P, 102000000, 0 },
+-	{ TEGRA114_CLK_VDE, TEGRA114_CLK_CLK_MAX, 600000000, 0 },
++	{ TEGRA114_CLK_VDE, TEGRA114_CLK_PLL_P, 408000000, 0 },
+ 	{ TEGRA114_CLK_SPDIF_IN_SYNC, TEGRA114_CLK_CLK_MAX, 24000000, 0 },
+ 	{ TEGRA114_CLK_I2S0_SYNC, TEGRA114_CLK_CLK_MAX, 24000000, 0 },
+ 	{ TEGRA114_CLK_I2S1_SYNC, TEGRA114_CLK_CLK_MAX, 24000000, 0 },
 -- 
 2.33.1
 
