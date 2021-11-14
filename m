@@ -2,55 +2,55 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5C1AC433EF
-	for <linux-tegra@archiver.kernel.org>; Sun, 14 Nov 2021 19:39:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C89AC43219
+	for <linux-tegra@archiver.kernel.org>; Sun, 14 Nov 2021 19:39:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9DC8960EE2
-	for <linux-tegra@archiver.kernel.org>; Sun, 14 Nov 2021 19:39:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 10D8C611C1
+	for <linux-tegra@archiver.kernel.org>; Sun, 14 Nov 2021 19:39:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236464AbhKNTl7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 14 Nov 2021 14:41:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57694 "EHLO
+        id S236593AbhKNTmF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 14 Nov 2021 14:42:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57710 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236372AbhKNTja (ORCPT
+        with ESMTP id S236374AbhKNTja (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
         Sun, 14 Nov 2021 14:39:30 -0500
-Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8186C061746;
-        Sun, 14 Nov 2021 11:36:27 -0800 (PST)
-Received: by mail-lf1-x12a.google.com with SMTP id b1so31690175lfs.13;
-        Sun, 14 Nov 2021 11:36:27 -0800 (PST)
+Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89979C061207;
+        Sun, 14 Nov 2021 11:36:30 -0800 (PST)
+Received: by mail-lf1-x12e.google.com with SMTP id br15so33785965lfb.9;
+        Sun, 14 Nov 2021 11:36:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=fItgMJ65iQSV+grlztB0lQCNjAn4l4vCQ8OPUC2n0iM=;
-        b=p7bP1P6r4dEikXS5YUjD4B1/CGf6lvJ6idSQeufZhdoMPZNLSpKj9R6K9ngCLl1aZ6
-         w6FiXIx1EhIKNCySvfZ9dq6eK83Ass5BFjbtVZJxOeyNraegN1qyU1UCHoL073F6P8Jq
-         hCtbPVZN3AHUyFfecXtTr4dj5Mcp/c9x+3SK7N41ST1QsDFdYaRzejn9zUP65Xbt1rdr
-         4X6+EYQ06asjrmCH5HZEJuz8XEX4fBiNCXSCBk4t6/dARk5uivUbY8e5kQ6id6QS039w
-         aepKfzngjEW5flAb9jo/i3puoqlYQwFUXBqEVehix3lbGsr/aQ9Hmi3LWp2clmwno6pn
-         J/BQ==
+        bh=nDfKTCKLqf9G6JM8mpqxRAZhh67bMGPfUrf1PMFZnmE=;
+        b=U9lUXFzw+LhuaWEaxuUA4cjMsEa9q1fstmVYcSlHgJO8iH26U05+9jbVKkp1qKcKVj
+         4GJu/hfHsAGvCSsQ1elS4Kmp1ZoKQlyblBEOVfwWxbRPGN8QubcTFqbt2m46InfpV8Ty
+         apF40BJJS7LmsL1g0T5auPLBCrNUkWildIoaOKVVxn3LQmWIis5wWRArJwTVqUIAkXFK
+         5arqBOR+gLRgN8IqK8Q61mEo0IhlqfvXZfnzzjWQMWkRu1cp+QhQVcQbe4FUFVBhTkNj
+         xX2gnkkHvapCra28ehcOYyQ7XpI2UHcoQtUgdicJtWLysRSU3K3EM4DLSjCUPuSEFoL0
+         9gPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=fItgMJ65iQSV+grlztB0lQCNjAn4l4vCQ8OPUC2n0iM=;
-        b=zu9Ed6x5r+Dr+cw6PE+K1pIWdwH6ZC6Vw+koe/v2x7Crd+cY5CsgpPQj1gDVrSi2Id
-         4NNx0iDol4rdNMdJX3JnzhW3pdttq3iat/3ftE08xGWEyJPHbPdXlMpRgpiVKQTtNbJP
-         0upNRbjeWa15oDbxwiWMrTvjp1+SrjyKkq836J5lnH1/noerGDZg/+2aY2Uozn/4wVHd
-         wvSeoJlmM/xugCS4WoZmP5+geOMM108U48frn73kZij+16weamyKColE87I6SS81eHHt
-         +HXW4TpD6UBlxpcFAVABOjQUC54Fl1c/W47aDixds8lVEeFkf07dKs1APhTFLXGgets/
-         LKCg==
-X-Gm-Message-State: AOAM530UR410sVhXSXjkJj62/wd7RJIITc73YpFnpGyKUNXmiPhPaSMJ
-        uT6UdrQvlYclQQQElZE9OQc=
-X-Google-Smtp-Source: ABdhPJzxAEbohXOKyUE7xn/hkXFl/4SfVadu4MW7os0XYNeheDcZ/TU+PAIPqaAHEjm2ORClibXzPg==
-X-Received: by 2002:a05:6512:3d1d:: with SMTP id d29mr30408424lfv.685.1636918586150;
-        Sun, 14 Nov 2021 11:36:26 -0800 (PST)
+        bh=nDfKTCKLqf9G6JM8mpqxRAZhh67bMGPfUrf1PMFZnmE=;
+        b=pfGX9TZR8iDMCf6hZ3JUUqHwEXtwk3Zt1oRBs4EoioYt3Ta1c+xEag5wyraPVvcri6
+         gh1nzaVpzyUe0Mx7HmbFdh9HNTwqf8WpD08URWjZ6dLP8w0XZggIXbBjje1JnhEWtwDV
+         gJEk3N8HJTGokh+JYUJy1V0WS7Zl7WSmvgNaTXO54oiwAWihzSpvz9/UFo4NAY18bwxn
+         FSoj5SzAnXi5zaIHgzPKY4Yn/TVRcw0pS5g9QcICkGB8l8EtQM7ecHqp1xhI8nLC8JqZ
+         J+l9QqFlcjZTiPVDgCu7UOk+eaHG5TeOacqYXM4fHodzVrpkI9deHq+JYm9xKW5VUf+w
+         lpww==
+X-Gm-Message-State: AOAM531qfOpf4M2lyTCoF6737Mv/LQeXA4/I2Dqg7A7Wlrla3aeII3TX
+        0FnXCMxFLXWYuhYrTbPJb04=
+X-Google-Smtp-Source: ABdhPJyusqVEM1bFGp/6ppX2dZiMhlD13GgviJ+ZpifWluNIUU5CQmBC6K8SfWpu+U2byKbaOvV4Hw==
+X-Received: by 2002:a05:6512:152a:: with SMTP id bq42mr29718650lfb.109.1636918588958;
+        Sun, 14 Nov 2021 11:36:28 -0800 (PST)
 Received: from localhost.localdomain (46-138-46-211.dynamic.spd-mgts.ru. [46.138.46.211])
-        by smtp.gmail.com with ESMTPSA id p18sm1191280lfu.127.2021.11.14.11.36.25
+        by smtp.gmail.com with ESMTPSA id p18sm1191280lfu.127.2021.11.14.11.36.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 14 Nov 2021 11:36:25 -0800 (PST)
+        Sun, 14 Nov 2021 11:36:28 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -68,9 +68,9 @@ Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-pm@vger.kernel.org, linux-pwm@vger.kernel.org,
         linux-mmc@vger.kernel.org, dri-devel@lists.freedesktop.org,
         linux-clk@vger.kernel.org, David Heidelberg <david@ixit.cz>
-Subject: [PATCH v15 31/39] soc/tegra: pmc: Rename core power domain
-Date:   Sun, 14 Nov 2021 22:34:27 +0300
-Message-Id: <20211114193435.7705-32-digetx@gmail.com>
+Subject: [PATCH v15 34/39] ARM: tegra: Add 500MHz entry to Tegra30 memory OPP table
+Date:   Sun, 14 Nov 2021 22:34:30 +0300
+Message-Id: <20211114193435.7705-35-digetx@gmail.com>
 X-Mailer: git-send-email 2.33.1
 In-Reply-To: <20211114193435.7705-1-digetx@gmail.com>
 References: <20211114193435.7705-1-digetx@gmail.com>
@@ -80,28 +80,50 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-CORE power domain uses name of device-tree node, which is inconsistent with
-the names of PMC domains. Set the name to "core" to make it consistent.
+Extend memory OPPs with 500MHz entry. This clock rate is used by ASUS
+Transformer tablets.
 
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/soc/tegra/pmc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/tegra30-peripherals-opp.dtsi | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index e1fae1a5e36a..de6234ec4f9b 100644
---- a/drivers/soc/tegra/pmc.c
-+++ b/drivers/soc/tegra/pmc.c
-@@ -1369,7 +1369,7 @@ static int tegra_pmc_core_pd_add(struct tegra_pmc *pmc, struct device_node *np)
- 	if (!genpd)
- 		return -ENOMEM;
+diff --git a/arch/arm/boot/dts/tegra30-peripherals-opp.dtsi b/arch/arm/boot/dts/tegra30-peripherals-opp.dtsi
+index ff25350869b3..af9640401402 100644
+--- a/arch/arm/boot/dts/tegra30-peripherals-opp.dtsi
++++ b/arch/arm/boot/dts/tegra30-peripherals-opp.dtsi
+@@ -216,6 +216,18 @@ opp-450000000-1250 {
+ 			opp-supported-hw = <0x0008>;
+ 		};
  
--	genpd->name = np->name;
-+	genpd->name = "core";
- 	genpd->set_performance_state = tegra_pmc_core_pd_set_performance_state;
- 	genpd->opp_to_performance_state = tegra_pmc_core_pd_opp_to_performance_state;
++		opp-500000000-1200 {
++			opp-microvolt = <1200000 1200000 1350000>;
++			opp-hz = /bits/ 64 <500000000>;
++			opp-supported-hw = <0x0007>;
++		};
++
++		opp-500000000-1250 {
++			opp-microvolt = <1250000 1250000 1350000>;
++			opp-hz = /bits/ 64 <500000000>;
++			opp-supported-hw = <0x0008>;
++		};
++
+ 		opp-533000000-1200 {
+ 			opp-microvolt = <1200000 1200000 1350000>;
+ 			opp-hz = /bits/ 64 <533000000>;
+@@ -347,6 +359,12 @@ opp-450000000 {
+ 			opp-peak-kBps = <3600000>;
+ 		};
  
++		opp-500000000 {
++			opp-hz = /bits/ 64 <500000000>;
++			opp-supported-hw = <0x000F>;
++			opp-peak-kBps = <4000000>;
++		};
++
+ 		opp-533000000 {
+ 			opp-hz = /bits/ 64 <533000000>;
+ 			opp-supported-hw = <0x000F>;
 -- 
 2.33.1
 
