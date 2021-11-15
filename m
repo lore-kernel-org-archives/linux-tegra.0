@@ -2,30 +2,30 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D038C433EF
-	for <linux-tegra@archiver.kernel.org>; Mon, 15 Nov 2021 08:57:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ED45C4332F
+	for <linux-tegra@archiver.kernel.org>; Mon, 15 Nov 2021 08:58:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 62D2D61263
-	for <linux-tegra@archiver.kernel.org>; Mon, 15 Nov 2021 08:57:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7033C63222
+	for <linux-tegra@archiver.kernel.org>; Mon, 15 Nov 2021 08:58:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230415AbhKOJAN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 15 Nov 2021 04:00:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56052 "EHLO mail.kernel.org"
+        id S230126AbhKOI7s (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 15 Nov 2021 03:59:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55700 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230147AbhKOI6k (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 15 Nov 2021 03:58:40 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 2223663223;
-        Mon, 15 Nov 2021 08:55:38 +0000 (UTC)
+        id S234749AbhKOI6O (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 15 Nov 2021 03:58:14 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 22ED66322D;
+        Mon, 15 Nov 2021 08:55:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1636966545;
-        bh=dcMQMZncG8IjNijKZNej/gmwTiTYDPeCFK23hEXOfto=;
+        s=k20201202; t=1636966519;
+        bh=dVdHkl1ZmLXmEp0TH/FEFVdiPBDZ+d25p7vGAAo1Op0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VYuJvxO5lVR/GiGcXXlpTenpQL8tS/RiB2q/z0CMEjbvV3OtExgDGliJ9mPslll9Z
-         gJF9jW4NvrAMcYVtan/DOPn491D5evV0DjVoLO4PKbj3djKSiupC9gs/o/JDRousmF
-         VfKHtJYY+yuBV0OABHqDiHSUkpE6qGp8SFfe7NSJEmA0l/mxODuVE3wHHx7vsA5sov
-         Wa36nu6IAmzkpbTK/7+6RaXeDPwWYCIT8QDeBGczguXuJlI760X3i1oAk8E/g82B3L
-         MDBneNRRk20n1rSG1Z9mUgJiWRhrqnptEhFZTTbLf+wXfy+4WmVGvjS1fVUD20TPas
-         ktKoOqahs6Lsg==
+        b=mRK/MrLIW0u6LLOVooQ0gN1KOgXTYhYKylaX2S32I4HonnlCFZurjXmSS8SVAK8uT
+         oms9xEfRjWR6ZFbM4n5WvC4swJa/tAasyMhklsk5Ir56gwJUPrslsn7ElKpFldUp/E
+         NlCAON7rV+dPkbJZagetmzGzxn9jWITAvoJTC1bh7hJM72/9cXRXvCjnZS1ul8EL2p
+         VBOA3hBnrk0Eb28v5ySeU5CAXlmyQ/9KxPR888YYSAX5yJSbDRY/Q7gBtrNNVxZYXZ
+         1ZwPE4au/UVHJxcKYNQikMHfKZ7UNLmAPuOP8AEjGq++T8L8DQUNKbV7hN6zPua+j8
+         yXgozqEEWHHIg==
 From:   Arnd Bergmann <arnd@kernel.org>
 To:     Vinod Koul <vkoul@kernel.org>
 Cc:     Arnd Bergmann <arnd@arndb.de>, Andy Gross <agross@kernel.org>,
@@ -57,9 +57,9 @@ Cc:     Arnd Bergmann <arnd@arndb.de>, Andy Gross <agross@kernel.org>,
         linux-rpi-kernel@lists.infradead.org, linux-serial@vger.kernel.org,
         linux-spi@vger.kernel.org, linux-staging@lists.linux.dev,
         linux-tegra@vger.kernel.org
-Subject: [PATCH 09/11] dmaengine: tegra20-apb: stop checking config->slave_id
-Date:   Mon, 15 Nov 2021 09:54:01 +0100
-Message-Id: <20211115085403.360194-10-arnd@kernel.org>
+Subject: [PATCH 05/11] dmaengine: pxa/mmp: stop referencing config->slave_id
+Date:   Mon, 15 Nov 2021 09:53:57 +0100
+Message-Id: <20211115085403.360194-6-arnd@kernel.org>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20211115085403.360194-1-arnd@kernel.org>
 References: <20211115085403.360194-1-arnd@kernel.org>
@@ -71,31 +71,53 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-Nothing sets the slave_id field any more, so stop accessing
-it to allow the removal of this field.
+The last driver referencing the slave_id on Marvell PXA and MMP platforms
+was the SPI driver, but this stopped doing so a long time ago, so the
+TODO from the earlier patch can no be removed.
 
+Fixes: b729bf34535e ("spi/pxa2xx: Don't use slave_id of dma_slave_config")
+Fixes: 13b3006b8ebd ("dma: mmp_pdma: add filter function")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/dma/tegra20-apb-dma.c | 6 ------
- 1 file changed, 6 deletions(-)
+ drivers/dma/mmp_pdma.c | 6 ------
+ drivers/dma/pxa_dma.c  | 7 -------
+ 2 files changed, 13 deletions(-)
 
-diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-index b7260749e8ee..eaafcbe4ca94 100644
---- a/drivers/dma/tegra20-apb-dma.c
-+++ b/drivers/dma/tegra20-apb-dma.c
-@@ -343,12 +343,6 @@ static int tegra_dma_slave_config(struct dma_chan *dc,
- 	}
+diff --git a/drivers/dma/mmp_pdma.c b/drivers/dma/mmp_pdma.c
+index a23563cd118b..5a53d7fcef01 100644
+--- a/drivers/dma/mmp_pdma.c
++++ b/drivers/dma/mmp_pdma.c
+@@ -727,12 +727,6 @@ static int mmp_pdma_config_write(struct dma_chan *dchan,
  
- 	memcpy(&tdc->dma_sconfig, sconfig, sizeof(*sconfig));
--	if (tdc->slave_id == TEGRA_APBDMA_SLAVE_ID_INVALID &&
--	    sconfig->device_fc) {
--		if (sconfig->slave_id > TEGRA_APBDMA_CSR_REQ_SEL_MASK)
--			return -EINVAL;
--		tdc->slave_id = sconfig->slave_id;
--	}
- 	tdc->config_init = true;
+ 	chan->dir = direction;
+ 	chan->dev_addr = addr;
+-	/* FIXME: drivers should be ported over to use the filter
+-	 * function. Once that's done, the following two lines can
+-	 * be removed.
+-	 */
+-	if (cfg->slave_id)
+-		chan->drcmr = cfg->slave_id;
  
  	return 0;
+ }
+diff --git a/drivers/dma/pxa_dma.c b/drivers/dma/pxa_dma.c
+index 52d04641e361..6078cc81892e 100644
+--- a/drivers/dma/pxa_dma.c
++++ b/drivers/dma/pxa_dma.c
+@@ -909,13 +909,6 @@ static void pxad_get_config(struct pxad_chan *chan,
+ 		*dcmd |= PXA_DCMD_BURST16;
+ 	else if (maxburst == 32)
+ 		*dcmd |= PXA_DCMD_BURST32;
+-
+-	/* FIXME: drivers should be ported over to use the filter
+-	 * function. Once that's done, the following two lines can
+-	 * be removed.
+-	 */
+-	if (chan->cfg.slave_id)
+-		chan->drcmr = chan->cfg.slave_id;
+ }
+ 
+ static struct dma_async_tx_descriptor *
 -- 
 2.30.2
 
