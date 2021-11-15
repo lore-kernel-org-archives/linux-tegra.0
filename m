@@ -2,30 +2,30 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2858C4321E
-	for <linux-tegra@archiver.kernel.org>; Mon, 15 Nov 2021 08:58:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D61EC433F5
+	for <linux-tegra@archiver.kernel.org>; Mon, 15 Nov 2021 08:58:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8E9836322E
-	for <linux-tegra@archiver.kernel.org>; Mon, 15 Nov 2021 08:58:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 14C5D63215
+	for <linux-tegra@archiver.kernel.org>; Mon, 15 Nov 2021 08:58:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237330AbhKOI74 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 15 Nov 2021 03:59:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55798 "EHLO mail.kernel.org"
+        id S236478AbhKOJBP (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 15 Nov 2021 04:01:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56354 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S236317AbhKOI6V (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 15 Nov 2021 03:58:21 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 9EF0B6322A;
-        Mon, 15 Nov 2021 08:55:19 +0000 (UTC)
+        id S236344AbhKOI6x (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 15 Nov 2021 03:58:53 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 1D85961BF5;
+        Mon, 15 Nov 2021 08:55:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1636966525;
-        bh=5QR5v6614zTOntPsUILdpgvMgyj2h7YC8v32L7VdrY8=;
+        s=k20201202; t=1636966558;
+        bh=KymEuSb1ZBu9d4ip60ZapuAOc2fPUmm65BckI1F9t+0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BVo2LZMTKnvi18fTU1oVyCcq5hSRkXwUKaqwxPxFj8ksBb3j3ZAMGnnyUBzxyju35
-         JD89ztkndvHbilbR165m9u29eYAyiAZP/352auOvSmoASz8QbySIAkx8sx6HqA3Fi+
-         NajC4qp9b42h6JI1IOXBv9o4BCffOY7AZgYVuLKQ7HNB7CtLqpCFYPXpzybPothEc7
-         iVAogxjPLeJtqekWAMFQpZU9AzNb/YLn/6ECUKqDOQJhupZ04BtGq9L1VopOyBhPBv
-         zquvlt2qbQvpw7jHxz0Ax3OX5az2YhpYpHthYZCr7jXdKg9XrvsUnmDM+vt780Vm2H
-         YQtg0r4AXxFjg==
+        b=LdZ6xF0xp+O72e2bWrz1JbVB8H175gzm3ebqcgB4b1TFRnEbOtg/Co/2UVmy2RSYO
+         K4PGopsAL2+EPUBQXn3pIZuRLnOiV7Z4ZHRzhRaGpOOilkyT8qB7djWEyRGQxY+o07
+         0pURtU5ha6Bqhqi3VRo20hpuTebBqhRUMgKKcND/ItqTEUbbBG6gtFAFRdgoUlbWQv
+         nllnKfHGybN+48IS6aBEK9XM+8ihm/vdNwSp8OLBPdHs4lV1MKpoIy38LN4jK4yIhT
+         e7DvDqpq2WV2gb8/H5hLIdnkM9Qc2HOyUeSrulI8xZE0lHPXJ5SUm3GD7JPkNCpR/k
+         kEJCWgx/yAgzA==
 From:   Arnd Bergmann <arnd@kernel.org>
 To:     Vinod Koul <vkoul@kernel.org>
 Cc:     Arnd Bergmann <arnd@arndb.de>, Andy Gross <agross@kernel.org>,
@@ -57,9 +57,9 @@ Cc:     Arnd Bergmann <arnd@arndb.de>, Andy Gross <agross@kernel.org>,
         linux-rpi-kernel@lists.infradead.org, linux-serial@vger.kernel.org,
         linux-spi@vger.kernel.org, linux-staging@lists.linux.dev,
         linux-tegra@vger.kernel.org
-Subject: [PATCH 06/11] dmaengine: sprd: stop referencing config->slave_id
-Date:   Mon, 15 Nov 2021 09:53:58 +0100
-Message-Id: <20211115085403.360194-7-arnd@kernel.org>
+Subject: [PATCH 11/11] dmaengine: remove slave_id config field
+Date:   Mon, 15 Nov 2021 09:54:03 +0100
+Message-Id: <20211115085403.360194-12-arnd@kernel.org>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20211115085403.360194-1-arnd@kernel.org>
 References: <20211115085403.360194-1-arnd@kernel.org>
@@ -71,29 +71,37 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-It appears that the code that reads the slave_id from the channel config
-was copied incorrectly from other drivers. Nothing ever sets this field
-on platforms that use this driver, so remove the reference.
+All references to the slave_id field have been removed, so
+remove the field as well to prevent new references from
+creeping in again.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/dma/sprd-dma.c | 3 ---
- 1 file changed, 3 deletions(-)
+ include/linux/dmaengine.h | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/drivers/dma/sprd-dma.c b/drivers/dma/sprd-dma.c
-index 4357d2395e6b..7f158ef5672d 100644
---- a/drivers/dma/sprd-dma.c
-+++ b/drivers/dma/sprd-dma.c
-@@ -795,9 +795,6 @@ static int sprd_dma_fill_desc(struct dma_chan *chan,
- 		return dst_datawidth;
- 	}
- 
--	if (slave_cfg->slave_id)
--		schan->dev_id = slave_cfg->slave_id;
--
- 	hw->cfg = SPRD_DMA_DONOT_WAIT_BDONE << SPRD_DMA_WAIT_BDONE_OFFSET;
- 
- 	/*
+diff --git a/include/linux/dmaengine.h b/include/linux/dmaengine.h
+index 9000f3ffce8b..0349b35235e6 100644
+--- a/include/linux/dmaengine.h
++++ b/include/linux/dmaengine.h
+@@ -418,9 +418,6 @@ enum dma_slave_buswidth {
+  * @device_fc: Flow Controller Settings. Only valid for slave channels. Fill
+  * with 'true' if peripheral should be flow controller. Direction will be
+  * selected at Runtime.
+- * @slave_id: Slave requester id. Only valid for slave channels. The dma
+- * slave peripheral will have unique id as dma requester which need to be
+- * pass as slave config.
+  * @peripheral_config: peripheral configuration for programming peripheral
+  * for dmaengine transfer
+  * @peripheral_size: peripheral configuration buffer size
+@@ -448,7 +445,6 @@ struct dma_slave_config {
+ 	u32 src_port_window_size;
+ 	u32 dst_port_window_size;
+ 	bool device_fc;
+-	unsigned int slave_id;
+ 	void *peripheral_config;
+ 	size_t peripheral_size;
+ };
 -- 
 2.30.2
 
