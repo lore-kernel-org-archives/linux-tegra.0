@@ -2,127 +2,225 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22EC0C4332F
-	for <linux-tegra@archiver.kernel.org>; Mon, 15 Nov 2021 12:13:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1588C433EF
+	for <linux-tegra@archiver.kernel.org>; Mon, 15 Nov 2021 12:16:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 029B16324A
-	for <linux-tegra@archiver.kernel.org>; Mon, 15 Nov 2021 12:13:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D405C63256
+	for <linux-tegra@archiver.kernel.org>; Mon, 15 Nov 2021 12:16:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231325AbhKOMQg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 15 Nov 2021 07:16:36 -0500
-Received: from www381.your-server.de ([78.46.137.84]:43592 "EHLO
-        www381.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231168AbhKOMQd (ORCPT
+        id S231476AbhKOMSf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 15 Nov 2021 07:18:35 -0500
+Received: from new1-smtp.messagingengine.com ([66.111.4.221]:42125 "EHLO
+        new1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231561AbhKOMSW (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 15 Nov 2021 07:16:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=metafoo.de;
-         s=default2002; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
-        MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID;
-        bh=toF67llO+BAwsdq0Ra1tOzp5njbcpYDZtx+Ajrw2D5M=; b=Fdhydmz9sHTMX39b4OR+PnWK29
-        ollzQvnmIQR6UYtKJJv+pdNenKDhmJoe1m+AZz1r/UzmBuh/s/zyEVT/qUSOAY+AepfailB3KakGl
-        nzMJPMS8YSL/mnxq67rqUJ7DGip2AxA33Vlw4H7McDxqIsQkCuDgzYTS3PpC3S4JeCR7BBcBbUbNI
-        zMk0Qwr7AHYBGE7YmvvEhxReJcSjOojKOUKKRtntZ7OnV/zed4/BbkqMvJs3SZ7PDbAEwJGvaYuyr
-        n93yvvpN0QrMdCXLyiVSv13S7LoWnUnb5JznQFPOzPr8bw/l91uSL6xCRsqIjm0Tb3QDvxbpszYjo
-        WFHKC7mA==;
-Received: from sslproxy05.your-server.de ([78.46.172.2])
-        by www381.your-server.de with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
-        (Exim 4.92.3)
-        (envelope-from <lars@metafoo.de>)
-        id 1mmaYO-000B0u-Vm; Mon, 15 Nov 2021 12:53:41 +0100
-Received: from [82.135.83.112] (helo=[192.168.178.20])
-        by sslproxy05.your-server.de with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <lars@metafoo.de>)
-        id 1mmaYO-000AKe-8G; Mon, 15 Nov 2021 12:53:40 +0100
-Subject: Re: [PATCH 01/11] ASoC: dai_dma: remove slave_id field
-To:     Arnd Bergmann <arnd@kernel.org>
-Cc:     Vinod Koul <vkoul@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Andy Gross <agross@kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Baolin Wang <baolin.wang7@gmail.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Hyun Kwon <hyun.kwon@xilinx.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Nicolas Saenz Julienne <nsaenz@kernel.org>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Scott Branden <sbranden@broadcom.com>,
-        Takashi Iwai <tiwai@suse.com>,
+        Mon, 15 Nov 2021 07:18:22 -0500
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 24778580611;
+        Mon, 15 Nov 2021 07:15:24 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Mon, 15 Nov 2021 07:15:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm1; bh=m6yz7sxqjDJzXf8qCotKj2WGdr2
+        rE7Yq5ktWnUKZSu4=; b=LEpuTkJn9a66vdVu3wiDRxyN1G0pqM6GZ+80RDGHoEJ
+        ZKqPp3kem1CwCkLnNdhffXWG8rYxIYAI67TvwTVMlaoYwt3kOmCflUVLnGzbrGBM
+        XYwnpO7MMXPmQZJyPMFJ8wSi87fH3f7oCwC6Gt8/oqhxgVxf+aVI3yCmnOhrHrua
+        HV+1lIT0J5wd2qdj9YuuXllfwYnqVAy93mfu+XNcisOjsHlU+2Gu/xgf6PWbjdaL
+        ETa96G8jTksY0IneVNOXT8ZB5ehwNTpMhTOcUFNpumDlnTVVGL05CkJOmdaM2Sif
+        2FRHYqurGwukXBR/XMvqYMs0IFdoUsmgE+PA2/8irKg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=m6yz7s
+        xqjDJzXf8qCotKj2WGdr2rE7Yq5ktWnUKZSu4=; b=IP7BhNuiUo9ogfojk5mQAe
+        G3ztFjmwlEtZbF6SuJV+ro7OORXhh5ZQpUCx96mgDAMY3U82ybDSrFPNKGMhAnUt
+        GlCqOOB8QFHBVT6+ivVElu8865hIV07L9cVnNeTKeKMryKNU6ajUUFW2Yi6ymhrj
+        gpV8doqeEVTuOuXA9wnsq9yjn+kwnsu8PaVy6jtHzkLb4qyTDdShrxunbWzx3+cg
+        MY0f/uMUKwVdRV8KtjsyDEcGcJz5xXWUKOJUs6i8znje4TPWiCJEnhPgoeRK7RWJ
+        ijGMW+nLhapSfOIFlTxMZdQ4yERUhP2gwTDBbmsrwK1/tkJhZu3lNZTEahF79blg
+        ==
+X-ME-Sender: <xms:Wk-SYUCi0HpplGa6lN5k8O-7KcTt_t2fCzX2C_Vs7m-VpRMEa_GGrw>
+    <xme:Wk-SYWixkBcfjtGmNNEIuhRPtwD-fBRxrvpkQPgrM0ZK5HFelyjHANpxyacurQ4eN
+    aK5sBBGy6OvmPNIMbE>
+X-ME-Received: <xmr:Wk-SYXlRP7vxg8JX-Iv18ZqQHNYFRsQUbbop_RrJV-ybce4hUUoEZtnzCk-TZrPC5mwAf0AJxPzOwWl-EIKkuZgnvhb8zRTzK93nTIsb>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvuddrfedtgdduudcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpeffhffvuffkfhggtggujgesghdtreertddtudenucfhrhhomhepofgrgihimhgv
+    ucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrghtth
+    gvrhhnpeejkeekffdtfffhhfevvddutefgtdeljeevffevvddvteegledtgfeghfehvdei
+    ffenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptd
+    enucfrrghrrghmpehmrghilhhfrhhomhepmhgrgihimhgvsegtvghrnhhordhtvggthh
+X-ME-Proxy: <xmx:Wk-SYazSl-uBGVEYq-y_I0D7uT9YP8l7hSCeOR_KqM0lDaSkPRm-rQ>
+    <xmx:Wk-SYZT_vlE6jIUnHAMz5jBtMfM1-BREngj_xsfmfEpaWII5hSekzQ>
+    <xmx:Wk-SYVZmSN07G30nVN7MgCxoWvGRDuQ_yH72eS3PIaOA2CDGLgegkw>
+    <xmx:XE-SYYK5ELigws3bd5Cxco85BjasnEcjxPKFNpTgtrqfPKw_c-Q-bQ>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 15 Nov 2021 07:15:22 -0500 (EST)
+Date:   Mon, 15 Nov 2021 13:15:20 +0100
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
+Cc:     Daniel Vetter <daniel@ffwll.ch>, Emma Anholt <emma@anholt.net>,
+        Dom Cobley <dom@raspberrypi.com>,
+        Tim Gover <tim.gover@raspberrypi.com>,
+        Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org,
+        Jonathan Hunter <jonathanh@nvidia.com>,
         Thierry Reding <thierry.reding@gmail.com>,
-        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
-        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
-        dmaengine@vger.kernel.org,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        linux-mtd <linux-mtd@lists.infradead.org>,
-        "moderated list:BROADCOM BCM2835 ARM ARCHITECTURE" 
-        <linux-rpi-kernel@lists.infradead.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        linux-staging@lists.linux.dev,
-        "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>
-References: <20211115085403.360194-1-arnd@kernel.org>
- <20211115085403.360194-2-arnd@kernel.org>
- <647b842d-76a1-7a96-3ea7-8a37b62bc18e@metafoo.de>
- <CAK8P3a2EVseM4t=e982fFhzBGSZxZ2_V-FHwr-fQPd-bkAKaJg@mail.gmail.com>
-From:   Lars-Peter Clausen <lars@metafoo.de>
-Message-ID: <d2dd42fc-e58a-0c06-7f7e-a6a2161c368d@metafoo.de>
-Date:   Mon, 15 Nov 2021 12:53:39 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        linux-tegra@vger.kernel.org,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Phil Elwell <phil@raspberrypi.com>
+Subject: Re: [PATCH 02/13] drm/connector: Add helper to check if a mode
+ requires scrambling
+Message-ID: <20211115121520.jceyxc4y2kjia6fy@gilmour>
+References: <20211102145944.259181-1-maxime@cerno.tech>
+ <20211102145944.259181-3-maxime@cerno.tech>
+ <YYP+MX9gxZVafhKk@intel.com>
+ <YYVxtp9PZiR3ZOjp@phenom.ffwll.local>
+ <YYV0bArjRbvYJ2K2@intel.com>
+ <20211108155834.6zz236ll75bxwcrk@gilmour>
+ <YYlkdHzW4ir07Gtk@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <CAK8P3a2EVseM4t=e982fFhzBGSZxZ2_V-FHwr-fQPd-bkAKaJg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Authenticated-Sender: lars@metafoo.de
-X-Virus-Scanned: Clear (ClamAV 0.103.3/26354/Mon Nov 15 10:21:07 2021)
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="yydf2lm4f4qpeqrp"
+Content-Disposition: inline
+In-Reply-To: <YYlkdHzW4ir07Gtk@intel.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 11/15/21 11:42 AM, Arnd Bergmann wrote:
-> On Mon, Nov 15, 2021 at 11:14 AM Lars-Peter Clausen <lars@metafoo.de> wrote:
->> On 11/15/21 9:53 AM, Arnd Bergmann wrote:
->>> From: Arnd Bergmann <arnd@arndb.de>
->>>
->>> This field is never set, and serves no purpose, so remove it.
->> I agree that we should remove it. Its been legacy support code for a
->> while, but the description that there is no user is not right.
->>
->> The tegra20_spdif driver obviously uses it and that user is removed in
->> this patch. I think it makes sense to split that out into a separate
->> patch with a description why the driver will still work even with
->> slave_id removed. Maybe the best is to remove the whole tegra20_spdif
->> driver.
-> Ok, I'll split out the tegra patch and try to come up with a better
-> description for it. What I saw in that driver is it just passes down the
-> slave_id number from a 'struct resource', but there is nothing in
-> the kernel that sets up this resource.
->
-> Do you or someone else have more information on the state of this
-> driver? I can see that it does not contain any of_device_id based
-> probing, so it seems that this is either dead code, the platform_device
-> gets created by some other code that is no longer compatible with
-> this driver.
 
-I've looked into this a while back, when I tried to remove slave_id. And 
-as far as I can tell there were never any in-tree users of this driver, 
-even back when we used platform board files. Maybe somebody from Nvidia 
-knows if there are out-of-tree users.
+--yydf2lm4f4qpeqrp
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-- Lars
+On Mon, Nov 08, 2021 at 07:55:00PM +0200, Ville Syrj=E4l=E4 wrote:
+> On Mon, Nov 08, 2021 at 04:58:34PM +0100, Maxime Ripard wrote:
+> > On Fri, Nov 05, 2021 at 08:14:04PM +0200, Ville Syrj=E4l=E4 wrote:
+> > > On Fri, Nov 05, 2021 at 07:02:30PM +0100, Daniel Vetter wrote:
+> > > > On Thu, Nov 04, 2021 at 05:37:21PM +0200, Ville Syrj=E4l=E4 wrote:
+> > > > > On Tue, Nov 02, 2021 at 03:59:33PM +0100, Maxime Ripard wrote:
+> > > > > > --- a/include/drm/drm_modes.h
+> > > > > > +++ b/include/drm/drm_modes.h
+> > > > > > @@ -424,6 +424,21 @@ static inline bool drm_mode_is_stereo(cons=
+t struct drm_display_mode *mode)
+> > > > > >  	return mode->flags & DRM_MODE_FLAG_3D_MASK;
+> > > > > >  }
+> > > > > > =20
+> > > > > > +/**
+> > > > > > + * drm_mode_hdmi_requires_scrambling - Checks if a mode requir=
+es HDMI Scrambling
+> > > > > > + * @mode: DRM display mode
+> > > > > > + *
+> > > > > > + * Checks if a given display mode requires the scrambling to b=
+e enabled.
+> > > > > > + *
+> > > > > > + * Returns:
+> > > > > > + * A boolean stating whether it's required or not.
+> > > > > > + */
+> > > > > > +static inline bool
+> > > > > > +drm_mode_hdmi_requires_scrambling(const struct drm_display_mod=
+e *mode)
+> > > > > > +{
+> > > > > > +	return mode->clock > DRM_HDMI_14_MAX_TMDS_CLK_KHZ;
+> > > > > > +}
+> > > > >=20
+> > > > > That's only correct for 8bpc. The actual limit is on the TMDS clo=
+ck (or
+> > > > > rather TMDS character rate as HDMI 2.0 calls it due to the 1/1 vs=
+=2E 1/4
+> > > > > magic for the actually transmitted TMDS clock).
+> > > >=20
+> > > > Yeah we might need to add the bus format for the cable here too, to=
+ make
+> > > > this complete.
+> > >=20
+> > > I don't think we have a usable thing for that on the drm level, so
+> > > would need to invent something. Oh, and the mode->clock vs.=20
+> > > mode->crtc_clock funny business also limits the usability of this
+> > > approach. So probably just easiest to pass in the the driver calculat=
+ed
+> > > TMDS clock instead.
+> >=20
+> > If we look at all (I think?) the existing users of scrambling in KMS as
+> > of 5.15, only i915 seems to use crtc_clock (which, in retrospect, seems
+> > to be the right thing to do), and only i915 and dw-hdmi use an output
+> > format, i915 rolling its own, and dw-hdmi using the mbus formats.
+> >=20
+> > I think using the mbus format here makes the most sense: i915 already is
+> > rolling a whole bunch of other code, and we use the mbus defines for the
+> > bridge format enumeration as well which is probably going to have some
+> > interaction.
+> >=20
+> > I'm not quite sure what to do next though. The whole point of that
+> > series is to streamline as much as possible the scrambling and TMDS
+> > ratio setup to avoid the duplication we already have in the drivers that
+> > support it, every one using the mostly-the-same-but-slightly-different
+> > logic to configure it.
+> >=20
+> > The mode is fortunately stored in generic structures so it's easy to
+> > make that decision. Having to take into account the output format
+> > however makes it mandatory to move the bus format in the
+> > drm_connector_state(?) structure too.
+>=20
+> I think involving state objects and the like is just going to make
+> it harder to share code between all drivers, if that is the goal.
+> Just a few tiny helpers I think is what would allow the broadest=20
+> reuse. I guess you could build additional midlayer on top of those
+> for some drivers if you wish.
+>=20
+> As for the bus_format stuff, that looks at the same time overkill,
+> and insufficiently documented. I guess its main purpose is to exactly
+> defines how some digtal bus works, which makes sense when you're
+> chaining a bunch of random chips together. But looks overly complicated
+> to me for defining what to output from a HDMI encoder. Looking at the
+> defines I wouldn't even know what to use for HDMI actually. All we
+> really want is RGB 4:4:4 vs. YCbCr 4:4:4 vs. YCbCr 4:2:2 vs. YCbCr 4:2:0.
+> Beyond that level of detail we don't care how each bit gets transferred
+> etc. Hence enum intel_output_format in i915.
 
+I have the same feeling about the mbus formats.
+
+I tried to start a discussion about this some time back, without much
+success:
+https://lore.kernel.org/all/20210317154352.732095-1-maxime@cerno.tech/
+
+The main issue for our current series is that it's tied to the bridges,
+while it should work for any HDMI connector, backed by a bridge or not.
+
+However, the main point of this series is to streamline as much as
+possible the scrambling setup, including dealing with hotplug properly
+just like i915 is doing.
+
+A flag in the connector state to enable the scrambling and high tmds
+ratio allows for the helper to perform the disable/enable cycle when we
+detected the hotplug. If we wouldn't have it, it wouldn't know what to
+do in the first place, and we would end up disabling/enabling the
+display every time (which isn't great).
+
+This also allows for less duplication since everyone is using a variant
+of the same algorithm to do so, without proper consideration for corner
+cases (like enabling scrambling for displays that supports it for rates
+< 340MHz)
+
+So we really need something generic there. Or maybe an intermediate
+hdmi_connector_state?
+
+Maxime
+
+--yydf2lm4f4qpeqrp
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYZJPWAAKCRDj7w1vZxhR
+xRLqAP9YKKwLqHFcVCCBpuA1NCMF0JyQoO5uXfRPMtwLszaReAEA6FIqRx/oR9Cb
+EoolMn31u6EId3Shg1J+ZqI6Wge4uwg=
+=ptZU
+-----END PGP SIGNATURE-----
+
+--yydf2lm4f4qpeqrp--
