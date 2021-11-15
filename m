@@ -2,225 +2,151 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1588C433EF
-	for <linux-tegra@archiver.kernel.org>; Mon, 15 Nov 2021 12:16:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 718B1C4332F
+	for <linux-tegra@archiver.kernel.org>; Mon, 15 Nov 2021 12:38:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D405C63256
-	for <linux-tegra@archiver.kernel.org>; Mon, 15 Nov 2021 12:16:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5716F6137B
+	for <linux-tegra@archiver.kernel.org>; Mon, 15 Nov 2021 12:38:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231476AbhKOMSf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 15 Nov 2021 07:18:35 -0500
-Received: from new1-smtp.messagingengine.com ([66.111.4.221]:42125 "EHLO
-        new1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231561AbhKOMSW (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 15 Nov 2021 07:18:22 -0500
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 24778580611;
-        Mon, 15 Nov 2021 07:15:24 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Mon, 15 Nov 2021 07:15:24 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm1; bh=m6yz7sxqjDJzXf8qCotKj2WGdr2
-        rE7Yq5ktWnUKZSu4=; b=LEpuTkJn9a66vdVu3wiDRxyN1G0pqM6GZ+80RDGHoEJ
-        ZKqPp3kem1CwCkLnNdhffXWG8rYxIYAI67TvwTVMlaoYwt3kOmCflUVLnGzbrGBM
-        XYwnpO7MMXPmQZJyPMFJ8wSi87fH3f7oCwC6Gt8/oqhxgVxf+aVI3yCmnOhrHrua
-        HV+1lIT0J5wd2qdj9YuuXllfwYnqVAy93mfu+XNcisOjsHlU+2Gu/xgf6PWbjdaL
-        ETa96G8jTksY0IneVNOXT8ZB5ehwNTpMhTOcUFNpumDlnTVVGL05CkJOmdaM2Sif
-        2FRHYqurGwukXBR/XMvqYMs0IFdoUsmgE+PA2/8irKg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=m6yz7s
-        xqjDJzXf8qCotKj2WGdr2rE7Yq5ktWnUKZSu4=; b=IP7BhNuiUo9ogfojk5mQAe
-        G3ztFjmwlEtZbF6SuJV+ro7OORXhh5ZQpUCx96mgDAMY3U82ybDSrFPNKGMhAnUt
-        GlCqOOB8QFHBVT6+ivVElu8865hIV07L9cVnNeTKeKMryKNU6ajUUFW2Yi6ymhrj
-        gpV8doqeEVTuOuXA9wnsq9yjn+kwnsu8PaVy6jtHzkLb4qyTDdShrxunbWzx3+cg
-        MY0f/uMUKwVdRV8KtjsyDEcGcJz5xXWUKOJUs6i8znje4TPWiCJEnhPgoeRK7RWJ
-        ijGMW+nLhapSfOIFlTxMZdQ4yERUhP2gwTDBbmsrwK1/tkJhZu3lNZTEahF79blg
-        ==
-X-ME-Sender: <xms:Wk-SYUCi0HpplGa6lN5k8O-7KcTt_t2fCzX2C_Vs7m-VpRMEa_GGrw>
-    <xme:Wk-SYWixkBcfjtGmNNEIuhRPtwD-fBRxrvpkQPgrM0ZK5HFelyjHANpxyacurQ4eN
-    aK5sBBGy6OvmPNIMbE>
-X-ME-Received: <xmr:Wk-SYXlRP7vxg8JX-Iv18ZqQHNYFRsQUbbop_RrJV-ybce4hUUoEZtnzCk-TZrPC5mwAf0AJxPzOwWl-EIKkuZgnvhb8zRTzK93nTIsb>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvuddrfedtgdduudcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvuffkfhggtggujgesghdtreertddtudenucfhrhhomhepofgrgihimhgv
-    ucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrghtth
-    gvrhhnpeejkeekffdtfffhhfevvddutefgtdeljeevffevvddvteegledtgfeghfehvdei
-    ffenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptd
-    enucfrrghrrghmpehmrghilhhfrhhomhepmhgrgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:Wk-SYazSl-uBGVEYq-y_I0D7uT9YP8l7hSCeOR_KqM0lDaSkPRm-rQ>
-    <xmx:Wk-SYZT_vlE6jIUnHAMz5jBtMfM1-BREngj_xsfmfEpaWII5hSekzQ>
-    <xmx:Wk-SYVZmSN07G30nVN7MgCxoWvGRDuQ_yH72eS3PIaOA2CDGLgegkw>
-    <xmx:XE-SYYK5ELigws3bd5Cxco85BjasnEcjxPKFNpTgtrqfPKw_c-Q-bQ>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 15 Nov 2021 07:15:22 -0500 (EST)
-Date:   Mon, 15 Nov 2021 13:15:20 +0100
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
-Cc:     Daniel Vetter <daniel@ffwll.ch>, Emma Anholt <emma@anholt.net>,
-        Dom Cobley <dom@raspberrypi.com>,
-        Tim Gover <tim.gover@raspberrypi.com>,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        linux-tegra@vger.kernel.org,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Phil Elwell <phil@raspberrypi.com>
-Subject: Re: [PATCH 02/13] drm/connector: Add helper to check if a mode
- requires scrambling
-Message-ID: <20211115121520.jceyxc4y2kjia6fy@gilmour>
-References: <20211102145944.259181-1-maxime@cerno.tech>
- <20211102145944.259181-3-maxime@cerno.tech>
- <YYP+MX9gxZVafhKk@intel.com>
- <YYVxtp9PZiR3ZOjp@phenom.ffwll.local>
- <YYV0bArjRbvYJ2K2@intel.com>
- <20211108155834.6zz236ll75bxwcrk@gilmour>
- <YYlkdHzW4ir07Gtk@intel.com>
+        id S231346AbhKOMlW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 15 Nov 2021 07:41:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37548 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230170AbhKOMlU (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 15 Nov 2021 07:41:20 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 3FE1761B4B;
+        Mon, 15 Nov 2021 12:38:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1636979905;
+        bh=0vPaiFLUq2SXWicOiHJ0dTL68j+HqvYqhdUUZpm4Lbg=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=I+1x2XZxjf0LcgW3lMmbiJPZ71Bi+3kqOGuAZRKXN1JfNBFrZaiB21OzI8/74f0h0
+         Qq9j3mNJNww5Ebh37UUU7T73Uy/xgxrT9Cch7mYImOv2H/bbOmofM9xkajEGTkGGUU
+         hGAI73KgAeiXM888w+zysyYQTZ4yYyjDXcXqXXwQJ8IyYB0pf/b0pqA/XCjqw9IpRl
+         yCWpvb6UA7WovNrxde2iEzHRITt42AWtZE7nvXGbJMW3vN4eAR3DyqEs1DZrNZzLk2
+         tuMyHLag1K86+X0psZqBhLcvq1czh8i8zV/S46+iyDlDN0sbFnwCD3e9XH7d1GqYQT
+         IxYpNW3g9oKFg==
+Received: by mail-wm1-f41.google.com with SMTP id y84-20020a1c7d57000000b00330cb84834fso15686264wmc.2;
+        Mon, 15 Nov 2021 04:38:25 -0800 (PST)
+X-Gm-Message-State: AOAM531TynSq29gOG8Yx2rvTe95pr5hI6jMuD2bTYFDKmBoXEexgKA2Y
+        3MbVHo8r39mS3vN+vOFnFD3yBU9BpiR7cxPhag0=
+X-Google-Smtp-Source: ABdhPJwFTprJJd11s9duELVend6oLQx+lemeU4w9vOaJiXxZUrLq0sghW72KOFAqYJMNV8KCFht4GWVIPZFIhNgyYas=
+X-Received: by 2002:a1c:770e:: with SMTP id t14mr58047076wmi.173.1636979903584;
+ Mon, 15 Nov 2021 04:38:23 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="yydf2lm4f4qpeqrp"
-Content-Disposition: inline
-In-Reply-To: <YYlkdHzW4ir07Gtk@intel.com>
+References: <20211115085403.360194-1-arnd@kernel.org> <20211115085403.360194-9-arnd@kernel.org>
+ <YZIk6cVb7XibrMjf@pendragon.ideasonboard.com> <CAK8P3a1Fu11-e0CK2of8u3ebdjom84UKuXhBKi5FUs5ZPPdOVA@mail.gmail.com>
+ <YZJJVA/92KYH8hQL@pendragon.ideasonboard.com>
+In-Reply-To: <YZJJVA/92KYH8hQL@pendragon.ideasonboard.com>
+From:   Arnd Bergmann <arnd@kernel.org>
+Date:   Mon, 15 Nov 2021 13:38:07 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a27rPBVbU-PrYR0BE4KV2DyJk7FoXaeDS=FU1=_RSwoQQ@mail.gmail.com>
+Message-ID: <CAK8P3a27rPBVbU-PrYR0BE4KV2DyJk7FoXaeDS=FU1=_RSwoQQ@mail.gmail.com>
+Subject: Re: [PATCH 08/11] dmaengine: xilinx_dpdma: stop using slave_id field
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     Vinod Koul <vkoul@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Andy Gross <agross@kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Baolin Wang <baolin.wang7@gmail.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Hyun Kwon <hyun.kwon@xilinx.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Nicolas Saenz Julienne <nsaenz@kernel.org>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Scott Branden <sbranden@broadcom.com>,
+        Takashi Iwai <tiwai@suse.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
+        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
+        dmaengine@vger.kernel.org,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        linux-mtd <linux-mtd@lists.infradead.org>,
+        "moderated list:BROADCOM BCM2835 ARM ARCHITECTURE" 
+        <linux-rpi-kernel@lists.infradead.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        linux-staging@lists.linux.dev,
+        "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On Mon, Nov 15, 2021 at 12:49 PM Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+> On Mon, Nov 15, 2021 at 11:21:30AM +0100, Arnd Bergmann wrote:
+> > On Mon, Nov 15, 2021 at 10:14 AM Laurent Pinchart wrote:
+> > > On Mon, Nov 15, 2021 at 09:54:00AM +0100, Arnd Bergmann wrote:
+> > > > @@ -1285,11 +1287,13 @@ static int xilinx_dpdma_config(struct dma_chan *dchan,
+> > > >       spin_lock_irqsave(&chan->lock, flags);
+> > > >
+> > > >       /*
+> > > > -      * Abuse the slave_id to indicate that the channel is part of a video
+> > > > -      * group.
+> > > > +      * Abuse the peripheral_config to indicate that the channel is part
+> > >
+> > > Is it still an abuse, or is this now the right way to pass custom data
+> > > to the DMA engine driver ?
+> >
+> > It doesn't make the driver any more portable, but it's now being
+> > more explicit about it. As far as I can tell, this is the best way
+> > to pass data that cannot be expressed through the regular interfaces
+> > in DT and the dmaengine API.
+> >
+> > Ideally there would be a generic way to pass this flag, but I couldn't
+> > figure out what this is actually doing, or whether there is a better
+> > way. Maybe Vinod has an idea.
+>
+> I don't think we need a generic API in this case. The DMA engine is
+> specific to the display device, I don't foresee a need to mix-n-match.
 
---yydf2lm4f4qpeqrp
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 08, 2021 at 07:55:00PM +0200, Ville Syrj=E4l=E4 wrote:
-> On Mon, Nov 08, 2021 at 04:58:34PM +0100, Maxime Ripard wrote:
-> > On Fri, Nov 05, 2021 at 08:14:04PM +0200, Ville Syrj=E4l=E4 wrote:
-> > > On Fri, Nov 05, 2021 at 07:02:30PM +0100, Daniel Vetter wrote:
-> > > > On Thu, Nov 04, 2021 at 05:37:21PM +0200, Ville Syrj=E4l=E4 wrote:
-> > > > > On Tue, Nov 02, 2021 at 03:59:33PM +0100, Maxime Ripard wrote:
-> > > > > > --- a/include/drm/drm_modes.h
-> > > > > > +++ b/include/drm/drm_modes.h
-> > > > > > @@ -424,6 +424,21 @@ static inline bool drm_mode_is_stereo(cons=
-t struct drm_display_mode *mode)
-> > > > > >  	return mode->flags & DRM_MODE_FLAG_3D_MASK;
-> > > > > >  }
-> > > > > > =20
-> > > > > > +/**
-> > > > > > + * drm_mode_hdmi_requires_scrambling - Checks if a mode requir=
-es HDMI Scrambling
-> > > > > > + * @mode: DRM display mode
-> > > > > > + *
-> > > > > > + * Checks if a given display mode requires the scrambling to b=
-e enabled.
-> > > > > > + *
-> > > > > > + * Returns:
-> > > > > > + * A boolean stating whether it's required or not.
-> > > > > > + */
-> > > > > > +static inline bool
-> > > > > > +drm_mode_hdmi_requires_scrambling(const struct drm_display_mod=
-e *mode)
-> > > > > > +{
-> > > > > > +	return mode->clock > DRM_HDMI_14_MAX_TMDS_CLK_KHZ;
-> > > > > > +}
-> > > > >=20
-> > > > > That's only correct for 8bpc. The actual limit is on the TMDS clo=
-ck (or
-> > > > > rather TMDS character rate as HDMI 2.0 calls it due to the 1/1 vs=
-=2E 1/4
-> > > > > magic for the actually transmitted TMDS clock).
-> > > >=20
-> > > > Yeah we might need to add the bus format for the cable here too, to=
- make
-> > > > this complete.
-> > >=20
-> > > I don't think we have a usable thing for that on the drm level, so
-> > > would need to invent something. Oh, and the mode->clock vs.=20
-> > > mode->crtc_clock funny business also limits the usability of this
-> > > approach. So probably just easiest to pass in the the driver calculat=
-ed
-> > > TMDS clock instead.
-> >=20
-> > If we look at all (I think?) the existing users of scrambling in KMS as
-> > of 5.15, only i915 seems to use crtc_clock (which, in retrospect, seems
-> > to be the right thing to do), and only i915 and dw-hdmi use an output
-> > format, i915 rolling its own, and dw-hdmi using the mbus formats.
-> >=20
-> > I think using the mbus format here makes the most sense: i915 already is
-> > rolling a whole bunch of other code, and we use the mbus defines for the
-> > bridge format enumeration as well which is probably going to have some
-> > interaction.
-> >=20
-> > I'm not quite sure what to do next though. The whole point of that
-> > series is to streamline as much as possible the scrambling and TMDS
-> > ratio setup to avoid the duplication we already have in the drivers that
-> > support it, every one using the mostly-the-same-but-slightly-different
-> > logic to configure it.
-> >=20
-> > The mode is fortunately stored in generic structures so it's easy to
-> > make that decision. Having to take into account the output format
-> > however makes it mandatory to move the bus format in the
-> > drm_connector_state(?) structure too.
->=20
-> I think involving state objects and the like is just going to make
-> it harder to share code between all drivers, if that is the goal.
-> Just a few tiny helpers I think is what would allow the broadest=20
-> reuse. I guess you could build additional midlayer on top of those
-> for some drivers if you wish.
->=20
-> As for the bus_format stuff, that looks at the same time overkill,
-> and insufficiently documented. I guess its main purpose is to exactly
-> defines how some digtal bus works, which makes sense when you're
-> chaining a bunch of random chips together. But looks overly complicated
-> to me for defining what to output from a HDMI encoder. Looking at the
-> defines I wouldn't even know what to use for HDMI actually. All we
-> really want is RGB 4:4:4 vs. YCbCr 4:4:4 vs. YCbCr 4:2:2 vs. YCbCr 4:2:0.
-> Beyond that level of detail we don't care how each bit gets transferred
-> etc. Hence enum intel_output_format in i915.
+Right. I wonder if there is even a point in using the dmaengine API
+in that case, I think for other single-purpose drivers we tend to just
+integrate the functionality in the client driver. No point changing this
+now of course, but it does feel odd.
 
-I have the same feeling about the mbus formats.
+From my earlier reading of the driver, my impression was that this
+is just a memory-to-memory device, so it could be used that way
+as well, but does need a flag when working on the video memory.
+I couldn't quite make sense of that though.
 
-I tried to start a discussion about this some time back, without much
-success:
-https://lore.kernel.org/all/20210317154352.732095-1-maxime@cerno.tech/
+> >         /*
+> >          * Use the peripheral_config to indicate that the channel is part
+> >          * of a video group. This requires matching use of the custom
+> >          * structure in each driver.
+> >          */
+> >         pconfig = config->peripheral_config;
+> >         if (WARN_ON(config->peripheral_size != 0 &&
+> >                     config->peripheral_size != sizeof(*pconfig)))
+> >                 return -EINVAL;
+>
+> How about
+>
+>         if (WARN_ON(config->peripheral_config &&
+>                     config->peripheral_size != sizeof(*pconfig)))
+>
+> >
+> >         spin_lock_irqsave(&chan->lock, flags);
+> >         if (chan->id <= ZYNQMP_DPDMA_VIDEO2 &&
+> >             config->peripheral_size == sizeof(*pconfig))
+>
+> And here you can test pconfig != NULL.
 
-The main issue for our current series is that it's tied to the bridges,
-while it should work for any HDMI connector, backed by a bridge or not.
+Good idea. Changed now, using 'if (pconfig)' without the '!= NULL'
+in both expressions.
 
-However, the main point of this series is to streamline as much as
-possible the scrambling setup, including dealing with hotplug properly
-just like i915 is doing.
-
-A flag in the connector state to enable the scrambling and high tmds
-ratio allows for the helper to perform the disable/enable cycle when we
-detected the hotplug. If we wouldn't have it, it wouldn't know what to
-do in the first place, and we would end up disabling/enabling the
-display every time (which isn't great).
-
-This also allows for less duplication since everyone is using a variant
-of the same algorithm to do so, without proper consideration for corner
-cases (like enabling scrambling for displays that supports it for rates
-< 340MHz)
-
-So we really need something generic there. Or maybe an intermediate
-hdmi_connector_state?
-
-Maxime
-
---yydf2lm4f4qpeqrp
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYZJPWAAKCRDj7w1vZxhR
-xRLqAP9YKKwLqHFcVCCBpuA1NCMF0JyQoO5uXfRPMtwLszaReAEA6FIqRx/oR9Cb
-EoolMn31u6EId3Shg1J+ZqI6Wge4uwg=
-=ptZU
------END PGP SIGNATURE-----
-
---yydf2lm4f4qpeqrp--
+        Arnd
