@@ -2,202 +2,107 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 584A9C433F5
-	for <linux-tegra@archiver.kernel.org>; Wed, 17 Nov 2021 10:01:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CDC6C433EF
+	for <linux-tegra@archiver.kernel.org>; Wed, 17 Nov 2021 14:23:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3DDB563236
-	for <linux-tegra@archiver.kernel.org>; Wed, 17 Nov 2021 10:01:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C9866128A
+	for <linux-tegra@archiver.kernel.org>; Wed, 17 Nov 2021 14:23:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235905AbhKQKEG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 17 Nov 2021 05:04:06 -0500
-Received: from new2-smtp.messagingengine.com ([66.111.4.224]:45249 "EHLO
-        new2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235778AbhKQKEG (ORCPT
+        id S238470AbhKQO0x (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 17 Nov 2021 09:26:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54754 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238513AbhKQO0v (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 17 Nov 2021 05:04:06 -0500
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 431BF580558;
-        Wed, 17 Nov 2021 05:01:07 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Wed, 17 Nov 2021 05:01:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm1; bh=Z4rc62NXo9sALoDI2kXA+PvCVrE
-        DdbeQgnJhg+J93hQ=; b=fdZGAPPHuLrcjbKFoJmhsru+A5BHIjEYVdrUGRo6dCS
-        MBc5TiBDcU9j/lUj5BDAkdK3kFUm6L8uBvN5G+3tar5k18LbogiaSVlu9pTzkgim
-        jD0f7/VP32nvuuDyJUn/QRx6tpz4iJgCX5Vod0gxzy/pOjxJwN7UfSDK+wxF9tDe
-        XcGTgCVcv8166pyegIaxY8Z92zOge+b61OamriKHwQIKd6YZoMHqUlpVSJtP1/y5
-        UCxBw9fCKwjdBOyzXEvzUlkEJ4o2VjgUHfPRyHLRe0vL23RQBJpTaSbeN/0uqNBe
-        2rW+QIgijT8D4fIduKjA6gbmeVAN6jYdkMkBJViPW6Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=Z4rc62
-        NXo9sALoDI2kXA+PvCVrEDdbeQgnJhg+J93hQ=; b=WvJc5SAqzGihaVtfI1vTqX
-        5DHyUzf1gGOXMgG81qrXOiLtBw1EYYlkgceqCMMRPBeudxu7KwLu03xBlFZDW+sJ
-        Wj/hPS3417conBlB61vGOLUueo1niC5Ezqfo2+gGvIUq3ncT29/xQhCww3UhMj2r
-        bMB9mw/3K7uQ1KKeAfsvqqE0zB0zBNh+/ray/AdM2zQfpDXyNJJ+VDbHuPOFxE/b
-        2/FB7y3RdVyRLosM6uQ5N7SimRKyr7ApH8++jR1lkiFFagyHau1bNczgg0Cbc1/z
-        xS+o6ZHIHy22Xvafd8Ztf7pUdsJuPntH3tEkqCADLYJwtEYwPNeqPjPrR1Q9FGyg
-        ==
-X-ME-Sender: <xms:4dKUYbvlYs-fjnnCpLQDrdKd1o0QRJo_DYWA-uYMr4qUb70I287Ppw>
-    <xme:4dKUYcfu22EGVC3bsLl3StqHbxLvrzIkgsDXfixTbRFcgXXY98yj1IQGGOWXt1Rt3
-    frUwezgdokHOJtQwYs>
-X-ME-Received: <xmr:4dKUYezM_-vdJPwmA112RAM6H_DCDB7NeAf6guvjX3pyHnP9O-eiCfEWMXtP_ATe6sZqT5gvv0zSTX3UyQ-hSyUm9hnglMAFiwKqM0GItnc>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvuddrfeeggddthecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvuffkfhggtggujgesghdtreertddtudenucfhrhhomhepofgrgihimhgv
-    ucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrghtth
-    gvrhhnpeduvdduhfekkeehgffftefflefgffdtheffudffgeevteffheeuiedvvdejvdfg
-    veenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmrg
-    igihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:4dKUYaO0eSSbsEntUHXLjO-3-Dj5a-nlW6YIsg333Do8qlN71oRphw>
-    <xmx:4dKUYb8fpPwb5rZrOAKdZsapBqu7GXHCLFox8DhgGPFElVgDoef1Yg>
-    <xmx:4dKUYaW6YW2IneBy0MsqJ4W0uKAHTxh8BNvrpnTGixuGssOocmd3wg>
-    <xmx:49KUYeXH_xPF0yuCtyFyj7ukBD3VIbrTOk7mObwMMpL87dn3ekHADQ>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 17 Nov 2021 05:01:05 -0500 (EST)
-Date:   Wed, 17 Nov 2021 11:01:03 +0100
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
-Cc:     Daniel Vetter <daniel@ffwll.ch>, Emma Anholt <emma@anholt.net>,
-        Dom Cobley <dom@raspberrypi.com>,
-        Tim Gover <tim.gover@raspberrypi.com>,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        linux-tegra@vger.kernel.org,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Phil Elwell <phil@raspberrypi.com>
-Subject: Re: [PATCH 02/13] drm/connector: Add helper to check if a mode
- requires scrambling
-Message-ID: <20211117100103.xouysycl5lmrescx@gilmour>
-References: <20211102145944.259181-1-maxime@cerno.tech>
- <20211102145944.259181-3-maxime@cerno.tech>
- <YYP+MX9gxZVafhKk@intel.com>
- <YYVxtp9PZiR3ZOjp@phenom.ffwll.local>
- <YYV0bArjRbvYJ2K2@intel.com>
- <20211108155834.6zz236ll75bxwcrk@gilmour>
- <YYlkdHzW4ir07Gtk@intel.com>
+        Wed, 17 Nov 2021 09:26:51 -0500
+Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A840C079786
+        for <linux-tegra@vger.kernel.org>; Wed, 17 Nov 2021 06:21:20 -0800 (PST)
+Received: by mail-lf1-x12b.google.com with SMTP id f18so9350931lfv.6
+        for <linux-tegra@vger.kernel.org>; Wed, 17 Nov 2021 06:21:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Z/asYRVVWrg/grLuo8zXbR+gZRKZzxwVDaGoh6UAG/o=;
+        b=wimL+JRML5IGeSealFKMZcxayi3pvkjJI/tzMcAtP/rIndg7ICyi4Yu4Qg3vbIcXnO
+         H6hz3fvy/1Cd9ZgKmmqmiCv75wi4m647NaA6Lqq1fH+BPstN8Bk9RY3Qjaojie6cZQIp
+         Q3YtO0eOZxRxTSlJHZmTrBzPr4uzgVmgVE0jIdh6ttV/k2ZjeePjhL7UWCQut1o7wfcW
+         Wn5dUUUUnBdRjI008WDNJ/gzXK8MCemg/p5sm2vsp0BEe5zpOecRDHB4ryO+iPxctttS
+         V9vBLyo3wVlG9wdhdEbp/zeadhiy3+LfMt4YabKFgHNFIWa4U3nQmDaj5GJYSzQyIDfv
+         pPxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Z/asYRVVWrg/grLuo8zXbR+gZRKZzxwVDaGoh6UAG/o=;
+        b=z85wIHA/oFOOULLH6lKm7wZMtvl3TJRRThmGc4ionc7fFHJfIn+0LwHNCwUt7qNnQZ
+         TI9qMhKPX1vc6ayU4kJtxSyM2XEPcdwKcCbeyTliWX2Xwd8M+8EQJy+ZMNDwJjAbyL0t
+         3BlEg0G+YCD+sAW85WZgZavp8uiKq6/bu1GLxpYiTt88+k72b7+IgOPLP44+olfhNHIq
+         wnBY9jHJe45nmPJPgrDujavdvhpzb6CKyqtjPGgE+hESDod9EoBGIC8kglQLWaCrkW54
+         O2Z2eO6nOecwpsU+gHSgpyafzqg+pnAywb/nlDo4WadI4McqEn6+HyUOnnk+rLQD73KQ
+         aptA==
+X-Gm-Message-State: AOAM531CYuKieoHm1M56kndTRlTqMfLrfzOqmceT+qf8mhLwtnVm6jX1
+        mVoDheXi1gZvmagOE/yhOffa0A==
+X-Google-Smtp-Source: ABdhPJwkO8DIFD2Kf3FTpIODSrLT4YpxSReqGBI4fzQVGakSD94NhFi1Wv9HnXf0MXYn1eLLlG0LRg==
+X-Received: by 2002:a05:6512:3d16:: with SMTP id d22mr15087875lfv.523.1637158878488;
+        Wed, 17 Nov 2021 06:21:18 -0800 (PST)
+Received: from localhost (c-9b28e555.07-21-73746f28.bbcust.telenor.se. [85.229.40.155])
+        by smtp.gmail.com with ESMTPSA id u7sm1165ljh.49.2021.11.17.06.21.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Nov 2021 06:21:18 -0800 (PST)
+From:   Anders Roxell <anders.roxell@linaro.org>
+To:     thierry.reding@gmail.com, jonathanh@nvidia.com
+Cc:     nathan@kernel.org, ndesaulniers@google.com,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        llvm@lists.linux.dev, Anders Roxell <anders.roxell@linaro.org>
+Subject: [PATCH] soc/tegra: fuse: fix bitwice vs. logical warning
+Date:   Wed, 17 Nov 2021 15:21:15 +0100
+Message-Id: <20211117142115.694316-1-anders.roxell@linaro.org>
+X-Mailer: git-send-email 2.33.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="thlviocxszlf7zcl"
-Content-Disposition: inline
-In-Reply-To: <YYlkdHzW4ir07Gtk@intel.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+When building with clang-13 the compiler warns about:
 
---thlviocxszlf7zcl
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+drivers/soc/tegra/fuse/speedo-tegra20.c:72:9: warning: use of bitwise '|' with boolean operands [-Wbitwise-instead-of-logical]
+                reg = tegra_fuse_read_spare(i) |
+                      ^~~~~~~~~~~~~~~~~~~~~~~~~~
+                                               ||
 
-On Mon, Nov 08, 2021 at 07:55:00PM +0200, Ville Syrj=E4l=E4 wrote:
-> On Mon, Nov 08, 2021 at 04:58:34PM +0100, Maxime Ripard wrote:
-> > On Fri, Nov 05, 2021 at 08:14:04PM +0200, Ville Syrj=E4l=E4 wrote:
-> > > On Fri, Nov 05, 2021 at 07:02:30PM +0100, Daniel Vetter wrote:
-> > > > On Thu, Nov 04, 2021 at 05:37:21PM +0200, Ville Syrj=E4l=E4 wrote:
-> > > > > On Tue, Nov 02, 2021 at 03:59:33PM +0100, Maxime Ripard wrote:
-> > > > > > --- a/include/drm/drm_modes.h
-> > > > > > +++ b/include/drm/drm_modes.h
-> > > > > > @@ -424,6 +424,21 @@ static inline bool drm_mode_is_stereo(cons=
-t struct drm_display_mode *mode)
-> > > > > >  	return mode->flags & DRM_MODE_FLAG_3D_MASK;
-> > > > > >  }
-> > > > > > =20
-> > > > > > +/**
-> > > > > > + * drm_mode_hdmi_requires_scrambling - Checks if a mode requir=
-es HDMI Scrambling
-> > > > > > + * @mode: DRM display mode
-> > > > > > + *
-> > > > > > + * Checks if a given display mode requires the scrambling to b=
-e enabled.
-> > > > > > + *
-> > > > > > + * Returns:
-> > > > > > + * A boolean stating whether it's required or not.
-> > > > > > + */
-> > > > > > +static inline bool
-> > > > > > +drm_mode_hdmi_requires_scrambling(const struct drm_display_mod=
-e *mode)
-> > > > > > +{
-> > > > > > +	return mode->clock > DRM_HDMI_14_MAX_TMDS_CLK_KHZ;
-> > > > > > +}
-> > > > >=20
-> > > > > That's only correct for 8bpc. The actual limit is on the TMDS clo=
-ck (or
-> > > > > rather TMDS character rate as HDMI 2.0 calls it due to the 1/1 vs=
-=2E 1/4
-> > > > > magic for the actually transmitted TMDS clock).
-> > > >=20
-> > > > Yeah we might need to add the bus format for the cable here too, to=
- make
-> > > > this complete.
-> > >=20
-> > > I don't think we have a usable thing for that on the drm level, so
-> > > would need to invent something. Oh, and the mode->clock vs.=20
-> > > mode->crtc_clock funny business also limits the usability of this
-> > > approach. So probably just easiest to pass in the the driver calculat=
-ed
-> > > TMDS clock instead.
-> >=20
-> > If we look at all (I think?) the existing users of scrambling in KMS as
-> > of 5.15, only i915 seems to use crtc_clock (which, in retrospect, seems
-> > to be the right thing to do), and only i915 and dw-hdmi use an output
-> > format, i915 rolling its own, and dw-hdmi using the mbus formats.
-> >=20
-> > I think using the mbus format here makes the most sense: i915 already is
-> > rolling a whole bunch of other code, and we use the mbus defines for the
-> > bridge format enumeration as well which is probably going to have some
-> > interaction.
-> >=20
-> > I'm not quite sure what to do next though. The whole point of that
-> > series is to streamline as much as possible the scrambling and TMDS
-> > ratio setup to avoid the duplication we already have in the drivers that
-> > support it, every one using the mostly-the-same-but-slightly-different
-> > logic to configure it.
-> >=20
-> > The mode is fortunately stored in generic structures so it's easy to
-> > make that decision. Having to take into account the output format
-> > however makes it mandatory to move the bus format in the
-> > drm_connector_state(?) structure too.
->=20
-> I think involving state objects and the like is just going to make
-> it harder to share code between all drivers, if that is the goal.
-> Just a few tiny helpers I think is what would allow the broadest=20
-> reuse. I guess you could build additional midlayer on top of those
-> for some drivers if you wish.
->=20
-> As for the bus_format stuff, that looks at the same time overkill,
-> and insufficiently documented. I guess its main purpose is to exactly
-> defines how some digtal bus works, which makes sense when you're
-> chaining a bunch of random chips together. But looks overly complicated
-> to me for defining what to output from a HDMI encoder. Looking at the
-> defines I wouldn't even know what to use for HDMI actually. All we
-> really want is RGB 4:4:4 vs. YCbCr 4:4:4 vs. YCbCr 4:2:2 vs. YCbCr 4:2:0.
-> Beyond that level of detail we don't care how each bit gets transferred
-> etc. Hence enum intel_output_format in i915.
+This should be a logical OR so change it to fix the warning.
 
-I was thinking about this some more, can we leverage struct
-hdmi_colorspace for this? Chances are it's already used by any driver
-that supports YCbCr output to setup the infoframes.
+Fixes: 7e939de1b2bb ("soc/tegra: fuse: Unify Tegra20 and Tegra30 drivers")
+Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+---
+ drivers/soc/tegra/fuse/speedo-tegra20.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Maxime
+diff --git a/drivers/soc/tegra/fuse/speedo-tegra20.c b/drivers/soc/tegra/fuse/speedo-tegra20.c
+index 2546bddbab93..4984246605ae 100644
+--- a/drivers/soc/tegra/fuse/speedo-tegra20.c
++++ b/drivers/soc/tegra/fuse/speedo-tegra20.c
+@@ -69,7 +69,7 @@ void __init tegra20_init_speedo_data(struct tegra_sku_info *sku_info)
+ 
+ 	val = 0;
+ 	for (i = CPU_SPEEDO_MSBIT; i >= CPU_SPEEDO_LSBIT; i--) {
+-		reg = tegra_fuse_read_spare(i) |
++		reg = tegra_fuse_read_spare(i) ||
+ 			tegra_fuse_read_spare(i + CPU_SPEEDO_REDUND_OFFS);
+ 		val = (val << 1) | (reg & 0x1);
+ 	}
+@@ -84,7 +84,7 @@ void __init tegra20_init_speedo_data(struct tegra_sku_info *sku_info)
+ 
+ 	val = 0;
+ 	for (i = SOC_SPEEDO_MSBIT; i >= SOC_SPEEDO_LSBIT; i--) {
+-		reg = tegra_fuse_read_spare(i) |
++		reg = tegra_fuse_read_spare(i) ||
+ 			tegra_fuse_read_spare(i + SOC_SPEEDO_REDUND_OFFS);
+ 		val = (val << 1) | (reg & 0x1);
+ 	}
+-- 
+2.33.0
 
---thlviocxszlf7zcl
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYZTS3wAKCRDj7w1vZxhR
-xTmyAQD6f7bBcSo7FKPBzGh+09zx0lQRcHlA3U6Ps1zDXHCc0AEAyejjdg07Q99k
-DauwTfAn9yIIyOSYSnlh6rWuq4HXsgw=
-=gjjc
------END PGP SIGNATURE-----
-
---thlviocxszlf7zcl--
