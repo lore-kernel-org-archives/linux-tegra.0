@@ -2,357 +2,202 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29296C433FE
-	for <linux-tegra@archiver.kernel.org>; Wed, 17 Nov 2021 09:56:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 584A9C433F5
+	for <linux-tegra@archiver.kernel.org>; Wed, 17 Nov 2021 10:01:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0F06263244
-	for <linux-tegra@archiver.kernel.org>; Wed, 17 Nov 2021 09:56:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3DDB563236
+	for <linux-tegra@archiver.kernel.org>; Wed, 17 Nov 2021 10:01:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235719AbhKQJ71 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 17 Nov 2021 04:59:27 -0500
-Received: from mail-sn1anam02on2076.outbound.protection.outlook.com ([40.107.96.76]:10433
-        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S235741AbhKQJ70 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 17 Nov 2021 04:59:26 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=mzj7ajbWhfNxmW91bm3+lwT/0BoaOrv0ym63zG9fTNvhulYc8T5qifmpflUHubYBG9iXYHivhur3xGeCrZ5GjfB+jqrsXBGbgKXc/ztGK7oDDsh07bFro2iPehXYfFEa1Hb6TnnqqZjHBTh+VI52L3W3yIBwRFvijDxiQvlg0CrmrIFMvlmaCXmJSFTJ3dWsmX+F6d1oBaNCYb2E2jNsfzjKUREC+sTub3fEX+Sg7n0RaUl+jFxLv6zFl3ezRPd0CzPCh0VTsV4+Z1Ru513S+fX730tiNFRndIDk5qW7rlK0bnaS2Rm+vFEpLXEb/Mdh5+BSnwyoxQGg+Azyp755iw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=IX46un4wkzovF72nSCtTQmW5ENCaTcrFLgi9cGA+kl8=;
- b=l4H6RuJzd/Pey1SE1HG46f9owprTVEecD81XZc8z+9JHjSIIt0mN4xIj3uDjegz2UB49BiJzIR/UY8hkzOFwn0cC8RoKONtUBJac/WaSpb70Pw0i/sGTwmFpuJneAd5mcSmwai+fVBw9SXHABJus9oUL9KN2dNDBmAov+gwBDfEaTrzkqo/SOaBAC8epfvCRdRGbH9yvHJzO6hNaiOHN5rqeWZSAnBAR241oZEe9RkUSLL4AonEKkBMQGYswnIwTTnJMUxg0dVtv3Lrt/CgsjKO7gvYb24Lw07errbQOYHHep0fZxco1lc4s5OyP5OF5vx4WaEnWhSx0UptOxHnRuw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.112.36) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=IX46un4wkzovF72nSCtTQmW5ENCaTcrFLgi9cGA+kl8=;
- b=RSJ6bF4EwYSgUk4mkuCTHkl1NHfojT6ZM+qNPoVnqlGfAi496QfqZj2jaTnfNZMMKvx22JTjuivF901/RCw/PRzxJLAAF5zGWXaJ7r/TpfljKVfqolPFuVSCMXeP4mhY8M7fHajPJoG7pdoFeKhomH+Irg3qoVMiDKdsn7VHDwgb06U44i8tG8vRlpj1EEQni4ol0q80CkkCvgmZXLcb0LaQR3OFgRoYxcxQCjyz59IhvnqzitSVAdgmr9nJha4vNWU/c0zftrdjcZ4RHktKZ+82cH8QmFvMwbtcMH6RFwPQDhrGhOUuxvbLRs+eZNmxgQ1QQMTI+Lm2rlu2xEhPKA==
-Received: from BN0PR10CA0008.namprd10.prod.outlook.com (2603:10b6:408:143::27)
- by MN2PR12MB4143.namprd12.prod.outlook.com (2603:10b6:208:1d0::24) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4713.19; Wed, 17 Nov
- 2021 09:56:25 +0000
-Received: from BN8NAM11FT040.eop-nam11.prod.protection.outlook.com
- (2603:10b6:408:143:cafe::3e) by BN0PR10CA0008.outlook.office365.com
- (2603:10b6:408:143::27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4713.21 via Frontend
- Transport; Wed, 17 Nov 2021 09:56:25 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.36)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.112.36 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.112.36; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (216.228.112.36) by
- BN8NAM11FT040.mail.protection.outlook.com (10.13.177.166) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.4690.15 via Frontend Transport; Wed, 17 Nov 2021 09:56:24 +0000
-Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Wed, 17 Nov
- 2021 09:56:20 +0000
-Received: from moonraker.nvidia.com (172.20.187.6) by mail.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server id 15.0.1497.18 via Frontend
- Transport; Wed, 17 Nov 2021 09:56:18 +0000
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Rob Herring <robh+dt@kernel.org>,
+        id S235905AbhKQKEG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 17 Nov 2021 05:04:06 -0500
+Received: from new2-smtp.messagingengine.com ([66.111.4.224]:45249 "EHLO
+        new2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S235778AbhKQKEG (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 17 Nov 2021 05:04:06 -0500
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 431BF580558;
+        Wed, 17 Nov 2021 05:01:07 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute4.internal (MEProxy); Wed, 17 Nov 2021 05:01:07 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm1; bh=Z4rc62NXo9sALoDI2kXA+PvCVrE
+        DdbeQgnJhg+J93hQ=; b=fdZGAPPHuLrcjbKFoJmhsru+A5BHIjEYVdrUGRo6dCS
+        MBc5TiBDcU9j/lUj5BDAkdK3kFUm6L8uBvN5G+3tar5k18LbogiaSVlu9pTzkgim
+        jD0f7/VP32nvuuDyJUn/QRx6tpz4iJgCX5Vod0gxzy/pOjxJwN7UfSDK+wxF9tDe
+        XcGTgCVcv8166pyegIaxY8Z92zOge+b61OamriKHwQIKd6YZoMHqUlpVSJtP1/y5
+        UCxBw9fCKwjdBOyzXEvzUlkEJ4o2VjgUHfPRyHLRe0vL23RQBJpTaSbeN/0uqNBe
+        2rW+QIgijT8D4fIduKjA6gbmeVAN6jYdkMkBJViPW6Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=Z4rc62
+        NXo9sALoDI2kXA+PvCVrEDdbeQgnJhg+J93hQ=; b=WvJc5SAqzGihaVtfI1vTqX
+        5DHyUzf1gGOXMgG81qrXOiLtBw1EYYlkgceqCMMRPBeudxu7KwLu03xBlFZDW+sJ
+        Wj/hPS3417conBlB61vGOLUueo1niC5Ezqfo2+gGvIUq3ncT29/xQhCww3UhMj2r
+        bMB9mw/3K7uQ1KKeAfsvqqE0zB0zBNh+/ray/AdM2zQfpDXyNJJ+VDbHuPOFxE/b
+        2/FB7y3RdVyRLosM6uQ5N7SimRKyr7ApH8++jR1lkiFFagyHau1bNczgg0Cbc1/z
+        xS+o6ZHIHy22Xvafd8Ztf7pUdsJuPntH3tEkqCADLYJwtEYwPNeqPjPrR1Q9FGyg
+        ==
+X-ME-Sender: <xms:4dKUYbvlYs-fjnnCpLQDrdKd1o0QRJo_DYWA-uYMr4qUb70I287Ppw>
+    <xme:4dKUYcfu22EGVC3bsLl3StqHbxLvrzIkgsDXfixTbRFcgXXY98yj1IQGGOWXt1Rt3
+    frUwezgdokHOJtQwYs>
+X-ME-Received: <xmr:4dKUYezM_-vdJPwmA112RAM6H_DCDB7NeAf6guvjX3pyHnP9O-eiCfEWMXtP_ATe6sZqT5gvv0zSTX3UyQ-hSyUm9hnglMAFiwKqM0GItnc>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvuddrfeeggddthecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpeffhffvuffkfhggtggujgesghdtreertddtudenucfhrhhomhepofgrgihimhgv
+    ucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrghtth
+    gvrhhnpeduvdduhfekkeehgffftefflefgffdtheffudffgeevteffheeuiedvvdejvdfg
+    veenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmrg
+    igihhmvgestggvrhhnohdrthgvtghh
+X-ME-Proxy: <xmx:4dKUYaO0eSSbsEntUHXLjO-3-Dj5a-nlW6YIsg333Do8qlN71oRphw>
+    <xmx:4dKUYb8fpPwb5rZrOAKdZsapBqu7GXHCLFox8DhgGPFElVgDoef1Yg>
+    <xmx:4dKUYaW6YW2IneBy0MsqJ4W0uKAHTxh8BNvrpnTGixuGssOocmd3wg>
+    <xmx:49KUYeXH_xPF0yuCtyFyj7ukBD3VIbrTOk7mObwMMpL87dn3ekHADQ>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 17 Nov 2021 05:01:05 -0500 (EST)
+Date:   Wed, 17 Nov 2021 11:01:03 +0100
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
+Cc:     Daniel Vetter <daniel@ffwll.ch>, Emma Anholt <emma@anholt.net>,
+        Dom Cobley <dom@raspberrypi.com>,
+        Tim Gover <tim.gover@raspberrypi.com>,
+        Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org,
+        Jonathan Hunter <jonathanh@nvidia.com>,
         Thierry Reding <thierry.reding@gmail.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>
-CC:     <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH V3 1/2] dt-bindings: Add YAML bindings for NVENC and NVJPG
-Date:   Wed, 17 Nov 2021 09:56:07 +0000
-Message-ID: <20211117095608.60415-1-jonathanh@nvidia.com>
-X-Mailer: git-send-email 2.25.1
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        linux-tegra@vger.kernel.org,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Phil Elwell <phil@raspberrypi.com>
+Subject: Re: [PATCH 02/13] drm/connector: Add helper to check if a mode
+ requires scrambling
+Message-ID: <20211117100103.xouysycl5lmrescx@gilmour>
+References: <20211102145944.259181-1-maxime@cerno.tech>
+ <20211102145944.259181-3-maxime@cerno.tech>
+ <YYP+MX9gxZVafhKk@intel.com>
+ <YYVxtp9PZiR3ZOjp@phenom.ffwll.local>
+ <YYV0bArjRbvYJ2K2@intel.com>
+ <20211108155834.6zz236ll75bxwcrk@gilmour>
+ <YYlkdHzW4ir07Gtk@intel.com>
 MIME-Version: 1.0
-X-NVConfidentiality: public
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 3353121b-ed78-4207-0211-08d9a9b084a8
-X-MS-TrafficTypeDiagnostic: MN2PR12MB4143:
-X-Microsoft-Antispam-PRVS: <MN2PR12MB4143EFFEFE6EFAF45317EA03D99A9@MN2PR12MB4143.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:5236;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: Mawl7PRPj53qkMjNOtVFMFDFY8Rm18gorc3lmDv1Xf/IwzfnljjNgYr5460c0qsb0r9pume7cXol99rvOk1zdwYQaYOpqk1kU1FoHMgsgj7b4e+4uLbi3AoQAGAGKQfPYPbl8UAjuLBjEbLBmEifLBypflNxwULCfs7oSlVpcDeN64ePUiboGt4oCkH/vrWn3+zsjcKuDcLcvW2I5D0dD840ToEsjg/vtZtqr6mBDZimpmCZm/Uk7crYVr5EUw2zCzk+nyrb93nGa38bTPaKHFQRHu9r9iTBxTUDivfs6bkn9JCxAmClnzPBAVq152G1eNICtH9vm4XoVj9GG/rvq63ZcsG0ULUunssgQW1Ti18qn2DHKv3Vx2jjREPUNOgl3XUieEkRRVmJ2F1ALX1X8tlpY4qGOalib9ek13e9Yy1SdeyFMyXkxflsat5JTYyIR7GGXMBa95SqTQR2TPH+bFxgV+6QVs7ZtJwtHFq+dsCsrpYTbLAj5UelWXPj/oTTvGKTE4Fsr8Uuz06NhtpTjbux0jNWnIdN0fAj7bfLthCGNPKzeXexKgDcaViK36d35kTuMGMapJkwnecVe8GNb+1Im7K7zLdoDD5vVeEQZWoMYD4Kdg+fV/xo0D36UEWWN/JEq1+aaZHkb0tIPFnpQPTriRasAMN8mf2X+c8ThRsUQ8jhAxPdpqPwB0FaAlGAzBllABnWRgTH4lgQJx2zxvk8KHo9Y2P4cMGUsjagbUuRW1jXP94ptHcvdcCIMLoE99qevlHk0WytnMo2SegECNBRbCLIlfBbPil5PYUd2jwPrzMQBu/8XS52BPYIZXJ24nJvJl/5CRycTW+ANybXqg==
-X-Forefront-Antispam-Report: CIP:216.228.112.36;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid05.nvidia.com;CAT:NONE;SFS:(4636009)(36840700001)(46966006)(70586007)(107886003)(4326008)(8676002)(7636003)(7696005)(5660300002)(1076003)(336012)(36860700001)(6636002)(86362001)(8936002)(47076005)(186003)(26005)(356005)(70206006)(508600001)(83380400001)(2906002)(54906003)(110136005)(6666004)(82310400003)(316002)(426003)(36756003)(2616005);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Nov 2021 09:56:24.8170
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3353121b-ed78-4207-0211-08d9a9b084a8
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.36];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT040.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4143
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="thlviocxszlf7zcl"
+Content-Disposition: inline
+In-Reply-To: <YYlkdHzW4ir07Gtk@intel.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Add YAML device tree bindings for the Tegra NVENC and NVJPG Host1x
-engines.
 
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
----
-Changes since V2:
-- Fixed indentation
-Changes since V1:
-- Fixed errors reported by Rob's bot
+--thlviocxszlf7zcl
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
- .../gpu/host1x/nvidia,tegra210-nvenc.yaml     | 135 ++++++++++++++++++
- .../gpu/host1x/nvidia,tegra210-nvjpg.yaml     |  94 ++++++++++++
- 2 files changed, 229 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/gpu/host1x/nvidia,tegra210-nvenc.yaml
- create mode 100644 Documentation/devicetree/bindings/gpu/host1x/nvidia,tegra210-nvjpg.yaml
+On Mon, Nov 08, 2021 at 07:55:00PM +0200, Ville Syrj=E4l=E4 wrote:
+> On Mon, Nov 08, 2021 at 04:58:34PM +0100, Maxime Ripard wrote:
+> > On Fri, Nov 05, 2021 at 08:14:04PM +0200, Ville Syrj=E4l=E4 wrote:
+> > > On Fri, Nov 05, 2021 at 07:02:30PM +0100, Daniel Vetter wrote:
+> > > > On Thu, Nov 04, 2021 at 05:37:21PM +0200, Ville Syrj=E4l=E4 wrote:
+> > > > > On Tue, Nov 02, 2021 at 03:59:33PM +0100, Maxime Ripard wrote:
+> > > > > > --- a/include/drm/drm_modes.h
+> > > > > > +++ b/include/drm/drm_modes.h
+> > > > > > @@ -424,6 +424,21 @@ static inline bool drm_mode_is_stereo(cons=
+t struct drm_display_mode *mode)
+> > > > > >  	return mode->flags & DRM_MODE_FLAG_3D_MASK;
+> > > > > >  }
+> > > > > > =20
+> > > > > > +/**
+> > > > > > + * drm_mode_hdmi_requires_scrambling - Checks if a mode requir=
+es HDMI Scrambling
+> > > > > > + * @mode: DRM display mode
+> > > > > > + *
+> > > > > > + * Checks if a given display mode requires the scrambling to b=
+e enabled.
+> > > > > > + *
+> > > > > > + * Returns:
+> > > > > > + * A boolean stating whether it's required or not.
+> > > > > > + */
+> > > > > > +static inline bool
+> > > > > > +drm_mode_hdmi_requires_scrambling(const struct drm_display_mod=
+e *mode)
+> > > > > > +{
+> > > > > > +	return mode->clock > DRM_HDMI_14_MAX_TMDS_CLK_KHZ;
+> > > > > > +}
+> > > > >=20
+> > > > > That's only correct for 8bpc. The actual limit is on the TMDS clo=
+ck (or
+> > > > > rather TMDS character rate as HDMI 2.0 calls it due to the 1/1 vs=
+=2E 1/4
+> > > > > magic for the actually transmitted TMDS clock).
+> > > >=20
+> > > > Yeah we might need to add the bus format for the cable here too, to=
+ make
+> > > > this complete.
+> > >=20
+> > > I don't think we have a usable thing for that on the drm level, so
+> > > would need to invent something. Oh, and the mode->clock vs.=20
+> > > mode->crtc_clock funny business also limits the usability of this
+> > > approach. So probably just easiest to pass in the the driver calculat=
+ed
+> > > TMDS clock instead.
+> >=20
+> > If we look at all (I think?) the existing users of scrambling in KMS as
+> > of 5.15, only i915 seems to use crtc_clock (which, in retrospect, seems
+> > to be the right thing to do), and only i915 and dw-hdmi use an output
+> > format, i915 rolling its own, and dw-hdmi using the mbus formats.
+> >=20
+> > I think using the mbus format here makes the most sense: i915 already is
+> > rolling a whole bunch of other code, and we use the mbus defines for the
+> > bridge format enumeration as well which is probably going to have some
+> > interaction.
+> >=20
+> > I'm not quite sure what to do next though. The whole point of that
+> > series is to streamline as much as possible the scrambling and TMDS
+> > ratio setup to avoid the duplication we already have in the drivers that
+> > support it, every one using the mostly-the-same-but-slightly-different
+> > logic to configure it.
+> >=20
+> > The mode is fortunately stored in generic structures so it's easy to
+> > make that decision. Having to take into account the output format
+> > however makes it mandatory to move the bus format in the
+> > drm_connector_state(?) structure too.
+>=20
+> I think involving state objects and the like is just going to make
+> it harder to share code between all drivers, if that is the goal.
+> Just a few tiny helpers I think is what would allow the broadest=20
+> reuse. I guess you could build additional midlayer on top of those
+> for some drivers if you wish.
+>=20
+> As for the bus_format stuff, that looks at the same time overkill,
+> and insufficiently documented. I guess its main purpose is to exactly
+> defines how some digtal bus works, which makes sense when you're
+> chaining a bunch of random chips together. But looks overly complicated
+> to me for defining what to output from a HDMI encoder. Looking at the
+> defines I wouldn't even know what to use for HDMI actually. All we
+> really want is RGB 4:4:4 vs. YCbCr 4:4:4 vs. YCbCr 4:2:2 vs. YCbCr 4:2:0.
+> Beyond that level of detail we don't care how each bit gets transferred
+> etc. Hence enum intel_output_format in i915.
 
-diff --git a/Documentation/devicetree/bindings/gpu/host1x/nvidia,tegra210-nvenc.yaml b/Documentation/devicetree/bindings/gpu/host1x/nvidia,tegra210-nvenc.yaml
-new file mode 100644
-index 000000000000..e63ae1a00818
---- /dev/null
-+++ b/Documentation/devicetree/bindings/gpu/host1x/nvidia,tegra210-nvenc.yaml
-@@ -0,0 +1,135 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: "http://devicetree.org/schemas/gpu/host1x/nvidia,tegra210-nvenc.yaml#"
-+$schema: "http://devicetree.org/meta-schemas/core.yaml#"
-+
-+title: Device tree binding for NVIDIA Tegra NVENC
-+
-+description: |
-+  NVENC is the hardware video encoder present on NVIDIA Tegra210
-+  and newer chips. It is located on the Host1x bus and typically
-+  programmed through Host1x channels.
-+
-+maintainers:
-+  - Thierry Reding <treding@gmail.com>
-+  - Mikko Perttunen <mperttunen@nvidia.com>
-+
-+properties:
-+  $nodename:
-+    pattern: "^nvenc@[0-9a-f]*$"
-+
-+  compatible:
-+    enum:
-+      - nvidia,tegra210-nvenc
-+      - nvidia,tegra186-nvenc
-+      - nvidia,tegra194-nvenc
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    maxItems: 1
-+
-+  clock-names:
-+    items:
-+      - const: nvenc
-+
-+  resets:
-+    maxItems: 1
-+
-+  reset-names:
-+    items:
-+      - const: nvenc
-+
-+  power-domains:
-+    maxItems: 1
-+
-+  iommus:
-+    maxItems: 1
-+
-+  dma-coherent: true
-+
-+  interconnects:
-+    minItems: 2
-+    maxItems: 3
-+
-+  interconnect-names:
-+    minItems: 2
-+    maxItems: 3
-+
-+  nvidia,host1x-class:
-+    description: |
-+      Host1x class of the engine, used to specify the targeted engine
-+      when programming the engine through Host1x channels or when
-+      configuring engine-specific behavior in Host1x.
-+    default: 0x21
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - clock-names
-+  - resets
-+  - reset-names
-+  - power-domains
-+
-+allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          enum:
-+            - nvidia,tegra210-nvenc
-+            - nvidia,tegra186-nvenc
-+    then:
-+      properties:
-+        interconnects:
-+          items:
-+            - description: DMA read memory client
-+            - description: DMA write memory client
-+        interconnect-names:
-+          items:
-+            - const: dma-mem
-+            - const: write
-+  - if:
-+      properties:
-+        compatible:
-+          enum:
-+            - nvidia,tegra194-nvenc
-+    then:
-+      properties:
-+        interconnects:
-+          items:
-+            - description: DMA read memory client
-+            - description: DMA read 2 memory client
-+            - description: DMA write memory client
-+        interconnect-names:
-+          items:
-+            - const: dma-mem
-+            - const: read-1
-+            - const: write
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/tegra186-clock.h>
-+    #include <dt-bindings/memory/tegra186-mc.h>
-+    #include <dt-bindings/power/tegra186-powergate.h>
-+    #include <dt-bindings/reset/tegra186-reset.h>
-+
-+    nvenc@154c0000 {
-+            compatible = "nvidia,tegra186-nvenc";
-+            reg = <0x154c0000 0x40000>;
-+            clocks = <&bpmp TEGRA186_CLK_NVENC>;
-+            clock-names = "nvenc";
-+            resets = <&bpmp TEGRA186_RESET_NVENC>;
-+            reset-names = "nvenc";
-+
-+            power-domains = <&bpmp TEGRA186_POWER_DOMAIN_MPE>;
-+            interconnects = <&mc TEGRA186_MEMORY_CLIENT_NVENCSRD &emc>,
-+                            <&mc TEGRA186_MEMORY_CLIENT_NVENCSWR &emc>;
-+            interconnect-names = "dma-mem", "write";
-+            iommus = <&smmu TEGRA186_SID_NVENC>;
-+    };
-diff --git a/Documentation/devicetree/bindings/gpu/host1x/nvidia,tegra210-nvjpg.yaml b/Documentation/devicetree/bindings/gpu/host1x/nvidia,tegra210-nvjpg.yaml
-new file mode 100644
-index 000000000000..8647404d67e4
---- /dev/null
-+++ b/Documentation/devicetree/bindings/gpu/host1x/nvidia,tegra210-nvjpg.yaml
-@@ -0,0 +1,94 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: "http://devicetree.org/schemas/gpu/host1x/nvidia,tegra210-nvjpg.yaml#"
-+$schema: "http://devicetree.org/meta-schemas/core.yaml#"
-+
-+title: Device tree binding for NVIDIA Tegra NVJPG
-+
-+description: |
-+  NVJPG is the hardware JPEG decoder and encoder present on NVIDIA Tegra210
-+  and newer chips. It is located on the Host1x bus and typically programmed
-+  through Host1x channels.
-+
-+maintainers:
-+  - Thierry Reding <treding@gmail.com>
-+  - Mikko Perttunen <mperttunen@nvidia.com>
-+
-+properties:
-+  $nodename:
-+    pattern: "^nvjpg@[0-9a-f]*$"
-+
-+  compatible:
-+    enum:
-+      - nvidia,tegra210-nvjpg
-+      - nvidia,tegra186-nvjpg
-+      - nvidia,tegra194-nvjpg
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    maxItems: 1
-+
-+  clock-names:
-+    items:
-+      - const: nvjpg
-+
-+  resets:
-+    maxItems: 1
-+
-+  reset-names:
-+    items:
-+      - const: nvjpg
-+
-+  power-domains:
-+    maxItems: 1
-+
-+  iommus:
-+    maxItems: 1
-+
-+  dma-coherent: true
-+
-+  interconnects:
-+    items:
-+      - description: DMA read memory client
-+      - description: DMA write memory client
-+
-+  interconnect-names:
-+    items:
-+      - const: dma-mem
-+      - const: write
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - clock-names
-+  - resets
-+  - reset-names
-+  - power-domains
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/tegra186-clock.h>
-+    #include <dt-bindings/memory/tegra186-mc.h>
-+    #include <dt-bindings/power/tegra186-powergate.h>
-+    #include <dt-bindings/reset/tegra186-reset.h>
-+
-+    nvjpg@15380000 {
-+            compatible = "nvidia,tegra186-nvjpg";
-+            reg = <0x15380000 0x40000>;
-+            clocks = <&bpmp TEGRA186_CLK_NVJPG>;
-+            clock-names = "nvjpg";
-+            resets = <&bpmp TEGRA186_RESET_NVJPG>;
-+            reset-names = "nvjpg";
-+
-+            power-domains = <&bpmp TEGRA186_POWER_DOMAIN_NVJPG>;
-+            interconnects = <&mc TEGRA186_MEMORY_CLIENT_NVJPGSRD &emc>,
-+                            <&mc TEGRA186_MEMORY_CLIENT_NVJPGSWR &emc>;
-+            interconnect-names = "dma-mem", "write";
-+            iommus = <&smmu TEGRA186_SID_NVJPG>;
-+    };
--- 
-2.25.1
+I was thinking about this some more, can we leverage struct
+hdmi_colorspace for this? Chances are it's already used by any driver
+that supports YCbCr output to setup the infoframes.
 
+Maxime
+
+--thlviocxszlf7zcl
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYZTS3wAKCRDj7w1vZxhR
+xTmyAQD6f7bBcSo7FKPBzGh+09zx0lQRcHlA3U6Ps1zDXHCc0AEAyejjdg07Q99k
+DauwTfAn9yIIyOSYSnlh6rWuq4HXsgw=
+=gjjc
+-----END PGP SIGNATURE-----
+
+--thlviocxszlf7zcl--
