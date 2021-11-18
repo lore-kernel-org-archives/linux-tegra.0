@@ -2,85 +2,141 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 140CDC433F5
-	for <linux-tegra@archiver.kernel.org>; Thu, 18 Nov 2021 19:13:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0514C433FE
+	for <linux-tegra@archiver.kernel.org>; Thu, 18 Nov 2021 23:35:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E6D0661260
-	for <linux-tegra@archiver.kernel.org>; Thu, 18 Nov 2021 19:13:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D074661ABA
+	for <linux-tegra@archiver.kernel.org>; Thu, 18 Nov 2021 23:35:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229554AbhKRTQi (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 18 Nov 2021 14:16:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53784 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233353AbhKRTQh (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 18 Nov 2021 14:16:37 -0500
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2342CC061574
-        for <linux-tegra@vger.kernel.org>; Thu, 18 Nov 2021 11:13:37 -0800 (PST)
-Received: by mail-lf1-x12e.google.com with SMTP id u3so31012227lfl.2
-        for <linux-tegra@vger.kernel.org>; Thu, 18 Nov 2021 11:13:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=tyvrVQ6HAAc8RNdhaLQn5bJB2W5wrxWYBIeg7TY3onc=;
-        b=nFa54ZvqWRYjaaeZ2eIgOMMQfJzWmcyrCw+3T4fRXhfMCygQuAoxkrZ8/SLhAdRdai
-         iJcVFj5LCQZ2PdsuE+Zrg7w8TyQk0dssHB4RGHgxTeb77WLp1RyAW7uArUi1wmMyluF6
-         05aKSb/XTpckRad9Ad4cUpzdvVx40Qu62G5SoCvCgXPlS4QJiIEsqYJcskYXsJmkluRM
-         5H/44slsfeZLKv0E/rI+DNZHxkM4KMYn4k3sNETPykFrbe8vUVwwIVrr7TnzUn4bIax4
-         oe9VeSFRvsqFcQXGkv+qNTsxp3uLWWEr9QBb4mowsRYpJ70Ft0WD+UpLCTlzQQvz9Znc
-         kudw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=tyvrVQ6HAAc8RNdhaLQn5bJB2W5wrxWYBIeg7TY3onc=;
-        b=FlRoNycv2b9iJ5wnK34v8Gp+kNGrqfbQ6lKlhnWtuxrGhh6WOKm9Y41UNFjwE5N7W/
-         6Lp+BtYh/doeJMXWqVHufs1mowXOEy8n8Flk6AZcfL/Khe2BQ1uxYZbfioMbWYGDsF9T
-         PYMTCsSxpX7AwIGOwXNYvibcuwmYbdyjuf27tzVT/TQNNWooerA43HwUNXeHiSSxav0a
-         XAfS/eHo5iO/9yoxPlaz5hldNFPc+it95aY0UP7wHKEc6f+F6dKdIy4OF42tA6z1Eb7B
-         0XGc6CqP4glTuzaT7RFVHoo5ybYoGiLY5dhKKmM1L1Z6aPPET2iwKnZJgwVF8bBk/vz5
-         Mo4g==
-X-Gm-Message-State: AOAM5331xVajwYsgubxouCfp1ldBVU6hmB8lGMhoPivmtgZq0uksX3to
-        dExFxVABjPgJRjWP6CHDGWt8Vfi27uw=
-X-Google-Smtp-Source: ABdhPJyMchatDvJEdhsJC+lurmLOH2UxZS60ya4EvrodDObBgJ/XSA3qw0vL0dpNRrTaWisRZkqJLA==
-X-Received: by 2002:a2e:95cb:: with SMTP id y11mr19795974ljh.431.1637262814961;
-        Thu, 18 Nov 2021 11:13:34 -0800 (PST)
-Received: from [192.168.2.145] (94-29-48-99.dynamic.spd-mgts.ru. [94.29.48.99])
-        by smtp.googlemail.com with ESMTPSA id x27sm88208lfq.192.2021.11.18.11.13.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 18 Nov 2021 11:13:34 -0800 (PST)
-Subject: Re: [PATCH] soc/tegra: pmc: Add reboot notifier
-To:     Jon Hunter <jonathanh@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>
-Cc:     linux-tegra@vger.kernel.org
-References: <20211115113208.237296-1-jonathanh@nvidia.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <b0274558-7ad3-bc56-01ea-eb9f89716c24@gmail.com>
-Date:   Thu, 18 Nov 2021 22:13:34 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+        id S233220AbhKRXiX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 18 Nov 2021 18:38:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42264 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231231AbhKRXiX (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 18 Nov 2021 18:38:23 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 5EB5F61A86;
+        Thu, 18 Nov 2021 23:35:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1637278522;
+        bh=Fqau0dqCEINzmMkwJjTEgzqPnrOEmI3UQprV38RXFd0=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=ucRdJNh0JXxmrs6RFed71fSHkitIRuiPVywHVpbADH9wJn5rFo9NaESSCr88xfb52
+         R4OA09akXeyN2c5XGNgJ0m86J2qusiU41LSRAXgfZ9WcKuZFRBPlHd2oTpOvkWQ4pz
+         GB6L3s0HEccYXM7G19W6AB7ZLX4vEzQuL8OYsGn8IH91yugl6Q3gHbPzKpvgR2073k
+         /iEmv6ho1jXDxK80FgY0TjYc6MhDJel4Cl5+QEO6Yy42WWF739pWPpy9z9s1pALXEu
+         OnxRsIhI8F61Zc0t82NwNoH/caNkc9XIY2GHGe3j8EaEZ5gvgI5Xl+oeyMJ6oBjIJF
+         s7A9s6vYvySmw==
+Received: by mail-ed1-f50.google.com with SMTP id l25so17941603eda.11;
+        Thu, 18 Nov 2021 15:35:22 -0800 (PST)
+X-Gm-Message-State: AOAM531FW8EZLl1T0ejNaPSEfW0YyDE50Rgh+mHXph+Yu0qxMTaJvpkR
+        7ICzqQrHvYzEd7E7IPbgYc4+OtNER6wGf0jE/g==
+X-Google-Smtp-Source: ABdhPJwcyGfkHDNwA//qQiBHvHR4tBMsbq6RlSr5Nv+iHL3iTM86rng209dGFSMwRijpZAJ/aoi0m/llJIz5W6hdbFk=
+X-Received: by 2002:aa7:cd5c:: with SMTP id v28mr17372154edw.6.1637278520762;
+ Thu, 18 Nov 2021 15:35:20 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20211115113208.237296-1-jonathanh@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <1635427419-22478-1-git-send-email-akhilrajeev@nvidia.com>
+ <1635427419-22478-2-git-send-email-akhilrajeev@nvidia.com>
+ <YYE7D2W721a1L4Mb@robh.at.kernel.org> <BN9PR12MB5273887DC5A3153A434432ADC08C9@BN9PR12MB5273.namprd12.prod.outlook.com>
+In-Reply-To: <BN9PR12MB5273887DC5A3153A434432ADC08C9@BN9PR12MB5273.namprd12.prod.outlook.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Thu, 18 Nov 2021 17:35:09 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqKqG79kZCT97pRnDHxztoq6rfJ9LDjn_iiuyvQksNnR4A@mail.gmail.com>
+Message-ID: <CAL_JsqKqG79kZCT97pRnDHxztoq6rfJ9LDjn_iiuyvQksNnR4A@mail.gmail.com>
+Subject: Re: [PATCH v11 1/4] dt-bindings: dmaengine: Add doc for tegra gpcdma
+To:     Akhil R <akhilrajeev@nvidia.com>
+Cc:     "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Krishna Yarlagadda <kyarlagadda@nvidia.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+        Rajesh Gumasta <rgumasta@nvidia.com>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        "vkoul@kernel.org" <vkoul@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-15.11.2021 14:32, Jon Hunter пишет:
-> -static int tegra_pmc_restart_notify(struct notifier_block *this,
-> -				    unsigned long action, void *data)
-> +static void tegra_pmc_program_reboot_reason(const char *cmd)
->  {
-> -	const char *cmd = data;
->  	u32 value;
->  
-> +	if (!cmd)
-> +		return;
+On Wed, Nov 3, 2021 at 5:34 AM Akhil R <akhilrajeev@nvidia.com> wrote:
+>
+> > On Thu, Oct 28, 2021 at 06:53:36PM +0530, Akhil R wrote:
+> > > Add DT binding document for Nvidia Tegra GPCDMA controller.
+> > >
+> > > Signed-off-by: Rajesh Gumasta <rgumasta@nvidia.com>
+> > > Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
+> > > Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
+> > > ---
+> > >  .../bindings/dma/nvidia,tegra186-gpc-dma.yaml      | 115
+> > +++++++++++++++++++++
+> > >  1 file changed, 115 insertions(+)
+> > >  create mode 100644
+> > > Documentation/devicetree/bindings/dma/nvidia,tegra186-gpc-dma.yaml
+> > >
+> > > diff --git
+> > > a/Documentation/devicetree/bindings/dma/nvidia,tegra186-gpc-dma.yaml
+> > > b/Documentation/devicetree/bindings/dma/nvidia,tegra186-gpc-dma.yaml
+> > > new file mode 100644
+> > > index 0000000..bc97efc
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/dma/nvidia,tegra186-gpc-dma.ya
+> > > +++ ml
+> > > @@ -0,0 +1,115 @@
+> > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) %YAML 1.2
+> > > +---
+> > > +$id: http://devicetree.org/schemas/dma/nvidia,tegra186-gpc-dma.yaml#
+> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > +
+> > > +title: NVIDIA Tegra GPC DMA Controller Device Tree Bindings
+> > > +
+> > > +description: |
+> > > +  The Tegra General Purpose Central (GPC) DMA controller is used for
+> > > +faster
+> > > +  data transfers between memory to memory, memory to device and
+> > > +device to
+> > > +  memory.
+> > > +
+> > > +maintainers:
+> > > +  - Jon Hunter <jonathanh@nvidia.com>
+> > > +  - Rajesh Gumasta <rgumasta@nvidia.com>
+> > > +
+> > > +allOf:
+> > > +  - $ref: "dma-controller.yaml#"
+> > > +
+> > > +properties:
+> > > +  compatible:
+> > > +    oneOf:
+> > > +      - enum:
+> > > +          - nvidia,tegra186-gpcdma
+> > > +          - nvidia,tegra194-gpcdma
+> > > +      - items:
+> > > +          - const: nvidia,tegra186-gpcdma
+> > > +          - const: nvidia,tegra194-gpcdma
+> >
+> > One of these is wrong. Either 186 has a fallback to 194 or it doesn't.
+> Not sure if I understood this correctly. Tegra186 and 194 have different chip data
+> inside driver based on the compatible. I guess, it then needs to be one of these.
+> Or is the mistake something related to formatting?
 
-There is no explanation of this change in the commit message. Previously
-scratch register was cleared if command is NULL, now it's not. Why?
+It's not about what the driver uses, but what is valid in a DT file.
+Either you say the 2 implementations are different and in no way
+compatible with each other:
+
+enum:
+  - nvidia,tegra186-gpcdma
+  - nvidia,tegra194-gpcdma
+
+Or you say 186 is backwards compatible with 194 (meaning 186 is a
+superset of 194 so a driver written for 194 still works on 186 (though
+not any new features)).
+
+oneOf:
+  - const: nvidia,tegra194-gpcdma
+  - items:
+    - const: nvidia,tegra186-gpcdma
+    - const: nvidia,tegra194-gpcdma
+
+Rob
