@@ -2,53 +2,52 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12899C433F5
-	for <linux-tegra@archiver.kernel.org>; Thu, 18 Nov 2021 13:32:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5DFAC433F5
+	for <linux-tegra@archiver.kernel.org>; Thu, 18 Nov 2021 13:33:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E670A619E1
-	for <linux-tegra@archiver.kernel.org>; Thu, 18 Nov 2021 13:32:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA3296152B
+	for <linux-tegra@archiver.kernel.org>; Thu, 18 Nov 2021 13:33:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231156AbhKRNfJ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 18 Nov 2021 08:35:09 -0500
-Received: from smtp-out2.suse.de ([195.135.220.29]:44748 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230249AbhKRNfJ (ORCPT
+        id S231392AbhKRNgw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 18 Nov 2021 08:36:52 -0500
+Received: from smtp-out1.suse.de ([195.135.220.28]:39628 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229914AbhKRNgv (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 18 Nov 2021 08:35:09 -0500
+        Thu, 18 Nov 2021 08:36:51 -0500
 Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id DE56E1FD29;
-        Thu, 18 Nov 2021 13:32:07 +0000 (UTC)
+        by smtp-out1.suse.de (Postfix) with ESMTP id DC15221891;
+        Thu, 18 Nov 2021 13:33:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1637242327; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1637242430; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=vJPpmSqwfQ+E7wyd/Ugvv0kRl9SOxF8b6yI9zshXapU=;
-        b=coMFhzHHTNQpqP1vGLhw2kauOIpNkdWyBHBsqcWy9r4oHA9e68LtK1QoLLxzYzAiU6NtGj
-        x2NUoxsicqy/j+e1B6vDvB/EM69jn9wLdI3wlqK35mUMvybrgWMMzMsXILsnoNE3qus2NR
-        rls9WDtUkoFvCtON7XpNWB03Q9b1pSw=
+        bh=o/2YbNV6NVTFla3wlTg4xaDtv/fczGAO/Q0JkY4Ef/A=;
+        b=Z4vR9AafeEX8duGJjLirPBTKPhsQ5Iu1cbF+EpmARtTsGcpzcsNiNeKgwcRuDGp7O3X1Ai
+        LblfBCjeDzIa2THj4pkbzCqZiN/7sNBpzzIikSKPUb7PxxJTFoLZfwT9NSyFlbXP3X6Ov4
+        V/VTMBSsUnTRCL1MPsA/DdEzCuPKpNw=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1637242327;
+        s=susede2_ed25519; t=1637242430;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=vJPpmSqwfQ+E7wyd/Ugvv0kRl9SOxF8b6yI9zshXapU=;
-        b=yU4K9TSDyOFY52UmX/MihBq1XfW8lh/RgMb9KD91z2TRONEEnOwARA5K/c1N63b6uzB7QM
-        wN4j1FTX+8eEHQCA==
+        bh=o/2YbNV6NVTFla3wlTg4xaDtv/fczGAO/Q0JkY4Ef/A=;
+        b=zj1mC8ykvi7FIl78G73BAOmCVmYUZEtc8q84F/RNtcx4BrcdFcwMnQVok7PmWIf7FU8tmH
+        eEuwUCDIvGeb84CQ==
 Received: from alsa1.suse.de (alsa1.suse.de [10.160.4.42])
-        by relay2.suse.de (Postfix) with ESMTP id B17A4A3B81;
-        Thu, 18 Nov 2021 13:32:07 +0000 (UTC)
-Date:   Thu, 18 Nov 2021 14:32:07 +0100
-Message-ID: <s5hzgq1io88.wl-tiwai@suse.de>
+        by relay2.suse.de (Postfix) with ESMTP id CFC44A3B81;
+        Thu, 18 Nov 2021 13:33:50 +0000 (UTC)
+Date:   Thu, 18 Nov 2021 14:33:50 +0100
+Message-ID: <s5hy25lio5d.wl-tiwai@suse.de>
 From:   Takashi Iwai <tiwai@suse.de>
 To:     Sameer Pujar <spujar@nvidia.com>
 Cc:     <broonie@kernel.org>, <lgirdwood@gmail.com>, <perex@perex.cz>,
         <tiwai@suse.com>, <thierry.reding@gmail.com>,
         <jonathanh@nvidia.com>, <alsa-devel@alsa-project.org>,
         <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 12/16] ASoC: tegra: Fix kcontrol put callback in MVC
-In-Reply-To: <1637219231-406-13-git-send-email-spujar@nvidia.com>
+Subject: Re: [PATCH v3 00/16] Kcontrol get/put cleanup in Tegra drivers
+In-Reply-To: <1637219231-406-1-git-send-email-spujar@nvidia.com>
 References: <1637219231-406-1-git-send-email-spujar@nvidia.com>
-        <1637219231-406-13-git-send-email-spujar@nvidia.com>
 User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
  FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/25.3
  (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
@@ -58,57 +57,70 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, 18 Nov 2021 08:07:07 +0100,
+On Thu, 18 Nov 2021 08:06:55 +0100,
 Sameer Pujar wrote:
 > 
-> The kcontrol put callback is expected to return 1 when there is change
-> in HW or when the update is acknowledged by driver. This would ensure
-> that change notifications are sent to subscribed applications. Filter
-> out duplicate updates in MVC driver.
+> There are two cleanups in the series:
+>  1. Use correct value type for enum controls. This is suggested by
+>     Takashi during review of v2.
 > 
-> Fixes: e539891f9687 ("ASoC: tegra: Add Tegra210 based MVC driver")
-> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
-> Suggested-by: Jaroslav Kysela <perex@perex.cz>
-> Suggested-by: Mark Brown <broonie@kernel.org>
-> ---
->  sound/soc/tegra/tegra210_mvc.c | 22 ++++++++++++++++++----
->  1 file changed, 18 insertions(+), 4 deletions(-)
+>  2. This series fixes kcontrol put callback in some of the Tegra drivers
+>     which are used on platforms based on Tegra210 and later. The callback
+>     is expected to return 1 whenever the HW update is done.
 > 
-> diff --git a/sound/soc/tegra/tegra210_mvc.c b/sound/soc/tegra/tegra210_mvc.c
-> index b7e3170..85b1558 100644
-> --- a/sound/soc/tegra/tegra210_mvc.c
-> +++ b/sound/soc/tegra/tegra210_mvc.c
-> @@ -136,7 +136,7 @@ static int tegra210_mvc_put_mute(struct snd_kcontrol *kcontrol,
->  	struct snd_soc_component *cmpnt = snd_soc_kcontrol_component(kcontrol);
->  	struct tegra210_mvc *mvc = snd_soc_component_get_drvdata(cmpnt);
->  	unsigned int value;
-> -	u8 mute_mask;
-> +	u8 new_mask, old_mask;
->  	int err;
->  
->  	pm_runtime_get_sync(cmpnt->dev);
-> @@ -148,11 +148,19 @@ static int tegra210_mvc_put_mute(struct snd_kcontrol *kcontrol,
->  	if (err < 0)
->  		goto end;
->  
-> -	mute_mask = ucontrol->value.integer.value[0];
-> +	regmap_read(mvc->regmap, TEGRA210_MVC_CTRL, &value);
-> +
-> +	old_mask = (value >> TEGRA210_MVC_MUTE_SHIFT) & TEGRA210_MUTE_MASK_EN;
-> +	new_mask = ucontrol->value.integer.value[0];
-> +
-> +	if (new_mask == old_mask) {
-> +		err = 0;
-> +		goto end;
-> +	}
->  
->  	err = regmap_update_bits(mvc->regmap, mc->reg,
->  				 TEGRA210_MVC_MUTE_MASK,
-> -				 mute_mask << TEGRA210_MVC_MUTE_SHIFT);
-> +				 new_mask << TEGRA210_MVC_MUTE_SHIFT);
+>     This idea is suggested by Jaroslav. Similar suggestion came from
+>     Mark during review of series [0] and drivers under this were updated
+>     to return 1, but missed to take care of duplicate updates. This series
+>     updates all concerned drivers to return proper values and duplicate
+>     updates are filtered out.
+> 
+> I have added 'Suggested-by" tags accordingly.
+> 
+> [0] https://lore.kernel.org/linux-arm-kernel/20210913142307.GF4283@sirena.org.uk/
+> 
+> Changelog
+> =========
+>  v2->v3:
+>  -------
+>    * Add fixes related to wrong value type as suggested by Takashi.
+>      Relevant drivers are updated as part of it.
+> 
+>    * Use separate get/put callbacks for each mixer control. The common
+>      part is pushed to separate function wherever applicable, thus
+>      removing usage of strstr() calls. The return values are fixed
+>      as suggested.
+> 
+> 
+>  v1->v2:
+>  -------
+>    * ADMAIF, I2S, DMIC and DSPK drivers updated to take care of
+>      duplicate updates.
+>    * Similarly new patches are added for AHUB, MVC, SFC, AMX, ADX
+>      and Mixer drivers.
+> 
+> Sameer Pujar (16):
+>   ASoC: tegra: Fix wrong value type in ADMAIF
+>   ASoC: tegra: Fix wrong value type in I2S
+>   ASoC: tegra: Fix wrong value type in DMIC
+>   ASoC: tegra: Fix wrong value type in DSPK
+>   ASoC: tegra: Fix wrong value type in SFC
+>   ASoC: tegra: Fix wrong value type in MVC
+>   ASoC: tegra: Fix kcontrol put callback in ADMAIF
+>   ASoC: tegra: Fix kcontrol put callback in I2S
+>   ASoC: tegra: Fix kcontrol put callback in DMIC
+>   ASoC: tegra: Fix kcontrol put callback in DSPK
+>   ASoC: tegra: Fix kcontrol put callback in AHUB
+>   ASoC: tegra: Fix kcontrol put callback in MVC
+>   ASoC: tegra: Fix kcontrol put callback in SFC
+>   ASoC: tegra: Fix kcontrol put callback in AMX
+>   ASoC: tegra: Fix kcontrol put callback in ADX
+>   ASoC: tegra: Fix kcontrol put callback in Mixer
 
-I guess this test-and-update procedure can be simplified with
-regmap_update_bits_check().
+Through a quick glance, the series looks good to me.  One place could
+be more optimized with a regmap helper, but it's a minor issue and can
+be updated later, too.
+
+Reviewed-by: Takashi Iwai <tiwai@suse.de>
 
 
 thanks,
