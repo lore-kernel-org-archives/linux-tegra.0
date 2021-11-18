@@ -2,100 +2,115 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ACCAC433EF
-	for <linux-tegra@archiver.kernel.org>; Thu, 18 Nov 2021 07:41:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12899C433F5
+	for <linux-tegra@archiver.kernel.org>; Thu, 18 Nov 2021 13:32:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0375E61391
-	for <linux-tegra@archiver.kernel.org>; Thu, 18 Nov 2021 07:41:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E670A619E1
+	for <linux-tegra@archiver.kernel.org>; Thu, 18 Nov 2021 13:32:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243908AbhKRHoU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 18 Nov 2021 02:44:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35556 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243810AbhKRHoM (ORCPT
+        id S231156AbhKRNfJ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 18 Nov 2021 08:35:09 -0500
+Received: from smtp-out2.suse.de ([195.135.220.29]:44748 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230249AbhKRNfJ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 18 Nov 2021 02:44:12 -0500
-Received: from mail-pl1-x634.google.com (mail-pl1-x634.google.com [IPv6:2607:f8b0:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46A81C061764;
-        Wed, 17 Nov 2021 23:41:13 -0800 (PST)
-Received: by mail-pl1-x634.google.com with SMTP id m24so4497156pls.10;
-        Wed, 17 Nov 2021 23:41:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=cumN0MHhp/gNl7eiIb43Myz/VE/1A4Arj32bsVlFt3k=;
-        b=RCWqFij3nGrcR78WVxxI/Ygk35c1Tus0wDC+efFGB+M/xU31DIXOjJGxz0jjm4y3xR
-         DZ/DM2eKbpt6WShft9fT8pjfTjYoJwDWFQcheY32CPbhK5nb51TccBfvBfJiyM8O1ziv
-         0nXQhrJzzSu2qPStvN049aHQ8HXFZhTMD1yOaJiRz4d5TtnQEQObhXW052oF7dJ5QQwk
-         llksUjwkojKG/hnPqukvWtTwNSxMx2biAsucilH+H7O/nEfBVfGgeIxs+58DoE+tlGME
-         euNpsnT8bHlo3hhvUQ1ViSU2nTa2b2pa8eSTwR+vQbDugUfaOlCIKrlc98vBMA0IPHCB
-         LlKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=cumN0MHhp/gNl7eiIb43Myz/VE/1A4Arj32bsVlFt3k=;
-        b=3AV+r25WQAQcMloSWPQub152xfVPuulprXdC8rymX27A+zV62atjPRmF47L8VAYzb2
-         AZu6oJFJw90NLUC60jclwR98ukIo9rXO0dZUJo8GL/knrDw5fDNy+FmcGLdL1AAUU1ID
-         96Ywk5YMFuKvtBdDNTej3cvEn3b1IUKENQZsBlMnkLVoMFyIdNexi+S/a/VLADM+It5k
-         gyM9NQRgRbOb0UeuTPXpUD0GmAYzl1Ivn3bpLtM328LarbqRSReL7Tk6ERxkSr3n1Mc6
-         bSlb3HmNDyndL9C4fsqpSpQDNz01EXvgEmscAgAhV7fmim7f/1Dz6WnVs7/I7Qp5amFI
-         FFBw==
-X-Gm-Message-State: AOAM530aeQNvSq8eohR9a75AnM+8AcreQBFlWSjU5RlrZq11eM++IDAq
-        kptodXWSpGIdCFPTXhcWFISosWv9XBo=
-X-Google-Smtp-Source: ABdhPJykGJ1M0Wufnub9TreQKMkzCLGjv8nqGSqC6ecHvV7QmMKJW1iviquzQPJaKxBJ3mRr027oQw==
-X-Received: by 2002:a17:90a:be10:: with SMTP id a16mr7943634pjs.133.1637221272875;
-        Wed, 17 Nov 2021 23:41:12 -0800 (PST)
-Received: from localhost.localdomain ([193.203.214.57])
-        by smtp.gmail.com with ESMTPSA id k14sm2020991pff.6.2021.11.17.23.41.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Nov 2021 23:41:12 -0800 (PST)
-From:   cgel.zte@gmail.com
-X-Google-Original-From: deng.changcheng@zte.com.cn
-To:     pdeschrijver@nvidia.com
-Cc:     jonathanh@nvidia.com, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        mturquette@baylibre.com, pgaikwad@nvidia.com, sboyd@kernel.org,
-        thierry.reding@gmail.com, zealci@zte.com.cn, cgel.zte@gmail.com,
-        deng.changcheng@zte.com.cn
-Subject: [PATCH v2] clk: tegra: Use div64_ul instead of do_div
-Date:   Thu, 18 Nov 2021 07:41:01 +0000
-Message-Id: <20211118074101.165168-1-deng.changcheng@zte.com.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20211117014714.159005-1-deng.changcheng@zte.com.cn>
-References: <20211117014714.159005-1-deng.changcheng@zte.com.cn>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Thu, 18 Nov 2021 08:35:09 -0500
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id DE56E1FD29;
+        Thu, 18 Nov 2021 13:32:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1637242327; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=vJPpmSqwfQ+E7wyd/Ugvv0kRl9SOxF8b6yI9zshXapU=;
+        b=coMFhzHHTNQpqP1vGLhw2kauOIpNkdWyBHBsqcWy9r4oHA9e68LtK1QoLLxzYzAiU6NtGj
+        x2NUoxsicqy/j+e1B6vDvB/EM69jn9wLdI3wlqK35mUMvybrgWMMzMsXILsnoNE3qus2NR
+        rls9WDtUkoFvCtON7XpNWB03Q9b1pSw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1637242327;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=vJPpmSqwfQ+E7wyd/Ugvv0kRl9SOxF8b6yI9zshXapU=;
+        b=yU4K9TSDyOFY52UmX/MihBq1XfW8lh/RgMb9KD91z2TRONEEnOwARA5K/c1N63b6uzB7QM
+        wN4j1FTX+8eEHQCA==
+Received: from alsa1.suse.de (alsa1.suse.de [10.160.4.42])
+        by relay2.suse.de (Postfix) with ESMTP id B17A4A3B81;
+        Thu, 18 Nov 2021 13:32:07 +0000 (UTC)
+Date:   Thu, 18 Nov 2021 14:32:07 +0100
+Message-ID: <s5hzgq1io88.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     Sameer Pujar <spujar@nvidia.com>
+Cc:     <broonie@kernel.org>, <lgirdwood@gmail.com>, <perex@perex.cz>,
+        <tiwai@suse.com>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <alsa-devel@alsa-project.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 12/16] ASoC: tegra: Fix kcontrol put callback in MVC
+In-Reply-To: <1637219231-406-13-git-send-email-spujar@nvidia.com>
+References: <1637219231-406-1-git-send-email-spujar@nvidia.com>
+        <1637219231-406-13-git-send-email-spujar@nvidia.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/25.3
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Changcheng Deng <deng.changcheng@zte.com.cn>
+On Thu, 18 Nov 2021 08:07:07 +0100,
+Sameer Pujar wrote:
+> 
+> The kcontrol put callback is expected to return 1 when there is change
+> in HW or when the update is acknowledged by driver. This would ensure
+> that change notifications are sent to subscribed applications. Filter
+> out duplicate updates in MVC driver.
+> 
+> Fixes: e539891f9687 ("ASoC: tegra: Add Tegra210 based MVC driver")
+> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
+> Suggested-by: Jaroslav Kysela <perex@perex.cz>
+> Suggested-by: Mark Brown <broonie@kernel.org>
+> ---
+>  sound/soc/tegra/tegra210_mvc.c | 22 ++++++++++++++++++----
+>  1 file changed, 18 insertions(+), 4 deletions(-)
+> 
+> diff --git a/sound/soc/tegra/tegra210_mvc.c b/sound/soc/tegra/tegra210_mvc.c
+> index b7e3170..85b1558 100644
+> --- a/sound/soc/tegra/tegra210_mvc.c
+> +++ b/sound/soc/tegra/tegra210_mvc.c
+> @@ -136,7 +136,7 @@ static int tegra210_mvc_put_mute(struct snd_kcontrol *kcontrol,
+>  	struct snd_soc_component *cmpnt = snd_soc_kcontrol_component(kcontrol);
+>  	struct tegra210_mvc *mvc = snd_soc_component_get_drvdata(cmpnt);
+>  	unsigned int value;
+> -	u8 mute_mask;
+> +	u8 new_mask, old_mask;
+>  	int err;
+>  
+>  	pm_runtime_get_sync(cmpnt->dev);
+> @@ -148,11 +148,19 @@ static int tegra210_mvc_put_mute(struct snd_kcontrol *kcontrol,
+>  	if (err < 0)
+>  		goto end;
+>  
+> -	mute_mask = ucontrol->value.integer.value[0];
+> +	regmap_read(mvc->regmap, TEGRA210_MVC_CTRL, &value);
+> +
+> +	old_mask = (value >> TEGRA210_MVC_MUTE_SHIFT) & TEGRA210_MUTE_MASK_EN;
+> +	new_mask = ucontrol->value.integer.value[0];
+> +
+> +	if (new_mask == old_mask) {
+> +		err = 0;
+> +		goto end;
+> +	}
+>  
+>  	err = regmap_update_bits(mvc->regmap, mc->reg,
+>  				 TEGRA210_MVC_MUTE_MASK,
+> -				 mute_mask << TEGRA210_MVC_MUTE_SHIFT);
+> +				 new_mask << TEGRA210_MVC_MUTE_SHIFT);
 
-do_div() does a 64-by-32 division. Here the divisor is an unsigned long
-which on some platforms is 64 bit wide. So use div64_ul instead of do_div
-to avoid a possible truncation.
+I guess this test-and-update procedure can be simplified with
+regmap_update_bits_check().
 
-Reported-by: Zeal Robot <zealci@zte.com.cn>
-Signed-off-by: Changcheng Deng <deng.changcheng@zte.com.cn>
----
- drivers/clk/tegra/clk-utils.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/tegra/clk-utils.c b/drivers/clk/tegra/clk-utils.c
-index 1a5daae4e501..12658add9dd7 100644
---- a/drivers/clk/tegra/clk-utils.c
-+++ b/drivers/clk/tegra/clk-utils.c
-@@ -26,7 +26,7 @@ int div_frac_get(unsigned long rate, unsigned parent_rate, u8 width,
- 	if (flags & TEGRA_DIVIDER_ROUND_UP)
- 		divider_ux1 += rate - 1;
- 
--	do_div(divider_ux1, rate);
-+	divider_ux1 = div64_ul(divider_ux1, rate);
- 
- 	if (flags & TEGRA_DIVIDER_INT)
- 		divider_ux1 *= mul;
--- 
-2.25.1
+thanks,
 
+Takashi
