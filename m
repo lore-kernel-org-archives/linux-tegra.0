@@ -2,132 +2,166 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7B87C433F5
-	for <linux-tegra@archiver.kernel.org>; Wed, 17 Nov 2021 18:21:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71319C433F5
+	for <linux-tegra@archiver.kernel.org>; Thu, 18 Nov 2021 07:07:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AD171630EF
-	for <linux-tegra@archiver.kernel.org>; Wed, 17 Nov 2021 18:21:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4839661AA2
+	for <linux-tegra@archiver.kernel.org>; Thu, 18 Nov 2021 07:07:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239948AbhKQSYS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 17 Nov 2021 13:24:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54390 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239940AbhKQSYR (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 17 Nov 2021 13:24:17 -0500
-Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBC5DC061570
-        for <linux-tegra@vger.kernel.org>; Wed, 17 Nov 2021 10:21:18 -0800 (PST)
-Received: by mail-lf1-x12f.google.com with SMTP id u3so12816877lfl.2
-        for <linux-tegra@vger.kernel.org>; Wed, 17 Nov 2021 10:21:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=rxZZyaqSeECbHShUU1e6nyZolvCataFx7XMR5EnugzQ=;
-        b=nV6v3kvHfDOsEHa//unuk7hKY+T8Ur2ySWyOBtNUwXxGo0Q+OZS2LIzQDzIbLzJ+Dm
-         j/dOowu1LlkmuceMaozN0Jwv9xLst7l/Paoe/ND/GUMSezAzhHMjzKwEGCXqcT1kStLQ
-         nnRJvjqZWtSNg4jDeQydDlmuCmtoZVNmVrCT1u4hJ6hlqfx8Ki4rUqp1dxQgiE7elSfH
-         CDRRP8Lr/nS2+RawPguXhxIfRYQZ2ITy8MaFmJAlQfOk0e8+kdpdWprwhyMwJtFK32Ss
-         aD8T4mLfBwvcw2mGvQVIB52ntFSDqcarxp8kHMzHD4um+7z7u+2np3tCbrnDO6vbgEO3
-         T2xg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rxZZyaqSeECbHShUU1e6nyZolvCataFx7XMR5EnugzQ=;
-        b=ugKV1wEXrI4mTpbvWuuDJadrEnRYnF0L4cHBNBXrEPiKGrKZiZBzcrQQEhlVoKloRi
-         KIGEzkwt2xVbM20S3eX4W2XVMdBVKX8goX9IU1/fH5MdL/leOc8DxFUa4WqgXD41+/cC
-         VDJRPA6L+kYpOyVxUz3h+reA3yc3Yjs8C24oZZGvf9CkchAS5O1P2Kh6PR5mAZh08/Iu
-         Ym3SnTMrsn5REUldFtTMrS0nzbMQA9EUI7AlxnE9phqkGB/Nyo68L9XqL2GbMq2fGXO7
-         ZZOi+qLjawEChx7GRJFMvExyiAce2Bt/3PROdvbc2s+oSc/+UWUURA9f4GweqR/0e2Ic
-         uVOA==
-X-Gm-Message-State: AOAM533M55htVLs0Ko2ygybBIgsClwjUtwojvL6a/EhS2snSfxMeJiWD
-        l3ZwmN71vqsGxxjtS8NPtRgDw80jVD8idO4bT+5/tA==
-X-Google-Smtp-Source: ABdhPJyFikjXXqzOj6YkMgayYjCdOOLM33cYMaMMto7XQuyQf9aixUnlVx2PnbTYswd4ixaLlpqH/pKdJwSf4lvJCf0=
-X-Received: by 2002:a05:6512:3b9c:: with SMTP id g28mr17505579lfv.651.1637173276868;
- Wed, 17 Nov 2021 10:21:16 -0800 (PST)
+        id S243545AbhKRHKb (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 18 Nov 2021 02:10:31 -0500
+Received: from mail-dm6nam10on2082.outbound.protection.outlook.com ([40.107.93.82]:47040
+        "EHLO NAM10-DM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S231443AbhKRHK3 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 18 Nov 2021 02:10:29 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=mV09UQ5gwwy9Aff1LKDZKNFqrZbwOWzXwovEno5tMXEhSy+Y5bwIh0sGPTSp/RTtDsQHYwjSc354bdhZCkM9/6kPnr0JrVfEPFjw03fCgB6cv2cORcoIoChDcn+IORSi01kDtJcZAlCdt+ZBLdc52xMuWN/GeKvc/DOVw0EYZcslMQWkxUnEtZHkpUsQWxLJVRRagoo2yb2XvzOm9YmIDb/bssdchvCGXL4LtOAZXip8KKgsu03Xfs0VURejUmRUOwg8FgTi2GpuPf3q5us1SpLaPxPdvixlc+YxExxzxz+AWxdMS8KQhljAm7QTuCsyInduoQO5vXsgojAPGtHylg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Kw3WGDiN6C5GEm48Zh9wz4VUJhjoF5GHIss6atSxtQc=;
+ b=BUWj/LktWL3U7Z3taQRgY52yP/fddLa91xJ7r2ixYbi5hvPhDTa7MC63sMltyE/tvFDRfeuyAEs6CipAplNc+LOOJhyJcMSa5fJc+gFEfR+JxT+JfwO/y+slPp175rqIahhzasjHwVwQYYQ0oKfw2YpmegsgUXycOsRVWy29GT+EpC0TmzM3xWctWacle3EUhZ1z3ua2GTg11FR2t1hWepKEZCiDEczc35WwJ8awD/LeK6+11f7dkR2VywzvQz/i1wb7u7EhJEvRiasOZcV5MrisO4+U8sxEmTPS+24L7KmRPlqUvhrue3E7UC/xU6w65HqV6u/1FMxioizJSilCsA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.112.32) smtp.rcpttodomain=alsa-project.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Kw3WGDiN6C5GEm48Zh9wz4VUJhjoF5GHIss6atSxtQc=;
+ b=PIQbCXKAsf25ZImrPjXj6Vax9rRSe5TU3SeQFrqqef9rL/tSbkkhfXAtKVXGgBTtiB1ANhXENk5VFO3w0AChLoSMgbsJ0gFTCqd/uulhApEL0wjW0Apytu7A2vCV6JKBYgMJfDjrv8jvI8g38F2R08JrGXah7/w61ILYkQeQP7cXNbHmVO87+HLaQ89JZCgc7v5LNN2oHGkeEdV6JIYx5lvTnplFfBd98dMvC0+o1EdctjHJQb9pfzcbou0jzqC33ZAoZi5JTxVvZCy6nkjbS7DzZHF0D997bseS3xlv+bcbgt13bn3c+QnuBzQwCoeFERzC2CJbl+/i1ZvzT1Ov9A==
+Received: from BN9PR03CA0809.namprd03.prod.outlook.com (2603:10b6:408:13f::34)
+ by CH2PR12MB3734.namprd12.prod.outlook.com (2603:10b6:610:2a::31) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4713.19; Thu, 18 Nov
+ 2021 07:07:26 +0000
+Received: from BN8NAM11FT046.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:408:13f:cafe::c5) by BN9PR03CA0809.outlook.office365.com
+ (2603:10b6:408:13f::34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4690.27 via Frontend
+ Transport; Thu, 18 Nov 2021 07:07:26 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.32)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.112.32 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.112.32; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (216.228.112.32) by
+ BN8NAM11FT046.mail.protection.outlook.com (10.13.177.127) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.4713.20 via Frontend Transport; Thu, 18 Nov 2021 07:07:25 +0000
+Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL109.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Wed, 17 Nov
+ 2021 23:07:24 -0800
+Received: from audio.nvidia.com (172.20.187.5) by mail.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server id 15.0.1497.18 via Frontend
+ Transport; Thu, 18 Nov 2021 07:07:22 +0000
+From:   Sameer Pujar <spujar@nvidia.com>
+To:     <broonie@kernel.org>, <lgirdwood@gmail.com>, <perex@perex.cz>,
+        <tiwai@suse.com>
+CC:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <alsa-devel@alsa-project.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Sameer Pujar <spujar@nvidia.com>
+Subject: [PATCH v3 00/16] Kcontrol get/put cleanup in Tegra drivers
+Date:   Thu, 18 Nov 2021 12:36:55 +0530
+Message-ID: <1637219231-406-1-git-send-email-spujar@nvidia.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-References: <20211021214500.2388146-1-nathan@kernel.org>
-In-Reply-To: <20211021214500.2388146-1-nathan@kernel.org>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Wed, 17 Nov 2021 10:21:05 -0800
-Message-ID: <CAKwvOd=Y50SvJiu=cxtEoogxJabdREh2tEX+wYn8FWs0si8vSg@mail.gmail.com>
-Subject: Re: [PATCH] soc/tegra: fuse: Fix bitwise vs. logical OR warning
-To:     Nathan Chancellor <nathan@kernel.org>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        llvm@lists.linux.dev, Anders Roxell <anders.roxell@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: ffd469ee-dc3e-49db-3f20-08d9aa621326
+X-MS-TrafficTypeDiagnostic: CH2PR12MB3734:
+X-Microsoft-Antispam-PRVS: <CH2PR12MB3734197C95EC9BDD26136171A79B9@CH2PR12MB3734.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:8882;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: PRXjhyXTuA9+eRAcbPTNH/pm2h8aIqsVqBhp/5eqSXeJT0GaxtCBQR+GmJK6iOXpqqwSyMsQtVEENf1mJhd47AYaTouevI3WxKkU0IJr4u//PNkJX8fAwIQO7xbMU1xPjJuXbni2wpMC3J0YFS6UVCj7Z0Nij7jvC5sS7eYXbraow0QjiPZQ6qZriMYWYvXO43fC0eHSgSzaZOVdo42YR7hrQqOgaeeO2EZLVrB9oNvDYz62ASnyZb8IfqDLaNmGUcwNC8ODEgqlv1c6ibYkJ2aq/+0Lq7FOdKkK/uIDDGOqNIQc1c+yiSkou4mMlkAmMUNinKiQmPm2WSPjv7Rv6h6TiIZpd0MNpUcZNHzC24MBZlD6KF8C0b+KHDx5GcdEUWNvZ2ozbaAyWYk/SXZ4hnCIAfn7BlxVwiZAV1pYPUTwdnHFMZ7gCZLpoGTmI0gs03jEO47uvHifNMWHffZt+aTitVBpowazifRE0mtgSQTJbqlhTP6Vej46AyxZHG9eOPFpuk/TK3CsL28YhjeGnXnpUswkUCKmY8mWhsdYyGfas+zlJKR6FhEtc1RhlunTjYwEOII5ifxW+iGxB+9tgZLnJlqLU2HofKwXxtcPJ8T4DnZTnHtN2buYbf79f0Gy2OolfKw7svBiR/4LMPFfGyc05+kzdsa6n093yFiumb1xCJJ81Xiqvc4mzIGKi2CyGOzKkCeJAFjhR83Gs8Gi5nmD2rqPlq1751OMKLCiJ1NThDUYGLOLVmjc7gd/XZ6pMNUW/hPKIqxdltmhubdgcFp65SL2e4eyX6Oq67Lec3A=
+X-Forefront-Antispam-Report: CIP:216.228.112.32;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid01.nvidia.com;CAT:NONE;SFS:(4636009)(46966006)(36840700001)(26005)(5660300002)(8676002)(2906002)(107886003)(6666004)(8936002)(36756003)(2616005)(82310400003)(426003)(7696005)(4326008)(316002)(186003)(336012)(86362001)(356005)(47076005)(7636003)(110136005)(508600001)(70586007)(54906003)(966005)(83380400001)(36860700001)(70206006);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Nov 2021 07:07:25.2807
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: ffd469ee-dc3e-49db-3f20-08d9aa621326
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.32];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT046.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB3734
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-+ Anders (combining
-https://lore.kernel.org/all/20211117142115.694316-1-anders.roxell@linaro.org/).
+There are two cleanups in the series:
+ 1. Use correct value type for enum controls. This is suggested by
+    Takashi during review of v2.
 
-On Thu, Oct 21, 2021 at 2:45 PM Nathan Chancellor <nathan@kernel.org> wrote:
->
-> A new warning in clang points out two instances where boolean
-> expressions are being used with a bitwise OR instead of logical OR:
->
-> drivers/soc/tegra/fuse/speedo-tegra20.c:72:9: warning: use of bitwise '|' with boolean operands [-Wbitwise-instead-of-logical]
->                 reg = tegra_fuse_read_spare(i) |
->                       ^~~~~~~~~~~~~~~~~~~~~~~~~~
->                                                ||
-> drivers/soc/tegra/fuse/speedo-tegra20.c:72:9: note: cast one or both operands to int to silence this warning
-> drivers/soc/tegra/fuse/speedo-tegra20.c:87:9: warning: use of bitwise '|' with boolean operands [-Wbitwise-instead-of-logical]
->                 reg = tegra_fuse_read_spare(i) |
->                       ^~~~~~~~~~~~~~~~~~~~~~~~~~
->                                                ||
-> drivers/soc/tegra/fuse/speedo-tegra20.c:87:9: note: cast one or both operands to int to silence this warning
-> 2 warnings generated.
->
-> The motivation for the warning is that logical operations short circuit
-> while bitwise operations do not. In this case, it does not seem like
-> short circuiting is harmful so implement the suggested fix of changing
-> to a logical operation to fix the warning.
->
-> Link: https://github.com/ClangBuiltLinux/linux/issues/1488
-> Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+ 2. This series fixes kcontrol put callback in some of the Tegra drivers
+    which are used on platforms based on Tegra210 and later. The callback
+    is expected to return 1 whenever the HW update is done.
 
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-Fixes: 25cd5a391478 ("ARM: tegra: Add speedo-based process identification")
+    This idea is suggested by Jaroslav. Similar suggestion came from
+    Mark during review of series [0] and drivers under this were updated
+    to return 1, but missed to take care of duplicate updates. This series
+    updates all concerned drivers to return proper values and duplicate
+    updates are filtered out.
 
-> ---
->  drivers/soc/tegra/fuse/speedo-tegra20.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/soc/tegra/fuse/speedo-tegra20.c b/drivers/soc/tegra/fuse/speedo-tegra20.c
-> index 2546bddbab93..4984246605ae 100644
-> --- a/drivers/soc/tegra/fuse/speedo-tegra20.c
-> +++ b/drivers/soc/tegra/fuse/speedo-tegra20.c
-> @@ -69,7 +69,7 @@ void __init tegra20_init_speedo_data(struct tegra_sku_info *sku_info)
->
->         val = 0;
->         for (i = CPU_SPEEDO_MSBIT; i >= CPU_SPEEDO_LSBIT; i--) {
-> -               reg = tegra_fuse_read_spare(i) |
-> +               reg = tegra_fuse_read_spare(i) ||
->                         tegra_fuse_read_spare(i + CPU_SPEEDO_REDUND_OFFS);
->                 val = (val << 1) | (reg & 0x1);
->         }
-> @@ -84,7 +84,7 @@ void __init tegra20_init_speedo_data(struct tegra_sku_info *sku_info)
->
->         val = 0;
->         for (i = SOC_SPEEDO_MSBIT; i >= SOC_SPEEDO_LSBIT; i--) {
-> -               reg = tegra_fuse_read_spare(i) |
-> +               reg = tegra_fuse_read_spare(i) ||
->                         tegra_fuse_read_spare(i + SOC_SPEEDO_REDUND_OFFS);
->                 val = (val << 1) | (reg & 0x1);
->         }
->
-> base-commit: 519d81956ee277b4419c723adfb154603c2565ba
-> --
-> 2.33.1.637.gf443b226ca
->
+I have added 'Suggested-by" tags accordingly.
 
+[0] https://lore.kernel.org/linux-arm-kernel/20210913142307.GF4283@sirena.org.uk/
+
+Changelog
+=========
+ v2->v3:
+ -------
+   * Add fixes related to wrong value type as suggested by Takashi.
+     Relevant drivers are updated as part of it.
+
+   * Use separate get/put callbacks for each mixer control. The common
+     part is pushed to separate function wherever applicable, thus
+     removing usage of strstr() calls. The return values are fixed
+     as suggested.
+
+
+ v1->v2:
+ -------
+   * ADMAIF, I2S, DMIC and DSPK drivers updated to take care of
+     duplicate updates.
+   * Similarly new patches are added for AHUB, MVC, SFC, AMX, ADX
+     and Mixer drivers.
+
+Sameer Pujar (16):
+  ASoC: tegra: Fix wrong value type in ADMAIF
+  ASoC: tegra: Fix wrong value type in I2S
+  ASoC: tegra: Fix wrong value type in DMIC
+  ASoC: tegra: Fix wrong value type in DSPK
+  ASoC: tegra: Fix wrong value type in SFC
+  ASoC: tegra: Fix wrong value type in MVC
+  ASoC: tegra: Fix kcontrol put callback in ADMAIF
+  ASoC: tegra: Fix kcontrol put callback in I2S
+  ASoC: tegra: Fix kcontrol put callback in DMIC
+  ASoC: tegra: Fix kcontrol put callback in DSPK
+  ASoC: tegra: Fix kcontrol put callback in AHUB
+  ASoC: tegra: Fix kcontrol put callback in MVC
+  ASoC: tegra: Fix kcontrol put callback in SFC
+  ASoC: tegra: Fix kcontrol put callback in AMX
+  ASoC: tegra: Fix kcontrol put callback in ADX
+  ASoC: tegra: Fix kcontrol put callback in Mixer
+
+ sound/soc/tegra/tegra186_dspk.c   | 181 ++++++++++++++++++-----
+ sound/soc/tegra/tegra210_admaif.c | 140 ++++++++++++++----
+ sound/soc/tegra/tegra210_adx.c    |   3 +
+ sound/soc/tegra/tegra210_ahub.c   |  11 +-
+ sound/soc/tegra/tegra210_amx.c    |   3 +
+ sound/soc/tegra/tegra210_dmic.c   | 184 +++++++++++++++++++-----
+ sound/soc/tegra/tegra210_i2s.c    | 296 +++++++++++++++++++++++++++++---------
+ sound/soc/tegra/tegra210_mixer.c  |  26 +++-
+ sound/soc/tegra/tegra210_mvc.c    |  30 ++--
+ sound/soc/tegra/tegra210_sfc.c    | 123 ++++++++++++----
+ 10 files changed, 780 insertions(+), 217 deletions(-)
 
 -- 
-Thanks,
-~Nick Desaulniers
+2.7.4
+
