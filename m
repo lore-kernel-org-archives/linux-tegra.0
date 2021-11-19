@@ -2,63 +2,63 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED60DC433F5
-	for <linux-tegra@archiver.kernel.org>; Fri, 19 Nov 2021 14:39:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 970DAC433F5
+	for <linux-tegra@archiver.kernel.org>; Fri, 19 Nov 2021 14:39:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CA4FB60EE4
-	for <linux-tegra@archiver.kernel.org>; Fri, 19 Nov 2021 14:39:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7E40361265
+	for <linux-tegra@archiver.kernel.org>; Fri, 19 Nov 2021 14:39:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235966AbhKSOmG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 19 Nov 2021 09:42:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33448 "EHLO
+        id S235972AbhKSOmJ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 19 Nov 2021 09:42:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33466 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231646AbhKSOmG (ORCPT
+        with ESMTP id S231646AbhKSOmJ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 19 Nov 2021 09:42:06 -0500
-Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95EF7C061574;
-        Fri, 19 Nov 2021 06:39:04 -0800 (PST)
-Received: by mail-wm1-x32f.google.com with SMTP id y196so8708220wmc.3;
-        Fri, 19 Nov 2021 06:39:04 -0800 (PST)
+        Fri, 19 Nov 2021 09:42:09 -0500
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 328E7C061574;
+        Fri, 19 Nov 2021 06:39:07 -0800 (PST)
+Received: by mail-wr1-x436.google.com with SMTP id t30so18485082wra.10;
+        Fri, 19 Nov 2021 06:39:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=CQxCnPcAPbozA2Unzyb1BDSDrGy+z8YGUBHGD0vjHKA=;
-        b=Gci5VyVHTqf1lB328y24FBP7t8yi7uP18OIw71G4rDqcHzQzV47zsBtjZ3hw+kDJWf
-         pC/FwJsNs5Vat0o+l5ks74qdZtTkKf/Pl1xIIdqpop6esB/mPyrGb2pbQH8ngNlxUWjP
-         mBHbRUazjBoDg+FRDmyh25qnfxU0Y+PgfPGvtEkwHf3QWTWDEgSktp6P6LYpJNk7qVBn
-         4WR903htchz63AgSpuUAw9gQOM8aAr4X7/JVvOpv/TVp/NEmNY5IAIycFPDF50i1MvFJ
-         1JL6tU+JZw2vdt/IedLEBVIAAwlEhXUt+2aiPoP9SscSiHR6UdMTTEa9T7wC0+O4B9zw
-         maRA==
+        bh=09NuwAV48ntRNAePO8qE+ZrwRqhuYbMQxZq5zKa4Rxs=;
+        b=kPhthXKwt9JQoqZrQ+HY6PYO6PUh9qpvQ1ZwTAyi7Vx/8z2YN8T3ael6L3wQJIP7CG
+         PXm9+EaB6BDShWK56WFSOP358tPQZwdLPoICcf4bwLQytGZ/haQEJfZGO42G1++SGkvm
+         N9aqZVy0TrTAi4QyeJPExCSJO0QTi5Ygty26FAXYUnDaEiVe1S486D8TKFS/cLXduRs7
+         dzsWiCTeNrGTDiHOuONe6kLZ/1nNHYGX9dO9Uho31WulNVk5duAJpRTfSo1hXiNETZu8
+         ijyjvYY9oSNS1YQcY8nvUr9iGvYpyzwl+JUc1mEhW80ZU/b13NkGDS3/MTW7xIniLFwa
+         bjxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=CQxCnPcAPbozA2Unzyb1BDSDrGy+z8YGUBHGD0vjHKA=;
-        b=FaDESd20d85ubgVSeGXKLoNFOjtZ8J5FA/U6KjYCq2khBJCHSeEySFmJ8pOPU2FP9i
-         6zCSFJfQqm6hvzIZzXtT8RDcaxv+PiY9N09m6eNMnW+xGyMat5dFDrbh36IUgwIfn93e
-         8iFAP7LXie6hZPnbvvyGiSir5vbifO2xCIlci7Z8iwjzyObQDoysEGjC3JVe2JOzJung
-         WVl5J9tksnDUL9lh0GEMMaK2hS+T/3to0cxX9SRpBNf1PzOC+6P+8iWAottt9tkM7aHT
-         vebe72L5Fe8OFBHFWhPNmKDAkt1x5KxuRII9jS3juhR239Gei6RcBADckRxn9J0qid9i
-         tijg==
-X-Gm-Message-State: AOAM532fijRxY8JTPOvXgwSdq63p9nKQaNER5Avm15KlKtReQNKtsPhd
-        Hv0uYuEP4C+NB+OMM/bZJa4=
-X-Google-Smtp-Source: ABdhPJxhdNtCfz2zPSLVc8pZFLWoFagwwEYOpBucfpd3lI7H7Ty//JolA4XHo2ZA/dI4WFlD7m7sRA==
-X-Received: by 2002:a1c:4d15:: with SMTP id o21mr76615wmh.171.1637332743117;
-        Fri, 19 Nov 2021 06:39:03 -0800 (PST)
+        bh=09NuwAV48ntRNAePO8qE+ZrwRqhuYbMQxZq5zKa4Rxs=;
+        b=b+0MxYEIq3ma7NdABomWPZxPOSUwmZYBVS8BFjVJghDHbmZtu/Ug1yCiWegrYQKrY3
+         4Q/aLU/QPAr+wqCAXRMUabRDquSh+zKP+XiHWg1/JQqx2OlOomQIiFxVJWQ0rq74+DvT
+         HGlpkg2jSG+9PVExFVkShXhM1j3Qhe143FXadBLPXrEPeV0exOMgrUC63eOxvZ2Hy8YV
+         3W1BOjmUgLx0cRHB3aL3AOEHpr8VJVwUvm6xQOllRuxVa5I+CLiAmK0TYiOTvonzgGhb
+         u/PTfKlFr02MQYocjDNhHUXgDeEgr+gwaqU7G9ejw+5RsRjB6lozLJDUpv8WwBwglBOX
+         bBmQ==
+X-Gm-Message-State: AOAM532486QqHfRW4oV8Gbv7yPNs/w9LpoYpTHg3b6IRRs4l51SETU+W
+        /z7MrOp6CzUjjmVm1MP5Mw5sR2E1YfkYaA==
+X-Google-Smtp-Source: ABdhPJxqP27JjRsmoFa9GF9wMTI5FVcpWFn8VCgD9bL7fnCHC54GDKyTtK7WpjNcZ7BympZs1zVGTA==
+X-Received: by 2002:a5d:522e:: with SMTP id i14mr8040608wra.43.1637332745705;
+        Fri, 19 Nov 2021 06:39:05 -0800 (PST)
 Received: from localhost ([193.209.96.43])
-        by smtp.gmail.com with ESMTPSA id p12sm3208028wro.33.2021.11.19.06.39.02
+        by smtp.gmail.com with ESMTPSA id d1sm2996979wrz.92.2021.11.19.06.39.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Nov 2021 06:39:02 -0800 (PST)
+        Fri, 19 Nov 2021 06:39:04 -0800 (PST)
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Rob Herring <robh+dt@kernel.org>
 Cc:     Jon Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
         linux-tegra@vger.kernel.org
-Subject: [PATCH v2 07/16] dt-bindings: fuse: tegra: Convert to json-schema
-Date:   Fri, 19 Nov 2021 15:38:30 +0100
-Message-Id: <20211119143839.1950739-8-thierry.reding@gmail.com>
+Subject: [PATCH v2 08/16] dt-bindings: fuse: tegra: Document Tegra234 FUSE
+Date:   Fri, 19 Nov 2021 15:38:31 +0100
+Message-Id: <20211119143839.1950739-9-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.33.1
 In-Reply-To: <20211119143839.1950739-1-thierry.reding@gmail.com>
 References: <20211119143839.1950739-1-thierry.reding@gmail.com>
@@ -70,155 +70,25 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-Convert the NVIDIA Tegra FUSE bindings from the free-form text format to
-json-schema.
+Add the compatible string for the FUSE block found on the Tegra234 SoC.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
-Changes in v2:
-- add missing additionalProperties: false
+ Documentation/devicetree/bindings/fuse/nvidia,tegra20-fuse.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
- .../bindings/fuse/nvidia,tegra20-fuse.txt     | 42 ----------
- .../bindings/fuse/nvidia,tegra20-fuse.yaml    | 81 +++++++++++++++++++
- 2 files changed, 81 insertions(+), 42 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/fuse/nvidia,tegra20-fuse.txt
- create mode 100644 Documentation/devicetree/bindings/fuse/nvidia,tegra20-fuse.yaml
-
-diff --git a/Documentation/devicetree/bindings/fuse/nvidia,tegra20-fuse.txt b/Documentation/devicetree/bindings/fuse/nvidia,tegra20-fuse.txt
-deleted file mode 100644
-index b109911669e4..000000000000
---- a/Documentation/devicetree/bindings/fuse/nvidia,tegra20-fuse.txt
-+++ /dev/null
-@@ -1,42 +0,0 @@
--NVIDIA Tegra20/Tegra30/Tegr114/Tegra124 fuse block.
--
--Required properties:
--- compatible : For Tegra20, must contain "nvidia,tegra20-efuse".  For Tegra30,
--  must contain "nvidia,tegra30-efuse".  For Tegra114, must contain
--  "nvidia,tegra114-efuse".  For Tegra124, must contain "nvidia,tegra124-efuse".
--  For Tegra132 must contain "nvidia,tegra132-efuse", "nvidia,tegra124-efuse".
--  For Tegra210 must contain "nvidia,tegra210-efuse". For Tegra186 must contain
--  "nvidia,tegra186-efuse". For Tegra194 must contain "nvidia,tegra194-efuse".
--  For Tegra234 must contain "nvidia,tegra234-efuse".
--  Details:
--  nvidia,tegra20-efuse: Tegra20 requires using APB DMA to read the fuse data
--	due to a hardware bug. Tegra20 also lacks certain information which is
--	available in later generations such as fab code, lot code, wafer id,..
--  nvidia,tegra30-efuse, nvidia,tegra114-efuse and nvidia,tegra124-efuse:
--	The differences between these SoCs are the size of the efuse array,
--	the location of the spare (OEM programmable) bits and the location of
--	the speedo data.
--- reg: Should contain 1 entry: the entry gives the physical address and length
--       of the fuse registers.
--- clocks: Must contain an entry for each entry in clock-names.
--  See ../clocks/clock-bindings.txt for details.
--- clock-names: Must include the following entries:
--  - fuse
--- resets: Must contain an entry for each entry in reset-names.
--  See ../reset/reset.txt for details.
--- reset-names: Must include the following entries:
-- - fuse
--
--Example:
--
--	fuse@7000f800 {
--		compatible = "nvidia,tegra20-efuse";
--		reg = <0x7000f800 0x400>,
--		      <0x70000000 0x400>;
--		clocks = <&tegra_car TEGRA20_CLK_FUSE>;
--		clock-names = "fuse";
--		resets = <&tegra_car 39>;
--		reset-names = "fuse";
--	};
--
--
 diff --git a/Documentation/devicetree/bindings/fuse/nvidia,tegra20-fuse.yaml b/Documentation/devicetree/bindings/fuse/nvidia,tegra20-fuse.yaml
-new file mode 100644
-index 000000000000..8d608e722ab2
---- /dev/null
+index 8d608e722ab2..ce1056174778 100644
+--- a/Documentation/devicetree/bindings/fuse/nvidia,tegra20-fuse.yaml
 +++ b/Documentation/devicetree/bindings/fuse/nvidia,tegra20-fuse.yaml
-@@ -0,0 +1,81 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/fuse/nvidia,tegra20-fuse.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: NVIDIA Tegra FUSE block
-+
-+maintainers:
-+  - Thierry Reding <thierry.reding@gmail.com>
-+  - Jon Hunter <jonathanh@nvidia.com>
-+
-+properties:
-+  compatible:
-+    oneOf:
-+      - enum:
-+          - nvidia,tegra20-efuse
-+          - nvidia,tegra30-efuse
-+          - nvidia,tegra114-efuse
-+          - nvidia,tegra124-efuse
-+          - nvidia,tegra210-efuse
-+          - nvidia,tegra186-efuse
-+          - nvidia,tegra194-efuse
-+
-+      - items:
-+          - const: nvidia,tegra132-efuse
-+          - const: nvidia,tegra124-efuse
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    maxItems: 1
-+
-+  clock-names:
-+    items:
-+      - const: fuse
-+
-+  resets:
-+    maxItems: 1
-+
-+  reset-names:
-+    items:
-+      - const: fuse
-+
-+additionalProperties: false
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - clock-names
-+
-+if:
-+  properties:
-+    compatible:
-+      contains:
-+        enum:
-+          - nvidia,tegra20-efuse
-+          - nvidia,tegra30-efuse
-+          - nvidia,tegra114-efuse
-+          - nvidia,tegra124-efuse
-+          - nvidia,tegra132-efuse
-+          - nvidia,tegra210-efuse
-+then:
-+  required:
-+    - resets
-+    - reset-names
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/tegra20-car.h>
-+
-+    fuse@7000f800 {
-+        compatible = "nvidia,tegra20-efuse";
-+        reg = <0x7000f800 0x400>;
-+        clocks = <&tegra_car TEGRA20_CLK_FUSE>;
-+        clock-names = "fuse";
-+        resets = <&tegra_car 39>;
-+        reset-names = "fuse";
-+    };
+@@ -21,6 +21,7 @@ properties:
+           - nvidia,tegra210-efuse
+           - nvidia,tegra186-efuse
+           - nvidia,tegra194-efuse
++          - nvidia,tegra234-efuse
+ 
+       - items:
+           - const: nvidia,tegra132-efuse
 -- 
 2.33.1
 
