@@ -2,63 +2,63 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 970DAC433F5
-	for <linux-tegra@archiver.kernel.org>; Fri, 19 Nov 2021 14:39:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FAFBC433F5
+	for <linux-tegra@archiver.kernel.org>; Fri, 19 Nov 2021 14:39:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7E40361265
-	for <linux-tegra@archiver.kernel.org>; Fri, 19 Nov 2021 14:39:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8B5B1613A3
+	for <linux-tegra@archiver.kernel.org>; Fri, 19 Nov 2021 14:39:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235972AbhKSOmJ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 19 Nov 2021 09:42:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33466 "EHLO
+        id S235974AbhKSOmL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 19 Nov 2021 09:42:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33482 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231646AbhKSOmJ (ORCPT
+        with ESMTP id S231646AbhKSOmL (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 19 Nov 2021 09:42:09 -0500
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 328E7C061574;
-        Fri, 19 Nov 2021 06:39:07 -0800 (PST)
-Received: by mail-wr1-x436.google.com with SMTP id t30so18485082wra.10;
-        Fri, 19 Nov 2021 06:39:07 -0800 (PST)
+        Fri, 19 Nov 2021 09:42:11 -0500
+Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D0ACC061748;
+        Fri, 19 Nov 2021 06:39:09 -0800 (PST)
+Received: by mail-wr1-x42c.google.com with SMTP id b12so18529960wrh.4;
+        Fri, 19 Nov 2021 06:39:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=09NuwAV48ntRNAePO8qE+ZrwRqhuYbMQxZq5zKa4Rxs=;
-        b=kPhthXKwt9JQoqZrQ+HY6PYO6PUh9qpvQ1ZwTAyi7Vx/8z2YN8T3ael6L3wQJIP7CG
-         PXm9+EaB6BDShWK56WFSOP358tPQZwdLPoICcf4bwLQytGZ/haQEJfZGO42G1++SGkvm
-         N9aqZVy0TrTAi4QyeJPExCSJO0QTi5Ygty26FAXYUnDaEiVe1S486D8TKFS/cLXduRs7
-         dzsWiCTeNrGTDiHOuONe6kLZ/1nNHYGX9dO9Uho31WulNVk5duAJpRTfSo1hXiNETZu8
-         ijyjvYY9oSNS1YQcY8nvUr9iGvYpyzwl+JUc1mEhW80ZU/b13NkGDS3/MTW7xIniLFwa
-         bjxQ==
+        bh=jQt3bGvPXR3AJH0Wpc4Hw/qwqDdumuScQ+nidDp9608=;
+        b=kJdlkr7/0xGuBZqPdpB6AUoLVwI1+5hmjBWwFpwYuKCmZyAzOGNSqSnjk96I+S9PZJ
+         ip0FX0OUAJEyYH5e6le1mzSba4jz+kLefESPgqVhy1iy2/lrPU7Z+nOnKqugxoy/FbcS
+         mMrhku/2UCQWbwTD06kXcy0jsUwUvvw2IL73XOtOK+msryL+piBayoBqk4fjxRATv39P
+         S3JVwFpJSC93IwACRL4c1sWzDBZesaZ0zuYxHaJ21cNVH4AN7EC9KHSgYHEkekrfSR75
+         Mg/N9b4qtplmRYJ+6p13ar61ytmzfnfsAYoFKApd0yC6tF7CTkKsG0p91pUYSahcVwg3
+         3vEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=09NuwAV48ntRNAePO8qE+ZrwRqhuYbMQxZq5zKa4Rxs=;
-        b=b+0MxYEIq3ma7NdABomWPZxPOSUwmZYBVS8BFjVJghDHbmZtu/Ug1yCiWegrYQKrY3
-         4Q/aLU/QPAr+wqCAXRMUabRDquSh+zKP+XiHWg1/JQqx2OlOomQIiFxVJWQ0rq74+DvT
-         HGlpkg2jSG+9PVExFVkShXhM1j3Qhe143FXadBLPXrEPeV0exOMgrUC63eOxvZ2Hy8YV
-         3W1BOjmUgLx0cRHB3aL3AOEHpr8VJVwUvm6xQOllRuxVa5I+CLiAmK0TYiOTvonzgGhb
-         u/PTfKlFr02MQYocjDNhHUXgDeEgr+gwaqU7G9ejw+5RsRjB6lozLJDUpv8WwBwglBOX
-         bBmQ==
-X-Gm-Message-State: AOAM532486QqHfRW4oV8Gbv7yPNs/w9LpoYpTHg3b6IRRs4l51SETU+W
-        /z7MrOp6CzUjjmVm1MP5Mw5sR2E1YfkYaA==
-X-Google-Smtp-Source: ABdhPJxqP27JjRsmoFa9GF9wMTI5FVcpWFn8VCgD9bL7fnCHC54GDKyTtK7WpjNcZ7BympZs1zVGTA==
-X-Received: by 2002:a5d:522e:: with SMTP id i14mr8040608wra.43.1637332745705;
-        Fri, 19 Nov 2021 06:39:05 -0800 (PST)
+        bh=jQt3bGvPXR3AJH0Wpc4Hw/qwqDdumuScQ+nidDp9608=;
+        b=EySjo7gEPzt8GswwQM7FHBNNkNxmcLqiqpEW2ZauhrmK8gsqHQN55ps+5rYirVuOai
+         wiaQEuHfAhp0b08LvhPc2L4sZHZX/GJo8rMl3VEKNYpdlICYINnC1r2fnCRVfwXE6/99
+         uI87YL17hkN1jeeupMxlrM4/R2rO8hTRAkoWSA7eRGQQtvZsfZvs8qTFN2pKbw97fJJs
+         LclKkFpBKwHPXpzh1T+SMvUyl7f5IT4/v+lWAwJ+K5DbNTrN1K0fo/Sj+rM5+Ju+gsfX
+         RKjWX135JeFbYk+TvimwGCpvVnKoJHRir3biLkSrGGrc7LikAnIeJChJndTpJ8GmG0T9
+         kgSA==
+X-Gm-Message-State: AOAM5329jjYZaZftwJFcqhb1rmrf495JHRlg/UXKjDDMd81xnbBi6vjT
+        Us5Q9LN9PX9ThJRnDIj4EgXXCwyTjFLvgw==
+X-Google-Smtp-Source: ABdhPJyV02yiQs9fkib5ZsBclMYwhGNrHe9lu0/MEjKpSnSjn9Pa1VVgpWMKEZt+RA+GrqsVgC5OTQ==
+X-Received: by 2002:adf:d20e:: with SMTP id j14mr7904920wrh.220.1637332748044;
+        Fri, 19 Nov 2021 06:39:08 -0800 (PST)
 Received: from localhost ([193.209.96.43])
-        by smtp.gmail.com with ESMTPSA id d1sm2996979wrz.92.2021.11.19.06.39.04
+        by smtp.gmail.com with ESMTPSA id h2sm2999388wrz.23.2021.11.19.06.39.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Nov 2021 06:39:04 -0800 (PST)
+        Fri, 19 Nov 2021 06:39:07 -0800 (PST)
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Rob Herring <robh+dt@kernel.org>
 Cc:     Jon Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
         linux-tegra@vger.kernel.org
-Subject: [PATCH v2 08/16] dt-bindings: fuse: tegra: Document Tegra234 FUSE
-Date:   Fri, 19 Nov 2021 15:38:31 +0100
-Message-Id: <20211119143839.1950739-9-thierry.reding@gmail.com>
+Subject: [PATCH v2 09/16] dt-bindings: mmc: tegra: Document Tegra234 SDHCI
+Date:   Fri, 19 Nov 2021 15:38:32 +0100
+Message-Id: <20211119143839.1950739-10-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.33.1
 In-Reply-To: <20211119143839.1950739-1-thierry.reding@gmail.com>
 References: <20211119143839.1950739-1-thierry.reding@gmail.com>
@@ -70,25 +70,30 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-Add the compatible string for the FUSE block found on the Tegra234 SoC.
+Add the compatible string for the SDHCI block found on the Tegra234 SoC.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- Documentation/devicetree/bindings/fuse/nvidia,tegra20-fuse.yaml | 1 +
- 1 file changed, 1 insertion(+)
+ .../devicetree/bindings/mmc/nvidia,tegra20-sdhci.yaml       | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/fuse/nvidia,tegra20-fuse.yaml b/Documentation/devicetree/bindings/fuse/nvidia,tegra20-fuse.yaml
-index 8d608e722ab2..ce1056174778 100644
---- a/Documentation/devicetree/bindings/fuse/nvidia,tegra20-fuse.yaml
-+++ b/Documentation/devicetree/bindings/fuse/nvidia,tegra20-fuse.yaml
-@@ -21,6 +21,7 @@ properties:
-           - nvidia,tegra210-efuse
-           - nvidia,tegra186-efuse
-           - nvidia,tegra194-efuse
-+          - nvidia,tegra234-efuse
+diff --git a/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.yaml b/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.yaml
+index 1c3b9bbea6b4..a361896323d0 100644
+--- a/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.yaml
++++ b/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.yaml
+@@ -33,6 +33,12 @@ properties:
+           - const: nvidia,tegra132-sdhci
+           - const: nvidia,tegra124-sdhci
  
-       - items:
-           - const: nvidia,tegra132-efuse
++      - items:
++          - enum:
++              - nvidia,tegra194-sdhci
++              - nvidia,tegra234-sdhci
++          - const: nvidia,tegra186-sdhci
++
+   reg:
+     maxItems: 1
+ 
 -- 
 2.33.1
 
