@@ -2,147 +2,99 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9560CC433EF
-	for <linux-tegra@archiver.kernel.org>; Tue, 23 Nov 2021 19:53:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E80E0C433EF
+	for <linux-tegra@archiver.kernel.org>; Tue, 23 Nov 2021 23:01:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234702AbhKWT5D (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 23 Nov 2021 14:57:03 -0500
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:51494
-        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233563AbhKWT5A (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 23 Nov 2021 14:57:00 -0500
-Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com [209.85.208.200])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id A8B2D3FFEC
-        for <linux-tegra@vger.kernel.org>; Tue, 23 Nov 2021 19:53:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1637697231;
-        bh=4Zq6MbMn9LAKCplJdBRxuSWyKxaV4rsKVk4jv6quK5c=;
-        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-         In-Reply-To:Content-Type;
-        b=gnCMy4xpQXoPLkz6J172mbFSDUjqv6YFpogCpfr1BewGuUk75liw8sKOORshx2m+n
-         fjKiIrtN0ZTXx2ZrW+mx1khkicB7FyqgdMUGp3GKUq2fbaD42gtpaHp242uhs1zURF
-         Gk/Di4V6OUUzKZkZmr+uFzjktndVP1o7zcaYTQRHbv1cSboW9QWcvSyrPcwShjkHxg
-         T1Rh2zQvlYABJZASRhV7Kj5Ly8prQSP1nXEncK5yZEJy8sGRBwAraPOVLszGGff5ox
-         Kd0LyND1bPlnoCIRCyBp8kiPxmVRL4WymouCWIBl3Erg3jSVM2Yw2ixVfJnCGqZSXY
-         n9hT1BDtFJq1Q==
-Received: by mail-lj1-f200.google.com with SMTP id q13-20020a2e750d000000b00218c953d0b8so71841ljc.21
-        for <linux-tegra@vger.kernel.org>; Tue, 23 Nov 2021 11:53:51 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=4Zq6MbMn9LAKCplJdBRxuSWyKxaV4rsKVk4jv6quK5c=;
-        b=yd/iLKWexoyACPfUTjRgaCMXtaHgjWqKqurYMA/ibgT9iRm9dlKUnjJ9ZBA75etPOk
-         b4QCx/G7FQs07o0pwgms2MhlbOHKqZee0hSUV1oyCTKGRvHTE8yDnYoqE0zqs5UzCgtN
-         amuO2ERUxej3yHyO56U9zm6mangBWfvniLbZylcv+HD53NxuxuGusq0KzPhRoMXDPpfg
-         BYAcAlylqOddnzhqtSZ7fw8yGba2nYso+LjUEWC957C8uYZNZyNxCWBPH//xbuP36n33
-         IzLGCCQFOJcX3nD5MigUfLJjMh+FDxB2/enFKupjbjPLxnf1W/GJuhynUfYg8BKXCRjW
-         62Ug==
-X-Gm-Message-State: AOAM53385jbg3tiSCNfSsde/4/LZOPdr7+igt/RL0i6jqut1xoUGZFDs
-        dmNrC1RBSCdgdZ6iUWr93W1yMfmyZk0aCQbetEtLv+z/NdKY4Dpl6rvmraRPUsLc8uaQsWYXPUr
-        o/CIL3jXAUyPB7O+/7W8+npL1dgzztuMI7PmBK2U0
-X-Received: by 2002:a05:651c:112e:: with SMTP id e14mr8194460ljo.466.1637697230902;
-        Tue, 23 Nov 2021 11:53:50 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJwjemlMI5EI99fhPJ9HY1rGImyRQTf2YT7NsQhHh6pN6UU71Nlm9uSU8jk1Fwr3K+pMROZHYQ==
-X-Received: by 2002:a05:651c:112e:: with SMTP id e14mr8194441ljo.466.1637697230737;
-        Tue, 23 Nov 2021 11:53:50 -0800 (PST)
-Received: from [192.168.3.67] (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
-        by smtp.gmail.com with ESMTPSA id c34sm1389638lfv.83.2021.11.23.11.53.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Nov 2021 11:53:50 -0800 (PST)
-Message-ID: <3ccecc07-5e76-125a-8bcb-12219af5983c@canonical.com>
-Date:   Tue, 23 Nov 2021 20:53:49 +0100
+        id S231847AbhKWXEM (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 23 Nov 2021 18:04:12 -0500
+Received: from mga01.intel.com ([192.55.52.88]:54470 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231368AbhKWXEJ (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 23 Nov 2021 18:04:09 -0500
+X-IronPort-AV: E=McAfee;i="6200,9189,10177"; a="259032785"
+X-IronPort-AV: E=Sophos;i="5.87,258,1631602800"; 
+   d="scan'208";a="259032785"
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Nov 2021 15:01:00 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.87,258,1631602800"; 
+   d="scan'208";a="456854084"
+Received: from lkp-server02.sh.intel.com (HELO 9e1e9f9b3bcb) ([10.239.97.151])
+  by orsmga003.jf.intel.com with ESMTP; 23 Nov 2021 15:00:55 -0800
+Received: from kbuild by 9e1e9f9b3bcb with local (Exim 4.92)
+        (envelope-from <lkp@intel.com>)
+        id 1mpemU-0002PQ-Sw; Tue, 23 Nov 2021 23:00:54 +0000
+Date:   Wed, 24 Nov 2021 07:00:38 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Akhil R <akhilrajeev@nvidia.com>, dan.j.williams@intel.com,
+        devicetree@vger.kernel.org, dmaengine@vger.kernel.org,
+        jonathanh@nvidia.com, kyarlagadda@nvidia.com, ldewangan@nvidia.com,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        p.zabel@pengutronix.de, rgumasta@nvidia.com
+Cc:     llvm@lists.linux.dev, kbuild-all@lists.01.org
+Subject: Re: [PATCH v13 2/4] dmaengine: tegra: Add tegra gpcdma driver
+Message-ID: <202111240616.WWuSKq38-lkp@intel.com>
+References: <1637573292-13214-3-git-send-email-akhilrajeev@nvidia.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.2.1
-Subject: Re: [PATCH 1/5] dt-bindings: memory: tegra: Document
- #interconnect-cells property
-Content-Language: en-US
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20211112130627.3682795-1-thierry.reding@gmail.com>
- <20211112130627.3682795-2-thierry.reding@gmail.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-In-Reply-To: <20211112130627.3682795-2-thierry.reding@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1637573292-13214-3-git-send-email-akhilrajeev@nvidia.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 12/11/2021 14:06, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
-> 
-> The #interconnect-cells properties are required to hook up memory
-> clients to the MC/EMC in interconnects properties. Add a description for
-> these properties.
-> 
-> Also, allow multiple reg and interrupt entries required by Tegra194 and
-> later.
-> 
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> ---
->  .../memory-controllers/nvidia,tegra186-mc.yaml       | 12 +++++++++---
->  1 file changed, 9 insertions(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml
-> index 611bda38d187..f6e4af4e86cf 100644
-> --- a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml
-> +++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml
-> @@ -33,10 +33,10 @@ properties:
->            - nvidia,tegra194-mc
->  
->    reg:
-> -    maxItems: 1
-> +    maxItems: 3
->  
->    interrupts:
-> -    maxItems: 1
-> +    maxItems: 2
+Hi Akhil,
 
-All these here and reg below might need if-else to define when one item
-is allowed, when not. For example - can nvidia,tegra234-mc come with
-only one reg?
+Thank you for the patch! Perhaps something to improve:
 
-Except this and Rob's DT-checker-bot rest of patches look ok to me.
+[auto build test WARNING on robh/for-next]
+[also build test WARNING on vkoul-dmaengine/next arm64/for-next/core v5.16-rc2 next-20211123]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch]
 
+url:    https://github.com/0day-ci/linux/commits/Akhil-R/Add-NVIDIA-Tegra-GPC-DMA-driver/20211122-173019
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
+config: riscv-randconfig-c006-20211123 (https://download.01.org/0day-ci/archive/20211124/202111240616.WWuSKq38-lkp@intel.com/config.gz)
+compiler: clang version 14.0.0 (https://github.com/llvm/llvm-project c133fb321f7ca6083ce15b6aa5bf89de6600e649)
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # install riscv cross compiling tool for clang build
+        # apt-get install binutils-riscv64-linux-gnu
+        # https://github.com/0day-ci/linux/commit/7707da9f914433ccc5718dd3431153d3b5bf485d
+        git remote add linux-review https://github.com/0day-ci/linux
+        git fetch --no-tags linux-review Akhil-R/Add-NVIDIA-Tegra-GPC-DMA-driver/20211122-173019
+        git checkout 7707da9f914433ccc5718dd3431153d3b5bf485d
+        # save the config file to linux build tree
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 ARCH=riscv 
 
-Best regards,
-Krzysztof
+If you fix the issue, kindly add following tag as appropriate
+Reported-by: kernel test robot <lkp@intel.com>
 
->  
->    "#address-cells":
->      const: 2
-> @@ -48,6 +48,9 @@ properties:
->  
->    dma-ranges: true
->  
-> +  "#interconnect-cells":
-> +    const: 1
-> +
->  patternProperties:
->    "^external-memory-controller@[0-9a-f]+$":
->      description:
-> @@ -65,7 +68,7 @@ patternProperties:
->                - nvidia,tegra194-emc
->  
->        reg:
-> -        maxItems: 1
-> +        maxItems: 2
->  
->        interrupts:
->          maxItems: 1
-> @@ -78,6 +81,9 @@ patternProperties:
->          items:
->            - const: emc
+All warnings (new ones prefixed by >>):
+
+>> drivers/dma/tegra186-gpc-dma.c:1264:21: warning: attribute declaration must precede definition [-Wignored-attributes]
+   static const struct __maybe_unused dev_pm_ops tegra_dma_dev_pm_ops = {
+                       ^
+   include/linux/compiler_attributes.h:286:56: note: expanded from macro '__maybe_unused'
+   #define __maybe_unused                  __attribute__((__unused__))
+                                                          ^
+   include/linux/pm.h:277:8: note: previous definition is here
+   struct dev_pm_ops {
+          ^
+   1 warning generated.
 
 
-Best regards,
-Krzysztof
+vim +1264 drivers/dma/tegra186-gpc-dma.c
+
+  1263	
+> 1264	static const struct __maybe_unused dev_pm_ops tegra_dma_dev_pm_ops = {
+  1265		SET_LATE_SYSTEM_SLEEP_PM_OPS(tegra_dma_pm_suspend, tegra_dma_pm_resume)
+  1266	};
+  1267	
+
+---
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
