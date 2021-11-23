@@ -2,165 +2,117 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69642C433EF
-	for <linux-tegra@archiver.kernel.org>; Tue, 23 Nov 2021 13:43:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9639BC433EF
+	for <linux-tegra@archiver.kernel.org>; Tue, 23 Nov 2021 14:08:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235672AbhKWNqw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 23 Nov 2021 08:46:52 -0500
-Received: from buffalo.u-blox.com ([195.34.89.137]:48537 "EHLO
-        buffalo.u-blox.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234969AbhKWNqw (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 23 Nov 2021 08:46:52 -0500
-Received: from mail_filter (localhost [127.0.0.1])
-        by buffalo.u-blox.com (PF_LO_10026) with ESMTP id 97F4F3A224;
-        Tue, 23 Nov 2021 14:43:41 +0100 (CET)
-Received: from ASSP.nospam (localhost [127.0.0.1])
-        by buffalo.u-blox.com (Postfix) with ESMTP id 391C639E54;
-        Tue, 23 Nov 2021 14:43:41 +0100 (CET)
-Received: from unknown ([127.0.0.1] helo=anyhost.local) by ASSP.nospam with
-        SMTP (2.4.7); 23 Nov 2021 14:43:41 +0100
+        id S234982AbhKWOLO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 23 Nov 2021 09:11:14 -0500
+Received: from mail-bn8nam11on2080.outbound.protection.outlook.com ([40.107.236.80]:57472
+        "EHLO NAM11-BN8-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S235273AbhKWOLO (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 23 Nov 2021 09:11:14 -0500
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=fifJj+0Jfg2I2pmyAyqC9msBPqVBV3NPVEWyNAs0tfgBi5g+YIYFRGtfEp1bziqeSNQHqRSQV5lJ/vll6q+VEuv9e2GUu0MRF1DIDriSTtwpoyTRz0PFE3Cq4iR2UW2zYhKKc5yWMz8dg3gJhSTQE94/L2RYIOIkmohXKFulw78L9IuSChi0cihWE25C7ygriGNyU5G+dEZe8YYNNMffGj85gO/2HVvp6SLEK3ZjhiHvO4tjUijvsfstkq8vT0z1SXHIVfT2NbQUfGV96cabjJbRG1gzBrGvsZ6m0wsoS2B0yDI23pO0yQ45ssCLRdxfmfiTii44c9m3mFZJyZzOYA==
+ b=e8M9uilgkOtTg9cUpPKHKuPc8KDTMl0hP1EYJtPoPS85vuYVVSYzgQrNVdKDW6GKkDDKXVPcNKkxYqOWzJ8H/e3pVJ5fzvuCFfG1rR94Kr0n5VIIb+MR/cvuei9aS/NWBXdbAzN2BwW1igG8uMosdza+CTLG2HNkr4r0ePbXoXWKDbFtKIy82nZRniTvQ8wvdDxfVTPUAnzu8auDpvxrKHBZsTcJ91A+cUzPbWhH95cKqlzwhibX/MN9NYExk+P74PBmFtoeq5c1tCh0/9E7yJSExGkUdaXsBBXUROPZGS7Zk3WfxZVanYCuvIUGDxDliR9XqKDtUsBJABYVQVgnaA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=mrEHge+esParzzZc1AHn+32I0MVgvWpqqXJu2N10O1w=;
- b=lszT3QB5tqjp2qjZTHu0yv+xy0UUzwG+zJm4jZr+LL6r72gdP5GgyByJlOWVQi8eO/GBOChhHdqxJuR1f//ZBD7E/7UtNI/AWTt2oTuylOlhgM/Cb2t5vxe1+mOjcDQj07NvhbQaStbwe05SdyTWQZ6Xvxvn5cdE4si1yPXA0MXiMSL8Wobh9dY8ScAx+VDx4VC6/3J0s/1ZTOimQ5gLR6/k6cXSC7MWmCpsZqfL0gpTuXKE5i3z2sxzrqmK7kNOcSU3GoHK5r8fGXsbN4TIzeoOCKVhzGIGoV4a7TRf1kkZLxpJaePKUgR4qMOrQzvKvP8pDr80jTdZBBhgZ5YpKA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=u-blox.com; dmarc=pass action=none header.from=u-blox.com;
- dkim=pass header.d=u-blox.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=u-blox.com;
- s=selector1;
+ bh=3MpoRJ84As/I/N/Y6pGiFXefJbAU8u6V/tyoSmsdpZk=;
+ b=ehsXMqVLJxb9OFsOLb5aBD3ZdQwMcFSSOm9bsL10rSgWDfcWT2TkRItap4tXmrrmN4GZKyhlj3cIGma1pJrs3L6N0kVKZo8zsgbE5KKCg0mtrFt3NCcb1xsd9OnW8gmiAQvtti0mbwIArVvx1pGrCQmD8XPyS/mKbNRpi+omai3ZiMavfbghweLzzmZeHSgr8pepZeF65xN0IGLpkZG9xoloP6bmKYF5zKIYGlMd6X5wncf7xeWmwjuFq8UcCFGhyzT/BsFyY9v7EkS5x2HflpMID6rBYCy7qve7/YlVR9BcBjWxA2JTU17b4diO9CclZ0cY1DjHwpLh/b8sBfcXzg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.112.32) smtp.rcpttodomain=alsa-project.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mrEHge+esParzzZc1AHn+32I0MVgvWpqqXJu2N10O1w=;
- b=WaQfcIb/k7yvuliE61kS3M6VjSxLeKKW8N865SMWtuLmSvHAXYYdUsRfHKeA+Fd3qQ9aistWzGLZNJXda+NFKZp/iSDmxQnGpkwLGjbRoudJSt78YIoPCC4CuLZTzZCaM6TCjnsZ+Q6WCBJxp6OV1O2K9I5sI8dc4oQ4B1se2DM=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=u-blox.com;
-From:   Patrik John <patrik.john@u-blox.com>
-To:     <linux-kernel@vger.kernel.org>
-CC:     <gregkh@linuxfoundation.org>, <ldewangan@nvidia.com>,
-        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <linux-serial@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        Patrik John <patrik.john@u-blox.com>
-Subject: [PATCH v3] serial: tegra: Change lower tolerance baud rate limit for tegra20 and tegra30
-Date:   Tue, 23 Nov 2021 14:27:38 +0100
-Message-Id: <sig.19614244f8.20211123132737.88341-1-patrik.john@u-blox.com>
-X-Mailer: git-send-email 2.25.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: AS9PR06CA0031.eurprd06.prod.outlook.com
- (2603:10a6:20b:463::7) To CWXP265MB2072.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:400:7c::7)
+ bh=3MpoRJ84As/I/N/Y6pGiFXefJbAU8u6V/tyoSmsdpZk=;
+ b=jeVq91+2siVhTNgctDnpYazw1tXR+iiznrXNNzbnHz9MyUPyKnPU5PseH99RG3Gql9zYHV5i5aDnNEMPCNjzfZdZhswQxjRtSlcr7+tKsz9eh+J7TXfaUoYJ4D8lgvA4hjWpnECYx68dsraCQG7yOirfgduUONGWsfnHcQ7XeRv2Z4CRi9sRcv1KPOs0aPB2zeDRG/Tg6f24vLHBtm7N0rkJdd8M9zRQhrUyR+jvHUYTtJLI7xn6xFiqLxjwSIFHOMUAEN1SW+TMrCfE1jlsca0d4b+9MNoEfzqQrAZNrcs1WzlQ13Tv88laO+hpi9WP31Tmy/RtD80ntcHS76AGDA==
+Received: from MW4P221CA0012.NAMP221.PROD.OUTLOOK.COM (2603:10b6:303:8b::17)
+ by BYAPR12MB2663.namprd12.prod.outlook.com (2603:10b6:a03:72::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4713.22; Tue, 23 Nov
+ 2021 14:08:02 +0000
+Received: from CO1NAM11FT057.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:303:8b:cafe::7) by MW4P221CA0012.outlook.office365.com
+ (2603:10b6:303:8b::17) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4713.22 via Frontend
+ Transport; Tue, 23 Nov 2021 14:08:02 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.32)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.112.32 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.112.32; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (216.228.112.32) by
+ CO1NAM11FT057.mail.protection.outlook.com (10.13.174.205) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.4713.20 via Frontend Transport; Tue, 23 Nov 2021 14:08:01 +0000
+Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL109.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Tue, 23 Nov
+ 2021 06:07:59 -0800
+Received: from audio.nvidia.com (172.20.187.6) by mail.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server id 15.0.1497.18 via Frontend
+ Transport; Tue, 23 Nov 2021 06:07:57 -0800
+From:   Sameer Pujar <spujar@nvidia.com>
+To:     <broonie@kernel.org>, <lgirdwood@gmail.com>, <perex@perex.cz>,
+        <tiwai@suse.com>
+CC:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <alsa-devel@alsa-project.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Sameer Pujar <spujar@nvidia.com>
+Subject: [PATCH 0/6] Suspend related fixes on Tegra
+Date:   Tue, 23 Nov 2021 19:37:33 +0530
+Message-ID: <1637676459-31191-1-git-send-email-spujar@nvidia.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 09b4d5b7-493c-4fbc-30bc-08d9ae8528c0
-X-MS-TrafficTypeDiagnostic: CWLP265MB3619:
-X-Microsoft-Antispam-PRVS: <CWLP265MB3619AFEEBDD80E086B651F85CC609@CWLP265MB3619.GBRP265.PROD.OUTLOOK.COM>
-X-MS-Oob-TLC-OOBClassifiers: OLM:639;
+X-MS-Office365-Filtering-Correlation-Id: e2054fef-8e9f-4534-9086-08d9ae8aa945
+X-MS-TrafficTypeDiagnostic: BYAPR12MB2663:
+X-Microsoft-Antispam-PRVS: <BYAPR12MB26638D63B8A1812FBF35E41EA7609@BYAPR12MB2663.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:4714;
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: DN3MVPoJnKz11h7s2u9i6Mpe7mVGpQ0wrJr16nStB8glH7Q6KD6934VKcfaFkvdCJ067rLIbSV5VvXgVhiVrKHjDo1ZMrPEcIsxugNYUmSPqpnCkMTAv6qlzYmjrBcM45NcYgUkFV/R0khtaLbEo25uBT5R1lRxUPblVwDLoEjm4rBTMCeXyX9Xu7CKCv9vJ/oH7CgzQ0qUQJ68GSjnpUjhuzrHRL5A+ywTxEGaBxyvGMglRcCiLgBnEtBa+BBJ8mlTs/LCcYct36fJEKS1baFM4tMsLuLayNFBsHUxtWPIX7OA3JjuR9HDSHuL3t6TVptVCj3Z+AwCgps1op7e4Yc6pnDFy0iyG++qwlUNbdkLOYjK7l+PirS208FriX0fE5TeJs6cp3fXJdPwnaj1J8T1ZMfWBRRpz9JPvi907UpQ0t6HW90bHsjn5f/sCGmdB8n5Cu90ZvkaGkxSK648eLToUIMK8oNoWmHzUMLsUI7+wcVTsfiAxuSUQqIhrqruoDQ+EmKqY3IymoPm3txD2ZvYWmJaXFj8LzZDiKpYFBbMTO6Ipbxyi6ivBSpITNXq5CdTEe7QuIIKLF7f9WaYykz+g50IgKcfTN1vLYV3mtUb6TuL6xOkGIB5m4tSVRxV85WpShF6yP/e6BJNY/M7SY9+LokQar+KETOUkRGAwhPhCzMEdlrcGeJjlTdOn0vRfA48VWvqWXCR7slwziyou04wipbAgqvG4QnAEUF9T2FU=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CWXP265MB2072.GBRP265.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(4636009)(366004)(6486002)(86362001)(8676002)(52116002)(956004)(107886003)(2906002)(2616005)(6916009)(1076003)(5660300002)(44832011)(38100700002)(38350700002)(8936002)(316002)(36756003)(4326008)(508600001)(186003)(83380400001)(26005)(6512007)(66556008)(66946007)(6506007)(66476007)(16453003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?HMNcjuy8IrpHaHYvD+TR/YrM3h7aIWpx1EppvLR2W/OmQflDHTpacLqJxYtK?=
- =?us-ascii?Q?lfT6be4EvoV9hDUOrUnCoWuXHwK0GBbRjrvO6xtdHDO77XECc4IWMvJSnUIO?=
- =?us-ascii?Q?kFZl4F3WKxFOixm3t4OAJCD0gG56Ks8vkfTp1WzpxepUodCh8pKH5Vg2ZnJP?=
- =?us-ascii?Q?aZczBntXC5Hor1jHRSSuyfZ81xU9xUujKMvtHvBHsrJ2qAvsZIrdyp01Y+jv?=
- =?us-ascii?Q?qhJN1ZY3wNHzWaNsMbsVk3Jnln9EE9cNZ6IuHXkvjB6sQqTxmILJm1w7Lsfi?=
- =?us-ascii?Q?qyCMUJMD0MTsRCUp/phXbS4yUsxJORW63MoHttybSqHG0c9VDuUXtE6M0cqB?=
- =?us-ascii?Q?95F6+Ur5WCQDHW6jWNUEVlE2Pe5Faplc72mgfx9X/JVIF6cBdXY5hXiL8M1W?=
- =?us-ascii?Q?0EFUj50/R96x3BltdcmOLhxHby7VYq39t30ZPiQZbaWFsgLrxvusmPV8TieQ?=
- =?us-ascii?Q?asm32LdfU5CD3PjxTc2ap9YPKRkL8LbNCAg+tZp6N0D93nzpuM0wmGytY4vp?=
- =?us-ascii?Q?AiEeoodpPiA6XnMl8Thm6CHzQQ6iLaMS4EjoBpAfq5fo+Iv3Ev+Mi2+QtwOu?=
- =?us-ascii?Q?7xpPdCaxJm21YusJzKIzk7mCIyeNS2Bv4hTtxUooWELCBd+NNCPhyWJh3lzs?=
- =?us-ascii?Q?oSZV1g6eOKIeA887WF/3b+S3lf+TamaknJ5neix2NQbbb1Q7i9ulgulu/YG7?=
- =?us-ascii?Q?/Z+IEQ8k6tQRgs0sgOSbxCyNbWTGgA7nSOdwwE3bRn7sSSBvnldipoyUQ4xP?=
- =?us-ascii?Q?NzvQ0DoF3tVwj7Js70vnoee+Yr5s59+aEee0iGz5aB0HgSQr3tut0X7U4z/X?=
- =?us-ascii?Q?EsWrTecQ45L1PIFyBA79yfBRvZ5WPcPC7slfT38OjRSCP6O5412k5887dfxk?=
- =?us-ascii?Q?0HG75NEYLWeLw/Rsnb1os9uM309KRRGjR7/hpdnuc/3nknK5lUDR6rlo0J5C?=
- =?us-ascii?Q?C2LwzQSE1Y0M1grke4+bgqqaAqT7phK2gClVXTvl+9iNoUgM0riXV30YN0Sc?=
- =?us-ascii?Q?xdrtEWFHjD9F/j0g+c4adIMl3MCMRpFWAMOOzn1uEvEvTg3F9IveFvuwHY29?=
- =?us-ascii?Q?EFGxBF65ZQp6I/RPYfaZV5UJ6rvWesP1UC6pcw8SsFjccHZ7hyw4FGq/YsNn?=
- =?us-ascii?Q?5InKoIrgMhC64n+2K61NBaeVduSuVKTIdtAul+3+RiO8o+MzsQ/Ygxh0Nt4J?=
- =?us-ascii?Q?H5X1mrl2Xo8QHJWjVAOjyYp1J/UCMbWO8bYFkPFviQxHaS/UbDPffdtK2jKF?=
- =?us-ascii?Q?FkFHJXY1o3EKzwvcVRxjwJvIOMKZuqB7rEcT6iPXtrxMm8id/ugzrPATGd9q?=
- =?us-ascii?Q?w+xyXtYuz9Xs/mbqICKDkxjwcdVa4j/8gOVpg0psuxfDv9N+coWW2lnIz2jP?=
- =?us-ascii?Q?YLaUFkCyWN4a175Xk1xlAhEyjgE0A8YsYMgVkAV8gBiRwRcPO6XJlMejFaYl?=
- =?us-ascii?Q?vbCDkqf1cowrBJw4vTbpWuepWyR2JaPLOkyIzKL/LbszKEZS+tmZEk0iaN3e?=
- =?us-ascii?Q?9z6qpZMK93l8gzORhMvnPTxFPBWIgY73JHV84FCNVmeNZG7cNJFYiDmXwPYG?=
- =?us-ascii?Q?ie+BzcU+by22Nw3Pk3rqqs9LqFFRRC+maL+SqYDekW/mDkqeLSOy3+Kwg4m4?=
- =?us-ascii?Q?pGwcXrcKaWcD5wmJ5NxG2y8=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 09b4d5b7-493c-4fbc-30bc-08d9ae8528c0
-X-MS-Exchange-CrossTenant-AuthSource: CWXP265MB2072.GBRP265.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Nov 2021 13:28:38.7850
+X-Microsoft-Antispam-Message-Info: QA4i6xAlGcB9nN5uFnxlpwfsYptmogYKzcWKNB3VSmCYeCD4V5QeNQoprLfNze1UJHwfJSYL9xctB7uAWtgn9IeAql6D7CP9Ar+tU95ub2f7UwTHcI4uPUlivY6U800FtIvh/due210alwAtzETYXvKq8NvykCkvR/wrpLBPQpbB/9es3MCQKG7tM9PrOxINbZwxaL/skY+KyZVGIPXU3iZMoj8ndtMtrqH5m/FrZHgEKEzpVZ2D7ekbHu92tbMZ1kBsx1TOH8R41y92/Co5Kork5XIxMgHEMQW8jcGabWTKQ6TodRjaxRiHm2uJKquZsJa+m7b2nwun2CzzMZbfnVRqvQhsr7npBHGyK5KpR6kLQEoc/++XGzWwPfKRUOEfhV6/t7/qsrNpEL4S2QfIYgBFIoVqpOHLF4gKvGsPT2a5BPrJp5gFRe0IdTOfQkea5swWZhRcampIdqThkC7v8oSrb4imEGaczSMkLN5MRkRR6kXFXP9ZuMr0YU6wnU91EYSsOLIsaZ7cXhPBRF8JBgbJYIqDcWZpFTddXHfV+VgM4zQqo/r9IF4hG1hYH20ijyxxyytrH01zU9utX0QtDmAEAwP0LTweNw9yztrLfg2BpHyhaMLFKJytxv1vGJhXfD+D3TeaqpJn4ti269WusBpGy8YlHc7fADqxrlMgucgC14fdNGTQp3hQ77z0aHR8vyOpeeV1wVEABoSgwP+Z9g==
+X-Forefront-Antispam-Report: CIP:216.228.112.32;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid01.nvidia.com;CAT:NONE;SFS:(4636009)(36840700001)(46966006)(2616005)(5660300002)(15650500001)(47076005)(36860700001)(2906002)(8936002)(186003)(70206006)(7696005)(107886003)(316002)(110136005)(54906003)(8676002)(36756003)(336012)(426003)(7636003)(4326008)(6666004)(26005)(356005)(508600001)(4744005)(86362001)(83380400001)(82310400004)(70586007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Nov 2021 14:08:01.7054
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 80c4ffa6-7511-4bba-9f03-e5872a660c9b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 4pB4zbZNoWFPGIdqjJCKudj0k5oCeZkgebMTTtFuONCDY1B19MuRoQzjjEf135ylt0TebksRAEkuX1nzbe/VyQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CWLP265MB3619
-X-OriginatorOrg: u-blox.com
-X-Assp-Version: 2.4.7(16004) on ASSP.nospam
-X-Assp-ID: ASSP.nospam 75021-21789
-X-Assp-Session: 43F7A368 (mail 1)
-X-Assp-Original-Subject: [PATCH v3] serial: tegra: Change lower tolerance
-        baud rate limit for tegra20 and tegra30
-X-Virus-Scanned: clamav-milter 0.99.4 at buffalo
-X-Virus-Status: Clean
+X-MS-Exchange-CrossTenant-Network-Message-Id: e2054fef-8e9f-4534-9086-08d9ae8aa945
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.32];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT057.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR12MB2663
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The current implementation uses 0 as lower limit for the baud rate
-tolerance for tegra20 and tegra30 chips which causes isses on UART
-initialization as soon as baud rate clock is lower than required even
-when within the standard UART tolerance of +/- 4%.
+This series addresses following problems:
+ * The runtime PM is not balanced in MVC driver, whenever
+   mute or volume mixer controls are set.
+ * Some of the AHUB devices (SFC, MVC, Mixer, AMX and ADX)
+   use late system sleep. Suspend failure is seen on Jetson
+   TX2 platform.
 
-This fix aligns the implementation with the initial commit description
-of +/- 4% tolerance for tegra chips other than tegra186 and
-tegra194.
+Sameer Pujar (6):
+  ASoC: tegra: Balance runtime PM count
+  ASoC: tegra: Use normal system sleep for SFC
+  ASoC: tegra: Use normal system sleep for MVC
+  ASoC: tegra: Use normal system sleep for Mixer
+  ASoC: tegra: Use normal system sleep for AMX
+  ASoC: tegra: Use normal system sleep for ADX
 
-Fixes: d781ec21bae6 ("serial: tegra: report clk rate errors")
-Signed-off-by: Patrik John <patrik.john@u-blox.com>
----
-This issue has been present since 5.4-rc1 and is applicable
-to 5.4.y and 5.10.y longterm releases as well. 
+ sound/soc/tegra/tegra210_adx.c   | 4 ++--
+ sound/soc/tegra/tegra210_amx.c   | 4 ++--
+ sound/soc/tegra/tegra210_mixer.c | 4 ++--
+ sound/soc/tegra/tegra210_mvc.c   | 8 ++++----
+ sound/soc/tegra/tegra210_sfc.c   | 4 ++--
+ 5 files changed, 12 insertions(+), 12 deletions(-)
 
-Changes in v3:
-- Changed Subject to be more precise
-- Reworked commit message to meet guidelines
-- Added Patch versions
-Changes in v2:
-- Fixed errors reported by Greg's bot  
- 
- drivers/tty/serial/serial-tegra.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/tty/serial/serial-tegra.c b/drivers/tty/serial/serial-tegra.c
-index 45e2e4109acd..b6223fab0687 100644
---- a/drivers/tty/serial/serial-tegra.c
-+++ b/drivers/tty/serial/serial-tegra.c
-@@ -1506,7 +1506,7 @@ static struct tegra_uart_chip_data tegra20_uart_chip_data = {
- 	.fifo_mode_enable_status	= false,
- 	.uart_max_port			= 5,
- 	.max_dma_burst_bytes		= 4,
--	.error_tolerance_low_range	= 0,
-+	.error_tolerance_low_range	= -4,
- 	.error_tolerance_high_range	= 4,
- };
- 
-@@ -1517,7 +1517,7 @@ static struct tegra_uart_chip_data tegra30_uart_chip_data = {
- 	.fifo_mode_enable_status	= false,
- 	.uart_max_port			= 5,
- 	.max_dma_burst_bytes		= 4,
--	.error_tolerance_low_range	= 0,
-+	.error_tolerance_low_range	= -4,
- 	.error_tolerance_high_range	= 4,
- };
- 
 -- 
-2.25.1
+2.7.4
 
