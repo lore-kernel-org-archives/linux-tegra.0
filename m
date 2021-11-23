@@ -2,94 +2,89 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C4ABC433FE
-	for <linux-tegra@archiver.kernel.org>; Tue, 23 Nov 2021 15:43:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 144B8C433F5
+	for <linux-tegra@archiver.kernel.org>; Tue, 23 Nov 2021 16:34:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231788AbhKWPqe (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 23 Nov 2021 10:46:34 -0500
-Received: from mga12.intel.com ([192.55.52.136]:19263 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230044AbhKWPqd (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 23 Nov 2021 10:46:33 -0500
-X-IronPort-AV: E=McAfee;i="6200,9189,10176"; a="215071473"
-X-IronPort-AV: E=Sophos;i="5.87,258,1631602800"; 
-   d="scan'208";a="215071473"
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Nov 2021 07:43:25 -0800
-X-IronPort-AV: E=Sophos;i="5.87,258,1631602800"; 
-   d="scan'208";a="509055823"
-Received: from smile.fi.intel.com ([10.237.72.184])
-  by fmsmga007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Nov 2021 07:43:24 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.95)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1mpXx2-009oii-HF;
-        Tue, 23 Nov 2021 17:43:20 +0200
-Date:   Tue, 23 Nov 2021 17:43:20 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH v1 1/2] spi: deduplicate spi_match_id() in
- __spi_register_driver()
-Message-ID: <YZ0MGP0HDjLN/HfD@smile.fi.intel.com>
-References: <20211119173718.52938-1-andriy.shevchenko@linux.intel.com>
- <1572a2ff-dcfb-422f-c4c3-5a454a36d31d@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1572a2ff-dcfb-422f-c4c3-5a454a36d31d@nvidia.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+        id S236846AbhKWQhn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 23 Nov 2021 11:37:43 -0500
+Received: from mail-io1-f53.google.com ([209.85.166.53]:46626 "EHLO
+        mail-io1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236344AbhKWQhm (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 23 Nov 2021 11:37:42 -0500
+Received: by mail-io1-f53.google.com with SMTP id x6so6945823iol.13;
+        Tue, 23 Nov 2021 08:34:33 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
+         :message-id;
+        bh=xHCYnhDhZCTxewpY+KOZ7LWuKPncTJz1crmpYlrkqfo=;
+        b=PAqxeekM2RcvZS+nZUr787NKDxK6yV4I54L5EdE8BljedVUnj55TkUnfvJ8stWvns9
+         qoMBYAnaMmCdZ1wAJNYXiEggRiA0i+nOnCThNPaYGKTuu1l9tSyyA93/1CXILsHS+det
+         RhyODwipXCMa38CgbZ/dTbmq5tZHpJRKhUQJH9Api/I76v558N1sZdTssTvEYix02akJ
+         t9CJna22pX6Dkm8KSJ9BHaXOoIc6P7Wqxt/24Dl3a895/qB1slrA8ZCiAomrkE2Dmjog
+         HgZ1tuX2iVJgn0PqQzC8jM2V8gUg9d7FulimqoYh8XXaYREQmbuCcb4axORycA/13qH1
+         VefQ==
+X-Gm-Message-State: AOAM533aufxMr+kW4txcBVw82kpV9TBG3S86swKPLqX0zqjD9YWQGURt
+        a7bm0sqG136Pu3ysh78nn/C0J1DzOw==
+X-Google-Smtp-Source: ABdhPJxwurIBVfozv0WaI04vNkMxK4z+wmlyG1U73zTi5k9/UxcwuBZEH75s2hOm1c8qOB6d3OBS6w==
+X-Received: by 2002:a05:6638:2585:: with SMTP id s5mr8115068jat.68.1637685272706;
+        Tue, 23 Nov 2021 08:34:32 -0800 (PST)
+Received: from robh.at.kernel.org ([64.188.179.248])
+        by smtp.gmail.com with ESMTPSA id o22sm8929199iow.52.2021.11.23.08.34.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Nov 2021 08:34:32 -0800 (PST)
+Received: (nullmailer pid 3442903 invoked by uid 1000);
+        Tue, 23 Nov 2021 16:34:29 -0000
+From:   Rob Herring <robh@kernel.org>
+To:     Akhil R <akhilrajeev@nvidia.com>
+Cc:     thierry.reding@gmail.com, robh+dt@kernel.org, vkoul@kernel.org,
+        rgumasta@nvidia.com, dan.j.williams@intel.com,
+        jonathanh@nvidia.com, p.zabel@pengutronix.de,
+        linux-kernel@vger.kernel.org, ldewangan@nvidia.com,
+        linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
+        dmaengine@vger.kernel.org, kyarlagadda@nvidia.com
+In-Reply-To: <1637573292-13214-2-git-send-email-akhilrajeev@nvidia.com>
+References: <1637573292-13214-1-git-send-email-akhilrajeev@nvidia.com> <1637573292-13214-2-git-send-email-akhilrajeev@nvidia.com>
+Subject: Re: [PATCH v13 1/4] dt-bindings: dmaengine: Add doc for tegra gpcdma
+Date:   Tue, 23 Nov 2021 09:34:29 -0700
+Message-Id: <1637685269.617639.3442902.nullmailer@robh.at.kernel.org>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Nov 23, 2021 at 03:22:38PM +0000, Jon Hunter wrote:
-> On 19/11/2021 17:37, Andy Shevchenko wrote:
-
-> > @@ -474,12 +473,8 @@ int __spi_register_driver(struct module *owner, struct spi_driver *sdrv)
-> >   			if (sdrv->id_table) {
-> >   				const struct spi_device_id *spi_id;
-> > -				for (spi_id = sdrv->id_table; spi_id->name[0];
-> > -				     spi_id++)
-> > -					if (strcmp(spi_id->name, of_name) == 0)
-> > -						break;
-
-> > -				if (spi_id->name[0])
-> > +				spi_id = spi_match_id(sdrv->id_table, of_name);
-> > +				if (!spi_id)
-
-Seems I have inverted condition here. Shouldn't it be
-
-				if (spi_id)
-
-instead?
-
-> >   					continue;
-> >   			} else {
-> >   				if (strcmp(sdrv->driver.name, of_name) == 0)
-> > 
+On Mon, 22 Nov 2021 14:58:09 +0530, Akhil R wrote:
+> Add DT binding document for Nvidia Tegra GPCDMA controller.
 > 
+> Signed-off-by: Rajesh Gumasta <rgumasta@nvidia.com>
+> Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
+> Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
+> ---
+>  .../bindings/dma/nvidia,tegra186-gpc-dma.yaml      | 111 +++++++++++++++++++++
+>  1 file changed, 111 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/dma/nvidia,tegra186-gpc-dma.yaml
 > 
-> Following this change I am seeing the following warnings again although most
-> of these have now been fixed ...
-> 
->  WARNING KERN SPI driver mtd_dataflash has no spi_device_id for atmel,at45
->  WARNING KERN SPI driver mtd_dataflash has no spi_device_id for
-> atmel,dataflash
->  WARNING KERN SPI driver spi-nor has no spi_device_id for jedec,spi-nor
->  WARNING KERN SPI driver mmc_spi has no spi_device_id for mmc-spi-slot
->  WARNING KERN SPI driver cros-ec-spi has no spi_device_id for
-> google,cros-ec-spi
-> 
-> I have not looked any further yet, but this appears to cause the SPI ID
-> match to fail.
 
-Ah, thanks for testing!
-Can you try above?
+My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+on your patch (DT_CHECKER_FLAGS is new in v5.13):
 
--- 
-With Best Regards,
-Andy Shevchenko
+yamllint warnings/errors:
+./Documentation/devicetree/bindings/dma/nvidia,tegra186-gpc-dma.yaml:26:10: [warning] wrong indentation: expected 10 but found 9 (indentation)
 
+dtschema/dtc warnings/errors:
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/patch/1557933
+
+This check can fail if there are any dependencies. The base for a patch
+series is generally the most recent rc1.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit.
 
