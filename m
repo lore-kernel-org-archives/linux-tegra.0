@@ -2,131 +2,121 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63CC8C43219
-	for <linux-tegra@archiver.kernel.org>; Wed, 24 Nov 2021 17:39:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 056BFC433F5
+	for <linux-tegra@archiver.kernel.org>; Wed, 24 Nov 2021 19:01:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243064AbhKXRmx (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 24 Nov 2021 12:42:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36184 "EHLO
+        id S232361AbhKXTFB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 24 Nov 2021 14:05:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55058 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229538AbhKXRmv (ORCPT
+        with ESMTP id S230468AbhKXTFA (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 24 Nov 2021 12:42:51 -0500
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7935C061574;
-        Wed, 24 Nov 2021 09:39:41 -0800 (PST)
-Received: by mail-lf1-x129.google.com with SMTP id c32so9302002lfv.4;
-        Wed, 24 Nov 2021 09:39:41 -0800 (PST)
+        Wed, 24 Nov 2021 14:05:00 -0500
+Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1F7BC061574;
+        Wed, 24 Nov 2021 11:01:50 -0800 (PST)
+Received: by mail-lj1-x22c.google.com with SMTP id i63so7546519lji.3;
+        Wed, 24 Nov 2021 11:01:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=6KwYnqzzoTeuVNxhHsajzRe6liKfZ7vCZOdko2MKcYY=;
-        b=lvNbpNKcqOAj74UHrS6XpdHcUjOf2sCIzeJURasqmwDotEWhqg+OtI1hIqfxXw53rO
-         z4tIfWJ15SJPCQPQEYpaz/zmC2AtWtLFdcPfiSvbidZ8Exl9V8VhaqU9R2npHpy4tYc0
-         yoAFhsyR/tm1sxMO7gFsD63QuHkm+jfTl/BAb0mYaTiKTxDGqN4kFZjH9jZeyYnQTnDY
-         +iO2QczJQHUVcBKOsIBMpcFVHI8R1BvISIqundwfmbO8Omwr++T3KiO2VqAHQJyXOIWo
-         3aZgsvReXTiUAJF/ECnq/pwPQIvxcyAQtmtfpSjrZuVeY4POAqNgnpvX5T/RJZH9Gntm
-         5JVA==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=HB5Uno7mPEgJ7bG9gHGpKx58JbhDKtKcQ9mk992LdI8=;
+        b=GL4bZUuqm+wkEX2j2dAm5uvA+8tXowQCu7EWl2vXN1PNEtMP2+sUhSEcAAkwXUNlUi
+         YcAHBNGzXEDyJwTvpk1UvHzhgOb9oD5ILkOe5yzqjffeXjWrbbvTpXA10c89hebBJPFf
+         b/vTAqdWXgb183fiQoL/huEgTRK93E6BNwZE8YgJczjm8GniQ7hVtKFTKuDS2SeTnaKZ
+         d0cKF7w1wBhAngkJocKAU/cNUKpgH1qJpvm5KPpKmjVSXKOyALabPDl3n/uXnJnJqsk5
+         3mPGBGUc834/GQjkUK0xM0mOlqsaFaerr3T9GAGR7roy6/RDrMnBDgZem3i2v/GHTa0/
+         MdTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=6KwYnqzzoTeuVNxhHsajzRe6liKfZ7vCZOdko2MKcYY=;
-        b=2XJD9GYe9hHnmKvNFuhTMENH7Fskzbl+0c0Q9mpX7FHCCkqpD9/lsrJl6Z3tbnD2D6
-         tNuAp3Cz2ctAkXxSbwVyfEVLuA+aczy97bAPagyqHl+oPN85ZZduqFSIy+KKT6NBNBVf
-         vKlOc+SXUjvRo6Dt37YRfS/vqEb/oNMAcRWU8o3wOaAcgodfhWAAn8jtQlmgyoVRYH2O
-         XqMRhBXbXgUCWX5+865lg1rmmhMlVlpxo3e9SeKxFuto0JauS6AHHob/TvP2JEt3PDFc
-         BCywUAXrY6C4Ek1nLvP7lFx8cC70M/z3kY7jj+WaKEGje0Ei2Elnx/AmMH0gQSzzcjCn
-         UDIg==
-X-Gm-Message-State: AOAM533AsgWYcLN+Uio0Mp23dqbIHj2eUzXTM9eYwK6UZryMihhq2jeP
-        rkWWq3U3jTHFtpIiYzV0gjfq5yFK63s=
-X-Google-Smtp-Source: ABdhPJzMAN6+EU9Pjecu2Hl3ZC50CFEhc3UzlNKlYPHJ5/rwKJi/3grC00PRL2kx8I9BrVZVbuLcvw==
-X-Received: by 2002:a19:c350:: with SMTP id t77mr16616753lff.152.1637775579976;
-        Wed, 24 Nov 2021 09:39:39 -0800 (PST)
-Received: from [192.168.2.145] (94-29-48-99.dynamic.spd-mgts.ru. [94.29.48.99])
-        by smtp.googlemail.com with ESMTPSA id q5sm44228lfu.18.2021.11.24.09.39.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 24 Nov 2021 09:39:39 -0800 (PST)
-Subject: Re: [PATCH v2 01/11] ASoC: tegra20-spdif: stop setting slave_id
-To:     Arnd Bergmann <arnd@kernel.org>, Vinod Koul <vkoul@kernel.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Andy Gross <agross@kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Baolin Wang <baolin.wang7@gmail.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Hyun Kwon <hyun.kwon@xilinx.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Nicolas Saenz Julienne <nsaenz@kernel.org>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Scott Branden <sbranden@broadcom.com>,
-        Takashi Iwai <tiwai@suse.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        alsa-devel@alsa-project.org, bcm-kernel-feedback-list@broadcom.com,
-        dmaengine@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-rpi-kernel@lists.infradead.org, linux-serial@vger.kernel.org,
-        linux-spi@vger.kernel.org, linux-staging@lists.linux.dev,
-        linux-tegra@vger.kernel.org
-References: <20211122222203.4103644-1-arnd@kernel.org>
- <20211122222203.4103644-2-arnd@kernel.org>
+        bh=HB5Uno7mPEgJ7bG9gHGpKx58JbhDKtKcQ9mk992LdI8=;
+        b=0rsz57+9EdlX2J8k2AexGGdq6MO1M+jze1l5BXgy19EwdCPrsS4e+vHS14O1h66Ee2
+         /YH38R0iHSXujIySa1e7BG/Gd0BDU71GEsf6Xm52Ltzhr4ls8m9yJvdLv4uJZJ9CnY0v
+         7C9WPRc2LULns3vecIQ8LHcTZjH4ueurbkDOY8nA5cLIMXmVvPuAfoOMb+e/q2U4OqNC
+         0fo3nG5lwT6UyJhzg03rkRTRD1iJnxuqZczLWcTNbzLBINn7Vl7YYKfk8QranKd0xQ/G
+         HrTlKNV94tFnVs71LSWCAzJ70d42uN8TiUjIz6G222ZbH0VbWueeOff6ATMYLUHjn3bl
+         iVgQ==
+X-Gm-Message-State: AOAM532gX5y6gI3VikigULH5Gd2rWLCzj0GxIvilhcK/h8HG/xb1S+tV
+        GG6ZvHbuX+x0kVzbk4+GZ78O+p9E8Hk=
+X-Google-Smtp-Source: ABdhPJx6+3Bv4REdEvYQPqth18YMMEmulgzz509fJMrNya8E42TOFHvZVKeBgIrqx/ki+Mo3WNAcJQ==
+X-Received: by 2002:a2e:5c04:: with SMTP id q4mr18915802ljb.334.1637780508620;
+        Wed, 24 Nov 2021 11:01:48 -0800 (PST)
+Received: from localhost.localdomain (94-29-48-99.dynamic.spd-mgts.ru. [94.29.48.99])
+        by smtp.gmail.com with ESMTPSA id u21sm58366ljl.76.2021.11.24.11.01.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Nov 2021 11:01:48 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <b5c9ece3-c702-26b8-347a-f6d9bed2c5db@gmail.com>
-Date:   Wed, 24 Nov 2021 20:39:38 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+To:     Tony Lindgren <tony@atomide.com>, Lee Jones <lee.jones@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Svyatoslav Ryhel <clamor95@gmail.com>
+Cc:     linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v1] mfd: tps65910: Set PWR_OFF bit during driver probe
+Date:   Wed, 24 Nov 2021 22:01:04 +0300
+Message-Id: <20211124190104.23554-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.33.1
 MIME-Version: 1.0
-In-Reply-To: <20211122222203.4103644-2-arnd@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-23.11.2021 01:21, Arnd Bergmann пишет:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> The DMA resource is never set up anywhere, and passing this as slave_id
-> has not been the proper procedure in a long time.
-> 
-> As a preparation for removing all slave_id references from the ALSA code,
-> remove this one.
-> 
-> According to Dmitry Osipenko, this driver has never been used and
-> the mechanism for configuring DMA would not work as it is implemented,
-> so this part will get rewritten when the driver gets put into use
-> again in the future.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  sound/soc/tegra/tegra20_spdif.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/sound/soc/tegra/tegra20_spdif.c b/sound/soc/tegra/tegra20_spdif.c
-> index 9fdc82d58db3..1c3385da6f82 100644
-> --- a/sound/soc/tegra/tegra20_spdif.c
-> +++ b/sound/soc/tegra/tegra20_spdif.c
-> @@ -284,7 +284,6 @@ static int tegra20_spdif_platform_probe(struct platform_device *pdev)
->  	spdif->playback_dma_data.addr = mem->start + TEGRA20_SPDIF_DATA_OUT;
->  	spdif->playback_dma_data.addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
->  	spdif->playback_dma_data.maxburst = 4;
-> -	spdif->playback_dma_data.slave_id = dmareq->start;
->  
->  	pm_runtime_enable(&pdev->dev);
->  
-> 
+The PWR_OFF bit needs to be set in order to power off properly, without
+hanging PMIC. This bit needs to be set early in order to allow thermal
+protection of NVIDIA Terga SoCs to power off hardware properly, otherwise
+a battery re-plug may be needed on some devices to recover after the hang.
 
-Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+Cc: <stable@vger.kernel.org>
+Tested-by: Svyatoslav Ryhel <clamor95@gmail.com> # ASUS TF201
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ drivers/mfd/tps65910.c | 22 +++++++++++++---------
+ 1 file changed, 13 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/mfd/tps65910.c b/drivers/mfd/tps65910.c
+index 6e105cca27d4..67e2707af4bc 100644
+--- a/drivers/mfd/tps65910.c
++++ b/drivers/mfd/tps65910.c
+@@ -436,15 +436,6 @@ static void tps65910_power_off(void)
+ 
+ 	tps65910 = dev_get_drvdata(&tps65910_i2c_client->dev);
+ 
+-	/*
+-	 * The PWR_OFF bit needs to be set separately, before transitioning
+-	 * to the OFF state. It enables the "sequential" power-off mode on
+-	 * TPS65911, it's a NO-OP on TPS65910.
+-	 */
+-	if (regmap_set_bits(tps65910->regmap, TPS65910_DEVCTRL,
+-			    DEVCTRL_PWR_OFF_MASK) < 0)
+-		return;
+-
+ 	regmap_update_bits(tps65910->regmap, TPS65910_DEVCTRL,
+ 			   DEVCTRL_DEV_OFF_MASK | DEVCTRL_DEV_ON_MASK,
+ 			   DEVCTRL_DEV_OFF_MASK);
+@@ -504,6 +495,19 @@ static int tps65910_i2c_probe(struct i2c_client *i2c,
+ 	tps65910_sleepinit(tps65910, pmic_plat_data);
+ 
+ 	if (pmic_plat_data->pm_off && !pm_power_off) {
++		/*
++		 * The PWR_OFF bit needs to be set separately, before
++		 * transitioning to the OFF state. It enables the "sequential"
++		 * power-off mode on TPS65911, it's a NO-OP on TPS65910.
++		 */
++		ret = regmap_set_bits(tps65910->regmap, TPS65910_DEVCTRL,
++				      DEVCTRL_PWR_OFF_MASK);
++		if (ret) {
++			dev_err(&i2c->dev, "failed to set power-off mode: %d\n",
++				ret);
++			return ret;
++		}
++
+ 		tps65910_i2c_client = i2c;
+ 		pm_power_off = tps65910_power_off;
+ 	}
+-- 
+2.33.1
+
