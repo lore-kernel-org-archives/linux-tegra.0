@@ -2,99 +2,171 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E80E0C433EF
-	for <linux-tegra@archiver.kernel.org>; Tue, 23 Nov 2021 23:01:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08CA9C433FE
+	for <linux-tegra@archiver.kernel.org>; Wed, 24 Nov 2021 00:45:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231847AbhKWXEM (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 23 Nov 2021 18:04:12 -0500
-Received: from mga01.intel.com ([192.55.52.88]:54470 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231368AbhKWXEJ (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 23 Nov 2021 18:04:09 -0500
-X-IronPort-AV: E=McAfee;i="6200,9189,10177"; a="259032785"
-X-IronPort-AV: E=Sophos;i="5.87,258,1631602800"; 
-   d="scan'208";a="259032785"
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Nov 2021 15:01:00 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.87,258,1631602800"; 
-   d="scan'208";a="456854084"
-Received: from lkp-server02.sh.intel.com (HELO 9e1e9f9b3bcb) ([10.239.97.151])
-  by orsmga003.jf.intel.com with ESMTP; 23 Nov 2021 15:00:55 -0800
-Received: from kbuild by 9e1e9f9b3bcb with local (Exim 4.92)
-        (envelope-from <lkp@intel.com>)
-        id 1mpemU-0002PQ-Sw; Tue, 23 Nov 2021 23:00:54 +0000
-Date:   Wed, 24 Nov 2021 07:00:38 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Akhil R <akhilrajeev@nvidia.com>, dan.j.williams@intel.com,
-        devicetree@vger.kernel.org, dmaengine@vger.kernel.org,
-        jonathanh@nvidia.com, kyarlagadda@nvidia.com, ldewangan@nvidia.com,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        p.zabel@pengutronix.de, rgumasta@nvidia.com
-Cc:     llvm@lists.linux.dev, kbuild-all@lists.01.org
-Subject: Re: [PATCH v13 2/4] dmaengine: tegra: Add tegra gpcdma driver
-Message-ID: <202111240616.WWuSKq38-lkp@intel.com>
-References: <1637573292-13214-3-git-send-email-akhilrajeev@nvidia.com>
+        id S231607AbhKXAsu (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 23 Nov 2021 19:48:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35638 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230490AbhKXAss (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 23 Nov 2021 19:48:48 -0500
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55712C061574;
+        Tue, 23 Nov 2021 16:45:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:
+        Subject:Sender:Reply-To:Cc:Content-ID:Content-Description;
+        bh=xB27hI0vcoK0X7IUXCx/Mp5AQPjXWuTvs7bAHhqYjwA=; b=XTfJCm0fQIqtp31k/uUvMW2enX
+        jA95MI5dUEwQC9pe//yZqS3E1T1g7cUDEFO9Yv0oY8NoVn/3HwHoQsdTguxQkrWVF8AhtgW9pC3tA
+        IGNVE1C+jfYBu5wHvXIZAzSxkdXrHO4JjF+tgX29Yfs7I9/vrlqXdIyozlKFP/i74SjTGIIJW7LQA
+        KrglDy6gWneibZzAAu0onNDNEq6xsHDL4IhXwE7YUlb9VWNTg2lWcjyTqOqV42IB9vr2MkZHbE5FV
+        d4FaUkwXrQEy8UgUGee4IscwFRQ53ZKTfuh+IGuFy0WQwCTJs2Vn78fNPQnp9qiIkwYg7c16ChR3t
+        oRqoycFQ==;
+Received: from [2601:1c0:6280:3f0::aa0b]
+        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mpgPr-003ksM-9T; Wed, 24 Nov 2021 00:45:39 +0000
+Subject: Re: [RFC v3 03/12] hte: Add tegra194 HTE kernel provider
+To:     Dipen Patel <dipenp@nvidia.com>, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
+        warthog618@gmail.com, devicetree@vger.kernel.org,
+        linux-doc@vger.kernel.org, robh+dt@kernel.org
+References: <20211123193039.25154-1-dipenp@nvidia.com>
+ <20211123193039.25154-4-dipenp@nvidia.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <a47ccdf7-0d35-feea-0015-526f65bfffac@infradead.org>
+Date:   Tue, 23 Nov 2021 16:45:37 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1637573292-13214-3-git-send-email-akhilrajeev@nvidia.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20211123193039.25154-4-dipenp@nvidia.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Akhil,
+Hi--
 
-Thank you for the patch! Perhaps something to improve:
+On 11/23/21 11:30 AM, Dipen Patel wrote:
+> Tegra194 device has multiple HTE instances also known as GTE
+> (Generic hardware Timestamping Engine) which can timestamp subset of
+> SoC lines/signals. This provider driver focuses on IRQ and GPIO lines
+> and exposes timestamping ability on those lines to the consumers
+> through HTE subsystem.
+> 
+> Also, with this patch, added:
+> - documentation about this provider and its capabilities at
+> Documentation/hte.
+> - Compilation support in Makefile and Kconfig
+> 
+> Signed-off-by: Dipen Patel <dipenp@nvidia.com>
+> ---
+> Changes in v3:
+> - Addressed grammatical/spelling errors.
+> 
+>   Documentation/hte/index.rst        |  22 ++
+>   Documentation/hte/tegra194-hte.rst |  57 +++
+>   Documentation/index.rst            |   1 +
+>   drivers/hte/Kconfig                |  12 +
+>   drivers/hte/Makefile               |   1 +
+>   drivers/hte/hte-tegra194.c         | 545 +++++++++++++++++++++++++++++
+>   6 files changed, 638 insertions(+)
+>   create mode 100644 Documentation/hte/index.rst
+>   create mode 100644 Documentation/hte/tegra194-hte.rst
+>   create mode 100644 drivers/hte/hte-tegra194.c
+> 
 
-[auto build test WARNING on robh/for-next]
-[also build test WARNING on vkoul-dmaengine/next arm64/for-next/core v5.16-rc2 next-20211123]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch]
+> diff --git a/Documentation/hte/tegra194-hte.rst b/Documentation/hte/tegra194-hte.rst
+> new file mode 100644
+> index 000000000000..3bebcbac5847
+> --- /dev/null
+> +++ b/Documentation/hte/tegra194-hte.rst
+> @@ -0,0 +1,57 @@
+> +HTE Kernel provider driver
+> +==========================
+> +
+> +Description
+> +-----------
+> +The Nvidia tegra194 HTE provider driver implements two GTE
+> +(Generic Timestamping Engine) instances: 1) GPIO GTE and 2) LIC
+> +(Legacy Interrupt Controller) IRQ GTE. Both GTEs instances get the
 
-url:    https://github.com/0day-ci/linux/commits/Akhil-R/Add-NVIDIA-Tegra-GPC-DMA-driver/20211122-173019
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
-config: riscv-randconfig-c006-20211123 (https://download.01.org/0day-ci/archive/20211124/202111240616.WWuSKq38-lkp@intel.com/config.gz)
-compiler: clang version 14.0.0 (https://github.com/llvm/llvm-project c133fb321f7ca6083ce15b6aa5bf89de6600e649)
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # install riscv cross compiling tool for clang build
-        # apt-get install binutils-riscv64-linux-gnu
-        # https://github.com/0day-ci/linux/commit/7707da9f914433ccc5718dd3431153d3b5bf485d
-        git remote add linux-review https://github.com/0day-ci/linux
-        git fetch --no-tags linux-review Akhil-R/Add-NVIDIA-Tegra-GPC-DMA-driver/20211122-173019
-        git checkout 7707da9f914433ccc5718dd3431153d3b5bf485d
-        # save the config file to linux build tree
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 ARCH=riscv 
+                                           Both GTE instances
 
-If you fix the issue, kindly add following tag as appropriate
-Reported-by: kernel test robot <lkp@intel.com>
+> +timestamp from the system counter TSC which has 31.25MHz clock rate, and the
+> +driver converts clock tick rate to nanoseconds before storing it as timestamp
+> +value.
+> +
+> +GPIO GTE
+> +--------
+> +
+> +This GTE instance timestamps GPIO in real time. For that to happen GPIO
+> +needs to be configured as input and IRQ needs to be enabled. The only always on
 
-All warnings (new ones prefixed by >>):
+                         Is "only" supposed to be here? ----------- ^^^^^^
 
->> drivers/dma/tegra186-gpc-dma.c:1264:21: warning: attribute declaration must precede definition [-Wignored-attributes]
-   static const struct __maybe_unused dev_pm_ops tegra_dma_dev_pm_ops = {
-                       ^
-   include/linux/compiler_attributes.h:286:56: note: expanded from macro '__maybe_unused'
-   #define __maybe_unused                  __attribute__((__unused__))
-                                                          ^
-   include/linux/pm.h:277:8: note: previous definition is here
-   struct dev_pm_ops {
-          ^
-   1 warning generated.
+> +(AON) GPIO controller instance supports timestamping GPIOs in real time and it
+> +has 39 GPIO lines. The GPIO GTE and AON GPIO controller are tightly coupled as
+> +it requires very specific bits to be set in GPIO config register before GPIO
+> +GTE can be used. The GPIO GTE functionality is accessed from the GPIOLIB
+> +framework for the in-kernel and userspace consumers. In the latter case,
+> +requests go through GPIOLIB CDEV framework. The below APIs are added in GPIOLIB
+> +framework to access HTE subsystem and GPIO GTE.
+> +
+> +.. kernel-doc:: drivers/gpio/gpiolib.c
+> +   :functions: gpiod_req_hw_timestamp_ns gpiod_rel_hw_timestamp_ns
+> +
+> +There is hte-tegra194-gpio-test.c, located in ``drivers/hte/`` directory, test
+> +driver which demonstrates above APIs for the Jetson AGX platform.
+> +
+> +For userspace consumers, GPIO_V2_LINE_FLAG_EVENT_CLOCK_HARDWARE flag must be
+> +specified during IOCTL calls. Refer to ``tools/gpio/gpio-event-mon.c``, which
+> +returns the timestamp in nanoseconds.
+> +
+> +LIC (Legacy Interrupt Controller) IRQ GTE
+> +-----------------------------------------
+> +
+> +This GTE instance timestamps LIC IRQ lines in real time. There are 352 IRQ
+> +lines which this instance can add timestamps to in real time. The hte
+> +devicetree binding described at ``Documentation/devicetree/bindings/hte/``
+> +provides an example of how a consumer can request an IRQ line. Since it is a
+> +one-to-one mapping, consumers can simply specify the IRQ number that they are
+> +interested in. There is no userspace consumer support for this GTE instance in
+> +the hte framework. The sample test code hte-tegra194-irq-test.c, located in
+> +the ``drivers/hte/`` directory, demonstrates how to use an IRQ GTE instance.
+> +The below is sample device tree snippet code for the test driver::
+> +
+> + tegra_hte_irq_test {
+> +        compatible = "nvidia,tegra194-hte-irq-test";
+> +        htes = <&tegra_hte_lic 0x19>;
+> +        hte-names = "hte-lic";
+> + };
+> +
+> +The provider source code of both IRQ and GPIO GTE instances is located at
+> +``drivers/hte/hte-tegra194.c``.
+> +
+> diff --git a/Documentation/index.rst b/Documentation/index.rst
+> index 1b13c2445e87..b41118577fe6 100644
+> --- a/Documentation/index.rst
+> +++ b/Documentation/index.rst
+> @@ -138,6 +138,7 @@ needed).
+>      misc-devices/index
+>      scheduler/index
+>      mhi/index
+> +   hte/index
+
+Looks like a text alignment problem there.
+
+>   
+>   Architecture-agnostic documentation
+>   -----------------------------------
 
 
-vim +1264 drivers/dma/tegra186-gpc-dma.c
-
-  1263	
-> 1264	static const struct __maybe_unused dev_pm_ops tegra_dma_dev_pm_ops = {
-  1265		SET_LATE_SYSTEM_SLEEP_PM_OPS(tegra_dma_pm_suspend, tegra_dma_pm_resume)
-  1266	};
-  1267	
-
----
-0-DAY CI Kernel Test Service, Intel Corporation
-https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
+-- 
+~Randy
