@@ -2,52 +2,52 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41419C43219
-	for <linux-tegra@archiver.kernel.org>; Wed, 24 Nov 2021 22:06:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96508C433F5
+	for <linux-tegra@archiver.kernel.org>; Wed, 24 Nov 2021 22:06:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344351AbhKXWJo (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 24 Nov 2021 17:09:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40834 "EHLO
+        id S1344682AbhKXWJp (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 24 Nov 2021 17:09:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40840 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344159AbhKXWJm (ORCPT
+        with ESMTP id S244968AbhKXWJn (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 24 Nov 2021 17:09:42 -0500
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 791D0C061574;
-        Wed, 24 Nov 2021 14:06:32 -0800 (PST)
-Received: by mail-lf1-x129.google.com with SMTP id b1so10873227lfs.13;
-        Wed, 24 Nov 2021 14:06:32 -0800 (PST)
+        Wed, 24 Nov 2021 17:09:43 -0500
+Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 615CAC061574;
+        Wed, 24 Nov 2021 14:06:33 -0800 (PST)
+Received: by mail-lf1-x132.google.com with SMTP id u3so10984303lfl.2;
+        Wed, 24 Nov 2021 14:06:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=2uuzWPY9rvjqfLr6fV1cmdNXd06jrQuuKD96OjbdPNQ=;
-        b=qfW/HGnpwCJ+dlE2szaDZeKhas1KXNCAysUabq12Y4F5YGkDbHpghxFVOofzIK/kTC
-         gElro/xsp2BmqhbbG3ukENdsXrM9TwUCWplBi6kH+whRJB8SDMaLZFjTvHm/8V03CJ++
-         RLRTk+bu7Y3J9gdjMza+jSJyJjieaKdSMxy+eD8wOGX3WLkHpww8wtwwMBsFJLUhrAH/
-         P4l/0QOWxp7sTeiB5tf21QhBm7/gvsft2MS/cFZlxQX+b45CW4ykPXboy/+9UXz7gz1W
-         B5RpB040Vl27+liyU/91pUGKM5/H4jly777rmEfqoluq7zNJgdIPhoMtAPKruSeaH/P0
-         6MPQ==
+        bh=MICB7mqmtHJVlNvBv+SpnWZStTf75CqEHyV3SkIQNcM=;
+        b=HhIn/DTxG+D4VfSf2OQYzEE48im3KVlsU7kOnmsyyR9CmnJXYni1HO1NFe5pqJ4PTN
+         OGXFX5iISFdbDHGQVbUJbgW4fGwJKApNGMWY5gPBxNJGZQS6JYzJ6x2l6+BuKBtv9qs6
+         kpWqN+BWZVOk94Cp31E2S/bI4cENe70RshvOHmyGWCMKT8BKM1g6CUYGRQAzJuzZjCP6
+         apIMCILOeJ1p+mReMRFK9M0GxBY2CI4pdDrdErVBmx4HGFUwvNYT8Wg6ECFz/SJU+91T
+         QrV6I7hbKK8nHcstU0o86z9ffx8tvcOLhqlMk7aAphpdoExJ3exK+FQwizJyRGk5HCjS
+         5EzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=2uuzWPY9rvjqfLr6fV1cmdNXd06jrQuuKD96OjbdPNQ=;
-        b=xWwyUZjBy5MX2VpTDsd33hirZNeW8/eHsbrev3m1iJOz6DrTCLUpGB3jDibyprG9HR
-         lAMETHoKI67Pp57m2G471c1x1TPBFCq+1r99c/+Y59AM0kcZ7vXZkHTeM3x0XU+X7H/K
-         sS1AonazPwvLxHgW2F3WzE/25rEKppSHE12rgexMQqEWZxEBTf7xTQutBcxGi9tqmeK0
-         lPLtfMdfxxnuxnLSwF4g6QrnF4i+C07c+/QAuEahh3+zMZamme8uifoYa0k8hwlN0MZy
-         T3J2f7S1H5wqLTU2u1YBOU4OBSgYce3PUrhmUrNGFl1YaEtt0Fw5TXVJVnDu/k1tQa7O
-         T8yg==
-X-Gm-Message-State: AOAM53183C2D/50c5/0RHWBoyvVrBgCA+FaXM0LH1PlBIxp278psmeKT
-        JZKoMvoBff+H162CMBL+K1Y=
-X-Google-Smtp-Source: ABdhPJzQ5wmPsf7MT2kOseSoWuXZrjMS2l8zY/SyQMJGCvCCrfyBLGpbOCXFy5OZHCgrTdnaiZanxQ==
-X-Received: by 2002:a05:6512:249:: with SMTP id b9mr19394202lfo.496.1637791590799;
-        Wed, 24 Nov 2021 14:06:30 -0800 (PST)
+        bh=MICB7mqmtHJVlNvBv+SpnWZStTf75CqEHyV3SkIQNcM=;
+        b=Au7F79LNMPJkScRSYl4Y0qQ7HMaTMn6s9+Qd5btVw14xW4vIY63Gj106SKkog4YyeZ
+         QjdlxUKEx7eDsoAdzL4lXlxuHNHJvsGtVrzyQ7HFWFWq0NHktyzvZJeGCD7rV7K/7xmb
+         xUjJG+Wic/+bZ/wofxsXdiJ4xZOvtjMoxnQqoQz+vK1oCzRmhm1gcZqw+LLf11DrH3iz
+         B/0AuT/hHmOMz1gsIU/3l2W+0rhkqDsS/0TRRuKlQnO/gw+sOKL+bEDIYoeBTRihhbla
+         DBXlwCpjPULTWwNgZkrtz5Vmb6E77wTfK2RD0bLvyZOQdhQ1mnHT2zjQXLKBqeyYs3Qd
+         MRgA==
+X-Gm-Message-State: AOAM530e6ncoYCEe8y+/4WtCiKMi7iigDBNViE742lVStkNABwQ8Q/ZX
+        PT4intsQTg1rQEz22pY2xgA=
+X-Google-Smtp-Source: ABdhPJwRcOg8FSHfX1XMSp6JKcqGsETM9PJXhUfm1mZ0N3DupGcSvfd54SIFkK8zcPH7ShULyXhhSw==
+X-Received: by 2002:a05:6512:2341:: with SMTP id p1mr18799257lfu.204.1637791591580;
+        Wed, 24 Nov 2021 14:06:31 -0800 (PST)
 Received: from localhost.localdomain (94-29-48-99.dynamic.spd-mgts.ru. [94.29.48.99])
         by smtp.gmail.com with ESMTPSA id w17sm93266ljh.15.2021.11.24.14.06.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Nov 2021 14:06:30 -0800 (PST)
+        Wed, 24 Nov 2021 14:06:31 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -58,9 +58,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
 Cc:     linux-tegra@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
         alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org
-Subject: [PATCH v1 01/20] ASoC: dt-bindings: Add binding for Tegra20 S/PDIF
-Date:   Thu, 25 Nov 2021 01:00:38 +0300
-Message-Id: <20211124220057.15763-2-digetx@gmail.com>
+Subject: [PATCH v1 02/20] ASoC: dt-bindings: tegra20-i2s: Convert to schema
+Date:   Thu, 25 Nov 2021 01:00:39 +0300
+Message-Id: <20211124220057.15763-3-digetx@gmail.com>
 X-Mailer: git-send-email 2.33.1
 In-Reply-To: <20211124220057.15763-1-digetx@gmail.com>
 References: <20211124220057.15763-1-digetx@gmail.com>
@@ -70,33 +70,70 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Add device-tree binding for Tegra20 S/PDIF controller.
+Convert NVIDIA Tegra20 I2S binding to schema.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- .../bindings/sound/nvidia,tegra20-spdif.yaml  | 88 +++++++++++++++++++
- 1 file changed, 88 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra20-spdif.yaml
+ .../bindings/sound/nvidia,tegra20-i2s.txt     | 30 --------
+ .../bindings/sound/nvidia,tegra20-i2s.yaml    | 71 +++++++++++++++++++
+ 2 files changed, 71 insertions(+), 30 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra20-i2s.txt
+ create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra20-i2s.yaml
 
-diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra20-spdif.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra20-spdif.yaml
+diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra20-i2s.txt b/Documentation/devicetree/bindings/sound/nvidia,tegra20-i2s.txt
+deleted file mode 100644
+index dc30c6bfbe95..000000000000
+--- a/Documentation/devicetree/bindings/sound/nvidia,tegra20-i2s.txt
++++ /dev/null
+@@ -1,30 +0,0 @@
+-NVIDIA Tegra 20 I2S controller
+-
+-Required properties:
+-- compatible : "nvidia,tegra20-i2s"
+-- reg : Should contain I2S registers location and length
+-- interrupts : Should contain I2S interrupt
+-- resets : Must contain an entry for each entry in reset-names.
+-  See ../reset/reset.txt for details.
+-- reset-names : Must include the following entries:
+-  - i2s
+-- dmas : Must contain an entry for each entry in clock-names.
+-  See ../dma/dma.txt for details.
+-- dma-names : Must include the following entries:
+-  - rx
+-  - tx
+-- clocks : Must contain one entry, for the module clock.
+-  See ../clocks/clock-bindings.txt for details.
+-
+-Example:
+-
+-i2s@70002800 {
+-	compatible = "nvidia,tegra20-i2s";
+-	reg = <0x70002800 0x200>;
+-	interrupts = < 45 >;
+-	clocks = <&tegra_car 11>;
+-	resets = <&tegra_car 11>;
+-	reset-names = "i2s";
+-	dmas = <&apbdma 21>, <&apbdma 21>;
+-	dma-names = "rx", "tx";
+-};
+diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra20-i2s.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra20-i2s.yaml
 new file mode 100644
-index 000000000000..4a2747d64772
+index 000000000000..cd87eb4ef995
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/nvidia,tegra20-spdif.yaml
-@@ -0,0 +1,88 @@
++++ b/Documentation/devicetree/bindings/sound/nvidia,tegra20-i2s.yaml
+@@ -0,0 +1,71 @@
 +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/sound/nvidia,tegra20-spdif.yaml#
++$id: http://devicetree.org/schemas/sound/nvidia,tegra20-i2s.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: NVIDIA Tegra20 S/PDIF Controller
++title: NVIDIA Tegra20 I2S Controller
 +
 +description: |
-+  The S/PDIF controller supports both input and output in serial audio
-+  digital interface format. The input controller can digitally recover
-+  a clock from the received stream. The S/PDIF controller is also used
-+  to generate the embedded audio for HDMI output channel.
++  The I2S Controller streams synchronous serial audio data between system
++  memory and an external audio device. The controller supports the I2S Left
++  Justified Mode, Right Justified Mode, and DSP mode formats.
 +
 +maintainers:
 +  - Thierry Reding <treding@nvidia.com>
@@ -104,7 +141,7 @@ index 000000000000..4a2747d64772
 +
 +properties:
 +  compatible:
-+    const: nvidia,tegra20-spdif
++    const: nvidia,tegra20-i2s
 +
 +  reg:
 +    maxItems: 1
@@ -112,16 +149,14 @@ index 000000000000..4a2747d64772
 +  resets:
 +    maxItems: 1
 +
++  reset-names:
++    const: i2s
++
 +  interrupts:
 +    maxItems: 1
 +
 +  clocks:
-+    minItems: 2
-+
-+  clock-names:
-+    items:
-+      - const: spdif_out
-+      - const: spdif_in
++    minItems: 1
 +
 +  dmas:
 +    minItems: 2
@@ -131,44 +166,30 @@ index 000000000000..4a2747d64772
 +      - const: rx
 +      - const: tx
 +
-+  "#sound-dai-cells":
-+    const: 0
-+
-+  nvidia,fixed-parent-rate:
-+    description: |
-+      Specifies whether board prefers parent clock to stay at a fixed rate.
-+      This allows multiple Tegra20 audio components work simultaneously by
-+      limiting number of supportable audio rates.
-+    type: boolean
-+
-+  assigned-clocks: true
-+  assigned-clock-parents: true
-+
 +required:
 +  - compatible
 +  - reg
 +  - resets
++  - reset-names
 +  - interrupts
 +  - clocks
 +  - clock-names
 +  - dmas
 +  - dma-names
-+  - "#sound-dai-cells"
 +
 +additionalProperties: false
 +
 +examples:
 +  - |
-+    spdif@70002400 {
-+        compatible = "nvidia,tegra20-spdif";
-+        reg = <0x70002400 0x200>;
-+        interrupts = <77>;
-+        clocks = <&tegra_car99>, <&tegra_car 98>;
-+        clock-names = "spdif_out", "spdif_in";
-+        resets = <&tegra_car 10>;
-+        dmas = <&apbdma 3>, <&apbdma 3>;
++    i2s@70002800 {
++        compatible = "nvidia,tegra20-i2s";
++        reg = <0x70002800 0x200>;
++        interrupts = <45>;
++        clocks = <&tegra_car 11>;
++        resets = <&tegra_car 11>;
++        reset-names = "i2s";
++        dmas = <&apbdma 21>, <&apbdma 21>;
 +        dma-names = "rx", "tx";
-+        #sound-dai-cells = <0>;
 +    };
 +
 +...
