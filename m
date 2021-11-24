@@ -2,82 +2,77 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B8BAC4321E
-	for <linux-tegra@archiver.kernel.org>; Wed, 24 Nov 2021 14:07:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E39ACC433F5
+	for <linux-tegra@archiver.kernel.org>; Wed, 24 Nov 2021 14:20:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349513AbhKXOKc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 24 Nov 2021 09:10:32 -0500
-Received: from foss.arm.com ([217.140.110.172]:39196 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1355110AbhKXOIa (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 24 Nov 2021 09:08:30 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C3873ED1;
-        Wed, 24 Nov 2021 06:05:20 -0800 (PST)
-Received: from [10.57.56.56] (unknown [10.57.56.56])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 66E5D3F73B;
-        Wed, 24 Nov 2021 06:05:19 -0800 (PST)
-Message-ID: <0dfb2ee7-e6ec-f085-ed16-650e646d24d7@arm.com>
-Date:   Wed, 24 Nov 2021 14:05:15 +0000
+        id S1356177AbhKXOXi (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 24 Nov 2021 09:23:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45850 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1356153AbhKXOXP (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 24 Nov 2021 09:23:15 -0500
+Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7604EC125620
+        for <linux-tegra@vger.kernel.org>; Wed, 24 Nov 2021 04:49:07 -0800 (PST)
+Received: by mail-ed1-x52b.google.com with SMTP id r25so9887298edq.7
+        for <linux-tegra@vger.kernel.org>; Wed, 24 Nov 2021 04:49:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Y20/1fNI0KyXaXs0cDKjMiW+8AcpeeOZCZyIy4HTxew=;
+        b=QWr1PwEG/EADEtJyNuAGgukP9TFolNnrcuwsHJZNQMYqnBXZx7f2XagUqNdKr0mIoQ
+         A+ouXtJ9i7ZT+9fYsDUcII/DKdRARKmtvcOG1kmQvXw4/P6Yo4aCxxn5Ih7tRr96C2sf
+         CsW3RQoGcK9SHFi26pns6ytEKoORprMUm3N4KzwbGx9MceFZMR5kZMZdw1RKHT8M+a31
+         9KnM15yguo0Kuz0FuCL+yKn+/rIutqNJjjnzcseEtp2SoqgjAVva9DpDBDrTrtwpu0/S
+         UTSlChU1HJY8OeKRjx9glKGWxJepO636z76PQQE7kCvr+Uxrmf8Y0mtWeA1mklLF8MMo
+         0wcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Y20/1fNI0KyXaXs0cDKjMiW+8AcpeeOZCZyIy4HTxew=;
+        b=LHMttGDrTzFtmmtLbvcjJSZv2U2Ux9YmQp4UfABeRAKV0ZDmu8Af+YSd5IzuqzWfSA
+         lxaVrbxzi1aG4n5HjWx736WhEqjIX3qXUaBxl14L/5fAjhhgkWTxXYGcts/AuQBQXMpH
+         4A4q4UZ/8cafxal+Iv19AKLmFWPPoA45/e+RQGPqb2ggZBlZIXDw1cZ1gqXkloljvc19
+         poaIHSGJMjBHvduxmfiUKI9b4klEjcKTBZ54fHIznsiVNS9G2aHXhAv71DmXCzsVPw/q
+         CAFJNA1OY41hu4/L1Vw6rEHRuF4Z8VP8dDmUHd0bzldgZZmjpa/d6ZJV9/j67PSI33ti
+         sP4g==
+X-Gm-Message-State: AOAM532uaSJRXpGNmnTGf28tQKCMZhGioKSbkl987Hl2ftua0eggDhlR
+        irH3DFVcDl6qqaoOcdhcqO9axas7pOePaHEBappK0w==
+X-Google-Smtp-Source: ABdhPJzTYyVftaV4BFYMlLiX1+O0OX4hovqL5nPKZA/1gazZYJqzC88C0uialiBMArI7+/Fj+g4nyCh9wLoMCoB2LrI=
+X-Received: by 2002:a17:907:9847:: with SMTP id jj7mr19421387ejc.508.1637758146037;
+ Wed, 24 Nov 2021 04:49:06 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:91.0) Gecko/20100101
- Thunderbird/91.3.2
-Subject: Re: [PATCH 1/9] gpu: host1x: Add missing DMA API include
-Content-Language: en-GB
-From:   Robin Murphy <robin.murphy@arm.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>
-Cc:     linux-kernel@vger.kernel.org, willy@infradead.org,
-        iommu@lists.linux-foundation.org, dri-devel@lists.freedesktop.org,
-        linux-tegra@vger.kernel.org, joro@8bytes.org, will@kernel.org
-References: <cover.1637671820.git.robin.murphy@arm.com>
- <d7bc49bfda25a7ea19dc574f8e212cd9e42bf2e2.1637671820.git.robin.murphy@arm.com>
-In-Reply-To: <d7bc49bfda25a7ea19dc574f8e212cd9e42bf2e2.1637671820.git.robin.murphy@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20211112130152.3682556-1-thierry.reding@gmail.com> <20211112130152.3682556-2-thierry.reding@gmail.com>
+In-Reply-To: <20211112130152.3682556-2-thierry.reding@gmail.com>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Wed, 24 Nov 2021 13:48:55 +0100
+Message-ID: <CAMRc=McFDS=_Dwkc1V6tq5xsOLyT+u_4uCVGFFeMFbdYNn46bA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/5] dt-bindings: gpio: tegra186: Convert to json-schema
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Prathamesh Shete <pshete@nvidia.com>,
+        linux-tegra@vger.kernel.org,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 2021-11-23 14:10, Robin Murphy wrote:
-> Host1x seems to be relying on picking up dma-mapping.h transitively from
-> iova.h, which has no reason to include it in the first place. Fix the
-> former issue before we totally break things by fixing the latter one.
-> 
-> CC: Thierry Reding <thierry.reding@gmail.com>
-> CC: Mikko Perttunen <mperttunen@nvidia.com>
-> CC: dri-devel@lists.freedesktop.org
-> CC: linux-tegra@vger.kernel.org
-> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
+On Fri, Nov 12, 2021 at 2:02 PM Thierry Reding <thierry.reding@gmail.com> wrote:
+>
+> From: Thierry Reding <treding@nvidia.com>
+>
+> Convert the Tegra186 GPIO controller device tree bindings from free-form
+> text format to json-schema.
+>
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
 > ---
-> 
-> Feel free to pick this into drm-misc-next or drm-misc-fixes straight
-> away if that suits - it's only to avoid a build breakage once the rest
-> of the series gets queued.
 
-Bah, seems like tegra-vic needs the same treatment too, but wasn't in my 
-local config. Should I squash that into a respin of this patch on the 
-grounds of being vaguely related, or would you prefer it separate?
+As it's an entire conversion into yaml - would you mind Cc'in Rob
+Herring for his review?
 
-(Either way I'll wait a little while to see if the buildbots uncover any 
-more...)
-
-Cheers,
-Robin.
-
->   drivers/gpu/host1x/bus.c | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/gpu/host1x/bus.c b/drivers/gpu/host1x/bus.c
-> index 218e3718fd68..881fad5c3307 100644
-> --- a/drivers/gpu/host1x/bus.c
-> +++ b/drivers/gpu/host1x/bus.c
-> @@ -5,6 +5,7 @@
->    */
->   
->   #include <linux/debugfs.h>
-> +#include <linux/dma-mapping.h>
->   #include <linux/host1x.h>
->   #include <linux/of.h>
->   #include <linux/seq_file.h>
-> 
+Bart
