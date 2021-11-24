@@ -2,52 +2,52 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDE11C433FE
-	for <linux-tegra@archiver.kernel.org>; Wed, 24 Nov 2021 21:01:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78EFAC43217
+	for <linux-tegra@archiver.kernel.org>; Wed, 24 Nov 2021 21:01:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343810AbhKXVEX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 24 Nov 2021 16:04:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54126 "EHLO
+        id S1344747AbhKXVEb (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 24 Nov 2021 16:04:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54136 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343595AbhKXVEO (ORCPT
+        with ESMTP id S1344815AbhKXVE1 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 24 Nov 2021 16:04:14 -0500
-Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 098A2C061574;
-        Wed, 24 Nov 2021 13:01:04 -0800 (PST)
-Received: by mail-lj1-x233.google.com with SMTP id t11so8100809ljh.6;
-        Wed, 24 Nov 2021 13:01:03 -0800 (PST)
+        Wed, 24 Nov 2021 16:04:27 -0500
+Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2047FC0613D7;
+        Wed, 24 Nov 2021 13:01:09 -0800 (PST)
+Received: by mail-lf1-x136.google.com with SMTP id c32so10628533lfv.4;
+        Wed, 24 Nov 2021 13:01:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=oy3zwV/g5imosVMvt8kebzh3+2gNs9w4Z9AIdIXw0XA=;
-        b=Sg4w8oGQaa37WclqtpGZ2KDpr5mCr0XFYNq5f8+1filNnlEvCUl37+6TrjOVVQNvyv
-         QbrLoj/wpe5Tcsq5/0r+L4fAr5mSWKACIHEQ++M/DRcXSy3CEbIrsPItoxRYvPFNCzQu
-         3nl/IZS/fpcyyj4l28lIxxJ++7EDiX8M6Gh+nRaqVGv29HRq8k7j2NpEBqmVJTLCR6hx
-         YlTOThpZmWr6eQCwtACvtn9on80rp/6X33dVz6BzOKzkDtBXyxa6AFroInSr8sLAjPpa
-         kMvSKf7U3LGyWBJlxVs5eMqslu6WwzSwoyLTveC9u+Lb/8QTmrOiqHUU3rVr67TA9PhS
-         YUyg==
+        bh=ARSimr4iZsMCsEeXtymIyYcjiDLOKfhPwInfMC9QD6U=;
+        b=cPdx9iIrjtueqnG/y37rs1hJtB6m+vBrWkI6aXEWd80pQK5T2FmrTwfzMSl7rOaNix
+         cdqUyHivS3Dwke1DHAvC8gE+ANRwFvnGLZBkNjRRhYrnIonTlFk13Ay+GMXzLJKTzwgZ
+         ufwvNHNtA+sOFXH+3c5SN1UD3nMeBDwvBD50EFGHQBjHtOlzaq/V56HOZD9ukcaNAyD7
+         FeZU4Cr83Bg/xNy6bRLxnmIw/hdb/lC4hh1k15ISBQI2lQy9HEXXm1SQb9pz6Qe9v2wa
+         yVVo04p1qZLdZO6+LpJaZkwcbSjeQB8ukvbxy2WXoY0NUPnMPrnUgnyRYzAH9OPYFAvn
+         RVvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=oy3zwV/g5imosVMvt8kebzh3+2gNs9w4Z9AIdIXw0XA=;
-        b=rjYZoAzM3MS9qkT/2TYfGb6Hz4MD4OdUUx976+MF8ckS38WmTCbg2bOy0/qDgeqfoP
-         cnV/x1PdEoZbIBJrylbZhI6FTeyEAoXcSWAX5FEQqU1OUKJ4tZjo6T0y5IIT32RLqz/E
-         fgG/N+ojhgdXZcR/DTQuM7g+sjWYxsSUIZzzDOuns5LAF00B8IDX9sCLOSBCG5LDUT1h
-         0IbPkEkoJOL1OxeU8pVxsRqC4YUTVdPZz/1qKd6AipZyW/EdZFnI5f0qxdqRO0E+n/NW
-         f6ZJcuY7UX73TibOeiaMIZUB51gsfob9T6Yyz+yhJEqNuH8ygncUFq9MHCGQHpWXi88F
-         ix2g==
-X-Gm-Message-State: AOAM5318r4V4k1XXbehVQjSR5ZGee38AqWh0QZmVQ3MW4HlVFdG+J+FA
-        eVvPZLw1qs4Rg2hB4+h2kTk=
-X-Google-Smtp-Source: ABdhPJzXZzUearKezYxqaVJCzAqwvFSzFtiKqxTJdF/eXfM58h/IzbCcPbkRwFAqTd2MLAX9ROCClw==
-X-Received: by 2002:a2e:9350:: with SMTP id m16mr19135363ljh.233.1637787661773;
-        Wed, 24 Nov 2021 13:01:01 -0800 (PST)
+        bh=ARSimr4iZsMCsEeXtymIyYcjiDLOKfhPwInfMC9QD6U=;
+        b=NjYQPRxWo1sIrGHm2oVRLMJFI3VUnNrw186Ood1MY1okrtyIfW1r3pGIsDMjSeBbNw
+         Cp+E3JJ4+PO7BfgIyi94PhcQ8LZHzywgIldcQjFz0m9WHKM/ANHG1CzqKEY3zVtNdu7U
+         pT0zTZO9DkVb/uLFf5L3g1uw/ZB+ZPoJ4fszjamdHV+yY/tFjMSgLrBmvY3wvdWBM7MO
+         mGcVQaB7lSOJyn+tPOIHj0KdFjyZFp8v3mjks/ZFzJu9awdb/B/PdlenfQozNpZJfBsj
+         Hyav6bzNndb9MNr7vjv5JKRcB0pr/eHvuot/Kdqnwdy05zLRDY+kEh6aSBBjNZFHtH68
+         tlNg==
+X-Gm-Message-State: AOAM530F+l/+8I8521WaZU+fEe5hULV1NBEIx9ubI35xJafnJ9cELclT
+        vuRvVA8L96JEHdOC/LkmJuo=
+X-Google-Smtp-Source: ABdhPJwOGmjnoymA3WREO7M+0EJ58YlGJePWQwQDEzG4+BsnBf+H7qjuI7FTSg4WdmWHf60L3diQpA==
+X-Received: by 2002:ac2:489a:: with SMTP id x26mr18689177lfc.419.1637787667201;
+        Wed, 24 Nov 2021 13:01:07 -0800 (PST)
 Received: from localhost.localdomain (94-29-48-99.dynamic.spd-mgts.ru. [94.29.48.99])
-        by smtp.gmail.com with ESMTPSA id 18sm79939ljr.17.2021.11.24.13.01.00
+        by smtp.gmail.com with ESMTPSA id 18sm79939ljr.17.2021.11.24.13.01.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Nov 2021 13:01:01 -0800 (PST)
+        Wed, 24 Nov 2021 13:01:06 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -67,9 +67,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Thomas Graichen <thomas.graichen@gmail.com>
 Cc:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 07/14] ARM: tegra: Add device-tree for ASUS Transformer Pad TF300TG
-Date:   Wed, 24 Nov 2021 23:59:15 +0300
-Message-Id: <20211124205922.11930-8-digetx@gmail.com>
+Subject: [PATCH v2 12/14] ARM: tegra: Name clock and regulator nodes according to DT-schema
+Date:   Wed, 24 Nov 2021 23:59:20 +0300
+Message-Id: <20211124205922.11930-13-digetx@gmail.com>
 X-Mailer: git-send-email 2.33.1
 In-Reply-To: <20211124205922.11930-1-digetx@gmail.com>
 References: <20211124205922.11930-1-digetx@gmail.com>
@@ -79,1110 +79,1533 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Svyatoslav Ryhel <clamor95@gmail.com>
+From: David Heidelberg <david@ixit.cz>
 
-Add device-tree for ASUS Transformer Pad TF300TG, which is NVIDIA
-Tegra30-based tablet device, a variant of TF300T that has 3g modem.
+Name clocks and regulators according to DT-schema to fix warnings such as:
 
-Co-developed-by: Ion Agorria <ion@agorria.com>
-Signed-off-by: Ion Agorria <ion@agorria.com>
-Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+arch/arm/boot/dts/tegra20-acer-a500-picasso.dt.yaml: /: clock@0: 'anyOf' conditional failed, one must be fixed:
+ 	'reg' is a required property
+ 	'ranges' is a required property
+ 	From schema: /home/runner/.local/lib/python3.8/site-packages/dtschema/schemas/root-node.yaml
+
+Signed-off-by: David Heidelberg <david@ixit.cz>
 ---
- arch/arm/boot/dts/Makefile                 |    1 +
- arch/arm/boot/dts/tegra30-asus-tf300tg.dts | 1072 ++++++++++++++++++++
- 2 files changed, 1073 insertions(+)
- create mode 100644 arch/arm/boot/dts/tegra30-asus-tf300tg.dts
+ arch/arm/boot/dts/tegra114-dalmore.dts        | 16 +++++------
+ arch/arm/boot/dts/tegra114-roth.dts           | 14 +++++-----
+ arch/arm/boot/dts/tegra114-tn7.dts            |  8 +++---
+ arch/arm/boot/dts/tegra124-jetson-tk1.dts     | 26 ++++++++---------
+ arch/arm/boot/dts/tegra124-nyan.dtsi          | 28 +++++++++----------
+ arch/arm/boot/dts/tegra124-venice2.dts        | 28 +++++++++----------
+ .../boot/dts/tegra20-acer-a500-picasso.dts    | 12 ++++----
+ arch/arm/boot/dts/tegra20-harmony.dts         | 16 +++++------
+ arch/arm/boot/dts/tegra20-medcom-wide.dts     |  8 +++---
+ arch/arm/boot/dts/tegra20-paz00.dts           |  6 ++--
+ arch/arm/boot/dts/tegra20-plutux.dts          |  8 +++---
+ arch/arm/boot/dts/tegra20-seaboard.dts        | 16 +++++------
+ arch/arm/boot/dts/tegra20-tamonten.dtsi       |  4 +--
+ arch/arm/boot/dts/tegra20-tec.dts             |  8 +++---
+ arch/arm/boot/dts/tegra20-trimslice.dts       | 12 ++++----
+ arch/arm/boot/dts/tegra20-ventana.dts         | 12 ++++----
+ .../tegra30-asus-nexus7-grouper-common.dtsi   | 10 +++----
+ ...egra30-asus-nexus7-grouper-maxim-pmic.dtsi |  4 +--
+ .../tegra30-asus-nexus7-grouper-ti-pmic.dtsi  |  2 +-
+ arch/arm/boot/dts/tegra30-beaver.dts          | 20 ++++++-------
+ arch/arm/boot/dts/tegra30-cardhu-a02.dts      | 12 ++++----
+ arch/arm/boot/dts/tegra30-cardhu-a04.dts      | 14 +++++-----
+ arch/arm/boot/dts/tegra30-cardhu.dtsi         | 28 +++++++++----------
+ 23 files changed, 156 insertions(+), 156 deletions(-)
 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index 85477066bb2d..fcbcaed0c2da 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -1323,6 +1323,7 @@ dtb-$(CONFIG_ARCH_TEGRA_3x_SOC) += \
- 	tegra30-asus-nexus7-tilapia-E1565.dtb \
- 	tegra30-asus-tf201.dtb \
- 	tegra30-asus-tf300t.dtb \
-+	tegra30-asus-tf300tg.dtb \
- 	tegra30-beaver.dtb \
- 	tegra30-cardhu-a02.dtb \
- 	tegra30-cardhu-a04.dtb \
-diff --git a/arch/arm/boot/dts/tegra30-asus-tf300tg.dts b/arch/arm/boot/dts/tegra30-asus-tf300tg.dts
-new file mode 100644
-index 000000000000..e1509b48a4fa
---- /dev/null
-+++ b/arch/arm/boot/dts/tegra30-asus-tf300tg.dts
-@@ -0,0 +1,1072 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/dts-v1/;
-+
-+#include "tegra30-asus-transformer-common.dtsi"
-+#include "tegra30-asus-lvds-display.dtsi"
-+
-+/ {
-+	model = "Asus Transformer Pad 3G TF300TG";
-+	compatible = "asus,tf300tg", "nvidia,tegra30";
-+
-+	gpio@6000d000 {
-+		tf300tg-init-hog {
-+			gpio-hog;
-+			gpios = <TEGRA_GPIO(C, 6) GPIO_ACTIVE_HIGH>,
-+				<TEGRA_GPIO(D, 2) GPIO_ACTIVE_HIGH>,
-+				<TEGRA_GPIO(P, 1) GPIO_ACTIVE_HIGH>,
-+				<TEGRA_GPIO(X, 5) GPIO_ACTIVE_HIGH>,
-+				<TEGRA_GPIO(W, 3) GPIO_ACTIVE_HIGH>,
-+				<TEGRA_GPIO(R, 3) GPIO_ACTIVE_HIGH>,
-+				<TEGRA_GPIO(U, 5) GPIO_ACTIVE_HIGH>,
-+				<TEGRA_GPIO(X, 7) GPIO_ACTIVE_HIGH>,
-+				<TEGRA_GPIO(X, 0) GPIO_ACTIVE_HIGH>,
-+				<TEGRA_GPIO(Y, 2) GPIO_ACTIVE_HIGH>,
-+				<TEGRA_GPIO(Y, 3) GPIO_ACTIVE_HIGH>,
-+				<TEGRA_GPIO(EE, 1) GPIO_ACTIVE_HIGH>,
-+				<TEGRA_GPIO(R, 7) GPIO_ACTIVE_HIGH>,
-+				<TEGRA_GPIO(U, 3) GPIO_ACTIVE_HIGH>;
-+			output-low;
-+		};
-+	};
-+
-+	pinmux@70000868 {
-+		state_default: pinmux {
-+			pbb3 {
-+				nvidia,pins = "pbb3";
-+				nvidia,function = "vgp3";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+			};
-+			pbb7 {
-+				nvidia,pins = "pbb7";
-+				nvidia,function = "i2s4";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+			};
-+			gmi_cs4_n_pk2 {
-+				nvidia,pins = "gmi_cs4_n_pk2";
-+				nvidia,function = "gmi";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_ENABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+			};
-+			lcd_pwr2_pc6 {
-+				nvidia,pins = "lcd_pwr2_pc6",
-+						"lcd_dc1_pd2";
-+				nvidia,function = "displaya";
-+				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+			};
-+			kb_row7_pr7 {
-+				nvidia,pins = "kb_row7_pr7";
-+				nvidia,function = "kbc";
-+				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+			};
-+			spi2_cs2_n_pw3 {
-+				nvidia,pins = "spi2_cs2_n_pw3";
-+				nvidia,function = "spi2";
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+			};
-+			dap3_din_pp1 {
-+				nvidia,pins = "dap3_din_pp1";
-+				nvidia,function = "i2s2";
-+				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+			};
-+			spi1_sck_px5 {
-+				nvidia,pins = "spi1_sck_px5";
-+				nvidia,function = "spi1";
-+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+			};
-+			pu5 {
-+				nvidia,pins = "pu5";
-+				nvidia,function = "pwm2";
-+				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+			};
-+			spi2_mosi_px0 {
-+				nvidia,pins = "spi2_mosi_px0";
-+				nvidia,function = "spi2";
-+			};
-+			spi1_miso_px7 {
-+				nvidia,pins = "spi1_miso_px7";
-+				nvidia,function = "spi1";
-+				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+			};
-+			clk3_req_pee1 {
-+				nvidia,pins = "clk3_req_pee1";
-+				nvidia,function = "dev3";
-+				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+			};
-+			ulpi_nxt_py2 {
-+				nvidia,pins = "ulpi_nxt_py2";
-+				nvidia,function = "uartd";
-+				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+			};
-+			ulpi_stp_py3 {
-+				nvidia,pins = "ulpi_stp_py3";
-+				nvidia,function = "uartd";
-+				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+			};
-+			pu3 {
-+				nvidia,pins = "pu3";
-+				nvidia,function = "rsvd1";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+			};
-+			dap1_din_pn1 {
-+				nvidia,pins = "dap1_din_pn1";
-+				nvidia,function = "i2s0";
-+				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+			};
-+		};
-+	};
-+
-+	uartc: serial@70006200 {
-+		/* Azurewave AW-NH615 BCM4329B1 */
-+		bluetooth {
-+			compatible = "brcm,bcm4329-bt";
-+		};
-+	};
-+
-+	i2c2: i2c@7000c400 {
-+		/* Elantech EKTH1036 touchscreen */
-+		touchscreen@10 {
-+			compatible = "elan,ektf3624";
-+			reg = <0x10>;
-+
-+			interrupt-parent = <&gpio>;
-+			interrupts = <TEGRA_GPIO(H, 4) IRQ_TYPE_EDGE_FALLING>;
-+			reset-gpios = <&gpio TEGRA_GPIO(H, 6) GPIO_ACTIVE_LOW>;
-+
-+			vcc33-supply = <&vdd_3v3_sys>;
-+			vccio-supply = <&vdd_3v3_sys>;
-+
-+			touchscreen-size-x = <2240>;
-+			touchscreen-size-y = <1408>;
-+			touchscreen-inverted-y;
-+		};
-+	};
-+
-+	i2c3: i2c@7000c500 {
-+		clock-frequency = <400000>;
-+
-+		magnetometer@e {
-+			mount-matrix =   "1",  "0",  "0",
-+					 "0", "-1",  "0",
-+					 "0",  "0", "-1";
-+		};
-+
-+		gyroscope@68 {
-+			mount-matrix =   "-1",  "0",  "0",
-+					  "0",  "1",  "0",
-+					  "0",  "0", "-1";
-+
-+			/* External I2C interface */
-+			i2c-gate {
-+				accelerometer@f {
-+					mount-matrix =   "0", "-1",  "0",
-+							"-1",  "0",  "0",
-+							 "0",  "0",  "1";
-+				};
-+			};
-+		};
-+	};
-+
-+	i2c5: i2c@7000d000 {
-+		/* Realtek ALC5631 audio codec */
-+		rt5631: audio-codec@1a {
-+			compatible = "realtek,rt5631";
-+			reg = <0x1a>;
-+		};
-+	};
-+
-+	display-panel {
-+		compatible = "innolux,g101ice-l01";
-+	};
-+
-+	memory-controller@7000f000 {
-+		emc-timings-0 {
-+			/* Elpida 1GB 667MHZ */
-+			nvidia,ram-code = <0>;
-+
-+			timing-25500000 {
-+				clock-frequency = <25500000>;
-+
-+				nvidia,emem-configuration = < 0x00020001 0xc0000020
-+					0x00000001 0x00000001 0x00000002 0x00000000
-+					0x00000001 0x00000001 0x00000003 0x00000008
-+					0x00000002 0x00000001 0x00000002 0x00000006
-+					0x06020102 0x000a0502 0x74830303 0x001f0000 >;
-+			};
-+
-+			timing-51000000 {
-+				clock-frequency = <51000000>;
-+
-+				nvidia,emem-configuration = < 0x00010001 0xc0000020
-+					0x00000001 0x00000001 0x00000002 0x00000000
-+					0x00000001 0x00000001 0x00000003 0x00000008
-+					0x00000002 0x00000001 0x00000002 0x00000006
-+					0x06020102 0x000a0502 0x73430303 0x001f0000 >;
-+			};
-+
-+			timing-102000000 {
-+				clock-frequency = <102000000>;
-+
-+				nvidia,emem-configuration = < 0x00000001 0xc0000030
-+					0x00000001 0x00000001 0x00000003 0x00000000
-+					0x00000001 0x00000001 0x00000003 0x00000008
-+					0x00000002 0x00000001 0x00000002 0x00000006
-+					0x06020102 0x000a0503 0x72830504 0x001f0000 >;
-+			};
-+
-+			timing-204000000 {
-+				clock-frequency = <204000000>;
-+
-+				nvidia,emem-configuration = < 0x00000003 0xc0000025
-+					0x00000001 0x00000001 0x00000005 0x00000002
-+					0x00000003 0x00000001 0x00000003 0x00000008
-+					0x00000002 0x00000001 0x00000002 0x00000006
-+					0x06020102 0x000a0505 0x72440a06 0x001f0000 >;
-+			};
-+
-+			timing-333500000 {
-+				clock-frequency = <333500000>;
-+
-+				nvidia,emem-configuration = < 0x00000005 0xc000003d
-+					0x00000001 0x00000002 0x00000008 0x00000004
-+					0x00000004 0x00000001 0x00000002 0x00000007
-+					0x00000002 0x00000002 0x00000003 0x00000006
-+					0x06030202 0x000b0608 0x70850f09 0x001f0000 >;
-+			};
-+
-+			timing-667000000 {
-+				clock-frequency = <667000000>;
-+
-+				nvidia,emem-configuration = < 0x0000000a 0xc0000079
-+					0x00000003 0x00000004 0x00000010 0x0000000b
-+					0x0000000a 0x00000001 0x00000003 0x0000000b
-+					0x00000002 0x00000002 0x00000004 0x00000008
-+					0x08040202 0x00130b10 0x70ea1f11 0x001f0000 >;
-+			};
-+		};
-+
-+		emc-timings-1 {
-+			/* Hynix 1GB 667MHZ */
-+			nvidia,ram-code = <1>;
-+
-+			timing-25500000 {
-+				clock-frequency = <25500000>;
-+
-+				nvidia,emem-configuration = < 0x00020001 0xc0000020
-+					0x00000001 0x00000001 0x00000002 0x00000000
-+					0x00000001 0x00000001 0x00000003 0x00000008
-+					0x00000002 0x00000001 0x00000002 0x00000006
-+					0x06020102 0x000a0502 0x74830303 0x001f0000 >;
-+			};
-+
-+			timing-51000000 {
-+				clock-frequency = <51000000>;
-+
-+				nvidia,emem-configuration = < 0x00010001 0xc0000020
-+					0x00000001 0x00000001 0x00000002 0x00000000
-+					0x00000001 0x00000001 0x00000003 0x00000008
-+					0x00000002 0x00000001 0x00000002 0x00000006
-+					0x06020102 0x000a0502 0x73430303 0x001f0000 >;
-+			};
-+
-+			timing-102000000 {
-+				clock-frequency = <102000000>;
-+
-+				nvidia,emem-configuration = < 0x00000001 0xc0000030
-+					0x00000001 0x00000001 0x00000003 0x00000000
-+					0x00000001 0x00000001 0x00000003 0x00000008
-+					0x00000002 0x00000001 0x00000002 0x00000006
-+					0x06020102 0x000a0503 0x72830504 0x001f0000 >;
-+			};
-+
-+			timing-204000000 {
-+				clock-frequency = <204000000>;
-+
-+				nvidia,emem-configuration = < 0x00000003 0xc0000025
-+					0x00000001 0x00000001 0x00000005 0x00000002
-+					0x00000003 0x00000001 0x00000003 0x00000008
-+					0x00000002 0x00000001 0x00000002 0x00000006
-+					0x06020102 0x000a0505 0x72440a06 0x001f0000 >;
-+			};
-+
-+			timing-333500000 {
-+				clock-frequency = <333500000>;
-+
-+				nvidia,emem-configuration = < 0x00000005 0xc000003d
-+					0x00000001 0x00000002 0x00000008 0x00000004
-+					0x00000004 0x00000001 0x00000002 0x00000007
-+					0x00000002 0x00000002 0x00000003 0x00000006
-+					0x06030202 0x000b0608 0x70850f09 0x001f0000 >;
-+			};
-+
-+			timing-667000000 {
-+				clock-frequency = <667000000>;
-+
-+				nvidia,emem-configuration = < 0x0000000a 0xc0000079
-+					0x00000003 0x00000004 0x00000010 0x0000000b
-+					0x0000000a 0x00000001 0x00000003 0x0000000b
-+					0x00000002 0x00000002 0x00000004 0x00000008
-+					0x08040202 0x00130b10 0x70ea1f11 0x001f0000 >;
-+			};
-+		};
-+
-+		emc-timings-2 {
-+			/* Micron 1GB 667MHZ */
-+			nvidia,ram-code = <2>;
-+
-+			timing-25500000 {
-+				clock-frequency = <25500000>;
-+
-+				nvidia,emem-configuration = < 0x00020001 0xc0000020
-+					0x00000001 0x00000001 0x00000002 0x00000000
-+					0x00000001 0x00000001 0x00000003 0x00000008
-+					0x00000002 0x00000001 0x00000002 0x00000006
-+					0x06020102 0x000a0502 0x74830303 0x001f0000 >;
-+			};
-+
-+			timing-51000000 {
-+				clock-frequency = <51000000>;
-+
-+				nvidia,emem-configuration = < 0x00010001 0xc0000020
-+					0x00000001 0x00000001 0x00000002 0x00000000
-+					0x00000001 0x00000001 0x00000003 0x00000008
-+					0x00000002 0x00000001 0x00000002 0x00000006
-+					0x06020102 0x000a0502 0x73430303 0x001f0000 >;
-+			};
-+
-+			timing-102000000 {
-+				clock-frequency = <102000000>;
-+
-+				nvidia,emem-configuration = < 0x00000001 0xc0000030
-+					0x00000001 0x00000001 0x00000003 0x00000000
-+					0x00000001 0x00000001 0x00000003 0x00000008
-+					0x00000002 0x00000001 0x00000002 0x00000006
-+					0x06020102 0x000a0503 0x72830504 0x001f0000 >;
-+			};
-+
-+			timing-204000000 {
-+				clock-frequency = <204000000>;
-+
-+				nvidia,emem-configuration = < 0x00000003 0xc0000025
-+					0x00000001 0x00000001 0x00000005 0x00000002
-+					0x00000003 0x00000001 0x00000003 0x00000008
-+					0x00000002 0x00000001 0x00000002 0x00000006
-+					0x06020102 0x000a0505 0x72440a06 0x001f0000 >;
-+			};
-+
-+			timing-333500000 {
-+				clock-frequency = <333500000>;
-+
-+				nvidia,emem-configuration = < 0x00000005 0x8000003d
-+					0x00000001 0x00000002 0x00000008 0x00000004
-+					0x00000004 0x00000001 0x00000002 0x00000007
-+					0x00000002 0x00000002 0x00000003 0x00000006
-+					0x06030202 0x000b0608 0x70850f09 0x001f0000 >;
-+			};
-+
-+			timing-667000000 {
-+				clock-frequency = <667000000>;
-+
-+				nvidia,emem-configuration = < 0x0000000a 0x80000079
-+					0x00000003 0x00000004 0x00000010 0x0000000a
-+					0x0000000a 0x00000001 0x00000003 0x0000000b
-+					0x00000002 0x00000002 0x00000004 0x00000008
-+					0x08040202 0x00130b10 0x70ea1f11 0x001f0000 >;
-+			};
-+		};
-+	};
-+
-+	memory-controller@7000f400 {
-+		emc-timings-0 {
-+			/* Elpida 1GB 667MHZ */
-+			nvidia,ram-code = <0>;
-+
-+			timing-25500000 {
-+				clock-frequency = <25500000>;
-+
-+				nvidia,emc-auto-cal-interval = <0x001fffff>;
-+				nvidia,emc-mode-1 = <0x80100003>;
-+				nvidia,emc-mode-2 = <0x80200048>;
-+				nvidia,emc-mode-reset = <0x80001221>;
-+				nvidia,emc-zcal-cnt-long = <0x00000040>;
-+				nvidia,emc-cfg-dyn-self-ref;
-+				nvidia,emc-cfg-periodic-qrst;
-+
-+				nvidia,emc-configuration =  < 0x00000001
-+					0x00000004 0x00000000 0x00000000 0x00000002
-+					0x0000000a 0x00000005 0x0000000b 0x00000000
-+					0x00000000 0x00000003 0x00000001 0x00000000
-+					0x00000005 0x00000005 0x00000004 0x0000000a
-+					0x0000000b 0x000000c0 0x00000000 0x00000030
-+					0x00000002 0x00000002 0x00000001 0x00000000
-+					0x00000007 0x0000000f 0x00000005 0x00000005
-+					0x00000004 0x00000001 0x00000000 0x00000004
-+					0x00000005 0x000000c7 0x00000006 0x00000004
-+					0x00000000 0x00000000 0x00004288 0x007800a4
-+					0x00008000 0x000fc000 0x000fc000 0x000fc000
-+					0x000fc000 0x000fc000 0x000fc000 0x000fc000
-+					0x000fc000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x000fc000 0x000fc000 0x000fc000
-+					0x000fc000 0x000002a0 0x0800211c 0x00000000
-+					0x77fff884 0x01f1f108 0x05057404 0x54000007
-+					0x08000168 0x08000000 0x00000802 0x00000000
-+					0x00000040 0x000c000c 0xa0f10000 0x00000000
-+					0x00000000 0x80000287 0xe8000000 0xff00ff00 >;
-+			};
-+
-+			timing-51000000 {
-+				clock-frequency = <51000000>;
-+
-+				nvidia,emc-auto-cal-interval = <0x001fffff>;
-+				nvidia,emc-mode-1 = <0x80100003>;
-+				nvidia,emc-mode-2 = <0x80200048>;
-+				nvidia,emc-mode-reset = <0x80001221>;
-+				nvidia,emc-zcal-cnt-long = <0x00000040>;
-+				nvidia,emc-cfg-dyn-self-ref;
-+				nvidia,emc-cfg-periodic-qrst;
-+
-+				nvidia,emc-configuration =  < 0x00000002
-+					0x00000008 0x00000001 0x00000000 0x00000002
-+					0x0000000a 0x00000005 0x0000000b 0x00000000
-+					0x00000000 0x00000003 0x00000001 0x00000000
-+					0x00000005 0x00000005 0x00000004 0x0000000a
-+					0x0000000b 0x00000181 0x00000000 0x00000060
-+					0x00000002 0x00000002 0x00000001 0x00000000
-+					0x00000007 0x0000000f 0x00000009 0x00000009
-+					0x00000004 0x00000002 0x00000000 0x00000004
-+					0x00000005 0x0000018e 0x00000006 0x00000004
-+					0x00000000 0x00000000 0x00004288 0x007800a4
-+					0x00008000 0x000fc000 0x000fc000 0x000fc000
-+					0x000fc000 0x000fc000 0x000fc000 0x000fc000
-+					0x000fc000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x000fc000 0x000fc000 0x000fc000
-+					0x000fc000 0x000002a0 0x0800211c 0x00000000
-+					0x77fff884 0x01f1f108 0x05057404 0x54000007
-+					0x08000168 0x08000000 0x00000802 0x00000000
-+					0x00000040 0x000c000c 0xa0f10000 0x00000000
-+					0x00000000 0x8000040b 0xe8000000 0xff00ff00 >;
-+			};
-+
-+			timing-102000000 {
-+				clock-frequency = <102000000>;
-+
-+				nvidia,emc-auto-cal-interval = <0x001fffff>;
-+				nvidia,emc-mode-1 = <0x80100003>;
-+				nvidia,emc-mode-2 = <0x80200048>;
-+				nvidia,emc-mode-reset = <0x80001221>;
-+				nvidia,emc-zcal-cnt-long = <0x00000040>;
-+				nvidia,emc-cfg-dyn-self-ref;
-+				nvidia,emc-cfg-periodic-qrst;
-+
-+				nvidia,emc-configuration =  < 0x00000005
-+					0x00000010 0x00000003 0x00000001 0x00000002
-+					0x0000000a 0x00000005 0x0000000b 0x00000001
-+					0x00000001 0x00000003 0x00000001 0x00000000
-+					0x00000005 0x00000005 0x00000004 0x0000000a
-+					0x0000000b 0x00000303 0x00000000 0x000000c0
-+					0x00000002 0x00000002 0x00000001 0x00000000
-+					0x00000007 0x0000000f 0x00000012 0x00000012
-+					0x00000004 0x00000004 0x00000000 0x00000004
-+					0x00000005 0x0000031c 0x00000006 0x00000004
-+					0x00000000 0x00000000 0x00004288 0x007800a4
-+					0x00008000 0x000fc000 0x000fc000 0x000fc000
-+					0x000fc000 0x000fc000 0x000fc000 0x000fc000
-+					0x000fc000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x000fc000 0x000fc000 0x000fc000
-+					0x000fc000 0x000002a0 0x0800211c 0x00000000
-+					0x77fff884 0x01f1f108 0x05057404 0x54000007
-+					0x08000168 0x08000000 0x00000802 0x00000000
-+					0x00000040 0x000c000c 0xa0f10000 0x00000000
-+					0x00000000 0x80000713 0xe8000000 0xff00ff00 >;
-+			};
-+
-+			timing-204000000 {
-+				clock-frequency = <204000000>;
-+
-+				nvidia,emc-auto-cal-interval = <0x001fffff>;
-+				nvidia,emc-mode-1 = <0x80100003>;
-+				nvidia,emc-mode-2 = <0x80200048>;
-+				nvidia,emc-mode-reset = <0x80001221>;
-+				nvidia,emc-zcal-cnt-long = <0x00000040>;
-+				nvidia,emc-cfg-dyn-self-ref;
-+				nvidia,emc-cfg-periodic-qrst;
-+
-+				nvidia,emc-configuration =  < 0x0000000a
-+					0x00000020 0x00000007 0x00000002 0x00000002
-+					0x0000000a 0x00000005 0x0000000b 0x00000002
-+					0x00000002 0x00000003 0x00000001 0x00000000
-+					0x00000005 0x00000006 0x00000004 0x0000000a
-+					0x0000000b 0x00000607 0x00000000 0x00000181
-+					0x00000002 0x00000002 0x00000001 0x00000000
-+					0x00000007 0x0000000f 0x00000023 0x00000023
-+					0x00000004 0x00000007 0x00000000 0x00000004
-+					0x00000005 0x00000638 0x00000007 0x00000004
-+					0x00000000 0x00000000 0x00004288 0x004400a4
-+					0x00008000 0x00080000 0x00080000 0x00080000
-+					0x00080000 0x00080000 0x00080000 0x00080000
-+					0x00080000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00080000 0x00080000 0x00080000
-+					0x00080000 0x000002a0 0x0800211c 0x00000000
-+					0x77fff884 0x01f1f108 0x05057404 0x54000007
-+					0x08000168 0x08000000 0x00000802 0x00020000
-+					0x00000100 0x000c000c 0xa0f10000 0x00000000
-+					0x00000000 0x80000d22 0xe8000000 0xff00ff00 >;
-+			};
-+
-+			timing-333500000 {
-+				clock-frequency = <333500000>;
-+
-+				nvidia,emc-auto-cal-interval = <0x001fffff>;
-+				nvidia,emc-mode-1 = <0x80100002>;
-+				nvidia,emc-mode-2 = <0x80200040>;
-+				nvidia,emc-mode-reset = <0x80000321>;
-+				nvidia,emc-zcal-cnt-long = <0x00000040>;
-+
-+				nvidia,emc-configuration =  < 0x0000000f
-+					0x00000034 0x0000000a 0x00000003 0x00000003
-+					0x00000008 0x00000002 0x00000009 0x00000003
-+					0x00000003 0x00000002 0x00000001 0x00000000
-+					0x00000004 0x00000006 0x00000004 0x0000000a
-+					0x0000000c 0x000009e9 0x00000000 0x0000027a
-+					0x00000001 0x00000008 0x00000001 0x00000000
-+					0x00000007 0x0000000e 0x00000039 0x00000200
-+					0x00000004 0x0000000a 0x00000000 0x00000004
-+					0x00000005 0x00000a2a 0x00000000 0x00000004
-+					0x00000000 0x00000000 0x00007088 0x002600a4
-+					0x00008000 0x0003c000 0x0003c000 0x0003c000
-+					0x0003c000 0x00014000 0x00014000 0x00014000
-+					0x00014000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00050000 0x00050000 0x00050000
-+					0x00050000 0x000002a0 0x0800013d 0x00000000
-+					0x77fff884 0x01f1f508 0x05057404 0x54000007
-+					0x080001e8 0x08000021 0x00000802 0x00020000
-+					0x00000100 0x018b000c 0xa0f10000 0x00000000
-+					0x00000000 0x800014d4 0xe8000000 0xff00ff89 >;
-+			};
-+
-+			timing-667000000 {
-+				clock-frequency = <667000000>;
-+
-+				nvidia,emc-auto-cal-interval = <0x001fffff>;
-+				nvidia,emc-mode-1 = <0x80100002>;
-+				nvidia,emc-mode-2 = <0x80200058>;
-+				nvidia,emc-mode-reset = <0x80000b71>;
-+				nvidia,emc-zcal-cnt-long = <0x00000040>;
-+				nvidia,emc-cfg-periodic-qrst;
-+
-+				nvidia,emc-configuration =  < 0x0000001f
-+					0x00000069 0x00000017 0x00000007 0x00000005
-+					0x0000000c 0x00000003 0x00000011 0x00000007
-+					0x00000007 0x00000002 0x00000001 0x00000000
-+					0x00000007 0x0000000b 0x00000009 0x0000000b
-+					0x00000011 0x00001412 0x00000000 0x00000504
-+					0x00000002 0x0000000e 0x00000001 0x00000000
-+					0x0000000c 0x00000016 0x00000072 0x00000200
-+					0x00000005 0x00000015 0x00000000 0x00000006
-+					0x00000007 0x00001453 0x0000000c 0x00000004
-+					0x00000000 0x00000000 0x00005088 0xf00b0191
-+					0x00008000 0x0000000c 0x0000000c 0x0000000c
-+					0x0000000c 0x0000000a 0x0000000a 0x0000000a
-+					0x0000000a 0x00018000 0x00018000 0x00018000
-+					0x00018000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x0000000c 0x0000000c 0x0000000c
-+					0x0000000c 0x000002a0 0x0a00013d 0x22220000
-+					0x77fff884 0x01f1f501 0x07077404 0x54000000
-+					0x080001e8 0x0a000021 0x00000802 0x00020000
-+					0x00000100 0x0156000c 0xa0f10000 0x00000000
-+					0x00000000 0x800028a5 0xe8000000 0xff00ff49 >;
-+			};
-+		};
-+
-+		emc-timings-1 {
-+			/* Hynix 1GB 667MHZ */
-+			nvidia,ram-code = <1>;
-+
-+			timing-25500000 {
-+				clock-frequency = <25500000>;
-+
-+				nvidia,emc-auto-cal-interval = <0x001fffff>;
-+				nvidia,emc-mode-1 = <0x80100003>;
-+				nvidia,emc-mode-2 = <0x80200048>;
-+				nvidia,emc-mode-reset = <0x80001221>;
-+				nvidia,emc-zcal-cnt-long = <0x00000040>;
-+				nvidia,emc-cfg-dyn-self-ref;
-+				nvidia,emc-cfg-periodic-qrst;
-+
-+				nvidia,emc-configuration =  < 0x00000001
-+					0x00000004 0x00000000 0x00000000 0x00000002
-+					0x0000000a 0x00000005 0x0000000b 0x00000000
-+					0x00000000 0x00000003 0x00000001 0x00000000
-+					0x00000005 0x00000005 0x00000004 0x0000000a
-+					0x0000000b 0x000000c0 0x00000000 0x00000030
-+					0x00000002 0x00000002 0x00000001 0x00000000
-+					0x00000007 0x0000000f 0x00000005 0x00000005
-+					0x00000004 0x00000001 0x00000000 0x00000004
-+					0x00000005 0x000000c7 0x00000006 0x00000004
-+					0x00000000 0x00000000 0x00004288 0x007800a4
-+					0x00008000 0x000fc000 0x000fc000 0x000fc000
-+					0x000fc000 0x000fc000 0x000fc000 0x000fc000
-+					0x000fc000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x000fc000 0x000fc000 0x000fc000
-+					0x000fc000 0x000002a0 0x0800211c 0x00000000
-+					0x77fff884 0x01f1f108 0x05057404 0x54000007
-+					0x08000168 0x08000000 0x00000802 0x00000000
-+					0x00000040 0x000c000c 0xa0f10000 0x00000000
-+					0x00000000 0x80000287 0xe8000000 0xff00ff00 >;
-+			};
-+
-+			timing-51000000 {
-+				clock-frequency = <51000000>;
-+
-+				nvidia,emc-auto-cal-interval = <0x001fffff>;
-+				nvidia,emc-mode-1 = <0x80100003>;
-+				nvidia,emc-mode-2 = <0x80200048>;
-+				nvidia,emc-mode-reset = <0x80001221>;
-+				nvidia,emc-zcal-cnt-long = <0x00000040>;
-+				nvidia,emc-cfg-dyn-self-ref;
-+				nvidia,emc-cfg-periodic-qrst;
-+
-+				nvidia,emc-configuration =  < 0x00000002
-+					0x00000008 0x00000001 0x00000000 0x00000002
-+					0x0000000a 0x00000005 0x0000000b 0x00000000
-+					0x00000000 0x00000003 0x00000001 0x00000000
-+					0x00000005 0x00000005 0x00000004 0x0000000a
-+					0x0000000b 0x00000181 0x00000000 0x00000060
-+					0x00000002 0x00000002 0x00000001 0x00000000
-+					0x00000007 0x0000000f 0x00000009 0x00000009
-+					0x00000004 0x00000002 0x00000000 0x00000004
-+					0x00000005 0x0000018e 0x00000006 0x00000004
-+					0x00000000 0x00000000 0x00004288 0x007800a4
-+					0x00008000 0x000fc000 0x000fc000 0x000fc000
-+					0x000fc000 0x000fc000 0x000fc000 0x000fc000
-+					0x000fc000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x000fc000 0x000fc000 0x000fc000
-+					0x000fc000 0x000002a0 0x0800211c 0x00000000
-+					0x77fff884 0x01f1f108 0x05057404 0x54000007
-+					0x08000168 0x08000000 0x00000802 0x00000000
-+					0x00000040 0x000c000c 0xa0f10000 0x00000000
-+					0x00000000 0x8000040b 0xe8000000 0xff00ff00 >;
-+			};
-+
-+			timing-102000000 {
-+				clock-frequency = <102000000>;
-+
-+				nvidia,emc-auto-cal-interval = <0x001fffff>;
-+				nvidia,emc-mode-1 = <0x80100003>;
-+				nvidia,emc-mode-2 = <0x80200048>;
-+				nvidia,emc-mode-reset = <0x80001221>;
-+				nvidia,emc-zcal-cnt-long = <0x00000040>;
-+				nvidia,emc-cfg-dyn-self-ref;
-+				nvidia,emc-cfg-periodic-qrst;
-+
-+				nvidia,emc-configuration =  < 0x00000005
-+					0x00000010 0x00000003 0x00000001 0x00000002
-+					0x0000000a 0x00000005 0x0000000b 0x00000001
-+					0x00000001 0x00000003 0x00000001 0x00000000
-+					0x00000005 0x00000005 0x00000004 0x0000000a
-+					0x0000000b 0x00000303 0x00000000 0x000000c0
-+					0x00000002 0x00000002 0x00000001 0x00000000
-+					0x00000007 0x0000000f 0x00000012 0x00000012
-+					0x00000004 0x00000004 0x00000000 0x00000004
-+					0x00000005 0x0000031c 0x00000006 0x00000004
-+					0x00000000 0x00000000 0x00004288 0x007800a4
-+					0x00008000 0x000fc000 0x000fc000 0x000fc000
-+					0x000fc000 0x000fc000 0x000fc000 0x000fc000
-+					0x000fc000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x000fc000 0x000fc000 0x000fc000
-+					0x000fc000 0x000002a0 0x0800211c 0x00000000
-+					0x77fff884 0x01f1f108 0x05057404 0x54000007
-+					0x08000168 0x08000000 0x00000802 0x00000000
-+					0x00000040 0x000c000c 0xa0f10000 0x00000000
-+					0x00000000 0x80000713 0xe8000000 0xff00ff00 >;
-+			};
-+
-+			timing-204000000 {
-+				clock-frequency = <204000000>;
-+
-+				nvidia,emc-auto-cal-interval = <0x001fffff>;
-+				nvidia,emc-mode-1 = <0x80100003>;
-+				nvidia,emc-mode-2 = <0x80200048>;
-+				nvidia,emc-mode-reset = <0x80001221>;
-+				nvidia,emc-zcal-cnt-long = <0x00000040>;
-+				nvidia,emc-cfg-dyn-self-ref;
-+				nvidia,emc-cfg-periodic-qrst;
-+
-+				nvidia,emc-configuration =  < 0x0000000a
-+					0x00000020 0x00000007 0x00000002 0x00000002
-+					0x0000000a 0x00000005 0x0000000b 0x00000002
-+					0x00000002 0x00000003 0x00000001 0x00000000
-+					0x00000005 0x00000006 0x00000004 0x0000000a
-+					0x0000000b 0x00000607 0x00000000 0x00000181
-+					0x00000002 0x00000002 0x00000001 0x00000000
-+					0x00000007 0x0000000f 0x00000023 0x00000023
-+					0x00000004 0x00000007 0x00000000 0x00000004
-+					0x00000005 0x00000638 0x00000007 0x00000004
-+					0x00000000 0x00000000 0x00004288 0x004400a4
-+					0x00008000 0x00080000 0x00080000 0x00080000
-+					0x00080000 0x00080000 0x00080000 0x00080000
-+					0x00080000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00080000 0x00080000 0x00080000
-+					0x00080000 0x000002a0 0x0800211c 0x00000000
-+					0x77fff884 0x01f1f108 0x05057404 0x54000007
-+					0x08000168 0x08000000 0x00000802 0x00020000
-+					0x00000100 0x000c000c 0xa0f10000 0x00000000
-+					0x00000000 0x80000d22 0xe8000000 0xff00ff00 >;
-+			};
-+
-+			timing-333500000 {
-+				clock-frequency = <333500000>;
-+
-+				nvidia,emc-auto-cal-interval = <0x001fffff>;
-+				nvidia,emc-mode-1 = <0x80100002>;
-+				nvidia,emc-mode-2 = <0x80200040>;
-+				nvidia,emc-mode-reset = <0x80000321>;
-+				nvidia,emc-zcal-cnt-long = <0x00000040>;
-+
-+				nvidia,emc-configuration =  < 0x0000000f
-+					0x00000034 0x0000000a 0x00000003 0x00000003
-+					0x00000008 0x00000002 0x00000009 0x00000003
-+					0x00000003 0x00000002 0x00000001 0x00000000
-+					0x00000004 0x00000006 0x00000004 0x0000000a
-+					0x0000000c 0x000009e9 0x00000000 0x0000027a
-+					0x00000001 0x00000008 0x00000001 0x00000000
-+					0x00000007 0x0000000e 0x00000039 0x00000200
-+					0x00000004 0x0000000a 0x00000000 0x00000004
-+					0x00000005 0x00000a2a 0x00000000 0x00000004
-+					0x00000000 0x00000000 0x00007088 0x002600a4
-+					0x00008000 0x0003c000 0x0003c000 0x0003c000
-+					0x0003c000 0x00014000 0x00014000 0x00014000
-+					0x00014000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00048000 0x00048000 0x00048000
-+					0x00048000 0x000002a0 0x0800013d 0x00000000
-+					0x77fff884 0x01f1f508 0x05057404 0x54000007
-+					0x080001e8 0x08000021 0x00000802 0x00020000
-+					0x00000100 0x018b000c 0xa0f10000 0x00000000
-+					0x00000000 0x800014d4 0xe8000000 0xff00ff89 >;
-+			};
-+
-+			timing-667000000 {
-+				clock-frequency = <667000000>;
-+
-+				nvidia,emc-auto-cal-interval = <0x001fffff>;
-+				nvidia,emc-mode-1 = <0x80100002>;
-+				nvidia,emc-mode-2 = <0x80200058>;
-+				nvidia,emc-mode-reset = <0x80000b71>;
-+				nvidia,emc-zcal-cnt-long = <0x00000040>;
-+				nvidia,emc-cfg-periodic-qrst;
-+
-+				nvidia,emc-configuration =  < 0x00000020
-+					0x00000069 0x00000017 0x00000007 0x00000005
-+					0x0000000c 0x00000003 0x00000011 0x00000007
-+					0x00000007 0x00000002 0x00000001 0x00000000
-+					0x00000007 0x0000000b 0x00000009 0x0000000b
-+					0x00000011 0x00001412 0x00000000 0x00000504
-+					0x00000002 0x0000000e 0x00000001 0x00000000
-+					0x0000000c 0x00000016 0x00000072 0x00000200
-+					0x00000005 0x00000015 0x00000000 0x00000006
-+					0x00000007 0x00001453 0x0000000c 0x00000004
-+					0x00000000 0x00000000 0x00005088 0xf00b0191
-+					0x00008000 0x0000000a 0x0000000a 0x0000000a
-+					0x0000000a 0x0000000a 0x0000000a 0x0000000a
-+					0x0000000a 0x00018000 0x00018000 0x00018000
-+					0x00018000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x0000000a 0x0000000a 0x0000000a
-+					0x0000000a 0x000002a0 0x0800013d 0x22220000
-+					0x77fff884 0x01f1f501 0x07077404 0x54000000
-+					0x080001e8 0x08000021 0x00000802 0x00020000
-+					0x00000100 0x0156000c 0xa0f10000 0x00000000
-+					0x00000000 0x800028a5 0xe8000000 0xff00ff49 >;
-+			};
-+		};
-+
-+		emc-timings-2 {
-+			/* Micron 1GB 667MHZ */
-+			nvidia,ram-code = <2>;
-+
-+			timing-25500000 {
-+				clock-frequency = <25500000>;
-+
-+				nvidia,emc-auto-cal-interval = <0x001fffff>;
-+				nvidia,emc-mode-1 = <0x80100003>;
-+				nvidia,emc-mode-2 = <0x80200008>;
-+				nvidia,emc-mode-reset = <0x80001221>;
-+				nvidia,emc-zcal-cnt-long = <0x00000040>;
-+				nvidia,emc-cfg-dyn-self-ref;
-+				nvidia,emc-cfg-periodic-qrst;
-+
-+				nvidia,emc-configuration =  < 0x00000001
-+					0x00000004 0x00000000 0x00000000 0x00000002
-+					0x0000000a 0x00000005 0x0000000b 0x00000000
-+					0x00000000 0x00000003 0x00000001 0x00000000
-+					0x00000005 0x00000005 0x00000004 0x0000000a
-+					0x0000000b 0x000000c0 0x00000000 0x00000030
-+					0x00000002 0x00000002 0x00000001 0x00000000
-+					0x00000007 0x0000000f 0x00000005 0x00000005
-+					0x00000004 0x00000001 0x00000000 0x00000004
-+					0x00000005 0x000000c7 0x00000006 0x00000004
-+					0x00000000 0x00000000 0x00004288 0x007800a4
-+					0x00008000 0x000fc000 0x000fc000 0x000fc000
-+					0x000fc000 0x000fc000 0x000fc000 0x000fc000
-+					0x000fc000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x000fc000 0x000fc000 0x000fc000
-+					0x000fc000 0x000002a0 0x0800211c 0x00000000
-+					0x77fff884 0x01f1f108 0x05057404 0x54000007
-+					0x08000168 0x08000000 0x00000802 0x00000000
-+					0x00000040 0x000c000c 0xa0f10000 0x00000000
-+					0x00000000 0x80000287 0xe8000000 0xff00ff00 >;
-+			};
-+
-+			timing-51000000 {
-+				clock-frequency = <51000000>;
-+
-+				nvidia,emc-auto-cal-interval = <0x001fffff>;
-+				nvidia,emc-mode-1 = <0x80100003>;
-+				nvidia,emc-mode-2 = <0x80200008>;
-+				nvidia,emc-mode-reset = <0x80001221>;
-+				nvidia,emc-zcal-cnt-long = <0x00000040>;
-+				nvidia,emc-cfg-dyn-self-ref;
-+				nvidia,emc-cfg-periodic-qrst;
-+
-+				nvidia,emc-configuration =  < 0x00000002
-+					0x00000008 0x00000001 0x00000000 0x00000002
-+					0x0000000a 0x00000005 0x0000000b 0x00000000
-+					0x00000000 0x00000003 0x00000001 0x00000000
-+					0x00000005 0x00000005 0x00000004 0x0000000a
-+					0x0000000b 0x00000181 0x00000000 0x00000060
-+					0x00000002 0x00000002 0x00000001 0x00000000
-+					0x00000007 0x0000000f 0x00000009 0x00000009
-+					0x00000004 0x00000002 0x00000000 0x00000004
-+					0x00000005 0x0000018e 0x00000006 0x00000004
-+					0x00000000 0x00000000 0x00004288 0x007800a4
-+					0x00008000 0x000fc000 0x000fc000 0x000fc000
-+					0x000fc000 0x000fc000 0x000fc000 0x000fc000
-+					0x000fc000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x000fc000 0x000fc000 0x000fc000
-+					0x000fc000 0x000002a0 0x0800211c 0x00000000
-+					0x77fff884 0x01f1f108 0x05057404 0x54000007
-+					0x08000168 0x08000000 0x00000802 0x00000000
-+					0x00000040 0x000c000c 0xa0f10000 0x00000000
-+					0x00000000 0x8000040b 0xe8000000 0xff00ff00 >;
-+			};
-+
-+			timing-102000000 {
-+				clock-frequency = <102000000>;
-+
-+				nvidia,emc-auto-cal-interval = <0x001fffff>;
-+				nvidia,emc-mode-1 = <0x80100003>;
-+				nvidia,emc-mode-2 = <0x80200008>;
-+				nvidia,emc-mode-reset = <0x80001221>;
-+				nvidia,emc-zcal-cnt-long = <0x00000040>;
-+				nvidia,emc-cfg-dyn-self-ref;
-+				nvidia,emc-cfg-periodic-qrst;
-+
-+				nvidia,emc-configuration =  < 0x00000004
-+					0x00000010 0x00000003 0x00000001 0x00000002
-+					0x0000000a 0x00000005 0x0000000b 0x00000001
-+					0x00000001 0x00000003 0x00000001 0x00000000
-+					0x00000005 0x00000005 0x00000004 0x0000000a
-+					0x0000000b 0x00000303 0x00000000 0x000000c0
-+					0x00000002 0x00000002 0x00000001 0x00000000
-+					0x00000007 0x0000000f 0x00000012 0x00000012
-+					0x00000004 0x00000004 0x00000000 0x00000004
-+					0x00000005 0x0000031c 0x00000006 0x00000004
-+					0x00000000 0x00000000 0x00004288 0x007800a4
-+					0x00008000 0x000fc000 0x000fc000 0x000fc000
-+					0x000fc000 0x000fc000 0x000fc000 0x000fc000
-+					0x000fc000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x000fc000 0x000fc000 0x000fc000
-+					0x000fc000 0x000002a0 0x0800211c 0x00000000
-+					0x77fff884 0x01f1f108 0x05057404 0x54000007
-+					0x08000168 0x08000000 0x00000802 0x00000000
-+					0x00000040 0x000c000c 0xa0f10000 0x00000000
-+					0x00000000 0x80000713 0xe8000000 0xff00ff00 >;
-+			};
-+
-+			timing-204000000 {
-+				clock-frequency = <204000000>;
-+
-+				nvidia,emc-auto-cal-interval = <0x001fffff>;
-+				nvidia,emc-mode-1 = <0x80100003>;
-+				nvidia,emc-mode-2 = <0x80200008>;
-+				nvidia,emc-mode-reset = <0x80001221>;
-+				nvidia,emc-zcal-cnt-long = <0x00000040>;
-+				nvidia,emc-cfg-dyn-self-ref;
-+				nvidia,emc-cfg-periodic-qrst;
-+
-+				nvidia,emc-configuration =  < 0x00000009
-+					0x00000020 0x00000007 0x00000002 0x00000002
-+					0x0000000a 0x00000005 0x0000000b 0x00000002
-+					0x00000002 0x00000003 0x00000001 0x00000000
-+					0x00000005 0x00000006 0x00000004 0x0000000a
-+					0x0000000b 0x00000607 0x00000000 0x00000181
-+					0x00000002 0x00000002 0x00000001 0x00000000
-+					0x00000007 0x0000000f 0x00000023 0x00000023
-+					0x00000004 0x00000007 0x00000000 0x00000004
-+					0x00000005 0x00000638 0x00000007 0x00000004
-+					0x00000000 0x00000000 0x00004288 0x004400a4
-+					0x00008000 0x00080000 0x00080000 0x00080000
-+					0x00080000 0x00080000 0x00080000 0x00080000
-+					0x00080000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00080000 0x00080000 0x00080000
-+					0x00080000 0x000002a0 0x0800211c 0x00000000
-+					0x77fff884 0x01f1f108 0x05057404 0x54000007
-+					0x08000168 0x08000000 0x00000802 0x00020000
-+					0x00000100 0x000c000c 0xa0f10000 0x00000000
-+					0x00000000 0x80000d22 0xe8000000 0xff00ff00 >;
-+			};
-+
-+			timing-333500000 {
-+				clock-frequency = <333500000>;
-+
-+				nvidia,emc-auto-cal-interval = <0x001fffff>;
-+				nvidia,emc-mode-1 = <0x80100002>;
-+				nvidia,emc-mode-2 = <0x80200000>;
-+				nvidia,emc-mode-reset = <0x80000321>;
-+				nvidia,emc-zcal-cnt-long = <0x00000040>;
-+
-+				nvidia,emc-configuration =  < 0x0000000f
-+					0x00000034 0x0000000a 0x00000003 0x00000003
-+					0x00000008 0x00000002 0x00000009 0x00000003
-+					0x00000003 0x00000002 0x00000001 0x00000000
-+					0x00000004 0x00000006 0x00000004 0x0000000a
-+					0x0000000c 0x000009e9 0x00000000 0x0000027a
-+					0x00000001 0x00000008 0x00000001 0x00000000
-+					0x00000007 0x0000000e 0x00000039 0x00000200
-+					0x00000004 0x0000000a 0x00000000 0x00000004
-+					0x00000005 0x00000a2a 0x00000000 0x00000004
-+					0x00000000 0x00000000 0x00007088 0x002600a4
-+					0x00008000 0x0003c000 0x0003c000 0x0003c000
-+					0x0003c000 0x00014000 0x00014000 0x00014000
-+					0x00014000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00040000 0x00040000 0x00040000
-+					0x00040000 0x000002a0 0x0800013d 0x00000000
-+					0x77fff884 0x01f1f508 0x05057404 0x54000007
-+					0x080001e8 0x08000021 0x00000802 0x00020000
-+					0x00000100 0x018b000c 0xa0f10000 0x00000000
-+					0x00000000 0x800014d4 0xe8000000 0xff00ff89 >;
-+			};
-+
-+			timing-667000000 {
-+				clock-frequency = <667000000>;
-+
-+				nvidia,emc-auto-cal-interval = <0x001fffff>;
-+				nvidia,emc-mode-1 = <0x80100002>;
-+				nvidia,emc-mode-2 = <0x80200018>;
-+				nvidia,emc-mode-reset = <0x80000b71>;
-+				nvidia,emc-zcal-cnt-long = <0x00000040>;
-+				nvidia,emc-cfg-periodic-qrst;
-+
-+				nvidia,emc-configuration =  < 0x0000001f
-+					0x00000069 0x00000016 0x00000007 0x00000005
-+					0x0000000c 0x00000003 0x00000011 0x00000007
-+					0x00000007 0x00000002 0x00000001 0x00000000
-+					0x00000007 0x0000000b 0x00000009 0x0000000b
-+					0x00000011 0x00001412 0x00000000 0x00000504
-+					0x00000002 0x0000000e 0x00000001 0x00000000
-+					0x0000000c 0x00000016 0x00000072 0x00000200
-+					0x00000005 0x00000015 0x00000000 0x00000006
-+					0x00000007 0x00001453 0x0000000c 0x00000004
-+					0x00000000 0x00000000 0x00005088 0xf00b0191
-+					0x00008000 0x0000000a 0x0000000a 0x0000000a
-+					0x0000000a 0x0000000a 0x0000000a 0x0000000a
-+					0x0000000a 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x0000000a 0x0000000a 0x0000000a
-+					0x0000000a 0x000002a0 0x0600013d 0x22220000
-+					0x77fff884 0x01f1f501 0x07077404 0x54000000
-+					0x080001e8 0x08000021 0x00000802 0x00020000
-+					0x00000100 0x0156000c 0xa0f10000 0x00000000
-+					0x00000000 0x800028a5 0xe8000000 0xff00ff49 >;
-+			};
-+		};
-+	};
-+};
-+
-+&emc_icc_dvfs_opp_table {
-+	/delete-node/ opp-750000000-1300;
-+	/delete-node/ opp-800000000-1300;
-+	/delete-node/ opp-900000000-1350;
-+};
-+
-+&emc_bw_dfs_opp_table {
-+	/delete-node/ opp-750000000;
-+	/delete-node/ opp-800000000;
-+	/delete-node/ opp-900000000;
-+};
+diff --git a/arch/arm/boot/dts/tegra114-dalmore.dts b/arch/arm/boot/dts/tegra114-dalmore.dts
+index 7fd901f8d39a..d23050bfaba6 100644
+--- a/arch/arm/boot/dts/tegra114-dalmore.dts
++++ b/arch/arm/boot/dts/tegra114-dalmore.dts
+@@ -1151,7 +1151,7 @@ backlight: backlight {
+ 		default-brightness-level = <6>;
+ 	};
+ 
+-	clk32k_in: clock@0 {
++	clk32k_in: clock-32k {
+ 		compatible = "fixed-clock";
+ 		clock-frequency = <32768>;
+ 		#clock-cells = <0>;
+@@ -1186,7 +1186,7 @@ volume_up {
+ 		};
+ 	};
+ 
+-	vdd_ac_bat_reg: regulator@0 {
++	vdd_ac_bat_reg: regulator-acbat {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_ac_bat";
+ 		regulator-min-microvolt = <5000000>;
+@@ -1194,7 +1194,7 @@ vdd_ac_bat_reg: regulator@0 {
+ 		regulator-always-on;
+ 	};
+ 
+-	dvdd_ts_reg: regulator@1 {
++	dvdd_ts_reg: regulator-ts {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "dvdd_ts";
+ 		regulator-min-microvolt = <1800000>;
+@@ -1203,7 +1203,7 @@ dvdd_ts_reg: regulator@1 {
+ 		gpio = <&gpio TEGRA_GPIO(H, 5) GPIO_ACTIVE_HIGH>;
+ 	};
+ 
+-	usb1_vbus_reg: regulator@3 {
++	usb1_vbus_reg: regulator-usb1 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "usb1_vbus";
+ 		regulator-min-microvolt = <5000000>;
+@@ -1214,7 +1214,7 @@ usb1_vbus_reg: regulator@3 {
+ 		vin-supply = <&tps65090_dcdc1_reg>;
+ 	};
+ 
+-	usb3_vbus_reg: regulator@4 {
++	usb3_vbus_reg: regulator-usb3 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "usb2_vbus";
+ 		regulator-min-microvolt = <5000000>;
+@@ -1225,7 +1225,7 @@ usb3_vbus_reg: regulator@4 {
+ 		vin-supply = <&tps65090_dcdc1_reg>;
+ 	};
+ 
+-	vdd_hdmi_reg: regulator@5 {
++	vdd_hdmi_reg: regulator-hdmi {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_hdmi_5v0";
+ 		regulator-min-microvolt = <5000000>;
+@@ -1233,7 +1233,7 @@ vdd_hdmi_reg: regulator@5 {
+ 		vin-supply = <&tps65090_dcdc1_reg>;
+ 	};
+ 
+-	vdd_cam_1v8_reg: regulator@6 {
++	vdd_cam_1v8_reg: regulator-cam {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_cam_1v8_reg";
+ 		regulator-min-microvolt = <1800000>;
+@@ -1242,7 +1242,7 @@ vdd_cam_1v8_reg: regulator@6 {
+ 		gpio = <&palmas_gpio 6 0>;
+ 	};
+ 
+-	vdd_5v0_hdmi: regulator@7 {
++	vdd_5v0_hdmi: regulator-hdmicon {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "VDD_5V0_HDMI_CON";
+ 		regulator-min-microvolt = <5000000>;
+diff --git a/arch/arm/boot/dts/tegra114-roth.dts b/arch/arm/boot/dts/tegra114-roth.dts
+index 07960171fabe..18521707ff5b 100644
+--- a/arch/arm/boot/dts/tegra114-roth.dts
++++ b/arch/arm/boot/dts/tegra114-roth.dts
+@@ -1016,7 +1016,7 @@ backlight: backlight {
+ 		enable-gpios = <&gpio TEGRA_GPIO(H, 2) GPIO_ACTIVE_HIGH>;
+ 	};
+ 
+-	clk32k_in: clock@0 {
++	clk32k_in: clock-32k {
+ 		compatible = "fixed-clock";
+ 		clock-frequency = <32768>;
+ 		#clock-cells = <0>;
+@@ -1045,7 +1045,7 @@ power {
+ 		};
+ 	};
+ 
+-	lcd_bl_en: regulator@0 {
++	lcd_bl_en: regulator-lcden {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "lcd_bl_en";
+ 		regulator-min-microvolt = <5000000>;
+@@ -1053,7 +1053,7 @@ lcd_bl_en: regulator@0 {
+ 		regulator-boot-on;
+ 	};
+ 
+-	vdd_lcd: regulator@1 {
++	vdd_lcd: regulator-lcd {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_lcd_1v8";
+ 		regulator-min-microvolt = <1800000>;
+@@ -1064,7 +1064,7 @@ vdd_lcd: regulator@1 {
+ 		regulator-boot-on;
+ 	};
+ 
+-	regulator@2 {
++	regulator-1v8ts {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_1v8_ts";
+ 		regulator-min-microvolt = <1800000>;
+@@ -1073,7 +1073,7 @@ regulator@2 {
+ 		regulator-boot-on;
+ 	};
+ 
+-	regulator@3 {
++	regulator-3v3ts {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_3v3_ts";
+ 		regulator-min-microvolt = <3300000>;
+@@ -1083,7 +1083,7 @@ regulator@3 {
+ 		regulator-boot-on;
+ 	};
+ 
+-	regulator@4 {
++	regulator-1v8com {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_1v8_com";
+ 		regulator-min-microvolt = <1800000>;
+@@ -1094,7 +1094,7 @@ regulator@4 {
+ 		regulator-boot-on;
+ 	};
+ 
+-	regulator@5 {
++	regulator-3v3com {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_3v3_com";
+ 		regulator-min-microvolt = <3300000>;
+diff --git a/arch/arm/boot/dts/tegra114-tn7.dts b/arch/arm/boot/dts/tegra114-tn7.dts
+index 745d234b105b..0534247458f0 100644
+--- a/arch/arm/boot/dts/tegra114-tn7.dts
++++ b/arch/arm/boot/dts/tegra114-tn7.dts
+@@ -273,7 +273,7 @@ backlight: backlight {
+ 		power-supply = <&lcd_bl_en>;
+ 	};
+ 
+-	clk32k_in: clock@0 {
++	clk32k_in: clock-32k {
+ 		compatible = "fixed-clock";
+ 		clock-frequency = <32768>;
+ 		#clock-cells = <0>;
+@@ -303,7 +303,7 @@ volume_up {
+ 	};
+ 
+ 	/* FIXME: output of BQ24192 */
+-	vs_sys: regulator@0 {
++	vs_sys: regulator-vs {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "VS_SYS";
+ 		regulator-min-microvolt = <4200000>;
+@@ -312,7 +312,7 @@ vs_sys: regulator@0 {
+ 		regulator-boot-on;
+ 	};
+ 
+-	lcd_bl_en: regulator@1 {
++	lcd_bl_en: regulator-lcden {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "VDD_LCD_BL";
+ 		regulator-min-microvolt = <16500000>;
+@@ -323,7 +323,7 @@ lcd_bl_en: regulator@1 {
+ 		regulator-boot-on;
+ 	};
+ 
+-	vdd_lcd: regulator@2 {
++	vdd_lcd: regulator-lcd {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "VD_LCD_1V8";
+ 		regulator-min-microvolt = <1800000>;
+diff --git a/arch/arm/boot/dts/tegra124-jetson-tk1.dts b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
+index 35ab296408e1..094f94a627b2 100644
+--- a/arch/arm/boot/dts/tegra124-jetson-tk1.dts
++++ b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
+@@ -1868,7 +1868,7 @@ usb-phy@7d008000 {
+ 		vbus-supply = <&vdd_usb3_vbus>;
+ 	};
+ 
+-	clk32k_in: clock@0 {
++	clk32k_in: clock-32k {
+ 		compatible = "fixed-clock";
+ 		clock-frequency = <32768>;
+ 		#clock-cells = <0>;
+@@ -1892,7 +1892,7 @@ power {
+ 		};
+ 	};
+ 
+-	vdd_mux: regulator@0 {
++	vdd_mux: regulator-mux {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+VDD_MUX";
+ 		regulator-min-microvolt = <12000000>;
+@@ -1901,7 +1901,7 @@ vdd_mux: regulator@0 {
+ 		regulator-boot-on;
+ 	};
+ 
+-	vdd_5v0_sys: regulator@1 {
++	vdd_5v0_sys: regulator-5v0sys {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+5V_SYS";
+ 		regulator-min-microvolt = <5000000>;
+@@ -1911,7 +1911,7 @@ vdd_5v0_sys: regulator@1 {
+ 		vin-supply = <&vdd_mux>;
+ 	};
+ 
+-	vdd_3v3_sys: regulator@2 {
++	vdd_3v3_sys: regulator-3v3sys {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+3.3V_SYS";
+ 		regulator-min-microvolt = <3300000>;
+@@ -1921,7 +1921,7 @@ vdd_3v3_sys: regulator@2 {
+ 		vin-supply = <&vdd_mux>;
+ 	};
+ 
+-	vdd_3v3_run: regulator@3 {
++	vdd_3v3_run: regulator-3v3run {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+3.3V_RUN";
+ 		regulator-min-microvolt = <3300000>;
+@@ -1933,7 +1933,7 @@ vdd_3v3_run: regulator@3 {
+ 		vin-supply = <&vdd_3v3_sys>;
+ 	};
+ 
+-	vdd_3v3_hdmi: regulator@4 {
++	vdd_3v3_hdmi: regulator-3v3hdmi {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+3.3V_AVDD_HDMI_AP_GATED";
+ 		regulator-min-microvolt = <3300000>;
+@@ -1941,7 +1941,7 @@ vdd_3v3_hdmi: regulator@4 {
+ 		vin-supply = <&vdd_3v3_run>;
+ 	};
+ 
+-	vdd_usb1_vbus: regulator@5 {
++	vdd_usb1_vbus: regulator-usb1 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+USB0_VBUS_SW";
+ 		regulator-min-microvolt = <5000000>;
+@@ -1952,7 +1952,7 @@ vdd_usb1_vbus: regulator@5 {
+ 		vin-supply = <&vdd_5v0_sys>;
+ 	};
+ 
+-	vdd_usb3_vbus: regulator@6 {
++	vdd_usb3_vbus: regulator-usb3 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+5V_USB_HS";
+ 		regulator-min-microvolt = <5000000>;
+@@ -1963,7 +1963,7 @@ vdd_usb3_vbus: regulator@6 {
+ 		vin-supply = <&vdd_5v0_sys>;
+ 	};
+ 
+-	vdd_3v3_lp0: regulator@7 {
++	vdd_3v3_lp0: regulator-lp0 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+3.3V_LP0";
+ 		regulator-min-microvolt = <3300000>;
+@@ -1975,7 +1975,7 @@ vdd_3v3_lp0: regulator@7 {
+ 		vin-supply = <&vdd_3v3_sys>;
+ 	};
+ 
+-	vdd_hdmi_pll: regulator@8 {
++	vdd_hdmi_pll: regulator-hdmipll {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+1.05V_RUN_AVDD_HDMI_PLL";
+ 		regulator-min-microvolt = <1050000>;
+@@ -1984,7 +1984,7 @@ vdd_hdmi_pll: regulator@8 {
+ 		vin-supply = <&vdd_1v05_run>;
+ 	};
+ 
+-	vdd_5v0_hdmi: regulator@9 {
++	vdd_5v0_hdmi: regulator-hdmicon {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+5V_HDMI_CON";
+ 		regulator-min-microvolt = <5000000>;
+@@ -1995,7 +1995,7 @@ vdd_5v0_hdmi: regulator@9 {
+ 	};
+ 
+ 	/* Molex power connector */
+-	vdd_5v0_sata: regulator@10 {
++	vdd_5v0_sata: regulator-5v0sata {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+5V_SATA";
+ 		regulator-min-microvolt = <5000000>;
+@@ -2005,7 +2005,7 @@ vdd_5v0_sata: regulator@10 {
+ 		vin-supply = <&vdd_5v0_sys>;
+ 	};
+ 
+-	vdd_12v0_sata: regulator@11 {
++	vdd_12v0_sata: regulator-12v0sata {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+12V_SATA";
+ 		regulator-min-microvolt = <12000000>;
+diff --git a/arch/arm/boot/dts/tegra124-nyan.dtsi b/arch/arm/boot/dts/tegra124-nyan.dtsi
+index 63a81270300a..2d045d1a9bcf 100644
+--- a/arch/arm/boot/dts/tegra124-nyan.dtsi
++++ b/arch/arm/boot/dts/tegra124-nyan.dtsi
+@@ -582,7 +582,7 @@ backlight: backlight {
+ 			 256>;
+ 	};
+ 
+-	clk32k_in: clock@0 {
++	clk32k_in: clock-32k {
+ 		compatible = "fixed-clock";
+ 		clock-frequency = <32768>;
+ 		#clock-cells = <0>;
+@@ -615,7 +615,7 @@ power {
+ 		};
+ 	};
+ 
+-	vdd_mux: regulator@0 {
++	vdd_mux: regulator-mux {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+VDD_MUX";
+ 		regulator-min-microvolt = <12000000>;
+@@ -624,7 +624,7 @@ vdd_mux: regulator@0 {
+ 		regulator-boot-on;
+ 	};
+ 
+-	vdd_5v0_sys: regulator@1 {
++	vdd_5v0_sys: regulator-5v0sys {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+5V_SYS";
+ 		regulator-min-microvolt = <5000000>;
+@@ -634,7 +634,7 @@ vdd_5v0_sys: regulator@1 {
+ 		vin-supply = <&vdd_mux>;
+ 	};
+ 
+-	vdd_3v3_sys: regulator@2 {
++	vdd_3v3_sys: regulator-3v3sys {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+3.3V_SYS";
+ 		regulator-min-microvolt = <3300000>;
+@@ -644,7 +644,7 @@ vdd_3v3_sys: regulator@2 {
+ 		vin-supply = <&vdd_mux>;
+ 	};
+ 
+-	vdd_3v3_run: regulator@3 {
++	vdd_3v3_run: regulator-3v3run {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+3.3V_RUN";
+ 		regulator-min-microvolt = <3300000>;
+@@ -656,7 +656,7 @@ vdd_3v3_run: regulator@3 {
+ 		vin-supply = <&vdd_3v3_sys>;
+ 	};
+ 
+-	vdd_3v3_hdmi: regulator@4 {
++	vdd_3v3_hdmi: regulator-3v3hdmi {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+3.3V_AVDD_HDMI_AP_GATED";
+ 		regulator-min-microvolt = <3300000>;
+@@ -664,7 +664,7 @@ vdd_3v3_hdmi: regulator@4 {
+ 		vin-supply = <&vdd_3v3_run>;
+ 	};
+ 
+-	vdd_led: regulator@5 {
++	vdd_led: regulator-led {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+VDD_LED";
+ 		gpio = <&gpio TEGRA_GPIO(P, 2) GPIO_ACTIVE_HIGH>;
+@@ -672,7 +672,7 @@ vdd_led: regulator@5 {
+ 		vin-supply = <&vdd_mux>;
+ 	};
+ 
+-	vdd_5v0_ts: regulator@6 {
++	vdd_5v0_ts: regulator-ts {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+5V_VDD_TS_SW";
+ 		regulator-min-microvolt = <5000000>;
+@@ -683,7 +683,7 @@ vdd_5v0_ts: regulator@6 {
+ 		vin-supply = <&vdd_5v0_sys>;
+ 	};
+ 
+-	vdd_usb1_vbus: regulator@7 {
++	vdd_usb1_vbus: regulator-usb1 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+5V_USB_HS";
+ 		regulator-min-microvolt = <5000000>;
+@@ -694,7 +694,7 @@ vdd_usb1_vbus: regulator@7 {
+ 		vin-supply = <&vdd_5v0_sys>;
+ 	};
+ 
+-	vdd_usb3_vbus: regulator@8 {
++	vdd_usb3_vbus: regulator-usb3 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+5V_USB_SS";
+ 		regulator-min-microvolt = <5000000>;
+@@ -705,7 +705,7 @@ vdd_usb3_vbus: regulator@8 {
+ 		vin-supply = <&vdd_5v0_sys>;
+ 	};
+ 
+-	vdd_3v3_panel: regulator@9 {
++	vdd_3v3_panel: regulator-panel {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+3.3V_PANEL";
+ 		regulator-min-microvolt = <3300000>;
+@@ -715,7 +715,7 @@ vdd_3v3_panel: regulator@9 {
+ 		vin-supply = <&vdd_3v3_run>;
+ 	};
+ 
+-	vdd_3v3_lp0: regulator@10 {
++	vdd_3v3_lp0: regulator-lp0 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+3.3V_LP0";
+ 		regulator-min-microvolt = <3300000>;
+@@ -730,7 +730,7 @@ vdd_3v3_lp0: regulator@10 {
+ 		vin-supply = <&vdd_3v3_sys>;
+ 	};
+ 
+-	vdd_hdmi_pll: regulator@11 {
++	vdd_hdmi_pll: regulator-hdmipll {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+1.05V_RUN_AVDD_HDMI_PLL";
+ 		regulator-min-microvolt = <1050000>;
+@@ -739,7 +739,7 @@ vdd_hdmi_pll: regulator@11 {
+ 		vin-supply = <&vdd_1v05_run>;
+ 	};
+ 
+-	vdd_5v0_hdmi: regulator@12 {
++	vdd_5v0_hdmi: regulator-hdmicon {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+5V_HDMI_CON";
+ 		regulator-min-microvolt = <5000000>;
+diff --git a/arch/arm/boot/dts/tegra124-venice2.dts b/arch/arm/boot/dts/tegra124-venice2.dts
+index e6b54ac1ebd1..457b8aada1f8 100644
+--- a/arch/arm/boot/dts/tegra124-venice2.dts
++++ b/arch/arm/boot/dts/tegra124-venice2.dts
+@@ -1061,7 +1061,7 @@ backlight: backlight {
+ 		default-brightness-level = <6>;
+ 	};
+ 
+-	clk32k_in: clock@0 {
++	clk32k_in: clock-32k {
+ 		compatible = "fixed-clock";
+ 		clock-frequency = <32768>;
+ 		#clock-cells = <0>;
+@@ -1086,7 +1086,7 @@ panel: panel {
+ 		ddc-i2c-bus = <&dpaux>;
+ 	};
+ 
+-	vdd_mux: regulator@0 {
++	vdd_mux: regulator-mux {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+VDD_MUX";
+ 		regulator-min-microvolt = <12000000>;
+@@ -1095,7 +1095,7 @@ vdd_mux: regulator@0 {
+ 		regulator-boot-on;
+ 	};
+ 
+-	vdd_5v0_sys: regulator@1 {
++	vdd_5v0_sys: regulator-5v0sys {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+5V_SYS";
+ 		regulator-min-microvolt = <5000000>;
+@@ -1105,7 +1105,7 @@ vdd_5v0_sys: regulator@1 {
+ 		vin-supply = <&vdd_mux>;
+ 	};
+ 
+-	vdd_3v3_sys: regulator@2 {
++	vdd_3v3_sys: regulator-3v3sys {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+3.3V_SYS";
+ 		regulator-min-microvolt = <3300000>;
+@@ -1115,7 +1115,7 @@ vdd_3v3_sys: regulator@2 {
+ 		vin-supply = <&vdd_mux>;
+ 	};
+ 
+-	vdd_3v3_run: regulator@3 {
++	vdd_3v3_run: regulator-3v3run {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+3.3V_RUN";
+ 		regulator-min-microvolt = <3300000>;
+@@ -1127,7 +1127,7 @@ vdd_3v3_run: regulator@3 {
+ 		vin-supply = <&vdd_3v3_sys>;
+ 	};
+ 
+-	vdd_3v3_hdmi: regulator@4 {
++	vdd_3v3_hdmi: regulator-hdmi {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+3.3V_AVDD_HDMI_AP_GATED";
+ 		regulator-min-microvolt = <3300000>;
+@@ -1135,7 +1135,7 @@ vdd_3v3_hdmi: regulator@4 {
+ 		vin-supply = <&vdd_3v3_run>;
+ 	};
+ 
+-	vdd_led: regulator@5 {
++	vdd_led: regulator-led {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+VDD_LED";
+ 		regulator-min-microvolt = <3300000>;
+@@ -1145,7 +1145,7 @@ vdd_led: regulator@5 {
+ 		vin-supply = <&vdd_mux>;
+ 	};
+ 
+-	vdd_5v0_ts: regulator@6 {
++	vdd_5v0_ts: regulator-ts {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+5V_VDD_TS_SW";
+ 		regulator-min-microvolt = <5000000>;
+@@ -1156,7 +1156,7 @@ vdd_5v0_ts: regulator@6 {
+ 		vin-supply = <&vdd_5v0_sys>;
+ 	};
+ 
+-	vdd_usb1_vbus: regulator@7 {
++	vdd_usb1_vbus: regulator-usb1 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+5V_USB_HS";
+ 		regulator-min-microvolt = <5000000>;
+@@ -1167,7 +1167,7 @@ vdd_usb1_vbus: regulator@7 {
+ 		vin-supply = <&vdd_5v0_sys>;
+ 	};
+ 
+-	vdd_usb3_vbus: regulator@8 {
++	vdd_usb3_vbus: regulator-usb3 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+5V_USB_SS";
+ 		regulator-min-microvolt = <5000000>;
+@@ -1178,7 +1178,7 @@ vdd_usb3_vbus: regulator@8 {
+ 		vin-supply = <&vdd_5v0_sys>;
+ 	};
+ 
+-	vdd_3v3_panel: regulator@9 {
++	vdd_3v3_panel: regulator-panel {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+3.3V_PANEL";
+ 		regulator-min-microvolt = <3300000>;
+@@ -1188,7 +1188,7 @@ vdd_3v3_panel: regulator@9 {
+ 		vin-supply = <&vdd_3v3_run>;
+ 	};
+ 
+-	vdd_3v3_lp0: regulator@10 {
++	vdd_3v3_lp0: regulator-lp0 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+3.3V_LP0";
+ 		regulator-min-microvolt = <3300000>;
+@@ -1203,7 +1203,7 @@ vdd_3v3_lp0: regulator@10 {
+ 		vin-supply = <&vdd_3v3_sys>;
+ 	};
+ 
+-	vdd_hdmi_pll: regulator@11 {
++	vdd_hdmi_pll: regulator-hdmipll {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+1.05V_RUN_AVDD_HDMI_PLL";
+ 		regulator-min-microvolt = <1050000>;
+@@ -1212,7 +1212,7 @@ vdd_hdmi_pll: regulator@11 {
+ 		vin-supply = <&vdd_1v05_run>;
+ 	};
+ 
+-	vdd_5v0_hdmi: regulator@12 {
++	vdd_5v0_hdmi: regulator-hdmicon {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+5V_HDMI_CON";
+ 		regulator-min-microvolt = <5000000>;
+diff --git a/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts b/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts
+index 23d3f8daab23..2e6340e92fe1 100644
+--- a/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts
++++ b/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts
+@@ -827,7 +827,7 @@ bat1010: battery-2s1p {
+ 	};
+ 
+ 	/* PMIC has a built-in 32KHz oscillator which is used by PMC */
+-	clk32k_in: clock@0 {
++	clk32k_in: clock-32k-in {
+ 		compatible = "fixed-clock";
+ 		#clock-cells = <0>;
+ 		clock-frequency = <32768>;
+@@ -839,7 +839,7 @@ clk32k_in: clock@0 {
+ 	 * oscillator is used as a reference clock-source by the
+ 	 * Azurewave WiFi/BT module.
+ 	 */
+-	rtc_32k_wifi: clock@1 {
++	rtc_32k_wifi: clock-32k-wifi {
+ 		compatible = "fixed-clock";
+ 		#clock-cells = <0>;
+ 		clock-frequency = <32768>;
+@@ -964,7 +964,7 @@ lvds_encoder_output: endpoint {
+ 		};
+ 	};
+ 
+-	vdd_5v0_sys: regulator@0 {
++	vdd_5v0_sys: regulator-5v0 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_5v0";
+ 		regulator-min-microvolt = <5000000>;
+@@ -972,7 +972,7 @@ vdd_5v0_sys: regulator@0 {
+ 		regulator-always-on;
+ 	};
+ 
+-	vdd_3v3_sys: regulator@1 {
++	vdd_3v3_sys: regulator-3v3 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_3v3_vs";
+ 		regulator-min-microvolt = <3300000>;
+@@ -981,7 +981,7 @@ vdd_3v3_sys: regulator@1 {
+ 		vin-supply = <&vdd_5v0_sys>;
+ 	};
+ 
+-	vdd_1v8_sys: regulator@2 {
++	vdd_1v8_sys: regulator-1v8 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_1v8_vs";
+ 		regulator-min-microvolt = <1800000>;
+@@ -990,7 +990,7 @@ vdd_1v8_sys: regulator@2 {
+ 		vin-supply = <&vdd_5v0_sys>;
+ 	};
+ 
+-	vdd_pnl: regulator@3 {
++	vdd_pnl: regulator-panel {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_panel";
+ 		regulator-min-microvolt = <3300000>;
+diff --git a/arch/arm/boot/dts/tegra20-harmony.dts b/arch/arm/boot/dts/tegra20-harmony.dts
+index ae4312eedcbd..a8494378c382 100644
+--- a/arch/arm/boot/dts/tegra20-harmony.dts
++++ b/arch/arm/boot/dts/tegra20-harmony.dts
+@@ -640,7 +640,7 @@ backlight: backlight {
+ 		default-brightness-level = <6>;
+ 	};
+ 
+-	clk32k_in: clock@0 {
++	clk32k_in: clock-32k {
+ 		compatible = "fixed-clock";
+ 		clock-frequency = <32768>;
+ 		#clock-cells = <0>;
+@@ -666,7 +666,7 @@ panel: panel {
+ 		backlight = <&backlight>;
+ 	};
+ 
+-	vdd_5v0_reg: regulator@0 {
++	vdd_5v0_reg: regulator-5v0 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_5v0";
+ 		regulator-min-microvolt = <5000000>;
+@@ -674,7 +674,7 @@ vdd_5v0_reg: regulator@0 {
+ 		regulator-always-on;
+ 	};
+ 
+-	regulator@1 {
++	regulator-1v5 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_1v5";
+ 		regulator-min-microvolt = <1500000>;
+@@ -682,7 +682,7 @@ regulator@1 {
+ 		gpio = <&pmic 0 GPIO_ACTIVE_HIGH>;
+ 	};
+ 
+-	regulator@2 {
++	regulator-1v2 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_1v2";
+ 		regulator-min-microvolt = <1200000>;
+@@ -691,7 +691,7 @@ regulator@2 {
+ 		enable-active-high;
+ 	};
+ 
+-	pci_vdd_reg: regulator@3 {
++	pci_vdd_reg: regulator-1v05 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_1v05";
+ 		regulator-min-microvolt = <1050000>;
+@@ -700,7 +700,7 @@ pci_vdd_reg: regulator@3 {
+ 		enable-active-high;
+ 	};
+ 
+-	vdd_pnl_reg: regulator@4 {
++	vdd_pnl_reg: regulator-pn1 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_pnl";
+ 		regulator-min-microvolt = <2800000>;
+@@ -709,7 +709,7 @@ vdd_pnl_reg: regulator@4 {
+ 		enable-active-high;
+ 	};
+ 
+-	vdd_bl_reg: regulator@5 {
++	vdd_bl_reg: regulator-bl {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_bl";
+ 		regulator-min-microvolt = <2800000>;
+@@ -718,7 +718,7 @@ vdd_bl_reg: regulator@5 {
+ 		enable-active-high;
+ 	};
+ 
+-	vdd_5v0_hdmi: regulator@6 {
++	vdd_5v0_hdmi: regulator-hdmi {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "VDDIO_HDMI";
+ 		regulator-min-microvolt = <5000000>;
+diff --git a/arch/arm/boot/dts/tegra20-medcom-wide.dts b/arch/arm/boot/dts/tegra20-medcom-wide.dts
+index b31c9bca16e6..cb6199d7d224 100644
+--- a/arch/arm/boot/dts/tegra20-medcom-wide.dts
++++ b/arch/arm/boot/dts/tegra20-medcom-wide.dts
+@@ -92,7 +92,7 @@ sound {
+ 		clock-names = "pll_a", "pll_a_out0", "mclk";
+ 	};
+ 
+-	vcc_24v_reg: regulator@100 {
++	vcc_24v_reg: regulator-24v0 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vcc_24v";
+ 		regulator-min-microvolt = <24000000>;
+@@ -100,7 +100,7 @@ vcc_24v_reg: regulator@100 {
+ 		regulator-always-on;
+ 	};
+ 
+-	vdd_5v0_reg: regulator@101 {
++	vdd_5v0_reg: regulator-5v0 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_5v0";
+ 		vin-supply = <&vcc_24v_reg>;
+@@ -109,7 +109,7 @@ vdd_5v0_reg: regulator@101 {
+ 		regulator-always-on;
+ 	};
+ 
+-	vdd_3v3_reg: regulator@102 {
++	vdd_3v3_reg: regulator-3v3 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_3v3";
+ 		vin-supply = <&vcc_24v_reg>;
+@@ -118,7 +118,7 @@ vdd_3v3_reg: regulator@102 {
+ 		regulator-always-on;
+ 	};
+ 
+-	vdd_1v8_reg: regulator@103 {
++	vdd_1v8_reg: regulator-1v8 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_1v8";
+ 		vin-supply = <&vdd_3v3_reg>;
+diff --git a/arch/arm/boot/dts/tegra20-paz00.dts b/arch/arm/boot/dts/tegra20-paz00.dts
+index 5b38b0606f99..46d81d703548 100644
+--- a/arch/arm/boot/dts/tegra20-paz00.dts
++++ b/arch/arm/boot/dts/tegra20-paz00.dts
+@@ -575,7 +575,7 @@ backlight: backlight {
+ 		default-brightness-level = <10>;
+ 	};
+ 
+-	clk32k_in: clock@0 {
++	clk32k_in: clock-32k {
+ 		compatible = "fixed-clock";
+ 		clock-frequency = <32768>;
+ 		#clock-cells = <0>;
+@@ -612,7 +612,7 @@ panel: panel {
+ 		backlight = <&backlight>;
+ 	};
+ 
+-	p5valw_reg: regulator@0 {
++	p5valw_reg: regulator-5v0alw {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+5valw";
+ 		regulator-min-microvolt = <5000000>;
+@@ -620,7 +620,7 @@ p5valw_reg: regulator@0 {
+ 		regulator-always-on;
+ 	};
+ 
+-	vdd_pnl_reg: regulator@1 {
++	vdd_pnl_reg: regulator-3v0 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+3VS,vdd_pnl";
+ 		regulator-min-microvolt = <3300000>;
+diff --git a/arch/arm/boot/dts/tegra20-plutux.dts b/arch/arm/boot/dts/tegra20-plutux.dts
+index 5811b7006a9b..71a8236491df 100644
+--- a/arch/arm/boot/dts/tegra20-plutux.dts
++++ b/arch/arm/boot/dts/tegra20-plutux.dts
+@@ -60,7 +60,7 @@ sound {
+ 		clock-names = "pll_a", "pll_a_out0", "mclk";
+ 	};
+ 
+-	vcc_24v_reg: regulator@100 {
++	vcc_24v_reg: regulator-24v0 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vcc_24v";
+ 		regulator-min-microvolt = <24000000>;
+@@ -68,7 +68,7 @@ vcc_24v_reg: regulator@100 {
+ 		regulator-always-on;
+ 	};
+ 
+-	vdd_5v0_reg: regulator@101 {
++	vdd_5v0_reg: regulator-5v0 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_5v0";
+ 		vin-supply = <&vcc_24v_reg>;
+@@ -77,7 +77,7 @@ vdd_5v0_reg: regulator@101 {
+ 		regulator-always-on;
+ 	};
+ 
+-	vdd_3v3_reg: regulator@102 {
++	vdd_3v3_reg: regulator-3v3 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_3v3";
+ 		vin-supply = <&vcc_24v_reg>;
+@@ -86,7 +86,7 @@ vdd_3v3_reg: regulator@102 {
+ 		regulator-always-on;
+ 	};
+ 
+-	vdd_1v8_reg: regulator@103 {
++	vdd_1v8_reg: regulator-1v8 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_1v8";
+ 		vin-supply = <&vdd_3v3_reg>;
+diff --git a/arch/arm/boot/dts/tegra20-seaboard.dts b/arch/arm/boot/dts/tegra20-seaboard.dts
+index 92d494b8c3d2..ca7adeb1fdd9 100644
+--- a/arch/arm/boot/dts/tegra20-seaboard.dts
++++ b/arch/arm/boot/dts/tegra20-seaboard.dts
+@@ -792,7 +792,7 @@ backlight: backlight {
+ 		default-brightness-level = <6>;
+ 	};
+ 
+-	clk32k_in: clock@0 {
++	clk32k_in: clock-32k {
+ 		compatible = "fixed-clock";
+ 		clock-frequency = <32768>;
+ 		#clock-cells = <0>;
+@@ -828,7 +828,7 @@ panel: panel {
+ 		ddc-i2c-bus = <&lvds_ddc>;
+ 	};
+ 
+-	vdd_5v0_reg: regulator@0 {
++	vdd_5v0_reg: regulator-5v0 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_5v0";
+ 		regulator-min-microvolt = <5000000>;
+@@ -836,7 +836,7 @@ vdd_5v0_reg: regulator@0 {
+ 		regulator-always-on;
+ 	};
+ 
+-	regulator@1 {
++	regulator-1v5 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_1v5";
+ 		regulator-min-microvolt = <1500000>;
+@@ -844,7 +844,7 @@ regulator@1 {
+ 		gpio = <&pmic 0 GPIO_ACTIVE_HIGH>;
+ 	};
+ 
+-	regulator@2 {
++	regulator-1v2 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_1v2";
+ 		regulator-min-microvolt = <1200000>;
+@@ -853,7 +853,7 @@ regulator@2 {
+ 		enable-active-high;
+ 	};
+ 
+-	vbus_reg: regulator@3 {
++	vbus_reg: regulator-vbus {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_vbus_wup1";
+ 		regulator-min-microvolt = <5000000>;
+@@ -864,7 +864,7 @@ vbus_reg: regulator@3 {
+ 		regulator-boot-on;
+ 	};
+ 
+-	vdd_pnl_reg: regulator@4 {
++	vdd_pnl_reg: regulator-pnl {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_pnl";
+ 		regulator-min-microvolt = <2800000>;
+@@ -873,7 +873,7 @@ vdd_pnl_reg: regulator@4 {
+ 		enable-active-high;
+ 	};
+ 
+-	vdd_bl_reg: regulator@5 {
++	vdd_bl_reg: regulator-bl {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_bl";
+ 		regulator-min-microvolt = <2800000>;
+@@ -882,7 +882,7 @@ vdd_bl_reg: regulator@5 {
+ 		enable-active-high;
+ 	};
+ 
+-	vdd_hdmi: regulator@6 {
++	vdd_hdmi: regulator-hdmi {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "VDDIO_HDMI";
+ 		regulator-min-microvolt = <5000000>;
+diff --git a/arch/arm/boot/dts/tegra20-tamonten.dtsi b/arch/arm/boot/dts/tegra20-tamonten.dtsi
+index dd4d506683de..2ad56f84bb62 100644
+--- a/arch/arm/boot/dts/tegra20-tamonten.dtsi
++++ b/arch/arm/boot/dts/tegra20-tamonten.dtsi
+@@ -502,13 +502,13 @@ mmc@c8000600 {
+ 		status = "okay";
+ 	};
+ 
+-	clk32k_in: clock@0 {
++	clk32k_in: clock-32k {
+ 		compatible = "fixed-clock";
+ 		clock-frequency = <32768>;
+ 		#clock-cells = <0>;
+ 	};
+ 
+-	pci_vdd_reg: regulator@1 {
++	pci_vdd_reg: regulator-1v05 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_1v05";
+ 		regulator-min-microvolt = <1050000>;
+diff --git a/arch/arm/boot/dts/tegra20-tec.dts b/arch/arm/boot/dts/tegra20-tec.dts
+index 10ff09d86efa..4f41c74384b2 100644
+--- a/arch/arm/boot/dts/tegra20-tec.dts
++++ b/arch/arm/boot/dts/tegra20-tec.dts
+@@ -69,7 +69,7 @@ sound {
+ 		clock-names = "pll_a", "pll_a_out0", "mclk";
+ 	};
+ 
+-	vcc_24v_reg: regulator@100 {
++	vcc_24v_reg: regulator-24v {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vcc_24v";
+ 		regulator-min-microvolt = <24000000>;
+@@ -77,7 +77,7 @@ vcc_24v_reg: regulator@100 {
+ 		regulator-always-on;
+ 	};
+ 
+-	vdd_5v0_reg: regulator@101 {
++	vdd_5v0_reg: regulator-5v0 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_5v0";
+ 		vin-supply = <&vcc_24v_reg>;
+@@ -86,7 +86,7 @@ vdd_5v0_reg: regulator@101 {
+ 		regulator-always-on;
+ 	};
+ 
+-	vdd_3v3_reg: regulator@102 {
++	vdd_3v3_reg: regulator-3v3 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_3v3";
+ 		vin-supply = <&vcc_24v_reg>;
+@@ -95,7 +95,7 @@ vdd_3v3_reg: regulator@102 {
+ 		regulator-always-on;
+ 	};
+ 
+-	vdd_1v8_reg: regulator@103 {
++	vdd_1v8_reg: regulator-1v8 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_1v8";
+ 		vin-supply = <&vdd_3v3_reg>;
+diff --git a/arch/arm/boot/dts/tegra20-trimslice.dts b/arch/arm/boot/dts/tegra20-trimslice.dts
+index 4bc87bc0c2a4..1f4893699614 100644
+--- a/arch/arm/boot/dts/tegra20-trimslice.dts
++++ b/arch/arm/boot/dts/tegra20-trimslice.dts
+@@ -379,7 +379,7 @@ mmc@c8000600 {
+ 		bus-width = <4>;
+ 	};
+ 
+-	clk32k_in: clock@0 {
++	clk32k_in: clock-32k {
+ 		compatible = "fixed-clock";
+ 		clock-frequency = <32768>;
+ 		#clock-cells = <0>;
+@@ -401,7 +401,7 @@ poweroff {
+ 		gpios = <&gpio TEGRA_GPIO(X, 7) GPIO_ACTIVE_LOW>;
+ 	};
+ 
+-	hdmi_vdd_reg: regulator@0 {
++	hdmi_vdd_reg: regulator-hdmi {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "avdd_hdmi";
+ 		regulator-min-microvolt = <3300000>;
+@@ -409,7 +409,7 @@ hdmi_vdd_reg: regulator@0 {
+ 		regulator-always-on;
+ 	};
+ 
+-	hdmi_pll_reg: regulator@1 {
++	hdmi_pll_reg: regulator-hdmipll {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "avdd_hdmi_pll";
+ 		regulator-min-microvolt = <1800000>;
+@@ -417,7 +417,7 @@ hdmi_pll_reg: regulator@1 {
+ 		regulator-always-on;
+ 	};
+ 
+-	vbus_reg: regulator@2 {
++	vbus_reg: regulator-vbus {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "usb1_vbus";
+ 		regulator-min-microvolt = <5000000>;
+@@ -428,7 +428,7 @@ vbus_reg: regulator@2 {
+ 		regulator-boot-on;
+ 	};
+ 
+-	pci_clk_reg: regulator@3 {
++	pci_clk_reg: regulator-pciclk {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "pci_clk";
+ 		regulator-min-microvolt = <3300000>;
+@@ -436,7 +436,7 @@ pci_clk_reg: regulator@3 {
+ 		regulator-always-on;
+ 	};
+ 
+-	pci_vdd_reg: regulator@4 {
++	pci_vdd_reg: regulator-pcivdd {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "pci_vdd";
+ 		regulator-min-microvolt = <1050000>;
+diff --git a/arch/arm/boot/dts/tegra20-ventana.dts b/arch/arm/boot/dts/tegra20-ventana.dts
+index 5a2578b3707f..4284054ebd2c 100644
+--- a/arch/arm/boot/dts/tegra20-ventana.dts
++++ b/arch/arm/boot/dts/tegra20-ventana.dts
+@@ -606,7 +606,7 @@ backlight: backlight {
+ 		default-brightness-level = <6>;
+ 	};
+ 
+-	clk32k_in: clock@0 {
++	clk32k_in: clock-32k {
+ 		compatible = "fixed-clock";
+ 		clock-frequency = <32768>;
+ 		#clock-cells = <0>;
+@@ -647,7 +647,7 @@ panel: panel {
+ 		ddc-i2c-bus = <&lvds_ddc>;
+ 	};
+ 
+-	vdd_5v0_reg: regulator@0 {
++	vdd_5v0_reg: regulator-5v0 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_5v0";
+ 		regulator-min-microvolt = <5000000>;
+@@ -655,7 +655,7 @@ vdd_5v0_reg: regulator@0 {
+ 		regulator-always-on;
+ 	};
+ 
+-	regulator@1 {
++	regulator-1v5 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_1v5";
+ 		regulator-min-microvolt = <1500000>;
+@@ -663,7 +663,7 @@ regulator@1 {
+ 		gpio = <&pmic 0 GPIO_ACTIVE_HIGH>;
+ 	};
+ 
+-	regulator@2 {
++	regulator-1v2 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_1v2";
+ 		regulator-min-microvolt = <1200000>;
+@@ -672,7 +672,7 @@ regulator@2 {
+ 		enable-active-high;
+ 	};
+ 
+-	vdd_pnl_reg: regulator@3 {
++	vdd_pnl_reg: regulator-pnl {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_pnl";
+ 		regulator-min-microvolt = <2800000>;
+@@ -681,7 +681,7 @@ vdd_pnl_reg: regulator@3 {
+ 		enable-active-high;
+ 	};
+ 
+-	vdd_bl_reg: regulator@4 {
++	vdd_bl_reg: regulator-bl {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_bl";
+ 		regulator-min-microvolt = <2800000>;
+diff --git a/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-common.dtsi b/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-common.dtsi
+index 07d4ea130964..e6aed19a5f3b 100644
+--- a/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-common.dtsi
++++ b/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-common.dtsi
+@@ -1069,7 +1069,7 @@ battery_cell: battery-cell {
+ 	};
+ 
+ 	/* PMIC has a built-in 32KHz oscillator which is used by PMC */
+-	clk32k_in: clock@0 {
++	clk32k_in: clock-32k {
+ 		compatible = "fixed-clock";
+ 		#clock-cells = <0>;
+ 		clock-frequency = <32768>;
+@@ -1207,7 +1207,7 @@ lvds_encoder_output: endpoint {
+ 		};
+ 	};
+ 
+-	vdd_5v0_sys: regulator@0 {
++	vdd_5v0_sys: regulator-5v0 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_5v0";
+ 		regulator-min-microvolt = <5000000>;
+@@ -1216,7 +1216,7 @@ vdd_5v0_sys: regulator@0 {
+ 		regulator-boot-on;
+ 	};
+ 
+-	vdd_3v3_sys: regulator@1 {
++	vdd_3v3_sys: regulator-3v3 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_3v3";
+ 		regulator-min-microvolt = <3300000>;
+@@ -1226,7 +1226,7 @@ vdd_3v3_sys: regulator@1 {
+ 		vin-supply = <&vdd_5v0_sys>;
+ 	};
+ 
+-	vdd_pnl: regulator@2 {
++	vdd_pnl: regulator-panel {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_panel";
+ 		regulator-min-microvolt = <3300000>;
+@@ -1237,7 +1237,7 @@ vdd_pnl: regulator@2 {
+ 		vin-supply = <&vdd_3v3_sys>;
+ 	};
+ 
+-	vcc_3v3_ts: regulator@3 {
++	vcc_3v3_ts: regulator-ts {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "ldo_s-1167_3v3";
+ 		regulator-min-microvolt = <3300000>;
+diff --git a/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-maxim-pmic.dtsi b/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-maxim-pmic.dtsi
+index 53966fa4eef2..cd28e8782f7d 100644
+--- a/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-maxim-pmic.dtsi
++++ b/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-maxim-pmic.dtsi
+@@ -166,12 +166,12 @@ ldo8 {
+ 		};
+ 	};
+ 
+-	vdd_3v3_sys: regulator@1 {
++	vdd_3v3_sys: regulator-3v3 {
+ 		gpio = <&pmic 3 GPIO_ACTIVE_HIGH>;
+ 		enable-active-high;
+ 	};
+ 
+-	regulator@4 {
++	regulator-usb {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "avdd_usb";
+ 		regulator-min-microvolt = <3300000>;
+diff --git a/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-ti-pmic.dtsi b/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-ti-pmic.dtsi
+index 9365ae607239..ee4a3f482769 100644
+--- a/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-ti-pmic.dtsi
++++ b/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-ti-pmic.dtsi
+@@ -143,7 +143,7 @@ vdd_core: core-regulator@60 {
+ 		};
+ 	};
+ 
+-	vdd_3v3_sys: regulator@1 {
++	vdd_3v3_sys: regulator-3v3 {
+ 		gpio = <&pmic 6 GPIO_ACTIVE_HIGH>;
+ 		enable-active-high;
+ 	};
+diff --git a/arch/arm/boot/dts/tegra30-beaver.dts b/arch/arm/boot/dts/tegra30-beaver.dts
+index e159feeedef7..2ec5e47d9623 100644
+--- a/arch/arm/boot/dts/tegra30-beaver.dts
++++ b/arch/arm/boot/dts/tegra30-beaver.dts
+@@ -1966,7 +1966,7 @@ usb-phy@7d008000 {
+ 		status = "okay";
+ 	};
+ 
+-	clk32k_in: clock@0 {
++	clk32k_in: clock-32k {
+ 		compatible = "fixed-clock";
+ 		clock-frequency = <32768>;
+ 		#clock-cells = <0>;
+@@ -1985,7 +1985,7 @@ gpled2 {
+ 		};
+ 	};
+ 
+-	vdd_5v_in_reg: regulator@0 {
++	vdd_5v_in_reg: regulator-5v0 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_5v_in";
+ 		regulator-min-microvolt = <5000000>;
+@@ -1993,7 +1993,7 @@ vdd_5v_in_reg: regulator@0 {
+ 		regulator-always-on;
+ 	};
+ 
+-	chargepump_5v_reg: regulator@1 {
++	chargepump_5v_reg: regulator-chargepump {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "chargepump_5v";
+ 		regulator-min-microvolt = <5000000>;
+@@ -2004,7 +2004,7 @@ chargepump_5v_reg: regulator@1 {
+ 		gpio = <&pmic 0 GPIO_ACTIVE_HIGH>;
+ 	};
+ 
+-	ddr_reg: regulator@2 {
++	ddr_reg: regulator-ddr {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_ddr";
+ 		regulator-min-microvolt = <1500000>;
+@@ -2016,7 +2016,7 @@ ddr_reg: regulator@2 {
+ 		vin-supply = <&vdd_5v_in_reg>;
+ 	};
+ 
+-	vdd_5v_sata_reg: regulator@3 {
++	vdd_5v_sata_reg: regulator-sata {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_5v_sata";
+ 		regulator-min-microvolt = <5000000>;
+@@ -2028,7 +2028,7 @@ vdd_5v_sata_reg: regulator@3 {
+ 		vin-supply = <&vdd_5v_in_reg>;
+ 	};
+ 
+-	usb1_vbus_reg: regulator@4 {
++	usb1_vbus_reg: regulator-usb1 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "usb1_vbus";
+ 		regulator-min-microvolt = <5000000>;
+@@ -2039,7 +2039,7 @@ usb1_vbus_reg: regulator@4 {
+ 		vin-supply = <&vdd_5v_in_reg>;
+ 	};
+ 
+-	usb3_vbus_reg: regulator@5 {
++	usb3_vbus_reg: regulator-usb3 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "usb3_vbus";
+ 		regulator-min-microvolt = <5000000>;
+@@ -2050,7 +2050,7 @@ usb3_vbus_reg: regulator@5 {
+ 		vin-supply = <&vdd_5v_in_reg>;
+ 	};
+ 
+-	sys_3v3_reg: regulator@6 {
++	sys_3v3_reg: regulator-3v3 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "sys_3v3,vdd_3v3_alw";
+ 		regulator-min-microvolt = <3300000>;
+@@ -2062,7 +2062,7 @@ sys_3v3_reg: regulator@6 {
+ 		vin-supply = <&vdd_5v_in_reg>;
+ 	};
+ 
+-	sys_3v3_pexs_reg: regulator@7 {
++	sys_3v3_pexs_reg: regulator-pexs {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "sys_3v3_pexs";
+ 		regulator-min-microvolt = <3300000>;
+@@ -2074,7 +2074,7 @@ sys_3v3_pexs_reg: regulator@7 {
+ 		vin-supply = <&sys_3v3_reg>;
+ 	};
+ 
+-	vdd_5v0_hdmi: regulator@8 {
++	vdd_5v0_hdmi: regulator-hdmi {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+VDD_5V_HDMI";
+ 		regulator-min-microvolt = <5000000>;
+diff --git a/arch/arm/boot/dts/tegra30-cardhu-a02.dts b/arch/arm/boot/dts/tegra30-cardhu-a02.dts
+index 4899e05a0d9c..247185314f46 100644
+--- a/arch/arm/boot/dts/tegra30-cardhu-a02.dts
++++ b/arch/arm/boot/dts/tegra30-cardhu-a02.dts
+@@ -16,7 +16,7 @@ mmc@78000400 {
+ 		keep-power-in-suspend;
+ 	};
+ 
+-	ddr_reg: regulator@100 {
++	ddr_reg: regulator-ddr {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_ddr";
+ 		regulator-min-microvolt = <1500000>;
+@@ -27,7 +27,7 @@ ddr_reg: regulator@100 {
+ 		gpio = <&pmic 6 GPIO_ACTIVE_HIGH>;
+ 	};
+ 
+-	sys_3v3_reg: regulator@101 {
++	sys_3v3_reg: regulator-3v3 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "sys_3v3";
+ 		regulator-min-microvolt = <3300000>;
+@@ -38,7 +38,7 @@ sys_3v3_reg: regulator@101 {
+ 		gpio = <&pmic 7 GPIO_ACTIVE_HIGH>;
+ 	};
+ 
+-	usb1_vbus_reg: regulator@102 {
++	usb1_vbus_reg: regulator-usb1 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "usb1_vbus";
+ 		regulator-min-microvolt = <5000000>;
+@@ -49,7 +49,7 @@ usb1_vbus_reg: regulator@102 {
+ 		vin-supply = <&vdd_5v0_reg>;
+ 	};
+ 
+-	usb3_vbus_reg: regulator@103 {
++	usb3_vbus_reg: regulator-usb3 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "usb3_vbus";
+ 		regulator-min-microvolt = <5000000>;
+@@ -60,7 +60,7 @@ usb3_vbus_reg: regulator@103 {
+ 		vin-supply = <&vdd_5v0_reg>;
+ 	};
+ 
+-	vdd_5v0_reg: regulator@104 {
++	vdd_5v0_reg: regulator-5v0 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "5v0";
+ 		regulator-min-microvolt = <5000000>;
+@@ -69,7 +69,7 @@ vdd_5v0_reg: regulator@104 {
+ 		gpio = <&pmic 2 GPIO_ACTIVE_HIGH>;
+ 	};
+ 
+-	vdd_bl_reg: regulator@105 {
++	vdd_bl_reg: regulator-bl {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_bl";
+ 		regulator-min-microvolt = <5000000>;
+diff --git a/arch/arm/boot/dts/tegra30-cardhu-a04.dts b/arch/arm/boot/dts/tegra30-cardhu-a04.dts
+index a11028b8b67b..2911f08863a0 100644
+--- a/arch/arm/boot/dts/tegra30-cardhu-a04.dts
++++ b/arch/arm/boot/dts/tegra30-cardhu-a04.dts
+@@ -16,7 +16,7 @@ mmc@78000400 {
+ 		keep-power-in-suspend;
+ 	};
+ 
+-	ddr_reg: regulator@100 {
++	ddr_reg: regulator-ddr {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "ddr";
+ 		regulator-min-microvolt = <1500000>;
+@@ -27,7 +27,7 @@ ddr_reg: regulator@100 {
+ 		gpio = <&pmic 7 GPIO_ACTIVE_HIGH>;
+ 	};
+ 
+-	sys_3v3_reg: regulator@101 {
++	sys_3v3_reg: regulator-3v3 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "sys_3v3";
+ 		regulator-min-microvolt = <3300000>;
+@@ -38,7 +38,7 @@ sys_3v3_reg: regulator@101 {
+ 		gpio = <&pmic 6 GPIO_ACTIVE_HIGH>;
+ 	};
+ 
+-	usb1_vbus_reg: regulator@102 {
++	usb1_vbus_reg: regulator-usb1 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "usb1_vbus";
+ 		regulator-min-microvolt = <5000000>;
+@@ -49,7 +49,7 @@ usb1_vbus_reg: regulator@102 {
+ 		vin-supply = <&vdd_5v0_reg>;
+ 	};
+ 
+-	usb3_vbus_reg: regulator@103 {
++	usb3_vbus_reg: regulator-usb3 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "usb3_vbus";
+ 		regulator-min-microvolt = <5000000>;
+@@ -60,7 +60,7 @@ usb3_vbus_reg: regulator@103 {
+ 		vin-supply = <&vdd_5v0_reg>;
+ 	};
+ 
+-	vdd_5v0_reg: regulator@104 {
++	vdd_5v0_reg: regulator-5v0 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "5v0";
+ 		regulator-min-microvolt = <5000000>;
+@@ -69,7 +69,7 @@ vdd_5v0_reg: regulator@104 {
+ 		gpio = <&pmic 8 GPIO_ACTIVE_HIGH>;
+ 	};
+ 
+-	vdd_bl_reg: regulator@105 {
++	vdd_bl_reg: regulator-bl {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_bl";
+ 		regulator-min-microvolt = <5000000>;
+@@ -80,7 +80,7 @@ vdd_bl_reg: regulator@105 {
+ 		gpio = <&gpio TEGRA_GPIO(DD, 2) GPIO_ACTIVE_HIGH>;
+ 	};
+ 
+-	vdd_bl2_reg: regulator@106 {
++	vdd_bl2_reg: regulator-bl2 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_bl2";
+ 		regulator-min-microvolt = <5000000>;
+diff --git a/arch/arm/boot/dts/tegra30-cardhu.dtsi b/arch/arm/boot/dts/tegra30-cardhu.dtsi
+index 448f1397e64a..d2f6121049a4 100644
+--- a/arch/arm/boot/dts/tegra30-cardhu.dtsi
++++ b/arch/arm/boot/dts/tegra30-cardhu.dtsi
+@@ -433,7 +433,7 @@ backlight: backlight {
+ 		default-brightness-level = <6>;
+ 	};
+ 
+-	clk32k_in: clock@0 {
++	clk32k_in: clock-32k {
+ 		compatible = "fixed-clock";
+ 		clock-frequency = <32768>;
+ 		#clock-cells = <0>;
+@@ -475,7 +475,7 @@ panel: panel {
+ 		backlight = <&backlight>;
+ 	};
+ 
+-	vdd_ac_bat_reg: regulator@0 {
++	vdd_ac_bat_reg: regulator-acbat {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_ac_bat";
+ 		regulator-min-microvolt = <5000000>;
+@@ -483,7 +483,7 @@ vdd_ac_bat_reg: regulator@0 {
+ 		regulator-always-on;
+ 	};
+ 
+-	cam_1v8_reg: regulator@1 {
++	cam_1v8_reg: regulator-cam {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "cam_1v8";
+ 		regulator-min-microvolt = <1800000>;
+@@ -493,7 +493,7 @@ cam_1v8_reg: regulator@1 {
+ 		vin-supply = <&vio_reg>;
+ 	};
+ 
+-	cp_5v_reg: regulator@2 {
++	cp_5v_reg: regulator-5v0cp {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "cp_5v";
+ 		regulator-min-microvolt = <5000000>;
+@@ -504,7 +504,7 @@ cp_5v_reg: regulator@2 {
+ 		gpio = <&pmic 0 GPIO_ACTIVE_HIGH>;
+ 	};
+ 
+-	emmc_3v3_reg: regulator@3 {
++	emmc_3v3_reg: regulator-emmc {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "emmc_3v3";
+ 		regulator-min-microvolt = <3300000>;
+@@ -516,7 +516,7 @@ emmc_3v3_reg: regulator@3 {
+ 		vin-supply = <&sys_3v3_reg>;
+ 	};
+ 
+-	modem_3v3_reg: regulator@4 {
++	modem_3v3_reg: regulator-modem {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "modem_3v3";
+ 		regulator-min-microvolt = <3300000>;
+@@ -525,7 +525,7 @@ modem_3v3_reg: regulator@4 {
+ 		gpio = <&gpio TEGRA_GPIO(D, 6) GPIO_ACTIVE_HIGH>;
+ 	};
+ 
+-	pex_hvdd_3v3_reg: regulator@5 {
++	pex_hvdd_3v3_reg: regulator-pex {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "pex_hvdd_3v3";
+ 		regulator-min-microvolt = <3300000>;
+@@ -535,7 +535,7 @@ pex_hvdd_3v3_reg: regulator@5 {
+ 		vin-supply = <&sys_3v3_reg>;
+ 	};
+ 
+-	vdd_cam1_ldo_reg: regulator@6 {
++	vdd_cam1_ldo_reg: regulator-cam1 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_cam1_ldo";
+ 		regulator-min-microvolt = <2800000>;
+@@ -545,7 +545,7 @@ vdd_cam1_ldo_reg: regulator@6 {
+ 		vin-supply = <&sys_3v3_reg>;
+ 	};
+ 
+-	vdd_cam2_ldo_reg: regulator@7 {
++	vdd_cam2_ldo_reg: regulator-cam2 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_cam2_ldo";
+ 		regulator-min-microvolt = <2800000>;
+@@ -555,7 +555,7 @@ vdd_cam2_ldo_reg: regulator@7 {
+ 		vin-supply = <&sys_3v3_reg>;
+ 	};
+ 
+-	vdd_cam3_ldo_reg: regulator@8 {
++	vdd_cam3_ldo_reg: regulator-cam3 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_cam3_ldo";
+ 		regulator-min-microvolt = <3300000>;
+@@ -565,7 +565,7 @@ vdd_cam3_ldo_reg: regulator@8 {
+ 		vin-supply = <&sys_3v3_reg>;
+ 	};
+ 
+-	vdd_com_reg: regulator@9 {
++	vdd_com_reg: regulator-com {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_com";
+ 		regulator-min-microvolt = <3300000>;
+@@ -577,7 +577,7 @@ vdd_com_reg: regulator@9 {
+ 		vin-supply = <&sys_3v3_reg>;
+ 	};
+ 
+-	vdd_fuse_3v3_reg: regulator@10 {
++	vdd_fuse_3v3_reg: regulator-fuse {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_fuse_3v3";
+ 		regulator-min-microvolt = <3300000>;
+@@ -587,7 +587,7 @@ vdd_fuse_3v3_reg: regulator@10 {
+ 		vin-supply = <&sys_3v3_reg>;
+ 	};
+ 
+-	vdd_pnl1_reg: regulator@11 {
++	vdd_pnl1_reg: regulator-pnl1 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_pnl1";
+ 		regulator-min-microvolt = <3300000>;
+@@ -599,7 +599,7 @@ vdd_pnl1_reg: regulator@11 {
+ 		vin-supply = <&sys_3v3_reg>;
+ 	};
+ 
+-	vdd_vid_reg: regulator@12 {
++	vdd_vid_reg: regulator-vid {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vddio_vid";
+ 		regulator-min-microvolt = <5000000>;
 -- 
 2.33.1
 
