@@ -2,316 +2,246 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55DA7C433FE
-	for <linux-tegra@archiver.kernel.org>; Thu, 25 Nov 2021 13:50:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D16EEC433EF
+	for <linux-tegra@archiver.kernel.org>; Thu, 25 Nov 2021 16:56:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355374AbhKYNyG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 25 Nov 2021 08:54:06 -0500
-Received: from mga01.intel.com ([192.55.52.88]:37419 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1355291AbhKYNwD (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 25 Nov 2021 08:52:03 -0500
-X-IronPort-AV: E=McAfee;i="6200,9189,10178"; a="259414637"
-X-IronPort-AV: E=Sophos;i="5.87,263,1631602800"; 
-   d="scan'208";a="259414637"
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2021 05:43:42 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.87,263,1631602800"; 
-   d="scan'208";a="457407725"
-Received: from lkp-server02.sh.intel.com (HELO 9e1e9f9b3bcb) ([10.239.97.151])
-  by orsmga003.jf.intel.com with ESMTP; 25 Nov 2021 05:43:38 -0800
-Received: from kbuild by 9e1e9f9b3bcb with local (Exim 4.92)
-        (envelope-from <lkp@intel.com>)
-        id 1mqF2H-0006Qt-LJ; Thu, 25 Nov 2021 13:43:37 +0000
-Date:   Thu, 25 Nov 2021 21:42:50 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Akhil R <akhilrajeev@nvidia.com>, dan.j.williams@intel.com,
-        devicetree@vger.kernel.org, dmaengine@vger.kernel.org,
-        jonathanh@nvidia.com, kyarlagadda@nvidia.com, ldewangan@nvidia.com,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        p.zabel@pengutronix.de, rgumasta@nvidia.com
-Cc:     kbuild-all@lists.01.org
-Subject: Re: [PATCH v13 2/4] dmaengine: tegra: Add tegra gpcdma driver
-Message-ID: <202111252148.4CbCTolF-lkp@intel.com>
-References: <1637573292-13214-3-git-send-email-akhilrajeev@nvidia.com>
+        id S1356656AbhKYQ7W (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 25 Nov 2021 11:59:22 -0500
+Received: from mail-mw2nam10on2079.outbound.protection.outlook.com ([40.107.94.79]:53185
+        "EHLO NAM10-MW2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S237194AbhKYQ5W (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 25 Nov 2021 11:57:22 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=f0xrvJbtTPc7vxgzg442sSmjYt+gLIiLmRwEZx55Hw8ZT+A2ZwxZCD9H0kxYQgDi1qHMEG7kls55h+oiWSLMsYqOtkCvz6oZsdEu9nPJAjT/V92k5+F0YN8cooANLgpOaDhq1CEMqoLAOyKW08F7kjJomygSb0NNiAJxJPGReFn3xxbHUneOBXHGg5W+fT+BmeyxyWzat9eimUCtKr7P8YRANiumfRmzd0zuGoHfORlOhQE06XGX/df/jLvt5Qo7q6Q45RkfHY/ly2dhFMRKHbpFamJJaikZuggjCzRWgYqwBTkCwjveaAkucGSObxULWahqIIyfzcdeUU+dkLIUgg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=G8xjsc6bwUpXvmbqm3GpIOkiJF2wmizzGK6pcxyhIRk=;
+ b=VdHztvhGF538ZNHVRBsEl6ycgq57UzTM3PH5GqTn+WKX4y6UjHYZtxVVfJKoJmE7lf77Mbob/5B4A2YJ67xmvsKdYjKjHID0bxKGxzjWHjX6PNTYE+BKYvYdMkxyKDtn6/2HOD7Sd0nbPwCxWkMnlG9QkmWuyHLU0HKIslE6wXvnIO3zNSw2bpd/d0Efu1AI22s7Ofsfc5z8BnaN7mGzXgzS10xhCo9vuWJ2IgRSPoJnyrDsDmw5bukxFOENswq63uDnvEng8z0miLwWS8sGH85AKhrRjDWDN5YwjPfqSz/BjxvbWcGbohhQ6/QcxM4hXoGnPf2OWPj/5qd1sUorBQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.112.34) smtp.rcpttodomain=amd.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=G8xjsc6bwUpXvmbqm3GpIOkiJF2wmizzGK6pcxyhIRk=;
+ b=SHdFg43/LmHUogEO06H+k/IkVQUsT/8U5QyVSLI9P0Rz6IY3FdQyF8J3V5SkGy+Dkjvg6egrMGYFvyfJrjRPAofO7yBkZ49UBzMk6EUxQxuQ5Lj0tIXHu34NAmOWCyU1VhS1GKitxoSdASiZacWa/UfnQA5UEQNzRqtMnohiPibHVWOu/3BGpPUWFVGsWnUV2gpEjXL8UqTPwFB37F+cKhEBAeO1RcikSWU9a+WArXzTO+zff7WMKWI2BtO58FozyuGhS6C84z5bfnVc+ZqXFLHGYK5fqV/PB7bOOr8GqWtPexJVXJiUgcRTn3ltUVbxYKbToFKUBG6qTdc4mpUX/A==
+Received: from DS7PR03CA0070.namprd03.prod.outlook.com (2603:10b6:5:3bb::15)
+ by DM6PR12MB4500.namprd12.prod.outlook.com (2603:10b6:5:28f::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4734.20; Thu, 25 Nov
+ 2021 16:53:59 +0000
+Received: from DM6NAM11FT056.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:5:3bb:cafe::ba) by DS7PR03CA0070.outlook.office365.com
+ (2603:10b6:5:3bb::15) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4713.21 via Frontend
+ Transport; Thu, 25 Nov 2021 16:53:59 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.34)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.112.34 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.112.34; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (216.228.112.34) by
+ DM6NAM11FT056.mail.protection.outlook.com (10.13.173.99) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.4734.22 via Frontend Transport; Thu, 25 Nov 2021 16:53:59 +0000
+Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Thu, 25 Nov
+ 2021 16:53:58 +0000
+Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Thu, 25 Nov
+ 2021 16:53:58 +0000
+Received: from kyarlagadda-linux.nvidia.com (172.20.187.5) by mail.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server id 15.0.1497.18 via Frontend
+ Transport; Thu, 25 Nov 2021 16:53:54 +0000
+From:   Akhil R <akhilrajeev@nvidia.com>
+To:     <akhilrajeev@nvidia.com>
+CC:     <andy.shevchenko@gmail.com>, <christian.koenig@amd.com>,
+        <digetx@gmail.com>, <dri-devel@lists.freedesktop.org>,
+        <jonathanh@nvidia.com>, <ldewangan@nvidia.com>,
+        <linaro-mm-sig@lists.linaro.org>, <linux-i2c@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-media@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <p.zabel@pengutronix.de>,
+        <sumit.semwal@linaro.org>, <thierry.reding@gmail.com>
+Subject: [PATCH v4] i2c: tegra: Add the ACPI support
+Date:   Thu, 25 Nov 2021 22:23:44 +0530
+Message-ID: <1637859224-5179-1-git-send-email-akhilrajeev@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+X-NVConfidentiality: public
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1637573292-13214-3-git-send-email-akhilrajeev@nvidia.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 8e0fd72c-66ed-40cf-831d-08d9b0342d37
+X-MS-TrafficTypeDiagnostic: DM6PR12MB4500:
+X-Microsoft-Antispam-PRVS: <DM6PR12MB45001EEA65341B25E202C943C0629@DM6PR12MB4500.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:5797;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: bD5XVvHvKu+8ttCLcaQvOUqY0fHMRpCQZ/RQBnqi4k+KYIClLWzI91U6bcojo6HaZ1ByNWxXtFrnyT7RoZW4eUdlpsdV6ZMDU63MZTk2Fqwj8KMe8Jb0rDMOpSuZxmCmZ5Y2eNrzgFdbrQt7rwQfOT9/fwVun1ImLNnjwu+jT9Q8diMgkDRIcYREuSge5jAdPwwJLiDaFGG+VeCjs8QBWnjgw4WW/ogQgANFuzj0J0Ht/s/uoNXKd2Nqr4BadB4sVD5IaTtn8651dSOEuXCclc6Il5wNVrcHrYLUo9CEJmKHjsw2XrdC23S47s4QGjw65eIvxAPErvWoDtevWIkUqDPsoAgc1JhDAhCkFBG5sv7bBXqKs85lOcxDiUKGRlEiPo+Z7d+nIC0/VY3bNVDwz/z2hEEQO5qJyIu8x/ykr9I+u7196pNA6jUwHGSEXn672wpUuq9RztN5ZxxT8Q5ZxI5u3DezLhM5Xj7DGMyJNxIrvtoEceXUCDHDEaX4dP3hJ+jW6ww8lmrTq+QH6xgxzgLlLQYdV9MtR4J2ACZU8+5hWqY8NtqgN+mFY4F9AuN3RqS6DrajQAQhQl3bD4HlngY9AZuA929B4lelpkv5tm7LgCLbePd28SJT959mmFynFtxBdZbbcC0zYeXqIwjDGBmg5D3B1+XjsdyYAbUC8HnW2qsz47dv5PgLoOftxyZ6FgbP+euIDBKZGIAasOAuqWnnhB7bwg6wTucPkyLGoB3rj2kiQUqajHaM+L0OjkGRqBVhAYciisdKMNIVcENeWAzl7qP7is9zFOS4eri8aWR/E8cUb9TjkAKfq/aXIyxtoSTDl15s2714j83fokzWWA==
+X-Forefront-Antispam-Report: CIP:216.228.112.34;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid03.nvidia.com;CAT:NONE;SFS:(4636009)(46966006)(36840700001)(6666004)(356005)(70586007)(7049001)(37006003)(966005)(8936002)(83380400001)(6200100001)(4326008)(7696005)(8676002)(5660300002)(70206006)(54906003)(7416002)(316002)(336012)(426003)(508600001)(86362001)(36860700001)(2616005)(26005)(2906002)(6862004)(7636003)(82310400004)(36756003)(186003)(47076005);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Nov 2021 16:53:59.1967
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8e0fd72c-66ed-40cf-831d-08d9b0342d37
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.34];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT056.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4500
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Akhil,
+Add support for the ACPI based device registration so that the driver
+can be also enabled through ACPI table.
 
-Thank you for the patch! Yet something to improve:
+This does not include the ACPI support for Tegra VI and DVC I2C.
 
-[auto build test ERROR on robh/for-next]
-[also build test ERROR on vkoul-dmaengine/next arm64/for-next/core v5.16-rc2 next-20211125]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch]
-
-url:    https://github.com/0day-ci/linux/commits/Akhil-R/Add-NVIDIA-Tegra-GPC-DMA-driver/20211122-173019
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
-config: arc-randconfig-m031-20211123 (https://download.01.org/0day-ci/archive/20211125/202111252148.4CbCTolF-lkp@intel.com/config)
-compiler: arceb-elf-gcc (GCC) 11.2.0
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # https://github.com/0day-ci/linux/commit/7707da9f914433ccc5718dd3431153d3b5bf485d
-        git remote add linux-review https://github.com/0day-ci/linux
-        git fetch --no-tags linux-review Akhil-R/Add-NVIDIA-Tegra-GPC-DMA-driver/20211122-173019
-        git checkout 7707da9f914433ccc5718dd3431153d3b5bf485d
-        # save the config file to linux build tree
-        mkdir build_dir
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.2.0 make.cross O=build_dir ARCH=arc SHELL=/bin/bash drivers/dma/
-
-If you fix the issue, kindly add following tag as appropriate
-Reported-by: kernel test robot <lkp@intel.com>
-
-All errors (new ones prefixed by >>):
-
-   drivers/dma/tegra186-gpc-dma.c:966:81: warning: right shift count >= width of type [-Wshift-count-overflow]
-     966 |                                 FIELD_PREP(TEGRA_GPCDMA_HIGH_ADDR_SRC_PTR, (mem >> 32));
-         |                                                                                 ^~
-   include/linux/compiler_types.h:315:23: note: in definition of macro '__compiletime_assert'
-     315 |                 if (!(condition))                                       \
-         |                       ^~~~~~~~~
-   include/linux/compiler_types.h:335:9: note: in expansion of macro '_compiletime_assert'
-     335 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
-         |         ^~~~~~~~~~~~~~~~~~~
-   include/linux/build_bug.h:39:37: note: in expansion of macro 'compiletime_assert'
-      39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
-         |                                     ^~~~~~~~~~~~~~~~~~
-   include/linux/bitfield.h:49:17: note: in expansion of macro 'BUILD_BUG_ON_MSG'
-      49 |                 BUILD_BUG_ON_MSG(__builtin_constant_p(_val) ?           \
-         |                 ^~~~~~~~~~~~~~~~
-   include/linux/bitfield.h:94:17: note: in expansion of macro '__BF_FIELD_CHECK'
-      94 |                 __BF_FIELD_CHECK(_mask, 0ULL, _val, "FIELD_PREP: ");    \
-         |                 ^~~~~~~~~~~~~~~~
-   drivers/dma/tegra186-gpc-dma.c:966:33: note: in expansion of macro 'FIELD_PREP'
-     966 |                                 FIELD_PREP(TEGRA_GPCDMA_HIGH_ADDR_SRC_PTR, (mem >> 32));
-         |                                 ^~~~~~~~~~
-   drivers/dma/tegra186-gpc-dma.c:966:81: warning: right shift count >= width of type [-Wshift-count-overflow]
-     966 |                                 FIELD_PREP(TEGRA_GPCDMA_HIGH_ADDR_SRC_PTR, (mem >> 32));
-         |                                                                                 ^~
-   include/linux/compiler_types.h:315:23: note: in definition of macro '__compiletime_assert'
-     315 |                 if (!(condition))                                       \
-         |                       ^~~~~~~~~
-   include/linux/compiler_types.h:335:9: note: in expansion of macro '_compiletime_assert'
-     335 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
-         |         ^~~~~~~~~~~~~~~~~~~
-   include/linux/build_bug.h:39:37: note: in expansion of macro 'compiletime_assert'
-      39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
-         |                                     ^~~~~~~~~~~~~~~~~~
-   include/linux/bitfield.h:49:17: note: in expansion of macro 'BUILD_BUG_ON_MSG'
-      49 |                 BUILD_BUG_ON_MSG(__builtin_constant_p(_val) ?           \
-         |                 ^~~~~~~~~~~~~~~~
-   include/linux/bitfield.h:94:17: note: in expansion of macro '__BF_FIELD_CHECK'
-      94 |                 __BF_FIELD_CHECK(_mask, 0ULL, _val, "FIELD_PREP: ");    \
-         |                 ^~~~~~~~~~~~~~~~
-   drivers/dma/tegra186-gpc-dma.c:966:33: note: in expansion of macro 'FIELD_PREP'
-     966 |                                 FIELD_PREP(TEGRA_GPCDMA_HIGH_ADDR_SRC_PTR, (mem >> 32));
-         |                                 ^~~~~~~~~~
-   In file included from drivers/dma/tegra186-gpc-dma.c:8:
-   drivers/dma/tegra186-gpc-dma.c:966:81: warning: right shift count >= width of type [-Wshift-count-overflow]
-     966 |                                 FIELD_PREP(TEGRA_GPCDMA_HIGH_ADDR_SRC_PTR, (mem >> 32));
-         |                                                                                 ^~
-   include/linux/bitfield.h:95:34: note: in definition of macro 'FIELD_PREP'
-      95 |                 ((typeof(_mask))(_val) << __bf_shf(_mask)) & (_mask);   \
-         |                                  ^~~~
-   In file included from <command-line>:
-   drivers/dma/tegra186-gpc-dma.c:971:81: warning: right shift count >= width of type [-Wshift-count-overflow]
-     971 |                                 FIELD_PREP(TEGRA_GPCDMA_HIGH_ADDR_DST_PTR, (mem >> 32));
-         |                                                                                 ^~
-   include/linux/compiler_types.h:315:23: note: in definition of macro '__compiletime_assert'
-     315 |                 if (!(condition))                                       \
-         |                       ^~~~~~~~~
-   include/linux/compiler_types.h:335:9: note: in expansion of macro '_compiletime_assert'
-     335 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
-         |         ^~~~~~~~~~~~~~~~~~~
-   include/linux/build_bug.h:39:37: note: in expansion of macro 'compiletime_assert'
-      39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
-         |                                     ^~~~~~~~~~~~~~~~~~
-   include/linux/bitfield.h:49:17: note: in expansion of macro 'BUILD_BUG_ON_MSG'
-      49 |                 BUILD_BUG_ON_MSG(__builtin_constant_p(_val) ?           \
-         |                 ^~~~~~~~~~~~~~~~
-   include/linux/bitfield.h:94:17: note: in expansion of macro '__BF_FIELD_CHECK'
-      94 |                 __BF_FIELD_CHECK(_mask, 0ULL, _val, "FIELD_PREP: ");    \
-         |                 ^~~~~~~~~~~~~~~~
-   drivers/dma/tegra186-gpc-dma.c:971:33: note: in expansion of macro 'FIELD_PREP'
-     971 |                                 FIELD_PREP(TEGRA_GPCDMA_HIGH_ADDR_DST_PTR, (mem >> 32));
-         |                                 ^~~~~~~~~~
-   drivers/dma/tegra186-gpc-dma.c:971:81: warning: right shift count >= width of type [-Wshift-count-overflow]
-     971 |                                 FIELD_PREP(TEGRA_GPCDMA_HIGH_ADDR_DST_PTR, (mem >> 32));
-         |                                                                                 ^~
-   include/linux/compiler_types.h:315:23: note: in definition of macro '__compiletime_assert'
-     315 |                 if (!(condition))                                       \
-         |                       ^~~~~~~~~
-   include/linux/compiler_types.h:335:9: note: in expansion of macro '_compiletime_assert'
-     335 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
-         |         ^~~~~~~~~~~~~~~~~~~
-   include/linux/build_bug.h:39:37: note: in expansion of macro 'compiletime_assert'
-      39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
-         |                                     ^~~~~~~~~~~~~~~~~~
-   include/linux/bitfield.h:49:17: note: in expansion of macro 'BUILD_BUG_ON_MSG'
-      49 |                 BUILD_BUG_ON_MSG(__builtin_constant_p(_val) ?           \
-         |                 ^~~~~~~~~~~~~~~~
-   include/linux/bitfield.h:94:17: note: in expansion of macro '__BF_FIELD_CHECK'
-      94 |                 __BF_FIELD_CHECK(_mask, 0ULL, _val, "FIELD_PREP: ");    \
-         |                 ^~~~~~~~~~~~~~~~
-   drivers/dma/tegra186-gpc-dma.c:971:33: note: in expansion of macro 'FIELD_PREP'
-     971 |                                 FIELD_PREP(TEGRA_GPCDMA_HIGH_ADDR_DST_PTR, (mem >> 32));
-         |                                 ^~~~~~~~~~
-   In file included from drivers/dma/tegra186-gpc-dma.c:8:
-   drivers/dma/tegra186-gpc-dma.c:971:81: warning: right shift count >= width of type [-Wshift-count-overflow]
-     971 |                                 FIELD_PREP(TEGRA_GPCDMA_HIGH_ADDR_DST_PTR, (mem >> 32));
-         |                                                                                 ^~
-   include/linux/bitfield.h:95:34: note: in definition of macro 'FIELD_PREP'
-      95 |                 ((typeof(_mask))(_val) << __bf_shf(_mask)) & (_mask);   \
-         |                                  ^~~~
-   drivers/dma/tegra186-gpc-dma.c: In function 'tegra_dma_probe':
->> drivers/dma/tegra186-gpc-dma.c:1121:31: error: 'struct iommu_fwspec' has no member named 'ids'
-    1121 |         stream_id = iommu_spec->ids[0] & 0xffff;
-         |                               ^~
-
-
-vim +1121 drivers/dma/tegra186-gpc-dma.c
-
-  1081	
-  1082	static int tegra_dma_probe(struct platform_device *pdev)
-  1083	{
-  1084		const struct tegra_dma_chip_data *cdata = NULL;
-  1085		struct iommu_fwspec *iommu_spec;
-  1086		unsigned int stream_id, i;
-  1087		struct tegra_dma *tdma;
-  1088		struct resource	*res;
-  1089		int ret;
-  1090	
-  1091		cdata = of_device_get_match_data(&pdev->dev);
-  1092	
-  1093		tdma = devm_kzalloc(&pdev->dev, sizeof(*tdma) + cdata->nr_channels *
-  1094				sizeof(struct tegra_dma_channel), GFP_KERNEL);
-  1095		if (!tdma)
-  1096			return -ENOMEM;
-  1097	
-  1098		tdma->dev = &pdev->dev;
-  1099		tdma->chip_data = cdata;
-  1100		platform_set_drvdata(pdev, tdma);
-  1101	
-  1102		tdma->base_addr = devm_platform_ioremap_resource(pdev, 0);
-  1103		if (IS_ERR(tdma->base_addr))
-  1104			return PTR_ERR(tdma->base_addr);
-  1105	
-  1106		tdma->rst = devm_reset_control_get_exclusive(&pdev->dev, "gpcdma");
-  1107		if (IS_ERR(tdma->rst)) {
-  1108			dev_err_probe(&pdev->dev, PTR_ERR(tdma->rst),
-  1109				      "Missing controller reset\n");
-  1110			return PTR_ERR(tdma->rst);
-  1111		}
-  1112		reset_control_reset(tdma->rst);
-  1113	
-  1114		tdma->dma_dev.dev = &pdev->dev;
-  1115	
-  1116		iommu_spec = dev_iommu_fwspec_get(&pdev->dev);
-  1117		if (!iommu_spec) {
-  1118			dev_err(&pdev->dev, "Missing iommu stream-id\n");
-  1119			return -EINVAL;
-  1120		}
-> 1121		stream_id = iommu_spec->ids[0] & 0xffff;
-  1122	
-  1123		INIT_LIST_HEAD(&tdma->dma_dev.channels);
-  1124		for (i = 0; i < cdata->nr_channels; i++) {
-  1125			struct tegra_dma_channel *tdc = &tdma->channels[i];
-  1126	
-  1127			tdc->chan_base_offset = TEGRA_GPCDMA_CHANNEL_BASE_ADD_OFFSET +
-  1128						i * cdata->channel_reg_size;
-  1129			res = platform_get_resource(pdev, IORESOURCE_IRQ, i);
-  1130			if (!res) {
-  1131				dev_err(&pdev->dev, "No irq resource for chan %d\n", i);
-  1132				return -EINVAL;
-  1133			}
-  1134			tdc->irq = res->start;
-  1135			snprintf(tdc->name, sizeof(tdc->name), "gpcdma.%d", i);
-  1136	
-  1137			tdc->tdma = tdma;
-  1138			tdc->id = i;
-  1139			tdc->slave_id = -1;
-  1140	
-  1141			vchan_init(&tdc->vc, &tdma->dma_dev);
-  1142			tdc->vc.desc_free = tegra_dma_desc_free;
-  1143			raw_spin_lock_init(&tdc->lock);
-  1144	
-  1145			/* program stream-id for this channel */
-  1146			tegra_dma_program_sid(tdc, i, stream_id);
-  1147			tdc->stream_id = stream_id;
-  1148		}
-  1149	
-  1150		dma_cap_set(DMA_SLAVE, tdma->dma_dev.cap_mask);
-  1151		dma_cap_set(DMA_PRIVATE, tdma->dma_dev.cap_mask);
-  1152		dma_cap_set(DMA_MEMCPY, tdma->dma_dev.cap_mask);
-  1153		dma_cap_set(DMA_MEMSET, tdma->dma_dev.cap_mask);
-  1154	
-  1155		/*
-  1156		 * Only word aligned transfers are supported. Set the copy
-  1157		 * alignment shift.
-  1158		 */
-  1159		tdma->dma_dev.copy_align = 2;
-  1160		tdma->dma_dev.fill_align = 2;
-  1161		tdma->dma_dev.device_alloc_chan_resources =
-  1162						tegra_dma_alloc_chan_resources;
-  1163		tdma->dma_dev.device_free_chan_resources =
-  1164						tegra_dma_free_chan_resources;
-  1165		tdma->dma_dev.device_prep_slave_sg = tegra_dma_prep_slave_sg;
-  1166		tdma->dma_dev.device_prep_dma_memcpy = tegra_dma_prep_dma_memcpy;
-  1167		tdma->dma_dev.device_prep_dma_memset = tegra_dma_prep_dma_memset;
-  1168		tdma->dma_dev.device_config = tegra_dma_slave_config;
-  1169		tdma->dma_dev.device_terminate_all = tegra_dma_terminate_all;
-  1170		tdma->dma_dev.device_tx_status = tegra_dma_tx_status;
-  1171		tdma->dma_dev.device_issue_pending = tegra_dma_issue_pending;
-  1172		tdma->dma_dev.device_synchronize = tegra_dma_chan_synchronize;
-  1173		tdma->dma_dev.residue_granularity = DMA_RESIDUE_GRANULARITY_BURST;
-  1174	
-  1175		/* Register DMA channel interrupt handlers after everything is setup */
-  1176		for (i = 0; i < cdata->nr_channels; i++) {
-  1177			struct tegra_dma_channel *tdc = &tdma->channels[i];
-  1178	
-  1179			ret = devm_request_irq(&pdev->dev, tdc->irq,
-  1180					       tegra_dma_isr, 0, tdc->name, tdc);
-  1181			if (ret) {
-  1182				dev_err_probe(&pdev->dev, ret,
-  1183					      "request_irq failed for channel %d\n", i);
-  1184				return ret;
-  1185			}
-  1186		}
-  1187	
-  1188		ret = dma_async_device_register(&tdma->dma_dev);
-  1189		if (ret < 0) {
-  1190			dev_err_probe(&pdev->dev, ret,
-  1191				      "GPC DMA driver registration failed\n");
-  1192			return ret;
-  1193		}
-  1194	
-  1195		ret = of_dma_controller_register(pdev->dev.of_node,
-  1196						 tegra_dma_of_xlate, tdma);
-  1197		if (ret < 0) {
-  1198			dev_err_probe(&pdev->dev, ret,
-  1199				      "GPC DMA OF registration failed\n");
-  1200	
-  1201			dma_async_device_unregister(&tdma->dma_dev);
-  1202			return ret;
-  1203		}
-  1204	
-  1205		dev_info(&pdev->dev, "GPC DMA driver register %d channels\n",
-  1206			 cdata->nr_channels);
-  1207	
-  1208		return 0;
-  1209	}
-  1210	
-
+Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
 ---
-0-DAY CI Kernel Test Service, Intel Corporation
-https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
+ drivers/i2c/busses/i2c-tegra.c | 52 ++++++++++++++++++++++++++++++++----------
+ 1 file changed, 40 insertions(+), 12 deletions(-)
+
+v4 changes:
+  * changed has_acpi_companion to ACPI_HANDLE for consistency across 
+    all functions
+v3 - https://lkml.org/lkml/2021/11/25/173
+v2 - https://lkml.org/lkml/2021/11/23/82
+v1 - https://lkml.org/lkml/2021/11/19/393
+
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index c883044..6986eb9 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -6,6 +6,7 @@
+  * Author: Colin Cross <ccross@android.com>
+  */
+ 
++#include <linux/acpi.h>
+ #include <linux/bitfield.h>
+ #include <linux/clk.h>
+ #include <linux/delay.h>
+@@ -608,6 +609,7 @@ static int tegra_i2c_wait_for_config_load(struct tegra_i2c_dev *i2c_dev)
+ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
+ {
+ 	u32 val, clk_divisor, clk_multiplier, tsu_thd, tlow, thigh, non_hs_mode;
++	acpi_handle handle = ACPI_HANDLE(i2c_dev->dev);
+ 	int err;
+ 
+ 	/*
+@@ -618,7 +620,11 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
+ 	 * emit a noisy warning on error, which won't stay unnoticed and
+ 	 * won't hose machine entirely.
+ 	 */
+-	err = reset_control_reset(i2c_dev->rst);
++	if (handle)
++		err = acpi_evaluate_object(handle, "_RST", NULL, NULL);
++	else
++		err = reset_control_reset(i2c_dev->rst);
++
+ 	WARN_ON_ONCE(err);
+ 
+ 	if (i2c_dev->is_dvc)
+@@ -1627,12 +1633,12 @@ static void tegra_i2c_parse_dt(struct tegra_i2c_dev *i2c_dev)
+ 	bool multi_mode;
+ 	int err;
+ 
+-	err = of_property_read_u32(np, "clock-frequency",
+-				   &i2c_dev->bus_clk_rate);
++	err = device_property_read_u32(i2c_dev->dev, "clock-frequency",
++				       &i2c_dev->bus_clk_rate);
+ 	if (err)
+ 		i2c_dev->bus_clk_rate = I2C_MAX_STANDARD_MODE_FREQ;
+ 
+-	multi_mode = of_property_read_bool(np, "multi-master");
++	multi_mode = device_property_read_bool(i2c_dev->dev, "multi-master");
+ 	i2c_dev->multimaster_mode = multi_mode;
+ 
+ 	if (of_device_is_compatible(np, "nvidia,tegra20-i2c-dvc"))
+@@ -1642,10 +1648,26 @@ static void tegra_i2c_parse_dt(struct tegra_i2c_dev *i2c_dev)
+ 		i2c_dev->is_vi = true;
+ }
+ 
++static int tegra_i2c_init_reset(struct tegra_i2c_dev *i2c_dev)
++{
++	if (ACPI_HANDLE(i2c_dev->dev))
++		return 0;
++
++	i2c_dev->rst = devm_reset_control_get_exclusive(i2c_dev->dev, "i2c");
++	if (IS_ERR(i2c_dev->rst))
++		return dev_err_probe(i2c_dev->dev, PTR_ERR(i2c_dev->rst),
++				      "failed to get reset control\n");
++
++	return 0;
++}
++
+ static int tegra_i2c_init_clocks(struct tegra_i2c_dev *i2c_dev)
+ {
+ 	int err;
+ 
++	if (ACPI_HANDLE(i2c_dev->dev))
++		return 0;
++
+ 	i2c_dev->clocks[i2c_dev->nclocks++].id = "div-clk";
+ 
+ 	if (i2c_dev->hw == &tegra20_i2c_hw || i2c_dev->hw == &tegra30_i2c_hw)
+@@ -1720,7 +1742,7 @@ static int tegra_i2c_probe(struct platform_device *pdev)
+ 	init_completion(&i2c_dev->msg_complete);
+ 	init_completion(&i2c_dev->dma_complete);
+ 
+-	i2c_dev->hw = of_device_get_match_data(&pdev->dev);
++	i2c_dev->hw = device_get_match_data(&pdev->dev);
+ 	i2c_dev->cont_id = pdev->id;
+ 	i2c_dev->dev = &pdev->dev;
+ 
+@@ -1746,15 +1768,12 @@ static int tegra_i2c_probe(struct platform_device *pdev)
+ 	if (err)
+ 		return err;
+ 
+-	i2c_dev->rst = devm_reset_control_get_exclusive(i2c_dev->dev, "i2c");
+-	if (IS_ERR(i2c_dev->rst)) {
+-		dev_err_probe(i2c_dev->dev, PTR_ERR(i2c_dev->rst),
+-			      "failed to get reset control\n");
+-		return PTR_ERR(i2c_dev->rst);
+-	}
+-
+ 	tegra_i2c_parse_dt(i2c_dev);
+ 
++	err = tegra_i2c_init_reset(i2c_dev);
++	if (err)
++		return err;
++
+ 	err = tegra_i2c_init_clocks(i2c_dev);
+ 	if (err)
+ 		return err;
+@@ -1923,12 +1942,21 @@ static const struct dev_pm_ops tegra_i2c_pm = {
+ 			   NULL)
+ };
+ 
++static const struct acpi_device_id tegra_i2c_acpi_match[] = {
++	{.id = "NVDA0101", .driver_data = (kernel_ulong_t)&tegra210_i2c_hw},
++	{.id = "NVDA0201", .driver_data = (kernel_ulong_t)&tegra186_i2c_hw},
++	{.id = "NVDA0301", .driver_data = (kernel_ulong_t)&tegra194_i2c_hw},
++	{ }
++};
++MODULE_DEVICE_TABLE(acpi, tegra_i2c_acpi_match);
++
+ static struct platform_driver tegra_i2c_driver = {
+ 	.probe = tegra_i2c_probe,
+ 	.remove = tegra_i2c_remove,
+ 	.driver = {
+ 		.name = "tegra-i2c",
+ 		.of_match_table = tegra_i2c_of_match,
++		.acpi_match_table = tegra_i2c_acpi_match,
+ 		.pm = &tegra_i2c_pm,
+ 	},
+ };
+-- 
+2.7.4
+
