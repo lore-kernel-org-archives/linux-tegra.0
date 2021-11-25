@@ -2,142 +2,135 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAB41C433F5
-	for <linux-tegra@archiver.kernel.org>; Thu, 25 Nov 2021 04:35:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FE1AC433F5
+	for <linux-tegra@archiver.kernel.org>; Thu, 25 Nov 2021 07:59:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230149AbhKYEiy (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 24 Nov 2021 23:38:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41332 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230129AbhKYEgy (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 24 Nov 2021 23:36:54 -0500
-Received: from mail-lj1-x22f.google.com (mail-lj1-x22f.google.com [IPv6:2a00:1450:4864:20::22f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABEF6C06173E
-        for <linux-tegra@vger.kernel.org>; Wed, 24 Nov 2021 20:33:43 -0800 (PST)
-Received: by mail-lj1-x22f.google.com with SMTP id t11so9943123ljh.6
-        for <linux-tegra@vger.kernel.org>; Wed, 24 Nov 2021 20:33:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Z7tG3xiUaoyEM6STWiPJ8DB/6Vy4kLRVEgzhfBpzBdU=;
-        b=lTlcHwiYVluDZ4nzIS5HAIQZR1TzXpZzokVTffGWuPddY1CpnRmovni0bfmI7NabKK
-         00zqgvwm9E1yjUkVvsqEpDA9HFMx30aA1XcCEwSNZJ6SwSgRUi4LyPz8e9+D3oC9ncrr
-         SEYlFAvOd8Jo47HxQERUdU4eftrbzWR9xmPZW76TsG5pKgEbq02EaOUeuF4qn7Mi23D2
-         c+FX787vjz6xKN8vKhS5UdOCFtzK6Vu0iIHxrRDIVS5SzrecLrZLZliq7sjP2gxf+ewe
-         T+IryvDoS4m79byInFylZDuXh3zgOFqSy05opWE2zebJE0TWAMRfhdMcoGJIl0lkL7DL
-         Cbsw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Z7tG3xiUaoyEM6STWiPJ8DB/6Vy4kLRVEgzhfBpzBdU=;
-        b=E+YUZGOWgUzrGSISQR353yWs9lwdBAA2jAsGjZLoGmqkqL/iKCsfMppVBqhSs6aNLl
-         XpKTUF9XCDeOin8EGUFIs/N1l3bcYfhimYMootWwzdVdSkd3tOmCHyKBga/Qlr+lphXS
-         BqPuVAlr0muiWErp5I0uXVkNOEe8CpjA6lbnyajaw4FpdTmPqqp/CFHc4oCJUCMcciwX
-         sL3qqN059jMgJ1fSOPbeyeWvqBRmTQ92RI+teXbLLfo4ximtWqbqD4ZdHjUYwppVv/Fu
-         ki29Ov+CTeiEBD1a9BF0MrPULL4nlhRn1GEJRXWwR9UTpX7Hrw0mfHyybWowbVYhqNbl
-         5OKA==
-X-Gm-Message-State: AOAM531qbnWfM041cHFQsgQpOxDZKIU9/wprACjNe1hWOdPDekRnYUYt
-        S9HL15axE3XJ+URcqglNv56F4goMJHk=
-X-Google-Smtp-Source: ABdhPJyfLTmh26Wfz4a25FZDCUt2cGdKHkqxeHfNcxdgutu6lENifugykBR6Kjg2i1BIUQP3HovcUw==
-X-Received: by 2002:a2e:a305:: with SMTP id l5mr22100734lje.73.1637814821708;
-        Wed, 24 Nov 2021 20:33:41 -0800 (PST)
-Received: from [192.168.2.145] (94-29-48-99.dynamic.spd-mgts.ru. [94.29.48.99])
-        by smtp.googlemail.com with ESMTPSA id e17sm163495lfr.46.2021.11.24.20.33.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 24 Nov 2021 20:33:41 -0800 (PST)
-Subject: Re: [PATCH V2] soc/tegra: pmc: Add reboot notifier
-To:     Jon Hunter <jonathanh@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>
-Cc:     linux-tegra@vger.kernel.org
-References: <20211123111134.26409-1-jonathanh@nvidia.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <eeb4200f-7608-56d5-76e3-508660669812@gmail.com>
-Date:   Thu, 25 Nov 2021 07:33:40 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+        id S1350043AbhKYICn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 25 Nov 2021 03:02:43 -0500
+Received: from mga11.intel.com ([192.55.52.93]:9131 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1347620AbhKYIAn (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 25 Nov 2021 03:00:43 -0500
+X-IronPort-AV: E=McAfee;i="6200,9189,10178"; a="232960681"
+X-IronPort-AV: E=Sophos;i="5.87,262,1631602800"; 
+   d="scan'208";a="232960681"
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Nov 2021 23:57:32 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.87,262,1631602800"; 
+   d="scan'208";a="741636594"
+Received: from lkp-server02.sh.intel.com (HELO 9e1e9f9b3bcb) ([10.239.97.151])
+  by fmsmga006.fm.intel.com with ESMTP; 24 Nov 2021 23:57:28 -0800
+Received: from kbuild by 9e1e9f9b3bcb with local (Exim 4.92)
+        (envelope-from <lkp@intel.com>)
+        id 1mq9dG-000607-RJ; Thu, 25 Nov 2021 07:57:26 +0000
+Date:   Thu, 25 Nov 2021 15:57:09 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Arnd Bergmann <arnd@kernel.org>, Vinod Koul <vkoul@kernel.org>
+Cc:     llvm@lists.linux.dev, kbuild-all@lists.01.org,
+        alsa-devel@alsa-project.org, dri-devel@lists.freedesktop.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-tegra@vger.kernel.org,
+        Thierry Reding <thierry.reding@gmail.com>,
+        linux-mtd@lists.infradead.org,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-spi@vger.kernel.org, Robert Jarzmik <robert.jarzmik@free.fr>
+Subject: Re: [PATCH 07/11] dmaengine: qcom-adm: stop abusing slave_id config
+Message-ID: <202111251538.x6sJNCka-lkp@intel.com>
+References: <20211115085403.360194-8-arnd@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20211123111134.26409-1-jonathanh@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211115085403.360194-8-arnd@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-23.11.2021 14:11, Jon Hunter пишет:
-> The Tegra PMC driver implements a restart handler that supports Tegra
-> specific reboot commands such as placing the device into 'recovery' mode
-> in order to reprogram the platform. This is accomplished by setting the
-> appropriate bit in the PMC scratch0 register prior to rebooting the
-> platform.
-> 
-> For Tegra platforms that support PSCI or EFI, the default Tegra restart
-> handler is not called and the PSCI or EFI restart handler is called
-> instead. Hence, for Tegra platforms that support PSCI or EFI, the Tegra
-> specific reboot commands do not currently work. Fix this by moving the
-> code that programs the PMC scratch0 register into a separate reboot
-> notifier that will always be called on reboot.
-> 
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> ---
-> Changes since V1:
-> - Don't change the behaviour for writing scratch0 register when the
->   notifier is called.
-> 
->  drivers/soc/tegra/pmc.c | 33 ++++++++++++++++++++++++++++++---
->  1 file changed, 30 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-> index 575d6d5b4294..bb2f39597823 100644
-> --- a/drivers/soc/tegra/pmc.c
-> +++ b/drivers/soc/tegra/pmc.c
-> @@ -1064,10 +1064,8 @@ int tegra_pmc_cpu_remove_clamping(unsigned int cpuid)
->  	return tegra_powergate_remove_clamping(id);
->  }
->  
-> -static int tegra_pmc_restart_notify(struct notifier_block *this,
-> -				    unsigned long action, void *data)
-> +static void tegra_pmc_program_reboot_reason(const char *cmd)
->  {
-> -	const char *cmd = data;
->  	u32 value;
->  
->  	value = tegra_pmc_scratch_readl(pmc, pmc->soc->regs->scratch0);
-> @@ -1085,6 +1083,27 @@ static int tegra_pmc_restart_notify(struct notifier_block *this,
->  	}
->  
->  	tegra_pmc_scratch_writel(pmc, value, pmc->soc->regs->scratch0);
-> +}
-> +
-> +static int tegra_pmc_reboot_notify(struct notifier_block *this,
-> +				   unsigned long action, void *data)
-> +{
-> +	if (action == SYS_RESTART)
-> +		tegra_pmc_program_reboot_reason(data);
-> +
-> +	return NOTIFY_DONE;
-> +}
-> +
-> +static struct notifier_block tegra_pmc_reboot_notifier = {
-> +	.notifier_call = tegra_pmc_reboot_notify,
-> +};
-> +
-> +static int tegra_pmc_restart_notify(struct notifier_block *this,
-> +				    unsigned long action, void *data)
-> +{
-> +	u32 value;
-> +
-> +	tegra_pmc_program_reboot_reason(data);
+Hi Arnd,
 
-So the PMC reason is programmed twice now? First time by the reboot
-handler and second by the restart? Why?
+I love your patch! Perhaps something to improve:
 
-BTW, could you please always CC LKML or request to include linux-tegra
-ML onto lore? Tegra ML uses Gmane and it's unusable for development
-since all email addresses are mangled, the Gmane support told me that
-only Tegra ML admin can disable mangling, but I'm not sure who is it,
-maybe Stephen Warren?
+[auto build test WARNING on vkoul-dmaengine/next]
+[also build test WARNING on tiwai-sound/for-next staging/staging-testing linus/master v5.16-rc2 next-20211125]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch]
+
+url:    https://github.com/0day-ci/linux/commits/Arnd-Bergmann/dmaengine-kill-off-dma_slave_config-slave_id/20211115-165731
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/vkoul/dmaengine.git next
+config: riscv-randconfig-r016-20211115 (https://download.01.org/0day-ci/archive/20211125/202111251538.x6sJNCka-lkp@intel.com/config)
+compiler: clang version 14.0.0 (https://github.com/llvm/llvm-project fbe72e41b99dc7994daac300d208a955be3e4a0a)
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # install riscv cross compiling tool for clang build
+        # apt-get install binutils-riscv64-linux-gnu
+        # https://github.com/0day-ci/linux/commit/f2e7f9ee67ce784864f75db39f20d1060c932279
+        git remote add linux-review https://github.com/0day-ci/linux
+        git fetch --no-tags linux-review Arnd-Bergmann/dmaengine-kill-off-dma_slave_config-slave_id/20211115-165731
+        git checkout f2e7f9ee67ce784864f75db39f20d1060c932279
+        # save the config file to linux build tree
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 ARCH=riscv 
+
+If you fix the issue, kindly add following tag as appropriate
+Reported-by: kernel test robot <lkp@intel.com>
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/dma/qcom/qcom_adm.c:712:18: warning: no previous prototype for function 'adm_dma_xlate' [-Wmissing-prototypes]
+   struct dma_chan *adm_dma_xlate(struct of_phandle_args *dma_spec,
+                    ^
+   drivers/dma/qcom/qcom_adm.c:712:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
+   struct dma_chan *adm_dma_xlate(struct of_phandle_args *dma_spec,
+   ^
+   static 
+   1 warning generated.
+
+
+vim +/adm_dma_xlate +712 drivers/dma/qcom/qcom_adm.c
+
+   700	
+   701	/**
+   702	 * adm_dma_xlate
+   703	 * @dma_spec:	pointer to DMA specifier as found in the device tree
+   704	 * @ofdma:	pointer to DMA controller data
+   705	 *
+   706	 * This can use either 1-cell or 2-cell formats, the first cell
+   707	 * identifies the slave device, while the optional second cell
+   708	 * contains the crci value.
+   709	 *
+   710	 * Returns pointer to appropriate dma channel on success or NULL on error.
+   711	 */
+ > 712	struct dma_chan *adm_dma_xlate(struct of_phandle_args *dma_spec,
+   713				       struct of_dma *ofdma)
+   714	{
+   715		struct dma_device *dev = ofdma->of_dma_data;
+   716		struct dma_chan *chan, *candidate = NULL;
+   717		struct adm_chan *achan;
+   718	
+   719		if (!dev || dma_spec->args_count > 2)
+   720			return NULL;
+   721	
+   722		list_for_each_entry(chan, &dev->channels, device_node)
+   723			if (chan->chan_id == dma_spec->args[0]) {
+   724				candidate = chan;
+   725				break;
+   726			}
+   727	
+   728		if (!candidate)
+   729			return NULL;
+   730	
+   731		achan = to_adm_chan(candidate);
+   732		if (dma_spec->args_count == 2)
+   733			achan->crci = dma_spec->args[1];
+   734		else
+   735			achan->crci = 0;
+   736	
+   737		return dma_get_slave_channel(candidate);
+   738	}
+   739	
+
+---
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
