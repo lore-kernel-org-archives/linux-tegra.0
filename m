@@ -2,53 +2,53 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 887A2C433F5
-	for <linux-tegra@archiver.kernel.org>; Thu, 25 Nov 2021 04:22:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1E0EC433EF
+	for <linux-tegra@archiver.kernel.org>; Thu, 25 Nov 2021 04:26:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238969AbhKYEZO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 24 Nov 2021 23:25:14 -0500
+        id S238179AbhKYE3N (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 24 Nov 2021 23:29:13 -0500
 Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38354 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230129AbhKYEXM (ORCPT
+        with ESMTP id S238918AbhKYE1N (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 24 Nov 2021 23:23:12 -0500
-Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10C70C061574;
-        Wed, 24 Nov 2021 20:20:02 -0800 (PST)
-Received: by mail-lf1-x133.google.com with SMTP id b40so12866429lfv.10;
-        Wed, 24 Nov 2021 20:20:01 -0800 (PST)
+        Wed, 24 Nov 2021 23:27:13 -0500
+Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48E73C0613F6;
+        Wed, 24 Nov 2021 20:23:03 -0800 (PST)
+Received: by mail-lf1-x135.google.com with SMTP id bi37so12917860lfb.5;
+        Wed, 24 Nov 2021 20:23:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=BE19aF5UvkexXFXpNDupHLeqTikRuVPoKcnXFT9OpTc=;
-        b=o++SMOtWY5OxrJrk2defJIuKEwAPjWW5ACHeX6LzrD2Vy8igEeRLV3ODdIBe353VBs
-         eYRFggmy1FJXJ+UwqTJ6vgdxWbPxHLFbr77UhZe/e+tQL31kSq9e7aEZ/e+I3gv6lJOc
-         XTMp942TXxjbhSwZ7UXMYo2Kh0q5Da2dM08gnGRI4uMtZDYtBA7FE/ve7LhkGHAy5+oM
-         1AjrnYHoxM8IVeiTSqTxZhQ97foDo2nkJ51JmTP1hkPSvJ0BrH4gYwlJXT6FXFahtBOc
-         Fp/3IndpEa1t5iEpKBuxrhFnPPzNUAsyyPinxnutr5dlh9apIz9n+Dp4FDYNvyTZ0GFP
-         8HjQ==
+        bh=yW96xTqN22+VgfWvofFKJ2uQthCcWS6JMEwqDhv1mBo=;
+        b=XubA+7GtvDkj0ES1YstwmKTLp3xvVzHzRaeqB//qspqLlT8c48Wlax7bQSlzp42qNC
+         +stMeEnSn6dW90xZoBfnm4+YUAwZdF5NTf56STCg0KHDg5/wUrPGZGtbtfcvcx0EmYAl
+         OFb9mNbpoQ1kvJpKgux/RtthQduVob3vB7uRzR1CE5fWlugQqqrl43yTIpGlayo3utdl
+         0210Y4AAyzU1iD5uyNIYK87Gvqp2UyfZZZXC1YbpHxShhim6MTnFSYP90wJsv4kHD+iE
+         UzBK0TCOQHc8Z5y7fo35nnCF+o829D1RtNIzvCexl4mWWq42ixAFQe632iS1Ianz7p9F
+         5fyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=BE19aF5UvkexXFXpNDupHLeqTikRuVPoKcnXFT9OpTc=;
-        b=gCI5EkfSeldHz4LFlWzUmVx6L+3wU5y17dgzO9hghhk2BpktrpyMkS/w22UqJAhiyF
-         80TJz8evz/5gXAR6e8Q4Wif6ou43otEnJ08EFlZdB5MIw3Q7HjEaJYT/me7+1H/enLpP
-         NhIO3IH3yFlxsNHJvFoCw4ivJzV+82U1CM3LHkVaQGPIBTkMsNWrEpBqR2l6vNFxDjII
-         MtFoWHG2+M2WD2eUDRu3jLQCxSciLZXxdmVK/W75yR/6PjqmQKbPvZ+BXB3kiyC1Sgk2
-         4MDWRFj+WICJeuRYgNLEwVafAuozzObjmIwF7iWpKmzRmqazcNJiLByvkyEpm7+4HVdQ
-         h0Ww==
-X-Gm-Message-State: AOAM530L0mwPutjxcHTEGruXKrXdvT1cU7rUP2xMlDPmsROhSwpY34hJ
-        l+O1QXRm9j7bHC3OnTzJCqbfPtp5/N0=
-X-Google-Smtp-Source: ABdhPJy0VrtiWGY5aK9Ntm6ZqTo5OoljLalg9RN9ABto5r2FcHYdh5wqlaU+y5c/FmJvhFIMbcdVdg==
-X-Received: by 2002:a05:6512:3d8c:: with SMTP id k12mr21946258lfv.365.1637813999593;
-        Wed, 24 Nov 2021 20:19:59 -0800 (PST)
+        bh=yW96xTqN22+VgfWvofFKJ2uQthCcWS6JMEwqDhv1mBo=;
+        b=xRIAvGZLw6T2O0XXHVuYtCVlW+sbZY1khFHlIfxrz5iyaLJEYLuzamd0dnpMkFOBi7
+         Ju0eNpdADYRvzkko8trJbRzhBqJ/1tqpYD4NyYsb9b5v7rxf6mmqQMMHAgXKJFkZudjN
+         VzomzQHfREuBTzI9b33S8jFNwEJGb5UNXcBoV23sk7gFP4uYQVdbqKLQSQqbN9My7ecI
+         3McymngF+gG6yLWLtKW4twNC0IdNIvUbpXZMdQ+HJvw7lCBybLBLM9UBVoI+g2UUBLOK
+         0wHPUaRVly/P4FzQXR7tFaGTSLvqxI3FsT5JQvw/F+KXzVphaFf/69SLaGyppNuNutP+
+         YvLQ==
+X-Gm-Message-State: AOAM533ItGeFPGkWkGMgqfMQBYkSh4ngauJ6KR/cCYjW+gyD8Djlc3Ep
+        mzvEoTjIdJk2wRU4irl06yCavKoEF4Y=
+X-Google-Smtp-Source: ABdhPJzSViA3nbJpeKg2as0KQ93wxdxlYCRirpiJ3L9FZiRWPS2phT5FbugeHgNJ3EZGhLvHMdIfaA==
+X-Received: by 2002:a19:495c:: with SMTP id l28mr21433144lfj.484.1637814181497;
+        Wed, 24 Nov 2021 20:23:01 -0800 (PST)
 Received: from [192.168.2.145] (94-29-48-99.dynamic.spd-mgts.ru. [94.29.48.99])
-        by smtp.googlemail.com with ESMTPSA id m8sm160775lfq.27.2021.11.24.20.19.58
+        by smtp.googlemail.com with ESMTPSA id v2sm144156ljg.46.2021.11.24.20.23.00
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 24 Nov 2021 20:19:59 -0800 (PST)
+        Wed, 24 Nov 2021 20:23:01 -0800 (PST)
 Subject: Re: [PATCH] dt-bindings: sound: nvidia,tegra-audio: Convert multiple
  txt bindings to yaml
 To:     Rob Herring <robh@kernel.org>, David Heidelberg <david@ixit.cz>
@@ -62,8 +62,8 @@ Cc:     Liam Girdwood <lgirdwood@gmail.com>,
 References: <20211025171927.92332-1-david@ixit.cz>
  <YYBRTK9KGglu/s9m@robh.at.kernel.org>
 From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <3ed2725b-3a78-d0fc-b09d-5725ca573215@gmail.com>
-Date:   Thu, 25 Nov 2021 07:19:58 +0300
+Message-ID: <39c21327-c2ec-b9c5-95c2-047ac347fd23@gmail.com>
+Date:   Thu, 25 Nov 2021 07:23:00 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.14.0
 MIME-Version: 1.0
@@ -76,54 +76,13 @@ List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 01.11.2021 23:42, Rob Herring пишет:
->> +  nvidia,audio-routing:
->> +    $ref: /schemas/types.yaml#/definitions/non-unique-string-array
->> +    description: |
->> +      A list of the connections between audio components.
->> +      Each entry is a pair of strings, the first being the connection's sink,
->> +      the second being the connection's source. Valid names for sources and
->> +      sinks are the pins (documented in the binding document),
->> +      and the jacks on the board:
->> +        ALC5632:
->> +          * Headset Stereophone
->> +          * Int Spk
->> +          * Headset Mic
->> +          * Digital Mic
->> +        MAXX98090:
->> +          * Headphones
->> +          * SPeakers
+>> +  assigned-clocks: true
+>> +
+>> +  assigned-clock-parents: true
+>> +
+>> +  assigned-clock-rates: true
+> These properties are always allowed when 'clocks' is present. So you 
+> don't have to list them.
+> 
 
-Speakers
- -
-
->> +          * Mic Jack
->> +          * Int Mic
->> +        RT5640:
->> +          * Headphones
->> +          * Speakers
->> +          * Mic Jack
->> +        RT5677:
->> +          * Headphone
->> +          * Speaker
->> +          * Headset Mic
->> +          * Internal Mic 1
->> +          * Internal Mic 2
->> +        SGTL5000:
->> +          * Headphone Jack
->> +          * Line In Jack
->> +          * Mic Jack
->> +        WM8753:
->> +          * Headphone Jack
->> +          * Mic Jack
->> +        WM8903:
->> +          * Headphone Jack
->> +          * Int Spk
->> +          * Mic Jack
->> +          * Int Mic
->> +        WM9712:
->> +          * Headphone
->> +          * LineIn
->> +          * Mic
-> All these strings should be part of the schema.
-
-Well, seems this can be done only using a separated bindings.
+That is a very nice new feature!
