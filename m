@@ -2,130 +2,129 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8242CC433EF
-	for <linux-tegra@archiver.kernel.org>; Thu, 25 Nov 2021 19:31:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F111C433EF
+	for <linux-tegra@archiver.kernel.org>; Thu, 25 Nov 2021 20:38:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242034AbhKYTeq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 25 Nov 2021 14:34:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41030 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351803AbhKYTcq (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 25 Nov 2021 14:32:46 -0500
-Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BDEFC061759;
-        Thu, 25 Nov 2021 11:29:34 -0800 (PST)
-Received: by mail-ed1-x532.google.com with SMTP id y13so29463547edd.13;
-        Thu, 25 Nov 2021 11:29:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+QdSnn9hnDbXHilVPEzYaOF00rC6aTmARJsrJsKk/HA=;
-        b=eZYdfa3q9HtFJRaW20SwlL7XA8WQ7r8jlBGVqh9TyKPBpv/nzIIQJ1cuusxBBozWUp
-         SmRZuuOksbeR9Ls1NpzezJ370EtRbOBpS3Ct/g+9c5X3nrrFfrbYZPjn+2cdCDkvrKWu
-         Syfgv5XE2Z851DPSLlO0SXfAZ7RcV3EeuawAvCDT+hY6nkmfboeK5w4IHrl9/cDJ73va
-         uXtUsQZIq0M4138F61KBzWewxcAsGrbhmCYYPkhWuDoMzmrEE7fympSIBETcwojM7rWH
-         dl4WCZb0PFuuETHN9RlD3tdpk0F6EE75DHgzpve6zHolLrfHTPaGkzEMAA+ND0mMkrrQ
-         BIhg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+QdSnn9hnDbXHilVPEzYaOF00rC6aTmARJsrJsKk/HA=;
-        b=6bgkqjqzkftARJMMlxgaYP8lyF/PrmfP087r+/QDIJTd18EqYtBiiocMJh0yoM/HgQ
-         ugVLkrqtTyAKe1cRUjEgHOYo6ZWa15XOhlt+gYErk9j1y9sHrectZX7WgAWpluIFxI/S
-         nNZ/eoJnOnkXCn2zyHnUnvT2PBDerGFo9cKhYNewR/++MJnGlOhbRUkCbJTCiG/SO5vr
-         NIXNZeQucNFDE5OwJn1i+6FPAzHGSzU9YSiEs9IhtEmpeLFjVUfNh/6DJmYa1kghq0Av
-         dFFqN/dr4cd3EIldl1MbaeK0G/trNui7+Be1N6G8Gs5FfZvGvzChQdfhODc09oFAUj0j
-         Oh5A==
-X-Gm-Message-State: AOAM5325o18HcT2BoK48JDJ86ks3FMFuVHMt4YxD7wFxOduASExMGVPc
-        uVLgAwrqQJqEJI51eC2O1cbK5Y2ap12dovxuaD0=
-X-Google-Smtp-Source: ABdhPJxia6v+ggx0h/6ClA1/sHMg1Q/7ZU1xWeQZA6EVhTerXcEGn294ZgigAx875QVPOK7l2krbLRnAJ036HXO5fPk=
-X-Received: by 2002:a17:906:489b:: with SMTP id v27mr33672901ejq.567.1637868572711;
- Thu, 25 Nov 2021 11:29:32 -0800 (PST)
+        id S1357089AbhKYUlk (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 25 Nov 2021 15:41:40 -0500
+Received: from mail-co1nam11on2073.outbound.protection.outlook.com ([40.107.220.73]:20065
+        "EHLO NAM11-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S243212AbhKYUjk (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 25 Nov 2021 15:39:40 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Z1nJnCS/W1dOrY5KZa8jxReXOBWyZmuaF1JF8VdGoBAlvjKe73hK9W3/MhLFC7nmOLAwHo6gJ/lKYouFjUk00GauMjbdLsiB5EdW+wBCsUMoqZQUBhIYa8xvmcoDBfG/1uBYxSntONduhc0nGTP5ckAHvYb8rvNUaKqP7PF8FaAwHwwaFGIjYecJRSGBDiFd7ibx3yZqt81SCDAB6SKfPcmguSpECei5KQ2ZwUGz3SfWSv4ZhC99ZLfOHuOIPfwh/n3LV5IwnoZRqpHVpw6w6z8bXr6/UYUp1iyxiTBf9WoiI0yV0MmjwuOQ1aS6WbNxf7h9qQkqfOv00EMgNkcLbg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=5DY4Z/M8fUoTCCO3eU4fYHdZD2EbfGjvkN2jiCiVQgM=;
+ b=fzXbeR5Rfe1kaIH6u52/jCWEUgYr3B3lFfK/j+Xbo0IDEtlML29DCwc3Qq1AiG56q9GJSFmP5cgu6GuAWfksEatP4xcYMU7XLx4XVc1CFXpT9qq/DxphJHWavGbsmnC1HccK6KXz+UCbyPnSYKxSGaqKlyqXFSbXOPyJNUeMLqs9qGiTHLtqeqrlounZ43rGgrKd22NKdb6cQT3eiOtC3jF2l+3Gi8FGVdwsDpm3nAzypx54rT6WV320MHlMvAQeZffJvJlUJJjn8zG71ysGvk4cfKDLak0kNYxN2kzUZMqgk01h26ikqFfNOeh3kLmmkV7ezp/rVeeS+z8JwQrzqg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.112.32) smtp.rcpttodomain=denx.de smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=5DY4Z/M8fUoTCCO3eU4fYHdZD2EbfGjvkN2jiCiVQgM=;
+ b=HeNX6objw1J3dUI07RXOGEIxwvX+bOO8t62NMK3hjrp9W9PWwb+YmLPkJaT37TUrrz4i+SMkEvpjqOj8QaSu4HywRzxHVSNPlDMN07VIxhb2n1dspINCkuEunlBaYucDyyQEcXRGmdAFOI3KpmZmAn6XEyZyGVXJTPP2peWh22ah6YswZQplvpgi+dbP0wZp5KobYloz+PBFWTczHzz1plHsqZz1T0Szu3Fn5ClthvRYnJaEJvnx69vpC0ZlY1+Np5ZkY1IXRt0w0j53KGX56dWXfzVf8tMZx9MRGIUSh4OPZ72xxFN0igtxdZgR2yWKT5Y6VnqeDmm7/IXwan/V+g==
+Received: from DM6PR03CA0028.namprd03.prod.outlook.com (2603:10b6:5:40::41) by
+ SN1PR12MB2416.namprd12.prod.outlook.com (2603:10b6:802:2f::30) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.4734.22; Thu, 25 Nov 2021 20:36:26 +0000
+Received: from DM6NAM11FT022.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:5:40:cafe::11) by DM6PR03CA0028.outlook.office365.com
+ (2603:10b6:5:40::41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4734.20 via Frontend
+ Transport; Thu, 25 Nov 2021 20:36:26 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.32)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.112.32 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.112.32; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (216.228.112.32) by
+ DM6NAM11FT022.mail.protection.outlook.com (10.13.172.210) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.4734.22 via Frontend Transport; Thu, 25 Nov 2021 20:36:26 +0000
+Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL109.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Thu, 25 Nov
+ 2021 12:36:25 -0800
+Received: from jonathanh-vm-01.nvidia.com (172.20.187.5) by mail.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1497.18 via Frontend
+ Transport; Thu, 25 Nov 2021 20:36:25 +0000
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
+        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
+        <stable@vger.kernel.org>, <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 4.9 000/204] 4.9.291-rc3 review
+In-Reply-To: <20211125160515.184659981@linuxfoundation.org>
+References: <20211125160515.184659981@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-References: <1637859224-5179-1-git-send-email-akhilrajeev@nvidia.com>
-In-Reply-To: <1637859224-5179-1-git-send-email-akhilrajeev@nvidia.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Thu, 25 Nov 2021 21:28:56 +0200
-Message-ID: <CAHp75VfPPpTNCaM+GhcqZS53ts-20GBzm+4OWLAjND=z79pgxg@mail.gmail.com>
-Subject: Re: [PATCH v4] i2c: tegra: Add the ACPI support
-To:     Akhil R <akhilrajeev@nvidia.com>
-Cc:     Christian Koenig <christian.koenig@amd.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        linaro-mm-sig@lists.linaro.org,
-        linux-i2c <linux-i2c@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Message-ID: <10bc944d9ae0489085f10c81325c977e@HQMAIL111.nvidia.com>
+Date:   Thu, 25 Nov 2021 20:36:25 +0000
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 979314ad-b882-4e71-4dc1-08d9b0534091
+X-MS-TrafficTypeDiagnostic: SN1PR12MB2416:
+X-Microsoft-Antispam-PRVS: <SN1PR12MB2416AE44382C0CEEE1C56FC5D9629@SN1PR12MB2416.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: K+YAnplWv/3l+K7mvAGlUaJx8f6UV4NelGNMib/LtOkxye2DAgN0B5TBsB1AXuMy5X96kgT77Ku5KxCiTfZSQV2ejCj7LlzfvcHlPRB5IdZsWZ9b11gc1c95KPFD/xaGlZmQbfz6s/TD9gX8dHuRKPvTRD/lbHdjZ9aFyKjEt3O3ENjZWg87JiAHWScHn80NSoGgi3CAq6yIw1mos+H5FGneiBfTYhQglOf6OVlLcZw1djJ6KiASblLmjpzngVxadwtYTlIiS69hOgl7bWNO7Qsq37kJmKdlvAzWnqmOvNAfzXq9vQEUlq2Xp9M2P3G+rj442UQ/FiWlieLPTkjIYacbUZ58NKlbxX9UN+YBOLvaPwQR2fhNkrxJB4PwQoCYjfbsbHZlJaO0BvN177dXns56CXTHI0/9/aV37FcBrVy7axrLf/5yU9zGeRdpvDCYJDH28sIXO8CHs639O6OBWKhqLp/xSBhJpLY0ZEKqVwgaTrsm/znw7Kag6X952cU0GAWceJwOMOdsziSUofHKEuVxO5YQICeUWP1W8yjTumOT2mlPKObHg2k61LyIFi+u4tpGQj9vlN21XH6UMBEuJqe3xB24t6hMKraLOgQwJTA7z/wtRngGTPhPwAY+EHoVVMd7tKsmuvZJHjyluiTVu0Xa+s1zSn4P2WwM8MTbSAg3jIcZKBF4h9DyV/QpccWevPf82SEwNnmO3r0kJYzibi+SMpH/caQ5UJd12/mnUrB7SF34bmpym12oDdVzFyXnpJyQ0KvV27R/leI4bg3g9278ccQEQsEZ0R17Kjjwb30=
+X-Forefront-Antispam-Report: CIP:216.228.112.32;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid01.nvidia.com;CAT:NONE;SFS:(4636009)(46966006)(36840700001)(47076005)(8936002)(5660300002)(7636003)(8676002)(508600001)(336012)(86362001)(7416002)(186003)(36860700001)(26005)(2906002)(70586007)(316002)(356005)(70206006)(6916009)(54906003)(82310400004)(4326008)(426003)(966005)(108616005)(24736004);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Nov 2021 20:36:26.0694
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 979314ad-b882-4e71-4dc1-08d9b0534091
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.32];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT022.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN1PR12MB2416
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, Nov 25, 2021 at 6:54 PM Akhil R <akhilrajeev@nvidia.com> wrote:
->
-> Add support for the ACPI based device registration so that the driver
-> can be also enabled through ACPI table.
->
-> This does not include the ACPI support for Tegra VI and DVC I2C.
+On Thu, 25 Nov 2021 17:07:20 +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.9.291 release.
+> There are 204 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sat, 27 Nov 2021 16:04:49 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.291-rc3.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-Thanks for an update, my comments below.
+All tests passing for Tegra ...
 
-...
+Test results for stable-v4.9:
+    8 builds:	8 pass, 0 fail
+    16 boots:	16 pass, 0 fail
+    32 tests:	32 pass, 0 fail
 
-> -       err = reset_control_reset(i2c_dev->rst);
-> +       if (handle)
+Linux version:	4.9.291-rc3-g54bc9d253e82
+Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+                tegra210-p2371-2180, tegra30-cardhu-a04
 
-> +               err = acpi_evaluate_object(handle, "_RST", NULL, NULL);
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
-Does it compile for CONFIG_ACPI=n case?
-
-> +       else
-> +               err = reset_control_reset(i2c_dev->rst);
-
-If not, you will need something like this instead:
-
-#ifdef CONFIG_ACPI
-               err = acpi_evaluate_object(ACPI_HANDLE(...), "_RST", NULL, NULL);
-#else
-               err = reset_control_reset(i2c_dev->rst);
-#endif
-
-...
-
-> +       err = device_property_read_u32(i2c_dev->dev, "clock-frequency",
-> +                                      &i2c_dev->bus_clk_rate);
->         if (err)
->                 i2c_dev->bus_clk_rate = I2C_MAX_STANDARD_MODE_FREQ;
-
-Actually you need to switch to use i2c_timings data structure and
-corresponding methods.
-This change will be incorporated there. I.o.w. do it as a prerequisite
-to this patch.
-
-...
-
-> +       if (ACPI_HANDLE(i2c_dev->dev))
-> +               return 0;
-
-With above mentioned ifdeffery this may be converted back to
-has_acpi_companion() which is slightly better in this case.
-
-> +       if (ACPI_HANDLE(i2c_dev->dev))
-> +               return 0;
-
-Ditto.
-
-P.S> Sorry if I missed something in the previous reviews.
-
--- 
-With Best Regards,
-Andy Shevchenko
+Jon
