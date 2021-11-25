@@ -2,123 +2,142 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C2C8C433EF
-	for <linux-tegra@archiver.kernel.org>; Thu, 25 Nov 2021 09:40:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC114C433EF
+	for <linux-tegra@archiver.kernel.org>; Thu, 25 Nov 2021 09:58:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351424AbhKYJoD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 25 Nov 2021 04:44:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50602 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353943AbhKYJmD (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 25 Nov 2021 04:42:03 -0500
-Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C09F6C0613E1;
-        Thu, 25 Nov 2021 01:38:34 -0800 (PST)
-Received: by mail-lf1-x131.google.com with SMTP id c32so14821498lfv.4;
-        Thu, 25 Nov 2021 01:38:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=aQfEF2jOyB6rG0WgJqxX+s72gSlGzMx+nQDP2V3jnUo=;
-        b=XP1s+2vl2wLKjYg8HW8m0tBRvF1KXYoTcuBdkaaqufBoeAAUNFbRtKZwsWlR9Qx9o7
-         sQfne5msWVBOQ2sExqYlvGUSXCf/nzLL4eBoQjyPJrPkU6vh/e6Ski5TOJZXOR2ORSrI
-         Bm+8i6X5FK/MPGj3rkm64ToQQgAAmHyN5TFzSlZBYu4WZP+L8sCHlNHUXxG5j1exzQDg
-         TmzWk7pSIK/QvGZQw6J2q7td0fvZRwYoAPn0lK7WdP7iZemoSkWzW9UGjFqC6zGVMxLa
-         llEiF9wHAVSX6MuEkqlXH6/AFGI+yHioqITD0XWU1zM8ylc0lOHJqsVFbzYAxOWc4mlA
-         QxjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=aQfEF2jOyB6rG0WgJqxX+s72gSlGzMx+nQDP2V3jnUo=;
-        b=JFMj3EnCmWSA3b3LS1j2vJkGfVvebfjRTkAiaWpCmiQFrYp5wwNgsxh82cQkBYMDhA
-         VA0dbA3KO03pWxpIeBSyCNjO2Aac7OjxVeUNhx5TUsFuYUJkS3yhzvaiUkK9QpMm0ZFp
-         z3PbdCJtuUZLlROCQLTarH+0G4x4Ti4afihRnX8LMCossvPG/qPpJWfkE9svx+LExefk
-         DW+qC7rdkjslCt+qK8gPmNXUczUX7v9eY7oIvCyveFJHFih1rgHN/iVTaO+nbHsKl8FW
-         irLkimbn/pBJ/uIYYNOYArQMDm7vuXcb1CTEbyDfkvtk3cJQe+9lt4t4kTzXmzr2oNmF
-         sSrw==
-X-Gm-Message-State: AOAM532NdryNS0lenYCSepCDiV0xwxsdYHkWcXQIyiw3LW3gLvoqXZpa
-        8U2eFKnrBJrKkqvWc4Z7U/0K81Eskr0=
-X-Google-Smtp-Source: ABdhPJzWc+bPvWIJYmGhydRiz7YOTBnPcF7QeIDgBqlVGZLg7GMaZCawciOk/gkfmc3Yo0+Xvj4ncw==
-X-Received: by 2002:a05:6512:3213:: with SMTP id d19mr22334711lfe.519.1637833113104;
-        Thu, 25 Nov 2021 01:38:33 -0800 (PST)
-Received: from [192.168.2.145] (94-29-48-99.dynamic.spd-mgts.ru. [94.29.48.99])
-        by smtp.googlemail.com with ESMTPSA id n9sm203122lji.131.2021.11.25.01.38.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 25 Nov 2021 01:38:32 -0800 (PST)
-Subject: Re: [PATCH v3] i2c: tegra: Add the ACPI support
-To:     Akhil R <akhilrajeev@nvidia.com>
-Cc:     andy.shevchenko@gmail.com, christian.koenig@amd.com,
-        dri-devel@lists.freedesktop.org, jonathanh@nvidia.com,
-        ldewangan@nvidia.com, linaro-mm-sig@lists.linaro.org,
-        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
-        p.zabel@pengutronix.de, sumit.semwal@linaro.org,
-        thierry.reding@gmail.com
-References: <1637831237-30652-1-git-send-email-akhilrajeev@nvidia.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <2a005ca8-e46a-59d0-c219-dfc94a3b810f@gmail.com>
-Date:   Thu, 25 Nov 2021 12:38:31 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+        id S1348532AbhKYKB1 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 25 Nov 2021 05:01:27 -0500
+Received: from mail-dm6nam11on2062.outbound.protection.outlook.com ([40.107.223.62]:20193
+        "EHLO NAM11-DM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1354091AbhKYJ71 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 25 Nov 2021 04:59:27 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=PjgfVSMKOcjBGI+TzxBc6EIkYT4l2WcVYcaCNIYLvzYB5aeoFdULgCo/Ie7gslMz4pR/OpFpF1uMWUFVfPTG6JzbgHQSZOwTIVCluS2v9E97mBM5lEnc3OCOh6wfFG9HWpwVZtXqnl4NZAxad0zBVNHYc1ixtWVJ5d9wAPAzjpAGsjzxAiq345MUAsmdSLLMg3ve+lZ5zK4rdpZ4j/vQQeTTsShqXMBGix1bbuO7Pq9N0OWd2CuGU/v2mVPQ/7kNMzIomP3wUA+s9sm8WuGDZmUiL2Qz69cN80TIcPiw1+u5b7oOQwULKQB7xlYzWFs4XWCknIb8p4v3Kord92Xq2w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=uKOHTZ8sxZlNIkWbInk0cfd1ut4fbU7U3yP/JoH5I6Y=;
+ b=cnCwaqZIULlQdutXG842Zn6MlHKV/sJqCx08XXO1KAsLX7FujufEPCPimE3xAlh5+42T7FSFKuTU+M4IZhcCK8KVgCDrKWl955410Bd0J+LR7jFp9YssLFcp8pQHTRS/qF/q7ALLj3zXrAVFwaWKtPycJ6k89MDDFg3FpJWthb3Kpi50+G7amoJ2yer7BsXEAYM6OxihUp0xdMulU9Lrc9cWYOa5bid+yJZsgHJBte0ttpowvg/nnUoPu9FMt1jVSppBhSOV+ZUv4pAk90lzBn5257hoQ80WdCN5MOjMHzg8PU9f2HC+jedZjoKcaWCqD5hCeAU2YjSC4UT+iXoLaQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.112.35) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=uKOHTZ8sxZlNIkWbInk0cfd1ut4fbU7U3yP/JoH5I6Y=;
+ b=pPyrcsEu7INNxJyjPmTRJHXGPwmEgCAQ3kEcAVRYA5IM/7GTUsARfK0DbTPluZhIumgSsazHsUmZD/GqF4VYvy1C20KsSzz82cl3/q2jPih6dapq2wlWcAidxkn6+WPfe3fuT67IPIUNAEJ/odqJY+FKkIVSxyEntrNobYW5vK2ZW+77O5KPTb8hrs/w4jsVJifPPpYgdNiyIJ3howjKBcDYwZGoWxf5R7/j9qNNiEF8O8EB/Wj9DBqdOIkMgACrj90soBHyJbHKyUA5epzJEDV4D4E/MdoSeoxR6i/oWM5dOIq5/plZkSbnSs40G46H/4B+AOnrcHJsg8urmvawFg==
+Received: from BN6PR1101CA0009.namprd11.prod.outlook.com
+ (2603:10b6:405:4a::19) by MWHPR1201MB0109.namprd12.prod.outlook.com
+ (2603:10b6:301:52::14) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4713.19; Thu, 25 Nov
+ 2021 09:56:14 +0000
+Received: from BN8NAM11FT015.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:405:4a:cafe::2a) by BN6PR1101CA0009.outlook.office365.com
+ (2603:10b6:405:4a::19) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4713.24 via Frontend
+ Transport; Thu, 25 Nov 2021 09:56:14 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.35)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.112.35 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.112.35; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (216.228.112.35) by
+ BN8NAM11FT015.mail.protection.outlook.com (10.13.176.90) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.4734.22 via Frontend Transport; Thu, 25 Nov 2021 09:56:13 +0000
+Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL111.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Thu, 25 Nov
+ 2021 09:56:11 +0000
+Received: from kyarlagadda-linux.nvidia.com (172.20.187.5) by mail.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server id 15.0.1497.18 via Frontend
+ Transport; Thu, 25 Nov 2021 01:56:08 -0800
+From:   Krishna Yarlagadda <kyarlagadda@nvidia.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>,
+        "Laxman Dewangan" <ldewangan@nvidia.com>,
+        Mark Brown <broonie@kernel.org>
+CC:     Krishna Yarlagadda <kyarlagadda@nvidia.com>,
+        <linux-tegra@vger.kernel.org>, <linux-spi@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH 1/2] spi: tegra210-quad: use devm call for cdata memory
+Date:   Thu, 25 Nov 2021 15:25:51 +0530
+Message-ID: <1637834152-32093-1-git-send-email-kyarlagadda@nvidia.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-In-Reply-To: <1637831237-30652-1-git-send-email-akhilrajeev@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: fec9a35f-2eff-424c-9ce6-08d9aff9d13c
+X-MS-TrafficTypeDiagnostic: MWHPR1201MB0109:
+X-Microsoft-Antispam-PRVS: <MWHPR1201MB0109710F218B81BB6362899CC3629@MWHPR1201MB0109.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:1417;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: S+cjT102aFeHIHvdFB1WJbAZ2527RmKQ+4OV9/dUpxahIgOkDmCPWyo6pU0l8soWLo5NE+qzH/w0IXF4CHAo9K+NXpQyQriqwmSJ/VXnAkGjLsyuRfL/vX1FXe1aSu5S9umemwb9xw0vQ+MLxzJwbtRqRNLBBXurytC8/zbhoIqAJVbmqzp1EyE880tGFvVF72HBRg/Y7WVfymn0adejngEuvL3hE2A+qTygtukfXuqcBqeHZLWbR2cIHAgVbQZ7ePLR35O2u87jKcn9qgYhpPEhHQ71TeuXvXnA4qNr5Z4v/v1UVGokALWGLPLGBC+P6ph7e+wYBIcCBRT7oCrvb8WazVjSP6X52P6Hym3wIETowlGQfsvAL9n931+W0WKZBLQp01tFsEPbsUD09U9AltFF9GzUt6pN3NnjCt2JjIVzO5Syg3qwcxaB0Rz2grXtymszTy2H7hiejPZzydGeQ6HIFicI/GdbZA3ZHNNnyvYPS7hOTwfS0+2dY1wI+zI0TJN1A7o5jp60bLgCeruA8RQYacEHN9GnkiCKLDo/G5jcVrT1JZ6H9nLtuZORLbnlsVinhcUPtQWTpcPI9lHTBUm516dg7d0MDT5jHo3GJozI0LdxZ9hw2K6olzmi/OLui9pbkcZO+qgZFgi39/627Byw2N4SEBVUO81NRLwj+paR8WJ73uePJ2DOpUS0cRwJ2dHauTaXnR3IxFiWd03UUw==
+X-Forefront-Antispam-Report: CIP:216.228.112.35;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid04.nvidia.com;CAT:NONE;SFS:(4636009)(36840700001)(46966006)(36756003)(2906002)(110136005)(54906003)(7696005)(36860700001)(26005)(47076005)(426003)(4326008)(336012)(186003)(82310400004)(86362001)(6666004)(70586007)(356005)(70206006)(83380400001)(7636003)(2616005)(5660300002)(8676002)(316002)(8936002)(508600001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Nov 2021 09:56:13.9864
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: fec9a35f-2eff-424c-9ce6-08d9aff9d13c
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.35];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT015.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR1201MB0109
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-25.11.2021 12:07, Akhil R пишет:
-> Add support for the ACPI based device registration so that the driver
-> can be also enabled through ACPI table.
-> 
-> This does not include the ACPI support for Tegra VI and DVC I2C.
-> 
-> Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
-> ---
->  drivers/i2c/busses/i2c-tegra.c | 52 ++++++++++++++++++++++++++++++++----------
->  1 file changed, 40 insertions(+), 12 deletions(-)
-> 
-> v3 changes
->   * removed acpi_has_method check.
->   * moved dev_err_probe to init_reset function to make it consistent with
-> 	init_clocks.
->   * Updates in commit message as suggested.
-> 
-> v2 - https://lkml.org/lkml/2021/11/23/82
-> v1 - https://lkml.org/lkml/2021/11/19/393
+Use devm alloc call to allocate memory for spi controller data and
+remove free calls from cleanup.
 
-Akhil, the patch looks almost good, thank you. Please see one minor
-question below.
+Signed-off-by: Krishna Yarlagadda <kyarlagadda@nvidia.com>
+---
+ drivers/spi/spi-tegra210-quad.c | 11 +----------
+ 1 file changed, 1 insertion(+), 10 deletions(-)
 
-> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-> index c883044..b889eb3 100644
-> --- a/drivers/i2c/busses/i2c-tegra.c
-> +++ b/drivers/i2c/busses/i2c-tegra.c
-> @@ -6,6 +6,7 @@
->   * Author: Colin Cross <ccross@android.com>
->   */
->  
-> +#include <linux/acpi.h>
->  #include <linux/bitfield.h>
->  #include <linux/clk.h>
->  #include <linux/delay.h>
-> @@ -608,6 +609,7 @@ static int tegra_i2c_wait_for_config_load(struct tegra_i2c_dev *i2c_dev)
->  static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
->  {
->  	u32 val, clk_divisor, clk_multiplier, tsu_thd, tlow, thigh, non_hs_mode;
-> +	acpi_handle handle = ACPI_HANDLE(i2c_dev->dev);
+diff --git a/drivers/spi/spi-tegra210-quad.c b/drivers/spi/spi-tegra210-quad.c
+index c0f9a75..ce1bdb4 100644
+--- a/drivers/spi/spi-tegra210-quad.c
++++ b/drivers/spi/spi-tegra210-quad.c
+@@ -877,7 +877,7 @@ static struct tegra_qspi_client_data *tegra_qspi_parse_cdata_dt(struct spi_devic
+ 	struct tegra_qspi_client_data *cdata;
+ 	struct device_node *slave_np = spi->dev.of_node;
+ 
+-	cdata = kzalloc(sizeof(*cdata), GFP_KERNEL);
++	cdata = devm_kzalloc(&spi->dev, sizeof(*cdata), GFP_KERNEL);
+ 	if (!cdata)
+ 		return NULL;
+ 
+@@ -888,14 +888,6 @@ static struct tegra_qspi_client_data *tegra_qspi_parse_cdata_dt(struct spi_devic
+ 	return cdata;
+ }
+ 
+-static void tegra_qspi_cleanup(struct spi_device *spi)
+-{
+-	struct tegra_qspi_client_data *cdata = spi->controller_data;
+-
+-	spi->controller_data = NULL;
+-	kfree(cdata);
+-}
+-
+ static int tegra_qspi_setup(struct spi_device *spi)
+ {
+ 	struct tegra_qspi *tqspi = spi_master_get_devdata(spi->master);
+@@ -1229,7 +1221,6 @@ static int tegra_qspi_probe(struct platform_device *pdev)
+ 			    SPI_TX_DUAL | SPI_RX_DUAL | SPI_TX_QUAD | SPI_RX_QUAD;
+ 	master->bits_per_word_mask = SPI_BPW_MASK(32) | SPI_BPW_MASK(16) | SPI_BPW_MASK(8);
+ 	master->setup = tegra_qspi_setup;
+-	master->cleanup = tegra_qspi_cleanup;
+ 	master->transfer_one_message = tegra_qspi_transfer_one_message;
+ 	master->num_chipselect = 1;
+ 	master->auto_runtime_pm = true;
+-- 
+2.7.4
 
-...
-> +static int tegra_i2c_init_reset(struct tegra_i2c_dev *i2c_dev)
-> +{
-> +	if (has_acpi_companion(i2c_dev->dev))
-> +		return 0;
-
-Can we use ACPI_HANDLE() everywhere instead of has_acpi_companion()? For
-consistency. I guess that's what Andy was asking about in v1?
