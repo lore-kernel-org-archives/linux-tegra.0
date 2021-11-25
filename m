@@ -2,105 +2,105 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8868C433FE
-	for <linux-tegra@archiver.kernel.org>; Wed, 24 Nov 2021 22:07:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15AC8C433F5
+	for <linux-tegra@archiver.kernel.org>; Thu, 25 Nov 2021 03:00:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351024AbhKXWKS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 24 Nov 2021 17:10:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40916 "EHLO
+        id S238003AbhKYDDi (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 24 Nov 2021 22:03:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48856 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346229AbhKXWKC (ORCPT
+        with ESMTP id S232102AbhKYDBi (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 24 Nov 2021 17:10:02 -0500
-Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97E2DC0613F4;
-        Wed, 24 Nov 2021 14:06:48 -0800 (PST)
-Received: by mail-lf1-x133.google.com with SMTP id f18so10965777lfv.6;
-        Wed, 24 Nov 2021 14:06:48 -0800 (PST)
+        Wed, 24 Nov 2021 22:01:38 -0500
+Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 786A6C061395;
+        Wed, 24 Nov 2021 18:15:24 -0800 (PST)
+Received: by mail-lj1-x229.google.com with SMTP id u22so9382016lju.7;
+        Wed, 24 Nov 2021 18:15:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=hEN8lxqzB5PkjPszcdUxNpJc6epYJF7n5YUfahDhZts=;
-        b=RLjzrUjM8S5jsmnXNKx086PozjojEBgI97mJK6oNkLYNvq5zuxlJFBR2ySrncrjDNl
-         4fxT/3GbaHGiMRVauMHpM4xrS7BHKf335Xrt6kY3wHT9kXIsGvQC/dRY10guNJZDSYIe
-         Sx9KJEqojbSiq7Aj2iwRmWtyZV6F4eVf8Cm6grpDZxrA6qVSDkhC8sWYz9hSKYVHX+Xd
-         lknPSpO3sBMUZ+hGRcHV2ACFC43qjFCQGgx5Ov68+pHr8LRe6wkpriZ8zKdZZjmOk4nh
-         5Zo37iV313OGLMG6DhkuZ6Yw1YPkSKKs05Tqr2seqt6jFoPf0QXLZnfFAfuitDlvsrhE
-         B9mg==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Lj/upQN23hUbS3GkdrQq0qv4Yn6ZPxec0EiWH+iqMEA=;
+        b=DLca4MslZlWfLY/LW/Le4nXm0Lum7JkUH2e/qN4ovD8bOQ+kz9mypepqtDwtvBoaTa
+         mKlIhR4I4RdGakqb+PuA9BCZhIPzlsjxmU6hS2jOpVkSDyOEyJwf9nzw+sVzN0v961pb
+         kcjhP48xKzax/6HW6UTL9lOMbHhSLCyM3sy/D8tzTu2ZFfjNvBm0pRO1dBVsecX5Bv0+
+         uVB2/LA4JMvrvkQuDI7dFIEASY5dy7A1FdEswK5yqjMf9+BWmirrXVyxKuvNOLpv8G5W
+         jSgvK2+Ei0SaCozS+BHconKlU2PczXRL7HkGrJ+94JZ3Tb0XxK0branHuIvp1xn8N3+C
+         xR7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=hEN8lxqzB5PkjPszcdUxNpJc6epYJF7n5YUfahDhZts=;
-        b=lE7/lG4sGASU4bEW2IrOh1ZHaaGubPk3ckwZDp0gYDGkE/BYzoGp/nscBi3adE+mIe
-         PavFYIWvFehTK22Y2LsjBpE0Gd1lOJcaL087KG4P1yJU7DNQgpehGljrXz+WRw5Ildu4
-         LiDxTtjHj3nNhHC16iLpKqRvudgZPXL5PNsG9Smh3o4itEBH//G94FuePQPyv9bd3JcC
-         Zh9qnMANll+9FMdjXZCbcjItZmj/zvCgAUjqzvK+7+I65Shb+Lrb4GK0fcS0A5k6p4Ow
-         7qbCT4Bs5UeIOrRfBepKK88EpjE5LZjuH1Pu/Pol6Fbq5Eu1ixsR3zfCR9tJzg+WbWT0
-         I23Q==
-X-Gm-Message-State: AOAM533UC/SdktaeAQV0mqf1ExZc3E4gNsLAEtLOynfo4C3yw3ixg06O
-        9uBhVSoeziNnudPqpDSp3DThQ8ai17U=
-X-Google-Smtp-Source: ABdhPJyIUhRHjHnojCL+ENORXllGnFFyQb8ITUY4N//P9DJOrpX//870vLxvAdYWiBUcVX7wb14qhQ==
-X-Received: by 2002:ac2:4e89:: with SMTP id o9mr18872451lfr.384.1637791606935;
-        Wed, 24 Nov 2021 14:06:46 -0800 (PST)
-Received: from localhost.localdomain (94-29-48-99.dynamic.spd-mgts.ru. [94.29.48.99])
-        by smtp.gmail.com with ESMTPSA id w17sm93266ljh.15.2021.11.24.14.06.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Nov 2021 14:06:46 -0800 (PST)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Lj/upQN23hUbS3GkdrQq0qv4Yn6ZPxec0EiWH+iqMEA=;
+        b=Zcqn6jV+jcgUNd2PyOypXueMY9vWjGuO+CvmeCxpSfmkU8ApmuoMps9IwgSoPu72gN
+         GDD3TZca3pNmN+pBEDwf834duCsW73egFyUzdJEkdcoyI574PBdidujoI8o//gIO4yhI
+         ZRWQ24eOkr5X42p9a8sSwW2q/oYdZQI7EYR5jw2f1LAbHhD0cqXwdWxrVtODNtGQT9lI
+         btOEQJGYBK7Pix2Anqx1F3dWO/PyIVHfqfi24yLGlOWPu3YmPrjiw3n12GHOb3cnHuld
+         hvRQ2Li2X8SMnTOm6On7SWbT6/I9IHMFvAoZilCkK6uciuXeDwSvZWNzj99GkEzy6ljl
+         wwzA==
+X-Gm-Message-State: AOAM530j7E9/K+3JKYSqBLEfbLtjdxVPeGgPTYhvM1oX8Oe4JFt0u91r
+        CiOfT3oISGaKuUGuYKg7sJ2V7u52U7k=
+X-Google-Smtp-Source: ABdhPJwAyB2heTKPgBeg1gEb9wBYyvxbBdHgV9Gy/aBPiZUAIjZAMyEG1ecw4TwMScq4tOcwaSfJ7g==
+X-Received: by 2002:a2e:b907:: with SMTP id b7mr21347657ljb.214.1637806522563;
+        Wed, 24 Nov 2021 18:15:22 -0800 (PST)
+Received: from [192.168.2.145] (94-29-48-99.dynamic.spd-mgts.ru. [94.29.48.99])
+        by smtp.googlemail.com with ESMTPSA id b43sm128479ljr.64.2021.11.24.18.15.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 24 Nov 2021 18:15:22 -0800 (PST)
+Subject: Re: [PATCH] dt-bindings: sound: nvidia,tegra-audio: Convert multiple
+ txt bindings to yaml
+To:     Rob Herring <robh@kernel.org>, David Heidelberg <david@ixit.cz>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Agneli <poczt@protonmail.ch>, Rob Herring <robh+dt@kernel.org>
-Cc:     linux-tegra@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: [PATCH v1 20/20] ARM: tegra: paz00: Enable S/PDIF and HDMI audio
-Date:   Thu, 25 Nov 2021 01:00:57 +0300
-Message-Id: <20211124220057.15763-21-digetx@gmail.com>
-X-Mailer: git-send-email 2.33.1
-In-Reply-To: <20211124220057.15763-1-digetx@gmail.com>
-References: <20211124220057.15763-1-digetx@gmail.com>
+        ~okias/devicetree@lists.sr.ht, alsa-devel@alsa-project.org,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20211025171927.92332-1-david@ixit.cz>
+ <YYBRTK9KGglu/s9m@robh.at.kernel.org>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <59a8095b-fa80-258f-f2d7-dc241bfae24a@gmail.com>
+Date:   Thu, 25 Nov 2021 05:15:21 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 MIME-Version: 1.0
+In-Reply-To: <YYBRTK9KGglu/s9m@robh.at.kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Enable S/PDIF controller to enable HDMI audio support on Toshiba AC100.
-Use nvidia,fixed-parent-rate property that prevents audio rate conflict
-between S/PDIF and I2S.
+01.11.2021 23:42, Rob Herring пишет:
+>> Convert Tegra audio complex with the
+>>  * ALC5632
+>>  * MAX98090
+>>  * RT5640
+>>  * RT5677
+>>  * SGTL5000
+>>  * TrimSlice
+>>  * WM8753
+>>  * WM8903
+>>  * WM9712
+>> codec to the YAML format.
+> Perhaps say why they can all be combined.
+> 
+> I don't think that really works because the properties which are valid 
+> varies. Specifically, the GPIO lines vary.
+> 
+> Instead, define a schema with all the common properties and then 
+> reference it.
+> 
 
-Tested-by: Agneli <poczt@protonmail.ch>
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- arch/arm/boot/dts/tegra20-paz00.dts | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Those GPIO lines should be more board-specific, rather than
+CODEC-specific. Yes, some of GPIO lines may be unrelated to a specific
+CODEC, but practically it's not worth the effort to split this binding
+because of a couple optional GPIOs, IMO. We actually considered the
+variant with the reference that you're suggesting and decided that it
+should be unnecessary.
 
-diff --git a/arch/arm/boot/dts/tegra20-paz00.dts b/arch/arm/boot/dts/tegra20-paz00.dts
-index 5b2260f61f05..921a811632a1 100644
---- a/arch/arm/boot/dts/tegra20-paz00.dts
-+++ b/arch/arm/boot/dts/tegra20-paz00.dts
-@@ -264,8 +264,16 @@ conf_ld17_0 {
- 		};
- 	};
- 
-+	spdif@70002400 {
-+		status = "okay";
-+
-+		nvidia,fixed-parent-rate;
-+	};
-+
- 	i2s@70002800 {
- 		status = "okay";
-+
-+		nvidia,fixed-parent-rate;
- 	};
- 
- 	serial@70006000 {
--- 
-2.33.1
-
+Are you insisting that the binding needs to be split?
