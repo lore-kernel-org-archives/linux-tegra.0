@@ -2,52 +2,52 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BD80C433F5
-	for <linux-tegra@archiver.kernel.org>; Fri, 26 Nov 2021 16:37:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECD29C43217
+	for <linux-tegra@archiver.kernel.org>; Fri, 26 Nov 2021 16:37:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353655AbhKZQkc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 26 Nov 2021 11:40:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35244 "EHLO
+        id S234023AbhKZQkj (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 26 Nov 2021 11:40:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35272 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230241AbhKZQib (ORCPT
+        with ESMTP id S1348152AbhKZQii (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 26 Nov 2021 11:38:31 -0500
-Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0E54C061D74;
-        Fri, 26 Nov 2021 08:19:57 -0800 (PST)
-Received: by mail-lf1-x130.google.com with SMTP id u3so25493742lfl.2;
-        Fri, 26 Nov 2021 08:19:57 -0800 (PST)
+        Fri, 26 Nov 2021 11:38:38 -0500
+Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F29B6C06175A;
+        Fri, 26 Nov 2021 08:19:58 -0800 (PST)
+Received: by mail-lj1-x232.google.com with SMTP id k23so19800566lje.1;
+        Fri, 26 Nov 2021 08:19:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=0mQGburGzaVO6t6m0C9ToG0s590roHzjwKj9a/U1hq8=;
-        b=fuV2rpY5vWtXLgfFL3kQDRM+ioE76IqkOsczEVCgP55ZUOsM6JRi1k1DUic6KroJPS
-         0tKyZlRv6Eyfnu2i63/8F5l3GQ3gMNc9CdD0hLqviK+wvyStY1jg5iC7kGuzI3eIMcEf
-         PB+2xvrZY342AogXJzAfszoXobBHB6Q3p0iYRgcdy2pL+5r5mbobIWDkdh/z9DTNnsQb
-         x59msvnA+cjRsiH/FH7HPP0qQ5JLIZK47Am2iLsa5Qd3Lq9qRfBeS03r7y+yojAESQhP
-         ShNJV3gqMzXfS0qwS2eGeNOLcm9Wh0FHqRbij68DTKDMYHAQ1d0SLguifx4pu026d7wv
-         /dEw==
+        bh=pyWXKSD/ngAWTwm6HA1HadGHkUDHHAfqetu21/vFVIM=;
+        b=bdbspkD2uxc8qeriYgYo3urTgP3sVL8LPoyinGG3VjF3C7Lw0RK+XZckeGj0vFEJHn
+         XQ4zadccolf5Ix433mkdFsT6vgImRa6Txk210jDxGGs2WztWVW5Y9CpKN8ks1hCa1VoP
+         MxyOOSkQGswD28YdxKvlc2JDyMc1jj0NVGVovHOfgYq6LoJTdWVQXajaanCtGL1TdQ1i
+         +WwdN6tfAhUArRz59d16jrN3THi5VHiu1P1uHM7Egb1SzwU0RYaOxhLHHfG3Uw+UoD3O
+         LtVtusEJIBWcyT1kojXzI8gP4RLEwwLnfE9bWG5pUgcIpqyp/yhYbnhxT7suOiB95i7B
+         AOgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=0mQGburGzaVO6t6m0C9ToG0s590roHzjwKj9a/U1hq8=;
-        b=YfiqBak4PuMy41JVIMdxC7jav1GAda0WiJzLwENOGQzg1B7psRn7n+AwZYxZ3NE8sN
-         uDntoeiFUk+saqnWWqrePOALnammoXIw4q0mmPgd7A8fEwuG3AiAWttHUbu+gSIy4hwM
-         zUB62eh8fM7mqKr3reU6L69X8Hd0wTiGx/Egac2iyccof74S/4CYBXRNy6tuuVuizBbj
-         F0fdtmeiD1VpwbQbbge/WNAxxQfT4F5TLE1Y0xv603OO3S62LXhPJ8Ga3JExG1EaGcdU
-         wfGiKOmnwQ1nXZHFTyZC7uU+ScxsMgaW+6JkI8xRnWDfmB236PBFPoWjKo4RTRzWUepC
-         gIng==
-X-Gm-Message-State: AOAM531kTdsTKHgnArRAPiQiDLu/iyZlcVOUECVVbWY/fsByjw9OacwI
-        UNTbuyHIDMHlOFOiCgAeGog=
-X-Google-Smtp-Source: ABdhPJylJzqB2ZvlpxpzfeqjArW2IsHMhFnA0BIsWJR6W+91PfSCYZb5GLBH1w9hRPLmfiiTF5DZOg==
-X-Received: by 2002:a05:6512:23a7:: with SMTP id c39mr31318838lfv.655.1637943596282;
-        Fri, 26 Nov 2021 08:19:56 -0800 (PST)
+        bh=pyWXKSD/ngAWTwm6HA1HadGHkUDHHAfqetu21/vFVIM=;
+        b=U/eO2mmj0GgMQA+WgQ2B76IyPnt7SQVqg+s02fniiUk5AbsMeKViEaolaMjUCVNtb+
+         bp/pXN+udAA9sDhFJR8R4PESgagOcC2wOce0nkoWLftHZBR72Vf7Ogqk9lPZhwdImjUc
+         OlQGqDgnq87iPdlVDUKbf7mremg9YR2OpwrEagLSAOdaLMxZubvuelxpgnPWJ7UyJQft
+         x2kyDNG7XH+1V5l1Jrc/NmlA06gH/DSlNeyJJSKkVlTka0utgdTafTX06g58N5rkU7H1
+         1PvgI++IUQ8/DblXDuleSPujfgRGcBGv04DEmT96jdeSruGdU+pDZe7eNWCETUu9JpC/
+         JOMg==
+X-Gm-Message-State: AOAM531fudgPdAnn7WkOJaGpD8cCRUElrgY2I7UM0xsGnKkpRg1KjKas
+        0AvjG/FoFiMRzLnM20q/wxs=
+X-Google-Smtp-Source: ABdhPJxpm9nqKWKezaZcIWKSbgNt+5aswTDFHwGvFf90WbQr4/XEZVYSn1hrv8SDqgkyr4alLXIBbw==
+X-Received: by 2002:a2e:9217:: with SMTP id k23mr31531018ljg.267.1637943597317;
+        Fri, 26 Nov 2021 08:19:57 -0800 (PST)
 Received: from localhost.localdomain (94-29-48-99.dynamic.spd-mgts.ru. [94.29.48.99])
-        by smtp.gmail.com with ESMTPSA id t7sm613381lfl.260.2021.11.26.08.19.55
+        by smtp.gmail.com with ESMTPSA id t7sm613381lfl.260.2021.11.26.08.19.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Nov 2021 08:19:55 -0800 (PST)
+        Fri, 26 Nov 2021 08:19:56 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -58,9 +58,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
 Cc:     linux-tegra@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
         alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: [PATCH v2 16/20] ARM: tegra_defconfig: Enable S/PDIF driver
-Date:   Fri, 26 Nov 2021 19:18:03 +0300
-Message-Id: <20211126161807.15776-17-digetx@gmail.com>
+Subject: [PATCH v2 17/20] ARM: tegra: Add S/PDIF node to Tegra20 device-tree
+Date:   Fri, 26 Nov 2021 19:18:04 +0300
+Message-Id: <20211126161807.15776-18-digetx@gmail.com>
 X-Mailer: git-send-email 2.33.1
 In-Reply-To: <20211126161807.15776-1-digetx@gmail.com>
 References: <20211126161807.15776-1-digetx@gmail.com>
@@ -70,26 +70,50 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Enable Tegra20 S/PDIF driver. It's a part of HDMI audio subsystem on
-Tegra.
+Add S/PDIF node to Tegra20 device-tree. It's needed for enabling HDMI
+audio support.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- arch/arm/configs/tegra_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/boot/dts/tegra20.dtsi | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
-index 817b39190d54..1b8f8fdbedc5 100644
---- a/arch/arm/configs/tegra_defconfig
-+++ b/arch/arm/configs/tegra_defconfig
-@@ -235,6 +235,7 @@ CONFIG_SND_HDA_CODEC_HDMI=y
- CONFIG_SND_SOC=y
- CONFIG_SND_SOC_TEGRA=y
- CONFIG_SND_SOC_TEGRA20_I2S=y
-+CONFIG_SND_SOC_TEGRA20_SPDIF=y
- CONFIG_SND_SOC_TEGRA30_I2S=y
- CONFIG_SND_SOC_TEGRA_RT5640=y
- CONFIG_SND_SOC_TEGRA_WM8753=y
+diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
+index 63c2c2f8c0ce..799da7dc929b 100644
+--- a/arch/arm/boot/dts/tegra20.dtsi
++++ b/arch/arm/boot/dts/tegra20.dtsi
+@@ -197,6 +197,7 @@ hdmi@54280000 {
+ 			reset-names = "hdmi";
+ 			power-domains = <&pd_core>;
+ 			operating-points-v2 = <&hdmi_dvfs_opp_table>;
++			#sound-dai-cells = <0>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -396,6 +397,23 @@ tegra_ac97: ac97@70002000 {
+ 		status = "disabled";
+ 	};
+ 
++	tegra_spdif: spdif@70002400 {
++		compatible = "nvidia,tegra20-spdif";
++		reg = <0x70002400 0x200>;
++		interrupts = <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&tegra_car TEGRA20_CLK_SPDIF_OUT>,
++			 <&tegra_car TEGRA20_CLK_SPDIF_IN>;
++		clock-names = "spdif_out", "spdif_in";
++		resets = <&tegra_car 10>;
++		dmas = <&apbdma 3>, <&apbdma 3>;
++		dma-names = "rx", "tx";
++		#sound-dai-cells = <0>;
++		status = "disabled";
++
++		assigned-clocks = <&tegra_car TEGRA20_CLK_SPDIF_OUT>;
++		assigned-clock-parents = <&tegra_car TEGRA20_CLK_PLL_A_OUT0>;
++	};
++
+ 	tegra_i2s1: i2s@70002800 {
+ 		compatible = "nvidia,tegra20-i2s";
+ 		reg = <0x70002800 0x200>;
 -- 
 2.33.1
 
