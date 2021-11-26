@@ -2,94 +2,89 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D2F9C433EF
-	for <linux-tegra@archiver.kernel.org>; Thu, 25 Nov 2021 21:28:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A9A6C433EF
+	for <linux-tegra@archiver.kernel.org>; Fri, 26 Nov 2021 00:43:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244772AbhKYVbY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 25 Nov 2021 16:31:24 -0500
-Received: from mail-ot1-f49.google.com ([209.85.210.49]:46025 "EHLO
-        mail-ot1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235874AbhKYV3Y (ORCPT
+        id S237844AbhKZAqW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 25 Nov 2021 19:46:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52872 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1357348AbhKZAoW (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 25 Nov 2021 16:29:24 -0500
-Received: by mail-ot1-f49.google.com with SMTP id a23-20020a9d4717000000b0056c15d6d0caso11132896otf.12;
-        Thu, 25 Nov 2021 13:26:12 -0800 (PST)
+        Thu, 25 Nov 2021 19:44:22 -0500
+Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 059D4C061756;
+        Thu, 25 Nov 2021 16:37:39 -0800 (PST)
+Received: by mail-lj1-x234.google.com with SMTP id 207so15380536ljf.10;
+        Thu, 25 Nov 2021 16:37:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=nMCkcNkVJHrUMMEDkKpjCXIAHsxHK0m1G/QamSr9K6g=;
+        b=UOqnunqsnMn5D9EP50S6+aOvQtPLUoltWmiTz6HxAhNzfbeySPSOPGeOl6o9gABXgU
+         R4ubclYHdlRX/BhMdfS1jWkG+fx/GwEjHYhLmMyhYRbVU5p2soAScnBgla+f61DspLaW
+         QvobT/wWL/czGrNtFt6a5rHvXebhv8swzGkNZJ6DFxe41OVxtfJs5md2N7rp0rN2Zdx8
+         wMILAGpUX4RVGbQ+122bfZuPENrC4mmZq/HHdW7BujRF/sVVeOFFYgRyChokKnOP9JlX
+         mBxaFOVisanu7dN4p6ozGotLMcmu+jTYYrUalnhR9hvpXuj3j0qijHE1mQwao6xSQv/B
+         xJ5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
-         :message-id;
-        bh=K9sBfhhvh3TyySdJ4+kH3HFS2nUgK5mo6oF+b8evIIw=;
-        b=ABG0AYWQQR6yg6fARRndhQ3NlQwfj5b5BxfrdzzKRzZm04xH6zCbGCYTTYX9ZvOQ60
-         DVdr0uPOwTm/906YDJLsEglwcRa4S24iMV3D+Tsjg6P6hURK3SD1SSyzVwKbM3T/iCD8
-         cVIxW7JF1jHNZazrVrqQ0Zqcwf7J2Rl04ILtKXk+B+utuvyC/JubBS4Pqdb58WBqq6Fb
-         nMu7pgWbS7MaGYbi3iZDc91sihmjhqDnPyU9RgRCFOwo2XIx5fDYYzfZoiIy7z1MHGR9
-         3hAef/lFmASxJnBfKnXJpvY4tJ3Wz3KkesTpcLAOK6Pw9m0WEd5QcLMzD+q3IVrUY0N6
-         0TiA==
-X-Gm-Message-State: AOAM531A+/UbBD+5tGbbPaXxC4+klpkSp6cXH555djTqcrzZgtXLNyWo
-        Z/dnHfSpcEjlkFMZ5r5Dsw==
-X-Google-Smtp-Source: ABdhPJzzt0Csr7okspWgSLe+I1n4SZvDhCX1LyaO2Mr9NAGUFau59mr2FaZq2piH3W6tpFyYwBeH1w==
-X-Received: by 2002:a9d:6c54:: with SMTP id g20mr24876267otq.30.1637875571987;
-        Thu, 25 Nov 2021 13:26:11 -0800 (PST)
-Received: from robh.at.kernel.org ([64.188.179.248])
-        by smtp.gmail.com with ESMTPSA id w19sm870433oih.44.2021.11.25.13.26.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Nov 2021 13:26:11 -0800 (PST)
-Received: (nullmailer pid 2858311 invoked by uid 1000);
-        Thu, 25 Nov 2021 21:26:02 -0000
-From:   Rob Herring <robh@kernel.org>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Agneli <poczt@protonmail.ch>, linux-kernel@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>
-In-Reply-To: <20211124220057.15763-3-digetx@gmail.com>
-References: <20211124220057.15763-1-digetx@gmail.com> <20211124220057.15763-3-digetx@gmail.com>
-Subject: Re: [PATCH v1 02/20] ASoC: dt-bindings: tegra20-i2s: Convert to schema
-Date:   Thu, 25 Nov 2021 14:26:02 -0700
-Message-Id: <1637875562.276093.2858310.nullmailer@robh.at.kernel.org>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=nMCkcNkVJHrUMMEDkKpjCXIAHsxHK0m1G/QamSr9K6g=;
+        b=BM0WUuARVXwSrkQv93RubEnTEtgS0Lcbedy3cjv/yggaFrvuTnzd7QfjX4033zMTzh
+         MhLl9uaWN/vFfcfnjZuIg71ipvxwwWiIuG04/jwXqLHFcrCclxFtYTj/pHdCzQn2tM7k
+         XJ5AQc2XjwNKUZ5vbIMalUPj08NB1BMO+biHZ0LSJ3Ro03rewyIPDAYmS5aF4VuOKETq
+         TSzZMKjaVqKNRWNOhy2eKBziPV1tZoL8ylHxqVLx0WzjiOIaPCkDLy31tMy1j1iJnW6B
+         uS+O0wCm+YkOdbdztuN1knpWpBISAPSDfEXHcehgEmDkvW2GZ+qByaVepkQ02wTamSju
+         qu+A==
+X-Gm-Message-State: AOAM533QLPi/DuCBGj+YumoAsIQYjcTjSELMX465E3kbSpuu228ucYS4
+        0qfppWWnJhjApOeVIbVhJTo=
+X-Google-Smtp-Source: ABdhPJyRX2L7hSbd3SNG4rggc/Cqlf6BaeolJPYAw1mQLBCAr4IT8k78ET/p4iE+e6YKJMpdWksvAg==
+X-Received: by 2002:a2e:a4ba:: with SMTP id g26mr28851298ljm.152.1637887057377;
+        Thu, 25 Nov 2021 16:37:37 -0800 (PST)
+Received: from [192.168.2.145] (94-29-48-99.dynamic.spd-mgts.ru. [94.29.48.99])
+        by smtp.googlemail.com with ESMTPSA id e5sm377433lfs.51.2021.11.25.16.37.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 25 Nov 2021 16:37:36 -0800 (PST)
+Subject: Re: [PATCH v4] i2c: tegra: Add the ACPI support
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Akhil R <akhilrajeev@nvidia.com>
+Cc:     Christian Koenig <christian.koenig@amd.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        linaro-mm-sig@lists.linaro.org,
+        linux-i2c <linux-i2c@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>
+References: <1637859224-5179-1-git-send-email-akhilrajeev@nvidia.com>
+ <CAHp75VfPPpTNCaM+GhcqZS53ts-20GBzm+4OWLAjND=z79pgxg@mail.gmail.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <aa63a45d-43a0-9aaf-cad3-2f4f66d707e7@gmail.com>
+Date:   Fri, 26 Nov 2021 03:37:35 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
+MIME-Version: 1.0
+In-Reply-To: <CAHp75VfPPpTNCaM+GhcqZS53ts-20GBzm+4OWLAjND=z79pgxg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, 25 Nov 2021 01:00:39 +0300, Dmitry Osipenko wrote:
-> Convert NVIDIA Tegra20 I2S binding to schema.
-> 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  .../bindings/sound/nvidia,tegra20-i2s.txt     | 30 --------
->  .../bindings/sound/nvidia,tegra20-i2s.yaml    | 71 +++++++++++++++++++
->  2 files changed, 71 insertions(+), 30 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra20-i2s.txt
->  create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra20-i2s.yaml
+25.11.2021 22:28, Andy Shevchenko пишет:
+>> -       err = reset_control_reset(i2c_dev->rst);
+>> +       if (handle)
+>> +               err = acpi_evaluate_object(handle, "_RST", NULL, NULL);
+> Does it compile for CONFIG_ACPI=n case?
 > 
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
-
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/sound/nvidia,tegra20-i2s.example.dt.yaml: i2s@70002800: 'clock-names' is a required property
-	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/sound/nvidia,tegra20-i2s.yaml
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/patch/1559387
-
-This check can fail if there are any dependencies. The base for a patch
-series is generally the most recent rc1.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit.
-
+It compiles and works fine with CONFIG_ACPI=n.
