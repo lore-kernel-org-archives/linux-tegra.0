@@ -2,35 +2,51 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0D18C433F5
-	for <linux-tegra@archiver.kernel.org>; Fri, 26 Nov 2021 16:02:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FB74C433F5
+	for <linux-tegra@archiver.kernel.org>; Fri, 26 Nov 2021 16:07:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354477AbhKZQFi (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 26 Nov 2021 11:05:38 -0500
-Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:8170 "EHLO
-        mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1377982AbhKZQDi (ORCPT
+        id S1377972AbhKZQKw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 26 Nov 2021 11:10:52 -0500
+Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:14339 "EHLO
+        mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1350876AbhKZQIw (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 26 Nov 2021 11:03:38 -0500
-IronPort-HdrOrdr: =?us-ascii?q?A9a23=3AH2qK26AUMNytlKrlHem555DYdb4zR+YMi2TD?=
- =?us-ascii?q?GXocdfUzSL38qynOpoV46faasl0ssR0b9OxoW5PwIk80l6QV3WB5B97LYOCBgg?=
- =?us-ascii?q?SVxepZg7cKrQeLJ8SHzI5g6Zs=3D?=
-X-IronPort-AV: E=Sophos;i="5.84,326,1620684000"; 
-   d="scan'208";a="400208539"
+        Fri, 26 Nov 2021 11:08:52 -0500
+X-Greylist: delayed 429 seconds by postgrey-1.27 at vger.kernel.org; Fri, 26 Nov 2021 11:08:51 EST
+IronPort-Data: =?us-ascii?q?A9a23=3A4Fb3CKMmEU7sQsvvrR10lsFynXyQoLVcMsFnjC/?=
+ =?us-ascii?q?WdVXvhmkrgWYBnTRMD2HXPvePNDSnLdh1OYSyp0ICuZTUm99gGjLY11k9FiMQ8?=
+ =?us-ascii?q?ZKt6fexdxqrYXvKdqUvdK/WhiknQoGowPscEzmM+X9BDpC79SMljPjSGOKmYAL?=
+ =?us-ascii?q?5EnsZqTFMGX5JZS1Ly7ZRbr5A2bBVMivV0T/Ai5W31GyNh1aYBlkpB5er83uDi?=
+ =?us-ascii?q?hhdVAQw5TTSbdgT1LPXeuJ84Jg3fcldJFOgKmVY83LTegrN8F251juxExYFAde?=
+ =?us-ascii?q?51++hIghbGfuLYlbL0CIMHba6hF5DoDYz2+A1LpLwa28O0WXPzos3kYoT88boE?=
+ =?us-ascii?q?2/FPYWV8AgZextFFyB3e6lP57bDJVC+t9aSxgvIaRMAxt0wVxBuZtNCkgpwKSQ?=
+ =?us-ascii?q?UnRACExgEbRCCg/i/wr+2VMFqmMUvLcCtN4Qa0lljxyzYCfpjSJTHa6HL/sNDm?=
+ =?us-ascii?q?m9pwMdUEp72a8MfLzgpcxXEZxxGP0w/CZQikePujX76GxVUpUyUrqcr+WXe5BJ?=
+ =?us-ascii?q?+3aKrM9fPfNGOA8JPkS6wqmfP8mL2AxcXHMKQxCDD8X+2gOLL2yThV+o6Frq+/?=
+ =?us-ascii?q?+JqiVuT7moNCREXXB2wpvzRok2vUshbIkMd9iYnha4s9UCqR5/2WBjQiHqIswE?=
+ =?us-ascii?q?VXdVZFcU89gCBy6OS6AGcbkAATzhceJkludUwSDgCyFCEhZXqCCZpvbnTTmiSn?=
+ =?us-ascii?q?p+QrDWvKW0JIGAYbAcaQgYfpdruuoc+ilTIVNkLOLbznNT/FDXY2z2MozUinbI?=
+ =?us-ascii?q?VjN5N26jT1UrInjelvYTAZggr5wnWVySu6QYRWWIPT+RE8nDQ6eoFddzJCwja+?=
+ =?us-ascii?q?SFbxY3EtLpIE4mL0i2LWuQEWr+zj8tp+Qb02TZHd6TNPRz0k5J7Qb1t3Q=3D?=
+ =?us-ascii?q?=3D?=
+IronPort-HdrOrdr: =?us-ascii?q?A9a23=3A8gdBXqN1feC728BcTtSjsMiBIKoaSvp037Dk?=
+ =?us-ascii?q?7SxMoHtuA6mlfqGV7ZYmPHDP4wr5NEtMpTniAtjifZq/z/9ICOAqVN+ftW/d11?=
+ =?us-ascii?q?dAR7sN0WKN+Vfd8lXFltJg6Q=3D=3D?=
+X-IronPort-AV: E=Sophos;i="5.87,266,1631570400"; 
+   d="scan'208";a="6390362"
 Received: from clt-128-93-176-202.vpn.inria.fr ([128.93.176.202])
-  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Nov 2021 17:00:20 +0100
-Date:   Fri, 26 Nov 2021 17:00:18 +0100 (CET)
+  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Nov 2021 16:58:25 +0100
+Date:   Fri, 26 Nov 2021 16:58:22 +0100 (CET)
 From:   Julia Lawall <julia.lawall@inria.fr>
 X-X-Sender: jll@hadrien
 To:     Akhil R <akhilrajeev@nvidia.com>
-cc:     kbuild-all@lists.01.org, Akhil R <akhilrajeev@nvidia.com>,
-        dan.j.williams@intel.com, devicetree@vger.kernel.org,
-        dmaengine@vger.kernel.org, jonathanh@nvidia.com,
-        kyarlagadda@nvidia.com, ldewangan@nvidia.com,
+cc:     kbuild-all@lists.01.org, dan.j.williams@intel.com,
+        devicetree@vger.kernel.org, dmaengine@vger.kernel.org,
+        jonathanh@nvidia.com, kyarlagadda@nvidia.com, ldewangan@nvidia.com,
         linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
         p.zabel@pengutronix.de, rgumasta@nvidia.com
-Subject: [PATCH] dmaengine: tegra: fix flexible_array.cocci warnings
-Message-ID: <alpine.DEB.2.22.394.2111261659030.18994@hadrien>
+Subject: [PATCH] dmaengine: tegra: fix platform_no_drv_owner.cocci warnings
+Message-ID: <alpine.DEB.2.22.394.2111261655450.18994@hadrien>
 User-Agent: Alpine 2.22 (DEB 394 2020-01-19)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -40,17 +56,14 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: kernel test robot <lkp@intel.com>
 
-Zero-length and one-element arrays are deprecated, see
-Documentation/process/deprecated.rst
-Flexible-array members should be used instead.
+No need to set .owner here. The core will do it.
 
-Generated by: scripts/coccinelle/misc/flexible_array.cocci
+Generated by: scripts/coccinelle/api/platform_no_drv_owner.cocci
 
 CC: Akhil R <akhilrajeev@nvidia.com>
 Reported-by: kernel test robot <lkp@intel.com>
 Signed-off-by: kernel test robot <lkp@intel.com>
 Signed-off-by: Julia Lawall <julia.lawall@inria.fr>
-
 ---
 
 url:    https://github.com/0day-ci/linux/commits/Akhil-R/Add-NVIDIA-Tegra-GPC-DMA-driver/20211122-173019
@@ -58,19 +71,16 @@ base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
 :::::: branch date: 29 hours ago
 :::::: commit date: 29 hours ago
 
-Please take the patch only if it's a positive warning. Thanks!
-
- tegra186-gpc-dma.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tegra186-gpc-dma.c |    1 -
+ 1 file changed, 1 deletion(-)
 
 --- a/drivers/dma/tegra186-gpc-dma.c
 +++ b/drivers/dma/tegra186-gpc-dma.c
-@@ -238,7 +238,7 @@ struct tegra_dma {
- 	unsigned long sid_m2d_reserved;
- 	unsigned long sid_d2m_reserved;
- 	unsigned long sid_m2m_reserved;
--	struct tegra_dma_channel channels[0];
-+	struct tegra_dma_channel channels[];
- };
-
- static inline void tdc_write(struct tegra_dma_channel *tdc,
+@@ -1268,7 +1268,6 @@ static const struct __maybe_unused dev_p
+ static struct platform_driver tegra_dmac_driver = {
+ 	.driver = {
+ 		.name	= "tegra-gpcdma",
+-		.owner = THIS_MODULE,
+ 		.pm	= &tegra_dma_dev_pm_ops,
+ 		.of_match_table = tegra_dma_of_match,
+ 	},
