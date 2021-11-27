@@ -2,98 +2,296 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DF3FC433F5
-	for <linux-tegra@archiver.kernel.org>; Sat, 27 Nov 2021 02:09:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F37DFC4332F
+	for <linux-tegra@archiver.kernel.org>; Sat, 27 Nov 2021 08:43:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234859AbhK0CMO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 26 Nov 2021 21:12:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46568 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237707AbhK0CKN (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 26 Nov 2021 21:10:13 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E19F8C08EAFC;
-        Fri, 26 Nov 2021 17:29:40 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 2F7BE60B24;
-        Sat, 27 Nov 2021 01:29:40 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC725C004E1;
-        Sat, 27 Nov 2021 01:29:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1637976579;
-        bh=ssrErp6Zv6UFvQZJ2r4rjzBWHowf96TZAds8iOrIckg=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=VdworWyY+nr8ob9c1aZz3+J4h4Q2ZhkpY0ZixlZ8XBB/yBc+oM4U3YpHODB4G8X77
-         97oFBGyNLTjigf1VjhSZbqx8RBMmGFabYWlLx8GVYMDdKUZFCwq+w/7ql8XyzClaea
-         VV5Fp1qdUg8IUWnl9e8V+GSQKNR5ECbcuxJMm/OEilV85Bah5JAgS/I9kdsnW7BUwo
-         AqHS/mJJGwxTSVlMjA7a+hWQNX8BIKQ9W6kL6l4ZrXmNHIouKmWiSUn3K4g30cGR2X
-         7d/+qGFucVdZvIpprqzxVLT4zXVeAUcRTIdkNpH8yhuLAiFhCfuhYnbbyfTxfT/Mhi
-         5kPH7ahTKW0yA==
-From:   Mark Brown <broonie@kernel.org>
-To:     tiwai@suse.com, lgirdwood@gmail.com,
-        Sameer Pujar <spujar@nvidia.com>, perex@perex.cz
-Cc:     jonathanh@nvidia.com, thierry.reding@gmail.com,
-        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org,
-        linux-tegra@vger.kernel.org
-In-Reply-To: <1637676459-31191-1-git-send-email-spujar@nvidia.com>
-References: <1637676459-31191-1-git-send-email-spujar@nvidia.com>
-Subject: Re: [PATCH 0/6] Suspend related fixes on Tegra
-Message-Id: <163797657754.2987896.15112513397487724007.b4-ty@kernel.org>
-Date:   Sat, 27 Nov 2021 01:29:37 +0000
+        id S1352987AbhK0IrD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 27 Nov 2021 03:47:03 -0500
+Received: from mga07.intel.com ([134.134.136.100]:33922 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231280AbhK0IpD (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Sat, 27 Nov 2021 03:45:03 -0500
+X-IronPort-AV: E=McAfee;i="6200,9189,10180"; a="299151605"
+X-IronPort-AV: E=Sophos;i="5.87,268,1631602800"; 
+   d="scan'208";a="299151605"
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Nov 2021 00:41:48 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.87,268,1631602800"; 
+   d="scan'208";a="652368341"
+Received: from lkp-server02.sh.intel.com (HELO 9e1e9f9b3bcb) ([10.239.97.151])
+  by fmsmga001.fm.intel.com with ESMTP; 27 Nov 2021 00:41:44 -0800
+Received: from kbuild by 9e1e9f9b3bcb with local (Exim 4.92)
+        (envelope-from <lkp@intel.com>)
+        id 1mqtHE-0009Gv-3M; Sat, 27 Nov 2021 08:41:44 +0000
+Date:   Sat, 27 Nov 2021 16:41:22 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Akhil R <akhilrajeev@nvidia.com>, dan.j.williams@intel.com,
+        devicetree@vger.kernel.org, dmaengine@vger.kernel.org,
+        jonathanh@nvidia.com, kyarlagadda@nvidia.com, ldewangan@nvidia.com,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        p.zabel@pengutronix.de, rgumasta@nvidia.com
+Cc:     kbuild-all@lists.01.org
+Subject: Re: [PATCH v13 2/4] dmaengine: tegra: Add tegra gpcdma driver
+Message-ID: <202111271635.HuTbjmfG-lkp@intel.com>
+References: <1637573292-13214-3-git-send-email-akhilrajeev@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1637573292-13214-3-git-send-email-akhilrajeev@nvidia.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, 23 Nov 2021 19:37:33 +0530, Sameer Pujar wrote:
-> This series addresses following problems:
->  * The runtime PM is not balanced in MVC driver, whenever
->    mute or volume mixer controls are set.
->  * Some of the AHUB devices (SFC, MVC, Mixer, AMX and ADX)
->    use late system sleep. Suspend failure is seen on Jetson
->    TX2 platform.
-> 
-> [...]
+Hi Akhil,
 
-Applied to
+Thank you for the patch! Perhaps something to improve:
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-linus
+[auto build test WARNING on robh/for-next]
+[also build test WARNING on vkoul-dmaengine/next arm64/for-next/core v5.16-rc2 next-20211126]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch]
 
-Thanks!
+url:    https://github.com/0day-ci/linux/commits/Akhil-R/Add-NVIDIA-Tegra-GPC-DMA-driver/20211122-173019
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
+config: csky-randconfig-r005-20211126 (https://download.01.org/0day-ci/archive/20211127/202111271635.HuTbjmfG-lkp@intel.com/config)
+compiler: csky-linux-gcc (GCC) 11.2.0
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/0day-ci/linux/commit/7707da9f914433ccc5718dd3431153d3b5bf485d
+        git remote add linux-review https://github.com/0day-ci/linux
+        git fetch --no-tags linux-review Akhil-R/Add-NVIDIA-Tegra-GPC-DMA-driver/20211122-173019
+        git checkout 7707da9f914433ccc5718dd3431153d3b5bf485d
+        # save the config file to linux build tree
+        mkdir build_dir
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.2.0 make.cross O=build_dir ARCH=csky SHELL=/bin/bash drivers/ kernel//
 
-[1/6] ASoC: tegra: Balance runtime PM count
-      commit: 70408f755f589f67957b9ec6852e6b01f858d0a2
-[2/6] ASoC: tegra: Use normal system sleep for SFC
-      commit: af120d07bbb0721708b10204beed66ed2cb0cb62
-[3/6] ASoC: tegra: Use normal system sleep for MVC
-      commit: c83d263a89f30d1c0274827c475f3583cf8e477f
-[4/6] ASoC: tegra: Use normal system sleep for Mixer
-      commit: b78400e41653b3a752a4cd17d2fcbd4a96bb4bc2
-[5/6] ASoC: tegra: Use normal system sleep for AMX
-      commit: 638c31d542a576714a52bb6a9a7dedff98e32a1d
-[6/6] ASoC: tegra: Use normal system sleep for ADX
-      commit: cf36de4fc5ce5502ce5070a793addd9d49df4113
+If you fix the issue, kindly add following tag as appropriate
+Reported-by: kernel test robot <lkp@intel.com>
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+All warnings (new ones prefixed by >>):
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+   In file included from <command-line>:
+   drivers/dma/tegra186-gpc-dma.c: In function 'tegra_dma_prep_dma_memset':
+>> drivers/dma/tegra186-gpc-dma.c:791:74: warning: right shift count >= width of type [-Wshift-count-overflow]
+     791 |                         FIELD_PREP(TEGRA_GPCDMA_HIGH_ADDR_DST_PTR, (dest >> 32));
+         |                                                                          ^~
+   include/linux/compiler_types.h:315:23: note: in definition of macro '__compiletime_assert'
+     315 |                 if (!(condition))                                       \
+         |                       ^~~~~~~~~
+   include/linux/compiler_types.h:335:9: note: in expansion of macro '_compiletime_assert'
+     335 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |         ^~~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:39:37: note: in expansion of macro 'compiletime_assert'
+      39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+         |                                     ^~~~~~~~~~~~~~~~~~
+   include/linux/bitfield.h:49:17: note: in expansion of macro 'BUILD_BUG_ON_MSG'
+      49 |                 BUILD_BUG_ON_MSG(__builtin_constant_p(_val) ?           \
+         |                 ^~~~~~~~~~~~~~~~
+   include/linux/bitfield.h:94:17: note: in expansion of macro '__BF_FIELD_CHECK'
+      94 |                 __BF_FIELD_CHECK(_mask, 0ULL, _val, "FIELD_PREP: ");    \
+         |                 ^~~~~~~~~~~~~~~~
+   drivers/dma/tegra186-gpc-dma.c:791:25: note: in expansion of macro 'FIELD_PREP'
+     791 |                         FIELD_PREP(TEGRA_GPCDMA_HIGH_ADDR_DST_PTR, (dest >> 32));
+         |                         ^~~~~~~~~~
+>> drivers/dma/tegra186-gpc-dma.c:791:74: warning: right shift count >= width of type [-Wshift-count-overflow]
+     791 |                         FIELD_PREP(TEGRA_GPCDMA_HIGH_ADDR_DST_PTR, (dest >> 32));
+         |                                                                          ^~
+   include/linux/compiler_types.h:315:23: note: in definition of macro '__compiletime_assert'
+     315 |                 if (!(condition))                                       \
+         |                       ^~~~~~~~~
+   include/linux/compiler_types.h:335:9: note: in expansion of macro '_compiletime_assert'
+     335 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |         ^~~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:39:37: note: in expansion of macro 'compiletime_assert'
+      39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+         |                                     ^~~~~~~~~~~~~~~~~~
+   include/linux/bitfield.h:49:17: note: in expansion of macro 'BUILD_BUG_ON_MSG'
+      49 |                 BUILD_BUG_ON_MSG(__builtin_constant_p(_val) ?           \
+         |                 ^~~~~~~~~~~~~~~~
+   include/linux/bitfield.h:94:17: note: in expansion of macro '__BF_FIELD_CHECK'
+      94 |                 __BF_FIELD_CHECK(_mask, 0ULL, _val, "FIELD_PREP: ");    \
+         |                 ^~~~~~~~~~~~~~~~
+   drivers/dma/tegra186-gpc-dma.c:791:25: note: in expansion of macro 'FIELD_PREP'
+     791 |                         FIELD_PREP(TEGRA_GPCDMA_HIGH_ADDR_DST_PTR, (dest >> 32));
+         |                         ^~~~~~~~~~
+   In file included from drivers/dma/tegra186-gpc-dma.c:8:
+>> drivers/dma/tegra186-gpc-dma.c:791:74: warning: right shift count >= width of type [-Wshift-count-overflow]
+     791 |                         FIELD_PREP(TEGRA_GPCDMA_HIGH_ADDR_DST_PTR, (dest >> 32));
+         |                                                                          ^~
+   include/linux/bitfield.h:95:34: note: in definition of macro 'FIELD_PREP'
+      95 |                 ((typeof(_mask))(_val) << __bf_shf(_mask)) & (_mask);   \
+         |                                  ^~~~
+   In file included from <command-line>:
+   drivers/dma/tegra186-gpc-dma.c: In function 'tegra_dma_prep_dma_memcpy':
+   drivers/dma/tegra186-gpc-dma.c:858:65: warning: right shift count >= width of type [-Wshift-count-overflow]
+     858 |                 FIELD_PREP(TEGRA_GPCDMA_HIGH_ADDR_SRC_PTR, (src >> 32));
+         |                                                                 ^~
+   include/linux/compiler_types.h:315:23: note: in definition of macro '__compiletime_assert'
+     315 |                 if (!(condition))                                       \
+         |                       ^~~~~~~~~
+   include/linux/compiler_types.h:335:9: note: in expansion of macro '_compiletime_assert'
+     335 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |         ^~~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:39:37: note: in expansion of macro 'compiletime_assert'
+      39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+         |                                     ^~~~~~~~~~~~~~~~~~
+   include/linux/bitfield.h:49:17: note: in expansion of macro 'BUILD_BUG_ON_MSG'
+      49 |                 BUILD_BUG_ON_MSG(__builtin_constant_p(_val) ?           \
+         |                 ^~~~~~~~~~~~~~~~
+   include/linux/bitfield.h:94:17: note: in expansion of macro '__BF_FIELD_CHECK'
+      94 |                 __BF_FIELD_CHECK(_mask, 0ULL, _val, "FIELD_PREP: ");    \
+         |                 ^~~~~~~~~~~~~~~~
+   drivers/dma/tegra186-gpc-dma.c:858:17: note: in expansion of macro 'FIELD_PREP'
+     858 |                 FIELD_PREP(TEGRA_GPCDMA_HIGH_ADDR_SRC_PTR, (src >> 32));
+         |                 ^~~~~~~~~~
+   drivers/dma/tegra186-gpc-dma.c:858:65: warning: right shift count >= width of type [-Wshift-count-overflow]
+     858 |                 FIELD_PREP(TEGRA_GPCDMA_HIGH_ADDR_SRC_PTR, (src >> 32));
+         |                                                                 ^~
+   include/linux/compiler_types.h:315:23: note: in definition of macro '__compiletime_assert'
+     315 |                 if (!(condition))                                       \
+         |                       ^~~~~~~~~
+   include/linux/compiler_types.h:335:9: note: in expansion of macro '_compiletime_assert'
+     335 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |         ^~~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:39:37: note: in expansion of macro 'compiletime_assert'
+      39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+         |                                     ^~~~~~~~~~~~~~~~~~
+   include/linux/bitfield.h:49:17: note: in expansion of macro 'BUILD_BUG_ON_MSG'
+      49 |                 BUILD_BUG_ON_MSG(__builtin_constant_p(_val) ?           \
+         |                 ^~~~~~~~~~~~~~~~
+   include/linux/bitfield.h:94:17: note: in expansion of macro '__BF_FIELD_CHECK'
+      94 |                 __BF_FIELD_CHECK(_mask, 0ULL, _val, "FIELD_PREP: ");    \
+         |                 ^~~~~~~~~~~~~~~~
+   drivers/dma/tegra186-gpc-dma.c:858:17: note: in expansion of macro 'FIELD_PREP'
+     858 |                 FIELD_PREP(TEGRA_GPCDMA_HIGH_ADDR_SRC_PTR, (src >> 32));
+         |                 ^~~~~~~~~~
+   In file included from drivers/dma/tegra186-gpc-dma.c:8:
+   drivers/dma/tegra186-gpc-dma.c:858:65: warning: right shift count >= width of type [-Wshift-count-overflow]
+     858 |                 FIELD_PREP(TEGRA_GPCDMA_HIGH_ADDR_SRC_PTR, (src >> 32));
+         |                                                                 ^~
+   include/linux/bitfield.h:95:34: note: in definition of macro 'FIELD_PREP'
+      95 |                 ((typeof(_mask))(_val) << __bf_shf(_mask)) & (_mask);   \
+         |                                  ^~~~
+   In file included from <command-line>:
+   drivers/dma/tegra186-gpc-dma.c:860:66: warning: right shift count >= width of type [-Wshift-count-overflow]
+     860 |                 FIELD_PREP(TEGRA_GPCDMA_HIGH_ADDR_DST_PTR, (dest >> 32));
+         |                                                                  ^~
+   include/linux/compiler_types.h:315:23: note: in definition of macro '__compiletime_assert'
+     315 |                 if (!(condition))                                       \
+         |                       ^~~~~~~~~
+   include/linux/compiler_types.h:335:9: note: in expansion of macro '_compiletime_assert'
+     335 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |         ^~~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:39:37: note: in expansion of macro 'compiletime_assert'
+      39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+         |                                     ^~~~~~~~~~~~~~~~~~
+   include/linux/bitfield.h:49:17: note: in expansion of macro 'BUILD_BUG_ON_MSG'
+      49 |                 BUILD_BUG_ON_MSG(__builtin_constant_p(_val) ?           \
+         |                 ^~~~~~~~~~~~~~~~
+   include/linux/bitfield.h:94:17: note: in expansion of macro '__BF_FIELD_CHECK'
+      94 |                 __BF_FIELD_CHECK(_mask, 0ULL, _val, "FIELD_PREP: ");    \
+         |                 ^~~~~~~~~~~~~~~~
+   drivers/dma/tegra186-gpc-dma.c:860:17: note: in expansion of macro 'FIELD_PREP'
+     860 |                 FIELD_PREP(TEGRA_GPCDMA_HIGH_ADDR_DST_PTR, (dest >> 32));
+         |                 ^~~~~~~~~~
+   drivers/dma/tegra186-gpc-dma.c:860:66: warning: right shift count >= width of type [-Wshift-count-overflow]
+     860 |                 FIELD_PREP(TEGRA_GPCDMA_HIGH_ADDR_DST_PTR, (dest >> 32));
+         |                                                                  ^~
+   include/linux/compiler_types.h:315:23: note: in definition of macro '__compiletime_assert'
+     315 |                 if (!(condition))                                       \
+         |                       ^~~~~~~~~
+   include/linux/compiler_types.h:335:9: note: in expansion of macro '_compiletime_assert'
+     335 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |         ^~~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:39:37: note: in expansion of macro 'compiletime_assert'
+      39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+         |                                     ^~~~~~~~~~~~~~~~~~
+   include/linux/bitfield.h:49:17: note: in expansion of macro 'BUILD_BUG_ON_MSG'
+      49 |                 BUILD_BUG_ON_MSG(__builtin_constant_p(_val) ?           \
+         |                 ^~~~~~~~~~~~~~~~
+   include/linux/bitfield.h:94:17: note: in expansion of macro '__BF_FIELD_CHECK'
+      94 |                 __BF_FIELD_CHECK(_mask, 0ULL, _val, "FIELD_PREP: ");    \
+         |                 ^~~~~~~~~~~~~~~~
+   drivers/dma/tegra186-gpc-dma.c:860:17: note: in expansion of macro 'FIELD_PREP'
+     860 |                 FIELD_PREP(TEGRA_GPCDMA_HIGH_ADDR_DST_PTR, (dest >> 32));
+         |                 ^~~~~~~~~~
+   In file included from drivers/dma/tegra186-gpc-dma.c:8:
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+vim +791 drivers/dma/tegra186-gpc-dma.c
 
-Thanks,
-Mark
+   737	
+   738	static struct dma_async_tx_descriptor *
+   739	tegra_dma_prep_dma_memset(struct dma_chan *dc, dma_addr_t dest, int value,
+   740				  size_t len, unsigned long flags)
+   741	{
+   742		struct tegra_dma_channel *tdc = to_tegra_dma_chan(dc);
+   743		unsigned int max_dma_count = tdc->tdma->chip_data->max_dma_count;
+   744		struct tegra_dma_desc *dma_desc;
+   745		unsigned long csr, mc_seq;
+   746	
+   747		if ((len & 3) || (dest & 3) || len > max_dma_count) {
+   748			dev_err(tdc2dev(tdc),
+   749				"DMA length/memory address is not supported\n");
+   750			return NULL;
+   751		}
+   752	
+   753		/* Set dma mode to fixed pattern */
+   754		csr = TEGRA_GPCDMA_CSR_DMA_FIXED_PAT;
+   755		/* Enable once or continuous mode */
+   756		csr |= TEGRA_GPCDMA_CSR_ONCE;
+   757		/* Enable IRQ mask */
+   758		csr |= TEGRA_GPCDMA_CSR_IRQ_MASK;
+   759		/* Enable the dma interrupt */
+   760		if (flags & DMA_PREP_INTERRUPT)
+   761			csr |= TEGRA_GPCDMA_CSR_IE_EOC;
+   762		/* Configure default priority weight for the channel */
+   763		csr |= FIELD_PREP(TEGRA_GPCDMA_CSR_WEIGHT, 1);
+   764	
+   765		mc_seq =  tdc_read(tdc, TEGRA_GPCDMA_CHAN_MCSEQ);
+   766		/* retain stream-id and clean rest */
+   767		mc_seq &= TEGRA_GPCDMA_MCSEQ_STREAM_ID0_MASK;
+   768	
+   769		/* Set the address wrapping */
+   770		mc_seq |= FIELD_PREP(TEGRA_GPCDMA_MCSEQ_WRAP0,
+   771							TEGRA_GPCDMA_MCSEQ_WRAP_NONE);
+   772		mc_seq |= FIELD_PREP(TEGRA_GPCDMA_MCSEQ_WRAP1,
+   773							TEGRA_GPCDMA_MCSEQ_WRAP_NONE);
+   774	
+   775		/* Program outstanding MC requests */
+   776		mc_seq |= FIELD_PREP(TEGRA_GPCDMA_MCSEQ_REQ_COUNT, 1);
+   777		/* Set burst size */
+   778		mc_seq |= TEGRA_GPCDMA_MCSEQ_BURST_16;
+   779	
+   780		dma_desc = kzalloc(sizeof(*dma_desc), GFP_NOWAIT);
+   781		if (!dma_desc)
+   782			return NULL;
+   783	
+   784		dma_desc->bytes_requested = 0;
+   785		dma_desc->bytes_transferred = 0;
+   786	
+   787		dma_desc->bytes_requested += len;
+   788		tdc->ch_regs.src_ptr = 0;
+   789		tdc->ch_regs.dst_ptr = dest;
+   790		tdc->ch_regs.high_addr_ptr =
+ > 791				FIELD_PREP(TEGRA_GPCDMA_HIGH_ADDR_DST_PTR, (dest >> 32));
+   792		tdc->ch_regs.fixed_pattern = value;
+   793		/* Word count reg takes value as (N +1) words */
+   794		tdc->ch_regs.wcount = ((len - 4) >> 2);
+   795		tdc->ch_regs.csr = csr;
+   796		tdc->ch_regs.mmio_seq = 0;
+   797		tdc->ch_regs.mc_seq = mc_seq;
+   798	
+   799		tdc->dma_desc = dma_desc;
+   800	
+   801		return vchan_tx_prep(&tdc->vc, &dma_desc->vd, flags);
+   802	}
+   803	
+
+---
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
