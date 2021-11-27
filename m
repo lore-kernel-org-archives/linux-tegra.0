@@ -2,52 +2,52 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99C7EC4167B
-	for <linux-tegra@archiver.kernel.org>; Sat, 27 Nov 2021 14:30:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1694C4167E
+	for <linux-tegra@archiver.kernel.org>; Sat, 27 Nov 2021 14:30:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355559AbhK0Od6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 27 Nov 2021 09:33:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36918 "EHLO
+        id S1355523AbhK0Ody (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 27 Nov 2021 09:33:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36908 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1355058AbhK0Obv (ORCPT
+        with ESMTP id S1345937AbhK0Obu (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sat, 27 Nov 2021 09:31:51 -0500
-Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75EA0C06175E;
-        Sat, 27 Nov 2021 06:26:46 -0800 (PST)
-Received: by mail-lj1-x234.google.com with SMTP id u22so24595137lju.7;
-        Sat, 27 Nov 2021 06:26:46 -0800 (PST)
+        Sat, 27 Nov 2021 09:31:50 -0500
+Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8CDA8C06175D;
+        Sat, 27 Nov 2021 06:26:45 -0800 (PST)
+Received: by mail-lf1-x12d.google.com with SMTP id bu18so31657158lfb.0;
+        Sat, 27 Nov 2021 06:26:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=MVMeO5TsjpG7X103IJ0vtCcKisfNOPmQ/M/aYmMnN4k=;
-        b=pPhpTSNLK1J4Kqw9WoHHLWWJ50NlLUtfzYhEK38Rj4jCoi1vvASrL0VVW/ZPKv0tBO
-         CnpG88BupjH05BbX2Ms5t2cir9A5uH/TXYrtwprGrVXB+vZkPKM1x84qtumttgGQURgE
-         sqfs8P6FiTYmyrGHzG1AzS44xyDJX6faCBydWcWFfhxVDtT0MKPZ5FRc2NoQiwy8qSQB
-         ++7EF1+3gshiYsoX44/c795qe1cXYZJWS0ZofEAfB5Ukahlb+5uB0cayKbzoHJh0Riw1
-         WP1jbbk7kJqgT2HlJ7Lsq//cOSEAIIhzR7/RQ01XNbiM1GTARY6OJK0Fzw49IHm4NZT5
-         P3MQ==
+        bh=ARSimr4iZsMCsEeXtymIyYcjiDLOKfhPwInfMC9QD6U=;
+        b=T3oSYGURE4Bmx65MJ9SRAi5XQDnO6Ne+okodNluYJHMQsQsPF18CxXdPqvFpejpoBw
+         UfeDGQtimnV47hZcy6HgHluuX3hiH5+Mzqoo3kS2ZFb+fyTQhp3Nr71OAXHH/vS/kEmp
+         JDQaoepw7i8n+aWqm8KoqGCJbdpdgnhKlGvOgIdooeZkimLMFkpuPmhvObrsWSCFBoKC
+         7NUzeDQkKsN73OAWNat5SxU4ZRv7qLOReUa+KBA/PbM+L7iFXsUBxXEZ6ZeIt2Ulisi9
+         tlcrm39fFbCvb99w2p1gbHeAmNGNtDGhrUcEIl7gjK4dFgTRPyeBD08iLiXyMDqKw9p2
+         seXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=MVMeO5TsjpG7X103IJ0vtCcKisfNOPmQ/M/aYmMnN4k=;
-        b=EuffCjrsn0ORZJSlfivCZ+79nuoWpRR2ISTWhOQnciwuzj99elXXSt45mt/FLuoho0
-         nW11m2v9o6AcVVMDbLI5l4TThF7MRuHmb7vnfYzzdggONsyQhNhS5xg6+Jy625KY0Wub
-         uPelaYK3iV9AQUnPCrUVnBREfyzjTrhnK7g22iaAHbj8c+/SWZpdH+HgQeCeRqxApYV9
-         o9qpQpO6013n5kbBXcCPGP095CmWbpx9YSWuX6cUXEffJ3GxPG8T/RtCSLgWfy4YIYTx
-         sn4WdWNrZh40NU/YIZH6MqTKkyxLDmiC8gxeuVYQDl2n1tjZP0Qqn70AaxRoh9aRgorb
-         ZYqw==
-X-Gm-Message-State: AOAM531sTBg2w7Tq3T3h0aAdTXRZX+6Y2DDXZtbwiL8iy6yGAYyy67Tu
-        7dHrUdZJuA6+v6lkUdoPssU=
-X-Google-Smtp-Source: ABdhPJyvdMzCuUTbkmi/liPKZZXlKJP0I+2pXAuIwXf7cUcJDOQrU+0daPcxHuLQlVSQan8pHNOdOA==
-X-Received: by 2002:a2e:815a:: with SMTP id t26mr37372758ljg.79.1638023204837;
-        Sat, 27 Nov 2021 06:26:44 -0800 (PST)
+        bh=ARSimr4iZsMCsEeXtymIyYcjiDLOKfhPwInfMC9QD6U=;
+        b=zoa/f321fYBsHXGSV5m1RGcPM7bZ6lvE4UZYbbOQH1DGbI0PrAWXkG2sJiJ6gBHABz
+         49qqENskdBQh56Z+3ofNE4jvJK7sahlVoxMN2mGIUEB7+dEEUbjXRkmpQYiCGrq9X+qA
+         KlSwclKRPuJSGqGKyxyVy64RytCPStKoCWwUwbugUaOPmkeLDhKZD1TIUw7oUVEA0rUC
+         mRQ6PUarINOeb4ln/z+wnhDj9IRIRHvQt9Bt50UkV0Dmx2qH0fqHC/tzdxEy6TStJxsb
+         jho/tX6KMqaB7bO1c1YDqzgCT4O3wU+AsIhKKYfcY6Hhke1KqQ3SkImqD3LbYSSqt6rd
+         IX4A==
+X-Gm-Message-State: AOAM533ht7icZTPzCQGUY3XEhguhzAH7/Z186BvZ0iHw6Vt/58UdWGpP
+        S8/lduWpPBNBNKfbhhliWVo1gy+CUr4=
+X-Google-Smtp-Source: ABdhPJztK46DEdAQXeE/kG5b5aA8YJ+ulF+qj87o9xWdGdqecECXrZxGiEVr1jx5GncPG/DWKhdDYw==
+X-Received: by 2002:a05:6512:38ae:: with SMTP id o14mr34871588lft.288.1638023203630;
+        Sat, 27 Nov 2021 06:26:43 -0800 (PST)
 Received: from localhost.localdomain (94-29-48-99.dynamic.spd-mgts.ru. [94.29.48.99])
-        by smtp.gmail.com with ESMTPSA id t22sm812382ljg.83.2021.11.27.06.26.43
+        by smtp.gmail.com with ESMTPSA id t22sm812382ljg.83.2021.11.27.06.26.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 27 Nov 2021 06:26:44 -0800 (PST)
+        Sat, 27 Nov 2021 06:26:42 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -67,9 +67,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Thomas Graichen <thomas.graichen@gmail.com>
 Cc:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v3 13/14] ARM: tegra: nexus7: Drop clock-frequency from NFC node
-Date:   Sat, 27 Nov 2021 17:23:26 +0300
-Message-Id: <20211127142327.17692-14-digetx@gmail.com>
+Subject: [PATCH v3 12/14] ARM: tegra: Name clock and regulator nodes according to DT-schema
+Date:   Sat, 27 Nov 2021 17:23:25 +0300
+Message-Id: <20211127142327.17692-13-digetx@gmail.com>
 X-Mailer: git-send-email 2.33.1
 In-Reply-To: <20211127142327.17692-1-digetx@gmail.com>
 References: <20211127142327.17692-1-digetx@gmail.com>
@@ -81,40 +81,1531 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: David Heidelberg <david@ixit.cz>
 
-The clock-frequency property was never used and is deprecated now.
-Remove it from Nexus 7 device-tree.
+Name clocks and regulators according to DT-schema to fix warnings such as:
+
+arch/arm/boot/dts/tegra20-acer-a500-picasso.dt.yaml: /: clock@0: 'anyOf' conditional failed, one must be fixed:
+ 	'reg' is a required property
+ 	'ranges' is a required property
+ 	From schema: /home/runner/.local/lib/python3.8/site-packages/dtschema/schemas/root-node.yaml
 
 Signed-off-by: David Heidelberg <david@ixit.cz>
 ---
- arch/arm/boot/dts/tegra30-asus-nexus7-grouper.dtsi | 1 -
- arch/arm/boot/dts/tegra30-asus-nexus7-tilapia.dtsi | 2 --
- 2 files changed, 3 deletions(-)
+ arch/arm/boot/dts/tegra114-dalmore.dts        | 16 +++++------
+ arch/arm/boot/dts/tegra114-roth.dts           | 14 +++++-----
+ arch/arm/boot/dts/tegra114-tn7.dts            |  8 +++---
+ arch/arm/boot/dts/tegra124-jetson-tk1.dts     | 26 ++++++++---------
+ arch/arm/boot/dts/tegra124-nyan.dtsi          | 28 +++++++++----------
+ arch/arm/boot/dts/tegra124-venice2.dts        | 28 +++++++++----------
+ .../boot/dts/tegra20-acer-a500-picasso.dts    | 12 ++++----
+ arch/arm/boot/dts/tegra20-harmony.dts         | 16 +++++------
+ arch/arm/boot/dts/tegra20-medcom-wide.dts     |  8 +++---
+ arch/arm/boot/dts/tegra20-paz00.dts           |  6 ++--
+ arch/arm/boot/dts/tegra20-plutux.dts          |  8 +++---
+ arch/arm/boot/dts/tegra20-seaboard.dts        | 16 +++++------
+ arch/arm/boot/dts/tegra20-tamonten.dtsi       |  4 +--
+ arch/arm/boot/dts/tegra20-tec.dts             |  8 +++---
+ arch/arm/boot/dts/tegra20-trimslice.dts       | 12 ++++----
+ arch/arm/boot/dts/tegra20-ventana.dts         | 12 ++++----
+ .../tegra30-asus-nexus7-grouper-common.dtsi   | 10 +++----
+ ...egra30-asus-nexus7-grouper-maxim-pmic.dtsi |  4 +--
+ .../tegra30-asus-nexus7-grouper-ti-pmic.dtsi  |  2 +-
+ arch/arm/boot/dts/tegra30-beaver.dts          | 20 ++++++-------
+ arch/arm/boot/dts/tegra30-cardhu-a02.dts      | 12 ++++----
+ arch/arm/boot/dts/tegra30-cardhu-a04.dts      | 14 +++++-----
+ arch/arm/boot/dts/tegra30-cardhu.dtsi         | 28 +++++++++----------
+ 23 files changed, 156 insertions(+), 156 deletions(-)
 
-diff --git a/arch/arm/boot/dts/tegra30-asus-nexus7-grouper.dtsi b/arch/arm/boot/dts/tegra30-asus-nexus7-grouper.dtsi
-index a044dbd200a9..564cfcde21a9 100644
---- a/arch/arm/boot/dts/tegra30-asus-nexus7-grouper.dtsi
-+++ b/arch/arm/boot/dts/tegra30-asus-nexus7-grouper.dtsi
-@@ -137,7 +137,6 @@ i2c@7000c500 {
- 		nfc@28 {
- 			compatible = "nxp,pn544-i2c";
- 			reg = <0x28>;
--			clock-frequency = <100000>;
+diff --git a/arch/arm/boot/dts/tegra114-dalmore.dts b/arch/arm/boot/dts/tegra114-dalmore.dts
+index 7fd901f8d39a..d23050bfaba6 100644
+--- a/arch/arm/boot/dts/tegra114-dalmore.dts
++++ b/arch/arm/boot/dts/tegra114-dalmore.dts
+@@ -1151,7 +1151,7 @@ backlight: backlight {
+ 		default-brightness-level = <6>;
+ 	};
  
- 			interrupt-parent = <&gpio>;
- 			interrupts = <TEGRA_GPIO(X, 0) IRQ_TYPE_EDGE_RISING>;
-diff --git a/arch/arm/boot/dts/tegra30-asus-nexus7-tilapia.dtsi b/arch/arm/boot/dts/tegra30-asus-nexus7-tilapia.dtsi
-index a681ad51fddd..cd63e0ef7445 100644
---- a/arch/arm/boot/dts/tegra30-asus-nexus7-tilapia.dtsi
-+++ b/arch/arm/boot/dts/tegra30-asus-nexus7-tilapia.dtsi
-@@ -223,8 +223,6 @@ nfc@2a {
- 			compatible = "nxp,pn544-i2c";
- 			reg = <0x2a>;
+-	clk32k_in: clock@0 {
++	clk32k_in: clock-32k {
+ 		compatible = "fixed-clock";
+ 		clock-frequency = <32768>;
+ 		#clock-cells = <0>;
+@@ -1186,7 +1186,7 @@ volume_up {
+ 		};
+ 	};
  
--			clock-frequency = <100000>;
--
- 			interrupt-parent = <&gpio>;
- 			interrupts = <TEGRA_GPIO(S, 7) IRQ_TYPE_EDGE_RISING>;
+-	vdd_ac_bat_reg: regulator@0 {
++	vdd_ac_bat_reg: regulator-acbat {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_ac_bat";
+ 		regulator-min-microvolt = <5000000>;
+@@ -1194,7 +1194,7 @@ vdd_ac_bat_reg: regulator@0 {
+ 		regulator-always-on;
+ 	};
  
+-	dvdd_ts_reg: regulator@1 {
++	dvdd_ts_reg: regulator-ts {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "dvdd_ts";
+ 		regulator-min-microvolt = <1800000>;
+@@ -1203,7 +1203,7 @@ dvdd_ts_reg: regulator@1 {
+ 		gpio = <&gpio TEGRA_GPIO(H, 5) GPIO_ACTIVE_HIGH>;
+ 	};
+ 
+-	usb1_vbus_reg: regulator@3 {
++	usb1_vbus_reg: regulator-usb1 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "usb1_vbus";
+ 		regulator-min-microvolt = <5000000>;
+@@ -1214,7 +1214,7 @@ usb1_vbus_reg: regulator@3 {
+ 		vin-supply = <&tps65090_dcdc1_reg>;
+ 	};
+ 
+-	usb3_vbus_reg: regulator@4 {
++	usb3_vbus_reg: regulator-usb3 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "usb2_vbus";
+ 		regulator-min-microvolt = <5000000>;
+@@ -1225,7 +1225,7 @@ usb3_vbus_reg: regulator@4 {
+ 		vin-supply = <&tps65090_dcdc1_reg>;
+ 	};
+ 
+-	vdd_hdmi_reg: regulator@5 {
++	vdd_hdmi_reg: regulator-hdmi {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_hdmi_5v0";
+ 		regulator-min-microvolt = <5000000>;
+@@ -1233,7 +1233,7 @@ vdd_hdmi_reg: regulator@5 {
+ 		vin-supply = <&tps65090_dcdc1_reg>;
+ 	};
+ 
+-	vdd_cam_1v8_reg: regulator@6 {
++	vdd_cam_1v8_reg: regulator-cam {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_cam_1v8_reg";
+ 		regulator-min-microvolt = <1800000>;
+@@ -1242,7 +1242,7 @@ vdd_cam_1v8_reg: regulator@6 {
+ 		gpio = <&palmas_gpio 6 0>;
+ 	};
+ 
+-	vdd_5v0_hdmi: regulator@7 {
++	vdd_5v0_hdmi: regulator-hdmicon {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "VDD_5V0_HDMI_CON";
+ 		regulator-min-microvolt = <5000000>;
+diff --git a/arch/arm/boot/dts/tegra114-roth.dts b/arch/arm/boot/dts/tegra114-roth.dts
+index 07960171fabe..18521707ff5b 100644
+--- a/arch/arm/boot/dts/tegra114-roth.dts
++++ b/arch/arm/boot/dts/tegra114-roth.dts
+@@ -1016,7 +1016,7 @@ backlight: backlight {
+ 		enable-gpios = <&gpio TEGRA_GPIO(H, 2) GPIO_ACTIVE_HIGH>;
+ 	};
+ 
+-	clk32k_in: clock@0 {
++	clk32k_in: clock-32k {
+ 		compatible = "fixed-clock";
+ 		clock-frequency = <32768>;
+ 		#clock-cells = <0>;
+@@ -1045,7 +1045,7 @@ power {
+ 		};
+ 	};
+ 
+-	lcd_bl_en: regulator@0 {
++	lcd_bl_en: regulator-lcden {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "lcd_bl_en";
+ 		regulator-min-microvolt = <5000000>;
+@@ -1053,7 +1053,7 @@ lcd_bl_en: regulator@0 {
+ 		regulator-boot-on;
+ 	};
+ 
+-	vdd_lcd: regulator@1 {
++	vdd_lcd: regulator-lcd {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_lcd_1v8";
+ 		regulator-min-microvolt = <1800000>;
+@@ -1064,7 +1064,7 @@ vdd_lcd: regulator@1 {
+ 		regulator-boot-on;
+ 	};
+ 
+-	regulator@2 {
++	regulator-1v8ts {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_1v8_ts";
+ 		regulator-min-microvolt = <1800000>;
+@@ -1073,7 +1073,7 @@ regulator@2 {
+ 		regulator-boot-on;
+ 	};
+ 
+-	regulator@3 {
++	regulator-3v3ts {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_3v3_ts";
+ 		regulator-min-microvolt = <3300000>;
+@@ -1083,7 +1083,7 @@ regulator@3 {
+ 		regulator-boot-on;
+ 	};
+ 
+-	regulator@4 {
++	regulator-1v8com {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_1v8_com";
+ 		regulator-min-microvolt = <1800000>;
+@@ -1094,7 +1094,7 @@ regulator@4 {
+ 		regulator-boot-on;
+ 	};
+ 
+-	regulator@5 {
++	regulator-3v3com {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_3v3_com";
+ 		regulator-min-microvolt = <3300000>;
+diff --git a/arch/arm/boot/dts/tegra114-tn7.dts b/arch/arm/boot/dts/tegra114-tn7.dts
+index 745d234b105b..0534247458f0 100644
+--- a/arch/arm/boot/dts/tegra114-tn7.dts
++++ b/arch/arm/boot/dts/tegra114-tn7.dts
+@@ -273,7 +273,7 @@ backlight: backlight {
+ 		power-supply = <&lcd_bl_en>;
+ 	};
+ 
+-	clk32k_in: clock@0 {
++	clk32k_in: clock-32k {
+ 		compatible = "fixed-clock";
+ 		clock-frequency = <32768>;
+ 		#clock-cells = <0>;
+@@ -303,7 +303,7 @@ volume_up {
+ 	};
+ 
+ 	/* FIXME: output of BQ24192 */
+-	vs_sys: regulator@0 {
++	vs_sys: regulator-vs {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "VS_SYS";
+ 		regulator-min-microvolt = <4200000>;
+@@ -312,7 +312,7 @@ vs_sys: regulator@0 {
+ 		regulator-boot-on;
+ 	};
+ 
+-	lcd_bl_en: regulator@1 {
++	lcd_bl_en: regulator-lcden {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "VDD_LCD_BL";
+ 		regulator-min-microvolt = <16500000>;
+@@ -323,7 +323,7 @@ lcd_bl_en: regulator@1 {
+ 		regulator-boot-on;
+ 	};
+ 
+-	vdd_lcd: regulator@2 {
++	vdd_lcd: regulator-lcd {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "VD_LCD_1V8";
+ 		regulator-min-microvolt = <1800000>;
+diff --git a/arch/arm/boot/dts/tegra124-jetson-tk1.dts b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
+index 35ab296408e1..094f94a627b2 100644
+--- a/arch/arm/boot/dts/tegra124-jetson-tk1.dts
++++ b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
+@@ -1868,7 +1868,7 @@ usb-phy@7d008000 {
+ 		vbus-supply = <&vdd_usb3_vbus>;
+ 	};
+ 
+-	clk32k_in: clock@0 {
++	clk32k_in: clock-32k {
+ 		compatible = "fixed-clock";
+ 		clock-frequency = <32768>;
+ 		#clock-cells = <0>;
+@@ -1892,7 +1892,7 @@ power {
+ 		};
+ 	};
+ 
+-	vdd_mux: regulator@0 {
++	vdd_mux: regulator-mux {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+VDD_MUX";
+ 		regulator-min-microvolt = <12000000>;
+@@ -1901,7 +1901,7 @@ vdd_mux: regulator@0 {
+ 		regulator-boot-on;
+ 	};
+ 
+-	vdd_5v0_sys: regulator@1 {
++	vdd_5v0_sys: regulator-5v0sys {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+5V_SYS";
+ 		regulator-min-microvolt = <5000000>;
+@@ -1911,7 +1911,7 @@ vdd_5v0_sys: regulator@1 {
+ 		vin-supply = <&vdd_mux>;
+ 	};
+ 
+-	vdd_3v3_sys: regulator@2 {
++	vdd_3v3_sys: regulator-3v3sys {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+3.3V_SYS";
+ 		regulator-min-microvolt = <3300000>;
+@@ -1921,7 +1921,7 @@ vdd_3v3_sys: regulator@2 {
+ 		vin-supply = <&vdd_mux>;
+ 	};
+ 
+-	vdd_3v3_run: regulator@3 {
++	vdd_3v3_run: regulator-3v3run {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+3.3V_RUN";
+ 		regulator-min-microvolt = <3300000>;
+@@ -1933,7 +1933,7 @@ vdd_3v3_run: regulator@3 {
+ 		vin-supply = <&vdd_3v3_sys>;
+ 	};
+ 
+-	vdd_3v3_hdmi: regulator@4 {
++	vdd_3v3_hdmi: regulator-3v3hdmi {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+3.3V_AVDD_HDMI_AP_GATED";
+ 		regulator-min-microvolt = <3300000>;
+@@ -1941,7 +1941,7 @@ vdd_3v3_hdmi: regulator@4 {
+ 		vin-supply = <&vdd_3v3_run>;
+ 	};
+ 
+-	vdd_usb1_vbus: regulator@5 {
++	vdd_usb1_vbus: regulator-usb1 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+USB0_VBUS_SW";
+ 		regulator-min-microvolt = <5000000>;
+@@ -1952,7 +1952,7 @@ vdd_usb1_vbus: regulator@5 {
+ 		vin-supply = <&vdd_5v0_sys>;
+ 	};
+ 
+-	vdd_usb3_vbus: regulator@6 {
++	vdd_usb3_vbus: regulator-usb3 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+5V_USB_HS";
+ 		regulator-min-microvolt = <5000000>;
+@@ -1963,7 +1963,7 @@ vdd_usb3_vbus: regulator@6 {
+ 		vin-supply = <&vdd_5v0_sys>;
+ 	};
+ 
+-	vdd_3v3_lp0: regulator@7 {
++	vdd_3v3_lp0: regulator-lp0 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+3.3V_LP0";
+ 		regulator-min-microvolt = <3300000>;
+@@ -1975,7 +1975,7 @@ vdd_3v3_lp0: regulator@7 {
+ 		vin-supply = <&vdd_3v3_sys>;
+ 	};
+ 
+-	vdd_hdmi_pll: regulator@8 {
++	vdd_hdmi_pll: regulator-hdmipll {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+1.05V_RUN_AVDD_HDMI_PLL";
+ 		regulator-min-microvolt = <1050000>;
+@@ -1984,7 +1984,7 @@ vdd_hdmi_pll: regulator@8 {
+ 		vin-supply = <&vdd_1v05_run>;
+ 	};
+ 
+-	vdd_5v0_hdmi: regulator@9 {
++	vdd_5v0_hdmi: regulator-hdmicon {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+5V_HDMI_CON";
+ 		regulator-min-microvolt = <5000000>;
+@@ -1995,7 +1995,7 @@ vdd_5v0_hdmi: regulator@9 {
+ 	};
+ 
+ 	/* Molex power connector */
+-	vdd_5v0_sata: regulator@10 {
++	vdd_5v0_sata: regulator-5v0sata {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+5V_SATA";
+ 		regulator-min-microvolt = <5000000>;
+@@ -2005,7 +2005,7 @@ vdd_5v0_sata: regulator@10 {
+ 		vin-supply = <&vdd_5v0_sys>;
+ 	};
+ 
+-	vdd_12v0_sata: regulator@11 {
++	vdd_12v0_sata: regulator-12v0sata {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+12V_SATA";
+ 		regulator-min-microvolt = <12000000>;
+diff --git a/arch/arm/boot/dts/tegra124-nyan.dtsi b/arch/arm/boot/dts/tegra124-nyan.dtsi
+index 63a81270300a..2d045d1a9bcf 100644
+--- a/arch/arm/boot/dts/tegra124-nyan.dtsi
++++ b/arch/arm/boot/dts/tegra124-nyan.dtsi
+@@ -582,7 +582,7 @@ backlight: backlight {
+ 			 256>;
+ 	};
+ 
+-	clk32k_in: clock@0 {
++	clk32k_in: clock-32k {
+ 		compatible = "fixed-clock";
+ 		clock-frequency = <32768>;
+ 		#clock-cells = <0>;
+@@ -615,7 +615,7 @@ power {
+ 		};
+ 	};
+ 
+-	vdd_mux: regulator@0 {
++	vdd_mux: regulator-mux {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+VDD_MUX";
+ 		regulator-min-microvolt = <12000000>;
+@@ -624,7 +624,7 @@ vdd_mux: regulator@0 {
+ 		regulator-boot-on;
+ 	};
+ 
+-	vdd_5v0_sys: regulator@1 {
++	vdd_5v0_sys: regulator-5v0sys {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+5V_SYS";
+ 		regulator-min-microvolt = <5000000>;
+@@ -634,7 +634,7 @@ vdd_5v0_sys: regulator@1 {
+ 		vin-supply = <&vdd_mux>;
+ 	};
+ 
+-	vdd_3v3_sys: regulator@2 {
++	vdd_3v3_sys: regulator-3v3sys {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+3.3V_SYS";
+ 		regulator-min-microvolt = <3300000>;
+@@ -644,7 +644,7 @@ vdd_3v3_sys: regulator@2 {
+ 		vin-supply = <&vdd_mux>;
+ 	};
+ 
+-	vdd_3v3_run: regulator@3 {
++	vdd_3v3_run: regulator-3v3run {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+3.3V_RUN";
+ 		regulator-min-microvolt = <3300000>;
+@@ -656,7 +656,7 @@ vdd_3v3_run: regulator@3 {
+ 		vin-supply = <&vdd_3v3_sys>;
+ 	};
+ 
+-	vdd_3v3_hdmi: regulator@4 {
++	vdd_3v3_hdmi: regulator-3v3hdmi {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+3.3V_AVDD_HDMI_AP_GATED";
+ 		regulator-min-microvolt = <3300000>;
+@@ -664,7 +664,7 @@ vdd_3v3_hdmi: regulator@4 {
+ 		vin-supply = <&vdd_3v3_run>;
+ 	};
+ 
+-	vdd_led: regulator@5 {
++	vdd_led: regulator-led {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+VDD_LED";
+ 		gpio = <&gpio TEGRA_GPIO(P, 2) GPIO_ACTIVE_HIGH>;
+@@ -672,7 +672,7 @@ vdd_led: regulator@5 {
+ 		vin-supply = <&vdd_mux>;
+ 	};
+ 
+-	vdd_5v0_ts: regulator@6 {
++	vdd_5v0_ts: regulator-ts {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+5V_VDD_TS_SW";
+ 		regulator-min-microvolt = <5000000>;
+@@ -683,7 +683,7 @@ vdd_5v0_ts: regulator@6 {
+ 		vin-supply = <&vdd_5v0_sys>;
+ 	};
+ 
+-	vdd_usb1_vbus: regulator@7 {
++	vdd_usb1_vbus: regulator-usb1 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+5V_USB_HS";
+ 		regulator-min-microvolt = <5000000>;
+@@ -694,7 +694,7 @@ vdd_usb1_vbus: regulator@7 {
+ 		vin-supply = <&vdd_5v0_sys>;
+ 	};
+ 
+-	vdd_usb3_vbus: regulator@8 {
++	vdd_usb3_vbus: regulator-usb3 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+5V_USB_SS";
+ 		regulator-min-microvolt = <5000000>;
+@@ -705,7 +705,7 @@ vdd_usb3_vbus: regulator@8 {
+ 		vin-supply = <&vdd_5v0_sys>;
+ 	};
+ 
+-	vdd_3v3_panel: regulator@9 {
++	vdd_3v3_panel: regulator-panel {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+3.3V_PANEL";
+ 		regulator-min-microvolt = <3300000>;
+@@ -715,7 +715,7 @@ vdd_3v3_panel: regulator@9 {
+ 		vin-supply = <&vdd_3v3_run>;
+ 	};
+ 
+-	vdd_3v3_lp0: regulator@10 {
++	vdd_3v3_lp0: regulator-lp0 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+3.3V_LP0";
+ 		regulator-min-microvolt = <3300000>;
+@@ -730,7 +730,7 @@ vdd_3v3_lp0: regulator@10 {
+ 		vin-supply = <&vdd_3v3_sys>;
+ 	};
+ 
+-	vdd_hdmi_pll: regulator@11 {
++	vdd_hdmi_pll: regulator-hdmipll {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+1.05V_RUN_AVDD_HDMI_PLL";
+ 		regulator-min-microvolt = <1050000>;
+@@ -739,7 +739,7 @@ vdd_hdmi_pll: regulator@11 {
+ 		vin-supply = <&vdd_1v05_run>;
+ 	};
+ 
+-	vdd_5v0_hdmi: regulator@12 {
++	vdd_5v0_hdmi: regulator-hdmicon {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+5V_HDMI_CON";
+ 		regulator-min-microvolt = <5000000>;
+diff --git a/arch/arm/boot/dts/tegra124-venice2.dts b/arch/arm/boot/dts/tegra124-venice2.dts
+index e6b54ac1ebd1..457b8aada1f8 100644
+--- a/arch/arm/boot/dts/tegra124-venice2.dts
++++ b/arch/arm/boot/dts/tegra124-venice2.dts
+@@ -1061,7 +1061,7 @@ backlight: backlight {
+ 		default-brightness-level = <6>;
+ 	};
+ 
+-	clk32k_in: clock@0 {
++	clk32k_in: clock-32k {
+ 		compatible = "fixed-clock";
+ 		clock-frequency = <32768>;
+ 		#clock-cells = <0>;
+@@ -1086,7 +1086,7 @@ panel: panel {
+ 		ddc-i2c-bus = <&dpaux>;
+ 	};
+ 
+-	vdd_mux: regulator@0 {
++	vdd_mux: regulator-mux {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+VDD_MUX";
+ 		regulator-min-microvolt = <12000000>;
+@@ -1095,7 +1095,7 @@ vdd_mux: regulator@0 {
+ 		regulator-boot-on;
+ 	};
+ 
+-	vdd_5v0_sys: regulator@1 {
++	vdd_5v0_sys: regulator-5v0sys {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+5V_SYS";
+ 		regulator-min-microvolt = <5000000>;
+@@ -1105,7 +1105,7 @@ vdd_5v0_sys: regulator@1 {
+ 		vin-supply = <&vdd_mux>;
+ 	};
+ 
+-	vdd_3v3_sys: regulator@2 {
++	vdd_3v3_sys: regulator-3v3sys {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+3.3V_SYS";
+ 		regulator-min-microvolt = <3300000>;
+@@ -1115,7 +1115,7 @@ vdd_3v3_sys: regulator@2 {
+ 		vin-supply = <&vdd_mux>;
+ 	};
+ 
+-	vdd_3v3_run: regulator@3 {
++	vdd_3v3_run: regulator-3v3run {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+3.3V_RUN";
+ 		regulator-min-microvolt = <3300000>;
+@@ -1127,7 +1127,7 @@ vdd_3v3_run: regulator@3 {
+ 		vin-supply = <&vdd_3v3_sys>;
+ 	};
+ 
+-	vdd_3v3_hdmi: regulator@4 {
++	vdd_3v3_hdmi: regulator-hdmi {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+3.3V_AVDD_HDMI_AP_GATED";
+ 		regulator-min-microvolt = <3300000>;
+@@ -1135,7 +1135,7 @@ vdd_3v3_hdmi: regulator@4 {
+ 		vin-supply = <&vdd_3v3_run>;
+ 	};
+ 
+-	vdd_led: regulator@5 {
++	vdd_led: regulator-led {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+VDD_LED";
+ 		regulator-min-microvolt = <3300000>;
+@@ -1145,7 +1145,7 @@ vdd_led: regulator@5 {
+ 		vin-supply = <&vdd_mux>;
+ 	};
+ 
+-	vdd_5v0_ts: regulator@6 {
++	vdd_5v0_ts: regulator-ts {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+5V_VDD_TS_SW";
+ 		regulator-min-microvolt = <5000000>;
+@@ -1156,7 +1156,7 @@ vdd_5v0_ts: regulator@6 {
+ 		vin-supply = <&vdd_5v0_sys>;
+ 	};
+ 
+-	vdd_usb1_vbus: regulator@7 {
++	vdd_usb1_vbus: regulator-usb1 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+5V_USB_HS";
+ 		regulator-min-microvolt = <5000000>;
+@@ -1167,7 +1167,7 @@ vdd_usb1_vbus: regulator@7 {
+ 		vin-supply = <&vdd_5v0_sys>;
+ 	};
+ 
+-	vdd_usb3_vbus: regulator@8 {
++	vdd_usb3_vbus: regulator-usb3 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+5V_USB_SS";
+ 		regulator-min-microvolt = <5000000>;
+@@ -1178,7 +1178,7 @@ vdd_usb3_vbus: regulator@8 {
+ 		vin-supply = <&vdd_5v0_sys>;
+ 	};
+ 
+-	vdd_3v3_panel: regulator@9 {
++	vdd_3v3_panel: regulator-panel {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+3.3V_PANEL";
+ 		regulator-min-microvolt = <3300000>;
+@@ -1188,7 +1188,7 @@ vdd_3v3_panel: regulator@9 {
+ 		vin-supply = <&vdd_3v3_run>;
+ 	};
+ 
+-	vdd_3v3_lp0: regulator@10 {
++	vdd_3v3_lp0: regulator-lp0 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+3.3V_LP0";
+ 		regulator-min-microvolt = <3300000>;
+@@ -1203,7 +1203,7 @@ vdd_3v3_lp0: regulator@10 {
+ 		vin-supply = <&vdd_3v3_sys>;
+ 	};
+ 
+-	vdd_hdmi_pll: regulator@11 {
++	vdd_hdmi_pll: regulator-hdmipll {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+1.05V_RUN_AVDD_HDMI_PLL";
+ 		regulator-min-microvolt = <1050000>;
+@@ -1212,7 +1212,7 @@ vdd_hdmi_pll: regulator@11 {
+ 		vin-supply = <&vdd_1v05_run>;
+ 	};
+ 
+-	vdd_5v0_hdmi: regulator@12 {
++	vdd_5v0_hdmi: regulator-hdmicon {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+5V_HDMI_CON";
+ 		regulator-min-microvolt = <5000000>;
+diff --git a/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts b/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts
+index 23d3f8daab23..2e6340e92fe1 100644
+--- a/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts
++++ b/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts
+@@ -827,7 +827,7 @@ bat1010: battery-2s1p {
+ 	};
+ 
+ 	/* PMIC has a built-in 32KHz oscillator which is used by PMC */
+-	clk32k_in: clock@0 {
++	clk32k_in: clock-32k-in {
+ 		compatible = "fixed-clock";
+ 		#clock-cells = <0>;
+ 		clock-frequency = <32768>;
+@@ -839,7 +839,7 @@ clk32k_in: clock@0 {
+ 	 * oscillator is used as a reference clock-source by the
+ 	 * Azurewave WiFi/BT module.
+ 	 */
+-	rtc_32k_wifi: clock@1 {
++	rtc_32k_wifi: clock-32k-wifi {
+ 		compatible = "fixed-clock";
+ 		#clock-cells = <0>;
+ 		clock-frequency = <32768>;
+@@ -964,7 +964,7 @@ lvds_encoder_output: endpoint {
+ 		};
+ 	};
+ 
+-	vdd_5v0_sys: regulator@0 {
++	vdd_5v0_sys: regulator-5v0 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_5v0";
+ 		regulator-min-microvolt = <5000000>;
+@@ -972,7 +972,7 @@ vdd_5v0_sys: regulator@0 {
+ 		regulator-always-on;
+ 	};
+ 
+-	vdd_3v3_sys: regulator@1 {
++	vdd_3v3_sys: regulator-3v3 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_3v3_vs";
+ 		regulator-min-microvolt = <3300000>;
+@@ -981,7 +981,7 @@ vdd_3v3_sys: regulator@1 {
+ 		vin-supply = <&vdd_5v0_sys>;
+ 	};
+ 
+-	vdd_1v8_sys: regulator@2 {
++	vdd_1v8_sys: regulator-1v8 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_1v8_vs";
+ 		regulator-min-microvolt = <1800000>;
+@@ -990,7 +990,7 @@ vdd_1v8_sys: regulator@2 {
+ 		vin-supply = <&vdd_5v0_sys>;
+ 	};
+ 
+-	vdd_pnl: regulator@3 {
++	vdd_pnl: regulator-panel {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_panel";
+ 		regulator-min-microvolt = <3300000>;
+diff --git a/arch/arm/boot/dts/tegra20-harmony.dts b/arch/arm/boot/dts/tegra20-harmony.dts
+index ae4312eedcbd..a8494378c382 100644
+--- a/arch/arm/boot/dts/tegra20-harmony.dts
++++ b/arch/arm/boot/dts/tegra20-harmony.dts
+@@ -640,7 +640,7 @@ backlight: backlight {
+ 		default-brightness-level = <6>;
+ 	};
+ 
+-	clk32k_in: clock@0 {
++	clk32k_in: clock-32k {
+ 		compatible = "fixed-clock";
+ 		clock-frequency = <32768>;
+ 		#clock-cells = <0>;
+@@ -666,7 +666,7 @@ panel: panel {
+ 		backlight = <&backlight>;
+ 	};
+ 
+-	vdd_5v0_reg: regulator@0 {
++	vdd_5v0_reg: regulator-5v0 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_5v0";
+ 		regulator-min-microvolt = <5000000>;
+@@ -674,7 +674,7 @@ vdd_5v0_reg: regulator@0 {
+ 		regulator-always-on;
+ 	};
+ 
+-	regulator@1 {
++	regulator-1v5 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_1v5";
+ 		regulator-min-microvolt = <1500000>;
+@@ -682,7 +682,7 @@ regulator@1 {
+ 		gpio = <&pmic 0 GPIO_ACTIVE_HIGH>;
+ 	};
+ 
+-	regulator@2 {
++	regulator-1v2 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_1v2";
+ 		regulator-min-microvolt = <1200000>;
+@@ -691,7 +691,7 @@ regulator@2 {
+ 		enable-active-high;
+ 	};
+ 
+-	pci_vdd_reg: regulator@3 {
++	pci_vdd_reg: regulator-1v05 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_1v05";
+ 		regulator-min-microvolt = <1050000>;
+@@ -700,7 +700,7 @@ pci_vdd_reg: regulator@3 {
+ 		enable-active-high;
+ 	};
+ 
+-	vdd_pnl_reg: regulator@4 {
++	vdd_pnl_reg: regulator-pn1 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_pnl";
+ 		regulator-min-microvolt = <2800000>;
+@@ -709,7 +709,7 @@ vdd_pnl_reg: regulator@4 {
+ 		enable-active-high;
+ 	};
+ 
+-	vdd_bl_reg: regulator@5 {
++	vdd_bl_reg: regulator-bl {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_bl";
+ 		regulator-min-microvolt = <2800000>;
+@@ -718,7 +718,7 @@ vdd_bl_reg: regulator@5 {
+ 		enable-active-high;
+ 	};
+ 
+-	vdd_5v0_hdmi: regulator@6 {
++	vdd_5v0_hdmi: regulator-hdmi {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "VDDIO_HDMI";
+ 		regulator-min-microvolt = <5000000>;
+diff --git a/arch/arm/boot/dts/tegra20-medcom-wide.dts b/arch/arm/boot/dts/tegra20-medcom-wide.dts
+index b31c9bca16e6..cb6199d7d224 100644
+--- a/arch/arm/boot/dts/tegra20-medcom-wide.dts
++++ b/arch/arm/boot/dts/tegra20-medcom-wide.dts
+@@ -92,7 +92,7 @@ sound {
+ 		clock-names = "pll_a", "pll_a_out0", "mclk";
+ 	};
+ 
+-	vcc_24v_reg: regulator@100 {
++	vcc_24v_reg: regulator-24v0 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vcc_24v";
+ 		regulator-min-microvolt = <24000000>;
+@@ -100,7 +100,7 @@ vcc_24v_reg: regulator@100 {
+ 		regulator-always-on;
+ 	};
+ 
+-	vdd_5v0_reg: regulator@101 {
++	vdd_5v0_reg: regulator-5v0 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_5v0";
+ 		vin-supply = <&vcc_24v_reg>;
+@@ -109,7 +109,7 @@ vdd_5v0_reg: regulator@101 {
+ 		regulator-always-on;
+ 	};
+ 
+-	vdd_3v3_reg: regulator@102 {
++	vdd_3v3_reg: regulator-3v3 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_3v3";
+ 		vin-supply = <&vcc_24v_reg>;
+@@ -118,7 +118,7 @@ vdd_3v3_reg: regulator@102 {
+ 		regulator-always-on;
+ 	};
+ 
+-	vdd_1v8_reg: regulator@103 {
++	vdd_1v8_reg: regulator-1v8 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_1v8";
+ 		vin-supply = <&vdd_3v3_reg>;
+diff --git a/arch/arm/boot/dts/tegra20-paz00.dts b/arch/arm/boot/dts/tegra20-paz00.dts
+index 5b38b0606f99..46d81d703548 100644
+--- a/arch/arm/boot/dts/tegra20-paz00.dts
++++ b/arch/arm/boot/dts/tegra20-paz00.dts
+@@ -575,7 +575,7 @@ backlight: backlight {
+ 		default-brightness-level = <10>;
+ 	};
+ 
+-	clk32k_in: clock@0 {
++	clk32k_in: clock-32k {
+ 		compatible = "fixed-clock";
+ 		clock-frequency = <32768>;
+ 		#clock-cells = <0>;
+@@ -612,7 +612,7 @@ panel: panel {
+ 		backlight = <&backlight>;
+ 	};
+ 
+-	p5valw_reg: regulator@0 {
++	p5valw_reg: regulator-5v0alw {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+5valw";
+ 		regulator-min-microvolt = <5000000>;
+@@ -620,7 +620,7 @@ p5valw_reg: regulator@0 {
+ 		regulator-always-on;
+ 	};
+ 
+-	vdd_pnl_reg: regulator@1 {
++	vdd_pnl_reg: regulator-3v0 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+3VS,vdd_pnl";
+ 		regulator-min-microvolt = <3300000>;
+diff --git a/arch/arm/boot/dts/tegra20-plutux.dts b/arch/arm/boot/dts/tegra20-plutux.dts
+index 5811b7006a9b..71a8236491df 100644
+--- a/arch/arm/boot/dts/tegra20-plutux.dts
++++ b/arch/arm/boot/dts/tegra20-plutux.dts
+@@ -60,7 +60,7 @@ sound {
+ 		clock-names = "pll_a", "pll_a_out0", "mclk";
+ 	};
+ 
+-	vcc_24v_reg: regulator@100 {
++	vcc_24v_reg: regulator-24v0 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vcc_24v";
+ 		regulator-min-microvolt = <24000000>;
+@@ -68,7 +68,7 @@ vcc_24v_reg: regulator@100 {
+ 		regulator-always-on;
+ 	};
+ 
+-	vdd_5v0_reg: regulator@101 {
++	vdd_5v0_reg: regulator-5v0 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_5v0";
+ 		vin-supply = <&vcc_24v_reg>;
+@@ -77,7 +77,7 @@ vdd_5v0_reg: regulator@101 {
+ 		regulator-always-on;
+ 	};
+ 
+-	vdd_3v3_reg: regulator@102 {
++	vdd_3v3_reg: regulator-3v3 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_3v3";
+ 		vin-supply = <&vcc_24v_reg>;
+@@ -86,7 +86,7 @@ vdd_3v3_reg: regulator@102 {
+ 		regulator-always-on;
+ 	};
+ 
+-	vdd_1v8_reg: regulator@103 {
++	vdd_1v8_reg: regulator-1v8 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_1v8";
+ 		vin-supply = <&vdd_3v3_reg>;
+diff --git a/arch/arm/boot/dts/tegra20-seaboard.dts b/arch/arm/boot/dts/tegra20-seaboard.dts
+index 92d494b8c3d2..ca7adeb1fdd9 100644
+--- a/arch/arm/boot/dts/tegra20-seaboard.dts
++++ b/arch/arm/boot/dts/tegra20-seaboard.dts
+@@ -792,7 +792,7 @@ backlight: backlight {
+ 		default-brightness-level = <6>;
+ 	};
+ 
+-	clk32k_in: clock@0 {
++	clk32k_in: clock-32k {
+ 		compatible = "fixed-clock";
+ 		clock-frequency = <32768>;
+ 		#clock-cells = <0>;
+@@ -828,7 +828,7 @@ panel: panel {
+ 		ddc-i2c-bus = <&lvds_ddc>;
+ 	};
+ 
+-	vdd_5v0_reg: regulator@0 {
++	vdd_5v0_reg: regulator-5v0 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_5v0";
+ 		regulator-min-microvolt = <5000000>;
+@@ -836,7 +836,7 @@ vdd_5v0_reg: regulator@0 {
+ 		regulator-always-on;
+ 	};
+ 
+-	regulator@1 {
++	regulator-1v5 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_1v5";
+ 		regulator-min-microvolt = <1500000>;
+@@ -844,7 +844,7 @@ regulator@1 {
+ 		gpio = <&pmic 0 GPIO_ACTIVE_HIGH>;
+ 	};
+ 
+-	regulator@2 {
++	regulator-1v2 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_1v2";
+ 		regulator-min-microvolt = <1200000>;
+@@ -853,7 +853,7 @@ regulator@2 {
+ 		enable-active-high;
+ 	};
+ 
+-	vbus_reg: regulator@3 {
++	vbus_reg: regulator-vbus {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_vbus_wup1";
+ 		regulator-min-microvolt = <5000000>;
+@@ -864,7 +864,7 @@ vbus_reg: regulator@3 {
+ 		regulator-boot-on;
+ 	};
+ 
+-	vdd_pnl_reg: regulator@4 {
++	vdd_pnl_reg: regulator-pnl {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_pnl";
+ 		regulator-min-microvolt = <2800000>;
+@@ -873,7 +873,7 @@ vdd_pnl_reg: regulator@4 {
+ 		enable-active-high;
+ 	};
+ 
+-	vdd_bl_reg: regulator@5 {
++	vdd_bl_reg: regulator-bl {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_bl";
+ 		regulator-min-microvolt = <2800000>;
+@@ -882,7 +882,7 @@ vdd_bl_reg: regulator@5 {
+ 		enable-active-high;
+ 	};
+ 
+-	vdd_hdmi: regulator@6 {
++	vdd_hdmi: regulator-hdmi {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "VDDIO_HDMI";
+ 		regulator-min-microvolt = <5000000>;
+diff --git a/arch/arm/boot/dts/tegra20-tamonten.dtsi b/arch/arm/boot/dts/tegra20-tamonten.dtsi
+index dd4d506683de..2ad56f84bb62 100644
+--- a/arch/arm/boot/dts/tegra20-tamonten.dtsi
++++ b/arch/arm/boot/dts/tegra20-tamonten.dtsi
+@@ -502,13 +502,13 @@ mmc@c8000600 {
+ 		status = "okay";
+ 	};
+ 
+-	clk32k_in: clock@0 {
++	clk32k_in: clock-32k {
+ 		compatible = "fixed-clock";
+ 		clock-frequency = <32768>;
+ 		#clock-cells = <0>;
+ 	};
+ 
+-	pci_vdd_reg: regulator@1 {
++	pci_vdd_reg: regulator-1v05 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_1v05";
+ 		regulator-min-microvolt = <1050000>;
+diff --git a/arch/arm/boot/dts/tegra20-tec.dts b/arch/arm/boot/dts/tegra20-tec.dts
+index 10ff09d86efa..4f41c74384b2 100644
+--- a/arch/arm/boot/dts/tegra20-tec.dts
++++ b/arch/arm/boot/dts/tegra20-tec.dts
+@@ -69,7 +69,7 @@ sound {
+ 		clock-names = "pll_a", "pll_a_out0", "mclk";
+ 	};
+ 
+-	vcc_24v_reg: regulator@100 {
++	vcc_24v_reg: regulator-24v {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vcc_24v";
+ 		regulator-min-microvolt = <24000000>;
+@@ -77,7 +77,7 @@ vcc_24v_reg: regulator@100 {
+ 		regulator-always-on;
+ 	};
+ 
+-	vdd_5v0_reg: regulator@101 {
++	vdd_5v0_reg: regulator-5v0 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_5v0";
+ 		vin-supply = <&vcc_24v_reg>;
+@@ -86,7 +86,7 @@ vdd_5v0_reg: regulator@101 {
+ 		regulator-always-on;
+ 	};
+ 
+-	vdd_3v3_reg: regulator@102 {
++	vdd_3v3_reg: regulator-3v3 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_3v3";
+ 		vin-supply = <&vcc_24v_reg>;
+@@ -95,7 +95,7 @@ vdd_3v3_reg: regulator@102 {
+ 		regulator-always-on;
+ 	};
+ 
+-	vdd_1v8_reg: regulator@103 {
++	vdd_1v8_reg: regulator-1v8 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_1v8";
+ 		vin-supply = <&vdd_3v3_reg>;
+diff --git a/arch/arm/boot/dts/tegra20-trimslice.dts b/arch/arm/boot/dts/tegra20-trimslice.dts
+index 4bc87bc0c2a4..1f4893699614 100644
+--- a/arch/arm/boot/dts/tegra20-trimslice.dts
++++ b/arch/arm/boot/dts/tegra20-trimslice.dts
+@@ -379,7 +379,7 @@ mmc@c8000600 {
+ 		bus-width = <4>;
+ 	};
+ 
+-	clk32k_in: clock@0 {
++	clk32k_in: clock-32k {
+ 		compatible = "fixed-clock";
+ 		clock-frequency = <32768>;
+ 		#clock-cells = <0>;
+@@ -401,7 +401,7 @@ poweroff {
+ 		gpios = <&gpio TEGRA_GPIO(X, 7) GPIO_ACTIVE_LOW>;
+ 	};
+ 
+-	hdmi_vdd_reg: regulator@0 {
++	hdmi_vdd_reg: regulator-hdmi {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "avdd_hdmi";
+ 		regulator-min-microvolt = <3300000>;
+@@ -409,7 +409,7 @@ hdmi_vdd_reg: regulator@0 {
+ 		regulator-always-on;
+ 	};
+ 
+-	hdmi_pll_reg: regulator@1 {
++	hdmi_pll_reg: regulator-hdmipll {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "avdd_hdmi_pll";
+ 		regulator-min-microvolt = <1800000>;
+@@ -417,7 +417,7 @@ hdmi_pll_reg: regulator@1 {
+ 		regulator-always-on;
+ 	};
+ 
+-	vbus_reg: regulator@2 {
++	vbus_reg: regulator-vbus {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "usb1_vbus";
+ 		regulator-min-microvolt = <5000000>;
+@@ -428,7 +428,7 @@ vbus_reg: regulator@2 {
+ 		regulator-boot-on;
+ 	};
+ 
+-	pci_clk_reg: regulator@3 {
++	pci_clk_reg: regulator-pciclk {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "pci_clk";
+ 		regulator-min-microvolt = <3300000>;
+@@ -436,7 +436,7 @@ pci_clk_reg: regulator@3 {
+ 		regulator-always-on;
+ 	};
+ 
+-	pci_vdd_reg: regulator@4 {
++	pci_vdd_reg: regulator-pcivdd {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "pci_vdd";
+ 		regulator-min-microvolt = <1050000>;
+diff --git a/arch/arm/boot/dts/tegra20-ventana.dts b/arch/arm/boot/dts/tegra20-ventana.dts
+index 5a2578b3707f..4284054ebd2c 100644
+--- a/arch/arm/boot/dts/tegra20-ventana.dts
++++ b/arch/arm/boot/dts/tegra20-ventana.dts
+@@ -606,7 +606,7 @@ backlight: backlight {
+ 		default-brightness-level = <6>;
+ 	};
+ 
+-	clk32k_in: clock@0 {
++	clk32k_in: clock-32k {
+ 		compatible = "fixed-clock";
+ 		clock-frequency = <32768>;
+ 		#clock-cells = <0>;
+@@ -647,7 +647,7 @@ panel: panel {
+ 		ddc-i2c-bus = <&lvds_ddc>;
+ 	};
+ 
+-	vdd_5v0_reg: regulator@0 {
++	vdd_5v0_reg: regulator-5v0 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_5v0";
+ 		regulator-min-microvolt = <5000000>;
+@@ -655,7 +655,7 @@ vdd_5v0_reg: regulator@0 {
+ 		regulator-always-on;
+ 	};
+ 
+-	regulator@1 {
++	regulator-1v5 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_1v5";
+ 		regulator-min-microvolt = <1500000>;
+@@ -663,7 +663,7 @@ regulator@1 {
+ 		gpio = <&pmic 0 GPIO_ACTIVE_HIGH>;
+ 	};
+ 
+-	regulator@2 {
++	regulator-1v2 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_1v2";
+ 		regulator-min-microvolt = <1200000>;
+@@ -672,7 +672,7 @@ regulator@2 {
+ 		enable-active-high;
+ 	};
+ 
+-	vdd_pnl_reg: regulator@3 {
++	vdd_pnl_reg: regulator-pnl {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_pnl";
+ 		regulator-min-microvolt = <2800000>;
+@@ -681,7 +681,7 @@ vdd_pnl_reg: regulator@3 {
+ 		enable-active-high;
+ 	};
+ 
+-	vdd_bl_reg: regulator@4 {
++	vdd_bl_reg: regulator-bl {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_bl";
+ 		regulator-min-microvolt = <2800000>;
+diff --git a/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-common.dtsi b/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-common.dtsi
+index 07d4ea130964..e6aed19a5f3b 100644
+--- a/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-common.dtsi
++++ b/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-common.dtsi
+@@ -1069,7 +1069,7 @@ battery_cell: battery-cell {
+ 	};
+ 
+ 	/* PMIC has a built-in 32KHz oscillator which is used by PMC */
+-	clk32k_in: clock@0 {
++	clk32k_in: clock-32k {
+ 		compatible = "fixed-clock";
+ 		#clock-cells = <0>;
+ 		clock-frequency = <32768>;
+@@ -1207,7 +1207,7 @@ lvds_encoder_output: endpoint {
+ 		};
+ 	};
+ 
+-	vdd_5v0_sys: regulator@0 {
++	vdd_5v0_sys: regulator-5v0 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_5v0";
+ 		regulator-min-microvolt = <5000000>;
+@@ -1216,7 +1216,7 @@ vdd_5v0_sys: regulator@0 {
+ 		regulator-boot-on;
+ 	};
+ 
+-	vdd_3v3_sys: regulator@1 {
++	vdd_3v3_sys: regulator-3v3 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_3v3";
+ 		regulator-min-microvolt = <3300000>;
+@@ -1226,7 +1226,7 @@ vdd_3v3_sys: regulator@1 {
+ 		vin-supply = <&vdd_5v0_sys>;
+ 	};
+ 
+-	vdd_pnl: regulator@2 {
++	vdd_pnl: regulator-panel {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_panel";
+ 		regulator-min-microvolt = <3300000>;
+@@ -1237,7 +1237,7 @@ vdd_pnl: regulator@2 {
+ 		vin-supply = <&vdd_3v3_sys>;
+ 	};
+ 
+-	vcc_3v3_ts: regulator@3 {
++	vcc_3v3_ts: regulator-ts {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "ldo_s-1167_3v3";
+ 		regulator-min-microvolt = <3300000>;
+diff --git a/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-maxim-pmic.dtsi b/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-maxim-pmic.dtsi
+index 53966fa4eef2..cd28e8782f7d 100644
+--- a/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-maxim-pmic.dtsi
++++ b/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-maxim-pmic.dtsi
+@@ -166,12 +166,12 @@ ldo8 {
+ 		};
+ 	};
+ 
+-	vdd_3v3_sys: regulator@1 {
++	vdd_3v3_sys: regulator-3v3 {
+ 		gpio = <&pmic 3 GPIO_ACTIVE_HIGH>;
+ 		enable-active-high;
+ 	};
+ 
+-	regulator@4 {
++	regulator-usb {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "avdd_usb";
+ 		regulator-min-microvolt = <3300000>;
+diff --git a/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-ti-pmic.dtsi b/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-ti-pmic.dtsi
+index 9365ae607239..ee4a3f482769 100644
+--- a/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-ti-pmic.dtsi
++++ b/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-ti-pmic.dtsi
+@@ -143,7 +143,7 @@ vdd_core: core-regulator@60 {
+ 		};
+ 	};
+ 
+-	vdd_3v3_sys: regulator@1 {
++	vdd_3v3_sys: regulator-3v3 {
+ 		gpio = <&pmic 6 GPIO_ACTIVE_HIGH>;
+ 		enable-active-high;
+ 	};
+diff --git a/arch/arm/boot/dts/tegra30-beaver.dts b/arch/arm/boot/dts/tegra30-beaver.dts
+index e159feeedef7..2ec5e47d9623 100644
+--- a/arch/arm/boot/dts/tegra30-beaver.dts
++++ b/arch/arm/boot/dts/tegra30-beaver.dts
+@@ -1966,7 +1966,7 @@ usb-phy@7d008000 {
+ 		status = "okay";
+ 	};
+ 
+-	clk32k_in: clock@0 {
++	clk32k_in: clock-32k {
+ 		compatible = "fixed-clock";
+ 		clock-frequency = <32768>;
+ 		#clock-cells = <0>;
+@@ -1985,7 +1985,7 @@ gpled2 {
+ 		};
+ 	};
+ 
+-	vdd_5v_in_reg: regulator@0 {
++	vdd_5v_in_reg: regulator-5v0 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_5v_in";
+ 		regulator-min-microvolt = <5000000>;
+@@ -1993,7 +1993,7 @@ vdd_5v_in_reg: regulator@0 {
+ 		regulator-always-on;
+ 	};
+ 
+-	chargepump_5v_reg: regulator@1 {
++	chargepump_5v_reg: regulator-chargepump {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "chargepump_5v";
+ 		regulator-min-microvolt = <5000000>;
+@@ -2004,7 +2004,7 @@ chargepump_5v_reg: regulator@1 {
+ 		gpio = <&pmic 0 GPIO_ACTIVE_HIGH>;
+ 	};
+ 
+-	ddr_reg: regulator@2 {
++	ddr_reg: regulator-ddr {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_ddr";
+ 		regulator-min-microvolt = <1500000>;
+@@ -2016,7 +2016,7 @@ ddr_reg: regulator@2 {
+ 		vin-supply = <&vdd_5v_in_reg>;
+ 	};
+ 
+-	vdd_5v_sata_reg: regulator@3 {
++	vdd_5v_sata_reg: regulator-sata {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_5v_sata";
+ 		regulator-min-microvolt = <5000000>;
+@@ -2028,7 +2028,7 @@ vdd_5v_sata_reg: regulator@3 {
+ 		vin-supply = <&vdd_5v_in_reg>;
+ 	};
+ 
+-	usb1_vbus_reg: regulator@4 {
++	usb1_vbus_reg: regulator-usb1 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "usb1_vbus";
+ 		regulator-min-microvolt = <5000000>;
+@@ -2039,7 +2039,7 @@ usb1_vbus_reg: regulator@4 {
+ 		vin-supply = <&vdd_5v_in_reg>;
+ 	};
+ 
+-	usb3_vbus_reg: regulator@5 {
++	usb3_vbus_reg: regulator-usb3 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "usb3_vbus";
+ 		regulator-min-microvolt = <5000000>;
+@@ -2050,7 +2050,7 @@ usb3_vbus_reg: regulator@5 {
+ 		vin-supply = <&vdd_5v_in_reg>;
+ 	};
+ 
+-	sys_3v3_reg: regulator@6 {
++	sys_3v3_reg: regulator-3v3 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "sys_3v3,vdd_3v3_alw";
+ 		regulator-min-microvolt = <3300000>;
+@@ -2062,7 +2062,7 @@ sys_3v3_reg: regulator@6 {
+ 		vin-supply = <&vdd_5v_in_reg>;
+ 	};
+ 
+-	sys_3v3_pexs_reg: regulator@7 {
++	sys_3v3_pexs_reg: regulator-pexs {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "sys_3v3_pexs";
+ 		regulator-min-microvolt = <3300000>;
+@@ -2074,7 +2074,7 @@ sys_3v3_pexs_reg: regulator@7 {
+ 		vin-supply = <&sys_3v3_reg>;
+ 	};
+ 
+-	vdd_5v0_hdmi: regulator@8 {
++	vdd_5v0_hdmi: regulator-hdmi {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "+VDD_5V_HDMI";
+ 		regulator-min-microvolt = <5000000>;
+diff --git a/arch/arm/boot/dts/tegra30-cardhu-a02.dts b/arch/arm/boot/dts/tegra30-cardhu-a02.dts
+index 4899e05a0d9c..247185314f46 100644
+--- a/arch/arm/boot/dts/tegra30-cardhu-a02.dts
++++ b/arch/arm/boot/dts/tegra30-cardhu-a02.dts
+@@ -16,7 +16,7 @@ mmc@78000400 {
+ 		keep-power-in-suspend;
+ 	};
+ 
+-	ddr_reg: regulator@100 {
++	ddr_reg: regulator-ddr {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_ddr";
+ 		regulator-min-microvolt = <1500000>;
+@@ -27,7 +27,7 @@ ddr_reg: regulator@100 {
+ 		gpio = <&pmic 6 GPIO_ACTIVE_HIGH>;
+ 	};
+ 
+-	sys_3v3_reg: regulator@101 {
++	sys_3v3_reg: regulator-3v3 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "sys_3v3";
+ 		regulator-min-microvolt = <3300000>;
+@@ -38,7 +38,7 @@ sys_3v3_reg: regulator@101 {
+ 		gpio = <&pmic 7 GPIO_ACTIVE_HIGH>;
+ 	};
+ 
+-	usb1_vbus_reg: regulator@102 {
++	usb1_vbus_reg: regulator-usb1 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "usb1_vbus";
+ 		regulator-min-microvolt = <5000000>;
+@@ -49,7 +49,7 @@ usb1_vbus_reg: regulator@102 {
+ 		vin-supply = <&vdd_5v0_reg>;
+ 	};
+ 
+-	usb3_vbus_reg: regulator@103 {
++	usb3_vbus_reg: regulator-usb3 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "usb3_vbus";
+ 		regulator-min-microvolt = <5000000>;
+@@ -60,7 +60,7 @@ usb3_vbus_reg: regulator@103 {
+ 		vin-supply = <&vdd_5v0_reg>;
+ 	};
+ 
+-	vdd_5v0_reg: regulator@104 {
++	vdd_5v0_reg: regulator-5v0 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "5v0";
+ 		regulator-min-microvolt = <5000000>;
+@@ -69,7 +69,7 @@ vdd_5v0_reg: regulator@104 {
+ 		gpio = <&pmic 2 GPIO_ACTIVE_HIGH>;
+ 	};
+ 
+-	vdd_bl_reg: regulator@105 {
++	vdd_bl_reg: regulator-bl {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_bl";
+ 		regulator-min-microvolt = <5000000>;
+diff --git a/arch/arm/boot/dts/tegra30-cardhu-a04.dts b/arch/arm/boot/dts/tegra30-cardhu-a04.dts
+index a11028b8b67b..2911f08863a0 100644
+--- a/arch/arm/boot/dts/tegra30-cardhu-a04.dts
++++ b/arch/arm/boot/dts/tegra30-cardhu-a04.dts
+@@ -16,7 +16,7 @@ mmc@78000400 {
+ 		keep-power-in-suspend;
+ 	};
+ 
+-	ddr_reg: regulator@100 {
++	ddr_reg: regulator-ddr {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "ddr";
+ 		regulator-min-microvolt = <1500000>;
+@@ -27,7 +27,7 @@ ddr_reg: regulator@100 {
+ 		gpio = <&pmic 7 GPIO_ACTIVE_HIGH>;
+ 	};
+ 
+-	sys_3v3_reg: regulator@101 {
++	sys_3v3_reg: regulator-3v3 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "sys_3v3";
+ 		regulator-min-microvolt = <3300000>;
+@@ -38,7 +38,7 @@ sys_3v3_reg: regulator@101 {
+ 		gpio = <&pmic 6 GPIO_ACTIVE_HIGH>;
+ 	};
+ 
+-	usb1_vbus_reg: regulator@102 {
++	usb1_vbus_reg: regulator-usb1 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "usb1_vbus";
+ 		regulator-min-microvolt = <5000000>;
+@@ -49,7 +49,7 @@ usb1_vbus_reg: regulator@102 {
+ 		vin-supply = <&vdd_5v0_reg>;
+ 	};
+ 
+-	usb3_vbus_reg: regulator@103 {
++	usb3_vbus_reg: regulator-usb3 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "usb3_vbus";
+ 		regulator-min-microvolt = <5000000>;
+@@ -60,7 +60,7 @@ usb3_vbus_reg: regulator@103 {
+ 		vin-supply = <&vdd_5v0_reg>;
+ 	};
+ 
+-	vdd_5v0_reg: regulator@104 {
++	vdd_5v0_reg: regulator-5v0 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "5v0";
+ 		regulator-min-microvolt = <5000000>;
+@@ -69,7 +69,7 @@ vdd_5v0_reg: regulator@104 {
+ 		gpio = <&pmic 8 GPIO_ACTIVE_HIGH>;
+ 	};
+ 
+-	vdd_bl_reg: regulator@105 {
++	vdd_bl_reg: regulator-bl {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_bl";
+ 		regulator-min-microvolt = <5000000>;
+@@ -80,7 +80,7 @@ vdd_bl_reg: regulator@105 {
+ 		gpio = <&gpio TEGRA_GPIO(DD, 2) GPIO_ACTIVE_HIGH>;
+ 	};
+ 
+-	vdd_bl2_reg: regulator@106 {
++	vdd_bl2_reg: regulator-bl2 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_bl2";
+ 		regulator-min-microvolt = <5000000>;
+diff --git a/arch/arm/boot/dts/tegra30-cardhu.dtsi b/arch/arm/boot/dts/tegra30-cardhu.dtsi
+index 448f1397e64a..d2f6121049a4 100644
+--- a/arch/arm/boot/dts/tegra30-cardhu.dtsi
++++ b/arch/arm/boot/dts/tegra30-cardhu.dtsi
+@@ -433,7 +433,7 @@ backlight: backlight {
+ 		default-brightness-level = <6>;
+ 	};
+ 
+-	clk32k_in: clock@0 {
++	clk32k_in: clock-32k {
+ 		compatible = "fixed-clock";
+ 		clock-frequency = <32768>;
+ 		#clock-cells = <0>;
+@@ -475,7 +475,7 @@ panel: panel {
+ 		backlight = <&backlight>;
+ 	};
+ 
+-	vdd_ac_bat_reg: regulator@0 {
++	vdd_ac_bat_reg: regulator-acbat {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_ac_bat";
+ 		regulator-min-microvolt = <5000000>;
+@@ -483,7 +483,7 @@ vdd_ac_bat_reg: regulator@0 {
+ 		regulator-always-on;
+ 	};
+ 
+-	cam_1v8_reg: regulator@1 {
++	cam_1v8_reg: regulator-cam {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "cam_1v8";
+ 		regulator-min-microvolt = <1800000>;
+@@ -493,7 +493,7 @@ cam_1v8_reg: regulator@1 {
+ 		vin-supply = <&vio_reg>;
+ 	};
+ 
+-	cp_5v_reg: regulator@2 {
++	cp_5v_reg: regulator-5v0cp {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "cp_5v";
+ 		regulator-min-microvolt = <5000000>;
+@@ -504,7 +504,7 @@ cp_5v_reg: regulator@2 {
+ 		gpio = <&pmic 0 GPIO_ACTIVE_HIGH>;
+ 	};
+ 
+-	emmc_3v3_reg: regulator@3 {
++	emmc_3v3_reg: regulator-emmc {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "emmc_3v3";
+ 		regulator-min-microvolt = <3300000>;
+@@ -516,7 +516,7 @@ emmc_3v3_reg: regulator@3 {
+ 		vin-supply = <&sys_3v3_reg>;
+ 	};
+ 
+-	modem_3v3_reg: regulator@4 {
++	modem_3v3_reg: regulator-modem {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "modem_3v3";
+ 		regulator-min-microvolt = <3300000>;
+@@ -525,7 +525,7 @@ modem_3v3_reg: regulator@4 {
+ 		gpio = <&gpio TEGRA_GPIO(D, 6) GPIO_ACTIVE_HIGH>;
+ 	};
+ 
+-	pex_hvdd_3v3_reg: regulator@5 {
++	pex_hvdd_3v3_reg: regulator-pex {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "pex_hvdd_3v3";
+ 		regulator-min-microvolt = <3300000>;
+@@ -535,7 +535,7 @@ pex_hvdd_3v3_reg: regulator@5 {
+ 		vin-supply = <&sys_3v3_reg>;
+ 	};
+ 
+-	vdd_cam1_ldo_reg: regulator@6 {
++	vdd_cam1_ldo_reg: regulator-cam1 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_cam1_ldo";
+ 		regulator-min-microvolt = <2800000>;
+@@ -545,7 +545,7 @@ vdd_cam1_ldo_reg: regulator@6 {
+ 		vin-supply = <&sys_3v3_reg>;
+ 	};
+ 
+-	vdd_cam2_ldo_reg: regulator@7 {
++	vdd_cam2_ldo_reg: regulator-cam2 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_cam2_ldo";
+ 		regulator-min-microvolt = <2800000>;
+@@ -555,7 +555,7 @@ vdd_cam2_ldo_reg: regulator@7 {
+ 		vin-supply = <&sys_3v3_reg>;
+ 	};
+ 
+-	vdd_cam3_ldo_reg: regulator@8 {
++	vdd_cam3_ldo_reg: regulator-cam3 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_cam3_ldo";
+ 		regulator-min-microvolt = <3300000>;
+@@ -565,7 +565,7 @@ vdd_cam3_ldo_reg: regulator@8 {
+ 		vin-supply = <&sys_3v3_reg>;
+ 	};
+ 
+-	vdd_com_reg: regulator@9 {
++	vdd_com_reg: regulator-com {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_com";
+ 		regulator-min-microvolt = <3300000>;
+@@ -577,7 +577,7 @@ vdd_com_reg: regulator@9 {
+ 		vin-supply = <&sys_3v3_reg>;
+ 	};
+ 
+-	vdd_fuse_3v3_reg: regulator@10 {
++	vdd_fuse_3v3_reg: regulator-fuse {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_fuse_3v3";
+ 		regulator-min-microvolt = <3300000>;
+@@ -587,7 +587,7 @@ vdd_fuse_3v3_reg: regulator@10 {
+ 		vin-supply = <&sys_3v3_reg>;
+ 	};
+ 
+-	vdd_pnl1_reg: regulator@11 {
++	vdd_pnl1_reg: regulator-pnl1 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_pnl1";
+ 		regulator-min-microvolt = <3300000>;
+@@ -599,7 +599,7 @@ vdd_pnl1_reg: regulator@11 {
+ 		vin-supply = <&sys_3v3_reg>;
+ 	};
+ 
+-	vdd_vid_reg: regulator@12 {
++	vdd_vid_reg: regulator-vid {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vddio_vid";
+ 		regulator-min-microvolt = <5000000>;
 -- 
 2.33.1
 
