@@ -2,52 +2,52 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74F70C43217
-	for <linux-tegra@archiver.kernel.org>; Sat, 27 Nov 2021 14:28:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F711C433EF
+	for <linux-tegra@archiver.kernel.org>; Sat, 27 Nov 2021 14:28:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344918AbhK0Obt (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 27 Nov 2021 09:31:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36460 "EHLO
+        id S237867AbhK0Obv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 27 Nov 2021 09:31:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36464 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239069AbhK0O3s (ORCPT
+        with ESMTP id S239154AbhK0O3t (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sat, 27 Nov 2021 09:29:48 -0500
+        Sat, 27 Nov 2021 09:29:49 -0500
 Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93807C06173E;
-        Sat, 27 Nov 2021 06:26:33 -0800 (PST)
-Received: by mail-lj1-x22c.google.com with SMTP id z8so24596020ljz.9;
-        Sat, 27 Nov 2021 06:26:33 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87F36C061746;
+        Sat, 27 Nov 2021 06:26:34 -0800 (PST)
+Received: by mail-lj1-x22c.google.com with SMTP id i63so24617298lji.3;
+        Sat, 27 Nov 2021 06:26:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=XpGhfbw+LB+dcPD92P/sr6xIoHQTd+cfqs/Lkbt/2zU=;
-        b=NtrAbVzGtndOEn211/nkvKArbqFFVOC+e+RFMf+g4OpNXjW+5goNKz9BPDciyhRYhI
-         zrv5RoaYkwm+m+sRp98kSo35fCITG1SK5/uTXRZz8rRKyJrpxMbNqXVH0s3jq2IjNeS8
-         ivw1XU7zhc92FKjEzXKiTicsWdDkeEVLkwrJH5tYz+yvbATgLfEd8FIqT6J0ILpaS5A7
-         r+wsgIlvwns8cL4p9xw0dRYve6lTtIPxRqJ+xYi2W+bwnl/155bMkg+4sJNeE1HIw+o2
-         chvm+NFFRp9W7l7ByuMzQXffW8RUrIz3kEMhVZ7haSEyUQUBt3JktVrcJnpC+tYMCBXT
-         ovqA==
+        bh=niwYK5N2j/3/WOUVbzxqfWl0+I+uux5zlGux9lfzEBE=;
+        b=aBF/0UgMq1eEqdc3/MQtDKEMmY3H8BF32Bfzg4Ohb1dHYvNr33cxvujBw5yNPTrkzy
+         DOZbG40pS0s6c1p54bMbSP2OEWbZ3OsoBXRBz7Ro7ZBQKO8j1xA3XgYkn226GhNZxBQB
+         LfdO63a6idEyfZEmJhE1XotwONS7AeVnAJrk34pAHOWC/DIuRtGRBIGFm8H0j0s5YHUE
+         onEzeB53mggHNPIsA5FJWIlFScvImPMFA4SZPqH6Hi99mhyhgKjk1wPTQ7+mQnEmynDv
+         VN062NIfq6a1Xf9AOhNZ6I35C4cZ5HLbB5gK+XrcrtkemKvDDv8gIvlLyUS50QxPUd6n
+         6MsA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=XpGhfbw+LB+dcPD92P/sr6xIoHQTd+cfqs/Lkbt/2zU=;
-        b=HCvsGZD89/YC5qGHGNFtxrS7d5QtfIullLu1xq4kCLXDU78x/vS7q7kEGjhnnLS46U
-         AM2LN9Xk85enQqqIWo6S2GeqXws+h870L2XnLdPjH24d2NHepWYjvxvrSGepiBw3BTLm
-         IWV6XeO5+Aewu2ThUFwObphbxWY5Iv2Q2U7ci8XJm4eFbXdQq/pmKaqCksi09nt9XY37
-         cY/5+uZYK4ty3qX4Df5tE91M+6anEkmzZBiNZaOPI8n1K7T6qv9ZlvTrZ1iS2O2M0Wol
-         MQf4WbbrZbFuPLODQklSixrF5n0NFsKSRKs1iZmsfCJXVsT9fnMZXS7JAbZTo6l5OXQj
-         otrQ==
-X-Gm-Message-State: AOAM531kYYFv1khjBU/9FAOZaFnDWuFd4qs/ILqQcGHSOmGNjKCXdBP+
-        APnOFpa9jG8jnw0bOqt54mhjEzLa0u4=
-X-Google-Smtp-Source: ABdhPJwvpzWs59NxqkjZExT/LmL88ihoE8cqeLmSHzzsHFqI1q3BkLfE8/kv92k8a9DDETc4Rq94oQ==
-X-Received: by 2002:a2e:a910:: with SMTP id j16mr10126085ljq.96.1638023191910;
-        Sat, 27 Nov 2021 06:26:31 -0800 (PST)
+        bh=niwYK5N2j/3/WOUVbzxqfWl0+I+uux5zlGux9lfzEBE=;
+        b=CHoJGWKSzVUkuClHXEdxl2yovZ62KT83ftlXgbhjpY8Ar1wFBXwmFi6XmRHhyYM9jR
+         qmIjvM4cYtuLQTsAdxH4tvixkPEBNyr6TFyz6NijTXrzsHhVPJvbWD+oAlapq6lSywaK
+         4G3qVfBBLhQiJl6vdWxrx0ctqQkt+excbWSwDWOQ22fJVKEkck0hU4n+i3lWuDGvN04S
+         ZaSUDKW00ykyQxCsYxR+EHdFbv4TrJ5ZtfmR84aR5dMWWFQ9D0cEHDwANARX4s83tVPA
+         JY+uqSkAL5g64QFDoSMyEaDVBrIlE2W8vYigVKu/9te/fz1cXsc/U3kzfWzjmIcaqrFH
+         cT1Q==
+X-Gm-Message-State: AOAM530Xy1J9HKluld4XUVlqGokmQhfyKuILa6hSkY9uDNWuXqp0iMe2
+        B8RuQUDmODhAA9gFnjvBWzE=
+X-Google-Smtp-Source: ABdhPJyAug0uU+UxsbjFI5Eo38u5rjdmLcoMA/j46B4RO9YE3tOoxOiQd1pi4h//xTPPEm7O20bSXw==
+X-Received: by 2002:a2e:3a18:: with SMTP id h24mr39669607lja.372.1638023192822;
+        Sat, 27 Nov 2021 06:26:32 -0800 (PST)
 Received: from localhost.localdomain (94-29-48-99.dynamic.spd-mgts.ru. [94.29.48.99])
         by smtp.gmail.com with ESMTPSA id t22sm812382ljg.83.2021.11.27.06.26.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 27 Nov 2021 06:26:31 -0800 (PST)
+        Sat, 27 Nov 2021 06:26:32 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -67,9 +67,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Thomas Graichen <thomas.graichen@gmail.com>
 Cc:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v3 01/14] dt-bindings: ARM: tegra: Document ASUS Transformers
-Date:   Sat, 27 Nov 2021 17:23:14 +0300
-Message-Id: <20211127142327.17692-2-digetx@gmail.com>
+Subject: [PATCH v3 02/14] dt-bindings: ARM: tegra: Document Pegatron Chagall
+Date:   Sat, 27 Nov 2021 17:23:15 +0300
+Message-Id: <20211127142327.17692-3-digetx@gmail.com>
 X-Mailer: git-send-email 2.33.1
 In-Reply-To: <20211127142327.17692-1-digetx@gmail.com>
 References: <20211127142327.17692-1-digetx@gmail.com>
@@ -79,61 +79,29 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Svyatoslav Ryhel <clamor95@gmail.com>
+From: David Heidelberg <david@ixit.cz>
 
-Document Tegra20/30/114-based ASUS Transformer Series tablet devices.
-This group includes EeePad TF101, Prime TF201, Pad TF300T, TF300TG
-Infinity TF700T, TF701T.
+Document Pegatron Chagall, which is Tegra30-based tablet device.
 
 Signed-off-by: David Heidelberg <david@ixit.cz>
-Signed-off-by: Anton Bambura <jenneron@protonmail.com>
-Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- Documentation/devicetree/bindings/arm/tegra.yaml | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ Documentation/devicetree/bindings/arm/tegra.yaml | 3 +++
+ 1 file changed, 3 insertions(+)
 
 diff --git a/Documentation/devicetree/bindings/arm/tegra.yaml b/Documentation/devicetree/bindings/arm/tegra.yaml
-index d79d36ac0c44..49ae6319336d 100644
+index 49ae6319336d..91a7d4a75fe6 100644
 --- a/Documentation/devicetree/bindings/arm/tegra.yaml
 +++ b/Documentation/devicetree/bindings/arm/tegra.yaml
-@@ -36,6 +36,9 @@ properties:
-               - toradex,colibri_t20-iris
-           - const: toradex,colibri_t20
-           - const: nvidia,tegra20
-+      - items:
-+          - const: asus,tf101
-+          - const: nvidia,tegra20
+@@ -89,6 +89,9 @@ properties:
        - items:
-           - const: acer,picasso
-           - const: nvidia,tegra20
-@@ -49,6 +52,18 @@ properties:
-               - nvidia,cardhu-a04
-           - const: nvidia,cardhu
+           - const: ouya,ouya
            - const: nvidia,tegra30
 +      - items:
-+          - const: asus,tf201
++          - const: pegatron,chagall
 +          - const: nvidia,tegra30
-+      - items:
-+          - const: asus,tf300t
-+          - const: nvidia,tegra30
-+      - items:
-+          - const: asus,tf300tg
-+          - const: nvidia,tegra30
-+      - items:
-+          - const: asus,tf700t
-+          - const: nvidia,tegra30
-       - items:
-           - const: toradex,apalis_t30-eval
-           - const: toradex,apalis_t30
-@@ -76,6 +91,7 @@ properties:
-           - const: nvidia,tegra30
        - items:
            - enum:
-+              - asus,tf701t
-               - nvidia,dalmore
-               - nvidia,roth
-               - nvidia,tn7
+               - asus,tf701t
 -- 
 2.33.1
 
