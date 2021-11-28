@@ -2,65 +2,114 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A34F9C433F5
-	for <linux-tegra@archiver.kernel.org>; Sat, 27 Nov 2021 23:21:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF21DC4167D
+	for <linux-tegra@archiver.kernel.org>; Sun, 28 Nov 2021 00:31:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240557AbhK0XZE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 27 Nov 2021 18:25:04 -0500
-Received: from rere.qmqm.pl ([91.227.64.183]:36626 "EHLO rere.qmqm.pl"
+        id S1356712AbhK1AeT (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 27 Nov 2021 19:34:19 -0500
+Received: from rere.qmqm.pl ([91.227.64.183]:24740 "EHLO rere.qmqm.pl"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1356509AbhK0XXD (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Sat, 27 Nov 2021 18:23:03 -0500
+        id S1356618AbhK1AcS (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Sat, 27 Nov 2021 19:32:18 -0500
 Received: from remote.user (localhost [127.0.0.1])
-        by rere.qmqm.pl (Postfix) with ESMTPSA id 4J1ndG31SVz9Y;
-        Sun, 28 Nov 2021 00:19:46 +0100 (CET)
+        by rere.qmqm.pl (Postfix) with ESMTPSA id 4J1q8r4xRGz9Y;
+        Sun, 28 Nov 2021 01:28:44 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
-        t=1638055187; bh=3IuV4KHyseUP25B0hUamJUw90nzzT3r2kSgbvRYgE4s=;
+        t=1638059340; bh=BpCUv6sc6+ijt8bP2X1dBPBQztb08CMPEjcmSI4mWHs=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=JK3pRYOLYNeG1VcAGugry8zKUgI8IWUX2uFGnlwLGpXc8D3CmoN3u8y9Tr0anjhA5
-         0A8Qy/LOhaD8VxlEdNWsqrCEdfoL4kLYajCPHahkwjsSyh1fyNTpAP7OaIv8Cd41Fp
-         bC/yFHHpqOVfJETijNRp4vh1CboVefrHEBTckwxDI2L7pXNeWUcUoW/R8bYvSvqtcd
-         qLfLXpsIzFQ+14JZRfK6vjf3MeRyOWzB//m+Uj9hi+ZCRg9j8osGTQF3afK6drcmvx
-         vuBpRT8IcEeEOSwUYU3B9S385dK47IOQYa8zaMoD9LKBYMCCBgQnmNvnJAHjHmkz26
-         Mypbfh7tLnFGg==
+        b=E2pJXVdwpF7xa7NgJpuaA7I4sUgCSxdIM51ma240k1OvyN0BqmbHCll/qibc7LmRW
+         l2lYyRdiOG0LzZZRcQGCbOEp7l5l7FW2EF13o78tAxh2BlfQLPIqSf2RtHjwNL3AHE
+         ag5QLlLhW95Kp8fH9dCV3j4Imx5XQ5T4nV1vyleMAzKz1Soq6c6OnKpJ5TdzfdwJ2G
+         LnQoKtgUWmpQEblg3IMnaxzgslueaP8apjKdZ9y96JJ35QjeXKQSawNEPmoxjBztTd
+         XADr6Ffb3r0e7Kv67f/UCkeky+8m4GCPkGRqXkdYh2BWzTit8bUIHp4dPNUh/LgLHY
+         SH/yCd1X39o+Q==
 X-Virus-Status: Clean
 X-Virus-Scanned: clamav-milter 0.103.3 at mail
-Date:   Sun, 28 Nov 2021 00:19:43 +0100
+Date:   Sun, 28 Nov 2021 01:28:40 +0100
 From:   =?iso-8859-2?Q?Micha=B3_Miros=B3aw?= <mirq-linux@rere.qmqm.pl>
-To:     Patrik John <patrik.john@u-blox.com>
-Cc:     linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
-        ldewangan@nvidia.com, thierry.reding@gmail.com,
-        jonathan@nvidia.com, linux-serial@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: Re: [PATCH] serial: tegra: Fixes lower tolerance baud rate limit for
- older tegra chips introduced by d781ec21bae6
-Message-ID: <YaK9DwsgGr8eaMuX@qmqm.qmqm.pl>
-References: <sig.096060f39c.20211122124425.74031-1-patrik.john@u-blox.com>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Guo Ren <guoren@kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Joshua Thompson <funaho@jurai.org>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Sebastian Reichel <sre@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Greentime Hu <green.hu@gmail.com>,
+        Vincent Chen <deanbo422@gmail.com>,
+        "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+        Helge Deller <deller@gmx.de>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Len Brown <lenb@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>, Pavel Machek <pavel@ucw.cz>,
+        Lee Jones <lee.jones@linaro.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>, alankao@andestech.com,
+        "K . C . Kuen-Chern Lin" <kclin@andestech.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-csky@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-riscv@lists.infradead.org, linux-sh@vger.kernel.org,
+        xen-devel@lists.xenproject.org, linux-acpi@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v4 05/25] reboot: Warn if restart handler has duplicated
+ priority
+Message-ID: <YaLNOJTM+lVq+YNS@qmqm.qmqm.pl>
+References: <20211126180101.27818-1-digetx@gmail.com>
+ <20211126180101.27818-6-digetx@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-2
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <sig.096060f39c.20211122124425.74031-1-patrik.john@u-blox.com>
+In-Reply-To: <20211126180101.27818-6-digetx@gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, Nov 22, 2021 at 01:44:26PM +0100, Patrik John wrote:
-> The current implementation uses 0 as lower limit for the baud rate tolerance which contradicts the initial commit description (https://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git/commit/drivers/tty/serial/serial-tegra.c?h=for-next&id=d781ec21bae6ff8f9e07682e8947a654484611f5) of +4/-4% tolerance for older tegra chips other than Tegra186 and Tegra194.
-> This causes issues on UART initilization as soon as the actual baud rate clock is slightly lower than required which we have seen on the Tegra124-based Toradex Apalis TK1 which also uses tegra30-hsuart as compatible in the DT serial node (for reference line 1540ff https://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git/tree/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi?h=for-next)
-> 
-> The standard baud rate tolerance limits are also stated in the tegra20-hsuart driver description (https://www.kernel.org/doc/Documentation/devicetree/bindings/serial/nvidia%2Ctegra20-hsuart.txt).
-> 
-> The previously introduced check_rate_in_range() always fails due to the lower limit set to 0 even if the actual baud rate is within the required -4% tolerance.
-> 
-[...]
+On Fri, Nov 26, 2021 at 09:00:41PM +0300, Dmitry Osipenko wrote:
+> Add sanity check which ensures that there are no two restart handlers
+> registered with the same priority. Normally it's a direct sign of a
+> problem if two handlers use the same priority.
 
-I have a same patch waiting in my tree [1]. Feel free to use the commit
-message and to add:
+The patch doesn't ensure the property that there are no duplicated-priority
+entries on the chain.
 
-Reviewed-and-tested-by: Micha³ Miros³aw <mirq-linux@rere.qmqm.pl>
+I'd rather see a atomic_notifier_chain_register_unique() that returns
+-EBUSY or something istead of adding an entry with duplicate priority.
+That way it would need only one list traversal unless you want to
+register the duplicate anyway (then you would call the older
+atomic_notifier_chain_register() after reporting the error).
 
-[1] https://rere.qmqm.pl/git/?p=linux;a=commitdiff;h=b658dcd83d0db777410fe960721193d35a38115a
+(Or you could return > 0 when a duplicate is registered in
+atomic_notifier_chain_register() if the callers are prepared
+for that. I don't really like this way, though.)
 
 Best Regards
-Micha³ Miros³aw
+Micha³ Miros³aw
