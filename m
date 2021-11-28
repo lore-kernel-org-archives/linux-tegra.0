@@ -2,85 +2,106 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 178C9C433FE
-	for <linux-tegra@archiver.kernel.org>; Sun, 28 Nov 2021 05:49:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD96BC433FE
+	for <linux-tegra@archiver.kernel.org>; Sun, 28 Nov 2021 16:08:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231990AbhK1Fwv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 28 Nov 2021 00:52:51 -0500
-Received: from rere.qmqm.pl ([91.227.64.183]:8587 "EHLO rere.qmqm.pl"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231162AbhK1Fuu (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 28 Nov 2021 00:50:50 -0500
-Received: from remote.user (localhost [127.0.0.1])
-        by rere.qmqm.pl (Postfix) with ESMTPSA id 4J1yDh5CCGzWG;
-        Sun, 28 Nov 2021 06:47:32 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
-        t=1638078453; bh=+Cj+BB/A2FsyTFVTgsdgLhKnhMnYskAogn3uwYKOvvs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=mDvzO3ZNwgpRiDuAFQm9+pmxug6iiRogj8KsZ2DHrmVfKL9MWSJm9HIQ2sF53TWpd
-         L0Cxo/iC7TwwP9CzggOdtnsG8yh61uH/yiyeGKtUaLSuvka7WWpkL+2fp2a7+f17zz
-         LHjYvTh7JA7FV6iyq6nBwmZrvFWcELXXfV45m1RCWxlWHolAHnoJwfNUJM70pyRscX
-         ENAaoeowyKRpJRtQFR1i2aNe9zfcheSfjlOzpYaHMu1obJu43gZXlYrjkkdRz+K8NR
-         sXFW2VroLhE37GnXrisZfCB+nIxUD7dB5BTDMrVasYp8kMZWagiL+RGR5M01Pdi/50
-         yPZ70dtIdnSCg==
-X-Virus-Status: Clean
-X-Virus-Scanned: clamav-milter 0.103.3 at mail
-Date:   Sun, 28 Nov 2021 06:47:31 +0100
-From:   =?iso-8859-2?Q?Micha=B3_Miros=B3aw?= <mirq-linux@rere.qmqm.pl>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Uwe =?iso-8859-2?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>, Nishanth Menon <nm@ti.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Michael Turquette <mturquette@baylibre.com>,
+        id S230349AbhK1QLk (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 28 Nov 2021 11:11:40 -0500
+Received: from mail-oi1-f173.google.com ([209.85.167.173]:40798 "EHLO
+        mail-oi1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238569AbhK1QJk (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Sun, 28 Nov 2021 11:09:40 -0500
+Received: by mail-oi1-f173.google.com with SMTP id bk14so29645066oib.7;
+        Sun, 28 Nov 2021 08:06:24 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=6XcdVLR5T8aEqWDjXmGT4FtJ9lSL6Rm6Y96yhhLDME0=;
+        b=4taXed+QR7SrHztucROx6uelGYy2q0iUcqYS3LBQkVwPhpmVaYT9tAZEWL3R9cQeHt
+         aQdSP0/huV8hw0ihrik92vGsIMf2I14vEHl0KKW2QDwzZpHH2zFb4sD3bulkuspQ8e/K
+         k6pjsZp2eUsD8uZmI0GnG8Y5wpkZwd2THd9fMC5GturI+smrVD+NQrGut5cc5b+Bpi5V
+         k2V2qAqaOWhN9V3tKV3t0Q3hU8OWeOZDF7RXHNG/SL0bX2UUCHTzwdVvaBNaW4q7j70y
+         H//9rO4fb5qAOwuY0fpj6bLW+L3qJXMOydUUxjARYYzwctQzl+gILw754rVguoIMj/IS
+         wslQ==
+X-Gm-Message-State: AOAM530vxLSlS8AnM8U/HdrlODPsg0KLAMfGDTy1KAV/qDHzyFx8fiR9
+        KGCh4+KjnHgfy/NYkYQqTA==
+X-Google-Smtp-Source: ABdhPJwKIwsK+qKc3/WIO+9F/yWvFZR4TMP+v+GAwfhU3SlRfqN972FhHTZlzd0Etz2MduGDNYwiZg==
+X-Received: by 2002:aca:1708:: with SMTP id j8mr34441661oii.62.1638115583942;
+        Sun, 28 Nov 2021 08:06:23 -0800 (PST)
+Received: from robh.at.kernel.org ([2607:fb90:20d6:afc8:f6e9:d57a:3e26:ee41])
+        by smtp.gmail.com with ESMTPSA id y12sm2487710oiv.49.2021.11.28.08.06.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 28 Nov 2021 08:06:23 -0800 (PST)
+Received: (nullmailer pid 2561004 invoked by uid 1000);
+        Sun, 28 Nov 2021 16:06:20 -0000
+Date:   Sun, 28 Nov 2021 10:06:20 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Akhil R <akhilrajeev@nvidia.com>
+Cc:     dan.j.williams@intel.com, devicetree@vger.kernel.org,
+        dmaengine@vger.kernel.org, jonathanh@nvidia.com,
+        kyarlagadda@nvidia.com, ldewangan@nvidia.com,
         linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-pwm@vger.kernel.org,
-        linux-mmc@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-clk@vger.kernel.org, David Heidelberg <david@ixit.cz>
-Subject: Re: [PATCH v15 12/39] drm/tegra: gr2d: Support generic power domain
- and runtime PM
-Message-ID: <YaMX89bRBlqh0MvB@qmqm.qmqm.pl>
-References: <20211114193435.7705-1-digetx@gmail.com>
- <20211114193435.7705-13-digetx@gmail.com>
+        p.zabel@pengutronix.de, rgumasta@nvidia.com,
+        thierry.reding@gmail.com, vkoul@kernel.org
+Subject: Re: [PATCH v13 1/4] dt-bindings: dmaengine: Add doc for tegra gpcdma
+Message-ID: <YaOo/FHKQBAa93hd@robh.at.kernel.org>
+References: <1637573292-13214-1-git-send-email-akhilrajeev@nvidia.com>
+ <1637573292-13214-2-git-send-email-akhilrajeev@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-2
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20211114193435.7705-13-digetx@gmail.com>
+In-Reply-To: <1637573292-13214-2-git-send-email-akhilrajeev@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Sun, Nov 14, 2021 at 10:34:08PM +0300, Dmitry Osipenko wrote:
-> Add runtime power management and support generic power domains.
-[...]
-> @@ -104,10 +127,17 @@ static int gr2d_open_channel(struct tegra_drm_client *client,
->  			     struct tegra_drm_context *context)
->  {
->  	struct gr2d *gr2d = to_gr2d(client);
-> +	int err;
+On Mon, Nov 22, 2021 at 02:58:09PM +0530, Akhil R wrote:
+> Add DT binding document for Nvidia Tegra GPCDMA controller.
+> 
+> Signed-off-by: Rajesh Gumasta <rgumasta@nvidia.com>
+> Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
+> Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
+> ---
+>  .../bindings/dma/nvidia,tegra186-gpc-dma.yaml      | 111 +++++++++++++++++++++
+>  1 file changed, 111 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/dma/nvidia,tegra186-gpc-dma.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/dma/nvidia,tegra186-gpc-dma.yaml b/Documentation/devicetree/bindings/dma/nvidia,tegra186-gpc-dma.yaml
+> new file mode 100644
+> index 0000000..3a5a70d
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/dma/nvidia,tegra186-gpc-dma.yaml
+> @@ -0,0 +1,111 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/dma/nvidia,tegra186-gpc-dma.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +	err = pm_runtime_resume_and_get(client->base.dev);
-> +	if (err)
-> +		return err;
->  
->  	context->channel = host1x_channel_get(gr2d->channel);
-> -	if (!context->channel)
-> +	if (!context->channel) {
-> +		pm_runtime_put(context->client->base.dev);
+> +title: NVIDIA Tegra GPC DMA Controller Device Tree Bindings
+> +
+> +description: |
+> +  The Tegra General Purpose Central (GPC) DMA controller is used for faster
+> +  data transfers between memory to memory, memory to device and device to
+> +  memory.
+> +
+> +maintainers:
+> +  - Jon Hunter <jonathanh@nvidia.com>
+> +  - Rajesh Gumasta <rgumasta@nvidia.com>
+> +
+> +allOf:
+> +  - $ref: "dma-controller.yaml#"
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - const: nvidia,tegra186-gpcdma
+> +      - items:
+> +         - const: nvidia,tegra186-gpcdma
+> +         - const: nvidia,tegra194-gpcdma
 
-Could host1x_channel_get/put() handle pm_runtime* calls ? I would expect
-this to be common code for the users.
+Still not how 'compatible' works nor what I wrote out for you.
 
-BTW, pm_runtime_resume_and_get() uses different dev than
-pm_runtime_put() in the error path - is this intended?
-
-Best Regards
-Micha³ Miros³aw
+Rob
