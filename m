@@ -2,74 +2,94 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAE91C433F5
-	for <linux-tegra@archiver.kernel.org>; Mon, 29 Nov 2021 21:28:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 280E0C433EF
+	for <linux-tegra@archiver.kernel.org>; Mon, 29 Nov 2021 21:34:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231669AbhK2VcI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 29 Nov 2021 16:32:08 -0500
-Received: from mail-oi1-f177.google.com ([209.85.167.177]:46672 "EHLO
-        mail-oi1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232517AbhK2VaI (ORCPT
+        id S229749AbhK2Vh7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 29 Nov 2021 16:37:59 -0500
+Received: from mail-oi1-f179.google.com ([209.85.167.179]:37409 "EHLO
+        mail-oi1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230466AbhK2Vf7 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 29 Nov 2021 16:30:08 -0500
-Received: by mail-oi1-f177.google.com with SMTP id s139so37076040oie.13;
-        Mon, 29 Nov 2021 13:26:49 -0800 (PST)
+        Mon, 29 Nov 2021 16:35:59 -0500
+Received: by mail-oi1-f179.google.com with SMTP id bj13so37188021oib.4;
+        Mon, 29 Nov 2021 13:32:40 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=KAU7+bZHiWEp2yIBieWGgyI8VLCnh42RRI0vBGHa9/4=;
-        b=q662PeQkNJD//NGtk6K7VmrnR1ngtFDCnb05wg0VsfUScBfNRzfgM1QLkkUQmkpyPG
-         4yGc7a/u3SOq0kRDkI8mCHgfczXport6PMV3mFaYGFV3kxdDJ5RHH7T2b/8bZAHfFQmf
-         wA7EUiQw8U7MD1S+6gUdz20MgvHzq3HbLiVPtSEmRAwWlsV4c3s5em3ffDxE1Vq0mOet
-         v4I9bkEl6u7yUdGaRRRuTWvY3afGVonBWD6o3m4rL/nVppwrg0tBYIKhS/DYYGFtUp1w
-         TDYJ5hlxHEHY+E97deaBEKwLMRfWDI9R57bvTAPhabvew/2Edk10mYOtn6LqNkhthibX
-         zXcA==
-X-Gm-Message-State: AOAM53145TD24oBmtrRtRH2Ap4KI82YXZqpqT/SavS5jKljxbblgFx3j
-        r19wfWq+rPjqveWmGrPQIw==
-X-Google-Smtp-Source: ABdhPJzQJ8YAzrRP8aRWzJTSjXg0Uz87YRg+E6Vk7gRhNjh6UYwPLj19H9agfaotDJ+Ni7iW3SCk2g==
-X-Received: by 2002:a05:6808:b0d:: with SMTP id s13mr548263oij.53.1638221209579;
-        Mon, 29 Nov 2021 13:26:49 -0800 (PST)
+        bh=RW7Kic35D09JywoCPiX4Hf5lonYwWJ2pHhLH0p3k1bA=;
+        b=OCwPGqw8XS1lNXKPmJjhr63/2l67blw8ROySVdFJQkZFkOgv4WS/3IOzldJGYyDf12
+         l5CFuz58LIThXB06HGUR0XBa0ZssrwUaUUSD9/3AsIz0zAHjKNCaIxpTPizPqnRI5WYH
+         wqVFwAlj8/uoXzQXJlNYuuBHZiksgu0eUL6NH0uMbvOw+68LyAATE+M31zopaW7z8yF0
+         m9k7vSi8gzzG694cTcVCJFmocR+5VD4jPW78rzIyep+N2wIbPT5FYu3MJosSq6vTJ9h3
+         ZBP/reg8XxFxlmvOJAmqrEGc2P3csenGA13SqPPIVQFvHi6FjulI4NxRj8xXgBgcc8va
+         I0Ug==
+X-Gm-Message-State: AOAM533dSFmlePEKGewKJEusLvLLlwa+sc0aCmAjTy4LJUx1/kEmEuRI
+        67D66WPfYstr6/7kP8tZoqHCMQfM5g==
+X-Google-Smtp-Source: ABdhPJwwr3ACGskcfmkUvbtDgGd1fiaHTmvZ31KfFo5cY7XqvZlbBXtx2LECKeAOzsKoomhOfpBBgA==
+X-Received: by 2002:aca:f20a:: with SMTP id q10mr565923oih.176.1638221560620;
+        Mon, 29 Nov 2021 13:32:40 -0800 (PST)
 Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id q9sm2829077oti.32.2021.11.29.13.26.48
+        by smtp.gmail.com with ESMTPSA id w2sm2404466ooa.26.2021.11.29.13.32.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Nov 2021 13:26:49 -0800 (PST)
-Received: (nullmailer pid 638684 invoked by uid 1000);
-        Mon, 29 Nov 2021 21:26:48 -0000
-Date:   Mon, 29 Nov 2021 15:26:48 -0600
+        Mon, 29 Nov 2021 13:32:40 -0800 (PST)
+Received: (nullmailer pid 647021 invoked by uid 1000);
+        Mon, 29 Nov 2021 21:32:39 -0000
+Date:   Mon, 29 Nov 2021 15:32:39 -0600
 From:   Rob Herring <robh@kernel.org>
 To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        David Airlie <airlied@linux.ie>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Sam Ravnborg <sam@ravnborg.org>,
-        Svyatoslav Ryhel <clamor95@gmail.com>,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v1 1/2] dt-bindings: display: simple: Add HannStar
- HSD101PWW2
-Message-ID: <YaVFmNji2CR5klCS@robh.at.kernel.org>
-References: <20211114200431.28484-1-digetx@gmail.com>
- <20211114200431.28484-2-digetx@gmail.com>
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Anton Bambura <jenneron@protonmail.com>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/2] dt-bindings: sharp,lq101r1sx01: Add compatible
+ for LQ101R1SX03
+Message-ID: <YaVG93LCF6MQYiSi@robh.at.kernel.org>
+References: <20211114200717.28986-1-digetx@gmail.com>
+ <20211114200717.28986-2-digetx@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20211114200431.28484-2-digetx@gmail.com>
+In-Reply-To: <20211114200717.28986-2-digetx@gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Sun, 14 Nov 2021 23:04:30 +0300, Dmitry Osipenko wrote:
-> From: Svyatoslav Ryhel <clamor95@gmail.com>
+On Sun, Nov 14, 2021 at 11:07:16PM +0300, Dmitry Osipenko wrote:
+> From: Anton Bambura <jenneron@protonmail.com>
 > 
-> Add HannStar HSD101PWW2 10.1" WXGA (1280x800) TFT-LCD LVDS panel
-> to the list of compatibles.
-> 
-> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> ---
->  .../devicetree/bindings/display/panel/panel-simple.yaml         | 2 ++
->  1 file changed, 2 insertions(+)
-> 
+> LQ101R1SX03 is compatible with LQ101R1SX01, document it.
 
-Acked-by: Rob Herring <robh@kernel.org>
+Then sounds like '"sharp,lq101r1sx03", "sharp,lq101r1sx01"' would be the 
+appropriate compatible value. Do that, and you don't need a driver 
+change.
+
+> 
+> Signed-off-by: Anton Bambura <jenneron@protonmail.com>
+> ---
+>  .../devicetree/bindings/display/panel/sharp,lq101r1sx01.yaml  | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/display/panel/sharp,lq101r1sx01.yaml b/Documentation/devicetree/bindings/display/panel/sharp,lq101r1sx01.yaml
+> index a679d3647dbd..f7514eb9ebda 100644
+> --- a/Documentation/devicetree/bindings/display/panel/sharp,lq101r1sx01.yaml
+> +++ b/Documentation/devicetree/bindings/display/panel/sharp,lq101r1sx01.yaml
+> @@ -30,7 +30,9 @@ allOf:
+>  
+>  properties:
+>    compatible:
+> -    const: sharp,lq101r1sx01
+> +    enum:
+> +      - sharp,lq101r1sx01
+> +      - sharp,lq101r1sx03
+>  
+>    reg: true
+>    power-supply: true
+> -- 
+> 2.33.1
+> 
+> 
