@@ -2,147 +2,88 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3FB8C43219
-	for <linux-tegra@archiver.kernel.org>; Mon, 29 Nov 2021 00:38:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D68BAC433F5
+	for <linux-tegra@archiver.kernel.org>; Mon, 29 Nov 2021 01:23:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1376456AbhK2Al7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 28 Nov 2021 19:41:59 -0500
-Received: from rere.qmqm.pl ([91.227.64.183]:39946 "EHLO rere.qmqm.pl"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235045AbhK2Aj6 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 28 Nov 2021 19:39:58 -0500
-Received: from remote.user (localhost [127.0.0.1])
-        by rere.qmqm.pl (Postfix) with ESMTPSA id 4J2RHF5R6Gz9Y;
-        Mon, 29 Nov 2021 01:36:25 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
-        t=1638146198; bh=DI1VWBOrDzR1kSFvGVwF5e/uC6F95umcWDF0D1gW0co=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=H73sBxsM7L9z8xEfnp2Ak7MzBK8+vuHhYSpX9ZmIw96z66YhhL0jbzAc1kAW4E8/k
-         E+n0myrDaFBdTPW3DCJBAB1QxLCznookgF41GB3ur/8AtJ172fB625fAJLQBCfF2Il
-         1tVB3rwB3wCft3kEONBcl+9mGZ0YFJna/va55m2Id6G5OQJMzxWyiW8mEoVG9uWh4D
-         9FU7cd4y+9BUv1/bcd+v0FTSSINIJ8msC5Z+cow25KP+uSrFkzTmZSbuYJNYmoN8pj
-         wIHmD3sAFqkn2Up4Tyhb9Q0kZcFFYL4JTYDk03Wdeze2AnxwyR74tes3GEAEUnF7BY
-         Uq7OHC/U12/7A==
-X-Virus-Status: Clean
-X-Virus-Scanned: clamav-milter 0.103.3 at mail
-Date:   Mon, 29 Nov 2021 01:36:24 +0100
-From:   =?iso-8859-2?Q?Micha=B3_Miros=B3aw?= <mirq-linux@rere.qmqm.pl>
+        id S233295AbhK2B0u (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 28 Nov 2021 20:26:50 -0500
+Received: from mail-ot1-f51.google.com ([209.85.210.51]:37566 "EHLO
+        mail-ot1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236052AbhK2BYu (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Sun, 28 Nov 2021 20:24:50 -0500
+Received: by mail-ot1-f51.google.com with SMTP id h19-20020a9d3e53000000b0056547b797b2so23272199otg.4;
+        Sun, 28 Nov 2021 17:21:33 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=35yw570T4KFH9Vn7h+QDO1+4caagXV0XP1TQ4gz5280=;
+        b=K1eyhAOdUcasaxVaykS2HCvGilML+GE8PHe6ojvcu0263gIG6c6hM6/xht2hh1mjbB
+         4ZZWWe20KKn8CA5ej7++R5FC19gWtOndwaG1ksBOp2az8Cp6z3U3xecbL5whgHIdTlaH
+         JPSb4szPi7fktOpP9gw5a5jXJPsWg5iwzBv3veHX7piB+l4CtBtCsP5fHp9aXccirLy+
+         RCNcVr5PPXp4PHJ7rwvfab2jqPe/sc0oq5ghKm4vh7qhCuw86vGDjO3VuGoZRFCnUVNy
+         j+ubE6/xrU92ihtJHrtpFAP5XXfGIA3OW4iYoKiWOTIZHXr4l3GKu4qmfMpRbYXskj82
+         JJoA==
+X-Gm-Message-State: AOAM533ozm17i7ALhnhRv0UG8VBSutygcwpg8l0kMjij3Ilc8mTpbdMg
+        9ri4wsHGVJ/m51+oWZTwPA==
+X-Google-Smtp-Source: ABdhPJzJpgDDeqI5phORJElcPK/Ul1dZlNZVTFQoni4QTL8NZuEmBhGu0ak5YcK9HiFlLLtITX4wcQ==
+X-Received: by 2002:a9d:4e89:: with SMTP id v9mr43407932otk.352.1638148893308;
+        Sun, 28 Nov 2021 17:21:33 -0800 (PST)
+Received: from robh.at.kernel.org ([172.58.99.229])
+        by smtp.gmail.com with ESMTPSA id y192sm2637613oie.21.2021.11.28.17.21.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 28 Nov 2021 17:21:32 -0800 (PST)
+Received: (nullmailer pid 2965603 invoked by uid 1000);
+        Mon, 29 Nov 2021 01:21:29 -0000
+Date:   Sun, 28 Nov 2021 19:21:29 -0600
+From:   Rob Herring <robh@kernel.org>
 To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
+Cc:     linux-tegra@vger.kernel.org, David Heidelberg <david@ixit.cz>,
+        Nikola Milosavljevic <mnidza@outlook.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Ihor Didenko <tailormoon@rambler.ru>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Guo Ren <guoren@kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        Joshua Thompson <funaho@jurai.org>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Sebastian Reichel <sre@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Greentime Hu <green.hu@gmail.com>,
-        Vincent Chen <deanbo422@gmail.com>,
-        "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-        Helge Deller <deller@gmx.de>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Len Brown <lenb@kernel.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, Pavel Machek <pavel@ucw.cz>,
-        Lee Jones <lee.jones@linaro.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>, alankao@andestech.com,
-        "K . C . Kuen-Chern Lin" <kclin@andestech.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-csky@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-riscv@lists.infradead.org, linux-sh@vger.kernel.org,
-        xen-devel@lists.xenproject.org, linux-acpi@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v4 08/25] kernel: Add combined power-off+restart handler
- call chain API
-Message-ID: <YaQgiLw03lPyvuhr@qmqm.qmqm.pl>
-References: <20211126180101.27818-1-digetx@gmail.com>
- <20211126180101.27818-9-digetx@gmail.com>
- <YaLQqks8cB0vWp6Q@qmqm.qmqm.pl>
- <9213569e-0f40-0df1-4710-8dab564e12d6@gmail.com>
- <YaPx0kY7poGpwCL9@qmqm.qmqm.pl>
- <1fa2d9d5-f5f6-77f5-adf6-827921acce49@gmail.com>
+        Thomas Graichen <thomas.graichen@gmail.com>,
+        Antoni Aloy Torrens <aaloytorrens@gmail.com>,
+        Andreas Westman Dorcsak <hedmoo@yahoo.com>,
+        devicetree@vger.kernel.org,
+        Raffaele Tranquillini <raffaele.tranquillini@gmail.com>,
+        Anton Bambura <jenneron@protonmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Ion Agorria <ion@agorria.com>,
+        =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        Jasper Korten <jja2000@gmail.com>,
+        Svyatoslav Ryhel <clamor95@gmail.com>,
+        linux-kernel@vger.kernel.org,
+        Maxim Schwalm <maxim.schwalm@gmail.com>
+Subject: Re: [PATCH v3 01/14] dt-bindings: ARM: tegra: Document ASUS
+ Transformers
+Message-ID: <YaQrGZUc3W4RAw80@robh.at.kernel.org>
+References: <20211127142327.17692-1-digetx@gmail.com>
+ <20211127142327.17692-2-digetx@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1fa2d9d5-f5f6-77f5-adf6-827921acce49@gmail.com>
+In-Reply-To: <20211127142327.17692-2-digetx@gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, Nov 29, 2021 at 12:53:51AM +0300, Dmitry Osipenko wrote:
-> 29.11.2021 00:17, Michał Mirosław пишет:
-> >> I'm having trouble with parsing this comment. Could you please try to
-> >> rephrase it? I don't see how you could check whether power-off handler
-> >> is available if you'll mix all handlers together.
-> > If notify_call_chain() would be fixed to return NOTIFY_OK if any call
-> > returned NOTIFY_OK, then this would be a clear way to gather the
-> > answer if any of the handlers will attempt the final action (reboot or
-> > power off).
-> Could you please show a code snippet that implements your suggestion?
+On Sat, 27 Nov 2021 17:23:14 +0300, Dmitry Osipenko wrote:
+> From: Svyatoslav Ryhel <clamor95@gmail.com>
+> 
+> Document Tegra20/30/114-based ASUS Transformer Series tablet devices.
+> This group includes EeePad TF101, Prime TF201, Pad TF300T, TF300TG
+> Infinity TF700T, TF701T.
+> 
+> Signed-off-by: David Heidelberg <david@ixit.cz>
+> Signed-off-by: Anton Bambura <jenneron@protonmail.com>
+> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  Documentation/devicetree/bindings/arm/tegra.yaml | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
+> 
 
-A rough idea is this:
-
- static int notifier_call_chain(struct notifier_block **nl,
- 			       unsigned long val, void *v,
- 			       int nr_to_call, int *nr_calls)
- {
--	int ret = NOTIFY_DONE;
-+	int ret, result = NOTIFY_DONE;
- 	struct notifier_block *nb, *next_nb;
- 
- 	nb = rcu_dereference_raw(*nl);
- 
- 	while (nb && nr_to_call) {
-...
- 		ret = nb->notifier_call(nb, val, v);
-+
-+		/* Assuming NOTIFY_STOP-carrying return is always greater than non-stopping one. */
-+		if (result < ret)
-+			result = ret;
-... 
- 	}
--	return ret;
-+	return result;
- }
-
-Then:
-
-bool prepare_reboot()
-{
-	int ret = xx_notifier_call_chain(&shutdown_notifier, PREPARE_REBOOT, ...);
-	return ret == NOTIFY_OK;
-}
-
-And the return value would signify whether the reboot will be attempted
-when calling the chain for the REBOOT action. (Analogously for powering off.)
-
-Best Regards
-Michał Mirosław
+Acked-by: Rob Herring <robh@kernel.org>
