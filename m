@@ -2,94 +2,115 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 280E0C433EF
-	for <linux-tegra@archiver.kernel.org>; Mon, 29 Nov 2021 21:34:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CC8FC433F5
+	for <linux-tegra@archiver.kernel.org>; Mon, 29 Nov 2021 22:54:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229749AbhK2Vh7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 29 Nov 2021 16:37:59 -0500
-Received: from mail-oi1-f179.google.com ([209.85.167.179]:37409 "EHLO
-        mail-oi1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230466AbhK2Vf7 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 29 Nov 2021 16:35:59 -0500
-Received: by mail-oi1-f179.google.com with SMTP id bj13so37188021oib.4;
-        Mon, 29 Nov 2021 13:32:40 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=RW7Kic35D09JywoCPiX4Hf5lonYwWJ2pHhLH0p3k1bA=;
-        b=OCwPGqw8XS1lNXKPmJjhr63/2l67blw8ROySVdFJQkZFkOgv4WS/3IOzldJGYyDf12
-         l5CFuz58LIThXB06HGUR0XBa0ZssrwUaUUSD9/3AsIz0zAHjKNCaIxpTPizPqnRI5WYH
-         wqVFwAlj8/uoXzQXJlNYuuBHZiksgu0eUL6NH0uMbvOw+68LyAATE+M31zopaW7z8yF0
-         m9k7vSi8gzzG694cTcVCJFmocR+5VD4jPW78rzIyep+N2wIbPT5FYu3MJosSq6vTJ9h3
-         ZBP/reg8XxFxlmvOJAmqrEGc2P3csenGA13SqPPIVQFvHi6FjulI4NxRj8xXgBgcc8va
-         I0Ug==
-X-Gm-Message-State: AOAM533dSFmlePEKGewKJEusLvLLlwa+sc0aCmAjTy4LJUx1/kEmEuRI
-        67D66WPfYstr6/7kP8tZoqHCMQfM5g==
-X-Google-Smtp-Source: ABdhPJwwr3ACGskcfmkUvbtDgGd1fiaHTmvZ31KfFo5cY7XqvZlbBXtx2LECKeAOzsKoomhOfpBBgA==
-X-Received: by 2002:aca:f20a:: with SMTP id q10mr565923oih.176.1638221560620;
-        Mon, 29 Nov 2021 13:32:40 -0800 (PST)
-Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id w2sm2404466ooa.26.2021.11.29.13.32.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Nov 2021 13:32:40 -0800 (PST)
-Received: (nullmailer pid 647021 invoked by uid 1000);
-        Mon, 29 Nov 2021 21:32:39 -0000
-Date:   Mon, 29 Nov 2021 15:32:39 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Anton Bambura <jenneron@protonmail.com>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/2] dt-bindings: sharp,lq101r1sx01: Add compatible
- for LQ101R1SX03
-Message-ID: <YaVG93LCF6MQYiSi@robh.at.kernel.org>
-References: <20211114200717.28986-1-digetx@gmail.com>
- <20211114200717.28986-2-digetx@gmail.com>
+        id S235927AbhK2W5c (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 29 Nov 2021 17:57:32 -0500
+Received: from foss.arm.com ([217.140.110.172]:50360 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S235385AbhK2W5E (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 29 Nov 2021 17:57:04 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4375C1063;
+        Mon, 29 Nov 2021 14:53:44 -0800 (PST)
+Received: from [10.57.34.182] (unknown [10.57.34.182])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C8E633F5A1;
+        Mon, 29 Nov 2021 14:53:42 -0800 (PST)
+Message-ID: <8ea071d7-a8ff-813a-6268-7445dbbf0c1a@arm.com>
+Date:   Mon, 29 Nov 2021 22:53:37 +0000
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211114200717.28986-2-digetx@gmail.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.2
+Subject: Re: [PATCH 2/2] arm64: tegra: Describe Tegra234 CPU hierarchy
+Content-Language: en-GB
+To:     Rob Herring <robh@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>
+Cc:     Jon Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        Will Deacon <will@kernel.org>
+References: <20211112131904.3683428-1-thierry.reding@gmail.com>
+ <20211112131904.3683428-2-thierry.reding@gmail.com>
+ <YaVAxNiU2O7kWXoQ@robh.at.kernel.org>
+From:   Robin Murphy <robin.murphy@arm.com>
+In-Reply-To: <YaVAxNiU2O7kWXoQ@robh.at.kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Sun, Nov 14, 2021 at 11:07:16PM +0300, Dmitry Osipenko wrote:
-> From: Anton Bambura <jenneron@protonmail.com>
+On 2021-11-29 21:06, Rob Herring wrote:
+> On Fri, Nov 12, 2021 at 02:19:04PM +0100, Thierry Reding wrote:
+>> From: Thierry Reding <treding@nvidia.com>
+>>
+>> The NVIDIA Tegra234 SoC has 3 clusters of 4 Cortex-A78AE CPU cores each,
+>> for a total of 12 CPUs. Each CPU has 64 KiB instruction and data caches
+>> with each cluster having an additional 256 KiB unified L2 cache and a 2
+>> MiB L3 cache.
+>>
+>> Signed-off-by: Thierry Reding <treding@nvidia.com>
+>> ---
+>>   arch/arm64/boot/dts/nvidia/tegra234.dtsi | 365 ++++++++++++++++++++++-
+>>   1 file changed, 363 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/arch/arm64/boot/dts/nvidia/tegra234.dtsi b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
+>> index 104e5fdd5f8a..db24f48edc9f 100644
+>> --- a/arch/arm64/boot/dts/nvidia/tegra234.dtsi
+>> +++ b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
+>> @@ -736,12 +736,373 @@ cpus {
+>>   		#address-cells = <1>;
+>>   		#size-cells = <0>;
+>>   
+>> -		cpu@0 {
+>> +		cpu0_0: cpu@0 {
+>> +			compatible = "arm,cortex-a78";
+>>   			device_type = "cpu";
+>> -			reg = <0x000>;
+>> +			reg = <0x00000>;
+>>   
+>>   			enable-method = "psci";
+>> +
 > 
-> LQ101R1SX03 is compatible with LQ101R1SX01, document it.
+>> +			i-cache-size = <65536>;
+>> +			i-cache-line-size = <64>;
+>> +			i-cache-sets = <256>;
+>> +			d-cache-size = <65536>;
+>> +			d-cache-line-size = <64>;
+>> +			d-cache-sets = <256>;
+> 
+> Isn't all this discoverable?
 
-Then sounds like '"sharp,lq101r1sx03", "sharp,lq101r1sx01"' would be the 
-appropriate compatible value. Do that, and you don't need a driver 
-change.
+No. The required parameters for cache maintenance by set/way are 
+discoverable from the CTR, and if you're particularly lucky they might 
+even happen to reflect the underlying physical cache structures, but 
+there's absolutely no guarantee of that, and there definitely exist 
+cases where they don't.
 
+[...]
+>> +	pmu {
+>> +		compatible = "arm,armv8-pmuv3";
+
+Oh, I'd missed this - per the current state of things, we should really 
+have a proper compatible for the PMU as well.
+
+(Suggestions for ways to improve the current state of things for better 
+forward- and backward- compatibility welcome - I started having a mad 
+idea about autogenerating a PMU name from the CPU compatible if the 
+generic PMU compatible is present, but I'm not sure that's realistic).
+
+Robin.
+
+>> +		interrupts = <GIC_PPI 7 IRQ_TYPE_LEVEL_HIGH>;
+>> +		status = "okay";
 > 
-> Signed-off-by: Anton Bambura <jenneron@protonmail.com>
-> ---
->  .../devicetree/bindings/display/panel/sharp,lq101r1sx01.yaml  | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+> That's the default.
 > 
-> diff --git a/Documentation/devicetree/bindings/display/panel/sharp,lq101r1sx01.yaml b/Documentation/devicetree/bindings/display/panel/sharp,lq101r1sx01.yaml
-> index a679d3647dbd..f7514eb9ebda 100644
-> --- a/Documentation/devicetree/bindings/display/panel/sharp,lq101r1sx01.yaml
-> +++ b/Documentation/devicetree/bindings/display/panel/sharp,lq101r1sx01.yaml
-> @@ -30,7 +30,9 @@ allOf:
->  
->  properties:
->    compatible:
-> -    const: sharp,lq101r1sx01
-> +    enum:
-> +      - sharp,lq101r1sx01
-> +      - sharp,lq101r1sx03
->  
->    reg: true
->    power-supply: true
-> -- 
-> 2.33.1
-> 
-> 
+>>   	};
+>>   
+>>   	psci {
+>> -- 
+>> 2.33.1
+>>
+>>
