@@ -2,75 +2,159 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5671BC433F5
-	for <linux-tegra@archiver.kernel.org>; Mon, 29 Nov 2021 00:22:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 844AAC433FE
+	for <linux-tegra@archiver.kernel.org>; Mon, 29 Nov 2021 00:28:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1359871AbhK2AZT (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 28 Nov 2021 19:25:19 -0500
-Received: from mail-ot1-f47.google.com ([209.85.210.47]:46625 "EHLO
-        mail-ot1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344104AbhK2AXT (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 28 Nov 2021 19:23:19 -0500
-Received: by mail-ot1-f47.google.com with SMTP id b5-20020a9d60c5000000b0055c6349ff22so23037383otk.13;
-        Sun, 28 Nov 2021 16:20:02 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Tmn8UPuYCbbaAu9yuKqOIAL/Z3VCsmY2MYHurrVcL6I=;
-        b=0zZlOCwGmp9UpDRhMGTp+YnoAzqY4t6S4UbMzJjHW3HHLERgP1wYQ3Peq6T2HifZuc
-         wCdPYlTo5tovwvTLzNJ0vQ3niWr2wxQRfeQK/MeSpdvnsL4nm3NUSPaUf1/LX48RxpQN
-         96kKwf4kJHhSFcp43KyTK0shKPDncDfVtwNr8QFqpHSI13shX00y4ulqvdC7Jr5INRTy
-         Wsm4G7kbObSpnY8gX5i6pFkexCkj6+zahCx3fXRQqQ9wfsbOyFyuF0MPKi3Jmvg0qB3g
-         MVgjAflMDd7TqIHbmr+cuZlL+lpo4pN2Nd7IiuRkGgYDECCO0urqbmTEjlhYGAideWf2
-         ddpA==
-X-Gm-Message-State: AOAM530vvdRXT+yean+yeWo1a40t9C5oZ0RNmbI/Z/4sRpZzNfyz6Eyu
-        kAyQ1g1J8PsaaUhfSJsf/w==
-X-Google-Smtp-Source: ABdhPJxgP+4Ec1L+bfIw9v66vTNZr0gLUBgMY59qf0MCtqMYqS9ZuJ839D9e1DwN0GzbL/OnlM16aA==
-X-Received: by 2002:a9d:749a:: with SMTP id t26mr43471407otk.96.1638145202357;
-        Sun, 28 Nov 2021 16:20:02 -0800 (PST)
-Received: from robh.at.kernel.org ([172.58.99.242])
-        by smtp.gmail.com with ESMTPSA id w18sm2376042otm.1.2021.11.28.16.20.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 28 Nov 2021 16:20:01 -0800 (PST)
-Received: (nullmailer pid 2876190 invoked by uid 1000);
-        Mon, 29 Nov 2021 00:19:59 -0000
-Date:   Sun, 28 Nov 2021 18:19:59 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Jon Hunter <jonathanh@nvidia.com>
+        id S1376304AbhK2AcP (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 28 Nov 2021 19:32:15 -0500
+Received: from rere.qmqm.pl ([91.227.64.183]:5612 "EHLO rere.qmqm.pl"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232018AbhK2AaN (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Sun, 28 Nov 2021 19:30:13 -0500
+Received: from remote.user (localhost [127.0.0.1])
+        by rere.qmqm.pl (Postfix) with ESMTPSA id 4J2R463HYCz9Y;
+        Mon, 29 Nov 2021 01:26:46 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
+        t=1638145614; bh=rYhG1/gOEGdeEm/s8Gt8rEBk1iF8QMIsgq7S9tytKm0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=CbL6Dkr0hp6+eWfnOkswWvW2NOKJ79Uh6/l2ZCnK5kWTiOO50iqx187Rg4dryYZZY
+         bxYRz4m9fgWtZVh11lmgMaMMzocpKUJUWIlke/44DEMmzJJm4vDOSxFAyf1Gq25nhd
+         1THlT17c8aj7yKXukSvNxOS2rqgVH1j/XRMa1p7Hswrcs4jJdmmxtpOwmRnm9PweUg
+         dgln8/6i94ET+XVFAx+2l6pzk4WNbL+PWxg255szxizJhOsvQ3eK1ntEQbcIyPN3HU
+         KJwCs9dJC+yqQftWDNSkBS/r4FvpiW2ousq8It65okWyLREqQTSJR+N2Sf4mDmjtBp
+         iZvEDATRHwtcA==
+X-Virus-Status: Clean
+X-Virus-Scanned: clamav-milter 0.103.3 at mail
+Date:   Mon, 29 Nov 2021 01:26:42 +0100
+From:   =?iso-8859-2?Q?Micha=B3_Miros=B3aw?= <mirq-linux@rere.qmqm.pl>
+To:     Dmitry Osipenko <digetx@gmail.com>
 Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        linux-tegra@vger.kernel.org,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH V3 1/2] dt-bindings: Add YAML bindings for NVENC and NVJPG
-Message-ID: <YaQcr5ntuVmsQMgy@robh.at.kernel.org>
-References: <20211117095608.60415-1-jonathanh@nvidia.com>
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Guo Ren <guoren@kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Joshua Thompson <funaho@jurai.org>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Sebastian Reichel <sre@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Greentime Hu <green.hu@gmail.com>,
+        Vincent Chen <deanbo422@gmail.com>,
+        "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+        Helge Deller <deller@gmx.de>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Len Brown <lenb@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>, Pavel Machek <pavel@ucw.cz>,
+        Lee Jones <lee.jones@linaro.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>, alankao@andestech.com,
+        "K . C . Kuen-Chern Lin" <kclin@andestech.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-csky@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-riscv@lists.infradead.org, linux-sh@vger.kernel.org,
+        xen-devel@lists.xenproject.org, linux-acpi@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v4 05/25] reboot: Warn if restart handler has duplicated
+ priority
+Message-ID: <YaQeQgbW+CjEdsqG@qmqm.qmqm.pl>
+References: <20211126180101.27818-1-digetx@gmail.com>
+ <20211126180101.27818-6-digetx@gmail.com>
+ <YaLNOJTM+lVq+YNS@qmqm.qmqm.pl>
+ <033ddf2a-6223-1a82-ec64-30f17c891f67@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20211117095608.60415-1-jonathanh@nvidia.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <033ddf2a-6223-1a82-ec64-30f17c891f67@gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, 17 Nov 2021 09:56:07 +0000, Jon Hunter wrote:
-> Add YAML device tree bindings for the Tegra NVENC and NVJPG Host1x
-> engines.
+On Mon, Nov 29, 2021 at 12:06:19AM +0300, Dmitry Osipenko wrote:
+> 28.11.2021 03:28, Michał Mirosław пишет:
+> > On Fri, Nov 26, 2021 at 09:00:41PM +0300, Dmitry Osipenko wrote:
+> >> Add sanity check which ensures that there are no two restart handlers
+> >> registered with the same priority. Normally it's a direct sign of a
+> >> problem if two handlers use the same priority.
+> > 
+> > The patch doesn't ensure the property that there are no duplicated-priority
+> > entries on the chain.
 > 
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> ---
-> Changes since V2:
-> - Fixed indentation
-> Changes since V1:
-> - Fixed errors reported by Rob's bot
+> It's not the exact point of this patch.
 > 
->  .../gpu/host1x/nvidia,tegra210-nvenc.yaml     | 135 ++++++++++++++++++
->  .../gpu/host1x/nvidia,tegra210-nvjpg.yaml     |  94 ++++++++++++
->  2 files changed, 229 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/gpu/host1x/nvidia,tegra210-nvenc.yaml
->  create mode 100644 Documentation/devicetree/bindings/gpu/host1x/nvidia,tegra210-nvjpg.yaml
+> > I'd rather see a atomic_notifier_chain_register_unique() that returns
+> > -EBUSY or something istead of adding an entry with duplicate priority.
+> > That way it would need only one list traversal unless you want to
+> > register the duplicate anyway (then you would call the older
+> > atomic_notifier_chain_register() after reporting the error).
 > 
+> The point of this patch is to warn developers about the problem that
+> needs to be fixed. We already have such troubling drivers in mainline.
+> 
+> It's not critical to register different handlers with a duplicated
+> priorities, but such cases really need to be corrected. We shouldn't
+> break users' machines during transition to the new API, meanwhile
+> developers should take action of fixing theirs drivers.
+> 
+> > (Or you could return > 0 when a duplicate is registered in
+> > atomic_notifier_chain_register() if the callers are prepared
+> > for that. I don't really like this way, though.)
+> 
+> I had a similar thought at some point before and decided that I'm not in
+> favor of this approach. It's nicer to have a dedicated function that
+> verifies the uniqueness, IMO.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+I don't like the part that it traverses the list second time to check
+the uniqueness. But actually you could avoid that if
+notifier_chain_register() would always add equal-priority entries in
+reverse order:
+
+ static int notifier_chain_register(struct notifier_block **nl,
+ 		struct notifier_block *n)
+ {
+ 	while ((*nl) != NULL) {
+ 		if (unlikely((*nl) == n)) {
+ 			WARN(1, "double register detected");
+ 			return 0;
+ 		}
+-		if (n->priority > (*nl)->priority)
++		if (n->priority >= (*nl)->priority)
+ 			break;
+ 		nl = &((*nl)->next);
+ 	}
+ 	n->next = *nl;
+ 	rcu_assign_pointer(*nl, n);
+ 	return 0;
+ }
+
+Then the check for uniqueness after adding would be:
+
+ WARN(nb->next && nb->priority == nb->next->priority);
+
+Best Regards
+Michał Mirosław
