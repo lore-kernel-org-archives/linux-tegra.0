@@ -2,149 +2,105 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11BBCC43219
-	for <linux-tegra@archiver.kernel.org>; Mon, 29 Nov 2021 13:22:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F18CC433FE
+	for <linux-tegra@archiver.kernel.org>; Mon, 29 Nov 2021 13:44:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1377751AbhK2N0K (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 29 Nov 2021 08:26:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51734 "EHLO
+        id S235022AbhK2Nrl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 29 Nov 2021 08:47:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57344 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1377631AbhK2NYI (ORCPT
+        with ESMTP id S231327AbhK2Npk (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 29 Nov 2021 08:24:08 -0500
-Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E19D7C08EE1B;
-        Mon, 29 Nov 2021 04:04:38 -0800 (PST)
-Received: by mail-lf1-x136.google.com with SMTP id b1so43778622lfs.13;
-        Mon, 29 Nov 2021 04:04:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=PNn5ANXHQBQImIpvHbPbNMd2Lqd15EQlJogO89cnByY=;
-        b=MI4kP55/Zlm7TBL7y2OrNMI5h+lPZeZmB7t8OlZkmrVqz5nkh2/Y6HuliAe0oVs0Rk
-         rFetODlieSY8yYJ/zujS836D4HMa1RwjML/CAxKtomUWXSGb1qL/KVpTn6q2+Uvz6fll
-         o53AZuiQAc2GWbWiafTtGZSuw2c5mqIFJqFNiJYF9aTjEDiBqb562eel2zakvhyPlOl3
-         pG/pjhw/StA1ckadkeclKZKjMkX16zdmIl6oAlX+4fS7qeRy6PONzcXzKzm9X1QdAno0
-         Kkwc07Ys2BvHYPaVq37PhoNg88rbf4eu8IhUwjBo48bGGmIHfJryc8vu/Bws5bIp8Ted
-         95RQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=PNn5ANXHQBQImIpvHbPbNMd2Lqd15EQlJogO89cnByY=;
-        b=ofoh+c30kzyAvX7PeNash1HX3Wdv4rC9lL5fjgeHWDZAoqZ3VSFXUrvyMTXyTkHz91
-         WP0SKuI050NO18iCfzHFHzZI26EdDDUfK3r7cc2es8wnsVEE1dvDQKPBMcuFVHoHkQhN
-         ZvgRCT1aeQ4xpcYTgjI/Jv5cQhixzSFNqbuhpXzC/eGr1qI49Bn4lYdg7YMgQEMHNizw
-         uOetJQx1w/rafolkGj9sO4XkBYPLaHFnBKEqglLSCJjKb9SHu797TFKzHwt+Q3+iDqZC
-         GGQZdmw1gYnjgGiYcy0EfnLpr9N8w74chiHVlEu8mc1fnEAuKxB93sNn+CCRSiJGXAMP
-         tFqg==
-X-Gm-Message-State: AOAM531Z5gComcgPWQJ2C4Z88M84Qkfz1GWynH3L4PWV3UmRrJj1Ant2
-        GqXkMtb1Mjb9qZfmLR9ekSxxM2RqH8g=
-X-Google-Smtp-Source: ABdhPJwfeiycltlybhTj7UKB2JEhJqYEuRYscpRNQomunXBGc+OXGSTBjoVVWr3Sr9Zkv1hFoSwEuA==
-X-Received: by 2002:a05:6512:e9c:: with SMTP id bi28mr45440847lfb.245.1638187475542;
-        Mon, 29 Nov 2021 04:04:35 -0800 (PST)
-Received: from [192.168.2.145] (94-29-46-111.dynamic.spd-mgts.ru. [94.29.46.111])
-        by smtp.googlemail.com with ESMTPSA id g12sm1317274lfu.135.2021.11.29.04.04.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 29 Nov 2021 04:04:34 -0800 (PST)
-Subject: Re: [PATCH v2 28/45] mfd: rn5t618: Use devm_register_power_handler()
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Mon, 29 Nov 2021 08:45:40 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21047C08EC74;
+        Mon, 29 Nov 2021 04:27:30 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id DCA6CB80EE5;
+        Mon, 29 Nov 2021 12:27:28 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6FBDC53FCE;
+        Mon, 29 Nov 2021 12:27:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1638188847;
+        bh=E5i6DFSVI4jA9y4loEyL6K4AOYrtzhJ3Mj+wiiM39UA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=rC+HsB+rQU7cQ2DGY/SENyf8O/IbKCXH2z6uqabnulyrUepxqLQnI2cpE/dc0Vj70
+         9EtvZLPnGz7xLth5zts5G5ulROIgs8ljulGCPMIuIdL3Sj8ayxlvEktBiMZbVbHTXP
+         2sdGnJcvpTwlCSm2lC8cBTKZZGuGVTvDGVoir2WC98bar9+gwA3bViz8TojXbRBfFD
+         GEcB5LuERQ+nwz81GO/FfupzUih5mmUCzGSfEOZH6sDHxDjvHxLSPyvgaGA7Kpba3Q
+         1yXh5HiZOzRM+j8vuV6668PP3qzkOKIEfcwWRmK1jJjVMwwgitdqcjTNJrw6NdhMUZ
+         o3eW+zpnVeADw==
+Date:   Mon, 29 Nov 2021 12:27:22 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Krishna Yarlagadda <kyarlagadda@nvidia.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+Cc:     Laxman Dewangan <ldewangan@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Russell King <linux@armlinux.org.uk>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Guo Ren <guoren@kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        Joshua Thompson <funaho@jurai.org>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Nick Hu <nickhu@andestech.com>,
-        Greentime Hu <green.hu@gmail.com>,
-        Vincent Chen <deanbo422@gmail.com>,
-        "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-        Helge Deller <deller@gmx.de>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        Len Brown <lenb@kernel.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        =?UTF-8?Q?Jonathan_Neusch=c3=a4fer?= <j.neuschaefer@gmx.net>,
-        Tony Lindgren <tony@atomide.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Patrick Venture <venture@google.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Pavel Machek <pavel@ucw.cz>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-csky@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-riscv@lists.infradead.org, linux-sh@vger.kernel.org,
-        xen-devel@lists.xenproject.org, linux-acpi@vger.kernel.org,
-        linux-omap@vger.kernel.org, openbmc@lists.ozlabs.org,
-        linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org
-References: <20211027211715.12671-1-digetx@gmail.com>
- <20211027211715.12671-29-digetx@gmail.com> <YaS/lStp2b8GhVxw@google.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <592f2326-b450-1db1-0d3d-804415cf5de6@gmail.com>
-Date:   Mon, 29 Nov 2021 15:04:25 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+        Sowjanya Komatineni <skomatineni@nvidia.com>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/2] spi: tegra210-quad: add acpi support
+Message-ID: <YaTHKuohUNt/hVLq@sirena.org.uk>
+References: <1637834152-32093-1-git-send-email-kyarlagadda@nvidia.com>
+ <1637834152-32093-2-git-send-email-kyarlagadda@nvidia.com>
+ <YZ+ImY1LrvB5a5iF@sirena.org.uk>
+ <BN6PR12MB124973BF5CBB4AB35CC59B8AC3669@BN6PR12MB1249.namprd12.prod.outlook.com>
 MIME-Version: 1.0
-In-Reply-To: <YaS/lStp2b8GhVxw@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="Y7UU9/U8laDFRwE1"
+Content-Disposition: inline
+In-Reply-To: <BN6PR12MB124973BF5CBB4AB35CC59B8AC3669@BN6PR12MB1249.namprd12.prod.outlook.com>
+X-Cookie: Thank god!! ... It's HENNY YOUNGMAN!!
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-29.11.2021 14:55, Lee Jones пишет:
-> On Thu, 28 Oct 2021, Dmitry Osipenko wrote:
-> 
->> Use devm_register_power_handler() that replaces global pm_power_off
->> variable and allows to register multiple power-off handlers. It also
->> provides restart-handler support, i.e. all in one API.
->>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> ---
->>  drivers/mfd/rn5t618.c | 56 ++++++++++++++++---------------------------
->>  1 file changed, 21 insertions(+), 35 deletions(-)
-> 
-> For my own reference (apply this as-is to your sign-off block):
-> 
->   Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
-> 
 
-Thanks you. This and other driver patches will be slightly changed
-because the power-handler was renamed to sys-off handler starting with
-the v3 of this series, but yours ack still will be valid here.
+--Y7UU9/U8laDFRwE1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Mon, Nov 29, 2021 at 09:09:30AM +0000, Krishna Yarlagadda wrote:
+
+> > > +#ifdef CONFIG_ACPI
+> > > +	if (ACPI_FAILURE(acpi_evaluate_object(ACPI_HANDLE(tqspi->dev),
+> > > +					      "_RST", NULL, NULL)))
+> > > +		dev_err(tqspi->dev, "failed to reset device\n"); #endif
+
+> > What happens when this runs on a DT system?
+
+> For a DT system reset handle would be present and this code will not run
+
+This code is really unclearly structured, the early return doesn't
+match the normal kernel style and the ifdefs aren't helping with
+clarity.  Please restructure it so it's clear that *both* cases have
+checks for the correct firmware type being present.
+
+That said frankly I'd expect this handling of ACPI reset to be pushed
+into the reset code, it's obviously not good to be open coding this in
+drivers when this looks like it's completely generic to any ACPI object
+so shouldn't be being open coded in individual driers especially with
+the ifdefery.  Shouldn't the reset API be able to figure out that an
+object with _RST has a reset control and provide access to it through
+the reset API?
+
+--Y7UU9/U8laDFRwE1
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmGkxykACgkQJNaLcl1U
+h9Crpwf+M2lKT8k9MyiOlgGyvbaUGlT/K1iYeMFMcHUTxpJHq5PFnxqGd50jKqLB
+OTdmmuNZ+WxSrhirzI+/IrppEbORlp9P1xhrIqTnLYqQZ+2dR9IbxY5OnZ2Usy01
+43yPEhfoK69045WPWw9RyQ4a/u+FxI+k+jA/zwbB390VNr0XVoc7JXXHhPhdZy/2
+VvcWTJF4Bs2ld4IR/bhQKmMxfR+g3jYACgJl6orlxUPU4GL8Gm+kAVDw+9iT3MgM
+C4j3dfKnlh2vB6V5j6roleO7jjst2AhuU8ADzYqFeDfLViMEuJ3XjExr5d6qoFgJ
+q8uZgkg7+I21aOg2b3UlEg4KbRGmmA==
+=rb4w
+-----END PGP SIGNATURE-----
+
+--Y7UU9/U8laDFRwE1--
