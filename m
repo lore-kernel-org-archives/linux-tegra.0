@@ -2,103 +2,75 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A9A3C43217
-	for <linux-tegra@archiver.kernel.org>; Sun, 28 Nov 2021 22:05:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5671BC433F5
+	for <linux-tegra@archiver.kernel.org>; Mon, 29 Nov 2021 00:22:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242722AbhK1WIp (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 28 Nov 2021 17:08:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50590 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231842AbhK1WGp (ORCPT
+        id S1359871AbhK2AZT (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 28 Nov 2021 19:25:19 -0500
+Received: from mail-ot1-f47.google.com ([209.85.210.47]:46625 "EHLO
+        mail-ot1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1344104AbhK2AXT (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 28 Nov 2021 17:06:45 -0500
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47858C061746;
-        Sun, 28 Nov 2021 14:03:28 -0800 (PST)
-Received: by mail-lf1-x129.google.com with SMTP id n12so39510119lfe.1;
-        Sun, 28 Nov 2021 14:03:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=BmJDsI1frubqpSHpwgLMDcWP2GRwtD3Aeu0GDNSS4Ao=;
-        b=JqJrLFejdvwG6EFcUaec1471GQnF4o7rWmB6ZJgoVyHzKIkkY8XPck6x3CHTcSe3mr
-         7c3WWIfu0LFTWTIWtfr1xMf1sIz9hSxmJjNmg5EpOoGtRIqQYrl7w/0PM+7DPJe3Nxtk
-         rN6rxwckbCb/tFQBuTom9QWJWe368iYPCHR6SzKZyxcrZavR0Qvz3FBbGQQWlxES0zx3
-         AyGMKx7T8uiK3LGqvY6k4r/pZaiGv/E3eR+VX0o1y8VwEVOx6vlL8inxXaHnS9nNzCHP
-         /sog83T0MTHqC7MSI4QlW3DNzKcOyj4MQKPD+Rgk5qe7wAw3+rNMhs5lE34rRjfMa9d6
-         m5mQ==
+        Sun, 28 Nov 2021 19:23:19 -0500
+Received: by mail-ot1-f47.google.com with SMTP id b5-20020a9d60c5000000b0055c6349ff22so23037383otk.13;
+        Sun, 28 Nov 2021 16:20:02 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=BmJDsI1frubqpSHpwgLMDcWP2GRwtD3Aeu0GDNSS4Ao=;
-        b=2IyZfutJKoDVgqLl0NkZ9nNbbLeMeOYzflxGGeJZeU/Nk/wkiRvelTK/KnbHvMUhmY
-         HQVB5hKUlT7BDy2p0ueeoxkDpbmVm0m91JzvvRL5Dr8hk9mVYcDeNuaHI5iiRDPjI+rU
-         FS+9NQfTTCmKdaJscGCTk5m/+HBZM9bh41ZhbZaLm2/iOxwn5hP9EeQ8aIBBX1X/rUUt
-         TfOzH8TIKSdDQLT7+j2dwpQtYVC8Cm4kqT2P1G7jpQzIpEZul+8L2zCojl1DBbVCvAAi
-         UeBfBTTvk157fn9Go7aG+KiiyTmqwOhsHDM5kabyGm7kwpD4N4v5xDUu2DGI5DsHBDaX
-         o4vw==
-X-Gm-Message-State: AOAM532p99SoNYyMqvD0XUfWn1H9VeUXqrvWjaPngyU+cO0DP5GB2+bp
-        +z/C47jDV4HwDwAsbTWlGXI=
-X-Google-Smtp-Source: ABdhPJxrPfjj0n+sgrY4w60/8r91odYTvOOfn9dIP0FlQoVAM5bMvzeBYaBIJ/QlbWNLbD8x9ctRNA==
-X-Received: by 2002:ac2:5fb1:: with SMTP id s17mr6692388lfe.587.1638137006608;
-        Sun, 28 Nov 2021 14:03:26 -0800 (PST)
-Received: from [192.168.2.145] (94-29-46-111.dynamic.spd-mgts.ru. [94.29.46.111])
-        by smtp.googlemail.com with ESMTPSA id s13sm1117685lfg.126.2021.11.28.14.03.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 28 Nov 2021 14:03:26 -0800 (PST)
-Subject: Re: [PATCH v15 00/39] NVIDIA Tegra power management patches for 5.17
-To:     =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Tmn8UPuYCbbaAu9yuKqOIAL/Z3VCsmY2MYHurrVcL6I=;
+        b=0zZlOCwGmp9UpDRhMGTp+YnoAzqY4t6S4UbMzJjHW3HHLERgP1wYQ3Peq6T2HifZuc
+         wCdPYlTo5tovwvTLzNJ0vQ3niWr2wxQRfeQK/MeSpdvnsL4nm3NUSPaUf1/LX48RxpQN
+         96kKwf4kJHhSFcp43KyTK0shKPDncDfVtwNr8QFqpHSI13shX00y4ulqvdC7Jr5INRTy
+         Wsm4G7kbObSpnY8gX5i6pFkexCkj6+zahCx3fXRQqQ9wfsbOyFyuF0MPKi3Jmvg0qB3g
+         MVgjAflMDd7TqIHbmr+cuZlL+lpo4pN2Nd7IiuRkGgYDECCO0urqbmTEjlhYGAideWf2
+         ddpA==
+X-Gm-Message-State: AOAM530vvdRXT+yean+yeWo1a40t9C5oZ0RNmbI/Z/4sRpZzNfyz6Eyu
+        kAyQ1g1J8PsaaUhfSJsf/w==
+X-Google-Smtp-Source: ABdhPJxgP+4Ec1L+bfIw9v66vTNZr0gLUBgMY59qf0MCtqMYqS9ZuJ839D9e1DwN0GzbL/OnlM16aA==
+X-Received: by 2002:a9d:749a:: with SMTP id t26mr43471407otk.96.1638145202357;
+        Sun, 28 Nov 2021 16:20:02 -0800 (PST)
+Received: from robh.at.kernel.org ([172.58.99.242])
+        by smtp.gmail.com with ESMTPSA id w18sm2376042otm.1.2021.11.28.16.20.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 28 Nov 2021 16:20:01 -0800 (PST)
+Received: (nullmailer pid 2876190 invoked by uid 1000);
+        Mon, 29 Nov 2021 00:19:59 -0000
+Date:   Sun, 28 Nov 2021 18:19:59 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Jon Hunter <jonathanh@nvidia.com>
 Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        linux-tegra@vger.kernel.org,
         Mikko Perttunen <mperttunen@nvidia.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
-        Nishanth Menon <nm@ti.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-pwm@vger.kernel.org,
-        linux-mmc@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-clk@vger.kernel.org, David Heidelberg <david@ixit.cz>
-References: <20211114193435.7705-1-digetx@gmail.com>
- <YaMWaKqQ+c8G08mJ@qmqm.qmqm.pl>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <6e364419-c4ef-a6d6-6538-9b04f1cfe9c7@gmail.com>
-Date:   Mon, 29 Nov 2021 01:03:18 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH V3 1/2] dt-bindings: Add YAML bindings for NVENC and NVJPG
+Message-ID: <YaQcr5ntuVmsQMgy@robh.at.kernel.org>
+References: <20211117095608.60415-1-jonathanh@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <YaMWaKqQ+c8G08mJ@qmqm.qmqm.pl>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211117095608.60415-1-jonathanh@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-28.11.2021 08:40, Michał Mirosław пишет:
-> On Sun, Nov 14, 2021 at 10:33:56PM +0300, Dmitry Osipenko wrote:
->> This series adds runtime PM support to Tegra drivers and enables core
->> voltage scaling for Tegra20/30 SoCs, resolving overheating troubles.
->>
->> All patches in this series are interdependent and should go via Tegra tree
->> for simplicity.
-> [...]
+On Wed, 17 Nov 2021 09:56:07 +0000, Jon Hunter wrote:
+> Add YAML device tree bindings for the Tegra NVENC and NVJPG Host1x
+> engines.
 > 
-> I would suggest pushing all the fixes to the front of the series (those are
-> at least patches 1, 3, 17, 27-31 and 39).
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> ---
+> Changes since V2:
+> - Fixed indentation
+> Changes since V1:
+> - Fixed errors reported by Rob's bot
+> 
+>  .../gpu/host1x/nvidia,tegra210-nvenc.yaml     | 135 ++++++++++++++++++
+>  .../gpu/host1x/nvidia,tegra210-nvjpg.yaml     |  94 ++++++++++++
+>  2 files changed, 229 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/gpu/host1x/nvidia,tegra210-nvenc.yaml
+>  create mode 100644 Documentation/devicetree/bindings/gpu/host1x/nvidia,tegra210-nvjpg.yaml
+> 
 
-All those patches, apart from 17, should be irrelevant to stable kernel.
-There is no real benefit in reordering them, IMO. The patches are
-grouped logically in this series.
-
-In the case of patch 17, perhaps won't hurt to add stable tag to it.
-Then the "drm/tegra: submit:" patches could be swapped to prioritize the
-fix, though there is no danger of a merge conflict there.
+Reviewed-by: Rob Herring <robh@kernel.org>
