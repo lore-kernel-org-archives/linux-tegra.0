@@ -2,67 +2,69 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26377C433F5
-	for <linux-tegra@archiver.kernel.org>; Tue, 30 Nov 2021 12:12:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D56CDC433EF
+	for <linux-tegra@archiver.kernel.org>; Tue, 30 Nov 2021 12:17:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241457AbhK3MPx (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 30 Nov 2021 07:15:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51738 "EHLO
+        id S241458AbhK3MUe (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 30 Nov 2021 07:20:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52806 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240941AbhK3MPx (ORCPT
+        with ESMTP id S234237AbhK3MUd (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 30 Nov 2021 07:15:53 -0500
-Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BCD4C061746
-        for <linux-tegra@vger.kernel.org>; Tue, 30 Nov 2021 04:12:34 -0800 (PST)
-Received: by mail-lf1-x131.google.com with SMTP id k37so53253521lfv.3
-        for <linux-tegra@vger.kernel.org>; Tue, 30 Nov 2021 04:12:33 -0800 (PST)
+        Tue, 30 Nov 2021 07:20:33 -0500
+Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69105C061574;
+        Tue, 30 Nov 2021 04:17:14 -0800 (PST)
+Received: by mail-lf1-x132.google.com with SMTP id bi37so53226053lfb.5;
+        Tue, 30 Nov 2021 04:17:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
+        h=subject:from:to:cc:references:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Bc5K5YmYf78G284ZTH0v7tQEmW7lp6rl84/YK+dus9o=;
-        b=ZmQHn59B4TF0K+0OSuEGNLFsZWWW0OJpsiXtMxRnI9T0w8E8HGTA++72P50IpNiyu0
-         SQi0pkLi1Gyk9HFaKqh3oXhe6dg2KfIdgPvZvN6yBkFbzrntQsgzvlRLVTT8VUBk2QIe
-         Gm8z3ZBFcP1XlqD+bJZ4+eScwNWngKo6w3S1EiWHo33L01jCh/27jwcph8s2IN7kRPuu
-         FpnFUgIRQY2bX6urfhLNaCQWKV3OmkuCupRrELA0dgIgMUZ1U5npsuxEU0lL0EMlp+aQ
-         QUPQssia8NrBquNWfjkf6YkPHH923fFNtGP73fgnBKg8Rm5+KwaxBj/iunceCHNkzC/0
-         4gVw==
+        bh=trRzexDm92sVJlThyj/04+7SN11dBJi8qOdq95CaO5g=;
+        b=VzMywNNj2yxWLL2z9DxwtUGbmUnA8iIr6NjgbGU0BU9wo16PrbqrOBttuCtLYiQZai
+         X+logj3jzyHag+GMsJF4KQdBhQD3+3jB7QDDAma0ktWI+bf/ktIfuuEnGeoLSuUJZAZx
+         tjU2bXEV65OCbmjlAZMLxwS8vITLUaNz+WJ5dPsUgUsMcWPhvZcVjZsmib+HuHOqrmhR
+         pZ+OnM2u7Wycjl06k9VcvBZ/H5jk+IeKppVz4NFng/diLaWdERct8E2mmukQYPNkKLIP
+         1zCPwhmSG74DXdpH3jJlCJvUDkYOioGXD941Ri+Mi1eHc/ZLnWx0fWDEb20f7EbPXc9o
+         19oQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=Bc5K5YmYf78G284ZTH0v7tQEmW7lp6rl84/YK+dus9o=;
-        b=y9T1PsLGz1ZR48EEFamWSMqB2IKIGkYMLC7LcNWzuzQThmPDqcghwoJOD0UzuUq1T4
-         8oR2yel8awpFIVDoznv224q7rCwTZFhyNwUtXHBtHNMA09QY1EjLWSNgh0iHmjkks3U6
-         chISNkvQBE1ZCcQK2Ia5L7k2R90Prbh4TGOALqkgxtzzh201LFQHwytYIWdsRgmbVbIN
-         UvFRkU0wKV7SdqEy1/Mgq9RiV30IhpK3D/NHHEGAa70z8VkqhCpYsRN9XZTSGdzey4Gh
-         m1uBDTO9t5Efa7+sgFiMSXW7EyvX8Nv7Kr+hqW7oYF+TmnlHExUPn3xbQvlCktGpDGxC
-         baEQ==
-X-Gm-Message-State: AOAM5329m7VWcAvqptdHdsVzRY7SaNLtlHQW2t4pafDYSwHoHltyuBg5
-        G00GkHTuSO4NP2XWXlUDZhn2ISEIKJw=
-X-Google-Smtp-Source: ABdhPJzTYyXWQjo+8VeOYssyJoJ/mtL0kk4751xYFHHayZZwsQHY6SswTTjj4IIyn2brhQGsV660rw==
-X-Received: by 2002:a19:fc08:: with SMTP id a8mr55550400lfi.645.1638274351317;
-        Tue, 30 Nov 2021 04:12:31 -0800 (PST)
+        bh=trRzexDm92sVJlThyj/04+7SN11dBJi8qOdq95CaO5g=;
+        b=obaj7A4coCxUJDQyRHD59vwnou8hCIyRVOcWpQv1SjsK1xZBGproLrzzw5+w9scGq/
+         whf87xoJnh065bpzmb2KPOFExTLX8oh7WMvAfIF5+WqhWT1n02p7I6OxR40gHj2T78Ng
+         sYb0R3yFgn6BFIpVkpcyxpNT6DekQHHoGClR+mdsP/7ivdDGDFpvlvA7CZCK2AbjEQFr
+         WVITL2Sv9FqKKCx/OM9ZSRpp5LuWT21XIqFRZReKtslYd1rcjYO+4ox5WGCp6XTNg1cr
+         DTJiD4HpuYdP1Zfso/EQJNR2VDFQc0raUKxXi8tr2XzHpEc+GOT7eefTSaAvdsKsJsWP
+         T+jQ==
+X-Gm-Message-State: AOAM531jYx9qATmV9PufGQ/cZjI/d/CQbTYOgR0heSIm21DB/rPtLRIq
+        7/d8KDfeyFBYBQ49Si/ayk5WP+PIfjc=
+X-Google-Smtp-Source: ABdhPJyeb69zs1klG9kPMwoTkQRV81S9ZqywFuLxMLusvHux/rRMMtdRtxrotgsIHc3R8AfBdeyY8A==
+X-Received: by 2002:a05:6512:3b2b:: with SMTP id f43mr55139476lfv.629.1638274632435;
+        Tue, 30 Nov 2021 04:17:12 -0800 (PST)
 Received: from [192.168.2.145] (94-29-46-111.dynamic.spd-mgts.ru. [94.29.46.111])
-        by smtp.googlemail.com with ESMTPSA id h20sm1690971lfg.14.2021.11.30.04.12.30
+        by smtp.googlemail.com with ESMTPSA id f23sm1708689ljg.90.2021.11.30.04.17.11
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 Nov 2021 04:12:30 -0800 (PST)
-Subject: Re: [PATCH V2] soc/tegra: pmc: Add reboot notifier
-To:     Jon Hunter <jonathanh@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>
-Cc:     linux-tegra@vger.kernel.org
-References: <20211123111134.26409-1-jonathanh@nvidia.com>
- <eeb4200f-7608-56d5-76e3-508660669812@gmail.com>
- <b2f11233-819c-a33e-aa92-fea7e818dfbb@nvidia.com>
+        Tue, 30 Nov 2021 04:17:11 -0800 (PST)
+Subject: Re: [PATCH] serial: tegra: Fixes lower tolerance baud rate limit for
+ older tegra chips introduced by d781ec21bae6
 From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <2b5a6530-638d-ae9c-483a-d6039eb44c63@gmail.com>
-Date:   Tue, 30 Nov 2021 15:12:29 +0300
+To:     Patrik John <patrik.john@u-blox.com>, linux-kernel@vger.kernel.org
+Cc:     gregkh@linuxfoundation.org, ldewangan@nvidia.com,
+        thierry.reding@gmail.com, jonathan@nvidia.com,
+        linux-serial@vger.kernel.org, linux-tegra@vger.kernel.org
+References: <sig.096060f39c.20211122124425.74031-1-patrik.john@u-blox.com>
+ <0165046b-c8bc-ec8e-05c7-bf9aea14339b@gmail.com>
+ <727044f2-12d4-0de4-f6b8-ef3ee75d3630@gmail.com>
+Message-ID: <d906ed7f-c507-e5b0-3d46-2750d62414a4@gmail.com>
+Date:   Tue, 30 Nov 2021 15:17:10 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.14.0
 MIME-Version: 1.0
-In-Reply-To: <b2f11233-819c-a33e-aa92-fea7e818dfbb@nvidia.com>
+In-Reply-To: <727044f2-12d4-0de4-f6b8-ef3ee75d3630@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -70,27 +72,27 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-30.11.2021 12:08, Jon Hunter пишет:
-...
->>> +static int tegra_pmc_restart_notify(struct notifier_block *this,
->>> +                    unsigned long action, void *data)
->>> +{
->>> +    u32 value;
->>> +
->>> +    tegra_pmc_program_reboot_reason(data);
+29.11.2021 15:36, Dmitry Osipenko пишет:
+> 29.11.2021 15:32, Dmitry Osipenko пишет:
+>> 3. Use "Link" tag and put all http links here, before the Signed-off-by
+>> tag, like this:
 >>
->> So the PMC reason is programmed twice now? First time by the reboot
->> handler and second by the restart? Why?
+>> Link:
+>> https://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git/commit/drivers/tty/serial/serial-tegra.c?h=for-next&id=d781ec21bae6ff8f9e07682e8947a654484611f5
+>> Link:
+>> https://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git/tree/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi?h=for-next
+>> Link:
+>> https://www.kernel.org/doc/Documentation/devicetree/bindings/serial/nvidia%2Ctegra20-hsuart.txt
 > 
-> That's an oversight. OK, thanks I will fix that in a V3.
+> Actually, it should be like this:
 > 
->> BTW, could you please always CC LKML or request to include linux-tegra
->> ML onto lore? Tegra ML uses Gmane and it's unusable for development
->> since all email addresses are mangled, the Gmane support told me that
->> only Tegra ML admin can disable mangling, but I'm not sure who is it,
->> maybe Stephen Warren?
+> Link: https://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git/commit/drivers/tty/serial/serial-tegra.c?h=for-next&id=d781ec21bae6ff8f9e07682e8947a654484611f5
+> Link: https://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git/tree/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi?h=for-next
+> Link: https://www.kernel.org/doc/Documentation/devicetree/bindings/serial/nvidia%2Ctegra20-hsuart.txt
 > 
-> I see linux-tegra here: https://lore.kernel.org/linux-tegra/
+> I turned off line wrapping for this email.
+> 
 
-Nice, I refreshed the list of MLs in Thunderbird and see that it's
-indeed there now, thank you.
+For the reference, I just found that there was v3 already on the list:
+
+https://patchwork.ozlabs.org/project/linux-tegra/patch/sig.19614244f8.20211123132737.88341-1-patrik.john@u-blox.com/
