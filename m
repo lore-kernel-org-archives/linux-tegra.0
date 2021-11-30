@@ -2,52 +2,52 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E17BAC433FE
-	for <linux-tegra@archiver.kernel.org>; Tue, 30 Nov 2021 22:39:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A83FC433F5
+	for <linux-tegra@archiver.kernel.org>; Tue, 30 Nov 2021 22:39:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344982AbhK3Wmd (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 30 Nov 2021 17:42:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56722 "EHLO
+        id S236168AbhK3Wmj (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 30 Nov 2021 17:42:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56742 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344695AbhK3WmU (ORCPT
+        with ESMTP id S1344858AbhK3WmV (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 30 Nov 2021 17:42:20 -0500
-Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40E45C0613D7;
-        Tue, 30 Nov 2021 14:38:56 -0800 (PST)
-Received: by mail-lf1-x12c.google.com with SMTP id t26so57638324lfk.9;
-        Tue, 30 Nov 2021 14:38:56 -0800 (PST)
+        Tue, 30 Nov 2021 17:42:21 -0500
+Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B790CC061748;
+        Tue, 30 Nov 2021 14:39:00 -0800 (PST)
+Received: by mail-lj1-x234.google.com with SMTP id l7so44083944lja.2;
+        Tue, 30 Nov 2021 14:39:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=GaDrIMpgT6ehw+oYiizpPLZzCqnLOIYK1wjey+O3h34=;
-        b=JNuBegogz4rG9mT5/zVUHwHZhsuXa/21y9CRXOavsDLTVxHIduJQtebT0x84hStezN
-         fz77DAcHyY6/UWaEAvcnv0V6KhpJcYiBslAfDH4oW0HysQ6sc96nAUsHlRnyCAxlWQMR
-         8y2lvIkvKbybgwOxkdI4ISEZ54Cs071sjyjPlW2PWu2ediikDfh1dasIALj+oTCDd8ou
-         PG7sEHZP+EVcamAIF54Dyh8BiOY94P0Cw/8jaJEbl2EBdZllItf0u58N11UQZ521lHXZ
-         +M2/u6rGjpoTXNqengbl6B1PS+b9So2dSybYSLwFS2Wnj0D3vr8iIHxq0Tzg3z2A1xpR
-         qnaQ==
+        bh=C5+BX638e/zr1wlcSpe5wD1KbonKJ+ofJR/o6bNYwLY=;
+        b=aVcyR5fpPgypXRrNW8M6Z20ss6njoTs2lIqGxkWL2+mI1d4yEoBS2Q3EHwwG1ESuph
+         CMqrTOE7BHtwPs9GwC0JlT98KgZSKKFlKeq9eEaalJ89NsP8J6hbFyPqB4bjcyZUqKD9
+         c3c6e8LVL4ur5FmCpmljR4AsqefnyokgPa+x7H2GU7YqFQBv/cmZws5KlCIQmMTgdjtW
+         qDxQ0IAEwM7HCCgB8eJUwpopZpOq7pC9Xi8ijo+h78HXntpnQLKmQGYqYjsuCBzF/B1A
+         Cz/SwrKZmhpvG0FAebQTtCf6yzN2BHvQufPeeOUlgJBbA3UZJLgtPMwN8W3AcJ3jLhZp
+         ThCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=GaDrIMpgT6ehw+oYiizpPLZzCqnLOIYK1wjey+O3h34=;
-        b=G9e4XRBdkmiNO+Ss+TbWSkffgElzwcq9jDITIbKYWMF3IH0hAjWR4GzOAPzfokpuhp
-         n0JxFbFdb8mxFQ9Yhcmx1YtLjFs3m1j9XL3OQx1Mz+n+JOSWJZC046xeocH/drLg1bd/
-         ltsd2AkJ7oRUj5n9q2Xm28Fq78H/vt4+hUhAmjlNPE2T/+S5zfQKVAq3+OO7hFFAtbHX
-         jE0PFWp9rB/Xln2yMjDAmRDRKCEuKzFP/K3hqesfUt5df2C0mGDt+URBp/yezHM4Sg4Z
-         t1F/aMZiYHkrpaP4/4uSJ6UZkPaMTEg4qxz/7t3ACFEc+YeWppjon1Inmz/QAMvI3PZJ
-         uHig==
-X-Gm-Message-State: AOAM531lcE3/wv7PDMcO6Gi9+Yy9w2GQ53Qnfn9qJoxRkpaw+aJCNzJU
-        Qs2of23RvBAn/uCbMtJ0oY8=
-X-Google-Smtp-Source: ABdhPJxD/YjGVrBujYBOFTuuYvwM1Q6sJZuAzAGIQqBXE3Q0YNp0688DPxO/wczO+Jxs0rhOgz32Ww==
-X-Received: by 2002:ac2:418f:: with SMTP id z15mr1819557lfh.213.1638311934611;
-        Tue, 30 Nov 2021 14:38:54 -0800 (PST)
+        bh=C5+BX638e/zr1wlcSpe5wD1KbonKJ+ofJR/o6bNYwLY=;
+        b=LVPXlNbY0UW/NnsYsa4baC5SENt/ToSXqsAkorSnqfXHKqmqi2ppVyxadn/I5LzAPx
+         Mfh21aJGC7UMP/ZfWih59lUf7T7UgJEjtyP7sYKxWKHSXUrzUhRCX37Bxu9bDMzCCGBp
+         GFE5Pl9Tvyc258MmkupISl8PKJy40jI6RKLJwlHl0qD+vuKWL/6MfaNUjC8nJ3grL9BN
+         tmgN9twlOxNk7YbkSxADckvVWvGD/yeXwj/8L5qFRGc2myilXHnJcML9knGX95Kbz+Dp
+         KScKjnljp2PHwOKHgl20NyKb4GwG4ZiX1zfGMedi4Jh5HAWRaIrx/3cYvP7t8KTA/FL6
+         hcqg==
+X-Gm-Message-State: AOAM532k5z/yaOygs90KjOxMIptl+UrpjWk7g7OEihLRrlQg0UzqAs4r
+        cG64CYTvFlC0kG4LzFt23oA=
+X-Google-Smtp-Source: ABdhPJxn8l2480a6DecgV3ino9MOUL8qxnmu4Ew5/hufA28ydoTcPUzpXhIZGHvwrJMHkw9q+qkSUQ==
+X-Received: by 2002:a05:651c:550:: with SMTP id q16mr1690044ljp.371.1638311939095;
+        Tue, 30 Nov 2021 14:38:59 -0800 (PST)
 Received: from localhost.localdomain (94-29-46-111.dynamic.spd-mgts.ru. [94.29.46.111])
-        by smtp.gmail.com with ESMTPSA id y11sm1820518ljd.117.2021.11.30.14.38.53
+        by smtp.gmail.com with ESMTPSA id y11sm1820518ljd.117.2021.11.30.14.38.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Nov 2021 14:38:54 -0800 (PST)
+        Tue, 30 Nov 2021 14:38:58 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -67,9 +67,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Stefan Eichenberger <stefan.eichenberger@toradex.com>
 Cc:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v4 14/24] ARM: tegra: Add device-tree for 1080p version of Nyan Big
-Date:   Wed,  1 Dec 2021 01:38:10 +0300
-Message-Id: <20211130223820.23609-15-digetx@gmail.com>
+Subject: [PATCH v4 18/24] ARM: tegra: Add CPU thermal zones to Nyan device-tree
+Date:   Wed,  1 Dec 2021 01:38:14 +0300
+Message-Id: <20211130223820.23609-19-digetx@gmail.com>
 X-Mailer: git-send-email 2.33.1
 In-Reply-To: <20211130223820.23609-1-digetx@gmail.com>
 References: <20211130223820.23609-1-digetx@gmail.com>
@@ -79,48 +79,89 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Add dedicated device-tree for 1080p version of Nyan Big in order to
-describe display panel properly. FHD panel doesn't support modes other
-than 1080p, hence it's wrong to use incompatible lower resolution panel
-in device-tree.
+CPU of Nyan Chromebooks is overheating badly because apparently hardware
+soctherm controller doesn't work well. Add CPU thermal zones to enable
+software thermal control over CPU and fix the overheat trouble.
 
-Tested-by: Thomas Graichen <thomas.graichen@gmail.com>
+Tested-by: Thomas Graichen <thomas.graichen@gmail.com> # T124 Nyan Big
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- arch/arm/boot/dts/Makefile                  |  1 +
- arch/arm/boot/dts/tegra124-nyan-big-fhd.dts | 11 +++++++++++
- 2 files changed, 12 insertions(+)
- create mode 100644 arch/arm/boot/dts/tegra124-nyan-big-fhd.dts
+ arch/arm/boot/dts/tegra124-nyan.dtsi | 49 +++++++++++++++++++++++++++-
+ 1 file changed, 48 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index 26798673739c..561e0eae05a9 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -1341,6 +1341,7 @@ dtb-$(CONFIG_ARCH_TEGRA_124_SOC) += \
- 	tegra124-apalis-v1.2-eval.dtb \
- 	tegra124-jetson-tk1.dtb \
- 	tegra124-nyan-big.dtb \
-+	tegra124-nyan-big-fhd.dtb \
- 	tegra124-nyan-blaze.dtb \
- 	tegra124-venice2.dtb
- dtb-$(CONFIG_ARCH_U8500) += \
-diff --git a/arch/arm/boot/dts/tegra124-nyan-big-fhd.dts b/arch/arm/boot/dts/tegra124-nyan-big-fhd.dts
-new file mode 100644
-index 000000000000..d35fb79d2f51
---- /dev/null
-+++ b/arch/arm/boot/dts/tegra124-nyan-big-fhd.dts
-@@ -0,0 +1,11 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/dts-v1/;
+diff --git a/arch/arm/boot/dts/tegra124-nyan.dtsi b/arch/arm/boot/dts/tegra124-nyan.dtsi
+index ec01a23d4d47..b16cce7476ef 100644
+--- a/arch/arm/boot/dts/tegra124-nyan.dtsi
++++ b/arch/arm/boot/dts/tegra124-nyan.dtsi
+@@ -1,5 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
+ #include <dt-bindings/input/input.h>
++#include <dt-bindings/thermal/thermal.h>
+ #include "tegra124.dtsi"
+ 
+ / {
+@@ -87,7 +88,7 @@ acodec: audio-codec@10 {
+ 			interrupts = <TEGRA_GPIO(H, 4) IRQ_TYPE_EDGE_FALLING>;
+ 		};
+ 
+-		temperature-sensor@4c {
++		tmp451: temperature-sensor@4c {
+ 			compatible = "ti,tmp451";
+ 			reg = <0x4c>;
+ 			interrupt-parent = <&gpio>;
+@@ -789,6 +790,52 @@ gpio-restart {
+ 		gpios = <&gpio TEGRA_GPIO(I, 5) GPIO_ACTIVE_LOW>;
+ 		priority = <200>;
+ 	};
 +
-+#include "tegra124-nyan-big.dts"
++	cpus {
++		cpu0: cpu@0 {
++			#cooling-cells = <2>;
++		};
 +
-+/ {
-+	/* Version of Nyan Big with 1080p panel */
-+	panel {
-+		compatible = "auo,b133htn01";
++		cpu1: cpu@1 {
++			#cooling-cells = <2>;
++		};
++
++		cpu2: cpu@2 {
++			#cooling-cells = <2>;
++		};
++
++		cpu3: cpu@3 {
++			#cooling-cells = <2>;
++		};
 +	};
-+};
++
++	thermal-zones {
++		cpu-skin-thermal {
++			polling-delay-passive = <1000>; /* milliseconds */
++			polling-delay = <5000>; /* milliseconds */
++
++			thermal-sensors = <&tmp451 0>;
++
++			trips {
++				cpu_passive_trip: cpu-alert0 {
++					/* throttle at 70C until temperature drops to 69.8C */
++					temperature = <70000>;
++					hysteresis = <200>;
++					type = "passive";
++				};
++			};
++
++			cooling-maps {
++				map0 {
++					trip = <&cpu_passive_trip>;
++					cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++							 <&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++							 <&cpu2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++							 <&cpu3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
++				};
++			};
++		};
++	};
+ };
+ 
+ #include "cros-ec-keyboard.dtsi"
 -- 
 2.33.1
 
