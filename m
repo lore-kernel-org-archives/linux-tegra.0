@@ -2,52 +2,52 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00B00C4167B
-	for <linux-tegra@archiver.kernel.org>; Tue, 30 Nov 2021 23:26:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2878BC433FE
+	for <linux-tegra@archiver.kernel.org>; Tue, 30 Nov 2021 23:26:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345390AbhK3X1k (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 30 Nov 2021 18:27:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38884 "EHLO
+        id S1345713AbhK3X3m (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 30 Nov 2021 18:29:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38988 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234673AbhK3X1U (ORCPT
+        with ESMTP id S1345312AbhK3X1e (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 30 Nov 2021 18:27:20 -0500
-Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E508DC061748;
-        Tue, 30 Nov 2021 15:23:59 -0800 (PST)
-Received: by mail-lj1-x229.google.com with SMTP id k2so44336079lji.4;
-        Tue, 30 Nov 2021 15:23:59 -0800 (PST)
+        Tue, 30 Nov 2021 18:27:34 -0500
+Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5BFB7C061757;
+        Tue, 30 Nov 2021 15:24:13 -0800 (PST)
+Received: by mail-lf1-x134.google.com with SMTP id l22so57903520lfg.7;
+        Tue, 30 Nov 2021 15:24:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=nXolFcz4QOLnIUZoiZ0Ry5uu5XANR011N6AEo6cZVfo=;
-        b=OXu134ZknM16mp/t4fYeI0tjGNPyk5M7izksLk+a9ehM0XqghuECkM9iNLajpPOAW9
-         HSKaYltiiE2fVtjjkFAx0C5C9VOVSk+6tLhEbfDwCle0X2H+D47YYn9T6vOhadb2+QVh
-         F7X/wWoLPpKj8CnRhZTfrQdI63zpPmEV6t/5Qxx1d5VgxcyAaaKhAzknboK05FEHJwVm
-         zJrAJclyt6s91b1Jy1R20qqO84D5hkD5BHTcR6xQE/1vFt5BN+e0s0vA1qAA7vuEipAr
-         XewldVfwSIVkCw1PkCMRkzySyawQRrUZx7ijY3/BS1noKVScovRmPLMTBEomBjSceiWu
-         Wyjw==
+        bh=aMqIRBx8bvkPqXq4sp0s4HdEiF5OdAJboSuvlHkSNzI=;
+        b=IQ1LSQa2l3fz6yR41bKkuciUdRe4P2k8wXpBlg7eku9Ndz4H79S5f/NrETNLfmTx97
+         RQ7G2o3fopgLto0kBSzMo2XifJ9jDu7yvqPOZKf5PyLtr83gMYuMZEFXzNWUGjH7hCH4
+         lRQpJn3rrcQHTUGjiPqCxKDS6gQ5kI9HbD7mQMR2QdX2p4udgvXQd+kqH8A6MKqFjKAO
+         iZ51QRTNwhSQWD0JsbWbNQUU3pOFgLyAWWu6zdYe63m8ZIdbNtn3Za1XGqjnliBdMo2K
+         gnF4w+3q9H6NCcP/EoNdkQQIzPK5ifAoiCSxl4Musc6BMiUSoGNSYgyDB/EUxuJeYBUA
+         ft3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=nXolFcz4QOLnIUZoiZ0Ry5uu5XANR011N6AEo6cZVfo=;
-        b=aSbSl7YaSi0qd9Ewy4ZTY5uvTpTvszR1nH0lkDGN2w3LBoYZs6s6vpIW+gPsBkgbJc
-         MfWhCS8yLXWAuPkooWTW/tYA//tJhbmEEK8+1ltbAof0nQFPFLIs0XVoMPmkH02eNhXR
-         VrcwddIqDl5I/VG4/mfxbawwyTRxBgirglDpnTz30IJoWjEl2+wldKLrvvU86ZBGoHC3
-         +leBQS02xyTNPAO8w2VpRNlQ7GNcK2GEncmZX2gYS/sAbuIN5kwc963qZjvldo2Hc34T
-         oFHzUJh1rVu59Fz9U+B7hm/FhD78qPtzfv/+5CsseQ97SmDQNJ1ncTh5daR3Ew8j5Ltn
-         PdVw==
-X-Gm-Message-State: AOAM532HWlOQ9zNqvK0qI9UdgiR2yH/noIZHAa4LDi0QVzlf/iBlsNQb
-        +9H3vuDDKi2NiRzgl6GSlv0=
-X-Google-Smtp-Source: ABdhPJz6W6krNEzBX3IW5DlNPEVv77H2J2aWulC37ZRZQJs4gEsq9g4I+6cuf2fvO0OWjUPse1lfKA==
-X-Received: by 2002:a2e:a594:: with SMTP id m20mr1861100ljp.332.1638314638272;
-        Tue, 30 Nov 2021 15:23:58 -0800 (PST)
+        bh=aMqIRBx8bvkPqXq4sp0s4HdEiF5OdAJboSuvlHkSNzI=;
+        b=LSzbmFxHe3fBA3D4xB0nWFKSaRKmllY9VCFdJcFlxdEr3wY32yF+vur5QQTsyCO915
+         vWl5sDCw8AhgSJ82qY5JCTh2WJdMz36Vu3c+SbbnzyULm0v1jnGLO6FG7mmVvykjj3Co
+         jb2zg97CcVfiX2HqVNqxPcpnpTHUVtptO3LJBb6sjajGBJJYSoJKJoq5IX4V1Yintmpn
+         tjv1kWnHQRfL73jzUkgVbvr6veIToI1N4bmkYCjp4KP+VcZdlkhuMghrCXiSbkXrVbKI
+         VeTa+1+Wv55pZFkvkpZA/82Pide12i0Z7U210JyAn1uwD+PikQrRjsyeUVwnUg+3Z55l
+         c2PA==
+X-Gm-Message-State: AOAM532DvhOO4Bh+WYRkK7uKKF4CmF+wOT2DxK/SYZBP2pCzlhXVFA2G
+        l8KLqauEAezd8/Wgmehr9C4=
+X-Google-Smtp-Source: ABdhPJznxpBclm3/sH8WRVsvo5VSZBSQu2u3rPiZvJGH/S9kgZZYVPAFxr2PhYbtP/VwIQIW5Yf90w==
+X-Received: by 2002:a19:dc51:: with SMTP id f17mr2296160lfj.555.1638314651720;
+        Tue, 30 Nov 2021 15:24:11 -0800 (PST)
 Received: from localhost.localdomain (94-29-46-111.dynamic.spd-mgts.ru. [94.29.46.111])
-        by smtp.gmail.com with ESMTPSA id x199sm1860735lff.284.2021.11.30.15.23.57
+        by smtp.gmail.com with ESMTPSA id x199sm1860735lff.284.2021.11.30.15.24.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Nov 2021 15:23:57 -0800 (PST)
+        Tue, 30 Nov 2021 15:24:11 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -65,9 +65,9 @@ Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-pm@vger.kernel.org, linux-pwm@vger.kernel.org,
         linux-mmc@vger.kernel.org, dri-devel@lists.freedesktop.org,
         linux-clk@vger.kernel.org, David Heidelberg <david@ixit.cz>
-Subject: [PATCH v16 04/40] dt-bindings: clock: tegra-car: Document new clock sub-nodes
-Date:   Wed,  1 Dec 2021 02:23:11 +0300
-Message-Id: <20211130232347.950-5-digetx@gmail.com>
+Subject: [PATCH v16 17/40] drm/tegra: submit: Remove pm_runtime_enabled() checks
+Date:   Wed,  1 Dec 2021 02:23:24 +0300
+Message-Id: <20211130232347.950-18-digetx@gmail.com>
 X-Mailer: git-send-email 2.33.1
 In-Reply-To: <20211130232347.950-1-digetx@gmail.com>
 References: <20211130232347.950-1-digetx@gmail.com>
@@ -77,74 +77,49 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Document sub-nodes which describe Tegra SoC clocks that require a higher
-voltage of the core power domain in order to operate properly on a higher
-clock rates.  Each node contains a phandle to OPP table and power domain.
+Runtime PM is now universally available, make it mandatory by removing
+the pm_runtime_enabled() checks.
 
-The root PLLs and system clocks don't have any specific device dedicated
-to them, clock controller is in charge of managing power for them.
-
-Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- .../bindings/clock/nvidia,tegra20-car.yaml    | 37 +++++++++++++++++++
- 1 file changed, 37 insertions(+)
+ drivers/gpu/drm/tegra/submit.c | 16 ++++++----------
+ 1 file changed, 6 insertions(+), 10 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/nvidia,tegra20-car.yaml b/Documentation/devicetree/bindings/clock/nvidia,tegra20-car.yaml
-index 459d2a525393..f832abb7f11a 100644
---- a/Documentation/devicetree/bindings/clock/nvidia,tegra20-car.yaml
-+++ b/Documentation/devicetree/bindings/clock/nvidia,tegra20-car.yaml
-@@ -42,6 +42,36 @@ properties:
-   "#reset-cells":
-     const: 1
+diff --git a/drivers/gpu/drm/tegra/submit.c b/drivers/gpu/drm/tegra/submit.c
+index 1ba4d539da06..6d6dd8c35475 100644
+--- a/drivers/gpu/drm/tegra/submit.c
++++ b/drivers/gpu/drm/tegra/submit.c
+@@ -504,10 +504,8 @@ static void release_job(struct host1x_job *job)
+ 	kfree(job_data->used_mappings);
+ 	kfree(job_data);
  
-+patternProperties:
-+  "^(sclk)|(pll-[cem])$":
-+    type: object
-+    properties:
-+      compatible:
-+        enum:
-+          - nvidia,tegra20-sclk
-+          - nvidia,tegra30-sclk
-+          - nvidia,tegra30-pllc
-+          - nvidia,tegra30-plle
-+          - nvidia,tegra30-pllm
-+
-+      operating-points-v2: true
-+
-+      clocks:
-+        items:
-+          - description: node's clock
-+
-+      power-domains:
-+        maxItems: 1
-+        description: phandle to the core SoC power domain
-+
-+    required:
-+      - compatible
-+      - operating-points-v2
-+      - clocks
-+      - power-domains
-+
-+    additionalProperties: false
-+
- required:
-   - compatible
-   - reg
-@@ -59,6 +89,13 @@ examples:
-         reg = <0x60006000 0x1000>;
-         #clock-cells = <1>;
-         #reset-cells = <1>;
-+
-+        sclk {
-+            compatible = "nvidia,tegra20-sclk";
-+            operating-points-v2 = <&opp_table>;
-+            clocks = <&tegra_car TEGRA20_CLK_SCLK>;
-+            power-domains = <&domain>;
-+        };
-     };
+-	if (pm_runtime_enabled(client->base.dev)) {
+-		pm_runtime_mark_last_busy(client->base.dev);
+-		pm_runtime_put_autosuspend(client->base.dev);
+-	}
++	pm_runtime_mark_last_busy(client->base.dev);
++	pm_runtime_put_autosuspend(client->base.dev);
+ }
  
-     usb-controller@c5004000 {
+ int tegra_drm_ioctl_channel_submit(struct drm_device *drm, void *data,
+@@ -591,12 +589,10 @@ int tegra_drm_ioctl_channel_submit(struct drm_device *drm, void *data,
+ 	}
+ 
+ 	/* Boot engine. */
+-	if (pm_runtime_enabled(context->client->base.dev)) {
+-		err = pm_runtime_resume_and_get(context->client->base.dev);
+-		if (err < 0) {
+-			SUBMIT_ERR(context, "could not power up engine: %d", err);
+-			goto unpin_job;
+-		}
++	err = pm_runtime_resume_and_get(context->client->base.dev);
++	if (err < 0) {
++		SUBMIT_ERR(context, "could not power up engine: %d", err);
++		goto unpin_job;
+ 	}
+ 
+ 	job->user_data = job_data;
 -- 
 2.33.1
 
