@@ -2,52 +2,52 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0581C433EF
-	for <linux-tegra@archiver.kernel.org>; Tue, 30 Nov 2021 23:24:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE869C433F5
+	for <linux-tegra@archiver.kernel.org>; Tue, 30 Nov 2021 23:24:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345492AbhK3X2A (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 30 Nov 2021 18:28:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39042 "EHLO
+        id S1345497AbhK3X2B (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 30 Nov 2021 18:28:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39092 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238824AbhK3X1q (ORCPT
+        with ESMTP id S1345442AbhK3X1u (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 30 Nov 2021 18:27:46 -0500
-Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0FD5C061756;
-        Tue, 30 Nov 2021 15:24:24 -0800 (PST)
-Received: by mail-lj1-x235.google.com with SMTP id z8so44295458ljz.9;
-        Tue, 30 Nov 2021 15:24:24 -0800 (PST)
+        Tue, 30 Nov 2021 18:27:50 -0500
+Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67DFCC061574;
+        Tue, 30 Nov 2021 15:24:30 -0800 (PST)
+Received: by mail-lj1-x230.google.com with SMTP id e11so44186801ljo.13;
+        Tue, 30 Nov 2021 15:24:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=5Vh+d6UNMnZ6MOnoLHUj11In0tvNGndmbN9w3wCCbo0=;
-        b=otpH2MMJgpXCBXyspyQziwZNEPtvbyFKZ/uCw26XdaYpGeO3BK9FYdFougBZLhXGrC
-         aWLcTT7K1/e+LuA5Sj1Am/kEst+t4DLg4hYhl9ODKVSXLv5UnegTvjA6rgxPC3sIaour
-         f27QMY5Bn32kqMc89OhgG6L/OK7G/RxPj1vyphWdYGItqWQYnklKFfan2hkdt9jSUH3b
-         lzQenD1Aw7HlDJPKLwi0up8FnsZ9W96weHEsSjkTx9X+oXRBTvUFNtD6Si4119Cf8tbu
-         V7vnVA36VDz7LH0a9kf1Q173CZPmCO1UbLLhXu2C3JiMSbKZr431bPWpxUbcgZLl/M7U
-         detA==
+        bh=nDfKTCKLqf9G6JM8mpqxRAZhh67bMGPfUrf1PMFZnmE=;
+        b=fhpWDE/W8BPbpYc6LrT3Sd3tL3GRIqLrzCk59WClqm4rHNchu4CExjdl/yfsM6OXDi
+         GW7PMw8GvZh5/M28Qh7yeE/PnCVnvTBw3xoaNaJ/bUDC8GUNstcex8ucbctDFUPhlg96
+         XbROgohEdgTo8uryBLF23Ou2EqYu7n22+wkAFeSCbBfCaZX0LHMcTfXnfnm5vkG5Asnk
+         itNiMnbDj7fRLFLdUlH8U5icIUkUeCio2KfDYw4BNJBeIgeatjNLCUU5bcONLTxWLIQb
+         k5IzhApWb39vbgOAeeYilHZa1gM9hjZTLN1R0uYknT/wM2DSquHyZiZBVwYBcS1QhFJx
+         0Uqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=5Vh+d6UNMnZ6MOnoLHUj11In0tvNGndmbN9w3wCCbo0=;
-        b=bX+OXWx+XdNJuyLJNDT/mZA/e96UOPibMcZnzFarB2a4l4/2D6oLVeUxvObCNGRk4m
-         Y/xhFhlaKTqLh+TgMDfq5qZfnEfYhn4Rdth/xpvcSq2b7EHGQW2bm0aKh4XxDZ+M4rff
-         b73KG5Sz89vC44Afn0BHh4egou+KTY851ibMVrIJZTQkCrFvQzxi8eBXU5S0zc1tcopR
-         DBX1zKkVgLEuL+j3Hoa5wKp9EcQnKv9KM+NzPd0nQqf6QJYnsbcA84C6PNk0EEt37sem
-         QD+T+eVeu+d8UFBOZG37Ecs4Rd2ll2Rzmvp8XtiXHaHbrTHUaIifXKR9wPoHbdwzEsSQ
-         x8MA==
-X-Gm-Message-State: AOAM532oGk7r8UzPd7NFRZEUzraXaIGtEOo2+HvYFfT6yMhEAFNmLvug
-        5WWnGl5ov8/XKqGx/ekL1ZXBd6i5oBo=
-X-Google-Smtp-Source: ABdhPJxppuXFseWAGKQOUokxbcAAEuEa8LPXg+6MQySfHxC6eFqClLRMZhH7riEDUGhgKT/1oCGZ3w==
-X-Received: by 2002:a2e:9ecb:: with SMTP id h11mr1943293ljk.212.1638314663121;
-        Tue, 30 Nov 2021 15:24:23 -0800 (PST)
+        bh=nDfKTCKLqf9G6JM8mpqxRAZhh67bMGPfUrf1PMFZnmE=;
+        b=rnpn9hR9HRAlTSTd8jz09WzAZTwm8Nn0XZcJYBNtHZrMB1iT0SOlgT2MRGN68MLQmF
+         SEFNkxO2Lvlm8SdzIvD+czB66wQWgJDg44VYEMB4d91k3Hnp9xqn5hoYdM3DcnV02aT2
+         S77ZIzC0gO10IBdl/McNnMm8Pm/MvSiXZGyHXvvEW9GolSHOjKLTSgFLgxlzh5eY+LzU
+         G0RVpZUp4efCIaZoaOv5xPZCRRxmDLKiKfVXWKGv2STZrnofkOfYdkvQWM6Z43QPeUDB
+         SlnClBEItP8Jg1/vaD/bKx7koKkmDKLPc2NqJavhDXs7er+b5Sl1dNtUgbym5BmJI7fE
+         kjhA==
+X-Gm-Message-State: AOAM533ggrhUI9a5yO5P2b1G89d8zmK5CNSV7LPIthTh5cCZXDatebyQ
+        WhUkOYni9tTmu7/NZPIw+bE=
+X-Google-Smtp-Source: ABdhPJxFExIlRTXbP3roDYpHOtAksUcXMnHB8sB6CKOzUF0kjCrj0HK7HUUphnePINzZFTW2y05wyw==
+X-Received: by 2002:a2e:9b17:: with SMTP id u23mr1975761lji.258.1638314668747;
+        Tue, 30 Nov 2021 15:24:28 -0800 (PST)
 Received: from localhost.localdomain (94-29-46-111.dynamic.spd-mgts.ru. [94.29.46.111])
-        by smtp.gmail.com with ESMTPSA id x199sm1860735lff.284.2021.11.30.15.24.22
+        by smtp.gmail.com with ESMTPSA id x199sm1860735lff.284.2021.11.30.15.24.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Nov 2021 15:24:22 -0800 (PST)
+        Tue, 30 Nov 2021 15:24:28 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -65,9 +65,9 @@ Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-pm@vger.kernel.org, linux-pwm@vger.kernel.org,
         linux-mmc@vger.kernel.org, dri-devel@lists.freedesktop.org,
         linux-clk@vger.kernel.org, David Heidelberg <david@ixit.cz>
-Subject: [PATCH v16 29/40] soc/tegra: fuse: Use resource-managed helpers
-Date:   Wed,  1 Dec 2021 02:23:36 +0300
-Message-Id: <20211130232347.950-30-digetx@gmail.com>
+Subject: [PATCH v16 35/40] ARM: tegra: Add 500MHz entry to Tegra30 memory OPP table
+Date:   Wed,  1 Dec 2021 02:23:42 +0300
+Message-Id: <20211130232347.950-36-digetx@gmail.com>
 X-Mailer: git-send-email 2.33.1
 In-Reply-To: <20211130232347.950-1-digetx@gmail.com>
 References: <20211130232347.950-1-digetx@gmail.com>
@@ -77,179 +77,50 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Use resource-managed helpers to make code cleaner and more correct,
-properly releasing all resources in case of driver probe error.
+Extend memory OPPs with 500MHz entry. This clock rate is used by ASUS
+Transformer tablets.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/soc/tegra/fuse/fuse-tegra.c   | 32 ++++++++++++++------------
- drivers/soc/tegra/fuse/fuse-tegra20.c | 33 ++++++++++++++++++++++++---
- 2 files changed, 48 insertions(+), 17 deletions(-)
+ arch/arm/boot/dts/tegra30-peripherals-opp.dtsi | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-diff --git a/drivers/soc/tegra/fuse/fuse-tegra.c b/drivers/soc/tegra/fuse/fuse-tegra.c
-index cc032729a143..fe4f935ce73a 100644
---- a/drivers/soc/tegra/fuse/fuse-tegra.c
-+++ b/drivers/soc/tegra/fuse/fuse-tegra.c
-@@ -182,6 +182,12 @@ static const struct nvmem_cell_info tegra_fuse_cells[] = {
- 	},
- };
+diff --git a/arch/arm/boot/dts/tegra30-peripherals-opp.dtsi b/arch/arm/boot/dts/tegra30-peripherals-opp.dtsi
+index ff25350869b3..af9640401402 100644
+--- a/arch/arm/boot/dts/tegra30-peripherals-opp.dtsi
++++ b/arch/arm/boot/dts/tegra30-peripherals-opp.dtsi
+@@ -216,6 +216,18 @@ opp-450000000-1250 {
+ 			opp-supported-hw = <0x0008>;
+ 		};
  
-+static void tegra_fuse_restore(void *base)
-+{
-+	fuse->clk = NULL;
-+	fuse->base = base;
-+}
++		opp-500000000-1200 {
++			opp-microvolt = <1200000 1200000 1350000>;
++			opp-hz = /bits/ 64 <500000000>;
++			opp-supported-hw = <0x0007>;
++		};
 +
- static int tegra_fuse_probe(struct platform_device *pdev)
- {
- 	void __iomem *base = fuse->base;
-@@ -189,13 +195,16 @@ static int tegra_fuse_probe(struct platform_device *pdev)
- 	struct resource *res;
- 	int err;
- 
-+	err = devm_add_action(&pdev->dev, tegra_fuse_restore, base);
-+	if (err)
-+		return err;
++		opp-500000000-1250 {
++			opp-microvolt = <1250000 1250000 1350000>;
++			opp-hz = /bits/ 64 <500000000>;
++			opp-supported-hw = <0x0008>;
++		};
 +
- 	/* take over the memory region from the early initialization */
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	fuse->phys = res->start;
- 	fuse->base = devm_ioremap_resource(&pdev->dev, res);
- 	if (IS_ERR(fuse->base)) {
- 		err = PTR_ERR(fuse->base);
--		fuse->base = base;
- 		return err;
- 	}
+ 		opp-533000000-1200 {
+ 			opp-microvolt = <1200000 1200000 1350000>;
+ 			opp-hz = /bits/ 64 <533000000>;
+@@ -347,6 +359,12 @@ opp-450000000 {
+ 			opp-peak-kBps = <3600000>;
+ 		};
  
-@@ -205,19 +214,20 @@ static int tegra_fuse_probe(struct platform_device *pdev)
- 			dev_err(&pdev->dev, "failed to get FUSE clock: %ld",
- 				PTR_ERR(fuse->clk));
- 
--		fuse->base = base;
- 		return PTR_ERR(fuse->clk);
- 	}
- 
- 	platform_set_drvdata(pdev, fuse);
- 	fuse->dev = &pdev->dev;
- 
--	pm_runtime_enable(&pdev->dev);
-+	err = devm_pm_runtime_enable(&pdev->dev);
-+	if (err)
-+		return err;
- 
- 	if (fuse->soc->probe) {
- 		err = fuse->soc->probe(fuse);
- 		if (err < 0)
--			goto restore;
-+			return err;
- 	}
- 
- 	memset(&nvmem, 0, sizeof(nvmem));
-@@ -241,7 +251,7 @@ static int tegra_fuse_probe(struct platform_device *pdev)
- 		err = PTR_ERR(fuse->nvmem);
- 		dev_err(&pdev->dev, "failed to register NVMEM device: %d\n",
- 			err);
--		goto restore;
-+		return err;
- 	}
- 
- 	fuse->rst = devm_reset_control_get_optional(&pdev->dev, "fuse");
-@@ -249,7 +259,7 @@ static int tegra_fuse_probe(struct platform_device *pdev)
- 		err = PTR_ERR(fuse->rst);
- 		dev_err(&pdev->dev, "failed to get FUSE reset: %pe\n",
- 			fuse->rst);
--		goto restore;
-+		return err;
- 	}
- 
- 	/*
-@@ -258,26 +268,20 @@ static int tegra_fuse_probe(struct platform_device *pdev)
- 	 */
- 	err = pm_runtime_resume_and_get(&pdev->dev);
- 	if (err)
--		goto restore;
-+		return err;
- 
- 	err = reset_control_reset(fuse->rst);
- 	pm_runtime_put(&pdev->dev);
- 
- 	if (err < 0) {
- 		dev_err(&pdev->dev, "failed to reset FUSE: %d\n", err);
--		goto restore;
-+		return err;
- 	}
- 
- 	/* release the early I/O memory mapping */
- 	iounmap(base);
- 
- 	return 0;
--
--restore:
--	fuse->clk = NULL;
--	fuse->base = base;
--	pm_runtime_disable(&pdev->dev);
--	return err;
- }
- 
- static int __maybe_unused tegra_fuse_runtime_resume(struct device *dev)
-diff --git a/drivers/soc/tegra/fuse/fuse-tegra20.c b/drivers/soc/tegra/fuse/fuse-tegra20.c
-index 8ec9fc5e5e4b..12503f563e36 100644
---- a/drivers/soc/tegra/fuse/fuse-tegra20.c
-+++ b/drivers/soc/tegra/fuse/fuse-tegra20.c
-@@ -94,9 +94,28 @@ static bool dma_filter(struct dma_chan *chan, void *filter_param)
- 	return of_device_is_compatible(np, "nvidia,tegra20-apbdma");
- }
- 
-+static void tegra20_fuse_release_channel(void *data)
-+{
-+	struct tegra_fuse *fuse = data;
++		opp-500000000 {
++			opp-hz = /bits/ 64 <500000000>;
++			opp-supported-hw = <0x000F>;
++			opp-peak-kBps = <4000000>;
++		};
 +
-+	dma_release_channel(fuse->apbdma.chan);
-+	fuse->apbdma.chan = NULL;
-+}
-+
-+static void tegra20_fuse_free_coherent(void *data)
-+{
-+	struct tegra_fuse *fuse = data;
-+
-+	dma_free_coherent(fuse->dev, sizeof(u32), fuse->apbdma.virt,
-+			  fuse->apbdma.phys);
-+	fuse->apbdma.virt = NULL;
-+	fuse->apbdma.phys = 0x0;
-+}
-+
- static int tegra20_fuse_probe(struct tegra_fuse *fuse)
- {
- 	dma_cap_mask_t mask;
-+	int err;
- 
- 	dma_cap_zero(mask);
- 	dma_cap_set(DMA_SLAVE, mask);
-@@ -105,13 +124,21 @@ static int tegra20_fuse_probe(struct tegra_fuse *fuse)
- 	if (!fuse->apbdma.chan)
- 		return -EPROBE_DEFER;
- 
-+	err = devm_add_action_or_reset(fuse->dev, tegra20_fuse_release_channel,
-+				       fuse);
-+	if (err)
-+		return err;
-+
- 	fuse->apbdma.virt = dma_alloc_coherent(fuse->dev, sizeof(u32),
- 					       &fuse->apbdma.phys,
- 					       GFP_KERNEL);
--	if (!fuse->apbdma.virt) {
--		dma_release_channel(fuse->apbdma.chan);
-+	if (!fuse->apbdma.virt)
- 		return -ENOMEM;
--	}
-+
-+	err = devm_add_action_or_reset(fuse->dev, tegra20_fuse_free_coherent,
-+				       fuse);
-+	if (err)
-+		return err;
- 
- 	fuse->apbdma.config.src_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
- 	fuse->apbdma.config.dst_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
+ 		opp-533000000 {
+ 			opp-hz = /bits/ 64 <533000000>;
+ 			opp-supported-hw = <0x000F>;
 -- 
 2.33.1
 
