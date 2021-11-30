@@ -2,52 +2,52 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D67CC433EF
-	for <linux-tegra@archiver.kernel.org>; Tue, 30 Nov 2021 23:24:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BA8BC41535
+	for <linux-tegra@archiver.kernel.org>; Tue, 30 Nov 2021 23:24:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345466AbhK3X1z (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 30 Nov 2021 18:27:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39034 "EHLO
+        id S240682AbhK3X16 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 30 Nov 2021 18:27:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39048 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345256AbhK3X1l (ORCPT
+        with ESMTP id S1345412AbhK3X1n (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 30 Nov 2021 18:27:41 -0500
-Received: from mail-lj1-x22e.google.com (mail-lj1-x22e.google.com [IPv6:2a00:1450:4864:20::22e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4EE2C061748;
-        Tue, 30 Nov 2021 15:24:20 -0800 (PST)
-Received: by mail-lj1-x22e.google.com with SMTP id v15so44394111ljc.0;
-        Tue, 30 Nov 2021 15:24:20 -0800 (PST)
+        Tue, 30 Nov 2021 18:27:43 -0500
+Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC9B2C061748;
+        Tue, 30 Nov 2021 15:24:22 -0800 (PST)
+Received: by mail-lf1-x130.google.com with SMTP id r26so57904917lfn.8;
+        Tue, 30 Nov 2021 15:24:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Nt2qbTsx4R5g/N/VYBhOrl2siDQQfrnptMwGepUXSgQ=;
-        b=L+xne0cVRct9fmIWP8hgoH8yyP3uaYTqCRqJEMhGnVMwiglELlmZfA7bFRet1hc06U
-         fJTX5Kuqix1tnLM0lyWrYljWAVr48GclCvGU90oXWk3QW0MVRZK4/WetfXnq5Hi1umFW
-         v1Auc5CjOorJCwS3cCUHlzHAPGVFfxK9OoKQ/1ZuMbquNIP+LkSrTLwovHi7o+P70n1v
-         HgUseg/nLFHl2Q81brHfnBp8zOWv5RBk6O7BzdiUcdb1el5wlw1G4E9XYJC8hKzeSWR4
-         goWlcXlNtfwrGID7//bL4+ZiqVVPRtVLq1jLNF/3kZ3Uc7f9aFsqfJLCwnHFv09BHYYQ
-         SMZA==
+        bh=udxoZ5sHHyWoGGCNUpfDNLDNjJsYtsk9R/zPM+x/w7I=;
+        b=ch2FSpnhpDvD8Jz/nv3PLmV0LWy7ZTaslLerjaww8PWr481n5oce1eWs69G5eZk2Cz
+         N2K01kgdZI3seB+o6ro7WqWQCDaLmkwK7ZzjEBVd8DkQARXiFc1RRBXnZ8It14gAIjeT
+         2g2R8qySm9tW7sL/AX3Sc0NijjHFpELfh3rJY1GPpH2cIDXaEurwhvGRni7l21bxgb8V
+         RqRJDsERFbP4N99ZGlKPzQVXypGAZFmo3QHhXzjey0lyjHSG4qk06Jc56N12A/ivJzpw
+         OQD+fSqI39ByaXNHLvwsBGOymQMD/n7kxKEcAfQxMKlwXmF0mq/RYSzwPgvGd6ybEBO0
+         giDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Nt2qbTsx4R5g/N/VYBhOrl2siDQQfrnptMwGepUXSgQ=;
-        b=dW9odHBq2VoH033uCAKOz5hNt9Oc04ZgR9wJftz8NFpbbXklaamhvpDMuiu5gLaows
-         Gwy+rcZlSR6vivjSGn2gXZ1R8CS57p2qBkxjZCNAsRUbcTSOAHniiTmh4QYnUA6ksUDF
-         XSvmcvp/0GZ1dxaovxjqpCnaYzGc1ZKIceN1QeyRl94Ho8R15IshtXQNDf+f1STbw/iH
-         fEpttyqyxxON1ile7UBCopk7H6QOiJKDB/9yH+Mxtii3rVTAn+1ohfJyukOl0dHl6N91
-         nIVAjf9UNzwvs4qgvjkCLOjB6Uz4EqnaJdBUiNBQ0MaigQ2pRd4z/9lX5i9nd0ejiKpw
-         rfHA==
-X-Gm-Message-State: AOAM532kEbcFBFBnWus+yBmGt4q41qzx9JUuyWYPJvoIZpQSh8BfoE4C
-        5EqXUXzidg62RNs4CsapVZ0=
-X-Google-Smtp-Source: ABdhPJz23pita21nMXWKRfP28/VZa3iQxHi3gHvJ7PlFjxfMNRTAo6GcGKLf+9LlWDgvT9dSNAx6fQ==
-X-Received: by 2002:a2e:7319:: with SMTP id o25mr1943965ljc.320.1638314659258;
-        Tue, 30 Nov 2021 15:24:19 -0800 (PST)
+        bh=udxoZ5sHHyWoGGCNUpfDNLDNjJsYtsk9R/zPM+x/w7I=;
+        b=VsJTU039R02GQ8LQ3jCrYLbPC2AhagnvFl0cZNdiom6J69mjhFXXa6Ao8Ab0wqH7Bd
+         xlt7YgWeviiutaqApkpOFe16Mf6Azj0Ri1+MbDM5UWI3XYNXHWdmvxdw1xJLuuBWyFXi
+         eqTYzcIBioelV9GCqUVV9fBU4ktJmP4mgDyC28GJaNQNh0Rc61jwIrQDlbk3hjLB3idl
+         S0x11DrK5pZmOq95ojKM1q54wyYI56BJjW1dcF5Iy8u65FG2d3j5jYCWjMf0fq0ujFhs
+         NYj3erNsWgqkQq/NRyoz5qA0XQPuTZh2cda52bEsohhh0DVlwNkZ7a06CVS+TH7Ixc0w
+         j5gw==
+X-Gm-Message-State: AOAM532/qG97VfKVfiLFTMScGtaujiQsEFiAyLiv+EyUjsiJuwrJH/+m
+        QAICQxkHvBtyoNwRIW68Hh4=
+X-Google-Smtp-Source: ABdhPJwjzik6wZp1IbZVuQlewW36T4pD8s6w1ySamGx3xs1AzCYMJEDqKeGcXDUMXoG5w5q3HWJwuA==
+X-Received: by 2002:a05:6512:118d:: with SMTP id g13mr2302001lfr.66.1638314661225;
+        Tue, 30 Nov 2021 15:24:21 -0800 (PST)
 Received: from localhost.localdomain (94-29-46-111.dynamic.spd-mgts.ru. [94.29.46.111])
-        by smtp.gmail.com with ESMTPSA id x199sm1860735lff.284.2021.11.30.15.24.18
+        by smtp.gmail.com with ESMTPSA id x199sm1860735lff.284.2021.11.30.15.24.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Nov 2021 15:24:18 -0800 (PST)
+        Tue, 30 Nov 2021 15:24:20 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -65,9 +65,9 @@ Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-pm@vger.kernel.org, linux-pwm@vger.kernel.org,
         linux-mmc@vger.kernel.org, dri-devel@lists.freedesktop.org,
         linux-clk@vger.kernel.org, David Heidelberg <david@ixit.cz>
-Subject: [PATCH v16 25/40] media: dt: bindings: tegra-vde: Convert to schema
-Date:   Wed,  1 Dec 2021 02:23:32 +0300
-Message-Id: <20211130232347.950-26-digetx@gmail.com>
+Subject: [PATCH v16 27/40] media: staging: tegra-vde: Support generic power domain
+Date:   Wed,  1 Dec 2021 02:23:34 +0300
+Message-Id: <20211130232347.950-28-digetx@gmail.com>
 X-Mailer: git-send-email 2.33.1
 In-Reply-To: <20211130232347.950-1-digetx@gmail.com>
 References: <20211130232347.950-1-digetx@gmail.com>
@@ -77,201 +77,144 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Convert NVIDIA Tegra video decoder binding to schema.
+Currently driver supports legacy power domain API, this patch adds generic
+power domain support. This allows us to utilize a modern GENPD API for
+newer device-trees.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+Tested-by: Peter Geis <pgwipeout@gmail.com> # Ouya T30
+Tested-by: Paul Fertser <fercerpav@gmail.com> # PAZ00 T20
+Tested-by: Nicolas Chauvet <kwizart@gmail.com> # PAZ00 T20 and TK1 T124
+Tested-by: Matt Merhar <mattmerhar@protonmail.com> # Ouya T30
 Acked-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- .../bindings/media/nvidia,tegra-vde.txt       |  64 -----------
- .../bindings/media/nvidia,tegra-vde.yaml      | 107 ++++++++++++++++++
- 2 files changed, 107 insertions(+), 64 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/media/nvidia,tegra-vde.txt
- create mode 100644 Documentation/devicetree/bindings/media/nvidia,tegra-vde.yaml
+ drivers/staging/media/tegra-vde/vde.c | 63 ++++++++++++++++++++++-----
+ 1 file changed, 52 insertions(+), 11 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/media/nvidia,tegra-vde.txt b/Documentation/devicetree/bindings/media/nvidia,tegra-vde.txt
-deleted file mode 100644
-index 602169b8aa19..000000000000
---- a/Documentation/devicetree/bindings/media/nvidia,tegra-vde.txt
-+++ /dev/null
-@@ -1,64 +0,0 @@
--NVIDIA Tegra Video Decoder Engine
--
--Required properties:
--- compatible : Must contain one of the following values:
--   - "nvidia,tegra20-vde"
--   - "nvidia,tegra30-vde"
--   - "nvidia,tegra114-vde"
--   - "nvidia,tegra124-vde"
--   - "nvidia,tegra132-vde"
--- reg : Must contain an entry for each entry in reg-names.
--- reg-names : Must include the following entries:
--  - sxe
--  - bsev
--  - mbe
--  - ppe
--  - mce
--  - tfe
--  - ppb
--  - vdma
--  - frameid
--- iram : Must contain phandle to the mmio-sram device node that represents
--         IRAM region used by VDE.
--- interrupts : Must contain an entry for each entry in interrupt-names.
--- interrupt-names : Must include the following entries:
--  - sync-token
--  - bsev
--  - sxe
--- clocks : Must include the following entries:
--  - vde
--- resets : Must contain an entry for each entry in reset-names.
--- reset-names : Should include the following entries:
--  - vde
--
--Optional properties:
--- resets : Must contain an entry for each entry in reset-names.
--- reset-names : Must include the following entries:
--  - mc
--- iommus: Must contain phandle to the IOMMU device node.
--
--Example:
--
--video-codec@6001a000 {
--	compatible = "nvidia,tegra20-vde";
--	reg = <0x6001a000 0x1000 /* Syntax Engine */
--	       0x6001b000 0x1000 /* Video Bitstream Engine */
--	       0x6001c000  0x100 /* Macroblock Engine */
--	       0x6001c200  0x100 /* Post-processing Engine */
--	       0x6001c400  0x100 /* Motion Compensation Engine */
--	       0x6001c600  0x100 /* Transform Engine */
--	       0x6001c800  0x100 /* Pixel prediction block */
--	       0x6001ca00  0x100 /* Video DMA */
--	       0x6001d800  0x300 /* Video frame controls */>;
--	reg-names = "sxe", "bsev", "mbe", "ppe", "mce",
--		    "tfe", "ppb", "vdma", "frameid";
--	iram = <&vde_pool>; /* IRAM region */
--	interrupts = <GIC_SPI  9 IRQ_TYPE_LEVEL_HIGH>, /* Sync token interrupt */
--		     <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>, /* BSE-V interrupt */
--		     <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>; /* SXE interrupt */
--	interrupt-names = "sync-token", "bsev", "sxe";
--	clocks = <&tegra_car TEGRA20_CLK_VDE>;
--	reset-names = "vde", "mc";
--	resets = <&tegra_car 61>, <&mc TEGRA20_MC_RESET_VDE>;
--	iommus = <&mc TEGRA_SWGROUP_VDE>;
--};
-diff --git a/Documentation/devicetree/bindings/media/nvidia,tegra-vde.yaml b/Documentation/devicetree/bindings/media/nvidia,tegra-vde.yaml
-new file mode 100644
-index 000000000000..c143aaa06346
---- /dev/null
-+++ b/Documentation/devicetree/bindings/media/nvidia,tegra-vde.yaml
-@@ -0,0 +1,107 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/media/nvidia,tegra-vde.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/drivers/staging/media/tegra-vde/vde.c b/drivers/staging/media/tegra-vde/vde.c
+index ed4c1250b303..859f60a70904 100644
+--- a/drivers/staging/media/tegra-vde/vde.c
++++ b/drivers/staging/media/tegra-vde/vde.c
+@@ -20,6 +20,7 @@
+ #include <linux/slab.h>
+ #include <linux/uaccess.h>
+ 
++#include <soc/tegra/common.h>
+ #include <soc/tegra/pmc.h>
+ 
+ #include "uapi.h"
+@@ -920,13 +921,17 @@ static __maybe_unused int tegra_vde_runtime_suspend(struct device *dev)
+ 	struct tegra_vde *vde = dev_get_drvdata(dev);
+ 	int err;
+ 
+-	err = tegra_powergate_power_off(TEGRA_POWERGATE_VDEC);
+-	if (err) {
+-		dev_err(dev, "Failed to power down HW: %d\n", err);
+-		return err;
++	if (!dev->pm_domain) {
++		err = tegra_powergate_power_off(TEGRA_POWERGATE_VDEC);
++		if (err) {
++			dev_err(dev, "Failed to power down HW: %d\n", err);
++			return err;
++		}
+ 	}
+ 
+ 	clk_disable_unprepare(vde->clk);
++	reset_control_release(vde->rst);
++	reset_control_release(vde->rst_mc);
+ 
+ 	return 0;
+ }
+@@ -936,14 +941,45 @@ static __maybe_unused int tegra_vde_runtime_resume(struct device *dev)
+ 	struct tegra_vde *vde = dev_get_drvdata(dev);
+ 	int err;
+ 
+-	err = tegra_powergate_sequence_power_up(TEGRA_POWERGATE_VDEC,
+-						vde->clk, vde->rst);
++	err = reset_control_acquire(vde->rst_mc);
+ 	if (err) {
+-		dev_err(dev, "Failed to power up HW : %d\n", err);
++		dev_err(dev, "Failed to acquire mc reset: %d\n", err);
+ 		return err;
+ 	}
+ 
++	err = reset_control_acquire(vde->rst);
++	if (err) {
++		dev_err(dev, "Failed to acquire reset: %d\n", err);
++		goto release_mc_reset;
++	}
 +
-+title: NVIDIA Tegra Video Decoder Engine
++	if (!dev->pm_domain) {
++		err = tegra_powergate_sequence_power_up(TEGRA_POWERGATE_VDEC,
++							vde->clk, vde->rst);
++		if (err) {
++			dev_err(dev, "Failed to power up HW : %d\n", err);
++			goto release_reset;
++		}
++	} else {
++		/*
++		 * tegra_powergate_sequence_power_up() leaves clocks enabled,
++		 * while GENPD not.
++		 */
++		err = clk_prepare_enable(vde->clk);
++		if (err) {
++			dev_err(dev, "Failed to enable clock: %d\n", err);
++			goto release_reset;
++		}
++	}
 +
-+maintainers:
-+  - Dmitry Osipenko <digetx@gmail.com>
-+  - Jon Hunter <jonathanh@nvidia.com>
-+  - Thierry Reding <thierry.reding@gmail.com>
+ 	return 0;
 +
-+properties:
-+  compatible:
-+    oneOf:
-+      - items:
-+          - enum:
-+              - nvidia,tegra132-vde
-+              - nvidia,tegra124-vde
-+              - nvidia,tegra114-vde
-+      - items:
-+          - const: nvidia,tegra30-vde
-+          - const: nvidia,tegra20-vde
-+      - items:
-+          - const: nvidia,tegra20-vde
++release_reset:
++	reset_control_release(vde->rst);
++release_mc_reset:
++	reset_control_release(vde->rst_mc);
 +
-+  reg:
-+    maxItems: 9
++	return err;
+ }
+ 
+ static int tegra_vde_probe(struct platform_device *pdev)
+@@ -1001,14 +1037,14 @@ static int tegra_vde_probe(struct platform_device *pdev)
+ 		return err;
+ 	}
+ 
+-	vde->rst = devm_reset_control_get(dev, NULL);
++	vde->rst = devm_reset_control_get_exclusive_released(dev, NULL);
+ 	if (IS_ERR(vde->rst)) {
+ 		err = PTR_ERR(vde->rst);
+ 		dev_err(dev, "Could not get VDE reset %d\n", err);
+ 		return err;
+ 	}
+ 
+-	vde->rst_mc = devm_reset_control_get_optional(dev, "mc");
++	vde->rst_mc = devm_reset_control_get_optional_exclusive_released(dev, "mc");
+ 	if (IS_ERR(vde->rst_mc)) {
+ 		err = PTR_ERR(vde->rst_mc);
+ 		dev_err(dev, "Could not get MC reset %d\n", err);
+@@ -1026,6 +1062,12 @@ static int tegra_vde_probe(struct platform_device *pdev)
+ 		return err;
+ 	}
+ 
++	err = devm_tegra_core_dev_init_opp_table_common(dev);
++	if (err) {
++		dev_err(dev, "Could initialize OPP table %d\n", err);
++		return err;
++	}
 +
-+  reg-names:
-+    items:
-+      - const: sxe
-+      - const: bsev
-+      - const: mbe
-+      - const: ppe
-+      - const: mce
-+      - const: tfe
-+      - const: ppb
-+      - const: vdma
-+      - const: frameid
-+
-+  clocks:
-+    maxItems: 1
-+
-+  resets:
-+    maxItems: 2
-+
-+  reset-names:
-+    items:
-+      - const: vde
-+      - const: mc
-+
-+  interrupts:
-+    maxItems: 3
-+
-+  interrupt-names:
-+    items:
-+      - const: sync-token
-+      - const: bsev
-+      - const: sxe
-+
-+  iommus:
-+    maxItems: 1
-+
-+  iram:
-+    $ref: /schemas/types.yaml#/definitions/phandle
-+    description:
-+      Phandle of the SRAM MMIO node.
-+
-+required:
-+  - compatible
-+  - reg
-+  - reg-names
-+  - clocks
-+  - resets
-+  - reset-names
-+  - interrupts
-+  - interrupt-names
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    video-codec@6001a000 {
-+      compatible = "nvidia,tegra20-vde";
-+      reg = <0x6001a000 0x1000>, /* Syntax Engine */
-+            <0x6001b000 0x1000>, /* Video Bitstream Engine */
-+            <0x6001c000  0x100>, /* Macroblock Engine */
-+            <0x6001c200  0x100>, /* Post-processing Engine */
-+            <0x6001c400  0x100>, /* Motion Compensation Engine */
-+            <0x6001c600  0x100>, /* Transform Engine */
-+            <0x6001c800  0x100>, /* Pixel prediction block */
-+            <0x6001ca00  0x100>, /* Video DMA */
-+            <0x6001d800  0x300>; /* Video frame controls */
-+      reg-names = "sxe", "bsev", "mbe", "ppe", "mce",
-+                  "tfe", "ppb", "vdma", "frameid";
-+      iram = <&iram>; /* IRAM MMIO region */
-+      interrupts = <0  9 4>, /* Sync token */
-+                   <0 10 4>, /* BSE-V */
-+                   <0 12 4>; /* SXE */
-+      interrupt-names = "sync-token", "bsev", "sxe";
-+      clocks = <&clk 61>;
-+      reset-names = "vde", "mc";
-+      resets = <&rst 61>, <&mem 13>;
-+      iommus = <&mem 15>;
-+    };
+ 	vde->iram_pool = of_gen_pool_get(dev->of_node, "iram", 0);
+ 	if (!vde->iram_pool) {
+ 		dev_err(dev, "Could not get IRAM pool\n");
+@@ -1133,8 +1175,7 @@ static void tegra_vde_shutdown(struct platform_device *pdev)
+ 	 * On some devices bootloader isn't ready to a power-gated VDE on
+ 	 * a warm-reboot, machine will hang in that case.
+ 	 */
+-	if (pm_runtime_status_suspended(&pdev->dev))
+-		tegra_vde_runtime_resume(&pdev->dev);
++	pm_runtime_get_sync(&pdev->dev);
+ }
+ 
+ static __maybe_unused int tegra_vde_pm_suspend(struct device *dev)
 -- 
 2.33.1
 
