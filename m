@@ -2,52 +2,52 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 026E8C433FE
-	for <linux-tegra@archiver.kernel.org>; Tue, 30 Nov 2021 23:30:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91EEDC43219
+	for <linux-tegra@archiver.kernel.org>; Tue, 30 Nov 2021 23:30:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237337AbhK3Xd4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 30 Nov 2021 18:33:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38936 "EHLO
+        id S241072AbhK3Xd7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 30 Nov 2021 18:33:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38976 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345220AbhK3X11 (ORCPT
+        with ESMTP id S1345289AbhK3X1b (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 30 Nov 2021 18:27:27 -0500
-Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 829BEC061746;
-        Tue, 30 Nov 2021 15:24:07 -0800 (PST)
-Received: by mail-lf1-x136.google.com with SMTP id b40so57918628lfv.10;
-        Tue, 30 Nov 2021 15:24:07 -0800 (PST)
+        Tue, 30 Nov 2021 18:27:31 -0500
+Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BAD4C061748;
+        Tue, 30 Nov 2021 15:24:11 -0800 (PST)
+Received: by mail-lf1-x12c.google.com with SMTP id c32so57986736lfv.4;
+        Tue, 30 Nov 2021 15:24:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=ICJnk3FwYhvBb3ZzWnvNkPNXyskDbLEUXbJt1XZit8o=;
-        b=X+yTWYpAAEzzZ0MPCyEBN0girAa4u+nRe66ItjmQHKXh6l/IsBrJhaIv3vSd6TMRR/
-         62e3Bbrq7A8a+8wTjxmyPNATt98pPKirmFYP92LAWUTNCCIPEYXI0IYkd7ToreOkJ86d
-         z6KxRsXpX1OwM1FmpJ9U8Az+pwv85H330dyad2bmvZcaKyHR14jzIxowIgwQob2GDpVF
-         3158IW0KPMsZ7uMB2GtLNcc++jWnNoaQG0LMtlfMEYp2TPpyznw/6OPHQDsUzKL1Y12S
-         jIY3Y7r36CyXgIo+ynrHcbnPe3rI+eSmxBOfmAhzpwvrlc7IUTy956FV8kf0bGiEvk9C
-         zp9A==
+        bh=uQ5jO8IglZlUMaRNPcN9PUVJW42EUXyxCQcfBM+SAVk=;
+        b=dvSJo7xzm1eJfh0VhPIQ/ualcGjwUWikpagcRiIdb/9jusqbHGcZerkLtz1ZR/PH+I
+         8hLAVLcT3AidmYxrQBDRtN7EJc6oTN8OHngaw7f9SOcu69vky6Th3Sw2lkuDoktXtKOA
+         lJpRgMAph56ewr+hUE0DsKQ5Ton6qQpe89Fqt71e7gjM3+eLU633Opqf+Jg4t6F3b4h+
+         b1hJ+nKbZ0p3rUID87bFVhOwzcsbJn1TFrRyT8d0tRJNKTM0wNrp9183PmTGcokb4CX9
+         QVaT6hSE9qArRqYZp2gNMntxcMuARDZ9FmYe+YmvkONRNAtJEfk7A7mI9PB/x45b9cIC
+         GSXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=ICJnk3FwYhvBb3ZzWnvNkPNXyskDbLEUXbJt1XZit8o=;
-        b=XohEbZkGjX8bQKYsBLn0H2Vgvx7Gut5f6Nzt8MJJ3X0Ir09jOoS/bsDm7ZeavEcG/p
-         UOOZF+Ki8Chd7KHLjeywAfzWJpTjo9J92KQ5LMGAuDAUS0G2e0AYjVSNfwJx98aRGKMb
-         rWJeni+NKxd1Ui46q03mO0oogEgxJqDgivjuHCe9Iyeyl4CWD2wmTkB2zFmweNhPNuey
-         DxRO4EOEMW/MdrqC+9C18mDHxxSXR7XCFtd7Gfichvp90X0WpmWleu04kz+u8riWJngx
-         7p8Lh1CBvZ3Ti0iC32Wj7Uq1Ca2C/eeBC8GvyZhdQIRD+/IO3NBkV65ZZOtMkzxp8OsN
-         CeAQ==
-X-Gm-Message-State: AOAM532F+vhJbl2eyfc1MVh37OHXmm8UicpCTGDDdH6xBP15E1qogJ4A
-        gGxkkSlL13LBxxtFzr2bJXA=
-X-Google-Smtp-Source: ABdhPJwGSBDqYX5ilFH58KTzc0EOSr5ocGDAIJKTE5f6EPmFGBJry+nOoQGvI55SX64HX2f7h/pQlA==
-X-Received: by 2002:ac2:4d29:: with SMTP id h9mr2173173lfk.633.1638314645871;
-        Tue, 30 Nov 2021 15:24:05 -0800 (PST)
+        bh=uQ5jO8IglZlUMaRNPcN9PUVJW42EUXyxCQcfBM+SAVk=;
+        b=fUVBTELzmq89WADmeVESUgfuxBILHPVFFtOrbTiussaqHVP5I4y3411CFyZhEGCX1Q
+         jdmLZLVXUAH7OYWizIC9hsCcMRr7hIuyL8mOCiVq6Lu/U4IrGpgO2OibDNOlzaZxcMk6
+         diEXiCIksnsGrVf6r53aWb5ktThULzC/sPnqTJwtE66XKFv6gB13xWjBtq56sT5JCyib
+         2rVxKi8NVbKF5OinFuCsi/stF3U/kK686HTPR7OdAkTRlYdXrjw3iJN59V82KwDUa3VO
+         i7pGHyB2IKphWRYUssdPITTak56/w6YDe9trcuIsEwOOmhgkPj6cP+m8HGxkGj5f/FYL
+         ovSw==
+X-Gm-Message-State: AOAM533GTGvNP308lhZL81HDCiJYoVhy2umprH6UHbaGyftfbVNeMz2x
+        x+94GpLlDOzgnNIb8CY7BQY=
+X-Google-Smtp-Source: ABdhPJyTRdX5wiYTmVoFjF4P8647/2ZqIvFbX6o0+UgUnk0xxvSu3+zbffENKNhFeInBCsH5zfNFjg==
+X-Received: by 2002:a05:6512:234d:: with SMTP id p13mr2248990lfu.505.1638314649852;
+        Tue, 30 Nov 2021 15:24:09 -0800 (PST)
 Received: from localhost.localdomain (94-29-46-111.dynamic.spd-mgts.ru. [94.29.46.111])
-        by smtp.gmail.com with ESMTPSA id x199sm1860735lff.284.2021.11.30.15.24.05
+        by smtp.gmail.com with ESMTPSA id x199sm1860735lff.284.2021.11.30.15.24.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Nov 2021 15:24:05 -0800 (PST)
+        Tue, 30 Nov 2021 15:24:09 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -65,9 +65,9 @@ Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-pm@vger.kernel.org, linux-pwm@vger.kernel.org,
         linux-mmc@vger.kernel.org, dri-devel@lists.freedesktop.org,
         linux-clk@vger.kernel.org, David Heidelberg <david@ixit.cz>
-Subject: [PATCH v16 11/40] drm/tegra: dc: Support OPP and SoC core voltage scaling
-Date:   Wed,  1 Dec 2021 02:23:18 +0300
-Message-Id: <20211130232347.950-12-digetx@gmail.com>
+Subject: [PATCH v16 15/40] drm/tegra: vic: Stop channel on suspend
+Date:   Wed,  1 Dec 2021 02:23:22 +0300
+Message-Id: <20211130232347.950-16-digetx@gmail.com>
 X-Mailer: git-send-email 2.33.1
 In-Reply-To: <20211130232347.950-1-digetx@gmail.com>
 References: <20211130232347.950-1-digetx@gmail.com>
@@ -77,162 +77,116 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Add OPP and SoC core voltage scaling support to the display controller
-driver. This is required for enabling system-wide DVFS on pre-Tegra186
-SoCs.
+CDMA must be stopped before hardware is suspended. Add channel stopping
+to RPM suspend callback. Add system level suspend-resume callbacks.
+
+Runtime PM initialization is moved to host1x client init phase because
+RPM callback now uses host1x channel that is available only when host1x
+client is registered.
 
 Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-Tested-by: Peter Geis <pgwipeout@gmail.com> # Ouya T30
-Tested-by: Paul Fertser <fercerpav@gmail.com> # PAZ00 T20
-Tested-by: Nicolas Chauvet <kwizart@gmail.com> # PAZ00 T20 and TK1 T124
-Tested-by: Matt Merhar <mattmerhar@protonmail.com> # Ouya T30
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/gpu/drm/tegra/dc.c | 79 ++++++++++++++++++++++++++++++++++++++
- drivers/gpu/drm/tegra/dc.h |  2 +
- 2 files changed, 81 insertions(+)
+ drivers/gpu/drm/tegra/vic.c | 36 ++++++++++++++++++------------------
+ 1 file changed, 18 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-index a457ee954a49..eb70eee8992a 100644
---- a/drivers/gpu/drm/tegra/dc.c
-+++ b/drivers/gpu/drm/tegra/dc.c
-@@ -11,9 +11,12 @@
- #include <linux/interconnect.h>
- #include <linux/module.h>
- #include <linux/of_device.h>
-+#include <linux/pm_domain.h>
-+#include <linux/pm_opp.h>
- #include <linux/pm_runtime.h>
- #include <linux/reset.h>
- 
-+#include <soc/tegra/common.h>
- #include <soc/tegra/pmc.h>
- 
- #include <drm/drm_atomic.h>
-@@ -1834,6 +1837,52 @@ int tegra_dc_state_setup_clock(struct tegra_dc *dc,
- 	return 0;
- }
- 
-+static void tegra_dc_update_voltage_state(struct tegra_dc *dc,
-+					  struct tegra_dc_state *state)
-+{
-+	unsigned long rate, pstate;
-+	struct dev_pm_opp *opp;
-+	int err;
-+
-+	if (!dc->has_opp_table)
-+		return;
-+
-+	/* calculate actual pixel clock rate which depends on internal divider */
-+	rate = DIV_ROUND_UP(clk_get_rate(dc->clk) * 2, state->div + 2);
-+
-+	/* find suitable OPP for the rate */
-+	opp = dev_pm_opp_find_freq_ceil(dc->dev, &rate);
-+
-+	/*
-+	 * Very high resolution modes may results in a clock rate that is
-+	 * above the characterized maximum. In this case it's okay to fall
-+	 * back to the characterized maximum.
-+	 */
-+	if (opp == ERR_PTR(-ERANGE))
-+		opp = dev_pm_opp_find_freq_floor(dc->dev, &rate);
-+
-+	if (IS_ERR(opp)) {
-+		dev_err(dc->dev, "failed to find OPP for %luHz: %pe\n",
-+			rate, opp);
-+		return;
-+	}
-+
-+	pstate = dev_pm_opp_get_required_pstate(opp, 0);
-+	dev_pm_opp_put(opp);
-+
-+	/*
-+	 * The minimum core voltage depends on the pixel clock rate (which
-+	 * depends on internal clock divider of the CRTC) and not on the
-+	 * rate of the display controller clock. This is why we're not using
-+	 * dev_pm_opp_set_rate() API and instead controlling the power domain
-+	 * directly.
-+	 */
-+	err = dev_pm_genpd_set_performance_state(dc->dev, pstate);
-+	if (err)
-+		dev_err(dc->dev, "failed to set power domain state to %lu: %d\n",
-+			pstate, err);
-+}
-+
- static void tegra_dc_set_clock_rate(struct tegra_dc *dc,
- 				    struct tegra_dc_state *state)
- {
-@@ -1867,6 +1916,8 @@ static void tegra_dc_set_clock_rate(struct tegra_dc *dc,
- 	DRM_DEBUG_KMS("rate: %lu, div: %u\n", clk_get_rate(dc->clk),
- 		      state->div);
- 	DRM_DEBUG_KMS("pclk: %lu\n", state->pclk);
-+
-+	tegra_dc_update_voltage_state(dc, state);
- }
- 
- static void tegra_dc_stop(struct tegra_dc *dc)
-@@ -2057,6 +2108,13 @@ static void tegra_crtc_atomic_disable(struct drm_crtc *crtc,
- 	err = host1x_client_suspend(&dc->client);
- 	if (err < 0)
- 		dev_err(dc->dev, "failed to suspend: %d\n", err);
-+
-+	if (dc->has_opp_table) {
-+		err = dev_pm_genpd_set_performance_state(dc->dev, 0);
-+		if (err)
-+			dev_err(dc->dev,
-+				"failed to clear power domain state: %d\n", err);
-+	}
- }
- 
- static void tegra_crtc_atomic_enable(struct drm_crtc *crtc,
-@@ -3058,6 +3116,23 @@ static int tegra_dc_couple(struct tegra_dc *dc)
- 	return 0;
- }
- 
-+static int tegra_dc_init_opp_table(struct tegra_dc *dc)
-+{
-+	struct tegra_core_opp_params opp_params = {};
-+	int err;
-+
-+	err = devm_tegra_core_dev_init_opp_table(dc->dev, &opp_params);
-+	if (err && err != -ENODEV)
-+		return err;
-+
-+	if (err)
-+		dc->has_opp_table = false;
-+	else
-+		dc->has_opp_table = true;
-+
-+	return 0;
-+}
-+
- static int tegra_dc_probe(struct platform_device *pdev)
- {
- 	u64 dma_mask = dma_get_mask(pdev->dev.parent);
-@@ -3123,6 +3198,10 @@ static int tegra_dc_probe(struct platform_device *pdev)
- 		tegra_powergate_power_off(dc->powergate);
+diff --git a/drivers/gpu/drm/tegra/vic.c b/drivers/gpu/drm/tegra/vic.c
+index b58e2b99f81a..9622ca96c539 100644
+--- a/drivers/gpu/drm/tegra/vic.c
++++ b/drivers/gpu/drm/tegra/vic.c
+@@ -151,9 +151,13 @@ static int vic_init(struct host1x_client *client)
+ 		goto free_channel;
  	}
  
-+	err = tegra_dc_init_opp_table(dc);
-+	if (err < 0)
-+		return err;
++	pm_runtime_enable(client->dev);
++	pm_runtime_use_autosuspend(client->dev);
++	pm_runtime_set_autosuspend_delay(client->dev, 500);
 +
- 	dc->regs = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(dc->regs))
- 		return PTR_ERR(dc->regs);
-diff --git a/drivers/gpu/drm/tegra/dc.h b/drivers/gpu/drm/tegra/dc.h
-index c9c4c45c0518..3f91a10ea6c7 100644
---- a/drivers/gpu/drm/tegra/dc.h
-+++ b/drivers/gpu/drm/tegra/dc.h
-@@ -101,6 +101,8 @@ struct tegra_dc {
- 	struct drm_info_list *debugfs_files;
+ 	err = tegra_drm_register_client(tegra, drm);
+ 	if (err < 0)
+-		goto free_syncpt;
++		goto disable_rpm;
  
- 	const struct tegra_dc_soc_info *soc;
+ 	/*
+ 	 * Inherit the DMA parameters (such as maximum segment size) from the
+@@ -163,7 +167,10 @@ static int vic_init(struct host1x_client *client)
+ 
+ 	return 0;
+ 
+-free_syncpt:
++disable_rpm:
++	pm_runtime_dont_use_autosuspend(client->dev);
++	pm_runtime_force_suspend(client->dev);
 +
-+	bool has_opp_table;
+ 	host1x_syncpt_put(client->syncpts[0]);
+ free_channel:
+ 	host1x_channel_put(vic->channel);
+@@ -188,10 +195,15 @@ static int vic_exit(struct host1x_client *client)
+ 	if (err < 0)
+ 		return err;
+ 
++	pm_runtime_dont_use_autosuspend(client->dev);
++	pm_runtime_force_suspend(client->dev);
++
+ 	host1x_syncpt_put(client->syncpts[0]);
+ 	host1x_channel_put(vic->channel);
+ 	host1x_client_iommu_detach(client);
+ 
++	vic->channel = NULL;
++
+ 	if (client->group) {
+ 		dma_unmap_single(vic->dev, vic->falcon.firmware.phys,
+ 				 vic->falcon.firmware.size, DMA_TO_DEVICE);
+@@ -315,6 +327,8 @@ static int vic_runtime_suspend(struct device *dev)
+ 	struct vic *vic = dev_get_drvdata(dev);
+ 	int err;
+ 
++	host1x_channel_stop(vic->channel);
++
+ 	err = reset_control_assert(vic->rst);
+ 	if (err < 0)
+ 		return err;
+@@ -482,19 +496,8 @@ static int vic_probe(struct platform_device *pdev)
+ 		goto exit_falcon;
+ 	}
+ 
+-	pm_runtime_enable(&pdev->dev);
+-	if (!pm_runtime_enabled(&pdev->dev)) {
+-		err = vic_runtime_resume(&pdev->dev);
+-		if (err < 0)
+-			goto unregister_client;
+-	}
+-	pm_runtime_set_autosuspend_delay(&pdev->dev, 500);
+-	pm_runtime_use_autosuspend(&pdev->dev);
+-
+ 	return 0;
+ 
+-unregister_client:
+-	host1x_client_unregister(&vic->client.base);
+ exit_falcon:
+ 	falcon_exit(&vic->falcon);
+ 
+@@ -513,11 +516,6 @@ static int vic_remove(struct platform_device *pdev)
+ 		return err;
+ 	}
+ 
+-	if (pm_runtime_enabled(&pdev->dev))
+-		pm_runtime_disable(&pdev->dev);
+-	else
+-		vic_runtime_suspend(&pdev->dev);
+-
+ 	falcon_exit(&vic->falcon);
+ 
+ 	return 0;
+@@ -525,6 +523,8 @@ static int vic_remove(struct platform_device *pdev)
+ 
+ static const struct dev_pm_ops vic_pm_ops = {
+ 	SET_RUNTIME_PM_OPS(vic_runtime_suspend, vic_runtime_resume, NULL)
++	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
++				pm_runtime_force_resume)
  };
  
- static inline struct tegra_dc *
+ struct platform_driver tegra_vic_driver = {
 -- 
 2.33.1
 
