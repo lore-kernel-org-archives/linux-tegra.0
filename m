@@ -2,67 +2,73 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D904C433F5
-	for <linux-tegra@archiver.kernel.org>; Tue, 30 Nov 2021 01:32:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD013C433EF
+	for <linux-tegra@archiver.kernel.org>; Tue, 30 Nov 2021 01:33:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236332AbhK3BgH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 29 Nov 2021 20:36:07 -0500
-Received: from mail-ot1-f54.google.com ([209.85.210.54]:44594 "EHLO
-        mail-ot1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232168AbhK3BgH (ORCPT
+        id S236374AbhK3Bgv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 29 Nov 2021 20:36:51 -0500
+Received: from mail-oi1-f178.google.com ([209.85.167.178]:44752 "EHLO
+        mail-oi1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236373AbhK3Bgt (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 29 Nov 2021 20:36:07 -0500
-Received: by mail-ot1-f54.google.com with SMTP id u18-20020a9d7212000000b00560cb1dc10bso28043419otj.11;
-        Mon, 29 Nov 2021 17:32:48 -0800 (PST)
+        Mon, 29 Nov 2021 20:36:49 -0500
+Received: by mail-oi1-f178.google.com with SMTP id be32so38109826oib.11;
+        Mon, 29 Nov 2021 17:33:31 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=xcUhzpJIsTN3woHlUJB738tXRxy+lYTgKoijkSeTT/8=;
-        b=zNNLx9iRGNu8uoQCOO6RUCi92YjwGEpVR8q7gUIHr92if0QexlSi4fxynMKT4aAMk5
-         evS5LogTQVsigQ6/RWxxjCK3PtIEsXKvsx806BkSTgdAzPsvcuaN7rqQaSu+w/aVPW87
-         a2XkrcVAYhV/vxoWVkCMM9KavuhbUQJJyWwrpNB4Rp5vDZaS+4LwXrq4QVN1YevDbvf2
-         AsuUn9dQGhVq2cQJCbyqRF5BxtCYGuPd0mquBXpZ9zNq9vXQ1/A7NaQ1xoabMBC5aCSP
-         Hit556a07O2X0t+Ju1bRmgLJ9SYOfR29pcZ2Kpe0kbm2oRUfM+zrvUop/oAE0zIqJdsc
-         WUlw==
-X-Gm-Message-State: AOAM5330iQSyyWqmkaYcaajBij/RPTnp5VABmlrO4YD0jFohlswP50BF
-        JRCX3PUjtec4FMMpepL7E2rNltAZbQ==
-X-Google-Smtp-Source: ABdhPJywn73txft+HXe4rYgqnyybU4NR+N9/1WE18o+r9wMA2fB0u4VaqjNlgpTakaqsHr94tCF+cg==
-X-Received: by 2002:a05:6830:118a:: with SMTP id u10mr47250663otq.194.1638235968616;
-        Mon, 29 Nov 2021 17:32:48 -0800 (PST)
+        bh=ORY5Q2M928az3WBxQhtJZfRlOJzq1QbH3Q1u+xuqJY0=;
+        b=jVK7DhK7b4nRv0QkiABzPIpOyfBKLPBwQaGOUzxsOO+i+aWbUq9BiTj8ekDR9KSFUj
+         UOyUjVGnFOkYHDgrJM59A2dGRm/WPxJIRAr8dESZzDoeYTDwhSlEV8fLwEUou1XZtRDs
+         nPQMC4onoGq07rkNEsvYLyQabcTzw3CL5A+MttDrjdbsN8Pfn0EQZu1DCfb1WlqJVXNZ
+         ybqhuuoiWy3sqpzYtZa3NCw+iuIgjis5ShQLTG9apXHwEG+DouGqoxUxuZcAGcfPf6pf
+         QvXX3Haq39JGz6UsaVYXG3zUjn7x0qefVrJvjtPaGppf9B78kHKm1n3Z+7KlGbjmjbVW
+         MYgg==
+X-Gm-Message-State: AOAM532/30krVc1yIPBPU4Me8gllXG7vu4RJwkoWrQjs9IWKyjgazzwC
+        elqBdb5PVYGH3sFe4b/kf+qxPxkUkw==
+X-Google-Smtp-Source: ABdhPJy2GeHadKKuoEqoC0zIM+DMrGIcRWw406E34T7k2OmSD8r84ZUxIDeMVUJMGAXP1nriJlfQhA==
+X-Received: by 2002:aca:120f:: with SMTP id 15mr1516672ois.132.1638236011077;
+        Mon, 29 Nov 2021 17:33:31 -0800 (PST)
 Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id m12sm2954640ots.59.2021.11.29.17.32.47
+        by smtp.gmail.com with ESMTPSA id y192sm3296679oie.21.2021.11.29.17.33.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Nov 2021 17:32:48 -0800 (PST)
-Received: (nullmailer pid 980645 invoked by uid 1000);
-        Tue, 30 Nov 2021 01:32:47 -0000
-Date:   Mon, 29 Nov 2021 19:32:47 -0600
+        Mon, 29 Nov 2021 17:33:30 -0800 (PST)
+Received: (nullmailer pid 981852 invoked by uid 1000);
+        Tue, 30 Nov 2021 01:33:29 -0000
+Date:   Mon, 29 Nov 2021 19:33:29 -0600
 From:   Rob Herring <robh@kernel.org>
 To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v2 04/16] dt-bindings: mailbox: tegra: Document Tegra234
- HSP
-Message-ID: <YaV/PxunmnnvXEI7@robh.at.kernel.org>
+Cc:     devicetree@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>,
+        Rob Herring <robh+dt@kernel.org>, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v2 05/16] dt-bindings: rtc: tegra: Convert to json-schema
+Message-ID: <YaV/aSzXMMY4LDeU@robh.at.kernel.org>
 References: <20211119143839.1950739-1-thierry.reding@gmail.com>
- <20211119143839.1950739-5-thierry.reding@gmail.com>
+ <20211119143839.1950739-6-thierry.reding@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20211119143839.1950739-5-thierry.reding@gmail.com>
+In-Reply-To: <20211119143839.1950739-6-thierry.reding@gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, 19 Nov 2021 15:38:27 +0100, Thierry Reding wrote:
+On Fri, 19 Nov 2021 15:38:28 +0100, Thierry Reding wrote:
 > From: Thierry Reding <treding@nvidia.com>
 > 
-> Add the compatible string for the HSP block found on the Tegra234 SoC.
+> Convert the NVIDIA Tegra RTC bindings from the free-form text format to
+> json-schema.
 > 
 > Signed-off-by: Thierry Reding <treding@nvidia.com>
 > ---
->  .../devicetree/bindings/mailbox/nvidia,tegra186-hsp.yaml       | 3 +++
->  1 file changed, 3 insertions(+)
+> Changes in v2:
+> - document clock-names property and add additionalProperties: false
+> 
+>  .../bindings/rtc/nvidia,tegra20-rtc.txt       | 24 --------
+>  .../bindings/rtc/nvidia,tegra20-rtc.yaml      | 60 +++++++++++++++++++
+>  2 files changed, 60 insertions(+), 24 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/rtc/nvidia,tegra20-rtc.txt
+>  create mode 100644 Documentation/devicetree/bindings/rtc/nvidia,tegra20-rtc.yaml
 > 
 
-Acked-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
