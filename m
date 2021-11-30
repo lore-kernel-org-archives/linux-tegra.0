@@ -2,97 +2,95 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D56CDC433EF
-	for <linux-tegra@archiver.kernel.org>; Tue, 30 Nov 2021 12:17:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ED95C433F5
+	for <linux-tegra@archiver.kernel.org>; Tue, 30 Nov 2021 13:06:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241458AbhK3MUe (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 30 Nov 2021 07:20:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52806 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234237AbhK3MUd (ORCPT
+        id S235548AbhK3NJY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 30 Nov 2021 08:09:24 -0500
+Received: from ams.source.kernel.org ([145.40.68.75]:51150 "EHLO
+        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230261AbhK3NJX (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 30 Nov 2021 07:20:33 -0500
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69105C061574;
-        Tue, 30 Nov 2021 04:17:14 -0800 (PST)
-Received: by mail-lf1-x132.google.com with SMTP id bi37so53226053lfb.5;
-        Tue, 30 Nov 2021 04:17:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=trRzexDm92sVJlThyj/04+7SN11dBJi8qOdq95CaO5g=;
-        b=VzMywNNj2yxWLL2z9DxwtUGbmUnA8iIr6NjgbGU0BU9wo16PrbqrOBttuCtLYiQZai
-         X+logj3jzyHag+GMsJF4KQdBhQD3+3jB7QDDAma0ktWI+bf/ktIfuuEnGeoLSuUJZAZx
-         tjU2bXEV65OCbmjlAZMLxwS8vITLUaNz+WJ5dPsUgUsMcWPhvZcVjZsmib+HuHOqrmhR
-         pZ+OnM2u7Wycjl06k9VcvBZ/H5jk+IeKppVz4NFng/diLaWdERct8E2mmukQYPNkKLIP
-         1zCPwhmSG74DXdpH3jJlCJvUDkYOioGXD941Ri+Mi1eHc/ZLnWx0fWDEb20f7EbPXc9o
-         19oQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=trRzexDm92sVJlThyj/04+7SN11dBJi8qOdq95CaO5g=;
-        b=obaj7A4coCxUJDQyRHD59vwnou8hCIyRVOcWpQv1SjsK1xZBGproLrzzw5+w9scGq/
-         whf87xoJnh065bpzmb2KPOFExTLX8oh7WMvAfIF5+WqhWT1n02p7I6OxR40gHj2T78Ng
-         sYb0R3yFgn6BFIpVkpcyxpNT6DekQHHoGClR+mdsP/7ivdDGDFpvlvA7CZCK2AbjEQFr
-         WVITL2Sv9FqKKCx/OM9ZSRpp5LuWT21XIqFRZReKtslYd1rcjYO+4ox5WGCp6XTNg1cr
-         DTJiD4HpuYdP1Zfso/EQJNR2VDFQc0raUKxXi8tr2XzHpEc+GOT7eefTSaAvdsKsJsWP
-         T+jQ==
-X-Gm-Message-State: AOAM531jYx9qATmV9PufGQ/cZjI/d/CQbTYOgR0heSIm21DB/rPtLRIq
-        7/d8KDfeyFBYBQ49Si/ayk5WP+PIfjc=
-X-Google-Smtp-Source: ABdhPJyeb69zs1klG9kPMwoTkQRV81S9ZqywFuLxMLusvHux/rRMMtdRtxrotgsIHc3R8AfBdeyY8A==
-X-Received: by 2002:a05:6512:3b2b:: with SMTP id f43mr55139476lfv.629.1638274632435;
-        Tue, 30 Nov 2021 04:17:12 -0800 (PST)
-Received: from [192.168.2.145] (94-29-46-111.dynamic.spd-mgts.ru. [94.29.46.111])
-        by smtp.googlemail.com with ESMTPSA id f23sm1708689ljg.90.2021.11.30.04.17.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 Nov 2021 04:17:11 -0800 (PST)
-Subject: Re: [PATCH] serial: tegra: Fixes lower tolerance baud rate limit for
- older tegra chips introduced by d781ec21bae6
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Patrik John <patrik.john@u-blox.com>, linux-kernel@vger.kernel.org
-Cc:     gregkh@linuxfoundation.org, ldewangan@nvidia.com,
-        thierry.reding@gmail.com, jonathan@nvidia.com,
-        linux-serial@vger.kernel.org, linux-tegra@vger.kernel.org
-References: <sig.096060f39c.20211122124425.74031-1-patrik.john@u-blox.com>
- <0165046b-c8bc-ec8e-05c7-bf9aea14339b@gmail.com>
- <727044f2-12d4-0de4-f6b8-ef3ee75d3630@gmail.com>
-Message-ID: <d906ed7f-c507-e5b0-3d46-2750d62414a4@gmail.com>
-Date:   Tue, 30 Nov 2021 15:17:10 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+        Tue, 30 Nov 2021 08:09:23 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 3860EB817AB;
+        Tue, 30 Nov 2021 13:06:03 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E948BC53FC7;
+        Tue, 30 Nov 2021 13:05:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1638277561;
+        bh=4Kk+iPJ9utmQ+No40KEp/M1GCd0HkU5mgNmfY3Ue3fk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=rX7nGVJBReMQH+ADECiLFvL9rGq8ZfBxRay4EgBHKZ1UMVR6r3mVVvLgY0S6hnhpq
+         a8H4etxGPgJOaWLoBfyhJ+b/3BNEOZPItzePUutGVFz0aph5rekDKr3CQKvgi7fHRt
+         D3+jPo7MOuLuFWP1jopsi7UCibTD3yL3kBngDQlYKYDDz3U2Ldj/wqzNmbJkNckvCY
+         nV1cw0IxW7JVzRrugHRn57OscU+VOKUiJcDeERLbjB9ofyipYR7jVL9J5W8eXOZc0z
+         099Xv3UmAgLHzhLXdK8TgTAPg9RgbCeM+zTVyIdtt4TFFcZVa7i2w3+AnyrRuJ8H8J
+         TWDHgxXw7mPjg==
+Date:   Tue, 30 Nov 2021 13:05:56 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Krishna Yarlagadda <kyarlagadda@nvidia.com>
+Cc:     Philipp Zabel <p.zabel@pengutronix.de>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/2] spi: tegra210-quad: add acpi support
+Message-ID: <YaYhtFnHlZob9s0J@sirena.org.uk>
+References: <1637834152-32093-1-git-send-email-kyarlagadda@nvidia.com>
+ <1637834152-32093-2-git-send-email-kyarlagadda@nvidia.com>
+ <YZ+ImY1LrvB5a5iF@sirena.org.uk>
+ <BN6PR12MB124973BF5CBB4AB35CC59B8AC3669@BN6PR12MB1249.namprd12.prod.outlook.com>
+ <YaTHKuohUNt/hVLq@sirena.org.uk>
+ <BN6PR12MB124927C4F4FAF53B59C2A23CC3679@BN6PR12MB1249.namprd12.prod.outlook.com>
 MIME-Version: 1.0
-In-Reply-To: <727044f2-12d4-0de4-f6b8-ef3ee75d3630@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="MHPCoeCF66a+8rsk"
+Content-Disposition: inline
+In-Reply-To: <BN6PR12MB124927C4F4FAF53B59C2A23CC3679@BN6PR12MB1249.namprd12.prod.outlook.com>
+X-Cookie: Check your local listings.
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-29.11.2021 15:36, Dmitry Osipenko пишет:
-> 29.11.2021 15:32, Dmitry Osipenko пишет:
->> 3. Use "Link" tag and put all http links here, before the Signed-off-by
->> tag, like this:
->>
->> Link:
->> https://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git/commit/drivers/tty/serial/serial-tegra.c?h=for-next&id=d781ec21bae6ff8f9e07682e8947a654484611f5
->> Link:
->> https://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git/tree/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi?h=for-next
->> Link:
->> https://www.kernel.org/doc/Documentation/devicetree/bindings/serial/nvidia%2Ctegra20-hsuart.txt
-> 
-> Actually, it should be like this:
-> 
-> Link: https://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git/commit/drivers/tty/serial/serial-tegra.c?h=for-next&id=d781ec21bae6ff8f9e07682e8947a654484611f5
-> Link: https://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git/tree/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi?h=for-next
-> Link: https://www.kernel.org/doc/Documentation/devicetree/bindings/serial/nvidia%2Ctegra20-hsuart.txt
-> 
-> I turned off line wrapping for this email.
-> 
 
-For the reference, I just found that there was v3 already on the list:
+--MHPCoeCF66a+8rsk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-https://patchwork.ozlabs.org/project/linux-tegra/patch/sig.19614244f8.20211123132737.88341-1-patrik.john@u-blox.com/
+On Tue, Nov 30, 2021 at 01:50:07AM +0000, Krishna Yarlagadda wrote:
+
+> > That said frankly I'd expect this handling of ACPI reset to be pushed into the
+> > reset code, it's obviously not good to be open coding this in drivers when this
+> > looks like it's completely generic to any ACPI object so shouldn't be being
+> > open coded in individual driers especially with the ifdefery.  Shouldn't the
+> > reset API be able to figure out that an object with _RST has a reset control
+> > and provide access to it through the reset API?
+
+> Common reset apis are not handling _RST. Each driver is implementing
+> _RST method in ACPI and calling from drivers.
+
+I can see that.  What I'm saying is that this seems bad and we should
+instead be implementing this in common code.
+
+--MHPCoeCF66a+8rsk
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmGmIbQACgkQJNaLcl1U
+h9CEiAf8CRl+6hMD+/ZKTgrUelUBql3J4AbFnksldvj6F6pz5SuZ0JlM0injXeAl
+s61rifuDIJsbC37ovaG3We84Cm2a7KiCtR8itIw/oLZQWDVfUNdNaN00zc7sNCPJ
+MnHlielK85ddMbXCYOInOM+LLI8RhuwIH/a2cOfLzWWuumze06hVSCiGuYyV53Pu
+ATrbWKy+keX4pciAZDFfpS+VkNvJ9tsmrmEabkH1PXjMfc2jKqgT5GnuHs/udSk9
+DxZ7Si3T1hLPdb3Ev/z4xiFP/w+4iIE+t0S6IUZx790SoPilV1QIeFjfM3L+dIq+
+710m8ULFLcxUNBs6G3Ut/B5TAO+ArA==
+=0vRn
+-----END PGP SIGNATURE-----
+
+--MHPCoeCF66a+8rsk--
