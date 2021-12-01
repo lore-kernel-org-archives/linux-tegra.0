@@ -2,202 +2,77 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13CEEC433FE
-	for <linux-tegra@archiver.kernel.org>; Wed,  1 Dec 2021 15:58:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52EB8C433EF
+	for <linux-tegra@archiver.kernel.org>; Wed,  1 Dec 2021 16:15:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351255AbhLAQBz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 1 Dec 2021 11:01:55 -0500
-Received: from mail-dm3nam07on2084.outbound.protection.outlook.com ([40.107.95.84]:53848
-        "EHLO NAM02-DM3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1351244AbhLAQBm (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 1 Dec 2021 11:01:42 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ZyO0wpSm0IHDoxxFtqzZCoipzXpd9hJZVaMFYFwHGCkHJjoNCLAxCXSqv6jCS+AdIdhb7SeoMEluQl7X2yTUAKDJe48k7CDzyGLP9dU8hdZJVtAohzjltOjq+rfTRQkGbQYMqN5DH+/v0xxB5yzluME3crcWmbEBoOspB150s+Qd4Bp6CbHpYpHo5UPQxhl6PGgqjDSrFUI6J1mIbXheUZB+0V09L8C7zsDt/mEIChpPXtI6hhl3h+yl0JR4uYxOsMWAqVIxWnDmWVFK1+eP/o0UJ6N5+zW9LTRngRQ6tLSNZA30iemM9dROH7MbPJoBf0QwtGKxFuVEO9Yr7zZS4g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=mNWkotrzllGzIok0az6trHY44j17oSTdQuZiGqw6Lq0=;
- b=Dk0XnPsxNkh8JpIksWvttedV0xphz31s1gDE9AXLtGfgFrHnWTsq44wWgyFLxP0sYBW+eoBCMrfiI47bM+QvRANrv5OcUWfyorKgSbm/OYWvXQfEQwXaIINmEzcXQT/1P+3gCBIijopQfPnPdaNtH/1LCPJjPQGWD7oPm4HJJw36OEPTbuOLc2pzmJh1l7EvT7vA3G/9yFCzWflo2eJ/jNUIcGgGgnHURylDcglmnkCxRbTzKDPHwJ3eubHy5vJrpLBS7P5J/Nz/MEsRNYVz63FeRDLTscGcGrUe6aJkHEgEjYMPpzcm6FdMrG7em9cyJ7jxpu/uMu6qTIgv9s5N/w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.112.32) smtp.rcpttodomain=lists.linux-foundation.org
- smtp.mailfrom=nvidia.com; dmarc=pass (p=quarantine sp=quarantine pct=100)
- action=none header.from=nvidia.com; dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mNWkotrzllGzIok0az6trHY44j17oSTdQuZiGqw6Lq0=;
- b=kyvVpPA8Ix+b+zrVA3TJE2dSDMl/AQu8U5vEkZFHSnaNm7rxmO1981J1w4W5VGBrKu+nQYHXw9w1b3bZKeUm4AltTfyz2qYlfgELb6sHCSZyZSg00emE4qNtRPxXmt9Kabs8DouEfdb0vGmZGZYAH7kvafzj44jMiUmw61QUP8SMGMiIDgYURA6ZVzirvYMZCeG+xdx38UxfKpjE5WsZF9p82vbtUJlVhoDIrT8VHiuYBeZNcb35FnEQ1wdTgwnpQQFD+hAt/usPDZFIFvc05K5i286Kl/VrrvVkEP/X1Q4nZ5prg0LEQChqVggdzi6YLrICdZ6VcjBonWwNGVd0gQ==
-Received: from BN9P221CA0015.NAMP221.PROD.OUTLOOK.COM (2603:10b6:408:10a::20)
- by BN8PR12MB3330.namprd12.prod.outlook.com (2603:10b6:408:43::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4755.11; Wed, 1 Dec
- 2021 15:58:17 +0000
-Received: from BN8NAM11FT046.eop-nam11.prod.protection.outlook.com
- (2603:10b6:408:10a:cafe::ac) by BN9P221CA0015.outlook.office365.com
- (2603:10b6:408:10a::20) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4734.23 via Frontend
- Transport; Wed, 1 Dec 2021 15:58:17 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.32)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.112.32 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.112.32; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (216.228.112.32) by
- BN8NAM11FT046.mail.protection.outlook.com (10.13.177.127) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.4755.13 via Frontend Transport; Wed, 1 Dec 2021 15:58:17 +0000
-Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL109.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Wed, 1 Dec
- 2021 07:57:38 -0800
-Received: from moonraker.nvidia.com (172.20.187.6) by mail.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server id 15.0.1497.18 via Frontend
- Transport; Wed, 1 Dec 2021 07:57:36 -0800
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Will Deacon <will@kernel.org>, Joerg Roedel <joro@8bytes.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <iommu@lists.linux-foundation.org>, <devicetree@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH 2/2] arm64: tegra: Add ISO SMMU controller for Tegra194
-Date:   Wed, 1 Dec 2021 15:57:16 +0000
-Message-ID: <20211201155716.149543-2-jonathanh@nvidia.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20211201155716.149543-1-jonathanh@nvidia.com>
-References: <20211201155716.149543-1-jonathanh@nvidia.com>
+        id S1351410AbhLAQSW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 1 Dec 2021 11:18:22 -0500
+Received: from out0.migadu.com ([94.23.1.103]:60722 "EHLO out0.migadu.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1351472AbhLAQP5 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 1 Dec 2021 11:15:57 -0500
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1638375148;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=lFszSLMJlckqMgj199+C+7TCwWXJukck64IGKpiISBg=;
+        b=i0yNjGxrUmQUBsNO+augWPsvo+7IopxwG1/mpq+SghSpQelceGeudz6JuXdcU/QG0wMqZX
+        2eKeQfajrnSMdmH1s4Lk4fhveabBMLB+lSMYU/78bGQFqk3amfU+ANqSVmlLCkFh3DVdn+
+        HEqEXjV2cwUpyWeFxXJDzfgA4IEJ5IU=
+From:   richard.leitner@linux.dev
+To:     richard.leitner@skidata.com
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] ARM: tegra: tamonten: Fix I2C3 pad setting
+Date:   Wed,  1 Dec 2021 17:11:48 +0100
+Message-Id: <20211201161148.238263-1-richard.leitner@linux.dev>
 MIME-Version: 1.0
-X-NVConfidentiality: public
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 347301d3-5722-4c33-59f5-08d9b4e363ca
-X-MS-TrafficTypeDiagnostic: BN8PR12MB3330:
-X-Microsoft-Antispam-PRVS: <BN8PR12MB3330E363E160ECA9B8E980F8D9689@BN8PR12MB3330.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:2958;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: JR+Fa/ZQYDg8UqG7yQvDj2eGVa+ZtFDrR52LEpGPmHnWxQ16up1wR0xX3c4MPKLYZRpxLkiiBUoz8xSYB6Ryu4t/I68DAsj6JcpZZyJ3d2tQj6AUH5T0G7/Viq5RAqDh3Nsz3k43MJZCpk6qFVZvFD7NJD+3M+tu9UH23ihXkiEIptZrKsi4yP/y6Pfa2RMmvnAVWmrV5vHO59q+sNws60gWByXpYMt1fMzh2+EJz44Ml+kyXYd5zTND9MKIa+J4Lgr2v25DQmOBH00do2+By8Js7khpX5OhClP/WQVLFa7xf+i18GGjyMEN4vsWGnZX6f7tp0bVjtvcO24yd+nkPI6dTVF3DP5ERVGuhxnHzlHdI0P0BCOeApSaXEfeDHOn3H+PRcW5uK2xnCRny553RDmNr+K3H7HQJl2uLNkWt0+xgPYlHx91KjYB8/Qje44UWQPy07hjmOoWLDbp0b4jNq685eZx2jkrQoyZXZzMcHihY6m/ln20WOY8pYIiao5vMtmK9R7ip6MHwp0fMGTk//Mlvp1A3wDPHAaZLzezhHUnjXrOwVMl9CQKrtR/sxJJhkox0vAweQjsucv6FnJAF/WVsEVur8u9xCl4cafYIX552Uf8ykzLyq8eaFVm9FonISCkVtqf/vcZ5TsgpgDkjnUGojclJbT39kF0mnn5d2FqWwOxMpO1TZ5ApMqNYFfurYlXHbv/c8zeUfePWJk/mOuLzyyGCzdoiuOo+L8ZGNeWWTFyPnrX7JsCYvZEEjdKcZtsRyqx8Fm0nMNTgm9+5A==
-X-Forefront-Antispam-Report: CIP:216.228.112.32;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid01.nvidia.com;CAT:NONE;SFS:(4636009)(46966006)(36840700001)(40470700001)(186003)(82310400004)(8936002)(86362001)(54906003)(4326008)(47076005)(2906002)(508600001)(36860700001)(40460700001)(26005)(110136005)(7696005)(1076003)(6666004)(36756003)(5660300002)(8676002)(336012)(356005)(7636003)(70206006)(316002)(107886003)(2616005)(70586007)(426003);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Dec 2021 15:58:17.2705
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 347301d3-5722-4c33-59f5-08d9b4e363ca
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.32];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT046.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN8PR12MB3330
+X-Migadu-Flow: FLOW_OUT
+X-Migadu-Auth-User: linux.dev
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The display controllers are attached to a separate ARM SMMU instance
-that is dedicated to servicing isochronous memory clients. Add this ISO
-instance of the ARM SMMU to device tree.
+From: Richard Leitner <richard.leitner@skidata.com>
 
-Please note that the display controllers are not hooked up to this SMMU
-yet, because we are still missing a means to transition framebuffers
-used by the bootloader to the kernel.
+This patch fixes the tristate configuration for i2c3 function assigned
+to the dtf pins on the Tamonten Tegra20 SoM.
 
-This based upon an initial patch by Thierry Reding <treding@nvidia.com>.
-
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+Signed-off-by: Richard Leitner <richard.leitner@skidata.com>
 ---
- arch/arm64/boot/dts/nvidia/tegra194.dtsi | 76 ++++++++++++++++++++++++
- 1 file changed, 76 insertions(+)
+ arch/arm/boot/dts/tegra20-tamonten.dtsi | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-index d78c9ed08c47..496e31b5c637 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-@@ -1474,6 +1474,82 @@ pmc: pmc@c360000 {
- 			interrupt-controller;
- 		};
- 
-+		iommu@10000000 {
-+			compatible = "nvidia,tegra194-smmu", "nvidia,smmu-500";
-+			reg = <0x10000000 0x800000>;
-+			interrupts = <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>;
-+			stream-match-mask = <0x7f80>;
-+			#global-interrupts = <1>;
-+			#iommu-cells = <1>;
-+
-+			nvidia,memory-controller = <&mc>;
-+			status = "okay";
-+		};
-+
- 		smmu: iommu@12000000 {
- 			compatible = "nvidia,tegra194-smmu", "nvidia,smmu-500";
- 			reg = <0x12000000 0x800000>,
+diff --git a/arch/arm/boot/dts/tegra20-tamonten.dtsi b/arch/arm/boot/dts/tegra20-tamonten.dtsi
+index 02a1a4fa3a27..01e98605d5be 100644
+--- a/arch/arm/boot/dts/tegra20-tamonten.dtsi
++++ b/arch/arm/boot/dts/tegra20-tamonten.dtsi
+@@ -184,8 +184,8 @@ uca {
+ 			};
+ 			conf_ata {
+ 				nvidia,pins = "ata", "atb", "atc", "atd", "ate",
+-					"cdev1", "cdev2", "dap1", "dtb", "gma",
+-					"gmb", "gmc", "gmd", "gme", "gpu7",
++					"cdev1", "cdev2", "dap1", "dtb", "dtf",
++					"gma", "gmb", "gmc", "gmd", "gme", "gpu7",
+ 					"gpv", "i2cp", "irrx", "irtx", "pta",
+ 					"rm", "slxa", "slxk", "spia", "spib",
+ 					"uac";
+@@ -204,7 +204,7 @@ conf_csus {
+ 			};
+ 			conf_crtp {
+ 				nvidia,pins = "crtp", "dap2", "dap3", "dap4",
+-					"dtc", "dte", "dtf", "gpu", "sdio1",
++					"dtc", "dte", "gpu", "sdio1",
+ 					"slxc", "slxd", "spdi", "spdo", "spig",
+ 					"uda";
+ 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
 -- 
-2.25.1
+2.33.1
 
