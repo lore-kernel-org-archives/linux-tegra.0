@@ -2,75 +2,156 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5519FC433F5
-	for <linux-tegra@archiver.kernel.org>; Wed,  1 Dec 2021 10:07:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BB61C433FE
+	for <linux-tegra@archiver.kernel.org>; Wed,  1 Dec 2021 13:00:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242538AbhLAKKg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 1 Dec 2021 05:10:36 -0500
-Received: from rere.qmqm.pl ([91.227.64.183]:10275 "EHLO rere.qmqm.pl"
+        id S1349451AbhLANDm (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 1 Dec 2021 08:03:42 -0500
+Received: from mga03.intel.com ([134.134.136.65]:14213 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S242474AbhLAKKe (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 1 Dec 2021 05:10:34 -0500
-Received: from remote.user (localhost [127.0.0.1])
-        by rere.qmqm.pl (Postfix) with ESMTPSA id 4J3vrp3PRzzBs;
-        Wed,  1 Dec 2021 11:07:06 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
-        t=1638353228; bh=jI+a/MwfWRbDEo5BWhC1Hzq/9z1sn8ojrhhDKyLGh8E=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=isJt0KIY/WDqINJs2yVBaU76Rzew3yyG4cDIgqEQcRMpvQwxxT4vOgrwQQ0I8z5ka
-         ym44vUZPixxSbzNkx+UK8XCE+ssrJGVqUGI2P/81u4+mCUA3SYEQxD9TKi6KW8IhfI
-         gv74fiGrrZ1vs2A/hG60WnRs+aDAnIS515rOGBxdoGiF7jT+DAr9VIN3ivpSMJwo9b
-         iL7z0IOEPVQRLb5eFA9F/ZP08f8YQzMIwgWjyUl2Ps8h7NK1SeFOUxOPeANYebnUEI
-         qPW0gTUzjG0xUUv1RV1ZQAygyYoLG0lxP2UgFqRDc69gHkUbFT1VYyY71Ii10qalka
-         QVjjV4kciqNPg==
-X-Virus-Status: Clean
-X-Virus-Scanned: clamav-milter 0.103.3 at mail
-Date:   Wed, 1 Dec 2021 11:07:05 +0100
-From:   =?iso-8859-2?Q?Micha=B3_Miros=B3aw?= <mirq-linux@rere.qmqm.pl>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        id S1349377AbhLANDk (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 1 Dec 2021 08:03:40 -0500
+X-IronPort-AV: E=McAfee;i="6200,9189,10184"; a="236395544"
+X-IronPort-AV: E=Sophos;i="5.87,278,1631602800"; 
+   d="scan'208";a="236395544"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Dec 2021 05:00:19 -0800
+X-IronPort-AV: E=Sophos;i="5.87,278,1631602800"; 
+   d="scan'208";a="609542469"
+Received: from paasikivi.fi.intel.com ([10.237.72.42])
+  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Dec 2021 05:00:17 -0800
+Received: from punajuuri.localdomain (punajuuri.localdomain [192.168.240.130])
+        by paasikivi.fi.intel.com (Postfix) with ESMTP id 6062C2036B;
+        Wed,  1 Dec 2021 15:00:15 +0200 (EET)
+Received: from sailus by punajuuri.localdomain with local (Exim 4.94.2)
+        (envelope-from <sakari.ailus@linux.intel.com>)
+        id 1msPEZ-003vmX-MH; Wed, 01 Dec 2021 15:01:15 +0200
+From:   Sakari Ailus <sakari.ailus@linux.intel.com>
+To:     linux-acpi@vger.kernel.org
+Cc:     andriy.shevchenko@linux.intel.com, heikki.krogerus@linux.intel.com,
+        rafael@kernel.org, Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        David Heidelberg <david@ixit.cz>,
-        Svyatoslav Ryhel <clamor95@gmail.com>,
-        Anton Bambura <jenneron@protonmail.com>,
-        Antoni Aloy Torrens <aaloytorrens@gmail.com>,
-        Nikola Milosavljevic <mnidza@outlook.com>,
-        Ion Agorria <ion@agorria.com>,
-        Ihor Didenko <tailormoon@rambler.ru>,
-        Andreas Westman Dorcsak <hedmoo@yahoo.com>,
-        Maxim Schwalm <maxim.schwalm@gmail.com>,
-        Raffaele Tranquillini <raffaele.tranquillini@gmail.com>,
-        Jasper Korten <jja2000@gmail.com>,
-        Thomas Graichen <thomas.graichen@gmail.com>,
-        Stefan Eichenberger <stefan.eichenberger@toradex.com>,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 06/24] ARM: tegra: Add common device-tree base for
- Tegra30 ASUS Transformers
-Message-ID: <YadJSRww8we7tzjP@qmqm.qmqm.pl>
-References: <20211130223820.23609-1-digetx@gmail.com>
- <20211130223820.23609-7-digetx@gmail.com>
+        Sowjanya Komatineni <skomatineni@nvidia.com>,
+        linux-tegra@vger.kernel.org, linux-media@vger.kernel.org
+Subject: [PATCH v2 7/7] device property: Drop fwnode_graph_get_remote_node()
+Date:   Wed,  1 Dec 2021 15:01:15 +0200
+Message-Id: <20211201130115.937052-1-sakari.ailus@linux.intel.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20211201125934.936953-1-sakari.ailus@linux.intel.com>
+References: <20211201125934.936953-1-sakari.ailus@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-2
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20211130223820.23609-7-digetx@gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, Dec 01, 2021 at 01:38:02AM +0300, Dmitry Osipenko wrote:
-> From: Svyatoslav Ryhel <clamor95@gmail.com>
-[...]
-> +	i2c2: i2c@7000c400 {
-> +		status = "okay";
-> +		clock-frequency = <400000>;
-> +	};
-[...]
+fwnode_graph_get_remote_node() is only used by the tegra-video driver.
+Convert it to use newer fwnode_graph_get_endpoint_by_id() and drop
+now-unused fwnode_graph_get_remote_node().
 
-Nit: You could now use the new controller handles directly - that would
-avoid some indentation and duplication. Though I understand it is a lot
-of tedious reformatting.
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/base/property.c                | 38 --------------------------
+ drivers/staging/media/tegra-video/vi.c | 12 +++++---
+ include/linux/property.h               |  3 --
+ 3 files changed, 8 insertions(+), 45 deletions(-)
 
-Best Regards
-Micha³ Miros³aw
+diff --git a/drivers/base/property.c b/drivers/base/property.c
+index 78106192babb8..a7086e5526445 100644
+--- a/drivers/base/property.c
++++ b/drivers/base/property.c
+@@ -1059,44 +1059,6 @@ fwnode_graph_get_remote_endpoint(const struct fwnode_handle *fwnode)
+ }
+ EXPORT_SYMBOL_GPL(fwnode_graph_get_remote_endpoint);
+ 
+-/**
+- * fwnode_graph_get_remote_node - get remote parent node for given port/endpoint
+- * @fwnode: pointer to parent fwnode_handle containing graph port/endpoint
+- * @port_id: identifier of the parent port node
+- * @endpoint_id: identifier of the endpoint node
+- *
+- * Return: Remote fwnode handle associated with remote endpoint node linked
+- *	   to @node. Use fwnode_node_put() on it when done.
+- */
+-struct fwnode_handle *
+-fwnode_graph_get_remote_node(const struct fwnode_handle *fwnode, u32 port_id,
+-			     u32 endpoint_id)
+-{
+-	struct fwnode_handle *endpoint;
+-
+-	fwnode_graph_for_each_endpoint(fwnode, endpoint) {
+-		struct fwnode_endpoint fwnode_ep;
+-		struct fwnode_handle *remote;
+-		int ret;
+-
+-		ret = fwnode_graph_parse_endpoint(endpoint, &fwnode_ep);
+-		if (ret < 0)
+-			continue;
+-
+-		if (fwnode_ep.port != port_id || fwnode_ep.id != endpoint_id)
+-			continue;
+-
+-		remote = fwnode_graph_get_remote_port_parent(endpoint);
+-		if (!remote)
+-			return NULL;
+-
+-		return fwnode_device_is_available(remote) ? remote : NULL;
+-	}
+-
+-	return NULL;
+-}
+-EXPORT_SYMBOL_GPL(fwnode_graph_get_remote_node);
+-
+ static bool fwnode_graph_remote_available(struct fwnode_handle *ep)
+ {
+ 	struct fwnode_handle *dev_node;
+diff --git a/drivers/staging/media/tegra-video/vi.c b/drivers/staging/media/tegra-video/vi.c
+index 69d9787d53384..d1f43f465c224 100644
+--- a/drivers/staging/media/tegra-video/vi.c
++++ b/drivers/staging/media/tegra-video/vi.c
+@@ -1845,7 +1845,6 @@ static int tegra_vi_graph_init(struct tegra_vi *vi)
+ 	struct tegra_vi_channel *chan;
+ 	struct fwnode_handle *fwnode = dev_fwnode(vi->dev);
+ 	int ret;
+-	struct fwnode_handle *remote = NULL;
+ 
+ 	/*
+ 	 * Walk the links to parse the full graph. Each channel will have
+@@ -1857,11 +1856,16 @@ static int tegra_vi_graph_init(struct tegra_vi *vi)
+ 	 * next channels.
+ 	 */
+ 	list_for_each_entry(chan, &vi->vi_chans, list) {
+-		remote = fwnode_graph_get_remote_node(fwnode, chan->portnos[0],
+-						      0);
+-		if (!remote)
++		struct fwnode_handle *ep, *remote;
++
++		ep = fwnode_graph_get_endpoint_by_id(fwnode,
++						     chan->portnos[0], 0, 0);
++		if (!ep)
+ 			continue;
+ 
++		remote = fwnode_graph_get_remote_port_parent(ep);
++		fwnode_handle_put(ep);
++
+ 		ret = tegra_vi_graph_parse_one(chan, remote);
+ 		fwnode_handle_put(remote);
+ 		if (ret < 0 || list_empty(&chan->notifier.asd_list))
+diff --git a/include/linux/property.h b/include/linux/property.h
+index e32b95f42c9db..3a31765895c11 100644
+--- a/include/linux/property.h
++++ b/include/linux/property.h
+@@ -401,9 +401,6 @@ struct fwnode_handle *fwnode_graph_get_remote_port(
+ 	const struct fwnode_handle *fwnode);
+ struct fwnode_handle *fwnode_graph_get_remote_endpoint(
+ 	const struct fwnode_handle *fwnode);
+-struct fwnode_handle *
+-fwnode_graph_get_remote_node(const struct fwnode_handle *fwnode, u32 port,
+-			     u32 endpoint);
+ 
+ static inline bool fwnode_graph_is_endpoint(struct fwnode_handle *fwnode)
+ {
+-- 
+2.30.2
+
