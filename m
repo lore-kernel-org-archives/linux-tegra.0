@@ -2,118 +2,55 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15BE6C433F5
-	for <linux-tegra@archiver.kernel.org>; Fri,  3 Dec 2021 12:26:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D9EDC433EF
+	for <linux-tegra@archiver.kernel.org>; Fri,  3 Dec 2021 13:36:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352089AbhLCMaL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 3 Dec 2021 07:30:11 -0500
-Received: from mga04.intel.com ([192.55.52.120]:8019 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S236481AbhLCMaK (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 3 Dec 2021 07:30:10 -0500
-X-IronPort-AV: E=McAfee;i="6200,9189,10186"; a="235700117"
-X-IronPort-AV: E=Sophos;i="5.87,284,1631602800"; 
-   d="scan'208";a="235700117"
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Dec 2021 04:26:46 -0800
-X-IronPort-AV: E=Sophos;i="5.87,284,1631602800"; 
-   d="scan'208";a="678082863"
-Received: from smile.fi.intel.com ([10.237.72.184])
-  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Dec 2021 04:26:35 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.95)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1mt7d5-001lPG-5I;
-        Fri, 03 Dec 2021 14:25:31 +0200
-Date:   Fri, 3 Dec 2021 14:25:30 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Marc Zyngier <maz@kernel.org>,
-        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-        Sergio Paracuellos <sergio.paracuellos@gmail.com>,
-        Chunyan Zhang <chunyan.zhang@unisoc.com>,
-        Baruch Siach <baruch@tkos.co.il>,
-        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>, Tony Lindgren <tony@atomide.com>,
-        Nicolas Saenz Julienne <nsaenz@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Jianqun Xu <jay.xu@rock-chips.com>,
-        Alexandru Ardelean <aardelean@deviqon.com>,
-        Thierry Reding <treding@nvidia.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        patches@opensource.cirrus.com,
-        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
-        linux-power <linux-power@fi.rohmeurope.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "moderated list:ARM/Mediatek SoC..." 
-        <linux-mediatek@lists.infradead.org>, linux-pwm@vger.kernel.org,
-        Linux-OMAP <linux-omap@vger.kernel.org>,
-        linux-unisoc@lists.infradead.org,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-tegra@vger.kernel.org, Ray Jui <rjui@broadcom.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Gregory Fong <gregory.0xf0@gmail.com>,
-        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
-        Keerthy <j-keerthy@ti.com>, Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang7@gmail.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH v1 1/3] gpio: Get rid of duplicate of_node assignment in
- the drivers
-Message-ID: <YaoMuoONxbJb0prf@smile.fi.intel.com>
-References: <20211202210839.79140-1-andriy.shevchenko@linux.intel.com>
- <CAMRc=Md-TKUETLzf41D2KeQODac153_AumMTW4928XfJ70GRxQ@mail.gmail.com>
+        id S1352598AbhLCNjm (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 3 Dec 2021 08:39:42 -0500
+Received: from relay1-d.mail.gandi.net ([217.70.183.193]:60071 "EHLO
+        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1381147AbhLCNjl (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 3 Dec 2021 08:39:41 -0500
+Received: (Authenticated sender: miquel.raynal@bootlin.com)
+        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id C192C24000C;
+        Fri,  3 Dec 2021 13:36:14 +0000 (UTC)
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Jon Hunter <jonathanh@nvidia.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>
+Cc:     linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org, Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH V2] mtd: dataflash: Add device-tree SPI IDs
+Date:   Fri,  3 Dec 2021 14:36:14 +0100
+Message-Id: <20211203133614.1372812-1-miquel.raynal@bootlin.com>
+X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20211130112443.107730-1-jonathanh@nvidia.com>
+References: 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMRc=Md-TKUETLzf41D2KeQODac153_AumMTW4928XfJ70GRxQ@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+X-linux-mtd-patch-notification: thanks
+X-linux-mtd-patch-commit: b'27a030e8729255b2068f35c1cd609b532b263311'
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, Dec 03, 2021 at 09:40:55AM +0100, Bartosz Golaszewski wrote:
-> On Thu, Dec 2, 2021 at 10:17 PM Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
-> >
-> > GPIO library does copy the of_node from the parent device of
-> > the GPIO chip, there is no need to repeat this in the individual
-> > drivers. Remove these assignment all at once.
-> >
-> > For the details one may look into the of_gpio_dev_init() implementation.
-> >
-> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> > ---
+On Tue, 2021-11-30 at 11:24:43 UTC, Jon Hunter wrote:
+> Commit 5fa6863ba692 ("spi: Check we have a spi_device_id for each DT
+> compatible") added a test to check that every SPI driver has a
+> spi_device_id for each DT compatiable string defined by the driver
+> and warns if the spi_device_id is missing. The spi_device_ids are
+> missing for the dataflash driver and the following warnings are now
+> seen.
 > 
-> I have a bad feeling about this but I've gone through the drivers in
-> this patch and it seems like you don't update any of the drivers that
-> use multiple child OF nodes so I can't really point out any obvious
-> bug.
+>  WARNING KERN SPI driver mtd_dataflash has no spi_device_id for atmel,at45
+>  WARNING KERN SPI driver mtd_dataflash has no spi_device_id for atmel,dataflash
+> 
+> Fix this by adding the necessary spi_device_ids.
+> 
+> Fixes: 96c8395e2166 ("spi: Revert modalias changes")
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 
-Yes, like I said it's just a series to kick off the conversion.
-I left the corner cases to the last.
+Applied to https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git mtd/fixes, thanks.
 
-> I have another change I'm working on that's related, let me send it shortly.
-
-Do you mean it should be attached to the series?
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Miquel
