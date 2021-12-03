@@ -2,135 +2,124 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF51FC433F5
-	for <linux-tegra@archiver.kernel.org>; Thu,  2 Dec 2021 22:38:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73DFBC433EF
+	for <linux-tegra@archiver.kernel.org>; Fri,  3 Dec 2021 08:41:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1377495AbhLBWls (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 2 Dec 2021 17:41:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35082 "EHLO
+        id S245058AbhLCIoc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 3 Dec 2021 03:44:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57734 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1377331AbhLBWlm (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 2 Dec 2021 17:41:42 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09D05C06174A;
-        Thu,  2 Dec 2021 14:38:20 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 925046288D;
-        Thu,  2 Dec 2021 22:38:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1EA1C53FCC;
-        Thu,  2 Dec 2021 22:38:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1638484699;
-        bh=eCQdRQeoLT8kjg3MQLOIfSv3SGDXKbkijV9amNxq63Y=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=r0h036N3J3vfGrA/G9S88xmo18p43rx/XYLCpe6Zz9Rppyt0rfYSoMOCK3Cp36S7N
-         oRKqKBMZUPZpO/e+D6VJx5Y11eY37/lJzJBQXtUQYHHpGU3RAIMjioi2NdPqsJtk34
-         e86cX264PXauxI4/UxH5JdHjnEwV1YV6KXAryVdgWygQ3ettiJEBAsljSLf9pESVT9
-         s9VWA5fPIhY1NYWPyPVP4nus63VmTnPfQODdy/Nmgml91nJ8xEov0PeSkXPgTpuHSt
-         qKXjep4vpoDPENk1FgGC0PyclXlpdPAC+IMb6iY44oW3NPjUzemiySHR/zgT5Gzm4e
-         /2D+ROIDeLBYg==
-Received: by mail-ed1-f53.google.com with SMTP id r11so3807856edd.9;
-        Thu, 02 Dec 2021 14:38:18 -0800 (PST)
-X-Gm-Message-State: AOAM533NnkhaYj54siQAM6w9RHtlI0H7q40pkhRo1Jmk+hJEArfqXCjq
-        Ti+EzMLtlcmSUvwheB1B1MMDCGaiJ36kigYtfA==
-X-Google-Smtp-Source: ABdhPJxWZbOYJhHoT3DHIAb5JqTei+fe/SmfOBJYQktQY1sAsS2RvEfUEn+PEnMvf1jc9N/t/XFlop9MsVhOS/pPRHU=
-X-Received: by 2002:a17:907:7f25:: with SMTP id qf37mr18683877ejc.147.1638484697293;
- Thu, 02 Dec 2021 14:38:17 -0800 (PST)
+        with ESMTP id S1351200AbhLCIob (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 3 Dec 2021 03:44:31 -0500
+Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E00B7C061758
+        for <linux-tegra@vger.kernel.org>; Fri,  3 Dec 2021 00:41:07 -0800 (PST)
+Received: by mail-ed1-x530.google.com with SMTP id r11so8405329edd.9
+        for <linux-tegra@vger.kernel.org>; Fri, 03 Dec 2021 00:41:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=uLBHn9jsbKV7jZYY7Dm+t8lPDQRTZnoOfAaLgWh49GU=;
+        b=LsIAHi4O7+rAKszJKyJ/QwZwolqgX7Xp85HCfWi/OAlf7oOjExVQVB3A1uF6oJMxXi
+         gPosTZ3PyRq9IbJKMX4ESqDGYZZYcom4XQ8JtyMRl5tOE7xlwAkd4FpJbONadp6pWo7I
+         oUoB99whrPg0HGUqiRetXBExiz97qDkf5NdxXb1GpetgxbWitUxWw81WWVuMwB7DeHg4
+         F4fsE0Im8ySC6EvPdTGuYxXIdnTwT10W+OMVEHRanF7YSviRe6CvO4rDs/Sfax7qLy0G
+         GQ8KIQPRWvs0w82uwlN5lRnk2skx92g4UPLasKF6asjvNdNubK/yYeFyTDsn7OcD+219
+         BK3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=uLBHn9jsbKV7jZYY7Dm+t8lPDQRTZnoOfAaLgWh49GU=;
+        b=XIqg1MZJqkzVoRu2r7nkRqWdTewDV+17oGMPM1BJWHg90pz4TpTi4PZ2ArmEW1WBFs
+         kb2YGRPGkn0nOdBgudYJXXrYE6IJNXylHxOPZOAjcN9eMdBc/vggWiUgItTmzfGrDcxG
+         tuLD9dgfYqMEzjQiBeQHr/UyLlnD2JtKBOKQg+f5btuEifKGMJdErEIrQ6U3ITLZsIWo
+         jx9PLWpUep8EX8rcirt4GILHhJmwkpHFAcRb+LXI+u8FjLR4+naqigjFIXQkvByc+gzU
+         EVPQTMoYWwp7yQSNpPrTXchSfG01xr8OTv6ZERhinOyGYKOVFPlG0O2e9HkBbFTPDVFR
+         ualA==
+X-Gm-Message-State: AOAM531c/IMUwte+mAXQxb87TkVI8auwb9XGlV6GeSplv0ra2BYO0Cav
+        JwmXZ3w7riZQowv4mCpANHp3Aht9khvjUnAeh6QCng==
+X-Google-Smtp-Source: ABdhPJzNHiauf+pMC5f/US+c9OIXcWbcKMNg90ABw6xCvQOgNu83JV2BIOiQy03TdGH6uVMTEr4y57dSuqO0jiYbpps=
+X-Received: by 2002:a17:907:75f0:: with SMTP id jz16mr22268827ejc.77.1638520866276;
+ Fri, 03 Dec 2021 00:41:06 -0800 (PST)
 MIME-Version: 1.0
-References: <20211119143839.1950739-1-thierry.reding@gmail.com>
- <20211119143839.1950739-14-thierry.reding@gmail.com> <YaWCAGQU0sjCwz66@robh.at.kernel.org>
- <Yae0DwCpFu8F/Gbw@orome.fritz.box> <CAL_Jsq+JvZQjN3q4A3yoM+pUPHLYKtwUT=QsDq+oQ7jk8mD3CA@mail.gmail.com>
- <YakIePafm3t6rJLE@orome.fritz.box> <CAL_JsqKb-azHGWkNzEJfCffiJ7FzscV4--8sKgq+uEONFmRD0w@mail.gmail.com>
-In-Reply-To: <CAL_JsqKb-azHGWkNzEJfCffiJ7FzscV4--8sKgq+uEONFmRD0w@mail.gmail.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Thu, 2 Dec 2021 16:38:05 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqJqCEr6JsTb_ZnadaDg_zxsdYxMyyyZT3JT=4uLLShGUQ@mail.gmail.com>
-Message-ID: <CAL_JsqJqCEr6JsTb_ZnadaDg_zxsdYxMyyyZT3JT=4uLLShGUQ@mail.gmail.com>
-Subject: Re: [PATCH v2 13/16] dt-bindings: i2c: tegra-bpmp: Convert to json-schema
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Jon Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org
+References: <20211202210839.79140-1-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20211202210839.79140-1-andriy.shevchenko@linux.intel.com>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Fri, 3 Dec 2021 09:40:55 +0100
+Message-ID: <CAMRc=Md-TKUETLzf41D2KeQODac153_AumMTW4928XfJ70GRxQ@mail.gmail.com>
+Subject: Re: [PATCH v1 1/3] gpio: Get rid of duplicate of_node assignment in
+ the drivers
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Marc Zyngier <maz@kernel.org>,
+        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+        Sergio Paracuellos <sergio.paracuellos@gmail.com>,
+        Chunyan Zhang <chunyan.zhang@unisoc.com>,
+        Baruch Siach <baruch@tkos.co.il>,
+        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>, Tony Lindgren <tony@atomide.com>,
+        Nicolas Saenz Julienne <nsaenz@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Jianqun Xu <jay.xu@rock-chips.com>,
+        Alexandru Ardelean <aardelean@deviqon.com>,
+        Thierry Reding <treding@nvidia.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        patches@opensource.cirrus.com,
+        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
+        linux-power <linux-power@fi.rohmeurope.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:ARM/Mediatek SoC..." 
+        <linux-mediatek@lists.infradead.org>, linux-pwm@vger.kernel.org,
+        Linux-OMAP <linux-omap@vger.kernel.org>,
+        linux-unisoc@lists.infradead.org,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-tegra@vger.kernel.org, Ray Jui <rjui@broadcom.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Gregory Fong <gregory.0xf0@gmail.com>,
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+        Keerthy <j-keerthy@ti.com>, Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang7@gmail.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Kevin Hilman <khilman@kernel.org>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, Dec 2, 2021 at 3:08 PM Rob Herring <robh@kernel.org> wrote:
+On Thu, Dec 2, 2021 at 10:17 PM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
 >
-> On Thu, Dec 2, 2021 at 11:55 AM Thierry Reding <thierry.reding@gmail.com> wrote:
-> >
-> > On Wed, Dec 01, 2021 at 12:42:07PM -0600, Rob Herring wrote:
-> > > On Wed, Dec 1, 2021 at 11:42 AM Thierry Reding <thierry.reding@gmail.com> wrote:
-> > > >
-
-[...]
-
-> > > > However, a side-effect seems to be that now it also ignores any
-> > > > properties that aren't defined anywhere. So for example if I touch
-> > > > up the example in firmware/nvidia,tegra186-bpmp.yaml and add a bogus
-> > > > "foo-bar = <0>;" property in the BPMP I2C node, then it'll blindly
-> > > > accept that as valid.
-> > >
-> > > Do you have unevaluatedProperties within the i2c node? It only applies
-> > > to 1 level, and you can't have a parent+child schema evaluated with
-> > > another child (or parent+child) schema. This is why the graph schema
-> > > is done the way it is and why we're splitting spi-controller.yaml
-> > > child node schema out to spi-peripheral.yaml.
-> >
-> > Let me give an example based on a schema that's already upstream. So
-> > looking at this:
-> >
-> >         Documentation/devicetree/bindings/spi/nvidia,tegra210-quad.yaml
-> >
-> > it does include spi-controller.yaml via an allOf: [ $ref: ... ], so it
-> > uses unevaluatedProperties to validate against any generic SPI
-> > controller properties. For example, #address-cells and #size-cells are
-> > validated based on the schema from spi-controller.yaml.
-> >
-> > However, if I now apply the following patch to add an undocumented
-> > property to the example, then validation doesn't fail as I would expect
-> > it to.
+> GPIO library does copy the of_node from the parent device of
+> the GPIO chip, there is no need to repeat this in the individual
+> drivers. Remove these assignment all at once.
 >
-> Indeed you are right. The problem is 'additionalProperties: true' in
-> spi-controller.yaml makes everything evaluated. I thought
-> 'additionalProperties: true' was equivalent to the default, but that's
-> not how it's working. Now to figure out if this is correct operation
-> or not. No wonder there were relatively few fixes when
-> 'unevaluatedProperties' got implemented...
+> For the details one may look into the of_gpio_dev_init() implementation.
+>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
 
-Based on the json-schema test cases[1], it looks like the tool is
-doing the right thing and our schemas are wrong.
+I have a bad feeling about this but I've gone through the drivers in
+this patch and it seems like you don't update any of the drivers that
+use multiple child OF nodes so I can't really point out any obvious
+bug.
 
-It's a quick fixup in the tools though to just delete any
-'additionalProperties: true':
+I have another change I'm working on that's related, let me send it shortly.
 
-index 3cc5e428b0eb..a0f22aab935a 100644
---- a/dtschema/lib.py
-+++ b/dtschema/lib.py
-@@ -367,6 +367,9 @@ def fixup_sub_schema(schema, is_prop):
-     if not isinstance(schema, dict):
-         return
-
-+    if 'additionalProperties' in schema and
-schema['additionalProperties'] == True:
-+        schema.pop('additionalProperties', None)
-+
-     schema.pop('description', None)
-     fixup_interrupts(schema)
-     if is_prop:
-
-I'm leaning towards this route besides being easy because the whole
-reason for the explicit 'additionalProperties: true' was so that
-missing 'additionalProperties' is flagged as an error. The only other
-way I've come up with handling this is making common schema use a
-different meta-schema.
-
-The result with the above is about 150 warnings. I quickly got this
-down to 100 with only a couple of fixes, but the rest appear to be
-individual schemas...
-
-Rob
-
-[1] https://github.com/json-schema-org/JSON-Schema-Test-Suite/blob/master/tests/draft2019-09/unevaluatedProperties.json#L230
+Bart
