@@ -2,51 +2,51 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69132C433FE
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBAB8C4167B
 	for <linux-tegra@archiver.kernel.org>; Sat,  4 Dec 2021 14:37:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240389AbhLDOlE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 4 Dec 2021 09:41:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35678 "EHLO
+        id S241831AbhLDOlJ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 4 Dec 2021 09:41:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35696 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239217AbhLDOlB (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Sat, 4 Dec 2021 09:41:01 -0500
+        with ESMTP id S239999AbhLDOlD (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Sat, 4 Dec 2021 09:41:03 -0500
 Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 310CEC061751;
-        Sat,  4 Dec 2021 06:37:36 -0800 (PST)
-Received: by mail-lj1-x234.google.com with SMTP id i63so11977162lji.3;
-        Sat, 04 Dec 2021 06:37:36 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E57EFC061751;
+        Sat,  4 Dec 2021 06:37:37 -0800 (PST)
+Received: by mail-lj1-x234.google.com with SMTP id d11so11910668ljg.8;
+        Sat, 04 Dec 2021 06:37:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Eb7uDgOyBpxldHIEI+VonaK+Xu/ASCFuEjbDdDXN+6A=;
-        b=KGnKA/dQc8pbQH0H3RIo4qaNKiRY7d6IAIGib9U78EeBrBD/UO9dBe39jn6NgwttBT
-         jNS8LifWCAC6/vvC65qiJ585D9msh7sKwa2ZYt9WGQa6By9MrbEE/f5CC5RsaJ0mIIB2
-         TJbx5dCfEdNn+VlHCLE/7DollFvrYKaP3BZ8zUtdAjX5rJHLshRJ4iHArEL57GLRzotm
-         FPRXwdsppJ+fypDqncS0FQ2Xnkm92/QOqvfu0yQ9Do6TDxruI30g9yzSURNHxDvHQUWU
-         CNsfOhgo0bGgWEqY9ECgmDBN1xOjLkEftjUTzDxwrnaKbQ6JrujXIJartr0qyZVNSC2f
-         ADnA==
+        bh=AAin265JOVL+o94pQxCU+sQvf2Xm5+tMWz8fFEKib7U=;
+        b=o1KGgDtQWGDqmjiOgI5S/+RbDDAWjn7RwxNM6FRu5jsCI6H19PFswt6Opnx+0ODTPy
+         hPRduERJtyDeRBrnfWfBGmrnXVCtAETHK85vi8EOrBil26r9K1uYi0YEDaG9Yx7axBQg
+         XdmehnDB9warwOcBZ5lCnQessgtSijHJA/3I3NnRp0EOuwd1+hAqOkdWnHjNO3yeqXmO
+         njnY06XzGevMbhitj2YiGsUwJwnk6d8R7aQYDcc25dvLI8cmunCmpfI1Ad+8sSHjbyLx
+         LP5dGS94RECbctBvsfo86RRnIGvpGGX+7TbM91wof82ITDXGsq1vcVVEbxP5/cwGJJ4U
+         JBfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Eb7uDgOyBpxldHIEI+VonaK+Xu/ASCFuEjbDdDXN+6A=;
-        b=ayNpMUq9ROw7CbDVIK5wrn1pdvsLRsm1mQV4QTkQE4HIb3+IRjbtn8Um9Di0yqD5Uc
-         cq7gPjsAZo0DiM94FIbNGCLIC1zEEtfnJXqT2bk3APBI87eEvCTRybEQ2Ohpyns2c4TB
-         HTTh1gJJnBzCo2y/PC3hiD7Rn9L829RZy8pvwvHlo4bNaZLTuqIfzVOuubYS2aWlAWOB
-         g1qOhYydAzyynG+vXzf7tr6IC1sKxAOSqIZixfyGSz0sXGqUfdhYz9mHR+4osc+ohI8t
-         M8ozkaU1TVngz8iaSByI1TVP/0KzhKuvziZ7h2Fu0+7OWnZsXFR2cKpOn56M1xdKSz2u
-         y0nA==
-X-Gm-Message-State: AOAM531FiGp+FNyOyJlNQ5aha0q9ylS4o5O/pqqYJLBfS5zKRKN5jJWq
-        mpm486M3MSNrDuqWyeyeWQU=
-X-Google-Smtp-Source: ABdhPJxG9CwWehDg+cjNOGJNJ68s2+9n0UqBCW/yFW5nzEyc+H1ZMEC6RTa4ZNUFnEefQ+7xWgLCFQ==
-X-Received: by 2002:a2e:9017:: with SMTP id h23mr24483040ljg.13.1638628654467;
-        Sat, 04 Dec 2021 06:37:34 -0800 (PST)
+        bh=AAin265JOVL+o94pQxCU+sQvf2Xm5+tMWz8fFEKib7U=;
+        b=rd+r9vz1DvOgpuC/wN7HBUbo58rsVshViCFY9bagIfIJK3jFcxnninjXYGjYIiJTbZ
+         Y7PPAE86UxKJ0sC8trje6pf07wrd3bY/96QO5sYqRoy/Izgtujxf4TQ4RWwf/+m54eaj
+         5aqW8VtNbPKSw8e3J6m4Y5eNXAUlw2JyXms3CW+IBFYAQqM0HekGQ3Qj8JoYsfap2UZ+
+         CUuu4gpyZBchOe8s2d4nFm29r+rnyHjVc4cWOJEeRl460EomIEKivHzadM/atTTFUtXi
+         74xQi2SMx40kRbKOPfJy9JbyEy8SLIDpVR3MC273Fs8+5US8n9ZK1c2H93vOABFQUfP/
+         I2mQ==
+X-Gm-Message-State: AOAM533QSZFC/06ysO9E/xIrOXLujWjfPNNVqOMOq984r5U9mYUj62T3
+        Is2NRXz5Fii8mc7Rr5TsKu8=
+X-Google-Smtp-Source: ABdhPJzCs7dQD/cZfTQiFvEEynpqpF6ANm/y7mYxAAce2J3VdDbfVr77o//xAPFMjDRP96a9qUFy5w==
+X-Received: by 2002:a05:651c:1ab:: with SMTP id c11mr24347618ljn.378.1638628656252;
+        Sat, 04 Dec 2021 06:37:36 -0800 (PST)
 Received: from localhost.localdomain (94-29-46-111.dynamic.spd-mgts.ru. [94.29.46.111])
-        by smtp.gmail.com with ESMTPSA id g36sm782934lfv.16.2021.12.04.06.37.33
+        by smtp.gmail.com with ESMTPSA id g36sm782934lfv.16.2021.12.04.06.37.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 04 Dec 2021 06:37:34 -0800 (PST)
+        Sat, 04 Dec 2021 06:37:35 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -58,9 +58,9 @@ Cc:     linux-tegra@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
         Rob Herring <robh+dt@kernel.org>, alsa-devel@alsa-project.org,
         linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         dri-devel@lists.freedesktop.org
-Subject: [PATCH v4 04/22] dt-bindings: host1x: Document optional HDMI sound-dai-cells
-Date:   Sat,  4 Dec 2021 17:37:07 +0300
-Message-Id: <20211204143725.31646-5-digetx@gmail.com>
+Subject: [PATCH v4 06/22] ASoC: tegra20-spdif: stop setting slave_id
+Date:   Sat,  4 Dec 2021 17:37:09 +0300
+Message-Id: <20211204143725.31646-7-digetx@gmail.com>
 X-Mailer: git-send-email 2.33.1
 In-Reply-To: <20211204143725.31646-1-digetx@gmail.com>
 References: <20211204143725.31646-1-digetx@gmail.com>
@@ -70,26 +70,36 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Document new optional sound-dai-cells property of HDMI node. This node will
-be used as endpoint of HDMI sound DAI graph.
+From: Arnd Bergmann <arnd@arndb.de>
 
-Acked-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+The DMA resource is never set up anywhere, and passing this as slave_id
+has not been the proper procedure in a long time.
+
+As a preparation for removing all slave_id references from the ALSA code,
+remove this one.
+
+According to Dmitry Osipenko, this driver has never been used and
+the mechanism for configuring DMA would not work as it is implemented,
+so this part will get rewritten when the driver gets put into use
+again in the future.
+
+Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- .../devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt  | 1 +
- 1 file changed, 1 insertion(+)
+ sound/soc/tegra/tegra20_spdif.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
-index e61999ce54e9..27b746f28f31 100644
---- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
-+++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
-@@ -297,6 +297,7 @@ of the following host1x client modules:
-   - nvidia,edid: supplies a binary EDID blob
-   - nvidia,panel: phandle of a display panel
-   - operating-points-v2: See ../bindings/opp/opp.txt for details.
-+  - #sound-dai-cells: Should be 0.
+diff --git a/sound/soc/tegra/tegra20_spdif.c b/sound/soc/tegra/tegra20_spdif.c
+index 6f0570cde964..e45e371edc42 100644
+--- a/sound/soc/tegra/tegra20_spdif.c
++++ b/sound/soc/tegra/tegra20_spdif.c
+@@ -298,7 +298,6 @@ static int tegra20_spdif_platform_probe(struct platform_device *pdev)
+ 	spdif->playback_dma_data.addr = mem->start + TEGRA20_SPDIF_DATA_OUT;
+ 	spdif->playback_dma_data.addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
+ 	spdif->playback_dma_data.maxburst = 4;
+-	spdif->playback_dma_data.slave_id = dmareq->start;
  
- - tvo: TV encoder output
+ 	pm_runtime_enable(&pdev->dev);
  
 -- 
 2.33.1
