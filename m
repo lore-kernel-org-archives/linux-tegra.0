@@ -2,51 +2,51 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 935ACC433EF
-	for <linux-tegra@archiver.kernel.org>; Sat,  4 Dec 2021 14:37:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12389C433FE
+	for <linux-tegra@archiver.kernel.org>; Sat,  4 Dec 2021 14:37:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237139AbhLDOlB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 4 Dec 2021 09:41:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35666 "EHLO
+        id S236615AbhLDOlE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 4 Dec 2021 09:41:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35672 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236615AbhLDOk7 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Sat, 4 Dec 2021 09:40:59 -0500
-Received: from mail-lj1-x22e.google.com (mail-lj1-x22e.google.com [IPv6:2a00:1450:4864:20::22e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB90BC061751;
-        Sat,  4 Dec 2021 06:37:33 -0800 (PST)
-Received: by mail-lj1-x22e.google.com with SMTP id j18so11864305ljc.12;
-        Sat, 04 Dec 2021 06:37:33 -0800 (PST)
+        with ESMTP id S233795AbhLDOlB (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Sat, 4 Dec 2021 09:41:01 -0500
+Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D2F5C061751;
+        Sat,  4 Dec 2021 06:37:35 -0800 (PST)
+Received: by mail-lf1-x134.google.com with SMTP id l22so13781197lfg.7;
+        Sat, 04 Dec 2021 06:37:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=F/X2rHEQd+Ucbeu0Y4aO3xdVUiQaaeBj1J30EhihxKs=;
-        b=Hmo2bp0XD7MwfOW5ZCLk2GISHdr/yTvLIohTI7RHWuHGbeHlDJozx/LsdhpQe4yoH8
-         A0PJJufbpQT4J4x549rDU6ERWTBWVUy73fRKupA2q9m+vVJnQKVTlHLeQsj2vwG+e2wJ
-         YJ5PQvT9yS3tiaRak55w5VFSYMzfh37EbTpqs0XqQvdL8nv/ww6pxCYkv9UOVE+PR0I3
-         aqIpYmAw4ZAbbmFphtECxow41rQMlYrds5ECDNmQDY6B5ypKDw30gze6Zm8/AziQAhgU
-         1/Oiq9L2G9GM2qOkn/zeMBWjxkuoy84PVTgD+c4beyfgl/LWOn3CKFOUScHNfBdOcYNu
-         HgQw==
+        bh=TqYniy4pFRsXD92ySrc+ZxB/2v4IriL3y3/YUqS2PUE=;
+        b=RNaLxgDCs6qXg/TwLlIXZzcLh4LJees5fE8xDEIukdb/OT7zBkOn507I9wRfW4w4xa
+         niemSTpkq4n0nexvCghsEPDaa2xSzvEpS/WsEmx4EV03PZVyKUZtZlS7Cti2Kn+4gMYF
+         J708JdarR4uxOSBnidMRRSiy2W6zsI1gXcaV3YFCIDJElDuSQASMDSwzTEERDBY6z/GJ
+         Tu5cJSkY8ZKkzpgGoDlyMSgeZiQ9HNZLslB40hhiwbDCqsRMTPi2uMzO0H3DlBuUQz5i
+         izOVMOtEV1I3PCwg+dtNL+UPSlH1eXaeVBZ7mKfa2tjeCrhdqFWl6mFiJFpGYAtZigR4
+         SdmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=F/X2rHEQd+Ucbeu0Y4aO3xdVUiQaaeBj1J30EhihxKs=;
-        b=XdDDWe/37mLoQzj+rl96llBqJK4y5E+LjhafEhULSHIpLpiO7XBzWso41agmCwCqIO
-         i55WJK/UQPItE3ZTRJ87rp7pLCgpbNrHtVhrGxcRDe8AGJhB3/rSODCPgTyUVfdg15Bv
-         bWHepZKfOhy9koK/ZvIRuJkSyrB8C2gB2mOXX5izVVvnYwsEGQiwXuQqKz16p5dKg5kd
-         s2/JGssJ24OYDJxDmlrnvpCsPeOOw+3eY58jOTUivXoSjn11IhrKdbAhGKKUALltjLoE
-         34CS3TBDCzbQYuHZC4W73e6k7D+qcsgiLg1s9f/jSvuA6aGDZRvF4vx0gtULd7r1/I6J
-         u7Pg==
-X-Gm-Message-State: AOAM531t+bJ6g+ZinUUo3ifEUMY4SHAI6vLQ9Be8OsSjR9xMBLH43c5Q
-        jWuZT3Zy6hGUJKK27kSufCg=
-X-Google-Smtp-Source: ABdhPJwcdgRw44pXn41+KUa5AP/jULS0ohcmHnZPCR7EdYs/LEdBhNkorjhYbQ3H4RJ980OeL+c3Fg==
-X-Received: by 2002:a2e:9bc9:: with SMTP id w9mr24035834ljj.27.1638628652007;
-        Sat, 04 Dec 2021 06:37:32 -0800 (PST)
+        bh=TqYniy4pFRsXD92ySrc+ZxB/2v4IriL3y3/YUqS2PUE=;
+        b=hDdYr/5f9u7DsEXXjOn7U4x4zrBcadg5So99ugoFqU6rZqXSlXlLtZnUsBn6be/Pwi
+         EM3pHGMFEsPHZhtAsxGrRB/pzr1dfd1KXsJ3G9QRppFZ/GjbcZMPDXblh0IcGaJ+nCfk
+         WNifgR0/Uz+UxK/9yxXyOivSB8+UeIOGhMKhZrciV/Z+FxDvsBaqlJVcyL5m0x7kqgWH
+         Cckub6jxVdBKrWp8kIPoMIbZXI7TCLY8pGSK8xd7RrqCUgPrZkP/ugC7UD27g9lqJyZ8
+         XKKP5eNOq8GNgAxcgR7Vl42xFCFcXTO+FUB7UIqdUwzJVr8fIvzvJhESSQJkLrE0wJoh
+         fnIA==
+X-Gm-Message-State: AOAM531xlR6miW7L6KsgNvqv8fm1IlLgGfWlpqQ2a8SXP6z8U+stDxCn
+        UTfUVOjHe6qySe6ZR0C8n6c=
+X-Google-Smtp-Source: ABdhPJxlNR6C8CFHLRo5rqVDCMsVLSUpmIzAdsrAsZFFI4Y2oRrvmEXZzQFyeVHAejMo+rAPaIrc5w==
+X-Received: by 2002:ac2:518b:: with SMTP id u11mr24097394lfi.498.1638628653644;
+        Sat, 04 Dec 2021 06:37:33 -0800 (PST)
 Received: from localhost.localdomain (94-29-46-111.dynamic.spd-mgts.ru. [94.29.46.111])
-        by smtp.gmail.com with ESMTPSA id g36sm782934lfv.16.2021.12.04.06.37.31
+        by smtp.gmail.com with ESMTPSA id g36sm782934lfv.16.2021.12.04.06.37.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 04 Dec 2021 06:37:31 -0800 (PST)
+        Sat, 04 Dec 2021 06:37:33 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -58,9 +58,9 @@ Cc:     linux-tegra@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
         Rob Herring <robh+dt@kernel.org>, alsa-devel@alsa-project.org,
         linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         dri-devel@lists.freedesktop.org
-Subject: [PATCH v4 01/22] ASoC: dt-bindings: Add binding for Tegra20 S/PDIF
-Date:   Sat,  4 Dec 2021 17:37:04 +0300
-Message-Id: <20211204143725.31646-2-digetx@gmail.com>
+Subject: [PATCH v4 03/22] ASoC: dt-bindings: tegra20-i2s: Document new nvidia,fixed-parent-rate property
+Date:   Sat,  4 Dec 2021 17:37:06 +0300
+Message-Id: <20211204143725.31646-4-digetx@gmail.com>
 X-Mailer: git-send-email 2.33.1
 In-Reply-To: <20211204143725.31646-1-digetx@gmail.com>
 References: <20211204143725.31646-1-digetx@gmail.com>
@@ -70,71 +70,27 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Add device-tree binding for Tegra20 S/PDIF controller.
+Document new nvidia,fixed-parent-rate property which instructs that this
+board wants parent clock to stay at a fixed rate. It allows to prevent
+conflicts between audio components that share same parent PLL. For
+instance, this property allows to have HDMI audio, speaker and headphones
+in the system playing audio simultaneously, which is a common pattern for
+consumer devices.
 
 Reviewed-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- .../bindings/sound/nvidia,tegra20-spdif.yaml  | 85 +++++++++++++++++++
- 1 file changed, 85 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra20-spdif.yaml
+ .../devicetree/bindings/sound/nvidia,tegra20-i2s.yaml      | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra20-spdif.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra20-spdif.yaml
-new file mode 100644
-index 000000000000..60a368a132b8
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/nvidia,tegra20-spdif.yaml
-@@ -0,0 +1,85 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/sound/nvidia,tegra20-spdif.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: NVIDIA Tegra20 S/PDIF Controller
-+
-+description: |
-+  The S/PDIF controller supports both input and output in serial audio
-+  digital interface format. The input controller can digitally recover
-+  a clock from the received stream. The S/PDIF controller is also used
-+  to generate the embedded audio for HDMI output channel.
-+
-+maintainers:
-+  - Thierry Reding <treding@nvidia.com>
-+  - Jon Hunter <jonathanh@nvidia.com>
-+
-+properties:
-+  compatible:
-+    const: nvidia,tegra20-spdif
-+
-+  reg:
-+    maxItems: 1
-+
-+  resets:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  clocks:
-+    minItems: 2
-+
-+  clock-names:
-+    items:
-+      - const: out
-+      - const: in
-+
-+  dmas:
-+    minItems: 2
-+
-+  dma-names:
-+    items:
-+      - const: rx
-+      - const: tx
-+
-+  "#sound-dai-cells":
-+    const: 0
-+
+diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra20-i2s.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra20-i2s.yaml
+index ad43b237d9af..68ae124eaf80 100644
+--- a/Documentation/devicetree/bindings/sound/nvidia,tegra20-i2s.yaml
++++ b/Documentation/devicetree/bindings/sound/nvidia,tegra20-i2s.yaml
+@@ -42,6 +42,13 @@ properties:
+       - const: rx
+       - const: tx
+ 
 +  nvidia,fixed-parent-rate:
 +    description: |
 +      Specifies whether board prefers parent clock to stay at a fixed rate.
@@ -142,34 +98,9 @@ index 000000000000..60a368a132b8
 +      limiting number of supportable audio rates.
 +    type: boolean
 +
-+required:
-+  - compatible
-+  - reg
-+  - resets
-+  - interrupts
-+  - clocks
-+  - clock-names
-+  - dmas
-+  - dma-names
-+  - "#sound-dai-cells"
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    spdif@70002400 {
-+        compatible = "nvidia,tegra20-spdif";
-+        reg = <0x70002400 0x200>;
-+        interrupts = <77>;
-+        clocks = <&clk 99>, <&clk 98>;
-+        clock-names = "out", "in";
-+        resets = <&rst 10>;
-+        dmas = <&apbdma 3>, <&apbdma 3>;
-+        dma-names = "rx", "tx";
-+        #sound-dai-cells = <0>;
-+    };
-+
-+...
+ required:
+   - compatible
+   - reg
 -- 
 2.33.1
 
