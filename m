@@ -2,51 +2,51 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70EC4C433F5
-	for <linux-tegra@archiver.kernel.org>; Sat,  4 Dec 2021 14:38:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E22AC433EF
+	for <linux-tegra@archiver.kernel.org>; Sat,  4 Dec 2021 14:38:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355154AbhLDOlf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 4 Dec 2021 09:41:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35800 "EHLO
+        id S244844AbhLDOlO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 4 Dec 2021 09:41:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35762 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241231AbhLDOlP (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Sat, 4 Dec 2021 09:41:15 -0500
-Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4090DC0613F8;
-        Sat,  4 Dec 2021 06:37:49 -0800 (PST)
-Received: by mail-lj1-x22b.google.com with SMTP id j18so11865313ljc.12;
-        Sat, 04 Dec 2021 06:37:49 -0800 (PST)
+        with ESMTP id S242841AbhLDOlK (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Sat, 4 Dec 2021 09:41:10 -0500
+Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F5D4C0613F8;
+        Sat,  4 Dec 2021 06:37:44 -0800 (PST)
+Received: by mail-lf1-x12f.google.com with SMTP id b1so13693175lfs.13;
+        Sat, 04 Dec 2021 06:37:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=hHEu7xIUmbPKbJQuG/1auedODddNVJ0Qz8PQOApRayA=;
-        b=leSChBds958mAfUMY9jeuuqD5Qn6lvxbEB6QV5qCZ0n0CsKze78eor5z0bN9rj/7Vw
-         h7/tlsyatSb4Rnn4aadHj9eKx3Hufmh5E1AfSh5sxzyV+r76EZLz4xGtHt/Upcn83GRk
-         VlmvlBxwI9IrqnFSd36xJr7Sj1OUvD1LYMjcmuDTUgiYSK1yb5hTeoP7IWcrLVmEe8Vq
-         ABkcKxWz8+fCJmaobjrWsaQaOyL68eh9YEuSyfNpUr0lL4ZpAvMCkfWw+ME8czOM9IQG
-         5rwGwfIae8P3ENqoKLVdn2qIscFlew1Y0QtLEW09HYlSN5ZtDmEBLi/dLcE2RWXmINFP
-         Ns6A==
+        bh=OxcYUIueLlQa52jFEvuy/N4e/ZecehjJr4Gk4VLaFrk=;
+        b=d4JHR4e9Tfq2drgPiQPOEWI/A9kfWJA+tfced71PQBHCRUEfZsydKbZhpd/5ptbv1j
+         w+PGcxYbFFThWeum/lgKvwUVn+2Btl6QdzG9ojRhj3jVeqVzY7numyCvU8YBxFh1aec1
+         dI7L2o2Io/20kOjxQDwxBdUbHUPOvYJChvySM6hzMlhawgNxNHI96mFcxjnLxaNezIFj
+         K3UvzRePyvLb4V7bUsUKIb2PiptOuQglxAVXybFqiUWZljVUA1F0epLPeS2S13Pdcp6Z
+         ooo++s9sqkOF6jKlWazC/SzHdD/295aQ54ax40XBjRNqTjb7uzDTQX/Oi8Wlf80W+P+a
+         1rPQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=hHEu7xIUmbPKbJQuG/1auedODddNVJ0Qz8PQOApRayA=;
-        b=tFZlbskz4WeA2+Vc/GZIltWETzEiqFsp+5UuMk7tjnJOnGrz1VORMAi62+GWFhr17f
-         yc3D9heHQZvewI1jElULEyWI/NRCuRUa2aESAv+y5gPQ282x2LsP9K6H816UWcousdH5
-         17lKfzEh+yjaikoAI9mlxb7p3X7sjqS0IqQC7QA/PrMVlvT1qqTwGN8zPfBj98PToN2V
-         KcugPKhpO6ViIBO0Stq2vCgtdugzFCq0qF3SAMJA2/jJFiVYMbYxuyTt+eYlwPEB2dCD
-         nwo+SNfAfLohTz3gYS5RbsDHBLPE/UuxihInfTUgy1DkC9/y9jJTtusisyZ86rlhuOMv
-         aqaw==
-X-Gm-Message-State: AOAM530KLbYViOU7ttFuvyrGu5FDmD0u2pY9Tg9Q6lX6qUDbtyL56RkD
-        sDeKzHGJUtQx6TUC67tV/0g=
-X-Google-Smtp-Source: ABdhPJyDeO75xIBk/QZj5qYQSqZV15+DMrRsbXBSrSANn3YT8kCBPAn11GIEkBQ9rFB2qoWlosH3Fw==
-X-Received: by 2002:a2e:b8cf:: with SMTP id s15mr24932955ljp.297.1638628667574;
-        Sat, 04 Dec 2021 06:37:47 -0800 (PST)
+        bh=OxcYUIueLlQa52jFEvuy/N4e/ZecehjJr4Gk4VLaFrk=;
+        b=pDryU9pWk3uMCmhZ2K7uQVLWF2pUds2MfS4JdQuEeK7puXtb3XEx9+LjYGnJ7+u/kF
+         Q0X99dHTkwVKy5t8oCuxsScmbIs/69o6kr8bW8xXE/oKV1ep6w5nxazvA6nJ2PDTNjdb
+         SYksmqDG2chyAWERDwoQtI/7SrqkOslGqiU8vAMDdXSlW7z+ch5gCVZG+xOb9e2iLhnX
+         eMDGloDVo1HgTtD84W4YrxCwBjJpp9V1Uc9Crs5c6d/6kHpTtPMLJyfjWWYHFUDBqP0K
+         PqSgt0rf59AR+D3se46cyF8c8Je5r4KXdg+LBOajCaBS/1bMu6KLVvL0iYey+Q/7vayM
+         fOsA==
+X-Gm-Message-State: AOAM530mum18urV8R8k1HTSnfWfta4dlLRfQwPDMV1I6lXXFHjHpw2do
+        5JCNe/amzVVVGrK+ixV9cIw=
+X-Google-Smtp-Source: ABdhPJxlgKfJiD7JvMzK1OyvgCUJ5A1miPAL4icM4r9MPzx1Ky/E3f131wx20rQata12xqR1oKlQ9g==
+X-Received: by 2002:a05:6512:234c:: with SMTP id p12mr23603437lfu.157.1638628662905;
+        Sat, 04 Dec 2021 06:37:42 -0800 (PST)
 Received: from localhost.localdomain (94-29-46-111.dynamic.spd-mgts.ru. [94.29.46.111])
-        by smtp.gmail.com with ESMTPSA id g36sm782934lfv.16.2021.12.04.06.37.46
+        by smtp.gmail.com with ESMTPSA id g36sm782934lfv.16.2021.12.04.06.37.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 04 Dec 2021 06:37:47 -0800 (PST)
+        Sat, 04 Dec 2021 06:37:42 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -58,9 +58,9 @@ Cc:     linux-tegra@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
         Rob Herring <robh+dt@kernel.org>, alsa-devel@alsa-project.org,
         linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         dri-devel@lists.freedesktop.org
-Subject: [PATCH v4 20/22] ARM: tegra: Add HDMI audio graph to Tegra20 device-tree
-Date:   Sat,  4 Dec 2021 17:37:23 +0300
-Message-Id: <20211204143725.31646-21-digetx@gmail.com>
+Subject: [PATCH v4 14/22] drm/tegra: hdmi: Unwind tegra_hdmi_init() errors
+Date:   Sat,  4 Dec 2021 17:37:17 +0300
+Message-Id: <20211204143725.31646-15-digetx@gmail.com>
 X-Mailer: git-send-email 2.33.1
 In-Reply-To: <20211204143725.31646-1-digetx@gmail.com>
 References: <20211204143725.31646-1-digetx@gmail.com>
@@ -70,52 +70,52 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Add HDMI audio graph to Tegra20 device-tree to enable HDMI audio on
-Tegra20 devices.
+Add missing error unwinding to tegra_hdmi_init(), for consistency.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- arch/arm/boot/dts/tegra20.dtsi | 22 +++++++++++++++++++++-
- 1 file changed, 21 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/tegra/hdmi.c | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
-index 72cbe32d0c1d..dde228bcbbff 100644
---- a/arch/arm/boot/dts/tegra20.dtsi
-+++ b/arch/arm/boot/dts/tegra20.dtsi
-@@ -186,7 +186,7 @@ rgb {
- 			};
- 		};
+diff --git a/drivers/gpu/drm/tegra/hdmi.c b/drivers/gpu/drm/tegra/hdmi.c
+index 3242baddc5e7..cc42476fd023 100644
+--- a/drivers/gpu/drm/tegra/hdmi.c
++++ b/drivers/gpu/drm/tegra/hdmi.c
+@@ -1456,22 +1456,31 @@ static int tegra_hdmi_init(struct host1x_client *client)
+ 	if (err < 0) {
+ 		dev_err(client->dev, "failed to enable HDMI regulator: %d\n",
+ 			err);
+-		return err;
++		goto output_exit;
+ 	}
  
--		hdmi@54280000 {
-+		tegra_hdmi: hdmi@54280000 {
- 			compatible = "nvidia,tegra20-hdmi";
- 			reg = <0x54280000 0x00040000>;
- 			interrupts = <GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>;
-@@ -1063,4 +1063,24 @@ pmu {
- 		interrupt-affinity = <&{/cpus/cpu@0}>,
- 				     <&{/cpus/cpu@1}>;
- 	};
+ 	err = regulator_enable(hdmi->pll);
+ 	if (err < 0) {
+ 		dev_err(hdmi->dev, "failed to enable PLL regulator: %d\n", err);
+-		return err;
++		goto disable_hdmi;
+ 	}
+ 
+ 	err = regulator_enable(hdmi->vdd);
+ 	if (err < 0) {
+ 		dev_err(hdmi->dev, "failed to enable VDD regulator: %d\n", err);
+-		return err;
++		goto disable_pll;
+ 	}
+ 
+ 	return 0;
 +
-+	sound-hdmi {
-+		compatible = "simple-audio-card";
-+		simple-audio-card,name = "NVIDIA Tegra20 HDMI";
++disable_pll:
++	regulator_disable(hdmi->pll);
++disable_hdmi:
++	regulator_disable(hdmi->hdmi);
++output_exit:
++	tegra_output_exit(&hdmi->output);
 +
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		simple-audio-card,dai-link@0 {
-+			reg = <0>;
-+
-+			cpu {
-+				sound-dai = <&tegra_spdif>;
-+			};
-+
-+			codec {
-+				sound-dai = <&tegra_hdmi>;
-+			};
-+		};
-+	};
- };
++	return err;
+ }
+ 
+ static int tegra_hdmi_exit(struct host1x_client *client)
 -- 
 2.33.1
 
