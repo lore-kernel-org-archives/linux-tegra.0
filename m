@@ -2,116 +2,135 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75FB4C433F5
-	for <linux-tegra@archiver.kernel.org>; Sat,  4 Dec 2021 15:00:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59988C433FE
+	for <linux-tegra@archiver.kernel.org>; Sun,  5 Dec 2021 00:06:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231150AbhLDPEU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 4 Dec 2021 10:04:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41052 "EHLO
+        id S229504AbhLEAJr (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 4 Dec 2021 19:09:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47262 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242924AbhLDPEU (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Sat, 4 Dec 2021 10:04:20 -0500
-Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C605C061751
-        for <linux-tegra@vger.kernel.org>; Sat,  4 Dec 2021 07:00:54 -0800 (PST)
-Received: by mail-lf1-x134.google.com with SMTP id t26so13836345lfk.9
-        for <linux-tegra@vger.kernel.org>; Sat, 04 Dec 2021 07:00:54 -0800 (PST)
+        with ESMTP id S229715AbhLEAJp (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Sat, 4 Dec 2021 19:09:45 -0500
+Received: from mail-oi1-x236.google.com (mail-oi1-x236.google.com [IPv6:2607:f8b0:4864:20::236])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D6CFC061354
+        for <linux-tegra@vger.kernel.org>; Sat,  4 Dec 2021 16:06:19 -0800 (PST)
+Received: by mail-oi1-x236.google.com with SMTP id be32so13713258oib.11
+        for <linux-tegra@vger.kernel.org>; Sat, 04 Dec 2021 16:06:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=j1+HihJ8jD8fjMbY3c8Sx1lu+g+OCnLBmM4aOdDd/yA=;
-        b=UORZSXzuqBDNLLFfoBJCa5zBI+/6Bjh6zZSZOf11/pc9QfysS29fhQ6cp+CoFBr/3S
-         lf3ddcj5uZsaffI0EvvBnwRDdGOsTYUt0/Rrk6K/cA1KKInyB5EEVmabm21kU1p7Bw13
-         5emWyQleFSy6I5/Yd1agTP5LLxTP3Cs+Z+hRLTwhNqYejK+oCHJqSfv5HEiTZU8JGQQB
-         7ndicHN/Jqvchs2Eyk99pQPY+RNMF+PIhjItmJw7iT0F6JOvAwqJYg8yKn9MrGxfkUv7
-         zE6aZdW+GuwtxAvxfguoM2LPfs0f/LIVz/ZsJmyHxmXZ9dCJFPbeXhbw1ejIGxiv+jgV
-         YqDg==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=aLM7Vzy6+wcFi2+uw4mY6eHdc1c6QIPZ2YzBFSeQVDk=;
+        b=oypqQM9WYczOUD8yOv4W0b0J4SdrSIP2/GWFE4TR5k1CGEkHNy9WPiO008zNzsg3Pz
+         zh9bUtf/VG6/b3zJ480BiJtwEa7PuEjsHQIWuEsggMdMqcZfJwsOE3iFtiG2DEPADAsO
+         hqFPrgRv7CWtgQ4J5ZJRkR9iA1oQHlUoWYY8QDKpr7VM+f+8Yrryge0w8oCSslRvNp+6
+         exKWbX0iHLd50+WQaM9fAnPeBnEozwwfUcCOKBUJC5pSMVg0d33S/UEK3rrGtAaDpFWu
+         Uv4am7V67+qDJ2gKBQwHEmdYiUOqE7eMf4wLG94y+RQ3YPpVsZKN31tRHAbmVgDqfwLj
+         frKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=j1+HihJ8jD8fjMbY3c8Sx1lu+g+OCnLBmM4aOdDd/yA=;
-        b=ua312/7C83aoP14j71VHG4YgWT5uk7h7cLxNf353nKN7UHTex+pDT9EmmMzegSec5B
-         BcuNesFO1xUVrUhwAzBqpHCXR35Qc6xNO3JYyRKnHOewsw++wch51fBMNXe4iw7DFi+U
-         oxomv4at0IDSmVPSzX6b7XBkTzsupVFSg6IowvwdHFgD80tyidlX/UB/tBHkw2VbCFFO
-         LMUVVW9OFs2Hf5EjYtEGXMBvk/PnE8100o4a25ZO3VenuPHG94WYjbhT/BEMJIEVIHRP
-         a9J06ZyIPtZUM+gnN5OUIpUvi50YsEwywIjccNg36APAHgp4YCEWfIfMAVgsjOnXQlmo
-         /9wA==
-X-Gm-Message-State: AOAM531rjfbwmQpc43Tp2vtMAaRmHpk9XelHudTg+48pC8R9LaI2RgwO
-        fberFKonKTYR5yOX7WGfuUQ=
-X-Google-Smtp-Source: ABdhPJzYnCQFzSxAmbyvbrIlbOsB1Owx9n3Q48SUcV8viRlu8FiGUgqba9DpAOhtEKHqDirlPS4yhw==
-X-Received: by 2002:a05:6512:12c4:: with SMTP id p4mr24097534lfg.307.1638630052646;
-        Sat, 04 Dec 2021 07:00:52 -0800 (PST)
-Received: from localhost.localdomain (94-29-46-111.dynamic.spd-mgts.ru. [94.29.46.111])
-        by smtp.gmail.com with ESMTPSA id t4sm859185lfe.220.2021.12.04.07.00.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 04 Dec 2021 07:00:52 -0800 (PST)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Mikko Perttunen <cyndis@kapsi.fi>
-Cc:     dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
-Subject: [PATCH v1 2/2] drm/tegra: Add back arm_iommu_detach_device()
-Date:   Sat,  4 Dec 2021 17:58:49 +0300
-Message-Id: <20211204145849.4034-3-digetx@gmail.com>
-X-Mailer: git-send-email 2.33.1
-In-Reply-To: <20211204145849.4034-1-digetx@gmail.com>
-References: <20211204145849.4034-1-digetx@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=aLM7Vzy6+wcFi2+uw4mY6eHdc1c6QIPZ2YzBFSeQVDk=;
+        b=757DcblkylzTaKyAW1kOpfJjLVcErneaNcrd6Kf5EjG7PL9X5tuGLDygh8CsHLugCr
+         eGnOWvtqaPNPrVAmluhYyR3tRCvLovdF2A1zBtQ3/lr1UAWbalbYf/xY37tK/+wV5sUv
+         SJNJ96hGANSjV520tmXvG1NpX7J17vfLS4PMlD3iJjXVOQUVsMe9k6++R5VDQGYb7OLw
+         FXtz+YlN5NKUNgtLnEOFHfrRgTbamS9iQOiEJ1sQdZd8MJ4Rkxf6bEAnDCmHZXhbaVwt
+         1IoGV6qTFZr+yGvp5gGMjc/LHIoSNT62d+QRO0R81BHzYn5PisSC2rFVkDXB6YcUsTee
+         S8Iw==
+X-Gm-Message-State: AOAM532itsRxisNZlxaAZmyf/Zpk43qSIvT1RNv3xX0C0n4B2BaSlVKJ
+        KtaQNB/GxNYghW4s0FgiueeWemas/w/wxP9LTLP5hQ==
+X-Google-Smtp-Source: ABdhPJy/aeGs123LiAIPsyMW3EdsawUgHdqxl5iex8vMswm1x7JAmAebxj9z1jBeNmQdoS/RXvDPX+AOcq/DNJTtHIA=
+X-Received: by 2002:aca:120f:: with SMTP id 15mr16602417ois.132.1638662778472;
+ Sat, 04 Dec 2021 16:06:18 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20211202210839.79140-1-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20211202210839.79140-1-andriy.shevchenko@linux.intel.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Sun, 5 Dec 2021 01:06:07 +0100
+Message-ID: <CACRpkdZbpKqG_uS2N8TW2-HL5CqnuKDpHVCabf66MyQQof0jOw@mail.gmail.com>
+Subject: Re: [PATCH v1 1/3] gpio: Get rid of duplicate of_node assignment in
+ the drivers
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Marc Zyngier <maz@kernel.org>,
+        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+        Sergio Paracuellos <sergio.paracuellos@gmail.com>,
+        Chunyan Zhang <chunyan.zhang@unisoc.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Baruch Siach <baruch@tkos.co.il>,
+        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>, Tony Lindgren <tony@atomide.com>,
+        Nicolas Saenz Julienne <nsaenz@kernel.org>,
+        Jianqun Xu <jay.xu@rock-chips.com>,
+        Alexandru Ardelean <aardelean@deviqon.com>,
+        Thierry Reding <treding@nvidia.com>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        patches@opensource.cirrus.com,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-power@fi.rohmeurope.com,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-pwm@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-unisoc@lists.infradead.org,
+        linux-rockchip@lists.infradead.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-tegra@vger.kernel.org, Ray Jui <rjui@broadcom.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Gregory Fong <gregory.0xf0@gmail.com>,
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+        Keerthy <j-keerthy@ti.com>, Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang7@gmail.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Kevin Hilman <khilman@kernel.org>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-DMA buffers of 2D/3D engines aren't mapped properly when
-CONFIG_ARM_DMA_USE_IOMMU=y. The memory management code of Tegra DRM driver
-has a longstanding overhaul overdue and it's not obvious where the problem
-is in this case. Hence let's add back the old workaround which we already
-had sometime before. It explicitly detaches DRM devices from the offending
-implicit IOMMU domain. This fixes a completely broken 2d/3d drivers in
-case of ARM32 multiplatform kernel config.
+On Thu, Dec 2, 2021 at 10:17 PM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
 
-Cc: stable@vger.kernel.org
-Fixes: fa6661b7aa0b ("drm/tegra: Optionally attach clients to the IOMMU")
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/gpu/drm/tegra/drm.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+> GPIO library does copy the of_node from the parent device of
+> the GPIO chip, there is no need to repeat this in the individual
+> drivers. Remove these assignment all at once.
+>
+> For the details one may look into the of_gpio_dev_init() implementation.
+>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
-index dc04ce329be3..e9de91a4e7e8 100644
---- a/drivers/gpu/drm/tegra/drm.c
-+++ b/drivers/gpu/drm/tegra/drm.c
-@@ -22,6 +22,10 @@
- #include <drm/drm_prime.h>
- #include <drm/drm_vblank.h>
- 
-+#if IS_ENABLED(CONFIG_ARM_DMA_USE_IOMMU)
-+#include <asm/dma-iommu.h>
-+#endif
-+
- #include "dc.h"
- #include "drm.h"
- #include "gem.h"
-@@ -945,6 +949,17 @@ int host1x_client_iommu_attach(struct host1x_client *client)
- 	struct iommu_group *group = NULL;
- 	int err;
- 
-+#if IS_ENABLED(CONFIG_ARM_DMA_USE_IOMMU)
-+	if (client->dev->archdata.mapping) {
-+		struct dma_iommu_mapping *mapping =
-+				to_dma_iommu_mapping(client->dev);
-+		arm_iommu_detach_device(client->dev);
-+		arm_iommu_release_mapping(mapping);
-+
-+		domain = iommu_get_domain_for_dev(client->dev);
-+	}
-+#endif
-+
- 	/*
- 	 * If the host1x client is already attached to an IOMMU domain that is
- 	 * not the shared IOMMU domain, don't try to attach it to a different
--- 
-2.33.1
+This is definitely a patch in the right direction, as Bart says
+it can be a bit dangerous, the outliers are those drivers that
+assign the .dev to something completely different than the
+the dev where the of_node is copied from.
 
+The idea was definitely always to only assign it in the core
+*unless* there is a reason to have a completely different
+of_node for some reason.
+
+> +++ b/drivers/gpio/gpio-rda.c
+> @@ -240,8 +240,6 @@ static int rda_gpio_probe(struct platform_device *pdev)
+>         rda_gpio->chip.label = dev_name(dev);
+>         rda_gpio->chip.ngpio = ngpios;
+>         rda_gpio->chip.base = -1;
+> -       rda_gpio->chip.parent = dev;
+> -       rda_gpio->chip.of_node = np;
+
+Mention in the commit message that in this driver
+you also drop the the .parent assignment because the
+core will handle it.
+
+Yours,
+Linus Walleij
