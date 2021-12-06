@@ -2,220 +2,147 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B797C433EF
-	for <linux-tegra@archiver.kernel.org>; Mon,  6 Dec 2021 09:55:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C356EC433F5
+	for <linux-tegra@archiver.kernel.org>; Mon,  6 Dec 2021 11:38:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241569AbhLFJ6x (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 6 Dec 2021 04:58:53 -0500
-Received: from mail-bn8nam08on2045.outbound.protection.outlook.com ([40.107.100.45]:51017
-        "EHLO NAM04-BN8-obe.outbound.protection.outlook.com"
+        id S242213AbhLFLld (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 6 Dec 2021 06:41:33 -0500
+Received: from mail-mw2nam12on2043.outbound.protection.outlook.com ([40.107.244.43]:21121
+        "EHLO NAM12-MW2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S241537AbhLFJ6w (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 6 Dec 2021 04:58:52 -0500
+        id S241994AbhLFLld (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 6 Dec 2021 06:41:33 -0500
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=YBkYViaiGnbDzfoTvkz7SrsvEsiPoXjYqNkVqLkOdf18b/rYFPzDs8WlQXYj7SrErRpi8OlaYilCPZjrvgnCgK/OdpRBTQA8/KVFqkfrBJBGsO9ceeQgYYEBitHlVzERSxbU6uzlfCZnzjL5uH0WJEifBgn9OVqW7PUIl+b2ABFHocME7Wu/bskR6i0waxW79fgnYVu6FYEnnyDq3LcI7egMxo+mmnDvxkDx9lODq0JlRvtqLlNyDGvoO4pZv9TQq6j2vTvr7TDmZFOFR07mBhipt8NLJC4YcpHbZ0liNZ+WBMzA64vHx9gCLv5nLa3u/OYHWxNFdE8j63qoiuNozQ==
+ b=QR4Vfn5tI0Jx+06U9jg8p3Q/k4IragzVxJEe9X8On/BV6MlWeYjYdzjbMv8CgfHpvq7sr4Z/Z0Pyno1+GRLN0oeS1Y6PpQSh/87ls7HvOPQSJlJP3nyHW1xSyWIjCkRp8Xo7bdcaa/tY0amiXc0+C9Un8gz8Rr1fmuMOFhoojsbeL9KjR6DY1d9aFijGC59cslxkHAGXWtahBlbL8lqE19iUBh/Tll7qyZLCadlUsnxHzwbWmje4+qzAV4DMDI0LpVW88oGoEYzgp8fM4Yd9LR+dTxPy9p2DVKnjXy4IoxBTNkC6TUTHhhMLy7QFFraitM+hDzKoTp8PemhkUqDMoQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5QTjCuoHORsIaYoDA38EAYujltYQA5bCxi4W2CzFP50=;
- b=gM6MCu7eplmoNDBHzJQU9YB7JmFd89URusbcDPqxusDFzNlIIBIurAtE2++Kl5iwprPdtYxC6SqKnYdQ2Ey+k6hAKdWL2ppON+XoaOf//F+yP2Um9NI/1o/giKx+UWXuLy/qxnGVkwPM7N17y5po+kEKad3xSQ3d0QwGJUaMjBAsaw1ePQIQs94PJNQulduYKoddsVAPfwv2KpdJk3uTQJbD7tdyzhPMqproKO1mbtNXRdZwaBIhzwyRxo/ExRtg8rl0CtjKRE08P41sEjh1apTrnxbwuSjRVAviLyrvOBifFym/u1i2MGledAAhkR5UUHkh8Ue0K8wGU9j4tv+Uwg==
+ bh=5hKFlVOvvAEUMYYqHC46rGoO2yr2jaX6XD3Mf4IFKz8=;
+ b=oWJufrn6wwzSY59WI185iSiqIaPlYiXMD2dzEiuWmNFN2L5ROr+Qna3m/09cMfEcfff/7nzsoqQa66PVWkuO4kv4FmOnby3F67PVYdyTrbEp7b24xT5dugl9YbdIiTaDHl9Kp9AFmASWWNM7pVgbBPrQe+etuYgkgVBG4ReEK18pZecI4F8EVKQjF8ODbE5LVW5t6O8sZexlgQTZUH8OzwwdMFHtc9IUUK+I0FwK9WtCKH8t2WHvsD9b0WNXFV+fWWAZTdzg8bmPbaAE1n3Kcabb6vLKDcgLfFAnEcpO6fe09oM2CoDOEXaoE40hvDjpPR2H1/4eSbMF7szIB3EJpA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
  dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5QTjCuoHORsIaYoDA38EAYujltYQA5bCxi4W2CzFP50=;
- b=kNps0xHo7R2Nd4LFsEgK08J0qS+VhJ3lCoCgzgTr/V4gG81Pe198IbRRxtRcKAp9o34pYnSgq5xZ63TsLGLgxZ2+cLPIAa6lQdBx7Ex4hzprJl+kz12D9tUIy0L1CeXW/jqrqnUzJ8xZAPPYOZEkxlk4t53w0ctRU8TWDiBaNa1BQtxgsjEaaniiTcRFRrNR+O63wqXpQ9e0yhmSyK51EmLoP7045Bt1QV5sH2WdT74LNPLInZbPMJp05Tr9YRsEvM1Xx/xsd6DugX58RKf2igq4jQ4GkCLvNG8zCuSTymB9LZ4FkMZjkjvPNEOf1JN/D5iCXZJS280Hi5HQGF2Dvw==
-Authentication-Results: gmail.com; dkim=none (message not signed)
- header.d=none;gmail.com; dmarc=none action=none header.from=nvidia.com;
+ bh=5hKFlVOvvAEUMYYqHC46rGoO2yr2jaX6XD3Mf4IFKz8=;
+ b=a+WsUo70tF3Mq0bTszBdNCTh/WpvDkcxXEIi73TrE5kVo40fEMr4FNjMgGvfuRub/Kyo2lwlfhFOvZBH2KfKkT8IiDCaATcUiqOYyz/i9dsNuPbYzOFosgCWpdLtioUxDBPvtV7iYh4QX2/fd9HkEbeNbpoLLzINew1p/w3hq7GtsplQVVrG5NVuCF2Le/5fuLXZ7vI/IMMsLJ3WcLFOjhQlO8v3753mN5CqDKuCbUnxIUMTTDCyd5g8TNp46tvZKCx45Lsf5pWrRYKtBQYbneOxEe67P4vFB7YyYG+8o7uwLvAjaB+NrG4GS6RFAWHb4xtxlSe9HdGlgCC03Skkog==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
 Received: from CO6PR12MB5444.namprd12.prod.outlook.com (2603:10b6:5:35e::8) by
- CO6PR12MB5457.namprd12.prod.outlook.com (2603:10b6:5:355::16) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.4669.11; Mon, 6 Dec 2021 09:55:19 +0000
+ CO6PR12MB5441.namprd12.prod.outlook.com (2603:10b6:303:13b::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4755.20; Mon, 6 Dec
+ 2021 11:38:03 +0000
 Received: from CO6PR12MB5444.namprd12.prod.outlook.com
  ([fe80::ecac:528f:e36c:39d0]) by CO6PR12MB5444.namprd12.prod.outlook.com
  ([fe80::ecac:528f:e36c:39d0%5]) with mapi id 15.20.4755.022; Mon, 6 Dec 2021
- 09:55:19 +0000
-Subject: Re: [PATCH v2 0/8] Host1x context isolation support
-To:     joro@8bytes.org, will@kernel.org, robh+dt@kernel.org,
-        robin.murphy@arm.com
-Cc:     linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Mikko Perttunen <cyndis@kapsi.fi>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        thierry.reding@gmail.com
-References: <20210916143302.2024933-1-mperttunen@nvidia.com>
- <10de82cf-27a5-8890-93a5-0e58c74e5bcc@kapsi.fi>
+ 11:38:03 +0000
+Subject: Re: [PATCH] reset: tegra-bpmp: Revert Handle errors in BPMP response
+To:     Philipp Zabel <p.zabel@pengutronix.de>,
+        Thierry Reding <thierry.reding@gmail.com>
+Cc:     Mikko Perttunen <mperttunen@nvidia.com>,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20211112112712.21587-1-jonathanh@nvidia.com>
+ <3975fcc5ebc31761d513f1961ee054f5fe76431c.camel@pengutronix.de>
 From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <c382fb0e-6b73-5ca0-7f63-d2843351325e@nvidia.com>
-Date:   Mon, 6 Dec 2021 09:55:09 +0000
+Message-ID: <3c3c9bf9-4276-1eec-af65-143f97bcd620@nvidia.com>
+Date:   Mon, 6 Dec 2021 11:37:55 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.14.0
-In-Reply-To: <10de82cf-27a5-8890-93a5-0e58c74e5bcc@kapsi.fi>
+In-Reply-To: <3975fcc5ebc31761d513f1961ee054f5fe76431c.camel@pengutronix.de>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: VI1PR07CA0283.eurprd07.prod.outlook.com
- (2603:10a6:800:130::11) To CO6PR12MB5444.namprd12.prod.outlook.com
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: VI1PR09CA0074.eurprd09.prod.outlook.com
+ (2603:10a6:802:29::18) To CO6PR12MB5444.namprd12.prod.outlook.com
  (2603:10b6:5:35e::8)
 MIME-Version: 1.0
-Received: from [10.26.49.14] (195.110.77.193) by VI1PR07CA0283.eurprd07.prod.outlook.com (2603:10a6:800:130::11) with Microsoft SMTP Server (version=TLS1_2, cipher=) via Frontend Transport; Mon, 6 Dec 2021 09:55:15 +0000
+Received: from [10.26.49.14] (195.110.77.193) by VI1PR09CA0074.eurprd09.prod.outlook.com (2603:10a6:802:29::18) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4755.17 via Frontend Transport; Mon, 6 Dec 2021 11:38:02 +0000
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: b0ed521c-f8a8-4317-5592-08d9b89e82d6
-X-MS-TrafficTypeDiagnostic: CO6PR12MB5457:
-X-Microsoft-Antispam-PRVS: <CO6PR12MB54574CC72F3FB1535F0CB7BCD96D9@CO6PR12MB5457.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:10000;
+X-MS-Office365-Filtering-Correlation-Id: 7cfb70ec-3ea1-4e96-c662-08d9b8acdd34
+X-MS-TrafficTypeDiagnostic: CO6PR12MB5441:EE_
+X-Microsoft-Antispam-PRVS: <CO6PR12MB5441ECFC175C0C0464032D5AD96D9@CO6PR12MB5441.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:5516;
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: kUdvvjnWnYGJffYlgouwPVkuIeReDOsiQXuDRXHyDW93Idoj5O7JFMW8jZ0Eod23MRcVoD1j1J6K+PZliJHpune8Q6Ihegjcx5GXx9KGW5Sc0h++tbaKLKAUdU21aF4SuevjLEGbZT8/sab/lRvCcndxl6HgUcvEWQiIgZID5Ah1D5AijrViOGUx/hQn2CxEwiP0AOwutxYpMVj74VciW49gx1gTToRvW1ZGGSThnb30PamEuKH9ucsVqYXElZBrhbxLdbOu2Aj8JdtP13zcpYJLFcR25KQbIo4bO0OHL/S4Iqxx8pvSY+6aRvVIyT+erYroCAXRyG7+OqGLemr48ExK3tN9JkNQQNWY0IPVxpPtl+ItRkNXQ9z5SOUTAuCGEHJ/O8VU8Yr61Pf1JqZn/xhpToQy5UIYQo/StibPiKWEAXc9CEFfvL+zaSFzQ0xW0aZj3kD2Y0vsFjv1KFkWh7gzl76ciHfi4YTv9UvW92b70LyprstAOgoRSKTSQzYnXeTe577x7UJUhMiR7zh7cWyzZYhfds4RoAS75g0QtGNTluNmAFM5Lq5yqrVsih2kiBeaw1scWZ0YrfhK7q8Xsc36UzY7v/0q9VfoO746rGZeqXnryfZUz01LL0EL0tC8WeAQDIepMusoEboNmlWjX3ihKV3GeWRChDovOQ64p1oq33+Fobl430I9Ffw4JGSl1QDZ7mTxuKQSPheM9YFYELQzPkkyuA573GUOvgrgGQgBAVNadux8CC6jKXhvgHgxyvwppWFHkC0hzDGdj3/aHhBGXs8nNP7ouurQWGPO69g=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR12MB5444.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(86362001)(66946007)(83380400001)(38100700002)(6486002)(956004)(2906002)(36756003)(508600001)(2616005)(31686004)(66556008)(31696002)(8936002)(66476007)(8676002)(55236004)(316002)(4326008)(16576012)(7416002)(54906003)(53546011)(6666004)(26005)(186003)(5660300002)(32563001)(45980500001)(43740500002)(357404004);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: Bhl5lPFOVNXcLcfZPRvuG9rgC5G86CWtwrNui3dNy/DT/uUVav819x3Hra1Itxc2Wyjj8jauWb6TQcAOcPEA85aAMIQH3bZU32fQvwG8nfImrB3Rt+bYKIbBbnFLz1R+OlsT3i2Eh0ZImw890+T4LVaHov3+Y8tlGM7WYN14xJj8L6BvgcvGovNuF8pNgbh88RfLDHQ2oM2+Fsd8xV/dPphDW9uuC6QdohgdcY1VWEG7PBp1NEm446sRA2ez8RCww39Wvt08Wof1OykfLgCEGwjZ5dBJMbg2uvC9cQVr74rXj9nfQtJQfqe2F+WZJ6SRcVIJsUQLiuhQgTr+THom2tKRGgjzA5DZrhDsoVDuwHtMeSELzDz0Fji21eQW7t9skssvpLC1xBXZRHQ5m2B2oDWDFueDlj6Y8VUsPfSd87zQasbxlydg12BjXOsnQBZ0C2FTu0zIPK/mUuOp6hux2xVpUVgCF1H9ybxJfcIwu9ccNeArEgAgkBQbWB0CJC6t+DzH9RCQzaDLgXfTPtj3SNLpCgwHSKpszPg/2JlvtK6tePlvc/uGzDZxjOITe9Ff6MwsVuhavVUGRtDh7zG+4QlVS0//cHh07IGCiL7DR1/PkfMDzfwBeCtpKN+bhSlSpPgbvba2bwksMlfkS1cwIOJN06MQ306psa2Dy+qe9+5xeRS6BLiuDDRVqvDzjsSNbNPAoZFFUZkFVE8PQZaRP90xfRRRqliy2tvcrh8ze0wwmvbbBHlkInyIBV7vVwG8
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR12MB5444.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(6486002)(4326008)(16576012)(53546011)(66556008)(6666004)(66946007)(66476007)(31686004)(8676002)(55236004)(5660300002)(110136005)(316002)(2906002)(508600001)(4001150100001)(2616005)(4744005)(86362001)(956004)(31696002)(26005)(8936002)(38100700002)(36756003)(186003)(45980500001)(43740500002);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?cm9PZ3IvNXBnUVdVcG11NXRZYnFWeXZCT01QSUVadFBlVUZhZ0dEcGJVY3ho?=
- =?utf-8?B?NDJHSURJVzZjKythK04xcVNoNGtHVFdiMUkxTkhWQkFzS1FGOGdRc3BnOFhT?=
- =?utf-8?B?R2xENmVSQURhYm1VVkdqcVFaV2hXMVRMck1xejFCK2FjeXlzQStGdnNPcjIr?=
- =?utf-8?B?V0RlYXMrazVsZ0FnRm9WenA3NkZZKzl2WGVKRFAvZGVQNXVxK2JPVzVVYVlv?=
- =?utf-8?B?TmhaY1dWQXBCNGFtWEZyZk9DUEJSNk04NUJlTGQ0K3FaUUxTWFBWKzQ5N0xj?=
- =?utf-8?B?N21CZ3FmcWxHQWp6Wkw2SkJZUGZzdFMrMWxxamx4VUEwTjcxZWkyV2ZFL1hT?=
- =?utf-8?B?T3dIYkE1YTVDODZiL1pJc2VsYUd5RTc3MkZHdSs3NDRxMVNnazRySnJ2UzN3?=
- =?utf-8?B?bnhwY3I3ZXRkUzhFUi9JQWdxYS8xcCtvL0lxMWxNK0NJdEozS1M4YU9QeGgx?=
- =?utf-8?B?eHJIY2w5SlJUbzM0bE1lOWZKOVBFV0hFN0IwV05tZkZXQkJINlVndW5zeFdr?=
- =?utf-8?B?VmhnbFl2V2lMejVqR2J0aFdkY3ZZL0EwbjVkQ2dtdkROVExJbTM5L3RTSzZL?=
- =?utf-8?B?MExJWUowdmxpeExDd3VnUVY4SXlydlRqREpNdUZrbVg1L05rTUtnRXRONjQz?=
- =?utf-8?B?SnJqMGdsVEFkRTVmVHJSQmpRS1dlMzkxTmF2a0pFVjQ5L3JCU2hNRjZwUEZJ?=
- =?utf-8?B?NFFXT0p5K0RGb08yZmtZeWR5Y0hweW95ZTh4eGFSVkRaVDNPaTR4VnlPd3dW?=
- =?utf-8?B?cGlObjl3U1BCOSs1QUlOZHdBY2NSdlVvbGh6bC9FTFdEYmZDdisyMjlqaXd2?=
- =?utf-8?B?UmdkeTFMSksyYlpkN0J6cG9WVURuK21tNzY5L2FQUWs1am9qTW1EMXVuZnQ3?=
- =?utf-8?B?MEFvUXlwN3pMUWNmZ29Rc2RFaFc0MHF0OVRDN1hGNEpSVU5zaXlxQVZYVXJp?=
- =?utf-8?B?bUtDUWJRSDV6R2ltWVhxK2F2VDdzcjJVQUpnR3RGMm0vOFMxTWJyTmQvRTU1?=
- =?utf-8?B?Wnk3ck9pWEZQTjc4ZUpydGhYVWJLalRGSWRHYzN5OTJrTEd1T0tLUUl3Skpj?=
- =?utf-8?B?akRaQXNZdnQ1MWFWZ2JPUEhHcm5JV3NuL2J2VjMrQStiZ0J2TG5aZFplamFH?=
- =?utf-8?B?M3hMWjl2ZlpKSW10aEZhaG1XZG5jM21mNldscTUvbXNGaldJL3hJVUh1aGJk?=
- =?utf-8?B?UWx5V3VMbzVtVW9CT3BaU0xwbjlxeGYrenBQK0hiV3V0c3dlMU1NbHRWK2VW?=
- =?utf-8?B?UUdJSnBhT01YUzBrM3FoN3RVRThEMFZSeUNJQXFtR0RKbXdRSFNGVDFLQm55?=
- =?utf-8?B?TWVENURLUGVYdkhVOEdXZ1pvdk5HcHJCaWs4c3cxelhmS2duZDM5bG1USVFR?=
- =?utf-8?B?VkVGQWVvYlJreUhlYzNMMUJrNko1dmlxY3A3eGdES3JHbC9zczVZQXkwRDAw?=
- =?utf-8?B?WjlEenoySTN6TzBEcG9KcnhtUXllT3E3WGZ6VXByM1NuT1pUdzVhUGYyZ3lh?=
- =?utf-8?B?VmNVNFF6dGF4UEdhYnhuemNFNVJob0piTVJpOW4waldPaEp4WkNMWVZnQ0pL?=
- =?utf-8?B?Vzk0aFZTNytoOU1tNFpMNjJBOUNNRUw4OVliRHQ3Z1YzK001MUlvMHZ5bU5E?=
- =?utf-8?B?SGxwa21tRDNVcWwxdHc4cWN2U25BcCsyRk1mVkJkeTRyMlg2NXJFcXlQaHpO?=
- =?utf-8?B?dkRPTmhDakFvUStRSHptUnprbXNDNTc3RVVCa1dqVnFPVmxub0h5Qm1Mb1JB?=
- =?utf-8?B?dHlNTFFWTTJIb3JydlJJVnR6L0w1VlJhUDFVbG1nVFovQzY2UU5yUVJJSFhR?=
- =?utf-8?B?ZXpHZ2V1ZFZwRVAvamtLNHhCaFRkMEdlOEhWd1czM1Bkd3FDcFRqZ0hUQ09Y?=
- =?utf-8?B?K1ZqUnJ1M3BTV2UyYnUyUmJ6VFZmY2d3RmN5R0VvRWU3S1YvaEZ6QkVhN2M5?=
- =?utf-8?B?bE5jaVVlZXRWS1JlME1SWXNnMllxdk5NR3ZORHBiWGRYQW5GNGpYOFdkZjEx?=
- =?utf-8?B?VjRDWCtybFBvb0NZd2g1ZUUydVVwSlByNk1wTkIrYitROFYzTzA4RFN0ZXU5?=
- =?utf-8?B?SldPNW5Cb0g0QzBJcm5XcXQxNjlnSzFqY2VtOEtocllaQUgrOVplN2o5UVNJ?=
- =?utf-8?B?S3U3SitLbmhBREZPU2Y3YjJLeTloUHUxYmlpL1FkVFd6NSt2VXpiVFZoZHpm?=
- =?utf-8?Q?1eOwKwSPgfVsGBwiSiVZrUY=3D?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?eG5lK1oxRGFnSU1EcDRMUEEvUktwWk55eFE3WklYNG83ZGdGU1RhVTZsVEl6?=
+ =?utf-8?B?dXQxd0tpdSsrRXpKU1Rya1VuN3FNamc1K25IQXV1YjNSeStEM3pOY20xbzFv?=
+ =?utf-8?B?enQwQ0FwcEFuWHFrQ25SVXdQcXJwUFFzQTRSMUtUZ2JINlZ3N0cvazAxdklH?=
+ =?utf-8?B?bjBmekJtdFdzK0V0dGdMb2ZaQXFGc1VuU2ZnWklPQVlhMkwyM09uem9SZzFt?=
+ =?utf-8?B?d3JpUG9sOGlDc1VBcUhTWnhCN3d3QkxyYnVCdVBGNDE0d2FDbFM3WDFyaTQr?=
+ =?utf-8?B?cnRYdzhaV1paWDVDbTlHaVF4ZnA5WFgyRTZIVGNncFJHZUZQSnpReWNuMmhO?=
+ =?utf-8?B?K2ZKOCtIVFVYaEdjeW80eW92eVFuYWt2eitWcmU0aG1laTV4UUs1ZVlIUFFG?=
+ =?utf-8?B?ckN0dnhMSC8zYk0vc2gxMlhzb09JbkNOVXo5S3hqODIwbmJTNFFtNlhOQldL?=
+ =?utf-8?B?V3hCV09hdzZuQjkzc0JNNHJnVHBTQWNrRUFCdG4xamtSUW5jUjh3T3hZZkRF?=
+ =?utf-8?B?bzhKM1Mzc1JSdWZDb0JjZGE0K1ZLRnhDakRHV2JONTFYVzY5ZzQ5ZFd5d2FF?=
+ =?utf-8?B?dEorbDBmTXlZV2tKdHlvTU0wajhJUTRkOU0yZkZHeUx3VmZEM3BBUVcyRVNW?=
+ =?utf-8?B?alc5Y2w1SjRZZjVIMjRsT3FoRXpKdWE0c3lyRUQ4RVVNVW13SEs2YmJTZi9Z?=
+ =?utf-8?B?Tk5WSXF3WFBzVk1zT1BhRnhneHA4ZDZaMEE4VUJpUVRlSUhHaVhqMW1mM3lQ?=
+ =?utf-8?B?YTlha2Z6eUdoTHIrTWJCbjVPUFBxT3ZOblhQYWRQTFB1T09QYU0yUFNycmJ2?=
+ =?utf-8?B?eDdUWVZnR1ZQRUlsQTlGY2hQZnJHQVRWcGYzWmRTTFQ3YjREa0FpUFFkekhy?=
+ =?utf-8?B?cWVGTlFlOXZrZzhFWlJrT0RjaGdKYnBDQUNJNDd2bzMzRlVuL0xKSGpKNVd5?=
+ =?utf-8?B?U21NRGVhTWZENU9GbHBNNEtVV0Z4aE05eEFLRkZIenFLS0R1V2FPcEd2Qjc3?=
+ =?utf-8?B?WVFkMjJCRTdWOVlVbE42T2VidUx0K2crL3EwZnNnOVA4MjhVV0g5QldVYWY3?=
+ =?utf-8?B?VVVhaDYva3gwM1YzYU1lbFJCbE00TnYwNldhdjRiTkR2c2J4NkxLZCtTMkxy?=
+ =?utf-8?B?amVwWmFBYmE2NmI5b0tmQnU2WGorYnJsZkd0cllydFZQZGc2U1d1bFhDRFRK?=
+ =?utf-8?B?dGxUV2NxWFlqWml1c05CKzhBalk5MThhTEdwck41a1VHSU9xTDdmeWFSYWw1?=
+ =?utf-8?B?Q3FuQlcxcitMNE9EQ0JOK2NxT2RpMXdpNjVJYmhtczYzMjYzQzhOakRQUTdT?=
+ =?utf-8?B?a3ZCNDg5dFZCOXJWZzdvQWF6YS80SHNmaTNUZGxTenRkMVcwZlRmaGN0K0FU?=
+ =?utf-8?B?VVQ2aml1aXA0eSsvN0x6eUYreDkwZmgyOXlvandWMHpuWkdpMEVBVnQ5K2JH?=
+ =?utf-8?B?KzRvMUZwYm81dUIxanQ4M2xCd250RzdpSjJ5dlpXbUNlTDZnT05UL1crdHFH?=
+ =?utf-8?B?eVZ2WjJDRTRCL1ErdjZEUWFvOXhoWmlCU1MrNFdPdlpWSkptOHdwZStCWGdh?=
+ =?utf-8?B?NVE4akxrb2RKcjI3MnFpSUozdVc3YWZKZnpJZXVNakFvUXlibjFEYko1NXl3?=
+ =?utf-8?B?SDN0WEhYNXN3NzVYTHV5Znl3WEh1LzYxakptQmxvMGh6c2tKNWd6K1pXWXJP?=
+ =?utf-8?B?TzhMdmdlZStoOHBLT1dNYU43UTdoWWdBaHVGcUhvbkRlN1NGZlB1cW9aL0x4?=
+ =?utf-8?B?Mk9idlZOMlloRjB2M1htSFN5SFBaN3dacVI1YnNwdGYzTCtkNnZpRllnTUpT?=
+ =?utf-8?B?NGsvMkNrcmx4eVhpMEtxU2ZiYkpSZVRuckNGTDFSMzZuNzNicEFvaGtQOFRW?=
+ =?utf-8?B?bmt1alpxOGhISUsxcGRqZXJqR3ZHbGhxMW03bDJnOUVLbmRna2NYUGdjWTBh?=
+ =?utf-8?B?Sy9KamxQUzFwVFpsV2tGVHlVZVdjTThaMkdIWEgvRkZXV2pJOXpQTmNySXRk?=
+ =?utf-8?B?TFZyb0JYWTRUcU5QRFRta1FWaHk0MlBvVFN2ejBtQjZxOCt1aVdwRE5aQjBY?=
+ =?utf-8?B?SjhLbzk5VTgvRFhwcWxmY0dMOGQ1emh0QVJmaHpCRjNER295OUFkNEtESnNn?=
+ =?utf-8?B?MHZDbCs5a001QjQrVklSNmE2U0N0bDgwMXJVTkE1bHArV0Q5dFQ3Rk16aWpz?=
+ =?utf-8?Q?blNPzQo5vkEBdQWUJ1XSulc=3D?=
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b0ed521c-f8a8-4317-5592-08d9b89e82d6
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7cfb70ec-3ea1-4e96-c662-08d9b8acdd34
 X-MS-Exchange-CrossTenant-AuthSource: CO6PR12MB5444.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Dec 2021 09:55:19.3315
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Dec 2021 11:38:03.6736
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: OtbvDo+wjHKJEbk0XCITUl8jRFiKTRxRc4W2iGvLHnK5ZsJeRkJuZSaDuKNjDN51+Ci8q055zizRrUQIdtuzGg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO6PR12MB5457
+X-MS-Exchange-CrossTenant-UserPrincipalName: mjxLxN0LMMx8rx9G9VOnBZegWFylSGNvMRV3eWLnV6hLnDamyGuqgjQgGPzIql+UDK3/0HM0b/RrolZBBR5yDw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO6PR12MB5441
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Will, Joerg, Rob,
+Hi Philipp,
 
-On 08/11/2021 10:36, Mikko Perttunen wrote:
-> On 9/16/21 5:32 PM, Mikko Perttunen wrote:
->> Hi all,
+On 17/11/2021 16:23, Philipp Zabel wrote:
+> On Fri, 2021-11-12 at 11:27 +0000, Jon Hunter wrote:
+>> Commit c045ceb5a145 ("reset: tegra-bpmp: Handle errors in BPMP
+>> response") fixed an issue in the Tegra BPMP error handling but has
+>> exposed an issue in the Tegra194 HDA driver and now resetting the
+>> Tegra194 HDA controller is failing. For now revert the commit
+>> c045ceb5a145 ("reset: tegra-bpmp: Handle errors in BPMP response")
+>> while a fix for the Tegra HDA driver is created.
 >>
->> ***
->> New in v2:
->>
->> Added support for Tegra194
->> Use standard iommu-map property instead of custom mechanism
->> ***
->>
->> this series adds support for Host1x 'context isolation'. Since
->> when programming engines through Host1x, userspace can program in
->> any addresses it wants, we need some way to isolate the engines'
->> memory spaces. Traditionally this has either been done imperfectly
->> with a single shared IOMMU domain, or by copying and verifying the
->> programming command stream at submit time (Host1x firewall).
->>
->> Since Tegra186 there is a privileged (only usable by kernel)
->> Host1x opcode that allows setting the stream ID sent by the engine
->> to the SMMU. So, by allocating a number of context banks and stream
->> IDs for this purpose, and using this opcode at the beginning of
->> each job, we can implement isolation. Due to the limited number of
->> context banks only each process gets its own context, and not
->> each channel.
->>
->> This feature also allows sharing engines among multiple VMs when
->> used with Host1x's hardware virtualization support - up to 8 VMs
->> can be configured with a subset of allowed stream IDs, enforced
->> at hardware level.
->>
->> To implement this, this series adds a new host1x context bus, which
->> will contain the 'struct device's corresponding to each context
->> bank / stream ID, changes to device tree and SMMU code to allow
->> registering the devices and using the bus, as well as the Host1x
->> stream ID programming code and support in TegraDRM.
->>
->> Device tree bindings are not updated yet pending consensus that the
->> proposed changes make sense.
->>
->> Thanks,
->> Mikko
->>
->> Mikko Perttunen (8):
->>    gpu: host1x: Add context bus
->>    gpu: host1x: Add context device management code
->>    gpu: host1x: Program context stream ID on submission
->>    iommu/arm-smmu: Attach to host1x context device bus
->>    arm64: tegra: Add Host1x context stream IDs on Tegra186+
->>    drm/tegra: falcon: Set DMACTX field on DMA transactions
->>    drm/tegra: vic: Implement get_streamid_offset
->>    drm/tegra: Support context isolation
->>
->>   arch/arm64/boot/dts/nvidia/tegra186.dtsi  |  12 ++
->>   arch/arm64/boot/dts/nvidia/tegra194.dtsi  |  12 ++
->>   drivers/gpu/Makefile                      |   3 +-
->>   drivers/gpu/drm/tegra/drm.h               |   2 +
->>   drivers/gpu/drm/tegra/falcon.c            |   8 +
->>   drivers/gpu/drm/tegra/falcon.h            |   1 +
->>   drivers/gpu/drm/tegra/submit.c            |  13 ++
->>   drivers/gpu/drm/tegra/uapi.c              |  34 ++++-
->>   drivers/gpu/drm/tegra/vic.c               |  38 +++++
->>   drivers/gpu/host1x/Kconfig                |   5 +
->>   drivers/gpu/host1x/Makefile               |   2 +
->>   drivers/gpu/host1x/context.c              | 174 ++++++++++++++++++++++
->>   drivers/gpu/host1x/context.h              |  27 ++++
->>   drivers/gpu/host1x/context_bus.c          |  31 ++++
->>   drivers/gpu/host1x/dev.c                  |  12 +-
->>   drivers/gpu/host1x/dev.h                  |   2 +
->>   drivers/gpu/host1x/hw/channel_hw.c        |  52 ++++++-
->>   drivers/gpu/host1x/hw/host1x06_hardware.h |  10 ++
->>   drivers/gpu/host1x/hw/host1x07_hardware.h |  10 ++
->>   drivers/iommu/arm/arm-smmu/arm-smmu.c     |  13 ++
->>   include/linux/host1x.h                    |  21 +++
->>   include/linux/host1x_context_bus.h        |  15 ++
->>   22 files changed, 488 insertions(+), 9 deletions(-)
->>   create mode 100644 drivers/gpu/host1x/context.c
->>   create mode 100644 drivers/gpu/host1x/context.h
->>   create mode 100644 drivers/gpu/host1x/context_bus.c
->>   create mode 100644 include/linux/host1x_context_bus.h
->>
+>> Fixes: c045ceb5a145 ("reset: tegra-bpmp: Handle errors in BPMP response")
+>> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 > 
-> IOMMU/DT folks, any thoughts about this approach? The patches that are 
-> of interest outside of Host1x/TegraDRM specifics are patches 1, 2, 4, 
-> and 5.
+> Thank you, applied to reset/fixes.
 
 
-Any feedback on this?
+I see this has not been picked up yet for v5.16 and so I just wanted to 
+check that you are planning to submit for v5.16.
 
+Thanks!
 Jon
 
 -- 
