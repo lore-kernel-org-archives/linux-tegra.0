@@ -2,135 +2,221 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59988C433FE
-	for <linux-tegra@archiver.kernel.org>; Sun,  5 Dec 2021 00:06:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B797C433EF
+	for <linux-tegra@archiver.kernel.org>; Mon,  6 Dec 2021 09:55:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229504AbhLEAJr (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 4 Dec 2021 19:09:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47262 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229715AbhLEAJp (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Sat, 4 Dec 2021 19:09:45 -0500
-Received: from mail-oi1-x236.google.com (mail-oi1-x236.google.com [IPv6:2607:f8b0:4864:20::236])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D6CFC061354
-        for <linux-tegra@vger.kernel.org>; Sat,  4 Dec 2021 16:06:19 -0800 (PST)
-Received: by mail-oi1-x236.google.com with SMTP id be32so13713258oib.11
-        for <linux-tegra@vger.kernel.org>; Sat, 04 Dec 2021 16:06:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=aLM7Vzy6+wcFi2+uw4mY6eHdc1c6QIPZ2YzBFSeQVDk=;
-        b=oypqQM9WYczOUD8yOv4W0b0J4SdrSIP2/GWFE4TR5k1CGEkHNy9WPiO008zNzsg3Pz
-         zh9bUtf/VG6/b3zJ480BiJtwEa7PuEjsHQIWuEsggMdMqcZfJwsOE3iFtiG2DEPADAsO
-         hqFPrgRv7CWtgQ4J5ZJRkR9iA1oQHlUoWYY8QDKpr7VM+f+8Yrryge0w8oCSslRvNp+6
-         exKWbX0iHLd50+WQaM9fAnPeBnEozwwfUcCOKBUJC5pSMVg0d33S/UEK3rrGtAaDpFWu
-         Uv4am7V67+qDJ2gKBQwHEmdYiUOqE7eMf4wLG94y+RQ3YPpVsZKN31tRHAbmVgDqfwLj
-         frKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=aLM7Vzy6+wcFi2+uw4mY6eHdc1c6QIPZ2YzBFSeQVDk=;
-        b=757DcblkylzTaKyAW1kOpfJjLVcErneaNcrd6Kf5EjG7PL9X5tuGLDygh8CsHLugCr
-         eGnOWvtqaPNPrVAmluhYyR3tRCvLovdF2A1zBtQ3/lr1UAWbalbYf/xY37tK/+wV5sUv
-         SJNJ96hGANSjV520tmXvG1NpX7J17vfLS4PMlD3iJjXVOQUVsMe9k6++R5VDQGYb7OLw
-         FXtz+YlN5NKUNgtLnEOFHfrRgTbamS9iQOiEJ1sQdZd8MJ4Rkxf6bEAnDCmHZXhbaVwt
-         1IoGV6qTFZr+yGvp5gGMjc/LHIoSNT62d+QRO0R81BHzYn5PisSC2rFVkDXB6YcUsTee
-         S8Iw==
-X-Gm-Message-State: AOAM532itsRxisNZlxaAZmyf/Zpk43qSIvT1RNv3xX0C0n4B2BaSlVKJ
-        KtaQNB/GxNYghW4s0FgiueeWemas/w/wxP9LTLP5hQ==
-X-Google-Smtp-Source: ABdhPJy/aeGs123LiAIPsyMW3EdsawUgHdqxl5iex8vMswm1x7JAmAebxj9z1jBeNmQdoS/RXvDPX+AOcq/DNJTtHIA=
-X-Received: by 2002:aca:120f:: with SMTP id 15mr16602417ois.132.1638662778472;
- Sat, 04 Dec 2021 16:06:18 -0800 (PST)
+        id S241569AbhLFJ6x (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 6 Dec 2021 04:58:53 -0500
+Received: from mail-bn8nam08on2045.outbound.protection.outlook.com ([40.107.100.45]:51017
+        "EHLO NAM04-BN8-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S241537AbhLFJ6w (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 6 Dec 2021 04:58:52 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=YBkYViaiGnbDzfoTvkz7SrsvEsiPoXjYqNkVqLkOdf18b/rYFPzDs8WlQXYj7SrErRpi8OlaYilCPZjrvgnCgK/OdpRBTQA8/KVFqkfrBJBGsO9ceeQgYYEBitHlVzERSxbU6uzlfCZnzjL5uH0WJEifBgn9OVqW7PUIl+b2ABFHocME7Wu/bskR6i0waxW79fgnYVu6FYEnnyDq3LcI7egMxo+mmnDvxkDx9lODq0JlRvtqLlNyDGvoO4pZv9TQq6j2vTvr7TDmZFOFR07mBhipt8NLJC4YcpHbZ0liNZ+WBMzA64vHx9gCLv5nLa3u/OYHWxNFdE8j63qoiuNozQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=5QTjCuoHORsIaYoDA38EAYujltYQA5bCxi4W2CzFP50=;
+ b=gM6MCu7eplmoNDBHzJQU9YB7JmFd89URusbcDPqxusDFzNlIIBIurAtE2++Kl5iwprPdtYxC6SqKnYdQ2Ey+k6hAKdWL2ppON+XoaOf//F+yP2Um9NI/1o/giKx+UWXuLy/qxnGVkwPM7N17y5po+kEKad3xSQ3d0QwGJUaMjBAsaw1ePQIQs94PJNQulduYKoddsVAPfwv2KpdJk3uTQJbD7tdyzhPMqproKO1mbtNXRdZwaBIhzwyRxo/ExRtg8rl0CtjKRE08P41sEjh1apTrnxbwuSjRVAviLyrvOBifFym/u1i2MGledAAhkR5UUHkh8Ue0K8wGU9j4tv+Uwg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=5QTjCuoHORsIaYoDA38EAYujltYQA5bCxi4W2CzFP50=;
+ b=kNps0xHo7R2Nd4LFsEgK08J0qS+VhJ3lCoCgzgTr/V4gG81Pe198IbRRxtRcKAp9o34pYnSgq5xZ63TsLGLgxZ2+cLPIAa6lQdBx7Ex4hzprJl+kz12D9tUIy0L1CeXW/jqrqnUzJ8xZAPPYOZEkxlk4t53w0ctRU8TWDiBaNa1BQtxgsjEaaniiTcRFRrNR+O63wqXpQ9e0yhmSyK51EmLoP7045Bt1QV5sH2WdT74LNPLInZbPMJp05Tr9YRsEvM1Xx/xsd6DugX58RKf2igq4jQ4GkCLvNG8zCuSTymB9LZ4FkMZjkjvPNEOf1JN/D5iCXZJS280Hi5HQGF2Dvw==
+Authentication-Results: gmail.com; dkim=none (message not signed)
+ header.d=none;gmail.com; dmarc=none action=none header.from=nvidia.com;
+Received: from CO6PR12MB5444.namprd12.prod.outlook.com (2603:10b6:5:35e::8) by
+ CO6PR12MB5457.namprd12.prod.outlook.com (2603:10b6:5:355::16) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.4669.11; Mon, 6 Dec 2021 09:55:19 +0000
+Received: from CO6PR12MB5444.namprd12.prod.outlook.com
+ ([fe80::ecac:528f:e36c:39d0]) by CO6PR12MB5444.namprd12.prod.outlook.com
+ ([fe80::ecac:528f:e36c:39d0%5]) with mapi id 15.20.4755.022; Mon, 6 Dec 2021
+ 09:55:19 +0000
+Subject: Re: [PATCH v2 0/8] Host1x context isolation support
+To:     joro@8bytes.org, will@kernel.org, robh+dt@kernel.org,
+        robin.murphy@arm.com
+Cc:     linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Mikko Perttunen <cyndis@kapsi.fi>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        thierry.reding@gmail.com
+References: <20210916143302.2024933-1-mperttunen@nvidia.com>
+ <10de82cf-27a5-8890-93a5-0e58c74e5bcc@kapsi.fi>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <c382fb0e-6b73-5ca0-7f63-d2843351325e@nvidia.com>
+Date:   Mon, 6 Dec 2021 09:55:09 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
+In-Reply-To: <10de82cf-27a5-8890-93a5-0e58c74e5bcc@kapsi.fi>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: VI1PR07CA0283.eurprd07.prod.outlook.com
+ (2603:10a6:800:130::11) To CO6PR12MB5444.namprd12.prod.outlook.com
+ (2603:10b6:5:35e::8)
 MIME-Version: 1.0
-References: <20211202210839.79140-1-andriy.shevchenko@linux.intel.com>
-In-Reply-To: <20211202210839.79140-1-andriy.shevchenko@linux.intel.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Sun, 5 Dec 2021 01:06:07 +0100
-Message-ID: <CACRpkdZbpKqG_uS2N8TW2-HL5CqnuKDpHVCabf66MyQQof0jOw@mail.gmail.com>
-Subject: Re: [PATCH v1 1/3] gpio: Get rid of duplicate of_node assignment in
- the drivers
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Marc Zyngier <maz@kernel.org>,
-        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-        Sergio Paracuellos <sergio.paracuellos@gmail.com>,
-        Chunyan Zhang <chunyan.zhang@unisoc.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Baruch Siach <baruch@tkos.co.il>,
-        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>, Tony Lindgren <tony@atomide.com>,
-        Nicolas Saenz Julienne <nsaenz@kernel.org>,
-        Jianqun Xu <jay.xu@rock-chips.com>,
-        Alexandru Ardelean <aardelean@deviqon.com>,
-        Thierry Reding <treding@nvidia.com>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        patches@opensource.cirrus.com,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-power@fi.rohmeurope.com,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-pwm@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-unisoc@lists.infradead.org,
-        linux-rockchip@lists.infradead.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-tegra@vger.kernel.org, Ray Jui <rjui@broadcom.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Gregory Fong <gregory.0xf0@gmail.com>,
-        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
-        Keerthy <j-keerthy@ti.com>, Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang7@gmail.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
+Received: from [10.26.49.14] (195.110.77.193) by VI1PR07CA0283.eurprd07.prod.outlook.com (2603:10a6:800:130::11) with Microsoft SMTP Server (version=TLS1_2, cipher=) via Frontend Transport; Mon, 6 Dec 2021 09:55:15 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: b0ed521c-f8a8-4317-5592-08d9b89e82d6
+X-MS-TrafficTypeDiagnostic: CO6PR12MB5457:
+X-Microsoft-Antispam-PRVS: <CO6PR12MB54574CC72F3FB1535F0CB7BCD96D9@CO6PR12MB5457.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:10000;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: kUdvvjnWnYGJffYlgouwPVkuIeReDOsiQXuDRXHyDW93Idoj5O7JFMW8jZ0Eod23MRcVoD1j1J6K+PZliJHpune8Q6Ihegjcx5GXx9KGW5Sc0h++tbaKLKAUdU21aF4SuevjLEGbZT8/sab/lRvCcndxl6HgUcvEWQiIgZID5Ah1D5AijrViOGUx/hQn2CxEwiP0AOwutxYpMVj74VciW49gx1gTToRvW1ZGGSThnb30PamEuKH9ucsVqYXElZBrhbxLdbOu2Aj8JdtP13zcpYJLFcR25KQbIo4bO0OHL/S4Iqxx8pvSY+6aRvVIyT+erYroCAXRyG7+OqGLemr48ExK3tN9JkNQQNWY0IPVxpPtl+ItRkNXQ9z5SOUTAuCGEHJ/O8VU8Yr61Pf1JqZn/xhpToQy5UIYQo/StibPiKWEAXc9CEFfvL+zaSFzQ0xW0aZj3kD2Y0vsFjv1KFkWh7gzl76ciHfi4YTv9UvW92b70LyprstAOgoRSKTSQzYnXeTe577x7UJUhMiR7zh7cWyzZYhfds4RoAS75g0QtGNTluNmAFM5Lq5yqrVsih2kiBeaw1scWZ0YrfhK7q8Xsc36UzY7v/0q9VfoO746rGZeqXnryfZUz01LL0EL0tC8WeAQDIepMusoEboNmlWjX3ihKV3GeWRChDovOQ64p1oq33+Fobl430I9Ffw4JGSl1QDZ7mTxuKQSPheM9YFYELQzPkkyuA573GUOvgrgGQgBAVNadux8CC6jKXhvgHgxyvwppWFHkC0hzDGdj3/aHhBGXs8nNP7ouurQWGPO69g=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR12MB5444.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(86362001)(66946007)(83380400001)(38100700002)(6486002)(956004)(2906002)(36756003)(508600001)(2616005)(31686004)(66556008)(31696002)(8936002)(66476007)(8676002)(55236004)(316002)(4326008)(16576012)(7416002)(54906003)(53546011)(6666004)(26005)(186003)(5660300002)(32563001)(45980500001)(43740500002)(357404004);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?cm9PZ3IvNXBnUVdVcG11NXRZYnFWeXZCT01QSUVadFBlVUZhZ0dEcGJVY3ho?=
+ =?utf-8?B?NDJHSURJVzZjKythK04xcVNoNGtHVFdiMUkxTkhWQkFzS1FGOGdRc3BnOFhT?=
+ =?utf-8?B?R2xENmVSQURhYm1VVkdqcVFaV2hXMVRMck1xejFCK2FjeXlzQStGdnNPcjIr?=
+ =?utf-8?B?V0RlYXMrazVsZ0FnRm9WenA3NkZZKzl2WGVKRFAvZGVQNXVxK2JPVzVVYVlv?=
+ =?utf-8?B?TmhaY1dWQXBCNGFtWEZyZk9DUEJSNk04NUJlTGQ0K3FaUUxTWFBWKzQ5N0xj?=
+ =?utf-8?B?N21CZ3FmcWxHQWp6Wkw2SkJZUGZzdFMrMWxxamx4VUEwTjcxZWkyV2ZFL1hT?=
+ =?utf-8?B?T3dIYkE1YTVDODZiL1pJc2VsYUd5RTc3MkZHdSs3NDRxMVNnazRySnJ2UzN3?=
+ =?utf-8?B?bnhwY3I3ZXRkUzhFUi9JQWdxYS8xcCtvL0lxMWxNK0NJdEozS1M4YU9QeGgx?=
+ =?utf-8?B?eHJIY2w5SlJUbzM0bE1lOWZKOVBFV0hFN0IwV05tZkZXQkJINlVndW5zeFdr?=
+ =?utf-8?B?VmhnbFl2V2lMejVqR2J0aFdkY3ZZL0EwbjVkQ2dtdkROVExJbTM5L3RTSzZL?=
+ =?utf-8?B?MExJWUowdmxpeExDd3VnUVY4SXlydlRqREpNdUZrbVg1L05rTUtnRXRONjQz?=
+ =?utf-8?B?SnJqMGdsVEFkRTVmVHJSQmpRS1dlMzkxTmF2a0pFVjQ5L3JCU2hNRjZwUEZJ?=
+ =?utf-8?B?NFFXT0p5K0RGb08yZmtZeWR5Y0hweW95ZTh4eGFSVkRaVDNPaTR4VnlPd3dW?=
+ =?utf-8?B?cGlObjl3U1BCOSs1QUlOZHdBY2NSdlVvbGh6bC9FTFdEYmZDdisyMjlqaXd2?=
+ =?utf-8?B?UmdkeTFMSksyYlpkN0J6cG9WVURuK21tNzY5L2FQUWs1am9qTW1EMXVuZnQ3?=
+ =?utf-8?B?MEFvUXlwN3pMUWNmZ29Rc2RFaFc0MHF0OVRDN1hGNEpSVU5zaXlxQVZYVXJp?=
+ =?utf-8?B?bUtDUWJRSDV6R2ltWVhxK2F2VDdzcjJVQUpnR3RGMm0vOFMxTWJyTmQvRTU1?=
+ =?utf-8?B?Wnk3ck9pWEZQTjc4ZUpydGhYVWJLalRGSWRHYzN5OTJrTEd1T0tLUUl3Skpj?=
+ =?utf-8?B?akRaQXNZdnQ1MWFWZ2JPUEhHcm5JV3NuL2J2VjMrQStiZ0J2TG5aZFplamFH?=
+ =?utf-8?B?M3hMWjl2ZlpKSW10aEZhaG1XZG5jM21mNldscTUvbXNGaldJL3hJVUh1aGJk?=
+ =?utf-8?B?UWx5V3VMbzVtVW9CT3BaU0xwbjlxeGYrenBQK0hiV3V0c3dlMU1NbHRWK2VW?=
+ =?utf-8?B?UUdJSnBhT01YUzBrM3FoN3RVRThEMFZSeUNJQXFtR0RKbXdRSFNGVDFLQm55?=
+ =?utf-8?B?TWVENURLUGVYdkhVOEdXZ1pvdk5HcHJCaWs4c3cxelhmS2duZDM5bG1USVFR?=
+ =?utf-8?B?VkVGQWVvYlJreUhlYzNMMUJrNko1dmlxY3A3eGdES3JHbC9zczVZQXkwRDAw?=
+ =?utf-8?B?WjlEenoySTN6TzBEcG9KcnhtUXllT3E3WGZ6VXByM1NuT1pUdzVhUGYyZ3lh?=
+ =?utf-8?B?VmNVNFF6dGF4UEdhYnhuemNFNVJob0piTVJpOW4waldPaEp4WkNMWVZnQ0pL?=
+ =?utf-8?B?Vzk0aFZTNytoOU1tNFpMNjJBOUNNRUw4OVliRHQ3Z1YzK001MUlvMHZ5bU5E?=
+ =?utf-8?B?SGxwa21tRDNVcWwxdHc4cWN2U25BcCsyRk1mVkJkeTRyMlg2NXJFcXlQaHpO?=
+ =?utf-8?B?dkRPTmhDakFvUStRSHptUnprbXNDNTc3RVVCa1dqVnFPVmxub0h5Qm1Mb1JB?=
+ =?utf-8?B?dHlNTFFWTTJIb3JydlJJVnR6L0w1VlJhUDFVbG1nVFovQzY2UU5yUVJJSFhR?=
+ =?utf-8?B?ZXpHZ2V1ZFZwRVAvamtLNHhCaFRkMEdlOEhWd1czM1Bkd3FDcFRqZ0hUQ09Y?=
+ =?utf-8?B?K1ZqUnJ1M3BTV2UyYnUyUmJ6VFZmY2d3RmN5R0VvRWU3S1YvaEZ6QkVhN2M5?=
+ =?utf-8?B?bE5jaVVlZXRWS1JlME1SWXNnMllxdk5NR3ZORHBiWGRYQW5GNGpYOFdkZjEx?=
+ =?utf-8?B?VjRDWCtybFBvb0NZd2g1ZUUydVVwSlByNk1wTkIrYitROFYzTzA4RFN0ZXU5?=
+ =?utf-8?B?SldPNW5Cb0g0QzBJcm5XcXQxNjlnSzFqY2VtOEtocllaQUgrOVplN2o5UVNJ?=
+ =?utf-8?B?S3U3SitLbmhBREZPU2Y3YjJLeTloUHUxYmlpL1FkVFd6NSt2VXpiVFZoZHpm?=
+ =?utf-8?Q?1eOwKwSPgfVsGBwiSiVZrUY=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b0ed521c-f8a8-4317-5592-08d9b89e82d6
+X-MS-Exchange-CrossTenant-AuthSource: CO6PR12MB5444.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Dec 2021 09:55:19.3315
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: OtbvDo+wjHKJEbk0XCITUl8jRFiKTRxRc4W2iGvLHnK5ZsJeRkJuZSaDuKNjDN51+Ci8q055zizRrUQIdtuzGg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO6PR12MB5457
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, Dec 2, 2021 at 10:17 PM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
+Will, Joerg, Rob,
 
-> GPIO library does copy the of_node from the parent device of
-> the GPIO chip, there is no need to repeat this in the individual
-> drivers. Remove these assignment all at once.
->
-> For the details one may look into the of_gpio_dev_init() implementation.
->
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+On 08/11/2021 10:36, Mikko Perttunen wrote:
+> On 9/16/21 5:32 PM, Mikko Perttunen wrote:
+>> Hi all,
+>>
+>> ***
+>> New in v2:
+>>
+>> Added support for Tegra194
+>> Use standard iommu-map property instead of custom mechanism
+>> ***
+>>
+>> this series adds support for Host1x 'context isolation'. Since
+>> when programming engines through Host1x, userspace can program in
+>> any addresses it wants, we need some way to isolate the engines'
+>> memory spaces. Traditionally this has either been done imperfectly
+>> with a single shared IOMMU domain, or by copying and verifying the
+>> programming command stream at submit time (Host1x firewall).
+>>
+>> Since Tegra186 there is a privileged (only usable by kernel)
+>> Host1x opcode that allows setting the stream ID sent by the engine
+>> to the SMMU. So, by allocating a number of context banks and stream
+>> IDs for this purpose, and using this opcode at the beginning of
+>> each job, we can implement isolation. Due to the limited number of
+>> context banks only each process gets its own context, and not
+>> each channel.
+>>
+>> This feature also allows sharing engines among multiple VMs when
+>> used with Host1x's hardware virtualization support - up to 8 VMs
+>> can be configured with a subset of allowed stream IDs, enforced
+>> at hardware level.
+>>
+>> To implement this, this series adds a new host1x context bus, which
+>> will contain the 'struct device's corresponding to each context
+>> bank / stream ID, changes to device tree and SMMU code to allow
+>> registering the devices and using the bus, as well as the Host1x
+>> stream ID programming code and support in TegraDRM.
+>>
+>> Device tree bindings are not updated yet pending consensus that the
+>> proposed changes make sense.
+>>
+>> Thanks,
+>> Mikko
+>>
+>> Mikko Perttunen (8):
+>>    gpu: host1x: Add context bus
+>>    gpu: host1x: Add context device management code
+>>    gpu: host1x: Program context stream ID on submission
+>>    iommu/arm-smmu: Attach to host1x context device bus
+>>    arm64: tegra: Add Host1x context stream IDs on Tegra186+
+>>    drm/tegra: falcon: Set DMACTX field on DMA transactions
+>>    drm/tegra: vic: Implement get_streamid_offset
+>>    drm/tegra: Support context isolation
+>>
+>>   arch/arm64/boot/dts/nvidia/tegra186.dtsi  |  12 ++
+>>   arch/arm64/boot/dts/nvidia/tegra194.dtsi  |  12 ++
+>>   drivers/gpu/Makefile                      |   3 +-
+>>   drivers/gpu/drm/tegra/drm.h               |   2 +
+>>   drivers/gpu/drm/tegra/falcon.c            |   8 +
+>>   drivers/gpu/drm/tegra/falcon.h            |   1 +
+>>   drivers/gpu/drm/tegra/submit.c            |  13 ++
+>>   drivers/gpu/drm/tegra/uapi.c              |  34 ++++-
+>>   drivers/gpu/drm/tegra/vic.c               |  38 +++++
+>>   drivers/gpu/host1x/Kconfig                |   5 +
+>>   drivers/gpu/host1x/Makefile               |   2 +
+>>   drivers/gpu/host1x/context.c              | 174 ++++++++++++++++++++++
+>>   drivers/gpu/host1x/context.h              |  27 ++++
+>>   drivers/gpu/host1x/context_bus.c          |  31 ++++
+>>   drivers/gpu/host1x/dev.c                  |  12 +-
+>>   drivers/gpu/host1x/dev.h                  |   2 +
+>>   drivers/gpu/host1x/hw/channel_hw.c        |  52 ++++++-
+>>   drivers/gpu/host1x/hw/host1x06_hardware.h |  10 ++
+>>   drivers/gpu/host1x/hw/host1x07_hardware.h |  10 ++
+>>   drivers/iommu/arm/arm-smmu/arm-smmu.c     |  13 ++
+>>   include/linux/host1x.h                    |  21 +++
+>>   include/linux/host1x_context_bus.h        |  15 ++
+>>   22 files changed, 488 insertions(+), 9 deletions(-)
+>>   create mode 100644 drivers/gpu/host1x/context.c
+>>   create mode 100644 drivers/gpu/host1x/context.h
+>>   create mode 100644 drivers/gpu/host1x/context_bus.c
+>>   create mode 100644 include/linux/host1x_context_bus.h
+>>
+> 
+> IOMMU/DT folks, any thoughts about this approach? The patches that are 
+> of interest outside of Host1x/TegraDRM specifics are patches 1, 2, 4, 
+> and 5.
 
-This is definitely a patch in the right direction, as Bart says
-it can be a bit dangerous, the outliers are those drivers that
-assign the .dev to something completely different than the
-the dev where the of_node is copied from.
 
-The idea was definitely always to only assign it in the core
-*unless* there is a reason to have a completely different
-of_node for some reason.
+Any feedback on this?
 
-> +++ b/drivers/gpio/gpio-rda.c
-> @@ -240,8 +240,6 @@ static int rda_gpio_probe(struct platform_device *pdev)
->         rda_gpio->chip.label = dev_name(dev);
->         rda_gpio->chip.ngpio = ngpios;
->         rda_gpio->chip.base = -1;
-> -       rda_gpio->chip.parent = dev;
-> -       rda_gpio->chip.of_node = np;
+Jon
 
-Mention in the commit message that in this driver
-you also drop the the .parent assignment because the
-core will handle it.
-
-Yours,
-Linus Walleij
+-- 
+nvpublic
