@@ -2,219 +2,131 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BCADC433FE
-	for <linux-tegra@archiver.kernel.org>; Mon,  6 Dec 2021 13:03:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2DF8C4332F
+	for <linux-tegra@archiver.kernel.org>; Mon,  6 Dec 2021 13:13:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243706AbhLFNHC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 6 Dec 2021 08:07:02 -0500
-Received: from mail-bn7nam10on2070.outbound.protection.outlook.com ([40.107.92.70]:4794
-        "EHLO NAM10-BN7-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S243777AbhLFNFC (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 6 Dec 2021 08:05:02 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=hVjvAJDoD6N503a87O6mKFQXVCnwB86J1L57Dgmznqqu4XYU9LiG3RyUEQR0nAtnvjpGaVwOUFvGPffW+G6nB+vVT67Sa9XKIAQU/18i8H0hhUxSnHdJL1GyyIyUz2mKhLAhA9fMmxWf0Xp4gX66nHUIal3QX3lxaUHirFaw7hliT55VZqitt8I8BYzZl9Lt1z/ys4CVbmg6HXDL+ab8lQon/tv3MamHbmSkpP87nVBgVIXYrJmdxfHy3LvEAhn1TBU73aVAlwzsy+h1KW2WElAzXTQsxD7MZy47a789QabBhxcgMQyTQpmtQTcTJVwfIji+346Y+QixOY3hW2jHlQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=deae2mmCEbXLoB2iBD7Gi94Mf7f4ZSiykR41KydhSMg=;
- b=Qn0ebTLHu21/ezx7YAezt/3bmJGjGYd8bcu3woZGHJAjlhGFgYZFc4T4ZDIU+LP+shYy9jtuqe6NxPYsUFx34woxur+/N5hxmHc5v20ETu/77+s9c0z4ccyNsSfS+Z3sU2f7StUViPWk2Ki+Pb/iFwlR72qZBxKNezbk/Yi4jV+eiUjjtn0SZMy97lfKGB+bsdXaooplN6BgecSLX/8GYiwSDTDApb5eDMDiAwcJ798MvrNWlPV/A6JgSthmAatsRJ4MFzb70mjBoM6kOfuiMyZ1m7jx3rYsHHcHjSDdOBCLiqwQfUe26pGwpI0mTG+8AY98LJ4IpmYf2WpeHTsicg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.112.35) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=deae2mmCEbXLoB2iBD7Gi94Mf7f4ZSiykR41KydhSMg=;
- b=SCz2O1icUNet6IFuBlObt7oKNUGZyXslsqDybk4gIk3Eel0aGI7cdgjDJzRrrWYQPVvQZZ8Xnl40i1XSt9Jgoa/rQVsJrPjBmyFTmsUhha72keLGS5ERbtwsSZXT+05jOYeSsQcKalJpsi5jj3u2/L0yIrwQG4zG/jqpYHRxB9mRdGf429vH4EjIL0571ZGQqjPwrx6J2zOfgWkZedswM3X6TAODDMXZME7ZwvlWWW/SThuIYl81vAYbPi78B4b2ltW16P/uCUEtzlLm50PaobC+hx17lxCSA+R+Ync0nRx36JEY5zSSOhkRCR8/nZ2XTNZ27jhdbElkK9PyABrgBg==
-Received: from MWHPR1701CA0016.namprd17.prod.outlook.com
- (2603:10b6:301:14::26) by SN6PR12MB2845.namprd12.prod.outlook.com
- (2603:10b6:805:75::33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4755.21; Mon, 6 Dec
- 2021 13:01:32 +0000
-Received: from CO1NAM11FT056.eop-nam11.prod.protection.outlook.com
- (2603:10b6:301:14:cafe::c8) by MWHPR1701CA0016.outlook.office365.com
- (2603:10b6:301:14::26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4755.17 via Frontend
- Transport; Mon, 6 Dec 2021 13:01:31 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.35)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.112.35 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.112.35; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (216.228.112.35) by
- CO1NAM11FT056.mail.protection.outlook.com (10.13.175.107) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.4755.13 via Frontend Transport; Mon, 6 Dec 2021 13:01:31 +0000
-Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Mon, 6 Dec
- 2021 13:01:31 +0000
-Received: from kyarlagadda-linux.nvidia.com (172.20.187.5) by mail.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server id 15.0.1497.18 via Frontend
- Transport; Mon, 6 Dec 2021 05:01:26 -0800
-From:   Akhil R <akhilrajeev@nvidia.com>
-To:     <dan.j.williams@intel.com>, <devicetree@vger.kernel.org>,
-        <dmaengine@vger.kernel.org>, <jonathanh@nvidia.com>,
-        <kyarlagadda@nvidia.com>, <ldewangan@nvidia.com>,
-        <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <p.zabel@pengutronix.de>, <rgumasta@nvidia.com>,
-        <robh+dt@kernel.org>, <thierry.reding@gmail.com>,
-        <vkoul@kernel.org>
-CC:     <akhilrajeev@nvidia.com>
-Subject: [PATCH v14 4/4] arm64: tegra: Add GPCDMA node for tegra186 and tegra194
-Date:   Mon, 6 Dec 2021 18:30:39 +0530
-Message-ID: <1638795639-3681-5-git-send-email-akhilrajeev@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1638795639-3681-1-git-send-email-akhilrajeev@nvidia.com>
-References: <1638795639-3681-1-git-send-email-akhilrajeev@nvidia.com>
-X-NVConfidentiality: public
+        id S244071AbhLFNQa (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 6 Dec 2021 08:16:30 -0500
+Received: from mga04.intel.com ([192.55.52.120]:41243 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S244041AbhLFNQ3 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 6 Dec 2021 08:16:29 -0500
+X-IronPort-AV: E=McAfee;i="6200,9189,10189"; a="236046871"
+X-IronPort-AV: E=Sophos;i="5.87,291,1631602800"; 
+   d="scan'208";a="236046871"
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Dec 2021 05:13:01 -0800
+X-IronPort-AV: E=Sophos;i="5.87,291,1631602800"; 
+   d="scan'208";a="604986568"
+Received: from smile.fi.intel.com ([10.237.72.184])
+  by fmsmga002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Dec 2021 05:12:50 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.95)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1muDmW-002mwh-84;
+        Mon, 06 Dec 2021 15:11:48 +0200
+Date:   Mon, 6 Dec 2021 15:11:48 +0200
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Marc Zyngier <maz@kernel.org>,
+        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+        Sergio Paracuellos <sergio.paracuellos@gmail.com>,
+        Chunyan Zhang <chunyan.zhang@unisoc.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Baruch Siach <baruch@tkos.co.il>,
+        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>, Tony Lindgren <tony@atomide.com>,
+        Nicolas Saenz Julienne <nsaenz@kernel.org>,
+        Jianqun Xu <jay.xu@rock-chips.com>,
+        Alexandru Ardelean <aardelean@deviqon.com>,
+        Thierry Reding <treding@nvidia.com>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        patches@opensource.cirrus.com,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-power@fi.rohmeurope.com,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-pwm@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-unisoc@lists.infradead.org,
+        linux-rockchip@lists.infradead.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-tegra@vger.kernel.org, Ray Jui <rjui@broadcom.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Gregory Fong <gregory.0xf0@gmail.com>,
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+        Keerthy <j-keerthy@ti.com>, Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang7@gmail.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Kevin Hilman <khilman@kernel.org>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH v1 1/3] gpio: Get rid of duplicate of_node assignment in
+ the drivers
+Message-ID: <Ya4MFMWSyj4YbdNG@smile.fi.intel.com>
+References: <20211202210839.79140-1-andriy.shevchenko@linux.intel.com>
+ <CACRpkdZbpKqG_uS2N8TW2-HL5CqnuKDpHVCabf66MyQQof0jOw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: ab9bd8fc-1ee6-4034-0e4a-08d9b8b8866a
-X-MS-TrafficTypeDiagnostic: SN6PR12MB2845:EE_
-X-Microsoft-Antispam-PRVS: <SN6PR12MB2845648868FD288A2F44F304C06D9@SN6PR12MB2845.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:1227;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 6o/SCfTeirpnxCY93ex6XWD8yTXX929n33Pd7gz5pBZ2QJ0mXJzrq8I3V+HoU7hwPTXRLLCpNMQonGWFWJEBBZhLW6Htv4gcs7Pn0gJEV6UsfCM2HWkxN0KFPdPG+NTV9SfBvd+C9aLaMEVlB4Nds/Yg7YRpzAijR8ttxBiTgafsyLWPPPvyfcDSeNZL2f9q0VYhT9nzczB4RmUJZvtfH/ZRjNShOQGTowCOEOOdClhn83uctRKV8cwdLqJ1PLJSd9uKQ3zEHf4C2b0VOr3gWOpYv8m6TW7QthYZIJ6d9487vDuQVSvkfL52qcSlT2B4DnQsDZHjwRAM+t9gl3YSVMneX4A7SahOrGWJdF5tKaejCujzNEx2A9BrZ8nd3tn7U58Ge4MDeBvD5gAvHxbmuj3ZyuyeRUYlVunXYtkY3yPWts0LwF5vA3A3leRCo6oGeK5+dLJQOT5YRm9P9DJOZ4QjPkZ7YPUarUcZ9juSqeaIlanWrqi0MqyjMxHfVAnvI8ZrmSijgbfWJEM1qjbMccBrPvXhxitBH4FHpWivTYvLAympxrSEwZFnzDZVxyFMrM2otiYX4C6QE7TYvGs7SS3JI/6Lqx2VUHZirbunhYF7CK2xqw/gKPNJOXaQ8qnEkkxBWCCa0n2pI7IF+C5yd7dlM5r1fI2fz41YDFBnHhPBmmpVWy12VRRzXxbBHTEhDcaGXb5/jAMPIwVMcrQ92GMd6cqjSl/mp2xchBSDEtdgs1dmyhOsx0cPExIqNhKzrsdn3m69f6PVr8Zljp5NuZl5BOEWjj+arS/RlzMPORoElGTWCYx/5Ysj5RXllIT4Imk/OS9slwrWygQ4lGFx6w==
-X-Forefront-Antispam-Report: CIP:216.228.112.35;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid04.nvidia.com;CAT:NONE;SFS:(4636009)(36840700001)(46966006)(40470700001)(86362001)(36860700001)(7636003)(107886003)(186003)(40460700001)(2906002)(316002)(47076005)(82310400004)(7696005)(356005)(26005)(4326008)(70206006)(2616005)(70586007)(921005)(6666004)(508600001)(336012)(36756003)(5660300002)(8936002)(110136005)(426003)(8676002)(2101003)(83996005);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Dec 2021 13:01:31.7132
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: ab9bd8fc-1ee6-4034-0e4a-08d9b8b8866a
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.35];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT056.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR12MB2845
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACRpkdZbpKqG_uS2N8TW2-HL5CqnuKDpHVCabf66MyQQof0jOw@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Add device tree node for GPCDMA controller on Tegra186 target
-and Tegra194 target.
+On Sun, Dec 05, 2021 at 01:06:07AM +0100, Linus Walleij wrote:
+> On Thu, Dec 2, 2021 at 10:17 PM Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
+> 
+> > GPIO library does copy the of_node from the parent device of
+> > the GPIO chip, there is no need to repeat this in the individual
+> > drivers. Remove these assignment all at once.
+> >
+> > For the details one may look into the of_gpio_dev_init() implementation.
+> >
+> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> 
+> This is definitely a patch in the right direction, as Bart says
+> it can be a bit dangerous, the outliers are those drivers that
+> assign the .dev to something completely different than the
+> the dev where the of_node is copied from.
 
-Signed-off-by: Rajesh Gumasta <rgumasta@nvidia.com>
-Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
-Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
----
- arch/arm64/boot/dts/nvidia/tegra186.dtsi | 42 +++++++++++++++++++++++++++++++
- arch/arm64/boot/dts/nvidia/tegra194.dtsi | 43 ++++++++++++++++++++++++++++++++
- 2 files changed, 85 insertions(+)
+I carefully checked these all and this patch series is only for the cases
+when I'm sure it's the same device, which is used as parent, and its of_node
+supplied.
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-index e94f8ad..9e4225f 100644
---- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-@@ -73,6 +73,48 @@
- 		snps,rxpbl = <8>;
- 	};
- 
-+	dma-controller@2600000 {
-+		compatible = "nvidia,tegra186-gpcdma";
-+		reg = <0x0 0x2600000 0x0 0x210000>;
-+		resets = <&bpmp TEGRA186_RESET_GPCDMA>;
-+		reset-names = "gpcdma";
-+		interrupts = <GIC_SPI 76 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 79 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 81 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 82 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 83 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 89 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 90 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 91 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 92 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 93 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 94 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 95 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 96 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 99 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 101 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 102 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>;
-+		#dma-cells = <1>;
-+		iommus = <&smmu TEGRA186_SID_GPCDMA_0>;
-+		dma-coherent;
-+		status = "okay";
-+	};
-+
- 	aconnect@2900000 {
- 		compatible = "nvidia,tegra186-aconnect",
- 			     "nvidia,tegra210-aconnect";
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-index c8250a3..dcdf27e 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-@@ -72,6 +72,49 @@
- 			snps,rxpbl = <8>;
- 		};
- 
-+		dma-controller@2600000 {
-+			compatible = "nvidia,tegra194-gpcdma",
-+				     "nvidia,tegra186-gpcdma";
-+			reg = <0x2600000 0x210000>;
-+			resets = <&bpmp TEGRA194_RESET_GPCDMA>;
-+			reset-names = "gpcdma";
-+			interrupts = <GIC_SPI 76 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 79 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 81 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 82 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 83 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 89 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 90 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 91 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 92 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 93 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 94 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 95 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 96 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 99 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 101 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 102 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>;
-+			#dma-cells = <1>;
-+			iommus = <&smmu TEGRA194_SID_GPCDMA_0>;
-+			dma-coherent;
-+			status = "okay";
-+		};
-+
- 		aconnect@2900000 {
- 			compatible = "nvidia,tegra194-aconnect",
- 				     "nvidia,tegra210-aconnect";
+> The idea was definitely always to only assign it in the core
+> *unless* there is a reason to have a completely different
+> of_node for some reason.
+> 
+> > +++ b/drivers/gpio/gpio-rda.c
+> > @@ -240,8 +240,6 @@ static int rda_gpio_probe(struct platform_device *pdev)
+> >         rda_gpio->chip.label = dev_name(dev);
+> >         rda_gpio->chip.ngpio = ngpios;
+> >         rda_gpio->chip.base = -1;
+> > -       rda_gpio->chip.parent = dev;
+> > -       rda_gpio->chip.of_node = np;
+> 
+> Mention in the commit message that in this driver
+> you also drop the the .parent assignment because the
+> core will handle it.
+
+Okay, I will update it. Also I'll update to the last codebase (dunno if Bart
+is going to pull the IB from Lee where one of the drivers is gone: da53cc634cea
+("gpio: bd70528 Drop BD70528 support").
+
 -- 
-2.7.4
+With Best Regards,
+Andy Shevchenko
+
 
