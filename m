@@ -2,123 +2,126 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38B36C433F5
-	for <linux-tegra@archiver.kernel.org>; Tue,  7 Dec 2021 06:37:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24D36C433F5
+	for <linux-tegra@archiver.kernel.org>; Tue,  7 Dec 2021 08:04:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237252AbhLGGlJ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 7 Dec 2021 01:41:09 -0500
-Received: from mail-dm6nam11on2067.outbound.protection.outlook.com ([40.107.223.67]:17249
-        "EHLO NAM11-DM6-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S237253AbhLGGlI (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 7 Dec 2021 01:41:08 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=AxqHAkXSWZMKr0O6XofPOgITboOKIFsQEp4jhapNG12oPBkr5hH1r++bz1e5R+VWev7CTEnnRHDgac2TLSegHFn1e0khGFhQMBY0FD0ijjpvMHb89DidJGyemT+FyeyGoVssnZSfmEJwas+x/gmDjTFu8VtIgrQupwN/NvA1ymRYbB2eF6e1MUjItHhqWUrsRCE7Tl81vee5u2dhcVbEsPUZWbDDha2a2aOxxiXApFYgJOt6kQfGZ0lR4HGL1CDByGRY994eEbHq/GgNwz29xKjOCSGmg/D/W3kamhu9yR0+rja7i9p3vn74eSGyb2ggJOfoO9vZzHh0gtPKxLH4Ig==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=rW2CBw1ZqgMzRjVYduwvq7BT9NVzCPU6/lpqXt4Mmzw=;
- b=iM7of2d5fbgt3L6QApA+41pOs3poWW4Seclka3LyZRDeQinAHFF5Utx0edw7fe50tloBSN5WL3UW/MZU52K+hmqOmIKCH2fncLNDzDUcbbwlXdPr90Mr+M/Xy7yFRToN7afzoJBbQ1Uh/hX9ww2QLjoklVIZks7bGgUPwlHAqa49PO/bxNdK+b602mhjEI9U9BuPwKw9WFUURpCHXOTMlyZCrSWt123U6g60KG8422fSHrDgjSVL49V2yoU0uRzrwYoZzrYphaeh6g5xgzwYaIXzgCHICEh+MpOPf5WUsxsL2w5CEDlU7IiP67M+TNRYjXaIqIikD3ocFCd1VAz/lQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.112.32) smtp.rcpttodomain=alsa-project.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rW2CBw1ZqgMzRjVYduwvq7BT9NVzCPU6/lpqXt4Mmzw=;
- b=RoV5gQk3wRxbAygBmzQrdbJDj2M2v8/V7RksaTyxrjXnp8jmBHjVYyVOBep1ZWqeCDl8ItaZ7vq8GG0ZUjVJswKcPjioUuqKNYix/RxwykjZ0pGuv0Gz3HWCJWCAzvv9XRiWuGZzUjK3mu9BG9Su3g/dsYi8vvVOIXV2Q2+ezZJp5YAxHxDmZm6SVGkfMpPmP3OqNLeE+Mz7jGjZuUCRE+Z+0GRxTMXAkK1ETeMLpNLfwHG67h7c1wDbkcg9XsJoyX3OI8l6vpDRyqJA38jyliWvOnVn7biy4K/kuzx10ntFjPsvWEVZh+2C4VAiewO3H1qMHc35l0eBrzWJflDiAA==
-Received: from BN1PR14CA0025.namprd14.prod.outlook.com (2603:10b6:408:e3::30)
- by DM6PR12MB4895.namprd12.prod.outlook.com (2603:10b6:5:1bc::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4755.21; Tue, 7 Dec
- 2021 06:37:36 +0000
-Received: from BN8NAM11FT003.eop-nam11.prod.protection.outlook.com
- (2603:10b6:408:e3:cafe::6) by BN1PR14CA0025.outlook.office365.com
- (2603:10b6:408:e3::30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4755.11 via Frontend
- Transport; Tue, 7 Dec 2021 06:37:36 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.32)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.112.32 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.112.32; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (216.228.112.32) by
- BN8NAM11FT003.mail.protection.outlook.com (10.13.177.90) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.4755.13 via Frontend Transport; Tue, 7 Dec 2021 06:37:36 +0000
-Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL109.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Mon, 6 Dec
- 2021 22:37:24 -0800
-Received: from audio.nvidia.com (172.20.187.5) by mail.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server id 15.0.1497.18 via Frontend
- Transport; Mon, 6 Dec 2021 22:37:21 -0800
-From:   Sameer Pujar <spujar@nvidia.com>
-To:     <tiwai@suse.com>, <broonie@kernel.org>, <lgirdwood@gmail.com>,
-        <robh+dt@kernel.org>, <thierry.reding@gmail.com>, <perex@perex.cz>
-CC:     <jonathanh@nvidia.com>, <digetx@gmail.com>,
-        <alsa-devel@alsa-project.org>, <devicetree@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Sameer Pujar <spujar@nvidia.com>
-Subject: [PATCH 3/3] arm64: tegra: Remove non existent Tegra194 reset
-Date:   Tue, 7 Dec 2021 12:02:50 +0530
-Message-ID: <1638858770-22594-4-git-send-email-spujar@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1638858770-22594-1-git-send-email-spujar@nvidia.com>
-References: <1638858770-22594-1-git-send-email-spujar@nvidia.com>
+        id S232087AbhLGIHj (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 7 Dec 2021 03:07:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37880 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232085AbhLGIHj (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 7 Dec 2021 03:07:39 -0500
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D715C061748
+        for <linux-tegra@vger.kernel.org>; Tue,  7 Dec 2021 00:04:09 -0800 (PST)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1muVRw-0007zm-Lm; Tue, 07 Dec 2021 09:03:44 +0100
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1muVRh-003BVK-7H; Tue, 07 Dec 2021 09:03:28 +0100
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1muVRg-0004V5-7f; Tue, 07 Dec 2021 09:03:28 +0100
+Date:   Tue, 7 Dec 2021 09:03:25 +0100
+From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Marc Zyngier <maz@kernel.org>,
+        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+        Sergio Paracuellos <sergio.paracuellos@gmail.com>,
+        Chunyan Zhang <chunyan.zhang@unisoc.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Baruch Siach <baruch@tkos.co.il>,
+        Tony Lindgren <tony@atomide.com>,
+        Nicolas Saenz Julienne <nsaenz@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Jianqun Xu <jay.xu@rock-chips.com>,
+        Alexandru Ardelean <aardelean@deviqon.com>,
+        Thierry Reding <treding@nvidia.com>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        patches@opensource.cirrus.com,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-power@fi.rohmeurope.com,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-pwm@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-unisoc@lists.infradead.org,
+        linux-rockchip@lists.infradead.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-tegra@vger.kernel.org, Ray Jui <rjui@broadcom.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Gregory Fong <gregory.0xf0@gmail.com>,
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+        Keerthy <j-keerthy@ti.com>, Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang7@gmail.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Kevin Hilman <khilman@kernel.org>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH v1 1/3] gpio: Get rid of duplicate of_node assignment in
+ the drivers
+Message-ID: <20211207080325.6hfokrrcs45iucx6@pengutronix.de>
+References: <20211202210839.79140-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 1670f76f-f165-437d-63fb-08d9b94c0e9d
-X-MS-TrafficTypeDiagnostic: DM6PR12MB4895:EE_
-X-Microsoft-Antispam-PRVS: <DM6PR12MB48955067DC81BE52A8D8DB04A76E9@DM6PR12MB4895.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:935;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: LttAvFrAwr2Tk/vNM1w9jRsm+ZwGeZFpU4IJOYBJTPCBxnYRKWnDPclVhx83lEiRT6zJPHIKXlTyghD7v+y9Bxs4styhXYhqPJORySeOnFeHshCOrrgSBIX5P38lAGayylOqndetM2dcu1NDLN5BEbJ0KB8nKm7oIiK3iLbsFy9lca71kyMLVyTZeHeSLq2RkpEhqKXfwlGfueVK4LQIg6ncd6wJn0n4ygeGgEsPFIQSIB+fN04dSgqipO8kH9Emg6nOWlQYFzN88348BSk4EYzZmAsJVAi/tbThAwxQ5EHQJiZVF+5Z4y1XpdUjqDjZSjU9O74KL5buU411XEEHiCIHnO7ONr7v5OJxXWsx4bfx9UZ5BVtR4SnteW346Ge72LfZk/aH/StBk5P06orkSrJRC3to7x4yerBSKqXcOmi4Ni4YYVIZlG6fZQ54zoqNpv0zTSKXQtn0LwsZhcjqqntiLqqF1/emHZDJSjDvj3GoUflKNN8gK67pQiiL1tWtYo2NOs/PUPsEv8OWIhCgAc6433IoWSCQvlDbxsrBFfoC+Ep8YE9SZi3ZuxrW8lzLDkqlP2gG+NUbT6RVi1sZdVbtWJ34ilPqs302UdYORfEsYFypJzPB5nAsCiKan9lKiA/KtrQpCGIRODwmLT0J10WMFi1OuLBmEfCT4j/wsD7u3duAZcluBX8YphqDmY4Q4k5oFmAe2R7sJEfzm7SYBTXvAcTkke83X5EeJRmL6i1IMy94820mpRx9b6sHCUZhy8Er5UMZ9Ni2FRRVZH+gRyYtsM7zqJ3hZ25F4lAFMRc=
-X-Forefront-Antispam-Report: CIP:216.228.112.32;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid01.nvidia.com;CAT:NONE;SFS:(4636009)(46966006)(36840700001)(40470700001)(110136005)(54906003)(83380400001)(36756003)(2616005)(34070700002)(82310400004)(86362001)(2906002)(36860700001)(40460700001)(8936002)(508600001)(356005)(4326008)(26005)(7636003)(107886003)(426003)(336012)(5660300002)(6666004)(70586007)(316002)(7416002)(70206006)(8676002)(7696005)(47076005)(186003);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Dec 2021 06:37:36.1766
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1670f76f-f165-437d-63fb-08d9b94c0e9d
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.32];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT003.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4895
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="xelnb7q2ptte2x6e"
+Content-Disposition: inline
+In-Reply-To: <20211202210839.79140-1-andriy.shevchenko@linux.intel.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Tegra194 does not really have "hda2codec_2x" related reset. Hence drop
-this entry to reflect actual HW.
 
-Fixes: 4878cc0c9fab ("arm64: tegra: Add HDA controller on Tegra194")
-Signed-off-by: Sameer Pujar <spujar@nvidia.com>
----
- arch/arm64/boot/dts/nvidia/tegra194.dtsi | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+--xelnb7q2ptte2x6e
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-index 8d29b7f..6a1d896 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-@@ -976,9 +976,8 @@
- 				 <&bpmp TEGRA194_CLK_HDA2CODEC_2X>;
- 			clock-names = "hda", "hda2hdmi", "hda2codec_2x";
- 			resets = <&bpmp TEGRA194_RESET_HDA>,
--				 <&bpmp TEGRA194_RESET_HDA2HDMICODEC>,
--				 <&bpmp TEGRA194_RESET_HDA2CODEC_2X>;
--			reset-names = "hda", "hda2hdmi", "hda2codec_2x";
-+				 <&bpmp TEGRA194_RESET_HDA2HDMICODEC>;
-+			reset-names = "hda", "hda2hdmi";
- 			power-domains = <&bpmp TEGRA194_POWER_DOMAIN_DISP>;
- 			interconnects = <&mc TEGRA194_MEMORY_CLIENT_HDAR &emc>,
- 					<&mc TEGRA194_MEMORY_CLIENT_HDAW &emc>;
--- 
-2.7.4
+Hello Andy,
 
+you Cc: linux-pwm and the pwm maintainers in this series. I don't spot
+anything pwm specific here (apart from touching gpio-mvebu which also
+contains a PWM driver). Do I miss something?
+
+Best regards
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--xelnb7q2ptte2x6e
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmGvFUoACgkQwfwUeK3K
+7Ak2FAf/a3x5Co4mVUxKnXqmGwHXz7g+sVyT+Syp0AbNKmLSwV/jFmFT6Zy9u/ee
+Tv34gVXuYPBNDch6VBo47qrv8omMZtiQvE6l0bU4pmjYU9kriMmE4l65BQqexZaM
+bM0EDY+/6GNToLwCq7AXD6l/waEl7lwtO/KcLZHowCSWr7opyg23EoTgDCyxLUwv
+ceSVjNXqAAd4NzyHf63suy2ID66QzItCoRNbOrOBtIi1Vo5RM0SgZbN8ODyXKIWu
+sGCnBiaseRnCv31VkHPE/hsgFXIEwQbtMwohgWfD7YlrkmpOh3Bi29Em95cRuVIo
+tZQmPFwDQcMgt/4UuHdm2lxVcYjgyQ==
+=gmyE
+-----END PGP SIGNATURE-----
+
+--xelnb7q2ptte2x6e--
