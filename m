@@ -2,70 +2,66 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 851B2C433F5
-	for <linux-tegra@archiver.kernel.org>; Tue,  7 Dec 2021 14:37:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C211C433EF
+	for <linux-tegra@archiver.kernel.org>; Tue,  7 Dec 2021 14:41:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233459AbhLGOlW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 7 Dec 2021 09:41:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46862 "EHLO
+        id S233797AbhLGOp0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 7 Dec 2021 09:45:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47828 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233436AbhLGOlV (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 7 Dec 2021 09:41:21 -0500
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D7C3C061574;
-        Tue,  7 Dec 2021 06:37:51 -0800 (PST)
-Received: by mail-lf1-x12e.google.com with SMTP id c32so34055190lfv.4;
-        Tue, 07 Dec 2021 06:37:51 -0800 (PST)
+        with ESMTP id S233705AbhLGOpZ (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 7 Dec 2021 09:45:25 -0500
+Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5624DC061574;
+        Tue,  7 Dec 2021 06:41:55 -0800 (PST)
+Received: by mail-lj1-x22c.google.com with SMTP id 207so27778393ljf.10;
+        Tue, 07 Dec 2021 06:41:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=subject:from:to:references:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=s9/qxIrR8tF6zWnC2CNOSyvQJwZNDJC7C9nlCNHrx+o=;
-        b=XAHGUhgbReJmLxZSPuCnTjbaTkHKyyoX7vnK7Kw5+SjE8r/O2NCLUCdTjCs+qYOhvx
-         LcXgpFSugwfUj+dt9CFAvXQvyqA5gVfMMSP+Tc/3+CZSs0oP1auVjCAhZOthfCOJUIKv
-         R35edurehJU05/8buCwtCBsmucGSxp6IADZKtf6cvl3os/koWo+sZhGOo0/OCaUthdO7
-         7rzLJN2cWV5jh0UWjspEAc/vgnuqeAooqrNKJuePrEXLDlZR8iYcOwwyvcMtVmk2SgqH
-         n1fTSvillj3C32O0v4eb4gE/6bWJEz43qQPRPaWO4TRn6CawNdgu9ktcI0wjwTzy2OYl
-         7oIQ==
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=7eade14rUwVaC6ONhU+mFD2/aGeW0O4W2AFPSjVxDfo=;
+        b=n7Ynb9iaAcbA7/q54bBbx/tqpCvDvt4QV43GvBGM2yFhYpXoVuiS4l39elTjUUAQ/q
+         RHYRXwSMPHti7y+vQU9UaJEUAVcVVFjd8EblKnrc582XxChj8pXU98hbQGIGc6Lm3glS
+         kfdfM2NK27Dkx9sMhWZPTzge5FxKrCnEzfwgrXEGCqWxgVgpfVJdMZn9fFfUHZJo/H6L
+         N8yiy7ziQPu2yL+1ua1cPPQCS8gVc7B/GAH382yBzWCPPztXDFvxx64aFS4KP28izIRe
+         gSh7vlZypo9XPIGmdWn7Ui3HP3BCYc/g3XSdMFrELhWtv5ONGhMnfHCkY2NrE9yK6Elr
+         WWjg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:from:to:references:message-id:date
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=s9/qxIrR8tF6zWnC2CNOSyvQJwZNDJC7C9nlCNHrx+o=;
-        b=T7zTI6aGEwbuPkl2Ja1CggJoakl1LaG5CpNE8ooOPDUmr5i4mTIcj5c1fEADfQwBTd
-         OCsdI1fnDChfBdcZUz7h/CL9fDz2kdERADLibD4fy8X+nFDD4foSpuHYH599C84ESwQN
-         r+1i85/359tHcYjzlAobLqTC7mF/O6zcx80LSVyl5j8KdBJeOogeI8KfEu4bEQg/Idzb
-         w4mHfOc09psf9QLBWPevbMOcWUVT2s9OtrLCKgMTLYeFTNIGiMFOP8S3LvrJrxnERSnw
-         jgjeTrrxEfkgBnIthGFYFaD+ljdi8I8QjzzvT5XyEPJ8vozbqGoOHutn9wKkqQZ7miwG
-         43cA==
-X-Gm-Message-State: AOAM533Ad80TSLU6ubjnOIdXsK+bM49RpgZVoKk7RnN6vuP9eg6dt9+L
-        DuZ3N7q62oURrFYS2gDaCzkOPyOd9oY=
-X-Google-Smtp-Source: ABdhPJy3IcwVhC0N1gj9NrdzdMXNnC7pXCO5CThzlG6JGABXQ23FtLwCvvedNx07wrV55fr9SqN2xQ==
-X-Received: by 2002:ac2:5a46:: with SMTP id r6mr41444829lfn.358.1638887869276;
-        Tue, 07 Dec 2021 06:37:49 -0800 (PST)
+        bh=7eade14rUwVaC6ONhU+mFD2/aGeW0O4W2AFPSjVxDfo=;
+        b=2Yur5YNY2sPfGrjBr0Xm7Vfn/+7kroqKIhWVWnRwnCHKLjFkd4s/te+O6Q1K+c6VhW
+         CLvJpaUbYHNspYrLHDPzl9XenmAcSXK+zEPDoOhjyF3WG2iCjt98GR0jpgNaBt6EjX5s
+         tGK7m3VFxmA1kGHNu7e7DlyycDoSOBgEmdlEM0nkvoGndMwES/3yam7YDcwv6cBSSwJC
+         /RNxvEslAYGkxzjkmqHP7AiKxZijhaZJGUc99KDtc2DfvCjz1bIhnMxelaKzIFCpdMNO
+         EcJ5idoROQHAbmp2qGDgEM4ewKdDAyo0eydMh2KsEhEiQ71LVMd+kmbJm1wS3owuXina
+         uV5A==
+X-Gm-Message-State: AOAM5305NxD52lVyjwgS+htDAC7CW6BPTT7xTNenFQAjBMJYpvQUJP9u
+        vSksJ4phBQ2qGpLf5ihshcHO7Vh6d1s=
+X-Google-Smtp-Source: ABdhPJxh9ScPWue7LeY18aOZam/zWNfvHhAen8kRbiPejnt56y/E3q4uhWmqfFmvEKTnVo/SpNC0Dg==
+X-Received: by 2002:a2e:810a:: with SMTP id d10mr43081476ljg.325.1638888113464;
+        Tue, 07 Dec 2021 06:41:53 -0800 (PST)
 Received: from [192.168.2.145] (94-29-46-111.dynamic.spd-mgts.ru. [94.29.46.111])
-        by smtp.googlemail.com with ESMTPSA id z23sm1676836ljk.136.2021.12.07.06.37.48
+        by smtp.googlemail.com with ESMTPSA id d4sm1664035ljq.37.2021.12.07.06.41.52
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 Dec 2021 06:37:48 -0800 (PST)
-Subject: Re: [PATCH] phy: tegra: add missing put_device() call in
- tegra210_xusb_padctl_probe()
+        Tue, 07 Dec 2021 06:41:53 -0800 (PST)
+Subject: Re: [PATCH] ARM: tegra: Drop reg-shift for Tegra HS UART
 From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Qing Wang <wangqing@vivo.com>, JC Kuo <jckuo@nvidia.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-phy@lists.infradead.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1638881776-3308-1-git-send-email-wangqing@vivo.com>
- <b56a0b92-cf64-570c-08f8-e7a54fc55946@gmail.com>
-Message-ID: <e57c1c99-0743-c785-24e3-44654e4991f1@gmail.com>
-Date:   Tue, 7 Dec 2021 17:37:48 +0300
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Jon Hunter <jonathanh@nvidia.com>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+References: <20211207101316.381031-1-thierry.reding@gmail.com>
+ <91755ddf-0b4d-aa73-f898-f15ccc214804@gmail.com>
+Message-ID: <24a7e99e-0a00-08c9-eb32-b9b64d747bac@gmail.com>
+Date:   Tue, 7 Dec 2021 17:41:52 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.14.0
 MIME-Version: 1.0
-In-Reply-To: <b56a0b92-cf64-570c-08f8-e7a54fc55946@gmail.com>
+In-Reply-To: <91755ddf-0b4d-aa73-f898-f15ccc214804@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -73,40 +69,23 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-07.12.2021 17:35, Dmitry Osipenko пишет:
-> 07.12.2021 15:56, Qing Wang пишет:
->> From: Wang Qing <wangqing@vivo.com>
+07.12.2021 17:19, Dmitry Osipenko пишет:
+> 07.12.2021 13:13, Thierry Reding пишет:
+>> From: Thierry Reding <treding@nvidia.com>
 >>
->> of_find_device_by_node() takes a reference to the embedded struct device 
->> which needs to be dropped when error return.
+>> When the Tegra High-Speed UART is used instead of the regular UART, the
+>> reg-shift property is implied from the compatible string and should not
+>> be explicitly listed.
 >>
->> Signed-off-by: Wang Qing <wangqing@vivo.com>
+>> Signed-off-by: Thierry Reding <treding@nvidia.com>
 >> ---
->>  drivers/phy/tegra/xusb-tegra210.c | 4 +++-
->>  1 file changed, 3 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/phy/tegra/xusb-tegra210.c b/drivers/phy/tegra/xusb-tegra210.c
->> index eedfc7c..05a0800
->> --- a/drivers/phy/tegra/xusb-tegra210.c
->> +++ b/drivers/phy/tegra/xusb-tegra210.c
->> @@ -3170,8 +3170,10 @@ tegra210_xusb_padctl_probe(struct device *dev,
->>  		goto out;
->>  	}
->>  
->> -	if (!platform_get_drvdata(pdev))
->> +	if (!platform_get_drvdata(pdev)) {
->> +		put_device(&pdev->dev);
->>  		return ERR_PTR(-EPROBE_DEFER);
->> +	}
->>  
->>  	padctl->regmap = dev_get_regmap(&pdev->dev, "usb_sleepwalk");
->>  	if (!padctl->regmap)
->>
+>>  arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi               | 3 +++
+>>  arch/arm/boot/dts/tegra124-jetson-tk1.dts                 | 2 ++
+>>  arch/arm/boot/dts/tegra30-asus-nexus7-grouper-common.dtsi | 2 ++
+>>  arch/arm/boot/dts/tegra30-colibri.dtsi                    | 2 ++
+>>  4 files changed, 9 insertions(+)
 > 
-> What if dev_get_regmap() fails? What if driver is removed?
-> 
-> Please either fix it properly or don't fix it.
+> What about Ouya?
 > 
 
-My bad, I see now in the code that this dev_get_regmap() fail is okay.
-Nevertheless the driver removal is incorrect.
+What about T20?
