@@ -2,73 +2,68 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEE31C4332F
-	for <linux-tegra@archiver.kernel.org>; Tue,  7 Dec 2021 14:07:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BACCC433F5
+	for <linux-tegra@archiver.kernel.org>; Tue,  7 Dec 2021 14:11:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233065AbhLGOLA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 7 Dec 2021 09:11:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39244 "EHLO
+        id S232369AbhLGOPE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 7 Dec 2021 09:15:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40220 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232979AbhLGOK7 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 7 Dec 2021 09:10:59 -0500
-Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AEE5C061574;
-        Tue,  7 Dec 2021 06:07:29 -0800 (PST)
-Received: by mail-lj1-x235.google.com with SMTP id l7so27680257lja.2;
-        Tue, 07 Dec 2021 06:07:29 -0800 (PST)
+        with ESMTP id S232213AbhLGOPE (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 7 Dec 2021 09:15:04 -0500
+Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3387EC061574;
+        Tue,  7 Dec 2021 06:11:34 -0800 (PST)
+Received: by mail-lj1-x236.google.com with SMTP id u22so27625727lju.7;
+        Tue, 07 Dec 2021 06:11:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=lJQIRwsjkZEXbwzLzd39gaDLY4c1jN1Jzr2fT+gRzoo=;
-        b=X7Mow1MF701sh2MYATVC08oUkjkjDSSqzKXJkkm6TbgcqHm3IbYo9egi0QSjkeMpfN
-         pCGLJqoULwaYTH0LVdkY5GIJYwwTdEnTi/7JOJNem+J7g4iNfXlukqVnniIsbaOi6KKY
-         uUD5DZlhYDmILqLOGiTfKTxSj9HECq+cjSg2rWKNUr73r4MDU7zPPhJp50/r9hHpDRUQ
-         fYnYgtnlVj8vfox/oql6GQppDOR13j0OQotbXt2r3lyXLMvdza/PcQ00AV4gKoqV2y8V
-         zP7p0KPUrHQ8PlFJOnBxI+ArYzc23zLgo/hl9ecHbz4oeJ1cEMVnpR6p/nSpDqnDjhhB
-         cX8g==
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=pWSGmOrMwfws0Ucq14Q1XoroBza19gcrEAP48UdsgDM=;
+        b=YYhDl2izG2LKie5W2Be936oRPf21p/xzlvvb6ALY7NhApzL8N7H1F+Pn1xLxQM0TVO
+         y5Y1NYbR1YiAW3T9AHGlHpU2HlSE6d22SJoEfvIV3+aqRp5wJY9qO4ZFZjdyIWlpTgJd
+         pTFGsMgUZnkE9vMaA3Q5DW7Imc7daZGOZ6wHJpKWk0rdCGn6uZPHXkgw6c3htI1nbCF6
+         LCMTJctNf+B+cwzzdPDrvUmW1u8dhbmdvxXtEJqC//Bj3jZ1Pccps1hsRdoXDqlqL4OD
+         G0TxRXOLxoe+gz1fB9guNAxBVfIWUVCrd9eNTZcOGeB37YDWP/VWJeUBprhvRvikv9LR
+         /hqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+        h=x-gm-message-state:subject:to:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=lJQIRwsjkZEXbwzLzd39gaDLY4c1jN1Jzr2fT+gRzoo=;
-        b=ml/hGrqpoC1JgamCn1j5FnhxGSI6jSrxi3NBZfvDgMMugLFlErQcZdqmeYT5bN2Adz
-         /YyoOYjmSsSKMySUEAVK+1geaZ4uDCoScdV0NF8OZ8lUghTjFch7XWj8g+QyO+F15AXs
-         UxYFPYx3dHd1fwHMEm70VAADDD0sPnH8YLwdlZi+VRut8lM92nYGp/PQHQKXkQ2OiRmb
-         o81UJmpka1h/lcqQ6OSoFbQzU/WaW26oP/A1hUZOK/lqiKnbD+jlHZM5lzy3pvLrFL2a
-         95hX8rhESiPvWzIF2y6Xw7CDCIKy0K9v8uKPY88ibOFwZsgPVdRPSiv/DIHzxWvRK10S
-         kw3g==
-X-Gm-Message-State: AOAM532a1VKLWPvTu1lgkGuqOI4BznZL4ViRO/HcFXt1tKhPoyDFaWAl
-        nfI/AJCDFGvSuM9RZhr9fCw=
-X-Google-Smtp-Source: ABdhPJwzhtGd5aUdaqo36sCrgV4k2hE+7JskRwIN6JedpeQyMg15GdGn3ThfyMrWgn9Gl+WryPjQ5A==
-X-Received: by 2002:a2e:9bd4:: with SMTP id w20mr42417463ljj.69.1638886047429;
-        Tue, 07 Dec 2021 06:07:27 -0800 (PST)
+        bh=pWSGmOrMwfws0Ucq14Q1XoroBza19gcrEAP48UdsgDM=;
+        b=C5SObyk2xYurOjZ5Y1EPK4s4i8gnan+qt10JCfWFqMrdkA4Cb2UDq1RZLKEK7J3cLE
+         oq+ecL5h0eEoXGFrCJdi5T9tpemTepB7nyn+KtaTPvf6Bmq6cGcHziqzsSXnEncBEUgB
+         gKqElbZ+FN0wo2YySiPhTyKu0+efKMrN6DOUHdG5Tf+Uhjf+GZNSJbxh1pEgCy4lQBq/
+         HC4ZvA6ujF9x13roFs1o4YjxlSlYn8PXssWnZWxpFKZ9dkMzwuKAqxA5fWwbpVH4qdns
+         R25avl+t2nwmnKtjIJmSh9MxNzs9Tk3NWHPwmqg06bKJgfL2Shd2tX75DxZISu0IXzx4
+         1B9A==
+X-Gm-Message-State: AOAM533uXGxy6kP6XQa8y0sG+farK7Y48xpjdCO1u10yNU7DkA14FVm/
+        h1SRStWJvbKA2dZI/22ue6by6zasB/4=
+X-Google-Smtp-Source: ABdhPJwmGorNge5TIowflQGYy3HlJeLfrQsqkkf7E3IJwgP7ow7mRYgrNVfYMEHsxjh+2+0qxs2NuA==
+X-Received: by 2002:a2e:a78c:: with SMTP id c12mr41978220ljf.418.1638886291839;
+        Tue, 07 Dec 2021 06:11:31 -0800 (PST)
 Received: from [192.168.2.145] (94-29-46-111.dynamic.spd-mgts.ru. [94.29.46.111])
-        by smtp.googlemail.com with ESMTPSA id a7sm1697292lfi.149.2021.12.07.06.07.26
+        by smtp.googlemail.com with ESMTPSA id i24sm1813605ljm.135.2021.12.07.06.11.31
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 Dec 2021 06:07:26 -0800 (PST)
-Subject: Re: [PATCH 1/3] ALSA: hda/tegra: Skip reset on BPMP devices
-To:     Sameer Pujar <spujar@nvidia.com>, tiwai@suse.com,
-        broonie@kernel.org, lgirdwood@gmail.com, robh+dt@kernel.org,
-        thierry.reding@gmail.com, perex@perex.cz
-Cc:     jonathanh@nvidia.com, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Mohan Kumar <mkumard@nvidia.com>
-References: <1638858770-22594-1-git-send-email-spujar@nvidia.com>
- <1638858770-22594-2-git-send-email-spujar@nvidia.com>
- <7742adae-cdbe-a9ea-2cef-f63363298d73@gmail.com>
- <8fd704d9-43ce-e34a-a3c0-b48381ef0cd8@nvidia.com>
- <56bb43b6-8d72-b1de-4402-a2cb31707bd9@gmail.com>
- <4855e9c4-e4c2-528b-c9ad-2be7209dc62a@nvidia.com>
+        Tue, 07 Dec 2021 06:11:31 -0800 (PST)
+Subject: Re: [PATCH] usb: phy: add missing put_device() call in
+ tegra_usb_phy_parse_pmc()
+To:     Qing Wang <wangqing@vivo.com>, Felipe Balbi <balbi@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1638881794-3361-1-git-send-email-wangqing@vivo.com>
 From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <5d441571-c1c2-5433-729f-86d6396c2853@gmail.com>
-Date:   Tue, 7 Dec 2021 17:07:26 +0300
+Message-ID: <768ced18-9e47-df7d-786e-dced5f06b0e7@gmail.com>
+Date:   Tue, 7 Dec 2021 17:11:30 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.14.0
 MIME-Version: 1.0
-In-Reply-To: <4855e9c4-e4c2-528b-c9ad-2be7209dc62a@nvidia.com>
+In-Reply-To: <1638881794-3361-1-git-send-email-wangqing@vivo.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -76,43 +71,27 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-07.12.2021 15:40, Sameer Pujar пишет:
+07.12.2021 15:56, Qing Wang пишет:
+> From: Wang Qing <wangqing@vivo.com>
 > 
+> of_find_device_by_node() takes a reference to the embedded struct device 
+> which needs to be dropped when error return.
 > 
-> On 12/7/2021 5:35 PM, Dmitry Osipenko wrote:
->> External email: Use caution opening links or attachments
->>
->>
->> 07.12.2021 15:00, Sameer Pujar пишет:
->>>
->>> On 12/7/2021 3:52 PM, Dmitry Osipenko wrote:
->>>> 07.12.2021 09:32, Sameer Pujar пишет:
->>>>> HDA regression is recently reported on Tegra194 based platforms.
->>>>> This happens because "hda2codec_2x" reset does not really exist
->>>>> in Tegra194 and it causes probe failure. All the HDA based audio
->>>>> tests fail at the moment. This underlying issue is exposed by
->>>>> commit c045ceb5a145 ("reset: tegra-bpmp: Handle errors in BPMP
->>>>> response") which now checks return code of BPMP command response.
->>>>>
->>>>> The failure can be fixed by avoiding above reset in the driver,
->>>>> but the explicit reset is not necessary for Tegra devices which
->>>>> depend on BPMP. On such devices, BPMP ensures reset application
->>>>> during unpowergate calls. Hence skip reset on these devices
->>>>> which is applicable for Tegra186 and later.
->>>> The power domain is shared with the display, AFAICS. The point of reset
->>>> is to bring h/w into predictable state. It doesn't make sense to me to
->>>> skip the reset.
->>> Yes the power-domain is shared with display. As mentioned above,
->>> explicit reset in driver is not really necessary since BPMP is already
->>> doing it during unpowergate stage. So the h/w is already ensured to be
->>> in a good state.
->> If you'll reload the driver module, then h/w won't be reset.
+> Add a jump target to fix the exception handling for this 
+> function implementation.
 > 
-> How the reload case would be different? Can you please specify more
-> details if you are referring to a particular scenario?
+> Signed-off-by: Wang Qing <wangqing@vivo.com>
+> ---
+>  drivers/usb/phy/phy-tegra-usb.c | 18 +++++++++++++-----
+>  1 file changed, 13 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/usb/phy/phy-tegra-usb.c b/drivers/usb/phy/phy-tegra-usb.c
+> index 68cd4b6..5678b7f
+> --- a/drivers/usb/phy/phy-tegra-usb.c
+> +++ b/drivers/usb/phy/phy-tegra-usb.c
+> @@ -1300,18 +1300,26 @@ static int tegra_usb_phy_parse_pmc(struct device *dev,
+>  	err = devm_add_action_or_reset(dev, tegra_usb_phy_put_pmc_device,
+>  				       &pmc_pdev->dev);
 
-You have a shared power domain. Since power domain can be turned off
-only when nobody keeps domain turned on, you now making reset of HDA
-controller dependent on the state of display driver. Do you want to have
-inconsistent h/w reset behaviour depending on the runtime state of
-display driver?
+This devm_add_action_or_reset() takes care of dropping the reference.
+This patch is incorrect.
