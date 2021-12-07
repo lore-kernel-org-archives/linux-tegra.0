@@ -2,107 +2,186 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83BB0C433EF
-	for <linux-tegra@archiver.kernel.org>; Tue,  7 Dec 2021 08:15:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72442C433EF
+	for <linux-tegra@archiver.kernel.org>; Tue,  7 Dec 2021 08:16:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232314AbhLGISf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 7 Dec 2021 03:18:35 -0500
-Received: from bzq-84-110-109-230.red.bezeqint.net ([84.110.109.230]:49891
-        "EHLO mx.tkos.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S232151AbhLGISf (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 7 Dec 2021 03:18:35 -0500
-X-Greylist: delayed 516 seconds by postgrey-1.27 at vger.kernel.org; Tue, 07 Dec 2021 03:18:34 EST
-Received: from tarshish (unknown [10.0.8.2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mx.tkos.co.il (Postfix) with ESMTPS id E1A8A440855;
-        Tue,  7 Dec 2021 10:06:08 +0200 (IST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tkos.co.il;
-        s=default; t=1638864370;
-        bh=esweGkmM1TaFxAsLsotS7LKsL2FjaGbpG3oTnnMt2EY=;
-        h=References:From:To:Cc:Subject:Date:In-reply-to:From;
-        b=GcPgxTp47EJex9304Cwrh1a93q3dHMKWiHIjz8ZTn4NegGPU69yqh7Su5vmg5fO+P
-         Kh7nqdgkBIpI3Rf9UzzHq/x7N7cBaA/7R0ZE12PQaFHPd0XT3nfMmWwSoc6YNW6HJ/
-         sY7u4RIykgN0trrfVUJdtS/HSKo97dqJciT8yZxSr0wjGT9g5g4otk+PHV0JYm9p9k
-         P9YzQWW8WWhUeig+fPqnm1HPGtUlIZxk5urZr4h4aKbE+4xA9oZm9Je0d93bTim8GN
-         1As0GD0fgMDT/yrRdfvnw9AkNJRlBW1Fj0uJad+Crzam3J4mee0elu9epTaexUTQ7t
-         Pqt45gjbFAkpw==
-References: <20211202210839.79140-1-andriy.shevchenko@linux.intel.com>
- <20211207080325.6hfokrrcs45iucx6@pengutronix.de>
-User-agent: mu4e 1.6.10; emacs 27.1
-From:   Baruch Siach <baruch@tkos.co.il>
-To:     Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-        Sergio Paracuellos <sergio.paracuellos@gmail.com>,
-        Chunyan Zhang <chunyan.zhang@unisoc.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Tony Lindgren <tony@atomide.com>,
-        Nicolas Saenz Julienne <nsaenz@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Jianqun Xu <jay.xu@rock-chips.com>,
-        Alexandru Ardelean <aardelean@deviqon.com>,
-        Thierry Reding <treding@nvidia.com>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        patches@opensource.cirrus.com,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-power@fi.rohmeurope.com,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-pwm@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-unisoc@lists.infradead.org,
-        linux-rockchip@lists.infradead.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-tegra@vger.kernel.org, Ray Jui <rjui@broadcom.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Gregory Fong <gregory.0xf0@gmail.com>,
-        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
-        Keerthy <j-keerthy@ti.com>, Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang7@gmail.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH v1 1/3] gpio: Get rid of duplicate of_node assignment in
- the drivers
-Date:   Tue, 07 Dec 2021 10:05:08 +0200
-In-reply-to: <20211207080325.6hfokrrcs45iucx6@pengutronix.de>
-Message-ID: <87ilw0on3z.fsf@tarshish>
+        id S232200AbhLGIUU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 7 Dec 2021 03:20:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41004 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232145AbhLGIUT (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 7 Dec 2021 03:20:19 -0500
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CEEA0C061746;
+        Tue,  7 Dec 2021 00:16:49 -0800 (PST)
+Received: by mail-wm1-x331.google.com with SMTP id p3-20020a05600c1d8300b003334fab53afso1076654wms.3;
+        Tue, 07 Dec 2021 00:16:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Ly6PK7ZlXENS118/xi5eqqCwa0KSNmpdRCsrscbUxXs=;
+        b=RJ2A2AvJ/GKuZox5oW4GExhqZKBSj9wIWUKbCtplJz8JhCWTyrAxFMIw72JuUB/V+Z
+         SPoIecc4pG3tPMKscObyZ2G/uII+bgm7BfxUU0bXw71NAB7FS8lBRIzIVv8M21zkG4ef
+         G2PFryO1xXzvsDYUoBUUexeBMEkGTatXl9Mr8rqweUAQNaeypw1JYwzKUEJQSaie5QLI
+         fya9lVVVb/XDzqesXcy+ShboMtB1eQDnknTyJU2WHG1Lms0pw0K5obFk6njQiKtDiRhT
+         kMTD92schvaOdVSO2zm7fddUwNXJc8+nBSWi5lxQP5xb7QB0pVdcvmXT3LXNvxahKlJ5
+         r55Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Ly6PK7ZlXENS118/xi5eqqCwa0KSNmpdRCsrscbUxXs=;
+        b=lfLszAvfMPplak3oGhDhhmtw20suqxoZow+6tU+94nrzR/aoYtfQVXSl1wmbPHf0pT
+         onNWpoTNuN9v3uux2dWwns1IVqX+I8o88zUnkA6qEAwTPDjb7z1UZDzxRrkZX2MI4aej
+         2N7fozra3H8vb1EtDV50wIj9umds9L3UOsZIPr5iWG7vcaAspqm0BpgTIz5d+WWTmoIm
+         YhotB/Gn0sZPK9iACgvTN108J13Mbhefah1Sl9MQkZNMXlRT5olyJ3X8ExNaBVncvL2l
+         piMHJOuoe1C/4fluTPucBkq65FcSHksgH1VYqRPIi9eF69ohfxIYTFFClxV6CCUZ4Bd3
+         vi9Q==
+X-Gm-Message-State: AOAM532LE/A2T4Fi+5auxTQ9IXhe6tXKfDUmc1p9SXBd0YdMUBjhl1wJ
+        STDVZ2OmSOgPiE9s3w2Ydhw=
+X-Google-Smtp-Source: ABdhPJwqMszyeTU2cTI4AGOx6dwxjoLr6yhBZ1CHjwUgz6wuPMFwPNBUzP0X7/jaHwSnRS/oZ9woXQ==
+X-Received: by 2002:a05:600c:a08:: with SMTP id z8mr5138256wmp.165.1638865008363;
+        Tue, 07 Dec 2021 00:16:48 -0800 (PST)
+Received: from orome.fritz.box ([193.209.96.43])
+        by smtp.gmail.com with ESMTPSA id p12sm16556493wrr.10.2021.12.07.00.16.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Dec 2021 00:16:47 -0800 (PST)
+Date:   Tue, 7 Dec 2021 09:16:43 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Sameer Pujar <spujar@nvidia.com>
+Cc:     tiwai@suse.com, broonie@kernel.org, lgirdwood@gmail.com,
+        robh+dt@kernel.org, perex@perex.cz, jonathanh@nvidia.com,
+        digetx@gmail.com, alsa-devel@alsa-project.org,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH 1/3] ALSA: hda/tegra: Skip reset on BPMP devices
+Message-ID: <Ya8Ya2en5Tm5Ol2u@orome.fritz.box>
+References: <1638858770-22594-1-git-send-email-spujar@nvidia.com>
+ <1638858770-22594-2-git-send-email-spujar@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="57gZ4qqQmZgyq7I1"
+Content-Disposition: inline
+In-Reply-To: <1638858770-22594-2-git-send-email-spujar@nvidia.com>
+User-Agent: Mutt/2.1.3 (987dde4c) (2021-09-10)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Uwe,
 
-On Tue, Dec 07 2021, Uwe Kleine-K=C3=B6nig wrote:
-> Hello Andy,
->
-> you Cc: linux-pwm and the pwm maintainers in this series. I don't spot
-> anything pwm specific here (apart from touching gpio-mvebu which also
-> contains a PWM driver). Do I miss something?
+--57gZ4qqQmZgyq7I1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-That's probably because of drivers/gpio/gpio-mvebu.c that appears in the
-MAINTAINERS PWM entry.
+On Tue, Dec 07, 2021 at 12:02:48PM +0530, Sameer Pujar wrote:
+> HDA regression is recently reported on Tegra194 based platforms.
+> This happens because "hda2codec_2x" reset does not really exist
+> in Tegra194 and it causes probe failure. All the HDA based audio
+> tests fail at the moment. This underlying issue is exposed by
+> commit c045ceb5a145 ("reset: tegra-bpmp: Handle errors in BPMP
+> response") which now checks return code of BPMP command response.
+>=20
+> The failure can be fixed by avoiding above reset in the driver,
+> but the explicit reset is not necessary for Tegra devices which
+> depend on BPMP. On such devices, BPMP ensures reset application
+> during unpowergate calls. Hence skip reset on these devices
+> which is applicable for Tegra186 and later.
+>=20
+> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
+> Cc: stable@vger.kernel.org
+> Depends-on: 87f0e46e7559 ("ALSA: hda/tegra: Reset hardware")
+> ---
+>  sound/pci/hda/hda_tegra.c | 24 +++++++++++++++++++-----
+>  1 file changed, 19 insertions(+), 5 deletions(-)
+>=20
+> diff --git a/sound/pci/hda/hda_tegra.c b/sound/pci/hda/hda_tegra.c
+> index ea700395..862141e 100644
+> --- a/sound/pci/hda/hda_tegra.c
+> +++ b/sound/pci/hda/hda_tegra.c
+> @@ -68,6 +68,10 @@
+>   */
+>  #define TEGRA194_NUM_SDO_LINES	  4
+> =20
+> +struct hda_data {
+> +	unsigned int do_reset:1;
+> +};
 
-baruch
+I suppose this could also be a bool. Not sure if we need to care about
+packing optimizations at this point.
 
---=20
-                                                     ~. .~   Tk Open Systems
-=3D}------------------------------------------------ooO--U--Ooo------------=
-{=3D
-   - baruch@tkos.co.il - tel: +972.52.368.4656, http://www.tkos.co.il -
+It may also be useful to rename this to something less generic to avoid
+potential clashes with other data structures in the future. We've often
+used the _soc suffix in other drivers to mark this kind of SoC-specific
+data. In this case it would be struct hda_tegra_soc.
+
+If Takashi is fine with this as-is, I don't have any strong objections,
+though.
+
+> +
+>  struct hda_tegra {
+>  	struct azx chip;
+>  	struct device *dev;
+> @@ -76,6 +80,7 @@ struct hda_tegra {
+>  	unsigned int nclocks;
+>  	void __iomem *regs;
+>  	struct work_struct probe_work;
+> +	const struct hda_data *data;
+>  };
+> =20
+>  #ifdef CONFIG_PM
+> @@ -427,8 +432,13 @@ static int hda_tegra_create(struct snd_card *card,
+>  	return 0;
+>  }
+> =20
+> +static const struct hda_data tegra30_data =3D {
+> +	.do_reset =3D 1,
+> +};
+> +
+>  static const struct of_device_id hda_tegra_match[] =3D {
+> -	{ .compatible =3D "nvidia,tegra30-hda" },
+> +	{ .compatible =3D "nvidia,tegra30-hda", .data =3D &tegra30_data },
+> +	{ .compatible =3D "nvidia,tegra186-hda" },
+>  	{ .compatible =3D "nvidia,tegra194-hda" },
+>  	{},
+>  };
+
+One other thing we've done in the past is to explicitly pass these
+structures for each compatible string. That simplifies things a bit
+because we don't have to keep checking for non-NULL pointers and instead
+rely on the fact that there's always a valid pointer.
+
+To do so, you'd basically add:
+
+	static const struct hda_data tegra186_data =3D {
+		.do_reset =3D 0,
+	};
+
+And reference that for both the Tegra186 and Tegra194 entries. Again,
+not strictly necessary and since we have only one occurrence where we
+need to check this, it seems fine as-is, so:
+
+Acked-by: Thierry Reding <treding@nvidia.com>
+
+--57gZ4qqQmZgyq7I1
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmGvGGsACgkQ3SOs138+
+s6ElZhAAkBaYvI5wUy4Npac6iTV4FV0hRhu5qIRVrFswg59quVV9ON7cg+yhPiT3
+ECUBt0PvJSyC2WahkVievF9k/szqlqmuIkccsh1dyTg989V3unM3QAiIv77sdkua
+HvljJ+klN7RCuYLG1ZRf9D2gq6673eTOh1DkAGX5piScMQj9cJskWDBkp6n3pxJt
+cGuaEuXC1+VMMKAZqQuyFcp067IVbSsiPggWXKaaR0fWiZak2gGNPDaZQGBIUrmH
+c5Tne6q+E3C+CRyuxE4SNTuurPwaorbFqR5rvaaViixJRrXII3pTa6MueGllsQPL
+ZbasWvQgLhSUg2r//wgDoMNwX4DpbUgBdhqjmz9jPZ/a8QwqCmZXbjxBs30EdLMs
+kZGfblGdGUUC2AEQRRUCG1ftCPrSj3FQtF41mOjWCEoeFvGSQhi0mi1Sm/vxYvbQ
+ur4P42gmEf83YIgZG93GjP0lsvu06Rb/vqcvB7tIvM6FR9F3TNp5rWasRj94x8w2
+v2JunAPyIjLPRd/h7mhFOJ7b40QrF4DkBduAQnfd/knk2qwaHmkHUG8wnPpoaVDN
+5oMwUJ2p8eAM/GHkj4iuEivBSVGQ9gcNU7xYE1Rd7yx7lGKexlC37UW55lVxlGYX
+7oXSVisIG2dJ4E3GjLbTkWQaf5Af4hjqdzziS4lEM33Fg+YY06c=
+=bQYe
+-----END PGP SIGNATURE-----
+
+--57gZ4qqQmZgyq7I1--
