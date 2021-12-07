@@ -2,115 +2,77 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0B38C433FE
-	for <linux-tegra@archiver.kernel.org>; Tue,  7 Dec 2021 15:08:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40CA8C433EF
+	for <linux-tegra@archiver.kernel.org>; Tue,  7 Dec 2021 15:25:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238455AbhLGPLh (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 7 Dec 2021 10:11:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54070 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233627AbhLGPLg (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 7 Dec 2021 10:11:36 -0500
-Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A176C061746;
-        Tue,  7 Dec 2021 07:08:06 -0800 (PST)
-Received: by mail-wr1-x42e.google.com with SMTP id o13so30056950wrs.12;
-        Tue, 07 Dec 2021 07:08:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=rt4kf+DWc0LcqIowjiwIJDIGCKtcXqUj5XnLkK/hFEU=;
-        b=JDL26ioIZvPLtxewTzm4hGLcNPdH+oW/QkPqGQW6E8vkG0C6+yKOEQHjZtCQcCHywb
-         QqI5gTxPj3ONxiyLLvxyn2l+0/vuOarI5AoEN4IAQMUM+2ZqA90fiBdXRc6U9KjB26UO
-         G3QXwScEGtVO+0tWaSNYSDRW3P8tViD5CN3mCBIEeoNlF5QL18NrKvAEZ6EQQlr5qZXu
-         3ARCrbLEWb0plE28eNzAeKoMI75YYJ2a8WRb+3grBa2LzkCD/LV1Wb39pVtihR9GLrAk
-         JxfoQXqtUAFX1HH+53fcp83HmhCV4+nsKU/XyD5ePmhaXtwrx4dLuIPLKkrCzASYFouz
-         S0sg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=rt4kf+DWc0LcqIowjiwIJDIGCKtcXqUj5XnLkK/hFEU=;
-        b=1i8ek8+j+DBJ4+KCBu0i5K6XeHffJvnznj4LH2Wbu6di721AIv4f3zDyPucLIbncSO
-         7XgIfATUTKqA4d98zHHDaVD+xDGyLK+KAOUipppzKpAhkq2kSYKcQ3TaBVsB4XrKTq+T
-         ziUM1iCKoitIDxwPsYLWgIv5Sc3+5Tk6jsmhultIAg/LMF8FQ+icnVzs49u7hLRc/a7K
-         iGdIv15ErPptrh7xohCgPkuZuuHz9ps/rvP7J7+5kBU2cB1IZ0FPoMhDpFiiSG5qjHBt
-         MATdULnos5sT7sf9wKK7L4axK5qknYzp0Y7fpX2JRRDnnbjo+ymfmvWpyIZ5puDKccxV
-         ZTIQ==
-X-Gm-Message-State: AOAM5333JOavn8dtZuUuTMrZARTbaALeO38X9oAHO+eFxgbeYUdhGF5y
-        qRtLaFAzZVJfiUfIVYDzSng=
-X-Google-Smtp-Source: ABdhPJyVkwOpkHsXqDRKJ9PutFBVtXFwjGE0HxJzlj1bgH0Y+0tuv358xxfn3HX3AOezngCyTCX/3w==
-X-Received: by 2002:a5d:6d01:: with SMTP id e1mr52103076wrq.157.1638889684831;
-        Tue, 07 Dec 2021 07:08:04 -0800 (PST)
-Received: from localhost ([193.209.96.43])
-        by smtp.gmail.com with ESMTPSA id a198sm3196119wme.1.2021.12.07.07.08.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Dec 2021 07:08:04 -0800 (PST)
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 3/3] arm64: tegra: Drop arm,armv8-pmuv3 compatible string
-Date:   Tue,  7 Dec 2021 16:07:46 +0100
-Message-Id: <20211207150746.444478-3-thierry.reding@gmail.com>
-X-Mailer: git-send-email 2.33.1
-In-Reply-To: <20211207150746.444478-1-thierry.reding@gmail.com>
-References: <20211207150746.444478-1-thierry.reding@gmail.com>
+        id S234683AbhLGP3M (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 7 Dec 2021 10:29:12 -0500
+Received: from sin.source.kernel.org ([145.40.73.55]:35098 "EHLO
+        sin.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233423AbhLGP3M (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 7 Dec 2021 10:29:12 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by sin.source.kernel.org (Postfix) with ESMTPS id 82B30CE1B61;
+        Tue,  7 Dec 2021 15:25:40 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF660C341C8;
+        Tue,  7 Dec 2021 15:25:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1638890738;
+        bh=J8msW6LwcnbTDITwAK9K1Hgp5b7keEccDrPi9Mhoggo=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=iwb5L4OlwmF0yt3uWY4AZYqXRz84IRo0QH9tgxKb2o5soL1MNqgQJcYQXEO+/tAtm
+         76CQRRrWE/0ce7lftJNT+Cb8gtLgAxfDW1vnhSI9V7LngiFtGB1OgsyXyQYytZSDWT
+         yoIZfFqqoW9bs2URgEiP3uL9rysxU9rg+mJTyveDYbnYSdGvtHzofgIaC3EfpqQazX
+         pEi6W6ucZSMArYx+wy3sTr+nIYnoRNfhlQGVz4b+kYNGKzdngXnaqdXfH3xtgYekYk
+         c4LC/uZDrPXO6cdrRIgc6Ksz7OBy69rZy/WzC1ovFUfDigNEL5fKqabNi8lzO9bOV1
+         sUE721hCI6rUA==
+Received: by mail-ed1-f54.google.com with SMTP id v1so58446336edx.2;
+        Tue, 07 Dec 2021 07:25:38 -0800 (PST)
+X-Gm-Message-State: AOAM532J6oXEKU+ocqGbCJaKGqLN47lCQVwGpsfm1P8IINeY29HSoy6+
+        D74e/eVode+aE2dRYXqAJa7PIQatm6Rzf4aiWQ==
+X-Google-Smtp-Source: ABdhPJyOdYTX77AKFpCdW12txA/jNFV1mj20oqfaQ5wauNVRPMWnjnumSoliIuE8OYgdRW1emQ32gqTEtRHsDJ6P8SE=
+X-Received: by 2002:a17:906:5e14:: with SMTP id n20mr84229eju.466.1638890736629;
+ Tue, 07 Dec 2021 07:25:36 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20211206154032.227938-1-thierry.reding@gmail.com>
+ <Ya51Ndf+VdRRdM9h@robh.at.kernel.org> <dfb6b42c-16ed-ab17-b585-6b07d3d6874f@gmail.com>
+In-Reply-To: <dfb6b42c-16ed-ab17-b585-6b07d3d6874f@gmail.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Tue, 7 Dec 2021 09:25:22 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqKJFk76nXwRZoe-A_C8r+1jBWMDg7BvrxFBRHR62Ls9yw@mail.gmail.com>
+Message-ID: <CAL_JsqKJFk76nXwRZoe-A_C8r+1jBWMDg7BvrxFBRHR62Ls9yw@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: regulators: Document Tegra regulator
+ coupling in json-schema
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+On Mon, Dec 6, 2021 at 3:55 PM Dmitry Osipenko <digetx@gmail.com> wrote:
+>
+> 06.12.2021 23:40, Rob Herring =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > On Mon, Dec 06, 2021 at 04:40:32PM +0100, Thierry Reding wrote:
+> >> From: Thierry Reding <treding@nvidia.com>
+> >>
+> >> Move the NVIDIA Tegra regulator coupling bindings from the free-form
+> >> text format into the existing json-schema file for regulators.
+> >
+> > Do we need these properties for every single regulator? This should be
+> > its own schema file and then referenced where it is needed.
+>
+> These properties are SoC-specific, they describe how regulators are
+> integrated into SoC's power subsystem. Regulators themselves are
+> SoC-independent, i.e. PMIC's vendor and model don't matter for SoC.
 
-The arm,armv8-pmuv3 compatible string is meant to be used only for
-software models and not silicon chips. Drop them and use silicon-
-specific compatible strings instead.
+Yes, but in reality the PMIC and SoC are typically somewhat coupled.
+How many PMICs do you need these properties for?
 
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- arch/arm64/boot/dts/nvidia/tegra186.dtsi | 4 ++--
- arch/arm64/boot/dts/nvidia/tegra194.dtsi | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-index 5f8132884be0..eb739ffbdfce 100644
---- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-@@ -1892,14 +1892,14 @@ L2_A57: l2-cache1 {
- 	};
- 
- 	pmu_denver {
--		compatible = "nvidia,denver-pmu", "arm,armv8-pmuv3";
-+		compatible = "nvidia,denver-pmu";
- 		interrupts = <GIC_SPI 320 IRQ_TYPE_LEVEL_HIGH>,
- 			     <GIC_SPI 321 IRQ_TYPE_LEVEL_HIGH>;
- 		interrupt-affinity = <&denver_0 &denver_1>;
- 	};
- 
- 	pmu_a57 {
--		compatible = "arm,cortex-a57-pmu", "arm,armv8-pmuv3";
-+		compatible = "arm,cortex-a57-pmu";
- 		interrupts = <GIC_SPI 296 IRQ_TYPE_LEVEL_HIGH>,
- 			     <GIC_SPI 297 IRQ_TYPE_LEVEL_HIGH>,
- 			     <GIC_SPI 298 IRQ_TYPE_LEVEL_HIGH>,
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-index 8d29b7fdb044..a0025b1c425f 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-@@ -2687,7 +2687,7 @@ l3c: l3-cache {
- 	};
- 
- 	pmu {
--		compatible = "arm,armv8-pmuv3";
-+		compatible = "nvidia,carmel-pmu";
- 		interrupts = <GIC_SPI 384 IRQ_TYPE_LEVEL_HIGH>,
- 			     <GIC_SPI 385 IRQ_TYPE_LEVEL_HIGH>,
- 			     <GIC_SPI 386 IRQ_TYPE_LEVEL_HIGH>,
--- 
-2.33.1
-
+Rob
