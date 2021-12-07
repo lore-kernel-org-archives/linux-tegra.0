@@ -2,75 +2,70 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E900C433EF
-	for <linux-tegra@archiver.kernel.org>; Tue,  7 Dec 2021 15:35:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24D88C433F5
+	for <linux-tegra@archiver.kernel.org>; Tue,  7 Dec 2021 15:49:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238882AbhLGPi4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 7 Dec 2021 10:38:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60952 "EHLO
+        id S234170AbhLGPwl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 7 Dec 2021 10:52:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36014 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234255AbhLGPiz (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 7 Dec 2021 10:38:55 -0500
-Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21717C061574;
-        Tue,  7 Dec 2021 07:35:25 -0800 (PST)
-Received: by mail-lj1-x22b.google.com with SMTP id m12so28122179ljj.6;
-        Tue, 07 Dec 2021 07:35:25 -0800 (PST)
+        with ESMTP id S233981AbhLGPwk (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 7 Dec 2021 10:52:40 -0500
+Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A47FC061574;
+        Tue,  7 Dec 2021 07:49:10 -0800 (PST)
+Received: by mail-lj1-x229.google.com with SMTP id z8so28178590ljz.9;
+        Tue, 07 Dec 2021 07:49:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=6QJHwvAIj7j6f9tXcv3t1jDYcyJk0MG+odriPhUknmc=;
-        b=gjMvzabeYrtiD2l4Ppofk0NmbF2NeHkBy3RKVQY6q5lwJxyQj6t6Hb/1Lqt667WBl7
-         nBEHCeGtXXXoqIcawTvzlZrmK34PF4DDZ6durwpMs9n8YJQmsBhzLkP2kx+OKYGvJIhi
-         n/c5L3ynfKirxqvexlPKBa9ie4H59UI60l9TswOhBzcFPVysh54UKdf2n01/UZmD75Nx
-         2sPDu8zABxfYiKrueVw8j6NQVVkhPqvCZ6RZZ3C7BJ7QvJe3TG2D3Z98KF4c/6lRuuxx
-         SOOgHpATXEFThcn433wYrvqvWjItjYepmDIrGN0l+K2T0yh1Fx139BK3veAjkcuQcFlk
-         zjxA==
+        bh=4uDjcpsKd8NPDhx91UKVlEBzzyIKS/ryAwk42PqDp8Q=;
+        b=UEtfTTDOqrQoj6+s5QaG/0SmRDQVDZqi7GfjXEpeYM+4+dZ1hpuhoT3tEqYqLdL4Er
+         YN3rhY47CyteMJQt6gr6ilhV7vpXTBTGzX1+Mllw1UXspZOoyajN2s3Q8yyhy84oSK4n
+         +65yyy1vm7c+sO7FQBTv2BXYdVMDv2G58lJ0cRtctGDhwLezgZukKtRv41HGl9pmkYGo
+         5Xc9McTM9QjwOUFuntzzjQDamTn18ar9L8/773vFi4XoCT76nc6uA0yK2iZOMyuTti1C
+         8pLRkfboinSm2Hr06AD0U1RYvlJp+Ur5FyI7EcZSFdDgyqRVUQ4LQ1R1WOPt4bSFkiQa
+         FMNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=6QJHwvAIj7j6f9tXcv3t1jDYcyJk0MG+odriPhUknmc=;
-        b=iAXV7m/EXx7Xvgcjn095chLgNTvs+kVLlWN+SHYXAc2UaaT86xq8ZcTNKV8UYgofql
-         KY8iZ7FeSfVC6bvtRY/5bUtMAXdZjjWLFR5El2/OEQkAoRQXqi173kqoj1Uku+V7FmC+
-         BhProlGW6IH7bnMrRqsobyTH4GfgEbNj1nGQWbrmlVJ69ChTNObmzR77T9PCmF9e48V/
-         wPIMGvTTPp7of3eCTqdIx0Lniz8D+Li6V2o7nBJJVqbrArqRXK7GHAThvRWdKclJquuc
-         ekPOLEiI+WFkvA2l6QbTs0UFoLDcf3eLfmoovbAcmuRUDy2gCsI0AaL6OBSGKY1rl7iP
-         hV1w==
-X-Gm-Message-State: AOAM531lfmwgRYo9DHuUL1LelLH7s5MksdLfTd8Jd1NTzJ5n2k5gnVRa
-        /Jf8IDLDbOM8xZIcTKG3iKI=
-X-Google-Smtp-Source: ABdhPJxHGZ+65r90qy522XHUaM4sCGrdC5fWeHGrHG5KsxuLtJvqNuqbIoCPKboT5L1H87xO47QUSw==
-X-Received: by 2002:a2e:9702:: with SMTP id r2mr43684071lji.482.1638891323459;
-        Tue, 07 Dec 2021 07:35:23 -0800 (PST)
+        bh=4uDjcpsKd8NPDhx91UKVlEBzzyIKS/ryAwk42PqDp8Q=;
+        b=7mxopVFf5F4wHhRjf+k40G36hygYbe+OuP5ykmeaexYLoluygx9QfIJkFuQt7K130J
+         5+O+AKE0BhrvIMyU1AzsrEqDM/3TmfENs5tQ7XiovrSwiTCG17oHoIUJLgqEfgXK96VR
+         vCl4t4BTkVH+wk1ujtbg+8ZKAXjtuJGwAIQDQEYycPWhYfvtsptHKvIkH/oi1MiNh2Dt
+         jb/Oeh11zhB+yVpPQxCmry1U9AA+Z7n80GyeO74LyM1K0FE37qPXZzwaNG4joeGPDYzN
+         zXAAIafELiuV7zyfOwG55qUvPHc6Y8obn66XC/XEK0yE7oDk8vHKh9hOyGp5RwRE9/hU
+         0Jzw==
+X-Gm-Message-State: AOAM533agj089wyTsac2XSgR10wQSNrhDcmqcaerstGVHkLQkmixcGVL
+        3yLKXh12imJdgRRtBtRTeeM6dqxxNTg=
+X-Google-Smtp-Source: ABdhPJyd5F+rdKY9vKX8srKhW4YKSmy3giHf4T98i3vJ99HbMF5SdEvvtOVUbD9AMCdDqwmIwmt+qw==
+X-Received: by 2002:a05:651c:2c1:: with SMTP id f1mr44175758ljo.345.1638892148238;
+        Tue, 07 Dec 2021 07:49:08 -0800 (PST)
 Received: from [192.168.2.145] (94-29-46-111.dynamic.spd-mgts.ru. [94.29.46.111])
-        by smtp.googlemail.com with ESMTPSA id n15sm454740lfu.228.2021.12.07.07.35.21
+        by smtp.googlemail.com with ESMTPSA id d16sm1712471ljj.87.2021.12.07.07.49.07
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 Dec 2021 07:35:22 -0800 (PST)
-Subject: Re: [PATCH 1/3] ALSA: hda/tegra: Skip reset on BPMP devices
-To:     Sameer Pujar <spujar@nvidia.com>, tiwai@suse.com,
-        broonie@kernel.org, lgirdwood@gmail.com, thierry.reding@gmail.com,
-        perex@perex.cz
-Cc:     jonathanh@nvidia.com, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Mohan Kumar <mkumard@nvidia.com>, robh+dt@kernel.org
-References: <1638858770-22594-1-git-send-email-spujar@nvidia.com>
- <1638858770-22594-2-git-send-email-spujar@nvidia.com>
- <7742adae-cdbe-a9ea-2cef-f63363298d73@gmail.com>
- <8fd704d9-43ce-e34a-a3c0-b48381ef0cd8@nvidia.com>
- <56bb43b6-8d72-b1de-4402-a2cb31707bd9@gmail.com>
- <4855e9c4-e4c2-528b-c9ad-2be7209dc62a@nvidia.com>
- <5d441571-c1c2-5433-729f-86d6396c2853@gmail.com>
- <f32cde65-63dc-67f8-ded8-b58ea5e89f4e@nvidia.com>
+        Tue, 07 Dec 2021 07:49:07 -0800 (PST)
+Subject: Re: [PATCH] dt-bindings: regulators: Document Tegra regulator
+ coupling in json-schema
+To:     Rob Herring <robh@kernel.org>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20211206154032.227938-1-thierry.reding@gmail.com>
+ <Ya51Ndf+VdRRdM9h@robh.at.kernel.org>
+ <dfb6b42c-16ed-ab17-b585-6b07d3d6874f@gmail.com>
+ <CAL_JsqKJFk76nXwRZoe-A_C8r+1jBWMDg7BvrxFBRHR62Ls9yw@mail.gmail.com>
 From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <95cc7efa-251c-690b-9afa-53ee9e052c34@gmail.com>
-Date:   Tue, 7 Dec 2021 18:35:21 +0300
+Message-ID: <3b67b2b5-104d-ebc7-426d-266086698a68@gmail.com>
+Date:   Tue, 7 Dec 2021 18:49:07 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.14.0
 MIME-Version: 1.0
-In-Reply-To: <f32cde65-63dc-67f8-ded8-b58ea5e89f4e@nvidia.com>
+In-Reply-To: <CAL_JsqKJFk76nXwRZoe-A_C8r+1jBWMDg7BvrxFBRHR62Ls9yw@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -78,24 +73,25 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-07.12.2021 17:49, Sameer Pujar пишет:
-...
->>> How the reload case would be different? Can you please specify more
->>> details if you are referring to a particular scenario?
->> You have a shared power domain. Since power domain can be turned off
->> only when nobody keeps domain turned on, you now making reset of HDA
->> controller dependent on the state of display driver.
+07.12.2021 18:25, Rob Herring пишет:
+> On Mon, Dec 6, 2021 at 3:55 PM Dmitry Osipenko <digetx@gmail.com> wrote:
+>>
+>> 06.12.2021 23:40, Rob Herring пишет:
+>>> On Mon, Dec 06, 2021 at 04:40:32PM +0100, Thierry Reding wrote:
+>>>> From: Thierry Reding <treding@nvidia.com>
+>>>>
+>>>> Move the NVIDIA Tegra regulator coupling bindings from the free-form
+>>>> text format into the existing json-schema file for regulators.
+>>>
+>>> Do we need these properties for every single regulator? This should be
+>>> its own schema file and then referenced where it is needed.
+>>
+>> These properties are SoC-specific, they describe how regulators are
+>> integrated into SoC's power subsystem. Regulators themselves are
+>> SoC-independent, i.e. PMIC's vendor and model don't matter for SoC.
 > 
-> I don't think that the state of display driver would affect. The HDA
-> driver itself can issue unpowergate calls which in turn ensures h/w
-> reset. If display driver is already runtime active, HDA driver runtime
-> resume after this would be still fine since h/w reset is already applied
-> during display runtime resume. Note that both HDA and display resets are
-> connected to this power-domain and BPMP applies these resets during
-> unpowergate.
+> Yes, but in reality the PMIC and SoC are typically somewhat coupled.
+> How many PMICs do you need these properties for?
 
-HDA won't be reset while display is active on T186+.
-HDA will be reset while is display is inactive on T186+.
-HDA will be reset regardless of display state on pre-T186.
-
-This is a pure inconsistency of the reset behaviour. Please don't do it.
+Three PMICs. Realistically we shouldn't have more such PMICs in upstream
+in foreseeable future.
