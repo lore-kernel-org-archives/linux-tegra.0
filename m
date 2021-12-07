@@ -2,96 +2,140 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24D88C433F5
-	for <linux-tegra@archiver.kernel.org>; Tue,  7 Dec 2021 15:49:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79A11C433EF
+	for <linux-tegra@archiver.kernel.org>; Tue,  7 Dec 2021 15:52:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234170AbhLGPwl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 7 Dec 2021 10:52:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36014 "EHLO
+        id S239121AbhLGPzw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 7 Dec 2021 10:55:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36872 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233981AbhLGPwk (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 7 Dec 2021 10:52:40 -0500
-Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A47FC061574;
-        Tue,  7 Dec 2021 07:49:10 -0800 (PST)
-Received: by mail-lj1-x229.google.com with SMTP id z8so28178590ljz.9;
-        Tue, 07 Dec 2021 07:49:10 -0800 (PST)
+        with ESMTP id S233306AbhLGPzw (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 7 Dec 2021 10:55:52 -0500
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7197EC061574;
+        Tue,  7 Dec 2021 07:52:21 -0800 (PST)
+Received: by mail-wr1-x432.google.com with SMTP id a18so30466414wrn.6;
+        Tue, 07 Dec 2021 07:52:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=4uDjcpsKd8NPDhx91UKVlEBzzyIKS/ryAwk42PqDp8Q=;
-        b=UEtfTTDOqrQoj6+s5QaG/0SmRDQVDZqi7GfjXEpeYM+4+dZ1hpuhoT3tEqYqLdL4Er
-         YN3rhY47CyteMJQt6gr6ilhV7vpXTBTGzX1+Mllw1UXspZOoyajN2s3Q8yyhy84oSK4n
-         +65yyy1vm7c+sO7FQBTv2BXYdVMDv2G58lJ0cRtctGDhwLezgZukKtRv41HGl9pmkYGo
-         5Xc9McTM9QjwOUFuntzzjQDamTn18ar9L8/773vFi4XoCT76nc6uA0yK2iZOMyuTti1C
-         8pLRkfboinSm2Hr06AD0U1RYvlJp+Ur5FyI7EcZSFdDgyqRVUQ4LQ1R1WOPt4bSFkiQa
-         FMNA==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=6P7zVBXhkZB89KSkmuzfPpvn7y6oK4PlBjq+KmslJgc=;
+        b=kTgT5/8E3EUTUQafk5f1paXaflLhVpA0IkbfEnIBcV97d0q0HpIsfs+jRx+QNmh6v1
+         YWNLjwIjPIGztgfmKAH4Vg1PM/NMdKstpdjBY/glNgAQZSu+rJh5gMXey3Vof0hRYQmA
+         FPGVnaCE+x3HenaDrFbiYZ9ep0IihM5J6LwCdU+3B7c7Gvtfa7Q5L7C051i8D/lvGpCl
+         mNAUCiQA+gPwoxE8+0n08aLFREIvoSbRiPI5SVMeUvdNIa/91aXhpkCBdqWOK3UFoyz9
+         07+0vplmJj8kKOZYC48OuRZqT03E3D5yd2ngouapAa0ZqWO+Qkut2cf5STnuFCBo35p4
+         Opzg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=4uDjcpsKd8NPDhx91UKVlEBzzyIKS/ryAwk42PqDp8Q=;
-        b=7mxopVFf5F4wHhRjf+k40G36hygYbe+OuP5ykmeaexYLoluygx9QfIJkFuQt7K130J
-         5+O+AKE0BhrvIMyU1AzsrEqDM/3TmfENs5tQ7XiovrSwiTCG17oHoIUJLgqEfgXK96VR
-         vCl4t4BTkVH+wk1ujtbg+8ZKAXjtuJGwAIQDQEYycPWhYfvtsptHKvIkH/oi1MiNh2Dt
-         jb/Oeh11zhB+yVpPQxCmry1U9AA+Z7n80GyeO74LyM1K0FE37qPXZzwaNG4joeGPDYzN
-         zXAAIafELiuV7zyfOwG55qUvPHc6Y8obn66XC/XEK0yE7oDk8vHKh9hOyGp5RwRE9/hU
-         0Jzw==
-X-Gm-Message-State: AOAM533agj089wyTsac2XSgR10wQSNrhDcmqcaerstGVHkLQkmixcGVL
-        3yLKXh12imJdgRRtBtRTeeM6dqxxNTg=
-X-Google-Smtp-Source: ABdhPJyd5F+rdKY9vKX8srKhW4YKSmy3giHf4T98i3vJ99HbMF5SdEvvtOVUbD9AMCdDqwmIwmt+qw==
-X-Received: by 2002:a05:651c:2c1:: with SMTP id f1mr44175758ljo.345.1638892148238;
-        Tue, 07 Dec 2021 07:49:08 -0800 (PST)
-Received: from [192.168.2.145] (94-29-46-111.dynamic.spd-mgts.ru. [94.29.46.111])
-        by smtp.googlemail.com with ESMTPSA id d16sm1712471ljj.87.2021.12.07.07.49.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 Dec 2021 07:49:07 -0800 (PST)
-Subject: Re: [PATCH] dt-bindings: regulators: Document Tegra regulator
- coupling in json-schema
-To:     Rob Herring <robh@kernel.org>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20211206154032.227938-1-thierry.reding@gmail.com>
- <Ya51Ndf+VdRRdM9h@robh.at.kernel.org>
- <dfb6b42c-16ed-ab17-b585-6b07d3d6874f@gmail.com>
- <CAL_JsqKJFk76nXwRZoe-A_C8r+1jBWMDg7BvrxFBRHR62Ls9yw@mail.gmail.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <3b67b2b5-104d-ebc7-426d-266086698a68@gmail.com>
-Date:   Tue, 7 Dec 2021 18:49:07 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=6P7zVBXhkZB89KSkmuzfPpvn7y6oK4PlBjq+KmslJgc=;
+        b=594nzXH9pm5FZkLHyekU2vdxz9P6fw8QWnjUSyPmQbYkSQ8QFgzJPEObvEUz/VjvXJ
+         GW2SJGGJaOjLtg6yLyE4xtg0XoxvHQHbFOIbuAf66IEUzmWfIY3JPaoFBdESc937qMLR
+         dGSBcRsjhUWNubSHkIgdLDFuQd+b7Px8UYEz8uKH5iK1qorZZdN+xSdTBtnJIUqRmlep
+         YT94Sh/pmcFU+XywCipBe0e1RrnabG4WMQ2WuXIWPpeGN3QgqrvQ5T6bIFCsJF9e+eyF
+         pJoMAPwB790xsORJDAfDFjPwBCs3aiEE1qQo7LSw1FTesFsppyRSn4XNZzpntD88DQnU
+         krdw==
+X-Gm-Message-State: AOAM533UIyC668L9C9PddlbINADncecW/m1bi9ywmU3iz/MpRDfMiMTJ
+        5vuTmyhbPZmCi8jLmAdWOoU=
+X-Google-Smtp-Source: ABdhPJxp5J4ipRp0e/VgzXH2/dNQBBjKdI90Vbc5z8GpoOljoQiRRPdqSRdlqBC+nv5z9grS7LxSaA==
+X-Received: by 2002:a5d:66cd:: with SMTP id k13mr51720979wrw.517.1638892340030;
+        Tue, 07 Dec 2021 07:52:20 -0800 (PST)
+Received: from orome.fritz.box ([193.209.96.43])
+        by smtp.gmail.com with ESMTPSA id z8sm69830wrh.54.2021.12.07.07.52.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Dec 2021 07:52:18 -0800 (PST)
+Date:   Tue, 7 Dec 2021 16:52:16 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Rob Herring <robh+dt@kernel.org>, linux-tegra@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 05/11] misc: sram: Add compatible string for Tegra234
+ SYSRAM
+Message-ID: <Ya+DMHSYt7T22fYX@orome.fritz.box>
+References: <20211112123542.3680629-1-thierry.reding@gmail.com>
+ <20211112123542.3680629-6-thierry.reding@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAL_JsqKJFk76nXwRZoe-A_C8r+1jBWMDg7BvrxFBRHR62Ls9yw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="zeOIG0z7395Yc90d"
+Content-Disposition: inline
+In-Reply-To: <20211112123542.3680629-6-thierry.reding@gmail.com>
+User-Agent: Mutt/2.1.3 (987dde4c) (2021-09-10)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-07.12.2021 18:25, Rob Herring пишет:
-> On Mon, Dec 6, 2021 at 3:55 PM Dmitry Osipenko <digetx@gmail.com> wrote:
->>
->> 06.12.2021 23:40, Rob Herring пишет:
->>> On Mon, Dec 06, 2021 at 04:40:32PM +0100, Thierry Reding wrote:
->>>> From: Thierry Reding <treding@nvidia.com>
->>>>
->>>> Move the NVIDIA Tegra regulator coupling bindings from the free-form
->>>> text format into the existing json-schema file for regulators.
->>>
->>> Do we need these properties for every single regulator? This should be
->>> its own schema file and then referenced where it is needed.
->>
->> These properties are SoC-specific, they describe how regulators are
->> integrated into SoC's power subsystem. Regulators themselves are
->> SoC-independent, i.e. PMIC's vendor and model don't matter for SoC.
-> 
-> Yes, but in reality the PMIC and SoC are typically somewhat coupled.
-> How many PMICs do you need these properties for?
 
-Three PMICs. Realistically we shouldn't have more such PMICs in upstream
-in foreseeable future.
+--zeOIG0z7395Yc90d
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, Nov 12, 2021 at 01:35:36PM +0100, Thierry Reding wrote:
+> From: Mikko Perttunen <mperttunen@nvidia.com>
+>=20
+> We want to use the same behavior as on Tegra186 and Tegra194, so add
+> this the compatible string for Tegra234 SYSRAM to the list.
+>=20
+> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
+>  drivers/misc/sram.c | 1 +
+>  1 file changed, 1 insertion(+)
+
+Hi Greg,
+
+I forgot to Cc you on the initial submission, not realizing that I had
+this one-line driver change mixed into a set of DT bindings and device
+tree updates.
+
+Quoting in full. Would you mind if I pick this up into the Tegra tree,
+or do you want me to resend this to you for inclusion in your tree?
+
+Thanks,
+Thierry
+
+>=20
+> diff --git a/drivers/misc/sram.c b/drivers/misc/sram.c
+> index 4c26b19f5154..f0e7f02605eb 100644
+> --- a/drivers/misc/sram.c
+> +++ b/drivers/misc/sram.c
+> @@ -371,6 +371,7 @@ static const struct of_device_id sram_dt_ids[] =3D {
+>  	{ .compatible =3D "atmel,sama5d2-securam", .data =3D &atmel_securam_con=
+fig },
+>  	{ .compatible =3D "nvidia,tegra186-sysram", .data =3D &tegra_sysram_con=
+fig },
+>  	{ .compatible =3D "nvidia,tegra194-sysram", .data =3D &tegra_sysram_con=
+fig },
+> +	{ .compatible =3D "nvidia,tegra234-sysram", .data =3D &tegra_sysram_con=
+fig },
+>  	{}
+>  };
+> =20
+> --=20
+> 2.33.1
+>=20
+
+--zeOIG0z7395Yc90d
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmGvgzAACgkQ3SOs138+
+s6FFww//R4hiT4esYUWFwYp5igNBAr6sYlk7+spTxbxaaLl0u/nQVRZdpRNa4GY9
+x4NDxlBdARrO/fM2FQulAWhwN/uVsTiGxX3DZa3jDmQbv4vi9l4FriZU1UrtwUKg
+rhc2GOV5GFOMq19hqiKgE2yw+xcbJG9iV2S8LnFiw8QeXhtc+4O7qk+nVg3VTHxr
+oF4PSSb73YRy7qYKJJsq/yCdEuMTafUIHtGqktD7fdxPQ97W8abGuxc12ZoagqaW
+xTx5ErpLKJsoji/x/MP9FprxK2Qt3DiSWh54bj6A5gur9ND8nRLAijl2MNRVrOvi
+o2lB6N2MySecoIpHOBNAHii6/9zUX0herJaImCtqTQmhAEmhsst3Z3Ub9ZhUs7J/
+WBp05Kt91SnWMedgdMOqh7O1p1hshM8ctBJ95lcdjeDZLUFoXUnbkmFA+vBXkBtU
+wyF2oiLj7/L/zEEe3dms9FQJs6AA1dPVBjJUVp76aeKq9dA8Mqn/kG/7Cnv1JxJy
+sI5fWkLYB+oTII9AwAF+yuMgTaJFRauCFJSigCmU1ZjNrgAT/T8+kwedU6Abr5qa
+aVOLgVd6qIkydgNbtZ3z0aTI2AUfG2M8C9rj4brunu6Hiqm4X//GDb0NQgokSnB6
+MFdYZQ4GqCq/tkdFLZrC0Pp0WG1DmHljUsBYCk29IlzIi6N0MJs=
+=QKiv
+-----END PGP SIGNATURE-----
+
+--zeOIG0z7395Yc90d--
