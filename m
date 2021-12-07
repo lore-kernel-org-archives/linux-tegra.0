@@ -2,157 +2,79 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3D04C433EF
-	for <linux-tegra@archiver.kernel.org>; Tue,  7 Dec 2021 10:13:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F11C5C433EF
+	for <linux-tegra@archiver.kernel.org>; Tue,  7 Dec 2021 10:14:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234872AbhLGKQu (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 7 Dec 2021 05:16:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40906 "EHLO
+        id S234768AbhLGKRv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 7 Dec 2021 05:17:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41160 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234871AbhLGKQt (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 7 Dec 2021 05:16:49 -0500
-Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89745C061574;
-        Tue,  7 Dec 2021 02:13:19 -0800 (PST)
-Received: by mail-wm1-x330.google.com with SMTP id p27-20020a05600c1d9b00b0033bf8532855so1822581wms.3;
-        Tue, 07 Dec 2021 02:13:19 -0800 (PST)
+        with ESMTP id S229818AbhLGKRu (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 7 Dec 2021 05:17:50 -0500
+Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10FBFC061746;
+        Tue,  7 Dec 2021 02:14:19 -0800 (PST)
+Received: by mail-lf1-x130.google.com with SMTP id bi37so32419837lfb.5;
+        Tue, 07 Dec 2021 02:14:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=+JSq2Mn+ndF3BDUlZbvnwRro8FYuW+wTgLGEUsIFszc=;
-        b=jx4vsmpJlRL074I/J2khBzcVl5m+1afbeYi72dwZPUupG98kokfO3XTPVgz59dtlJD
-         bm5S6qKOKKRC+k4A87EI1ZosDPcW5RyPIzGZtUZ4VIa/QScE073YVf9+Uhe8UXsbeqJR
-         horMcOhuBABYe+iv0r7KxL55c0teTAJSKiIvBhQpDJqm4DjTJddeHFqbsu/fiqn3/gvI
-         zxCEYBojma1csyauLtOldMnJW6rAzVhTPxvOcF9eNw1XUl5sc2rW65s3TGjRO2OA2D/a
-         4w8MD6kfU5BCIkn+2IAcO3E6vtENiJLx5LC7skswbMFiicrA4WYK8GlT+xmY8y8UvG8P
-         Y4lQ==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=e8kee/N0as/hz/cg2sQd2lCPZnQthggdydHn9mrSiqU=;
+        b=Vn7zKGINM/TVnj1QqZzCB4RhDZXr5GvFm0DDRUrZ6icbPApcWsfZsMgO3UiLD70BCF
+         uOkV0ROYdKwHyS8iLSIkN28MswjzfnkK5zQDX5w224RopqbJPh2c+yUgiSikKsyGin03
+         THJ+OPgdAymtIiMRMASPqRzXhZL6jKYBt2KKP6DzuUDGusT7YXjoPRgF0Xq9gcmi2jiJ
+         PiEKuxjAGYMU0ndESLlKnF9fIjcWEAYuIQmKAbIaND9+F8vbhETUOZVOY+We4DEiyjzL
+         6kOT3gjLdor4/ZjtlRdY3Ue7n6NZ39ksC0xMa7w/Cc5QVbmHESP1CAm2AFRocceomZbv
+         FMSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=+JSq2Mn+ndF3BDUlZbvnwRro8FYuW+wTgLGEUsIFszc=;
-        b=RkogOFfGEe73pcLYYs53yQ+geXILIurAnN+ex8ZdyJBaViLgiBjoRWJx5+lOFsObR4
-         NPTv/SN07pG/Ce9ihCkEF8Xg5vh2Ovq1FiuJ9uUsJ0evRUS2PHYyk4M0oZZYfzNrkf82
-         fCTNQw1aiH+0x5k4VGubAYlDbmhQ1tqPHgq5RYiAXtPYpEArIFUgdKTU4B6cSLP5lWuL
-         f2UZhwTIqk8r8yjHtKihQ/hPOX/59sU4cqhCS8VhUAZNnltiukNDR2z6FM926FeX5k92
-         ifWI8dq141UrSqu/weqewYUWRpo2o1VSEVT3eLuSZ5f0jkyooVq6UzZ3Yw/tx/43SOlZ
-         npqQ==
-X-Gm-Message-State: AOAM532r2+8gAHyyZ8sMTsxy1LqxjAbpQieMiEPKFMVmB4bhEyR8Dlk5
-        naHo+sC+78phJHhcwmOtepyDmzyWjQAJvw==
-X-Google-Smtp-Source: ABdhPJyAyeeCGiwEblNflI2r7vGjggtsr/ghbekDzsgeWyZFdFBTBJDV9gQud36CcCPcWBG8wjQTNg==
-X-Received: by 2002:a1c:f60a:: with SMTP id w10mr5794742wmc.53.1638871998138;
-        Tue, 07 Dec 2021 02:13:18 -0800 (PST)
-Received: from localhost ([193.209.96.43])
-        by smtp.gmail.com with ESMTPSA id y6sm2056345wma.37.2021.12.07.02.13.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Dec 2021 02:13:17 -0800 (PST)
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Jon Hunter <jonathanh@nvidia.com>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: [PATCH] ARM: tegra: Drop reg-shift for Tegra HS UART
-Date:   Tue,  7 Dec 2021 11:13:16 +0100
-Message-Id: <20211207101316.381031-1-thierry.reding@gmail.com>
-X-Mailer: git-send-email 2.33.1
+        bh=e8kee/N0as/hz/cg2sQd2lCPZnQthggdydHn9mrSiqU=;
+        b=VmVHrNCgJ1/Lq5D1ZwATV4m4aczyJzFDrhOF+yPJgy2pbq/FUrqPCywCliwqTv0/O6
+         TKJGvpLVE1io6LAGXhOZx0832SNNQYxESnZHMow66oS9d1V0JYK/Jpyn/bMFtkwl1t5j
+         gKef/nFmJQES6vNkIKV56tbGeU9mpr8oOqZQhJEliTHuvld5wkkGAev3Ylo4mjs85Am0
+         xmpWj6bxhiKj7qT46FT3DVasHP6riEeY0+u40HBBqf4vkUnXYRUkfBHAq9TjsURHRLre
+         QQQr6WbcpcDbbk+vleF76VC/md+kTz7aEbo+lpbzIzpa2I293Y7VC+7U92imr2qmFpfU
+         HeFw==
+X-Gm-Message-State: AOAM533vgzm6/pR5+/1GCOpMcFtXpD+rUFGRHsTriKvuXZ5muoJdrNPE
+        eoYReOzF4sBe68nNg+JiIA03kT4Nt3s=
+X-Google-Smtp-Source: ABdhPJzQGDXpxQbq645M+Cx7NqFq4GuTvMkGZHqWfLldEcnTBw1AkZi7CP1LNhMvfB00h76mxuu0Lw==
+X-Received: by 2002:a05:6512:39d3:: with SMTP id k19mr39194848lfu.81.1638872057999;
+        Tue, 07 Dec 2021 02:14:17 -0800 (PST)
+Received: from [192.168.2.145] (94-29-46-111.dynamic.spd-mgts.ru. [94.29.46.111])
+        by smtp.googlemail.com with ESMTPSA id i18sm1635047lfu.67.2021.12.07.02.14.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 07 Dec 2021 02:14:17 -0800 (PST)
+Subject: Re: [PATCH 2/3] dt-bindings: sound: tegra: Update HDA resets
+To:     Sameer Pujar <spujar@nvidia.com>, tiwai@suse.com,
+        broonie@kernel.org, lgirdwood@gmail.com, robh+dt@kernel.org,
+        thierry.reding@gmail.com, perex@perex.cz
+Cc:     jonathanh@nvidia.com, alsa-devel@alsa-project.org,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1638858770-22594-1-git-send-email-spujar@nvidia.com>
+ <1638858770-22594-3-git-send-email-spujar@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <13d20227-ec6b-03db-01dc-b4b00038a15c@gmail.com>
+Date:   Tue, 7 Dec 2021 13:14:16 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 MIME-Version: 1.0
+In-Reply-To: <1638858770-22594-3-git-send-email-spujar@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+07.12.2021 09:32, Sameer Pujar пишет:
+> Tegra194 HDA has only two resets unlike the previous generations of
+> Tegra SoCs. Hence update the reset list accordingly.
+> 
+> Fixes: 2d8f8955fe02 ("dt-bindings: tegra: Convert HDA doc to json-schema")
 
-When the Tegra High-Speed UART is used instead of the regular UART, the
-reg-shift property is implied from the compatible string and should not
-be explicitly listed.
-
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi               | 3 +++
- arch/arm/boot/dts/tegra124-jetson-tk1.dts                 | 2 ++
- arch/arm/boot/dts/tegra30-asus-nexus7-grouper-common.dtsi | 2 ++
- arch/arm/boot/dts/tegra30-colibri.dtsi                    | 2 ++
- 4 files changed, 9 insertions(+)
-
-diff --git a/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi b/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
-index f00ef4d08fd4..b952b272afc0 100644
---- a/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
-+++ b/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
-@@ -1539,14 +1539,17 @@ sdmmc3-clk-lb-out-pee4 { /* NC */
- 
- 	serial@70006040 {
- 		compatible = "nvidia,tegra124-hsuart", "nvidia,tegra30-hsuart";
-+		/delete-property/ reg-shift;
- 	};
- 
- 	serial@70006200 {
- 		compatible = "nvidia,tegra124-hsuart", "nvidia,tegra30-hsuart";
-+		/delete-property/ reg-shift;
- 	};
- 
- 	serial@70006300 {
- 		compatible = "nvidia,tegra124-hsuart", "nvidia,tegra30-hsuart";
-+		/delete-property/ reg-shift;
- 	};
- 
- 	hdmi_ddc: i2c@7000c700 {
-diff --git a/arch/arm/boot/dts/tegra124-jetson-tk1.dts b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
-index e056e737abdf..f76f4e13458a 100644
---- a/arch/arm/boot/dts/tegra124-jetson-tk1.dts
-+++ b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
-@@ -1389,6 +1389,7 @@ dsi_b {
- 	 */
- 	serial@70006000 {
- 		compatible = "nvidia,tegra124-hsuart", "nvidia,tegra30-hsuart";
-+		/delete-property/ reg-shift;
- 		status = "okay";
- 	};
- 
-@@ -1401,6 +1402,7 @@ serial@70006000 {
- 	 */
- 	serial@70006040 {
- 		compatible = "nvidia,tegra124-hsuart", "nvidia,tegra30-hsuart";
-+		/delete-property/ reg-shift;
- 		status = "okay";
- 	};
- 
-diff --git a/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-common.dtsi b/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-common.dtsi
-index 3fbb57d517c4..f3d14d8dd87f 100644
---- a/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-common.dtsi
-+++ b/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-common.dtsi
-@@ -804,11 +804,13 @@ drive_gma {
- 
- 	uartb: serial@70006040 {
- 		compatible = "nvidia,tegra30-hsuart";
-+		/delete-property/ reg-shift;
- 		/* GPS BCM4751 */
- 	};
- 
- 	uartc: serial@70006200 {
- 		compatible = "nvidia,tegra30-hsuart";
-+		/delete-property/ reg-shift;
- 		status = "okay";
- 
- 		nvidia,adjust-baud-rates = <0 9600 100>,
-diff --git a/arch/arm/boot/dts/tegra30-colibri.dtsi b/arch/arm/boot/dts/tegra30-colibri.dtsi
-index 03b930bce479..e89b4e5a238d 100644
---- a/arch/arm/boot/dts/tegra30-colibri.dtsi
-+++ b/arch/arm/boot/dts/tegra30-colibri.dtsi
-@@ -701,10 +701,12 @@ pv0 {
- 
- 	serial@70006040 {
- 		compatible = "nvidia,tegra30-hsuart";
-+		/delete-property/ reg-shift;
- 	};
- 
- 	serial@70006300 {
- 		compatible = "nvidia,tegra30-hsuart";
-+		/delete-property/ reg-shift;
- 	};
- 
- 	hdmi_ddc: i2c@7000c700 {
--- 
-2.33.1
-
+The original txt binding was already wrong, this "fixes" tag is wrong.
