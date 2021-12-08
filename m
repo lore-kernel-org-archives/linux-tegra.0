@@ -2,248 +2,129 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DCB3C433F5
-	for <linux-tegra@archiver.kernel.org>; Wed,  8 Dec 2021 14:37:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78E01C433EF
+	for <linux-tegra@archiver.kernel.org>; Wed,  8 Dec 2021 14:41:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233260AbhLHOlK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 8 Dec 2021 09:41:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43402 "EHLO
+        id S235293AbhLHOor (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 8 Dec 2021 09:44:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44204 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231708AbhLHOlK (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 8 Dec 2021 09:41:10 -0500
-Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38ED1C061746;
-        Wed,  8 Dec 2021 06:37:38 -0800 (PST)
-Received: by mail-lj1-x229.google.com with SMTP id bn20so4175373ljb.8;
-        Wed, 08 Dec 2021 06:37:38 -0800 (PST)
+        with ESMTP id S235288AbhLHOor (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 8 Dec 2021 09:44:47 -0500
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48AF3C061746;
+        Wed,  8 Dec 2021 06:41:15 -0800 (PST)
+Received: by mail-wr1-x42f.google.com with SMTP id c4so4428949wrd.9;
+        Wed, 08 Dec 2021 06:41:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=YQEKCLjlalppfIwA7C25NVMf1kXovJJ5rxk2lrnjyHg=;
-        b=So2ZQ3i6muj1swwi9nVQYixhTs2rFja9AiQ6nJ9nLNUIVvFPji2T37cMyWIorjB8Cm
-         2HpT3VAsnMAI8MqyDt/bzbrGGVvEPgYnznzoMIjXisy2rgL7LhukcLS+gjMTc5PLPjK2
-         NzwMGX242y2VPjN8Ire2j6nsYdLo1b4Zi00Q3ulub8RG6MjGuARAm7CeXDUofBVzZr+M
-         PvBTA4zf6RJye7X0Pgssf1FneIVFaGZxlqSPL0pHfM6Yau4A7z4BYBI4sZRD1/mYTMdi
-         VBv+bE+3odK++P8GmCHqwKt500sx4N8ZGyFXykXUlrL2ZryYYVvyT9WViSfMgJ3EmR/N
-         E4DQ==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=qU1Nu0uDwKbv0ASOHzlGRqdEWy8QYeodVW7QKE4d9jc=;
+        b=e1sLGHX6mQCWpJirLRXjSEaGkieK0VAKI7A2fk3H8MHttiuvepmwLmO+st0hCPWgEF
+         CvPaIbZZQwDUym08o43M5ojFZ14id+AvjHPWdcF63CgF9V5Q1RHbnP/cg9Ny1OU8qiAh
+         bNXJEY0nwMHj5NqLb6Xon67Ah8OHuwJpfYwYBuDQHEEM7BSWPtrkHLs9NQmfYZD8wFCO
+         JrYCVsPL8WKK2fSDATR/uvNvl6BJsmEvLw2kNKNXUBciiZ2rK+vY35rdZIkTXptd1p5Y
+         LvxwQpEUKD2EOPikX92/5q9UOsGGBju5U3IjGcbSXRO3EzTPbMJ1n44/S3M3I8ESRXTM
+         Z2AQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=YQEKCLjlalppfIwA7C25NVMf1kXovJJ5rxk2lrnjyHg=;
-        b=vI5es/Qc5EfLcWuYdNIJW9oFpNK8euNNExwUNsEQlKS5OegEFnEUVsA5YFOV6gzNTo
-         4/yn0t3PwVM31S5T6oikuga3je+nvjILryQTa2sgSQaJVYAO5D02lnL6B1TjsjgzhOp4
-         41oax/doDjGfa0xf/JoStkney4RKhD4RwcxYc14TClVGFEmneHh2KXUR3UbcC89bFum0
-         ErDMbgM8ZKwo1i3u9y9yNd4Gj9ucMzwScjPr18+USE8od6yHNDSR47yGmEThDzed4md7
-         FVjO+ALN6/vqfOlCdlgqMnEfhjEPLWvJuAjwKQXTHads8nmURvD8C0/27rWdgprS30+Z
-         +Vpw==
-X-Gm-Message-State: AOAM533dH8HdRZNbj0lPlyyxQXnZD4JbaLB8wMc3cIf8V9Pa+YRttaLn
-        rtxErYr+5OSX4QvmM31oaqlZhJrnp6I=
-X-Google-Smtp-Source: ABdhPJyorDpZti4BMtPd9AOn+iX5gnjrZmrS7HTPOzlS2hL594mfM25Qm0jMuzeLpVYBk0sn/FQnPA==
-X-Received: by 2002:a2e:8e38:: with SMTP id r24mr47966640ljk.450.1638974256178;
-        Wed, 08 Dec 2021 06:37:36 -0800 (PST)
-Received: from [192.168.2.145] (94-29-46-111.dynamic.spd-mgts.ru. [94.29.46.111])
-        by smtp.googlemail.com with ESMTPSA id z8sm270446lfu.128.2021.12.08.06.37.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 Dec 2021 06:37:35 -0800 (PST)
-Subject: Re: [PATCH v7 6/6] iommu/tegra-smmu: Add pagetable mappings to
- debugfs
-To:     Nicolin Chen <nicolinc@nvidia.com>, thierry.reding@gmail.com,
-        joro@8bytes.org, will@kernel.org
-Cc:     vdumpa@nvidia.com, jonathanh@nvidia.com,
-        linux-tegra@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org
-References: <20211208084732.23363-1-nicolinc@nvidia.com>
- <20211208084732.23363-7-nicolinc@nvidia.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <085d4e6a-31b1-37c8-fe31-fb15119affc6@gmail.com>
-Date:   Wed, 8 Dec 2021 17:37:34 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=qU1Nu0uDwKbv0ASOHzlGRqdEWy8QYeodVW7QKE4d9jc=;
+        b=3++YLLo2CUOamvHzQCe/tOxu0uLqZglHw0ys4mrum94RIvdZdglZkPMa1+xAVUFoER
+         4tRk0ZY8qq/wPVdrwxHJTQd0WMZ55zthdoTZNKK3cubq5XAgpeA3kBTkX6r5otzCHawH
+         MRfDN470dlALzltiLlJa6aEUpn/15GxjYScvLEBBrlWezE5S84N4SA/O0KH6k3dlQS65
+         GCWhsaibtcUx+SrRF0Hl5W8ZHN20CHs6SaWCjlJvYAXJnm9Xs4qjy/q+z+9vzuD4xthN
+         baqWbaYjPm0a3j5LxEX8KJgZalCQVnrAN9/rgyspD8WE5dsd0xyxxelotgXDbSZlzRXF
+         WpFA==
+X-Gm-Message-State: AOAM530RTjzRwiMOKnLkmRhZvTukJbckKEhi6mhmGQ0iSNWB56lq4FOv
+        yNP/omz2gdf4v9FxC/qMUUSWAz/a4ZqUAw==
+X-Google-Smtp-Source: ABdhPJy9BHQ5CRCgi7+6wu0Kn/3eNG2H9FWUXW9u1ZoHxzHaz8hcEZykhJyYzBLqVWZJeRs9Rr1+8g==
+X-Received: by 2002:a05:6000:18a3:: with SMTP id b3mr59981274wri.343.1638974473830;
+        Wed, 08 Dec 2021 06:41:13 -0800 (PST)
+Received: from orome ([193.209.96.43])
+        by smtp.gmail.com with ESMTPSA id e8sm2841189wrr.26.2021.12.08.06.41.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 Dec 2021 06:41:12 -0800 (PST)
+Date:   Wed, 8 Dec 2021 15:41:09 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Jon Hunter <jonathanh@nvidia.com>, Will Deacon <will@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/3] dt-bindings: arm: pmu: Document Denver and Carmel
+ PMUs
+Message-ID: <YbDEBexUo8WYKVwd@orome>
+References: <20211207150746.444478-1-thierry.reding@gmail.com>
+ <1638971068.754546.3857733.nullmailer@robh.at.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20211208084732.23363-7-nicolinc@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="KuCPuRyt1LA+wE+Y"
+Content-Disposition: inline
+In-Reply-To: <1638971068.754546.3857733.nullmailer@robh.at.kernel.org>
+User-Agent: Mutt/2.1.3 (987dde4c) (2021-09-10)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi,
 
-08.12.2021 11:47, Nicolin Chen пишет:
-> This patch dumps all active mapping entries from pagetable to a
-> debugfs directory named "mappings".
-> 
-> Attaching an example:
-> 
-> [SWGROUP: xusb_host] [as: (id: 5), (attr: R|W|-), (pd_dma: 0x0000000080005000)]
-> {
->         [index: 1023] 0xf0080040 (count: 52)
->         {
->                 PTE RANGE      | ATTR | PHYS               | IOVA               | SIZE
->                 [#913 , #913 ] | 0x7  | 0x0000000102674000 | 0x00000000fff91000 | 0x1000
->                 [#914 , #914 ] | 0x7  | 0x0000000102672000 | 0x00000000fff92000 | 0x1000
->                 [#915 , #915 ] | 0x7  | 0x0000000102671000 | 0x00000000fff93000 | 0x1000
->                 [#916 , #916 ] | 0x7  | 0x0000000102670000 | 0x00000000fff94000 | 0x1000
->                 [#921 , #921 ] | 0x7  | 0x00000000fcc00000 | 0x00000000fff99000 | 0x1000
->                 [#922 , #922 ] | 0x7  | 0x000000010266d000 | 0x00000000fff9a000 | 0x1000
->                 [#923 , #923 ] | 0x7  | 0x000000010266c000 | 0x00000000fff9b000 | 0x1000
->                 [#948 , #948 ] | 0x7  | 0x0000000102668000 | 0x00000000fffb4000 | 0x1000
->                 [#949 , #949 ] | 0x7  | 0x0000000102667000 | 0x00000000fffb5000 | 0x1000
->                 [#950 , #950 ] | 0x7  | 0x0000000102666000 | 0x00000000fffb6000 | 0x1000
->                 [#951 , #951 ] | 0x7  | 0x0000000102665000 | 0x00000000fffb7000 | 0x1000
->                 [#952 , #952 ] | 0x7  | 0x000000010264b000 | 0x00000000fffb8000 | 0x1000
->                 [#953 , #953 ] | 0x7  | 0x000000010264a000 | 0x00000000fffb9000 | 0x1000
->                 [#954 , #954 ] | 0x7  | 0x0000000102649000 | 0x00000000fffba000 | 0x1000
->                 [#955 , #955 ] | 0x7  | 0x0000000102648000 | 0x00000000fffbb000 | 0x1000
->                 [#956 , #956 ] | 0x7  | 0x000000010260f000 | 0x00000000fffbc000 | 0x1000
->                 [#957 , #957 ] | 0x7  | 0x000000010260e000 | 0x00000000fffbd000 | 0x1000
->                 [#958 , #958 ] | 0x7  | 0x000000010260d000 | 0x00000000fffbe000 | 0x1000
->                 [#959 , #959 ] | 0x7  | 0x000000010260b000 | 0x00000000fffbf000 | 0x1000
->                 [#960 , #992 ] | 0x7  | 0x00000001025ea000 | 0x00000000fffc0000 | 0x21000
->         }
-> }
-> Total PDEs: 1, total PTEs: 52
+--KuCPuRyt1LA+wE+Y
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The patch is almost good to me, there is one nit.
+On Wed, Dec 08, 2021 at 07:44:28AM -0600, Rob Herring wrote:
+> On Tue, 07 Dec 2021 16:07:44 +0100, Thierry Reding wrote:
+> > From: Thierry Reding <treding@nvidia.com>
+> >=20
+> > Add compatible strings for the NVIDIA Denver and Carmel PMUs.
+> >=20
+> > Signed-off-by: Thierry Reding <treding@nvidia.com>
+> > ---
+> >  Documentation/devicetree/bindings/arm/pmu.yaml | 2 ++
+> >  1 file changed, 2 insertions(+)
+> >=20
+>=20
+> Running 'make dtbs_check' with the schema in this patch gives the
+> following warnings. Consider if they are expected or the schema is
+> incorrect. These may not be new warnings.
+>=20
+> Note that it is not yet a requirement to have 0 warnings for dtbs_check.
+> This will change in the future.
+>=20
+> Full log is available here: https://patchwork.ozlabs.org/patch/1564747
 
-On older SoCs we put multiple devices into the same shared group and the debugfs shows it as the first member of the group.
+Yikes, that's a lot of warnings. I've got local patches to fix up the
+Tegra-specific ones, but I could look at fixing up the others as well,
+provided that you or anyone else aren't looking at this yet.
 
-This is what we get on T30 using this v7:
+On that note: do you know of a simple trick to get the dtbs_check target
+to run on all DTB files? The only way I've found so far is to manually
+select all Kconfig options that would enable a specific subset, but it'd
+be great if we could just run the checks on all irrespective of .config.
 
-# ls/sys/kernel/debug/smmu/mappings
-g2  hc  vde
+Thierry
 
-# cat /sys/kernel/debug/smmu/mappings/g2 
-[SWGROUP: g2] [as: (id: 2), (attr: R|W|-), (pd_dma: 0x834a6000)]
-{
-        [index: 0] 0xf0083494 (count: 1000)
-        {
-                PTE RANGE      | ATTR | PHYS       | IOVA       | SIZE       
-                [#0   , #15  ] | 0x7  | 0xbfde0000 | 0x00000000 | 0x10000    
-                [#16  , #47  ] | 0x7  | 0xbfdc0000 | 0x00010000 | 0x20000    
-                [#48  , #111 ] | 0x7  | 0xbfd80000 | 0x00030000 | 0x40000    
-                [#112 , #239 ] | 0x7  | 0xbfd00000 | 0x00070000 | 0x80000    
-                [#240 , #495 ] | 0x7  | 0xbfc00000 | 0x000f0000 | 0x100000   
-                [#496 , #999 ] | 0x7  | 0xbf400000 | 0x001f0000 | 0x1f8000   
-        }
-}
-Total PDEs: 1, total PTEs: 1000
+--KuCPuRyt1LA+wE+Y
+Content-Type: application/pgp-signature; name="signature.asc"
 
-See that name is "g2", meanwhile these mappings are made by display client driver.
+-----BEGIN PGP SIGNATURE-----
 
-I changed your patch to use the proper group name and to show all members of the group, see that change in the end of this email.
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmGwxAUACgkQ3SOs138+
+s6Hetg/+JJQtnLCDBwikRv38CHKdGaRq2lC4boCxd+kHMDh+LcYF6KX55dSLV8l2
+gdqjETipx/c/azJV6aaoIPbQFZmfus90ENpzCx0+o61kacH3U1RIKPqrIPBFMWY2
+H+33qyaswXhR32uUJS50fWLoufGse9c17fxZ+2pTM8qY+Bw97FHqyrmZNeubWWxu
+P80ql6PXVuZsNH6hqRkPVmRaMKeajXpyIx6hjjgMOgUMP9GtsC0jC4Cgbc7sr5AG
+hvXvcFQZ2BcSA/nr3QyaTJdmr6OQJW1Zph0GonwK6e7F6hdZ3lr7ijNP5fBgtD8j
+9a2QnSueIUN8aawvZTbN1RznY9YEON+YixxhJTEbXcUjWeZkUVeVzrPN6GF7slq8
+h4DqcgyNM+CQXFp5kf112Odq1vZ1oSWmnKuP5lNVq5Drmco4VVzsoLv+81PAzuSS
+T/vUHP25U4gcCfJ67SHYtYvAK33a1YBBsfklPG12iuDNbWB9SNtwRzUg3Da5p2xW
+Ck0akKmEnzA2iIapWpVTb3o17bFrbOLOA7NIXBD9z59v7oGADwnUfrdMr215X0tK
+gD5sImDWT0t4QkepgUXxS0+RbFXRwBjYB7oIrZpGvwEzGShEZb8wfT/L+lJv9VqC
+2en6ErjxdkjFSLuK5AStGxkjOgSkBb3Q7ugY1Ld13RXRmZv/Eic=
+=jAaG
+-----END PGP SIGNATURE-----
 
-With my change applied, we get:
-
-# ls/sys/kernel/debug/smmu/mappings
-drm  hc  vde
-
-# cat /sys/kernel/debug/smmu/mappings/drm 
-[SWGROUP: dc, dcb, g2, nv, nv2] [as: (id: 2), (attr: R|W|-), (pd_dma: 0x82480000)]
-{
-        [index: 0] 0xf0083583 (count: 1000)
-        {
-                PTE RANGE      | ATTR | PHYS       | IOVA       | SIZE       
-                [#0   , #15  ] | 0x7  | 0xbfde0000 | 0x00000000 | 0x10000    
-                [#16  , #47  ] | 0x7  | 0xbfdc0000 | 0x00010000 | 0x20000    
-                [#48  , #111 ] | 0x7  | 0xbfd80000 | 0x00030000 | 0x40000    
-                [#112 , #239 ] | 0x7  | 0xbfd00000 | 0x00070000 | 0x80000    
-                [#240 , #495 ] | 0x7  | 0xbfc00000 | 0x000f0000 | 0x100000   
-                [#496 , #999 ] | 0x7  | 0xbf400000 | 0x001f0000 | 0x1f8000   
-        }
-}
-Total PDEs: 1, total PTEs: 1000
-
---- >8 ---
-
-diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
-index 575e82076270..fb1326a72038 100644
---- a/drivers/iommu/tegra-smmu.c
-+++ b/drivers/iommu/tegra-smmu.c
-@@ -509,6 +509,7 @@ static void tegra_smmu_as_unprepare(struct tegra_smmu *smmu,
- static int tegra_smmu_debugfs_mappings_show(struct seq_file *s, void *data)
- {
- 	struct tegra_smmu_group *group = s->private;
-+	const struct tegra_smmu_group_soc *soc;
- 	const struct tegra_smmu_swgroup *swgrp;
- 	struct tegra_smmu_as *as;
- 	struct tegra_smmu *smmu;
-@@ -524,6 +525,7 @@ static int tegra_smmu_debugfs_mappings_show(struct seq_file *s, void *data)
- 
- 	swgrp = group->swgrp;
- 	smmu = group->smmu;
-+	soc = group->soc;
- 	as = group->as;
- 
- 	mutex_lock(&smmu->lock);
-@@ -536,7 +538,38 @@ static int tegra_smmu_debugfs_mappings_show(struct seq_file *s, void *data)
- 	if (!pd)
- 		goto unlock;
- 
--	seq_printf(s, "[SWGROUP: %s] ", swgrp->name);
-+	seq_puts(s, "[SWGROUP: ");
-+	if (soc) {
-+		bool first_swgroup = true;
-+		unsigned int i;
-+
-+		for (i = 0; i < soc->num_swgroups; i++) {
-+			swgrp = tegra_smmu_find_swgrp(smmu, soc->swgroups[i]);
-+
-+			if (WARN_ON(!swgrp))
-+				goto unlock;
-+
-+			val = smmu_readl(smmu, swgrp->reg);
-+
-+			if (!(val & SMMU_ASID_ENABLE))
-+				continue;
-+
-+			if (WARN_ON((val & SMMU_ASID_MASK) != as->id))
-+				continue;
-+
-+			if (first_swgroup)
-+				first_swgroup = false;
-+			else
-+				seq_puts(s, ", ");
-+
-+			seq_printf(s, "%s", swgrp->name);
-+		}
-+	} else {
-+		WARN_ON((val & SMMU_ASID_MASK) != as->id);
-+		seq_printf(s, "%s", swgrp->name);
-+	}
-+	seq_puts(s, "] ");
-+
- 	seq_printf(s, "[as: (id: %d), ", as->id);
- 	seq_printf(s, "(attr: %c|%c|%c), ",
- 		   as->attr & SMMU_PD_READABLE ? 'R' : '-',
-@@ -631,6 +664,7 @@ static void tegra_smmu_attach_as(struct tegra_smmu *smmu,
- {
- 	const struct tegra_smmu_swgroup *swgrp;
- 	struct tegra_smmu_group *group;
-+	const char *name;
- 
- 	/* Find swgrp according to the swgroup id */
- 	swgrp = tegra_smmu_find_swgrp(smmu, swgroup);
-@@ -647,10 +681,16 @@ static void tegra_smmu_attach_as(struct tegra_smmu *smmu,
- 				 "overwriting group->as for swgroup: %s\n", swgrp->name);
- 		group->as = as;
- 
--		if (smmu->debugfs_mappings)
--			debugfs_create_file(group->swgrp->name, 0444,
-+		if (smmu->debugfs_mappings) {
-+			if (group->soc)
-+				name = group->soc->name;
-+			else
-+				name = group->swgrp->name;
-+
-+			debugfs_create_file(name, 0444,
- 					    smmu->debugfs_mappings, group,
- 					    &tegra_smmu_debugfs_mappings_fops);
-+		}
- 
- 		break;
- 	}
+--KuCPuRyt1LA+wE+Y--
