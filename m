@@ -2,51 +2,51 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17FBEC4167E
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51729C41535
 	for <linux-tegra@archiver.kernel.org>; Wed,  8 Dec 2021 17:38:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238396AbhLHRmE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 8 Dec 2021 12:42:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57924 "EHLO
+        id S238327AbhLHRmC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 8 Dec 2021 12:42:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57884 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238348AbhLHRl4 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 8 Dec 2021 12:41:56 -0500
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5795BC0698D7;
-        Wed,  8 Dec 2021 09:38:21 -0800 (PST)
-Received: by mail-lf1-x129.google.com with SMTP id b40so6988178lfv.10;
-        Wed, 08 Dec 2021 09:38:21 -0800 (PST)
+        with ESMTP id S238323AbhLHRlz (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 8 Dec 2021 12:41:55 -0500
+Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A65DC0698CB;
+        Wed,  8 Dec 2021 09:38:19 -0800 (PST)
+Received: by mail-lj1-x232.google.com with SMTP id u22so5002964lju.7;
+        Wed, 08 Dec 2021 09:38:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=MVMeO5TsjpG7X103IJ0vtCcKisfNOPmQ/M/aYmMnN4k=;
-        b=h4YHUaUH+61gQIqQv+0xllt+xb40H0potONRxgOSvGhH/L6e66yBCmcJeHmyjOpY4z
-         kiPKhzQwfWHE1cOqAZy6LYdM6Kmqe4WFV4jy0WJe0fwjnTmErLv613DSQAXeUpeciHhF
-         mKvVSFsRZGUcwPhpmbiQsm2gPTHuvi9uMA4DlhN7BQbyxOtDMbzNs+N9ZoLFJTdXsxPg
-         NI/z5aLWbq2xUat0GVZ2VXW1BfLGIE3JLYPGJIN3aMvCLJbQhlqAkWthB/u5xUNn0S1T
-         gGY/D2B2BRK0vZb2DleqiEa+FEvkdGegLPlHc/HrooY+onVW8CI9uFMLfPruFXpgNTAw
-         jvFQ==
+        bh=C5+BX638e/zr1wlcSpe5wD1KbonKJ+ofJR/o6bNYwLY=;
+        b=NdRnazLDGP39FMNnfpQagOAvxDlNBXU0va0P9CYPQ5uwy5zpe2SdiVZf+dBx1KCUTy
+         2IFUlOoL0Nhm1FYcVyU6ZDb8yG/kTRsumEEKJmt+2kU/GPFeaWj36Vcobnih5/6R163p
+         CcIsmbfOu3VvOFPXkYxFHhEjhK57z3By7MnhFQqQHc0o3qnd0HQDM/TMCKIe5S8Z1NVm
+         yDMBlDX/wx2dSn0X65y9cAl0yst35ig2kS7bEI+3ExXUZ0SQsBXY/tBWoPf5zGilcPos
+         zdsuhxLHE/eRCiwE+UGd2zrGFZWgS1pNWcRncIP4j0eEfni7BP0KRd3VLyFUAGPJthFo
+         YSzQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=MVMeO5TsjpG7X103IJ0vtCcKisfNOPmQ/M/aYmMnN4k=;
-        b=oRLREwzzA8e9AKVOzPw3RXFd40Hpbym+cX5ypGEimZUplz7yilGs3W5V/nYLyqjcsr
-         QC5M3LZbLx/Ph/ApRI/1Pekt25+1CRPf7XBkN7DbK43gB40iwwFp6hz1ntbb1oASXyA2
-         YFA0PaQhEEafjIBrld0co0kuQSZ/fB1ihytginJh1+xkxS8hWpuWAdFjqplxJ4RME5nx
-         JfL0m+jh8GKfa9PZKNNQgpc+SFYbDLS4uKqcIK3FW/m//XeVn2VewuLyxRMBaA7/Tqka
-         X+z2arzpV5MpVI8EeBOw/QIJs1c8lO6TTd9dyraFasfD1KrBhM/JoxLza/rpA2SxO5L/
-         b2ZA==
-X-Gm-Message-State: AOAM532kXhtVlE9Ix+9JLJP3QweoCLfLEEmdAiyiGouBkr2BUTn4JhHd
-        IA7lSfOyPHYiJ4h2sC2p8ek=
-X-Google-Smtp-Source: ABdhPJzCdM7qRpQ5Z2Usl9cPWNrsepSRlq7XaNSglr4pbqRckUPRnc0dxYoG9vVfzkhk/vT1eKP63w==
-X-Received: by 2002:a05:6512:130d:: with SMTP id x13mr815806lfu.466.1638985099699;
-        Wed, 08 Dec 2021 09:38:19 -0800 (PST)
+        bh=C5+BX638e/zr1wlcSpe5wD1KbonKJ+ofJR/o6bNYwLY=;
+        b=zYKykm7/kzUx5cdyeCjscY97kAQcgMU0RPcE3wwcAxOMGV2iRZfe8GLjEaP9uBwNbd
+         V+yyPjbAijW/3RIRes+Oqt9zwbp1/GvUc2KM6z94haqFabfZTGbaGtkKISR1u3nwNKJA
+         zC8xxjysQd/Dm3Q2U644UDCfUDroQYtaqCuzP2cQP3eYYagfCYkPR4a/8Bx+eFKEWMrt
+         wfE/Wf6KxHTA8n5S4BS10vGtQQG27uMgm+Dn9Z/xCK53c75N2VUPZNgJYiAuOUeI5QmM
+         QUIr3tDO+2Ar4fvlKBPHvCh1064rygoRT0GNwIkC+X0lDp3XtabLKP5jCNQhvKUy0DmK
+         HEyw==
+X-Gm-Message-State: AOAM532XV8IeTvJil3loo9UVmcdQqyssjdSw3lsIfnNuVcDW2YR4dU5F
+        vEFBUHgKK6PKpwJFBzHhq3I=
+X-Google-Smtp-Source: ABdhPJyzJ6b4Qha7+L0hrWjKPXB/3g0enzvPuBaACXO7cPzqveLoEJq0wTOHM0HUIe/V9rvHUbj7rw==
+X-Received: by 2002:a2e:9654:: with SMTP id z20mr889412ljh.254.1638985097699;
+        Wed, 08 Dec 2021 09:38:17 -0800 (PST)
 Received: from localhost.localdomain (94-29-46-111.dynamic.spd-mgts.ru. [94.29.46.111])
-        by smtp.gmail.com with ESMTPSA id a25sm349159lfm.250.2021.12.08.09.38.18
+        by smtp.gmail.com with ESMTPSA id a25sm349159lfm.250.2021.12.08.09.38.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Dec 2021 09:38:19 -0800 (PST)
+        Wed, 08 Dec 2021 09:38:17 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -66,9 +66,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Stefan Eichenberger <stefan.eichenberger@toradex.com>
 Cc:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v5 20/24] ARM: tegra: nexus7: Drop clock-frequency from NFC node
-Date:   Wed,  8 Dec 2021 20:36:05 +0300
-Message-Id: <20211208173609.4064-21-digetx@gmail.com>
+Subject: [PATCH v5 18/24] ARM: tegra: Add CPU thermal zones to Nyan device-tree
+Date:   Wed,  8 Dec 2021 20:36:03 +0300
+Message-Id: <20211208173609.4064-19-digetx@gmail.com>
 X-Mailer: git-send-email 2.33.1
 In-Reply-To: <20211208173609.4064-1-digetx@gmail.com>
 References: <20211208173609.4064-1-digetx@gmail.com>
@@ -78,42 +78,89 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: David Heidelberg <david@ixit.cz>
+CPU of Nyan Chromebooks is overheating badly because apparently hardware
+soctherm controller doesn't work well. Add CPU thermal zones to enable
+software thermal control over CPU and fix the overheat trouble.
 
-The clock-frequency property was never used and is deprecated now.
-Remove it from Nexus 7 device-tree.
-
-Signed-off-by: David Heidelberg <david@ixit.cz>
+Tested-by: Thomas Graichen <thomas.graichen@gmail.com> # T124 Nyan Big
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- arch/arm/boot/dts/tegra30-asus-nexus7-grouper.dtsi | 1 -
- arch/arm/boot/dts/tegra30-asus-nexus7-tilapia.dtsi | 2 --
- 2 files changed, 3 deletions(-)
+ arch/arm/boot/dts/tegra124-nyan.dtsi | 49 +++++++++++++++++++++++++++-
+ 1 file changed, 48 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/tegra30-asus-nexus7-grouper.dtsi b/arch/arm/boot/dts/tegra30-asus-nexus7-grouper.dtsi
-index a044dbd200a9..564cfcde21a9 100644
---- a/arch/arm/boot/dts/tegra30-asus-nexus7-grouper.dtsi
-+++ b/arch/arm/boot/dts/tegra30-asus-nexus7-grouper.dtsi
-@@ -137,7 +137,6 @@ i2c@7000c500 {
- 		nfc@28 {
- 			compatible = "nxp,pn544-i2c";
- 			reg = <0x28>;
--			clock-frequency = <100000>;
+diff --git a/arch/arm/boot/dts/tegra124-nyan.dtsi b/arch/arm/boot/dts/tegra124-nyan.dtsi
+index ec01a23d4d47..b16cce7476ef 100644
+--- a/arch/arm/boot/dts/tegra124-nyan.dtsi
++++ b/arch/arm/boot/dts/tegra124-nyan.dtsi
+@@ -1,5 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
+ #include <dt-bindings/input/input.h>
++#include <dt-bindings/thermal/thermal.h>
+ #include "tegra124.dtsi"
  
+ / {
+@@ -87,7 +88,7 @@ acodec: audio-codec@10 {
+ 			interrupts = <TEGRA_GPIO(H, 4) IRQ_TYPE_EDGE_FALLING>;
+ 		};
+ 
+-		temperature-sensor@4c {
++		tmp451: temperature-sensor@4c {
+ 			compatible = "ti,tmp451";
+ 			reg = <0x4c>;
  			interrupt-parent = <&gpio>;
- 			interrupts = <TEGRA_GPIO(X, 0) IRQ_TYPE_EDGE_RISING>;
-diff --git a/arch/arm/boot/dts/tegra30-asus-nexus7-tilapia.dtsi b/arch/arm/boot/dts/tegra30-asus-nexus7-tilapia.dtsi
-index a681ad51fddd..cd63e0ef7445 100644
---- a/arch/arm/boot/dts/tegra30-asus-nexus7-tilapia.dtsi
-+++ b/arch/arm/boot/dts/tegra30-asus-nexus7-tilapia.dtsi
-@@ -223,8 +223,6 @@ nfc@2a {
- 			compatible = "nxp,pn544-i2c";
- 			reg = <0x2a>;
+@@ -789,6 +790,52 @@ gpio-restart {
+ 		gpios = <&gpio TEGRA_GPIO(I, 5) GPIO_ACTIVE_LOW>;
+ 		priority = <200>;
+ 	};
++
++	cpus {
++		cpu0: cpu@0 {
++			#cooling-cells = <2>;
++		};
++
++		cpu1: cpu@1 {
++			#cooling-cells = <2>;
++		};
++
++		cpu2: cpu@2 {
++			#cooling-cells = <2>;
++		};
++
++		cpu3: cpu@3 {
++			#cooling-cells = <2>;
++		};
++	};
++
++	thermal-zones {
++		cpu-skin-thermal {
++			polling-delay-passive = <1000>; /* milliseconds */
++			polling-delay = <5000>; /* milliseconds */
++
++			thermal-sensors = <&tmp451 0>;
++
++			trips {
++				cpu_passive_trip: cpu-alert0 {
++					/* throttle at 70C until temperature drops to 69.8C */
++					temperature = <70000>;
++					hysteresis = <200>;
++					type = "passive";
++				};
++			};
++
++			cooling-maps {
++				map0 {
++					trip = <&cpu_passive_trip>;
++					cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++							 <&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++							 <&cpu2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++							 <&cpu3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
++				};
++			};
++		};
++	};
+ };
  
--			clock-frequency = <100000>;
--
- 			interrupt-parent = <&gpio>;
- 			interrupts = <TEGRA_GPIO(S, 7) IRQ_TYPE_EDGE_RISING>;
- 
+ #include "cros-ec-keyboard.dtsi"
 -- 
 2.33.1
 
