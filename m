@@ -2,51 +2,51 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3485FC433EF
-	for <linux-tegra@archiver.kernel.org>; Wed,  8 Dec 2021 17:38:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73380C43217
+	for <linux-tegra@archiver.kernel.org>; Wed,  8 Dec 2021 17:38:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238277AbhLHRlv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 8 Dec 2021 12:41:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57898 "EHLO
+        id S238089AbhLHRl6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 8 Dec 2021 12:41:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57884 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238190AbhLHRlp (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 8 Dec 2021 12:41:45 -0500
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17608C061D72;
-        Wed,  8 Dec 2021 09:38:13 -0800 (PST)
-Received: by mail-lf1-x129.google.com with SMTP id z7so6984235lfi.11;
-        Wed, 08 Dec 2021 09:38:12 -0800 (PST)
+        with ESMTP id S238172AbhLHRlr (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 8 Dec 2021 12:41:47 -0500
+Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5DD7BC061A72;
+        Wed,  8 Dec 2021 09:38:15 -0800 (PST)
+Received: by mail-lf1-x12b.google.com with SMTP id bi37so7050447lfb.5;
+        Wed, 08 Dec 2021 09:38:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=RDSrnJu/0NbEzXDchXHeJp37p1UNm5ocI/66beK70mM=;
-        b=Vats6b66m3+0Oq3bFwHLnvk6KaJupuQg05H3cy2V4mRHW5HfTtsWpkL9Ws4PxsU3Ao
-         4uUa94zz8g2Cz0hJQEPb5dMUc6fXLslZpzv2coSMndFeUeb6itL5173zXUTc//VGaWHO
-         AbdONO7ik3D5IPidhtFxtuNRDCS7y/G0tm4QUPQrOvHKsUYUxuifFgKi03ZV9wjHMIbW
-         xqC5PXvBB1Z+0bdhGs4M9ljblp6oGIlA3ykhMLpMw039pceyakCeydBjNdk/jd0P6X+8
-         Lf1iwBjXX97qtyARLspRzEwrW+xVkQp+9wd0NitIbuXV6hJiKnjDlS7Okdcj79Ct40qM
-         SOfA==
+        bh=GaDrIMpgT6ehw+oYiizpPLZzCqnLOIYK1wjey+O3h34=;
+        b=Pqo4Jd4O/HLoDGruXyCJAP/za85iFZ7p1Cj2aEhHYVfr3yklT/BO6xdMYXQh/BUsuf
+         VB1nfPHvFkY1flL2gEZo9n6GFFSh9jkjSGm72iPHeurwf1rg/Id3Kl6UzG5DuqEFJXqF
+         LN+QQE+ke8PEsjJkvK0TG19RICoaYtjNiHYav2GWEp3GOaSoRi0y5LRHXmqt9GmFG/bJ
+         v5qooCS/Ax6u7gYzc3+IE91e9pWpYNlVJjE4Q/wO5wazfZhtYxuYAUXfwdxyDL16FaS8
+         Gi9K/fpVu0diwrlOHNm2J5o1u1WvQiS1mLSu69Q35cQV20aigf0eIjpY2AjiLeAp6o1P
+         Mq8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=RDSrnJu/0NbEzXDchXHeJp37p1UNm5ocI/66beK70mM=;
-        b=pA6m3w4m3eC0usAwFGK9vnhdY870MkLA4PxRr0wFS/Mha86/NJPV2qoAhmd0azDz7r
-         zqJAtBD2P5vnHkHh1jlvaH4QWS3QOV9XFQnjmior0wif525xxSJflSSoZPItTVPa20oz
-         7mIgCMOTaixvOKdM+8IjWvRKNOFpZqSmF2Iizj9k57LJ4MG/rtS6yEsiHwON39hUZSO6
-         RrCyQaARGlPL5r8TBGMCgR/ypqRGmF7cBbg/t59RmfrV9eDZk6wHQIkIwq0Lqi8MNBRy
-         6rQpWKLs6OqjkDGOBmQ6wjIWPtExWuMGCYWvEafyRBPSLnTIUzILSxB3s6rU3rTu/2ba
-         QchA==
-X-Gm-Message-State: AOAM530HQsQJPOSf49fYI57n+bvo1sFolVX39ZTDftS5CX9iSJr8IduL
-        8yEO66bgfj8jNQtp2I5kkEU=
-X-Google-Smtp-Source: ABdhPJyrfxawUkmOHaqo7PWlY7UHSBOtBgklzymLtRfuJo9s01Bnmzs8m0EkQkGmlP1dpTLSUeLfdw==
-X-Received: by 2002:a19:fc08:: with SMTP id a8mr779584lfi.645.1638985091296;
-        Wed, 08 Dec 2021 09:38:11 -0800 (PST)
+        bh=GaDrIMpgT6ehw+oYiizpPLZzCqnLOIYK1wjey+O3h34=;
+        b=XLsEtxKzw0pnqtHhA6MO5/RbShp3dTZGeNAVa8L5Pd4MPJjoTbnG2lsO/HXaAeVQwP
+         XI2lVlb2YwwiYVzHNlROiFOp6y2c8Lsx4yov7LI2B32jEyArorJ+Rtl0iJYQVxmrarL8
+         o/I08qlmwXTFyuRgvaGwis3qVmppkTftbiKRgkPE74oyKx6A/j95Ydq5kcTdIxVz5gK/
+         hdJ3d95A/FqGlBjuI5cUSS52wg6kx/ZcPX4E+nKA9ZNqN5CJ5lZX8EJXZ4sGW90TWqI/
+         WWoHx7HGCcckOUOL1QnIn0DKjo+2LdifZmBWqws22bXPPty+oGIRJBy/UMh/a7ELzq3a
+         qDKg==
+X-Gm-Message-State: AOAM532oSjU2xftcHP3Jz8Zm8GqADlS6eCdb8wl01ibygtLKBl97CIav
+        X3/9iSoDgg0T4i3cejoekp0=
+X-Google-Smtp-Source: ABdhPJwGqakbrEhveiiGGmkeiW+6iFJ97HNrKf2Gb+PgPAZpBvxKdD4z4ivIj0Ev7FJkisaC+KkSgw==
+X-Received: by 2002:ac2:464f:: with SMTP id s15mr839062lfo.590.1638985093728;
+        Wed, 08 Dec 2021 09:38:13 -0800 (PST)
 Received: from localhost.localdomain (94-29-46-111.dynamic.spd-mgts.ru. [94.29.46.111])
-        by smtp.gmail.com with ESMTPSA id a25sm349159lfm.250.2021.12.08.09.38.10
+        by smtp.gmail.com with ESMTPSA id a25sm349159lfm.250.2021.12.08.09.38.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Dec 2021 09:38:10 -0800 (PST)
+        Wed, 08 Dec 2021 09:38:13 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -66,9 +66,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Stefan Eichenberger <stefan.eichenberger@toradex.com>
 Cc:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v5 12/24] ARM: tegra: Add device-tree for ASUS Transformer Pad TF701T
-Date:   Wed,  8 Dec 2021 20:35:57 +0300
-Message-Id: <20211208173609.4064-13-digetx@gmail.com>
+Subject: [PATCH v5 14/24] ARM: tegra: Add device-tree for 1080p version of Nyan Big
+Date:   Wed,  8 Dec 2021 20:35:59 +0300
+Message-Id: <20211208173609.4064-15-digetx@gmail.com>
 X-Mailer: git-send-email 2.33.1
 In-Reply-To: <20211208173609.4064-1-digetx@gmail.com>
 References: <20211208173609.4064-1-digetx@gmail.com>
@@ -78,837 +78,46 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Anton Bambura <jenneron@protonmail.com>
+Add dedicated device-tree for 1080p version of Nyan Big in order to
+describe display panel properly. FHD panel doesn't support modes other
+than 1080p, hence it's wrong to use incompatible lower resolution panel
+in device-tree.
 
-Add device-tree for Tegra114-based ASUS Transformer Pad TF701T (K00C)
-tablet.
-
-Link: https://wiki.postmarketos.org/wiki/ASUS_Transformer_Pad_(TF701T)_(asus-tf701t)
-Signed-off-by: Anton Bambura <jenneron@protonmail.com>
+Tested-by: Thomas Graichen <thomas.graichen@gmail.com>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- arch/arm/boot/dts/Makefile                 |   1 +
- arch/arm/boot/dts/tegra114-asus-tf701t.dts | 802 +++++++++++++++++++++
- 2 files changed, 803 insertions(+)
- create mode 100644 arch/arm/boot/dts/tegra114-asus-tf701t.dts
+ arch/arm/boot/dts/Makefile                  |  1 +
+ arch/arm/boot/dts/tegra124-nyan-big-fhd.dts | 11 +++++++++++
+ 2 files changed, 12 insertions(+)
+ create mode 100644 arch/arm/boot/dts/tegra124-nyan-big-fhd.dts
 
 diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index 87166d66e0b1..e59e7973990d 100644
+index 26798673739c..561e0eae05a9 100644
 --- a/arch/arm/boot/dts/Makefile
 +++ b/arch/arm/boot/dts/Makefile
-@@ -1331,6 +1331,7 @@ dtb-$(CONFIG_ARCH_TEGRA_3x_SOC) += \
- 	tegra30-colibri-eval-v3.dtb \
- 	tegra30-ouya.dtb
- dtb-$(CONFIG_ARCH_TEGRA_114_SOC) += \
-+	tegra114-asus-tf701t.dtb \
- 	tegra114-dalmore.dtb \
- 	tegra114-roth.dtb \
- 	tegra114-tn7.dtb
-diff --git a/arch/arm/boot/dts/tegra114-asus-tf701t.dts b/arch/arm/boot/dts/tegra114-asus-tf701t.dts
+@@ -1341,6 +1341,7 @@ dtb-$(CONFIG_ARCH_TEGRA_124_SOC) += \
+ 	tegra124-apalis-v1.2-eval.dtb \
+ 	tegra124-jetson-tk1.dtb \
+ 	tegra124-nyan-big.dtb \
++	tegra124-nyan-big-fhd.dtb \
+ 	tegra124-nyan-blaze.dtb \
+ 	tegra124-venice2.dtb
+ dtb-$(CONFIG_ARCH_U8500) += \
+diff --git a/arch/arm/boot/dts/tegra124-nyan-big-fhd.dts b/arch/arm/boot/dts/tegra124-nyan-big-fhd.dts
 new file mode 100644
-index 000000000000..6c280606be08
+index 000000000000..d35fb79d2f51
 --- /dev/null
-+++ b/arch/arm/boot/dts/tegra114-asus-tf701t.dts
-@@ -0,0 +1,802 @@
++++ b/arch/arm/boot/dts/tegra124-nyan-big-fhd.dts
+@@ -0,0 +1,11 @@
 +// SPDX-License-Identifier: GPL-2.0
-+
 +/dts-v1/;
 +
-+#include <dt-bindings/input/gpio-keys.h>
-+#include <dt-bindings/input/input.h>
-+
-+#include "tegra114.dtsi"
++#include "tegra124-nyan-big.dts"
 +
 +/ {
-+	model = "Asus Transformer Pad TF701T";
-+	compatible = "asus,tf701t", "nvidia,tegra114";
-+	chassis-type = "convertible";
-+
-+	aliases {
-+		mmc0 = &sdmmc4; /* eMMC */
-+		mmc1 = &sdmmc3; /* uSD slot */
-+		mmc2 = &sdmmc1; /* WiFi */
-+
-+		rtc0 = &palmas;
-+		rtc1 = &tegra_rtc;
-+
-+		serial0 = &uartd; /* Console */
-+		serial1 = &uartc; /* Bluetooth */
-+		serial2 = &uartb; /* GPS */
-+	};
-+
-+	memory@80000000 {
-+		reg = <0x80000000 0x80000000>;
-+	};
-+
-+	reserved-memory {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges;
-+
-+		linux,cma@80000000 {
-+			compatible = "shared-dma-pool";
-+			alloc-ranges = <0x80000000 0x30000000>;
-+			size = <0x10000000>;
-+			linux,cma-default;
-+			reusable;
-+		};
-+
-+		trustzone@bfe00000 {
-+			reg = <0xbfe00000 0x200000>;
-+			no-map;
-+		};
-+	};
-+
-+	backlight: backlight {
-+		compatible = "pwm-backlight";
-+
-+		enable-gpios = <&gpio TEGRA_GPIO(H, 2) GPIO_ACTIVE_HIGH>;
-+		power-supply = <&vdd_5v0_sys>;
-+		pwms = <&pwm 1 1000000>;
-+
-+		brightness-levels = <1 255>;
-+		num-interpolated-steps = <254>;
-+		default-brightness-level = <224>;
-+
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&backlight_default>;
-+	};
-+
-+	pad_battery: battery-pad {
-+		compatible = "simple-battery";
-+		charge-full-design-microamp-hours = <8150000>;
-+		energy-full-design-microwatt-hours = <31000000>;
-+		operating-range-celsius = <0 45>;
-+	};
-+
-+	dock_battery: battery-dock {
-+		compatible = "simple-battery";
-+		charge-full-design-microamp-hours = <420000>;
-+		energy-full-design-microwatt-hours = <16000000>;
-+		operating-range-celsius = <0 45>;
-+	};
-+
-+	/* PMIC has a built-in 32KHz oscillator which is used by PMC */
-+	clk32k_in: clock-32k {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <32768>;
-+		clock-output-names = "pmic-oscillator";
-+	};
-+
-+	firmware {
-+		trusted-foundations {
-+			compatible = "tlm,trusted-foundations";
-+			tlm,version-major = <2>;
-+			tlm,version-minor = <8>;
-+		};
-+	};
-+
-+	gpio-keys {
-+		compatible = "gpio-keys";
-+
-+		label = "GPIO Buttons";
-+
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&gpio_keys_default>;
-+
-+		power {
-+			label = "Power";
-+			gpios = <&gpio TEGRA_GPIO(Q, 0) GPIO_ACTIVE_LOW>;
-+			linux,code = <KEY_POWER>;
-+			debounce-interval = <10>;
-+			wakeup-source;
-+		};
-+
-+		volume-up {
-+			label = "Volume Up";
-+			gpios = <&gpio TEGRA_GPIO(R, 2) GPIO_ACTIVE_LOW>;
-+			linux,code = <KEY_VOLUMEUP>;
-+			debounce-interval = <10>;
-+		};
-+
-+		volume-down {
-+			label = "Volume Down";
-+			gpios = <&gpio TEGRA_GPIO(R, 1) GPIO_ACTIVE_LOW>;
-+			linux,code = <KEY_VOLUMEDOWN>;
-+			debounce-interval = <10>;
-+		};
-+	};
-+
-+	gpio-hall-sensor {
-+		compatible = "gpio-keys";
-+
-+		label = "GPIO Hall Effect Sensor";
-+
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&gpio_hall_sensor_default>;
-+
-+		hall-sensor {
-+			label = "Hall Effect Sensor";
-+			gpios = <&gpio TEGRA_GPIO(O, 5) GPIO_ACTIVE_LOW>;
-+			linux,input-type = <EV_SW>;
-+			linux,code = <SW_LID>;
-+			linux,can-disable;
-+			wakeup-source;
-+		};
-+	};
-+
-+	sound {
-+		compatible = "asus,tegra-audio-rt5639-tf701t",
-+			     "nvidia,tegra-audio-rt5640";
-+		nvidia,model = "Asus Transformer Pad TF701T RT5639";
-+
-+		nvidia,audio-routing =
-+			"Headphones", "HPOR",
-+			"Headphones", "HPOL",
-+			"Speakers", "SPORP",
-+			"Speakers", "SPORN",
-+			"Speakers", "SPOLP",
-+			"Speakers", "SPOLN",
-+			"Mic Jack", "MICBIAS1",
-+			"IN2P", "Mic Jack";
-+
-+		nvidia,i2s-controller = <&tegra_i2s0>;
-+		nvidia,audio-codec = <&rt5639>;
-+
-+		nvidia,hp-det-gpios = <&gpio TEGRA_GPIO(R, 7) GPIO_ACTIVE_LOW>;
-+
-+		clocks = <&tegra_car TEGRA114_CLK_PLL_A>,
-+			 <&tegra_car TEGRA114_CLK_PLL_A_OUT0>,
-+			 <&tegra_pmc TEGRA_PMC_CLK_OUT_1>;
-+		clock-names = "pll_a", "pll_a_out0", "mclk";
-+
-+		assigned-clocks = <&tegra_car TEGRA114_CLK_EXTERN1>,
-+				  <&tegra_pmc TEGRA_PMC_CLK_OUT_1>;
-+
-+		assigned-clock-parents = <&tegra_car TEGRA114_CLK_PLL_A_OUT0>,
-+					 <&tegra_car TEGRA114_CLK_EXTERN1>;
-+
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&hp_det_default>;
-+	};
-+
-+	vdd_5v0_sys: regulator-5v0-sys {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vdd_5v0";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		regulator-always-on;
-+		regulator-boot-on;
-+	};
-+
-+	vdd_3v3_sys: regulator-3v3-sys {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vdd_3v3";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-always-on;
-+		regulator-boot-on;
-+	};
-+
-+	vdd_lcd: regulator-vdd-lcd {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vdd_lcd_1v8";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		vin-supply = <&tps65913_smps8>;
-+		enable-active-high;
-+		gpio = <&gpio TEGRA_GPIO(CC, 4) GPIO_ACTIVE_HIGH>;
-+		regulator-boot-on;
-+
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&vdd_lcd_default>;
-+	};
-+
-+	vdd_usd: regulator-vdd-usd {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vdd_sd_slot";
-+		regulator-min-microvolt = <2900000>;
-+		regulator-max-microvolt = <2900000>;
-+		vin-supply = <&tps65913_smps9>;
-+		enable-active-high;
-+		gpio = <&gpio TEGRA_GPIO(K, 1) GPIO_ACTIVE_HIGH>;
-+
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&sdmmc3_vdd_default>;
-+	};
-+};
-+
-+&dsia {
-+	status = "okay";
-+
-+	avdd-dsi-csi-supply = <&tps65913_ldo2>;
-+
-+	nvidia,ganged-mode = <&dsib>;
-+
-+	panel_primary: panel@0 {
-+		compatible = "sharp,lq101r1sx03", "sharp,lq101r1sx01";
-+		reg = <0>;
-+
-+		link2 = <&panel_secondary>;
-+
-+		power-supply = <&vdd_lcd>;
-+		backlight = <&backlight>;
-+	};
-+};
-+
-+&dsib {
-+	status = "okay";
-+
-+	avdd-dsi-csi-supply = <&tps65913_ldo2>;
-+
-+	nvidia,ganged-mode;
-+
-+	panel_secondary: panel@0 {
-+		compatible = "sharp,lq101r1sx03", "sharp,lq101r1sx01";
-+		reg = <0>;
-+	};
-+};
-+
-+&i2c1 {
-+	status = "okay";
-+	clock-frequency = <100000>;
-+
-+	magnetometer@c {
-+		compatible = "asahi-kasei,ak09911";
-+		reg = <0xc>;
-+
-+		vdd-supply = <&vdd_3v3_sys>;
-+	};
-+
-+	rt5639: audio-codec@1c {
-+		compatible = "realtek,rt5639";
-+		reg = <0x1c>;
-+
-+		interrupt-parent = <&gpio>;
-+		interrupts = <TEGRA_GPIO(W, 3) IRQ_TYPE_EDGE_FALLING>;
-+
-+		realtek,ldo1-en-gpios = <&gpio TEGRA_GPIO(V, 3) GPIO_ACTIVE_HIGH>;
-+
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&codec_default>;
-+	};
-+
-+	motion-tracker@68 {
-+		compatible = "invensense,mpu6500";
-+		reg = <0x68>;
-+
-+		interrupt-parent = <&gpio>;
-+		interrupts = <TEGRA_GPIO(R, 3) IRQ_TYPE_LEVEL_HIGH>;
-+
-+		mount-matrix =  "0", "-1", "0",
-+				"1",  "0", "0",
-+				"0",  "0", "1";
-+
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&imu_default>;
-+	};
-+
-+	temp_sensor: temperature-sensor@4c {
-+		compatible = "onnn,nct1008";
-+		reg = <0x4c>;
-+
-+		vcc-supply = <&vdd_3v3_sys>;
-+		#thermal-sensor-cells = <1>;
-+	};
-+};
-+
-+&i2c2 {
-+	status = "okay";
-+	clock-frequency = <100000>;
-+
-+	power-sensor@44 {
-+		compatible = "ti,ina230";
-+		reg = <0x44>;
-+	};
-+};
-+
-+&i2c3 {
-+	status = "okay";
-+	clock-frequency = <400000>;
-+
-+	light-sensor@1c {
-+		compatible = "dynaimage,al3320a";
-+		reg = <0x1c>;
-+
-+		vdd-supply = <&vdd_3v3_sys>;
-+	};
-+};
-+
-+&i2c4 {
-+	/* HDMI DDC */
-+};
-+
-+&i2c5 {
-+	status = "okay";
-+	clock-frequency = <400000>;
-+
-+	palmas: pmic@58 {
-+		compatible = "ti,palmas";
-+		reg = <0x58>;
-+		interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
-+
-+		#interrupt-cells = <2>;
-+		interrupt-controller;
-+
-+		ti,system-power-controller;
-+
-+		palmas_gpio: gpio {
-+			compatible = "ti,palmas-gpio";
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+		};
-+
-+		pmic {
-+			compatible = "ti,tps65913-pmic", "ti,palmas-pmic";
-+
-+			ldo1-in-supply = <&tps65913_smps7>;
-+			ldo2-in-supply = <&tps65913_smps7>;
-+			ldo4-in-supply = <&tps65913_smps8>;
-+			ldo5-in-supply = <&tps65913_smps9>;
-+			ldo6-in-supply = <&tps65913_smps9>;
-+			ldo7-in-supply = <&tps65913_smps9>;
-+			ldo9-in-supply = <&tps65913_smps9>;
-+
-+			regulators {
-+				tps65913_smps123: smps123 {
-+					regulator-name = "vdd-cpu";
-+					regulator-min-microvolt = <900000>;
-+					regulator-max-microvolt = <1350000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+					ti,roof-floor = <1>;
-+					ti,mode-sleep = <3>;
-+				};
-+
-+				tps65913_smps45: smps45 {
-+					regulator-name = "vdd-core";
-+					regulator-min-microvolt = <900000>;
-+					regulator-max-microvolt = <1400000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+					ti,roof-floor = <3>;
-+				};
-+
-+				smps6 {
-+					regulator-name = "va-lcd-hv";
-+					regulator-min-microvolt = <1000000>;
-+					regulator-max-microvolt = <1000000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+				};
-+
-+				tps65913_smps7: smps7 {
-+					regulator-name = "vdd-ddr";
-+					regulator-min-microvolt = <1350000>;
-+					regulator-max-microvolt = <1350000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+				};
-+
-+				tps65913_smps8: smps8 {
-+					regulator-name = "vdd-1v8";
-+					regulator-min-microvolt = <1800000>;
-+					regulator-max-microvolt = <1800000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+				};
-+
-+				tps65913_smps9: smps9 {
-+					regulator-name = "vdd-sd";
-+					regulator-min-microvolt = <2900000>;
-+					regulator-max-microvolt = <2900000>;
-+					regulator-always-on;
-+				};
-+
-+				tps65913_smps10_out1: smps10_out1 {
-+					regulator-name = "vd-smps10-out1";
-+					regulator-min-microvolt = <5000000>;
-+					regulator-max-microvolt = <5000000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+				};
-+
-+				tps65913_smps10_out2: smps10_out2 {
-+					regulator-name = "vd-smps10-out2";
-+					regulator-min-microvolt = <5000000>;
-+					regulator-max-microvolt = <5000000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+				};
-+
-+				tps65913_ldo1: ldo1 {
-+					regulator-name = "vdd-hdmi-pll";
-+					regulator-min-microvolt = <1050000>;
-+					regulator-max-microvolt = <1050000>;
-+					regulator-always-on;
-+					ti,roof-floor = <3>;
-+				};
-+
-+				tps65913_ldo2: ldo2 {
-+					regulator-name = "vdd-2v8-dsi-csi";
-+					regulator-min-microvolt = <1200000>;
-+					regulator-max-microvolt = <1200000>;
-+					regulator-boot-on;
-+				};
-+
-+				ldo3 {
-+					regulator-name = "vpp-fuse";
-+					regulator-min-microvolt = <1800000>;
-+					regulator-max-microvolt = <1800000>;
-+				};
-+
-+				ldo4 {
-+					regulator-name = "vdd-1v2-cam";
-+					regulator-min-microvolt = <1200000>;
-+					regulator-max-microvolt = <1200000>;
-+				};
-+
-+				ldo5 {
-+					regulator-name = "vdd-cam";
-+					regulator-min-microvolt = <2800000>;
-+					regulator-max-microvolt = <2800000>;
-+				};
-+
-+				ldo6 {
-+					regulator-name = "vdd-dev";
-+					regulator-min-microvolt = <2850000>;
-+					regulator-max-microvolt = <2850000>;
-+					regulator-boot-on;
-+				};
-+
-+				ldo7 {
-+					regulator-name = "vdd-2v8-cam";
-+					regulator-min-microvolt = <2800000>;
-+					regulator-max-microvolt = <2800000>;
-+				};
-+
-+				tps65913_ldo8: ldo8 {
-+					regulator-name = "vdd-rtc";
-+					regulator-min-microvolt = <950000>;
-+					regulator-max-microvolt = <950000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+					ti,enable-ldo8-tracking;
-+				};
-+
-+				tps65913_ldo9: ldo9 {
-+					regulator-name = "vdd-sdmmc";
-+					regulator-min-microvolt = <1800000>;
-+					regulator-max-microvolt = <2900000>;
-+				};
-+
-+				tps65913_ldoln: ldoln {
-+					regulator-name = "vdd-hdmi";
-+					regulator-min-microvolt = <3300000>;
-+					regulator-max-microvolt = <3300000>;
-+				};
-+
-+				ldousb {
-+					regulator-name = "vdd-usb";
-+					regulator-min-microvolt = <3300000>;
-+					regulator-max-microvolt = <3300000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+				};
-+			};
-+		};
-+
-+		rtc {
-+			compatible = "ti,palmas-rtc";
-+			interrupt-parent = <&palmas>;
-+			interrupts = <8 0>;
-+		};
-+
-+		pinmux {
-+			compatible = "ti,tps65913-pinctrl";
-+			ti,palmas-enable-dvfs1;
-+
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&palmas_default>;
-+
-+			palmas_default: pinmux {
-+				pin_powergood {
-+					pins = "powergood";
-+					function = "powergood";
-+				};
-+
-+				pin_vac {
-+					pins = "vac";
-+					function = "vac";
-+				};
-+
-+				pin_gpio0 {
-+					pins = "gpio0";
-+					function = "gpio";
-+				};
-+
-+				pin_gpio1 {
-+					pins = "gpio1";
-+					function = "gpio";
-+				};
-+
-+				pin_gpio2 {
-+					pins = "gpio2";
-+					function = "gpio";
-+				};
-+
-+				pin_gpio3 {
-+					pins = "gpio3";
-+					function = "gpio";
-+				};
-+
-+				pin_gpio4 {
-+					pins = "gpio4";
-+					function = "gpio";
-+				};
-+
-+				pin_gpio5 {
-+					pins = "gpio5";
-+					function = "gpio";
-+				};
-+
-+				pin_gpio6 {
-+					pins = "gpio6";
-+					function = "gpio";
-+				};
-+
-+				pin_gpio7 {
-+					pins = "gpio7";
-+					function = "gpio";
-+				};
-+			};
-+		};
-+	};
-+};
-+
-+&pwm {
-+	status = "okay";
-+
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pwm_default>;
-+};
-+
-+&sdmmc1 {
-+	/* WiFi */
-+};
-+
-+/* MicroSD card */
-+&sdmmc3 {
-+	status = "okay";
-+
-+	bus-width = <4>;
-+	cd-gpios = <&gpio TEGRA_GPIO(V, 2) GPIO_ACTIVE_LOW>;
-+
-+	nvidia,default-tap = <0x3>;
-+	nvidia,default-trim = <0x3>;
-+
-+	vmmc-supply = <&vdd_usd>;
-+	vqmmc-supply = <&tps65913_ldo9>;
-+
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&sdmmc3_default>;
-+};
-+
-+&sdmmc4 {
-+	/* eMMC */
-+};
-+
-+&tegra_i2s0 {
-+	status = "okay";
-+};
-+
-+&uartb {
-+	/* GPS */
-+};
-+
-+&uartc {
-+	/* Bluetooth */
-+};
-+
-+&uartd {
-+	status = "okay";
-+};
-+
-+&usb1 {
-+	compatible = "nvidia,tegra114-udc";
-+	status = "okay";
-+	dr_mode = "peripheral";
-+
-+	/* Peripheral USB via ASUS connector */
-+};
-+
-+&usb1_phy {
-+	status = "okay";
-+};
-+
-+&usb3 {
-+	status = "okay";
-+
-+	/* Host USB via dock */
-+};
-+
-+&usb3_phy {
-+	status = "okay";
-+	vbus-supply = <&vdd_5v0_sys>;
-+};
-+
-+&pinmux {
-+	asus_pad_ec_default: asus-pad-ec-default {
-+		ec-interrupt {
-+			nvidia,pins = "kb_col5_pq5";
-+			nvidia,function = "kbc";
-+			nvidia,pull = <TEGRA_PIN_PULL_UP>;
-+			nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+			nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+		};
-+		ec-request {
-+			nvidia,pins = "kb_col2_pq2";
-+			nvidia,function = "kbc";
-+			nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+			nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+			nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+		};
-+	};
-+
-+	backlight_default: backlight-default {
-+		backlight-enable {
-+			nvidia,pins = "gmi_ad10_ph2";
-+			nvidia,function = "gmi";
-+			nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+			nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+			nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+		};
-+	};
-+
-+	codec_default: codec-default {
-+		ldo1-en {
-+			nvidia,pins = "sdmmc1_wp_n_pv3";
-+			nvidia,function = "sdmmc1";
-+			nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+			nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+			nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+		};
-+		interrupt {
-+			nvidia,pins = "gpio_w2_aud_pw2",
-+					"gpio_w3_aud_pw3";
-+			nvidia,function = "spi6";
-+			nvidia,pull = <TEGRA_PIN_PULL_UP>;
-+			nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+			nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+		};
-+	};
-+
-+	gpio_keys_default: gpio-keys-default {
-+		power {
-+			nvidia,pins = "kb_col0_pq0";
-+			nvidia,function = "kbc";
-+			nvidia,pull = <TEGRA_PIN_PULL_UP>;
-+			nvidia,tristate = <TEGRA_PIN_ENABLE>;
-+			nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+		};
-+		volume {
-+			nvidia,pins = "kb_row1_pr1",
-+					"kb_row2_pr2";
-+			nvidia,function = "rsvd2";
-+			nvidia,pull = <TEGRA_PIN_PULL_UP>;
-+			nvidia,tristate = <TEGRA_PIN_ENABLE>;
-+			nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+		};
-+	};
-+
-+	gpio_hall_sensor_default: gpio-hall-sensor-default {
-+		ulpi_data4_po5 {
-+			nvidia,pins = "ulpi_data4_po5";
-+			nvidia,function = "spi2";
-+			nvidia,pull = <TEGRA_PIN_PULL_UP>;
-+			nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+			nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+		};
-+	};
-+
-+	hp_det_default: hp-det-default {
-+		gmi_iordy_pi5 {
-+			nvidia,pins = "kb_row7_pr7";
-+			nvidia,function = "rsvd2";
-+			nvidia,pull = <TEGRA_PIN_PULL_UP>;
-+			nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+			nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+		};
-+	};
-+
-+	imu_default: imu-default {
-+		kb_row3_pr3 {
-+			nvidia,pins = "kb_row3_pr3";
-+			nvidia,function = "rsvd3";
-+			nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
-+			nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+			nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+		};
-+	};
-+
-+	pwm_default: pwm-default {
-+		gmi_ad9_ph1 {
-+			nvidia,pins = "gmi_ad9_ph1";
-+			nvidia,function = "pwm1";
-+			nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+			nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+			nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+		};
-+	};
-+
-+	sdmmc3_default: sdmmc3-default {
-+		sdmmc3_clk_pa6 {
-+			nvidia,pins = "sdmmc3_clk_pa6";
-+			nvidia,function = "sdmmc3";
-+			nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+			nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+			nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+		};
-+		sdmmc3_cmd_pa7 {
-+			nvidia,pins = "sdmmc3_cmd_pa7",
-+					"sdmmc3_dat0_pb7",
-+					"sdmmc3_dat1_pb6",
-+					"sdmmc3_dat2_pb5",
-+					"sdmmc3_dat3_pb4",
-+					"kb_col4_pq4",
-+					"sdmmc3_clk_lb_out_pee4",
-+					"sdmmc3_clk_lb_in_pee5",
-+					"sdmmc3_cd_n_pv2";
-+			nvidia,function = "sdmmc3";
-+			nvidia,pull = <TEGRA_PIN_PULL_UP>;
-+			nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+			nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+		};
-+		drive_sdio3 {
-+			nvidia,pins = "drive_sdio3";
-+			nvidia,high-speed-mode = <TEGRA_PIN_ENABLE>;
-+			nvidia,schmitt = <TEGRA_PIN_DISABLE>;
-+			nvidia,pull-down-strength = <22>;
-+			nvidia,pull-up-strength = <36>;
-+			nvidia,slew-rate-rising = <TEGRA_PIN_SLEW_RATE_FASTEST>;
-+			nvidia,slew-rate-falling = <TEGRA_PIN_SLEW_RATE_FASTEST>;
-+		};
-+	};
-+
-+	sdmmc3_vdd_default: sdmmc3-vdd-default {
-+		gmi_clk_pk1 {
-+			nvidia,pins = "gmi_clk_pk1";
-+			nvidia,function = "gmi";
-+			nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+			nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+			nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+		};
-+	};
-+
-+	vdd_lcd_default: vdd-lcd-default {
-+		sdmmc4_clk_pcc4 {
-+			nvidia,pins = "sdmmc4_clk_pcc4";
-+			nvidia,function = "sdmmc4";
-+			nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+			nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+			nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+		};
++	/* Version of Nyan Big with 1080p panel */
++	panel {
++		compatible = "auo,b133htn01";
 +	};
 +};
 -- 
