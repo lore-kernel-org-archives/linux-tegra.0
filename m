@@ -2,129 +2,122 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78E01C433EF
-	for <linux-tegra@archiver.kernel.org>; Wed,  8 Dec 2021 14:41:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DA86C433EF
+	for <linux-tegra@archiver.kernel.org>; Wed,  8 Dec 2021 14:43:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235293AbhLHOor (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 8 Dec 2021 09:44:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44204 "EHLO
+        id S235334AbhLHOqs (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 8 Dec 2021 09:46:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44702 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235288AbhLHOor (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 8 Dec 2021 09:44:47 -0500
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48AF3C061746;
-        Wed,  8 Dec 2021 06:41:15 -0800 (PST)
-Received: by mail-wr1-x42f.google.com with SMTP id c4so4428949wrd.9;
-        Wed, 08 Dec 2021 06:41:15 -0800 (PST)
+        with ESMTP id S232999AbhLHOqr (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 8 Dec 2021 09:46:47 -0500
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2D54C061746;
+        Wed,  8 Dec 2021 06:43:15 -0800 (PST)
+Received: by mail-wm1-x32b.google.com with SMTP id p27-20020a05600c1d9b00b0033bf8532855so1929822wms.3;
+        Wed, 08 Dec 2021 06:43:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
+        h=date:from:to:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=qU1Nu0uDwKbv0ASOHzlGRqdEWy8QYeodVW7QKE4d9jc=;
-        b=e1sLGHX6mQCWpJirLRXjSEaGkieK0VAKI7A2fk3H8MHttiuvepmwLmO+st0hCPWgEF
-         CvPaIbZZQwDUym08o43M5ojFZ14id+AvjHPWdcF63CgF9V5Q1RHbnP/cg9Ny1OU8qiAh
-         bNXJEY0nwMHj5NqLb6Xon67Ah8OHuwJpfYwYBuDQHEEM7BSWPtrkHLs9NQmfYZD8wFCO
-         JrYCVsPL8WKK2fSDATR/uvNvl6BJsmEvLw2kNKNXUBciiZ2rK+vY35rdZIkTXptd1p5Y
-         LvxwQpEUKD2EOPikX92/5q9UOsGGBju5U3IjGcbSXRO3EzTPbMJ1n44/S3M3I8ESRXTM
-         Z2AQ==
+        bh=gkckMTiZfRwVNN4itkbvhr/VyfBzxnDGQ/5xxIOPdP8=;
+        b=jwHiPKQtQZ2UJMeEteCcSTn1pH8heQ7r4zZDRd+DA0hbuMlvQa0OPs1SNFyNMEyPNj
+         8fzfdfsQD0zGipjDUaBJCxoHgHBFIezBuGd0v+RwoyXOvpRvEeSseDNbH0p9kHyYK2/h
+         cqjAjTDg1jWeZpB5WO3rlJ6CWg9mTnByDDzAI+cuU/A2JbGBO9tdfJiBaAhz+ZofAy6n
+         BByH0tY54Ao+itOckYdsWmSkdpWgaxSh42f8POO/wqQbJWx4lovIz6h4NF3IyAs11HFp
+         Q4Vg27HOcR29r6mthZlfHOIUZliGAmvzYKQUMpDStpo/Rl2yIAfDzQ3W0hh7ejGm36At
+         HKhw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+        h=x-gm-message-state:date:from:to:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=qU1Nu0uDwKbv0ASOHzlGRqdEWy8QYeodVW7QKE4d9jc=;
-        b=3++YLLo2CUOamvHzQCe/tOxu0uLqZglHw0ys4mrum94RIvdZdglZkPMa1+xAVUFoER
-         4tRk0ZY8qq/wPVdrwxHJTQd0WMZ55zthdoTZNKK3cubq5XAgpeA3kBTkX6r5otzCHawH
-         MRfDN470dlALzltiLlJa6aEUpn/15GxjYScvLEBBrlWezE5S84N4SA/O0KH6k3dlQS65
-         GCWhsaibtcUx+SrRF0Hl5W8ZHN20CHs6SaWCjlJvYAXJnm9Xs4qjy/q+z+9vzuD4xthN
-         baqWbaYjPm0a3j5LxEX8KJgZalCQVnrAN9/rgyspD8WE5dsd0xyxxelotgXDbSZlzRXF
-         WpFA==
-X-Gm-Message-State: AOAM530RTjzRwiMOKnLkmRhZvTukJbckKEhi6mhmGQ0iSNWB56lq4FOv
-        yNP/omz2gdf4v9FxC/qMUUSWAz/a4ZqUAw==
-X-Google-Smtp-Source: ABdhPJy9BHQ5CRCgi7+6wu0Kn/3eNG2H9FWUXW9u1ZoHxzHaz8hcEZykhJyYzBLqVWZJeRs9Rr1+8g==
-X-Received: by 2002:a05:6000:18a3:: with SMTP id b3mr59981274wri.343.1638974473830;
-        Wed, 08 Dec 2021 06:41:13 -0800 (PST)
+        bh=gkckMTiZfRwVNN4itkbvhr/VyfBzxnDGQ/5xxIOPdP8=;
+        b=37Pcagpa4ZxBtwKyeWlQQXW6B7/Tus7n48Y3dev8nhiicjr91QN6MjzeAkkdqmsKgG
+         XpHl0gzqnCgFVpqq7u9lkxyzcEiCX8gJsGIUya0veo7IwwYFf7aopx2mzyGX1JfL+x34
+         AveEijTswkpREstENsVuX32rLz3p3dNt8ubqDOVNKzuhwndmSNqlLDMuHzIAg9ThSzdk
+         TZPqTtvPWlzWcAq9NsysnpLT7gMENNaQTEqAu2AvQEAAEWFvW/tBV6iMWnyZuj7gvOnK
+         irPt/F2Rd31GcsZvGJ0Jti1jZLNtlAuIN4L5+kOlcNZrhVAMGxI5F+koEE8kOfkW1GfC
+         ATyw==
+X-Gm-Message-State: AOAM530jwWbroFIs8WbFRtH82T7P0JDVd7bZz2JNNN0u0PllIjaFsfch
+        9e/CruNZB3JlNUZxdYemxD0=
+X-Google-Smtp-Source: ABdhPJz7/W5CBLFVMWOOtUxYXPDa6nVfnt98Y0vRzXNYiq3jlJc65jPiIT+FJ5Bdr9F/LXZCqLBTdg==
+X-Received: by 2002:a7b:c94e:: with SMTP id i14mr16559721wml.85.1638974594333;
+        Wed, 08 Dec 2021 06:43:14 -0800 (PST)
 Received: from orome ([193.209.96.43])
-        by smtp.gmail.com with ESMTPSA id e8sm2841189wrr.26.2021.12.08.06.41.11
+        by smtp.gmail.com with ESMTPSA id f7sm3651944wri.74.2021.12.08.06.43.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Dec 2021 06:41:12 -0800 (PST)
-Date:   Wed, 8 Dec 2021 15:41:09 +0100
+        Wed, 08 Dec 2021 06:43:13 -0800 (PST)
+Date:   Wed, 8 Dec 2021 15:43:10 +0100
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Jon Hunter <jonathanh@nvidia.com>, Will Deacon <will@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
-Subject: Re: [PATCH 1/3] dt-bindings: arm: pmu: Document Denver and Carmel
- PMUs
-Message-ID: <YbDEBexUo8WYKVwd@orome>
-References: <20211207150746.444478-1-thierry.reding@gmail.com>
- <1638971068.754546.3857733.nullmailer@robh.at.kernel.org>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Jon Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v3] dt-bindings: i2c: tegra-bpmp: Convert to json-schema
+Message-ID: <YbDEfhIp5FCTZ8rS@orome>
+References: <20211208143306.534700-1-thierry.reding@gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="KuCPuRyt1LA+wE+Y"
+        protocol="application/pgp-signature"; boundary="6v150EU9JdEI1kSj"
 Content-Disposition: inline
-In-Reply-To: <1638971068.754546.3857733.nullmailer@robh.at.kernel.org>
+In-Reply-To: <20211208143306.534700-1-thierry.reding@gmail.com>
 User-Agent: Mutt/2.1.3 (987dde4c) (2021-09-10)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---KuCPuRyt1LA+wE+Y
+--6v150EU9JdEI1kSj
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Dec 08, 2021 at 07:44:28AM -0600, Rob Herring wrote:
-> On Tue, 07 Dec 2021 16:07:44 +0100, Thierry Reding wrote:
-> > From: Thierry Reding <treding@nvidia.com>
-> >=20
-> > Add compatible strings for the NVIDIA Denver and Carmel PMUs.
-> >=20
-> > Signed-off-by: Thierry Reding <treding@nvidia.com>
-> > ---
-> >  Documentation/devicetree/bindings/arm/pmu.yaml | 2 ++
-> >  1 file changed, 2 insertions(+)
-> >=20
+On Wed, Dec 08, 2021 at 03:33:06PM +0100, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
 >=20
-> Running 'make dtbs_check' with the schema in this patch gives the
-> following warnings. Consider if they are expected or the schema is
-> incorrect. These may not be new warnings.
+> Convert the NVIDIA Tegra186 (and later) BPMP I2C bindings from the
+> free-form text format to json-schema.
 >=20
-> Note that it is not yet a requirement to have 0 warnings for dtbs_check.
-> This will change in the future.
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
+> Changes in v3:
+> - include i2c-controller.yaml and use unevaluatedProperties: false
 >=20
-> Full log is available here: https://patchwork.ozlabs.org/patch/1564747
+> Changes in v2:
+> - add missing additionalProperties: false
+>=20
+>  .../bindings/i2c/nvidia,tegra186-bpmp-i2c.txt | 42 -----------------
+>  .../i2c/nvidia,tegra186-bpmp-i2c.yaml         | 45 +++++++++++++++++++
+>  2 files changed, 45 insertions(+), 42 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/i2c/nvidia,tegra186=
+-bpmp-i2c.txt
+>  create mode 100644 Documentation/devicetree/bindings/i2c/nvidia,tegra186=
+-bpmp-i2c.yaml
 
-Yikes, that's a lot of warnings. I've got local patches to fix up the
-Tegra-specific ones, but I could look at fixing up the others as well,
-provided that you or anyone else aren't looking at this yet.
-
-On that note: do you know of a simple trick to get the dtbs_check target
-to run on all DTB files? The only way I've found so far is to manually
-select all Kconfig options that would enable a specific subset, but it'd
-be great if we could just run the checks on all irrespective of .config.
+Rob, for context, I've split this one out of the 16-patch series since
+you had reviewed the other 15 already. This is the updated version that
+came out of the discussion we had regarding unevaluatedProperties not
+working correctly because of additionalProperties: true.
 
 Thierry
 
---KuCPuRyt1LA+wE+Y
+--6v150EU9JdEI1kSj
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmGwxAUACgkQ3SOs138+
-s6Hetg/+JJQtnLCDBwikRv38CHKdGaRq2lC4boCxd+kHMDh+LcYF6KX55dSLV8l2
-gdqjETipx/c/azJV6aaoIPbQFZmfus90ENpzCx0+o61kacH3U1RIKPqrIPBFMWY2
-H+33qyaswXhR32uUJS50fWLoufGse9c17fxZ+2pTM8qY+Bw97FHqyrmZNeubWWxu
-P80ql6PXVuZsNH6hqRkPVmRaMKeajXpyIx6hjjgMOgUMP9GtsC0jC4Cgbc7sr5AG
-hvXvcFQZ2BcSA/nr3QyaTJdmr6OQJW1Zph0GonwK6e7F6hdZ3lr7ijNP5fBgtD8j
-9a2QnSueIUN8aawvZTbN1RznY9YEON+YixxhJTEbXcUjWeZkUVeVzrPN6GF7slq8
-h4DqcgyNM+CQXFp5kf112Odq1vZ1oSWmnKuP5lNVq5Drmco4VVzsoLv+81PAzuSS
-T/vUHP25U4gcCfJ67SHYtYvAK33a1YBBsfklPG12iuDNbWB9SNtwRzUg3Da5p2xW
-Ck0akKmEnzA2iIapWpVTb3o17bFrbOLOA7NIXBD9z59v7oGADwnUfrdMr215X0tK
-gD5sImDWT0t4QkepgUXxS0+RbFXRwBjYB7oIrZpGvwEzGShEZb8wfT/L+lJv9VqC
-2en6ErjxdkjFSLuK5AStGxkjOgSkBb3Q7ugY1Ld13RXRmZv/Eic=
-=jAaG
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmGwxH4ACgkQ3SOs138+
+s6GPJA//SMiwEDapgISMALUXnq/+FRmIHvDGIzzKCYG5+zAcX8pQ7kS2zGmfJlXp
+a011IkNqJoDai1DvSQihlygX3V4LE3Fgg+uh4m3hFyTIk+L7KWdfc5JqriVBXWSK
+slUp7ct0dTp0jqu8bjDhhF3Jj6slIg2AMKJWUBXLO/H/9maTsnj/68sgfIr/5RV9
+MPYGn74mVp2sVuTK0Kx5qZlI2cQrVoIhtbMC9JXfWnWFPrHKwgbx02uT160ChY5V
+b7VhC3kdy25ePdEuhCPjv5eSVrNGHyKOgbd7CGnKQfSmHzbFtC4gIBC99MPWb4Pc
+YayaEyMepdejMK/u2d3mGaDY0TQYU+O002t8HyZTTwUjXRFMTDvW6gT2uQXzDoUJ
+4oN81QycQXk8hMCYuUh4auebWxupNrj4X/Y8b7E2kgENtQnqh5JLTvUH5DT8ZYwR
+hc7mY2W8jsmChuAPkwMRDQ83BtxL9pCJtq7h7fKcb9wkIAaM5Fg2434LTYGhpBNK
+AqQYrXk1NFi4cRL23qjqqCHf7XnBgpUGKGHfrDA3CoE+gL5ZrGvZidpqrT42TaNe
+Nn/3rsRgvv0ycSy55f8YEOqKzL3fodXIJhHsBynPTuPoOhXZSB36b9CByjStdhrH
++VmRry0Cm00+zLuqVr/LjNOy+WbQzkb/nHyj+NAbB/e35pLM5Wk=
+=zZyG
 -----END PGP SIGNATURE-----
 
---KuCPuRyt1LA+wE+Y--
+--6v150EU9JdEI1kSj--
