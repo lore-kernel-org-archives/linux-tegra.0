@@ -2,136 +2,119 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51026C433EF
-	for <linux-tegra@archiver.kernel.org>; Thu,  9 Dec 2021 17:11:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18FCFC433EF
+	for <linux-tegra@archiver.kernel.org>; Thu,  9 Dec 2021 17:14:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242630AbhLIROe (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 9 Dec 2021 12:14:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45530 "EHLO
+        id S235026AbhLIRSU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 9 Dec 2021 12:18:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46616 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239053AbhLIROa (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 9 Dec 2021 12:14:30 -0500
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80C73C0617A1;
-        Thu,  9 Dec 2021 09:10:56 -0800 (PST)
-Received: by mail-wm1-x32d.google.com with SMTP id i12so4757503wmq.4;
-        Thu, 09 Dec 2021 09:10:56 -0800 (PST)
+        with ESMTP id S232916AbhLIRST (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 9 Dec 2021 12:18:19 -0500
+Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04CE9C061746;
+        Thu,  9 Dec 2021 09:14:46 -0800 (PST)
+Received: by mail-wr1-x42b.google.com with SMTP id j3so10946185wrp.1;
+        Thu, 09 Dec 2021 09:14:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=Eey3ZpemVIQey3aUEzHauqKMAedPhaSMvKYTLO4vJR4=;
-        b=Qr3xahMG7jgbSv1CijjihRMn2tiI3uX2hR/Gkaf/95cs09uLEwDwKhlBxwc6pVw1vh
-         4CRnzMxg878ulkS/uKwKFyds2J0OIOmS45QKqBFNhii84FJO5Fpx/ZhV+/G0a5RBpukV
-         pKeQD5arDVdJaCNyZ1LegrU9/sxVSzi1B2R1sLN+yDSlEiCHt+RsmFah+W9J2utelPj3
-         d3SrFVfAR4moqxHbJNlwGIve7w/XnP6/ELecyY5YS7wKd38IV+KCvGPZJgPjOJH5Ar6L
-         Tz4+FmbMFpajSuO9eCUcMpsCfb+rL/u/WquNC7DRyB2leWQRL6kv8l68Cj3HQsjuECZV
-         OHDA==
+        bh=1WIvJ0cMOzreLs80b+VI49//n3XG9dDrPeLotL/bUDk=;
+        b=oqzKpfW6ahOYYATVIkEj8+lMiWjswlMB490eQDhQzqTkdBoYBxVz6oCWiFV/xwT5Oh
+         2zwt1J27fHtPih1bTtyzmIb22poeL+8f4G9QFBl2a0IHg88+ro2SVpxfQ3qA/uMyQohk
+         K/Fdko4eX9WIuFgKG3B5fszYGZ85o0k5t+ujX3JW2YpaZYvQtdJeVMiLKhr7iZQ2VOq2
+         qaCorvae4NsYjQos9Ec18lMAjPp/e5srRCLT3OaZebntpm71zDUTVyO/N90+B3hbFuhA
+         2bwQ1pGVg29nqlVEaGEM8jbBwJE8jhNXFhchkQDUHTakaXWTCHjRk7jZxmFhtGnu7Yp9
+         9ikw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Eey3ZpemVIQey3aUEzHauqKMAedPhaSMvKYTLO4vJR4=;
-        b=I8R7OeACJxezrmy38mq5p/drxF/coaOCno2YMqNGb0/N7wknstZ0v3/HUZbVUwHvuB
-         Zv+Sdu3huCQyi7gPsr5BtEZLvdh634ix9AutrFbADZsym5ylptJnOhBxDgNleBUJcDSN
-         heMijvHzh9s4nCpD9bM1Cmw+cUK1pbjQZK+QTkndPUOW2jpL/RZeux6/BTP2KylaweYQ
-         hoImmaQGdPw0baqwj/wD/OxQHo5T0HH7QcDz7Mvr4TnXs+xWdQPlu/tl5zbQ9Lzpegrb
-         ZYyz2I3P9AtbmuU6S0TVrzaRQdaHqxcJL/usKdmPmimIFjWb30ULmffQQarh1v7acNoy
-         68HQ==
-X-Gm-Message-State: AOAM532wDGAvdWYm7pedd31txIQxH9fVJDuFNkZVQDnzWN2Q9JTll6ho
-        HE1sLAJ8MkocWnhu4SoYRMQ=
-X-Google-Smtp-Source: ABdhPJxHfxQx2i1K4jKrLcQ+S1rdfCLHuZD0YQJBWS/cYW5VUOZTrDT446KMNTbFtpsPPGA6oOJLBA==
-X-Received: by 2002:a05:600c:1d01:: with SMTP id l1mr9141930wms.44.1639069854820;
-        Thu, 09 Dec 2021 09:10:54 -0800 (PST)
+        bh=1WIvJ0cMOzreLs80b+VI49//n3XG9dDrPeLotL/bUDk=;
+        b=4blH4YEd+OcNW/SW1hrUhK6hDHNfg3BGJrOKAK5St0Rzg8VMoBskuwmeYeL89a2Tbj
+         L6ENWB4REZzu33RxHRSKKR7aUS6MpeIuCnZmJgLeX6pG1pslhjo4u7h/ARkLd7Oh/7Me
+         e1Fl22PdYA2x8SklloUllZRHyX6fgV6MucIpU6GA5i6sIU2irpKrVuKRNMp+k7YmlIHC
+         YCMWvt91eR6DXFChA1Qdk6hhH+6absy1AKJxT5eerBkRwYjVHmcXc73UKpxe9GJWooG2
+         LmEAOlD+BK2Hu7qooT6sUyic8il57M72QjwaQehqrHS3IvllAZmiFFIB6UBp6HupR3nd
+         WW/g==
+X-Gm-Message-State: AOAM532v7RPRmlb0FtDP76A2PCnZGu5dly2jO1dLGE+nA3CXi5cSH1V7
+        I5PU7ovrfTtoUx3osy6HzTc=
+X-Google-Smtp-Source: ABdhPJwRktuofTJyEgBTDGYurKcdU9wj/SmOmXpVhXUyg/Sq8RhVLeGQ9B/NPgxX1W3cbakHx1IwjA==
+X-Received: by 2002:adf:f1cc:: with SMTP id z12mr7880445wro.395.1639070084560;
+        Thu, 09 Dec 2021 09:14:44 -0800 (PST)
 Received: from orome ([193.209.96.43])
-        by smtp.gmail.com with ESMTPSA id z8sm275504wrh.54.2021.12.09.09.10.51
+        by smtp.gmail.com with ESMTPSA id u15sm298752wmq.13.2021.12.09.09.14.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Dec 2021 09:10:53 -0800 (PST)
-Date:   Thu, 9 Dec 2021 18:10:50 +0100
+        Thu, 09 Dec 2021 09:14:43 -0800 (PST)
+Date:   Thu, 9 Dec 2021 18:14:40 +0100
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Akhil R <akhilrajeev@nvidia.com>
-Cc:     dan.j.williams@intel.com, devicetree@vger.kernel.org,
-        dmaengine@vger.kernel.org, jonathanh@nvidia.com,
-        kyarlagadda@nvidia.com, ldewangan@nvidia.com,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        p.zabel@pengutronix.de, rgumasta@nvidia.com, robh+dt@kernel.org,
-        vkoul@kernel.org, Pavan Kunapuli <pkunapuli@nvidia.com>
-Subject: Re: [PATCH v14 2/4] dmaengine: tegra: Add tegra gpcdma driver
-Message-ID: <YbI4mtV3npK87c26@orome>
-References: <1638795639-3681-1-git-send-email-akhilrajeev@nvidia.com>
- <1638795639-3681-3-git-send-email-akhilrajeev@nvidia.com>
+To:     Rob Herring <robh+dt@kernel.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Peter Chen <peter.chen@freescale.com>,
+        Nagarjuna Kristam <nkristam@nvidia.com>,
+        JC Kuo <jckuo@nvidia.com>, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org
+Subject: Re: [PATCH 4/4] dt-bindings: usb: tegra-xudc: Document interconnects
+ and iommus properties
+Message-ID: <YbI5gNIitiikI+JF@orome>
+References: <20211209165339.614498-1-thierry.reding@gmail.com>
+ <20211209165339.614498-4-thierry.reding@gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="7mqnZnHDnajOmsOv"
+        protocol="application/pgp-signature"; boundary="XphOr6ZdSFzXaAAr"
 Content-Disposition: inline
-In-Reply-To: <1638795639-3681-3-git-send-email-akhilrajeev@nvidia.com>
+In-Reply-To: <20211209165339.614498-4-thierry.reding@gmail.com>
 User-Agent: Mutt/2.1.3 (987dde4c) (2021-09-10)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---7mqnZnHDnajOmsOv
+--XphOr6ZdSFzXaAAr
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Dec 06, 2021 at 06:30:37PM +0530, Akhil R wrote:
-> Adding GPC DMA controller driver for Tegra186 and Tegra194. The driver
-> supports dma transfers between memory to memory, IO peripheral to memory
-> and memory to IO peripheral.
+On Thu, Dec 09, 2021 at 05:53:39PM +0100, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
 >=20
-> Signed-off-by: Pavan Kunapuli <pkunapuli@nvidia.com>
-> Signed-off-by: Rajesh Gumasta <rgumasta@nvidia.com>
-> Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
-> Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
+> Add the interconnects, interconnect-names and iommus properties to the
+> device tree bindings for the Tegra XUDC controller. These are used to
+> describe the device's paths to and from memory.
+>=20
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
 > ---
->  drivers/dma/Kconfig            |   12 +
->  drivers/dma/Makefile           |    1 +
->  drivers/dma/tegra186-gpc-dma.c | 1284 ++++++++++++++++++++++++++++++++++=
-++++++
->  3 files changed, 1297 insertions(+)
->  create mode 100644 drivers/dma/tegra186-gpc-dma.c
->=20
-> diff --git a/drivers/dma/Kconfig b/drivers/dma/Kconfig
-> index 80c2c03..35095ae 100644
-> --- a/drivers/dma/Kconfig
-> +++ b/drivers/dma/Kconfig
-> @@ -629,6 +629,18 @@ config TXX9_DMAC
->  	  Support the TXx9 SoC internal DMA controller.  This can be
->  	  integrated in chips such as the Toshiba TX4927/38/39.
-> =20
-> +config TEGRA186_GPC_DMA
-> +	tristate "NVIDIA Tegra GPC DMA support"
-> +	depends on ARCH_TEGRA_186_SOC || ARCH_TEGRA_194_SOC || COMPILE_TEST
+>  .../devicetree/bindings/usb/nvidia,tegra-xudc.yaml  | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
 
-I wonder if we want to maybe make this depend on ARCH_TEGRA instead to
-avoid having to add dependencies on newer SoCs (presumably Tegra234 will
-feature this GPC DMA as well).
+Sorry Rob, I realized you already reviewed this one earlier:
 
-Not worth a respin, but perhaps something to consider when adding
-Tegra234 support.
+	http://patchwork.ozlabs.org/project/linux-tegra/patch/20211206155559.23255=
+0-1-thierry.reding@gmail.com/
 
-Thierry
+so technically:
 
---7mqnZnHDnajOmsOv
+Acked-by: Rob Herring <robh@kernel.org>
+
+--XphOr6ZdSFzXaAAr
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmGyOJoACgkQ3SOs138+
-s6FQLw//YQbWddZFUUepCv0b7YpjZTW7Vbd3JWuPDsETBN2QinnTKblQ/sAwEPcd
-Szvbiym/rYEjolSaVq0LMnE8N6Yt4UYGNpPpZYygbfzQGXZDMLwWkSv5u9SYGxbC
-89erpmqFUUEFmJWqtW9AnsiUCacYyOuLbNJHbjPQnP5ogpOu/AHCcD5iKn9guF+4
-cpYDuo6+8Ywwt4E5fa8WjgoKSoDWeGbGdhF8Ysac6b6ImI+6MFbZUJUDSxvfn9wa
-IVH5zl5eB01o0AD7DPtTRaKGKIIukylqg2UxYKROdMUWLP3L0YdgPF8ekNI8oz4J
-bcsSdYt0Sw2kcYzVVOqQrF3cFdYvf18XrO+UOUQA0r2B/hyopqsBKXQ9+5HOToj9
-ynQBSNcvj72AGc87pnjYmZPD63UO4kw1Zz7O77WVQClpIj/KKCFKRMLUSyk2QteI
-XHPiLLFBFkyueptQpeaAWXZCNbnE4b2BYk/DuMjfdyB7awww82GnMDD1Lj/pjguZ
-0JntM8RHgCSRSTx6rmEHnWrcmHvX0vmUseAVjTaK03rH5AqIRMmEJuaaypvseYqV
-pHHKnSs2obuHaQ0UVl95LFvjJaNhWISwdvteLhjvEOWqQd5zNClWHVA427MOwF74
-tGtvLslwUzPBjbtPps5ebvJwiURyfrAP9J+3ntTV83JEw3qgweU=
-=za4a
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmGyOYAACgkQ3SOs138+
+s6FZsRAAgcx3SMFsP4NMdw0V3PGov6oKJS5d1KilhVi55+DsHH1TRPEJgU3xY1/K
+15DCTeDj8vSPSvPLNh92yhkD43B4/i71Sc7dNy4KYycCGRt/UEzKPL0jPahKFnl/
+Z2PzcrUtYDWN2B1AhbHvoRvyWj8oQ8C7BerPGqtFPnfJuML5g1kqcon0PmD9cZB3
+HzJAakuRXjM3SC1RDLxFK0YCQJ7+HIydTtQ2q1/Tglb7wW4sv9FSUgI8PWWbdo1+
+Id7xZT2SWVxaiUtdrYsLFzxdXaEU8EuOi84OdA5ZE25RE9+KhrLi9wlDHS12RZaL
+LNLMkdFm1KKxsUeF4mTlXleH6i17wU2TZbzNxZaEV15chLgJwvDuA0TEPTnU60wW
+JOPb2TUJV7CCaDvbRLc6kKqcnfJCmh/1gHJM2FFaOrzTd3OHNYSPH6cCP0EQfSyM
+Pg9hpx+0iwS54ghSKqIkTWinyyY2llhpSeXIXCMnw6B/iCxGXhJbSmyJR8vZLV4h
+14zNkQp4yhcN4sEbwZVH6WiRtn/yF5MShDNY4KHuLa/UaqzecQlrFf5dmtUGT1R9
+cWevfQ7xuCgzcuC+5Cisuu+oKSo48vqAgQH6ChkbDy+qrdINHVtLB0Fj0gtBFH/y
+2pDwJodmvvm2dT3etM+ukefKkLM7uWldb+A1Ky0IIQeoioBIJpk=
+=72yo
 -----END PGP SIGNATURE-----
 
---7mqnZnHDnajOmsOv--
+--XphOr6ZdSFzXaAAr--
