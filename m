@@ -2,157 +2,138 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CF50C43217
-	for <linux-tegra@archiver.kernel.org>; Thu,  9 Dec 2021 07:38:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A18FEC433F5
+	for <linux-tegra@archiver.kernel.org>; Thu,  9 Dec 2021 12:21:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233977AbhLIHmN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 9 Dec 2021 02:42:13 -0500
-Received: from mail-mw2nam10on2062.outbound.protection.outlook.com ([40.107.94.62]:43808
-        "EHLO NAM10-MW2-obe.outbound.protection.outlook.com"
+        id S236130AbhLIMY4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 9 Dec 2021 07:24:56 -0500
+Received: from mail-psaapc01on2104.outbound.protection.outlook.com ([40.107.255.104]:42241
+        "EHLO APC01-PSA-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S233933AbhLIHmJ (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 9 Dec 2021 02:42:09 -0500
+        id S232290AbhLIMYz (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 9 Dec 2021 07:24:55 -0500
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=TWiegKCrAnVjvEz19NmVCm8uTLU+BbeKYuFyFf0BJgmaUZ5addK5mdjsEJF2zJ4yckrMchqSGESWj7VippNbWHtOLE2QzI0zqJdttTi/rl1AB84I+rgfmfSeiZH9AwAAWJg6aOZlcKC8KVTgNBcZ2ESPi++DzdjQO9AZq4N2TKJO2TC4GLwvVHdo6CxkCySGltXELROIh2FgFVkWT5DHNyrTF5C4FrpvwNWK3NrafXFpyyIEyUCYI0zDiTTXXP3y/VnYXKpFmRPM/i3+B53p//3SOrQYuNNhlhhzxqWDHoNDyBYJ96lWJyG+tUgG8IAMgMsnUE6uAC8W+Hr/VPbqHQ==
+ b=IEC7HFJh4z2+FeLwikddWK8j2YTR/1uSo2o+Ou1ZJYIGYlBs1RbMCUCSfg+la9o8imuwR8STDo7zIUCG36KDbmTHHp5Cc/OKgVFelc4UdDm3Kwh6Uda+XL9Ce1JBqOWU8T71GQOsDGzynB+oZxBfit15VhYzru/BUBv/hJh0JLHUfWyGVEtZjMW+Vu9SZuPS8MkUSiZPUXqwOWACdq8h0daKKvnDFplN4VSWikeSDVkamqok1LeFp25hV92C1qbtkcmLsoF3Ht8L7cKlDbnqzzdZVrl/DrmEIPzyvucq0quKYoz2eNg6uspqYPJH8czpBRiPxItsRS0Ot4Y5cWzSJA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YOTG1d4rBvNLhhTcrp32ba9Ys0WCtNwL+lBBmHhb/kQ=;
- b=KnypXvOhkV2Sf45P0DYmEM8FBfglvpy+ETcS8t3sTd5flr4QwqJHYhioER6xgbWJ950SGZyLyCVnwaO73G4K4k9o5CjzFUf6fTo3XXZKofeDgyjzGGoe0FTX82USnWZgHJqOWE3EpsDe4AJUDm3pXAeTI6IwI1RedupiA5OKzRkjEKT+czd4MpZCGRvvXCOh50ekMRhda9TTjX5rnANRXHdQRZBXM5XasFrW47cp0Vru8t6yX527bCAqUdnj+6xw6b+0by9BF1Da4Uasa+48SgxW/rVlIRanoqm4ncUlK35UWjT1iEBojU5jYBLUxmg7qd43OJFoRTI49uEPUQz7AA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 203.18.50.12) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
+ bh=FoAzQy0t3X9KjO4hsv4ADg/+uo4ddQs0LZ4dBrkv3zA=;
+ b=Iz+8ZLJt8yiV2N8CC8SjqvY92GkrPljNxXRRj2oMp2CxjMyAAij1RvPORNUzMlOMZiFT41OrZ71JUzjqIuLi5SJfejV+HB8d8vDFA5zP6nNkWvcSM697Zfnz7uLxFoFRnkmPIBYp2mUmTQIfnG3KhClVoyxm0P3UXEfMIU36KJ2nkoixO0zpLSL1XmtKySmgSP75S2FeWZ5SnIbaUUrVOgw6JWuCB3dpuFXOQPiP8lxbdMEQmvgHdplJPXplN0mCntwNMfm8Omx37/NL4l3Po1S7VuSxTDA4Dh8usn4gDWm469vfpGmSY/vFbA4y0uSFygTx/zWSAfRVI5xMQ56M/w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo0.onmicrosoft.com;
+ s=selector2-vivo0-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YOTG1d4rBvNLhhTcrp32ba9Ys0WCtNwL+lBBmHhb/kQ=;
- b=g9H2uRV/6X+7OZf08ehbZkUtswwQr0Bvb1kUDXMg9q0qE3vfc1pS+kikfV42C/dYgO3gFhjf1RgohfwwUGhlzOGfxEeHw4DiR1zAjhwSELCeuG5TeuU5rBS1aNh0UMpYNWu7OH1Gz9CB1HAvRssDiZf1v51dxHyayIC0yUaKtowNU0fLcHwHpIm9T/XuagW4XbGbZQ5qvjJeBv/wvn2unTsKN0JxM6Kn+bQh//pmdI+IHecQEDFsNwi3M0JRnk21erhIw9aJlWZp7SfqBiclYj/J6f0DbW0TYnKk7/OIPR1s+zi2A+7pjl0RmXFtv6RE/li+/YCMPyNQcss40Uciyg==
-Received: from CO1PR15CA0106.namprd15.prod.outlook.com (2603:10b6:101:21::26)
- by BY5PR12MB3683.namprd12.prod.outlook.com (2603:10b6:a03:1a5::16) with
+ bh=FoAzQy0t3X9KjO4hsv4ADg/+uo4ddQs0LZ4dBrkv3zA=;
+ b=XDcwOr9iNFD6Lq9KhzG/MqN2tI9GlRvATVmweeGFHNgIeS+tKXtnPniHZEy7e8EXJJvrNttlUL7VccB6iiP5HC9jIB5xLuxViCvo1oXdToWrbOBnnDjzfQHmM6kOlbwzq4uh+m5NpNkhNiPLj5paqUM47lggvU7zT5lKRTOaYnc=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SL2PR06MB3082.apcprd06.prod.outlook.com (2603:1096:100:37::17)
+ by SL2PR06MB3033.apcprd06.prod.outlook.com (2603:1096:100:36::13) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4778.11; Thu, 9 Dec
- 2021 07:38:34 +0000
-Received: from CO1NAM11FT056.eop-nam11.prod.protection.outlook.com
- (2603:10b6:101:21:cafe::9f) by CO1PR15CA0106.outlook.office365.com
- (2603:10b6:101:21::26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4755.22 via Frontend
- Transport; Thu, 9 Dec 2021 07:38:34 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 203.18.50.12)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 203.18.50.12 as permitted sender) receiver=protection.outlook.com;
- client-ip=203.18.50.12; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (203.18.50.12) by
- CO1NAM11FT056.mail.protection.outlook.com (10.13.175.107) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.4755.13 via Frontend Transport; Thu, 9 Dec 2021 07:38:33 +0000
-Received: from HQMAIL111.nvidia.com (172.20.187.18) by HKMAIL101.nvidia.com
- (10.18.16.10) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Thu, 9 Dec
- 2021 07:38:27 +0000
-Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Thu, 9 Dec
- 2021 07:38:27 +0000
-Received: from Asurada-Nvidia.nvidia.com (172.20.187.5) by mail.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server id 15.0.1497.18 via Frontend
- Transport; Wed, 8 Dec 2021 23:38:26 -0800
-From:   Nicolin Chen <nicolinc@nvidia.com>
-To:     <thierry.reding@gmail.com>, <joro@8bytes.org>, <will@kernel.org>
-CC:     <digetx@gmail.com>, <vdumpa@nvidia.com>, <jonathanh@nvidia.com>,
-        <linux-tegra@vger.kernel.org>, <iommu@lists.linux-foundation.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v8 4/6] iommu/tegra-smmu: Use swgrp pointer instead of swgroup id
-Date:   Wed, 8 Dec 2021 23:38:20 -0800
-Message-ID: <20211209073822.26728-5-nicolinc@nvidia.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20211209073822.26728-1-nicolinc@nvidia.com>
-References: <20211209073822.26728-1-nicolinc@nvidia.com>
-MIME-Version: 1.0
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4778.13; Thu, 9 Dec
+ 2021 12:21:18 +0000
+Received: from SL2PR06MB3082.apcprd06.prod.outlook.com
+ ([fe80::a0cf:a0e2:ee48:a396]) by SL2PR06MB3082.apcprd06.prod.outlook.com
+ ([fe80::a0cf:a0e2:ee48:a396%4]) with mapi id 15.20.4755.023; Thu, 9 Dec 2021
+ 12:21:18 +0000
+From:   Qing Wang <wangqing@vivo.com>
+To:     Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Wang Qing <wangqing@vivo.com>
+Subject: [PATCH] clk: tegra: add missing put_device() call in emc_ensure_emc_driver()
+Date:   Thu,  9 Dec 2021 04:21:10 -0800
+Message-Id: <1639052470-23368-1-git-send-email-wangqing@vivo.com>
+X-Mailer: git-send-email 2.7.4
 Content-Type: text/plain
-X-EOPAttributedMessage: 0
+X-ClientProxiedBy: HK2PR04CA0047.apcprd04.prod.outlook.com
+ (2603:1096:202:14::15) To SL2PR06MB3082.apcprd06.prod.outlook.com
+ (2603:1096:100:37::17)
+MIME-Version: 1.0
+Received: from ubuntu.localdomain (218.213.202.189) by HK2PR04CA0047.apcprd04.prod.outlook.com (2603:1096:202:14::15) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.20.4755.24 via Frontend Transport; Thu, 9 Dec 2021 12:21:17 +0000
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 1682f348-8c12-4e8a-9a71-08d9bae6e79b
-X-MS-TrafficTypeDiagnostic: BY5PR12MB3683:EE_
-X-Microsoft-Antispam-PRVS: <BY5PR12MB36832FB18D1D26A0BD0B094BAB709@BY5PR12MB3683.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:3631;
+X-MS-Office365-Filtering-Correlation-Id: 880f8b53-156b-4769-c4cb-08d9bb0e672d
+X-MS-TrafficTypeDiagnostic: SL2PR06MB3033:EE_
+X-Microsoft-Antispam-PRVS: <SL2PR06MB3033D811E09C26CD88227BDABD709@SL2PR06MB3033.apcprd06.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:1923;
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: Q/SXwRn0y0q3UBAKYGQjPP/LWT6hzqDTqvuOXEVmAJ3DPPgHYpop07tB95xmc7VsUqf1gNfsks1/2LhTXl5K9MpusHJiBryITQwKQdd9u7ujnMVQliEQq2pYmMByywwd8JOxHa3+8Me/fxpZHJjndhypDUqj3L2XE+uhYSUocUvukdCgw02OEx8wDMjT64zopSmXjwhFbchFeq/gwBaiRuLwyDXILD1r91tehh8dbM5RBmrfPQJlpTUpf5L0anbadx1ffE1UsPiLJZtPCr2EWCLYQg6P5xmdIoM/GPcttBgonAgpGLbaNonpbwYsqwD9I8tkqcalHizJf6RTKVfIwc+3SUhcJFiyAUVbhI0PVttEN8ghLzPFVaBEu2ZsDjneMZyzA7SlSamM4y1QtdzLZTYHLfRJd3/fJfJ4q+ErcdMDlPppWfiJjOIOLjBLye+IAFKEYprHMLyN40RX2HsGkCbPC4CEbFxGB/mtEtu0LjBj0RBTRCXtY6TN2Junu6a+fYlkdcf0FLrRPuwE6j0HIbrrR9oBOVG9WnLnxGX0Acs4eiMWyJCuuYN48SYTwarw4zRveM2tXkCAPp4vhGWOtlZV+ZuLR+HL0UXAL2dlhf7W/KSAlMP4eXvW+0RlGQCy8DLRa/3CPAqrQctQWu/kDD2KpM6kCtID4qmQCNCvOX7NgA/p8YGMMAAhj57Aa6hfzD97GCBOVuAqTKb5oi9qxjZbMEfQ1JWUjXh4IlFmYhe6DHX6K814jplymR760l9ZG4EyBqVWyQKP1QAUyGfbd02IM4CnNy1NRvRJoifG0rCguhvyRVnAoAk6Llnj+9+24epUSgNL+Ev+DNt3+l6EBytr0SzcML40X1KzYP2W2rM=
-X-Forefront-Antispam-Report: CIP:203.18.50.12;CTRY:HK;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:hkhybrid01.nvidia.com;CAT:NONE;SFS:(4636009)(46966006)(36840700001)(40470700001)(2616005)(40460700001)(186003)(336012)(426003)(70206006)(70586007)(26005)(34070700002)(83380400001)(82310400004)(36756003)(508600001)(2906002)(356005)(5660300002)(1076003)(7636003)(6666004)(47076005)(8676002)(8936002)(54906003)(86362001)(7696005)(110136005)(316002)(4326008)(36860700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Dec 2021 07:38:33.5771
+X-Microsoft-Antispam-Message-Info: Tx9fZtUfYcgDN+MmrhI+jkku8+23xsdUmZ9sWdMNY0pcwKd8L91AJJo+uX5pzzB5PehoTqQKWbWs5REpf1j9yo1R/0CmiySXpwu0cBPPBhldONUqCm3Dj5ue1+8RphfIB6yeyx1VdK988Nl1AV/6Evfg/j+K06/x3v9cIdtTsjcYbE/nzgCG9JY45tvKDyYgc5+LtAOCDbhY+dxCwGt3s8rXmKaHwdwtt04M6hvy7KwwnP3ouy/NcE6ro1zaU0H2rMa61OTAN2HyJstA7cLRglFFtaWPSUr+ZxDXcZhkV868RgHeiNNk7AjFnFo95TP6iPZ9rzW/6myuqt7TlPGYCWH2vG/1pJK9b1rH11FEWiSWvXJ7F4Ya26S3krH9+CybjotvKZsO72kTLTSbzPz6iAjyvjMZB5FhoToKiTMH/yaURtXKhOarHmUG7xSC25ZPB2y74z20PTNOqpsn3FXdsH7ljHyzpK2Anv3i4U/96OLyr6bY+XX690/cweqNzl2kZjNhISuOkaNGDK2Dt4C3DT1y9d7Sv3KBpWm+GYF3mDqYC0k7VbUN7eamB4L8bB1JYVBtzXuWSCtMDSnewCQYOqPZAOxj423GLjSPGcy5/jlwIQRNxcnY/lDLIDCdBfhk0rNpesb0f6kGXm2JEmqO1os39r4RBzUsrvAa4hazplmuihSsXDNmNr7v/vLhVZD60SHKjMQlRzywAn3G8RZ+Yg==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SL2PR06MB3082.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(4744005)(107886003)(2616005)(956004)(26005)(38100700002)(38350700002)(86362001)(508600001)(8676002)(316002)(2906002)(5660300002)(110136005)(8936002)(66946007)(66476007)(66556008)(186003)(52116002)(6666004)(6512007)(6506007)(6486002)(4326008)(36756003);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?5LYnfGh46+KxbA+tANMLbvtHQIreDD19Bd1/ObH2iDsPnav70Jg6pFlBuFyq?=
+ =?us-ascii?Q?2HGPgkTw3zlQEh6wjBdGp4yZSdVIjMvPmyJB7iGWRGklLwbRliE9vjJJctxu?=
+ =?us-ascii?Q?NfT3P5gi1N/0uuf8cSSCfOiWIvoDqxuoSSuCGoJ/htPZ9UyF7WVZjoj9KxHA?=
+ =?us-ascii?Q?ClFu9GHJj4yBpxJzprl9W/KS81/vvVxJzqzU02I3a1MpfGuwCA24AG6jb+Tu?=
+ =?us-ascii?Q?zYW1kzm/9hLv7s141zTBUQDT0q1OEhx4nNr1U4Ui7ORWzCfCTZNH5bI9E/j4?=
+ =?us-ascii?Q?1gQ5bH+JBIu7OhjLH24JBmwh9VpOYxXYlSQm2ms4w4D1j25zpXh7F0/IB/mW?=
+ =?us-ascii?Q?3nhgtP3WjhToXMiMJBz31cUwQHrCHfFg9s56KHSvAuBokpVzqqwQTRB10rfV?=
+ =?us-ascii?Q?INarMDziEkVQFvg+sOOXE5cgAbt20q0D7iP6LCplEu0EQVY8vFWj6XY4tFeN?=
+ =?us-ascii?Q?nKLGDOQDPu4AvL4x08haDb/68li1OAvMnWY8S/AHIm3vIaC+OV2QoXJdC6Wz?=
+ =?us-ascii?Q?oZDAfe79yvDlYhMTVyoBCT9vjD+qZTUdgu4w+Xzeaek55M8N2MBJCjIaZOou?=
+ =?us-ascii?Q?MJQcWlgKeWtSGjcuYl0YKCN2L1j4VVmiPLt1tBiyACA5dSzNQiMwFlLXHYP9?=
+ =?us-ascii?Q?v6Ab0CgJaBUwF+Dt0Wqm4iJvFmXzvhLvMiX6Q1WS7eHRYjHyzmFjqm97uYum?=
+ =?us-ascii?Q?Pu3vzowwRdHAdllS25ukuARGOsrXhw88WhlTqNB7JENBMN9dL6ksagXe6NRw?=
+ =?us-ascii?Q?A0+b4AAPO8gTiqBL1ivRwviXIDcANqlILzC9b8XGgji/m3gI15fVVhT1BMqM?=
+ =?us-ascii?Q?Pszl6RRcYTIOHypAveOZjDrs0t/HT/ibuyW+NqXGyHrDRU9012fqblVYmFJv?=
+ =?us-ascii?Q?PA5WKnt8nbw29/Nq+RzEdMeVcY7/ax3Si4PA/Kp97Oin8JPD5GsjkE5lYg48?=
+ =?us-ascii?Q?XRrdjFk/k41vf0XkJBFuim/l0dixIUa/5iZQf285qtp/QIYU+O5g7cqXmKF/?=
+ =?us-ascii?Q?9s9dzfNmUh0kABw6yYMa42s4VdXRq0cS+Etd4qJibZX4zQZPs5E7ZcGCX9+b?=
+ =?us-ascii?Q?Rf8BZDSeGWQ3dc3rXw4h0eq+gD57mQkeCEyWjKLsNPQleUmKS/7K5V7+9J6s?=
+ =?us-ascii?Q?OHYJegtIJMpgiKxM/erClEXU2i2yH9oksHkqVFZPITK4949Qf2XbEwEDrSPc?=
+ =?us-ascii?Q?mnGd83d9ED+DvFc3dIYqRcEe++AFGo1zswaK5eLzbyHrWnFkF4BkMPvWesxh?=
+ =?us-ascii?Q?Ozmui9JBr1f4fKh5xAqA3ncBobE0Qc4y+Gd/wbs5xQQ2fgMJVWK7j1rWnemh?=
+ =?us-ascii?Q?5irXRu0Mw7MWF1ZJmKsXY9xFW3Oavl7Msc5wZcvSz8690SAC1GbY7Zb9urPR?=
+ =?us-ascii?Q?u0RZnPQX6SSOplHuN4X4eCzDg1O5zQL/MdOdmU8TmIlQcL91/8XPWF97a9pV?=
+ =?us-ascii?Q?R5iR4vvczVqJXbmGNTHfnWuLvWUtjFXdjEBr8mGpXvbIHiXOHO26efp8qhhM?=
+ =?us-ascii?Q?6PehaSys1u5VWzbn8L/p/mDmZ7OJAMyQ6DxcM4vagA5AkPEu3dh55cHGkVOg?=
+ =?us-ascii?Q?dsyJLJSgA38Kh1UWitnk9bBnFdJ7YzN/3e+UTx482Isj4dXQwpFwXIRQ1r3T?=
+ =?us-ascii?Q?LejsOrBuWqxDH+lWuZei/jw=3D?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 880f8b53-156b-4769-c4cb-08d9bb0e672d
+X-MS-Exchange-CrossTenant-AuthSource: SL2PR06MB3082.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Dec 2021 12:21:18.6386
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1682f348-8c12-4e8a-9a71-08d9bae6e79b
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[203.18.50.12];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT056.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB3683
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: k+TBBdjB0lYzKmWG+JkXHYx/qz5+oLWTwXjNxk/3nwqR1yM2+u6AlYhM2d3ecukBUvCFJPxod1ytH2becbk5cw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SL2PR06MB3033
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-This patch changes in struct tegra_smmu_group to use swgrp
-pointer instead of swgroup, as a preparational change for
-the "mappings" debugfs feature.
+From: Wang Qing <wangqing@vivo.com>
 
-Acked-by: Thierry Reding <treding@nvidia.com>
-Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
+of_find_device_by_node() takes a reference to the embedded struct device 
+which needs to be dropped when error return.
+
+Signed-off-by: Wang Qing <wangqing@vivo.com>
 ---
- drivers/iommu/tegra-smmu.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ drivers/clk/tegra/clk-tegra124-emc.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
-index 05a386036fce..532c843eb631 100644
---- a/drivers/iommu/tegra-smmu.c
-+++ b/drivers/iommu/tegra-smmu.c
-@@ -24,8 +24,8 @@ struct tegra_smmu_group {
- 	struct list_head list;
- 	struct tegra_smmu *smmu;
- 	const struct tegra_smmu_group_soc *soc;
-+	const struct tegra_smmu_swgroup *swgrp;
- 	struct iommu_group *grp;
--	unsigned int swgroup;
- };
+diff --git a/drivers/clk/tegra/clk-tegra124-emc.c b/drivers/clk/tegra/clk-tegra124-emc.c
+index 74c1d89..219c806
+--- a/drivers/clk/tegra/clk-tegra124-emc.c
++++ b/drivers/clk/tegra/clk-tegra124-emc.c
+@@ -198,6 +198,7 @@ static struct tegra_emc *emc_ensure_emc_driver(struct tegra_clk_emc *tegra)
  
- struct tegra_smmu {
-@@ -899,18 +899,22 @@ static struct iommu_group *tegra_smmu_device_group(struct device *dev)
- 	struct iommu_fwspec *fwspec = dev_iommu_fwspec_get(dev);
- 	struct tegra_smmu *smmu = dev_iommu_priv_get(dev);
- 	const struct tegra_smmu_group_soc *soc;
-+	const struct tegra_smmu_swgroup *swgrp;
- 	unsigned int swgroup = fwspec->ids[0];
- 	struct tegra_smmu_group *group;
- 	struct iommu_group *grp;
- 
-+	/* Find swgrp according to the swgroup id */
-+	swgrp = tegra_smmu_find_swgrp(smmu, swgroup);
-+
- 	/* Find group_soc associating with swgroup */
- 	soc = tegra_smmu_find_group_soc(smmu, swgroup);
- 
- 	mutex_lock(&smmu->lock);
- 
--	/* Find existing iommu_group associating with swgroup or group_soc */
-+	/* Find existing iommu_group associating with swgrp or group_soc */
- 	list_for_each_entry(group, &smmu->groups, list)
--		if ((group->swgroup == swgroup) || (soc && group->soc == soc)) {
-+		if ((swgrp && group->swgrp == swgrp) || (soc && group->soc == soc)) {
- 			grp = iommu_group_ref_get(group->grp);
- 			mutex_unlock(&smmu->lock);
- 			return grp;
-@@ -923,7 +927,7 @@ static struct iommu_group *tegra_smmu_device_group(struct device *dev)
+ 	tegra->emc = platform_get_drvdata(pdev);
+ 	if (!tegra->emc) {
++		put_device(&pdev->dev);
+ 		pr_err("%s: cannot find EMC driver\n", __func__);
+ 		return NULL;
  	}
- 
- 	INIT_LIST_HEAD(&group->list);
--	group->swgroup = swgroup;
-+	group->swgrp = swgrp;
- 	group->smmu = smmu;
- 	group->soc = soc;
- 
 -- 
-2.17.1
+2.7.4
 
