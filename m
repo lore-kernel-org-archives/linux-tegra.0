@@ -2,99 +2,120 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34E9CC433EF
-	for <linux-tegra@archiver.kernel.org>; Thu,  9 Dec 2021 19:24:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3845EC433EF
+	for <linux-tegra@archiver.kernel.org>; Thu,  9 Dec 2021 19:25:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229436AbhLIT2D (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 9 Dec 2021 14:28:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49572 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229379AbhLIT2D (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 9 Dec 2021 14:28:03 -0500
-Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28A33C061746
-        for <linux-tegra@vger.kernel.org>; Thu,  9 Dec 2021 11:24:29 -0800 (PST)
-Received: by mail-lj1-x233.google.com with SMTP id 207so10496137ljf.10
-        for <linux-tegra@vger.kernel.org>; Thu, 09 Dec 2021 11:24:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=BZ2tGT9M8cB0HCGJHG+03QiiOm2x7MaAkyJy5gMxvXM=;
-        b=co6up5KccrX2uFd8G62ItqN9gVhESx/mBgDUlvOLua8tESp5se4yoW6SZh5VgvsANS
-         04ECY4rMEo6cOUDnviXUvvUi0Og3laPB/3z8D/wTtDfzwHuirIMnvSi4TYevp5SHJd2X
-         pr56p/7b7coeGJDzfGsHRZvHlqsBLbsVOek97eX/PFaEb3VOUfhfnh1Sfyc5xPh4yXYh
-         57VdGsR4c4mAfE6FN0Rb6E9BBzM1toiJRhwOerBK4LvOJlunb6UBJc+qYPM4TJua4B5i
-         fgGTdiugOZyLJCjfHYNfrka9P5AMLp6784CwFNYOiAJ9A97it+DJVECdUR2IXgNoG/dy
-         YGwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=BZ2tGT9M8cB0HCGJHG+03QiiOm2x7MaAkyJy5gMxvXM=;
-        b=VkUDYp1qcAlC3bi4rOIoSoJ402rQmT7Zk5xiXT18TCeo8H4AxxJor/ehZtk35jyzmf
-         OIVGegaGc/rC0t7Ei2Xwa+ZpKcA69Ut1vevNIZmA6LDbbLt26OoPhSiWbGJdG3BipsiM
-         50MHXcLx/uCV2RLA673v1E6DSpdQs25eVCg9sBazPuNO2EOCxGk5yCZqWG7MxO/mVnxZ
-         oDhmwUiyH96aOMLdUqvw9j1HhI8tluJ/85vIw6rVkwbv8IEWa8hfoXcvopvqGHwtcsI5
-         nK+7ei5pLfknAFGHHmn884kFZR9ReVUVlvXyIuDxRY+zpmjauUeqAXxksl/YfF7WpFbD
-         0/WA==
-X-Gm-Message-State: AOAM532N8ZeiIwyNRE4WHCj6INx9zF7klUeDYKfBeI5OJ7UR46gRV2p+
-        0u2EqRyD5Z9n7DYKUFuKqDRxSHXOM9U=
-X-Google-Smtp-Source: ABdhPJzCrf5+91qowdKzAP1W92ZTOoAvr3pbHmFG7xRf2gLb2JyL1zYdi2Dt8eRaMggAqmpH3/zGVA==
-X-Received: by 2002:a2e:9787:: with SMTP id y7mr8073123lji.228.1639077867294;
-        Thu, 09 Dec 2021 11:24:27 -0800 (PST)
-Received: from [192.168.2.145] (94-29-46-111.dynamic.spd-mgts.ru. [94.29.46.111])
-        by smtp.googlemail.com with ESMTPSA id x6sm74004lfe.201.2021.12.09.11.24.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 09 Dec 2021 11:24:26 -0800 (PST)
-Subject: Re: [PATCH 23/25] ARM: tegra: Remove stray #reset-cells property
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org
-References: <20211209173356.618460-1-thierry.reding@gmail.com>
- <20211209173356.618460-24-thierry.reding@gmail.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <9b59ae8b-0c99-c59d-e837-aff49d78cbbc@gmail.com>
-Date:   Thu, 9 Dec 2021 22:24:26 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+        id S229505AbhLIT2i (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 9 Dec 2021 14:28:38 -0500
+Received: from mail-mw2nam10on2087.outbound.protection.outlook.com ([40.107.94.87]:24096
+        "EHLO NAM10-MW2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S229379AbhLIT2h (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 9 Dec 2021 14:28:37 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Zj53xkaozwTv8K5/AxFp94cdn421lTefcOc+GHRj4AqtxBbDc+jUy/jVYXUDMAjNFkDwtaQoDElP1z1tt//namKywfANiuHLOk3nJX/KTzzBsOBzvylh8HaqNj5l5foNMdURdmPgqoYJ5mlgSPCjkg8DFAtnFycAJ/N2xwrS83eGpHNX6+UIF01NwWQ7fm+6hI0vl0+TXtZ7cTSzz9jumgkFDvsTa27vAm2AX3QQXGne0DQ99b98P57EaXaMfTbEE0AWt6TKvGSbw8ofhS8FcgRw5eAeSSEiTHtXxN47ufD6+F4sCssgx9C7ljAjZEpXHBCXy4bglrzB6o2thcL6/g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+YoTjcosVtVSVKl7IhFxzy9ZE8iHtrD+jGoOC0yGJaI=;
+ b=BBDfQOzofP9JxMmmR+MQFwX8hvn+8yzPOjAkpxfo7BZCbUvg69/2xfNBkSRjDBCUA2XwIj+QgI00nrxOcn/G88YPcAIr4nVTsTeivLr8BNVhXcfYjAzdAVR0pLBdh5LWE42RBSZd4bW34NtRdItELBeQYCj4w0Fv97ZK6GWC3hizjM8R+gsixqA5/JMLdZzjqmZV9eyZszqnjjRtpwOZqgvpFrnvodHlV/rNIkLpRivB07NQx3yFo5+yX73qdWNIBYnWGgQ2KblTZGrHm179AVR7bVRFQgqQKyAtKwR5wzCfvpiRKbzn6DAvPr/0Sfog861kkAIUYS+82C1XrQZl4Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 203.18.50.14) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+YoTjcosVtVSVKl7IhFxzy9ZE8iHtrD+jGoOC0yGJaI=;
+ b=Rf3l8qxe5Hwykurh6OoW+xMF3JU7HFPD84fV1s23IUbX1hCmJkgRPQZMgtVB4ldniRBt4scOVly2l91Oz2DO9SMYW5jjGwpohZYaAIkcTUj2ZYznImSPEKjpMbcUD8its+pyf29oD8y2iI4FIzJ3cTkapTcAIiXNwU02uSms4dXg+3EG5mcrbzLKYA8UPaI7gafFHkE/zA2mFfkseELsncZ4Y1J62SQiFEIv+YzOCsz19QbueZDzsZ03oM8hHbMUlTsaIBfawy559fG7qd15hgMGTp++FTrmnjksMxxw7agTLHAJLuCv+vFegkTr6BiKfzG6WIL6y4HOTjJ9fparog==
+Received: from MWHPR04CA0041.namprd04.prod.outlook.com (2603:10b6:300:ee::27)
+ by MN2PR12MB3456.namprd12.prod.outlook.com (2603:10b6:208:ca::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4755.20; Thu, 9 Dec
+ 2021 19:24:57 +0000
+Received: from CO1NAM11FT007.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:300:ee:cafe::25) by MWHPR04CA0041.outlook.office365.com
+ (2603:10b6:300:ee::27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4778.12 via Frontend
+ Transport; Thu, 9 Dec 2021 19:24:57 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 203.18.50.14)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 203.18.50.14 as permitted sender) receiver=protection.outlook.com;
+ client-ip=203.18.50.14; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (203.18.50.14) by
+ CO1NAM11FT007.mail.protection.outlook.com (10.13.174.131) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.4755.13 via Frontend Transport; Thu, 9 Dec 2021 19:24:56 +0000
+Received: from HQMAIL107.nvidia.com (172.20.187.13) by HKMAIL103.nvidia.com
+ (10.18.16.12) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Thu, 9 Dec
+ 2021 19:24:55 +0000
+Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Thu, 9 Dec
+ 2021 19:24:53 +0000
+Received: from Asurada-Nvidia (172.20.187.5) by mail.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.18 via Frontend
+ Transport; Thu, 9 Dec 2021 19:24:52 +0000
+Date:   Thu, 9 Dec 2021 11:24:51 -0800
+From:   Nicolin Chen <nicolinc@nvidia.com>
+To:     Dmitry Osipenko <digetx@gmail.com>
+CC:     <thierry.reding@gmail.com>, <joro@8bytes.org>, <will@kernel.org>,
+        <vdumpa@nvidia.com>, <jonathanh@nvidia.com>,
+        <linux-tegra@vger.kernel.org>, <iommu@lists.linux-foundation.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v8 6/6] iommu/tegra-smmu: Add pagetable mappings to
+ debugfs
+Message-ID: <20211209192450.GA34762@Asurada-Nvidia>
+References: <20211209073822.26728-1-nicolinc@nvidia.com>
+ <20211209073822.26728-7-nicolinc@nvidia.com>
+ <63b4c2e2-0e55-5701-4c45-70684c7e058e@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20211209173356.618460-24-thierry.reding@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <63b4c2e2-0e55-5701-4c45-70684c7e058e@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 3f35654e-47f4-4428-5f62-08d9bb4995e0
+X-MS-TrafficTypeDiagnostic: MN2PR12MB3456:EE_
+X-Microsoft-Antispam-PRVS: <MN2PR12MB3456E2A184A0E3C112282194AB709@MN2PR12MB3456.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:8882;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: D0TkpQkgsOxTvCed4lra6RVCl3TSC/+iUeVle6eiItgBvJqOaI1XXhm+5Bkb0YV6bBOALv06cjLtpoI53tg5FmjPyRN8uckZkl+RVnuYWBsDqRbj4H/o5uT7OqPWtmY3h/QZZv1gI9yxXbTKfLpACFAFznylPCUmgdFVlmqZLVXOsVbH711d8kLindNfDVpQw2lCN3M5nRbJxsoww1cpwlqBBt9FwkHbFKUFuLvoM8I9p7x38+T9maZZ2anI1gFU2h+LKe+0XDOX3ruJzhvA+CuX0caVRlo/YhFP001v48HlSI1kb2S/9c5J+g5jR7Bc/OUvcuKKUYtjfyPL7ZdbAEOYFbfGHbAM/SaospBRQO/5qDvbaz957PJVkfnNzTZl5SLwhWdwcab2AIQGcEGJCvvfHvGOF+/qe0xfD58o4oeAEaukTu2oNIx2fE9CsufnmgSex3INDuhRV9fV/lwXqZr/MWvnVjkaRG8owG6Fa00o/5pUoaC25ye0Ofsf/G1Ky0ZXm5az/OJbDOusCLdWGCihR/CceXMS26Ra3AyNTi4YaKW/VdeZajE3In32KXImzZ8hvZ4p/NQmMV1y0gPrfVrJCcRDLg5Fb9ok+kdu8r5+zIzWJ8b9jEDMRHqEMZdKSisxA8TY9+bvtSsXfsbLnwY1aYhWxuBJ+3mF4G8fR3NTSmHMCzCkBMdcVObfHK2EaoEul/YJgmfndHMdqPuh8DIFvm+vwnZV0qQwB7zN2Lthx01vzBfiIVn67Q9qUK0umfvXo8gnmiC7ezoRWCgn51uioos/8L84nLN4ZcdI9vk=
+X-Forefront-Antispam-Report: CIP:203.18.50.14;CTRY:HK;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:hkhybrid03.nvidia.com;CAT:NONE;SFS:(4636009)(36840700001)(46966006)(40470700001)(186003)(4744005)(26005)(33716001)(4326008)(1076003)(54906003)(9686003)(356005)(508600001)(86362001)(2906002)(36860700001)(8936002)(8676002)(316002)(47076005)(82310400004)(55016003)(34020700004)(6916009)(7636003)(336012)(426003)(33656002)(70206006)(70586007)(5660300002)(40460700001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Dec 2021 19:24:56.6777
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3f35654e-47f4-4428-5f62-08d9bb4995e0
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[203.18.50.14];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT007.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB3456
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-09.12.2021 20:33, Thierry Reding пишет:
-> From: Thierry Reding <treding@nvidia.com>
+On Thu, Dec 09, 2021 at 05:49:09PM +0300, Dmitry Osipenko wrote:
+> External email: Use caution opening links or attachments
 > 
-> The Ouya board specifies the #reset-cells property for the GPIO
-> controller. Since the GPIO controller doesn't provide reset controls
-> this is not needed, so they can be dropped.
 > 
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> ---
->  arch/arm/boot/dts/tegra30-ouya.dts | 1 -
->  1 file changed, 1 deletion(-)
+> 09.12.2021 10:38, Nicolin Chen пишет:
+> > +static unsigned long pd_pt_index_iova(unsigned int pd_index, unsigned int pt_index)
+> > +{
+> > +     return (pd_index & (SMMU_NUM_PDE - 1)) << SMMU_PDE_SHIFT |
+> > +            (pt_index & (SMMU_NUM_PTE - 1)) << SMMU_PTE_SHIFT;
+> > +}
 > 
-> diff --git a/arch/arm/boot/dts/tegra30-ouya.dts b/arch/arm/boot/dts/tegra30-ouya.dts
-> index 4259871b76c9..fd64aadc472a 100644
-> --- a/arch/arm/boot/dts/tegra30-ouya.dts
-> +++ b/arch/arm/boot/dts/tegra30-ouya.dts
-> @@ -70,7 +70,6 @@ hdmi@54280000 {
->  
->  	gpio: gpio@6000d000 {
->  		gpio-ranges = <&pinmux 0 0 248>;
-> -		#reset-cells = <1>;
->  	};
->  
->  	pinmux@70000868 {
-> 
+> I'd change the return type to u32 here, for consistency.
 
-Can we uncomment the gpio-ranges in tegra.dtsi? I reviewed and tested it
-almost 3 years ago [1].
-
-[1]
-https://lore.kernel.org/linux-tegra/20180726154025.13173-2-stefan@agner.ch/
+The whole file defines iova using "unsigned long", which I see
+as the consistency... If we change it to u32, it'd be probably
+necessary to change all iova types to u32 too... So I'd rather
+keep it "unsigned long" here. If you see a big necessity to do
+that, an additional patch would be nicer IMHO.
