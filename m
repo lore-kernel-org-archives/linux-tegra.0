@@ -2,58 +2,60 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93D4EC433F5
-	for <linux-tegra@archiver.kernel.org>; Thu,  9 Dec 2021 17:34:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 839CBC433EF
+	for <linux-tegra@archiver.kernel.org>; Thu,  9 Dec 2021 17:34:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231187AbhLIRhg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 9 Dec 2021 12:37:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51652 "EHLO
+        id S234086AbhLIRhm (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 9 Dec 2021 12:37:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51684 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243074AbhLIRhg (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 9 Dec 2021 12:37:36 -0500
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 733C9C061746
-        for <linux-tegra@vger.kernel.org>; Thu,  9 Dec 2021 09:34:02 -0800 (PST)
-Received: by mail-wr1-x433.google.com with SMTP id o13so10922792wrs.12
-        for <linux-tegra@vger.kernel.org>; Thu, 09 Dec 2021 09:34:02 -0800 (PST)
+        with ESMTP id S243080AbhLIRhm (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 9 Dec 2021 12:37:42 -0500
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48A00C061746
+        for <linux-tegra@vger.kernel.org>; Thu,  9 Dec 2021 09:34:08 -0800 (PST)
+Received: by mail-wm1-x32c.google.com with SMTP id o19-20020a1c7513000000b0033a93202467so4689668wmc.2
+        for <linux-tegra@vger.kernel.org>; Thu, 09 Dec 2021 09:34:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=wJtntXQekOIR717x314CURxiw/snxfdh85IygtZJedM=;
-        b=Ohgv3o6GK/obR0N4Of2wSWpGa9tVg9F60ZNpBw82BhP/OawZcbq/9QHVQGKN7tB9P5
-         iCEFjs+hcG7TKE8B9FeOYqbEIKKSSB7hZc75xNFkz3ZRLQIoIh+hODcO9hXaIs8cPYpd
-         crmJY1lEIVnfG3MQOJFO4BGthH5aIASuqEaEGKABRalJdqC9cwqihHRYx4U1hb7dN1Gi
-         m2s4JAwo8eZQM4Rd6mGHVl+o+Ju/bhQ2lzHi+5HHu5GUVpFWvqcxBTvVu+cvphZbOEiD
-         TGeQxCLq8n/Ewj+9grdC+uC+ELW1Mx/zCF0yDM2lskJAyGHyLTIUhekKaUTNksa/ldi5
-         vEQg==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=TRYX0MX6Wpoz4clCvnqMMkys1UkfE+UyT5Be/4aVqPA=;
+        b=S7YIIgDwA1kv/1GfJisrb+ZryQ4TTxhB+v1Hsr4kXutvmzklVwWxbksSxSdZgQt68t
+         Yp0Xd+/wIMZY5izQE7ZzU+tHbXAX6mfR85HANjus8d3rIEE1CC301JgEkMraadIBk9C2
+         nwg1iS4cEVf9JE8RuaFZamuj6koj71Xenl7HzpKv/3JNP+a1ZyjoNzOlluEfl4HmxQWc
+         Q1qRiFvX+aTVKJaDaB3jsF2q3/QoFpdBZ45NRTT47L01GFl+FLaZKTkStQeJII18V9Rc
+         BIXU6QOdLGWVGY2zZ48Q9DrYhzvBZUEolXPebgNsfxRuuBLr5A+3iu7zeBTx6ddb+fKc
+         d5eg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=wJtntXQekOIR717x314CURxiw/snxfdh85IygtZJedM=;
-        b=mg3lA6EKws+LBEZangYybNuiOzLeuxUagFlEVPObPyKj04q8Y6gwft40iDpB+6PeNy
-         XWscT/t2PCb7ZWCrvkZ5q8qPg1clvLjWvHV/S8nspOeUPCBLeBbQS81QHypQ7Ss+oJ4n
-         RfoJEWEJlcOanr5VY41dh4nxqT/ECeXq4S53/Eyo1YQXbhFbiMKCifL7gy5wQ/zpK1vf
-         eR3IqF84366DgYLurApphPn3WEi1KzTKm8q+FRwotD72SZm1qDUKg6PHG3EwXc+Y2Ki2
-         +3XIqIASskFRZITaoLf2rB63TgJLavwXCUGl+xDE43bmEctya1yaTMu4PxCr0LwZRQk/
-         ba3g==
-X-Gm-Message-State: AOAM5305r4fP/B7wVhZ4mJBdUovHvV2wBG8jhtmVtOq1Yf7jYz8Ht0SQ
-        wVFDbGClJkW2zBXpupp1Vfo=
-X-Google-Smtp-Source: ABdhPJwSULsElwpkRR2gTHEgHuf5cm8xCO3OmGzWtmKWi0I6rNdcm6Yi194pqdWgi6TGkIKv0nkOkg==
-X-Received: by 2002:a5d:64cc:: with SMTP id f12mr8133043wri.224.1639071240931;
-        Thu, 09 Dec 2021 09:34:00 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=TRYX0MX6Wpoz4clCvnqMMkys1UkfE+UyT5Be/4aVqPA=;
+        b=TCt2Roh7iPLFDqZwNYWWm0T7ybjjMRzfPbvL44wFgAuCyGZcN/xAQbyyQVWcCCqT9U
+         fX+YJGccCOjgIx8XRJf2Cv9m7iBdLovuMW3+scmi2Zl3kLyG+BQRSDToDNM6aBtImp6I
+         uTCEzDtusGV8dGNoXfzhsK5H09Oao7qZHO66xAOP3ldChePm3zKp37QLhHRDs5EOTtZZ
+         hWHrg9AarK72Ja4aDPi55QTqCXyVWcgyQsXyxccqAuBWlwTezG64ILIG2vBK4w3Jmvdf
+         wlhSITMIZLyI2Co3GD5uKgUJefV8qflfh6T6yuKymWQoGTz9Y8gJMge3eaSgqadikI5g
+         ePCQ==
+X-Gm-Message-State: AOAM532isOmFXNjYGDhNcQexFmSK9KZb2KCgGNRZ4WbSoBFC4HT4h/fu
+        j/yLR2AFPDZ8DrjvENTm61E=
+X-Google-Smtp-Source: ABdhPJy7fA2if/RXFypCRoRqOhmwBoFRlFiVj+aAOi6msnX93ttsgNNO49OEKe8HL60Lo5s76yOyeg==
+X-Received: by 2002:a7b:c194:: with SMTP id y20mr9131682wmi.61.1639071246842;
+        Thu, 09 Dec 2021 09:34:06 -0800 (PST)
 Received: from localhost ([193.209.96.43])
-        by smtp.gmail.com with ESMTPSA id n1sm435776wmq.6.2021.12.09.09.33.59
+        by smtp.gmail.com with ESMTPSA id t17sm10119196wmq.15.2021.12.09.09.34.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Dec 2021 09:34:00 -0800 (PST)
+        Thu, 09 Dec 2021 09:34:05 -0800 (PST)
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>
 Cc:     Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org
-Subject: [PATCH 00/25] ARM: tegra: Various cleanups for DT validation
-Date:   Thu,  9 Dec 2021 18:33:31 +0100
-Message-Id: <20211209173356.618460-1-thierry.reding@gmail.com>
+Subject: [PATCH 02/25] ARM: tegra: Specify correct PMIC compatible on Tegra114 boards
+Date:   Thu,  9 Dec 2021 18:33:33 +0100
+Message-Id: <20211209173356.618460-3-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20211209173356.618460-1-thierry.reding@gmail.com>
+References: <20211209173356.618460-1-thierry.reding@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -62,96 +64,56 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-This is a set of patches that clean up existing device trees so that
-they can pass DT validation. Note that for this to take full effect a
-bunch of DT json-schema conversion patches are needed. I've started
-sending those out but want to get these here in so that everything is
-in place when the json-schema conversions land and we don't get an
-excessive amount of warnings.
+The PMIC found on Dalmore, TN7 and Roth is a TPS65913, so add the
+specific compatible string in addition to the generic Palmas series
+compatible string.
 
-Thierry
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ arch/arm/boot/dts/tegra114-dalmore.dts | 2 +-
+ arch/arm/boot/dts/tegra114-roth.dts    | 2 +-
+ arch/arm/boot/dts/tegra114-tn7.dts     | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-Thierry Reding (25):
-  ARM: tegra: Clean up external memory controller nodes
-  ARM: tegra: Specify correct PMIC compatible on Tegra114 boards
-  ARM: tegra: Rename SPI flash chip nodes
-  ARM: tegra: Rename top-level clocks
-  ARM: tegra: Rename top-level regulators
-  ARM: tegra: Fix compatible string for Tegra30+ timer
-  ARM: tegra: Add #reset-cells for Tegra114 MC
-  ARM: tegra: Rename GPIO hog nodes to match schema
-  ARM: tegra: Rename GPU node on Tegra124
-  ARM: tegra: Drop reg-shift for Tegra HS UART
-  ARM: tegra: Rename thermal zone nodes
-  ARM: tegra: Do not use unit-address for OPP nodes
-  ARM: tegra: Fix Tegra124 I2C compatible string list
-  ARM: tegra: Drop unused AHCI clocks on Tegra124
-  ARM: tegra: Sort Tegra124 XUSB clocks correctly
-  ARM: tegra: Avoid pwm- prefix in pinmux nodes
-  ARM: tegra: Add compatible string for built-in ASIX on Colibri boards
-  ARM: tegra: Remove PHY reset GPIO references from USB controller node
-  ARM: tegra: Add dummy backlight power supplies
-  ARM: tegra: Use correct vendor prefix for Invensense
-  ARM: tegra: Remove unsupported properties on Apalis
-  ARM: tegra: Move I2C clock frequency to bus nodes
-  ARM: tegra: Remove stray #reset-cells property
-  ARM: tegra: Fix SLINK compatible string on Tegra30
-  ARM: tegra: Fix I2C mux reset GPIO reference on Cardhu
-
- arch/arm/boot/dts/tegra114-dalmore.dts        |   21 +-
- arch/arm/boot/dts/tegra114-roth.dts           |   16 +-
- arch/arm/boot/dts/tegra114-tn7.dts            |   10 +-
- arch/arm/boot/dts/tegra114.dtsi               |    3 +-
- arch/arm/boot/dts/tegra124-apalis-emc.dtsi    |  483 +++--
- arch/arm/boot/dts/tegra124-apalis-eval.dts    |    2 +-
- .../boot/dts/tegra124-apalis-v1.2-eval.dts    |    2 +-
- arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi   |   15 +-
- arch/arm/boot/dts/tegra124-apalis.dtsi        |   12 +-
- .../arm/boot/dts/tegra124-jetson-tk1-emc.dtsi |  699 +++---
- arch/arm/boot/dts/tegra124-jetson-tk1.dts     |   39 +-
- arch/arm/boot/dts/tegra124-nyan-big-emc.dtsi  | 1918 +++++++++--------
- .../arm/boot/dts/tegra124-nyan-blaze-emc.dtsi |  639 +++---
- arch/arm/boot/dts/tegra124-nyan.dtsi          |   30 +-
- .../boot/dts/tegra124-peripherals-opp.dtsi    |  142 +-
- arch/arm/boot/dts/tegra124-venice2.dts        |   33 +-
- arch/arm/boot/dts/tegra124.dtsi               |   39 +-
- .../boot/dts/tegra20-acer-a500-picasso.dts    |   12 +-
- arch/arm/boot/dts/tegra20-colibri-eval-v3.dts |    4 +-
- arch/arm/boot/dts/tegra20-colibri-iris.dts    |    4 +-
- arch/arm/boot/dts/tegra20-colibri.dtsi        |   11 +-
- .../boot/dts/tegra20-cpu-opp-microvolt.dtsi   |   82 +-
- arch/arm/boot/dts/tegra20-cpu-opp.dtsi        |   82 +-
- arch/arm/boot/dts/tegra20-harmony.dts         |   18 +-
- arch/arm/boot/dts/tegra20-medcom-wide.dts     |   11 +-
- arch/arm/boot/dts/tegra20-paz00.dts           |   11 +-
- .../arm/boot/dts/tegra20-peripherals-opp.dtsi |   36 +-
- arch/arm/boot/dts/tegra20-plutux.dts          |    8 +-
- arch/arm/boot/dts/tegra20-seaboard.dts        |   20 +-
- arch/arm/boot/dts/tegra20-tamonten.dtsi       |    4 +-
- arch/arm/boot/dts/tegra20-tec.dts             |    8 +-
- arch/arm/boot/dts/tegra20-trimslice.dts       |   17 +-
- arch/arm/boot/dts/tegra20-ventana.dts         |   14 +-
- arch/arm/boot/dts/tegra30-apalis-eval.dts     |    2 +-
- .../arm/boot/dts/tegra30-apalis-v1.1-eval.dts |    2 +-
- arch/arm/boot/dts/tegra30-apalis-v1.1.dtsi    |    3 -
- arch/arm/boot/dts/tegra30-apalis.dtsi         |    3 -
- .../tegra30-asus-nexus7-grouper-common.dtsi   |   12 +-
- ...egra30-asus-nexus7-grouper-maxim-pmic.dtsi |    4 +-
- .../tegra30-asus-nexus7-grouper-ti-pmic.dtsi  |    2 +-
- .../boot/dts/tegra30-asus-nexus7-grouper.dtsi |    3 +-
- .../boot/dts/tegra30-asus-nexus7-tilapia.dtsi |    4 +-
- arch/arm/boot/dts/tegra30-beaver.dts          |   23 +-
- arch/arm/boot/dts/tegra30-cardhu-a02.dts      |   12 +-
- arch/arm/boot/dts/tegra30-cardhu-a04.dts      |   14 +-
- arch/arm/boot/dts/tegra30-cardhu.dtsi         |   33 +-
- arch/arm/boot/dts/tegra30-colibri.dtsi        |    8 +-
- .../boot/dts/tegra30-cpu-opp-microvolt.dtsi   |  144 +-
- arch/arm/boot/dts/tegra30-cpu-opp.dtsi        |  144 +-
- arch/arm/boot/dts/tegra30-ouya.dts            |    1 -
- .../arm/boot/dts/tegra30-peripherals-opp.dtsi |  130 +-
- arch/arm/boot/dts/tegra30.dtsi                |   14 +-
- 52 files changed, 2533 insertions(+), 2470 deletions(-)
-
+diff --git a/arch/arm/boot/dts/tegra114-dalmore.dts b/arch/arm/boot/dts/tegra114-dalmore.dts
+index 7fd901f8d39a..82caefe5928c 100644
+--- a/arch/arm/boot/dts/tegra114-dalmore.dts
++++ b/arch/arm/boot/dts/tegra114-dalmore.dts
+@@ -894,7 +894,7 @@ ldo2 {
+ 		};
+ 
+ 		palmas: tps65913@58 {
+-			compatible = "ti,palmas";
++			compatible = "ti,tps65913", "ti,palmas";
+ 			reg = <0x58>;
+ 			interrupts = <0 86 IRQ_TYPE_LEVEL_HIGH>;
+ 
+diff --git a/arch/arm/boot/dts/tegra114-roth.dts b/arch/arm/boot/dts/tegra114-roth.dts
+index 07960171fabe..71a2806c0f59 100644
+--- a/arch/arm/boot/dts/tegra114-roth.dts
++++ b/arch/arm/boot/dts/tegra114-roth.dts
+@@ -801,7 +801,7 @@ regulator@43 {
+ 		};
+ 
+ 		palmas: pmic@58 {
+-			compatible = "ti,palmas";
++			compatible = "ti,tps65913", "ti,palmas";
+ 			reg = <0x58>;
+ 			interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
+ 
+diff --git a/arch/arm/boot/dts/tegra114-tn7.dts b/arch/arm/boot/dts/tegra114-tn7.dts
+index 745d234b105b..753130b1e37b 100644
+--- a/arch/arm/boot/dts/tegra114-tn7.dts
++++ b/arch/arm/boot/dts/tegra114-tn7.dts
+@@ -62,7 +62,7 @@ i2c@7000d000 {
+ 		clock-frequency = <400000>;
+ 
+ 		palmas: pmic@58 {
+-			compatible = "ti,palmas";
++			compatible = "ti,tps65913", "ti,palmas";
+ 			reg = <0x58>;
+ 			interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
+ 
 -- 
 2.34.1
 
