@@ -2,65 +2,70 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2ABADC433EF
-	for <linux-tegra@archiver.kernel.org>; Thu,  9 Dec 2021 19:36:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3F3DC433F5
+	for <linux-tegra@archiver.kernel.org>; Thu,  9 Dec 2021 19:40:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230198AbhLITkU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 9 Dec 2021 14:40:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52494 "EHLO
+        id S229803AbhLIToU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 9 Dec 2021 14:44:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53426 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230125AbhLITkT (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 9 Dec 2021 14:40:19 -0500
-Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEB20C061746
-        for <linux-tegra@vger.kernel.org>; Thu,  9 Dec 2021 11:36:45 -0800 (PST)
-Received: by mail-lj1-x236.google.com with SMTP id l7so10619875lja.2
-        for <linux-tegra@vger.kernel.org>; Thu, 09 Dec 2021 11:36:45 -0800 (PST)
+        with ESMTP id S229461AbhLIToT (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 9 Dec 2021 14:44:19 -0500
+Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6ACEC061746;
+        Thu,  9 Dec 2021 11:40:45 -0800 (PST)
+Received: by mail-lf1-x136.google.com with SMTP id bi37so14049538lfb.5;
+        Thu, 09 Dec 2021 11:40:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=7px+GquIdd2Zoaa9ZFCzJ+pQIfzUD4c8V6pLGNOqVR0=;
-        b=i40kXzAQyprl9fc+TVwsGbWK+ANCEj9xodDxReVto9GO8SDzGDkbJbnsAJsySnWDQM
-         3M5j1z5IlNg7JtRO52nqfEK6AA4iqmdRDx6RTXq+3mfm5X4HCGAtUuZVQ0noPHYLT4gb
-         bBST+Dg4DPl5bvrq36ezuGmNQQUPtnzvAYyieIO5BZAZL8vvlxsJAz9tsYZjAI6fBNmH
-         tx15UQiu+Dtc9jSBNNw27nbiwnhn2lbqN4esGXCGqev9W7SlZ7iHWpr4CGvAfCcbQFst
-         pKN/tNZh6UZgH0PYcdrcuE+W1W7xyn4BfB9tmJQx2dFarkSR62gFnpwwrpG5N7M+hJ6F
-         5F3Q==
+        bh=7e4wPhBpHhYcL4TNHjTq6GfxBUZhweLfxcnZCfxNmD0=;
+        b=kx0CzCpM7B18oC7QqVp3vpnqp9czqNUFHoA2bD/13SOmPSLpXfnGusM07Ge5JLunbJ
+         9QkHy3yixBqpBDwSBgS7OU9mfK0byvztX0LPJ7k5RUcD0t9pObVR9K6hakgZqmRLoFMg
+         3ZsSxuPOZUyJDMKa+aaKpskTHBH0Hq9xeLVXlzmdgbrwRqz4HraO/uiKg1twyPxvwEag
+         lNW9Plx1vS7dvlYw4F+GCUlX2XpMqQghtbQtwF5XhicqFh4bWeJj180Z5oYOfhc+rwAR
+         5vAz780e1rZWX9o0PLV5Qz3lnR3SfNfn93g6KevrV4jDAk0buKHm10H8qaKP7g/I8ImJ
+         IQlg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=7px+GquIdd2Zoaa9ZFCzJ+pQIfzUD4c8V6pLGNOqVR0=;
-        b=q5uxFXmGdd7JFhTLWtEENVbn/1NC9344khT4TJEFrh3g+Ii1cAxQZeWnsT3QABoBpr
-         iehEr04NV+dyGsyqpVBuqNsqdFHX75OTOJFhLKz04c+mxHC2K/04B8b3ix+lPEvZDExp
-         YPJWhU5JJHu0E0qNUDoXvHGYEXUJ/6f1HOVQsL7f/1dK+ujGEi4KZEocZ0oA+jlNLtMR
-         wTKtMy4GH4riwtTepzCzHDd6XweqjEmFRpINIMXcpQCdAaKAhd3d7YtO/B9pUPTXSpkh
-         TzKkC8mURXOfb2c6minSVpPqtdBPfKJUFfsk71RiExIP4a/EcQSV4BoI7QbUg0F/89Uu
-         ZC7w==
-X-Gm-Message-State: AOAM530kMpdAWYjfDQzCHVtun9SETqHHwzoUJiVI2c2tB86HwaKoku5l
-        njTnaiPMJhWgc+z658BXjeqVGhAh5Is=
-X-Google-Smtp-Source: ABdhPJxXfyzXism1yrIlsJQM/T25RNSzWSGXYOD8nXKKXn4wOuKD0Cu/sZl43ohw8KtXwzbPxM0j/g==
-X-Received: by 2002:a05:651c:17a1:: with SMTP id bn33mr8821840ljb.479.1639078603993;
-        Thu, 09 Dec 2021 11:36:43 -0800 (PST)
+        bh=7e4wPhBpHhYcL4TNHjTq6GfxBUZhweLfxcnZCfxNmD0=;
+        b=gPxtaAGuydJ9qOiK5U0A0wykZ8vtukyPIJbHEj/V1cDd7YnqjuXxbKExVN3C0tSlEQ
+         yUdOv+pIT9EPfyJw8/ZFDd5eJH4zTzl/MelzMb/PDXrrY36kvoeDqmpzAsXHrGmrjF8k
+         77vVWJ0U8lfNyOgveEkeQSZeRPT0ThpAYpBS1EqPYAiAWlx4t97qcUsEmUqNAM5c/iIK
+         3ozGRd/4QZdOws0pKVIfXdZnFdL6kYGauciH3Ht7zEcewQd3W8iqa8zqyIlTmd9T8Htw
+         IOkbWOAYZXhGlNsgxeGGAIOjOZUlOOxSlGhswjhSwCSyfHCR6xDfIA/0oKLWs1A4j6Ls
+         +bJw==
+X-Gm-Message-State: AOAM5320M12yrHusEadCARX7xkvSeVAbH/8QBV1D8A7k5Or/z22gcpsF
+        I8+IvpL0aqeOCXi/xVt7tjaEOI0BZ3s=
+X-Google-Smtp-Source: ABdhPJya6K3A+oUSCP6WXn/UJfIBjZHyRWdgszR22IMDqvOAXepYBTyL4q4uAlCO5kEr8GD3/wMW8A==
+X-Received: by 2002:a05:6512:2082:: with SMTP id t2mr8285209lfr.186.1639078843695;
+        Thu, 09 Dec 2021 11:40:43 -0800 (PST)
 Received: from [192.168.2.145] (94-29-46-111.dynamic.spd-mgts.ru. [94.29.46.111])
-        by smtp.googlemail.com with ESMTPSA id bp36sm87884lfb.0.2021.12.09.11.36.43
+        by smtp.googlemail.com with ESMTPSA id x5sm69577ljm.101.2021.12.09.11.40.42
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 09 Dec 2021 11:36:43 -0800 (PST)
-Subject: Re: [PATCH 06/25] ARM: tegra: Fix compatible string for Tegra30+
- timer
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org
-References: <20211209173356.618460-1-thierry.reding@gmail.com>
- <20211209173356.618460-7-thierry.reding@gmail.com>
+        Thu, 09 Dec 2021 11:40:43 -0800 (PST)
+Subject: Re: [PATCH v8 6/6] iommu/tegra-smmu: Add pagetable mappings to
+ debugfs
+To:     Nicolin Chen <nicolinc@nvidia.com>
+Cc:     thierry.reding@gmail.com, joro@8bytes.org, will@kernel.org,
+        vdumpa@nvidia.com, jonathanh@nvidia.com,
+        linux-tegra@vger.kernel.org, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org
+References: <20211209073822.26728-1-nicolinc@nvidia.com>
+ <20211209073822.26728-7-nicolinc@nvidia.com>
+ <5713902d-823b-63ca-00c9-aa6c64c1af41@gmail.com>
+ <20211209193253.GB34762@Asurada-Nvidia>
 From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <d7989902-a42e-1fed-d85b-ade3e160400a@gmail.com>
-Date:   Thu, 9 Dec 2021 22:36:43 +0300
+Message-ID: <97a32c9a-2ec7-6579-7d8d-026d6f820a3e@gmail.com>
+Date:   Thu, 9 Dec 2021 22:40:42 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.14.0
 MIME-Version: 1.0
-In-Reply-To: <20211209173356.618460-7-thierry.reding@gmail.com>
+In-Reply-To: <20211209193253.GB34762@Asurada-Nvidia>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -68,63 +73,26 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-09.12.2021 20:33, Thierry Reding пишет:
-> From: Thierry Reding <treding@nvidia.com>
-> 
-> The TKE (time-keeping engine) found on Tegra30 and later is not
-> backwards compatible with the version found on Tegra20, so update the
-> compatible string list accordingly.
-> 
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> ---
->  arch/arm/boot/dts/tegra114.dtsi | 2 +-
->  arch/arm/boot/dts/tegra124.dtsi | 2 +-
->  arch/arm/boot/dts/tegra30.dtsi  | 2 +-
->  3 files changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/arm/boot/dts/tegra114.dtsi b/arch/arm/boot/dts/tegra114.dtsi
-> index 546272e396b4..328425dba023 100644
-> --- a/arch/arm/boot/dts/tegra114.dtsi
-> +++ b/arch/arm/boot/dts/tegra114.dtsi
-> @@ -164,7 +164,7 @@ lic: interrupt-controller@60004000 {
->  	};
->  
->  	timer@60005000 {
-> -		compatible = "nvidia,tegra114-timer", "nvidia,tegra30-timer", "nvidia,tegra20-timer";
-> +		compatible = "nvidia,tegra114-timer", "nvidia,tegra30-timer";
->  		reg = <0x60005000 0x400>;
->  		interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
->  			     <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
-> diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
-> index 63a64171b422..f4ac0c327c2e 100644
-> --- a/arch/arm/boot/dts/tegra124.dtsi
-> +++ b/arch/arm/boot/dts/tegra124.dtsi
-> @@ -259,7 +259,7 @@ lic: interrupt-controller@60004000 {
->  	};
->  
->  	timer@60005000 {
-> -		compatible = "nvidia,tegra124-timer", "nvidia,tegra30-timer", "nvidia,tegra20-timer";
-> +		compatible = "nvidia,tegra124-timer", "nvidia,tegra30-timer";
->  		reg = <0x0 0x60005000 0x0 0x400>;
->  		interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
->  			     <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
-> diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
-> index ae3df73c20a7..4c04b9c28484 100644
-> --- a/arch/arm/boot/dts/tegra30.dtsi
-> +++ b/arch/arm/boot/dts/tegra30.dtsi
-> @@ -342,7 +342,7 @@ lic: interrupt-controller@60004000 {
->  	};
->  
->  	timer@60005000 {
-> -		compatible = "nvidia,tegra30-timer", "nvidia,tegra20-timer";
-> +		compatible = "nvidia,tegra30-timer";
->  		reg = <0x60005000 0x400>;
->  		interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
->  			     <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
+09.12.2021 22:32, Nicolin Chen пишет:
+> On Thu, Dec 09, 2021 at 05:47:18PM +0300, Dmitry Osipenko wrote:
+>> External email: Use caution opening links or attachments
+>>
+>>
+>> 09.12.2021 10:38, Nicolin Chen пишет:
+>>> @@ -545,6 +719,15 @@ static void tegra_smmu_detach_as(struct tegra_smmu *smmu,
+>>>               if (group->swgrp != swgrp)
+>>>                       continue;
+>>>               group->as = NULL;
+>>> +
+>>> +             if (smmu->debugfs_mappings) {
+>> Do we really need this check?
+>>
+>> Looks like all debugfs_create_dir() usages in this driver are incorrect,
+>> that function never returns NULL. Please fix this.
+> debugfs_create_dir returns ERR_PTR on failure. So here should be
+> to check !IS_ERR. Thanks for pointing it out!
 > 
 
-What exactly is incompatible? IIRC, T30+ is a superset of T20. This
-patch should be wrong, also see [1].
-
-[1]
-https://elixir.bootlin.com/linux/v5.16-rc4/source/drivers/clocksource/timer-tegra.c#L404
+All debugfs functions handle IS_ERR(). GregKH removes all such checks
+all over the kernel. So the check shouldn't be needed at all, please
+remove it if it's unneeded or prove that it's needed.
