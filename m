@@ -2,72 +2,65 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AA75C433EF
-	for <linux-tegra@archiver.kernel.org>; Thu,  9 Dec 2021 19:58:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C4C8C433F5
+	for <linux-tegra@archiver.kernel.org>; Thu,  9 Dec 2021 20:01:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231272AbhLIUCK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 9 Dec 2021 15:02:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57538 "EHLO
+        id S231416AbhLIUEr (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 9 Dec 2021 15:04:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58172 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231337AbhLIUCK (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 9 Dec 2021 15:02:10 -0500
-Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D184C061746;
-        Thu,  9 Dec 2021 11:58:36 -0800 (PST)
-Received: by mail-lf1-x131.google.com with SMTP id m27so14055176lfj.12;
-        Thu, 09 Dec 2021 11:58:36 -0800 (PST)
+        with ESMTP id S231411AbhLIUEr (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 9 Dec 2021 15:04:47 -0500
+Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54063C061746
+        for <linux-tegra@vger.kernel.org>; Thu,  9 Dec 2021 12:01:13 -0800 (PST)
+Received: by mail-lf1-x135.google.com with SMTP id c32so14180041lfv.4
+        for <linux-tegra@vger.kernel.org>; Thu, 09 Dec 2021 12:01:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=uM+eFXoWiWetPTI10tceV6UBa9/7Dufz9K7yclEKlI0=;
-        b=oCqfCY2JIiJilttvVZHOauO6ECOE6Afie3ANJ3X5Vr0i3pfRV1nmwcCXijTzpzh9wY
-         bi7YBYlkFbKiFcSgZo6cBhenPCTubiN4V9FPUJ9YZIioT9j2O9Ixln1xN+qIsClVc1Do
-         +EKXvKKkUfWEDljaIXjhfucZxW8ta+H202606N8GoTjulMKAhQHNkQrvYT0I4NVbHFuF
-         H09hKK9k/McDAYEwxAzbKUirIj//T9cNDM4e/JI1yrhhnARSjTRVBGyYCEgijek8tPWU
-         6DIeF4/ceATr4ZALuEnwXMssodFcxmS/7XWya+Q5QpoFNR5WTWntKlGUtjYW/1ct97d0
-         2DuA==
+        bh=lLaS7UAlCpNsIEJD/xgeZ3+kfewKd2EHdr+/RAxjIPE=;
+        b=VP+VK1PWHYI2i1fNIPglPEtd6jG4sNH0OW/5LDZvizmUK+QiFu/NXJApGIv8gsGTlx
+         fMBTeUjlipC50AYwvQlreVtvEikATZay3/il1b+JJOHKeI+veXsVU5ETOIiP/HLhJiHT
+         aXWctliFCMz1EUPh08Xi2K5sxl+VUx+bknaa9KNTyj66bU9+ZSL0W5L90+hi4aJRuuQw
+         y3EhEgV+bSS8HSD86cVsOUzkcUCCaoWM3/i2cqC+38XRZRbYVWbqTt2lS+u9gcMVClIO
+         2TkeTJvkgVleoyaQYnmq3QcPeyrSSaArx+Q4F5Qwy1PQD5/ED8lguRRHqbk3C6lrMIBY
+         7dbg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=uM+eFXoWiWetPTI10tceV6UBa9/7Dufz9K7yclEKlI0=;
-        b=tQBH3a4MEB7Kg+fwC+XVmSdeJ3orUqSQEKlWGI5e5/xyJYbJZJ1XJHXdJ2PlanikJo
-         ita77HJQPUAr+YeqO4WKBPIg1WoJqtKm9rnjE17rMIpHe2dz2Kg0nZ0F0hnFNND14VgT
-         edAVGwpdfF9eLK3ZyyIPViiyDyJpXIWSiZrc669/QIaFe2Zj8yp/uZZolrJoeMZUqpbU
-         mQSlVoLwMr29RLI1m+sOpd6C5cyn7BDob+maA0pjRG3ZxzTwskxHWh2u8tlKnO0zSMd6
-         Bdr2n6JNwAQHhIz/8w4L148jAOAbBckkFUJ9VuemRJNVIrBxz43klLrxYYPhXz2Y6n6x
-         84Gw==
-X-Gm-Message-State: AOAM530c17LJcvPMYJY5kYaKa3/cZIeE78csrCfssnB85WGr2trFF4tv
-        dc75albGnyYi1B2e8JL7v5Wh4VpmcGI=
-X-Google-Smtp-Source: ABdhPJx7I+soYFAg27UyyMF614X5ml5K/O6igAuGctXo8HGNaRIcXOQdKsUNc8fVwmt4dOF//1/+rw==
-X-Received: by 2002:a05:6512:32c1:: with SMTP id f1mr1252953lfg.85.1639079914011;
-        Thu, 09 Dec 2021 11:58:34 -0800 (PST)
+        bh=lLaS7UAlCpNsIEJD/xgeZ3+kfewKd2EHdr+/RAxjIPE=;
+        b=1mLyb/2W1XGOrw6gZqmtwaxW0FSPEroH/QfdNSbL6vt2bxnPcHzpDORG92UwIN76VW
+         7ztIDB7ASRh2FG8bhRCcAd6pWps7vZbela/bhbhG3y98xIou4vUQslNVDZpYMCSDbrWh
+         0ioQXoNoqq2UnMavf4Yc1CiwJDVCK0KQnnQInAY5ICfsPbGz+Gkl7crFZkgJ2thcYvGA
+         QyNgwAO7qOxu6yjv23B3OG0mu1zayvIGR5HmpehTXwP5xqRubPM7BirFzpkUKo6CnFqS
+         i08FFDMdVS7/wPB65EblV/PywAw5ZIg4sLrw3nC/dden1lQdr7mouk7xopFDqBSHubCB
+         NWIA==
+X-Gm-Message-State: AOAM530ECuD/zXda7h31G/iIe2kbD8CE0PX+Mby9P0K039rVDZvBhS0M
+        pBBSU68XGh8z7vZP4B6tXDSQc/ipWyQ=
+X-Google-Smtp-Source: ABdhPJzNEkuPafN6AUpsxFDm9sdyjsBBRcD9FSqAghYJ3Xv1GKwQDlzF2OjDsbAypXXqajM5PIlp8w==
+X-Received: by 2002:a05:6512:2350:: with SMTP id p16mr8154054lfu.482.1639080071335;
+        Thu, 09 Dec 2021 12:01:11 -0800 (PST)
 Received: from [192.168.2.145] (94-29-46-111.dynamic.spd-mgts.ru. [94.29.46.111])
-        by smtp.googlemail.com with ESMTPSA id y11sm83212ljh.54.2021.12.09.11.58.32
+        by smtp.googlemail.com with ESMTPSA id c37sm86019lfv.152.2021.12.09.12.01.10
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 09 Dec 2021 11:58:33 -0800 (PST)
-Subject: Re: [PATCH v8 6/6] iommu/tegra-smmu: Add pagetable mappings to
- debugfs
-To:     Nicolin Chen <nicolinc@nvidia.com>
-Cc:     thierry.reding@gmail.com, joro@8bytes.org, will@kernel.org,
-        vdumpa@nvidia.com, jonathanh@nvidia.com,
-        linux-tegra@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org
-References: <20211209073822.26728-1-nicolinc@nvidia.com>
- <20211209073822.26728-7-nicolinc@nvidia.com>
- <63b4c2e2-0e55-5701-4c45-70684c7e058e@gmail.com>
- <20211209192450.GA34762@Asurada-Nvidia>
- <fab11209-a579-bbfb-a701-e613cecabd56@gmail.com>
- <20211209195450.GB35526@Asurada-Nvidia>
+        Thu, 09 Dec 2021 12:01:10 -0800 (PST)
+Subject: Re: [PATCH 01/25] ARM: tegra: Clean up external memory controller
+ nodes
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org
+References: <20211209173356.618460-1-thierry.reding@gmail.com>
+ <20211209173356.618460-2-thierry.reding@gmail.com>
 From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <520bc232-7173-dc28-2d81-6b0f42773bc8@gmail.com>
-Date:   Thu, 9 Dec 2021 22:58:32 +0300
+Message-ID: <ec912e49-5ac6-476c-903e-cf1ad08e62bb@gmail.com>
+Date:   Thu, 9 Dec 2021 23:01:10 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.14.0
 MIME-Version: 1.0
-In-Reply-To: <20211209195450.GB35526@Asurada-Nvidia>
+In-Reply-To: <20211209173356.618460-2-thierry.reding@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -75,41 +68,29 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-09.12.2021 22:54, Nicolin Chen пишет:
-> On Thu, Dec 09, 2021 at 10:44:25PM +0300, Dmitry Osipenko wrote:
->> External email: Use caution opening links or attachments
->>
->>
->> 09.12.2021 22:24, Nicolin Chen пишет:
->>> On Thu, Dec 09, 2021 at 05:49:09PM +0300, Dmitry Osipenko wrote:
->>>> External email: Use caution opening links or attachments
->>>>
->>>>
->>>> 09.12.2021 10:38, Nicolin Chen пишет:
->>>>> +static unsigned long pd_pt_index_iova(unsigned int pd_index, unsigned int pt_index)
->>>>> +{
->>>>> +     return (pd_index & (SMMU_NUM_PDE - 1)) << SMMU_PDE_SHIFT |
->>>>> +            (pt_index & (SMMU_NUM_PTE - 1)) << SMMU_PTE_SHIFT;
->>>>> +}
->>>>
->>>> I'd change the return type to u32 here, for consistency.
->>>
->>> The whole file defines iova using "unsigned long", which I see
->>> as the consistency... If we change it to u32, it'd be probably
->>> necessary to change all iova types to u32 too... So I'd rather
->>> keep it "unsigned long" here. If you see a big necessity to do
->>> that, an additional patch would be nicer IMHO.
->>>
->>
->> In general IOVA is "unsigned long", of course. But in case of Tegra
->> SMMU, we know that is always u32.
->>
->> Alright, I see now that there are other places in the driver code that
->> use "unsigned long", so need to change it in this patch.
+09.12.2021 20:33, Thierry Reding пишет:
+> From: Thierry Reding <treding@nvidia.com>
 > 
-> I think we should do that in a separate patch that changes the iova
-> type in the entire tegra-smmu file. I can add one in this series, if
-> this makes you happy...
-> 
+> The external memory controller should be sorted after the memory
+> controller to keep the ordering by unit-address intact.
 
-Please keep it "unsigned long", no need for extra patches.
+"sorted after the memory controller, I don't understand what this means.
+Please clarify.
+
+> While at it,
+> rename the emc-timings and timing nodes to avoid including the RAM code
+> and clock frequency in their names. There is no requirement to do this,
+> so we can use simple enumerations instead.
+> 
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
+>  arch/arm/boot/dts/tegra124-apalis-emc.dtsi    |  483 +++--
+>  .../arm/boot/dts/tegra124-jetson-tk1-emc.dtsi |  699 +++---
+>  arch/arm/boot/dts/tegra124-nyan-big-emc.dtsi  | 1918 +++++++++--------
+>  .../arm/boot/dts/tegra124-nyan-blaze-emc.dtsi |  639 +++---
+>  4 files changed, 1900 insertions(+), 1839 deletions(-)
+
+It's very suspicious that you changed only T124. This all doesn't look
+good to me.
+
+Please either explain it all or drop this patch.
