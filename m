@@ -2,69 +2,65 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA085C433F5
-	for <linux-tegra@archiver.kernel.org>; Thu,  9 Dec 2021 21:37:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83D39C433EF
+	for <linux-tegra@archiver.kernel.org>; Thu,  9 Dec 2021 22:27:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231377AbhLIVlF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 9 Dec 2021 16:41:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52214 "EHLO
+        id S233603AbhLIWbc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 9 Dec 2021 17:31:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35788 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229505AbhLIVlE (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 9 Dec 2021 16:41:04 -0500
-Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42AE7C061746;
-        Thu,  9 Dec 2021 13:37:30 -0800 (PST)
-Received: by mail-lf1-x12a.google.com with SMTP id m6so2747614lfu.1;
-        Thu, 09 Dec 2021 13:37:30 -0800 (PST)
+        with ESMTP id S230479AbhLIWbc (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 9 Dec 2021 17:31:32 -0500
+Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21521C061746;
+        Thu,  9 Dec 2021 14:27:58 -0800 (PST)
+Received: by mail-lf1-x12f.google.com with SMTP id z7so14713735lfi.11;
+        Thu, 09 Dec 2021 14:27:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=TqTpDTINLxy3WS9shl/AGQezgI5fHlezU7a3Hlx0CnI=;
-        b=DXJPkF2bXslN6AlJW7fuVsvie6HWMwkpZoA71U0rpDcSbx2g+evi3vXrvjSZV2nq62
-         B9O+/aoeJBRFjuL2KIvAj74B/A84FyyLnfW2gUCvWjPs9LpThTkaqKrHIC5NFbHLuBG9
-         SvgWcSPA42LFss7qR3MS1miXw05FL8xEDrEkwwOEWmzpA+upYI3c2VVyefdNwjx91N4J
-         eqbvfLSzjwkCioHd0fK66LT6EFIzg69m8//eGTkWKi+XRoGq/UUaz3yI6bdqKmzUU25B
-         Hrj4mKGxlI3idRqmol8oXAjysg5A3vlViwWYDsEkHPb49y/7t4ftZ2YRy1bOwrK4Mo58
-         ZF8Q==
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=vB6UFMMKeMbML0pasfrlK2ON8jLTtffrDd18+0fvXTM=;
+        b=iddzqvFmZjbr0V4tMd5txSDNy7G2HAtwVp5YCUKPc9Li6DCaSw1Dl939MACHK+hypd
+         dUgBtSYybk5qW4WJpYOYiRhaLY0cMX7W309R/DHAihMWKLZC6l26Oj+s6L9LLUReNWr0
+         jUamKjDqSmseia/nXvbIs29In+ghj1NOlsW6tQAA8bKp02+OId7jO9dTdNKyI6qbnZSr
+         sjV7hqSqDOhL93lfp5thW2Bu+JR5fc3kRlu2xTw7E6gvYphreWnD61oFXgsJgjdE/S9U
+         wPVcajc5uLx685kx2V4dyVaEUwd7fLfg6qi7qMy4SojfN/cWKQHX/IUPBu62pepXEn08
+         u+7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+        h=x-gm-message-state:subject:to:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=TqTpDTINLxy3WS9shl/AGQezgI5fHlezU7a3Hlx0CnI=;
-        b=U3FMnkpH3G7zIL8VaCasmlihqFJgL+F8PbB+DjlqRSDCEFv/j5zNHyTi+pDFWYYrAS
-         deDQ/D6Pmd0MOXbuaXlstnUISM0O1H0w1Gs/0JKpozDdNvUj3XKuoSEePOtQD+smxzyq
-         HLQT5G5obLlnyFukJVSet9tnizk7EaE2ijr83xiB9DRAItsTjvWrnMgGBVeVKRbHn5ag
-         LnyGqvJCtD+AYU38ACYB3IPgWqi19UE0XdRk767tm1S2QS69kw7BMyLVWxGnvHYickh7
-         9ymCs2xxld2k6CBuVngurucUq5CLcKFALdfzpCFPASIrO74fdse2JZgqA6FvYk66lAmf
-         ZDFA==
-X-Gm-Message-State: AOAM531oROqUt9AZKySiC48lize8otfibVwjrp9CcKm0aTpzkdnTL6oE
-        TkURo6XqBx+ihV93pbaunqU=
-X-Google-Smtp-Source: ABdhPJxJuvc07pm2m00Inr4k5j+ojE1PDO3izUfN9TyqXbGTRQvem85bBJCiHCjsgP+aA7ugv7zbsQ==
-X-Received: by 2002:a05:6512:2815:: with SMTP id cf21mr8365281lfb.211.1639085848520;
-        Thu, 09 Dec 2021 13:37:28 -0800 (PST)
+        bh=vB6UFMMKeMbML0pasfrlK2ON8jLTtffrDd18+0fvXTM=;
+        b=XPfZuYZEMVdEDzJYCTcxa0Rp5UfbH+dBtg/3XA2Old65OTCv/ss37XfRI07Qtemq/a
+         VXnHih7cOlM+r3716yl0/VasGVxoUg4UIojyepPxlYOCcgpwX8IW3RkeDVe4l8sSgoMJ
+         l8x58H3Rx1DDj2p7AB9VSeRj3ezwzeUWJaR1sT+KySCouyj2DprzJzog+UBd+EjtxHDD
+         VMFDHo2bG4qfeU8PVXFbCX+cZTDQlP5vPcGyysg9M/Gbc9fWv1GpUFGH1EIDW4XsbgsE
+         m71rWsjrEUBVNAMJ8c28cXSIrtitmCv6+LEUApO/DJe+dLN0A2vdWzbLThjDFQSD4zMi
+         oC1A==
+X-Gm-Message-State: AOAM530qw+oqk5alzqsOxMi+WLI7PPT02+O+4EyBPZUjfuxbboeD0ODX
+        2HA7O9/UN1cnibVoreuiVbUsPKStiZs=
+X-Google-Smtp-Source: ABdhPJzFdHGaxPfjywJc1hIiA9ySfrY8guYDU1C2I16TpAhgmS6ic0/GqJw1gbuLNpG04WutziYJSg==
+X-Received: by 2002:a05:6512:31cf:: with SMTP id j15mr8629350lfe.229.1639088876408;
+        Thu, 09 Dec 2021 14:27:56 -0800 (PST)
 Received: from [192.168.2.145] (94-29-46-111.dynamic.spd-mgts.ru. [94.29.46.111])
-        by smtp.googlemail.com with ESMTPSA id c30sm112551lfp.31.2021.12.09.13.37.27
+        by smtp.googlemail.com with ESMTPSA id k6sm122488lfu.218.2021.12.09.14.27.55
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 09 Dec 2021 13:37:28 -0800 (PST)
-Subject: Re: [PATCH v14 2/4] dmaengine: tegra: Add tegra gpcdma driver
-To:     Akhil R <akhilrajeev@nvidia.com>, dan.j.williams@intel.com,
-        devicetree@vger.kernel.org, dmaengine@vger.kernel.org,
-        jonathanh@nvidia.com, kyarlagadda@nvidia.com, ldewangan@nvidia.com,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        p.zabel@pengutronix.de, rgumasta@nvidia.com, robh+dt@kernel.org,
-        thierry.reding@gmail.com, vkoul@kernel.org
-Cc:     Pavan Kunapuli <pkunapuli@nvidia.com>
-References: <1638795639-3681-1-git-send-email-akhilrajeev@nvidia.com>
- <1638795639-3681-3-git-send-email-akhilrajeev@nvidia.com>
+        Thu, 09 Dec 2021 14:27:56 -0800 (PST)
+Subject: Re: [PATCH v2] i2c: tegra: use i2c_timings for bus clock freq
+To:     Akhil R <akhilrajeev@nvidia.com>, andy.shevchenko@gmail.com,
+        jonathanh@nvidia.com, ldewangan@nvidia.com,
+        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org, thierry.reding@gmail.com
+References: <1639067318-29014-1-git-send-email-akhilrajeev@nvidia.com>
 From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <a8e55db8-67cf-0706-8770-b89e1282e007@gmail.com>
-Date:   Fri, 10 Dec 2021 00:37:27 +0300
+Message-ID: <c9eceaba-df4e-0e75-d6a7-87cfdf45fced@gmail.com>
+Date:   Fri, 10 Dec 2021 01:27:55 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.14.0
 MIME-Version: 1.0
-In-Reply-To: <1638795639-3681-3-git-send-email-akhilrajeev@nvidia.com>
+In-Reply-To: <1639067318-29014-1-git-send-email-akhilrajeev@nvidia.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -72,55 +68,17 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-06.12.2021 16:00, Akhil R пишет:
-> +static int tegra_dma_terminate_all(struct dma_chan *dc)
-> +{
-> +	struct tegra_dma_channel *tdc = to_tegra_dma_chan(dc);
-> +	unsigned long wcount = 0;
-> +	unsigned long status;
-> +	unsigned long flags;
-> +	int err;
-> +
-> +	raw_spin_lock_irqsave(&tdc->lock, flags);
-> +
-> +	if (!tdc->dma_desc) {
-> +		raw_spin_unlock_irqrestore(&tdc->lock, flags);
-> +		return 0;
-> +	}
-> +
-> +	if (!tdc->busy)
-> +		goto skip_dma_stop;
-> +
-> +	if (tdc->tdma->chip_data->hw_support_pause)
-> +		err = tegra_dma_pause(tdc);
-> +	else
-> +		err = tegra_dma_stop_client(tdc);
-> +
-> +	if (err) {
-> +		raw_spin_unlock_irqrestore(&tdc->lock, flags);
-> +		return err;
-> +	}
-> +
-> +	status = tdc_read(tdc, TEGRA_GPCDMA_CHAN_STATUS);
-> +	if (status & TEGRA_GPCDMA_STATUS_ISE_EOC) {
-> +		dev_dbg(tdc2dev(tdc), "%s():handling isr\n", __func__);
-> +		tegra_dma_xfer_complete(tdc);
-> +		status = tdc_read(tdc, TEGRA_GPCDMA_CHAN_STATUS);
-> +	}
-> +
-> +	wcount = tdc_read(tdc, TEGRA_GPCDMA_CHAN_XFER_COUNT);
-> +	tegra_dma_stop(tdc);
-> +
-> +	tdc->dma_desc->bytes_transferred +=
-> +			tdc->dma_desc->bytes_requested - (wcount * 4);
-> +
-> +skip_dma_stop:
-> +	tegra_dma_sid_free(tdc);
-> +	kfree(tdc->dma_desc);
+09.12.2021 19:28, Akhil R пишет:
+> -	err = device_property_read_u32(i2c_dev->dev, "clock-frequency",
+> -				       &i2c_dev->bus_clk_rate);
+> -	if (err)
+> -		i2c_dev->bus_clk_rate = I2C_MAX_STANDARD_MODE_FREQ;
+> +	i2c_parse_fw_timings(i2c_dev->dev, &i2c_dev->timings, true);
 
-This kfree looks very suspicious. It should be on the tdc->vc list
-AFAICS, secondly I don't think that driver can be considered the owner
-of the descriptor.
+Was this patch tested at all? Apparently it wasn't compile-tested.
 
-> +	vchan_free_chan_resources(&tdc->vc);
+drivers/i2c/busses/i2c-tegra.c: In function ‘tegra_i2c_parse_dt’:
+drivers/i2c/busses/i2c-tegra.c:1635:13: warning: unused variable ‘err’ [-Wunused-variable]
+ 1635 |         int err;
 
+BTW, MM, DRI and media mailing lists have nothing to do with this patch
