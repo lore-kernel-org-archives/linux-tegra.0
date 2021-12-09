@@ -2,57 +2,57 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16774C433F5
-	for <linux-tegra@archiver.kernel.org>; Thu,  9 Dec 2021 17:34:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FF29C433EF
+	for <linux-tegra@archiver.kernel.org>; Thu,  9 Dec 2021 17:35:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237408AbhLIRic (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 9 Dec 2021 12:38:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51916 "EHLO
+        id S237418AbhLIRif (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 9 Dec 2021 12:38:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51928 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229962AbhLIRib (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 9 Dec 2021 12:38:31 -0500
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 193D1C061746
-        for <linux-tegra@vger.kernel.org>; Thu,  9 Dec 2021 09:34:58 -0800 (PST)
-Received: by mail-wr1-x433.google.com with SMTP id o13so10926943wrs.12
-        for <linux-tegra@vger.kernel.org>; Thu, 09 Dec 2021 09:34:58 -0800 (PST)
+        with ESMTP id S229962AbhLIRie (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 9 Dec 2021 12:38:34 -0500
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DB7CC0617A1
+        for <linux-tegra@vger.kernel.org>; Thu,  9 Dec 2021 09:35:01 -0800 (PST)
+Received: by mail-wr1-x42a.google.com with SMTP id q3so10981309wru.5
+        for <linux-tegra@vger.kernel.org>; Thu, 09 Dec 2021 09:35:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=t593U6jnAX2qOsNeBNBkrwZwoJMGeLahGGdgRk8vEXo=;
-        b=HxCE9nVfZx+rfmn5mNYGJ4ZyfR3zi4lZwPg3U/fpO+Wu2vJgJOXxs62+yXfnBCfKaI
-         FAzozpexq6TxEAc1515T3YH6smPSIQslD0NSvsD7SAl1K1gvrV59hRgpZJnJSqZXSLmh
-         jxvmaBWaaDMyGfUGifki2hXh4A9Awj3s2akNIAzmHogBFCmED2uGYNyi/iFNZlR9xc+y
-         E9pG9xbB03og8UaFqVLPIGWWs3afWtoSpmYRFBFQAwgxYosLxqqU2vbB091AMyGVr42p
-         +zx/DscNGp4xO9qisJI2ix/6dqVkWvVNMF12rUb9HsVAkjB4SWwRXAgD3HMttwlWQt18
-         cf9g==
+        bh=HdS+aHtpowx/tX9ufq07E04i2WBThsjsPDg43b+XIx8=;
+        b=GSYRO+2jX685WQFl2LJCNUhNrKghaAE8yjESki/6BPCGDSy2dWXbeld+maeeE8J4pf
+         zbgLCdB2iys+je4I4pDbum1pcKRWxjsIzLtQqLGNkMNcx64ul9X7r8r2u5daGZkxkLkb
+         fs1iAFGVcNhLKPgLAnogfrryLBLYUKIDNoreLp6CqjXraO5g7DoMkQQHw4JFd/QikUjn
+         6Ktj9cwDE4lFL3JJXfZ96wn8FisQJmmGhIILMYRWPdAdP3QH5NWdg07E6gFj9mzPiWxc
+         UTgatGkX/tqxqu3lwLI9AZAnXmgihspoPSQopRzZZNqBzo16eJpDXIjF35M3dtz0TTNB
+         Yq8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=t593U6jnAX2qOsNeBNBkrwZwoJMGeLahGGdgRk8vEXo=;
-        b=m/jJoT3XIohMGl/EgeAgmR/aIhGcpbedu/Cnk/X+OD4KATeKI0Eo+a5nBpLVqNdM8K
-         HqMfLKPtjFKFjJJeva+ROalamfZfmPVflf7UCzMCWRt7TeGr7mAqIMa7n1qoMbHB7CL1
-         7dzg/HtPp0nmr2aiNFV8DXQkkesM4+/Sp9RcLH2IXygNE9SvnUUwR7cimgd+7O8c5G1G
-         n0W3vW0bdNTKWVwXlVMHGOwt7LMDzQciBv+psKyT7iW55fMalPlqRTyvMmiXXh4uWKtd
-         3FnAr4XLay0RuwlMjNFCsSUNOQ51Xj6kfvlBHRNoQ3O9eApGmyKZDU+/daO3FgFgadKu
-         3nmw==
-X-Gm-Message-State: AOAM531xx2PdfGXQCTHLOsyN5UpgAXGiVt57VZzByvJzOYtSp3tS+X2E
-        pw0FEh8J0++30RsdRNg3JuuWEfzhqmLVng==
-X-Google-Smtp-Source: ABdhPJyJ38FyX/VnNZzqThBvQ+bFyv+l8Dx9RwARq1A/QzMXW7DvYO5AkTBSiWXxXQRADeGm5VVCXw==
-X-Received: by 2002:a5d:6da1:: with SMTP id u1mr7839194wrs.263.1639071296668;
-        Thu, 09 Dec 2021 09:34:56 -0800 (PST)
+        bh=HdS+aHtpowx/tX9ufq07E04i2WBThsjsPDg43b+XIx8=;
+        b=wu3jdpQBIUzoUJLTBwEcSDqIinYGLRlVFRjwSdajvPZAC9MikSmdo/zlofDiorOfKM
+         yRoMBdNl0WfqO6tMHjVT2vO8M+g7KCTVIKqqlBJkmx7xaflIgBvfkSf4v65+1Nng/0Q6
+         RMi5wCHw3INVDdCPfTDFxzCjb0v8vHc/t/OxxsYdLndILBZSiwdMWbzJ72wZsjaeX16v
+         YqaNJ4YaQbFvIyWfO36Paisu6CyyJwqpn6y2YkBhRpAP0LONlemk0k13gOGR7DiLpZvl
+         1AY8R2IrwKuMMAUnpVgZxRE4yxivJG+7lxgMeehGzqy6F9rEhCofGRIcCBi1uRJN7w7F
+         P3mw==
+X-Gm-Message-State: AOAM531eGpT7HKaDsYbCiJtQFK7zlpLpyiRpi1aEgl5jb4//1NuIRhfw
+        jC0AZ9CRG5WrNPN4AQj6Z/Y=
+X-Google-Smtp-Source: ABdhPJzPUggygPssTvjzi9fsn/y/rxm/gHYa2BTiyc8LV0xN4+5RPeEeRYS5WEUWc4key84i09RsXw==
+X-Received: by 2002:a5d:584c:: with SMTP id i12mr7929671wrf.95.1639071299709;
+        Thu, 09 Dec 2021 09:34:59 -0800 (PST)
 Received: from localhost ([193.209.96.43])
-        by smtp.gmail.com with ESMTPSA id m36sm432897wms.25.2021.12.09.09.34.54
+        by smtp.gmail.com with ESMTPSA id d8sm293586wrm.76.2021.12.09.09.34.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Dec 2021 09:34:55 -0800 (PST)
+        Thu, 09 Dec 2021 09:34:58 -0800 (PST)
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>
 Cc:     Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org
-Subject: [PATCH 21/25] ARM: tegra: Remove unsupported properties on Apalis
-Date:   Thu,  9 Dec 2021 18:33:52 +0100
-Message-Id: <20211209173356.618460-22-thierry.reding@gmail.com>
+Subject: [PATCH 22/25] ARM: tegra: Move I2C clock frequency to bus nodes
+Date:   Thu,  9 Dec 2021 18:33:53 +0100
+Message-Id: <20211209173356.618460-23-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20211209173356.618460-1-thierry.reding@gmail.com>
 References: <20211209173356.618460-1-thierry.reding@gmail.com>
@@ -64,59 +64,53 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-The +V1.2_VDD_CORE regulator on Apalis and Colibri boards uses the
-unsupported ti,vsel{0,1}-state-low properties. It turns out that these
-are in fact the default and can be overridden by ti,vsel{0,1}-state-high
-properties if needed. Drop them since they are not needed.
+The "clock-frequency" property for an I2C controller needs to be
+specified at the bus level.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- arch/arm/boot/dts/tegra30-apalis-v1.1.dtsi | 3 ---
- arch/arm/boot/dts/tegra30-apalis.dtsi      | 3 ---
- arch/arm/boot/dts/tegra30-colibri.dtsi     | 3 ---
- 3 files changed, 9 deletions(-)
+ arch/arm/boot/dts/tegra30-asus-nexus7-grouper.dtsi | 3 ++-
+ arch/arm/boot/dts/tegra30-asus-nexus7-tilapia.dtsi | 4 ++--
+ 2 files changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/boot/dts/tegra30-apalis-v1.1.dtsi b/arch/arm/boot/dts/tegra30-apalis-v1.1.dtsi
-index e4e17c0e01fd..010dfa665b3d 100644
---- a/arch/arm/boot/dts/tegra30-apalis-v1.1.dtsi
-+++ b/arch/arm/boot/dts/tegra30-apalis-v1.1.dtsi
-@@ -1044,9 +1044,6 @@ regulator@60 {
- 			regulator-max-microvolt = <1400000>;
- 			regulator-boot-on;
- 			regulator-always-on;
--			ti,vsel0-state-low;
--			/* VSEL1: EN_CORE_DVFS_N low for DVFS */
--			ti,vsel1-state-low;
- 		};
+diff --git a/arch/arm/boot/dts/tegra30-asus-nexus7-grouper.dtsi b/arch/arm/boot/dts/tegra30-asus-nexus7-grouper.dtsi
+index a044dbd200a9..d5f28e424244 100644
+--- a/arch/arm/boot/dts/tegra30-asus-nexus7-grouper.dtsi
++++ b/arch/arm/boot/dts/tegra30-asus-nexus7-grouper.dtsi
+@@ -134,10 +134,11 @@ gmi_cs6_n_pi3 {
  	};
  
-diff --git a/arch/arm/boot/dts/tegra30-apalis.dtsi b/arch/arm/boot/dts/tegra30-apalis.dtsi
-index 28e7d445c076..424d83f99be7 100644
---- a/arch/arm/boot/dts/tegra30-apalis.dtsi
-+++ b/arch/arm/boot/dts/tegra30-apalis.dtsi
-@@ -1027,9 +1027,6 @@ regulator@60 {
- 			regulator-max-microvolt = <1400000>;
- 			regulator-boot-on;
- 			regulator-always-on;
--			ti,vsel0-state-low;
--			/* VSEL1: EN_CORE_DVFS_N low for DVFS */
--			ti,vsel1-state-low;
- 		};
+ 	i2c@7000c500 {
++		clock-frequency = <100000>;
++
+ 		nfc@28 {
+ 			compatible = "nxp,pn544-i2c";
+ 			reg = <0x28>;
+-			clock-frequency = <100000>;
+ 
+ 			interrupt-parent = <&gpio>;
+ 			interrupts = <TEGRA_GPIO(X, 0) IRQ_TYPE_EDGE_RISING>;
+diff --git a/arch/arm/boot/dts/tegra30-asus-nexus7-tilapia.dtsi b/arch/arm/boot/dts/tegra30-asus-nexus7-tilapia.dtsi
+index a681ad51fddd..713bb2c36fcc 100644
+--- a/arch/arm/boot/dts/tegra30-asus-nexus7-tilapia.dtsi
++++ b/arch/arm/boot/dts/tegra30-asus-nexus7-tilapia.dtsi
+@@ -197,6 +197,8 @@ gmi_cs6_n_pi3 {
  	};
  
-diff --git a/arch/arm/boot/dts/tegra30-colibri.dtsi b/arch/arm/boot/dts/tegra30-colibri.dtsi
-index 4361b93d0934..20c9a583a6e0 100644
---- a/arch/arm/boot/dts/tegra30-colibri.dtsi
-+++ b/arch/arm/boot/dts/tegra30-colibri.dtsi
-@@ -898,9 +898,6 @@ regulator@60 {
- 			regulator-max-microvolt = <1400000>;
- 			regulator-boot-on;
- 			regulator-always-on;
--			ti,vsel0-state-low;
--			/* VSEL1: EN_CORE_DVFS_N low for DVFS */
--			ti,vsel1-state-low;
- 		};
- 	};
+ 	i2c@7000c500 {
++		clock-frequency = <100000>;
++
+ 		proximity-sensor@28 {
+ 			compatible = "microchip,cap1106";
+ 			reg = <0x28>;
+@@ -223,8 +225,6 @@ nfc@2a {
+ 			compatible = "nxp,pn544-i2c";
+ 			reg = <0x2a>;
+ 
+-			clock-frequency = <100000>;
+-
+ 			interrupt-parent = <&gpio>;
+ 			interrupts = <TEGRA_GPIO(S, 7) IRQ_TYPE_EDGE_RISING>;
  
 -- 
 2.34.1
