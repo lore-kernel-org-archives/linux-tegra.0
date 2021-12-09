@@ -2,57 +2,57 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B8AEC433F5
-	for <linux-tegra@archiver.kernel.org>; Thu,  9 Dec 2021 17:34:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0C4EC433F5
+	for <linux-tegra@archiver.kernel.org>; Thu,  9 Dec 2021 17:34:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243084AbhLIRiC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 9 Dec 2021 12:38:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51780 "EHLO
+        id S229919AbhLIRiG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 9 Dec 2021 12:38:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51798 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243080AbhLIRiC (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 9 Dec 2021 12:38:02 -0500
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3D53C0617A1
-        for <linux-tegra@vger.kernel.org>; Thu,  9 Dec 2021 09:34:28 -0800 (PST)
-Received: by mail-wr1-x434.google.com with SMTP id d24so11097455wra.0
-        for <linux-tegra@vger.kernel.org>; Thu, 09 Dec 2021 09:34:28 -0800 (PST)
+        with ESMTP id S230129AbhLIRiF (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 9 Dec 2021 12:38:05 -0500
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48CDAC061746
+        for <linux-tegra@vger.kernel.org>; Thu,  9 Dec 2021 09:34:31 -0800 (PST)
+Received: by mail-wm1-x32a.google.com with SMTP id c6-20020a05600c0ac600b0033c3aedd30aso4677136wmr.5
+        for <linux-tegra@vger.kernel.org>; Thu, 09 Dec 2021 09:34:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=nR81Vi5lI7w9Y1IvWxvBfKoT2kMxtXOkdyq2d0wN2vU=;
-        b=aPr/DXOxIBZ8B+j05gzaMcpEFB6Nu3AK1RaKezzbf3IVI2V20lzaZjWJnuVwFhll1b
-         K7KYAwa/bFTnxqU321uON+xxrwX0kHCXOTLvW3fPgjcYZDsAAtb1JgsRhSTJpEHlkPm4
-         zpE5iVRXxS+1oqQZA8nOY+TItfnNbUaay5ITe/wWHlXtO99UJbxA2eJHPHIqhyC3R3LN
-         Nleyhg4d5vmFdA/3D1DvfUzMem4jzrP45sZKWPJlRA9yyHA2osL1JedU2VMGKVBL40Tv
-         kq0M8lR+gd4Gk/RnVmfZ8OX6V70nDeTi3CBUvHfjQ22HdTyHt9UZTELd7QJTwJ1p947h
-         X7YA==
+        bh=UFQUMYHv1QTMgBFhemHqwlKMXXaou1an8xXgcGwe6VI=;
+        b=kfMrxs1Z/tf4qpjj69uZZ5iZRymt/q9kGmChdA/kmutw2CKxl8V9cvDKfkWuhFHZhE
+         yd5xTr8/P/JAXi8rK9HZNXNuu9E0+jaK686D3EFzQJEtzIgWkcFsPbweeYtQUCDcwDU2
+         x8wPD8hryjdbwu8wozNqOE1OGzhEN9UUOWkBmP/VweegYLm6T5ZvjOrzn/3iuRuIJOcB
+         Gkfh+9C0IaXSP6uOUJhMCdIxsXnoxVPs/H4V7hL3V3oDOtjzjv83gJTFR2XnMTOmA5BR
+         V3thiqgvmUio6Q0UrXGWnK2nzxzP+/LnGme0JYvVlnpCl3fCnOc8unTOHNC87Y/tO1Vp
+         zTTg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=nR81Vi5lI7w9Y1IvWxvBfKoT2kMxtXOkdyq2d0wN2vU=;
-        b=3hcNd0lYZz+rQMk7jB3T8nBQ7QYLRcuzkHq4HVR2auP+LOBZ9pQghDZ8xSmTCdwfll
-         skzuCilwVMOUflomBSd+yFgoOBZUzmJFRBeDBIQB4KReX15nV7sP3aIKHWu/kkXoK6J4
-         3AzAb++UGA5AJ3VrV8/qqDmeVwxR2OFnAhg3EaDN1U3prylATOdzsfvX+U1rwNylY7Bo
-         tI3o82b+cQzi46F0wn+HFRQHwWwjmKSt7h6Auwy1MzuMiPaTusZ30lNB8imThKKZ6xBl
-         583ESKBEesLt0e9MIscucFBq8bkAi5DrP7dwv/Ap/wrF4voH1CEkojgW2VrmSFnj7Fde
-         uvog==
-X-Gm-Message-State: AOAM532eO8z6XUvpjZeC1y8SXEmPCOayoVTLv8/pa6GSP3kzWtHHEcN1
-        3PkEWFL7eUgXI5OQI/msjDU=
-X-Google-Smtp-Source: ABdhPJyht0yShlsjxxOeOQkWk5pEsaLjJ7RzyWLqmiIUHCrP07/lAUiYuZqnSxCJgeEeV7tro53ryw==
-X-Received: by 2002:adf:e109:: with SMTP id t9mr7779486wrz.387.1639071267260;
-        Thu, 09 Dec 2021 09:34:27 -0800 (PST)
+        bh=UFQUMYHv1QTMgBFhemHqwlKMXXaou1an8xXgcGwe6VI=;
+        b=JzitX6WBJVnCuyuKD4MfRkXC7sQh84nlz5a9JW6One/UA2K3Hsqo76EmWORGWon3LY
+         9m5C/pvf/lbKEqWaWZyr9/j85mbzeDJgNYLdiV7f5yP7cUbJpvMULeG8QSrkL4h553hU
+         mxHmts/hvu3UKr71vu1FD94ndzg5iHI8KAbv3ZDLjfn9+rpDgJ+qejdSrJvh+c+dpKsu
+         2mXW8rc2kVXJ1g41YiSZG7fVwY5mJpF+1xaHFTN+Zclt+A4IVEuT9FhbfT2QIgE0PA+9
+         ubaNxbjuMhVhZ5caX/yo5XkY88NjhgAFZqW7Nn5JlBORxFLXtuom0/Cir+gN1tY5+ojV
+         SD8A==
+X-Gm-Message-State: AOAM533q4TxKquJJomcI2wIGr+LCMtEYzTYPSCeBxz5+pW/KTdpbyy/T
+        zGfbxWQeNewpSLCOKsAnzwU=
+X-Google-Smtp-Source: ABdhPJxubXjfiBycRl134Kp6BdkynFkTWuKq5KYNK7scNbUonXs44Ql+ItuH0Hge2cfmCXf7zDj5vQ==
+X-Received: by 2002:a05:600c:19cc:: with SMTP id u12mr9174392wmq.24.1639071269849;
+        Thu, 09 Dec 2021 09:34:29 -0800 (PST)
 Received: from localhost ([193.209.96.43])
-        by smtp.gmail.com with ESMTPSA id 10sm436039wrb.75.2021.12.09.09.34.26
+        by smtp.gmail.com with ESMTPSA id y6sm329407wrh.18.2021.12.09.09.34.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Dec 2021 09:34:26 -0800 (PST)
+        Thu, 09 Dec 2021 09:34:29 -0800 (PST)
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>
 Cc:     Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org
-Subject: [PATCH 10/25] ARM: tegra: Drop reg-shift for Tegra HS UART
-Date:   Thu,  9 Dec 2021 18:33:41 +0100
-Message-Id: <20211209173356.618460-11-thierry.reding@gmail.com>
+Subject: [PATCH 11/25] ARM: tegra: Rename thermal zone nodes
+Date:   Thu,  9 Dec 2021 18:33:42 +0100
+Message-Id: <20211209173356.618460-12-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20211209173356.618460-1-thierry.reding@gmail.com>
 References: <20211209173356.618460-1-thierry.reding@gmail.com>
@@ -64,95 +64,150 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-When the Tegra High-Speed UART is used instead of the regular UART, the
-reg-shift property is implied from the compatible string and should not
-be explicitly listed.
+The DT schema requires that nodes representing thermal zones include a
+"-thermal" suffix in their name.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi               | 3 +++
- arch/arm/boot/dts/tegra124-jetson-tk1.dts                 | 2 ++
- arch/arm/boot/dts/tegra30-asus-nexus7-grouper-common.dtsi | 2 ++
- arch/arm/boot/dts/tegra30-colibri.dtsi                    | 2 ++
- 4 files changed, 9 insertions(+)
+ arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi | 6 +++---
+ arch/arm/boot/dts/tegra124-apalis.dtsi      | 6 +++---
+ arch/arm/boot/dts/tegra124-jetson-tk1.dts   | 6 +++---
+ arch/arm/boot/dts/tegra124.dtsi             | 8 ++++----
+ 4 files changed, 13 insertions(+), 13 deletions(-)
 
 diff --git a/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi b/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
-index f00ef4d08fd4..b952b272afc0 100644
+index b952b272afc0..f5440ae14cb4 100644
 --- a/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
 +++ b/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
-@@ -1539,14 +1539,17 @@ sdmmc3-clk-lb-out-pee4 { /* NC */
- 
- 	serial@70006040 {
- 		compatible = "nvidia,tegra124-hsuart", "nvidia,tegra30-hsuart";
-+		/delete-property/ reg-shift;
+@@ -2024,7 +2024,7 @@ sound {
  	};
  
- 	serial@70006200 {
- 		compatible = "nvidia,tegra124-hsuart", "nvidia,tegra30-hsuart";
-+		/delete-property/ reg-shift;
+ 	thermal-zones {
+-		cpu {
++		cpu-thermal {
+ 			trips {
+ 				cpu-shutdown-trip {
+ 					temperature = <101000>;
+@@ -2034,7 +2034,7 @@ cpu-shutdown-trip {
+ 			};
+ 		};
+ 
+-		mem {
++		mem-thermal {
+ 			trips {
+ 				mem-shutdown-trip {
+ 					temperature = <101000>;
+@@ -2044,7 +2044,7 @@ mem-shutdown-trip {
+ 			};
+ 		};
+ 
+-		gpu {
++		gpu-thermal {
+ 			trips {
+ 				gpu-shutdown-trip {
+ 					temperature = <101000>;
+diff --git a/arch/arm/boot/dts/tegra124-apalis.dtsi b/arch/arm/boot/dts/tegra124-apalis.dtsi
+index e6d25813b416..f168fbbe2a6d 100644
+--- a/arch/arm/boot/dts/tegra124-apalis.dtsi
++++ b/arch/arm/boot/dts/tegra124-apalis.dtsi
+@@ -2013,7 +2013,7 @@ sound {
  	};
  
- 	serial@70006300 {
- 		compatible = "nvidia,tegra124-hsuart", "nvidia,tegra30-hsuart";
-+		/delete-property/ reg-shift;
- 	};
+ 	thermal-zones {
+-		cpu {
++		cpu-thermal {
+ 			trips {
+ 				cpu-shutdown-trip {
+ 					temperature = <101000>;
+@@ -2023,7 +2023,7 @@ cpu-shutdown-trip {
+ 			};
+ 		};
  
- 	hdmi_ddc: i2c@7000c700 {
+-		mem {
++		mem-thermal {
+ 			trips {
+ 				mem-shutdown-trip {
+ 					temperature = <101000>;
+@@ -2033,7 +2033,7 @@ mem-shutdown-trip {
+ 			};
+ 		};
+ 
+-		gpu {
++		gpu-thermal {
+ 			trips {
+ 				gpu-shutdown-trip {
+ 					temperature = <101000>;
 diff --git a/arch/arm/boot/dts/tegra124-jetson-tk1.dts b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
-index e056e737abdf..f76f4e13458a 100644
+index f76f4e13458a..0d1c17b3d655 100644
 --- a/arch/arm/boot/dts/tegra124-jetson-tk1.dts
 +++ b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
-@@ -1389,6 +1389,7 @@ dsi_b {
- 	 */
- 	serial@70006000 {
- 		compatible = "nvidia,tegra124-hsuart", "nvidia,tegra30-hsuart";
-+		/delete-property/ reg-shift;
- 		status = "okay";
+@@ -2047,7 +2047,7 @@ sound {
  	};
  
-@@ -1401,6 +1402,7 @@ serial@70006000 {
- 	 */
- 	serial@70006040 {
- 		compatible = "nvidia,tegra124-hsuart", "nvidia,tegra30-hsuart";
-+		/delete-property/ reg-shift;
- 		status = "okay";
+ 	thermal-zones {
+-		cpu {
++		cpu-thermal {
+ 			trips {
+ 				cpu-shutdown-trip {
+ 					temperature = <101000>;
+@@ -2057,7 +2057,7 @@ cpu-shutdown-trip {
+ 			};
+ 		};
+ 
+-		mem {
++		mem-thermal {
+ 			trips {
+ 				mem-shutdown-trip {
+ 					temperature = <101000>;
+@@ -2067,7 +2067,7 @@ mem-shutdown-trip {
+ 			};
+ 		};
+ 
+-		gpu {
++		gpu-thermal {
+ 			trips {
+ 				gpu-shutdown-trip {
+ 					temperature = <101000>;
+diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
+index d0ec1a30ff54..752a28268024 100644
+--- a/arch/arm/boot/dts/tegra124.dtsi
++++ b/arch/arm/boot/dts/tegra124.dtsi
+@@ -1242,7 +1242,7 @@ pmu {
  	};
  
-diff --git a/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-common.dtsi b/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-common.dtsi
-index 3fbb57d517c4..f3d14d8dd87f 100644
---- a/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-common.dtsi
-+++ b/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-common.dtsi
-@@ -804,11 +804,13 @@ drive_gma {
+ 	thermal-zones {
+-		cpu {
++		cpu-thermal {
+ 			polling-delay-passive = <1000>;
+ 			polling-delay = <1000>;
  
- 	uartb: serial@70006040 {
- 		compatible = "nvidia,tegra30-hsuart";
-+		/delete-property/ reg-shift;
- 		/* GPS BCM4751 */
- 	};
+@@ -1270,7 +1270,7 @@ map0 {
+ 			};
+ 		};
  
- 	uartc: serial@70006200 {
- 		compatible = "nvidia,tegra30-hsuart";
-+		/delete-property/ reg-shift;
- 		status = "okay";
+-		mem {
++		mem-thermal {
+ 			polling-delay-passive = <1000>;
+ 			polling-delay = <1000>;
  
- 		nvidia,adjust-baud-rates = <0 9600 100>,
-diff --git a/arch/arm/boot/dts/tegra30-colibri.dtsi b/arch/arm/boot/dts/tegra30-colibri.dtsi
-index 03b930bce479..e89b4e5a238d 100644
---- a/arch/arm/boot/dts/tegra30-colibri.dtsi
-+++ b/arch/arm/boot/dts/tegra30-colibri.dtsi
-@@ -701,10 +701,12 @@ pv0 {
+@@ -1298,7 +1298,7 @@ cooling-maps {
+ 			};
+ 		};
  
- 	serial@70006040 {
- 		compatible = "nvidia,tegra30-hsuart";
-+		/delete-property/ reg-shift;
- 	};
+-		gpu {
++		gpu-thermal {
+ 			polling-delay-passive = <1000>;
+ 			polling-delay = <1000>;
  
- 	serial@70006300 {
- 		compatible = "nvidia,tegra30-hsuart";
-+		/delete-property/ reg-shift;
- 	};
+@@ -1326,7 +1326,7 @@ map0 {
+ 			};
+ 		};
  
- 	hdmi_ddc: i2c@7000c700 {
+-		pllx {
++		pllx-thermal {
+ 			polling-delay-passive = <1000>;
+ 			polling-delay = <1000>;
+ 
 -- 
 2.34.1
 
