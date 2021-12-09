@@ -2,58 +2,60 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B827C433EF
-	for <linux-tegra@archiver.kernel.org>; Thu,  9 Dec 2021 17:25:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A203FC433F5
+	for <linux-tegra@archiver.kernel.org>; Thu,  9 Dec 2021 17:25:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242904AbhLIR2s (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 9 Dec 2021 12:28:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49170 "EHLO
+        id S242942AbhLIR2v (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 9 Dec 2021 12:28:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49198 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242926AbhLIR2k (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 9 Dec 2021 12:28:40 -0500
-Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D3C5C061746
-        for <linux-tegra@vger.kernel.org>; Thu,  9 Dec 2021 09:25:07 -0800 (PST)
-Received: by mail-wm1-x329.google.com with SMTP id i8-20020a7bc948000000b0030db7b70b6bso7132715wml.1
-        for <linux-tegra@vger.kernel.org>; Thu, 09 Dec 2021 09:25:07 -0800 (PST)
+        with ESMTP id S242969AbhLIR2s (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 9 Dec 2021 12:28:48 -0500
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1C40C061A72
+        for <linux-tegra@vger.kernel.org>; Thu,  9 Dec 2021 09:25:09 -0800 (PST)
+Received: by mail-wm1-x331.google.com with SMTP id p18so4778496wmq.5
+        for <linux-tegra@vger.kernel.org>; Thu, 09 Dec 2021 09:25:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ZHBTUhOT3awcXS61yx98NX/R7X60+79EfDtACSGhzLw=;
-        b=pltHGV1KaD+wWDErvyCpWVn//LqHAkL3msh74nGI3XEdIIgE8Hh7b4ZMqnC0MayAYt
-         lhKB7qoeUMuJ+/WqTovB8EwWRFwpW3VHUJY6OHtkSI/t4eKYmZqh0jd8kNTDehkmy4+0
-         RUcXhGgHY+ofLuC8UekQZj9aWqkRsNAccRodBEbewxgQijb+ZjkHIkk810HRUt2MLpEb
-         uW8Y3FX757J1o/BeJNB6cc80N9y4mTwpQ+pW9h1Tq+NaBHmP3tGqwu2EY0Q+FM1gtOuk
-         OAtA8IDteIe/BW3GSu/Oj2CMp2XyqfX2GB0SoIE0H8WtHHhJ2LptC6I81CS3V6s6+L7l
-         AzzQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=njc6iBCIIcJEfBBmmi88h1svGLtR5R9x889jLiMbnc4=;
+        b=WAGsYADCPH1KHkzvwQI6PBwxpAwVi0sg9KYjGD9Mnjohc0nCcNbaihIhSH2PFnhp1U
+         Pb+SejMJK7q3MB8zY+Jn3a1QoL9rqSp/APDKAbr805KlD45UAxDs2Ub8EfMs+lTJ8VkS
+         YmYc+xghWinFcbaH2TodCCpYcAEBoqys9zW5ScU/TmkJkPe1THBXtlzfwy9Aq+vE68Z2
+         8dp+SUGEBLulz/vVYmYF5apr9Ow4FRCXnuKF87KYSuBeDVjXAwqnAKewmtV9W3AkkRXQ
+         nX6YJWEWlv/GsqmVpEUgZQWMMI5K7Zr8qliQPlHL47gQDSce/NDHuaZyNnA0qDGDdUFr
+         xkCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ZHBTUhOT3awcXS61yx98NX/R7X60+79EfDtACSGhzLw=;
-        b=b5eZEzNnVR2xTUhWJz4wWUtCwJ2vnPWF+gf7h+yRuGkeMTtlT3eM8ipW+g2ULTnOwz
-         enp4vfhCfS3kZH96W2zq+FeX4GkyAFbyPzlHiSgTCO1kGYHHrmqO1fzw5oyoKt6qG1qv
-         mqyFBBYHrv97/Beobuk1jVv8CogGzgyZ28lv4JUNH2F2WgMIf5dFJ9mLsAVWUKyx9t58
-         WggaRRhvDr4nPTDLYPSWnhZyyjmKKBz395wHhIGu8DTdpDz7TljJ/MIkOzr2FLSpzmo7
-         +L6Jty7IDIQ7clJk3bAKlICsrMj6syPvAAasYN2aGrFZ6QijSXar8xdg3I4vohPIWkiI
-         eyCw==
-X-Gm-Message-State: AOAM530HSz/o05BaBjB9GHpG/EJ72kY/sT1HtheB2a7+fb79IvFlJQjh
-        CxgIG8na9+nPInrmM/gW+1uaCIJD2VgrJA==
-X-Google-Smtp-Source: ABdhPJxg99CHZ+JhgKDGVX3bMvDYMwvHeB8cjBJDZLAvOJTu5IRmdS/SfK9amusy2xin5JXIK2DZIQ==
-X-Received: by 2002:a1c:a58d:: with SMTP id o135mr8617920wme.93.1639070705734;
-        Thu, 09 Dec 2021 09:25:05 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=njc6iBCIIcJEfBBmmi88h1svGLtR5R9x889jLiMbnc4=;
+        b=uWmSTDnMoC2W3Cgz3N/vKNrFGJ5jhEUr4DYiOhx7A5DGlkIJnCWfaP2hKAz0rNIIrz
+         TiA6ki9e6HIOEckjFgUb1Vx0x3DYeh59uPf8tmpvDZmromf82cThng5bxC5N4Bogb5p9
+         TiHyZO8i9LGt4NosL7gVuuzvOH9gfjZsUy57TWi3KydeZ72A7ONGXNZ6Rae8Sa75ecNN
+         r7ysUQN6Le2PFlX6eVLRetmke7y6996ko2V3cirubdnFft/J84Ks3RhPRx33CdYRJpwL
+         r5P6KxvHKqeBX12+dM5/np/2mt5LQBNSyomaXwE9y1V6dMeTxGum73QSu7PmnrpTzsgr
+         JVCA==
+X-Gm-Message-State: AOAM530Ljk50ZpY39ynHSpQktYKERd1giUK/NpAYZ505iu5ueIo8cs4H
+        uTid1sY5Ip43F7mS/qFGyoRcL976I6VsMQ==
+X-Google-Smtp-Source: ABdhPJyThK80AEu7SSCweDHmSi7AqXmLZm2c2cU6txy2arIRq+0RXb5lqHb29NlXmd/X54gddAzB1A==
+X-Received: by 2002:a1c:1f94:: with SMTP id f142mr9151132wmf.192.1639070708365;
+        Thu, 09 Dec 2021 09:25:08 -0800 (PST)
 Received: from localhost ([193.209.96.43])
-        by smtp.gmail.com with ESMTPSA id ay29sm355143wmb.44.2021.12.09.09.25.04
+        by smtp.gmail.com with ESMTPSA id l26sm439210wms.15.2021.12.09.09.25.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Dec 2021 09:25:05 -0800 (PST)
+        Thu, 09 Dec 2021 09:25:07 -0800 (PST)
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>
 Cc:     Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org
-Subject: [PATCH 00/30] arm64: tegra: Various cleanups for DT validation
-Date:   Thu,  9 Dec 2021 18:24:33 +0100
-Message-Id: <20211209172503.617716-1-thierry.reding@gmail.com>
+Subject: [PATCH 01/30] arm64: tegra: Rename top-level clocks
+Date:   Thu,  9 Dec 2021 18:24:34 +0100
+Message-Id: <20211209172503.617716-2-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20211209172503.617716-1-thierry.reding@gmail.com>
+References: <20211209172503.617716-1-thierry.reding@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -62,76 +64,101 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-This is a set of patches that gets rid of most warnings when running the
-make dtbs_check target for Tegra device tree files on 64-bit ARM. I've
-got another set of patches for 32-bit ARM and a set of patches for
-conversion of DT bindings to json-schema that I've started sending out
-and which may take a while to get reviewed and applied. In the meantime
-I plan on applying these for v5.17 so that by the time we get to all the
-json-schema conversions we actually start seeing good results.
+Clocks defined at the top level in device tree are no longer part of a
+simple bus and therefore don't have a reg property. Nodes without a reg
+property shouldn't have a unit-address either, so drop the unit address
+from the node names. To ensure nodes aren't duplicated (in which case
+they would end up merged in the final DTB), append the name of the clock
+to the node name.
 
-Thierry
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ arch/arm64/boot/dts/nvidia/tegra132-norrin.dts     | 2 +-
+ arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi     | 2 +-
+ arch/arm64/boot/dts/nvidia/tegra210-p2530.dtsi     | 2 +-
+ arch/arm64/boot/dts/nvidia/tegra210-p2894.dtsi     | 2 +-
+ arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts | 2 +-
+ arch/arm64/boot/dts/nvidia/tegra210-smaug.dts      | 2 +-
+ 6 files changed, 6 insertions(+), 6 deletions(-)
 
-Thierry Reding (30):
-  arm64: tegra: Rename top-level clocks
-  arm64: tegra: Rename top-level regulators
-  arm64: tegra: Add native timer support on Tegra186
-  arm64: tegra: Fix unit-addresses on Norrin
-  arm64: tegra: Remove unsupported properties on Norrin
-  arm64: tegra: Fix compatible string for Tegra132 timer
-  arm64: tegra: Add OPP tables on Tegra132
-  arm64: tegra: Fix Tegra132 I2C compatible string list
-  arm64: tegra: Drop unused AHCI clocks on Tegra132
-  arm64: tegra: Sort Tegra132 XUSB clocks correctly
-  arm64: tegra: Rename thermal zones nodes
-  arm64: tegra: Rename power-monitor input nodes
-  arm64: tegra: Fix Tegra186 compatible string list
-  arm64: tegra: Adjust length of CCPLEX cluster MMIO region
-  arm64: tegra: Drop unit-address for audio card graph endpoints
-  arm64: tegra: Use JEDEC vendor prefix for SPI NOR flash chips
-  arm64: tegra: Drop unsupported nvidia,lpdr property
-  arm64: tegra: Fix Tegra194 HSP compatible string
-  arm64: tegra: Drop unused properties for Tegra194 PCIe
-  arm64: tegra: Remove undocumented Tegra194 PCIe "core_m" clock
-  arm64: tegra: Rename TCU node to "serial"
-  arm64: tegra: Remove unsupported regulator properties
-  arm64: tegra: Rename GPIO hog nodes to match schema
-  arm64: tegra: jetson-tx1: Remove extra PLL power supplies for PCIe and
-    XUSB
-  arm64: tegra: smaug: Remove extra PLL power supplies for XUSB
-  arm64: tegra: jetson-nano: Remove extra PLL power supplies for PCIe
-    and XUSB
-  arm64: tegra: Add missing TSEC properties on Tegra210
-  arm64: tegra: Sort Tegra210 XUSB clocks correctly
-  arm64: tegra: Remove unused only-1-8-v properties
-  arm64: tegra: Rename Ethernet PHY nodes
-
- .../arm64/boot/dts/nvidia/tegra132-norrin.dts |  36 +-
- .../dts/nvidia/tegra132-peripherals-opp.dtsi  | 426 ++++++++++++++++++
- arch/arm64/boot/dts/nvidia/tegra132.dtsi      |  48 +-
- .../boot/dts/nvidia/tegra186-p2771-0000.dts   |  20 +-
- .../arm64/boot/dts/nvidia/tegra186-p3310.dtsi |  20 +-
- .../nvidia/tegra186-p3509-0000+p3636-0001.dts |  32 +-
- arch/arm64/boot/dts/nvidia/tegra186.dtsi      |  63 ++-
- .../arm64/boot/dts/nvidia/tegra194-p2888.dtsi |  12 +-
- .../boot/dts/nvidia/tegra194-p2972-0000.dts   |   8 +-
- .../boot/dts/nvidia/tegra194-p3509-0000.dtsi  |  20 +-
- .../boot/dts/nvidia/tegra194-p3668-0000.dtsi  |   2 +-
- .../arm64/boot/dts/nvidia/tegra194-p3668.dtsi |   2 +-
- arch/arm64/boot/dts/nvidia/tegra194.dtsi      |  58 +--
- .../arm64/boot/dts/nvidia/tegra210-p2180.dtsi |   4 +-
- .../boot/dts/nvidia/tegra210-p2371-2180.dts   |   3 -
- .../arm64/boot/dts/nvidia/tegra210-p2530.dtsi |   2 +-
- .../arm64/boot/dts/nvidia/tegra210-p2597.dtsi |  37 +-
- .../arm64/boot/dts/nvidia/tegra210-p2894.dtsi |  40 +-
- .../boot/dts/nvidia/tegra210-p3450-0000.dts   |  53 +--
- arch/arm64/boot/dts/nvidia/tegra210-smaug.dts |  22 +-
- arch/arm64/boot/dts/nvidia/tegra210.dtsi      |  23 +-
- .../boot/dts/nvidia/tegra234-p3701-0000.dtsi  |   1 -
- .../boot/dts/nvidia/tegra234-sim-vdk.dts      |   1 -
- 23 files changed, 667 insertions(+), 266 deletions(-)
- create mode 100644 arch/arm64/boot/dts/nvidia/tegra132-peripherals-opp.dtsi
-
+diff --git a/arch/arm64/boot/dts/nvidia/tegra132-norrin.dts b/arch/arm64/boot/dts/nvidia/tegra132-norrin.dts
+index 8a51751526ee..ecd58bd2770f 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra132-norrin.dts
++++ b/arch/arm64/boot/dts/nvidia/tegra132-norrin.dts
+@@ -1023,7 +1023,7 @@ backlight: backlight {
+ 		default-brightness-level = <6>;
+ 	};
+ 
+-	clk32k_in: clock@0 {
++	clk32k_in: clock-32k {
+ 		compatible = "fixed-clock";
+ 		clock-frequency = <32768>;
+ 		#clock-cells = <0>;
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
+index 6077d572d828..d3e622c4a439 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
+@@ -301,7 +301,7 @@ mmc@700b0600 {
+ 		vqmmc-supply = <&vdd_1v8>;
+ 	};
+ 
+-	clk32k_in: clock@0 {
++	clk32k_in: clock-32k {
+ 		compatible = "fixed-clock";
+ 		clock-frequency = <32768>;
+ 		#clock-cells = <0>;
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2530.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2530.dtsi
+index 58aa0518965e..0a70daeffd85 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210-p2530.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra210-p2530.dtsi
+@@ -40,7 +40,7 @@ mmc@700b0600 {
+ 		non-removable;
+ 	};
+ 
+-	clk32k_in: clock@0 {
++	clk32k_in: clock-32k {
+ 		compatible = "fixed-clock";
+ 		clock-frequency = <32768>;
+ 		#clock-cells = <0>;
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2894.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2894.dtsi
+index 41beab626d95..ed73c3a0c140 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210-p2894.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra210-p2894.dtsi
+@@ -1586,7 +1586,7 @@ mmc@700b0600 {
+ 		status = "okay";
+ 	};
+ 
+-	clk32k_in: clock@0 {
++	clk32k_in: clock-32k {
+ 		compatible = "fixed-clock";
+ 		clock-frequency = <32768>;
+ 		#clock-cells = <0>;
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts b/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
+index 030f264eccd5..cbd8cda48f37 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
++++ b/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
+@@ -1645,7 +1645,7 @@ flash@0 {
+ 		};
+ 	};
+ 
+-	clk32k_in: clock@0 {
++	clk32k_in: clock-32k {
+ 		compatible = "fixed-clock";
+ 		clock-frequency = <32768>;
+ 		#clock-cells = <0>;
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
+index 131c064d6991..43ff5e4bda19 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
++++ b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
+@@ -1726,7 +1726,7 @@ interrupt-controller@702f9000 {
+ 		};
+ 	};
+ 
+-	clk32k_in: clock@0 {
++	clk32k_in: clock-32k {
+ 		compatible = "fixed-clock";
+ 		clock-frequency = <32768>;
+ 		#clock-cells = <0>;
 -- 
 2.34.1
 
