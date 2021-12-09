@@ -2,57 +2,57 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6B29C433EF
-	for <linux-tegra@archiver.kernel.org>; Thu,  9 Dec 2021 17:26:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1C72C433EF
+	for <linux-tegra@archiver.kernel.org>; Thu,  9 Dec 2021 17:26:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242916AbhLIR3w (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 9 Dec 2021 12:29:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49588 "EHLO
+        id S242908AbhLIR36 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 9 Dec 2021 12:29:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49624 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242909AbhLIR3w (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 9 Dec 2021 12:29:52 -0500
-Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE8DBC061746
-        for <linux-tegra@vger.kernel.org>; Thu,  9 Dec 2021 09:26:18 -0800 (PST)
-Received: by mail-wm1-x32f.google.com with SMTP id m25-20020a7bcb99000000b0033aa12cdd33so5669080wmi.1
-        for <linux-tegra@vger.kernel.org>; Thu, 09 Dec 2021 09:26:18 -0800 (PST)
+        with ESMTP id S242923AbhLIR35 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 9 Dec 2021 12:29:57 -0500
+Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AFB83C061A72
+        for <linux-tegra@vger.kernel.org>; Thu,  9 Dec 2021 09:26:23 -0800 (PST)
+Received: by mail-wr1-x42b.google.com with SMTP id u17so10974016wrt.3
+        for <linux-tegra@vger.kernel.org>; Thu, 09 Dec 2021 09:26:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=sDLIj84vPIUnNZTjAH0DOp2B4tU0LFC4Wkl4B2dIBao=;
-        b=lr6+oavRVDPhRo9de65JL5RUT3XodPJoQLQq4PcHp2NmV2NkEi6U928h1Efq064XIH
-         X/HRfs0aFKebXd84bmP4yhxUHE3RZ/Ww3fVqZMoZoT9Yo48YL3GVOHNQGl8bOQ5WFNGn
-         oQDZJYXyoAGOAJXDZ3OPXVtENLO4j9aYRzdrgbucqVTJ9lJxke8vHOrG8jXrMdS2w2B3
-         WxJ4o62AoMa8yK/vmXtIGSlv5Kt4PgQeLBV2Qo/CE9QjuxMT/DamZxcI9SEGYIvG3+6D
-         r4LtbQcx1gB0XC2IX3HdHDhljeaAs0l4ObaWvPd+QCJ0Pka1TSzFxeo7/DeAV9DmmWkp
-         1lKA==
+        bh=h0h66338u5hSxqQTPm/OSloK0s/WKr6FBpTI53AOt90=;
+        b=Kfq/iLJFifc6+N7cac+YoXGag5MCo8ryyg/Lz+4gTHMK2jGGi6M6/X3s3bpmnCnMM1
+         NUcxtmEmn1vfTjtJISEec5ZaTMjowte07U0xUiGMTIQnoNmaWUB6QbW/+JNQmz2DaK1k
+         lXJIQArX2CIYTGou9PfBihUHSyFEYkLpdp+B/4e4dWhynFC8ZOdupf6J3/aziZGGMBrT
+         6UJ8fYJJVXHcKo5C7Cxr3kAhcyD149O8xcZcr2qdw8m55X3fuMfggDxZqQxtlRD5LLvd
+         q7yjm3fQqu0w7GDlovbRKHDwdvlkVy8RVu4OURAW19aCdpmV0efw0r1e9xaJXvQxNlAz
+         c8PA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=sDLIj84vPIUnNZTjAH0DOp2B4tU0LFC4Wkl4B2dIBao=;
-        b=v8T1QmkfvC40DxBW4lqmVLq9B/Lp6CvNo1xN+CU64uFk6wOu6JKq/712NNXRdCQwAa
-         khB4c6xq3K8FDnkPXPRmCpagsiXfocXbN0CcsR8AsJ7eRA8pNPpKOadek4FccAvK/mMC
-         shhNxD3piqpPVdrHydyabQ8IlWFXgPbSORqyufh8G5aIYUiet3Cnb1vh7GxselHgFx1Q
-         C3CFFmqzsSYzk3CKyCsP5YBYFgOOemD/48GITj+Kya/ZheJ3d0FB/suKPr+pbTAA5vqB
-         L9y9OC1wWIZJUK/VGheJIWRoqYuBx0DcFEkBTtI/Z5sXXRS/rVEQyTfhvgyc97IavDK9
-         d7MQ==
-X-Gm-Message-State: AOAM532OOsJgbWltjgigTu2eB4n1G1QOsuaXjGzl9ISKdrPst7Xjs14Q
-        zYguQq6n36/d6HnxvD1f5YISgv3xgUrHvw==
-X-Google-Smtp-Source: ABdhPJyHeWdxaHn0C2MPdSC7KO+U2oMpLL8kHeipPQTqnTCOQY0voQ8Y0+rKtRDqcjshPfY+UEls9w==
-X-Received: by 2002:a1c:5414:: with SMTP id i20mr9247507wmb.88.1639070777441;
-        Thu, 09 Dec 2021 09:26:17 -0800 (PST)
+        bh=h0h66338u5hSxqQTPm/OSloK0s/WKr6FBpTI53AOt90=;
+        b=biH3+gsgTNlM1SKG4BobM0BDagSzntMCvhznewZguObHlIqxqTcF23PIVwf9UBOyVO
+         L7WXIMl3StK4wseaxo/L6Mz3Lr9eVred4O5i8XX92olyVVbJNUW5XCnFmjU8N+Fc0+hl
+         VW1IoRUN5K/btsXDJ5ObgJ+d1mtQgz+0OHnvg+/KVoHzvElVHAfQJowUHZ6P9Mr/lKJ8
+         OYF1etQKX7MZwsKq5dWmrMUXdcEjPlSDmHK5Wr4P3ThFJza1KpQfhCZIF1h/ZBlPY0pi
+         vXw3aK2vJ/ciuYxiMVl5xxPwerjRuTl5Zm6ES8ZS9muwZQb5cp7Dsdz9M8x7Q1qEVBwL
+         iOMA==
+X-Gm-Message-State: AOAM533Tt0TOstRNf8hR4JZ2oSlHCYDC4ZJVqepEJvj3BP5ukpXUpb3W
+        AVOfqDophCylUtV9WfwNejw=
+X-Google-Smtp-Source: ABdhPJxpuQ0KpgReTM+uGi/YIBxAA4V4vJ6zvbTuOWc2mby/zla56MJgODQkCjuz7dxlgwcdW+fyeA==
+X-Received: by 2002:a05:6000:15c6:: with SMTP id y6mr8070376wry.422.1639070782294;
+        Thu, 09 Dec 2021 09:26:22 -0800 (PST)
 Received: from localhost ([193.209.96.43])
-        by smtp.gmail.com with ESMTPSA id o4sm414167wry.80.2021.12.09.09.26.12
+        by smtp.gmail.com with ESMTPSA id z5sm11837844wmp.26.2021.12.09.09.26.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Dec 2021 09:26:16 -0800 (PST)
+        Thu, 09 Dec 2021 09:26:21 -0800 (PST)
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>
 Cc:     Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org
-Subject: [PATCH 27/30] arm64: tegra: Add missing TSEC properties on Tegra210
-Date:   Thu,  9 Dec 2021 18:25:00 +0100
-Message-Id: <20211209172503.617716-28-thierry.reding@gmail.com>
+Subject: [PATCH 29/30] arm64: tegra: Remove unused only-1-8-v properties
+Date:   Thu,  9 Dec 2021 18:25:02 +0100
+Message-Id: <20211209172503.617716-30-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20211209172503.617716-1-thierry.reding@gmail.com>
 References: <20211209172503.617716-1-thierry.reding@gmail.com>
@@ -64,43 +64,38 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-Add missing interrupts, clocks, clock-names, reset and reset-names
-properties for the TSEC blocks found on Tegra210.
+The only-1-8-v property is not support by an DT schema, so drop it.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- arch/arm64/boot/dts/nvidia/tegra210.dtsi | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ arch/arm64/boot/dts/nvidia/tegra234-p3701-0000.dtsi | 1 -
+ arch/arm64/boot/dts/nvidia/tegra234-sim-vdk.dts     | 1 -
+ 2 files changed, 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-index af9237ad03c1..a49a12fd84b1 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-@@ -181,6 +181,12 @@ csi@838 {
- 		tsec@54100000 {
- 			compatible = "nvidia,tegra210-tsec";
- 			reg = <0x0 0x54100000 0x0 0x00040000>;
-+			interrupts = <GIC_SPI 50 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&tegra_car TEGRA210_CLK_TSEC>;
-+			clock-names = "tsec";
-+			resets = <&tegra_car 83>;
-+			reset-names = "tsec";
-+			status = "disabled";
+diff --git a/arch/arm64/boot/dts/nvidia/tegra234-p3701-0000.dtsi b/arch/arm64/boot/dts/nvidia/tegra234-p3701-0000.dtsi
+index d3c936822186..d95a542c0bca 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra234-p3701-0000.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra234-p3701-0000.dtsi
+@@ -11,7 +11,6 @@ mmc@3460000 {
+ 			status = "okay";
+ 			bus-width = <8>;
+ 			non-removable;
+-			only-1-8-v;
  		};
  
- 		dc@54200000 {
-@@ -283,6 +289,11 @@ nvenc@544c0000 {
- 		tsec@54500000 {
- 			compatible = "nvidia,tegra210-tsec";
- 			reg = <0x0 0x54500000 0x0 0x00040000>;
-+			interrupts = <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&tegra_car TEGRA210_CLK_TSECB>;
-+			clock-names = "tsec";
-+			resets = <&tegra_car 206>;
-+			reset-names = "tsec";
- 			status = "disabled";
+ 		rtc@c2a0000 {
+diff --git a/arch/arm64/boot/dts/nvidia/tegra234-sim-vdk.dts b/arch/arm64/boot/dts/nvidia/tegra234-sim-vdk.dts
+index b5d9a5526272..5804acfc428a 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra234-sim-vdk.dts
++++ b/arch/arm64/boot/dts/nvidia/tegra234-sim-vdk.dts
+@@ -26,7 +26,6 @@ mmc@3460000 {
+ 			status = "okay";
+ 			bus-width = <8>;
+ 			non-removable;
+-			only-1-8-v;
  		};
  
+ 		rtc@c2a0000 {
 -- 
 2.34.1
 
