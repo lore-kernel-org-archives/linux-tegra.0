@@ -2,23 +2,23 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1849FC433F5
-	for <linux-tegra@archiver.kernel.org>; Thu,  9 Dec 2021 17:06:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 581F5C4332F
+	for <linux-tegra@archiver.kernel.org>; Thu,  9 Dec 2021 17:06:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242288AbhLIRKA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 9 Dec 2021 12:10:00 -0500
-Received: from mail-mw2nam12on2069.outbound.protection.outlook.com ([40.107.244.69]:30816
-        "EHLO NAM12-MW2-obe.outbound.protection.outlook.com"
+        id S242376AbhLIRKG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 9 Dec 2021 12:10:06 -0500
+Received: from mail-co1nam11on2055.outbound.protection.outlook.com ([40.107.220.55]:24032
+        "EHLO NAM11-CO1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S242350AbhLIRJe (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 9 Dec 2021 12:09:34 -0500
+        id S242437AbhLIRJy (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 9 Dec 2021 12:09:54 -0500
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=aYjn5Xk8R5JMOWBqka7NAyzuxWMdWD6syRxIko9+7Tk7xcwKfy9oGli3mBVBxjb0ntFBTrLJM0/kNwvzXebCozX9wP8x6peOaX9SINuHXECcHfdSCmsh7DQgOcNgSJ7sg0i8It1cM8WfWKDpaKTPHtWMZaLm3SlpRHEiZoe96NZbhSFUJ/fbrtoI+a6lli20ej69Age6QqKQvzX8cn2fvuL6v4Csu7nY96+STW8i+WEcrdMcmniuKM/n8P36hMfs90+HIF4baz+tRXddy/D29Kvy5DLlzEM4h7zvxDJvH2eRrPNyn8cecSNYqiAHQbovETRr5lViyEJ/H1rUNZTnbw==
+ b=j/zo7t7kf/5Nj3N4Ircc4TmjmYU8MD9abF/V9JlDHBM++AbNHRFLpmnR20Vza66q3B4zC64ZcQkbVj2MpN6oEgodn5cIKZ/2Q+UQmZF1pm/UFaD2vkqe38KcOHfzMLdF7u8NYBimozXl+0RYeV0crIEQMwBy9Pn1s5qVHdocgrOrX6Zsb4WTbDo5Yn/qyESwVOZ4g23odnXt7GAcvGHhcDZcbjJeMHt9YcOEoij/dhO8wj2g1aUBxO9xcrd1zgYIbcCQwqxJYaphPt9NNaVcaHk+trdjhprMopUU6RlvHLOEX6PWCAMMOc7iobvEC859mMhsxIfjsBvOB56iYlw60Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=cxwQx15yfYaHq4bDjHNhn9lRY8pLFCupMyO3VFKQLEQ=;
- b=d+nyb6zXooaDlZO0ERDYkhqrYcbVmOW7YaePjFslPCSpJvmxXc9jIM3wxXngFzuX/asd2JAFALvmbpV6/tEzLCOtJKlTLKZpuO09cXK5vZvgv0sjKeLIeBmKDTpWd9tlpWE9IWARyfLHI57T5PGhWRl+f0Q9q1qqCg97sy26DBbMshoaKR21lXBMGZmhjZ5+vK6ZJ8bzm4k60IuhAqtTH3I625ipc1NK1IlH3R7pSVkwhWos514lElLkEne7p8GsHyRO+PTOzziYEM0eb21NtzeWKIS654B6Eoj3ABSzQjAjaH03DMR4OqqYA2tnWqzN6soxEvWaxIyv/Du0uu77DA==
+ bh=XqlYD4lnGLXlOfOdkKznR6ZHYsKduH1W/Um9rhsibAo=;
+ b=A3Sp0p618HwP5p13sanAeAknCT1W2JVMxd70EmNOjdXr9GEzq704MBfJGjlJvzrkxwxU7gkkN+16qVQUaq7mL6EnQfUcPwx1awTJcUWWwRG9tOcHCLgbOo8ONENMli3WrfbZkKis5Qagobb4u+otF13u0OgTcAq5mv0wHryBhaWkxWYdO4xOQCCELzNIHM21PiQuoZDg9gm/cPkgt5HmR8e0gvTBOJ9Yq9Orhk8Eynz7+qX0DncYtJHTmoPuDSdF0pvmgkyLQ/4jzrigjmBH0WMV9ilOEfPNYDuT8vGIrGE1Gj/V9UjoeeMdCzRanstDno0PK+L9wWNCNHBgotdjfw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  203.18.50.13) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
  dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
@@ -26,18 +26,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cxwQx15yfYaHq4bDjHNhn9lRY8pLFCupMyO3VFKQLEQ=;
- b=kYYBzA2WjDvZ6gknznBUwvJ1TvsErrpJ2anU1iytlORUSq5R0KzVnXWvT4ByD1+YNEtIIxuVkV8dIC9pCOXe8zJ214k9Egy6pSiWU0rpqJhGTEeAbiN1n9tzUT224F7eoM/jswuTYT926QhaKk2P0bWCdp5AUq/D/eg8/ebf4YRpz50wvRe1i/OdGDQ5lgiUypAKwTvRV3vDoHH20hUs+xm25D9+lhThJcegbKC/ZC6Pf0Ecl39O5AP1+9ekKqVhSAguhc+i0+ndRt8avGfj58szYTsm9wibM1HNpO+R4LB2AiIu3GIPbnG4X80mrQUpatNo4sByf6j1H/nUj+/fEA==
-Received: from CO2PR04CA0088.namprd04.prod.outlook.com (2603:10b6:104:6::14)
- by CY4PR1201MB0215.namprd12.prod.outlook.com (2603:10b6:910:1d::20) with
+ bh=XqlYD4lnGLXlOfOdkKznR6ZHYsKduH1W/Um9rhsibAo=;
+ b=QrnyqVoigjbjsW4Py5GCV6Tm1Tl0/Z+Stvs1ueGxkJurbPaKaYwyJ/LSwP2rre3U+A/G3MTs7/Akuu8Z0ckLSCIZevw2axZ6WVQytcy7kCzFc7v0xr+0GCAWzlckQiF6AWagjzzKvFU53pglY1p2Plhq+Bwx23GEDeit1K9hy2v+M6AWREVOx1u0W+ZUUEf5x8WkU94RD+hf7WxfG3mAm/24pH+vpWgKMwVA+Ah/Fe8lWecGJy8iE5IxpukqGAtzxkUd76emnQROO9bBA5VMF0SI7Z6kgNQa0ePjdAhAHFg8cJGsyw9x2z1BuWyjy9xAHJXVNvfW95qyfOvq4uASBg==
+Received: from MW4PR04CA0042.namprd04.prod.outlook.com (2603:10b6:303:6a::17)
+ by BN6PR1201MB2497.namprd12.prod.outlook.com (2603:10b6:404:b3::16) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4755.16; Thu, 9 Dec
- 2021 17:05:59 +0000
-Received: from CO1NAM11FT024.eop-nam11.prod.protection.outlook.com
- (2603:10b6:104:6:cafe::37) by CO2PR04CA0088.outlook.office365.com
- (2603:10b6:104:6::14) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4755.17 via Frontend
- Transport; Thu, 9 Dec 2021 17:05:59 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4755.21; Thu, 9 Dec
+ 2021 17:06:18 +0000
+Received: from CO1NAM11FT036.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:303:6a:cafe::71) by MW4PR04CA0042.outlook.office365.com
+ (2603:10b6:303:6a::17) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4755.21 via Frontend
+ Transport; Thu, 9 Dec 2021 17:06:18 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 203.18.50.13)
  smtp.mailfrom=nvidia.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=nvidia.com;
@@ -45,162 +45,194 @@ Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
  203.18.50.13 as permitted sender) receiver=protection.outlook.com;
  client-ip=203.18.50.13; helo=mail.nvidia.com;
 Received: from mail.nvidia.com (203.18.50.13) by
- CO1NAM11FT024.mail.protection.outlook.com (10.13.174.162) with Microsoft SMTP
+ CO1NAM11FT036.mail.protection.outlook.com (10.13.174.124) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.4755.13 via Frontend Transport; Thu, 9 Dec 2021 17:05:59 +0000
-Received: from HQMAIL107.nvidia.com (172.20.187.13) by HKMAIL102.nvidia.com
+ 15.20.4755.13 via Frontend Transport; Thu, 9 Dec 2021 17:06:17 +0000
+Received: from HQMAIL111.nvidia.com (172.20.187.18) by HKMAIL102.nvidia.com
  (10.18.16.11) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Thu, 9 Dec
- 2021 17:05:55 +0000
-Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Thu, 9 Dec
- 2021 17:05:53 +0000
+ 2021 17:06:16 +0000
+Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL111.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Thu, 9 Dec
+ 2021 17:06:14 +0000
 Received: from sumitg-l4t.nvidia.com (172.20.187.6) by mail.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server id 15.0.1497.18 via Frontend
- Transport; Thu, 9 Dec 2021 17:05:50 +0000
+ (172.20.187.13) with Microsoft SMTP Server id 15.0.1497.18 via Frontend
+ Transport; Thu, 9 Dec 2021 17:06:11 +0000
 From:   Sumit Gupta <sumitg@nvidia.com>
 To:     <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <devicetree@vger.kernel.org>, <thierry.reding@gmail.com>,
         <jonathanh@nvidia.com>, <robh+dt@kernel.org>
 CC:     <sumitg@nvidia.com>, <bbasu@nvidia.com>, <vsethi@nvidia.com>,
         <jsequeira@nvidia.com>
-Subject: [Patch v1 1/8] soc: tegra: set ERD bit to mask inband errors
-Date:   Thu, 9 Dec 2021 22:35:48 +0530
-Message-ID: <20211209170548.17144-1-sumitg@nvidia.com>
+Subject: [Patch v1 2/8] dt-bindings: arm: tegra: Add NVIDIA Tegra194 CBB1.0 binding
+Date:   Thu, 9 Dec 2021 22:36:09 +0530
+Message-ID: <20211209170609.17192-1-sumitg@nvidia.com>
 X-Mailer: git-send-email 2.17.1
 X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 71979a2b-00ba-4d9b-bed1-08d9bb362c3b
-X-MS-TrafficTypeDiagnostic: CY4PR1201MB0215:EE_
-X-Microsoft-Antispam-PRVS: <CY4PR1201MB0215B88CEF2750491FCCA0E4B9709@CY4PR1201MB0215.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
+X-MS-Office365-Filtering-Correlation-Id: 5a1dc150-5130-45b7-fb8f-08d9bb36374b
+X-MS-TrafficTypeDiagnostic: BN6PR1201MB2497:EE_
+X-Microsoft-Antispam-PRVS: <BN6PR1201MB24974F44C5C36CE9714C702AB9709@BN6PR1201MB2497.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:8273;
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: XJLABPpcuVWm/zyYqKk9FJqmQKg7+NakC7CnHePR6MOZt0J2m6ikbXu9y+E7MhMQF1Xp+lI86grDi0ELz7ZzuJ+Mo6IPNKKx+yRmzprDIV6ZO8PyKK6k1DAhknm0t9ub6GW4ID6+mg0yT8cVdADJD9EOLx5UZdm63iWnxRerlmNkcSR+45buYsD8Eu1JdQ6Uz7dr8TrmAv7vrLLsFJoN744h2ZC3DNJ9oKmYzAdwuqneTXgSxzxzc1ZFDKGTsQGpu/Qn96Tmv8o7L15ky/y+zYaJ5YzxBTuT3O1H0aO3tRQO42oTABhCO4Sc8OtgErxs+Fxcct1sSw9UFWZFjG/1KwkUabD1YHOvPHcLmGq5fYFBAxGU9JBIzgMeaebUEnPvzz+T6/Lfh9N6jSR1J5FsbgiDGWBWi5m4RIJMRndo5v8H54k+Zb5taP8jPFLjDzlJGIU0v4UGKkoUAnOXLdzkfyny68KBg0GfeDWz8YTEuJxLb3dXGT4KRg/wn2/Q7BENIf7g+TEiuJIcQ/wjaGDn3tTrZbBSYFGyp1IyFMP8SYmkolM44jCFZ78DnYJbG5kvyNv6tBgiO/Sv9i2IgFQpkb9Y0ljT33kAXYY4CEUrUzpeXqLKAbdimt+4E6HxTW2VFY0w23zKkmOm8ze9nabrCmDCoI6JYcJltoFsxNr9xMSl5vgIlNBSpXnYaRvgUbuyMDDIWzmwvEiMw5KtaRG3ugmw95EG35MCgwzdfZiY/A92BAUderL1+Eq6YLQHOhjmRYYcqS2hdlv07yP0iJyjU7faXFmJ8nuJHhy1MP1Xpk4=
-X-Forefront-Antispam-Report: CIP:203.18.50.13;CTRY:HK;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:hkhybrid02.nvidia.com;CAT:NONE;SFS:(4636009)(46966006)(36840700001)(40470700001)(34020700004)(5660300002)(2906002)(4326008)(336012)(8936002)(7696005)(83380400001)(86362001)(186003)(82310400004)(36860700001)(40460700001)(26005)(426003)(54906003)(356005)(110136005)(7636003)(70206006)(47076005)(2616005)(316002)(70586007)(1076003)(107886003)(8676002)(36756003)(508600001);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: Koosjm8kGq/CLRHoOVKy2OU5Lzx8Fy09c6AvuWir2q0YwGu6MLwucxIGUDdtjNFCwjKxVhRGoHt8OZJwhWeAO4G5gGKlqGM8svlHhF04d/yojSV28+GZsE/Dgj/91ExAno25e7MsFN4G+gfSMACZ9t2PQpV8rQx62wPElvq3hP6+oom8LAkJdC2GHgpZLKzVUYDXd9x+K6RDF77N7Y1cgzM55B9iXXm8C+UNrrK+9jyzM/+igLRX9C1oGsFjnam+iTSUL3lEx560YkGZ64ZKRLBSe7ZYUhwj8IjbMiMEaOI8467+qyx6v/1o2xRHSq6808Q6r/SuzA6hm4Tb3U23yBZ7iTSBHn17E2SqEBlkT10TolGyfZ+Or6ODArijnSpa/gyAe5axUMhaEl4K4uu/d9gIFIQGWZcN1oc852sAzNJ03P+5f7J/cFAe1TA7fJFVXkym4sZP56no4FvwmJM9IMJs7t8yRsyMTNq53oVr2pJLbpm41ECc5wXdNQJjMbab515ANCry4lRNdBpX2w51HoQXQ8kB6grYUgmO8QUEyj9nBIl0MAi6sVZXmbjlbuiAvUohzPailtHigakCpEU2/XEbG56DXZRhMpSJ93/FunTqy2IJ60YQXBuKM5cK8NCC783UmwIhGWE3g79t6FwIoTfe8X8WHnheGQ8Z/CDPVJPIFt57GOrpbGOLQpZy2ospscBpSrXg3C1FaKbF/CJPMpybxsg07f2q4FGWY2azwHgM6jSsO7fVsD1hJnK4Z3pJR9F/DFxM9uzajePtY8tupRSQcdpUuBxPTrKUKPXBLcdleFNQQCkurXqnDmF6F41yeYITMF3yBIGqGSTLDJH6RNgdZi2z0MD1/gzsZl6UfrRS0Qtrzp+jzs9VFGL5rr05QwDtijNHV/0aTHVczJnGr/QG1bJHW2Yi4Q7v+cvf4lM=
+X-Forefront-Antispam-Report: CIP:203.18.50.13;CTRY:HK;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:hkhybrid02.nvidia.com;CAT:NONE;SFS:(4636009)(36840700001)(46966006)(40470700001)(426003)(8676002)(7696005)(1076003)(2906002)(316002)(8936002)(34020700004)(336012)(2616005)(70586007)(26005)(70206006)(508600001)(40460700001)(356005)(186003)(4326008)(47076005)(107886003)(5660300002)(86362001)(110136005)(54906003)(83380400001)(7636003)(36756003)(36860700001)(82310400004);DIR:OUT;SFP:1101;
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Dec 2021 17:05:59.0939
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Dec 2021 17:06:17.6553
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 71979a2b-00ba-4d9b-bed1-08d9bb362c3b
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5a1dc150-5130-45b7-fb8f-08d9bb36374b
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[203.18.50.13];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT024.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT036.eop-nam11.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR1201MB0215
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR1201MB2497
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Add function to set Error Response Disable bit in MISCREG_CCROC_ERR_CONFIG
-register from the Control Backbone(CBB) error handler driver.
-ERD bit allows masking of SError due to inband errors which are caused by
-illegal register accesses through CBB. When the bit is set, interrupt is
-used for reporting errors and magic code '0xdead2003' is returned.
-This change is only required for Tegra194 SOC as the config is moved to CBB
-register space for future SOC's. Also, remove unmapping the apbmisc_base as
-it's required to get the base address for accessing the misc register.
+Add device-tree binding documentation to represent the error handling
+driver for Control Backbone (CBB) version 1.0 used in Tegra194 SOC.
+The driver prints debug information about failed transactions due to
+illegal register accesses on receiving interrupt from CBB.
 
 Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
 ---
- drivers/soc/tegra/fuse/tegra-apbmisc.c | 29 ++++++++++++++++++++++++--
- include/soc/tegra/fuse.h               |  6 ++++++
- 2 files changed, 33 insertions(+), 2 deletions(-)
+ .../arm/tegra/nvidia,tegra194-cbb.yaml        | 121 ++++++++++++++++++
+ 1 file changed, 121 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,tegra194-cbb.yaml
 
-diff --git a/drivers/soc/tegra/fuse/tegra-apbmisc.c b/drivers/soc/tegra/fuse/tegra-apbmisc.c
-index 590c862538d0..de833f8d2408 100644
---- a/drivers/soc/tegra/fuse/tegra-apbmisc.c
-+++ b/drivers/soc/tegra/fuse/tegra-apbmisc.c
-@@ -16,12 +16,16 @@
- 
- #define FUSE_SKU_INFO	0x10
- 
-+#define ERD_ERR_CONFIG 0x120c
-+#define ERD_MASK_INBAND_ERR 0x1
+diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra194-cbb.yaml b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra194-cbb.yaml
+new file mode 100644
+index 000000000000..a9b5a1eab909
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra194-cbb.yaml
+@@ -0,0 +1,121 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
 +
- #define PMC_STRAPPING_OPT_A_RAM_CODE_SHIFT	4
- #define PMC_STRAPPING_OPT_A_RAM_CODE_MASK_LONG	\
- 	(0xf << PMC_STRAPPING_OPT_A_RAM_CODE_SHIFT)
- #define PMC_STRAPPING_OPT_A_RAM_CODE_MASK_SHORT	\
- 	(0x3 << PMC_STRAPPING_OPT_A_RAM_CODE_SHIFT)
- 
-+static void __iomem *apbmisc_base;
- static bool long_ram_code;
- static u32 strapping;
- static u32 chipid;
-@@ -93,6 +97,28 @@ u32 tegra_read_ram_code(void)
- }
- EXPORT_SYMBOL_GPL(tegra_read_ram_code);
- 
-+/*
-+ * The function sets ERD(Error Response Disable) bit.
-+ * This allows to mask inband errors and always send an
-+ * OKAY response from CBB to the master which caused error.
-+ */
-+int tegra194_miscreg_mask_serror(void)
-+{
-+	if (!apbmisc_base)
-+		return -EPROBE_DEFER;
++$id: "http://devicetree.org/schemas/arm/tegra/tegra19_cbb.yaml#"
++$schema: "http://devicetree.org/meta-schemas/core.yaml#"
 +
-+	if (!of_machine_is_compatible("nvidia,tegra194")) {
-+		WARN(1, "Only supported for Tegra194 devices!\n");
-+		return -EOPNOTSUPP;
-+	}
++title: NVIDIA Tegra194 CBB1.0 Error handling driver device tree bindings
 +
-+	writel_relaxed(ERD_MASK_INBAND_ERR,
-+		       apbmisc_base + ERD_ERR_CONFIG);
++maintainers:
++  - Sumit Gupta <sumitg@nvidia.com>
 +
-+	return 0;
-+}
-+EXPORT_SYMBOL(tegra194_miscreg_mask_serror);
++description: |+
++  Control Backbone (CBB) comprises of the physical path from an
++  initiator to a target's register configuration space.
++  CBB1.0 has multiple hierarchical sub-NOC's (Network-on-Chip) and
++  connects various initiators and targets using different bridges
++  like AXIP2P, AXI2APB.
++  This driver handles errors due to illegal register accesses reported
++  by the NOC's inside CBB. NOC's reporting errors are cluster NOC's
++  "AON-NOC, SCE-NOC, RCE-NOC, BPMP-NOC, CV-NOC" and "CBB Central NOC"
++  which is the main NOC.
 +
- static const struct of_device_id apbmisc_match[] __initconst = {
- 	{ .compatible = "nvidia,tegra20-apbmisc", },
- 	{ .compatible = "nvidia,tegra186-misc", },
-@@ -134,7 +160,7 @@ void __init tegra_init_revision(void)
- 
- void __init tegra_init_apbmisc(void)
- {
--	void __iomem *apbmisc_base, *strapping_base;
-+	void __iomem *strapping_base;
- 	struct resource apbmisc, straps;
- 	struct device_node *np;
- 
-@@ -196,7 +222,6 @@ void __init tegra_init_apbmisc(void)
- 		pr_err("failed to map APBMISC registers\n");
- 	} else {
- 		chipid = readl_relaxed(apbmisc_base + 4);
--		iounmap(apbmisc_base);
- 	}
- 
- 	strapping_base = ioremap(straps.start, resource_size(&straps));
-diff --git a/include/soc/tegra/fuse.h b/include/soc/tegra/fuse.h
-index 67d2bc856fbc..977c334136e9 100644
---- a/include/soc/tegra/fuse.h
-+++ b/include/soc/tegra/fuse.h
-@@ -58,6 +58,7 @@ u32 tegra_read_chipid(void);
- u8 tegra_get_chip_id(void);
- u8 tegra_get_platform(void);
- bool tegra_is_silicon(void);
-+int tegra194_miscreg_mask_serror(void);
- #else
- static struct tegra_sku_info tegra_sku_info __maybe_unused;
- 
-@@ -95,6 +96,11 @@ static inline bool tegra_is_silicon(void)
- {
- 	return false;
- }
++  By default, the access issuing initiator is informed about the error
++  using SError or Data Abort exception unless the ERD (Error Response
++  Disable) is enabled/set for that initiator. If the ERD is enabled,
++  then SError or Data Abort is masked and the error is reported with
++  interrupt.
 +
-+static inline int tegra194_miscreg_mask_serror(void)
-+{
-+	return false;
-+}
- #endif
- 
- struct device *tegra_soc_device_register(void);
++  - For CCPLEX (CPU Complex) initiator, the driver sets ERD bit. So,
++    the errors due to illegal accesses from CCPLEX are reported by
++    interrupts. If ERD is not set, then error is reported by SError.
++  - For other initiators, the ERD is disabled. So, the access issuing
++    initiator is informed about the illegal access by Data Abort
++    exception. In addition, an interrupt is also generated to CCPLEX.
++    These initiators include all engines using Cortex-R5 (which is
++    ARMv7 CPU cluster) and engines like TSEC (Security co-processor),
++    NVDEC (NVIDIA Video Decoder engine) etc which can initiate
++    transactions.
++
++  The driver prints relevant debug information like Error Code, Error
++  Description, Master, Address, AXI ID, Cache, Protection, Security
++  Group etc on receiving error notification.
++
++properties:
++  $nodename:
++    pattern: "^[a-f]+-noc@[0-9a-f]+$"
++
++  compatible:
++    enum:
++      - nvidia,tegra194-cbb-noc
++      - nvidia,tegra194-aon-noc
++      - nvidia,tegra194-bpmp-noc
++      - nvidia,tegra194-rce-noc
++      - nvidia,tegra194-sce-noc
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 2
++    minItems: 2
++    items:
++      - description: non-secure interrupt
++      - description: secure interrupt
++    description:
++      CCPLEX receives secure or nonsecure interrupt depending on error type.
++      Secure interrupt is received for SEC(firewall) & SLV errors and
++      Non-secure interrupt is received for TMO & DEC errors.
++
++  nvidia,axi2apb:
++    $ref: '/schemas/types.yaml#/definitions/phandle'
++    description:
++      Specifies the node having all axi2apb bridges which need to be checked
++      for any error logged in their status register.
++
++  nvidia,apbmisc:
++    $ref: '/schemas/types.yaml#/definitions/phandle'
++    description:
++      Specifies the apbmisc node which need to be used for reading ERD register.
++
++additionalProperties: true
++
++examples:
++  - |
++    cbb-noc@2300000 {
++        compatible = "nvidia,tegra194-cbb-noc";
++        reg = <0x02300000 0x1000>;
++        interrupts = <GIC_SPI 230 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 231 IRQ_TYPE_LEVEL_HIGH>;
++        nvidia,axi2apb = <&axi2apb>;
++        nvidia,apbmisc = <&apbmisc>;
++        status = "okay";
++    };
++
++properties:
++  $nodename:
++    const: axi2apb@2390000
++    description: AXI2APB bridge
++
++  compatible:
++    enum:
++      - nvidia,tegra194-axi2apb-bridge
++
++  reg:
++    maxItems: 6
++    description: Physical base address and length of registers for all bridges
++
++examples:
++  - |
++    axi2apb: axi2apb@2390000 {
++        compatible = "nvidia,tegra194-axi2apb-bridge";
++        reg = <0x02390000 0x1000>,
++            <0x023A0000 0x1000>,
++            <0x023B0000 0x1000>,
++            <0x023C0000 0x1000>,
++            <0x023D0000 0x1000>,
++            <0x023E0000 0x1000>;
++        status = "okay";
++    };
++...
 -- 
 2.17.1
 
