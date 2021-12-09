@@ -2,57 +2,57 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96268C433EF
-	for <linux-tegra@archiver.kernel.org>; Thu,  9 Dec 2021 17:34:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4C5BC433FE
+	for <linux-tegra@archiver.kernel.org>; Thu,  9 Dec 2021 17:34:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243074AbhLIRhp (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 9 Dec 2021 12:37:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51694 "EHLO
+        id S237367AbhLIRhr (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 9 Dec 2021 12:37:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51710 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237367AbhLIRho (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 9 Dec 2021 12:37:44 -0500
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED652C061746
-        for <linux-tegra@vger.kernel.org>; Thu,  9 Dec 2021 09:34:10 -0800 (PST)
-Received: by mail-wm1-x336.google.com with SMTP id 137so4821363wma.1
-        for <linux-tegra@vger.kernel.org>; Thu, 09 Dec 2021 09:34:10 -0800 (PST)
+        with ESMTP id S236684AbhLIRhr (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 9 Dec 2021 12:37:47 -0500
+Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94881C061746
+        for <linux-tegra@vger.kernel.org>; Thu,  9 Dec 2021 09:34:13 -0800 (PST)
+Received: by mail-wm1-x32e.google.com with SMTP id c6-20020a05600c0ac600b0033c3aedd30aso4676488wmr.5
+        for <linux-tegra@vger.kernel.org>; Thu, 09 Dec 2021 09:34:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=rGEh8VVHgWzWZAbzr7aP9gEQLHRnSNsnCj/2tRQ8Yws=;
-        b=hJY+xG481nRhTR8+DzX58Mqv6gBaIgjhuuZ/21jyMYEFTMBn1YPrFK8orKUjmyQsA1
-         HTEFHrUrVVdRuug6KiYMBxJg5hp23JPPm7BZ0nLHOb7Ahf8TMmPI2O5weDZHHpzdR99b
-         +MA3qyvgIuSW5vVrt2zZhZEKZcQcTiIhsyHzZuNXi9KQ7VCUp5dMsIurxPQQdk5XTIHK
-         up/xUyjW3Y9YHCRBbbsVkZuaK9PFzryQXQo77jMc2A+Kl7+GnCqg44N5v9QAKm1JxiCf
-         +U1YXuvmVj5OrYB86uNskUnWqSn4YUzheB5WlnyU77+Yhycr7EWEbUPo47EOy2od4eTI
-         IG1A==
+        bh=pXWGTWR7RW7YQXrBlSccx4/GYB8XMw2ogccuJY7SV5I=;
+        b=il/Lldnmjv2Ras8+CCbSeg61YiqeZdPYQnVbQFUqgHn8AkFsUfWcfJBnUu1QYVtmJF
+         BLDoIHY27FYfOE6IQJAlwakz75zZpmuXyyUc3XX9fbeGoAQ6WntHsSgx1xEHrLx5MmHc
+         kdgZhTND6/vEQ+WPcrFhPDcTymSTLAsVcK6xF0HeH5i35b79OP7K7OQJxY6Dpehru0Cg
+         4AjQ3FsCoAoH5frg4dY7xd7ORzqtb7r4jJrunQBM7qAJcMIb1KdZWDPNcWP6dy6mH2wU
+         lOPD7n3oUXWlwdeVXkjXqTO+G736pgxmkUhifdFH9DCV7Y6M1pA/4JNjuNYXIBwMDNQS
+         pIkQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=rGEh8VVHgWzWZAbzr7aP9gEQLHRnSNsnCj/2tRQ8Yws=;
-        b=YAE45UwL2pc6NA8zqdb0GB+e6fSav87tXg0JdPAdWKQNV4ozvLTPWkUVEN550p2eKN
-         Es6bhF9/dltjlakCJQ+TypuLQMNL4bgC/EO09T3U+2G+24xb6m4BGA8bSO3mY6eUplUM
-         VQ/rJaobaqq7BQxXEKZLqCS+tAH5iAcM8rT00sIwbeBKEFykcviihGvycNSZA0clEhmq
-         66Mw9xzo0sZ8sT2efQs4kUR7qkAy4JmHd5w7QTYQX2Yqo/fIdHF4zLgaXzNCYUFbnzoA
-         obl6UVdOziNHMhAjj9g0s6skp90VaY00jM3LCZkhZVMCZ7Yb9Jk2GThFHLqHo+9dXxHz
-         yGvw==
-X-Gm-Message-State: AOAM531yRczLJa7MiyekHWTVpndZwYvLkaBxq/Hc2FzW10ZJHpXEOL+O
-        cqbllIhSxhlzcTc51EbfopAPnV7WdnjkYw==
-X-Google-Smtp-Source: ABdhPJyZXw00OIgF92a5zZ8k1mAHmYUasLN/AhNwxQPuwSffa/pEa3YdX+yS4S5+GrlwcL0nKC/uHQ==
-X-Received: by 2002:a05:600c:1c20:: with SMTP id j32mr8822607wms.1.1639071249436;
-        Thu, 09 Dec 2021 09:34:09 -0800 (PST)
+        bh=pXWGTWR7RW7YQXrBlSccx4/GYB8XMw2ogccuJY7SV5I=;
+        b=u3XwSuUEFOATJfUNcPsyxSrbzD7JjA+SP40sQ+DEoJzljQArRZIDI9wGoO0jfN9SBe
+         q17U/tsaLoiV0tGOrzsX1xC3zA774ibiUOrr8s7z09MYF+V3lyxZNGuecV3axo8H8F9L
+         wjypba8O/NQWeXDt5rH1IuNnX9JFwK059HWWfCBtn2iW42ViCYi9YfM+gtNkCic0PCLG
+         2d4DQrM17p+MgjW3MeDLCH8rpAd6D7m2mgScRlfqSzxnTytEf27a5Ir1WVu9f5V6sm0B
+         3G89AIgAMsjbdE/BWQJ+/8tSCQuPP6X58WIxwAv71NCl4cTee2ur1ydGCdLENPnHG9KI
+         PcXg==
+X-Gm-Message-State: AOAM530cmXrxpDoXpf+7ev/SLjWatsTVURVJrg35Uz1z6QKccuCmYWBQ
+        ri66f6yb2ejGbSDW53rWptU=
+X-Google-Smtp-Source: ABdhPJxVvRH1BhnvRni4Djjpl7AeIvOAya2BJ8SfSsFKK/4r1Q6KPAf8XrNgmszQIvvNIcs/AeAAjg==
+X-Received: by 2002:a05:600c:4113:: with SMTP id j19mr9232891wmi.48.1639071251991;
+        Thu, 09 Dec 2021 09:34:11 -0800 (PST)
 Received: from localhost ([193.209.96.43])
-        by smtp.gmail.com with ESMTPSA id k8sm298644wrn.91.2021.12.09.09.34.08
+        by smtp.gmail.com with ESMTPSA id m9sm521614wmq.1.2021.12.09.09.34.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Dec 2021 09:34:08 -0800 (PST)
+        Thu, 09 Dec 2021 09:34:11 -0800 (PST)
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>
 Cc:     Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org
-Subject: [PATCH 03/25] ARM: tegra: Rename SPI flash chip nodes
-Date:   Thu,  9 Dec 2021 18:33:34 +0100
-Message-Id: <20211209173356.618460-4-thierry.reding@gmail.com>
+Subject: [PATCH 04/25] ARM: tegra: Rename top-level clocks
+Date:   Thu,  9 Dec 2021 18:33:35 +0100
+Message-Id: <20211209173356.618460-5-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20211209173356.618460-1-thierry.reding@gmail.com>
 References: <20211209173356.618460-1-thierry.reding@gmail.com>
@@ -64,102 +64,250 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-SPI flash chip nodes should be named "flash" instead of "spi-flash".
+Clocks defined at the top level in device tree are no longer part of a
+simple bus and therefore don't have a reg property. Nodes without a reg
+property shouldn't have a unit-address either, so drop the unit address
+from the node names. To ensure nodes aren't duplicated (in which case
+they would end up merged in the final DTB), append the name of the clock
+to the node name.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- arch/arm/boot/dts/tegra114-dalmore.dts    | 3 ++-
- arch/arm/boot/dts/tegra124-jetson-tk1.dts | 3 ++-
- arch/arm/boot/dts/tegra124-venice2.dts    | 3 ++-
- arch/arm/boot/dts/tegra20-trimslice.dts   | 3 ++-
- arch/arm/boot/dts/tegra30-beaver.dts      | 3 ++-
- arch/arm/boot/dts/tegra30-cardhu.dtsi     | 3 ++-
- 6 files changed, 12 insertions(+), 6 deletions(-)
+ arch/arm/boot/dts/tegra114-dalmore.dts                    | 2 +-
+ arch/arm/boot/dts/tegra114-roth.dts                       | 2 +-
+ arch/arm/boot/dts/tegra114-tn7.dts                        | 2 +-
+ arch/arm/boot/dts/tegra124-jetson-tk1.dts                 | 2 +-
+ arch/arm/boot/dts/tegra124-nyan.dtsi                      | 2 +-
+ arch/arm/boot/dts/tegra124-venice2.dts                    | 2 +-
+ arch/arm/boot/dts/tegra20-acer-a500-picasso.dts           | 4 ++--
+ arch/arm/boot/dts/tegra20-harmony.dts                     | 2 +-
+ arch/arm/boot/dts/tegra20-paz00.dts                       | 2 +-
+ arch/arm/boot/dts/tegra20-seaboard.dts                    | 2 +-
+ arch/arm/boot/dts/tegra20-tamonten.dtsi                   | 2 +-
+ arch/arm/boot/dts/tegra20-trimslice.dts                   | 2 +-
+ arch/arm/boot/dts/tegra20-ventana.dts                     | 2 +-
+ arch/arm/boot/dts/tegra30-asus-nexus7-grouper-common.dtsi | 2 +-
+ arch/arm/boot/dts/tegra30-beaver.dts                      | 2 +-
+ arch/arm/boot/dts/tegra30-cardhu.dtsi                     | 2 +-
+ 16 files changed, 17 insertions(+), 17 deletions(-)
 
 diff --git a/arch/arm/boot/dts/tegra114-dalmore.dts b/arch/arm/boot/dts/tegra114-dalmore.dts
-index 82caefe5928c..e64199ba82cb 100644
+index e64199ba82cb..ad8116780dc9 100644
 --- a/arch/arm/boot/dts/tegra114-dalmore.dts
 +++ b/arch/arm/boot/dts/tegra114-dalmore.dts
-@@ -1084,7 +1084,8 @@ pin_gpio6 {
- 	spi@7000da00 {
- 		status = "okay";
- 		spi-max-frequency = <25000000>;
--		spi-flash@0 {
-+
-+		flash@0 {
- 			compatible = "winbond,w25q32dw", "jedec,spi-nor";
- 			reg = <0>;
- 			spi-max-frequency = <20000000>;
+@@ -1152,7 +1152,7 @@ backlight: backlight {
+ 		default-brightness-level = <6>;
+ 	};
+ 
+-	clk32k_in: clock@0 {
++	clk32k_in: clock-32k {
+ 		compatible = "fixed-clock";
+ 		clock-frequency = <32768>;
+ 		#clock-cells = <0>;
+diff --git a/arch/arm/boot/dts/tegra114-roth.dts b/arch/arm/boot/dts/tegra114-roth.dts
+index 71a2806c0f59..ed6ebbf008e1 100644
+--- a/arch/arm/boot/dts/tegra114-roth.dts
++++ b/arch/arm/boot/dts/tegra114-roth.dts
+@@ -1016,7 +1016,7 @@ backlight: backlight {
+ 		enable-gpios = <&gpio TEGRA_GPIO(H, 2) GPIO_ACTIVE_HIGH>;
+ 	};
+ 
+-	clk32k_in: clock@0 {
++	clk32k_in: clock-32k {
+ 		compatible = "fixed-clock";
+ 		clock-frequency = <32768>;
+ 		#clock-cells = <0>;
+diff --git a/arch/arm/boot/dts/tegra114-tn7.dts b/arch/arm/boot/dts/tegra114-tn7.dts
+index 753130b1e37b..36717331101e 100644
+--- a/arch/arm/boot/dts/tegra114-tn7.dts
++++ b/arch/arm/boot/dts/tegra114-tn7.dts
+@@ -273,7 +273,7 @@ backlight: backlight {
+ 		power-supply = <&lcd_bl_en>;
+ 	};
+ 
+-	clk32k_in: clock@0 {
++	clk32k_in: clock-32k {
+ 		compatible = "fixed-clock";
+ 		clock-frequency = <32768>;
+ 		#clock-cells = <0>;
 diff --git a/arch/arm/boot/dts/tegra124-jetson-tk1.dts b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
-index 35ab296408e1..b2b3eea81232 100644
+index b2b3eea81232..f59135b93cb0 100644
 --- a/arch/arm/boot/dts/tegra124-jetson-tk1.dts
 +++ b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
-@@ -1655,7 +1655,8 @@ spi@7000d400 {
- 	spi@7000da00 {
- 		status = "okay";
- 		spi-max-frequency = <25000000>;
--		spi-flash@0 {
-+
-+		flash@0 {
- 			compatible = "winbond,w25q32dw", "jedec,spi-nor";
- 			reg = <0>;
- 			spi-max-frequency = <20000000>;
+@@ -1869,7 +1869,7 @@ usb-phy@7d008000 {
+ 		vbus-supply = <&vdd_usb3_vbus>;
+ 	};
+ 
+-	clk32k_in: clock@0 {
++	clk32k_in: clock-32k {
+ 		compatible = "fixed-clock";
+ 		clock-frequency = <32768>;
+ 		#clock-cells = <0>;
+diff --git a/arch/arm/boot/dts/tegra124-nyan.dtsi b/arch/arm/boot/dts/tegra124-nyan.dtsi
+index 63a81270300a..f15623f83893 100644
+--- a/arch/arm/boot/dts/tegra124-nyan.dtsi
++++ b/arch/arm/boot/dts/tegra124-nyan.dtsi
+@@ -582,7 +582,7 @@ backlight: backlight {
+ 			 256>;
+ 	};
+ 
+-	clk32k_in: clock@0 {
++	clk32k_in: clock-32k {
+ 		compatible = "fixed-clock";
+ 		clock-frequency = <32768>;
+ 		#clock-cells = <0>;
 diff --git a/arch/arm/boot/dts/tegra124-venice2.dts b/arch/arm/boot/dts/tegra124-venice2.dts
-index e6b54ac1ebd1..02cf986c7567 100644
+index 02cf986c7567..14eeb1242b15 100644
 --- a/arch/arm/boot/dts/tegra124-venice2.dts
 +++ b/arch/arm/boot/dts/tegra124-venice2.dts
-@@ -881,7 +881,8 @@ battery: sbs-battery@b {
- 	spi@7000da00 {
+@@ -1062,7 +1062,7 @@ backlight: backlight {
+ 		default-brightness-level = <6>;
+ 	};
+ 
+-	clk32k_in: clock@0 {
++	clk32k_in: clock-32k {
+ 		compatible = "fixed-clock";
+ 		clock-frequency = <32768>;
+ 		#clock-cells = <0>;
+diff --git a/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts b/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts
+index 23d3f8daab23..be5ef6745ac8 100644
+--- a/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts
++++ b/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts
+@@ -827,7 +827,7 @@ bat1010: battery-2s1p {
+ 	};
+ 
+ 	/* PMIC has a built-in 32KHz oscillator which is used by PMC */
+-	clk32k_in: clock@0 {
++	clk32k_in: clock-32k {
+ 		compatible = "fixed-clock";
+ 		#clock-cells = <0>;
+ 		clock-frequency = <32768>;
+@@ -839,7 +839,7 @@ clk32k_in: clock@0 {
+ 	 * oscillator is used as a reference clock-source by the
+ 	 * Azurewave WiFi/BT module.
+ 	 */
+-	rtc_32k_wifi: clock@1 {
++	rtc_32k_wifi: clock-rtc-32k-wifi {
+ 		compatible = "fixed-clock";
+ 		#clock-cells = <0>;
+ 		clock-frequency = <32768>;
+diff --git a/arch/arm/boot/dts/tegra20-harmony.dts b/arch/arm/boot/dts/tegra20-harmony.dts
+index ae4312eedcbd..4d137461f3c4 100644
+--- a/arch/arm/boot/dts/tegra20-harmony.dts
++++ b/arch/arm/boot/dts/tegra20-harmony.dts
+@@ -640,7 +640,7 @@ backlight: backlight {
+ 		default-brightness-level = <6>;
+ 	};
+ 
+-	clk32k_in: clock@0 {
++	clk32k_in: clock-32k {
+ 		compatible = "fixed-clock";
+ 		clock-frequency = <32768>;
+ 		#clock-cells = <0>;
+diff --git a/arch/arm/boot/dts/tegra20-paz00.dts b/arch/arm/boot/dts/tegra20-paz00.dts
+index 5b38b0606f99..d3d24523553e 100644
+--- a/arch/arm/boot/dts/tegra20-paz00.dts
++++ b/arch/arm/boot/dts/tegra20-paz00.dts
+@@ -575,7 +575,7 @@ backlight: backlight {
+ 		default-brightness-level = <10>;
+ 	};
+ 
+-	clk32k_in: clock@0 {
++	clk32k_in: clock-32k {
+ 		compatible = "fixed-clock";
+ 		clock-frequency = <32768>;
+ 		#clock-cells = <0>;
+diff --git a/arch/arm/boot/dts/tegra20-seaboard.dts b/arch/arm/boot/dts/tegra20-seaboard.dts
+index 92d494b8c3d2..ffeae5da22e7 100644
+--- a/arch/arm/boot/dts/tegra20-seaboard.dts
++++ b/arch/arm/boot/dts/tegra20-seaboard.dts
+@@ -792,7 +792,7 @@ backlight: backlight {
+ 		default-brightness-level = <6>;
+ 	};
+ 
+-	clk32k_in: clock@0 {
++	clk32k_in: clock-32k {
+ 		compatible = "fixed-clock";
+ 		clock-frequency = <32768>;
+ 		#clock-cells = <0>;
+diff --git a/arch/arm/boot/dts/tegra20-tamonten.dtsi b/arch/arm/boot/dts/tegra20-tamonten.dtsi
+index dd4d506683de..d5f1a46da0bc 100644
+--- a/arch/arm/boot/dts/tegra20-tamonten.dtsi
++++ b/arch/arm/boot/dts/tegra20-tamonten.dtsi
+@@ -502,7 +502,7 @@ mmc@c8000600 {
  		status = "okay";
- 		spi-max-frequency = <25000000>;
--		spi-flash@0 {
-+
-+		flash@0 {
- 			compatible = "winbond,w25q32dw", "jedec,spi-nor";
- 			reg = <0>;
- 			spi-max-frequency = <20000000>;
+ 	};
+ 
+-	clk32k_in: clock@0 {
++	clk32k_in: clock-32k {
+ 		compatible = "fixed-clock";
+ 		clock-frequency = <32768>;
+ 		#clock-cells = <0>;
 diff --git a/arch/arm/boot/dts/tegra20-trimslice.dts b/arch/arm/boot/dts/tegra20-trimslice.dts
-index 4bc87bc0c2a4..beae368f827a 100644
+index beae368f827a..49c3b3bfac51 100644
 --- a/arch/arm/boot/dts/tegra20-trimslice.dts
 +++ b/arch/arm/boot/dts/tegra20-trimslice.dts
-@@ -287,7 +287,8 @@ dvi_ddc: i2c@7000c000 {
- 	spi@7000c380 {
- 		status = "okay";
- 		spi-max-frequency = <48000000>;
--		spi-flash@0 {
-+
-+		flash@0 {
- 			compatible = "winbond,w25q80bl", "jedec,spi-nor";
- 			reg = <0>;
- 			spi-max-frequency = <48000000>;
+@@ -380,7 +380,7 @@ mmc@c8000600 {
+ 		bus-width = <4>;
+ 	};
+ 
+-	clk32k_in: clock@0 {
++	clk32k_in: clock-32k {
+ 		compatible = "fixed-clock";
+ 		clock-frequency = <32768>;
+ 		#clock-cells = <0>;
+diff --git a/arch/arm/boot/dts/tegra20-ventana.dts b/arch/arm/boot/dts/tegra20-ventana.dts
+index 5a2578b3707f..ef97457f1334 100644
+--- a/arch/arm/boot/dts/tegra20-ventana.dts
++++ b/arch/arm/boot/dts/tegra20-ventana.dts
+@@ -606,7 +606,7 @@ backlight: backlight {
+ 		default-brightness-level = <6>;
+ 	};
+ 
+-	clk32k_in: clock@0 {
++	clk32k_in: clock-32k {
+ 		compatible = "fixed-clock";
+ 		clock-frequency = <32768>;
+ 		#clock-cells = <0>;
+diff --git a/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-common.dtsi b/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-common.dtsi
+index 07d4ea130964..72159eb55a3d 100644
+--- a/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-common.dtsi
++++ b/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-common.dtsi
+@@ -1069,7 +1069,7 @@ battery_cell: battery-cell {
+ 	};
+ 
+ 	/* PMIC has a built-in 32KHz oscillator which is used by PMC */
+-	clk32k_in: clock@0 {
++	clk32k_in: clock-32k {
+ 		compatible = "fixed-clock";
+ 		#clock-cells = <0>;
+ 		clock-frequency = <32768>;
 diff --git a/arch/arm/boot/dts/tegra30-beaver.dts b/arch/arm/boot/dts/tegra30-beaver.dts
-index e159feeedef7..f724abcdb1a5 100644
+index f724abcdb1a5..91ecca0be5a2 100644
 --- a/arch/arm/boot/dts/tegra30-beaver.dts
 +++ b/arch/arm/boot/dts/tegra30-beaver.dts
-@@ -1898,7 +1898,8 @@ core_vdd_reg: tps62361@60 {
- 	spi@7000da00 {
+@@ -1967,7 +1967,7 @@ usb-phy@7d008000 {
  		status = "okay";
- 		spi-max-frequency = <25000000>;
--		spi-flash@1 {
-+
-+		flash@1 {
- 			compatible = "winbond,w25q32", "jedec,spi-nor";
- 			reg = <1>;
- 			spi-max-frequency = <20000000>;
+ 	};
+ 
+-	clk32k_in: clock@0 {
++	clk32k_in: clock-32k {
+ 		compatible = "fixed-clock";
+ 		clock-frequency = <32768>;
+ 		#clock-cells = <0>;
 diff --git a/arch/arm/boot/dts/tegra30-cardhu.dtsi b/arch/arm/boot/dts/tegra30-cardhu.dtsi
-index 448f1397e64a..e7bfe0e5ee06 100644
+index e7bfe0e5ee06..6074885280fc 100644
 --- a/arch/arm/boot/dts/tegra30-cardhu.dtsi
 +++ b/arch/arm/boot/dts/tegra30-cardhu.dtsi
-@@ -374,7 +374,8 @@ vdd_core: tps62361@60 {
- 	spi@7000da00 {
- 		status = "okay";
- 		spi-max-frequency = <25000000>;
--		spi-flash@1 {
-+
-+		flash@1 {
- 			compatible = "winbond,w25q32", "jedec,spi-nor";
- 			reg = <1>;
- 			spi-max-frequency = <20000000>;
+@@ -434,7 +434,7 @@ backlight: backlight {
+ 		default-brightness-level = <6>;
+ 	};
+ 
+-	clk32k_in: clock@0 {
++	clk32k_in: clock-32k {
+ 		compatible = "fixed-clock";
+ 		clock-frequency = <32768>;
+ 		#clock-cells = <0>;
 -- 
 2.34.1
 
