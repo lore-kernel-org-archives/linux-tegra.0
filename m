@@ -2,57 +2,57 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB0A8C4332F
-	for <linux-tegra@archiver.kernel.org>; Thu,  9 Dec 2021 17:34:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 335B5C433EF
+	for <linux-tegra@archiver.kernel.org>; Thu,  9 Dec 2021 17:34:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230129AbhLIRiK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 9 Dec 2021 12:38:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51816 "EHLO
+        id S231390AbhLIRiN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 9 Dec 2021 12:38:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51824 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229962AbhLIRiK (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 9 Dec 2021 12:38:10 -0500
-Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A70C3C061746
-        for <linux-tegra@vger.kernel.org>; Thu,  9 Dec 2021 09:34:36 -0800 (PST)
-Received: by mail-wr1-x42c.google.com with SMTP id v11so10942648wrw.10
-        for <linux-tegra@vger.kernel.org>; Thu, 09 Dec 2021 09:34:36 -0800 (PST)
+        with ESMTP id S229962AbhLIRiN (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 9 Dec 2021 12:38:13 -0500
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 278F8C061746
+        for <linux-tegra@vger.kernel.org>; Thu,  9 Dec 2021 09:34:39 -0800 (PST)
+Received: by mail-wr1-x433.google.com with SMTP id d24so11098204wra.0
+        for <linux-tegra@vger.kernel.org>; Thu, 09 Dec 2021 09:34:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=jcSskejSneiFuu74k2khPfVI19aDm0oOaVgWlk4oXTw=;
-        b=d5oUm/ld3oQWeYvw4aAPeLzZL7rVsAhyGkkpWGKb5FlfH6EvV7rykoMU7ycdHUCWIF
-         YRMQwRoCq5T34mFXVocGw5kzL3d0CMNGwIlvacWC0uzfDuT5COVEcu0BqgDnG/YXCX7d
-         He6hWnyymkJuXrLUMMT0mLnKAN5HBTLizqXkhW8SpVpgTeR6HjrxvzBy/WHMKvVBprqH
-         yXvCZuMQcg2TOGjiHXd1MgaO/HaF2H5429ddO/kJktHh33UWKI4zBBGv/7g1uoaMoNdN
-         3XDb0DwTRoXQFA09cAan/XftxBlod9CMpm5yfzCBQxTDtcBTkvyzr/xsfwbj75WxM/hZ
-         t7Kg==
+        bh=krbyAktj7SyFwQPSlYLai67LwLG2H2lkARH3cT60d6w=;
+        b=of4pxsuLstcHBuSnhiYCQ3WIavEY952nYATcZLqzE25r1bPb6XS7Qjv8iveb3lBzBp
+         ulkcYiW69WT7eSVinLyDd0w6fg+PyjyWOkTPOH8szkoEOE0zZZ8q6aS8ulcwxQJV5hYV
+         knXrDsYYnhf3mqiHN3ILcauiK8S42tRVczsekLLpkMG0IgDVjn2XTgyaegDTZhFjVcv5
+         p4tsboh0tenLshcbk27mXyPpSArron7rsbPfGbjm9dVKfAPwYKp0nxxXL0a64OARU4rr
+         re/Fn0S6s4VbpaLeQ6VyP92MB3gK6RvvbCOgp78zp8++KmQpL0PrCQ0dw5rQEtV9pije
+         nZnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=jcSskejSneiFuu74k2khPfVI19aDm0oOaVgWlk4oXTw=;
-        b=cEc4YFmiLHme99tLTOWXyRVOhE5VmDsspNvY5RUKyaovPtcmBTwo8pZHTfCulwuGBL
-         Peq2xR+L1w42WyTfxmMelQ2KMTr8ciFEg8o1gCP3/l97dhrdFzaGmnx3DgLGHu5Q5ZN9
-         iZb/fKmBSeAyuLyYLNEA/kCcDKgHtac7J5FxTQSoc34hhGMqfqOdgdOO5LN0+DSy9uth
-         rsQm/R2FqiXdPmSSZ+ZJc4D0QXO+b5R57jeo53jM+r1HJo2lklG+SGucJPeRlxMdJqHF
-         c8aEErArBjoh7jljuTjTwtK7Rwshf5dUlEnAV2QYfDfy1qC51u+K2LhgR4qvpeY3n9Bp
-         HvRQ==
-X-Gm-Message-State: AOAM532T8PeqVFqGtBb4nqZdk/Pn+mRIvsljUE5Ajap8n8KjPa9+C1r2
-        qRMCXPonbjOaaa1Tft6H7UmlN7YcaYSOWw==
-X-Google-Smtp-Source: ABdhPJzH3ASpKXaCc+b6KlvLCFqgYJf+mWOipS77Y7PSdYSgAcZmNm5GbEYoP+I2rkZ9RjQ2BtYYFQ==
-X-Received: by 2002:a5d:6902:: with SMTP id t2mr7944951wru.317.1639071275239;
-        Thu, 09 Dec 2021 09:34:35 -0800 (PST)
+        bh=krbyAktj7SyFwQPSlYLai67LwLG2H2lkARH3cT60d6w=;
+        b=h6VXOIepo0uMs09kSGAUq2LJQq/d+1MzEpfFBrEUQglfwxwVVzSE1QsLPPZeffHrGg
+         mF6EeQkDQ97w45EqYuOWgjbuOWqHbJOnnmGN0xVVrM4AksI67kpgao5nplRXFb0YRMp2
+         030KT+AY+EF7kUgBgS7JYAgi67P6Ut0IKTu26hVJsKO+mmlT2m8+l4u89Y+FLoCQhF9i
+         viHRQnFbD4zDlVH2ycCR82pcA/yomYtvSd73tilvsXaW7HyvlDLbzD+8NAdg0tYYVHlf
+         w+bES8FkeqmKa4tvdQ5d3xCo83wXk5QSpuhsq6J2a/K5gAh0vOprnCea6KviVtvskHZt
+         FcTQ==
+X-Gm-Message-State: AOAM531Z/m/6r/SCJsPYILoXbnEpvjcYLHPxxp3rKFbG9MfmxUAynysX
+        Z0hMBTnwtD2a7V0YqSyxLgM=
+X-Google-Smtp-Source: ABdhPJwytTIpNkWpCEUyPlp7u8la9u/3mxtmbdcBBz2zAZqVWQU3UOr10DYMbwfiYOjGuGAKophnaA==
+X-Received: by 2002:adf:cd02:: with SMTP id w2mr8113257wrm.269.1639071277695;
+        Thu, 09 Dec 2021 09:34:37 -0800 (PST)
 Received: from localhost ([193.209.96.43])
-        by smtp.gmail.com with ESMTPSA id t11sm293799wrz.97.2021.12.09.09.34.33
+        by smtp.gmail.com with ESMTPSA id bg12sm519365wmb.5.2021.12.09.09.34.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Dec 2021 09:34:34 -0800 (PST)
+        Thu, 09 Dec 2021 09:34:36 -0800 (PST)
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>
 Cc:     Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org
-Subject: [PATCH 13/25] ARM: tegra: Fix Tegra124 I2C compatible string list
-Date:   Thu,  9 Dec 2021 18:33:44 +0100
-Message-Id: <20211209173356.618460-14-thierry.reding@gmail.com>
+Subject: [PATCH 14/25] ARM: tegra: Drop unused AHCI clocks on Tegra124
+Date:   Thu,  9 Dec 2021 18:33:45 +0100
+Message-Id: <20211209173356.618460-15-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20211209173356.618460-1-thierry.reding@gmail.com>
 References: <20211209173356.618460-1-thierry.reding@gmail.com>
@@ -64,72 +64,32 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-The I2C controller found on Tegra124 is not fully compatible with the
-Tegra114 version, so drop the fallback compatible string from the list.
+The CML1 and PLL_E clocks are never explicitly used by the AHCI
+controller found on Tegra124, so drop them from the corresponding device
+tree node.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- arch/arm/boot/dts/tegra124.dtsi | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ arch/arm/boot/dts/tegra124.dtsi | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
 diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
-index 752a28268024..0e0a769fb30f 100644
+index 0e0a769fb30f..36566a777e49 100644
 --- a/arch/arm/boot/dts/tegra124.dtsi
 +++ b/arch/arm/boot/dts/tegra124.dtsi
-@@ -438,7 +438,7 @@ pwm: pwm@7000a000 {
- 	};
- 
- 	i2c@7000c000 {
--		compatible = "nvidia,tegra124-i2c", "nvidia,tegra114-i2c";
-+		compatible = "nvidia,tegra124-i2c";
- 		reg = <0x0 0x7000c000 0x0 0x100>;
- 		interrupts = <GIC_SPI 38 IRQ_TYPE_LEVEL_HIGH>;
- 		#address-cells = <1>;
-@@ -453,7 +453,7 @@ i2c@7000c000 {
- 	};
- 
- 	i2c@7000c400 {
--		compatible = "nvidia,tegra124-i2c", "nvidia,tegra114-i2c";
-+		compatible = "nvidia,tegra124-i2c";
- 		reg = <0x0 0x7000c400 0x0 0x100>;
- 		interrupts = <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>;
- 		#address-cells = <1>;
-@@ -468,7 +468,7 @@ i2c@7000c400 {
- 	};
- 
- 	i2c@7000c500 {
--		compatible = "nvidia,tegra124-i2c", "nvidia,tegra114-i2c";
-+		compatible = "nvidia,tegra124-i2c";
- 		reg = <0x0 0x7000c500 0x0 0x100>;
- 		interrupts = <GIC_SPI 92 IRQ_TYPE_LEVEL_HIGH>;
- 		#address-cells = <1>;
-@@ -483,7 +483,7 @@ i2c@7000c500 {
- 	};
- 
- 	i2c@7000c700 {
--		compatible = "nvidia,tegra124-i2c", "nvidia,tegra114-i2c";
-+		compatible = "nvidia,tegra124-i2c";
- 		reg = <0x0 0x7000c700 0x0 0x100>;
- 		interrupts = <GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>;
- 		#address-cells = <1>;
-@@ -498,7 +498,7 @@ i2c@7000c700 {
- 	};
- 
- 	i2c@7000d000 {
--		compatible = "nvidia,tegra124-i2c", "nvidia,tegra114-i2c";
-+		compatible = "nvidia,tegra124-i2c";
- 		reg = <0x0 0x7000d000 0x0 0x100>;
- 		interrupts = <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>;
- 		#address-cells = <1>;
-@@ -513,7 +513,7 @@ i2c@7000d000 {
- 	};
- 
- 	i2c@7000d100 {
--		compatible = "nvidia,tegra124-i2c", "nvidia,tegra114-i2c";
-+		compatible = "nvidia,tegra124-i2c";
- 		reg = <0x0 0x7000d100 0x0 0x100>;
- 		interrupts = <GIC_SPI 63 IRQ_TYPE_LEVEL_HIGH>;
- 		#address-cells = <1>;
+@@ -672,10 +672,8 @@ sata@70020000 {
+ 		      <0x0 0x70020000 0x0 0x7000>; /* SATA */
+ 		interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&tegra_car TEGRA124_CLK_SATA>,
+-			 <&tegra_car TEGRA124_CLK_SATA_OOB>,
+-			 <&tegra_car TEGRA124_CLK_CML1>,
+-			 <&tegra_car TEGRA124_CLK_PLL_E>;
+-		clock-names = "sata", "sata-oob", "cml1", "pll_e";
++			 <&tegra_car TEGRA124_CLK_SATA_OOB>;
++		clock-names = "sata", "sata-oob";
+ 		resets = <&tegra_car 124>,
+ 			 <&tegra_car 129>,
+ 			 <&tegra_car 123>;
 -- 
 2.34.1
 
