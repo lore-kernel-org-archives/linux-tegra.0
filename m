@@ -2,55 +2,54 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B78D4C433F5
-	for <linux-tegra@archiver.kernel.org>; Fri, 10 Dec 2021 16:21:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A41EC433EF
+	for <linux-tegra@archiver.kernel.org>; Fri, 10 Dec 2021 16:26:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240821AbhLJQYg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 10 Dec 2021 11:24:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54304 "EHLO
+        id S238196AbhLJQ3z (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 10 Dec 2021 11:29:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55618 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236537AbhLJQYf (ORCPT
+        with ESMTP id S233008AbhLJQ3z (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 10 Dec 2021 11:24:35 -0500
-Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3EF72C061746;
-        Fri, 10 Dec 2021 08:21:00 -0800 (PST)
-Received: by mail-lf1-x12d.google.com with SMTP id m6so7190764lfu.1;
-        Fri, 10 Dec 2021 08:21:00 -0800 (PST)
+        Fri, 10 Dec 2021 11:29:55 -0500
+Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18E59C061746;
+        Fri, 10 Dec 2021 08:26:20 -0800 (PST)
+Received: by mail-lf1-x131.google.com with SMTP id bi37so19041185lfb.5;
+        Fri, 10 Dec 2021 08:26:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=vQ3hR815wxY8d2C2vTh6hx28ByOwjqQnUNIo+IqY3Jc=;
-        b=TuUDXVSnZEFVgo6qAiyWR8SLp9STIAdrqdg2cGFG1SmHSBgA2OEyPCpvtnNtkROsw2
-         /yZS7W8INF9eADa6GA0LXg6AaB7aBXPFtp1FgOHbu0RncUxgi/ZpgJPF6OavpwSZxUwA
-         hXYiyDk18k/ZhFYXiSCVU9btCySiNQ0gP8vRvylDgMawONJ2nQc3rh6HkN1ieb+iHQIk
-         5jnBZSw7GpcYQAWdUjrTnuQoLWJ90Q3R8JD0C+Xx4Q3XPco+AurDOD5iC9XHX1u0QL9S
-         rxSedfNCYljvCoduUMGLo3hDXnUVuyrxr242ZRqDducKUHRgOj3J9tvPPF8Ry1PwJ6Wq
-         JoGA==
+        bh=dW//pQ14dQ1neJjGOt42iXxni2fzAcbg0k81zdgp73Y=;
+        b=eSud5R9akWmbTEfdL7A6s+3p+ryMAKG/sfOxkfpbVJzjJL/Aq/jHNZnbhoS3XSfuvE
+         D/3sm6183CkqZ/6H8uD9SKNH69dvZ1TpP6f8G0rLoVIPXawaWOVEJQwam5ewY+w1SSEF
+         PbW9ivtB54N5dcIIhJlgHJidL3akAAUjUANbReZoqHhIRHieZd9RmIljBrjhTe6Zbmzy
+         eSDvIy7//CPL5ti0q8L0unk6vuccgOwpxLfoci4DHqd7gyT60qk9EJKVoWUrtgv3Lq7B
+         ab+fUaU7EggaDrexZyAHd1BkHMSbRC1fHm4oUfUfmx/9S2S/2orp2pNBXBBoiGAbk7Xm
+         KmVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=vQ3hR815wxY8d2C2vTh6hx28ByOwjqQnUNIo+IqY3Jc=;
-        b=nrWXJj1fDxLdiwvwWEwwfa8XfPMwHwCuvbA+zmNtMIcHrVIcrrHjzk0V1MLSvu7ISi
-         QwzPgvIXFTrkl9f+kh5tVQoS1nmVvAKuKcAAyJsv48rRl9vUvZhSJYxO68if7IFsF6bx
-         ic7/lyElvfOpWSQMm5YbE8ee2+cDXB1dYkhQVVhtTIIo14cyACkwT1wH1R9cC6FERwZo
-         EpCXP4qscW02yYyO1UpA0OHSXsz0Q0Wdl9RNl6XNgn2Rr6VRv2uK6vJ7DoN3MimJl+dB
-         sWd5xm0ZqFxviG9qlSitgPJCeoOo/qBlMEHwNGRoTheQ5AP2erOeDhdXmN4IjBKglK+E
-         a7+g==
-X-Gm-Message-State: AOAM530hXyFj1wayRHHDJxQWABtWBbAw3lrdSjuto/KbivrH8HgsAKw4
-        oRw0kt/izjF5nGp9D/VnIcnIlaLQ18w=
-X-Google-Smtp-Source: ABdhPJzm4ZQxiA0uKpXl1sGoGIifDEXXivAIck6/Cs3f0CLOZFpWrJD8KQW9LBCRGfwlIF7ikZU+iQ==
-X-Received: by 2002:a05:6512:1520:: with SMTP id bq32mr13552431lfb.232.1639153257751;
-        Fri, 10 Dec 2021 08:20:57 -0800 (PST)
+        bh=dW//pQ14dQ1neJjGOt42iXxni2fzAcbg0k81zdgp73Y=;
+        b=Vr/+NQMrVeyYJoqlnudn2GQ37DZBhfoLoomIRMyoX8HF0h8+KwqBk3uNuacs0+WZQQ
+         S90DhrR3PLRhc7hojlgbHhfZ0vWpBwhUHHhdBiikK0SFHDoucnIzf3kFCi6WQKVIOTmw
+         IyykL6ZNXXgF/2vACmVGnyetnGKhYZbfqgKi0MkxVgY1B0dcMzyFuXzgYbkdguT+2CjR
+         d8l+LLpSRNIC0/BaBwq9jkWpj43I0JoHyQWFSbUhigV796AG1XJ/XdahbsngDZ5UVBqw
+         NGJPFcpdX3X/wPdvobGxTijANoHdhnw8ufbfKdQegaqit1kxW7O7XUqiQnw+uaOFRQrh
+         YyAg==
+X-Gm-Message-State: AOAM530RRAwDNECol1/yw0eSyWZUcCwp3fkNmhXuhdcPEGz0WAGd7cFm
+        uijuN52i2/H2hvpTYRDZsTVWb6MNBmU=
+X-Google-Smtp-Source: ABdhPJzT/Df5+k6cta9cAqQTJP6CH13OgF3rJyFR0ZVS+3uqQtuTTCy9/XPqtLZ668nUXnYhYM7ccw==
+X-Received: by 2002:a05:6512:1194:: with SMTP id g20mr12780423lfr.58.1639153578243;
+        Fri, 10 Dec 2021 08:26:18 -0800 (PST)
 Received: from [192.168.2.145] (94-29-46-111.dynamic.spd-mgts.ru. [94.29.46.111])
-        by smtp.googlemail.com with ESMTPSA id d11sm349867lfq.303.2021.12.10.08.20.56
+        by smtp.googlemail.com with ESMTPSA id i18sm352419lfe.186.2021.12.10.08.26.17
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 10 Dec 2021 08:20:57 -0800 (PST)
-Subject: Re: [PATCH v5 02/24] dt-bindings: ARM: tegra: Document Pegatron
- Chagall
+        Fri, 10 Dec 2021 08:26:17 -0800 (PST)
+Subject: Re: [PATCH v5 03/24] ARM: tegra: Add labels to tegra30.dtsi
 To:     Thierry Reding <thierry.reding@gmail.com>
 Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
         David Heidelberg <david@ixit.cz>,
@@ -70,14 +69,14 @@ Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
         devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
 References: <20211208173609.4064-1-digetx@gmail.com>
- <20211208173609.4064-3-digetx@gmail.com> <YbNv8fBpMRTIGZQh@orome>
+ <20211208173609.4064-4-digetx@gmail.com> <YbNwpWpEW4EKHd2R@orome>
 From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <5eedbd5e-6300-7c84-a7af-ace83ed8f1cc@gmail.com>
-Date:   Fri, 10 Dec 2021 19:20:56 +0300
+Message-ID: <5a684edd-aaa4-f96e-a72b-bb6d388e6b30@gmail.com>
+Date:   Fri, 10 Dec 2021 19:26:16 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.14.0
 MIME-Version: 1.0
-In-Reply-To: <YbNv8fBpMRTIGZQh@orome>
+In-Reply-To: <YbNwpWpEW4EKHd2R@orome>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -85,26 +84,28 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-10.12.2021 18:19, Thierry Reding пишет:
-> On Wed, Dec 08, 2021 at 08:35:47PM +0300, Dmitry Osipenko wrote:
->> From: David Heidelberg <david@ixit.cz>
+10.12.2021 18:22, Thierry Reding пишет:
+> On Wed, Dec 08, 2021 at 08:35:48PM +0300, Dmitry Osipenko wrote:
+>> From: Michał Mirosław <mirq-linux@rere.qmqm.pl>
 >>
->> Document Pegatron Chagall, which is Tegra30-based tablet device.
+>> Add phandle names for memory/I2C/SPI/USB/SDMMC controller nodes to allow
+>> for cleaner device descriptions.
 >>
->> Acked-by: Rob Herring <robh@kernel.org>
->> Signed-off-by: David Heidelberg <david@ixit.cz>
+>> Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
 >> ---
->>  Documentation/devicetree/bindings/arm/tegra.yaml | 3 +++
->>  1 file changed, 3 insertions(+)
+>>  arch/arm/boot/dts/tegra30.dtsi | 36 +++++++++++++++++-----------------
+>>  1 file changed, 18 insertions(+), 18 deletions(-)
 > 
-> This and many others in the set are missing your Signed-off-by. See
-> "Developer's Certificate of Origin 1.1" in
-> Documentation/process/submitting-patches.rst for a rationale why that's
-> important.
+> We typically only add those when they are really needed. These are
+> technically harmless because without a reference, DTC won't actually
+> create a phandle property, but dangling labels are the kind of thing
+> that some janitor may at some point want to remove with some scripts,
+> so I'm hesitant to apply this because it'll likely cause churn in the
+> future.
 
-I specifically checked documentation about this in the past, now I see
-that it says that s-b should from people in the delivery path. Wish
-checkpatch could tell about that.
+The plan is to add labels for T20 and switch all DTs to use those
+phandles consistently, but that's the plan for the next kernel release.
 
-Please either add my s-b by yourself while applying or let me know if I
-should make v6.
+Those labels are practically useful when you porting something from old
+downstream kernel because it uses those human-readable names instead of
+the addresses.
