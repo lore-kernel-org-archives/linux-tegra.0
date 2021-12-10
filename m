@@ -2,145 +2,185 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04631C433EF
-	for <linux-tegra@archiver.kernel.org>; Fri, 10 Dec 2021 14:27:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68230C433EF
+	for <linux-tegra@archiver.kernel.org>; Fri, 10 Dec 2021 14:38:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242117AbhLJObK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 10 Dec 2021 09:31:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55354 "EHLO
+        id S242276AbhLJOlk (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 10 Dec 2021 09:41:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57788 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234548AbhLJObK (ORCPT
+        with ESMTP id S242259AbhLJOlk (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 10 Dec 2021 09:31:10 -0500
-Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D400DC061746
-        for <linux-tegra@vger.kernel.org>; Fri, 10 Dec 2021 06:27:34 -0800 (PST)
-Received: by mail-wm1-x330.google.com with SMTP id 133so6994619wme.0
-        for <linux-tegra@vger.kernel.org>; Fri, 10 Dec 2021 06:27:34 -0800 (PST)
+        Fri, 10 Dec 2021 09:41:40 -0500
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D6A8C061746
+        for <linux-tegra@vger.kernel.org>; Fri, 10 Dec 2021 06:38:05 -0800 (PST)
+Received: by mail-wm1-x335.google.com with SMTP id y196so6973637wmc.3
+        for <linux-tegra@vger.kernel.org>; Fri, 10 Dec 2021 06:38:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=WVh/2mTH8dAaKZnnoPemRRD9Q4gtEEf9slI8pDG6PJE=;
-        b=l029UJZtkZIvGf63tIEshtw5w7OvAvyszwrFpe2ZIEwFWuGCEUsUDpVjgjGknmJ2Cp
-         Ao1qxTLeWPykjqezqs9ahdpRN8zvwEb1snhzOlcGacc7NvyFoJ0VR1RN+C4leXUM9xNm
-         yaO8954yB3GTAlkKzEmIC/416H7Yh6IVN1BcXJemuMWwz9Y/ENibzwhHZ2q+NfqJRAjq
-         o+/Y5pcuxWU3iQyY/2RArJtTvMcErqKdE/TKenDdzMOWEQwZWRyb9DcClqoxZ9gVldPr
-         wDTECXwZemxmof+M9UY+XBa2tqVw9/jgGi1tgXZ36I7JTH/AU3ArIzcsWz0YBTT61HQs
-         +hhQ==
+        bh=kD9OQfqTF7ltLq0Rduoymlaz0wI08kY7EOURxhIvEow=;
+        b=Tme4pabvLXoyM2rlI+e9bo7+8RlzRvRWt9hEuUfoh8/NtbVYdMNQtXEM/KuNFjodeV
+         JHtKxxzFlh+kaoHDOKe+7i5h0aRdLw+3ZTJXfiba8wHGyComi2d66FS+weNprMG1VDYA
+         oA++1//uKtNyOMatZE2fFFMdZoiEJ+O/wJpc4lJe2+5d6ZrZztgQVmo/BKGbmthldDh+
+         AnXDS/ervdLwp6equOgdrJWmpeQO9F6lJOXdSs8ZsGPeUd2RCGursHGCiq1hIi0GOt/n
+         FKJi8EL8kRrLkZXB+wwwd/u7YpVjsl2KpLYFhZGb87WROU9xZiyd0x+s2oLwGSc+J9Q7
+         ILpw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=WVh/2mTH8dAaKZnnoPemRRD9Q4gtEEf9slI8pDG6PJE=;
-        b=s5TO4KMa7BUesnbj8IiwursKivtM2v9dlS/NPFfujoakfRXlq4XTNpTiK+IlINYzzg
-         QFmUpb8y7cYuPtv6Qe8cI8SYD6S+A0Idl0dkWPJEj9XgVcJ5BOS8qnsb+RlGx7o/IEQD
-         Qj1Xwwqo1lw/VUcy5XTXu3Vr9x9ybLLtgs6ol8odClwaUg21SZkfejMriSi75Cxt/KMn
-         KgP7zLtk+7Z/KY7CYtmy/2oOjdZCg6Mrgr4zY+dXf7ryY8SbgZhhCJRkGyfb76aUWLKm
-         G/NhP/7BNlJGK02zNVAFwdf+Voh46cIxR6xqQvGxk1f34UpG75WPHJO5k7sKyboeF3YK
-         pxpA==
-X-Gm-Message-State: AOAM533TWm1H1Kk9g4xj0HxM1fIJCoWTybvWop+Siy+QaELH1QP0Xnvp
-        c3YqaI5VQui0i/tzOglPmemmyLN4jFLFfA==
-X-Google-Smtp-Source: ABdhPJxSrYiYx9BRZXfqgbaeMc1zvSknq5M8zNMv2Gaz6kBxKfGxq7jIPSn9x1zX23QolR/BDCe5Tw==
-X-Received: by 2002:a7b:ca4c:: with SMTP id m12mr17238705wml.119.1639146453343;
-        Fri, 10 Dec 2021 06:27:33 -0800 (PST)
+        bh=kD9OQfqTF7ltLq0Rduoymlaz0wI08kY7EOURxhIvEow=;
+        b=Pi5kphJbZCgD6FZZvRFiA8WGenVcVES/5ExF4p1+goL9CMUilIh2J7bY59MTw935e+
+         jducGcv0oXYGAsVJNYhVr+KrLKQMd3Eq11nr8srzFJGwgNQXVLr1WD9ERxgbD7TInh2w
+         u5SmiEPecOSSIs1Uiezqs8ltwuwpRDNhALJB1ICtgbGJQRI6WG74qHdZCjFoB/owHCIn
+         sH0O1RwjlFPC/M5O7imq+Hj6fyTWMDCAZDjdQyP794LMvJcyS6Iz42oZuidjteX0RsKh
+         RPcOWRPANyxmMAgklpy7LZO2Awh5HKjIasSmvjBG/q5j38aW0sBhhf+3CtBjEhl5xU5i
+         4kGg==
+X-Gm-Message-State: AOAM531EUulIa4s0ZOVdYQqwgZrjClA5Y2scI7zz3Gg3tE0Ilqp7cez3
+        WNkoDvjXJU7LlOKOQJCE+Wc=
+X-Google-Smtp-Source: ABdhPJwMNBnDHpjkP8z4PoZiykBAa3wj5mm4monnLDpgwM1fjEEShj5++UqJiWPDRDGKIkvqiS70SA==
+X-Received: by 2002:a7b:c756:: with SMTP id w22mr17135631wmk.34.1639147083913;
+        Fri, 10 Dec 2021 06:38:03 -0800 (PST)
 Received: from orome ([193.209.96.43])
-        by smtp.gmail.com with ESMTPSA id d7sm2614737wrw.87.2021.12.10.06.27.31
+        by smtp.gmail.com with ESMTPSA id d1sm2546255wrz.92.2021.12.10.06.38.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Dec 2021 06:27:32 -0800 (PST)
-Date:   Fri, 10 Dec 2021 15:27:30 +0100
+        Fri, 10 Dec 2021 06:38:03 -0800 (PST)
+Date:   Fri, 10 Dec 2021 15:38:00 +0100
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Dmitry Osipenko <digetx@gmail.com>
 Cc:     Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 12/25] ARM: tegra: Do not use unit-address for OPP nodes
-Message-ID: <YbNj0ifkaDIDEJdn@orome>
+Subject: Re: [PATCH 16/25] ARM: tegra: Avoid pwm- prefix in pinmux nodes
+Message-ID: <YbNmSIqlzB9A6aGX@orome>
 References: <20211209173356.618460-1-thierry.reding@gmail.com>
- <20211209173356.618460-13-thierry.reding@gmail.com>
- <b133948b-1705-b27e-d0fb-b71481148bad@gmail.com>
+ <20211209173356.618460-17-thierry.reding@gmail.com>
+ <169a140b-7cf6-7a60-fc1d-e3a9574604a7@gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="t5Mbt099HfhNxRO0"
+        protocol="application/pgp-signature"; boundary="+nJSjPQh25U+8a7+"
 Content-Disposition: inline
-In-Reply-To: <b133948b-1705-b27e-d0fb-b71481148bad@gmail.com>
+In-Reply-To: <169a140b-7cf6-7a60-fc1d-e3a9574604a7@gmail.com>
 User-Agent: Mutt/2.1.3 (987dde4c) (2021-09-10)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---t5Mbt099HfhNxRO0
+--+nJSjPQh25U+8a7+
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Dec 09, 2021 at 09:38:06PM +0300, Dmitry Osipenko wrote:
+On Thu, Dec 09, 2021 at 10:13:56PM +0300, Dmitry Osipenko wrote:
 > 09.12.2021 20:33, Thierry Reding =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
 > > From: Thierry Reding <treding@nvidia.com>
 > >=20
-> > OPP nodes do not have a "reg" property and therefore shouldn't have a
-> > unit-address. Instead, use a dash instead of the '@' and ',' characters
-> > to allow validation of the nodes against the DT schema.
+> > The "pwm-" prefix currently matches the DT schema for PWM controllers
+> > and throws an error in that case. This is something that should be fixed
+> > in the PWM DT schema, but in this case we can also preempt any such
+> > conflict by naming the nodes after the pins like we do for many others
+> > of these nodes.
 > >=20
 > > Signed-off-by: Thierry Reding <treding@nvidia.com>
 > > ---
-> >  .../boot/dts/tegra124-peripherals-opp.dtsi    | 142 ++++++++---------
-> >  .../boot/dts/tegra20-cpu-opp-microvolt.dtsi   |  82 +++++-----
-> >  arch/arm/boot/dts/tegra20-cpu-opp.dtsi        |  82 +++++-----
-> >  .../arm/boot/dts/tegra20-peripherals-opp.dtsi |  36 ++---
-> >  .../boot/dts/tegra30-cpu-opp-microvolt.dtsi   | 144 +++++++++---------
-> >  arch/arm/boot/dts/tegra30-cpu-opp.dtsi        | 144 +++++++++---------
-> >  .../arm/boot/dts/tegra30-peripherals-opp.dtsi | 130 ++++++++--------
-> >  7 files changed, 382 insertions(+), 378 deletions(-)
+> >  arch/arm/boot/dts/tegra20-colibri-eval-v3.dts | 4 ++--
+> >  arch/arm/boot/dts/tegra20-colibri-iris.dts    | 4 ++--
+> >  arch/arm/boot/dts/tegra20-colibri.dtsi        | 4 ++--
+> >  3 files changed, 6 insertions(+), 6 deletions(-)
+> >=20
+> > diff --git a/arch/arm/boot/dts/tegra20-colibri-eval-v3.dts b/arch/arm/b=
+oot/dts/tegra20-colibri-eval-v3.dts
+> > index a05fb3853da8..d2a3bf9d28bd 100644
+> > --- a/arch/arm/boot/dts/tegra20-colibri-eval-v3.dts
+> > +++ b/arch/arm/boot/dts/tegra20-colibri-eval-v3.dts
+> > @@ -70,11 +70,11 @@ mmccd {
+> >  				nvidia,tristate =3D <TEGRA_PIN_DISABLE>;
+> >  			};
+> > =20
+> > -			pwm-a-b {
+> > +			sdc {
+> >  				nvidia,tristate =3D <TEGRA_PIN_DISABLE>;
+> >  			};
+> > =20
+> > -			pwm-c-d {
+> > +			sdb_sdd {
+> >  				nvidia,tristate =3D <TEGRA_PIN_DISABLE>;
+> >  			};
+> > =20
+> > diff --git a/arch/arm/boot/dts/tegra20-colibri-iris.dts b/arch/arm/boot=
+/dts/tegra20-colibri-iris.dts
+> > index 425494b9ed54..00ecbbd5e9e1 100644
+> > --- a/arch/arm/boot/dts/tegra20-colibri-iris.dts
+> > +++ b/arch/arm/boot/dts/tegra20-colibri-iris.dts
+> > @@ -70,11 +70,11 @@ mmccd {
+> >  				nvidia,tristate =3D <TEGRA_PIN_DISABLE>;
+> >  			};
+> > =20
+> > -			pwm-a-b {
+> > +			sdc {
+> >  				nvidia,tristate =3D <TEGRA_PIN_DISABLE>;
+> >  			};
+> > =20
+> > -			pwm-c-d {
+> > +			sdb_sdd {
+> >  				nvidia,tristate =3D <TEGRA_PIN_DISABLE>;
+> >  			};
+> > =20
+> > diff --git a/arch/arm/boot/dts/tegra20-colibri.dtsi b/arch/arm/boot/dts=
+/tegra20-colibri.dtsi
+> > index 80e439003a6d..2350fda3be6a 100644
+> > --- a/arch/arm/boot/dts/tegra20-colibri.dtsi
+> > +++ b/arch/arm/boot/dts/tegra20-colibri.dtsi
+> > @@ -113,7 +113,7 @@ bl-on {
+> >  			};
+> > =20
+> >  			/* Colibri Backlight PWM<A>, PWM<B> */
+> > -			pwm-a-b {
+> > +			sdc {
+> >  				nvidia,pins =3D "sdc";
+> >  				nvidia,function =3D "pwm";
+> >  				nvidia,tristate =3D <TEGRA_PIN_ENABLE>;
+> > @@ -242,7 +242,7 @@ cif {
+> >  			};
+> > =20
+> >  			/* Colibri PWM<C>, PWM<D> */
+> > -			pwm-c-d {
+> > +			sdb_sdd {
+> >  				nvidia,pins =3D "sdb", "sdd";
+> >  				nvidia,function =3D "pwm";
+> >  				nvidia,tristate =3D <TEGRA_PIN_ENABLE>;
+> >=20
 >=20
-> This patch is wrong, you haven't renamed the delete-node properties [1].
+> Should be a bit nicer to add the 'pin-' prefix, like I suggested to
+> David [1] sometime ago.
 
-Yeah, I noticed that too as I was reworking the EMC timing nodes as you
-requested.
-
-> Please stop rewriting patches and use what already has been sent out and
-> tested, thanks.
->=20
-> [1]
-> https://patchwork.ozlabs.org/project/linux-tegra/patch/20211130232347.950=
--35-digetx@gmail.com/
-
-I've had versions of this in my tree for literally years now, so I
-haven't exactly been rewriting these. Rather this is an iteration of
-work that I had started over 18 months ago:
-
-	http://patchwork.ozlabs.org/project/linux-tegra/patch/20200616135238.30018=
-88-26-thierry.reding@gmail.com/
-
-After that obviously things had to be changed again. The earliest
-version that you sent that I can find is from late October which is when
-I was already in the midst of this latest effort to get Tegra DTBs to
-validate.
-
-What's really been happening here is that we haven't been communicating
-and ended up duplicating work.
-
-Stop making this into something it isn't.
+We don't use the pin- prefix anywhere else, so it would just look out of
+place. We've used this kind of notation where the node name is composed
+of the concatenation of the pins defined within elsewhere, so I prefer
+that.
 
 Thierry
 
---t5Mbt099HfhNxRO0
+--+nJSjPQh25U+8a7+
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmGzY88ACgkQ3SOs138+
-s6Hr2xAAsaJ+AJbOfpt3J4XkUbhIsYrppOt/IAfwR8muWmqL6gOinHFVI+6K16AP
-JFNWJYIXw+j7jqK/6c+D3WTADg2+wqe+x50B0txq1+lsVFXyrhj1WvzjuCY8zEuW
-GZ+dN2W0psHSTUh4l3ugCvfe6BQ9z0m4+NBEQ1xnd3PnSVR7ZFSvIMoBsUhYOhBs
-yqhSUTaH/aF21uROuUseziGFo6bCw/IkqNwspE3TPUCdijyj9JhLrWhsnWtvKysc
-SHBJTOPbaSUFfeyBEEHzHHea541mghH4pXUjLPA5R3JgPu7pgns5al5gxrYCJO6i
-n9PBpEdIer7KxMplAN49Ie2i713ulKExefIWE2/XWKWZHbxfUlv1oAzhEzFr4U3M
-nowx7uC/hU3dLVu0yf/YIArbgLurFWvYwwLIzfMNF0WPhPnshTFJv6ZTt+zeCseb
-7LD+jgy432R7E9oNQXOihz+f0cMwoWC31nzer60OYaHT4pQB5NA31KP0r8PPZ9Kz
-HMC/qe2YB+ydAZbPjlZXMKLf13LY65D1lrIsYuRaZYQ+tGgHTylZrx3ikJWHIUEW
-mIfzVkwvSbh+sS1GBy5i3SjFVjrySk9GLcorVqOweoS/e7jO+SvDugskQSR0nFny
-gXmMUtHM74Lm5MdXlUMlTB5JohNsqyEmnCV3wUiQ5wTMNFkS1dE=
-=QwU9
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmGzZkYACgkQ3SOs138+
+s6GAQQ/8DDZgzPcUm+avCJL3pGb7km61wpg11ZGnjPD/S/bVDOjWNSo3+j/3iYQm
+1Bl6dlJiuiO7FckHDAPsjUC0U6NPcZm7Wo32w1MuaX9XvNINrSw1iBKoOPbThJcE
+jYtt6o9MHQ+LvXVCm0NvSS4fqrClI3bV6/CO8tbJTgT+JfsZ4bukiqOrxfRryuAC
+HNyvN+JctXusZsZR5ZCph8UBnjG0aB2n+G4S3zrog7mjDk3DhVhFAg/JSKKfZfRk
+2zAM8eVMkuAbfxlUdAoR3xjRTnkqzqilXpM5CI9EtdInQGdKUeHAtHe6YJFXD+N9
+5Lr9DbwSl0OymTeCJw2pN0BtLUQo7l54scKSCOPbeLrSiqJRXytWu9ZCu2RLEBvX
+w6LxfkAdtFpJ+bZ68MR0qDmAZyjsMYc86nmTAVnwYt5tQpInr33UbN3qGOiuajkd
+Nb8qDVaviZvyYmqLDPKaLYtPH72SQUtZ7a0XI85A8tY8lxsZ0uA8sfNfXKnNJVkC
+uJlj2BiChtpi4nJYp/mhC/BTOzezXOAqGmFATF0Lgg3g2S7bK7610VYMI0px/0kc
+PHvY/fYk33gX+OXeF3q3n4eY6JUzesd+Wuw7p3ioI9DJUazm74ozjbjaY5FdrHAL
+aIWr/eK8bFgb1y54djhfB8OHxuyEqqOgHptVIu55SVe9/nlOSGs=
+=+WEC
 -----END PGP SIGNATURE-----
 
---t5Mbt099HfhNxRO0--
+--+nJSjPQh25U+8a7+--
