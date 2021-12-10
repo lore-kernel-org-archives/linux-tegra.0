@@ -2,61 +2,61 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 552D9C433EF
-	for <linux-tegra@archiver.kernel.org>; Fri, 10 Dec 2021 16:48:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9DD8C4332F
+	for <linux-tegra@archiver.kernel.org>; Fri, 10 Dec 2021 16:48:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244016AbhLJQvf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 10 Dec 2021 11:51:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33194 "EHLO
+        id S244111AbhLJQvl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 10 Dec 2021 11:51:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33218 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244048AbhLJQvb (ORCPT
+        with ESMTP id S244119AbhLJQvh (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 10 Dec 2021 11:51:31 -0500
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9DB16C0617A2;
-        Fri, 10 Dec 2021 08:47:55 -0800 (PST)
-Received: by mail-wr1-x429.google.com with SMTP id i5so15945048wrb.2;
-        Fri, 10 Dec 2021 08:47:55 -0800 (PST)
+        Fri, 10 Dec 2021 11:51:37 -0500
+Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 752B1C061B38;
+        Fri, 10 Dec 2021 08:48:01 -0800 (PST)
+Received: by mail-wm1-x329.google.com with SMTP id c6-20020a05600c0ac600b0033c3aedd30aso7074489wmr.5;
+        Fri, 10 Dec 2021 08:48:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=+Q/4DEmKM3Cq2HhP5WpDWHKu/Cc6C+vR4Ni+Fz1R7UU=;
-        b=npa1AKPiSHJukax+fAqKhEL68vJlP4dvtWNXKbJbyhBAB3bFoPKQj+gtBj2BQbB27A
-         WWvYhuzhOgqmpKxw4W09yu9rCEo+bwJHUigMNWyVJU/C8L4FZLJtfbEVev1qjvk/OuO8
-         3CpkBINicUNX0wYpVxNIqjmbqR93D+vyFZ2O8twSQv4sBLMdDl8HX+tHseEL9mv3RhPM
-         a9Jvv3JWy6esF84EyoQzPQYB3KH6FOrxPiqb+3mgASPTxO2jUTdzsUq4DWoDtTTd5/no
-         +CgOVHqBgLJPj7qbqdRI4J01FJn61RWWGMwzcPpSmbq3/FLxbU4dGTjzw/iLQKa44sGV
-         pRzw==
+        bh=RRq0hfApreiHtzHlp8RLgD5AXAfijxXr2DgGdf8mphw=;
+        b=A7YASKCtSZmjH5AHUo9Lguft22JcHtL05v4NWtrGm1sEX4ENI3TZNVhNtleiEOgLv7
+         OcsiWZLrj4OjjHL9x3vlcE9XfB+Dk9sIei3lC8LcgiI/bpYbY64UBM0PtnKWDUz3NCh6
+         0sEcywbHnDARQT+OXSwZPoW79g/m6/30FzaveZbgierDJWHVYdpkWSpAFOQzKfJvjKqY
+         khjptbK4qOHhLQ8ihQfGGegKDxwHWMb4xbWtzLbjWm1OoNCEbfrYQdbpRXpw3+nZix0F
+         ghoBlsatowWFoJfN4bMTRfJhgsjn/u11299dgxSGRzdYMvSf1Wua2s7LCLEYBOO22REo
+         1rWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=+Q/4DEmKM3Cq2HhP5WpDWHKu/Cc6C+vR4Ni+Fz1R7UU=;
-        b=QQzpWfo50W5J44i51bY4PTASmF0O/5frAnh6ZVyPSMsIVP7cu43PdRO3VFp86xdPIO
-         EMUIX047zfjbkZ/ksnvc2ee4USRKIDBBNdJqNIltyv0earEnSugMwhX2hYR0Saa1PHxM
-         mkqEkGEf8v6ejy+g2HeoxUemcQJ3DnwTw3CFnhlFhYDVy4RP1Twg/fgqkb6v950KC0J4
-         JKhfg3oY9SHQpliFxCelzCizkb7elwl9szCOkXdGpNHNEYgPsiIqZykKFLJO8rsUBnE6
-         UG1c7J/sgZIDmA2XMRpBUd7rqhVMaWHp8I528dLCTk4UrB2vqvzvWTRQHEPjr0JvsJgx
-         L/yw==
-X-Gm-Message-State: AOAM532VEzmStaBvw2iJlpIKMeOgbb+kVacWkJXPRfUQWQrxIKj20eNi
-        aocJo2j+/+EjecSMol5u4X0=
-X-Google-Smtp-Source: ABdhPJyyZccznAQ0oK5NREEh9zB+zLk0rJiSmA+Nd5N+NyZqzAUta4l1yeW4MKStmJaCEUNZ4WQ+NA==
-X-Received: by 2002:adf:f001:: with SMTP id j1mr15118538wro.351.1639154874252;
-        Fri, 10 Dec 2021 08:47:54 -0800 (PST)
+        bh=RRq0hfApreiHtzHlp8RLgD5AXAfijxXr2DgGdf8mphw=;
+        b=53d8u2lsHvGg8CV0UytdAWFoeXXgPIYBjZCVVDyjv7vJ60F5VPwTpEEC+n35eE/BBQ
+         vQfE3Cq93U8yyrvYHc/k+UK8sFn6L0wpMBRXZsGTVChHxy/MRWnUiWKpmblGbjVzZrRm
+         Cm/zTMRABjWfMqKNSDwICW0AXIOJ9GedE1fBty7F55VNTmv7Q8StqdqyeFfREYjOZwq5
+         A+88lwnAFqV92xjsw3jwi8w3uA1R4BE32WQv6u1agFNQKrFg2IKMTect9WOlSY+TWcYi
+         4tvc6zpyw2hQMtnE2orUapf6eJzK8+i1MquJh74OVjRrqrcXwpGonK4K6sGBrtsxGo+N
+         bQ5g==
+X-Gm-Message-State: AOAM531Gdc74B/UNU3jw8HFQBt1z5PIF+O1Lh/Edi/F/cf6D8IgIZcZO
+        rKYkdTGr939gAihMF+UzBlc=
+X-Google-Smtp-Source: ABdhPJySgQ8B+evQLwgajoXSdSDmIbVYgiz32CGDuiiffF8C/H8TuQ4BuH59Vat1aCW7PaZFdPGKkA==
+X-Received: by 2002:a7b:c310:: with SMTP id k16mr17906114wmj.169.1639154880025;
+        Fri, 10 Dec 2021 08:48:00 -0800 (PST)
 Received: from localhost ([193.209.96.43])
-        by smtp.gmail.com with ESMTPSA id y15sm4309083wry.72.2021.12.10.08.47.52
+        by smtp.gmail.com with ESMTPSA id f3sm2984522wrm.96.2021.12.10.08.47.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Dec 2021 08:47:53 -0800 (PST)
+        Fri, 10 Dec 2021 08:47:59 -0800 (PST)
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
         Rob Herring <robh+dt@kernel.org>,
         Thierry Reding <thierry.reding@gmail.com>
 Cc:     Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 4/6] arm64: tegra: Add EMC general interrupt on Tegra194
-Date:   Fri, 10 Dec 2021 17:47:39 +0100
-Message-Id: <20211210164741.881161-5-thierry.reding@gmail.com>
+Subject: [PATCH v2 6/6] arm64: tegra: Hook up MMC and BPMP to memory controller
+Date:   Fri, 10 Dec 2021 17:47:41 +0100
+Message-Id: <20211210164741.881161-7-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20211210164741.881161-1-thierry.reding@gmail.com>
 References: <20211210164741.881161-1-thierry.reding@gmail.com>
@@ -68,29 +68,41 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-Add the missing EMC general interrupt for the external memory controller
-on Tegra194.
+Use the interconnects property to hook up the MMC and BPMP to the memory
+controller. This is needed to set the correct bus-level DMA mask, which
+is a prerequisite for adding IOMMU support.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
-Changes in v2:
-- new patch to add the missing EMC general interrupt on Tegra194
+ arch/arm64/boot/dts/nvidia/tegra234.dtsi | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
- arch/arm64/boot/dts/nvidia/tegra194.dtsi | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-index 8d29b7fdb044..ee668902dd6c 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-@@ -593,6 +593,7 @@ emc: external-memory-controller@2c60000 {
- 				compatible = "nvidia,tegra194-emc";
- 				reg = <0x0 0x02c60000 0x0 0x90000>,
- 				      <0x0 0x01780000 0x0 0x80000>;
-+				interrupts = <GIC_SPI 224 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&bpmp TEGRA194_CLK_EMC>;
- 				clock-names = "emc";
+diff --git a/arch/arm64/boot/dts/nvidia/tegra234.dtsi b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
+index a75b21c6a521..fafbd9a819a4 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra234.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
+@@ -157,6 +157,9 @@ mmc@3460000 {
+ 			assigned-clock-parents = <&bpmp TEGRA234_CLK_PLLC4>;
+ 			resets = <&bpmp TEGRA234_RESET_SDMMC4>;
+ 			reset-names = "sdhci";
++			interconnects = <&mc TEGRA234_MEMORY_CLIENT_SDMMCRAB &emc>,
++					<&mc TEGRA234_MEMORY_CLIENT_SDMMCWAB &emc>;
++			interconnect-names = "dma-mem", "write";
+ 			nvidia,pad-autocal-pull-up-offset-hs400 = <0x00>;
+ 			nvidia,pad-autocal-pull-down-offset-hs400 = <0x00>;
+ 			nvidia,pad-autocal-pull-up-offset-1v8-timeout = <0x0a>;
+@@ -289,6 +292,11 @@ bpmp: bpmp {
+ 		#clock-cells = <1>;
+ 		#reset-cells = <1>;
+ 		#power-domain-cells = <1>;
++		interconnects = <&mc TEGRA234_MEMORY_CLIENT_BPMPR &emc>,
++				<&mc TEGRA234_MEMORY_CLIENT_BPMPW &emc>,
++				<&mc TEGRA234_MEMORY_CLIENT_BPMPDMAR &emc>,
++				<&mc TEGRA234_MEMORY_CLIENT_BPMPDMAW &emc>;
++		interconnect-names = "read", "write", "dma-mem", "dma-write";
  
+ 		bpmp_i2c: i2c {
+ 			compatible = "nvidia,tegra186-bpmp-i2c";
 -- 
 2.34.1
 
