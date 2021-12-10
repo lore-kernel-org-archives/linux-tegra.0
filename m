@@ -2,120 +2,150 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC1C2C433EF
-	for <linux-tegra@archiver.kernel.org>; Fri, 10 Dec 2021 16:57:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C091C433F5
+	for <linux-tegra@archiver.kernel.org>; Fri, 10 Dec 2021 17:02:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232023AbhLJRBD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 10 Dec 2021 12:01:03 -0500
-Received: from ams.source.kernel.org ([145.40.68.75]:58642 "EHLO
-        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229821AbhLJRBD (ORCPT
+        id S244306AbhLJRFy (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 10 Dec 2021 12:05:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36956 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237724AbhLJRFy (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 10 Dec 2021 12:01:03 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id B1DE1B82885;
-        Fri, 10 Dec 2021 16:57:26 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E03CEC00446;
-        Fri, 10 Dec 2021 16:57:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1639155445;
-        bh=jET+YLDQ2r1VmsaDyAomjk4pSNQ9+dFdxLKsYrjuJcU=;
-        h=From:To:Cc:Subject:Date:From;
-        b=UmhIYrIMDeDK7n1lLWFTjsNiyMfC0BgwO4+Oe1AD7IiL8Nd/8YdaaAUdKes9hfmAX
-         LtqRQBKnniX7w9m3KbUcxgOlxMF6cx01+0uKbCTS/RTUQviDyWHF30XWJ9uDSbtkGh
-         Y41Whl+tzeDeGfC9HgMTsh0am4kj/b97aemcI0+p8A3l99+GJsGLaQ42JNBPgYUDco
-         /BDrGrWdJFXg1tA7w23/ysFLNeXb4KIma4vYfmlbRvI0oRYz960LJeo5YCk8TVAaju
-         FjncMM0+oMhqY1eeruK7XKiKF7AGewpcTkY15Av5lZM2cxphfWnfyAH5e/Mxi/ZySw
-         QQuH23PHwd+Yg==
-From:   Nathan Chancellor <nathan@kernel.org>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Cc:     Nick Desaulniers <ndesaulniers@google.com>,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        llvm@lists.linux.dev, Nathan Chancellor <nathan@kernel.org>,
-        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
-Subject: [PATCH v2] soc/tegra: fuse: Fix bitwise vs. logical OR warning
-Date:   Fri, 10 Dec 2021 09:55:29 -0700
-Message-Id: <20211210165528.3232292-1-nathan@kernel.org>
-X-Mailer: git-send-email 2.34.1
+        Fri, 10 Dec 2021 12:05:54 -0500
+Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA080C061746;
+        Fri, 10 Dec 2021 09:02:18 -0800 (PST)
+Received: by mail-lf1-x12f.google.com with SMTP id d10so19207519lfg.6;
+        Fri, 10 Dec 2021 09:02:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=khe42KQd2i39PRZO8NKm3PH3oE5cDTRnrPeaaVcSlKs=;
+        b=aT7O05Ob2F7u0IucdOLOdYhj2Y5eqR5hBxxJrJ8DW/EY7X8rKUpDWeWZ5luBvaIX/r
+         HKJCT2arWXABOgWOO4uI6JhtC1iqZjryMGoSY8cjTMKV1glKXd8ZZNpp8lV79xrxdFBt
+         5TyW6h0DDOu6NwW9eUWmn60BcpqHv0cX2+Db5+HsiBBpWvu9K6GY5i2au3XRWMYlVbn/
+         4n26zfICKYqURTQEkXQKLSTMPJGAHaVX8ypa+WLDcZDi3Iiyt6vWj6gsOAjUMpaHDTBL
+         L2FjQMoH/JczSz3woiDe2+0p5KiAgL/7qB2Yl0SwOY13V2vZzWUCnZdYlloXnHg+1aJ0
+         emKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=khe42KQd2i39PRZO8NKm3PH3oE5cDTRnrPeaaVcSlKs=;
+        b=pU0nTJaKxoAVa6BeR5QAx3RgG7L1j98KV8zMjjaSgkW0YNPUFyfMOfVXL05gPl+FML
+         TFAB11wm6ZuU5b4NdF3ozOV20NuVldkti6CA3tjVVBFUACzhkp0NRUXX8iCMF3fao2di
+         +1SPRUgnVSECvtY4a1txThAgzD9WL61i7CnGYfiBdNTXFjfv+0eYu/7P/t7p2Trgadif
+         jwqkalO0hWrsSicSLTnWMo0yQyTtu8foEhJ2EKcDSQOWuyo/YZ8t3TgvywDkZ+uaB7v2
+         3QnQjJIvHb3uyFf+ueu8+1ON+JiqEho/30PiAivTcvZuOJzxEmmfdCCLGsbbxY8EtJiE
+         1ZTw==
+X-Gm-Message-State: AOAM531D/csV+0k08lfPw/mWKimFHDhhBHNehwffMPAf45Y4GwruHIl5
+        ia2eTRbQISuwOO+iJTUnse3b3yiYNxk=
+X-Google-Smtp-Source: ABdhPJwNyEUsEdqvetBjSnSDOj73MmwzhfsOY76fP8zmlqjVuPrjyf/EFK/lSd61vQzt4HIW6syguw==
+X-Received: by 2002:a05:6512:1506:: with SMTP id bq6mr13705022lfb.444.1639155735845;
+        Fri, 10 Dec 2021 09:02:15 -0800 (PST)
+Received: from [192.168.2.145] (94-29-46-111.dynamic.spd-mgts.ru. [94.29.46.111])
+        by smtp.googlemail.com with ESMTPSA id b5sm360912lff.278.2021.12.10.09.02.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 10 Dec 2021 09:02:15 -0800 (PST)
+Subject: Re: [PATCH v5 06/24] ARM: tegra: Add common device-tree base for
+ Tegra30 ASUS Transformers
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
+        David Heidelberg <david@ixit.cz>,
+        Svyatoslav Ryhel <clamor95@gmail.com>,
+        Anton Bambura <jenneron@protonmail.com>,
+        Antoni Aloy Torrens <aaloytorrens@gmail.com>,
+        Nikola Milosavljevic <mnidza@outlook.com>,
+        Ion Agorria <ion@agorria.com>,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        Ihor Didenko <tailormoon@rambler.ru>,
+        Andreas Westman Dorcsak <hedmoo@yahoo.com>,
+        Maxim Schwalm <maxim.schwalm@gmail.com>,
+        Raffaele Tranquillini <raffaele.tranquillini@gmail.com>,
+        Jasper Korten <jja2000@gmail.com>,
+        Thomas Graichen <thomas.graichen@gmail.com>,
+        Stefan Eichenberger <stefan.eichenberger@toradex.com>,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20211208173609.4064-1-digetx@gmail.com>
+ <20211208173609.4064-7-digetx@gmail.com> <YbN3OektEKoHY3s1@orome>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <55a397be-a1cd-efaa-28bb-c0291c200295@gmail.com>
+Date:   Fri, 10 Dec 2021 20:02:14 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <YbN3OektEKoHY3s1@orome>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-A new warning in clang points out two instances where boolean
-expressions are being used with a bitwise OR instead of logical OR:
+10.12.2021 18:50, Thierry Reding пишет:
+> On Wed, Dec 08, 2021 at 08:35:51PM +0300, Dmitry Osipenko wrote:
+>> From: Svyatoslav Ryhel <clamor95@gmail.com>
+>>
+>> Add common DTSI for Tegra30 ASUS Transformers. It will be used by multiple
+>> device-trees of ASUS devices. The common part initially was born out of
+>> the ASUS TF300T tablet's device-tree that was created by Michał Mirosław.
+>> It was heavily reworked and improved by Svyatoslav Ryhel, Maxim Schwalm,
+>> Ion Agorria et al.
+>>
+>> [digetx@gmail.com: factored out common part into separate patch and wrote commit message]
+>> Co-developed-by: Ion Agorria <ion@agorria.com>
+>> Signed-off-by: Ion Agorria <ion@agorria.com>
+>> Co-developed-by: Maxim Schwalm <maxim.schwalm@gmail.com>
+>> Signed-off-by: Maxim Schwalm <maxim.schwalm@gmail.com>
+>> Co-developed-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
+>> Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
+>> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>>  .../dts/tegra30-asus-transformer-common.dtsi  | 1729 +++++++++++++++++
+>>  1 file changed, 1729 insertions(+)
+>>  create mode 100644 arch/arm/boot/dts/tegra30-asus-transformer-common.dtsi
+>>
+>> diff --git a/arch/arm/boot/dts/tegra30-asus-transformer-common.dtsi b/arch/arm/boot/dts/tegra30-asus-transformer-common.dtsi
+>> new file mode 100644
+>> index 000000000000..be77212dd8c7
+>> --- /dev/null
+>> +++ b/arch/arm/boot/dts/tegra30-asus-transformer-common.dtsi
+>> @@ -0,0 +1,1729 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +
+>> +#include <dt-bindings/input/gpio-keys.h>
+>> +#include <dt-bindings/input/input.h>
+>> +#include <dt-bindings/thermal/thermal.h>
+>> +
+>> +#include "tegra30.dtsi"
+>> +#include "tegra30-cpu-opp.dtsi"
+>> +#include "tegra30-cpu-opp-microvolt.dtsi"
+>> +
+>> +/ {
+>> +	chassis-type = "convertible";
+>> +
+>> +	aliases {
+>> +		mmc0 = &sdmmc4;	/* eMMC */
+> 
+> Looks like a tab snuck in there... otherwise this also has some nodes
+> sorted in the wrong order.
 
-drivers/soc/tegra/fuse/speedo-tegra20.c:72:9: warning: use of bitwise '|' with boolean operands [-Wbitwise-instead-of-logical]
-                reg = tegra_fuse_read_spare(i) |
-                      ^~~~~~~~~~~~~~~~~~~~~~~~~~
-                                               ||
-drivers/soc/tegra/fuse/speedo-tegra20.c:72:9: note: cast one or both operands to int to silence this warning
-drivers/soc/tegra/fuse/speedo-tegra20.c:87:9: warning: use of bitwise '|' with boolean operands [-Wbitwise-instead-of-logical]
-                reg = tegra_fuse_read_spare(i) |
-                      ^~~~~~~~~~~~~~~~~~~~~~~~~~
-                                               ||
-drivers/soc/tegra/fuse/speedo-tegra20.c:87:9: note: cast one or both operands to int to silence this warning
-2 warnings generated.
+I was fixing these tabs, but missed that one. Good catch.
 
-The motivation for the warning is that logical operations short circuit
-while bitwise operations do not.
+Apparently I missed to recheck the order after the most recent changes,
+good that you noticed it.
 
-In this instance, tegra_fuse_read_spare() is not semantically returning
-a boolean, it is returning a bit value. Use u32 for its return type so
-that it can be used with either bitwise or boolean operators without any
-warnings.
+> [...]
+>> +	pad-keys {
+> 
+> Any specific reason why this is called pad-keys? We call it gpio-keys
+> everywhere else.
 
-Fixes: 25cd5a391478 ("ARM: tegra: Add speedo-based process identification")
-Link: https://github.com/ClangBuiltLinux/linux/issues/1488
-Suggested-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
-Signed-off-by: Nathan Chancellor <nathan@kernel.org>
----
+Not sure about the name. Perhaps Svyatoslav likes the pad-keys name
+more. I recall it was named gpio-keys at some point in the past.
 
-v1 -> v2: https://lore.kernel.org/r/20211021214500.2388146-1-nathan@kernel.org/
-
-* Change return type of tegra_fuse_read_spare(), instead of changing
-  bitwise OR to logical OR in tegra20_init_speedo_data() (Michał).
-
-It would be nice to get this fixed sooner rather than later, as ARCH=arm
-allmodconfig is broken due to -Werror.
-
- drivers/soc/tegra/fuse/fuse-tegra.c | 2 +-
- drivers/soc/tegra/fuse/fuse.h       | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/soc/tegra/fuse/fuse-tegra.c b/drivers/soc/tegra/fuse/fuse-tegra.c
-index f2151815db58..e714ed3b61bc 100644
---- a/drivers/soc/tegra/fuse/fuse-tegra.c
-+++ b/drivers/soc/tegra/fuse/fuse-tegra.c
-@@ -320,7 +320,7 @@ static struct platform_driver tegra_fuse_driver = {
- };
- builtin_platform_driver(tegra_fuse_driver);
- 
--bool __init tegra_fuse_read_spare(unsigned int spare)
-+u32 __init tegra_fuse_read_spare(unsigned int spare)
- {
- 	unsigned int offset = fuse->soc->info->spare + spare * 4;
- 
-diff --git a/drivers/soc/tegra/fuse/fuse.h b/drivers/soc/tegra/fuse/fuse.h
-index de58feba0435..ecff0c08e959 100644
---- a/drivers/soc/tegra/fuse/fuse.h
-+++ b/drivers/soc/tegra/fuse/fuse.h
-@@ -65,7 +65,7 @@ struct tegra_fuse {
- void tegra_init_revision(void);
- void tegra_init_apbmisc(void);
- 
--bool __init tegra_fuse_read_spare(unsigned int spare);
-+u32 __init tegra_fuse_read_spare(unsigned int spare);
- u32 __init tegra_fuse_read_early(unsigned int offset);
- 
- u8 tegra_get_major_rev(void);
-
-base-commit: 0fcfb00b28c0b7884635dacf38e46d60bf3d4eb1
--- 
-2.34.1
-
+Again, will you change it all by yourself or should I make v6?
