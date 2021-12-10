@@ -2,137 +2,134 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E947BC433F5
-	for <linux-tegra@archiver.kernel.org>; Fri, 10 Dec 2021 15:01:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A0CBC433F5
+	for <linux-tegra@archiver.kernel.org>; Fri, 10 Dec 2021 15:06:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231383AbhLJPFH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 10 Dec 2021 10:05:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35184 "EHLO
+        id S242621AbhLJPJi (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 10 Dec 2021 10:09:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36264 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231156AbhLJPFH (ORCPT
+        with ESMTP id S235073AbhLJPJh (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 10 Dec 2021 10:05:07 -0500
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF7E8C061746
-        for <linux-tegra@vger.kernel.org>; Fri, 10 Dec 2021 07:01:31 -0800 (PST)
-Received: by mail-wm1-x333.google.com with SMTP id m25-20020a7bcb99000000b0033aa12cdd33so7325573wmi.1
-        for <linux-tegra@vger.kernel.org>; Fri, 10 Dec 2021 07:01:31 -0800 (PST)
+        Fri, 10 Dec 2021 10:09:37 -0500
+Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4EB18C061746
+        for <linux-tegra@vger.kernel.org>; Fri, 10 Dec 2021 07:06:02 -0800 (PST)
+Received: by mail-wm1-x32e.google.com with SMTP id i8-20020a7bc948000000b0030db7b70b6bso9246816wml.1
+        for <linux-tegra@vger.kernel.org>; Fri, 10 Dec 2021 07:06:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=0KZrnIu+zteTn9ooumUQg8iNynSkm9sAUepqTBXW/M4=;
-        b=NAQy1KruoKj5SEP+ima2Po9jkRO/vTHfdI/aESfdX+5BlU2+fXUM211I9wCDSQHIhD
-         07vJREaMl3cUpOvDIQp2BUrFlIFL6jCArixbLFJvgDS7prYfSyKqo1zh6eVZxWknCQOv
-         6ONxMOitebp2L3u+QZZLydbzYAImKb1x3z8IOIaq0//hOjOCQhDXJc7oy7M/BPr/RKud
-         e4mdfTJQd6neB6gHCirRi7Ffa8N6tQhsgru9wzvp89ULjT2X7bMm+OxyVH8vN/3he3Qd
-         q5RPUugZeyBw6UJNAzZb+Io8Y97vImaO5QcpibV/1ygriN3sxbYxGc4MMOvqNxmDDFfI
-         tj5Q==
+        bh=L4pD+iiVtUklR5bHcOrp0J6f/ab+fZCKK7RexyIQQHg=;
+        b=Q5MSzSRVTibIYF9VMQEyzG2/ITKptNspS2L471Ffi+hBH2dyMkxRnbfWo9lr5sskPR
+         oOeAToliv9e+nAsuayeUPV1nSfW4VY7/RIn4wXnHwi3jpHoLPJDyKpgl0aP1/WFB90wz
+         20mWxBLhP6/3dqADVA3y7+rPSgPwNDKvqHoDPxXnA4O7TMZSSk2eLnnUVDP0mBYdV3e1
+         VN2YhRRGWb2mcavxOQuEU+DKOn2jbP8KYlu40JD+zPAyxn3nQIzVTQd4NMXTItsQMxMK
+         yuhgQob7WHlvgd11DtfZqH/53r5jHP6UXpzR/xvvuDNkOl1VXY/wcwDnP3EvKCbmMgx/
+         ossQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=0KZrnIu+zteTn9ooumUQg8iNynSkm9sAUepqTBXW/M4=;
-        b=Tc8GrSGPxpySlHec2x2zraCPGM366ua4TdH5TdiO1o0ZYXlIce4jYEqb5cVvVELxat
-         cJxIJzsYVr0as+O2VvmgW2I9vxqZsVMaqUqv56lFNEH/YOG3uJ39hJaf2DeYNJxzUI29
-         qXn7wQcRrmfuZQml1qBbd9d3U3mwOYaJyOcUm8jBlJo2u76BFc1zwLBOmYs7N6N9b+Bk
-         1WuBLuqo/itmLu7bXjBCw7rv7iWfi9CXeY+1GV2w0sXIn1kAo362/CoOpnhXyQiNOzt5
-         cDdXmIplEvVF2X5payso5q+aO7siG6YZitqAe+R9mvtD9CbHIFL1atmM21FAgAYnK1/K
-         eb1Q==
-X-Gm-Message-State: AOAM532lX+cHl+4U0spfCtO8XoejhuxC2klJpYt8bErgookU5v0M1Tja
-        erPvjP1WYEWw+O4DIdisLVM=
-X-Google-Smtp-Source: ABdhPJwCiv8ck7B7ojLZ8p01z7AAvnZFw2WPI/lBofRecKM2iGl6fne/OF7/Z/P5EeMK3dc6YQwPOA==
-X-Received: by 2002:a7b:c109:: with SMTP id w9mr17516450wmi.114.1639148490443;
-        Fri, 10 Dec 2021 07:01:30 -0800 (PST)
+        bh=L4pD+iiVtUklR5bHcOrp0J6f/ab+fZCKK7RexyIQQHg=;
+        b=c+FGbkvi7Fd8U4MQDMFuxdE8JN0uOJaUEyCRTNO5422B4uXDwymFniasIfWKt9GJuN
+         CjdWXOcN3y6J+Br55OcRp4/IDtP3jINroKseRNLfZqfcs1k1pYDEw9AO6Q82NRc2Och3
+         zuc6W91q1AkABKp9Jk3SOvFwribxDtAmihe3BPHVbI+/v07VmdbZsqwPyJ8CGC6TgfqT
+         gZ7/reEnlmn+woUugB08FAKEkFRZlRhzMzmdsOMS/6yE1rx7pYePM9FMe+NvzrRi6Gnp
+         LqZLhoXFMs8mirP1uafAqVlLoxZLZLEgeYmBERvGExE4gcfKJY+j3KMWA64e3tNrbRZi
+         BhsA==
+X-Gm-Message-State: AOAM5302cJe0ALbL434UslQvvkNwYjbvMiyOodOhqrMbbS1QgCbRbxuo
+        to62hbCGSI7QHGsHbiS3xMs=
+X-Google-Smtp-Source: ABdhPJwaTfPQkCKb6LwbpUWZ7u04M4L/3tu8ajmsF8Gj7SCwVtyf53qp7wM3QJID5G3CMIKicLf9pA==
+X-Received: by 2002:a05:600c:3b8f:: with SMTP id n15mr17374486wms.180.1639148760872;
+        Fri, 10 Dec 2021 07:06:00 -0800 (PST)
 Received: from orome ([193.209.96.43])
-        by smtp.gmail.com with ESMTPSA id k8sm2800614wrn.91.2021.12.10.07.01.28
+        by smtp.gmail.com with ESMTPSA id z18sm2650268wrq.11.2021.12.10.07.05.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Dec 2021 07:01:29 -0800 (PST)
-Date:   Fri, 10 Dec 2021 16:01:26 +0100
+        Fri, 10 Dec 2021 07:05:59 -0800 (PST)
+Date:   Fri, 10 Dec 2021 16:05:57 +0100
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Dmitry Osipenko <digetx@gmail.com>
 Cc:     Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 22/25] ARM: tegra: Move I2C clock frequency to bus nodes
-Message-ID: <YbNrxsv6Gd9jvx7l@orome>
+Subject: Re: [PATCH 23/25] ARM: tegra: Remove stray #reset-cells property
+Message-ID: <YbNs1SCLclVifFDP@orome>
 References: <20211209173356.618460-1-thierry.reding@gmail.com>
- <20211209173356.618460-23-thierry.reding@gmail.com>
- <4865a5b6-c841-99c6-f132-24967a349f9b@gmail.com>
+ <20211209173356.618460-24-thierry.reding@gmail.com>
+ <9b59ae8b-0c99-c59d-e837-aff49d78cbbc@gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="AL+M4xkQ+OLwRWm1"
+        protocol="application/pgp-signature"; boundary="RvHoiqZAwus5EfEP"
 Content-Disposition: inline
-In-Reply-To: <4865a5b6-c841-99c6-f132-24967a349f9b@gmail.com>
+In-Reply-To: <9b59ae8b-0c99-c59d-e837-aff49d78cbbc@gmail.com>
 User-Agent: Mutt/2.1.3 (987dde4c) (2021-09-10)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---AL+M4xkQ+OLwRWm1
+--RvHoiqZAwus5EfEP
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Dec 09, 2021 at 09:57:08PM +0300, Dmitry Osipenko wrote:
+On Thu, Dec 09, 2021 at 10:24:26PM +0300, Dmitry Osipenko wrote:
 > 09.12.2021 20:33, Thierry Reding =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
 > > From: Thierry Reding <treding@nvidia.com>
 > >=20
-> > The "clock-frequency" property for an I2C controller needs to be
-> > specified at the bus level.
+> > The Ouya board specifies the #reset-cells property for the GPIO
+> > controller. Since the GPIO controller doesn't provide reset controls
+> > this is not needed, so they can be dropped.
 > >=20
 > > Signed-off-by: Thierry Reding <treding@nvidia.com>
 > > ---
-> >  arch/arm/boot/dts/tegra30-asus-nexus7-grouper.dtsi | 3 ++-
-> >  arch/arm/boot/dts/tegra30-asus-nexus7-tilapia.dtsi | 4 ++--
-> >  2 files changed, 4 insertions(+), 3 deletions(-)
+> >  arch/arm/boot/dts/tegra30-ouya.dts | 1 -
+> >  1 file changed, 1 deletion(-)
+> >=20
+> > diff --git a/arch/arm/boot/dts/tegra30-ouya.dts b/arch/arm/boot/dts/teg=
+ra30-ouya.dts
+> > index 4259871b76c9..fd64aadc472a 100644
+> > --- a/arch/arm/boot/dts/tegra30-ouya.dts
+> > +++ b/arch/arm/boot/dts/tegra30-ouya.dts
+> > @@ -70,7 +70,6 @@ hdmi@54280000 {
+> > =20
+> >  	gpio: gpio@6000d000 {
+> >  		gpio-ranges =3D <&pinmux 0 0 248>;
+> > -		#reset-cells =3D <1>;
+> >  	};
+> > =20
+> >  	pinmux@70000868 {
+> >=20
 >=20
-> The clock-frequency is specified in the parent-common N7 DTSI, NAK.
+> Can we uncomment the gpio-ranges in tegra.dtsi? I reviewed and tested it
+> almost 3 years ago [1].
 >=20
-> There is already patch from David that removes the clock-frequency from
-> NFC node [1], please use it.
->=20
-> Please never again rewrite the preexisting patches, this makes you look o=
-dd.
+> [1]
+> https://lore.kernel.org/linux-tegra/20180726154025.13173-2-stefan@agner.c=
+h/
 
-Again, please don't make this into something it isn't.
-
-> I suggest to collect *all* patches (not only your own) into single
-> for-next branch, resolving all conflicts, making sure that you don't
-> duplicate the effort and letting it all to be tested before it will hit
-> the bus.
-
-You know, if you guys communicated better over existing channels or
-actually let me know of what's going on then a lot of this could've been
-avoided. I don't have visibility into what you're all up to, so I can't
-take that into account.
-
-If I happen to start working on something that someone else is also
-doing in their corner, that's by accident, not because I have bad
-intentions or because "I want to do everything myself", or whatever
-other reason you keep coming up with.
-
-Stop insinuating things that aren't true.
+Does it still work today?
 
 Thierry
 
---AL+M4xkQ+OLwRWm1
+--RvHoiqZAwus5EfEP
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmGza8YACgkQ3SOs138+
-s6EuyBAAgLEbOhhHoM6qjpY2oBK+/4VB4JTlLxKdebN9kT+Y4emfuUZmMwkDSTil
-jgRwsMn5bVRDNJVskYkznkwA6NklwEnphPUFLgq/2HlZJpw9V7mOlJqjFEdbOIO2
-jg7y3Wy5KyhpDqlvHtDsMB0Y+h+vmO7XsH2AGL9k7PXbEWv2kwjubpOAtKuTZx1m
-JdgEjgBHgBvEonU9UdEW1Axk4DdqBD5cFT3Gfa6nVw6UzfRK6iPeEZs6he2n/YHw
-852IT7KEjEAzdmHi1msVE/e4O7s1Vy4q1Wv6+ViYwiYsJdgm775rFTKR3GZ6PkvW
-fcpPn9XMTd7ybnYg+k/BlSBPdfC/VJRVGYhgyODXsgGQPxSfflDfPZL9WTXElvXW
-FFGdBTv+Kl7hRPpQUYxAfS8e6+CxH/xLttNXdvY6k+qwo487ipTcgP7m9SfvGqGi
-JD8ezdyi+qFtydq3ldRZsAJOiS9F7W1aNSMIWjQraPxM0qbo1tRuyE4iC3NHsbEG
-x4ZCDbjwlGJmQ9pf/7z0iRhf+gFTxiMebFAsrSzlTDVacbjc/kkjGKZiIFFrZUlu
-Aw03ZRFTZ9Tvd3vkugsrwjbaJ3jBF9x2q5kANG3OjtVyV5tBTAvZJEXc/bLcqAwl
-BCkSauoblOqxDMHbzYv4m+uIAi5T1fHpaF/Psk3lp+Z+He7Wp9k=
-=xgHf
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmGzbNQACgkQ3SOs138+
+s6HVpRAAulqnpbutifQ8MqSSR+HloYJ0cj+GVMeQ0q0xB/Ju2l3Y835fgbz9bw+H
+lEOKxO9HxMJymyN9+POPH1GIHb/zOXmsHe1QKnlxOtpVLrcFwa/gQNFuZg9tTgVr
+TG+xfcEmTynHFYq/FSlq2V1JESE3TdWS2E/9XdFp1lXVM20d4ReraVLGQPtyyfMt
+rh0Ax63PN6/gvgwG5Q5DeW5/YWVqahrMBSaYO781/VLtru1TL701SoIERNZgXcjh
+LrdY+zCIG5K6ZsrAm9W+nbi+Ftj4C0GYmM6eAIES5a1Vps+2Txz8IxDjImOino4r
+6dSr2mVamSbff3kwcMLeaIVSl29PapVcP6HUrt2VpykuDVpVAk8IBoVgL5Wjq9AD
+BQj+N/6zH46e6n3QjBehGOaSLJu9CnTITpYXMEsgo3oag3mT5k7Hf8dH0N5SmyKT
+QidQg5ldppxgs5gFRlBn4SnAr4epeOwixIbyhLstPAApi7TxSt3DdxxLKpHTDeYx
+uAfU3rsZBAIft7aPRWL452tFlALSPli2QsPkqDEPVpVVOqN2O7b8PimWJKryiqKJ
+gCcZRwN9CDRs3ni/hHLT35gxGUcxhfMmZvP4psmXfPqQSULlfDI158uel0OD0v53
+WuRPBxC2g7r03eeO1CNGU/vDy5S3PtoM+xtXgNcbg622/QAax38=
+=k8e9
 -----END PGP SIGNATURE-----
 
---AL+M4xkQ+OLwRWm1--
+--RvHoiqZAwus5EfEP--
