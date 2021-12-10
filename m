@@ -2,134 +2,124 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A0CBC433F5
-	for <linux-tegra@archiver.kernel.org>; Fri, 10 Dec 2021 15:06:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E9D2C433EF
+	for <linux-tegra@archiver.kernel.org>; Fri, 10 Dec 2021 15:15:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242621AbhLJPJi (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 10 Dec 2021 10:09:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36264 "EHLO
+        id S235322AbhLJPTH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 10 Dec 2021 10:19:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38510 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235073AbhLJPJh (ORCPT
+        with ESMTP id S235353AbhLJPTH (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 10 Dec 2021 10:09:37 -0500
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4EB18C061746
-        for <linux-tegra@vger.kernel.org>; Fri, 10 Dec 2021 07:06:02 -0800 (PST)
-Received: by mail-wm1-x32e.google.com with SMTP id i8-20020a7bc948000000b0030db7b70b6bso9246816wml.1
-        for <linux-tegra@vger.kernel.org>; Fri, 10 Dec 2021 07:06:02 -0800 (PST)
+        Fri, 10 Dec 2021 10:19:07 -0500
+Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5805C061746
+        for <linux-tegra@vger.kernel.org>; Fri, 10 Dec 2021 07:15:31 -0800 (PST)
+Received: by mail-lf1-x135.google.com with SMTP id bi37so18669599lfb.5
+        for <linux-tegra@vger.kernel.org>; Fri, 10 Dec 2021 07:15:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=L4pD+iiVtUklR5bHcOrp0J6f/ab+fZCKK7RexyIQQHg=;
-        b=Q5MSzSRVTibIYF9VMQEyzG2/ITKptNspS2L471Ffi+hBH2dyMkxRnbfWo9lr5sskPR
-         oOeAToliv9e+nAsuayeUPV1nSfW4VY7/RIn4wXnHwi3jpHoLPJDyKpgl0aP1/WFB90wz
-         20mWxBLhP6/3dqADVA3y7+rPSgPwNDKvqHoDPxXnA4O7TMZSSk2eLnnUVDP0mBYdV3e1
-         VN2YhRRGWb2mcavxOQuEU+DKOn2jbP8KYlu40JD+zPAyxn3nQIzVTQd4NMXTItsQMxMK
-         yuhgQob7WHlvgd11DtfZqH/53r5jHP6UXpzR/xvvuDNkOl1VXY/wcwDnP3EvKCbmMgx/
-         ossQ==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=phaoDr6eSfVkdRaM2IGEkMgF2cRckolimSHWqi9K2x8=;
+        b=oBemBmm4+UARcNz3HjxZtcJheGFx3aGSbwPPnsRwG1LidBKf6g0WOG3uI1T86mSxAS
+         1rBm0akyrH1rJEWfOhIVW2qrJDyTue2iuEI+Y8H52eAN+58iy3zmcG2Sr/OusvdTW7me
+         LUMPBO5tNdLb7JcZ71F+Sk4Y5YwYfPHVZIeu/k9te2wA/RNygNLieUktNuV/6WMpQyaV
+         wb+6HdYms8TjBexMX8GTdWCMm1YTBjC+cwj94mkovrNxDP4Rd+rG88Jxe5qTsh9w+JPR
+         c2Tli/S/LAPSyB8qRHuFozLPdX6jt48IjNoPt+Wyy8QIO1+/TEFZJwl63BgXCOv0OnNY
+         0WqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=L4pD+iiVtUklR5bHcOrp0J6f/ab+fZCKK7RexyIQQHg=;
-        b=c+FGbkvi7Fd8U4MQDMFuxdE8JN0uOJaUEyCRTNO5422B4uXDwymFniasIfWKt9GJuN
-         CjdWXOcN3y6J+Br55OcRp4/IDtP3jINroKseRNLfZqfcs1k1pYDEw9AO6Q82NRc2Och3
-         zuc6W91q1AkABKp9Jk3SOvFwribxDtAmihe3BPHVbI+/v07VmdbZsqwPyJ8CGC6TgfqT
-         gZ7/reEnlmn+woUugB08FAKEkFRZlRhzMzmdsOMS/6yE1rx7pYePM9FMe+NvzrRi6Gnp
-         LqZLhoXFMs8mirP1uafAqVlLoxZLZLEgeYmBERvGExE4gcfKJY+j3KMWA64e3tNrbRZi
-         BhsA==
-X-Gm-Message-State: AOAM5302cJe0ALbL434UslQvvkNwYjbvMiyOodOhqrMbbS1QgCbRbxuo
-        to62hbCGSI7QHGsHbiS3xMs=
-X-Google-Smtp-Source: ABdhPJwaTfPQkCKb6LwbpUWZ7u04M4L/3tu8ajmsF8Gj7SCwVtyf53qp7wM3QJID5G3CMIKicLf9pA==
-X-Received: by 2002:a05:600c:3b8f:: with SMTP id n15mr17374486wms.180.1639148760872;
-        Fri, 10 Dec 2021 07:06:00 -0800 (PST)
-Received: from orome ([193.209.96.43])
-        by smtp.gmail.com with ESMTPSA id z18sm2650268wrq.11.2021.12.10.07.05.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Dec 2021 07:05:59 -0800 (PST)
-Date:   Fri, 10 Dec 2021 16:05:57 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Dmitry Osipenko <digetx@gmail.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=phaoDr6eSfVkdRaM2IGEkMgF2cRckolimSHWqi9K2x8=;
+        b=InX3s8rwhxJZuXbG5Kp3hfLk1q08ZdEVl5h/V1oYyW3JrJ6SKUaQ5j1ja6bOdnvrJb
+         HexOoXjX2Cw3j/r7AmUbiEXOto7WezwIX//0CQOVb9S/ykpo2k3K0Vc8oKc2+J66agMd
+         f6QdYdOhkfwAJUB+l1tQEW68G34kpOKMGcvuYn9Wj4+KJ1X9w74rfqtHzvEFQ4/O8eOp
+         KP6v4bX173bYfUCDFRemYJ/tLfrS/EWXnlSFAaTMwUgfWQkEh1ktVa2gMoamIcQbi1Zu
+         zHGGEnpePoZLMhw2YyjkSCWfTDcuQRDagoahHboHM6mqo96gROp6VgPp/B8gj4+Vs0qB
+         d21A==
+X-Gm-Message-State: AOAM533F0Q5ZYRHOvHowYZ++YSY8j29OBHmpJswK/RiIc5GsoY+n0BHV
+        ft8VWinwGrj9g6fn/8filstk8hOhsG8=
+X-Google-Smtp-Source: ABdhPJz1GBebVbbnH/mh6oenfPju+X67g7PRaM6l20cNARAnql4fCbwjUSWFy4LWEXEkHOi+Y9UeIw==
+X-Received: by 2002:a19:6b0b:: with SMTP id d11mr12885067lfa.446.1639149329765;
+        Fri, 10 Dec 2021 07:15:29 -0800 (PST)
+Received: from [192.168.2.145] (94-29-46-111.dynamic.spd-mgts.ru. [94.29.46.111])
+        by smtp.googlemail.com with ESMTPSA id v10sm335570ljp.125.2021.12.10.07.15.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 10 Dec 2021 07:15:29 -0800 (PST)
+Subject: Re: [PATCH 01/25] ARM: tegra: Clean up external memory controller
+ nodes
+To:     Thierry Reding <thierry.reding@gmail.com>
 Cc:     Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 23/25] ARM: tegra: Remove stray #reset-cells property
-Message-ID: <YbNs1SCLclVifFDP@orome>
 References: <20211209173356.618460-1-thierry.reding@gmail.com>
- <20211209173356.618460-24-thierry.reding@gmail.com>
- <9b59ae8b-0c99-c59d-e837-aff49d78cbbc@gmail.com>
+ <20211209173356.618460-2-thierry.reding@gmail.com>
+ <ec912e49-5ac6-476c-903e-cf1ad08e62bb@gmail.com> <YbNFVznlT+ErMfSf@orome>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <a4a14cc9-975e-ae36-8486-02fbecb00931@gmail.com>
+Date:   Fri, 10 Dec 2021 18:15:27 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="RvHoiqZAwus5EfEP"
-Content-Disposition: inline
-In-Reply-To: <9b59ae8b-0c99-c59d-e837-aff49d78cbbc@gmail.com>
-User-Agent: Mutt/2.1.3 (987dde4c) (2021-09-10)
+In-Reply-To: <YbNFVznlT+ErMfSf@orome>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+10.12.2021 15:17, Thierry Reding пишет:
+> On Thu, Dec 09, 2021 at 11:01:10PM +0300, Dmitry Osipenko wrote:
+>> 09.12.2021 20:33, Thierry Reding пишет:
+>>> From: Thierry Reding <treding@nvidia.com>
+>>>
+>>> The external memory controller should be sorted after the memory
+>>> controller to keep the ordering by unit-address intact.
+>>
+>> "sorted after the memory controller, I don't understand what this means.
+>> Please clarify.
+> 
+> In device tree we sort nodes by unit-address. In these files the
+> external memory controller device tree nodes (which have a higher unit-
+> address than the memory controller device tree nodes) was listed before
+> the memory controller device tree node. This fixes the order by sorting
+> the nodes correctly.
+> 
+> Guess "sort after" doesn't really exist, but I thought it'd be clear
+> enough in the context to avoid using so many words. Guess I was wrong.
 
---RvHoiqZAwus5EfEP
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Now I see what you did, thanks.
 
-On Thu, Dec 09, 2021 at 10:24:26PM +0300, Dmitry Osipenko wrote:
-> 09.12.2021 20:33, Thierry Reding =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > From: Thierry Reding <treding@nvidia.com>
-> >=20
-> > The Ouya board specifies the #reset-cells property for the GPIO
-> > controller. Since the GPIO controller doesn't provide reset controls
-> > this is not needed, so they can be dropped.
-> >=20
-> > Signed-off-by: Thierry Reding <treding@nvidia.com>
-> > ---
-> >  arch/arm/boot/dts/tegra30-ouya.dts | 1 -
-> >  1 file changed, 1 deletion(-)
-> >=20
-> > diff --git a/arch/arm/boot/dts/tegra30-ouya.dts b/arch/arm/boot/dts/teg=
-ra30-ouya.dts
-> > index 4259871b76c9..fd64aadc472a 100644
-> > --- a/arch/arm/boot/dts/tegra30-ouya.dts
-> > +++ b/arch/arm/boot/dts/tegra30-ouya.dts
-> > @@ -70,7 +70,6 @@ hdmi@54280000 {
-> > =20
-> >  	gpio: gpio@6000d000 {
-> >  		gpio-ranges =3D <&pinmux 0 0 248>;
-> > -		#reset-cells =3D <1>;
-> >  	};
-> > =20
-> >  	pinmux@70000868 {
-> >=20
->=20
-> Can we uncomment the gpio-ranges in tegra.dtsi? I reviewed and tested it
-> almost 3 years ago [1].
->=20
-> [1]
-> https://lore.kernel.org/linux-tegra/20180726154025.13173-2-stefan@agner.c=
-h/
+>>> While at it,
+>>> rename the emc-timings and timing nodes to avoid including the RAM code
+>>> and clock frequency in their names. There is no requirement to do this,
+>>> so we can use simple enumerations instead.
+>>>
+>>> Signed-off-by: Thierry Reding <treding@nvidia.com>
+>>> ---
+>>>  arch/arm/boot/dts/tegra124-apalis-emc.dtsi    |  483 +++--
+>>>  .../arm/boot/dts/tegra124-jetson-tk1-emc.dtsi |  699 +++---
+>>>  arch/arm/boot/dts/tegra124-nyan-big-emc.dtsi  | 1918 +++++++++--------
+>>>  .../arm/boot/dts/tegra124-nyan-blaze-emc.dtsi |  639 +++---
+>>>  4 files changed, 1900 insertions(+), 1839 deletions(-)
+>>
+>> It's very suspicious that you changed only T124. This all doesn't look
+>> good to me.
+>>
+>> Please either explain it all or drop this patch.
+> 
+> Well, on other SoCs the order of the MC vs. EMC was correct, so I didn't
+> have to touch those and therefore didn't fix up the numbering while at
+> it. What exactly is suspicous about that?
+> 
+> I'll go and update all of those files as well if that makes you happy.
 
-Does it still work today?
+You renamed only the T124 timings here. This is similar to another patch
+where you partially removed the reg-shift, which is incorrect to do.
 
-Thierry
-
---RvHoiqZAwus5EfEP
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmGzbNQACgkQ3SOs138+
-s6HVpRAAulqnpbutifQ8MqSSR+HloYJ0cj+GVMeQ0q0xB/Ju2l3Y835fgbz9bw+H
-lEOKxO9HxMJymyN9+POPH1GIHb/zOXmsHe1QKnlxOtpVLrcFwa/gQNFuZg9tTgVr
-TG+xfcEmTynHFYq/FSlq2V1JESE3TdWS2E/9XdFp1lXVM20d4ReraVLGQPtyyfMt
-rh0Ax63PN6/gvgwG5Q5DeW5/YWVqahrMBSaYO781/VLtru1TL701SoIERNZgXcjh
-LrdY+zCIG5K6ZsrAm9W+nbi+Ftj4C0GYmM6eAIES5a1Vps+2Txz8IxDjImOino4r
-6dSr2mVamSbff3kwcMLeaIVSl29PapVcP6HUrt2VpykuDVpVAk8IBoVgL5Wjq9AD
-BQj+N/6zH46e6n3QjBehGOaSLJu9CnTITpYXMEsgo3oag3mT5k7Hf8dH0N5SmyKT
-QidQg5ldppxgs5gFRlBn4SnAr4epeOwixIbyhLstPAApi7TxSt3DdxxLKpHTDeYx
-uAfU3rsZBAIft7aPRWL452tFlALSPli2QsPkqDEPVpVVOqN2O7b8PimWJKryiqKJ
-gCcZRwN9CDRs3ni/hHLT35gxGUcxhfMmZvP4psmXfPqQSULlfDI158uel0OD0v53
-WuRPBxC2g7r03eeO1CNGU/vDy5S3PtoM+xtXgNcbg622/QAax38=
-=k8e9
------END PGP SIGNATURE-----
-
---RvHoiqZAwus5EfEP--
+If you'll split this patch into two and rename all the timings
+consistently in a separate patch, then I'll be happy. Please note that
+you'll also have to change the new DTs if you're going to take them into
+5.17.
