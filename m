@@ -2,200 +2,142 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 294E2C433F5
-	for <linux-tegra@archiver.kernel.org>; Fri, 10 Dec 2021 12:16:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06FE3C433EF
+	for <linux-tegra@archiver.kernel.org>; Fri, 10 Dec 2021 12:17:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230031AbhLJMTv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 10 Dec 2021 07:19:51 -0500
-Received: from mail-dm6nam10on2048.outbound.protection.outlook.com ([40.107.93.48]:46561
-        "EHLO NAM10-DM6-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S229483AbhLJMTu (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 10 Dec 2021 07:19:50 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=crY3l2QmIbG5UzpPapu/BVG8+AKuJP3XDqw7LDAz549bD8GuWRppkIjQGZqGDcaYoETxrpnrYWGrrwjG+kui1DER9j1cXu2vZwAXObslxHDiqv+Z2OL+EeazLMOk8WZnQEJESwVUp8UNKU074KleR/NYAWhLGAcB6zeRKO8e8dA+dfxTtOJpjfVeOcLmUnTDKUdEE80lj72t1auPazwtmsEQLiAcJuSOmsHLZGrso+x90vsjnWAHJJljwL32B3YxgTjrILxJB56gGhAPSIDf8FQZNJ/SlK2ypigHF0djRX7KJmSIo/EZRS3wlZWgBRLZ0TOlMJUQ4lhY2pAjZPcMpQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Slt+9fP9OeSpqNTHPmvrHG1E0ydNuIK6LJsqnPx5bv0=;
- b=WbmnUf6jS8kfs5VK7NWpnUIej34JaZTjU/jT7SE0qlnqb3A1EvgJf5oIUr3UVXT8W/5XvgK3bTiHBMw0QlI4JsLgJi6QenWQntmgpYw2u196OZ3X3w6U5LDVkhizwWTvtTCl0Roo7aZk0lnV4J5PAVnvGdUjkRkv1nZ2ieAxgsSTMXaYedYRBmUO1CMbHAp3dgAbNkye/a8/5wq+RvG4nBgwtjZmdi2WfqoDbZw18eDeZI+e+FL2dOK6gH5Xl2Tavj3vVl1fwRQr97dMKB6qEKk5HMakwKmKB0EX96Umfb6O6QyGEYDI8gmpcUdYIdwZ/Oe13f4FsAfHbJXT+2pELw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=temperror (sender ip
- is 203.18.50.13) smtp.rcpttodomain=amd.com smtp.mailfrom=nvidia.com;
- dmarc=temperror action=none header.from=nvidia.com; dkim=none (message not
- signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Slt+9fP9OeSpqNTHPmvrHG1E0ydNuIK6LJsqnPx5bv0=;
- b=d1+ewM/qdKg444doSzK1fDWNDDsTNHVt2+4+PIL5YhBszYxRZdnBF2DrQ2yjADwmPwbquNS8I8VQbqCT2M+BPuqQsEDRxp3bWU9JKjkVg+oXNM77o/4u7IBQLsQBJWlaRGN70jE//b4RKZjDFo17UI2L+o9HWxeHn5OJPdvqCUJEHH7sUt8R+U1qHRXmyl0nB5gACN+f5ZcHXeGa61sv69xtD9SW3ZmQIwyGNmnjQ+rn6BuP30E4CzfsCDQUoHc3mLde/7bn3iIKHgZySoP/XV4/qlcTTT8ugcmYpjTPr9nqQqoAW10FqoNBU8+WkcRivP3us/sFFovcfExA9LFXuQ==
-Received: from BN6PR21CA0024.namprd21.prod.outlook.com (2603:10b6:404:8e::34)
- by DM5PR12MB1148.namprd12.prod.outlook.com (2603:10b6:3:74::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4755.21; Fri, 10 Dec
- 2021 12:16:14 +0000
-Received: from BN8NAM11FT034.eop-nam11.prod.protection.outlook.com
- (2603:10b6:404:8e:cafe::70) by BN6PR21CA0024.outlook.office365.com
- (2603:10b6:404:8e::34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4801.7 via Frontend
- Transport; Fri, 10 Dec 2021 12:16:14 +0000
-X-MS-Exchange-Authentication-Results: spf=temperror (sender IP is
- 203.18.50.13) smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=temperror action=none header.from=nvidia.com;
-Received-SPF: TempError (protection.outlook.com: error in processing during
- lookup of nvidia.com: DNS Timeout)
-Received: from mail.nvidia.com (203.18.50.13) by
- BN8NAM11FT034.mail.protection.outlook.com (10.13.176.139) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.4778.13 via Frontend Transport; Fri, 10 Dec 2021 12:16:12 +0000
-Received: from HQMAIL105.nvidia.com (172.20.187.12) by HKMAIL102.nvidia.com
- (10.18.16.11) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Fri, 10 Dec
- 2021 12:16:10 +0000
-Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Fri, 10 Dec
- 2021 12:16:08 +0000
-Received: from kyarlagadda-linux.nvidia.com (172.20.187.5) by mail.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server id 15.0.1497.18 via Frontend
- Transport; Fri, 10 Dec 2021 12:16:05 +0000
-From:   Akhil R <akhilrajeev@nvidia.com>
-To:     <andy.shevchenko@gmail.com>, <christian.koenig@amd.com>,
-        <digetx@gmail.com>, <jonathanh@nvidia.com>, <ldewangan@nvidia.com>,
-        <linux-i2c@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <p.zabel@pengutronix.de>,
-        <sumit.semwal@linaro.org>, <thierry.reding@gmail.com>,
-        <robh+dt@kernel.org>, <devicetree@vger.kernel.org>
-CC:     <akhilrajeev@nvidia.com>
-Subject: [PATCH v3] i2c: tegra: use i2c_timings for bus clock freq
-Date:   Fri, 10 Dec 2021 17:45:57 +0530
-Message-ID: <1639138557-1709-1-git-send-email-akhilrajeev@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-X-NVConfidentiality: public
+        id S236068AbhLJMVI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 10 Dec 2021 07:21:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53600 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229483AbhLJMVI (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Fri, 10 Dec 2021 07:21:08 -0500
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F338FC061746
+        for <linux-tegra@vger.kernel.org>; Fri, 10 Dec 2021 04:17:32 -0800 (PST)
+Received: by mail-wr1-x434.google.com with SMTP id v11so14572830wrw.10
+        for <linux-tegra@vger.kernel.org>; Fri, 10 Dec 2021 04:17:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=HSEdPBDPX+gdhClLmDp0y7TAdLojPAK0Bl5S/iPqSzo=;
+        b=ByBfgC1M61gCH9tfVq5mKhQCub3P2YNM37nipzmS3R2cZD/HbPzqxn1sTLis9wNChd
+         DRi4+z4eUiSuJF9VJTLz6wzbBzzb6qDM9u5PzhVxJMLE73G2l8s9BTdyrAF1exkPddNf
+         y5fo0NEueBsH5t0QHxs5eUCey9JRaAZLVEGzU6McvpPwZ4Y43sqT+zQgOpaIt+clP3D6
+         OMM0kA6HNr5A9Kxh+1bMNIDrWFnpXDuRUhRAuVNQ8QTVa0PRl+YcStf+Wswe34mNWYpI
+         ONn/7p2noWFYNoeqlO7p15pK7hnhFKT5kn4JV3AQ95dSTeKkKBRkcAZ8KLK1JqfbFbsJ
+         QDKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=HSEdPBDPX+gdhClLmDp0y7TAdLojPAK0Bl5S/iPqSzo=;
+        b=B4dUNpVU0S2N84SpD/lXbxkG10t4ktZWpq2gTeslml4448DAOfFxJp0vKezprnZHj0
+         GdpWvNU9j2lp7wULGMm5VnEDcMrqNWaFnQ66vX99oLb6BEsyDFBj8pM6xKKEXXpv7RiV
+         wARxcpyu5GAkVCU2ZcuJS76o5vK4gfAJTQlqMbIuVN5AmLCsFAmcBsUV9F76YB8E18Oi
+         FyUyKuNHTTXB5PCCQuRqHyng5DtAWEJZjWI6AdT3QhpevSQAG1CjLTF6GFOObWULW1mU
+         uGTp/GROhz95XPMNW4jKoplfDGi1+3Xc5RtOP43a5lXSgpgqhj9wJh2pAIzs3sCt+LdG
+         IHEA==
+X-Gm-Message-State: AOAM530e2mP2DOWrGdRLM/CNDn7k1leojDWshTcLbws8jUGGddezcoBN
+        k2tTs2vt1TH7wBYJnWhuZEo=
+X-Google-Smtp-Source: ABdhPJyQKw21WZ+q+XO3WBKZJJn8k+RsDjhzHRuOimgSZ/U1iuvjwx9SQwj13avKvy4YRKlvdRna+g==
+X-Received: by 2002:a5d:45c4:: with SMTP id b4mr13509766wrs.222.1639138651420;
+        Fri, 10 Dec 2021 04:17:31 -0800 (PST)
+Received: from orome ([193.209.96.43])
+        by smtp.gmail.com with ESMTPSA id az15sm2654333wmb.0.2021.12.10.04.17.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 Dec 2021 04:17:30 -0800 (PST)
+Date:   Fri, 10 Dec 2021 13:17:27 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH 01/25] ARM: tegra: Clean up external memory controller
+ nodes
+Message-ID: <YbNFVznlT+ErMfSf@orome>
+References: <20211209173356.618460-1-thierry.reding@gmail.com>
+ <20211209173356.618460-2-thierry.reding@gmail.com>
+ <ec912e49-5ac6-476c-903e-cf1ad08e62bb@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: a635cb6e-7b4a-4af8-e99d-08d9bbd6db91
-X-MS-TrafficTypeDiagnostic: DM5PR12MB1148:EE_
-X-Microsoft-Antispam-PRVS: <DM5PR12MB1148388F61484F277C4B8913C0719@DM5PR12MB1148.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:513;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: iBhzIT/rx9RhDhdTBc32frW6bIga/9kHrlH1ztWplmWkvPPGI/OaMFob5EgyHj86d/5kQCqe9ZIeJ2ZHdDwJ6PutO5LMoctOHLyOtcnJf9dkBeAqHc5yVujx6H/fWENKkxU6gJA2BBfDSGi3z7Xq83bLfcoZrf2yxh2jxPRbTLxn3oW4my/0qE/iE9tP9aiNcPm5AUBUvVtiFHaEOi445BhsPc+N706NEqWpblbBHG32pgRfOVoNAAVE2FUL7H/e8t9Coph0pQk3bND2QeDlGBrPBeHW0FKdZ1A12hdJefMixc5D0n9h4JCsLSt/7KLqwQv9tG8byefoQjRbVS79xs23EtK8tYrwIEXCLDUxG3jtVKx7USAXS80ljO6ugFHHsDOxRGYvcaO3+R7HquAL6YPERtfmMcySQDDkbw1+YFeaeViqtFceddCoQY6yOVGZJ32qPqVFDmBWxicCw8n64Sp5X4WeoR5KPqHGhaaLAqAMnzX06MgBjOAlz8ruLEqYBmy/+wIRsbO703sF6ZNbY/+RFwaDlt4REmotls0z1rEPR2boc7auGSbiU7pH6KU2TFEtRmh3/odKvFFIo3cOXlPQL0dkZar0ThBItPV9PND1f/GK6j/hF2PAJlwuNnDqheV5ASJJ1glvMwsJIReC7p7rI0RC+QSt+zEDdySyYYzhcXhgc/VyWR3UEzSgvaCSX5S0hgmX5mBzKNwa+Rr7rj0HmrSIovKS7BFxaWB1McaXr3DeKYgKSXmPagoKHTbpvKNbi3FqQPSLLW1umd+FqDj8BRVAreqAra6KZksn8AtqT5k1lnJtzohPL1kXSnBvEO/Pd7H2pmCgSTZRHhUrGGJd8wwmE5vs4frgI/vohHc=
-X-Forefront-Antispam-Report: CIP:203.18.50.13;CTRY:HK;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:hkhybrid02.nvidia.com;CAT:NONE;SFS:(4636009)(46966006)(36840700001)(40470700001)(40460700001)(7416002)(356005)(6666004)(316002)(110136005)(34020700004)(63350400001)(7636003)(186003)(36756003)(2906002)(336012)(508600001)(70586007)(8936002)(86362001)(70206006)(7696005)(26005)(8676002)(82310400004)(83380400001)(921005)(5660300002)(2616005)(4326008)(47076005)(107886003)(426003)(36860700001)(63370400001)(83996005)(2101003);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Dec 2021 12:16:12.5804
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a635cb6e-7b4a-4af8-e99d-08d9bbd6db91
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[203.18.50.13];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT034.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB1148
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="Q2WBmmuvboH5xNq6"
+Content-Disposition: inline
+In-Reply-To: <ec912e49-5ac6-476c-903e-cf1ad08e62bb@gmail.com>
+User-Agent: Mutt/2.1.3 (987dde4c) (2021-09-10)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Use i2c_timings struct and corresponding methods to get bus clock frequency
 
-Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
-Suggested-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
----
- drivers/i2c/busses/i2c-tegra.c | 21 +++++++++------------
- 1 file changed, 9 insertions(+), 12 deletions(-)
+--Q2WBmmuvboH5xNq6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-v2->v3: Removed unused variable 'err'.
-v1->v2: Added temp var for i2c_timings struct in function.
+On Thu, Dec 09, 2021 at 11:01:10PM +0300, Dmitry Osipenko wrote:
+> 09.12.2021 20:33, Thierry Reding =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > From: Thierry Reding <treding@nvidia.com>
+> >=20
+> > The external memory controller should be sorted after the memory
+> > controller to keep the ordering by unit-address intact.
+>=20
+> "sorted after the memory controller, I don't understand what this means.
+> Please clarify.
 
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index a5be8f0..93b61c4 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -246,7 +246,7 @@ struct tegra_i2c_hw_feature {
-  * @msg_buf: pointer to current message data
-  * @msg_buf_remaining: size of unsent data in the message buffer
-  * @msg_read: indicates that the transfer is a read access
-- * @bus_clk_rate: current I2C bus clock rate
-+ * @timings: i2c timings information like bus frequency
-  * @multimaster_mode: indicates that I2C controller is in multi-master mode
-  * @tx_dma_chan: DMA transmit channel
-  * @rx_dma_chan: DMA receive channel
-@@ -273,7 +273,7 @@ struct tegra_i2c_dev {
- 	unsigned int nclocks;
- 
- 	struct clk *div_clk;
--	u32 bus_clk_rate;
-+	struct i2c_timings timings;
- 
- 	struct completion msg_complete;
- 	size_t msg_buf_remaining;
-@@ -610,6 +610,7 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
- {
- 	u32 val, clk_divisor, clk_multiplier, tsu_thd, tlow, thigh, non_hs_mode;
- 	acpi_handle handle = ACPI_HANDLE(i2c_dev->dev);
-+	struct i2c_timings *t = &i2c_dev->timings;
- 	int err;
- 
- 	/*
-@@ -642,14 +643,14 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
- 	if (i2c_dev->is_vi)
- 		tegra_i2c_vi_init(i2c_dev);
- 
--	switch (i2c_dev->bus_clk_rate) {
-+	switch (t->bus_freq_hz) {
- 	case I2C_MAX_STANDARD_MODE_FREQ + 1 ... I2C_MAX_FAST_MODE_PLUS_FREQ:
- 	default:
- 		tlow = i2c_dev->hw->tlow_fast_fastplus_mode;
- 		thigh = i2c_dev->hw->thigh_fast_fastplus_mode;
- 		tsu_thd = i2c_dev->hw->setup_hold_time_fast_fast_plus_mode;
- 
--		if (i2c_dev->bus_clk_rate > I2C_MAX_FAST_MODE_FREQ)
-+		if (t->bus_freq_hz > I2C_MAX_FAST_MODE_FREQ)
- 			non_hs_mode = i2c_dev->hw->clk_divisor_fast_plus_mode;
- 		else
- 			non_hs_mode = i2c_dev->hw->clk_divisor_fast_mode;
-@@ -685,7 +686,7 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
- 	clk_multiplier = (tlow + thigh + 2) * (non_hs_mode + 1);
- 
- 	err = clk_set_rate(i2c_dev->div_clk,
--			   i2c_dev->bus_clk_rate * clk_multiplier);
-+			   t->bus_freq_hz * clk_multiplier);
- 	if (err) {
- 		dev_err(i2c_dev->dev, "failed to set div-clk rate: %d\n", err);
- 		return err;
-@@ -724,7 +725,7 @@ static int tegra_i2c_disable_packet_mode(struct tegra_i2c_dev *i2c_dev)
- 	 * before disabling the controller so that the STOP condition has
- 	 * been delivered properly.
- 	 */
--	udelay(DIV_ROUND_UP(2 * 1000000, i2c_dev->bus_clk_rate));
-+	udelay(DIV_ROUND_UP(2 * 1000000, i2c_dev->timings.bus_freq_hz));
- 
- 	cnfg = i2c_readl(i2c_dev, I2C_CNFG);
- 	if (cnfg & I2C_CNFG_PACKET_MODE_EN)
-@@ -1254,7 +1255,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
- 	 * Total bits = 9 bits per byte (including ACK bit) + Start & stop bits
- 	 */
- 	xfer_time += DIV_ROUND_CLOSEST(((xfer_size * 9) + 2) * MSEC_PER_SEC,
--				       i2c_dev->bus_clk_rate);
-+				       i2c_dev->timings.bus_freq_hz);
- 
- 	int_mask = I2C_INT_NO_ACK | I2C_INT_ARBITRATION_LOST;
- 	tegra_i2c_unmask_irq(i2c_dev, int_mask);
-@@ -1631,12 +1632,8 @@ static void tegra_i2c_parse_dt(struct tegra_i2c_dev *i2c_dev)
- {
- 	struct device_node *np = i2c_dev->dev->of_node;
- 	bool multi_mode;
--	int err;
- 
--	err = device_property_read_u32(i2c_dev->dev, "clock-frequency",
--				       &i2c_dev->bus_clk_rate);
--	if (err)
--		i2c_dev->bus_clk_rate = I2C_MAX_STANDARD_MODE_FREQ;
-+	i2c_parse_fw_timings(i2c_dev->dev, &i2c_dev->timings, true);
- 
- 	multi_mode = device_property_read_bool(i2c_dev->dev, "multi-master");
- 	i2c_dev->multimaster_mode = multi_mode;
--- 
-2.7.4
+In device tree we sort nodes by unit-address. In these files the
+external memory controller device tree nodes (which have a higher unit-
+address than the memory controller device tree nodes) was listed before
+the memory controller device tree node. This fixes the order by sorting
+the nodes correctly.
 
+Guess "sort after" doesn't really exist, but I thought it'd be clear
+enough in the context to avoid using so many words. Guess I was wrong.
+
+>=20
+> > While at it,
+> > rename the emc-timings and timing nodes to avoid including the RAM code
+> > and clock frequency in their names. There is no requirement to do this,
+> > so we can use simple enumerations instead.
+> >=20
+> > Signed-off-by: Thierry Reding <treding@nvidia.com>
+> > ---
+> >  arch/arm/boot/dts/tegra124-apalis-emc.dtsi    |  483 +++--
+> >  .../arm/boot/dts/tegra124-jetson-tk1-emc.dtsi |  699 +++---
+> >  arch/arm/boot/dts/tegra124-nyan-big-emc.dtsi  | 1918 +++++++++--------
+> >  .../arm/boot/dts/tegra124-nyan-blaze-emc.dtsi |  639 +++---
+> >  4 files changed, 1900 insertions(+), 1839 deletions(-)
+>=20
+> It's very suspicious that you changed only T124. This all doesn't look
+> good to me.
+>=20
+> Please either explain it all or drop this patch.
+
+Well, on other SoCs the order of the MC vs. EMC was correct, so I didn't
+have to touch those and therefore didn't fix up the numbering while at
+it. What exactly is suspicous about that?
+
+I'll go and update all of those files as well if that makes you happy.
+
+Thierry
+
+--Q2WBmmuvboH5xNq6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmGzRVUACgkQ3SOs138+
+s6FrehAAiK3CGe8SpLmz9u0ls0ULKlDMP978AHM0zbguxOagUXmFrymb60uLYFbo
+0qnUsZIgOMzhyfyFZdvxDVIi+hH3f1iVQUWwE0+8Jy5K4DDfPbniKHhSHAFMnmBT
++FOrewFV/6M39NxUcKnjn9QBqhVuIBb2COvJJwvy3geM78emDy+LXuWfGiL/nw9C
+SpEQj6DBi0q1RnbBmgp56IcIVv1fJjRtx+od1gX2IuDWClYYNBf0k+lvfyYV0rzU
+2uiflwA4j6t/BrHqAB5ux7uHNT592S7b3oI1GPvgJx75UB24Nc/EyquSzg1q4E2i
+F8q/M/geehGWsg5XacvUq7DIf2nNbKNfndDJdvVfXsuLojnKpRYpe324q3him59c
+ejdoURH8hjefJkoxN6LC9yCRlEaGdWc3BhKlby+gBx667IqYXVnO9zxGd2VnOInQ
+k+Z8mZn234fSgluK5eWKNwOqB8OQR3/MMPHcPjZv1LvQWyiNVZfjrnSkw1N2epYM
+b6XsWKZq1hZJ8GJydqVGjh+FhriJbI3esEEqDg4dJrWyQNUYRJhwkC99eD4uOAAE
+fhsDV3FxjVQRR+xxHMd3+pcuIt4o/4AVqCm3DfKXlRMz2JwGKUrbaO0oStCzVnvE
+z/SuZIXJrzMBCxXcrEyDeI51yZPWpp9rbOjX0yKeZXQdIe4MzBw=
+=TFGi
+-----END PGP SIGNATURE-----
+
+--Q2WBmmuvboH5xNq6--
