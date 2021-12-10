@@ -2,144 +2,118 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A014C433EF
-	for <linux-tegra@archiver.kernel.org>; Fri, 10 Dec 2021 16:02:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66326C433F5
+	for <linux-tegra@archiver.kernel.org>; Fri, 10 Dec 2021 16:08:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238563AbhLJQGC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 10 Dec 2021 11:06:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49974 "EHLO
+        id S233882AbhLJQMC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 10 Dec 2021 11:12:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51430 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238225AbhLJQGC (ORCPT
+        with ESMTP id S240274AbhLJQMC (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 10 Dec 2021 11:06:02 -0500
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF419C061746;
-        Fri, 10 Dec 2021 08:02:26 -0800 (PST)
-Received: by mail-wr1-x430.google.com with SMTP id v11so15655395wrw.10;
-        Fri, 10 Dec 2021 08:02:26 -0800 (PST)
+        Fri, 10 Dec 2021 11:12:02 -0500
+Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7622C061746
+        for <linux-tegra@vger.kernel.org>; Fri, 10 Dec 2021 08:08:26 -0800 (PST)
+Received: by mail-lj1-x22a.google.com with SMTP id i63so14478512lji.3
+        for <linux-tegra@vger.kernel.org>; Fri, 10 Dec 2021 08:08:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=BjXW6fm0PtmxnDuZ5f1C1GLdB8wT64MP92DyErb42Vo=;
-        b=AHPTEPEkmkZBW/y95HtVx67utNlKCNQCCPEUZCPZIUcAJ82n5XUTzyGyBjzwmYr3QQ
-         sUhZOtD6fDyEkTGeFAV8SPSDgT4ySzhiaEsEmoWUYkLhJFd4NCkYm5Re3HDrKDxYPetZ
-         NMlDdZsdm6mCDZi+zsefMQRbNa9r1JVd9F2jxJc8K4hJmItHAKteefYfwpuIzEKPT90g
-         +tMyi41dNSxpFKlm639o1JJmJ0F7UFy+jrFnk1+G1w73Arzyc2bfahRyg74C/vIGulSP
-         teIkhAftKUUszZ3k0mROLjCh+qr+7QtRMkUg1u1OhlFB/2ArDEUHHoj1ISnkLABHIc3f
-         9opA==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=yO19n6rEX9s/r1FIcXbkbOtSlXt5jG4o1654FyO9tIE=;
+        b=fT+UqaTu62FOdp5euMV5kpqBbx29Nv77uSDVYtleuR+VsSa+Ofb1iF2DbJyw0cpQ05
+         pYoY5pSKl4uBoWcN9lZ3fP6c9po5PZjVqaEiPrDCpjKCGD7KKzto1qMIDJvYe3hJekhZ
+         zJqE1fHQen7UvntEsb8q1k5IMC3OEEshDrkTsC6IEcdv4VArL1Iden0U+a3Mc3NhgEvo
+         J0iW0wheXRk7iBLELZw8f6ymp8W6YByL1VY3LWjyvgSvvgpW0nJR8A+msDudUCKslPbq
+         xBZHHi/6FeefcZLXTzl3uhRQnyifnfM7+nx/mfHO1DGhxH/pfrPxo5+PYycrNCKAbsHF
+         bZcQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=BjXW6fm0PtmxnDuZ5f1C1GLdB8wT64MP92DyErb42Vo=;
-        b=EuMeCRfxaiVquoomUvUB5efI5W6qPcLf5okuHoaBSiUMFvYO3JrO1YQzcinLDFtdsZ
-         Q1v/bJMtJSUjXF6h38bcLcmteJ6Kj5Dr7laaU+/QalXnmY4fWJdvR6T9FbnP1NbooCSf
-         7U8bd6KFv9q/qX20zS7d8HokvwlB6DyjcADpMNmnzIsgSymOoDFWeKuudlxMxJdm5u+C
-         cwoyx9mYG+YcWh+hzYD3HcY0kiVbaZp6PD8XuZbc9cWdHtqbtY6FOGvTe2kZnZqEtHQM
-         xuB1caomVSlphBgLXs1LQP9SXbKClVUTmu9+AxtO8eSXiQFGOK/1bvumscpm0e92pVTt
-         FQJA==
-X-Gm-Message-State: AOAM531BiM6jkxOmrTyi1b7NtyEc2xlsUGHhU0z2zJGnPEDbQoL/QVe9
-        MKtkwpY6UJYn/gtjU4iz/w8=
-X-Google-Smtp-Source: ABdhPJx7s5fHaG4DshNEy4UGX63HmLh4wX5XY4VXIO2k6ftnMSJq6QFDpn6k4ktnPk7ZDmb+3Ziayw==
-X-Received: by 2002:adf:e387:: with SMTP id e7mr14598425wrm.412.1639152144848;
-        Fri, 10 Dec 2021 08:02:24 -0800 (PST)
-Received: from localhost ([193.209.96.43])
-        by smtp.gmail.com with ESMTPSA id k13sm2871809wri.6.2021.12.10.08.02.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Dec 2021 08:02:23 -0800 (PST)
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Prathamesh Shete <pshete@nvidia.com>,
-        linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: [PATCH v4 6/6] arm64: tegra: Enable gpio-keys on Jetson AGX Orin Developer Kit
-Date:   Fri, 10 Dec 2021 17:02:06 +0100
-Message-Id: <20211210160206.872998-6-thierry.reding@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20211210160206.872998-1-thierry.reding@gmail.com>
-References: <20211210160206.872998-1-thierry.reding@gmail.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=yO19n6rEX9s/r1FIcXbkbOtSlXt5jG4o1654FyO9tIE=;
+        b=C687srny30nYoWothkx9cTB+jhxrZBZDI50Q6qUZSDpZm3BA20d2bi0vyd7whR9eP/
+         aEHVDbWNCMOcGMRikZbFFV6+dWJR4W9NZOrkSy1oylpFWt2tTrBhRN+IGh/GvPGCoosc
+         PWhpJwTydjD39HmnoYGF+ltbE22LYMUcDg8f+NGEzsWfVAKNDmm0iZUrwqUj32yF55+z
+         lK/cw0repQB/QAYGclj57g34NzuYLr6RdRy2CIS7fcNTfdp7jvb/e7+XjRhFtEkAgsFA
+         GxQpDiPXYwHh6YAUWwFx24noTSjl0xNk2KciupXHCSeSGywnPqXyuH36KF4klHdj0l/h
+         13Cg==
+X-Gm-Message-State: AOAM532xldClNV6SxCWBrJX+knLAHQOUkrNnENsts0BS7aPZa4adrqhe
+        HgeOw59rUS5m3qVnok8KUFAqKCHS2r8=
+X-Google-Smtp-Source: ABdhPJyGCrm/c33bvsvU/ktALLw1F+Oi2devrFri/BleW/nQ0lvOOdxeoTF/ChvzR/b4mny+wsZJ0A==
+X-Received: by 2002:a2e:9982:: with SMTP id w2mr13874596lji.440.1639152504801;
+        Fri, 10 Dec 2021 08:08:24 -0800 (PST)
+Received: from [192.168.2.145] (94-29-46-111.dynamic.spd-mgts.ru. [94.29.46.111])
+        by smtp.googlemail.com with ESMTPSA id f9sm381360lfu.10.2021.12.10.08.08.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 10 Dec 2021 08:08:23 -0800 (PST)
+Subject: Re: [PATCH 22/25] ARM: tegra: Move I2C clock frequency to bus nodes
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org
+References: <20211209173356.618460-1-thierry.reding@gmail.com>
+ <20211209173356.618460-23-thierry.reding@gmail.com>
+ <4865a5b6-c841-99c6-f132-24967a349f9b@gmail.com> <YbNrxsv6Gd9jvx7l@orome>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <8bb98f01-5cd6-ec17-fdfe-13557d79d590@gmail.com>
+Date:   Fri, 10 Dec 2021 19:08:22 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 MIME-Version: 1.0
+In-Reply-To: <YbNrxsv6Gd9jvx7l@orome>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+10.12.2021 18:01, Thierry Reding пишет:
+> On Thu, Dec 09, 2021 at 09:57:08PM +0300, Dmitry Osipenko wrote:
+>> 09.12.2021 20:33, Thierry Reding пишет:
+>>> From: Thierry Reding <treding@nvidia.com>
+>>>
+>>> The "clock-frequency" property for an I2C controller needs to be
+>>> specified at the bus level.
+>>>
+>>> Signed-off-by: Thierry Reding <treding@nvidia.com>
+>>> ---
+>>>  arch/arm/boot/dts/tegra30-asus-nexus7-grouper.dtsi | 3 ++-
+>>>  arch/arm/boot/dts/tegra30-asus-nexus7-tilapia.dtsi | 4 ++--
+>>>  2 files changed, 4 insertions(+), 3 deletions(-)
+>>
+>> The clock-frequency is specified in the parent-common N7 DTSI, NAK.
+>>
+>> There is already patch from David that removes the clock-frequency from
+>> NFC node [1], please use it.
+>>
+>> Please never again rewrite the preexisting patches, this makes you look odd.
+> 
+> Again, please don't make this into something it isn't.
+> 
+>> I suggest to collect *all* patches (not only your own) into single
+>> for-next branch, resolving all conflicts, making sure that you don't
+>> duplicate the effort and letting it all to be tested before it will hit
+>> the bus.
+> 
+> You know, if you guys communicated better over existing channels or
+> actually let me know of what's going on then a lot of this could've been
+> avoided. I don't have visibility into what you're all up to, so I can't
+> take that into account.
 
-Expose power, force-recovery and sleep buttons via a gpio-keys device so
-that userspace can receive events from them.
+All the messages from me and David are in yours email inbox and on
+#tegra IRC. You have the complete visibility. Either you don't have time
+to take a look and then forget about it or I don't know what's the problem.
 
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- .../nvidia/tegra234-p3737-0000+p3701-0000.dts | 31 +++++++++++++++++++
- arch/arm64/boot/dts/nvidia/tegra234.dtsi      |  1 +
- 2 files changed, 32 insertions(+)
+> If I happen to start working on something that someone else is also
+> doing in their corner, that's by accident, not because I have bad
+> intentions or because "I want to do everything myself", or whatever
+> other reason you keep coming up with.
+> 
+> Stop insinuating things that aren't true.
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dts b/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dts
-index e3bb874869df..699eaa66824d 100644
---- a/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dts
-@@ -1,6 +1,9 @@
- // SPDX-License-Identifier: GPL-2.0
- /dts-v1/;
- 
-+#include <dt-bindings/input/linux-event-codes.h>
-+#include <dt-bindings/input/gpio-keys.h>
-+
- #include "tegra234-p3701-0000.dtsi"
- #include "tegra234-p3737-0000.dtsi"
- 
-@@ -18,6 +21,34 @@ chosen {
- 		stdout-path = "serial0:115200n8";
- 	};
- 
-+	gpio-keys {
-+		compatible = "gpio-keys";
-+		status = "okay";
-+
-+		force-recovery {
-+			label = "Force Recovery";
-+			gpios = <&gpio TEGRA234_MAIN_GPIO(G, 0) GPIO_ACTIVE_LOW>;
-+			linux,input-type = <EV_KEY>;
-+			linux,code = <BTN_1>;
-+		};
-+
-+		power-key {
-+			label = "Power";
-+			gpios = <&gpio_aon TEGRA234_AON_GPIO(EE, 4) GPIO_ACTIVE_LOW>;
-+			linux,input-type = <EV_KEY>;
-+			linux,code = <KEY_POWER>;
-+			wakeup-event-action = <EV_ACT_ASSERTED>;
-+			wakeup-source;
-+		};
-+
-+		suspend {
-+			label = "Suspend";
-+			gpios = <&gpio TEGRA234_MAIN_GPIO(G, 2) GPIO_ACTIVE_LOW>;
-+			linux,input-type = <EV_KEY>;
-+			linux,code = <KEY_SLEEP>;
-+		};
-+	};
-+
- 	tcu {
- 		status = "okay";
- 	};
-diff --git a/arch/arm64/boot/dts/nvidia/tegra234.dtsi b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-index f715671f0333..f8061b452046 100644
---- a/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-@@ -1,6 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0
- 
- #include <dt-bindings/clock/tegra234-clock.h>
-+#include <dt-bindings/gpio/tegra234-gpio.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/mailbox/tegra186-hsp.h>
- #include <dt-bindings/reset/tegra234-reset.h>
--- 
-2.34.1
-
+My point is that you're ignoring the existing patches. It may not look
+like a big problem to you since you can apply patches directly and I
+understand that own patches are always the most important ones, but this
+is a problem for everyone around you.
