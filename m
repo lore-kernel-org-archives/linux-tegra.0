@@ -2,170 +2,257 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BCEFC433F5
-	for <linux-tegra@archiver.kernel.org>; Fri, 10 Dec 2021 15:50:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44C63C433EF
+	for <linux-tegra@archiver.kernel.org>; Fri, 10 Dec 2021 16:02:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234953AbhLJPyO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 10 Dec 2021 10:54:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46602 "EHLO
+        id S237877AbhLJQFt (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 10 Dec 2021 11:05:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49878 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235843AbhLJPx6 (ORCPT
+        with ESMTP id S237869AbhLJQFt (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 10 Dec 2021 10:53:58 -0500
-Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52C2BC061A32;
-        Fri, 10 Dec 2021 07:50:23 -0800 (PST)
-Received: by mail-wm1-x32f.google.com with SMTP id c6-20020a05600c0ac600b0033c3aedd30aso6945584wmr.5;
-        Fri, 10 Dec 2021 07:50:23 -0800 (PST)
+        Fri, 10 Dec 2021 11:05:49 -0500
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E814C0617A1;
+        Fri, 10 Dec 2021 08:02:14 -0800 (PST)
+Received: by mail-wr1-x429.google.com with SMTP id i5so15715373wrb.2;
+        Fri, 10 Dec 2021 08:02:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ODdzhhl8ZdFMrrK88abDusryGLbUIj0Lh4fOWPeWSw8=;
-        b=UCKM5bzxlPxFnJ3zWFXVphdgBxbCZqAN/l+8nsDHLrWoy2oNoiPnvkmo2wz+MuxLnW
-         WAcjVYytWMiYwOOmSJqovuzLx6kxJz+tj+g0jmIMJd6P5o3uep45cYp81kqkWnanQbyd
-         0CnK+Rbelqvs1WFLcKxLsqGI+77Ps6UXm11ghMiomm9fU+2jAgKjZsf9dp8aPA+F9PBY
-         JS83V+OSbMWeoWwsEtQ/26l7w1HX6IGyByVb3F1lOcyxHBTWqW/N61Op3cdPYLA+479y
-         sAojwaK3IHO9OD2dCOP9eZyNOiHbWTX8OKz9X4aDmw0h2787aG0p07CS5rPa9crKABP6
-         rFIw==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=KDKlrGukJH2S1gvUWpBXSmvjwvcwzS5T4IjVBs77AeQ=;
+        b=V+L9iOEOifeUb4oaeCp613u5sQpQvTy9qKRNW7WxJUNJAw7DcKAedMqigHjonXMWpK
+         EL4rTpdHJQGKgoAnd/DKMyIMIs0UhHkaLfq9taKgxL8mpbWBSG6uznxoQywtNZkeTakA
+         RA9To6Ai/D0w/Vxvd2cVG5q5UElctLRr0CQePH28RZb2fFR8RY02pZ87zhTPuXlp/Eop
+         lcPgxe2NlA/+EMRocX3Fgd9a40oRqwq8CXgWQiu+wK0uEv7M4MaJH4LlHrrJ0JkQss7C
+         ELdga9GRT/UbJm/TrZcFvk3UEZ+/hUj8RcUMTUlYo2A2ROnRIDPylbwETXSzdKo8yB6u
+         TMlw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ODdzhhl8ZdFMrrK88abDusryGLbUIj0Lh4fOWPeWSw8=;
-        b=HMvR51grFe/tuejWAm8IrOxSgLYak2NOwcSpmtN5lFCxeUSsJiQHQAUEG9pi487n2X
-         XX2hahtmTVbxv9dyX7Li5RrGsTMobLN96R25x7MeuhNBRkiG8NIMXTlbfdJWO+p80YMr
-         xYfIe8IyN4fCE3bDXh0vqGqkyPF3yB3yO3NwRnqN4UA0Wwdd93ccsSCNuGQY2cnZxLEf
-         rVquZv2PAqbs9EkLyU/IftUc4Oi0R24y6mVhaoQOM/rNMSz0DcFA1/y0PEawLaGg/UWT
-         cUJz2wUtr021YAVWME/caHoOO6FJrXhhhKVDrmYcjXzLqk+x3CYEvQ0bhBZTnHOdNtYI
-         j0Ig==
-X-Gm-Message-State: AOAM532EvDj5FFp4CMj7hi0g+/6uNyAnOMALxHbQ7ADndEAP4uIPW0lu
-        0vjdvVxC3Sy0SiveM+p7G9Q=
-X-Google-Smtp-Source: ABdhPJwn8W7fYBHhMNf2ILi5nDjJiMbQppURBXn8/SyhkIy2O6pZw9xqlOBrICoPquz1+mvhTka/zw==
-X-Received: by 2002:a05:600c:4f03:: with SMTP id l3mr17707480wmq.47.1639151421878;
-        Fri, 10 Dec 2021 07:50:21 -0800 (PST)
-Received: from orome ([193.209.96.43])
-        by smtp.gmail.com with ESMTPSA id g16sm4096240wmq.20.2021.12.10.07.50.18
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=KDKlrGukJH2S1gvUWpBXSmvjwvcwzS5T4IjVBs77AeQ=;
+        b=kWivUji6oYshnJ33RB4ykGxCK80PdlnRxuXD4fxFZFoU9KLidtohE1nYiSC88vsL1z
+         jzWQcV67z/ucsNouGYQ+G28yth9Bq6TaAbczPJKy1dCDzhkfoGU+WgpzSf4LdijDVKhW
+         63tzG6IOqbhdJJz7YzXCLkbiGcU92uhTOHmk7Qza43/w7e/aqxFBftgI/RjvbB9L4Yrn
+         FXTBM3nRyt8DYsI2e78Hw/3YnwX7Us/R6CuYbiNABkPy7kKPHeMfICFXTa8p4VOfSccT
+         SfUrazlr1E7HlATPqA25QxFqFx014Q+0jeaBFcVgpAVG0fl7Zj/RuHxohvfvc9LN03yg
+         rqGQ==
+X-Gm-Message-State: AOAM530cPMTHznaFJieYGP3UnjJ8f8v1AIJzJK2VRbXPZ1HD6p46tiPh
+        /Ttmpt2z+I5qr/+BkHARA3E=
+X-Google-Smtp-Source: ABdhPJyV8RAFU2Zc7EHcsmpH+r0N+C2eal/zofLLffhV8Ixy/+/wzENQo/BBsMs4YMs2GkuT843OVg==
+X-Received: by 2002:a5d:4448:: with SMTP id x8mr14467637wrr.508.1639152131430;
+        Fri, 10 Dec 2021 08:02:11 -0800 (PST)
+Received: from localhost ([193.209.96.43])
+        by smtp.gmail.com with ESMTPSA id w17sm2932621wrp.79.2021.12.10.08.02.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Dec 2021 07:50:20 -0800 (PST)
-Date:   Fri, 10 Dec 2021 16:50:17 +0100
+        Fri, 10 Dec 2021 08:02:10 -0800 (PST)
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
-        David Heidelberg <david@ixit.cz>,
-        Svyatoslav Ryhel <clamor95@gmail.com>,
-        Anton Bambura <jenneron@protonmail.com>,
-        Antoni Aloy Torrens <aaloytorrens@gmail.com>,
-        Nikola Milosavljevic <mnidza@outlook.com>,
-        Ion Agorria <ion@agorria.com>,
-        =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-        Ihor Didenko <tailormoon@rambler.ru>,
-        Andreas Westman Dorcsak <hedmoo@yahoo.com>,
-        Maxim Schwalm <maxim.schwalm@gmail.com>,
-        Raffaele Tranquillini <raffaele.tranquillini@gmail.com>,
-        Jasper Korten <jja2000@gmail.com>,
-        Thomas Graichen <thomas.graichen@gmail.com>,
-        Stefan Eichenberger <stefan.eichenberger@toradex.com>,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 06/24] ARM: tegra: Add common device-tree base for
- Tegra30 ASUS Transformers
-Message-ID: <YbN3OektEKoHY3s1@orome>
-References: <20211208173609.4064-1-digetx@gmail.com>
- <20211208173609.4064-7-digetx@gmail.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Prathamesh Shete <pshete@nvidia.com>,
+        linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org,
+        devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>
+Subject: [PATCH v4 1/6] dt-bindings: gpio: tegra: Convert to json-schema
+Date:   Fri, 10 Dec 2021 17:02:01 +0100
+Message-Id: <20211210160206.872998-1-thierry.reding@gmail.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="SxYMGIsuJmaT2LMM"
-Content-Disposition: inline
-In-Reply-To: <20211208173609.4064-7-digetx@gmail.com>
-User-Agent: Mutt/2.1.3 (987dde4c) (2021-09-10)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+From: Thierry Reding <treding@nvidia.com>
 
---SxYMGIsuJmaT2LMM
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Convert the NVIDIA Tegra GPIO controller device tree bindings from
+free-form text format to json-schema.
 
-On Wed, Dec 08, 2021 at 08:35:51PM +0300, Dmitry Osipenko wrote:
-> From: Svyatoslav Ryhel <clamor95@gmail.com>
->=20
-> Add common DTSI for Tegra30 ASUS Transformers. It will be used by multiple
-> device-trees of ASUS devices. The common part initially was born out of
-> the ASUS TF300T tablet's device-tree that was created by Micha=C5=82 Miro=
-s=C5=82aw.
-> It was heavily reworked and improved by Svyatoslav Ryhel, Maxim Schwalm,
-> Ion Agorria et al.
->=20
-> [digetx@gmail.com: factored out common part into separate patch and wrote=
- commit message]
-> Co-developed-by: Ion Agorria <ion@agorria.com>
-> Signed-off-by: Ion Agorria <ion@agorria.com>
-> Co-developed-by: Maxim Schwalm <maxim.schwalm@gmail.com>
-> Signed-off-by: Maxim Schwalm <maxim.schwalm@gmail.com>
-> Co-developed-by: Micha=C5=82 Miros=C5=82aw <mirq-linux@rere.qmqm.pl>
-> Signed-off-by: Micha=C5=82 Miros=C5=82aw <mirq-linux@rere.qmqm.pl>
-> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  .../dts/tegra30-asus-transformer-common.dtsi  | 1729 +++++++++++++++++
->  1 file changed, 1729 insertions(+)
->  create mode 100644 arch/arm/boot/dts/tegra30-asus-transformer-common.dtsi
->=20
-> diff --git a/arch/arm/boot/dts/tegra30-asus-transformer-common.dtsi b/arc=
-h/arm/boot/dts/tegra30-asus-transformer-common.dtsi
-> new file mode 100644
-> index 000000000000..be77212dd8c7
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/tegra30-asus-transformer-common.dtsi
-> @@ -0,0 +1,1729 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +#include <dt-bindings/input/gpio-keys.h>
-> +#include <dt-bindings/input/input.h>
-> +#include <dt-bindings/thermal/thermal.h>
-> +
-> +#include "tegra30.dtsi"
-> +#include "tegra30-cpu-opp.dtsi"
-> +#include "tegra30-cpu-opp-microvolt.dtsi"
-> +
-> +/ {
-> +	chassis-type =3D "convertible";
-> +
-> +	aliases {
-> +		mmc0 =3D &sdmmc4;	/* eMMC */
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+Changes in v4:
+- remove redundent type reference for "#gpio-cells"
 
-Looks like a tab snuck in there... otherwise this also has some nodes
-sorted in the wrong order.
+Changes in v3:
+- replace unevaluatedProperties with additionalProperties
 
-[...]
-> +	pad-keys {
+Changes in v2:
+- move GPIO hog definitions into unevaluatedProperties subschema
+- remove redundant description of standard properties
 
-Any specific reason why this is called pad-keys? We call it gpio-keys
-everywhere else.
+ .../bindings/gpio/nvidia,tegra20-gpio.txt     |  40 -------
+ .../bindings/gpio/nvidia,tegra20-gpio.yaml    | 110 ++++++++++++++++++
+ 2 files changed, 110 insertions(+), 40 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/gpio/nvidia,tegra20-gpio.txt
+ create mode 100644 Documentation/devicetree/bindings/gpio/nvidia,tegra20-gpio.yaml
 
-Thierry
+diff --git a/Documentation/devicetree/bindings/gpio/nvidia,tegra20-gpio.txt b/Documentation/devicetree/bindings/gpio/nvidia,tegra20-gpio.txt
+deleted file mode 100644
+index 023c9526e5f8..000000000000
+--- a/Documentation/devicetree/bindings/gpio/nvidia,tegra20-gpio.txt
++++ /dev/null
+@@ -1,40 +0,0 @@
+-NVIDIA Tegra GPIO controller
+-
+-Required properties:
+-- compatible : "nvidia,tegra<chip>-gpio"
+-- reg : Physical base address and length of the controller's registers.
+-- interrupts : The interrupt outputs from the controller. For Tegra20,
+-  there should be 7 interrupts specified, and for Tegra30, there should
+-  be 8 interrupts specified.
+-- #gpio-cells : Should be two. The first cell is the pin number and the
+-  second cell is used to specify optional parameters:
+-  - bit 0 specifies polarity (0 for normal, 1 for inverted)
+-- gpio-controller : Marks the device node as a GPIO controller.
+-- #interrupt-cells : Should be 2.
+-  The first cell is the GPIO number.
+-  The second cell is used to specify flags:
+-    bits[3:0] trigger type and level flags:
+-      1 = low-to-high edge triggered.
+-      2 = high-to-low edge triggered.
+-      4 = active high level-sensitive.
+-      8 = active low level-sensitive.
+-      Valid combinations are 1, 2, 3, 4, 8.
+-- interrupt-controller : Marks the device node as an interrupt controller.
+-
+-Example:
+-
+-gpio: gpio@6000d000 {
+-	compatible = "nvidia,tegra20-gpio";
+-	reg = < 0x6000d000 0x1000 >;
+-	interrupts = < 0 32 0x04
+-		       0 33 0x04
+-		       0 34 0x04
+-		       0 35 0x04
+-		       0 55 0x04
+-		       0 87 0x04
+-		       0 89 0x04 >;
+-	#gpio-cells = <2>;
+-	gpio-controller;
+-	#interrupt-cells = <2>;
+-	interrupt-controller;
+-};
+diff --git a/Documentation/devicetree/bindings/gpio/nvidia,tegra20-gpio.yaml b/Documentation/devicetree/bindings/gpio/nvidia,tegra20-gpio.yaml
+new file mode 100644
+index 000000000000..94b51749ee76
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gpio/nvidia,tegra20-gpio.yaml
+@@ -0,0 +1,110 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/gpio/nvidia,tegra20-gpio.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: NVIDIA Tegra GPIO Controller (Tegra20 - Tegra210)
++
++maintainers:
++  - Thierry Reding <thierry.reding@gmail.com>
++  - Jon Hunter <jonathanh@nvidia.com>
++
++properties:
++  compatible:
++    oneOf:
++      - enum:
++          - nvidia,tegra20-gpio
++          - nvidia,tegra30-gpio
++
++      - items:
++          - enum:
++              - nvidia,tegra114-gpio
++              - nvidia,tegra124-gpio
++              - nvidia,tegra210-gpio
++          - const: nvidia,tegra30-gpio
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    description: The interrupt outputs from the controller. For Tegra20,
++      there should be 7 interrupts specified, and for Tegra30, there should
++      be 8 interrupts specified.
++
++  "#gpio-cells":
++    description: The first cell is the pin number and the second cell is used
++      to specify the GPIO polarity (0 = active high, 1 = active low).
++    const: 2
++
++  gpio-controller: true
++
++  gpio-ranges:
++    maxItems: 1
++
++  "#interrupt-cells":
++    description: |
++      Should be 2. The first cell is the GPIO number. The second cell is
++      used to specify flags:
++
++        bits[3:0] trigger type and level flags:
++          1 = low-to-high edge triggered.
++          2 = high-to-low edge triggered.
++          4 = active high level-sensitive.
++          8 = active low level-sensitive.
++
++      Valid combinations are 1, 2, 3, 4, 8.
++    const: 2
++
++  interrupt-controller: true
++
++allOf:
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: nvidia,tegra30-gpio
++    then:
++      properties:
++        interrupts:
++          minItems: 8
++          maxItems: 8
++    else:
++      properties:
++        interrupts:
++          minItems: 7
++          maxItems: 7
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - "#gpio-cells"
++  - gpio-controller
++  - "#interrupt-cells"
++  - interrupt-controller
++
++additionalProperties:
++  type: object
++  required:
++    - gpio-hog
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++
++    gpio: gpio@6000d000 {
++        compatible = "nvidia,tegra20-gpio";
++        reg = <0x6000d000 0x1000>;
++        interrupts = <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 33 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 35 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 55 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 89 IRQ_TYPE_LEVEL_HIGH>;
++        #gpio-cells = <2>;
++        gpio-controller;
++        #interrupt-cells = <2>;
++        interrupt-controller;
++    };
+-- 
+2.34.1
 
---SxYMGIsuJmaT2LMM
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmGzdzgACgkQ3SOs138+
-s6Gy4Q//bskcxKccjBg6l0+Dg1tNy7cS+Zewx8+Q2m5+tAN8oea3chH8mWGp/utb
-XU3F0G8j7y75D+/v4KQVkFRI6OXN1owDxy6ClqFNKkPcXg4o6yBWzmny5HRGgLJI
-Ep4rMo6V7vV5cSdOfEHer/LEQKPDZE9x2itahoABxZYUUV6HAkNTES4RCNuqWLoD
-rt8JQ407o2c463lLozb/6xRj8VyJFYc/YRstsehXVSBxY5zdee4okLIOjGHbJoi0
-SaWej8nb0z5z/TFZqw19xf2urgU2McaO9UZNrpGEfajYBU2yLog5G7JMFqc/7mtB
-O5l1mMV5R93pRb/WfDFCc5bhbpkCkrg6MQODpvdcNkyFZsVg8OloPPbOz/BeUT44
-HZxoxs7HZ/JKy5S91YIsRLIkKpWUejv9SKdzXwfnW035Kc7JpT7pdmq9HjvE6xQ5
-CnO8KNGuH2H5UsAh0WswC1xBzIAhjUvRrt6iKz+DcVpZWnwyiQpdAUzlSDkhEsqd
-P6upWNO3Dmb0alXdsIkDj4zkGZJVgexhh37FdXJEsVCqjKquF+ETev9Jrrc+b50F
-IaHjNSy91rqymMkJYHxZ+VRRcMtoUFnI+TO+6rivjv4jqu+seQwGeQ9+xLpZKFVF
-R8yxGH3jurk9AIi4Hc3la/O3hgyRFCLGHx7/Xi04g+y/mppOUrI=
-=y1qL
------END PGP SIGNATURE-----
-
---SxYMGIsuJmaT2LMM--
