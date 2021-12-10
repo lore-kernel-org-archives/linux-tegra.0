@@ -2,130 +2,113 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2E15C433EF
-	for <linux-tegra@archiver.kernel.org>; Fri, 10 Dec 2021 15:22:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EF59C433EF
+	for <linux-tegra@archiver.kernel.org>; Fri, 10 Dec 2021 15:23:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242813AbhLJPZ4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 10 Dec 2021 10:25:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40178 "EHLO
+        id S234499AbhLJP1M (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 10 Dec 2021 10:27:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40508 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242805AbhLJPZz (ORCPT
+        with ESMTP id S234441AbhLJP1M (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 10 Dec 2021 10:25:55 -0500
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5B04C061746;
-        Fri, 10 Dec 2021 07:22:19 -0800 (PST)
-Received: by mail-wr1-x431.google.com with SMTP id j3so15551485wrp.1;
-        Fri, 10 Dec 2021 07:22:19 -0800 (PST)
+        Fri, 10 Dec 2021 10:27:12 -0500
+Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 259CFC061746
+        for <linux-tegra@vger.kernel.org>; Fri, 10 Dec 2021 07:23:37 -0800 (PST)
+Received: by mail-lf1-x12f.google.com with SMTP id u3so18756206lfl.2
+        for <linux-tegra@vger.kernel.org>; Fri, 10 Dec 2021 07:23:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Jnwba4bZjLq5RdhOQVSpoiV3VIIFnQHgzq6yln7hbIM=;
-        b=ipFuXk59Dbzxv+IW1pqe3zwl2tPFuRdtGzbi2GkerIVVR5YEUtK6VhO11qqcECuezO
-         BxCc1PLVya1tw6yxoJWafKOag64FcjhVA8Do8a/AfI80Napz3R6tH67rgZT5cCR+gTIo
-         LPkdIYHBhkw59s7633lktVm1mNSr4SEW1jLHHTOe81bBJMD2bl45ixAC2UVUYWYnt0Nt
-         aC9R7Tl3p6aSeAWQ3i3N0cIvjqJi8JanNGecB2W49UtVj9aF5efFHVxHcxXI21bgdyQ7
-         YYgJILE1tsXuFtEq7e9EH5hPyGfytKaa3dvUPYFCpzXpovzAA6bvp/yR/zQ1YACjZ/Xz
-         J5RA==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=rPLKB8l2EZFcu1fA8n9M6ZJRW9nmDCaBTYVyMtUbqS8=;
+        b=Rz+XODTdr3bK64zBCXs8xJ4KYrQW0d10+3R2zHd9EzOPHKXsKM4xKhDWQ54nABCVJk
+         Yv7w8kfcrncFmQvPlFtvz/UXDBUCbP3Uc7yzq7PsKjZWNSh9YLIRqhkCUXa00hxZ4JfB
+         b5IIX0LGOjEJ0xZ+06ZQZm//Dgvcj+bEFRNyY8Z6xPImTIXJW1RtWzNB2+DlcYRk+sj+
+         UZbbZVWLUbc19jV429qbeYxcEP7rJpSwze5Btx/glP0F09SRyf6AbthfisSTrJNCHIX2
+         oVhxO3ls2xDtlnzLnT5ZhnJV+PGH3skfmL6MBgTBhu/2ICxiz+PRK3haq/7TjOx2Jk5b
+         R/TQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Jnwba4bZjLq5RdhOQVSpoiV3VIIFnQHgzq6yln7hbIM=;
-        b=hpfDBdhI9qZAk9C/M1wCBM3F+Kasfmkb/wZDbsnpWQlpqbHXRLc2MC6dFDoebptASD
-         Q9M3ncXzCBMLE1DrP705xYGYxHeKeRLUw6iI7eWTrhYQbGlQbRFAlz+Mm/qaUS4SDebB
-         XqzOmYHVrymEWHPG/0kDuGhN7OR/uu2VQgxhcWHdxwgg2OPSXaFl+uyxV4tk47bfcLO/
-         PDQ3JiVzFgyOW1dOWoKq7K+Rjg3lWGOAfhWWVD9I+NGJuwsa4U5OLIsQ5m62NP6gssCo
-         j716HRpZXBZKWX4axNisf77nmMn2LmNXVlAwlcGXZ1xu60NJu7aPUNOxMRff3Wh366GG
-         6ddg==
-X-Gm-Message-State: AOAM532NatNfILUB7nhKwk6McRFfPDRjg9QyIYbd0+VDnhmy/773PMBm
-        URPlIJhRO6fIf8ri/HQXPgU=
-X-Google-Smtp-Source: ABdhPJxzXqCHZ5Qv9ATTXNRDO6EVE3SyE7fZi3Qxy3ZhjwIYvc/zez/pO+TuwILJQi6/dxfae5AkxA==
-X-Received: by 2002:adf:cd06:: with SMTP id w6mr15078105wrm.431.1639149737976;
-        Fri, 10 Dec 2021 07:22:17 -0800 (PST)
-Received: from orome ([193.209.96.43])
-        by smtp.gmail.com with ESMTPSA id t127sm12355478wma.9.2021.12.10.07.22.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Dec 2021 07:22:16 -0800 (PST)
-Date:   Fri, 10 Dec 2021 16:22:13 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
-        David Heidelberg <david@ixit.cz>,
-        Svyatoslav Ryhel <clamor95@gmail.com>,
-        Anton Bambura <jenneron@protonmail.com>,
-        Antoni Aloy Torrens <aaloytorrens@gmail.com>,
-        Nikola Milosavljevic <mnidza@outlook.com>,
-        Ion Agorria <ion@agorria.com>,
-        =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-        Ihor Didenko <tailormoon@rambler.ru>,
-        Andreas Westman Dorcsak <hedmoo@yahoo.com>,
-        Maxim Schwalm <maxim.schwalm@gmail.com>,
-        Raffaele Tranquillini <raffaele.tranquillini@gmail.com>,
-        Jasper Korten <jja2000@gmail.com>,
-        Thomas Graichen <thomas.graichen@gmail.com>,
-        Stefan Eichenberger <stefan.eichenberger@toradex.com>,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 03/24] ARM: tegra: Add labels to tegra30.dtsi
-Message-ID: <YbNwpWpEW4EKHd2R@orome>
-References: <20211208173609.4064-1-digetx@gmail.com>
- <20211208173609.4064-4-digetx@gmail.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=rPLKB8l2EZFcu1fA8n9M6ZJRW9nmDCaBTYVyMtUbqS8=;
+        b=5evk/oU8Aaq69632pTIav2WN3nriAfaBFeQ7wFey834EWvmlDIakzuYNR9dObJBHtT
+         boq/KLlzoy4cmVL0V1bIIwlc3FpZNZKGiHW0PFjKokA0XGhy2wrBZ4RFkbfZfkp9EOBW
+         DkyLzH2OJMppTi/Er/yVh+SXSFM4OqLMT+Zyzr2YWJmRW1L9EuvmhfFe/E0RGWAXMgVI
+         C+47Ziwu3Z4WqQnG/IwPOyW403xjnDD7aB1cgXbshE2kNbUtfoBSXQeO16o+CkJLtOOt
+         ZVWyInwUApPfqc20NNkvG0BctlPqx7Ysk35TdoGu+Pbl3AW6ryRi3kc5PGMwgawlQB3q
+         0+Wg==
+X-Gm-Message-State: AOAM532pGvB/EQv826rio+cfihn9veO0oGx6qYnVJ1FrRz/u/Ph7H1WR
+        j1dMLB1/7Q0GZEF6awEmwlAcm3I3n7s=
+X-Google-Smtp-Source: ABdhPJwtdKpYJRVUqd+4pzspp+PQqA4tSuMv7/NQZIhP+PygsACsHqCi5pOgL2KHkDmL4sWmmKWKHA==
+X-Received: by 2002:a05:6512:519:: with SMTP id o25mr12542694lfb.422.1639149815180;
+        Fri, 10 Dec 2021 07:23:35 -0800 (PST)
+Received: from [192.168.2.145] (94-29-46-111.dynamic.spd-mgts.ru. [94.29.46.111])
+        by smtp.googlemail.com with ESMTPSA id k23sm341449ljg.139.2021.12.10.07.23.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 10 Dec 2021 07:23:34 -0800 (PST)
+Subject: Re: [PATCH 06/25] ARM: tegra: Fix compatible string for Tegra30+
+ timer
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org
+References: <20211209173356.618460-1-thierry.reding@gmail.com>
+ <20211209173356.618460-7-thierry.reding@gmail.com>
+ <d7989902-a42e-1fed-d85b-ade3e160400a@gmail.com> <YbNZR9WqBiWbYn2d@orome>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <8988f759-689f-7c46-ba1e-3eab1a91de7c@gmail.com>
+Date:   Fri, 10 Dec 2021 18:23:34 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="RFgBf0dxqJCnzj+c"
-Content-Disposition: inline
-In-Reply-To: <20211208173609.4064-4-digetx@gmail.com>
-User-Agent: Mutt/2.1.3 (987dde4c) (2021-09-10)
+In-Reply-To: <YbNZR9WqBiWbYn2d@orome>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+10.12.2021 16:42, Thierry Reding пишет:
+> On Thu, Dec 09, 2021 at 10:36:43PM +0300, Dmitry Osipenko wrote:
+>> 09.12.2021 20:33, Thierry Reding пишет:
+>>> From: Thierry Reding <treding@nvidia.com>
+>>>
+>>> The TKE (time-keeping engine) found on Tegra30 and later is not
+>>> backwards compatible with the version found on Tegra20, so update the
+>>> compatible string list accordingly.
+>>>
+>>> Signed-off-by: Thierry Reding <treding@nvidia.com>
+>>> ---
+>>>  arch/arm/boot/dts/tegra114.dtsi | 2 +-
+>>>  arch/arm/boot/dts/tegra124.dtsi | 2 +-
+>>>  arch/arm/boot/dts/tegra30.dtsi  | 2 +-
+>>>  3 files changed, 3 insertions(+), 3 deletions(-)
+...
+>>>  	timer@60005000 {
+>>> -		compatible = "nvidia,tegra30-timer", "nvidia,tegra20-timer";
+>>> +		compatible = "nvidia,tegra30-timer";
+>>>  		reg = <0x60005000 0x400>;
+>>>  		interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
+>>>  			     <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
+>>>
+>>
+>> What exactly is incompatible? IIRC, T30+ is a superset of T20. This
+>> patch should be wrong, also see [1].
+> 
+> As the comment in that location explains, Tegra114 and later have an
+> architectural timer that is preferred over the legacy timer. So while
+> this doesn't technically make Tegra114 incompatible (in terms of
+> register programming, etc.) with Tegra20, in practice we don't want
+> Tegra20 behaviour on Tegra114 and later.
 
---RFgBf0dxqJCnzj+c
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+So the T114 timer code works using the T20 code and we prefer to use the
+ARCH timer on T114+ in the driver, what is the problem then? Where is
+the incompatibility?
 
-On Wed, Dec 08, 2021 at 08:35:48PM +0300, Dmitry Osipenko wrote:
-> From: Micha=C5=82 Miros=C5=82aw <mirq-linux@rere.qmqm.pl>
->=20
-> Add phandle names for memory/I2C/SPI/USB/SDMMC controller nodes to allow
-> for cleaner device descriptions.
->=20
-> Signed-off-by: Micha=C5=82 Miros=C5=82aw <mirq-linux@rere.qmqm.pl>
-> ---
->  arch/arm/boot/dts/tegra30.dtsi | 36 +++++++++++++++++-----------------
->  1 file changed, 18 insertions(+), 18 deletions(-)
+> For Tegra30, you're indeed correct, there shouldn't be a difference, so
+> I can add that back in.
 
-We typically only add those when they are really needed. These are
-technically harmless because without a reference, DTC won't actually
-create a phandle property, but dangling labels are the kind of thing
-that some janitor may at some point want to remove with some scripts,
-so I'm hesitant to apply this because it'll likely cause churn in the
-future.
-
-Thierry
-
---RFgBf0dxqJCnzj+c
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmGzcKUACgkQ3SOs138+
-s6GftA/+KbVHvJu3VYIbmIUpoJYVbJBgJIylYA73m5ii010cLhvZb8ojspNZLof6
-VaHjhKCUqfYy3BabVIbMqLleHzCIBZPSw9SWGkP/yp8SajHZxKrT3ZGqzTnl+QAF
-OZVDjO65wWx81upZHinaysN3tEPJaRjrJhaq0QoiNVnyO8AYvvgq7E8SyfBYBd6B
-mp+gomXAjzn2I/TxP2xpIJesaYnUURATdbu/Sb4S/r1x4eoIH7tELC8LSgAqNfZy
-GPUPFJ6Fd4TS4YCFuC2/5oJt5Cfsw4wz/uA2AlGhWiI9zoHcKj2B4D0sOVwnn0AZ
-Wso4V9kfiZ1+eeALg5q14CU3YFfb/CmsyFrwEdQKV4V+Kvg5VMHIYHOhMgBtO+AR
-jS6cGt4NrgfRNq2PELeT3ns9/nUR7vyW+faJ9r6vXcH/HyB5JcF0ZSDQusVlO+3V
-GTmiIQ0NWwHCckD0l3Ha5tZhfG6X124fV4nX4R7JcP4sMxX8+GtX985Ab/Xusmnt
-VKgUytPXJ3Mj2eOHEca9WgvtNxESOc1Ki7qDbq2bAI7RxxZcND4JwSqE7dLfy1RA
-3+9KTAi4+MrK26QUv1FDSLIDNtwu1cOJx7Rjzg1UswoZuVZY8MxzYiz5qzLSvsIr
-ddK9gDNE1V+4S2H8gc6yF5+NwdrQADORfe4/N6P1+4ww+1nrVhc=
-=WGJZ
------END PGP SIGNATURE-----
-
---RFgBf0dxqJCnzj+c--
+Please either add it back or extend the clocksource driver with the
+additional compatibles.
