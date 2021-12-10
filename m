@@ -2,150 +2,120 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCD84C433F5
-	for <linux-tegra@archiver.kernel.org>; Fri, 10 Dec 2021 16:48:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC1C2C433EF
+	for <linux-tegra@archiver.kernel.org>; Fri, 10 Dec 2021 16:57:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244195AbhLJQvo (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 10 Dec 2021 11:51:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33218 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244076AbhLJQve (ORCPT
+        id S232023AbhLJRBD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 10 Dec 2021 12:01:03 -0500
+Received: from ams.source.kernel.org ([145.40.68.75]:58642 "EHLO
+        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229821AbhLJRBD (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 10 Dec 2021 11:51:34 -0500
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D242CC061D5F;
-        Fri, 10 Dec 2021 08:47:58 -0800 (PST)
-Received: by mail-wr1-x435.google.com with SMTP id j3so15978372wrp.1;
-        Fri, 10 Dec 2021 08:47:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=dmpF5nkRi2WoXriQpRMFXwjffTvFPB+sSSjc501wv0s=;
-        b=cyTP3KVyI+VC4Q++OWCN8m447L2kG16cVAy6fmhtmTax+gO1evWi+veQCUN1SuqtgV
-         N66HZ2Alue9Z7o5JDrqFoGUAg9ElyfM3YIar1K4SmTWmTCF68H8IywCIZMc+QA1jXcCL
-         3fe5+NR8AkV5/GoGBpwls65HkSHrmVH2YwxP/RmPgIRp+VDx3nwUKR1MVDzYvV5VYlDi
-         NvG3FBi/0LVWSYq0I4rt31DjD2X/h0K8PC545gIFFV6KjJF6UUorRQxwS9Wob8IzSgwA
-         NyJuyHDzR4HlBQxutyjBbBDe5ZubKSS5TlppxtxwWAyNiULwRVyCUdUVkiQVBdRox4Dg
-         ypwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=dmpF5nkRi2WoXriQpRMFXwjffTvFPB+sSSjc501wv0s=;
-        b=WH6/OZic/APci1uS9XQf7Pe6RDsaHbuYccH9kIy0hyXhg0uwBMa8PvoawsrXyQS7f6
-         tHo3XXHF1e9Hqn2CxWlUxVODqlf/xAGJv8ylf45LFx+ruIVR+D6WVhEtBLgUME+ka+w4
-         nzxsMylYOPthKexckqhlFzKyNI1lVJUnpKr1NSHKMeV3tPPn0tJyeXlLgNU/6JrRLPHQ
-         11FkOqD6gWziEzKzHQJCLVKfeGa+w5Z//ioBMXoh8RzpkfcfiGD5Ij922l7EGuZOb8hp
-         mnQw60EyBMAoSdwxohddnOPiESGVQjlJvhI7TGbF7D6LUVTVN2URwSacwuzZDEwd0ISt
-         zAWQ==
-X-Gm-Message-State: AOAM531Q66RZAiDtREoEE6Etp1g0P2geKKMUA9W90rFJjdWtMXPtPE3Q
-        MmpQP2f4VCS/dhz2RajduLo=
-X-Google-Smtp-Source: ABdhPJyxSsV/MDGkzJgNVMYKEKfJAsT5MvxbcUIpMJpsOoxGJuYOtJtBtOgZb1hBgydKjDpd7jeAuQ==
-X-Received: by 2002:adf:eb42:: with SMTP id u2mr15740277wrn.521.1639154877427;
-        Fri, 10 Dec 2021 08:47:57 -0800 (PST)
-Received: from localhost ([193.209.96.43])
-        by smtp.gmail.com with ESMTPSA id 10sm3997115wrb.75.2021.12.10.08.47.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Dec 2021 08:47:55 -0800 (PST)
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>
-Cc:     Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 5/6] arm64: tegra: Add memory controller on Tegra234
-Date:   Fri, 10 Dec 2021 17:47:40 +0100
-Message-Id: <20211210164741.881161-6-thierry.reding@gmail.com>
+        Fri, 10 Dec 2021 12:01:03 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id B1DE1B82885;
+        Fri, 10 Dec 2021 16:57:26 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E03CEC00446;
+        Fri, 10 Dec 2021 16:57:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1639155445;
+        bh=jET+YLDQ2r1VmsaDyAomjk4pSNQ9+dFdxLKsYrjuJcU=;
+        h=From:To:Cc:Subject:Date:From;
+        b=UmhIYrIMDeDK7n1lLWFTjsNiyMfC0BgwO4+Oe1AD7IiL8Nd/8YdaaAUdKes9hfmAX
+         LtqRQBKnniX7w9m3KbUcxgOlxMF6cx01+0uKbCTS/RTUQviDyWHF30XWJ9uDSbtkGh
+         Y41Whl+tzeDeGfC9HgMTsh0am4kj/b97aemcI0+p8A3l99+GJsGLaQ42JNBPgYUDco
+         /BDrGrWdJFXg1tA7w23/ysFLNeXb4KIma4vYfmlbRvI0oRYz960LJeo5YCk8TVAaju
+         FjncMM0+oMhqY1eeruK7XKiKF7AGewpcTkY15Av5lZM2cxphfWnfyAH5e/Mxi/ZySw
+         QQuH23PHwd+Yg==
+From:   Nathan Chancellor <nathan@kernel.org>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc:     Nick Desaulniers <ndesaulniers@google.com>,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        llvm@lists.linux.dev, Nathan Chancellor <nathan@kernel.org>,
+        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
+Subject: [PATCH v2] soc/tegra: fuse: Fix bitwise vs. logical OR warning
+Date:   Fri, 10 Dec 2021 09:55:29 -0700
+Message-Id: <20211210165528.3232292-1-nathan@kernel.org>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20211210164741.881161-1-thierry.reding@gmail.com>
-References: <20211210164741.881161-1-thierry.reding@gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+A new warning in clang points out two instances where boolean
+expressions are being used with a bitwise OR instead of logical OR:
 
-This adds the memory controller and the embedded external memory
-controller found on the Tegra234 SoC.
+drivers/soc/tegra/fuse/speedo-tegra20.c:72:9: warning: use of bitwise '|' with boolean operands [-Wbitwise-instead-of-logical]
+                reg = tegra_fuse_read_spare(i) |
+                      ^~~~~~~~~~~~~~~~~~~~~~~~~~
+                                               ||
+drivers/soc/tegra/fuse/speedo-tegra20.c:72:9: note: cast one or both operands to int to silence this warning
+drivers/soc/tegra/fuse/speedo-tegra20.c:87:9: warning: use of bitwise '|' with boolean operands [-Wbitwise-instead-of-logical]
+                reg = tegra_fuse_read_spare(i) |
+                      ^~~~~~~~~~~~~~~~~~~~~~~~~~
+                                               ||
+drivers/soc/tegra/fuse/speedo-tegra20.c:87:9: note: cast one or both operands to int to silence this warning
+2 warnings generated.
 
-Signed-off-by: Thierry Reding <treding@nvidia.com>
+The motivation for the warning is that logical operations short circuit
+while bitwise operations do not.
+
+In this instance, tegra_fuse_read_spare() is not semantically returning
+a boolean, it is returning a bit value. Use u32 for its return type so
+that it can be used with either bitwise or boolean operators without any
+warnings.
+
+Fixes: 25cd5a391478 ("ARM: tegra: Add speedo-based process identification")
+Link: https://github.com/ClangBuiltLinux/linux/issues/1488
+Suggested-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
+Signed-off-by: Nathan Chancellor <nathan@kernel.org>
 ---
-Changes in v2:
-- move EMC general interrupt from MC to EMC
 
- arch/arm64/boot/dts/nvidia/tegra234.dtsi | 49 ++++++++++++++++++++++++
- 1 file changed, 49 insertions(+)
+v1 -> v2: https://lore.kernel.org/r/20211021214500.2388146-1-nathan@kernel.org/
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra234.dtsi b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-index f8061b452046..a75b21c6a521 100644
---- a/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-@@ -4,6 +4,7 @@
- #include <dt-bindings/gpio/tegra234-gpio.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/mailbox/tegra186-hsp.h>
-+#include <dt-bindings/memory/tegra234-mc.h>
- #include <dt-bindings/reset/tegra234-reset.h>
+* Change return type of tegra_fuse_read_spare(), instead of changing
+  bitwise OR to logical OR in tegra20_init_speedo_data() (Michał).
+
+It would be nice to get this fixed sooner rather than later, as ARCH=arm
+allmodconfig is broken due to -Werror.
+
+ drivers/soc/tegra/fuse/fuse-tegra.c | 2 +-
+ drivers/soc/tegra/fuse/fuse.h       | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/soc/tegra/fuse/fuse-tegra.c b/drivers/soc/tegra/fuse/fuse-tegra.c
+index f2151815db58..e714ed3b61bc 100644
+--- a/drivers/soc/tegra/fuse/fuse-tegra.c
++++ b/drivers/soc/tegra/fuse/fuse-tegra.c
+@@ -320,7 +320,7 @@ static struct platform_driver tegra_fuse_driver = {
+ };
+ builtin_platform_driver(tegra_fuse_driver);
  
- / {
-@@ -85,6 +86,54 @@ gpio: gpio@2200000 {
- 			gpio-controller;
- 		};
+-bool __init tegra_fuse_read_spare(unsigned int spare)
++u32 __init tegra_fuse_read_spare(unsigned int spare)
+ {
+ 	unsigned int offset = fuse->soc->info->spare + spare * 4;
  
-+		mc: memory-controller@2c00000 {
-+			compatible = "nvidia,tegra234-mc";
-+			reg = <0x02c00000 0x100000>,
-+			      <0x02b80000 0x040000>,
-+			      <0x01700000 0x100000>;
-+			interrupts = <GIC_SPI 223 IRQ_TYPE_LEVEL_HIGH>;
-+			#interconnect-cells = <1>;
-+			status = "okay";
-+
-+			#address-cells = <2>;
-+			#size-cells = <2>;
-+
-+			ranges = <0x01700000 0x0 0x01700000 0x0 0x100000>,
-+				 <0x02b80000 0x0 0x02b80000 0x0 0x040000>,
-+				 <0x02c00000 0x0 0x02c00000 0x0 0x100000>;
-+
-+			/*
-+			 * Bit 39 of addresses passing through the memory
-+			 * controller selects the XBAR format used when memory
-+			 * is accessed. This is used to transparently access
-+			 * memory in the XBAR format used by the discrete GPU
-+			 * (bit 39 set) or Tegra (bit 39 clear).
-+			 *
-+			 * As a consequence, the operating system must ensure
-+			 * that bit 39 is never used implicitly, for example
-+			 * via an I/O virtual address mapping of an IOMMU. If
-+			 * devices require access to the XBAR switch, their
-+			 * drivers must set this bit explicitly.
-+			 *
-+			 * Limit the DMA range for memory clients to [38:0].
-+			 */
-+			dma-ranges = <0x0 0x0 0x0 0x80 0x0>;
-+
-+			emc: external-memory-controller@2c60000 {
-+				compatible = "nvidia,tegra234-emc";
-+				reg = <0x0 0x02c60000 0x0 0x90000>,
-+				      <0x0 0x01780000 0x0 0x80000>;
-+				interrupts = <GIC_SPI 224 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&bpmp TEGRA234_CLK_EMC>;
-+				clock-names = "emc";
-+				status = "okay";
-+
-+				#interconnect-cells = <0>;
-+
-+				nvidia,bpmp = <&bpmp>;
-+			};
-+		};
-+
- 		uarta: serial@3100000 {
- 			compatible = "nvidia,tegra234-uart", "nvidia,tegra20-uart";
- 			reg = <0x03100000 0x10000>;
+diff --git a/drivers/soc/tegra/fuse/fuse.h b/drivers/soc/tegra/fuse/fuse.h
+index de58feba0435..ecff0c08e959 100644
+--- a/drivers/soc/tegra/fuse/fuse.h
++++ b/drivers/soc/tegra/fuse/fuse.h
+@@ -65,7 +65,7 @@ struct tegra_fuse {
+ void tegra_init_revision(void);
+ void tegra_init_apbmisc(void);
+ 
+-bool __init tegra_fuse_read_spare(unsigned int spare);
++u32 __init tegra_fuse_read_spare(unsigned int spare);
+ u32 __init tegra_fuse_read_early(unsigned int offset);
+ 
+ u8 tegra_get_major_rev(void);
+
+base-commit: 0fcfb00b28c0b7884635dacf38e46d60bf3d4eb1
 -- 
 2.34.1
 
