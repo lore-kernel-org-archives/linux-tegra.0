@@ -2,52 +2,52 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65C01C433FE
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 940EBC4332F
 	for <linux-tegra@archiver.kernel.org>; Sat, 11 Dec 2021 21:38:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231340AbhLKViI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 11 Dec 2021 16:38:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49574 "EHLO
+        id S231373AbhLKViL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 11 Dec 2021 16:38:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49582 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231207AbhLKViH (ORCPT
+        with ESMTP id S231371AbhLKViJ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sat, 11 Dec 2021 16:38:07 -0500
-Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46C4EC061751;
-        Sat, 11 Dec 2021 13:38:07 -0800 (PST)
-Received: by mail-lf1-x133.google.com with SMTP id m6so12369452lfu.1;
-        Sat, 11 Dec 2021 13:38:07 -0800 (PST)
+        Sat, 11 Dec 2021 16:38:09 -0500
+Received: from mail-lj1-x22f.google.com (mail-lj1-x22f.google.com [IPv6:2a00:1450:4864:20::22f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A63DDC061751;
+        Sat, 11 Dec 2021 13:38:08 -0800 (PST)
+Received: by mail-lj1-x22f.google.com with SMTP id b19so16718376ljr.12;
+        Sat, 11 Dec 2021 13:38:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=a8C2Ox9mLAi+48xHMMaxUeraFYeN7fBArVOxNr3R0I8=;
-        b=QaE2nnf/2Ogb8IBsN2aGR8hcuFjn0C/bwIbtDK1cUUTuEY5/wc1Iz6l6z7uz9laLd+
-         Tlt3ezJN1y3dbA05wlBAHptRCt4J4uBd30PJtIdG3Sk1B3mzlEoAEeg9EI9r8KtJ5k/7
-         y1SbuRSUc9ppr7NLH33eq75WmPCffemZ5Ad0pbK9ZNBM838m/rUWtspvYCmGBta8z0wf
-         aAEFg+8YxnRUllhNcQ7Bu6Usgk9D+OHcDCyHudYHpvIkXMgyuaSgt25azzVe16k+Q6xF
-         jeZ4j6H0xYEKRXmCJK0Tuug9KZO3GjX887WSAh5TP7TYIzLdh2m0ffyqG15OlUFBMK1o
-         UBAg==
+        bh=Y5cqVCk6ynWp5U/3Ep3k4Mo6eL6tir3HlEgYMajRnK4=;
+        b=OtOehzc58gi64fYKYGJoUhU9yfbyw5erXeRGj9xZ//qaRQtR/innknOTIwss8QsRxX
+         uGrRsJb1d2E1wcxH24VILEMMrLn1C7j8APXpVN46pIqXdDi2mV9JNYr8kvFW5gclVsnp
+         gB7fo6UO6vmMJLx+RSgX2mlXCjUtYTsC6052zSOKM6SoQLtgE2TKjEI2+f57zJbU5DB2
+         nGPFYks1dvbnGj2fOGSBnIVTrY9ReXqb1ibf4JQuUBIsFJ83exRIGGkAclUCfctQlk2C
+         bazsgZ0gsuj3/VWLwhZFT/JlQJKDdfjmO1KjsoZTOZMNuvxsYDUhfvoQSVBJPmJsFCKW
+         6G5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=a8C2Ox9mLAi+48xHMMaxUeraFYeN7fBArVOxNr3R0I8=;
-        b=uH9GnxfAipr0g2AECuIkJGS9W1BJvWTnu8wwOqnM8ItKhv+UXNYel09CkQI8tmAvJD
-         mn/S6sJm3imloRAG+I8shr2Yf1xWqMnV96PkFGTF+uguWsuxjVug9Tti838MnLra05uS
-         vy8kaSAsoiKuKOW2TxqZQRDfbJINSPtgoaSMirU9IDxMQz5UXAHIsa6xRH/HTH5P1LzC
-         vkrKPDvBf1fbXwJpZKKMWoellQ+8VdIWPLmMQFITMYhQz1gbIZhjh9tEtqbRwM1OF8J1
-         yLzags2+Ct+vuTLgdgUSLC5gw0T/i6fB1A7PJW8ZZU7Bxmp0D4CTBzuVdbIp6D+8VFvm
-         qleg==
-X-Gm-Message-State: AOAM533R790KPdi6mwTwtLXonMDVlKa963L6ly8rl74g9mMHzbxiWfH/
-        abzJgb1p3mVOSWn88Gi9PEI=
-X-Google-Smtp-Source: ABdhPJzzQaET53q/FDFQJ9CyBQfgCK/ECu+LJ6oDv/04jXNG6kWMXPjoDGISTC/hUXs0JaRT+NWkGA==
-X-Received: by 2002:a05:6512:3185:: with SMTP id i5mr18737901lfe.341.1639258685583;
-        Sat, 11 Dec 2021 13:38:05 -0800 (PST)
+        bh=Y5cqVCk6ynWp5U/3Ep3k4Mo6eL6tir3HlEgYMajRnK4=;
+        b=pdcs83GMWl/gJonYvsy8lDlYbfMZlzlbmGenBpApz5H8YLJy31xQDKn/2hTiEkDfS4
+         kNxsSpnlxBm+zGsscrpUpEKj3kuabVjZCJ9Fx7Bh58YCTfuI2Wg4BT/tS60iFL35f/GO
+         /YZXLhurmCc59In1rHZsn5Xoc+9EyQH/QxYzIS8Dwa79aX/UehH5Br2AkvAIiX7RwB+7
+         yaNkWs7d7fgBcyQaTeRxQ0T2PR8diMr2+xvHAOVMcLXqkncLT4f52NxZnl7wgey/m8Q5
+         GT4KA5ZI8BvpYt26d1a9NKeYoLagZ31hYqGGLr4L5J1xCTtascoEuIhX9j1lnPi2dbOS
+         0UaQ==
+X-Gm-Message-State: AOAM530ngBQkVmHgp9WF/GaOu/YLZm9rGV92ME0+Nnar8ZvHA3Z+sI9x
+        58GMorUOK075l32f1zAw/EE=
+X-Google-Smtp-Source: ABdhPJxK+AF0es5MIQf67gn1WgcvNfNMLLw8QZninH5UxBgKlGqTHB3Q6eB1OovkgWAQD7IxOF9O5w==
+X-Received: by 2002:a2e:2242:: with SMTP id i63mr20232363lji.448.1639258687039;
+        Sat, 11 Dec 2021 13:38:07 -0800 (PST)
 Received: from localhost.localdomain (94-29-46-111.dynamic.spd-mgts.ru. [94.29.46.111])
-        by smtp.gmail.com with ESMTPSA id w14sm786844ljj.7.2021.12.11.13.38.04
+        by smtp.gmail.com with ESMTPSA id w14sm786844ljj.7.2021.12.11.13.38.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 11 Dec 2021 13:38:05 -0800 (PST)
+        Sat, 11 Dec 2021 13:38:06 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Sam Ravnborg <sam@ravnborg.org>,
@@ -58,9 +58,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Anton Bambura <jenneron@protonmail.com>
 Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/3] dt-bindings: sharp,lq101r1sx01: Add compatible for LQ101R1SX03
-Date:   Sun, 12 Dec 2021 00:36:51 +0300
-Message-Id: <20211211213653.17700-2-digetx@gmail.com>
+Subject: [PATCH v2 3/3] drm/panel: simple: Add support for HannStar HSD101PWW2 panel
+Date:   Sun, 12 Dec 2021 00:36:53 +0300
+Message-Id: <20211211213653.17700-4-digetx@gmail.com>
 X-Mailer: git-send-email 2.33.1
 In-Reply-To: <20211211213653.17700-1-digetx@gmail.com>
 References: <20211211213653.17700-1-digetx@gmail.com>
@@ -70,38 +70,63 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Anton Bambura <jenneron@protonmail.com>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
 
-LQ101R1SX03 is compatible with LQ101R1SX01 from software perspective,
-document it. The LQ101R1SX03 is a newer revision of LQ101R1SX01, it has
-minor differences in hardware pins in comparison to the older version.
-The newer version of the panel can be found on Android tablets, like
-ASUS TF701T.
+Add definition of the HannStar HSD101PWW2 Rev0-A00/A01 LCD
+SuperIPS+ HD panel.
 
-Signed-off-by: Anton Bambura <jenneron@protonmail.com>
+Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- .../bindings/display/panel/sharp,lq101r1sx01.yaml          | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/panel/panel-simple.c | 28 ++++++++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/display/panel/sharp,lq101r1sx01.yaml b/Documentation/devicetree/bindings/display/panel/sharp,lq101r1sx01.yaml
-index a679d3647dbd..9ec0e8aae4c6 100644
---- a/Documentation/devicetree/bindings/display/panel/sharp,lq101r1sx01.yaml
-+++ b/Documentation/devicetree/bindings/display/panel/sharp,lq101r1sx01.yaml
-@@ -30,7 +30,12 @@ allOf:
+diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
+index dde033066f3d..f86378ff32a5 100644
+--- a/drivers/gpu/drm/panel/panel-simple.c
++++ b/drivers/gpu/drm/panel/panel-simple.c
+@@ -1927,6 +1927,31 @@ static const struct panel_desc hannstar_hsd100pxn1 = {
+ 	.connector_type = DRM_MODE_CONNECTOR_LVDS,
+ };
  
- properties:
-   compatible:
--    const: sharp,lq101r1sx01
-+    oneOf:
-+      - items:
-+          - const: sharp,lq101r1sx03
-+          - const: sharp,lq101r1sx01
-+      - items:
-+          - const: sharp,lq101r1sx01
- 
-   reg: true
-   power-supply: true
++static const struct display_timing hannstar_hsd101pww2_timing = {
++	.pixelclock = { 64300000, 71100000, 82000000 },
++	.hactive = { 1280, 1280, 1280 },
++	.hfront_porch = { 1, 1, 10 },
++	.hback_porch = { 1, 1, 10 },
++	.hsync_len = { 58, 158, 661 },
++	.vactive = { 800, 800, 800 },
++	.vfront_porch = { 1, 1, 10 },
++	.vback_porch = { 1, 1, 10 },
++	.vsync_len = { 1, 21, 203 },
++	.flags = DISPLAY_FLAGS_DE_HIGH,
++};
++
++static const struct panel_desc hannstar_hsd101pww2 = {
++	.timings = &hannstar_hsd101pww2_timing,
++	.num_timings = 1,
++	.bpc = 8,
++	.size = {
++		.width = 217,
++		.height = 136,
++	},
++	.bus_format = MEDIA_BUS_FMT_RGB888_1X7X4_SPWG,
++	.connector_type = DRM_MODE_CONNECTOR_LVDS,
++};
++
+ static const struct drm_display_mode hitachi_tx23d38vm0caa_mode = {
+ 	.clock = 33333,
+ 	.hdisplay = 800,
+@@ -3775,6 +3800,9 @@ static const struct of_device_id platform_of_match[] = {
+ 	}, {
+ 		.compatible = "hannstar,hsd100pxn1",
+ 		.data = &hannstar_hsd100pxn1,
++	}, {
++		.compatible = "hannstar,hsd101pww2",
++		.data = &hannstar_hsd101pww2,
+ 	}, {
+ 		.compatible = "hit,tx23d38vm0caa",
+ 		.data = &hitachi_tx23d38vm0caa
 -- 
 2.33.1
 
