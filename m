@@ -2,77 +2,82 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4147C433EF
-	for <linux-tegra@archiver.kernel.org>; Sat, 11 Dec 2021 14:52:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16068C433F5
+	for <linux-tegra@archiver.kernel.org>; Sat, 11 Dec 2021 15:28:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231255AbhLKOw0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 11 Dec 2021 09:52:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46052 "EHLO
+        id S229813AbhLKP2z (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 11 Dec 2021 10:28:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53938 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229945AbhLKOwZ (ORCPT
+        with ESMTP id S229503AbhLKP2y (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sat, 11 Dec 2021 09:52:25 -0500
-Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5ADA7C061714;
-        Sat, 11 Dec 2021 06:52:24 -0800 (PST)
-Received: by mail-lf1-x134.google.com with SMTP id bu18so23244994lfb.0;
-        Sat, 11 Dec 2021 06:52:24 -0800 (PST)
+        Sat, 11 Dec 2021 10:28:54 -0500
+Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7A1BC061714;
+        Sat, 11 Dec 2021 07:28:53 -0800 (PST)
+Received: by mail-lf1-x12f.google.com with SMTP id t26so23192051lfk.9;
+        Sat, 11 Dec 2021 07:28:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=sVjMFdeuBLQSPpKHTdYhUbqD/ObKT0xUXQ+uzu60LvM=;
-        b=ofUbA147cPQrvvcyvnqccNBaic9AraNmvjEhJmPnUTFrGyDSJGkh3vtHA+UIZLPkk/
-         1w64GrW0fz2nKX1Hw/JucIpKjuEe+6SH8xGGf2+9j++kgUi1BY9+qcBGPq2z5jmCdk8C
-         pxE/LghkdGxS7xHc/F1ypn4FXOnWljj3R7TF6ZffGF/9a/6TqRDhkcEVwQU3wF1IuCk7
-         tbCb3RYhSEZvYt1dCZe55wIlOPSxm9DfdUJTne5/XUl7812n6UkBnJeXCyLYqFz03hQP
-         6ailwjtiMpLPVn4Zm9coy1QHJOGevs7VmPIkB7xCCISpdQLQVx4e9rKJTZgdgHxJOMgM
-         oufA==
+        bh=W+78tT7DvCusUKi3cge1x8a7J0QAvGLFsCIq9fOA3Jg=;
+        b=Sude1OT0MoUDKhSge1VsW272aWD8foR6kHOpmaKMbMBCZQUdAsS6scox7f7o5IXR+T
+         IMmPBAkAq/FpwQ+lMHlC3Q5gkf6vjm5cVEOihn4QXJY5gNzvFpYY+1DHFbMaDO15Sik2
+         17eRm7Q1qL3xVcHzN8g3w9Hkrqy/jzaDwVUupEiA78Vto/JKBvAnGdmmLsKOV1DcvNzp
+         4L14bPdPfzCd1hc/RFrKuOiJWcQObtq9vBbdJUVr7/w1ruoTMny7Y1jRER8enzlMhynY
+         PGtmifZp1cmIGl0oGqympohgatR9RVDcEqpZdR7PBSwoU4yDpfngR0cWfVSVd2EEBa7f
+         Z1XA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=sVjMFdeuBLQSPpKHTdYhUbqD/ObKT0xUXQ+uzu60LvM=;
-        b=fNjSequZT+WzdD+e9eUbTeX7ENBcZbV594Au1l/Oek/7Hr5AXi35iaQjRNCIvrtwd1
-         0UbGrvbpO+Ad3K9hLZTyr3fC2a6+PaaYwIADyooyjRzNKQti6o7+h4QVBBuB4FYa4jdM
-         GoF/ueIapZzca2+s2EGyjUadZJFfoxxrP4/h/kbTjWXgF3z/Hqqh+HjCInFkUEQH/TFo
-         lwGYNclgHwrW19atKYH9T0zQW9MYEee73cwXT4a3Dd3+XLyHkXQssgl5fi2Tx+oPQOcD
-         vfMEXA/O5xIs7xLtt1iUaWHTTJ+wblfyoTRnnYJ6iIOBosimxAxl6fZTXZtwFM20RWHC
-         WfJw==
-X-Gm-Message-State: AOAM532kQibfzyxu3eLS9sX/Hh9Wn5irQ9YxqoMClyMmDArX/XyLYo4y
-        2E5hZ4fJ41LRi1wMwc40F3Ovyz0jknw=
-X-Google-Smtp-Source: ABdhPJy0NhAEgx0YueavHkoSGEGm8/Mr33UwaW2jLvNQQvPaYv8aq5+3hyMTwVmG12Oro9tTskAoDA==
-X-Received: by 2002:a05:6512:3a5:: with SMTP id v5mr18645438lfp.250.1639234342465;
-        Sat, 11 Dec 2021 06:52:22 -0800 (PST)
+        bh=W+78tT7DvCusUKi3cge1x8a7J0QAvGLFsCIq9fOA3Jg=;
+        b=ca8NAPzSruo0I32d1wQWTAsZDaLOu1u2cF0lOLi4mL/BSyVaDxNHMjzhA0F/MwBGWo
+         WyBaSPb6woR/mQA/XHkT8JOMi23r5KRFV96FRvcXrOPQ7egsG7fqhmjwiI5WQj1mlO1F
+         qgh0w1cZfvD6qMW65636Cdh8tdCWfkEggcMUbOkbcZQE5SzyT9aYX8+vdlnIX3saOV9m
+         m0hCVt08QCtvfvp1YoVNdD6kbljok0QqEWUN2ZMyYXQ8wkngvdEd85Jin+azxTBXDr8e
+         s9tHoIVMkIX9znzwZGUANw7IAOCU3oY7LiuAZgWmcnJ0KtOLaFJKPNl6xI+LsnKcZXmj
+         LaDQ==
+X-Gm-Message-State: AOAM532qW50/oaQqdopeQ1vkNMO+cBD0yOtYZmNwaJDDDlvbKRjMMowW
+        WiLy/fUjOb048sAFTRQcbdly2LFfwNY=
+X-Google-Smtp-Source: ABdhPJxv4TmikjxD/+ijVr0Ajj6JZ0fjBKhtPlbI7Zdod50NnI3w0fRp49A6Ele6jDbhVL82+SUhxA==
+X-Received: by 2002:ac2:5e89:: with SMTP id b9mr9969602lfq.616.1639236531938;
+        Sat, 11 Dec 2021 07:28:51 -0800 (PST)
 Received: from [192.168.2.145] (94-29-46-111.dynamic.spd-mgts.ru. [94.29.46.111])
-        by smtp.googlemail.com with ESMTPSA id p10sm679546lja.0.2021.12.11.06.52.21
+        by smtp.googlemail.com with ESMTPSA id d24sm666372lfb.139.2021.12.11.07.28.50
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 11 Dec 2021 06:52:21 -0800 (PST)
-Subject: Re: [PATCH v3] i2c: tegra: use i2c_timings for bus clock freq
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Akhil R <akhilrajeev@nvidia.com>,
-        Christian Koenig <christian.koenig@amd.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        linux-i2c <linux-i2c@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        devicetree <devicetree@vger.kernel.org>
-References: <1639138557-1709-1-git-send-email-akhilrajeev@nvidia.com>
- <1056abdf-684b-b808-3471-d4733fd5e449@gmail.com>
- <CAHp75VfykSN6Jnoq6XsEL7W9+yCq-uwRdFRTSAJ6bBuYCuMa5Q@mail.gmail.com>
+        Sat, 11 Dec 2021 07:28:51 -0800 (PST)
+Subject: Re: [PATCH v5 05/24] ARM: tegra: Add device-tree for ASUS Transformer
+ EeePad TF101
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
+        David Heidelberg <david@ixit.cz>,
+        Svyatoslav Ryhel <clamor95@gmail.com>,
+        Anton Bambura <jenneron@protonmail.com>,
+        Antoni Aloy Torrens <aaloytorrens@gmail.com>,
+        Nikola Milosavljevic <mnidza@outlook.com>,
+        Ion Agorria <ion@agorria.com>,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        Ihor Didenko <tailormoon@rambler.ru>,
+        Andreas Westman Dorcsak <hedmoo@yahoo.com>,
+        Maxim Schwalm <maxim.schwalm@gmail.com>,
+        Raffaele Tranquillini <raffaele.tranquillini@gmail.com>,
+        Jasper Korten <jja2000@gmail.com>,
+        Thomas Graichen <thomas.graichen@gmail.com>,
+        Stefan Eichenberger <stefan.eichenberger@toradex.com>,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20211208173609.4064-1-digetx@gmail.com>
+ <20211208173609.4064-6-digetx@gmail.com> <YbN2T5guOfIRLXg1@orome>
 From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <e0d4a63f-b5c6-8c01-f11e-a0af331a5f0c@gmail.com>
-Date:   Sat, 11 Dec 2021 17:52:21 +0300
+Message-ID: <6c33db23-dfb9-bea2-f10f-02b9ed1558eb@gmail.com>
+Date:   Sat, 11 Dec 2021 18:28:50 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.14.0
 MIME-Version: 1.0
-In-Reply-To: <CAHp75VfykSN6Jnoq6XsEL7W9+yCq-uwRdFRTSAJ6bBuYCuMa5Q@mail.gmail.com>
+In-Reply-To: <YbN2T5guOfIRLXg1@orome>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -80,19 +85,17 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-10.12.2021 23:07, Andy Shevchenko пишет:
-> On Fri, Dec 10, 2021 at 7:24 PM Dmitry Osipenko <digetx@gmail.com> wrote:
->> 10.12.2021 15:15, Akhil R пишет:
->>> Use i2c_timings struct and corresponding methods to get bus clock frequency
->>>
->>> Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
->>> Suggested-by: Andy Shevchenko <andy.shevchenko@gmail.com>
->>> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
->>
->> Note that your s-b should be the last line of the commit message. No
->> need to resend for that.
-> 
-> AFAICT there is no such requirement in the documentation. It says that
-> SoB should be last among SoBs, which is not broken here.
+10.12.2021 18:46, Thierry Reding пишет:
+> Again, the memory-controller node needs to be sorted differently. There
+> are other occurrences of this throughout the file.
 
-Correct, that's why I said no need to resend.
+Memory-controller node is placed on purpose in the end of DT to keep it
+readable. Those huge timings make it unreadable. I don't want to change
+it. Alternatively, we can factor out timings into separate DTSI, but
+it's unnecessary to me. I leave it up to you to decide what to do.
+
+I'll reorder couple nodes alphabetically, those that don't have address
+and were missed by me. The by-address nodes are all okay to me.
+
+Please feel free to reorder nodes to yours liking by yourself while
+applying if I'll miss something.
