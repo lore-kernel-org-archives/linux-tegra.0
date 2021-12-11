@@ -2,128 +2,102 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BF89C433EF
-	for <linux-tegra@archiver.kernel.org>; Sat, 11 Dec 2021 21:16:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16076C433EF
+	for <linux-tegra@archiver.kernel.org>; Sat, 11 Dec 2021 21:38:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232108AbhLKVQW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 11 Dec 2021 16:16:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44396 "EHLO
+        id S230356AbhLKViH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 11 Dec 2021 16:38:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49564 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232513AbhLKVPV (ORCPT
+        with ESMTP id S229933AbhLKViH (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sat, 11 Dec 2021 16:15:21 -0500
-Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40989C0698C4;
-        Sat, 11 Dec 2021 13:14:51 -0800 (PST)
-Received: by mail-lf1-x12c.google.com with SMTP id bu18so24276474lfb.0;
-        Sat, 11 Dec 2021 13:14:51 -0800 (PST)
+        Sat, 11 Dec 2021 16:38:07 -0500
+Received: from mail-lj1-x231.google.com (mail-lj1-x231.google.com [IPv6:2a00:1450:4864:20::231])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8469EC061714;
+        Sat, 11 Dec 2021 13:38:06 -0800 (PST)
+Received: by mail-lj1-x231.google.com with SMTP id bn20so18521280ljb.8;
+        Sat, 11 Dec 2021 13:38:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Cge4cKwoH4rfWpliovNOORGBmRueDCEgmB9owthxwO0=;
-        b=mtcITI6HAKA2/1OyhGxy70tTAz7jnk8ufG76N6ybdDwPF52yqmZEZ+sqfqAq8/RJWj
-         xP7PVCdkQnDxlGfK59NBilH3s0KLvl4s6EZD5gKKbVctk7k7UAv8FR92Ohoh5vGib/Te
-         ghTFHf35IY3nvjReIhZ0I8BkdEzjiFWbRrut3dZvmvPmboYO9MopI28TQHAy6rxHU4I3
-         VLPpB5TNXJsDNcVjNpwCh/U3mrp5+BVC7eBeCJF5AEXX+XqixT/gjRt2mK4h+WJ0So8M
-         RWWDFr8A4NdbprZZc3a+IMfkKKcBtOhofvof5m6PRYQ/BQttw16nBDY96PHP0LUsNdcy
-         sCGw==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=AN606FDWoic1gE/hvIhNv/tnFd7knEeZEmhAMBvktOQ=;
+        b=LLKACYa/RglwZ3lc+IgOkFptxsNWlNEp2S1LoPxuOhjVJnxlkAkMMg7GVek+lN0nMh
+         a7OXtCOcI97959q+n4eeVfYRQ2v9YD73i1h5nhVmG899RH2MWdWVScMGa1cFhfyA3lrT
+         kzKBCr6d/rKnDxeaTebzq8FV8vnSj2QYmOsL1QTX/C6+ytDp7oEIU5OR7arKPuFKqo26
+         uML9DYon7GugigEv4PP7fOSbIMtrAEzZVUV1wIdWQOjG5WF3L+gckeg8WfSIHpyNZ5bd
+         oSvLhdqlXZVHnEFXD7x9ofq5W+7MeDn+kqWdiCcGyl13Ifsb1hLQNEqBw2kJ2I5U8o0K
+         hX7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Cge4cKwoH4rfWpliovNOORGBmRueDCEgmB9owthxwO0=;
-        b=ve9FCTQupgW5kg2Dq6EIUAGdEu/3fyvgcquzSy4bsbr8tX5nhtleFw/9kjFSxdstZ4
-         GBML9SHwqYxm6LzLuW9y3UOuIu8ziLPjJBXUKL/slqVRWmMjr0RaaEIgLi4FGjIixpdC
-         Wx7C/Qv0x/bohzB20z3R/pz5CIbsY6zys56aoxO2yl98RT/Dg61RFG142Az5tVLj2TUh
-         upIyaCaj48fd1abCXJvG8gpL/oh/1vHS4Me+i4y8YXVb+kst9TLBH4rW+pr+yPorJ4FA
-         xUrLr3pPIaf+iLM06iqnXGiG5xwOOGZr6YiOhPzyjweqCrB/cxS5l/07I5iJ5E2TLEAE
-         suCg==
-X-Gm-Message-State: AOAM530lrhATvviS0A//Ea9/WJ9CQffhXZB4PyiTj5RjDoCu9RDZaHAO
-        9axP7JB6T8dRSZxP1MqslBA=
-X-Google-Smtp-Source: ABdhPJw3J4lUPY92u2nGl6KaYE4sg+acNG2onelI91fxHfxiwjIOTMjxabRudqNQyERlR/3xZOYQ8A==
-X-Received: by 2002:a05:6512:3f20:: with SMTP id y32mr20247147lfa.353.1639257290291;
-        Sat, 11 Dec 2021 13:14:50 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=AN606FDWoic1gE/hvIhNv/tnFd7knEeZEmhAMBvktOQ=;
+        b=48fvpiDiyWPfo9QpmbOQBbEDb/TTMdyZZozzDNArNKvqsBpHhKXOzsCLwD7muzWiwG
+         Z8MXBnf/3Khjk2xY66r/UfiVnaSbH+obYHFfe0uaT0FEcLoFYXxAYT8rQtpZf+MwtACo
+         w6OUgNQHOQMJic2tQ8TEwF+NZBe9qCx0mTHaYmt18QNetjADI38B40KPQWOkApo4DCjt
+         D6UKQAIXfDnuKNKb7q8FbfK/b/kG6LzvyB/Yg5QlL5YorOu91/Lt7HJfODvwwkI8kNVt
+         tV72ZXk7aJ4YR1t/r01FbXa1U9HZ4d7LlO7QHkN3NQeW7Y9/8tHCnOzoRCkzw4iSX+qZ
+         uOnw==
+X-Gm-Message-State: AOAM532K0W49SwxU3Fly80yOXu0lfYzVpUwrTAZfcFMJ62aO/a8EF+DV
+        +HZNH3Kf/WT21DM/0si3d2g=
+X-Google-Smtp-Source: ABdhPJw9Udh0ZLeBHQZnYsPbOAv42sClfx6AJuaWEU5e75QX0H8fo56IQmU7TA6gsFS6FPg71+K9eA==
+X-Received: by 2002:a2e:b8cf:: with SMTP id s15mr20806073ljp.364.1639258684871;
+        Sat, 11 Dec 2021 13:38:04 -0800 (PST)
 Received: from localhost.localdomain (94-29-46-111.dynamic.spd-mgts.ru. [94.29.46.111])
-        by smtp.gmail.com with ESMTPSA id v6sm765927lfp.61.2021.12.11.13.14.49
+        by smtp.gmail.com with ESMTPSA id w14sm786844ljj.7.2021.12.11.13.38.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 11 Dec 2021 13:14:50 -0800 (PST)
+        Sat, 11 Dec 2021 13:38:04 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        David Heidelberg <david@ixit.cz>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
         Svyatoslav Ryhel <clamor95@gmail.com>,
-        Anton Bambura <jenneron@protonmail.com>,
-        Antoni Aloy Torrens <aaloytorrens@gmail.com>,
-        Nikola Milosavljevic <mnidza@outlook.com>,
-        Ion Agorria <ion@agorria.com>,
-        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>,
-        Ihor Didenko <tailormoon@rambler.ru>,
-        Andreas Westman Dorcsak <hedmoo@yahoo.com>,
-        Maxim Schwalm <maxim.schwalm@gmail.com>,
-        Raffaele Tranquillini <raffaele.tranquillini@gmail.com>,
-        Jasper Korten <jja2000@gmail.com>,
-        Thomas Graichen <thomas.graichen@gmail.com>,
-        Stefan Eichenberger <stefan.eichenberger@toradex.com>,
-        Stefan Agner <stefan@agner.ch>,
-        Peter Geis <pgwipeout@gmail.com>
-Cc:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v6 28/28] ARM: config: multi v7: Enable display drivers used by Tegra devices
-Date:   Sun, 12 Dec 2021 00:14:12 +0300
-Message-Id: <20211211211412.10791-29-digetx@gmail.com>
+        Anton Bambura <jenneron@protonmail.com>
+Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/3] Support Sharp LQ101R1SX03 and HannStar HSD101PWW2 panels
+Date:   Sun, 12 Dec 2021 00:36:50 +0300
+Message-Id: <20211211213653.17700-1-digetx@gmail.com>
 X-Mailer: git-send-email 2.33.1
-In-Reply-To: <20211211211412.10791-1-digetx@gmail.com>
-References: <20211211211412.10791-1-digetx@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Enable display-related drivers used by various Tegra-based tablets.
+This series adds support for Sharp LQ101R1SX03 and HannStar HSD101PWW2
+display panels that are used by Asus Transformer tablets, which we're
+planning to support since 5.17 kernel.
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- arch/arm/configs/multi_v7_defconfig | 5 +++++
- 1 file changed, 5 insertions(+)
+Changelog:
 
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index c951aeed2138..3d509bc13444 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -382,6 +382,7 @@ CONFIG_TCG_TPM=m
- CONFIG_TCG_TIS_I2C_INFINEON=m
- CONFIG_I2C_CHARDEV=y
- CONFIG_I2C_ARB_GPIO_CHALLENGE=m
-+CONFIG_I2C_MUX_GPIO=y
- CONFIG_I2C_MUX_PCA954x=y
- CONFIG_I2C_MUX_PINCTRL=y
- CONFIG_I2C_DEMUX_PINCTRL=y
-@@ -680,19 +681,23 @@ CONFIG_DRM_FSL_DCU=m
- CONFIG_DRM_TEGRA=y
- CONFIG_DRM_STM=m
- CONFIG_DRM_STM_DSI=m
-+CONFIG_DRM_PANEL_LVDS=m
- CONFIG_DRM_PANEL_SIMPLE=y
- CONFIG_DRM_PANEL_EDP=y
- CONFIG_DRM_PANEL_SAMSUNG_LD9040=m
-+CONFIG_DRM_PANEL_SHARP_LQ101R1SX01=m
- CONFIG_DRM_PANEL_ORISETECH_OTM8009A=m
- CONFIG_DRM_PANEL_RAYDIUM_RM68200=m
- CONFIG_DRM_PANEL_SAMSUNG_S6E63J0X03=m
- CONFIG_DRM_PANEL_SAMSUNG_S6E8AA0=m
-+CONFIG_DRM_LVDS_CODEC=m
- CONFIG_DRM_NXP_PTN3460=m
- CONFIG_DRM_PARADE_PS8622=m
- CONFIG_DRM_SII902X=m
- CONFIG_DRM_SII9234=m
- CONFIG_DRM_SIMPLE_BRIDGE=m
- CONFIG_DRM_TOSHIBA_TC358764=m
-+CONFIG_DRM_TOSHIBA_TC358768=m
- CONFIG_DRM_I2C_ADV7511=m
- CONFIG_DRM_I2C_ADV7511_AUDIO=y
- CONFIG_DRM_STI=m
+v2: - Added ack from Rob Herring to the HSD101PWW2 binding.
+
+    - Updated LQ101R1SX01 binding, like it was suggested by Rob Herring,
+      making LQ101R1SX03 directly compatible with the LQ101R1SX01.
+      Such that ["sharp,lq101r1sx03", "sharp,lq101r1sx01"] could be
+      used in DT. This removes need to update panel driver with the new
+      compatible.
+
+    - Improved commit message of the LQ101R1SX03 patch.
+
+    - Added my s-o-b to all patches.
+
+Anton Bambura (1):
+  dt-bindings: sharp,lq101r1sx01: Add compatible for LQ101R1SX03
+
+Svyatoslav Ryhel (2):
+  dt-bindings: display: simple: Add HannStar HSD101PWW2
+  drm/panel: simple: Add support for HannStar HSD101PWW2 panel
+
+ .../bindings/display/panel/panel-simple.yaml  |  2 ++
+ .../display/panel/sharp,lq101r1sx01.yaml      |  7 ++++-
+ drivers/gpu/drm/panel/panel-simple.c          | 28 +++++++++++++++++++
+ 3 files changed, 36 insertions(+), 1 deletion(-)
+
 -- 
 2.33.1
 
