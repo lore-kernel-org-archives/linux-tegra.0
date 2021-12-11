@@ -2,52 +2,52 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B6C3C433EF
-	for <linux-tegra@archiver.kernel.org>; Sat, 11 Dec 2021 21:15:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E0FCC433FE
+	for <linux-tegra@archiver.kernel.org>; Sat, 11 Dec 2021 21:15:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232344AbhLKVPh (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 11 Dec 2021 16:15:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44368 "EHLO
+        id S232363AbhLKVPj (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 11 Dec 2021 16:15:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44432 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232235AbhLKVOv (ORCPT
+        with ESMTP id S232222AbhLKVOu (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sat, 11 Dec 2021 16:14:51 -0500
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BE5DC061371;
-        Sat, 11 Dec 2021 13:14:49 -0800 (PST)
-Received: by mail-lf1-x129.google.com with SMTP id t26so24123526lfk.9;
-        Sat, 11 Dec 2021 13:14:49 -0800 (PST)
+        Sat, 11 Dec 2021 16:14:50 -0500
+Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0648C0698E1;
+        Sat, 11 Dec 2021 13:14:46 -0800 (PST)
+Received: by mail-lf1-x136.google.com with SMTP id d10so24126577lfg.6;
+        Sat, 11 Dec 2021 13:14:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=PKt9YnkKlXD514q7tFDbDrGJcN8l4g6hHAMjM2/Z7es=;
-        b=Ufo/uyD/7MQAkaRBq1aCIdThdkb9eD/xhxhYeqGBVd5zR4MVNGnjNx3V7NPArCpEas
-         vV60tL6etbtCEfucj3MmstWAWhp7PM5yJc1HlU3cTpAM7p1VkhNBWo4rXrO7DdtbPaAv
-         xdoXwc8pfkBBk7PtKvPofKwmb7SEyPu8m840WlUsy9Ndij15wxQbKgEztbANsOzPb030
-         zJ636g5p/LgefmZmBKxyoxLBXUZoHC0xur554nF6Wcr4y/YwoUrv7PiQVVvY+UPorwHr
-         GfyyJdHpHCOawzwmfEWGQk2AtEbPKSmbVgwQrfxnoDJhz0g/b2dB0M8JYIHltqfW9Rv5
-         ZmNg==
+        bh=QmQg/p/Vn2YKZaq3yQvTU2o68zUY2EoLoTpiJk2fogA=;
+        b=R3kTb5Fpo3WUYZnWolBlr0u65HsjnFNjCk1T37dLPQn+qgY1ndHNAXHu2osf3c3Gph
+         HGTbj7frBChvgdQT9g3NE1wWw0GsOSJOlM/hjmyFdK5gjBgnsjVJommToDg+cYmM3KlW
+         MJURIxqmhYwvzEcYr/8eh28Ccm2MHg/2tULxyYCDxMiILg97SHWqc5VqGovqWcoERvgR
+         wkzidlr9wzEBlaHY+TZmYHEC2P9Kr7HszgtOvJPFHEDFkrPclv2NB2WdsJjf9TDwDqI1
+         9cEsJa2u/7TeT2gsFZ4XQHll7JxsWsSkTGEmp4v8geng8xj9NpDwbZQ5/cLScosrjzid
+         7CFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=PKt9YnkKlXD514q7tFDbDrGJcN8l4g6hHAMjM2/Z7es=;
-        b=F6LWwTgXFWqs6u0dWEVmWnzXLY7OHWyywmWuRjsqxuiD+BBHNbNC6rLWwjf6pValCn
-         7w2AA2lRt3OEDclbcGYM0mz07gCIiKjJOPrhh5rCL4kPEymAZF+Sm7dvYuSnXut920U1
-         OhrN/ucrWOvVegxTvnZhfEuVxS9uQWq4O3jFSXxXgVnAx3HizLObQwQF8Ubzdgs/o3wl
-         nzK4bDC/VmyJJLBl+staYDDCSgJVSEZqdsnH54tqC4bhT2OCvzDQmqLrUGho3l83D7MK
-         YI3Tja4tnMwzb4IDvcfQ6r4+PFjhLbua3GVdXxvji87CVwon70tHjKOm+srGf0FUWw32
-         b4kg==
-X-Gm-Message-State: AOAM533Ks4d3fNH2U0/cgO4dG5gSlNP++aNgsIDL8qC2Q4BjOjwIqi2N
-        xzVQvPvEmLitozRqs8eWcmw=
-X-Google-Smtp-Source: ABdhPJwkLnozsS6NrjlYv2VXKYKVjLTRvnF/RbHq790CdC4zn+qSXYGmLPUY2wDZf6wyvlr+3DG4oQ==
-X-Received: by 2002:a19:614f:: with SMTP id m15mr19852748lfk.187.1639257287302;
-        Sat, 11 Dec 2021 13:14:47 -0800 (PST)
+        bh=QmQg/p/Vn2YKZaq3yQvTU2o68zUY2EoLoTpiJk2fogA=;
+        b=eLQect7adwf6oz2ZIMKoNQIoVaqqmRMx/esOl029+db6kJ+jj5Q92X4vad+e16O9Xj
+         LGZQScN0ax+mqJKUZALvWqQ6a9XBXXSuZDkB3IqqB5axtzl0wYy4kjwepFquTl+zAoaf
+         d3Nq42h4kAp7jhXekZ+1lU3P3M4r94yvvsUjP6EONaTJrizCcsadB2PCq9c6JDsp7NBT
+         VStrS+hWtw1A7Q6K7FQezL3oR1CpBY/Rjlo9HL96w2ROC628d8pxb+xNF93TmxD3fU7O
+         Zpa/eP7rjIuzvp6xPub8pzgZmMRlFoYoasbB4VhWCgFeGpoqX4sRNbn1+Wooq89dS5XG
+         U3ZA==
+X-Gm-Message-State: AOAM532C1/CW2/pjcp7gKFMPbA4BJngrI1yvpA1h+BVvOW+J7hZG7og+
+        l15zU4KQJhzluJ3UA9+msPldBspV5IE=
+X-Google-Smtp-Source: ABdhPJxI5/pMnQ9lMH1qDS+TSdx82+bb2ufnCih2cYHizJubjlC4ZezpafcgYz7f2FMVY5flQDnVzQ==
+X-Received: by 2002:ac2:4e09:: with SMTP id e9mr19086127lfr.657.1639257285333;
+        Sat, 11 Dec 2021 13:14:45 -0800 (PST)
 Received: from localhost.localdomain (94-29-46-111.dynamic.spd-mgts.ru. [94.29.46.111])
-        by smtp.gmail.com with ESMTPSA id v6sm765927lfp.61.2021.12.11.13.14.46
+        by smtp.gmail.com with ESMTPSA id v6sm765927lfp.61.2021.12.11.13.14.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 11 Dec 2021 13:14:47 -0800 (PST)
+        Sat, 11 Dec 2021 13:14:45 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -69,9 +69,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Peter Geis <pgwipeout@gmail.com>
 Cc:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v6 25/28] ARM: tegra: Remove stray #reset-cells property
-Date:   Sun, 12 Dec 2021 00:14:09 +0300
-Message-Id: <20211211211412.10791-26-digetx@gmail.com>
+Subject: [PATCH v6 23/28] ARM: tegra: Add #reset-cells for Tegra114 MC
+Date:   Sun, 12 Dec 2021 00:14:07 +0300
+Message-Id: <20211211211412.10791-24-digetx@gmail.com>
 X-Mailer: git-send-email 2.33.1
 In-Reply-To: <20211211211412.10791-1-digetx@gmail.com>
 References: <20211211211412.10791-1-digetx@gmail.com>
@@ -83,29 +83,27 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-The Ouya board specifies the #reset-cells property for the GPIO
-controller. Since the GPIO controller doesn't provide reset controls
-this is not needed, so they can be dropped.
+The Tegra memory controller provides reset controls for hotflush reset,
+so the #reset-cells property must be specified.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
-Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- arch/arm/boot/dts/tegra30-ouya.dts | 1 -
- 1 file changed, 1 deletion(-)
+ arch/arm/boot/dts/tegra114.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/boot/dts/tegra30-ouya.dts b/arch/arm/boot/dts/tegra30-ouya.dts
-index 4259871b76c9..fd64aadc472a 100644
---- a/arch/arm/boot/dts/tegra30-ouya.dts
-+++ b/arch/arm/boot/dts/tegra30-ouya.dts
-@@ -70,7 +70,6 @@ hdmi@54280000 {
+diff --git a/arch/arm/boot/dts/tegra114.dtsi b/arch/arm/boot/dts/tegra114.dtsi
+index 563ee262f41d..d487bc180f09 100644
+--- a/arch/arm/boot/dts/tegra114.dtsi
++++ b/arch/arm/boot/dts/tegra114.dtsi
+@@ -543,6 +543,7 @@ mc: memory-controller@70019000 {
+ 		interrupts = <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>;
  
- 	gpio: gpio@6000d000 {
- 		gpio-ranges = <&pinmux 0 0 248>;
--		#reset-cells = <1>;
+ 		#iommu-cells = <1>;
++		#reset-cells = <1>;
  	};
  
- 	pinmux@70000868 {
+ 	ahub@70080000 {
 -- 
 2.33.1
 
