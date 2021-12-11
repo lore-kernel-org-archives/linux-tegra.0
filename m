@@ -2,93 +2,281 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10F8BC433F5
-	for <linux-tegra@archiver.kernel.org>; Sat, 11 Dec 2021 20:12:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9FA3C433F5
+	for <linux-tegra@archiver.kernel.org>; Sat, 11 Dec 2021 21:14:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230159AbhLKUMo (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 11 Dec 2021 15:12:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59092 "EHLO
+        id S231866AbhLKVOX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 11 Dec 2021 16:14:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44228 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229591AbhLKUMn (ORCPT
+        with ESMTP id S230241AbhLKVOW (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sat, 11 Dec 2021 15:12:43 -0500
-Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E88B5C061714;
-        Sat, 11 Dec 2021 12:12:42 -0800 (PST)
-Received: by mail-lf1-x12c.google.com with SMTP id m27so23914852lfj.12;
-        Sat, 11 Dec 2021 12:12:42 -0800 (PST)
+        Sat, 11 Dec 2021 16:14:22 -0500
+Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36088C061714;
+        Sat, 11 Dec 2021 13:14:22 -0800 (PST)
+Received: by mail-lj1-x232.google.com with SMTP id z8so18453485ljz.9;
+        Sat, 11 Dec 2021 13:14:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=1NX00lfdfJEOmAGyiJqx+//AAUizbRo1RDb63QViKlk=;
-        b=WLa28H62/MxLZ/L/Fc9vw8GNYtDrk/K22CQruONOV7GwAwD/dLgLjwXdwd7hZ+Hg2W
-         EImb9TQZtJfGit9HwbXsz0vghR/slk9HUDpHGNwTKSlw34JRrUt/pzHbo0eSmyQgvsWH
-         4P0bE7DhfkD6zZh1/rl0ITod5jA8IrkplpKRzRy5J8/njc2h309o73FiC3DV1Qi574nx
-         0GByGwBSNdrrOG0z+C3CGa4KvkeMOZRPmt+0L0k0tiqBr19JLVTlur2U32muIfezGt01
-         L0Q5sG1XgtCK8fMzuGpVg0rgtLV7T/OJ4SN9V8Yq1Us2OBGduqFViH7MB4sZLY12Fsep
-         6h8A==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=dQgbXLDygjds0YLNQGqPucAQ1zkcXHyC+uTKGssc/nw=;
+        b=d0s/oQOZmkvjre/cNKFItCJ/1EZLydSntVWLC6j8cJ0HxRoODrT0Y0xdaEwR8Eemx5
+         w1xguGi84Cz/SO+y5YujOm0yS57TPWugvXlp9PP3jMXo+y5kakvBb1WHCDYz0h7muABt
+         Uos+Gv7SpgpXdJErj21hvFtkK7ZE8cjEMkVuk+pK+4PJTt4kQD3T2yaAhI+5jkLGwDh3
+         kFX5iS8hcl+J0G6GFJ8VQFfuJx2Zu3KTdBgPbYVhR7QaJL5hKWb3c6wQ0nZpPw89+GNc
+         dpUj4JGUtcnBz/UqTER0xkEcgxOjweJEUJN8hIrv4TOnqOTGHSwP639EeYXzo1K5CQs7
+         62Zg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=1NX00lfdfJEOmAGyiJqx+//AAUizbRo1RDb63QViKlk=;
-        b=l3Rh/om4ZGTVazyqw3AQKMsoJUFrd3e9PAK27l19gDla/o1ocBCDPpzKB18+7IGxz4
-         I7u6D4yoPsyrUzhLGqPU4RtXaHtbgvImdhQMdbJWr+HAlgXD/Pjieq+nQQJhLRbFFrmB
-         BzdPgrEXRhUxhZaHRZAFW0YP0nsST5OL1f9mDf08SVcUVVtL46OaYTZB06+5+ZCNDM+A
-         I4IUbGPIa6BzvpMyQ9Mb6vaEi6OfZTKQbvWAPRVmJPeXS5fI6CgNQ87o5UKX9vx3M6WI
-         qjlwv0bzVeypI8+nK+zBwKoepNMqPuGWigYHSTatHLUon8yNceUmaDKGe6oQ1/kiyIIf
-         G3xA==
-X-Gm-Message-State: AOAM530r2RpDxL6owIFGxw+gg8T6Hicfmh7Re0z5o78YIaD1NWylmbFH
-        oBzxIK5tPf129s9s4L5DMJcBvVmoqu4=
-X-Google-Smtp-Source: ABdhPJwYvn9cCJZhDtDvzm/np2uqdT1CxD52LOZm/NibOjCeH2ooOvJR/7/oDphCpRJdH4VL2/A9tg==
-X-Received: by 2002:ac2:4d0a:: with SMTP id r10mr18686144lfi.210.1639253560831;
-        Sat, 11 Dec 2021 12:12:40 -0800 (PST)
-Received: from [192.168.2.145] (94-29-46-111.dynamic.spd-mgts.ru. [94.29.46.111])
-        by smtp.googlemail.com with ESMTPSA id x18sm745539ljd.110.2021.12.11.12.12.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 11 Dec 2021 12:12:40 -0800 (PST)
-Subject: Re: [PATCH 2/2] i2c: tegra: Add SMBus block read and SMBus alert
- functions
-To:     Akhil R <akhilrajeev@nvidia.com>,
-        "andy.shevchenko@gmail.com" <andy.shevchenko@gmail.com>,
-        "christian.koenig@amd.com" <christian.koenig@amd.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
-        "sumit.semwal@linaro.org" <sumit.semwal@linaro.org>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-References: <1639062321-18840-1-git-send-email-akhilrajeev@nvidia.com>
- <1639062321-18840-3-git-send-email-akhilrajeev@nvidia.com>
- <72ea6030-5f2d-4f51-3a42-8386c3638c65@gmail.com>
- <BN9PR12MB52733A443AA5D5A690CE7132C0719@BN9PR12MB5273.namprd12.prod.outlook.com>
+        bh=dQgbXLDygjds0YLNQGqPucAQ1zkcXHyC+uTKGssc/nw=;
+        b=tcL/10e1SC3fuoNjreZyJlEXoJl0YtTN47hl0mCWLa9Djte5BN+oufxGTzC7vl1SUj
+         OzNLL1FlmcOA6xNwXJi58KM0pwnYDgsEZM22djKCXhB/Gm9zg1P8QjUE9mdSb9xKeCQ4
+         /NXUDmGDsrkkNjO4wQ9td05b+rojlN2XdlWosUJ9lTvD9MMIUxD2gUoawRkc3F44uQAP
+         T5k8o5SiqXVPs1/RJOBV0+7X30Ir8iZCiEw7jnFG4hCGo8+4WnNs7Y/GVokFHjypq/k8
+         Sv+0IK+kF1xR6ZYWfEv+4c9i6QTYoA/qX9vtZlaX1xPLwNclV2tP+WWnOmQMQMdz+ZDh
+         RHEg==
+X-Gm-Message-State: AOAM530Yc02yKvr0rWvDIPXuBQcfJUGlXXNyEnbO5bdG2heA5mslKZrD
+        juCKcecPDNourwqZEeOy/iU=
+X-Google-Smtp-Source: ABdhPJyrlmPEmlo7S0omL3v5zrt7N4IvW8LO438GG5Yg2+OeJeOMN8ckgThZGPzE2oRoDy5kxLOh1A==
+X-Received: by 2002:a2e:9b07:: with SMTP id u7mr20749966lji.200.1639257260232;
+        Sat, 11 Dec 2021 13:14:20 -0800 (PST)
+Received: from localhost.localdomain (94-29-46-111.dynamic.spd-mgts.ru. [94.29.46.111])
+        by smtp.gmail.com with ESMTPSA id v6sm765927lfp.61.2021.12.11.13.14.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 11 Dec 2021 13:14:19 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <595413e0-3535-a40e-9a28-490d297c386a@gmail.com>
-Date:   Sat, 11 Dec 2021 23:12:39 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        David Heidelberg <david@ixit.cz>,
+        Svyatoslav Ryhel <clamor95@gmail.com>,
+        Anton Bambura <jenneron@protonmail.com>,
+        Antoni Aloy Torrens <aaloytorrens@gmail.com>,
+        Nikola Milosavljevic <mnidza@outlook.com>,
+        Ion Agorria <ion@agorria.com>,
+        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>,
+        Ihor Didenko <tailormoon@rambler.ru>,
+        Andreas Westman Dorcsak <hedmoo@yahoo.com>,
+        Maxim Schwalm <maxim.schwalm@gmail.com>,
+        Raffaele Tranquillini <raffaele.tranquillini@gmail.com>,
+        Jasper Korten <jja2000@gmail.com>,
+        Thomas Graichen <thomas.graichen@gmail.com>,
+        Stefan Eichenberger <stefan.eichenberger@toradex.com>,
+        Stefan Agner <stefan@agner.ch>,
+        Peter Geis <pgwipeout@gmail.com>
+Cc:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v6 00/28] NVIDIA Tegra ARM32 device-tree patches for 5.17 (new devices and more)
+Date:   Sun, 12 Dec 2021 00:13:44 +0300
+Message-Id: <20211211211412.10791-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.33.1
 MIME-Version: 1.0
-In-Reply-To: <BN9PR12MB52733A443AA5D5A690CE7132C0719@BN9PR12MB5273.namprd12.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-10.12.2021 12:38, Akhil R пишет:
->> Although, you shouldn't need it at all, use devm_gpiod_get_optional().
-> smbus-alert is provided in the i2c dt bindings by default. I felt it is good
-> to put it into use since the use case is same.
+In this patchset you will find:
 
-My point is that you don't need to use device_property_read_bool().
+  - New device-trees of ASUS Transformer and Pegatron Chagall tablets.
 
-Instead, you could use devm_gpiod_get_optional() and check whether
-returned GPIO is ERR or NULL (not present). Which could be a bit nicer
-variant.
+  - New device-tree of Nyan Big Chromebook variant that has 1080p display
+    panel.
+
+  - Enabled video decoder on Tegra114.
+
+  - Minor cleanup of Nexus7 device-tree.
+
+  - Renamed clocks and regulator nodes.
+
+  - Fixes for T124 device-trees.
+
+Changelog:
+
+v6: - Added my s-o-b to all patches.
+
+    - Separated clk/regulator nodes renaming patch and gave Thierry Reding
+      credit for that.
+
+    - Borrowed "ARM: tegra: Add #reset-cells for Tegra114 MC" patch from
+      Thierry to resolve merge conflict with the video decoder patch.
+
+    - Added old patch from Stefan Agner that enables gpio-ranges, it was
+      brought up in the other DT thread. I borrowed "ARM: tegra: Remove stray
+      #reset-cells property" patch from Thierry to resolve merge conflict of
+      these patches.
+
+    - Reordered all DT nodes alphabetically.
+
+    - Enabled couple more options in tegra_defconfig needed by Nyan
+      Chromebook, as was requested by Thomas Graichen.
+
+    - Improved thermal zones of TF101, making them to match what latest
+      DT of Acer A500 uses. Previous versions used older variant of the
+      A500 zones.
+
+v5: - Minor update. Maxim improved commit messages. We added links to the
+      postmarketOS Wiki.
+
+v4: - Factored out common parts of ASUS device-trees into separate patches.
+      I retained the original author of the tegra30-asus-transformer-common.dtsi
+      after chatting with Svyatoslav. Initially I wanted to change the
+      authorship to Michał, but not that much left from the original DT that
+      was created by Michał, so it's fair to keep Svyatoslav the author.
+      I explained in the commit message that the common DT was derived from
+      the Michał's TF300T DT and then reworked heavily, I also added Michał
+      as co-developer of the common part.
+
+    - Added new T124 patches that were requested by Thomas Graichen. They
+      restore USB, CPUFreq and fix overheating of Nyan Chromebooks.
+
+    - Added patches that update tegra_defconfig and multi_v7_defconfig with
+      enabled drivers used by ASUS Transformers and Nyan Chromebooks.
+
+    - Added acks that were given by Rob Herring to v3.
+
+    - Changed display panel compatible of ASUS TF701T like it was suggested
+      by Rob Herring in other thread.
+
+    - Removed yet unused SDMMC1 pinmux from TF701T DT as was requested by
+      Anton Bambura.
+
+    - Added patch which adds node labels to T30 DTSI. It eases porting
+      devices to upstream. This was requested by Michał Mirosław.
+
+v3: - Maxim added couple "FIXME" comments to Transformer device-trees for
+      things that are yet missing on kernel side, and thus, can't be enabled
+      in the DT for now.
+
+    - Maxim also found that v2 had a small problem in the patch which adds
+      device-tree for Chagall tablet. Turned out I made a mistake during
+      rebase of the patches and haven't noticed it, it's fixed now.
+
+v2: - Svyatoslav and Maxim made couple corrections to regulators, comments
+      and default brightness of the device-trees.
+
+    - Added thermtrip node to transformers DT as we now have PMIC fix for
+      it [1], it works properly now.
+
+      [1] https://patchwork.ozlabs.org/project/linux-tegra/patch/20211124190104.23554-1-digetx@gmail.com/
+
+    - Changed sound card model names to make them per-device and consistent
+      with the names that other Tegra DTs already use in upstream. This will
+      prevent potential ABI breakages in the future if we will find that sound
+      of some device needs extra differentiation.
+
+Anton Bambura (3):
+  ARM: tegra: Add labels to tegra114.dtsi
+  ARM: tegra: Add device-tree for ASUS Transformer Pad TF701T
+  ARM: tegra: Enable video decoder on Tegra114
+
+David Heidelberg (3):
+  dt-bindings: ARM: tegra: Document Pegatron Chagall
+  ARM: tegra: Rename top-level clocks
+  ARM: tegra: nexus7: Drop clock-frequency from NFC node
+
+Dmitry Osipenko (7):
+  ARM: tegra: Add device-tree for 1080p version of Nyan Big
+  ARM: tegra: Enable HDMI CEC on Nyan
+  ARM: tegra: Enable CPU DFLL on Nyan
+  ARM: tegra: Add CPU thermal zones to Nyan device-tree
+  ARM: tegra: Rename top-level regulators
+  ARM: tegra_defconfig: Enable drivers wanted by Acer Chromebooks and
+    ASUS tablets
+  ARM: config: multi v7: Enable display drivers used by Tegra devices
+
+Maxim Schwalm (2):
+  ARM: tegra: Add common device-tree for LVDS display panels of Tegra30
+    ASUS tablets
+  ARM: tegra: nexus7: Use common LVDS display device-tree
+
+Michał Mirosław (2):
+  ARM: tegra: Add labels to tegra30.dtsi
+  ARM: tegra: Add device-tree for ASUS Transformer Pad TF300T
+
+Nikola Milosavljevic (1):
+  ARM: tegra: Add device-tree for ASUS Transformer EeePad TF101
+
+Stefan Agner (1):
+  ARM: tegra: Re-add gpio-ranges properties
+
+Stefan Eichenberger (1):
+  ARM: tegra: Add usb-role-switch property to USB OTG ports
+
+Svyatoslav Ryhel (6):
+  dt-bindings: ARM: tegra: Document ASUS Transformers
+  ARM: tegra: Add common device-tree base for Tegra30 ASUS Transformers
+  ARM: tegra: Add device-tree for ASUS Transformer Prime TF201
+  ARM: tegra: Add device-tree for ASUS Transformer Pad TF300TG
+  ARM: tegra: Add device-tree for ASUS Transformer Infinity TF700T
+  ARM: tegra: Add device-tree for Pegatron Chagall
+
+Thierry Reding (2):
+  ARM: tegra: Add #reset-cells for Tegra114 MC
+  ARM: tegra: Remove stray #reset-cells property
+
+ .../devicetree/bindings/arm/tegra.yaml        |   19 +
+ arch/arm/boot/dts/Makefile                    |   10 +-
+ arch/arm/boot/dts/tegra114-asus-tf701t.dts    |  788 +++++
+ arch/arm/boot/dts/tegra114-dalmore.dts        |   16 +-
+ arch/arm/boot/dts/tegra114-roth.dts           |   14 +-
+ arch/arm/boot/dts/tegra114-tn7.dts            |    8 +-
+ arch/arm/boot/dts/tegra114.dtsi               |   92 +-
+ arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi   |    1 +
+ arch/arm/boot/dts/tegra124-apalis.dtsi        |    1 +
+ arch/arm/boot/dts/tegra124-jetson-tk1.dts     |   26 +-
+ arch/arm/boot/dts/tegra124-nyan-big-fhd.dts   |   11 +
+ arch/arm/boot/dts/tegra124-nyan.dtsi          |   84 +-
+ arch/arm/boot/dts/tegra124-venice2.dts        |   30 +-
+ arch/arm/boot/dts/tegra124.dtsi               |    2 -
+ .../boot/dts/tegra20-acer-a500-picasso.dts    |   12 +-
+ arch/arm/boot/dts/tegra20-asus-tf101.dts      | 1228 ++++++++
+ arch/arm/boot/dts/tegra20-harmony.dts         |   16 +-
+ arch/arm/boot/dts/tegra20-medcom-wide.dts     |    8 +-
+ arch/arm/boot/dts/tegra20-paz00.dts           |    6 +-
+ arch/arm/boot/dts/tegra20-plutux.dts          |    8 +-
+ arch/arm/boot/dts/tegra20-seaboard.dts        |   16 +-
+ arch/arm/boot/dts/tegra20-tamonten.dtsi       |    4 +-
+ arch/arm/boot/dts/tegra20-tec.dts             |    8 +-
+ arch/arm/boot/dts/tegra20-trimslice.dts       |   12 +-
+ arch/arm/boot/dts/tegra20-ventana.dts         |   12 +-
+ arch/arm/boot/dts/tegra20.dtsi                |    2 -
+ .../boot/dts/tegra30-asus-lvds-display.dtsi   |   61 +
+ .../tegra30-asus-nexus7-grouper-common.dtsi   |   64 +-
+ ...egra30-asus-nexus7-grouper-maxim-pmic.dtsi |    4 +-
+ .../tegra30-asus-nexus7-grouper-ti-pmic.dtsi  |    2 +-
+ .../boot/dts/tegra30-asus-nexus7-grouper.dtsi |    1 -
+ .../boot/dts/tegra30-asus-nexus7-tilapia.dtsi |    2 -
+ arch/arm/boot/dts/tegra30-asus-tf201.dts      |  623 ++++
+ arch/arm/boot/dts/tegra30-asus-tf300t.dts     | 1030 ++++++
+ arch/arm/boot/dts/tegra30-asus-tf300tg.dts    | 1072 +++++++
+ arch/arm/boot/dts/tegra30-asus-tf700t.dts     |  818 +++++
+ .../dts/tegra30-asus-transformer-common.dtsi  | 1729 ++++++++++
+ arch/arm/boot/dts/tegra30-beaver.dts          |   20 +-
+ arch/arm/boot/dts/tegra30-cardhu-a02.dts      |   12 +-
+ arch/arm/boot/dts/tegra30-cardhu-a04.dts      |   14 +-
+ arch/arm/boot/dts/tegra30-cardhu.dtsi         |   28 +-
+ arch/arm/boot/dts/tegra30-ouya.dts            |    5 -
+ .../arm/boot/dts/tegra30-pegatron-chagall.dts | 2794 +++++++++++++++++
+ arch/arm/boot/dts/tegra30.dtsi                |   38 +-
+ arch/arm/configs/multi_v7_defconfig           |    5 +
+ arch/arm/configs/tegra_defconfig              |   12 +
+ 46 files changed, 10497 insertions(+), 271 deletions(-)
+ create mode 100644 arch/arm/boot/dts/tegra114-asus-tf701t.dts
+ create mode 100644 arch/arm/boot/dts/tegra124-nyan-big-fhd.dts
+ create mode 100644 arch/arm/boot/dts/tegra20-asus-tf101.dts
+ create mode 100644 arch/arm/boot/dts/tegra30-asus-lvds-display.dtsi
+ create mode 100644 arch/arm/boot/dts/tegra30-asus-tf201.dts
+ create mode 100644 arch/arm/boot/dts/tegra30-asus-tf300t.dts
+ create mode 100644 arch/arm/boot/dts/tegra30-asus-tf300tg.dts
+ create mode 100644 arch/arm/boot/dts/tegra30-asus-tf700t.dts
+ create mode 100644 arch/arm/boot/dts/tegra30-asus-transformer-common.dtsi
+ create mode 100644 arch/arm/boot/dts/tegra30-pegatron-chagall.dts
+
+-- 
+2.33.1
+
