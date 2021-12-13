@@ -2,83 +2,91 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B17A4C433EF
-	for <linux-tegra@archiver.kernel.org>; Mon, 13 Dec 2021 18:18:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FC08C433F5
+	for <linux-tegra@archiver.kernel.org>; Mon, 13 Dec 2021 22:42:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241819AbhLMSS6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 13 Dec 2021 13:18:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38436 "EHLO
+        id S243737AbhLMWm3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 13 Dec 2021 17:42:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43314 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241806AbhLMSS4 (ORCPT
+        with ESMTP id S243736AbhLMWm2 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 13 Dec 2021 13:18:56 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2196C061748;
-        Mon, 13 Dec 2021 10:18:56 -0800 (PST)
+        Mon, 13 Dec 2021 17:42:28 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32BD9C061574;
+        Mon, 13 Dec 2021 14:42:28 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 3DE66611B5;
-        Mon, 13 Dec 2021 18:18:56 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F23CEC34600;
-        Mon, 13 Dec 2021 18:18:53 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id F03ABB816CC;
+        Mon, 13 Dec 2021 22:42:26 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFFBFC34600;
+        Mon, 13 Dec 2021 22:42:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1639419535;
-        bh=REYgSuVQdxp2bAFggNyzh9NNmOFZO6LbeZVIVnH6Uu8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=SUFdmu55C4htemBDQWIPw/vyW7OKgjqa0nwzJt7rqMXVgRU5XY4XdNGBUY68C6dFp
-         s65YM1n5cETbhRzRwV3v1BqwauyFQl9kwnnrK+Uz0qxyN6/VfxZnn3kkjPcQTbfjmq
-         I2bNQL5Qj683EkRaAlyd9dVnbMq4B/UoplXVoefY4H2fDI4owuJOeU+kC0ptXDvB1p
-         /C87W/uA/eFBeQU5D6t6ZW2es3Od7kj5q/+elPGr8H7xHbai2wP2ZCwmMBGyLCMr9I
-         +8RgHRFnxsxmwsl5HTZjzNqG1G2OtzgT4uaGgHNlBUNOfd0AqNcPa9iwmkUn1tTNZH
-         ijXsUVpMec7PA==
-Date:   Mon, 13 Dec 2021 18:18:50 +0000
-From:   Will Deacon <will@kernel.org>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Joerg Roedel <joro@8bytes.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 3/4] iommu/arm-smmu: Support Tegra234 SMMU
-Message-ID: <20211213181849.GA12405@willie-the-truck>
-References: <20211209163600.609613-1-thierry.reding@gmail.com>
- <20211209163600.609613-3-thierry.reding@gmail.com>
+        s=k20201202; t=1639435345;
+        bh=dDQFAFUmTORVECs8IuRszmLZ6KqUu5Nfojvby5Bc3rM=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=QUX9zrPh31+XK+TMxIuA6+kPF4uIX6QRj1Q+26ETWZrZ6f0tcMg2/H94di7h0yysc
+         zaiuMd3+xt5uNVevsiNk2yO7VUq6aL7Be/+Ho8zpUd4RMf09sqR7rSoHjJtJGZK/gc
+         lwNs6cwupky48u1WEdk8toOE2bsgG74Yjnt6qZBKfxFwPk4GVcEfDCTgLR8HZe5hWL
+         o+Rvh0hcd/oHuATZUnq1soZ/0+vH6ylr+PTcB8zIM0Si7RANNuKBkwMz25ZqTe+PqJ
+         +izi4OUBUKxKNnPEflzaA5QjFIeFeA6CqGKWZdkxb4xb/k93Vg8OBNa473nURZldTN
+         6JVzNqwWozF1w==
+From:   Mark Brown <broonie@kernel.org>
+To:     Jaroslav Kysela <perex@perex.cz>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Takashi Iwai <tiwai@suse.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Thomas Graichen <thomas.graichen@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>
+Cc:     alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+In-Reply-To: <20211211231146.6137-1-digetx@gmail.com>
+References: <20211211231146.6137-1-digetx@gmail.com>
+Subject: Re: [PATCH v1 1/2] ASoC: tegra: Add DAPM switches for headphones and mic jack
+Message-Id: <163943534342.1012216.11678969524505932920.b4-ty@kernel.org>
+Date:   Mon, 13 Dec 2021 22:42:23 +0000
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211209163600.609613-3-thierry.reding@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, Dec 09, 2021 at 05:35:59PM +0100, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
+On Sun, 12 Dec 2021 02:11:45 +0300, Dmitry Osipenko wrote:
+> UCM of Acer Chromebook (Nyan) uses DAPM switches of headphones and mic
+> jack. These switches were lost by accident during unification of the
+> machine drivers, restore them.
 > 
-> Allow the NVIDIA-specific ARM SMMU implementation to bind to the SMMU
-> instances found on Tegra234.
 > 
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> ---
->  drivers/iommu/arm/arm-smmu/arm-smmu-impl.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu-impl.c b/drivers/iommu/arm/arm-smmu/arm-smmu-impl.c
-> index 2c25cce38060..658f3cc83278 100644
-> --- a/drivers/iommu/arm/arm-smmu/arm-smmu-impl.c
-> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu-impl.c
-> @@ -211,7 +211,8 @@ struct arm_smmu_device *arm_smmu_impl_init(struct arm_smmu_device *smmu)
->  	if (of_property_read_bool(np, "calxeda,smmu-secure-config-access"))
->  		smmu->impl = &calxeda_impl;
->  
-> -	if (of_device_is_compatible(np, "nvidia,tegra194-smmu") ||
-> +	if (of_device_is_compatible(np, "nvidia,tegra234-smmu") ||
-> +	    of_device_is_compatible(np, "nvidia,tegra194-smmu") ||
->  	    of_device_is_compatible(np, "nvidia,tegra186-smmu"))
->  		return nvidia_smmu_impl_init(smmu);
 
-Acked-by: Will Deacon <will@kernel.org>
+Applied to
 
-Will
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-linus
+
+Thanks!
+
+[1/2] ASoC: tegra: Add DAPM switches for headphones and mic jack
+      commit: d341b427c3c3fd6a58263ce01e01700d16861c28
+[2/2] ASoC: tegra: Restore headphones jack name on Nyan Big
+      commit: db635ba4fadf3ba676d07537f3b3f58166aa7b0e
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
