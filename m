@@ -2,147 +2,89 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA8DEC4332F
-	for <linux-tegra@archiver.kernel.org>; Sun, 12 Dec 2021 21:25:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AD4BC433EF
+	for <linux-tegra@archiver.kernel.org>; Mon, 13 Dec 2021 02:05:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229583AbhLLVY7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 12 Dec 2021 16:24:59 -0500
-Received: from mail-ed1-f47.google.com ([209.85.208.47]:46058 "EHLO
-        mail-ed1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230437AbhLLVWx (ORCPT
+        id S231211AbhLMCFT (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 12 Dec 2021 21:05:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38330 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230523AbhLMCFT (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 12 Dec 2021 16:22:53 -0500
-Received: by mail-ed1-f47.google.com with SMTP id y12so45411683eda.12;
-        Sun, 12 Dec 2021 13:22:52 -0800 (PST)
+        Sun, 12 Dec 2021 21:05:19 -0500
+Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A1AEC06173F;
+        Sun, 12 Dec 2021 18:05:19 -0800 (PST)
+Received: by mail-pl1-x633.google.com with SMTP id y7so10177140plp.0;
+        Sun, 12 Dec 2021 18:05:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=qRRUcggihxuvvuxXR8avhK/eModbACqCMIG7s3bijm0=;
-        b=cwgMkLRmIC5Jc7bTumRtZfdR/utOuYZMGz1d8ygkTHHtVzgzo42XHF3MxCIlHJHEyT
-         C7LdLWylZ0pNaMDQhDT13J5l+njgSg9TNbzeMmfiPFReiWjuLN3BPKhAAriju1eHl9cw
-         v0xZYrbokM5iV9yDxCHW4tROVpkV6lIWT7CatJGFsO5P7KMEX+3KZoYfdE3quHDnbdkY
-         jpj2wUw+3g4R/1VtteNb23NQNkNZ2V1/PAhs7heDgq209kuV3pPkDwgZ1aWLoWFqzEEX
-         OFHc08yxalGQachdnm1D3b45tSRQQlH3u/KkV4GShGX8mzd5qIB7iZpCyJ01mJBdqNcV
-         pVRA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=ZfMoG6X9oBnz9vgJgatuWr3jCxlugYsFtu5GcGk49Mc=;
+        b=g5vVjsFJHe9o2GHUu4E4+Su0ye9H6m0xqBM+DGcgJdmD+IQiPo5zQOKiiu3Ft8IEbs
+         zHBPcspyJeEVAOVSDs2hxq1G/V1lyQek5p3oHS1dZyT8RP7vge/6jUa6z80deAs1Escm
+         KqNH4YQYYqjvsvPSnV6SWPkr001GcVsgSdjEFRjvtNIj2v1zh6T6pGwoXAu/mvU/j8mu
+         clkhoeQjghjlwBf+ck+uSZ7G8C9C2J5ffNXHE3/4ge0i35niKH7wy0bTzREkA1FL7pRJ
+         fN/vq9LkR1bWZKCXUf7BDqsOkx/FL6fldEAA6rmuOO1A6EuV7igYRYWsRMTT4VOkmRZC
+         X2aw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=qRRUcggihxuvvuxXR8avhK/eModbACqCMIG7s3bijm0=;
-        b=MnM5fd9o5CYQ7BgAkgoEob/ZkqXMTehB/iN9E4jzKVKC4pmvXQ3I7KqQwe+5RAVT5B
-         boGbYDZ54VArfZ3fK3p30isfmEZ84BSSCfgU/n1aL47XIKRAJWzavdpoD52Q/JQF5Kle
-         TzewIzakG6lt65F3lpBIc2YtCsnZRDkxNE2c/K+AWHaYNA1PcnUbfsrfavoir3O3wUo7
-         ZHtXCyKGH8vKomoabAxMAWgw+/ipbT5GTAK4XkNLmaFj8VbPvdm64NT7GnIYuOBbJhFU
-         TXqVvPeqZxynFaXeFDr96ArMWkPnTdY+IKsiO+GuZL30tn4rhsZ3qY+R9+QOKkOeIZi9
-         cE7A==
-X-Gm-Message-State: AOAM531vhPoRow8DDQImpWnR1q53cp8Ji7RrSp0xplrENTuQjJXTZjgu
-        pNxDJTzG/DFonuUfR21dJAlIMMRXgCs=
-X-Google-Smtp-Source: ABdhPJwkugCxrPdxtc+DUdPqlE8VTgsZlj2PXoqJkSrC88l4/tv/AsdhkMaJuxd6V34n0G6eKbJ/hw==
-X-Received: by 2002:a05:651c:1790:: with SMTP id bn16mr25960176ljb.475.1639343032645;
-        Sun, 12 Dec 2021 13:03:52 -0800 (PST)
-Received: from localhost.localdomain (94-29-46-111.dynamic.spd-mgts.ru. [94.29.46.111])
-        by smtp.gmail.com with ESMTPSA id y4sm1197172ljp.16.2021.12.12.13.03.50
+         :references;
+        bh=ZfMoG6X9oBnz9vgJgatuWr3jCxlugYsFtu5GcGk49Mc=;
+        b=kzIYD3WF5iZqwXbPR3SevokrltLbpq7MlYd743m0UqmoeeaXqwugO80kiSNLdxCfrE
+         fUf3Mvi1vpYCcWOiind8RNm+7NYLhmxiiB0wahUqZI/U057C4uGM7s/8mhLGWsHNce3S
+         HvZ8iyIHLYlj94stF+Rg/fCq5QEIAI38fNvqWD6zBwww/3N5CKmdFo/gvpzWYVwS4X6z
+         Nr9k1jBurKBXd95u1bXw0FDughrGD22JnqeTnr9y0u4FoCkwt6vLtqAmHD0X3vYSME/z
+         S1GP5lRe0lU0J+36LkwzakhPp+wnu73L+ntvMA/rtIA4T+a6uhAmvk5EzvkbXTpHrbgn
+         S2IQ==
+X-Gm-Message-State: AOAM532ij/qi8yyUsYYW2omZmm1ivGfjlozz80XClgUTsIyd5DAHs6rj
+        kazZdPbAU/Ew+Z1YsE72bh8=
+X-Google-Smtp-Source: ABdhPJxXe2sVfiehDtu1Fli3a+yt3W24vxsc25t6eLYydxx6kbdIMIr5thbA+poPOAHvKPLb0sj9Cw==
+X-Received: by 2002:a17:90a:ce02:: with SMTP id f2mr40408011pju.77.1639361118786;
+        Sun, 12 Dec 2021 18:05:18 -0800 (PST)
+Received: from localhost.localdomain ([159.226.95.43])
+        by smtp.googlemail.com with ESMTPSA id s28sm11278915pfg.147.2021.12.12.18.05.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 12 Dec 2021 13:03:52 -0800 (PST)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Guo Ren <guoren@kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        Joshua Thompson <funaho@jurai.org>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Sebastian Reichel <sre@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Greentime Hu <green.hu@gmail.com>,
-        Vincent Chen <deanbo422@gmail.com>,
-        "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-        Helge Deller <deller@gmx.de>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Len Brown <lenb@kernel.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, Pavel Machek <pavel@ucw.cz>,
-        Lee Jones <lee.jones@linaro.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>, alankao@andestech.com,
-        "K . C . Kuen-Chern Lin" <kclin@andestech.com>,
-        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
-Cc:     linux-kernel@vger.kernel.org, linux-csky@vger.kernel.org,
-        linux-ia64@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
-        linux-sh@vger.kernel.org, xen-devel@lists.xenproject.org,
-        linux-acpi@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: [PATCH v5 09/21] parisc: Use do_kernel_power_off()
-Date:   Mon, 13 Dec 2021 00:02:57 +0300
-Message-Id: <20211212210309.9851-10-digetx@gmail.com>
-X-Mailer: git-send-email 2.33.1
-In-Reply-To: <20211212210309.9851-1-digetx@gmail.com>
-References: <20211212210309.9851-1-digetx@gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Sun, 12 Dec 2021 18:05:18 -0800 (PST)
+From:   Miaoqian Lin <linmq006@gmail.com>
+To:     digetx@gmail.com
+Cc:     jckuo@nvidia.com, jonathanh@nvidia.com, kishon@ti.com,
+        linmq006@gmail.com, linux-kernel@vger.kernel.org,
+        linux-phy@lists.infradead.org, linux-tegra@vger.kernel.org,
+        thierry.reding@gmail.com, vkoul@kernel.org
+Subject: [PATCH v2] phy: tegra: xusb: Fix return value of tegra_xusb_find_port_node function
+Date:   Mon, 13 Dec 2021 02:05:07 +0000
+Message-Id: <20211213020507.1458-1-linmq006@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <942f943c-9ec8-9887-aa6d-4d133821beca@gmail.com>
+References: <942f943c-9ec8-9887-aa6d-4d133821beca@gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Kernel now supports chained power-off handlers. Use do_kernel_power_off()
-that invokes chained power-off handlers. It also invokes legacy
-pm_power_off() for now, which will be removed once all drivers will
-be converted to the new power-off API.
+callers of tegra_xusb_find_port_node() function only do NULL checking for
+the return value. return NULL instead of ERR_PTR(-ENOMEM) to keep
+consistent.
 
-Acked-by: Helge Deller <deller@gmx.de> # parisc
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
 ---
- arch/parisc/kernel/process.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/phy/tegra/xusb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/parisc/kernel/process.c b/arch/parisc/kernel/process.c
-index ea3d83b6fb62..928201b1f58f 100644
---- a/arch/parisc/kernel/process.c
-+++ b/arch/parisc/kernel/process.c
-@@ -26,6 +26,7 @@
- #include <linux/module.h>
- #include <linux/personality.h>
- #include <linux/ptrace.h>
-+#include <linux/reboot.h>
- #include <linux/sched.h>
- #include <linux/sched/debug.h>
- #include <linux/sched/task.h>
-@@ -114,8 +115,7 @@ void machine_power_off(void)
- 	pdc_chassis_send_status(PDC_CHASSIS_DIRECT_SHUTDOWN);
- 
- 	/* ipmi_poweroff may have been installed. */
--	if (pm_power_off)
--		pm_power_off();
-+	do_kernel_power_off();
- 		
- 	/* It seems we have no way to power the system off via
- 	 * software. The user has to press the button himself. */
+diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
+index 963de5913e50..aa5237eacd29 100644
+--- a/drivers/phy/tegra/xusb.c
++++ b/drivers/phy/tegra/xusb.c
+@@ -455,7 +455,7 @@ tegra_xusb_find_port_node(struct tegra_xusb_padctl *padctl, const char *type,
+ 	name = kasprintf(GFP_KERNEL, "%s-%u", type, index);
+ 	if (!name) {
+ 		of_node_put(ports);
+-		return ERR_PTR(-ENOMEM);
++		return NULL;
+ 	}
+ 	np = of_get_child_by_name(ports, name);
+ 	kfree(name);
 -- 
-2.33.1
+2.17.1
 
