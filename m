@@ -2,104 +2,123 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10EBAC433F5
-	for <linux-tegra@archiver.kernel.org>; Mon, 13 Dec 2021 13:34:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF73AC4332F
+	for <linux-tegra@archiver.kernel.org>; Mon, 13 Dec 2021 13:51:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237646AbhLMNeU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 13 Dec 2021 08:34:20 -0500
-Received: from mga14.intel.com ([192.55.52.115]:64854 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S237638AbhLMNeU (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 13 Dec 2021 08:34:20 -0500
-X-IronPort-AV: E=McAfee;i="6200,9189,10196"; a="238954425"
-X-IronPort-AV: E=Sophos;i="5.88,202,1635231600"; 
-   d="scan'208";a="238954425"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Dec 2021 05:34:19 -0800
-X-IronPort-AV: E=Sophos;i="5.88,202,1635231600"; 
-   d="scan'208";a="517751011"
-Received: from ppolasze-mobl.ger.corp.intel.com (HELO localhost) ([10.252.20.7])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Dec 2021 05:34:15 -0800
-From:   Jani Nikula <jani.nikula@linux.intel.com>
-To:     Thomas Zimmermann <tzimmermann@suse.de>, mripard@kernel.org,
-        maarten.lankhorst@linux.intel.com, airlied@linux.ie,
-        daniel@ffwll.ch
-Cc:     linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org,
-        linux-rockchip@lists.infradead.org,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        nouveau@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-        freedreno@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 0/3] drm/dp: Move DisplayPort helpers into own module
-In-Reply-To: <20211213093650.19598-1-tzimmermann@suse.de>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20211213093650.19598-1-tzimmermann@suse.de>
-Date:   Mon, 13 Dec 2021 15:34:12 +0200
-Message-ID: <87lf0o7hnv.fsf@intel.com>
+        id S232624AbhLMNvL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 13 Dec 2021 08:51:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58892 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238013AbhLMNvK (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 13 Dec 2021 08:51:10 -0500
+Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81F78C061751
+        for <linux-tegra@vger.kernel.org>; Mon, 13 Dec 2021 05:51:09 -0800 (PST)
+Received: by mail-ed1-x52e.google.com with SMTP id y13so51879480edd.13
+        for <linux-tegra@vger.kernel.org>; Mon, 13 Dec 2021 05:51:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=JA6W9bf1908WD6cfFb6AhPYhGreRD1L3ZPU1ovM0YAo=;
+        b=JR+DaCc5q3x/nJ52dLl6r+4FwSEv9WD0p7h6CAvJzuCN4LA6+wkAYifxMiKmhtGPMC
+         FTN/0x8gYKn6C0DH+DPrgH6lH2w+WJEIfGDy1/YzVD0zU202RDccLQt46z8yx/mv5SEQ
+         orFijgywNSCXDOJ/OPyq3mvh5NlrdflBnU+13ax6fE2dt0FQGfzQsQKPQMlWf12X6gYS
+         H/d+nrvTinlxhp9IzxuZ3LhRXaM+23FWY9lMgayxh0hvEqluoQhfJStRiFE2+rfIOnQF
+         Iw8LA3Ko152lC8tyud5LtFSKXRrJ7LmTPR7MzT1Pb8/drF5Zj0ygRhSQOmk3y0qr4lHt
+         19ug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=JA6W9bf1908WD6cfFb6AhPYhGreRD1L3ZPU1ovM0YAo=;
+        b=MoBwzbwn0IpAiNT3DBQ+XT9bO0ucADgSHEgud/S6L/VuswRi9y2XnL75bVGLhgCRKU
+         W9rDTmyKPoaMo2Vx229YFlGwF73pKGgzZWK2+Pe7kO3TWSzmtNKJur9wJqbVxW6Gou9s
+         O5Ax8pu5g92QwYr1JLhTsu0SoLZk+KRL5/f2uL9Aa3jJTT722++WazMyPVRGWnbU0gm8
+         bnFLgr/QPn+y7AAXGE/00XSXUNbJazBsBUkBmqYrAo1jVBsibsZ1aIQ/ff76Gq8nVgEm
+         /EUpMzIYCrCqH8VtjhkQzvBv4aY53kGuQsUkIqpUr3437rH8GY8KbmHvm6kpKeKLpoiw
+         U1MQ==
+X-Gm-Message-State: AOAM5321BM1XrSWxpMoyoN4sUg7cEn5mIGUMr1u/bG4wKGfbcRcA14PY
+        CrKDEsQd/le0bk3qOcJn74VMJW0x6TQZc9FVvOOGHw==
+X-Google-Smtp-Source: ABdhPJyUfRonKaOMYp5CA3+4Qguk6GD9f9+ENkQJ7XEThNqMIaIY/ZVhde1IxmgVdguaMtUOm8hj/b6kBh4NcjdyhEI=
+X-Received: by 2002:a05:6402:354e:: with SMTP id f14mr63951085edd.245.1639403467922;
+ Mon, 13 Dec 2021 05:51:07 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20211202210839.79140-1-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20211202210839.79140-1-andriy.shevchenko@linux.intel.com>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Mon, 13 Dec 2021 14:50:57 +0100
+Message-ID: <CAMRc=Meve=W3yvPmakFap-s6cOY1GUq7c1VjJE2dEH4f0+shag@mail.gmail.com>
+Subject: Re: [PATCH v1 1/3] gpio: Get rid of duplicate of_node assignment in
+ the drivers
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Marc Zyngier <maz@kernel.org>,
+        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+        Sergio Paracuellos <sergio.paracuellos@gmail.com>,
+        Chunyan Zhang <chunyan.zhang@unisoc.com>,
+        Baruch Siach <baruch@tkos.co.il>,
+        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>, Tony Lindgren <tony@atomide.com>,
+        Nicolas Saenz Julienne <nsaenz@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Jianqun Xu <jay.xu@rock-chips.com>,
+        Alexandru Ardelean <aardelean@deviqon.com>,
+        Thierry Reding <treding@nvidia.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        patches@opensource.cirrus.com,
+        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
+        linux-power <linux-power@fi.rohmeurope.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:ARM/Mediatek SoC..." 
+        <linux-mediatek@lists.infradead.org>,
+        "open list:PWM SUBSYSTEM" <linux-pwm@vger.kernel.org>,
+        Linux-OMAP <linux-omap@vger.kernel.org>,
+        linux-unisoc@lists.infradead.org,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-tegra@vger.kernel.org, Ray Jui <rjui@broadcom.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Gregory Fong <gregory.0xf0@gmail.com>,
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+        Keerthy <j-keerthy@ti.com>, Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang7@gmail.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Kevin Hilman <khilman@kernel.org>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, 13 Dec 2021, Thomas Zimmermann <tzimmermann@suse.de> wrote:
-> Split-off DisplayPort functions from KMS helper library and move them
-> into their own module. Reduces the size of drm_kms_helper.ko by ~50%.
+On Thu, Dec 2, 2021 at 10:17 PM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
 >
-> This patchset is part of an on-going effort to reduce the minimum
-> binary size of the DRM core and helpers. It's helpful for systems with
-> early-boot DRM graphics, which requires DRM to be linked into the
-> kernel image.
-
-Would it be time to add a subdirectory for each non-driver, non-core drm
-module? We've touched this topic before. I find it increasingly hard to
-remember which files are part of helpers. This would also help with the
-arbitrary drm_dp_helper_mod.c naming.
-
-Perhaps drivers/gpu/drm/drm_dp/?
-
-BR,
-Jani.
-
-
-
+> GPIO library does copy the of_node from the parent device of
+> the GPIO chip, there is no need to repeat this in the individual
+> drivers. Remove these assignment all at once.
 >
-> Thomas Zimmermann (3):
->   drm/dp_mst: Remove trailing whitespace.
->   drm/dp: Move DP declarations into separate header file
->   drm/dp: Move DisplayPort helpers into separate helper module
+> For the details one may look into the of_gpio_dev_init() implementation.
 >
->  drivers/gpu/drm/Kconfig                       |  8 ++++++
->  drivers/gpu/drm/Makefile                      | 14 ++++++----
->  drivers/gpu/drm/bridge/Kconfig                |  4 +++
->  drivers/gpu/drm/bridge/analogix/Kconfig       |  2 ++
->  drivers/gpu/drm/bridge/cadence/Kconfig        |  1 +
->  drivers/gpu/drm/drm_crtc_helper_internal.h    | 27 ------------------
->  drivers/gpu/drm/{drm_dp_helper.c => drm_dp.c} |  2 +-
->  drivers/gpu/drm/drm_dp_aux_dev.c              |  2 +-
->  drivers/gpu/drm/drm_dp_helper_internal.h      | 28 +++++++++++++++++++
->  drivers/gpu/drm/drm_dp_helper_mod.c           | 22 +++++++++++++++
->  drivers/gpu/drm/drm_dp_mst_topology.c         |  4 +--
->  drivers/gpu/drm/drm_kms_helper_common.c       | 14 ----------
->  drivers/gpu/drm/i915/Kconfig                  |  1 +
->  drivers/gpu/drm/msm/Kconfig                   |  1 +
->  drivers/gpu/drm/nouveau/Kconfig               |  1 +
->  drivers/gpu/drm/rockchip/Kconfig              |  1 +
->  drivers/gpu/drm/tegra/Kconfig                 |  1 +
->  drivers/gpu/drm/xlnx/Kconfig                  |  1 +
->  18 files changed, 83 insertions(+), 51 deletions(-)
->  rename drivers/gpu/drm/{drm_dp_helper.c => drm_dp.c} (99%)
->  create mode 100644 drivers/gpu/drm/drm_dp_helper_internal.h
->  create mode 100644 drivers/gpu/drm/drm_dp_helper_mod.c
->
->
-> base-commit: 3f422828221d9ceefcddef0be33561b1646a1cbe
-> prerequisite-patch-id: c2b2f08f0eccc9f5df0c0da49fa1d36267deb11d
-> prerequisite-patch-id: c67e5d886a47b7d0266d81100837557fda34cb24
-> --
-> 2.34.1
->
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
 
--- 
-Jani Nikula, Intel Open Source Graphics Center
+If there are no objections, I am willing to apply this to give it some
+time in next and get the work on dropping the OF APIs from gpiolib
+going.
+
+Bart
