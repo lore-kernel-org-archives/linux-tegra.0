@@ -2,86 +2,104 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D3A6C433F5
-	for <linux-tegra@archiver.kernel.org>; Mon, 13 Dec 2021 13:31:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10EBAC433F5
+	for <linux-tegra@archiver.kernel.org>; Mon, 13 Dec 2021 13:34:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237616AbhLMNa7 convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 13 Dec 2021 08:30:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54008 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231847AbhLMNa7 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 13 Dec 2021 08:30:59 -0500
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50144C061574
-        for <linux-tegra@vger.kernel.org>; Mon, 13 Dec 2021 05:30:59 -0800 (PST)
-Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1mwlPp-0000zK-7i; Mon, 13 Dec 2021 14:30:53 +0100
-Received: from pza by lupine with local (Exim 4.94.2)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1mwlPn-000F2x-Td; Mon, 13 Dec 2021 14:30:51 +0100
-Message-ID: <c3fbce43b49ee7c5ab5abdaab8ac8f7c9b6f2278.camel@pengutronix.de>
-Subject: Re: [GIT PULL] Reset controller fixes for v5.16
-From:   Philipp Zabel <p.zabel@pengutronix.de>
-To:     Arnd Bergmann <arnd@arndb.de>, Jon Hunter <jonathanh@nvidia.com>
-Cc:     arm-soc <arm@kernel.org>, Olof Johansson <olof@lixom.net>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Date:   Mon, 13 Dec 2021 14:30:51 +0100
-In-Reply-To: <CAK8P3a0d0AR7fvMn6+zLVUec4ww+SY9h_aCuf++gErwvmj5z4w@mail.gmail.com>
-References: <5383deda141721643419e98c485fb510be56fb61.camel@pengutronix.de>
-         <22bbd3d0-2622-3f23-2fa9-9826631084b0@nvidia.com>
-         <CAK8P3a0d0AR7fvMn6+zLVUec4ww+SY9h_aCuf++gErwvmj5z4w@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-User-Agent: Evolution 3.38.3-1 
+        id S237646AbhLMNeU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 13 Dec 2021 08:34:20 -0500
+Received: from mga14.intel.com ([192.55.52.115]:64854 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S237638AbhLMNeU (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 13 Dec 2021 08:34:20 -0500
+X-IronPort-AV: E=McAfee;i="6200,9189,10196"; a="238954425"
+X-IronPort-AV: E=Sophos;i="5.88,202,1635231600"; 
+   d="scan'208";a="238954425"
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Dec 2021 05:34:19 -0800
+X-IronPort-AV: E=Sophos;i="5.88,202,1635231600"; 
+   d="scan'208";a="517751011"
+Received: from ppolasze-mobl.ger.corp.intel.com (HELO localhost) ([10.252.20.7])
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Dec 2021 05:34:15 -0800
+From:   Jani Nikula <jani.nikula@linux.intel.com>
+To:     Thomas Zimmermann <tzimmermann@suse.de>, mripard@kernel.org,
+        maarten.lankhorst@linux.intel.com, airlied@linux.ie,
+        daniel@ffwll.ch
+Cc:     linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org,
+        linux-rockchip@lists.infradead.org,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        nouveau@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        freedreno@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 0/3] drm/dp: Move DisplayPort helpers into own module
+In-Reply-To: <20211213093650.19598-1-tzimmermann@suse.de>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20211213093650.19598-1-tzimmermann@suse.de>
+Date:   Mon, 13 Dec 2021 15:34:12 +0200
+Message-ID: <87lf0o7hnv.fsf@intel.com>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Arnd, Jon,
+On Mon, 13 Dec 2021, Thomas Zimmermann <tzimmermann@suse.de> wrote:
+> Split-off DisplayPort functions from KMS helper library and move them
+> into their own module. Reduces the size of drm_kms_helper.ko by ~50%.
+>
+> This patchset is part of an on-going effort to reduce the minimum
+> binary size of the DRM core and helpers. It's helpful for systems with
+> early-boot DRM graphics, which requires DRM to be linked into the
+> kernel image.
 
-On Mon, 2021-12-13 at 14:15 +0100, Arnd Bergmann wrote:
-> On Mon, Dec 13, 2021 at 1:21 PM Jon Hunter <jonathanh@nvidia.com> wrote:
-> > On 19/11/2021 17:07, Philipp Zabel wrote:
-> > > Reset controller fixes for v5.16
-> > > 
-> > > Well, just one: revert commit c045ceb5a145 ("reset: tegra-bpmp: Handle
-> > > errors in BPMP response"), which exposed an issue with the Tegra194 HDA
-> > > controller reset. BPMP response error handling will be reinstated once
-> > > there's a fix for the HDA issue.
-> > > 
-> > 
-> > I have not seen this get picked up yet and we need this fix for v5.16.
-> > Please can you pick this up?
-> 
-> Thank you for pointing this out. I see this never made it into patchwork
-> because it was sent to the old address (arm@kernel.org) that gets in
-> my inbox but not patchwork like the new address (soc@kernel.org).
+Would it be time to add a subdirectory for each non-driver, non-core drm
+module? We've touched this topic before. I find it increasingly hard to
+remember which files are part of helpers. This would also help with the
+arbitrary drm_dp_helper_mod.c naming.
 
-Ouf, sorry. I thought I had switched over to the soc@ address for good,
-but this time my fingers must have betrayed me.
+Perhaps drivers/gpu/drm/drm_dp/?
 
-> I'm also behind with the other pull requests, but I've picked it up manually
-> now.
+BR,
+Jani.
 
-Thank you.
 
-> Philipp, please make sure you send future pull requests to soc@kernel.org,
-> and maybe check that I did pick up previous ones you may have sent.
 
-I'll do that, and make sure I won't manually type that address even
-though it seems so memorable.
+>
+> Thomas Zimmermann (3):
+>   drm/dp_mst: Remove trailing whitespace.
+>   drm/dp: Move DP declarations into separate header file
+>   drm/dp: Move DisplayPort helpers into separate helper module
+>
+>  drivers/gpu/drm/Kconfig                       |  8 ++++++
+>  drivers/gpu/drm/Makefile                      | 14 ++++++----
+>  drivers/gpu/drm/bridge/Kconfig                |  4 +++
+>  drivers/gpu/drm/bridge/analogix/Kconfig       |  2 ++
+>  drivers/gpu/drm/bridge/cadence/Kconfig        |  1 +
+>  drivers/gpu/drm/drm_crtc_helper_internal.h    | 27 ------------------
+>  drivers/gpu/drm/{drm_dp_helper.c => drm_dp.c} |  2 +-
+>  drivers/gpu/drm/drm_dp_aux_dev.c              |  2 +-
+>  drivers/gpu/drm/drm_dp_helper_internal.h      | 28 +++++++++++++++++++
+>  drivers/gpu/drm/drm_dp_helper_mod.c           | 22 +++++++++++++++
+>  drivers/gpu/drm/drm_dp_mst_topology.c         |  4 +--
+>  drivers/gpu/drm/drm_kms_helper_common.c       | 14 ----------
+>  drivers/gpu/drm/i915/Kconfig                  |  1 +
+>  drivers/gpu/drm/msm/Kconfig                   |  1 +
+>  drivers/gpu/drm/nouveau/Kconfig               |  1 +
+>  drivers/gpu/drm/rockchip/Kconfig              |  1 +
+>  drivers/gpu/drm/tegra/Kconfig                 |  1 +
+>  drivers/gpu/drm/xlnx/Kconfig                  |  1 +
+>  18 files changed, 83 insertions(+), 51 deletions(-)
+>  rename drivers/gpu/drm/{drm_dp_helper.c => drm_dp.c} (99%)
+>  create mode 100644 drivers/gpu/drm/drm_dp_helper_internal.h
+>  create mode 100644 drivers/gpu/drm/drm_dp_helper_mod.c
+>
+>
+> base-commit: 3f422828221d9ceefcddef0be33561b1646a1cbe
+> prerequisite-patch-id: c2b2f08f0eccc9f5df0c0da49fa1d36267deb11d
+> prerequisite-patch-id: c67e5d886a47b7d0266d81100837557fda34cb24
+> --
+> 2.34.1
+>
 
-regards
-Philipp
+-- 
+Jani Nikula, Intel Open Source Graphics Center
