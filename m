@@ -2,198 +2,110 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5164FC4332F
-	for <linux-tegra@archiver.kernel.org>; Mon, 13 Dec 2021 10:14:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39641C433EF
+	for <linux-tegra@archiver.kernel.org>; Mon, 13 Dec 2021 10:38:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236034AbhLMKOU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 13 Dec 2021 05:14:20 -0500
-Received: from mga07.intel.com ([134.134.136.100]:45637 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S238323AbhLMKLN (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 13 Dec 2021 05:11:13 -0500
-X-IronPort-AV: E=McAfee;i="6200,9189,10196"; a="302083100"
-X-IronPort-AV: E=Sophos;i="5.88,202,1635231600"; 
-   d="scan'208";a="302083100"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Dec 2021 01:59:25 -0800
-X-IronPort-AV: E=Sophos;i="5.88,202,1635231600"; 
-   d="scan'208";a="566495206"
-Received: from ppolasze-mobl.ger.corp.intel.com (HELO localhost) ([10.252.20.7])
-  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Dec 2021 01:59:20 -0800
-From:   Jani Nikula <jani.nikula@linux.intel.com>
-To:     Thomas Zimmermann <tzimmermann@suse.de>, mripard@kernel.org,
-        maarten.lankhorst@linux.intel.com, airlied@linux.ie,
-        daniel@ffwll.ch
-Cc:     linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org,
-        linux-rockchip@lists.infradead.org,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        nouveau@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-        freedreno@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [Intel-gfx] [PATCH 2/3] drm/dp: Move DP declarations into
- separate header file
-In-Reply-To: <20211213093650.19598-3-tzimmermann@suse.de>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20211213093650.19598-1-tzimmermann@suse.de>
- <20211213093650.19598-3-tzimmermann@suse.de>
-Date:   Mon, 13 Dec 2021 11:59:18 +0200
-Message-ID: <87v8zs7rm1.fsf@intel.com>
+        id S238672AbhLMKil (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 13 Dec 2021 05:38:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41574 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S243976AbhLMKiX (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 13 Dec 2021 05:38:23 -0500
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08704C04C896;
+        Mon, 13 Dec 2021 02:24:56 -0800 (PST)
+Received: by mail-wr1-x432.google.com with SMTP id o13so26085794wrs.12;
+        Mon, 13 Dec 2021 02:24:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Lps8zlY0plffu89oo+ZuKtBVR2UFB4mYLL1XQcOR5SA=;
+        b=Za7I3FFfxdMWiq9GbGcKIbeq0brDgYen8LmJIsEVOpyPpHwYZbppF3xfqtlIfENdP1
+         jHzUFwVAP2of3Xe4rLtkWRMId6pLI74v5FjBEJhPFD2Qe3miPuN6o+ncw3dknYNTDqMQ
+         wi42NVQiYAJAWQuwYkLNh0hK3QsTiXETLvNGR0EhwzmqH4c74hCm5xpFWWJMJYXIQTGT
+         BYc3zFYCdPn8GMYWHCfq2KJLnwt2dEmjvKUfVgKQT2HwZ3pO9WkLRmLq19EdRyHkAMrM
+         fL4N8RW+umwAa887wcZi43Se2SgJtZuq1L7bW2zIXPKWZgkAjcr0R4miICMkPdiQ/sVh
+         cxTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Lps8zlY0plffu89oo+ZuKtBVR2UFB4mYLL1XQcOR5SA=;
+        b=whCIDkFaj4gYg5jFIpKMmN/dS1Sx/G9OJj85S8El46UnnFGIiHLl59m6pDLi45oofD
+         tXEoRs4c+7nCVSdE6TpH+IPXngA+JSrP/JzzWIkdmwWikt2N/7cbzNokjmXsTUOqzZvx
+         bG2E+DUbDdAtQUlF9Kno22DO6UYodfJL0tHxebNXnkmfagGVFKgCiMP0ZUfuSalzVvI7
+         bQZoamgsJUh8aFQLD3tkKvgCJHtnFfXWXD08ydx8whQVMQ7Imt3LeZTLuENaE9B+4MlS
+         8jZWuAvxrxXCxWRu6lSFgQcL+IzhyQDOmNfkkm/lP2QG0+09LSaT3d09xvR1G2ytL2uY
+         pcTg==
+X-Gm-Message-State: AOAM531GWe77MkSSYFtxZYi9Q3NSC2SApsMqhLtIVNmlY+sdDTFCioTl
+        gSHJuxrLLLuT20RQTmwQZ3o=
+X-Google-Smtp-Source: ABdhPJwFcQlQB6qp/Z8EgEGC4clwRl8Lug9EUHupaG/P+GoEeE207ABb2BWX1xTZnxDob1Ye9DojIQ==
+X-Received: by 2002:a5d:5643:: with SMTP id j3mr31204212wrw.138.1639391094112;
+        Mon, 13 Dec 2021 02:24:54 -0800 (PST)
+Received: from orome ([193.209.96.43])
+        by smtp.gmail.com with ESMTPSA id o3sm7170098wms.10.2021.12.13.02.24.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 Dec 2021 02:24:53 -0800 (PST)
+Date:   Mon, 13 Dec 2021 11:24:50 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Miaoqian Lin <linmq006@gmail.com>
+Cc:     digetx@gmail.com, jckuo@nvidia.com, jonathanh@nvidia.com,
+        kishon@ti.com, linux-kernel@vger.kernel.org,
+        linux-phy@lists.infradead.org, linux-tegra@vger.kernel.org,
+        vkoul@kernel.org
+Subject: Re: [PATCH v2] phy: tegra: xusb: Fix return value of
+ tegra_xusb_find_port_node function
+Message-ID: <YbcfcpkwxCkeGP3f@orome>
+References: <942f943c-9ec8-9887-aa6d-4d133821beca@gmail.com>
+ <20211213020507.1458-1-linmq006@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="W2swrXWGj6l4aaDV"
+Content-Disposition: inline
+In-Reply-To: <20211213020507.1458-1-linmq006@gmail.com>
+User-Agent: Mutt/2.1.3 (987dde4c) (2021-09-10)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, 13 Dec 2021, Thomas Zimmermann <tzimmermann@suse.de> wrote:
-> Split the DP declarations from other helpers before moving the
-> DP functions into a separate module.
->
-> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+
+--W2swrXWGj6l4aaDV
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Dec 13, 2021 at 02:05:07AM +0000, Miaoqian Lin wrote:
+> callers of tegra_xusb_find_port_node() function only do NULL checking for
+> the return value. return NULL instead of ERR_PTR(-ENOMEM) to keep
+> consistent.
+>=20
+> Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
 > ---
->  drivers/gpu/drm/drm_crtc_helper_internal.h | 27 ---------------------
->  drivers/gpu/drm/drm_dp_aux_dev.c           |  2 +-
->  drivers/gpu/drm/drm_dp_helper.c            |  2 +-
->  drivers/gpu/drm/drm_dp_helper_internal.h   | 28 ++++++++++++++++++++++
->  drivers/gpu/drm/drm_dp_mst_topology.c      |  2 +-
->  drivers/gpu/drm/drm_kms_helper_common.c    |  1 +
->  6 files changed, 32 insertions(+), 30 deletions(-)
->  create mode 100644 drivers/gpu/drm/drm_dp_helper_internal.h
->
-> diff --git a/drivers/gpu/drm/drm_crtc_helper_internal.h b/drivers/gpu/drm/drm_crtc_helper_internal.h
-> index 61e09f8a8d0f..28e04e750130 100644
-> --- a/drivers/gpu/drm/drm_crtc_helper_internal.h
-> +++ b/drivers/gpu/drm/drm_crtc_helper_internal.h
-> @@ -28,36 +28,9 @@
->  
->  #include <drm/drm_connector.h>
->  #include <drm/drm_crtc.h>
-> -#include <drm/drm_dp_helper.h>
->  #include <drm/drm_encoder.h>
->  #include <drm/drm_modes.h>
->  
-> -/* drm_dp_aux_dev.c */
-> -#ifdef CONFIG_DRM_DP_AUX_CHARDEV
-> -int drm_dp_aux_dev_init(void);
-> -void drm_dp_aux_dev_exit(void);
-> -int drm_dp_aux_register_devnode(struct drm_dp_aux *aux);
-> -void drm_dp_aux_unregister_devnode(struct drm_dp_aux *aux);
-> -#else
-> -static inline int drm_dp_aux_dev_init(void)
-> -{
-> -	return 0;
-> -}
-> -
-> -static inline void drm_dp_aux_dev_exit(void)
-> -{
-> -}
-> -
-> -static inline int drm_dp_aux_register_devnode(struct drm_dp_aux *aux)
-> -{
-> -	return 0;
-> -}
-> -
-> -static inline void drm_dp_aux_unregister_devnode(struct drm_dp_aux *aux)
-> -{
-> -}
-> -#endif
-> -
->  /* drm_probe_helper.c */
->  enum drm_mode_status drm_crtc_mode_valid(struct drm_crtc *crtc,
->  					 const struct drm_display_mode *mode);
-> diff --git a/drivers/gpu/drm/drm_dp_aux_dev.c b/drivers/gpu/drm/drm_dp_aux_dev.c
-> index 06b374cae956..0618dfe16660 100644
-> --- a/drivers/gpu/drm/drm_dp_aux_dev.c
-> +++ b/drivers/gpu/drm/drm_dp_aux_dev.c
-> @@ -40,7 +40,7 @@
->  #include <drm/drm_dp_mst_helper.h>
->  #include <drm/drm_print.h>
->  
-> -#include "drm_crtc_helper_internal.h"
-> +#include "drm_dp_helper_internal.h"
->  
->  struct drm_dp_aux_dev {
->  	unsigned index;
-> diff --git a/drivers/gpu/drm/drm_dp_helper.c b/drivers/gpu/drm/drm_dp_helper.c
-> index 23f9073bc473..e995a0262ed7 100644
-> --- a/drivers/gpu/drm/drm_dp_helper.c
-> +++ b/drivers/gpu/drm/drm_dp_helper.c
-> @@ -35,7 +35,7 @@
->  #include <drm/drm_dp_mst_helper.h>
->  #include <drm/drm_panel.h>
->  
-> -#include "drm_crtc_helper_internal.h"
-> +#include "drm_dp_helper_internal.h"
->  
->  struct dp_aux_backlight {
->  	struct backlight_device *base;
-> diff --git a/drivers/gpu/drm/drm_dp_helper_internal.h b/drivers/gpu/drm/drm_dp_helper_internal.h
-> new file mode 100644
-> index 000000000000..5c9f8bb0c99a
-> --- /dev/null
-> +++ b/drivers/gpu/drm/drm_dp_helper_internal.h
-> @@ -0,0 +1,28 @@
-> +/* SPDX-License-Identifier: MIT */
-> +
-> +#include <drm/drm_dp_helper.h>
+>  drivers/phy/tegra/xusb.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Please don't include other headers if you can avoid them by using
-forward declarations.
+Acked-by: Thierry Reding <treding@nvidia.com>
 
-BR,
-Jani.
+--W2swrXWGj6l4aaDV
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
 
-> +
-> +#ifdef CONFIG_DRM_DP_AUX_CHARDEV
-> +int drm_dp_aux_dev_init(void);
-> +void drm_dp_aux_dev_exit(void);
-> +int drm_dp_aux_register_devnode(struct drm_dp_aux *aux);
-> +void drm_dp_aux_unregister_devnode(struct drm_dp_aux *aux);
-> +#else
-> +static inline int drm_dp_aux_dev_init(void)
-> +{
-> +	return 0;
-> +}
-> +
-> +static inline void drm_dp_aux_dev_exit(void)
-> +{
-> +}
-> +
-> +static inline int drm_dp_aux_register_devnode(struct drm_dp_aux *aux)
-> +{
-> +	return 0;
-> +}
-> +
-> +static inline void drm_dp_aux_unregister_devnode(struct drm_dp_aux *aux)
-> +{
-> +}
-> +#endif
-> diff --git a/drivers/gpu/drm/drm_dp_mst_topology.c b/drivers/gpu/drm/drm_dp_mst_topology.c
-> index 7f0ff96261cf..9f7b0b606924 100644
-> --- a/drivers/gpu/drm/drm_dp_mst_topology.c
-> +++ b/drivers/gpu/drm/drm_dp_mst_topology.c
-> @@ -45,7 +45,7 @@
->  #include <drm/drm_print.h>
->  #include <drm/drm_probe_helper.h>
->  
-> -#include "drm_crtc_helper_internal.h"
-> +#include "drm_dp_helper_internal.h"
->  #include "drm_dp_mst_topology_internal.h"
->  
->  /**
-> diff --git a/drivers/gpu/drm/drm_kms_helper_common.c b/drivers/gpu/drm/drm_kms_helper_common.c
-> index 47e92400548d..88260d26409c 100644
-> --- a/drivers/gpu/drm/drm_kms_helper_common.c
-> +++ b/drivers/gpu/drm/drm_kms_helper_common.c
-> @@ -29,6 +29,7 @@
->  
->  #include <drm/drm_print.h>
->  
-> +#include "drm_dp_helper_internal.h"
->  #include "drm_crtc_helper_internal.h"
->  
->  MODULE_AUTHOR("David Airlie, Jesse Barnes");
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmG3H3IACgkQ3SOs138+
+s6HJrw/+PwLmkXa7Ame0lq2zyamq1ugkXKFFAabK3ZHFV8Epsuyl4tT+FKNn2ShM
+y7Dy/Vqh6SVtb4CXBFc25tI4SyfoH1uRALMdFc8CqUyPGhN4HXOOIPRrikUyeWyg
+xROkHn5Fnjf3vdkBat3vwVEHZiu++AZTMz97GOsNP25lwMIEmw/sGw9KBFt+cCTV
+S8g/ihfq8fncGHOIO7soGncJyjZPQhWB/R7mur7A5eSelfj+OKW+BqeZUwhI167C
++yvONyxgtB8EZmNWGnw5jrV384n0hw6kOJGR9G4tsZRV9kVWGL7vTGcdiAZiDB/v
+GIZGGdzNiCKFSp9di9nj8lkvl28YGJrgQgg7VfT1MF5KfDZCW0dohgq+KrrBPw4N
+/IxAVEvF8rYmuESrL4UuPS8KVjAhjN0DlvtJvWoBumq3rhx0FsD5OpuZik1daN8c
+/eXWcxlvAZZZSYyyiNMIxTIPDixHxj3s2J9/9zTfDpNZYuShOBR2t43wYTiCUbfr
+HRIyaUO73BHbOU1wUeutEO4IS9pqL4YU2a2bnELG5GGG6HQ1/HmdIeMWVjgeebux
+LG1eqUqKSoV13LWt8ULgli4Xz3Ra+y6PJpbB1a1hsINgCmuv0PpDG2qkHS2ZKYbJ
+9XiWzxcgulRpx1OzLOFkdkcfbRt/zWCCiOK1bQiJIG5mwrI3NQo=
+=JIfE
+-----END PGP SIGNATURE-----
 
--- 
-Jani Nikula, Intel Open Source Graphics Center
+--W2swrXWGj6l4aaDV--
