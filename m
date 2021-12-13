@@ -2,68 +2,67 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03CCBC433F5
-	for <linux-tegra@archiver.kernel.org>; Mon, 13 Dec 2021 16:44:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCBB2C433EF
+	for <linux-tegra@archiver.kernel.org>; Mon, 13 Dec 2021 16:47:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234343AbhLMQow (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 13 Dec 2021 11:44:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44726 "EHLO
+        id S232358AbhLMQrw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 13 Dec 2021 11:47:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45458 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229790AbhLMQow (ORCPT
+        with ESMTP id S231806AbhLMQrw (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 13 Dec 2021 11:44:52 -0500
-Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91671C061574
-        for <linux-tegra@vger.kernel.org>; Mon, 13 Dec 2021 08:44:51 -0800 (PST)
-Received: by mail-lf1-x136.google.com with SMTP id b1so31902362lfs.13
-        for <linux-tegra@vger.kernel.org>; Mon, 13 Dec 2021 08:44:51 -0800 (PST)
+        Mon, 13 Dec 2021 11:47:52 -0500
+Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9EC00C061574
+        for <linux-tegra@vger.kernel.org>; Mon, 13 Dec 2021 08:47:51 -0800 (PST)
+Received: by mail-lf1-x132.google.com with SMTP id k37so32087908lfv.3
+        for <linux-tegra@vger.kernel.org>; Mon, 13 Dec 2021 08:47:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=aL1Bkwkm4K7uXp1mzh9+uIwwElltoFnomk07fJEg1KI=;
-        b=MMi3qpzG35ObhP8n3pNiHVHNNZTfyM1C1I0iXDkT46IK5kOD0xh95Q6gRd/CEnOX4V
-         RfQPCxcpDapaO1vTDeI3bgeK5qUGuz4zGFtokSCVlLab8A+QMN6Ype/8PNtXgbyXIke/
-         hNo+l+OM0lwMywQT7287txlNm/3YOsIvptHIgB2zdnr46pt8aEjP1Ko2EHsmqUY2g/kF
-         cCsM59Q4feDnIBcakdDXBwJTHOfK0DtyLn5Vj+pqeX9oMMpAJe0ffGPO+A+XfBzc5+2H
-         u+Y4kTe3m7zhscMgTSZo9vI9mgeNipeVgBNgKT653ALqmgD4ALkKK0lX2wQi9LF1Gd22
-         UWlQ==
+        bh=gWGX1ucP5HloE9oZqwM5Lg1vV22Ijran58tF4FX+CSs=;
+        b=MnuSwRFe/t2YP9v7V00+hoW067MtegaYz48KL9O0hBNSHwJz7Q3OFpVWimJ4a/M0TH
+         vmbJbmIp5SKJCVw3J7dS2ORhwjcKcMVPcoChthmw2t8hgVEjnz/DKEYve0+dpQ0hJCwi
+         fsGnJnG64hIuhx6jH8Hcz/m0aMTEwNrCsCQEXPsXIJvM22/tgzIBAeCZ+iGYBuOAI2My
+         IYUcdEmLpw7yIz26PLBk2P+xrk3QQIhcUciAMypc0CxDptRVE8oZQlP+P+n4qJOigyFS
+         zqUMFPo26ftFXL+bxG/4DMQGA9xDixxUQ19InQBrKBJ+9hKR+B8ITTjeT3LocPC0f69l
+         V8TA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=aL1Bkwkm4K7uXp1mzh9+uIwwElltoFnomk07fJEg1KI=;
-        b=6WOjc1IPDlRRDjGBL6Zv/Ilzbas/dj1hrbEMDRJBYpjRxp8I8t/zJUk6caOznW7eNR
-         qYgTHMUUGySKvEBPA8T5p0w9Vi5uZrQRwCA3m3RjtWqfYBg75d2oiJ+ex5cRXhIJ8VTh
-         zlUR0xFhl5e8r0gbvh5fFBBJSd/gQ8v4syRWFFKPvLByOMatc+Q4/0cQEJXjBQinvp5y
-         no+nyHWFiK32Y/hbV1DxPlF33a2sLW5zi33Bjfs+brm88U0/udSYPO1DGdkIl03SUPNg
-         SbS3rQerDrW78mb19TjCCURYbjzRpd1iSbTvO4/MmkH71bnCTlK9w9cXPj6R6l7jPEte
-         XxYg==
-X-Gm-Message-State: AOAM5316tzE71Fg3vovQnIGQLG14Rhu4Ywcvk/zllD1lI7n7oWWMbyQH
-        dOHHVsNLMYm/0zORzF/Zfw3RoGCaZM0=
-X-Google-Smtp-Source: ABdhPJyZMhb96R83TKxUkqgCSiMH0cXDA9tQzDT5xtS9XpqJQPXyuezoN7IKc9N/Z0bcivcEDu1nYQ==
-X-Received: by 2002:a05:6512:e9a:: with SMTP id bi26mr28502729lfb.480.1639413889741;
-        Mon, 13 Dec 2021 08:44:49 -0800 (PST)
+        bh=gWGX1ucP5HloE9oZqwM5Lg1vV22Ijran58tF4FX+CSs=;
+        b=rKr5iwa/WvWNzK2cs9CQ9uTsErSyI7ZDOc1qPusr5N44IyWTxZjP3W0nXzjqoj5GdD
+         xaQQNsHH8fOkdPn4/3K6foCrbnaZbIkNy0PryqBN5iX1fVoXy3lD/r5QJ1cM6GGR00rB
+         TRcKhMi6jCqXxcaIo/FSznbtx8d3QbpQ44IveN5YVQscdwk2bL/77W/eFVTZhUd+kfgf
+         2+n9Fjl7omeKuzdSJQu8g/JtlSRiriTA6ACOhvcUy3RHJfPJSs3oYLp12d1P4hQU2t6x
+         rry+OCMqmv30DA3n6NrUMEF9WgKOHQTNpI54hYHwszAezPq1+QKeH+OrYPUqt/uayy+p
+         SAww==
+X-Gm-Message-State: AOAM531XqEBKxhuVntsvsMm+2eLQBaHhm01ckgFLAQ6YAU19Ay0X+2c2
+        nomHvtCDs/xFJfzl5VI87JK1FHNgbbE=
+X-Google-Smtp-Source: ABdhPJwHHjZUptlPkBW4wmrOZZtc3D9Vj1+XO2R5LGkAPJhP8V0TzptUYwdi5IT4s8VtWvfyWiXIug==
+X-Received: by 2002:a19:5216:: with SMTP id m22mr29595681lfb.28.1639414069673;
+        Mon, 13 Dec 2021 08:47:49 -0800 (PST)
 Received: from [192.168.2.145] (94-29-46-111.dynamic.spd-mgts.ru. [94.29.46.111])
-        by smtp.googlemail.com with ESMTPSA id w10sm1488552lfn.308.2021.12.13.08.44.49
+        by smtp.googlemail.com with ESMTPSA id c34sm1498984lfv.83.2021.12.13.08.47.49
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 Dec 2021 08:44:49 -0800 (PST)
-Subject: Re: [PATCH 06/25] ARM: tegra: Fix compatible string for Tegra30+
- timer
+        Mon, 13 Dec 2021 08:47:49 -0800 (PST)
+Subject: Re: [PATCH 07/25] ARM: tegra: Add #reset-cells for Tegra114 MC
 To:     Thierry Reding <thierry.reding@gmail.com>
 Cc:     Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org
 References: <20211209173356.618460-1-thierry.reding@gmail.com>
- <20211209173356.618460-7-thierry.reding@gmail.com>
- <d7989902-a42e-1fed-d85b-ade3e160400a@gmail.com> <YbNZR9WqBiWbYn2d@orome>
- <8988f759-689f-7c46-ba1e-3eab1a91de7c@gmail.com> <Ybdu9RjWZxL325xz@orome>
+ <20211209173356.618460-8-thierry.reding@gmail.com>
+ <f63ccf90-2def-e241-5f86-1166ab938d8d@gmail.com> <YbNZlyjpi/i2Dph6@orome>
+ <60c59ccd-eed4-3046-3ecc-b74475778a3f@gmail.com> <Ybdva8E9+vsBi0mP@orome>
 From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <0be69e6b-bec4-faf9-ce1a-ce513a217622@gmail.com>
-Date:   Mon, 13 Dec 2021 19:44:48 +0300
+Message-ID: <f75aff60-ac7f-bba3-c7a3-fb6b19fc107b@gmail.com>
+Date:   Mon, 13 Dec 2021 19:47:48 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.14.0
 MIME-Version: 1.0
-In-Reply-To: <Ybdu9RjWZxL325xz@orome>
+In-Reply-To: <Ybdva8E9+vsBi0mP@orome>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -71,50 +70,58 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-13.12.2021 19:04, Thierry Reding пишет:
-> On Fri, Dec 10, 2021 at 06:23:34PM +0300, Dmitry Osipenko wrote:
->> 10.12.2021 16:42, Thierry Reding пишет:
->>> On Thu, Dec 09, 2021 at 10:36:43PM +0300, Dmitry Osipenko wrote:
+13.12.2021 19:06, Thierry Reding пишет:
+> On Fri, Dec 10, 2021 at 06:28:36PM +0300, Dmitry Osipenko wrote:
+>> 10.12.2021 16:43, Thierry Reding пишет:
+>>> On Thu, Dec 09, 2021 at 11:34:39PM +0300, Dmitry Osipenko wrote:
 >>>> 09.12.2021 20:33, Thierry Reding пишет:
 >>>>> From: Thierry Reding <treding@nvidia.com>
 >>>>>
->>>>> The TKE (time-keeping engine) found on Tegra30 and later is not
->>>>> backwards compatible with the version found on Tegra20, so update the
->>>>> compatible string list accordingly.
+>>>>> The Tegra memory controller provides reset controls for hotflush reset,
+>>>>> so the #reset-cells property must be specified.
 >>>>>
 >>>>> Signed-off-by: Thierry Reding <treding@nvidia.com>
 >>>>> ---
->>>>>  arch/arm/boot/dts/tegra114.dtsi | 2 +-
->>>>>  arch/arm/boot/dts/tegra124.dtsi | 2 +-
->>>>>  arch/arm/boot/dts/tegra30.dtsi  | 2 +-
->>>>>  3 files changed, 3 insertions(+), 3 deletions(-)
->> ...
->>>>>  	timer@60005000 {
->>>>> -		compatible = "nvidia,tegra30-timer", "nvidia,tegra20-timer";
->>>>> +		compatible = "nvidia,tegra30-timer";
->>>>>  		reg = <0x60005000 0x400>;
->>>>>  		interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
->>>>>  			     <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
+>>>>>  arch/arm/boot/dts/tegra114.dtsi | 1 +
+>>>>>  1 file changed, 1 insertion(+)
+>>>>>
+>>>>> diff --git a/arch/arm/boot/dts/tegra114.dtsi b/arch/arm/boot/dts/tegra114.dtsi
+>>>>> index 328425dba023..ce7410ee08b8 100644
+>>>>> --- a/arch/arm/boot/dts/tegra114.dtsi
+>>>>> +++ b/arch/arm/boot/dts/tegra114.dtsi
+>>>>> @@ -542,6 +542,7 @@ mc: memory-controller@70019000 {
+>>>>>  
+>>>>>  		interrupts = <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>;
+>>>>>  
+>>>>> +		#reset-cells = <1>;
+>>>>>  		#iommu-cells = <1>;
+>>>>>  	};
+>>>>>  
 >>>>>
 >>>>
->>>> What exactly is incompatible? IIRC, T30+ is a superset of T20. This
->>>> patch should be wrong, also see [1].
+>>>> This will conflict with the patch that adds video decoder node [1].
+>>>> Since the VDE patch was sent out earlier, I suggest you to drop this patch.
+>>>>
+>>>> [1]
+>>>> https://patchwork.ozlabs.org/project/linux-tegra/patch/20211208173609.4064-23-digetx@gmail.com/
 >>>
->>> As the comment in that location explains, Tegra114 and later have an
->>> architectural timer that is preferred over the legacy timer. So while
->>> this doesn't technically make Tegra114 incompatible (in terms of
->>> register programming, etc.) with Tegra20, in practice we don't want
->>> Tegra20 behaviour on Tegra114 and later.
+>>> I prefer to keep this separate because it actually gives the reason for
+>>> why this is added, whereas with the VDE node patch it looks like it's
+>>> there by mistake.
 >>
->> So the T114 timer code works using the T20 code and we prefer to use the
->> ARCH timer on T114+ in the driver, what is the problem then? Where is
->> the incompatibility?
+>> So the direct reference to the MC using TEGRA114_MC_RESET_VDE is a
+>> mistake to you. I disagree.
 > 
-> It's the priority that's set differently for Tegra20 and Tegra30. On
-> Tegra114 and later, the Tegra timer has lower priority so that the
-> architected timer takes precedence. It's not exactly an
-> incompatibilitity, but there's no good way to describe it otherwise.
+> That's not what I'm saying. I'm saying that it's not obvious from the
+> patch description or from the rest of the content why that #reset-cells
+> is added. It looks out of place.
+> 
+>> I don't mind if you'll keep this patch, but then please don't forget to
+>> resolve the conflict, or we may have two #reset-cells entries.
+> 
+> Yeah, no worries, I'll take care of that.
 
+Again, I already took care about it [1]. Please just rebase your patches ;)
 
-Priority is a property of the Linux kernel driver, it's not a hardware
-property. This whole patch is incorrect and should be dropped, IMO.
+[1]
+https://patchwork.ozlabs.org/project/linux-tegra/patch/20211211211412.10791-26-digetx@gmail.com/
