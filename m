@@ -2,61 +2,61 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDD5EC4321E
-	for <linux-tegra@archiver.kernel.org>; Mon, 13 Dec 2021 16:22:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D1F7C433EF
+	for <linux-tegra@archiver.kernel.org>; Mon, 13 Dec 2021 16:22:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240797AbhLMQWM (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 13 Dec 2021 11:22:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39180 "EHLO
+        id S240775AbhLMQWS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 13 Dec 2021 11:22:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39214 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240680AbhLMQWD (ORCPT
+        with ESMTP id S240771AbhLMQWJ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 13 Dec 2021 11:22:03 -0500
-Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A231C0617A1;
-        Mon, 13 Dec 2021 08:22:03 -0800 (PST)
-Received: by mail-wm1-x331.google.com with SMTP id o19-20020a1c7513000000b0033a93202467so11929684wmc.2;
-        Mon, 13 Dec 2021 08:22:03 -0800 (PST)
+        Mon, 13 Dec 2021 11:22:09 -0500
+Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60D0AC061751;
+        Mon, 13 Dec 2021 08:22:09 -0800 (PST)
+Received: by mail-wm1-x332.google.com with SMTP id i12so12346237wmq.4;
+        Mon, 13 Dec 2021 08:22:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=M6YER+BdZLVh9vSNswdDWSR9+jpZxoPtB4QqBlBxhsw=;
-        b=GZEaAZkcT6FU/DjWgTBU031hRvI00IMhty+4sB3C2dclXSA4YBD7uRWH0Zfumh4lNr
-         rxsEWjwo1ClOe8EYFV5cgB2EsPQMa2uZps2YJoqwuf51VOEbjr9GRHEHffeZ9tF28QV+
-         UrjCwm2fuIsdQvFepPRsKweGkaYnPipBrWqZBgOjpIP+4Jweo4q0AFWHhYR4otIIPZAH
-         0EXfenWzPwlCrhEOjeG6SGjYH5cuUWAV2Z4gJKR8Ne7o6pHgKqMqj40qWDKIL80dMy0h
-         c4SDjTaeZ+C8YuCfBxxjJKR5afx5dc1sEa6aKFqWHO1+4WzeFVj9UxXdfMj1ShJOHyib
-         cM1A==
+        bh=dmpF5nkRi2WoXriQpRMFXwjffTvFPB+sSSjc501wv0s=;
+        b=n299pL2klwd1hvzFTB8rHTSz1AGUG7Yk6fsWfRcoPOcxD+kHEUlvFP+Tt2wBwsAVHl
+         joDEJ5JmDUecihibaE3onopQl251ZYahhJlorEGIvVVDpm2E+2ymtqDaC5JNIMKRwcC4
+         qnbkKoPtp5ycBlOgrJh3iPjTeEnApsB1XG/U7DQ/PCkKdiWUDataAah8miiLug0TbCJ4
+         tihnwvLfuTXfK1gkstylTLHrjdNhA7oy41LlMlThVV4MKrXW5XvTjmuZxIBc2nq+4/Bw
+         EDU9Ac8L13hV7zEmOcwYO82MOFh9/0Ar72VhuYo5JOFQhjnoyDl07cC7uCzjc0VhAig0
+         WKXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=M6YER+BdZLVh9vSNswdDWSR9+jpZxoPtB4QqBlBxhsw=;
-        b=xa0unfophbzh6pxC6/TQgBIF28Dd2D9K8ViDk8vHJbMyI94gw3yYiGW5ZxLJvXeKjR
-         Bvoefm40OUslhgQrYN61HbLfC9tvs7VhWd89/Q/5QRBpor0ZutCDgG47EbPPcZuAQD6c
-         PL3pUTAtNB4iQ6IfQksvwSt3P5r0QUhDpngqSt+HrZpiIPVs9vaSZzs5bOT2NpRuJbIA
-         1Gk9H8vK5KJXsTLPtvLd7HyrGGoB/sv3otQGVWMuI4ZjpmDJh6Dma+DBcTrAbkOAdLo3
-         LLmFVKd/v7h+Rh1MXyAaepq50fSuZLuWJ1awneatS5u3sn7t425bCcagj0tpFxEiRegS
-         siLg==
-X-Gm-Message-State: AOAM531nc4Mh4Xj5ijnC4JVUU8jSV5YLUBipLTcqZE9nthAGvJ/xF/of
-        lBFhxOs4BO/KSWBkUywLcGE=
-X-Google-Smtp-Source: ABdhPJwYa+SklZbDZixva0JX7nYuSjTA9f2kn6umNChnE88vJwnsX09Jd8nicBCcxtqxZjiTJhfJiA==
-X-Received: by 2002:a1c:6a04:: with SMTP id f4mr39007224wmc.56.1639412521673;
-        Mon, 13 Dec 2021 08:22:01 -0800 (PST)
+        bh=dmpF5nkRi2WoXriQpRMFXwjffTvFPB+sSSjc501wv0s=;
+        b=aX4qdwQOgMlg0G9tOW3qYz440QuHCk7baC8pO3reFnW0PeishNGaci7CTzQ0bY9xeH
+         5D9F1so+ZKK9Q+Wihy5uDODeyZ81jH3eRp/kPQZZ2SjElJB188j0VGJRfbRd03lQTLjy
+         wh1Y7vR3Lr/Vr1+VMU9ShtTUhWVsNAKRlbbBScwEesaqvOCmW+eRRxY55yK05yfkCVpw
+         uqwMvnYpyALygWBgIznFLqIAEjjDIpa/U1t2RLtiRlwa5xL6a4XfXKvcArcDkiAq57SG
+         dlskg0bxZ3G4OqQVN+8o8xwcvG4KyJLlD76szAq2o/IYd7RSIlL+qwXHYOVxvdiIzP3j
+         LFuA==
+X-Gm-Message-State: AOAM533wdZ9LbdL4GUbwWOqP/jBkq3Ex5T6Pw6jIYoMv9VdC8EUDFUjj
+        acOEx4/Z34gC6Nq+vjO591Y=
+X-Google-Smtp-Source: ABdhPJyT5chf5bWcaQzIHYkZllzHGAky7L6Om3dI3AdL8QxAtkZfKt6U1EEWI/zyEVxNQcTZY0pJCg==
+X-Received: by 2002:a05:600c:1d0e:: with SMTP id l14mr37799060wms.64.1639412526853;
+        Mon, 13 Dec 2021 08:22:06 -0800 (PST)
 Received: from localhost ([193.209.96.43])
-        by smtp.gmail.com with ESMTPSA id j40sm7773271wms.16.2021.12.13.08.22.00
+        by smtp.gmail.com with ESMTPSA id y7sm10905251wrw.55.2021.12.13.08.22.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Dec 2021 08:22:01 -0800 (PST)
+        Mon, 13 Dec 2021 08:22:05 -0800 (PST)
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
         Rob Herring <robh+dt@kernel.org>,
         Thierry Reding <thierry.reding@gmail.com>
 Cc:     Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 3/6] memory: tegra: Add Tegra234 support
-Date:   Mon, 13 Dec 2021 17:21:48 +0100
-Message-Id: <20211213162151.916523-4-thierry.reding@gmail.com>
+Subject: [PATCH v3 5/6] arm64: tegra: Add memory controller on Tegra234
+Date:   Mon, 13 Dec 2021 17:21:50 +0100
+Message-Id: <20211213162151.916523-6-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20211213162151.916523-1-thierry.reding@gmail.com>
 References: <20211213162151.916523-1-thierry.reding@gmail.com>
@@ -68,175 +68,84 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-The memory controller and external memory controller found on Tegra234
-is similar to the version found on earlier SoCs but supports a number of
-new memory clients.
-
-Add initial memory client definitions for the Tegra234 so that the SMMU
-stream ID override registers can be properly programmed at boot time.
+This adds the memory controller and the embedded external memory
+controller found on the Tegra234 SoC.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/memory/tegra/Makefile       |  1 +
- drivers/memory/tegra/mc.c           |  3 ++
- drivers/memory/tegra/mc.h           |  7 ++-
- drivers/memory/tegra/tegra186-emc.c |  3 ++
- drivers/memory/tegra/tegra234.c     | 81 +++++++++++++++++++++++++++++
- 5 files changed, 94 insertions(+), 1 deletion(-)
- create mode 100644 drivers/memory/tegra/tegra234.c
+Changes in v2:
+- move EMC general interrupt from MC to EMC
 
-diff --git a/drivers/memory/tegra/Makefile b/drivers/memory/tegra/Makefile
-index c992e87782d2..1df0b43e40b1 100644
---- a/drivers/memory/tegra/Makefile
-+++ b/drivers/memory/tegra/Makefile
-@@ -9,6 +9,7 @@ tegra-mc-$(CONFIG_ARCH_TEGRA_132_SOC) += tegra124.o
- tegra-mc-$(CONFIG_ARCH_TEGRA_210_SOC) += tegra210.o
- tegra-mc-$(CONFIG_ARCH_TEGRA_186_SOC) += tegra186.o
- tegra-mc-$(CONFIG_ARCH_TEGRA_194_SOC) += tegra186.o tegra194.o
-+tegra-mc-$(CONFIG_ARCH_TEGRA_194_SOC) += tegra186.o tegra234.o
- 
- obj-$(CONFIG_TEGRA_MC) += tegra-mc.o
- 
-diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
-index 44b4a4080920..bf3abb6d8354 100644
---- a/drivers/memory/tegra/mc.c
-+++ b/drivers/memory/tegra/mc.c
-@@ -44,6 +44,9 @@ static const struct of_device_id tegra_mc_of_match[] = {
- #endif
- #ifdef CONFIG_ARCH_TEGRA_194_SOC
- 	{ .compatible = "nvidia,tegra194-mc", .data = &tegra194_mc_soc },
-+#endif
-+#ifdef CONFIG_ARCH_TEGRA_234_SOC
-+	{ .compatible = "nvidia,tegra234-mc", .data = &tegra234_mc_soc },
- #endif
- 	{ /* sentinel */ }
- };
-diff --git a/drivers/memory/tegra/mc.h b/drivers/memory/tegra/mc.h
-index 1e492989c363..062886e94c04 100644
---- a/drivers/memory/tegra/mc.h
-+++ b/drivers/memory/tegra/mc.h
-@@ -137,6 +137,10 @@ extern const struct tegra_mc_soc tegra186_mc_soc;
- extern const struct tegra_mc_soc tegra194_mc_soc;
- #endif
- 
-+#ifdef CONFIG_ARCH_TEGRA_234_SOC
-+extern const struct tegra_mc_soc tegra234_mc_soc;
-+#endif
-+
- #if defined(CONFIG_ARCH_TEGRA_3x_SOC) || \
-     defined(CONFIG_ARCH_TEGRA_114_SOC) || \
-     defined(CONFIG_ARCH_TEGRA_124_SOC) || \
-@@ -147,7 +151,8 @@ extern const struct tegra_mc_ops tegra30_mc_ops;
- #endif
- 
- #if defined(CONFIG_ARCH_TEGRA_186_SOC) || \
--    defined(CONFIG_ARCH_TEGRA_194_SOC)
-+    defined(CONFIG_ARCH_TEGRA_194_SOC) || \
-+    defined(CONFIG_ARCH_TEGRA_234_SOC)
- extern const struct tegra_mc_ops tegra186_mc_ops;
- #endif
- 
-diff --git a/drivers/memory/tegra/tegra186-emc.c b/drivers/memory/tegra/tegra186-emc.c
-index 746c4ef2c0af..54b47ca33483 100644
---- a/drivers/memory/tegra/tegra186-emc.c
-+++ b/drivers/memory/tegra/tegra186-emc.c
-@@ -272,6 +272,9 @@ static const struct of_device_id tegra186_emc_of_match[] = {
- #endif
- #if defined(CONFIG_ARCH_TEGRA_194_SOC)
- 	{ .compatible = "nvidia,tegra194-emc" },
-+#endif
-+#if defined(CONFIG_ARCH_TEGRA_234_SOC)
-+	{ .compatible = "nvidia,tegra234-emc" },
- #endif
- 	{ /* sentinel */ }
- };
-diff --git a/drivers/memory/tegra/tegra234.c b/drivers/memory/tegra/tegra234.c
-new file mode 100644
-index 000000000000..45efc5139960
---- /dev/null
-+++ b/drivers/memory/tegra/tegra234.c
-@@ -0,0 +1,81 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (C) 2021 NVIDIA CORPORATION.  All rights reserved.
-+ */
-+
-+#include <soc/tegra/mc.h>
-+
+ arch/arm64/boot/dts/nvidia/tegra234.dtsi | 49 ++++++++++++++++++++++++
+ 1 file changed, 49 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/nvidia/tegra234.dtsi b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
+index f8061b452046..a75b21c6a521 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra234.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
+@@ -4,6 +4,7 @@
+ #include <dt-bindings/gpio/tegra234-gpio.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/mailbox/tegra186-hsp.h>
 +#include <dt-bindings/memory/tegra234-mc.h>
+ #include <dt-bindings/reset/tegra234-reset.h>
+ 
+ / {
+@@ -85,6 +86,54 @@ gpio: gpio@2200000 {
+ 			gpio-controller;
+ 		};
+ 
++		mc: memory-controller@2c00000 {
++			compatible = "nvidia,tegra234-mc";
++			reg = <0x02c00000 0x100000>,
++			      <0x02b80000 0x040000>,
++			      <0x01700000 0x100000>;
++			interrupts = <GIC_SPI 223 IRQ_TYPE_LEVEL_HIGH>;
++			#interconnect-cells = <1>;
++			status = "okay";
 +
-+#include "mc.h"
++			#address-cells = <2>;
++			#size-cells = <2>;
 +
-+static const struct tegra_mc_client tegra234_mc_clients[] = {
-+	{
-+		.id = TEGRA234_MEMORY_CLIENT_SDMMCRAB,
-+		.name = "sdmmcrab",
-+		.sid = TEGRA234_SID_SDMMC4,
-+		.regs = {
-+			.sid = {
-+				.override = 0x318,
-+				.security = 0x31c,
-+			},
-+		},
-+	}, {
-+		.id = TEGRA234_MEMORY_CLIENT_SDMMCWAB,
-+		.name = "sdmmcwab",
-+		.sid = TEGRA234_SID_SDMMC4,
-+		.regs = {
-+			.sid = {
-+				.override = 0x338,
-+				.security = 0x33c,
-+			},
-+		},
-+	}, {
-+		.id = TEGRA234_MEMORY_CLIENT_BPMPR,
-+		.name = "bpmpr",
-+		.sid = TEGRA234_SID_BPMP,
-+		.regs = {
-+			.sid = {
-+				.override = 0x498,
-+				.security = 0x49c,
-+			},
-+		},
-+	}, {
-+		.id = TEGRA234_MEMORY_CLIENT_BPMPW,
-+		.name = "bpmpw",
-+		.sid = TEGRA234_SID_BPMP,
-+		.regs = {
-+			.sid = {
-+				.override = 0x4a0,
-+				.security = 0x4a4,
-+			},
-+		},
-+	}, {
-+		.id = TEGRA234_MEMORY_CLIENT_BPMPDMAR,
-+		.name = "bpmpdmar",
-+		.sid = TEGRA234_SID_BPMP,
-+		.regs = {
-+			.sid = {
-+				.override = 0x4a8,
-+				.security = 0x4ac,
-+			},
-+		},
-+	}, {
-+		.id = TEGRA234_MEMORY_CLIENT_BPMPDMAW,
-+		.name = "bpmpdmaw",
-+		.sid = TEGRA234_SID_BPMP,
-+		.regs = {
-+			.sid = {
-+				.override = 0x4b0,
-+				.security = 0x4b4,
-+			},
-+		},
-+	},
-+};
++			ranges = <0x01700000 0x0 0x01700000 0x0 0x100000>,
++				 <0x02b80000 0x0 0x02b80000 0x0 0x040000>,
++				 <0x02c00000 0x0 0x02c00000 0x0 0x100000>;
 +
-+const struct tegra_mc_soc tegra234_mc_soc = {
-+	.num_clients = ARRAY_SIZE(tegra234_mc_clients),
-+	.clients = tegra234_mc_clients,
-+	.num_address_bits = 40,
-+	.ops = &tegra186_mc_ops,
-+};
++			/*
++			 * Bit 39 of addresses passing through the memory
++			 * controller selects the XBAR format used when memory
++			 * is accessed. This is used to transparently access
++			 * memory in the XBAR format used by the discrete GPU
++			 * (bit 39 set) or Tegra (bit 39 clear).
++			 *
++			 * As a consequence, the operating system must ensure
++			 * that bit 39 is never used implicitly, for example
++			 * via an I/O virtual address mapping of an IOMMU. If
++			 * devices require access to the XBAR switch, their
++			 * drivers must set this bit explicitly.
++			 *
++			 * Limit the DMA range for memory clients to [38:0].
++			 */
++			dma-ranges = <0x0 0x0 0x0 0x80 0x0>;
++
++			emc: external-memory-controller@2c60000 {
++				compatible = "nvidia,tegra234-emc";
++				reg = <0x0 0x02c60000 0x0 0x90000>,
++				      <0x0 0x01780000 0x0 0x80000>;
++				interrupts = <GIC_SPI 224 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&bpmp TEGRA234_CLK_EMC>;
++				clock-names = "emc";
++				status = "okay";
++
++				#interconnect-cells = <0>;
++
++				nvidia,bpmp = <&bpmp>;
++			};
++		};
++
+ 		uarta: serial@3100000 {
+ 			compatible = "nvidia,tegra234-uart", "nvidia,tegra20-uart";
+ 			reg = <0x03100000 0x10000>;
 -- 
 2.34.1
 
