@@ -2,134 +2,98 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2CB9C433FE
-	for <linux-tegra@archiver.kernel.org>; Mon, 13 Dec 2021 04:34:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33AF3C433EF
+	for <linux-tegra@archiver.kernel.org>; Mon, 13 Dec 2021 04:59:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231699AbhLMEeO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 12 Dec 2021 23:34:14 -0500
-Received: from inva021.nxp.com ([92.121.34.21]:46214 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231620AbhLMEeO (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 12 Dec 2021 23:34:14 -0500
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id C5DDA20061A;
-        Mon, 13 Dec 2021 05:34:12 +0100 (CET)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 8C9DA200616;
-        Mon, 13 Dec 2021 05:34:12 +0100 (CET)
-Received: from localhost.localdomain (mega.ap.freescale.net [10.192.208.232])
-        by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 133EC183AC4C;
-        Mon, 13 Dec 2021 12:34:10 +0800 (+08)
-From:   Xiaoliang Yang <xiaoliang.yang_1@nxp.com>
-To:     robh+dt@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
-        festevam@gmail.com
-Cc:     linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
-        linux-imx@nxp.com, kernel@pengutronix.de,
-        devicetree@vger.kernel.org, qiangqing.zhang@nxp.com,
-        xiaoliang.yang_1@nxp.com
-Subject: [PATCH v2] arm64: dts: imx8mp-evk: configure multiple queues on eqos
-Date:   Mon, 13 Dec 2021 12:45:46 +0800
-Message-Id: <20211213044546.9903-1-xiaoliang.yang_1@nxp.com>
-X-Mailer: git-send-email 2.17.1
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S231787AbhLME7T (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 12 Dec 2021 23:59:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47958 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229990AbhLME7S (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Sun, 12 Dec 2021 23:59:18 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2B5CC06173F;
+        Sun, 12 Dec 2021 20:59:17 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 15254B80D7C;
+        Mon, 13 Dec 2021 04:59:16 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7897CC00446;
+        Mon, 13 Dec 2021 04:59:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1639371554;
+        bh=uqDkjyi1DAG2WVFI7Iu0TC2w+GaDC3EmWkInyLpcGtE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=mVDRCny15VHJlA+o7pFyvRO+fGTVY2J3x91BIqcOwy4cryBFjZQyaHtyPhgW6KO28
+         HCKopx8WXOVlRdPjhEOrjN2VBJ1zFB8NRnGb5EUdfofWdRrki7ZlorlrhKm0n81/la
+         3mN9IpyIgfzc1/r0ZuBokeJT/zwaGH17foE/YzWMrXovh2MCpsiNQwWNaKLY5YRyFy
+         blW8ncTTX15Q1zUIMmgSzOFg2mWmU6KWhkXrs65ZUlMvc/lyG3K8k5h5nInsBLDfjW
+         SlpMqgTcrrDN8iKQSo2q7ad2+NbXTwlELLLoqff2K0DHg43fpfYsWOz0ibzpD4QupX
+         V/h6/iJ4bdVAQ==
+Date:   Mon, 13 Dec 2021 10:29:10 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Arnd Bergmann <arnd@kernel.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Andy Gross <agross@kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Baolin Wang <baolin.wang7@gmail.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Hyun Kwon <hyun.kwon@xilinx.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Nicolas Saenz Julienne <nsaenz@kernel.org>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Scott Branden <sbranden@broadcom.com>,
+        Takashi Iwai <tiwai@suse.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        alsa-devel@alsa-project.org, bcm-kernel-feedback-list@broadcom.com,
+        dmaengine@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-rpi-kernel@lists.infradead.org, linux-serial@vger.kernel.org,
+        linux-spi@vger.kernel.org, linux-staging@lists.linux.dev,
+        linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v2 00/11] dmaengine: kill off dma_slave_config->slave_id
+Message-ID: <YbbTHo+Wfpl30ZUH@matsya>
+References: <20211122222203.4103644-1-arnd@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211122222203.4103644-1-arnd@kernel.org>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Eqos ethernet support five queues on hardware, enable these queues and
-configure the priority of each queue. Uses Strict Priority as scheduling
-algorithms to ensure that the TSN function works.
+On 22-11-21, 23:21, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+> 
+> I recently came across some new uses of the 'slave_id' field that
+> I had (almost) removed a few years ago. There are no legitimate
+> uses of this field in the kernel, only a few stale references and
+> two drivers that abuse the field as a side-channel between the
+> dmaengine driver and its client.
+> 
+> Let's change the xilinx and qualcomm drivers to use the documented
+> side-channel (peripheral_data) instead, and remove the remnants of
+> it to prevent new users from coming in.
+> 
+> I think I got all the necessary Acks on v1 already, so if there are
+> no further concerns, please merge this through the dmaengine tree
+> for v5.17, or pull from
 
-The priority of each queue is a bitmask value that maps VLAN tag
-priority to the queue. Since the hardware only supports five queues,
-this patch maps priority 0-4 to queues one by one, and priority 5-7 to
-queue 4.
+Arnd, Thanks for the cleanup. I have applied and folder the fix you sent
+in this
 
-The total fifo size of 5 queues is 8192 bytes, if enable 5 queues with
-store-and-forward mode, it's not enough for large packets, which would
-trigger fifo overflow frequently. This patch set DMA to thresh mode to
-enable all 5 queues.
-
-Signed-off-by: Xiaoliang Yang <xiaoliang.yang_1@nxp.com>
----
- arch/arm64/boot/dts/freescale/imx8mp-evk.dts | 57 ++++++++++++++++++++
- 1 file changed, 57 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/freescale/imx8mp-evk.dts b/arch/arm64/boot/dts/freescale/imx8mp-evk.dts
-index 7b99fad6e4d6..e4c69594f067 100644
---- a/arch/arm64/boot/dts/freescale/imx8mp-evk.dts
-+++ b/arch/arm64/boot/dts/freescale/imx8mp-evk.dts
-@@ -86,6 +86,9 @@
- 	pinctrl-0 = <&pinctrl_eqos>;
- 	phy-mode = "rgmii-id";
- 	phy-handle = <&ethphy0>;
-+	snps,force_thresh_dma_mode;
-+	snps,mtl-tx-config = <&mtl_tx_setup>;
-+	snps,mtl-rx-config = <&mtl_rx_setup>;
- 	status = "okay";
- 
- 	mdio {
-@@ -99,6 +102,60 @@
- 			eee-broken-1000t;
- 		};
- 	};
-+
-+	mtl_tx_setup: tx-queues-config {
-+		snps,tx-queues-to-use = <5>;
-+		snps,tx-sched-sp;
-+		queue0 {
-+			snps,dcb-algorithm;
-+			snps,priority = <0x1>;
-+		};
-+		queue1 {
-+			snps,dcb-algorithm;
-+			snps,priority = <0x2>;
-+		};
-+		queue2 {
-+			snps,dcb-algorithm;
-+			snps,priority = <0x4>;
-+		};
-+		queue3 {
-+			snps,dcb-algorithm;
-+			snps,priority = <0x8>;
-+		};
-+		queue4 {
-+			snps,dcb-algorithm;
-+			snps,priority = <0xf0>;
-+		};
-+	};
-+	mtl_rx_setup: rx-queues-config {
-+		snps,rx-queues-to-use = <5>;
-+		snps,rx-sched-sp;
-+		queue0 {
-+			snps,dcb-algorithm;
-+			snps,priority = <0x1>;
-+			snps,map-to-dma-channel = <0>;
-+		};
-+		queue1 {
-+			snps,dcb-algorithm;
-+			snps,priority = <0x2>;
-+			snps,map-to-dma-channel = <1>;
-+		};
-+		queue2 {
-+			snps,dcb-algorithm;
-+			snps,priority = <0x4>;
-+			snps,map-to-dma-channel = <2>;
-+		};
-+		queue3 {
-+			snps,dcb-algorithm;
-+			snps,priority = <0x8>;
-+			snps,map-to-dma-channel = <3>;
-+		};
-+		queue4 {
-+			snps,dcb-algorithm;
-+			snps,priority = <0xf0>;
-+			snps,map-to-dma-channel = <4>;
-+		};
-+	};
- };
- 
- &fec {
 -- 
-2.17.1
-
+~Vinod
