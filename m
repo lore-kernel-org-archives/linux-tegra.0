@@ -2,44 +2,55 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4D7EC433F5
-	for <linux-tegra@archiver.kernel.org>; Tue, 14 Dec 2021 14:53:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 684A8C43217
+	for <linux-tegra@archiver.kernel.org>; Tue, 14 Dec 2021 15:31:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235074AbhLNOx3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 14 Dec 2021 09:53:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38458 "EHLO
+        id S231226AbhLNPbS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 14 Dec 2021 10:31:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47500 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235053AbhLNOx3 (ORCPT
+        with ESMTP id S232849AbhLNPbQ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 14 Dec 2021 09:53:29 -0500
-Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22BF0C061574;
-        Tue, 14 Dec 2021 06:53:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-         s=20161220; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-        References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=QZYhNaGojIhkj+DE3EZypSilzYN2uhm80/kOdf1GbYA=; b=IlPN7dM2SThppX1r0UTulL/Isn
-        e+U/mXVxY67CDVx82BzZ2uOGU/otApvyN6778DHwVP2o81j9E6zO+GGobSI5PUNjiaZj+46Tt5Tms
-        zYQPfUcnELURQm0aXn2m7WzCu23wzd4oUxEXYZKcv5BgpjSsOIeRjsT8fg8Ynta/tOSyD6IeFZhxa
-        nNmcRLipl3uuTZZmONO7kULsoXP+ShRwKgB6FmoswXmpUBbjRv+hZq32V48Y5BWDCLVJyU7k4HNoP
-        drdGSCjfNFKpuEcDPHLq75GFb0MlmXDXY8aL2idfIcBmAldsRSH203JE1+Trc22VEgx3+p2j/HCEL
-        gzMoJjIg==;
-Received: from dsl-hkibng22-54f986-236.dhcp.inet.fi ([84.249.134.236] helo=[192.168.1.10])
-        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <cyndis@kapsi.fi>)
-        id 1mx9BB-0000zE-4A; Tue, 14 Dec 2021 16:53:21 +0200
-Message-ID: <a62602df-91f6-783d-60f3-d9eba10da543@kapsi.fi>
-Date:   Tue, 14 Dec 2021 16:53:20 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.2
+        Tue, 14 Dec 2021 10:31:16 -0500
+Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A6F9C061574;
+        Tue, 14 Dec 2021 07:31:16 -0800 (PST)
+Received: by mail-lf1-x134.google.com with SMTP id l22so37469522lfg.7;
+        Tue, 14 Dec 2021 07:31:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Cew1bsVh+uPPxFCPvivLMvnMySnBo7QVXMyLf4NUogc=;
+        b=EIBs/m05yVAVjNZxKsVu8Oh0Ra+ssLFinvG7LKfMOy1Tb+DDQFa83JoEpSp/kyJ20f
+         vtvaLZfleYaQEdO83kKRrCP8Y1G2P1VVBd1C8H/rC2FEvRABY4qZuLZF9MfzdbRNDmow
+         cGRJTZrbJmdGnvJe7MN8XhbpvUlkpK10PBqiVAoE8HuxHw13OwKud0XkPDg5fcAHJYnV
+         DUKRpnGNMPgJ7sbEiuJYUCWQTbbeQh0lDx39iMitKSXkglOeja3j0JlYaUtRccSzzC+C
+         igtqlbPFWaGY1CMcs+PW8sdRnRh3ONs1rCgNZ4xxe4sqUVtqBu0PNS8azfyALy+nPF5r
+         Y88A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Cew1bsVh+uPPxFCPvivLMvnMySnBo7QVXMyLf4NUogc=;
+        b=knUKAk8uNV1lprw14Hcbr+/SH7nj2mX79QYgu5IXDG+cS4xDfLWGZMzAQDnisXF4A7
+         EcmhOZR6dXQqDeFD5jW0KKfjn5dKSp729GaWjW4rwb9QkzTfIvl7vYLqKSVSLfSttntj
+         PaSW+tRscTHylXhvf03Z5FCY96FAJHZxs5yzHECKOslRV9JnBFgsCJ/t9SnS/7uSyXXT
+         t+ytQUOSyc3Wm/YEN9xMOMMETEFlqz1x7+UWm5kOl7F7XDV9POuq1E0PMnas7evl103y
+         htUaLF6lgb0hAXPRjCMQnBlcRLYzRxNtOAPSr5prmRFL06LKLCCkfU0DFWs5NP02H5qz
+         /wpA==
+X-Gm-Message-State: AOAM533WmYXJVtY4muqPeDaqCwhDkClne8DZySmmmRqVLhCmAbEFwssS
+        i0vpfllNr1f25y5/Au29aDE=
+X-Google-Smtp-Source: ABdhPJxmQNB9Dr/Fnytdwhc2WP3yKSVRtKMT+07lahidhyWpm3qWdRsLiGLH2I4Htvoh4G+FR0Ibzw==
+X-Received: by 2002:a05:6512:3053:: with SMTP id b19mr5387718lfb.276.1639495874691;
+        Tue, 14 Dec 2021 07:31:14 -0800 (PST)
+Received: from [192.168.2.145] (94-29-63-156.dynamic.spd-mgts.ru. [94.29.63.156])
+        by smtp.googlemail.com with ESMTPSA id s4sm11501lfp.198.2021.12.14.07.31.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 14 Dec 2021 07:31:14 -0800 (PST)
 Subject: Re: [PATCH v2 0/8] Host1x context isolation support
-Content-Language: en-US
-To:     Dmitry Osipenko <digetx@gmail.com>,
+To:     Mikko Perttunen <cyndis@kapsi.fi>,
         Jon Hunter <jonathanh@nvidia.com>, joro@8bytes.org,
         will@kernel.org, robh+dt@kernel.org, robin.murphy@arm.com,
         Mikko Perttunen <mperttunen@nvidia.com>
@@ -52,28 +63,34 @@ References: <20210916143302.2024933-1-mperttunen@nvidia.com>
  <c382fb0e-6b73-5ca0-7f63-d2843351325e@nvidia.com>
  <91dddccd-a6c1-21b3-34d6-6a8082a386e7@nvidia.com>
  <a507b10b-395b-1f6d-87b9-7c7c436cab0e@gmail.com>
-From:   Mikko Perttunen <cyndis@kapsi.fi>
-In-Reply-To: <a507b10b-395b-1f6d-87b9-7c7c436cab0e@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+ <a62602df-91f6-783d-60f3-d9eba10da543@kapsi.fi>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <be8aec02-8651-0b12-ff13-237c75a5b29d@gmail.com>
+Date:   Tue, 14 Dec 2021 18:31:13 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
+MIME-Version: 1.0
+In-Reply-To: <a62602df-91f6-783d-60f3-d9eba10da543@kapsi.fi>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 84.249.134.236
-X-SA-Exim-Mail-From: cyndis@kapsi.fi
-X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 12/14/21 16:35, Dmitry Osipenko wrote:
-> 14.12.2021 11:05, Jon Hunter пишет:
->> Hi all,
+14.12.2021 17:53, Mikko Perttunen пишет:
+> On 12/14/21 16:35, Dmitry Osipenko wrote:
+>> 14.12.2021 11:05, Jon Hunter пишет:
+>>> Hi all,
+>>>
+>>> Still no response on this :-(
 >>
->> Still no response on this :-(
+>> I see only two patches on Tegra ML and others on DRI ML. Might be good
+>> to start with re-sending this whole series and CCing MLs properly.
+>>
 > 
-> I see only two patches on Tegra ML and others on DRI ML. Might be good
-> to start with re-sending this whole series and CCing MLs properly.
-> 
+> All patches should have been sent to the same set of addresses. At least
+> LWN's archive seems to agree..
 
-All patches should have been sent to the same set of addresses. At least 
-LWN's archive seems to agree..
-
-Mikko
+Indeed, I see that Tegra ML was CCed and I see all patches on Tegra
+patchwork, but I don't see them all on lore and gmane.
