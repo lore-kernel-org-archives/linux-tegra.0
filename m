@@ -2,88 +2,142 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC36CC433F5
-	for <linux-tegra@archiver.kernel.org>; Mon, 13 Dec 2021 22:42:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AFCFC433F5
+	for <linux-tegra@archiver.kernel.org>; Tue, 14 Dec 2021 06:01:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243748AbhLMWmh (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 13 Dec 2021 17:42:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43338 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243752AbhLMWmd (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 13 Dec 2021 17:42:33 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 573A2C061574;
-        Mon, 13 Dec 2021 14:42:33 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 22AD0B816C8;
-        Mon, 13 Dec 2021 22:42:32 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B517C34600;
-        Mon, 13 Dec 2021 22:42:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1639435351;
-        bh=eGOn9R4/r9WTJ3fguC8+nzmsSiBmWCn5D/O1wRbjkec=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=ELty3FkCr60mWZyKXZzkFM074a0u2GLBDsaPaxay6zH+YMAKnjCRtZ7TfvOPeFBix
-         GTTwtDLrwmtWj5DA/WcThDztMsAbraIw48yxtYolzZlBATX5xVE7nVM1JtDUcylzn+
-         TwALQqlGFHlOsCCgec/TuGvocfwi57W9xkxz1V2k1FPRBAyVxQs9sKBTP2LiFj0HLC
-         RB7GllpXVT6SFwB+O1RjZSMKarlIhALb3rdLJCLtD8o5OEPmBRgXNZ4QoHYtat039O
-         hx6RE7MFR22eHQTKe0dkE9r0ABOBJ3zvbqPH4GcKGwRC/+kHaBM3XJa3c2GoivDxLJ
-         0HYqR8oSQzriA==
-From:   Mark Brown <broonie@kernel.org>
-To:     Liam Girdwood <lgirdwood@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>
-Cc:     Sameer Pujar <spujar@nvidia.com>, devicetree@vger.kernel.org,
-        Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
-        alsa-devel@alsa-project.org, Rob Herring <robh+dt@kernel.org>
-In-Reply-To: <20211206154624.229018-1-thierry.reding@gmail.com>
-References: <20211206154624.229018-1-thierry.reding@gmail.com>
-Subject: Re: [PATCH] ASoC: dt-bindings: tegra: Document interconnects property
-Message-Id: <163943534909.1016050.10549071402255477167.b4-ty@kernel.org>
-Date:   Mon, 13 Dec 2021 22:42:29 +0000
+        id S230178AbhLNGB3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 14 Dec 2021 01:01:29 -0500
+Received: from mga14.intel.com ([192.55.52.115]:34295 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230114AbhLNGB3 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 14 Dec 2021 01:01:29 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1639461689; x=1670997689;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=ci/qhNRNS7RvrPrSsDjgrZYNVw1Al3ceB7ixpdUcULc=;
+  b=gj3CwvxKikDXRyMnth1x4/rOp3fSK7n3nJEA1oY6iOrN6BI25XlH+RU+
+   BB9eIuNWppNEeCmFTTBb3cs3jDd64Sn0UyhwRz2R7UOd3wdjZKGgoMk/A
+   t7wl2D4Pjw12yibYPAJUkYhVjYiOesWJYEX54erChb/psCeYWTgSzKrRi
+   NzEOahGrCIjAw1xovlBX8Qtyiv6EU9h5jApYh5a2H5uKPB/ljLtqyTtQl
+   xg0ljdbabbnAqkFToOu7OPc5cHvf4E/z/rXTdWtwQG84E7lV+HZI8KJZR
+   y+k+pAKCRV7HUXebSUOOfGDSPuv5s32zuukoyUHgX81HSXVPd4XiYUGqH
+   A==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10197"; a="239129194"
+X-IronPort-AV: E=Sophos;i="5.88,204,1635231600"; 
+   d="scan'208";a="239129194"
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Dec 2021 22:01:28 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.88,204,1635231600"; 
+   d="scan'208";a="464942290"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.76]) ([10.237.72.76])
+  by orsmga006.jf.intel.com with ESMTP; 13 Dec 2021 22:01:25 -0800
+Subject: Re: [PATCH v3] mmc: sdhci-tegra: Fix switch to HS400ES mode
+To:     Prathamesh Shete <pshete@nvidia.com>, ulf.hansson@linaro.org,
+        thierry.reding@gmail.com, jonathanh@nvidia.com,
+        p.zabel@pengutronix.de, linux-mmc@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     anrao@nvidia.com, smangipudi@nvidia.com
+References: <bf629e1b-c61d-37e7-8802-b6d778f89c21@intel.com>
+ <20211206140541.17148-1-pshete@nvidia.com>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <3dd2473a-00ca-4c62-e17f-9392cf74cda4@intel.com>
+Date:   Tue, 14 Dec 2021 08:01:24 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Firefox/78.0 Thunderbird/78.13.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20211206140541.17148-1-pshete@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, 6 Dec 2021 16:46:24 +0100, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
+On 06/12/2021 16:05, Prathamesh Shete wrote:
+> When CMD13 is sent after switching to HS400ES mode, the bus
+> is operating at either MMC_HIGH_26_MAX_DTR or MMC_HIGH_52_MAX_DTR.
+> To meet Tegra SDHCI requirement at HS400ES mode, force SDHCI
+> interface clock to MMC_HS200_MAX_DTR (200 MHz) so that host
+> controller CAR clock and the interface clock are rate matched.
 > 
-> Add the interconnects and interconnect-names properties to the bindings
-> for the sound card on various NVIDIA Tegra based boards. These are used
-> to describe the device's memory paths to and from memory.
+> Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
+
+One minor comment below otherwise:
+
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+
+> ---
+>  drivers/mmc/host/sdhci-tegra.c | 43 ++++++++++++++++++++--------------
+>  1 file changed, 26 insertions(+), 17 deletions(-)
 > 
+> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+> index 387ce9cdbd7c..ddaa3d9000f6 100644
+> --- a/drivers/mmc/host/sdhci-tegra.c
+> +++ b/drivers/mmc/host/sdhci-tegra.c
+> @@ -354,23 +354,6 @@ static void tegra_sdhci_set_tap(struct sdhci_host *host, unsigned int tap)
+>  	}
+>  }
+>  
+> -static void tegra_sdhci_hs400_enhanced_strobe(struct mmc_host *mmc,
+> -					      struct mmc_ios *ios)
+> -{
+> -	struct sdhci_host *host = mmc_priv(mmc);
+> -	u32 val;
+> -
+> -	val = sdhci_readl(host, SDHCI_TEGRA_VENDOR_SYS_SW_CTRL);
+> -
+> -	if (ios->enhanced_strobe)
+> -		val |= SDHCI_TEGRA_SYS_SW_CTRL_ENHANCED_STROBE;
+> -	else
+> -		val &= ~SDHCI_TEGRA_SYS_SW_CTRL_ENHANCED_STROBE;
+> -
+> -	sdhci_writel(host, val, SDHCI_TEGRA_VENDOR_SYS_SW_CTRL);
+> -
+> -}
+> -
+>  static void tegra_sdhci_reset(struct sdhci_host *host, u8 mask)
+>  {
+>  	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+> @@ -791,6 +774,32 @@ static void tegra_sdhci_set_clock(struct sdhci_host *host, unsigned int clock)
+>  	}
+>  }
+>  
+> +static void tegra_sdhci_hs400_enhanced_strobe(struct mmc_host *mmc,
+> +					      struct mmc_ios *ios)
+> +{
+> +	struct sdhci_host *host = mmc_priv(mmc);
+> +	u32 val;
+> +
+> +	val = sdhci_readl(host, SDHCI_TEGRA_VENDOR_SYS_SW_CTRL);
+> +
+> +	if (ios->enhanced_strobe) {
+> +		val |= SDHCI_TEGRA_SYS_SW_CTRL_ENHANCED_STROBE;
+> +	/*
+> +	 * When CMD13 is sent from mmc_select_hs400es() after
+> +	 * switching to HS400ES mode, the bus is operating at
+> +	 * either MMC_HIGH_26_MAX_DTR or MMC_HIGH_52_MAX_DTR.
+> +	 * To meet Tegra SDHCI requirement at HS400ES mode, force SDHCI
+> +	 * interface clock to MMC_HS200_MAX_DTR (200 MHz) so that host
+> +	 * controller CAR clock and the interface clock are rate matched.
+> +	 */
+> +	tegra_sdhci_set_clock(host, MMC_HS200_MAX_DTR);
+
+Comment and line above need indenting
+
+> +	} else {
+> +		val &= ~SDHCI_TEGRA_SYS_SW_CTRL_ENHANCED_STROBE;
+> +	}
+> +
+> +	sdhci_writel(host, val, SDHCI_TEGRA_VENDOR_SYS_SW_CTRL);
+> +}
+> +
+>  static unsigned int tegra_sdhci_get_max_clock(struct sdhci_host *host)
+>  {
+>  	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
 > 
-> [...]
 
-Applied to
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
-
-Thanks!
-
-[1/1] ASoC: dt-bindings: tegra: Document interconnects property
-      commit: 5f9155a7d2dc067d72a95b42168f944c7710c0d5
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
