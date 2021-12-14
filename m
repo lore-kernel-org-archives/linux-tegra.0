@@ -2,102 +2,136 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 275AFC433EF
-	for <linux-tegra@archiver.kernel.org>; Tue, 14 Dec 2021 15:34:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DA5DC433F5
+	for <linux-tegra@archiver.kernel.org>; Tue, 14 Dec 2021 15:39:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234562AbhLNPea (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 14 Dec 2021 10:34:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48228 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233034AbhLNPe2 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 14 Dec 2021 10:34:28 -0500
-Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3688FC061574;
-        Tue, 14 Dec 2021 07:34:28 -0800 (PST)
-Received: by mail-lf1-x12d.google.com with SMTP id u3so37573946lfl.2;
-        Tue, 14 Dec 2021 07:34:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=m/qW6OJTq+PZMI2TVoFARae55ogXm1E7P0dFW1QTwws=;
-        b=EFQ3vqV+R8neb78NOg2W1d/+0znWSMA8y3MxU6ojmqf0dH1fgOK9iO8zQD9UJ4OA0N
-         Asz9VV2IMp0dtwlEvwCZezbmiosrhe8h7T2SJnx79NEtnKqGF8QHE6llglwGUz5wYvqz
-         Wrxd3OHTMFpD148w8gP4dKSmEFlPP83Ok/fGQBxXecb4+c0u2o0klPZGS0Zds4cMK6rt
-         vFaL4CaBZRvFpU04prw4VTWMcm8bBQohFwIaAEklLB/orovPO9Mz/2bUd5c7BwToFiR4
-         t59/inKbGK+L+Vx55dQWtRFuO8/NxVgGHoA567QqNGBQzIYzWSx/iNET4fNMLdzY/7LJ
-         6C/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=m/qW6OJTq+PZMI2TVoFARae55ogXm1E7P0dFW1QTwws=;
-        b=V0rYhgLKV4s2qhU0ym0y8Q74KYvIyJzqZ/vxUp+2U9IC9TF/1yuYhg7+YJKTc5CC/X
-         wYaNCYPTrZz8BKU9NgEbGArvmpj8atHt2j6miQNMay364nauTKz9iKxsQjHxXn2gkyaa
-         Bgx3wM901xRGUmlC1rH6G39lCZTdGClWl4BDDNcRMY0JfIcsTp4HPFE2d13YBtN/KpYL
-         ge4/5f9lu6NG9ekfUIAcUVMKyala/dsN+bH7qOsnYd+WHZokiPdggHxfiCEoamB9v9cJ
-         UMpEXWrVKfYNh+p0CoUULxoeoJdlsAHHPiZjB8n5oZygZJ+CHYyLjlAdv6zpnyVjqXQe
-         zyPQ==
-X-Gm-Message-State: AOAM533+fsVzZcY8npKshY6ba1fP7UId82xlS2rxAOqN/WBR8q0ehs+U
-        RkuZLRPbsZxLDScKl7DEDQU=
-X-Google-Smtp-Source: ABdhPJzwtl22wgbOJNUiLRvzjqIzb84KHkq1ypWVWnAF32iWfkeJGaGZLEBcU+zP+CWTwxWsKtRnog==
-X-Received: by 2002:a19:c350:: with SMTP id t77mr5415981lff.152.1639496066375;
-        Tue, 14 Dec 2021 07:34:26 -0800 (PST)
-Received: from [192.168.2.145] (94-29-63-156.dynamic.spd-mgts.ru. [94.29.63.156])
-        by smtp.googlemail.com with ESMTPSA id g27sm14872lfe.55.2021.12.14.07.34.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Dec 2021 07:34:26 -0800 (PST)
-Subject: Re: [PATCH 1/3] ALSA: hda/tegra: Skip reset on BPMP devices
-To:     Takashi Iwai <tiwai@suse.de>
-Cc:     Sameer Pujar <spujar@nvidia.com>, tiwai@suse.com,
-        broonie@kernel.org, lgirdwood@gmail.com, thierry.reding@gmail.com,
-        perex@perex.cz, jonathanh@nvidia.com, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Mohan Kumar <mkumard@nvidia.com>, robh+dt@kernel.org
-References: <1638858770-22594-1-git-send-email-spujar@nvidia.com>
- <1638858770-22594-2-git-send-email-spujar@nvidia.com>
- <7742adae-cdbe-a9ea-2cef-f63363298d73@gmail.com>
- <8fd704d9-43ce-e34a-a3c0-b48381ef0cd8@nvidia.com>
- <56bb43b6-8d72-b1de-4402-a2cb31707bd9@gmail.com>
- <4855e9c4-e4c2-528b-c9ad-2be7209dc62a@nvidia.com>
- <5d441571-c1c2-5433-729f-86d6396c2853@gmail.com>
- <f32cde65-63dc-67f8-ded8-b58ea5e89f4e@nvidia.com>
- <95cc7efa-251c-690b-9afa-53ee9e052c34@gmail.com>
- <148fba18-5d14-d342-0eb9-4ff224cc58ad@nvidia.com>
- <3b0de739-7866-3886-be9c-a853c746f8b7@gmail.com>
- <73d04377-9898-930b-09db-bb6c4b3eb90a@nvidia.com>
- <ad388f5e-6f60-cf78-8510-87aec8524e33@gmail.com>
- <50bf5a83-051e-8c12-6502-aabd8edd0a72@nvidia.com>
- <7230ad0b-2b04-4f1b-b616-b7d98789ded0@gmail.com>
- <48f891bc-d8f6-2634-6dd1-6ea4f14ae6a3@nvidia.com>
- <0761f6f2-27f8-4e1a-fabc-9d319f465a9e@gmail.com>
- <s5hv8zr9s5a.wl-tiwai@suse.de>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <b7ad34b4-02be-00ed-05e2-12ea31ababb2@gmail.com>
-Date:   Tue, 14 Dec 2021 18:34:25 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+        id S234780AbhLNPjA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 14 Dec 2021 10:39:00 -0500
+Received: from foss.arm.com ([217.140.110.172]:59110 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S234762AbhLNPi7 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 14 Dec 2021 10:38:59 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 40EBBD6E;
+        Tue, 14 Dec 2021 07:38:59 -0800 (PST)
+Received: from [10.57.34.58] (unknown [10.57.34.58])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 549423F774;
+        Tue, 14 Dec 2021 07:38:54 -0800 (PST)
+Message-ID: <a1c8c438-72e6-0938-1b05-09694983164d@arm.com>
+Date:   Tue, 14 Dec 2021 15:38:50 +0000
 MIME-Version: 1.0
-In-Reply-To: <s5hv8zr9s5a.wl-tiwai@suse.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.2
+Subject: Re: [PATCH v2 0/8] Host1x context isolation support
+Content-Language: en-GB
+To:     Mikko Perttunen <cyndis@kapsi.fi>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, joro@8bytes.org,
+        will@kernel.org, robh+dt@kernel.org
+Cc:     linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20210916143302.2024933-1-mperttunen@nvidia.com>
+ <10de82cf-27a5-8890-93a5-0e58c74e5bcc@kapsi.fi>
+From:   Robin Murphy <robin.murphy@arm.com>
+In-Reply-To: <10de82cf-27a5-8890-93a5-0e58c74e5bcc@kapsi.fi>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-14.12.2021 17:29, Takashi Iwai пишет:
->> I'm also wondering whether snd_power_change_state() should be moved into
->> RPM callbacks and whether this function does anything practically useful
->> on Tegra at all.
-> This call is mostly for ALSA core stuff, and not necessarily
-> reflecting the exact device power state.  The major role is for
-> controlling / blocking the device accesses at the system
-> suspend/resume, so it's correct to set only in the system
-> suspend/resume callbacks, not in runtime PM.
+On 2021-11-08 10:36, Mikko Perttunen wrote:
+> On 9/16/21 5:32 PM, Mikko Perttunen wrote:
+>> Hi all,
+>>
+>> ***
+>> New in v2:
+>>
+>> Added support for Tegra194
+>> Use standard iommu-map property instead of custom mechanism
+>> ***
+>>
+>> this series adds support for Host1x 'context isolation'. Since
+>> when programming engines through Host1x, userspace can program in
+>> any addresses it wants, we need some way to isolate the engines'
+>> memory spaces. Traditionally this has either been done imperfectly
+>> with a single shared IOMMU domain, or by copying and verifying the
+>> programming command stream at submit time (Host1x firewall).
+>>
+>> Since Tegra186 there is a privileged (only usable by kernel)
+>> Host1x opcode that allows setting the stream ID sent by the engine
+>> to the SMMU. So, by allocating a number of context banks and stream
+>> IDs for this purpose, and using this opcode at the beginning of
+>> each job, we can implement isolation. Due to the limited number of
+>> context banks only each process gets its own context, and not
+>> each channel.
+>>
+>> This feature also allows sharing engines among multiple VMs when
+>> used with Host1x's hardware virtualization support - up to 8 VMs
+>> can be configured with a subset of allowed stream IDs, enforced
+>> at hardware level.
+>>
+>> To implement this, this series adds a new host1x context bus, which
+>> will contain the 'struct device's corresponding to each context
+>> bank / stream ID, changes to device tree and SMMU code to allow
+>> registering the devices and using the bus, as well as the Host1x
+>> stream ID programming code and support in TegraDRM.
+>>
+>> Device tree bindings are not updated yet pending consensus that the
+>> proposed changes make sense.
+>>
+>> Thanks,
+>> Mikko
+>>
+>> Mikko Perttunen (8):
+>>    gpu: host1x: Add context bus
+>>    gpu: host1x: Add context device management code
+>>    gpu: host1x: Program context stream ID on submission
+>>    iommu/arm-smmu: Attach to host1x context device bus
+>>    arm64: tegra: Add Host1x context stream IDs on Tegra186+
+>>    drm/tegra: falcon: Set DMACTX field on DMA transactions
+>>    drm/tegra: vic: Implement get_streamid_offset
+>>    drm/tegra: Support context isolation
+>>
+>>   arch/arm64/boot/dts/nvidia/tegra186.dtsi  |  12 ++
+>>   arch/arm64/boot/dts/nvidia/tegra194.dtsi  |  12 ++
+>>   drivers/gpu/Makefile                      |   3 +-
+>>   drivers/gpu/drm/tegra/drm.h               |   2 +
+>>   drivers/gpu/drm/tegra/falcon.c            |   8 +
+>>   drivers/gpu/drm/tegra/falcon.h            |   1 +
+>>   drivers/gpu/drm/tegra/submit.c            |  13 ++
+>>   drivers/gpu/drm/tegra/uapi.c              |  34 ++++-
+>>   drivers/gpu/drm/tegra/vic.c               |  38 +++++
+>>   drivers/gpu/host1x/Kconfig                |   5 +
+>>   drivers/gpu/host1x/Makefile               |   2 +
+>>   drivers/gpu/host1x/context.c              | 174 ++++++++++++++++++++++
+>>   drivers/gpu/host1x/context.h              |  27 ++++
+>>   drivers/gpu/host1x/context_bus.c          |  31 ++++
+>>   drivers/gpu/host1x/dev.c                  |  12 +-
+>>   drivers/gpu/host1x/dev.h                  |   2 +
+>>   drivers/gpu/host1x/hw/channel_hw.c        |  52 ++++++-
+>>   drivers/gpu/host1x/hw/host1x06_hardware.h |  10 ++
+>>   drivers/gpu/host1x/hw/host1x07_hardware.h |  10 ++
+>>   drivers/iommu/arm/arm-smmu/arm-smmu.c     |  13 ++
+>>   include/linux/host1x.h                    |  21 +++
+>>   include/linux/host1x_context_bus.h        |  15 ++
+>>   22 files changed, 488 insertions(+), 9 deletions(-)
+>>   create mode 100644 drivers/gpu/host1x/context.c
+>>   create mode 100644 drivers/gpu/host1x/context.h
+>>   create mode 100644 drivers/gpu/host1x/context_bus.c
+>>   create mode 100644 include/linux/host1x_context_bus.h
+>>
 > 
+> IOMMU/DT folks, any thoughts about this approach? The patches that are 
+> of interest outside of Host1x/TegraDRM specifics are patches 1, 2, 4, 
+> and 5.
 
-Thank you for the clarification.
+FWIW it looks fairly innocuous to me. I don't understand host1x - 
+neither hardware nor driver abstractions - well enough to meaningfully 
+review it all (e.g. maybe it's deliberate that the bus .dma_configure 
+method isn't used?), but the SMMU patch seems fine given the Kconfig 
+solution to avoid module linkage problems.
+
+Cheers,
+Robin.
