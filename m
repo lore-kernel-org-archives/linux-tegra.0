@@ -2,138 +2,145 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11FAFC433EF
-	for <linux-tegra@archiver.kernel.org>; Tue, 14 Dec 2021 12:06:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BFDEC433EF
+	for <linux-tegra@archiver.kernel.org>; Tue, 14 Dec 2021 12:18:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233783AbhLNMGZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 14 Dec 2021 07:06:25 -0500
-Received: from mga05.intel.com ([192.55.52.43]:26111 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229494AbhLNMGW (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 14 Dec 2021 07:06:22 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1639483582; x=1671019582;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=iIWYR91VbYEqQX+iN3rz0mKbS7VG6StqBEl02zH+MNc=;
-  b=kyBjPZ1zNp8EDHvl4fCoNaOAk4juEhJ5eudmAs9fdR1abIZDDX6Gl5Do
-   u3cFbZi4LFH1SBDVqs4jtoJhpmHXL3y8FIMRFh5uovOLqc6Gxrs+LKD+3
-   cmyn4Gp5vN3Va8JegsuT9sZN5hkiyo4yqS4le9Pn70mpJD+GGrzVys09c
-   eXCwEGA3KwDIDr+UJNR/Fa4j3syc8CQ2pdbRxA+iI4JhbH6d/BIs/rPWB
-   8RP2h5lKQMCS4wOkxSV7q1zNdO6lB5wdDLnS6XgZo3RTxZge+mrNACT8q
-   oc4jvt2Ia6wVKqxgiPJtUvDUIlGwUVq5n4GGYn1O8EzlbO326BPuRrA/6
-   A==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10197"; a="325239247"
-X-IronPort-AV: E=Sophos;i="5.88,205,1635231600"; 
-   d="scan'208";a="325239247"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Dec 2021 04:06:22 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.88,205,1635231600"; 
-   d="scan'208";a="465057184"
-Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.76]) ([10.237.72.76])
-  by orsmga006.jf.intel.com with ESMTP; 14 Dec 2021 04:06:18 -0800
-Subject: Re: [PATCH v4] mmc: sdhci-tegra: Fix switch to HS400ES mode
-To:     Prathamesh Shete <pshete@nvidia.com>, ulf.hansson@linaro.org,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        p.zabel@pengutronix.de, linux-mmc@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     anrao@nvidia.com, smangipudi@nvidia.com
-References: <3dd2473a-00ca-4c62-e17f-9392cf74cda4@intel.com>
- <20211214113653.4631-1-pshete@nvidia.com>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <58312188-d9fd-4bba-2be6-bb208c8b4d63@intel.com>
-Date:   Tue, 14 Dec 2021 14:06:17 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Firefox/78.0 Thunderbird/78.13.0
+        id S230189AbhLNMS1 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 14 Dec 2021 07:18:27 -0500
+Received: from mail-psaapc01on2109.outbound.protection.outlook.com ([40.107.255.109]:58081
+        "EHLO APC01-PSA-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S230161AbhLNMS0 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 14 Dec 2021 07:18:26 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=NyRMP9V12UmPNcnf2FOAXFsr/BEx95e9wLx2F6x3zSeVqikPOqu6ewKU+beoN8B+UuTcY9f92HLXNG7m9bbjq1hYTqTyu4/cRRNxhIFinLE9VcGq8Oa0/+1P9bAcIAl2RDB98W1/kJn2HK7Q/v6LKVZ8a7xwcnOL+qsVG9bTX1Yyy9E4F3BRd7KCR0QGAkNBxO9aZhnHoqEFI8MdWPkknDX8pzOyhdt34vDEwSExYFabFCrtpAj7uPRBE8j/rqaohHtpw/GBWWe20zmDKSXf5HB6TPq6puv7tzgxkHg3JlOnA4lRSMY09/FDq6OeyEIBmzpOJBJC84BPiEW1yR47Kw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=WLtmXAm3mxZ0AGcLP2vMe72z9yuF4hyiIB8zb1krezo=;
+ b=kK5Yyaunv7DZi30wVHB74dceSsX6DJ/Cqnt0uPis1aBlYGQOTvbL7H7OGCOfWiC9YUZ0RUCZvFFtTtkH3iFA0eoPzwb+3dcg++76Unz5+j68BxKbuTO7brH85SDaHAypwqEfnVioPJIj0F9drLTNNNEspGiYgNcAfi5py+8ttDg8G5GUBEkKFZ1olrNzA/XBDdK5xeppNdwcGWTJLNeqrdVTikZmGNOc19lDYofIALCMK+mEYzGbKANhdMX4fMr06MCDKaBHr20WtG7Zs5fvXaxF2GyDdl3x/fNEqseNIDGijZqwAnEZuOGGKnPWW2SOXwQtau16qMEcsN8bZmDFBA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo0.onmicrosoft.com;
+ s=selector2-vivo0-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=WLtmXAm3mxZ0AGcLP2vMe72z9yuF4hyiIB8zb1krezo=;
+ b=mf/urcGot1UluSEYvvXY7nTPsflQUkWE8rPPODTiGWDSaDym7qALTApGIYiVz3/lWmwjVfYGLK+nEi2uDmAVz1enf9F0O7xN6mFMEmVs4pS55CNmF2JZuROzeEC2aI/TX6tNlXV1hLe9c0yJ98miww2aDrzal31VLSc1SyEb+IU=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SL2PR06MB3082.apcprd06.prod.outlook.com (2603:1096:100:37::17)
+ by SL2PR06MB3003.apcprd06.prod.outlook.com (2603:1096:100:33::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4755.25; Tue, 14 Dec
+ 2021 12:18:25 +0000
+Received: from SL2PR06MB3082.apcprd06.prod.outlook.com
+ ([fe80::a0cf:a0e2:ee48:a396]) by SL2PR06MB3082.apcprd06.prod.outlook.com
+ ([fe80::a0cf:a0e2:ee48:a396%4]) with mapi id 15.20.4778.018; Tue, 14 Dec 2021
+ 12:18:25 +0000
+From:   Qing Wang <wangqing@vivo.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Wang Qing <wangqing@vivo.com>
+Subject: [PATCH] drm: tegra: use vmemdup_user instead of kvmalloc and copy_from_user
+Date:   Tue, 14 Dec 2021 04:18:17 -0800
+Message-Id: <1639484297-75825-1-git-send-email-wangqing@vivo.com>
+X-Mailer: git-send-email 2.7.4
+Content-Type: text/plain
+X-ClientProxiedBy: HK2PR0302CA0024.apcprd03.prod.outlook.com
+ (2603:1096:202::34) To SL2PR06MB3082.apcprd06.prod.outlook.com
+ (2603:1096:100:37::17)
 MIME-Version: 1.0
-In-Reply-To: <20211214113653.4631-1-pshete@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 845116a9-f26a-43e3-adc1-08d9befbd3ba
+X-MS-TrafficTypeDiagnostic: SL2PR06MB3003:EE_
+X-Microsoft-Antispam-PRVS: <SL2PR06MB300318039C425BFF978EAC74BD759@SL2PR06MB3003.apcprd06.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:1775;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: IvNtfFRum87YvCTlqfw4HEInIdCkNNvvPMEGQdcfx+mpr7uXk12fqgePfScdrpuqlORuYHRK1GzY73nUj34WVBbtFFQ1WPH6SK7OwNP++qQz19iehm8edmHK0lCcLup6XcA/Svy99NXqnFXUnrvfC7nMQ3zbxAJzmT4Qtp94PaVa1tz1jPbj6OoH7DLSHnmtK6ijglPSgh9wAyb7RWmm5B6/kz6RiufPOzMZZFPfj1B2ru4wEg/xZ279wtvEoNvEJJ4H4IVLfwzfAqeWu/z6B9rwc1uPZyAljKQqtFS6vf2AOGjgIBu8AvBjRDsFPlK0hkHm+SFULxyh+nEhIeeTjnVUhTwIb/6/RO/v8rtZL7HyqZQpA6tGtBEQ0yiDqxkJ0EYM48ILF64EVhlzYUNSMaKGxnOAPXbxgxTCiP9YirXz/nhnCD8vGqInnykmG6pwWF59zmwDmEv0RBSYbLxiiZmSgdSnE55r57sABPYEoCwPSG2/u9VrkAFh+jE2pm/OswOpBa7iEbVd/ctQQdFb8lZ9da7dIXmfdnnWsfh2wwsLFsSvzwjkRgkOXJWRhDPMVwm8v+50uaF8O5z2Fj3TqsVcDIxGPpF/d0jcQViqUsmIIF+N4Z5m3yzb6iJtzUAykPbGWj0PvSaTZIzbGj/zCCsyCK21UccVIAUsM1hlClyoAUobxD1ELB/776vIXZ07xsGu847Exkd08rlNSiQziw==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SL2PR06MB3082.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(38350700002)(38100700002)(186003)(6506007)(83380400001)(6666004)(66946007)(6486002)(2616005)(4744005)(66556008)(66476007)(316002)(110136005)(8676002)(86362001)(5660300002)(8936002)(508600001)(6512007)(4326008)(2906002)(36756003)(52116002)(26005)(107886003);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?jQUAKx8DzUIZGY2T+tF8TP0dJT+vXZ8Ut4YLaraFo+qrmlumQ1ToBgvg669u?=
+ =?us-ascii?Q?iV3wi443xnO9g7G1pP+UmL6brX58/YEeYLTaQsxckzLeHVJ67Wl0VrNqpJlR?=
+ =?us-ascii?Q?3IsTwHstDa80P0H9f6Wx9KiVfNA8p24wAx9Xepj2nkcRvl+9BZcbahyTk/6g?=
+ =?us-ascii?Q?FztXu7sVgl8WRzveCqEawxzh7uHUKIuWCT+kKeaQACiw7f2kV97bcX/hH3ao?=
+ =?us-ascii?Q?mMS0nB4nWaGq4E8zIGhkpi9B7wtgjJbd/iyEgUOb8gGTJV39PYl7T9YtnC+l?=
+ =?us-ascii?Q?GcrdsbVcaO/Uy1aA9OBLfPqE3xDGwSxn8BBK2CWgS/RWWMT+zm8vCOdKnIpS?=
+ =?us-ascii?Q?/++jpZFyNGgzOyzjUw3aoqO5Q57ya8rqslbehYDC5DiMt+KDWhxcgZVm3n1h?=
+ =?us-ascii?Q?b5F8uPFTdz7RjkwGpicGPMwjJQkJZPNjW84ltvOiJRXvZM3yDqdGJB+m3kgp?=
+ =?us-ascii?Q?URmJScxLSCp6b4iRfyenWdnPAwondaxqNqpIHzF2gBHQXpyXGVBp7+ArhIV+?=
+ =?us-ascii?Q?AY5EFigupz2pOfF9h0oERECls1/LpxQ1iZlRbpb8GsYZrAl8AWsHOBwFBPDZ?=
+ =?us-ascii?Q?GP4v+FsS3AKiayVENycn73Tg1/PqDLIWginoVa7tJ/2JLdYlUhnCmMOk9/z4?=
+ =?us-ascii?Q?wt6DtPIo58vivw1z3AkMZaW62//iCBB/KT4uUMzjan4ZAMLgKdcPZPwi0quN?=
+ =?us-ascii?Q?HGvg9ucypbyIIckWNPFUYXPzFCNUpwMmbzhWQV+DI+eZkdGy5L32fVGTWcSo?=
+ =?us-ascii?Q?9TZk64yU0ahqJj8huA0+zcYmaBaeB/ru+Ezw5Vtv0m8qSnwiSY0YwCUz5jzd?=
+ =?us-ascii?Q?xp6+iRKhqONaYKvz+qnxquhyqJ5vC/MVZRA6xEthwFTXMT7d7yCCBzdD+CPF?=
+ =?us-ascii?Q?cOp3A6LbyXOR3+iVFh1edr+/oBfJu7i43CSmtkw+viDehD8aKw6zNJaIkoGg?=
+ =?us-ascii?Q?zBsJ6zYqQ1fanx3oQPtmjdLtOlY8bLKP2O/tLejVWrdywKo8Mt5HsuZ4tsrO?=
+ =?us-ascii?Q?jf8eROk+uFTfv8uOPfbB6GcekyatL766KYvNi+KJKBNQG0GuY7ynNz0x7mdr?=
+ =?us-ascii?Q?AEumoKq+sb3LIqgh68MuKML5iaDF1EFv94znmd9Ut5dJki2s8NBOFnOdNKAl?=
+ =?us-ascii?Q?8pYDzBsZji2DU+A5uefIulPY3p6PSf+mYU9K23aNOGPHKGWVAy6YVuLLT+Yx?=
+ =?us-ascii?Q?OjIrUMliFRVVBGm2OG8N88Z6ABLCi9DFNtmS3Wsf1Bbz+x54j9JCFbF7bgKV?=
+ =?us-ascii?Q?qfeOzlyDoarvXUbON8sk5Wnz9Pj+LSNyyDyy603MgcpZB5oJWeWgVkj6kgrc?=
+ =?us-ascii?Q?/nOuVbJU5Bf0jZjC+z/EacRF/58sEDjWnYb2MEpusCDiEGYe9YNHk0NG8uPM?=
+ =?us-ascii?Q?nSVHDnzPgLRuPu2DdPBgeN7QGq82gCz72ALnW37wPuR0qU2quM3BQDBFUzXV?=
+ =?us-ascii?Q?EgwrdHaNrObCJipE4PHkJNqBmnqlRymHJR7zbunbZJR8bj2qIHEvlWiEOEiP?=
+ =?us-ascii?Q?TFzuu8kn6jt01EsmPWtIR3xsJ5ZOKVjKWLi90tYqixzGODcksVCCm8mjVmzv?=
+ =?us-ascii?Q?SAcOcnp/0sYKUEKUw2PzvIgBbLNTpkznVJOhJ5e814pxzxYGiHqqxFMmpBxF?=
+ =?us-ascii?Q?8YivY02qoERldMjiJznbR38=3D?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 845116a9-f26a-43e3-adc1-08d9befbd3ba
+X-MS-Exchange-CrossTenant-AuthSource: SL2PR06MB3082.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Dec 2021 12:18:24.9850
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: pSwBVtAej4rmw7WJoYeywqKe+AAS1w2Nt1djhZKuAx5Mq74R5sKWY2tSIiUxyBL+Vncts1HQW5vAsRAovDHfTg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SL2PR06MB3003
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 14/12/2021 13:36, Prathamesh Shete wrote:
-> When CMD13 is sent after switching to HS400ES mode, the bus
-> is operating at either MMC_HIGH_26_MAX_DTR or MMC_HIGH_52_MAX_DTR.
-> To meet Tegra SDHCI requirement at HS400ES mode, force SDHCI
-> interface clock to MMC_HS200_MAX_DTR (200 MHz) so that host
-> controller CAR clock and the interface clock are rate matched.
-> 
-> Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
+From: Wang Qing <wangqing@vivo.com>
 
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+fix memdup_user.cocci warning:
+gpu/drm/tegra/submit.c:172:8-16: WARNING opportunity for vmemdup_user
 
-> ---
->  drivers/mmc/host/sdhci-tegra.c | 43 ++++++++++++++++++++--------------
->  1 file changed, 26 insertions(+), 17 deletions(-)
-> 
-> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-> index 387ce9cdbd7c..7be6674eebd5 100644
-> --- a/drivers/mmc/host/sdhci-tegra.c
-> +++ b/drivers/mmc/host/sdhci-tegra.c
-> @@ -354,23 +354,6 @@ static void tegra_sdhci_set_tap(struct sdhci_host *host, unsigned int tap)
->  	}
->  }
->  
-> -static void tegra_sdhci_hs400_enhanced_strobe(struct mmc_host *mmc,
-> -					      struct mmc_ios *ios)
-> -{
-> -	struct sdhci_host *host = mmc_priv(mmc);
-> -	u32 val;
-> -
-> -	val = sdhci_readl(host, SDHCI_TEGRA_VENDOR_SYS_SW_CTRL);
-> -
-> -	if (ios->enhanced_strobe)
-> -		val |= SDHCI_TEGRA_SYS_SW_CTRL_ENHANCED_STROBE;
-> -	else
-> -		val &= ~SDHCI_TEGRA_SYS_SW_CTRL_ENHANCED_STROBE;
-> -
-> -	sdhci_writel(host, val, SDHCI_TEGRA_VENDOR_SYS_SW_CTRL);
-> -
-> -}
-> -
->  static void tegra_sdhci_reset(struct sdhci_host *host, u8 mask)
->  {
->  	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-> @@ -791,6 +774,32 @@ static void tegra_sdhci_set_clock(struct sdhci_host *host, unsigned int clock)
->  	}
->  }
->  
-> +static void tegra_sdhci_hs400_enhanced_strobe(struct mmc_host *mmc,
-> +					      struct mmc_ios *ios)
-> +{
-> +	struct sdhci_host *host = mmc_priv(mmc);
-> +	u32 val;
-> +
-> +	val = sdhci_readl(host, SDHCI_TEGRA_VENDOR_SYS_SW_CTRL);
-> +
-> +	if (ios->enhanced_strobe) {
-> +		val |= SDHCI_TEGRA_SYS_SW_CTRL_ENHANCED_STROBE;
-> +		/*
-> +		 * When CMD13 is sent from mmc_select_hs400es() after
-> +		 * switching to HS400ES mode, the bus is operating at
-> +		 * either MMC_HIGH_26_MAX_DTR or MMC_HIGH_52_MAX_DTR.
-> +		 * To meet Tegra SDHCI requirement at HS400ES mode, force SDHCI
-> +		 * interface clock to MMC_HS200_MAX_DTR (200 MHz) so that host
-> +		 * controller CAR clock and the interface clock are rate matched.
-> +		 */
-> +		tegra_sdhci_set_clock(host, MMC_HS200_MAX_DTR);
-> +	} else {
-> +		val &= ~SDHCI_TEGRA_SYS_SW_CTRL_ENHANCED_STROBE;
-> +	}
-> +
-> +	sdhci_writel(host, val, SDHCI_TEGRA_VENDOR_SYS_SW_CTRL);
-> +}
-> +
->  static unsigned int tegra_sdhci_get_max_clock(struct sdhci_host *host)
->  {
->  	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-> -- 2.17.1
-> 
+Signed-off-by: Wang Qing <wangqing@vivo.com>
+---
+ drivers/gpu/drm/tegra/submit.c | 11 +----------
+ 1 file changed, 1 insertion(+), 10 deletions(-)
+
+diff --git a/drivers/gpu/drm/tegra/submit.c b/drivers/gpu/drm/tegra/submit.c
+index c326984..842a2d3
+--- a/drivers/gpu/drm/tegra/submit.c
++++ b/drivers/gpu/drm/tegra/submit.c
+@@ -169,16 +169,7 @@ static void *alloc_copy_user_array(void __user *from, size_t count, size_t size)
+ 	if (copy_len > 0x4000)
+ 		return ERR_PTR(-E2BIG);
+ 
+-	data = kvmalloc(copy_len, GFP_KERNEL);
+-	if (!data)
+-		return ERR_PTR(-ENOMEM);
+-
+-	if (copy_from_user(data, from, copy_len)) {
+-		kvfree(data);
+-		return ERR_PTR(-EFAULT);
+-	}
+-
+-	return data;
++	return vmemdup_user(from, copy_len);
+ }
+ 
+ static int submit_copy_gather_data(struct gather_bo **pbo, struct device *dev,
+-- 
+2.7.4
 
