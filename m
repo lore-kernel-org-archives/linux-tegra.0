@@ -2,142 +2,97 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AFCFC433F5
-	for <linux-tegra@archiver.kernel.org>; Tue, 14 Dec 2021 06:01:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E280C433F5
+	for <linux-tegra@archiver.kernel.org>; Tue, 14 Dec 2021 06:02:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230178AbhLNGB3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 14 Dec 2021 01:01:29 -0500
-Received: from mga14.intel.com ([192.55.52.115]:34295 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230114AbhLNGB3 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 14 Dec 2021 01:01:29 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1639461689; x=1670997689;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=ci/qhNRNS7RvrPrSsDjgrZYNVw1Al3ceB7ixpdUcULc=;
-  b=gj3CwvxKikDXRyMnth1x4/rOp3fSK7n3nJEA1oY6iOrN6BI25XlH+RU+
-   BB9eIuNWppNEeCmFTTBb3cs3jDd64Sn0UyhwRz2R7UOd3wdjZKGgoMk/A
-   t7wl2D4Pjw12yibYPAJUkYhVjYiOesWJYEX54erChb/psCeYWTgSzKrRi
-   NzEOahGrCIjAw1xovlBX8Qtyiv6EU9h5jApYh5a2H5uKPB/ljLtqyTtQl
-   xg0ljdbabbnAqkFToOu7OPc5cHvf4E/z/rXTdWtwQG84E7lV+HZI8KJZR
-   y+k+pAKCRV7HUXebSUOOfGDSPuv5s32zuukoyUHgX81HSXVPd4XiYUGqH
-   A==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10197"; a="239129194"
-X-IronPort-AV: E=Sophos;i="5.88,204,1635231600"; 
-   d="scan'208";a="239129194"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Dec 2021 22:01:28 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.88,204,1635231600"; 
-   d="scan'208";a="464942290"
-Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.76]) ([10.237.72.76])
-  by orsmga006.jf.intel.com with ESMTP; 13 Dec 2021 22:01:25 -0800
-Subject: Re: [PATCH v3] mmc: sdhci-tegra: Fix switch to HS400ES mode
-To:     Prathamesh Shete <pshete@nvidia.com>, ulf.hansson@linaro.org,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        p.zabel@pengutronix.de, linux-mmc@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     anrao@nvidia.com, smangipudi@nvidia.com
-References: <bf629e1b-c61d-37e7-8802-b6d778f89c21@intel.com>
- <20211206140541.17148-1-pshete@nvidia.com>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <3dd2473a-00ca-4c62-e17f-9392cf74cda4@intel.com>
-Date:   Tue, 14 Dec 2021 08:01:24 +0200
+        id S230114AbhLNGCZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 14 Dec 2021 01:02:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57638 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230224AbhLNGCX (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 14 Dec 2021 01:02:23 -0500
+Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEEDBC061574;
+        Mon, 13 Dec 2021 22:02:22 -0800 (PST)
+Received: by mail-lj1-x234.google.com with SMTP id k2so26806015lji.4;
+        Mon, 13 Dec 2021 22:02:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=JPox4HTFV1UZCnU6dN+2eTxEqhdNLrUL/tLAtf5dn78=;
+        b=VXFuH2QL8D6R1sls6cI0em1DXONNojMqjdOeNB1qMOyQVk321RI7rldmLDXwPg35Wr
+         M9zUkMLA3ftCdg5q9+UNuuR/h1x57Ic/wQ+fH9s6Xv9V20gj09g05+8fycvxaVabSjIg
+         O8Oc5MWHPOnJVWASHUQ6be6iuzJF5hMUJSM/6HqsyWJY5U9eM4ZCpMjuc9Brf1VtOLe3
+         FMnbyVsrIHxBFkmzPquUa8siW871hLCbFeL+lsqT4ctiRAfPI4ePBycs+WjU3UTRqb5e
+         SP/VQdgz3FxBd8i2YQtCjU5gBwLhSm7oJhAyduWV7j2oXDfB0iDWCtxWXhO6mQPV+SmW
+         s44Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=JPox4HTFV1UZCnU6dN+2eTxEqhdNLrUL/tLAtf5dn78=;
+        b=LMIlFvZQGJxDVUnkLifSYlSBoWJX2kT4D0X0yDyHINZ3FG+YWf5tYsiOxA2zr5uE3N
+         5StqqtNS3gJmY0H1gw6keO1Jem0xrSsNLUk50roPP13583PGH7zbyYvm9BnfX3Dj/JuZ
+         769P9xwdnRDI7Ms7kxUbUFz4r5eHVB70XWfxZeCjCZ/6dAp9fzcFZBttW1lAXLDGmWT8
+         R5DHAceA8uMn+IXTu89mIPJMMtl6lmiSbOHdWPHofV31jcgrF5j97iUDE6UsJG/9ylC5
+         OJh7+l5RZZsTX4uBnz6MoV/IQLSXZ13Z6xqBtXgRL/GBqC3f6eQ7coBHNkCmj1aYpN5T
+         Drcw==
+X-Gm-Message-State: AOAM530z9sq3X8nN4Hok8iBSoNfi1iR4SLvhENYHURtnJrxjURZbzX2b
+        3FAyND97cN9cP/FuvljZ7OkaA3JyamE=
+X-Google-Smtp-Source: ABdhPJxMrjUPQQkutrvXQpLlsZjiqHmlviNxJRoslXBAQEVDwo9/grFad43uvSFRe3LMKk8ExXNsuw==
+X-Received: by 2002:a2e:8702:: with SMTP id m2mr2804842lji.55.1639461741017;
+        Mon, 13 Dec 2021 22:02:21 -0800 (PST)
+Received: from [192.168.2.145] (94-29-63-156.dynamic.spd-mgts.ru. [94.29.63.156])
+        by smtp.googlemail.com with ESMTPSA id s15sm1697177lfp.252.2021.12.13.22.02.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 Dec 2021 22:02:20 -0800 (PST)
+Subject: Re: [PATCH] cpuidle: tegra: fix typo in a comment
+To:     Jason Wang <wangborong@cdjrlc.com>, daniel.lezcano@linaro.org
+Cc:     rafael@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com,
+        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20211212033130.64032-1-wangborong@cdjrlc.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <be88a80f-251f-638d-bf29-a0423db53e06@gmail.com>
+Date:   Tue, 14 Dec 2021 09:02:19 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Firefox/78.0 Thunderbird/78.13.0
+ Thunderbird/78.14.0
 MIME-Version: 1.0
-In-Reply-To: <20211206140541.17148-1-pshete@nvidia.com>
+In-Reply-To: <20211212033130.64032-1-wangborong@cdjrlc.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 06/12/2021 16:05, Prathamesh Shete wrote:
-> When CMD13 is sent after switching to HS400ES mode, the bus
-> is operating at either MMC_HIGH_26_MAX_DTR or MMC_HIGH_52_MAX_DTR.
-> To meet Tegra SDHCI requirement at HS400ES mode, force SDHCI
-> interface clock to MMC_HS200_MAX_DTR (200 MHz) so that host
-> controller CAR clock and the interface clock are rate matched.
+12.12.2021 06:31, Jason Wang пишет:
+> The double `that' in the comment in line 275 is repeated. Remove one
+> of them from the comment.
 > 
-> Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
-
-One minor comment below otherwise:
-
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
-
+> Signed-off-by: Jason Wang <wangborong@cdjrlc.com>
 > ---
->  drivers/mmc/host/sdhci-tegra.c | 43 ++++++++++++++++++++--------------
->  1 file changed, 26 insertions(+), 17 deletions(-)
+>  drivers/cpuidle/cpuidle-tegra.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-> index 387ce9cdbd7c..ddaa3d9000f6 100644
-> --- a/drivers/mmc/host/sdhci-tegra.c
-> +++ b/drivers/mmc/host/sdhci-tegra.c
-> @@ -354,23 +354,6 @@ static void tegra_sdhci_set_tap(struct sdhci_host *host, unsigned int tap)
->  	}
->  }
->  
-> -static void tegra_sdhci_hs400_enhanced_strobe(struct mmc_host *mmc,
-> -					      struct mmc_ios *ios)
-> -{
-> -	struct sdhci_host *host = mmc_priv(mmc);
-> -	u32 val;
-> -
-> -	val = sdhci_readl(host, SDHCI_TEGRA_VENDOR_SYS_SW_CTRL);
-> -
-> -	if (ios->enhanced_strobe)
-> -		val |= SDHCI_TEGRA_SYS_SW_CTRL_ENHANCED_STROBE;
-> -	else
-> -		val &= ~SDHCI_TEGRA_SYS_SW_CTRL_ENHANCED_STROBE;
-> -
-> -	sdhci_writel(host, val, SDHCI_TEGRA_VENDOR_SYS_SW_CTRL);
-> -
-> -}
-> -
->  static void tegra_sdhci_reset(struct sdhci_host *host, u8 mask)
->  {
->  	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-> @@ -791,6 +774,32 @@ static void tegra_sdhci_set_clock(struct sdhci_host *host, unsigned int clock)
->  	}
->  }
->  
-> +static void tegra_sdhci_hs400_enhanced_strobe(struct mmc_host *mmc,
-> +					      struct mmc_ios *ios)
-> +{
-> +	struct sdhci_host *host = mmc_priv(mmc);
-> +	u32 val;
-> +
-> +	val = sdhci_readl(host, SDHCI_TEGRA_VENDOR_SYS_SW_CTRL);
-> +
-> +	if (ios->enhanced_strobe) {
-> +		val |= SDHCI_TEGRA_SYS_SW_CTRL_ENHANCED_STROBE;
-> +	/*
-> +	 * When CMD13 is sent from mmc_select_hs400es() after
-> +	 * switching to HS400ES mode, the bus is operating at
-> +	 * either MMC_HIGH_26_MAX_DTR or MMC_HIGH_52_MAX_DTR.
-> +	 * To meet Tegra SDHCI requirement at HS400ES mode, force SDHCI
-> +	 * interface clock to MMC_HS200_MAX_DTR (200 MHz) so that host
-> +	 * controller CAR clock and the interface clock are rate matched.
-> +	 */
-> +	tegra_sdhci_set_clock(host, MMC_HS200_MAX_DTR);
-
-Comment and line above need indenting
-
-> +	} else {
-> +		val &= ~SDHCI_TEGRA_SYS_SW_CTRL_ENHANCED_STROBE;
-> +	}
-> +
-> +	sdhci_writel(host, val, SDHCI_TEGRA_VENDOR_SYS_SW_CTRL);
-> +}
-> +
->  static unsigned int tegra_sdhci_get_max_clock(struct sdhci_host *host)
->  {
->  	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+> diff --git a/drivers/cpuidle/cpuidle-tegra.c b/drivers/cpuidle/cpuidle-tegra.c
+> index 9845629aeb6d..93ed4b8e164a 100644
+> --- a/drivers/cpuidle/cpuidle-tegra.c
+> +++ b/drivers/cpuidle/cpuidle-tegra.c
+> @@ -272,7 +272,7 @@ static int tegra114_enter_s2idle(struct cpuidle_device *dev,
+>   * LP2 | C7	(CPU core power gating)
+>   * LP2 | CC6	(CPU cluster power gating)
+>   *
+> - * Note that that the older CPUIDLE driver versions didn't explicitly
+> + * Note that the older CPUIDLE driver versions didn't explicitly
+>   * differentiate the LP2 states because these states either used the same
+>   * code path or because CC6 wasn't supported.
+>   */
 > 
 
+This might be a candidate for <trivial@kernel.org>.
+
+https://www.kernel.org/doc/html/latest/process/submitting-patches.html#select-the-recipients-for-your-patch
