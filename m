@@ -2,103 +2,96 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFACDC4321E
-	for <linux-tegra@archiver.kernel.org>; Wed, 15 Dec 2021 16:12:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38260C433FE
+	for <linux-tegra@archiver.kernel.org>; Wed, 15 Dec 2021 16:26:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244532AbhLOQMJ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 15 Dec 2021 11:12:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46312 "EHLO
+        id S244588AbhLOQ0Z (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 15 Dec 2021 11:26:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50014 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244559AbhLOQL4 (ORCPT
+        with ESMTP id S235247AbhLOQ0Z (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 15 Dec 2021 11:11:56 -0500
-Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4EEEEC061574;
-        Wed, 15 Dec 2021 08:11:56 -0800 (PST)
-Received: by mail-lj1-x233.google.com with SMTP id k2so34063666lji.4;
-        Wed, 15 Dec 2021 08:11:56 -0800 (PST)
+        Wed, 15 Dec 2021 11:26:25 -0500
+Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBF49C061574
+        for <linux-tegra@vger.kernel.org>; Wed, 15 Dec 2021 08:26:24 -0800 (PST)
+Received: by mail-wr1-x42b.google.com with SMTP id a18so39172039wrn.6
+        for <linux-tegra@vger.kernel.org>; Wed, 15 Dec 2021 08:26:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=xVG5B7SYBr3u6P2qpHezZS1RRrCpJWiliz1cwjgXHPU=;
-        b=MfLIVsUVi+6UjKkeOfI0SWNq8AXH2YggFu7ywHP79o0QYXM9HVXCVGjCAk+oNn9NqZ
-         NYCRvxnhWtZHwZ4emtwGdoZjRamabsNU42OtclVmR/5CTOZ7sZgYPgVwywMvu+kF4mUS
-         aJNvX2mOII/VEiLV83CfHaHbwj6zorAqRfm2cjUKs1Fa9iCNQrDPXMqIzxJ3rgPWTuLX
-         GjzNF1zdf6H31DQ4DWeLg43Fa3WgXEViRaZ+gRq/t/OmoFeO32V9dbtuJpgKE5iMU6Pf
-         u+OUQIbVNgsZ6US518XBPac+7esIc24pXvcwYUUqy5ecAQ2c3jDkQxnQ1rvoMr27iyGT
-         QpgQ==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=i7wWXueumBpxvpt3CRkJLtH1idEzNW/GlYM9K5fnKu4=;
+        b=k1rETn9HkIBex934GCnqta61OfsBUR7z4i6lwLcketY2a1OhrOXyyFlxybBMk2Tk6w
+         iX6IkpwuUrGKaoHEKnXkvTrZn/ey5UMlrjcEjj1Tdp04ZKLrPOyQoUOQJbW1tZ7n858H
+         cJqJSPdwCBbumYvVoEVZiCxrorFd8PwG48iOLLIfyLQ0pzP8TJtzMnP/jiI1og10pdM/
+         /iXI2ZDfdCShqRC+UHcZhUi3ZjELjF7Myf76ZHcIjAKZkwdro6XHONojrX+gJzu9OP6i
+         QUaBiC36PhZvgrkNO/d9Ga6FYUxPlMIFYAj0cTGLZH+gxE2togTySfPHi0ean7vY4P2O
+         Gopg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=xVG5B7SYBr3u6P2qpHezZS1RRrCpJWiliz1cwjgXHPU=;
-        b=uKNOLBGUZ/EIOzKo9VB1fScpsBXW9vlmtzZaTnkq08by9RVUxmyxkKDTwZ/M5e0MY9
-         /k1nSTnFFStfzjsDHK6ZSjGTjtYr+tiYpQvwh+6GdPpe58B6UXtVl4Gr28XLygTshgxl
-         yl49crLih3PiubtOFAOWNEerELWMG0gfpGtlc8kJ+XQWzNZkPwFJWKoTgA20JLQmcS1U
-         RlH6ieVhwKfPBQ4u5CmVc849KU6JolFirO0UIFS3+NioL1P1nCL+eOW9urDE8E8FqiHS
-         SfPBnN9MnjLXYQPqKiY1AA1McIP5visiUT2nyIUd95j90nomYFfAlehBB8gN8kSmxu2q
-         ceVg==
-X-Gm-Message-State: AOAM532b8M8osTeZg2zDqifxedROQVok1dKm6UdcPj/miXuNXAWK9zZO
-        zW3W3xG9HsGdne+v5vgURL8=
-X-Google-Smtp-Source: ABdhPJyW91GoZwqnrgyCst9/kcQTSRAGzVshAjgCuHC7JMUDYihZ1zeSVLqBM/gdk2wHRVzlCGewUw==
-X-Received: by 2002:a2e:3012:: with SMTP id w18mr10494861ljw.217.1639584714625;
-        Wed, 15 Dec 2021 08:11:54 -0800 (PST)
-Received: from [192.168.2.145] (94-29-63-156.dynamic.spd-mgts.ru. [94.29.63.156])
-        by smtp.googlemail.com with ESMTPSA id l4sm503086ljg.60.2021.12.15.08.11.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 Dec 2021 08:11:54 -0800 (PST)
-Subject: Re: [PATCH v16 00/40] NVIDIA Tegra power management patches for 5.17
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
-        Nishanth Menon <nm@ti.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-pwm@vger.kernel.org,
-        linux-mmc@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-clk@vger.kernel.org, David Heidelberg <david@ixit.cz>
-References: <20211130232347.950-1-digetx@gmail.com> <YboP9IFMUrUnEzrU@orome>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <6baf6013-fbb2-b42f-5b26-2d10a2ca9374@gmail.com>
-Date:   Wed, 15 Dec 2021 19:11:53 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+        bh=i7wWXueumBpxvpt3CRkJLtH1idEzNW/GlYM9K5fnKu4=;
+        b=ieS45icOy7ouuNAEoLoraFtMhRBe7ycDjfyKR+kUbKR49QRSD6/mYVEjzok82AFscy
+         FUc8Hz4jFkcuQ4/ZdlksL+FSj2EcnvF6T8uidunFCabxqos6LOoCiTKNgxjveBlCDR0r
+         hR/b+myzCi2LHqnS1mFseR2DnLwqnlPZZhoyq8Jm6vaiUzggEIIAkEkdhejcDaCo+1AL
+         IJys45IBP1aSPTzxAHwgXonzFVpHxFuRPszvsYwPF77r6yAHdUik0ED85QFlICWqbsEE
+         nl4nW9eW4fbJ6zM223yfC/tacPGvR3wWCZ3MBNgWjHbxi2mw1Pluwsh5yVraT04+G9NS
+         3Jtw==
+X-Gm-Message-State: AOAM533pBPwmXZyD1tkV0aOoQ60bqEVWXNgo7kMX3GX6kex4jRbw0VLg
+        IFtwmZvtaLC9rhAlvfjZsb4=
+X-Google-Smtp-Source: ABdhPJyDN7900ndzWAS8GYNF/EXE9loh52/7cQL418PjO9H2GbjhCUu/JMKwaKr3/K8lzWKUC6bv+w==
+X-Received: by 2002:a05:6000:89:: with SMTP id m9mr5147846wrx.427.1639585583545;
+        Wed, 15 Dec 2021 08:26:23 -0800 (PST)
+Received: from localhost ([193.209.96.43])
+        by smtp.gmail.com with ESMTPSA id j32sm2157957wms.40.2021.12.15.08.26.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Dec 2021 08:26:22 -0800 (PST)
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     arm@kernel.org, soc@kernel.org
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Nathan Chancellor <nathan@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [GIT PULL] soc/tegra: Fixes for v5.16-rc6
+Date:   Wed, 15 Dec 2021 17:26:18 +0100
+Message-Id: <20211215162618.3568474-1-thierry.reding@gmail.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-In-Reply-To: <YboP9IFMUrUnEzrU@orome>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-15.12.2021 18:55, Thierry Reding пишет:
-> On Wed, Dec 01, 2021 at 02:23:07AM +0300, Dmitry Osipenko wrote:
->> This series adds runtime PM support to Tegra drivers and enables core
->> voltage scaling for Tegra20/30 SoCs, resolving overheating troubles.
->>
->> All patches in this series are interdependent and should go via Tegra tree
->> for simplicity.
-> 
-> So these can be applied in any order without breaking anything?
+Hi ARM SoC maintainers,
 
-Please notice that the word is *inter* dependent, not *in* dependent.
+The following changes since commit 76d89474310e05d9c592a8beed2aefe4d3396d2d:
 
-There is a build dependency for the patches. The first two "soc/tegra"
-must be applied first.
+  soc/tegra: pmc: Use devm_platform_ioremap_resource() (2021-10-08 21:42:41 +0200)
 
-The "soc/tegra: pmc: Enable core domain support for Tegra20 and Tegra30"
-*must* be the last applied patch if we want to preserve bisectability.
-The core voltage scaling can be enabled only once all the drivers got
-the power management support.
+are available in the Git repository at:
 
-The rest could be applied out-of-order.
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.16-soc-fixes
+
+for you to fetch changes up to a7083763619f7485ccdade160deb81737cf2732f:
+
+  soc/tegra: fuse: Fix bitwise vs. logical OR warning (2021-12-15 17:19:06 +0100)
+
+Thanks,
+Thierry
+
+----------------------------------------------------------------
+soc/tegra: Fixes for v5.16-rc6
+
+This contains a single build fix without which ARM allmodconfig builds
+are broken if -Werror is enabled.
+
+----------------------------------------------------------------
+Nathan Chancellor (1):
+      soc/tegra: fuse: Fix bitwise vs. logical OR warning
+
+ drivers/soc/tegra/fuse/fuse-tegra.c | 2 +-
+ drivers/soc/tegra/fuse/fuse.h       | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
