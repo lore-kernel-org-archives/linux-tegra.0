@@ -2,80 +2,118 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1E9CC433EF
-	for <linux-tegra@archiver.kernel.org>; Wed, 15 Dec 2021 19:16:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15C29C433F5
+	for <linux-tegra@archiver.kernel.org>; Wed, 15 Dec 2021 19:19:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344135AbhLOTQ0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 15 Dec 2021 14:16:26 -0500
-Received: from mail-oo1-f54.google.com ([209.85.161.54]:40643 "EHLO
-        mail-oo1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344116AbhLOTQ0 (ORCPT
+        id S239018AbhLOTTM (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 15 Dec 2021 14:19:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34274 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238169AbhLOTTL (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 15 Dec 2021 14:16:26 -0500
-Received: by mail-oo1-f54.google.com with SMTP id w15-20020a4a354f000000b002d85ef0533dso1535497oog.7;
-        Wed, 15 Dec 2021 11:16:25 -0800 (PST)
+        Wed, 15 Dec 2021 14:19:11 -0500
+Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F398C061574;
+        Wed, 15 Dec 2021 11:19:11 -0800 (PST)
+Received: by mail-lj1-x22c.google.com with SMTP id l7so34873452lja.2;
+        Wed, 15 Dec 2021 11:19:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=mcoM9Ax1uVbLecr06Jv1GjfyazYcAb1+Wc5JbxKbgLk=;
+        b=SVHqay68VUOAOHu9uBZo4mdJWTihaz5p+A6gLbEoE3abtu4VilIEkQaAoxGgkqIxCJ
+         ebBrahy80p+gKC5PUp8cy/iok91hF8uU90zVfcYCEQZ3SHyk2iV/M7yBuM5xXx1q+dbU
+         5HYPfT/e1p1lkh8wzWatch4fvJdJLNPZ+kGX2LpuRhZxZYaKjhQyHOeZu6pgOAkfqBrl
+         j46GWZWa2ldkdxunzLARSSBw53v5jsHy5vDrAHM0XddeaZK+IBjhIpCsmR/2RIeprNMa
+         B0e0JU6YbzcQ+5TIWgVjqtru1nqdqQcnUt+H+vsOBjU6fZXijMwHlxAtIxg66N9nh3O/
+         8+eA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=xgMdRGgCuIolfRdeKGEr50tqMCz4JPztfeQpCRP8ws0=;
-        b=ZOAE0v1Ze8ej4ulWmOxBEii0MvYDazfE3U5UVulg4R776izikEqLRIbe9ga4Tk0Q+3
-         wCw/zLJgBORjCNS7FxKXu/729SRfPCMDKHpLVgOnHNOtD0nA7gUcJiANidLFZhHPdF8d
-         Lfop5TuugrvuZjqHpeqAnOvA6YCiHfmjqJXnroV8oMUmBOzCVdLjBdJh/sQ5BJ7WVK6w
-         E4wEXA4h0Ij52TNMOfFWWnRInQ/rbgSc4dIUmQNojIt/aGwW4S0osW213evb9M7gbhCy
-         UF1DwDsDFvF3yF7NkhzuevTb4D9ZbVrUUS7K2hNzgVA337MLnor7siDoupFGKyMlAtRF
-         pqGA==
-X-Gm-Message-State: AOAM530wmy6Rke+9+2HqPZ8vJ/KVg4wA++QBuYK3SmSKgz/Ey/7kMnRc
-        PCcSfArJR+n219i7mCoJWA==
-X-Google-Smtp-Source: ABdhPJxsusBoa6hPOOtDxjKOQmlBNdaIhp1woTGfzH5zoLjDqu1oEoUdLzD4RkrrplFyG70u7FcjNQ==
-X-Received: by 2002:a4a:c987:: with SMTP id u7mr8518064ooq.65.1639595785406;
-        Wed, 15 Dec 2021 11:16:25 -0800 (PST)
-Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id x17sm588157oot.30.2021.12.15.11.16.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Dec 2021 11:16:24 -0800 (PST)
-Received: (nullmailer pid 1673469 invoked by uid 1000);
-        Wed, 15 Dec 2021 19:16:23 -0000
-Date:   Wed, 15 Dec 2021 13:16:23 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Joerg Roedel <joro@8bytes.org>, Rob Herring <robh+dt@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        iommu@lists.linux-foundation.org,
-        linux-arm-kernel@lists.infradead.org,
-        Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
-        devicetree@vger.kernel.org, Will Deacon <will@kernel.org>
-Subject: Re: [PATCH v2 1/4] dt-bindings: arm-smmu: Document
- nvidia,memory-controller property
-Message-ID: <Ybo/B1cjP4pumACW@robh.at.kernel.org>
-References: <20211209163600.609613-1-thierry.reding@gmail.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=mcoM9Ax1uVbLecr06Jv1GjfyazYcAb1+Wc5JbxKbgLk=;
+        b=6ckwBa6ut1JC+uLyMbIYUE2APx/UnYjfcGeqsPjtVxHv1Isnr+aFfU08OZ4WXFY3Jp
+         qkN4bayUVGY0vTVd1ORGGMeVfieYWXG4DSfr5KfePg1dOT0AAWv2kc4xeKRpzR2IWtoH
+         H5mcuFpAcKzduwkEiJ7Ios2mcRhf5EpbIgbFpl3J5DauKAc1uY8gFAEaGmnYiksB3Jm2
+         forUn7tgwR0oFxp2xZBdYvEtal8bDDHCT7ZzGpFkRp215XiXR4UegkNeNyPFAJ6N6V5e
+         MCiNLqgwWwvWt9fPJf84dam3DStOKfnoaiqfU3f1eEBEC+Ta5GP4t7XKFLZzx5A/rnXm
+         CzQA==
+X-Gm-Message-State: AOAM5321YujbnqPX0/SDCpJJ1V1Hn2Kzz/8Z3peMQxnlFDo/ieepRn9F
+        ScmXBdVZwN+csFT/c5IE9yU=
+X-Google-Smtp-Source: ABdhPJwfQiIXPLFnM45Qsq1mKLc+gw5v4w90DdqR/S/COVYdQgiDcGeqkBnZ70V6mO6ZWA17wweAIA==
+X-Received: by 2002:a2e:a7c4:: with SMTP id x4mr11737287ljp.43.1639595949539;
+        Wed, 15 Dec 2021 11:19:09 -0800 (PST)
+Received: from [192.168.2.145] (94-29-63-156.dynamic.spd-mgts.ru. [94.29.63.156])
+        by smtp.googlemail.com with ESMTPSA id j22sm455282lfu.155.2021.12.15.11.19.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 15 Dec 2021 11:19:08 -0800 (PST)
+Subject: Re: [PATCH v4 00/22] Support HDMI audio on NVIDIA Tegra20
+To:     Mark Brown <broonie@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>
+Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
+        Takashi Iwai <tiwai@suse.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Agneli <poczt@protonmail.ch>, linux-tegra@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Rob Herring <robh+dt@kernel.org>, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+References: <20211204143725.31646-1-digetx@gmail.com>
+ <Ybo6tsnQM6OacoZs@sirena.org.uk>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <26af30a6-9606-72d0-9258-cf9627ddfe77@gmail.com>
+Date:   Wed, 15 Dec 2021 22:19:07 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211209163600.609613-1-thierry.reding@gmail.com>
+In-Reply-To: <Ybo6tsnQM6OacoZs@sirena.org.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, 09 Dec 2021 17:35:57 +0100, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
+15.12.2021 21:57, Mark Brown пишет:
+> On Sat, Dec 04, 2021 at 05:37:03PM +0300, Dmitry Osipenko wrote:
 > 
-> On NVIDIA SoC's the ARM SMMU needs to interact with the memory
-> controller in order to map memory clients to the corresponding stream
-> IDs. Document how the nvidia,memory-controller property can be used to
-> achieve this.
+>> I based S/PDIF patches on Arnd's Bergmann patch from a separate series [1]
+>> that removes obsolete slave_id. This eases merging of the patches by
+>> removing the merge conflict. This is a note for Mark Brown.
 > 
-> Note that this is a backwards-incompatible change that is, however,
-> necessary to ensure correctness. Without the new property, most of the
-> devices would still work but it is not guaranteed that all will.
-> 
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> ---
-> Changes in v2:
-> - clarify why the new nvidia,memory-controller property is required
-> 
->  .../devicetree/bindings/iommu/arm,smmu.yaml     | 17 +++++++++++++++++
->  1 file changed, 17 insertions(+)
+> That's not in my tree so I'll need either a pull request with the series
+> or a resend after the merge window.
+
+This patch is included as a part of this series, please see the patch #6.
+
+I saw that Vinod Koul already merged it into his DMA tree [1] a day ago,
+but there is no stable branch there.
+
+[1]
+https://git.kernel.org/pub/scm/linux/kernel/git/vkoul/dmaengine.git/log/?h=next
+
+>  It's also not clear what to do
+> about the DRM bits, I guess it's probably easiest to just apply them
+> along with the ASoC patches.
+
+I already asked Thierry Reding to take a look at this patchset. He will
+let to you know how the DRM bits should be handled. Hopefully this
+should happen tomorrow.
+
+We will know how to move forward if Vinod and Thierry will reply ASAP.
+Otherwise this series will have to wait for the next cycle.
+
+> Please include human readable descriptions of things like commits and
+> issues being discussed in e-mail in your mails, this makes them much
+> easier for humans to read especially when they have no internet access.
+> I do frequently catch up on my mail on flights or while otherwise
+> travelling so this is even more pressing for me than just being about
+> making things a bit easier to read.
 > 
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Noted; I see now that it's indeed not clear from the cover letter that I
+included Arnd's patch into this patchset, sorry about that. I assumed
+that you will notice this after looking through the patches.
