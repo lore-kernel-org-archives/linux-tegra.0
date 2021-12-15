@@ -2,1265 +2,169 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78BC1C433EF
-	for <linux-tegra@archiver.kernel.org>; Thu, 16 Dec 2021 21:59:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 210C9C433F5
+	for <linux-tegra@archiver.kernel.org>; Fri, 17 Dec 2021 03:43:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237139AbhLPV7h (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 16 Dec 2021 16:59:37 -0500
-Received: from mail-oi1-f178.google.com ([209.85.167.178]:35606 "EHLO
-        mail-oi1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234459AbhLPV7e (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 16 Dec 2021 16:59:34 -0500
-Received: by mail-oi1-f178.google.com with SMTP id m6so905441oim.2;
-        Thu, 16 Dec 2021 13:59:33 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=/2SFJZkTm0jd4W3nufd4WDoqYmDsCrg8uI37ginbZxY=;
-        b=PDIXyYslr9OBQbDrP7bvqfa6JBgBjWs0v2ztLWGJJM+B1o15iDDpAeNn4QquFlzCO8
-         sHJ+WHPR19ickJLlL1iUkhoiDvs9Vwt0ng4Of3uv66qTnCb04xtGEJ3pgkWjx95aGfVK
-         3rZ3RIPV3KT0v4YhCx2Qxk5Dga5Qadu9Txo0SF9Egt2jAcXrVfBve3Awr+lyWCyLlQ1y
-         yFx/rdkGEuYxbEqhxf8+hpigHT4KYdzeWbk/2K3If9/Tba5cnYLdsjb4R2ie6RCZ+jWW
-         s9HrDSpEkXOtvOkBqQg9ndNS3upoJkMqJ1QU7S0NA5aSCQ0WYF/eG8JldpqntZJD/Z8v
-         dhxA==
-X-Gm-Message-State: AOAM53187AaM5naKtGFesvSZUXQuoVMfyB4sqoX6oib+roEuehV1vAO8
-        uD7qanhOnd6ZTsY4AX96SA==
-X-Google-Smtp-Source: ABdhPJygoTkHEHf+sgw9HEdDG6ZWZfQAlLICUlsq+NxuLHfc152GQ8ebLLITcnqnYBUTBOb4V8wdvg==
-X-Received: by 2002:a05:6808:bc3:: with SMTP id o3mr5656564oik.151.1639691973308;
-        Thu, 16 Dec 2021 13:59:33 -0800 (PST)
-Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id i16sm1220414oig.15.2021.12.16.13.59.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Dec 2021 13:59:32 -0800 (PST)
-Received: (nullmailer pid 843614 invoked by uid 1000);
-        Thu, 16 Dec 2021 21:59:31 -0000
-Date:   Thu, 16 Dec 2021 15:59:31 -0600
-From:   Rob Herring <robh@kernel.org>
+        id S232535AbhLQDnV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 16 Dec 2021 22:43:21 -0500
+Received: from ixit.cz ([94.230.151.217]:38938 "EHLO ixit.cz"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231143AbhLQDnV (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 16 Dec 2021 22:43:21 -0500
+Received: from [192.168.1.138] (ip-89-176-96-70.net.upcbroadband.cz [89.176.96.70])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ixit.cz (Postfix) with ESMTPSA id D07DB24CC2;
+        Wed, 15 Dec 2021 16:28:36 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ixit.cz; s=dkim;
+        t=1639582118;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=7Edv46GPYMJdJozDwMUanWLkqZtLTb27/B2Rn3iDwNQ=;
+        b=GXAPaLdrpkYx14JHvm2zisZ8qSpyq6BTeXd+5OCNNVgTl7mfP7w0pnkjJ6j+ERP6EMLjsp
+        p1WonHQHoHUOFb+ugI5ZjjFPxXdfcjUpgLiSuPnUTl5k8k3AE43bq7HYSEYQexRSBGbAj2
+        mBODbbk2VLtGW/X1asJafXM+CLhPqqg=
+Date:   Wed, 15 Dec 2021 16:28:30 +0100
+From:   David Heidelberg <david@ixit.cz>
+Subject: Re: [PATCH v6 11/28] ARM: tegra: Add device-tree for ASUS Transformer
+ Infinity TF700T
 To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v3] dt-bindings: display: tegra: Convert to json-schema
-Message-ID: <Ybu2wy2mwNmke/od@robh.at.kernel.org>
-References: <20211216142012.1479213-1-thierry.reding@gmail.com>
+Cc:     Dmitry Osipenko <digetx@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Svyatoslav Ryhel <clamor95@gmail.com>,
+        Anton Bambura <jenneron@protonmail.com>,
+        Antoni Aloy Torrens <aaloytorrens@gmail.com>,
+        Nikola Milosavljevic <mnidza@outlook.com>,
+        Ion Agorria <ion@agorria.com>,
+        =?iso-8859-2?q?Micha=B3_Miros=B3aw?= <mirq-linux@rere.qmqm.pl>,
+        Ihor Didenko <tailormoon@rambler.ru>,
+        Andreas Westman Dorcsak <hedmoo@yahoo.com>,
+        Maxim Schwalm <maxim.schwalm@gmail.com>,
+        Raffaele Tranquillini <raffaele.tranquillini@gmail.com>,
+        Jasper Korten <jja2000@gmail.com>,
+        Thomas Graichen <thomas.graichen@gmail.com>,
+        Stefan Eichenberger <stefan.eichenberger@toradex.com>,
+        Stefan Agner <stefan@agner.ch>,
+        Peter Geis <pgwipeout@gmail.com>, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Message-Id: <INX54R.ECW0Q9B43ONC3@ixit.cz>
+In-Reply-To: <YboHd6tIUrl+LJQb@orome>
+References: <20211211211412.10791-1-digetx@gmail.com>
+        <20211211211412.10791-12-digetx@gmail.com> <Ybn1Ne2aGfsablwQ@orome>
+        <02d7e9a9-6999-cccd-aea2-d069c759cd56@gmail.com> <YboHd6tIUrl+LJQb@orome>
+X-Mailer: geary/40.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211216142012.1479213-1-thierry.reding@gmail.com>
+Content-Type: text/plain; charset=iso-8859-5; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, Dec 16, 2021 at 03:20:12PM +0100, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
-> 
-> Convert the Tegra host1x controller bindings from the free-form text
-> format to json-schema.
-> 
-> This also adds the missing display-hub DT bindings that were not
-> previously documented.
-> 
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> ---
-> Sorry Rob for making you look at this again. However, I think it's much
-> cleaner than earlier versions of this because of the split into separate
-> YAML files, so hopefully it's not too bad. I've got a couple of DT fixes
-> in the Tegra tree that will allow this to successfully validate all of
-> these host1x and child nodes.
+Hello Dmitry and Thierry!
 
-Mostly looks good. A few things below.
+Sent as "[PATCH] dt-bindings: display: bridge: document Toshiba=20
+TC358768 cells and panel node",
 
-> 
-> Note that some of these can possibly be moved into a different directory
-> now since they aren't all that display-related, but I'll do that in a
-> separate patch to keep this simpler to review.
-> 
-> Changes in v3:
-> - split into separate YAML files for simplicity
-> - add display-hub DT bindings
-> 
-> Changes in v2:
-> - use additionalProperties instead of unevaluatedProperties where
->   sufficient
-> - drop redundant $ref and add missing maxItems properties
-> - drop documentation for standard properties
-> - remove status properties from example
-> - drop spurious comments
-> 
->  .../display/tegra/nvidia,tegra114-mipi.txt    |  41 --
->  .../display/tegra/nvidia,tegra114-mipi.yaml   |  74 +++
->  .../display/tegra/nvidia,tegra124-dpaux.yaml  | 149 +++++
->  .../display/tegra/nvidia,tegra124-sor.yaml    | 209 ++++++
->  .../display/tegra/nvidia,tegra124-vic.yaml    |  71 ++
->  .../display/tegra/nvidia,tegra186-dc.yaml     |  85 +++
->  .../tegra/nvidia,tegra186-display.yaml        | 310 +++++++++
->  .../tegra/nvidia,tegra186-dsi-padctl.yaml     |  46 ++
->  .../display/tegra/nvidia,tegra20-dc.yaml      | 174 +++++
->  .../display/tegra/nvidia,tegra20-dsi.yaml     | 174 +++++
->  .../display/tegra/nvidia,tegra20-epp.yaml     |  57 ++
->  .../display/tegra/nvidia,tegra20-gr2d.yaml    |  58 ++
->  .../display/tegra/nvidia,tegra20-gr3d.yaml    | 109 +++
->  .../display/tegra/nvidia,tegra20-hdmi.yaml    | 116 ++++
->  .../display/tegra/nvidia,tegra20-host1x.txt   | 622 ------------------
->  .../display/tegra/nvidia,tegra20-host1x.yaml  | 334 ++++++++++
->  .../display/tegra/nvidia,tegra20-isp.yaml     |  55 ++
->  .../display/tegra/nvidia,tegra20-mpe.yaml     |  58 ++
->  .../display/tegra/nvidia,tegra20-tvo.yaml     |  51 ++
->  .../display/tegra/nvidia,tegra20-vi.yaml      | 151 +++++
->  .../display/tegra/nvidia,tegra210-csi.yaml    |  52 ++
->  .../pinctrl/nvidia,tegra124-dpaux-padctl.txt  |  59 --
->  22 files changed, 2333 insertions(+), 722 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra114-mipi.txt
->  create mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra114-mipi.yaml
->  create mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra124-dpaux.yaml
->  create mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra124-sor.yaml
->  create mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra124-vic.yaml
->  create mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra186-dc.yaml
->  create mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra186-display.yaml
->  create mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra186-dsi-padctl.yaml
->  create mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-dc.yaml
->  create mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-dsi.yaml
->  create mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-epp.yaml
->  create mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-gr2d.yaml
->  create mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-gr3d.yaml
->  create mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-hdmi.yaml
->  delete mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
->  create mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.yaml
->  create mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-isp.yaml
->  create mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-mpe.yaml
->  create mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-tvo.yaml
->  create mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-vi.yaml
->  create mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra210-csi.yaml
->  delete mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-dpaux-padctl.txt
+I'll try to not keep these patches for myself for so long.
+David
 
-[...]
+On Wed, Dec 15 2021 at 16:19:19 +0100, Thierry Reding=20
+<thierry.reding@gmail.com> wrote:
+> On Wed, Dec 15, 2021 at 05:52:24PM +0300, Dmitry Osipenko wrote:
+>>  15.12.2021 17:01, Thierry Reding =DF=D8=E8=D5=E2:
+>>  > On Sun, Dec 12, 2021 at 12:13:55AM +0300, Dmitry Osipenko wrote:
+>>  > [...]
+>>  >> +		i2c@1 {
+>>  >> +			reg =3D <1>;
+>>  >> +			#address-cells =3D <1>;
+>>  >> +			#size-cells =3D <0>;
+>>  >> +
+>>  >> +			dsi-bridge@7 {
+>>  >> +				compatible =3D "toshiba,tc358768";
+>>  >> +				reg =3D <0x7>;
+>>  >> +
+>>  >> +				#address-cells =3D <1>;
+>>  >> +				#size-cells =3D <0>;
+>>  >> +
+>>  >> +				clocks =3D <&tc358768_osc>;
+>>  >> +				clock-names =3D "refclk";
+>>  >> +
+>>  >> +				reset-gpios =3D <&gpio TEGRA_GPIO(N, 6) GPIO_ACTIVE_LOW>;
+>>  >> +
+>>  >> +				vddc-supply =3D <&vdd_1v2_mipi>;
+>>  >> +				vddio-supply =3D <&vdd_1v8_vio>;
+>>  >> +				vddmipi-supply =3D <&vdd_1v2_mipi>;
+>>  >> +
+>>  >> +				ports {
+>>  >> +					#address-cells =3D <1>;
+>>  >> +					#size-cells =3D <0>;
+>>  >> +
+>>  >> +					port@0 {
+>>  >> +						reg =3D <0>;
+>>  >> +
+>>  >> +						bridge_input: endpoint {
+>>  >> +							remote-endpoint =3D <&dpi_output>;
+>>  >> +							data-lines =3D <24>;
+>>  >> +						};
+>>  >> +					};
+>>  >> +
+>>  >> +					port@1 {
+>>  >> +						reg =3D <1>;
+>>  >> +
+>>  >> +						bridge_output: endpoint {
+>>  >> +							remote-endpoint =3D <&panel_input>;
+>>  >> +						};
+>>  >> +					};
+>>  >> +				};
+>>  >> +
+>>  >> +				/*
+>>  >> +				 * Panasonic VVX10F004B00 or HYDIS HV101WU1-1E1
+>>  >> +				 * LCD SuperIPS+ Full HD panel.
+>>  >> +				 */
+>>  >> +				panel@1 {
+>>  >> +					compatible =3D "panasonic,vvx10f004b00";
+>>  >> +					reg =3D <1>;
+>>  >> +
+>>  >> +					power-supply =3D <&vdd_pnl>;
+>>  >> +					backlight =3D <&backlight>;
+>>  >> +
+>>  >> +					port {
+>>  >> +						panel_input: endpoint {
+>>  >> +							remote-endpoint =3D <&bridge_output>;
+>>  >> +						};
+>>  >> +					};
+>>  >> +				};
+>>  >
+>>  > make dtbs_check complains about this and says that panel@1 (as=20
+>> well as
+>>  > #address-cells and #size-cells) are not allowed here. And indeed=20
+>> the
+>>  > binding for the Toshiba bridge doesn't mention them here.
+>>  >
+>>  > Do we need this here or should this be moved to the top level to=20
+>> fix
+>>  > those warnings? I guess what you're doing above is describe a DSI=20
+>> bus
+>>  > created by the DSI bridge, which also makes sense, so another
+>>  > alternative would be to fix up the binding and let it accept those
+>>  > properties.
+>>=20
+>>  Toshiba bridge binding is incomplete. David has patch for that [1],=20
+>> I
+>>  don't think that it was sent out yet.
+>>=20
+>>  [1]
+>> =20
+>> https://github.com/okias/linux/commit/0875230062294b6db17f395ced0a8384a4=
+c1cfc7
+>=20
+> Okay, please make sure this finds its way upstream eventually. That
+> patch looks quite similar to what I tried to do to fix this up=20
+> locally.
+>=20
+> Thierry
 
-> diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra124-sor.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra124-sor.yaml
-> new file mode 100644
-> index 000000000000..afc283796653
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra124-sor.yaml
-> @@ -0,0 +1,209 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/display/tegra/nvidia,tegra124-sor.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: NVIDIA Tegra SOR Output Encoder
-> +
-> +maintainers:
-> +  - Thierry Reding <thierry.reding@gmail.com>
-> +  - Jon Hunter <jonathanh@nvidia.com>
-> +
-> +description: |
-> +  The Serial Output Resource (SOR) can be used to drive HDMI, LVDS, eDP
-> +  and DP outputs.
-> +
-> +  See ../pinctrl/nvidia,tegra124-dpaux-padctl.txt for information
 
-Now removed...
-
-> +  regarding the DPAUX pad controller bindings.
-> +
-> +properties:
-> +  $nodename:
-> +    pattern: "^sor@[0-9a-f]+$"
-> +
-> +  compatible:
-> +    oneOf:
-> +      - enum:
-> +          - nvidia,tegra124-sor
-> +          - nvidia,tegra210-sor
-> +          - nvidia,tegra210-sor1
-> +          - nvidia,tegra186-sor
-> +          - nvidia,tegra186-sor1
-> +          - nvidia,tegra194-sor
-> +
-> +      - items:
-> +          - const: nvidia,tegra132-sor
-> +          - const: nvidia,tegra124-sor
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    minItems: 5
-> +    maxItems: 6
-> +
-> +  clock-names:
-> +    minItems: 5
-> +    maxItems: 6
-> +
-> +  resets:
-> +    items:
-> +      - description: module reset
-> +
-> +  reset-names:
-> +    items:
-> +      - const: sor
-> +
-> +  power-domains:
-> +    maxItems: 1
-> +
-> +  avdd-io-hdmi-dp-supply:
-> +    description: I/O supply for HDMI/DP
-> +
-> +  vdd-hdmi-dp-pll-supply:
-> +    description: PLL supply for HDMI/DP
-> +
-> +  hdmi-supply:
-> +    description: +5.0V HDMI connector supply
-> +
-> +  # Tegra186 and later
-> +  nvidia,interface:
-> +    description: index of the SOR interface
-> +    $ref: "/schemas/types.yaml#/definitions/uint32"
-> +
-> +  nvidia,ddc-i2c-bus:
-> +    description: phandle of an I2C controller used for DDC EDID
-> +      probing
-> +    $ref: "/schemas/types.yaml#/definitions/phandle"
-> +
-> +  nvidia,hpd-gpio:
-> +    description: specifies a GPIO used for hotplug detection
-> +    maxItems: 1
-> +
-> +  nvidia,edid:
-> +    description: supplies a binary EDID blob
-> +    $ref: "/schemas/types.yaml#/definitions/uint8-array"
-> +
-> +  nvidia,panel:
-> +    description: phandle of a display panel
-> +    $ref: "/schemas/types.yaml#/definitions/phandle"
-> +
-> +  nvidia,xbar-cfg:
-> +    description: 5 cells containing the crossbar configuration.
-> +      Each lane of the SOR, identified by the cell's index, is
-> +      mapped via the crossbar to the pad specified by the cell's
-> +      value.
-> +    $ref: "/schemas/types.yaml#/definitions/uint32-array"
-> +
-> +  # optional when driving an eDP output
-> +  nvidia,dpaux:
-> +    description: phandle to a DispayPort AUX interface
-> +    $ref: "/schemas/types.yaml#/definitions/phandle"
-> +
-> +allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - nvidia,tegra186-sor
-> +              - nvidia,tegra194-sor
-> +    then:
-> +      properties:
-> +        clocks:
-> +          items:
-> +            - description: clock input for the SOR hardware
-> +            - description: SOR output clock
-> +            - description: input for the pixel clock
-> +            - description: reference clock for the SOR clock
-> +            - description: safe reference clock for the SOR clock
-> +                during power up
-> +            - description: SOR pad output clock
-> +
-> +        clock-names:
-> +          items:
-> +            - const: sor
-> +            - enum:
-> +                - source # deprecated
-> +                - out
-> +            - const: parent
-> +            - const: dp
-> +            - const: safe
-> +            - const: pad
-> +    else:
-> +      properties:
-> +        clocks:
-> +          items:
-> +            - description: clock input for the SOR hardware
-> +            - description: SOR output clock
-> +            - description: input for the pixel clock
-> +            - description: reference clock for the SOR clock
-> +            - description: safe reference clock for the SOR clock
-> +                during power up
-> +
-> +        clock-names:
-> +          items:
-> +            - const: sor
-> +            - enum:
-> +                - source # deprecated
-> +                - out
-> +            - const: parent
-> +            - const: dp
-> +            - const: safe
-> +
-> +  - if:
-> +      not:
-> +        properties:
-> +          contains:
-> +            const: nvidia,panel
-> +    then:
-> +      required:
-> +        - hdmi-supply
-> +
-> +additionalProperties: false
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - clocks
-> +  - clock-names
-> +  - resets
-> +  - reset-names
-> +  - avdd-io-hdmi-dp-supply
-> +  - vdd-hdmi-dp-pll-supply
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/tegra210-car.h>
-> +    #include <dt-bindings/gpio/tegra-gpio.h>
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +
-> +    sor0: sor@54540000 {
-> +        compatible = "nvidia,tegra210-sor";
-> +        reg = <0x54540000 0x00040000>;
-> +        interrupts = <GIC_SPI 76 IRQ_TYPE_LEVEL_HIGH>;
-> +        clocks = <&tegra_car TEGRA210_CLK_SOR0>,
-> +                 <&tegra_car TEGRA210_CLK_SOR0_OUT>,
-> +                 <&tegra_car TEGRA210_CLK_PLL_D_OUT0>,
-> +                 <&tegra_car TEGRA210_CLK_PLL_DP>,
-> +                 <&tegra_car TEGRA210_CLK_SOR_SAFE>;
-> +        clock-names = "sor", "out", "parent", "dp", "safe";
-> +        resets = <&tegra_car 182>;
-> +        reset-names = "sor";
-> +        pinctrl-0 = <&state_dpaux_aux>;
-> +        pinctrl-1 = <&state_dpaux_i2c>;
-> +        pinctrl-2 = <&state_dpaux_off>;
-> +        pinctrl-names = "aux", "i2c", "off";
-> +        power-domains = <&pd_sor>;
-> +
-> +        avdd-io-hdmi-dp-supply = <&avdd_1v05>;
-> +        vdd-hdmi-dp-pll-supply = <&vdd_1v8>;
-> +        hdmi-supply = <&vdd_hdmi>;
-> +
-> +        nvidia,ddc-i2c-bus = <&hdmi_ddc>;
-> +        nvidia,hpd-gpio = <&gpio TEGRA_GPIO(CC, 1) GPIO_ACTIVE_LOW>;
-> +    };
-> diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra124-vic.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra124-vic.yaml
-> new file mode 100644
-> index 000000000000..37bb5ddc1963
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra124-vic.yaml
-> @@ -0,0 +1,71 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/display/tegra/nvidia,tegra124-vic.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: NVIDIA Tegra Video Image Composer
-> +
-> +maintainers:
-> +  - Thierry Reding <thierry.reding@gmail.com>
-> +  - Jon Hunter <jonathanh@nvidia.com>
-> +
-> +properties:
-> +  $nodename:
-> +    pattern: "^vic@[0-9a-f]+$"
-> +
-> +  compatible:
-> +    oneOf:
-> +      - enum:
-> +          - nvidia,tegra124-vic
-> +          - nvidia,tegra210-vic
-> +          - nvidia,tegra186-vic
-> +          - nvidia,tegra194-vic
-> +
-> +      - items:
-> +          - const: nvidia,tegra132-vic
-> +          - const: nvidia,tegra124-vic
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    items:
-> +      - description: clock input for the VIC hardware
-> +
-> +  clock-names:
-> +    items:
-> +      - const: vic
-> +
-> +  resets:
-> +    items:
-> +      - description: module reset
-> +
-> +  reset-names:
-> +    items:
-> +      - const: vic
-> +
-> +  power-domains:
-> +    maxItems: 1
-> +
-> +  iommus:
-> +    maxItems: 1
-> +
-> +  interconnects:
-> +    description: Description of the interconnect paths for the VIC;
-> +      see ../interconnect/interconnect.txt for details.
-> +    items:
-> +      - description: memory read client for VIC
-> +      - description: memory write client for VIC
-> +
-> +  interconnect-names:
-> +    items:
-> +      - const: dma-mem # read
-> +      - const: write
-> +
-> +  dma-coherent: true
-> +
-> +additionalProperties: false
-> diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra186-dc.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra186-dc.yaml
-> new file mode 100644
-> index 000000000000..265a60d79d89
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra186-dc.yaml
-> @@ -0,0 +1,85 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/display/tegra/nvidia,tegra186-dc.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: NVIDIA Tegra186 (and later) Display Controller
-> +
-> +maintainers:
-> +  - Thierry Reding <thierry.reding@gmail.com>
-> +  - Jon Hunter <jonathanh@nvidia.com>
-> +
-> +properties:
-> +  $nodename:
-> +    pattern: "^display@[0-9a-f]+$"
-> +
-> +  compatible:
-> +    enum:
-> +      - nvidia,tegra186-dc
-> +      - nvidia,tegra194-dc
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    items:
-> +      - description: display controller pixel clock
-> +
-> +  clock-names:
-> +    items:
-> +      - const: dc
-> +
-> +  resets:
-> +    items:
-> +      - description: display controller reset
-> +
-> +  reset-names:
-> +    items:
-> +      - const: dc
-> +
-> +  power-domains:
-> +    maxItems: 1
-> +
-> +  iommus:
-> +    maxItems: 1
-> +
-> +  interconnects:
-> +    description: Description of the interconnect paths for the
-> +      display controller; see ../interconnect/interconnect.txt
-> +      for details.
-> +
-> +  interconnect-names:
-> +    items:
-> +      - const: dma-mem # read-0
-> +      - const: read-1
-> +
-> +  nvidia,outputs:
-> +    description: A list of phandles of outputs that this display
-> +      controller can drive.
-> +    $ref: "/schemas/types.yaml#/definitions/phandle-array"
-> +
-> +  nvidia,head:
-> +    description: The number of the display controller head. This
-> +      is used to setup the various types of output to receive
-> +      video data from the given head.
-> +    $ref: "/schemas/types.yaml#/definitions/uint32"
-> +
-> +additionalProperties: false
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - clocks
-> +  - clock-names
-> +  - resets
-> +  - reset-names
-> +  - power-domains
-> +  - nvidia,outputs
-> +  - nvidia,head
-> +
-> +# see nvidia,tegra186-display.yaml for examples
-> diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra186-display.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra186-display.yaml
-> new file mode 100644
-> index 000000000000..8c0231345529
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra186-display.yaml
-> @@ -0,0 +1,310 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/display/tegra/nvidia,tegra186-display.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: NVIDIA Tegra186 (and later) Display Hub
-> +
-> +maintainers:
-> +  - Thierry Reding <thierry.reding@gmail.com>
-> +  - Jon Hunter <jonathanh@nvidia.com>
-> +
-> +properties:
-> +  $nodename:
-> +    pattern: "^display-hub@[0-9a-f]+$"
-> +
-> +  compatible:
-> +    enum:
-> +      - nvidia,tegra186-display
-> +      - nvidia,tegra194-display
-> +
-> +  '#address-cells':
-> +    const: 1
-> +
-> +  '#size-cells':
-> +    const: 1
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    minItems: 2
-> +    maxItems: 3
-> +
-> +  clock-names:
-> +    minItems: 2
-> +    maxItems: 3
-> +
-> +  resets:
-> +    items:
-> +      - description: display hub reset
-> +      - description: window group 0 reset
-> +      - description: window group 1 reset
-> +      - description: window group 2 reset
-> +      - description: window group 3 reset
-> +      - description: window group 4 reset
-> +      - description: window group 5 reset
-> +
-> +  reset-names:
-> +    items:
-> +      - const: misc
-> +      - const: wgrp0
-> +      - const: wgrp1
-> +      - const: wgrp2
-> +      - const: wgrp3
-> +      - const: wgrp4
-> +      - const: wgrp5
-> +
-> +  power-domains:
-> +    maxItems: 1
-> +
-> +  ranges:
-> +    maxItems: 1
-> +
-> +patternProperties:
-> +  "^display@[0-9a-f]+$":
-> +    type: object
-> +
-> +allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: nvidia,tegra186-display
-> +    then:
-> +      properties:
-> +        clocks:
-> +          items:
-> +            - description: display core clock
-> +            - description: display stream compression clock
-> +            - description: display hub clock
-> +
-> +        clock-names:
-> +          items:
-> +            - const: disp
-> +            - const: dsc
-> +            - const: hub
-> +    else:
-> +      properties:
-> +        clocks:
-> +          items:
-> +            - description: display core clock
-> +            - description: display hub clock
-> +
-> +        clock-names:
-> +          items:
-> +            - const: disp
-> +            - const: hub
-> +
-> +additionalProperties: false
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - clock-names
-> +  - resets
-> +  - reset-names
-> +  - power-domains
-> +  - "#address-cells"
-> +  - "#size-cells"
-> +  - ranges
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/tegra186-clock.h>
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    #include <dt-bindings/memory/tegra186-mc.h>
-> +    #include <dt-bindings/power/tegra186-powergate.h>
-> +    #include <dt-bindings/reset/tegra186-reset.h>
-> +
-> +    display-hub@15200000 {
-> +        compatible = "nvidia,tegra186-display";
-> +        reg = <0x15200000 0x00040000>;
-> +        resets = <&bpmp TEGRA186_RESET_NVDISPLAY0_MISC>,
-> +                 <&bpmp TEGRA186_RESET_NVDISPLAY0_WGRP0>,
-> +                 <&bpmp TEGRA186_RESET_NVDISPLAY0_WGRP1>,
-> +                 <&bpmp TEGRA186_RESET_NVDISPLAY0_WGRP2>,
-> +                 <&bpmp TEGRA186_RESET_NVDISPLAY0_WGRP3>,
-> +                 <&bpmp TEGRA186_RESET_NVDISPLAY0_WGRP4>,
-> +                 <&bpmp TEGRA186_RESET_NVDISPLAY0_WGRP5>;
-> +        reset-names = "misc", "wgrp0", "wgrp1", "wgrp2",
-> +                      "wgrp3", "wgrp4", "wgrp5";
-> +        clocks = <&bpmp TEGRA186_CLK_NVDISPLAY_DISP>,
-> +                 <&bpmp TEGRA186_CLK_NVDISPLAY_DSC>,
-> +                 <&bpmp TEGRA186_CLK_NVDISPLAYHUB>;
-> +        clock-names = "disp", "dsc", "hub";
-> +        status = "disabled";
-> +
-> +        power-domains = <&bpmp TEGRA186_POWER_DOMAIN_DISP>;
-> +
-> +        #address-cells = <1>;
-> +        #size-cells = <1>;
-> +
-> +        ranges = <0x15200000 0x15200000 0x40000>;
-> +
-> +        display@15200000 {
-> +            compatible = "nvidia,tegra186-dc";
-> +            reg = <0x15200000 0x10000>;
-> +            interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
-> +            clocks = <&bpmp TEGRA186_CLK_NVDISPLAY_P0>;
-> +            clock-names = "dc";
-> +            resets = <&bpmp TEGRA186_RESET_NVDISPLAY0_HEAD0>;
-> +            reset-names = "dc";
-> +
-> +            power-domains = <&bpmp TEGRA186_POWER_DOMAIN_DISP>;
-> +            interconnects = <&mc TEGRA186_MEMORY_CLIENT_NVDISPLAYR &emc>,
-> +                            <&mc TEGRA186_MEMORY_CLIENT_NVDISPLAYR1 &emc>;
-> +            interconnect-names = "dma-mem", "read-1";
-> +            iommus = <&smmu TEGRA186_SID_NVDISPLAY>;
-> +
-> +            nvidia,outputs = <&dsia &dsib &sor0 &sor1>;
-> +            nvidia,head = <0>;
-> +        };
-> +
-> +        display@15210000 {
-> +            compatible = "nvidia,tegra186-dc";
-> +            reg = <0x15210000 0x10000>;
-> +            interrupts = <GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>;
-> +            clocks = <&bpmp TEGRA186_CLK_NVDISPLAY_P1>;
-> +            clock-names = "dc";
-> +            resets = <&bpmp TEGRA186_RESET_NVDISPLAY0_HEAD1>;
-> +            reset-names = "dc";
-> +
-> +            power-domains = <&bpmp TEGRA186_POWER_DOMAIN_DISPB>;
-> +            interconnects = <&mc TEGRA186_MEMORY_CLIENT_NVDISPLAYR &emc>,
-> +                            <&mc TEGRA186_MEMORY_CLIENT_NVDISPLAYR1 &emc>;
-> +            interconnect-names = "dma-mem", "read-1";
-> +            iommus = <&smmu TEGRA186_SID_NVDISPLAY>;
-> +
-> +            nvidia,outputs = <&dsia &dsib &sor0 &sor1>;
-> +            nvidia,head = <1>;
-> +        };
-> +
-> +        display@15220000 {
-> +            compatible = "nvidia,tegra186-dc";
-> +            reg = <0x15220000 0x10000>;
-> +            interrupts = <GIC_SPI 155 IRQ_TYPE_LEVEL_HIGH>;
-> +            clocks = <&bpmp TEGRA186_CLK_NVDISPLAY_P2>;
-> +            clock-names = "dc";
-> +            resets = <&bpmp TEGRA186_RESET_NVDISPLAY0_HEAD2>;
-> +            reset-names = "dc";
-> +
-> +            power-domains = <&bpmp TEGRA186_POWER_DOMAIN_DISPC>;
-> +            interconnects = <&mc TEGRA186_MEMORY_CLIENT_NVDISPLAYR &emc>,
-> +                            <&mc TEGRA186_MEMORY_CLIENT_NVDISPLAYR1 &emc>;
-> +            interconnect-names = "dma-mem", "read-1";
-> +            iommus = <&smmu TEGRA186_SID_NVDISPLAY>;
-> +
-> +            nvidia,outputs = <&sor0 &sor1>;
-> +            nvidia,head = <2>;
-> +        };
-> +    };
-> +
-> +  - |
-> +    #include <dt-bindings/clock/tegra194-clock.h>
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    #include <dt-bindings/memory/tegra194-mc.h>
-> +    #include <dt-bindings/power/tegra194-powergate.h>
-> +    #include <dt-bindings/reset/tegra194-reset.h>
-> +
-> +    display-hub@15200000 {
-> +        compatible = "nvidia,tegra194-display";
-> +        reg = <0x15200000 0x00040000>;
-> +        resets = <&bpmp TEGRA194_RESET_NVDISPLAY0_MISC>,
-> +                 <&bpmp TEGRA194_RESET_NVDISPLAY0_WGRP0>,
-> +                 <&bpmp TEGRA194_RESET_NVDISPLAY0_WGRP1>,
-> +                 <&bpmp TEGRA194_RESET_NVDISPLAY0_WGRP2>,
-> +                 <&bpmp TEGRA194_RESET_NVDISPLAY0_WGRP3>,
-> +                 <&bpmp TEGRA194_RESET_NVDISPLAY0_WGRP4>,
-> +                 <&bpmp TEGRA194_RESET_NVDISPLAY0_WGRP5>;
-> +        reset-names = "misc", "wgrp0", "wgrp1", "wgrp2",
-> +                      "wgrp3", "wgrp4", "wgrp5";
-> +        clocks = <&bpmp TEGRA194_CLK_NVDISPLAY_DISP>,
-> +                 <&bpmp TEGRA194_CLK_NVDISPLAYHUB>;
-> +        clock-names = "disp", "hub";
-> +        status = "disabled";
-> +
-> +        power-domains = <&bpmp TEGRA194_POWER_DOMAIN_DISP>;
-> +
-> +        #address-cells = <1>;
-> +        #size-cells = <1>;
-> +
-> +        ranges = <0x15200000 0x15200000 0x40000>;
-> +
-> +        display@15200000 {
-> +            compatible = "nvidia,tegra194-dc";
-> +            reg = <0x15200000 0x10000>;
-> +            interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
-> +            clocks = <&bpmp TEGRA194_CLK_NVDISPLAY_P0>;
-> +            clock-names = "dc";
-> +            resets = <&bpmp TEGRA194_RESET_NVDISPLAY0_HEAD0>;
-> +            reset-names = "dc";
-> +
-> +            power-domains = <&bpmp TEGRA194_POWER_DOMAIN_DISP>;
-> +            interconnects = <&mc TEGRA194_MEMORY_CLIENT_NVDISPLAYR &emc>,
-> +                            <&mc TEGRA194_MEMORY_CLIENT_NVDISPLAYR1 &emc>;
-> +            interconnect-names = "dma-mem", "read-1";
-> +
-> +            nvidia,outputs = <&sor0 &sor1 &sor2 &sor3>;
-> +            nvidia,head = <0>;
-> +        };
-> +
-> +        display@15210000 {
-> +            compatible = "nvidia,tegra194-dc";
-> +            reg = <0x15210000 0x10000>;
-> +            interrupts = <GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>;
-> +            clocks = <&bpmp TEGRA194_CLK_NVDISPLAY_P1>;
-> +            clock-names = "dc";
-> +            resets = <&bpmp TEGRA194_RESET_NVDISPLAY0_HEAD1>;
-> +            reset-names = "dc";
-> +
-> +            power-domains = <&bpmp TEGRA194_POWER_DOMAIN_DISPB>;
-> +            interconnects = <&mc TEGRA194_MEMORY_CLIENT_NVDISPLAYR &emc>,
-> +                            <&mc TEGRA194_MEMORY_CLIENT_NVDISPLAYR1 &emc>;
-> +            interconnect-names = "dma-mem", "read-1";
-> +
-> +            nvidia,outputs = <&sor0 &sor1 &sor2 &sor3>;
-> +            nvidia,head = <1>;
-> +        };
-> +
-> +        display@15220000 {
-> +            compatible = "nvidia,tegra194-dc";
-> +            reg = <0x15220000 0x10000>;
-> +            interrupts = <GIC_SPI 155 IRQ_TYPE_LEVEL_HIGH>;
-> +            clocks = <&bpmp TEGRA194_CLK_NVDISPLAY_P2>;
-> +            clock-names = "dc";
-> +            resets = <&bpmp TEGRA194_RESET_NVDISPLAY0_HEAD2>;
-> +            reset-names = "dc";
-> +
-> +            power-domains = <&bpmp TEGRA194_POWER_DOMAIN_DISPC>;
-> +            interconnects = <&mc TEGRA194_MEMORY_CLIENT_NVDISPLAYR &emc>,
-> +                            <&mc TEGRA194_MEMORY_CLIENT_NVDISPLAYR1 &emc>;
-> +            interconnect-names = "dma-mem", "read-1";
-> +
-> +            nvidia,outputs = <&sor0 &sor1 &sor2 &sor3>;
-> +            nvidia,head = <2>;
-> +        };
-> +
-> +        display@15230000 {
-> +            compatible = "nvidia,tegra194-dc";
-> +            reg = <0x15230000 0x10000>;
-> +            interrupts = <GIC_SPI 242 IRQ_TYPE_LEVEL_HIGH>;
-> +            clocks = <&bpmp TEGRA194_CLK_NVDISPLAY_P3>;
-> +            clock-names = "dc";
-> +            resets = <&bpmp TEGRA194_RESET_NVDISPLAY0_HEAD3>;
-> +            reset-names = "dc";
-> +
-> +            power-domains = <&bpmp TEGRA194_POWER_DOMAIN_DISPC>;
-> +            interconnects = <&mc TEGRA194_MEMORY_CLIENT_NVDISPLAYR &emc>,
-> +                            <&mc TEGRA194_MEMORY_CLIENT_NVDISPLAYR1 &emc>;
-> +            interconnect-names = "dma-mem", "read-1";
-> +
-> +            nvidia,outputs = <&sor0 &sor1 &sor2 &sor3>;
-> +            nvidia,head = <3>;
-> +        };
-> +    };
-> diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra186-dsi-padctl.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra186-dsi-padctl.yaml
-> new file mode 100644
-> index 000000000000..4a12710e2a2f
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra186-dsi-padctl.yaml
-> @@ -0,0 +1,46 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/display/tegra/nvidia,tegra186-dsi-padctl.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: NVIDIA Tegra MIPI DSI pad controller
-> +
-> +maintainers:
-> +  - Thierry Reding <thierry.reding@gmail.com>
-> +  - Jon Hunter <jonathanh@nvidia.com>
-> +
-> +properties:
-> +  $nodename:
-> +    pattern: "^padctl@[0-9a-f]+$"
-> +
-> +  compatible:
-> +    const: nvidia,tegra186-dsi-padctl
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  resets:
-> +    items:
-> +      - description: module reset
-> +
-> +  reset-names:
-> +    items:
-> +      - const: dsi
-> +
-> +allOf:
-> +  - $ref: "/schemas/reset/reset.yaml"
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/reset/tegra186-reset.h>
-> +
-> +    padctl@15880000 {
-> +        compatible = "nvidia,tegra186-dsi-padctl";
-> +        reg = <0x15880000 0x10000>;
-> +        resets = <&bpmp TEGRA186_RESET_DSI>;
-> +        reset-names = "dsi";
-> +    };
-> +
-> diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-dc.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-dc.yaml
-> new file mode 100644
-> index 000000000000..eeffb8d7c597
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-dc.yaml
-> @@ -0,0 +1,174 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/display/tegra/nvidia,tegra20-dc.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: NVIDIA Tegra Display Controller
-> +
-> +maintainers:
-> +  - Thierry Reding <thierry.reding@gmail.com>
-> +  - Jon Hunter <jonathanh@nvidia.com>
-> +
-> +properties:
-> +  $nodename:
-> +    pattern: "^dc@[0-9a-f]+$"
-> +
-> +  compatible:
-> +    oneOf:
-> +      - enum:
-> +          - nvidia,tegra20-dc
-> +          - nvidia,tegra30-dc
-> +          - nvidia,tegra114-dc
-> +          - nvidia,tegra124-dc
-> +          - nvidia,tegra210-dc
-> +
-> +      - items:
-> +          - const: nvidia,tegra124-dc
-> +          - const: nvidia,tegra132-dc
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    minItems: 1
-> +    items:
-> +      - description: display controller pixel clock
-> +      - description: parent clock # optional
-> +
-> +  clock-names:
-> +    minItems: 1
-> +    items:
-> +      - const: dc
-> +      - const: parent # optional
-> +
-> +  resets:
-> +    items:
-> +      - description: module reset
-> +
-> +  reset-names:
-> +    items:
-> +      - const: dc
-> +
-> +  interconnect-names: true
-> +  interconnects: true
-> +
-> +  iommus:
-> +    maxItems: 1
-> +
-> +  nvidia,head:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description: The number of the display controller head. This is used to setup the various
-> +      types of output to receive video data from the given head.
-> +
-> +  nvidia,outputs:
-> +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> +    description: A list of phandles of outputs that this display controller can drive.
-> +
-> +  rgb:
-> +    type: object
-> +
-> +allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - nvidia,tegra20-dc
-> +              - nvidia,tegra30-dc
-> +              - nvidia,tegra114-dc
-> +    then:
-> +      properties:
-> +        interconnects:
-> +          items:
-> +            - description: window A memory client
-> +            - description: window B memory client
-> +            - description: window B memory client (vertical filter)
-> +            - description: window C memory client
-> +            - description: cursor memory client
-> +
-> +        interconnect-names:
-> +          items:
-> +            - const: wina
-> +            - const: winb
-> +            - const: winb-vfilter
-> +            - const: winc
-> +            - const: cursor
-> +
-> +        rgb:
-> +          description: Each display controller node has a child node, named "rgb", that represents
-> +            the RGB output associated with the controller.
-> +          type: object
-> +          properties:
-> +            nvidia,ddc-i2c-bus:
-> +              $ref: /schemas/types.yaml#/definitions/phandle
-> +              description: phandle of an I2C controller used for DDC EDID probing
-> +
-> +            nvidia,hpd-gpio:
-> +              description: specifies a GPIO used for hotplug detection
-> +              maxItems: 1
-> +
-> +            nvidia,edid:
-> +              $ref: /schemas/types.yaml#/definitions/uint8-array
-> +              description: supplies a binary EDID blob
-> +
-> +            nvidia,panel:
-> +              $ref: /schemas/types.yaml#/definitions/phandle
-> +              description: phandle of a display panel
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - nvidia,tegra124-dc
-> +    then:
-> +      properties:
-> +        interconnects:
-> +          minItems: 4
-> +          items:
-> +            - description: window A memory client
-> +            - description: window B memory client
-> +            - description: window C memory client
-> +            - description: cursor memory client
-> +            - description: window D memory client
-> +            - description: window T memory client
-> +
-> +        interconnect-names:
-> +          minItems: 4
-> +          items:
-> +            - const: wina
-> +            - const: winb
-> +            - const: winc
-> +            - const: cursor
-> +            - const: wind
-> +            - const: wint
-> +
-> +additionalProperties: false
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - clocks
-> +  - clock-names
-> +  - resets
-> +  - reset-names
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/tegra20-car.h>
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +
-> +    dc@54200000 {
-> +        compatible = "nvidia,tegra20-dc";
-> +        reg = <0x54200000 0x00040000>;
-> +        interrupts = <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
-> +        clocks = <&tegra_car TEGRA20_CLK_DISP1>;
-> +        clock-names = "dc";
-> +        resets = <&tegra_car 27>;
-> +        reset-names = "dc";
-> +    };
-> diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-dsi.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-dsi.yaml
-> new file mode 100644
-> index 000000000000..abab8783db1b
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-dsi.yaml
-> @@ -0,0 +1,174 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/display/tegra/nvidia,tegra20-dsi.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: NVIDIA Tegra Display Serial Interface
-> +
-> +maintainers:
-> +  - Thierry Reding <thierry.reding@gmail.com>
-> +  - Jon Hunter <jonathanh@nvidia.com>
-> +
-
-Reference dsi-controller.yaml
-
-> +properties:
-> +  $nodename:
-> +    pattern: "^dsi@[0-9a-f]+$"
-
-and drop this.
-
-> +
-> +  compatible:
-> +    oneOf:
-> +      - enum:
-> +          - nvidia,tegra20-dsi
-> +          - nvidia,tegra30-dsi
-> +          - nvidia,tegra114-dsi
-> +          - nvidia,tegra124-dsi
-> +          - nvidia,tegra210-dsi
-> +          - nvidia,tegra186-dsi
-> +
-> +      - items:
-> +          - const: nvidia,tegra132-dsi
-> +          - const: nvidia,tegra124-dsi
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    minItems: 2
-> +    maxItems: 3
-> +
-> +  clock-names:
-> +    minItems: 2
-> +    maxItems: 3
-> +
-> +  resets:
-> +    items:
-> +      - description: module reset
-> +
-> +  reset-names:
-> +    items:
-> +      - const: dsi
-> +
-> +  power-domains:
-> +    maxItems: 1
-> +
-
-> +  '#address-cells':
-> +    const: 1
-> +
-> +  '#size-cells':
-> +    const: 0
-
-and these.
-
-> +
-> +  avdd-dsi-csi-supply:
-> +    description: phandle of a supply that powers the DSI controller
-> +
-> +  nvidia,mipi-calibrate:
-> +    description: Should contain a phandle and a specifier specifying
-> +      which pads are used by this DSI output and need to be
-> +      calibrated. See nvidia,tegra114-mipi.yaml for details.
-> +    $ref: "/schemas/types.yaml#/definitions/phandle-array"
-> +
-> +  nvidia,ddc-i2c-bus:
-> +    description: phandle of an I2C controller used for DDC EDID
-> +      probing
-> +    $ref: "/schemas/types.yaml#/definitions/phandle"
-> +
-> +  nvidia,hpd-gpio:
-> +    description: specifies a GPIO used for hotplug detection
-> +    maxItems: 1
-> +
-> +  nvidia,edid:
-> +    description: supplies a binary EDID blob
-> +    $ref: "/schemas/types.yaml#/definitions/uint8-array"
-> +
-> +  nvidia,panel:
-> +    description: phandle of a display panel
-> +    $ref: "/schemas/types.yaml#/definitions/phandle"
-> +
-> +  nvidia,ganged-mode:
-> +    description: contains a phandle to a second DSI controller to
-> +      gang up with in order to support up to 8 data lanes
-> +    $ref: "/schemas/types.yaml#/definitions/phandle"
-> +
-
-> +patternProperties:
-> +  "^panel@[0-9]+$":
-> +    type: object
-> +    properties:
-> +      reg:
-> +        maxItems: 1
-> +
-> +    required:
-> +      - reg
-
-and this.
-
-> +
-> +allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - nvidia,tegra20-dsi
-> +              - nvidia,tegra30-dsi
-> +    then:
-> +      properties:
-> +        clocks:
-> +          items:
-> +            - description: DSI module clock
-> +            - description: input for the pixel clock
-> +
-> +        clock-names:
-> +          items:
-> +            - const: dsi
-> +            - const: parent
-> +    else:
-> +      properties:
-> +        clocks:
-> +          items:
-> +            - description: DSI module clock
-> +            - description: low-power module clock
-> +            - description: input for the pixel clock
-> +
-> +        clock-names:
-> +          items:
-> +            - const: dsi
-> +            - const: lp
-> +            - const: parent
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: nvidia,tegra186-dsi
-> +    then:
-> +      required:
-> +        - interrupts
-> +
-> +additionalProperties: false
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - clock-names
-> +  - resets
-> +  - reset-names
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/tegra186-clock.h>
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    #include <dt-bindings/power/tegra186-powergate.h>
-> +    #include <dt-bindings/reset/tegra186-reset.h>
-> +
-> +    dsi@15300000 {
-> +        compatible = "nvidia,tegra186-dsi";
-> +        reg = <0x15300000 0x10000>;
-> +        interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
-> +        clocks = <&bpmp TEGRA186_CLK_DSI>,
-> +                 <&bpmp TEGRA186_CLK_DSIA_LP>,
-> +                 <&bpmp TEGRA186_CLK_PLLD>;
-> +        clock-names = "dsi", "lp", "parent";
-> +        resets = <&bpmp TEGRA186_RESET_DSI>;
-> +        reset-names = "dsi";
-> +
-> +        power-domains = <&bpmp TEGRA186_POWER_DOMAIN_DISP>;
-> +    };
