@@ -2,141 +2,143 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46873C433EF
-	for <linux-tegra@archiver.kernel.org>; Wed, 15 Dec 2021 11:12:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B939C433F5
+	for <linux-tegra@archiver.kernel.org>; Wed, 15 Dec 2021 13:14:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242028AbhLOLM2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 15 Dec 2021 06:12:28 -0500
-Received: from smtp-out2.suse.de ([195.135.220.29]:43844 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242014AbhLOLM1 (ORCPT
+        id S242778AbhLONOq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 15 Dec 2021 08:14:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33064 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237406AbhLONOq (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 15 Dec 2021 06:12:27 -0500
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 781621F386;
-        Wed, 15 Dec 2021 11:12:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1639566745; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=bbZO9ysX0uCXDwHVS9hyNW+8Tmt8urhUpLdw4FhMSJo=;
-        b=oNJG8RBc74gmNQz5uRboqK6lUIhA06/mxUa2Duh/gl20ysqe5sJUGlxcvrGIwB6ZO1T+KU
-        gX1MP1dbJqlP2qOFSd8OQgLc9CU6gUHs1m38Zr9z4Mmg7YUl1KT7xT5J1C1UDYIwlXnX6H
-        7GQovU16qxEsG3gUoRaivjzqigH7tYA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1639566745;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=bbZO9ysX0uCXDwHVS9hyNW+8Tmt8urhUpLdw4FhMSJo=;
-        b=Y1Mo6E1ktA8KRGhl+YTwmRerTL82XXMxi4+7bNo6g0g0xLYAUYeJ/ni9/0yojIaHNsKhXp
-        o12D5DrpR5WaVrAw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 362551330B;
-        Wed, 15 Dec 2021 11:12:25 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id CD0oDJnNuWGsCQAAMHmgww
-        (envelope-from <tzimmermann@suse.de>); Wed, 15 Dec 2021 11:12:25 +0000
-Message-ID: <2165cfb8-c9c6-1aca-b492-587a8e07eb9f@suse.de>
-Date:   Wed, 15 Dec 2021 12:12:24 +0100
+        Wed, 15 Dec 2021 08:14:46 -0500
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D09D8C061574;
+        Wed, 15 Dec 2021 05:14:45 -0800 (PST)
+Received: by mail-wr1-x429.google.com with SMTP id c4so38118882wrd.9;
+        Wed, 15 Dec 2021 05:14:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=DtC00k5MoJtHy7c+VzfuwnEjrtBRQAfi/4tLwKgqaW0=;
+        b=VZ4y91FcJaDU4ZleLAHlSLyXrFp6sNyvA95gVonN0nEw+nJVgibfwDrEQu5OZh17eR
+         q3zZaaMlewkKM3NfWbtdeUTJBuCnmOAD+gcAyk2+7BBy0VH+NhgMCAVe+Qv1CYI0cJZu
+         AaJPJ8FUxRRMT2BYrUeJLFb8TMgk7MEvRj+pEfiUvsMgyA7hNsLBDnTY+oIvLC0sU+xJ
+         B6mAUP3QeI+FjNKgtTMeeVbRZWBArTdf/hAZBbepS/BxFIWub4BurjkmJyWbNiGkckAq
+         cbM2SaoJSdcK7O7sWg+SazJpGyhcPJMe01g4GvaSPpLEssVjDQL49cMgtnE5F4CYxQG1
+         9fsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=DtC00k5MoJtHy7c+VzfuwnEjrtBRQAfi/4tLwKgqaW0=;
+        b=E2uSJI4QeRJIY8vPE+ATGuWwfmN50z7eXdPGyGOJ+TJ7euxmlMnNrzMh1reWX/V3E0
+         LKL3fHIlc0fQwUZZ4TBs85Q5BGYAB/amueTPlRD3MKpg5IOgeskK9e1ETb1eIaeTDGTa
+         fe/lm5i5utOvhxlqb5kEnDltZ6TuM2ph7DADvIiY6GC7DsYopI9uDNF5XOG0+mpeKJYV
+         kFcb5ZwZZ+QQHytakumdiMERitlS/GNLhn2cUeYuF6eKmepG6uCGRQg1I1so13vWEr0s
+         z6z9s4Ltgz6E5fGDODuHtCSVJCu7Br8NDEyVIkGInkrtz9GDSOv+KkRV22UKIo5QljxO
+         Hqhw==
+X-Gm-Message-State: AOAM531b3PK96GTnE7oZ/Q9ItZqt8wa3cJ1jt2py+AX1/TIRCqc9txwH
+        i9sWCX8d1sBtgUYn5pr+Sy4=
+X-Google-Smtp-Source: ABdhPJymhOm8azyKTgsfcLqcFUGnGZDkvsCXnEHC8aGHsl3rQH8JIkSAX7BLLq0HVQDmqT/Sz9fKuw==
+X-Received: by 2002:adf:f049:: with SMTP id t9mr2987749wro.40.1639574084359;
+        Wed, 15 Dec 2021 05:14:44 -0800 (PST)
+Received: from orome ([193.209.96.43])
+        by smtp.gmail.com with ESMTPSA id c187sm3424177wme.33.2021.12.15.05.14.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Dec 2021 05:14:43 -0800 (PST)
+Date:   Wed, 15 Dec 2021 14:14:39 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
+        David Heidelberg <david@ixit.cz>,
+        Svyatoslav Ryhel <clamor95@gmail.com>,
+        Anton Bambura <jenneron@protonmail.com>,
+        Antoni Aloy Torrens <aaloytorrens@gmail.com>,
+        Nikola Milosavljevic <mnidza@outlook.com>,
+        Ion Agorria <ion@agorria.com>,
+        =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        Ihor Didenko <tailormoon@rambler.ru>,
+        Andreas Westman Dorcsak <hedmoo@yahoo.com>,
+        Maxim Schwalm <maxim.schwalm@gmail.com>,
+        Raffaele Tranquillini <raffaele.tranquillini@gmail.com>,
+        Jasper Korten <jja2000@gmail.com>,
+        Thomas Graichen <thomas.graichen@gmail.com>,
+        Stefan Eichenberger <stefan.eichenberger@toradex.com>,
+        Stefan Agner <stefan@agner.ch>,
+        Peter Geis <pgwipeout@gmail.com>, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 15/28] ARM: tegra: Add usb-role-switch property to USB
+ OTG ports
+Message-ID: <YbnqP0XAcUYc4ePy@orome>
+References: <20211211211412.10791-1-digetx@gmail.com>
+ <20211211211412.10791-16-digetx@gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.2
-Subject: Re: [PATCH v2 3/5] drm/dp: Move DisplayPort helpers into separate
- helper module
-Content-Language: en-US
-To:     Jani Nikula <jani.nikula@linux.intel.com>, mripard@kernel.org,
-        maarten.lankhorst@linux.intel.com, airlied@linux.ie,
-        daniel@ffwll.ch
-Cc:     linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org,
-        linux-rockchip@lists.infradead.org, nouveau@lists.freedesktop.org,
-        linux-tegra@vger.kernel.org, freedreno@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org
-References: <20211215104318.18866-1-tzimmermann@suse.de>
- <20211215104318.18866-4-tzimmermann@suse.de> <87pmpy3za7.fsf@intel.com>
-From:   Thomas Zimmermann <tzimmermann@suse.de>
-In-Reply-To: <87pmpy3za7.fsf@intel.com>
 Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------NjiJBJidkxdywBFmRsUVvTBz"
+        protocol="application/pgp-signature"; boundary="jZPZDpo3CQ/tiVnX"
+Content-Disposition: inline
+In-Reply-To: <20211211211412.10791-16-digetx@gmail.com>
+User-Agent: Mutt/2.1.3 (987dde4c) (2021-09-10)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------NjiJBJidkxdywBFmRsUVvTBz
-Content-Type: multipart/mixed; boundary="------------CjvT8PR4kFFI3de8QxPISLnx";
- protected-headers="v1"
-From: Thomas Zimmermann <tzimmermann@suse.de>
-To: Jani Nikula <jani.nikula@linux.intel.com>, mripard@kernel.org,
- maarten.lankhorst@linux.intel.com, airlied@linux.ie, daniel@ffwll.ch
-Cc: linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, linux-rockchip@lists.infradead.org,
- nouveau@lists.freedesktop.org, linux-tegra@vger.kernel.org,
- freedreno@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org
-Message-ID: <2165cfb8-c9c6-1aca-b492-587a8e07eb9f@suse.de>
-Subject: Re: [PATCH v2 3/5] drm/dp: Move DisplayPort helpers into separate
- helper module
-References: <20211215104318.18866-1-tzimmermann@suse.de>
- <20211215104318.18866-4-tzimmermann@suse.de> <87pmpy3za7.fsf@intel.com>
-In-Reply-To: <87pmpy3za7.fsf@intel.com>
 
---------------CjvT8PR4kFFI3de8QxPISLnx
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+--jZPZDpo3CQ/tiVnX
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-SGkNCg0KQW0gMTUuMTIuMjEgdW0gMTI6MDQgc2NocmllYiBKYW5pIE5pa3VsYToNCj4gT24g
-V2VkLCAxNSBEZWMgMjAyMSwgVGhvbWFzIFppbW1lcm1hbm4gPHR6aW1tZXJtYW5uQHN1c2Uu
-ZGU+IHdyb3RlOg0KPj4gCSogbW92ZSBEUCBoZWxwZXIgY29kZSBpbnRvIGRwLyAoSmFuaSkN
-Cj4gDQo+IEkgc3VnZ2VzdGVkIGFkZGluZyB0aGUgc3ViZGlyZWN0b3J5LCBidXQgSSdtIGdv
-aW5nIHRvIGJpa2VzaGVkIHRoZSBuYW1lLA0KPiB3aGljaCBJIGRpZG4ndCBzdWdnZXN0Lg0K
-PiANCj4gJCBmaW5kIGRyaXZlcnMvZ3B1L2RybSAtbWluZGVwdGggMSAtbWF4ZGVwdGggMSAt
-dHlwZSBkIHwgd2MgLWwNCj4gNjgNCj4gDQo+IEFzc3VtaW5nIHdlIG1vdmUgbW9yZSBvZiB0
-aGUgZHJtIG1vZHVsZXMgdG8gc3ViZGlyZWN0b3JpZXMsIGhvdyBhcmUgdGhleQ0KPiBnb2lu
-ZyB0byBzdGFuZCBvdXQgZnJvbSBkcml2ZXJzPw0KPiANCj4gSSBzdWdnZXN0ZWQgZHJtX2Rw
-LCB3aGljaCBJIHVuZGVyc3RhbmQgcmVzdWx0cyBpbiB0YXV0b2xvZ3ksIGJ1dCBoZXksDQo+
-IGFsbCB0aGUgZmlsZW5hbWVzIHVuZGVyIGRybS8gYWxzbyBoYXZlIGRybV8qLltjaF0uIEFu
-ZCBJIGZpbmQgdGhhdCB2ZXJ5DQo+IHVzZWZ1bCBmb3IgZ2l0IGdyZXBzIGFuZCBvdGhlciBj
-b2RlIGFyY2hlb2xvZ3kuIFdpdGgganVzdCB0aGUgZHAgbmFtZSwNCj4geW91J2QgaGF2ZSB0
-byBrbm93IGFuZCBsaXN0IGFsbCB0aGUgZHJtIHN1YmRpcmVjdG9yaWVzIHdoZW4gbG9va2lu
-ZyB1cA0KPiBzdHVmZiB0aGF0J3MgcGFydCBvZiBkcm0gYnV0IG5vdCBkcml2ZXJzLg0KDQpJ
-IHRoaW5rIHdlIGhhdmUgZW5vdWdoIGZpbGVuYW1lIHByZWZpeGVzIGFscmVhZHkuIGRybS9k
-cm1fZHAvZHJtX2RwXyBpcyANCmp1c3QgcmlkaWN1bG91cy4NCg0KQmVzdCByZWdhcmRzDQpU
-aG9tYXMNCg0KPiANCj4gDQo+IEJSLA0KPiBKYW5pLg0KPiANCj4gDQoNCi0tIA0KVGhvbWFz
-IFppbW1lcm1hbm4NCkdyYXBoaWNzIERyaXZlciBEZXZlbG9wZXINClNVU0UgU29mdHdhcmUg
-U29sdXRpb25zIEdlcm1hbnkgR21iSA0KTWF4ZmVsZHN0ci4gNSwgOTA0MDkgTsO8cm5iZXJn
-LCBHZXJtYW55DQooSFJCIDM2ODA5LCBBRyBOw7xybmJlcmcpDQpHZXNjaMOkZnRzZsO8aHJl
-cjogSXZvIFRvdGV2DQo=
+On Sun, Dec 12, 2021 at 12:13:59AM +0300, Dmitry Osipenko wrote:
+> From: Stefan Eichenberger <stefan.eichenberger@toradex.com>
+>=20
+> If an USB port is an OTG port, then we should add the usb-role-switch
+> property. Otherwise XUSB setup fails and therefore padctl is unable to
+> set up the ports. This leads to broken USB and PCIe ports. Add the
+> usb-role-switch properties to Tegra124 device-trees to fix the problem.
+>=20
+> The error message shown without this patch is e.g:
+> usb2-0: usb-role-switch not found for otg mode
+>=20
+> [digetx@gmail.com: improved commit message]
+> Tested-by: Thomas Graichen <thomas.graichen@gmail.com> # T124 Nyan Big
+> Signed-off-by: Stefan Eichenberger <stefan.eichenberger@toradex.com>
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi | 1 +
+>  arch/arm/boot/dts/tegra124-apalis.dtsi      | 1 +
+>  arch/arm/boot/dts/tegra124-nyan.dtsi        | 1 +
+>  arch/arm/boot/dts/tegra124-venice2.dts      | 2 +-
+>  4 files changed, 4 insertions(+), 1 deletion(-)
 
---------------CjvT8PR4kFFI3de8QxPISLnx--
+The device tree bindings for the XUSB pad controller say that when this
+property is set, then the "connector" subnode should also exist.
 
---------------NjiJBJidkxdywBFmRsUVvTBz
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature"
+Any chance we can add that? I was planning on making that a dependency
+in the json-schema conversion of the binding, in which case it would be
+more of a "must" than a "should".
+
+Thierry
+
+--jZPZDpo3CQ/tiVnX
+Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-wsF5BAABCAAjFiEExndm/fpuMUdwYFFolh/E3EQov+AFAmG5zZgFAwAAAAAACgkQlh/E3EQov+Bp
-ixAAwWs8icDnyBSxV2SFa3psBdVLmho2jWbzofKikPHRoIcQYX/gUZfJJkp5B/s4nOKVq/PfyKms
-cEHDVBGJxyKsjQHvRqDja4JA5RZD52fvYt3+mJM4eZK7cqZabIURhhWnKMKbQKChZQ2fWECJpBcF
-AHJ2n95F/Tz7N2NUxAtWspQZSfYgoIEpc4hfwMDNlSFHdfzjb/OzUHNyPo5Wj/xZhbTp9jCScVau
-Qd3wDAp3/94OEsk3SvmuDqlCO2N4NCVPHHOQ8ZxI9WUm7tIWqd8oZ2P3usRwWQrCzNP/24qENqV8
-3NKz7xFup4ZIGVqL3XlgtELUyDTc2d0KhB/KiQnoIm5G3ABGla6sHnO53NpCKvWDiWKiloZwWgfb
-m/c4v+tGONqUpvhEJYAwDIptWMNioWmfMTIcKQ5EI2TX+pEcCj40fPmykz2ms4RekdAXmYKo+TW0
-fHI1ihrdJTHma0XKP/if1b0iLpqy+6JJ1edAgoOyMG8tzDiLmKeJIAOoaQg0qTqXHc4qkFMOTT79
-uoJE08Ysab/cT4isNZDpsVxHEwiNvtc94sPLvU8HCcyBLsPpOkY1aiKbRV4WNxJx3llBtGNUL47I
-N35xD2LxHS7sH43a9o5hxQyiZlh0aWqIuQ1mIEIbmL7edw2cDOT1XXVyBvRZ8VXDio3GKHIiJcHi
-VAI=
-=vQBm
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmG56j0ACgkQ3SOs138+
+s6ED/BAAjJzAFGEDZMa0RP9mEQ8ZKPoBhLPoU6TYw8zUJbImsBK004ZjQf/8+RgQ
+cuy7PrKJVdVf3GbpKKyj6B+1POinwPCTOChix1LpM8hVr/Cbyo3u20CEDHHuTnDT
+7ubav66bl3W5XlLLrUMShqv4mvZU75XJweJSWfnJntM01K0ozYVFJP2m9w/m4kwt
+Mo4Gz/tA5Gha9GuupY3M1Nxue3uqRWBgnRoCrns6Ph6m6m/64qxIB0yP4+mnF3bl
+egP7VYEXSwOeEGYX3CBgu9C6bwMh4ikY/4TAIJ5qD79rUg8Gx5zhtP0mZU85kn/S
+opaDvw9cNzc80PsFLRuA3C9JzYOEi4GVca/b94iSPf7vI/2qqWZ6W6t9pmkCu0ub
+Pf0JsTvs7l6+PZil1lbPmFcbQ7B+dOXFLmn2+2htt+VCN0YjRHOeduBVAwVgNTVF
+GdbLQ/kLjD/zSKQ8mTXvoDiqgyEs4qa/zTEnLdiE6Mk7+vRKx3oKJb9ebjTgjDro
+c1xR+/EBKuzpdTdMMfkNu1JMIbKkp4HXt1Zq/jf1q1+MdJ7ijV128T+as0+wUb6k
+FUisvaWf0Winw30eBmbsbzWYstEDf9ofjTDGBuBXrlyuRtZunKe2+MszNa5aoJpg
+G5m0UbGwMrhoPaXuV+F7fY0A2BH+M3+yGLAKY/REavAemMn1JtM=
+=Q6N6
 -----END PGP SIGNATURE-----
 
---------------NjiJBJidkxdywBFmRsUVvTBz--
+--jZPZDpo3CQ/tiVnX--
