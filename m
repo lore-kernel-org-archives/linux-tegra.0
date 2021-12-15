@@ -2,135 +2,126 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17E45C433F5
-	for <linux-tegra@archiver.kernel.org>; Wed, 15 Dec 2021 20:01:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A63C6C433F5
+	for <linux-tegra@archiver.kernel.org>; Wed, 15 Dec 2021 20:01:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231842AbhLOUBC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 15 Dec 2021 15:01:02 -0500
-Received: from mail-bn8nam12on2085.outbound.protection.outlook.com ([40.107.237.85]:26646
-        "EHLO NAM12-BN8-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S229699AbhLOUBC (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 15 Dec 2021 15:01:02 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=XoEHgxj+Myt2pg27RJ3Axz0aARU4z4UYeMvUcmUQ/rjhuJImzHHkR4UsrB0phffMcjvgNJC/XQGrMUHTMKUMV3MExFF/vV+nZlFNQRm+Gf4FIC7UrYyWk4Xf7DxH7Yyh8kWc16ujGqQjaLgU54rmL3mcdT2UbtOG0HFHqwZtubQGgiZvUsYdyPlG1aqRlnvaMGNKGEPyiZnMRENbq13Z0PsQv99Qb9Ukb1a8pSxdCvRy1C4GkykuhThAhVh4ir0dKvMKRtLU/8c/QqazCfkSU7HA8qAKRuePysNo4PQovfcpWhCBgU0ejXeM+t2m0//yRuzIwE6yK0BFD3TpDua0gw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=d6HAPPerDuS3H/S3hxB4ArXy0GyrP/qmRaVrAz/r9Bs=;
- b=PpRLC0VX8StO5fZBkm62rLNc22hRWntty59fWJYPfWtu0mLUCqEJ1YQy6n1+siLdf7CHVtkoNBiiQAuRbvOuKTRx9fdkAwUaX7y7qzj8bwOU8oZrTsoNsFTNA2BD7cNEgK/kvyH2CmNIOLdbB4HouerkgcREEF/ePz2vOCoWZFPaM29kkX76esej7PMARscCnFuj7zvRoPIXEixNtxHI2wGMz72MdtxWXuv4CVPxeucFldgVmwgokhM/5PDAzicisQFZTGawvWraVO7dgyT7/xAKE6DK+BRSIu2n2rKHtC0WxHGrgFfkbRDFGtRcs3RxE8fo0eJltPPOMeVogrm3Vg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 203.18.50.14) smtp.rcpttodomain=linuxfoundation.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=d6HAPPerDuS3H/S3hxB4ArXy0GyrP/qmRaVrAz/r9Bs=;
- b=TIqMxdKniBjZRTu6CDdHgx91cOH8ZVok2ZxE87GMsF0TIFe32ujV/mrcqazfFEGS5cfswFszYWF3TfMKPoRyijreWtqHBwNTcyMputNGEeINhYTQC8q1rHOHmeXvgQ3I3IJoVXrwuRbBup0RULLRQmKBr8MimFgjnUVhu5FUnBu/lzTGBN98OnGz64YwcHrrL1IarpBqKtqyqZpHJ3NRazaG4rf4G63qddC1VEMVkfs03eGGuOPoAh2cr3NTPEpxydoE547BDAykJR4TrHAMvd5ziGBRh5X5NCP7RxG4d9Sc63gHrorEEqRy134G0WOHFF2OrIBGIYx1oddUl1u7rA==
-Received: from BN6PR1701CA0011.namprd17.prod.outlook.com
- (2603:10b6:405:15::21) by DM6PR12MB3419.namprd12.prod.outlook.com
- (2603:10b6:5:3c::32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4778.17; Wed, 15 Dec
- 2021 20:00:59 +0000
-Received: from BN8NAM11FT034.eop-nam11.prod.protection.outlook.com
- (2603:10b6:405:15:cafe::b0) by BN6PR1701CA0011.outlook.office365.com
- (2603:10b6:405:15::21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4801.14 via Frontend
- Transport; Wed, 15 Dec 2021 20:00:59 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 203.18.50.14)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 203.18.50.14 as permitted sender) receiver=protection.outlook.com;
- client-ip=203.18.50.14; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (203.18.50.14) by
- BN8NAM11FT034.mail.protection.outlook.com (10.13.176.139) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.4778.13 via Frontend Transport; Wed, 15 Dec 2021 20:00:58 +0000
-Received: from HQMAIL101.nvidia.com (172.20.187.10) by HKMAIL103.nvidia.com
- (10.18.16.12) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Wed, 15 Dec
- 2021 20:00:36 +0000
-Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Wed, 15 Dec
- 2021 20:00:35 +0000
-Received: from jonathanh-vm-01.nvidia.com (172.20.187.6) by mail.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1497.18 via Frontend
- Transport; Wed, 15 Dec 2021 20:00:35 +0000
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
-        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
-        <stable@vger.kernel.org>, <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 5.4 00/18] 5.4.166-rc1 review
-In-Reply-To: <20211215172022.795825673@linuxfoundation.org>
-References: <20211215172022.795825673@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        id S234251AbhLOUBF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 15 Dec 2021 15:01:05 -0500
+Received: from mail-oi1-f171.google.com ([209.85.167.171]:41689 "EHLO
+        mail-oi1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231995AbhLOUBF (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 15 Dec 2021 15:01:05 -0500
+Received: by mail-oi1-f171.google.com with SMTP id u74so33164189oie.8;
+        Wed, 15 Dec 2021 12:01:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=l+xFFfLKiEhkrb+S6WEQGs0sRTxxdeIwUbUb4lHfegA=;
+        b=IjtChSY3QrUXmsGoBEoBhSJf9Hlf2jhSRr8VO+S8T4hrjtakky2+1IvDO8SHYL4/8O
+         zCqHECv3aRryJkKuttXi3OnpgYE1GjNxWlJkhWczWEJZFDC77mlmpXlK18BIgjvvrQzV
+         9FRCheNbX/fMmxZTQ2XCQrORf/MmKthWBzxudd5o2/1yq4H8OvhouoiaEc7yqGEzQHQV
+         xdTFqyFLentoaDJXs63+hT5+dhyqphltCwF8NoWjRYrXD/S+d3KgM5A8enDEGf8Nl1Fy
+         yUcv/j39SFB7Pyq5jETKF+qOUSGjOwylPJWW+sfA1hzN3Nt2D3rBfhsUQyzf8+fv099S
+         GiYA==
+X-Gm-Message-State: AOAM532PJPZVWglpNbTBQrhjw5iXTDw8yYPVwwGCm0QrL8rglSvU3PQg
+        Ix5ihxIbyuLKOB2izwTGqA==
+X-Google-Smtp-Source: ABdhPJxU2SELg23Wszu5aa+Iw/ImO+xlHwegqhlZfMXLPwQKMl+VsUMi/yrDwMV249upMHcpSYQ0hA==
+X-Received: by 2002:aca:2b02:: with SMTP id i2mr1350825oik.140.1639598464509;
+        Wed, 15 Dec 2021 12:01:04 -0800 (PST)
+Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
+        by smtp.gmail.com with ESMTPSA id e4sm531117oiy.12.2021.12.15.12.01.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Dec 2021 12:01:03 -0800 (PST)
+Received: (nullmailer pid 1740176 invoked by uid 1000);
+        Wed, 15 Dec 2021 20:01:02 -0000
+Date:   Wed, 15 Dec 2021 14:01:02 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     David Heidelberg <david@ixit.cz>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        devicetree@vger.kernel.org, alsa-devel@alsa-project.org,
+        ~okias/devicetree@lists.sr.ht, linux-kernel@vger.kernel.org,
+        Mark Brown <broonie@kernel.org>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        linux-tegra@vger.kernel.org,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Liam Girdwood <lgirdwood@gmail.com>
+Subject: Re: [PATCH v2] dt-bindings: sound: nvidia,tegra-audio: Convert
+ multiple txt bindings to yaml
+Message-ID: <YbpJflKptK3f0EqZ@robh.at.kernel.org>
+References: <20211211224946.79875-1-david@ixit.cz>
 MIME-Version: 1.0
-Message-ID: <2ed7761f645f40538a255a4185a70200@HQMAIL105.nvidia.com>
-Date:   Wed, 15 Dec 2021 20:00:35 +0000
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: fa82f857-2fa3-4537-65b9-08d9c0059d14
-X-MS-TrafficTypeDiagnostic: DM6PR12MB3419:EE_
-X-Microsoft-Antispam-PRVS: <DM6PR12MB3419E427E168DB1D47850F45D9769@DM6PR12MB3419.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: gU4bCnC6ERhWo7kSZNY2DWlqqZho1P/zp9RurMoTtsQaUdMaBqY2GxIM7xOBHivgM8exlkjqWa/AcpMPsTFiKpHQpw1/Ldo4UhZ71LhSgPpQ2oPy+oKhp/NFA5TwGLCJr+tkfraHxtl+CU4lbYRGMNfrF3XxL1cBuxbmfcwAnSmPqbxKAmgcIEF4FUaBe1zgHVBjVU7r8LhXHdl9sjQ4rnqR3+9zMIMVFMTZC8nrKCM4gMOhh6bBNjGaS5AvrVk/4Qb5iaSvZ0CHnXGoyXxenStud0aTPOL1poj1PCwkepHyLkGt7K7aEtm7Od+ryuLiZG+S2XH/kQRlJBEXhtdqGfigz+CmFyjqh/vdOPduWkrYFLSJ5yqsmp+FeK+QnM8cnNHHGBCQk68vEO2GcfwwbX/LKfoDsK1MeUGmEOvgkPhl6nbe65PeWpF0S3JlrLqAiuUl1LUlf5IbUWoCyQl62xfjbuu5fBg3VpXtF1btPHIqRXnH46S9NcSDaY3E78cUTBekQtpCbUNe6KD21qdLKfYOfxtdtz1oKT+m63eV9zeOCXCJk2w275ecEUQfsfnOWWl39p0OTi2vWH0cief/JhHB4I5BmmXNjSZKlJkmQFn2fhbzd8jAaDTyb4KBLp3P+apaMfHaIwmn11YEMJDwlir+bTpiVNEx71fZ/hlKSH5GlPqT6nbn+oHz63rSrV6Mn10gezfSpPtJjW8SOu80afp1hL8ceGHRw5h89Jis9npNdJ8PZ0irPCl60w3VBAfVwcinN6xArgMcS9PWgWdOdhpDTyKu/0N56GbWlaFr/q4++VXcSm1fjNJMgpFtf/Bw1B8es+SOhea3s+heozU3lJtwYhdJhjDtu0iMpHgOfJXiEVgKeAJffePLTW+ayNYC
-X-Forefront-Antispam-Report: CIP:203.18.50.14;CTRY:HK;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:hkhybrid03.nvidia.com;CAT:NONE;SFS:(4636009)(46966006)(36840700001)(40470700001)(336012)(426003)(186003)(5660300002)(2906002)(47076005)(70206006)(7636003)(6916009)(34020700004)(508600001)(36860700001)(82310400004)(8936002)(356005)(40460700001)(86362001)(26005)(8676002)(7416002)(316002)(108616005)(24736004)(70586007)(4326008)(966005)(54906003);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Dec 2021 20:00:58.7521
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: fa82f857-2fa3-4537-65b9-08d9c0059d14
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[203.18.50.14];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT034.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB3419
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211211224946.79875-1-david@ixit.cz>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, 15 Dec 2021 18:21:21 +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.4.166 release.
-> There are 18 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Sat, 11 Dec 2021 23:49:44 +0100, David Heidelberg wrote:
+> Convert Tegra audio complex with the
+>   * ALC5632
+>   * MAX98090
+>   * RT5640
+>   * RT5677
+>   * SGTL5000
+>   * TrimSlice
+>   * WM8753
+>   * WM8903
+>   * WM9712
+> codec to the YAML format.
 > 
-> Responses should be made by Fri, 17 Dec 2021 17:20:14 +0000.
-> Anything received after that time might be too late.
+> Additional changes:
+>  - added missing HPOUTL to the WM9712 codec.
+>  - extended rt5677 codec with multiple pins
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.166-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
-> and the diffstat can be found below.
+> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+> Signed-off-by: David Heidelberg <david@ixit.cz>
+> ---
+> v2:
+>  - converted from one big schema into the common properties and then references to it
+>  - few additional changes mentioned in commit message
+>  .../sound/nvidia,tegra-audio-alc5632.txt      |  48 --------
+>  .../sound/nvidia,tegra-audio-alc5632.yaml     |  74 +++++++++++++
+>  .../sound/nvidia,tegra-audio-common.yaml      |  83 ++++++++++++++
+>  .../sound/nvidia,tegra-audio-max98090.txt     |  53 ---------
+>  .../sound/nvidia,tegra-audio-max98090.yaml    |  97 +++++++++++++++++
+>  .../sound/nvidia,tegra-audio-rt5640.txt       |  52 ---------
+>  .../sound/nvidia,tegra-audio-rt5640.yaml      |  85 +++++++++++++++
+>  .../sound/nvidia,tegra-audio-rt5677.txt       |  67 ------------
+>  .../sound/nvidia,tegra-audio-rt5677.yaml      | 103 ++++++++++++++++++
+>  .../sound/nvidia,tegra-audio-sgtl5000.txt     |  42 -------
+>  .../sound/nvidia,tegra-audio-sgtl5000.yaml    |  67 ++++++++++++
+>  .../sound/nvidia,tegra-audio-trimslice.txt    |  21 ----
+>  .../sound/nvidia,tegra-audio-trimslice.yaml   |  33 ++++++
+>  .../sound/nvidia,tegra-audio-wm8753.txt       |  40 -------
+>  .../sound/nvidia,tegra-audio-wm8753.yaml      |  79 ++++++++++++++
+>  .../sound/nvidia,tegra-audio-wm8903.txt       |  62 -----------
+>  .../sound/nvidia,tegra-audio-wm8903.yaml      |  93 ++++++++++++++++
+>  .../sound/nvidia,tegra-audio-wm9712.txt       |  60 ----------
+>  .../sound/nvidia,tegra-audio-wm9712.yaml      |  76 +++++++++++++
+>  19 files changed, 790 insertions(+), 445 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra-audio-alc5632.txt
+>  create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra-audio-alc5632.yaml
+>  create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra-audio-common.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra-audio-max98090.txt
+>  create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra-audio-max98090.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra-audio-rt5640.txt
+>  create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra-audio-rt5640.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra-audio-rt5677.txt
+>  create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra-audio-rt5677.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra-audio-sgtl5000.txt
+>  create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra-audio-sgtl5000.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra-audio-trimslice.txt
+>  create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra-audio-trimslice.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra-audio-wm8753.txt
+>  create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra-audio-wm8753.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra-audio-wm8903.txt
+>  create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra-audio-wm8903.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra-audio-wm9712.txt
+>  create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra-audio-wm9712.yaml
 > 
-> thanks,
-> 
-> greg k-h
 
-All tests passing for Tegra ...
-
-Test results for stable-v5.4:
-    10 builds:	10 pass, 0 fail
-    26 boots:	26 pass, 0 fail
-    59 tests:	59 pass, 0 fail
-
-Linux version:	5.4.166-rc1-gb780ab989d60
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra20-ventana,
-                tegra210-p2371-2180, tegra210-p3450-0000,
-                tegra30-cardhu-a04
-
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
-
-Jon
+Reviewed-by: Rob Herring <robh@kernel.org>
