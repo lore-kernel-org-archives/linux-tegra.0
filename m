@@ -2,53 +2,53 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 540DCC433EF
-	for <linux-tegra@archiver.kernel.org>; Wed, 15 Dec 2021 15:16:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5862C433FE
+	for <linux-tegra@archiver.kernel.org>; Wed, 15 Dec 2021 15:19:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243717AbhLOPQ3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 15 Dec 2021 10:16:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33072 "EHLO
+        id S243843AbhLOPT0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 15 Dec 2021 10:19:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33776 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234671AbhLOPQ2 (ORCPT
+        with ESMTP id S237934AbhLOPT0 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 15 Dec 2021 10:16:28 -0500
-Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CBBAC061574;
-        Wed, 15 Dec 2021 07:16:28 -0800 (PST)
-Received: by mail-wm1-x331.google.com with SMTP id a83-20020a1c9856000000b00344731e044bso3299684wme.1;
-        Wed, 15 Dec 2021 07:16:28 -0800 (PST)
+        Wed, 15 Dec 2021 10:19:26 -0500
+Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9B3BC061574;
+        Wed, 15 Dec 2021 07:19:25 -0800 (PST)
+Received: by mail-wm1-x32f.google.com with SMTP id i8-20020a7bc948000000b0030db7b70b6bso18752664wml.1;
+        Wed, 15 Dec 2021 07:19:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=9Q9Qi8wQrEoZWm5nsu6G4IHs86FT9L423fH5Q6OLkcA=;
-        b=TW0UDNbyWAL4qgqq0kFrVu7bE+lTDYxQSAwBC3cRCaJFFH1/P4MGQ0hQYHQ4BN4lRY
-         jF7mY9owHeXUSwMEaLWBueGxhSi5E7Ry2FWkpAC4Yy99H1DbBzXJVWkhI9ly0FLUOAac
-         HvBAxmOQClgmCA/Tpn2dW69r9OM+VqeUI8tjKehRElFOR/nzQLOfzFkApGSFw/y4VfI3
-         H2jBDinKiMjTPU5dxmCtNS+HNF6fzqmzpKWdsalQp3425T+zUCxFYlJE8sMxxyDthcjg
-         dWFcq/btrhjgS4axZMuHzI5WK5Z7wo4f3RuOJs8pcSpKcQqRAGDnC31JYhQO2rNE5ihR
-         n2Zg==
+        bh=iZHOedxMgCeGLCUDZm6mjDrIj4D4tIu8hqn1Os+H7C8=;
+        b=Genqt2/LMR7roaPGgIO7ChGlNRU5FTpnbd0fXp8jUhkrqMTDdt1CDmjf4fMuG+5Kek
+         uAzF3tPpR4eBkRP7FBlkKwV0pBfvnKiukJxAeuGWLQe9aI6BURBPLMXE/X3vsv5qiI0C
+         BHqllhcylD07Dka32pkA+9u76zLXrJOUb6+ruLqR1P3gTZmPHfC7UuI7BfndsgsKNEr/
+         195uAIlupKhL+j1y8fIRUzFs+3KSjiJ6ri6veoHZnJTSRxRQoBVn4QuCs15PxLP8EUih
+         QxFVyQyCqGvUWTZuPEJjoWD8fwIx+FbBSne/PL3gj3M5vNNizu5zp94RnWoyWNrDwncN
+         CUZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=9Q9Qi8wQrEoZWm5nsu6G4IHs86FT9L423fH5Q6OLkcA=;
-        b=qG1NojqR0tTWNn3GGlWZnvYoREX8GUC7ZypZUg1ESktYCOuv5j2U0yNu/r2nh31bNR
-         g+X/3A/qhOyqIeoYH3+7gcK+5l8hqYGwl4Kbs9Wb6fZjSNZZ8Zi5fYMNa8sk5ZJtBqra
-         WSZ2sm7LTufC7OVUqj8zcFMqoLxFvw0Bk9L2PyEQIDzuZrcM94VBps1bd4C9f9kqQm5E
-         IREy060oP+H7bjvQcy2bH+If0GJRQtkFQM6tWJz85rAX4mQFgPxs1SXeDM3hXCPp4Mvd
-         7GyHlugnUoqD7DnYdVFf90E3vOzA9TFasLKptJy1wS1ZlaOygSvUolGBF1R/QwtrMwyr
-         pxtg==
-X-Gm-Message-State: AOAM531hN7cY7uXjURIe96zcMQPVjbfX7sESALC+uGaht8ND3Ti/PXUW
-        7qwm6qSU4FghmipvrocGDDE=
-X-Google-Smtp-Source: ABdhPJwcQAhgd6tMvOqhOGQfwhmuxfi4/RnpfrTqDUixzz+Dbbo/ne0yrMPZtjGbR6B1DiRKXMbBAw==
-X-Received: by 2002:a05:600c:22cb:: with SMTP id 11mr212948wmg.181.1639581386791;
-        Wed, 15 Dec 2021 07:16:26 -0800 (PST)
+        bh=iZHOedxMgCeGLCUDZm6mjDrIj4D4tIu8hqn1Os+H7C8=;
+        b=drW1Zl1BIo1ngfg+ZLW+TSniUkp+QOOCKE/xxIMoVHiAVOWERzpD8R8kMlxKNSz7TJ
+         b5tPl1tWLGSbJEDP9aRc7pJGnr7m1jeehOlFnPZ8fsb8Qc4wyfwyc6mKw7u6HOsphBvU
+         tLMiYC/qPtxSVTYYe53E3AGDwjNVzoBvEu+d2FkLF6jILIdCT0AdQhJtVHK43wnR291M
+         mTuUPf5nmyRpPQeX7vu84pmt29kSDsmZhanu6Vh+TGcXzXd/uvHdS8v5EBy3KhpUqKAe
+         vMfrVWot/b/8WOzcHiydcyRrV4NSMYqhvIKFQn/YSL4k/lYhVYq7Qqumff58IUm98nz8
+         0LWA==
+X-Gm-Message-State: AOAM530etAsP0qP1TrNGr1/Q4u0a/cwj3eduqpkUPUPEf7fB8BVlM1GP
+        2oBgDN60aWqpGcsGXJr9dtY=
+X-Google-Smtp-Source: ABdhPJx9Ix/Ow7uC2/FizTS758EXx0yBXdMjt+miiZcyAqAaDE287YFOGiCJFYVRg1BOMimDuz8Tkg==
+X-Received: by 2002:a05:600c:253:: with SMTP id 19mr230316wmj.179.1639581564226;
+        Wed, 15 Dec 2021 07:19:24 -0800 (PST)
 Received: from orome ([193.209.96.43])
-        by smtp.gmail.com with ESMTPSA id d1sm2211910wrz.92.2021.12.15.07.16.23
+        by smtp.gmail.com with ESMTPSA id m34sm5514766wms.25.2021.12.15.07.19.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Dec 2021 07:16:25 -0800 (PST)
-Date:   Wed, 15 Dec 2021 16:16:21 +0100
+        Wed, 15 Dec 2021 07:19:23 -0800 (PST)
+Date:   Wed, 15 Dec 2021 16:19:19 +0100
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Dmitry Osipenko <digetx@gmail.com>
 Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
@@ -69,105 +69,134 @@ Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
         Stefan Agner <stefan@agner.ch>,
         Peter Geis <pgwipeout@gmail.com>, devicetree@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 15/28] ARM: tegra: Add usb-role-switch property to USB
- OTG ports
-Message-ID: <YboGxZSi13OGByUQ@orome>
+Subject: Re: [PATCH v6 11/28] ARM: tegra: Add device-tree for ASUS
+ Transformer Infinity TF700T
+Message-ID: <YboHd6tIUrl+LJQb@orome>
 References: <20211211211412.10791-1-digetx@gmail.com>
- <20211211211412.10791-16-digetx@gmail.com>
- <YbnqP0XAcUYc4ePy@orome>
- <9cf23721-db53-830a-f634-d2215232f059@gmail.com>
+ <20211211211412.10791-12-digetx@gmail.com>
+ <Ybn1Ne2aGfsablwQ@orome>
+ <02d7e9a9-6999-cccd-aea2-d069c759cd56@gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="WYAJB0Pchkifo8CI"
+        protocol="application/pgp-signature"; boundary="icIo6y0Y+9SyroLX"
 Content-Disposition: inline
-In-Reply-To: <9cf23721-db53-830a-f634-d2215232f059@gmail.com>
+In-Reply-To: <02d7e9a9-6999-cccd-aea2-d069c759cd56@gmail.com>
 User-Agent: Mutt/2.1.3 (987dde4c) (2021-09-10)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---WYAJB0Pchkifo8CI
+--icIo6y0Y+9SyroLX
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Dec 15, 2021 at 06:04:54PM +0300, Dmitry Osipenko wrote:
-> 15.12.2021 16:14, Thierry Reding =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > On Sun, Dec 12, 2021 at 12:13:59AM +0300, Dmitry Osipenko wrote:
-> >> From: Stefan Eichenberger <stefan.eichenberger@toradex.com>
-> >>
-> >> If an USB port is an OTG port, then we should add the usb-role-switch
-> >> property. Otherwise XUSB setup fails and therefore padctl is unable to
-> >> set up the ports. This leads to broken USB and PCIe ports. Add the
-> >> usb-role-switch properties to Tegra124 device-trees to fix the problem.
-> >>
-> >> The error message shown without this patch is e.g:
-> >> usb2-0: usb-role-switch not found for otg mode
-> >>
-> >> [digetx@gmail.com: improved commit message]
-> >> Tested-by: Thomas Graichen <thomas.graichen@gmail.com> # T124 Nyan Big
-> >> Signed-off-by: Stefan Eichenberger <stefan.eichenberger@toradex.com>
-> >> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> >> ---
-> >>  arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi | 1 +
-> >>  arch/arm/boot/dts/tegra124-apalis.dtsi      | 1 +
-> >>  arch/arm/boot/dts/tegra124-nyan.dtsi        | 1 +
-> >>  arch/arm/boot/dts/tegra124-venice2.dts      | 2 +-
-> >>  4 files changed, 4 insertions(+), 1 deletion(-)
+On Wed, Dec 15, 2021 at 05:52:24PM +0300, Dmitry Osipenko wrote:
+> 15.12.2021 17:01, Thierry Reding =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > On Sun, Dec 12, 2021 at 12:13:55AM +0300, Dmitry Osipenko wrote:
+> > [...]
+> >> +		i2c@1 {
+> >> +			reg =3D <1>;
+> >> +			#address-cells =3D <1>;
+> >> +			#size-cells =3D <0>;
+> >> +
+> >> +			dsi-bridge@7 {
+> >> +				compatible =3D "toshiba,tc358768";
+> >> +				reg =3D <0x7>;
+> >> +
+> >> +				#address-cells =3D <1>;
+> >> +				#size-cells =3D <0>;
+> >> +
+> >> +				clocks =3D <&tc358768_osc>;
+> >> +				clock-names =3D "refclk";
+> >> +
+> >> +				reset-gpios =3D <&gpio TEGRA_GPIO(N, 6) GPIO_ACTIVE_LOW>;
+> >> +
+> >> +				vddc-supply =3D <&vdd_1v2_mipi>;
+> >> +				vddio-supply =3D <&vdd_1v8_vio>;
+> >> +				vddmipi-supply =3D <&vdd_1v2_mipi>;
+> >> +
+> >> +				ports {
+> >> +					#address-cells =3D <1>;
+> >> +					#size-cells =3D <0>;
+> >> +
+> >> +					port@0 {
+> >> +						reg =3D <0>;
+> >> +
+> >> +						bridge_input: endpoint {
+> >> +							remote-endpoint =3D <&dpi_output>;
+> >> +							data-lines =3D <24>;
+> >> +						};
+> >> +					};
+> >> +
+> >> +					port@1 {
+> >> +						reg =3D <1>;
+> >> +
+> >> +						bridge_output: endpoint {
+> >> +							remote-endpoint =3D <&panel_input>;
+> >> +						};
+> >> +					};
+> >> +				};
+> >> +
+> >> +				/*
+> >> +				 * Panasonic VVX10F004B00 or HYDIS HV101WU1-1E1
+> >> +				 * LCD SuperIPS+ Full HD panel.
+> >> +				 */
+> >> +				panel@1 {
+> >> +					compatible =3D "panasonic,vvx10f004b00";
+> >> +					reg =3D <1>;
+> >> +
+> >> +					power-supply =3D <&vdd_pnl>;
+> >> +					backlight =3D <&backlight>;
+> >> +
+> >> +					port {
+> >> +						panel_input: endpoint {
+> >> +							remote-endpoint =3D <&bridge_output>;
+> >> +						};
+> >> +					};
+> >> +				};
 > >=20
-> > The device tree bindings for the XUSB pad controller say that when this
-> > property is set, then the "connector" subnode should also exist.
+> > make dtbs_check complains about this and says that panel@1 (as well as
+> > #address-cells and #size-cells) are not allowed here. And indeed the
+> > binding for the Toshiba bridge doesn't mention them here.
 > >=20
-> > Any chance we can add that? I was planning on making that a dependency
-> > in the json-schema conversion of the binding, in which case it would be
-> > more of a "must" than a "should".
+> > Do we need this here or should this be moved to the top level to fix
+> > those warnings? I guess what you're doing above is describe a DSI bus
+> > created by the DSI bridge, which also makes sense, so another
+> > alternative would be to fix up the binding and let it accept those
+> > properties.
 >=20
-> I guess it will be harmless if you'll add the connector subnodes. Will
-> you be able to create a separate patch that will add the subnodes on top
-> of this patch?
+> Toshiba bridge binding is incomplete. David has patch for that [1], I
+> don't think that it was sent out yet.
 >=20
-> Thomas Graichen says that one USB port on Nyan Big doesn't work without
-> this patch. This is why this patch is needed essentially.
+> [1]
+> https://github.com/okias/linux/commit/0875230062294b6db17f395ced0a8384a4c=
+1cfc7
 
-Okay, I can add "dummy" connector nodes for now. I don't see how we can
-properly set this up because as far as I can tell there's USB ID GPIO on
-Tegra124 (seems like it's a fixed function pin) and the VBUS GPIO is
-already used to enable the VBUS supply. The gpio-usb-b-connector binding
-required at least one of the ID and VBUS GPIOs to be specified.
-
-On the other hand, at least Venice2 has a USB type A connector for this,
-so I'm not even sure how that would work. I vaguely recall that the
-Tegra20 Seaboard also had a USB type A and that it was possible to use
-it in device mode, but I don't how that would. Nor would it be correct
-to use the gpio-usb-b-connector compatible for that since, well, it's
-not USB type B.
-
-I suspect that Apalis has a micro-B port, much like the Jetson TK1. My
-understanding is that OTG doesn't work on Jetson TK1 (which is why it's
-configured in "host" mode), so it'd be interesting to see if this can be
-made to work on Apalis.
+Okay, please make sure this finds its way upstream eventually. That
+patch looks quite similar to what I tried to do to fix this up locally.
 
 Thierry
 
---WYAJB0Pchkifo8CI
+--icIo6y0Y+9SyroLX
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmG6BsUACgkQ3SOs138+
-s6EdVA/9HoSwai41QHSPGL6ezVQADy/iGs9tHGDNypOX4IMF/UOYV3SNVHJDI5wG
-sJS1OFIlEHLj0+IaKsSjg3wLQvtPduWoO2Gdi/aTScPdiABe86xIOLPu9jv0I+/E
-MzhrVLnN+t0YYPkU/0uornbwd2UzgZTeyhn8Ey5E4NrtqdLXyVj+5q3UFrYpEn+Q
-ReMRZJ1RTXNzFqpOGTTW5pa4+sWx3ECaUV7Hwd2qY6Ezlun41U7EjoBvhNLPUowB
-A/k5CtdzwWHu5plpwquUwP8eDk9v53tYIgA2gPDtbf7xBMop2D4X/YFywIQTTos2
-wU5GcnFVpK1Yg+GAMJGieI/61UxMcYyJqinhY4qRtj4PR5Eo3pn4H7FVA+sG5CKb
-vPZWmv3n/UDAWlW0mQZZsgqtWwpgMLz2PN8AGZmfru/1pmCZrTStLORSDqMkv2Aq
-4SzSd6BBRfpiaJySaXr1aj+c7fPRN8niqOi1TFjnv8F5LNaqFvqOhfX9gylByvJc
-v8TOxMqu27+CtDdK3WlcmGEE2A5DdW4IPTXVSvR0f8KeoxDUOOW+nQc8300jA/iv
-EfHZfe+JsvP1pTNPE+9AdIg1C/us5ZSM1FcnMBvUB4mWX5sZjZ8GLLxJ2fPKJ7VP
-9dGQMD1y73vrMBLHLDNFNchAMKuUay+STSoLkpxvndJ3rcOtm1c=
-=Ut27
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmG6B3YACgkQ3SOs138+
+s6Gxtw//aCvOf0bKYvoVKs4ZCTS+T/XQeMyl3xrlo066OnC/8FgVPWQBxCWdpg6F
+w0cDvawYI5tNIb+X4BGzTiD7HMySlaLhxm+UHhBg6CF/LbMIi4b5iY1QI/6djQhW
+98bosskqCFmL00X5NlYZClfloYh2N8XuVXWujQtFzH0H4uuTfAxCidHwEibkynbO
+TAuqMWZR9W4IqX5lzaCdsyr2Eb6VZ94TiYskuBouICCUjNLrgAwxxU/ngCZQzweD
+sGTxjWjIkvsO5xoXUFJi3G0+GjHEk20AGFi1CDl1+2/EIAUWheoYfS5sphPWIMWN
+wFbWZl9F5HVbAspGTI6rf0Z6mmU2vNAaUs+9KKmvhYGVL2XTws6hmtujh0dpb8mc
+9e15sImNz2StsDUwufeg44+XJaqTNy4ir1qzLrMk1KMsMh3K5gqYh5J+pjmvzzJs
+ec4OQeJ2F6Aj+7BDN/PLvbwn8sYfl/Ll8/dxk/00/PqhhROx6tGKNY0Xh63gHHJY
+d2MbsGe0JOAHtl9Yeu/wSzVw7xP+J1nTN/us8FzPLv5ZElAlySzdW0I6Eg6825WR
+qG8oD73IV0DNwCa2xcmutblU6T4JyhDRq641qXWscChlXnTvF+s8d2el9ww5KEm+
+vDWlbOfwupfkuDlg1GtF9Dco7NtebMLTOgakzSWR8DRhNrBCgoo=
+=xXhW
 -----END PGP SIGNATURE-----
 
---WYAJB0Pchkifo8CI--
+--icIo6y0Y+9SyroLX--
