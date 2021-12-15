@@ -2,99 +2,88 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F9BAC433EF
-	for <linux-tegra@archiver.kernel.org>; Wed, 15 Dec 2021 06:00:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 378A6C433F5
+	for <linux-tegra@archiver.kernel.org>; Wed, 15 Dec 2021 10:24:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239942AbhLOGA2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 15 Dec 2021 01:00:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46800 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235741AbhLOGA1 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 15 Dec 2021 01:00:27 -0500
-Received: from mail-qk1-x736.google.com (mail-qk1-x736.google.com [IPv6:2607:f8b0:4864:20::736])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78942C061574;
-        Tue, 14 Dec 2021 22:00:27 -0800 (PST)
-Received: by mail-qk1-x736.google.com with SMTP id d21so11740041qkl.3;
-        Tue, 14 Dec 2021 22:00:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=X94i9GwAGQdZXxmrKZXUyd71u3DF8Ifr+h6cNaVJuPo=;
-        b=amICIEk992AO724YjVsKghniSAM7DGR0e965C6lhwNf4ZsXI3LVeMyMxuLJdzOMiDO
-         cDlQ8bMItVKnV8ctON42lsrA5H65Z407eeuUiknUK1YZI6dLnTjGBjMp2uDrp/32xqmw
-         iP1u6H6g/+D5Ya0aByPVaqI6Z4aHKBQea0G6IO8st1ZfkuJ30K931qXd4v50JJPbeeGk
-         sYPgrVdvTyIRfn0PHzUqk74A/FA6LDbGvM6hmrkEHU2h8lc2GcWdsjfMkFoL/iCY/M7Y
-         SnwI9uzkrbxLO65FK29xdwn0GDJN52Cn65Lr4SqWhMo96cVI5V6QFlS7/gUr1gHz/sgv
-         mdRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=X94i9GwAGQdZXxmrKZXUyd71u3DF8Ifr+h6cNaVJuPo=;
-        b=JRUbQzDdhebpujjtY6jL+TBz33LPEW1DqCmJxWvgz1rYCOpYek7YHLzZNDpusmyCuX
-         8u+0rclpO9vJMJPvUforiSYPqAyqj+Th+fh5wSaf49/EzLGv7A4wR3t57mFl8gbs8fBg
-         FQ/5VqF6ZDvn44zWbmMrQtYDmkThh4e3qjXWMDapuWZL72765+WHOSwFMF1+fVnlEhhI
-         Z/Cr8p7KXa+hZAhEmchssCZsRv6nTAXvrhPTsvjO8xT5Gg+O27fD4loV9wuNu0WmaZcp
-         zAgyLv2g5U7nmFF1P/pRWDSoLE7o8/MDzQ6ksn1fEiVjGzHaDejoy5Pv8GnwuCCsv5pM
-         pfdw==
-X-Gm-Message-State: AOAM533mINaowfJUZIciXjqiARO3XWlBe0Ix1Hkax7HndLm2SESw0MKI
-        aT358IknkjCi0YyvWQFBBXc=
-X-Google-Smtp-Source: ABdhPJwjRhUri+keyasONrwHJcx0gAGe8Su0UuJjARiSq5P6lFSKTLV14PmUKftN7k93lis3tYiYyQ==
-X-Received: by 2002:a37:6cf:: with SMTP id 198mr7467379qkg.78.1639548026672;
-        Tue, 14 Dec 2021 22:00:26 -0800 (PST)
-Received: from localhost.localdomain ([193.203.214.57])
-        by smtp.gmail.com with ESMTPSA id u10sm820469qtx.3.2021.12.14.22.00.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Dec 2021 22:00:26 -0800 (PST)
-From:   cgel.zte@gmail.com
-X-Google-Original-From: chi.minghao@zte.com.cn
-To:     pdeschrijver@nvidia.com
-Cc:     pgaikwad@nvidia.com, mturquette@baylibre.com, sboyd@kernel.org,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Minghao Chi <chi.minghao@zte.com.cn>,
-        Zeal Robot <zealci@zte.com.cn>
-Subject: [PATCH clk-next] drivers/clk: remove redundant result variable
-Date:   Wed, 15 Dec 2021 06:00:19 +0000
-Message-Id: <20211215060019.441549-1-chi.minghao@zte.com.cn>
-X-Mailer: git-send-email 2.25.1
+        id S236551AbhLOKYf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 15 Dec 2021 05:24:35 -0500
+Received: from mga17.intel.com ([192.55.52.151]:7633 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229791AbhLOKYf (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 15 Dec 2021 05:24:35 -0500
+X-IronPort-AV: E=McAfee;i="6200,9189,10198"; a="219880427"
+X-IronPort-AV: E=Sophos;i="5.88,207,1635231600"; 
+   d="scan'208";a="219880427"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Dec 2021 02:24:35 -0800
+X-IronPort-AV: E=Sophos;i="5.88,207,1635231600"; 
+   d="scan'208";a="614655687"
+Received: from adalyx-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.7.70])
+  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Dec 2021 02:24:30 -0800
+From:   Jani Nikula <jani.nikula@linux.intel.com>
+To:     Thomas Zimmermann <tzimmermann@suse.de>, mripard@kernel.org,
+        maarten.lankhorst@linux.intel.com, airlied@linux.ie,
+        daniel@ffwll.ch
+Cc:     nouveau@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org,
+        linux-rockchip@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        linux-tegra@vger.kernel.org, freedreno@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 0/3] drm/dp: Move DisplayPort helpers into own module
+In-Reply-To: <83ab4452-3744-20fe-e3ba-5bd4b48622e3@suse.de>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20211213093650.19598-1-tzimmermann@suse.de>
+ <87lf0o7hnv.fsf@intel.com> <83ab4452-3744-20fe-e3ba-5bd4b48622e3@suse.de>
+Date:   Wed, 15 Dec 2021 12:24:22 +0200
+Message-ID: <87sfuu4149.fsf@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Minghao Chi <chi.minghao@zte.com.cn>
+On Mon, 13 Dec 2021, Thomas Zimmermann <tzimmermann@suse.de> wrote:
+> Hi
+>
+> Am 13.12.21 um 14:34 schrieb Jani Nikula:
+>> On Mon, 13 Dec 2021, Thomas Zimmermann <tzimmermann@suse.de> wrote:
+>>> Split-off DisplayPort functions from KMS helper library and move them
+>>> into their own module. Reduces the size of drm_kms_helper.ko by ~50%.
+>>>
+>>> This patchset is part of an on-going effort to reduce the minimum
+>>> binary size of the DRM core and helpers. It's helpful for systems with
+>>> early-boot DRM graphics, which requires DRM to be linked into the
+>>> kernel image.
+>> 
+>> Would it be time to add a subdirectory for each non-driver, non-core drm
+>> module? We've touched this topic before. I find it increasingly hard to
+>> remember which files are part of helpers. This would also help with the
+>> arbitrary drm_dp_helper_mod.c naming.
+>> 
+>> Perhaps drivers/gpu/drm/drm_dp/?
+>
+> It's probably worth it, but I'd prefer a separate patchset and 
+> discussion over this. It affects several modules.
 
-Return value from FIELD_GET() directly instead
-of taking this in another redundant variable.
+I guess the only thing here that we need to get right from the start is
+the new module name, everything else is relatively easy to change
+later. drm_dp_helper.ko seems fine by me.
 
-Reported-by: Zeal Robot <zealci@zte.com.cn>
-Signed-off-by: Minghao Chi <chi.minghao@zte.com.cn>
----
- drivers/clk/tegra/clk-tegra210-emc.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+Note that this will also affect the drm_kms_helper.ko module parameters
+dp_aux_i2c_speed_khz, dp_aux_i2c_transfer_size and
+drm_dp_cec_unregister_delay, which will move to drm_dp_helper.ko.
 
-diff --git a/drivers/clk/tegra/clk-tegra210-emc.c b/drivers/clk/tegra/clk-tegra210-emc.c
-index 672ca8c184d2..481fd50a36a0 100644
---- a/drivers/clk/tegra/clk-tegra210-emc.c
-+++ b/drivers/clk/tegra/clk-tegra210-emc.c
-@@ -52,12 +52,10 @@ static u8 tegra210_clk_emc_get_parent(struct clk_hw *hw)
- {
- 	struct tegra210_clk_emc *emc = to_tegra210_clk_emc(hw);
- 	u32 value;
--	u8 src;
- 
- 	value = readl_relaxed(emc->regs + CLK_SOURCE_EMC);
--	src = FIELD_GET(CLK_SOURCE_EMC_2X_CLK_SRC, value);
- 
--	return src;
-+	return FIELD_GET(CLK_SOURCE_EMC_2X_CLK_SRC, value);
- }
- 
- static unsigned long tegra210_clk_emc_recalc_rate(struct clk_hw *hw,
+See the monstrosity near the top of drm_kms_helper_common.c I had to add
+for backward compatibility when I moved drm_edid_load.c from
+drm_kms_helper.ko to drm.ko. That was perhaps different, as these seem
+more like debug knobs, but at a minimum this needs to be mentioned in
+the commit message, and certainly needs acks from Dave and/or Daniel.
+
+
+BR,
+Jani.
+
+
+
 -- 
-2.25.1
-
+Jani Nikula, Intel Open Source Graphics Center
