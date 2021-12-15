@@ -2,95 +2,80 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90992C433F5
-	for <linux-tegra@archiver.kernel.org>; Wed, 15 Dec 2021 18:58:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1E9CC433EF
+	for <linux-tegra@archiver.kernel.org>; Wed, 15 Dec 2021 19:16:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239098AbhLOS6F (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 15 Dec 2021 13:58:05 -0500
-Received: from dfw.source.kernel.org ([139.178.84.217]:34316 "EHLO
-        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235473AbhLOS6F (ORCPT
+        id S1344135AbhLOTQ0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 15 Dec 2021 14:16:26 -0500
+Received: from mail-oo1-f54.google.com ([209.85.161.54]:40643 "EHLO
+        mail-oo1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1344116AbhLOTQ0 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 15 Dec 2021 13:58:05 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 0F06161899;
-        Wed, 15 Dec 2021 18:58:05 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8ADB1C36AE3;
-        Wed, 15 Dec 2021 18:58:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1639594684;
-        bh=76eb7VDWfPRd7pvYjeAKY4dcwiM5H0xLKfZAlmiztxc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Z0iSKh3vKhdbFk1neCcrSe+Pzz9B7uk/gXVZqa7cqsyP5e3NuDNJ6g3TlIYzqioxP
-         AsT6VSjdWNFxVYu2mzZyIhobGGJ3HWcSKXOmNHTIGdWY1eFuySt7/uVz3zlrPtmzMz
-         KiCDM+GnCReT/Hi62TTcJXfML0VhsVLvJQYRPe93KdkP5Yxb13RLRf1GB1vO+mIxyE
-         656/TTsEcb+IGbWvQ4YUj8y1RRZfJVcHlxwZ4hEOIo+7Kk7I16v/5gkbL8QyQSjniv
-         S/YgMUg4h1cCmeud1uX5gJECCwHGHVlXCwHrq9aDuc55ANZuTgmJtNC3OyH9pgfMiJ
-         ayYMGgNNP1Eaw==
-Date:   Wed, 15 Dec 2021 18:57:58 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Takashi Iwai <tiwai@suse.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Agneli <poczt@protonmail.ch>, linux-tegra@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Rob Herring <robh+dt@kernel.org>, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v4 00/22] Support HDMI audio on NVIDIA Tegra20
-Message-ID: <Ybo6tsnQM6OacoZs@sirena.org.uk>
-References: <20211204143725.31646-1-digetx@gmail.com>
+        Wed, 15 Dec 2021 14:16:26 -0500
+Received: by mail-oo1-f54.google.com with SMTP id w15-20020a4a354f000000b002d85ef0533dso1535497oog.7;
+        Wed, 15 Dec 2021 11:16:25 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=xgMdRGgCuIolfRdeKGEr50tqMCz4JPztfeQpCRP8ws0=;
+        b=ZOAE0v1Ze8ej4ulWmOxBEii0MvYDazfE3U5UVulg4R776izikEqLRIbe9ga4Tk0Q+3
+         wCw/zLJgBORjCNS7FxKXu/729SRfPCMDKHpLVgOnHNOtD0nA7gUcJiANidLFZhHPdF8d
+         Lfop5TuugrvuZjqHpeqAnOvA6YCiHfmjqJXnroV8oMUmBOzCVdLjBdJh/sQ5BJ7WVK6w
+         E4wEXA4h0Ij52TNMOfFWWnRInQ/rbgSc4dIUmQNojIt/aGwW4S0osW213evb9M7gbhCy
+         UF1DwDsDFvF3yF7NkhzuevTb4D9ZbVrUUS7K2hNzgVA337MLnor7siDoupFGKyMlAtRF
+         pqGA==
+X-Gm-Message-State: AOAM530wmy6Rke+9+2HqPZ8vJ/KVg4wA++QBuYK3SmSKgz/Ey/7kMnRc
+        PCcSfArJR+n219i7mCoJWA==
+X-Google-Smtp-Source: ABdhPJxsusBoa6hPOOtDxjKOQmlBNdaIhp1woTGfzH5zoLjDqu1oEoUdLzD4RkrrplFyG70u7FcjNQ==
+X-Received: by 2002:a4a:c987:: with SMTP id u7mr8518064ooq.65.1639595785406;
+        Wed, 15 Dec 2021 11:16:25 -0800 (PST)
+Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
+        by smtp.gmail.com with ESMTPSA id x17sm588157oot.30.2021.12.15.11.16.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Dec 2021 11:16:24 -0800 (PST)
+Received: (nullmailer pid 1673469 invoked by uid 1000);
+        Wed, 15 Dec 2021 19:16:23 -0000
+Date:   Wed, 15 Dec 2021 13:16:23 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Joerg Roedel <joro@8bytes.org>, Rob Herring <robh+dt@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        iommu@lists.linux-foundation.org,
+        linux-arm-kernel@lists.infradead.org,
+        Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
+        devicetree@vger.kernel.org, Will Deacon <will@kernel.org>
+Subject: Re: [PATCH v2 1/4] dt-bindings: arm-smmu: Document
+ nvidia,memory-controller property
+Message-ID: <Ybo/B1cjP4pumACW@robh.at.kernel.org>
+References: <20211209163600.609613-1-thierry.reding@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="r8pMqbbDVxb335U5"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20211204143725.31646-1-digetx@gmail.com>
-X-Cookie: No solicitors.
+In-Reply-To: <20211209163600.609613-1-thierry.reding@gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On Thu, 09 Dec 2021 17:35:57 +0100, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
+> 
+> On NVIDIA SoC's the ARM SMMU needs to interact with the memory
+> controller in order to map memory clients to the corresponding stream
+> IDs. Document how the nvidia,memory-controller property can be used to
+> achieve this.
+> 
+> Note that this is a backwards-incompatible change that is, however,
+> necessary to ensure correctness. Without the new property, most of the
+> devices would still work but it is not guaranteed that all will.
+> 
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
+> Changes in v2:
+> - clarify why the new nvidia,memory-controller property is required
+> 
+>  .../devicetree/bindings/iommu/arm,smmu.yaml     | 17 +++++++++++++++++
+>  1 file changed, 17 insertions(+)
+> 
 
---r8pMqbbDVxb335U5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Sat, Dec 04, 2021 at 05:37:03PM +0300, Dmitry Osipenko wrote:
-
-> I based S/PDIF patches on Arnd's Bergmann patch from a separate series [1]
-> that removes obsolete slave_id. This eases merging of the patches by
-> removing the merge conflict. This is a note for Mark Brown.
-
-That's not in my tree so I'll need either a pull request with the series
-or a resend after the merge window.  It's also not clear what to do
-about the DRM bits, I guess it's probably easiest to just apply them
-along with the ASoC patches.
-
-Please include human readable descriptions of things like commits and
-issues being discussed in e-mail in your mails, this makes them much
-easier for humans to read especially when they have no internet access.
-I do frequently catch up on my mail on flights or while otherwise
-travelling so this is even more pressing for me than just being about
-making things a bit easier to read.
-
---r8pMqbbDVxb335U5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmG6OrUACgkQJNaLcl1U
-h9CG4wf/R0NhMevfJzcrxbAImYtw8MIQXIBeRXJNM+viHozogArxj5HSQNArbEYW
-VBlrS/tCW9uXaIoqZgIAAkU5UoH8r01iharsCnm/GLer4aFfvFJqYfc6KPZAVhgu
-zu1AwsHPBiv59YBPE5eMNxwluv5AORqy98wy0i5eiyEBCpEeKgt3lLoFDr/GFIKt
-tXWuheE/2fqKASDvQvTHfbQ75Nb7oiCqdc/0xRkjmUgJX6JDrUPPASiQ38YfHgHw
-0X6L1Y2tWlLlGsQpdoXOceu0pnc0WdWWAxnLvJHjv6o+nMGECYBCZB/AmHYkqzrj
-vAkNiHZXRi+f3RikU7TRzEHgXszS2Q==
-=rihE
------END PGP SIGNATURE-----
-
---r8pMqbbDVxb335U5--
+Reviewed-by: Rob Herring <robh@kernel.org>
