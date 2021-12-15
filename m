@@ -2,80 +2,83 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B768C4332F
-	for <linux-tegra@archiver.kernel.org>; Wed, 15 Dec 2021 14:56:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77A45C4332F
+	for <linux-tegra@archiver.kernel.org>; Wed, 15 Dec 2021 15:04:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243588AbhLOO40 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 15 Dec 2021 09:56:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56426 "EHLO
+        id S232459AbhLOPE7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 15 Dec 2021 10:04:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58628 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243575AbhLOO4Z (ORCPT
+        with ESMTP id S229623AbhLOPE6 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 15 Dec 2021 09:56:25 -0500
+        Wed, 15 Dec 2021 10:04:58 -0500
 Received: from mail-lj1-x22f.google.com (mail-lj1-x22f.google.com [IPv6:2a00:1450:4864:20::22f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA356C06173E;
-        Wed, 15 Dec 2021 06:56:24 -0800 (PST)
-Received: by mail-lj1-x22f.google.com with SMTP id u22so33686892lju.7;
-        Wed, 15 Dec 2021 06:56:24 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38053C061574;
+        Wed, 15 Dec 2021 07:04:58 -0800 (PST)
+Received: by mail-lj1-x22f.google.com with SMTP id z8so33754535ljz.9;
+        Wed, 15 Dec 2021 07:04:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=VlpUM4pVnFF7b/v49q5hG/QwrE0qXlxltwh39I/Lb3U=;
-        b=aa6oe37gkeikvLqkgQh4Y837T645JoVUUPcc6Rkd9TBbGuzq8J7gfQnQJxKEfazilm
-         xjVa0jXe5Rizo7oGsjIlD+H4jIPSNziX6oKVz1TfSZKcy/UyUwX7Y3Uxcqnla9a+N0+7
-         PGaF+FerxDS3CvJKQxLCUk/m478BUgaON1nKCFZjUCzTVUCsAIqHnBNtZW5iuchZkwgT
-         yWKQqC4UGy8UZ0i36y0hM73bTREHeJzrl9AGWHAkjz9sUBSRVAmQXd956vjX+GTSI3hw
-         OK7zVF+Lr4VZu9yE9dt/aGk6xRHkfRz/GVlTbCVf11Nl9HNlXmJ0RQ4s01FEdcUSl+gy
-         VeqQ==
+        bh=SK2obCHb5ZGA4KhJ57yX8FGQ/4KglrxupbNqsVDZlaA=;
+        b=BYLCbT8gYFALFqpbU6OMPW34q3cqou4DBJTb5cGnt3LrRUnr0WPPUsVNAIBEFqkqCp
+         jS99Y7BW1C59sBXvttCsgmVbfdCY5sXgqFIxBs1Qjv+tRSpVcQGLaeL9S8+6DNl0FVu4
+         AGAavkXp8wBAVrmNt/y8bSBWs+AYPobKFmCklfB52Qgdb/JK4VOehOl41pI9z8L6QUWk
+         8FSPOAioTlYiQ2PiqoMQXLXxK8GFJt62VjOyKjZgmFCk/gSVw6bg6EA4sJQDMA3s9AM7
+         7JEb4prZBcyOuyio213TnY94M0JnpfkWhU5613/553SUeadbQKQw7EF39JQ2bmuj9DN8
+         XdSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=VlpUM4pVnFF7b/v49q5hG/QwrE0qXlxltwh39I/Lb3U=;
-        b=Z2qHA55au2qwu6s21olx0D4NVmqk/HaxsgDYmGw10K2Dosvk9Y5dSEo2Kb6mR6Tvai
-         25TYuckmD8vrvNuqPcn334rv/aonX1gt6zHHmuIPgjljAKTIfwb8Qguj2g29Hrr0AHPs
-         NzleO6L/u5OPrCd//caB6EL7rqsHSbHyGdwWLadzw6JNu9C2HQ2IIGfOwj9Se2JZ7aTy
-         xGOaTzW6WFdc3Fk96Nx8FRI8qYQiC5OmyUShiJ3uhcsnzgkjf7eBNqT4Y6kXLLtXIrq3
-         ZXq3qVirb76zGbZd9M1QkPExKMyGa+DQKHAZWA6/9IQGO+bQuwrzx5mhlsbua6Qvf+ix
-         Nsig==
-X-Gm-Message-State: AOAM532n/i/TcpAK8cQ7NmEhfjYSBeSx08X9DlJQb8gUjVCLSXoZIVRq
-        1WnbKuTSNzg/5U/G4x2jL+STSy2Goqg=
-X-Google-Smtp-Source: ABdhPJxtZzId3hlV/qfDQ7GjmHdzLoX/TCsop5PDpRClHgQYUT0FtHwvACVezQ3yUAbTdn7cYaU8bw==
-X-Received: by 2002:a2e:9903:: with SMTP id v3mr10380295lji.143.1639580182548;
-        Wed, 15 Dec 2021 06:56:22 -0800 (PST)
+        bh=SK2obCHb5ZGA4KhJ57yX8FGQ/4KglrxupbNqsVDZlaA=;
+        b=YUOGemlaY7RQMCbbhazWx1f2M9PQ7CSF/llsM6a7B9Ttn65tU712RB76Uf7EPf57yf
+         Y/3ZzxO49nlf41lrDtIFUWQRNgorpofE3ZK+VLvlFnz3QjoYEIo1sf7zZGgrR6cz4Maf
+         OySIMYqpIwai5bBn/2epLLoLBf7hkCWMzMKRjN8fB52b5+X+CG5OaC1UpISGr5dCtChU
+         lhf9FvMzVNWADDVLuJvs99+wqmSSgFdrZ9Cf/1HdpuKsjfQQAOoAZqqLrP9mrCfrjIsA
+         bjcOxjtLCEiG5SVHsbFuhOAB1Lx8tRCeZi0DBFha9TmDS6ICk7UCYnboeRm5x0sTs7nk
+         qo7w==
+X-Gm-Message-State: AOAM5311Smbotjsi4lEnxYOzj47IH/kUzVXogRXXVed8Kz13RPKCzSKl
+        MOA5wcjoJNhc5Z5pnRg4c+x/Aujqq0A=
+X-Google-Smtp-Source: ABdhPJyrkoYIFZIklEWbn/7U9QxIDN8R9tR4hIMA43eCE6YeQWs4azVahAS5uPKHDe2d+d8CRP8hkA==
+X-Received: by 2002:a2e:151b:: with SMTP id s27mr10382983ljd.274.1639580696364;
+        Wed, 15 Dec 2021 07:04:56 -0800 (PST)
 Received: from [192.168.2.145] (94-29-63-156.dynamic.spd-mgts.ru. [94.29.63.156])
-        by smtp.googlemail.com with ESMTPSA id c34sm357937lfv.83.2021.12.15.06.56.21
+        by smtp.googlemail.com with ESMTPSA id k15sm361906lfe.15.2021.12.15.07.04.55
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 Dec 2021 06:56:22 -0800 (PST)
-Subject: Re: [PATCH v14 2/4] dmaengine: tegra: Add tegra gpcdma driver
-To:     Akhil R <akhilrajeev@nvidia.com>,
-        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Krishna Yarlagadda <kyarlagadda@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
-        Rajesh Gumasta <rgumasta@nvidia.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        "vkoul@kernel.org" <vkoul@kernel.org>
-Cc:     Pavan Kunapuli <pkunapuli@nvidia.com>
-References: <1638795639-3681-1-git-send-email-akhilrajeev@nvidia.com>
- <1638795639-3681-3-git-send-email-akhilrajeev@nvidia.com>
- <3f7b072d-f108-ebce-e862-eff9869d1d92@gmail.com>
- <BN9PR12MB52738F4B5B7494466A9CB5A1C0769@BN9PR12MB5273.namprd12.prod.outlook.com>
+        Wed, 15 Dec 2021 07:04:55 -0800 (PST)
+Subject: Re: [PATCH v6 15/28] ARM: tegra: Add usb-role-switch property to USB
+ OTG ports
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
+        David Heidelberg <david@ixit.cz>,
+        Svyatoslav Ryhel <clamor95@gmail.com>,
+        Anton Bambura <jenneron@protonmail.com>,
+        Antoni Aloy Torrens <aaloytorrens@gmail.com>,
+        Nikola Milosavljevic <mnidza@outlook.com>,
+        Ion Agorria <ion@agorria.com>,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        Ihor Didenko <tailormoon@rambler.ru>,
+        Andreas Westman Dorcsak <hedmoo@yahoo.com>,
+        Maxim Schwalm <maxim.schwalm@gmail.com>,
+        Raffaele Tranquillini <raffaele.tranquillini@gmail.com>,
+        Jasper Korten <jja2000@gmail.com>,
+        Thomas Graichen <thomas.graichen@gmail.com>,
+        Stefan Eichenberger <stefan.eichenberger@toradex.com>,
+        Stefan Agner <stefan@agner.ch>,
+        Peter Geis <pgwipeout@gmail.com>, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20211211211412.10791-1-digetx@gmail.com>
+ <20211211211412.10791-16-digetx@gmail.com> <YbnqP0XAcUYc4ePy@orome>
 From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <70cce574-4022-16a9-ae10-4b84696d21d5@gmail.com>
-Date:   Wed, 15 Dec 2021 17:56:21 +0300
+Message-ID: <9cf23721-db53-830a-f634-d2215232f059@gmail.com>
+Date:   Wed, 15 Dec 2021 18:04:54 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.14.0
 MIME-Version: 1.0
-In-Reply-To: <BN9PR12MB52738F4B5B7494466A9CB5A1C0769@BN9PR12MB5273.namprd12.prod.outlook.com>
+In-Reply-To: <YbnqP0XAcUYc4ePy@orome>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -83,18 +86,39 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-15.12.2021 16:50, Akhil R пишет:
->> 06.12.2021 16:00, Akhil R пишет:
->>> +static const struct __maybe_unused dev_pm_ops tegra_dma_dev_pm_ops =
->> {
->>> +     SET_LATE_SYSTEM_SLEEP_PM_OPS(tegra_dma_pm_suspend,
->>> +tegra_dma_pm_resume) };
+15.12.2021 16:14, Thierry Reding пишет:
+> On Sun, Dec 12, 2021 at 12:13:59AM +0300, Dmitry Osipenko wrote:
+>> From: Stefan Eichenberger <stefan.eichenberger@toradex.com>
 >>
->> Why late?
-> To wait for the drivers using the dma to be suspended so that they
-> don't keep the dma busy.
-> Agree with the other comments.
+>> If an USB port is an OTG port, then we should add the usb-role-switch
+>> property. Otherwise XUSB setup fails and therefore padctl is unable to
+>> set up the ports. This leads to broken USB and PCIe ports. Add the
+>> usb-role-switch properties to Tegra124 device-trees to fix the problem.
+>>
+>> The error message shown without this patch is e.g:
+>> usb2-0: usb-role-switch not found for otg mode
+>>
+>> [digetx@gmail.com: improved commit message]
+>> Tested-by: Thomas Graichen <thomas.graichen@gmail.com> # T124 Nyan Big
+>> Signed-off-by: Stefan Eichenberger <stefan.eichenberger@toradex.com>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>>  arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi | 1 +
+>>  arch/arm/boot/dts/tegra124-apalis.dtsi      | 1 +
+>>  arch/arm/boot/dts/tegra124-nyan.dtsi        | 1 +
+>>  arch/arm/boot/dts/tegra124-venice2.dts      | 2 +-
+>>  4 files changed, 4 insertions(+), 1 deletion(-)
+> 
+> The device tree bindings for the XUSB pad controller say that when this
+> property is set, then the "connector" subnode should also exist.
+> 
+> Any chance we can add that? I was planning on making that a dependency
+> in the json-schema conversion of the binding, in which case it would be
+> more of a "must" than a "should".
 
-Drivers are suspended in the opposite order to the probe order. DMA
-controller driver is always probed first. The "late" is unneeded, please
-see tegra20-apb-dma driver for the example.
+I guess it will be harmless if you'll add the connector subnodes. Will
+you be able to create a separate patch that will add the subnodes on top
+of this patch?
+
+Thomas Graichen says that one USB port on Nyan Big doesn't work without
+this patch. This is why this patch is needed essentially.
