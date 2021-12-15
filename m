@@ -2,46 +2,50 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D827C433F5
-	for <linux-tegra@archiver.kernel.org>; Wed, 15 Dec 2021 10:43:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57BDAC43217
+	for <linux-tegra@archiver.kernel.org>; Wed, 15 Dec 2021 10:43:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237930AbhLOKnW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 15 Dec 2021 05:43:22 -0500
-Received: from smtp-out2.suse.de ([195.135.220.29]:40590 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236690AbhLOKnW (ORCPT
+        id S241738AbhLOKnX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 15 Dec 2021 05:43:23 -0500
+Received: from smtp-out1.suse.de ([195.135.220.28]:48634 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237596AbhLOKnX (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 15 Dec 2021 05:43:22 -0500
+        Wed, 15 Dec 2021 05:43:23 -0500
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 4601E1F382;
+        by smtp-out1.suse.de (Postfix) with ESMTPS id DC256212C0;
         Wed, 15 Dec 2021 10:43:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
         t=1639565001; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-        bh=M2oalJH/koH3roTDPDbPSrvJue1i8o+dUOZK+n2x69g=;
-        b=dfzvyDT/oZssAW6P5PRwf4LbbkB0n/PE91+XthjAV3IWhhqI1q2IdUYG1klgx8xKJg4NI2
-        xFgjZ3CGlSMTHEO/I5dhzdiZuRR9rcAT2Bpn79yUXDL2ZSgP+9IN1qTSxSUqTdLG/lqLVP
-        lZlvojmtJJE1FvjV4CcVMaz56pKTrns=
+         mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=nb9F5Z8bMRJ29PjFnWYClorHHVdL3vddk6Ud4G0acUE=;
+        b=YlrtP9J9w9LWDYVaM2I344dafJSH/Pls0vIJE23fov4LEXEtj5lfZJ1/ne14tq6Mpk6smA
+        cmOdXild3GZlPIQrYrzbPTRsV6qaB1M4gtcE67ZNr82Jckgn5eVEFZOweOhCOIPDY40/j9
+        Q7ftQkrMbe58DRiui3eS1siT67pE2tU=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
         s=susede2_ed25519; t=1639565001;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-        bh=M2oalJH/koH3roTDPDbPSrvJue1i8o+dUOZK+n2x69g=;
-        b=Xvr0A3vYEvRf7IvTydmZLjcghPcqKy7Jq8qGRY0vRo94entLQawFpekUISARriGABGY6Uj
-        yemJ3KmIrtHiJqAA==
+         mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=nb9F5Z8bMRJ29PjFnWYClorHHVdL3vddk6Ud4G0acUE=;
+        b=BxEeOmmMblkITUSERkAtFz5DHSAO7WVbnt1rtUK6JQQf+U5loAVoc2Hj5PwrAdMCYE6YGE
+        ve+wVuh/6UXtsXCw==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id EECD413B1C;
-        Wed, 15 Dec 2021 10:43:20 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 9473A13B1C;
+        Wed, 15 Dec 2021 10:43:21 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id SVlROcjGuWH1eAAAMHmgww
-        (envelope-from <tzimmermann@suse.de>); Wed, 15 Dec 2021 10:43:20 +0000
+        id wNdnI8nGuWH1eAAAMHmgww
+        (envelope-from <tzimmermann@suse.de>); Wed, 15 Dec 2021 10:43:21 +0000
 From:   Thomas Zimmermann <tzimmermann@suse.de>
 To:     mripard@kernel.org, maarten.lankhorst@linux.intel.com,
         airlied@linux.ie, daniel@ffwll.ch, jani.nikula@linux.intel.com
@@ -51,142 +55,167 @@ Cc:     dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
         linux-arm-kernel@lists.infradead.org,
         linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
         Thomas Zimmermann <tzimmermann@suse.de>
-Subject: [PATCH v2 0/5] drm/dp: Move DisplayPort helpers into own module
-Date:   Wed, 15 Dec 2021 11:43:12 +0100
-Message-Id: <20211215104318.18866-1-tzimmermann@suse.de>
+Subject: [PATCH v2 2/5] drm/dp: Move DP declarations into separate header file
+Date:   Wed, 15 Dec 2021 11:43:14 +0100
+Message-Id: <20211215104318.18866-3-tzimmermann@suse.de>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20211215104318.18866-1-tzimmermann@suse.de>
+References: <20211215104318.18866-1-tzimmermann@suse.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Split-off DisplayPort functions from KMS helper library and move them
-into their own module. Reduces the size of drm_kms_helper.ko by ~50%.
-
-This patchset is part of an on-going effort to reduce the minimum
-binary size of the DRM core and helpers. It's helpful for systems with
-early-boot DRM graphics, which requires DRM to be linked into the
-kernel image.
+Split the DP declarations from other helpers before moving the
+DP functions into a separate module.
 
 v2:
-	* move helper library into subdirectory (Jani)
-	* also move DP AUX bus helpers
+	* forward-declare struct drm_dp_aux (Jani)
+	* add include guards in drm_dp_helper_internal.h
 
-Thomas Zimmermann (5):
-  drm/dp_mst: Remove trailing whitespace.
-  drm/dp: Move DP declarations into separate header file
-  drm/dp: Move DisplayPort helpers into separate helper module
-  drm/dp: Move public DisplayPort headers into dp/
-  drm/dp: Move DisplayPort AUX bus helpers into dp/
+Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+---
+ drivers/gpu/drm/drm_crtc_helper_internal.h | 27 ------------------
+ drivers/gpu/drm/drm_dp_aux_dev.c           |  2 +-
+ drivers/gpu/drm/drm_dp_helper.c            |  2 +-
+ drivers/gpu/drm/drm_dp_helper_internal.h   | 33 ++++++++++++++++++++++
+ drivers/gpu/drm/drm_dp_mst_topology.c      |  2 +-
+ drivers/gpu/drm/drm_kms_helper_common.c    |  1 +
+ 6 files changed, 37 insertions(+), 30 deletions(-)
+ create mode 100644 drivers/gpu/drm/drm_dp_helper_internal.h
 
- drivers/gpu/drm/Kconfig                       |  8 +++++
- drivers/gpu/drm/Makefile                      | 12 +++----
- .../gpu/drm/amd/amdgpu/amdgpu_connectors.c    |  2 +-
- drivers/gpu/drm/amd/amdgpu/amdgpu_mode.h      |  4 +--
- drivers/gpu/drm/amd/amdgpu/atombios_dp.c      |  2 +-
- .../gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c |  2 +-
- .../gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h |  2 +-
- .../display/amdgpu_dm/amdgpu_dm_mst_types.c   |  4 +--
- .../drm/amd/display/dc/core/dc_link_dpcd.c    |  2 +-
- drivers/gpu/drm/amd/display/dc/dsc/dc_dsc.c   |  2 +-
- drivers/gpu/drm/amd/display/dc/os_types.h     |  2 +-
- .../gpu/drm/amd/display/include/dpcd_defs.h   |  2 +-
- .../gpu/drm/amd/display/modules/hdcp/hdcp.h   |  2 +-
- drivers/gpu/drm/bridge/Kconfig                |  4 +++
- drivers/gpu/drm/bridge/analogix/Kconfig       |  2 ++
- .../drm/bridge/analogix/analogix-anx6345.c    |  2 +-
- .../drm/bridge/analogix/analogix-anx78xx.c    |  2 +-
- .../drm/bridge/analogix/analogix-i2c-dptx.c   |  2 +-
- .../drm/bridge/analogix/analogix_dp_core.h    |  2 +-
- drivers/gpu/drm/bridge/analogix/anx7625.c     |  2 +-
- drivers/gpu/drm/bridge/cadence/Kconfig        |  1 +
- .../drm/bridge/cadence/cdns-mhdp8546-core.c   |  2 +-
- .../drm/bridge/cadence/cdns-mhdp8546-core.h   |  2 +-
- drivers/gpu/drm/bridge/parade-ps8640.c        |  4 +--
- drivers/gpu/drm/bridge/tc358767.c             |  2 +-
- drivers/gpu/drm/bridge/tc358775.c             |  2 +-
- drivers/gpu/drm/bridge/ti-sn65dsi86.c         |  4 +--
- drivers/gpu/drm/dp/Makefile                   |  9 +++++
- .../gpu/drm/{drm_dp_helper.c => dp/drm_dp.c}  |  6 ++--
- drivers/gpu/drm/{ => dp}/drm_dp_aux_bus.c     |  4 +--
- drivers/gpu/drm/{ => dp}/drm_dp_aux_dev.c     |  6 ++--
- drivers/gpu/drm/{ => dp}/drm_dp_cec.c         |  2 +-
- .../drm/{ => dp}/drm_dp_dual_mode_helper.c    |  2 +-
- drivers/gpu/drm/dp/drm_dp_helper_internal.h   | 33 +++++++++++++++++++
- drivers/gpu/drm/dp/drm_dp_helper_mod.c        | 22 +++++++++++++
- .../gpu/drm/{ => dp}/drm_dp_mst_topology.c    |  6 ++--
- .../{ => dp}/drm_dp_mst_topology_internal.h   |  2 +-
- drivers/gpu/drm/drm_crtc_helper_internal.h    | 27 ---------------
- drivers/gpu/drm/drm_dsc.c                     |  2 +-
- drivers/gpu/drm/drm_kms_helper_common.c       | 14 --------
- drivers/gpu/drm/gma500/cdv_intel_dp.c         |  2 +-
- drivers/gpu/drm/gma500/intel_bios.c           |  2 +-
- drivers/gpu/drm/i915/Kconfig                  |  1 +
- drivers/gpu/drm/i915/display/intel_bios.c     |  2 +-
- drivers/gpu/drm/i915/display/intel_display.c  |  2 +-
- .../drm/i915/display/intel_display_types.h    |  4 +--
- drivers/gpu/drm/i915/display/intel_dp.c       |  2 +-
- drivers/gpu/drm/i915/display/intel_dp_hdcp.c  |  4 +--
- .../drm/i915/display/intel_dp_link_training.h |  2 +-
- drivers/gpu/drm/i915/display/intel_lspcon.c   |  2 +-
- drivers/gpu/drm/msm/Kconfig                   |  1 +
- drivers/gpu/drm/msm/dp/dp_audio.c             |  2 +-
- drivers/gpu/drm/msm/dp/dp_aux.h               |  2 +-
- drivers/gpu/drm/msm/dp/dp_catalog.c           |  2 +-
- drivers/gpu/drm/msm/dp/dp_ctrl.c              |  2 +-
- drivers/gpu/drm/msm/edp/edp.h                 |  2 +-
- drivers/gpu/drm/msm/edp/edp_ctrl.c            |  2 +-
- drivers/gpu/drm/nouveau/Kconfig               |  1 +
- drivers/gpu/drm/nouveau/dispnv50/disp.c       |  2 +-
- drivers/gpu/drm/nouveau/nouveau_connector.h   |  2 +-
- drivers/gpu/drm/nouveau/nouveau_dp.c          |  2 +-
- drivers/gpu/drm/nouveau/nouveau_encoder.h     |  4 +--
- drivers/gpu/drm/panel/panel-edp.c             |  4 +--
- .../gpu/drm/panel/panel-samsung-atna33xc20.c  |  4 +--
- drivers/gpu/drm/radeon/atombios_dp.c          |  2 +-
- drivers/gpu/drm/radeon/radeon_connectors.c    |  2 +-
- drivers/gpu/drm/radeon/radeon_dp_mst.c        |  2 +-
- drivers/gpu/drm/radeon/radeon_mode.h          |  4 +--
- drivers/gpu/drm/rockchip/Kconfig              |  1 +
- .../gpu/drm/rockchip/analogix_dp-rockchip.c   |  2 +-
- drivers/gpu/drm/rockchip/cdn-dp-core.c        |  2 +-
- drivers/gpu/drm/rockchip/cdn-dp-core.h        |  2 +-
- drivers/gpu/drm/rockchip/rockchip_lvds.c      |  2 +-
- drivers/gpu/drm/rockchip/rockchip_rgb.c       |  2 +-
- .../drm/selftests/test-drm_dp_mst_helper.c    |  2 +-
- drivers/gpu/drm/tegra/Kconfig                 |  1 +
- drivers/gpu/drm/tegra/dp.c                    |  2 +-
- drivers/gpu/drm/tegra/dpaux.c                 |  2 +-
- drivers/gpu/drm/tegra/sor.c                   |  2 +-
- drivers/gpu/drm/xlnx/Kconfig                  |  1 +
- drivers/gpu/drm/xlnx/zynqmp_dp.c              |  2 +-
- include/drm/{ => dp}/drm_dp_aux_bus.h         |  0
- .../drm/{ => dp}/drm_dp_dual_mode_helper.h    |  0
- include/drm/{ => dp}/drm_dp_helper.h          |  0
- include/drm/{ => dp}/drm_dp_mst_helper.h      |  2 +-
- include/drm/drm_dsc.h                         |  2 +-
- 86 files changed, 173 insertions(+), 133 deletions(-)
- create mode 100644 drivers/gpu/drm/dp/Makefile
- rename drivers/gpu/drm/{drm_dp_helper.c => dp/drm_dp.c} (99%)
- rename drivers/gpu/drm/{ => dp}/drm_dp_aux_bus.c (99%)
- rename drivers/gpu/drm/{ => dp}/drm_dp_aux_dev.c (98%)
- rename drivers/gpu/drm/{ => dp}/drm_dp_cec.c (99%)
- rename drivers/gpu/drm/{ => dp}/drm_dp_dual_mode_helper.c (99%)
- create mode 100644 drivers/gpu/drm/dp/drm_dp_helper_internal.h
- create mode 100644 drivers/gpu/drm/dp/drm_dp_helper_mod.c
- rename drivers/gpu/drm/{ => dp}/drm_dp_mst_topology.c (99%)
- rename drivers/gpu/drm/{ => dp}/drm_dp_mst_topology_internal.h (94%)
- rename include/drm/{ => dp}/drm_dp_aux_bus.h (100%)
- rename include/drm/{ => dp}/drm_dp_dual_mode_helper.h (100%)
- rename include/drm/{ => dp}/drm_dp_helper.h (100%)
- rename include/drm/{ => dp}/drm_dp_mst_helper.h (99%)
-
-
-base-commit: 3f422828221d9ceefcddef0be33561b1646a1cbe
-prerequisite-patch-id: c2b2f08f0eccc9f5df0c0da49fa1d36267deb11d
-prerequisite-patch-id: c67e5d886a47b7d0266d81100837557fda34cb24
-prerequisite-patch-id: d7624cd450e9961cb3a1efa61f906213316ab2a5
---
+diff --git a/drivers/gpu/drm/drm_crtc_helper_internal.h b/drivers/gpu/drm/drm_crtc_helper_internal.h
+index 61e09f8a8d0f..28e04e750130 100644
+--- a/drivers/gpu/drm/drm_crtc_helper_internal.h
++++ b/drivers/gpu/drm/drm_crtc_helper_internal.h
+@@ -28,36 +28,9 @@
+ 
+ #include <drm/drm_connector.h>
+ #include <drm/drm_crtc.h>
+-#include <drm/drm_dp_helper.h>
+ #include <drm/drm_encoder.h>
+ #include <drm/drm_modes.h>
+ 
+-/* drm_dp_aux_dev.c */
+-#ifdef CONFIG_DRM_DP_AUX_CHARDEV
+-int drm_dp_aux_dev_init(void);
+-void drm_dp_aux_dev_exit(void);
+-int drm_dp_aux_register_devnode(struct drm_dp_aux *aux);
+-void drm_dp_aux_unregister_devnode(struct drm_dp_aux *aux);
+-#else
+-static inline int drm_dp_aux_dev_init(void)
+-{
+-	return 0;
+-}
+-
+-static inline void drm_dp_aux_dev_exit(void)
+-{
+-}
+-
+-static inline int drm_dp_aux_register_devnode(struct drm_dp_aux *aux)
+-{
+-	return 0;
+-}
+-
+-static inline void drm_dp_aux_unregister_devnode(struct drm_dp_aux *aux)
+-{
+-}
+-#endif
+-
+ /* drm_probe_helper.c */
+ enum drm_mode_status drm_crtc_mode_valid(struct drm_crtc *crtc,
+ 					 const struct drm_display_mode *mode);
+diff --git a/drivers/gpu/drm/drm_dp_aux_dev.c b/drivers/gpu/drm/drm_dp_aux_dev.c
+index 06b374cae956..0618dfe16660 100644
+--- a/drivers/gpu/drm/drm_dp_aux_dev.c
++++ b/drivers/gpu/drm/drm_dp_aux_dev.c
+@@ -40,7 +40,7 @@
+ #include <drm/drm_dp_mst_helper.h>
+ #include <drm/drm_print.h>
+ 
+-#include "drm_crtc_helper_internal.h"
++#include "drm_dp_helper_internal.h"
+ 
+ struct drm_dp_aux_dev {
+ 	unsigned index;
+diff --git a/drivers/gpu/drm/drm_dp_helper.c b/drivers/gpu/drm/drm_dp_helper.c
+index 23f9073bc473..e995a0262ed7 100644
+--- a/drivers/gpu/drm/drm_dp_helper.c
++++ b/drivers/gpu/drm/drm_dp_helper.c
+@@ -35,7 +35,7 @@
+ #include <drm/drm_dp_mst_helper.h>
+ #include <drm/drm_panel.h>
+ 
+-#include "drm_crtc_helper_internal.h"
++#include "drm_dp_helper_internal.h"
+ 
+ struct dp_aux_backlight {
+ 	struct backlight_device *base;
+diff --git a/drivers/gpu/drm/drm_dp_helper_internal.h b/drivers/gpu/drm/drm_dp_helper_internal.h
+new file mode 100644
+index 000000000000..8917fc3af9ec
+--- /dev/null
++++ b/drivers/gpu/drm/drm_dp_helper_internal.h
+@@ -0,0 +1,33 @@
++/* SPDX-License-Identifier: MIT */
++
++#ifndef DRM_DP_HELPER_INTERNAL_H
++#define DRM_DP_HELPER_INTERNAL_H
++
++struct drm_dp_aux;
++
++#ifdef CONFIG_DRM_DP_AUX_CHARDEV
++int drm_dp_aux_dev_init(void);
++void drm_dp_aux_dev_exit(void);
++int drm_dp_aux_register_devnode(struct drm_dp_aux *aux);
++void drm_dp_aux_unregister_devnode(struct drm_dp_aux *aux);
++#else
++static inline int drm_dp_aux_dev_init(void)
++{
++	return 0;
++}
++
++static inline void drm_dp_aux_dev_exit(void)
++{
++}
++
++static inline int drm_dp_aux_register_devnode(struct drm_dp_aux *aux)
++{
++	return 0;
++}
++
++static inline void drm_dp_aux_unregister_devnode(struct drm_dp_aux *aux)
++{
++}
++#endif
++
++#endif
+diff --git a/drivers/gpu/drm/drm_dp_mst_topology.c b/drivers/gpu/drm/drm_dp_mst_topology.c
+index 7f0ff96261cf..9f7b0b606924 100644
+--- a/drivers/gpu/drm/drm_dp_mst_topology.c
++++ b/drivers/gpu/drm/drm_dp_mst_topology.c
+@@ -45,7 +45,7 @@
+ #include <drm/drm_print.h>
+ #include <drm/drm_probe_helper.h>
+ 
+-#include "drm_crtc_helper_internal.h"
++#include "drm_dp_helper_internal.h"
+ #include "drm_dp_mst_topology_internal.h"
+ 
+ /**
+diff --git a/drivers/gpu/drm/drm_kms_helper_common.c b/drivers/gpu/drm/drm_kms_helper_common.c
+index 47e92400548d..88260d26409c 100644
+--- a/drivers/gpu/drm/drm_kms_helper_common.c
++++ b/drivers/gpu/drm/drm_kms_helper_common.c
+@@ -29,6 +29,7 @@
+ 
+ #include <drm/drm_print.h>
+ 
++#include "drm_dp_helper_internal.h"
+ #include "drm_crtc_helper_internal.h"
+ 
+ MODULE_AUTHOR("David Airlie, Jesse Barnes");
+-- 
 2.34.1
 
