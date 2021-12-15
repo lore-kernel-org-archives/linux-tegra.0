@@ -2,56 +2,55 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77A45C4332F
-	for <linux-tegra@archiver.kernel.org>; Wed, 15 Dec 2021 15:04:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD8D5C433EF
+	for <linux-tegra@archiver.kernel.org>; Wed, 15 Dec 2021 15:09:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232459AbhLOPE7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 15 Dec 2021 10:04:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58628 "EHLO
+        id S243688AbhLOPJV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 15 Dec 2021 10:09:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59626 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229623AbhLOPE6 (ORCPT
+        with ESMTP id S243550AbhLOPJU (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 15 Dec 2021 10:04:58 -0500
-Received: from mail-lj1-x22f.google.com (mail-lj1-x22f.google.com [IPv6:2a00:1450:4864:20::22f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38053C061574;
-        Wed, 15 Dec 2021 07:04:58 -0800 (PST)
-Received: by mail-lj1-x22f.google.com with SMTP id z8so33754535ljz.9;
-        Wed, 15 Dec 2021 07:04:58 -0800 (PST)
+        Wed, 15 Dec 2021 10:09:20 -0500
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51297C061574;
+        Wed, 15 Dec 2021 07:09:20 -0800 (PST)
+Received: by mail-wr1-x42d.google.com with SMTP id c4so38738131wrd.9;
+        Wed, 15 Dec 2021 07:09:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=SK2obCHb5ZGA4KhJ57yX8FGQ/4KglrxupbNqsVDZlaA=;
-        b=BYLCbT8gYFALFqpbU6OMPW34q3cqou4DBJTb5cGnt3LrRUnr0WPPUsVNAIBEFqkqCp
-         jS99Y7BW1C59sBXvttCsgmVbfdCY5sXgqFIxBs1Qjv+tRSpVcQGLaeL9S8+6DNl0FVu4
-         AGAavkXp8wBAVrmNt/y8bSBWs+AYPobKFmCklfB52Qgdb/JK4VOehOl41pI9z8L6QUWk
-         8FSPOAioTlYiQ2PiqoMQXLXxK8GFJt62VjOyKjZgmFCk/gSVw6bg6EA4sJQDMA3s9AM7
-         7JEb4prZBcyOuyio213TnY94M0JnpfkWhU5613/553SUeadbQKQw7EF39JQ2bmuj9DN8
-         XdSg==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ndszUawtcZsihPxhRzA/LtnVLLc7iX4oMb3QBYTTmpA=;
+        b=ETfDROvgKirT7dBbBlqYQ7Tpuf+p+zrnl5rYRaBKrhjNi9Tpg6CiRqXowvqdw3nr6n
+         b4w98RHtiIadoeNhtbtYbMzTKxzO46k9/1VDYGBysTXZEZqEhIupEQ1USi2vflDoYuch
+         VYwDEXDnbYzaKZ5AKYcudUcbXG9W+6UcuF4BAomK1bJS4/sK7LiniD8CETKEVdg0WoUl
+         lImaYoiFrX0oIa7HEjUhl7mn8Ep1pfG1pJbdVtpC7ZRuyooDiY6KoyKYTkfPU8RAvFpr
+         z7yu8eNP5QIBXzq+jKDHS0TpVNLSkaS2Adu/+qyeKAmjFLTFWubhEMBOuOQqh5meSaWQ
+         sZ9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=SK2obCHb5ZGA4KhJ57yX8FGQ/4KglrxupbNqsVDZlaA=;
-        b=YUOGemlaY7RQMCbbhazWx1f2M9PQ7CSF/llsM6a7B9Ttn65tU712RB76Uf7EPf57yf
-         Y/3ZzxO49nlf41lrDtIFUWQRNgorpofE3ZK+VLvlFnz3QjoYEIo1sf7zZGgrR6cz4Maf
-         OySIMYqpIwai5bBn/2epLLoLBf7hkCWMzMKRjN8fB52b5+X+CG5OaC1UpISGr5dCtChU
-         lhf9FvMzVNWADDVLuJvs99+wqmSSgFdrZ9Cf/1HdpuKsjfQQAOoAZqqLrP9mrCfrjIsA
-         bjcOxjtLCEiG5SVHsbFuhOAB1Lx8tRCeZi0DBFha9TmDS6ICk7UCYnboeRm5x0sTs7nk
-         qo7w==
-X-Gm-Message-State: AOAM5311Smbotjsi4lEnxYOzj47IH/kUzVXogRXXVed8Kz13RPKCzSKl
-        MOA5wcjoJNhc5Z5pnRg4c+x/Aujqq0A=
-X-Google-Smtp-Source: ABdhPJyrkoYIFZIklEWbn/7U9QxIDN8R9tR4hIMA43eCE6YeQWs4azVahAS5uPKHDe2d+d8CRP8hkA==
-X-Received: by 2002:a2e:151b:: with SMTP id s27mr10382983ljd.274.1639580696364;
-        Wed, 15 Dec 2021 07:04:56 -0800 (PST)
-Received: from [192.168.2.145] (94-29-63-156.dynamic.spd-mgts.ru. [94.29.63.156])
-        by smtp.googlemail.com with ESMTPSA id k15sm361906lfe.15.2021.12.15.07.04.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 Dec 2021 07:04:55 -0800 (PST)
-Subject: Re: [PATCH v6 15/28] ARM: tegra: Add usb-role-switch property to USB
- OTG ports
-To:     Thierry Reding <thierry.reding@gmail.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ndszUawtcZsihPxhRzA/LtnVLLc7iX4oMb3QBYTTmpA=;
+        b=5zssZ2r4x3D0BYT2mIAMNDCzNTWb1ksnHyeBP2S/Irbsnej2cLLGXxsusIlsVBjeKc
+         iFNUWd9EMz2W1Rn9xiLz0FlRcu/NvfAZv6syZTrbziMD5+gePDTa1fpxkNnE49ADOzxn
+         d+ZdklnQkVDrl3basSHQwwPBTfvsi2xAdHQ51+hyadi9SRstohYqu9OH/g1+I8szkmRz
+         aXvr0GDXC58tPcHBifwlDXY3gBeKbt1eWGsDwenV6ZKxcnXdguoU4Os0grFrIX4j4XnY
+         k+lPzGpegygsM6DO6QRaPSoMsuo6yI6Q6fylmneefeQB3PZCUITP1HLT0xqA1P54hjBC
+         aHpQ==
+X-Gm-Message-State: AOAM532dxkIiv/rSgoyVMQcO8CIwm+OQh4M510gs3FyEXfvEFSo753LF
+        2nPbjKJWka8bVc4oc+OBMkA=
+X-Google-Smtp-Source: ABdhPJzBpWAYkW+xNPBUpX4TQ/KAQSl85LQaKAjS9J1srPEWlG4c04xnHAwDm8xKqEjGOXe78f8ILA==
+X-Received: by 2002:adf:fd4c:: with SMTP id h12mr4535921wrs.429.1639580958794;
+        Wed, 15 Dec 2021 07:09:18 -0800 (PST)
+Received: from orome ([193.209.96.43])
+        by smtp.gmail.com with ESMTPSA id r17sm5683419wmq.5.2021.12.15.07.09.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Dec 2021 07:09:17 -0800 (PST)
+Date:   Wed, 15 Dec 2021 16:09:13 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Dmitry Osipenko <digetx@gmail.com>
 Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
         David Heidelberg <david@ixit.cz>,
         Svyatoslav Ryhel <clamor95@gmail.com>,
@@ -59,7 +58,7 @@ Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
         Antoni Aloy Torrens <aaloytorrens@gmail.com>,
         Nikola Milosavljevic <mnidza@outlook.com>,
         Ion Agorria <ion@agorria.com>,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
         Ihor Didenko <tailormoon@rambler.ru>,
         Andreas Westman Dorcsak <hedmoo@yahoo.com>,
         Maxim Schwalm <maxim.schwalm@gmail.com>,
@@ -70,55 +69,76 @@ Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
         Stefan Agner <stefan@agner.ch>,
         Peter Geis <pgwipeout@gmail.com>, devicetree@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 08/28] ARM: tegra: Add device-tree for ASUS
+ Transformer Prime TF201
+Message-ID: <YboFGXzalmPeCqwI@orome>
 References: <20211211211412.10791-1-digetx@gmail.com>
- <20211211211412.10791-16-digetx@gmail.com> <YbnqP0XAcUYc4ePy@orome>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <9cf23721-db53-830a-f634-d2215232f059@gmail.com>
-Date:   Wed, 15 Dec 2021 18:04:54 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+ <20211211211412.10791-9-digetx@gmail.com>
+ <Ybntiedyo353hMxm@orome>
+ <373613c6-2c3b-522c-ac63-371304b79bb9@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <YbnqP0XAcUYc4ePy@orome>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="5JrQbDbVSoe0zJtM"
+Content-Disposition: inline
+In-Reply-To: <373613c6-2c3b-522c-ac63-371304b79bb9@gmail.com>
+User-Agent: Mutt/2.1.3 (987dde4c) (2021-09-10)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-15.12.2021 16:14, Thierry Reding пишет:
-> On Sun, Dec 12, 2021 at 12:13:59AM +0300, Dmitry Osipenko wrote:
->> From: Stefan Eichenberger <stefan.eichenberger@toradex.com>
->>
->> If an USB port is an OTG port, then we should add the usb-role-switch
->> property. Otherwise XUSB setup fails and therefore padctl is unable to
->> set up the ports. This leads to broken USB and PCIe ports. Add the
->> usb-role-switch properties to Tegra124 device-trees to fix the problem.
->>
->> The error message shown without this patch is e.g:
->> usb2-0: usb-role-switch not found for otg mode
->>
->> [digetx@gmail.com: improved commit message]
->> Tested-by: Thomas Graichen <thomas.graichen@gmail.com> # T124 Nyan Big
->> Signed-off-by: Stefan Eichenberger <stefan.eichenberger@toradex.com>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> ---
->>  arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi | 1 +
->>  arch/arm/boot/dts/tegra124-apalis.dtsi      | 1 +
->>  arch/arm/boot/dts/tegra124-nyan.dtsi        | 1 +
->>  arch/arm/boot/dts/tegra124-venice2.dts      | 2 +-
->>  4 files changed, 4 insertions(+), 1 deletion(-)
-> 
-> The device tree bindings for the XUSB pad controller say that when this
-> property is set, then the "connector" subnode should also exist.
-> 
-> Any chance we can add that? I was planning on making that a dependency
-> in the json-schema conversion of the binding, in which case it would be
-> more of a "must" than a "should".
 
-I guess it will be harmless if you'll add the connector subnodes. Will
-you be able to create a separate patch that will add the subnodes on top
-of this patch?
+--5JrQbDbVSoe0zJtM
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thomas Graichen says that one USB port on Nyan Big doesn't work without
-this patch. This is why this patch is needed essentially.
+On Wed, Dec 15, 2021 at 05:19:09PM +0300, Dmitry Osipenko wrote:
+> 15.12.2021 16:28, Thierry Reding =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > On Sun, Dec 12, 2021 at 12:13:52AM +0300, Dmitry Osipenko wrote:
+> > [...]
+> >> +	display-panel {
+> >> +		compatible =3D "hannstar,hsd101pww2";
+> >=20
+> > There doesn't seem to be a DT binding for this and I can't find any
+> > patches where this would be added. Is there a patch somewhere to do
+> > this?
+>=20
+> Are you trolling me? :/ Please search the "Tegra kernel patches for
+> 5.17" email in your inbox, it must be there. Please read and answer to it.
+
+Hmm... I searched for this in my inbox and couldn't find it. Odd.
+
+> All patches are in the Tegra patchwork. Who marked them "Not Applicable"?
+>=20
+> https://patchwork.ozlabs.org/project/linux-tegra/patch/20211211213653.177=
+00-3-digetx@gmail.com/
+>=20
+> https://patchwork.ozlabs.org/project/linux-tegra/list/?series=3D276358
+
+I will regularly go over patchwork and mark things "Not Applicable" if
+they don't go in via the Tegra tree. These would have to go in via DRM
+and so are not relevant on the linux-tegra patchwork instance.
+
+Thierry
+
+--5JrQbDbVSoe0zJtM
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmG6BRYACgkQ3SOs138+
+s6EPuxAAl3QaJ9HZpSuDGYbnFMXdFJ0jby48BCs2NQFpQuwCiuu6OWE61nwOOS8v
+5bcKavrBm5ZHQ/qgfIl6GQVjpLQKn+Y322DkE1IoRlWa/czGMUn3cuIc+OzL+N4+
+5gRqwjQw+Xg/BYSUsacLVI5j8Mre+NGVsicQxmAWLjBCdojTvIbimAReDlenXsSF
+8/3Y7FqPLlper1ca7QB8B1yn8J/ff2/YgFWr1XJMSRN/dktTPmmPuI+5gw6XlBzD
+XUk4v/9O5oZWC4SBryIFTyTovILIU+HYyvCmsjHP9XdA/zTKT26XkDulBIpyZV+L
+se9poN7OqGX96GdF7Yap9ZWu+R/6dYHpPZin1OWz3aQ5JuPHM2qDKfWYWdQpe09T
+dH6kybvJ4nS1zmtG1F7BkXWF5y2LMbzGDttxJAwF84/p858WdlrxNTrsmeQwU2KD
+mO6UD/H9NZJMZV95GTVwvD5yQQpZzDKK+pVxqo4+FikEvbvpKF2wnAM/RyihTkl6
+Y1bPED0uhiQvDbFEgQ7WLCdZgpPZCVmV3Mf8pHQXiFN3S993tC5oWwiaIu94WZ0g
+Cmi/QZDkFD0kj0GJSnJlesrn/38FRdAHBAx5zPG4IIudQH5kIDzMBCwoz/7x4Am9
+JNLd7EKQLd7dQxCi6rypkrr6F9N3rzsr8NUO0S6hz4IRx1nAOEQ=
+=2Phy
+-----END PGP SIGNATURE-----
+
+--5JrQbDbVSoe0zJtM--
