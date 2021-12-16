@@ -2,120 +2,145 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23878C433F5
-	for <linux-tegra@archiver.kernel.org>; Thu, 16 Dec 2021 15:31:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6102C433EF
+	for <linux-tegra@archiver.kernel.org>; Thu, 16 Dec 2021 15:42:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238556AbhLPPb0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 16 Dec 2021 10:31:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58314 "EHLO
+        id S235218AbhLPPm5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 16 Dec 2021 10:42:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60902 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238544AbhLPPb0 (ORCPT
+        with ESMTP id S232616AbhLPPm4 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 16 Dec 2021 10:31:26 -0500
-Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C8C8C061574;
-        Thu, 16 Dec 2021 07:31:26 -0800 (PST)
-Received: by mail-wr1-x42b.google.com with SMTP id o13so44805530wrs.12;
-        Thu, 16 Dec 2021 07:31:25 -0800 (PST)
+        Thu, 16 Dec 2021 10:42:56 -0500
+Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7CA1AC061574;
+        Thu, 16 Dec 2021 07:42:56 -0800 (PST)
+Received: by mail-lf1-x135.google.com with SMTP id b40so50415576lfv.10;
+        Thu, 16 Dec 2021 07:42:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=sts3JGyfN1WuKgg88vZXBQQlHHEJeYISoHb+lIrYjpI=;
-        b=OI/lA3kVbaJDD/afsQSi+J36E2JqDxVXvOowE3TBOFNTrX1O3LczxrTihQ1jr6Ux6f
-         ovaLEraU36ANee/qN+2S8S2u/FdMucEzq/hFYUrnE5bdNBZUd2/3iL9s9yR8moc3CZMU
-         Ag5+NZCv2EM7gw8WWiN98BkkFWIS5jCXHKWRcq8FrmRoZ5HDS0i5wSh3wcN+ZOwrtWWO
-         O7YH0NPO0KSE+LDkUNWT/cRYfL/tKOdqbASlL9LB5xUnPbcqkw5Qjxu+maa3lETPxwPK
-         Nnz1cAva20b7kryGV92hhutdsvoEydLKblUacrE1FntjJzhyX0BXb0uozsSWZ4q3IKDQ
-         psfw==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=xT/SiTniM/eQ/R5+rML11O3ecWALbJayKGmVc/zKnAs=;
+        b=eDUAjQFU4pujVpoke1B2Ce2DlcWwNzL17RKV9V6JUts6HbLEXAMq2STRc4kzJ8boUz
+         B7R9RJQgQtdt7cf6pcTPa16ZtGntHnvNS/J6bkb4xkNIuPZNWGESjob6LMV/pMuHyICu
+         nYzW3fRQ53vO+WuuHmtrmiiniG4zHgvBLTejeiJoYfInfvBfY2GGSwa6AlrJab6TdBbC
+         7Ma5VKLSWQKxuaEiwraTPfbJu7DGXNjBlvp/0ApwrqiRRK42WF5XjYMh5X0odMOZEQqy
+         KgbIV7sRQsbC0b5IsQmdPRAE3kB3j11KRct2kNJRRrY7oSoKUemT9npq2rI/I/jytwJo
+         op4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=sts3JGyfN1WuKgg88vZXBQQlHHEJeYISoHb+lIrYjpI=;
-        b=Ls0V9VgAfNRiLa6PJ8jhr9Ld1/53eCK/f2N85+OPxgjARNB739FfBRo6sH+w1HeBz+
-         gJcIBXQR7acylTKbc/AvJs4WivccBSB74N0JaN79+muvOV+D7Z00In9bF5nNLfpFllLk
-         5wp9CgHbsl0Mu5HWCNlpChG6zG3Cum4NsiJ/6sTWKwFJ2kRsHT7yk4Co+tr+PhI5j3oW
-         azm91/JZPL5JsEclz6HO6jxdsjpu1jcaw7cJnGV0zdfCflVYiQ6pnZ9wJe1R411m8kNL
-         +G/5rQVtZi5f1JJpGL3f4UrJk769wZhaN/PHOUeZ7dt12Iyfy0Hyx0mAU2U8NTLodexc
-         oIjw==
-X-Gm-Message-State: AOAM533JZ+0chla0ZZFBMetxRtRL17Jpa3jx9lSNoYJnA27Itj+mbc19
-        ofY5nmPKiUe6ra7zjFI2BvI=
-X-Google-Smtp-Source: ABdhPJx1GRSUJgkEQM02MsqnuDNU/r4aWmqUaySJJcyuR/EPQN8tAfIjZJbeWsV+oiDXQvB/S//viQ==
-X-Received: by 2002:a5d:6d05:: with SMTP id e5mr7296693wrq.460.1639668684641;
-        Thu, 16 Dec 2021 07:31:24 -0800 (PST)
-Received: from orome ([193.209.96.43])
-        by smtp.gmail.com with ESMTPSA id d2sm1204462wrw.26.2021.12.16.07.31.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Dec 2021 07:31:23 -0800 (PST)
-Date:   Thu, 16 Dec 2021 16:31:19 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
-        Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>,
-        Jaroslav Kysela <perex@perex.cz>,
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=xT/SiTniM/eQ/R5+rML11O3ecWALbJayKGmVc/zKnAs=;
+        b=72r10DjQxS6P3avX+vHvXgvErI8VZS/XDPKELALZA0IuGv3iOxMkPSBzydqptYgr/c
+         tL/KbFigAc0/7XI3NzXF+1MVxqNk/YspuNxhXr4aMVTGcnCE/44w3h64i8qQhLVbOgai
+         YgwaLa+9LT232dRkjr2rg3Phhqpr3kxtBp3qe4Llwpy3EJ0cnicMhIISggyqsvxgyW33
+         qyo3J2XbWG5jDA9763uNnM09Voy7My69l7HTOF6paFOXw8hPewz7ixS9IWITx4mz6z8/
+         T/UpcsobT/ZHLrH+8kygbK7x4NfTLcsIdHNJ/CG6RNjQzBaRlFjhNaLiu5vsnWNaSmfm
+         7xnA==
+X-Gm-Message-State: AOAM531oNnxipyxIm6cUXYzxWe/Gi7g8scjRxT8gOjYVhtV+QzaXexhM
+        /gWLFsaXLO+lcNQsbLweo5tgJBt/vBU=
+X-Google-Smtp-Source: ABdhPJzrTLDA1Jn72VfYP7tscsKDTD/B1+9QqstauFMJLrAGBEUP0kWlPKjLAbc2kgKzJNPD0OB4zg==
+X-Received: by 2002:a05:6512:682:: with SMTP id t2mr14590038lfe.503.1639669374608;
+        Thu, 16 Dec 2021 07:42:54 -0800 (PST)
+Received: from [192.168.2.145] (94-29-63-156.dynamic.spd-mgts.ru. [94.29.63.156])
+        by smtp.googlemail.com with ESMTPSA id o19sm1184608ljp.124.2021.12.16.07.42.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 16 Dec 2021 07:42:54 -0800 (PST)
+Subject: Re: [PATCH v2] dt-bindings: sound: nvidia,tegra-audio: Convert
+ multiple txt bindings to yaml
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     David Heidelberg <david@ixit.cz>,
         Liam Girdwood <lgirdwood@gmail.com>,
-        Agneli <poczt@protonmail.ch>, linux-tegra@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Rob Herring <robh+dt@kernel.org>, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v4 13/22] ASoC: tegra20: i2s: Filter out unsupported rates
-Message-ID: <Ybtbx8gQJaSsOjGM@orome>
-References: <20211204143725.31646-1-digetx@gmail.com>
- <20211204143725.31646-14-digetx@gmail.com>
+        Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        ~okias/devicetree@lists.sr.ht, alsa-devel@alsa-project.org,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20211211224946.79875-1-david@ixit.cz>
+ <a84213cb-272a-f1b2-338f-ed8ed0bf133d@gmail.com> <YbtC2I49D0pdcyLY@orome>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <75214d23-3b5f-48d7-be80-8ea17637f3ac@gmail.com>
+Date:   Thu, 16 Dec 2021 18:42:53 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="S1udWQXOrWShk0yg"
-Content-Disposition: inline
-In-Reply-To: <20211204143725.31646-14-digetx@gmail.com>
-User-Agent: Mutt/2.1.3 (987dde4c) (2021-09-10)
+In-Reply-To: <YbtC2I49D0pdcyLY@orome>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+16.12.2021 16:44, Thierry Reding пишет:
+> On Thu, Dec 16, 2021 at 05:52:12AM +0300, Dmitry Osipenko wrote:
+>> 12.12.2021 01:49, David Heidelberg пишет:
+>>> +unevaluatedProperties: false
+>>> +
+>>> +examples:
+>>> +  - |
+>>> +    sound {
+>>> +        compatible = "nvidia,tegra-audio-rt5677-ryu",
+>>> +                     "nvidia,tegra-audio-rt5677";
+>>> +        nvidia,model = "NVIDIA Tegra Ryu";
+>>> +
+>>> +        nvidia,audio-routing =
+>>> +                "Headphone", "LOUT2",
+>>> +                "Headphone", "LOUT1",
+>>> +                "Headset Mic", "MICBIAS1",
+>>> +                "IN1P", "Headset Mic",
+>>> +                "IN1N", "Headset Mic",
+>>> +                "DMIC L1", "Internal Mic 1",
+>>> +                "DMIC R1", "Internal Mic 1",
+>>> +                "DMIC L2", "Internal Mic 2",
+>>> +                "DMIC R2", "Internal Mic 2",
+>>> +                "Speaker", "PDM1L",
+>>> +                "Speaker", "PDM1R";
+>>> +
+>>> +        nvidia,i2s-controller = <&tegra_i2s1>;
+>>> +        nvidia,audio-codec = <&rt5677>;
+>>> +
+>>> +        nvidia,hp-det-gpios = <&gpio 143 0>;
+>>> +        nvidia,mic-present-gpios = <&gpio 132 1>;
+>>> +        nvidia,hp-en-gpios = <&rt5677 1 0>;
+>>> +        nvidia,dmic-clk-en-gpios = <&rt5677 2 1>;
+>>
+>> I spotted that nvidia,dmic-clk-en-gpios is undocumented, but DTs and
+>> binding are passing the validation. We will make another patch to fix it.
+>>
+>> Rob, could you please tell whether this is because unevaluatedProperties
+>> doesn't work yet or we're missing something?
+> 
+> If you update dt-schema.git to the latest "main" branch you should have
+> most of what's needed to make unevaluatedProperties work. However, there
+> seems to be an issue with some $referenced schemas setting
+> additionalProperties to true and then that gets propogated to the schema
+> that included it.
+> 
+> Rob came up with the patch below to fix that:
+> 
+> --- >8 ---
+> diff --git a/dtschema/lib.py b/dtschema/lib.py
+> index 3cc5e428b0eb..a0f22aab935a 100644
+> --- a/dtschema/lib.py
+> +++ b/dtschema/lib.py
+> @@ -367,6 +367,9 @@ def fixup_sub_schema(schema, is_prop):
+>      if not isinstance(schema, dict):
+>          return
+> 
+> +    if 'additionalProperties' in schema and schema['additionalProperties'] == True:
+> +        schema.pop('additionalProperties', None)
+> +
+>      schema.pop('description', None)
+>      fixup_interrupts(schema)
+>      if is_prop:
+> --- >8 ---
+> 
+> I'm currently running the tools based on that and it's indeed been
+> flagging some properties as unevaluated that weren't there before.
 
---S1udWQXOrWShk0yg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Sat, Dec 04, 2021 at 05:37:16PM +0300, Dmitry Osipenko wrote:
-> Support new nvidia,fixed-parent-rate device-tree property which instructs
-> I2S that board wants parent clock rate to stay at a fixed rate. This allo=
-ws
-> to play audio over S/PDIF and I2S simultaneously. The root of the problem
-> is that audio components on Tegra share the same audio PLL, and thus, only
-> a subset of rates can be supported if we want to play audio simultaneousl=
-y.
-> Filter out audio rates that don't match parent clock rate if device-tree
-> has the nvidia,fixed-parent-rate property.
->=20
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  sound/soc/tegra/tegra20_i2s.c | 49 +++++++++++++++++++++++++++++++++++
->  1 file changed, 49 insertions(+)
-
-Acked-by: Thierry Reding <treding@nvidia.com>
-
---S1udWQXOrWShk0yg
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmG7W8cACgkQ3SOs138+
-s6HSMxAAwX26l+Dg3mv4WaTtS1H3RdqOzt4vyKt0XKp31P44er319zd2Zg254d+i
-TawtYdaIqqfVp0nnU21mXGkCdKeI3PYuKMAIkwxr/oqKEz0DXJ3x75+MqGDkX1Xb
-CI8kio5xGDi/8WDUmEaItKjlQtysVAS+cqxVpJ6sQ2dCuG03laCvX/P7y/41nYDE
-8cVJwGIUu4e7yQ2E9yi2kJqvOfFn/NyA4tyPjAYpFLRI0LiaHioczQNKGkhr3Ecm
-FA71vbV3hF/pJ2ygRzKbHKu/9PE08xKkOl6pWgFJSkJ8LGXZjGs5Kx4f0V97r/hK
-BrKqrPgG06GCrbI8q4UjGh18GKe4tt1Cu7cX6ak+t6s4tqvIVF45dHFPlHnltpFD
-E4x83Tp0qJdcsAOEI8HdnvcIeCKXH9Pz5f+ekHaAVrify7kb+He2L+7b8GzEYwPz
-zx5pG+3XisWQog3Ir9UJn4S9SxzLG66SQRVV0tChf6HRbBHp2GqnlmzlJk4nh69+
-pCdGvwBd+JGXiuW0EEkh4eGdhYvN7rC9B9gTIJXBGtvEW7qRApHzMtSs8+LQJtat
-apPcE2u1SQIL3QWH8SMNZjdkYOIM4CTkrLK2WotRkJajW5mmt7NZJMEfkSjGiOzL
-eNMAkyoaWEU/Ne3yVSXk5P1nIvrecBIJnQMYh/fpb8tyFzgPDVo=
-=8pKh
------END PGP SIGNATURE-----
-
---S1udWQXOrWShk0yg--
+Thank you! The unevaluatedProperties indeed works properly using this patch.
