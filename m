@@ -2,159 +2,129 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4367FC433EF
-	for <linux-tegra@archiver.kernel.org>; Thu, 16 Dec 2021 14:10:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FCACC43217
+	for <linux-tegra@archiver.kernel.org>; Thu, 16 Dec 2021 14:19:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237531AbhLPOKY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 16 Dec 2021 09:10:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38964 "EHLO
+        id S237848AbhLPOTM (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 16 Dec 2021 09:19:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41122 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237665AbhLPOKY (ORCPT
+        with ESMTP id S229583AbhLPOTL (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 16 Dec 2021 09:10:24 -0500
-Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C62EC061574;
-        Thu, 16 Dec 2021 06:10:24 -0800 (PST)
-Received: by mail-wr1-x42c.google.com with SMTP id t26so8111353wrb.4;
-        Thu, 16 Dec 2021 06:10:24 -0800 (PST)
+        Thu, 16 Dec 2021 09:19:11 -0500
+Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7554C061574;
+        Thu, 16 Dec 2021 06:19:10 -0800 (PST)
+Received: by mail-lf1-x12c.google.com with SMTP id t3so3560708lfe.12;
+        Thu, 16 Dec 2021 06:19:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=PxyU+XWVTEJWznDnBADFy9jfsdEEP9yIkmzfwC1SDkc=;
-        b=g5iHT6E3mT8IaFyfop2oEblxtacvubDUhm/vfMWpvBONSvry7kp/VpUlsIhuBrBl49
-         RF1m5E4AaZ8R6ZGqLr9+0UM/UpibTvCIdWfa46mUMIlIDbMeST4260i3AUpQge1qQ+w6
-         uZ8bUERPwWA6ec1odJXlzXP50P12WgGId0j/Z+slQ2vBjTRiA8xiz2B/OfdzoJZWAZt0
-         rUvoICHr9If8NcV6HHzRboSRFwsVrp9c2U5nXNgjCf4JWM+8UH8jiG2gCWusmoVk8Ffy
-         tgCPUBf6janlxLQI4ej7logP90ODsmxhRWE2XjuuNxkD9YqCc8/Jqc0SWaKrTJGRn2Me
-         sT7Q==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=FHZhtH3DW7AMrBjP8iVuxcvAkwhLC1m6PQhYldA9iJU=;
+        b=kfQna7lwKWEWNyGl0m+WM04u4GvDzlfWdVJpaVjT3VLpr11FElsgNikURpISaLmqEB
+         gSnfcAyYPclS/JMQBjs4BWeC4liYjwwJhGaI2CLj9zwVCtQp20VEezdXRdvXOfU+rQv+
+         cvdiG+BIckrRWvJ5LmWc6gi1KqhH5V1mE4tW41nr4+IFwNca4fR7ttL4xlWwn74TndKS
+         G0whMZLLYcMsAAhjjKd4W8N2DSbx8f8iAVMtBkeyqMXniFfccMFxE6qkDTG53a+wbF/W
+         fUHDrFY0WxEr+0Me59Iq1ISBYx2DSYnRx5jkh9GCiG6ldF+F7h4CTLIk/j1S9Ue9eW4l
+         GW3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=PxyU+XWVTEJWznDnBADFy9jfsdEEP9yIkmzfwC1SDkc=;
-        b=T+a/kgiHrBm1pWtFxRU3dJ9uIhbZGWV6JoaJajRd9HTZbPf0HEx6s0m+cNgMUXS15x
-         fJP5sZ5FlUTdTtxmdc0v0KtC8nmZ73ocUqUIbqmSAuyoXFSDk2p0Ix7VsCApuB8q04qV
-         8iuCovXNHDjJn4dhqlidXBUL/d9tdyE5x4/Umy4THNtk0YYMUxL/iv6nUgTaziXVzaRk
-         svqjvMAd0hMz5Hl4LexFA9weVocqkmrxqoYod8VYA1+H8yyJQeedLqOBBM+TcKi6feLH
-         UkovnLMnJi2OFauzyD2/FjPEg8YxEVTdF0Ly/WqEViCuQ4myk8i7UWwVTrYSr/9MJs17
-         QNDw==
-X-Gm-Message-State: AOAM533wu0ixvtRZ/nRUUrlhN64rzxOblNy39aEfIU/TPhALsPQ5F43T
-        A7aaZjzlGuvurXqJBKRozjs=
-X-Google-Smtp-Source: ABdhPJy8PWrMH/0lqhcwl6GMYkBmwX4mbcZxUo+x3DqxY7D/chl51mapMF4REI5u7Svk7zAwtKvCPQ==
-X-Received: by 2002:a5d:5912:: with SMTP id v18mr9020514wrd.144.1639663821471;
-        Thu, 16 Dec 2021 06:10:21 -0800 (PST)
-Received: from localhost ([193.209.96.43])
-        by smtp.gmail.com with ESMTPSA id b15sm6612271wri.62.2021.12.16.06.10.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Dec 2021 06:10:20 -0800 (PST)
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Jon Hunter <jonathanh@nvidia.com>,
-        Akhil R <akhilrajeev@nvidia.com>, linux-gpio@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: [PATCH 2/2] gpio: tegra186: Add support for Tegra241
-Date:   Thu, 16 Dec 2021 15:10:09 +0100
-Message-Id: <20211216141009.1478562-3-thierry.reding@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20211216141009.1478562-1-thierry.reding@gmail.com>
-References: <20211216141009.1478562-1-thierry.reding@gmail.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=FHZhtH3DW7AMrBjP8iVuxcvAkwhLC1m6PQhYldA9iJU=;
+        b=EKww2pebI/8EdJ2mCFlg0xUlm5l1n0Sv0XJDK0pCnBHi/RVg6O18cKNBrrcUKaxS+Q
+         7KC2rm/YnIR+aHINg09IfFWdfD/agGbk9uMQesP1eOh1sJ3u62oS0M4lqoqC+bYBLqII
+         j4jAw0amS7Wjpbp1IY4Z5eIdrb+S1o/NTJ7A209n4BW6QIu25LA/UfCQN6TBwwwNl2gx
+         HdGpQkWNT5FqNMYOxI8ffFYbS1xyj/5U3bu02eiw7XjgzGvCLdQeWOsxPfraIuDYZFom
+         UQ58Tx1zCdMGzquE12BygpWzosJgyTe4nAHJgqVi0csXSuGzDG6c1FVEfM+yMwW8WvD8
+         VgPQ==
+X-Gm-Message-State: AOAM531y0OcgijHp5GgxhVXHW4hga+7QtuR2ZKpuBuJB6iBE/lXiJEaP
+        IKNyvDXGrI3RuEZ5ThhVzEA=
+X-Google-Smtp-Source: ABdhPJwTCLw6X+g8WZv+7SknvWAEs+qjM7J+ZiSnSsKS4sTnaSQels7ZUzqMKyR6w73ajpLDsSHcBA==
+X-Received: by 2002:a19:8c48:: with SMTP id i8mr14971511lfj.179.1639664349109;
+        Thu, 16 Dec 2021 06:19:09 -0800 (PST)
+Received: from [192.168.2.145] (94-29-63-156.dynamic.spd-mgts.ru. [94.29.63.156])
+        by smtp.googlemail.com with ESMTPSA id k14sm1148653ljk.57.2021.12.16.06.19.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 16 Dec 2021 06:19:08 -0800 (PST)
+Subject: Re: [PATCH v16 00/40] NVIDIA Tegra power management patches for 5.17
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
+        Nishanth Menon <nm@ti.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-pwm@vger.kernel.org,
+        linux-mmc@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-clk@vger.kernel.org, David Heidelberg <david@ixit.cz>
+References: <20211130232347.950-1-digetx@gmail.com> <YboP9IFMUrUnEzrU@orome>
+ <6baf6013-fbb2-b42f-5b26-2d10a2ca9374@gmail.com> <Ybs7zKQY1uJCJ2f3@orome>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <f4ba1201-e3f4-d0cc-17df-9645783dee04@gmail.com>
+Date:   Thu, 16 Dec 2021 17:19:07 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 MIME-Version: 1.0
+In-Reply-To: <Ybs7zKQY1uJCJ2f3@orome>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Akhil R <akhilrajeev@nvidia.com>
+16.12.2021 16:14, Thierry Reding пишет:
+> On Wed, Dec 15, 2021 at 07:11:53PM +0300, Dmitry Osipenko wrote:
+>> 15.12.2021 18:55, Thierry Reding пишет:
+>>> On Wed, Dec 01, 2021 at 02:23:07AM +0300, Dmitry Osipenko wrote:
+>>>> This series adds runtime PM support to Tegra drivers and enables core
+>>>> voltage scaling for Tegra20/30 SoCs, resolving overheating troubles.
+>>>>
+>>>> All patches in this series are interdependent and should go via Tegra tree
+>>>> for simplicity.
+>>>
+>>> So these can be applied in any order without breaking anything?
+>>
+>> Please notice that the word is *inter* dependent, not *in* dependent.
+>>
+>> There is a build dependency for the patches. The first two "soc/tegra"
+>> must be applied first.
+> 
+> Okay, so I've separated the first two patches out into a separate stable
+> branch that I can share between the Tegra and drm/tegra trees to pull in
+> the build dependency and then I've applied the driver patches to those
+> two trees and I've verified that the two branches build correctly. I've
+> not done any runtime testing, but I'll trust you on that.
 
-Extend the existing Tegra186 GPIO controller driver with support for the
-GPIO controller found on Tegra241 (Grace). While the programming model
-remains the same, the number of pins has slightly changed.
+I only compile-tested VIC and NVDEC drivers, but they should be okay,
+and thus, everything should be good.
 
-Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- drivers/gpio/gpio-tegra186.c | 52 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 52 insertions(+)
-
-diff --git a/drivers/gpio/gpio-tegra186.c b/drivers/gpio/gpio-tegra186.c
-index 91c77fccc1e6..fe45f5a89bb2 100644
---- a/drivers/gpio/gpio-tegra186.c
-+++ b/drivers/gpio/gpio-tegra186.c
-@@ -15,6 +15,7 @@
- #include <dt-bindings/gpio/tegra186-gpio.h>
- #include <dt-bindings/gpio/tegra194-gpio.h>
- #include <dt-bindings/gpio/tegra234-gpio.h>
-+#include <dt-bindings/gpio/tegra241-gpio.h>
- 
- /* security registers */
- #define TEGRA186_GPIO_CTL_SCR 0x0c
-@@ -1042,6 +1043,55 @@ static const struct tegra_gpio_soc tegra234_aon_soc = {
- 	.num_irqs_per_bank = 8,
- };
- 
-+#define TEGRA241_MAIN_GPIO_PORT(_name, _bank, _port, _pins)	\
-+	[TEGRA241_MAIN_GPIO_PORT_##_name] = {			\
-+		.name = #_name,					\
-+		.bank = _bank,					\
-+		.port = _port,					\
-+		.pins = _pins,					\
-+	}
-+
-+static const struct tegra_gpio_port tegra241_main_ports[] = {
-+	TEGRA241_MAIN_GPIO_PORT(A, 0, 0, 8),
-+	TEGRA241_MAIN_GPIO_PORT(B, 0, 1, 8),
-+	TEGRA241_MAIN_GPIO_PORT(C, 0, 2, 2),
-+	TEGRA241_MAIN_GPIO_PORT(D, 0, 3, 6),
-+	TEGRA241_MAIN_GPIO_PORT(E, 0, 4, 8),
-+	TEGRA241_MAIN_GPIO_PORT(F, 1, 0, 8),
-+	TEGRA241_MAIN_GPIO_PORT(G, 1, 1, 8),
-+	TEGRA241_MAIN_GPIO_PORT(H, 1, 2, 8),
-+	TEGRA241_MAIN_GPIO_PORT(J, 1, 3, 8),
-+	TEGRA241_MAIN_GPIO_PORT(K, 1, 4, 4),
-+	TEGRA241_MAIN_GPIO_PORT(L, 1, 5, 6),
-+};
-+
-+static const struct tegra_gpio_soc tegra241_main_soc = {
-+	.num_ports = ARRAY_SIZE(tegra241_main_ports),
-+	.ports = tegra241_main_ports,
-+	.name = "tegra241-gpio",
-+	.instance = 0,
-+};
-+
-+#define TEGRA241_AON_GPIO_PORT(_name, _bank, _port, _pins)	\
-+	[TEGRA241_AON_GPIO_PORT_##_name] = {			\
-+		.name = #_name,					\
-+		.bank = _bank,					\
-+		.port = _port,					\
-+		.pins = _pins,					\
-+	}
-+
-+static const struct tegra_gpio_port tegra241_aon_ports[] = {
-+	TEGRA241_AON_GPIO_PORT(AA, 0, 0, 8),
-+	TEGRA241_AON_GPIO_PORT(BB, 0, 0, 4),
-+};
-+
-+static const struct tegra_gpio_soc tegra241_aon_soc = {
-+	.num_ports = ARRAY_SIZE(tegra241_aon_ports),
-+	.ports = tegra241_aon_ports,
-+	.name = "tegra241-gpio-aon",
-+	.instance = 1,
-+};
-+
- static const struct of_device_id tegra186_gpio_of_match[] = {
- 	{
- 		.compatible = "nvidia,tegra186-gpio",
-@@ -1072,6 +1122,8 @@ static const struct acpi_device_id  tegra186_gpio_acpi_match[] = {
- 	{ .id = "NVDA0208", .driver_data = (kernel_ulong_t)&tegra186_aon_soc },
- 	{ .id = "NVDA0308", .driver_data = (kernel_ulong_t)&tegra194_main_soc },
- 	{ .id = "NVDA0408", .driver_data = (kernel_ulong_t)&tegra194_aon_soc },
-+	{ .id = "NVDA0508", .driver_data = (kernel_ulong_t)&tegra241_main_soc },
-+	{ .id = "NVDA0608", .driver_data = (kernel_ulong_t)&tegra241_aon_soc },
- 	{}
- };
- MODULE_DEVICE_TABLE(acpi, tegra186_gpio_acpi_match);
--- 
-2.34.1
-
+>> The "soc/tegra: pmc: Enable core domain support for Tegra20 and Tegra30"
+>> *must* be the last applied patch if we want to preserve bisectability.
+>> The core voltage scaling can be enabled only once all the drivers got
+>> the power management support.
+>>
+>> The rest could be applied out-of-order.
+> 
+> One last remaining question: I don't think I can apply that one patch if
+> it requires that all the others are enabled first because it would
+> basically create a circular dependency.
+> 
+> Can I pick up the final 7 patches (the DT ones) independently of that
+> one patch without things breaking? If so, one option we could try is to
+> wait for both Tegra and drm/tegra trees to get merged into v5.17-rc1 and
+> then send that one patch (which is only a 4-line diff) right after
+> v5.17-rc1 so that it makes it into v5.17-rc2. That avoids the circular
+> dependency and should get everything enabled for v5.17.
+> 
+> Do you see any problems with that?
+Deferring that one patch till v5.17-rc2 will work, thank you.
