@@ -2,101 +2,126 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3689C433EF
-	for <linux-tegra@archiver.kernel.org>; Thu, 16 Dec 2021 14:29:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89AF8C433F5
+	for <linux-tegra@archiver.kernel.org>; Thu, 16 Dec 2021 14:40:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237977AbhLPO33 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 16 Dec 2021 09:29:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43578 "EHLO
+        id S234854AbhLPOkZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 16 Dec 2021 09:40:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46088 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237712AbhLPO33 (ORCPT
+        with ESMTP id S232369AbhLPOkX (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 16 Dec 2021 09:29:29 -0500
-Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F997C061574;
-        Thu, 16 Dec 2021 06:29:28 -0800 (PST)
-Received: by mail-lj1-x232.google.com with SMTP id 13so38668910ljj.11;
-        Thu, 16 Dec 2021 06:29:28 -0800 (PST)
+        Thu, 16 Dec 2021 09:40:23 -0500
+Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD372C061574;
+        Thu, 16 Dec 2021 06:40:22 -0800 (PST)
+Received: by mail-ed1-x534.google.com with SMTP id t5so87596520edd.0;
+        Thu, 16 Dec 2021 06:40:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=jmTSSpcNWtwfnBOzQ4SXDAvbSBKcOFTBcwOus93VJW4=;
-        b=PG2xS2vLUFH54ArG56D+Q342pRiH3jdFwS4K/6S4B/nw7Y2ox89atjJk4nUylobM1w
-         NrHXA+Tp2PDubHrme4IATwGXahvbiRKJuyOVxiVfbp5OAZ1zmFUCcW6ZTHCAOPDO5KlI
-         DxcIaap5F+3oy943AsuTQKyhGmbBEC2vAL9N9Jd51tukt9puT+E1/DGPgWx+TlMEKCDN
-         5YgH36A3+Qtej4UaSRMEuzvcu3V528Qz5qi2f7ql7nGF8SNkDPSArnuPKmx4B69FToTJ
-         sRGISFsX6sRbqbBLyA6brQjtFl6WHtcyGZxxs/CGupN+c+fr/VXwcQJizLEipEpvTTOx
-         GTHg==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=7Os6s1NmcWdadYy3WvTCfCU61qwcymHUj3Z04MGXTuI=;
+        b=pG4QU7yUyjNjGbkDkh3nNMBIJ9HxblK1cY6w8XvnM0K5G9YQDDoE/GmVJhMj/tuIoE
+         qfW1M802ZWevHAbYukyZShAQ4cPR77ymBiVIBF3pTtJplKVrksmLSHpky6k/HfgjRt32
+         f+lEhsE0SYeaG8eu2TSspGc/aKhM5E8xpMYP8qITvfZUBLTSSKlOKxHwRpU0GJ3zzcD0
+         wviUvHIo7PQiltZDqOMqTg9vHlliptxBinki7S1o6xlyf4u/jHd4CN27bzAKEkWtBBx1
+         o3R7drIHOrGJcCvLUgtcmreRLp4lHVP34TiAVHXetGKw2Kk6xkYU+Ev2bQqU9qHFfvQg
+         1Zaw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=jmTSSpcNWtwfnBOzQ4SXDAvbSBKcOFTBcwOus93VJW4=;
-        b=PhZy9sY3Oiz0DuiuZH1FS+wBfWwDXZnJMV7LMwFWEhcUvNUbZ3q9yZJ2fEEJh1vzDK
-         jVbLIDh0pl3MuzXJ6oIi475QwGCKXjElRAcQRKie8fyv8Pv/ecgXZfKQuHGdhGCH8nzR
-         MQKcMVHb6WaIp/28j8+8mqC92bI/i5ZKuHOOkPJo9xmIEnY9zBeRNLGAO5dGJC8J3WGP
-         wVu/xNBHBndSb0gO2K8aXKcv5Xr3YW0PrAtcYfm5xVubFgLqeev+FBlRgIpzdGwHpdX7
-         rw1FujjnVJ4kCVJM+DMq7CMDO/KiLsYgVzRyqxmufOlK7J/N1K17pt+Hf0djiZxOb6mG
-         WHLQ==
-X-Gm-Message-State: AOAM531KZJdURwU0WnzmSDnUOpWY/W1qvddwfwzAf/ZBbGbEGwmgNlmA
-        yI0TFfl/yaHrzn7aMgiL5xg=
-X-Google-Smtp-Source: ABdhPJwHopng7TTn6djyhWoM581vIPB/7Ea84WYzSp8kNNJXVSzEf+3IcwroTLJc3Wygi8UzwwagkQ==
-X-Received: by 2002:a2e:8e88:: with SMTP id z8mr15090638ljk.197.1639664966914;
-        Thu, 16 Dec 2021 06:29:26 -0800 (PST)
-Received: from [192.168.2.145] (94-29-63-156.dynamic.spd-mgts.ru. [94.29.63.156])
-        by smtp.googlemail.com with ESMTPSA id d10sm898153lfv.114.2021.12.16.06.29.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 16 Dec 2021 06:29:26 -0800 (PST)
-Subject: Re: [PATCH v4 00/22] Support HDMI audio on NVIDIA Tegra20
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Mark Brown <broonie@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>
-Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
-        Takashi Iwai <tiwai@suse.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Agneli <poczt@protonmail.ch>, linux-tegra@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Rob Herring <robh+dt@kernel.org>, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-References: <20211204143725.31646-1-digetx@gmail.com>
- <Ybo6tsnQM6OacoZs@sirena.org.uk>
- <26af30a6-9606-72d0-9258-cf9627ddfe77@gmail.com>
-Message-ID: <7179a409-d838-0e9e-4600-785e69c3e3a6@gmail.com>
-Date:   Thu, 16 Dec 2021 17:29:25 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=7Os6s1NmcWdadYy3WvTCfCU61qwcymHUj3Z04MGXTuI=;
+        b=gj9t04FRJGk47CxlVsfeMLOxcCIXlqQ4vGR4jC3AsngJN1/Qv4J+RTFJIcpvaSLim/
+         43AExQuYNX/htnF4wj92uFkmbLwsvNb95868o3aGNgMltBMaqpu3whqkDFot6RviT+ZE
+         Hnsf0DkI655gR8u7bXR5T332osi2H/sPbU6JHuhkfMDHHSoLnEj65yQN7Ljq4wdr3tmq
+         7oD71pP1z1/cBiUQOKKdn4KgTYbm/kwYheE9EANZ1LEh+a32Z0v8DnZXk4jZDJMSUDyp
+         dllQyJspsiS/4LrNrHb2xBdl+84uWtioGvcnVU6R9aoZAxzbWAM08qPNBznrlAv1GG3D
+         /YYg==
+X-Gm-Message-State: AOAM531XysvT3GP2wrSq9i12fE70j8Lp7HfLRgfO/bembkN7rpmPgc8K
+        2EhH5tEGeX9VokXZ6Ni3mjwordQpXdlBks4ZGsI=
+X-Google-Smtp-Source: ABdhPJwdDpS+ipR7n6OxR+8cz83068lG1xJWRu+5XbSn01J69xOCeONv5WDOGDbgkPCyc+YILRfBNJa3fhRNy8xxVS8=
+X-Received: by 2002:a05:6402:270c:: with SMTP id y12mr20762654edd.258.1639665621353;
+ Thu, 16 Dec 2021 06:40:21 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <26af30a6-9606-72d0-9258-cf9627ddfe77@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <1639660402-31207-1-git-send-email-akhilrajeev@nvidia.com> <1639660402-31207-2-git-send-email-akhilrajeev@nvidia.com>
+In-Reply-To: <1639660402-31207-2-git-send-email-akhilrajeev@nvidia.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Thu, 16 Dec 2021 16:38:52 +0200
+Message-ID: <CAHp75VdXw_XvDN=T3fOmNOWsdfQ_xm2090z9uAq77oADPRcMzw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] device property: Add device_irq_get_byname
+To:     Akhil R <akhilrajeev@nvidia.com>
+Cc:     Wolfram Sang <wsa@kernel.org>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Christian Koenig <christian.koenig@amd.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        linux-i2c <linux-i2c@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-15.12.2021 22:19, Dmitry Osipenko пишет:
-> 15.12.2021 21:57, Mark Brown пишет:
->> On Sat, Dec 04, 2021 at 05:37:03PM +0300, Dmitry Osipenko wrote:
->>
->>> I based S/PDIF patches on Arnd's Bergmann patch from a separate series [1]
->>> that removes obsolete slave_id. This eases merging of the patches by
->>> removing the merge conflict. This is a note for Mark Brown.
->> That's not in my tree so I'll need either a pull request with the series
->> or a resend after the merge window.
-> This patch is included as a part of this series, please see the patch #6.
-> 
-> I saw that Vinod Koul already merged it into his DMA tree [1] a day ago,
-> but there is no stable branch there.
-> 
-> [1]
-> https://git.kernel.org/pub/scm/linux/kernel/git/vkoul/dmaengine.git/log/?h=next
-> 
+On Thu, Dec 16, 2021 at 3:14 PM Akhil R <akhilrajeev@nvidia.com> wrote:
+>
+> Get interrupt by name from ACPI table as well.
 
-Vinod, will you be a able to create immutable branch for us with the
-"dmaengine: kill off dma_slave_config->slave_id" patches [1]?
+the interrupt resource
 
-[1] https://lore.kernel.org/all/20211122222203.4103644-1-arnd@kernel.org/
+> Add option to use 'interrupt-names' in _DSD which can map to interrupt by
+> index. The implementation is similar to 'interrupt-names' in devicetree.
+> Also add a common routine to get irq by name from devicetree and ACPI
+> table.
+>
+> Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
+> ---
+>  drivers/base/property.c  | 35 +++++++++++++++++++++++++++++++++++
+>  include/linux/property.h |  3 +++
+>  2 files changed, 38 insertions(+)
+>
+> diff --git a/drivers/base/property.c b/drivers/base/property.c
+> index cbe4fa2..7acf4fc 100644
+> --- a/drivers/base/property.c
+> +++ b/drivers/base/property.c
+> @@ -920,6 +920,41 @@ int fwnode_irq_get(const struct fwnode_handle *fwnode, unsigned int index)
+>  EXPORT_SYMBOL(fwnode_irq_get);
+>
+>  /**
+> + * fwnode_irq_get_byname - Get IRQ from a fwnode using its name
+> + * @fwnode:    Pointer to the firmware node
+> + * @index:     IRQ name
+> + *
+
+Needs a description to explain how the name is described.
+
+> + * Returns Linux IRQ number on success, errno otherwise.
+> + */
+> +int fwnode_irq_get_byname(const struct fwnode_handle *fwnode, const char *name)
+> +{
+> +       int index;
+> +
+> +       if (unlikely(!name))
+> +               return -EINVAL;
+> +
+> +       index = fwnode_property_match_string(fwnode, "interrupt-names",  name);
+> +       if (index < 0)
+> +               return index;
+
+This property ise needs to be described in the ACPI documentation:
+https://www.kernel.org/doc/html/latest/firmware-guide/acpi/enumeration.html
+
+Perhaps after the DMA section.
+
+> +       return fwnode_irq_get(fwnode, index);
+> +}
+
+-- 
+With Best Regards,
+Andy Shevchenko
