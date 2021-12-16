@@ -2,57 +2,58 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1472BC433EF
-	for <linux-tegra@archiver.kernel.org>; Thu, 16 Dec 2021 13:46:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07D02C433EF
+	for <linux-tegra@archiver.kernel.org>; Thu, 16 Dec 2021 13:55:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232014AbhLPNqg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 16 Dec 2021 08:46:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33404 "EHLO
+        id S232316AbhLPNzs (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 16 Dec 2021 08:55:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35684 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229840AbhLPNqg (ORCPT
+        with ESMTP id S229676AbhLPNzs (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 16 Dec 2021 08:46:36 -0500
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8182C061574;
-        Thu, 16 Dec 2021 05:46:35 -0800 (PST)
-Received: by mail-wr1-x430.google.com with SMTP id u17so44342337wrt.3;
-        Thu, 16 Dec 2021 05:46:35 -0800 (PST)
+        Thu, 16 Dec 2021 08:55:48 -0500
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E42C5C061574;
+        Thu, 16 Dec 2021 05:55:47 -0800 (PST)
+Received: by mail-wr1-x433.google.com with SMTP id t18so44297605wrg.11;
+        Thu, 16 Dec 2021 05:55:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=082erHSPrIMR3rNHlkVNnLqclLhfGMrOuGl2rkH3scs=;
-        b=j5l38ck6lv5iBJ7KVkH+GcDavx/dqdCt1vmbAMSuNmlhDxQzV61rT80YoY2pobDgbo
-         V9eciYJZf+jIns+/Gca6T6c0MUvYZR1ttdNKIcvvfHSIs9M4VbfwaSiKyR6OjHSWtk/D
-         SsoRqBRBZ0t7hIXC/pgKnwyf/X6LGID8m/KUlhSC3kJNjnkGvmM5cs15d93GjWhtix8j
-         7hJzBZrUu/VoxV9ead8wfhFXBdQBXRjaxB6efNsPKkY4/n2Ozt4iTb1rpJ9EzShToEZn
-         itt9xgOnRmuvlQ5B4LWW/cO2OPICBy+FkgZQlU5CSCwhRAQ9iynWEgT+I5zVHFhX98bf
-         fO1w==
+        bh=aIGXePb6uuyKEdP5anINB0mi5RZTL/ymGbXYta94nJg=;
+        b=bjHYxaWsg+7VcP+S4a+QdmgpyK+6giwYoL5QN0eYIcY0V3HuSWIlmByyu0OxeXBODk
+         i6QahJMgbb9jvsHn4Y16iSWbXxMwWTeJerl2YSnw0DYeyAFR6Ad4zadmrPktHC+GO8Xy
+         m4gPrdna4pb75f55JeaKELoI40ylmCdcis8rep/nAhZC829Mgqi2FLkn69mjeog14CmS
+         YoByKy46N2g9Svw59t1GnVD7YBgujN6sc0FwP7v9DMZFooBcZ/0jlxYqmdjIVwFupwr9
+         QGq+P0nwEzWlpB5Hpp66E+Imn9aTOL56Ns9n+EdFz+8hLHGUMFQoUIQ7eqq2aT8FPjGH
+         7WYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=082erHSPrIMR3rNHlkVNnLqclLhfGMrOuGl2rkH3scs=;
-        b=oPU7u9K86URdt/bCIJ8lyi+XsWtT5N59OAMQBf+ErMYHeLca9AOq6gsYE38kGZFBh4
-         9IVG4fIha8KnZp+NHE/ocrX8SjKT6Fqzzf8lItc0Hg/qtIJYozBmkME8iLSj7eNbaYz3
-         8ttVJijz3uUFZE50lPy+c43TpPq4gHtWbRlGx6sXqTTOWy5BQ2SOp3gdDh6GGvSfWSdk
-         i5K/wVkBtWBIANCiufU1ur5cflW1rZ2U27L4f4sysDWku+QXz0bZXyem1+952j33TMuD
-         CHpP+RZP3YP6xCWbZ0zf7vUSNPrBYtFL/o23Oor5LSW95TQ3XzqqQj/IEdrv1E/X2i2X
-         ujyA==
-X-Gm-Message-State: AOAM530ufnYyU1sygY7qZ1cYydpFIha1pFfCgtmiI3K8g+ecSEvH7ybP
-        0199u+AiSiCy6UYXh8WiMVA=
-X-Google-Smtp-Source: ABdhPJz6fej/q9wMgIqkbfb+Am1+cVbK1+zRmhxF4GEIhutpDbPUdi0sxT+4y58hn1UKOADbjiJg+Q==
-X-Received: by 2002:a05:6000:15ca:: with SMTP id y10mr9100087wry.582.1639662394439;
-        Thu, 16 Dec 2021 05:46:34 -0800 (PST)
+        bh=aIGXePb6uuyKEdP5anINB0mi5RZTL/ymGbXYta94nJg=;
+        b=C/U5nGIDRY5XPzLvqEpCO4K8RD+L0jm0nEXkF72NVizIMKod+njAcOOR5iwzFz4v7r
+         jjbwzfTjARNgsn7kxBv3v0T2TM+9mXpH8gaa73pRS0MJegw8bAymdmM/pFauzxJkjUTU
+         FQigTzZb7+Xtly+F6s42hBkdL3/CNUzltmjjLDrQeqFp7jUsRS6TT8gygP6NfVQ3ugaF
+         kfVQxdtaRWXMBFBjybK8mt1a5NLGE8QwNZJc8rm4VWbDkhNCRIo3u+x0qbHtbLx5aZJ0
+         yDAqRKEUlnupkOs4IczyocNWxltmDhvKKEsq3sWDyKo3lEv6h0+o/Y80CNrd645pMfXC
+         OtOQ==
+X-Gm-Message-State: AOAM530qxvL0W1ut7swQJKjsVdhl7I+voyqwKp4X7F2LYlCQWbDl6a1G
+        5VRj8xUbdNGGmp09rx40CDk=
+X-Google-Smtp-Source: ABdhPJw0BU7321M+NuHBlUDUl4qArnbnLCrw+1dI3O/QNXo8FyEsKyCBlFIpPZ72vmTMhlcW35T0jw==
+X-Received: by 2002:adf:f049:: with SMTP id t9mr3324177wro.399.1639662946541;
+        Thu, 16 Dec 2021 05:55:46 -0800 (PST)
 Received: from orome ([193.209.96.43])
-        by smtp.gmail.com with ESMTPSA id b14sm5340551wrg.15.2021.12.16.05.46.31
+        by smtp.gmail.com with ESMTPSA id b19sm9049101wmb.38.2021.12.16.05.55.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Dec 2021 05:46:33 -0800 (PST)
-Date:   Thu, 16 Dec 2021 14:46:29 +0100
+        Thu, 16 Dec 2021 05:55:45 -0800 (PST)
+Date:   Thu, 16 Dec 2021 14:55:41 +0100
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
-        Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>,
+Cc:     Mark Brown <broonie@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Takashi Iwai <tiwai@suse.com>,
         Jaroslav Kysela <perex@perex.cz>,
         Liam Girdwood <lgirdwood@gmail.com>,
         Agneli <poczt@protonmail.ch>, linux-tegra@vger.kernel.org,
@@ -60,98 +61,83 @@ Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
         Rob Herring <robh+dt@kernel.org>, alsa-devel@alsa-project.org,
         linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v4 20/22] ARM: tegra: Add HDMI audio graph to Tegra20
- device-tree
-Message-ID: <YbtDNbdJqCGTaMNs@orome>
+Subject: Re: [PATCH v4 00/22] Support HDMI audio on NVIDIA Tegra20
+Message-ID: <YbtFXcteESF0nLZz@orome>
 References: <20211204143725.31646-1-digetx@gmail.com>
- <20211204143725.31646-21-digetx@gmail.com>
+ <Ybo6tsnQM6OacoZs@sirena.org.uk>
+ <26af30a6-9606-72d0-9258-cf9627ddfe77@gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="gyfxT+HMhoGDzaoq"
+        protocol="application/pgp-signature"; boundary="/kZ9M+KZOl3BGf8Y"
 Content-Disposition: inline
-In-Reply-To: <20211204143725.31646-21-digetx@gmail.com>
+In-Reply-To: <26af30a6-9606-72d0-9258-cf9627ddfe77@gmail.com>
 User-Agent: Mutt/2.1.3 (987dde4c) (2021-09-10)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---gyfxT+HMhoGDzaoq
-Content-Type: text/plain; charset=us-ascii
+--/kZ9M+KZOl3BGf8Y
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Dec 04, 2021 at 05:37:23PM +0300, Dmitry Osipenko wrote:
-> Add HDMI audio graph to Tegra20 device-tree to enable HDMI audio on
-> Tegra20 devices.
+On Wed, Dec 15, 2021 at 10:19:07PM +0300, Dmitry Osipenko wrote:
+> 15.12.2021 21:57, Mark Brown =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > On Sat, Dec 04, 2021 at 05:37:03PM +0300, Dmitry Osipenko wrote:
+> >=20
+> >> I based S/PDIF patches on Arnd's Bergmann patch from a separate series=
+ [1]
+> >> that removes obsolete slave_id. This eases merging of the patches by
+> >> removing the merge conflict. This is a note for Mark Brown.
+> >=20
+> > That's not in my tree so I'll need either a pull request with the series
+> > or a resend after the merge window.
 >=20
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  arch/arm/boot/dts/tegra20.dtsi | 22 +++++++++++++++++++++-
->  1 file changed, 21 insertions(+), 1 deletion(-)
+> This patch is included as a part of this series, please see the patch #6.
 >=20
-> diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.d=
-tsi
-> index 72cbe32d0c1d..dde228bcbbff 100644
-> --- a/arch/arm/boot/dts/tegra20.dtsi
-> +++ b/arch/arm/boot/dts/tegra20.dtsi
-> @@ -186,7 +186,7 @@ rgb {
->  			};
->  		};
-> =20
-> -		hdmi@54280000 {
-> +		tegra_hdmi: hdmi@54280000 {
->  			compatible =3D "nvidia,tegra20-hdmi";
->  			reg =3D <0x54280000 0x00040000>;
->  			interrupts =3D <GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>;
-> @@ -1063,4 +1063,24 @@ pmu {
->  		interrupt-affinity =3D <&{/cpus/cpu@0}>,
->  				     <&{/cpus/cpu@1}>;
->  	};
-> +
-> +	sound-hdmi {
-> +		compatible =3D "simple-audio-card";
-> +		simple-audio-card,name =3D "NVIDIA Tegra20 HDMI";
-> +
-> +		#address-cells =3D <1>;
-> +		#size-cells =3D <0>;
-> +
-> +		simple-audio-card,dai-link@0 {
-> +			reg =3D <0>;
-> +
-> +			cpu {
-> +				sound-dai =3D <&tegra_spdif>;
-> +			};
-> +
-> +			codec {
-> +				sound-dai =3D <&tegra_hdmi>;
-> +			};
-> +		};
-> +	};
+> I saw that Vinod Koul already merged it into his DMA tree [1] a day ago,
+> but there is no stable branch there.
+>=20
+> [1]
+> https://git.kernel.org/pub/scm/linux/kernel/git/vkoul/dmaengine.git/log/?=
+h=3Dnext
+>=20
+> >  It's also not clear what to do
+> > about the DRM bits, I guess it's probably easiest to just apply them
+> > along with the ASoC patches.
+>=20
+> I already asked Thierry Reding to take a look at this patchset. He will
+> let to you know how the DRM bits should be handled. Hopefully this
+> should happen tomorrow.
+>=20
+> We will know how to move forward if Vinod and Thierry will reply ASAP.
+> Otherwise this series will have to wait for the next cycle.
 
-Should this be status =3D "disabled" and then only enabled for platforms
-that actually enable HDMI?
+I've applied the DRM patches to the drm/tegra tree and pulled in the ARM
+device tree changes into the Tegra tree. I think the rest can go through
+ASoC. Well, provided you can sort out the patch 6 issue with Vinod.
 
 Thierry
 
---gyfxT+HMhoGDzaoq
+--/kZ9M+KZOl3BGf8Y
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmG7QzUACgkQ3SOs138+
-s6Fz0g/+NXG6Z5v1cU5m8qATHlCS7LOgj0m1pDYH7NGhleBIryfDjU2YTHXFLVs7
-9rmIyyM+EkHDDNrmZSW/EbXeADTOvlQR6IaMDqRxQQnZ7/7lyWxpwIzNpVMNOY8x
-kfv1G2e1+GmjkHtWQpjKa+PFpIFFLc872ivZXcx4wqT+93KdTlqxQ93v1pLKOsxF
-vfN3rtnRukmbifI8vaIgacWTEuL2EvZEFlmpUL0/83qM2d96RWKfPozq43qJKAL+
-fYa+9dzPG2NnK90C7lY69SQ9gaE5tiV81l5UewA8Q6foZ6b9OQty4aWk7uc4uXCk
-MLiTR2hXLf5OSTsq4hbGk2TBgvPPmzCrFOJu92UllBEkveYBd/2AP4U8e5mfx/vx
-cFzWKXVskWQ9bWy9Q98DGtKM9Ojf7ZgxGsF3r98yxy7O4JCO3lNBJf+aug/Glhw4
-qcFsmmXfIXIdIWnmfO5X1v/RQdHEldzwTdyqR1L2LXyDy9jONdpp8lcKXyEbr3L3
-XCv4gnZE44IdI3ZDu7SLGBk1kCAa7HP6p2Tdkg+h4igQidlDcFPu63iCEiRYnIcG
-kTrosbzFBH3w1BHd3wE1LZbF2md0k1ra8lV4XSujtY7cqDJ24xrIEA6Rb0vjpYsw
-eFgpOzcO6tDHfFp4gPKnmFceREIar9AkxSKaIK8THz8lbuJMdGY=
-=nVuk
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmG7RV0ACgkQ3SOs138+
+s6EvjBAAt2FOUdF0TCSDCaSEKSFVQrAri9CBbbbCiohF9acoD/UG+pUtEe3MxqPD
+sRbw0FT1mRbb374jZJOpJG95FQBT3+41QoAbXFB5cVbFCoJDRuyC3dzS738KZYw8
+VYoWzTRt2wu247ZYsg6YSc6sAYwO9+GPkKU1CCoDJDlr/jLcof5qJVFXsIRwnjS9
+5Qh8y6OiFFrPjlx3PVzPDFY1iYapzCsHTDr3WHKH6VymPo56oxZ/lRHHAnwlDqqC
+K2YyGsk+4K0kzB2jokNyMqI2P2ZkDcfKVhMDIE0Zt9F5tf46WQrU3FMgaZ4bx6Rr
+mglBqX6d9h8dmVYKWO0/cJLx1TTAMjemnmzM27UOK3xCyheqV+gZ9sEF06pVXP9Q
+vxG3Z1ETQB4Tgp4dWLTg4eJmPyvCy/Kl9lTLckV9UQtY3VC1Ig65tZCC5qVZAeBa
+627H99VkSbq6eNA6nmCQv3YI+tNuEraAMdQWvbHEmssemjDPiU5ZB7K6Le8PjfEU
+wzLSUWPXXcjBQFC/SfGkKxybEQXEcvH7rfEGGOkgxsuSuHM0UR1qzFTPiS6KI+IW
+q7EQKFoIE4dOnUer0rZ7fJwlZ5DequydnphOU/ao/Qd51dOaTSxHNDlRXzK92VO7
+9EgsrZ/6V8DnYLrzcnF35zpN1rmA9gobNyTodowf/96tvDPF+0c=
+=uSDP
 -----END PGP SIGNATURE-----
 
---gyfxT+HMhoGDzaoq--
+--/kZ9M+KZOl3BGf8Y--
