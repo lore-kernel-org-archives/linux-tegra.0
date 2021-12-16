@@ -2,96 +2,112 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B3E3C433F5
-	for <linux-tegra@archiver.kernel.org>; Thu, 16 Dec 2021 02:21:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90B11C433EF
+	for <linux-tegra@archiver.kernel.org>; Thu, 16 Dec 2021 02:52:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229920AbhLPCVS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 15 Dec 2021 21:21:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45932 "EHLO
+        id S233092AbhLPCwQ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 15 Dec 2021 21:52:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53024 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229649AbhLPCVS (ORCPT
+        with ESMTP id S233082AbhLPCwP (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 15 Dec 2021 21:21:18 -0500
-Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 137F4C061574;
-        Wed, 15 Dec 2021 18:21:18 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id 61DF8CE1FCB;
-        Thu, 16 Dec 2021 02:21:16 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 398ACC36AE4;
-        Thu, 16 Dec 2021 02:21:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1639621274;
-        bh=nkUMHXuChFJ8SQgxBc9IJz2hTIZPrCqyutTFbE6fZns=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=T14vMczy1z/wkd6xvGn6Vjn82zR//KMjlmv3PY/WmrCY21PtkDw9UqBO5x8A5PVVN
-         K3DaQ/boRM6SKh4o4OT23Brugxa81aEa2zkSgxzvTWf7gcAP8RPx84tKixS7Nb9mFL
-         7w0OvQ53P2PMOspSqEiKLS5eAfyCJBmBGEEvXgpKGzSEst4KPaLjWvt9LP5/b5h3hP
-         jxOleB2O17pecn+5RkWVRbufzCvkf+8MepmTZkJTiDALkqMJA14SDaI1Dcmqn4PLYL
-         nhv4k76OYzKLSvM9oTaBY3uxJtMvro/Dznuw3xTmQGzCIj1M4gr+Li0Vfarwb8JyCG
-         LQjv8LZYZpvFQ==
-From:   Mark Brown <broonie@kernel.org>
+        Wed, 15 Dec 2021 21:52:15 -0500
+Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62E4CC061574;
+        Wed, 15 Dec 2021 18:52:15 -0800 (PST)
+Received: by mail-lj1-x22b.google.com with SMTP id p8so36269384ljo.5;
+        Wed, 15 Dec 2021 18:52:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=xdliTs2c7a14RuIv4fQ6Gv/2gRZUaewMh1986gMRzTU=;
+        b=JdzpyixQ2xNOQp1kobBa6dmn34VWHrmMYTVwUXGQSaVyVj5QVJDy4JjSTrjFE296mQ
+         CqhG/ZJHjvykbtD8aRhdXgHW+5EnEpakNZxH9tupm40iWsE97QvdLlsriAmDxbK3YSCn
+         EvcJw/ioGVLXy9UBVUwa/Hq8EGUxqaU08tz9K0liPFw8/3XP5+M2PwAypuru9/AtxXKN
+         cOdyxo4xygp8Lgkp8e4AJBW0beG0Q9Cy8S6ZEYIEq+LcT5QmoNNxNZAash2TxA8QMJlE
+         UvChP3emDP0SncFNgecakH5na4BlgfREMcuwDHzdWMp8tifU1OIZeYZ+jgSRIDl0pTPR
+         /NVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=xdliTs2c7a14RuIv4fQ6Gv/2gRZUaewMh1986gMRzTU=;
+        b=YnPpdHKjBXnwuxsUw7ZS91zF2cChoxwWHbg9Z87Ia1mLTzNWa+skT08WubEr7Xthu3
+         o24QNPs+UA0HvnUGjKU4q2eEGknWT6s/oFU+GFE3mbG/lVXYT62E81j0YWTXicoNhknj
+         Z3DFqNCCEgmdO0OSYYwQ9ZSHLZvwjuEqwEPIVJ6X9KfsEmccATN0fCsntp+HR8Vlsov0
+         6lXbW95jxd7XGmb2jUVslasq3s27mHzAt3HGBHpbnOEGQW4u8dDzpKSyBDdowwWZ0l+2
+         KEPhmAKKR3SDv4qRlXPNKDA/k/frgJ3gwjzHSV2T5RWMrt6m4XC9aqjQVTGz82pCCUDy
+         fObg==
+X-Gm-Message-State: AOAM532e4/P/lmFkOu1NZ7QFPdDmLH04sYwnn+K7nIxTxCtqiSzpujHK
+        1OHul6CeRSZq6ThjJ3S/HaSR25IJQ2E=
+X-Google-Smtp-Source: ABdhPJxJTPdnQvFSNjW8VJ5MEa46UwKjQZuqfN3F0CKc5MARIiUKTXKvc2vfpEjqqHJMYASZmKS6Gw==
+X-Received: by 2002:a2e:8e88:: with SMTP id z8mr12924139ljk.197.1639623133561;
+        Wed, 15 Dec 2021 18:52:13 -0800 (PST)
+Received: from [192.168.2.145] (94-29-63-156.dynamic.spd-mgts.ru. [94.29.63.156])
+        by smtp.googlemail.com with ESMTPSA id k8sm613103lfv.179.2021.12.15.18.52.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 15 Dec 2021 18:52:13 -0800 (PST)
+Subject: Re: [PATCH v2] dt-bindings: sound: nvidia,tegra-audio: Convert
+ multiple txt bindings to yaml
 To:     David Heidelberg <david@ixit.cz>,
-        Thierry Reding <thierry.reding@gmail.com>,
         Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>
-Cc:     ~okias/devicetree@lists.sr.ht, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
-        devicetree@vger.kernel.org, alsa-devel@alsa-project.org
-In-Reply-To: <20211211224946.79875-1-david@ixit.cz>
+Cc:     ~okias/devicetree@lists.sr.ht, alsa-devel@alsa-project.org,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 References: <20211211224946.79875-1-david@ixit.cz>
-Subject: Re: [PATCH v2] dt-bindings: sound: nvidia,tegra-audio: Convert multiple txt bindings to yaml
-Message-Id: <163962127187.2075333.9430552763697046784.b4-ty@kernel.org>
-Date:   Thu, 16 Dec 2021 02:21:11 +0000
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <a84213cb-272a-f1b2-338f-ed8ed0bf133d@gmail.com>
+Date:   Thu, 16 Dec 2021 05:52:12 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20211211224946.79875-1-david@ixit.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Sat, 11 Dec 2021 23:49:44 +0100, David Heidelberg wrote:
-> Convert Tegra audio complex with the
->   * ALC5632
->   * MAX98090
->   * RT5640
->   * RT5677
->   * SGTL5000
->   * TrimSlice
->   * WM8753
->   * WM8903
->   * WM9712
-> codec to the YAML format.
-> 
-> [...]
+12.12.2021 01:49, David Heidelberg пишет:
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    sound {
+> +        compatible = "nvidia,tegra-audio-rt5677-ryu",
+> +                     "nvidia,tegra-audio-rt5677";
+> +        nvidia,model = "NVIDIA Tegra Ryu";
+> +
+> +        nvidia,audio-routing =
+> +                "Headphone", "LOUT2",
+> +                "Headphone", "LOUT1",
+> +                "Headset Mic", "MICBIAS1",
+> +                "IN1P", "Headset Mic",
+> +                "IN1N", "Headset Mic",
+> +                "DMIC L1", "Internal Mic 1",
+> +                "DMIC R1", "Internal Mic 1",
+> +                "DMIC L2", "Internal Mic 2",
+> +                "DMIC R2", "Internal Mic 2",
+> +                "Speaker", "PDM1L",
+> +                "Speaker", "PDM1R";
+> +
+> +        nvidia,i2s-controller = <&tegra_i2s1>;
+> +        nvidia,audio-codec = <&rt5677>;
+> +
+> +        nvidia,hp-det-gpios = <&gpio 143 0>;
+> +        nvidia,mic-present-gpios = <&gpio 132 1>;
+> +        nvidia,hp-en-gpios = <&rt5677 1 0>;
+> +        nvidia,dmic-clk-en-gpios = <&rt5677 2 1>;
 
-Applied to
+I spotted that nvidia,dmic-clk-en-gpios is undocumented, but DTs and
+binding are passing the validation. We will make another patch to fix it.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
-
-Thanks!
-
-[1/1] dt-bindings: sound: nvidia,tegra-audio: Convert multiple txt bindings to yaml
-      commit: 88dffe43cbc625eb52a57daa0d1c0fb7037b63d2
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+Rob, could you please tell whether this is because unevaluatedProperties
+doesn't work yet or we're missing something?
