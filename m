@@ -2,94 +2,106 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 833A4C433F5
-	for <linux-tegra@archiver.kernel.org>; Thu, 16 Dec 2021 14:50:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D133EC433F5
+	for <linux-tegra@archiver.kernel.org>; Thu, 16 Dec 2021 15:01:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237764AbhLPOu5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 16 Dec 2021 09:50:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48554 "EHLO
+        id S235090AbhLPPBV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 16 Dec 2021 10:01:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50996 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230071AbhLPOu4 (ORCPT
+        with ESMTP id S232565AbhLPPBV (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 16 Dec 2021 09:50:56 -0500
-Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F6BAC061574;
-        Thu, 16 Dec 2021 06:50:56 -0800 (PST)
-Received: by mail-lf1-x12b.google.com with SMTP id b40so50099233lfv.10;
-        Thu, 16 Dec 2021 06:50:56 -0800 (PST)
+        Thu, 16 Dec 2021 10:01:21 -0500
+Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90CB5C061574;
+        Thu, 16 Dec 2021 07:01:20 -0800 (PST)
+Received: by mail-ed1-x52e.google.com with SMTP id z5so88676990edd.3;
+        Thu, 16 Dec 2021 07:01:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=YF1YEVRPu5rfTUvbjqvshziJmK/i7RZrcuqF9EviPFE=;
-        b=c6aWx4pFU21YvYKT7WKhT3TP+Zle5ry7TK+CVS4HweA+FXs1pxYaow9ljDJYv2k8cA
-         La/+h0Bb+/nCVzZkC7buFdT2opj3wh4Ut4GDoc2nzsUUkgsSQAGfRLNS3RyRNbglP+Bv
-         yUN5EycVq8k8PXWbH9NrX1Lmy0eAS7Y/cliJPKPpQ60rWPZEHew0qS6ugT+Em2Y3+HMV
-         S9L/5EMiF6XXuG0XABWvPruoFD7TeTBCLflzBzxjU5zYaLRtuJr3vfl+OcnG6zACWv6W
-         6N2Jbvf+D2ZSAJtZwEqRWrednWhcOqr0BcM8D1uNPWa2CZ8cZ2min8Dgm/LD1FIV7KXT
-         cVYA==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=9zj1pfsGNIVw4QzFbgPaYaMCLDHK2SPvXFEllDH8Wrk=;
+        b=gxniatxv2cejxITlqQ0p4l2KDDXvkNLHmK0a7hEp5FHaqs+t7PX2OMCZ8zLOp5MyZC
+         oqB7FGtopXz0zW5LwIhoTGmh0HR/bf+DEBVXlHAB3NR25PyAZpNWCxRGHXxyxxkKgS/E
+         HRpsLTkDea0EdJKRUyuyYWNDafCPvK53SzbLQQ6if0nGO5jknVFHU6ggR9346+Gp3SaQ
+         ZGlQVKjlo6cqks7QCLGxw3ASGTrNWREChQAXVN82JGvqnjaaDXl0RtO196xXeiq3izqM
+         XVob9dTWuAhqMa3hwWrpNSSD6BN8WMmiCAY1vw/Poh59mDFW56UD034cLLnn21OcE6XM
+         STzQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=YF1YEVRPu5rfTUvbjqvshziJmK/i7RZrcuqF9EviPFE=;
-        b=vMlLrXK9BvXxvPXwobhwdyVQXZOJ/V6MnshGn/AoNqfdlTfsuhcoJtueoZ6trAmgUz
-         QNqFJtQ8O/3Osbv3jPVmiw3ErbaHpIQUsrsSGvuE80Nv+M2yS44q87ePFxcwTAeFD9et
-         nMevpSBWSbSooqgeX/aUun82CE3oqnJmdOjbHDEGMwp3FUrmWsW50D67QHuLh/BxIr3a
-         Fx4tYDJhKZsyueUm1oQJDGYPWbij8McGP+KEECsfJ4RlIXKaBFcIGXqRqp7L/W7Zyabl
-         PijOvlsolBCqPKaRCbj4oObSoLU2sZDUI+MhxjA77SbaOdskWE89suMKXJCUtQ7V0+Bs
-         bTag==
-X-Gm-Message-State: AOAM533Au4xLv89A43dqct5AsNwdZeTThlObL8sn+e/YGj/sCWWO4758
-        UPBo0SmEOLDWdm9jYurqrgoNTlfUi14=
-X-Google-Smtp-Source: ABdhPJw4JeMKBF6U7PfzAg+7LQ04cGggHkVQWdtCDVMNaGu4piAmC5F2+ePgJI2Eu6bSBGC+Nd4cDA==
-X-Received: by 2002:a05:6512:ac4:: with SMTP id n4mr14415460lfu.352.1639666254527;
-        Thu, 16 Dec 2021 06:50:54 -0800 (PST)
-Received: from [192.168.2.145] (94-29-63-156.dynamic.spd-mgts.ru. [94.29.63.156])
-        by smtp.googlemail.com with ESMTPSA id f35sm906222lfv.98.2021.12.16.06.50.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 16 Dec 2021 06:50:54 -0800 (PST)
-Subject: Re: [PATCH v3] dt-bindings: display: tegra: Convert to json-schema
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-tegra@vger.kernel.org
-References: <20211216142012.1479213-1-thierry.reding@gmail.com>
- <c935b4d2-984b-e08f-6125-0ce390519b45@gmail.com>
-Message-ID: <4e87231d-5df2-d0cf-eb49-e37d2172784d@gmail.com>
-Date:   Thu, 16 Dec 2021 17:50:53 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9zj1pfsGNIVw4QzFbgPaYaMCLDHK2SPvXFEllDH8Wrk=;
+        b=3phGbL37m6lVwDjmdGqOT1XROeW4rK0ta/68k4rKS7FBzPyIH+a+VzIDuIZwkl53kv
+         GwGa4iINEt+O7Cri/UeEyQ3r6e8583tBZlssygpo5b1PbR0Hk7bFXPmddjPK2DhewWxr
+         gYc2XEo39frwUzLT3LQrkJEniXtBFDsHXhuBVZ9ZsK5/TBWuWqRhIV9c7VoMgtEe+Ry7
+         3EVum2IwarhHjbpNLAX258GyAwacVo92bh9H+zCkP4R0AwHC3RQoSqYN+gULiVJHkI2N
+         gmS3rhzdQwtPpJKPwDsYe5HO0fhZmjzqYtCrA3qhD3ZTnyiMMgBCkl7IGqlKOrYDQIzU
+         vOzQ==
+X-Gm-Message-State: AOAM5332VtzOBkRaxBga33REC7itLWU20E7Z4Ur87tQEZSZGIRhgWwrW
+        GgYCORvl3NWrixBmwNHXFsLnR0RkuMSzezpSePQ=
+X-Google-Smtp-Source: ABdhPJyQATRoSClS0GBPB5Utozlk9jX6Ai7xTg7PRs2485NEJpUMVlVa7oVsKEk6kXHQwomnvUcGvvMrzx5gfikZlmw=
+X-Received: by 2002:aa7:cd75:: with SMTP id ca21mr4288962edb.242.1639666873565;
+ Thu, 16 Dec 2021 07:01:13 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <c935b4d2-984b-e08f-6125-0ce390519b45@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <1639660402-31207-1-git-send-email-akhilrajeev@nvidia.com> <1639660402-31207-3-git-send-email-akhilrajeev@nvidia.com>
+In-Reply-To: <1639660402-31207-3-git-send-email-akhilrajeev@nvidia.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Thu, 16 Dec 2021 16:59:44 +0200
+Message-ID: <CAHp75VcvrM0qLQE-04UZEkxbAvkE-MNSN7RGC7mPxj+1hoUyTw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] i2c: smbus: Use device_ functions instead of of_
+To:     Akhil R <akhilrajeev@nvidia.com>
+Cc:     Wolfram Sang <wsa@kernel.org>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Christian Koenig <christian.koenig@amd.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        linux-i2c <linux-i2c@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-16.12.2021 17:48, Dmitry Osipenko пишет:
-> 16.12.2021 17:20, Thierry Reding пишет:
->> +  resets:
->> +    description: Must contain an entry for each entry in reset-names. See
->> +      ../reset/reset.txt for details.
->> +
->> +  reset-names:
->> +    items:
->> +      - const: host1x
-> 
-> Could you please add the optional memory controller reset to all
-> bindings or are you going to do it later on?
-> 
-> https://patchwork.ozlabs.org/project/linux-tegra/patch/20211130232347.950-8-digetx@gmail.com/
-> 
-> Ideally, you should add the MC reset to each binding, so we won't ever
-> have to add them once again later on.
-> 
+On Thu, Dec 16, 2021 at 3:14 PM Akhil R <akhilrajeev@nvidia.com> wrote:
+>
+> Change of_ functions to device_ for firmware agnostic usage.
 
-Although, the MC resets addition should be a separate patch.
+of_*()
+device_*()
 
-I also assume that you'll resolve the merge conflict of the host1x
-binding by yourself in the tegra tree.
+> This allows to have smbus_alert interrupt without any changes
+> in the controller drivers using ACPI table.
+
+...
+
+> -       irq = of_property_match_string(adapter->dev.of_node, "interrupt-names",
+> -                                      "smbus_alert");
+> +       irq = device_property_match_string(adapter->dev.parent, "interrupt-names",
+> +                                          "smbus_alert");
+
+Hmm... Adapter device node is not the same as the node for its parent.
+Do you have some code that propagates of_node from parent to child?
+
+I.o.w. I would expect to see
+
+       irq = device_property_match_string(&adapter->dev, "interrupt-names",
+
+here.
+
+>         if (irq == -EINVAL || irq == -ENODATA)
+>                 return 0;
+>         else if (irq < 0)
+
+TBH the entire code smells. "Interesting" way of getting an optional
+named interrupt.
+
+-- 
+With Best Regards,
+Andy Shevchenko
