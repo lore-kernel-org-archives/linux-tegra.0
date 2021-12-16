@@ -2,55 +2,56 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E040C433EF
-	for <linux-tegra@archiver.kernel.org>; Thu, 16 Dec 2021 14:20:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7706BC433EF
+	for <linux-tegra@archiver.kernel.org>; Thu, 16 Dec 2021 14:24:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237888AbhLPOU2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 16 Dec 2021 09:20:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41424 "EHLO
+        id S237922AbhLPOYy (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 16 Dec 2021 09:24:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42444 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234831AbhLPOU1 (ORCPT
+        with ESMTP id S229533AbhLPOYy (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 16 Dec 2021 09:20:27 -0500
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82826C061574;
-        Thu, 16 Dec 2021 06:20:27 -0800 (PST)
-Received: by mail-wr1-x434.google.com with SMTP id q16so3695939wrg.7;
-        Thu, 16 Dec 2021 06:20:27 -0800 (PST)
+        Thu, 16 Dec 2021 09:24:54 -0500
+Received: from mail-lj1-x22e.google.com (mail-lj1-x22e.google.com [IPv6:2a00:1450:4864:20::22e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5D97C061574;
+        Thu, 16 Dec 2021 06:24:53 -0800 (PST)
+Received: by mail-lj1-x22e.google.com with SMTP id u22so38732254lju.7;
+        Thu, 16 Dec 2021 06:24:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=2aMnjU7hIQzPIODNPQxr8yp+39K6YzUUOxZgZZF/gHk=;
-        b=jEXIJan1huk1UQpmmCmNfmwqrd4qKANO5zNtO8Iijqax4fsDmJvFxqBEI9x5qrcgfq
-         Ye8tnshx4JVdfL4kZBqhxOzJ2xMFLrThaclAwSTQmw/2fs0XZaIGl4xlTA6Vf/ebNqwF
-         sO2rK2ZGdWMbB6Fbo08LnCIjOBiU6gTb1Lk1WGlvdpWNfnRStY1ulhBlmov2PZzKUzJK
-         ZDdHZUNzPxPjFmX6KnFQysxSD0QIfXb2jSCBjNOFPbIxqLjcmJeNfzGyRNWrqkMJo6xv
-         G1joetmCmqGyaqWacTWR5NhiGJ4DfQ3vKCg/5K55qhCws8gH9Vja2Ua4hpztSGsIqdSu
-         Nbeg==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=3te9pe7rOJHos3EuPgW4pF2bDr58GHICUC52sb6TTQw=;
+        b=igVil4d7hecRf/ZlSHkjGruHgf+4OOe4/KwyAc3HNyI/F2/EASnbWlmBW1xTb9kyIf
+         LCsjrURmGl04f3eT9XO2PC7S7qc7QHJF7vXVdsW221Oir2aAxMMhWcEDjv3yX9WDczqV
+         ZDS/IvjvPnck+FzEw10c7WJJf3Hs1whJzcS4oMZEwL83kIugA95UTue+8vljF7orSw/F
+         W1pN26OniH5nNBEyrLvvldgEsL7ZcXLfrgZgfW/+EJCzdM179Fnek2baPlSqDFWaJuu5
+         R2hxrJEuFfzP88gWkIzimlDjZBs6i7mip18yIbHvCl3zFmfzJdLvHKsnANZ9IEim+FqC
+         +aZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=2aMnjU7hIQzPIODNPQxr8yp+39K6YzUUOxZgZZF/gHk=;
-        b=DrdyloSPtPM5G+0NZDPOog8IYfv+ctQ+6MO3yiX+nZaMv9tiqo5E3YW+sqJTeK3ofA
-         ZtnSSChR7jiaibcuI17hnZox9IVR6gNNDuDDGePNklZ40KOrcAMkWt0T7SS5vt6n6q8A
-         JiIK+oe88sFOLSyJa69WAY0ttnaOluYx/Daea8rJYV4B7K0v9TWWYkKH8arDaLbth9fL
-         Q1Yo7u80xUnj8IY4dnXsX+QRXp7kCYk0beGjSJ9irUDQ3c0STpp4w5iWJKt2KMgLP7UN
-         YNukgA4eaWcE0KF6UBulvcwzm9t/PzkVRmH7nxajAy7ppCJq7QA9u9WqbAisO0gW2uMM
-         AAyw==
-X-Gm-Message-State: AOAM533V6mii1gg0by4tBmOMYEeCiC2Icvf3n+ZyT7FGt93duFebroaS
-        G8c9gr+UUwyWvyJ41ShAhFI=
-X-Google-Smtp-Source: ABdhPJzyhdKgbIYkyLmJVEDx2jsU2zymKPqxvGpbsD2mBizBJldfL7d0I25gv5R9KPE9gf994HYdeg==
-X-Received: by 2002:adf:f68a:: with SMTP id v10mr8139833wrp.212.1639664426137;
-        Thu, 16 Dec 2021 06:20:26 -0800 (PST)
-Received: from orome ([193.209.96.43])
-        by smtp.gmail.com with ESMTPSA id q13sm1460504wrr.64.2021.12.16.06.20.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Dec 2021 06:20:25 -0800 (PST)
-Date:   Thu, 16 Dec 2021 15:20:21 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Dmitry Osipenko <digetx@gmail.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=3te9pe7rOJHos3EuPgW4pF2bDr58GHICUC52sb6TTQw=;
+        b=3u6oU+SIT2NvO14nNK86ndpl5Uz+kufgoj8KnNh33RabfG5b8AJl6/9RE6oUYPcB6f
+         NCTXf28/9dRU1BJ9baxj17uhhX4mN4Mn+ElrniqeUj4xAJvbjcpGCfxpx6voQzFFefJN
+         8g/k2ehbO7fZgx8UUyF9bB6dm6VyZKRJFhSWEnp9qrOiKEtoCmUVdxG7kbnWRepObcB1
+         ndphNIeDlgeHgCvk6Ur4r0gJ/ZmB/DLOpVcjXH9/l+9DMEVJRlVSLLgtsVP3T9LvsEsH
+         GSUP8sIND1YVxeNKlehH2W8dwEahvQG+kfblCYKjqGT+OEWAxWUYxWuGjQ6CEocrgXm+
+         R6rQ==
+X-Gm-Message-State: AOAM532b9toFQPV126tPw7RK6d7IMgS1jUBjA97rWsgH5PFSHj7kqN+O
+        8yN1+aAzKCuD0X0SdpneZfk=
+X-Google-Smtp-Source: ABdhPJyZgc6J3PJapwYvBcgEEKZ/Jerd++aLCQoky0Jcr64DLrgfwsKC+jhHtu9KLPZdgvdP4/NUvA==
+X-Received: by 2002:a2e:948:: with SMTP id 69mr15645160ljj.82.1639664692137;
+        Thu, 16 Dec 2021 06:24:52 -0800 (PST)
+Received: from [192.168.2.145] (94-29-63-156.dynamic.spd-mgts.ru. [94.29.63.156])
+        by smtp.googlemail.com with ESMTPSA id a12sm896315lfk.227.2021.12.16.06.24.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 16 Dec 2021 06:24:51 -0800 (PST)
+Subject: Re: [PATCH v4 20/22] ARM: tegra: Add HDMI audio graph to Tegra20
+ device-tree
+To:     Thierry Reding <thierry.reding@gmail.com>
 Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
         Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>,
         Jaroslav Kysela <perex@perex.cz>,
@@ -60,64 +61,74 @@ Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
         Rob Herring <robh+dt@kernel.org>, alsa-devel@alsa-project.org,
         linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v4 04/22] dt-bindings: host1x: Document optional HDMI
- sound-dai-cells
-Message-ID: <YbtLJeIxXlVyQhd3@orome>
 References: <20211204143725.31646-1-digetx@gmail.com>
- <20211204143725.31646-5-digetx@gmail.com>
+ <20211204143725.31646-21-digetx@gmail.com> <YbtDNbdJqCGTaMNs@orome>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <7cc2693f-df2d-b3ca-5336-4815d98a67cb@gmail.com>
+Date:   Thu, 16 Dec 2021 17:24:50 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="s6xvmThKn00W/gOE"
-Content-Disposition: inline
-In-Reply-To: <20211204143725.31646-5-digetx@gmail.com>
-User-Agent: Mutt/2.1.3 (987dde4c) (2021-09-10)
+In-Reply-To: <YbtDNbdJqCGTaMNs@orome>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+16.12.2021 16:46, Thierry Reding пишет:
+> On Sat, Dec 04, 2021 at 05:37:23PM +0300, Dmitry Osipenko wrote:
+>> Add HDMI audio graph to Tegra20 device-tree to enable HDMI audio on
+>> Tegra20 devices.
+>>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>>  arch/arm/boot/dts/tegra20.dtsi | 22 +++++++++++++++++++++-
+>>  1 file changed, 21 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
+>> index 72cbe32d0c1d..dde228bcbbff 100644
+>> --- a/arch/arm/boot/dts/tegra20.dtsi
+>> +++ b/arch/arm/boot/dts/tegra20.dtsi
+>> @@ -186,7 +186,7 @@ rgb {
+>>  			};
+>>  		};
+>>  
+>> -		hdmi@54280000 {
+>> +		tegra_hdmi: hdmi@54280000 {
+>>  			compatible = "nvidia,tegra20-hdmi";
+>>  			reg = <0x54280000 0x00040000>;
+>>  			interrupts = <GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>;
+>> @@ -1063,4 +1063,24 @@ pmu {
+>>  		interrupt-affinity = <&{/cpus/cpu@0}>,
+>>  				     <&{/cpus/cpu@1}>;
+>>  	};
+>> +
+>> +	sound-hdmi {
+>> +		compatible = "simple-audio-card";
+>> +		simple-audio-card,name = "NVIDIA Tegra20 HDMI";
+>> +
+>> +		#address-cells = <1>;
+>> +		#size-cells = <0>;
+>> +
+>> +		simple-audio-card,dai-link@0 {
+>> +			reg = <0>;
+>> +
+>> +			cpu {
+>> +				sound-dai = <&tegra_spdif>;
+>> +			};
+>> +
+>> +			codec {
+>> +				sound-dai = <&tegra_hdmi>;
+>> +			};
+>> +		};
+>> +	};
+> 
+> Should this be status = "disabled" and then only enabled for platforms
+> that actually enable HDMI?
 
---s6xvmThKn00W/gOE
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Sat, Dec 04, 2021 at 05:37:07PM +0300, Dmitry Osipenko wrote:
-> Document new optional sound-dai-cells property of HDMI node. This node wi=
-ll
-> be used as endpoint of HDMI sound DAI graph.
->=20
-> Acked-by: Rob Herring <robh@kernel.org>
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  .../devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt  | 1 +
->  1 file changed, 1 insertion(+)
-
-It's probably best for this to go through ASoC along with the other
-audio-related bindings.
-
-Alternatively, I've just sent out a patch that converts the host1x
-bindings to json-schema, so I could work this into that as well.
-
-Thierry
-
---s6xvmThKn00W/gOE
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmG7SyUACgkQ3SOs138+
-s6HU9Q/+LJiPotWXIHgjqddwtzU6/HD7NNzSDIDIQzl+FQCjYyWmJCFfhyIgmI1O
-3t27pQ7abUhhsvr1oZr/+vnUpw/ZGekjOTA7cuqXWstDJfVpKtALJXwqqNvn059V
-NDBYXE9IvoNnPWZlKZpF+RvPxBekzBOOG7zQ8Ig/2JwhG/caYnzRYNsH1GF5NOhN
-8zbP5CrTY+jRpaKWF5J2oXrvS+EmV0tYuleNpJsZttYhPwWwbyE6Nk12WNqacnEW
-vGBSNv/DeO2yPvcfxvn15SXPFRo93hc1JdoiuGKUrS38BoKCjQj4yA5DTFgp9MVz
-tLzMZ38YlZS7hwxrlhzGjNPyZmZ6e7o09cj2CgfYzL++fJC0PzTXK9bPkwBpnmB8
-TT9TCAVZE+KUpExyiOroT6TmpJRl8ETH+x/cUOltkPwtpl1eKIS19l1qFuTqp3x0
-Uh5w4Wg96EeqRlf8BDw6l7748TmED1Z4BqiyMZ0SrDAxF8fzalxsoIgfZ9xrn2u7
-xJIoigBHB2gHjVfaDFxOx3eHTioW9xQCdjMC0y6vBbJYPjw1lXz5Sc1n84k3Wyij
-Gd80HQ68NLb2hcERYf6Rbl+jVnibKYrS5HEuA9bGU0gU/HEoTqEJTAicFKHu5PwH
-OjRKjFar0sFhYQtFVQh77Yb7CQzlV4dg9ywdLK718KnY9IlzipA=
-=InZN
------END PGP SIGNATURE-----
-
---s6xvmThKn00W/gOE--
+Assuming that HDMI node is disabled, we assume that the card won't be
+initialized. It won't be a problem to restructure this card in DT later
+on if we will have any other use-cases than we currently have, but this
+is unlikely to happen in practice.
