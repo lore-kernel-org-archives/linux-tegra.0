@@ -2,155 +2,193 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B3E0C433F5
-	for <linux-tegra@archiver.kernel.org>; Thu, 16 Dec 2021 10:54:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B94CC433FE
+	for <linux-tegra@archiver.kernel.org>; Thu, 16 Dec 2021 11:30:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233634AbhLPKyq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 16 Dec 2021 05:54:46 -0500
-Received: from mail-eopbgr80048.outbound.protection.outlook.com ([40.107.8.48]:53314
-        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S233592AbhLPKyp (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 16 Dec 2021 05:54:45 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=m3V/tUKPsCoNKXMuAwh6lQJcT+CGDLCUrL39K6AXOUMavN1gpiy6kq0tFC4ZpbEfpdTzw8mdybv4XVZoXEISkNo3CRsPXXBX6NG5zZTiU3/s13W5WZnyitKmJKdeCrcqe1wSb+GfmARgzt+bVE6kBLOTKJN/zH8ywl4CwRWmb5mRUnXUCz7Otd6Ac3DtevR+jDnA22h3JdMjsfHORru73C3mkjoz4kgY/pKWrhYf4269rSG0GzybOp8eyeLSrOTipTdhVLr+XXtZEmqzwl+FuumWYPJhdQlhlLGjs5TBWSLasAwT5Vvir0ko9iDiCM0rzrJCxkpHP/PkdPdKA4CHPQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/H+xUGBT3IfLZQ0dZQ2QU9IQ/kn8AiT/G4IHwpopGWU=;
- b=Wmnh7ADV+kSs/CMzn8sIGTL7I+asBkf1Ugh+6T1F9vMDOB/yt0Fm7GC7b0ibdjxYKETu+aehE0RRLXuYHMi96gEwSANThCjIQALZTUxhSFV6FAOOQ/nV1aVAQChCeSvOgnGxSpXsqFxni5X9ptmBksYOrZ/f28z0bX6R6osB4U9rpJIEcbhkOFyLju9tUfskFh89Tobxme9TuDv5Jt5GqMISUpZXPdDssD/8PwvehDD5BWOKqRawL2eXF1fol5s8ujvMewF2RpJsW8WRYbFKZZKKzslQ4Fvc8Fd4Cs6C6j2Ny+qks0PjUrXm6mxFtg5ZDEv/YxhuSWcs2Ucw5xctkg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/H+xUGBT3IfLZQ0dZQ2QU9IQ/kn8AiT/G4IHwpopGWU=;
- b=T5MO547OEN2JZOPESqDcAp1bkyUlC8Y6uhsjmrsS55IfxHqQr4/RZQR1F2jGJh9c8fXmFl24QUosy3y5Z+t4YvQN/nI8DF0AnEpvbj9unKktr+oSU7IkCpLIVhDSV61D18gqmqTo2Zcg9KZhwRXp6kWl/FG/J+X37ICfdHQSwqk=
-Received: from DB8PR04MB5785.eurprd04.prod.outlook.com (2603:10a6:10:b0::22)
- by DB8PR04MB6972.eurprd04.prod.outlook.com (2603:10a6:10:11c::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4778.17; Thu, 16 Dec
- 2021 10:54:43 +0000
-Received: from DB8PR04MB5785.eurprd04.prod.outlook.com
- ([fe80::30f6:2b14:3433:c9bf]) by DB8PR04MB5785.eurprd04.prod.outlook.com
- ([fe80::30f6:2b14:3433:c9bf%5]) with mapi id 15.20.4778.018; Thu, 16 Dec 2021
- 10:54:43 +0000
-From:   Xiaoliang Yang <xiaoliang.yang_1@nxp.com>
-To:     Alexander Stein <alexander.stein@ew.tq-group.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>
-CC:     "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Joakim Zhang <qiangqing.zhang@nxp.com>
-Subject: RE: [EXT] Re: (EXT) [PATCH v3] arm64: dts: imx8mp-evk: configure
- multiple queues on eqos
-Thread-Topic: [EXT] Re: (EXT) [PATCH v3] arm64: dts: imx8mp-evk: configure
- multiple queues on eqos
-Thread-Index: AQHX8l0rYmdtkILFi0ubdlKVmDV1eaw06lqAgAACkgA=
-Date:   Thu, 16 Dec 2021 10:54:43 +0000
-Message-ID: <DB8PR04MB578511BD4D2FB93B32F87D9CF0779@DB8PR04MB5785.eurprd04.prod.outlook.com>
-References: <20211216092448.35927-1-xiaoliang.yang_1@nxp.com>
- <edc76a76d0d65038ea1494004c7c4bba0068f88a.camel@ew.tq-group.com>
-In-Reply-To: <edc76a76d0d65038ea1494004c7c4bba0068f88a.camel@ew.tq-group.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 3a1c62b5-4524-4619-d5c1-08d9c0827795
-x-ms-traffictypediagnostic: DB8PR04MB6972:EE_
-x-microsoft-antispam-prvs: <DB8PR04MB6972F3417256D5952322F663F0779@DB8PR04MB6972.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:9508;
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: QHlNSraQqHBsHzv50bLVdmQbTz+yWdko2ZQYZYYKwVDz02WrxFLSitZgL9zejtmPruTrEL/XffflGZjsfKyT4kHA0/D9mN6Y8cDxCka/U2K5zSQSp608AfZpyqux7Lsnbe5PBq3utkSLKAJjxZGNo0W/Gj/1/HXxeNOxjsZ+RaWjp+zxR4thbVZosggGLvgWTuhPPaGE2um+XopJfuzyN/laitavgpwMPK4pk3ujWXFeJxRz/+j2b/d3Aldt+l8/uVvF9etf5AvEst39nGSzG0K5mLe7wDNJzscZgZrUrmYnxoSEPaGIfkVx0zqM+tVnZ3PDC7L5ogdyOvg76WUR/7m6OW2vCHPi8mESQ6+ebGUmgrdmiCRF5CfVaS/tnXk5/pyjU4QdXmlHcju4K48OgddZ23dtdDXnqI1dUn5lExKxzt8x83xOLrEhv/CLSlS/vlKmosAGMHLGLG4IoqvhXTTSHSyiz4VVvYI/c4Vh4lVemLH2UzfBPymJqkTRFCTR2X3EJAYqwoPRak69UijfsNAIkqnpDLEZcfjbIO+XDI8Euu/Su9WGXzL0HoywpWM/QovGk70L+2sOCrK1/J0f94apUZKH81dPp0srwsHvGnheNbv03p6Gc/aJ9zr0dgOltpYuGmENi9oSCjVtmALcVhWM8qvXeOGh1YhUeSomFeGvsP9i7g4b+1IukVgPtiRHamlBNXt/N0Q2iP2LwNlmQnP4Ng/r5EacptarhPfgWJg=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB8PR04MB5785.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(66446008)(55016003)(71200400001)(66556008)(64756008)(54906003)(66476007)(508600001)(110136005)(5660300002)(66946007)(33656002)(7696005)(8676002)(316002)(122000001)(38100700002)(52536014)(76116006)(38070700005)(9686003)(186003)(2906002)(6506007)(86362001)(8936002)(4326008)(26005)(32563001);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?S0FmOVdsL1NBTUxJQ2REM0dRT1UrbmdBZ3VIdXR5QzBMd1FZTlhnRkNjM0NU?=
- =?utf-8?B?QTVZcXVkaFRtb2dRcFptN2dlU1Q2djQ1WGpKc0pkWHZWaVhxZnVFb1dESndG?=
- =?utf-8?B?ZDI3SUZMOTRBYnpDa0wvSVhDU293aVI1WnBtTkFXQ1dHYVV3M2lQNG84aFlR?=
- =?utf-8?B?V1hNOWl1U1BxVnV4a25oTjlqMEpUQjI0RExYYVl3dTAyTTZqQzZxRDZ2emtr?=
- =?utf-8?B?SkFLeFM0aW00WkVPbitJV2ZIaUJvdEhzdlJiODFWRkV1Zko5WFhiNVJwMVJo?=
- =?utf-8?B?MjhpS0EzUm96K01jT091MEhXVDd0RXl2Y0NKZFBVSXRBbUdDVWt4dnVUZWI3?=
- =?utf-8?B?Tmx0UTlwdHVySit0Um5sU2I5VjFzaE9pbkhLc1dvOVlJbGNyaGUxb1VlaEJw?=
- =?utf-8?B?M0t2OXJibTJ6MHUwQUJSOXkrdDc0a28rYVpxaEVTcEh1RnMxczZLU3dBWG55?=
- =?utf-8?B?MUtwVURISXF6b0p5cWI4RU1TMVBZUWYvcGVlUUNnWHVuamhVT09BbG40L2dF?=
- =?utf-8?B?eXh3ZHRIZzBDOXgzdTBPeTRsNmc5U3ROZFpwbUZXZEFvcWxFYzZDNU1scGJR?=
- =?utf-8?B?WjJaWGh6UEtrM2gzWWwxN01BY1RBTXRiUDBaOW4zL3F1UVlGNURzWkp1ZHNq?=
- =?utf-8?B?QndKOHVkSTkzOWRUZTdvUm5LR1lhYWk4bWNrSHEyR3ZPcEZVRkdlZXR1L1Qx?=
- =?utf-8?B?ZWZUT3gzZHV0ZkFsTFBDL2hlU1U3Z1RHMytCZE1IcmtIT21RbU5mYnpwK0xu?=
- =?utf-8?B?ZWJqaTlCSW5lOE5Jb2k2SytkbmRVYURpY3BCYWpZYVNKMmNQYUcweS8zVVlC?=
- =?utf-8?B?bTlCYTRZQjB2a29kaXZyQ3pJUE9UVkh2WksxUk9NQkdSdmJsdy9EM3dwNWlJ?=
- =?utf-8?B?OGM2QkU1UUVKYlowVUkyVVBHM1Z0dGNLR1pxZ1RKZTFteTFWUXN5dHZKVkNh?=
- =?utf-8?B?bDg0OTkwOHJNOUVkWkRvT1J6d1k1SGhTMUQyVzNtMjIvS3FCZmRFTGdjYzEw?=
- =?utf-8?B?eVZ2cE9xS0xBbFQ5VngrVTRBVjAraGcwbEhkSmpCWXMzYmlhQ3YvTDVrMXg2?=
- =?utf-8?B?Q1lUUUpkUFp4elJJR2NFNm5jMUVPZXpsMG5WSmZnMnNaVGJCTnZSVGcrdE1w?=
- =?utf-8?B?ckozSU15U1pvQ09lTkNldTdqZlJxWHR5TmVuMDdkcy8vanZvTm1iNTJlaFRR?=
- =?utf-8?B?QlFVYmxDcmJMdUxUR0pDU0l5Qmpsb0hua01FK0dQdHYzVXNRYlVibDh2MHBG?=
- =?utf-8?B?NmxPRGg4RGtTUGptcE5EWW1mck5DSUVyYlVTeThOOS82d3pVUlRRTkFWVEkx?=
- =?utf-8?B?Yk53WG4wdFBkQy9jci9LVEJ6RHQyZ0lvdW9DTWFjQWJlaXp1YnByWEJUMFEy?=
- =?utf-8?B?RFlnWm9yV3dYN3NmSXErZ0E5dUVLYXhFcUY3UW1xR1piMG1ReDdCS3BOR2xY?=
- =?utf-8?B?S0grYWo0UXZVeG9NMkJGUUlwaW1uTU9ZeG1IVUZKaTRPeUhHcnNIUE9pOXpS?=
- =?utf-8?B?QnZqQXFZUTJKUkhaM1JPZURMcFlXUkJHNWhLYzNISDdyeEZYQ3E1dFJ5ZWow?=
- =?utf-8?B?ZWk5QjBTMFdGbXlESk04ZTJ3bXB0S1QvVnRFaWlvcDlZNlBqWnd2Z1VvSmZB?=
- =?utf-8?B?aDJ5WERuSmpJbU00OUhUV1Yya2RacVlWUUNoNU5JTC9DUTkydW9kSG1HUVJK?=
- =?utf-8?B?UllRWHdXdUhIZWROVkovTGE5KzVVV002VHVSZWhwVEovNjVFNmRVQXBqa3pO?=
- =?utf-8?B?WUhDMjZ1RGxwUXpYSHl6eUxVRGd4ZHlnOHp0Um5aWjNFWHBycWN6bTFlcVBa?=
- =?utf-8?B?aTlTTHFaTi9uVGxhWkZ6Sktic3NUK1VGdmFNMnRWZHVoMzl0bXBEVzBmZG1V?=
- =?utf-8?B?Q3gxZE93TjlqL2Vvd21hdUsxZVZEaWo1TzNhWW4zSDVpcHBJdytsd1BDUVo0?=
- =?utf-8?B?MHpEZThBZVRmTWZMOXYyR3dGd1k5TzUzcmQvS2FLaXd1L0p0YWtqd3BwS0hZ?=
- =?utf-8?B?bE5BbXlTZlQ4VDVUZzg4Q0dNNnp1Nzh2bDV4ZXhCWWRHbFlndVhBc0ZQQ1VE?=
- =?utf-8?B?akc5RUJaTU9TKzFIZUpTb2pHNkI3eGw0QlhESFdvWDF5NVp4Y2VMeVRIMm9Z?=
- =?utf-8?B?c2djT3NkM29IWjV2akdrWTJFOFlkT2FPWm1COFhqb3dSZVF2SXhpS2hoYWxw?=
- =?utf-8?B?Nno4KzhRTjdMUThrQnBYdXJacEF2OHRVN3AwWDBIM2V4MTJKcjFpRFd1dzdD?=
- =?utf-8?B?ZmxiTGZOMFpVWXR4dkhkcGxzbWR3PT0=?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S233799AbhLPLav (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 16 Dec 2021 06:30:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57424 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229996AbhLPLau (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 16 Dec 2021 06:30:50 -0500
+Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D68CC061574;
+        Thu, 16 Dec 2021 03:30:49 -0800 (PST)
+Received: by mail-wm1-x32e.google.com with SMTP id p18so18674895wmq.5;
+        Thu, 16 Dec 2021 03:30:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=kkKYFdWW6UCJzSdQqJXxaaYA3bsQkl9FlH/GOA+i1Yc=;
+        b=UoOLDVzd2Z7MeM0G4GorBmBwofg4ukS3hyY1S1lsoXvl16VQqDJwISRk3xaJbP/5AK
+         IJfXaSMlAbZVtIW8GDpmhPi3fs5uyXxDTyXGg51BHCeGmBNwsEGqtWNBZRkrF2vedRBc
+         gOFchM7VSi5Vj1dekR70jIfvyq5DKZfbUx94LReShDVIsG6Bm5r7jdCRJle7YUH2PbGd
+         5k+Fh5oC2KUh2UcwvyuR4u2XeDwxgL5CLqEzvc8kvO/9XzQ5GF7pxKFWkykdtkRI1Elf
+         T/LlmZ9mNGarHGy/C6qLZfBXh7ETHhWPq4woQZp3zL0rZLVxpDtCsvL2J6rktrtKZe37
+         gQ1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=kkKYFdWW6UCJzSdQqJXxaaYA3bsQkl9FlH/GOA+i1Yc=;
+        b=F/q9l4DR/AgCx9+Jb5wQHmj8yIOc9s2pPgaA2bnkOqsYXa0c33ozxgMDme+Kd2igLR
+         UQKdJEBy/KRaNPQ9xUjhv/aSx1zZ9aP6F1/x3WVvcTd+Bxux2pWGf2SFXtu+UCixyqGT
+         UlqtGNb0peU9m8LHo7EOm392D3v2suazHdWaISXffWCnMWuLYhO+FGI6Y8cT5mOI7yH+
+         NURZSTg/r/W75D38ZAx4YMr/naw7AXzL5NyDLAE73nm5HUyFTV83dHJ/TSR1Ta1xXoVA
+         zLP9xH/INYP0ru8GINT884gfFiI45jQmIcsNGFrF/YzIzwtZgk7r/t9O+eO51NELvowU
+         4NoA==
+X-Gm-Message-State: AOAM533Aj47/4Xm1uMUhcAZ74nZEQAXKjWTAeKkETJiE2u7X5qdnJev/
+        mYUc1mFlUKotGyXWo7WVxE8=
+X-Google-Smtp-Source: ABdhPJx63rpTL/bdCiuPeeXe27cBb+BoXyDlOVw2g7opXpmXsbzI1Ulj9Ru3/UsvVRsRHarz4wrntA==
+X-Received: by 2002:a05:600c:3d94:: with SMTP id bi20mr4551005wmb.71.1639654247975;
+        Thu, 16 Dec 2021 03:30:47 -0800 (PST)
+Received: from orome ([193.209.96.43])
+        by smtp.gmail.com with ESMTPSA id c11sm1156319wmq.48.2021.12.16.03.30.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Dec 2021 03:30:47 -0800 (PST)
+Date:   Thu, 16 Dec 2021 12:30:44 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Sumit Gupta <sumitg@nvidia.com>
+Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, jonathanh@nvidia.com,
+        robh+dt@kernel.org, bbasu@nvidia.com, vsethi@nvidia.com,
+        jsequeira@nvidia.com
+Subject: Re: [Patch Resend v1 5/8] dt-bindings: arm: tegra: Add NVIDIA
+ Tegra234 CBB2.0 binding
+Message-ID: <YbsjZDc8tt3fMUQt@orome>
+References: <20211209172206.17778-1-sumitg@nvidia.com>
+ <20211209172206.17778-6-sumitg@nvidia.com>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DB8PR04MB5785.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3a1c62b5-4524-4619-d5c1-08d9c0827795
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Dec 2021 10:54:43.2406
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: KqbFqsSWvIFJQuFxUJqhTjrCWm58QHDHFLdfPaFRgibIDL3WeXvh4k5Q1YplJ6OZNbcOo1UynvffIFiCstIjnmdlggi+psDhlr9FxAEV8UA=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR04MB6972
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="kDnqfaHImAnj07sS"
+Content-Disposition: inline
+In-Reply-To: <20211209172206.17778-6-sumitg@nvidia.com>
+User-Agent: Mutt/2.1.3 (987dde4c) (2021-09-10)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-DQpPbiBUaHUsIDE2IERlYyAyMDIxIDE4OjA3OjEzIEFsZXhhbmRlciBTdGVpbiB3cm90ZToNCj4g
-PiBFcW9zIGV0aGVybmV0IHN1cHBvcnQgZml2ZSBxdWV1ZXMgb24gaGFyZHdhcmUsIGVuYWJsZSB0
-aGVzZSBxdWV1ZXMgYW5kDQo+ID4gY29uZmlndXJlIHRoZSBwcmlvcml0eSBvZiBlYWNoIHF1ZXVl
-LiBVc2VzIFN0cmljdCBQcmlvcml0eSBhcw0KPiA+IHNjaGVkdWxpbmcgYWxnb3JpdGhtcyB0byBl
-bnN1cmUgdGhhdCB0aGUgVFNOIGZ1bmN0aW9uIHdvcmtzLg0KPiA+DQo+ID4gVGhlIHByaW9yaXR5
-IG9mIGVhY2ggcXVldWUgaXMgYSBiaXRtYXNrIHZhbHVlIHRoYXQgbWFwcyBWTEFOIHRhZw0KPiA+
-IHByaW9yaXR5IHRvIHRoZSBxdWV1ZS4gU2luY2UgdGhlIGhhcmR3YXJlIG9ubHkgc3VwcG9ydHMg
-Zml2ZSBxdWV1ZXMsDQo+ID4gdGhpcyBwYXRjaCBtYXBzIHByaW9yaXR5IDAtNCB0byBxdWV1ZXMg
-b25lIGJ5IG9uZSwgYW5kIHByaW9yaXR5IDUtNyB0bw0KPiA+IHF1ZXVlIDQuDQo+ID4NCj4gPiBU
-aGUgdG90YWwgZmlmbyBzaXplIG9mIDUgcXVldWVzIGlzIDgxOTIgYnl0ZXMsIGlmIGVuYWJsZSA1
-IHF1ZXVlcyB3aXRoDQo+ID4gc3RvcmUtYW5kLWZvcndhcmQgbW9kZSwgaXQncyBub3QgZW5vdWdo
-IGZvciBsYXJnZSBwYWNrZXRzLCB3aGljaCB3b3VsZA0KPiA+IHRyaWdnZXIgZmlmbyBvdmVyZmxv
-dyBmcmVxdWVudGx5LiBUaGlzIHBhdGNoIHNldCBETUEgdG8gdGhyZXNoIG1vZGUgdG8NCj4gPiBl
-bmFibGUgYWxsIDUgcXVldWVzLg0KPiANCj4gSXMgdGhlcmUgYSBzcGVjaWZpYyByZWFzb24gdG8g
-Y29uZmlndXJlIHRoaXMgb25seSBvbiBib2FyZC1sZXZlbCBidXQgbm90IGZvciBhbGwNCj4gaW14
-OG1wIGluIGdlbmVyYWw/DQpIb3cgbWFueSBxdWV1ZXMgYXJlIGVuYWJsZWQgYW5kIHdoYXQgYXR0
-cmlidXRlcyBhcmUgc2V0IHRvIGVxb3MgZGVwZW5kcyBvbiB0aGUgbmVlZHMgb2YgdXNlcnMuIERp
-ZmZlcmVudCBib2FyZHMgbWF5IGhhdmUgZGlmZmVyZW50IHJlcXVpcmVtZW50cy4gRm9yIGV4YW1w
-bGUsIHdlIHNldCB0aGUgdGhyZXNob2xkIG1vZGUgYW5kIDUgcXVldWVzIG9uIHRoZSBpbXg4bXAt
-ZXZrIGJvYXJkLCBidXQgb3RoZXIgYm9hcmRzIG1heSBhbHNvIHJlcXVpcmUgU0YgbW9kZSBhbmQg
-MyBxdWV1ZXMuIFdlIHNldCB1cCA1IHF1ZXVlcyBhbmQgU1Agc2NoZWR1bGluZyBtb2RlcyBvbiB0
-aGUgaS5teDltcC1ldmsgYm9hcmQgdG8gYmV0dGVyIHVzZSB0aGUgVFNOIGZ1bmN0aW9uLg0KDQpU
-aGFua3MsDQpYaWFvbGlhbmcNCg==
+
+--kDnqfaHImAnj07sS
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, Dec 09, 2021 at 10:52:03PM +0530, Sumit Gupta wrote:
+> Add device-tree binding documentation to represent CBB2.0 (Control
+> Backbone) error handling driver. The driver prints debug information
+> about failed transaction on receiving interrupt from CBB2.0.
+>=20
+> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+> ---
+>  .../arm/tegra/nvidia,tegra234-cbb.yaml        | 80 +++++++++++++++++++
+>  1 file changed, 80 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,te=
+gra234-cbb.yaml
+>=20
+> diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra234-=
+cbb.yaml b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra234-cbb.=
+yaml
+> new file mode 100644
+> index 000000000000..ad8177255e6c
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra234-cbb.yaml
+> @@ -0,0 +1,80 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +
+> +$id: "http://devicetree.org/schemas/arm/tegra/tegra23_cbb.yaml#"
+> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+> +
+> +title: NVIDIA Tegra CBB2.0 Error handling driver device tree bindings
+> +
+> +maintainers:
+> +  - Sumit Gupta <sumitg@nvidia.com>
+> +
+> +description: |+
+> +  Control Backbone (CBB) comprises of the physical path from an
+> +  initiator to a target's register configuration space.
+> +  CBB2.0 consists of multiple sub-blocks connected to each other
+> +  to create a topology.
+> +  Tegra234 SOC has different fabrics based on CBB2.0 architecture
+> +  which include cluster fabrics BPMP, AON, PSC, SCE, RCE, DCE, FSI
+> +  and "CBB central fabric".
+> +
+> +  In CBB2.0, each initiator which can issue transactions connects to
+> +  a Root Master Node (MN) before it connects to any other element of
+> +  the fabric. Each Root MN contains a Error Monitor (EM) which detects
+> +  and logs error. Interrupts from various EM blocks are collated by
+> +  Error Notifier (EN) which is per fabric and presents a single
+> +  interrupt from fabric to the SOC interrupt controller.
+> +
+> +  The driver handles errors from CBB due to illegal register accesses
+> +  and prints debug information about failed transaction on receiving
+> +  the interrupt from EN. Debug information includes Error Code, Error
+> +  Description, MasterID, Fabric, SlaveID, Address, Cache, Protection,
+> +  Security Group etc on receiving error notification.
+> +
+> +  If the Error Response Disable (ERD) is set/enabled for an initiator,
+> +  then SError or Data abort exception error response is masked and an
+> +  interrupt is used for reporting errors due to illegal accesses from
+> +  that initiator. The value returned on read failures is '0xFFFFFFFF'
+> +  for compatibility with PCIE.
+> +
+> +properties:
+> +  $nodename:
+> +    pattern: "^[a-f]+-en@[0-9a-f]+$"
+> +
+> +  compatible:
+> +    enum:
+> +      - nvidia,tegra234-aon-fabric
+> +      - nvidia,tegra234-bpmp-fabric
+> +      - nvidia,tegra234-cbb-fabric
+> +      - nvidia,tegra234-dce-fabric
+> +      - nvidia,tegra234-rce-fabric
+> +      - nvidia,tegra234-sce-fabric
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +    items:
+> +      - description: secure interrupt from error notifier.
+> +
+> +  nvidia,err-notifier-base:
+> +    description: address of error notifier inside a fabric.
+> +
+> +  nvidia,off-mask-erd:
+> +    description: offset of register having ERD bit.
+
+I was wondering about these two properties. Do we really need them? I
+see that they are set on a per-SoC basic and they only differ between
+the various fabrics. If they don't need to be configured on a per-board
+basis, then I don't think we need to specify these explicitly. Instead I
+think we could derive them from the compatible string.
+
+Thierry
+
+--kDnqfaHImAnj07sS
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmG7I2EACgkQ3SOs138+
+s6G0RQ//QsTrAYxPZSsjpqcT32TaiYNtCdwarmMkxl8hueLKxMW5Lp9Kbd500Nyg
+hMrIJxrN0P/iBx14FLBs/Oik8x91ADhLst+gcsOH23ibM0nk2CcokcT29mBnsLTe
+E2ADcNbLO6H1795RKde/KjgkfEHS/6bdRwk555/WMZSKJyUwVIn15+HY+9hrBcXj
+Elu77lebBY5ac4xI/UCxbHZk1nMBBznpLDdDbCnvmtnRX4jZ3IQML6/8VgIiauOU
+TJwSIwgrUmxFfJJAIzHf4ijNXcKItar3NpA68vFuQGqJVccC00wemYUa4P+2HFMy
+Je1PbtGORUPBidYzv0GDSeLwKM7HqHXFOaKgGw8RHj4X5HOlMlrUXeUn1dXD3aDC
+Kv+VlogVhkoZRpMJm/4u0BWdW+pDgDiwDFHQXo7o6H/lx8MSu6eQa2svNhKiSw17
+Byn1O+A3m5SyrMmmtzkrwYNp1v5PZphPkq2FpdPwoODUhrblTv08OrQ7Oy30hwH1
+O/9QDKwRXceNDVumcQWmc18/amLI3fK0qeoCmoI1Q/tkS0rQo9B7/tO4knF1jScS
+NW1vzGS6YmZzSMH26UVzLHr1y41Ihzw0Si2jyqH7YDZyV1grnZbe42pYoZ93dhsy
+MoaiOqHxCW+d4NMgS/Tc4q0kE4Nr1hrwmn9Fp2RpQ57qigZjBEU=
+=brHz
+-----END PGP SIGNATURE-----
+
+--kDnqfaHImAnj07sS--
