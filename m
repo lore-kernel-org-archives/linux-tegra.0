@@ -2,227 +2,226 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77674C433EF
-	for <linux-tegra@archiver.kernel.org>; Thu, 16 Dec 2021 16:12:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D3A5C433FE
+	for <linux-tegra@archiver.kernel.org>; Thu, 16 Dec 2021 16:38:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231438AbhLPQMN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 16 Dec 2021 11:12:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40080 "EHLO
+        id S232621AbhLPQis (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 16 Dec 2021 11:38:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47498 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230255AbhLPQMM (ORCPT
+        with ESMTP id S229480AbhLPQir (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 16 Dec 2021 11:12:12 -0500
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A873C061574;
-        Thu, 16 Dec 2021 08:12:12 -0800 (PST)
-Received: by mail-wr1-x42a.google.com with SMTP id t26so8779894wrb.4;
-        Thu, 16 Dec 2021 08:12:12 -0800 (PST)
+        Thu, 16 Dec 2021 11:38:47 -0500
+Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B17DC061574;
+        Thu, 16 Dec 2021 08:38:47 -0800 (PST)
+Received: by mail-wr1-x42b.google.com with SMTP id o13so45169010wrs.12;
+        Thu, 16 Dec 2021 08:38:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=0Jbu2T86Hj77iiPuDeptb5d5E0Vs1H1COLGpOMhjfR8=;
-        b=GHY0h9P6LRzb+6ygzCtHy2FPKy46PfWHa6WVdgD7FUbLWHsVsVfKI8rTVfv/LJ7A+1
-         aUOyBW+UWXwPwwsS2VCF5KtLmB7oc2nCOUoQdEGbfTtEPg35gBzEYFvoxhPxjLfGMHmb
-         FvI0y/jopIps600yQpbxPpGZXTcK1iC1+sTpXsS2khYL5PBSg5d0cAQXXndemPUUu0+v
-         O2uxG1oM8C5bIS9BNod8XlWpDBoC0UbI/XN2m4d/cCxjNaLFLpwApm/OVLZR5icx1VeW
-         1Sn9Gq497YoqCELDxnVGgfH+lcu833j70PzmsgFKj4O5fhCE+80h3rQFBWijYvrP8NF1
-         4HbA==
+        bh=EP3xb+L2xQ/6dsIM4CEwcEiPmw14nHoll6jOIGKWqPA=;
+        b=TzPuFWV24wtWEhXxZJK40D4ieK3a7qzqWSIapU1CFCnakNH5USfJdAE69OCM6lgAjh
+         sdjugSHia6pAzbLfDz+vlcAX3fcfvOQm+RsGHiHPu8uuOiGPZpswMq7Z2ZOmcq0mI5OA
+         4DfJtIPbSKCSZQnP/sh7rmVH2Lx4SV0WAVN6mmcNVl7xL/qa3zupA4/PlKPB0r//vLps
+         X1L5EjaRQhoOF6neQwkdmFfFL/ekhPyaWwrj1DLc3kif9epgfJWqhZ5sMRdPpOCuKbJb
+         zyC6H/pJseZK965PTe01kdvlfGg/AuQyDxPADhBYoT0kUQEeSd2vflz+tXhNyQ54GBqS
+         O6oQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=0Jbu2T86Hj77iiPuDeptb5d5E0Vs1H1COLGpOMhjfR8=;
-        b=xtpbUgN7rI5PFJsl2AH6OryxD7mumzun24BMlJqAQxavAKLl8M0IZH8Vm4YJ+N6++V
-         q/6JhO2Guo83rsOw5kbaVGriOZlGjvOIQAoOi+obI/TpINWgWUJVrYTdSTSbNj4nXFD6
-         nVqG62wpK63vE1Tp7B3dqCahWkStixbURC6G/4jtlTgj1YyEMGT2ZdWRIXRTA7JQqQA4
-         pVl3qxUCWfIdOWxjCrHlqdGvDa/0ekSKtYBwtc9LRD6AFWt6NW4VTX3pnB0px/3cPUHW
-         biP0ZZf4MO8s4b/oMITAY/mz5qp+FteIY6FQpOPBTgisv0TvaeUkyeEPijQYe8+GwAAQ
-         RmKg==
-X-Gm-Message-State: AOAM533No6taY33+arDmFMmyuM4k3wqs+zH2nTlJpmgrGgS5BhZlHFtS
-        /Cpnsi0YbU+wM++soDQsrdY=
-X-Google-Smtp-Source: ABdhPJwXGM0FZkbPOs9LSR4UAPbIexmy56AyfaoJzRFzQezJlMnPsrxGdnRhvJg1aCMFO1bovTkCMA==
-X-Received: by 2002:adf:db04:: with SMTP id s4mr9829450wri.467.1639671130578;
-        Thu, 16 Dec 2021 08:12:10 -0800 (PST)
+        bh=EP3xb+L2xQ/6dsIM4CEwcEiPmw14nHoll6jOIGKWqPA=;
+        b=hURW4Tx/sFC/Xdm7bIzrGunqqHtNjllkP1J6UMy4WGZvnwvU16AO/30ahKD5b+uUZU
+         BskD1cHGsd05nSN754PQfV7G7vRPxsqSvGp/eIxWyWwIuog6T8x19D4cBmdGoNOfXtdk
+         7bP0nfRGQfBBZp24WjzW/aWniFu6a7wYvwOwF2CZYtThp2S0L9W9Sf2t+bHBYh0YDr0U
+         KjcMXwe6ICrBmvA/INBs1jTgvQ2L2oFC2eGx2IzKM9X21d09SNSIuwHWybacmT2dHTsu
+         4hM3GTSwVZVAHJJkRWbBMuiVGmhhbQ26xdGYW80Bbjb7sPdNV9JMSQLoTSsXn/qazxTC
+         uwSA==
+X-Gm-Message-State: AOAM5301xpRgZE0phX09CsZEz2u94pp4aatlq7bpXDNWUIkTrF3b95d5
+        ok+UDFk5xa/2x/NrbXYxwJAtLqfFSXiGaA==
+X-Google-Smtp-Source: ABdhPJxSn97MDh2IXVe4MI7nWPHDfEm3gKt2P6E6PmGP9AT9pQEnrTpqaClaoo+RYs2k+5XaAQitdg==
+X-Received: by 2002:a5d:4575:: with SMTP id a21mr9850468wrc.193.1639672725778;
+        Thu, 16 Dec 2021 08:38:45 -0800 (PST)
 Received: from orome ([193.209.96.43])
-        by smtp.gmail.com with ESMTPSA id b10sm5456629wrg.19.2021.12.16.08.12.08
+        by smtp.gmail.com with ESMTPSA id z11sm5402253wmf.9.2021.12.16.08.38.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Dec 2021 08:12:09 -0800 (PST)
-Date:   Thu, 16 Dec 2021 17:12:06 +0100
+        Thu, 16 Dec 2021 08:38:44 -0800 (PST)
+Date:   Thu, 16 Dec 2021 17:38:41 +0100
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Peter Chen <peter.chen@freescale.com>,
-        Nagarjuna Kristam <nkristam@nvidia.com>,
-        JC Kuo <jckuo@nvidia.com>, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org
-Subject: Re: [PATCH 1/4] dt-bindings: usb: chipidea: Convert to json-schema
-Message-ID: <YbtlVilOGk556ynR@orome>
-References: <20211209165339.614498-1-thierry.reding@gmail.com>
- <YbpBFKeuSK4v7Fdz@robh.at.kernel.org>
+To:     Sumit Gupta <sumitg@nvidia.com>
+Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, jonathanh@nvidia.com,
+        robh+dt@kernel.org, bbasu@nvidia.com, vsethi@nvidia.com,
+        jsequeira@nvidia.com
+Subject: Re: [Patch Resend v1 5/8] dt-bindings: arm: tegra: Add NVIDIA
+ Tegra234 CBB2.0 binding
+Message-ID: <YbtrkcMMwjipgkZf@orome>
+References: <20211209172206.17778-1-sumitg@nvidia.com>
+ <20211209172206.17778-6-sumitg@nvidia.com>
+ <YbsjZDc8tt3fMUQt@orome>
+ <321bfcdf-2aa3-0d0a-2096-972b5cf0297a@nvidia.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="Cg/kEI5DFPwPjmTt"
+        protocol="application/pgp-signature"; boundary="JSShQrnBNGx5c7H6"
 Content-Disposition: inline
-In-Reply-To: <YbpBFKeuSK4v7Fdz@robh.at.kernel.org>
+In-Reply-To: <321bfcdf-2aa3-0d0a-2096-972b5cf0297a@nvidia.com>
 User-Agent: Mutt/2.1.3 (987dde4c) (2021-09-10)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---Cg/kEI5DFPwPjmTt
+--JSShQrnBNGx5c7H6
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Dec 15, 2021 at 01:25:08PM -0600, Rob Herring wrote:
-> On Thu, Dec 09, 2021 at 05:53:36PM +0100, Thierry Reding wrote:
-> > From: Thierry Reding <treding@nvidia.com>
-> >=20
-> > Convert the ChipIdea USB2 bindings from the free-form text format to
-> > json-schema.
-> >=20
-> > Signed-off-by: Thierry Reding <treding@nvidia.com>
-> > ---
-> >  .../bindings/usb/chipidea,usb2.yaml           | 310 ++++++++++++++++++
-> >  .../devicetree/bindings/usb/ci-hdrc-usb2.txt  | 158 ---------
-> >  2 files changed, 310 insertions(+), 158 deletions(-)
-> >  create mode 100644 Documentation/devicetree/bindings/usb/chipidea,usb2=
+On Thu, Dec 16, 2021 at 08:36:11PM +0530, Sumit Gupta wrote:
+> Hi Thierry,
+>=20
+> > On Thu, Dec 09, 2021 at 10:52:03PM +0530, Sumit Gupta wrote:
+> > > Add device-tree binding documentation to represent CBB2.0 (Control
+> > > Backbone) error handling driver. The driver prints debug information
+> > > about failed transaction on receiving interrupt from CBB2.0.
+> > >=20
+> > > Signed-off-by: Sumit Gupta<sumitg@nvidia.com>
+> > > ---
+> > >   .../arm/tegra/nvidia,tegra234-cbb.yaml        | 80 ++++++++++++++++=
++++
+> > >   1 file changed, 80 insertions(+)
+> > >   create mode 100644 Documentation/devicetree/bindings/arm/tegra/nvid=
+ia,tegra234-cbb.yaml
+> > >=20
+> > > diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra=
+234-cbb.yaml b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra234-=
+cbb.yaml
+> > > new file mode 100644
+> > > index 000000000000..ad8177255e6c
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra234-cbb=
 =2Eyaml
-> >  delete mode 100644 Documentation/devicetree/bindings/usb/ci-hdrc-usb2.=
-txt
-> >=20
-> > diff --git a/Documentation/devicetree/bindings/usb/chipidea,usb2.yaml b=
-/Documentation/devicetree/bindings/usb/chipidea,usb2.yaml
-> > new file mode 100644
-> > index 000000000000..0e36259f23ba
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/usb/chipidea,usb2.yaml
-> > @@ -0,0 +1,310 @@
-> > +# SPDX-License-Identifier: GPL-2.0-only
-> > +%YAML 1.2
-> > +---
-> > +$id: "http://devicetree.org/schemas/usb/chipidea,usb2.yaml#"
-> > +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
-> > +
-> > +title: USB2 ChipIdea USB controller for ci13xxx
-> > +
-> > +maintainers:
-> > +  - Peter Chen <peter.chen@freescale.com>
->=20
-> This should have a reference to usb-drd.yaml I think.
->=20
-> > +
-> > +properties:
-> > +  compatible:
-> > +    oneOf:
-> > +      - enum:
-> > +          - fsl,imx23-usb
-> > +          - fsl,imx27-usb
-> > +          - fsl,imx28-usb
-> > +          - fsl,imx6q-usb
-> > +          - fsl,imx6sl-usb
-> > +          - fsl,imx6sx-usb
-> > +          - fsl,imx6ul-usb
-> > +          - fsl,imx7d-usb
-> > +          - fsl,imx7ulp-usb
-> > +          - lsi,zevio-usb
-> > +          - qcom,ci-hdrc
-> > +          - chipidea,usb2
-> > +          - xlnx,zynq-usb-2.20a
-> > +          - nvidia,tegra20-udc
-> > +          - nvidia,tegra30-udc
-> > +          - nvidia,tegra114-udc
-> > +          - nvidia,tegra124-udc
-> > +      - items:
-> > +          - const: fsl,imx6q-usb
-> > +          - const: fsl,imx27-usb
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  interrupts:
-> > +    maxItems: 1
-> > +
-> > +  phy_type:
-> > +    $ref: /schemas/types.yaml#/definitions/string
-> > +    description: The type of the PHY connected to the core. Without th=
-is property the PORTSC
-> > +      register won't be touched.
-> > +    enum:
-> > +      - utmi
-> > +      - utmi_wide
-> > +      - ulpi
-> > +      - serial
-> > +      - hsic
-> > +
-> > +  dr_mode:
-> > +    $ref: /schemas/types.yaml#/definitions/string
-> > +    description: dual-role mode of the interface
-> > +    enum:
-> > +      - host
-> > +      - peripheral
-> > +      - otg
-> > +    default:
-> > +      const: otg
-> > +
-> > +  clocks:
-> > +    items:
-> > +      - description: reference to the USB clock
->=20
-> From the report, i.MX needs 3 clocks.
+> > > @@ -0,0 +1,80 @@
+> > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > > +%YAML 1.2
+> > > +---
+> > > +
+> > > +$id:"http://devicetree.org/schemas/arm/tegra/tegra23_cbb.yaml#"
+> > > +$schema:"http://devicetree.org/meta-schemas/core.yaml#"
+> > > +
+> > > +title: NVIDIA Tegra CBB2.0 Error handling driver device tree bindings
+> > > +
+> > > +maintainers:
+> > > +  - Sumit Gupta<sumitg@nvidia.com>
+> > > +
+> > > +description: |+
+> > > +  Control Backbone (CBB) comprises of the physical path from an
+> > > +  initiator to a target's register configuration space.
+> > > +  CBB2.0 consists of multiple sub-blocks connected to each other
+> > > +  to create a topology.
+> > > +  Tegra234 SOC has different fabrics based on CBB2.0 architecture
+> > > +  which include cluster fabrics BPMP, AON, PSC, SCE, RCE, DCE, FSI
+> > > +  and "CBB central fabric".
+> > > +
+> > > +  In CBB2.0, each initiator which can issue transactions connects to
+> > > +  a Root Master Node (MN) before it connects to any other element of
+> > > +  the fabric. Each Root MN contains a Error Monitor (EM) which detec=
+ts
+> > > +  and logs error. Interrupts from various EM blocks are collated by
+> > > +  Error Notifier (EN) which is per fabric and presents a single
+> > > +  interrupt from fabric to the SOC interrupt controller.
+> > > +
+> > > +  The driver handles errors from CBB due to illegal register accesses
+> > > +  and prints debug information about failed transaction on receiving
+> > > +  the interrupt from EN. Debug information includes Error Code, Error
+> > > +  Description, MasterID, Fabric, SlaveID, Address, Cache, Protection,
+> > > +  Security Group etc on receiving error notification.
+> > > +
+> > > +  If the Error Response Disable (ERD) is set/enabled for an initiato=
+r,
+> > > +  then SError or Data abort exception error response is masked and an
+> > > +  interrupt is used for reporting errors due to illegal accesses from
+> > > +  that initiator. The value returned on read failures is '0xFFFFFFFF'
+> > > +  for compatibility with PCIE.
+> > > +
+> > > +properties:
+> > > +  $nodename:
+> > > +    pattern: "^[a-f]+-en@[0-9a-f]+$"
+> > > +
+> > > +  compatible:
+> > > +    enum:
+> > > +      - nvidia,tegra234-aon-fabric
+> > > +      - nvidia,tegra234-bpmp-fabric
+> > > +      - nvidia,tegra234-cbb-fabric
+> > > +      - nvidia,tegra234-dce-fabric
+> > > +      - nvidia,tegra234-rce-fabric
+> > > +      - nvidia,tegra234-sce-fabric
+> > > +
+> > > +  reg:
+> > > +    maxItems: 1
+> > > +
+> > > +  interrupts:
+> > > +    maxItems: 1
+> > > +    items:
+> > > +      - description: secure interrupt from error notifier.
+> > > +
+> > > +  nvidia,err-notifier-base:
+> > > +    description: address of error notifier inside a fabric.
+> > > +
+> > > +  nvidia,off-mask-erd:
+> > > +    description: offset of register having ERD bit.
+> > I was wondering about these two properties. Do we really need them? I
+> > see that they are set on a per-SoC basic and they only differ between
+> > the various fabrics. If they don't need to be configured on a per-board
+> > basis, then I don't think we need to specify these explicitly. Instead I
+> > think we could derive them from the compatible string
+> The CBB 2.0 based fabric's error handling driver remains same across
+> different SOC's and their variants. Only these fields change.
+> e.g: "off-mask-erd" value is different for T23x SOC variants.
+> "err-notifier-base" also changed multiple times during simulator stage.
+> So, keeping them in DT to avoid changing the driver code for different
+> variants of an SOC and to change them during bring up stages with DT chan=
+ge
+> only.
 
-Okay, I'll look into that.
+For different SoC variants I would expect this to be implied by a new
+compatible string. A hypothetical Tegra235 SoC that is largely the same
+as Tegra234 but required slight changes in these values would also get a
+different set of compatible strings. So the fabrics in that case would
+be called:
 
-> > +  # USB bus
-> > +  "#address-cells":
-> > +    const: 1
-> > +
-> > +  "#size-cells":
-> > +    const: 0
->=20
-> Covered by common schema (I think).
+	- nvidia,tegra235-aon-fabric
+	- nvidia,tegra235-bpmp-fabric
+	- nvidia,tegra235-cbb-fabric
+	...
 
-Yeah, so this can be both used in peripheral mode and host mode, so it
-probably needs usb-hcd.yaml and usb-drd.yaml, and then #address-cells
-and #size-cells will get pulled in.
-
->=20
-> > +
-> > +patternProperties:
-> > +  "^pinctrl-[0-9]+$": true
-> > +
-> > +additionalProperties:
-> > +  $ref: usb-device.yaml
->=20
-> This is wrong as usb.device.yaml applies to child nodes.
-
-Originally the idea behind this was that any additionalProperties would
-have to be child nodes that represent hard-wired USB devices. Given the
-above and that I'm now including usb-hcd.yaml here, this is taken care
-of automatically.
+and then that new value can be derived from that new compatible string.
+In general we only want to provide data in device tree if it can't be
+implied from the compatible string. Most of the time that's only for
+things that are somehow dependent on the board design. Data that is
+fixed for a given SoC can be derived from the compatible string.
 
 Thierry
 
---Cg/kEI5DFPwPjmTt
+--JSShQrnBNGx5c7H6
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmG7ZVMACgkQ3SOs138+
-s6FKzA//R/GhotrWh4k00B8kO0LRpHoBfdBTGa5kdp3qpVr7VO41WrXfOHgii7Fo
-BfDXJbqXlynHr8rXbA33juJdkMOOdWdYmYAdNlLRq8SKlJCk2zXFoioZtwkjc5cH
-eMNzsA6B3DfI4i/QBZUshrRSWAgb1KA38uS+h5iE0tjVDmCmtYsHHnbSP2rTEXAR
-n7mHxp8A8jCAiBn3tdaoNatdEs9Mq+Ef5h0y+dp0wysIqxoomE+iH41alNJjUkSu
-9GLwaNR+JVvm/sk3Dc3KEctQnfAnUBM0XxfTN7Nvi2I9DpSFCgSVhAEHn0wmp1jL
-KcD7T8sOn5QJn9B2pizmdVn8ASQrkjGdJ8dNA4kepQBnWMsQOr/x395qyGxlfm6c
-I/leFG47ugxSzEmcwCWNLc/DvXlFNM5vWViX5MwqVRR/TjdhawwhYuD4vgF6fYNg
-Spa1BkCFoHJRA6RqmyXCAcy2k1jGe4HqLlG8Ct1CA3zvP8K47tna3N7AHVFeWRb/
-3l7zUtPkLlZtX+fIf0mRJaW3Xh4OPubiYAaYm9RMuUEHqH6Qt1c+0sxrMUj0njk3
-Bevv4xhO0ukczBnbFIM6Ic6O2GX5m32YwIXkTO9PhaEeKLXB7YZAnbcVBdjOFiEa
-R3M+s4fQ2DJF+5Izs4ezcsfWS30n8DYj5z/xh8vCENS71oM04+Y=
-=/HxT
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmG7a5EACgkQ3SOs138+
+s6H9rRAAs+Bg4hTGhnbQAODadcjtWiBSRBzHGhRfk/G6gN2dRh8dDSz0T36/85Cn
+/jiklDbeK3M+IMlQm+vQDF+h5rOpiSP6k4EWb3HHI9fetkWmdlwi/XH16pweAfTB
+gi8M70wv0GlsI7OqeDZ2ECEykO13VBnfdV+AGtEFcv3T0uYDtDa9HcBp0ZUGNne8
+rTA9Qtn4qJlfbCEoES6lCxqtW8CDnuPrnomGHOs7nL5dNwT4F82ZkYT2CuXhZ4PS
+JfHqia25jyf1cgvqfj+FNcNdt/X2EjBpNSqvS7g3qCDltvpeDRgz85K71ZpTeSzB
++6VN3aWK+ViAoBPmiMvPCXejvuPjZV+G9ZEkbLsWlrZA7dPtHSXE+2A7Llcd4Vgz
+TR/3uydaKkyE85owW9X9ZrwrmEZ5uy8EJcS1I9v0UAMZY5hHEGTjJCltXMSLOrLQ
+CIug97VshHKiZmRPKN1IqUrcBsKDrjkSeylQpoSKEgI9OyNRyQZ2iNuIf3qADg4p
+td0cKYbi4x/8Ox50PDoQE9n0T6fau0QhBx/KpHYbOspcqr/AOevR9xqI7ARMnedp
+Nn00MIeI1LzC2IOzin/X+f1jD43nt1tH1uPkCt8JlCz0JQeTTxX239lN3SITZRpk
+mA0t3HKOIQrPGJb4Bz98mUHlo3hIzNGUD3c54h3rJWpkj9kR5FM=
+=ZqLg
 -----END PGP SIGNATURE-----
 
---Cg/kEI5DFPwPjmTt--
+--JSShQrnBNGx5c7H6--
