@@ -2,162 +2,91 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EB2BC433F5
-	for <linux-tegra@archiver.kernel.org>; Thu, 16 Dec 2021 06:49:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3C5BC433EF
+	for <linux-tegra@archiver.kernel.org>; Thu, 16 Dec 2021 08:57:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234221AbhLPGtb (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 16 Dec 2021 01:49:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48832 "EHLO
+        id S229533AbhLPI5s (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 16 Dec 2021 03:57:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49600 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230062AbhLPGta (ORCPT
+        with ESMTP id S235070AbhLPI5s (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 16 Dec 2021 01:49:30 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82FC1C061574;
-        Wed, 15 Dec 2021 22:49:30 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 2220A61B2A;
-        Thu, 16 Dec 2021 06:49:30 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB31BC36AE4;
-        Thu, 16 Dec 2021 06:49:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1639637369;
-        bh=7bvL5hDSJ7fdSl4gbMctBcUCFh5zcS7vNHoxGI5MSo0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=rR7NMNgHONWMJMJ/7b0ptVDtxIccYvBdtV/r6qwDBIX6fITBvEYAjgrdQ0gD+Eyyo
-         VXzPvgc1aFeNz/O1H0X4FZItuoraxgNKY3+QRG88NTBZap79GfDt8HJM83Ciqus6Gl
-         5KTVOHOiC1S7yeok57BVL5GxGpS/hOoGscyx8NWhUPH5/A7t9DNrSBALFw3KIthcDy
-         mnpTavLOdPmWVHgHDoQQI3a8O1GGaQ6Rwr6LS26ciE8fVlZjkjnDo/A16T3wPBqKi5
-         l8QGlOX06Xa1QDnpzvr56gaQiHR066cgjHj8YjVnxpWojfbVFSyuHqdeuKWxXIEyo2
-         tPejS3DfsCszg==
-Date:   Thu, 16 Dec 2021 14:49:23 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Xiaoliang Yang <xiaoliang.yang_1@nxp.com>
-Cc:     robh+dt@kernel.org, s.hauer@pengutronix.de, festevam@gmail.com,
-        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
-        linux-imx@nxp.com, kernel@pengutronix.de,
-        devicetree@vger.kernel.org, qiangqing.zhang@nxp.com
-Subject: Re: [PATCH v2] arm64: dts: imx8mp-evk: configure multiple queues on
- eqos
-Message-ID: <20211216064922.GW4216@dragon>
-References: <20211213044546.9903-1-xiaoliang.yang_1@nxp.com>
+        Thu, 16 Dec 2021 03:57:48 -0500
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 972D9C061574
+        for <linux-tegra@vger.kernel.org>; Thu, 16 Dec 2021 00:57:47 -0800 (PST)
+Received: by mail-wr1-x42a.google.com with SMTP id j9so10707340wrc.0
+        for <linux-tegra@vger.kernel.org>; Thu, 16 Dec 2021 00:57:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=K+H8K64HIIAzzi6Wq71ui1bloRAuSnkt5CtXVfSPR6o=;
+        b=oixvcvbBrELBSxNdg4nlSO8BbPddPkJoZAGiKORc+PVZncD67/djXkY5OVdjlE6DJH
+         1yzSWp8Lhv4O8x8kRWCnFF+/VDh/vvPalcgq6Scqg6dWQkfnOu0mnLQwMbQc7eRdyWq4
+         faftXj6LgKt+XlsP1gufEOrWiJ8ls6/H61EymK2s1DM+WKyy+X4NwPcsaGjzwXCMipNW
+         VdOfE/Qx68EptDZup7sfFskLKKbfMIZ7enLnwV/HVyREGPZYLt9c5FdV9h1TOJWBDKLK
+         aRn4I27fu78ZQEfEYzl5La34b86PKhhxnCf1AFjT3ce3myJfeKW8z5sNeUeUcYfiAUOz
+         MUxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=K+H8K64HIIAzzi6Wq71ui1bloRAuSnkt5CtXVfSPR6o=;
+        b=X0jDc2UNA6ovQUW4qur5CtQLuBomTYLR5cY8uFdoPUsqsvpBqjMZCoOLpNg9eUp08T
+         LfpFlfTcPDB3lR/KfwVuP0e2+Aab4dwdWRAUb4GSjnYGZcWxytSYw8Bc39cpC0PqEpww
+         b9WyJS/bNryeREF03nWqbRRRBEn5O5/Fl1gc7O7QQDK6CcTJEGt6hGLb9nNJ8OqTlLbx
+         ZMN6sVDbw8A/tOxT2F5qm98wWgmDhou0Va4WQBTIQ70S5T1kOViPmMyWBGCbINEKe5Bd
+         PeviXDcJCRRNEX7KB4CO/WGNp0ic3++QSw1c7F/SzqrVZVyfEmoRXsP772HcYCXy1n1z
+         kinA==
+X-Gm-Message-State: AOAM5336jRuBsWBolYbAjw6eXLgMLax3tb/skEd+HxtTs9CfWnSbOBnf
+        4qg1NBGCijQaN82bja/0sIY=
+X-Google-Smtp-Source: ABdhPJypuZKrSvTfZncadzB2OvkfkY79+xUiWWwCPSRhU6hRPnhmYPMYJpL+Gse2zhnN7dza7FUyzw==
+X-Received: by 2002:a05:6000:1c8:: with SMTP id t8mr8322112wrx.542.1639645066216;
+        Thu, 16 Dec 2021 00:57:46 -0800 (PST)
+Received: from localhost ([193.209.96.43])
+        by smtp.gmail.com with ESMTPSA id p12sm5063559wrr.10.2021.12.16.00.57.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Dec 2021 00:57:44 -0800 (PST)
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Mikko Perttunen <mperttunen@nvidia.com>,
+        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        Robin Murphy <robin.murphy@arm.com>
+Subject: [PATCH] drm/tegra: vic: Handle tegra_drm_alloc() failure
+Date:   Thu, 16 Dec 2021 09:57:43 +0100
+Message-Id: <20211216085743.1300416-1-thierry.reding@gmail.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211213044546.9903-1-xiaoliang.yang_1@nxp.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, Dec 13, 2021 at 12:45:46PM +0800, Xiaoliang Yang wrote:
-> Eqos ethernet support five queues on hardware, enable these queues and
-> configure the priority of each queue. Uses Strict Priority as scheduling
-> algorithms to ensure that the TSN function works.
-> 
-> The priority of each queue is a bitmask value that maps VLAN tag
-> priority to the queue. Since the hardware only supports five queues,
-> this patch maps priority 0-4 to queues one by one, and priority 5-7 to
-> queue 4.
-> 
-> The total fifo size of 5 queues is 8192 bytes, if enable 5 queues with
-> store-and-forward mode, it's not enough for large packets, which would
-> trigger fifo overflow frequently. This patch set DMA to thresh mode to
-> enable all 5 queues.
-> 
-> Signed-off-by: Xiaoliang Yang <xiaoliang.yang_1@nxp.com>
-> ---
->  arch/arm64/boot/dts/freescale/imx8mp-evk.dts | 57 ++++++++++++++++++++
->  1 file changed, 57 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/freescale/imx8mp-evk.dts b/arch/arm64/boot/dts/freescale/imx8mp-evk.dts
-> index 7b99fad6e4d6..e4c69594f067 100644
-> --- a/arch/arm64/boot/dts/freescale/imx8mp-evk.dts
-> +++ b/arch/arm64/boot/dts/freescale/imx8mp-evk.dts
-> @@ -86,6 +86,9 @@
->  	pinctrl-0 = <&pinctrl_eqos>;
->  	phy-mode = "rgmii-id";
->  	phy-handle = <&ethphy0>;
-> +	snps,force_thresh_dma_mode;
-> +	snps,mtl-tx-config = <&mtl_tx_setup>;
-> +	snps,mtl-rx-config = <&mtl_rx_setup>;
->  	status = "okay";
->  
->  	mdio {
-> @@ -99,6 +102,60 @@
->  			eee-broken-1000t;
->  		};
->  	};
-> +
-> +	mtl_tx_setup: tx-queues-config {
-> +		snps,tx-queues-to-use = <5>;
-> +		snps,tx-sched-sp;
+From: Thierry Reding <treding@nvidia.com>
 
-Please have a newline between properties and child node ...
+This function can return one of several errors in an ERR_PTR()-encoded
+pointer, so make sure to propogate those on failure.
 
-> +		queue0 {
-> +			snps,dcb-algorithm;
-> +			snps,priority = <0x1>;
-> +		};
+Suggested-by: Robin Murphy <robin.murphy@arm.com>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ drivers/gpu/drm/tegra/vic.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-... and also between nodes.
+diff --git a/drivers/gpu/drm/tegra/vic.c b/drivers/gpu/drm/tegra/vic.c
+index c5f4d2b13c43..7d2b719ed8d1 100644
+--- a/drivers/gpu/drm/tegra/vic.c
++++ b/drivers/gpu/drm/tegra/vic.c
+@@ -237,6 +237,8 @@ static int vic_load_firmware(struct vic *vic)
+ 			return -ENOMEM;
+ 	} else {
+ 		virt = tegra_drm_alloc(tegra, size, &iova);
++		if (IS_ERR(virt))
++			return PTR_ERR(virt);
+ 	}
+ 
+ 	vic->falcon.firmware.virt = virt;
+-- 
+2.34.1
 
-> +		queue1 {
-> +			snps,dcb-algorithm;
-> +			snps,priority = <0x2>;
-> +		};
-> +		queue2 {
-> +			snps,dcb-algorithm;
-> +			snps,priority = <0x4>;
-> +		};
-> +		queue3 {
-> +			snps,dcb-algorithm;
-> +			snps,priority = <0x8>;
-> +		};
-> +		queue4 {
-> +			snps,dcb-algorithm;
-> +			snps,priority = <0xf0>;
-> +		};
-> +	};
-
-Ditto
-
-Shawn
-
-> +	mtl_rx_setup: rx-queues-config {
-> +		snps,rx-queues-to-use = <5>;
-> +		snps,rx-sched-sp;
-> +		queue0 {
-> +			snps,dcb-algorithm;
-> +			snps,priority = <0x1>;
-> +			snps,map-to-dma-channel = <0>;
-> +		};
-> +		queue1 {
-> +			snps,dcb-algorithm;
-> +			snps,priority = <0x2>;
-> +			snps,map-to-dma-channel = <1>;
-> +		};
-> +		queue2 {
-> +			snps,dcb-algorithm;
-> +			snps,priority = <0x4>;
-> +			snps,map-to-dma-channel = <2>;
-> +		};
-> +		queue3 {
-> +			snps,dcb-algorithm;
-> +			snps,priority = <0x8>;
-> +			snps,map-to-dma-channel = <3>;
-> +		};
-> +		queue4 {
-> +			snps,dcb-algorithm;
-> +			snps,priority = <0xf0>;
-> +			snps,map-to-dma-channel = <4>;
-> +		};
-> +	};
->  };
->  
->  &fec {
-> -- 
-> 2.17.1
-> 
