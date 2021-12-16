@@ -2,188 +2,154 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD297C433EF
-	for <linux-tegra@archiver.kernel.org>; Thu, 16 Dec 2021 13:14:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DCF2C43219
+	for <linux-tegra@archiver.kernel.org>; Thu, 16 Dec 2021 13:15:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237355AbhLPNOr (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 16 Dec 2021 08:14:47 -0500
-Received: from mail-co1nam11on2071.outbound.protection.outlook.com ([40.107.220.71]:36390
-        "EHLO NAM11-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S237350AbhLPNOq (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 16 Dec 2021 08:14:46 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=oAmv8TDTxgAJQ3kl9IWT8fQEWKIkkdUtsKFBXdmbmLgD7F87IyLZjtBy+5QBRyqRNTOaFvyizA2blzuFiiPtmASSOWjVJVIiqis7JPfvXFoydwprLhcXKzT/zz7pjzKP3c2VmrK4zxLz/PeXjdoNIe1ZVU/l64Ui2LvbzsDqfYKV9cBkj1K9V0HYLMP1jFJkywMq/aCFi7cAeCwjHmcs/T9VlvacqcXRa43zAH3kkhqKOMFcWTzPXeVC2OGPHTior/yTda77R8NPHkKBYHTKW7rGi52SBY+TEOjPqQ486tmJY3x7pWL4iRWMZ/5UaMiWzVHX+D/hgxyRHVRoY2Tp8A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5+TmBSQuBqsuAJqzXfGABA0B+aPrMwjDPBkKxTtX/hY=;
- b=TWr3xlsdHWE4p3PmRNs1pyB1pYScdOO6sXnG4J3a/mplHqKsuZu+R/NJ1bZQW10aMM2aBCq5iyHVwCxVd5DY4dGIrjyVAVD09uG3y0ZE8fvdJelY55WAuJJmTnIrkaeGaW+31lT7jEhS6eTAY6IuekIsMvNpCcEMbLq2eRQTILp8dNVU4Ouy43rLyqCV2qLsDfN42cMSxBswV1W5TXHFk4UdlGVWImOmHoD0UezQA1Usve9VGVr+1VYzebobf4tHx4p3cHenL8xB1bZVjaWbcwX61VrNPbStzb0Szrmy1VfoIflsAJKZJVRTq8BCCvoBKO9+IIgMU57i22jzkQ0mZQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 12.22.5.235) smtp.rcpttodomain=linuxfoundation.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5+TmBSQuBqsuAJqzXfGABA0B+aPrMwjDPBkKxTtX/hY=;
- b=sEm40swkP0gRGJIjJuDRkqEdXzszabvo4OiWu6mOSLTclhXjPX9B6wv9d83shxINszlUfSrj4BDE8Zn8rlPpX0Sdrlx+nsZWPipLTNqn78gM/NKgCPrTR+A7OyEhZtPnWXYF+h7axNPqnNhgeJRFM4zqoijjd2YGNK0HCELaRW3eqlAjJPO5sEKu09JH9CvKWOs/STFA1EUr6jP4PgVr1REDn2a4elYCKKNeRfqpCEYupyyPEvGEDb+036a55PWaehjXw3d4CLues0a6w57qwAsoEwV9q5BK3/Hy8j+3t5p8N/kmuZOEiHyQFtjSGq2FAKxQi5saoYK2VzGSiN6Pqg==
-Received: from DS7PR05CA0046.namprd05.prod.outlook.com (2603:10b6:8:2f::14) by
- BN8PR12MB3586.namprd12.prod.outlook.com (2603:10b6:408:47::19) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.4801.14; Thu, 16 Dec 2021 13:14:43 +0000
-Received: from DM6NAM11FT068.eop-nam11.prod.protection.outlook.com
- (2603:10b6:8:2f:cafe::40) by DS7PR05CA0046.outlook.office365.com
- (2603:10b6:8:2f::14) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4823.8 via Frontend
- Transport; Thu, 16 Dec 2021 13:14:43 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.235)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 12.22.5.235 as permitted sender) receiver=protection.outlook.com;
- client-ip=12.22.5.235; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (12.22.5.235) by
- DM6NAM11FT068.mail.protection.outlook.com (10.13.173.67) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.4801.14 via Frontend Transport; Thu, 16 Dec 2021 13:14:43 +0000
-Received: from HQMAIL105.nvidia.com (172.20.187.12) by DRHQMAIL107.nvidia.com
- (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Thu, 16 Dec
- 2021 13:14:41 +0000
-Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Thu, 16 Dec
- 2021 13:14:41 +0000
-Received: from kyarlagadda-linux.nvidia.com (172.20.187.5) by mail.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server id 15.0.1497.18 via Frontend
- Transport; Thu, 16 Dec 2021 13:14:37 +0000
-From:   Akhil R <akhilrajeev@nvidia.com>
-To:     <wsa@kernel.org>, <sumit.semwal@linaro.org>,
-        <christian.koenig@amd.com>, <gregkh@linuxfoundation.org>,
-        <rafael@kernel.org>, <andy.shevchenko@gmail.com>,
-        <digetx@gmail.com>, <ldewangan@nvidia.com>,
-        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <linux-i2c@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>
-CC:     Akhil R <akhilrajeev@nvidia.com>
-Subject: [PATCH 2/2] i2c: smbus: Use device_ functions instead of of_
-Date:   Thu, 16 Dec 2021 18:43:22 +0530
-Message-ID: <1639660402-31207-3-git-send-email-akhilrajeev@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1639660402-31207-1-git-send-email-akhilrajeev@nvidia.com>
-References: <1639660402-31207-1-git-send-email-akhilrajeev@nvidia.com>
-X-NVConfidentiality: public
+        id S237384AbhLPNPB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 16 Dec 2021 08:15:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54034 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237350AbhLPNPA (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 16 Dec 2021 08:15:00 -0500
+Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2A19C061574;
+        Thu, 16 Dec 2021 05:14:59 -0800 (PST)
+Received: by mail-wr1-x42b.google.com with SMTP id t26so7817512wrb.4;
+        Thu, 16 Dec 2021 05:14:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=plntCnoEf4l+2O6n5K2//4k94Xfcj+XZd/AAN0qmlKg=;
+        b=FIO7dAYdQsogQTPmvKNLvcHJmvCg6gKD4gaQUApx/L1OHKB+gdGjuTQwMR7iPm8Au8
+         4eDzFvrkcAOZXcQn5eov/jIed7iuyilK/FrmhhV9f8ipnM83966znpVIWxQ0y8rENrx/
+         DR0dxbZOtzzl9ogZGBI4oY+EmvHQRGx2Ld8d2c1XyIEbnaK/FbMQjYo43feaOZmMoGu8
+         UWjWd+D5bnSeZfuFe/mxr8MKKfHSA6tbWcxKs/BtvaTwP4U2sCSA86AZ5Wi7VNnPQfPJ
+         tqn7Slclo/4qiAkuAew92t2U+kRMWgGGC7e1ZxGxqC6qyRRNj5UDm262Don06h799XPa
+         /fuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=plntCnoEf4l+2O6n5K2//4k94Xfcj+XZd/AAN0qmlKg=;
+        b=3Li3cl2rRvPNc3ncVDBH1Ay/8qv1DKriRx3R3liMNvHC8Z19XJo3vZf1Sfm5fpwVYV
+         DLvtByryhb1lD0iiVkBwHjuCDbzbAIv62V2eMv5EhRQPnOe+xZkxuEeTHQQk0WtfRlbM
+         yU6Iq2IIkS/L5Ywy4ipbd+hFid5zN/SArSMEIMJp2CAltJVi/3uUcm9hzgiYChcTNQ4h
+         RaKXhngX/qniMyvZFvipu0QbMOtBjPtukpfNk03WOgzMBVgR279tK5sSeKz0kbSLU4Dr
+         P1MWZdt2s4jkyrNPA82ZCbt18CmWG5bnMGjuyGk2z5gsNdZujCeCiiOTbs24fjqTlZIA
+         kefg==
+X-Gm-Message-State: AOAM530Ewg9koOTZG95pzYXs+ND+8jFQ7Ij1fxB1rjFJx+82LSHeblHN
+        FHWPvsTiklG0Rz9TGYMHuQY=
+X-Google-Smtp-Source: ABdhPJxZUIxe16AL1U6OVyWzVyNBqRDFNcocl3pvTG2D4/71hffD8CvlNr25wmCQpMbdSJzLa6QbkQ==
+X-Received: by 2002:a05:6000:1787:: with SMTP id e7mr8860261wrg.433.1639660498311;
+        Thu, 16 Dec 2021 05:14:58 -0800 (PST)
+Received: from orome ([193.209.96.43])
+        by smtp.gmail.com with ESMTPSA id x1sm4651630wru.40.2021.12.16.05.14.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Dec 2021 05:14:57 -0800 (PST)
+Date:   Thu, 16 Dec 2021 14:14:52 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>, Nishanth Menon <nm@ti.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-pwm@vger.kernel.org,
+        linux-mmc@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-clk@vger.kernel.org, David Heidelberg <david@ixit.cz>
+Subject: Re: [PATCH v16 00/40] NVIDIA Tegra power management patches for 5.17
+Message-ID: <Ybs7zKQY1uJCJ2f3@orome>
+References: <20211130232347.950-1-digetx@gmail.com>
+ <YboP9IFMUrUnEzrU@orome>
+ <6baf6013-fbb2-b42f-5b26-2d10a2ca9374@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: a79bea25-8ed5-4510-15e1-08d9c0960649
-X-MS-TrafficTypeDiagnostic: BN8PR12MB3586:EE_
-X-Microsoft-Antispam-PRVS: <BN8PR12MB3586F24B76305A61A1C099F2C0779@BN8PR12MB3586.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:5797;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: wmbrwwa1egUFfaGOpuhphMG2v7sPjeGw5NMRGgXKz9XsuZUZQnRisw2qjqIyuMYnwLO/CHxwEMuB6QCdOBw5d3MCUXRG2Q1aAllLhN7lE/eFntW7YzSlKP3qPB9ZMhmUUjL5gT5b33gTVJUaEzHkYHszCHWYUSl8qOFyXYJOF2hAhNTfrcvMyyZ76TjYcqKbgY8Eoz1IDufLLlpXmXfcYh70Z7TxWC0DG33VWmP7BpwsTr5CsIlPaqXFy3IAaBjtnra5i4wgLolaKH1y2uK7rPR8rwsWexcm36wlHvdPNpZngLowm+HSOOfULErPXIgnwToQRsCvYfsZqcfLWzhtlqi9GYzHQSOdDTA9rNlG1DwuaVBP6TjsSr2knjTh3kuPrMjg9k8eG3ab5D48UhwJrEfbK2aeQsTLH76Gg01T7Pbyj9F9SJBLyl8QIgw1yFuZKuZzKU/ejB1+zYLHyrIw0JKwUCY4kEm8DNkPeWzUhCn3bfbQVYD8//jtT+iY/Mswn4iF9zCcsYTaQ0P5ptFF2i+m5/Bmxi4MXcWjjDrOmr7Se6uqfJ+6b7edJwRUMhE0xLGNvQt6q3IuMtZnTewnCotJxIBNy5Jdkou4HMhtI7VKvsd1M6fSP2mrtROMHvWEqIQftMqxiSFxteectWWcqevQspOpe7EXGTQ8agE4b3ws4RhLyV5AHCmG7eMyQWDBna9XiyrkGbrSshM5EgjqUI2jOwakQ0WRCktzZ2BKOvCQVcqYjtvKlQqDZdcq3dHr6/jO2NpqFvkU6yUwn4yya0+ixIdlH0SOKPVpBEIo5xI9wUTsuEwqLQXAh8OSvTv0t85xa/5iTuw+BU4GtE/LPDTy3+IEQ9PIuCxSskM3Ngg=
-X-Forefront-Antispam-Report: CIP:12.22.5.235;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(4636009)(36840700001)(46966006)(40470700001)(186003)(34020700004)(8936002)(336012)(6666004)(82310400004)(426003)(26005)(40460700001)(86362001)(36756003)(81166007)(70586007)(7696005)(316002)(5660300002)(2906002)(4326008)(8676002)(7416002)(83380400001)(70206006)(508600001)(47076005)(107886003)(921005)(36860700001)(356005)(110136005)(2616005)(36900700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Dec 2021 13:14:43.1466
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a79bea25-8ed5-4510-15e1-08d9c0960649
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.235];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT068.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN8PR12MB3586
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="GBkk6fJUCkERZf+c"
+Content-Disposition: inline
+In-Reply-To: <6baf6013-fbb2-b42f-5b26-2d10a2ca9374@gmail.com>
+User-Agent: Mutt/2.1.3 (987dde4c) (2021-09-10)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Change of_ functions to device_ for firmware agnostic usage.
-This allows to have smbus_alert interrupt without any changes
-in the controller drivers using ACPI table.
 
-Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
----
- drivers/i2c/i2c-core-base.c  |  2 +-
- drivers/i2c/i2c-core-smbus.c | 10 +++++-----
- drivers/i2c/i2c-smbus.c      |  2 +-
- include/linux/i2c-smbus.h    |  6 +++---
- 4 files changed, 10 insertions(+), 10 deletions(-)
+--GBkk6fJUCkERZf+c
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
-index 1072a47..8e6c7a1 100644
---- a/drivers/i2c/i2c-core-base.c
-+++ b/drivers/i2c/i2c-core-base.c
-@@ -1574,7 +1574,7 @@ static int i2c_register_adapter(struct i2c_adapter *adap)
- 		goto out_list;
- 	}
- 
--	res = of_i2c_setup_smbus_alert(adap);
-+	res = i2c_setup_smbus_alert(adap);
- 	if (res)
- 		goto out_reg;
- 
-diff --git a/drivers/i2c/i2c-core-smbus.c b/drivers/i2c/i2c-core-smbus.c
-index e5b2d14..4c24c84 100644
---- a/drivers/i2c/i2c-core-smbus.c
-+++ b/drivers/i2c/i2c-core-smbus.c
-@@ -701,13 +701,13 @@ struct i2c_client *i2c_new_smbus_alert_device(struct i2c_adapter *adapter,
- }
- EXPORT_SYMBOL_GPL(i2c_new_smbus_alert_device);
- 
--#if IS_ENABLED(CONFIG_I2C_SMBUS) && IS_ENABLED(CONFIG_OF)
--int of_i2c_setup_smbus_alert(struct i2c_adapter *adapter)
-+#if IS_ENABLED(CONFIG_I2C_SMBUS)
-+int i2c_setup_smbus_alert(struct i2c_adapter *adapter)
- {
- 	int irq;
- 
--	irq = of_property_match_string(adapter->dev.of_node, "interrupt-names",
--				       "smbus_alert");
-+	irq = device_property_match_string(adapter->dev.parent, "interrupt-names",
-+					   "smbus_alert");
- 	if (irq == -EINVAL || irq == -ENODATA)
- 		return 0;
- 	else if (irq < 0)
-@@ -715,5 +715,5 @@ int of_i2c_setup_smbus_alert(struct i2c_adapter *adapter)
- 
- 	return PTR_ERR_OR_ZERO(i2c_new_smbus_alert_device(adapter, NULL));
- }
--EXPORT_SYMBOL_GPL(of_i2c_setup_smbus_alert);
-+EXPORT_SYMBOL_GPL(i2c_setup_smbus_alert);
- #endif
-diff --git a/drivers/i2c/i2c-smbus.c b/drivers/i2c/i2c-smbus.c
-index d3d06e3..fdd6d97 100644
---- a/drivers/i2c/i2c-smbus.c
-+++ b/drivers/i2c/i2c-smbus.c
-@@ -128,7 +128,7 @@ static int smbalert_probe(struct i2c_client *ara,
- 	if (setup) {
- 		irq = setup->irq;
- 	} else {
--		irq = of_irq_get_byname(adapter->dev.of_node, "smbus_alert");
-+		irq = device_irq_get_byname(adapter->dev.parent, "smbus_alert");
- 		if (irq <= 0)
- 			return irq;
- 	}
-diff --git a/include/linux/i2c-smbus.h b/include/linux/i2c-smbus.h
-index 1ef4218..95cf902 100644
---- a/include/linux/i2c-smbus.h
-+++ b/include/linux/i2c-smbus.h
-@@ -30,10 +30,10 @@ struct i2c_client *i2c_new_smbus_alert_device(struct i2c_adapter *adapter,
- 					      struct i2c_smbus_alert_setup *setup);
- int i2c_handle_smbus_alert(struct i2c_client *ara);
- 
--#if IS_ENABLED(CONFIG_I2C_SMBUS) && IS_ENABLED(CONFIG_OF)
--int of_i2c_setup_smbus_alert(struct i2c_adapter *adap);
-+#if IS_ENABLED(CONFIG_I2C_SMBUS)
-+int i2c_setup_smbus_alert(struct i2c_adapter *adap);
- #else
--static inline int of_i2c_setup_smbus_alert(struct i2c_adapter *adap)
-+static inline int i2c_setup_smbus_alert(struct i2c_adapter *adap)
- {
- 	return 0;
- }
--- 
-2.7.4
+On Wed, Dec 15, 2021 at 07:11:53PM +0300, Dmitry Osipenko wrote:
+> 15.12.2021 18:55, Thierry Reding =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > On Wed, Dec 01, 2021 at 02:23:07AM +0300, Dmitry Osipenko wrote:
+> >> This series adds runtime PM support to Tegra drivers and enables core
+> >> voltage scaling for Tegra20/30 SoCs, resolving overheating troubles.
+> >>
+> >> All patches in this series are interdependent and should go via Tegra =
+tree
+> >> for simplicity.
+> >=20
+> > So these can be applied in any order without breaking anything?
+>=20
+> Please notice that the word is *inter* dependent, not *in* dependent.
+>=20
+> There is a build dependency for the patches. The first two "soc/tegra"
+> must be applied first.
 
+Okay, so I've separated the first two patches out into a separate stable
+branch that I can share between the Tegra and drm/tegra trees to pull in
+the build dependency and then I've applied the driver patches to those
+two trees and I've verified that the two branches build correctly. I've
+not done any runtime testing, but I'll trust you on that.
+
+> The "soc/tegra: pmc: Enable core domain support for Tegra20 and Tegra30"
+> *must* be the last applied patch if we want to preserve bisectability.
+> The core voltage scaling can be enabled only once all the drivers got
+> the power management support.
+>=20
+> The rest could be applied out-of-order.
+
+One last remaining question: I don't think I can apply that one patch if
+it requires that all the others are enabled first because it would
+basically create a circular dependency.
+
+Can I pick up the final 7 patches (the DT ones) independently of that
+one patch without things breaking? If so, one option we could try is to
+wait for both Tegra and drm/tegra trees to get merged into v5.17-rc1 and
+then send that one patch (which is only a 4-line diff) right after
+v5.17-rc1 so that it makes it into v5.17-rc2. That avoids the circular
+dependency and should get everything enabled for v5.17.
+
+Do you see any problems with that?
+
+Thierry
+
+--GBkk6fJUCkERZf+c
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmG7O8oACgkQ3SOs138+
+s6FaPxAAurtl9RVWzTQoPumQ6idPyH/LVTqdXH8uhMksiRkr4Y5/jwAgyN0Xds9g
+0elHBQwMR1RuXgChY1mCtzK5Bd7KYuXtbRrDNDuzdNeErVVWhAmkLfpaWx4gtsn+
+LnNMnNjGqhpJl+x4JET4cExLmzvsZPonV3KOJb11zqf0MHPPErBIUNVtN3fHEtEz
+mH2WbH3Kt7f1ih6syH6w+LcwdZ9Z6nRxSfzXTX1Y8IFrncwmwU7UIVAJ0/iPNXso
+7CVfEKEkR+3q2FNlHFpoZj+yeeSsk7pMC1EIHXIgjUqZmgVgZPbT4s02saWqsI0s
+SUOo2uLBW8xIsSvUltCBsi8fQ36zj8gWz0brqiAQu47t7XB7oX8Z1m7Y+9GjuFoz
+AlATrPX+VxyLryAxx4WgkYVarCHr67qjqRjZJ9LXqCES8IfwXxgNBRP7igTLkLzD
+dkMkGxw+n7T1Ic6hH4/UPK44ZfpHDhE8Fl1zD2P/h0hBm9kcd7P+8GO3SnKETaKS
+MsdJTA+1RUCdT/24s/obuMDA/3va8SoU6UEzaOqmsb+KujnSHb8kcR/NWHjAdDXP
+325SFxssz92BU7jiOnooUw1BhqGio6Ufv+EEHJCataCIczKt9XogPtLJrcO94qo1
+Qlb6JGF1/uUXQj3IaICdmPigTcyAdSuFM4pKXoyOL8HOToBjKcc=
+=AIks
+-----END PGP SIGNATURE-----
+
+--GBkk6fJUCkERZf+c--
