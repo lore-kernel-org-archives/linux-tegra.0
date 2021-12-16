@@ -2,205 +2,93 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D72F5C433F5
-	for <linux-tegra@archiver.kernel.org>; Thu, 16 Dec 2021 13:59:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7B91C433F5
+	for <linux-tegra@archiver.kernel.org>; Thu, 16 Dec 2021 14:10:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237318AbhLPN7z (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 16 Dec 2021 08:59:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36638 "EHLO
+        id S237628AbhLPOKR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 16 Dec 2021 09:10:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38930 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237296AbhLPN7z (ORCPT
+        with ESMTP id S237531AbhLPOKQ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 16 Dec 2021 08:59:55 -0500
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1D28C061574;
-        Thu, 16 Dec 2021 05:59:54 -0800 (PST)
-Received: by mail-wr1-x432.google.com with SMTP id i22so14585334wrb.13;
-        Thu, 16 Dec 2021 05:59:54 -0800 (PST)
+        Thu, 16 Dec 2021 09:10:16 -0500
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84634C061574;
+        Thu, 16 Dec 2021 06:10:16 -0800 (PST)
+Received: by mail-wm1-x32b.google.com with SMTP id j140-20020a1c2392000000b003399ae48f58so1820123wmj.5;
+        Thu, 16 Dec 2021 06:10:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=vEL/p+6X4t2RxWiyQBolJiVn1r+GBjsT1ZsJkJj0PPo=;
-        b=flpxh0Or0b7P+X7i4LdmbnJYrWfkkN1krgWgekNohPFOYCV/BeW8+4PFx2r+qp/WRY
-         GKQYJgImE3HXE+y4A5HuIA6kNZ3LmlAw9IFYi+lO6EZpybHQbVLgYRHBKJdPHU/nonXF
-         ZGJjUa3GaSDBf61fX4uPvvrdDTAYhHbsYXUFA7+czDQk6KnFBbvdarSoT18TXEI2kd4p
-         53xUMxh+mskr6kZLM9YYeotsFocUf94XPVlSymZBEuCoAbqMGdjvbrxjBXRGXSgPRcFM
-         nsM4ApBWhxGYAQcrFOPu9qRfv9N02QfKgPvUOEOx5I1MW6k7/S+iX1urteq6GlBx0dLg
-         NOGQ==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=l5uZzj2HREZlkQkg6V05gCWd+HHMWkzcCuOsxTkeJ70=;
+        b=SVQ6qloS1jWGnBZmEWPmtFA5SUJXLoi47E4p6+gY1pTCuyQaB6Ab8SKCe19Y8HI1R8
+         6E+tnF6XNff3ns0GXEiDUuYG95Rum/WOn/01PQUdwpdT5zBbksnASjuEMCh7fLtSx6gU
+         9vESOtjlwh9G8FN70JJuxwecnxgWjzOXyCtLCOR2ooNylAvksgWinMdNjGQJ04Ppsc1q
+         NHyWj86GUs04zU/6bg2ogAz850VwaPAstXyFQDxnific2rJpYNQUpFpj+g23JqD0WvoQ
+         sL3PyEJLJJHh5xwYGtzhVtX+k2NNLNtldkrEEuaySHZ/iHq2JGkufVxUSZe1/yD/9Og7
+         hoNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=vEL/p+6X4t2RxWiyQBolJiVn1r+GBjsT1ZsJkJj0PPo=;
-        b=Q/uVSL/roQMV+CdXzAX5sx2sEWXrEz9gxKhagj96lRgLxscWdJQjbmafSeJX84G2RW
-         Al2sikibkxjm2/iJRWsga68s0LMyxdNWzyUElUlCMunFuW6zUJpXGRWqo9uXDOZfKO7B
-         Unjmxm7KAaJPj57QOPJ7T1BVHdGN2cghSyrdc5WayIktT97xCASptrc+2weIMSkFrwxk
-         TGpHamncpRF+NOO+7bk++X/5ChXgG65FOYcDQIQNQSzMxfKFEjaC5Y1Rb6v3THgFPRcb
-         kROfuLd9cLywBF2Oj/TI8VXoYEvvbUPakW9LLdpcX6mGvMDwjOwsiUZjY9WQ10TsT4gJ
-         97Hg==
-X-Gm-Message-State: AOAM533+65T2h5pxcxKbqRx5UH63Gqq2CfP1NJ9lYPZxtkcgArZQSTez
-        DaUEGeRH68/wiYBEXOOVN7U=
-X-Google-Smtp-Source: ABdhPJzm1yiVRK/KgEFXo+3/iCJ3xmvI6CtnldBWGvgBdba8TugGiRs1bmoKZlpDwjIN90mvSarwgQ==
-X-Received: by 2002:a05:6000:156c:: with SMTP id 12mr2694347wrz.104.1639663193349;
-        Thu, 16 Dec 2021 05:59:53 -0800 (PST)
-Received: from orome ([193.209.96.43])
-        by smtp.gmail.com with ESMTPSA id j8sm4661904wrh.16.2021.12.16.05.59.50
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=l5uZzj2HREZlkQkg6V05gCWd+HHMWkzcCuOsxTkeJ70=;
+        b=DY92wGTNDXii7WWE38p4oe1POpvxfEEvQg9qCvkk7wF6fTKTTlbxAgS5RpndVP2uH3
+         v28DWrG45xpxtFN6Ofwi1FrN6Ems7jO2+V9UlqxUN7aRGHb+5/adXNkOGE9TXzGDUudj
+         /y57Qsvw4VEGM3y3ADng3z/6kHB644eLflXnoEmfhW9Ddmj7kwR9aeyYZdUAYDl4Wzw3
+         D+qX54FKMFHz4PJ0Arl0ZRqKK1hncKzhvvFeClYLqDRfQSMolt1I1+O4M530O9pQOTez
+         nIlP9M8PvjWZNbeoG0jUt6xXEFCOfOyKteqz9prF0Cbbiy2FSkV8YZJ0NFC7s+JsNA/R
+         H18A==
+X-Gm-Message-State: AOAM532TTpGwB87lA7SlevmFmoxOj1OrTEsR7hTzoh7V2mVyDU91x00M
+        M1L5+4i/spVQMmBEfRV2TLE=
+X-Google-Smtp-Source: ABdhPJzme2TYnUlOODJae45eozPJivlOVJi6npRdm5AzIsyCag4h2b2vQW6cZA/KSfvgWfT9wpRk4g==
+X-Received: by 2002:a1c:9d55:: with SMTP id g82mr3209275wme.58.1639663815109;
+        Thu, 16 Dec 2021 06:10:15 -0800 (PST)
+Received: from localhost ([193.209.96.43])
+        by smtp.gmail.com with ESMTPSA id h4sm4930284wrf.93.2021.12.16.06.10.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Dec 2021 05:59:52 -0800 (PST)
-Date:   Thu, 16 Dec 2021 14:59:48 +0100
+        Thu, 16 Dec 2021 06:10:14 -0800 (PST)
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
-        Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Agneli <poczt@protonmail.ch>, linux-tegra@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Rob Herring <robh+dt@kernel.org>, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v4 02/22] ASoC: dt-bindings: tegra20-i2s: Convert to
- schema
-Message-ID: <YbtGVHBogkZG7xEo@orome>
-References: <20211204143725.31646-1-digetx@gmail.com>
- <20211204143725.31646-3-digetx@gmail.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Jon Hunter <jonathanh@nvidia.com>,
+        Akhil R <akhilrajeev@nvidia.com>, linux-gpio@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: [PATCH 0/2] gpio: tegra186: Add support for Tegra241
+Date:   Thu, 16 Dec 2021 15:10:07 +0100
+Message-Id: <20211216141009.1478562-1-thierry.reding@gmail.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="nGNIxp6bVJwYANhE"
-Content-Disposition: inline
-In-Reply-To: <20211204143725.31646-3-digetx@gmail.com>
-User-Agent: Mutt/2.1.3 (987dde4c) (2021-09-10)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+From: Thierry Reding <treding@nvidia.com>
 
---nGNIxp6bVJwYANhE
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi,
 
-On Sat, Dec 04, 2021 at 05:37:05PM +0300, Dmitry Osipenko wrote:
-> Convert NVIDIA Tegra20 I2S binding to schema.
->=20
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  .../bindings/sound/nvidia,tegra20-i2s.txt     | 30 --------
->  .../bindings/sound/nvidia,tegra20-i2s.yaml    | 70 +++++++++++++++++++
->  2 files changed, 70 insertions(+), 30 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra2=
-0-i2s.txt
->  create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra2=
-0-i2s.yaml
->=20
-> diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra20-i2s.t=
-xt b/Documentation/devicetree/bindings/sound/nvidia,tegra20-i2s.txt
-> deleted file mode 100644
-> index dc30c6bfbe95..000000000000
-> --- a/Documentation/devicetree/bindings/sound/nvidia,tegra20-i2s.txt
-> +++ /dev/null
-> @@ -1,30 +0,0 @@
-> -NVIDIA Tegra 20 I2S controller
-> -
-> -Required properties:
-> -- compatible : "nvidia,tegra20-i2s"
-> -- reg : Should contain I2S registers location and length
-> -- interrupts : Should contain I2S interrupt
-> -- resets : Must contain an entry for each entry in reset-names.
-> -  See ../reset/reset.txt for details.
-> -- reset-names : Must include the following entries:
-> -  - i2s
-> -- dmas : Must contain an entry for each entry in clock-names.
-> -  See ../dma/dma.txt for details.
-> -- dma-names : Must include the following entries:
-> -  - rx
-> -  - tx
-> -- clocks : Must contain one entry, for the module clock.
-> -  See ../clocks/clock-bindings.txt for details.
-> -
-> -Example:
-> -
-> -i2s@70002800 {
-> -	compatible =3D "nvidia,tegra20-i2s";
-> -	reg =3D <0x70002800 0x200>;
-> -	interrupts =3D < 45 >;
-> -	clocks =3D <&tegra_car 11>;
-> -	resets =3D <&tegra_car 11>;
-> -	reset-names =3D "i2s";
-> -	dmas =3D <&apbdma 21>, <&apbdma 21>;
-> -	dma-names =3D "rx", "tx";
-> -};
-> diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra20-i2s.y=
-aml b/Documentation/devicetree/bindings/sound/nvidia,tegra20-i2s.yaml
-> new file mode 100644
-> index 000000000000..ad43b237d9af
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/sound/nvidia,tegra20-i2s.yaml
-> @@ -0,0 +1,70 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/sound/nvidia,tegra20-i2s.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: NVIDIA Tegra20 I2S Controller
-> +
-> +description: |
-> +  The I2S Controller streams synchronous serial audio data between system
-> +  memory and an external audio device. The controller supports the I2S L=
-eft
-> +  Justified Mode, Right Justified Mode, and DSP mode formats.
-> +
-> +maintainers:
-> +  - Thierry Reding <treding@nvidia.com>
-> +  - Jon Hunter <jonathanh@nvidia.com>
-> +
-> +properties:
-> +  compatible:
-> +    const: nvidia,tegra20-i2s
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  resets:
-> +    maxItems: 1
-> +
-> +  reset-names:
-> +    const: i2s
-> +
-> +  interrupts:
-> +    maxItems: 1
+this is another extension of the Tegra186 GPIO driver, this time for the
+upcoming Tegra241 (Grace) chip. Note that while this adds the DT binding
+header, it doesn't actually define a new DT compatible string because it
+is unlikely that the Tegra241 will ever boot using DT but will use ACPI
+instead.
 
-I prefer ordering these by the same order that we typically have in
-device tree, so "compatible", "reg", "interrupts", "clocks",
-"clock-names", "resets", "reset-names", "dmas", "dma-names". I find
-that clearer because it lists the common properties at the top and
-the less common ones (such as "dmas") at the bottom.
+The pin definitions are still in the "DT binding" header for consistency
+with previous chips. Just wanted to highlight this to preempt questions
+as to why I haven't Cc'ed Rob or the devicetree mailing list.
 
-Anyway, it doesn't really matter, so:
+Thierry
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+Akhil R (2):
+  dt-bindings: gpio: Add Tegra241 support
+  gpio: tegra186: Add support for Tegra241
 
---nGNIxp6bVJwYANhE
-Content-Type: application/pgp-signature; name="signature.asc"
+ drivers/gpio/gpio-tegra186.c             | 52 ++++++++++++++++++++++++
+ include/dt-bindings/gpio/tegra241-gpio.h | 42 +++++++++++++++++++
+ 2 files changed, 94 insertions(+)
+ create mode 100644 include/dt-bindings/gpio/tegra241-gpio.h
 
------BEGIN PGP SIGNATURE-----
+-- 
+2.34.1
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmG7RlQACgkQ3SOs138+
-s6F39g/8Cy821xezorEEzUPmXIFzlPsyeO2N2H+EY19l6SFCrJ0EHpabduqC43rC
-g2fcVI0ueQiJUkjZ3NHOqufv3994fF6dJPhN/2ASFCJacvwD0JpYQ231hH7l3Z7l
-5X+VfANc2dQErfyMuobk/g2GDEcOlSKb9mEvot/nBI66fzo+NCSl21/lT6w4bruB
-JT4b+2ECbjdREcu6gT1yzyOFrbABOiIHRSEno0SZOASiMQDh7xX4i3eaeNKc93gQ
-oXWBB7r3NsMoRB/6L4BUuBSLcWnxvAGsw3B57dQQgQt/5pu3uBQSkQTZ1Ds3aOBh
-eXerhBJCYopGZAO5iQ3t25O1c3Kg+U9+CFbIQO/wCwVCbVOiPcT5rT3fgC04rqgG
-82jW/yJ3eJv5cGV4oFA0NgK21uk2bocAyGOg9II4ewBzjUZQpGQnrJ2OupN7jW/+
-8oJmIIMKmLQtsuytx9YHtoWazQ5ewOcKv5y6UOnGB296V2EooxBCqHNdOv1PRF5z
-nBNiJlAeuddbeDqB69iVWZ8wyu7q3Jl+jPmLO/9pAO4ta5Bgx6Ain7KrxRhhjYUP
-zOIFXcCDepJw4U0m4x5Oou6xG9pseqm9fuYdS6vLMM+dfzXFaVe9aQgWN3kG6aac
-SKpnXMfg7Q4rLf8gga6vIOS9/e4JsX87s29LSJtRU/93VJMmaaI=
-=Qqas
------END PGP SIGNATURE-----
-
---nGNIxp6bVJwYANhE--
