@@ -2,221 +2,115 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46EEFC433FE
-	for <linux-tegra@archiver.kernel.org>; Thu, 16 Dec 2021 15:06:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54E54C433F5
+	for <linux-tegra@archiver.kernel.org>; Thu, 16 Dec 2021 15:09:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238273AbhLPPGU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 16 Dec 2021 10:06:20 -0500
-Received: from mail-bn7nam10on2057.outbound.protection.outlook.com ([40.107.92.57]:12192
-        "EHLO NAM10-BN7-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S238266AbhLPPGU (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 16 Dec 2021 10:06:20 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=jjKSlmZ4DJ4CNUmQp2CCoscNt5l6zcqnosYcrCvKPT/zTYajrWdHvOKQT/ZtPlKn+rKAtxfkpO9PuvAwQqLo4FNXXpajsR+S5xsw+bn3oyWcVKd+xAXN35MDz6dTOmqM143qVzpJSEeIkHqH+lQ7JRuHwY0knZsFCpcRpdzGAMhO5L3EDcSzhuV8En+Ao8ONjqQdYx9ANEIdeaXC2eVa+TUzky/rrpsp+ShklVQszJR7d8wvW6Y4qaz3a1otcGIV2HGD3WOFbwaGA5Otvu6M/jJVs9ObWPPmT3KG5NZI5btVBwxJcFkalGP/XZo4AmiYMXqICT32Q+3cAEdrjBxBIg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zFSpQwwBV2wjr5W0W7J5VLdbsYUUIoXVVrPKTiAQSUU=;
- b=MbWWYd+nKyA4Nh35iTqrvNdoakoVjYNfvmHsUeqpafXng2VMKVK6Uo1K59ajkPYf/WdQHulhmrGcxRUs9mZJsfCEndFQR/WINypPwA4wZ71AEX7+g/S9uPO4JAIwSYLgCsGKoE/AegP13UNYjdIjB2v0qaGfMtG/buo0g2c3DnvuxGEIaIPn/9tpTwOeBuBJF76QWuzYMGp7tgzfWIJjThOt3AzhYznjz9Zhf3tX+uLa5Pg8wNSkaylqO5vbbegw7w3tUcf9duxqGyANh3UPxSWzBjx0op5KGkkJtNG1IX2gTuu8PIM6j8/dsrxf4elHelvS1xDSheQC6pPv3HoGxQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 12.22.5.235) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zFSpQwwBV2wjr5W0W7J5VLdbsYUUIoXVVrPKTiAQSUU=;
- b=lGjX7D8/A5c6UdJbhmArXaU6AfYspaJvCW5fy8o+2QhmzWyOA2wjx6HCDuz+aNZGHvlwsCCf60hBA3EdUF+XUznBCOKf3pCxSEUnPIRgmCXkHJ0gv6Rxp8b4pXrQi9UgJvEtW0ap04BtMU/y5zA/A3nQ9cJV30NcgO+RHogTMIggzstUlKU9mMjWqeFQFt2/H/gt2Y3UFXy20uQ+IgZ0UtGQbvs6mYmhp1FXNMJAFiFd1RRidbcTXVsjaMNFCsoLhK7oZbFXztZzha72vPowu2p02TptJrLp08gJNkWV8m5S2XmXICJm6TrS4Mz1nDO/H15lALlcr74x3LcKd5e+0g==
-Received: from DM6PR18CA0008.namprd18.prod.outlook.com (2603:10b6:5:15b::21)
- by DM6PR12MB3211.namprd12.prod.outlook.com (2603:10b6:5:15c::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4801.14; Thu, 16 Dec
- 2021 15:06:17 +0000
-Received: from DM6NAM11FT042.eop-nam11.prod.protection.outlook.com
- (2603:10b6:5:15b:cafe::af) by DM6PR18CA0008.outlook.office365.com
- (2603:10b6:5:15b::21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4801.14 via Frontend
- Transport; Thu, 16 Dec 2021 15:06:17 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.235)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 12.22.5.235 as permitted sender) receiver=protection.outlook.com;
- client-ip=12.22.5.235; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (12.22.5.235) by
- DM6NAM11FT042.mail.protection.outlook.com (10.13.173.165) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.4801.14 via Frontend Transport; Thu, 16 Dec 2021 15:06:17 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by DRHQMAIL107.nvidia.com
- (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Thu, 16 Dec
- 2021 15:06:16 +0000
-Received: from [10.41.21.79] (172.20.187.6) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.986.9; Thu, 16 Dec 2021
- 07:06:13 -0800
-Subject: Re: [Patch Resend v1 5/8] dt-bindings: arm: tegra: Add NVIDIA
- Tegra234 CBB2.0 binding
+        id S235222AbhLPPJ0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 16 Dec 2021 10:09:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53010 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235169AbhLPPJ0 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 16 Dec 2021 10:09:26 -0500
+Received: from mail-lj1-x22f.google.com (mail-lj1-x22f.google.com [IPv6:2a00:1450:4864:20::22f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0097EC061574;
+        Thu, 16 Dec 2021 07:09:26 -0800 (PST)
+Received: by mail-lj1-x22f.google.com with SMTP id l7so38997740lja.2;
+        Thu, 16 Dec 2021 07:09:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=1qfd395IYWj+B/UdbiFiPVdCXFHwSx1zWwQl0BrdIvo=;
+        b=Ztghiy1SxXBJ21k5EHGfOxtkLitrM3pminuWlLG7d35vrjB9Ud0njt3RXd7DzwIITZ
+         9R0EkJ7CKk02W2fvI21ouo0VeL6rB583kIEbWMEJRVT8A0/t+WPpMSzI3xaPKP35qMpZ
+         JA7LtaXd3Oyb5P3Aemn/pGmzOhomhGHP5nEzGdUjqx1vfeu9WJzgBTXxK8wSx9CgzlkL
+         Foj6WyQjz8rD+0rl31WtPDh2E8RXfdQJrk1/o3HRcZ00MmtPLClv2KN61TS7NOqsRuXG
+         HCL+NipbTzGoPbcY/ZkN0ILJZx1FSSQeRvrURn3C/Jo2USIuwwi6BZXYvHDckU/wkwlx
+         hufA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=1qfd395IYWj+B/UdbiFiPVdCXFHwSx1zWwQl0BrdIvo=;
+        b=W3i5/E/lOYlp9eIE9AkPZRaANeOLCLoTwLx5ySavQNpwnEkBHBwog4ZQ4CSWmtfeQC
+         XvwGLwl8/2u49JLUrU2aitmjiPCzv4O7iDoeQA1xF6p+hGwW+zRO5oGjkxZhJLFhriHL
+         7zy8hi6M4/5Rq6Iw0oPtjJ1s9gbl/fN517KJSQON1jAtKjOA6JM7u1tfDwUW3hSZmFwX
+         nkZCvmCQ8DqxIdfGO+w337p23aE0EtIwxqbmkU0i+z+lDWuL24iDb7y2FMlao5YLTsn4
+         5PJXmaiURjhe96F/aqsfil6c6xeqE6Uugtq9S0ocvQlP2aYVV4QS+8oZ7JzGpcxmpKCT
+         v4dg==
+X-Gm-Message-State: AOAM531GHy5cCbqW+kgIJE0hLkR0MsMTEHsEAzKPe6UhLGKySoc4yhUH
+        S44gUpx02LNAD7MA+Thx0Lw=
+X-Google-Smtp-Source: ABdhPJzSYtr+35JjMyfwDiGDowXvrdjIoh3vwsMwh7YTEgoBMb3070lHBDEXydaKeMXVufN4FZEHmw==
+X-Received: by 2002:a05:651c:b11:: with SMTP id b17mr15513775ljr.272.1639667364213;
+        Thu, 16 Dec 2021 07:09:24 -0800 (PST)
+Received: from [192.168.2.145] (94-29-63-156.dynamic.spd-mgts.ru. [94.29.63.156])
+        by smtp.googlemail.com with ESMTPSA id s9sm910898lfr.304.2021.12.16.07.09.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 16 Dec 2021 07:09:23 -0800 (PST)
+Subject: Re: [PATCH v4 00/22] Support HDMI audio on NVIDIA Tegra20
 To:     Thierry Reding <thierry.reding@gmail.com>
-CC:     <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <jonathanh@nvidia.com>,
-        <robh+dt@kernel.org>, <bbasu@nvidia.com>, <vsethi@nvidia.com>,
-        <jsequeira@nvidia.com>, Sumit Gupta <sumitg@nvidia.com>
-References: <20211209172206.17778-1-sumitg@nvidia.com>
- <20211209172206.17778-6-sumitg@nvidia.com> <YbsjZDc8tt3fMUQt@orome>
-From:   Sumit Gupta <sumitg@nvidia.com>
-Message-ID: <321bfcdf-2aa3-0d0a-2096-972b5cf0297a@nvidia.com>
-Date:   Thu, 16 Dec 2021 20:36:11 +0530
+Cc:     Mark Brown <broonie@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Takashi Iwai <tiwai@suse.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Agneli <poczt@protonmail.ch>, linux-tegra@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Rob Herring <robh+dt@kernel.org>, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+References: <20211204143725.31646-1-digetx@gmail.com>
+ <Ybo6tsnQM6OacoZs@sirena.org.uk>
+ <26af30a6-9606-72d0-9258-cf9627ddfe77@gmail.com> <YbtFXcteESF0nLZz@orome>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <03ede0df-e86e-798e-e2c7-c0ed3dc81fca@gmail.com>
+Date:   Thu, 16 Dec 2021 18:09:22 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.14.0
 MIME-Version: 1.0
-In-Reply-To: <YbsjZDc8tt3fMUQt@orome>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+In-Reply-To: <YbtFXcteESF0nLZz@orome>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [172.20.187.6]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: abf29675-ea49-4b1d-db50-08d9c0a59c82
-X-MS-TrafficTypeDiagnostic: DM6PR12MB3211:EE_
-X-Microsoft-Antispam-PRVS: <DM6PR12MB3211966623FE5A815C2E0A3EB9779@DM6PR12MB3211.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: =?Windows-1252?Q?lqA2MieAmzljUSdyWvfboOMfJsRFdpBTQbzg8qBkaYBj706eac2Jhtxd?=
- =?Windows-1252?Q?eWsFLUPwwhqtg7M9o8V3JLup6qST30IGOqJBSnOC/dPiahkIcrQloGmj?=
- =?Windows-1252?Q?0/FarRa2zMjkfAlpwHUNX+AYHiaH+Rs3J3OlQ/Zwloobit3SOnEXKCk+?=
- =?Windows-1252?Q?Mb2xkxEo0xC/pM4nXHmtht1ei2eJMcqoJ84gL1IIjI6z+XhGyRbEdEx7?=
- =?Windows-1252?Q?6CPCnB/m44Smo36v1bdeKKcm5hm36otPAYaiNQCy/aGw8Lxjgmgk6S1C?=
- =?Windows-1252?Q?ZEsFXvftrruf+Hr5oBwfiQS6GFGm30xcpoEDpeILa7/2u1BWvfufNFOL?=
- =?Windows-1252?Q?3Vc67UB08V4YGNOtVwh0CoamKx5PHJEUTA+nsZ8TH2WYuoIjTOk1uxPT?=
- =?Windows-1252?Q?XNh8q+TdoNWgTYakLtE16dfgqDX4bPlVQgpEcsJEH5Axs6xswYeQ7Fff?=
- =?Windows-1252?Q?Cc1/Nm84PU1w2SSzW74ViQ5JdDD7ysbkiayJpzogGFhnP/pqFbp3uUeg?=
- =?Windows-1252?Q?XlRIiI4+yIyZEEx6E2uagsCTFq+Mnzsxd6EFy6EdNYnNZyvfB2twY+EC?=
- =?Windows-1252?Q?kJrHEtUCj536uLyEEKrGtXWQijdyey5MwXf5dzlH2EPeESq3RAQRJ+7r?=
- =?Windows-1252?Q?RpTdV8oYF+NigFiw/mL5a1CUl/BQvbgfs8PZPWeHRKvAkfnlxIdWABNS?=
- =?Windows-1252?Q?JmzgPsovHYl0y1FiD8Ec08a5zZ9ohEEpHAnUEElqoFyNgG/2I80draty?=
- =?Windows-1252?Q?HNP27hAoqLN0QE1/VYnK/rR9IlAkkiODaB9GxOOYLWE5u/3DbHN+fvgq?=
- =?Windows-1252?Q?UKVxAeB51+I6+r6lrwh5J9R6v0PQuYu1Td2NcPIwdXFrP54vLfXC0ICE?=
- =?Windows-1252?Q?Rh2DV0FxxbUaYoEt9XfupEPeqoGV1fUNnq2NgZ1oDNpf/rMer36HXbmf?=
- =?Windows-1252?Q?/JHSmtQxkAA6WOB3y74N0XaSMN374AAQo/HC2OzuTKYBGB2HF5K8i277?=
- =?Windows-1252?Q?gzm4r11eutpSnTSji2F3b6IoNHf0q0kT6gse15duenKdRI2UTKE=3D?=
-X-Forefront-Antispam-Report: CIP:12.22.5.235;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(4636009)(36840700001)(46966006)(40470700001)(26005)(426003)(70586007)(107886003)(2616005)(16576012)(316002)(2906002)(34020700004)(36756003)(86362001)(5660300002)(336012)(16526019)(186003)(31686004)(40460700001)(6916009)(83380400001)(8936002)(36860700001)(54906003)(8676002)(4326008)(31696002)(82310400004)(356005)(70206006)(47076005)(81166007)(508600001)(43740500002)(36900700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Dec 2021 15:06:17.6188
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: abf29675-ea49-4b1d-db50-08d9c0a59c82
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.235];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT042.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB3211
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Thierry,
-
-> On Thu, Dec 09, 2021 at 10:52:03PM +0530, Sumit Gupta wrote:
->> Add device-tree binding documentation to represent CBB2.0 (Control
->> Backbone) error handling driver. The driver prints debug information
->> about failed transaction on receiving interrupt from CBB2.0.
+16.12.2021 16:55, Thierry Reding пишет:
+> On Wed, Dec 15, 2021 at 10:19:07PM +0300, Dmitry Osipenko wrote:
+>> 15.12.2021 21:57, Mark Brown пишет:
+>>> On Sat, Dec 04, 2021 at 05:37:03PM +0300, Dmitry Osipenko wrote:
+>>>
+>>>> I based S/PDIF patches on Arnd's Bergmann patch from a separate series [1]
+>>>> that removes obsolete slave_id. This eases merging of the patches by
+>>>> removing the merge conflict. This is a note for Mark Brown.
+>>>
+>>> That's not in my tree so I'll need either a pull request with the series
+>>> or a resend after the merge window.
 >>
->> Signed-off-by: Sumit Gupta<sumitg@nvidia.com>
->> ---
->>   .../arm/tegra/nvidia,tegra234-cbb.yaml        | 80 +++++++++++++++++++
->>   1 file changed, 80 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,tegra234-cbb.yaml
+>> This patch is included as a part of this series, please see the patch #6.
 >>
->> diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra234-cbb.yaml b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra234-cbb.yaml
->> new file mode 100644
->> index 000000000000..ad8177255e6c
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra234-cbb.yaml
->> @@ -0,0 +1,80 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +
->> +$id:"http://devicetree.org/schemas/arm/tegra/tegra23_cbb.yaml#"
->> +$schema:"http://devicetree.org/meta-schemas/core.yaml#"
->> +
->> +title: NVIDIA Tegra CBB2.0 Error handling driver device tree bindings
->> +
->> +maintainers:
->> +  - Sumit Gupta<sumitg@nvidia.com>
->> +
->> +description: |+
->> +  Control Backbone (CBB) comprises of the physical path from an
->> +  initiator to a target's register configuration space.
->> +  CBB2.0 consists of multiple sub-blocks connected to each other
->> +  to create a topology.
->> +  Tegra234 SOC has different fabrics based on CBB2.0 architecture
->> +  which include cluster fabrics BPMP, AON, PSC, SCE, RCE, DCE, FSI
->> +  and "CBB central fabric".
->> +
->> +  In CBB2.0, each initiator which can issue transactions connects to
->> +  a Root Master Node (MN) before it connects to any other element of
->> +  the fabric. Each Root MN contains a Error Monitor (EM) which detects
->> +  and logs error. Interrupts from various EM blocks are collated by
->> +  Error Notifier (EN) which is per fabric and presents a single
->> +  interrupt from fabric to the SOC interrupt controller.
->> +
->> +  The driver handles errors from CBB due to illegal register accesses
->> +  and prints debug information about failed transaction on receiving
->> +  the interrupt from EN. Debug information includes Error Code, Error
->> +  Description, MasterID, Fabric, SlaveID, Address, Cache, Protection,
->> +  Security Group etc on receiving error notification.
->> +
->> +  If the Error Response Disable (ERD) is set/enabled for an initiator,
->> +  then SError or Data abort exception error response is masked and an
->> +  interrupt is used for reporting errors due to illegal accesses from
->> +  that initiator. The value returned on read failures is '0xFFFFFFFF'
->> +  for compatibility with PCIE.
->> +
->> +properties:
->> +  $nodename:
->> +    pattern: "^[a-f]+-en@[0-9a-f]+$"
->> +
->> +  compatible:
->> +    enum:
->> +      - nvidia,tegra234-aon-fabric
->> +      - nvidia,tegra234-bpmp-fabric
->> +      - nvidia,tegra234-cbb-fabric
->> +      - nvidia,tegra234-dce-fabric
->> +      - nvidia,tegra234-rce-fabric
->> +      - nvidia,tegra234-sce-fabric
->> +
->> +  reg:
->> +    maxItems: 1
->> +
->> +  interrupts:
->> +    maxItems: 1
->> +    items:
->> +      - description: secure interrupt from error notifier.
->> +
->> +  nvidia,err-notifier-base:
->> +    description: address of error notifier inside a fabric.
->> +
->> +  nvidia,off-mask-erd:
->> +    description: offset of register having ERD bit.
-> I was wondering about these two properties. Do we really need them? I
-> see that they are set on a per-SoC basic and they only differ between
-> the various fabrics. If they don't need to be configured on a per-board
-> basis, then I don't think we need to specify these explicitly. Instead I
-> think we could derive them from the compatible string
-The CBB 2.0 based fabric's error handling driver remains same across 
-different SOC's and their variants. Only these fields change.
-e.g: "off-mask-erd" value is different for T23x SOC variants.
-"err-notifier-base" also changed multiple times during simulator stage.
-So, keeping them in DT to avoid changing the driver code for different 
-variants of an SOC and to change them during bring up stages with DT 
-change only.
+>> I saw that Vinod Koul already merged it into his DMA tree [1] a day ago,
+>> but there is no stable branch there.
+>>
+>> [1]
+>> https://git.kernel.org/pub/scm/linux/kernel/git/vkoul/dmaengine.git/log/?h=next
+>>
+>>>  It's also not clear what to do
+>>> about the DRM bits, I guess it's probably easiest to just apply them
+>>> along with the ASoC patches.
+>>
+>> I already asked Thierry Reding to take a look at this patchset. He will
+>> let to you know how the DRM bits should be handled. Hopefully this
+>> should happen tomorrow.
+>>
+>> We will know how to move forward if Vinod and Thierry will reply ASAP.
+>> Otherwise this series will have to wait for the next cycle.
+> 
+> I've applied the DRM patches to the drm/tegra tree and pulled in the ARM
+> device tree changes into the Tegra tree. I think the rest can go through
+> ASoC. Well, provided you can sort out the patch 6 issue with Vinod.
 
-> 
-> Thierry
-> 
+Thank you!
