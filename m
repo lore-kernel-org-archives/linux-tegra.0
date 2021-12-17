@@ -2,112 +2,77 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6F90C433FE
-	for <linux-tegra@archiver.kernel.org>; Fri, 17 Dec 2021 22:25:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 516F6C433EF
+	for <linux-tegra@archiver.kernel.org>; Fri, 17 Dec 2021 22:29:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230112AbhLQWZL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 17 Dec 2021 17:25:11 -0500
-Received: from mail-ot1-f49.google.com ([209.85.210.49]:37386 "EHLO
-        mail-ot1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229743AbhLQWZK (ORCPT
+        id S229710AbhLQW31 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 17 Dec 2021 17:29:27 -0500
+Received: from mail-oi1-f177.google.com ([209.85.167.177]:35564 "EHLO
+        mail-oi1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229521AbhLQW30 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 17 Dec 2021 17:25:10 -0500
-Received: by mail-ot1-f49.google.com with SMTP id h19-20020a9d3e53000000b0056547b797b2so4608946otg.4;
-        Fri, 17 Dec 2021 14:25:10 -0800 (PST)
+        Fri, 17 Dec 2021 17:29:26 -0500
+Received: by mail-oi1-f177.google.com with SMTP id m6so5729923oim.2;
+        Fri, 17 Dec 2021 14:29:26 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
-         :message-id;
-        bh=hWqaijK8egDuCBel5OyaSVRQqT1kaUshzj4OdLgdIlU=;
-        b=mSFKdyllDZgsrBWdgeFkS1oKb7NuL5ehg8lx0GxGGrWYItQKaH2LiizPZeKniE/RPx
-         GieQ2XYSa9cvaxLmOeklneRtgnF3g9yf2JqHr7JltjAPb9wFm8Mmo8ykKW0/+2edx/ij
-         qNM0ze/utiqdDKoNK+pPYBErYHIG9dnY7sPFA9WhTSIStmf60trRQ1hAAf6dLNmribbr
-         Rh88K3tpDlCu2CvF81orU0+ggcywCWiKgsHjg2JMxNqu62O/eA/AGVHRLJWvj4bv+IZc
-         UsL/RSRd0IQMQSnzzroqcmWkmg20dyWnhi4DZrkrl4626GIOH+I96t7r+IOKRljSkPpO
-         /R0A==
-X-Gm-Message-State: AOAM530iYWtBtQ32Lkwf8AKm5YTeym+1uDUm/P7iIk1kBMFJsaBIrCDP
-        bSZZFTBLHd1ZNTsqe+kILcG/l7TgFQ==
-X-Google-Smtp-Source: ABdhPJyMEnYnVjmoCwzmRtWE52jz5UVqOqhLASd7/jfN0rJRGqu/7AOXRpa/PsKEeT3wb1EBpJVmNw==
-X-Received: by 2002:a9d:1727:: with SMTP id i39mr3684643ota.48.1639779909968;
-        Fri, 17 Dec 2021 14:25:09 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=ceA6uFPrxoxuPoqQlCvVhkmHGQ1jymNTT0ALfCVWMx0=;
+        b=kmvDxkFWyvd3fKMj1/SOgGFswQkmFl18O/E9PQrJEMcULJpYKy9fnmz7dS2obCu+Og
+         sLdIoxBtYMAcmAY1VDzPBJ0nQxEEq6sGIhpKL/iMdTIcl0icQdH1mthi4c02Lx3bc3kq
+         677Welo+SoCO23FePLdcsv6l9kfRtAluhgs+n60/u6kivFNtq4ixh8dDRrtzJJbgdPN+
+         bN5yIk2/HmyzDVEA9VENf/0t/689q5Wp12m1ybN2MXV16r/194H+5gWpabT9WhRYVhw4
+         BPJkTBE/zJqjSJqrMun5QwzBT4EvU2nwHb+dVUncpnUVRaZkQP5ehWyAP+VlFlBWuDa9
+         9xAA==
+X-Gm-Message-State: AOAM5334F1PjAU/mpahcVeYzjxNR2yji74tt5DcGYrve1RbLduz4mvYO
+        SgJNsbxDmab0YBqkUOQf6w==
+X-Google-Smtp-Source: ABdhPJyMY+V79ohByfMUfq1Nt1y6axnKEY0TTdPBUJ5AEZ3X2yrpLHCKyrBkQ9z2wmUCusqOeDwpog==
+X-Received: by 2002:a05:6808:1285:: with SMTP id a5mr3751571oiw.104.1639780166081;
+        Fri, 17 Dec 2021 14:29:26 -0800 (PST)
 Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id bn41sm1772947oib.18.2021.12.17.14.25.08
+        by smtp.gmail.com with ESMTPSA id h14sm1859512ots.22.2021.12.17.14.29.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Dec 2021 14:25:09 -0800 (PST)
-Received: (nullmailer pid 3686971 invoked by uid 1000);
-        Fri, 17 Dec 2021 22:25:06 -0000
+        Fri, 17 Dec 2021 14:29:25 -0800 (PST)
+Received: (nullmailer pid 3695500 invoked by uid 1000);
+        Fri, 17 Dec 2021 22:29:24 -0000
+Date:   Fri, 17 Dec 2021 16:29:24 -0600
 From:   Rob Herring <robh@kernel.org>
 To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org,
-        Jon Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
+Cc:     Peter Rosin <peda@axentia.se>,
+        Brendan Higgins <brendanhiggins@google.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-i2c@vger.kernel.org, Andrew Jeffery <andrew@aj.id.au>,
+        Wolfram Sang <wsa@kernel.org>, Joel Stanley <joel@jms.id.au>,
         Rob Herring <robh+dt@kernel.org>
-In-Reply-To: <20211217165342.2572021-1-thierry.reding@gmail.com>
-References: <20211217165342.2572021-1-thierry.reding@gmail.com>
-Subject: Re: [PATCH] dt-bindings: pinctrl: tegra: Convert to json-schema
-Date:   Fri, 17 Dec 2021 16:25:06 -0600
-Message-Id: <1639779906.600898.3686970.nullmailer@robh.at.kernel.org>
+Subject: Re: [PATCH v2 1/4] dt-bindings: i2c: tegra: Convert to json-schema
+Message-ID: <Yb0PRLJXM6tKTFMB@robh.at.kernel.org>
+References: <20211217165658.2650677-1-thierry.reding@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211217165658.2650677-1-thierry.reding@gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, 17 Dec 2021 17:53:42 +0100, Thierry Reding wrote:
+On Fri, 17 Dec 2021 17:56:55 +0100, Thierry Reding wrote:
 > From: Thierry Reding <treding@nvidia.com>
 > 
-> Convert the NVIDIA Tegra pinmux controller bindings from the free-form
-> text format to json-schema.
+> Convert the Tegra I2C controller bindings from plain text to json-schema
+> format.
 > 
 > Signed-off-by: Thierry Reding <treding@nvidia.com>
 > ---
->  .../pinctrl/nvidia,tegra114-pinmux.txt        | 131 --------
->  .../pinctrl/nvidia,tegra114-pinmux.yaml       | 264 ++++++++++++++++
->  .../pinctrl/nvidia,tegra124-pinmux.txt        | 153 ----------
->  .../pinctrl/nvidia,tegra124-pinmux.yaml       | 287 ++++++++++++++++++
->  .../pinctrl/nvidia,tegra194-pinmux.txt        | 107 -------
->  .../pinctrl/nvidia,tegra194-pinmux.yaml       | 175 +++++++++++
->  .../pinctrl/nvidia,tegra20-pinmux.txt         | 143 ---------
->  .../pinctrl/nvidia,tegra20-pinmux.yaml        | 203 +++++++++++++
->  .../pinctrl/nvidia,tegra210-pinmux.txt        | 166 ----------
->  .../pinctrl/nvidia,tegra210-pinmux.yaml       | 232 ++++++++++++++
->  .../pinctrl/nvidia,tegra30-pinmux.txt         | 144 ---------
->  .../pinctrl/nvidia,tegra30-pinmux.yaml        | 268 ++++++++++++++++
->  12 files changed, 1429 insertions(+), 844 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra114-pinmux.txt
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra114-pinmux.yaml
->  delete mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-pinmux.txt
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-pinmux.yaml
->  delete mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra194-pinmux.txt
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra194-pinmux.yaml
->  delete mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra20-pinmux.txt
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra20-pinmux.yaml
->  delete mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra210-pinmux.txt
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra210-pinmux.yaml
->  delete mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra30-pinmux.txt
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra30-pinmux.yaml
+> Changes in v2:
+> - include i2c-controller.yaml and use unevaluatedProperties: false
+> 
+>  .../bindings/i2c/nvidia,tegra20-i2c.txt       |  87 --------
+>  .../bindings/i2c/nvidia,tegra20-i2c.yaml      | 192 ++++++++++++++++++
+>  2 files changed, 192 insertions(+), 87 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/i2c/nvidia,tegra20-i2c.txt
+>  create mode 100644 Documentation/devicetree/bindings/i2c/nvidia,tegra20-i2c.yaml
 > 
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
-
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-pinmux.example.dt.yaml:0:0: /example-0/mmc@700b0600: failed to match any schema with compatible: ['nvidia,tegra124-sdhci']
-Documentation/devicetree/bindings/pinctrl/nvidia,tegra20-pinmux.example.dt.yaml:0:0: /example-0/mmc@c8000600: failed to match any schema with compatible: ['nvidia,tegra20-sdhci']
-
-doc reference errors (make refcheckdocs):
-Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt: Documentation/devicetree/bindings/pinctrl/nvidia,tegra210-pinmux.txt
-
-See https://patchwork.ozlabs.org/patch/1570184
-
-This check can fail if there are any dependencies. The base for a patch
-series is generally the most recent rc1.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit.
-
+Applied, thanks!
