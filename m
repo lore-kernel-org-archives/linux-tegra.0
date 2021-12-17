@@ -2,112 +2,120 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 716D8C433EF
-	for <linux-tegra@archiver.kernel.org>; Fri, 17 Dec 2021 16:59:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A19E9C433F5
+	for <linux-tegra@archiver.kernel.org>; Fri, 17 Dec 2021 17:19:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239535AbhLQQ7i (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 17 Dec 2021 11:59:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51034 "EHLO
+        id S239805AbhLQRTD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 17 Dec 2021 12:19:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55820 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239541AbhLQQ7d (ORCPT
+        with ESMTP id S239798AbhLQRTB (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 17 Dec 2021 11:59:33 -0500
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5FB5C061746;
-        Fri, 17 Dec 2021 08:59:32 -0800 (PST)
-Received: by mail-wm1-x32e.google.com with SMTP id o29so2065512wms.2;
-        Fri, 17 Dec 2021 08:59:32 -0800 (PST)
+        Fri, 17 Dec 2021 12:19:01 -0500
+Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14679C061574;
+        Fri, 17 Dec 2021 09:19:01 -0800 (PST)
+Received: by mail-lj1-x236.google.com with SMTP id v15so4526425ljc.0;
+        Fri, 17 Dec 2021 09:19:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=dFHoQPOrbV6E0S61sp0iENhRWxLWfzEEYHIRAwtb27w=;
-        b=LTRIldyNB62poDhP4+555c0Gp8yEd3nIJemwakeK+eB1hYwlAey3xvYAej6umEpWlY
-         /2rhUFYfz6uXMOEKxC0R67Khu+1qYbsK/JThPIu9blSmwI07Kd6nWPH5ZCSp6xvNcCKX
-         npoV3oBxrWhYT7lV3C7UwRV0EaNayGnp89H000YhFfZu++9dn7h3VKjgzFSes5OYMOu6
-         BWHobu1/VuzCyvwMxcsshtg4ivfNGQGrG276SJUelvfYclajV64YBdsOtdBd67ds9dc3
-         6cJUev8j7uq8r9jofX2q+FJf8v7X1+fwUKB7pDmdKkyYCa6/4mD9DDFu2juhhkjTSdec
-         rqbg==
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=aD+hC6FqlLZlRa2bYYfAt8xGKCazGEctgmQARu+DDU8=;
+        b=N+UO0OVMGnFIK0uWKGSzU0og53fRsylVVAjm+0aq9GOMGpnSHN/MN8kNXkzeAsUDVi
+         /r3VLwK2ENO7yz83w5dxYdI5t3Xrv9LkpIuK59aiYvbL0fnapPr85PwHaEBDabE/5kRK
+         GWeJrY7WmFCNzRw5gUmLBURUHiKJ9PBeOU2tm2n2GrnLu++HyRIPa3Ye1MwUdAwGGWbE
+         WkKXwxi1SujNH17xZAIHeVmtVq7GLDTEgKFP3rosA/WbXc4Kzf5WbVSgbgtx9AG3zGr4
+         qMiB+ODoVkA4ZSUPGZPuN5onKzOXsyqQP9UHjAAgMzmkNkZ4L+hZxC1xdF8qDU+/jHL/
+         Aong==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=dFHoQPOrbV6E0S61sp0iENhRWxLWfzEEYHIRAwtb27w=;
-        b=VhwndRUNr9yfQqxQ0USToTLCFNMiuD/snXfcIgvoXEdYGI7Kz/QPMTztBOeEp4IWWD
-         zDzqSvaSADRMmEAinfRnYKbbxF5jdpf9XIdxXobNzit4JNUoB2BdGXQf84VSzpWGab1s
-         xI9WnOKyO+BRQPEloXA4in2th7UEecWRzSnkjjdf0vvO9rhQLHlIY3sd2bHsV8RQ93Do
-         Bqw3e3OVvWefuOpu7eieJ6QsDSQXh87bwcYYh3kfN1AuY6G2FS/eiE17vUY0hxjh2eUe
-         DtXM/5MXxQ/n4+kX2r/oq01JCsg1uF97M+F3vTH5zV/COH2bQC8R8mXMCbshiMCpTcsX
-         LgGw==
-X-Gm-Message-State: AOAM532mHoMmJBFkdFyPqWQ0tvcsXPeteNBHc2qmqBeOF32JOLXW38v0
-        dUyAJfp3HiixiEnIywCP09w=
-X-Google-Smtp-Source: ABdhPJzXXneTut0iRLJDi7+nLqEKV8Tl49rdcNwK7q3KKgYJK3L0zJ2sXWk7DiolnQr+N/9dh2DV1A==
-X-Received: by 2002:a05:600c:19d0:: with SMTP id u16mr3457837wmq.111.1639760371336;
-        Fri, 17 Dec 2021 08:59:31 -0800 (PST)
-Received: from localhost ([193.209.96.43])
-        by smtp.gmail.com with ESMTPSA id t11sm7543851wrz.97.2021.12.17.08.59.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Dec 2021 08:59:30 -0800 (PST)
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     Jon Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 5/5] dt-bindings: memory: tegra210: Mark EMC as cooling device
-Date:   Fri, 17 Dec 2021 17:59:19 +0100
-Message-Id: <20211217165919.2700920-5-thierry.reding@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20211217165919.2700920-1-thierry.reding@gmail.com>
-References: <20211217165919.2700920-1-thierry.reding@gmail.com>
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=aD+hC6FqlLZlRa2bYYfAt8xGKCazGEctgmQARu+DDU8=;
+        b=Jci30ZNiXK8xVx1uLbQ2OM9DL/VRec4gc9/+OuDL50XjhtkZTN9iAtX3ZKUTXph8BC
+         UiluoTPfSXPOszqfmuOF+Q8lKAJun7vfpax77Sae4CNWnrmSXoUDjH+xmFam9S1eAHb9
+         XX4tlxGrubldv4XOGTZIX2ag0sd4ZsP6Uoj2Ua8YKtrcLzJOGtUZwxep8lt5dAEuI2rD
+         fa22s5h8iOetFiEoJChK/wfM+d3Gu2JSvFleq9efPA+bp/Im0tqDHnVnyq5zROPsDWdP
+         wTakUp8/4PCkATwtL7+VyMwhxvQ/cXiUR6F9FzhP9M7aVvwns0SWsUDVIHnroCb1zoSe
+         JTBA==
+X-Gm-Message-State: AOAM530LMUiF2gKXYZBSlE8v3gpc7j1E5VXGV1li3rxRZGPeFE0Drrt2
+        1sEVxrDiPD3CBHUHKLrYr5M=
+X-Google-Smtp-Source: ABdhPJzBjfXZEGXsleWCP8vjNzkIbrIDY0hTHQDynU+0L28mioCf9nBMTGevXSjGLXhOGHJT4nr+6w==
+X-Received: by 2002:a05:651c:504:: with SMTP id o4mr3649716ljp.242.1639761539376;
+        Fri, 17 Dec 2021 09:18:59 -0800 (PST)
+Received: from [192.168.2.145] (94-29-63-156.dynamic.spd-mgts.ru. [94.29.63.156])
+        by smtp.googlemail.com with ESMTPSA id p20sm1470067lfu.151.2021.12.17.09.18.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 17 Dec 2021 09:18:58 -0800 (PST)
+Subject: Re: [PATCH v4 04/22] dt-bindings: host1x: Document optional HDMI
+ sound-dai-cells
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Mark Brown <broonie@kernel.org>
+Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
+        Takashi Iwai <tiwai@suse.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Agneli <poczt@protonmail.ch>, linux-tegra@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Rob Herring <robh+dt@kernel.org>, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+References: <20211204143725.31646-1-digetx@gmail.com>
+ <20211204143725.31646-5-digetx@gmail.com> <YbtLJeIxXlVyQhd3@orome>
+ <Ybxwovlw2GARzqUO@sirena.org.uk>
+ <4edfbff2-ffd9-1c33-de0c-013a29dc286c@gmail.com> <Ybx8XdLGGiQsNMTq@orome>
+ <36972e00-0eb9-acb7-d537-3b9a4b53386d@gmail.com>
+Message-ID: <e0536860-3fea-e57b-8602-4936bfdcd4a6@gmail.com>
+Date:   Fri, 17 Dec 2021 20:18:58 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 MIME-Version: 1.0
+In-Reply-To: <36972e00-0eb9-acb7-d537-3b9a4b53386d@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+17.12.2021 15:06, Dmitry Osipenko пишет:
+> 17.12.2021 15:02, Thierry Reding пишет:
+>> On Fri, Dec 17, 2021 at 02:55:48PM +0300, Dmitry Osipenko wrote:
+>>> 17.12.2021 14:12, Mark Brown пишет:
+>>>> On Thu, Dec 16, 2021 at 03:20:21PM +0100, Thierry Reding wrote:
+>>>>> On Sat, Dec 04, 2021 at 05:37:07PM +0300, Dmitry Osipenko wrote:
+>>>>>> Document new optional sound-dai-cells property of HDMI node. This node will
+>>>>>> be used as endpoint of HDMI sound DAI graph.
+>>>>
+>>>>> It's probably best for this to go through ASoC along with the other
+>>>>> audio-related bindings.
+>>>>
+>>>>> Alternatively, I've just sent out a patch that converts the host1x
+>>>>> bindings to json-schema, so I could work this into that as well.
+>>>>
+>>>> It doesn't apply to the ASoC tree for whatever reason so probably best
+>>>> to roll it in with those JSON updates.
+>>>>
+>>>
+>>> This hos1tx binding patch indeed will conflict with the Thierry's patch.
+>>>
+>>> Thierry, will you be able to take the binding patches into the Tegra
+>>> tree and resolve all those hos1tx binding conflicts there?
+>>
+>> Yes, I'll resolve all of those conflicts in the Tegra tree.
+> 
+> Thank you!
+> 
+> Mark, then you may apply patches 5-13 to ASoC on top of the Vinod's
+> branch, skipping patch #6. Thanks in advance!
+> 
 
-The external memory controller found on Tegra210 can use throttling of
-the EMC frequency in order to reduce the memory chip temperature. Mark
-the memory controller as a cooling device to take advantage of this
-functionality.
+I see that Thierry applied only the host1x patch, but not the other
+bindings.
 
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- .../bindings/memory-controllers/nvidia,tegra210-emc.yaml  | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.yaml b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.yaml
-index bc8477e7ab19..95c14deb8941 100644
---- a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.yaml
-+++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.yaml
-@@ -44,6 +44,11 @@ properties:
-     description:
-       phandle of the memory controller node
- 
-+allOf:
-+  - $ref: ../thermal/thermal-cooling-devices.yaml
-+
-+unevaluatedProperties: false
-+
- required:
-   - compatible
-   - reg
-@@ -51,8 +56,6 @@ required:
-   - clock-names
-   - nvidia,memory-controller
- 
--additionalProperties: false
--
- examples:
-   - |
-     #include <dt-bindings/clock/tegra210-car.h>
-@@ -79,4 +82,5 @@ examples:
-         interrupts = <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>;
-         memory-region = <&emc_table>;
-         nvidia,memory-controller = <&mc>;
-+        #cooling-cells = <2>;
-     };
--- 
-2.34.1
-
+Mark, perhaps will be easier if I'll just make the v5 which you could
+apply easily without a need to apply only selective patches. I'll try to
+post it ASAP.
