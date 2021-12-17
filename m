@@ -2,76 +2,90 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E42FC433F5
-	for <linux-tegra@archiver.kernel.org>; Fri, 17 Dec 2021 22:36:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B70D2C433F5
+	for <linux-tegra@archiver.kernel.org>; Fri, 17 Dec 2021 23:38:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230453AbhLQWgu (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 17 Dec 2021 17:36:50 -0500
-Received: from mail-ot1-f44.google.com ([209.85.210.44]:36441 "EHLO
-        mail-ot1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229662AbhLQWgu (ORCPT
+        id S231394AbhLQXiV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 17 Dec 2021 18:38:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57430 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229914AbhLQXiU (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 17 Dec 2021 17:36:50 -0500
-Received: by mail-ot1-f44.google.com with SMTP id w6-20020a9d77c6000000b0055e804fa524so4652293otl.3;
-        Fri, 17 Dec 2021 14:36:50 -0800 (PST)
+        Fri, 17 Dec 2021 18:38:20 -0500
+Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D7B0C061574;
+        Fri, 17 Dec 2021 15:38:20 -0800 (PST)
+Received: by mail-lf1-x131.google.com with SMTP id l22so7738933lfg.7;
+        Fri, 17 Dec 2021 15:38:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=tvLuwZuQc2vFuQbM3eSjczyde6xCYDzNlRUJGi0Zkrg=;
+        b=SmZais2gwhqBddKIjEvC4Z//0TkJ/MVGWod8LzyjqWqOke6DIyRTXv6PcSYOav5I6p
+         7AfiLXQMco+QuuePLY4RHwexzF9NNJRs/Bvs4SBIDjQjtimzFHmgGJp6cprxJw+UpJ7U
+         DvGrh4jXZq+rXI/f6JEt80eX1ZKN6MqCvEZ0s/1/vitpsJmau25HIEf0zSK0WIPyGoL0
+         LnagQZOEby10gv78HVUvaofMr0X1aJOsT4ze/xVzh22sOoSam8VuF3u+xTM2bKr4PlMs
+         Elz+ldEKAcSIBXLGVD/7OW+c87k5WVS7Uw0TIJlUeoaoPVWO8OmX6tchO4IhDCYSUY1h
+         04GA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=x0GNlsg6T0pkZOGC90LJCmrqjNSybHFgJWL7OCTvoy0=;
-        b=rlB8+ZBdzrJ9XxfFvLPa96hTrxcuF3ZxbIMHoFSb3TRywWhnT/lbd2vRe6Hb5Qq0a7
-         3A7FUXD2ftaLl1ngijD3MA7THmYgmIk5FhkqvD8Otk7SIj4lCXuqgXpqrn7H0q4bdTCO
-         Diulx+WCzoEjP4QpVovx1tDYJ43ZqjlLuHDaOeQD7zW2mbE+PQInVGJv3AjMwoGp86UK
-         FoWcNIaVTOYa1KrrqRXqlOw9erL0NVIg6c/t79LXeFh/Y3xRa785UjRQHrfl7TyYfYAn
-         NJtcOMiBKCBFQ2dIc7HOQY6ubK8R9OjMqS8qMpNneTtMgtkMOGN7K7aUCEL4UXkyQ+GZ
-         XtcA==
-X-Gm-Message-State: AOAM532coc80HpvCDvzedmqRZ8N94ev31+YryclhpaGjUBYR27tVyL60
-        5Az2Aku3QWE65Y7aGuAlEg==
-X-Google-Smtp-Source: ABdhPJwYN9ZlYkJ5qZKVuAuQurdZ33Nklh8k7j6P/XkV4MT1YonY3wE/vJAr7Dr8fyNK6fgXiu2pAw==
-X-Received: by 2002:a05:6830:2681:: with SMTP id l1mr3666877otu.378.1639780609704;
-        Fri, 17 Dec 2021 14:36:49 -0800 (PST)
-Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id z12sm1816195oor.45.2021.12.17.14.36.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Dec 2021 14:36:49 -0800 (PST)
-Received: (nullmailer pid 3708784 invoked by uid 1000);
-        Fri, 17 Dec 2021 22:36:48 -0000
-Date:   Fri, 17 Dec 2021 16:36:48 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Peter Rosin <peda@axentia.se>, devicetree@vger.kernel.org,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Joel Stanley <joel@jms.id.au>, Wolfram Sang <wsa@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        linux-tegra@vger.kernel.org, linux-i2c@vger.kernel.org,
-        Brendan Higgins <brendanhiggins@google.com>
-Subject: Re: [PATCH 4/4] dt-bindings: i2c: i2c-mux-gpio: Convert to
- json-schema
-Message-ID: <Yb0RABwvuSr56coI@robh.at.kernel.org>
-References: <20211217165658.2650677-1-thierry.reding@gmail.com>
- <20211217165658.2650677-4-thierry.reding@gmail.com>
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=tvLuwZuQc2vFuQbM3eSjczyde6xCYDzNlRUJGi0Zkrg=;
+        b=ao/ALRdgx9etM7QbbrhjtKfabJb3MCJJiPdH4kMfC2yocwtHEDJdtRVSlGchbPLMBn
+         S4PC3XpQZUn1+bV9skZT/03lzPvges67mSAb6kq5/pCemLawI05hjaWpWJUb1v3Jpbv3
+         Yyn5PySyEt0eJPYaSXPHtiRqy3rnS603003BZR6svmvknqL5pZm6KMi09D4ocaFYr4Ug
+         8DmpMIa46Za3lpJP+Z5CiTvopdrK4miXuaKtB1fD17agF0g9RI2+lLuNHpqZ1b5ZJe1s
+         ad+m0UxFQqPzaynmf+Bxp89kBRz2RbLDHaGHSBzCkC2FHxTVjgYTtUmHsmvNJmR0y0+1
+         /gwA==
+X-Gm-Message-State: AOAM531NKhFj8SSu+0I822yB23WkBYnkaTzFnD8hjePtgSAKbEp+0Tuy
+        5nz5llpZbwWpyetorVQncDrZfTRJDAo=
+X-Google-Smtp-Source: ABdhPJzWv9aV3PULV5S7fOiTwP7zomEueQZzONpp6mhA8Ryq7mVqDKVY3/4jPvZL22vPCwZnPcnInA==
+X-Received: by 2002:a05:6512:228a:: with SMTP id f10mr4836388lfu.13.1639784298641;
+        Fri, 17 Dec 2021 15:38:18 -0800 (PST)
+Received: from [192.168.2.145] (94-29-63-156.dynamic.spd-mgts.ru. [94.29.63.156])
+        by smtp.googlemail.com with ESMTPSA id be25sm1868385ljb.114.2021.12.17.15.38.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 17 Dec 2021 15:38:18 -0800 (PST)
+Subject: Re: [PATCH v1] mfd: tps65910: Set PWR_OFF bit during driver probe
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Tony Lindgren <tony@atomide.com>, Lee Jones <lee.jones@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Svyatoslav Ryhel <clamor95@gmail.com>
+Cc:     linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20211124190104.23554-1-digetx@gmail.com>
+Message-ID: <9e28e8a8-2ff1-1990-b8d5-778e8251fe53@gmail.com>
+Date:   Sat, 18 Dec 2021 02:38:17 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211217165658.2650677-4-thierry.reding@gmail.com>
+In-Reply-To: <20211124190104.23554-1-digetx@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, 17 Dec 2021 17:56:58 +0100, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
+24.11.2021 22:01, Dmitry Osipenko пишет:
+> The PWR_OFF bit needs to be set in order to power off properly, without
+> hanging PMIC. This bit needs to be set early in order to allow thermal
+> protection of NVIDIA Terga SoCs to power off hardware properly, otherwise
+> a battery re-plug may be needed on some devices to recover after the hang.
 > 
-> Convert the GPIO-based I2C mux bindings from the free-form text format
-> to json-schema.
-> 
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> Cc: <stable@vger.kernel.org>
+> Tested-by: Svyatoslav Ryhel <clamor95@gmail.com> # ASUS TF201
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > ---
->  .../devicetree/bindings/i2c/i2c-mux-gpio.txt  |  80 --------------
->  .../devicetree/bindings/i2c/i2c-mux-gpio.yaml | 103 ++++++++++++++++++
->  2 files changed, 103 insertions(+), 80 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/i2c/i2c-mux-gpio.txt
->  create mode 100644 Documentation/devicetree/bindings/i2c/i2c-mux-gpio.yaml
-> 
+>  drivers/mfd/tps65910.c | 22 +++++++++++++---------
+>  1 file changed, 13 insertions(+), 9 deletions(-)
 
-Applied, thanks!
+Hello Lee,
+
+Will you be able to take this patch into yours MFD tree?
+
+
