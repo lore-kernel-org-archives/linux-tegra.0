@@ -2,58 +2,60 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87921C433F5
-	for <linux-tegra@archiver.kernel.org>; Fri, 17 Dec 2021 16:14:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FA29C433EF
+	for <linux-tegra@archiver.kernel.org>; Fri, 17 Dec 2021 16:22:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238917AbhLQQOg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 17 Dec 2021 11:14:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40192 "EHLO
+        id S239062AbhLQQW5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 17 Dec 2021 11:22:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42290 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235959AbhLQQOf (ORCPT
+        with ESMTP id S238463AbhLQQW5 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 17 Dec 2021 11:14:35 -0500
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C379C061574;
-        Fri, 17 Dec 2021 08:14:35 -0800 (PST)
-Received: by mail-wm1-x32e.google.com with SMTP id o29so1974369wms.2;
-        Fri, 17 Dec 2021 08:14:35 -0800 (PST)
+        Fri, 17 Dec 2021 11:22:57 -0500
+Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15CA0C061574
+        for <linux-tegra@vger.kernel.org>; Fri, 17 Dec 2021 08:22:57 -0800 (PST)
+Received: by mail-wr1-x42b.google.com with SMTP id s1so5108826wrg.1
+        for <linux-tegra@vger.kernel.org>; Fri, 17 Dec 2021 08:22:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=9PrIKDIDs5G43xHziGUw5xjWzhxUWAXkgHn7b6XgCRg=;
-        b=Hb1kRPY1nKW9YV5BDJ24z1aQxe8ouBR/JIGR5EyD7fr3bFji4yk6B8QP1W6tac5gd1
-         /4YLednLOdFW8IUd7HtzA0EI1cD6DbmIL79LQnA19NwTP/Cm8+JkKvrc3WQau8PidGSF
-         9sdbEafRfcQ1i9FwBj50umoGXFSePHO4MK3s7kxFFw5RvIwdyGoO4qaWmxSuQ3OV6R9I
-         obF0C6HZCqlkmnxqreFnTtYSim1QLQyliZzfsR+6E/XYRlL8YLkiDdBJpxbUmc3QxYto
-         sUAlbJMbOvQVP3Ygr9db+oEoEiKJWD6d01P6MehYT1s0iN747OY6Zd0t1St2B+aXbYCR
-         qvPQ==
+        bh=G8pUod1rJ8BKM00tNDrqEm69jNJuPPsCXj/GPzLhEkg=;
+        b=qgcswfc2FeMKuVZJt9dTF9WELwWEHfzvuj3QJVngxi6Ew8rwMCnolub9lMsTh+nqXt
+         wdvmaPa1FmR+TuHHR5pKtlEnqY1c3R48UK9EyAW7Y8syaRNvQygo7W8ppSA4hh2fZO4R
+         VHBJX0X+TKIgFYicVLHZyVcp2Q/6f5PzmwuEZ7J4S2EsajM/DA5cTvIoQaX4Qpuazigl
+         6EUqCOscXP7fvjE8HtH49au1neBtnYH3FuYvqS3gNtHwDtauUGC4iE3KxlDD9mQXDVjW
+         gxWe7JIuizEGnBi5BBi0ZY9EJmiXkJpRvf3Npvzi4Jyt+OS9btFrv/bAC24g7wKaZyBv
+         OawQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=9PrIKDIDs5G43xHziGUw5xjWzhxUWAXkgHn7b6XgCRg=;
-        b=bTS7UsXcLvSAVu42bREtYbifSMKezLj8GPJ7q2D9crj7Yqgz+QZJfAzG5Mm2lJ4YAE
-         GcT58SrpyYOxWvkg61ZK/O8TxgkrRv5xCkIAGOPo9uOMFCDXzibQhkK1AMW3BqwDNRLP
-         UCBBLISpweYhMF7UZ5lo8qZlGfnSpIyHFSiPssrs7+UTzYYUOdmIUSvAKiuYHYH7EfaV
-         tNs1i0dRLRkIqDh7w1mmhXB2mYJNgj960fXfMjXn77RCvlAcoV0QtM0W+Hb6/PDQ4sd4
-         50bd2eIUYmA5gtmsVLwfCtNph/fNnEuDfCW+O/OKtd5mCDwmOFxYoI/S+S4aqrBskJpT
-         W9tA==
-X-Gm-Message-State: AOAM532BS5yWj1scfzt9THj/LNmg6IgwdZh9dU4u3hVoz9tNMEwJpIfS
-        v/+0yQ6FVwe4cgiSVcyQJJdEPYrSWsM80A==
-X-Google-Smtp-Source: ABdhPJzcrnukyGJtVPRgJ+/YGbCE1v003rEfdzpBi5YbuLBsqBBWAW+Xrcj0X+FY12GRtvH+rdgAxQ==
-X-Received: by 2002:a05:600c:3797:: with SMTP id o23mr2879199wmr.178.1639757673970;
-        Fri, 17 Dec 2021 08:14:33 -0800 (PST)
+        bh=G8pUod1rJ8BKM00tNDrqEm69jNJuPPsCXj/GPzLhEkg=;
+        b=4uOJUTZ4658J9QoWhskOrfHm5XA5QAaIwfh2bqIAZltHDKZ0L2LHqycMaQ1f1D7tOV
+         OdVjufKoLj/l9PC0NqDCqRWU0y9HdP/y5u291YC4r2RVwlwwiqe0DhCk3qjSDzCdNkXC
+         Z23oTdhmNrKCpbAU1SDvyyyXPYQvVVG4oH+V1NSSqs9oAV+1ecNh4hXnAW9IrH/mu9SR
+         +14mx/ZVc3O2UwrgIoprXHoAn2RF2CFbBfwBwiOOB/pr6dbfIdiq+WqjUBsb9gGVPc2c
+         ESxHDyg3Om727IpZ96X9gdXQ5kQ7P3XpWhFh7thOzVlSRLbjzAo/6syThzWA8e8AOltG
+         E+rQ==
+X-Gm-Message-State: AOAM532W2wLaBGR/ofzSYmkhnHuAXFLQv6kfL9ayNGxEHw//E/+5z6VG
+        f8L9kKp8jR+q46E3shbeCdY=
+X-Google-Smtp-Source: ABdhPJz/bOkEs4384vt3/kweTJfOmZ0H7sRcry48HWvxwFLtpAuSa+XR8tfOaFtLOPySt0urpAtWqg==
+X-Received: by 2002:a05:6000:1449:: with SMTP id v9mr1396032wrx.280.1639758175667;
+        Fri, 17 Dec 2021 08:22:55 -0800 (PST)
 Received: from localhost ([193.209.96.43])
-        by smtp.gmail.com with ESMTPSA id h27sm12002300wmc.43.2021.12.17.08.14.32
+        by smtp.gmail.com with ESMTPSA id d1sm7536400wrz.92.2021.12.17.08.22.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Dec 2021 08:14:33 -0800 (PST)
+        Fri, 17 Dec 2021 08:22:55 -0800 (PST)
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: [GIT PULL] memory: tegra: Changes for v5.17-rc1
-Date:   Fri, 17 Dec 2021 17:14:31 +0100
-Message-Id: <20211217161431.1524285-1-thierry.reding@gmail.com>
+To:     arm@kernel.org, soc@kernel.org
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [GIT PULL 1/6] soc/tegra: Changes for v5.17-rc1
+Date:   Fri, 17 Dec 2021 17:22:48 +0100
+Message-Id: <20211217162253.1801077-1-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.34.1
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
@@ -62,7 +64,7 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Krzysztof,
+Hi ARM SoC maintainers,
 
 The following changes since commit fa55b7dcdc43c1aa1ba12bca9d2dd4318c2a0dbf:
 
@@ -70,41 +72,44 @@ The following changes since commit fa55b7dcdc43c1aa1ba12bca9d2dd4318c2a0dbf:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/for-5.17-memory
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.17-soc
 
-for you to fetch changes up to 9ecccfabc29df15e1fd03a440f3f6e611ebff062:
+for you to fetch changes up to 81c4c86c66650f61c6d7a712737d43a3e4d072bf:
 
-  memory: tegra: Add Tegra234 support (2021-12-16 16:48:21 +0100)
+  soc/tegra: pmc: Rename core power domain (2021-12-16 14:03:38 +0100)
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-memory: tegra: Changes for v5.17-rc1
+soc/tegra: Changes for v5.17-rc1
 
-This contains the stable tag that shares the device tree includes
-between the memory and Tegra trees. I've also applied the Tegra234
-support patch on top for your convenience.
+This set of changes contains some preparatory work that is shared by
+several branches and trees to support DVFS via power domains.
+
+There's also a bit of cleanup and improvements to reboot on chips that
+use PSCI.
 
 ----------------------------------------------------------------
-Mikko Perttunen (1):
-      dt-bindings: Update headers for Tegra234
+Dmitry Osipenko (8):
+      soc/tegra: Enable runtime PM during OPP state-syncing
+      soc/tegra: Add devm_tegra_core_dev_init_opp_table_common()
+      soc/tegra: Don't print error message when OPPs not available
+      soc/tegra: fuse: Reset hardware
+      soc/tegra: fuse: Use resource-managed helpers
+      soc/tegra: regulators: Prepare for suspend
+      soc/tegra: pmc: Rename 3d power domains
+      soc/tegra: pmc: Rename core power domain
 
-Thierry Reding (4):
-      dt-bindings: memory: tegra: Update for Tegra194
-      dt-bindings: memory: tegra: Add Tegra234 support
-      Merge tag 'tegra-for-5.17-dt-bindings-memory' into for-5.17/memory
-      memory: tegra: Add Tegra234 support
+Jon Hunter (1):
+      soc/tegra: pmc: Add reboot notifier
 
- .../memory-controllers/nvidia,tegra186-mc.yaml     | 98 +++++++++++++++++++---
- drivers/memory/tegra/Makefile                      |  1 +
- drivers/memory/tegra/mc.c                          |  3 +
- drivers/memory/tegra/mc.h                          |  7 +-
- drivers/memory/tegra/tegra186-emc.c                |  3 +
- drivers/memory/tegra/tegra234.c                    | 81 ++++++++++++++++++
- include/dt-bindings/clock/tegra234-clock.h         | 26 +++++-
- include/dt-bindings/memory/tegra234-mc.h           | 32 +++++++
- include/dt-bindings/reset/tegra234-reset.h         | 12 ++-
- 9 files changed, 246 insertions(+), 17 deletions(-)
- create mode 100644 drivers/memory/tegra/tegra234.c
- create mode 100644 include/dt-bindings/memory/tegra234-mc.h
+ drivers/soc/tegra/common.c             |  29 +++++++-
+ drivers/soc/tegra/fuse/fuse-tegra.c    |  51 +++++++++++---
+ drivers/soc/tegra/fuse/fuse-tegra20.c  |  33 ++++++++-
+ drivers/soc/tegra/fuse/fuse.h          |   1 +
+ drivers/soc/tegra/pmc.c                |  41 ++++++++---
+ drivers/soc/tegra/regulators-tegra20.c |  99 ++++++++++++++++++++++++++
+ drivers/soc/tegra/regulators-tegra30.c | 122 +++++++++++++++++++++++++++++++++
+ include/soc/tegra/common.h             |  15 ++++
+ 8 files changed, 366 insertions(+), 25 deletions(-)
