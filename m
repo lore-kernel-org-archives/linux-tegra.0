@@ -2,210 +2,179 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B891BC433EF
-	for <linux-tegra@archiver.kernel.org>; Fri, 17 Dec 2021 05:31:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D9C6C433F5
+	for <linux-tegra@archiver.kernel.org>; Fri, 17 Dec 2021 06:04:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232792AbhLQFbv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 17 Dec 2021 00:31:51 -0500
-Received: from mail-bn8nam11on2061.outbound.protection.outlook.com ([40.107.236.61]:18080
-        "EHLO NAM11-BN8-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S230106AbhLQFbu (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 17 Dec 2021 00:31:50 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=nVRcJI9stBJLuwzVyc9vVobMG1YpKpnTBWsEs71E5vLSXR5r24tzX/ACQYj+A1SJC93chyQ1cT+wfN6vfaYaHUnaTrIptuIJE6M3fDMAo+2YkDrF9fO6wbFFGuDpSbniRxX7Xpwxdoqy1BekBxqBfZyziyfhb+Y5FmVJ1ylMYbvTqxrjq9JF1rWWCyYFdTRL6P2H5/aCvYFkOgdopo0gv3NhCgk96tJ/iHQs+V+kBS1nsuWrpm4NnskS4pM0KhyKVy4D4PuQG+zPyOhsOuEH6sLHEjN2ZnIGyLzuAeiEwxdYciZjC2xDL+0QEHa/gRBuq082aYDPOhmXJ4lVsISpiA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ykuK1K43Yyf5KTVhpdyaXJvqKXKV5fTFIEpEKdeCR1Q=;
- b=OC85wmNEAU1+GEUeMFj+KN4sdp0anWhI7nBKUhzs0PfMEh9aVQHFLd5Fq/EwCzBoObQ29Sklg/TxQAUVbzzAWF4G733f/LDxZO2BpwRzxjpeigKKT3SpyG34eKwlkkAunz0jHTRm8u8lLLT4LNuSd/1b6Q70J0/ZKnX2MRhrbO7uEzE6/Qcjh7wPvfefyKH57Io6iQikDDw5fWtL6/wG5QVUgEkIBwpXChDWmRooWS++zr6Q5wa9fJM6iz6/O3uM/6zffwYYT5wxb5IWPSTUtlUFrMXC6DrmyFDFpOQr42/6f8g3JqohKAMR43JTaHbFU7l3eAuGjMoKx92OVq422A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ykuK1K43Yyf5KTVhpdyaXJvqKXKV5fTFIEpEKdeCR1Q=;
- b=bW4qlGGhcSbfPm7DAgGvPCj2WMSm2hJZTq6rvk21eQjZaQR64tU+dQX/Q8QbbC2uCdZPGK7S+N5Ec1cwPzFWBpSq2aAJL9BdytRj4NZ84FDnkVUIN2JrfMNMy/AmWEDPuFanmcR7pNX0YiBcg4ggHVeNhUHDCNGT97PZq3NVy9XRJDIDYhHKiOhKZ9Z36BUMJK4ELeLxztvZGCVTcJrvuzBliUSxQAw8XPFW0ezYOk2PW6mZ+dXH4TmVhU+L3SiTJ95WDFgZXt3bVBwcb0+7E9qho5bizfU1YvYgAhmvl0hedXjfCAkT+es3MYxDeiNmfCqXkJ3+aqTGOdejMbfwVA==
-Received: from BN9PR12MB5273.namprd12.prod.outlook.com (2603:10b6:408:11e::22)
- by BN9PR12MB5306.namprd12.prod.outlook.com (2603:10b6:408:103::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4801.15; Fri, 17 Dec
- 2021 05:31:48 +0000
-Received: from BN9PR12MB5273.namprd12.prod.outlook.com
- ([fe80::6867:d54e:5040:2167]) by BN9PR12MB5273.namprd12.prod.outlook.com
- ([fe80::6867:d54e:5040:2167%5]) with mapi id 15.20.4801.015; Fri, 17 Dec 2021
- 05:31:48 +0000
-From:   Akhil R <akhilrajeev@nvidia.com>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-CC:     Wolfram Sang <wsa@kernel.org>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Christian Koenig <christian.koenig@amd.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
+        id S233141AbhLQGEQ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 17 Dec 2021 01:04:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39556 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230405AbhLQGEQ (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Fri, 17 Dec 2021 01:04:16 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC3EAC061574;
+        Thu, 16 Dec 2021 22:04:15 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 198FE62065;
+        Fri, 17 Dec 2021 06:04:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 861F2C36AE1;
+        Fri, 17 Dec 2021 06:04:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1639721054;
+        bh=kwoVfr91sfDbXUKT7OKdnlYuZVy9njagc98xzPanrDU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=YTqFvg/hfF0lUestaWcAB80XJkTL/iy6IDSt7jP6+ESZr8GI22Qxo/LvXAVjMA9wq
+         aUGU8kGBf/IzSMOTdwqvmn7Zv5xXM35fcywMFOxtbDPDLcLJjuV5k5+1cF9OLZ4XyU
+         Fw5WunmhHxTS9QOwc415W6U1sieJ6CgG4x8bFG/EjBo2FJSvAyUEdSYNcpB3rmPfzE
+         24OvE8RF7pDyG0MXG2IDRoWLBYB1QNxwL+Z+R5rYRs4cV62FVd82Bcu6879lwHrzn/
+         Tln06klRkA2ylotphb2f4yW7FkDjX1poS4ObMcnA5TXaqXqIhXWWedor/7V3CH6geF
+         edUqAttGhYDnw==
+Date:   Fri, 17 Dec 2021 11:34:10 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Mark Brown <broonie@kernel.org>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-i2c <linux-i2c@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Krishna Yarlagadda <kyarlagadda@nvidia.com>,
-        Suresh Mangipudi <smangipudi@nvidia.com>
-Subject: RE: [PATCH 2/2] i2c: smbus: Use device_ functions instead of of_
-Thread-Topic: [PATCH 2/2] i2c: smbus: Use device_ functions instead of of_
-Thread-Index: AQHX8n7my/abMo8OBEe71trFCBr2/aw1NiAAgAAG55CAAFJGAIAAhfUA
-Date:   Fri, 17 Dec 2021 05:31:48 +0000
-Message-ID: <BN9PR12MB52736B1658C0B13526728119C0789@BN9PR12MB5273.namprd12.prod.outlook.com>
-References: <1639660402-31207-1-git-send-email-akhilrajeev@nvidia.com>
- <1639660402-31207-3-git-send-email-akhilrajeev@nvidia.com>
- <CAHp75VcvrM0qLQE-04UZEkxbAvkE-MNSN7RGC7mPxj+1hoUyTw@mail.gmail.com>
- <BN9PR12MB52732B801C0D15BBBA71B8DDC0779@BN9PR12MB5273.namprd12.prod.outlook.com>
- <CAHp75VfQpgWhKXM=1oRg8d_ntZvxkSArQv=6eaq7tyU6-KvJjg@mail.gmail.com>
-In-Reply-To: <CAHp75VfQpgWhKXM=1oRg8d_ntZvxkSArQv=6eaq7tyU6-KvJjg@mail.gmail.com>
-Accept-Language: en-IN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 557a686f-a881-479b-c0db-08d9c11e8584
-x-ms-traffictypediagnostic: BN9PR12MB5306:EE_
-x-microsoft-antispam-prvs: <BN9PR12MB530631550C637574B43CECC7C0789@BN9PR12MB5306.namprd12.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:4125;
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: ndbW7rKmRFSNpbsTRMmDyiGbEKX0hzOLyZ5+aH8KhpO8oZR0aNIYj+EjsgRyB1rLOyqJvsAIcr2FkF0zOeBsRvSMKRoE4KXxUn+D91LsMEXFR49HEiBuBJ1GFkbB33CdtQ5jpADzGLcZ1PqGd1ZchkzL1+Qy+8VDAddKLiq5R9qh07xmCpAp5eLSJnxlaV41pVMqY6dPT9s7WwP7JmnANObIeq2Zgbo0dB8G1K4GItA78S94vDnGHQzERNpXkcB10WaH9MPHJQD3nrptmLE515YcNWMR11GBk32RLDqw2jfUoNjfkpJVl7kCeVVHiCDQDtoItmVs52Ph/ONR9MMUhqx38utOiztNKXeMD8rVXgPI22DB+WOtySgReV2Jb2l8AvKalLjVsbqXP1Ymo+Yc1ggPYWxgtq7en/eui5hMeR2u6smr7jkN9AU5E6fWn+9RZD+u7JpzVN7Rs4/TA4AXL022TW3fAa/93tIz1cjRaQ+ksy3TAk56pC2Pecq2E+CCa0gLFIeUSHp7xv48dYfD/jvCW8YxpLhgkbwyoFU3XEGVr/wAU6Ti3qdzYOwKfnMqnjCWIPAlvHD/MPFHeOPuHLXOe3EulFZka+xctbt/TcnNUSLsX406oZ2ZrQEUefZfjJNYz8zXZPKMdC5QTuc5eQKibuRB0K3bfnup2empmfdGgk5/v+oWZbsT6aAePXxjUj6NXuvktvPYoKJmBe4MbRj7dbORgV7B68Oh0J2Ll8AJDCf3hb0GvbRvVJ021bC5Rd9GJEvEQ2Bxi6gKk4uU5dzCA7nmd+Jd7vbO0r7W7XV8ic+hgSqfOgDoJ57lCjESlwWkZFliStWfyH9WvbOv7A==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR12MB5273.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(38070700005)(5660300002)(76116006)(55016003)(7696005)(71200400001)(83380400001)(86362001)(4326008)(107886003)(52536014)(64756008)(66446008)(66946007)(9686003)(66556008)(316002)(2906002)(186003)(26005)(66476007)(8676002)(38100700002)(8936002)(6506007)(7416002)(53546011)(966005)(33656002)(54906003)(122000001)(6916009)(508600001);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?1DmGqXO8mpdZtZy4wkkyC8HeHQSGrW9sIlSCoQOsF9nAtVuLYo0YmuP+bSvF?=
- =?us-ascii?Q?Kj+qNigEoUQQI5MyObY90n9WrcbVr4swuoPsE3kqZh3w3Gn8sVt/O5aFHTEb?=
- =?us-ascii?Q?40DDRmvdKHl4oBXpl/gud3aL5SGfNCKE9OFI26iI6IaORQNLDigxSgXykrBH?=
- =?us-ascii?Q?Ku+5pejfNFI1jbxck+pVjEXnzR9SJTDMacMsmj3ha3ZV1s6fPk8q72zzxyt0?=
- =?us-ascii?Q?eFSPe3F49Hb8gyN9T085Bu8NWXeZPAkIh66yD8cybA8jNhTuoqv+wDeBhJOu?=
- =?us-ascii?Q?UGKCHWz+SSAfdkStwAumilNB2vxHuS8HBesO1dUtOkFAXEgAjmiOYSdKGmZM?=
- =?us-ascii?Q?/8008CDakprgORzsB22s7uXnnvSkiB8f6JDYGKGoEcHA2xn9Jiu8vjC+XXnj?=
- =?us-ascii?Q?W+sroATYPnDpzR0jRsX2SBMksQzf7ifXoWSLPse9YXc0n4MghPbLBOxQ2DHI?=
- =?us-ascii?Q?Kfpj4sO9A/o4fbjZqdSf0IHKSS2rFW25mpbk/fwQRm6pBR86TYMxsCXWKFEH?=
- =?us-ascii?Q?dsRQROxPXSWq0mtynlmMVANDHoyN+jX+MBNTujUmpkgnWUiMHb9lhCWH8zQ0?=
- =?us-ascii?Q?fvbVipGmUueEAkoroRoiec9Nf+KpP7MDB30lP2UwTpm7EbC2t1NBvPLMiQQ8?=
- =?us-ascii?Q?2T6DhkbcKI6mpJ3nR1nbkdSz/DSkSPLfm0zN1+8RsNX+8kSSrbUjKkGRlR52?=
- =?us-ascii?Q?WglY6J1VY8byxf3Z6x9MPPMYXtZMYjS8VhsUBpzQbhtZC9Rp06Zv0E7r6ngr?=
- =?us-ascii?Q?VIL52wDSATCebPXlJgJ6iPrCG37DfWFQqlOO/cvZTn9C1oU9NOzeRBfSYZzP?=
- =?us-ascii?Q?dIi64G8BJm+t2L8RtfMa6CmjFMMcJqdcNnd/DZoTlBJOqNpOyUANvhsTYlOl?=
- =?us-ascii?Q?0HLA1M9UreY0kNaksWG2WCxbgmRbv5LsdHXl8kJ85vxL7xdAm7c6395NRTIg?=
- =?us-ascii?Q?8ZCzQ9LHDG9QceVfFhtEF60uJMvuy+zd85Vrwr8m6SZYV3/DnbpFqz5Of3/g?=
- =?us-ascii?Q?V8lSmaMloxXHLHdPeyDQY1chS/kgagnJK+vyGzPV8UDNWSj170Ox7dJ9p+3F?=
- =?us-ascii?Q?OABNQLXho+48s+dZMvWQ4foWMSa3CJwGt2FW4rQTVVWBJLuPaMIsX5pDDPI2?=
- =?us-ascii?Q?Azq9jnRUt4b1xAoavDBOboFh06Q44xm1avWvAz6HnP4AAvrI064KhMqYCXPT?=
- =?us-ascii?Q?fQ/OqH4Rtw2QsET0/clizgwgE2ePr2K8AL5FHlnDqVHlodXrwNTxLNe0uKUk?=
- =?us-ascii?Q?hibZpaz3XPT1WmKBsdhD5Op8Frnf4e5/mKtsBKZVqrL1aDs2f321uCgO4nCq?=
- =?us-ascii?Q?Ozivh7LxioeNfQd4E/dZdFl49MbdW0NdT6awNuf9vEwz0CbBDNapyrQd3bv0?=
- =?us-ascii?Q?kLyUe7uj0ieeZLqyMVeOitJKnHGqCUXsptLgBzacYby+DOCmvFZRr3anfWKA?=
- =?us-ascii?Q?HtlYYXIAFzdxJpDFVrkM3kdkuwELHWnQwrdbSBFj/LBKpQ2xj6B/wLvcat0h?=
- =?us-ascii?Q?1hZqRJFVcBzvIqe7qx99Nb1CZ1tbOjZXTXebCeReJH10HcfdDtxKlgkUrnGG?=
- =?us-ascii?Q?qMyyiJXnhihrHB3LfZ5QhZYoD8mU6HeY8cDcIlH98nZDxHL4kf3JUTM6LSGb?=
- =?us-ascii?Q?sQ0aIRxAStNf5jQEsSpTEi0=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Takashi Iwai <tiwai@suse.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Agneli <poczt@protonmail.ch>, linux-tegra@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Rob Herring <robh+dt@kernel.org>, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v4 00/22] Support HDMI audio on NVIDIA Tegra20
+Message-ID: <YbwoWhg6h8ChE5Xs@matsya>
+References: <20211204143725.31646-1-digetx@gmail.com>
+ <Ybo6tsnQM6OacoZs@sirena.org.uk>
+ <26af30a6-9606-72d0-9258-cf9627ddfe77@gmail.com>
+ <7179a409-d838-0e9e-4600-785e69c3e3a6@gmail.com>
 MIME-Version: 1.0
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BN9PR12MB5273.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 557a686f-a881-479b-c0db-08d9c11e8584
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Dec 2021 05:31:48.2260
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: NhqRCd8880EUi55oLTcRkzXA8r+w6awRuYTU+f+KKG/3ZqNEFYWT+LG/a9ilBpFz/e3ifWbtuzme+NcesxYOpA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN9PR12MB5306
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="H5lYUFRYsnZI2oAy"
+Content-Disposition: inline
+In-Reply-To: <7179a409-d838-0e9e-4600-785e69c3e3a6@gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-> On Thu, Dec 16, 2021 at 6:08 PM Akhil R <akhilrajeev@nvidia.com> wrote:
-> > > On Thu, Dec 16, 2021 at 3:14 PM Akhil R <akhilrajeev@nvidia.com> wrot=
-e:
->=20
-> ...
->=20
-> > > > -       irq =3D of_property_match_string(adapter->dev.of_node, "int=
-errupt-
-> > > names",
-> > > > -                                      "smbus_alert");
-> > > > +       irq =3D device_property_match_string(adapter->dev.parent,
-> > > > + "interrupt-
-> > > names",
-> > > > +                                          "smbus_alert");
-> > >
-> > > Hmm... Adapter device node is not the same as the node for its parent=
-.
-> > > Do you have some code that propagates of_node from parent to child?
-> > Adapter device does not have an of_node unless the adapter driver sets
-> > it, I guess. I see all the adapter drivers add the of_node and parent
-> > for adapter. Also, there are many places in i2c-core-base and
-> > i2c-core-acpi where adapter->dev.parent is referred to as the adapter
-> > driver device.
-> >
-> > Basically, adapter->dev.parent and adapter->dev.of_node would
-> > ultimately refer to the same device (or the of_node of that device),
-> > as far as I understand.
-> > >
-> > > I.o.w. I would expect to see
-> > >
-> > >        irq =3D device_property_match_string(&adapter->dev,
-> > > "interrupt-names",
-> > >
-> > > here.
-> > It would then require adding the fw_node as well from the adapter drive=
-r.
-> > I felt it made more sense to refer adapter->dev.parent here as most of
-> > the (or rather all of the) adapter drivers already sets it.
->=20
-> Is this
-> https://elixir.bootlin.com/linux/latest/source/drivers/i2c/i2c-core-base.=
-c#L1047
->
-> what you are looking for?
-This, I suppose, is for the i2c client driver.
-I meant the individual adapter drivers.
-https://elixir.bootlin.com/linux/latest/source/drivers/i2c/busses/i2c-tegra=
-.c#L1786
-similar is there in all drivers.
-If to use adapter->dev for interrupt-names, I assume, it would require to a=
-dd
 
-	adapter->dev.fwnode =3D i2c_dev->dev->fwnode;
+--H5lYUFRYsnZI2oAy
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-in all drivers (or at least in the drivers which does not use devicetree).
-I thought it would be decent to use adapter->dev.parent as all the drivers =
-already
-set it.
-
+On 16-12-21, 17:29, Dmitry Osipenko wrote:
+> 15.12.2021 22:19, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > 15.12.2021 21:57, Mark Brown =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> >> On Sat, Dec 04, 2021 at 05:37:03PM +0300, Dmitry Osipenko wrote:
+> >>
+> >>> I based S/PDIF patches on Arnd's Bergmann patch from a separate serie=
+s [1]
+> >>> that removes obsolete slave_id. This eases merging of the patches by
+> >>> removing the merge conflict. This is a note for Mark Brown.
+> >> That's not in my tree so I'll need either a pull request with the seri=
+es
+> >> or a resend after the merge window.
+> > This patch is included as a part of this series, please see the patch #=
+6.
+> >=20
+> > I saw that Vinod Koul already merged it into his DMA tree [1] a day ago,
+> > but there is no stable branch there.
+> >=20
+> > [1]
+> > https://git.kernel.org/pub/scm/linux/kernel/git/vkoul/dmaengine.git/log=
+/?h=3Dnext
+> >=20
 >=20
-> ...
+> Vinod, will you be a able to create immutable branch for us with the
+> "dmaengine: kill off dma_slave_config->slave_id" patches [1]?
 >=20
-> > > >         if (irq =3D=3D -EINVAL || irq =3D=3D -ENODATA)
-> > > >                 return 0;
-> > > >         else if (irq < 0)
-> > >
-> > > TBH the entire code smells. "Interesting" way of getting an optional
-> > > named interrupt.
-> > I felt it useful to have it this way as it would remain agnostic to
-> > device tree and the ACPI. We would not have to add redundant codes in
-> > adapter drivers that are using ACPI table.
-> >
-> > Named interrupts for the ACPI as well, I feel would be a useful
-> > addition that can prove to be of value more than this change; I believe=
-.
->=20
-> Me too. My comment was about current state of affairs, and not to your
-> change.
-Got it :)
+> [1] https://lore.kernel.org/all/20211122222203.4103644-1-arnd@kernel.org/
 
-Thanks,
-Akhil
+Here you go:
 
+The following changes since commit fa55b7dcdc43c1aa1ba12bca9d2dd4318c2a0dbf:
+
+  Linux 5.16-rc1 (2021-11-14 13:56:52 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/vkoul/dmaengine.git tags/dm=
+aengine_topic_slave_id_removal_5.17
+
+for you to fetch changes up to 3c219644075795a99271d345efdfa8b256e55161:
+
+  dmaengine: remove slave_id config field (2021-12-17 11:23:56 +0530)
+
+----------------------------------------------------------------
+dmaengine_topic_slave_id_removal_5.17
+
+Tag for dmaengine slave_id removal topic branch which should be merged
+into v5.17
+
+----------------------------------------------------------------
+Arnd Bergmann (11):
+      ASoC: tegra20-spdif: stop setting slave_id
+      dmaengine: tegra20-apb: stop checking config->slave_id
+      ASoC: dai_dma: remove slave_id field
+      spi: pic32: stop setting dma_config->slave_id
+      mmc: bcm2835: stop setting chan_config->slave_id
+      dmaengine: shdma: remove legacy slave_id parsing
+      dmaengine: pxa/mmp: stop referencing config->slave_id
+      dmaengine: sprd: stop referencing config->slave_id
+      dmaengine: qcom-adm: stop abusing slave_id config
+      dmaengine: xilinx_dpdma: stop using slave_id field
+      dmaengine: remove slave_id config field
+
+ drivers/dma/mmp_pdma.c             |  6 ------
+ drivers/dma/pxa_dma.c              |  7 -------
+ drivers/dma/qcom/qcom_adm.c        | 56 ++++++++++++++++++++++++++++++++++=
++++++++++++++++-------
+ drivers/dma/sh/shdma-base.c        |  8 --------
+ drivers/dma/sprd-dma.c             |  3 ---
+ drivers/dma/tegra20-apb-dma.c      |  6 ------
+ drivers/dma/xilinx/xilinx_dpdma.c  | 17 +++++++++++------
+ drivers/gpu/drm/xlnx/zynqmp_disp.c |  9 +++++++--
+ drivers/mmc/host/bcm2835.c         |  2 --
+ drivers/mtd/nand/raw/qcom_nandc.c  | 14 ++++++++++++--
+ drivers/spi/spi-pic32.c            |  2 --
+ drivers/tty/serial/msm_serial.c    | 15 +++++++++++++--
+ include/linux/dma/qcom_adm.h       | 12 ++++++++++++
+ include/linux/dma/xilinx_dpdma.h   | 11 +++++++++++
+ include/linux/dmaengine.h          |  4 ----
+ include/sound/dmaengine_pcm.h      |  2 --
+ sound/core/pcm_dmaengine.c         |  5 ++---
+ sound/soc/tegra/tegra20_spdif.c    |  1 -
+ 18 files changed, 117 insertions(+), 63 deletions(-)
+ create mode 100644 include/linux/dma/qcom_adm.h
+ create mode 100644 include/linux/dma/xilinx_dpdma.h
+
+Thanks
+--=20
+~Vinod
+
+--H5lYUFRYsnZI2oAy
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEE+vs47OPLdNbVcHzyfBQHDyUjg0cFAmG8KFoACgkQfBQHDyUj
+g0cMEA/+LySLtN5xrYUyWQlJYPXEglgbzTuSsOz/GvVvGIvw2UqVR4njIWmVypWh
+aE7r7IgA4bM3ApFbwXEfNgeXmjRKuBiL7YyxaZ6JxLPyG9kis+yl7j3pwTMkLEW7
+W2vcO0jH+QSP2K/nPyQRdyCBfdP0ECtBefVwcpdpDcN7vPhcVKLHADJ9cN4cBTmW
+XRji1kutNFxbWPbL068ZBU2t9hl3WVVg3jqVUrEMOeo4RZUyFQDBB7mH4tE+Gj4u
+eJUh5ZA0Sn2+DiESYzHdpMvdciS6L2Fe7ujbZFyMQBwA52MtR50pyNlHFxrL7z/C
+BHdjuGKWBTP3Jah9AXEQcMpRKZ67NdbNYE4DXwyOscWFkv79Tc3vC7XxHiT4Jztc
+2IPIO+vJLORfAxEupml/ARZYwr+pNdA41v4c5aOp+3ZADRN2TLnZfIVkRdx6Zs6F
+t9Q2B7xKXIHuS5sLEArpGyHNroJ1f0sF7b4OL/vbKCd6fO/XZvumXpQNHj4N91ET
+LjtBtnfLeMRdAei1aqaQzAkLPigBa1E3cYjvdN4uyWDiU7c5NJ91i9U2jE8sR/Oj
+2oVUsPTHHQMOQcmoei16ajYF7UFClyGxV/w71L06uCEnFXqRF+Jvd0l2MAxgOMVP
+AIB/FPoyX4VkOMZNCbN+iRZ+VUwAaqz11fbGv+O1fbV6j397pvw=
+=EFS8
+-----END PGP SIGNATURE-----
+
+--H5lYUFRYsnZI2oAy--
