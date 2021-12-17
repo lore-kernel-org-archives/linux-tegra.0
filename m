@@ -2,120 +2,148 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A19E9C433F5
-	for <linux-tegra@archiver.kernel.org>; Fri, 17 Dec 2021 17:19:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED9DEC433F5
+	for <linux-tegra@archiver.kernel.org>; Fri, 17 Dec 2021 17:58:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239805AbhLQRTD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 17 Dec 2021 12:19:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55820 "EHLO
+        id S240000AbhLQR6G (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 17 Dec 2021 12:58:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36520 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239798AbhLQRTB (ORCPT
+        with ESMTP id S239954AbhLQR6G (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 17 Dec 2021 12:19:01 -0500
+        Fri, 17 Dec 2021 12:58:06 -0500
 Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14679C061574;
-        Fri, 17 Dec 2021 09:19:01 -0800 (PST)
-Received: by mail-lj1-x236.google.com with SMTP id v15so4526425ljc.0;
-        Fri, 17 Dec 2021 09:19:00 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA764C061574;
+        Fri, 17 Dec 2021 09:58:05 -0800 (PST)
+Received: by mail-lj1-x236.google.com with SMTP id 13so4530185ljj.11;
+        Fri, 17 Dec 2021 09:58:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=aD+hC6FqlLZlRa2bYYfAt8xGKCazGEctgmQARu+DDU8=;
-        b=N+UO0OVMGnFIK0uWKGSzU0og53fRsylVVAjm+0aq9GOMGpnSHN/MN8kNXkzeAsUDVi
-         /r3VLwK2ENO7yz83w5dxYdI5t3Xrv9LkpIuK59aiYvbL0fnapPr85PwHaEBDabE/5kRK
-         GWeJrY7WmFCNzRw5gUmLBURUHiKJ9PBeOU2tm2n2GrnLu++HyRIPa3Ye1MwUdAwGGWbE
-         WkKXwxi1SujNH17xZAIHeVmtVq7GLDTEgKFP3rosA/WbXc4Kzf5WbVSgbgtx9AG3zGr4
-         qMiB+ODoVkA4ZSUPGZPuN5onKzOXsyqQP9UHjAAgMzmkNkZ4L+hZxC1xdF8qDU+/jHL/
-         Aong==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=JO0eGwLLz0htK5AL/Osj6kMOG2fBVADJOFwbMhccx2c=;
+        b=d5Le4BhUw5QzNbC7DQKgQqpXdfvh6u9SezZgTCbqnUlmOtwuN0GnLY6AG306dbTfE1
+         YumWoEYHgEWiKe2maOm4gQuhb6PYqbI51Qul5Jaoy6lsnyz8PrkyME3Oes6RyYDd0DrA
+         en73kuwm9PnbtvQS3Bz4pVVYRbTdBEd6LSuNV+unLpb/sxu3SmZfObXyFQ8v/8UdjSJA
+         gYvcO58LSEEVN5qbu+JMwfpjvddKNGFUynHDkyiuuJMyfaBiMYFt5gqrNN/iTo6aWL2X
+         k/wzPaBsbm6Hp4vvpVi9Io24YqlqRBB/EJbcw7f4IyOx2TeEvSaurcZathgZL/aDy6Nk
+         OG4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=aD+hC6FqlLZlRa2bYYfAt8xGKCazGEctgmQARu+DDU8=;
-        b=Jci30ZNiXK8xVx1uLbQ2OM9DL/VRec4gc9/+OuDL50XjhtkZTN9iAtX3ZKUTXph8BC
-         UiluoTPfSXPOszqfmuOF+Q8lKAJun7vfpax77Sae4CNWnrmSXoUDjH+xmFam9S1eAHb9
-         XX4tlxGrubldv4XOGTZIX2ag0sd4ZsP6Uoj2Ua8YKtrcLzJOGtUZwxep8lt5dAEuI2rD
-         fa22s5h8iOetFiEoJChK/wfM+d3Gu2JSvFleq9efPA+bp/Im0tqDHnVnyq5zROPsDWdP
-         wTakUp8/4PCkATwtL7+VyMwhxvQ/cXiUR6F9FzhP9M7aVvwns0SWsUDVIHnroCb1zoSe
-         JTBA==
-X-Gm-Message-State: AOAM530LMUiF2gKXYZBSlE8v3gpc7j1E5VXGV1li3rxRZGPeFE0Drrt2
-        1sEVxrDiPD3CBHUHKLrYr5M=
-X-Google-Smtp-Source: ABdhPJzBjfXZEGXsleWCP8vjNzkIbrIDY0hTHQDynU+0L28mioCf9nBMTGevXSjGLXhOGHJT4nr+6w==
-X-Received: by 2002:a05:651c:504:: with SMTP id o4mr3649716ljp.242.1639761539376;
-        Fri, 17 Dec 2021 09:18:59 -0800 (PST)
-Received: from [192.168.2.145] (94-29-63-156.dynamic.spd-mgts.ru. [94.29.63.156])
-        by smtp.googlemail.com with ESMTPSA id p20sm1470067lfu.151.2021.12.17.09.18.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 17 Dec 2021 09:18:58 -0800 (PST)
-Subject: Re: [PATCH v4 04/22] dt-bindings: host1x: Document optional HDMI
- sound-dai-cells
+        bh=JO0eGwLLz0htK5AL/Osj6kMOG2fBVADJOFwbMhccx2c=;
+        b=Jqd80balRk4XkXUBgId2TLuUcZ181trLA9i2W/E7lAHUFYbAyw9dkXOtfSZYk0ArXq
+         ymaolkwL/I9oVQvvuZvfbaUFb/UnoX2Mgbq63fdrr38Uj9knIpYSkZgBMSA/qnGQZ3rB
+         48cj7+mMinin81ECVYjUrvOm9r6Qv/jf8wjmGPP1MTT7eiWCjQKwe/4ZZcelIju5A5J8
+         IMYmtzsmVtUMFeUTHab2dhDuL1LT7b4v38V7JEqsRHX+8Q7jjS/XBoi75MWhhVUQfh41
+         RlpXa79DjO2b5dsoK9xes1MmJge7SdR4HCAHyy7oPqjJPAeRt72H2OwcupF1eGnzIBhV
+         kSVA==
+X-Gm-Message-State: AOAM533MVgpvIkRx2aP5Yd0eLuyVKlDWuIXmJQSP7EhKnFplAX8+hRTX
+        YGo0DuWoljLNj6BbeWKBmwg=
+X-Google-Smtp-Source: ABdhPJzWhLeDED2hHghcC5fAa2gjRzuaP7qnOlGcCDZ2vQfhpumBT/J4D1ToEkRHaNTc007UnY0kQw==
+X-Received: by 2002:a2e:a175:: with SMTP id u21mr3807462ljl.284.1639763884028;
+        Fri, 17 Dec 2021 09:58:04 -0800 (PST)
+Received: from localhost.localdomain (94-29-63-156.dynamic.spd-mgts.ru. [94.29.63.156])
+        by smtp.gmail.com with ESMTPSA id w23sm1479244lfa.191.2021.12.17.09.58.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Dec 2021 09:58:03 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
-        Mark Brown <broonie@kernel.org>
-Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
-        Takashi Iwai <tiwai@suse.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>,
         Jaroslav Kysela <perex@perex.cz>,
         Liam Girdwood <lgirdwood@gmail.com>,
-        Agneli <poczt@protonmail.ch>, linux-tegra@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Rob Herring <robh+dt@kernel.org>, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-References: <20211204143725.31646-1-digetx@gmail.com>
- <20211204143725.31646-5-digetx@gmail.com> <YbtLJeIxXlVyQhd3@orome>
- <Ybxwovlw2GARzqUO@sirena.org.uk>
- <4edfbff2-ffd9-1c33-de0c-013a29dc286c@gmail.com> <Ybx8XdLGGiQsNMTq@orome>
- <36972e00-0eb9-acb7-d537-3b9a4b53386d@gmail.com>
-Message-ID: <e0536860-3fea-e57b-8602-4936bfdcd4a6@gmail.com>
-Date:   Fri, 17 Dec 2021 20:18:58 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+        Agneli <poczt@protonmail.ch>
+Cc:     linux-tegra@vger.kernel.org, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: [PATCH v5 00/11] Support HDMI audio on NVIDIA Tegra20
+Date:   Fri, 17 Dec 2021 20:55:55 +0300
+Message-Id: <20211217175606.22645-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.33.1
 MIME-Version: 1.0
-In-Reply-To: <36972e00-0eb9-acb7-d537-3b9a4b53386d@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-17.12.2021 15:06, Dmitry Osipenko пишет:
-> 17.12.2021 15:02, Thierry Reding пишет:
->> On Fri, Dec 17, 2021 at 02:55:48PM +0300, Dmitry Osipenko wrote:
->>> 17.12.2021 14:12, Mark Brown пишет:
->>>> On Thu, Dec 16, 2021 at 03:20:21PM +0100, Thierry Reding wrote:
->>>>> On Sat, Dec 04, 2021 at 05:37:07PM +0300, Dmitry Osipenko wrote:
->>>>>> Document new optional sound-dai-cells property of HDMI node. This node will
->>>>>> be used as endpoint of HDMI sound DAI graph.
->>>>
->>>>> It's probably best for this to go through ASoC along with the other
->>>>> audio-related bindings.
->>>>
->>>>> Alternatively, I've just sent out a patch that converts the host1x
->>>>> bindings to json-schema, so I could work this into that as well.
->>>>
->>>> It doesn't apply to the ASoC tree for whatever reason so probably best
->>>> to roll it in with those JSON updates.
->>>>
->>>
->>> This hos1tx binding patch indeed will conflict with the Thierry's patch.
->>>
->>> Thierry, will you be able to take the binding patches into the Tegra
->>> tree and resolve all those hos1tx binding conflicts there?
->>
->> Yes, I'll resolve all of those conflicts in the Tegra tree.
-> 
-> Thank you!
-> 
-> Mark, then you may apply patches 5-13 to ASoC on top of the Vinod's
-> branch, skipping patch #6. Thanks in advance!
-> 
+This series revives Tegra20 S/PDIF driver which was upstreamed long time
+ago, but never was used. It also turns Tegra DRM HDMI driver into HDMI
+audio CODEC provider. Finally, HDMI audio is enabled in device-trees.
+For now the audio is enable only for Acer A500 tablet and Toshiba AC100
+netbook because they're already supported by upstream, later on ASUS TF101
+tablet will join them.
 
-I see that Thierry applied only the host1x patch, but not the other
-bindings.
+(!) These patches are made on top of stable dmaengine branch from Vinod Koul.
 
-Mark, perhaps will be easier if I'll just make the v5 which you could
-apply easily without a need to apply only selective patches. I'll try to
-post it ASAP.
+The following changes since commit fa55b7dcdc43c1aa1ba12bca9d2dd4318c2a0dbf:
+
+  Linux 5.16-rc1 (2021-11-14 13:56:52 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/vkoul/dmaengine.git tags/dmaengine_topic_slave_id_removal_5.17
+
+for you to fetch changes up to 3c219644075795a99271d345efdfa8b256e55161:
+
+  dmaengine: remove slave_id config field (2021-12-17 11:23:56 +0530)
+
+Changelog:
+
+v5: - Dropped all patches that were already applied by Thierry Reding.
+
+    - Made minor changes that were suggested by Thierry Reding.
+
+    - Added acks from Thierry Reding.
+
+    - Rebased patches on top of stable dmaengine branch from Vinod Koul.
+
+v4: - Added patches that update multi_v7_defconfig with the enabled S/PDIF
+      and APB DMA drivers.
+
+v3: - Renamed S/PDIF device-tree clocks as was suggested by Rob Herring.
+
+    - Added r-bs and acks that were given by Rob Herring to v2.
+
+v2: - Corrected I2S yaml problem that was reported by the DT bot for v1
+      by removing the non-existent required clock-names property.
+
+    - Removed assigned-clocks property from S/PDIF yaml since this property
+      is now inherited from the clocks property.
+
+    - Reordered the "tegra20: spdif: Set FIFO trigger level" patch, making
+      it the first sound/soc patch in the series, like it was suggested by
+      Mark Brown in the comment to v1. Also reworded commit message of this
+      patch to *not* make it looks like it should be backported to stable
+      kernels.
+
+Dmitry Osipenko (11):
+  ASoC: dt-bindings: Add binding for Tegra20 S/PDIF
+  ASoC: dt-bindings: tegra20-i2s: Convert to schema
+  ASoC: dt-bindings: tegra20-i2s: Document new nvidia,fixed-parent-rate
+    property
+  ASoC: tegra20: spdif: Set FIFO trigger level
+  ASoC: tegra20: spdif: Support device-tree
+  ASoC: tegra20: spdif: Improve driver's code
+  ASoC: tegra20: spdif: Use more resource-managed helpers
+  ASoC: tegra20: spdif: Reset hardware
+  ASoC: tegra20: spdif: Support system suspend
+  ASoC: tegra20: spdif: Filter out unsupported rates
+  ASoC: tegra20: i2s: Filter out unsupported rates
+
+ .../bindings/sound/nvidia,tegra20-i2s.txt     |  30 ---
+ .../bindings/sound/nvidia,tegra20-i2s.yaml    |  77 +++++++
+ .../bindings/sound/nvidia,tegra20-spdif.yaml  |  85 ++++++++
+ sound/soc/tegra/tegra20_i2s.c                 |  49 +++++
+ sound/soc/tegra/tegra20_spdif.c               | 198 +++++++++++++-----
+ sound/soc/tegra/tegra20_spdif.h               |   1 +
+ sound/soc/tegra/tegra_pcm.c                   |   6 +
+ sound/soc/tegra/tegra_pcm.h                   |   1 +
+ 8 files changed, 359 insertions(+), 88 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra20-i2s.txt
+ create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra20-i2s.yaml
+ create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra20-spdif.yaml
+
+-- 
+2.33.1
+
