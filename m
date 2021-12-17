@@ -2,61 +2,63 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FA29C433EF
-	for <linux-tegra@archiver.kernel.org>; Fri, 17 Dec 2021 16:22:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67A37C433F5
+	for <linux-tegra@archiver.kernel.org>; Fri, 17 Dec 2021 16:23:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239062AbhLQQW5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 17 Dec 2021 11:22:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42290 "EHLO
+        id S239065AbhLQQXA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 17 Dec 2021 11:23:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42300 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238463AbhLQQW5 (ORCPT
+        with ESMTP id S238463AbhLQQW7 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 17 Dec 2021 11:22:57 -0500
-Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15CA0C061574
-        for <linux-tegra@vger.kernel.org>; Fri, 17 Dec 2021 08:22:57 -0800 (PST)
-Received: by mail-wr1-x42b.google.com with SMTP id s1so5108826wrg.1
-        for <linux-tegra@vger.kernel.org>; Fri, 17 Dec 2021 08:22:57 -0800 (PST)
+        Fri, 17 Dec 2021 11:22:59 -0500
+Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77B61C061574
+        for <linux-tegra@vger.kernel.org>; Fri, 17 Dec 2021 08:22:59 -0800 (PST)
+Received: by mail-wm1-x32e.google.com with SMTP id b186-20020a1c1bc3000000b00345734afe78so1904043wmb.0
+        for <linux-tegra@vger.kernel.org>; Fri, 17 Dec 2021 08:22:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=G8pUod1rJ8BKM00tNDrqEm69jNJuPPsCXj/GPzLhEkg=;
-        b=qgcswfc2FeMKuVZJt9dTF9WELwWEHfzvuj3QJVngxi6Ew8rwMCnolub9lMsTh+nqXt
-         wdvmaPa1FmR+TuHHR5pKtlEnqY1c3R48UK9EyAW7Y8syaRNvQygo7W8ppSA4hh2fZO4R
-         VHBJX0X+TKIgFYicVLHZyVcp2Q/6f5PzmwuEZ7J4S2EsajM/DA5cTvIoQaX4Qpuazigl
-         6EUqCOscXP7fvjE8HtH49au1neBtnYH3FuYvqS3gNtHwDtauUGC4iE3KxlDD9mQXDVjW
-         gxWe7JIuizEGnBi5BBi0ZY9EJmiXkJpRvf3Npvzi4Jyt+OS9btFrv/bAC24g7wKaZyBv
-         OawQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=1mK0r/9xUuE63DtKuCJhcveUtYFPRvoBOsKNoXyCrPA=;
+        b=VM8/lLDXMOd+hUZfrJAyMOvCYcS36Sy6Sm4r7VxDJ5vLiRJuX4RAmz++RQMnPwGRjy
+         IMvPhKNZ3upPL5kycR/PpqRfUAXu5IttI11mmhPAUC0BuLsB6RdNkEiNR78GA6facdr1
+         CDNg9dnvezxuVqGxmC5zeAk8Td5HIwxuaaLEzlTSJMNR+V9GdYc7qROzQWhyHYl/CFqA
+         190jbD+SdN4LgDsxaKX/wv0pG7/pOw0DyRNqHszEykOdnRCyWvHyiVnGBpchUnf82M3l
+         So2tmaz3Y/xWhh7Vcme2qxE4WA2tQ6aZmFAi/jyPQNXmNJ+3YaqCZwl6XyEVTt1xwqhN
+         CUMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=G8pUod1rJ8BKM00tNDrqEm69jNJuPPsCXj/GPzLhEkg=;
-        b=4uOJUTZ4658J9QoWhskOrfHm5XA5QAaIwfh2bqIAZltHDKZ0L2LHqycMaQ1f1D7tOV
-         OdVjufKoLj/l9PC0NqDCqRWU0y9HdP/y5u291YC4r2RVwlwwiqe0DhCk3qjSDzCdNkXC
-         Z23oTdhmNrKCpbAU1SDvyyyXPYQvVVG4oH+V1NSSqs9oAV+1ecNh4hXnAW9IrH/mu9SR
-         +14mx/ZVc3O2UwrgIoprXHoAn2RF2CFbBfwBwiOOB/pr6dbfIdiq+WqjUBsb9gGVPc2c
-         ESxHDyg3Om727IpZ96X9gdXQ5kQ7P3XpWhFh7thOzVlSRLbjzAo/6syThzWA8e8AOltG
-         E+rQ==
-X-Gm-Message-State: AOAM532W2wLaBGR/ofzSYmkhnHuAXFLQv6kfL9ayNGxEHw//E/+5z6VG
-        f8L9kKp8jR+q46E3shbeCdY=
-X-Google-Smtp-Source: ABdhPJz/bOkEs4384vt3/kweTJfOmZ0H7sRcry48HWvxwFLtpAuSa+XR8tfOaFtLOPySt0urpAtWqg==
-X-Received: by 2002:a05:6000:1449:: with SMTP id v9mr1396032wrx.280.1639758175667;
-        Fri, 17 Dec 2021 08:22:55 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=1mK0r/9xUuE63DtKuCJhcveUtYFPRvoBOsKNoXyCrPA=;
+        b=tbigApRfjBIYvHhQzSCCalhFdaksJFGaGEUxq3bh0AIOuVgwF4Hf6BTvgBCH4Nu72T
+         wHdVFkjPpw8dAjIkHzQPQOUfkDq4fY/WaBdPi7miRCkQivMIJ4n2ug/XlSDQdNdyS0O8
+         IoNLz0kZ9ykeXE5wHoNe9/jlnPLfCiNRC0miWvDDoW7foKVB/pUxhwVqPetQPIRbda7l
+         GaYkP51Xfb14Deez+j0qt0vjkgj+cQH4+2BCDAZUZI/UEatoDdLQ5HvzPYXetjhPJap+
+         Cn51t4FiwlOifD4SNX3FoxcWgn8b87IsEIsLv+/bOChCS+T+ma16fyoGooPDUp2S23d4
+         1sFQ==
+X-Gm-Message-State: AOAM531kJnIrqYAEbm8oF68M5qUV8kRdx8FgQ//aUxpZrcC02WHxIDEX
+        jd8+Xb2GeLXrVHr8hYU5H9A=
+X-Google-Smtp-Source: ABdhPJw+akvRiJCruMuiEPgxbuNFe3BiGD8LAiDrZWdaMpw1V6oo/FSXtPorZpI92aj0+2egXxHnrQ==
+X-Received: by 2002:a05:600c:4e07:: with SMTP id b7mr10245702wmq.8.1639758178019;
+        Fri, 17 Dec 2021 08:22:58 -0800 (PST)
 Received: from localhost ([193.209.96.43])
-        by smtp.gmail.com with ESMTPSA id d1sm7536400wrz.92.2021.12.17.08.22.54
+        by smtp.gmail.com with ESMTPSA id bd19sm592741wmb.23.2021.12.17.08.22.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Dec 2021 08:22:55 -0800 (PST)
+        Fri, 17 Dec 2021 08:22:57 -0800 (PST)
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     arm@kernel.org, soc@kernel.org
 Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [GIT PULL 1/6] soc/tegra: Changes for v5.17-rc1
-Date:   Fri, 17 Dec 2021 17:22:48 +0100
-Message-Id: <20211217162253.1801077-1-thierry.reding@gmail.com>
+Subject: [GIT PULL 2/6] drivers: Changes for v5.17-rc1
+Date:   Fri, 17 Dec 2021 17:22:49 +0100
+Message-Id: <20211217162253.1801077-2-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20211217162253.1801077-1-thierry.reding@gmail.com>
+References: <20211217162253.1801077-1-thierry.reding@gmail.com>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -72,44 +74,45 @@ The following changes since commit fa55b7dcdc43c1aa1ba12bca9d2dd4318c2a0dbf:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.17-soc
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.17-drivers
 
-for you to fetch changes up to 81c4c86c66650f61c6d7a712737d43a3e4d072bf:
+for you to fetch changes up to e0abae19535504cc012a32c98619c07ace8a91aa:
 
-  soc/tegra: pmc: Rename core power domain (2021-12-16 14:03:38 +0100)
+  media: staging: tegra-vde: Support generic power domain (2021-12-16 14:05:24 +0100)
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-soc/tegra: Changes for v5.17-rc1
+drivers: Changes for v5.17-rc1
 
-This set of changes contains some preparatory work that is shared by
-several branches and trees to support DVFS via power domains.
-
-There's also a bit of cleanup and improvements to reboot on chips that
-use PSCI.
+This is an assortment of driver patches that rely on some of the changes
+in the for-5.17/soc branch. These have all been acked by the respective
+maintainers and go through the Tegra tree to more easily handle the
+build dependency.
 
 ----------------------------------------------------------------
-Dmitry Osipenko (8):
+Dmitry Osipenko (9):
       soc/tegra: Enable runtime PM during OPP state-syncing
       soc/tegra: Add devm_tegra_core_dev_init_opp_table_common()
-      soc/tegra: Don't print error message when OPPs not available
-      soc/tegra: fuse: Reset hardware
-      soc/tegra: fuse: Use resource-managed helpers
-      soc/tegra: regulators: Prepare for suspend
-      soc/tegra: pmc: Rename 3d power domains
-      soc/tegra: pmc: Rename core power domain
+      usb: chipidea: tegra: Add runtime PM and OPP support
+      bus: tegra-gmi: Add runtime PM and OPP support
+      pwm: tegra: Add runtime PM and OPP support
+      mmc: sdhci-tegra: Add runtime PM and OPP support
+      mtd: rawnand: tegra: Add runtime PM and OPP support
+      spi: tegra20-slink: Add OPP support
+      media: staging: tegra-vde: Support generic power domain
 
-Jon Hunter (1):
-      soc/tegra: pmc: Add reboot notifier
+Thierry Reding (1):
+      Merge branch 'tegra-for-5.17-soc-opp' of git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux into for-5.17/drivers
 
- drivers/soc/tegra/common.c             |  29 +++++++-
- drivers/soc/tegra/fuse/fuse-tegra.c    |  51 +++++++++++---
- drivers/soc/tegra/fuse/fuse-tegra20.c  |  33 ++++++++-
- drivers/soc/tegra/fuse/fuse.h          |   1 +
- drivers/soc/tegra/pmc.c                |  41 ++++++++---
- drivers/soc/tegra/regulators-tegra20.c |  99 ++++++++++++++++++++++++++
- drivers/soc/tegra/regulators-tegra30.c | 122 +++++++++++++++++++++++++++++++++
- include/soc/tegra/common.h             |  15 ++++
- 8 files changed, 366 insertions(+), 25 deletions(-)
+ drivers/bus/tegra-gmi.c               | 50 ++++++++++++++++++---
+ drivers/mmc/host/sdhci-tegra.c        | 81 +++++++++++++++++++++++++++-------
+ drivers/mtd/nand/raw/tegra_nand.c     | 58 +++++++++++++++++++++----
+ drivers/pwm/pwm-tegra.c               | 82 +++++++++++++++++++++++++++--------
+ drivers/soc/tegra/common.c            | 25 +++++++++++
+ drivers/spi/spi-tegra20-slink.c       |  9 +++-
+ drivers/staging/media/tegra-vde/vde.c | 63 ++++++++++++++++++++++-----
+ drivers/usb/chipidea/ci_hdrc_tegra.c  | 53 +++++++++++++++++++---
+ include/soc/tegra/common.h            | 15 +++++++
+ 9 files changed, 369 insertions(+), 67 deletions(-)
