@@ -2,155 +2,119 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2C31C433EF
-	for <linux-tegra@archiver.kernel.org>; Fri, 17 Dec 2021 18:05:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68DD8C433F5
+	for <linux-tegra@archiver.kernel.org>; Fri, 17 Dec 2021 21:14:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235822AbhLQSFS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 17 Dec 2021 13:05:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38336 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232748AbhLQSFR (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 17 Dec 2021 13:05:17 -0500
-Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 513F2C061574;
-        Fri, 17 Dec 2021 10:05:17 -0800 (PST)
-Received: by mail-lj1-x22b.google.com with SMTP id 13so4560313ljj.11;
-        Fri, 17 Dec 2021 10:05:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=TfMBvuPX2wgd5B4i9WzScZ4xJDbFLe7nDXiaKwSnRqo=;
-        b=lLuPe83qA2TPyZ90TpYoRINS+4fMhqGeIv3mHp8yHHW2I7lThzCxthnx0N6YPEHNqr
-         IcmZIW6fFcdD5IneEq0bADRMX+XoM1rhkuM8+/YrEurXU62UheYOQxJD9ZSzQTOWNrxP
-         1esazbMTAq761cFb22R7GFXqiksjN0Iq3LVC9Qx9FtcNLmIQan5LSSx+BYEI9KQokc/r
-         rXtQDs0GXgzd5YfM4zeW1o2ABGq4Us/iAFhSipTWMSyBZEhnBwcbexICvhS222jhfZrt
-         3rfsRzxpXwFHdRERwKEZJDDFhxrpULvk4Jqj0ofPhN4Aqdk1Kq46LZ6qzPFrkDAWg/5z
-         NoWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=TfMBvuPX2wgd5B4i9WzScZ4xJDbFLe7nDXiaKwSnRqo=;
-        b=z9oHTQ2LTH6ayP8PAMrV1Dto4UMNq/Ak5aW1eqakt/k+up6GrJ8xeq2iRQ23lOjBA4
-         8IjTTDgHLag1gybJog8noCnj7h5RDMkMO1PFBvwAmLFxwoOHNV1UG2mJRP2KbeEYFzgH
-         emHMOYw4sDYrACBRK6QMtG3IiS4BkTexBvRiS4fR4LcjtZkwPxRKAyGoVaxvvQV6gm0m
-         cNCigpQuoINUkKOWGGOen4mW/vWBRLWj3/wvOFhf+E8kSo0SDnN+8M3kNrYO3XOljvYt
-         qayoDu6Nvrz4cNRbzrt6ZvlesqaTiysitEx2fSkhHBDbVX3Qi96Ews46HkbFYF9kt3tS
-         tyrA==
-X-Gm-Message-State: AOAM531VwOEU4H80ztpqJUyu8yk3LjnREM0t0b4Li6ICZ0zIsjkYsT1F
-        qITLKyqLOk6nCqskQoekC5ztvIq4Xls=
-X-Google-Smtp-Source: ABdhPJz1FVHSMGSmE2Wy7Rd1zrsuOxe4lGKW7e0DD9WOJgs+K7rhRmtZ7AWxOjbcwTSyRKOHPx0oHw==
-X-Received: by 2002:a05:651c:b0e:: with SMTP id b14mr3769307ljr.38.1639764315476;
-        Fri, 17 Dec 2021 10:05:15 -0800 (PST)
-Received: from [192.168.2.145] (94-29-63-156.dynamic.spd-mgts.ru. [94.29.63.156])
-        by smtp.googlemail.com with ESMTPSA id k13sm1475964lfo.300.2021.12.17.10.05.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 17 Dec 2021 10:05:15 -0800 (PST)
-Subject: Re: [PATCH v5 00/11] Support HDMI audio on NVIDIA Tegra20
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Agneli <poczt@protonmail.ch>
-Cc:     linux-tegra@vger.kernel.org, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <20211217175606.22645-1-digetx@gmail.com>
-Message-ID: <019854ed-e181-eb81-8d91-2b598911b174@gmail.com>
-Date:   Fri, 17 Dec 2021 21:05:14 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+        id S240069AbhLQVOi (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 17 Dec 2021 16:14:38 -0500
+Received: from mga12.intel.com ([192.55.52.136]:11171 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S236219AbhLQVOh (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Fri, 17 Dec 2021 16:14:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1639775677; x=1671311677;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=PKD8agw6OrHky9JhV5gyaeJZna8zqKMQWp+esUG9fLg=;
+  b=ZcwQbWYTTLqm484SFVq1Z8fBuGLfhKeujns+zXyttujpJFnaQ6+FQukY
+   rzTNwDAipKwTxAS+krgr1esAegrWu0fZcHEOe65VRsHL0vKr/lPZ7r7mq
+   WyI0gTX9NmmeaJGgs0ACJqQH2529pPfULRvA6nW1lgyuTTnImO/8OscCg
+   VwmRyNCbx1XXeo4xWTAgVB4gHEqSNvvgXTCCsKOImGojqm8TOONZzDeFh
+   kJ0MM2mCKXicuzHqQn8pbeWlWffcZ/I2oA25AAwg+3NAjT9INCGhENfZ4
+   Br/9DrIwk1lf1XhuebsOJuVR01FilkTaUg8hEWzhybXiOnfPIs6L0Dqby
+   g==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10201"; a="219849002"
+X-IronPort-AV: E=Sophos;i="5.88,214,1635231600"; 
+   d="scan'208";a="219849002"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Dec 2021 13:14:37 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.88,214,1635231600"; 
+   d="scan'208";a="569138237"
+Received: from lkp-server02.sh.intel.com (HELO 9f38c0981d9f) ([10.239.97.151])
+  by fmsmga008.fm.intel.com with ESMTP; 17 Dec 2021 13:14:34 -0800
+Received: from kbuild by 9f38c0981d9f with local (Exim 4.92)
+        (envelope-from <lkp@intel.com>)
+        id 1myKYj-0005DT-UD; Fri, 17 Dec 2021 21:14:33 +0000
+Date:   Sat, 18 Dec 2021 05:13:48 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Sumit Gupta <sumitg@nvidia.com>, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, robh+dt@kernel.org
+Cc:     kbuild-all@lists.01.org, sumitg@nvidia.com, bbasu@nvidia.com,
+        vsethi@nvidia.com, jsequeira@nvidia.com
+Subject: Re: [Patch v2 5/9] soc: tegra: cbb: Add CBB1.0 driver for Tegra194
+Message-ID: <202112180528.6oINgaDF-lkp@intel.com>
+References: <20211217120656.16480-6-sumitg@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <20211217175606.22645-1-digetx@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211217120656.16480-6-sumitg@nvidia.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-17.12.2021 20:55, Dmitry Osipenko пишет:
-> This series revives Tegra20 S/PDIF driver which was upstreamed long time
-> ago, but never was used. It also turns Tegra DRM HDMI driver into HDMI
-> audio CODEC provider. Finally, HDMI audio is enabled in device-trees.
-> For now the audio is enable only for Acer A500 tablet and Toshiba AC100
-> netbook because they're already supported by upstream, later on ASUS TF101
-> tablet will join them.
-> 
-> (!) These patches are made on top of stable dmaengine branch from Vinod Koul.
-> 
-> The following changes since commit fa55b7dcdc43c1aa1ba12bca9d2dd4318c2a0dbf:
-> 
->   Linux 5.16-rc1 (2021-11-14 13:56:52 -0800)
-> 
-> are available in the Git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/vkoul/dmaengine.git tags/dmaengine_topic_slave_id_removal_5.17
-> 
-> for you to fetch changes up to 3c219644075795a99271d345efdfa8b256e55161:
-> 
->   dmaengine: remove slave_id config field (2021-12-17 11:23:56 +0530)
-> 
-> Changelog:
-> 
-> v5: - Dropped all patches that were already applied by Thierry Reding.
-> 
->     - Made minor changes that were suggested by Thierry Reding.
-> 
->     - Added acks from Thierry Reding.
-> 
->     - Rebased patches on top of stable dmaengine branch from Vinod Koul.
-> 
-> v4: - Added patches that update multi_v7_defconfig with the enabled S/PDIF
->       and APB DMA drivers.
-> 
-> v3: - Renamed S/PDIF device-tree clocks as was suggested by Rob Herring.
-> 
->     - Added r-bs and acks that were given by Rob Herring to v2.
-> 
-> v2: - Corrected I2S yaml problem that was reported by the DT bot for v1
->       by removing the non-existent required clock-names property.
-> 
->     - Removed assigned-clocks property from S/PDIF yaml since this property
->       is now inherited from the clocks property.
-> 
->     - Reordered the "tegra20: spdif: Set FIFO trigger level" patch, making
->       it the first sound/soc patch in the series, like it was suggested by
->       Mark Brown in the comment to v1. Also reworded commit message of this
->       patch to *not* make it looks like it should be backported to stable
->       kernels.
-> 
-> Dmitry Osipenko (11):
->   ASoC: dt-bindings: Add binding for Tegra20 S/PDIF
->   ASoC: dt-bindings: tegra20-i2s: Convert to schema
->   ASoC: dt-bindings: tegra20-i2s: Document new nvidia,fixed-parent-rate
->     property
->   ASoC: tegra20: spdif: Set FIFO trigger level
->   ASoC: tegra20: spdif: Support device-tree
->   ASoC: tegra20: spdif: Improve driver's code
->   ASoC: tegra20: spdif: Use more resource-managed helpers
->   ASoC: tegra20: spdif: Reset hardware
->   ASoC: tegra20: spdif: Support system suspend
->   ASoC: tegra20: spdif: Filter out unsupported rates
->   ASoC: tegra20: i2s: Filter out unsupported rates
-> 
->  .../bindings/sound/nvidia,tegra20-i2s.txt     |  30 ---
->  .../bindings/sound/nvidia,tegra20-i2s.yaml    |  77 +++++++
->  .../bindings/sound/nvidia,tegra20-spdif.yaml  |  85 ++++++++
->  sound/soc/tegra/tegra20_i2s.c                 |  49 +++++
->  sound/soc/tegra/tegra20_spdif.c               | 198 +++++++++++++-----
->  sound/soc/tegra/tegra20_spdif.h               |   1 +
->  sound/soc/tegra/tegra_pcm.c                   |   6 +
->  sound/soc/tegra/tegra_pcm.h                   |   1 +
->  8 files changed, 359 insertions(+), 88 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra20-i2s.txt
->  create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra20-i2s.yaml
->  create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra20-spdif.yaml
-> 
+Hi Sumit,
 
-Mark, I see that you already applied previous v4 to broonie/misc. Please
-skip this v5 then, thanks!
+Thank you for the patch! Perhaps something to improve:
+
+[auto build test WARNING on robh/for-next]
+[also build test WARNING on tegra-drm/drm/tegra/for-next v5.16-rc5 next-20211217]
+[cannot apply to tegra/for-next]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch]
+
+url:    https://github.com/0day-ci/linux/commits/Sumit-Gupta/CBB-driver-for-Tegra194-Tegra234-Tegra-Grace/20211217-200840
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
+config: arm64-allyesconfig (https://download.01.org/0day-ci/archive/20211218/202112180528.6oINgaDF-lkp@intel.com/config)
+compiler: aarch64-linux-gcc (GCC) 11.2.0
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/0day-ci/linux/commit/4289c950622627160bdc937ad22a311db38f4ca8
+        git remote add linux-review https://github.com/0day-ci/linux
+        git fetch --no-tags linux-review Sumit-Gupta/CBB-driver-for-Tegra194-Tegra234-Tegra-Grace/20211217-200840
+        git checkout 4289c950622627160bdc937ad22a311db38f4ca8
+        # save the config file to linux build tree
+        mkdir build_dir
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.2.0 make.cross O=build_dir ARCH=arm64 SHELL=/bin/bash drivers/soc/tegra/cbb/
+
+If you fix the issue, kindly add following tag as appropriate
+Reported-by: kernel test robot <lkp@intel.com>
+
+All warnings (new ones prefixed by >>):
+
+   drivers/soc/tegra/cbb/tegra-cbb.c: In function 'print_cbb_err':
+>> drivers/soc/tegra/cbb/tegra-cbb.c:31:17: warning: function 'print_cbb_err' might be a candidate for 'gnu_printf' format attribute [-Wsuggest-attribute=format]
+      31 |                 seq_vprintf(file, fmt, args);
+         |                 ^~~~~~~~~~~
+
+
+vim +31 drivers/soc/tegra/cbb/tegra-cbb.c
+
+    22	
+    23	void print_cbb_err(struct seq_file *file, const char *fmt, ...)
+    24	{
+    25		va_list args;
+    26		struct va_format vaf;
+    27	
+    28		va_start(args, fmt);
+    29	
+    30		if (file) {
+  > 31			seq_vprintf(file, fmt, args);
+    32		} else {
+    33			vaf.fmt = fmt;
+    34			vaf.va = &args;
+    35			pr_crit("%pV", &vaf);
+    36		}
+    37	
+    38		va_end(args);
+    39	}
+    40	
+
+---
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
