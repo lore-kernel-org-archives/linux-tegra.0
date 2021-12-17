@@ -2,60 +2,60 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54C6AC433EF
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBD24C433F5
 	for <linux-tegra@archiver.kernel.org>; Fri, 17 Dec 2021 16:23:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238463AbhLQQXG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 17 Dec 2021 11:23:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42328 "EHLO
+        id S239084AbhLQQXH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 17 Dec 2021 11:23:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42342 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239082AbhLQQXE (ORCPT
+        with ESMTP id S239082AbhLQQXH (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 17 Dec 2021 11:23:04 -0500
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C9C3C061574
-        for <linux-tegra@vger.kernel.org>; Fri, 17 Dec 2021 08:23:04 -0800 (PST)
-Received: by mail-wr1-x431.google.com with SMTP id a18so5057990wrn.6
-        for <linux-tegra@vger.kernel.org>; Fri, 17 Dec 2021 08:23:04 -0800 (PST)
+        Fri, 17 Dec 2021 11:23:07 -0500
+Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9F85C061574
+        for <linux-tegra@vger.kernel.org>; Fri, 17 Dec 2021 08:23:06 -0800 (PST)
+Received: by mail-wr1-x430.google.com with SMTP id q16so5068021wrg.7
+        for <linux-tegra@vger.kernel.org>; Fri, 17 Dec 2021 08:23:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=yisB2sBDYOOSNkfBetYak0Yx/DrETgULS8zG4daqePQ=;
-        b=OMDj0tnPFCx7rdJ4n66c7jwfbEV5TbGi/2QsuYunV38JZhWQ9WIVhjFjylIr45saeH
-         JGDr9dmD5/l7Ed4wv0oo2riAAt32c+Z0Rv3UraHtnwbO+VlHzaoRbrPyRdpEXxjGuzuP
-         gyFXPIfu+BLWjrSWOmDFVjaRUZlMuXDcWRXe1pYgIPNAPQCH3LVmps07Ii9DmLI6u3H+
-         znHJ6hTWQ2twmZMv8XtC+/cUcjc9gYOAo/3yYt1cRw8j7Wx1Z4jwqzTtWOcKcHZu8HTE
-         a9Mw4bE8h8z4iKpsjHiIpBEM6y7VCZ2M77K8uR8P/T2fyLdeHd6BoXlqZ5y0dMck6trR
-         6q+w==
+        bh=Pj4zcvWHSEKGVjWMUZ0syF7x+vXRKdMupJyIRJ0fx2k=;
+        b=eBcYxx5AGf3AWD7itGsaakYqClLa2twMqPKEWXPRfPM6mQIfmFYO4AQw6jv3TEQN0i
+         PJgRf0aS/PDnQdNyP3y3r+XYWfRQUbwo0DztV29KTnL3xMT4BZua+KwI2JqtMFEH15Yl
+         bjWtFmQZjLzsD2kF4/9OhWqLNVlhx5Q/RidpE8n7bnfkHQag5BNkPd0GDtRN+vyGnd4G
+         9mjoZrPbtZp5X5hE3JtCV32l5r3WT9JvfZJFCzoVFeUdfRliJk7UcNF1TZl4KlIVypX6
+         +y8U1im2OKVRJ8EHmVkPpA2tttc3SOwXIZ5lrX6V8cMZqerL+3XpPJtwzVCh6+gSW2yJ
+         qJ4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=yisB2sBDYOOSNkfBetYak0Yx/DrETgULS8zG4daqePQ=;
-        b=3cQsz/2lQc7ph6bQhlJDMxXYUIb+SFSiM9sgTz0P2yt1e9VnviWRCjdCsbvgwRlrwx
-         nGjWTMZvQtL27aLH73X23S/MtefXca4XFHnCDqRlqPrtyLcVMSUlJJkaW6waQ5Fj6xBz
-         j09RoXg2FNiqmOYdRtcJZyWlmWhBcvDheoMgsXrgzUBzlZwZqzGwJ5XFMKcBAdEB49tn
-         Ir4Rq/o8XWdGoO5Vw2vGzl/dDCXlHakpIe4u/VJTG6JnOLbzozs1rLu39Vis0L+tjyg9
-         q1MXN5Ai0RZ+DupiuoxSOJBiAK8evUXAPPQwGOrvVkqiqud4K4uvogqNOCPm5N6zytJu
-         mw1Q==
-X-Gm-Message-State: AOAM530xIaYpts5iVcuU1neJN19tY03Qfxg2F0vg+tFrE0ezf6xPfq7/
-        pvkpahgsvkrKAb9EKDa5PMw=
-X-Google-Smtp-Source: ABdhPJydA+0Y50jNwlA466rohG9flJZ+NbDOIQaS9J4G5uwRNEiqf6zwCDo7tNvSoUPZPqBx1tSmQg==
-X-Received: by 2002:adf:c74f:: with SMTP id b15mr3104681wrh.276.1639758182735;
-        Fri, 17 Dec 2021 08:23:02 -0800 (PST)
+        bh=Pj4zcvWHSEKGVjWMUZ0syF7x+vXRKdMupJyIRJ0fx2k=;
+        b=yJTBqKfZiYd2PeTfrkSalq+J0T34xoqNE+JShy4Z8+tGIVYPUr0qLgknwD40IPpC66
+         Lx+BqpoWhwyw7BLejg4q0cnZAoUlsKWnQ8gh3GD2K2L3sGtYz6PaqeoSCpilZYrWIESH
+         Upx0MdlM/BHQ1+QVPJ1I2+ZOYlmN3IrmfYVfNsqrOVYr+WW56qTDzieu5Lu1BUjU+ICm
+         lpp/t2h+RpKPTPXH0nWQ5VGIYFXEmFmH+9H7Ph+SRRR2hhwVYrlHUH+fZj+YflXcWNWf
+         fEFFcRac3ZFAXzz6NolweC+y/mlNg//cN4PXN1u3otjeWCtfKR5RJ9fnxmj8XgQPPrkv
+         WXSw==
+X-Gm-Message-State: AOAM532Vr+WHZ++4XtTI6k88/eGKxH5cYcSlBHs7D7LRyYJl5ohHRPH4
+        odwEsAE9Mxyx5Uhh+nxmii8=
+X-Google-Smtp-Source: ABdhPJyqJJc4RuVxkas2PjJnvGQ1T24gZQI50wZEhE+W7xT5oKXm9lQ1Zsj+Co5tjai6XleWLGHSzg==
+X-Received: by 2002:a5d:64c8:: with SMTP id f8mr3460047wri.158.1639758185189;
+        Fri, 17 Dec 2021 08:23:05 -0800 (PST)
 Received: from localhost ([193.209.96.43])
-        by smtp.gmail.com with ESMTPSA id g198sm8978790wme.23.2021.12.17.08.23.01
+        by smtp.gmail.com with ESMTPSA id 10sm9746674wrb.75.2021.12.17.08.23.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Dec 2021 08:23:02 -0800 (PST)
+        Fri, 17 Dec 2021 08:23:04 -0800 (PST)
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     arm@kernel.org, soc@kernel.org
 Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [GIT PULL 4/6] arm64: tegra: Device tree changes for v5.17-rc1
-Date:   Fri, 17 Dec 2021 17:22:51 +0100
-Message-Id: <20211217162253.1801077-4-thierry.reding@gmail.com>
+Subject: [GIT PULL 5/6] ARM: tegra: Changes for v5.17-rc1
+Date:   Fri, 17 Dec 2021 17:22:52 +0100
+Message-Id: <20211217162253.1801077-5-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20211217162253.1801077-1-thierry.reding@gmail.com>
 References: <20211217162253.1801077-1-thierry.reding@gmail.com>
@@ -74,119 +74,174 @@ The following changes since commit fa55b7dcdc43c1aa1ba12bca9d2dd4318c2a0dbf:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.17-arm64-dt
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.17-arm-dt
 
-for you to fetch changes up to 914ed1f56581f99094035f1cc989ab4498104e94:
+for you to fetch changes up to bd048487af68a9782ebccc3af6606e9e0d7d9f8b:
 
-  arm64: tegra: Add host1x hotflush reset on Tegra210 (2021-12-17 14:58:58 +0100)
+  ARM: tegra: Add host1x hotflush reset on Tegra124 (2021-12-17 14:55:32 +0100)
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-arm64: tegra: Device tree changes for v5.17-rc1
+ARM: tegra: Changes for v5.17-rc1
 
-The vast majority of this contains various updates and cleanups to the
-Tegra device trees that will eventually help validate all of them using
-the dt-schema infrastructure.
+A large part of this is cleanups to existing device trees in order to
+improve validation of the device trees using the dt-schema tooling.
 
-Another notable chunk of this contains additional Tegra234 support as
-well as support for the new Jetson AGX Orin Developer Kit.
+This also contains a set of new device trees for various boards that
+have been contributed by community members as well as fixes to existing
+devices.
 
 ----------------------------------------------------------------
-Jon Hunter (3):
-      arm64: tegra: Add NVENC and NVJPG nodes for Tegra186 and Tegra194
-      arm64: tegra: Add ISO SMMU controller for Tegra194
-      arm64: tegra: Add dma-coherent for Tegra194 VIC
+Anton Bambura (2):
+      ARM: tegra: Add device-tree for ASUS Transformer Pad TF701T
+      ARM: tegra: Enable video decoder on Tegra114
 
-Mikko Perttunen (6):
-      dt-bindings: Update headers for Tegra234
-      arm64: tegra: Add clock for Tegra234 RTC
-      arm64: tegra: Update Tegra234 BPMP channel addresses
-      arm64: tegra: Fill in properties for Tegra234 eMMC
-      arm64: tegra: Add Tegra234 TCU device
-      arm64: tegra: Add NVIDIA Jetson AGX Orin Developer Kit support
+David Heidelberg (2):
+      ARM: tegra: Rename top-level clocks
+      ARM: tegra: nexus7: Drop clock-frequency from NFC node
 
-Prathamesh Shete (2):
-      arm64: tegra: Add support to enumerate SD in UHS mode
-      arm64: tegra: Update SDMMC4 speeds for Tegra194
+Dmitry Osipenko (16):
+      ARM: tegra: Rename top-level regulators
+      ARM: tegra: Rename CPU and EMC OPP table device-tree nodes
+      ARM: tegra: Add device-tree for 1080p version of Nyan Big
+      ARM: tegra: Enable HDMI CEC on Nyan
+      ARM: tegra: Enable CPU DFLL on Nyan
+      ARM: tegra: Add CPU thermal zones to Nyan device-tree
+      ARM: tegra: Add 500 MHz entry to Tegra30 memory OPP table
+      ARM: tegra: Add OPP tables and power domains to Tegra20 device-trees
+      ARM: tegra: Add OPP tables and power domains to Tegra30 device-trees
+      ARM: tegra: Add Memory Client resets to Tegra20 GR2D, GR3D and Host1x
+      ARM: tegra: Add Memory Client resets to Tegra30 GR2D, GR3D and Host1x
+      ARM: tegra20/30: Disable unused host1x hardware
+      ARM: tegra: Add S/PDIF node to Tegra20 device-tree
+      ARM: tegra: Add HDMI audio graph to Tegra20 device-tree
+      ARM: tegra: acer-a500: Enable S/PDIF and HDMI audio
+      ARM: tegra: paz00: Enable S/PDIF and HDMI audio
 
-Thierry Reding (40):
-      dt-bindings: memory: tegra: Update for Tegra194
-      dt-bindings: memory: tegra: Add Tegra234 support
-      Merge tag 'tegra-for-5.17-dt-bindings-memory' into for-5.17/arm64/dt
-      arm64: tegra: Fixup SYSRAM references
-      arm64: tegra: Add main and AON GPIO controllers on Tegra234
-      arm64: tegra: Describe Tegra234 CPU hierarchy
-      arm64: tegra: Rename top-level clocks
-      arm64: tegra: Rename top-level regulators
-      arm64: tegra: Add native timer support on Tegra186
-      arm64: tegra: Fix unit-addresses on Norrin
-      arm64: tegra: Remove unsupported properties on Norrin
-      arm64: tegra: Fix compatible string for Tegra132 timer
-      arm64: tegra: Add OPP tables on Tegra132
-      arm64: tegra: Fix Tegra132 I2C compatible string list
-      arm64: tegra: Drop unused AHCI clocks on Tegra132
-      arm64: tegra: Sort Tegra132 XUSB clocks correctly
-      arm64: tegra: Rename thermal zones nodes
-      arm64: tegra: Rename power-monitor input nodes
-      arm64: tegra: Fix Tegra186 compatible string list
-      arm64: tegra: Adjust length of CCPLEX cluster MMIO region
-      arm64: tegra: Drop unit-address for audio card graph endpoints
-      arm64: tegra: Use JEDEC vendor prefix for SPI NOR flash chips
-      arm64: tegra: Drop unsupported nvidia,lpdr property
-      arm64: tegra: Fix Tegra194 HSP compatible string
-      arm64: tegra: Drop unused properties for Tegra194 PCIe
-      arm64: tegra: Remove undocumented Tegra194 PCIe "core_m" clock
-      arm64: tegra: Rename TCU node to "serial"
-      arm64: tegra: Remove unsupported regulator properties
-      arm64: tegra: Rename GPIO hog nodes to match schema
-      arm64: tegra: jetson-tx1: Remove extra PLL power supplies for PCIe and XUSB
-      arm64: tegra: smaug: Remove extra PLL power supplies for XUSB
-      arm64: tegra: jetson-nano: Remove extra PLL power supplies for PCIe and XUSB
-      arm64: tegra: Add missing TSEC properties on Tegra210
-      arm64: tegra: Sort Tegra210 XUSB clocks correctly
-      arm64: tegra: Remove unused only-1-8-v properties
-      arm64: tegra: Rename Ethernet PHY nodes
-      arm64: tegra: Add EMC general interrupt on Tegra194
-      arm64: tegra: Add memory controller on Tegra234
-      arm64: tegra: Hook up MMC and BPMP to memory controller
-      arm64: tegra: Add host1x hotflush reset on Tegra210
+Maxim Schwalm (2):
+      ARM: tegra: Add common device-tree for LVDS display panels of Tegra30 ASUS tablets
+      ARM: tegra: nexus7: Use common LVDS display device-tree
 
- .../memory-controllers/nvidia,tegra186-mc.yaml     |  98 +++-
- arch/arm64/boot/dts/nvidia/Makefile                |   1 +
- arch/arm64/boot/dts/nvidia/tegra132-norrin.dts     |  36 +-
- .../boot/dts/nvidia/tegra132-peripherals-opp.dtsi  | 426 ++++++++++++++++
- arch/arm64/boot/dts/nvidia/tegra132.dtsi           |  48 +-
- arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts |  20 +-
- arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi     |  20 +-
- .../dts/nvidia/tegra186-p3509-0000+p3636-0001.dts  |  32 +-
- arch/arm64/boot/dts/nvidia/tegra186.dtsi           |  95 +++-
- arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi     |  12 +-
- arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts |   8 +-
- .../arm64/boot/dts/nvidia/tegra194-p3509-0000.dtsi |  20 +-
- .../arm64/boot/dts/nvidia/tegra194-p3668-0000.dtsi |   2 +-
- arch/arm64/boot/dts/nvidia/tegra194-p3668.dtsi     |   2 +-
- arch/arm64/boot/dts/nvidia/tegra194.dtsi           | 231 +++++++--
- arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi     |   4 +-
- arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts |   3 -
- arch/arm64/boot/dts/nvidia/tegra210-p2530.dtsi     |   2 +-
- arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi     |  37 +-
- arch/arm64/boot/dts/nvidia/tegra210-p2894.dtsi     |  40 +-
- arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts |  53 +-
- arch/arm64/boot/dts/nvidia/tegra210-smaug.dts      |  22 +-
- arch/arm64/boot/dts/nvidia/tegra210.dtsi           |  27 +-
- .../arm64/boot/dts/nvidia/tegra234-p3701-0000.dtsi |  24 +
- .../dts/nvidia/tegra234-p3737-0000+p3701-0000.dts  |  24 +
- .../arm64/boot/dts/nvidia/tegra234-p3737-0000.dtsi |   5 +
- arch/arm64/boot/dts/nvidia/tegra234-sim-vdk.dts    |   1 -
- arch/arm64/boot/dts/nvidia/tegra234.dtsi           | 541 ++++++++++++++++++++-
- include/dt-bindings/clock/tegra234-clock.h         |  26 +-
- include/dt-bindings/memory/tegra234-mc.h           |  32 ++
- include/dt-bindings/reset/tegra234-reset.h         |  12 +-
- 31 files changed, 1606 insertions(+), 298 deletions(-)
- create mode 100644 arch/arm64/boot/dts/nvidia/tegra132-peripherals-opp.dtsi
- create mode 100644 arch/arm64/boot/dts/nvidia/tegra234-p3701-0000.dtsi
- create mode 100644 arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dts
- create mode 100644 arch/arm64/boot/dts/nvidia/tegra234-p3737-0000.dtsi
- create mode 100644 include/dt-bindings/memory/tegra234-mc.h
+Michał Mirosław (1):
+      ARM: tegra: Add device-tree for ASUS Transformer Pad TF300T
+
+Nikola Milosavljevic (1):
+      ARM: tegra: Add device-tree for ASUS Transformer EeePad TF101
+
+Stefan Agner (1):
+      ARM: tegra: Add back gpio-ranges properties
+
+Stefan Eichenberger (1):
+      ARM: tegra: Add usb-role-switch property to USB OTG ports
+
+Svyatoslav Ryhel (5):
+      ARM: tegra: Add common device-tree base for Tegra30 ASUS Transformers
+      ARM: tegra: Add device-tree for ASUS Transformer Prime TF201
+      ARM: tegra: Add device-tree for ASUS Transformer Pad TF300TG
+      ARM: tegra: Add device-tree for ASUS Transformer Infinity TF700T
+      ARM: tegra: Add device-tree for Pegatron Chagall
+
+Thierry Reding (24):
+      ARM: tegra: Clean up external memory controller nodes
+      ARM: tegra: Specify correct PMIC compatible on Tegra114 boards
+      ARM: tegra: Rename SPI flash chip nodes
+      ARM: tegra: Fix compatible string for Tegra114+ timer
+      ARM: tegra: Add #reset-cells for Tegra114 MC
+      ARM: tegra: Rename GPIO hog nodes to match schema
+      ARM: tegra: Rename GPU node on Tegra124
+      ARM: tegra: Drop reg-shift for Tegra HS UART
+      ARM: tegra: Rename thermal zone nodes
+      ARM: tegra: Fix Tegra124 I2C compatible string list
+      ARM: tegra: Drop unused AHCI clocks on Tegra124
+      ARM: tegra: Sort Tegra124 XUSB clocks correctly
+      ARM: tegra: Avoid pwm- prefix in pinmux nodes
+      ARM: tegra: Add compatible string for built-in ASIX on Colibri boards
+      ARM: tegra: Remove PHY reset GPIO references from USB controller node
+      ARM: tegra: Add dummy backlight power supplies
+      ARM: tegra: Use correct vendor prefix for Invensense
+      ARM: tegra: Remove unsupported properties on Apalis
+      ARM: tegra: Remove stray #reset-cells property
+      ARM: tegra: Fix SLINK compatible string on Tegra30
+      ARM: tegra: Fix I2C mux reset GPIO reference on Cardhu
+      ARM: tegra: Avoid phandle indirection on Ouya
+      ARM: tegra: Add memory client hotflush resets on Tegra114
+      ARM: tegra: Add host1x hotflush reset on Tegra124
+
+ arch/arm/boot/dts/Makefile                         |   10 +-
+ arch/arm/boot/dts/tegra114-asus-tf701t.dts         |  807 ++
+ arch/arm/boot/dts/tegra114-dalmore.dts             |   21 +-
+ arch/arm/boot/dts/tegra114-roth.dts                |   16 +-
+ arch/arm/boot/dts/tegra114-tn7.dts                 |   10 +-
+ arch/arm/boot/dts/tegra114.dtsi                    |   58 +-
+ arch/arm/boot/dts/tegra124-apalis-emc.dtsi         |  436 +-
+ arch/arm/boot/dts/tegra124-apalis-eval.dts         |    2 +-
+ arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts    |    2 +-
+ arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi        |   16 +-
+ arch/arm/boot/dts/tegra124-apalis.dtsi             |   16 +-
+ arch/arm/boot/dts/tegra124-jetson-tk1-emc.dtsi     |  652 +-
+ arch/arm/boot/dts/tegra124-jetson-tk1.dts          |   39 +-
+ arch/arm/boot/dts/tegra124-nyan-big-emc.dtsi       | 1782 ++---
+ arch/arm/boot/dts/tegra124-nyan-big-fhd.dts        |   11 +
+ arch/arm/boot/dts/tegra124-nyan-blaze-emc.dtsi     |  604 +-
+ arch/arm/boot/dts/tegra124-nyan.dtsi               |   86 +-
+ arch/arm/boot/dts/tegra124-peripherals-opp.dtsi    |  140 +-
+ arch/arm/boot/dts/tegra124-venice2.dts             |   35 +-
+ arch/arm/boot/dts/tegra124.dtsi                    |   45 +-
+ arch/arm/boot/dts/tegra20-acer-a500-picasso.dts    |   27 +-
+ arch/arm/boot/dts/tegra20-asus-tf101.dts           | 1280 +++
+ arch/arm/boot/dts/tegra20-colibri-eval-v3.dts      |    4 +-
+ arch/arm/boot/dts/tegra20-colibri-iris.dts         |    4 +-
+ arch/arm/boot/dts/tegra20-colibri.dtsi             |   18 +-
+ arch/arm/boot/dts/tegra20-cpu-opp-microvolt.dtsi   |   82 +-
+ arch/arm/boot/dts/tegra20-cpu-opp.dtsi             |   82 +-
+ arch/arm/boot/dts/tegra20-harmony.dts              |   21 +-
+ arch/arm/boot/dts/tegra20-medcom-wide.dts          |   11 +-
+ arch/arm/boot/dts/tegra20-paz00.dts                |   22 +-
+ arch/arm/boot/dts/tegra20-peripherals-opp.dtsi     |  948 ++-
+ arch/arm/boot/dts/tegra20-plutux.dts               |    8 +-
+ arch/arm/boot/dts/tegra20-seaboard.dts             |   23 +-
+ arch/arm/boot/dts/tegra20-tamonten.dtsi            |    7 +-
+ arch/arm/boot/dts/tegra20-tec.dts                  |    8 +-
+ arch/arm/boot/dts/tegra20-trimslice.dts            |   26 +-
+ arch/arm/boot/dts/tegra20-ventana.dts              |   15 +-
+ arch/arm/boot/dts/tegra20.dtsi                     |  162 +-
+ arch/arm/boot/dts/tegra30-apalis-eval.dts          |    2 +-
+ arch/arm/boot/dts/tegra30-apalis-v1.1-eval.dts     |    2 +-
+ arch/arm/boot/dts/tegra30-apalis-v1.1.dtsi         |    6 +-
+ arch/arm/boot/dts/tegra30-apalis.dtsi              |    6 +-
+ arch/arm/boot/dts/tegra30-asus-lvds-display.dtsi   |   61 +
+ .../dts/tegra30-asus-nexus7-grouper-common.dtsi    |   67 +-
+ .../tegra30-asus-nexus7-grouper-maxim-pmic.dtsi    |    4 +-
+ ...tegra30-asus-nexus7-grouper-memory-timings.dtsi |   12 +-
+ .../dts/tegra30-asus-nexus7-grouper-ti-pmic.dtsi   |    2 +-
+ arch/arm/boot/dts/tegra30-asus-nexus7-grouper.dtsi |    1 -
+ arch/arm/boot/dts/tegra30-asus-nexus7-tilapia.dtsi |    2 -
+ arch/arm/boot/dts/tegra30-asus-tf201.dts           |  627 ++
+ arch/arm/boot/dts/tegra30-asus-tf300t.dts          | 1034 +++
+ arch/arm/boot/dts/tegra30-asus-tf300tg.dts         | 1087 +++
+ arch/arm/boot/dts/tegra30-asus-tf700t.dts          |  823 ++
+ .../boot/dts/tegra30-asus-transformer-common.dtsi  | 1787 +++++
+ arch/arm/boot/dts/tegra30-beaver.dts               |   24 +-
+ arch/arm/boot/dts/tegra30-cardhu-a02.dts           |   12 +-
+ arch/arm/boot/dts/tegra30-cardhu-a04.dts           |   14 +-
+ arch/arm/boot/dts/tegra30-cardhu.dtsi              |   35 +-
+ arch/arm/boot/dts/tegra30-colibri.dtsi             |   25 +-
+ arch/arm/boot/dts/tegra30-cpu-opp-microvolt.dtsi   |  144 +-
+ arch/arm/boot/dts/tegra30-cpu-opp.dtsi             |  144 +-
+ arch/arm/boot/dts/tegra30-ouya.dts                 | 8149 ++++++++++----------
+ arch/arm/boot/dts/tegra30-pegatron-chagall.dts     | 2859 +++++++
+ arch/arm/boot/dts/tegra30-peripherals-opp.dtsi     | 1370 +++-
+ arch/arm/boot/dts/tegra30.dtsi                     |  189 +-
+ 65 files changed, 19640 insertions(+), 6384 deletions(-)
+ create mode 100644 arch/arm/boot/dts/tegra114-asus-tf701t.dts
+ create mode 100644 arch/arm/boot/dts/tegra124-nyan-big-fhd.dts
+ create mode 100644 arch/arm/boot/dts/tegra20-asus-tf101.dts
+ create mode 100644 arch/arm/boot/dts/tegra30-asus-lvds-display.dtsi
+ create mode 100644 arch/arm/boot/dts/tegra30-asus-tf201.dts
+ create mode 100644 arch/arm/boot/dts/tegra30-asus-tf300t.dts
+ create mode 100644 arch/arm/boot/dts/tegra30-asus-tf300tg.dts
+ create mode 100644 arch/arm/boot/dts/tegra30-asus-tf700t.dts
+ create mode 100644 arch/arm/boot/dts/tegra30-asus-transformer-common.dtsi
+ create mode 100644 arch/arm/boot/dts/tegra30-pegatron-chagall.dts
