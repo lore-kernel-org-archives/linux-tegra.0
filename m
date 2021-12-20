@@ -2,170 +2,252 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39792C433F5
-	for <linux-tegra@archiver.kernel.org>; Mon, 20 Dec 2021 10:49:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB187C433EF
+	for <linux-tegra@archiver.kernel.org>; Mon, 20 Dec 2021 11:03:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229912AbhLTKtG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 20 Dec 2021 05:49:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34428 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229823AbhLTKtG (ORCPT
+        id S230116AbhLTLDm (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 20 Dec 2021 06:03:42 -0500
+Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:57460
+        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230034AbhLTLDm (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 20 Dec 2021 05:49:06 -0500
-Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2965FC061574
-        for <linux-tegra@vger.kernel.org>; Mon, 20 Dec 2021 02:49:06 -0800 (PST)
-Received: by mail-wr1-x42e.google.com with SMTP id q16so19156647wrg.7
-        for <linux-tegra@vger.kernel.org>; Mon, 20 Dec 2021 02:49:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=nrFL+333nutm+Hk0ekrxwdiYsKgWdK607ZfAuwXbC20=;
-        b=T7I3MoFImxEfb2R1yvjGm629QFBhXTIbLj5TKWBHvBHRVeOkJ9cX2VoDfgSOpAGfg4
-         r5f+XusVW6sFrPPmKl6OtDKgMDWUot3HhheJJZUeAQWrDHVtFCy1LJTE0ydKsaGwy3xA
-         AKMOgmn15LQ35KSamW+j84sa+QRXMHe3EC1T3fa3WdmbellxHdRx/JMjINwxz0Kbmi18
-         wn6aPlGnVOT05Eu14zlmC8IBNwLU5vaVWZ+6D72dyI+QiG64Q+nQNd/VvO0yieKKH5l1
-         FjObcdanpreB9OnfuijM8Z9P2jaBk5DTpwXnQixaFPpX+7MvzNz0qkcSZZ4Tv/bR80C0
-         dbCQ==
+        Mon, 20 Dec 2021 06:03:42 -0500
+Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com [209.85.167.70])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id D96B63FFE9
+        for <linux-tegra@vger.kernel.org>; Mon, 20 Dec 2021 11:03:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1639998220;
+        bh=3+QEJ5yyjk03GvWAOtMzsA3wZ/2kgLuPexbg3WiiC0k=;
+        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+         In-Reply-To:Content-Type;
+        b=hvc5zA2FfKX8wyPxYdG89wryK4cLmpc4+DP59cM4cBYLY98+86kjQ1lgEE/ysLqIT
+         Gg+xB5UA6n1tIdI93LCZYeXUU0aTbDVQo/zl+JNWqQWFeQHdTgAoQwaGHF6v7yiZBZ
+         1CmHejJ8g1dPsIYotQbl6L6tKOemVwV6xaKEeld4HjxM6cdELMuw+7Ty98DpIv8H3z
+         oJS3Cb7VcIz+NeHQ2II3xjgq8VOZTxEIOlu3w4LVdJ0Hwv6tFG4FG2XEpkp8+mpiTK
+         LMWoyhrylIbrtRURECFEFrHTaSelBdQBMi4/1NS44CZf/50mp2BPU5n4cU2QbEqx7j
+         uokMEJee9dKdQ==
+Received: by mail-lf1-f70.google.com with SMTP id r21-20020ac25f95000000b004259e6ab262so2454709lfe.6
+        for <linux-tegra@vger.kernel.org>; Mon, 20 Dec 2021 03:03:40 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=nrFL+333nutm+Hk0ekrxwdiYsKgWdK607ZfAuwXbC20=;
-        b=ghs3T4tbXcSbDPOgBJCBewjAL+brXSXHCtU5lW/Aow0dAPNOqFZpDlFPzUQVNYCA8z
-         OloaYchCFynr18TIcHdGtc5IK0uiq5eS+Qt8WXZYh73/I6zrB1viiHM3YkA4dQP+WOIO
-         /P8MwiCYPdxXXVWxtaSQDlkmxz38XLPxiJHvr3/UXsOM1wjMByBxhAZDYmGFuHsS388D
-         G3nOkzvGxceykCTFTfLOLHKHXGFxN1ka+huUSaPLXJuTZTwgy8jfYFrkN5KBwBoZRcJj
-         /eXTsk4Wz2R59MQuKw5g+67dk5nSjSR5SQg6/JZe5B6jtS02VgjqqnEqg2b1jSwySsyn
-         kBgQ==
-X-Gm-Message-State: AOAM533VvxOlOupRymaVmDnFWzsN7M9vwSqwmpNRdLe5pA+fvfx5VThz
-        S9oPsYR9uvi0tpDpOhm3y1c=
-X-Google-Smtp-Source: ABdhPJwm5fpVKZp2T9VwXhSqDzKTLAGT0rtcfVRzy+CgaArOgHBbpKMHLhpwsY/JKyEc/VoqaV9fnQ==
-X-Received: by 2002:a5d:6c67:: with SMTP id r7mr277449wrz.350.1639997344760;
-        Mon, 20 Dec 2021 02:49:04 -0800 (PST)
-Received: from localhost ([193.209.96.43])
-        by smtp.gmail.com with ESMTPSA id 138sm18125767wma.17.2021.12.20.02.49.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Dec 2021 02:49:04 -0800 (PST)
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Dmitry Osipenko <digetx@gmail.com>,
-        Thomas Graichen <thomas.graichen@gmail.com>,
-        Douglas Anderson <dianders@chromium.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
-Subject: [PATCH 2/2] ARM: tegra: Move panels to AUX bus
-Date:   Mon, 20 Dec 2021 11:48:55 +0100
-Message-Id: <20211220104855.428290-3-thierry.reding@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20211220104855.428290-1-thierry.reding@gmail.com>
-References: <20211220104855.428290-1-thierry.reding@gmail.com>
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=3+QEJ5yyjk03GvWAOtMzsA3wZ/2kgLuPexbg3WiiC0k=;
+        b=WLFf5w7hI2HK7c2PGnloEYJ5heJ0B+cI4fapGkYlyssETqy17p7y/ArtWXqnhl+lxn
+         yhmJw70dG5ZjOR3OeYbme3qci7/1OZ/vZD17513Ikl3CHXTFODW00Y0fMpMcMLyp8MNz
+         ItcIB2Ffr5sbK7SR6kpODWsHGKIoZ4UOE3OgXi/NnvM3vNM0AREgAkHN57T6uCkpdM8/
+         7lhny5nIZz8j58zCHzUzbamjGTVAwnqocJu/LBdTuCP6xs1HEh5EMcjnaR4lnFhlGelp
+         peOiCQvkffQpfyUI/iawS5LIRe2VejupRM2cJ8T8AxSuY2o4GYNms8pJNRae9tv16ViY
+         iU9g==
+X-Gm-Message-State: AOAM530hkODcr2JYP5x/DwV+V4hp8sz5IJJ9jIszZl9CLjX8kjXHnVzm
+        3rPRYT/m2bhhIwiXna6Vt0kdgdtxgRz4bX58iw8a+5ODPqgq1PmXUq4TisGasXiHDTIbklmEyuT
+        hlFAwNnq7gFNqskFM1MpBRKamiljGgQ9XXRP8YQ8Y
+X-Received: by 2002:a05:6512:310e:: with SMTP id n14mr15346865lfb.167.1639998219877;
+        Mon, 20 Dec 2021 03:03:39 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJwBrhefRt7PNvZmDlAKXB1EpCP+JYBgyBstGV0t5KK1DqVBpBEde6XyUCpS9RuHAV+JCKfdLg==
+X-Received: by 2002:a05:6512:310e:: with SMTP id n14mr15346853lfb.167.1639998219665;
+        Mon, 20 Dec 2021 03:03:39 -0800 (PST)
+Received: from [192.168.3.67] (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
+        by smtp.gmail.com with ESMTPSA id bu11sm1560107lfb.15.2021.12.20.03.03.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 Dec 2021 03:03:37 -0800 (PST)
+Message-ID: <fc5601e7-40e7-03c5-a433-859539f82144@canonical.com>
+Date:   Mon, 20 Dec 2021 12:03:37 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.1
+Subject: Re: [PATCH v1] memory: tegra30-emc: Print additional memory info
+Content-Language: en-US
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Svyatoslav Ryhel <clamor95@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+References: <20211217234711.8353-1-digetx@gmail.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+In-Reply-To: <20211217234711.8353-1-digetx@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+On 18/12/2021 00:47, Dmitry Osipenko wrote:
+> Print out memory type and LPDDR2 configuration on Tegra30, making it
+> similar to the memory info printed by the Tegra20 memory driver. This
+> info is useful for debugging purposes.
+> 
+> Tested-by: Svyatoslav Ryhel <clamor95@gmail.com> # T30 ASUS TF201 LPDDR2
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/memory/tegra/Kconfig       |   1 +
+>  drivers/memory/tegra/tegra30-emc.c | 131 ++++++++++++++++++++++++++---
+>  2 files changed, 122 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/memory/tegra/Kconfig b/drivers/memory/tegra/Kconfig
+> index 7951764b4efe..3fe83d7c2bf8 100644
+> --- a/drivers/memory/tegra/Kconfig
+> +++ b/drivers/memory/tegra/Kconfig
+> @@ -28,6 +28,7 @@ config TEGRA30_EMC
+>  	default y
+>  	depends on ARCH_TEGRA_3x_SOC || COMPILE_TEST
+>  	select PM_OPP
+> +	select DDR
+>  	help
+>  	  This driver is for the External Memory Controller (EMC) found on
+>  	  Tegra30 chips. The EMC controls the external DRAM on the board.
+> diff --git a/drivers/memory/tegra/tegra30-emc.c b/drivers/memory/tegra/tegra30-emc.c
+> index 80f98d717e13..4c0432704f46 100644
+> --- a/drivers/memory/tegra/tegra30-emc.c
+> +++ b/drivers/memory/tegra/tegra30-emc.c
+> @@ -9,6 +9,7 @@
+>   * Copyright (C) 2019 GRATE-DRIVER project
+>   */
+>  
+> +#include <linux/bitfield.h>
+>  #include <linux/clk.h>
+>  #include <linux/clk/tegra.h>
+>  #include <linux/debugfs.h>
+> @@ -31,11 +32,15 @@
+>  #include <soc/tegra/common.h>
+>  #include <soc/tegra/fuse.h>
+>  
+> +#include "../jedec_ddr.h"
+> +#include "../of_memory.h"
+> +
+>  #include "mc.h"
+>  
+>  #define EMC_INTSTATUS				0x000
+>  #define EMC_INTMASK				0x004
+>  #define EMC_DBG					0x008
+> +#define EMC_ADR_CFG				0x010
+>  #define EMC_CFG					0x00c
+>  #define EMC_REFCTRL				0x020
+>  #define EMC_TIMING_CONTROL			0x028
+> @@ -81,6 +86,7 @@
+>  #define EMC_EMRS				0x0d0
+>  #define EMC_SELF_REF				0x0e0
+>  #define EMC_MRW					0x0e8
+> +#define EMC_MRR					0x0ec
+>  #define EMC_XM2DQSPADCTRL3			0x0f8
+>  #define EMC_FBIO_SPARE				0x100
+>  #define EMC_FBIO_CFG5				0x104
+> @@ -208,6 +214,13 @@
+>  
+>  #define EMC_REFRESH_OVERFLOW_INT		BIT(3)
+>  #define EMC_CLKCHANGE_COMPLETE_INT		BIT(4)
+> +#define EMC_MRR_DIVLD_INT			BIT(5)
+> +
+> +#define EMC_MRR_DEV_SELECTN			GENMASK(31, 30)
+> +#define EMC_MRR_MRR_MA				GENMASK(23, 16)
+> +#define EMC_MRR_MRR_DATA			GENMASK(15, 0)
+> +
+> +#define EMC_ADR_CFG_EMEM_NUMDEV			BIT(0)
+>  
+>  enum emc_dram_type {
+>  	DRAM_TYPE_DDR3,
+> @@ -378,6 +391,8 @@ struct tegra_emc {
+>  
+>  	/* protect shared rate-change code path */
+>  	struct mutex rate_lock;
+> +
+> +	bool mrr_error;
+>  };
+>  
+>  static int emc_seq_update_timing(struct tegra_emc *emc)
+> @@ -1008,12 +1023,18 @@ static int emc_load_timings_from_dt(struct tegra_emc *emc,
+>  	return 0;
+>  }
+>  
+> -static struct device_node *emc_find_node_by_ram_code(struct device *dev)
+> +static struct device_node *emc_find_node_by_ram_code(struct tegra_emc *emc)
+>  {
+> +	struct device *dev = emc->dev;
+>  	struct device_node *np;
+>  	u32 value, ram_code;
+>  	int err;
+>  
+> +	if (emc->mrr_error) {
+> +		dev_warn(dev, "memory timings skipped due to MRR error\n");
+> +		return NULL;
+> +	}
+> +
+>  	if (of_get_child_count(dev->of_node) == 0) {
+>  		dev_info_once(dev, "device-tree doesn't have memory timings\n");
+>  		return NULL;
+> @@ -1035,11 +1056,73 @@ static struct device_node *emc_find_node_by_ram_code(struct device *dev)
+>  	return NULL;
+>  }
+>  
+> +static int emc_read_lpddr_mode_register(struct tegra_emc *emc,
+> +					unsigned int emem_dev,
+> +					unsigned int register_addr,
+> +					unsigned int *register_data)
+> +{
+> +	u32 memory_dev = emem_dev + 1;
+> +	u32 val, mr_mask = 0xff;
+> +	int err;
+> +
+> +	/* clear data-valid interrupt status */
+> +	writel_relaxed(EMC_MRR_DIVLD_INT, emc->regs + EMC_INTSTATUS);
+> +
+> +	/* issue mode register read request */
+> +	val  = FIELD_PREP(EMC_MRR_DEV_SELECTN, memory_dev);
+> +	val |= FIELD_PREP(EMC_MRR_MRR_MA, register_addr);
+> +
+> +	writel_relaxed(val, emc->regs + EMC_MRR);
+> +
+> +	/* wait for the LPDDR2 data-valid interrupt */
+> +	err = readl_relaxed_poll_timeout_atomic(emc->regs + EMC_INTSTATUS, val,
+> +						val & EMC_MRR_DIVLD_INT,
+> +						1, 100);
+> +	if (err) {
+> +		dev_err(emc->dev, "mode register %u read failed: %d\n",
+> +			register_addr, err);
+> +		emc->mrr_error = true;
+> +		return err;
+> +	}
+> +
+> +	/* read out mode register data */
+> +	val = readl_relaxed(emc->regs + EMC_MRR);
+> +	*register_data = FIELD_GET(EMC_MRR_MRR_DATA, val) & mr_mask;
+> +
+> +	return 0;
+> +}
+> +
+> +static void emc_read_lpddr_sdram_info(struct tegra_emc *emc,
+> +				      unsigned int emem_dev)
+> +{
+> +	union lpddr2_basic_config4 basic_conf4;
+> +	unsigned int manufacturer_id;
+> +	unsigned int revision_id1;
+> +	unsigned int revision_id2;
+> +
+> +	/* these registers are standard for all LPDDR JEDEC memory chips */
+> +	emc_read_lpddr_mode_register(emc, emem_dev, 5, &manufacturer_id);
+> +	emc_read_lpddr_mode_register(emc, emem_dev, 6, &revision_id1);
+> +	emc_read_lpddr_mode_register(emc, emem_dev, 7, &revision_id2);
+> +	emc_read_lpddr_mode_register(emc, emem_dev, 8, &basic_conf4.value);
+> +
+> +	dev_info(emc->dev, "SDRAM[dev%u]: manufacturer: 0x%x (%s) rev1: 0x%x rev2: 0x%x prefetch: S%u density: %uMbit iowidth: %ubit\n",
+> +		 emem_dev, manufacturer_id,
+> +		 lpddr2_jedec_manufacturer(manufacturer_id),
+> +		 revision_id1, revision_id2,
+> +		 4 >> basic_conf4.arch_type,
+> +		 64 << basic_conf4.density,
+> +		 32 >> basic_conf4.io_width);
+> +}
+> +
 
-Move the eDP panel on Venice 2 and Nyan boards into the corresponding
-AUX bus device tree node. This allows us to avoid a nasty circular
-dependency that would otherwise be created between the DPAUX and panel
-nodes via the DDC/I2C phandle.
+Quickly looking, these two functions are exactly the same as ones in
+tegra20-emc.c
+. Later you might come up with another set for other SoCs, so it looks
+it is worth to share these.
 
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- arch/arm/boot/dts/tegra124-nyan-big.dts   | 15 +++++++++------
- arch/arm/boot/dts/tegra124-nyan-blaze.dts | 15 +++++++++------
- arch/arm/boot/dts/tegra124-venice2.dts    | 14 +++++++-------
- 3 files changed, 25 insertions(+), 19 deletions(-)
 
-diff --git a/arch/arm/boot/dts/tegra124-nyan-big.dts b/arch/arm/boot/dts/tegra124-nyan-big.dts
-index 1d2aac2cb6d0..fdc1d64dfff9 100644
---- a/arch/arm/boot/dts/tegra124-nyan-big.dts
-+++ b/arch/arm/boot/dts/tegra124-nyan-big.dts
-@@ -13,12 +13,15 @@ / {
- 		     "google,nyan-big-rev1", "google,nyan-big-rev0",
- 		     "google,nyan-big", "google,nyan", "nvidia,tegra124";
- 
--	panel: panel {
--		compatible = "auo,b133xtn01";
--
--		power-supply = <&vdd_3v3_panel>;
--		backlight = <&backlight>;
--		ddc-i2c-bus = <&dpaux>;
-+	host1x@50000000 {
-+		dpaux@545c0000 {
-+			aux-bus {
-+				panel: panel {
-+					compatible = "auo,b133xtn01";
-+					backlight = <&backlight>;
-+				};
-+			};
-+		};
- 	};
- 
- 	mmc@700b0400 { /* SD Card on this bus */
-diff --git a/arch/arm/boot/dts/tegra124-nyan-blaze.dts b/arch/arm/boot/dts/tegra124-nyan-blaze.dts
-index 677babde6460..abdf4456826f 100644
---- a/arch/arm/boot/dts/tegra124-nyan-blaze.dts
-+++ b/arch/arm/boot/dts/tegra124-nyan-blaze.dts
-@@ -15,12 +15,15 @@ / {
- 		     "google,nyan-blaze-rev0", "google,nyan-blaze",
- 		     "google,nyan", "nvidia,tegra124";
- 
--	panel: panel {
--		compatible = "samsung,ltn140at29-301";
--
--		power-supply = <&vdd_3v3_panel>;
--		backlight = <&backlight>;
--		ddc-i2c-bus = <&dpaux>;
-+	host1x@50000000 {
-+		dpaux@545c0000 {
-+			aux-bus {
-+				panel: panel {
-+					compatible = "samsung,ltn140at29-301";
-+					backlight = <&backlight>;
-+				};
-+			};
-+		};
- 	};
- 
- 	sound {
-diff --git a/arch/arm/boot/dts/tegra124-venice2.dts b/arch/arm/boot/dts/tegra124-venice2.dts
-index 232c90604df9..6a9592ceb5f2 100644
---- a/arch/arm/boot/dts/tegra124-venice2.dts
-+++ b/arch/arm/boot/dts/tegra124-venice2.dts
-@@ -48,6 +48,13 @@ sor@54540000 {
- 		dpaux@545c0000 {
- 			vdd-supply = <&vdd_3v3_panel>;
- 			status = "okay";
-+
-+			aux-bus {
-+				panel: panel {
-+					compatible = "lg,lp129qe";
-+					backlight = <&backlight>;
-+				};
-+			};
- 		};
- 	};
- 
-@@ -1080,13 +1087,6 @@ power {
- 		};
- 	};
- 
--	panel: panel {
--		compatible = "lg,lp129qe";
--		power-supply = <&vdd_3v3_panel>;
--		backlight = <&backlight>;
--		ddc-i2c-bus = <&dpaux>;
--	};
--
- 	vdd_mux: regulator-mux {
- 		compatible = "regulator-fixed";
- 		regulator-name = "+VDD_MUX";
--- 
-2.34.1
-
+Best regards,
+Krzysztof
