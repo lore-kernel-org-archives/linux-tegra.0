@@ -2,135 +2,100 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE197C433EF
-	for <linux-tegra@archiver.kernel.org>; Mon, 20 Dec 2021 18:25:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7739C433EF
+	for <linux-tegra@archiver.kernel.org>; Mon, 20 Dec 2021 18:42:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240423AbhLTSZq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 20 Dec 2021 13:25:46 -0500
-Received: from mail-dm6nam12on2067.outbound.protection.outlook.com ([40.107.243.67]:43104
-        "EHLO NAM12-DM6-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S236730AbhLTSZp (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 20 Dec 2021 13:25:45 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=eP5dTTDvGrNqg+D012DLRSpoWfBluxRAAnZZYvsqnwfZ27Had3H256OljWTbR7i0wKQG3CzaWGniQvrQ7+eOvQbFx7hOdZCeiwfDxMC9hT9T2DAQyC8vFEKQ0zPxHDN56MvuUCV8OmKVymHdh/RABquQX9T1uO+pnH2wm5xZ2B8NAesmZtWbUX19USq4hg+4mc3gUh+CCmkehkWnbWILBvpOXRlE+5Ar85yHnd55rY+ZVK3uE54QqpASL2vqBP3fhV7qFBrJQlWz2+NR86rwBaPyFUuRxjOvhmGQQo5cyGpjtPeWuycdKA7Xx8Iw1OtQ0unRscBfye/a9rSQiPoA/Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=WIuAUJDfpi4PszmUVc38dJ2NLa2gqRx/W4tQS3opan4=;
- b=Qk8V/f9j8dXKQy3nx3ugWU/g6r2UO9gQp2HMVGrc4c8Qngmu8B9CEsbdLNrX6cfCQPZlEIHYlLiDIOsW7XhfvNqZZQVO3zvE/79ZGdJkPRzJKqg5IGq4Grc4OijSUPnlBQzPYVp4HR5juzIqmqEabxj7uF2qJONDpge2odzNa/lucXpBUCjKMKL/25wHQ2Y0VEqT0F6tMqeC3k5Y8ePUgn099R8KcwqdO+/yDlJQZs6//oiJozHcFpVORfImbG4+O5YsT7khxnS623LjbGu8QwRCvQrHT9OU2cxbUAlr56Ixx2mglj9Q5gqw+5orpGRRawNjiCSpJ9z/lN3bZMU3Aw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 12.22.5.236) smtp.rcpttodomain=linuxfoundation.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WIuAUJDfpi4PszmUVc38dJ2NLa2gqRx/W4tQS3opan4=;
- b=MdoQ1tR9WlJi8Gm0gETzzJcaFA9EEQjCkUJCW8D7CNg47Z8rS0LInVPNBu27PlLnFF8yx/u6QHDBURIqC/kw684WrGn8Xm/JxdU2GmbahPIChmR3hrFZSTcvg6MaKEK4NeDjZnqWEknivDAHIAv9Rpp7zyvh4eTlYbrVS7/i8aL7lAiE+mD39v5wk1jqCRvSvwD3mc+bWSsZvt9bKvmvtnfhwq+IgLA1rgrCETBNGuonNfsLkgHpHpdoN7IFFd4FnQpMBZAALZWMjVGXgzzlnTofZOLkUtzLKNm13L1er35eEw5F/g24Suh5eWNrOgSD0b31fZnpUO3Y+4/G3wjeFw==
-Received: from BN6PR14CA0005.namprd14.prod.outlook.com (2603:10b6:404:79::15)
- by SJ0PR12MB5487.namprd12.prod.outlook.com (2603:10b6:a03:301::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4801.15; Mon, 20 Dec
- 2021 18:25:43 +0000
-Received: from BN8NAM11FT057.eop-nam11.prod.protection.outlook.com
- (2603:10b6:404:79:cafe::47) by BN6PR14CA0005.outlook.office365.com
- (2603:10b6:404:79::15) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4801.17 via Frontend
- Transport; Mon, 20 Dec 2021 18:25:43 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.236)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 12.22.5.236 as permitted sender) receiver=protection.outlook.com;
- client-ip=12.22.5.236; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (12.22.5.236) by
- BN8NAM11FT057.mail.protection.outlook.com (10.13.177.49) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.4801.14 via Frontend Transport; Mon, 20 Dec 2021 18:25:43 +0000
-Received: from HQMAIL107.nvidia.com (172.20.187.13) by DRHQMAIL109.nvidia.com
- (10.27.9.19) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Mon, 20 Dec
- 2021 18:25:42 +0000
-Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Mon, 20 Dec
- 2021 18:25:42 +0000
-Received: from jonathanh-vm-01.nvidia.com (172.20.187.5) by mail.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1497.18 via Frontend
- Transport; Mon, 20 Dec 2021 18:25:42 +0000
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
-        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
-        <stable@vger.kernel.org>, <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 5.15 000/177] 5.15.11-rc1 review
-In-Reply-To: <20211220143040.058287525@linuxfoundation.org>
-References: <20211220143040.058287525@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        id S240501AbhLTSmh (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 20 Dec 2021 13:42:37 -0500
+Received: from foss.arm.com ([217.140.110.172]:33236 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S240513AbhLTSmf (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 20 Dec 2021 13:42:35 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6C2BC6D;
+        Mon, 20 Dec 2021 10:42:35 -0800 (PST)
+Received: from [10.57.34.58] (unknown [10.57.34.58])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 904723F774;
+        Mon, 20 Dec 2021 10:42:30 -0800 (PST)
+Message-ID: <b05183b4-e08a-77ff-219c-009a4e42a32b@arm.com>
+Date:   Mon, 20 Dec 2021 18:42:26 +0000
 MIME-Version: 1.0
-Message-ID: <3c3401e340dd4374a9a74c0f10c8f3ea@HQMAIL101.nvidia.com>
-Date:   Mon, 20 Dec 2021 18:25:42 +0000
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 9d6f8d13-c669-4c05-dcfc-08d9c3e62251
-X-MS-TrafficTypeDiagnostic: SJ0PR12MB5487:EE_
-X-Microsoft-Antispam-PRVS: <SJ0PR12MB5487B4244C32888A723B5E49D97B9@SJ0PR12MB5487.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: ubaDumnOAj636u54LixEa2D4VTDiZ4byjCmJhz+PnKw/6DQVdV02ymjiC+OhSoTnanaefM/r7HEPSAyU+PmyOxiPrLipImqEXjKRd7EMKGINUGmEHlGegDKZB1LJIryjcKSlxpOf5P9mSBMD3V+y2kzeRYsKS8e8+vvppeQaMMwEk2s6S4ugVB89PAHMUn27xxuYe+/45/3Wt4hZxFCeD0cmTAdztmmN8u9wCiedVfMobji4j30sYoqwK4TLM6K2dqipBBLcNWjHDD2ZZBRCzbOz7p2O46azECuNLAd7nbViMP0Xus6ThREg+sff01Ve3jPjl91afi8PY/5e/RjDV7c5dQ4ZxaLthdGlt2Wga8eKV5LKnV0PX7y/kNF1E8TCIImG8Ifp+tufMoocH9dSMtVstI671XHEYjTQy4ciDZLNfrvH/wdAADJDtIC7rIFrYz+FUbIYqktjkNTOqXkM/1oCs/JjwhJjoQQxbUmYwOB6uy8BVMwUXHmEGPKFA0ZLcf3/oe1Iy7VdLKUzwoG0OI1iF2cmdK9BrRk9wEPnfasIsycIQ2uq/W+jW19xUrirSxz8lgnlwnVFKMOx6ieM9CKILKtTo1ynB1CnGrlmoeNII3/+OuC0dbUFAUgDDYXiaoTXDdvXX5j8hJwXumtx+N3MnFnPriaqhCltnRlBimZUuGNIzYvYqa4UTH3mTotCewYmFj4Tab9+P1QCwqi3Z/9TtPqCOml0Tsyd6nIADU0fNuzpVgxNaDqh3dfHVUDlsqXM7PRUa5d9/pnqz5Ep9nX7iyXHmJEDBsx9JRrghxMuXaL5bt+urS3SP8gip8AWJ0ma/BcfUGCpjpc2AJPR9A/zODJzMQ23tXOz+oLehLkKfzAnWZ/vUBs8Qim6hZR23o7aaF5Esz1i7c2eYU3grL5Di3tEUSDk0tAIqFmj2hQ=
-X-Forefront-Antispam-Report: CIP:12.22.5.236;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(4636009)(46966006)(36840700001)(40470700001)(36860700001)(2906002)(81166007)(47076005)(336012)(4326008)(54906003)(70206006)(356005)(26005)(426003)(40460700001)(8936002)(966005)(316002)(24736004)(86362001)(186003)(70586007)(5660300002)(6916009)(508600001)(8676002)(82310400004)(34020700004)(7416002)(108616005)(36900700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Dec 2021 18:25:43.3601
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9d6f8d13-c669-4c05-dcfc-08d9c3e62251
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.236];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT057.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB5487
+User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:91.0) Gecko/20100101
+ Thunderbird/91.4.0
+Subject: Re: [PATCH v3 4/5] iommu/arm-smmu-v3: Add host support for NVIDIA
+ Grace CMDQ-V
+Content-Language: en-GB
+To:     Nicolin Chen <nicolinc@nvidia.com>, joro@8bytes.org,
+        will@kernel.org
+Cc:     nicoleotsuka@gmail.com, thierry.reding@gmail.com,
+        vdumpa@nvidia.com, nwatterson@nvidia.com, jean-philippe@linaro.org,
+        thunder.leizhen@huawei.com, chenxiang66@hisilicon.com,
+        Jonathan.Cameron@huawei.com, yuzenghui@huawei.com,
+        linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
+        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+        jgg@nvidia.com
+References: <20211119071959.16706-1-nicolinc@nvidia.com>
+ <20211119071959.16706-5-nicolinc@nvidia.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+In-Reply-To: <20211119071959.16706-5-nicolinc@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, 20 Dec 2021 15:32:30 +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.15.11 release.
-> There are 177 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On 2021-11-19 07:19, Nicolin Chen wrote:
+> From: Nate Watterson <nwatterson@nvidia.com>
 > 
-> Responses should be made by Wed, 22 Dec 2021 14:30:09 +0000.
-> Anything received after that time might be too late.
+> NVIDIA's Grace Soc has a CMDQ-Virtualization (CMDQV) hardware,
+> which extends the standard ARM SMMU v3 IP to support multiple
+> VCMDQs with virtualization capabilities. In-kernel of host OS,
+> they're used to reduce contention on a single queue. In terms
+> of command queue, they are very like the standard CMDQ/ECMDQs,
+> but only support CS_NONE in the CS field of CMD_SYNC command.
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.11-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
-> and the diffstat can be found below.
+> This patch adds a new nvidia-grace-cmdqv file and inserts its
+> structure pointer into the existing arm_smmu_device, and then
+> adds related function calls in the arm-smmu-v3 driver.
 > 
-> thanks,
-> 
-> greg k-h
+> In the CMDQV driver itself, this patch only adds minimal part
+> for host kernel support. Upon probe(), VINTF0 is reserved for
+> in-kernel use. And some of the VCMDQs are assigned to VINTF0.
+> Then the driver will select one of VCMDQs in the VINTF0 based
+> on the CPU currently executing, to issue commands.
 
-All tests passing for Tegra ...
+Is there a tangible difference to DMA API or VFIO performance?
 
-Test results for stable-v5.15:
-    10 builds:	10 pass, 0 fail
-    28 boots:	28 pass, 0 fail
-    114 tests:	114 pass, 0 fail
+[...]
+> +struct arm_smmu_cmdq *nvidia_grace_cmdqv_get_cmdq(struct arm_smmu_device *smmu)
+> +{
+> +	struct nvidia_grace_cmdqv *cmdqv = smmu->nvidia_grace_cmdqv;
+> +	struct nvidia_grace_cmdqv_vintf *vintf0 = &cmdqv->vintf0;
+> +	u16 qidx;
+> +
+> +	/* Check error status of vintf0 */
+> +	if (!FIELD_GET(VINTF_STATUS, vintf0->status))
+> +		return &smmu->cmdq;
+> +
+> +	/*
+> +	 * Select a vcmdq to use. Here we use a temporal solution to
+> +	 * balance out traffic on cmdq issuing: each cmdq has its own
+> +	 * lock, if all cpus issue cmdlist using the same cmdq, only
+> +	 * one CPU at a time can enter the process, while the others
+> +	 * will be spinning at the same lock.
+> +	 */
+> +	qidx = smp_processor_id() % cmdqv->num_vcmdqs_per_vintf;
 
-Linux version:	5.15.11-rc1-g6c3eb74f1432
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
-                tegra20-ventana, tegra210-p2371-2180,
-                tegra210-p3450-0000, tegra30-cardhu-a04
+How does ordering work between queues? Do they follow a global order 
+such that a sync on any queue is guaranteed to complete all prior 
+commands on all queues?
 
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
+The challenge to make ECMDQ useful to Linux is how to make sure that all 
+the commands expected to be within scope of a future CMND_SYNC plus that 
+sync itself all get issued on the same queue, so I'd be mildly surprised 
+if you didn't have the same problem.
 
-Jon
+Robin.
+
+> +	return &vintf0->vcmdqs[qidx];
+> +}
