@@ -2,255 +2,112 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 163AAC433EF
-	for <linux-tegra@archiver.kernel.org>; Tue, 21 Dec 2021 01:21:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FED8C433F5
+	for <linux-tegra@archiver.kernel.org>; Tue, 21 Dec 2021 02:50:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230004AbhLUBV2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 20 Dec 2021 20:21:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36386 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229596AbhLUBV2 (ORCPT
+        id S233901AbhLUCux (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 20 Dec 2021 21:50:53 -0500
+Received: from ams.source.kernel.org ([145.40.68.75]:52934 "EHLO
+        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233891AbhLUCuw (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 20 Dec 2021 20:21:28 -0500
-Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2281C061574;
-        Mon, 20 Dec 2021 17:21:27 -0800 (PST)
-Received: by mail-lf1-x12c.google.com with SMTP id k37so25729405lfv.3;
-        Mon, 20 Dec 2021 17:21:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=nkRfs6Jq6Yr/a/t9OO2egmqloXCmD4IcdPxGpgHonb8=;
-        b=eF1G2y2TjCAkFUrBHcdwf3AbiSiwCXaA2g7IKISK3lq1/wtP150oj9nLjun2CQ+h1R
-         vot0D+gAcqRR647Zq81AI3CvVtcy3qDvnFMgCF4DHHFLLiEhLrLdpLz1gGyWi7JqjsMq
-         Q5XPxpn2JAkCLZfvmuz8D1aMmD/Bp5QBWMX+MGVw72KvpunSLbk+ZeKop5LvmtvU2n97
-         5CsfKyuXgPWnKXIlltWovD4O1uQy3ssLCHpROmBnMqq4e6sbAe5zm8UC2DTyXOTkglGX
-         EUt8rMwVdQ90IX6gxggPtLDeknNwu3LogfS0J0irajS7bExPTNK/MTUro5ZETcIatvCq
-         UFlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=nkRfs6Jq6Yr/a/t9OO2egmqloXCmD4IcdPxGpgHonb8=;
-        b=7rcyIkUoI9NraJrNWxDJHsjbW2MNT1HlFOtD8VP1REmS7Qh6ndSLxLU+c1CS8dYYIg
-         RQdnel7r0SjlCnaHqrSGrUZzsFsEi6kYpkWOa0HBbzA3JchhirukkyvP6IGkMJkG7zLS
-         7FqbQKtqgip3L8SS4jRYKf8fiVoy6tEoiVwKa+kQ7ipjFZC4uxqAYmSoPrptf2p4nxJe
-         179jvUk48t0i4OVJfUr55gPEbSv0VLLT/ghVTGFtnCRxD1c+dEBTBellU/JuwaW4M3P1
-         wI0VrrcQqfAwlS3Ex0RN/uTdU5Ta/mMK5FtmJ6JjB7TPZQD+onhnrNacBJBOjl34xmZB
-         IOhA==
-X-Gm-Message-State: AOAM531tAOnar56Xr0bx2fzfbt1R027T3/J7hQdwe6NV4tA0LYk/qldo
-        6bRuY1ByRdNqOq1r9BdK/yx1bjr0B6k=
-X-Google-Smtp-Source: ABdhPJziuxKcVGxUkjz2c00kkrTen8rOkYs71ofy6F7odPfZ42R/oI6ztDoz6894QXV2I32c3yKg8w==
-X-Received: by 2002:ac2:51bc:: with SMTP id f28mr842680lfk.222.1640049685857;
-        Mon, 20 Dec 2021 17:21:25 -0800 (PST)
-Received: from [192.168.2.145] (46-138-43-24.dynamic.spd-mgts.ru. [46.138.43.24])
-        by smtp.googlemail.com with ESMTPSA id h18sm2637460ljh.133.2021.12.20.17.21.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 Dec 2021 17:21:25 -0800 (PST)
-Subject: Re: [PATCH v2 1/3] ALSA: hda/tegra: Fix Tegra194 HDA reset failure
-To:     Sameer Pujar <spujar@nvidia.com>, tiwai@suse.com,
-        broonie@kernel.org, lgirdwood@gmail.com, robh+dt@kernel.org,
-        thierry.reding@gmail.com, perex@perex.cz
-Cc:     jonathanh@nvidia.com, mkumard@nvidia.com,
-        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-References: <1640021408-12824-1-git-send-email-spujar@nvidia.com>
- <1640021408-12824-2-git-send-email-spujar@nvidia.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <f859559c-abf1-ae37-6a0f-80329e6f747f@gmail.com>
-Date:   Tue, 21 Dec 2021 04:21:24 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+        Mon, 20 Dec 2021 21:50:52 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 03F1AB8108E;
+        Tue, 21 Dec 2021 02:50:51 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27462C36AE8;
+        Tue, 21 Dec 2021 02:50:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1640055049;
+        bh=qdD3IlBLcb1CCrc6ryPjrgcuHWvblXz5Qe4tDjAsWtw=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=Fg+OGFBPKXG2ANEnS4eOCr0jhnl41sdAIuROHNPh/dQmDY+sAVIIKv8W5usHNwdR/
+         vATmSDCAJ8FBGojgQqtHJbqqE37D3EDP8VBYziYkj49Kki7daG/IXOurrosCXjKX/t
+         hPeYlazbcEbwskAA0I7UEjdHXL7CKhrXmNFoOElq9vAn9DRRX9ZsiWOr6CGPufAVw+
+         oaphnyZvbylwVfXPROo8rrgHN+bCqGJ5TjJvejOq6kdGySSzu2jqrVZHsSZ5Q/ctGy
+         xiL32gGKfozvaDh/WwMH9XxMbKVgTH9duXhH0eyXTGGyfRV5lYvi18s42N5N4oU6LL
+         j2k6QB+nLYRSA==
+From:   Mark Brown <broonie@kernel.org>
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Agneli <poczt@protonmail.ch>, Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>
+Cc:     linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org,
+        linux-tegra@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        Arnd Bergmann <arnd@arndb.de>
+In-Reply-To: <20211204143725.31646-1-digetx@gmail.com>
+References: <20211204143725.31646-1-digetx@gmail.com>
+Subject: Re: (subset) [PATCH v4 00/22] Support HDMI audio on NVIDIA Tegra20
+Message-Id: <164005504688.2647792.15486992358595152806.b4-ty@kernel.org>
+Date:   Tue, 21 Dec 2021 02:50:46 +0000
 MIME-Version: 1.0
-In-Reply-To: <1640021408-12824-2-git-send-email-spujar@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-20.12.2021 20:30, Sameer Pujar пишет:
-> HDA regression is recently reported on Tegra194 based platforms.
-> This happens because "hda2codec_2x" reset does not really exist
-> in Tegra194 and it causes probe failure. All the HDA based audio
-> tests fail at the moment. This underlying issue is exposed by
-> commit c045ceb5a145 ("reset: tegra-bpmp: Handle errors in BPMP
-> response") which now checks return code of BPMP command response.
-> Fix this issue by skipping unavailable reset on Tegra194.
+On Sat, 4 Dec 2021 17:37:03 +0300, Dmitry Osipenko wrote:
+> This series revives Tegra20 S/PDIF driver which was upstreamed long time
+> ago, but never was used. It also turns Tegra DRM HDMI driver into HDMI
+> audio CODEC provider. Finally, HDMI audio is enabled in device-trees.
+> For now the audio is enable only for Acer A500 tablet and Toshiba AC100
+> netbook because they're already supported by upstream, later on ASUS TF101
+> tablet will join them.
 > 
-> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
-> Cc: stable@vger.kernel.org
-> Depends-on: 87f0e46e7559 ("ALSA: hda/tegra: Reset hardware")
-> ---
->  sound/pci/hda/hda_tegra.c | 96 ++++++++++++++++++++++++++++++++++++++++++-----
->  1 file changed, 86 insertions(+), 10 deletions(-)
-> 
-> diff --git a/sound/pci/hda/hda_tegra.c b/sound/pci/hda/hda_tegra.c
-> index ea700395..be010cd 100644
-> --- a/sound/pci/hda/hda_tegra.c
-> +++ b/sound/pci/hda/hda_tegra.c
-> @@ -68,14 +68,21 @@
->   */
->  #define TEGRA194_NUM_SDO_LINES	  4
->  
-> +struct hda_tegra_soc {
-> +	bool has_hda2codec_2x_reset;
-> +};
-> +
->  struct hda_tegra {
->  	struct azx chip;
->  	struct device *dev;
-> -	struct reset_control *reset;
-> +	struct reset_control *reset_hda;
-> +	struct reset_control *reset_hda2hdmi;
-> +	struct reset_control *reset_hda2codec_2x;
->  	struct clk_bulk_data clocks[3];
->  	unsigned int nclocks;
->  	void __iomem *regs;
->  	struct work_struct probe_work;
-> +	const struct hda_tegra_soc *data;
->  };
->  
->  #ifdef CONFIG_PM
-> @@ -170,9 +177,26 @@ static int __maybe_unused hda_tegra_runtime_resume(struct device *dev)
->  	int rc;
->  
->  	if (!chip->running) {
-> -		rc = reset_control_assert(hda->reset);
-> -		if (rc)
-> +		rc = reset_control_assert(hda->reset_hda);
-> +		if (rc) {
-> +			dev_err(dev, "hda reset assert failed, err: %d\n", rc);
-> +			return rc;
-> +		}
-> +
-> +		rc = reset_control_assert(hda->reset_hda2hdmi);
-> +		if (rc) {
-> +			dev_err(dev, "hda2hdmi reset assert failed, err: %d\n",
-> +				rc);
-> +			return rc;
-> +		}
-> +
-> +		rc = reset_control_assert(hda->reset_hda2codec_2x);
-> +		if (rc) {
-> +			dev_err(dev,
-> +				"hda2codec_2x reset assert failed, err: %d\n",
-> +				rc);
->  			return rc;
-> +		}
->  	}
->  
->  	rc = clk_bulk_prepare_enable(hda->nclocks, hda->clocks);
-> @@ -187,9 +211,27 @@ static int __maybe_unused hda_tegra_runtime_resume(struct device *dev)
->  	} else {
->  		usleep_range(10, 100);
->  
-> -		rc = reset_control_deassert(hda->reset);
-> -		if (rc)
-> +		rc = reset_control_deassert(hda->reset_hda);
-> +		if (rc) {
-> +			dev_err(dev, "hda reset deassert failed, err: %d\n",
-> +				rc);
->  			return rc;
-> +		}
-> +
-> +		rc = reset_control_deassert(hda->reset_hda2hdmi);
-> +		if (rc) {
-> +			dev_err(dev, "hda2hdmi reset deassert failed, err: %d\n",
-> +				rc);
-> +			return rc;
-> +		}
-> +
-> +		rc = reset_control_deassert(hda->reset_hda2codec_2x);
-> +		if (rc) {
-> +			dev_err(dev,
-> +				"hda2codec_2x reset deassert failed, err: %d\n",
-> +				rc);
-> +			return rc;
-> +		}
->  	}
->  
->  	return 0;
-> @@ -427,9 +469,17 @@ static int hda_tegra_create(struct snd_card *card,
->  	return 0;
->  }
->  
-> +static const struct hda_tegra_soc tegra30_data = {
-> +	.has_hda2codec_2x_reset = true,
-> +};
-> +
-> +static const struct hda_tegra_soc tegra194_data = {
-> +	.has_hda2codec_2x_reset = false,
-> +};
-> +
->  static const struct of_device_id hda_tegra_match[] = {
-> -	{ .compatible = "nvidia,tegra30-hda" },
-> -	{ .compatible = "nvidia,tegra194-hda" },
-> +	{ .compatible = "nvidia,tegra30-hda", .data = &tegra30_data },
-> +	{ .compatible = "nvidia,tegra194-hda", .data = &tegra194_data },
->  	{},
->  };
->  MODULE_DEVICE_TABLE(of, hda_tegra_match);
-> @@ -449,6 +499,10 @@ static int hda_tegra_probe(struct platform_device *pdev)
->  	hda->dev = &pdev->dev;
->  	chip = &hda->chip;
->  
-> +	hda->data = of_device_get_match_data(&pdev->dev);
-> +	if (!hda->data)
-> +		return -EINVAL;
-> +
->  	err = snd_card_new(&pdev->dev, SNDRV_DEFAULT_IDX1, SNDRV_DEFAULT_STR1,
->  			   THIS_MODULE, 0, &card);
->  	if (err < 0) {
-> @@ -456,12 +510,34 @@ static int hda_tegra_probe(struct platform_device *pdev)
->  		return err;
->  	}
->  
-> -	hda->reset = devm_reset_control_array_get_exclusive(&pdev->dev);
-> -	if (IS_ERR(hda->reset)) {
-> -		err = PTR_ERR(hda->reset);
-> +	hda->reset_hda = devm_reset_control_get_exclusive(&pdev->dev, "hda");
-> +	if (IS_ERR(hda->reset_hda)) {
-> +		err = PTR_ERR(hda->reset_hda);
->  		goto out_free;
->  	}
->  
-> +	hda->reset_hda2hdmi = devm_reset_control_get_exclusive(&pdev->dev,
-> +							       "hda2hdmi");
-> +	if (IS_ERR(hda->reset_hda2hdmi)) {
-> +		err = PTR_ERR(hda->reset_hda2hdmi);
-> +		goto out_free;
-> +	}
-> +
-> +	/*
-> +	 * "hda2codec_2x" reset is not present on Tegra194. Though DT would
-> +	 * be updated to reflect this, but to have backward compatibility
-> +	 * below is necessary.
-> +	 */
-> +	if (hda->data->has_hda2codec_2x_reset) {
-> +		hda->reset_hda2codec_2x =
-> +			devm_reset_control_get_exclusive(&pdev->dev,
-> +							 "hda2codec_2x");
-> +		if (IS_ERR(hda->reset_hda2codec_2x)) {
-> +			err = PTR_ERR(hda->reset_hda2codec_2x);
-> +			goto out_free;
-> +		}
-> +	}
-> +
->  	hda->clocks[hda->nclocks++].id = "hda";
->  	hda->clocks[hda->nclocks++].id = "hda2hdmi";
->  	hda->clocks[hda->nclocks++].id = "hda2codec_2x";
-> 
+> [...]
 
-All stable kernels affected by this problem that don't support the bulk
-reset API are EOL now. Please use bulk reset API like I suggested in the
-comment to v1, it will allow us to have a cleaner and nicer code.
+Applied to
 
-The bulk reset code will look similar to the bulk clk API already used
-by the HDA driver, you'll only need to skip adding the hda2codec_2x to
-resets[3] and switch to use reset_control_bulk_reset_*() variants of the
-functions.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+
+Thanks!
+
+[01/22] ASoC: dt-bindings: Add binding for Tegra20 S/PDIF
+        commit: 46f016119e2ac38d9efd32e4957bc888dc71fffe
+[02/22] ASoC: dt-bindings: tegra20-i2s: Convert to schema
+        commit: 80c3d0a97abfd2a678b6077236a77ccb8c4747fa
+[03/22] ASoC: dt-bindings: tegra20-i2s: Document new nvidia,fixed-parent-rate property
+        commit: 549818e5c85a6d806cdef146d0203df2689d4e2f
+[05/22] ASoC: tegra20: spdif: Set FIFO trigger level
+        commit: 16736a0221db6d6f3fe130750c6dc5bbf5417da4
+[06/22] ASoC: tegra20-spdif: stop setting slave_id
+        (no commit info)
+[07/22] ASoC: tegra20: spdif: Support device-tree
+        commit: c0000fc618cdbe190274cf37040033dfa23c159d
+[08/22] ASoC: tegra20: spdif: Improve driver's code
+        commit: 117aeed43974e500dcbd106e51218a83ae2c9977
+[09/22] ASoC: tegra20: spdif: Use more resource-managed helpers
+        commit: 150f4d573fe19a77864f6dec31aa444332f9fc9e
+[10/22] ASoC: tegra20: spdif: Reset hardware
+        commit: ec1b4545d75575118e01a5e95699cff5010b4e19
+[11/22] ASoC: tegra20: spdif: Support system suspend
+        commit: d51693092ecc732fca3f49549cde1c5206331b09
+[12/22] ASoC: tegra20: spdif: Filter out unsupported rates
+        commit: 9d8f51cd1fa993939db02a014d4f4b6e252c2a18
+[13/22] ASoC: tegra20: i2s: Filter out unsupported rates
+        commit: bfa4671db1effe315cade5bddd6cf025e1c403d0
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
