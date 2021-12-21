@@ -2,70 +2,70 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD0A0C433F5
-	for <linux-tegra@archiver.kernel.org>; Tue, 21 Dec 2021 15:34:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6FB4C433EF
+	for <linux-tegra@archiver.kernel.org>; Tue, 21 Dec 2021 15:47:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239307AbhLUPep (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 21 Dec 2021 10:34:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33322 "EHLO
+        id S229624AbhLUPrf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 21 Dec 2021 10:47:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36694 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234135AbhLUPeo (ORCPT
+        with ESMTP id S229449AbhLUPrf (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 21 Dec 2021 10:34:44 -0500
-Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7CD03C061574;
-        Tue, 21 Dec 2021 07:34:44 -0800 (PST)
-Received: by mail-lj1-x234.google.com with SMTP id i63so21989822lji.3;
-        Tue, 21 Dec 2021 07:34:44 -0800 (PST)
+        Tue, 21 Dec 2021 10:47:35 -0500
+Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A349CC061574
+        for <linux-tegra@vger.kernel.org>; Tue, 21 Dec 2021 07:47:34 -0800 (PST)
+Received: by mail-lf1-x12c.google.com with SMTP id x21so22068493lfa.5
+        for <linux-tegra@vger.kernel.org>; Tue, 21 Dec 2021 07:47:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ENsWP3t0OEsvzi2ehFfWL5PLo9nbmRuKstEblytFSZk=;
-        b=du6prEqyy4VDh/9oQkaNuO9m1zQmEsrUQ+ezBUvmdM6CVHpRrysbEQkA9iSaS8HB+8
-         MMzGTQKeSwvJ/OMg2yhe7Yt1vapH1K108rr2fLquBGUMx0MpBRRQl2si/5hZffG4aFAG
-         N9jkNTT9MYa23a5A7VgGu7lS5uMTHDm1h7ZrmuXECkw8zkoH8pKFS0hF7MjLbTEFkOlN
-         gLOYbyWyTbW1YKBZlvHUA+8qaXAlZh0AzZB8Ig0kFWVbyqaJq+Q1T+FBmLBNfogkbfYs
-         4o7SJOOV18G/kAxQu0QoOel+dW83xDbMgHYW+3Zof+o1vsttA+tQNcM/eEesD1T9fSXC
-         yNww==
+        bh=P/AjqKnlbhjD52zhKuwLST7SIhcLpZikm45Z0zGIr8g=;
+        b=oz1TU+1UCx2PBCN4OQBrtioUPbG6hLhpDKNcLgx9IEUzhslAyNQT+3S/srKEeF/0L1
+         mnDjOYEhP/7M1h0rnzPr5H1K6gZPtML7CnDtqjnJBfPyj8AvdpMcIJTFcQrqvOKFrvsE
+         IpNCoO23yd+z7bpbjZH71rSKMDI/KiwYpoojjEDHKADkEjbH+80NXYFVhJyogR9YjLhZ
+         XdDv1GggRi/wCWqiMd1WOiEeKTgMK3qYnku7fzegx6DuXiy8I9bQ87Tnp0AboAc4gLl3
+         zERM1MYIwOjuaXXt32oMFIkx9YAsfQBiAyIL2VDZQLZh8tyH6QD9bf9Rw8YWTTNy3iy9
+         hSJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=ENsWP3t0OEsvzi2ehFfWL5PLo9nbmRuKstEblytFSZk=;
-        b=TG+wOZKjktHQUjIAAkl55XtF3qlM1E/f8mdnXpeDoHyQBvs2E121VnesvZLf6xRWDQ
-         Tb+ln3H1dMD2jHBUo3aVr7M9MwpyEhMTf/STvCiT1nqfPaUY32XeBaPogAWcotaIbQyD
-         q1E5bdha/2eb7/+9oGm0sydjBApkG3rQvpdtpaCSD/nzAjIIpaO5c39yhFTCQS3/LRNZ
-         kVQwDUP+hlJ67qsSayZZ0ObhoRN+zQz3MQskuYL74pXx/CzuPg5gwNcu/Ax9+bg85SM1
-         Pa982juKAiobhF6OYgNYGLs/zTdgeDQA/I6pQxJr9cktPzhpoFmIH7cAWKy8vEnv+SRv
-         Rn8g==
-X-Gm-Message-State: AOAM530nYJjJOZan29nSxH0fd2o1WBQUH7ZWZ5ZBRVCqv1ipaVG0ywG/
-        oLjkRxdd6o+Iq5rs5XHHKkPZxEj+nVk=
-X-Google-Smtp-Source: ABdhPJyDx3MAzVctUS7978ihuhMpJuYGK9FEWO80QNPmP5CaKDEoqhisEbZErPGWxHz0QLZ7Rtf0oQ==
-X-Received: by 2002:a2e:7a11:: with SMTP id v17mr2727509ljc.33.1640100882577;
-        Tue, 21 Dec 2021 07:34:42 -0800 (PST)
+        bh=P/AjqKnlbhjD52zhKuwLST7SIhcLpZikm45Z0zGIr8g=;
+        b=Q/CWK9IHp9LGlVONS0KpQz2j3rLDT0mFTOONf+dxMd11uffgix2+oIq3z0r7Cr+Js1
+         gKdZG4U3mfFqwFIgrrCQZJMPb27EDuf/PqZmwcDHDggOwRVvDrEaZVX1bb9bCsqcr/Am
+         UuJ35xhGzyosF1H4jnZRxXpYL7e0OPEJqcchXVKOBykqYMF5ij5huwgYQReEEx4oDaqE
+         BztP8fymMHNo0qETQQ0hfXkIUGo6RigWZvTNvNLQaONW4AXNrjbyjPvAKWQwy+6+7b/g
+         CR0yUJ8elfaRTtNniMqPr1ciAgabdSE4Yts+j8CVotyZqqTmI8CZ4ohovFoXKIKD9KS6
+         9nIA==
+X-Gm-Message-State: AOAM532a6OU+pAnNTLnNkNVkj6sTyJDRU44iSbQQPaCZpgMkOQW5BJRp
+        Hctp0ENcjF7WzN4jEIs+Oo41DUW4CaY=
+X-Google-Smtp-Source: ABdhPJwpUWaPqAbiSqRSSP3dYUaQSUPtyJxaTeDK0cFwBA/ikKMVtsdvGE+98TsRLV0XpDdW/0aYog==
+X-Received: by 2002:a19:6e42:: with SMTP id q2mr3478719lfk.60.1640101652838;
+        Tue, 21 Dec 2021 07:47:32 -0800 (PST)
 Received: from [192.168.2.145] (46-138-43-24.dynamic.spd-mgts.ru. [46.138.43.24])
-        by smtp.googlemail.com with ESMTPSA id bf19sm2771177ljb.126.2021.12.21.07.34.41
+        by smtp.googlemail.com with ESMTPSA id c20sm2767716ljf.37.2021.12.21.07.47.32
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Dec 2021 07:34:42 -0800 (PST)
-Subject: Re: [PATCH v1] memory: tegra30-emc: Print additional memory info
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Svyatoslav Ryhel <clamor95@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-References: <20211217234711.8353-1-digetx@gmail.com>
- <fc5601e7-40e7-03c5-a433-859539f82144@canonical.com>
- <03a09ff5-fe2d-3ce2-a93b-4e44fd030ffb@gmail.com>
- <84487ed8-2f9d-c178-012b-8407e5083b87@canonical.com>
+        Tue, 21 Dec 2021 07:47:32 -0800 (PST)
+Subject: Re: [PATCH 0/2] drm/tegra: Fix panel support on Venice 2 and Nyan
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Thomas Graichen <thomas.graichen@gmail.com>,
+        Douglas Anderson <dianders@chromium.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
+References: <20211220104855.428290-1-thierry.reding@gmail.com>
+ <dd7a2f23-00d6-9160-1e09-1d4ea5b1f5e1@gmail.com> <YcCg/xktJ2uShFRf@orome>
+ <e27bd5e0-51d2-875b-aa41-f198230880ac@gmail.com> <YcGzO0A/iWzhFjvE@orome>
 From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <f775891b-12c4-ae6c-364c-abaa7ea3f249@gmail.com>
-Date:   Tue, 21 Dec 2021 18:34:41 +0300
+Message-ID: <c2d2e5a1-7f44-a190-2ab1-84125fbe9f65@gmail.com>
+Date:   Tue, 21 Dec 2021 18:47:31 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.14.0
 MIME-Version: 1.0
-In-Reply-To: <84487ed8-2f9d-c178-012b-8407e5083b87@canonical.com>
+In-Reply-To: <YcGzO0A/iWzhFjvE@orome>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -73,69 +73,25 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-21.12.2021 11:14, Krzysztof Kozlowski пишет:
->>>> +static void emc_read_lpddr_sdram_info(struct tegra_emc *emc,
->>>> +				      unsigned int emem_dev)
->>>> +{
->>>> +	union lpddr2_basic_config4 basic_conf4;
->>>> +	unsigned int manufacturer_id;
->>>> +	unsigned int revision_id1;
->>>> +	unsigned int revision_id2;
->>>> +
->>>> +	/* these registers are standard for all LPDDR JEDEC memory chips */
->>>> +	emc_read_lpddr_mode_register(emc, emem_dev, 5, &manufacturer_id);
->>>> +	emc_read_lpddr_mode_register(emc, emem_dev, 6, &revision_id1);
->>>> +	emc_read_lpddr_mode_register(emc, emem_dev, 7, &revision_id2);
->>>> +	emc_read_lpddr_mode_register(emc, emem_dev, 8, &basic_conf4.value);
->>>> +
->>>> +	dev_info(emc->dev, "SDRAM[dev%u]: manufacturer: 0x%x (%s) rev1: 0x%x rev2: 0x%x prefetch: S%u density: %uMbit iowidth: %ubit\n",
->>>> +		 emem_dev, manufacturer_id,
->>>> +		 lpddr2_jedec_manufacturer(manufacturer_id),
->>>> +		 revision_id1, revision_id2,
->>>> +		 4 >> basic_conf4.arch_type,
->>>> +		 64 << basic_conf4.density,
->>>> +		 32 >> basic_conf4.io_width);
->>>> +}
->>>> +
->>> Quickly looking, these two functions are exactly the same as ones in
->>> tegra20-emc.c
->>> . Later you might come up with another set for other SoCs, so it looks
->>> it is worth to share these.
->> Should be too much trouble for not much gain, IMO. How many bytes will
->> be shared in the end? There is no much code here, we may lose more than
->> win. All these Tegra EMC drivers can be compiled as a loadable modules,
->> that's what distro kernels usually do. There are no plans for other SoCs
->> for today.
-> It's not about the bytes but source code lines to maintain and fix (if
-> there is something to fix). But if you don't plan to make a third copy
-> of it, it is okay.
+21.12.2021 13:58, Thierry Reding пишет:
+..
+>>>> The panel->ddc isn't used by the new panel-edp driver unless panel is
+>>>> compatible with "edp-panel". Hence the generic_edp_panel_probe() should
+>>>> either fail or crash for a such "edp-panel" since panel->ddc isn't fully
+>>>> instantiated, AFAICS.
+>>>
+>>> I've tested this and it works fine on Venice 2. Since that was the
+>>> reference design for Nyan, I suspect that Nyan's will also work.
+>>>
+>>> It'd be great if Thomas or anyone else with access to a Nyan could
+>>> test this to verify that.
+>>
+>> There is no panel-edp driver in the v5.15. The EOL of v5.15 is Oct,
+>> 2023, hence we need to either use:
+> 
+> All the (at least relevant) functionality that is in panel-edp was in
+> panel-simple before it was moved to panel-edp. I've backported this set
+> of patches to v5.15 and it works just fine there.
 
-Only Tegra114 SoC potentially supports LPDDR2, later SoCs dropped LPDDR2
-support. We don't even have memory driver for T114 at all in the today's
-mainline. I also doubt that there were any consumer T114 devices sold
-with LPDDR2. Hence we shouldn't have a need for the third copy anytime
-soon, likely ever.
-
->> I don't see how that sharing could be done easily and nicely. Please
->> tell if you see.
-> Since it is not about duplicated object code, but code for review, it is
-> pretty straightforward:
-> 
-> 1. Create tegra-emc-common.[ch]
-> 2. In Makefile:
-> 
-> +tegra20_emc-y += tegra20-emc.o tegra-emc-common.o
-> 
-> +obj-$(CONFIG_TEGRA20_EMC)  += tegra20_emc.o
-> 
-> +
-> 
-> +tegra30_emc-y += tegra30-emc.o tegra-emc-common.o
-> 
-> +obj-$(CONFIG_TEGRA30_EMC)  += tegra30_emc.o
-> 
-
-The problem that struct tegra_emc isn't shareable and this common code
-should introduce messiness to the Tegra EMC drivers. I'd prefer not to
-share anything for now and get back to this option with sharing later
-on, if will be another good reason.
+Will we be able to add patch to bypass the panel's DT ddc-i2c-bus on
+Nyan to keep the older DTBs working?
