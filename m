@@ -2,139 +2,287 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12D9BC433FE
-	for <linux-tegra@archiver.kernel.org>; Tue, 21 Dec 2021 06:19:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A496DC433EF
+	for <linux-tegra@archiver.kernel.org>; Tue, 21 Dec 2021 08:15:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233241AbhLUGTZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 21 Dec 2021 01:19:25 -0500
-Received: from mail-sn1anam02on2057.outbound.protection.outlook.com ([40.107.96.57]:45314
-        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S233179AbhLUGTY (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 21 Dec 2021 01:19:24 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=PbcEXOtWrzbpJbRJS4cr4V4SSfkgk1ClpPAUvy/ytAKwQrTvu/gFEbiMTMeWbuQShLiuI1qS99z/hVvKroeuPZQUY83CE1r2rWuke4Kc4HSSSxvkRW9iKebH31Ag5wxIK7KcdOK7uMBxJdAZvNolMCqkxbc3Mzsaz7VdrSH7Gq4qbM4XdWwbCQOcx+5y3K7g6U2Wn1cN06N8jYiKDmb8PtnyEXb1dQgXF3NY1VFTG43jGsb3xzbMFJSqovuBrAkzVqeqP5TW5qrSa7IcI0eJpKl5BidtPWFlaorCbslRqhdW6/dCo37syUU5G3uUfh4lZTxwXsVMHUApah5J4HsuJg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=z53hK0SijnQ5AfVyRYH4Xay91UqVv0LMPX9WPz/au1A=;
- b=L7vras6a4bfg6wwvDwY8E/nk444pBGhQpgDK3rV36ExJsM7nLIYh335uJGnqLa/OzoJtIUkzYBoReP1BS3JqgSPugjGSifrwXW4UecLpmh2ZfpdNHuksltaRljuT5PqJ5A1UmjblqLidy0EfxtER0Gm01Dr4JYscg41AJHX8eZC9cmSYdwe3jNmQSjV+cvBnllcq4/V+d+tnVQ338ZZSJM5nXTDBucecKML/kpsAAW5rxwYuUylSOH/uQK4PMrqF8r0HTjtuYa2RsqmA5aJpZE2YGSm85pE1ENNB6uSKbunqkCp9QElqNtaNT7t0tOKjbHTX4jsgwRYuPdPuNunmCg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=z53hK0SijnQ5AfVyRYH4Xay91UqVv0LMPX9WPz/au1A=;
- b=gW0bmxMSguCtqakQXxTzxriQfwuYiL5kuvdDtFLx/rsYNktX9Q/bL7VjbikNZ7kgfMxib48jmK+QIIDOssK7J0G93juTFqubhD5Rdsd/zsXvXmW4/+EDB3Yt9WhgU8SBBDdPhbP5XqYmiRzM72DIimUM6EocGD3XaZiMOa6xEZ7ZRUnXbcnV2XWqh0KJryh4zZA2ZGFYVcSBGHKpn/7rDJMccRnzYVR7fIz112OLXDVeO1+kzE6p/cVlnLLzEtOMefGjhOSOYpMCQyqaqvfO5XLMyj8BF42pDuQF9n3S84FCSaD+pw8aoyEk56gRbAVYPV435RFyOsIRSlz0rKQClA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CY4PR12MB1576.namprd12.prod.outlook.com (2603:10b6:910:10::9)
- by CY4PR12MB1765.namprd12.prod.outlook.com (2603:10b6:903:120::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4801.17; Tue, 21 Dec
- 2021 06:19:22 +0000
-Received: from CY4PR12MB1576.namprd12.prod.outlook.com
- ([fe80::24b0:46e7:d3c0:a77b]) by CY4PR12MB1576.namprd12.prod.outlook.com
- ([fe80::24b0:46e7:d3c0:a77b%7]) with mapi id 15.20.4801.020; Tue, 21 Dec 2021
- 06:19:22 +0000
-Subject: Re: [PATCH v2 1/3] ALSA: hda/tegra: Fix Tegra194 HDA reset failure
-To:     Dmitry Osipenko <digetx@gmail.com>, tiwai@suse.com,
-        broonie@kernel.org, lgirdwood@gmail.com, robh+dt@kernel.org,
-        thierry.reding@gmail.com, perex@perex.cz
-Cc:     jonathanh@nvidia.com, mkumard@nvidia.com,
-        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-References: <1640021408-12824-1-git-send-email-spujar@nvidia.com>
- <1640021408-12824-2-git-send-email-spujar@nvidia.com>
- <f859559c-abf1-ae37-6a0f-80329e6f747f@gmail.com>
-From:   Sameer Pujar <spujar@nvidia.com>
-Message-ID: <f65ae56d-d289-9e3f-1c15-f0bedda3918c@nvidia.com>
-Date:   Tue, 21 Dec 2021 11:48:57 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
-In-Reply-To: <f859559c-abf1-ae37-6a0f-80329e6f747f@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-GB
-X-ClientProxiedBy: MA1PR01CA0097.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a00:1::13) To CY4PR12MB1576.namprd12.prod.outlook.com
- (2603:10b6:910:10::9)
+        id S235464AbhLUIPD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 21 Dec 2021 03:15:03 -0500
+Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:55704
+        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S235465AbhLUIPC (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 21 Dec 2021 03:15:02 -0500
+Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com [209.85.208.200])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 59B013FFE9
+        for <linux-tegra@vger.kernel.org>; Tue, 21 Dec 2021 08:15:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1640074500;
+        bh=unzKlROTSDkZ2H17InUSxNeUgzq1dfHAeoMgtouOPKY=;
+        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+         In-Reply-To:Content-Type;
+        b=ktQQQGEge6rMiCcRLL8iSEg+VFF1/JIYxERrF5PxCxAdFR/q8YiOAwOG2LQNpZ4UK
+         8qFgrF04UkI5bZS31VsVVafht8K0hq9suIVZEFgeH4XswLnSU7YqbcaWh4+Ryb5GfT
+         eon8phwMBkQt9VFrP57oX8VkLXWSACmh8ir8zwLb5elAnI7rESiG1Alz1Sub/nLJqw
+         5X94v3N59evtmJANv7BMzwtsijBLWGuPcBCaRm8Dlw6fG/lZIqJSiu6GDx8Fv4cdpZ
+         pVzY4tpyL4GkIPw4kL2kLqd3+OkqLgSO9PcvpYgSopxwRT4fe+fmLzJnPSSnuXZwxW
+         WDJ3pxitlNoUQ==
+Received: by mail-lj1-f200.google.com with SMTP id bn28-20020a05651c179c00b002222b4cc6d8so1980241ljb.0
+        for <linux-tegra@vger.kernel.org>; Tue, 21 Dec 2021 00:15:00 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=unzKlROTSDkZ2H17InUSxNeUgzq1dfHAeoMgtouOPKY=;
+        b=mERM0laUqbjFTZg2yzkGIjHbAgi/sbag17uu1+eqaSDeiAwfRkPXpb9WTUlrzO7nt1
+         BhO8bmZo7V6pkWHHVdXSOUWP00UGRv4vuk+LFTwtmBYegGJj+U5MflfFeTDB3SntfkYN
+         WpbjUI0iigVXuZuFxuhOBEQFE92NkZBQIfspXGr4V+ZLvuGatsbWhdqt3uY5wdYG+GJl
+         TujP1sb8wu3+pjz+iJ4dcOJ+dDaZIc6b/1IEJF0SCmz6vcMn6QCAHB99cIhixPPp53ke
+         dPeLPtMN+z+WD8v1LGo5XxO4WXJ2Y/+5CsEm0IsHVV5KV1TX2osuh8g/jwqyIphPzso6
+         ApiA==
+X-Gm-Message-State: AOAM531fNe6/JxttQZPPTQiSvIu8fZUV1OXLq+SlozQVkmaQ56qhgtMH
+        /g/73f0xPAy7oEx5TSgwLonytGi54dcE+oA5d9UIRVF3pR9qSXYvkkr6Ux9OEtnbknrzTEHbc7B
+        nVAHrG+cbVuNHxrsfSoOq3u7ebSCoNTKdA63Rpl2G
+X-Received: by 2002:a05:6512:1324:: with SMTP id x36mr2112496lfu.495.1640074498244;
+        Tue, 21 Dec 2021 00:14:58 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJwwGZohg1XqgJzmBQWomoxCDi6AUox4WkhITAi/1I0iErY7NdBuHTJbhMUBZfe7ca0I37JxzA==
+X-Received: by 2002:a05:6512:1324:: with SMTP id x36mr2112479lfu.495.1640074497960;
+        Tue, 21 Dec 2021 00:14:57 -0800 (PST)
+Received: from [192.168.3.67] (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
+        by smtp.gmail.com with ESMTPSA id m14sm2705332ljg.2.2021.12.21.00.14.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 21 Dec 2021 00:14:57 -0800 (PST)
+Message-ID: <84487ed8-2f9d-c178-012b-8407e5083b87@canonical.com>
+Date:   Tue, 21 Dec 2021 09:14:56 +0100
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 8df6d86d-b8dc-429a-af6e-08d9c449d45c
-X-MS-TrafficTypeDiagnostic: CY4PR12MB1765:EE_
-X-Microsoft-Antispam-PRVS: <CY4PR12MB1765196E76AF731720371D6BA77C9@CY4PR12MB1765.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:8273;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: KXl+MQ+WZLXtIPTwPYhq44ef+te/79NpKS0cyg8nxadwPWnWirXxZY5IhSRbqpMfptBHO4A3nRJR0D9BDju4WxKVYLOfliUdSH4f3YTeX9VxzyVUM80G+ftM3hrEF7g5A4gpv7FbDZrJs9H+LF/wRD/Qau2fa9PuIOngoyu12L6S3szYjhq6XTmfvQhHA6WLsbveJC0trJEabQIcRx4ar6TnUbt7YwspgE+si7AZ2RQPHBcUoP7e6/9Q+3ScQCKRJC/B1LHlmf+iybQnr8JvEoyWjjA85Xi8ene/rlVfeG42GVNWUwoZgYGC97VWJ+Zus7COYq/POIadLN0+sQLmdK9Xod6jgf8rXZTwSMeXxYfwC1pHfuVtbkRURT/mt9PQ3WwFK2wAGi2Noncc7IYcoVgwyO7Wc/ixrlkWcK6IZhcqRYdS2G832JvbGFCWnUHdScVcwrdByIWWjuH6L/5yza9RWoCMpmPM3BAd7fidhFUzzV7X6xoriRs+UM9p9Rj5LPqd3O9n/ua/asjGRj6KNyoWx0QxWByW3rBD85a/wHnSZB9nr21xUTjqhXGsTh2yiF+LiLjnlhTrk5C2FYUDKVowJy9zyy5ptIzKrKTCf0PgBE9DnGFIL8/6/uf3vDoVf79VcN/+C11LcIuxXhX6b0Kesc+/H71bmv43L64jfr1sRIhP0NvGAIaRrgwxdT1zr9sfYb4G5nF0yj/+x24PZi9eQeR609bYfCn6sNYV8zA=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY4PR12MB1576.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(316002)(31696002)(53546011)(8936002)(6486002)(83380400001)(38100700002)(5660300002)(2616005)(186003)(4326008)(31686004)(508600001)(66556008)(4744005)(6512007)(26005)(7416002)(66946007)(6506007)(2906002)(66476007)(8676002)(6666004)(86362001)(36756003)(45980500001)(43740500002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?T0hkejk3YUNOdWlTQnI1clUzeitoY2l5WHNTTThoaE5TNVRpNTM3a3FEM1Bz?=
- =?utf-8?B?RG4ySVBkR1NVYkljRm5RNmRtNjhmS01XNzZtU3pzZUNBczEwRW1GVWNUMisr?=
- =?utf-8?B?TTd5bXRFL3FLM0ZMWkxTMzlaOVFGTXcwdlZjVW9mYTlpVE9UUzN3OGxZYUFk?=
- =?utf-8?B?YkpPWkRlaVAwWmNVSWpvNGtOWVFJK0VZR2FQZlBJUDBrWUM4bXVNY2hDSkRW?=
- =?utf-8?B?eklEOFp5MEl2MEhtbWgrcGZCOE9xQXF2Q1Z5aDNpYXR5cXdMOXlZVDQ0WVht?=
- =?utf-8?B?cnZ2YXBnR0JZbDloV1Z6U09XL09iMHN2ZTdpNDYyMEVDV3JtRXNmK3REOEFM?=
- =?utf-8?B?STA4UkpsTng3UXVzQ282dUQ0bGR2QzVncDlKbGFZaUZ6cTFTeUJJbDhKelQ1?=
- =?utf-8?B?aExUSFFVNVppNFY2OFQ2MWVRSkJHdDQzZERkeUZqY3lhVHRUNFFwZ2JESmQ5?=
- =?utf-8?B?eVUzZTFjbE85RGFxSEFYdDBINUlJWGFlWXFFSmhTLzR2N0FVNEk5UzViQ1Q0?=
- =?utf-8?B?c1RVYjJ5M1ZHM1dLVEZSazR4TzVyTnRWdGd5QWxUZmZjTXNIcXJDcU93MXQ1?=
- =?utf-8?B?cUlEQm1SdnVobnVJN3g2SFowSUxhUXhDRmo4RVNPK3VqenZCS0JwQ2o1a3Rz?=
- =?utf-8?B?ekZCM05xczdQZWplanY0OGZTTXpTU3JLRzZRbG03eWFzUWVpK0NYZmU1c1o1?=
- =?utf-8?B?SXBlemRrOFY1RURJamdpUndsc3laajN3Z05RalFzakV4UmU2eVFnUXl2SjVZ?=
- =?utf-8?B?VFFCR01kd2N4Y2tGajRUTmxuemdJSFcwVVdVUXNabnB3NGpYOUVLY2dwQmdJ?=
- =?utf-8?B?a2xCdktPK2dlaExYdXZNNGs1Ym9tRXlpWjBGM0dlbEJrajhnbkZrNmhVUVVB?=
- =?utf-8?B?ZTBHZ3dXWk1keWg3RExjOFYydTZieDJhbmtJeDNDaGVwalJGSnNVWEhvWEFQ?=
- =?utf-8?B?d1BFZ2RzenBXc0ttUFdQWTJUd0F6eUYvQXJqME5vYmpMS1VscCtxTUVNa0d3?=
- =?utf-8?B?eXlwc0N1OTd0bk5nWWtCRTlCcXQxcDVvcE1uN2VKcXVQUlI3NmxZVFVUUlRS?=
- =?utf-8?B?Y2JiM09zc1hBSHdTQ0d0VjdaSFNJdXpHUzh2TlpKeEYzbzdoQjV1bkVFTDE3?=
- =?utf-8?B?ODZXYVJqRUJTRGV2ZmE0akw1NHkrYUdLenJQUjV0VEUzQ2VOSm1yWHliTDVU?=
- =?utf-8?B?WHk4N1VHeit4c01DdXRPb3pOdDFLbEFwUkpNVE9BOFRoOVVTZDNXSVlwQ1JY?=
- =?utf-8?B?ajVZUVhhdGExRDRKcnNHODEzRVp2NGNHWUlDOXhYcno4UHJHL2pnYm9tVlhn?=
- =?utf-8?B?N051U0R2bUN2SERpekJqaFpGNXIwVElrenRqcStTL1Z3eCtsa3g4M0NiVE9i?=
- =?utf-8?B?WVJJN1hxQk4zL3lONThYcC9INjdyOWNLV3hvMEJtQXdReFdqTFRBcDU3eWV2?=
- =?utf-8?B?TlY5ZGVTZStWL3p3dlprWW5RWit3ZlZHUTIwV1dFS0tMV1dGaTk0ZmZIWXp3?=
- =?utf-8?B?UFByYk52NFRTamNTWE9sUVhra3VtNXkrRnN0cmpjS1dnSjdRazA5Z0l5QmZI?=
- =?utf-8?B?bUxUdnBCWlNJdmJ5OUhsNHcwSmJQblM3VGZrL04rcDMxQ0FpdFJqOGovNGVx?=
- =?utf-8?B?SWRvWGo3dFg1NGtZOVlZZW44clI5Zm5uT3hhcVFXL3VrbkZ2RTBJWm5NUHVq?=
- =?utf-8?B?cmZSamJFZFptbEF4SGZkRjdDKzV2V2R5TUJmQjhHanV5YnpDRzZqYzBDMFVv?=
- =?utf-8?B?QTY1RitwajVWb3dyL2Nab3V0MHBTMEc2UTVLc1gyUlFPR2tXREJYb2VUb3BD?=
- =?utf-8?B?anNWT0x4VVcxR3lCQjh5RkVUWmVReEVZV3lJbGxQbmJ3aGhJeHMvdGRMbzYy?=
- =?utf-8?B?aTlGeWc1MGRGYnNDdENZNDhHZlMxM1JZbXNLUllOMW0vL3RRclJBM1doVlk0?=
- =?utf-8?B?RUVGQ0tGZnJLWEdXcEZUSTdzTWYwVlI0WEVGN0lyb2dTaW9wLzErSHBUcldx?=
- =?utf-8?B?RzVGNmNJUHVjT0ZNUGE1MnRZOWtERE50YWNZekhrSWF0SnRySGlmY1ZQZzJY?=
- =?utf-8?B?YVNWSEJ2cC9ONk5uOElZZDV5WDJJdUlTeVVCdEZVWGJiTDJDeDhBRElRV1Ar?=
- =?utf-8?B?WXNna1VlTVpxVy8rUUlUMXJxUEhRK29vcVh3cGFBTytFNDc4VUlDaTY5aUdJ?=
- =?utf-8?Q?UhkDqdTZLEz/OINtx7wvO2A=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8df6d86d-b8dc-429a-af6e-08d9c449d45c
-X-MS-Exchange-CrossTenant-AuthSource: CY4PR12MB1576.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Dec 2021 06:19:22.5925
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 6KEI9dlH/Eem646oojH84vGZLQkjtvRDxJGOupt2GNJ+QTgMJ1/SopHjnxe9DYsIdS+orKVzuinYbdVv65l+Iw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR12MB1765
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.1
+Subject: Re: [PATCH v1] memory: tegra30-emc: Print additional memory info
+Content-Language: en-US
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Svyatoslav Ryhel <clamor95@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+References: <20211217234711.8353-1-digetx@gmail.com>
+ <fc5601e7-40e7-03c5-a433-859539f82144@canonical.com>
+ <03a09ff5-fe2d-3ce2-a93b-4e44fd030ffb@gmail.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+In-Reply-To: <03a09ff5-fe2d-3ce2-a93b-4e44fd030ffb@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On 20/12/2021 14:44, Dmitry Osipenko wrote:
+> 20.12.2021 14:03, Krzysztof Kozlowski пишет:
+>> On 18/12/2021 00:47, Dmitry Osipenko wrote:
+>>> Print out memory type and LPDDR2 configuration on Tegra30, making it
+>>> similar to the memory info printed by the Tegra20 memory driver. This
+>>> info is useful for debugging purposes.
+>>>
+>>> Tested-by: Svyatoslav Ryhel <clamor95@gmail.com> # T30 ASUS TF201 LPDDR2
+>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>>> ---
+>>>  drivers/memory/tegra/Kconfig       |   1 +
+>>>  drivers/memory/tegra/tegra30-emc.c | 131 ++++++++++++++++++++++++++---
+>>>  2 files changed, 122 insertions(+), 10 deletions(-)
+>>>
+>>> diff --git a/drivers/memory/tegra/Kconfig b/drivers/memory/tegra/Kconfig
+>>> index 7951764b4efe..3fe83d7c2bf8 100644
+>>> --- a/drivers/memory/tegra/Kconfig
+>>> +++ b/drivers/memory/tegra/Kconfig
+>>> @@ -28,6 +28,7 @@ config TEGRA30_EMC
+>>>  	default y
+>>>  	depends on ARCH_TEGRA_3x_SOC || COMPILE_TEST
+>>>  	select PM_OPP
+>>> +	select DDR
+>>>  	help
+>>>  	  This driver is for the External Memory Controller (EMC) found on
+>>>  	  Tegra30 chips. The EMC controls the external DRAM on the board.
+>>> diff --git a/drivers/memory/tegra/tegra30-emc.c b/drivers/memory/tegra/tegra30-emc.c
+>>> index 80f98d717e13..4c0432704f46 100644
+>>> --- a/drivers/memory/tegra/tegra30-emc.c
+>>> +++ b/drivers/memory/tegra/tegra30-emc.c
+>>> @@ -9,6 +9,7 @@
+>>>   * Copyright (C) 2019 GRATE-DRIVER project
+>>>   */
+>>>  
+>>> +#include <linux/bitfield.h>
+>>>  #include <linux/clk.h>
+>>>  #include <linux/clk/tegra.h>
+>>>  #include <linux/debugfs.h>
+>>> @@ -31,11 +32,15 @@
+>>>  #include <soc/tegra/common.h>
+>>>  #include <soc/tegra/fuse.h>
+>>>  
+>>> +#include "../jedec_ddr.h"
+>>> +#include "../of_memory.h"
+>>> +
+>>>  #include "mc.h"
+>>>  
+>>>  #define EMC_INTSTATUS				0x000
+>>>  #define EMC_INTMASK				0x004
+>>>  #define EMC_DBG					0x008
+>>> +#define EMC_ADR_CFG				0x010
+>>>  #define EMC_CFG					0x00c
+>>>  #define EMC_REFCTRL				0x020
+>>>  #define EMC_TIMING_CONTROL			0x028
+>>> @@ -81,6 +86,7 @@
+>>>  #define EMC_EMRS				0x0d0
+>>>  #define EMC_SELF_REF				0x0e0
+>>>  #define EMC_MRW					0x0e8
+>>> +#define EMC_MRR					0x0ec
+>>>  #define EMC_XM2DQSPADCTRL3			0x0f8
+>>>  #define EMC_FBIO_SPARE				0x100
+>>>  #define EMC_FBIO_CFG5				0x104
+>>> @@ -208,6 +214,13 @@
+>>>  
+>>>  #define EMC_REFRESH_OVERFLOW_INT		BIT(3)
+>>>  #define EMC_CLKCHANGE_COMPLETE_INT		BIT(4)
+>>> +#define EMC_MRR_DIVLD_INT			BIT(5)
+>>> +
+>>> +#define EMC_MRR_DEV_SELECTN			GENMASK(31, 30)
+>>> +#define EMC_MRR_MRR_MA				GENMASK(23, 16)
+>>> +#define EMC_MRR_MRR_DATA			GENMASK(15, 0)
+>>> +
+>>> +#define EMC_ADR_CFG_EMEM_NUMDEV			BIT(0)
+>>>  
+>>>  enum emc_dram_type {
+>>>  	DRAM_TYPE_DDR3,
+>>> @@ -378,6 +391,8 @@ struct tegra_emc {
+>>>  
+>>>  	/* protect shared rate-change code path */
+>>>  	struct mutex rate_lock;
+>>> +
+>>> +	bool mrr_error;
+>>>  };
+>>>  
+>>>  static int emc_seq_update_timing(struct tegra_emc *emc)
+>>> @@ -1008,12 +1023,18 @@ static int emc_load_timings_from_dt(struct tegra_emc *emc,
+>>>  	return 0;
+>>>  }
+>>>  
+>>> -static struct device_node *emc_find_node_by_ram_code(struct device *dev)
+>>> +static struct device_node *emc_find_node_by_ram_code(struct tegra_emc *emc)
+>>>  {
+>>> +	struct device *dev = emc->dev;
+>>>  	struct device_node *np;
+>>>  	u32 value, ram_code;
+>>>  	int err;
+>>>  
+>>> +	if (emc->mrr_error) {
+>>> +		dev_warn(dev, "memory timings skipped due to MRR error\n");
+>>> +		return NULL;
+>>> +	}
+>>> +
+>>>  	if (of_get_child_count(dev->of_node) == 0) {
+>>>  		dev_info_once(dev, "device-tree doesn't have memory timings\n");
+>>>  		return NULL;
+>>> @@ -1035,11 +1056,73 @@ static struct device_node *emc_find_node_by_ram_code(struct device *dev)
+>>>  	return NULL;
+>>>  }
+>>>  
+>>> +static int emc_read_lpddr_mode_register(struct tegra_emc *emc,
+>>> +					unsigned int emem_dev,
+>>> +					unsigned int register_addr,
+>>> +					unsigned int *register_data)
+>>> +{
+>>> +	u32 memory_dev = emem_dev + 1;
+>>> +	u32 val, mr_mask = 0xff;
+>>> +	int err;
+>>> +
+>>> +	/* clear data-valid interrupt status */
+>>> +	writel_relaxed(EMC_MRR_DIVLD_INT, emc->regs + EMC_INTSTATUS);
+>>> +
+>>> +	/* issue mode register read request */
+>>> +	val  = FIELD_PREP(EMC_MRR_DEV_SELECTN, memory_dev);
+>>> +	val |= FIELD_PREP(EMC_MRR_MRR_MA, register_addr);
+>>> +
+>>> +	writel_relaxed(val, emc->regs + EMC_MRR);
+>>> +
+>>> +	/* wait for the LPDDR2 data-valid interrupt */
+>>> +	err = readl_relaxed_poll_timeout_atomic(emc->regs + EMC_INTSTATUS, val,
+>>> +						val & EMC_MRR_DIVLD_INT,
+>>> +						1, 100);
+>>> +	if (err) {
+>>> +		dev_err(emc->dev, "mode register %u read failed: %d\n",
+>>> +			register_addr, err);
+>>> +		emc->mrr_error = true;
+>>> +		return err;
+>>> +	}
+>>> +
+>>> +	/* read out mode register data */
+>>> +	val = readl_relaxed(emc->regs + EMC_MRR);
+>>> +	*register_data = FIELD_GET(EMC_MRR_MRR_DATA, val) & mr_mask;
+>>> +
+>>> +	return 0;
+>>> +}
+>>> +
+>>> +static void emc_read_lpddr_sdram_info(struct tegra_emc *emc,
+>>> +				      unsigned int emem_dev)
+>>> +{
+>>> +	union lpddr2_basic_config4 basic_conf4;
+>>> +	unsigned int manufacturer_id;
+>>> +	unsigned int revision_id1;
+>>> +	unsigned int revision_id2;
+>>> +
+>>> +	/* these registers are standard for all LPDDR JEDEC memory chips */
+>>> +	emc_read_lpddr_mode_register(emc, emem_dev, 5, &manufacturer_id);
+>>> +	emc_read_lpddr_mode_register(emc, emem_dev, 6, &revision_id1);
+>>> +	emc_read_lpddr_mode_register(emc, emem_dev, 7, &revision_id2);
+>>> +	emc_read_lpddr_mode_register(emc, emem_dev, 8, &basic_conf4.value);
+>>> +
+>>> +	dev_info(emc->dev, "SDRAM[dev%u]: manufacturer: 0x%x (%s) rev1: 0x%x rev2: 0x%x prefetch: S%u density: %uMbit iowidth: %ubit\n",
+>>> +		 emem_dev, manufacturer_id,
+>>> +		 lpddr2_jedec_manufacturer(manufacturer_id),
+>>> +		 revision_id1, revision_id2,
+>>> +		 4 >> basic_conf4.arch_type,
+>>> +		 64 << basic_conf4.density,
+>>> +		 32 >> basic_conf4.io_width);
+>>> +}
+>>> +
+>>
+>> Quickly looking, these two functions are exactly the same as ones in
+>> tegra20-emc.c
+>> . Later you might come up with another set for other SoCs, so it looks
+>> it is worth to share these.
+> 
+> Should be too much trouble for not much gain, IMO. How many bytes will
+> be shared in the end? There is no much code here, we may lose more than
+> win. All these Tegra EMC drivers can be compiled as a loadable modules,
+> that's what distro kernels usually do. There are no plans for other SoCs
+> for today.
+
+It's not about the bytes but source code lines to maintain and fix (if
+there is something to fix). But if you don't plan to make a third copy
+of it, it is okay.
+
+> 
+> I don't see how that sharing could be done easily and nicely. Please
+> tell if you see.
+
+Since it is not about duplicated object code, but code for review, it is
+pretty straightforward:
+
+1. Create tegra-emc-common.[ch]
+2. In Makefile:
+
++tegra20_emc-y += tegra20-emc.o tegra-emc-common.o
+
++obj-$(CONFIG_TEGRA20_EMC)  += tegra20_emc.o
+
++
+
++tegra30_emc-y += tegra30-emc.o tegra-emc-common.o
+
++obj-$(CONFIG_TEGRA30_EMC)  += tegra30_emc.o
 
 
-On 12/21/2021 6:51 AM, Dmitry Osipenko wrote:
->
-> All stable kernels affected by this problem that don't support the bulk
-> reset API are EOL now. Please use bulk reset API like I suggested in the
-> comment to v1, it will allow us to have a cleaner and nicer code.
 
-Agree that it would be compact and cleaner, but any specific reset 
-failure in the group won't be obvious in the logs. In this case it 
-failed silently. If compactness is preferred, then may be I can keep an 
-error print at group level so that we see some failure context whenever 
-it happens.
+Best regards,
+Krzysztof
