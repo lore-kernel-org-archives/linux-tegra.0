@@ -2,287 +2,213 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A496DC433EF
-	for <linux-tegra@archiver.kernel.org>; Tue, 21 Dec 2021 08:15:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94770C433EF
+	for <linux-tegra@archiver.kernel.org>; Tue, 21 Dec 2021 10:58:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235464AbhLUIPD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 21 Dec 2021 03:15:03 -0500
-Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:55704
-        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235465AbhLUIPC (ORCPT
+        id S230491AbhLUK6I (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 21 Dec 2021 05:58:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53548 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230391AbhLUK6H (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 21 Dec 2021 03:15:02 -0500
-Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com [209.85.208.200])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 59B013FFE9
-        for <linux-tegra@vger.kernel.org>; Tue, 21 Dec 2021 08:15:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1640074500;
-        bh=unzKlROTSDkZ2H17InUSxNeUgzq1dfHAeoMgtouOPKY=;
-        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-         In-Reply-To:Content-Type;
-        b=ktQQQGEge6rMiCcRLL8iSEg+VFF1/JIYxERrF5PxCxAdFR/q8YiOAwOG2LQNpZ4UK
-         8qFgrF04UkI5bZS31VsVVafht8K0hq9suIVZEFgeH4XswLnSU7YqbcaWh4+Ryb5GfT
-         eon8phwMBkQt9VFrP57oX8VkLXWSACmh8ir8zwLb5elAnI7rESiG1Alz1Sub/nLJqw
-         5X94v3N59evtmJANv7BMzwtsijBLWGuPcBCaRm8Dlw6fG/lZIqJSiu6GDx8Fv4cdpZ
-         pVzY4tpyL4GkIPw4kL2kLqd3+OkqLgSO9PcvpYgSopxwRT4fe+fmLzJnPSSnuXZwxW
-         WDJ3pxitlNoUQ==
-Received: by mail-lj1-f200.google.com with SMTP id bn28-20020a05651c179c00b002222b4cc6d8so1980241ljb.0
-        for <linux-tegra@vger.kernel.org>; Tue, 21 Dec 2021 00:15:00 -0800 (PST)
+        Tue, 21 Dec 2021 05:58:07 -0500
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40DCBC061574
+        for <linux-tegra@vger.kernel.org>; Tue, 21 Dec 2021 02:58:07 -0800 (PST)
+Received: by mail-wr1-x429.google.com with SMTP id s1so26150461wrg.1
+        for <linux-tegra@vger.kernel.org>; Tue, 21 Dec 2021 02:58:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=obI3r1nbzM0iraW5qRU50M6aT90W8rhVhO6/hztYZ1A=;
+        b=N7sRrOs0i4SKE+2dl7grvKCNzlSX7whuGGJGN6uOHeaOfVEsPPNdJxRa+VgOfWqVAr
+         EI7/ntGcE+8IyTfhusJMl79m/NxSAn3o9afWnO2g1fkSkyMF2hyWPFg4aH0QHZQKXNSk
+         lkqOIZXKq+XoMBpjbkhxf9qipY75M0P4G+5hy4YVbFZGsJ8R3Tejv+dtmzeF95YIEHNO
+         LoKt0ZPm/+hrzCMbUn7XW0HrAj0v3vgMiPbg6otqHlYahfFMMwaQvaHcZs28TLwzlENr
+         lSVPxzWgOgVFN7KX+Ut1kml4Pyzm4FoeyBY84ZC+TMDyapU8Puzy4GtBUAXS6bV6blOV
+         WIeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=unzKlROTSDkZ2H17InUSxNeUgzq1dfHAeoMgtouOPKY=;
-        b=mERM0laUqbjFTZg2yzkGIjHbAgi/sbag17uu1+eqaSDeiAwfRkPXpb9WTUlrzO7nt1
-         BhO8bmZo7V6pkWHHVdXSOUWP00UGRv4vuk+LFTwtmBYegGJj+U5MflfFeTDB3SntfkYN
-         WpbjUI0iigVXuZuFxuhOBEQFE92NkZBQIfspXGr4V+ZLvuGatsbWhdqt3uY5wdYG+GJl
-         TujP1sb8wu3+pjz+iJ4dcOJ+dDaZIc6b/1IEJF0SCmz6vcMn6QCAHB99cIhixPPp53ke
-         dPeLPtMN+z+WD8v1LGo5XxO4WXJ2Y/+5CsEm0IsHVV5KV1TX2osuh8g/jwqyIphPzso6
-         ApiA==
-X-Gm-Message-State: AOAM531fNe6/JxttQZPPTQiSvIu8fZUV1OXLq+SlozQVkmaQ56qhgtMH
-        /g/73f0xPAy7oEx5TSgwLonytGi54dcE+oA5d9UIRVF3pR9qSXYvkkr6Ux9OEtnbknrzTEHbc7B
-        nVAHrG+cbVuNHxrsfSoOq3u7ebSCoNTKdA63Rpl2G
-X-Received: by 2002:a05:6512:1324:: with SMTP id x36mr2112496lfu.495.1640074498244;
-        Tue, 21 Dec 2021 00:14:58 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJwwGZohg1XqgJzmBQWomoxCDi6AUox4WkhITAi/1I0iErY7NdBuHTJbhMUBZfe7ca0I37JxzA==
-X-Received: by 2002:a05:6512:1324:: with SMTP id x36mr2112479lfu.495.1640074497960;
-        Tue, 21 Dec 2021 00:14:57 -0800 (PST)
-Received: from [192.168.3.67] (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
-        by smtp.gmail.com with ESMTPSA id m14sm2705332ljg.2.2021.12.21.00.14.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Dec 2021 00:14:57 -0800 (PST)
-Message-ID: <84487ed8-2f9d-c178-012b-8407e5083b87@canonical.com>
-Date:   Tue, 21 Dec 2021 09:14:56 +0100
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=obI3r1nbzM0iraW5qRU50M6aT90W8rhVhO6/hztYZ1A=;
+        b=BQQ7aTOCi/cS7cG52Al7i/W4/XdFg9lnt9PyeSpqjb0z4JyZwCaw8GcJjxCVCSNgIy
+         RpOX/0XuR1tgTloFWk7ajky6J+QBdu9AyPK7BOY1lJuFvb0qYMdnJrXKNAZRU4zDwrtI
+         yQUbQM4F3ayIBhHfku4x6lWlsZnsV9pZov1iHdzZznM+P3PwlupJs7uIn91fjWqjhDmu
+         r2f3sVjIXDiZVtL1Ok+ueSsbkmjAEKESSIvE4KbrzP5RyLzOuYDfXtpsOuxPK8cZu4s9
+         F41fE08M0YhTbXyDTramcVUUobB4LQATP9p327TowzZmPvtMzWCRMgY7qU6m5UVN9twH
+         pDKQ==
+X-Gm-Message-State: AOAM531RJWcTBD5/ETDL5mLpoGkqu5e6u+Pml8Iil65PUXOjcOYVbavj
+        OgQ5xQ4koDIvDGS5FgQuRqU=
+X-Google-Smtp-Source: ABdhPJx3nBlH0mkdVbGBQjSn1PPOzgpA0j3HWH/tnD2RozrYeh6BjPALNBoyb9X4HwCzmxsMXIjhkA==
+X-Received: by 2002:adf:a18b:: with SMTP id u11mr2059051wru.397.1640084285707;
+        Tue, 21 Dec 2021 02:58:05 -0800 (PST)
+Received: from orome (pd9e51d39.dip0.t-ipconnect.de. [217.229.29.57])
+        by smtp.gmail.com with ESMTPSA id b6sm2397205wmq.45.2021.12.21.02.58.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Dec 2021 02:58:04 -0800 (PST)
+Date:   Tue, 21 Dec 2021 11:58:03 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Thomas Graichen <thomas.graichen@gmail.com>,
+        Douglas Anderson <dianders@chromium.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH 0/2] drm/tegra: Fix panel support on Venice 2 and Nyan
+Message-ID: <YcGzO0A/iWzhFjvE@orome>
+References: <20211220104855.428290-1-thierry.reding@gmail.com>
+ <dd7a2f23-00d6-9160-1e09-1d4ea5b1f5e1@gmail.com>
+ <YcCg/xktJ2uShFRf@orome>
+ <e27bd5e0-51d2-875b-aa41-f198230880ac@gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.1
-Subject: Re: [PATCH v1] memory: tegra30-emc: Print additional memory info
-Content-Language: en-US
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Svyatoslav Ryhel <clamor95@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-References: <20211217234711.8353-1-digetx@gmail.com>
- <fc5601e7-40e7-03c5-a433-859539f82144@canonical.com>
- <03a09ff5-fe2d-3ce2-a93b-4e44fd030ffb@gmail.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-In-Reply-To: <03a09ff5-fe2d-3ce2-a93b-4e44fd030ffb@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="me06PRNfHQeU1eBN"
+Content-Disposition: inline
+In-Reply-To: <e27bd5e0-51d2-875b-aa41-f198230880ac@gmail.com>
+User-Agent: Mutt/2.1.4 (93ef06ae) (2021-12-11)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 20/12/2021 14:44, Dmitry Osipenko wrote:
-> 20.12.2021 14:03, Krzysztof Kozlowski пишет:
->> On 18/12/2021 00:47, Dmitry Osipenko wrote:
->>> Print out memory type and LPDDR2 configuration on Tegra30, making it
->>> similar to the memory info printed by the Tegra20 memory driver. This
->>> info is useful for debugging purposes.
->>>
->>> Tested-by: Svyatoslav Ryhel <clamor95@gmail.com> # T30 ASUS TF201 LPDDR2
->>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>> ---
->>>  drivers/memory/tegra/Kconfig       |   1 +
->>>  drivers/memory/tegra/tegra30-emc.c | 131 ++++++++++++++++++++++++++---
->>>  2 files changed, 122 insertions(+), 10 deletions(-)
->>>
->>> diff --git a/drivers/memory/tegra/Kconfig b/drivers/memory/tegra/Kconfig
->>> index 7951764b4efe..3fe83d7c2bf8 100644
->>> --- a/drivers/memory/tegra/Kconfig
->>> +++ b/drivers/memory/tegra/Kconfig
->>> @@ -28,6 +28,7 @@ config TEGRA30_EMC
->>>  	default y
->>>  	depends on ARCH_TEGRA_3x_SOC || COMPILE_TEST
->>>  	select PM_OPP
->>> +	select DDR
->>>  	help
->>>  	  This driver is for the External Memory Controller (EMC) found on
->>>  	  Tegra30 chips. The EMC controls the external DRAM on the board.
->>> diff --git a/drivers/memory/tegra/tegra30-emc.c b/drivers/memory/tegra/tegra30-emc.c
->>> index 80f98d717e13..4c0432704f46 100644
->>> --- a/drivers/memory/tegra/tegra30-emc.c
->>> +++ b/drivers/memory/tegra/tegra30-emc.c
->>> @@ -9,6 +9,7 @@
->>>   * Copyright (C) 2019 GRATE-DRIVER project
->>>   */
->>>  
->>> +#include <linux/bitfield.h>
->>>  #include <linux/clk.h>
->>>  #include <linux/clk/tegra.h>
->>>  #include <linux/debugfs.h>
->>> @@ -31,11 +32,15 @@
->>>  #include <soc/tegra/common.h>
->>>  #include <soc/tegra/fuse.h>
->>>  
->>> +#include "../jedec_ddr.h"
->>> +#include "../of_memory.h"
->>> +
->>>  #include "mc.h"
->>>  
->>>  #define EMC_INTSTATUS				0x000
->>>  #define EMC_INTMASK				0x004
->>>  #define EMC_DBG					0x008
->>> +#define EMC_ADR_CFG				0x010
->>>  #define EMC_CFG					0x00c
->>>  #define EMC_REFCTRL				0x020
->>>  #define EMC_TIMING_CONTROL			0x028
->>> @@ -81,6 +86,7 @@
->>>  #define EMC_EMRS				0x0d0
->>>  #define EMC_SELF_REF				0x0e0
->>>  #define EMC_MRW					0x0e8
->>> +#define EMC_MRR					0x0ec
->>>  #define EMC_XM2DQSPADCTRL3			0x0f8
->>>  #define EMC_FBIO_SPARE				0x100
->>>  #define EMC_FBIO_CFG5				0x104
->>> @@ -208,6 +214,13 @@
->>>  
->>>  #define EMC_REFRESH_OVERFLOW_INT		BIT(3)
->>>  #define EMC_CLKCHANGE_COMPLETE_INT		BIT(4)
->>> +#define EMC_MRR_DIVLD_INT			BIT(5)
->>> +
->>> +#define EMC_MRR_DEV_SELECTN			GENMASK(31, 30)
->>> +#define EMC_MRR_MRR_MA				GENMASK(23, 16)
->>> +#define EMC_MRR_MRR_DATA			GENMASK(15, 0)
->>> +
->>> +#define EMC_ADR_CFG_EMEM_NUMDEV			BIT(0)
->>>  
->>>  enum emc_dram_type {
->>>  	DRAM_TYPE_DDR3,
->>> @@ -378,6 +391,8 @@ struct tegra_emc {
->>>  
->>>  	/* protect shared rate-change code path */
->>>  	struct mutex rate_lock;
->>> +
->>> +	bool mrr_error;
->>>  };
->>>  
->>>  static int emc_seq_update_timing(struct tegra_emc *emc)
->>> @@ -1008,12 +1023,18 @@ static int emc_load_timings_from_dt(struct tegra_emc *emc,
->>>  	return 0;
->>>  }
->>>  
->>> -static struct device_node *emc_find_node_by_ram_code(struct device *dev)
->>> +static struct device_node *emc_find_node_by_ram_code(struct tegra_emc *emc)
->>>  {
->>> +	struct device *dev = emc->dev;
->>>  	struct device_node *np;
->>>  	u32 value, ram_code;
->>>  	int err;
->>>  
->>> +	if (emc->mrr_error) {
->>> +		dev_warn(dev, "memory timings skipped due to MRR error\n");
->>> +		return NULL;
->>> +	}
->>> +
->>>  	if (of_get_child_count(dev->of_node) == 0) {
->>>  		dev_info_once(dev, "device-tree doesn't have memory timings\n");
->>>  		return NULL;
->>> @@ -1035,11 +1056,73 @@ static struct device_node *emc_find_node_by_ram_code(struct device *dev)
->>>  	return NULL;
->>>  }
->>>  
->>> +static int emc_read_lpddr_mode_register(struct tegra_emc *emc,
->>> +					unsigned int emem_dev,
->>> +					unsigned int register_addr,
->>> +					unsigned int *register_data)
->>> +{
->>> +	u32 memory_dev = emem_dev + 1;
->>> +	u32 val, mr_mask = 0xff;
->>> +	int err;
->>> +
->>> +	/* clear data-valid interrupt status */
->>> +	writel_relaxed(EMC_MRR_DIVLD_INT, emc->regs + EMC_INTSTATUS);
->>> +
->>> +	/* issue mode register read request */
->>> +	val  = FIELD_PREP(EMC_MRR_DEV_SELECTN, memory_dev);
->>> +	val |= FIELD_PREP(EMC_MRR_MRR_MA, register_addr);
->>> +
->>> +	writel_relaxed(val, emc->regs + EMC_MRR);
->>> +
->>> +	/* wait for the LPDDR2 data-valid interrupt */
->>> +	err = readl_relaxed_poll_timeout_atomic(emc->regs + EMC_INTSTATUS, val,
->>> +						val & EMC_MRR_DIVLD_INT,
->>> +						1, 100);
->>> +	if (err) {
->>> +		dev_err(emc->dev, "mode register %u read failed: %d\n",
->>> +			register_addr, err);
->>> +		emc->mrr_error = true;
->>> +		return err;
->>> +	}
->>> +
->>> +	/* read out mode register data */
->>> +	val = readl_relaxed(emc->regs + EMC_MRR);
->>> +	*register_data = FIELD_GET(EMC_MRR_MRR_DATA, val) & mr_mask;
->>> +
->>> +	return 0;
->>> +}
->>> +
->>> +static void emc_read_lpddr_sdram_info(struct tegra_emc *emc,
->>> +				      unsigned int emem_dev)
->>> +{
->>> +	union lpddr2_basic_config4 basic_conf4;
->>> +	unsigned int manufacturer_id;
->>> +	unsigned int revision_id1;
->>> +	unsigned int revision_id2;
->>> +
->>> +	/* these registers are standard for all LPDDR JEDEC memory chips */
->>> +	emc_read_lpddr_mode_register(emc, emem_dev, 5, &manufacturer_id);
->>> +	emc_read_lpddr_mode_register(emc, emem_dev, 6, &revision_id1);
->>> +	emc_read_lpddr_mode_register(emc, emem_dev, 7, &revision_id2);
->>> +	emc_read_lpddr_mode_register(emc, emem_dev, 8, &basic_conf4.value);
->>> +
->>> +	dev_info(emc->dev, "SDRAM[dev%u]: manufacturer: 0x%x (%s) rev1: 0x%x rev2: 0x%x prefetch: S%u density: %uMbit iowidth: %ubit\n",
->>> +		 emem_dev, manufacturer_id,
->>> +		 lpddr2_jedec_manufacturer(manufacturer_id),
->>> +		 revision_id1, revision_id2,
->>> +		 4 >> basic_conf4.arch_type,
->>> +		 64 << basic_conf4.density,
->>> +		 32 >> basic_conf4.io_width);
->>> +}
->>> +
->>
->> Quickly looking, these two functions are exactly the same as ones in
->> tegra20-emc.c
->> . Later you might come up with another set for other SoCs, so it looks
->> it is worth to share these.
-> 
-> Should be too much trouble for not much gain, IMO. How many bytes will
-> be shared in the end? There is no much code here, we may lose more than
-> win. All these Tegra EMC drivers can be compiled as a loadable modules,
-> that's what distro kernels usually do. There are no plans for other SoCs
-> for today.
 
-It's not about the bytes but source code lines to maintain and fix (if
-there is something to fix). But if you don't plan to make a third copy
-of it, it is okay.
+--me06PRNfHQeU1eBN
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> 
-> I don't see how that sharing could be done easily and nicely. Please
-> tell if you see.
+On Mon, Dec 20, 2021 at 07:12:03PM +0300, Dmitry Osipenko wrote:
+> 20.12.2021 18:27, Thierry Reding =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > On Mon, Dec 20, 2021 at 05:45:41PM +0300, Dmitry Osipenko wrote:
+> >> 20.12.2021 13:48, Thierry Reding =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> >>> From: Thierry Reding <treding@nvidia.com>
+> >>>
+> >>> Hi,
+> >>>
+> >>> this is an alternative proposal to fix panel support on Venice 2 and
+> >>> Nyan. Dmitry had proposed a different solution that involved reverting
+> >>> the I2C/DDC registration order and would complicate things by breaking
+> >>> the encapsulation of the driver by introducing a global (though local=
+ly
+> >>> scoped) variable[0].
+> >>>
+> >>> This set of patches avoids that by using the recently introduced DP A=
+UX
+> >>> bus infrastructure. The result is that the changes are actually less
+> >>> intrusive and not a step back. Instead they nicely remove the circular
+> >>> dependency that previously existed and caused these issues in the fir=
+st
+> >>> place.
+> >>>
+> >>> To be fair, this is not perfect either because it requires a device t=
+ree
+> >>> change and hence isn't technically backwards-compatible. However, giv=
+en
+> >>> that the original device tree was badly broken in the first place, I
+> >>> think we can make an exception, especially since it is not generally a
+> >>> problem to update device trees on the affected devices.
+> >>>
+> >>> Secondly, this relies on infrastructure that was introduced in v5.15 =
+and
+> >>> therefore will be difficult to backport beyond that. However, since t=
+his
+> >>> functionality has been broken since v5.13 and all of the kernel versi=
+ons
+> >>> between that and v5.15 are EOL anyway, there isn't much that we can do
+> >>> to fix the interim versions anyway.
+> >>>
+> >>> Adding Doug and Laurent since they originally designed the AUX bus
+> >>> patches in case they see anything in here that would be objectionable.
+> >>>
+> >>> Thierry
+> >>>
+> >>> [0]: https://lore.kernel.org/dri-devel/20211130230957.30213-1-digetx@=
+gmail.com/
+> >>>
+> >>> Thierry Reding (2):
+> >>>   drm/tegra: dpaux: Populate AUX bus
+> >>>   ARM: tegra: Move panels to AUX bus
+> >>>
+> >>>  arch/arm/boot/dts/tegra124-nyan-big.dts   | 15 +++++++++------
+> >>>  arch/arm/boot/dts/tegra124-nyan-blaze.dts | 15 +++++++++------
+> >>>  arch/arm/boot/dts/tegra124-venice2.dts    | 14 +++++++-------
+> >>>  drivers/gpu/drm/tegra/Kconfig             |  1 +
+> >>>  drivers/gpu/drm/tegra/dpaux.c             |  7 +++++++
+> >>>  5 files changed, 33 insertions(+), 19 deletions(-)
+> >>>
+> >>
+> >> It should "work" since you removed the ddc-i2c-bus phandle from the
+> >> panel nodes, and thus, panel->ddc won't be used during panel-edp driver
+> >> probe. But this looks like a hack rather than a fix.
+> >=20
+> > The AUX ->ddc will be used for panel->ddc if the ddc-i2c-bus property is
+> > not specified. And that makes perfect sense because we'd basically just
+> > be pointing back to the AUX node anyway.
+> >=20
+> >> I'm not sure why and how devm_of_dp_aux_populate_ep_devices() usage
+> >> should be relevant here. The drm_dp_aux_register() still should to
+> >> invoked before devm_of_dp_aux_populate_ep_devices(), otherwise
+> >> panel->ddc adapter won't be registered.
+> >=20
+> > drm_dp_aux_register() is only needed to expose the device to userspace
+> > and make the I2C adapter available to the rest of the system. But since
+> > we already know the AUX and I2C adapter, we can use it directly without
+> > doing a separate lookup. drm_dp_aux_init() should be enough to set the
+> > adapter up to work for what we need.
+> >=20
+> > See also the kerneldoc for drm_dp_aux_register() where this is described
+> > in a bit more detail.
+>=20
+> Alright, so you fixed it by removing the ddc-i2c-bus phandles and I2C
+> DDC will work properly anyways with that on v5.16.
+>=20
+> But the aux-bus usage still is irrelevant for the fix. Let's not use it
+> then.
 
-Since it is not about duplicated object code, but code for review, it is
-pretty straightforward:
+Yes, it's completely relevant because it essentially replaces the I2C
+DDC. With the AUX bus, the AUX and hence the I2C DDC can be implied from
+the bus' parent.
 
-1. Create tegra-emc-common.[ch]
-2. In Makefile:
+> >> The panel->ddc isn't used by the new panel-edp driver unless panel is
+> >> compatible with "edp-panel". Hence the generic_edp_panel_probe() should
+> >> either fail or crash for a such "edp-panel" since panel->ddc isn't ful=
+ly
+> >> instantiated, AFAICS.
+> >=20
+> > I've tested this and it works fine on Venice 2. Since that was the
+> > reference design for Nyan, I suspect that Nyan's will also work.
+> >=20
+> > It'd be great if Thomas or anyone else with access to a Nyan could
+> > test this to verify that.
+>=20
+> There is no panel-edp driver in the v5.15. The EOL of v5.15 is Oct,
+> 2023, hence we need to either use:
 
-+tegra20_emc-y += tegra20-emc.o tegra-emc-common.o
+All the (at least relevant) functionality that is in panel-edp was in
+panel-simple before it was moved to panel-edp. I've backported this set
+of patches to v5.15 and it works just fine there.
 
-+obj-$(CONFIG_TEGRA20_EMC)  += tegra20_emc.o
+Thierry
 
-+
+--me06PRNfHQeU1eBN
+Content-Type: application/pgp-signature; name="signature.asc"
 
-+tegra30_emc-y += tegra30-emc.o tegra-emc-common.o
+-----BEGIN PGP SIGNATURE-----
 
-+obj-$(CONFIG_TEGRA30_EMC)  += tegra30_emc.o
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmHBszoACgkQ3SOs138+
+s6GvQw//bsLwp0KnPTFEbrxWV+FH1aNy868Cl8evmrK/43zhvUBXRGM9TYuZ0vFV
+pgytpg/Kxrg5zEVu/3F081gsisAcDMi3jsWuVozsddP7DN5v7tuQVRtCRyNjZjXw
+o3iTIoYhGVfiSmqC6ecPFolGb2IFkEcxkgzioGkFKiUlgIWhbFv9L/b6MHThx/Oo
+U424dwzgsNaDXBKuU+GntZ1ew1dDPQr81fMhm2zHBhweeyCMDZ2SkU9lD1tQSrmw
+16JQQfKZoefKEwv7zPh3TbO6r6Xmxn6NXKRoABg9jjwIXhqMfQ4jbd5fs+siEzd+
+W/mC75XtcqI1uoemaUxQD5TcQLTTXX8FqD8jl9xdHuVog1oOSswKd4X/ayjGJRI8
+4pNVkbA35khe3iNcDd9bL4UwVI0NLpuoz2D5q9fNIy76aO9NZu34kqOkMUowtl/t
+kWrH2cx8NBiOXLqEfwiI+yAh+fx8O0Z1+FHKThDwY12yA44tJZ51Ke/3fS0Rkvnw
+8ZDd0ORiU55Y9FophkyF3oUwTy9SFv/BG0WoB1o8U2+fm5Sa+86WS7Re5BpyNau5
+f5awB/HfaiC6/QPNNN5dU+8/g0SoF4GEEdPw7NngHlutfQK3sc8nILxJtgVvjsrY
+51biL+703GRwR/SPMULipycmT6yiGj/Uc735YrRJSluFEcokhtY=
+=PYE7
+-----END PGP SIGNATURE-----
 
-
-
-Best regards,
-Krzysztof
+--me06PRNfHQeU1eBN--
