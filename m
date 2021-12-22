@@ -2,192 +2,111 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46DFBC433F5
-	for <linux-tegra@archiver.kernel.org>; Wed, 22 Dec 2021 12:32:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F1C2C433F5
+	for <linux-tegra@archiver.kernel.org>; Wed, 22 Dec 2021 17:20:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233751AbhLVMch (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 22 Dec 2021 07:32:37 -0500
-Received: from foss.arm.com ([217.140.110.172]:44266 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S240517AbhLVMch (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 22 Dec 2021 07:32:37 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 131091FB;
-        Wed, 22 Dec 2021 04:32:37 -0800 (PST)
-Received: from [10.57.34.58] (unknown [10.57.34.58])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 02FE23F5A1;
-        Wed, 22 Dec 2021 04:32:34 -0800 (PST)
-Message-ID: <6f020ea5-a45c-d21d-04b5-bdb2aef080f1@arm.com>
-Date:   Wed, 22 Dec 2021 12:32:29 +0000
+        id S232678AbhLVRUd (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 22 Dec 2021 12:20:33 -0500
+Received: from mail-qv1-f53.google.com ([209.85.219.53]:42613 "EHLO
+        mail-qv1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230222AbhLVRUd (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 22 Dec 2021 12:20:33 -0500
+Received: by mail-qv1-f53.google.com with SMTP id q4so2903181qvh.9;
+        Wed, 22 Dec 2021 09:20:33 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=a0nsqOSUC19qSjY8cD/nHB7fi0tQEVn7WPyxI3iDGdE=;
+        b=pTRermqo0hTO10KrLEeFmEpzyjFZYp6ZOQxqxuYRMBNDOVujYddmx069qiAWxCAJ6i
+         PqDBE10YjICm6rOjNXvaPLY6x16RuQXKZrsfbQbNA+yF01wZWdenVriSluNk/CZnr46V
+         Y3Bc2FSeG23rtG+abynjparBbC1ReRinMLH9pVBB1zy1XQNPglw1FJvQ1eOW/jZPgs3X
+         DmRkEizZMhiDXBCHO0kFV2Uo2v2CZX/GwifPMQPhBwnMtLAvEUlOO/RYDyZEdnEkCXWY
+         tLxabXgF/5fdx+3EhbcM8VzQcFFVUk/KIxr/Jlj/PcBhNpfqoDJogd2+f/iQlDLxo0PX
+         sDRA==
+X-Gm-Message-State: AOAM530BuxkKYbSUSRzVt4EXyCnzgSre/J6yvxyw2469SLhxAeflIos8
+        +8AUlXSjr/P0EBPTOT1Z1w==
+X-Google-Smtp-Source: ABdhPJzE/OH+L8kidyFrzZMckxaEXTWuD4w5ageV1YGENdTSThNnLhLCIv7WIwxTBr2rs+e6UQAb6Q==
+X-Received: by 2002:a05:6214:c42:: with SMTP id r2mr3273655qvj.53.1640193632837;
+        Wed, 22 Dec 2021 09:20:32 -0800 (PST)
+Received: from robh.at.kernel.org ([24.55.105.145])
+        by smtp.gmail.com with ESMTPSA id r187sm2124946qke.11.2021.12.22.09.20.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Dec 2021 09:20:32 -0800 (PST)
+Received: (nullmailer pid 2351409 invoked by uid 1000);
+        Wed, 22 Dec 2021 17:20:30 -0000
+Date:   Wed, 22 Dec 2021 13:20:30 -0400
+From:   Rob Herring <robh@kernel.org>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Jon Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 5/5] dt-bindings: memory: tegra210: Mark EMC as cooling
+ device
+Message-ID: <YcNeXgRyxvIkcgiD@robh.at.kernel.org>
+References: <20211217165919.2700920-1-thierry.reding@gmail.com>
+ <20211217165919.2700920-5-thierry.reding@gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:91.0) Gecko/20100101
- Thunderbird/91.4.0
-Subject: Re: [PATCH v3 5/5] iommu/nvidia-grace-cmdqv: Limit CMDs for guest
- owned VINTF
-Content-Language: en-GB
-To:     Nicolin Chen <nicolinc@nvidia.com>, joro@8bytes.org,
-        will@kernel.org
-Cc:     jean-philippe@linaro.org, linux-kernel@vger.kernel.org,
-        iommu@lists.linux-foundation.org, linux-tegra@vger.kernel.org,
-        thierry.reding@gmail.com, jgg@nvidia.com,
-        linux-arm-kernel@lists.infradead.org
-References: <20211119071959.16706-1-nicolinc@nvidia.com>
- <20211119071959.16706-6-nicolinc@nvidia.com>
-From:   Robin Murphy <robin.murphy@arm.com>
-In-Reply-To: <20211119071959.16706-6-nicolinc@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211217165919.2700920-5-thierry.reding@gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 2021-11-19 07:19, Nicolin Chen via iommu wrote:
-> When VCMDQs are assigned to a VINTF that is owned by a guest, not
-> hypervisor (HYP_OWN bit is unset), only TLB invalidation commands
-> are supported. This requires get_cmd() function to scan the input
-> cmd before selecting cmdq between smmu->cmdq and vintf->vcmdq, so
-> unsupported commands can still go through emulated smmu->cmdq.
+On Fri, Dec 17, 2021 at 05:59:19PM +0100, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
 > 
-> Also the guest shouldn't have HYP_OWN bit being set regardless of
-> guest kernel driver writing it or not, i.e. the user space driver
-> running in the host OS should wire this bit to zero when trapping
-> a write access to this VINTF_CONFIG register from a guest kernel.
-> So instead of using the existing regval, this patch reads out the
-> register value explicitly to cache in vintf->cfg.
+> The external memory controller found on Tegra210 can use throttling of
+> the EMC frequency in order to reduce the memory chip temperature. Mark
+> the memory controller as a cooling device to take advantage of this
+> functionality.
 > 
-> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
 > ---
->   drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c   |  6 ++--
->   drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h   |  5 +--
->   .../arm/arm-smmu-v3/nvidia-grace-cmdqv.c      | 32 +++++++++++++++++--
->   3 files changed, 36 insertions(+), 7 deletions(-)
+>  .../bindings/memory-controllers/nvidia,tegra210-emc.yaml  | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-> index b1182dd825fd..73941ccc1a3e 100644
-> --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-> +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-> @@ -337,10 +337,10 @@ static int arm_smmu_cmdq_build_cmd(u64 *cmd, struct arm_smmu_cmdq_ent *ent)
->   	return 0;
->   }
->   
-> -static struct arm_smmu_cmdq *arm_smmu_get_cmdq(struct arm_smmu_device *smmu)
-> +static struct arm_smmu_cmdq *arm_smmu_get_cmdq(struct arm_smmu_device *smmu, u64 *cmds, int n)
->   {
->   	if (smmu->nvidia_grace_cmdqv)
-> -		return nvidia_grace_cmdqv_get_cmdq(smmu);
-> +		return nvidia_grace_cmdqv_get_cmdq(smmu, cmds, n);
->   
->   	return &smmu->cmdq;
->   }
-> @@ -747,7 +747,7 @@ static int arm_smmu_cmdq_issue_cmdlist(struct arm_smmu_device *smmu,
->   	u32 prod;
->   	unsigned long flags;
->   	bool owner;
-> -	struct arm_smmu_cmdq *cmdq = arm_smmu_get_cmdq(smmu);
-> +	struct arm_smmu_cmdq *cmdq = arm_smmu_get_cmdq(smmu, cmds, n);
->   	struct arm_smmu_ll_queue llq, head;
->   	int ret = 0;
->   
-> diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
-> index 24f93444aeeb..085c775c2eea 100644
-> --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
-> +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
-> @@ -832,7 +832,8 @@ struct nvidia_grace_cmdqv *
->   nvidia_grace_cmdqv_acpi_probe(struct arm_smmu_device *smmu,
->   			      struct acpi_iort_node *node);
->   int nvidia_grace_cmdqv_device_reset(struct arm_smmu_device *smmu);
-> -struct arm_smmu_cmdq *nvidia_grace_cmdqv_get_cmdq(struct arm_smmu_device *smmu);
-> +struct arm_smmu_cmdq *nvidia_grace_cmdqv_get_cmdq(struct arm_smmu_device *smmu,
-> +						  u64 *cmds, int n);
->   #else /* CONFIG_NVIDIA_GRACE_CMDQV */
->   static inline struct nvidia_grace_cmdqv *
->   nvidia_grace_cmdqv_acpi_probe(struct arm_smmu_device *smmu,
-> @@ -847,7 +848,7 @@ static inline int nvidia_grace_cmdqv_device_reset(struct arm_smmu_device *smmu)
->   }
->   
->   static inline struct arm_smmu_cmdq *
-> -nvidia_grace_cmdqv_get_cmdq(struct arm_smmu_device *smmu)
-> +nvidia_grace_cmdqv_get_cmdq(struct arm_smmu_device *smmu, u64 *cmds, int n)
->   {
->   	return NULL;
->   }
-> diff --git a/drivers/iommu/arm/arm-smmu-v3/nvidia-grace-cmdqv.c b/drivers/iommu/arm/arm-smmu-v3/nvidia-grace-cmdqv.c
-> index c0d7351f13e2..71f6bc684e64 100644
-> --- a/drivers/iommu/arm/arm-smmu-v3/nvidia-grace-cmdqv.c
-> +++ b/drivers/iommu/arm/arm-smmu-v3/nvidia-grace-cmdqv.c
-> @@ -166,7 +166,8 @@ static int nvidia_grace_cmdqv_init_one_vcmdq(struct nvidia_grace_cmdqv *cmdqv,
->   	return arm_smmu_cmdq_init(cmdqv->smmu, cmdq);
->   }
->   
-> -struct arm_smmu_cmdq *nvidia_grace_cmdqv_get_cmdq(struct arm_smmu_device *smmu)
-> +struct arm_smmu_cmdq *
-> +nvidia_grace_cmdqv_get_cmdq(struct arm_smmu_device *smmu, u64 *cmds, int n)
->   {
->   	struct nvidia_grace_cmdqv *cmdqv = smmu->nvidia_grace_cmdqv;
->   	struct nvidia_grace_cmdqv_vintf *vintf0 = &cmdqv->vintf0;
-> @@ -176,6 +177,24 @@ struct arm_smmu_cmdq *nvidia_grace_cmdqv_get_cmdq(struct arm_smmu_device *smmu)
->   	if (!FIELD_GET(VINTF_STATUS, vintf0->status))
->   		return &smmu->cmdq;
->   
-> +	/* Check for supported CMDs if VINTF is owned by guest (not hypervisor) */
-> +	if (!FIELD_GET(VINTF_HYP_OWN, vintf0->cfg)) {
-> +		u64 opcode = (n) ? FIELD_GET(CMDQ_0_OP, cmds[0]) : CMDQ_OP_CMD_SYNC;
+> diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.yaml b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.yaml
+> index bc8477e7ab19..95c14deb8941 100644
+> --- a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.yaml
+> +++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.yaml
+> @@ -44,6 +44,11 @@ properties:
+>      description:
+>        phandle of the memory controller node
+>  
+> +allOf:
+> +  - $ref: ../thermal/thermal-cooling-devices.yaml
 
-I'm not sure there was ever a conscious design decision that batches 
-only ever contain one type of command - if something needs to start 
-depending on that behaviour then that dependency probably wants to be 
-clearly documented. Also, a sync on its own gets trapped to the main 
-cmdq but a sync on the end of a batch of TLBIs or ATCIs goes to the 
-VCMDQ, huh?
+/schemas/thermal/...
+
+With that,
+
+Reviewed-by: Rob Herring <robh@kernel.org>
 
 > +
-> +		/* List all supported CMDs for vintf->cmdq pathway */
-> +		switch (opcode) {
-> +		case CMDQ_OP_TLBI_NH_ASID:
-> +		case CMDQ_OP_TLBI_NH_VA:
-> +		case CMDQ_OP_TLBI_S12_VMALL:
-> +		case CMDQ_OP_TLBI_S2_IPA:
-
-Fun! Can the guest invalidate any VMID it feels like, or is there some 
-additional magic on the host side that we're missing here?
-
-> +		case CMDQ_OP_ATC_INV:
-> +			break;
-Ditto for StreamID here.
-
-Robin.
-
-
-> +		default:
-> +			/* Unsupported CMDs go for smmu->cmdq pathway */
-> +			return &smmu->cmdq;
-> +		}
-> +	}
+> +unevaluatedProperties: false
 > +
->   	/*
->   	 * Select a vcmdq to use. Here we use a temporal solution to
->   	 * balance out traffic on cmdq issuing: each cmdq has its own
-> @@ -199,13 +218,22 @@ int nvidia_grace_cmdqv_device_reset(struct arm_smmu_device *smmu)
->   	vintf0->idx = 0;
->   	vintf0->base = cmdqv->base + NVIDIA_CMDQV_VINTF(0);
->   
-> +	/*
-> +	 * Note that HYP_OWN bit is wired to zero when running in guest kernel
-> +	 * regardless of enabling it here, as !HYP_OWN cmdqs have a restricted
-> +	 * set of supported commands, by following the HW design.
-> +	 */
->   	regval = FIELD_PREP(VINTF_HYP_OWN, 1);
->   	writel(regval, vintf0->base + NVIDIA_VINTF_CONFIG);
->   
->   	regval |= FIELD_PREP(VINTF_EN, 1);
->   	writel(regval, vintf0->base + NVIDIA_VINTF_CONFIG);
->   
-> -	vintf0->cfg = regval;
-> +	/*
-> +	 * As being mentioned above, HYP_OWN bit is wired to zero for a guest
-> +	 * kernel, so read back regval from HW to ensure that reflects in cfg
-> +	 */
-> +	vintf0->cfg = readl(vintf0->base + NVIDIA_VINTF_CONFIG);
->   
->   	ret = readl_relaxed_poll_timeout(vintf0->base + NVIDIA_VINTF_STATUS,
->   					 regval, regval == VINTF_ENABLED,
+>  required:
+>    - compatible
+>    - reg
+> @@ -51,8 +56,6 @@ required:
+>    - clock-names
+>    - nvidia,memory-controller
+>  
+> -additionalProperties: false
+> -
+>  examples:
+>    - |
+>      #include <dt-bindings/clock/tegra210-car.h>
+> @@ -79,4 +82,5 @@ examples:
+>          interrupts = <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>;
+>          memory-region = <&emc_table>;
+>          nvidia,memory-controller = <&mc>;
+> +        #cooling-cells = <2>;
+>      };
+> -- 
+> 2.34.1
+> 
+> 
