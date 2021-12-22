@@ -2,111 +2,129 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F1C2C433F5
-	for <linux-tegra@archiver.kernel.org>; Wed, 22 Dec 2021 17:20:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1DA7C433F5
+	for <linux-tegra@archiver.kernel.org>; Wed, 22 Dec 2021 18:35:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232678AbhLVRUd (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 22 Dec 2021 12:20:33 -0500
-Received: from mail-qv1-f53.google.com ([209.85.219.53]:42613 "EHLO
-        mail-qv1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230222AbhLVRUd (ORCPT
+        id S236474AbhLVSfb (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 22 Dec 2021 13:35:31 -0500
+Received: from mail-qv1-f44.google.com ([209.85.219.44]:45917 "EHLO
+        mail-qv1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233997AbhLVSfb (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 22 Dec 2021 12:20:33 -0500
-Received: by mail-qv1-f53.google.com with SMTP id q4so2903181qvh.9;
-        Wed, 22 Dec 2021 09:20:33 -0800 (PST)
+        Wed, 22 Dec 2021 13:35:31 -0500
+Received: by mail-qv1-f44.google.com with SMTP id a9so3071473qvd.12;
+        Wed, 22 Dec 2021 10:35:30 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=a0nsqOSUC19qSjY8cD/nHB7fi0tQEVn7WPyxI3iDGdE=;
-        b=pTRermqo0hTO10KrLEeFmEpzyjFZYp6ZOQxqxuYRMBNDOVujYddmx069qiAWxCAJ6i
-         PqDBE10YjICm6rOjNXvaPLY6x16RuQXKZrsfbQbNA+yF01wZWdenVriSluNk/CZnr46V
-         Y3Bc2FSeG23rtG+abynjparBbC1ReRinMLH9pVBB1zy1XQNPglw1FJvQ1eOW/jZPgs3X
-         DmRkEizZMhiDXBCHO0kFV2Uo2v2CZX/GwifPMQPhBwnMtLAvEUlOO/RYDyZEdnEkCXWY
-         tLxabXgF/5fdx+3EhbcM8VzQcFFVUk/KIxr/Jlj/PcBhNpfqoDJogd2+f/iQlDLxo0PX
-         sDRA==
-X-Gm-Message-State: AOAM530BuxkKYbSUSRzVt4EXyCnzgSre/J6yvxyw2469SLhxAeflIos8
-        +8AUlXSjr/P0EBPTOT1Z1w==
-X-Google-Smtp-Source: ABdhPJzE/OH+L8kidyFrzZMckxaEXTWuD4w5ageV1YGENdTSThNnLhLCIv7WIwxTBr2rs+e6UQAb6Q==
-X-Received: by 2002:a05:6214:c42:: with SMTP id r2mr3273655qvj.53.1640193632837;
-        Wed, 22 Dec 2021 09:20:32 -0800 (PST)
+        bh=wddvJKAjEcziM4JqMrIWh39VyvuNvYrlg87KqL78R3k=;
+        b=tifJlH84BhxhIY7lq/s52QZzvuk1xHcyi4wKhW3aprARQ4Vr8mqO1TjE0z2xhb5qnQ
+         gdek0F8+wd/bwkSs2/Mb2kjqP9oNA8ZF2DGrM/n0yKeJyHW7e/Sts7w02aXyECfbVFhG
+         L13JFiSj2LNPSeCdotwgATO0vHYHlp6r2/FBPPXiXB+ELp9Ea029dLO1226VW/jJrATU
+         8svw5ZSqdQJHPW0DDUIKtzoXfl3Fu+OPuoETFy/xphBoawQy5SnRI3y2l1uYZYwGaugL
+         B25TjfoREDpYFKAwqQ1UgT8k7jB2Fn+D37PBo17kbOwUBlgSYmokJ2SnsKpGcofPZEyF
+         V7Tw==
+X-Gm-Message-State: AOAM530rRBLIWu9tcpkHjpdTnWEx2NVQvDWd6PSPua1B7PmpyfZVsAkx
+        itvX87xZZ6621PEkYmpCNRXRdXIJcrXd
+X-Google-Smtp-Source: ABdhPJxhIH2nLhxHUmJ9ealzrumRvQGjwfnGIcUS/n07yDQLdGrm95e8KglsOX+17uY9I9UC3ku9CA==
+X-Received: by 2002:ad4:5be5:: with SMTP id k5mr3545749qvc.124.1640198130421;
+        Wed, 22 Dec 2021 10:35:30 -0800 (PST)
 Received: from robh.at.kernel.org ([24.55.105.145])
-        by smtp.gmail.com with ESMTPSA id r187sm2124946qke.11.2021.12.22.09.20.31
+        by smtp.gmail.com with ESMTPSA id d27sm2157772qko.132.2021.12.22.10.35.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Dec 2021 09:20:32 -0800 (PST)
-Received: (nullmailer pid 2351409 invoked by uid 1000);
-        Wed, 22 Dec 2021 17:20:30 -0000
-Date:   Wed, 22 Dec 2021 13:20:30 -0400
+        Wed, 22 Dec 2021 10:35:29 -0800 (PST)
+Received: (nullmailer pid 2475434 invoked by uid 1000);
+        Wed, 22 Dec 2021 18:35:27 -0000
+Date:   Wed, 22 Dec 2021 14:35:27 -0400
 From:   Rob Herring <robh@kernel.org>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Jon Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/5] dt-bindings: memory: tegra210: Mark EMC as cooling
- device
-Message-ID: <YcNeXgRyxvIkcgiD@robh.at.kernel.org>
-References: <20211217165919.2700920-1-thierry.reding@gmail.com>
- <20211217165919.2700920-5-thierry.reding@gmail.com>
+To:     Sumit Gupta <sumitg@nvidia.com>
+Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, kbuild-all@lists.01.org, bbasu@nvidia.com,
+        vsethi@nvidia.com, jsequeira@nvidia.com,
+        Thierry Reding <treding@nvidia.com>
+Subject: Re: [Patch v3 3/9] dt-bindings: arm: tegra: Add NVIDIA Tegra194
+ axi2apb binding
+Message-ID: <YcNv7xm19sFTlfjW@robh.at.kernel.org>
+References: <20211221125117.6545-1-sumitg@nvidia.com>
+ <20211221125117.6545-4-sumitg@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20211217165919.2700920-5-thierry.reding@gmail.com>
+In-Reply-To: <20211221125117.6545-4-sumitg@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, Dec 17, 2021 at 05:59:19PM +0100, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
+On Tue, Dec 21, 2021 at 06:21:11PM +0530, Sumit Gupta wrote:
+> Add device-tree binding documentation to represent the axi2apb bridges
+> used by Control Backbone (CBB) 1.0 in Tegra194 SOC. All errors for APB
+> slaves are reported as slave error because APB bas single bit to report
+> error. So, CBB driver needs to further check error status registers of
+> all the axi2apb bridges to find error type.
 > 
-> The external memory controller found on Tegra210 can use throttling of
-> the EMC frequency in order to reduce the memory chip temperature. Mark
-> the memory controller as a cooling device to take advantage of this
-> functionality.
-> 
+> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
 > Signed-off-by: Thierry Reding <treding@nvidia.com>
 > ---
->  .../bindings/memory-controllers/nvidia,tegra210-emc.yaml  | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
+>  .../arm/tegra/nvidia,tegra194-axi2apb.yaml    | 40 +++++++++++++++++++
+>  1 file changed, 40 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,tegra194-axi2apb.yaml
 > 
-> diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.yaml b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.yaml
-> index bc8477e7ab19..95c14deb8941 100644
-> --- a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.yaml
-> +++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.yaml
-> @@ -44,6 +44,11 @@ properties:
->      description:
->        phandle of the memory controller node
->  
-> +allOf:
-> +  - $ref: ../thermal/thermal-cooling-devices.yaml
-
-/schemas/thermal/...
-
-With that,
-
-Reviewed-by: Rob Herring <robh@kernel.org>
-
+> diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra194-axi2apb.yaml b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra194-axi2apb.yaml
+> new file mode 100644
+> index 000000000000..788a13f8aa93
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra194-axi2apb.yaml
+> @@ -0,0 +1,40 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: "http://devicetree.org/schemas/arm/tegra/nvidia,tegra194-axi2apb.yaml#"
+> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
 > +
-> +unevaluatedProperties: false
+> +title: NVIDIA Tegra194 AXI2APB bridge
 > +
->  required:
->    - compatible
->    - reg
-> @@ -51,8 +56,6 @@ required:
->    - clock-names
->    - nvidia,memory-controller
->  
-> -additionalProperties: false
-> -
->  examples:
->    - |
->      #include <dt-bindings/clock/tegra210-car.h>
-> @@ -79,4 +82,5 @@ examples:
->          interrupts = <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>;
->          memory-region = <&emc_table>;
->          nvidia,memory-controller = <&mc>;
-> +        #cooling-cells = <2>;
->      };
+> +maintainers:
+> +  - Sumit Gupta <sumitg@nvidia.com>
+> +
+> +properties:
+> +  $nodename:
+> +    pattern: "^axi2apb@([0-9a-f]+)$"
+> +
+> +  compatible:
+> +    enum:
+> +      - nvidia,tegra194-axi2apb
+> +
+> +  reg:
+> +    maxItems: 6
+> +    description: Physical base address and length of registers for all bridges
+> +
+> +additionalProperties: false
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +examples:
+> +  - |
+> +    axi2apb: axi2apb@2390000 {
+
+As axi2apb appears to be a bus, then all the child nodes (APB devices) 
+should be under this node.
+
+Is NVidia still putting all the devices at the root level rather than 
+under a bus node which is preferred?
+
+> +      compatible = "nvidia,tegra194-axi2apb";
+> +      reg = <0x02390000 0x1000>,
+> +            <0x023a0000 0x1000>,
+> +            <0x023b0000 0x1000>,
+> +            <0x023c0000 0x1000>,
+> +            <0x023d0000 0x1000>,
+> +            <0x023e0000 0x1000>;
+> +    };
 > -- 
-> 2.34.1
+> 2.17.1
 > 
 > 
