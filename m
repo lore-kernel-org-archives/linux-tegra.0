@@ -2,125 +2,83 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1477C433F5
-	for <linux-tegra@archiver.kernel.org>; Thu, 23 Dec 2021 11:54:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3858FC433F5
+	for <linux-tegra@archiver.kernel.org>; Thu, 23 Dec 2021 12:27:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348041AbhLWLyP (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 23 Dec 2021 06:54:15 -0500
-Received: from mail-bn8nam12on2049.outbound.protection.outlook.com ([40.107.237.49]:57024
-        "EHLO NAM12-BN8-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1348077AbhLWLyN (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 23 Dec 2021 06:54:13 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=GS7rSn1RDrs41FvSG6Hhj2fYb0mlEJPSrwNBgP5yIXTMVGNgFW2A5F4hXjCAeqh8BFxh5XeklVFzL5aIvVBWn1UQEShfUnJT2Of47kIRjswirhTjf67Wb5RRw07qi06JSDOqu1DFx17p+CVTW8c08ZcQTI0Bw5/dvgX8UADkvYk/MBsLUP+41u1VYhBh3432nQVLdON+sFBUNbJPmYOo/e9rfgw8axUpmeblEnO0FavpfMPEGRl1jMIyS30KG8sI4zBFHJcAF5y7fkh5uhqkNuWceZbGq6lOYRTPV9QMj0TL7qC0kngb0aM3G5U+WCKKXAKMlG+y8x38kKbzCf7UUQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=rW2CBw1ZqgMzRjVYduwvq7BT9NVzCPU6/lpqXt4Mmzw=;
- b=IrGZqoUIWzfiWdoyZh+ePfK+oPHDn7HB/aW2LVe1+be+Sz+36Z2r8oYnYE9qBKJtkE1k40v3cBq3pLjttKuiOPuaD5Nr/7yKKSycCY7/+WwMrOKhIaIP8PT2Z97/K5KNYZH/H73HVjtf7m97WldbtAlViI6n7bhPFzoovXbVrQWRdiQTqnlDzEqrcVEaGcx66vDd8hiw0OlQxjX8V1IEV8m9LEe4i2tYx+7hCz1MfSV5C9nsAdpfwSqONwMcu5ZGptQXQWFGGsebu8zqOnY6Iw2zemhlrNTulkj2LSUvpnbiSA7+ItQW+wUPTPT9inpkBKh1UDoUK3LyHNhHOrYgAg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 12.22.5.236) smtp.rcpttodomain=suse.com smtp.mailfrom=nvidia.com; dmarc=pass
- (p=reject sp=reject pct=100) action=none header.from=nvidia.com; dkim=none
- (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rW2CBw1ZqgMzRjVYduwvq7BT9NVzCPU6/lpqXt4Mmzw=;
- b=SYtcnZ5KNFBHQEAoo26VVHFfbttAEuKE8ga5UZYvLrem92Xu+1MfqPMimZLGVZtJCI1+9FpcGN5b+pM/UFRhP5Gg5TLaBNW0G1fbm5PX9GDAOI08sQggFA/x98Ovdz20ZjIkVWahF4mNLld8bykMZU3jBRQEGVuhq8tbIDbTihjoxO9OJ3x6ADBH287bHp2zsM99KXpNpHeO6cKFKSLH64p8if9StM9zLZWRw4ypXVBBLoAxXlqZN4DJ8YlITxyqlV1w58lQ2Cac2b5lV9D8AS2tLOTsvop9vsbss2ri1fDDy7n9zK6j5Hi2ltDGSisQEQmSUCLyrYed6/OuiPSMDg==
-Received: from MWHPR01CA0046.prod.exchangelabs.com (2603:10b6:300:101::32) by
- SN1PR12MB2543.namprd12.prod.outlook.com (2603:10b6:802:2a::16) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.4823.18; Thu, 23 Dec 2021 11:54:11 +0000
-Received: from CO1NAM11FT054.eop-nam11.prod.protection.outlook.com
- (2603:10b6:300:101:cafe::d5) by MWHPR01CA0046.outlook.office365.com
- (2603:10b6:300:101::32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4823.19 via Frontend
- Transport; Thu, 23 Dec 2021 11:54:11 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.236)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 12.22.5.236 as permitted sender) receiver=protection.outlook.com;
- client-ip=12.22.5.236; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (12.22.5.236) by
- CO1NAM11FT054.mail.protection.outlook.com (10.13.174.70) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.4823.18 via Frontend Transport; Thu, 23 Dec 2021 11:54:11 +0000
-Received: from HQMAIL111.nvidia.com (172.20.187.18) by DRHQMAIL109.nvidia.com
- (10.27.9.19) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Thu, 23 Dec
- 2021 11:54:09 +0000
-Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Thu, 23 Dec
- 2021 11:54:09 +0000
-Received: from audio.nvidia.com (172.20.187.6) by mail.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server id 15.0.1497.18 via Frontend
- Transport; Thu, 23 Dec 2021 11:54:06 +0000
-From:   Sameer Pujar <spujar@nvidia.com>
-To:     <tiwai@suse.com>, <broonie@kernel.org>, <lgirdwood@gmail.com>,
-        <robh+dt@kernel.org>, <thierry.reding@gmail.com>, <perex@perex.cz>
-CC:     <jonathanh@nvidia.com>, <digetx@gmail.com>, <mkumard@nvidia.com>,
-        <alsa-devel@alsa-project.org>, <devicetree@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Sameer Pujar <spujar@nvidia.com>
-Subject: [PATCH v4 3/3] arm64: tegra: Remove non existent Tegra194 reset
-Date:   Thu, 23 Dec 2021 17:23:51 +0530
-Message-ID: <1640260431-11613-4-git-send-email-spujar@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1640260431-11613-1-git-send-email-spujar@nvidia.com>
-References: <1640260431-11613-1-git-send-email-spujar@nvidia.com>
+        id S1348202AbhLWM07 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 23 Dec 2021 07:26:59 -0500
+Received: from mga03.intel.com ([134.134.136.65]:51618 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S243438AbhLWM07 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 23 Dec 2021 07:26:59 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1640262419; x=1671798419;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=EsO/C6TP2k5lECpkQDcYXdFNp6zHeSuOgOuojLwJg/U=;
+  b=T/HBN5SFjur99cMzlvFznjkUaOUY2dba1Go99ZLOVrCCfPVDwyt9wMmS
+   DvZlj3aGmib7IDaXtqIixv5PXpr1EqNkqSD8SqJL5jXG962FG4WolUOue
+   QD6aHkpwxdtfDYyOd0M19eC9RJ4zNIZK5hVTEPJnqSmqbNO/K+Dl0wlXP
+   Dp/RQZzXfLDiZMBfSv/Z4l+ipBq4LEU2z7G+dqAdb1wnRS8juBBmWQhRN
+   jVKGv0yApgFmE18H+vha7zNH7v4LRVxXJWtcj+MMGPd+VDNxkMDnsSwG0
+   zlPkDl2EpPp8EX092YgtD2yWN9MIPYl8FpQS0Oi3Baa+N93PuXdo3zEsR
+   A==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10206"; a="240769028"
+X-IronPort-AV: E=Sophos;i="5.88,229,1635231600"; 
+   d="scan'208";a="240769028"
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Dec 2021 04:26:59 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.88,229,1635231600"; 
+   d="scan'208";a="522077258"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orsmga008.jf.intel.com with ESMTP; 23 Dec 2021 04:26:34 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id 94A4A120; Thu, 23 Dec 2021 14:26:42 +0200 (EET)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Thierry Reding <treding@nvidia.com>,
+        linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 1/1] gpio: tegra: Get rid of duplicate of_node assignment
+Date:   Thu, 23 Dec 2021 14:26:39 +0200
+Message-Id: <20211223122639.86923-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 87787131-0c7e-4842-0b8c-08d9c60aef0a
-X-MS-TrafficTypeDiagnostic: SN1PR12MB2543:EE_
-X-Microsoft-Antispam-PRVS: <SN1PR12MB2543C1BAAD018D942A4D6C88A77E9@SN1PR12MB2543.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:935;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: QlDi0I6ChjjdNLGahh2zAmFAMoT8Riot4rzPr60uy9tHPdqlgEpyTNABaO/6gtgU8x7cHTBUz7FKyMcfW8aGbWlY7OiodGQKuX3FklzVa8XfyCJsPf7E3IBV6cNsMl/neadHNUbHiku0/IuVZkMS0Q2sXb7PX/q1YYlZUSBVecy4LdW0JenfgDEVTHel0K0b/8VaaCiY3WqI/ewfZM10XYzOoOIpU9G6Sv4e7NxDYxr1lcT1ZQ4Q6+l1Qr/OZMmMcc0hWbQm+z2Vp7hbs8xsRq2MnYL6Q5fn5YkLOQw6HpcXU8XbQGi5cGEDzSCP7WyTJRvs92VBp7JwilEb1QRXCk/lnU0pRK8v9EvKJw4hAnGZn7mq8b6u0mmhkUhuFYoXhkKhFP0+sLDZWOdXDJAGAQ1x7R7efO8PfSqGbBL5qkeP0PcF15zt7JvOuFjUjiL28nYVgPaf0xIIdiT7Yceye18EIE7rdmyUB+Ex1esvt/YclJUkz2WUPe4VmN99qVms3YA2cAi5SnH0p3k6eCkmtJMsXCa+oYX7VXQGGXd47eQUqgpnG6NtoG+LK4FbpeTQmCRdu2meurLoY4MzYU2IxJmERSPX1tqShl4UFynY4SAVzj9sJ3Bxs6mGkTd36NFtrwjWcnRBjoE92Sj0a5KDPSLvWBzDf5Ctqc1oWQzyDzx2xifQAbsFzvGXhHn809VteZWxwjoTR1scq5fvR1BKgLNf9Qxb74crkB9ZEI+k96cdw8RjfLEw/Hx7HzCReIEfsLlY7b3RE45RHQjc5iTgXLFTWa8I4E22PK7sLkNic6s=
-X-Forefront-Antispam-Report: CIP:12.22.5.236;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(4636009)(40470700002)(36840700001)(46966006)(70206006)(70586007)(36860700001)(336012)(26005)(7696005)(83380400001)(5660300002)(8676002)(356005)(54906003)(316002)(110136005)(508600001)(86362001)(40460700001)(36756003)(47076005)(186003)(82310400004)(81166007)(107886003)(8936002)(2906002)(7416002)(2616005)(6666004)(426003)(4326008)(36900700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Dec 2021 11:54:11.0927
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 87787131-0c7e-4842-0b8c-08d9c60aef0a
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.236];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT054.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN1PR12MB2543
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Tegra194 does not really have "hda2codec_2x" related reset. Hence drop
-this entry to reflect actual HW.
+GPIO library does copy the of_node from the parent device of
+the GPIO chip, there is no need to repeat this in the individual
+drivers. Remove these assignment all at once.
 
-Fixes: 4878cc0c9fab ("arm64: tegra: Add HDA controller on Tegra194")
-Signed-off-by: Sameer Pujar <spujar@nvidia.com>
+For the details one may look into the of_gpio_dev_init() implementation.
+
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- arch/arm64/boot/dts/nvidia/tegra194.dtsi | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/gpio/gpio-tegra.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-index 8d29b7f..6a1d896 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-@@ -976,9 +976,8 @@
- 				 <&bpmp TEGRA194_CLK_HDA2CODEC_2X>;
- 			clock-names = "hda", "hda2hdmi", "hda2codec_2x";
- 			resets = <&bpmp TEGRA194_RESET_HDA>,
--				 <&bpmp TEGRA194_RESET_HDA2HDMICODEC>,
--				 <&bpmp TEGRA194_RESET_HDA2CODEC_2X>;
--			reset-names = "hda", "hda2hdmi", "hda2codec_2x";
-+				 <&bpmp TEGRA194_RESET_HDA2HDMICODEC>;
-+			reset-names = "hda", "hda2hdmi";
- 			power-domains = <&bpmp TEGRA194_POWER_DOMAIN_DISP>;
- 			interconnects = <&mc TEGRA194_MEMORY_CLIENT_HDAR &emc>,
- 					<&mc TEGRA194_MEMORY_CLIENT_HDAW &emc>;
+diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
+index 7f5bc10a6479..ff2d2a1f9c73 100644
+--- a/drivers/gpio/gpio-tegra.c
++++ b/drivers/gpio/gpio-tegra.c
+@@ -691,7 +691,6 @@ static int tegra_gpio_probe(struct platform_device *pdev)
+ 	tgi->gc.base			= 0;
+ 	tgi->gc.ngpio			= tgi->bank_count * 32;
+ 	tgi->gc.parent			= &pdev->dev;
+-	tgi->gc.of_node			= pdev->dev.of_node;
+ 
+ 	tgi->ic.name			= "GPIO";
+ 	tgi->ic.irq_ack			= tegra_gpio_irq_ack;
 -- 
-2.7.4
+2.34.1
 
