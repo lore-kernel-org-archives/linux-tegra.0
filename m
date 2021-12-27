@@ -2,51 +2,105 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35586C433F5
-	for <linux-tegra@archiver.kernel.org>; Sun, 26 Dec 2021 09:42:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0589BC433EF
+	for <linux-tegra@archiver.kernel.org>; Mon, 27 Dec 2021 06:46:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231560AbhLZJmN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 26 Dec 2021 04:42:13 -0500
-Received: from slot0.jllresort.com ([62.197.136.5]:34810 "EHLO
-        slot0.jllresort.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233181AbhLZJmN (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 26 Dec 2021 04:42:13 -0500
-X-Greylist: delayed 723 seconds by postgrey-1.27 at vger.kernel.org; Sun, 26 Dec 2021 04:42:12 EST
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed/relaxed; s=dkim; d=jllresort.com;
- h=Reply-To:From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding; i=ele.mon@jllresort.com;
- bh=l72fu4pKvFycnO4A54jZhQGs/6M=;
- b=pAaf5CR34vlrs7f2zxONvzUrDo10FelJ+rYxHg5TumEPNatFe43TadJQ9pKpCchOTlKTstT5a3aJ
-   aRaOilOACzuLS6OVfLJXUIEnyURGkH3fzsW96dr3z4r/lCkfCeFt9MAiH14XPosEV6zc0wlWGfN8
-   Zj5T9R3O2ksmZYi6j0mL/tTSmzd2/lrvzq4eij2bSyngIoCIvr6m5NbPkzVbmlAMbnXOE8gBGQGR
-   4qCZh1z0calyXbG3eS3KEPOSXtvRknbYso9MGzpMJqvCAo8Sy/rPcYZwfSFmS80rOIwPos3OprZ2
-   nJtkv6pMHgjRRV/swcb25q5UBOhwkIWdkrjEZA==
-DomainKey-Signature: a=rsa-sha1; c=nofws; q=dns; s=dkim; d=jllresort.com;
- b=mIXoDURNcjkfoi7nu/RBPUAuUkT53ix3HGXILYffQ4i1PO/VXhNTKawY/PrVin0S9dAvT1igMIKl
-   PqWMG5cVMlBKjOXkEfyEiAq+2YjXeVTbojszPmQtC2Bpv0IineDziL2pl52+r4moqr3Pm04y5wXg
-   RjHjbjvemlyXqyuyuXDzApqoe02DqctUo3bfw7OZ9WQaW2Tt+U4QCuvvBiTfTQT4G8dEiggbNfUO
-   3vQxkKb48d//VjV/H6b+fcxTKYEAn+ngi3qkdJ6lQx6pR+pfMkkkOuU/mT/Iy+5fUBQhLzPjscfy
-   7s0dwZHddWX6aWA/HPPQkThHlLtLSETkX/+szw==;
-Reply-To: mustafa.ayvaz@ayvazburosu.com
-From:   ele.mon@jllresort.com
-To:     linux-tegra@vger.kernel.org
-Subject: Happy Weekend:
-Date:   26 Dec 2021 10:29:29 +0100
-Message-ID: <20211226102855.51F3477359D57CB7@jllresort.com>
+        id S235369AbhL0GqM (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 27 Dec 2021 01:46:12 -0500
+Received: from guitar.tcltek.co.il ([84.110.109.230]:53426 "EHLO mx.tkos.co.il"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S235318AbhL0GqM (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 27 Dec 2021 01:46:12 -0500
+Received: from tarshish.tkos.co.il (unknown [10.0.8.2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mx.tkos.co.il (Postfix) with ESMTPS id 4EE16440534;
+        Mon, 27 Dec 2021 08:45:58 +0200 (IST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tkos.co.il;
+        s=default; t=1640587558;
+        bh=BP1dvxIAwyBUC3bfdY7iX3hCPTCn/UhmSEubBQYYE/c=;
+        h=From:To:Cc:Subject:Date:From;
+        b=uRcxdRpapqtmNQIGXXwwNonuMJUvmTkS0cneWjHMxr71gi4Gc4RSHFWXuEkJ/G8Ex
+         3nQqunH7tAL9APIRuji6Z+olX9VB215+cghXsKWrSXG1oYpvZl1Y30nH9xYmbrwh2H
+         qNSWD6GPHHo3lnjBhBcst8YJFOTTtgKSQorEiWEh84IZ4nw/nZYvHT6zTQgdDbWXoy
+         NbWIjHtbV9BqibP5Sk9x+lhfklgGk9NIFuqiZ64mDjikUKPwta2gVrWDwsBahx/a1Q
+         f1vafpFFgXVLTnGykxsitCyhCPlwGCsoep0ZDKo9h3CqlRQYINVYl60guqd8DnZ3kv
+         sBxDsfUztBwAw==
+From:   Baruch Siach <baruch@tkos.co.il>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Baruch Siach <baruch@tkos.co.il>,
+        Selvam Sathappan Periakaruppan <speriaka@codeaurora.org>,
+        Kathiravan T <kathirav@codeaurora.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Robert Marko <robert.marko@sartura.hr>,
+        linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
+Subject: [PATCH v4 0/3] PCI: IPQ6018 PCIe controller support
+Date:   Mon, 27 Dec 2021 08:46:02 +0200
+Message-Id: <cover.1640587131.git.baruch@tkos.co.il>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Greetings to you linux-tegra,
+This series adds support for the single PCIe lane on IPQ6018 SoCs. The code is 
+ported from downstream Codeaurora v5.4 kernel. The main difference from 
+downstream code is the split of PCIe registers configuration from .init to 
+.post_init, since it requires phy_power_on().
 
-I was wondering if you got my previous email? I have been trying=20
-to reach you by email linux-tegra@vger.kernel.org, kindly get=20
-back to me swiftly, it is very important and urgent.
+Tested on IPQ6010 based hardware.
 
-Thanks
-Mustafa Ayvaz
-Email: mustafa.ayvaz@ayvazburosu.com
+Changes in v4:
+
+  * Drop applied DT bits
+
+  * Add max-link-speed that was missing from the applied v2 patch
+
+  * Rebase the driver on v5.16-rc3
+
+Changes in v3:
+
+  * Drop applied patches
+
+  * Rely on generic code for speed setup
+
+  * Drop unused macros
+
+  * Formatting fixes
+
+Changes in v2:
+
+  * Add patch moving GEN3_RELATED macros to a common header
+
+  * Drop ATU configuration from pcie-qcom
+
+  * Remove local definition of common registers
+
+  * Use bulk clk and reset APIs
+
+  * Remove msi-parent from device-tree
+
+Baruch Siach (2):
+  arm64: dts: qcom: ipq6018: add pcie max-link-speed
+  PCI: dwc: tegra: move GEN3_RELATED DBI register to common header
+
+Selvam Sathappan Periakaruppan (1):
+  PCI: qcom: add support for IPQ60xx PCIe controller
+
+ arch/arm64/boot/dts/qcom/ipq6018.dtsi        |   1 +
+ drivers/pci/controller/dwc/pcie-designware.h |   7 +
+ drivers/pci/controller/dwc/pcie-qcom.c       | 145 +++++++++++++++++++
+ drivers/pci/controller/dwc/pcie-tegra194.c   |   6 -
+ 4 files changed, 153 insertions(+), 6 deletions(-)
+
+-- 
+2.34.1
+
