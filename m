@@ -2,307 +2,127 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DB4FC4167E
-	for <linux-tegra@archiver.kernel.org>; Mon, 27 Dec 2021 06:46:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C738C433EF
+	for <linux-tegra@archiver.kernel.org>; Mon, 27 Dec 2021 15:45:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235377AbhL0GqO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 27 Dec 2021 01:46:14 -0500
-Received: from guitar.tcltek.co.il ([84.110.109.230]:53462 "EHLO mx.tkos.co.il"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S235371AbhL0GqN (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 27 Dec 2021 01:46:13 -0500
-Received: from tarshish.tkos.co.il (unknown [10.0.8.2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S239125AbhL0Ppo (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 27 Dec 2021 10:45:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37710 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239642AbhL0Pm6 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 27 Dec 2021 10:42:58 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C087BC07E5DD;
+        Mon, 27 Dec 2021 07:41:26 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx.tkos.co.il (Postfix) with ESMTPS id C0EB44409BF;
-        Mon, 27 Dec 2021 08:46:00 +0200 (IST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tkos.co.il;
-        s=default; t=1640587561;
-        bh=XrZ4NVy0peN0Xgfag9Eh3NBvuXx+EXCuS4c9cI6kDM8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qdxlRAPlOkBiB1sEGI1lTKxYpSYw//UrkbvV5I1KDc66WSrYleVriCL1rJmTdJ48L
-         IsWAJvHkFRZPLY0j681/cU9ACiJ0Pl2KsT3HZTUTuEH3EWzVJasGuFt3rD5zZZI7/R
-         W7cYwtjlu/jaYdsrJKbQYBOcrsIVPzbLynwwZo0swumgO2Si144Qja1iDfY1Oa4ERq
-         azLGvb1mA+lYEVtEQ4NXFUfLIM8bbHZnzWg3mtMaklnz4Hi78Y4WgijFpdJrq/2oPG
-         dxjKj1WnG5pVDcJE7CNj8t/Vss2LP9hQ3gXUlK9IFJ6gdrDK28o98kn+XBZfbQFe57
-         suZWxFB9zmoIQ==
-From:   Baruch Siach <baruch@tkos.co.il>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Selvam Sathappan Periakaruppan <speriaka@codeaurora.org>,
-        Baruch Siach <baruch.siach@siklu.com>,
-        Kathiravan T <kathirav@codeaurora.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Robert Marko <robert.marko@sartura.hr>,
-        linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
-Subject: [PATCH v4 3/3] PCI: qcom: add support for IPQ60xx PCIe controller
-Date:   Mon, 27 Dec 2021 08:46:05 +0200
-Message-Id: <a2406bf515124afad50ca3c947e2cd758c0896b1.1640587131.git.baruch@tkos.co.il>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1640587131.git.baruch@tkos.co.il>
-References: <cover.1640587131.git.baruch@tkos.co.il>
+        by ams.source.kernel.org (Postfix) with ESMTPS id 8A89BB80E5A;
+        Mon, 27 Dec 2021 15:41:25 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E48CC36AEB;
+        Mon, 27 Dec 2021 15:41:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1640619684;
+        bh=15mMjnAJtOvIMn6zPv/4Je924uGKzCsmt8+HS5gmN20=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=LU9WtGSi1RIaQ3Obqt23VhFJ/0uEDZLpUimW9OQoURgljdEIsWaGKqA55rq1pA96R
+         J2q6sx1+Fk8taeNIGu2eg/z1SesNapn24DXTxrG2Wei9JQFiS6CbIBApFpeDs6S3Dv
+         bRMLEC25DPJJd/MBLB2A8XyaNZF1pYBbWooLjXsAHhQhC5J54np/S8XXGPphifRrTk
+         TXiIHJNXRN6M5cEJctVbcx7SnjVl12kjKZh3cDa6FehJeHX/NrL7RBDCUihFwwOeRc
+         uADk1sPmFRbri6Mm9lk2qrlBriq82xQVWsxqhYDRK7rSrX+cXPW7oKoYM9kErixfnF
+         +6F0CcTtCoFBQ==
+Received: by mail-ed1-f47.google.com with SMTP id o6so63116909edc.4;
+        Mon, 27 Dec 2021 07:41:24 -0800 (PST)
+X-Gm-Message-State: AOAM533xQN9dZ6gAqity0zX4M83RpnuMgB7oSq403naUNGLfZTCw9rzz
+        /ywGqELjxJ/15jfbgZIDVo8AXnoGj1lofwFFtg==
+X-Google-Smtp-Source: ABdhPJxrg1e+Qn2QFV1JLvASB+GljzG6LFYYW5RjZebxYJd8e7aHGbkaKlnnbY17b7L0jTd6OFpJGLZEMhYGgJDjHQA=
+X-Received: by 2002:a17:906:eb04:: with SMTP id mb4mr13908147ejb.27.1640619682657;
+ Mon, 27 Dec 2021 07:41:22 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20211221125117.6545-1-sumitg@nvidia.com> <20211221125117.6545-4-sumitg@nvidia.com>
+ <YcNv7xm19sFTlfjW@robh.at.kernel.org> <226fd57c-2631-ec7a-fc48-d6547d557681@nvidia.com>
+In-Reply-To: <226fd57c-2631-ec7a-fc48-d6547d557681@nvidia.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Mon, 27 Dec 2021 11:41:10 -0400
+X-Gmail-Original-Message-ID: <CAL_Jsq+=hGG-cMwvM0sKFW=Rwa56=fqS379jL4ZjSyDKOia-RA@mail.gmail.com>
+Message-ID: <CAL_Jsq+=hGG-cMwvM0sKFW=Rwa56=fqS379jL4ZjSyDKOia-RA@mail.gmail.com>
+Subject: Re: [Patch v3 3/9] dt-bindings: arm: tegra: Add NVIDIA Tegra194
+ axi2apb binding
+To:     Sumit Gupta <sumitg@nvidia.com>
+Cc:     linux-tegra <linux-tegra@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jon Hunter <jonathanh@nvidia.com>, kbuild-all@lists.01.org,
+        bbasu@nvidia.com, vsethi@nvidia.com, jsequeira@nvidia.com,
+        Thierry Reding <treding@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Selvam Sathappan Periakaruppan <speriaka@codeaurora.org>
+On Thu, Dec 23, 2021 at 4:24 AM Sumit Gupta <sumitg@nvidia.com> wrote:
+> > On Tue, Dec 21, 2021 at 06:21:11PM +0530, Sumit Gupta wrote:
+> >> Add device-tree binding documentation to represent the axi2apb bridges
+> >> used by Control Backbone (CBB) 1.0 in Tegra194 SOC. All errors for APB
+> >> slaves are reported as slave error because APB bas single bit to report
+> >> error. So, CBB driver needs to further check error status registers of
+> >> all the axi2apb bridges to find error type.
+> >>
+> >> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+> >> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> >> ---
+> >>   .../arm/tegra/nvidia,tegra194-axi2apb.yaml    | 40 +++++++++++++++++++
+> >>   1 file changed, 40 insertions(+)
+> >>   create mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,tegra194-axi2apb.yaml
+> >>
+> >> diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra194-axi2apb.yaml b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra194-axi2apb.yaml
+> >> new file mode 100644
+> >> index 000000000000..788a13f8aa93
+> >> --- /dev/null
+> >> +++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra194-axi2apb.yaml
+> >> @@ -0,0 +1,40 @@
+> >> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> >> +%YAML 1.2
+> >> +---
+> >> +$id: "http://devicetree.org/schemas/arm/tegra/nvidia,tegra194-axi2apb.yaml#"
+> >> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+> >> +
+> >> +title: NVIDIA Tegra194 AXI2APB bridge
+> >> +
+> >> +maintainers:
+> >> +  - Sumit Gupta <sumitg@nvidia.com>
+> >> +
+> >> +properties:
+> >> +  $nodename:
+> >> +    pattern: "^axi2apb@([0-9a-f]+)$"
+> >> +
+> >> +  compatible:
+> >> +    enum:
+> >> +      - nvidia,tegra194-axi2apb
+> >> +
+> >> +  reg:
+> >> +    maxItems: 6
+> >> +    description: Physical base address and length of registers for all bridges
+> >> +
+> >> +additionalProperties: false
+> >> +
+> >> +required:
+> >> +  - compatible
+> >> +  - reg
+> >> +
+> >> +examples:
+> >> +  - |
+> >> +    axi2apb: axi2apb@2390000 {
+> >
+> > As axi2apb appears to be a bus, then all the child nodes (APB devices)
+> > should be under this node.
+>
+> axi2apb is a bridge which coverts an AXI to APB interface and not a bus.
 
-IPQ60xx series of SoCs have one port of PCIe gen 3. Add support for that
-platform.
+A bus and bridge node are pretty much one and the same in DT
+representation. A PCI host bridge has a PCI bus beneath it for
+example.
 
-The code is based on downstream[1] Codeaurora kernel v5.4 (branch
-win.linuxopenwrt.2.0).
-
-Split out the DBI registers access part from .init into .post_init. DBI
-registers are only accessible after phy_power_on().
-
-[1] https://source.codeaurora.org/quic/qsdk/oss/kernel/linux-ipq-5.4/
-
-Signed-off-by: Selvam Sathappan Periakaruppan <speriaka@codeaurora.org>
-Signed-off-by: Baruch Siach <baruch.siach@siklu.com>
----
-v4:
-
-  * Rebase on v5.16-rc1
-
-v3:
-  * Drop speed setup; rely on generic code (Rob Herring)
-
-  * Drop unused CLK_RATE macros (Bjorn Helgaas)
-
-  * Minor formatting fixes (Bjorn Helgaas)
-
-  * Add reference to downstream Codeaurora kernel tree (Bjorn Helgaas)
-
-v2:
-  * Drop ATU configuration; rely on common code instead
-
-  * Use more common register macros
-
-  * Use bulk clk and reset APIs
----
- drivers/pci/controller/dwc/pcie-designware.h |   1 +
- drivers/pci/controller/dwc/pcie-qcom.c       | 145 +++++++++++++++++++
- 2 files changed, 146 insertions(+)
-
-diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
-index ea87809ee298..279c3778a13b 100644
---- a/drivers/pci/controller/dwc/pcie-designware.h
-+++ b/drivers/pci/controller/dwc/pcie-designware.h
-@@ -76,6 +76,7 @@
- 
- #define GEN3_RELATED_OFF			0x890
- #define GEN3_RELATED_OFF_GEN3_ZRXDC_NONCOMPL	BIT(0)
-+#define GEN3_RELATED_OFF_RXEQ_RGRDLESS_RXTS	BIT(13)
- #define GEN3_RELATED_OFF_GEN3_EQ_DISABLE	BIT(16)
- #define GEN3_RELATED_OFF_RATE_SHADOW_SEL_SHIFT	24
- #define GEN3_RELATED_OFF_RATE_SHADOW_SEL_MASK	GENMASK(25, 24)
-diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
-index 1c3d1116bb60..14f86c45a8d9 100644
---- a/drivers/pci/controller/dwc/pcie-qcom.c
-+++ b/drivers/pci/controller/dwc/pcie-qcom.c
-@@ -52,6 +52,10 @@
- #define PCIE20_PARF_DBI_BASE_ADDR		0x168
- #define PCIE20_PARF_SLV_ADDR_SPACE_SIZE		0x16C
- #define PCIE20_PARF_MHI_CLOCK_RESET_CTRL	0x174
-+#define AHB_CLK_EN				BIT(0)
-+#define MSTR_AXI_CLK_EN				BIT(1)
-+#define BYPASS					BIT(4)
-+
- #define PCIE20_PARF_AXI_MSTR_WR_ADDR_HALT	0x178
- #define PCIE20_PARF_AXI_MSTR_WR_ADDR_HALT_V2	0x1A8
- #define PCIE20_PARF_LTSSM			0x1B0
-@@ -171,6 +175,11 @@ struct qcom_pcie_resources_2_7_0 {
- 	struct clk *ref_clk_src;
- };
- 
-+struct qcom_pcie_resources_2_9_0 {
-+	struct clk_bulk_data clks[5];
-+	struct reset_control *rst;
-+};
-+
- union qcom_pcie_resources {
- 	struct qcom_pcie_resources_1_0_0 v1_0_0;
- 	struct qcom_pcie_resources_2_1_0 v2_1_0;
-@@ -178,6 +187,7 @@ union qcom_pcie_resources {
- 	struct qcom_pcie_resources_2_3_3 v2_3_3;
- 	struct qcom_pcie_resources_2_4_0 v2_4_0;
- 	struct qcom_pcie_resources_2_7_0 v2_7_0;
-+	struct qcom_pcie_resources_2_9_0 v2_9_0;
- };
- 
- struct qcom_pcie;
-@@ -1297,6 +1307,127 @@ static void qcom_pcie_post_deinit_2_7_0(struct qcom_pcie *pcie)
- 	clk_disable_unprepare(res->pipe_clk);
- }
- 
-+static int qcom_pcie_get_resources_2_9_0(struct qcom_pcie *pcie)
-+{
-+	struct qcom_pcie_resources_2_9_0 *res = &pcie->res.v2_9_0;
-+	struct dw_pcie *pci = pcie->pci;
-+	struct device *dev = pci->dev;
-+	int ret;
-+
-+	res->clks[0].id = "iface";
-+	res->clks[1].id = "axi_m";
-+	res->clks[2].id = "axi_s";
-+	res->clks[3].id = "axi_bridge";
-+	res->clks[4].id = "rchng";
-+
-+	ret = devm_clk_bulk_get(dev, ARRAY_SIZE(res->clks), res->clks);
-+	if (ret < 0)
-+		return ret;
-+
-+	res->rst = devm_reset_control_array_get_exclusive(dev);
-+	if (IS_ERR(res->rst))
-+		return PTR_ERR(res->rst);
-+
-+	return 0;
-+}
-+
-+static void qcom_pcie_deinit_2_9_0(struct qcom_pcie *pcie)
-+{
-+	struct qcom_pcie_resources_2_9_0 *res = &pcie->res.v2_9_0;
-+
-+	clk_bulk_disable_unprepare(ARRAY_SIZE(res->clks), res->clks);
-+}
-+
-+static int qcom_pcie_init_2_9_0(struct qcom_pcie *pcie)
-+{
-+	struct qcom_pcie_resources_2_9_0 *res = &pcie->res.v2_9_0;
-+	struct device *dev = pcie->pci->dev;
-+	int ret;
-+
-+	ret = reset_control_assert(res->rst);
-+	if (ret) {
-+		dev_err(dev, "reset assert failed (%d)\n", ret);
-+		return ret;
-+	}
-+
-+	usleep_range(2000, 2500);
-+
-+	ret = reset_control_deassert(res->rst);
-+	if (ret) {
-+		dev_err(dev, "reset deassert failed (%d)\n", ret);
-+		return ret;
-+	}
-+
-+	/*
-+	 * Don't have a way to see if the reset has completed.
-+	 * Wait for some time.
-+	 */
-+	usleep_range(2000, 2500);
-+
-+	ret = clk_bulk_prepare_enable(ARRAY_SIZE(res->clks), res->clks);
-+	if (ret)
-+		goto err_reset;
-+
-+	return 0;
-+
-+	/*
-+	 * Not checking for failure, will anyway return
-+	 * the original failure in 'ret'.
-+	 */
-+err_reset:
-+	reset_control_assert(res->rst);
-+
-+	return ret;
-+}
-+
-+static int qcom_pcie_post_init_2_9_0(struct qcom_pcie *pcie)
-+{
-+	struct dw_pcie *pci = pcie->pci;
-+	u16 offset = dw_pcie_find_capability(pci, PCI_CAP_ID_EXP);
-+	u32 val;
-+	int i;
-+
-+	writel(SLV_ADDR_SPACE_SZ,
-+		pcie->parf + PCIE20_v3_PARF_SLV_ADDR_SPACE_SIZE);
-+
-+	val = readl(pcie->parf + PCIE20_PARF_PHY_CTRL);
-+	val &= ~BIT(0);
-+	writel(val, pcie->parf + PCIE20_PARF_PHY_CTRL);
-+
-+	writel(0, pcie->parf + PCIE20_PARF_DBI_BASE_ADDR);
-+
-+	writel(DEVICE_TYPE_RC, pcie->parf + PCIE20_PARF_DEVICE_TYPE);
-+	writel(BYPASS | MSTR_AXI_CLK_EN | AHB_CLK_EN,
-+		pcie->parf + PCIE20_PARF_MHI_CLOCK_RESET_CTRL);
-+	writel(GEN3_RELATED_OFF_RXEQ_RGRDLESS_RXTS
-+		| GEN3_RELATED_OFF_GEN3_ZRXDC_NONCOMPL,
-+		pci->dbi_base + GEN3_RELATED_OFF);
-+
-+	writel(MST_WAKEUP_EN | SLV_WAKEUP_EN | MSTR_ACLK_CGC_DIS
-+		| SLV_ACLK_CGC_DIS | CORE_CLK_CGC_DIS |
-+		AUX_PWR_DET | L23_CLK_RMV_DIS | L1_CLK_RMV_DIS,
-+		pcie->parf + PCIE20_PARF_SYS_CTRL);
-+
-+	writel(0, pcie->parf + PCIE20_PARF_Q2A_FLUSH);
-+
-+	dw_pcie_dbi_ro_wr_en(pci);
-+	writel(PCIE_CAP_LINK1_VAL, pci->dbi_base + offset + PCI_EXP_SLTCAP);
-+
-+	/* Configure PCIe link capabilities for ASPM */
-+	val = readl(pci->dbi_base + offset + PCI_EXP_LNKCAP);
-+	val &= ~PCI_EXP_LNKCAP_ASPMS;
-+	writel(val, pci->dbi_base + offset + PCI_EXP_LNKCAP);
-+
-+	writel(PCI_EXP_DEVCTL2_COMP_TMOUT_DIS, pci->dbi_base + offset +
-+			PCI_EXP_DEVCTL2);
-+
-+	for (i = 0; i < 256; i++)
-+		writel(0x0, pcie->parf + PCIE20_PARF_BDF_TO_SID_TABLE_N
-+				+ (4 * i));
-+
-+	return 0;
-+}
-+
- static int qcom_pcie_link_up(struct dw_pcie *pci)
- {
- 	u16 offset = dw_pcie_find_capability(pci, PCI_CAP_ID_EXP);
-@@ -1487,6 +1618,15 @@ static const struct qcom_pcie_ops ops_1_9_0 = {
- 	.config_sid = qcom_pcie_config_sid_sm8250,
- };
- 
-+/* Qcom IP rev.: 2.9.0  Synopsys IP rev.: 5.00a */
-+static const struct qcom_pcie_ops ops_2_9_0 = {
-+	.get_resources = qcom_pcie_get_resources_2_9_0,
-+	.init = qcom_pcie_init_2_9_0,
-+	.post_init = qcom_pcie_post_init_2_9_0,
-+	.deinit = qcom_pcie_deinit_2_9_0,
-+	.ltssm_enable = qcom_pcie_2_3_2_ltssm_enable,
-+};
-+
- static const struct qcom_pcie_cfg apq8084_cfg = {
- 	.ops = &ops_1_0_0,
- };
-@@ -1520,6 +1660,10 @@ static const struct qcom_pcie_cfg sc7280_cfg = {
- 	.pipe_clk_need_muxing = true,
- };
- 
-+static const struct qcom_pcie_cfg ipq6018_cfg = {
-+	.ops = &ops_2_9_0,
-+};
-+
- static const struct dw_pcie_ops dw_pcie_ops = {
- 	.link_up = qcom_pcie_link_up,
- 	.start_link = qcom_pcie_start_link,
-@@ -1629,6 +1773,7 @@ static const struct of_device_id qcom_pcie_match[] = {
- 	{ .compatible = "qcom,pcie-sm8250", .data = &sm8250_cfg },
- 	{ .compatible = "qcom,pcie-sc8180x", .data = &sm8250_cfg },
- 	{ .compatible = "qcom,pcie-sc7280", .data = &sc7280_cfg },
-+	{ .compatible = "qcom,pcie-ipq6018", .data = &ipq6018_cfg },
- 	{ }
- };
- 
--- 
-2.34.1
-
+Rob
