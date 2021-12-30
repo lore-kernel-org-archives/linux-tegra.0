@@ -2,96 +2,93 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95607C433EF
-	for <linux-tegra@archiver.kernel.org>; Wed, 29 Dec 2021 16:50:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 247EEC433EF
+	for <linux-tegra@archiver.kernel.org>; Thu, 30 Dec 2021 08:00:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240915AbhL2Qul (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 29 Dec 2021 11:50:41 -0500
-Received: from sibelius.xs4all.nl ([83.163.83.176]:52481 "EHLO
-        sibelius.xs4all.nl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237478AbhL2Quk (ORCPT
+        id S231688AbhL3IAn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 30 Dec 2021 03:00:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38540 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231345AbhL3IAn (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 29 Dec 2021 11:50:40 -0500
-Received: from localhost (bloch.sibelius.xs4all.nl [local])
-        by bloch.sibelius.xs4all.nl (OpenSMTPD) with ESMTPA id 7141976b;
-        Wed, 29 Dec 2021 17:50:38 +0100 (CET)
-Date:   Wed, 29 Dec 2021 17:50:38 +0100 (CET)
-From:   Mark Kettenis <mark.kettenis@xs4all.nl>
-To:     Jisheng Zhang <jszhang@kernel.org>
-Cc:     shawnguo@kernel.org, leoyang.li@nxp.com, robh+dt@kernel.org,
-        krzysztof.kozlowski@canonical.com, linux@armlinux.org.uk,
-        andrew@lunn.ch, sebastian.hesselbarth@gmail.com,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        hayashi.kunihiko@socionext.com, mhiramat@kernel.org,
-        nobuhiro1.iwamatsu@toshiba.co.jp,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-In-Reply-To: <20211229160245.1338-1-jszhang@kernel.org> (message from Jisheng
-        Zhang on Thu, 30 Dec 2021 00:02:38 +0800)
-Subject: Re: [PATCH 0/7] arm/arm64: dts: Remove unused num-viewport from pcie node
-References: <20211229160245.1338-1-jszhang@kernel.org>
-Message-ID: <d3cb7b8439ee3d06@bloch.sibelius.xs4all.nl>
+        Thu, 30 Dec 2021 03:00:43 -0500
+Received: from mail-pg1-x52b.google.com (mail-pg1-x52b.google.com [IPv6:2607:f8b0:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD26CC061574;
+        Thu, 30 Dec 2021 00:00:42 -0800 (PST)
+Received: by mail-pg1-x52b.google.com with SMTP id r5so20840472pgi.6;
+        Thu, 30 Dec 2021 00:00:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id;
+        bh=4uA7esXhcDSHJbZ7Mjo7PojXGD+W2Pww5KfPM/kIPPM=;
+        b=ahUsvOxb+3Za/20OSG9KaukpQMgGmhNZR8IHwPHqa+ugUa7cUKcyWNLPF/XmVTPv00
+         9LOfQcIuBZqOMrG7kLrrFQ86jwh3RoYtpfQsniAZSZ8C/ZWDxho8jl4KhI7vnJih12rE
+         U4jYEpWyuSIyCEQrlAON8IhTxF24J6AsW8Y3aX3mI9lFr+f64Dm98jyffPUCkfPIIa7b
+         jFe54gltc/jdGoUn8xvjn5vxTbWQItlGJBGOck+rSDvYSm4IE1rd03JSrctKzSgUHsYK
+         A5/BN4QXrIkdEq7Vhm8FgvulwwkO//R+zgyVYmHyjrOc+I9Rzhh6+844rnc/ogxVeK67
+         0nhw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=4uA7esXhcDSHJbZ7Mjo7PojXGD+W2Pww5KfPM/kIPPM=;
+        b=ybiAW/uNqfVFAehVVwVDZdjDPWerVxDyWanzE8DmEWQ6W5kIOhmdo192Gb3bbs4rsk
+         PuvIfWvRaxI8qG0FW5Ksb4VlO23ytIORRevWcOHG9aZI+V4fGDKedu7QCfvIx8SqqaUN
+         av7AL7gVUcSyMpjmI9jevRaW+Gi82/YOZDCjK2uB6FI4YoFLNtBfkwMtAch3N5rfWohQ
+         uAyqvZu5KJx2wmHhIZd3ntkiTDgE0V39cx4d4JNixllHr3GGfcufQScQBr4JzuhV9beG
+         X4FDF+HFmHcibG26QibTPJqMY6a9zpvnLI3MsctBExxfilcnOijV5yqNLX4pKg1EAxYP
+         pasg==
+X-Gm-Message-State: AOAM532HpmYYiyNLJ0bbaWGfv3cJeHCw37OcUwndsYQ0OUeL6cpEimPs
+        c46wRzh9Tfc6URe+fZBUT1huYHTXhXfbNoynS5g=
+X-Google-Smtp-Source: ABdhPJx760XrjH+HZrZC2Z2gnCQ76KWUvwcQX+asvmcEtoedQg1YwqeLV6jhb+13GWRJXgZUZos6vw==
+X-Received: by 2002:a63:62c6:: with SMTP id w189mr25916919pgb.343.1640851242351;
+        Thu, 30 Dec 2021 00:00:42 -0800 (PST)
+Received: from localhost.localdomain ([159.226.95.43])
+        by smtp.googlemail.com with ESMTPSA id k23sm4051598pji.3.2021.12.30.00.00.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 Dec 2021 00:00:42 -0800 (PST)
+From:   Miaoqian Lin <linmq006@gmail.com>
+Cc:     linmq006@gmail.com, JC Kuo <jckuo@nvidia.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-phy@lists.infradead.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] phy: tegra: xusb: Fix missing put_device() in tegra210_xusb_padctl_probe
+Date:   Thu, 30 Dec 2021 08:00:31 +0000
+Message-Id: <20211230080031.26952-1-linmq006@gmail.com>
+X-Mailer: git-send-email 2.17.1
+To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-> From: Jisheng Zhang <jszhang@kernel.org>
-> Date: Thu, 30 Dec 2021 00:02:38 +0800
-> 
-> After commit 281f1f99cf3a("PCI: dwc: Detect number of iATU windows"),
-> the number of iATU windows is detected at runtime, what's more,
-> the 'num-viewport' property parsing has been removed, so remove the
-> unused num-viewport from pcie node(s).
-> 
-> It's too late for linux-5.17-rc1, I will rebase and send out v2 if
-> necessary when 5.17-rc1 is released.
+If of_find_device_by_node() succeeds, tegra210_xusb_padctl_probe()
+doesn't have a corresponding put_device(). Thus add put_device() to
+fix the exception handling.
 
-Please no.  This only makes the device trees unnecessarily
-incompatible with older kernels and other OSes that do rely on the
-"num-viewport" property.  It really doesn't hurt to keep this property
-even if future Linux kernels no longer look at it.
+Fixes: 2d10214 ("phy: tegra: xusb: Add wake/sleepwalk for Tegra210")
+Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
+---
+ drivers/phy/tegra/xusb-tegra210.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Thanks,
+diff --git a/drivers/phy/tegra/xusb-tegra210.c b/drivers/phy/tegra/xusb-tegra210.c
+index eedfc7c2cc05..05a0800af0e8 100644
+--- a/drivers/phy/tegra/xusb-tegra210.c
++++ b/drivers/phy/tegra/xusb-tegra210.c
+@@ -3170,8 +3170,10 @@ tegra210_xusb_padctl_probe(struct device *dev,
+ 		goto out;
+ 	}
+ 
+-	if (!platform_get_drvdata(pdev))
++	if (!platform_get_drvdata(pdev)) {
++		put_device(&pdev->dev);
+ 		return ERR_PTR(-EPROBE_DEFER);
++	}
+ 
+ 	padctl->regmap = dev_get_regmap(&pdev->dev, "usb_sleepwalk");
+ 	if (!padctl->regmap)
+-- 
+2.17.1
 
-Mark
-
-> Jisheng Zhang (7):
->   ARM: dts: ls1021a: remove unused num-viewport from pcie nodes
->   arm64: dts: visconti: Remove unused num-viewport from pcie node
->   arm64: dts: uniphier: Remove unused num-viewport from pcie node
->   arm64: tegra: Remove unused num-viewport from pcie node
->   arm64: dts: marvell: Remove unused num-viewport from pcie node
->   arm64: dts: freescale: Remove unused num-viewport from pcie node
->   arm64: dts: exynos: Remove unused num-viewport from pcie node
-> 
->  arch/arm/boot/dts/ls1021a.dtsi                          | 2 --
->  arch/arm64/boot/dts/exynos/exynos5433.dtsi              | 1 -
->  arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi          | 1 -
->  arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi          | 2 --
->  arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi          | 3 ---
->  arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi          | 3 ---
->  arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi          | 3 ---
->  arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi          | 4 ----
->  arch/arm64/boot/dts/marvell/armada-8040-mcbin.dtsi      | 1 -
->  arch/arm64/boot/dts/marvell/armada-8040-puzzle-m801.dts | 1 -
->  arch/arm64/boot/dts/marvell/cn9130-crb-A.dts            | 1 -
->  arch/arm64/boot/dts/marvell/cn9130-crb-B.dts            | 1 -
->  arch/arm64/boot/dts/marvell/cn9130-db.dtsi              | 1 -
->  arch/arm64/boot/dts/marvell/cn9131-db.dtsi              | 1 -
->  arch/arm64/boot/dts/marvell/cn9132-db.dtsi              | 2 --
->  arch/arm64/boot/dts/nvidia/tegra194.dtsi                | 6 ------
->  arch/arm64/boot/dts/socionext/uniphier-ld20.dtsi        | 1 -
->  arch/arm64/boot/dts/socionext/uniphier-pxs3.dtsi        | 1 -
->  arch/arm64/boot/dts/toshiba/tmpv7708.dtsi               | 1 -
->  19 files changed, 36 deletions(-)
-> 
-> -- 
-> 2.34.1
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-> 
