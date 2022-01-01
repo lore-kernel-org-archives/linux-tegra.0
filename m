@@ -2,93 +2,101 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 247EEC433EF
-	for <linux-tegra@archiver.kernel.org>; Thu, 30 Dec 2021 08:00:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56706C433EF
+	for <linux-tegra@archiver.kernel.org>; Sat,  1 Jan 2022 15:48:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231688AbhL3IAn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 30 Dec 2021 03:00:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38540 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231345AbhL3IAn (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 30 Dec 2021 03:00:43 -0500
-Received: from mail-pg1-x52b.google.com (mail-pg1-x52b.google.com [IPv6:2607:f8b0:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD26CC061574;
-        Thu, 30 Dec 2021 00:00:42 -0800 (PST)
-Received: by mail-pg1-x52b.google.com with SMTP id r5so20840472pgi.6;
-        Thu, 30 Dec 2021 00:00:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id;
-        bh=4uA7esXhcDSHJbZ7Mjo7PojXGD+W2Pww5KfPM/kIPPM=;
-        b=ahUsvOxb+3Za/20OSG9KaukpQMgGmhNZR8IHwPHqa+ugUa7cUKcyWNLPF/XmVTPv00
-         9LOfQcIuBZqOMrG7kLrrFQ86jwh3RoYtpfQsniAZSZ8C/ZWDxho8jl4KhI7vnJih12rE
-         U4jYEpWyuSIyCEQrlAON8IhTxF24J6AsW8Y3aX3mI9lFr+f64Dm98jyffPUCkfPIIa7b
-         jFe54gltc/jdGoUn8xvjn5vxTbWQItlGJBGOck+rSDvYSm4IE1rd03JSrctKzSgUHsYK
-         A5/BN4QXrIkdEq7Vhm8FgvulwwkO//R+zgyVYmHyjrOc+I9Rzhh6+844rnc/ogxVeK67
-         0nhw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=4uA7esXhcDSHJbZ7Mjo7PojXGD+W2Pww5KfPM/kIPPM=;
-        b=ybiAW/uNqfVFAehVVwVDZdjDPWerVxDyWanzE8DmEWQ6W5kIOhmdo192Gb3bbs4rsk
-         PuvIfWvRaxI8qG0FW5Ksb4VlO23ytIORRevWcOHG9aZI+V4fGDKedu7QCfvIx8SqqaUN
-         av7AL7gVUcSyMpjmI9jevRaW+Gi82/YOZDCjK2uB6FI4YoFLNtBfkwMtAch3N5rfWohQ
-         uAyqvZu5KJx2wmHhIZd3ntkiTDgE0V39cx4d4JNixllHr3GGfcufQScQBr4JzuhV9beG
-         X4FDF+HFmHcibG26QibTPJqMY6a9zpvnLI3MsctBExxfilcnOijV5yqNLX4pKg1EAxYP
-         pasg==
-X-Gm-Message-State: AOAM532HpmYYiyNLJ0bbaWGfv3cJeHCw37OcUwndsYQ0OUeL6cpEimPs
-        c46wRzh9Tfc6URe+fZBUT1huYHTXhXfbNoynS5g=
-X-Google-Smtp-Source: ABdhPJx760XrjH+HZrZC2Z2gnCQ76KWUvwcQX+asvmcEtoedQg1YwqeLV6jhb+13GWRJXgZUZos6vw==
-X-Received: by 2002:a63:62c6:: with SMTP id w189mr25916919pgb.343.1640851242351;
-        Thu, 30 Dec 2021 00:00:42 -0800 (PST)
-Received: from localhost.localdomain ([159.226.95.43])
-        by smtp.googlemail.com with ESMTPSA id k23sm4051598pji.3.2021.12.30.00.00.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Dec 2021 00:00:42 -0800 (PST)
-From:   Miaoqian Lin <linmq006@gmail.com>
-Cc:     linmq006@gmail.com, JC Kuo <jckuo@nvidia.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-phy@lists.infradead.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] phy: tegra: xusb: Fix missing put_device() in tegra210_xusb_padctl_probe
-Date:   Thu, 30 Dec 2021 08:00:31 +0000
-Message-Id: <20211230080031.26952-1-linmq006@gmail.com>
-X-Mailer: git-send-email 2.17.1
-To:     unlisted-recipients:; (no To-header on input)
+        id S232444AbiAAPsJ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 1 Jan 2022 10:48:09 -0500
+Received: from smtp-out2.suse.de ([195.135.220.29]:39996 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229634AbiAAPsJ (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Sat, 1 Jan 2022 10:48:09 -0500
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id EB0331F387;
+        Sat,  1 Jan 2022 15:48:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1641052087; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=chbhCQj6hAZogsch5Y5wPKP/+t88RAVuQw/XW7sQuSc=;
+        b=Gm4YMxIRurIJHvqgIdaH4wq0fLMTqwhixOYrjyUR/xD2HEgBoBME1hdbNGmPMvfkvB52f5
+        cko9TqD1PoaZpO67afUw9vhuTHwu1oZz6X80lEILDiVA3SvXZrvCzwVaUduxWIsbIt0I11
+        ErtwQnKlk5kkXhUA9NJjmxcwXkb0EHA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1641052087;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=chbhCQj6hAZogsch5Y5wPKP/+t88RAVuQw/XW7sQuSc=;
+        b=I1w19BW9LhWgIbjFBUzlS1Uryk5ZZamS7br+ZGdLWL+whCKUEpZZa5jca4QHpe/UGDNzHP
+        LUxMV10+fkrdywAw==
+Received: from alsa1.suse.de (alsa1.suse.de [10.160.4.42])
+        by relay2.suse.de (Postfix) with ESMTP id 655C4A3B81;
+        Sat,  1 Jan 2022 15:48:07 +0000 (UTC)
+Date:   Sat, 01 Jan 2022 16:48:07 +0100
+Message-ID: <s5h7dbjo3t4.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     Sameer Pujar <spujar@nvidia.com>
+Cc:     <tiwai@suse.com>, <broonie@kernel.org>, <lgirdwood@gmail.com>,
+        <robh+dt@kernel.org>, <thierry.reding@gmail.com>, <perex@perex.cz>,
+        <jonathanh@nvidia.com>, <digetx@gmail.com>, <mkumard@nvidia.com>,
+        <alsa-devel@alsa-project.org>, <devicetree@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 0/3] Fix Tegra194 HDA regression
+In-Reply-To: <1640260431-11613-1-git-send-email-spujar@nvidia.com>
+References: <1640260431-11613-1-git-send-email-spujar@nvidia.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/25.3
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-If of_find_device_by_node() succeeds, tegra210_xusb_padctl_probe()
-doesn't have a corresponding put_device(). Thus add put_device() to
-fix the exception handling.
+On Thu, 23 Dec 2021 12:53:48 +0100,
+Sameer Pujar wrote:
+> 
+> HDA probe failure is observed on Tegra194 based platforms and this
+> happens due to reset failure. This series fixes the problem by
+> skipping the failing reset and DT bindings are updated accordingly.
+> 
+> 
+> Changelog
+> =========
+>  v3 -> v4:
+>  ---------
+>    * Rename SoC data variable in HDA driver patch.
+>    * Remove NULL check for compatible match data in HDA driver patch.
+>    * Drop "Depends-on" tag from commit message and add "Reviewed-by"
+>      tag from Dmitry.
+>    * Update binding doc patch as per comment from Rob.
+> 
+>  
+>  v2 -> v3:
+>  ---------
+>    * Use reset bulk APIs in HDA driver as suggested by Dmitry.
+> 
+> 
+>  v1 -> v2:
+>  ---------
+>    * Updated HDA driver patch to skip the failing reset instead of
+>      skipping resets in general for BPMP devices as per comment from
+>      Dmitry.
+>    * Used a better strucure name for SoC data as per comment from
+>      Thierry.
+>    * Dropped 'Fixes' tag in binding doc patch as per comment from
+>      Dmitry.
+> 
+> Sameer Pujar (3):
+>   ALSA: hda/tegra: Fix Tegra194 HDA reset failure
+>   dt-bindings: sound: tegra: Add minItems for resets
+>   arm64: tegra: Remove non existent Tegra194 reset
 
-Fixes: 2d10214 ("phy: tegra: xusb: Add wake/sleepwalk for Tegra210")
-Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
----
- drivers/phy/tegra/xusb-tegra210.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+As there seems no objection for this revision, I applied all three
+patches now to for-next branch of sound.git tree.
 
-diff --git a/drivers/phy/tegra/xusb-tegra210.c b/drivers/phy/tegra/xusb-tegra210.c
-index eedfc7c2cc05..05a0800af0e8 100644
---- a/drivers/phy/tegra/xusb-tegra210.c
-+++ b/drivers/phy/tegra/xusb-tegra210.c
-@@ -3170,8 +3170,10 @@ tegra210_xusb_padctl_probe(struct device *dev,
- 		goto out;
- 	}
- 
--	if (!platform_get_drvdata(pdev))
-+	if (!platform_get_drvdata(pdev)) {
-+		put_device(&pdev->dev);
- 		return ERR_PTR(-EPROBE_DEFER);
-+	}
- 
- 	padctl->regmap = dev_get_regmap(&pdev->dev, "usb_sleepwalk");
- 	if (!padctl->regmap)
--- 
-2.17.1
 
+thanks,
+
+Takashi
