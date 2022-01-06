@@ -2,515 +2,135 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8544C433FE
-	for <linux-tegra@archiver.kernel.org>; Thu,  6 Jan 2022 00:27:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 540E4C433EF
+	for <linux-tegra@archiver.kernel.org>; Thu,  6 Jan 2022 01:02:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343692AbiAFA1L (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 5 Jan 2022 19:27:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38026 "EHLO
+        id S240033AbiAFBCa (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 5 Jan 2022 20:02:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46232 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343699AbiAFA1H (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 5 Jan 2022 19:27:07 -0500
-Received: from mail-pg1-x52e.google.com (mail-pg1-x52e.google.com [IPv6:2607:f8b0:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7189FC061201
-        for <linux-tegra@vger.kernel.org>; Wed,  5 Jan 2022 16:27:07 -0800 (PST)
-Received: by mail-pg1-x52e.google.com with SMTP id x194so849816pgx.4
-        for <linux-tegra@vger.kernel.org>; Wed, 05 Jan 2022 16:27:07 -0800 (PST)
+        with ESMTP id S240018AbiAFBCa (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 5 Jan 2022 20:02:30 -0500
+Received: from mail-il1-x12d.google.com (mail-il1-x12d.google.com [IPv6:2607:f8b0:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDE76C061245
+        for <linux-tegra@vger.kernel.org>; Wed,  5 Jan 2022 17:02:29 -0800 (PST)
+Received: by mail-il1-x12d.google.com with SMTP id v10so891773ilj.3
+        for <linux-tegra@vger.kernel.org>; Wed, 05 Jan 2022 17:02:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bluerivertech.com; s=google;
-        h=from:to:cc:subject:date:message-id:reply-to:mime-version
-         :content-transfer-encoding;
-        bh=J4DVZfSEHc+5lwv7xu8XA+IYBgCz30iR8NpK/PggUiU=;
-        b=e/KtI/dthbUT5strgq7i/oCnNUR28WLY2PI6kprFOLnhJG0NYtSAOhzL9t91+q7vtO
-         X/6XBbmb/ml4JI05ax97C/zI+KfHaJ1ussMxSNVouHCoe2rWo98A0mHTFgB0s1c7GJK5
-         nEa1sSwZGkz1D4KMMUrXZ6beNqj9+UXrg2ybSmZLSQ3xED743VQNR3V85kAeGs7xxGJO
-         xlwxxbtaYiXPhWfVh3DKRMhKH0tOSzlysypPv+1xqD9sOl1VhGtDL84GNShHXJZqMr6c
-         8+y+BGPLF/LMZhofq/qlOb3OVPQzBjufdkanTTcmm6FVNCDREx4H/tjp2ObMhU3CNqtw
-         YgPw==
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=MIFRxmXWiEBCiGr15456Pgg06Y+aeSi4XJyFkvrjKcY=;
+        b=YWi65CpZCs2GGkYUWUA+9oQ5itYVgpmPFXUHQhi8B3TMg6XhFy5U+fGdUq21oWo/dB
+         TDI/nlySgRjRy/gbqtKKNYZXShZrx8VtLBM6nKht/ZaExjQIxD4ZpGOJs6D3s8DWreQq
+         SAF/8uVSAr7OkGtIJlg90seeMXjq6K1dJhN9k=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :mime-version:content-transfer-encoding;
-        bh=J4DVZfSEHc+5lwv7xu8XA+IYBgCz30iR8NpK/PggUiU=;
-        b=2/XiF5INrINZoj/oA3ZeCHtIqOj0GJyRO+DP2RLyhIJK3mexE66w+VMy7QYgp6bQQJ
-         +hLINI82QQRyW1LaN0aps47p0hHrLSznb2HsfKB73kMaIKONvMJNgdcGqase2Vo/ZWhr
-         7zSxV9ZKBUy4ucTha28Cpf8Xda+xuEVsML44PPqsrnUmhEz9s/ZITLfPFxOZ8q9+hn2G
-         9Xc4rL+pd3z8Z67dJUxraQrUOJnfZ/n2Fo/Kg1mpV7gRr5Iw6gH9LBHeTdqXaJ1PEygN
-         xeWcAx+FVj1W2lYA61q9bjLEtcUINRqM6YaPDT5BORGf2im+GV2lT6EAv97/OhCt0u0s
-         UpAw==
-X-Gm-Message-State: AOAM532L47a1C3Zj0PHa9sR5tnr7n4He+6Upsk+uE5c1cZIKk9WDIms7
-        ZFwSVR54hb9f7I7kT9cplGrBfg==
-X-Google-Smtp-Source: ABdhPJw7FJNHh3B4AmQureIxpKhsaNHdS5jphlEqWHnuN8cumYwSsJ9KI2AN2uFHmZoSc77wMfZyAA==
-X-Received: by 2002:a65:6853:: with SMTP id q19mr50700441pgt.612.1641428826848;
-        Wed, 05 Jan 2022 16:27:06 -0800 (PST)
-Received: from localhost.localdomain (c-73-231-33-37.hsd1.ca.comcast.net. [73.231.33.37])
-        by smtp.gmail.com with ESMTPSA id c9sm230622pfc.61.2022.01.05.16.27.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Jan 2022 16:27:06 -0800 (PST)
-From:   Brian Silverman <brian.silverman@bluerivertech.com>
-Cc:     Brian Silverman <bsilver16384@gmail.com>,
-        Brian Silverman <brian.silverman@bluerivertech.com>,
-        Wolfgang Grandegger <wg@grandegger.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Dan Murphy <dmurphy@ti.com>,
-        linux-kernel@vger.kernel.org (open list),
-        linux-can@vger.kernel.org (open list:CAN NETWORK DRIVERS),
-        netdev@vger.kernel.org (open list:NETWORKING DRIVERS),
-        linux-tegra@vger.kernel.org (open list:TEGRA ARCHITECTURE SUPPORT)
-Subject: [RFC PATCH] can: m_can: Add driver for M_CAN hardware in NVIDIA devices
-Date:   Wed,  5 Jan 2022 16:25:09 -0800
-Message-Id: <20220106002514.24589-1-brian.silverman@bluerivertech.com>
-X-Mailer: git-send-email 2.20.1
-Reply-To: Brian Silverman <bsilver16384@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=MIFRxmXWiEBCiGr15456Pgg06Y+aeSi4XJyFkvrjKcY=;
+        b=v6E3UA1qs2dSna846eaSF3QsXaANqMFjQzy6hg2Ekq6p+FHwMVUZZ1DijSaw7vNnhB
+         f3Gwct733AZEqKLNS1pxT4xmtm2kltM7GaNtfMbX/fj1A/8r0+hFkPBtrmqwV+J6e+UI
+         aZI/83wzyMoAjtTn4z2VtsTTCO8UUn8jYpYHZyR193rDTPibC+O45RGOgtdLyLyN8mHb
+         x1lfb+84Aw6e0UkM2NCEqBae9atLFl/FgHT4q+pab113MklWty9PD2TM6GdwfrbtzNDO
+         xCh083TkurvckQdJRdpD0wtPCbud2YAV01OG64V2fhFCkxlZH//5A2Le6KJVxYnsWprL
+         SIfw==
+X-Gm-Message-State: AOAM5328URDvtmHp5NK3cV39i/38m4u+Sxz4pwaDi7S0zeBhuxF1pprg
+        f+TTt+hmqkZgQwtVoio9y9eTqyAhItK09A==
+X-Google-Smtp-Source: ABdhPJwP6Bq1W9/94v0hMQUQc+HRvjb4KW/PQB6GZn7gNeoY2u7T19IF2GL+zWAMLuetIa3aDvqfWA==
+X-Received: by 2002:a92:ca46:: with SMTP id q6mr29080224ilo.107.1641430948783;
+        Wed, 05 Jan 2022 17:02:28 -0800 (PST)
+Received: from mail-io1-f47.google.com (mail-io1-f47.google.com. [209.85.166.47])
+        by smtp.gmail.com with ESMTPSA id c19sm310686ioi.15.2022.01.05.17.02.28
+        for <linux-tegra@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 05 Jan 2022 17:02:28 -0800 (PST)
+Received: by mail-io1-f47.google.com with SMTP id p65so1257625iof.3
+        for <linux-tegra@vger.kernel.org>; Wed, 05 Jan 2022 17:02:28 -0800 (PST)
+X-Received: by 2002:a02:294b:: with SMTP id p72mr21568959jap.263.1641430947664;
+ Wed, 05 Jan 2022 17:02:27 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+References: <20211220104855.428290-1-thierry.reding@gmail.com> <20211220104855.428290-3-thierry.reding@gmail.com>
+In-Reply-To: <20211220104855.428290-3-thierry.reding@gmail.com>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Wed, 5 Jan 2022 17:02:16 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=WV2dsmRL0bVXz9jTgyy1zQpDjzrM=XDO=2rxsks=70rA@mail.gmail.com>
+Message-ID: <CAD=FV=WV2dsmRL0bVXz9jTgyy1zQpDjzrM=XDO=2rxsks=70rA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] ARM: tegra: Move panels to AUX bus
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Dmitry Osipenko <digetx@gmail.com>,
+        Thomas Graichen <thomas.graichen@gmail.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-It's a M_TTCAN with some NVIDIA-specific glue logic and clocks. The
-existing m_can driver works with it after handling the glue logic.
+Hi,
 
-The code is a combination of pieces from m_can_platform and NVIDIA's
-driver [1].
+On Mon, Dec 20, 2021 at 2:49 AM Thierry Reding <thierry.reding@gmail.com> wrote:
+>
+> From: Thierry Reding <treding@nvidia.com>
+>
+> Move the eDP panel on Venice 2 and Nyan boards into the corresponding
+> AUX bus device tree node. This allows us to avoid a nasty circular
+> dependency that would otherwise be created between the DPAUX and panel
+> nodes via the DDC/I2C phandle.
+>
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
+>  arch/arm/boot/dts/tegra124-nyan-big.dts   | 15 +++++++++------
+>  arch/arm/boot/dts/tegra124-nyan-blaze.dts | 15 +++++++++------
+>  arch/arm/boot/dts/tegra124-venice2.dts    | 14 +++++++-------
+>  3 files changed, 25 insertions(+), 19 deletions(-)
+>
+> diff --git a/arch/arm/boot/dts/tegra124-nyan-big.dts b/arch/arm/boot/dts/tegra124-nyan-big.dts
+> index 1d2aac2cb6d0..fdc1d64dfff9 100644
+> --- a/arch/arm/boot/dts/tegra124-nyan-big.dts
+> +++ b/arch/arm/boot/dts/tegra124-nyan-big.dts
+> @@ -13,12 +13,15 @@ / {
+>                      "google,nyan-big-rev1", "google,nyan-big-rev0",
+>                      "google,nyan-big", "google,nyan", "nvidia,tegra124";
+>
+> -       panel: panel {
+> -               compatible = "auo,b133xtn01";
+> -
+> -               power-supply = <&vdd_3v3_panel>;
 
-[1] https://github.com/hartkopp/nvidia-t18x-can/blob/master/r32.2.1/nvidia/drivers/net/can/mttcan/hal/m_ttcan.c
+You remove the "power-supply" line here but don't add it below. Isn't
+that a problem? power-supply for the panel is listed as "required" in
+the panel dt bindings so I presume this will increase validation
+warnings?
 
-Signed-off-by: Brian Silverman <brian.silverman@bluerivertech.com>
----
-I ran into bugs with the error handling in NVIDIA's m_ttcan driver, so I
-switched to m_can which has been much better. I'm looking for feedback
-on whether I should ensure rebasing hasn't broken anything, write up DT
-documentation, and submit this patch for real. The driver works great,
-but I've got some questions about submitting it.
 
-question: This has liberal copying of GPL code from NVIDIA's
-non-upstreamed m_ttcan driver. Is that OK?
+> -               backlight = <&backlight>;
+> -               ddc-i2c-bus = <&dpaux>;
+> +       host1x@50000000 {
+> +               dpaux@545c0000 {
 
-corollary: I don't know what any of this glue logic does. I do know the
-device doesn't work without it. I can't find any documentation of what
-these addresses do.
+Optional nit: on other SoC dts files I've always had the policy to try
+to avoid replicating hierarchies like this (host1x@50000000 =>
+dpaux@545c0000). Instead I'd express this as:
 
-question: There is some duplication between this and m_can_platform. It
-doesn't seem too bad to me, but is this the preferred way to do it or is
-there another alternative?
+&dpaux {
+  aux-bux {
+    panel: panel {
+      ...
+    };
+  };
+};
 
-question: Do new DT bindings need to be in the YAML format, or is the
-.txt one OK?
 
- drivers/net/can/m_can/Kconfig       |  10 +
- drivers/net/can/m_can/Makefile      |   1 +
- drivers/net/can/m_can/m_can_tegra.c | 362 ++++++++++++++++++++++++++++
- 3 files changed, 373 insertions(+)
- create mode 100644 drivers/net/can/m_can/m_can_tegra.c
+> +                       aux-bus {
+> +                               panel: panel {
+> +                                       compatible = "auo,b133xtn01";
+> +                                       backlight = <&backlight>;
 
-diff --git a/drivers/net/can/m_can/Kconfig b/drivers/net/can/m_can/Kconfig
-index 45ad1b3f0cd0..00e042cb7d33 100644
---- a/drivers/net/can/m_can/Kconfig
-+++ b/drivers/net/can/m_can/Kconfig
-@@ -22,6 +22,16 @@ config CAN_M_CAN_PLATFORM
- 	  This support is for devices that have the Bosch M_CAN controller
- 	  IP embedded into the device and the IP is IO Mapped to the processor.
- 
-+config CAN_M_CAN_TEGRA
-+	tristate "Bosch M_CAN support for io-mapped devices on NVIDIA Tegra"
-+	depends on HAS_IOMEM
-+	---help---
-+	  Say Y here if you want support for IO Mapped Bosch M_CAN controller,
-+	  with additional NVIDIA Tegra-specific glue logic.
-+	  This support is for Tegra devices that have the Bosch M_CAN/M_TTCAN
-+		controller IP embedded into the device and the IP is IO Mapped to the
-+		processor.
-+
- config CAN_M_CAN_TCAN4X5X
- 	depends on SPI
- 	select REGMAP_SPI
-diff --git a/drivers/net/can/m_can/Makefile b/drivers/net/can/m_can/Makefile
-index d717bbc9e033..36360c1c5eca 100644
---- a/drivers/net/can/m_can/Makefile
-+++ b/drivers/net/can/m_can/Makefile
-@@ -6,6 +6,7 @@
- obj-$(CONFIG_CAN_M_CAN) += m_can.o
- obj-$(CONFIG_CAN_M_CAN_PCI) += m_can_pci.o
- obj-$(CONFIG_CAN_M_CAN_PLATFORM) += m_can_platform.o
-+obj-$(CONFIG_CAN_M_CAN_TEGRA) += m_can_tegra.o
- obj-$(CONFIG_CAN_M_CAN_TCAN4X5X) += tcan4x5x.o
- 
- tcan4x5x-objs :=
-diff --git a/drivers/net/can/m_can/m_can_tegra.c b/drivers/net/can/m_can/m_can_tegra.c
-new file mode 100644
-index 000000000000..3739b92b4540
---- /dev/null
-+++ b/drivers/net/can/m_can/m_can_tegra.c
-@@ -0,0 +1,362 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// IOMapped CAN bus driver for Bosch M_CAN controller on NVIDIA Tegra
-+
-+#include <linux/platform_device.h>
-+#include <linux/reset.h>
-+
-+#include "m_can.h"
-+
-+struct m_can_tegra_priv {
-+	struct m_can_classdev cdev;
-+
-+	void __iomem *base;
-+	void __iomem *mram_base;
-+	void __iomem *glue_base;
-+	// cclk is core_clk if it exists, otherwise can_clk.
-+	struct clk *core_clk, *can_clk, *pll_clk;
-+};
-+
-+static inline struct m_can_tegra_priv *cdev_to_priv(struct m_can_classdev *cdev)
-+{
-+	return container_of(cdev, struct m_can_tegra_priv, cdev);
-+}
-+
-+static u32 iomap_read_reg(struct m_can_classdev *cdev, int reg)
-+{
-+	struct m_can_tegra_priv *priv = cdev_to_priv(cdev);
-+
-+	return readl(priv->base + reg);
-+}
-+
-+static u32 iomap_read_fifo(struct m_can_classdev *cdev, int offset)
-+{
-+	struct m_can_tegra_priv *priv = cdev_to_priv(cdev);
-+
-+	return readl(priv->mram_base + offset);
-+}
-+
-+static u32 iomap_read_glue(struct m_can_classdev *cdev, int reg)
-+{
-+	struct m_can_tegra_priv *priv = cdev_to_priv(cdev);
-+
-+	return readl(priv->glue_base + reg);
-+}
-+
-+static int iomap_write_reg(struct m_can_classdev *cdev, int reg, int val)
-+{
-+	struct m_can_tegra_priv *priv = cdev_to_priv(cdev);
-+
-+	writel(val, priv->base + reg);
-+
-+	return 0;
-+}
-+
-+static int iomap_write_fifo(struct m_can_classdev *cdev, int offset, int val)
-+{
-+	struct m_can_tegra_priv *priv = cdev_to_priv(cdev);
-+
-+	writel(val, priv->mram_base + offset);
-+
-+	return 0;
-+}
-+
-+static int iomap_write_glue(struct m_can_classdev *cdev, int reg, int val)
-+{
-+	struct m_can_tegra_priv *priv = cdev_to_priv(cdev);
-+
-+	writel(val, priv->glue_base + reg);
-+
-+	return 0;
-+}
-+
-+static struct m_can_ops m_can_tegra_ops = {
-+	.read_reg = iomap_read_reg,
-+	.write_reg = iomap_write_reg,
-+	.write_fifo = iomap_write_fifo,
-+	.read_fifo = iomap_read_fifo,
-+};
-+
-+/* Glue logic apperature */
-+#define ADDR_M_TTCAN_IR          0x00
-+#define ADDR_M_TTCAN_TTIR        0x04
-+#define ADDR_M_TTCAN_TXBRP       0x08
-+#define ADDR_M_TTCAN_FD_DATA     0x0C
-+#define ADDR_M_TTCAN_STATUS_REG  0x10
-+#define ADDR_M_TTCAN_CNTRL_REG   0x14
-+#define ADDR_M_TTCAN_DMA_INTF0   0x18
-+#define ADDR_M_TTCAN_CLK_STOP    0x1C
-+#define ADDR_M_TTCAN_HSM_MASK0   0x20
-+#define ADDR_M_TTCAN_HSM_MASK1   0x24
-+#define ADDR_M_TTCAN_EXT_SYC_SLT 0x28
-+#define ADDR_M_TTCAN_HSM_SW_OVRD 0x2C
-+#define ADDR_M_TTCAN_TIME_STAMP  0x30
-+
-+#define M_TTCAN_CNTRL_REG_COK           (1<<3)
-+#define M_TTCAN_TIME_STAMP_OFFSET_SEL   4
-+
-+static void tegra_can_set_ok(struct m_can_classdev *cdev)
-+{
-+	u32 val;
-+
-+	val = iomap_read_glue(cdev, ADDR_M_TTCAN_CNTRL_REG);
-+	val |= M_TTCAN_CNTRL_REG_COK;
-+	iomap_write_glue(cdev, ADDR_M_TTCAN_CNTRL_REG, val);
-+}
-+
-+
-+static int m_can_tegra_probe(struct platform_device *pdev)
-+{
-+	struct m_can_classdev *mcan_class;
-+	struct m_can_tegra_priv *priv;
-+	struct resource *res;
-+	void __iomem *addr;
-+	void __iomem *mram_addr;
-+	void __iomem *glue_addr;
-+	struct reset_control *rstc;
-+	struct clk *host_clk = NULL, *can_clk = NULL, *core_clk = NULL, *pclk = NULL;
-+	int irq, ret = 0;
-+	u32 rate;
-+	unsigned long new_rate;
-+
-+	mcan_class = m_can_class_allocate_dev(&pdev->dev,
-+					      sizeof(struct m_can_tegra_priv));
-+	if (!mcan_class)
-+		return -ENOMEM;
-+
-+	priv = cdev_to_priv(mcan_class);
-+
-+	host_clk = devm_clk_get(&pdev->dev, "can_host");
-+	if (IS_ERR(host_clk)) {
-+		ret = PTR_ERR(host_clk);
-+		goto probe_fail;
-+	}
-+	can_clk = devm_clk_get(&pdev->dev, "can");
-+	if (IS_ERR(can_clk)) {
-+		ret = PTR_ERR(can_clk);
-+		goto probe_fail;
-+	}
-+
-+	core_clk = devm_clk_get(&pdev->dev, "can_core");
-+	if (IS_ERR(core_clk)) {
-+		core_clk = NULL;
-+	}
-+
-+	pclk = clk_get(&pdev->dev, "pll");
-+	if (IS_ERR(pclk)) {
-+		ret = PTR_ERR(pclk);
-+		goto probe_fail;
-+	}
-+
-+	ret = clk_set_parent(can_clk, pclk);
-+	if (ret) {
-+		goto probe_fail;
-+	}
-+
-+	ret = fwnode_property_read_u32(dev_fwnode(&pdev->dev), "can-clk-rate", &rate);
-+	if (ret) {
-+		goto probe_fail;
-+	}
-+
-+	new_rate = clk_round_rate(can_clk, rate);
-+	if (!new_rate)
-+		dev_warn(&pdev->dev, "incorrect CAN clock rate\n");
-+
-+	ret = clk_set_rate(can_clk, new_rate > 0 ? new_rate : rate);
-+	if (ret) {
-+		goto probe_fail;
-+	}
-+
-+	ret = clk_set_rate(host_clk, new_rate > 0 ? new_rate : rate);
-+	if (ret) {
-+		goto probe_fail;
-+	}
-+
-+	if (core_clk) {
-+		ret = fwnode_property_read_u32(dev_fwnode(&pdev->dev), "core-clk-rate", &rate);
-+		if (ret) {
-+			goto probe_fail;
-+		}
-+		new_rate = clk_round_rate(core_clk, rate);
-+		if (!new_rate)
-+			dev_warn(&pdev->dev, "incorrect CAN_CORE clock rate\n");
-+
-+		ret = clk_set_rate(core_clk, new_rate > 0 ? new_rate : rate);
-+		if (ret) {
-+			goto probe_fail;
-+		}
-+	}
-+
-+	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "m_can");
-+	addr = devm_ioremap_resource(&pdev->dev, res);
-+	if (IS_ERR(addr)) {
-+		ret = PTR_ERR(addr);
-+		goto probe_fail;
-+	}
-+
-+	irq = platform_get_irq_byname(pdev, "int0");
-+	if (irq < 0) {
-+		ret = -ENODEV;
-+		goto probe_fail;
-+	}
-+
-+	/* message ram could be shared */
-+	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "message_ram");
-+	mram_addr = devm_ioremap(&pdev->dev, res->start, resource_size(res));
-+	if (!mram_addr) {
-+		ret = -ENOMEM;
-+		goto probe_fail;
-+	}
-+
-+	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "glue_regs");
-+	glue_addr = devm_ioremap(&pdev->dev, res->start, resource_size(res));
-+	if (!glue_addr) {
-+		ret = -ENOMEM;
-+		goto probe_fail;
-+	}
-+
-+	rstc = devm_reset_control_get(&pdev->dev, "can");
-+	if (IS_ERR(rstc)) {
-+		ret = PTR_ERR(rstc);
-+		goto probe_fail;
-+	}
-+	reset_control_reset(rstc);
-+
-+	priv->can_clk = can_clk;
-+	mcan_class->hclk = host_clk;
-+
-+	if (core_clk) {
-+		mcan_class->cclk = core_clk;
-+	} else {
-+		mcan_class->cclk = can_clk;
-+	}
-+	priv->core_clk = core_clk;
-+
-+	priv->base = addr;
-+	priv->mram_base = mram_addr;
-+	priv->glue_base = glue_addr;
-+
-+	mcan_class->net->irq = irq;
-+	mcan_class->pm_clock_support = 1;
-+	mcan_class->can.clock.freq = clk_get_rate(mcan_class->cclk);
-+	mcan_class->dev = &pdev->dev;
-+
-+	mcan_class->ops = &m_can_tegra_ops;
-+
-+	mcan_class->is_peripheral = false;
-+
-+	platform_set_drvdata(pdev, mcan_class);
-+
-+	pm_runtime_enable(mcan_class->dev);
-+
-+	ret = pm_runtime_get_sync(mcan_class->dev);
-+	if (ret < 0) {
-+		pm_runtime_put_noidle(mcan_class->dev);
-+		goto out_runtime_disable;
-+	}
-+	tegra_can_set_ok(mcan_class);
-+	m_can_init_ram(mcan_class);
-+	pm_runtime_put_sync(mcan_class->dev);
-+
-+	ret = m_can_class_register(mcan_class);
-+	if (ret)
-+		goto out_runtime_disable;
-+
-+	return ret;
-+
-+out_runtime_disable:
-+	pm_runtime_disable(mcan_class->dev);
-+probe_fail:
-+	m_can_class_free_dev(mcan_class->net);
-+	return ret;
-+}
-+
-+static __maybe_unused int m_can_suspend(struct device *dev)
-+{
-+	return m_can_class_suspend(dev);
-+}
-+
-+static __maybe_unused int m_can_resume(struct device *dev)
-+{
-+	return m_can_class_resume(dev);
-+}
-+
-+static int m_can_tegra_remove(struct platform_device *pdev)
-+{
-+	struct m_can_tegra_priv *priv = platform_get_drvdata(pdev);
-+	struct m_can_classdev *mcan_class = &priv->cdev;
-+
-+	m_can_class_unregister(mcan_class);
-+
-+	m_can_class_free_dev(mcan_class->net);
-+
-+	return 0;
-+}
-+
-+static int __maybe_unused m_can_runtime_suspend(struct device *dev)
-+{
-+	struct m_can_tegra_priv *priv = dev_get_drvdata(dev);
-+	struct m_can_classdev *mcan_class = &priv->cdev;
-+
-+	if (priv->core_clk)
-+		clk_disable_unprepare(priv->core_clk);
-+
-+	clk_disable_unprepare(mcan_class->hclk);
-+	clk_disable_unprepare(priv->can_clk);
-+
-+	return 0;
-+}
-+
-+static int __maybe_unused m_can_runtime_resume(struct device *dev)
-+{
-+	struct m_can_tegra_priv *priv = dev_get_drvdata(dev);
-+	struct m_can_classdev *mcan_class = &priv->cdev;
-+	int err;
-+
-+	err = clk_prepare_enable(priv->can_clk);
-+	if (err) {
-+		return err;
-+	}
-+
-+	err = clk_prepare_enable(mcan_class->hclk);
-+	if (err) {
-+		clk_disable_unprepare(priv->can_clk);
-+	}
-+
-+	if (priv->core_clk) {
-+		err = clk_prepare_enable(priv->core_clk);
-+		if (err) {
-+			clk_disable_unprepare(mcan_class->hclk);
-+			clk_disable_unprepare(priv->can_clk);
-+		}
-+	}
-+
-+	return err;
-+}
-+
-+static const struct dev_pm_ops m_can_pmops = {
-+	SET_RUNTIME_PM_OPS(m_can_runtime_suspend,
-+			   m_can_runtime_resume, NULL)
-+	SET_SYSTEM_SLEEP_PM_OPS(m_can_suspend, m_can_resume)
-+};
-+
-+static const struct of_device_id m_can_of_table[] = {
-+	{ .compatible = "nvidia,tegra194-m_can", .data = NULL },
-+	{ /* sentinel */ },
-+};
-+MODULE_DEVICE_TABLE(of, m_can_of_table);
-+
-+static struct platform_driver m_can_tegra_driver = {
-+	.driver = {
-+		.name = KBUILD_MODNAME,
-+		.of_match_table = m_can_of_table,
-+		.pm     = &m_can_pmops,
-+	},
-+	.probe = m_can_tegra_probe,
-+	.remove = m_can_tegra_remove,
-+};
-+
-+module_platform_driver(m_can_tegra_driver);
-+
-+MODULE_AUTHOR("Brian Silverman <brian.silverman@bluerivertech.com>");
-+MODULE_LICENSE("GPL v2");
-+MODULE_DESCRIPTION("M_CAN driver for IO Mapped Bosch controllers on NVIDIA Tegra");
--- 
-2.20.1
+nit: In theory the "backlight" could go in tegra124-nyan.dtsi, right?
+Then you just need to override the compatible...
 
+
+-Doug
