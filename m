@@ -2,172 +2,515 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26F8BC433F5
-	for <linux-tegra@archiver.kernel.org>; Wed,  5 Jan 2022 22:57:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8544C433FE
+	for <linux-tegra@archiver.kernel.org>; Thu,  6 Jan 2022 00:27:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245194AbiAEW5W (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 5 Jan 2022 17:57:22 -0500
-Received: from mail-bn8nam12on2052.outbound.protection.outlook.com ([40.107.237.52]:22624
-        "EHLO NAM12-BN8-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S245153AbiAEW5T (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 5 Jan 2022 17:57:19 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Rncjs3U5miZVV8ymAq99aa7EXH7+txZpi07zFfVxUE8cwF0s2asyMnwGvd/+ntgBrzARXdqC+N0nVneotkA4dau7x+gqxJqZ3FlwwKajmtwT3fQOv24NdgGUNNaIhTTGWNqTDOrLGiK7sBqocHCtJveDmb63dEZUf1/UzcEapMJKzYj/gVJseYDk1PvLUf84ONBxynntK4qk2hkAuS+Gast2NavmICfY2PRbOk5WOUp8hkp0s+Yq3gIQmLYWdYcukmMbhppridqfe+mKHJPsmKGBIt6NOquIN0keWRM7P2Y2h5SilEBeV5ZbEB4X7DC59dKU92HFoFIb/F076siKNg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=7Jml4yKGgz+x3JaOgTvWcF5aVgmK417mgRLejxz1iTU=;
- b=Bv3zBky1vvmpw8dDRAWNgHyCP9mdn80pDC5h5MAaDWj7MVogUQtsxTIqBO9ZYZhQfKVFPtN0AQi44Av+BPLE+aSfTMkUhF+gLDN+yOwwmu6laEOR+XmvgNUaRtP8aJFtPL88bWl78AhJUPhqNJ9Klir7AE8PoZiUOja1XROGdIPMwtTvbAyffnaKG7Ek2H3SmftZKhBh/lxnmoSUZpuR3MorWb04juFiSIEcUnetLitsnZAzZvKa9tJfVHYD2UjFB6GB9CwjK/TNAcmWC37ATM6XwxkmEI31vlsIcNdUyQe/JzF6gu1OmveTGwQvcc7S2Zs7ahKzKR5U6Cd5/iEWLA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 12.22.5.238) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7Jml4yKGgz+x3JaOgTvWcF5aVgmK417mgRLejxz1iTU=;
- b=PihulWsKd0WF/+YdjmVq6i/qhYNT0I1qmx5T5a9lrdmF8+qth+F5KpU4sRuoi73nYLb6Ga36441F8jSkU7qLS8gGuqiNofGqdeVTZozsNwaPnT1OkaTENn2nXpQ/kwKEcThxpigEqk6XSt3KYYUpE85ca7mMrrRrnr9oUNoSX98H8qz7fTaVVS7PKg192pKnjds/r9K8K0hs4kqyFzJYAB8YXA4xn9UY+kNI8BM+ER3vRlf4rVvGxiS7gny5idvVIXQcMechFSKcOiEPieHeeY4+9FBVCc+/xJO7bqb5HdwDJr3z7y59twGNoXzjjBd65YBg4UvEX1fPvxPYf41TNw==
-Received: from MWHPR19CA0014.namprd19.prod.outlook.com (2603:10b6:300:d4::24)
- by CH0PR12MB5234.namprd12.prod.outlook.com (2603:10b6:610:d1::24) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4867.9; Wed, 5 Jan
- 2022 22:57:17 +0000
-Received: from CO1NAM11FT057.eop-nam11.prod.protection.outlook.com
- (2603:10b6:300:d4:cafe::29) by MWHPR19CA0014.outlook.office365.com
- (2603:10b6:300:d4::24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4867.7 via Frontend
- Transport; Wed, 5 Jan 2022 22:57:16 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.238)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 12.22.5.238 as permitted sender) receiver=protection.outlook.com;
- client-ip=12.22.5.238; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (12.22.5.238) by
- CO1NAM11FT057.mail.protection.outlook.com (10.13.174.205) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.4867.9 via Frontend Transport; Wed, 5 Jan 2022 22:57:16 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by DRHQMAIL105.nvidia.com
- (10.27.9.14) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Wed, 5 Jan
- 2022 22:57:15 +0000
-Received: from [172.17.173.69] (172.20.187.5) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.986.9; Wed, 5 Jan 2022
- 14:57:13 -0800
-Subject: Re: [RFC v3 09/12] gpiolib: cdev: Add hardware timestamp clock type
-To:     Kent Gibson <warthog618@gmail.com>
-CC:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, <linus.walleij@linaro.org>,
-        <brgl@bgdev.pl>, <devicetree@vger.kernel.org>,
-        <linux-doc@vger.kernel.org>, <robh+dt@kernel.org>
-References: <20211123193039.25154-1-dipenp@nvidia.com>
- <20211123193039.25154-10-dipenp@nvidia.com> <20211126013137.GC10380@sol>
- <9ad666ec-eedd-8075-73e6-1e47a1eb228b@nvidia.com>
- <20211201171638.GA31045@sol>
- <4c7c3db1-a1b3-1944-4278-cb37e8a4f373@nvidia.com> <20211202005349.GA7007@sol>
-From:   Dipen Patel <dipenp@nvidia.com>
-X-Nvconfidentiality: public
-Message-ID: <498da060-b02d-528a-9dbc-81dd22fc13a0@nvidia.com>
-Date:   Wed, 5 Jan 2022 15:00:24 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+        id S1343692AbiAFA1L (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 5 Jan 2022 19:27:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38026 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1343699AbiAFA1H (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 5 Jan 2022 19:27:07 -0500
+Received: from mail-pg1-x52e.google.com (mail-pg1-x52e.google.com [IPv6:2607:f8b0:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7189FC061201
+        for <linux-tegra@vger.kernel.org>; Wed,  5 Jan 2022 16:27:07 -0800 (PST)
+Received: by mail-pg1-x52e.google.com with SMTP id x194so849816pgx.4
+        for <linux-tegra@vger.kernel.org>; Wed, 05 Jan 2022 16:27:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bluerivertech.com; s=google;
+        h=from:to:cc:subject:date:message-id:reply-to:mime-version
+         :content-transfer-encoding;
+        bh=J4DVZfSEHc+5lwv7xu8XA+IYBgCz30iR8NpK/PggUiU=;
+        b=e/KtI/dthbUT5strgq7i/oCnNUR28WLY2PI6kprFOLnhJG0NYtSAOhzL9t91+q7vtO
+         X/6XBbmb/ml4JI05ax97C/zI+KfHaJ1ussMxSNVouHCoe2rWo98A0mHTFgB0s1c7GJK5
+         nEa1sSwZGkz1D4KMMUrXZ6beNqj9+UXrg2ybSmZLSQ3xED743VQNR3V85kAeGs7xxGJO
+         xlwxxbtaYiXPhWfVh3DKRMhKH0tOSzlysypPv+1xqD9sOl1VhGtDL84GNShHXJZqMr6c
+         8+y+BGPLF/LMZhofq/qlOb3OVPQzBjufdkanTTcmm6FVNCDREx4H/tjp2ObMhU3CNqtw
+         YgPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :mime-version:content-transfer-encoding;
+        bh=J4DVZfSEHc+5lwv7xu8XA+IYBgCz30iR8NpK/PggUiU=;
+        b=2/XiF5INrINZoj/oA3ZeCHtIqOj0GJyRO+DP2RLyhIJK3mexE66w+VMy7QYgp6bQQJ
+         +hLINI82QQRyW1LaN0aps47p0hHrLSznb2HsfKB73kMaIKONvMJNgdcGqase2Vo/ZWhr
+         7zSxV9ZKBUy4ucTha28Cpf8Xda+xuEVsML44PPqsrnUmhEz9s/ZITLfPFxOZ8q9+hn2G
+         9Xc4rL+pd3z8Z67dJUxraQrUOJnfZ/n2Fo/Kg1mpV7gRr5Iw6gH9LBHeTdqXaJ1PEygN
+         xeWcAx+FVj1W2lYA61q9bjLEtcUINRqM6YaPDT5BORGf2im+GV2lT6EAv97/OhCt0u0s
+         UpAw==
+X-Gm-Message-State: AOAM532L47a1C3Zj0PHa9sR5tnr7n4He+6Upsk+uE5c1cZIKk9WDIms7
+        ZFwSVR54hb9f7I7kT9cplGrBfg==
+X-Google-Smtp-Source: ABdhPJw7FJNHh3B4AmQureIxpKhsaNHdS5jphlEqWHnuN8cumYwSsJ9KI2AN2uFHmZoSc77wMfZyAA==
+X-Received: by 2002:a65:6853:: with SMTP id q19mr50700441pgt.612.1641428826848;
+        Wed, 05 Jan 2022 16:27:06 -0800 (PST)
+Received: from localhost.localdomain (c-73-231-33-37.hsd1.ca.comcast.net. [73.231.33.37])
+        by smtp.gmail.com with ESMTPSA id c9sm230622pfc.61.2022.01.05.16.27.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Jan 2022 16:27:06 -0800 (PST)
+From:   Brian Silverman <brian.silverman@bluerivertech.com>
+Cc:     Brian Silverman <bsilver16384@gmail.com>,
+        Brian Silverman <brian.silverman@bluerivertech.com>,
+        Wolfgang Grandegger <wg@grandegger.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Dan Murphy <dmurphy@ti.com>,
+        linux-kernel@vger.kernel.org (open list),
+        linux-can@vger.kernel.org (open list:CAN NETWORK DRIVERS),
+        netdev@vger.kernel.org (open list:NETWORKING DRIVERS),
+        linux-tegra@vger.kernel.org (open list:TEGRA ARCHITECTURE SUPPORT)
+Subject: [RFC PATCH] can: m_can: Add driver for M_CAN hardware in NVIDIA devices
+Date:   Wed,  5 Jan 2022 16:25:09 -0800
+Message-Id: <20220106002514.24589-1-brian.silverman@bluerivertech.com>
+X-Mailer: git-send-email 2.20.1
+Reply-To: Brian Silverman <bsilver16384@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20211202005349.GA7007@sol>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Originating-IP: [172.20.187.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: b8fda927-a3c0-47c3-c207-08d9d09eb861
-X-MS-TrafficTypeDiagnostic: CH0PR12MB5234:EE_
-X-Microsoft-Antispam-PRVS: <CH0PR12MB5234D1FFEEC254BD8EAD91BBAE4B9@CH0PR12MB5234.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 251phr4WELwNemvji/D6p4OxDyhELrn8PjGzuodi7BDhYlUfCT6mtqU0hlDa+KQLjvQDsUq5oIhwwaD5/faYvvCSJwUCzMpZ/cu2svI/hce9JeKAQVyWcDsvp6KLbOqWl96tDUPjiB/SV+Es4ahCxBkJ/fJ/2UJhP60usqt57H84mJBEn3lmnpKY/cZEEJSo6RRmVAF4pJS2BgJ7hg+D/XxUUYOzeelOV+8sJBHJcvMijJby2qDDPynCQShqvHuUvcGKa3AQMEU53MxjvrUp34sJdiRBvWQ8/lYyta7pwx6tcOBZSDsOl0HNzPeIx9BR/xk+Ysi5WP/uXzaWfURUSYCimyd1QUb9H/ky2iHI3ATzPl0Jv5VkKGohIx8k9vtOZmxSi6P6pmvC/Hmvu+HYrwZRjcAW8hc6SKqj1VkZ6Owz8hpR0MF1cbR8gEPlYib1uHBRrRdcYV96kdecyXxWzBvVvY0h8H/7WFrAiIz6Yl6Y+TPiK6P9rDhpEhXLJpKfQeK7nYcpCKDc3+N33F3nLpE5QONZzJLdw0e1B/uSfF5vLgUijQZnT5c5gdf6VwylM5hpa/kARpern0Dj+iIZn/4xxeFYMMQ+G7PPFsuThvdWBq4vOjkVdS+xHEp/rRa0Zgc0mA76LwFi9fyPOpK5IlFaY3yYRZsQzdygztc4dn7YdiXVOBR9kz0Cl0YtlvKOOW3UG5mYDAzTmQRsF3ZyctAgb5T1JU0mOEJK8Taw3E8GdHPe1+QPOGxjMBpbm+zDm2o5896iWSm4Ycsbg/pJkNofLex9kolIQXk2ZYL2yk19hR6xWIphyxIkJzQYuPSTX1/1frb+HwXg0XSA0nE7eg==
-X-Forefront-Antispam-Report: CIP:12.22.5.238;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(4636009)(40470700002)(36840700001)(46966006)(36860700001)(54906003)(31686004)(6666004)(508600001)(7416002)(40460700001)(82310400004)(47076005)(2906002)(336012)(186003)(16526019)(26005)(8676002)(4326008)(2616005)(8936002)(70586007)(70206006)(426003)(53546011)(86362001)(83380400001)(6916009)(36756003)(5660300002)(356005)(31696002)(316002)(16576012)(81166007)(36900700001)(43740500002);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Jan 2022 22:57:16.5366
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: b8fda927-a3c0-47c3-c207-08d9d09eb861
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.238];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT057.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR12MB5234
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi,
+It's a M_TTCAN with some NVIDIA-specific glue logic and clocks. The
+existing m_can driver works with it after handling the glue logic.
 
+The code is a combination of pieces from m_can_platform and NVIDIA's
+driver [1].
 
-On 12/1/21 4:53 PM, Kent Gibson wrote:
-> On Wed, Dec 01, 2021 at 10:01:46AM -0800, Dipen Patel wrote:
->> Hi,
->>
->>
->> On 12/1/21 9:16 AM, Kent Gibson wrote:
->>> On Tue, Nov 30, 2021 at 07:29:20PM -0800, Dipen Patel wrote:
->>>> Hi,
->>>>
->>>> On 11/25/21 5:31 PM, Kent Gibson wrote:
->>>>> On Tue, Nov 23, 2021 at 11:30:36AM -0800, Dipen Patel wrote:
->>>>>> This patch adds new clock type for the GPIO controller which can
->>>>>> timestamp gpio lines in realtime using hardware means. To expose such
->>>>>> functionalities to the userspace, code has been added in this patch
->>>>>> where during line create call, it checks for new clock type and if
->>>>>> requested, calls hardware timestamp related API from gpiolib.c.
->>>>>> During line change event, the HTE subsystem pushes timestamp data
->>>>>> through callbacks.
->>>>>>
->>>>>> Signed-off-by: Dipen Patel <dipenp@nvidia.com>
->>>>>> Acked-by: Linus Walleij <linus.walleij@linaro.org>
->>>>>> ---
->>>>>> Changes in v2:
->>>>>> - Added hte_dir and static structure hte_ts_desc.
->>>>>> - Added callbacks which get invoked by HTE when new data is available.
->>>>>> - Better use of hte_dir and seq from hte_ts_desc.
->>>>>> - Modified sw debounce function to accommodate hardware timestamping.
->>>>>>
->>>>>>  drivers/gpio/gpiolib-cdev.c | 161 ++++++++++++++++++++++++++++++++++--
->>>>>>  include/uapi/linux/gpio.h   |   1 +
->>>>>>  2 files changed, 153 insertions(+), 9 deletions(-)
->>>>>>
->>>>>> [snip]
-> The code here has to deal with the general case, not just the one example
-> driver you have provided.  So in general there COULD be gaps in the
-> ts->seq, right?
->
-> I do see that using the ts-seq for sw debounced lines is problematic
-> though. The debouncer itself will be discarding hte events, but that
-> shouldn't be considered a lost event to the user.  You could track
-> how many events are discarded by the debouncer and subtract those from
-> the sequence numbers reported to userspace?
+[1] https://github.com/hartkopp/nvidia-t18x-can/blob/master/r32.2.1/nvidia/drivers/net/can/mttcan/hal/m_ttcan.c
 
-This could be little complicated, especially for "hybrid" scenario where
+Signed-off-by: Brian Silverman <brian.silverman@bluerivertech.com>
+---
+I ran into bugs with the error handling in NVIDIA's m_ttcan driver, so I
+switched to m_can which has been much better. I'm looking for feedback
+on whether I should ensure rebasing hasn't broken anything, write up DT
+documentation, and submit this patch for real. The driver works great,
+but I've got some questions about submitting it.
 
-cdev debouncer receives partial events to discard and rest is dropped in hw fifo
+question: This has liberal copying of GPL code from NVIDIA's
+non-upstreamed m_ttcan driver. Is that OK?
 
-in hte core. For example, if there were 5 events to discard before debounce period,
+corollary: I don't know what any of this glue logic does. I do know the
+device doesn't work without it. I can't find any documentation of what
+these addresses do.
 
-cdev receives only 3 events to discard and rest 2 is dropped in hte core. In this
+question: There is some duplication between this and m_can_platform. It
+doesn't seem too bad to me, but is this the preferred way to do it or is
+there another alternative?
 
-case, when debounce period ends and work func gets executed, it will take 3rd event
+question: Do new DT bindings need to be in the YAML format, or is the
+.txt one OK?
 
-as that was the last seen in cdev debouncer. This makes both ts and seq unstable and
+ drivers/net/can/m_can/Kconfig       |  10 +
+ drivers/net/can/m_can/Makefile      |   1 +
+ drivers/net/can/m_can/m_can_tegra.c | 362 ++++++++++++++++++++++++++++
+ 3 files changed, 373 insertions(+)
+ create mode 100644 drivers/net/can/m_can/m_can_tegra.c
 
-out of sync. In the absence of actual hardware which can drop, its probably hard to
+diff --git a/drivers/net/can/m_can/Kconfig b/drivers/net/can/m_can/Kconfig
+index 45ad1b3f0cd0..00e042cb7d33 100644
+--- a/drivers/net/can/m_can/Kconfig
++++ b/drivers/net/can/m_can/Kconfig
+@@ -22,6 +22,16 @@ config CAN_M_CAN_PLATFORM
+ 	  This support is for devices that have the Bosch M_CAN controller
+ 	  IP embedded into the device and the IP is IO Mapped to the processor.
+ 
++config CAN_M_CAN_TEGRA
++	tristate "Bosch M_CAN support for io-mapped devices on NVIDIA Tegra"
++	depends on HAS_IOMEM
++	---help---
++	  Say Y here if you want support for IO Mapped Bosch M_CAN controller,
++	  with additional NVIDIA Tegra-specific glue logic.
++	  This support is for Tegra devices that have the Bosch M_CAN/M_TTCAN
++		controller IP embedded into the device and the IP is IO Mapped to the
++		processor.
++
+ config CAN_M_CAN_TCAN4X5X
+ 	depends on SPI
+ 	select REGMAP_SPI
+diff --git a/drivers/net/can/m_can/Makefile b/drivers/net/can/m_can/Makefile
+index d717bbc9e033..36360c1c5eca 100644
+--- a/drivers/net/can/m_can/Makefile
++++ b/drivers/net/can/m_can/Makefile
+@@ -6,6 +6,7 @@
+ obj-$(CONFIG_CAN_M_CAN) += m_can.o
+ obj-$(CONFIG_CAN_M_CAN_PCI) += m_can_pci.o
+ obj-$(CONFIG_CAN_M_CAN_PLATFORM) += m_can_platform.o
++obj-$(CONFIG_CAN_M_CAN_TEGRA) += m_can_tegra.o
+ obj-$(CONFIG_CAN_M_CAN_TCAN4X5X) += tcan4x5x.o
+ 
+ tcan4x5x-objs :=
+diff --git a/drivers/net/can/m_can/m_can_tegra.c b/drivers/net/can/m_can/m_can_tegra.c
+new file mode 100644
+index 000000000000..3739b92b4540
+--- /dev/null
++++ b/drivers/net/can/m_can/m_can_tegra.c
+@@ -0,0 +1,362 @@
++// SPDX-License-Identifier: GPL-2.0
++// IOMapped CAN bus driver for Bosch M_CAN controller on NVIDIA Tegra
++
++#include <linux/platform_device.h>
++#include <linux/reset.h>
++
++#include "m_can.h"
++
++struct m_can_tegra_priv {
++	struct m_can_classdev cdev;
++
++	void __iomem *base;
++	void __iomem *mram_base;
++	void __iomem *glue_base;
++	// cclk is core_clk if it exists, otherwise can_clk.
++	struct clk *core_clk, *can_clk, *pll_clk;
++};
++
++static inline struct m_can_tegra_priv *cdev_to_priv(struct m_can_classdev *cdev)
++{
++	return container_of(cdev, struct m_can_tegra_priv, cdev);
++}
++
++static u32 iomap_read_reg(struct m_can_classdev *cdev, int reg)
++{
++	struct m_can_tegra_priv *priv = cdev_to_priv(cdev);
++
++	return readl(priv->base + reg);
++}
++
++static u32 iomap_read_fifo(struct m_can_classdev *cdev, int offset)
++{
++	struct m_can_tegra_priv *priv = cdev_to_priv(cdev);
++
++	return readl(priv->mram_base + offset);
++}
++
++static u32 iomap_read_glue(struct m_can_classdev *cdev, int reg)
++{
++	struct m_can_tegra_priv *priv = cdev_to_priv(cdev);
++
++	return readl(priv->glue_base + reg);
++}
++
++static int iomap_write_reg(struct m_can_classdev *cdev, int reg, int val)
++{
++	struct m_can_tegra_priv *priv = cdev_to_priv(cdev);
++
++	writel(val, priv->base + reg);
++
++	return 0;
++}
++
++static int iomap_write_fifo(struct m_can_classdev *cdev, int offset, int val)
++{
++	struct m_can_tegra_priv *priv = cdev_to_priv(cdev);
++
++	writel(val, priv->mram_base + offset);
++
++	return 0;
++}
++
++static int iomap_write_glue(struct m_can_classdev *cdev, int reg, int val)
++{
++	struct m_can_tegra_priv *priv = cdev_to_priv(cdev);
++
++	writel(val, priv->glue_base + reg);
++
++	return 0;
++}
++
++static struct m_can_ops m_can_tegra_ops = {
++	.read_reg = iomap_read_reg,
++	.write_reg = iomap_write_reg,
++	.write_fifo = iomap_write_fifo,
++	.read_fifo = iomap_read_fifo,
++};
++
++/* Glue logic apperature */
++#define ADDR_M_TTCAN_IR          0x00
++#define ADDR_M_TTCAN_TTIR        0x04
++#define ADDR_M_TTCAN_TXBRP       0x08
++#define ADDR_M_TTCAN_FD_DATA     0x0C
++#define ADDR_M_TTCAN_STATUS_REG  0x10
++#define ADDR_M_TTCAN_CNTRL_REG   0x14
++#define ADDR_M_TTCAN_DMA_INTF0   0x18
++#define ADDR_M_TTCAN_CLK_STOP    0x1C
++#define ADDR_M_TTCAN_HSM_MASK0   0x20
++#define ADDR_M_TTCAN_HSM_MASK1   0x24
++#define ADDR_M_TTCAN_EXT_SYC_SLT 0x28
++#define ADDR_M_TTCAN_HSM_SW_OVRD 0x2C
++#define ADDR_M_TTCAN_TIME_STAMP  0x30
++
++#define M_TTCAN_CNTRL_REG_COK           (1<<3)
++#define M_TTCAN_TIME_STAMP_OFFSET_SEL   4
++
++static void tegra_can_set_ok(struct m_can_classdev *cdev)
++{
++	u32 val;
++
++	val = iomap_read_glue(cdev, ADDR_M_TTCAN_CNTRL_REG);
++	val |= M_TTCAN_CNTRL_REG_COK;
++	iomap_write_glue(cdev, ADDR_M_TTCAN_CNTRL_REG, val);
++}
++
++
++static int m_can_tegra_probe(struct platform_device *pdev)
++{
++	struct m_can_classdev *mcan_class;
++	struct m_can_tegra_priv *priv;
++	struct resource *res;
++	void __iomem *addr;
++	void __iomem *mram_addr;
++	void __iomem *glue_addr;
++	struct reset_control *rstc;
++	struct clk *host_clk = NULL, *can_clk = NULL, *core_clk = NULL, *pclk = NULL;
++	int irq, ret = 0;
++	u32 rate;
++	unsigned long new_rate;
++
++	mcan_class = m_can_class_allocate_dev(&pdev->dev,
++					      sizeof(struct m_can_tegra_priv));
++	if (!mcan_class)
++		return -ENOMEM;
++
++	priv = cdev_to_priv(mcan_class);
++
++	host_clk = devm_clk_get(&pdev->dev, "can_host");
++	if (IS_ERR(host_clk)) {
++		ret = PTR_ERR(host_clk);
++		goto probe_fail;
++	}
++	can_clk = devm_clk_get(&pdev->dev, "can");
++	if (IS_ERR(can_clk)) {
++		ret = PTR_ERR(can_clk);
++		goto probe_fail;
++	}
++
++	core_clk = devm_clk_get(&pdev->dev, "can_core");
++	if (IS_ERR(core_clk)) {
++		core_clk = NULL;
++	}
++
++	pclk = clk_get(&pdev->dev, "pll");
++	if (IS_ERR(pclk)) {
++		ret = PTR_ERR(pclk);
++		goto probe_fail;
++	}
++
++	ret = clk_set_parent(can_clk, pclk);
++	if (ret) {
++		goto probe_fail;
++	}
++
++	ret = fwnode_property_read_u32(dev_fwnode(&pdev->dev), "can-clk-rate", &rate);
++	if (ret) {
++		goto probe_fail;
++	}
++
++	new_rate = clk_round_rate(can_clk, rate);
++	if (!new_rate)
++		dev_warn(&pdev->dev, "incorrect CAN clock rate\n");
++
++	ret = clk_set_rate(can_clk, new_rate > 0 ? new_rate : rate);
++	if (ret) {
++		goto probe_fail;
++	}
++
++	ret = clk_set_rate(host_clk, new_rate > 0 ? new_rate : rate);
++	if (ret) {
++		goto probe_fail;
++	}
++
++	if (core_clk) {
++		ret = fwnode_property_read_u32(dev_fwnode(&pdev->dev), "core-clk-rate", &rate);
++		if (ret) {
++			goto probe_fail;
++		}
++		new_rate = clk_round_rate(core_clk, rate);
++		if (!new_rate)
++			dev_warn(&pdev->dev, "incorrect CAN_CORE clock rate\n");
++
++		ret = clk_set_rate(core_clk, new_rate > 0 ? new_rate : rate);
++		if (ret) {
++			goto probe_fail;
++		}
++	}
++
++	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "m_can");
++	addr = devm_ioremap_resource(&pdev->dev, res);
++	if (IS_ERR(addr)) {
++		ret = PTR_ERR(addr);
++		goto probe_fail;
++	}
++
++	irq = platform_get_irq_byname(pdev, "int0");
++	if (irq < 0) {
++		ret = -ENODEV;
++		goto probe_fail;
++	}
++
++	/* message ram could be shared */
++	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "message_ram");
++	mram_addr = devm_ioremap(&pdev->dev, res->start, resource_size(res));
++	if (!mram_addr) {
++		ret = -ENOMEM;
++		goto probe_fail;
++	}
++
++	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "glue_regs");
++	glue_addr = devm_ioremap(&pdev->dev, res->start, resource_size(res));
++	if (!glue_addr) {
++		ret = -ENOMEM;
++		goto probe_fail;
++	}
++
++	rstc = devm_reset_control_get(&pdev->dev, "can");
++	if (IS_ERR(rstc)) {
++		ret = PTR_ERR(rstc);
++		goto probe_fail;
++	}
++	reset_control_reset(rstc);
++
++	priv->can_clk = can_clk;
++	mcan_class->hclk = host_clk;
++
++	if (core_clk) {
++		mcan_class->cclk = core_clk;
++	} else {
++		mcan_class->cclk = can_clk;
++	}
++	priv->core_clk = core_clk;
++
++	priv->base = addr;
++	priv->mram_base = mram_addr;
++	priv->glue_base = glue_addr;
++
++	mcan_class->net->irq = irq;
++	mcan_class->pm_clock_support = 1;
++	mcan_class->can.clock.freq = clk_get_rate(mcan_class->cclk);
++	mcan_class->dev = &pdev->dev;
++
++	mcan_class->ops = &m_can_tegra_ops;
++
++	mcan_class->is_peripheral = false;
++
++	platform_set_drvdata(pdev, mcan_class);
++
++	pm_runtime_enable(mcan_class->dev);
++
++	ret = pm_runtime_get_sync(mcan_class->dev);
++	if (ret < 0) {
++		pm_runtime_put_noidle(mcan_class->dev);
++		goto out_runtime_disable;
++	}
++	tegra_can_set_ok(mcan_class);
++	m_can_init_ram(mcan_class);
++	pm_runtime_put_sync(mcan_class->dev);
++
++	ret = m_can_class_register(mcan_class);
++	if (ret)
++		goto out_runtime_disable;
++
++	return ret;
++
++out_runtime_disable:
++	pm_runtime_disable(mcan_class->dev);
++probe_fail:
++	m_can_class_free_dev(mcan_class->net);
++	return ret;
++}
++
++static __maybe_unused int m_can_suspend(struct device *dev)
++{
++	return m_can_class_suspend(dev);
++}
++
++static __maybe_unused int m_can_resume(struct device *dev)
++{
++	return m_can_class_resume(dev);
++}
++
++static int m_can_tegra_remove(struct platform_device *pdev)
++{
++	struct m_can_tegra_priv *priv = platform_get_drvdata(pdev);
++	struct m_can_classdev *mcan_class = &priv->cdev;
++
++	m_can_class_unregister(mcan_class);
++
++	m_can_class_free_dev(mcan_class->net);
++
++	return 0;
++}
++
++static int __maybe_unused m_can_runtime_suspend(struct device *dev)
++{
++	struct m_can_tegra_priv *priv = dev_get_drvdata(dev);
++	struct m_can_classdev *mcan_class = &priv->cdev;
++
++	if (priv->core_clk)
++		clk_disable_unprepare(priv->core_clk);
++
++	clk_disable_unprepare(mcan_class->hclk);
++	clk_disable_unprepare(priv->can_clk);
++
++	return 0;
++}
++
++static int __maybe_unused m_can_runtime_resume(struct device *dev)
++{
++	struct m_can_tegra_priv *priv = dev_get_drvdata(dev);
++	struct m_can_classdev *mcan_class = &priv->cdev;
++	int err;
++
++	err = clk_prepare_enable(priv->can_clk);
++	if (err) {
++		return err;
++	}
++
++	err = clk_prepare_enable(mcan_class->hclk);
++	if (err) {
++		clk_disable_unprepare(priv->can_clk);
++	}
++
++	if (priv->core_clk) {
++		err = clk_prepare_enable(priv->core_clk);
++		if (err) {
++			clk_disable_unprepare(mcan_class->hclk);
++			clk_disable_unprepare(priv->can_clk);
++		}
++	}
++
++	return err;
++}
++
++static const struct dev_pm_ops m_can_pmops = {
++	SET_RUNTIME_PM_OPS(m_can_runtime_suspend,
++			   m_can_runtime_resume, NULL)
++	SET_SYSTEM_SLEEP_PM_OPS(m_can_suspend, m_can_resume)
++};
++
++static const struct of_device_id m_can_of_table[] = {
++	{ .compatible = "nvidia,tegra194-m_can", .data = NULL },
++	{ /* sentinel */ },
++};
++MODULE_DEVICE_TABLE(of, m_can_of_table);
++
++static struct platform_driver m_can_tegra_driver = {
++	.driver = {
++		.name = KBUILD_MODNAME,
++		.of_match_table = m_can_of_table,
++		.pm     = &m_can_pmops,
++	},
++	.probe = m_can_tegra_probe,
++	.remove = m_can_tegra_remove,
++};
++
++module_platform_driver(m_can_tegra_driver);
++
++MODULE_AUTHOR("Brian Silverman <brian.silverman@bluerivertech.com>");
++MODULE_LICENSE("GPL v2");
++MODULE_DESCRIPTION("M_CAN driver for IO Mapped Bosch controllers on NVIDIA Tegra");
+-- 
+2.20.1
 
-simulate and implement complete solution to tackle this.
-
-
->
->
