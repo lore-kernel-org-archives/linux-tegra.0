@@ -2,61 +2,61 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 540E4C433EF
-	for <linux-tegra@archiver.kernel.org>; Thu,  6 Jan 2022 01:02:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86B65C433F5
+	for <linux-tegra@archiver.kernel.org>; Thu,  6 Jan 2022 01:03:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240033AbiAFBCa (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 5 Jan 2022 20:02:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46232 "EHLO
+        id S1343967AbiAFBDI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 5 Jan 2022 20:03:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46368 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240018AbiAFBCa (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 5 Jan 2022 20:02:30 -0500
-Received: from mail-il1-x12d.google.com (mail-il1-x12d.google.com [IPv6:2607:f8b0:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDE76C061245
-        for <linux-tegra@vger.kernel.org>; Wed,  5 Jan 2022 17:02:29 -0800 (PST)
-Received: by mail-il1-x12d.google.com with SMTP id v10so891773ilj.3
-        for <linux-tegra@vger.kernel.org>; Wed, 05 Jan 2022 17:02:29 -0800 (PST)
+        with ESMTP id S240018AbiAFBDH (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 5 Jan 2022 20:03:07 -0500
+Received: from mail-il1-x130.google.com (mail-il1-x130.google.com [IPv6:2607:f8b0:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17A36C061245
+        for <linux-tegra@vger.kernel.org>; Wed,  5 Jan 2022 17:03:07 -0800 (PST)
+Received: by mail-il1-x130.google.com with SMTP id d14so906116ila.1
+        for <linux-tegra@vger.kernel.org>; Wed, 05 Jan 2022 17:03:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=MIFRxmXWiEBCiGr15456Pgg06Y+aeSi4XJyFkvrjKcY=;
-        b=YWi65CpZCs2GGkYUWUA+9oQ5itYVgpmPFXUHQhi8B3TMg6XhFy5U+fGdUq21oWo/dB
-         TDI/nlySgRjRy/gbqtKKNYZXShZrx8VtLBM6nKht/ZaExjQIxD4ZpGOJs6D3s8DWreQq
-         SAF/8uVSAr7OkGtIJlg90seeMXjq6K1dJhN9k=
+        bh=LnAubQ94PDCRwQNOSUL7oWBc6st8xuAGeyidhQSqpxM=;
+        b=L+KKy1dIZAwAdNTOVd0qKOKt+iqom+ZV4roHbjm+6kadMtLGIIVBSiOOCpx34AcihH
+         0O6o2MNxPd0Y4mb8rb6+/dBn+2ajW6we7n+Nvt1v8DST7b+3zYtGiNC4A1jVWzbSaLHP
+         YeeKuKQBkCpeABG0hXzBrLpv1VFCNMOe5GVBI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=MIFRxmXWiEBCiGr15456Pgg06Y+aeSi4XJyFkvrjKcY=;
-        b=v6E3UA1qs2dSna846eaSF3QsXaANqMFjQzy6hg2Ekq6p+FHwMVUZZ1DijSaw7vNnhB
-         f3Gwct733AZEqKLNS1pxT4xmtm2kltM7GaNtfMbX/fj1A/8r0+hFkPBtrmqwV+J6e+UI
-         aZI/83wzyMoAjtTn4z2VtsTTCO8UUn8jYpYHZyR193rDTPibC+O45RGOgtdLyLyN8mHb
-         x1lfb+84Aw6e0UkM2NCEqBae9atLFl/FgHT4q+pab113MklWty9PD2TM6GdwfrbtzNDO
-         xCh083TkurvckQdJRdpD0wtPCbud2YAV01OG64V2fhFCkxlZH//5A2Le6KJVxYnsWprL
-         SIfw==
-X-Gm-Message-State: AOAM5328URDvtmHp5NK3cV39i/38m4u+Sxz4pwaDi7S0zeBhuxF1pprg
-        f+TTt+hmqkZgQwtVoio9y9eTqyAhItK09A==
-X-Google-Smtp-Source: ABdhPJwP6Bq1W9/94v0hMQUQc+HRvjb4KW/PQB6GZn7gNeoY2u7T19IF2GL+zWAMLuetIa3aDvqfWA==
-X-Received: by 2002:a92:ca46:: with SMTP id q6mr29080224ilo.107.1641430948783;
-        Wed, 05 Jan 2022 17:02:28 -0800 (PST)
-Received: from mail-io1-f47.google.com (mail-io1-f47.google.com. [209.85.166.47])
-        by smtp.gmail.com with ESMTPSA id c19sm310686ioi.15.2022.01.05.17.02.28
+        bh=LnAubQ94PDCRwQNOSUL7oWBc6st8xuAGeyidhQSqpxM=;
+        b=QAT+HxjTezqmd5ENPrMvgRr1waSpGn+jupZWmEDs8VTAcj0otldfNAe6d+Hxun+drM
+         UD8GEIDJtfxG+XD/Sd5wQKhEe8YATjF7xzi7gLIJFrBB2Qe86/rJ51APsU4X01TkhzBL
+         DAFe38teo0tHySbmIgz3zi6FK7LbvyospxswxQjNa1QXBOsPt0tmyASjvX3xrg221cOo
+         TmcsN6OQWMjhh6qlk6/lBOAlZY6yJWN1VbnvRPIZlnpciIoueigCqAdKTgDE/GxuPntK
+         s6CeXKdE6iuej4ecX9lgjBSlLVOKAMw5P8JwmWg+A+e2piO95LqsN6TlrhQ7LsJxpUDC
+         XXRA==
+X-Gm-Message-State: AOAM532D4IXzdPdMi3O7NG2H8XusULTDkwH6tqeW2vIs38QQzP0RxAqx
+        4CSkIB652h7DJeeFD1tl3HE2gKMgX+nSsg==
+X-Google-Smtp-Source: ABdhPJxCqtVRu1wqA35LDbVZmjPrlytLWLEhzxfaShXn7FU7D159VX3rVZCm480/NSGLUFvFOvl0dg==
+X-Received: by 2002:a05:6e02:1b8b:: with SMTP id h11mr27199633ili.14.1641430986082;
+        Wed, 05 Jan 2022 17:03:06 -0800 (PST)
+Received: from mail-io1-f52.google.com (mail-io1-f52.google.com. [209.85.166.52])
+        by smtp.gmail.com with ESMTPSA id h15sm277841ili.55.2022.01.05.17.03.05
         for <linux-tegra@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Jan 2022 17:02:28 -0800 (PST)
-Received: by mail-io1-f47.google.com with SMTP id p65so1257625iof.3
-        for <linux-tegra@vger.kernel.org>; Wed, 05 Jan 2022 17:02:28 -0800 (PST)
-X-Received: by 2002:a02:294b:: with SMTP id p72mr21568959jap.263.1641430947664;
- Wed, 05 Jan 2022 17:02:27 -0800 (PST)
+        Wed, 05 Jan 2022 17:03:05 -0800 (PST)
+Received: by mail-io1-f52.google.com with SMTP id u8so1240987iol.5
+        for <linux-tegra@vger.kernel.org>; Wed, 05 Jan 2022 17:03:05 -0800 (PST)
+X-Received: by 2002:a05:6602:2c83:: with SMTP id i3mr25918868iow.128.1641430985233;
+ Wed, 05 Jan 2022 17:03:05 -0800 (PST)
 MIME-Version: 1.0
-References: <20211220104855.428290-1-thierry.reding@gmail.com> <20211220104855.428290-3-thierry.reding@gmail.com>
-In-Reply-To: <20211220104855.428290-3-thierry.reding@gmail.com>
+References: <20211220104855.428290-1-thierry.reding@gmail.com> <20211220104855.428290-2-thierry.reding@gmail.com>
+In-Reply-To: <20211220104855.428290-2-thierry.reding@gmail.com>
 From:   Doug Anderson <dianders@chromium.org>
-Date:   Wed, 5 Jan 2022 17:02:16 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=WV2dsmRL0bVXz9jTgyy1zQpDjzrM=XDO=2rxsks=70rA@mail.gmail.com>
-Message-ID: <CAD=FV=WV2dsmRL0bVXz9jTgyy1zQpDjzrM=XDO=2rxsks=70rA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] ARM: tegra: Move panels to AUX bus
+Date:   Wed, 5 Jan 2022 17:02:53 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=VeN=rODkhO3gYNZ5rFW1iabirHopR0Ra5UFAKLNn1zYA@mail.gmail.com>
+Message-ID: <CAD=FV=VeN=rODkhO3gYNZ5rFW1iabirHopR0Ra5UFAKLNn1zYA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] drm/tegra: dpaux: Populate AUX bus
 To:     Thierry Reding <thierry.reding@gmail.com>
 Cc:     Dmitry Osipenko <digetx@gmail.com>,
         Thomas Graichen <thomas.graichen@gmail.com>,
@@ -75,62 +75,72 @@ On Mon, Dec 20, 2021 at 2:49 AM Thierry Reding <thierry.reding@gmail.com> wrote:
 >
 > From: Thierry Reding <treding@nvidia.com>
 >
-> Move the eDP panel on Venice 2 and Nyan boards into the corresponding
-> AUX bus device tree node. This allows us to avoid a nasty circular
-> dependency that would otherwise be created between the DPAUX and panel
-> nodes via the DDC/I2C phandle.
+> The DPAUX hardware block exposes an DP AUX interface that provides
+> access to an AUX bus and the devices on that bus. Use the DP AUX bus
+> infrastructure that was recently introduced to probe devices on this
+> bus from DT.
 >
 > Signed-off-by: Thierry Reding <treding@nvidia.com>
 > ---
->  arch/arm/boot/dts/tegra124-nyan-big.dts   | 15 +++++++++------
->  arch/arm/boot/dts/tegra124-nyan-blaze.dts | 15 +++++++++------
->  arch/arm/boot/dts/tegra124-venice2.dts    | 14 +++++++-------
->  3 files changed, 25 insertions(+), 19 deletions(-)
+>  drivers/gpu/drm/tegra/Kconfig | 1 +
+>  drivers/gpu/drm/tegra/dpaux.c | 7 +++++++
+>  2 files changed, 8 insertions(+)
 >
-> diff --git a/arch/arm/boot/dts/tegra124-nyan-big.dts b/arch/arm/boot/dts/tegra124-nyan-big.dts
-> index 1d2aac2cb6d0..fdc1d64dfff9 100644
-> --- a/arch/arm/boot/dts/tegra124-nyan-big.dts
-> +++ b/arch/arm/boot/dts/tegra124-nyan-big.dts
-> @@ -13,12 +13,15 @@ / {
->                      "google,nyan-big-rev1", "google,nyan-big-rev0",
->                      "google,nyan-big", "google,nyan", "nvidia,tegra124";
+> diff --git a/drivers/gpu/drm/tegra/Kconfig b/drivers/gpu/drm/tegra/Kconfig
+> index 8cf5aeb9db6c..201f5175ecfe 100644
+> --- a/drivers/gpu/drm/tegra/Kconfig
+> +++ b/drivers/gpu/drm/tegra/Kconfig
+> @@ -5,6 +5,7 @@ config DRM_TEGRA
+>         depends on COMMON_CLK
+>         depends on DRM
+>         depends on OF
+> +       select DRM_DP_AUX_BUS
+>         select DRM_KMS_HELPER
+>         select DRM_MIPI_DSI
+>         select DRM_PANEL
+> diff --git a/drivers/gpu/drm/tegra/dpaux.c b/drivers/gpu/drm/tegra/dpaux.c
+> index 1f96e416fa08..9da1edcdc835 100644
+> --- a/drivers/gpu/drm/tegra/dpaux.c
+> +++ b/drivers/gpu/drm/tegra/dpaux.c
+> @@ -18,6 +18,7 @@
+>  #include <linux/reset.h>
+>  #include <linux/workqueue.h>
 >
-> -       panel: panel {
-> -               compatible = "auo,b133xtn01";
-> -
-> -               power-supply = <&vdd_3v3_panel>;
+> +#include <drm/drm_dp_aux_bus.h>
+>  #include <drm/drm_dp_helper.h>
+>  #include <drm/drm_panel.h>
+>
+> @@ -570,6 +571,12 @@ static int tegra_dpaux_probe(struct platform_device *pdev)
+>         list_add_tail(&dpaux->list, &dpaux_list);
+>         mutex_unlock(&dpaux_lock);
+>
+> +       err = devm_of_dp_aux_populate_ep_devices(&dpaux->aux);
+> +       if (err < 0) {
+> +               dev_err(dpaux->dev, "failed to populate AUX bus: %d\n", err);
+> +               return err;
 
-You remove the "power-supply" line here but don't add it below. Isn't
-that a problem? power-supply for the panel is listed as "required" in
-the panel dt bindings so I presume this will increase validation
-warnings?
+nit:
 
+if (err < 0)
+  return dev_err_probe(dpaux->dev, err, "failed to populate AUX bus\n");
 
-> -               backlight = <&backlight>;
-> -               ddc-i2c-bus = <&dpaux>;
-> +       host1x@50000000 {
-> +               dpaux@545c0000 {
+That's more concise and gives the pretty formatting for the error code
+(not that devm_of_dp_aux_populate_ep_devices() currently returns
+anything other than 0).
 
-Optional nit: on other SoC dts files I've always had the policy to try
-to avoid replicating hierarchies like this (host1x@50000000 =>
-dpaux@545c0000). Instead I'd express this as:
+> +       }
 
-&dpaux {
-  aux-bux {
-    panel: panel {
-      ...
-    };
-  };
-};
+I think you need to use of_dp_aux_populate_ep_devices() and then
+depopulate in your remove, right? Otherwise the ordering won't be
+right. Either that or fully transition your probe to devm (and get rid
+of your remove) by adding some devm_add_action_or_reset() helpers...
 
-
-> +                       aux-bus {
-> +                               panel: panel {
-> +                                       compatible = "auo,b133xtn01";
-> +                                       backlight = <&backlight>;
-
-nit: In theory the "backlight" could go in tegra124-nyan.dtsi, right?
-Then you just need to override the compatible...
+Hrm, I guess looking closer it's also a little concerning that if
+devm_of_dp_aux_populate_ep_devices() returns an error then you'll
+totally skip all the things that tegra_dpaux_remove() is supposed to
+handle. I guess that's a pre-existing bug (earlier error cases in the
+probe don't, for instance, undo the pm_runtime state) but this makes
+it worse.
 
 
 -Doug
