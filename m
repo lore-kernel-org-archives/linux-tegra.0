@@ -2,192 +2,120 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 190B0C433F5
-	for <linux-tegra@archiver.kernel.org>; Fri,  7 Jan 2022 10:58:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61838C433EF
+	for <linux-tegra@archiver.kernel.org>; Fri,  7 Jan 2022 12:47:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346865AbiAGK6m (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 7 Jan 2022 05:58:42 -0500
-Received: from mga07.intel.com ([134.134.136.100]:62442 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1346861AbiAGK6m (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 7 Jan 2022 05:58:42 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1641553122; x=1673089122;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=BMc9Z3LTtaONxwRGR93Wx3i0m7MuqSXfo4BQM2965WY=;
-  b=NituwgX3U7C8QRUcAiInl/+cN0rBXUDuFUq9t4NAR/q2YJVlrzHF/kWU
-   159dxEBhqOJTICkUcMu85+12z7TTdZgGVwQtBdNOGn+T6K1ald8OCzg0+
-   3UihEfaquYE2vIjqsMHO5tLQ/bIFAOqpMFgH/lvOn9k27565BqJOA0Mc5
-   PhmKs3qURP/ophSuSrIlFWj1OBTTdvqtCjsc7YGLyvk5QH6uJuKbJzZaB
-   BrdU1weoaTPAiuqTmTWCzMiq/lSSORUKnEV1eRW4MSm90w1a0R4LIONwY
-   QC2UnGxhHpVKuthu2BR2JDIWJltYYBByYda9tbqFUwsPO0LZLJtRpNhW9
-   g==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10219"; a="306216986"
-X-IronPort-AV: E=Sophos;i="5.88,269,1635231600"; 
-   d="scan'208";a="306216986"
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jan 2022 02:58:42 -0800
-X-IronPort-AV: E=Sophos;i="5.88,269,1635231600"; 
-   d="scan'208";a="513754516"
-Received: from dgreerx-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.24.206])
-  by orsmga007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jan 2022 02:58:37 -0800
-From:   Jani Nikula <jani.nikula@linux.intel.com>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Lyude Paul <lyude@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] drm/dp: Remove common Post Cursor2 register handling
-In-Reply-To: <202201051410.8F65E4E0@keescook>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20220105173507.2420910-1-keescook@chromium.org>
- <878rvujc4t.fsf@intel.com> <202201051410.8F65E4E0@keescook>
-Date:   Fri, 07 Jan 2022 12:58:32 +0200
-Message-ID: <87y23rlsmf.fsf@intel.com>
+        id S232125AbiAGMrH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 7 Jan 2022 07:47:07 -0500
+Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:52840
+        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231959AbiAGMrG (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Fri, 7 Jan 2022 07:47:06 -0500
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com [209.85.128.70])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 3F89D3F17B
+        for <linux-tegra@vger.kernel.org>; Fri,  7 Jan 2022 12:47:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1641559625;
+        bh=mw0ExawwR8ahd9kK1BIGn/SS/zU5Dv8XgcJ3wXAs/II=;
+        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+         In-Reply-To:Content-Type;
+        b=U0wKWHqcpGm/m+00m1PkET9TAVO1BlVbVgB4HVn7x8iXja77UaTu6IJFhaCUkvpXh
+         0QPLXd9eHk86R8sVAKvuItU+lz62HvFpBnfexDk7i3Hb6JOvfnBavQ/MDnTuHAUZ7A
+         xFvRWEdvUyQueOWzdwK5HdrWgupNdraQVIQrDGS5bhXuAWsZrNhWp1HBsSW1k6EjVS
+         887SaP0Ioc4C26bLHekWAN5K7vwh8u7dy6jxkcoWZOpxZPVkNaulT70DTa2fhdSsb0
+         8Q4GvnrvT+FAOeSwi/NyoOy82OHnd5kTuzeijznImSqES1ztiV+QEUSQAYOt9SihXT
+         e9Uz5j2P8y6zA==
+Received: by mail-wm1-f70.google.com with SMTP id b20-20020a05600c4e1400b003457da1c91eso773078wmq.4
+        for <linux-tegra@vger.kernel.org>; Fri, 07 Jan 2022 04:47:05 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=mw0ExawwR8ahd9kK1BIGn/SS/zU5Dv8XgcJ3wXAs/II=;
+        b=W6tijIK8X+4tKBeKGzzIspj0IOJkYyfII6W84o7XPWymckbA61QEJ+XA+aKrfv9UqV
+         EA1jNpvGLqFAUG6spqiuJ8Ia0hyNYLCHGW9TqF0dwE508+VfrlzPW3GF1VYB571VnkUr
+         3WqIMPiHv3RC6njEUA1QuQ4RZXY5/hDTNUBB482fUg+rij3PN+FpkIvBaeHLIs9JIC+Z
+         HDTzkBqnwEUe+3QhOfTjZBNRwogkzhSKDVADQDRa6M4dnq2luxtFmdyUsd2mCV+Qmkn3
+         wVxQj1aio5wRiOQXstiYzdnGwiYcGmH9ow/3korqglc3X6qUTdOY2+XHknORVqpN0fol
+         CH9w==
+X-Gm-Message-State: AOAM532kNXxPD1G+5lSloCjIhBw4CJKAOEGMhJqmlWd/twjTTKwf/Uqc
+        vaDohvjUlIuB5wDch2x1m1O9BYBficZKugR85mIL3aAnH/YBByjJdqjM5KjtWag3Xv1Mvde26v+
+        gdIeR71UdGAKW5tvToO22YXUgwttBcwBlOK5p8n+C
+X-Received: by 2002:a1c:7908:: with SMTP id l8mr10769069wme.16.1641559624910;
+        Fri, 07 Jan 2022 04:47:04 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJw2FsvDO60VgGxZNwGuql9jeQSwLbf8fwlr9vig9/8LpbnhuhXAEvvUqztMYtnXUorH1j6+bA==
+X-Received: by 2002:a1c:7908:: with SMTP id l8mr10769046wme.16.1641559624685;
+        Fri, 07 Jan 2022 04:47:04 -0800 (PST)
+Received: from [192.168.1.126] (xdsl-188-155-168-84.adslplus.ch. [188.155.168.84])
+        by smtp.gmail.com with ESMTPSA id y8sm5941569wma.19.2022.01.07.04.47.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 07 Jan 2022 04:47:04 -0800 (PST)
+Message-ID: <99115cc4-32f6-d217-68be-33256a6993a8@canonical.com>
+Date:   Fri, 7 Jan 2022 13:47:03 +0100
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.1
+Subject: Re: [PATCH 0/7] arm/arm64: dts: Remove unused num-viewport from pcie
+ node
+Content-Language: en-US
+To:     Mark Kettenis <mark.kettenis@xs4all.nl>,
+        Jisheng Zhang <jszhang@kernel.org>
+Cc:     shawnguo@kernel.org, leoyang.li@nxp.com, robh+dt@kernel.org,
+        linux@armlinux.org.uk, andrew@lunn.ch,
+        sebastian.hesselbarth@gmail.com, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, hayashi.kunihiko@socionext.com,
+        mhiramat@kernel.org, nobuhiro1.iwamatsu@toshiba.co.jp,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+References: <20211229160245.1338-1-jszhang@kernel.org>
+ <d3cb7b8439ee3d06@bloch.sibelius.xs4all.nl>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+In-Reply-To: <d3cb7b8439ee3d06@bloch.sibelius.xs4all.nl>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, 05 Jan 2022, Kees Cook <keescook@chromium.org> wrote:
-> On Wed, Jan 05, 2022 at 08:00:50PM +0200, Jani Nikula wrote:
->> On Wed, 05 Jan 2022, Kees Cook <keescook@chromium.org> wrote:
->> > The link_status array was not large enough to read the Adjust Request
->> > Post Cursor2 register, so remove the common helper function to avoid
->> > an OOB read, found with a -Warray-bounds build:
->> >
->> > drivers/gpu/drm/drm_dp_helper.c: In function 'drm_dp_get_adjust_request_post_cursor':
->> > drivers/gpu/drm/drm_dp_helper.c:59:27: error: array subscript 10 is outside array bounds of 'const u8[6]' {aka 'const unsigned char[6]'} [-Werror=array-bounds]
->> >    59 |         return link_status[r - DP_LANE0_1_STATUS];
->> >       |                ~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~
->> > drivers/gpu/drm/drm_dp_helper.c:147:51: note: while referencing 'link_status'
->> >   147 | u8 drm_dp_get_adjust_request_post_cursor(const u8 link_status[DP_LINK_STATUS_SIZE],
->> >       |                                          ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->> >
->> > Replace the only user of the helper with an open-coded fetch and decode,
->> > similar to drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c.
->> >
->> > Fixes: 79465e0ffeb9 ("drm/dp: Add helper to get post-cursor adjustments")
->> > Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
->> > Cc: Maxime Ripard <mripard@kernel.org>
->> > Cc: Thomas Zimmermann <tzimmermann@suse.de>
->> > Cc: David Airlie <airlied@linux.ie>
->> > Cc: Daniel Vetter <daniel@ffwll.ch>
->> > Cc: dri-devel@lists.freedesktop.org
->> > Signed-off-by: Kees Cook <keescook@chromium.org>
->> > ---
->> > This is the alternative to:
->> > https://lore.kernel.org/lkml/20211203084354.3105253-1-keescook@chromium.org/
->> > ---
->> >  drivers/gpu/drm/drm_dp_helper.c | 10 ----------
->> >  drivers/gpu/drm/tegra/dp.c      | 11 ++++++++++-
->> >  include/drm/drm_dp_helper.h     |  2 --
->> >  3 files changed, 10 insertions(+), 13 deletions(-)
->> >
->> > diff --git a/drivers/gpu/drm/drm_dp_helper.c b/drivers/gpu/drm/drm_dp_helper.c
->> > index 23f9073bc473..c9528aa62c9c 100644
->> > --- a/drivers/gpu/drm/drm_dp_helper.c
->> > +++ b/drivers/gpu/drm/drm_dp_helper.c
->> > @@ -144,16 +144,6 @@ u8 drm_dp_get_adjust_tx_ffe_preset(const u8 link_status[DP_LINK_STATUS_SIZE],
->> >  }
->> >  EXPORT_SYMBOL(drm_dp_get_adjust_tx_ffe_preset);
->> >  
->> > -u8 drm_dp_get_adjust_request_post_cursor(const u8 link_status[DP_LINK_STATUS_SIZE],
->> > -					 unsigned int lane)
->> > -{
->> > -	unsigned int offset = DP_ADJUST_REQUEST_POST_CURSOR2;
->> > -	u8 value = dp_link_status(link_status, offset);
->> > -
->> > -	return (value >> (lane << 1)) & 0x3;
->> > -}
->> > -EXPORT_SYMBOL(drm_dp_get_adjust_request_post_cursor);
->> > -
->> >  static int __8b10b_clock_recovery_delay_us(const struct drm_dp_aux *aux, u8 rd_interval)
->> >  {
->> >  	if (rd_interval > 4)
->> > diff --git a/drivers/gpu/drm/tegra/dp.c b/drivers/gpu/drm/tegra/dp.c
->> > index 70dfb7d1dec5..f5535eb04c6b 100644
->> > --- a/drivers/gpu/drm/tegra/dp.c
->> > +++ b/drivers/gpu/drm/tegra/dp.c
->> > @@ -549,6 +549,15 @@ static void drm_dp_link_get_adjustments(struct drm_dp_link *link,
->> >  {
->> >  	struct drm_dp_link_train_set *adjust = &link->train.adjust;
->> >  	unsigned int i;
->> > +	u8 post_cursor;
->> > +	int err;
->> > +
->> > +	err = drm_dp_dpcd_read(link->aux, DP_ADJUST_REQUEST_POST_CURSOR2,
->> > +			       &post_cursor, sizeof(post_cursor));
->> 
->> There's a drm_dp_dpcd_readb() for the common 1-byte reads. Other than
->> that,
->> 
->> Reviewed-by: Jani Nikula <jani.nikula@intel.com>
->
-> Thanks!
->
->> 
->> Though obviously that's not enough to actually merge to tegra.
->
-> As in, "a review by Jani isn't sufficient to land via the tegra tree"?
+On 29/12/2021 17:50, Mark Kettenis wrote:
+>> From: Jisheng Zhang <jszhang@kernel.org>
+>> Date: Thu, 30 Dec 2021 00:02:38 +0800
+>>
+>> After commit 281f1f99cf3a("PCI: dwc: Detect number of iATU windows"),
+>> the number of iATU windows is detected at runtime, what's more,
+>> the 'num-viewport' property parsing has been removed, so remove the
+>> unused num-viewport from pcie node(s).
+>>
+>> It's too late for linux-5.17-rc1, I will rebase and send out v2 if
+>> necessary when 5.17-rc1 is released.
+> 
+> Please no.  This only makes the device trees unnecessarily
+> incompatible with older kernels
 
-Yeah. Or, in this case, via any tree, really.
+Anyone who is running a new DTB with older kernel is doomed anyway, not
+only because of this change but hundreds of other similar cleanups, e.g.
+making DTS conforming to dtschema. Are you sure there are such use cases
+of using new DTB with old kernel? I cannot imagine making a stable
+product with such scenario...
 
-> What should next steps be?
+> and other OSes that do rely on the
+> "num-viewport" property.
 
-Get an ack from tegra and/or drm-misc maintainers. All the relevant
-folks and lists are in the recipients already.
+Right. We should have move the DTS out of the kernel when it was still
+small. :)
 
-BR,
-Jani.
+> It really doesn't hurt to keep this property
+> even if future Linux kernels no longer look at it.
 
+For Exynos PCIe, the property is still required by bindings, so
+definitely it cannot be removed from DTS. I did not check the other
+bindings.
 
->
-> -Kees
->
->> 
->> > +	if (err < 0) {
->> > +		DRM_ERROR("failed to read post_cursor2: %d\n", err);
->> > +		post_cursor = 0;
->> > +	}
->> >  
->> >  	for (i = 0; i < link->lanes; i++) {
->> >  		adjust->voltage_swing[i] =
->> > @@ -560,7 +569,7 @@ static void drm_dp_link_get_adjustments(struct drm_dp_link *link,
->> >  				DP_TRAIN_PRE_EMPHASIS_SHIFT;
->> >  
->> >  		adjust->post_cursor[i] =
->> > -			drm_dp_get_adjust_request_post_cursor(status, i);
->> > +			(post_cursor >> (i << 1)) & 0x3;
->> >  	}
->> >  }
->> >  
->> > diff --git a/include/drm/drm_dp_helper.h b/include/drm/drm_dp_helper.h
->> > index 472dac376284..fdf3cf6ccc02 100644
->> > --- a/include/drm/drm_dp_helper.h
->> > +++ b/include/drm/drm_dp_helper.h
->> > @@ -1528,8 +1528,6 @@ u8 drm_dp_get_adjust_request_pre_emphasis(const u8 link_status[DP_LINK_STATUS_SI
->> >  					  int lane);
->> >  u8 drm_dp_get_adjust_tx_ffe_preset(const u8 link_status[DP_LINK_STATUS_SIZE],
->> >  				   int lane);
->> > -u8 drm_dp_get_adjust_request_post_cursor(const u8 link_status[DP_LINK_STATUS_SIZE],
->> > -					 unsigned int lane);
->> >  
->> >  #define DP_BRANCH_OUI_HEADER_SIZE	0xc
->> >  #define DP_RECEIVER_CAP_SIZE		0xf
->> 
->> -- 
->> Jani Nikula, Intel Open Source Graphics Center
-
--- 
-Jani Nikula, Intel Open Source Graphics Center
+Best regards,
+Krzysztof
