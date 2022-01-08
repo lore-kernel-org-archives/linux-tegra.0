@@ -2,93 +2,136 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5125EC433EF
-	for <linux-tegra@archiver.kernel.org>; Fri,  7 Jan 2022 19:39:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7281CC433EF
+	for <linux-tegra@archiver.kernel.org>; Sat,  8 Jan 2022 23:25:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232975AbiAGTj5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 7 Jan 2022 14:39:57 -0500
-Received: from sibelius.xs4all.nl ([83.163.83.176]:59446 "EHLO
-        sibelius.xs4all.nl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230209AbiAGTj5 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 7 Jan 2022 14:39:57 -0500
-Received: from localhost (bloch.sibelius.xs4all.nl [local])
-        by bloch.sibelius.xs4all.nl (OpenSMTPD) with ESMTPA id ac96d287;
-        Fri, 7 Jan 2022 20:39:53 +0100 (CET)
-Date:   Fri, 7 Jan 2022 20:39:53 +0100 (CET)
-From:   Mark Kettenis <mark.kettenis@xs4all.nl>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     jszhang@kernel.org, shawnguo@kernel.org, leoyang.li@nxp.com,
-        robh+dt@kernel.org, linux@armlinux.org.uk, andrew@lunn.ch,
-        sebastian.hesselbarth@gmail.com, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, hayashi.kunihiko@socionext.com,
-        mhiramat@kernel.org, nobuhiro1.iwamatsu@toshiba.co.jp,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-In-Reply-To: <99115cc4-32f6-d217-68be-33256a6993a8@canonical.com> (message
-        from Krzysztof Kozlowski on Fri, 7 Jan 2022 13:47:03 +0100)
-Subject: Re: [PATCH 0/7] arm/arm64: dts: Remove unused num-viewport from pcie
- node
-References: <20211229160245.1338-1-jszhang@kernel.org>
- <d3cb7b8439ee3d06@bloch.sibelius.xs4all.nl> <99115cc4-32f6-d217-68be-33256a6993a8@canonical.com>
-Message-ID: <d3cb933f371ab5b5@bloch.sibelius.xs4all.nl>
+        id S234886AbiAHXZM (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 8 Jan 2022 18:25:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55484 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233555AbiAHXZM (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Sat, 8 Jan 2022 18:25:12 -0500
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B7DAC06173F
+        for <linux-tegra@vger.kernel.org>; Sat,  8 Jan 2022 15:25:11 -0800 (PST)
+Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=bjornoya.blackshift.org)
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <mkl@pengutronix.de>)
+        id 1n6L59-0005ig-8E; Sun, 09 Jan 2022 00:25:07 +0100
+Received: from pengutronix.de (2a03-f580-87bc-d400-6624-65e0-1d16-9a67.ip6.dokom21.de [IPv6:2a03:f580:87bc:d400:6624:65e0:1d16:9a67])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (Client did not present a certificate)
+        (Authenticated sender: mkl-all@blackshift.org)
+        by smtp.blackshift.org (Postfix) with ESMTPSA id ADD7C6D3BA2;
+        Sat,  8 Jan 2022 23:25:04 +0000 (UTC)
+Date:   Sun, 9 Jan 2022 00:25:03 +0100
+From:   Marc Kleine-Budde <mkl@pengutronix.de>
+To:     Brian Silverman <bsilver16384@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:CAN NETWORK DRIVERS" <linux-can@vger.kernel.org>,
+        "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>
+Subject: Re: [RFC PATCH] can: m_can: Add driver for M_CAN hardware in NVIDIA
+ devices
+Message-ID: <20220108232503.ecwf7f4uuo7s7eni@pengutronix.de>
+References: <20220106002514.24589-1-brian.silverman@bluerivertech.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="j2owows65r7zjzcq"
+Content-Disposition: inline
+In-Reply-To: <20220106002514.24589-1-brian.silverman@bluerivertech.com>
+X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-> Date: Fri, 7 Jan 2022 13:47:03 +0100
-> From: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-> 
-> On 29/12/2021 17:50, Mark Kettenis wrote:
-> >> From: Jisheng Zhang <jszhang@kernel.org>
-> >> Date: Thu, 30 Dec 2021 00:02:38 +0800
-> >>
-> >> After commit 281f1f99cf3a("PCI: dwc: Detect number of iATU windows"),
-> >> the number of iATU windows is detected at runtime, what's more,
-> >> the 'num-viewport' property parsing has been removed, so remove the
-> >> unused num-viewport from pcie node(s).
-> >>
-> >> It's too late for linux-5.17-rc1, I will rebase and send out v2 if
-> >> necessary when 5.17-rc1 is released.
-> > 
-> > Please no.  This only makes the device trees unnecessarily
-> > incompatible with older kernels
-> 
-> Anyone who is running a new DTB with older kernel is doomed anyway, not
-> only because of this change but hundreds of other similar cleanups, e.g.
-> making DTS conforming to dtschema. Are you sure there are such use cases
-> of using new DTB with old kernel? I cannot imagine making a stable
-> product with such scenario...
 
-Well, many of those changes just affect the node names, which aren't
-part of the ABI.  And adding missing properties or compatibles doesn't
-break things either.  But yes, we keep seeing diffs to "cleanup"
-bindings and device trees, especially in the context of converting
-them to dtschema.  And that's just wrong.  If old device trees don't
-pass validation, the default assumption should be that the schema is
-wrong; not the other way around.
+--j2owows65r7zjzcq
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> > and other OSes that do rely on the
-> > "num-viewport" property.
-> 
-> Right. We should have move the DTS out of the kernel when it was still
-> small. :)
+On 05.01.2022 16:25:09, Brian Silverman wrote:
+> It's a M_TTCAN with some NVIDIA-specific glue logic and clocks. The
+> existing m_can driver works with it after handling the glue logic.
+>=20
+> The code is a combination of pieces from m_can_platform and NVIDIA's
+> driver [1].
+>=20
+> [1] https://github.com/hartkopp/nvidia-t18x-can/blob/master/r32.2.1/nvidi=
+a/drivers/net/can/mttcan/hal/m_ttcan.c
+>=20
+> Signed-off-by: Brian Silverman <brian.silverman@bluerivertech.com>
 
-I don't think the number/size of DTs really matters.  But yes, moving
-them to a separate repository would certainly make it more obvious
-that they should not be tied to a particular kernel version and that
-they are shared with other projects such as U-Boot and other OSes.
+Thanks for your patch.
 
-> > It really doesn't hurt to keep this property
-> > even if future Linux kernels no longer look at it.
-> 
-> For Exynos PCIe, the property is still required by bindings, so
-> definitely it cannot be removed from DTS. I did not check the other
-> bindings.
-> 
-> Best regards,
-> Krzysztof
+> ---
+> I ran into bugs with the error handling in NVIDIA's m_ttcan driver, so I
+> switched to m_can which has been much better. I'm looking for feedback
+> on whether I should ensure rebasing hasn't broken anything, write up DT
+> documentation, and submit this patch for real. The driver works great,
+> but I've got some questions about submitting it.
+>=20
+> question: This has liberal copying of GPL code from NVIDIA's
+> non-upstreamed m_ttcan driver. Is that OK?
 
-Cheers,
+The header in the driver says it's GPLv2:
 
-Mark
+| https://github.com/hartkopp/nvidia-t18x-can/blob/master/r32.2.1/nvidia/dr=
+ivers/net/can/mttcan/hal/m_ttcan.c#L5
+
+So it's OK. You should copy the original copyright notice to your glue
+driver, though.
+
+> corollary: I don't know what any of this glue logic does. I do know the
+> device doesn't work without it. I can't find any documentation of what
+> these addresses do.
+
+hmmm ok
+
+> question: There is some duplication between this and m_can_platform. It
+> doesn't seem too bad to me, but is this the preferred way to do it or is
+> there another alternative?
+
+You might merge this driver to the generic platform driver.
+
+> question: Do new DT bindings need to be in the YAML format, or is the
+> .txt one OK?
+
+YAML
+
+Please fix the checkpatch warning found by:
+
+| ./scripts/checkpatch.pl --file drivers/net/can/m_can/m_can_tegra.c
+
+regards,
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde           |
+Embedded Linux                   | https://www.pengutronix.de  |
+Vertretung West/Dortmund         | Phone: +49-231-2826-924     |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-5555 |
+
+--j2owows65r7zjzcq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEK3kIWJt9yTYMP3ehqclaivrt76kFAmHaHUwACgkQqclaivrt
+76lrtwf/TBE40m671Kec7lv1AErSTYn7yLjVZkgZy8sHRUkiBzDfOvpFkRXfn4Yl
+RFKlGuNl1bzSNH1FP2iEQu5G6HBzougiMCff1tjL/ou7fKoGfdPiR85QWGsXHUZZ
+US1UXyMBBPWeFZeK9Fm9XmgOfDUaEvI9RDrHyUrul9T5DyKw3A1j4x43QOR++9VE
+GzitPzB8oPWPnFyi/8iFwCfkg6+j8V7VX/UmwJyvkzZT8R99dWh4OUWuwKJjFkHa
+PsOr7ToXgoKJTAOu3IMNyLrxu0tJSBEDGWTPmJ07bBJfyTLoyL4mHOAr89J4xPGG
+O6UboqJB0B5WyE1+EMaoMLNhbzy+7g==
+=BWAy
+-----END PGP SIGNATURE-----
+
+--j2owows65r7zjzcq--
