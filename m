@@ -2,191 +2,66 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DCFDC4332F
-	for <linux-tegra@archiver.kernel.org>; Sat,  8 Jan 2022 23:35:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22621C433EF
+	for <linux-tegra@archiver.kernel.org>; Sat,  8 Jan 2022 23:56:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234979AbiAHXfg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 8 Jan 2022 18:35:36 -0500
-Received: from rere.qmqm.pl ([91.227.64.183]:6635 "EHLO rere.qmqm.pl"
+        id S234984AbiAHX44 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 8 Jan 2022 18:56:56 -0500
+Received: from rere.qmqm.pl ([91.227.64.183]:2270 "EHLO rere.qmqm.pl"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230502AbiAHXfe (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Sat, 8 Jan 2022 18:35:34 -0500
+        id S229974AbiAHX4z (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Sat, 8 Jan 2022 18:56:55 -0500
 Received: from remote.user (localhost [127.0.0.1])
-        by rere.qmqm.pl (Postfix) with ESMTPSA id 4JWbzn6Bf4z9c;
-        Sun,  9 Jan 2022 00:35:17 +0100 (CET)
+        by rere.qmqm.pl (Postfix) with ESMTPSA id 4JWcSj2Nmgz9c;
+        Sun,  9 Jan 2022 00:56:52 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
-        t=1641684931; bh=PlUOfTOJmz/Ue3/EDBlVUxJ2DxqecfDU18/1xQbQtoA=;
+        t=1641686214; bh=Z2n6Y6Sf4Y6Bf2Ppe85jypN2n8Y8lV1D9040Mx5hpos=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=FscL30pAUhiOa20r1Aci5nnOyAPPM7+JoY4I/TdvClRTh0U4D6S+wg1hl5DP6lTxY
-         uXsR1x49ZX58OBDSXL5QGeKh44OE5Qx3HX+fhAHnzzl6d2Bb3RMolFLW/CZs7ANyT9
-         2B2bqDVSaDvrnFLV9W4laov2KVjSpYZyXNNSx0uhvIf6/Ty/Jc6im2Ya6WtOK+mKnU
-         8tBa912YBdNEWU6kN5XGlGndW+KwbfYMSoJHIv4OJWOXoW7NdW+vFlXd5iG2C0Sl5t
-         yLjrrdYJpGeB9xfuugFJFXVZkd4+VRh97hWFY+LEwPEsT5kUEeN00fOMl2F0IbFH2g
-         x9nJQfgC6GmfA==
+        b=Ni4KnjOtn+hCc9wZqB4O1lyd/SQvYGeDveDJiVEyqIzfK9xa+8kQssISAVkp10OOS
+         QJG+E4XBi/DI9IrVihm8pNKRfTZCFWiUpeYSaANqHiLQuq0Ni5+Hq9janns3FG36Kf
+         HRKczCvbqcseuavdP2cQwxe7fy71FhFJj6Gm6Y4uGMMVMQSeRiX37DK+TgkZiuj3fa
+         u28xFMriqr/zJvK9WXZtbO48c35IRJ1q6hNu/DUpyyFQUSD8XVJ//1ciCunkK6TGIC
+         W3OZnrCmSV3xtiEnJdTHJ2fKvOUk+pZzPnn8646Ku8Z1lL9KH0tHYrreIjGwZuj/iD
+         1zclsDw8lR1IQ==
 X-Virus-Status: Clean
 X-Virus-Scanned: clamav-milter 0.103.4 at mail
-Date:   Sun, 9 Jan 2022 00:35:15 +0100
+Date:   Sun, 9 Jan 2022 00:56:51 +0100
 From:   =?iso-8859-2?Q?Micha=B3_Miros=B3aw?= <mirq-linux@rere.qmqm.pl>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Guo Ren <guoren@kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        Joshua Thompson <funaho@jurai.org>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Sebastian Reichel <sre@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Greentime Hu <green.hu@gmail.com>,
-        Vincent Chen <deanbo422@gmail.com>,
-        "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-        Helge Deller <deller@gmx.de>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Len Brown <lenb@kernel.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, Pavel Machek <pavel@ucw.cz>,
-        Lee Jones <lee.jones@linaro.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>, alankao@andestech.com,
-        "K . C . Kuen-Chern Lin" <kclin@andestech.com>,
-        linux-kernel@vger.kernel.org, linux-csky@vger.kernel.org,
-        linux-ia64@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
-        linux-sh@vger.kernel.org, xen-devel@lists.xenproject.org,
-        linux-acpi@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v5 04/21] kernel: Add combined power-off+restart handler
- call chain API
-Message-ID: <Ydofs2CIfA+r5KAz@qmqm.qmqm.pl>
-References: <20211212210309.9851-1-digetx@gmail.com>
- <20211212210309.9851-5-digetx@gmail.com>
+To:     Jani Nikula <jani.nikula@linux.intel.com>
+Cc:     Thomas Zimmermann <tzimmermann@suse.de>, mripard@kernel.org,
+        maarten.lankhorst@linux.intel.com, airlied@linux.ie,
+        daniel@ffwll.ch, dri-devel@lists.freedesktop.org,
+        intel-gfx@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v2 3/5] drm/dp: Move DisplayPort helpers into separate
+ helper module
+Message-ID: <Ydokw2y6w9JlCsgR@qmqm.qmqm.pl>
+References: <20211215104318.18866-1-tzimmermann@suse.de>
+ <20211215104318.18866-4-tzimmermann@suse.de>
+ <87pmpy3za7.fsf@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-2
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20211212210309.9851-5-digetx@gmail.com>
+In-Reply-To: <87pmpy3za7.fsf@intel.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, Dec 13, 2021 at 12:02:52AM +0300, Dmitry Osipenko wrote:
-[...]
-> +/**
-> + * struct power_off_data - Power-off callback argument
-> + *
-> + * @cb_data: Callback data.
-> + */
-> +struct power_off_data {
-> +	void *cb_data;
-> +};
-> +
-> +/**
-> + * struct power_off_prep_data - Power-off preparation callback argument
-> + *
-> + * @cb_data: Callback data.
-> + */
-> +struct power_off_prep_data {
-> +	void *cb_data;
-> +};
+On Wed, Dec 15, 2021 at 01:04:00PM +0200, Jani Nikula wrote:
+> On Wed, 15 Dec 2021, Thomas Zimmermann <tzimmermann@suse.de> wrote:
+> > 	* move DP helper code into dp/ (Jani)
+> 
+> I suggested adding the subdirectory, but I'm going to bikeshed the name,
+> which I didn't suggest.
+> 
+> $ find drivers/gpu/drm -mindepth 1 -maxdepth 1 -type d | wc -l
+> 68
 
-Why two exactly same structures? Why only a single pointer instead? If
-it just to enable type-checking callbacks, then thouse could be opaque
-or zero-sized structs that would be embedded or casted away in
-respective callbacks.
-
-> +
-> +/**
-> + * struct restart_data - Restart callback argument
-> + *
-> + * @cb_data: Callback data.
-> + * @cmd: Restart command string.
-> + * @stop_chain: Further lower priority callbacks won't be executed if set to
-> + *		true. Can be changed within callback. Default is false.
-> + * @mode: Reboot mode ID.
-> + */
-> +struct restart_data {
-> +	void *cb_data;
-> +	const char *cmd;
-> +	bool stop_chain;
-> +	enum reboot_mode mode;
-> +};
-> +
-> +/**
-> + * struct reboot_prep_data - Reboot and shutdown preparation callback argument
-> + *
-> + * @cb_data: Callback data.
-> + * @cmd: Restart command string.
-> + * @stop_chain: Further lower priority callbacks won't be executed if set to
-> + *		true. Can be changed within callback. Default is false.
-
-Why would we want to stop power-off or erboot chain? If the callback
-succeded, then further calls won't be made. If it doesn't succeed, but
-possibly breaks the system somehow, it shouldn't return. Then the only
-case left would be to just try the next method of shutting down.
-
-> + * @mode: Preparation mode ID.
-> + */
-> +struct reboot_prep_data {
-> +	void *cb_data;
-> +	const char *cmd;
-> +	bool stop_chain;
-> +	enum reboot_prepare_mode mode;
-> +};
-> +
-> +struct sys_off_handler_private_data {
-> +	struct notifier_block power_off_nb;
-> +	struct notifier_block restart_nb;
-> +	struct notifier_block reboot_nb;
-
-What's the difference between restart and reboot?
-
-> +	void (*platform_power_off_cb)(void);
-> +	void (*simple_power_off_cb)(void *data);
-> +	void *simple_power_off_cb_data;
-> +	bool registered;
-> +};
-
-BTW, I couldn't find a right description of my idea of unifying the
-chains before, so let me sketch it now.
-
-The idea is to have a single system-off chain in which the callback
-gets a mode ({QUERY_*, PREP_*, DO_*} for each of {*_REBOOT, *_POWEROFF, ...?).
-The QUERY_* calls would be made in can_kernel_reboot/poweroff(): all
-would be called, and if at least one returned true, then the shutdown
-mode would continue. All of PREP_* would be called then. After that
-all DO_* would be tried until one doesn't return (succeeded or broke
-the system hard). Classic for(;;); could be a final fallback for the
-case where arch/machine (lowest priority) call would return instead
-of halting the system in machine-dependent way. The QUERY and PREP
-stages could be combined, but I haven't thought about it enough to
-see what conditions would need to be imposed on the callbacks in
-that case (maybe it's not worth the trouble, since it isn't a fast
-path anyway?). The goal here is to have less (duplicated) code in
-kernel, but otherwise it seems equivalent to your API proposal.
+Maybe the hardware-specific drivers could be moved up to drivers/gpu/
+instead? That would make it obvious what code is generic and what is not.
 
 Best Regards
 Micha³ Miros³aw
