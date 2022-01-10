@@ -2,222 +2,384 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DADDC433FE
-	for <linux-tegra@archiver.kernel.org>; Mon, 10 Jan 2022 16:06:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DD49C433EF
+	for <linux-tegra@archiver.kernel.org>; Mon, 10 Jan 2022 19:55:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236996AbiAJQGb (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 10 Jan 2022 11:06:31 -0500
-Received: from mail-bn8nam12on2042.outbound.protection.outlook.com ([40.107.237.42]:64032
-        "EHLO NAM12-BN8-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S236997AbiAJQGU (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 10 Jan 2022 11:06:20 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=d7mvaF7Ow17sPj33w0eTpRHsB2afB4lzYcuzatDDiEwF9zDnqdznWx7zBeSHE22/hxQUdfTFKQGe//rCBskIoFY3U23ZrmEGKO//GHIrcYuHMk/M9nCFbfHOaB8Os1u4o68lzet9RlTxD4IQKYNFjSSGpASShg1HCqIdXzHHsfyir3A9IHye+EklMMLD+bYIK0Wvi/oDuCRA9KgFt6RUeSOuNpTjSWxX+rgtMITGTae/31nlUSZd4yydI4rjqwl82C9IQ4bLVQc6bp+zgXYx2AXWyBxxeyACy2rZUyqZZRBjpAeUgbAnQKg8dQ40Us6BeTMt/4SlK5ZezMBBKAvf5Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Vzh1nLibA+eO0657eOj/R3cg5dm3JVUR3NWfL5k6iL8=;
- b=fS3HLikvwoYDL0PTO4BGTgKH2IRs65XRtlyOBxCFq53GA5xJUzUzzVVxK8mB3RybcSReBF8VZAMXVNeuChkkSafCi6lK48wtDUQ6SbuIMPDSsfcLLw03RWqSBkY8fncKXAeIT6rgVV+qiu5EHcbxgsf5EeEHDO9ppZwAEJ/J7bbOTKp+tSSW1yK9S1wRuWmDpzilWShgTnRhN9khFaCo0bJ5pdjucEcZyRIzWCUP+2GmIUFW4+9KO1jZS/ZhgGGlPh1TgapTi8VOHtMTFwBp9WxaPhEjV8hXZaUEmu2TBvREta7EBkh6Pepj1vqHANkFLUXXOlWLnenBFG7Zpnjspg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 12.22.5.238) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Vzh1nLibA+eO0657eOj/R3cg5dm3JVUR3NWfL5k6iL8=;
- b=BTURLTfq7OKYNKTkVymcr34oAyNJfgiAKbtVPPtW7WkABrEJWiQ6MYiMq6NFDqxhtO3bbR3LcOWKNaLOOIav1X6z3e7CZ1jo9eL2OKZCumGqtXzTQR0YZ1Xg+NhJHJD016jKAxelq2qhebe/1RTlj7ynBbvnkFZITGj0ZI4lmChMtSKgyh0V2hBvhagCF3tpNTSwWDFCzLJ+mnoZa1iTIXFlhpsAM50wqE9TzJKSYTZh4fEdjm9P3m/b8MoPqgsRwAKesOyixmQKprxHKj0tv1XTHuNH4RTW85CADSInl+93Sv8I/7b8biLcWNXhRbF4inEaoo8WfuhjGzZCFiO4eA==
-Received: from BN9PR03CA0464.namprd03.prod.outlook.com (2603:10b6:408:139::19)
- by MN2PR12MB4551.namprd12.prod.outlook.com (2603:10b6:208:263::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4867.7; Mon, 10 Jan
- 2022 16:06:17 +0000
-Received: from BN8NAM11FT003.eop-nam11.prod.protection.outlook.com
- (2603:10b6:408:139:cafe::6d) by BN9PR03CA0464.outlook.office365.com
- (2603:10b6:408:139::19) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4867.7 via Frontend
- Transport; Mon, 10 Jan 2022 16:06:17 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.238)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 12.22.5.238 as permitted sender) receiver=protection.outlook.com;
- client-ip=12.22.5.238; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (12.22.5.238) by
- BN8NAM11FT003.mail.protection.outlook.com (10.13.177.90) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.4867.7 via Frontend Transport; Mon, 10 Jan 2022 16:06:17 +0000
-Received: from HQMAIL109.nvidia.com (172.20.187.15) by DRHQMAIL105.nvidia.com
- (10.27.9.14) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Mon, 10 Jan
- 2022 16:06:16 +0000
-Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL109.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Mon, 10 Jan
- 2022 08:06:16 -0800
-Received: from kyarlagadda-linux.nvidia.com (10.127.8.10) by mail.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server id 15.0.1497.18 via Frontend
- Transport; Mon, 10 Jan 2022 16:06:12 +0000
-From:   Akhil R <akhilrajeev@nvidia.com>
-To:     <dan.j.williams@intel.com>, <devicetree@vger.kernel.org>,
-        <dmaengine@vger.kernel.org>, <jonathanh@nvidia.com>,
-        <kyarlagadda@nvidia.com>, <ldewangan@nvidia.com>,
-        <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <p.zabel@pengutronix.de>, <rgumasta@nvidia.com>,
-        <robh+dt@kernel.org>, <thierry.reding@gmail.com>,
-        <vkoul@kernel.org>
-CC:     <akhilrajeev@nvidia.com>
-Subject: [PATCH v16 4/4] arm64: tegra: Add GPCDMA node for tegra186 and tegra194
-Date:   Mon, 10 Jan 2022 21:35:18 +0530
-Message-ID: <1641830718-23650-5-git-send-email-akhilrajeev@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1641830718-23650-1-git-send-email-akhilrajeev@nvidia.com>
-References: <1641830718-23650-1-git-send-email-akhilrajeev@nvidia.com>
-X-NVConfidentiality: public
+        id S245125AbiAJTzH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 10 Jan 2022 14:55:07 -0500
+Received: from mxout01.lancloud.ru ([45.84.86.81]:56060 "EHLO
+        mxout01.lancloud.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S243733AbiAJTzA (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 10 Jan 2022 14:55:00 -0500
+Received: from LanCloud
+DKIM-Filter: OpenDKIM Filter v2.11.0 mxout01.lancloud.ru 40192209A558
+Received: from LanCloud
+Received: from LanCloud
+Received: from LanCloud
+From:   Sergey Shtylyov <s.shtylyov@omp.ru>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Qiang Yu <yuq825@gmail.com>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Jassi Brar <jassisinghbrar@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        "Wolfgang Grandegger" <wg@grandegger.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        "Vivien Didelot" <vivien.didelot@gmail.com>,
+        Vladimir Oltean <olteanv@gmail.com>,
+        Joakim Zhang <qiangqing.zhang@nxp.com>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Jose Abreu <joabreu@synopsys.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        "Gustavo Pimentel" <gustavo.pimentel@synopsys.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Rob Herring <robh@kernel.org>,
+        =?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Kamal Dasu <kdasu.kdev@gmail.com>,
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Mark Brown <broonie@kernel.org>,
+        Peter Chen <peter.chen@kernel.org>,
+        Pawel Laszczak <pawell@cadence.com>,
+        Roger Quadros <rogerq@kernel.org>,
+        Aswath Govindraju <a-govindraju@ti.com>,
+        Mathias Nyman <mathias.nyman@intel.com>,
+        Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <dri-devel@lists.freedesktop.org>, <lima@lists.freedesktop.org>,
+        <linux-tegra@vger.kernel.org>, <linux-can@vger.kernel.org>,
+        <netdev@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-pci@vger.kernel.org>, <linux-spi@vger.kernel.org>,
+        <linux-usb@vger.kernel.org>, <linux-mediatek@lists.infradead.org>
+Subject: [PATCH 2/2] platform: make platform_get_irq_byname_optional() optional
+Date:   Mon, 10 Jan 2022 22:54:49 +0300
+Message-ID: <20220110195449.12448-3-s.shtylyov@omp.ru>
+X-Mailer: git-send-email 2.26.3
+In-Reply-To: <20220110195449.12448-1-s.shtylyov@omp.ru>
+References: <20220110195449.12448-1-s.shtylyov@omp.ru>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: b1921bd7-0836-4ec1-0ff4-08d9d4532285
-X-MS-TrafficTypeDiagnostic: MN2PR12MB4551:EE_
-X-Microsoft-Antispam-PRVS: <MN2PR12MB4551990F261D5DFBB1A853B7C0509@MN2PR12MB4551.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:1227;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: Mn0KAHIqA3TI5wJiOkiZMXSwI1aIQESR5+lZJh0GHl7k0myOdA/bW8/2cnLugBmQttj+qcZNTKagUqLkn3i6oOWVYaYhppGsvXHgdADs7RyNQ300rU9Gk4xDY6dmCft+IxRVa76HLAePvghbsASQxI2NUkNgoqihf1evJ7NHHpIAwAwkR738PjthS7BW1B3+JfxCKHRPDMA3hp9boxGCLBTz0bkgdo/2gk9kpcbSuLiRuzJlaWGgGfmKlY++cN1vy9v4xkD5JEFeWwHXsmuz0GHHAJ5VH6aohzU+2jGLQxN+rMrLjZFdkgSrjtYXIcBHUmiFF3j9Ab4AwVIdrFmEc8jSupQUAvXBXlEqgOEVT5EtoUE8iY6y+p5UwsPq/EKpi5iaE4uhhqxUp2n4LHYKgbKEFmDPBt8y7UD8R3H0cHLdhAhXIDwdl8BrV7HjPrWsum3Xx7BSQAxMQAqXl1EPlOAKnx/2XlPI7WxTwWnNnE8WcaR4tL36rvK37KcuHq3KPU7NOs74nq0bbAvEmEnTGqQtHtR+0WiqkAQ7xAoijw7XHGz+w01RfxbL02L1/5ihiusK853NFmmRk+JIIwzMpIG3NeNWMgg1PkzaUjPJjVnPMeHfqvqjPwssi1+qQtm14JssayjYm7fTiQxdyiGE3aawT2QOBv6dKkkztNJ+usBwzqqu2etNJ3qK+Fkxtz1rGY81OtGqfAUZ3zWiSWYIfDD9Rcr77xc36G3nFOFq2hvwwsb8ggMlwrsCTpaq6hpK/Zu0uRtiIU6x1BYSTcPscMtPosRzd1AxLp9xaWE/pk9+3tOBKaYJIlC9RpgRwcWUmVsLLe7fygbnBrKx14L7imeZ6ExY6T5chuhl7lUFNVM=
-X-Forefront-Antispam-Report: CIP:12.22.5.238;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(4636009)(36840700001)(46966006)(40470700002)(70586007)(4326008)(921005)(2616005)(7696005)(47076005)(70206006)(36860700001)(2906002)(508600001)(316002)(186003)(26005)(86362001)(107886003)(81166007)(356005)(82310400004)(8936002)(8676002)(40460700001)(5660300002)(336012)(426003)(110136005)(36756003)(2101003)(36900700001)(83996005);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jan 2022 16:06:17.4436
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: b1921bd7-0836-4ec1-0ff4-08d9d4532285
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.238];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT003.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4551
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [192.168.11.198]
+X-ClientProxiedBy: LFEXT02.lancloud.ru (fd00:f066::142) To
+ LFEX1907.lancloud.ru (fd00:f066::207)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Add device tree node for GPCDMA controller on Tegra186 target
-and Tegra194 target.
+Currently platform_get_irq_byname_optional() returns an error code even
+if IRQ resource simply has not been found. It prevents the callers from
+being error code agnostic in their error handling:
 
-Signed-off-by: Rajesh Gumasta <rgumasta@nvidia.com>
-Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
-Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
+	ret = platform_get_irq_byname_optional(...);
+	if (ret < 0 && ret != -ENXIO)
+		return ret; // respect deferred probe
+	if (ret > 0)
+		...we get an IRQ...
+
+All other *_optional() APIs seem to return 0 or NULL in case an optional
+resource is not available. Let's follow this good example, so that the
+callers would look like:
+
+	ret = platform_get_irq_byname_optional(...);
+	if (ret < 0)
+		return ret;
+	if (ret > 0)
+		...we get an IRQ...
+
+Signed-off-by: Sergey Shtylyov <s.shtylyov@omp.ru>
 ---
- arch/arm64/boot/dts/nvidia/tegra186.dtsi | 42 +++++++++++++++++++++++++++++++
- arch/arm64/boot/dts/nvidia/tegra194.dtsi | 43 ++++++++++++++++++++++++++++++++
- 2 files changed, 85 insertions(+)
+ drivers/base/platform.c                             | 13 ++++++++++---
+ drivers/gpu/drm/lima/lima_device.c                  |  2 +-
+ drivers/mailbox/tegra-hsp.c                         |  4 ++--
+ drivers/net/can/rcar/rcar_canfd.c                   |  4 ++--
+ drivers/net/dsa/b53/b53_srab.c                      |  2 +-
+ drivers/net/ethernet/freescale/fec_main.c           |  2 +-
+ drivers/net/ethernet/freescale/fec_ptp.c            |  2 +-
+ drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c   |  4 ++--
+ .../net/ethernet/stmicro/stmmac/stmmac_platform.c   |  4 ++--
+ drivers/pci/controller/dwc/pcie-designware-host.c   |  2 +-
+ drivers/spi/spi-bcm-qspi.c                          |  2 +-
+ drivers/spi/spi-rspi.c                              |  8 ++++----
+ drivers/usb/cdns3/cdns3-plat.c                      |  5 +----
+ drivers/usb/host/xhci-mtk.c                         |  2 +-
+ drivers/usb/mtu3/mtu3_core.c                        |  2 +-
+ 15 files changed, 31 insertions(+), 27 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-index c91afff..6bec977 100644
---- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-@@ -73,6 +73,48 @@
- 		snps,rxpbl = <8>;
- 	};
- 
-+	dma-controller@2600000 {
-+		compatible = "nvidia,tegra186-gpcdma";
-+		reg = <0x0 0x2600000 0x0 0x210000>;
-+		resets = <&bpmp TEGRA186_RESET_GPCDMA>;
-+		reset-names = "gpcdma";
-+		interrupts = <GIC_SPI 76 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 79 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 81 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 82 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 83 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 89 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 90 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 91 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 92 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 93 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 94 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 95 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 96 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 99 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 101 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 102 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>;
-+		#dma-cells = <1>;
-+		iommus = <&smmu TEGRA186_SID_GPCDMA_0>;
-+		dma-coherent;
-+		status = "okay";
-+	};
+diff --git a/drivers/base/platform.c b/drivers/base/platform.c
+index 7c7b3638f02d..1d0ea635922b 100644
+--- a/drivers/base/platform.c
++++ b/drivers/base/platform.c
+@@ -495,14 +495,21 @@ EXPORT_SYMBOL_GPL(platform_get_irq_byname);
+  * @name: IRQ name
+  *
+  * Get an optional IRQ by name like platform_get_irq_byname(). Except that it
+- * does not print an error message if an IRQ can not be obtained.
++ * does not print an error message if an IRQ can not be obtained and returns
++ * 0 when IRQ resource has not been found.
+  *
+- * Return: non-zero IRQ number on success, negative error number on failure.
++ * Return: non-zero IRQ number on success, 0 if IRQ wasn't found, negative error
++ * number on failure.
+  */
+ int platform_get_irq_byname_optional(struct platform_device *dev,
+ 				     const char *name)
+ {
+-	return __platform_get_irq_byname(dev, name);
++	int ret;
 +
- 	aconnect@2900000 {
- 		compatible = "nvidia,tegra186-aconnect",
- 			     "nvidia,tegra210-aconnect";
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-index 3c4acfc..491a02f 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-@@ -115,6 +115,49 @@
- 			snps,rxpbl = <8>;
- 		};
++	ret = __platform_get_irq_byname(dev, name);
++	if (ret == -ENXIO)
++		return 0;
++	return ret;
+ }
+ EXPORT_SYMBOL_GPL(platform_get_irq_byname_optional);
  
-+		dma-controller@2600000 {
-+			compatible = "nvidia,tegra194-gpcdma",
-+				     "nvidia,tegra186-gpcdma";
-+			reg = <0x2600000 0x210000>;
-+			resets = <&bpmp TEGRA194_RESET_GPCDMA>;
-+			reset-names = "gpcdma";
-+			interrupts = <GIC_SPI 76 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 79 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 81 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 82 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 83 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 89 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 90 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 91 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 92 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 93 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 94 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 95 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 96 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 99 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 101 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 102 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>;
-+			#dma-cells = <1>;
-+			iommus = <&smmu TEGRA194_SID_GPCDMA_0>;
-+			dma-coherent;
-+			status = "okay";
-+		};
-+
- 		aconnect@2900000 {
- 			compatible = "nvidia,tegra194-aconnect",
- 				     "nvidia,tegra210-aconnect";
+diff --git a/drivers/gpu/drm/lima/lima_device.c b/drivers/gpu/drm/lima/lima_device.c
+index 65fdca366e41..e3659aa687c2 100644
+--- a/drivers/gpu/drm/lima/lima_device.c
++++ b/drivers/gpu/drm/lima/lima_device.c
+@@ -223,7 +223,7 @@ static int lima_init_ip(struct lima_device *dev, int index)
+ 	if (irq_name) {
+ 		err = must ? platform_get_irq_byname(pdev, irq_name) :
+ 			     platform_get_irq_byname_optional(pdev, irq_name);
+-		if (err < 0)
++		if (err <= 0)
+ 			goto out;
+ 		ip->irq = err;
+ 	}
+diff --git a/drivers/mailbox/tegra-hsp.c b/drivers/mailbox/tegra-hsp.c
+index acd0675da681..17aa88e31445 100644
+--- a/drivers/mailbox/tegra-hsp.c
++++ b/drivers/mailbox/tegra-hsp.c
+@@ -667,7 +667,7 @@ static int tegra_hsp_probe(struct platform_device *pdev)
+ 	hsp->num_si = (value >> HSP_nSI_SHIFT) & HSP_nINT_MASK;
+ 
+ 	err = platform_get_irq_byname_optional(pdev, "doorbell");
+-	if (err >= 0)
++	if (err > 0)
+ 		hsp->doorbell_irq = err;
+ 
+ 	if (hsp->num_si > 0) {
+@@ -687,7 +687,7 @@ static int tegra_hsp_probe(struct platform_device *pdev)
+ 				return -ENOMEM;
+ 
+ 			err = platform_get_irq_byname_optional(pdev, name);
+-			if (err >= 0) {
++			if (err > 0) {
+ 				hsp->shared_irqs[i] = err;
+ 				count++;
+ 			}
+diff --git a/drivers/net/can/rcar/rcar_canfd.c b/drivers/net/can/rcar/rcar_canfd.c
+index ff9d0f5ae0dd..1d4794493c6a 100644
+--- a/drivers/net/can/rcar/rcar_canfd.c
++++ b/drivers/net/can/rcar/rcar_canfd.c
+@@ -1778,7 +1778,7 @@ static int rcar_canfd_probe(struct platform_device *pdev)
+ 
+ 	if (chip_id == RENESAS_RCAR_GEN3) {
+ 		ch_irq = platform_get_irq_byname_optional(pdev, "ch_int");
+-		if (ch_irq < 0) {
++		if (ch_irq <= 0) {
+ 			/* For backward compatibility get irq by index */
+ 			ch_irq = platform_get_irq(pdev, 0);
+ 			if (ch_irq < 0)
+@@ -1786,7 +1786,7 @@ static int rcar_canfd_probe(struct platform_device *pdev)
+ 		}
+ 
+ 		g_irq = platform_get_irq_byname_optional(pdev, "g_int");
+-		if (g_irq < 0) {
++		if (g_irq <= 0) {
+ 			/* For backward compatibility get irq by index */
+ 			g_irq = platform_get_irq(pdev, 1);
+ 			if (g_irq < 0)
+diff --git a/drivers/net/dsa/b53/b53_srab.c b/drivers/net/dsa/b53/b53_srab.c
+index 4591bb1c05d2..80b7c8f053ad 100644
+--- a/drivers/net/dsa/b53/b53_srab.c
++++ b/drivers/net/dsa/b53/b53_srab.c
+@@ -420,7 +420,7 @@ static int b53_srab_irq_enable(struct b53_device *dev, int port)
+ 	/* Interrupt is optional and was not specified, do not make
+ 	 * this fatal
+ 	 */
+-	if (p->irq == -ENXIO)
++	if (!p->irq)
+ 		return ret;
+ 
+ 	ret = request_threaded_irq(p->irq, b53_srab_port_isr,
+diff --git a/drivers/net/ethernet/freescale/fec_main.c b/drivers/net/ethernet/freescale/fec_main.c
+index bc418b910999..fba36d09a6e0 100644
+--- a/drivers/net/ethernet/freescale/fec_main.c
++++ b/drivers/net/ethernet/freescale/fec_main.c
+@@ -3933,7 +3933,7 @@ fec_probe(struct platform_device *pdev)
+ 	for (i = 0; i < irq_cnt; i++) {
+ 		snprintf(irq_name, sizeof(irq_name), "int%d", i);
+ 		irq = platform_get_irq_byname_optional(pdev, irq_name);
+-		if (irq < 0)
++		if (irq <= 0)
+ 			irq = platform_get_irq(pdev, i);
+ 		if (irq < 0) {
+ 			ret = irq;
+diff --git a/drivers/net/ethernet/freescale/fec_ptp.c b/drivers/net/ethernet/freescale/fec_ptp.c
+index 158676eda48d..251863c2d5a4 100644
+--- a/drivers/net/ethernet/freescale/fec_ptp.c
++++ b/drivers/net/ethernet/freescale/fec_ptp.c
+@@ -615,7 +615,7 @@ void fec_ptp_init(struct platform_device *pdev, int irq_idx)
+ 	INIT_DELAYED_WORK(&fep->time_keep, fec_time_keep);
+ 
+ 	irq = platform_get_irq_byname_optional(pdev, "pps");
+-	if (irq < 0)
++	if (irq <= 0)
+ 		irq = platform_get_irq_optional(pdev, irq_idx);
+ 	/* Failure to get an irq is not fatal,
+ 	 * only the PTP_CLOCK_PPS clock events should stop
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c
+index 2b38a499a404..5519b5b35365 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c
+@@ -342,7 +342,7 @@ static int stm32mp1_parse_data(struct stm32_dwmac *dwmac,
+ 	if (dwmac->irq_pwr_wakeup == -EPROBE_DEFER)
+ 		return -EPROBE_DEFER;
+ 
+-	if (!dwmac->clk_eth_ck && dwmac->irq_pwr_wakeup >= 0) {
++	if (!dwmac->clk_eth_ck && dwmac->irq_pwr_wakeup > 0) {
+ 		err = device_init_wakeup(&pdev->dev, true);
+ 		if (err) {
+ 			dev_err(&pdev->dev, "Failed to init wake up irq\n");
+@@ -426,7 +426,7 @@ static int stm32_dwmac_remove(struct platform_device *pdev)
+ 
+ 	stm32_dwmac_clk_disable(priv->plat->bsp_priv);
+ 
+-	if (dwmac->irq_pwr_wakeup >= 0) {
++	if (dwmac->irq_pwr_wakeup > 0) {
+ 		dev_pm_clear_wake_irq(&pdev->dev);
+ 		device_init_wakeup(&pdev->dev, false);
+ 	}
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
+index 232ac98943cd..dcfc04f7bfd4 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
+@@ -679,7 +679,7 @@ int stmmac_get_platform_resources(struct platform_device *pdev,
+ 	 */
+ 	stmmac_res->wol_irq =
+ 		platform_get_irq_byname_optional(pdev, "eth_wake_irq");
+-	if (stmmac_res->wol_irq < 0) {
++	if (stmmac_res->wol_irq <= 0) {
+ 		if (stmmac_res->wol_irq == -EPROBE_DEFER)
+ 			return -EPROBE_DEFER;
+ 		dev_info(&pdev->dev, "IRQ eth_wake_irq not found\n");
+@@ -688,7 +688,7 @@ int stmmac_get_platform_resources(struct platform_device *pdev,
+ 
+ 	stmmac_res->lpi_irq =
+ 		platform_get_irq_byname_optional(pdev, "eth_lpi");
+-	if (stmmac_res->lpi_irq < 0) {
++	if (stmmac_res->lpi_irq <= 0) {
+ 		if (stmmac_res->lpi_irq == -EPROBE_DEFER)
+ 			return -EPROBE_DEFER;
+ 		dev_info(&pdev->dev, "IRQ eth_lpi not found\n");
+diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
+index f4755f3a03be..00e1a33fd06d 100644
+--- a/drivers/pci/controller/dwc/pcie-designware-host.c
++++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+@@ -364,7 +364,7 @@ int dw_pcie_host_init(struct pcie_port *pp)
+ 		} else if (pp->has_msi_ctrl) {
+ 			if (!pp->msi_irq) {
+ 				pp->msi_irq = platform_get_irq_byname_optional(pdev, "msi");
+-				if (pp->msi_irq < 0) {
++				if (pp->msi_irq <= 0) {
+ 					pp->msi_irq = platform_get_irq(pdev, 0);
+ 					if (pp->msi_irq < 0)
+ 						return pp->msi_irq;
+diff --git a/drivers/spi/spi-bcm-qspi.c b/drivers/spi/spi-bcm-qspi.c
+index f3de3305d0f5..40ca101e9875 100644
+--- a/drivers/spi/spi-bcm-qspi.c
++++ b/drivers/spi/spi-bcm-qspi.c
+@@ -1595,7 +1595,7 @@ int bcm_qspi_probe(struct platform_device *pdev,
+ 			irq = platform_get_irq(pdev, 0);
+ 		}
+ 
+-		if (irq  >= 0) {
++		if (irq > 0) {
+ 			ret = devm_request_irq(&pdev->dev, irq,
+ 					       qspi_irq_tab[val].irq_handler, 0,
+ 					       name,
+diff --git a/drivers/spi/spi-rspi.c b/drivers/spi/spi-rspi.c
+index 41761f0d892a..b736b57f5ff2 100644
+--- a/drivers/spi/spi-rspi.c
++++ b/drivers/spi/spi-rspi.c
+@@ -1330,16 +1330,16 @@ static int rspi_probe(struct platform_device *pdev)
+ 	ctlr->max_native_cs = rspi->ops->num_hw_ss;
+ 
+ 	ret = platform_get_irq_byname_optional(pdev, "rx");
+-	if (ret < 0) {
++	if (ret <= 0) {
+ 		ret = platform_get_irq_byname_optional(pdev, "mux");
+-		if (ret < 0)
++		if (ret <= 0)
+ 			ret = platform_get_irq(pdev, 0);
+-		if (ret >= 0)
++		if (ret > 0)
+ 			rspi->rx_irq = rspi->tx_irq = ret;
+ 	} else {
+ 		rspi->rx_irq = ret;
+ 		ret = platform_get_irq_byname(pdev, "tx");
+-		if (ret >= 0)
++		if (ret > 0)
+ 			rspi->tx_irq = ret;
+ 	}
+ 
+diff --git a/drivers/usb/cdns3/cdns3-plat.c b/drivers/usb/cdns3/cdns3-plat.c
+index 4d0f027e5bd3..7379b6026f9f 100644
+--- a/drivers/usb/cdns3/cdns3-plat.c
++++ b/drivers/usb/cdns3/cdns3-plat.c
+@@ -108,10 +108,7 @@ static int cdns3_plat_probe(struct platform_device *pdev)
+ 	cdns->wakeup_irq = platform_get_irq_byname_optional(pdev, "wakeup");
+ 	if (cdns->wakeup_irq == -EPROBE_DEFER)
+ 		return cdns->wakeup_irq;
+-	else if (cdns->wakeup_irq == 0)
+-		return -EINVAL;
+-
+-	if (cdns->wakeup_irq < 0) {
++	if (cdns->wakeup_irq <= 0) {
+ 		dev_dbg(dev, "couldn't get wakeup irq\n");
+ 		cdns->wakeup_irq = 0x0;
+ 	}
+diff --git a/drivers/usb/host/xhci-mtk.c b/drivers/usb/host/xhci-mtk.c
+index 58a0eae4f41b..e3071e7cb165 100644
+--- a/drivers/usb/host/xhci-mtk.c
++++ b/drivers/usb/host/xhci-mtk.c
+@@ -495,7 +495,7 @@ static int xhci_mtk_probe(struct platform_device *pdev)
+ 		return ret;
+ 
+ 	irq = platform_get_irq_byname_optional(pdev, "host");
+-	if (irq < 0) {
++	if (irq <= 0) {
+ 		if (irq == -EPROBE_DEFER)
+ 			return irq;
+ 
+diff --git a/drivers/usb/mtu3/mtu3_core.c b/drivers/usb/mtu3/mtu3_core.c
+index c4a2c37abf62..08173c05a1d6 100644
+--- a/drivers/usb/mtu3/mtu3_core.c
++++ b/drivers/usb/mtu3/mtu3_core.c
+@@ -925,7 +925,7 @@ int ssusb_gadget_init(struct ssusb_mtk *ssusb)
+ 		return -ENOMEM;
+ 
+ 	mtu->irq = platform_get_irq_byname_optional(pdev, "device");
+-	if (mtu->irq < 0) {
++	if (mtu->irq <= 0) {
+ 		if (mtu->irq == -EPROBE_DEFER)
+ 			return mtu->irq;
+ 
 -- 
-2.7.4
+2.26.3
 
