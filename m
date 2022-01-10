@@ -2,66 +2,91 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22621C433EF
-	for <linux-tegra@archiver.kernel.org>; Sat,  8 Jan 2022 23:56:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA572C433F5
+	for <linux-tegra@archiver.kernel.org>; Mon, 10 Jan 2022 06:53:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234984AbiAHX44 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 8 Jan 2022 18:56:56 -0500
-Received: from rere.qmqm.pl ([91.227.64.183]:2270 "EHLO rere.qmqm.pl"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229974AbiAHX4z (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Sat, 8 Jan 2022 18:56:55 -0500
-Received: from remote.user (localhost [127.0.0.1])
-        by rere.qmqm.pl (Postfix) with ESMTPSA id 4JWcSj2Nmgz9c;
-        Sun,  9 Jan 2022 00:56:52 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
-        t=1641686214; bh=Z2n6Y6Sf4Y6Bf2Ppe85jypN2n8Y8lV1D9040Mx5hpos=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Ni4KnjOtn+hCc9wZqB4O1lyd/SQvYGeDveDJiVEyqIzfK9xa+8kQssISAVkp10OOS
-         QJG+E4XBi/DI9IrVihm8pNKRfTZCFWiUpeYSaANqHiLQuq0Ni5+Hq9janns3FG36Kf
-         HRKczCvbqcseuavdP2cQwxe7fy71FhFJj6Gm6Y4uGMMVMQSeRiX37DK+TgkZiuj3fa
-         u28xFMriqr/zJvK9WXZtbO48c35IRJ1q6hNu/DUpyyFQUSD8XVJ//1ciCunkK6TGIC
-         W3OZnrCmSV3xtiEnJdTHJ2fKvOUk+pZzPnn8646Ku8Z1lL9KH0tHYrreIjGwZuj/iD
-         1zclsDw8lR1IQ==
-X-Virus-Status: Clean
-X-Virus-Scanned: clamav-milter 0.103.4 at mail
-Date:   Sun, 9 Jan 2022 00:56:51 +0100
-From:   =?iso-8859-2?Q?Micha=B3_Miros=B3aw?= <mirq-linux@rere.qmqm.pl>
-To:     Jani Nikula <jani.nikula@linux.intel.com>
-Cc:     Thomas Zimmermann <tzimmermann@suse.de>, mripard@kernel.org,
-        maarten.lankhorst@linux.intel.com, airlied@linux.ie,
-        daniel@ffwll.ch, dri-devel@lists.freedesktop.org,
-        intel-gfx@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
-        freedreno@lists.freedesktop.org, nouveau@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v2 3/5] drm/dp: Move DisplayPort helpers into separate
- helper module
-Message-ID: <Ydokw2y6w9JlCsgR@qmqm.qmqm.pl>
-References: <20211215104318.18866-1-tzimmermann@suse.de>
- <20211215104318.18866-4-tzimmermann@suse.de>
- <87pmpy3za7.fsf@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-2
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <87pmpy3za7.fsf@intel.com>
+        id S235035AbiAJGxX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 10 Jan 2022 01:53:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41156 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235016AbiAJGxW (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 10 Jan 2022 01:53:22 -0500
+Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97D42C06173F;
+        Sun,  9 Jan 2022 22:53:22 -0800 (PST)
+Received: by mail-pl1-x62b.google.com with SMTP id l8so8841229plt.6;
+        Sun, 09 Jan 2022 22:53:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id;
+        bh=y8qyK9Z1xdNQlga6YeRs4Ebp3n/3+IX2v6kqUk3/oSc=;
+        b=Cr7WEcflIJBG/7P3XHctuvDTTVxF9JqvZi0hyBxz6tEKEgJaAefi4qKIxkAFn0Drf6
+         UimMAPjrYQm3XhyWATzqAMX7bIlspftZHJZBhOY+mGhHI1ajEAiKcjU4I/hmu8x58QtW
+         o+egbDqiuRAdYIcaHY0/vcBI9Z+PapWwowh/PkKhqI19Wx/VDRNH8uuOrZYm9jTUGymF
+         vLvNNMaeOkuhBxwSt0Y6pk96ozOPK4DCDK1QDXK1PnjELkEFfWHcf+H8dXCJj20v1coy
+         +u2dsjMqC7Qizsr06eNEOo5IU1/fgqijb/UIiJ2Pw9HXghrJkyGG85U17q6ivzKGtZaO
+         +e0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=y8qyK9Z1xdNQlga6YeRs4Ebp3n/3+IX2v6kqUk3/oSc=;
+        b=CNyNm8EFx0mptmmmUWwz1ZTpcwBNiE9K1LZnpa1B0BgrB5bpqHanvTC331JYShi5kC
+         VlLdSCBOU7dGKi0C0H5bH3C7YvUgEX1e3XinnPPF1aG3KT6BSJrjiczclofokAqJUfFv
+         4j71PZGtyYKD2w96ypC2Ni7pgX7RdX8++8K/gIeQDZzYtXBv0x7LZHNZSYkZttdtYUfx
+         zaqLCMI+YrwcSb+cHXWPPQmr+Pgz4SBr6OxHQv48DPcf84vKdUG+FJUqUCgMHN0JnrtT
+         W/8YNzxHjzHRCKeUcMi2q9RPfo3GEnpscU2fltcW+vUYDTz/YCja9OTykZsWLUX9rQnT
+         aAPg==
+X-Gm-Message-State: AOAM530M+ibWYaEzc17KHaO98POcMyM1LeszoyFDIIXi4kgpiixoRYqR
+        S6BYrBOriGQ1gW1jDIALVqE=
+X-Google-Smtp-Source: ABdhPJyD/SU7nRKBl+/czf25l/KE05P6+YzALyMSx5Y1DQzALekriTvfDZTscUp1R64rAwbo6oWrig==
+X-Received: by 2002:a17:90b:1d8b:: with SMTP id pf11mr22900394pjb.119.1641797601781;
+        Sun, 09 Jan 2022 22:53:21 -0800 (PST)
+Received: from localhost.localdomain ([159.226.95.43])
+        by smtp.googlemail.com with ESMTPSA id y16sm1083219pfi.7.2022.01.09.22.53.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 09 Jan 2022 22:53:21 -0800 (PST)
+From:   Miaoqian Lin <linmq006@gmail.com>
+Cc:     linmq006@gmail.com, Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/tegra: Fix reference leak in tegra_dsi_ganged_probe
+Date:   Mon, 10 Jan 2022 06:53:16 +0000
+Message-Id: <20220110065316.6023-1-linmq006@gmail.com>
+X-Mailer: git-send-email 2.17.1
+To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, Dec 15, 2021 at 01:04:00PM +0200, Jani Nikula wrote:
-> On Wed, 15 Dec 2021, Thomas Zimmermann <tzimmermann@suse.de> wrote:
-> > 	* move DP helper code into dp/ (Jani)
-> 
-> I suggested adding the subdirectory, but I'm going to bikeshed the name,
-> which I didn't suggest.
-> 
-> $ find drivers/gpu/drm -mindepth 1 -maxdepth 1 -type d | wc -l
-> 68
+The reference taken by 'of_find_device_by_node()' must be released when
+not needed anymore. Add put_device() call to fix this.
 
-Maybe the hardware-specific drivers could be moved up to drivers/gpu/
-instead? That would make it obvious what code is generic and what is not.
+Fixes: e94236cde4d5 ("drm/tegra: dsi: Add ganged mode support")
+Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
+---
+ drivers/gpu/drm/tegra/dsi.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Best Regards
-Micha³ Miros³aw
+diff --git a/drivers/gpu/drm/tegra/dsi.c b/drivers/gpu/drm/tegra/dsi.c
+index f46d377f0c30..de1333dc0d86 100644
+--- a/drivers/gpu/drm/tegra/dsi.c
++++ b/drivers/gpu/drm/tegra/dsi.c
+@@ -1538,8 +1538,10 @@ static int tegra_dsi_ganged_probe(struct tegra_dsi *dsi)
+ 		dsi->slave = platform_get_drvdata(gangster);
+ 		of_node_put(np);
+ 
+-		if (!dsi->slave)
++		if (!dsi->slave) {
++			put_device(&gangster->dev);
+ 			return -EPROBE_DEFER;
++		}
+ 
+ 		dsi->slave->master = dsi;
+ 	}
+-- 
+2.17.1
+
