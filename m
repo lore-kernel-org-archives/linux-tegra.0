@@ -2,282 +2,130 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12B56C433EF
-	for <linux-tegra@archiver.kernel.org>; Tue, 11 Jan 2022 20:56:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A58BC433F5
+	for <linux-tegra@archiver.kernel.org>; Tue, 11 Jan 2022 21:46:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234885AbiAKU4m (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 11 Jan 2022 15:56:42 -0500
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:39874
-        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234709AbiAKU4l (ORCPT
+        id S245488AbiAKVqO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 11 Jan 2022 16:46:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46880 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232974AbiAKVqN (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 11 Jan 2022 15:56:41 -0500
-Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com [209.85.208.69])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        Tue, 11 Jan 2022 16:46:13 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F22F6C06173F;
+        Tue, 11 Jan 2022 13:46:12 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 6651F3F175
-        for <linux-tegra@vger.kernel.org>; Tue, 11 Jan 2022 20:56:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1641934600;
-        bh=joK4ZHDMtjn7XdRm0td7fXUsOXKWOtlWbAnMaVZPaew=;
-        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-         In-Reply-To:Content-Type;
-        b=Oy3+QZZY72mcjgetB1RE/QIxP7O6xAKVJNafJSfETm1pPPnQ+ToQrEBF4m4ZOF1+H
-         H0//nEJA/oa8GW4khTIyoqXuRgmSEDI4cw7rChoTuW02O2553UBbcw//5o39LEbV2/
-         jPNwatOKTDcZVOqR4YpnXrnLrVXtnlKgzvYtiK4/rBz2BTbLsDt42rptnRktAh9aNe
-         5jkhOf3tyV3Enn85BoDl8xwW30ntJvKY1MS/C8V2/zwmfkB409fG655sqQSnQ5O6nW
-         yJFJGVp69OiaAO0wJ5D/kQnkCPIxuypYLCmgXsguXh3sBdeKcSrE80t7pAqvuJ8qp7
-         XpfhDfxtPHPBg==
-Received: by mail-ed1-f69.google.com with SMTP id l14-20020aa7cace000000b003f7f8e1cbbdso234267edt.20
-        for <linux-tegra@vger.kernel.org>; Tue, 11 Jan 2022 12:56:40 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=joK4ZHDMtjn7XdRm0td7fXUsOXKWOtlWbAnMaVZPaew=;
-        b=3rIAKLP9gPRrVwlvwhWvIHVXPM5xNUYRkwE02cynZzDD25UbrUGvBqDO60GlVYyaKd
-         rSkRvRkqReJXUQz17s1HF6tgnHb7SXwfr1hxpn1e80fywkQ3Mew7HtGY3Y1gOKgqnpMN
-         +w7GT49QzhiM7gwOcFHUJbBdOYtZnUzCsOwJefqh+mDzr/zoH5Jo9CrPAOfPFOX2h+Pb
-         /nygqSp/pTgtOaUS3ENrkAukfh07yqTDidy/6WE2f2OiaZHjkx7SXUzvUrz1gFuvUHcL
-         xBeDGpNC5Df5YUvguhgqms52GjgsUQjN7jCNG/Hi55cKziFbrfFZzKy28FF7ssds/aT5
-         LJaw==
-X-Gm-Message-State: AOAM531/gtzESzLxUjdfDSp16UubceEQ6r8U38VivNQC7DsHcuq3uL6N
-        nXClGA6jxt44wWKF6FFQJlwNd9BQzOt9PAS2v7ZCZuswFFwtoXkYu5vwj0tRXAH7fzNaedNcDAo
-        g0rl9MBbhHzssyy8iDF0JFQDEBxB107t3BZQR+4DK
-X-Received: by 2002:a17:906:cc50:: with SMTP id mm16mr5018857ejb.515.1641934599347;
-        Tue, 11 Jan 2022 12:56:39 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJzHxmM3ssxvS7T+yoQLKzgq1V+7D7WNOuOj9cI6ighPxndQeJa5uBWY90FwFBrdBQ6JjPPqIg==
-X-Received: by 2002:a17:906:cc50:: with SMTP id mm16mr5018844ejb.515.1641934599152;
-        Tue, 11 Jan 2022 12:56:39 -0800 (PST)
-Received: from [192.168.0.26] (xdsl-188-155-168-84.adslplus.ch. [188.155.168.84])
-        by smtp.gmail.com with ESMTPSA id gs9sm3887865ejc.30.2022.01.11.12.56.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Jan 2022 12:56:38 -0800 (PST)
-Message-ID: <dd9bacd6-1365-d9f9-1b28-c603bfa708d7@canonical.com>
-Date:   Tue, 11 Jan 2022 21:56:38 +0100
+        by ams.source.kernel.org (Postfix) with ESMTPS id B6C0CB81D54;
+        Tue, 11 Jan 2022 21:46:11 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D999C36AE9;
+        Tue, 11 Jan 2022 21:46:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1641937570;
+        bh=XNEfESj08xbpQ9h2hTKb/Pu9WAZg5VvTWzJOGQNAOC4=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=hrPlCKr2Cgo8R910eadJlHVlOQja6nGt1WhCOdCaXCFbaY87edhU/MmAMX/v1PJsc
+         gLQc0SVeHdbiE+O2eRDoMKPl75FAH+9KQyJDGXovCKyCiyadNi8gEHpPonHamnVox+
+         G04I153V4JR+wMjH4pxqMpmy15qR5o2IrbvHn9FFW8B65WXFhkGXUhvSFYkIGy6yh3
+         hA4WQhIs2poE1DZrZ30e2kEEHb/WlABHuWYKlp5c9+auiqcRV0NWB+f+CloLsF44oi
+         sHcF3MxaFbGuuaZJXqMhu2E3SIyauijaeJkHkWIKSXHFM6YfsjF2RAKLje4z0h4GaE
+         X5ke9q8yP4zfw==
+Date:   Tue, 11 Jan 2022 15:46:08 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+        Tiezhu Yang <yangtiezhu@loongson.cn>,
+        Jiaxun Yang <jiaxun.yang@flygoat.com>,
+        Huacai Chen <chenhuacai@kernel.org>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: Re: [PATCH 19/19] PCI: Set bridge map_irq and swizzle_irq to default
+ functions
+Message-ID: <20220111214608.GA169999@bhelgaas>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.1
-Subject: Re: [Patch V1 3/4] memory: tegra: add mc-err support for T186
-Content-Language: en-US
-To:     Ashish Mhetre <amhetre@nvidia.com>, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Snikam@nvidia.com, vdumpa@nvidia.com,
-        Dmitry Osipenko <digetx@gmail.com>
-References: <1641926750-27544-1-git-send-email-amhetre@nvidia.com>
- <1641926750-27544-4-git-send-email-amhetre@nvidia.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-In-Reply-To: <1641926750-27544-4-git-send-email-amhetre@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200722022514.1283916-20-robh@kernel.org>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Cc in the future also Dmitry, because he was involved in these drivers
-quite a lot.
+[-cc many, +cc iproc, loongson, tegra maintainers]
 
-On 11/01/2022 19:45, Ashish Mhetre wrote:
-> Add all mc-errors supported by T186.
-> Implement mc interrupt handling routine for T186.
-
-Here and in other patches - please use Tegra186 (and similar) to be
-consistent with existing upstream naming.
-
+On Tue, Jul 21, 2020 at 08:25:14PM -0600, Rob Herring wrote:
+> The majority of DT based host drivers use the default .map_irq() and
+> .swizzle_irq() functions, so let's initialize the function pointers to
+> the default and drop setting them in the host drivers.
 > 
-> Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
-> ---
->  drivers/memory/tegra/mc.h       |  17 +++++++
->  drivers/memory/tegra/tegra186.c | 100 ++++++++++++++++++++++++++++++++++++++++
->  2 files changed, 117 insertions(+)
-> 
-> diff --git a/drivers/memory/tegra/mc.h b/drivers/memory/tegra/mc.h
-> index 2d4f495..7817492 100644
-> --- a/drivers/memory/tegra/mc.h
-> +++ b/drivers/memory/tegra/mc.h
-> @@ -44,6 +44,15 @@
->  #define MC_TIMING_CONTROL_DBG				0xf8
->  #define MC_TIMING_CONTROL				0xfc
+> Drivers like iProc which don't support legacy interrupts need to set
+> .map_irq() back to NULL.
+
+Probably a dumb question...
+
+This patch removed all the ->swizzle_irq users in drivers/pci/, which
+is great -- IIUC swizzling is specified by the PCI-to-PCI Bridge Spec,
+r1.2, sec 9.1, and should not be device-specific.  I assume the few
+remaining arch/ users (arm and alpha) are either bugs or workarounds
+for broken devices.
+
+My question is why we still have a few users of ->map_irq: loongson,
+tegra, iproc.  Shouldn't this mapping be described somehow via DT?
+
+> diff --git a/drivers/pci/controller/pci-tegra.c b/drivers/pci/controller/pci-tegra.c
+> index fc4e38fec928..97433beff6cf 100644
+> --- a/drivers/pci/controller/pci-tegra.c
+> +++ b/drivers/pci/controller/pci-tegra.c
+> @@ -2709,7 +2709,6 @@ static int tegra_pcie_probe(struct platform_device *pdev)
 >  
-> +#define MC_ERR_VPR_STATUS				0x654
-> +#define MC_ERR_VPR_ADR					0x658
-> +#define MC_ERR_SEC_STATUS				0x67c
-> +#define MC_ERR_SEC_ADR					0x680
-> +#define MC_ERR_MTS_STATUS				0x9b0
-> +#define MC_ERR_MTS_ADR					0x9b4
-> +#define MC_ERR_GENERALIZED_CARVEOUT_STATUS		0xc00
-> +#define MC_ERR_GENERALIZED_CARVEOUT_ADR			0xc04
-> +
->  #define MC_INT_DECERR_ROUTE_SANITY			BIT(20)
->  #define MC_INT_WCAM_ERR					BIT(19)
->  #define MC_INT_SCRUB_ECC_WR_ACK				BIT(18)
-> @@ -159,6 +168,14 @@ extern const struct tegra_mc_ops tegra186_mc_ops;
->  extern const char * const tegra_mc_status_names[32];
->  extern const char * const tegra_mc_error_names[8];
+>  	host->ops = &tegra_pcie_ops;
+>  	host->map_irq = tegra_pcie_map_irq;
+> -	host->swizzle_irq = pci_common_swizzle;
 >  
-> +struct tegra_mc_error {
-> +	u32 int_bit;
+>  	err = pci_host_probe(host);
+>  	if (err < 0) {
 
-Where is it used (read)?
-
-> +	const char *msg;
-> +	u32 status_reg;
-> +	u32 addr_reg;
-
-Please describe all these fields with kerneldoc.
-
-> +	u32 addr_reg_hi;
-
-Looks unused.
-
-> +};
-> +
->  /*
->   * These IDs are for internal use of Tegra ICC drivers. The ID numbers are
->   * chosen such that they don't conflict with the device-tree ICC node IDs.
-> diff --git a/drivers/memory/tegra/tegra186.c b/drivers/memory/tegra/tegra186.c
-> index 6766cc4..4f3ae71 100644
-> --- a/drivers/memory/tegra/tegra186.c
-> +++ b/drivers/memory/tegra/tegra186.c
-> @@ -146,8 +146,107 @@ static void tegra186_mc_clear_interrupt(struct tegra_mc *mc)
->  	mc_writel(mc, MC_INTSTATUS_CLEAR, MC_INTSTATUS);
->  }
+> diff --git a/drivers/pci/controller/pcie-iproc-platform.c b/drivers/pci/controller/pcie-iproc-platform.c
+> index 7c10c1cb6f65..a956b0c18bd1 100644
+> --- a/drivers/pci/controller/pcie-iproc-platform.c
+> +++ b/drivers/pci/controller/pcie-iproc-platform.c
+> @@ -99,9 +99,10 @@ static int iproc_pcie_pltfm_probe(struct platform_device *pdev)
+>  	switch (pcie->type) {
+>  	case IPROC_PCIE_PAXC:
+>  	case IPROC_PCIE_PAXC_V2:
+> +		pcie->map_irq = 0;
+>  		break;
+>  	default:
+> -		pcie->map_irq = of_irq_parse_and_map_pci;
+> +		break;
+>  	}
 >  
-> +static const struct tegra_mc_error int_mc_errors[] = {
-> +	{
-> +		.int_bit = MC_INT_DECERR_EMEM,
-> +		.msg = "EMEM address decode error",
-> +		.status_reg = MC_ERR_STATUS,
-> +		.addr_reg = MC_ERR_ADR,
-> +	},
-> +	{
-> +		.int_bit = MC_INT_SECURITY_VIOLATION,
-> +		.msg = "non secure access to secure region",
-> +		.status_reg = MC_ERR_STATUS,
-> +		.addr_reg = MC_ERR_ADR,
-> +	},
-> +	{
-> +		.int_bit = MC_INT_DECERR_VPR,
-> +		.msg = "MC request violates VPR requirements",
-> +		.status_reg = MC_ERR_VPR_STATUS,
-> +		.addr_reg = MC_ERR_VPR_ADR,
-> +	},
-> +	{
-> +		.int_bit = MC_INT_SECERR_SEC,
-> +		.msg = "MC request violated SEC carveout requirements",
-> +		.status_reg = MC_ERR_SEC_STATUS,
-> +		.addr_reg = MC_ERR_SEC_ADR,
-> +	},
-> +	{
-> +		.int_bit = MC_INT_DECERR_MTS,
-> +		.msg = "MTS carveout access violation",
-> +		.status_reg = MC_ERR_MTS_STATUS,
-> +		.addr_reg = MC_ERR_MTS_ADR,
-> +	},
-> +	{
-> +		.int_bit = MC_INT_DECERR_GENERALIZED_CARVEOUT,
-> +		.msg = "GSC access violation",
-> +		.status_reg = MC_ERR_GENERALIZED_CARVEOUT_STATUS,
-> +		.addr_reg = MC_ERR_GENERALIZED_CARVEOUT_ADR,
-> +	},
-> +};
-> +
-> +static irqreturn_t tegra186_mc_handle_irq(int irq, void *data)
-> +{
-> +	struct tegra_mc *mc = data;
-> +	unsigned long status;
-> +	unsigned int bit;
-> +
-> +	status = mc_readl(mc, MC_INTSTATUS) & mc->soc->intmask;
-> +	if (!status)
-> +		return IRQ_NONE;
-> +
-> +	for_each_set_bit(bit, &status, 32) {
+>  	ret = iproc_pcie_setup(pcie, &bridge->windows);
 
-Don't you need bitops.h for this?
-
-> +		const char *error = int_mc_errors[bit].msg ?: "unknown";
-
-int_mc_errors has size of 6, but it's index (the bit variable) can be 20
-or even 32. Are you sure indices are used properly or maybe
-int_mc_errors missed initializer per-index?
-
-> +		const char *client = "unknown";
-> +		const char *direction, *secure;
-> +		phys_addr_t addr = 0;
-> +		unsigned int i;
-> +		u8 id;
-> +		u32 value;
-
-Keep order in reversed xmas tree plus name it in a meaningful way. You
-read here several registers, so which one is value? Probably you meant
-status?
-
-> +
-> +		value = mc_readl(mc, int_mc_errors[bit].status_reg);
-> +
-> +#ifdef CONFIG_PHYS_ADDR_T_64BIT
-> +		if (mc->soc->num_address_bits > 32) {
-> +			addr = ((value >> MC_ERR_STATUS_ADR_HI_SHIFT) &
-> +				MC_ERR_STATUS_ADR_HI_MASK);
-> +			addr <<= 32;
-> +		}
-> +#endif
-> +		addr |= mc_readl(mc, int_mc_errors[bit].addr_reg);
-> +
-> +		if (value & MC_ERR_STATUS_RW)
-> +			direction = "write";
-> +		else
-> +			direction = "read";
-> +
-> +		if (value & MC_ERR_STATUS_SECURITY)
-> +			secure = "secure ";
-> +		else
-> +			secure = "";
-> +
-> +		id = value & mc->soc->client_id_mask;
-> +
-> +		for (i = 0; i < mc->soc->num_clients; i++) {
-> +			if (mc->soc->clients[i].id == id) {
-> +				client = mc->soc->clients[i].name;
-> +				break;
-> +			}
-> +		}
-> +
-> +		dev_err_ratelimited(mc->dev, "%s: %s%s @%pa: %s\n",
-> +				    client, secure, direction, &addr, error);
-> +	}
-> +
-> +	/* clear interrupts */
-> +	mc_writel(mc, status, MC_INTSTATUS);> +
-> +	return IRQ_HANDLED;
-
-I don't think you are actually handling these errors as stated in commit
-message. You only log them. Please adjust the commit subject and message
-to mention the actual purpose/action of error handling.
-
-> +}
-> +
->  const struct tegra_mc_interrupt_ops tegra186_mc_interrupt_ops = {
->  	.clear_interrupt = tegra186_mc_clear_interrupt,
-> +	.handle_irq = tegra186_mc_handle_irq,
->  };
+> diff --git a/drivers/pci/controller/pcie-iproc.c b/drivers/pci/controller/pcie-iproc.c
+> index e98dafd0fff4..905e93808243 100644
+> --- a/drivers/pci/controller/pcie-iproc.c
+> +++ b/drivers/pci/controller/pcie-iproc.c
+> @@ -1526,7 +1526,6 @@ int iproc_pcie_setup(struct iproc_pcie *pcie, struct list_head *res)
+>  	host->ops = &iproc_pcie_ops;
+>  	host->sysdata = pcie;
+>  	host->map_irq = pcie->map_irq;
+> -	host->swizzle_irq = pci_common_swizzle;
 >  
->  const struct tegra_mc_ops tegra186_mc_ops = {
-> @@ -886,6 +985,7 @@ const struct tegra_mc_soc tegra186_mc_soc = {
->  	.num_clients = ARRAY_SIZE(tegra186_mc_clients),
->  	.clients = tegra186_mc_clients,
->  	.num_address_bits = 40,
-> +	.client_id_mask = 0xff,
->  	.intmask = MC_INT_WCAM_ERR | MC_INT_SCRUB_ECC_WR_ACK |
->  		   MC_INT_DECERR_GENERALIZED_CARVEOUT | MC_INT_DECERR_MTS |
->  		   MC_INT_SECERR_SEC | MC_INT_DECERR_VPR |
-> 
+>  	ret = pci_host_probe(host);
+>  	if (ret < 0) {
 
+drivers/pci/controller/pci-loongson.c:
 
+  static int loongson_pci_probe(struct platform_device *pdev)
+  {
+    ...
+    bridge->map_irq = loongson_map_irq;
 
-Best regards,
-Krzysztof
