@@ -2,130 +2,62 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A58BC433F5
-	for <linux-tegra@archiver.kernel.org>; Tue, 11 Jan 2022 21:46:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B2B9C433FE
+	for <linux-tegra@archiver.kernel.org>; Wed, 12 Jan 2022 02:52:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245488AbiAKVqO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 11 Jan 2022 16:46:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46880 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232974AbiAKVqN (ORCPT
+        id S1348929AbiALCwD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 11 Jan 2022 21:52:03 -0500
+Received: from ams.source.kernel.org ([145.40.68.75]:51838 "EHLO
+        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236450AbiALCwD (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 11 Jan 2022 16:46:13 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F22F6C06173F;
-        Tue, 11 Jan 2022 13:46:12 -0800 (PST)
+        Tue, 11 Jan 2022 21:52:03 -0500
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id B6C0CB81D54;
-        Tue, 11 Jan 2022 21:46:11 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D999C36AE9;
-        Tue, 11 Jan 2022 21:46:09 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id EAD21B81DBC;
+        Wed, 12 Jan 2022 02:52:01 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95C4BC36AEB;
+        Wed, 12 Jan 2022 02:52:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1641937570;
-        bh=XNEfESj08xbpQ9h2hTKb/Pu9WAZg5VvTWzJOGQNAOC4=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=hrPlCKr2Cgo8R910eadJlHVlOQja6nGt1WhCOdCaXCFbaY87edhU/MmAMX/v1PJsc
-         gLQc0SVeHdbiE+O2eRDoMKPl75FAH+9KQyJDGXovCKyCiyadNi8gEHpPonHamnVox+
-         G04I153V4JR+wMjH4pxqMpmy15qR5o2IrbvHn9FFW8B65WXFhkGXUhvSFYkIGy6yh3
-         hA4WQhIs2poE1DZrZ30e2kEEHb/WlABHuWYKlp5c9+auiqcRV0NWB+f+CloLsF44oi
-         sHcF3MxaFbGuuaZJXqMhu2E3SIyauijaeJkHkWIKSXHFM6YfsjF2RAKLje4z0h4GaE
-         X5ke9q8yP4zfw==
-Date:   Tue, 11 Jan 2022 15:46:08 -0600
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-        Tiezhu Yang <yangtiezhu@loongson.cn>,
-        Jiaxun Yang <jiaxun.yang@flygoat.com>,
-        Huacai Chen <chenhuacai@kernel.org>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 19/19] PCI: Set bridge map_irq and swizzle_irq to default
- functions
-Message-ID: <20220111214608.GA169999@bhelgaas>
+        s=k20201202; t=1641955920;
+        bh=pYhb6dYTiKQIyigud0WBES7Miwz6szh1LNYMaHQQldE=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=JY3XDvFyZXt3/PZGaZH0VSJJBaguuqSEDAFP1wsz7d+YI9EQj2bvOxu8GOIqJnT2H
+         Dvwv0dLhY/I8xd/hSyc84qnUby8O7mhu7fU4ry4QBa1Hx2fYWt3NcZ0PDyG6ISQQ0y
+         1xU3ISEcaFIXAkgrgjLjjqnGNKbFMFyQbqUFLUk+cW0RWbbHRjOgxMdRmtb3KyJ3iH
+         vnu/wjihNmT0uR2IsSIIPiOhVwCG+1saDepT+yuWvJ+5Isae+0eAvSI278rAW1QAEc
+         NetC6mna8UUCKD6y8AAkrZrTTztUNtsSiKrLEbRQpKEd+MkfVC7etlEa299vfGZs5j
+         iseun22PDVHlw==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200722022514.1283916-20-robh@kernel.org>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20220107082436.17716-1-linmq006@gmail.com>
+References: <20220107082436.17716-1-linmq006@gmail.com>
+Subject: Re: [PATCH] clk: tegra: tegra124-emc: Fix missing put_device() call in emc_ensure_emc_driver
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     linmq006@gmail.com, Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+To:     Miaoqian Lin <linmq006@gmail.com>
+Date:   Tue, 11 Jan 2022 18:51:59 -0800
+User-Agent: alot/0.9.1
+Message-Id: <20220112025200.95C4BC36AEB@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-[-cc many, +cc iproc, loongson, tegra maintainers]
+Quoting Miaoqian Lin (2022-01-07 00:24:36)
+> The reference taken by 'of_find_device_by_node()' must be released when
+> not needed anymore.
+> Add the corresponding 'put_device()' in the error handling path.
+>=20
+> Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
 
-On Tue, Jul 21, 2020 at 08:25:14PM -0600, Rob Herring wrote:
-> The majority of DT based host drivers use the default .map_irq() and
-> .swizzle_irq() functions, so let's initialize the function pointers to
-> the default and drop setting them in the host drivers.
-> 
-> Drivers like iProc which don't support legacy interrupts need to set
-> .map_irq() back to NULL.
+Please send the mail To: somebody
 
-Probably a dumb question...
-
-This patch removed all the ->swizzle_irq users in drivers/pci/, which
-is great -- IIUC swizzling is specified by the PCI-to-PCI Bridge Spec,
-r1.2, sec 9.1, and should not be device-specific.  I assume the few
-remaining arch/ users (arm and alpha) are either bugs or workarounds
-for broken devices.
-
-My question is why we still have a few users of ->map_irq: loongson,
-tegra, iproc.  Shouldn't this mapping be described somehow via DT?
-
-> diff --git a/drivers/pci/controller/pci-tegra.c b/drivers/pci/controller/pci-tegra.c
-> index fc4e38fec928..97433beff6cf 100644
-> --- a/drivers/pci/controller/pci-tegra.c
-> +++ b/drivers/pci/controller/pci-tegra.c
-> @@ -2709,7 +2709,6 @@ static int tegra_pcie_probe(struct platform_device *pdev)
->  
->  	host->ops = &tegra_pcie_ops;
->  	host->map_irq = tegra_pcie_map_irq;
-> -	host->swizzle_irq = pci_common_swizzle;
->  
->  	err = pci_host_probe(host);
->  	if (err < 0) {
-
-> diff --git a/drivers/pci/controller/pcie-iproc-platform.c b/drivers/pci/controller/pcie-iproc-platform.c
-> index 7c10c1cb6f65..a956b0c18bd1 100644
-> --- a/drivers/pci/controller/pcie-iproc-platform.c
-> +++ b/drivers/pci/controller/pcie-iproc-platform.c
-> @@ -99,9 +99,10 @@ static int iproc_pcie_pltfm_probe(struct platform_device *pdev)
->  	switch (pcie->type) {
->  	case IPROC_PCIE_PAXC:
->  	case IPROC_PCIE_PAXC_V2:
-> +		pcie->map_irq = 0;
->  		break;
->  	default:
-> -		pcie->map_irq = of_irq_parse_and_map_pci;
-> +		break;
->  	}
->  
->  	ret = iproc_pcie_setup(pcie, &bridge->windows);
-
-> diff --git a/drivers/pci/controller/pcie-iproc.c b/drivers/pci/controller/pcie-iproc.c
-> index e98dafd0fff4..905e93808243 100644
-> --- a/drivers/pci/controller/pcie-iproc.c
-> +++ b/drivers/pci/controller/pcie-iproc.c
-> @@ -1526,7 +1526,6 @@ int iproc_pcie_setup(struct iproc_pcie *pcie, struct list_head *res)
->  	host->ops = &iproc_pcie_ops;
->  	host->sysdata = pcie;
->  	host->map_irq = pcie->map_irq;
-> -	host->swizzle_irq = pci_common_swizzle;
->  
->  	ret = pci_host_probe(host);
->  	if (ret < 0) {
-
-drivers/pci/controller/pci-loongson.c:
-
-  static int loongson_pci_probe(struct platform_device *pdev)
-  {
-    ...
-    bridge->map_irq = loongson_map_irq;
-
+Also, please add a Fixes: tag.
