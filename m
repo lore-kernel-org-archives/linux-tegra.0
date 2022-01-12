@@ -2,102 +2,92 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB64BC433EF
-	for <linux-tegra@archiver.kernel.org>; Wed, 12 Jan 2022 15:32:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A253C433FE
+	for <linux-tegra@archiver.kernel.org>; Wed, 12 Jan 2022 15:40:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348084AbiALPcq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 12 Jan 2022 10:32:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34096 "EHLO
+        id S241778AbiALPkU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 12 Jan 2022 10:40:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35864 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240181AbiALPcp (ORCPT
+        with ESMTP id S229874AbiALPkT (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 12 Jan 2022 10:32:45 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B879C06173F;
-        Wed, 12 Jan 2022 07:32:43 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id F0A4461932;
-        Wed, 12 Jan 2022 15:32:42 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08895C36AE5;
-        Wed, 12 Jan 2022 15:32:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1642001562;
-        bh=TmVoPyrYCTfNSodHZ3UduskHBWm/lkWLvgSm8FdlN7M=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=OOcmWvbFWt0+bDrg1D6Bu2Ep5/ae0/OMi1woG2R9lLudTKIevYAeEQIUKgGh/trhD
-         zZUC7IuwPAAqpCZTnPAq/ZQ4zhUjS/3SgoOeZ/QpThJlwZZH6jXgk1SfCgtZWbvh0q
-         K3RbifkUmhQXdM4GDFoV4B9l1p/poQoeKndCAMP2zazWnJc4BhRuguSm6N66nipAO7
-         wjZ4/VecDAF+iuzHXNxg7ksnCukSGEUbPp3nPfJ3qALcZl+SSCqIdfc8yl7oV+9hcV
-         BcozVK5KBI+lWfa7rDihqlQjCZ/D3C94+RA+KQJj2hkPWjUjiA4N4sdyYDzXS1hW2w
-         wPBMlbRnFmZWg==
-Date:   Wed, 12 Jan 2022 09:32:40 -0600
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Wed, 12 Jan 2022 10:40:19 -0500
+Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB627C06173F;
+        Wed, 12 Jan 2022 07:40:18 -0800 (PST)
+Received: by mail-lf1-x12f.google.com with SMTP id d3so9403987lfv.13;
+        Wed, 12 Jan 2022 07:40:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=7YzcHELoQHE6lsWBBlYzNlfti5+qLJvr6LQTidmKO20=;
+        b=A/K8h4Hb+/kmC14dRYp4GUa5XZrjznZgoK+QJ0/eZYRVzxAZ4YrO7RFViyjOu6tYa+
+         NL224hlp/f2CwFEh49nizaxrbPFUPvL6ClidPqYzGLm8J4qOH1PQM6Y2GdGkGZ6R7fzE
+         Vxl0Fk2Oz57Pn0WIpYO6iPijYsDktxfEAmNDuEZG02KBB2wv7OJtUaYAx8GJmCgYzYcf
+         jsgcLDI+eQwa2CSwDxUl+ccEJVip92Y38PgBpbBYBbxmax7S/2KR6fc16FxhSvXfGEWw
+         8kIPbJX1dkqLt2+yN6iG5ABRZCt3fP/CXHpwes6uHzSt87l2zHz4WRO7tG9oYE5SxLua
+         i9xQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=7YzcHELoQHE6lsWBBlYzNlfti5+qLJvr6LQTidmKO20=;
+        b=vlQGPJC/qb1of1wqJWy3P+2Z0t8MBzgZQZmhoa2lEEv4c6fmAJkDarPYByAh0gqCAY
+         sc4CgobUGlR9HvOaijRY31vAyElivh5d1OjvrJwD850cVE/4XXegoigzUK8Zo3kYHfsN
+         lx4nCDYbzWOaDzfp6bTT1yMTGF3+KmEdjcQH/I5usPHb76sQIDOaMrmUk8aPwyTBk03i
+         92y/HIhXBIBSVAjA7ybn66EM9uKDeIVuEhG95JZ8T+T2cZzMM8qPHnX3n0nAcd3sOmVl
+         gbTepmCKMUg30HHrYV5eyY5gaS+iTchdyh5PNdIbfMSo5SRxUnEiqxjOCnur/4ynmFlR
+         NaXQ==
+X-Gm-Message-State: AOAM532MEUCXHb7A/1qU47k9/2CnV8mvWZa7+NuqkTE+krJkge1e7/OH
+        RVrLnCtbsS4TQ/Gx/B/KlhM=
+X-Google-Smtp-Source: ABdhPJwOEEebyuP7EAEmCPtKjHEQiyeb0fgrZNYFW9s4PnlrOT82YWv562fvSljJ0XzY3hXketcblw==
+X-Received: by 2002:a2e:8695:: with SMTP id l21mr76627lji.452.1642002017185;
+        Wed, 12 Jan 2022 07:40:17 -0800 (PST)
+Received: from localhost.localdomain (94-29-62-108.dynamic.spd-mgts.ru. [94.29.62.108])
+        by smtp.gmail.com with ESMTPSA id f27sm20173lfk.266.2022.01.12.07.40.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Jan 2022 07:40:16 -0800 (PST)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-        Tiezhu Yang <yangtiezhu@loongson.cn>,
-        Jiaxun Yang <jiaxun.yang@flygoat.com>,
-        Huacai Chen <chenhuacai@kernel.org>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        "maintainer:BROADCOM BCM7XXX ARM ARCHITECTURE" 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        PCI <linux-pci@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 19/19] PCI: Set bridge map_irq and swizzle_irq to default
- functions
-Message-ID: <20220112153240.GA258585@bhelgaas>
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Nicolas Dufresne <nicolas@ndufresne.ca>
+Cc:     linux-media@vger.kernel.org, linux-staging@lists.linux.dev,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v1 0/2] Add V4L stateless video decoder API support to NVIDIA Tegra driver
+Date:   Wed, 12 Jan 2022 18:39:50 +0300
+Message-Id: <20220112153952.1291-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.33.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAL_JsqKoK6Vewwn4X0L+TKAz-UdK4n7CQ+OKpiEwGe2HqR5L8g@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, Jan 12, 2022 at 09:09:31AM -0600, Rob Herring wrote:
-> On Tue, Jan 11, 2022 at 3:46 PM Bjorn Helgaas <helgaas@kernel.org> wrote:
-> > On Tue, Jul 21, 2020 at 08:25:14PM -0600, Rob Herring wrote:
-> > > The majority of DT based host drivers use the default .map_irq() and
-> > > .swizzle_irq() functions, so let's initialize the function pointers to
-> > > the default and drop setting them in the host drivers.
-> > >
-> > > Drivers like iProc which don't support legacy interrupts need to set
-> > > .map_irq() back to NULL.
-> >
-> > Probably a dumb question...
-> >
-> > This patch removed all the ->swizzle_irq users in drivers/pci/, which
-> > is great -- IIUC swizzling is specified by the PCI-to-PCI Bridge Spec,
-> > r1.2, sec 9.1, and should not be device-specific.  I assume the few
-> > remaining arch/ users (arm and alpha) are either bugs or workarounds
-> > for broken devices.
-> >
-> > My question is why we still have a few users of ->map_irq: loongson,
-> > tegra, iproc.  Shouldn't this mapping be described somehow via DT?
-> 
-> Tegra could perhaps be written another way. The mapping is standard,
-> but it's disabling an idle state when PCI interrupts are used. It just
-> needs some way to know if legacy interrupts are being used.
->
-> iproc looks pretty special with its bcma bus.
-> 
-> Adding something to DT doesn't really help because we'd still have to
-> support the old way.
+Support V4L stateless video decoder API by NVIDIA Tegra decoder driver.
+Tested using GStreamer [1] and libvdpau-tegra [2].
 
-I guess my underlying question is whether new drivers should ever use
-->swizzle_irq() and ->map_irq().  I'm hoping the answer is "no".
+[1] https://github.com/grate-driver/gstreamer/commit/b8509bdbb69b534e61419ea1798f32f9ad2f3597
+[2] https://github.com/grate-driver/libvdpau-tegra/commit/f822e95911e5e0c39f8ba19f843ddc1e0138d5ce
 
-If we need them for pre-DT systems or things with incomplete DTs in
-the field, I guess we have to live with that.
+Dmitry Osipenko (2):
+  media: staging: tegra-vde: Factor out H.264 code
+  media: staging: tegra-vde: Support V4L stateless video decoder API
 
-All ACPI really gives you is the _PRT, and I'm not sure that's
-expressive enough to describe platforms that need these things, so
-maybe this will eventually solve itself.
+ drivers/staging/media/tegra-vde/Kconfig       |    7 +
+ drivers/staging/media/tegra-vde/Makefile      |    2 +-
+ drivers/staging/media/tegra-vde/h264.c        |  988 ++++++++++++++++
+ drivers/staging/media/tegra-vde/h264_reader.c |  264 +++++
+ drivers/staging/media/tegra-vde/v4l2.c        | 1013 +++++++++++++++++
+ drivers/staging/media/tegra-vde/vde.c         |  700 ++----------
+ drivers/staging/media/tegra-vde/vde.h         |  129 +++
+ 7 files changed, 2487 insertions(+), 616 deletions(-)
+ create mode 100644 drivers/staging/media/tegra-vde/h264.c
+ create mode 100644 drivers/staging/media/tegra-vde/h264_reader.c
+ create mode 100644 drivers/staging/media/tegra-vde/v4l2.c
 
-Bjorn
+-- 
+2.33.1
+
