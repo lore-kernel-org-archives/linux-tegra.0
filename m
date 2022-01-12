@@ -2,67 +2,68 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AFC2C433EF
-	for <linux-tegra@archiver.kernel.org>; Wed, 12 Jan 2022 11:22:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DB5DC433F5
+	for <linux-tegra@archiver.kernel.org>; Wed, 12 Jan 2022 11:24:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239927AbiALLWf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 12 Jan 2022 06:22:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60886 "EHLO
+        id S1352836AbiALLY5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 12 Jan 2022 06:24:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33144 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238953AbiALLWe (ORCPT
+        with ESMTP id S1352832AbiALLYl (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 12 Jan 2022 06:22:34 -0500
-Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59BF7C06173F;
-        Wed, 12 Jan 2022 03:22:34 -0800 (PST)
-Received: by mail-lf1-x130.google.com with SMTP id x7so6881006lfu.8;
-        Wed, 12 Jan 2022 03:22:34 -0800 (PST)
+        Wed, 12 Jan 2022 06:24:41 -0500
+Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E044C06173F;
+        Wed, 12 Jan 2022 03:24:40 -0800 (PST)
+Received: by mail-lf1-x12c.google.com with SMTP id br17so6922477lfb.6;
+        Wed, 12 Jan 2022 03:24:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
+        h=subject:from:to:cc:references:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=i3J9e40/qw3RUUYb2b020SFx3wJaeeIDSrRZNGkXFSw=;
-        b=B/DwJAktTSBHU8JBc1OwYod+gQ8oHU59G2zVu6ltzgGb9oZ9jKl3qkivRBVYKkgsgQ
-         4UnbtFtN1ScC/nRIGs75r/D3pa9CqJQbq0TyU7HKjWzMljvj3U2yobOmNYIJbKz81r5/
-         vjs1K4ISERXlxm2gQyCFK4DjL1Iqi1fAadaSTtx3YM/R+rpvGvXEXwN8MlQtL+c6QGIw
-         OJZK5aZhG5MyMRpCpUgxQf0bGeoxc9+z6qXQVptzuAAmeScmsuAsVtYpZSwsV6hgBYm5
-         TCh61UT5LjJJsCLOFtBqQWi0ZYJ2Cgq0MKPKaqgLVPjR5xjxkPUzKomvI6utpSJB6aYl
-         joKQ==
+        bh=NbhOvUkO9g131jLa1g16YTEMtyTYHn9ZvHoBdZ3P+9E=;
+        b=TXxz5pdv0WTMvF9sFpXKkRYZj0cRwOO9fREIzpnSZTMMi+Cg/YywiZv1l0KCLx83QG
+         OGgVYHCmc5UjWFvlFxXdCrrL+NT8LiwVayJ9R+hu7SbZBm9Qyye8yvCfQHKeG3DyamQg
+         JINGIml2JzTMSoNMiaxmCJ7scCoTUv1hUe3281wW+ra1n4HDJU6IxbrBrEy5ApdCm9UJ
+         O6wpVBqQQk3qv7KgchM1Qw2yhFL/4Em1bTwAgiXbwO/oCgjvk7LIO8xYFxcghq1hSgqS
+         O1ie4goI+UpEdBZsjCAM0xRRMnO64J7bdWtFhsZ2UY5Oj94JIr6lgygdveDVz3fk2hAQ
+         x6Tw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=i3J9e40/qw3RUUYb2b020SFx3wJaeeIDSrRZNGkXFSw=;
-        b=4lQ4chPHa968FliwMr9hMIhDavcwch2A4AAWeXw4lXsq38FkJxlzAJ20dMFtAwFxD1
-         zfV+g5kZqpCoaUXxrhK69yOg4ovr45k3KwZDV5qtmeCdKcguId+S1l6IdHjaOA2kTk6K
-         QQWJ+Rtqwnx52D+6S1+SxAH9OQUYXhNSDN5g4aKTUG9R8dahd5JhDFJRz6pVldJJPhZW
-         1tEwczmTKyZI1hg9RMd+zNbCHL/HQ2U/JpqTSRdIEBMmuXVyRVJe5R8/eDYCPSp1YON7
-         F5at2kebNMbMfkzvy6Rvxzrr8WyFUvVrb4NN793x45u9nMiNi66rTbabyDYEnWtwF5fb
-         edDw==
-X-Gm-Message-State: AOAM530Y4Z9t4F40R9WaqMRGWJOhdPRlmD3qc2qZGqmOhdWKyyCMxEE/
-        Fvl+2aDDMbZTaImxZrCfEYuffO5432g=
-X-Google-Smtp-Source: ABdhPJwi/QZFJP1f1CylCHF29BDSHvNiAczhugZC+6a/+Ffwq6BgcQKDeVkO5NYgP8eMQ09JvBuQMQ==
-X-Received: by 2002:ac2:50c6:: with SMTP id h6mr6658544lfm.420.1641986552730;
-        Wed, 12 Jan 2022 03:22:32 -0800 (PST)
+        bh=NbhOvUkO9g131jLa1g16YTEMtyTYHn9ZvHoBdZ3P+9E=;
+        b=ie9VPMOD/G5iwHxAv4mel3ukDzgvqg0T+xxOS4kGSCkFNhM7TlXfdwieLxHRY2ooPm
+         WvW/uv9pZeKuMhqkvF9mj3GjKtoTC6aRylKHEXN6e4uMMvXYWtVhnOg5AZo4CeZXCwVk
+         isbXkzMax7kCpjDgFWgefAPkUZUKDSu9AWouJRx1frd4TaIo0tIRjnE0Vbblo4aZ///+
+         tf5j4rCeY8nr8GBNsMnWRGGMPCPv2LTuyrMCfQiTCB0J8PjqOfhogegYOmLdboImYTHL
+         ccZZkqE3zBnqHGqAyFJKjNgaZaTUFdXnozFPTFmLLBxHqYzKgurUD7j/k/ByOWIbuMSQ
+         Iqgg==
+X-Gm-Message-State: AOAM532NkiZrpL6izl5YgdTkpScmFNvocR/30+ULCnkiTmVUHvUgmN9n
+        LcxAVPxq5Ge2E1uLs2wm5vc=
+X-Google-Smtp-Source: ABdhPJyf5aunjokJX6KtWkI+sbtwB39whmA1C2n4n2vD74x0zZFX84Fz71b5DvHpb8qGMCMXb9Aqzg==
+X-Received: by 2002:ac2:44d6:: with SMTP id d22mr6414152lfm.590.1641986678598;
+        Wed, 12 Jan 2022 03:24:38 -0800 (PST)
 Received: from [192.168.2.145] (94-29-62-108.dynamic.spd-mgts.ru. [94.29.62.108])
-        by smtp.googlemail.com with ESMTPSA id a3sm231510lji.133.2022.01.12.03.22.31
+        by smtp.googlemail.com with ESMTPSA id i9sm1611371lfe.26.2022.01.12.03.24.37
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Jan 2022 03:22:32 -0800 (PST)
+        Wed, 12 Jan 2022 03:24:38 -0800 (PST)
 Subject: Re: [Patch V1 3/4] memory: tegra: add mc-err support for T186
+From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Ashish Mhetre <amhetre@nvidia.com>, thierry.reding@gmail.com,
         jonathanh@nvidia.com, linux-tegra@vger.kernel.org,
         krzysztof.kozlowski@canonical.com, linux-kernel@vger.kernel.org
 Cc:     Snikam@nvidia.com, vdumpa@nvidia.com
 References: <1641926750-27544-1-git-send-email-amhetre@nvidia.com>
  <1641926750-27544-4-git-send-email-amhetre@nvidia.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <0b584dfd-04f6-d7f7-f08a-003b89e557f5@gmail.com>
-Date:   Wed, 12 Jan 2022 14:22:31 +0300
+ <0b584dfd-04f6-d7f7-f08a-003b89e557f5@gmail.com>
+Message-ID: <b250e2f5-b095-3767-519d-40e42e0a832b@gmail.com>
+Date:   Wed, 12 Jan 2022 14:24:37 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.14.0
 MIME-Version: 1.0
-In-Reply-To: <1641926750-27544-4-git-send-email-amhetre@nvidia.com>
+In-Reply-To: <0b584dfd-04f6-d7f7-f08a-003b89e557f5@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -70,10 +71,14 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-11.01.2022 21:45, Ashish Mhetre пишет:
->  #define MC_INT_DECERR_ROUTE_SANITY			BIT(20)
->  #define MC_INT_WCAM_ERR					BIT(19)
->  #define MC_INT_SCRUB_ECC_WR_ACK				BIT(18)
+12.01.2022 14:22, Dmitry Osipenko пишет:
+> 11.01.2022 21:45, Ashish Mhetre пишет:
+>>  #define MC_INT_DECERR_ROUTE_SANITY			BIT(20)
+>>  #define MC_INT_WCAM_ERR					BIT(19)
+>>  #define MC_INT_SCRUB_ECC_WR_ACK				BIT(18)
+> 
+> I don't see where these errors are handled in the code. Is documentation
+> that explains these bits publicly available?
+> 
 
-I don't see where these errors are handled in the code. Is documentation
-that explains these bits publicly available?
+MC_INT_SCRUB_ECC_WR_ACK shouldn't be a error.
