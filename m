@@ -2,53 +2,53 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65CB4C433EF
-	for <linux-tegra@archiver.kernel.org>; Wed, 12 Jan 2022 11:02:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AFC2C433EF
+	for <linux-tegra@archiver.kernel.org>; Wed, 12 Jan 2022 11:22:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352704AbiALLCP (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 12 Jan 2022 06:02:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56360 "EHLO
+        id S239927AbiALLWf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 12 Jan 2022 06:22:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60886 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239745AbiALLCP (ORCPT
+        with ESMTP id S238953AbiALLWe (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 12 Jan 2022 06:02:15 -0500
-Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89760C06173F;
-        Wed, 12 Jan 2022 03:02:14 -0800 (PST)
-Received: by mail-lf1-x12b.google.com with SMTP id e3so3969070lfc.9;
-        Wed, 12 Jan 2022 03:02:14 -0800 (PST)
+        Wed, 12 Jan 2022 06:22:34 -0500
+Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59BF7C06173F;
+        Wed, 12 Jan 2022 03:22:34 -0800 (PST)
+Received: by mail-lf1-x130.google.com with SMTP id x7so6881006lfu.8;
+        Wed, 12 Jan 2022 03:22:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=09JJuYQHYFSNkDJz11ddv1sgJi4bBO6UP4Co8RuirbE=;
-        b=dBlGUI/+GJtOOdMTkK2Rk+J00wdWOU7MRoX7T6F6KrYadNEH+MjaHLN1LzmJ/eIpJL
-         z/FAFWKPI/PX7LN452hvOecPZU4qlKvqRH45NsdIPK/ShNLA+C5kXdzRYobLiy0x/ILZ
-         pQnQtIEp/R96tSA4+B3bgL2AesQIIJ4inLeQsdt05SJzZ9dUUw+LpJm7SEtXAzjFeETg
-         y6a3/AfNCUyhhfp1gC1VvlqUiI3ZheEcMIA7vapV6vYM4YTn49ewUo+yXQZUyOXqtM2t
-         M00XdGkNdi8W+CO6lN1cB2ycmBHBoEN8erGnoTz9lg51H6uY3qns6KlDukKSjQ2cj+Cy
-         eGVg==
+        bh=i3J9e40/qw3RUUYb2b020SFx3wJaeeIDSrRZNGkXFSw=;
+        b=B/DwJAktTSBHU8JBc1OwYod+gQ8oHU59G2zVu6ltzgGb9oZ9jKl3qkivRBVYKkgsgQ
+         4UnbtFtN1ScC/nRIGs75r/D3pa9CqJQbq0TyU7HKjWzMljvj3U2yobOmNYIJbKz81r5/
+         vjs1K4ISERXlxm2gQyCFK4DjL1Iqi1fAadaSTtx3YM/R+rpvGvXEXwN8MlQtL+c6QGIw
+         OJZK5aZhG5MyMRpCpUgxQf0bGeoxc9+z6qXQVptzuAAmeScmsuAsVtYpZSwsV6hgBYm5
+         TCh61UT5LjJJsCLOFtBqQWi0ZYJ2Cgq0MKPKaqgLVPjR5xjxkPUzKomvI6utpSJB6aYl
+         joKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=09JJuYQHYFSNkDJz11ddv1sgJi4bBO6UP4Co8RuirbE=;
-        b=rBsaXQhKti4ILUM73qsjMArBViS0uv9shCoM7d3QlxXgpnMnJGIAnIBUxgEO5tvHv/
-         tS3eROJM/ovFGpHPgUgxi+v5/FXroIn1kwCPreYPoRiOPhPe8SgcbHtaH8G6Isv5vegf
-         1crULgjqvrIuON/U3t/1RP+Sp5s86+SwkASRV8/7lKihzbwjXimWpmWy3B660InHds/k
-         WKzBD9a0S90n+HpblYntV41CEafZ9yIMIxuP7tDbJQNrAGKcUldxM5XvzAHntVv3yVQV
-         cGRB200T0/djF9N7Czl6mBcP6WLm8TnsJMozgxQ0zF1cMiFh+WwVaWVfbERlg2muMRMQ
-         MlWQ==
-X-Gm-Message-State: AOAM531TkzYpxQ9MpOZCDkaAGsvHxEXFQpMvQK6dnCIj3fm/6k7vkzAM
-        ylvFOIaSqW18LIw5SYdJg7s=
-X-Google-Smtp-Source: ABdhPJyt0wH+jA39S0j3mvW1vYjy6yhjAhFU3tVcMWRdF9T9fxMosfgsDonBUiJxwLBCD3c1JBOJFg==
-X-Received: by 2002:a05:651c:1681:: with SMTP id bd1mr5624583ljb.33.1641985332952;
-        Wed, 12 Jan 2022 03:02:12 -0800 (PST)
+        bh=i3J9e40/qw3RUUYb2b020SFx3wJaeeIDSrRZNGkXFSw=;
+        b=4lQ4chPHa968FliwMr9hMIhDavcwch2A4AAWeXw4lXsq38FkJxlzAJ20dMFtAwFxD1
+         zfV+g5kZqpCoaUXxrhK69yOg4ovr45k3KwZDV5qtmeCdKcguId+S1l6IdHjaOA2kTk6K
+         QQWJ+Rtqwnx52D+6S1+SxAH9OQUYXhNSDN5g4aKTUG9R8dahd5JhDFJRz6pVldJJPhZW
+         1tEwczmTKyZI1hg9RMd+zNbCHL/HQ2U/JpqTSRdIEBMmuXVyRVJe5R8/eDYCPSp1YON7
+         F5at2kebNMbMfkzvy6Rvxzrr8WyFUvVrb4NN793x45u9nMiNi66rTbabyDYEnWtwF5fb
+         edDw==
+X-Gm-Message-State: AOAM530Y4Z9t4F40R9WaqMRGWJOhdPRlmD3qc2qZGqmOhdWKyyCMxEE/
+        Fvl+2aDDMbZTaImxZrCfEYuffO5432g=
+X-Google-Smtp-Source: ABdhPJwi/QZFJP1f1CylCHF29BDSHvNiAczhugZC+6a/+Ffwq6BgcQKDeVkO5NYgP8eMQ09JvBuQMQ==
+X-Received: by 2002:ac2:50c6:: with SMTP id h6mr6658544lfm.420.1641986552730;
+        Wed, 12 Jan 2022 03:22:32 -0800 (PST)
 Received: from [192.168.2.145] (94-29-62-108.dynamic.spd-mgts.ru. [94.29.62.108])
-        by smtp.googlemail.com with ESMTPSA id o19sm1528364ljp.58.2022.01.12.03.02.12
+        by smtp.googlemail.com with ESMTPSA id a3sm231510lji.133.2022.01.12.03.22.31
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Jan 2022 03:02:12 -0800 (PST)
+        Wed, 12 Jan 2022 03:22:32 -0800 (PST)
 Subject: Re: [Patch V1 3/4] memory: tegra: add mc-err support for T186
 To:     Ashish Mhetre <amhetre@nvidia.com>, thierry.reding@gmail.com,
         jonathanh@nvidia.com, linux-tegra@vger.kernel.org,
@@ -57,8 +57,8 @@ Cc:     Snikam@nvidia.com, vdumpa@nvidia.com
 References: <1641926750-27544-1-git-send-email-amhetre@nvidia.com>
  <1641926750-27544-4-git-send-email-amhetre@nvidia.com>
 From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <e10bffa7-3b6d-fb21-583a-1a3f907ff6b9@gmail.com>
-Date:   Wed, 12 Jan 2022 14:02:11 +0300
+Message-ID: <0b584dfd-04f6-d7f7-f08a-003b89e557f5@gmail.com>
+Date:   Wed, 12 Jan 2022 14:22:31 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.14.0
 MIME-Version: 1.0
@@ -71,58 +71,9 @@ List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 11.01.2022 21:45, Ashish Mhetre пишет:
-> +static const struct tegra_mc_error int_mc_errors[] = {
-> +	{
-> +		.int_bit = MC_INT_DECERR_EMEM,
-> +		.msg = "EMEM address decode error",
-> +		.status_reg = MC_ERR_STATUS,
-> +		.addr_reg = MC_ERR_ADR,
-> +	},
-> +	{
-> +		.int_bit = MC_INT_SECURITY_VIOLATION,
-> +		.msg = "non secure access to secure region",
-> +		.status_reg = MC_ERR_STATUS,
-> +		.addr_reg = MC_ERR_ADR,
-> +	},
-> +	{
-> +		.int_bit = MC_INT_DECERR_VPR,
-> +		.msg = "MC request violates VPR requirements",
-> +		.status_reg = MC_ERR_VPR_STATUS,
-> +		.addr_reg = MC_ERR_VPR_ADR,
-> +	},
-> +	{
-> +		.int_bit = MC_INT_SECERR_SEC,
-> +		.msg = "MC request violated SEC carveout requirements",
-> +		.status_reg = MC_ERR_SEC_STATUS,
-> +		.addr_reg = MC_ERR_SEC_ADR,
-> +	},
-> +	{
-> +		.int_bit = MC_INT_DECERR_MTS,
-> +		.msg = "MTS carveout access violation",
-> +		.status_reg = MC_ERR_MTS_STATUS,
-> +		.addr_reg = MC_ERR_MTS_ADR,
-> +	},
-> +	{
-> +		.int_bit = MC_INT_DECERR_GENERALIZED_CARVEOUT,
-> +		.msg = "GSC access violation",
-> +		.status_reg = MC_ERR_GENERALIZED_CARVEOUT_STATUS,
-> +		.addr_reg = MC_ERR_GENERALIZED_CARVEOUT_ADR,
-> +	},
-> +};
-> +
-> +static irqreturn_t tegra186_mc_handle_irq(int irq, void *data)
-> +{
-> +	struct tegra_mc *mc = data;
-> +	unsigned long status;
-> +	unsigned int bit;
-> +
-> +	status = mc_readl(mc, MC_INTSTATUS) & mc->soc->intmask;
-> +	if (!status)
-> +		return IRQ_NONE;
-> +
-> +	for_each_set_bit(bit, &status, 32) {
-> +		const char *error = int_mc_errors[bit].msg ?: "unknown";
+>  #define MC_INT_DECERR_ROUTE_SANITY			BIT(20)
+>  #define MC_INT_WCAM_ERR					BIT(19)
+>  #define MC_INT_SCRUB_ECC_WR_ACK				BIT(18)
 
-int_mc_errors[bit] isn't what you need and .int_bit is unused, which
-suggests that all this code doesn't work and was untested. Please don't
-send untested patches.
+I don't see where these errors are handled in the code. Is documentation
+that explains these bits publicly available?
