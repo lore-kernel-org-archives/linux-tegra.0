@@ -2,53 +2,53 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AEB7C433F5
-	for <linux-tegra@archiver.kernel.org>; Wed, 12 Jan 2022 11:01:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65CB4C433EF
+	for <linux-tegra@archiver.kernel.org>; Wed, 12 Jan 2022 11:02:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238836AbiALLBb (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 12 Jan 2022 06:01:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56168 "EHLO
+        id S1352704AbiALLCP (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 12 Jan 2022 06:02:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56360 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239583AbiALLB2 (ORCPT
+        with ESMTP id S239745AbiALLCP (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 12 Jan 2022 06:01:28 -0500
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6B3CC06173F;
-        Wed, 12 Jan 2022 03:01:26 -0800 (PST)
-Received: by mail-lf1-x12e.google.com with SMTP id d3so6599047lfv.13;
-        Wed, 12 Jan 2022 03:01:26 -0800 (PST)
+        Wed, 12 Jan 2022 06:02:15 -0500
+Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89760C06173F;
+        Wed, 12 Jan 2022 03:02:14 -0800 (PST)
+Received: by mail-lf1-x12b.google.com with SMTP id e3so3969070lfc.9;
+        Wed, 12 Jan 2022 03:02:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=JDKpbVvncXZg+dhS5GwOnEl7CbpOlY80mhDgDjysBHQ=;
-        b=nzy3J6DQUoamzkSBls6Pv1aEhtT5GXx2J+BARKTcC0dHOymkoyUR+h82smpMD6URP2
-         qHCWRbYWyCVoUZqzyk5DfksiZcN+3XzRXoxWHChgj+EJUwtzRuwNAjhxWOd2TRypQyGQ
-         //Z//MBYWCeHCYjqE5J6YXjfU2Lidv6zyXdlBbr91Iz6fflNwhp9dhNeINSpggPejHSH
-         JKqyAi3N4px8P5pWxbB30wVV/Rsfwsnjk19YGotXNyScb6BxopNFts2G33TjWs+K0ng+
-         tfraakLmcn4wlHF+YN316DEr5l2mJ6TaJRB7KNh0Ai6Wygh1RW7nCLdr6k3mqEkeif18
-         d8Yw==
+        bh=09JJuYQHYFSNkDJz11ddv1sgJi4bBO6UP4Co8RuirbE=;
+        b=dBlGUI/+GJtOOdMTkK2Rk+J00wdWOU7MRoX7T6F6KrYadNEH+MjaHLN1LzmJ/eIpJL
+         z/FAFWKPI/PX7LN452hvOecPZU4qlKvqRH45NsdIPK/ShNLA+C5kXdzRYobLiy0x/ILZ
+         pQnQtIEp/R96tSA4+B3bgL2AesQIIJ4inLeQsdt05SJzZ9dUUw+LpJm7SEtXAzjFeETg
+         y6a3/AfNCUyhhfp1gC1VvlqUiI3ZheEcMIA7vapV6vYM4YTn49ewUo+yXQZUyOXqtM2t
+         M00XdGkNdi8W+CO6lN1cB2ycmBHBoEN8erGnoTz9lg51H6uY3qns6KlDukKSjQ2cj+Cy
+         eGVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=JDKpbVvncXZg+dhS5GwOnEl7CbpOlY80mhDgDjysBHQ=;
-        b=2kKJVCQLFS5EOVvkkzeYjj/h+LJDvv/tvMx2AEznRewWpK2xueG7UMtPo1R30zfu10
-         eGsex/4a5LisbJzWmuUZJRwvcKlPzUtwzvr/XQCRmJ7Q1rmaegABbZV4XdqQYr8fymVL
-         0yTq7YlbEAinysQiwfWFFHQ+lIJyncH+V1HeN4a7RXAl/m7IET1LYL7amWN9bwcJ9geV
-         k1d5nmF5hCqCpUeEJlRBOqV8nTDQG20Y1VOXuMKVBS0BYRuJn1pkJTyFRzhEXM5fdrCW
-         6pHtfv81uKV9gchpJDt4KGYjtEYIiN2NXF3X6IeZrPQu/TxTd7/rI3HBDxSu4lcUFMuC
-         kkSg==
-X-Gm-Message-State: AOAM532yjsXn9aj0l8+VzwSnB/VNQValgkMh0PxMTbUSvZ/IhR2R47OM
-        R8yKmccamfIcZsUdrl2aRTk=
-X-Google-Smtp-Source: ABdhPJxLXmyjrpw57NQ8We0Hd905K3dTHP1k+kD9HH5Clmmr0HXM5eP+lDgF48rYW/aMgYrZ4kTPTw==
-X-Received: by 2002:a05:6512:3c88:: with SMTP id h8mr6813345lfv.256.1641985285347;
-        Wed, 12 Jan 2022 03:01:25 -0800 (PST)
+        bh=09JJuYQHYFSNkDJz11ddv1sgJi4bBO6UP4Co8RuirbE=;
+        b=rBsaXQhKti4ILUM73qsjMArBViS0uv9shCoM7d3QlxXgpnMnJGIAnIBUxgEO5tvHv/
+         tS3eROJM/ovFGpHPgUgxi+v5/FXroIn1kwCPreYPoRiOPhPe8SgcbHtaH8G6Isv5vegf
+         1crULgjqvrIuON/U3t/1RP+Sp5s86+SwkASRV8/7lKihzbwjXimWpmWy3B660InHds/k
+         WKzBD9a0S90n+HpblYntV41CEafZ9yIMIxuP7tDbJQNrAGKcUldxM5XvzAHntVv3yVQV
+         cGRB200T0/djF9N7Czl6mBcP6WLm8TnsJMozgxQ0zF1cMiFh+WwVaWVfbERlg2muMRMQ
+         MlWQ==
+X-Gm-Message-State: AOAM531TkzYpxQ9MpOZCDkaAGsvHxEXFQpMvQK6dnCIj3fm/6k7vkzAM
+        ylvFOIaSqW18LIw5SYdJg7s=
+X-Google-Smtp-Source: ABdhPJyt0wH+jA39S0j3mvW1vYjy6yhjAhFU3tVcMWRdF9T9fxMosfgsDonBUiJxwLBCD3c1JBOJFg==
+X-Received: by 2002:a05:651c:1681:: with SMTP id bd1mr5624583ljb.33.1641985332952;
+        Wed, 12 Jan 2022 03:02:12 -0800 (PST)
 Received: from [192.168.2.145] (94-29-62-108.dynamic.spd-mgts.ru. [94.29.62.108])
-        by smtp.googlemail.com with ESMTPSA id p9sm1601519lfg.287.2022.01.12.03.01.21
+        by smtp.googlemail.com with ESMTPSA id o19sm1528364ljp.58.2022.01.12.03.02.12
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Jan 2022 03:01:24 -0800 (PST)
+        Wed, 12 Jan 2022 03:02:12 -0800 (PST)
 Subject: Re: [Patch V1 3/4] memory: tegra: add mc-err support for T186
 To:     Ashish Mhetre <amhetre@nvidia.com>, thierry.reding@gmail.com,
         jonathanh@nvidia.com, linux-tegra@vger.kernel.org,
@@ -57,8 +57,8 @@ Cc:     Snikam@nvidia.com, vdumpa@nvidia.com
 References: <1641926750-27544-1-git-send-email-amhetre@nvidia.com>
  <1641926750-27544-4-git-send-email-amhetre@nvidia.com>
 From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <f9ca5794-55ac-803f-8606-f0b48e826eb7@gmail.com>
-Date:   Wed, 12 Jan 2022 14:01:21 +0300
+Message-ID: <e10bffa7-3b6d-fb21-583a-1a3f907ff6b9@gmail.com>
+Date:   Wed, 12 Jan 2022 14:02:11 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.14.0
 MIME-Version: 1.0
@@ -71,61 +71,6 @@ List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 11.01.2022 21:45, Ashish Mhetre пишет:
-> Add all mc-errors supported by T186.
-> Implement mc interrupt handling routine for T186.
-> 
-> Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
-> ---
->  drivers/memory/tegra/mc.h       |  17 +++++++
->  drivers/memory/tegra/tegra186.c | 100 ++++++++++++++++++++++++++++++++++++++++
->  2 files changed, 117 insertions(+)
-> 
-> diff --git a/drivers/memory/tegra/mc.h b/drivers/memory/tegra/mc.h
-> index 2d4f495..7817492 100644
-> --- a/drivers/memory/tegra/mc.h
-> +++ b/drivers/memory/tegra/mc.h
-> @@ -44,6 +44,15 @@
->  #define MC_TIMING_CONTROL_DBG				0xf8
->  #define MC_TIMING_CONTROL				0xfc
->  
-
-this empty line is unnecessary
-
-> +#define MC_ERR_VPR_STATUS				0x654
-> +#define MC_ERR_VPR_ADR					0x658
-> +#define MC_ERR_SEC_STATUS				0x67c
-> +#define MC_ERR_SEC_ADR					0x680
-> +#define MC_ERR_MTS_STATUS				0x9b0
-> +#define MC_ERR_MTS_ADR					0x9b4
-> +#define MC_ERR_GENERALIZED_CARVEOUT_STATUS		0xc00
-> +#define MC_ERR_GENERALIZED_CARVEOUT_ADR			0xc04
-> +
->  #define MC_INT_DECERR_ROUTE_SANITY			BIT(20)
->  #define MC_INT_WCAM_ERR					BIT(19)
->  #define MC_INT_SCRUB_ECC_WR_ACK				BIT(18)
-> @@ -159,6 +168,14 @@ extern const struct tegra_mc_ops tegra186_mc_ops;
->  extern const char * const tegra_mc_status_names[32];
->  extern const char * const tegra_mc_error_names[8];
->  
-> +struct tegra_mc_error {
-> +	u32 int_bit;
-> +	const char *msg;
-> +	u32 status_reg;
-> +	u32 addr_reg;
-> +	u32 addr_reg_hi;
-> +};
-> +
->  /*
->   * These IDs are for internal use of Tegra ICC drivers. The ID numbers are
->   * chosen such that they don't conflict with the device-tree ICC node IDs.
-> diff --git a/drivers/memory/tegra/tegra186.c b/drivers/memory/tegra/tegra186.c
-> index 6766cc4..4f3ae71 100644
-> --- a/drivers/memory/tegra/tegra186.c
-> +++ b/drivers/memory/tegra/tegra186.c
-> @@ -146,8 +146,107 @@ static void tegra186_mc_clear_interrupt(struct tegra_mc *mc)
->  	mc_writel(mc, MC_INTSTATUS_CLEAR, MC_INTSTATUS);
->  }
->  
 > +static const struct tegra_mc_error int_mc_errors[] = {
 > +	{
 > +		.int_bit = MC_INT_DECERR_EMEM,
@@ -145,27 +90,39 @@ this empty line is unnecessary
 > +		.status_reg = MC_ERR_VPR_STATUS,
 > +		.addr_reg = MC_ERR_VPR_ADR,
 > +	},
+> +	{
+> +		.int_bit = MC_INT_SECERR_SEC,
+> +		.msg = "MC request violated SEC carveout requirements",
+> +		.status_reg = MC_ERR_SEC_STATUS,
+> +		.addr_reg = MC_ERR_SEC_ADR,
+> +	},
+> +	{
+> +		.int_bit = MC_INT_DECERR_MTS,
+> +		.msg = "MTS carveout access violation",
+> +		.status_reg = MC_ERR_MTS_STATUS,
+> +		.addr_reg = MC_ERR_MTS_ADR,
+> +	},
+> +	{
+> +		.int_bit = MC_INT_DECERR_GENERALIZED_CARVEOUT,
+> +		.msg = "GSC access violation",
+> +		.status_reg = MC_ERR_GENERALIZED_CARVEOUT_STATUS,
+> +		.addr_reg = MC_ERR_GENERALIZED_CARVEOUT_ADR,
+> +	},
+> +};
+> +
+> +static irqreturn_t tegra186_mc_handle_irq(int irq, void *data)
+> +{
+> +	struct tegra_mc *mc = data;
+> +	unsigned long status;
+> +	unsigned int bit;
+> +
+> +	status = mc_readl(mc, MC_INTSTATUS) & mc->soc->intmask;
+> +	if (!status)
+> +		return IRQ_NONE;
+> +
+> +	for_each_set_bit(bit, &status, 32) {
+> +		const char *error = int_mc_errors[bit].msg ?: "unknown";
 
-I see that these VPR registers present on all SoCs starting with T124.
-It doesn't look like you need the separate IRQ handlers at all, instead
-please extend the common T30 handler. For example, you may add a
-switch-case statements to handle those T124+ specific bits differently.
-
-static irqreturn_t tegra30_mc_handle_irq(int irq, void *data)
-{
-...
-	switch (bit) {
-	case MC_INT_DECERR_VPR:
-		status_reg = MC_ERR_VPR_STATUS;
-		addr_reg   = MC_ERR_VPR_ADR;
-		break;
-	...
-	default:
-		status_reg = MC_ERR_STATUS;
-		addr_reg   = MC_ERR_ADR;
-	}
-
-	value = mc_readl(mc, status_reg);
-	...
-	
-	value = mc_readl(mc, addr_reg);
+int_mc_errors[bit] isn't what you need and .int_bit is unused, which
+suggests that all this code doesn't work and was untested. Please don't
+send untested patches.
