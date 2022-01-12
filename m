@@ -2,99 +2,91 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E96F5C433EF
-	for <linux-tegra@archiver.kernel.org>; Wed, 12 Jan 2022 08:13:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3303FC433F5
+	for <linux-tegra@archiver.kernel.org>; Wed, 12 Jan 2022 08:48:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351444AbiALINN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 12 Jan 2022 03:13:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45906 "EHLO
+        id S1351749AbiALIsg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 12 Jan 2022 03:48:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54138 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237993AbiALINK (ORCPT
+        with ESMTP id S1351742AbiALIsf (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 12 Jan 2022 03:13:10 -0500
-Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 655C4C06173F;
-        Wed, 12 Jan 2022 00:13:10 -0800 (PST)
-Received: by mail-lf1-x133.google.com with SMTP id e3so2541981lfc.9;
-        Wed, 12 Jan 2022 00:13:10 -0800 (PST)
+        Wed, 12 Jan 2022 03:48:35 -0500
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 890DDC06173F
+        for <linux-tegra@vger.kernel.org>; Wed, 12 Jan 2022 00:48:35 -0800 (PST)
+Received: by mail-wr1-x435.google.com with SMTP id a5so2833905wrh.5
+        for <linux-tegra@vger.kernel.org>; Wed, 12 Jan 2022 00:48:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Ui0cHnkj5I0HD2fe+MzyyLDDYFQT+ppgbg9aYqgOGaQ=;
-        b=PK01xfrMmh5kecd+m8mNSyqTT/hhuRPndmcj70so55KnrdpEXwL/6KoItu7rAZL/XF
-         RaSCIa8OkGbCcjUUaLcWfiDXQ+mzw6SxdTQJSmYPC4H/spPzuwMh+cIiy4B9lFaLIap9
-         ASo4kJFV/AsFC+rBGLtIDCClJUKOUQsxcKueaQ224s1SCZXGqx6dk8rNWROY9JHxHQYz
-         W2DXn5kho3mqn2iXb3761ZaurglP9kmoYYLwaAMirF7FE2Ax62r+nznsvR1AMy8WVJvr
-         B7rcnUEkYcqNEGSpG3owyBKnH2waME/mbVJ3hk/uHFVdurpkpDSZbCadDDR1mCOlu47m
-         IOIQ==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=RSPnyrRswexikOyiWIHNeiaTOVsRKfEItQusWN5Uic8=;
+        b=cDMMDbCjvMkpAxzjaDysSyRi3J0mJWxBU8rnfU5xn/dVUh+6WSPICfuVzEJcG9nlky
+         38tpSLHGG8kubFVdh4SSaeFYgs+IyNi4feq+gZOzz+xvG+iLaQNG5RzzxsHRlZ1spDwJ
+         yz2JNiaHdGpeM8jjTlrVLWc49gsm3eB1AoiUME2T4e6POFKRwqFvWJ+t3YHglt9uOCr4
+         SEdWvqG7iF/9Ond5Ktxex9VCillYxvWcsxwg5IMVA98l+qCeJTM8mZXVoUobqaixIrbn
+         uYWbT6FZ1OiE4Ohekt5/VER0hQLXj7OZ0fHNeQIRfs3ySwxEZQmRv9akjCae4Vb+XWaF
+         stbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=Ui0cHnkj5I0HD2fe+MzyyLDDYFQT+ppgbg9aYqgOGaQ=;
-        b=JAHPE8MKY3Xj1rSWOXkV3sq0kf0P9wMWEHo9q9mXZKo47PqjVXN4HWeHdlmLji8wTG
-         OU6vHdkprg+OMDxdKC7u6gsm86eshyBBe59VnCBTfGbZ/sNYCqUf8Ll50zorfsnk+KZO
-         iU/rTNQrLZVZPh6uKbxi/4uHth6Q60dp5ofm7JlSWbuaBv3cwhiR+GmV/FW/UFh4CZCk
-         B2sSx66wE7KVpLqwU/TYKXtno3R87ozJFVUSi/QJxKpAK9CDsrsEDI+3TbTz2uR7k0J0
-         uJwFNCQ1jxIC2o7CmyHH2FQuJnp97QffWJnfFAdUa/x2adxV6aFQ+XcavKwa7j83s4ZK
-         r8ig==
-X-Gm-Message-State: AOAM530ejzck5rnUKoiDKsavurbaLgzomxQAPcgqWZM1+GjaURvn8dLW
-        oqfyRwAF1TVunhD9721iQ48=
-X-Google-Smtp-Source: ABdhPJyj7lXG9CASnnt14HBgHRh1fruIOO6aEFTwylkhyvTmZwgsEJSPtZR4Qjp3V4kzM4QEnbP/Cw==
-X-Received: by 2002:a2e:9581:: with SMTP id w1mr5744510ljh.36.1641975188762;
-        Wed, 12 Jan 2022 00:13:08 -0800 (PST)
-Received: from [192.168.2.145] (94-29-62-108.dynamic.spd-mgts.ru. [94.29.62.108])
-        by smtp.googlemail.com with ESMTPSA id a6sm1519757ljm.136.2022.01.12.00.13.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Jan 2022 00:13:08 -0800 (PST)
-Subject: Re: [Patch V1 1/4] memory: tegra: Add support for mc interrupts
-To:     Ashish Mhetre <amhetre@nvidia.com>, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, linux-tegra@vger.kernel.org,
-        krzysztof.kozlowski@canonical.com, linux-kernel@vger.kernel.org
-Cc:     Snikam@nvidia.com, vdumpa@nvidia.com
-References: <1641926750-27544-1-git-send-email-amhetre@nvidia.com>
- <1641926750-27544-2-git-send-email-amhetre@nvidia.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <1c2dacc4-566a-929c-2100-37b6f9bece98@gmail.com>
-Date:   Wed, 12 Jan 2022 11:13:07 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+        bh=RSPnyrRswexikOyiWIHNeiaTOVsRKfEItQusWN5Uic8=;
+        b=xJY5kCjqZkc1wxcHwhCtlwMl9NuXGs0MjVBCWLt1S4yfN3axHhlzSSgbqkOJ5cdiWO
+         hYM7zkEEXNCaIUv3c+kx7PnvCT92PuSY+MJb1vho9ABrFHV2GFyklZ6xkr8Q4+XWO8x0
+         pt0h4k+jxatgEaglJdeUcdCB4/cEqBVYs/rSQoajde2N+rop/RqVFPYm58EWB/+NxvZj
+         ronaDKBjII2Tj18HjRAGzJymf7ed4VOO9+5RTtDoNabtjG4DvEQQZ9uSuAPeVsTpgKHL
+         AIQyP6fuYUAeW4cb+vFHWED0X6JalVodx3fP4yqiSomO4NMUbDs1aoVdDFcPVJzO+wId
+         NFiQ==
+X-Gm-Message-State: AOAM531Fh5MbzQw2bORfZg1sYATRPeOFWdsL6fom+zxW7oXwAwwa3WaT
+        sVEy/k7UseigGdpAac1Tz5s=
+X-Google-Smtp-Source: ABdhPJxA/TepMw2dd111vuDL70ElA1lcEhts9RoXOBo6RLQFkDyLXMy0etqdaiTSWp8S9Kj4PmqCPg==
+X-Received: by 2002:a5d:5342:: with SMTP id t2mr6438232wrv.215.1641977314138;
+        Wed, 12 Jan 2022 00:48:34 -0800 (PST)
+Received: from localhost ([193.209.96.43])
+        by smtp.gmail.com with ESMTPSA id p62sm3686207wmp.10.2022.01.12.00.48.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Jan 2022 00:48:33 -0800 (PST)
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Maniraj D <md@nvidia.com>, dri-devel@lists.freedesktop.org,
+        linux-tegra@vger.kernel.org
+Subject: [PATCH 1/2] drm/tegra: Fix planar formats on Tegra186 and later
+Date:   Wed, 12 Jan 2022 09:48:27 +0100
+Message-Id: <20220112084828.230780-1-thierry.reding@gmail.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-In-Reply-To: <1641926750-27544-2-git-send-email-amhetre@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-11.01.2022 21:45, Ashish Mhetre пишет:
->  
-> @@ -765,16 +768,21 @@ static int tegra_mc_probe(struct platform_device *pdev)
->  			return err;
->  	}
->  
-> -	if (mc->soc->ops && mc->soc->ops->handle_irq) {
-> +	if (mc->soc->interrupt_ops && mc->soc->interrupt_ops->handle_irq) {
->  		mc->irq = platform_get_irq(pdev, 0);
->  		if (mc->irq < 0)
->  			return mc->irq;
->  
->  		WARN(!mc->soc->client_id_mask, "missing client ID mask for this SoC\n");
->  
-> +		/* clear any mc-errs that occurred before. */
+From: Thierry Reding <treding@nvidia.com>
 
-s/mc-errs/Memory Controller errors/
+Use the correct pitch when programming the DC_WIN_PLANAR_STORAGE_UV
+register's PITCH_U field to ensure the correct value is used in all
+cases. This isn't currently causing any problems because the pitch
+for both U and V planes is always the same.
 
-> +		if (mc->soc->interrupt_ops->clear_interrupt)
-> +			mc->soc->interrupt_ops->clear_interrupt(mc);
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ drivers/gpu/drm/tegra/hub.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-There is no explanation of this change neither in the code, nor in the
-commit message. Please always provide detailed descriptions for a
-non-trivial changes.
+diff --git a/drivers/gpu/drm/tegra/hub.c b/drivers/gpu/drm/tegra/hub.c
+index b910155f80c4..fc9813e6b2c9 100644
+--- a/drivers/gpu/drm/tegra/hub.c
++++ b/drivers/gpu/drm/tegra/hub.c
+@@ -673,7 +673,7 @@ static void tegra_shared_plane_atomic_update(struct drm_plane *plane,
+ 		tegra_plane_writel(p, upper_32_bits(base), DC_WINBUF_START_ADDR_HI_V);
+ 		tegra_plane_writel(p, lower_32_bits(base), DC_WINBUF_START_ADDR_V);
+ 
+-		value = PITCH_U(fb->pitches[2]) | PITCH_V(fb->pitches[2]);
++		value = PITCH_U(fb->pitches[1]) | PITCH_V(fb->pitches[2]);
+ 		tegra_plane_writel(p, value, DC_WIN_PLANAR_STORAGE_UV);
+ 	} else {
+ 		tegra_plane_writel(p, 0, DC_WINBUF_START_ADDR_U);
+-- 
+2.34.1
 
-Interrupts aren't cleared intentionally by the driver, otherwise you'll
-never know about early-boot memory faults which happened before the
-probe. Hence this change is incorrect.
