@@ -2,119 +2,118 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 492F7C433EF
-	for <linux-tegra@archiver.kernel.org>; Thu, 13 Jan 2022 12:08:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54114C433F5
+	for <linux-tegra@archiver.kernel.org>; Thu, 13 Jan 2022 13:30:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234382AbiAMMIV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 13 Jan 2022 07:08:21 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:60854 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230310AbiAMMIU (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 13 Jan 2022 07:08:20 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1642075699;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=TCNkeFEK71+LV6A7k+ZbeQqGlDkwam6mXnXbXpILn2s=;
-        b=G9wI3n6jtobWgpGeGocqaC7uHI1qTt9+3vI+Tu1hIUmMQBjVTp/+/HizGjSNkYcxej+TUT
-        YT+nnMP8DcxiayBe3ylWKFS06aKG8xR9dQ3WZ6PkeeIkGynmz/TqavJQsqHgrgINzz03xe
-        3ygosZ2acPkUPYon9TZSDuQ0yPi7H4s=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-57-jwoGwns4MtiJQq0oalNNIQ-1; Thu, 13 Jan 2022 07:08:14 -0500
-X-MC-Unique: jwoGwns4MtiJQq0oalNNIQ-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2564F10247B4;
-        Thu, 13 Jan 2022 12:08:13 +0000 (UTC)
-Received: from work (unknown [10.40.194.158])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id D203D7A8C7;
-        Thu, 13 Jan 2022 12:08:11 +0000 (UTC)
-Date:   Thu, 13 Jan 2022 13:08:07 +0100
-From:   Lukas Czerner <lczerner@redhat.com>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     linux-ext4@vger.kernel.org, tytso@mit.edu,
-        linux-fsdevel@vger.kernel.org,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH v3 12/13] ext4: switch to the new mount api
-Message-ID: <20220113120807.xlyg4wmbbhajuftu@work>
-References: <20211021114508.21407-1-lczerner@redhat.com>
- <20211021114508.21407-13-lczerner@redhat.com>
- <286d36c9-e9ab-b896-e23c-2a95c6385817@nvidia.com>
+        id S235162AbiAMNao (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 13 Jan 2022 08:30:44 -0500
+Received: from mail-co1nam11on2044.outbound.protection.outlook.com ([40.107.220.44]:27233
+        "EHLO NAM11-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S232034AbiAMNan (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 13 Jan 2022 08:30:43 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=RLY79KATQKh1oayG7+SHdH/GsWcBb9jy9eExlEt46qH33NYuIYuKQBM7IDu79DtWTvm03r661lvSTkrVQfW1q/FE8/SHcZ7HADAYfTgneVjF2YJREObYSwrdIRb4r+V0JD8cMVso7fzDprbbKGygmJTu1+DKgOHKkFKkrDKOaOlJbnyDghAhGwjRbOa2aRUdBl4/LFI6ah8s0zZs5MP3EUIzi3CnTvWh6XdGofqG3vaLjK4aIottrpu1FPR1lAp2ZSkOf7sQCNFfL1S8r7xSBQg5vV2aP2GhbOWr1EMYAPUd0GDlDVuBI3v6aeO6m5jOHmiSFIt5ogDlVJD4qtbE8Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=fBd3iv8X69U+lFF2QFBUHQllG9OZz/fQUw8w5+UIbWQ=;
+ b=n9YVAysfD/QaSQ/+ldEogrV9t3bTDaYpxECHX4pjW4/9x226jLeLHhMWxqxYvprih3v+fpHa0eORJtfhNWHx4AOwojrrL1X0vqmRV+TL5mupiR+0jw1eu7m0+OXh9/FQE3nuon0L0bkhJZSa2q6QOoU9jmnazvb6srnwapocHYVAQmP6WYiu2SBAtGG6M1vPJmeQ41PGAhYjFLbWb6vab7OCiXGvHiQYbWt+84Y+xjQE3FemxnaekQzs3D8ahmpm5x5RRqqChIy44YWoSpHCoWHemR2vUtm/pjzpHcu9Ehsal+z6Lf0XlEpeOAKDH0oXlNtDvbTAEfOSrgIDlmR58g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 12.22.5.236) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com; dmarc=pass
+ (p=reject sp=reject pct=100) action=none header.from=nvidia.com; dkim=none
+ (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fBd3iv8X69U+lFF2QFBUHQllG9OZz/fQUw8w5+UIbWQ=;
+ b=VHEq49V5pjmch1WGdEZF1G/5a22rmG9sqqsTnJnJl22GmBDs5BeKfnnvHII+zJuzBnme4G7ESQl43INg5Zo/Tmyn0+AzNeQjXlWdLrhhZTnynBMpb9hh2fl7BmRLXSM1jlrUZJ0uuGfhNCBhGlgVHBEVd1f6eSlxfDej9mp/N0gn60oNAvKpevtrJQ//vkuKFCxYnpO9jMO6ofw+JK3KSSdZYSJ6vHyYRquycDQGxoAn+q4qbSWpeqfwbuVuBnw7zq5Uhm3AncNOcoQFcVn9uwA0oFu2PQtMTiXjlnsM+OkbsJ4K7Yryy6zMgnJlAXoi7cEMi+5SZkEWw9+lfrnhkA==
+Received: from BN9PR03CA0295.namprd03.prod.outlook.com (2603:10b6:408:f5::30)
+ by BY5PR12MB5512.namprd12.prod.outlook.com (2603:10b6:a03:1df::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4888.10; Thu, 13 Jan
+ 2022 13:30:41 +0000
+Received: from BN8NAM11FT013.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:408:f5:cafe::cf) by BN9PR03CA0295.outlook.office365.com
+ (2603:10b6:408:f5::30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4888.9 via Frontend
+ Transport; Thu, 13 Jan 2022 13:30:41 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.236)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 12.22.5.236 as permitted sender) receiver=protection.outlook.com;
+ client-ip=12.22.5.236; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (12.22.5.236) by
+ BN8NAM11FT013.mail.protection.outlook.com (10.13.176.182) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.4888.9 via Frontend Transport; Thu, 13 Jan 2022 13:30:41 +0000
+Received: from HQMAIL111.nvidia.com (172.20.187.18) by DRHQMAIL109.nvidia.com
+ (10.27.9.19) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Thu, 13 Jan
+ 2022 13:30:40 +0000
+Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL111.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Thu, 13 Jan
+ 2022 13:30:40 +0000
+Received: from kyarlagadda-linux.nvidia.com (10.127.8.10) by mail.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server id 15.0.1497.18 via Frontend
+ Transport; Thu, 13 Jan 2022 13:30:37 +0000
+From:   Akhil R <akhilrajeev@nvidia.com>
+To:     <robh+dt@kernel.org>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <mperttunen@nvidia.com>,
+        <ldewangan@nvidia.com>, <digetx@gmail.com>,
+        <linux-i2c@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     <akhilrajeev@nvidia.com>
+Subject: [PATCH 0/6] Add I2C and PWM support for T234
+Date:   Thu, 13 Jan 2022 19:00:17 +0530
+Message-ID: <1642080623-15980-1-git-send-email-akhilrajeev@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+X-NVConfidentiality: public
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <286d36c9-e9ab-b896-e23c-2a95c6385817@nvidia.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 2a8d2b21-3f33-40db-41e9-08d9d698e51a
+X-MS-TrafficTypeDiagnostic: BY5PR12MB5512:EE_
+X-Microsoft-Antispam-PRVS: <BY5PR12MB5512C7AD3C4E781BFF0CA946C0539@BY5PR12MB5512.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:3968;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: CDU3VY3i2mbsK++YzUhmuC8fapnrphX+Dt1K+L8/vTFo6AsSY1w7JIyXRo88THsGPLIQpMyhOKZABe2laraAOQOcWpAqnkiVDlplZVZnA14NK40P9sIB6N9+Bk/Wz+5TCdY3Ntz+1ujJxBXeKlwpeLOTji1AUdaT7m18WHQ87ULNHWjTm0PSHM2HuJTg+dxqFbk2J7BIthq/09guMA89K2u+RKgqGpJoihvfHBEh7fdVsWvjdyCBvg6SUHmk/KU+9YARMPqlDKlW0p9JoYJz79Y+3iPsibCNS4OZDXoUoISq7tJnGqe+mOyd+T/qGll6+nrb+jS/gWhEpKYcw45h5FqJEMKd3V7Q7WOBoePhdY/HstScsZ8L+wkkisrXKUMkNVcaSlH8S2SLRd+4skiS75fP+MPRYXFJ4oIruvBZH72Igp4Qcq+4/TYrMva2wflJvbrUzYf2kKPFm+xbG48xEWbBlRJjfolge9FHb9Y85JACBdc4At1ZaDH1WtIgOuRJmYxIEOlbPD2axeA3voENM+a0wGVpu1XugJZ0kpoFMA9S7ZUoxcJOaA8rXCDNoBK1Dj1uBjrMRalWp88rhsdzS0LPKbdKQi7OPfZeQbEZ4PIggX7AwBmmojBknIeRflKjswT7kNsl6mXXRWwjq2ZWuo123QPm1yGOQex4E+U1I8ZP/3INgFdYbTQOI28SzT88DTEZ6ZQXgcXQ9a9SqFTKPKrZOd35b59zABxufIjQsG3GVF2AbP3c26I2MuR4HmrlQ2vlkTUXH8MK42bmTq9o1RJtJOk3kaqb3DK3sMXwpPfGAFv2VIQ5XrvCzG4TH0bJ
+X-Forefront-Antispam-Report: CIP:12.22.5.236;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(4636009)(40470700002)(46966006)(36840700001)(508600001)(70586007)(5660300002)(8936002)(6666004)(8676002)(70206006)(2906002)(4744005)(2616005)(4326008)(356005)(426003)(316002)(186003)(7696005)(336012)(26005)(40460700001)(110136005)(83380400001)(36860700001)(107886003)(47076005)(82310400004)(81166007)(36756003)(921005)(86362001)(36900700001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Jan 2022 13:30:41.4993
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2a8d2b21-3f33-40db-41e9-08d9d698e51a
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.236];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT013.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB5512
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, Jan 13, 2022 at 11:29:24AM +0000, Jon Hunter wrote:
-> Hi Lukas,
-> 
-> On 21/10/2021 12:45, Lukas Czerner wrote:
-> > Add the necessary functions for the fs_context_operations. Convert and
-> > rename ext4_remount() and ext4_fill_super() to ext4_get_tree() and
-> > ext4_reconfigure() respectively and switch the ext4 to use the new api.
-> > 
-> > One user facing change is the fact that we no longer have access to the
-> > entire string of mount options provided by mount(2) since the mount api
-> > does not store it anywhere. As a result we can't print the options to
-> > the log as we did in the past after the successful mount.
-> > 
-> > Signed-off-by: Lukas Czerner <lczerner@redhat.com>
-> 
-> 
-> I have noticed the following error on -next on various ARM64 platforms that
-> we have ...
-> 
->  ERR KERN /dev/mmcblk1: Can't open blockdev
-> 
-> I have bisected this, to see where this was introduced and bisect is
-> pointing to this commit. I have not looked any further so far, but wanted to
-> see if you had any ideas/suggestions?
+The patchset contains driver and devicetree changes to support I2C and
+PWM for Tegra234
 
-Hi,
+Akhil R (6):
+  i2c: tegra: Add support for Tegra234 I2C
+  dt-bindings: i2c: tegra: Add Tegra234 details
+  dt-bindings: Add headers for Tegra234 I2C
+  arm64: tegra: Add Tegra234 I2C devicetree nodes
+  dt-bindings: Add headers for Tegra234 PWM
+  arm64: tegra: Add Tegra234 PWM devicetree nodes
 
-this error does not come from the ext4, but probably rather from vfs. More
-specifically from get_tree_bdev()
+ .../bindings/i2c/nvidia,tegra20-i2c.yaml           |   5 +
+ arch/arm64/boot/dts/nvidia/tegra234.dtsi           | 133 +++++++++++++++++++++
+ drivers/i2c/busses/i2c-tegra.c                     |  25 ++++
+ include/dt-bindings/clock/tegra234-clock.h         |  36 ++++++
+ include/dt-bindings/reset/tegra234-reset.h         |  16 +++
+ 5 files changed, 215 insertions(+)
 
-        bdev = blkdev_get_by_path(fc->source, mode, fc->fs_type);
-        if (IS_ERR(bdev)) {
-                errorf(fc, "%s: Can't open blockdev", fc->source);
-                return PTR_ERR(bdev);
-        }
-
-I have no idea why this fails in your case. Do you know what kind of
-error it fails with? Any oher error or warning messages preceding the one you
-point out in the logs?
-
-I assume that this happens on mount and the device that you're trying to
-mount contains ext4 file system? Ext4 is not the only file system
-utilizing the new mount api, can you try the same with xfs on the device?
-
-Does this happen only on some specific devices? I see that the error
-is mentioning /dev/mmcblk1. Is it the case that it only affects MMC ?
-Does this happen when you try to mount a different type of block device
-with ext4 on it?
-
-Any specific mount options you're using? Is it rw mount? If so, any
-chance the device is read only?
-
-Do you have any way of reliably reproducing this?
-
-Thanks!
--Lukas
-> 
-> Cheers
-> Jon
-> 
-> -- 
-> nvpublic
-> 
+-- 
+2.7.4
 
