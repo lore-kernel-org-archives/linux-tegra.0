@@ -2,136 +2,213 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C94A4C433EF
-	for <linux-tegra@archiver.kernel.org>; Fri, 14 Jan 2022 10:02:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36569C433F5
+	for <linux-tegra@archiver.kernel.org>; Fri, 14 Jan 2022 11:35:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237569AbiANKC1 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 14 Jan 2022 05:02:27 -0500
-Received: from mail-mw2nam10on2050.outbound.protection.outlook.com ([40.107.94.50]:10101
-        "EHLO NAM10-MW2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S230329AbiANKCZ (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 14 Jan 2022 05:02:25 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Bpg62Bu5e3JNObL+FoT1oWLdwijtm/tmLt6nbYnqXm5y7uMrZHefb/WQ8edixpUzifvPSHcQN0E/FZ3OI6o5ScWwSgpHuxodWLvWGwo0flv05hlBkN7vZLwrsLfLzYvvFyoIl8QC+2Vfau2IKhBifrySTalclz3BBFFZodA4bXqKI1mB5qdUiAd74ceR8Ik2S00jSdtAdera11zf2kxtvvgvClaZqGB3uTAED9xszOV0wHXRPiwor6oWNo3gcnPKwc3zYSIcgzUrGShZBJUnoSw7EG2bhk9eFEBC4QUwWvdk8MvZdv5pA2M5pQHGbGJDfnUFtl2VXAMWqix1fKLiGA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=635GWRb8oEgugdj7wfSSTmegZKq0nQe9AneCKh/6UGE=;
- b=JlzKUBv/wuzEKBuqZ7EygRFb58onxnuRf23tcCKv6vjPt0C2tcbWj/4aLeL3nHkT/M27opQcN9wkcvV/PkNSIKuOkXvOQ4hOjPwEiYSHL7I43jP5Z/wBrRCm3vegzwNVlV7tzzpOvnbWCAUzxLTJG1BBWiiN5KuH1+Wr7cINxfGWWPdZ1OQApgj0ltmRIEitZGPpJSINnwnLbmrIH1Sbwr/+BiL8UqaFqKNQNM6gBMSIdDDqYHaghlO+K6OiZD52kqN5CFbqCAXhvELZcLZG+JsUlmXu6m4ldjG+BKx3r/Apk2Pcn38+I0baGdVRiW1bvpX7usIx2+t4Dlz0vThtWA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 12.22.5.234) smtp.rcpttodomain=linux.intel.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=635GWRb8oEgugdj7wfSSTmegZKq0nQe9AneCKh/6UGE=;
- b=K4VLJwTQutn5QSbXcYcaw+9T3R56QcgGH+cw4aeNo2VoOK/wJNJ4wNWmDx8EZqXT8nRwmdKCauBzaZeLhtnsspJnLGTBqZ6EZkdsT+wokBtCLIlgIQ1TnluD0bwfcfWQLMNZm9nbdGjqKLZmFzNMw5yA1SzK6X0zI2g9Galj0+IQHBTjAUuP3qkzH8huJ5nX+ziWtN0MINOlGl1XVDOPAhHQOqxzHvd1ErjZAWPvp/ffW3LRjTUIvQGQ/+pdumxvTiQKp1JhGXo4AR6SUsp08cvfQzltH8CX7O+ZqUpW9QBIJovJOauBYCiXmGTnw3z0DYtaOwPRcqa+DNVAg84w3g==
-Received: from DM5PR04CA0040.namprd04.prod.outlook.com (2603:10b6:3:12b::26)
- by DM5PR12MB1594.namprd12.prod.outlook.com (2603:10b6:4:e::18) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.4888.11; Fri, 14 Jan 2022 10:02:23 +0000
-Received: from DM6NAM11FT014.eop-nam11.prod.protection.outlook.com
- (2603:10b6:3:12b:cafe::bb) by DM5PR04CA0040.outlook.office365.com
- (2603:10b6:3:12b::26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4888.9 via Frontend
- Transport; Fri, 14 Jan 2022 10:02:23 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.234)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 12.22.5.234 as permitted sender) receiver=protection.outlook.com;
- client-ip=12.22.5.234; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (12.22.5.234) by
- DM6NAM11FT014.mail.protection.outlook.com (10.13.173.132) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.4888.9 via Frontend Transport; Fri, 14 Jan 2022 10:02:23 +0000
-Received: from HQMAIL111.nvidia.com (172.20.187.18) by DRHQMAIL101.nvidia.com
- (10.27.9.10) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Fri, 14 Jan
- 2022 10:02:22 +0000
-Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Fri, 14 Jan
- 2022 10:02:22 +0000
-Received: from moonraker.nvidia.com (10.127.8.11) by mail.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server id 15.0.1497.18 via Frontend
- Transport; Fri, 14 Jan 2022 10:02:20 +0000
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Stephan Gerhold <stephan@gerhold.net>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-CC:     <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH] usb: common: ulpi: Fix crash in ulpi_match()
-Date:   Fri, 14 Jan 2022 10:02:17 +0000
-Message-ID: <20220114100217.59541-1-jonathanh@nvidia.com>
-X-Mailer: git-send-email 2.25.1
+        id S233899AbiANLfS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 14 Jan 2022 06:35:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38748 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233085AbiANLfS (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Fri, 14 Jan 2022 06:35:18 -0500
+Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E27B7C061574
+        for <linux-tegra@vger.kernel.org>; Fri, 14 Jan 2022 03:35:17 -0800 (PST)
+Received: by mail-lf1-x129.google.com with SMTP id o15so29226195lfo.11
+        for <linux-tegra@vger.kernel.org>; Fri, 14 Jan 2022 03:35:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=M+VBIwYRH7lkP4vx+jUC18op58Ydo4ny7N/YYs9+5uw=;
+        b=BVQ2oc5T37F7uodj0Et8f2w04ctg6Nv4GojRWvMIgXyc0x2d+FbjJbPYZVMO2Rzdt0
+         sIB/Oh+jpveZIWGbvqUlW9il3f6MrafUxs0b1mAJbhuIl4dl/UxwWo+TXAVlzSAMI5ii
+         8Bg00U9m/oJiLNymXoSbfhRz2eAWMUnI8lLNvl4YkqIywXpF8k0/TpzaZ0Z8SyXiYm5J
+         PqdOM/Nty/FUwRhJUL7UCkZBBbvwDjOBK3siZwbJpYjJGgjKcbm/tn+S1CtVmfF1STgC
+         dcfC3mN7LxJUCaTeDZjerUMm8q1edqNjNk1LsLKK8b+DfkOSn6J0NiSKmS0komb7Tzer
+         VysA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=M+VBIwYRH7lkP4vx+jUC18op58Ydo4ny7N/YYs9+5uw=;
+        b=ZLoSV2LTLGPHhIT3+w6tNgUZyj0yIyvLeX4KlPAL/2DMmCXK9oTDK0G8QMuYm4VtaZ
+         e1NM155A5ZkqFVI77GKLk0qDEdpLikvmslGpDlMPgOJeAwhtEsbzMAuwHWKmYgKSGs/3
+         k4XmG1u7dXcn6cNfkpI/flgiOA3SlFlJT/1J0n6BYgghygBnTi0xh9abVAUYbq53oWgN
+         a/fM5eAuc/6u9Y851Ev12OEG1VjqrBAZJXWEnpTnABW4D920+33EkaDX4qcCrn9423r2
+         8D/3Ixng1aYvG9ufUNuWkRz5fAMLM0ocILNvq69yCoDkRGHIc+E4mvCBuwJNRmczujPk
+         Ipmw==
+X-Gm-Message-State: AOAM533pckOpP5LywW84g1HewGtCryAjLw0IRmGJ73ubWviPqnbsWmNC
+        L1D2FAOj45BMUygHI/fek7LlTwsTtOc=
+X-Google-Smtp-Source: ABdhPJxjlsj9rRW7k3H63N28S1ebd0U0m1VYuPo71Yc9zWgss73Nmc4JCwd4YePsysrZ7jAi/oqooA==
+X-Received: by 2002:a05:651c:113:: with SMTP id a19mr6055490ljb.505.1642160115961;
+        Fri, 14 Jan 2022 03:35:15 -0800 (PST)
+Received: from [192.168.2.172] (46-138-227-157.dynamic.spd-mgts.ru. [46.138.227.157])
+        by smtp.googlemail.com with ESMTPSA id q10sm557951lfm.282.2022.01.14.03.35.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 14 Jan 2022 03:35:15 -0800 (PST)
+Subject: Re: [PATCH 0/2] drm/tegra: Fix panel support on Venice 2 and Nyan
+To:     Doug Anderson <dianders@chromium.org>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Thomas Graichen <thomas.graichen@gmail.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>
+References: <20211220104855.428290-1-thierry.reding@gmail.com>
+ <dd7a2f23-00d6-9160-1e09-1d4ea5b1f5e1@gmail.com> <YcCg/xktJ2uShFRf@orome>
+ <e27bd5e0-51d2-875b-aa41-f198230880ac@gmail.com> <YcGzO0A/iWzhFjvE@orome>
+ <c2d2e5a1-7f44-a190-2ab1-84125fbe9f65@gmail.com> <YcH+Fw9sCzCIzFIx@orome>
+ <1bac3b32-ad9b-4d10-c7fb-6aafd353cdd4@gmail.com> <YcIWlOoER16wUyQ/@orome>
+ <f8c50f22-ddeb-1805-bfcd-410aa46f869a@gmail.com> <YcMRuE0oVinpJPMq@orome>
+ <72465efa-47a9-7f2d-15b4-d71f06cff1ca@gmail.com>
+ <CAD=FV=XGMBw5NEDAY7BZ7+LqOjYPxjB_hLHYzT7mN6q4PbF56Q@mail.gmail.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <19082304-f785-3978-72f8-44eb13b1dc95@gmail.com>
+Date:   Fri, 14 Jan 2022 14:35:14 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 MIME-Version: 1.0
-X-NVConfidentiality: public
+In-Reply-To: <CAD=FV=XGMBw5NEDAY7BZ7+LqOjYPxjB_hLHYzT7mN6q4PbF56Q@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 1e011d1c-d56a-4423-fe6d-08d9d744f605
-X-MS-TrafficTypeDiagnostic: DM5PR12MB1594:EE_
-X-Microsoft-Antispam-PRVS: <DM5PR12MB1594F1501AAE07464978EED0D9549@DM5PR12MB1594.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:6108;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: szR0NZyeVOqZED8j3YE2UMy8lGzPeArmhowaOTn+2JeL1ttVBrgzjYHxKNHKmPJ2/9a7Kp/nJQhTPqUyrTCA8TDq2tLpbFFnpofwjLQ8uJ9EL2DmwwnJCEQmb3+TZz60KkcSZ+gYRWlKpYoo7l74C9/qva/pjcGfxFs0r3ROn8vQyDF6cZ8s3+E32wg1PfMidldR0aXAl+pzsSuwr4BLJUkPsmRpgSGkkMiwIraIepo0YuT6AY48NOVCrDyqsCCusq4s1jy/2RIiyCrUQSG7HW3lT//vWouXGlIVXg41esPu2xmugjAul0S3sqEaMPbXXxTz5ArUpBCgOT+sIFOqf6lGV7hC0RREHlp8+vhs9sOtNKoqVYbAqmARZ1T439u8qrjE2seeXMRJU6b7TvfTS0uMgpgYn1Bs0fgspDk/69DoRWQx+f12oaKsIatxjEOGaNU+lsqZe2qofPcPb1/luCHy+AcoHJvO0V7oTMXXaAaMFr9UXHflnV74g3RL6ZFYpbnUT++wJikCPhgAodeulpu2OxfWB1KB6wSFYjUkSXME65/DiitfWRI2l+s9XG2+blK4KX2DHD8ZVgLismOirIHkmhOj1ey51ZUCbXSN6k2Iw5gcZzoSwANGySEjZT7AIMVdm+QIOcn/zB3aFhS6y/I9MYPvYj/FpLgkEp3JRUnhVJRTxFUEb0buSrw+58zZdybmmmpBOb4plICbXep1eGEr6t66AXQ7/NhGWMBmaXUE441GJ+F8xueL5hYFV5VDZEuzjMN7tEgCA9K8uaz0QSjE0pNS5BJczUaQOzc4+MY=
-X-Forefront-Antispam-Report: CIP:12.22.5.234;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(4636009)(40470700002)(36840700001)(46966006)(6666004)(8936002)(336012)(186003)(8676002)(4326008)(1076003)(316002)(40460700001)(70206006)(26005)(36756003)(426003)(2616005)(107886003)(82310400004)(70586007)(110136005)(83380400001)(47076005)(81166007)(7696005)(36860700001)(86362001)(2906002)(54906003)(5660300002)(356005)(508600001)(36900700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Jan 2022 10:02:23.3878
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1e011d1c-d56a-4423-fe6d-08d9d744f605
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.234];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT014.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB1594
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Commit 7495af930835 ("ARM: multi_v7_defconfig: Enable drivers for
-DragonBoard 410c") enables the CONFIG_PHY_QCOM_USB_HS for the ARM
-multi_v7_defconfig. Enabling this Kconfig is causing the kernel to crash
-on the Tegra20 Ventana platform in the ulpi_match() function.
+06.01.2022 04:11, Doug Anderson пишет:
+> Hi,
+> 
+> On Wed, Dec 22, 2021 at 11:26 AM Dmitry Osipenko <digetx@gmail.com> wrote:
+>>
+>> 22.12.2021 14:53, Thierry Reding пишет:
+>>> On Wed, Dec 22, 2021 at 06:01:26AM +0300, Dmitry Osipenko wrote:
+>>>> 21.12.2021 21:01, Thierry Reding пишет:
+>>>>> On Tue, Dec 21, 2021 at 07:45:31PM +0300, Dmitry Osipenko wrote:
+>>>>>> 21.12.2021 19:17, Thierry Reding пишет:
+>>>>>>> On Tue, Dec 21, 2021 at 06:47:31PM +0300, Dmitry Osipenko wrote:
+>>>>>>>> 21.12.2021 13:58, Thierry Reding пишет:
+>>>>>>>> ..
+>>>>>>>>>>>> The panel->ddc isn't used by the new panel-edp driver unless panel is
+>>>>>>>>>>>> compatible with "edp-panel". Hence the generic_edp_panel_probe() should
+>>>>>>>>>>>> either fail or crash for a such "edp-panel" since panel->ddc isn't fully
+>>>>>>>>>>>> instantiated, AFAICS.
+>>>>>>>>>>>
+>>>>>>>>>>> I've tested this and it works fine on Venice 2. Since that was the
+>>>>>>>>>>> reference design for Nyan, I suspect that Nyan's will also work.
+>>>>>>>>>>>
+>>>>>>>>>>> It'd be great if Thomas or anyone else with access to a Nyan could
+>>>>>>>>>>> test this to verify that.
+>>>>>>>>>>
+>>>>>>>>>> There is no panel-edp driver in the v5.15. The EOL of v5.15 is Oct,
+>>>>>>>>>> 2023, hence we need to either use:
+>>>>>>>>>
+>>>>>>>>> All the (at least relevant) functionality that is in panel-edp was in
+>>>>>>>>> panel-simple before it was moved to panel-edp. I've backported this set
+>>>>>>>>> of patches to v5.15 and it works just fine there.
+>>>>>>>>
+>>>>>>>> Will we be able to add patch to bypass the panel's DT ddc-i2c-bus on
+>>>>>>>> Nyan to keep the older DTBs working?
+>>>>>>>
+>>>>>>> I don't see why we would want to do that. It's quite clear that the DTB
+>>>>>>> is buggy in this case and we have a more accurate way to describe what's
+>>>>>>> really there in hardware. In addition that more accurate representation
+>>>>>>> also gets rid of a bug. Obviously because the bug is caused by the
+>>>>>>> previous representation that was not accurate.
+>>>>>>>
+>>>>>>> Given that we can easily replace the DTBs on these devices there's no
+>>>>>>> reason to make this any more complicated than it has to be.
+>>>>>>
+>>>>>> Don't you care about normal people at all? Do you assume that everyone
+>>>>>> must to be a kernel developer to be able to use Tegra devices? :/
+>>>>>
+>>>>> If you know how to install a custom kernel you also know how to replace
+>>>>> the DTB on these devices.
+>>>>>
+>>>>> For everyone else, once these patches are merged upstream and
+>>>>> distributions start shipping the new version, they will get this
+>>>>> automatically by updating their kernel package since most distributions
+>>>>> actually ship the DTB files as part of that.
+>>>>>
+>>>>>> It's not a problem for you to figure out why display is broken, for
+>>>>>> other people it's a problem. Usually nobody will update DTB without a
+>>>>>> well known reason, instead device will be dusted on a shelf. In the end
+>>>>>> you won't have any users at all.
+>>>>>
+>>>>> Most "normal" people aren't even going to notice that their DTB is going
+>>>>> to be updated. They would actually have to do extra work *not* to update
+>>>>> it.
+>>>>
+>>>> My past experience tells that your assumption is incorrect. There are
+>>>> quite a lot of people who will update kernel, but not DTB.
+>>>
+>>> People that do this will have to do it manually because most
+>>> distributions I know of will actually ship the DTBs. If they know how to
+>>> update the kernel separately, I'm sure they will manage to update the
+>>> DTB as well. It's really not more complicated that updating the kernel
+>>> image.
+>>>
+>>>> ARM devices have endless variations of bootloaders and individual quirks
+>>>> required for a successful installation of a kernel. Kernel update by
+>>>> distro usually isn't a thing on ARM.
+>>>
+>>> I'm not sure what distribution you have been using, but the ones that
+>>> I'm familiar with all install the DTBs along with the kernel. Most Tegra
+>>> devices (newer ones at least) do also support booting with U-Boot which
+>>> supports standard ways to boot a system (which were co-developed with
+>>> distributions precisely so that it would become easier for users to keep
+>>> their systems up-to-date), so there's really nothing magical anyone
+>>> should need to do in order to get an updated DTB along with the updated
+>>> kernel.
+>>>
+>>> It's a simple fact that sometimes a DTB contains a bug and we have to
+>>> fix it.
+>>>
+>>> In general we try to fix things up in the driver code when reasonable so
+>>> that people don't have to update the DTB. This is for the (mostly hypo-
+>>> thetical) case where updating the DTB is not possible or very
+>>> complicated.
+>>>
+>>> However, that's not the case on the Venice 2 or Nyan boards. And looking
+>>> at the alternative in this case, I don't think it's reasonable compared
+>>> to just fixing the problem at the root, which is in the DTB.
+>>
+>> My understanding that U-Boot isn't the only available bootloader option
+>> for Nyan. I don't feel happy about the ABI breakage, but in the same
+>> time don't feel very strong about the need to care about it in the case
+>> of Nyan since its DT already had a preexisting problem with the wrong
+>> panel model used for the FHD model. The decision will be on your
+>> conscience :)
+> 
+> Maybe I should stand back to avoid getting hit by tomatoes, but IMO
+> it's a terrible idea to try to update devices trees separately from
+> kernels for any sufficiently complicated device. I won't stop you from
+> shooting yourself in the foot, but I also certainly wouldn't encourage
+> it. I've always said that I'll accept that this is something to really
+> worry about when we land chunk of "device tree fixup" code that runs
+> in early boot to fix all the broken device trees out there. All ARM
+> Chrome OS devices that have ever shipped all bundle device trees
+> together with the kernel (they bundle a whole pile of them and the
+> bootloader picks the right one based on model). Sure, someone could
+> decide to bake one into their bootloader but, even aside from this
+> case, there are sometimes bugs in device trees and they need to get
+> fixed. Updating your kernel without your device tree is just bad juju
+> IMO.
+> 
+> I'll let you and Thierry figure out what you want to do for 5.15. In
+> the Chrome OS 5.15 kernel tree we simply backported all the edp-panel
+> stuff, which was fairly clean. I even backported all that stuff to
+> 5.4, but it was decidedly more complex...
 
-The Qualcomm USB HS PHY driver that is enabled by CONFIG_PHY_QCOM_USB_HS,
-registers a ulpi_driver but this driver does not provide an 'id_table',
-so when ulpi_match() is called on the Tegra20 Ventana platform, it
-crashes when attempting to deference the id_table pointer which is not
-valid. The Qualcomm USB HS PHY driver uses device-tree for matching the
-ULPI driver with the device and so fix this crash by using device-tree
-for matching if the id_table is not valid.
+Chrome OS is a commercial product, while here we are talking about
+normal (non-kernel/developer) people. It's incorrect to compare home
+hackers with professional developers/products, IMO.
 
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
----
- drivers/usb/common/ulpi.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+If we could keep older DTBs working without much effort, then will be
+great. If not, maybe not a big deal.
 
-diff --git a/drivers/usb/common/ulpi.c b/drivers/usb/common/ulpi.c
-index 4169cf40a03b..8f8405b0d608 100644
---- a/drivers/usb/common/ulpi.c
-+++ b/drivers/usb/common/ulpi.c
-@@ -39,8 +39,11 @@ static int ulpi_match(struct device *dev, struct device_driver *driver)
- 	struct ulpi *ulpi = to_ulpi_dev(dev);
- 	const struct ulpi_device_id *id;
- 
--	/* Some ULPI devices don't have a vendor id so rely on OF match */
--	if (ulpi->id.vendor == 0)
-+	/*
-+	 * Some ULPI devices don't have a vendor id
-+	 * or provide an id_table so rely on OF match.
-+	 */
-+	if (ulpi->id.vendor == 0 || !drv->id_table)
- 		return of_driver_match_device(dev, driver);
- 
- 	for (id = drv->id_table; id->vendor; id++)
--- 
-2.25.1
-
+I suggested variants of preserving the older DTBs and leaving it up to
+Thierry to decide what to do.
