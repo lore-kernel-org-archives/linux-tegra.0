@@ -2,77 +2,88 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C04C6C433EF
-	for <linux-tegra@archiver.kernel.org>; Sun, 16 Jan 2022 16:30:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BF60C433FE
+	for <linux-tegra@archiver.kernel.org>; Sun, 16 Jan 2022 17:54:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235938AbiAPQaL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 16 Jan 2022 11:30:11 -0500
-Received: from rere.qmqm.pl ([91.227.64.183]:63217 "EHLO rere.qmqm.pl"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235731AbiAPQ3q (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 16 Jan 2022 11:29:46 -0500
-Received: from remote.user (localhost [127.0.0.1])
-        by rere.qmqm.pl (Postfix) with ESMTPSA id 4JcL944DHLz31;
-        Sun, 16 Jan 2022 17:29:44 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
-        t=1642350584; bh=bGGaw/ldrCq1jAH5EChsBqNxiTNzrIjLK3w+QjVTJCw=;
-        h=Resent-From:Resent-Date:Resent-To:Date:From:Subject:To:Cc:From;
-        b=Pd2VbWB0znYwxMr/zuvbiSNcckRInObFJiQtiRGqwDj3EA7SODdZgaBDWEpmLQh2A
-         r32Jytoo0hFOkKPlS5oktGs6H4MvtCRnrjG5SKPuQZfMFz1QHKGXKbvoDIz8YzB2KT
-         OAmcLV09tAc8c1CyWiXGQtrY6uB1nwwwOhvALBTveCDxX30BSU2O4QnKlVvZudEt/o
-         O3RV5cV5zmk6wRPiP3MhP+rrbtlzeSfCGSVp0OaJ08XMI3lz6dCq6kX+pAEz0HxKP0
-         hJsQFv6g8w7yjPSxfRCVQEtrTcuouKKqTl5P9iK7YiGHn137IUMUYeTZ4veQk5oAI5
-         VRirZxQx/XCIA==
-X-Virus-Status: Clean
-X-Virus-Scanned: clamav-milter 0.103.4 at mail
-X-Bogosity: H 0.000000
-Received: from rere.qmqm.pl
-        by rere.qmqm.pl with LMTP
-        id gCUpJ4tB5GFaKgEAZU03Dg
-        (envelope-from <mirq-linux@rere.qmqm.pl>)
-        for <mirq-linux@rere.qmqm.pl>; Sun, 16 Jan 2022 17:02:19 +0100
-Received: from remote.user (localhost [127.0.0.1])
-        by rere.qmqm.pl (Postfix) with ESMTPSA id 4JcKYR2wYTz63;
-        Sun, 16 Jan 2022 17:02:18 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
-        t=1642348939; bh=bGGaw/ldrCq1jAH5EChsBqNxiTNzrIjLK3w+QjVTJCw=;
-        h=Date:From:Subject:To:Cc:From;
-        b=FBgmvOZ5We0GsAgvaOrgo4c7fgbnPoYnoOImUCCiJsRJ0Iwa9CE7aT+amX8e+RXdS
-         y1eOLOJBwpUDUzkIpzNqL2B7eixDqYjsJFvPx5DKxHBWOVGhz946cHyBzuwywLh+ik
-         1MNjQ4wr91aom/rgSmqDeNmHN8+Dg4js8LxzapMr/YjzsruxFZBS05mCY3AJKre+r8
-         OqLXewNTlPfzcKQ4QCpArFWweFoYQEq+S2swpdM4er4QIg+9YU4hu7IyW/BQDMGoKy
-         9Bkpmw50XCnc0lzS9lMT/AH6G6ObSAv8+pXT0TXlnGsA8lA4ciGOxZU05k1GPxtiJ9
-         jJQddSTQck9wg==
-X-Virus-Status: Clean
-X-Virus-Scanned: clamav-milter 0.103.4 at mail
-Date:   Sun, 16 Jan 2022 17:02:17 +0100
-Message-Id: <cover.1642348712.git.mirq-linux@rere.qmqm.pl>
-From:   =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
-Subject: [PATCH 0/2] i2c: tegra: allow compiling out support for Tegra's special constrollers
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-To:     Dmitry Osipenko <digetx@gmail.com>,
+        id S231432AbiAPRyN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 16 Jan 2022 12:54:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46658 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230174AbiAPRyM (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Sun, 16 Jan 2022 12:54:12 -0500
+Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A00A1C061574;
+        Sun, 16 Jan 2022 09:54:11 -0800 (PST)
+Received: by mail-lf1-x129.google.com with SMTP id e3so46342315lfc.9;
+        Sun, 16 Jan 2022 09:54:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=+FwywsmeKxCvqz366I7pw78v5C+rzvcwSFpFisGArd8=;
+        b=SHmCb9Ix2ZOU7lgCI9KWTqe91Wt4Q0kUzz3UNC7982BILZQkZgpMHOONHG+HBvE/o6
+         9O5uGeLoio2EncHZvD5iftz8DnPMgYMKXwRs7/N7b7vmIH3HZj7wFvd4gbh+ghXaRpPg
+         my49ZZ6J+azPqmFFhzKxpFtXCv3++jkrV3nTMQsqh+MY8HRiAlLbjEzL6tC4LB9ib7iQ
+         96bAnnpp3gbMHAQgJODvHuxOegNh7cDDeKT/X7YU0sJuH4e43VHwE5HQVRgCafq6tDZb
+         DHV66sX8QVCfPa4GwkBnWlFDUf1oknkNcFmFQUebfe9isHKoEzD34iq4Kur1VxaY56SM
+         cH7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=+FwywsmeKxCvqz366I7pw78v5C+rzvcwSFpFisGArd8=;
+        b=f7ph7nJw5277gnSUjBycdcQZsiknnboAMfigwPEL4A0UcmVeH+mGO1YWRZrWAURf6W
+         Fu4CqD4CFEQINPsJWa5VnWfOFuSSiH0XYXYXzRzUy3aEPAQBO81kJZP9YAkKO3Yb8Zzy
+         8/aPmgG/hoNHKFDnKRzzwGTQjoPgGiFbQo07wP7qcY5YEZIt3hcCLHbuxU05208Kct0D
+         g0eMlQsJmbcG8bZNt0F9FffWPlPqYrOPFOQUKEz1IU6vPIm6BO3eJH9gyhe379W9/+0S
+         pjgFZD0koIvkAuEtuaSNIZC1CCqjMgzR+RJMWv258oUI8zPaGtqBndp1FJlhySA5NltY
+         jNRg==
+X-Gm-Message-State: AOAM532/6c9mPG6zHUIQsbpoVn6X3ttXy89+eiPzy+lfs5Lh3/J1U+72
+        TlD1X1JPu7msNnFs8MDV4LkvFAn7VTs=
+X-Google-Smtp-Source: ABdhPJxhoFluSDEIVijugDkxVn4Lxyg98P5p+RJ0v6ZBCHTbyRgLaGSCFwcJI9NQFGGgBz6K53ioTw==
+X-Received: by 2002:a05:651c:1304:: with SMTP id u4mr5036791lja.49.1642355649594;
+        Sun, 16 Jan 2022 09:54:09 -0800 (PST)
+Received: from [192.168.2.145] (46-138-227-157.dynamic.spd-mgts.ru. [46.138.227.157])
+        by smtp.googlemail.com with ESMTPSA id m3sm1174498lfr.60.2022.01.16.09.54.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 16 Jan 2022 09:54:09 -0800 (PST)
+Subject: Re: [PATCH 0/2] i2c: tegra: allow compiling out support for Tegra's
+ special constrollers
+To:     =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Laxman Dewangan <ldewangan@nvidia.com>,
         Thierry Reding <thierry.reding@gmail.com>
 Cc:     linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-tegra@vger.kernel.org
+References: <cover.1642348712.git.mirq-linux@rere.qmqm.pl>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <ea9ab0b7-022b-93e2-ed7d-dccfa95bd900@gmail.com>
+Date:   Sun, 16 Jan 2022 20:54:08 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
+MIME-Version: 1.0
+In-Reply-To: <cover.1642348712.git.mirq-linux@rere.qmqm.pl>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-To patches that, combined, reduce I2C driver's code by ~2kB and a bit
-from runtime overhead for non-Tegra20 or non-Tegra210 builds.
+16.01.2022 19:02, Michał Mirosław пишет:
+> To patches that, combined, reduce I2C driver's code by ~2kB and a bit
+> from runtime overhead for non-Tegra20 or non-Tegra210 builds.
+> 
+> Michał Mirosław (2):
+>   i2c: tegra: allow DVC support to be compiled out
+>   i2c: tegra: allow VI support to be compiled out
+> 
+>  drivers/i2c/busses/Kconfig     | 16 ++++++++++++++++
+>  drivers/i2c/busses/i2c-tegra.c | 35 +++++++++++++++++++++-------------
+>  2 files changed, 38 insertions(+), 13 deletions(-)
+> 
 
-Michał Mirosław (2):
-  i2c: tegra: allow DVC support to be compiled out
-  i2c: tegra: allow VI support to be compiled out
-
- drivers/i2c/busses/Kconfig     | 16 ++++++++++++++++
- drivers/i2c/busses/i2c-tegra.c | 35 +++++++++++++++++++++-------------
- 2 files changed, 38 insertions(+), 13 deletions(-)
-
--- 
-2.30.2
-
+2KB is a too small difference to justify the ifdefs and Kconfig entries,
+IMO.
