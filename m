@@ -2,103 +2,102 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E327C433FE
-	for <linux-tegra@archiver.kernel.org>; Mon, 17 Jan 2022 15:41:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABF70C433F5
+	for <linux-tegra@archiver.kernel.org>; Mon, 17 Jan 2022 16:10:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240572AbiAQPlI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 17 Jan 2022 10:41:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54728 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237263AbiAQPlH (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 17 Jan 2022 10:41:07 -0500
-Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42A04C06161C;
-        Mon, 17 Jan 2022 07:41:07 -0800 (PST)
-Received: by mail-lf1-x136.google.com with SMTP id b14so40653208lff.3;
-        Mon, 17 Jan 2022 07:41:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=5y8O1ztdEpf6Q5K1EWJl/cnGkg0Yyb3hjgY54wdHbA0=;
-        b=I3TXrgYdSkMgV6jQBIuL4t/kAnifbPfadKQXpiUEwrrRAxPONrQcLu2JvDUN6i2klu
-         59mwDxYiJpHqY+At28M2RqrGoGPoBM7YBl3ybzxPupE+Ixm/tAl9qajHJA2zVyTfeed8
-         HGbm/NV849yHRyOZND8pn8/bAYoQ/gtbYdeIPylKPcelOG6EYS6f2tT1WoU5LYM30rxk
-         F1CPqdocoTn6gd4wtJTO461HV4mTKa7ty7Xku9sqAtX/0TsLpcU+O/12FfKQHqLnGoLm
-         UGlE7WZOWgMDp+4bs+i4Auc5hbCvZuqScLC95bdV+igiloV/cxMjrYVA1mD2JckpjRDt
-         xR/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=5y8O1ztdEpf6Q5K1EWJl/cnGkg0Yyb3hjgY54wdHbA0=;
-        b=CghkiQEGVdEyfpFppOhHrn7UFVVBdstL1wFG38VoTbfChDGgeUJGV2x4miHMe19kGr
-         /sigAJTQ71XPHqJkip/lLQc5MLPlkWqFC2GM4WnFmHEZwgMcuyJwLPIKwwAh1HVE9Ujr
-         Qd4tNwlnb3iBUXtwKsiaysgEU/iFWDJ8xb4Nq7lRLH9KL3GBpG+zkUDq/+Sv7jnl6wtl
-         GPI3PF550RAVY7DMcLfjoKJ47verlbKlY0cbXth6oFYGv5tZ3zbGbZpgbYu5Gcye/GvJ
-         wB1MS942+ptZzXSjKzKLPHzLi74+iBvJyR6wxpc4c1wfUtlEs6adCB4sCdCpZAT1OTAi
-         lEMQ==
-X-Gm-Message-State: AOAM533nPqBiKUyxF7ZMhvjamxA/RqB1ayEwhuKjq3lxUJqM2F71lSum
-        8ZdAOr6HKQWeujZ9LiyJAKQ=
-X-Google-Smtp-Source: ABdhPJyWpdQazpzpnwHC6v7uwHKEePYVC80n+PdtMGszQLyxMhWoZygnqF4NdaS4DRX42FzPLBud7Q==
-X-Received: by 2002:a2e:95cf:: with SMTP id y15mr15070933ljh.132.1642434065726;
-        Mon, 17 Jan 2022 07:41:05 -0800 (PST)
-Received: from [192.168.2.145] (46-138-227-157.dynamic.spd-mgts.ru. [46.138.227.157])
-        by smtp.googlemail.com with ESMTPSA id w16sm1427526ljh.122.2022.01.17.07.41.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Jan 2022 07:41:05 -0800 (PST)
-Message-ID: <1db14c3d-6a96-96dd-be76-b81b3a48a2b1@gmail.com>
-Date:   Mon, 17 Jan 2022 18:41:04 +0300
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH v16 2/4] dmaengine: tegra: Add tegra gpcdma driver
-Content-Language: en-US
-To:     Akhil R <akhilrajeev@nvidia.com>,
-        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Krishna Yarlagadda <kyarlagadda@nvidia.com>,
+        id S237573AbiAQQKm (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 17 Jan 2022 11:10:42 -0500
+Received: from rere.qmqm.pl ([91.227.64.183]:61607 "EHLO rere.qmqm.pl"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S237318AbiAQQKl (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 17 Jan 2022 11:10:41 -0500
+Received: from remote.user (localhost [127.0.0.1])
+        by rere.qmqm.pl (Postfix) with ESMTPSA id 4Jcxhb4DNTz63;
+        Mon, 17 Jan 2022 17:10:39 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
+        t=1642435839; bh=7gVZSyvOycxlSlM1HmMfh3271Vdc6leDU5o6KP2vhwo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ISiCeo59FRMSkswQRfm3Dg3+YPAEaSmqw8++c2n6NG06HqyTAIXje2RfYjRU8dsCg
+         d33vrgpiAKoIj9HaFDXqIXvEuVQNx/7cyZdhJbK4R2cyFE8anJeSPqvOuv6kXp4Sl1
+         mvwZXuJ/hbfoTTHiv5ah9IZIiksb9hoGJqNQxpRY0zsxDq/U9tdeLLImi6zAqd3E47
+         OxTKDUWDpo54rMo8AFGtMOEYVihYIrcWoI6kILTrUOFM8P3m1a+vhzrS94vu6SFJbA
+         JpvqXWjnaRlC0dvTDxle0u0OsiXQEAHaZFomwRxmulECiMH4ZkRT4FR8eGQ6aejmJu
+         r0JTxIgEiq2TQ==
+X-Virus-Status: Clean
+X-Virus-Scanned: clamav-milter 0.103.4 at mail
+Date:   Mon, 17 Jan 2022 17:10:38 +0100
+From:   =?iso-8859-2?Q?Micha=B3_Miros=B3aw?= <mirq-linux@rere.qmqm.pl>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
         Laxman Dewangan <ldewangan@nvidia.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
-        Rajesh Gumasta <rgumasta@nvidia.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        "vkoul@kernel.org" <vkoul@kernel.org>
-Cc:     Pavan Kunapuli <pkunapuli@nvidia.com>
-References: <1641830718-23650-1-git-send-email-akhilrajeev@nvidia.com>
- <1641830718-23650-3-git-send-email-akhilrajeev@nvidia.com>
- <16c73e83-b990-7d8e-ddfd-7cbbe7e407ea@gmail.com>
- <DM5PR12MB1850A5F5ABA9CD5D04C37086C0579@DM5PR12MB1850.namprd12.prod.outlook.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-In-Reply-To: <DM5PR12MB1850A5F5ABA9CD5D04C37086C0579@DM5PR12MB1850.namprd12.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
+        Thierry Reding <thierry.reding@gmail.com>,
+        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: Re: [PATCH 0/2] i2c: tegra: allow compiling out support for Tegra's
+ special constrollers
+Message-ID: <YeWU/tuh12Co0Cdj@qmqm.qmqm.pl>
+References: <cover.1642348712.git.mirq-linux@rere.qmqm.pl>
+ <ea9ab0b7-022b-93e2-ed7d-dccfa95bd900@gmail.com>
+ <YeRd90gLqtsz2zVV@qmqm.qmqm.pl>
+ <e7a9a48b-e924-9e14-a4ff-b13853c5033e@gmail.com>
+ <YeSQj/f94IH4SAQ/@qmqm.qmqm.pl>
+ <9ca5caed-a68f-f131-dfb6-d187614ff9ee@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <9ca5caed-a68f-f131-dfb6-d187614ff9ee@gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-17.01.2022 10:02, Akhil R пишет:
->> 10.01.2022 19:05, Akhil R пишет:
->>> +static int tegra_dma_terminate_all(struct dma_chan *dc)
->>> +{
->>> +     struct tegra_dma_channel *tdc = to_tegra_dma_chan(dc);
->>> +     unsigned long flags;
->>> +     LIST_HEAD(head);
->>> +     int err;
->>> +
->>> +     if (tdc->dma_desc) {
->>
->> Needs locking protection against racing with the interrupt handler.
-> tegra_dma_stop_client() waits for the in-flight transfer 
-> to complete and prevents any additional transfer to start. 
-> Wouldn't it manage the race? Do you see any potential issue there?
+On Mon, Jan 17, 2022 at 06:37:12PM +0300, Dmitry Osipenko wrote:
+> 17.01.2022 00:39, Michał Mirosław пишет:
+> > On Sun, Jan 16, 2022 at 09:34:42PM +0300, Dmitry Osipenko wrote:
+> >> 16.01.2022 21:03, Michał Mirosław пишет:
+> >>> On Sun, Jan 16, 2022 at 08:54:08PM +0300, Dmitry Osipenko wrote:
+> >>>> 16.01.2022 19:02, Michał Mirosław пишет:
+> >>>>> To patches that, combined, reduce I2C driver's code by ~2kB and a bit
+> >>>>> from runtime overhead for non-Tegra20 or non-Tegra210 builds.
+> >>>>>
+> >>>>> Michał Mirosław (2):
+> >>>>>   i2c: tegra: allow DVC support to be compiled out
+> >>>>>   i2c: tegra: allow VI support to be compiled out
+> >>>>>
+> >>>>>  drivers/i2c/busses/Kconfig     | 16 ++++++++++++++++
+> >>>>>  drivers/i2c/busses/i2c-tegra.c | 35 +++++++++++++++++++++-------------
+> >>>>>  2 files changed, 38 insertions(+), 13 deletions(-)
+> >>>>>
+> >>>>
+> >>>> 2KB is a too small difference to justify the ifdefs and Kconfig entries,
+> >>>> IMO.
+> >>>
+> >>> Maybe I should have mentioned that it's ~20%? With my "embedded" hat on:
+> >>> I think it might be small, but sometimes it is the difference between
+> >>> bootable kernel or one too big.
+> >>
+> >> 10KB is a small size too. I'm very doubtful that such changes make any
+> >> real difference in practice.
+> >>
+> >> Much more practical should be to modularize more kernel code. You should
+> >> be able to squeeze zImage down to 3MB without any code changes by
+> >> toggling more kernel config options to =m. Try to use grate_defconfig
+> >> [1] for the base, that is what postmarketOS kernel build uses.
+> > 
+> > For normal system this solution is workable. But for recovery, where you
+> > have to fit kernel+initrd in whatever small partition is provided (like
+> > eg. in Transformers 8MiB), it becomes a problem from time to time.
+> > (In this case, modules make it worse due to additional overhead in
+> > kernel and userspace).
+> 
+> My point is that 2KB very likely won't change anything for you. I'd
+> suggest to take a look at a more "fat" drivers, like DRM/host1x for
+> example. I suppose it should be possible to save at least couple
+> hundreds KB by trimming those fat drivers.
 
-You should consider interrupt handler like a process running in a
-parallel thread. The interrupt handler sets tdc->dma_desc to NULL, hence
-you'll get NULL dereference in tegra_dma_stop_client().
+No doubt we can find more code to trim. :-) This one was cheap and easy,
+though. BTW, I worked around host1x size by using simpledrmfb instead,
+so I'm not sure there will be much benefit to digging there.
+
+Best Regards
+Michał Mirosław
