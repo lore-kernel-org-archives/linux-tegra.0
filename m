@@ -2,110 +2,120 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FDEBC433F5
-	for <linux-tegra@archiver.kernel.org>; Tue, 18 Jan 2022 10:43:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85147C433F5
+	for <linux-tegra@archiver.kernel.org>; Tue, 18 Jan 2022 13:48:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237753AbiARKnj (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 18 Jan 2022 05:43:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60966 "EHLO
+        id S242626AbiARNsb (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 18 Jan 2022 08:48:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47224 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230274AbiARKnj (ORCPT
+        with ESMTP id S242543AbiARNs2 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 18 Jan 2022 05:43:39 -0500
-Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AABF6C061574;
-        Tue, 18 Jan 2022 02:43:38 -0800 (PST)
-Received: by mail-lf1-x12f.google.com with SMTP id m3so54792451lfu.0;
-        Tue, 18 Jan 2022 02:43:38 -0800 (PST)
+        Tue, 18 Jan 2022 08:48:28 -0500
+Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8B4BC06161C;
+        Tue, 18 Jan 2022 05:48:27 -0800 (PST)
+Received: by mail-lf1-x12c.google.com with SMTP id br17so70910855lfb.6;
+        Tue, 18 Jan 2022 05:48:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=message-id:date:mime-version:user-agent:subject:content-language:to
          :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=Oq4iCc0Wwww95pZLDL+Et/XTeCWCBjBihbZj50b8h3M=;
-        b=b6JxSCncymDWIYKs/NDxFeWUhfO9T3aGxAmnNRbuKRFctelJmHrCxc4GgDoe3VLLb3
-         H+jk0CebLDbcWRvUDksG2L8oAF0Kd50Cd4Ccjby/eqY+ih62XseR6fDqnYjZOL1KcK5z
-         RZkJMoz5oyrO9S3yTNCbP+eVb++NDCh6RMaF/Gxo1gEn6vnh4IZOYV6iEqjvBd07fEC5
-         u0pEF3fZWNJlluEyfQCdEp0W9j+28v7/OrxvLtFvE0/O6v/0fWneShjpSDGDZzO+S5Tv
-         zEQoalJQmoyjPFcUIm99RMIPu4Ew29iK4JMB7TWEfmmJGy8H7VaroWLXy42yT2BiXqit
-         HTqg==
+        bh=17MkQ+D7lcIHENLUZkNE+Wb1M6GLIW0KLmLfLfpyKuY=;
+        b=mvTY0w/pN5vJRbVPnoOMSXYgEs0lE5GlWlKV8Luv12ObuBtRxvt7RXJeD2Z0aNH3ce
+         PPMNmQnjVcQOy6g/N73ELDWzPO5QURYj60f7BWVvl2JFCrM8hDCL+Ou6UqO4dWJASTUE
+         p85+YBd1DD4XiFG9c5igQlX+SSZ84TaUlM8j3MmOtnbCR9w97IzXpN0PdmXOAVK/gJoL
+         zMTZ4Ev4EBM5S9UF3Hcub3rkfkbGCeruG6b3ZVGf1C0ZgonWKEWOweucqUJ3XJ7ILIMM
+         iuW8AwkGSe5KaKLAHljj1SOLuHXp8YxWfy0G2Edb0RGSiya/37yP/b5x0O9rPqBNAzXr
+         kcsA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=Oq4iCc0Wwww95pZLDL+Et/XTeCWCBjBihbZj50b8h3M=;
-        b=tRU+t8bKiSMcUWf2kBWh8+yNyMxFE/fU3P2edbUXXOabBAqX8bm6Ey5GgCtF5vVegk
-         urUAaVolSSsekUL3urULBvUe9j1KRuRcESvRY7VdL7g6KI2sijbHiBmhJSzdpoWaVpj+
-         pBRU3GzSLHjLxlYzcvoT/eYkG0xCkqRjr3tWLC6rPm9lXYNiaJUOVeVOWQVvm8nvtc88
-         Yer0Vx7adMKf1OZzLlLLup20RSoYxhXa4bb5Zn+ICk5FP8eGj49V2k0LaBv6cVlPUSmr
-         oWJ9b3+kfuadBmJyqI4lFQ0NP7JJTfy4kFSpe+OZXFENC1HWXiTHcHTeVWMW7dcmysEf
-         IzyA==
-X-Gm-Message-State: AOAM533GhQyTQVv67SFufiFB+fFjgbC663PDKSyqGsGUE1tBKCUei6dT
-        Aw6KYx7g0KSqvC5xSdYo5u4=
-X-Google-Smtp-Source: ABdhPJxLLjKJ5WZW73z7MJeySmPKJaTlIopLrMZq3VtSCkLPKbKCOllEW97jssTlrt8X8H4+5SYagg==
-X-Received: by 2002:a05:651c:19ab:: with SMTP id bx43mr9860035ljb.112.1642502617075;
-        Tue, 18 Jan 2022 02:43:37 -0800 (PST)
+        bh=17MkQ+D7lcIHENLUZkNE+Wb1M6GLIW0KLmLfLfpyKuY=;
+        b=C69E5gk22bWcOcu7SHgSG1kbiNeKsaLUDpvqULxcpjrKX2SO7yPZS3inaMw1PHHxNo
+         i29llskcmsY69uM4SPrX5Eokn6nG2bd2El9ftc6pb06UUssgx3Y9MbKWG9Dz3deyTzpd
+         0tuvUeoO7eF4PkyT3uqRbF+pyU6kG8izgOFWSOmrErCLzYqjuVrc0nUaNPQSyIB6bgeb
+         VQP8qhOswOfnRyLtSUnYh7kmDMwqdoHIWDjjLsPOVJvVotCKkzyZnLdcK+bBGPdeRbH+
+         5HWq16GlyC91ptFGuZLW97bk6umuwwMCDTNIhaEMRYV2MavGBZJaLVAkFRQ194EXfMt4
+         ihYw==
+X-Gm-Message-State: AOAM532SCUlKmsfxYNHpIxl7lhuGrI3xA9jxTQamRNqZ1glnx6OO5KeG
+        OIgxo3R3+OOSQmmRY8tOPzE=
+X-Google-Smtp-Source: ABdhPJy5tJQ9AnqnDnEzUgBVyJTQX64dfrMfnDFOnHwhm/zxWsZZI0QlLSJNsTEqxIim+EyvlBxJ6g==
+X-Received: by 2002:a05:651c:171c:: with SMTP id be28mr20262368ljb.183.1642513705172;
+        Tue, 18 Jan 2022 05:48:25 -0800 (PST)
 Received: from [192.168.2.145] (46-138-227-157.dynamic.spd-mgts.ru. [46.138.227.157])
-        by smtp.googlemail.com with ESMTPSA id q9sm1374535lfd.266.2022.01.18.02.43.36
+        by smtp.googlemail.com with ESMTPSA id t13sm1625887lji.57.2022.01.18.05.48.24
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Jan 2022 02:43:36 -0800 (PST)
-Message-ID: <f73de032-6461-c665-940d-9cb0c5f63869@gmail.com>
-Date:   Tue, 18 Jan 2022 13:43:35 +0300
+        Tue, 18 Jan 2022 05:48:24 -0800 (PST)
+Message-ID: <683a71b1-049a-bddf-280d-5d5141b59686@gmail.com>
+Date:   Tue, 18 Jan 2022 16:48:23 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.5.0
-Subject: Re: [PATCH v1 2/2] media: staging: tegra-vde: Support V4L stateless
- video decoder API
+Subject: Re: [PATCH v16 2/4] dmaengine: tegra: Add tegra gpcdma driver
 Content-Language: en-US
-To:     Nicolas Dufresne <nicolas@ndufresne.ca>,
-        Thierry Reding <thierry.reding@gmail.com>,
+To:     Akhil R <akhilrajeev@nvidia.com>,
+        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>
-Cc:     linux-media@vger.kernel.org, linux-staging@lists.linux.dev,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20220112153952.1291-1-digetx@gmail.com>
- <20220112153952.1291-3-digetx@gmail.com>
- <e5bcc0a6d283ce3ed0cfe7d318232fb878c1b47d.camel@ndufresne.ca>
- <0ae51264-8578-0b4f-4348-7f7a239c98dc@gmail.com>
- <26cd15bc1c5dfe3acf8bb280cf7542657cb8b291.camel@ndufresne.ca>
+        Krishna Yarlagadda <kyarlagadda@nvidia.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+        Rajesh Gumasta <rgumasta@nvidia.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        "vkoul@kernel.org" <vkoul@kernel.org>
+Cc:     Pavan Kunapuli <pkunapuli@nvidia.com>
+References: <1641830718-23650-1-git-send-email-akhilrajeev@nvidia.com>
+ <1641830718-23650-3-git-send-email-akhilrajeev@nvidia.com>
+ <16c73e83-b990-7d8e-ddfd-7cbbe7e407ea@gmail.com>
+ <DM5PR12MB1850A5F5ABA9CD5D04C37086C0579@DM5PR12MB1850.namprd12.prod.outlook.com>
+ <1db14c3d-6a96-96dd-be76-b81b3a48a2b1@gmail.com>
+ <DM5PR12MB1850FF1DC4DC1714E31AADB5C0589@DM5PR12MB1850.namprd12.prod.outlook.com>
 From:   Dmitry Osipenko <digetx@gmail.com>
-In-Reply-To: <26cd15bc1c5dfe3acf8bb280cf7542657cb8b291.camel@ndufresne.ca>
+In-Reply-To: <DM5PR12MB1850FF1DC4DC1714E31AADB5C0589@DM5PR12MB1850.namprd12.prod.outlook.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-18.01.2022 05:43, Nicolas Dufresne пишет:
-> Le mercredi 12 janvier 2022 à 22:04 +0300, Dmitry Osipenko a écrit :
->>> If so, I may suggest to drop this fallback, and propose an amendment to the
->>> spec, we can require flagging KEYFRAME/PFRAME/BFRAME on the OUTPUT buffer,
->>> this
->>> won't break any drivers/userland on other HW, and will benefit possibly
->>> other HW
->>> in the future. I can volunteer to patch GStreamer and LibreELEC ffmpeg if we
->>> agree to this. Not sure how it works for Chromium, or if it actually make
->>> sense
->>> to support here.
->>>
->>> (expecting feedback from Hans and Ezequiel here)
+18.01.2022 08:36, Akhil R пишет:
+>> 17.01.2022 10:02, Akhil R пишет:
+>>>> 10.01.2022 19:05, Akhil R пишет:
+>>>>> +static int tegra_dma_terminate_all(struct dma_chan *dc)
+>>>>> +{
+>>>>> +     struct tegra_dma_channel *tdc = to_tegra_dma_chan(dc);
+>>>>> +     unsigned long flags;
+>>>>> +     LIST_HEAD(head);
+>>>>> +     int err;
+>>>>> +
+>>>>> +     if (tdc->dma_desc) {
+>>>>
+>>>> Needs locking protection against racing with the interrupt handler.
+>>> tegra_dma_stop_client() waits for the in-flight transfer
+>>> to complete and prevents any additional transfer to start.
+>>> Wouldn't it manage the race? Do you see any potential issue there?
 >>
->> Amending the spec will be great, although it's not clear how to flag
->> frame that consists of slices having different types.
+>> You should consider interrupt handler like a process running in a
+>> parallel thread. The interrupt handler sets tdc->dma_desc to NULL, hence
+>> you'll get NULL dereference in tegra_dma_stop_client().
 > 
-> As per spec, all slices of a frame must be of the same type. In short, there is
-> no problem, adding new flags to the decode_params.flags is fine, and is backward
-> compatible. I had a second thought that I'd probably prefer this over using the
-> v4l2_buffer flags, but either way seems backward compatible.
+> Is it better if I remove the below part from tegra_dma_stop_client() so
+> that dma_desc is not accessed at all?
 > 
-> In H264, but also other CODEC, slices are have two types of parameters, some of
-> the parameters are invariant between slices, but still duplicated so you can
-> decode some of the frame, even if the very first slice is lost. We tried our
-> best to place all the slice invariant parameters in decode_params to keep the
-> slice_params as small as we could.
+> +	wcount = tdc_read(tdc, TEGRA_GPCDMA_CHAN_XFER_COUNT);
+> +	tdc->dma_desc->bytes_transferred +=
+> +			tdc->dma_desc->bytes_requested - (wcount * 4);
+> 
+> Because I don't see a point in updating the value there. dma_desc is set
+> to NULL in the next step in terminate_all() anyway.
 
-Could you please give a direct reference to the spec? (chapter / page or
-provide quote)
-
-I'm vaguely recalling that x264 encoder was able to generate such frames.
+That isn't going help you much because you also can't release DMA
+descriptor while interrupt handler still may be running and using that
+descriptor.
