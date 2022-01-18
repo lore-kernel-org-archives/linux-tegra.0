@@ -2,36 +2,36 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ADC1C2BA4C
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76D03C3525B
 	for <linux-tegra@archiver.kernel.org>; Tue, 18 Jan 2022 03:16:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237573AbiARDPz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 17 Jan 2022 22:15:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39182 "EHLO
+        id S1348205AbiARDQC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 17 Jan 2022 22:16:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38988 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354127AbiARDFT (ORCPT
+        with ESMTP id S1352904AbiARDIi (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 17 Jan 2022 22:05:19 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B83DC021992;
-        Mon, 17 Jan 2022 18:48:17 -0800 (PST)
+        Mon, 17 Jan 2022 22:08:38 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36E81C06161C;
+        Mon, 17 Jan 2022 18:50:40 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 0CBBE6130A;
-        Tue, 18 Jan 2022 02:48:17 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C915C36AE3;
-        Tue, 18 Jan 2022 02:48:15 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id EECFEB811CF;
+        Tue, 18 Jan 2022 02:50:38 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C023AC36AE3;
+        Tue, 18 Jan 2022 02:50:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1642474096;
-        bh=x+VaJ/8Bhk9YBGBufy5sI3aIsySA7PsMp6c05L2SEDM=;
+        s=k20201202; t=1642474237;
+        bh=bm+Rd7qexeD5Drlqz+BMs3kGsfMPTU5l5sG13qlHO/w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DFmf+a9Ea8WYVliExPjUOi1sjJMDwbdVOkd7Cj/XkP3bGxAPjGkK4YAvHD7JVHY1G
-         FUDO+tZwEQDDng8Y4J7TtX/nrKhXFLWjarnkrUBQOHwdofhVUe4ZrqOUmRzP5jDv2p
-         ACj3MIJM7sxcWLHSQCKPvxIh0kINIl4X2ADy+XkiD5zJVF9q9P53Z88BUpR5EI/nNh
-         ycUULpSKC/HIxFZnciwKq1VhKMlsqItIzYLT//ydl8W0GDs8QwZe21CMxS+JPakyQD
-         3HFSk65YZPff3IgNDMGHZlfCQQR9So24SoqVrB6B7EB6tka70uqWkAtHZVRxtyssLh
-         gDujp1HWs1T2w==
+        b=dZ9cwAf/uLVw3I7EPnU3DqYyuK/mzSFSriP+IQ5NWIuexGZfwjUFykTqV/Q+lwy4q
+         Fh7dibqRDjEZ3uE5/DZ6LA+KkIuRSiZvk85bgSOa09DyoenqSNXxMiOIu7TNQC7ok0
+         mVXQ/4gdkN8YIqNebE9m1zd34KVNxFd2FUx2iJPGduDVu7zBhJ6/kH6u2c8gRdJ234
+         /NXyFtSBb4+wGprRic1ig5DUa6s1142EjB8L6/JIh5V0ahzGISa9V29STITBrC1eqs
+         4866L+/Ax4IPLO6wWMaGidlDY/GNcKTZhGJj8i3SABtVV/tcnL2ApxTVq2todUhyvo
+         BfLpU2p8jDfxQ==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Thierry Reding <treding@nvidia.com>,
@@ -39,12 +39,12 @@ Cc:     Thierry Reding <treding@nvidia.com>,
         thierry.reding@gmail.com, jonathanh@nvidia.com, spujar@nvidia.com,
         mperttunen@nvidia.com, devicetree@vger.kernel.org,
         linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 34/59] arm64: tegra: Adjust length of CCPLEX cluster MMIO region
-Date:   Mon, 17 Jan 2022 21:46:35 -0500
-Message-Id: <20220118024701.1952911-34-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 36/56] arm64: tegra: Adjust length of CCPLEX cluster MMIO region
+Date:   Mon, 17 Jan 2022 21:48:48 -0500
+Message-Id: <20220118024908.1953673-36-sashal@kernel.org>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220118024701.1952911-1-sashal@kernel.org>
-References: <20220118024701.1952911-1-sashal@kernel.org>
+In-Reply-To: <20220118024908.1953673-1-sashal@kernel.org>
+References: <20220118024908.1953673-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -68,10 +68,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-index b762227f6aa18..fc5d047ca50bc 100644
+index a9c3eef6c4e09..3307d816050fe 100644
 --- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
 +++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-@@ -372,7 +372,7 @@ pmc@c360000 {
+@@ -351,7 +351,7 @@ pmc@c360000 {
  
  	ccplex@e000000 {
  		compatible = "nvidia,tegra186-ccplex-cluster";
