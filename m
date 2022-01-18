@@ -2,96 +2,135 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2371C433F5
-	for <linux-tegra@archiver.kernel.org>; Tue, 18 Jan 2022 20:34:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED1FDC433EF
+	for <linux-tegra@archiver.kernel.org>; Tue, 18 Jan 2022 20:49:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349249AbiARUeD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 18 Jan 2022 15:34:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57202 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349215AbiARUeC (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 18 Jan 2022 15:34:02 -0500
-Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4A90C061574;
-        Tue, 18 Jan 2022 12:34:01 -0800 (PST)
-Received: by mail-lf1-x131.google.com with SMTP id s30so169723lfo.7;
-        Tue, 18 Jan 2022 12:34:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=4KiSRYNU3dEoSIxZgfjmsEi9gh2lmzCxmuoV7SZWZUc=;
-        b=C0vcenroANcLWxZ4utwH2h1z5RHY8FPUk7RDDoqeXCZOCeb5tN+2JcPTsbqiEC0ClU
-         tLsGeQrhivj7yvAK+HpKHWSOPXEWvq3N2SGVjl+afF8uJbliVKgQTcPenIGTIAJTEJlL
-         3fD7GTNpevJiPx7PTIdnLEssZRKVGdZ31DHv5uzyS0Fc6AqB3Ze3M/Q802jccgU84CCF
-         uFFAIhJFmMoKP4wBAc6X6qg5hP0+haYb0cNS3i7Om8asOl2rSDa8puX4oUCLRjBvPpWl
-         YPBKEuPGsxdOTpa+91TWuh0tfc7I5rPrPqpxn8egHNsImHVQtRaEeOg7zSmlgO4U+gLR
-         N9ow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=4KiSRYNU3dEoSIxZgfjmsEi9gh2lmzCxmuoV7SZWZUc=;
-        b=fD11rbtYG8/3kIvZmw1bkYb2Spo2sVofqyrFsPwDJtmXoEHAjwxiyGqn6sz8ZuCb3d
-         9xLnrdQwRl64CQp8LHwhsVSljPYhkNLYB+7S95oQhmUoOy51gPKljm0VBJ/gK7jrgheT
-         vZjaeDquufC4XsZMwBzeKEiD7QBVEfiYDnxC8LnD5htOM3MwuVL8d3/JjARBFt+m9ZdM
-         nay2ay/MjVhK3v0f/JI9L6FyfHxVh5Fi4MTuBH1IVWpwG66ym9mPhwyhjY9B1Rs+volx
-         GTXO+EGyiAaIbuOwJnNIXrTr8vuOKHbRj6tfbt7mRWw+eMmeO55N6A0iRZ9J1esWDSzC
-         c5xQ==
-X-Gm-Message-State: AOAM5325z316mrZjrFxfvaMgwMTv2VEyFj95AEAd3vPT6AztHSPWj53g
-        Z5XuiTCOa+uG3JCXvdG3sbY=
-X-Google-Smtp-Source: ABdhPJzVbPv/I+bzGSNNcJwxDdPU7QQyaFKs3K9fZA4PGy9r5uq799uf4EkK+Ci9WyqbK/lJroiCpA==
-X-Received: by 2002:a05:6512:1148:: with SMTP id m8mr17949894lfg.424.1642538040156;
-        Tue, 18 Jan 2022 12:34:00 -0800 (PST)
-Received: from [192.168.2.145] (46-138-227-157.dynamic.spd-mgts.ru. [46.138.227.157])
-        by smtp.googlemail.com with ESMTPSA id e26sm1795901lfn.159.2022.01.18.12.33.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Jan 2022 12:33:59 -0800 (PST)
-Message-ID: <522fa061-4d4b-a135-51bd-e265b2476b93@gmail.com>
-Date:   Tue, 18 Jan 2022 23:33:58 +0300
+        id S1345822AbiARUtr (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 18 Jan 2022 15:49:47 -0500
+Received: from mail-bn8nam12on2068.outbound.protection.outlook.com ([40.107.237.68]:35873
+        "EHLO NAM12-BN8-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1344254AbiARUtq (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 18 Jan 2022 15:49:46 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Qzeo+q6VgiWedBFd7+kUhKPefN8PF5xkmV+zMAjMGQgRyxbiiUJohb7c7XlLJ19/psoRvFqKafISimvzZl0nXSSgSlaYK5Ccra8bAzzb4ear4wpmf4IWtVqUJJzP1mqx5gjvZlhk01eUv6XjaxoTso3+du+htpwS76eseh8h4/R5MieTqadaFB2LNc37OE4u/N6aJdqjuWLmF3TT9kZxV+l5Z+SYgSpJrEj2awcxBUI4x8QMzsrcMIbzhXI7u87eC26EjotygKtEkwuHtpwauCOrxmEKJ+RLPfGR44S2L00vuB0cIPLLPEZm233jP23iXCezMtd2K5kIuBQkkqZlFQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=KWlTIulflvqRWwmrikGYebyM5eLkLpOq/E6QDtjvQKs=;
+ b=LKKZnVot1OPEUqC+SrbL5y3A3SQaDSTojjtIz1hqwXYMnyUJmlbu+5oybTO2Y3lzpOyynLNKy4+KdYJTYvw+R+PMuzcPxXh9YAtiZU7CXz6P7SMEL1EeKly2uKgpwSQsmaKp9ed/oicXmZ5tJ5MYEMIGvIV1Pg6M4fO9ypg+q+JtnPpFx/3ZufK/42lHINC9DL8SncTVbRRP21JxNL2/CZmLbkY8QHq7KUavgk2ecAQCx+C3MbcUdoQlZBhrg3VUdYp/HXeNz54Arx1yhcBy92MAgUrKAW0thhCXH21V7PUOFjM99lUf8JGXAqxJGa1H8KnwofaaIaeFxvk7coKnrw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 12.22.5.238) smtp.rcpttodomain=linuxfoundation.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=KWlTIulflvqRWwmrikGYebyM5eLkLpOq/E6QDtjvQKs=;
+ b=Oh8/cxwSMe1hROQQ+zm9zkRXpLSQYVN5N9ZEI6xfERt6M3IKUCdslHjVXxPUjAerO5M1qulCtjERDi4D/C1Cy6zcWkSUP3AMG+Ls8ZxRsfoiyCjQvpjuFiDXLqu0w4h3mG4kP8FyWxobZgoCKX6/nIgjqr5tUUK91pM+md0xG0OgQPBphQ4r+WLZNho975NQwqqS6iZMmuf1nkKQLKtkMfzJAzXzgwL/GstkHDeQivqzYGbwUBp4acT5oGLsgmbBPjXjUV0jlmU8uFtuoeCmGh7FqvsWcJMj+GMnex16v4MpCh2jyRpObWBIg2Gg0UoWkrKqCQ7m5ysbuClRp3XKRg==
+Received: from BN9PR03CA0685.namprd03.prod.outlook.com (2603:10b6:408:10e::30)
+ by BL1PR12MB5336.namprd12.prod.outlook.com (2603:10b6:208:314::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4888.9; Tue, 18 Jan
+ 2022 20:49:44 +0000
+Received: from BN8NAM11FT033.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:408:10e:cafe::d3) by BN9PR03CA0685.outlook.office365.com
+ (2603:10b6:408:10e::30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4888.10 via Frontend
+ Transport; Tue, 18 Jan 2022 20:49:44 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.238)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 12.22.5.238 as permitted sender) receiver=protection.outlook.com;
+ client-ip=12.22.5.238; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (12.22.5.238) by
+ BN8NAM11FT033.mail.protection.outlook.com (10.13.177.149) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.4909.7 via Frontend Transport; Tue, 18 Jan 2022 20:49:44 +0000
+Received: from HQMAIL105.nvidia.com (172.20.187.12) by DRHQMAIL105.nvidia.com
+ (10.27.9.14) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Tue, 18 Jan
+ 2022 20:49:44 +0000
+Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Tue, 18 Jan
+ 2022 20:49:43 +0000
+Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1497.18 via Frontend
+ Transport; Tue, 18 Jan 2022 20:49:43 +0000
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
+        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
+        <stable@vger.kernel.org>, <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 5.10 00/23] 5.10.93-rc1 review
+In-Reply-To: <20220118160451.233828401@linuxfoundation.org>
+References: <20220118160451.233828401@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH v2 2/2] i2c: tegra: allow VI support to be compiled out
-Content-Language: en-US
-To:     =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Cc:     linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <cover.1642535860.git.mirq-linux@rere.qmqm.pl>
- <fd14f1e81691f9655ea2ad58692df94dd2830230.1642535860.git.mirq-linux@rere.qmqm.pl>
-From:   Dmitry Osipenko <digetx@gmail.com>
-In-Reply-To: <fd14f1e81691f9655ea2ad58692df94dd2830230.1642535860.git.mirq-linux@rere.qmqm.pl>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Message-ID: <96e52ddaff1048a3b750c7879bed5916@HQMAIL101.nvidia.com>
+Date:   Tue, 18 Jan 2022 20:49:43 +0000
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 9ed3ac78-e7da-4531-d109-08d9dac40ee9
+X-MS-TrafficTypeDiagnostic: BL1PR12MB5336:EE_
+X-Microsoft-Antispam-PRVS: <BL1PR12MB5336E6A60FDDA193CF009000D9589@BL1PR12MB5336.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: DaZDjzqN7XN4mPOAfpb1JpVEar7SMnESSyV5ONyTCdx5bO298txvwHpG4VURVC00RGUApk8UhnQ/Tgvd6YRPKwPzUehz086zk+mNMQpxNtrKZu1vc8qnlqJ0czz0XdkTi80XdSUGiaV5iAEhObou1pOQHhVYTU0ZLt8TA3vQjn6EdRcP9fcwH3L6hseNSeWsQoQVU7YQvxO/mRYYsUWbM2Ikwrbs8wPYpTkWrgE/fLj4WievsLwg/5Vg1LbL8RTzJyXpxPo9TDr5g4R/jXsJm17RgMCItVrp14L2xP7CM44y5oENrRL4ko0xNPcAfiQg1jN45WJnyh6wf83EtitW7hlmSQ4K+BfAlmcvZ0tg5iwrId//QgRXMv+YFA+idZCau1gummNS+SeaaqKE1F8XjD09PmHs/ww9B2+e4vT3Dko7R/V1hIHuhlnU+95LdakSbQPO+yfCMIeuI4PrQLx/qsi6RpmSNVYeSJZE1HcrNfsjr8p+fK9gLiPku+4i4krVRneS6ZIYrxkzdnWa5Lg9BRZrbV2iFVtsvQ3b22bw8r3rU4dvPt93KGcMR26xk7ceq6vnBFSeLPqoF16CCsmcNb2Y9+lZ4RmJo9TySbiycZPUFkRQlAnlagpaipuFKFHI9ZOvBgX+iSkOYmVkZCctOG6VxP/mVDZFSdIsW0FWbSub5uMNFabGfnTVURO1uP4hw4ACJdb6hEKncN3krKol9pHtEbHsj5PdoyS72ofgGcE0eSpaKg19Lwq2qINHpaj3ylf4l/TAa9AVYgbIxeP5I3cfqlfQ/qJ9NH28CNrKbyv1BiTqRdA3THuOXqCu1s5uYdOyKDfqYgH9CLz00HJA35b3Vsufwk5GxE86xb0nBrsm0/wDjfOOZ8KjsIwkAXlO
+X-Forefront-Antispam-Report: CIP:12.22.5.238;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(4636009)(36840700001)(40470700002)(46966006)(54906003)(356005)(108616005)(36860700001)(966005)(8676002)(24736004)(2906002)(5660300002)(40460700001)(82310400004)(7416002)(26005)(316002)(70586007)(70206006)(508600001)(8936002)(426003)(81166007)(336012)(6916009)(4326008)(86362001)(47076005)(186003)(36900700001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jan 2022 20:49:44.6410
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9ed3ac78-e7da-4531-d109-08d9dac40ee9
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.238];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT033.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5336
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-18.01.2022 23:00, Michał Mirosław пишет:
-> Save a bit of code for older Tegra platforms by compiling out
-> VI's I2C mode support that's used only for Tegra210.
+On Tue, 18 Jan 2022 17:05:40 +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.10.93 release.
+> There are 23 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> $ size i2c-tegra.o
->    text    data     bss     dec     hex filename
->   10385     240       8   10633    2989 i2c-tegra.o (full)
->    9617     240       8    9865    2689 i2c-tegra.o (no-dvc)
->    9389     240       8    9637    25a5 i2c-tegra.o (no-vi)
->    8617     240       8    8865    22a1 i2c-tegra.o (no-vi,no-dvc)
+> Responses should be made by Thu, 20 Jan 2022 16:04:42 +0000.
+> Anything received after that time might be too late.
 > 
-> ---
-> v2: remove KConfig symbol as per Dmitry Osipenko's suggestion.
->     (Assuming that for Tegra210 the VI part will be used anyway.)
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.93-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
+> and the diffstat can be found below.
 > 
-> Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
-> ---
->  drivers/i2c/busses/i2c-tegra.c | 20 ++++++++++++--------
->  1 file changed, 12 insertions(+), 8 deletions(-)
+> thanks,
+> 
+> greg k-h
 
-Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+All tests passing for Tegra ...
 
+Test results for stable-v5.10:
+    10 builds:	10 pass, 0 fail
+    28 boots:	28 pass, 0 fail
+    75 tests:	75 pass, 0 fail
 
+Linux version:	5.10.93-rc1-ge0476c04ea89
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
+                tegra20-ventana, tegra210-p2371-2180,
+                tegra210-p3450-0000, tegra30-cardhu-a04
+
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+
+Jon
