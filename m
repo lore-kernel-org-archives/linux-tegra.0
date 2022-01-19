@@ -2,196 +2,158 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E01BC433FE
-	for <linux-tegra@archiver.kernel.org>; Tue, 18 Jan 2022 21:38:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3AABC433EF
+	for <linux-tegra@archiver.kernel.org>; Wed, 19 Jan 2022 07:37:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344291AbiARVh7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 18 Jan 2022 16:37:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43318 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343490AbiARVh7 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 18 Jan 2022 16:37:59 -0500
-Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07778C061574
-        for <linux-tegra@vger.kernel.org>; Tue, 18 Jan 2022 13:37:59 -0800 (PST)
-Received: by mail-pj1-x1034.google.com with SMTP id s61-20020a17090a69c300b001b4d0427ea2so3717791pjj.4
-        for <linux-tegra@vger.kernel.org>; Tue, 18 Jan 2022 13:37:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=iDq8s3Xs74YiCluh75TJCVZjxCkYXlG1IQO+4atrnQE=;
-        b=XB8triqqGfvX+MO0SSSjLfGgRehuRrHKUWfwNz7JRRAL7zL/jvR9IdcA2oKx+QQ2b1
-         FlCs5XAQ28WT27EUO0eMeXMWvxKe4n/gR4ui/AEfIr9gPj92S262VYORvL2bVr3+1wTi
-         gRg5YKMCipALu1ghGGEYMrmk5/pKyHrt+iRLo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=iDq8s3Xs74YiCluh75TJCVZjxCkYXlG1IQO+4atrnQE=;
-        b=y13ya/euYbp4Oo6f8bvkuLMhNCQVLiAFQBX0i2ytnOGSKAjS+Znq7E0OrLs8jXNQ+e
-         Qoh2aOE66V3nHp3zZggUJf26g+dpuHS26smhS9lUv8tE2kCAX5Czo5f2KK4IHKS4jL/l
-         KpW/kRAncSlzKPhG/Piz96uaa5uhglbZUhd68aGlDAumofVURRAmA3kg02zXB/i6sF+Y
-         f/9OLd3J77Nd8Atq2q90p4R6XUzU2UrB3ct/bCuZRQGNR/O1bZyR4Bb9mA1OWBmBtkz8
-         6ILAPVsytIyrJ8VZ/J2zoNboHVXMy8FcEklDwKZ84Rc7YcqTYhySdL1+1n9Uvq/MsYcE
-         OwgQ==
-X-Gm-Message-State: AOAM533V38HrD3q0pRc4+JdsnGKm1EK2E4/20Wvtma//CGk9reWHaEec
-        t9HNEoveciKzN8nL4NJo5F+1NQ==
-X-Google-Smtp-Source: ABdhPJyfv4KZZskiJBhrdXMXSByEal1AQQYqMHNrmQ693fDkqhxfNsbSSrhpRFMiZRPF9DT6sng7rA==
-X-Received: by 2002:a17:90b:3906:: with SMTP id ob6mr607002pjb.170.1642541878457;
-        Tue, 18 Jan 2022 13:37:58 -0800 (PST)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id h3sm14566341pfg.18.2022.01.18.13.37.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Jan 2022 13:37:58 -0800 (PST)
-Date:   Tue, 18 Jan 2022 13:37:57 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Lyude Paul <lyude@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] drm/dp: Remove common Post Cursor2 register handling
-Message-ID: <202201181337.3EE7821@keescook>
-References: <20220105173507.2420910-1-keescook@chromium.org>
- <cae904f1-21f4-426f-8831-e122d965b131@embeddedor.com>
+        id S245393AbiASHhF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 19 Jan 2022 02:37:05 -0500
+Received: from mail-dm6nam11on2048.outbound.protection.outlook.com ([40.107.223.48]:9601
+        "EHLO NAM11-DM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S241096AbiASHhE (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 19 Jan 2022 02:37:04 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=L0dhCfsOJvZus60CPIxaK/JKOk9RvRHg04vjOAhApSS3BYfvgNwEYyce2qZJWwkw27tzzV23T+70kJdwb+IqeSLftOsjsM1wxdOvVPFJgZEuPpXsVxnOydsVRV4W6B1L6aUaXiDOoPeP6nSWA0OrV+QgCUJ6PXmqa0Thg7K7bxw1gDV0opqFkuy9AnhLL8IajwTyLelkdjfvTLuyMIGmpW9vgqJxWnGYxB5voh5j7z12vo8/cIg49QCW1nzTs/mw0eFZGo962BUls/nczP8bUcXhtZ6iDKlvdTva/Z2ndAz5jVACI0hyo19zUX/bGDxvVcg9fVOsiSky57+r8I3elg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=PsCt4kBkLnqAmAfXFfvPezeo5ea+wnHPyKr+JkG1VGU=;
+ b=PPNyfR2rHX/1d4cKX4nnIQ7Ytc/l5ws9AZsxZMdVD18kj6OqkLySxuNMoXJQp1OB2GqswI6UnhQmW8/koCLzi0XiZnwv/+3qpq/ZpaqjsPiJi/d9JkQIWuqMtS3906UIvNSryBP/NBRDAxWJupnDasdyRRqUw6JKpVVloNYuXcDdH8UUNqYf9NbCSLR0TDnM02qzD19oE0qhFRGmU8u7/aTVJpLWUvM7qnK+n0YqtRMjIp6MxjuXP1J0b5GTGxqzlD10YwHQLLE8KFJK1A0k9Wb1DnXlXvhpoC0Z7OxBbZCgPIs0wAGUidFng3Vh9g6rZMpQ6TQgcLfLSDIhaWqHeQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 12.22.5.235) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=PsCt4kBkLnqAmAfXFfvPezeo5ea+wnHPyKr+JkG1VGU=;
+ b=QOw6QW7Z8XHhoFDUQRjnTXusXoCXwc5BzzI12Q+hspNqNQujq5Hyj8cdgjerIE4LeIMcXrrJoBv4+AuuJ7P0xY3ljtUsKo9A0Fs8/p/hN729Toet6ifeOffdZFg2LlQd7QGT5b0Sn1UdJQOkb44vD2LLR8ueEvQLXTLWMX5R0zNTuz+w1e563bE/NTT3iOz7osidKF/TmfwgO4FtI7MUxemT3iAqu8b5J51Yj+lDtljaMtK7e/S4EVcGx7wFlUjUv4/dgvrxYIwWndOLWpc6/Ss0iP41jotrWC08ao83iLeaPp8EYFruiSLuHU/hpCMRORwOaiZYiliocyIzR7AJAA==
+Received: from MWHPR13CA0017.namprd13.prod.outlook.com (2603:10b6:300:16::27)
+ by BN7PR12MB2705.namprd12.prod.outlook.com (2603:10b6:408:25::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4888.12; Wed, 19 Jan
+ 2022 07:37:02 +0000
+Received: from CO1NAM11FT052.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:300:16:cafe::cc) by MWHPR13CA0017.outlook.office365.com
+ (2603:10b6:300:16::27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4909.2 via Frontend
+ Transport; Wed, 19 Jan 2022 07:37:02 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.235)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 12.22.5.235 as permitted sender) receiver=protection.outlook.com;
+ client-ip=12.22.5.235; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (12.22.5.235) by
+ CO1NAM11FT052.mail.protection.outlook.com (10.13.174.225) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.4909.7 via Frontend Transport; Wed, 19 Jan 2022 07:37:02 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by DRHQMAIL107.nvidia.com
+ (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Wed, 19 Jan
+ 2022 07:37:01 +0000
+Received: from [10.25.78.231] (10.126.230.35) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.986.9; Tue, 18 Jan 2022
+ 23:36:58 -0800
+Message-ID: <fcfb2415-1ed8-a375-86b9-dc8c57106f87@nvidia.com>
+Date:   Wed, 19 Jan 2022 13:06:54 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cae904f1-21f4-426f-8831-e122d965b131@embeddedor.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [Patch V1 1/4] memory: tegra: Add support for mc interrupts
+Content-Language: en-US
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     <Snikam@nvidia.com>, <vdumpa@nvidia.com>
+References: <1641926750-27544-1-git-send-email-amhetre@nvidia.com>
+ <1641926750-27544-2-git-send-email-amhetre@nvidia.com>
+ <c71e09a8-0170-ce05-3fef-3e32c990b377@canonical.com>
+From:   Ashish Mhetre <amhetre@nvidia.com>
+In-Reply-To: <c71e09a8-0170-ce05-3fef-3e32c990b377@canonical.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.126.230.35]
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: b614c99e-d0d4-46b8-ea27-08d9db1e7bcf
+X-MS-TrafficTypeDiagnostic: BN7PR12MB2705:EE_
+X-Microsoft-Antispam-PRVS: <BN7PR12MB2705D20A0B1DCF657E13CA28CA599@BN7PR12MB2705.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:7691;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 1nQmIfcpo54PXL44D9nV0usG2FymHMTBs9xIomvEmQZGFNonpT03q33YNDcOVGA8QDrS7w8v4olQXqTJLPauaeo5wf7twKhU7oGtKl8V8DCIO9upW5g5WSjDzENia1DwG4bI+eOsI+ub2Ir/0yeCRlN0bB2lGbXTR8+XOhX3TB+vdxIsmencaGpmYU476OFxejrpRypR+HEqaBBSDRNwLdw7ZlVtzYbVDzL93c4hIuoipYdnp8RgZ5DSWTu7NJ9ePGnYHQf6stLDmkF0sGhhUdiLF520pYSycvm0DwFcysASGb6tiMwgmso6M1wH7Hn2HdA5BxeI9WS+yD/NF3ghTgBj4/2l3WN8B1EYPj1c5lrd5RFaA2Iw3afIrKIEWzJzF20PvNSFaIVYnearUfYRdPvdPXaLGqEWXNjxOH1vQvDx+Q6ap8AnW0tp3G8c5nofkWhmcjuqmrBW+7IuoHlfyTW28wX+5adAbfeOjn81XYi3IHEGT1ZWfjjPHKQ++qjX+F80BPk7fKklzi2G9kPpDHYz8AIpbGgHpr0gWYfZVRw/V8G4QAyWpkXMFu8TY3kiF/7sao6RhSOLnNJZRG7noQxX0fipAbVkYP/weyUQqwuWWGdAaRHSFFoFURS0vgLxax0sCAUrSHW5UoXBgj6IA8aGk3AGKDHSJ/ZCTpizB7DpXaFiSy4gKPsBVGIlzmCDJrL1i5vSRbFtagWIAV13zTfsOMmLtIcI6VH6lUI6RAY7tZlEu2T082ec+0Fdd5lRZFzma8GJtHw3KJ1ZPdNOezImjuoPjZlGG5n7oyiG1JhmmybWFUu+gV+vvNYwhgA3su99CSAINE0pgLc8DkzMMA==
+X-Forefront-Antispam-Report: CIP:12.22.5.235;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(4636009)(36840700001)(46966006)(40470700002)(2616005)(40460700001)(5660300002)(81166007)(36860700001)(54906003)(8676002)(107886003)(26005)(36756003)(47076005)(8936002)(31686004)(110136005)(16576012)(336012)(6666004)(86362001)(316002)(4326008)(31696002)(53546011)(186003)(356005)(70586007)(426003)(16526019)(70206006)(83380400001)(2906002)(82310400004)(508600001)(43740500002)(36900700001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Jan 2022 07:37:02.1423
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b614c99e-d0d4-46b8-ea27-08d9db1e7bcf
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.235];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT052.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PR12MB2705
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Jan 18, 2022 at 01:11:48PM -0600, Gustavo A. R. Silva wrote:
-> 
-> 
-> On 1/5/22 11:35, Kees Cook wrote:
-> > The link_status array was not large enough to read the Adjust Request
-> > Post Cursor2 register, so remove the common helper function to avoid
-> > an OOB read, found with a -Warray-bounds build:
-> > 
-> > drivers/gpu/drm/drm_dp_helper.c: In function 'drm_dp_get_adjust_request_post_cursor':
-> > drivers/gpu/drm/drm_dp_helper.c:59:27: error: array subscript 10 is outside array bounds of 'const u8[6]' {aka 'const unsigned char[6]'} [-Werror=array-bounds]
-> >    59 |         return link_status[r - DP_LANE0_1_STATUS];
-> >       |                ~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~
-> > drivers/gpu/drm/drm_dp_helper.c:147:51: note: while referencing 'link_status'
-> >   147 | u8 drm_dp_get_adjust_request_post_cursor(const u8 link_status[DP_LINK_STATUS_SIZE],
-> >       |                                          ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> > 
-> > Replace the only user of the helper with an open-coded fetch and decode,
-> > similar to drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c.
-> > 
-> > Fixes: 79465e0ffeb9 ("drm/dp: Add helper to get post-cursor adjustments")
-> 
-> This should be tagged for -stable:
-> 
-> Cc: stable@vger.kernel.org
 
-Ah yeah, good point. Added.
 
+On 1/12/2022 1:59 AM, Krzysztof Kozlowski wrote:
+> External email: Use caution opening links or attachments
 > 
-> > Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-> > Cc: Maxime Ripard <mripard@kernel.org>
-> > Cc: Thomas Zimmermann <tzimmermann@suse.de>
-> > Cc: David Airlie <airlied@linux.ie>
-> > Cc: Daniel Vetter <daniel@ffwll.ch>
-> > Cc: dri-devel@lists.freedesktop.org
-> > Signed-off-by: Kees Cook <keescook@chromium.org>
 > 
-> Reviewed-by: Gustavo A. R. Silva <gustavoars@kernel.org>
-
-Thanks!
-
--Kees
-
+> On 11/01/2022 19:45, Ashish Mhetre wrote:
+>> Implement new structure for function related to mc interrupts.
 > 
-> Thanks
-> --
-> Gustavo
+> s/mc/MC/
 > 
-> > ---
-> > This is the alternative to:
-> > https://lore.kernel.org/lkml/20211203084354.3105253-1-keescook@chromium.org/
-> > ---
-> >  drivers/gpu/drm/drm_dp_helper.c | 10 ----------
-> >  drivers/gpu/drm/tegra/dp.c      | 11 ++++++++++-
-> >  include/drm/drm_dp_helper.h     |  2 --
-> >  3 files changed, 10 insertions(+), 13 deletions(-)
-> > 
-> > diff --git a/drivers/gpu/drm/drm_dp_helper.c b/drivers/gpu/drm/drm_dp_helper.c
-> > index 23f9073bc473..c9528aa62c9c 100644
-> > --- a/drivers/gpu/drm/drm_dp_helper.c
-> > +++ b/drivers/gpu/drm/drm_dp_helper.c
-> > @@ -144,16 +144,6 @@ u8 drm_dp_get_adjust_tx_ffe_preset(const u8 link_status[DP_LINK_STATUS_SIZE],
-> >  }
-> >  EXPORT_SYMBOL(drm_dp_get_adjust_tx_ffe_preset);
-> >  
-> > -u8 drm_dp_get_adjust_request_post_cursor(const u8 link_status[DP_LINK_STATUS_SIZE],
-> > -					 unsigned int lane)
-> > -{
-> > -	unsigned int offset = DP_ADJUST_REQUEST_POST_CURSOR2;
-> > -	u8 value = dp_link_status(link_status, offset);
-> > -
-> > -	return (value >> (lane << 1)) & 0x3;
-> > -}
-> > -EXPORT_SYMBOL(drm_dp_get_adjust_request_post_cursor);
-> > -
-> >  static int __8b10b_clock_recovery_delay_us(const struct drm_dp_aux *aux, u8 rd_interval)
-> >  {
-> >  	if (rd_interval > 4)
-> > diff --git a/drivers/gpu/drm/tegra/dp.c b/drivers/gpu/drm/tegra/dp.c
-> > index 70dfb7d1dec5..f5535eb04c6b 100644
-> > --- a/drivers/gpu/drm/tegra/dp.c
-> > +++ b/drivers/gpu/drm/tegra/dp.c
-> > @@ -549,6 +549,15 @@ static void drm_dp_link_get_adjustments(struct drm_dp_link *link,
-> >  {
-> >  	struct drm_dp_link_train_set *adjust = &link->train.adjust;
-> >  	unsigned int i;
-> > +	u8 post_cursor;
-> > +	int err;
-> > +
-> > +	err = drm_dp_dpcd_read(link->aux, DP_ADJUST_REQUEST_POST_CURSOR2,
-> > +			       &post_cursor, sizeof(post_cursor));
-> > +	if (err < 0) {
-> > +		DRM_ERROR("failed to read post_cursor2: %d\n", err);
-> > +		post_cursor = 0;
-> > +	}
-> >  
-> >  	for (i = 0; i < link->lanes; i++) {
-> >  		adjust->voltage_swing[i] =
-> > @@ -560,7 +569,7 @@ static void drm_dp_link_get_adjustments(struct drm_dp_link *link,
-> >  				DP_TRAIN_PRE_EMPHASIS_SHIFT;
-> >  
-> >  		adjust->post_cursor[i] =
-> > -			drm_dp_get_adjust_request_post_cursor(status, i);
-> > +			(post_cursor >> (i << 1)) & 0x3;
-> >  	}
-> >  }
-> >  
-> > diff --git a/include/drm/drm_dp_helper.h b/include/drm/drm_dp_helper.h
-> > index 472dac376284..fdf3cf6ccc02 100644
-> > --- a/include/drm/drm_dp_helper.h
-> > +++ b/include/drm/drm_dp_helper.h
-> > @@ -1528,8 +1528,6 @@ u8 drm_dp_get_adjust_request_pre_emphasis(const u8 link_status[DP_LINK_STATUS_SI
-> >  					  int lane);
-> >  u8 drm_dp_get_adjust_tx_ffe_preset(const u8 link_status[DP_LINK_STATUS_SIZE],
-> >  				   int lane);
-> > -u8 drm_dp_get_adjust_request_post_cursor(const u8 link_status[DP_LINK_STATUS_SIZE],
-> > -					 unsigned int lane);
-> >  
-> >  #define DP_BRANCH_OUI_HEADER_SIZE	0xc
-> >  #define DP_RECEIVER_CAP_SIZE		0xf
-> > 
+Okay, I'll update these.
+>> Move handle_irq into this structure.
+>> Add support for clearing interrupts.
+> 
+> The subject says you are adding support for MC interrupts, so before
+> they were not supported at all?
+> 
+Interrupt handling and error logging is not supported from Tegra186
+onward. So the patches are for adding supported interrupts and logging
+them from Tegra186 onward. But you are right, subject/commit message is
+misleading. I'll update it in next version.
 
--- 
-Kees Cook
+> Here you also mention clearing of interrupts - another new feature. One
+> commit for refactoring (adding new structure) which does not change
+> functionality, second commit for adding new feature.
+> > Different question - why do you need new structure for just two function
+> pointers? Why these different IRQ handling functions cannot be in
+> tegra_mc_ops? To me, it's unnecessary code complexity (plus performance
+> impact, but it's not that important). If this is really, really needed,
+> please describe the rationale in the commit message.
+>
+clearing_interrupts() won't be needed. As pointed by Dmitry, we should
+be logging early boot MC interrupts as well instead of clearing them.
+Also, I'll keep handling irq inside tegra_mc_ops instead of adding new
+structure.
+
+>>
+>> Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
+>> ---
+>>   drivers/memory/tegra/mc.c       | 14 +++++++++++---
+>>   drivers/memory/tegra/mc.h       |  1 +
+>>   drivers/memory/tegra/tegra114.c |  1 +
+>>   drivers/memory/tegra/tegra124.c |  2 ++
+>>   drivers/memory/tegra/tegra186.c | 14 ++++++++++++++
+>>   drivers/memory/tegra/tegra194.c | 12 ++++++++++++
+>>   drivers/memory/tegra/tegra20.c  |  6 +++++-
+>>   drivers/memory/tegra/tegra210.c |  1 +
+>>   drivers/memory/tegra/tegra30.c  |  1 +
+>>   include/soc/tegra/mc.h          |  7 ++++++-
+>>   10 files changed, 54 insertions(+), 5 deletions(-)
+>>
+> 
+> 
+> Best regards,
+> Krzysztof
