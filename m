@@ -2,118 +2,192 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76526C433F5
-	for <linux-tegra@archiver.kernel.org>; Wed, 19 Jan 2022 12:20:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D517C433F5
+	for <linux-tegra@archiver.kernel.org>; Wed, 19 Jan 2022 13:41:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354406AbiASMUl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 19 Jan 2022 07:20:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43750 "EHLO
+        id S234937AbiASNlj (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 19 Jan 2022 08:41:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33976 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234677AbiASMUj (ORCPT
+        with ESMTP id S234312AbiASNli (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 19 Jan 2022 07:20:39 -0500
-Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15592C06173E;
-        Wed, 19 Jan 2022 04:20:39 -0800 (PST)
-Received: by mail-lf1-x131.google.com with SMTP id o12so8493274lfu.12;
-        Wed, 19 Jan 2022 04:20:39 -0800 (PST)
+        Wed, 19 Jan 2022 08:41:38 -0500
+Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46E15C061574;
+        Wed, 19 Jan 2022 05:41:38 -0800 (PST)
+Received: by mail-lf1-x12f.google.com with SMTP id x7so9477431lfu.8;
+        Wed, 19 Jan 2022 05:41:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :references:from:in-reply-to:content-transfer-encoding;
-        bh=x7T608envSn65mtmAeo3YxF/Yj94yNBfmWXtPvIkNW0=;
-        b=I/eG5Cu69oB4/0oQ+fNPOnT9X0A31uHTGLbkOqXSP7km1HqT2g9YJ8jwlJeqCJVsAy
-         R6huVxNhLier+x2F5E/+ai9eX5ff/0dNk1rb9ZMsVsD+hH3gq3zgg08CK5l/R8+wRIGc
-         cd3O1DQmqr1LBrAvWyqCKMB6NKrwgcRPjVV+aizoDmxbsXFyKb+GJaCT+MqqflrdLuD6
-         xA5dyqgr/r9CUvx02JhdnzXHqiX2QCLZVV1eHWt9bAG4Q5tQAhWETakkBjfSl12NJQs+
-         mkOGqBRzuql17MJxD1gOsHm0whP8y6DhyjdMZPI4EFEFyZ6eVnT9ZVqJyNQ3BdOUWiiS
-         5L0Q==
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=E80AIJuq6LPMF9rIykqm1KYtwvgVA/MlGMAu7dFX5Ek=;
+        b=I8N4zkeDQGGY+JpK17xsljhDGBSRjOz6IoY+IvPzfLzIsFqc/aeNBrxqiYPZfu7Z6E
+         M3KNBjEfrHTfo0tU0u25PgeXtLPcrorYRrRRDtG0bMg376P4rHZk+s0kOfeh6iH8NcYL
+         8MhFzMA+H3J/EtNE12KqmWnrgPPjlzDzkScC0U1FOrAoNBQb73/xJ4SQS7djRna5pkhQ
+         yAViVWJFyZsD8x4kVBIGoLCK0TkCvpDNVGkeDhCL+b9TdrYIdF5cQjrPTeXPXavAM2sf
+         tHHIFi0sn7/9UpXbx7SqjQtVtSWOPLVtJQXCk7SLrrxv5Oln4MwBs26mf62xQMdiM0BL
+         9eWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:references:from:in-reply-to
+         :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=x7T608envSn65mtmAeo3YxF/Yj94yNBfmWXtPvIkNW0=;
-        b=mmO5bLA5HmH/Ogfl8MOVwcamEb9ZY+9JPBFExgjU2DtUHHg8TthyP5ZALdbFa6OGqp
-         hhO390HVCoAJcD9PQ2yPeUefQjAC3O7MUSLnsCRTUojCM+YMDXTJ3mPryBp+K/FDEFvE
-         tZWouydomG6TrbZNZOR+U5Y8YHTHtvfr8EGUff3wSp+Zv79UrGGtVh/9e9QBAY3l5sWE
-         lo+kjd2DQZqat2X8LYQV04rjz7tiQYvVm8ZkLKFEkT3VEcBc04SbkkTMq2uHnZAyuQF3
-         ra6h9k+HWgNdT6TYVWmktOnHjzbh4/76a8BGFOjW9lbZmvHt4aZZcVD9cq5wp5wDzSa1
-         Ys3A==
-X-Gm-Message-State: AOAM530iSxChbOEeMWnxjJ1/sBwcBdhty2C+qGsGNnV/QSk9NCvF1ks8
-        DJNusHrzjNAZOdyAQRUcfyeq3nbjnGg=
-X-Google-Smtp-Source: ABdhPJwe3MenFJXbtwjTP43X46FVmE45XDOXbaFhj5zqSnHc1YYf6U7W+nqb8VaP4KwEdb0Uqiaqgg==
-X-Received: by 2002:a05:651c:2059:: with SMTP id t25mr24872735ljo.427.1642594837409;
-        Wed, 19 Jan 2022 04:20:37 -0800 (PST)
+        bh=E80AIJuq6LPMF9rIykqm1KYtwvgVA/MlGMAu7dFX5Ek=;
+        b=DtGIeB/SJUW9GYHXMDQKHsIpYOAJw5ZdKKfaCUujJ8UwZgnN2d68jUfShnCZTzB2oL
+         /NoLymdmSh7pqLN3SLr0wh13cUOwRrSe92Gcnej33WlgGDb8vWHd36n12FYwBv/9JV1C
+         YxgEhxKXPOyq8/eE8SlfDEzhx/v2z3kQrH30ydVzAkyVXhIBagJri+krimisOsNOcW4L
+         E5B4BYgT7oaFAz5XIJeTCQ0TUiTrQhvBC4bGNU8DO8XWhdyZn8QuUPxsiVKss7BfLTUD
+         si4waWN8hslMj3C0FlMbb3iCo3A1wIYQd8rwXd3J03qj7AD97rONkQ7WW4aZsB0MXRnT
+         n2qQ==
+X-Gm-Message-State: AOAM532xSFZ4kfoIyxBD68iC8aA0OT4x1DoTVqozAOMoWcNO/ZoGV88Y
+        OpDH5Kan2fFfMhKLABxUyiY=
+X-Google-Smtp-Source: ABdhPJw7CcqTRgFq0l669xagB3fK6l3pm0gwEuRtaDo2RiKzIhH+cD3GgxZzsX4rtvxoAOZ0tXrIkg==
+X-Received: by 2002:a2e:953:: with SMTP id 80mr24515560ljj.134.1642599696661;
+        Wed, 19 Jan 2022 05:41:36 -0800 (PST)
 Received: from [192.168.2.145] (109-252-139-36.dynamic.spd-mgts.ru. [109.252.139.36])
-        by smtp.googlemail.com with ESMTPSA id z13sm141770lfr.183.2022.01.19.04.20.36
+        by smtp.googlemail.com with ESMTPSA id f30sm1825612lfv.40.2022.01.19.05.41.35
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Jan 2022 04:20:36 -0800 (PST)
-Message-ID: <a7a33c29-427d-5e82-f327-aa4701d51898@gmail.com>
-Date:   Wed, 19 Jan 2022 15:20:35 +0300
+        Wed, 19 Jan 2022 05:41:36 -0800 (PST)
+Message-ID: <f98df604-1b2b-3803-b415-445656a6fa4b@gmail.com>
+Date:   Wed, 19 Jan 2022 16:41:35 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.5.0
-Subject: Re: [PATCH 1/6] i2c: tegra: Add support for Tegra234 I2C
+Subject: Re: [Patch V1 3/4] memory: tegra: add mc-err support for T186
 Content-Language: en-US
-To:     Akhil R <akhilrajeev@nvidia.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Petlozu Pravareshwar <petlozup@nvidia.com>
-References: <1642080623-15980-1-git-send-email-akhilrajeev@nvidia.com>
- <1642080623-15980-2-git-send-email-akhilrajeev@nvidia.com>
- <d9a21970-b403-4674-dbd6-5dfab0a83a3b@gmail.com>
- <DM5PR12MB1850237ECA6C115AD776635EC0599@DM5PR12MB1850.namprd12.prod.outlook.com>
+To:     Ashish Mhetre <amhetre@nvidia.com>, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, linux-tegra@vger.kernel.org,
+        krzysztof.kozlowski@canonical.com, linux-kernel@vger.kernel.org
+Cc:     Snikam@nvidia.com, vdumpa@nvidia.com
+References: <1641926750-27544-1-git-send-email-amhetre@nvidia.com>
+ <1641926750-27544-4-git-send-email-amhetre@nvidia.com>
+ <f9ca5794-55ac-803f-8606-f0b48e826eb7@gmail.com>
+ <a926e5aa-4872-5585-d367-da815518915c@nvidia.com>
 From:   Dmitry Osipenko <digetx@gmail.com>
-In-Reply-To: <DM5PR12MB1850237ECA6C115AD776635EC0599@DM5PR12MB1850.namprd12.prod.outlook.com>
+In-Reply-To: <a926e5aa-4872-5585-d367-da815518915c@nvidia.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-19.01.2022 11:20, Akhil R пишет:
->> 13.01.2022 16:30, Akhil R пишет:
->>> +static const struct tegra_i2c_hw_feature tegra234_i2c_hw = {
->>> +     .has_continue_xfer_support = true,
->>> +     .has_per_pkt_xfer_complete_irq = true,
->>> +     .clk_divisor_hs_mode = 0x2,
->>> +     .clk_divisor_std_mode = 0x4f,
->>> +     .clk_divisor_fast_mode = 0x58,
->>> +     .clk_divisor_fast_plus_mode = 0x24,
->>> +     .has_config_load_reg = true,
->>> +     .has_multi_master_mode = true,
->>> +     .has_slcg_override_reg = true,
->>> +     .has_mst_fifo = true,
->>> +     .quirks = &tegra194_i2c_quirks,
->>> +     .supports_bus_clear = true,
->>> +     .has_apb_dma = false,
->>> +     .tlow_std_mode = 0x8,
->>> +     .thigh_std_mode = 0x7,
->>> +     .tlow_fast_fastplus_mode = 0x1,
->>> +     .thigh_fast_fastplus_mode = 0x1,
->>> +     .setup_hold_time_std_mode = 0x08080808,
->>> +     .setup_hold_time_fast_fast_plus_mode = 0x02020202,
->>> +     .setup_hold_time_hs_mode = 0x090909,
->>> +     .has_interface_timing_reg = true, };
+19.01.2022 11:53, Ashish Mhetre пишет:
+> 
+> 
+> On 1/12/2022 4:31 PM, Dmitry Osipenko wrote:
+>> External email: Use caution opening links or attachments
 >>
->> Why tegra194_i2c_hw can't be reused by T234? Looks like I2C h/w hasn't
->> changed and somebody just made a minor tuning of the timing parameters, does
->> it really matter in practice?
-> The timing parameters are important to get the desired data rate for I2C. The values,
-> unfortunately, cannot be reused from Tegra194.
+>>
+>> 11.01.2022 21:45, Ashish Mhetre пишет:
+>>> Add all mc-errors supported by T186.
+>>> Implement mc interrupt handling routine for T186.
+>>>
+>>> Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
+>>> ---
+>>>   drivers/memory/tegra/mc.h       |  17 +++++++
+>>>   drivers/memory/tegra/tegra186.c | 100
+>>> ++++++++++++++++++++++++++++++++++++++++
+>>>   2 files changed, 117 insertions(+)
+>>>
+>>> diff --git a/drivers/memory/tegra/mc.h b/drivers/memory/tegra/mc.h
+>>> index 2d4f495..7817492 100644
+>>> --- a/drivers/memory/tegra/mc.h
+>>> +++ b/drivers/memory/tegra/mc.h
+>>> @@ -44,6 +44,15 @@
+>>>   #define MC_TIMING_CONTROL_DBG                                0xf8
+>>>   #define MC_TIMING_CONTROL                            0xfc
+>>>
+>>
+>> this empty line is unnecessary
+>>
+> I'll fix this in next version.
+> 
+>>> +#define MC_ERR_VPR_STATUS                            0x654
+>>> +#define MC_ERR_VPR_ADR                                       0x658
+>>> +#define MC_ERR_SEC_STATUS                            0x67c
+>>> +#define MC_ERR_SEC_ADR                                       0x680
+>>> +#define MC_ERR_MTS_STATUS                            0x9b0
+>>> +#define MC_ERR_MTS_ADR                                       0x9b4
+>>> +#define MC_ERR_GENERALIZED_CARVEOUT_STATUS           0xc00
+>>> +#define MC_ERR_GENERALIZED_CARVEOUT_ADR                      0xc04
+>>> +
+>>>   #define MC_INT_DECERR_ROUTE_SANITY                   BIT(20)
+>>>   #define MC_INT_WCAM_ERR                                      BIT(19)
+>>>   #define MC_INT_SCRUB_ECC_WR_ACK                              BIT(18)
+>>> @@ -159,6 +168,14 @@ extern const struct tegra_mc_ops tegra186_mc_ops;
+>>>   extern const char * const tegra_mc_status_names[32];
+>>>   extern const char * const tegra_mc_error_names[8];
+>>>
+>>> +struct tegra_mc_error {
+>>> +     u32 int_bit;
+>>> +     const char *msg;
+>>> +     u32 status_reg;
+>>> +     u32 addr_reg;
+>>> +     u32 addr_reg_hi;
+>>> +};
+>>> +
+>>>   /*
+>>>    * These IDs are for internal use of Tegra ICC drivers. The ID
+>>> numbers are
+>>>    * chosen such that they don't conflict with the device-tree ICC
+>>> node IDs.
+>>> diff --git a/drivers/memory/tegra/tegra186.c
+>>> b/drivers/memory/tegra/tegra186.c
+>>> index 6766cc4..4f3ae71 100644
+>>> --- a/drivers/memory/tegra/tegra186.c
+>>> +++ b/drivers/memory/tegra/tegra186.c
+>>> @@ -146,8 +146,107 @@ static void tegra186_mc_clear_interrupt(struct
+>>> tegra_mc *mc)
+>>>        mc_writel(mc, MC_INTSTATUS_CLEAR, MC_INTSTATUS);
+>>>   }
+>>>
+>>> +static const struct tegra_mc_error int_mc_errors[] = {
+>>> +     {
+>>> +             .int_bit = MC_INT_DECERR_EMEM,
+>>> +             .msg = "EMEM address decode error",
+>>> +             .status_reg = MC_ERR_STATUS,
+>>> +             .addr_reg = MC_ERR_ADR,
+>>> +     },
+>>> +     {
+>>> +             .int_bit = MC_INT_SECURITY_VIOLATION,
+>>> +             .msg = "non secure access to secure region",
+>>> +             .status_reg = MC_ERR_STATUS,
+>>> +             .addr_reg = MC_ERR_ADR,
+>>> +     },
+>>> +     {
+>>> +             .int_bit = MC_INT_DECERR_VPR,
+>>> +             .msg = "MC request violates VPR requirements",
+>>> +             .status_reg = MC_ERR_VPR_STATUS,
+>>> +             .addr_reg = MC_ERR_VPR_ADR,
+>>> +     },
+>>
+>> I see that these VPR registers present on all SoCs starting with T124.
+>> It doesn't look like you need the separate IRQ handlers at all, instead
+>> please extend the common T30 handler. For example, you may add a
+>> switch-case statements to handle those T124+ specific bits differently.
+>>
+>> static irqreturn_t tegra30_mc_handle_irq(int irq, void *data)
+>> {
+>> ...
+>>          switch (bit) {
+>>          case MC_INT_DECERR_VPR:
+>>                  status_reg = MC_ERR_VPR_STATUS;
+>>                  addr_reg   = MC_ERR_VPR_ADR;
+>>                  break;
+>>          ...
+>>          default:
+>>                  status_reg = MC_ERR_STATUS;
+>>                  addr_reg   = MC_ERR_ADR;
+>>          }
+>>
+>>          value = mc_readl(mc, status_reg);
+>>          ...
+>>
+>>          value = mc_readl(mc, addr_reg);
+> Okay. I'll use same handler as Tegra30 with additional Tegra186 onward
+> bits.
+> Also, shall I change name of tegra30_mc_handle_irq() to
+> tegra_mc_handle_irq() as we are using it across all Tegra SOCs ?
 
-From where those T194 parameters specified in the Tegra I2C driver came
-from?
-
-I'm now looking at T194 TRM (Xavier_TRM_DP09253002_v1.3p 10.2.3.1.1
-Example Settings for Various I2C Speeds) and see that all the values
-should match T234. Please check whether T194 configuration is correct
-and fix it if needed.
+T20 won't use it, no need to change the name.
