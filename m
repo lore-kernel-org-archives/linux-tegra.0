@@ -2,55 +2,55 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FF81C433F5
-	for <linux-tegra@archiver.kernel.org>; Thu, 20 Jan 2022 12:59:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C206C433F5
+	for <linux-tegra@archiver.kernel.org>; Thu, 20 Jan 2022 13:07:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241557AbiATM7y (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 20 Jan 2022 07:59:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39738 "EHLO
+        id S244357AbiATNHC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 20 Jan 2022 08:07:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41368 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237067AbiATM7y (ORCPT
+        with ESMTP id S241799AbiATNHB (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 20 Jan 2022 07:59:54 -0500
-Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF2F6C061574;
-        Thu, 20 Jan 2022 04:59:53 -0800 (PST)
-Received: by mail-lf1-x12d.google.com with SMTP id m1so21357735lfq.4;
-        Thu, 20 Jan 2022 04:59:53 -0800 (PST)
+        Thu, 20 Jan 2022 08:07:01 -0500
+Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D9BBC061574;
+        Thu, 20 Jan 2022 05:07:01 -0800 (PST)
+Received: by mail-lf1-x134.google.com with SMTP id o12so21300170lfu.12;
+        Thu, 20 Jan 2022 05:07:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=message-id:date:mime-version:user-agent:subject:content-language:to
          :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=LsmckIhI4rAR2wBGS0GbJd6b2Xr2c/U/68CeWyncqcA=;
-        b=YzqLYvoBCsUBhWov+dYz9LNmT70qVxSj+G4GHIh6zRcgXktSuRKn6RiJM5FXIzJDz+
-         leoMlA7y9fBhMFW2a8tLX/qBJYDGotwpgq2UsqSI2lkDZPnZJgifwW3GBLubfP+OOrFK
-         sKpExBmAvhJL8Zd7v59DW11zpDSNm1+VQSPjP6x40fMG4vjoo4T185xht6Ln+b1fe+KN
-         HaC+szCJyuIqyucXrJqcjpVgdbBBsKXAWEelr7B6UYL95HGssmmFxoXEm5RcWKjHbO9V
-         6BBrMEQGeCzOwgd3GUsXIT1cxvDYPijW0Aa0gryj0EhLJ63tarAuwLjUpM02aoXFV/zb
-         U37A==
+        bh=aXepAYAyT7/G8EroLA/XnX6tZ9gPc8nhC6rl/rhcEGs=;
+        b=Ss4NoeWtMC4d0o9WZ/kRzzaxrIxL/7mA+WzSid6J6zcrfxEDmH3DqWIBii2r8YeQzC
+         rvnUwzEkWpesHSbJFyrOerFhoQOhmAhbe1XNwjJ96JqZcgx3127/m2tWqVXLWgQvjts9
+         COBENoNvpCehEgl6WbsJBKdK3mW2aLb2+xpqLYJW1FB2hZliu2cqxevrinDA8CmPooju
+         G6e4Jq6PWfWkVWZY/hCRauFk6bSYWLkf4q8xA4ujRdLuQLN7l2uv/ClSYmu7NvOGswdq
+         iR9vM4BQGWQErX2KewyEHCEzP0bKi7o3HnDU1qeRHgvppGbCRkyBkf67Shicjq7Q6ltE
+         OyUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=LsmckIhI4rAR2wBGS0GbJd6b2Xr2c/U/68CeWyncqcA=;
-        b=kLZYJRC6dzZBXv8mT9ba9dn2q34nS0hxKCOe9snN45e3OUbRblUFtbJi98dUHSeGrc
-         OrZZ8AQkEYi/5KPSX2HsOm/iwq0PyLz944CYR4lGybouLmVXmKaWoOH4u0XP5EmO6f/u
-         ylGLouBmyad3kiqLIdffF1R049pLaAQxGT4KH8DT0v6ipUsF8QqXu/DvLbuo+HJX3If0
-         MvaIHHc7eIinRUpHKCcM/osqcYhAEZ31ilC1CDuoDcaZOt1NCO6n9QOG6c4r3RuemJQS
-         TTFQ4Vm4mKRghS6WD5ofxQN94H22bVpzZGK/vAft/2poyNFBVViz39ePUPJDOMedKUTP
-         QQSw==
-X-Gm-Message-State: AOAM530xIxfU7njws14ymWPizWkiRZeGA6SG0ljC5SJh9bo1T+eenOQp
-        5k3xwp1SxuwMbg+XHKeA3vUN5vBTBa8=
-X-Google-Smtp-Source: ABdhPJwFfQkBgrktKE3ju6bGfP+W7sKeTkfRmdmm9IaX1Ybzae/qv3ZGsSRrv49/hXVQMWFKOfCzQg==
-X-Received: by 2002:a05:651c:1a29:: with SMTP id by41mr19572266ljb.151.1642683592339;
-        Thu, 20 Jan 2022 04:59:52 -0800 (PST)
+        bh=aXepAYAyT7/G8EroLA/XnX6tZ9gPc8nhC6rl/rhcEGs=;
+        b=Yv3/aGdMBTMMKC2S1BRh1IZNdFd7Jegst1jMAhG0JAz1NAi3uKLavB0AG/XjxPwlep
+         4YDI4l8dGcn1rQj0VTomdtErn1scw6LsO/hi9fLGa7ZOZZOXzSaWkPRbkAGJccAWJ3Xb
+         pzsw+kF2/qE5j9YYFtbQFYazNXlcFUWf+NGJspBL9VaV4b6WZoTFd3ltbF2IkWvGiIsm
+         ZPzQ/ObIM8Mor1dtQGUt9nEjy22K2xPNiyuYeNI/o2Cm6YdmGRIYrXrpgRG1IuTx6eFN
+         EKqYMMj94YNGJQmWDQjJUhkfcQEGptBh/PfGeSZmtJOMlBoJHK2Xcmk2LPp/odqvRsGx
+         7vvQ==
+X-Gm-Message-State: AOAM5304Q1nfzdMPVO5DEJ/AT1Wj9jXuLDijMW0s+UgQEeYFzzVseQuY
+        6/Rc9mBv46jNXWBE0anvO2g=
+X-Google-Smtp-Source: ABdhPJz7bgETZMke5qG1t4pwZ0b4t8bIgENlVidIOCfUlk+navtmLt1uQXf8liK1BUVJZ6CnicFTqA==
+X-Received: by 2002:a2e:8854:: with SMTP id z20mr7773833ljj.343.1642684019705;
+        Thu, 20 Jan 2022 05:06:59 -0800 (PST)
 Received: from [192.168.2.145] (109-252-139-36.dynamic.spd-mgts.ru. [109.252.139.36])
-        by smtp.googlemail.com with ESMTPSA id p25sm351459lfa.49.2022.01.20.04.59.51
+        by smtp.googlemail.com with ESMTPSA id z13sm353056lft.92.2022.01.20.05.06.58
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Jan 2022 04:59:51 -0800 (PST)
-Message-ID: <cd7a212e-71ff-90a6-d3dc-1391567fc113@gmail.com>
-Date:   Thu, 20 Jan 2022 15:59:51 +0300
+        Thu, 20 Jan 2022 05:06:59 -0800 (PST)
+Message-ID: <1ef23e26-fcde-e2b7-d4d7-c4fc68c1ca90@gmail.com>
+Date:   Thu, 20 Jan 2022 16:06:58 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.5.0
@@ -70,15 +70,16 @@ List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 20.01.2022 12:02, Ashish Mhetre пишет:
-> @@ -521,23 +535,64 @@ static irqreturn_t tegra30_mc_handle_irq(int irq, void *data)
->  
->  	for_each_set_bit(bit, &status, 32) {
->  		const char *error = tegra_mc_status_names[bit] ?: "unknown";
-> +		u32 status_reg = MC_ERR_STATUS, addr_reg = MC_ERR_ADR;
+> +		default:
+> +			status_reg = MC_ERR_STATUS;
+> +			addr_reg = MC_ERR_ADR;
+> +#if defined(CONFIG_ARCH_TEGRA_194_SOC) || \
+> +    defined(CONFIG_ARCH_TEGRA_234_SOC)
+> +			addr_hi_reg = MC_ERR_ADR_HI;
+> +#endif
 
-No need to initialize these variables, since they are always initialized
-by the further code.
+I'd add new "has_addr_hi_reg" field to struct tegra_mc_soc and use it
+instead of the ifdefs.
 
-Please write it like this:
-
-u32 addr_hi_reg = 0, status_reg, addr_reg;
+if (mc->soc->has_addr_hi_reg)
+	addr_hi_reg = MC_ERR_ADR_HI;
