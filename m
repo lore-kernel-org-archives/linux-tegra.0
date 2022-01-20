@@ -2,147 +2,227 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6D86C433FE
-	for <linux-tegra@archiver.kernel.org>; Thu, 20 Jan 2022 11:31:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 071D6C433EF
+	for <linux-tegra@archiver.kernel.org>; Thu, 20 Jan 2022 12:54:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231610AbiATLbN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 20 Jan 2022 06:31:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47472 "EHLO
+        id S231168AbiATMyU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 20 Jan 2022 07:54:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38124 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231603AbiATLbM (ORCPT
+        with ESMTP id S244608AbiATMyQ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 20 Jan 2022 06:31:12 -0500
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 399BEC061574
-        for <linux-tegra@vger.kernel.org>; Thu, 20 Jan 2022 03:31:12 -0800 (PST)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1nAVeb-0003Ed-UQ; Thu, 20 Jan 2022 12:30:57 +0100
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1nAVeZ-00BLYg-Sj; Thu, 20 Jan 2022 12:30:55 +0100
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1nAVeY-000E9C-HJ; Thu, 20 Jan 2022 12:30:54 +0100
-Date:   Thu, 20 Jan 2022 12:30:54 +0100
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Akhil R <akhilrajeev@nvidia.com>,
-        Christian Koenig <christian.koenig@amd.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        linux-i2c <linux-i2c@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Wolfram Sang <wsa@kernel.org>, Len Brown <lenb@kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>
-Subject: Re: [PATCH v2 3/3] i2c: smbus: Use device_*() functions instead of
- of_*()
-Message-ID: <20220120113054.lmd5rmvmflaf7v7t@pengutronix.de>
-References: <1641996862-26960-1-git-send-email-akhilrajeev@nvidia.com>
- <1641996862-26960-4-git-send-email-akhilrajeev@nvidia.com>
- <CAHp75Vd=gxF9jFMvRw3qM9rfsxxCsO8qYXKVheuhjOV7ypU9og@mail.gmail.com>
- <DM5PR12MB18509C555A8A6F5891F0CC28C05A9@DM5PR12MB1850.namprd12.prod.outlook.com>
- <CAHp75VfVJo=8FPX_Pw15X5B3awFXpuEq+=LryxB6M4Ub-YJ7uA@mail.gmail.com>
- <DM5PR12MB185098D36F665AC5702D47DDC05A9@DM5PR12MB1850.namprd12.prod.outlook.com>
- <CAHp75VfVt0b+rBTfvTTj4-M11DrM2EGdqb4NNNTq0ApvR+gpDg@mail.gmail.com>
+        Thu, 20 Jan 2022 07:54:16 -0500
+Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC271C061574;
+        Thu, 20 Jan 2022 04:53:26 -0800 (PST)
+Received: by mail-lf1-x131.google.com with SMTP id h26so6519998lfv.11;
+        Thu, 20 Jan 2022 04:53:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=1LqZq0O7eLdirdCHQCT48HNOIc+4FU2wpYuxnO3KmGg=;
+        b=T6b7UUlDDd35DwuHRdlQ2pHINjJp7EbhX29Y7FYCaWKUvlgm3Hi0ns0gwtFvsS4Vpu
+         V+CU6jHSU14H0DzSYQTWlOxcXvGJQ0D0IkkQH1OEXJmvoPYhiqsyk504YqSRVSyU0dup
+         dWm+3TqHhguyE9BQ1Fzgobh0ZnOshPappS3Hka+4I9asmEz7fTfuJ6B81Sboew+iWWOH
+         pIL8G/u/1ktLYX5iTUU9OgqUi10x2Z5+g4aD/WT+g3czm0/V4ks9AeeZtwjozrZxWOUh
+         IkvIJ5FfDipk8kEZsXdHGGCuOgRtPliW5rOTC06eCmVbOoiVM68CG0BHbC0i3k/5eRZN
+         A3Tg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=1LqZq0O7eLdirdCHQCT48HNOIc+4FU2wpYuxnO3KmGg=;
+        b=1zrnA7+FKtqm7SdQj8vlZI5viaKHVVWKGP+g9sPt/Myl2ahcy8mSrSb2imaj0icGMT
+         c9K57vk2o72vMTz0+pHPPSbdJPnhYxU/6ZszZ5a10GqmD4lULZzsf0aaBW6OPoGt1B25
+         YmfqNTrSGP2nUWCumVUl47JkkoBBkYg+DIcWzlybZrikJtEpZe5McIqeoPl5eTz1jr7k
+         L1uUj5wVgzl0pxESmCmcvq389KSjs9E7U8ZFThJWIF+BXX0tsZ/0Zv1/2b0GcjCpHNq0
+         akC2jiLxHk5a4pWXG19WG2pQo6HU1pLcPVyvmEgitSrR7PeuyDH4yuUYsVDTe7p/u8sD
+         s21Q==
+X-Gm-Message-State: AOAM530fWZtUlLEK2uRpX5535+0lTydKteZr81ZY2dB8fgkHweBom3j2
+        Nbfglq0bE/p5DoXo+Vnk7eSFiDA9DQU=
+X-Google-Smtp-Source: ABdhPJxpNVNnlti34Aue4nQMiHS3+GO2b3oxC1ilHEaQZ2/skp8FzRBKUDvVR+CckwbGgiiGAn+TeQ==
+X-Received: by 2002:a2e:2405:: with SMTP id k5mr24710279ljk.402.1642683204910;
+        Thu, 20 Jan 2022 04:53:24 -0800 (PST)
+Received: from [192.168.2.145] (109-252-139-36.dynamic.spd-mgts.ru. [109.252.139.36])
+        by smtp.googlemail.com with ESMTPSA id y12sm271345ljh.26.2022.01.20.04.53.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 20 Jan 2022 04:53:24 -0800 (PST)
+Message-ID: <3ebf9021-8df2-3d62-7f6c-0ff660e93735@gmail.com>
+Date:   Thu, 20 Jan 2022 15:53:23 +0300
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="cdxvf7ymm4mv6sgi"
-Content-Disposition: inline
-In-Reply-To: <CAHp75VfVt0b+rBTfvTTj4-M11DrM2EGdqb4NNNTq0ApvR+gpDg@mail.gmail.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [Patch V2] memory: tegra: Add MC error logging on tegra186 onward
+Content-Language: en-US
+To:     Ashish Mhetre <amhetre@nvidia.com>, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, linux-tegra@vger.kernel.org,
+        krzysztof.kozlowski@canonical.com, linux-kernel@vger.kernel.org
+Cc:     Snikam@nvidia.com, vdumpa@nvidia.com
+References: <1642669368-20605-1-git-send-email-amhetre@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+In-Reply-To: <1642669368-20605-1-git-send-email-amhetre@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+20.01.2022 12:02, Ashish Mhetre пишет:
+> Remove static from tegra30_mc_handle_irq and use it as interrupt handler
+> for MC interrupts on tegra186, tegra194 and tegra234 to log the errors.
+> Add error specific MC status and address register bits and use them on
+> tegra186, tegra194 and tegra234.
+> Add error logging for generalized carveout interrupt on tegra186, tegra194
+> and tegra234.
+> Add error logging for route sanity interrupt on tegra194 an tegra234.
+> Add register for higher bits of error address and use it on tegra194 and
+> tegra234.
+> 
+> Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
+> ---
+> Changes in v2:
+> - Updated patch subject and commit message
+> - Removed separate irq handlers
+> - Updated tegra30_mc_handle_irq to be used for Tegra186 onwards as well
+> 
+>  drivers/memory/tegra/mc.c       | 73 ++++++++++++++++++++++++++++++++++-------
+>  drivers/memory/tegra/mc.h       | 16 +++++++++
+>  drivers/memory/tegra/tegra186.c |  7 ++++
+>  drivers/memory/tegra/tegra194.c |  5 +++
+>  drivers/memory/tegra/tegra234.c |  5 +++
+>  5 files changed, 94 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
+> index bf3abb6..badebe8 100644
+> --- a/drivers/memory/tegra/mc.c
+> +++ b/drivers/memory/tegra/mc.c
+> @@ -508,7 +508,21 @@ int tegra30_mc_probe(struct tegra_mc *mc)
+>  	return 0;
+>  }
+>  
+> -static irqreturn_t tegra30_mc_handle_irq(int irq, void *data)
+> +const struct tegra_mc_ops tegra30_mc_ops = {
+> +	.probe = tegra30_mc_probe,
+> +	.handle_irq = tegra30_mc_handle_irq,
+> +};
+> +#endif
+> +
+> +#if defined(CONFIG_ARCH_TEGRA_3x_SOC) || \
+> +    defined(CONFIG_ARCH_TEGRA_114_SOC) || \
+> +    defined(CONFIG_ARCH_TEGRA_124_SOC) || \
+> +    defined(CONFIG_ARCH_TEGRA_132_SOC) || \
+> +    defined(CONFIG_ARCH_TEGRA_210_SOC) || \
+> +    defined(CONFIG_ARCH_TEGRA_186_SOC) || \
+> +    defined(CONFIG_ARCH_TEGRA_194_SOC) || \
+> +    defined(CONFIG_ARCH_TEGRA_234_SOC)
 
---cdxvf7ymm4mv6sgi
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Ifdefs are unnecessary, please remove them. They are okay for
+tegra30_mc_ops, which is known to be used only by specific older SoC
+versions, not okay in case of newer SoCs.
 
-On Thu, Jan 20, 2022 at 12:43:02PM +0200, Andy Shevchenko wrote:
-> On Thu, Jan 20, 2022 at 12:29 PM Akhil R <akhilrajeev@nvidia.com> wrote:
-> >
-> > > ...
-> > >
-> > > > > This change reveals potential issue:
-> > > > >
-> > > > > > -               irq =3D of_irq_get_byname(adapter->dev.of_node,=
- "smbus_alert");
-> > > > > > +               irq =3D device_irq_get_byname(adapter->dev.pare=
-nt,
-> > > "smbus_alert");
-> > > > >
-> > > > > >                 if (irq <=3D 0)
-> > > > >
-> > > > > I guess this '=3D 0' part should be fixed first.
-> > > >
-> > > > '0' is a failure as per the documentation of of_irq_get_byname() as=
- well as
-> > > > of_irq_get(). The case is different for acpi_irq_get(), but it is h=
-andled in
-> > > > fwnode_irq_get(). If I understood it right, a return value of '0' s=
-hould be
-> > > > considered a failure here.
-> > >
-> > > Depends. I have no idea what the original code does here. But
-> > > returning an error or 0 from this function seems confusing to me.
-> > >
-> > The description in of_irq_get*() says -
-> > /* Return: Linux IRQ number on success, or 0 on the IRQ mapping failure=
-, or
-> >  * -EPROBE_DEFER if the IRQ domain is not yet created, or error code in=
- case
-> >  * of any other failure.
-> >  */
-> > As I see from the code of fwnode_irq_get(), which is used in this case,=
- returns
-> > either the return value of of_irq_get() or error code from acpi_irq_get=
-() when
-> > it fails, or res.start if it didn't fail. I guess, any of these would n=
-ot be 0 unless
-> > there is an error.
->=20
-> of_irq_get*() seems inconsistent...
->=20
-> Uwe, what do you think?
+> +irqreturn_t tegra30_mc_handle_irq(int irq, void *data)
+>  {
+>  	struct tegra_mc *mc = data;
+>  	unsigned long status;
+> @@ -521,23 +535,64 @@ static irqreturn_t tegra30_mc_handle_irq(int irq, void *data)
+>  
+>  	for_each_set_bit(bit, &status, 32) {
+>  		const char *error = tegra_mc_status_names[bit] ?: "unknown";
+> +		u32 status_reg = MC_ERR_STATUS, addr_reg = MC_ERR_ADR;
+>  		const char *client = "unknown", *desc;
+>  		const char *direction, *secure;
+>  		phys_addr_t addr = 0;
+> +		u32 addr_hi_reg = 0;
+>  		unsigned int i;
+>  		char perm[7];
+>  		u8 id, type;
+>  		u32 value;
+>  
+> -		value = mc_readl(mc, MC_ERR_STATUS);
+> +#if defined(CONFIG_ARCH_TEGRA_186_SOC) || \
+> +    defined(CONFIG_ARCH_TEGRA_194_SOC) || \
+> +    defined(CONFIG_ARCH_TEGRA_234_SOC)
 
-Yeah, this is something I stumbled over during the platform_get_irq*()
-discussion. But I don't feel like investing any more energy there.
+Please drop these ifdefs.
 
-Best regards
-Uwe
+> +		switch (bit) {
+> +		case MC_INT_DECERR_VPR:
+> +			status_reg = MC_ERR_VPR_STATUS;
+> +			addr_reg = MC_ERR_VPR_ADR;
 
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+I mentioned previously that VPR is supported by T124+. Hence ifdefs are
+incorrect.
 
---cdxvf7ymm4mv6sgi
-Content-Type: application/pgp-signature; name="signature.asc"
+...
+> +		addr |= mc_readl(mc, addr_reg);
+>  
+>  		if (value & MC_ERR_STATUS_RW)
+>  			direction = "write";
+> @@ -591,9 +646,6 @@ static irqreturn_t tegra30_mc_handle_irq(int irq, void *data)
+>  			break;
+>  		}
+>  
+> -		value = mc_readl(mc, MC_ERR_ADR);
 
------BEGIN PGP SIGNATURE-----
+Don't change the order of the code, just replace the MC_ERR_ADR here.
 
-iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmHpR+sACgkQwfwUeK3K
-7AlVDQf/UyEbXUuWCywlD2V5dd6jAINm1Cg0yyuFPxHty9d7WFBu0iL+OmYwdKsf
-VNESVe1lcz+AUYaov33RaM0cMCqR2tZ+i3tnoyxBH80xIRTE0ncyW1zhg0pxkQnE
-vQZRkHAjVtz1DzmOKVP1FPCRqh0H9LmZXfaSJL7lhHDLe5WgAhzXszGDVY1J9xZi
-tlR1vB91vzTk/+TLVsj3l+NU5qbrhqx6Cqwktlnn00XX9QMkH5+FApDMC8NfZ9qI
-CMAh5RjiEBoZEKQY70Ix70kyVLAblmNkVY5rvbie9YoZ+fBMMpRNdykLgPqPUaBv
-kEdOP8qlPlbAKVs7MmUfMgtl+IVocg==
-=bB3r
------END PGP SIGNATURE-----
+> -		addr |= value;
+> -
+>  		dev_err_ratelimited(mc->dev, "%s: %s%s @%pa: %s (%s%s)\n",
+>  				    client, secure, direction, &addr, error,
+>  				    desc, perm);
+> @@ -604,11 +656,6 @@ static irqreturn_t tegra30_mc_handle_irq(int irq, void *data)
+>  
+>  	return IRQ_HANDLED;
+>  }
+> -
+> -const struct tegra_mc_ops tegra30_mc_ops = {
+> -	.probe = tegra30_mc_probe,
+> -	.handle_irq = tegra30_mc_handle_irq,
+> -};
+>  #endif
+>  
+>  const char *const tegra_mc_status_names[32] = {
+> @@ -622,6 +669,8 @@ const char *const tegra_mc_status_names[32] = {
+>  	[12] = "VPR violation",
+>  	[13] = "Secure carveout violation",
+>  	[16] = "MTS carveout violation",
+> +	[17] = "Generalized carveout violation",
+> +	[20] = "Route Sanity error",
+>  };
+>  
+>  const char *const tegra_mc_error_names[8] = {
+> diff --git a/drivers/memory/tegra/mc.h b/drivers/memory/tegra/mc.h
+> index 062886e..9b1b0dc 100644
+> --- a/drivers/memory/tegra/mc.h
+> +++ b/drivers/memory/tegra/mc.h
+> @@ -44,6 +44,8 @@
+>  #define MC_TIMING_CONTROL_DBG				0xf8
+>  #define MC_TIMING_CONTROL				0xfc
+>  
+> +#define MC_INT_DECERR_ROUTE_SANITY			BIT(20)
+> +#define MC_INT_DECERR_GENERALIZED_CARVEOUT		BIT(17)
+>  #define MC_INT_DECERR_MTS				BIT(16)
+>  #define MC_INT_SECERR_SEC				BIT(13)
+>  #define MC_INT_DECERR_VPR				BIT(12)
+> @@ -65,6 +67,18 @@
+>  #define MC_ERR_STATUS_SECURITY				BIT(17)
+>  #define MC_ERR_STATUS_RW				BIT(16)
+>  
+> +#define MC_ERR_VPR_STATUS				0x654
+> +#define MC_ERR_VPR_ADR					0x658
+> +#define MC_ERR_SEC_STATUS				0x67c
+> +#define MC_ERR_SEC_ADR					0x680
+> +#define MC_ERR_MTS_STATUS				0x9b0
+> +#define MC_ERR_MTS_ADR					0x9b4
+> +#define MC_ERR_ROUTE_SANITY_STATUS			0x9c0
+> +#define MC_ERR_ROUTE_SANITY_ADR				0x9c4
+> +#define MC_ERR_GENERALIZED_CARVEOUT_STATUS		0xc00
+> +#define MC_ERR_GENERALIZED_CARVEOUT_ADR			0xc04
+> +#define MC_ERR_ADR_HI					0x11fc
 
---cdxvf7ymm4mv6sgi--
+Please put these regs right after the MC_TIMING_CONTROL. There is no
+reason to separate them.
+
