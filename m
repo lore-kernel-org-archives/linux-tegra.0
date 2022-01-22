@@ -2,99 +2,115 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE3EFC433F5
-	for <linux-tegra@archiver.kernel.org>; Fri, 21 Jan 2022 18:52:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A295C43217
+	for <linux-tegra@archiver.kernel.org>; Sat, 22 Jan 2022 02:22:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229983AbiAUSw3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 21 Jan 2022 13:52:29 -0500
-Received: from mail-ed1-f47.google.com ([209.85.208.47]:42705 "EHLO
-        mail-ed1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231326AbiAUSvs (ORCPT
+        id S231594AbiAVCWU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 21 Jan 2022 21:22:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35176 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229689AbiAVCWT (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 21 Jan 2022 13:51:48 -0500
-Received: by mail-ed1-f47.google.com with SMTP id p12so44332769edq.9;
-        Fri, 21 Jan 2022 10:51:48 -0800 (PST)
+        Fri, 21 Jan 2022 21:22:19 -0500
+Received: from mail-yb1-xb30.google.com (mail-yb1-xb30.google.com [IPv6:2607:f8b0:4864:20::b30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9DB19C06173B;
+        Fri, 21 Jan 2022 18:22:19 -0800 (PST)
+Received: by mail-yb1-xb30.google.com with SMTP id c6so32739153ybk.3;
+        Fri, 21 Jan 2022 18:22:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=0WFsl464O1plaAdb1DqUc2FVm3sL9ZIJC+WKaUWfUbY=;
+        b=GDj/J3wvMb7a7yQnhMjuXVC+fNwBgi7tTQcyVGHVuY6nxhGeKrskBjuEelpg1nrpGp
+         +TkzOpNNWRPqKMrFwiX71+kqmI/TTNo7MN6Q5u0YI8fgvJalTUKkRnsNqREEujjszKOd
+         iXTWa66eagtiGSbe1V+MTtLEJpg8uU5oBHP5kq2OvwuQsAzrBVJAuFiEnx+hG/wLKu8R
+         egaMLbWAVq8POsKHE/bR8PEqI/0ryKBjztSeoeOOwNS9SOtyIzfxlsbSGAODzCaH+Skj
+         USYPyfOtRAgBBeqRPa9Px1TlqpkPLGEFJQ5LMzFg0gpaIPEahSOBPoqN+NP91yWwJLEv
+         PU4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:from:to:cc:references:in-reply-to
-         :content-transfer-encoding;
-        bh=pr/5QKzb6ToiCGRJqJUCw/c9mGEuN4OsH5UfA8KKh98=;
-        b=0hfsO+43bzRH4CModhIp3wee/y2fjXLFXSprp5BO3Fp0smGl6zRAwime9kRx9af4LV
-         jivb22dgQ8rEs4C2KGJ4svUeaNKgYgvEiOeVeUQFuxw3b2k6rFL/mAE3V6cl4W3x3r4+
-         RIRCaFr4VrmOFpfSaw/32YLGkMFdeHCi12pmFQ4EWiRzY4QbKFg9swGHmDQ1RKu3oJZN
-         Znsa0yUIHQrJsMcYYEAyWDtnNeYBF8+hWCaCg3Jpdqe60PN9fVdEdDlKwMBI64odKcfw
-         mlwerXhUfiAAdfpuepjbBezjJNEE/cxOOAOnb3YcfLSGlnxK5Al7CN9MU9owZgjceGEn
-         HKyg==
-X-Gm-Message-State: AOAM532QAJ9CWD6VIzlhp9UKdKjmEHSGrbkuYHD6MJewV0m2+Md0MHbC
-        FrsKA5ZX+hCdKsJ/a62OW/Y=
-X-Google-Smtp-Source: ABdhPJxj0HoivAhgudAe2G3Y+/yLisodc6m1q7KE10/KIPC2fCSfw2yRzZAR0/F2axmjojQeOh80vg==
-X-Received: by 2002:aa7:db8d:: with SMTP id u13mr5423945edt.111.1642791106615;
-        Fri, 21 Jan 2022 10:51:46 -0800 (PST)
-Received: from [192.168.0.51] (xdsl-188-155-168-84.adslplus.ch. [188.155.168.84])
-        by smtp.googlemail.com with ESMTPSA id u18sm2276882eje.37.2022.01.21.10.51.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Jan 2022 10:51:45 -0800 (PST)
-Message-ID: <d24379ab-5627-d37e-d61f-af68dd56ab12@kernel.org>
-Date:   Fri, 21 Jan 2022 19:51:44 +0100
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=0WFsl464O1plaAdb1DqUc2FVm3sL9ZIJC+WKaUWfUbY=;
+        b=QlIrb1rYog1DvKwXOwMygYmZhWvD+gc9wJ/ol/NqL19BK8zvvqsDk+48JoHQkgs2Jq
+         rapzU6n+A3YONNYyZkK5o40DEg4VQtdRS0iFxKCTYtoAcRfHVESo8rj06sEKSsjuiEWw
+         oCtEsAtB+HhPYuCGfS+gWKemIHMdU0lsHFXvyPqwvqFHdndnfvKW3Hd5NTrv10m+hNG1
+         MufokmiJgQ9s8B+8IulI4/JY9gQBw2y8kOmkg8DlbLpasD0UFonln5lLae1IXJ8opnP+
+         z7Q2hOv5Wk/hW9HdFUhCsCa8P5G6kFcULifb37ezKqHzU+fv7U+2p/keEpHVqGo1YsZ7
+         /Jbw==
+X-Gm-Message-State: AOAM530nA8ZS8COTecacOuP8IIDeutHwrM5SFi4VOL5RkqUaoGND/l7w
+        dfDs5Yf1CBvNzpreAxnnbRwiIDlYQ7mYxypR3XzTorsSidU=
+X-Google-Smtp-Source: ABdhPJwYwPQ+DUeWkFo38oGf0XBHqn1JkHM8zwXVbMjt7Yr8cw+7ws6W+uTuj1bLmgjPZIJZgKAiPk6GzvFVpJIPc+U=
+X-Received: by 2002:a25:6f0a:: with SMTP id k10mr10232548ybc.536.1642818138850;
+ Fri, 21 Jan 2022 18:22:18 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.1
-Subject: Re: [Patch V3] memory: tegra: Add MC error logging on tegra186 onward
-Content-Language: en-US
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        Ashish Mhetre <amhetre@nvidia.com>, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Snikam@nvidia.com, vdumpa@nvidia.com
-References: <1642763962-32129-1-git-send-email-amhetre@nvidia.com>
- <dc9b0c08-bd2a-6ffa-ad75-47afd036f3ef@gmail.com>
- <625e47a5-a6a6-826f-6f9d-f036732588b6@kernel.org>
-In-Reply-To: <625e47a5-a6a6-826f-6f9d-f036732588b6@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20220118002214.18271-1-dipenp@nvidia.com> <20220118002214.18271-2-dipenp@nvidia.com>
+ <CAMU9jJoFAG4taoN0SSbVGPFMKyUnkT9VkrtatGuRpU-ek+hJ2g@mail.gmail.com> <7c8a32fd-8233-cc69-d4d3-668a3a14aa14@nvidia.com>
+In-Reply-To: <7c8a32fd-8233-cc69-d4d3-668a3a14aa14@nvidia.com>
+From:   teng sterling <sterlingteng@gmail.com>
+Date:   Sat, 22 Jan 2022 10:22:07 +0800
+Message-ID: <CAMU9jJrBOdV79Ho34bgT808gTPoTrGHA_mZLQbbzNigmg0myGw@mail.gmail.com>
+Subject: Re: [RFC v4 01/11] Documentation: Add HTE subsystem guide
+To:     Dipen Patel <dipenp@nvidia.com>
+Cc:     smangipudi@nvidia.com, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, LKML <linux-kernel@vger.kernel.org>,
+        linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        bgolaszewski@baylibre.com, warthog618@gmail.com,
+        devicetree@vger.kernel.org,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        robh+dt@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 21/01/2022 19:49, Krzysztof Kozlowski wrote:
-> On 21/01/2022 13:31, Dmitry Osipenko wrote:
->> ...
->>> @@ -529,12 +536,44 @@ static irqreturn_t tegra30_mc_handle_irq(int irq, void *data)
->>>  		u8 id, type;
->>>  		u32 value;
->>>  
->>> -		value = mc_readl(mc, MC_ERR_STATUS);
->>> +		switch (bit) {
->>
->> Again, I see that the code wasn't tested :/ Shouldn't be too difficult
->> to create memory-read errors to check that at least basics work
->> properly. Please always test your changes next time.
->>
->> So it must be "switch(BIT(bit))" here, please write it like this:
->>
->> u32 intmask = BIT(bit);
->> ...
->> 	switch(intmask) {
->>
-> 
-> Also, please build your changes with W=1... It's the second try of
-> sending un-tested and not-working code. This time also with a compiler
-> warning. This looks very bad :(
+Dipen Patel <dipenp@nvidia.com> =E4=BA=8E2022=E5=B9=B41=E6=9C=8820=E6=97=A5=
+=E5=91=A8=E5=9B=9B 12:21=E5=86=99=E9=81=93=EF=BC=9A
+>
+> Hi Teng,
+>
+>  I believe I added in patch 0003. Before sending this patch series, I did=
+ make htmldocs and did compile successfully. Let me know in case I am missi=
+ng something.
+Sorry I didn't read through your patch carefully.
 
-I am afraid this might be taken too literally and W=1 build will replace
-other required steps, so let me be explicit:
-We not only expect to compile it but also compile with W=1, run sparse,
-smatch and coccicheck. Then also test.
+ I'll be happy to translate fresh documentation into Chinese, please
+let me know if these are applied, Thank you!   >_<
 
-> 
-> For big companies with a lot of engineers, like nVidia, it is useful if
-> some internal review happens. It is a nice way to offload community
-> reviewers which are - like maintainers - a scarce resource. Doing
-> internal review is not a requirement, but helps to find such mistakes
-> earlier, before using the community. It is simply nice to us.
-> 
-
-Best regards,
-Krzysztof
+Thanks,
+Yanteng
+>
+> On 1/19/22 6:03 PM, teng sterling wrote:
+> > Dipen Patel <dipenp@nvidia.com> =E4=BA=8E2022=E5=B9=B41=E6=9C=8818=E6=
+=97=A5=E5=91=A8=E4=BA=8C 11:06=E5=86=99=E9=81=93=EF=BC=9A
+> >> Adding hte document which can help understand various APIs implemented
+> >> in HTE framework for the HTE producers and the consumers.
+> >>
+> >> Signed-off-by: Dipen Patel <dipenp@nvidia.com>
+> >> ---
+> >> Changes in v2:
+> >> - Removed explanation, instead added kernel-doc references.
+> >>
+> >> Changes in v3:
+> >> - Addressed grammatical errors.
+> >>
+> >> Changes in v4:
+> >> - Added new API hte_req_ts_by_linedata_ns description.
+> >> - Removed hte_req_ts_by_hte_name.
+> >>
+> >>  Documentation/hte/hte.rst | 83 ++++++++++++++++++++++++++++++++++++++=
++
+> > Hi Dipen
+> >
+> > A document build warning will be introduced=EF=BC=8CNeed to add it to t=
+he index:
+> >
+> > 1) Create Documentation/hte/index.rst
+> > 2) Add hte/index.rst into Documentation/index.rst
+> > 3) Add hte.rst into Documentation/hte/index.rst
+> >
+> > Thanks,
+> > Yanteng
