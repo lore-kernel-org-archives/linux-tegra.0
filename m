@@ -2,108 +2,151 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72571C433EF
-	for <linux-tegra@archiver.kernel.org>; Sun, 23 Jan 2022 18:42:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83A04C433F5
+	for <linux-tegra@archiver.kernel.org>; Sun, 23 Jan 2022 21:07:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240204AbiAWSmi (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 23 Jan 2022 13:42:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53942 "EHLO
+        id S240193AbiAWVHV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 23 Jan 2022 16:07:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57952 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240074AbiAWSlo (ORCPT
+        with ESMTP id S231262AbiAWVHU (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 23 Jan 2022 13:41:44 -0500
-Received: from mail-pl1-x634.google.com (mail-pl1-x634.google.com [IPv6:2607:f8b0:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A4EEC0613DE;
-        Sun, 23 Jan 2022 10:41:38 -0800 (PST)
-Received: by mail-pl1-x634.google.com with SMTP id c3so13490602pls.5;
-        Sun, 23 Jan 2022 10:41:38 -0800 (PST)
+        Sun, 23 Jan 2022 16:07:20 -0500
+Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C0D1C06173B;
+        Sun, 23 Jan 2022 13:07:20 -0800 (PST)
+Received: by mail-lf1-x12f.google.com with SMTP id u6so13532229lfm.10;
+        Sun, 23 Jan 2022 13:07:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=IkNrFbXH9gY1KIOKy+h9o3LQcC7Su75w6LGwm4LKjaA=;
-        b=EaNO/dASy+lPZWlcOtxF1hC9GdUeB2iS8umkWOWTX4v3h315YhPaRibVAi7vXbbHWe
-         dZQi44B8tyxUoVsiF1ho0iJZOHCw92Invp1s1Jngv0T8L+0c7uqMPEEfpdlpf7wsR2hX
-         def6pyngVUbofEtQ0onarODYce0lr6EcewlHKAkg7wW7/E/IkNjJ29EwgZ9JC95dqfwt
-         HyYjjJh6C7hZd1XozPUerv73BbBwkDAQaBq4LR4A9muS5E19XN+FHJn+gDMMIIQ3OCVG
-         BFULBqru13piNITxvIlEYH3XteGH1vToU8U0ADIfL8v4GWj0g5Y1FVAMkzSf8zEQusxa
-         sUQg==
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :references:from:in-reply-to:content-transfer-encoding;
+        bh=7Fptv/d36Inx1g/nl3sp/HBXOUVPHRuV+KU3uJ6QILk=;
+        b=oTsgsifraku/GW/gfz0NeJXIMsYLdBRnNvv0d7deBVIG2KXuxMzmhV1o7zHSSi1exp
+         NlqIBbJObdHbrcNS5BH+JwBa27Mf1AQYo2flTX0hS9blqkLaucmkNsVp4ZWl19l50xOR
+         fSAwOzOc37eNCjyXlfnSMvzoQ0RQ4prjzaGux3JI5rCJOuZtxvzXpvX9zdOqoRBbBnme
+         rDySvv9D+ctu3qbX6HrSgmZ0JxrLJrwfJEwtuSt015I9JIMwdSC/q2k8LKIEumBIhjzQ
+         G+3qB3yfhZ6Eq/KB0TMy5XDxUHIkYPeJ2DohVoQk2EfveEXHt05ErTgagbThKizs4awR
+         QX2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=IkNrFbXH9gY1KIOKy+h9o3LQcC7Su75w6LGwm4LKjaA=;
-        b=RY59NwHFm1GkcqcSz+WxYiTzOYYpKs+o8EVUByY0h5MJM5wYx/6NXMO0C3l/O7iM47
-         zy7TIyf6BD90C/Gx3RYoGJN0FF+ttqgIpLAEcTglK5xMG6p/r3Wld1zHt1UQTMdg9/B5
-         ZcdJQU7NqMYXzUInH6Hb0Okv6Ga2ZXrmewlIePNR+W8s7zKaeOe3Ac1pY8RtrjkHhzLW
-         Wff7QzpHnVxJt2ZZnPsiAUh8Lllkj6mX9zoYQBY/u0yXlToUZKrY0KfgyceF6XowEoJB
-         0ZCZtc7Fl/encwiEBiwxmdzweEEETg5f72uKev0mWl8EvuiwKNNbeaZa8H9ICoRw4U7w
-         TWHA==
-X-Gm-Message-State: AOAM533iw7yIgHU+dKabTx8o/cKkFQjbqjvwHdZ1mdw6MG7nYzRnwfOb
-        tkutO2Rvl22V5fOZIfPOo2Y=
-X-Google-Smtp-Source: ABdhPJzWjGjT87hpyuJ8zxGhbFECmd1/Zcro15HLI2qS1pA/4gjZkUJUdMuLJwg9rhA75s0Tv2Dbgg==
-X-Received: by 2002:a17:902:c40d:b0:14a:96a4:1044 with SMTP id k13-20020a170902c40d00b0014a96a41044mr11869369plk.50.1642963297601;
-        Sun, 23 Jan 2022 10:41:37 -0800 (PST)
-Received: from localhost (searspoint.nvidia.com. [216.228.112.21])
-        by smtp.gmail.com with ESMTPSA id ms14sm11163509pjb.15.2022.01.23.10.41.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Jan 2022 10:41:37 -0800 (PST)
-From:   Yury Norov <yury.norov@gmail.com>
-To:     Yury Norov <yury.norov@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        David Laight <David.Laight@aculab.com>,
-        Joe Perches <joe@perches.com>, Dennis Zhou <dennis@kernel.org>,
-        Emil Renner Berthing <kernel@esmil.dk>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-        Alexey Klimov <aklimov@redhat.com>,
-        linux-kernel@vger.kernel.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-staging@lists.linux.dev
-Subject: [PATCH 35/54] drivers/staging: replace bitmap_weight with bitmap_weight_le for tegra-video
-Date:   Sun, 23 Jan 2022 10:39:06 -0800
-Message-Id: <20220123183925.1052919-36-yury.norov@gmail.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20220123183925.1052919-1-yury.norov@gmail.com>
-References: <20220123183925.1052919-1-yury.norov@gmail.com>
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=7Fptv/d36Inx1g/nl3sp/HBXOUVPHRuV+KU3uJ6QILk=;
+        b=SAvv2Tl1NTRMRmQerS2dzdJsKZAi6Uceh5p1N6q0L8M2b0NcyyGLChpiJttNfuE1mA
+         5C2zqjL1eP/pMcra9rFhqzIlKw4C9BWqCMloztBgdFs4crW9vjjWrKBYa+4/4Ul0USkI
+         Y8tjmbYXwLXWvqGbt/NAviayxhIk2do/3JmhvlRxhkmDRPBJ5DVstk9cWYL6vcxmQA7H
+         SeSp+2ofFhrCKp1s7qxASHvlNlTVwdEIuOsFEKwRbycmtY9+sVb1Pm37ncP8+cgZC711
+         51b9kRQcuxFq3O3BoyEzy2qDVdVHTgNNm5KGtswMusCFZM9weQZLZf+qH2KZMMxH/o9b
+         RBvw==
+X-Gm-Message-State: AOAM5324Xbynbwwt+4VkZ5zOX7fSMXSuFUZYU+GGhnw2erHq0JNbUIxV
+        MldkZ6UG32Sj+WNeTgt1AZvUwmw7O/k=
+X-Google-Smtp-Source: ABdhPJwMPa1G20sU4czNbsXZXFVFm2GNtDELu+rqNjAsqsWRAHzwT+4wJotjYZb5N64KY0JIen90IA==
+X-Received: by 2002:a05:6512:2203:: with SMTP id h3mr1237595lfu.228.1642972038290;
+        Sun, 23 Jan 2022 13:07:18 -0800 (PST)
+Received: from [192.168.2.145] (109-252-139-36.dynamic.spd-mgts.ru. [109.252.139.36])
+        by smtp.googlemail.com with ESMTPSA id m26sm587716lfo.107.2022.01.23.13.07.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 23 Jan 2022 13:07:17 -0800 (PST)
+Message-ID: <a937a784-ad37-0c70-33ae-89d9907b1f68@gmail.com>
+Date:   Mon, 24 Jan 2022 00:07:17 +0300
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [PATCH v2 1/4] dt-bindings: Add headers for Tegra234 I2C
+Content-Language: en-US
+To:     Akhil R <akhilrajeev@nvidia.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>
+References: <1642850607-20664-1-git-send-email-akhilrajeev@nvidia.com>
+ <1642850607-20664-2-git-send-email-akhilrajeev@nvidia.com>
+ <103960bf-ed5c-4a0c-9142-65ffc2e4bca0@gmail.com>
+ <DM5PR12MB18503A9968008AE5E25D328BC05D9@DM5PR12MB1850.namprd12.prod.outlook.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+In-Reply-To: <DM5PR12MB18503A9968008AE5E25D328BC05D9@DM5PR12MB1850.namprd12.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-tegra_channel_enum_format() calls bitmap_weight() to compare the weight
-of bitmap with a given number. We can do it more efficiently with
-bitmap_weight_le() because conditional bitmap_weight may stop traversing
-the bitmap earlier, as soon as condition is met.
+23.01.2022 19:56, Akhil R пишет:
+>>> Add dt-bindings header files for I2C controllers for Tegra234
+>>>
+>>> Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
+>>> ---
+>>>  include/dt-bindings/clock/tegra234-clock.h | 19 +++++++++++++++++++
+>>> include/dt-bindings/reset/tegra234-reset.h |  8 ++++++++
+>>>  2 files changed, 27 insertions(+)
+>>>
+>>> diff --git a/include/dt-bindings/clock/tegra234-clock.h
+>>> b/include/dt-bindings/clock/tegra234-clock.h
+>>> index 8d7e66e..5d05c19 100644
+>>> --- a/include/dt-bindings/clock/tegra234-clock.h
+>>> +++ b/include/dt-bindings/clock/tegra234-clock.h
+>>> @@ -30,5 +30,24 @@
+>>>  #define TEGRA234_CLK_PLLC4                   237U
+>>>  /** @brief 32K input clock provided by PMIC */
+>>>  #define TEGRA234_CLK_CLK_32K                 289U
+>>> +/** @brief output of mux controlled by
+>> CLK_RST_CONTROLLER_CLK_SOURCE_I2C1 */
+>>> +#define TEGRA234_CLK_I2C1                    48U
+>>> +/** @brief output of mux controlled by
+>> CLK_RST_CONTROLLER_CLK_SOURCE_I2C2 */
+>>> +#define TEGRA234_CLK_I2C2                    49U
+>>> +/** @brief output of mux controlled by
+>> CLK_RST_CONTROLLER_CLK_SOURCE_I2C3 */
+>>> +#define TEGRA234_CLK_I2C3                    50U
+>>> +/** output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_I2C4
+>> */
+>>> +#define TEGRA234_CLK_I2C4                    51U
+>>> +/** @brief output of mux controlled by
+>> CLK_RST_CONTROLLER_CLK_SOURCE_I2C6 */
+>>> +#define TEGRA234_CLK_I2C6                    52U
+>>> +/** @brief output of mux controlled by
+>> CLK_RST_CONTROLLER_CLK_SOURCE_I2C7 */
+>>> +#define TEGRA234_CLK_I2C7                    53U
+>>> +/** @brief output of mux controlled by
+>> CLK_RST_CONTROLLER_CLK_SOURCE_I2C8 */
+>>> +#define TEGRA234_CLK_I2C8                    54U
+>>> +/** @brief output of mux controlled by
+>> CLK_RST_CONTROLLER_CLK_SOURCE_I2C9 */
+>>> +#define TEGRA234_CLK_I2C9                    55U
+>>> +
+>>> +/** @brief PLLP clk output */
+>>> +#define TEGRA234_CLK_PLLP_OUT0                       102U
+>>>
+>>>  #endif
+>>> diff --git a/include/dt-bindings/reset/tegra234-reset.h
+>>> b/include/dt-bindings/reset/tegra234-reset.h
+>>> index 50e13bc..e07e898 100644
+>>> --- a/include/dt-bindings/reset/tegra234-reset.h
+>>> +++ b/include/dt-bindings/reset/tegra234-reset.h
+>>> @@ -12,6 +12,14 @@
+>>>   */
+>>>  #define TEGRA234_RESET_SDMMC4                        85U
+>>>  #define TEGRA234_RESET_UARTA                 100U
+>>> +#define TEGRA234_RESET_I2C1                  24U
+>>> +#define TEGRA234_RESET_I2C2                  29U
+>>> +#define TEGRA234_RESET_I2C3                  30U
+>>> +#define TEGRA234_RESET_I2C4                  31U
+>>> +#define TEGRA234_RESET_I2C6                  32U
+>>> +#define TEGRA234_RESET_I2C7                  33U
+>>> +#define TEGRA234_RESET_I2C8                  34U
+>>> +#define TEGRA234_RESET_I2C9                  35U
+>>
+>> Why ID order isn't maintained?
+> Do you mean RESET_UART4, SDMMC4 etc should be
+> below RESET_I2C*?
 
-Signed-off-by: Yury Norov <yury.norov@gmail.com>
----
- drivers/staging/media/tegra-video/vi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/staging/media/tegra-video/vi.c b/drivers/staging/media/tegra-video/vi.c
-index d1f43f465c22..4e79a80e9307 100644
---- a/drivers/staging/media/tegra-video/vi.c
-+++ b/drivers/staging/media/tegra-video/vi.c
-@@ -436,7 +436,7 @@ static int tegra_channel_enum_format(struct file *file, void *fh,
- 	if (!IS_ENABLED(CONFIG_VIDEO_TEGRA_TPG))
- 		fmts_bitmap = chan->fmts_bitmap;
- 
--	if (f->index >= bitmap_weight(fmts_bitmap, MAX_FORMAT_NUM))
-+	if (bitmap_weight_le(fmts_bitmap, MAX_FORMAT_NUM, f->index))
- 		return -EINVAL;
- 
- 	for (i = 0; i < f->index + 1; i++, index++)
--- 
-2.30.2
-
+Yes, please see T186/194 headers for the example and do the same for
+T234. Always try to use existing examples in general to maintain
+consistency.
