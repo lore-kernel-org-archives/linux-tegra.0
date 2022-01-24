@@ -2,186 +2,121 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D9D2C433FE
-	for <linux-tegra@archiver.kernel.org>; Sun, 23 Jan 2022 21:07:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19A20C433EF
+	for <linux-tegra@archiver.kernel.org>; Mon, 24 Jan 2022 11:18:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240178AbiAWVHl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 23 Jan 2022 16:07:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58044 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231262AbiAWVHk (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 23 Jan 2022 16:07:40 -0500
-Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79E1FC06173B;
-        Sun, 23 Jan 2022 13:07:40 -0800 (PST)
-Received: by mail-lj1-x229.google.com with SMTP id z7so5609546ljj.4;
-        Sun, 23 Jan 2022 13:07:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=TWroeOFfXJ8ykubtpTzdZUMtBKtFDv4WjEMH7rViCZ4=;
-        b=AkLDoU65OoXutqFq/yU8DRichLINsqWe+UTaaaCXQHLixjrDMIlvTm18EXVEiGEe6T
-         CcoIqpwZuZBwZK5lc0CvVKkDALVypCQrym1w6j5gBlRonsn+dhdr2lGBy3Soc4P9XlVp
-         /vT84+5JJDT1hpWTbdlcBSXeeZ3npxZsIVcePXVSgIrfbID89xiqQEO7WPXoW5paFVnP
-         /vNPluEab1TPFBZKGuOSp+gED+DwV7KW4nH74OU6hFt2IRFg8LHkFJtYuQ2jCGOtSfbo
-         0qVQHT+5qNzUanGW01v4sTKCS+Y4I1wUOgb9/lqqOVB4TLCF7RjtXh2X48/Iw7RtV85w
-         q7Nw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=TWroeOFfXJ8ykubtpTzdZUMtBKtFDv4WjEMH7rViCZ4=;
-        b=tCQzOXGKTpoyHVg4gADTDj2AXsnEkdRZ8IzN1A0t7Etu3H2Z25Wn7UqJGYmPo6nPON
-         Moim+Ia70LNVgw5b3Uf7v446UaisLVyHj+LtaHZyEjNtGJbV+oMJ/d4Oz/w0DgofrDig
-         bdHMfYs/wemVPGsUiLhTNL/vevG4uRJLkutXVxY/I6c27G+9GUWbmSrP17S7hdntogEB
-         iyDsutsK0TKgyWd817ccrm3F0ICnVDWDQBW4D3Q0aRCnNn52fXJZeoFxhLRcxzcGVDUw
-         uTWhvgCWz+46emu2cLQ9Spnw0YqSJsMlOxaHqbrg6AnHYKOva8JvcDZ8bCGW6ZRU2UMM
-         nqbg==
-X-Gm-Message-State: AOAM531k1uw2xP7IsiM9XGRzd05ucdjEr3UmQug+n97RPdZ0Dvzzjaxd
-        pvYdaiBOVpep5bqRseTPhrc=
-X-Google-Smtp-Source: ABdhPJy3W+F/c72AUGx8ghCc1RakIcSzEyHm1Ekag8uEj+X1pC5IVjbRpsm7U2ORGJTTDfS1DMmxyw==
-X-Received: by 2002:a2e:a40c:: with SMTP id p12mr2268584ljn.66.1642972058863;
-        Sun, 23 Jan 2022 13:07:38 -0800 (PST)
-Received: from [192.168.2.145] (109-252-139-36.dynamic.spd-mgts.ru. [109.252.139.36])
-        by smtp.googlemail.com with ESMTPSA id be31sm960455lfb.46.2022.01.23.13.07.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 23 Jan 2022 13:07:38 -0800 (PST)
-Message-ID: <80a90a28-d9b8-1ba6-b79e-07fd49cc92b7@gmail.com>
-Date:   Mon, 24 Jan 2022 00:07:37 +0300
+        id S237207AbiAXLSe (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 24 Jan 2022 06:18:34 -0500
+Received: from mail-co1nam11on2069.outbound.protection.outlook.com ([40.107.220.69]:42880
+        "EHLO NAM11-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S237227AbiAXLSd (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 24 Jan 2022 06:18:33 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=UleyuRVDphjFcf8XxItaiODAgqP7beyFf0y5xZRC/Q8AZKEUuw2sEtB0RSMVxs4DOJCkvvl7fClcXL7Y96bZ6wL97eVwfcsrxgFslF2LXy9BqlVspgA4B0AGuenv2wrHZLOAYyLx2k+ekT44FRtiNr6H1Obeu/7MuN0qQ9GJCgi7iKaZSQQvCvZq9XCLfeg1FUnRmPeWJJTSpdpBmU4JdFzXAqCAwP/y9O35NaWz0c4/tvIE1FbS57NOEp51lG3aM9HotalTH5kjJF2V2LhQh45QwGV/SyHgZkIFCgolRB2w8erCIptCOk4fugQzQipNYrHkIByMcVZjQdwFIsKZHQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=15Dlj/HNyqqj3YLwdIIXt99VkBTc0ALkmizgvh4Pz7s=;
+ b=HUSdlH3KOGXHWYk17PJqScC1mTpEZNp7gQPuMTn9RoKoUUfbB7HnXVNgFYMuAThW80Yuppoz0h2Y3pT8l6umUYWbr7m8pM34oAd5+Uu0NzsfiOfN3zwVpP9ZVe+uBnPQg9RCBO58cGT+EpeFRQPvXpxuKIl+7sghPl88p2XYPSJdVrOZeRDWSO3z+gh5uoNhGDC8GfYYIf9tPKtFYL6+cDoR7h/qrGbmagtKFS8+Ib7VWJHC4ReFj/ncv1dN+JCIyNTTZKH0HWX4Ax8HFi/LBEFAKOz9bZ2e5ESQmjfDIBsQHYCqNnk6gF+KSrsq2hRtFd5BYLTilou5KH8tNzOPvg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 12.22.5.234) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=15Dlj/HNyqqj3YLwdIIXt99VkBTc0ALkmizgvh4Pz7s=;
+ b=fu0TxYsPecWEzvhn1l7y3YAPSVtAh8jVTVreQOQ9nyxxf+Npq6CePp5wylJUkOgjBiCjMZsrre0HsXUvjRPqtkkr4VWTk3AVKwZpAr/ZOqBlt2b+L7BseAK8sRF2soeAqSx+sgvbxKg7CY7LefBxXMdPoEeSuGAyvT0fgQH0NMAGBHcYLUeUKE2GZqmFLiUsct+51HpgwH2UoETGHjlXoPFMnViXpmOJKmGEhAk70Or4siMrDmjUq3rieEFxjrhe0lzaLw/pspvgxUEdW1KmpbPvokkm/akXVoxCO12zBJlV5KdlfVnmc7/paOLNI0+2MI2LxrtRupwKiFQeK89gWw==
+Received: from MWHPR11CA0033.namprd11.prod.outlook.com (2603:10b6:300:115::19)
+ by MN2PR12MB3790.namprd12.prod.outlook.com (2603:10b6:208:164::31) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4909.10; Mon, 24 Jan
+ 2022 11:18:31 +0000
+Received: from CO1NAM11FT024.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:300:115:cafe::91) by MWHPR11CA0033.outlook.office365.com
+ (2603:10b6:300:115::19) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4909.7 via Frontend
+ Transport; Mon, 24 Jan 2022 11:18:30 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.234)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 12.22.5.234 as permitted sender) receiver=protection.outlook.com;
+ client-ip=12.22.5.234; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (12.22.5.234) by
+ CO1NAM11FT024.mail.protection.outlook.com (10.13.174.162) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.4909.7 via Frontend Transport; Mon, 24 Jan 2022 11:18:30 +0000
+Received: from drhqmail201.nvidia.com (10.126.190.180) by
+ DRHQMAIL101.nvidia.com (10.27.9.10) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.18; Mon, 24 Jan 2022 11:18:30 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by
+ drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.9;
+ Mon, 24 Jan 2022 03:18:29 -0800
+Received: from kyarlagadda-linux.nvidia.com (10.127.8.10) by mail.nvidia.com
+ (10.126.190.182) with Microsoft SMTP Server id 15.2.986.9 via Frontend
+ Transport; Mon, 24 Jan 2022 03:18:26 -0800
+From:   Akhil R <akhilrajeev@nvidia.com>
+To:     <devicetree@vger.kernel.org>, <digetx@gmail.com>,
+        <jonathanh@nvidia.com>, <ldewangan@nvidia.com>,
+        <linux-i2c@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <mperttunen@nvidia.com>,
+        <robh+dt@kernel.org>, <thierry.reding@gmail.com>
+CC:     <akhilrajeev@nvidia.com>
+Subject: [PATCH v3 0/4] Add I2C and PWM support for T234
+Date:   Mon, 24 Jan 2022 16:48:13 +0530
+Message-ID: <1643023097-5221-1-git-send-email-akhilrajeev@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+X-NVConfidentiality: public
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH v16 2/4] dmaengine: tegra: Add tegra gpcdma driver
-Content-Language: en-US
-To:     Akhil R <akhilrajeev@nvidia.com>,
-        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Krishna Yarlagadda <kyarlagadda@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
-        Rajesh Gumasta <rgumasta@nvidia.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        "vkoul@kernel.org" <vkoul@kernel.org>
-Cc:     Pavan Kunapuli <pkunapuli@nvidia.com>
-References: <1641830718-23650-1-git-send-email-akhilrajeev@nvidia.com>
- <1641830718-23650-3-git-send-email-akhilrajeev@nvidia.com>
- <16c73e83-b990-7d8e-ddfd-7cbbe7e407ea@gmail.com>
- <DM5PR12MB1850A5F5ABA9CD5D04C37086C0579@DM5PR12MB1850.namprd12.prod.outlook.com>
- <1db14c3d-6a96-96dd-be76-b81b3a48a2b1@gmail.com>
- <DM5PR12MB1850FF1DC4DC1714E31AADB5C0589@DM5PR12MB1850.namprd12.prod.outlook.com>
- <683a71b1-049a-bddf-280d-5d5141b59686@gmail.com>
- <DM5PR12MB1850D67F9B5640943F1AEB2EC05B9@DM5PR12MB1850.namprd12.prod.outlook.com>
- <31ba2627-65c7-1340-e6b9-7c328a485456@gmail.com>
- <DM5PR12MB18502DF12B324E50D5E50BC0C05D9@DM5PR12MB1850.namprd12.prod.outlook.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-In-Reply-To: <DM5PR12MB18502DF12B324E50D5E50BC0C05D9@DM5PR12MB1850.namprd12.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: ea79e0ce-36a6-4c83-3f32-08d9df2b4043
+X-MS-TrafficTypeDiagnostic: MN2PR12MB3790:EE_
+X-Microsoft-Antispam-PRVS: <MN2PR12MB3790D5528E0BF857DB224C7DC05E9@MN2PR12MB3790.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:5516;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: ZsGj6Mj2Uggf3qFxLk8uv53ZlAvQzIA+qDACyMVMx380iBioSpwxpCq9KKT9GbjG0lcyTNfsXGC/uhOL3uK8j3x4xsdj7QyVaoB8HbyNLWRTOFvuaRLW7fw5ch99TOSC04mCLhCT4x11jCp/5lt0D+xurm+x4OjhqtakHToSJdIEYqboP1M5UoXy5vet+oqr5US5BWXb6z605mIErkaIeYYpZLFCLYszAiEZL/9xKB4JeCDC9qYzx3gVLObEnB1XqQwPeStLjBVoztaX+neg8lMbXXxAX9qOYQhBr0lth+4+Cvs5eJz8wg9UjvH7eAHkDCCpEM7Z5CKO+ckahtkHf7r5RmwE7Gpa9l7XAXWlCiIzCJocwNk/IR7lKona27Vrdot4eOgZ3nLtz21TB+DgFkW3KCSvGCl+cDr0Q355IyM0UAckEeUMdNXOqfu7pXy2MnUcFVY9BbvM5Td9J9ZR32vJtd/Vp4+Ld/JF5/j4/ic0rjwpmcC/s/K94C/13TXMmUXQcmxtlvSTAER8S9yNl3Uth9TsO7yZKFyNH1NEL/+SJYcKV3yruHv4nc9NPKqjvkwBdMMQHxKIU6cPDsmQoKkvyig1XnuZxKPC1Mpgjq71ViRq7ROLkAf4aH5mHtcZDcoPWOfV8EiXaPczUN7zl1R23a2/VYQBfkzeHkXBfrgfZIWVrnbSsNamnmN2ind4GmCgrmd9zXlN49FfVQ+T+ZMa8EDENrSfwaEzPGdFbo4EH0EQ4apYoZODmj8MCbdX+WS0gdlcA+GV64kkDxZr9fXDtDLQy157e/BwklzjaQpUU6+fdK4EMYUg9N0mj5PkL+tOAsEZt4pNxTXuOYLQ6Zk/CHus76g1/z8jUWldC78=
+X-Forefront-Antispam-Report: CIP:12.22.5.234;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(4636009)(46966006)(36840700001)(40470700004)(82310400004)(921005)(81166007)(86362001)(83380400001)(47076005)(36756003)(2906002)(356005)(40460700003)(4326008)(508600001)(26005)(7696005)(316002)(8936002)(5660300002)(186003)(107886003)(336012)(426003)(110136005)(6666004)(70586007)(2616005)(70206006)(4744005)(36860700001)(8676002)(36900700001)(2101003)(83996005);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jan 2022 11:18:30.3278
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: ea79e0ce-36a6-4c83-3f32-08d9df2b4043
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.234];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT024.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB3790
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-23.01.2022 19:49, Akhil R пишет:
->> 21.01.2022 19:24, Akhil R пишет:
->>>>>>>>> +static int tegra_dma_terminate_all(struct dma_chan *dc) {
->>>>>>>>> +     struct tegra_dma_channel *tdc = to_tegra_dma_chan(dc);
->>>>>>>>> +     unsigned long flags;
->>>>>>>>> +     LIST_HEAD(head);
->>>>>>>>> +     int err;
->>>>>>>>> +
->>>>>>>>> +     if (tdc->dma_desc) {
->>>>>>>>
->>>>>>>> Needs locking protection against racing with the interrupt handler.
->>>>>>> tegra_dma_stop_client() waits for the in-flight transfer to
->>>>>>> complete and prevents any additional transfer to start.
->>>>>>> Wouldn't it manage the race? Do you see any potential issue there?
->>>>>>
->>>>>> You should consider interrupt handler like a process running in a
->>>>>> parallel thread. The interrupt handler sets tdc->dma_desc to NULL,
->>>>>> hence you'll get NULL dereference in tegra_dma_stop_client().
->>>>>
->>>>> Is it better if I remove the below part from tegra_dma_stop_client()
->>>>> so that dma_desc is not accessed at all?
->>>>>
->>>>> +     wcount = tdc_read(tdc, TEGRA_GPCDMA_CHAN_XFER_COUNT);
->>>>> +     tdc->dma_desc->bytes_transferred +=
->>>>> +                     tdc->dma_desc->bytes_requested - (wcount * 4);
->>>>>
->>>>> Because I don't see a point in updating the value there. dma_desc is
->>>>> set to NULL in the next step in terminate_all() anyway.
->>>>
->>>> That isn't going help you much because you also can't release DMA
->>>> descriptor while interrupt handler still may be running and using
->>>> that descriptor.
->>>
->>> Does the below functions look good to resolve the issue, provided
->>> tegra_dma_stop_client() doesn't access dma_desc?
->>
->> Stop shall not race with the start.
->>
->>> +static int tegra_dma_terminate_all(struct dma_chan *dc) {
->>> +       struct tegra_dma_channel *tdc = to_tegra_dma_chan(dc);
->>> +       unsigned long flags;
->>> +       LIST_HEAD(head);
->>> +       int err;
->>> +
->>> +       err = tegra_dma_stop_client(tdc);
->>> +       if (err)
->>> +               return err;
->>> +
->>> +       tegra_dma_stop(tdc);
->>> +
->>> +       spin_lock_irqsave(&tdc->vc.lock, flags);
->>> +       tegra_dma_sid_free(tdc);
->>> +       tdc->dma_desc = NULL;
->>> +
->>> +       vchan_get_all_descriptors(&tdc->vc, &head);
->>> +       spin_unlock_irqrestore(&tdc->vc.lock, flags);
->>> +
->>> +       vchan_dma_desc_free_list(&tdc->vc, &head);
->>> +
->>> +       return 0;
->>> +}
->>>
->>> +static irqreturn_t tegra_dma_isr(int irq, void *dev_id) {
->>> +       struct tegra_dma_channel *tdc = dev_id;
->>> +       struct tegra_dma_desc *dma_desc = tdc->dma_desc;
->>> +       struct tegra_dma_sg_req *sg_req;
->>> +       u32 status;
->>> +
->>> +       /* Check channel error status register */
->>> +       status = tdc_read(tdc, TEGRA_GPCDMA_CHAN_ERR_STATUS);
->>> +       if (status) {
->>> +               tegra_dma_chan_decode_error(tdc, status);
->>> +               tegra_dma_dump_chan_regs(tdc);
->>> +               tdc_write(tdc, TEGRA_GPCDMA_CHAN_ERR_STATUS, 0xFFFFFFFF);
->>> +       }
->>> +
->>> +       status = tdc_read(tdc, TEGRA_GPCDMA_CHAN_STATUS);
->>> +       if (!(status & TEGRA_GPCDMA_STATUS_ISE_EOC))
->>> +               return IRQ_HANDLED;
->>> +
->>> +       tdc_write(tdc, TEGRA_GPCDMA_CHAN_STATUS,
->>> +                 TEGRA_GPCDMA_STATUS_ISE_EOC);
->>> +
->>> +       spin_lock(&tdc->vc.lock);
->>> +       if (!dma_desc)
->> All checks and assignments must be done inside of critical section.
-> 
-> Okay. So, the lock should be held throughout the function.
-> Do you think tegra_dma_pause should also hold a lock
-> and remove irq_synchronize? That function also writes
-> to CSR register.
+The patchset contains driver and devicetree changes to support I2C and
+PWM for Tegra234
 
-Interrupt handler shall not unpause channel in a case of race condition,
-it should handle completed transfer and check whether channel is paused
-before issuing next transfer.
-So yes, pause also needs a lock.
+v2->v3:
+  * Sorted clock and reset based on ID
+v1->v2:
+  * Reverted changes in i2c-tegra.c. using tegra194_i2c_hw for tegra234
+    as the values are compatible.
+
+Akhil R (4):
+  dt-bindings: Add headers for Tegra234 I2C
+  arm64: tegra: Add Tegra234 I2C devicetree nodes
+  dt-bindings: Add headers for Tegra234 PWM
+  arm64: tegra: Add Tegra234 PWM devicetree nodes
+
+ arch/arm64/boot/dts/nvidia/tegra234.dtsi   | 133 +++++++++++++++++++++++++++++
+ include/dt-bindings/clock/tegra234-clock.h |  35 +++++++-
+ include/dt-bindings/reset/tegra234-reset.h |  16 ++++
+ 3 files changed, 183 insertions(+), 1 deletion(-)
+
+-- 
+2.7.4
+
