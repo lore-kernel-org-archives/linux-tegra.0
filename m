@@ -2,82 +2,108 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FF96C4167D
-	for <linux-tegra@archiver.kernel.org>; Mon, 24 Jan 2022 16:29:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C00AEC433F5
+	for <linux-tegra@archiver.kernel.org>; Mon, 24 Jan 2022 16:48:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243744AbiAXQ3K (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 24 Jan 2022 11:29:10 -0500
-Received: from guitar.tcltek.co.il ([84.110.109.230]:34339 "EHLO mx.tkos.co.il"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S241118AbiAXQ3H (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 24 Jan 2022 11:29:07 -0500
-Received: from tarshish.tkos.co.il (unknown [10.0.8.3])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mx.tkos.co.il (Postfix) with ESMTPS id A8C90440537;
-        Mon, 24 Jan 2022 18:28:47 +0200 (IST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tkos.co.il;
-        s=default; t=1643041728;
-        bh=5QfVU3Vc9kJkteXou5FKpbIKc/tTimDxXUcTduzXFC0=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=n5TPIKBdQFS/Tup/NtncXiCmPANMKDUmzh0Qqt/F4GS7c7HDrh2aQVwliKUAm+iT3
-         T0CIsjEpC9qftv41GCjggnIMCXq/lXRHLpxzCpkJG9r1ffdTnsWyuscK4UYu72TeHH
-         UzVVwm7NEiR3zOxFEHGdHMdi0mnj/hk+YF0yo1NURvgD0vRv2a4c1/wZbJR9zdXlWI
-         dx+XobylLa1aMIkqk8McyzNMhq4ddwBtz9gQE+81qa6MQCA5sOUnQhliVoffQvirwx
-         bsHYcwcfhUVTL0t8uHowcGbS8Huf+kEOaBsD7CCoXQUcunXaFHP5g36zCA4pMzhR57
-         wEkGOyj8bxJyg==
-From:   Baruch Siach <baruch@tkos.co.il>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Baruch Siach <baruch@tkos.co.il>,
-        Baruch Siach <baruch.siach@siklu.com>,
-        Selvam Sathappan Periakaruppan <speriaka@codeaurora.org>,
-        Kathiravan T <kathirav@codeaurora.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Robert Marko <robert.marko@sartura.hr>,
-        Bryan O'Donoghue <pure.logic@nexus-software.ie>,
-        linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
-Subject: [PATCH v5 1/3] arm64: dts: qcom: ipq6018: add pcie max-link-speed
-Date:   Mon, 24 Jan 2022 18:27:29 +0200
-Message-Id: <a3c2914eb55d0e364611c56e1ef3ccbe2342ba3f.1643041464.git.baruch@tkos.co.il>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1643041464.git.baruch@tkos.co.il>
-References: <cover.1643041464.git.baruch@tkos.co.il>
+        id S243900AbiAXQsu (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 24 Jan 2022 11:48:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41630 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235273AbiAXQsu (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 24 Jan 2022 11:48:50 -0500
+Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99B77C06173B;
+        Mon, 24 Jan 2022 08:48:49 -0800 (PST)
+Received: by mail-lf1-x12c.google.com with SMTP id y15so42925065lfa.9;
+        Mon, 24 Jan 2022 08:48:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :references:from:in-reply-to:content-transfer-encoding;
+        bh=OGRoCWlLh1MtdWp2wRwR8A6iXPK2mkskDaiLHJ++qnI=;
+        b=iNqXCOEYfW1EwHWWGckGw2iIgEPVYKhaRwGiaY2KnEa7YqA4kao7mzfgVd2oNfjptt
+         53PqzD9paye3tFaQWkCk3ryI1Rb8qbART76KSsfV3pa/aVuNkOnkQX1xAcNDfF5At6J7
+         hmcsr8dW6+i3OstSOGUKpfHQBFJqYh/fzSjrbAeCna7UkmfXLeqw2gPjUwthOEukTw6v
+         Pf++exKO4IYKNGOKY/2lSgp9uDQ98LjevykXHnkBKckjiT8abYVSCFvCaMnLo7E3zPJR
+         djB4PvMivWQdsc9JxUKZ3gUrTiAr69DIglFf7N58z5fkOftou4e4JlvdN+sHHqk3cngH
+         T3xg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=OGRoCWlLh1MtdWp2wRwR8A6iXPK2mkskDaiLHJ++qnI=;
+        b=ZHBM6mzUfHJvajltGAhcTySYIVZnRRVNUzIDufqybgRmps0HQL8XuvBqTwSqJglNx6
+         DibtTONcvSwMHNp3FuKgT/3THCcYWDSx5WmwZo3p2E7d2mGZ+RqzfSip9fJsJS3Jmf9K
+         VjAaY2Ie6IgCy7FaqwVOhjH+9FXeYoXMaf24+utqgbkFAiVTp7V9DU2LIWFt0bAuZGm7
+         c49Ym4GRe6Gh3ogEXBwssmxLzpGBy3PFny9xv63TgEYbq6mVB3YK+Uw+7fa+hOBPWJsw
+         Bop/Pfq+NCwUGm2E3eTzTRqfLEYqongKXjPtv5wa1DyVgLLEQJj7KpttOdSXpd4DKNBE
+         pucQ==
+X-Gm-Message-State: AOAM5312Z7LeDUIgbT5a0blyMFc1hgHSRAY/amG/CxgHOB+tjdtAT8vd
+        gw7WrYRJZA8Sf3w36+r3vGU=
+X-Google-Smtp-Source: ABdhPJxBFI3sfXPwHgAnVDNtaQChKuY6EgxqjFs76Q30zFSl70khIgPLU+qKwyA5ZzQWzP3Jp3KmTQ==
+X-Received: by 2002:a19:ca03:: with SMTP id a3mr13426648lfg.16.1643042927780;
+        Mon, 24 Jan 2022 08:48:47 -0800 (PST)
+Received: from [192.168.2.145] (109-252-139-36.dynamic.spd-mgts.ru. [109.252.139.36])
+        by smtp.googlemail.com with ESMTPSA id o22sm244127lfk.14.2022.01.24.08.48.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Jan 2022 08:48:47 -0800 (PST)
+Message-ID: <c323b734-b134-2dc0-cfa2-c9f63f1c3ad8@gmail.com>
+Date:   Mon, 24 Jan 2022 19:48:46 +0300
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [PATCH v3 2/4] arm64: tegra: Add Tegra234 I2C devicetree nodes
+Content-Language: en-US
+To:     Akhil R <akhilrajeev@nvidia.com>, devicetree@vger.kernel.org,
+        jonathanh@nvidia.com, ldewangan@nvidia.com,
+        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org, mperttunen@nvidia.com,
+        robh+dt@kernel.org, thierry.reding@gmail.com
+References: <1643023097-5221-1-git-send-email-akhilrajeev@nvidia.com>
+ <1643023097-5221-3-git-send-email-akhilrajeev@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+In-Reply-To: <1643023097-5221-3-git-send-email-akhilrajeev@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Baruch Siach <baruch.siach@siklu.com>
+24.01.2022 14:18, Akhil R пишет:
+> Add device tree nodes for Tegra234 I2C controllers
+> 
+> Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
+> ---
+>  arch/arm64/boot/dts/nvidia/tegra234.dtsi | 121 +++++++++++++++++++++++++++++++
+>  1 file changed, 121 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/nvidia/tegra234.dtsi b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
+> index 6b6f1580..c686827 100644
+> --- a/arch/arm64/boot/dts/nvidia/tegra234.dtsi
+> +++ b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
+> @@ -144,6 +144,96 @@
+>  			status = "disabled";
+>  		};
+>  
+> +		gen1_i2c: i2c@3160000 {
+> +			compatible = "nvidia,tegra194-i2c";
+> +			reg = <0x3160000 0x100>;
+> +			status = "disabled";
+> +			interrupts = <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>;
+> +			clock-frequency = <400000>;
+> +			clocks = <&bpmp TEGRA234_CLK_I2C1
+> +				  &bpmp TEGRA234_CLK_PLLP_OUT0>;
+> +			assigned-clocks = <&bpmp TEGRA234_CLK_I2C1>;
+> +			assigned-clock-parents = <&bpmp TEGRA234_CLK_PLLP_OUT0>;
+> +			clock-names = "div-clk", "parent";
+> +			resets = <&bpmp TEGRA234_RESET_I2C1>;
+> +			reset-names = "i2c";
+> +		};
 
-Add the generic 'max-link-speed' that correctly describes the IPQ6018
-PCIe link generation limit. This allows the generic dwc code to
-configure the link speed correctly.
+The patchset looks okay to me, thank you. I've one question:
 
-Signed-off-by: Baruch Siach <baruch.siach@siklu.com>
----
- arch/arm64/boot/dts/qcom/ipq6018.dtsi | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/ipq6018.dtsi b/arch/arm64/boot/dts/qcom/ipq6018.dtsi
-index a717fc17523d..665ee301b85d 100644
---- a/arch/arm64/boot/dts/qcom/ipq6018.dtsi
-+++ b/arch/arm64/boot/dts/qcom/ipq6018.dtsi
-@@ -438,6 +438,7 @@ pcie0: pci@20000000 {
- 			linux,pci-domain = <0>;
- 			bus-range = <0x00 0xff>;
- 			num-lanes = <1>;
-+			max-link-speed = <3>;
- 			#address-cells = <3>;
- 			#size-cells = <2>;
- 
--- 
-2.34.1
-
+Could you please explain why the "PLLP" I2C timing configuration that is
+specified in the "example" section of Tegra TRM isn't suitable for
+T194/234? Why I2C Tegra kernel driver uses a different configuration?
