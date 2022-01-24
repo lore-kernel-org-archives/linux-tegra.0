@@ -2,117 +2,87 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB410C433FE
-	for <linux-tegra@archiver.kernel.org>; Mon, 24 Jan 2022 14:41:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6A80C433F5
+	for <linux-tegra@archiver.kernel.org>; Mon, 24 Jan 2022 15:11:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239903AbiAXOls (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 24 Jan 2022 09:41:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39920 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239912AbiAXOlr (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 24 Jan 2022 09:41:47 -0500
-Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32D9CC06173B
-        for <linux-tegra@vger.kernel.org>; Mon, 24 Jan 2022 06:41:47 -0800 (PST)
-Received: by mail-lf1-x12f.google.com with SMTP id p27so50028131lfa.1
-        for <linux-tegra@vger.kernel.org>; Mon, 24 Jan 2022 06:41:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Dt0TIjFH2rj7vzbGPRJ1VIsaxBP8dFaOgztWn+GtXbs=;
-        b=NGbOY41d8mvU/UOsgSm6XBtkvTxs2nEvDfQRp42uJB2ZUoDNXmlDIJCfX8kPKCe+Vo
-         3ZtF06uAG3blwhIR4P7oQ4glHodNVlQNAMMOj2lzVqDeeKr8ipVku2zXaVmteFUMTkGg
-         LV2v7D3GRDJky1oCuRPn8F0xHR3FpteoeydnddRIi/pzlWHc9YPy0ljbN4ElTV3o7Unc
-         OxAJHX33gOwZbPbrGtCnn8FH6hlPklp2mxbRsYOA0Pg+Sn8QwGR7Y/F2+nZijKkC/hXX
-         d99umKDneeSLxiaIq1wz7EGqanLzMSJV2ih9MA3bThD/RSRozcpErzg7J6UY1WjbFpnS
-         IYuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Dt0TIjFH2rj7vzbGPRJ1VIsaxBP8dFaOgztWn+GtXbs=;
-        b=1IZQpOIifP2xpkow8iw5r4P5IE+5ZYeOsw7d4WbGjqNOousW/0iXlO9ihwRc0nRURW
-         V27rRJuOHYdpDCAYiWb9ODQ2vRqBKVdYRyacw0Hnce+wq/9C0IpQr1uaEauTzy88KwkC
-         cNdZpOyneUlEjY7hyHBdU1Dt03aM2qZjyUAMruuPCbYAY4R1pOm8D+0rPBadO8drqc/O
-         AUnyAlcEQvGGnmfrD2GaBf1Ilomdw5Tw0Okd24k4045jM5g5MjNiRYINJmVkR/GdX7/9
-         3NBYkdT50RCHkKkGofPQwFHoATQdhNODtpFbOg61hlkINysYTpFnJW7p33d7YuaPgSCz
-         xxOg==
-X-Gm-Message-State: AOAM533tQv0vTgTvkP9BX1pVGxAGcuLf1qssWcZDNtpmsMViw+/TMEU5
-        +YAzu9MTf9BiuwWEwB/7AveU7y/YLLu7yQSZ3TvQbg==
-X-Google-Smtp-Source: ABdhPJwnzmeErgUKcLme9VHJTI4yfBT7Ilrk5WKCFJr7Lh2Lp4vrh4hTPIoOoNSW8/g/lAVOV3W1hTWHpwqofKoWRFs=
-X-Received: by 2002:a2e:9187:: with SMTP id f7mr5213711ljg.463.1643035305614;
- Mon, 24 Jan 2022 06:41:45 -0800 (PST)
+        id S240206AbiAXPLW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 24 Jan 2022 10:11:22 -0500
+Received: from mga12.intel.com ([192.55.52.136]:6566 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S235119AbiAXPLW (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 24 Jan 2022 10:11:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1643037082; x=1674573082;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=bPoO0UpQDTtomNmCEeSw5WFs51jU0nY+bce3pE812xs=;
+  b=JTbJXvGOkDI5hLU8WGQK9DPmIB4OXnyH8WnD9bL6AY5haKmK6P8Dy3+S
+   9DMWy9IfGnU9v34gAOhnkcDBCaTeDqRp98LcDNecc+CObRRO4Cb3QVGiH
+   WoQLbeauGNfebd0efbEAaUQeiVXRMmpB65jyZMMZBayPFcqvn+f4jVi6A
+   IZ209gvCd41wjMeDLWHW1ns+JMZs9kkDxYiT5X5voUlgU8wyMbQ7g2yQv
+   zTZ5SGmbjKLXKnXfAp60IFgTpCeHs5GZAjfDQzBpRxzNageGpXWPuJlfe
+   JeHRNcKlX1okNjHFMYPGWXABPOXt0jwVUnBsB2F+yrYiuamT8qRYBWRV6
+   w==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10236"; a="226046456"
+X-IronPort-AV: E=Sophos;i="5.88,311,1635231600"; 
+   d="scan'208";a="226046456"
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jan 2022 07:11:21 -0800
+X-IronPort-AV: E=Sophos;i="5.88,311,1635231600"; 
+   d="scan'208";a="476747480"
+Received: from smile.fi.intel.com ([10.237.72.61])
+  by orsmga003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jan 2022 07:11:18 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.95)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1nC0yy-00DvuI-Ay;
+        Mon, 24 Jan 2022 17:10:12 +0200
+Date:   Mon, 24 Jan 2022 17:10:12 +0200
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Thierry Reding <treding@nvidia.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-tegra@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH v1 1/1] gpio: tegra: Get rid of duplicate of_node
+ assignment
+Message-ID: <Ye7BVEvepBTLgtWO@smile.fi.intel.com>
+References: <20211223122639.86923-1-andriy.shevchenko@linux.intel.com>
+ <YdWp09bj4SP5oNvc@smile.fi.intel.com>
+ <CAMRc=McdH7EebcM5AJb1jT2T_cP_yXyS7t+TP675f6kw92wbRA@mail.gmail.com>
 MIME-Version: 1.0
-References: <1642050969-21152-1-git-send-email-anrao@nvidia.com>
-In-Reply-To: <1642050969-21152-1-git-send-email-anrao@nvidia.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Mon, 24 Jan 2022 15:41:09 +0100
-Message-ID: <CAPDyKFo6X4z_gEUSjKqV6gKk6hiBRzMRUKK_7LFcct4WYg=_qg@mail.gmail.com>
-Subject: Re: [PATCH] mmc: tegra: Enable wake on SD card event
-To:     Aniruddha Rao <anrao@nvidia.com>
-Cc:     adrian.hunter@intel.com, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, p.zabel@pengutronix.de,
-        linux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMRc=McdH7EebcM5AJb1jT2T_cP_yXyS7t+TP675f6kw92wbRA@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, 13 Jan 2022 at 06:16, Aniruddha Rao <anrao@nvidia.com> wrote:
->
-> Enable GPIO wake source on SD card detect line.
-> Physical card insertion/removal event should wake the system
-> from suspend.
->
-> Signed-off-by: Aniruddha Rao <anrao@nvidia.com>
+On Thu, Jan 06, 2022 at 09:42:15AM +0100, Bartosz Golaszewski wrote:
+> On Wed, Jan 5, 2022 at 3:33 PM Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
+> >
+> > On Thu, Dec 23, 2021 at 02:26:39PM +0200, Andy Shevchenko wrote:
+> > > GPIO library does copy the of_node from the parent device of
+> > > the GPIO chip, there is no need to repeat this in the individual
+> > > drivers. Remove these assignment all at once.
+> > >
+> > > For the details one may look into the of_gpio_dev_init() implementation.
+> >
+> > Any comments on this one?
+> 
+> It looks good to me but I wanted to wait for Thierry's ack.
 
-Applied for next, thanks!
+We have got a tag, I'll incorporate this to my usual PR, since we got into
+a new cycle anyway and this is not a fix. Same for other similar patches.
 
-Kind regards
-Uffe
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
-> ---
->  drivers/mmc/host/sdhci-tegra.c | 9 ++++++++-
->  1 file changed, 8 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-> index 35ebba0..5c84bd5 100644
-> --- a/drivers/mmc/host/sdhci-tegra.c
-> +++ b/drivers/mmc/host/sdhci-tegra.c
-> @@ -1673,6 +1673,9 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
->         /* HW busy detection is supported, but R1B responses are required. */
->         host->mmc->caps |= MMC_CAP_WAIT_WHILE_BUSY | MMC_CAP_NEED_RSP_BUSY;
->
-> +       /* GPIO CD can be set as a wakeup source */
-> +       host->mmc->caps |= MMC_CAP_CD_WAKE;
-> +
->         tegra_sdhci_parse_dt(host);
->
->         tegra_host->power_gpio = devm_gpiod_get_optional(&pdev->dev, "power",
-> @@ -1840,7 +1843,7 @@ static int sdhci_tegra_suspend(struct device *dev)
->                 return ret;
->         }
->
-> -       return 0;
-> +       return mmc_gpio_set_cd_wake(host->mmc, true);
->  }
->
->  static int sdhci_tegra_resume(struct device *dev)
-> @@ -1848,6 +1851,10 @@ static int sdhci_tegra_resume(struct device *dev)
->         struct sdhci_host *host = dev_get_drvdata(dev);
->         int ret;
->
-> +       ret = mmc_gpio_set_cd_wake(host->mmc, false);
-> +       if (ret)
-> +               return ret;
-> +
->         ret = pm_runtime_force_resume(dev);
->         if (ret)
->                 return ret;
-> --
-> 2.7.4
->
