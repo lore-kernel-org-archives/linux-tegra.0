@@ -2,165 +2,143 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 591B5C4332F
-	for <linux-tegra@archiver.kernel.org>; Mon, 24 Jan 2022 11:19:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 392B6C433F5
+	for <linux-tegra@archiver.kernel.org>; Mon, 24 Jan 2022 13:28:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237266AbiAXLTo (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 24 Jan 2022 06:19:44 -0500
-Received: from mail-bn8nam12on2072.outbound.protection.outlook.com ([40.107.237.72]:23607
-        "EHLO NAM12-BN8-obe.outbound.protection.outlook.com"
+        id S243143AbiAXN2W (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 24 Jan 2022 08:28:22 -0500
+Received: from mail-dm6nam10on2055.outbound.protection.outlook.com ([40.107.93.55]:4544
+        "EHLO NAM10-DM6-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S237292AbiAXLTf (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 24 Jan 2022 06:19:35 -0500
+        id S229576AbiAXN2V (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 24 Jan 2022 08:28:21 -0500
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ZeckRxTP6C8i1GSocBfEGxIjtA5IFYdZ5LYVqy42tDjHgbywcopAOfNUdW60wBxVY/lVY5nECnsrOru10YhIFd/vtAAq4bLUWIrCPfSuEH6Bglm34g+YZVubGe42Utn2QSqFmNKhm8IwIaEkTV23V0sTmIJwLCSsnZUb+fX2933O41k3MeHSXlMEaYXFZ7B52UpiHvfyXq+rStVYMrGIS9QfpITRfXZtJ68tmoGFrn9psraQGiNb8bIVbQew6C0zNREV/tiKG0PYLgaydBzmk9v3qhZ1+Zsw3nuOQGUR9XkIaHQ5Js7swigbYvGEsiC5VvOs0Qp6NXNJ7cUQcReiMQ==
+ b=ONYwqxOmhcxQhKC67XJ0n+AUTqL7I3iUFpwHmqPZMH2e3bhVmEAuU9Nxy/F0KjN7UJuqJFY4YpnI4UQ/hTHCDqo9l1f8W2UZc1a+QoDMzVRHNwnbYZG7d+03o+CkW2c5D8e9GAR+RBkK+RRhLrhJXyckLj9X9aFEbDGPJi0M3+hvo2lZxpwkoLJ4kCCrtIw9Z1aMIvTQegzskP3bG25LewhnDzHDCz93e5Whk7XgxlbRWcUYKdbkLvmn1r8+CivFLB412ahecz/kmMakuOQbAaEfSOb/q3a6SEjkjvQqWFH5KAav2QrcboOMb9VdHXcgqfnC9NdOiXMIzj9+02A4Tw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=h9otDzfIZn0jaAmsx0x/XX5WOkCKM5484cFIGSiBWmY=;
- b=Gsfm8w2MqnhGvH/Fnrs5sgVLB/dLs9OUToFPRt+pHnZZP1al1F9HaZ/t6ZD72W32TVuwlahK9MnWZQiypGMMiAky68x3BOXkhJ8tbQ5uEiCrKVOqVG/3MEpsdlTllvUbO9vgT1A2ZmMhTXvDcMHFjZk0LAr4InzL4uFAKUjCv9KWCBRsq90+Ln6C3otIy9ZA2e/PgQtj9DsJAb5D5S4fNM2R1IKNlTkdRdnrb5mS+J+v/2gsHGvd919u6TXeJnHVu8irtd+SU9SuAd9EzF6YswSf6B3vfNTjCLiDBmoTJTlFBV23UBTpqKHCTEW8dsYPOiQsOF/FFsVLU38BZVVgtw==
+ bh=hIL+QT6b03sPMZdKjRi2oT9ip99Xq5Nhf+srC8g/ZI0=;
+ b=YkI8/tvVJsKy9pqrstpiRtESEc8ldoL9EhA0Nz8nAJBLWrgS22MtsNAU05a4IQMstwEccHqdAGC3HaeWSpRqp1DuoI3D/Sasuq1OeLVtw5L5AujQcvxbAkWNanqxhbjVZv9gCKJc4WOo1T7KwEcZiaDCl/KS94n8+FWnN2ttn2cFYQnIXFm2ldckLruJ5D3pNwYtXtV0Rtxc5s+FQpGV6K3UzG23FJhBBrOkRlsDij20CcoMyGoYHzJKSDUyqiwk9M1wfiotJTwI7zfNgRrAjqr4q2I8v11Y2yj4wpyBI1NGdSDU9mcir1w6RL59CvYLxTQNuVqUoOVRKdWxKBz5pg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 12.22.5.236) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
+ 12.22.5.238) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
  dkim=none (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=h9otDzfIZn0jaAmsx0x/XX5WOkCKM5484cFIGSiBWmY=;
- b=gR08YH9VuFkM3GfIeuCx7aCMWhL8VudhX/v0pCCRsdl7zy1WALcgt03zpjBBw7feIpQpEXZahgsSoYVg9aG4t18FLEPJJu/D7V9W/rDz7Unj/WgUtJgj+xpY30nptQ7+PqQFXt1KtElRPLWW9mqNet/jsej6sf67DVopR/HnwDwnufeTs3DKNIiAkAGplT7Ugk2nz+Mn0LIbvI7mP9G1/YWjKYOTH2KIyyzJuOJyGYeTh+92LB/h2pfgGmGPbdmimixfS08JKH2M/s7fH2ag2hJfSx9eFI0DDoYYQW1ol5/W+OYnZMhbqk1VXTjVDY4B/4pNumpmYU/oGkHMloe2uQ==
-Received: from BN0PR02CA0003.namprd02.prod.outlook.com (2603:10b6:408:e4::8)
- by MWHPR12MB1503.namprd12.prod.outlook.com (2603:10b6:301:b::19) with
+ bh=hIL+QT6b03sPMZdKjRi2oT9ip99Xq5Nhf+srC8g/ZI0=;
+ b=UBk4zEC7fReVtk+ZWlDER8g4S2GREgXQlGxkNJZ48DBqLoP45KCwDqOAU/sj01c7eMgnw9hbq6Z51DmZoFQDjTQDyQSjxlvQ5cZpOhJtW1scHOuRonRlxV7aV5Mrct9omkkP9ClPUhwFsdoqFLBK1Iieya0Q4TcLos18RqMGd7YhHBHT0jMAdaxV/bYs04sgvf2lc7el2EMpQBtVgj7WrXiJZsBWfyA7jGlpPdpgREOPcKCy4vZyCheyXnz769YZjPwCisBMpQCJHl0S7f7eBQqmXoBXA83i+9V/t7Ojau97BfF8LQctfSzSPsjxHm9Hy8SXSb7UvrrKvYnc8TCSxQ==
+Received: from DM6PR12CA0021.namprd12.prod.outlook.com (2603:10b6:5:1c0::34)
+ by BY5PR12MB3650.namprd12.prod.outlook.com (2603:10b6:a03:1a3::19) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4909.8; Mon, 24 Jan
- 2022 11:19:32 +0000
-Received: from BN8NAM11FT058.eop-nam11.prod.protection.outlook.com
- (2603:10b6:408:e4:cafe::f0) by BN0PR02CA0003.outlook.office365.com
- (2603:10b6:408:e4::8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4909.7; Mon, 24 Jan
+ 2022 13:28:19 +0000
+Received: from DM6NAM11FT061.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:5:1c0:cafe::1) by DM6PR12CA0021.outlook.office365.com
+ (2603:10b6:5:1c0::34) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4909.8 via Frontend
- Transport; Mon, 24 Jan 2022 11:19:32 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.236)
+ Transport; Mon, 24 Jan 2022 13:28:19 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.238)
  smtp.mailfrom=nvidia.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=nvidia.com;
 Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 12.22.5.236 as permitted sender) receiver=protection.outlook.com;
- client-ip=12.22.5.236; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (12.22.5.236) by
- BN8NAM11FT058.mail.protection.outlook.com (10.13.177.58) with Microsoft SMTP
+ 12.22.5.238 as permitted sender) receiver=protection.outlook.com;
+ client-ip=12.22.5.238; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (12.22.5.238) by
+ DM6NAM11FT061.mail.protection.outlook.com (10.13.173.138) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.4909.7 via Frontend Transport; Mon, 24 Jan 2022 11:19:30 +0000
-Received: from drhqmail202.nvidia.com (10.126.190.181) by
- DRHQMAIL109.nvidia.com (10.27.9.19) with Microsoft SMTP Server (TLS) id
- 15.0.1497.18; Mon, 24 Jan 2022 11:18:38 +0000
+ 15.20.4909.7 via Frontend Transport; Mon, 24 Jan 2022 13:28:19 +0000
+Received: from drhqmail201.nvidia.com (10.126.190.180) by
+ DRHQMAIL105.nvidia.com (10.27.9.14) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.18; Mon, 24 Jan 2022 13:28:18 +0000
 Received: from drhqmail203.nvidia.com (10.126.190.182) by
- drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
+ drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.9;
- Mon, 24 Jan 2022 03:18:38 -0800
-Received: from kyarlagadda-linux.nvidia.com (10.127.8.10) by mail.nvidia.com
+ Mon, 24 Jan 2022 05:28:17 -0800
+Received: from kkartik-desktop.nvidia.com (10.127.8.12) by mail.nvidia.com
  (10.126.190.182) with Microsoft SMTP Server id 15.2.986.9 via Frontend
- Transport; Mon, 24 Jan 2022 03:18:35 -0800
-From:   Akhil R <akhilrajeev@nvidia.com>
-To:     <devicetree@vger.kernel.org>, <digetx@gmail.com>,
-        <jonathanh@nvidia.com>, <ldewangan@nvidia.com>,
-        <linux-i2c@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <mperttunen@nvidia.com>,
-        <robh+dt@kernel.org>, <thierry.reding@gmail.com>
-CC:     <akhilrajeev@nvidia.com>
-Subject: [PATCH v3 1/4] dt-bindings: Add headers for Tegra234 I2C
-Date:   Mon, 24 Jan 2022 16:48:14 +0530
-Message-ID: <1643023097-5221-2-git-send-email-akhilrajeev@nvidia.com>
+ Transport; Mon, 24 Jan 2022 05:28:14 -0800
+From:   Kartik <kkartik@nvidia.com>
+To:     <robh+dt@kernel.org>, <treding@nvidia.com>, <jonathanh@nvidia.com>,
+        <mperttunen@nvidia.com>, <devicetree@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kkartik@nvidia.com>
+CC:     <smangipudi@nvidia.com>
+Subject: [PATCH v2] arm64: tegra: Enable additional UART for Jetson AGX Orin
+Date:   Mon, 24 Jan 2022 19:00:04 +0530
+Message-ID: <1643031004-4649-1-git-send-email-kkartik@nvidia.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1643023097-5221-1-git-send-email-akhilrajeev@nvidia.com>
-References: <1643023097-5221-1-git-send-email-akhilrajeev@nvidia.com>
 X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 6266a1fd-e0fd-4e7e-7620-08d9df2b6453
-X-MS-TrafficTypeDiagnostic: MWHPR12MB1503:EE_
-X-Microsoft-Antispam-PRVS: <MWHPR12MB150323BF8511730F87433FF3C05E9@MWHPR12MB1503.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:1186;
+X-MS-Office365-Filtering-Correlation-Id: 6e4fab38-4c94-42c6-22d0-08d9df3d62ff
+X-MS-TrafficTypeDiagnostic: BY5PR12MB3650:EE_
+X-Microsoft-Antispam-PRVS: <BY5PR12MB3650184FEEBEBA229200C5B1CD5E9@BY5PR12MB3650.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:370;
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 869Qu0Bdv4hiAIGfoB/C4HvuRm/2u7ljn7y2/F6acn4wr5GgMH/whI0JsyX13vLhCyYGEztMySNPx/cN7nGkoyT5qohIE22RnJZ1s1XCg4vga2OnfU5xglbj+zoI3AODim96cSB/E1iXNATlpL5SC+VmwKRYBh+fvfOEg3pRbe5dNwft5U8y9mVJZOVyhNQ7GmcC0zx7Y9T8ji/6apgdhz0MgupXJ1TM/6M0EI+i5lxy72Hu08Mp+Fe8+RQ3YarEbbsg3QRyEIg5Pa6BYFZZePDqMe93bgxjJPJ85L5H1qoVSrmq0BkX8eZ4isQ+0K6tSU88J5GKQIWdCIOj+NFl6J27KE4rbjIOJq0MDGbrVmBEPlSoV5w8+7xM8tDXRCk14BK2Cop3oDKEqcm9BpO2qeu//rje9JJyJhc5bISNS/BvMcfYDYW9zFEbLWqofYxvZVF+HGEF5tUF6YDEDbFw5W+BB/QxAmCDRzsB4modyzbuZNvmjeYPKwg9/wwDX0MHOYQ5x4678wjByB9tx7ZdvhzPLQ/8wOrK5C0d5E6IhfxcTqDpQNaOrL9zJtS0SSHOwn6htk+uwA3N7KCI+MSbC8Vh2sTaor1CSnzOueIG8g2CsRfb9+g1BRByWSvyiu3Hm9xPImEUyU4SMfqTDiXWLOd5vyfVFxNJqs0EaJ8GiTvdqJhWv+3oiDLr7CLsvLF/P/T832xIXe28AsuYMw2lUTZbRTIcN/FA0WLcdJyN3DarHIR65Ph45jbnTwORz+7kI4ge6gQZ4HsgHiiy7acQBc08/k9mBq3FvvGcF5bKd8QAHyFyfKm4RTi9txWTRroSjaw+SUd/Ogm8lxACFyOcYg7HaisCgkKQajxRk9ZQh3E=
-X-Forefront-Antispam-Report: CIP:12.22.5.236;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:mail.nvidia.com;PTR:ErrorRetry;CAT:NONE;SFS:(4636009)(46966006)(36840700001)(40470700004)(6666004)(186003)(8676002)(356005)(316002)(508600001)(26005)(107886003)(921005)(81166007)(36860700001)(110136005)(8936002)(5660300002)(86362001)(2906002)(82310400004)(4326008)(70206006)(426003)(2616005)(47076005)(36756003)(70586007)(7696005)(40460700003)(336012)(83380400001)(2101003)(36900700001)(83996005);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: vLZ14IHHDZMDmDz8YlUqs9yIpO7CiLfeC5xYhFg1DIxd1AWgJoj2X3AFmVY/kgIgC8FNXtXysQD5bUPYbALUFggIykxfMfciLZru1ujGC+AaBzdvw1CskGcC9IoA77sz4UCiKNH158lbbaJNskQmJo9kPjZYe7CU/K3/7Xbo6GR1/fNLXQhpWvAc+36ZnaijfU10uqraRa1GAXpYK4Z20E4w5RJnQvTi/w59oegXAhBO95GVdpP3Jyyoq1s42jEcJNFzB1WyVQLkEsQYWZd1jNhpc2w61S8PZJV1pzGgWwdJu65J73F1KKdUoPL+ky4U8DaHZZVbccMq4QuU1VGXo6PmcZ21TDtPfiri2QQDhu5aHMJj09Exc3V0t18z83H9+Io7vN+dCXmZKpSws8ADhYZ0m2p1QDjtSY96xWZo0sdbYndmP9uFbIpbWQkWHSM/3rs6Nk3l1T0pMppAHFL2l4I4w/ZNIhWPa0ekf8Fp/OVj6V75B/Q20T/nY4U4bF7lhmg7hPdD86xdB1JfCQWfBa9ysExz2sG6AMAuIiTLwqJaDSevg0ofo+2+m4OTt2G18ZrMHu2UfpOW6zZlW3/qy31A0OxPYwYlFkw3o8p32tDsoDhHWUv8rAkzTIKK3ItkoBijh3M/d4P01UDpvBNTyohYcNXGQKyJNPnBWzrHVWGG0MMZQAOpCIMqZV49EcinBrW1vH6xjDzYPjt8K1aNuYHKokiI/Ix7PQjJOrkGf5cgqJ73PtIyIDMGTIjotYbRSowCdLBH8/id4VymXLZLbCLYTVosE3vQ2cU469RCnCI=
+X-Forefront-Antispam-Report: CIP:12.22.5.238;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(4636009)(36840700001)(40470700004)(46966006)(47076005)(40460700003)(336012)(36860700001)(107886003)(508600001)(7696005)(2616005)(5660300002)(26005)(86362001)(36756003)(426003)(4326008)(7049001)(82310400004)(83380400001)(356005)(81166007)(8676002)(70206006)(70586007)(110136005)(6666004)(186003)(2906002)(8936002)(316002)(36900700001);DIR:OUT;SFP:1101;
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jan 2022 11:19:30.7696
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jan 2022 13:28:19.5116
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6266a1fd-e0fd-4e7e-7620-08d9df2b6453
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6e4fab38-4c94-42c6-22d0-08d9df3d62ff
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.236];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT058.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.238];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT061.eop-nam11.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR12MB1503
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB3650
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Add dt-bindings header files for I2C controllers for Tegra234
+From: kartik <kkartik@nvidia.com>
 
-Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
+On Jetson AGX Orin, additional UART (UART-A) is available on 40-pin
+header.
+
+Enable UART-A for Jetson AGX Orin and change the compatible string to
+"nvidia,tegra194-hsuart". This enables serial-tegra driver, which
+supports HW flow control and is the preffered driver for higher
+baud rates.
+
+Signed-off-by: kartik <kkartik@nvidia.com>
 ---
- include/dt-bindings/clock/tegra234-clock.h | 19 ++++++++++++++++++-
- include/dt-bindings/reset/tegra234-reset.h |  8 ++++++++
- 2 files changed, 26 insertions(+), 1 deletion(-)
+v2 -> v1: updated commit message
+---
+ arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dts | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/include/dt-bindings/clock/tegra234-clock.h b/include/dt-bindings/clock/tegra234-clock.h
-index 8d7e66e..dc524e6 100644
---- a/include/dt-bindings/clock/tegra234-clock.h
-+++ b/include/dt-bindings/clock/tegra234-clock.h
-@@ -20,6 +20,24 @@
- #define TEGRA234_CLK_EMC			31U
- /** @brief output of gate CLK_ENB_FUSE */
- #define TEGRA234_CLK_FUSE			40U
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_I2C1 */
-+#define TEGRA234_CLK_I2C1			48U
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_I2C2 */
-+#define TEGRA234_CLK_I2C2			49U
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_I2C3 */
-+#define TEGRA234_CLK_I2C3			50U
-+/** output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_I2C4 */
-+#define TEGRA234_CLK_I2C4			51U
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_I2C6 */
-+#define TEGRA234_CLK_I2C6			52U
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_I2C7 */
-+#define TEGRA234_CLK_I2C7			53U
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_I2C8 */
-+#define TEGRA234_CLK_I2C8			54U
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_I2C9 */
-+#define TEGRA234_CLK_I2C9			55U
-+/** @brief PLLP clk output */
-+#define TEGRA234_CLK_PLLP_OUT0			102U
- /** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_SDMMC4 */
- #define TEGRA234_CLK_SDMMC4			123U
- /** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_UARTA */
-@@ -30,5 +48,4 @@
- #define TEGRA234_CLK_PLLC4			237U
- /** @brief 32K input clock provided by PMIC */
- #define TEGRA234_CLK_CLK_32K			289U
--
- #endif
-diff --git a/include/dt-bindings/reset/tegra234-reset.h b/include/dt-bindings/reset/tegra234-reset.h
-index 50e13bc..2963259 100644
---- a/include/dt-bindings/reset/tegra234-reset.h
-+++ b/include/dt-bindings/reset/tegra234-reset.h
-@@ -10,6 +10,14 @@
-  * @brief Identifiers for Resets controllable by firmware
-  * @{
-  */
-+#define TEGRA234_RESET_I2C1			24U
-+#define TEGRA234_RESET_I2C2			29U
-+#define TEGRA234_RESET_I2C3			30U
-+#define TEGRA234_RESET_I2C4			31U
-+#define TEGRA234_RESET_I2C6			32U
-+#define TEGRA234_RESET_I2C7			33U
-+#define TEGRA234_RESET_I2C8			34U
-+#define TEGRA234_RESET_I2C9			35U
- #define TEGRA234_RESET_SDMMC4			85U
- #define TEGRA234_RESET_UARTA			100U
+diff --git a/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dts b/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dts
+index efbbb87..4eda238 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dts
++++ b/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dts
+@@ -11,6 +11,7 @@
+ 	aliases {
+ 		mmc3 = "/bus@0/mmc@3460000";
+ 		serial0 = &tcu;
++		serial1 = &uarta;
+ 	};
  
+ 	chosen {
+@@ -18,6 +19,13 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
++	bus@0 {
++		serial@3100000 {
++			compatible = "nvidia,tegra194-hsuart";
++			status = "okay";
++		};
++	};
++
+ 	serial {
+ 		status = "okay";
+ 	};
 -- 
 2.7.4
 
