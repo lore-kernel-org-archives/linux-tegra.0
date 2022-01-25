@@ -2,138 +2,109 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B16ADC433FE
-	for <linux-tegra@archiver.kernel.org>; Tue, 25 Jan 2022 20:16:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D82BC433F5
+	for <linux-tegra@archiver.kernel.org>; Tue, 25 Jan 2022 20:37:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231573AbiAYUOs (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 25 Jan 2022 15:14:48 -0500
-Received: from mail-bn8nam11on2053.outbound.protection.outlook.com ([40.107.236.53]:2656
-        "EHLO NAM11-BN8-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S231566AbiAYUOf (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 25 Jan 2022 15:14:35 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=m1HsP0ncwC4HRVzvA/sDZOBuc2jK40j/FY0gLDYqBrr3g/Q2qvW2m/wvYtAsvrz2EtpOod3CCLiuvhclBaLspFlTXU6Nj4Qcmr65SCw1BrGqXxBzD8LtlgEGpfTK+LpkoMYhTqGtoNsq2j4CCsh8raSWYUhafb0FteEPhLledtCKXw89wEWAYJP6Yg+/mpNFbaAiyRIUahFcAx8OkCzms/LpRGqwZeome3vqvyvdoLE30lv64otn7UhqxaYj4zcKLlC0m28K57p/dhW5Tu35AphlfV9UA4r0FHehnq8oI/xoDTL1s2c1FmXyaw7umdxlcnnurApLzQ/j967UO98nXg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8s/Wb21nDewbyrPgi9TFPSczi3wEbDMXcYJ3jHHHymc=;
- b=kC2qsOroCOIeVAppXglivM8iPwfTxLCCFd4frFrZU565gPiioZNuOvVoQHLm0huwbj/uUi4xqKIdHQazLWPogpfg/9byEA7Yn9H13ho6TOGqYnxB/LUshUR9wGuv7JgwrEkRrp+epQmkapdIXuhMVJgv02ucuLRkOx/rLsRwXeFnFnwJvi2pe2oGoJscQv1Xtt5Pe5Y8WF95N1offKaljYF3Mr4+SGhhRJ568lHEqgNNq+Y9+XEkhwpDHZ/F8ZwMS81AX0A44kw2MoTIbNfhqV7HycQCMOHOPHSAzjz3B6WvcpYFdUK2SvQGzp1dr2w4fMTKYDatusRpYHVaI8PQcg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 12.22.5.236) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com; dmarc=pass
- (p=reject sp=reject pct=100) action=none header.from=nvidia.com; dkim=none
- (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8s/Wb21nDewbyrPgi9TFPSczi3wEbDMXcYJ3jHHHymc=;
- b=TSzSIuPUmqAKH+aMQDZ8zVac1VmrfG46ENFSKLtHugswifwfMZyYhx+aMPH3cthK2IE4GpRCX4C4yX/Vg854+e9ztU6AJ+IVorux25uvGGHweehrhhmX1vH9jBp3d4uaaIfUhLPTgIwgeVFZdoelN2JDNp4HMN4WdSVaJAIbnzOvlKHRgeJ2Hx6FHrDXFvib2heyx14Q1UZSQ1G6A8MdALbth5wmlI68J5vkHkP6mxg29rg2iAhTEOWs+0qKE9fQyQS7gqKMdILw5BiGROIySsx5fY4Wy+NsCudOWiKGXZ4dQpyMFaNmCRysS3n3BO2UseELAk5wXRLm45jU3k5ZIg==
-Received: from DS7PR03CA0270.namprd03.prod.outlook.com (2603:10b6:5:3b3::35)
- by MWHPR1201MB0032.namprd12.prod.outlook.com (2603:10b6:301:4f::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4909.12; Tue, 25 Jan
- 2022 20:14:29 +0000
-Received: from DM6NAM11FT054.eop-nam11.prod.protection.outlook.com
- (2603:10b6:5:3b3:cafe::fd) by DS7PR03CA0270.outlook.office365.com
- (2603:10b6:5:3b3::35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4909.12 via Frontend
- Transport; Tue, 25 Jan 2022 20:14:29 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.236)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 12.22.5.236 as permitted sender) receiver=protection.outlook.com;
- client-ip=12.22.5.236; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (12.22.5.236) by
- DM6NAM11FT054.mail.protection.outlook.com (10.13.173.95) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.4909.7 via Frontend Transport; Tue, 25 Jan 2022 20:14:29 +0000
-Received: from drhqmail203.nvidia.com (10.126.190.182) by
- DRHQMAIL109.nvidia.com (10.27.9.19) with Microsoft SMTP Server (TLS) id
- 15.0.1497.18; Tue, 25 Jan 2022 20:14:28 +0000
-Received: from drhqmail201.nvidia.com (10.126.190.180) by
- drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.9;
- Tue, 25 Jan 2022 12:14:27 -0800
-Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.126.190.180) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.9 via Frontend
- Transport; Tue, 25 Jan 2022 12:14:27 -0800
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
-        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
-        <sudipm.mukherjee@gmail.com>, <stable@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 5.15 000/841] 5.15.17-rc2 review
-In-Reply-To: <20220125155423.959812122@linuxfoundation.org>
-References: <20220125155423.959812122@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        id S232241AbiAYUhQ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 25 Jan 2022 15:37:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38326 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232210AbiAYUhN (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 25 Jan 2022 15:37:13 -0500
+Received: from mail-qt1-x82e.google.com (mail-qt1-x82e.google.com [IPv6:2607:f8b0:4864:20::82e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7E61C061747
+        for <linux-tegra@vger.kernel.org>; Tue, 25 Jan 2022 12:37:12 -0800 (PST)
+Received: by mail-qt1-x82e.google.com with SMTP id b5so7507274qtq.11
+        for <linux-tegra@vger.kernel.org>; Tue, 25 Jan 2022 12:37:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ndufresne-ca.20210112.gappssmtp.com; s=20210112;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=+JbdAIL0dHyu/M74p8aA5YjzfndB90rS3t+uZU/cRXU=;
+        b=gCddeVXrtQ7+W7o/2Ko4QmrY/BNb9ES0f4KiJhyudrPTflhDjql1piebHPEv4SGzL4
+         qcCowEutu1cEkwHQf65JrBiPw0FmGP+5P1GIfR4ejHnGJ9h8ZHtfzCbwldCpDvdsZxRn
+         BFlctXIIcTNRfxLZrpkUrF/zlgB6qDXnRvq25J/TLY25qU26m1W6MKuoNS8t8JlBT7En
+         TnJ9ZsUf3nNy20c0hKjqFw5UvO49GOuct8zrcINVsxsYv7vwrQ8fBe/Ivc5FLEvXX/Mv
+         dWMY+TovISqsN7YPTr9yiyYjE6PhUtwMdN+izjdxIgQ2sNXhJovxkJXtEEr5/fYn0q86
+         7Bog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=+JbdAIL0dHyu/M74p8aA5YjzfndB90rS3t+uZU/cRXU=;
+        b=bGVFpBvGPNSmYC5HPLJCMKkMXGIBnQ588QYz9lO3K4GkK1QE8s/UrWBWYx3Ice6pdX
+         kdk9XC7boNezK2LDocjhEZobN+DAhUrWtoDZDQ5t6LAYev9ImMGn7M2hC7/qtbpsWBi0
+         v9/XutKOb+TSNAdOggTQ21gPWSYUx8Dfv178T61honwHbN3i7yvCtG9sREVpTQ4zsP0/
+         jlrlJq5RuBF8J8OGjAG9/816G202+hMxatCnV09+rQSBi6n6wq4vaTCF+mVxwDpsJ+al
+         opaWno/8iS1df5X8BH5FJwvCS1RkAfbXPU2T7J7a6nHkZEG1Kn+1qi+i/Xx9vbbxvhbj
+         eyyg==
+X-Gm-Message-State: AOAM531NyzqbDNA/M6F/Dsm3haJzJLSrdL3WpRwRMLplkjREFzySMZK9
+        6zdBcz9SU3uWM3u+gbXR6h/LXA==
+X-Google-Smtp-Source: ABdhPJzOnHSEe2sQobYdCVpNGc6vOQyPkuT9p1HchozV1ea6U6F7yfbM6V2pUl0cETahJ/Y0Gl/uuw==
+X-Received: by 2002:a05:622a:14c9:: with SMTP id u9mr3342837qtx.677.1643143031929;
+        Tue, 25 Jan 2022 12:37:11 -0800 (PST)
+Received: from nicolas-tpx395.localdomain (173-246-12-168.qc.cable.ebox.net. [173.246.12.168])
+        by smtp.gmail.com with ESMTPSA id o10sm9467348qtx.33.2022.01.25.12.37.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Jan 2022 12:37:11 -0800 (PST)
+Message-ID: <8be37d34b7090e3d3adca5b0d298c4b1b5639fa1.camel@ndufresne.ca>
+Subject: Re: [PATCH v2 3/3] media: docs: dev-stateless-decoder: Document
+ frame type flags
+From:   Nicolas Dufresne <nicolas@ndufresne.ca>
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
+Cc:     linux-media@vger.kernel.org, linux-staging@lists.linux.dev,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+        kernel <kernel@collabora.com>
+Date:   Tue, 25 Jan 2022 15:37:10 -0500
+In-Reply-To: <20220116185556.10657-4-digetx@gmail.com>
+References: <20220116185556.10657-1-digetx@gmail.com>
+         <20220116185556.10657-4-digetx@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.3 (3.42.3-1.fc35) 
 MIME-Version: 1.0
-Message-ID: <d73457f8-4c73-4f32-b37a-800731e21c27@drhqmail201.nvidia.com>
-Date:   Tue, 25 Jan 2022 12:14:27 -0800
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 37b5fa3a-25b9-43f4-f9e4-08d9e03f4acc
-X-MS-TrafficTypeDiagnostic: MWHPR1201MB0032:EE_
-X-Microsoft-Antispam-PRVS: <MWHPR1201MB0032A732979F051665F8FF8FD95F9@MWHPR1201MB0032.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: fdx3OA8rUWz6n7wbQ3y990dH/xO4HM4RQStimJMubTJlgepWaGNp0f+eTSRbqyn3ooTjcrm+BZF271ZvxJ1Wf4ReV/bp8axVUJLCR1Rp1+wNQo5onylM+cJBl2fymjUYAARQjbrBiI0AMOn9J7E5YBqcJKaT8KclRy8tV4E7nfeZg8GV9N0R+MO5Jo2dI3t29rLSZxza2o+/dKEDz7aYcWIxDIDnTs0zR+3vZJLjly9q/qYugq90w/eDZ448rYnjZ+xEAIqhzkzfKd/nklcL8Ks6OiblrcwHP7UVNGFEEYIJYejA/bOEaWssMBDOuDygFg211hm3XgC9svmroRji1+uA7aWFFo0/9FjvvORs2q1DrD7Z88nixuzQPUJ3/JILoBlH0fdLscvxfgSJf/UXj/kiBeUv2fX/6s0yYvAQaH3PNaza/all6JrDmk3j43isuSfg4KciosT6PM7HqrhXjlnzLr+RrzMf8+llJSWl1POAVUbtuzCstROAGL0YCOzZl4gd1xVMXG+ufc0b66OkF2B+o+dXTvWLr0XmQjr9+Y1Tsk2+6pCBE7I2iRzFi8/wT20bipzqaCtKk9tump4CkLO0ccNa7NEsPr4mAPsS4G7etNnDAn2tqBYyAjjwrhzPRFZdFTErA8iawTBIo3SlZZUFcqQimpDsojV+7mMMBMuAJm9yq6l8QGrB5kf12t1LpbXMQgnqE6IRrT8Pp/neQ6SYLDQhj8nCu+xGiBcENS6um+Q3joc6DnBnNgGUpDA4c8P9bQVzHB0dh/p5HTmyPcYgA5cbSw1s3PZ+H+RJF046+9/frFJ3kXIMXyyCBId07b1wQxQhjJHQYYPZWTBIwv/ikMJz1cc3Gmw7ucu0WqgPA/DmgPcwnfmxmazNY6do
-X-Forefront-Antispam-Report: CIP:12.22.5.236;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(4636009)(40470700004)(36840700001)(46966006)(54906003)(47076005)(70206006)(316002)(356005)(82310400004)(6916009)(2906002)(70586007)(40460700003)(8676002)(31686004)(81166007)(336012)(5660300002)(186003)(966005)(508600001)(31696002)(86362001)(26005)(426003)(7416002)(36860700001)(8936002)(4326008)(36900700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jan 2022 20:14:29.1050
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 37b5fa3a-25b9-43f4-f9e4-08d9e03f4acc
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.236];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT054.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR1201MB0032
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, 25 Jan 2022 17:32:41 +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.15.17 release.
-> There are 841 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+Le dimanche 16 janvier 2022 à 21:55 +0300, Dmitry Osipenko a écrit :
+> Document that frame type flags must be set for the coded buffer.
+> Decoders, like NVIDIA Tegra h264 decoder for example, won't work
+> properly without these flags.
 > 
-> Responses should be made by Thu, 27 Jan 2022 15:52:30 +0000.
-> Anything received after that time might be too late.
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  .../userspace-api/media/v4l/dev-stateless-decoder.rst          | 3 +++
+>  1 file changed, 3 insertions(+)
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.17-rc2.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+> diff --git a/Documentation/userspace-api/media/v4l/dev-stateless-decoder.rst b/Documentation/userspace-api/media/v4l/dev-stateless-decoder.rst
+> index 4a26646eeec5..845f4481d34f 100644
+> --- a/Documentation/userspace-api/media/v4l/dev-stateless-decoder.rst
+> +++ b/Documentation/userspace-api/media/v4l/dev-stateless-decoder.rst
+> @@ -271,6 +271,9 @@ A typical frame would thus be decoded using the following sequence:
+>            we are not sure that the current decode request is the last one needed
+>            to produce a fully decoded frame, then
+>            ``V4L2_BUF_FLAG_M2M_HOLD_CAPTURE_BUF`` must also be set.
+> +          ``V4L2_BUF_FLAG_KEYFRAME``, ``V4L2_BUF_FLAG_PFRAME`` and
+> +          ``V4L2_BUF_FLAG_BFRAME`` must be set if relevant to the coded
+> +          format.
 
-All tests passing for Tegra ...
+I think I would rather keep this in the CODEC specific APIs (BFrame being an
+MPEG specific concept). If I knew about this before we made the API final, I
+would have added the slice_type bitstream parameter in the
+v4l2_h264_decode_params structure. But as the types are rather limited, I would
+preserve our "reservered" space and make that part of the
+V4L2_H264_DECODE_PARAM_FLAGS_{} instead. Do you also need that for HEVC ? (do
+you have HEVC on that generation of tegra ?)
 
-Test results for stable-v5.15:
-    10 builds:	10 pass, 0 fail
-    28 boots:	28 pass, 0 fail
-    114 tests:	114 pass, 0 fail
+>  
+>        ``request_fd``
+>            must be set to the file descriptor of the decoding request.
 
-Linux version:	5.15.17-rc2-g384933ffef76
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
-                tegra20-ventana, tegra210-p2371-2180,
-                tegra210-p3450-0000, tegra30-cardhu-a04
-
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
-
-Jon
