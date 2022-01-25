@@ -2,126 +2,108 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7568C433EF
-	for <linux-tegra@archiver.kernel.org>; Tue, 25 Jan 2022 17:57:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A505C433F5
+	for <linux-tegra@archiver.kernel.org>; Tue, 25 Jan 2022 18:41:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344966AbiAYR4l (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 25 Jan 2022 12:56:41 -0500
-Received: from mail-yb1-f182.google.com ([209.85.219.182]:40758 "EHLO
-        mail-yb1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1357539AbiAYRzC (ORCPT
+        id S232901AbiAYSkx (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 25 Jan 2022 13:40:53 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:51373 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232889AbiAYSkw (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 25 Jan 2022 12:55:02 -0500
-Received: by mail-yb1-f182.google.com with SMTP id 23so63924631ybf.7;
-        Tue, 25 Jan 2022 09:54:57 -0800 (PST)
+        Tue, 25 Jan 2022 13:40:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1643136051;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=g6xgw7PLLB99kGOm82Md5xSrceAHr+vyHuVH486XnJc=;
+        b=QFrDht///ZiAsWtq5NB+5Xfy9GgQOWlmnYsXx1JW/G6PzlBFV3wV/s5PgUddS4dwi7u+JE
+        W1JXRW0SeqAoNEEcmg/+cxbgavhtAH0aF1703vWgClKwRp8x8kJL83cRryoKRSfCWbRwIQ
+        FnTsjJ/YEmfR+nh5OCG0leEmMooZ5Sw=
+Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
+ [209.85.208.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-161-OMp3Np22MC6dbD83M0rwMQ-1; Tue, 25 Jan 2022 13:40:49 -0500
+X-MC-Unique: OMp3Np22MC6dbD83M0rwMQ-1
+Received: by mail-ed1-f71.google.com with SMTP id p17-20020aa7c891000000b004052d1936a5so11134235eds.7
+        for <linux-tegra@vger.kernel.org>; Tue, 25 Jan 2022 10:40:49 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=y+R3o3okOUEIZN8/dDxsGECLwf9ITaDap15PmIOOEJw=;
-        b=tsaGoOSmVk7vaXbB33hs4k9q3BbeTHUtBXwyeQUuY62ng6sjhay1Kb4Lkgq/AUAgN+
-         6qPdLnFELJywM6E1EE3SVz6+TRd+7bnuB0tpov/WrsG3Svjy7GrVu8HZ/CbIDGP+QNJe
-         oQEbuXHgOXLaHVLD24h2Y9Y/kXEefHWPXYT5bsrULtvYDNCfjkm3GDoPUe8hDayhTVVO
-         Kz9Ms1OfHUy3KbMJp18jW8fgRMT87MzcCpM93IUAuBEeSiuySK97rE0ZoYdf+6HoURyf
-         NGnh9UrhQrCFuOxTSDngSUEDDCzYrcrpIda+jjDv+UFSx1suftZpy/p6ntJvcZR8tCCq
-         RDoQ==
-X-Gm-Message-State: AOAM530pDc2Zout0EHUtZV5IwPRSuSgNf6aZjx1i3U89GfCmC64SQrv0
-        5jnhfKkCY70mzNNEEnxmMQt4tbgQ+yC8QKXnGf0=
-X-Google-Smtp-Source: ABdhPJx+RSxvIz+QTS29NNZlNto0r/PEcq1x9Ah2IeEOnqDbQuwUZ7x2ZQ/2bvu5VBLp3XyWBQoxhvNKmB0ZgYbANKg=
-X-Received: by 2002:a25:1bd5:: with SMTP id b204mr34517304ybb.552.1643133297390;
- Tue, 25 Jan 2022 09:54:57 -0800 (PST)
+        bh=g6xgw7PLLB99kGOm82Md5xSrceAHr+vyHuVH486XnJc=;
+        b=nUEpLIxf+8khRVlBvVIFmzEYFD/Qw5we1/5uzRGD5/tBwNj7pHdb9fN6RmZqwDv1q5
+         2FrQMNAIWbk1A8oqWT6knvdwkIXGrgKGKN1pUBi/4qwZcOJ5qllFNe7amAdu77PrrGQT
+         FV0LNopL1b4SI1AtXBPFqm4jJ3lk+g6iSHtlf+YAsZZ2Ekubp9XkEe4pfD5KsWoOfQXz
+         ASCd++j8QZB8GweCWgquPkFWK6boCQIR4czsJQ+jbFOi/2+GLoEZFXdrIw9f+mOacsVf
+         91n8hTtd7ufzh4k43///F+N/nIxljkWmZZNpYrFDtzFCo9FyneOs6qCgbgf3apwP3Ns6
+         x1oQ==
+X-Gm-Message-State: AOAM531/Oszl8NuGXJIoegbHRMSakyQrjzkr7kBRML2bHMi8bxQn0z9E
+        t6d0v2V76jrj9IIj3wqQhkoAxTvOO7NBYHfDP8T4myOJlhg2xxXd0erqlUzLfsvjSL3rBd7Q3Ky
+        k8+dApKVG/aL/iQ7wnz8AAlHcpGfaGcHVVqFLyUU=
+X-Received: by 2002:aa7:c046:: with SMTP id k6mr18187799edo.9.1643136048744;
+        Tue, 25 Jan 2022 10:40:48 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJxya5dJ1miI9SET/rdoVMG9M9jvYhFhoQdOs0j/ZIC5u8/OefiKgy0godTNlvTTkg6wialGZuuOBdiW278y2To=
+X-Received: by 2002:aa7:c046:: with SMTP id k6mr18187780edo.9.1643136048545;
+ Tue, 25 Jan 2022 10:40:48 -0800 (PST)
 MIME-Version: 1.0
-References: <1642851166-27096-1-git-send-email-akhilrajeev@nvidia.com> <1642851166-27096-3-git-send-email-akhilrajeev@nvidia.com>
-In-Reply-To: <1642851166-27096-3-git-send-email-akhilrajeev@nvidia.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Tue, 25 Jan 2022 18:54:46 +0100
-Message-ID: <CAJZ5v0gt+aDr_Te_mco_0CyRJAWgyeDKUb+dksfZz0mj91G0hw@mail.gmail.com>
-Subject: Re: [PATCH v4 2/3] docs: firmware-guide: ACPI: Add named interrupt doc
-To:     Akhil R <akhilrajeev@nvidia.com>
-Cc:     =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
+References: <20211029201402.428284-1-wander@redhat.com> <a1ac6254-f79e-d131-fa2a-c7ad714c6d4a@nvidia.com>
+ <f451e67d-adb9-01e8-bd11-bf7804863b4b@kernel.org> <8e57400f-d6a8-bd42-6214-fca1fe37a972@kernel.org>
+ <11ec4350-b890-4949-cf8f-bc62d530d64f@nvidia.com> <CAAq0SU=9R3Y_SAdM+HaqavzWBRd1Li-b5bnZZLd5Opfgd0vnkQ@mail.gmail.com>
+ <fa42a60c-954a-acc0-3962-f00427153f78@nvidia.com> <YfArHDfrVHw7ApDx@smile.fi.intel.com>
+ <YfArWaKJ13+OC/7w@smile.fi.intel.com>
+In-Reply-To: <YfArWaKJ13+OC/7w@smile.fi.intel.com>
+From:   Wander Costa <wcosta@redhat.com>
+Date:   Tue, 25 Jan 2022 15:40:36 -0300
+Message-ID: <CAAq0SU=U3UY+DUdd1fjj25Yt_QZriShZTSFTsq5B4tPnOYhQvQ@mail.gmail.com>
+Subject: Re: [PATCH] tty: serial: Use fifo in 8250 console driver
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Jon Hunter <jonathanh@nvidia.com>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Wander Lairson Costa <wander@redhat.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Len Brown <lenb@kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        linux-i2c <linux-i2c@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Wolfram Sang <wsa@kernel.org>
+        "Maciej W. Rozycki" <macro@orcam.me.uk>,
+        Johan Hovold <johan@kernel.org>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Sat, Jan 22, 2022 at 12:33 PM Akhil R <akhilrajeev@nvidia.com> wrote:
+On Tue, Jan 25, 2022 at 1:56 PM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
 >
-> Add a detailed example of the named interrupts in the ACPI table.
+> On Tue, Jan 25, 2022 at 06:53:48PM +0200, Andy Shevchenko wrote:
+> > On Tue, Jan 25, 2022 at 12:40:27PM +0000, Jon Hunter wrote:
+> > > On 25/01/2022 10:29, Wander Costa wrote:
 >
-> Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
+> ...
+>
+> > > Andy, does this work for X86?
+> >
+> > Reported-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> >
+> > No, it does NOT fix an issue (I see it on a handful x86) with the legacy UART
+> > (means the 8250_pnp is in use). And I believe the same will be the case on LPSS
+> > ones (8250_dw / 8250_lpss) and HSU (8250_mid), because the patch influences on
+> > all of them.
+>
+> Shall I send a revert and we can continue with a new approach later on?
+>
 
-Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Tomorrow (or maybe after tomorrow) I am going to post the fixes I
+already have, and an additional patch adding a build option
+(disabled to default) so people maybe if they want to use the FIFO on
+console write. But I understand if people decide to go
+ahead and revert the patch.
 
-> ---
->  Documentation/firmware-guide/acpi/enumeration.rst | 39 +++++++++++++++++++++++
->  1 file changed, 39 insertions(+)
->
-> diff --git a/Documentation/firmware-guide/acpi/enumeration.rst b/Documentation/firmware-guide/acpi/enumeration.rst
-> index 74b830b2..d002256 100644
-> --- a/Documentation/firmware-guide/acpi/enumeration.rst
-> +++ b/Documentation/firmware-guide/acpi/enumeration.rst
-> @@ -143,6 +143,45 @@ In robust cases the client unfortunately needs to call
->  acpi_dma_request_slave_chan_by_index() directly and therefore choose the
->  specific FixedDMA resource by its index.
->
-> +Named Interrupts
-> +================
-> +
-> +Drivers enumerated via ACPI can have names to interrupts in the ACPI table
-> +which can be used to get the IRQ number in the driver.
-> +
-> +The interrupt name can be listed in _DSD as 'interrupt-names'. The names
-> +should be listed as an array of strings which will map to the Interrupt()
-> +resource in the ACPI table corresponding to its index.
-> +
-> +The table below shows an example of its usage::
-> +
-> +    Device (DEV0) {
-> +        ...
-> +        Name (_CRS, ResourceTemplate() {
-> +            ...
-> +            Interrupt (ResourceConsumer, Level, ActiveHigh, Exclusive) {
-> +                0x20,
-> +                0x24
-> +            }
-> +        })
-> +
-> +        Name (_DSD, Package () {
-> +            ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-> +            Package () {
-> +                Package () {"interrupt-names",
-> +                Package (2) {"default", "alert"}},
-> +            }
-> +        ...
-> +        })
-> +    }
-> +
-> +The interrupt name 'default' will correspond to 0x20 in Interrupt()
-> +resource and 'alert' to 0x24. Note that only the Interrupt() resource
-> +is mapped and not GpioInt() or similar.
-> +
-> +The driver can call the function - fwnode_irq_get_byname() with the fwnode
-> +and interrupt name as arguments to get the corresponding IRQ number.
-> +
->  SPI serial bus support
->  ======================
->
 > --
-> 2.7.4
+> With Best Regards,
+> Andy Shevchenko
 >
+>
+
