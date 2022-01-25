@@ -2,154 +2,377 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0D39C433F5
-	for <linux-tegra@archiver.kernel.org>; Tue, 25 Jan 2022 05:57:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FD7EC433EF
+	for <linux-tegra@archiver.kernel.org>; Tue, 25 Jan 2022 08:06:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229833AbiAYF5r (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 25 Jan 2022 00:57:47 -0500
-Received: from mail-dm6nam10on2045.outbound.protection.outlook.com ([40.107.93.45]:53575
-        "EHLO NAM10-DM6-obe.outbound.protection.outlook.com"
+        id S237744AbiAYIGO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 25 Jan 2022 03:06:14 -0500
+Received: from guitar.tcltek.co.il ([84.110.109.230]:35004 "EHLO mx.tkos.co.il"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S240524AbiAYFz2 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 25 Jan 2022 00:55:28 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=k9EoQPvIXb/IirFpKiboM/RmEI1goOujCIjayaEVOMtHQgF39xDbt8F77Zm39Ka35W7NY2X1c+JtEDBFUyp4FX8aPJkf7e4Kd709g7ZWQUNq3hz89OHoEtms5MOwu+35UmatTBcRDGkIGghoCeG/q27MHqVsYgFMReioFkVgLJIoxuK4tMZsQX2JsLilgXNVYD9MQMJ1Rq0R4hxYbz8N1p/AWat3wFToi+zOCITR2s16p0GogQ8Nhqm6J2SeUrAnSVQZQFhu/dje4rVXL1/kbUqUDQzK72+2UA9+QClCeiPioyj3AOV0LOgpX5mUv/bh8PxAO6gveuE2u+SUH0SsLw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8t442sqYo7CNkPqZbrYZm67XBdg8RSTrFfdLvq/6y0s=;
- b=ggKFoX0NNHYg+oAAA4HgYu24rchcW8KwoB6lJm+ychqg024qBTzG/ycde3nvQgM8Zw/BZ+S2+qclfqDZay25J0eBTd02xOKtIeHTzWWRAksSsqh4BCRNJN5VNEK5e1Zszj7vUpw0mTkhdyKB190oOUtu9safl0bAIlgY6Xxr3Wl5p2PEgDzych5WMXyBZA5v3cd5Sx0fA7/8zUyNaTPYkb68+9x7RQ041u/5Z5N12McCG5Sp9a2spYBsQsMs+f0srczR9eMZDajQdOZ1SOIoDYY0xpk2xSdY3GGgd0PxSSBVOfH43I4TCA1Em4kaq/cN//wzlqnQ+nh0BDUqpG4Q+A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 12.22.5.235) smtp.rcpttodomain=baidu.com smtp.mailfrom=nvidia.com; dmarc=pass
- (p=reject sp=reject pct=100) action=none header.from=nvidia.com; dkim=none
- (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8t442sqYo7CNkPqZbrYZm67XBdg8RSTrFfdLvq/6y0s=;
- b=gg9OA8WE551Ojsu3TO7gWl+aYgM1ljpdABdOba3Bv2AMb+/KKv2h7rodwDnwHXjGbM2Dr2QwVmrYbL/CC7W8F3OwPHmujQN3/2e1MkXem09AJ7KSRsQDH1nNIbbbHN4emLkZn6j4h8rwoTZ/UQp35Jr7yRjVNnR9lU6uLJO/3WqhSTHDCCGWnXrc9KaJuSZg0WIcldnYLztlqdKzGAUCeMzY/Tsv3i3tdilvQS9mjvwvNMyCZ5UswA/jCxOdYvIDUmS4aaQQAc1cjmjAFdB1sFcGAoAszRhYDSy0KDJrVcSnBgXi2V3qcdS3/+E2ai/XD1hdemT/QNX8Pq3txOEpAQ==
-Received: from DM6PR07CA0131.namprd07.prod.outlook.com (2603:10b6:5:330::19)
- by DM6PR12MB5005.namprd12.prod.outlook.com (2603:10b6:5:1be::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4909.10; Tue, 25 Jan
- 2022 05:55:26 +0000
-Received: from DM6NAM11FT040.eop-nam11.prod.protection.outlook.com
- (2603:10b6:5:330:cafe::af) by DM6PR07CA0131.outlook.office365.com
- (2603:10b6:5:330::19) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4909.7 via Frontend
- Transport; Tue, 25 Jan 2022 05:55:26 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.235)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 12.22.5.235 as permitted sender) receiver=protection.outlook.com;
- client-ip=12.22.5.235; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (12.22.5.235) by
- DM6NAM11FT040.mail.protection.outlook.com (10.13.173.133) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.4909.7 via Frontend Transport; Tue, 25 Jan 2022 05:55:24 +0000
-Received: from drhqmail203.nvidia.com (10.126.190.182) by
- DRHQMAIL107.nvidia.com (10.27.9.16) with Microsoft SMTP Server (TLS) id
- 15.0.1497.18; Tue, 25 Jan 2022 05:55:24 +0000
-Received: from drhqmail203.nvidia.com (10.126.190.182) by
- drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.9;
- Mon, 24 Jan 2022 21:55:23 -0800
-Received: from kkartik-desktop.nvidia.com (10.127.8.12) by mail.nvidia.com
- (10.126.190.182) with Microsoft SMTP Server id 15.2.986.9 via Frontend
- Transport; Mon, 24 Jan 2022 21:55:20 -0800
-From:   Kartik <kkartik@nvidia.com>
-To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <digetx@gmail.com>, <ulf.hansson@linaro.org>,
-        <christophe.jaillet@wanadoo.fr>, <kkartik@nvidia.com>,
-        <andriy.shevchenko@linux.intel.com>, <jckuo@nvidia.com>,
-        <caihuoqing@baidu.com>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH] soc/tegra: pmc: Add Tegra234 wake events
-Date:   Tue, 25 Jan 2022 11:27:42 +0530
-Message-ID: <1643090262-26127-1-git-send-email-kkartik@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-X-NVConfidentiality: public
+        id S1448047AbiAYID2 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 25 Jan 2022 03:03:28 -0500
+Received: from tarshish (unknown [10.0.8.3])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mx.tkos.co.il (Postfix) with ESMTPS id D1B26440537;
+        Tue, 25 Jan 2022 10:02:58 +0200 (IST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tkos.co.il;
+        s=default; t=1643097779;
+        bh=iPGeJdTdA+TpA5xDJP7UJ9drYm1TDPI/YbdN2WqBtnU=;
+        h=References:From:To:Cc:Subject:Date:In-reply-to:From;
+        b=d60MWrops0rKjqbjNjCWnpl8XxcE937GqSNudiQOtHJKzP8P1m8whC/P7CfNU3vXC
+         GYxdBeZPq+SYSaC+ENkTG9HI/9EWiGxERRjcazKailFGjGSBtSqXlHTFSZQfaKb8mN
+         5us8w77Ge0m2MEdKQSOFnZQhVkj7lEF1qGsy2pPgz3Z55TYf9kSyQcGCp6Bh6uNfNW
+         oVw6ZFr0ygyqaLndNk9pFZkv3FuZ14dBOTfhiAwGiyui4QZcWqm886yqGbDNtXIP1R
+         AIYLvoan+t/fVlVZcRwOtxog664E6e4ERFEtjL5dnyn66kdysGXCe55rGzxmnHF0kj
+         /GkVHCemMk3Cg==
+References: <f69d32f08a890463a331567e5742f2d33fa8b2bb.1643041464.git.baruch@tkos.co.il>
+ <20220124204252.GA1552314@bhelgaas>
+User-agent: mu4e 1.6.10; emacs 27.1
+From:   Baruch Siach <baruch@tkos.co.il>
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Selvam Sathappan Periakaruppan <speriaka@codeaurora.org>,
+        Kathiravan T <kathirav@codeaurora.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Robert Marko <robert.marko@sartura.hr>,
+        Bryan O'Donoghue <pure.logic@nexus-software.ie>,
+        linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v5 3/3] PCI: qcom: add support for IPQ60xx PCIe controller
+Date:   Tue, 25 Jan 2022 09:41:45 +0200
+In-reply-to: <20220124204252.GA1552314@bhelgaas>
+Message-ID: <8735lc9r9d.fsf@tarshish>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 49815307-ccbd-488a-5124-08d9dfc747c1
-X-MS-TrafficTypeDiagnostic: DM6PR12MB5005:EE_
-X-Microsoft-Antispam-PRVS: <DM6PR12MB5005C7CB8605E9CC348D4155CD5F9@DM6PR12MB5005.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:2449;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: ij6hSFNNIW5/rH3o1OJuQV5Hy7x+zIDBRwyJhEeCWTKVgBgH3lJbNDVSDS7lZ03eLALw3tbw2LrVd/lTGeGdY4b/DidjHes/LyZfzxNZZrzy7l69RX+6WNYkBNnEjUBNuldTguvwMzOpimtTGDm8RPefe39lTWmCfYGPT1H8QUlCHOXkKDLg7WGyVeNWztNkM02eVNa52hEAYlY/cl0BoNoCeydVY1jmM9Bgd5cDw8eVI6Q9KbeEWaIFh54NLzclcZ1dr6KmwRWltUzuXESmPXTO1+h3GdRfZjS4sXcbiz1KPDXqV/tIWjfFt7L5vZbpHS49nEH1r1aKXd9ONha/5idBPY9wXyh6Z0sAA25dm0qrSU8WrDPS8JDpdjZZDjjmtBxI3QpDiMeJtAxrME1X9LWk69QrqKdPcdmdpgo0Yz3618pcHYSefsopaDQxFz7yoe4TaGE0h6KhzLhjqW6i7D8o+QJvz/fA6FrI7xotbNYckXpXwhDyp56taMByTWQcHeJ1koHpoquGl/nrSZjFzyR0+WSBVUFc2qjBGrbObSBScvldLsqHtQiWjbrhZoXJpLy2rz4uupVPIVlcEmA76DU/n5rf5zmUd9TaF4T/oQKPrjSqb2oc4gDvzV0miSpwwQwm2ZKXA2DYoeO+h8+nYBbrZOqDtwp9QomU+TjSjeyKiO7hAXZ3Vqt4rJeSokFAnmhmWFHxU1NIgykN/0t9yyY1ojgkVhu9UNmCc8Xlj5CyY/m2RS+kBGMhgMtv96+FekgGDhVXoy5wVbq8+bdbmAzZTSap82Bqct5NP70a8CLA1Ho+2RK93hU5s8WgdKKR
-X-Forefront-Antispam-Report: CIP:12.22.5.235;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(4636009)(46966006)(40470700004)(36840700001)(36860700001)(426003)(110136005)(82310400004)(36756003)(81166007)(2906002)(921005)(336012)(508600001)(70586007)(47076005)(2616005)(186003)(8676002)(70206006)(6666004)(356005)(8936002)(86362001)(7696005)(83380400001)(316002)(5660300002)(40460700003)(26005)(36900700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jan 2022 05:55:24.3723
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 49815307-ccbd-488a-5124-08d9dfc747c1
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.235];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT040.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB5005
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: kartik <kkartik@nvidia.com>
+Hi Bjorn,
 
-Enable the Tegra RTC alarm and power key wake-ups for Tegra234
+Thanks for your review comments.
 
-Signed-off-by: kartik <kkartik@nvidia.com>
----
- drivers/soc/tegra/pmc.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+On Mon, Jan 24 2022, Bjorn Helgaas wrote:
+> Capitalize subject line to match history, i.e.,
+>
+>   $ git log --oneline drivers/pci/controller/dwc/pcie-qcom.c
+>   3f13d611aa6b PCI: qcom: Use __be16 type to store return value from cpu_to_be16()
+>   4e0e90539bb0 PCI: qcom: Fix an error handling path in 'qcom_pcie_probe()'
+>   45a3ec891370 PCI: qcom: Add sc8180x compatible
+>   aa9c0df98c29 PCI: qcom: Switch pcie_1_pipe_clk_src after PHY init in SC7280
+>   b89ff410253d PCI: qcom: Replace ops with struct pcie_cfg in pcie match data
+>   2cfef1971aea PCI: qcom: Use PHY_REFCLK_USE_PAD only for ipq8064
+>   7081556f81f7 PCI: qcom: Add support for ddrss_sf_tbu clock
+>   4c9398822106 PCI: qcom: Add support for configuring BDF to SID mapping for SM8250
+>   e1dd639e374a PCI: qcom: Add SM8250 SoC support
+>
+> A good one would be:
+>
+>   PCI: qcom: Add IPQ60xx support
+>
+> We already know this is a PCIe controller, and it's nice to have the
+> important words like "IPQ60xx" early in the message so they don't get
+> truncated or wrapped.
+>
+> On Mon, Jan 24, 2022 at 06:27:31PM +0200, Baruch Siach wrote:
+>> From: Selvam Sathappan Periakaruppan <speriaka@codeaurora.org>
+>> 
+>> IPQ60xx series of SoCs have one port of PCIe gen 3. Add support for that
+>> platform.
+>> 
+>> The code is based on downstream[1] Codeaurora kernel v5.4 (branch
+>> win.linuxopenwrt.2.0).
+>> 
+>> Split out the DBI registers access part from .init into .post_init. DBI
+>> registers are only accessible after phy_power_on().
+>> 
+>> [1] https://source.codeaurora.org/quic/qsdk/oss/kernel/linux-ipq-5.4/
+>> 
+>> Signed-off-by: Selvam Sathappan Periakaruppan <speriaka@codeaurora.org>
+>> Signed-off-by: Baruch Siach <baruch.siach@siklu.com>
+>> ---
+>> v5:
+>> 
+>>   * Remove comments from qcom_pcie_init_2_9_0() (Bjorn Andersson)
+>> 
+>> v4:
+>> 
+>>   * Rebase on v5.16-rc1
+>> 
+>> v3:
+>>   * Drop speed setup; rely on generic code (Rob Herring)
+>> 
+>>   * Drop unused CLK_RATE macros (Bjorn Helgaas)
+>> 
+>>   * Minor formatting fixes (Bjorn Helgaas)
+>> 
+>>   * Add reference to downstream Codeaurora kernel tree (Bjorn Helgaas)
+>> 
+>> v2:
+>>   * Drop ATU configuration; rely on common code instead
+>> 
+>>   * Use more common register macros
+>> 
+>>   * Use bulk clk and reset APIs
+>> ---
+>>  drivers/pci/controller/dwc/pcie-designware.h |   1 +
+>>  drivers/pci/controller/dwc/pcie-qcom.c       | 137 +++++++++++++++++++
+>>  2 files changed, 138 insertions(+)
+>> 
+>> diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
+>> index ea87809ee298..279c3778a13b 100644
+>> --- a/drivers/pci/controller/dwc/pcie-designware.h
+>> +++ b/drivers/pci/controller/dwc/pcie-designware.h
+>> @@ -76,6 +76,7 @@
+>>  
+>>  #define GEN3_RELATED_OFF			0x890
+>>  #define GEN3_RELATED_OFF_GEN3_ZRXDC_NONCOMPL	BIT(0)
+>> +#define GEN3_RELATED_OFF_RXEQ_RGRDLESS_RXTS	BIT(13)
+>>  #define GEN3_RELATED_OFF_GEN3_EQ_DISABLE	BIT(16)
+>>  #define GEN3_RELATED_OFF_RATE_SHADOW_SEL_SHIFT	24
+>>  #define GEN3_RELATED_OFF_RATE_SHADOW_SEL_MASK	GENMASK(25, 24)
+>> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
+>> index c19cd506ed3f..5d47e572da44 100644
+>> --- a/drivers/pci/controller/dwc/pcie-qcom.c
+>> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
+>> @@ -52,6 +52,10 @@
+>>  #define PCIE20_PARF_DBI_BASE_ADDR		0x168
+>>  #define PCIE20_PARF_SLV_ADDR_SPACE_SIZE		0x16C
+>>  #define PCIE20_PARF_MHI_CLOCK_RESET_CTRL	0x174
+>> +#define AHB_CLK_EN				BIT(0)
+>> +#define MSTR_AXI_CLK_EN				BIT(1)
+>> +#define BYPASS					BIT(4)
+>> +
+>>  #define PCIE20_PARF_AXI_MSTR_WR_ADDR_HALT	0x178
+>>  #define PCIE20_PARF_AXI_MSTR_WR_ADDR_HALT_V2	0x1A8
+>>  #define PCIE20_PARF_LTSSM			0x1B0
+>> @@ -171,6 +175,11 @@ struct qcom_pcie_resources_2_7_0 {
+>>  	struct clk *ref_clk_src;
+>>  };
+>>  
+>> +struct qcom_pcie_resources_2_9_0 {
+>> +	struct clk_bulk_data clks[5];
+>> +	struct reset_control *rst;
+>> +};
+>> +
+>>  union qcom_pcie_resources {
+>>  	struct qcom_pcie_resources_1_0_0 v1_0_0;
+>>  	struct qcom_pcie_resources_2_1_0 v2_1_0;
+>> @@ -178,6 +187,7 @@ union qcom_pcie_resources {
+>>  	struct qcom_pcie_resources_2_3_3 v2_3_3;
+>>  	struct qcom_pcie_resources_2_4_0 v2_4_0;
+>>  	struct qcom_pcie_resources_2_7_0 v2_7_0;
+>> +	struct qcom_pcie_resources_2_9_0 v2_9_0;
+>>  };
+>>  
+>>  struct qcom_pcie;
+>> @@ -1297,6 +1307,119 @@ static void qcom_pcie_post_deinit_2_7_0(struct qcom_pcie *pcie)
+>>  	clk_disable_unprepare(res->pipe_clk);
+>>  }
+>>  
+>> +static int qcom_pcie_get_resources_2_9_0(struct qcom_pcie *pcie)
+>> +{
+>> +	struct qcom_pcie_resources_2_9_0 *res = &pcie->res.v2_9_0;
+>> +	struct dw_pcie *pci = pcie->pci;
+>> +	struct device *dev = pci->dev;
+>> +	int ret;
+>> +
+>> +	res->clks[0].id = "iface";
+>> +	res->clks[1].id = "axi_m";
+>> +	res->clks[2].id = "axi_s";
+>> +	res->clks[3].id = "axi_bridge";
+>> +	res->clks[4].id = "rchng";
+>> +
+>> +	ret = devm_clk_bulk_get(dev, ARRAY_SIZE(res->clks), res->clks);
+>> +	if (ret < 0)
+>> +		return ret;
+>> +
+>> +	res->rst = devm_reset_control_array_get_exclusive(dev);
+>> +	if (IS_ERR(res->rst))
+>> +		return PTR_ERR(res->rst);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static void qcom_pcie_deinit_2_9_0(struct qcom_pcie *pcie)
+>> +{
+>> +	struct qcom_pcie_resources_2_9_0 *res = &pcie->res.v2_9_0;
+>> +
+>> +	clk_bulk_disable_unprepare(ARRAY_SIZE(res->clks), res->clks);
+>> +}
+>> +
+>> +static int qcom_pcie_init_2_9_0(struct qcom_pcie *pcie)
+>> +{
+>> +	struct qcom_pcie_resources_2_9_0 *res = &pcie->res.v2_9_0;
+>> +	struct device *dev = pcie->pci->dev;
+>> +	int ret;
+>> +
+>> +	ret = reset_control_assert(res->rst);
+>> +	if (ret) {
+>> +		dev_err(dev, "reset assert failed (%d)\n", ret);
+>> +		return ret;
+>> +	}
+>> +
+>> +	usleep_range(2000, 2500);
+>
+> Where do these sleep durations come from?  If they're specified
+> somewhere by PCIe, can you include a citation, e.g., a section number
+> in the spec.
 
-diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index 5aceacb..0edb7f8 100644
---- a/drivers/soc/tegra/pmc.c
-+++ b/drivers/soc/tegra/pmc.c
-@@ -3,7 +3,7 @@
-  * drivers/soc/tegra/pmc.c
-  *
-  * Copyright (c) 2010 Google, Inc
-- * Copyright (c) 2018-2020, NVIDIA CORPORATION. All rights reserved.
-+ * Copyright (c) 2018-2022, NVIDIA CORPORATION. All rights reserved.
-  *
-  * Author:
-  *	Colin Cross <ccross@google.com>
-@@ -54,6 +54,7 @@
- #include <dt-bindings/pinctrl/pinctrl-tegra-io-pad.h>
- #include <dt-bindings/gpio/tegra186-gpio.h>
- #include <dt-bindings/gpio/tegra194-gpio.h>
-+#include <dt-bindings/gpio/tegra234-gpio.h>
- #include <dt-bindings/soc/tegra-pmc.h>
- 
- #define PMC_CNTRL			0x0
-@@ -3788,6 +3789,11 @@ static const char * const tegra234_reset_sources[] = {
- 	"FUSECRC",
- };
- 
-+static const struct tegra_wake_event tegra234_wake_events[] = {
-+	TEGRA_WAKE_GPIO("power", 29, 1, TEGRA234_AON_GPIO(EE, 4)),
-+	TEGRA_WAKE_IRQ("rtc", 73, 10),
-+};
-+
- static const struct tegra_pmc_soc tegra234_pmc_soc = {
- 	.supports_core_domain = false,
- 	.num_powergates = 0,
-@@ -3812,8 +3818,8 @@ static const struct tegra_pmc_soc tegra234_pmc_soc = {
- 	.num_reset_sources = ARRAY_SIZE(tegra234_reset_sources),
- 	.reset_levels = tegra186_reset_levels,
- 	.num_reset_levels = ARRAY_SIZE(tegra186_reset_levels),
--	.num_wake_events = 0,
--	.wake_events = NULL,
-+	.num_wake_events = ARRAY_SIZE(tegra234_wake_events),
-+	.wake_events = tegra234_wake_events,
- 	.pmc_clks_data = NULL,
- 	.num_pmc_clks = 0,
- 	.has_blink_output = false,
+As I mentioned before, I have no access to hardware documentation. I'm
+only porting working code from downstream kernel.
+
+In a comment on v4 Bjorn Andersson mentioned "datasheet stating the
+minimum timing of the operations to be performed to get the PCIe
+controller into a known (clean) state".
+
+  https://lore.kernel.org/all/Ydd5Wh0KeADBQ%2Fh1@ripper/
+
+I have no further details.
+
+>> +	ret = reset_control_deassert(res->rst);
+>> +	if (ret) {
+>> +		dev_err(dev, "reset deassert failed (%d)\n", ret);
+>> +		return ret;
+>> +	}
+>> +
+>> +	usleep_range(2000, 2500);
+>> +
+>> +	ret = clk_bulk_prepare_enable(ARRAY_SIZE(res->clks), res->clks);
+>> +	if (ret)
+>> +		goto err_reset;
+>> +
+>> +	return 0;
+>> +
+>> +err_reset:
+>> +	reset_control_assert(res->rst);
+>> +
+>> +	return ret;
+>> +}
+>> +
+>> +static int qcom_pcie_post_init_2_9_0(struct qcom_pcie *pcie)
+>> +{
+>> +	struct dw_pcie *pci = pcie->pci;
+>> +	u16 offset = dw_pcie_find_capability(pci, PCI_CAP_ID_EXP);
+>> +	u32 val;
+>> +	int i;
+>> +
+>> +	writel(SLV_ADDR_SPACE_SZ,
+>> +		pcie->parf + PCIE20_v3_PARF_SLV_ADDR_SPACE_SIZE);
+>> +
+>> +	val = readl(pcie->parf + PCIE20_PARF_PHY_CTRL);
+>> +	val &= ~BIT(0);
+>> +	writel(val, pcie->parf + PCIE20_PARF_PHY_CTRL);
+>> +
+>> +	writel(0, pcie->parf + PCIE20_PARF_DBI_BASE_ADDR);
+>> +
+>> +	writel(DEVICE_TYPE_RC, pcie->parf + PCIE20_PARF_DEVICE_TYPE);
+>> +	writel(BYPASS | MSTR_AXI_CLK_EN | AHB_CLK_EN,
+>> +		pcie->parf + PCIE20_PARF_MHI_CLOCK_RESET_CTRL);
+>> +	writel(GEN3_RELATED_OFF_RXEQ_RGRDLESS_RXTS
+>> +		| GEN3_RELATED_OFF_GEN3_ZRXDC_NONCOMPL,
+>> +		pci->dbi_base + GEN3_RELATED_OFF);
+>> +
+>> +	writel(MST_WAKEUP_EN | SLV_WAKEUP_EN | MSTR_ACLK_CGC_DIS
+>> +		| SLV_ACLK_CGC_DIS | CORE_CLK_CGC_DIS |
+>> +		AUX_PWR_DET | L23_CLK_RMV_DIS | L1_CLK_RMV_DIS,
+>> +		pcie->parf + PCIE20_PARF_SYS_CTRL);
+>> +
+>> +	writel(0, pcie->parf + PCIE20_PARF_Q2A_FLUSH);
+>> +
+>> +	dw_pcie_dbi_ro_wr_en(pci);
+>> +	writel(PCIE_CAP_LINK1_VAL, pci->dbi_base + offset + PCI_EXP_SLTCAP);
+>
+> Is "PCIE_CAP_LINK1_VAL" misnamed?  If it's being written to
+> PCI_EXP_SLTCAP, seems like it should be named something about a
+> *slot*, not a *link*.
+>
+> Or is this an error and it should this be written to PCI_EXP_LNKCAP
+> instead?
+
+As above, I don't know. I can only mention that the exact same
+assignment is currently also in qcom_pcie_init_2_3_3().
+
+> Could PCIE_CAP_LINK1_VAL be defined in terms of PCI_EXP_SLTCAP_* or
+> PCI_EXP_LNKCAP_*?
+
+It surely can. Whether it makes sense I can't tell.
+
+>> +	/* Configure PCIe link capabilities for ASPM */
+>> +	val = readl(pci->dbi_base + offset + PCI_EXP_LNKCAP);
+>> +	val &= ~PCI_EXP_LNKCAP_ASPMS;
+>> +	writel(val, pci->dbi_base + offset + PCI_EXP_LNKCAP);
+>
+> Thanks for using the standard PCI_EXP_LNKCAP and similar #defines.
+> Does this mean you don't advertise any ASPM support on this platform?
+> If so, that's fine, but the comment could be more specific.
+> "Configure" doesn't give any hint about *how* they are configured.
+
+Again, the same code is in qcom_pcie_init_2_3_3(). I'll just drop the
+comment in the next submission.
+
+Thanks,
+baruch
+
+>> +	writel(PCI_EXP_DEVCTL2_COMP_TMOUT_DIS, pci->dbi_base + offset +
+>> +			PCI_EXP_DEVCTL2);
+>> +
+>> +	for (i = 0; i < 256; i++)
+>> +		writel(0x0, pcie->parf + PCIE20_PARF_BDF_TO_SID_TABLE_N
+>> +				+ (4 * i));
+>> +
+>> +	return 0;
+>> +}
+>> +
+>>  static int qcom_pcie_link_up(struct dw_pcie *pci)
+>>  {
+>>  	u16 offset = dw_pcie_find_capability(pci, PCI_CAP_ID_EXP);
+>> @@ -1487,6 +1610,15 @@ static const struct qcom_pcie_ops ops_1_9_0 = {
+>>  	.config_sid = qcom_pcie_config_sid_sm8250,
+>>  };
+>>  
+>> +/* Qcom IP rev.: 2.9.0  Synopsys IP rev.: 5.00a */
+>> +static const struct qcom_pcie_ops ops_2_9_0 = {
+>> +	.get_resources = qcom_pcie_get_resources_2_9_0,
+>> +	.init = qcom_pcie_init_2_9_0,
+>> +	.post_init = qcom_pcie_post_init_2_9_0,
+>> +	.deinit = qcom_pcie_deinit_2_9_0,
+>> +	.ltssm_enable = qcom_pcie_2_3_2_ltssm_enable,
+>> +};
+>> +
+>>  static const struct qcom_pcie_cfg apq8084_cfg = {
+>>  	.ops = &ops_1_0_0,
+>>  };
+>> @@ -1520,6 +1652,10 @@ static const struct qcom_pcie_cfg sc7280_cfg = {
+>>  	.pipe_clk_need_muxing = true,
+>>  };
+>>  
+>> +static const struct qcom_pcie_cfg ipq6018_cfg = {
+>> +	.ops = &ops_2_9_0,
+>> +};
+>> +
+>>  static const struct dw_pcie_ops dw_pcie_ops = {
+>>  	.link_up = qcom_pcie_link_up,
+>>  	.start_link = qcom_pcie_start_link,
+>> @@ -1629,6 +1765,7 @@ static const struct of_device_id qcom_pcie_match[] = {
+>>  	{ .compatible = "qcom,pcie-sm8250", .data = &sm8250_cfg },
+>>  	{ .compatible = "qcom,pcie-sc8180x", .data = &sm8250_cfg },
+>>  	{ .compatible = "qcom,pcie-sc7280", .data = &sc7280_cfg },
+>> +	{ .compatible = "qcom,pcie-ipq6018", .data = &ipq6018_cfg },
+>>  	{ }
+>>  };
+>>  
+>> -- 
+>> 2.34.1
+
 -- 
-2.7.4
-
+                                                     ~. .~   Tk Open Systems
+=}------------------------------------------------ooO--U--Ooo------------{=
+   - baruch@tkos.co.il - tel: +972.52.368.4656, http://www.tkos.co.il -
