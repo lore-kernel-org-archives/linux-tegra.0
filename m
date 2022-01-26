@@ -2,91 +2,83 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAC99C2BA4C
-	for <linux-tegra@archiver.kernel.org>; Wed, 26 Jan 2022 13:35:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55491C28CF5
+	for <linux-tegra@archiver.kernel.org>; Wed, 26 Jan 2022 16:50:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240196AbiAZNfv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 26 Jan 2022 08:35:51 -0500
-Received: from mga06.intel.com ([134.134.136.31]:27196 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235061AbiAZNfv (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 26 Jan 2022 08:35:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1643204151; x=1674740151;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=cXGNTr5J5iMmzg+/ShSMdmmAjgQmyI/sGWK0ORhpF3k=;
-  b=FXimzd0aKattG8fitN7WHaDaAYQzlKj1tBGpuxLh4IUqGP+ecAPPw0oL
-   /ToFS6cYGZ8x0iwQIbm5WJqd67DSvxD8svttwcOupD8vQY2PYE6HoLhcy
-   daZppcFFUpnHZscQTTmHPX7PcDg7ydV7Rv1jaapABRTIkqM1qiSlW6QUU
-   PoL2CvNOnji/G8FUbaA+QZ10z7XrVtv9YL6xqN7Ou5+jNFuQaD6OTiPXt
-   YH59ujHlARYkMFDWMgP3zAOReei6qFyxC99VY0o8TP/R7T4953Umjy8Vu
-   LKqURb95pTdxHoInOzDBd2MAmPkyi4GuHsGdpplyd7k6gb1ias0/7ve/D
-   A==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10238"; a="307263605"
-X-IronPort-AV: E=Sophos;i="5.88,318,1635231600"; 
-   d="scan'208";a="307263605"
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jan 2022 05:35:50 -0800
-X-IronPort-AV: E=Sophos;i="5.88,318,1635231600"; 
-   d="scan'208";a="628303941"
-Received: from smile.fi.intel.com ([10.237.72.61])
-  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jan 2022 05:35:47 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.95)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1nCiRd-00Ebvw-G8;
-        Wed, 26 Jan 2022 15:34:41 +0200
-Date:   Wed, 26 Jan 2022 15:34:41 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Wander Costa <wcosta@redhat.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Wander Lairson Costa <wander@redhat.com>,
-        "Maciej W. Rozycki" <macro@orcam.me.uk>,
-        Johan Hovold <johan@kernel.org>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH] tty: serial: Use fifo in 8250 console driver
-Message-ID: <YfFN8Q0o2RxXcE7y@smile.fi.intel.com>
-References: <8e57400f-d6a8-bd42-6214-fca1fe37a972@kernel.org>
- <11ec4350-b890-4949-cf8f-bc62d530d64f@nvidia.com>
- <CAAq0SU=9R3Y_SAdM+HaqavzWBRd1Li-b5bnZZLd5Opfgd0vnkQ@mail.gmail.com>
- <fa42a60c-954a-acc0-3962-f00427153f78@nvidia.com>
- <YfArHDfrVHw7ApDx@smile.fi.intel.com>
- <YfArWaKJ13+OC/7w@smile.fi.intel.com>
- <CAAq0SU=U3UY+DUdd1fjj25Yt_QZriShZTSFTsq5B4tPnOYhQvQ@mail.gmail.com>
- <YfELyq5AmxiZxjme@kroah.com>
- <YfE6AiIgXrd+5qvk@smile.fi.intel.com>
- <CAAq0SU=ivwiGPZoD=BsD67A4A4pvuh0S02L2Udhg8vmjnmCAAw@mail.gmail.com>
+        id S243260AbiAZQux (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 26 Jan 2022 11:50:53 -0500
+Received: from sin.source.kernel.org ([145.40.73.55]:37482 "EHLO
+        sin.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236507AbiAZQux (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 26 Jan 2022 11:50:53 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by sin.source.kernel.org (Postfix) with ESMTPS id 8E0A1CE1ECB;
+        Wed, 26 Jan 2022 16:50:51 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DC97C340E3;
+        Wed, 26 Jan 2022 16:50:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1643215849;
+        bh=1cgmbcZ0e/AT2PqQvRKm/v2aOJwVfwwesAq0tfOOHcQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=HDzMRyNrEJENcowk1xqt+k2IrEi6qh5BxqxnclOJKO2dqh3/A0N5SiuPxnIirhf7I
+         SIATo2hAoQQu19QHkddDteWUjlIncQe+vLBQYY6f+J8UW/2r2ZGmJVXSgMRbpljhW9
+         cIxAxfkI/rQr8zo393UmHUnX9+C2zNqys3E3xcjkjOwsaLyuL/k5xQ9Ol3OOeB9Dh3
+         Gzad1+9sXSD2LqH3KQkRYFTX8UbWE5bG/Y0uBj1GoFibNiP5YWTL/9enFLh9tH2F0y
+         z9J7UtmtUs2mp8CdBJpzJZZexZkk1qW5rEWfCeuWbIuJKiAEae/HFElejXVln+OxKG
+         /v0regaxaCcsg==
+Date:   Wed, 26 Jan 2022 16:50:44 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Sameer Pujar <spujar@nvidia.com>
+Cc:     lgirdwood@gmail.com, tiwai@suse.com, perex@perex.cz,
+        robh+dt@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com,
+        mkumard@nvidia.com, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        alsa-devel@alsa-project.org
+Subject: Re: [PATCH 1/5] ASoC: tegra: Update AHUB driver for Tegra234
+Message-ID: <YfF75N97CzLNDRMs@sirena.org.uk>
+References: <1643100491-5398-1-git-send-email-spujar@nvidia.com>
+ <1643100491-5398-2-git-send-email-spujar@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="7G6rfQCsm0QlA7PU"
 Content-Disposition: inline
-In-Reply-To: <CAAq0SU=ivwiGPZoD=BsD67A4A4pvuh0S02L2Udhg8vmjnmCAAw@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <1643100491-5398-2-git-send-email-spujar@nvidia.com>
+X-Cookie: Falling rock.
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, Jan 26, 2022 at 10:23:57AM -0300, Wander Costa wrote:
-> On Wed, Jan 26, 2022 at 9:10 AM Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
-> > On Wed, Jan 26, 2022 at 09:52:26AM +0100, Greg Kroah-Hartman wrote:
 
-...
+--7G6rfQCsm0QlA7PU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> > Wander, if you need a test for something new, I may help to perform on
-> > our (sub)set of x86 machines.
-> 
-> Thanks, Andy. I will let you know when I have new patches.
+On Tue, Jan 25, 2022 at 02:18:07PM +0530, Sameer Pujar wrote:
+> From: Mohan Kumar <mkumard@nvidia.com>
+>=20
+> The register offsets of switches connecting various AHUB internal
+> modules have changed from previous chip. Address this variation by
+> making use of Tegra234 based compatible.
 
-Just Cc me that time.
+This doesn't apply against current code, please check and resend.
 
--- 
-With Best Regards,
-Andy Shevchenko
+--7G6rfQCsm0QlA7PU
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
 
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmHxe+MACgkQJNaLcl1U
+h9C39gf7Bgac0Z427RTs2ThXzH7ngg9dB03iZ+TD9vFLhe4Prs/g68DP3xec+gCI
+yG2D688DuGSW6QSIcGggWJHgrTYqzD0+IC1bE1JmamwUB4ulq2ftBIqk4ot0l9t4
+UQu4CYuL52Tohok1/1RKQYRVKAD+Evw5fFrygVCRPXqU4bhTOiEA+z+6MxL1zfcO
+YZEAvcm3WYjzqK5+so6kcCJL2aVIc7u2TNekGm343hvnwDthhZPjENNrlM1xwlYG
+XpsHUKxvWEBXRn2wE+eB5mY81VvmhVd4W1/002WeVICx1w34pxFQVtvTk4DZFsB2
+bPMLsH0d6SXkpRPOXSVXi5fvC1WwRQ==
+=udiP
+-----END PGP SIGNATURE-----
+
+--7G6rfQCsm0QlA7PU--
