@@ -2,112 +2,92 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61E1BC433FE
-	for <linux-tegra@archiver.kernel.org>; Thu, 27 Jan 2022 17:38:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3D45C43219
+	for <linux-tegra@archiver.kernel.org>; Thu, 27 Jan 2022 18:11:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244706AbiA0Rip (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 27 Jan 2022 12:38:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37862 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230270AbiA0Rin (ORCPT
+        id S245372AbiA0SLM (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 27 Jan 2022 13:11:12 -0500
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:54622 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S244950AbiA0SKp (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 27 Jan 2022 12:38:43 -0500
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E490C061714
-        for <linux-tegra@vger.kernel.org>; Thu, 27 Jan 2022 09:38:43 -0800 (PST)
-Received: by mail-ej1-x630.google.com with SMTP id me13so7355146ejb.12
-        for <linux-tegra@vger.kernel.org>; Thu, 27 Jan 2022 09:38:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=V5C74FdRuwoqpy1ViP/6GNBHpsGNGyUemK6FLnqIKus=;
-        b=ObBTSXJZMANXgPLlcRDvZmDpM9KWzEyPz5AKJGGdQu1XE+FnSA0pJtbPkNJmuj2yxh
-         AhqbFznG4jNh3flYvle88ujpEqYo6/nKmjuFZPhp8GyAF2RmHGxcuHBe5z7gZKEGY6tG
-         LA73RCpgDJqJG0ZTyHMYk83uOVxrEozO6cbJB+smdXHwinxQPYpflGqi4LiWehAOVJ2v
-         PdBLm8JpDuAO2CsmaaB/tXGSW1M/J+2m5cCM6cHJ2vk+AVHhkMAyv4rMvpU4b4/kNnFB
-         UfCfrUVCMplnzWyfFV4ZY02E3wPXsxlH2hJtpSZN842ukUnvzIYxDDR9ZEF4ZmDF7l0P
-         HyUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=V5C74FdRuwoqpy1ViP/6GNBHpsGNGyUemK6FLnqIKus=;
-        b=dB5QfrD8UUx5rwRzrbzuKagKMY4MI05ms1ObnUcy2eZSf6sIxlMFxTRDLFxgeQNjw+
-         SgNGNmSp3KtJyBHNiETXTlKBjq7S8gziSZXukKIpGjJKoX2iL3+mIoziEBOZMceV3h5h
-         idtZwUYWYWt4f3FOWzi4D3HYkKq8ctIe5uiFQfW6hfdgWp2wBu2oasKrzM3viJYEXlaC
-         CcDPxIK9ulW5L1E907ytYqzyXodl6au2+ramrLq5NMzOvrjfFmNH45HWHu0pTJyMBpbh
-         9I1q4p9ZaBHnFxIeDYxJe8wRY7yVZU2MSHy4dTZbE1tMzt70BzSpyNr0IXHu0/gh2LwO
-         keFw==
-X-Gm-Message-State: AOAM530xKtq9yoewRgl3zhST4rpg3upAqTSWYVbncCk88U3UwBW6/YVM
-        Q0pmAP1F/b2z2Qi5WTzdUjFQLTNzaRn7PA==
-X-Google-Smtp-Source: ABdhPJwbwj4iZ4539t2iMlsQnN5OsKUNWNgMMPlqfk7h70aUhyR1H5t3uVkg1q/BbW6nK5m1ewWk2g==
-X-Received: by 2002:a17:906:6a0f:: with SMTP id qw15mr3934099ejc.66.1643305121701;
-        Thu, 27 Jan 2022 09:38:41 -0800 (PST)
-Received: from orome ([193.209.96.43])
-        by smtp.gmail.com with ESMTPSA id co19sm11742662edb.7.2022.01.27.09.38.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Jan 2022 09:38:40 -0800 (PST)
-Date:   Thu, 27 Jan 2022 18:38:38 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     linux-tegra@vger.kernel.org
-Subject: Re: [PATCH] arm64: tegra: Disable ISO SMMU for Tegra194
-Message-ID: <YfLYnujnXl3PW+MM@orome>
-References: <20220113143152.167583-1-jonathanh@nvidia.com>
+        Thu, 27 Jan 2022 13:10:45 -0500
+Received: from callcc.thunk.org (static-74-43-95-34.fnd.frontiernet.net [74.43.95.34])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 20RIAF2r014158
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 27 Jan 2022 13:10:17 -0500
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 64CBB420385; Thu, 27 Jan 2022 13:10:15 -0500 (EST)
+Date:   Thu, 27 Jan 2022 13:10:15 -0500
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Wander Costa <wcosta@redhat.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Wander Lairson Costa <wander@redhat.com>,
+        "Maciej W. Rozycki" <macro@orcam.me.uk>,
+        Johan Hovold <johan@kernel.org>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH] tty: serial: Use fifo in 8250 console driver
+Message-ID: <YfLgB/WsQcePTXlQ@mit.edu>
+References: <a1ac6254-f79e-d131-fa2a-c7ad714c6d4a@nvidia.com>
+ <f451e67d-adb9-01e8-bd11-bf7804863b4b@kernel.org>
+ <8e57400f-d6a8-bd42-6214-fca1fe37a972@kernel.org>
+ <11ec4350-b890-4949-cf8f-bc62d530d64f@nvidia.com>
+ <CAAq0SU=9R3Y_SAdM+HaqavzWBRd1Li-b5bnZZLd5Opfgd0vnkQ@mail.gmail.com>
+ <fa42a60c-954a-acc0-3962-f00427153f78@nvidia.com>
+ <YfArHDfrVHw7ApDx@smile.fi.intel.com>
+ <YfArWaKJ13+OC/7w@smile.fi.intel.com>
+ <CAAq0SU=U3UY+DUdd1fjj25Yt_QZriShZTSFTsq5B4tPnOYhQvQ@mail.gmail.com>
+ <YfELyq5AmxiZxjme@kroah.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="0dffjVEj5IQlPdcO"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220113143152.167583-1-jonathanh@nvidia.com>
-User-Agent: Mutt/2.1.5 (31b18ae9) (2021-12-30)
+In-Reply-To: <YfELyq5AmxiZxjme@kroah.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On Wed, Jan 26, 2022 at 09:52:26AM +0100, Greg Kroah-Hartman wrote:
+> 
+> Let me revert this for now.  And no new config options please, this
+> should "just work".
 
---0dffjVEj5IQlPdcO
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I'm not sure the commit is actually worth the extra complexity, to be
+honest.  The reason for the FIFO is to improve interrupt latency, and
+in the console write path, we're busy looping.  There is something
+seriously wrong serial port of the HP Proliant DL380 Gen 9.  Per the
+commit description for 5021d709b31b: ("tty: serial: Use fifo in 8250
+console driver"), on the "fast machine" (read: the one with a
+propertly working serial port), we were getting over 10 KB/s without
+the patch.  And on the "slow machine" it was getting only 2.5 KB/s,
+and with the patch it only improved things by 25% (so only 3.1 KB/s).
 
-On Thu, Jan 13, 2022 at 02:31:52PM +0000, Jon Hunter wrote:
-> Commit e762232f9466 ("arm64: tegra: Add ISO SMMU controller for Tegra194")
-> add the ISO SMMU for display devices on Tegra194. The SMMU is enabled by
-> default but no hooked up to the display controllers yet because we do not
-> have a way to pass frame-buffer memory from the bootloader to the kernel.
-> However, even though the SMMU is not hooked up to the display controllers
-> SMMU faults are being seen if a display is connected. Therefore, keep the
-> ISO SMMU disabled by default for now.
->=20
-> Fixes: e762232f9466 ("arm64: tegra: Add ISO SMMU controller for Tegra194")
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> ---
->  arch/arm64/boot/dts/nvidia/tegra194.dtsi | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+I assume what must be going on is this machine is emulating the UART
+and is extremely slow to set the Trasmitter Holding Register Empty
+(THRE) bit after the UART is finished sending the byte out the serial
+port.
 
-Applied, thanks.
+So we're adding a lot of complexity for what is obviously broken
+hardware, and we risk breaking the serial console for other machines
+with a properly implemented serial port.  How common are UART's which
+are broken in this way?  Is it unique to the HP Proliant DL380 Gen 9?
+Or is a common misimplementation which is unfortunately quite common?
+If it's the former, maybe the FIFO hack should only be done via a
+quirk?
 
-Thierry
+If it's really the case that the HP Proliant's nasty performance is
+due to a badly implemented emulation layer, is there any way to do
+better, perhaps via a more direct path to the serial port?  Or is the
+problem that the serial port on this motherboard is connected via some
+super-slow internal path and it would be faster if you could talk to
+it directly via a UEFI call, or some other mechanism?  Whether it's
+2.5 KB/s or 3.1 KB/s, it's really quite pathetic....
 
---0dffjVEj5IQlPdcO
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmHy2J4ACgkQ3SOs138+
-s6Gr/hAAucNUdaMBv0qZZxSiXI36sutrC3grlWlyHsjYbx6KvM200OdCm8uAKrt6
-MmUrwpdNYljKeJmPhcJpL4tErGL1mwd5VeybuYSCvt+uI22eFKQKBJfDNX/d+kUP
-U/fIm3z9WcLCvuHWa6vLu4Cv0koFm6U7IaGYF/GBqwfOsE0KzMeATxnuplYfMaiJ
-Q7bPh28eFuOZeu9+7H8XAwvHls2nyZLp2SLCEjKAme6zJz1MrTqYdp6kyj7VaPn5
-RzPOUplv8OhwZuxPvcx0cev9DMQYyy/pZNVC8HftbvGaFmE+6PkbqiEo4qe+YOk+
-+/z7RZ0G2PpLWHTf23HvmLf4NHyVjPns6trRqINlY03lYmD/OB4fLastwTIIMzko
-UtuUuqW0eui9AmhNN7JQgllG7DkhXgWH08QJa4jPvuAa7Znh2CjeHrdC0iHafQ9M
-9qxTwnhUTtzixlBUlxaLgkUhY+yqkIWfvOFZ7I07dxPSpBdI6JEX3ITLHwT1mzth
-mZTczUeDvOeohzVa6Mk3kU3E0DMcQgYGtTwkZGD/phavWw8uae8LvNBrRx8x2xey
-VFMIxCj/cDP37aDZeMJrDa/yOhMExba0fbHwyswLLlTtCnSpdlKU0Ty34cUvKQXr
-ayeFsfID6QC/Kw7EvHZq3BQVs7Xln40p1+Ib//Rv2+lQ6GxCwYo=
-=96cx
------END PGP SIGNATURE-----
-
---0dffjVEj5IQlPdcO--
+     	      	     	   	       - Ted
