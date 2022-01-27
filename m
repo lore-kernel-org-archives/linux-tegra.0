@@ -2,148 +2,99 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51315C43219
-	for <linux-tegra@archiver.kernel.org>; Thu, 27 Jan 2022 14:39:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC17EC433EF
+	for <linux-tegra@archiver.kernel.org>; Thu, 27 Jan 2022 15:16:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242509AbiA0Ojc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 27 Jan 2022 09:39:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51850 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242440AbiA0Oja (ORCPT
+        id S242833AbiA0PQe (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 27 Jan 2022 10:16:34 -0500
+Received: from dfw.source.kernel.org ([139.178.84.217]:37272 "EHLO
+        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231149AbiA0PQd (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 27 Jan 2022 09:39:30 -0500
-Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4ED3C061747;
-        Thu, 27 Jan 2022 06:39:29 -0800 (PST)
-Received: by mail-lf1-x12b.google.com with SMTP id o12so5695802lfg.12;
-        Thu, 27 Jan 2022 06:39:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=XkYKE/mqIw+ZogEPzGoXmtOQI8nkKTmA4V70TLbVWS4=;
-        b=BHb2Xn1jq66/9MHahrzGm/gWUKtVbh/58wKW18vGWzni3fO5qyqP4VG1OOnOie8Jsh
-         gDERoDSbSutwAXYx2C5vNn4TrrwM4BpgdHcNKbywEL+R5MYLhL5n2nGGvdHyYC3+WdiR
-         AH7kOLTk/zgQKoF333ryAx/KFlOhDG6pX/tZk4LwhLgv5peCfB01DtWBVE+9RHO5Zn9/
-         GlTTQk4e9TGZCrINPfliTtlCZdTAH9LmWOb+qXQAmfLULPmn+Omh2L6j2NgulGAPM/A+
-         p0mPzTS/Ny1WZgGK/AicqnPTN5Ub7NU4t23e3Ka67Gnz7TG7Nyg0lXeqh7s3FoDGgrJx
-         11/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=XkYKE/mqIw+ZogEPzGoXmtOQI8nkKTmA4V70TLbVWS4=;
-        b=6iLmI2H/+JAizdRH6u1BkFYrXGezfYRXBsQmrG1wzIbN24qW/yFCoQz0+XMdIv+q73
-         FuLJ5a4+50vMIMcbDUB/qV0D637F9LN1XErH7td7BBURsprUfxL/Vs8dvCyhUGCxqcCE
-         X62D+ivGdSIulisip3vQj/PZLdqlCDRoPN3p5EG08/VUkKboGb4lMIovRmdkGOSgYqKt
-         c4BJQuN+8rVdRv+010k6M0EL+wxXNxw4Gapg1Rz6P5RoGtHOXIzUkzrk7s/NM0TXJqQy
-         rDgvK3mN8qGrqCpPe9PfIMPNpmjJmsKQy9qY+IyYOt72Anjm6/3xMzxyhS8tH8g5LYKz
-         Y2Nw==
-X-Gm-Message-State: AOAM533hWHQ1QUAKT+lgDSES8w8zPc2JK3tXStRuzgstZIx7CvVncyGb
-        cTyGmBUc2MqLgz77jeCl0k8=
-X-Google-Smtp-Source: ABdhPJy1MhVvMOXi8UxQ8s4idXCyJ+ifGIsp8CpwyHRf9+W1A9LbFInI9I0x2geweWfK/i1YhzfC+Q==
-X-Received: by 2002:a05:6512:3d1c:: with SMTP id d28mr2997039lfv.135.1643294367899;
-        Thu, 27 Jan 2022 06:39:27 -0800 (PST)
-Received: from [192.168.2.145] (109-252-138-126.dynamic.spd-mgts.ru. [109.252.138.126])
-        by smtp.googlemail.com with ESMTPSA id r13sm476323lfr.65.2022.01.27.06.39.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Jan 2022 06:39:22 -0800 (PST)
-Message-ID: <e8d3ca39-ddeb-2c21-6000-1cc65da57915@gmail.com>
-Date:   Thu, 27 Jan 2022 17:39:15 +0300
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH v5 04/21] kernel: Add combined power-off+restart handler
- call chain API
-Content-Language: en-US
-To:     =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Thu, 27 Jan 2022 10:16:33 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 0F15960C44;
+        Thu, 27 Jan 2022 15:16:33 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A4C8C340E4;
+        Thu, 27 Jan 2022 15:16:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1643296592;
+        bh=6zdI64JO16o4OH7ihIB0tyhcoVY66C9Jpg96cHbKPds=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=hACrKDFLEvnRX2070s40MHT2rdBP6mAneFCTf5+sefDmyVuNOGFCIC+g+qN1028um
+         /Ibeid44iPpekMbYboRKsakO/x6MVfzNQPdB8yJ8JzSZHsykf5XfI+XmzMPOip4Ju0
+         INLL1ozY5XoDNN765dpagbrWTf0+RrXW5U/q+eEfv1zHAyHfbAD2zItMPuvBXue1T9
+         q7ELjwNJJMEOe7G0mZ3FhoPBZbjGulwhA+2755cC+5ztRRFM22NZkifhGHTmP84frZ
+         IDdxkI2cDy2xYx4dpEivf0rNZ975DUGdHd/fbKBcjeU8R//VHo6dQjRLWNeGX0XY9N
+         9Slo4T7bqdY5g==
+Date:   Thu, 27 Jan 2022 09:16:30 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Baruch Siach <baruch@tkos.co.il>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Selvam Sathappan Periakaruppan <speriaka@codeaurora.org>,
+        Kathiravan T <kathirav@codeaurora.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Guo Ren <guoren@kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        Joshua Thompson <funaho@jurai.org>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Sebastian Reichel <sre@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Greentime Hu <green.hu@gmail.com>,
-        Vincent Chen <deanbo422@gmail.com>,
-        "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-        Helge Deller <deller@gmx.de>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Len Brown <lenb@kernel.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, Pavel Machek <pavel@ucw.cz>,
-        Lee Jones <lee.jones@linaro.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>, alankao@andestech.com,
-        "K . C . Kuen-Chern Lin" <kclin@andestech.com>,
-        linux-kernel@vger.kernel.org, linux-csky@vger.kernel.org,
-        linux-ia64@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
-        linux-sh@vger.kernel.org, xen-devel@lists.xenproject.org,
-        linux-acpi@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-References: <20211212210309.9851-1-digetx@gmail.com>
- <20211212210309.9851-5-digetx@gmail.com> <Ydofs2CIfA+r5KAz@qmqm.qmqm.pl>
-From:   Dmitry Osipenko <digetx@gmail.com>
-In-Reply-To: <Ydofs2CIfA+r5KAz@qmqm.qmqm.pl>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Jingoo Han <jingoohan1@gmail.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Robert Marko <robert.marko@sartura.hr>,
+        Bryan O'Donoghue <pure.logic@nexus-software.ie>,
+        linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v5 3/3] PCI: qcom: add support for IPQ60xx PCIe controller
+Message-ID: <20220127151630.GA100574@bhelgaas>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8735lc9r9d.fsf@tarshish>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hello Michał,
+On Tue, Jan 25, 2022 at 09:41:45AM +0200, Baruch Siach wrote:
+> On Mon, Jan 24 2022, Bjorn Helgaas wrote:
+> > On Mon, Jan 24, 2022 at 06:27:31PM +0200, Baruch Siach wrote:
 
-09.01.2022 02:35, Michał Mirosław пишет:
-> BTW, I couldn't find a right description of my idea of unifying the
-> chains before, so let me sketch it now.
+> >> +static int qcom_pcie_init_2_9_0(struct qcom_pcie *pcie)
+> >> +{
+> >> +	struct qcom_pcie_resources_2_9_0 *res = &pcie->res.v2_9_0;
+> >> +	struct device *dev = pcie->pci->dev;
+> >> +	int ret;
+> >> +
+> >> +	ret = reset_control_assert(res->rst);
+> >> +	if (ret) {
+> >> +		dev_err(dev, "reset assert failed (%d)\n", ret);
+> >> +		return ret;
+> >> +	}
+> >> +
+> >> +	usleep_range(2000, 2500);
+> >
+> > Where do these sleep durations come from?  If they're specified
+> > somewhere by PCIe, can you include a citation, e.g., a section number
+> > in the spec.
 > 
-> The idea is to have a single system-off chain in which the callback
-> gets a mode ({QUERY_*, PREP_*, DO_*} for each of {*_REBOOT, *_POWEROFF, ...?).
-> The QUERY_* calls would be made in can_kernel_reboot/poweroff(): all
-> would be called, and if at least one returned true, then the shutdown
-> mode would continue. All of PREP_* would be called then. After that
-> all DO_* would be tried until one doesn't return (succeeded or broke
-> the system hard). Classic for(;;); could be a final fallback for the
-> case where arch/machine (lowest priority) call would return instead
-> of halting the system in machine-dependent way. The QUERY and PREP
-> stages could be combined, but I haven't thought about it enough to
-> see what conditions would need to be imposed on the callbacks in
-> that case (maybe it's not worth the trouble, since it isn't a fast
-> path anyway?). The goal here is to have less (duplicated) code in
-> kernel, but otherwise it seems equivalent to your API proposal.
+> As I mentioned before, I have no access to hardware documentation. I'm
+> only porting working code from downstream kernel.
+> 
+> In a comment on v4 Bjorn Andersson mentioned "datasheet stating the
+> minimum timing of the operations to be performed to get the PCIe
+> controller into a known (clean) state".
 
-Thank you again for yours proposal! IMO, it's much more important to
-keep the core code simple and maintainable, rather than try to optimize
-it without a very good reason, given that this isn't a hot code path at
-all and saving a couple of bytes won't be noticeable. The poweroff,
-restart and reboot were separated before this series and I'm finding
-that it's easier to follow the code when it's structured that way. I'm
-not convinced that we need to change it.
+Sorry if I'm repeating questions.  We can help avoid that by adding a
+brief comment here like "black magic copied from working code at X" or
+whatever you *do* know.  Repeated questions are wasted effort for both
+the author and reviewers.
+
+Sleeps with unsourced durations are always suspect because nobody
+wants to wait longer than necessary, and if all we have is a bare
+number and nobody knows how it was derived, we can't be confident
+about changing it.
+
+>   https://lore.kernel.org/all/Ydd5Wh0KeADBQ%2Fh1@ripper/
+> 
+> I have no further details.
