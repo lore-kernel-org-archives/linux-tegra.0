@@ -2,93 +2,108 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A8EDC433F5
-	for <linux-tegra@archiver.kernel.org>; Thu, 27 Jan 2022 18:18:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40787C433EF
+	for <linux-tegra@archiver.kernel.org>; Thu, 27 Jan 2022 21:32:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232396AbiA0SSL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 27 Jan 2022 13:18:11 -0500
-Received: from mga18.intel.com ([134.134.136.126]:34042 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232693AbiA0SSL (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 27 Jan 2022 13:18:11 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1643307491; x=1674843491;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=tiRW1w/ZrynBvZpC/+NGXrHRVk29FeyQEHkhrU+8/7U=;
-  b=RBJeK4gMMtXSB6F6KsNfPWprZExEGn+w/0aDQ4h7fMUIobH28uVR1Deq
-   FjfUCm6RjjsybS4/Zs4yminZPfw0tM228CVNp4OKAv8u7wg+5gkzHDUl0
-   5EQI4RiktPyFalPig1PZPkGysPEczm7LhaRppeOSKVsfDCHv33gBJbBc2
-   oDhswXOEWlgmXai3dtlzqpwiGjdDhO+KIToINzls0DObDNzqck8AumE8X
-   Hd0dWKB8PX856AEdgHsrDu7+e59H0hfYz3webG9jcAZgvDZYihtUHXYS3
-   XU2TmuvyxyD9BpfH0SIS1wrBzsLaf2Tt8kOf2ImOm+/z63TafTmnOhaSM
-   A==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10239"; a="230506270"
-X-IronPort-AV: E=Sophos;i="5.88,321,1635231600"; 
-   d="scan'208";a="230506270"
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jan 2022 10:18:09 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.88,321,1635231600"; 
-   d="scan'208";a="563885039"
-Received: from lkp-server01.sh.intel.com (HELO 276f1b88eecb) ([10.239.97.150])
-  by orsmga001.jf.intel.com with ESMTP; 27 Jan 2022 10:18:07 -0800
-Received: from kbuild by 276f1b88eecb with local (Exim 4.92)
-        (envelope-from <lkp@intel.com>)
-        id 1nD9LS-000Mu4-Gp; Thu, 27 Jan 2022 18:18:06 +0000
-Date:   Fri, 28 Jan 2022 02:17:23 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Sameer Pujar <spujar@nvidia.com>, broonie@kernel.org,
-        lgirdwood@gmail.com, tiwai@suse.com, perex@perex.cz,
-        robh+dt@kernel.org, thierry.reding@gmail.com
-Cc:     kbuild-all@lists.01.org, jonathanh@nvidia.com, mkumard@nvidia.com,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v2 4/5] arm64: tegra: Add audio devices on Tegra234
-Message-ID: <202201280238.X7EvyPqD-lkp@intel.com>
-References: <1643268455-15567-5-git-send-email-spujar@nvidia.com>
+        id S1344349AbiA0VcB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 27 Jan 2022 16:32:01 -0500
+Received: from ams.source.kernel.org ([145.40.68.75]:36712 "EHLO
+        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234277AbiA0VcB (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 27 Jan 2022 16:32:01 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 296F2B823B4;
+        Thu, 27 Jan 2022 21:32:00 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23061C340E4;
+        Thu, 27 Jan 2022 21:31:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1643319118;
+        bh=YwK9akSpFjl30yk34HJst43Rlm8DajT1e6Wu6ffaX7s=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=TcAqK8kKFbHS7IMA2o31ZIp4Y8VsbwAS9VnZJU/kiL/hi6Yul6vFW8An4+vX0exH8
+         f5SvifVgJwP4ibtaCfn3/BJv7byPsbCyZgeexpZtuZatOBMcwtgskJIA5xX89kr+MB
+         NLd6ake5RhJ2E4XJOvmn9sWiIe1f5PGvINfDB43ARoa+zp/qPSeK71M4WyIuGDgRmj
+         zO3Ar6FfbTndfh+KHOXdvWyMkdpDESbW5wYNGiu2mBotVhhAO5uOwoZZ5Ss1EMox8I
+         wGwEAg5CXVfjrokpMWD6i2fFT9xBc2ryULsx2aF5GOWT0yuUNzQGwWBseijnO9DkBb
+         DLLw3yO6sWVoA==
+Date:   Thu, 27 Jan 2022 22:31:50 +0100
+From:   Wolfram Sang <wsa@kernel.org>
+To:     =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
+Cc:     Laxman Dewangan <ldewangan@nvidia.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] i2c: tegra: allow DVC support to be compiled out
+Message-ID: <YfMPRj8H8nT4rFZb@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
+        =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>, linux-i2c@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <cover.1642535860.git.mirq-linux@rere.qmqm.pl>
+ <ebe847bb25016e743c28bd38a10c966b04b06cc8.1642535860.git.mirq-linux@rere.qmqm.pl>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="kSuXyQOCCZh8UNsS"
 Content-Disposition: inline
-In-Reply-To: <1643268455-15567-5-git-send-email-spujar@nvidia.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <ebe847bb25016e743c28bd38a10c966b04b06cc8.1642535860.git.mirq-linux@rere.qmqm.pl>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Sameer,
 
-Thank you for the patch! Yet something to improve:
+--kSuXyQOCCZh8UNsS
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-[auto build test ERROR on broonie-sound/for-next]
-[also build test ERROR on robh/for-next tegra/for-next v5.17-rc1 next-20220127]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch]
+Hi Micha=C5=82,
 
-url:    https://github.com/0day-ci/linux/commits/Sameer-Pujar/Tegra234-APE-support/20220127-152859
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
-config: arm64-randconfig-r032-20220124 (https://download.01.org/0day-ci/archive/20220128/202201280238.X7EvyPqD-lkp@intel.com/config)
-compiler: aarch64-linux-gcc (GCC) 11.2.0
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # https://github.com/0day-ci/linux/commit/208f1a37b06fb0211db2a4f54be494079f0f3310
-        git remote add linux-review https://github.com/0day-ci/linux
-        git fetch --no-tags linux-review Sameer-Pujar/Tegra234-APE-support/20220127-152859
-        git checkout 208f1a37b06fb0211db2a4f54be494079f0f3310
-        # save the config file to linux build tree
-        mkdir build_dir
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.2.0 make.cross O=build_dir ARCH=arm64 SHELL=/bin/bash
+> ---
+> v2: remove KConfig symbol as per Dmitry Osipenko's suggestion.
+>     (Assuming that for Tegra20 the DVC part will be used anyway.)
+>=20
+> Signed-off-by: Micha=C5=82 Miros=C5=82aw <mirq-linux@rere.qmqm.pl>
 
-If you fix the issue, kindly add following tag as appropriate
-Reported-by: kernel test robot <lkp@intel.com>
+Your SoB should be above the "---" line.
 
-All errors (new ones prefixed by >>):
+> +#define IS_DVC(dev) (IS_ENABLED(CONFIG_ARCH_TEGRA_2x_SOC) && dev->is_dvc)
 
->> Error: arch/arm64/boot/dts/nvidia/tegra234.dtsi:28.27-28 syntax error
-   FATAL ERROR: Unable to parse input tree
+'checkpatch --strict' IMO rightfully mentions that 'dev' should be in
+paranthesis when being used.
 
----
-0-DAY CI Kernel Test Service, Intel Corporation
-https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
+Both comments apply to patch 2 as well. Otherwise looks good!
+
+Thanks,
+
+   Wolfram
+
+
+--kSuXyQOCCZh8UNsS
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmHzD0MACgkQFA3kzBSg
+Kba05Q//aApAEPO2ippzR1+1dZRRovc97ePxoYqtSHbgz5J5WKE3sRjWHzqU2XQJ
+WzF2YVS/RNtyDbAE/DN7zQamQ2ch9YwCguaNQPLaefoSr0EhShIUVdysR1+MeMk1
+XPFr9eIJ1oxApaLfGo7TWCrpdV5jMjZ0lnvTPAkPaIvDygaygcozhFqPB6O5z3MS
+EFOzpFNeu7O8t2ZD5muO6Yxk7i+CUqeVYmJFKMQuFPYORben3j7/ZB8/L22AqS79
+o4+L7oxzddcKLyIC1L3kzydCc/2zrnV8k9+7l4cq7TLqBr+msd6VGJzakUP/OXRI
+1FaIL3FHtoQbuxmUqGywgdNiu5gl2jRtyEKkfgFd3LuY5+yLhBxkZvhy2i8S73hM
+wFbCL8GgPh1GXKtQEqdyK6BCvjpdKlUId78fCl+RvviCYJ1YOk95q2Dgk85jcIIG
+C9HNl/VhKkaUG4uwdRgFSXdFkm1a6Kz7yJDLC4VVMqeKXxsyGCEXru3mwW1K/ndV
+7pBhJED8+PUixjd0j3yeA4fUZIMTLLRzoR+SW36mWI+gF5CQGKfKzTM7dOjJBtrF
+0Cu9vNnlxouVf/DHYuFM5mu0Hp8SeRCNrIAMZjxZ+r+7D0TFOnV2NGCd2WN0zto0
+JWMN9Bz+q02DVHOPuHz7beYHF/zpc6f9istwbL2T/ULRORVaHBk=
+=x6er
+-----END PGP SIGNATURE-----
+
+--kSuXyQOCCZh8UNsS--
