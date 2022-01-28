@@ -2,90 +2,104 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA4F5C433FE
-	for <linux-tegra@archiver.kernel.org>; Fri, 28 Jan 2022 17:00:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7728FC433F5
+	for <linux-tegra@archiver.kernel.org>; Fri, 28 Jan 2022 21:43:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350379AbiA1RAD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 28 Jan 2022 12:00:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50062 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245576AbiA1RAC (ORCPT
+        id S242539AbiA1VnP (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 28 Jan 2022 16:43:15 -0500
+Received: from ams.source.kernel.org ([145.40.68.75]:60936 "EHLO
+        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232513AbiA1VnO (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 28 Jan 2022 12:00:02 -0500
-Received: from mail-pg1-x534.google.com (mail-pg1-x534.google.com [IPv6:2607:f8b0:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9783C061714;
-        Fri, 28 Jan 2022 09:00:02 -0800 (PST)
-Received: by mail-pg1-x534.google.com with SMTP id g20so5664516pgn.10;
-        Fri, 28 Jan 2022 09:00:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id;
-        bh=+C9vX6xCDqvkQ70Y80+HH81TrwKxhCYxQC092GOuFQc=;
-        b=QBncfqMh62y6OfBYS1O3hAMenwW5HA6+1y1SzVQ8DuwIlu81PHahMSu4lYyNz92mqw
-         VCF7g1LAZaC1G/HAkQZ4nlqC38oR1+hl9oZCpz0EZu0pyV810arjgJuBtUeVgjReBUfA
-         Suk1P9W7f+nF9D6eDIpEd8ePa5w5+54TPqPLIZJx6x1xDwDkJsUxOFa2WeL35XZ8FdKE
-         Vi59dpo1/2lfCuBKe6zmlb+X+TQ8Cmm1gnnQdjfbHDoJKHVBcUY/dzKqoFAOGq6E+1Rp
-         jLEwgtp1hN1j5oJGw/+gWFoDsQoa1B6DLDgeYQ39Xad30AuOTG2oZP27qUl6AoSFBX6g
-         uAcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=+C9vX6xCDqvkQ70Y80+HH81TrwKxhCYxQC092GOuFQc=;
-        b=tcMA3LvsLl3MIHCCJCeCMkFycGhsmBfhawl6cUJaGz4cnUqYWDRHMaPgQAgVesuzko
-         FgjmekiW6MXPjzJcD8RirW5GTastb0BIj2t+ICRSspt2oaR/HWrIMM/rA+wxEFP+Cyq/
-         7OnQdWY5H9Yys+j1dFS4zUos4hMb4PaIElqjcw6fuNKT35i2Qsq9trGkxcOYGvlzEsX/
-         u2BEphPK5AgF9yvf2appfq68sfjmMdxSsqy1u58eD9vdax2E8MFNYvdLisa6PAtyPEpw
-         nMVqSKm8aBfF/YBJ488UZCdAnjdT/YkHGi9AEDHaUGaU+w1z1rcjPF6ehMW6ZWWC6pRy
-         6pHg==
-X-Gm-Message-State: AOAM532k2rq6iWR8FhFTuzepJvjbteWH2TSW3wv7meG10t1qMkv1KuJx
-        dR71GzVuk3XB4V8NWSFtLEbPcRgXBj7SMhBseL4=
-X-Google-Smtp-Source: ABdhPJyB6CItxjnOMvt+FRSBG50hnskVKlJqSjGYtvtldH72NRe7B+pKu96pHf8ZvXRDUBG3VfvtFA==
-X-Received: by 2002:a63:e704:: with SMTP id b4mr7235174pgi.315.1643389202302;
-        Fri, 28 Jan 2022 09:00:02 -0800 (PST)
-Received: from localhost.localdomain ([159.226.95.43])
-        by smtp.googlemail.com with ESMTPSA id o21sm22261791pgl.19.2022.01.28.09.00.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Jan 2022 09:00:02 -0800 (PST)
-From:   Miaoqian Lin <linmq006@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Mark Brown <broonie@kernel.org>, linux-tegra@vger.kernel.org,
-        linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     linmq006@gmail.com
-Subject: [PATCH] spi: tegra210-quad: Fix missin IRQ check in tegra_qspi_probe
-Date:   Fri, 28 Jan 2022 16:59:56 +0000
-Message-Id: <20220128165956.27821-1-linmq006@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Fri, 28 Jan 2022 16:43:14 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 842FAB82712;
+        Fri, 28 Jan 2022 21:43:13 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7198EC340E7;
+        Fri, 28 Jan 2022 21:43:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1643406192;
+        bh=KrNLYI7l4Z2XWCVJOJncEdgDvKIrccJPtypzN9fcezQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=M6l++n7kHCLAhC1Fm4k3Qrnrwpg4T7So232rj00+/Vmsws7ozMc36wyySgWtfrNsC
+         DnXC0GkXuNS7R0W6vk/otO0yhb7D7DS+FinHiwhFcRbT9qT8fCUn7HfZjdu94aP3g3
+         AZh8lGX9gGeXcau+jLRpilt32qKZYKI9R7EPrZAWbZek4y8fINLleQiXt7UMnTzHIF
+         J1G/Ncljg1+MScqcD3BJv+TGhx2L7KGvHyPMEoAqk+J44OwWZNeMcTb1a3eUM5Si2X
+         5p8a20LQwKmUqRq9s1pw0BYpeobOl9I1Se1cWTvn8l5NUMWAyZcA/5Lr7eJwo5Tcdo
+         +CVhFdUQXMUJw==
+Date:   Fri, 28 Jan 2022 22:43:08 +0100
+From:   Wolfram Sang <wsa@kernel.org>
+To:     Akhil R <akhilrajeev@nvidia.com>
+Cc:     u.kleine-koenig@pengutronix.de, andy.shevchenko@gmail.com,
+        christian.koenig@amd.com, digetx@gmail.com,
+        gregkh@linuxfoundation.org, jonathanh@nvidia.com,
+        ldewangan@nvidia.com, lenb@kernel.org, linux-acpi@vger.kernel.org,
+        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org, rafael@kernel.org,
+        sumit.semwal@linaro.org, thierry.reding@gmail.com
+Subject: Re: [PATCH v5 1/3] device property: Add fwnode_irq_get_byname
+Message-ID: <YfRjbOM7kAab+o2a@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
+        Akhil R <akhilrajeev@nvidia.com>, u.kleine-koenig@pengutronix.de,
+        andy.shevchenko@gmail.com, christian.koenig@amd.com,
+        digetx@gmail.com, gregkh@linuxfoundation.org, jonathanh@nvidia.com,
+        ldewangan@nvidia.com, lenb@kernel.org, linux-acpi@vger.kernel.org,
+        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org, rafael@kernel.org,
+        sumit.semwal@linaro.org, thierry.reding@gmail.com
+References: <1643370267-31804-1-git-send-email-akhilrajeev@nvidia.com>
+ <1643370267-31804-2-git-send-email-akhilrajeev@nvidia.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="GqFDkcnaiGdDfDXW"
+Content-Disposition: inline
+In-Reply-To: <1643370267-31804-2-git-send-email-akhilrajeev@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-This func misses checking for platform_get_irq()'s call and may passes the
-negative error codes to request_threaded_irq(), which takes unsigned IRQ #,
-causing it to fail with -EINVAL, overriding an original error code.
-Stop calling request_threaded_irq() with invalid IRQ #s.
 
-Fixes: 921fc1838fb0 ("spi: tegra210-quad: Add support for Tegra210 QSPI controller")
-Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
----
- drivers/spi/spi-tegra210-quad.c | 2 ++
- 1 file changed, 2 insertions(+)
+--GqFDkcnaiGdDfDXW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/spi/spi-tegra210-quad.c b/drivers/spi/spi-tegra210-quad.c
-index ce1bdb4767ea..cb00ac2fc7d8 100644
---- a/drivers/spi/spi-tegra210-quad.c
-+++ b/drivers/spi/spi-tegra210-quad.c
-@@ -1240,6 +1240,8 @@ static int tegra_qspi_probe(struct platform_device *pdev)
- 
- 	tqspi->phys = r->start;
- 	qspi_irq = platform_get_irq(pdev, 0);
-+	if (qspi_irq < 0)
-+		return qspi_irq;
- 	tqspi->irq = qspi_irq;
- 
- 	tqspi->clk = devm_clk_get(&pdev->dev, "qspi");
--- 
-2.17.1
+On Fri, Jan 28, 2022 at 05:14:25PM +0530, Akhil R wrote:
+> Add fwnode_irq_get_byname() to get an interrupt by name from either
+> ACPI table or Device Tree, whichever is used for enumeration.
+>=20
+> In the ACPI case, this allow us to use 'interrupt-names' in
+> _DSD which can be mapped to Interrupt() resource by index.
+> The implementation is similar to 'interrupt-names' in the
+> Device Tree.
+>=20
+> Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
+> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
+Applied to for-next, thanks!
+
+
+--GqFDkcnaiGdDfDXW
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmH0Y2wACgkQFA3kzBSg
+KbZp+w/8C8HWFzM9oDqz/GAa2MEn53PUhLLcg1R8xieCo6jMAUWyt7qOWF9cfRxI
+V9sBtd5Aslc+aWRdhOyIRaCdqhD2E770OVD+n1XUZXeO4sRcnGN4lL2lpHCUQSwV
+WIeppXMjrQGGAMWk+dskq2y4M1eVMwCJnveHMxrUrSLc5uvEPUEK+/8w32ToJtrF
+UBvsIATGRDnGCNo+jtEo3Vm/9hueeSdM0+vLnW3arsg4F3L+W4T98XPwJrMZVfaM
+LqmwulaPB3EUEqa2Co7JcRHSbZtYUEbfgLZtiQafENWtqZPazyLYd9hlLYGf5Hii
+EWB8rbm9ajT0Y/RTubiGWSxvuLPEUUk7OvQNLpLg2ZIrE88QD9puc3PzkK57N3nK
+sI+sABinAGHsqkn0ywusnxNctaX1ZsjR8cIpNNwOpA5Cpwg4UCOJLSTn8emZZYPN
+xZ1p/7VZwqz0XNBh4Wy3T1IbziTD16B6s9SbShPmg0FG5MswIGCY5Cn7duk8z8up
+eqgK+Izb9dWKHmrPSD1JTbpJDaOSRZ78gv84VU/4x2kogb80M+HFWoJR/IZ1KBO4
+BGPzXeJXCpfvGEUaem2OfOscumHIxpnlctRisF5mqtAN57D0r4D0m1V80VTAXwSD
+vjUuyecJLCaztGV+uGw3/v6qtz3P/HC5/TZ+QtBY1uF4szenfr4=
+=2VH+
+-----END PGP SIGNATURE-----
+
+--GqFDkcnaiGdDfDXW--
