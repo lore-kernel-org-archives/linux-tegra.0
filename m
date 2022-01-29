@@ -2,100 +2,129 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A89D8C433EF
-	for <linux-tegra@archiver.kernel.org>; Fri, 28 Jan 2022 21:43:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC470C433F5
+	for <linux-tegra@archiver.kernel.org>; Sat, 29 Jan 2022 16:41:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351593AbiA1Vnb (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 28 Jan 2022 16:43:31 -0500
-Received: from dfw.source.kernel.org ([139.178.84.217]:38224 "EHLO
-        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351585AbiA1Vna (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 28 Jan 2022 16:43:30 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 0463F61EAF;
-        Fri, 28 Jan 2022 21:43:30 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D52D4C340E7;
-        Fri, 28 Jan 2022 21:43:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1643406209;
-        bh=NsbOiPGUfmhHB0ZJ5H7auWzUVox6einPVS8ygPPXcH4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=gxJ1XRfCvKgYczlOtWaCaBl9Ty3jszmxz0xWE4CNzNFxOqFhyuWKQkUXxlGzMG2V1
-         fK50t0QwryjDxf1HexL20NvHKa1a0oe3KxvKLMRZrj9jl/dH8YfZWA+XCFXuIxQXP9
-         tWZxz82fv4WQYQ2SJB/p+eLFp3Enb9FS3qQwUiWFmEoR6wdLCbKCaPfkX/v8UiioC5
-         iwLgcicwasltRlwAOG7EbInhuP6RT8qtIJVfPx8KIdSQEXDwSwgQYQ0FNo8w+osjka
-         gvxFnMbd0uinZCllNoZM1Avfrm3s0WKVwJi0U1bn3Fa8IcoiBs2qHRYTs0ySHKx8vu
-         Mcuk6sQ1Uc/Ig==
-Date:   Fri, 28 Jan 2022 22:43:26 +0100
-From:   Wolfram Sang <wsa@kernel.org>
-To:     Akhil R <akhilrajeev@nvidia.com>
-Cc:     u.kleine-koenig@pengutronix.de, andy.shevchenko@gmail.com,
-        christian.koenig@amd.com, digetx@gmail.com,
-        gregkh@linuxfoundation.org, jonathanh@nvidia.com,
-        ldewangan@nvidia.com, lenb@kernel.org, linux-acpi@vger.kernel.org,
-        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org, rafael@kernel.org,
-        sumit.semwal@linaro.org, thierry.reding@gmail.com
-Subject: Re: [PATCH v5 3/3] i2c: smbus: Use device_*() functions instead of
- of_*()
-Message-ID: <YfRjfvwMoYcCOHA8@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
-        Akhil R <akhilrajeev@nvidia.com>, u.kleine-koenig@pengutronix.de,
-        andy.shevchenko@gmail.com, christian.koenig@amd.com,
-        digetx@gmail.com, gregkh@linuxfoundation.org, jonathanh@nvidia.com,
-        ldewangan@nvidia.com, lenb@kernel.org, linux-acpi@vger.kernel.org,
-        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org, rafael@kernel.org,
-        sumit.semwal@linaro.org, thierry.reding@gmail.com
-References: <1643370267-31804-1-git-send-email-akhilrajeev@nvidia.com>
- <1643370267-31804-4-git-send-email-akhilrajeev@nvidia.com>
+        id S1352063AbiA2Qlx (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 29 Jan 2022 11:41:53 -0500
+Received: from mail-sn1anam02on2063.outbound.protection.outlook.com ([40.107.96.63]:64276
+        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S243121AbiA2Qlx (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Sat, 29 Jan 2022 11:41:53 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=hMBElDRhrFiyYFLohlXrgdHGuQo8W9dqR2lWO8+HkFTPgk76zmyLrKmHztGSshGpuRceqMgy6lhJJ8zqwa8oqcKX4tzLKnP0PKxgr7Y9TnphF64JiAewB/DvE6/cUO8jV87lh7lsWJLIPmICmMUeAxb+XrHf95xsDwrAjhqEaCjQrDgJXDhwNLahwhQMpGTNpPf4lri0gR0JXqclI9et7a0K904H50NF06FkGWykbfcyDevB4pR20sXjmZKRIWOaVyjyHryvsaFd3xLHimiGc6kfvB3x2sog5rh4ZmFmBh7UxRSbj+KkGUSqmAv6dcQdjm/hWxlxRkvPBgx4shCyzA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=QYDtTPlxXooczPT/6qlNnN1W5DBM7LDqxAdcyrEMGb4=;
+ b=gyQemlFpfaThOXvIFQngDPSnmRxQtT0KEdoMyNWbKqVmTAcYQmjpJbB6Ea/Ce4jLwlmFog5qiIZnS5qxeQA0qL1k56M18XkpHPsuYi3XGB1d5H5WYtYEBe1xP7GymfbN+w+BiLAqpBnhkCd7wyDw1+pMKMKbP2lQlj4Zvm9TYCUWJdfXjLx7LZv2wQwbFZH5/CyQiCW5ogDAmHFao+R5IHVVmcNCQ/KPQwo1NmPWpTzP2we4okfAgUjiQODhkdwnPRC6oBxXrnudHn477CIRmsdrFP1ja6iW0Z1fI1ZvWExEsXZYC0QqHZ11nbxcIxUBEwL8RbH5a2z/Kuf4R8txIQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 12.22.5.235) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QYDtTPlxXooczPT/6qlNnN1W5DBM7LDqxAdcyrEMGb4=;
+ b=SAo8a6ePv5LzDLAPQL+W7zLoYf8x/Y+JxQBW2mHjx73lqKcm3ifo3nJW24Binba+x3xRyW8wupj9q6GfwuIWAdmJ5m4HrGmooHsEzsc4zxkshAteTj/sAqiOb3F8pEj+lhamKppStVUaIJnQPUEgT7EceseLwObfWidj4vooI0eNgrXB9rV2ndL4QLphk+LafAQFfj4rSOAhPkMrdLXxAJKL7DklsWQjbynMIBpyLPnr8BU43RkPFZoIvZtZZ0X52cXYBtBb3Odv0NZw/SQPE8KYL+LcelGcg1XkA83J/ToOd5LEKLKH1w/ua4yw8lfpK/OhaVJOXQMTCXi1nYuSzw==
+Received: from BN9PR03CA0160.namprd03.prod.outlook.com (2603:10b6:408:f4::15)
+ by DM5PR1201MB0076.namprd12.prod.outlook.com (2603:10b6:4:55::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4930.17; Sat, 29 Jan
+ 2022 16:41:50 +0000
+Received: from BN8NAM11FT007.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:408:f4:cafe::8a) by BN9PR03CA0160.outlook.office365.com
+ (2603:10b6:408:f4::15) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4930.15 via Frontend
+ Transport; Sat, 29 Jan 2022 16:41:49 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.235)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 12.22.5.235 as permitted sender) receiver=protection.outlook.com;
+ client-ip=12.22.5.235; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (12.22.5.235) by
+ BN8NAM11FT007.mail.protection.outlook.com (10.13.177.109) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.4930.15 via Frontend Transport; Sat, 29 Jan 2022 16:41:49 +0000
+Received: from drhqmail201.nvidia.com (10.126.190.180) by
+ DRHQMAIL107.nvidia.com (10.27.9.16) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.18; Sat, 29 Jan 2022 16:41:47 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by
+ drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.9;
+ Sat, 29 Jan 2022 08:41:47 -0800
+Received: from kyarlagadda-linux.nvidia.com (10.127.8.10) by mail.nvidia.com
+ (10.126.190.182) with Microsoft SMTP Server id 15.2.986.9 via Frontend
+ Transport; Sat, 29 Jan 2022 08:41:43 -0800
+From:   Akhil R <akhilrajeev@nvidia.com>
+To:     <devicetree@vger.kernel.org>, <dmaengine@vger.kernel.org>,
+        <jonathanh@nvidia.com>, <kyarlagadda@nvidia.com>,
+        <ldewangan@nvidia.com>, <linux-kernel@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <p.zabel@pengutronix.de>,
+        <rgumasta@nvidia.com>, <robh+dt@kernel.org>,
+        <thierry.reding@gmail.com>, <vkoul@kernel.org>
+CC:     <akhilrajeev@nvidia.com>
+Subject: [PATCH v17 0/4] Add NVIDIA Tegra GPC-DMA driver
+Date:   Sat, 29 Jan 2022 22:10:49 +0530
+Message-ID: <1643474453-32619-1-git-send-email-akhilrajeev@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+X-NVConfidentiality: public
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="qL1R9k/YUU5WV4Iv"
-Content-Disposition: inline
-In-Reply-To: <1643370267-31804-4-git-send-email-akhilrajeev@nvidia.com>
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: b6663132-31b2-4803-308f-08d9e3463f03
+X-MS-TrafficTypeDiagnostic: DM5PR1201MB0076:EE_
+X-Microsoft-Antispam-PRVS: <DM5PR1201MB007616D4E0F7843FDE524B49C0239@DM5PR1201MB0076.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:4125;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: U02Hv8NFFM4fTJqgJiI0m6aFqvhmy+y6dPeUCuAAXoo0xrBWpUeMOKdiLunI9P8MNRvJCzLSZ/Mw/coV4tOUNJNysjgWxAbk4oQ9FVuUYeLF2WafLLEqcnE+vmTiAMaeBteIybSOBR/jjXDuBg8wJ83fkTMgc3qc0zQJhpKoy35ue4jzse87YbYE0HxDbLi4SCduNGP7NGncV1TEs1jFMNXrqf13spib+URoUWTaV6STeQygtqBfwAxaypMSkT4OMjwc21fJL719lEPGARVmW/6WICPrcUH1FxWPftQblL2wPHNi9M42fdZIRuepvUUZBBy04OmiJ3/TxaQ0qNHi+wIcJ4BPjSgCYtej19Tiq7UyHpoV5FRGxzEkw83NxUzDdbUuhtiibiAni6VSUSI7SftiRUMyrgb8EPiA16Z9zng7uynaIY+dQ8oIx6dfJcpSapn7CTLwI3TNVBVl5JzZJY0keO3BQkRh0gI5Usm0Q9N5aisae0DRYJX4XItp5Omq5PxuzXJjY5GhTNEy5DD+YUhRZTLE9f8Gh9ynvONX8bwOPgbvBnP+jgWH62/fWy2NGmLZNDseByeTgvc5AkTDVt2oxVCWOfGItr/gfe0v9rCYOgVJY6zL1hREpl6yK309KiIOIOna0KhM0D0JvaW41YSLhi+zQ+iFwZDsNlHqyqhWIx01tPHsAoAAYZHclJa7dKK38ROr8JP+38IuW66ylCv0lIPJwx5GCgddpXbaLu5WV8Odgh8KMCSkN68STajgO7uhlaJ+e1iPlJDcnuHKFQ==
+X-Forefront-Antispam-Report: CIP:12.22.5.235;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230001)(4636009)(36840700001)(46966006)(40470700004)(107886003)(70206006)(8936002)(110136005)(82310400004)(316002)(7696005)(83380400001)(70586007)(186003)(26005)(4326008)(8676002)(921005)(86362001)(356005)(81166007)(40460700003)(2616005)(2906002)(508600001)(36756003)(47076005)(426003)(336012)(36860700001)(5660300002)(36900700001)(2101003)(83996005)(20210929001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jan 2022 16:41:49.2306
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b6663132-31b2-4803-308f-08d9e3463f03
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.235];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT007.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR1201MB0076
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+Add support for NVIDIA Tegra general purpose DMA driver for
+Tegra186 and Tegra194 platform.
 
---qL1R9k/YUU5WV4Iv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+v16 -> v17:
+  * Updates in terminate_all() and pause().
+  * Moved DMA busy check to configure_next_sg() from issue_pending()
+  * shortened variable names -
+    bytes_requested -> bytes_req; bytes_transferred -> bytes_xfer
+  * Correction in burst_size calculation
 
-On Fri, Jan 28, 2022 at 05:14:27PM +0530, Akhil R wrote:
-> Change of_*() functions to device_*() for firmware agnostic usage.
-> This allows to have the smbus_alert interrupt without any changes
-> in the controller drivers using the ACPI table.
->=20
-> Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
-> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Akhil R (4):
+  dt-bindings: dmaengine: Add doc for tegra gpcdma
+  dmaengine: tegra: Add tegra gpcdma driver
+  arm64: defconfig: tegra: Enable GPCDMA
+  arm64: tegra: Add GPCDMA node for tegra186 and tegra194
 
-Applied to for-next, thanks!
+ .../bindings/dma/nvidia,tegra186-gpc-dma.yaml      |  110 ++
+ arch/arm64/boot/dts/nvidia/tegra186.dtsi           |   42 +
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi           |   43 +
+ arch/arm64/configs/defconfig                       |    1 +
+ drivers/dma/Kconfig                                |   11 +
+ drivers/dma/Makefile                               |    1 +
+ drivers/dma/tegra186-gpc-dma.c                     | 1488 ++++++++++++++++++++
+ 7 files changed, 1696 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/dma/nvidia,tegra186-gpc-dma.yaml
+ create mode 100644 drivers/dma/tegra186-gpc-dma.c
 
+-- 
+2.7.4
 
---qL1R9k/YUU5WV4Iv
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmH0Y30ACgkQFA3kzBSg
-KbbTJw/+NVGeZckoRLVgX1UiF/eLLpRlbEVDRaLa2fu9ZEx5zxnYLIlJ+B1tXk1p
-yq0nkWm+aEx7q/gONbe8fkq6vMr7PN++hd4foXY8iEa9BVWhJZsgG/dyPpSVeZQA
-xerxXoqy47yqLT37KTFj43tBJseQ7Hqzebh/bJGGJDuZ36onFiGE0QA4R8wglRVe
-HP107SmFTBz65gcoOMtLeVF0IMrJo8FCK6UooL8XDivNrYexbr44tzgNKbkgZ63+
-PTmCTEriezU34dV8bXz83j+uaISGagLAH15FYIgwfT5Ykr66X9CTQTv+lLiHGnDN
-NIrS1Hs/iW7w17QxMcon8CxvElJvkTiniQSlrywN3u9wsQmb+COsKC0lgI4cuPvO
-W/PorJB3hkU4pPsJCu5fSQnb8C8Rr2swJ3eTcppOQ+IquqXqPRFgDz/7ikOANDnw
-2YkxGSIK8LjlkCL5wC5R9q3ZsTwM0Bc44XWJJ5I1hNXh+MLwGQiuUUGks1EzFkrB
-0c5yEji5TCsM3yBktIjbYnYPX0SASFF96nJJ15yZ1l2P86n2+kKhRkoYrjq058Cj
-4w+VrmEuA0zMBy+ZnPTDYJUUgFzGf50LfEnVw2JUinqN6ZZb0p+kTpTuRfIIRHUG
-UW2YJ1owF26BPYE57gzYtDgQ3dNwXFB8thVZyZzsSpTvFOXjoiM=
-=QrQm
------END PGP SIGNATURE-----
-
---qL1R9k/YUU5WV4Iv--
