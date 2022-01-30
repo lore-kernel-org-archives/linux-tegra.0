@@ -2,52 +2,52 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEE50C433EF
-	for <linux-tegra@archiver.kernel.org>; Sun, 30 Jan 2022 23:39:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44C16C43217
+	for <linux-tegra@archiver.kernel.org>; Sun, 30 Jan 2022 23:40:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1357140AbiA3XjN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 30 Jan 2022 18:39:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34398 "EHLO
+        id S1357396AbiA3Xks (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 30 Jan 2022 18:40:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34426 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1357338AbiA3XiA (ORCPT
+        with ESMTP id S1357405AbiA3XiF (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 30 Jan 2022 18:38:00 -0500
-Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9408EC061757;
-        Sun, 30 Jan 2022 15:37:59 -0800 (PST)
-Received: by mail-lf1-x134.google.com with SMTP id bu18so23308852lfb.5;
-        Sun, 30 Jan 2022 15:37:59 -0800 (PST)
+        Sun, 30 Jan 2022 18:38:05 -0500
+Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F6E1C061760;
+        Sun, 30 Jan 2022 15:38:03 -0800 (PST)
+Received: by mail-lf1-x131.google.com with SMTP id u14so23251503lfo.11;
+        Sun, 30 Jan 2022 15:38:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=6m8P3WoXpjmgm4wPv3Z7h5cBjPxfBSCYucbGZeGzChw=;
-        b=pw0lvBk+dTz3ObiHx+Tziue58w6zUuZQVNJvU9S7GB+pTzwAHhgcj/iJlwXXxw2erP
-         SjJaIXCKqSP4ZUdeywJtZKFLRYiUBBH6flK45216wEu+kAKbGqsUiHPKIi82YM1bz/wq
-         bMKu0rK0969KEuxg/PSMaDE+zRgG2hxtPkS3M1mFIZPAgYW4ktfU2t1MzGq6fvtQ0WCp
-         Y+7PFXh6gcLp4xF5Q6p6cFH24zY5vWjbmW+bewwmKwBTNzJ37xEIcDLIFgNsMgKiVVBl
-         Kl81Cxsay4XTPckhsJ1WeXkyEjcWdoSjNX8wa8Lm2Ykdw2ly2wOfBD20u+sG0elmdIGM
-         o1xg==
+        bh=wEeGalIPQ9GIIDvt4ZGJ+mYKkZoiFtMFy2ITVcPwwOI=;
+        b=jXXBBfwPJ7SdtaD0pclW/HMx76vc8RahjAuPQm5Z/0dXxW/074tzfimlFO1HkDBvcr
+         oaZmouil0FqH92hbizW5my46ifg5DAFhrVT4LPFQpqXlLAxmnLJ6s1I5wLZSpyLZkBO0
+         wmI0HqfYIjv7H9ry2CW8BCr2FKRe9TovMRMPOdztHPrunU9Y7lzjTWnUadttQIH5bcvW
+         vttSNQ9r1vC1IZO5YVlqjP01k8/CcmcrMHA8TiKEuoGV1yx8sOgJc71/KAtv9CA4CYS0
+         o8OCrmOu9r4n3DeN2/5U1nzk/Hg0gBL3B1cSmVdN8RggR9Ftjf3x1TwywZSLzo/+Zh9b
+         2sCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=6m8P3WoXpjmgm4wPv3Z7h5cBjPxfBSCYucbGZeGzChw=;
-        b=h2mCAOMbZbzkk1ECRXctqaYnGatW35mubMGZmnZacbSh9EiDoYQ8lcbu/SbHDg5Ebr
-         fBNVSWqA3CweZuJi17k+JIU7LPyzqJQ5rjO0zB7x3fisw2WqRgC7laI4Lft/2E2/8tB7
-         dMHNOaz3nZLz0kIcb3JVokb/p9rqdg+UfaMEwsvmZDe9CI5/bXxy9tGlO++gfUHa/U1M
-         XLX8p3k8UZGLbQY6YBlJW+dFoqDwjnMTCO5GUeHZqxGm9yuesFWNQr5nsTVlNNERWJaa
-         hUKTAFWXrRywodocMcxAvHBt4rZpVN5V+w45VePT+Y8sXsxpLJBLpMxFRBhVjmwUxOyV
-         4VGw==
-X-Gm-Message-State: AOAM5314pkahsagkdMyOm7+h+d3Sj+72SBJiHS6o8UmxP7/C6u38s8xG
-        l5bNnG9GThRDCdvpwYQxdmc=
-X-Google-Smtp-Source: ABdhPJym+9e+qz3b9Eox6rk6EROG58IYAq1gwBJQdx3IJq9mRqA6OUoE67/3HvdiOb6Vb5OIHzS4jw==
-X-Received: by 2002:a05:6512:10c4:: with SMTP id k4mr13546209lfg.63.1643585878009;
-        Sun, 30 Jan 2022 15:37:58 -0800 (PST)
+        bh=wEeGalIPQ9GIIDvt4ZGJ+mYKkZoiFtMFy2ITVcPwwOI=;
+        b=y4kMksU65D1pJavAk3ETN4c8isOcOOiiONvGRreiivH+/h02zucilMkzrRM1OerMoJ
+         PofIEb4kUs93yZEjfkQUCGb44UUCn0Dsh+AfuIJ01Z95FmGo20x09tbfSEJXScPcd/aa
+         pO50QreBfP1Fk/Dzz9Pp+N0Xr9EgUfXfVKbTQ3k4txNxuUtrkQGbSvNj+veGDIYZ38zf
+         opbKEswjakjqTO0VI0MO7lNzm2eIjnpIbK144dWOWEJbDX7fJD4skzeUZSt17bJRerE4
+         tc9/UxHPcyd7DfHnUvZmQEisT1y7TvdwSYhAKS1sXMx9gLNTnUfAM2nZIIm5FuPQlU5F
+         tdoQ==
+X-Gm-Message-State: AOAM531c+MK5ymDQtlFQamP51XPbA8uhsziubhpEl2ffJPkJdhIQy/yk
+        SpcKubuphbqfqULRr7sbxJs=
+X-Google-Smtp-Source: ABdhPJxKcR6AU2adDJMgqBbtDaQvM6Qs2pl/Zem+Cp2eBfoUK309RxSg7fIwfBi/lJNJPdOsuZTuaw==
+X-Received: by 2002:a05:6512:402a:: with SMTP id br42mr13689925lfb.336.1643585881636;
+        Sun, 30 Jan 2022 15:38:01 -0800 (PST)
 Received: from localhost.localdomain (109-252-138-126.dynamic.spd-mgts.ru. [109.252.138.126])
-        by smtp.gmail.com with ESMTPSA id a24sm1262950ljp.112.2022.01.30.15.37.56
+        by smtp.gmail.com with ESMTPSA id a24sm1262950ljp.112.2022.01.30.15.37.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 30 Jan 2022 15:37:57 -0800 (PST)
+        Sun, 30 Jan 2022 15:38:01 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -100,9 +100,9 @@ Cc:     linux-kernel@vger.kernel.org, linux-csky@vger.kernel.org,
         linux-riscv@lists.infradead.org, linux-sh@vger.kernel.org,
         xen-devel@lists.xenproject.org, linux-acpi@vger.kernel.org,
         linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: [PATCH v6 18/21] memory: emif: Use kernel_can_power_off()
-Date:   Mon, 31 Jan 2022 02:37:15 +0300
-Message-Id: <20220130233718.21544-19-digetx@gmail.com>
+Subject: [PATCH v6 20/21] regulator: pfuze100: Use devm_register_sys_off_handler()
+Date:   Mon, 31 Jan 2022 02:37:17 +0300
+Message-Id: <20220130233718.21544-21-digetx@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220130233718.21544-1-digetx@gmail.com>
 References: <20220130233718.21544-1-digetx@gmail.com>
@@ -112,27 +112,108 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Replace legacy pm_power_off with kernel_can_power_off() helper that
-is aware about chained power-off handlers.
+Use devm_register_sys_off_handler() that replaces global
+pm_power_off_prepare variable and allows to register multiple
+power-off handlers.
 
+Acked-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/memory/emif.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/regulator/pfuze100-regulator.c | 38 ++++++++++----------------
+ 1 file changed, 14 insertions(+), 24 deletions(-)
 
-diff --git a/drivers/memory/emif.c b/drivers/memory/emif.c
-index 762d0c0f0716..cab10d5274a0 100644
---- a/drivers/memory/emif.c
-+++ b/drivers/memory/emif.c
-@@ -630,7 +630,7 @@ static irqreturn_t emif_threaded_isr(int irq, void *dev_id)
- 		dev_emerg(emif->dev, "SDRAM temperature exceeds operating limit.. Needs shut down!!!\n");
+diff --git a/drivers/regulator/pfuze100-regulator.c b/drivers/regulator/pfuze100-regulator.c
+index d60d7d1b7fa2..2eca8d43a097 100644
+--- a/drivers/regulator/pfuze100-regulator.c
++++ b/drivers/regulator/pfuze100-regulator.c
+@@ -10,6 +10,7 @@
+ #include <linux/of_device.h>
+ #include <linux/regulator/of_regulator.h>
+ #include <linux/platform_device.h>
++#include <linux/reboot.h>
+ #include <linux/regulator/driver.h>
+ #include <linux/regulator/machine.h>
+ #include <linux/regulator/pfuze100.h>
+@@ -76,6 +77,7 @@ struct pfuze_chip {
+ 	struct pfuze_regulator regulator_descs[PFUZE100_MAX_REGULATOR];
+ 	struct regulator_dev *regulators[PFUZE100_MAX_REGULATOR];
+ 	struct pfuze_regulator *pfuze_regulators;
++	struct sys_off_handler sys_off;
+ };
  
- 		/* If we have Power OFF ability, use it, else try restarting */
--		if (pm_power_off) {
-+		if (kernel_can_power_off()) {
- 			kernel_power_off();
- 		} else {
- 			WARN(1, "FIXME: NO pm_power_off!!! trying restart\n");
+ static const int pfuze100_swbst[] = {
+@@ -569,10 +571,10 @@ static inline struct device_node *match_of_node(int index)
+ 	return pfuze_matches[index].of_node;
+ }
+ 
+-static struct pfuze_chip *syspm_pfuze_chip;
+-
+-static void pfuze_power_off_prepare(void)
++static void pfuze_power_off_prepare(struct power_off_prep_data *data)
+ {
++	struct pfuze_chip *syspm_pfuze_chip = data->cb_data;
++
+ 	dev_info(syspm_pfuze_chip->dev, "Configure standby mode for power off");
+ 
+ 	/* Switch from default mode: APS/APS to APS/Off */
+@@ -611,24 +613,23 @@ static void pfuze_power_off_prepare(void)
+ 
+ static int pfuze_power_off_prepare_init(struct pfuze_chip *pfuze_chip)
+ {
++	int err;
++
+ 	if (pfuze_chip->chip_id != PFUZE100) {
+ 		dev_warn(pfuze_chip->dev, "Requested pm_power_off_prepare handler for not supported chip\n");
+ 		return -ENODEV;
+ 	}
+ 
+-	if (pm_power_off_prepare) {
+-		dev_warn(pfuze_chip->dev, "pm_power_off_prepare is already registered.\n");
+-		return -EBUSY;
+-	}
++	pfuze_chip->sys_off.power_off_prepare_cb = pfuze_power_off_prepare;
++	pfuze_chip->sys_off.cb_data = pfuze_chip;
+ 
+-	if (syspm_pfuze_chip) {
+-		dev_warn(pfuze_chip->dev, "syspm_pfuze_chip is already set.\n");
+-		return -EBUSY;
++	err = devm_register_sys_off_handler(pfuze_chip->dev, &pfuze_chip->sys_off);
++	if (err) {
++		dev_err(pfuze_chip->dev,
++			"failed to register sys-off handler: %d\n", err);
++		return err;
+ 	}
+ 
+-	syspm_pfuze_chip = pfuze_chip;
+-	pm_power_off_prepare = pfuze_power_off_prepare;
+-
+ 	return 0;
+ }
+ 
+@@ -837,23 +838,12 @@ static int pfuze100_regulator_probe(struct i2c_client *client,
+ 	return 0;
+ }
+ 
+-static int pfuze100_regulator_remove(struct i2c_client *client)
+-{
+-	if (syspm_pfuze_chip) {
+-		syspm_pfuze_chip = NULL;
+-		pm_power_off_prepare = NULL;
+-	}
+-
+-	return 0;
+-}
+-
+ static struct i2c_driver pfuze_driver = {
+ 	.driver = {
+ 		.name = "pfuze100-regulator",
+ 		.of_match_table = pfuze_dt_ids,
+ 	},
+ 	.probe = pfuze100_regulator_probe,
+-	.remove = pfuze100_regulator_remove,
+ };
+ module_i2c_driver(pfuze_driver);
+ 
 -- 
 2.34.1
 
