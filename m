@@ -2,91 +2,171 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2845C433F5
-	for <linux-tegra@archiver.kernel.org>; Sat, 29 Jan 2022 22:40:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18863C433F5
+	for <linux-tegra@archiver.kernel.org>; Sun, 30 Jan 2022 10:05:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346477AbiA2Wkk (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 29 Jan 2022 17:40:40 -0500
-Received: from angie.orcam.me.uk ([78.133.224.34]:44012 "EHLO
-        angie.orcam.me.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243417AbiA2Wkk (ORCPT
+        id S237059AbiA3KFl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 30 Jan 2022 05:05:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54242 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235274AbiA3KFk (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sat, 29 Jan 2022 17:40:40 -0500
-X-Greylist: delayed 392 seconds by postgrey-1.27 at vger.kernel.org; Sat, 29 Jan 2022 17:40:39 EST
-Received: by angie.orcam.me.uk (Postfix, from userid 500)
-        id 4E85792009C; Sat, 29 Jan 2022 23:34:03 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by angie.orcam.me.uk (Postfix) with ESMTP id 4823E92009B;
-        Sat, 29 Jan 2022 22:34:03 +0000 (GMT)
-Date:   Sat, 29 Jan 2022 22:34:03 +0000 (GMT)
-From:   "Maciej W. Rozycki" <macro@orcam.me.uk>
-To:     Bjorn Helgaas <helgaas@kernel.org>
-cc:     Rob Herring <robh@kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
-        Tiezhu Yang <yangtiezhu@loongson.cn>,
-        Jiaxun Yang <jiaxun.yang@flygoat.com>,
-        Huacai Chen <chenhuacai@kernel.org>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 19/19] PCI: Set bridge map_irq and swizzle_irq to default
- functions
-In-Reply-To: <20220111214608.GA169999@bhelgaas>
-Message-ID: <alpine.DEB.2.21.2201220459090.58572@angie.orcam.me.uk>
-References: <20220111214608.GA169999@bhelgaas>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Sun, 30 Jan 2022 05:05:40 -0500
+Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0285BC061714;
+        Sun, 30 Jan 2022 02:05:39 -0800 (PST)
+Received: by mail-lf1-x133.google.com with SMTP id x7so20776737lfu.8;
+        Sun, 30 Jan 2022 02:05:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=HeV0Wv/H/OhgPt4lE7qSA5LOMFeXkV06jM9iQMmPzsQ=;
+        b=KXn6y3ZIu6u53xHjCds+h+Xo7KnzeCx1m+Iw3r799KUJnhwChxLYR2bBxufN03LcbL
+         KAoZkknY7Kx6+Yauov6dWgRzTNPPiIon48TGET2ptsFZa/XptFFuhEb8WeK5dO5l27BZ
+         K21H+0aDt1IhIwErB2pk4bVzskG1zsT7Wez9u+o5Ng2MOWJKbRD4DbiJ8E5wnb3ss2tH
+         N/+9h9DCACNlcM65TTSvkJ540ypkBPqsDkZf8BaUBfyl/NgFzK/eGaX9pxnW2Kzad+pA
+         s0zLc8lSPq1wGWlGVDtPWL3XUoQb33/Oo0ajNbNKJ0aq6zB1HGf0bzpYB1r7E5PAfh1c
+         Sdag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=HeV0Wv/H/OhgPt4lE7qSA5LOMFeXkV06jM9iQMmPzsQ=;
+        b=tBQO1cMlPv/VlBU4kNHiXmkODkPjq1apodwMACfrADxvIqmOiMtWSmXDP/2dJ6Qzg5
+         vS9c+ie4Dvtev2wl69JL1hMGJB0uC4e2kqB66D47TNxKCwIzPx8RBHRGa/cOmQjf1CXA
+         MCUIIyueHY7vobJml9wWIsxGBiq8UAxEhp8aPwqBqO8GwFnzeZiGYwZQqgTfrtwWYgJP
+         XQMqLVXnhuAWEw1yv1eJAy1cnrA8oxaFsDTg6tG09ZEspesTjolZO8IX9ZUsOBZtBbZq
+         ELm1HOIoM2mdD+4TsemJzPikgEQnoul9pUZJzLk5WaHcaKwU2vGXBkQDQp7f2T/ZtX0J
+         QtGw==
+X-Gm-Message-State: AOAM533TTNe3phyI1wA22A3YHBsZ007ZDfpFq2rYWGJX8AG0ecCPZoy2
+        gD/B6EENgRnlrzjSLtCEy3i/4dCO7OA=
+X-Google-Smtp-Source: ABdhPJwsdB2zj04aLxYfc6dbnuikX14O8Y5qLS+iVnH0LLu+zJxiI9zZl8ykGDDA6+VYG2o3Jq4nsA==
+X-Received: by 2002:ac2:4d57:: with SMTP id 23mr11862456lfp.28.1643537138092;
+        Sun, 30 Jan 2022 02:05:38 -0800 (PST)
+Received: from [192.168.2.145] (109-252-138-126.dynamic.spd-mgts.ru. [109.252.138.126])
+        by smtp.googlemail.com with ESMTPSA id o20sm1119021lfu.244.2022.01.30.02.05.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 30 Jan 2022 02:05:37 -0800 (PST)
+Message-ID: <ba109465-d7ee-09cb-775b-9b702a3910b0@gmail.com>
+Date:   Sun, 30 Jan 2022 13:05:36 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [PATCH v17 2/4] dmaengine: tegra: Add tegra gpcdma driver
+Content-Language: en-US
+To:     Akhil R <akhilrajeev@nvidia.com>, devicetree@vger.kernel.org,
+        dmaengine@vger.kernel.org, jonathanh@nvidia.com,
+        kyarlagadda@nvidia.com, ldewangan@nvidia.com,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        p.zabel@pengutronix.de, rgumasta@nvidia.com, robh+dt@kernel.org,
+        thierry.reding@gmail.com, vkoul@kernel.org
+Cc:     Pavan Kunapuli <pkunapuli@nvidia.com>
+References: <1643474453-32619-1-git-send-email-akhilrajeev@nvidia.com>
+ <1643474453-32619-3-git-send-email-akhilrajeev@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+In-Reply-To: <1643474453-32619-3-git-send-email-akhilrajeev@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, 11 Jan 2022, Bjorn Helgaas wrote:
+29.01.2022 19:40, Akhil R пишет:
+> +static int tegra_dma_device_pause(struct dma_chan *dc)
+> +{
+> +	struct tegra_dma_channel *tdc = to_tegra_dma_chan(dc);
+> +	unsigned long wcount, flags;
+> +	int ret = 0;
+> +
+> +	if (!tdc->tdma->chip_data->hw_support_pause)
+> +		return 0;
 
-> This patch removed all the ->swizzle_irq users in drivers/pci/, which
-> is great -- IIUC swizzling is specified by the PCI-to-PCI Bridge Spec,
-> r1.2, sec 9.1, and should not be device-specific.  I assume the few
-> remaining arch/ users (arm and alpha) are either bugs or workarounds
-> for broken devices.
+It's wrong to return zero if pause unsupported, please see what
+dmaengine_pause() returns.
 
- I skimmed over the Alpha stuff and it seems to mostly care about setting 
-the slot value returned differently and defers to `pci_common_swizzle' for 
-actual pin determination.  This could be moderately easy to sort out.
+> +
+> +	spin_lock_irqsave(&tdc->vc.lock, flags);
+> +	if (!tdc->dma_desc)
+> +		goto out;
+> +
+> +	ret = tegra_dma_pause(tdc);
+> +	if (ret) {
+> +		dev_err(tdc2dev(tdc), "DMA pause timed out\n");
+> +		goto out;
+> +	}
+> +
+> +	wcount = tdc_read(tdc, TEGRA_GPCDMA_CHAN_XFER_COUNT);
+> +	tdc->dma_desc->bytes_xfer +=
+> +			tdc->dma_desc->bytes_req - (wcount * 4);
 
- One exception is `takara_swizzle' which looks incomplete to me; as this 
-is a PICMG device[1] someone would have to fill in the missing details as 
-AFAICT the PICMG connector is supposed to provide all the INT# A-D lines 
-and then routing is done on the backplane using binding defined by PICMG.
+Why transfer is accumulated?
 
- According to DEC documentation there's an alternative interrupt routing 
-mode available too, using a external interrupt controller FPGA placed on 
-the backplane[2], where no swizzling is done and instead each of the four 
-INT# lines across all the PCI slots, up to 16, provided by a backplane is 
-individually routed to 64 inputs of the interrupt controller.
+Why do you need to update xfer size at all on pause?
 
- There is a paper by DEC available online[3] that could help filling in 
-the missing details for either mode, especially someone who has access to 
-such a system and could verify it in reality.
+> +
+> +out:
+> +	spin_unlock_irqrestore(&tdc->vc.lock, flags);
+> +
+> +	return ret;
+> +}
 
-References:
+Still nothing prevents interrupt handler to fire during the pause.
 
-[1] "DIGITAL 21164 PICMG SBC, User Information for the EBM21 and EBM23",
-    V1.0, Digital Equipment Corporation, June 1997, Part Number: 
-    EK-A0937-UG. A01
+What you actually need to do is to disable/enable interrupt. This will
+prevent the interrupt racing and then pause/resume may look like this:
 
-[2] "DIGITAL Modular Computing Components, OEM Information for DMCC 
-    Backplanes", Version 4.1, Compaq Computer Corporation, January 1999, 
-    Order Number: EK-A0929-TM. C01
+static int tegra_dma_device_resume(struct dma_chan *dc)
+{
+	struct tegra_dma_channel *tdc = to_tegra_dma_chan(dc);
+	u32 val;
 
-[3] Ross L. Armstrong, "PCI Interrupt Controller for Industry Standard 
-    PCI-ISA Bus Architecture using PCI-to-PCI Bridge Technology", Digital 
-    Equipment Corporation (Scotland) Ltd., 1996
+	if (!tdc->tdma->chip_data->hw_support_pause)
+		return -ENOSYS;
 
- FWIW,
+	if (!tdc->dma_desc)
+		return 0;
 
-  Maciej
+	val = tdc_read(tdc, TEGRA_GPCDMA_CHAN_CSRE);
+	val &= ~TEGRA_GPCDMA_CHAN_CSRE_PAUSE;
+	tdc_write(tdc, TEGRA_GPCDMA_CHAN_CSRE, val);
+	
+	enable_irq(tdc->irq);
+
+	return 0;
+}
+
+static int tegra_dma_device_pause(struct dma_chan *dc)
+{
+	struct tegra_dma_channel *tdc = to_tegra_dma_chan(dc);
+	u32 val;
+	int ret;
+
+	if (!tdc->tdma->chip_data->hw_support_pause)
+		return -ENOSYS;
+
+	disable_irq(tdc->irq);
+
+	if (!tdc->dma_desc)
+		return 0;
+
+	val = tdc_read(tdc, TEGRA_GPCDMA_CHAN_CSRE);
+	val |= TEGRA_GPCDMA_CHAN_CSRE_PAUSE;
+	tdc_write(tdc, TEGRA_GPCDMA_CHAN_CSRE, val);
+
+	/* Wait until busy bit is de-asserted */
+	ret = readl_relaxed_poll_timeout_atomic(
+			tdc->chan_base + TEGRA_GPCDMA_CHAN_STATUS,
+			val, !(val & TEGRA_GPCDMA_STATUS_BUSY),
+			TEGRA_GPCDMA_BURST_COMPLETE_TIME,
+			TEGRA_GPCDMA_BURST_COMPLETION_TIMEOUT);
+	if (ret) {
+		dev_err(tdc2dev(tdc), "DMA pause timed out: %d\n", ret);
+		tegra_dma_device_resume(dc);
+	}
+
+	return ret;
+}
+
+
