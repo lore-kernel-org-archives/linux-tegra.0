@@ -2,52 +2,52 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B122DC47080
-	for <linux-tegra@archiver.kernel.org>; Sun, 30 Jan 2022 23:37:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DEA3C35275
+	for <linux-tegra@archiver.kernel.org>; Sun, 30 Jan 2022 23:37:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1357273AbiA3Xhy (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 30 Jan 2022 18:37:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34222 "EHLO
+        id S1356984AbiA3Xh5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 30 Jan 2022 18:37:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34256 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1356968AbiA3Xhd (ORCPT
+        with ESMTP id S1356989AbiA3Xhi (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 30 Jan 2022 18:37:33 -0500
-Received: from mail-lj1-x22f.google.com (mail-lj1-x22f.google.com [IPv6:2a00:1450:4864:20::22f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 652FDC06173B;
-        Sun, 30 Jan 2022 15:37:32 -0800 (PST)
-Received: by mail-lj1-x22f.google.com with SMTP id c15so17066054ljf.11;
-        Sun, 30 Jan 2022 15:37:32 -0800 (PST)
+        Sun, 30 Jan 2022 18:37:38 -0500
+Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4162C06173B;
+        Sun, 30 Jan 2022 15:37:37 -0800 (PST)
+Received: by mail-lf1-x135.google.com with SMTP id u6so23256707lfm.10;
+        Sun, 30 Jan 2022 15:37:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=omD9ii6hdmOPOLz0ZrMYTS/dF5Fa75SnRoAvSUBcMXk=;
-        b=cQofKfpuj96FPKIuElG4JVB5ebsyCGvTeW5J4j2MH7X0WRLgzbVACf4DTute0QixNl
-         XMz7+003bKZlwkXkPIQbN8oTinvwUmojDoYGjYhv7pjY2trTgrMx6mGzRdNnLsY8mkl2
-         7WmE4naskN1xx+dSFpiWKWqfRvBmvOtiRbW6rsCNAcLJPNEVLDCe91z6iUu5+BFugaT2
-         bIk9Hfq63C50xsIBoY2u595h9M/qG+2YlE2Nn78b7kg2gyK8fxA4P0H2C4WFKliLAVXZ
-         7qPk0tNjqYTPF3ucU8/++kKEXP9ZHsFeIbMKK+4hihzAWu5kciFNMvK+pAj6fKNfAPQ5
-         xmCA==
+        bh=1ZrDgi56okXdj0bmuwFyDd+PCBPMTNLxDRZAmCQiy7Q=;
+        b=c3NtOsqbA47a1sJX+GEy+0rTmzy10+oHXKnLf++rqhzO+HkV5EX5GbmXX0syutXx6R
+         46cFfpCzhcPa31L6Xgo37w0ud+s6MmIVbyT0zR8tDah7CqXCEteg4iWk/eRCwba6mO4V
+         8W4zc+2KzJhcjNF1j1wVUUcXHT6ObiOakX5p2KYvUVsZQRY7Y82Y6MKvBpcRryxOInUF
+         RxKVqw9v4fGeVOkmtCX3EyiW/0qXGxVzl0X9GRONS3eJ/CiP8qRj0ZyFLbrruPRrmWMZ
+         iKAyqg4ppe9pVvVxKhsjy91ldTFtuqlW7PzcwXhnonKoFQRzsPVvvJpThza+ddSLXVij
+         QBag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=omD9ii6hdmOPOLz0ZrMYTS/dF5Fa75SnRoAvSUBcMXk=;
-        b=MYs5UiMmyA1To9moc+iya2wu9ltHXiUn3LiMynnlTYgG2GWAkdN4eyb89s+qBFQWLu
-         fe0FIwSYiUp8zJEMkIhgds050HEfMbRNjAgFT1BqpDPYMXyunuUAaE0PDMz+MiY3PoW2
-         9Ma++MTwrSUqrc3cKaqfSF1nqEEAg4nqnW1D8yZZb10TIMPdDS4vlUcoGONasjzGGanf
-         WCi7xULN885RjfZi8UyOxxAfBAHBjWmkVJ2ExaRvCa2dGxF2fUa6vUdgtkQr0QHjlOxv
-         SPqAT06Teu1KIMKgwNKFlZzNAzkry0ofsXyQ0X/7e+Xjc1ViX7Hy2Dr3QMzOpzCgGR8d
-         hzpw==
-X-Gm-Message-State: AOAM531CQimf2pKY+vVk3oA1xLHyqj9tXiFXTdrRuz59kiOClHdgzslp
-        JrvbUyei2fL+9DwmPN+HeHY=
-X-Google-Smtp-Source: ABdhPJzH4GGHER1dd7BkRpS9JCpguXkNuEOfM70GPh5pyei2pr3VhMNQQj2zlKMHcg7OCQ6lFFEolA==
-X-Received: by 2002:a2e:7a06:: with SMTP id v6mr12281006ljc.301.1643585850758;
-        Sun, 30 Jan 2022 15:37:30 -0800 (PST)
+        bh=1ZrDgi56okXdj0bmuwFyDd+PCBPMTNLxDRZAmCQiy7Q=;
+        b=38FzZxpLqBxna6ZJBs4RH92j5a+sk6oECmhg4dsNk6Y8NdAAIOzIeq9NdJYVIhJOB/
+         HbsWVNjobM7huSELe4VZctTQv3HtMj70daJSzLfPT5EBuzc0QTOjNOgkCXNa3Jf87yIT
+         u0hBvB2KfyitlofTKEpan+k7YU6zJgjQ018xqrW4JmY+GykhsIXnh2XstwqTRRX0H5Ye
+         U+QEGYN/2yU9rdd9uMC4r+Nbs3Y2ZKL1rkJ9pXkFgdwjrDg96O/NfuatMYNFXpqXLjOa
+         hUcQvfVmIJrK3PB0rWOTbZROE8GZfcyE5m4L1a02X60ZGLFmh5VyspR4TCl9BI0+Z+O8
+         LyKA==
+X-Gm-Message-State: AOAM533Zi2J+r3ulB5BXoOAcUG+JRAvQ6sD5iH3ZhVXzem3apod6i8Io
+        7m0vem/EXTGox2Zzg9RcQ/4=
+X-Google-Smtp-Source: ABdhPJwjH2OF/Lh8B3AhmAwBhRKlkrWOfnqlna+Zr9L+uqZhDMGJf1wpdqmmSlpmTjq1hjKH+//r2w==
+X-Received: by 2002:a05:6512:1082:: with SMTP id j2mr7550090lfg.371.1643585856261;
+        Sun, 30 Jan 2022 15:37:36 -0800 (PST)
 Received: from localhost.localdomain (109-252-138-126.dynamic.spd-mgts.ru. [109.252.138.126])
-        by smtp.gmail.com with ESMTPSA id a24sm1262950ljp.112.2022.01.30.15.37.29
+        by smtp.gmail.com with ESMTPSA id a24sm1262950ljp.112.2022.01.30.15.37.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 30 Jan 2022 15:37:30 -0800 (PST)
+        Sun, 30 Jan 2022 15:37:35 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -100,9 +100,9 @@ Cc:     linux-kernel@vger.kernel.org, linux-csky@vger.kernel.org,
         linux-riscv@lists.infradead.org, linux-sh@vger.kernel.org,
         xen-devel@lists.xenproject.org, linux-acpi@vger.kernel.org,
         linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: [PATCH v6 03/21] reboot: Print error message if restart handler has duplicated priority
-Date:   Mon, 31 Jan 2022 02:37:00 +0300
-Message-Id: <20220130233718.21544-4-digetx@gmail.com>
+Subject: [PATCH v6 06/21] csky: Use do_kernel_power_off()
+Date:   Mon, 31 Jan 2022 02:37:03 +0300
+Message-Id: <20220130233718.21544-7-digetx@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220130233718.21544-1-digetx@gmail.com>
 References: <20220130233718.21544-1-digetx@gmail.com>
@@ -112,42 +112,40 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Add sanity check which ensures that there are no two restart handlers
-registered using the same priority. This requirement will become mandatory
-once all drivers will be converted to the new API and such errors will be
-fixed.
+Kernel now supports chained power-off handlers. Use do_kernel_power_off()
+that invokes chained power-off handlers. It also invokes legacy
+pm_power_off() for now, which will be removed once all drivers will
+be converted to the new power-off API.
 
+Acked-by: Guo Ren <guoren@kernel.org>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- kernel/reboot.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ arch/csky/kernel/power.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/kernel/reboot.c b/kernel/reboot.c
-index 6bcc5d6a6572..35f0cde641c1 100644
---- a/kernel/reboot.c
-+++ b/kernel/reboot.c
-@@ -182,6 +182,21 @@ static ATOMIC_NOTIFIER_HEAD(restart_handler_list);
-  */
- int register_restart_handler(struct notifier_block *nb)
+diff --git a/arch/csky/kernel/power.c b/arch/csky/kernel/power.c
+index 923ee4e381b8..86ee202906f8 100644
+--- a/arch/csky/kernel/power.c
++++ b/arch/csky/kernel/power.c
+@@ -9,16 +9,14 @@ EXPORT_SYMBOL(pm_power_off);
+ void machine_power_off(void)
  {
-+	int ret;
-+
-+	ret = atomic_notifier_chain_register_unique_prio(&restart_handler_list, nb);
-+	if (ret != -EBUSY)
-+		return ret;
-+
-+	/*
-+	 * Handler must have unique priority. Otherwise call order is
-+	 * determined by registration order, which is unreliable.
-+	 *
-+	 * This requirement will become mandatory once all drivers
-+	 * will be converted to use new sys-off API.
-+	 */
-+	pr_err("failed to register restart handler using unique priority\n");
-+
- 	return atomic_notifier_chain_register(&restart_handler_list, nb);
+ 	local_irq_disable();
+-	if (pm_power_off)
+-		pm_power_off();
++	do_kernel_power_off();
+ 	asm volatile ("bkpt");
  }
- EXPORT_SYMBOL(register_restart_handler);
+ 
+ void machine_halt(void)
+ {
+ 	local_irq_disable();
+-	if (pm_power_off)
+-		pm_power_off();
++	do_kernel_power_off();
+ 	asm volatile ("bkpt");
+ }
+ 
 -- 
 2.34.1
 
