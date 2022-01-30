@@ -2,166 +2,105 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC589C433EF
-	for <linux-tegra@archiver.kernel.org>; Sun, 30 Jan 2022 23:40:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1556C433EF
+	for <linux-tegra@archiver.kernel.org>; Mon, 31 Jan 2022 00:00:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1357247AbiA3Xku (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 30 Jan 2022 18:40:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34434 "EHLO
+        id S244145AbiAaAAD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 30 Jan 2022 19:00:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39244 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1357008AbiA3XiG (ORCPT
+        with ESMTP id S243945AbiAaAAC (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 30 Jan 2022 18:38:06 -0500
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BC0BC061768;
-        Sun, 30 Jan 2022 15:38:05 -0800 (PST)
-Received: by mail-lf1-x12e.google.com with SMTP id a28so23276906lfl.7;
-        Sun, 30 Jan 2022 15:38:04 -0800 (PST)
+        Sun, 30 Jan 2022 19:00:02 -0500
+Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A438C06173B;
+        Sun, 30 Jan 2022 16:00:02 -0800 (PST)
+Received: by mail-lf1-x134.google.com with SMTP id u14so23316838lfo.11;
+        Sun, 30 Jan 2022 16:00:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=kEaxNtq4BarrclNUiioDBF+6lBsKK3a9toXDktjcMR4=;
-        b=HntJ6DyCYL+ke6f/r0is/oFtPZ4gM0JnOcriee/6UCUdnbMrZ6NOZCGasE1GEHraDu
-         pCBWJZjwmgcL07nwsUauAU2GlxacbaVxZhonKlPwwFBuAdu9viIQHcwKhf5dcL+qJ3nn
-         XhquQFTcfNjpbKfwUnK91j3Ge7sDIsFDFI/0mJTVowVMyA1BhEquZb8cXOuqYsZtg9aC
-         IwXRQGqgPsQgyNkeIMf9S+4pn8Wundfp1v2UsKp+neG01ddR2rxW0d3I1LRmyGvULbSe
-         5ToOMq/E6pAjk3+OSUQ6ZeKR1+WuSDVpNO845bw8OU98QhOQkdAG7afJAysxD5/92Ee2
-         gC9A==
+        bh=dSRXr5ZF0nstHXuLDJqj0kP/ADj336Vx1akoatH/1f4=;
+        b=QCaUpwAprGHXP3AkP+bziM+wqojb7xFEfUeDy/40PxRMK3ropDDtOFSrg4W2lpY1T4
+         bkPat1SCKo4lpe/LlE9AzrraVql9QcJiHNjbijwxvT++r5B88TlqpjT04DbqNKKkHB1m
+         CFaGZe6/9O1ahyR4fFvQ7TRtm8TLE6uotDhrplk+tFqbtLURgXjM4guWBtH56J1MCVDt
+         JOL6N8q3lvdX3j6SLap+6QOeMR/coq2y/+FyUOHhdZkVft5xaNM1uxou6nSxU9EqvM8J
+         KhGBd7ZAcvzqc01Nfd4h6LTARxZu//yXHzBxLtVs2tUgqZuD56vMWGy1g8ny5/+trtx5
+         Hb9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=kEaxNtq4BarrclNUiioDBF+6lBsKK3a9toXDktjcMR4=;
-        b=w1fPv78lWgedNIBanxpYqZC53NvGvi2vz2vyHiIwQk3p6nCZegGVNjIYnhbDTFxU15
-         HpP2pxMl9wZcQCf6X99bcGzqC9AXUWWHQhSd1VCubuc8kH43amvs9WHwkYdZSjZZ4uWB
-         Uv0sJYhCS6gJrituWKKj8zT0wnXlSUaSdxUSEoY1RjREQjLzjTOdVAFlQRWWJes0ng7l
-         NxOOToSpYw2ASMcBnflHo4G29jYQrL7DlVSb68zvwspP93aoEPx0zQsD3wfGeszt5izy
-         D+AVYpccTrPQ96vQEQEcZJyaPFwZf24SkDC/VtQo+QGgE5Fkbs1lGEtoYBT1w70rb9zg
-         rgCA==
-X-Gm-Message-State: AOAM5330N36hGX/Hwmsb7hHX3nhs69r8OqgEdhfUGEZw+vjTeiO4n/ji
-        lsHJfD8cZNBLDv1JiQV7gg8=
-X-Google-Smtp-Source: ABdhPJy7y3uqXOwOev3QXphmi8L7tLYmjKiDpJEwGe8WqzvjXRaZTuzAa3HaIFQiqtNJq5XkxRnQXQ==
-X-Received: by 2002:a05:6512:310:: with SMTP id t16mr13842194lfp.138.1643585883411;
-        Sun, 30 Jan 2022 15:38:03 -0800 (PST)
+        bh=dSRXr5ZF0nstHXuLDJqj0kP/ADj336Vx1akoatH/1f4=;
+        b=5FZ/XDlTXovsXILxqoZJ29NzwqtCmBzT8VzuDgqj+tmlScFIFx3NLJ3cdc2j9GJNMQ
+         1z4fr4PTLxmdZUTynauDlnWnKBUjP1KIHZB7lfpSwrQz0Nh/urw+JwcOvNS5tq/+R8Wl
+         OR5QzopIYfxLAqtvLwBSTo7OoXKmD5eHoW278mhIUv2zOeAlc+p56al7kAMQ69UEOUYc
+         rFlfIDUhhHLzxqWgZP7fdofwKUhS9EZOnlfvtv45MWiEk7beC41rY/dFFOMSF9R0Z2oV
+         ylLKy6DCxC3nw7+ydbP6yQcADijlXlp7oB/4TnB2l418N8DNprwbfh1E0Xt5OM1h90T8
+         TGMw==
+X-Gm-Message-State: AOAM530ffgOk4KXo1JEYXeQu2IjKmici3x2UocCPbKwai8J1gqMegHS6
+        ISe0h0xZ7nQ0OU4BDt/VkK4=
+X-Google-Smtp-Source: ABdhPJxYEuAYHQSlw/+GIa/vwm5WXcLSmoc7ThaeQRELpG3jBxBX9v+KGy5wC/15zu6eB4EbBnVjJQ==
+X-Received: by 2002:ac2:490b:: with SMTP id n11mr13663286lfi.134.1643587200667;
+        Sun, 30 Jan 2022 16:00:00 -0800 (PST)
 Received: from localhost.localdomain (109-252-138-126.dynamic.spd-mgts.ru. [109.252.138.126])
-        by smtp.gmail.com with ESMTPSA id a24sm1262950ljp.112.2022.01.30.15.38.01
+        by smtp.gmail.com with ESMTPSA id e7sm3443193lfb.17.2022.01.30.16.00.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 30 Jan 2022 15:38:03 -0800 (PST)
+        Sun, 30 Jan 2022 16:00:00 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Guo Ren <guoren@kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        Joshua Thompson <funaho@jurai.org>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Sebastian Reichel <sre@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Greentime Hu <green.hu@gmail.com>,
-        Vincent Chen <deanbo422@gmail.com>,
-        "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-        Helge Deller <deller@gmx.de>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Len Brown <lenb@kernel.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, Pavel Machek <pavel@ucw.cz>,
-        Lee Jones <lee.jones@linaro.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>, alankao@andestech.com,
-        "K . C . Kuen-Chern Lin" <kclin@andestech.com>,
-        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
-Cc:     linux-kernel@vger.kernel.org, linux-csky@vger.kernel.org,
-        linux-ia64@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-        linux-riscv@lists.infradead.org, linux-sh@vger.kernel.org,
-        xen-devel@lists.xenproject.org, linux-acpi@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: [PATCH v6 21/21] reboot: Remove pm_power_off_prepare()
-Date:   Mon, 31 Jan 2022 02:37:18 +0300
-Message-Id: <20220130233718.21544-22-digetx@gmail.com>
+        Sam Ravnborg <sam@ravnborg.org>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Svyatoslav Ryhel <clamor95@gmail.com>,
+        Anton Bambura <jenneron@protonmail.com>
+Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 1/3] dt-bindings: sharp,lq101r1sx01: Add compatible for LQ101R1SX03
+Date:   Mon, 31 Jan 2022 02:59:43 +0300
+Message-Id: <20220130235945.22746-2-digetx@gmail.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220130233718.21544-1-digetx@gmail.com>
-References: <20220130233718.21544-1-digetx@gmail.com>
+In-Reply-To: <20220130235945.22746-1-digetx@gmail.com>
+References: <20220130235945.22746-1-digetx@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-All pm_power_off_prepare() users were converted to sys-off handler API.
-Remove the obsolete callback.
+From: Anton Bambura <jenneron@protonmail.com>
 
+LQ101R1SX03 is compatible with LQ101R1SX01 from software perspective,
+document it. The LQ101R1SX03 is a newer revision of LQ101R1SX01, it has
+minor differences in hardware pins in comparison to the older version.
+The newer version of the panel can be found on Android tablets, like
+ASUS TF701T.
+
+Signed-off-by: Anton Bambura <jenneron@protonmail.com>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- include/linux/pm.h |  1 -
- kernel/reboot.c    | 11 -----------
- 2 files changed, 12 deletions(-)
+ .../bindings/display/panel/sharp,lq101r1sx01.yaml          | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/pm.h b/include/linux/pm.h
-index f7d2be686359..62879bfc4b8e 100644
---- a/include/linux/pm.h
-+++ b/include/linux/pm.h
-@@ -21,7 +21,6 @@
-  * Callbacks for platform drivers to implement.
-  */
- extern void (*pm_power_off)(void);
--extern void (*pm_power_off_prepare)(void);
+diff --git a/Documentation/devicetree/bindings/display/panel/sharp,lq101r1sx01.yaml b/Documentation/devicetree/bindings/display/panel/sharp,lq101r1sx01.yaml
+index a679d3647dbd..9ec0e8aae4c6 100644
+--- a/Documentation/devicetree/bindings/display/panel/sharp,lq101r1sx01.yaml
++++ b/Documentation/devicetree/bindings/display/panel/sharp,lq101r1sx01.yaml
+@@ -30,7 +30,12 @@ allOf:
  
- struct device; /* we have a circular dep with device.h */
- #ifdef CONFIG_VT_CONSOLE_SLEEP
-diff --git a/kernel/reboot.c b/kernel/reboot.c
-index 1ae5ba86b150..6e0d4deda987 100644
---- a/kernel/reboot.c
-+++ b/kernel/reboot.c
-@@ -48,13 +48,6 @@ int reboot_cpu;
- enum reboot_type reboot_type = BOOT_ACPI;
- int reboot_force;
+ properties:
+   compatible:
+-    const: sharp,lq101r1sx01
++    oneOf:
++      - items:
++          - const: sharp,lq101r1sx03
++          - const: sharp,lq101r1sx01
++      - items:
++          - const: sharp,lq101r1sx01
  
--/*
-- * If set, this is used for preparing the system to power off.
-- */
--
--void (*pm_power_off_prepare)(void);
--EXPORT_SYMBOL_GPL(pm_power_off_prepare);
--
- /**
-  *	emergency_restart - reboot the system
-  *
-@@ -828,10 +821,6 @@ void do_kernel_power_off(void)
- 
- static void do_kernel_power_off_prepare(void)
- {
--	/* legacy pm_power_off_prepare() is unchained and has highest priority */
--	if (pm_power_off_prepare)
--		return pm_power_off_prepare();
--
- 	blocking_notifier_call_chain(&power_off_handler_list, POWEROFF_PREPARE,
- 				     NULL);
- }
+   reg: true
+   power-supply: true
 -- 
 2.34.1
 
