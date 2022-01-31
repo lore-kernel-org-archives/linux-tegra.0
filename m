@@ -2,120 +2,107 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 261A4C433F5
-	for <linux-tegra@archiver.kernel.org>; Mon, 31 Jan 2022 16:09:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13B0AC433F5
+	for <linux-tegra@archiver.kernel.org>; Mon, 31 Jan 2022 18:12:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1380165AbiAaQJ6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 31 Jan 2022 11:09:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59816 "EHLO
+        id S237281AbiAaSMc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 31 Jan 2022 13:12:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60358 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1380115AbiAaQJW (ORCPT
+        with ESMTP id S231236AbiAaSMc (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 31 Jan 2022 11:09:22 -0500
-Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0E8AC06173D;
-        Mon, 31 Jan 2022 08:08:33 -0800 (PST)
-Received: by mail-lj1-x230.google.com with SMTP id t7so20044015ljc.10;
-        Mon, 31 Jan 2022 08:08:33 -0800 (PST)
+        Mon, 31 Jan 2022 13:12:32 -0500
+Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A892DC061714;
+        Mon, 31 Jan 2022 10:12:31 -0800 (PST)
+Received: by mail-lf1-x133.google.com with SMTP id z19so28492795lfq.13;
+        Mon, 31 Jan 2022 10:12:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=ARtnzVcNl9dDSKBaCcG/d/TntN+I4MaOYNcQFv7Q8es=;
-        b=WJgmasi6ITbtf7yUBQI+682wfFnC8NExgOrfXskJFodPfm9C/g4a9x/6MquSgK2l+v
-         bKS7YRlKlvMqvdl49eCdlRj2egMvplVSwzu+IKmowqK9KDJSSosROv92lxuZ7FVPKznv
-         6q6ujZ9NGvFBTuAuSEkRfU/JVpaWvRyseZd/IET5NSBp8moUWd4Uybi1m6C7I55Sb/OC
-         AGdsPtdWK/0j+O5qi0MlsKAuQjfqw/XOru79/3yHMMoSnmTEAr+3SapcyhkxdxbskMGg
-         BFtxY8GqkAbIrOv7jfJQWgqyiQpvI4EVX20kab77BakumxUFt6ur2H/JgQ26bTamnp82
-         WBsg==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=rdIVNwv67nmAZn6Meg0bs0vVT2lvEaPKcRD9PPeIdYY=;
+        b=LRrh0REUWFjKtcauuGh5jfhwq1TtfPUpAStoxGh1BuSp7MsRpHJTISGtIbjRnH7L5i
+         eeyqNbaTmOSlbfURgVH5suiBUeL6SE7xSWvhAw7/2usSofMOgQ83xlWtlULaE//UwSX+
+         f2Kor2JCpnHUhVr3qcY94IfepImszFbyz7xXm3+U15ruu+VA7gA037hG9h2XFqP/iMO1
+         ByX/j/ASQjcUx0XeNHZe2L2h3pZ7TEozWncTnL4Q5fS/e4GQgX5If5u/d0n942B8YXnf
+         nDOgrwW8XJcy+mG1XyDknjG/U9Ts6ikFSR6bGxIv1avfHVyZnaisFFwveo+kqVXl8Kcx
+         +JDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=ARtnzVcNl9dDSKBaCcG/d/TntN+I4MaOYNcQFv7Q8es=;
-        b=uarqhFeeFKTXgb59qF8N2rvvsuhoCuAiYBHv5V8eQVJLJjS78HAwX7BTpAtWfMKKnS
-         2V11ZX3sBpGACGmuH1j5CZqOM0Gnz6M4b562+wur/9DR+dgPlEJZCa4nl8AxNT46AN76
-         3sb63JjAvQPkHbeboyMy37ee9dboEyya7KsNcrEY/aOu6Q5RUkzhAY2rrMApNDEeKmut
-         /ytbILRdeSQswoRT4oyiwyisYwRymsOr1few7f2fI1XvwnZicGuVxKskDmLyfhTBwDDi
-         ELIxYd4O5lWWLiJqYwwrBbJunWQ100GWj0KikegrVl2f/+RwR4BzUR8keN1iwKJKmGPr
-         kO0A==
-X-Gm-Message-State: AOAM533iNYAaASGgNGxY+UJfPmpfyld24hPAWT4UQDDEoeSNyGAaZSRw
-        GGO/cPZCJ/me5kp9GxRwogk=
-X-Google-Smtp-Source: ABdhPJxymwrKsMsgUICadUNuZPe8Y4nSbOndhqHboWZkAfSn7QX1tmMD1335BwZUplbFeUA7dx3/ow==
-X-Received: by 2002:a2e:3102:: with SMTP id x2mr13737332ljx.211.1643645312238;
-        Mon, 31 Jan 2022 08:08:32 -0800 (PST)
-Received: from [192.168.2.145] (109-252-138-136.dynamic.spd-mgts.ru. [109.252.138.136])
-        by smtp.googlemail.com with ESMTPSA id f15sm1942307lfk.198.2022.01.31.08.08.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 31 Jan 2022 08:08:31 -0800 (PST)
-Message-ID: <6dfdfd02-bfc3-1626-f819-7ddcc8bf9c1c@gmail.com>
-Date:   Mon, 31 Jan 2022 19:08:29 +0300
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH v17 2/4] dmaengine: tegra: Add tegra gpcdma driver
-Content-Language: en-US
-To:     Akhil R <akhilrajeev@nvidia.com>
-Cc:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Krishna Yarlagadda <kyarlagadda@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
-        Rajesh Gumasta <rgumasta@nvidia.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        "vkoul@kernel.org" <vkoul@kernel.org>,
-        Pavan Kunapuli <pkunapuli@nvidia.com>
-References: <1643474453-32619-1-git-send-email-akhilrajeev@nvidia.com>
- <1643474453-32619-3-git-send-email-akhilrajeev@nvidia.com>
- <ba109465-d7ee-09cb-775b-9b702a3910b0@gmail.com>
- <DM5PR12MB1850D836ACDF95008EF74CC7C0249@DM5PR12MB1850.namprd12.prod.outlook.com>
- <08f6571e-af75-b6b3-443e-e86e3bdb365b@gmail.com>
- <DM5PR12MB1850FD5F3EF5CBFEA97B3611C0259@DM5PR12MB1850.namprd12.prod.outlook.com>
- <20220131094205.73f5f8c3@dimatab>
- <DM5PR12MB1850D677140466EC74C621A4C0259@DM5PR12MB1850.namprd12.prod.outlook.com>
- <8abf2da8-9a11-8f16-b495-d8ef2d00ab51@gmail.com>
- <DM5PR12MB18505C4CB4A34F96E74BF28FC0259@DM5PR12MB1850.namprd12.prod.outlook.com>
+        bh=rdIVNwv67nmAZn6Meg0bs0vVT2lvEaPKcRD9PPeIdYY=;
+        b=0JbmDqSZTMR07/byDP8wv2bC+7MW2koAvVkXdQlhrkhpKl8r5fy+rikT5H6H3SU1Bt
+         vQsdf3AbfsT+8DIt4hzDJxv0s28rlDmp7H+Ufzhm8lnbanJHu/cXre31lEyCVE3LlSsk
+         gDFY+bSjsXipcqiBrAk7QPZJKYh1T7UHxjyY1eT3jNkY7uXzEY7zSpAMyydEgpnxJ/38
+         0b6LINCx8zhD3cLE4X2QojiUcQstCQG4iVifT/sRhaU9XXMM0E4tlRoK5Wkzg+p+Ca9v
+         tq8llAL1B6GMr+bnK8T4hBv55j5FsJxWCLOT//N0apvpM7BqILjCy6VqiV67cNSd7r1W
+         o0lA==
+X-Gm-Message-State: AOAM530a1yhYxlhd8O99l6OQrtzLNNrgkEqfZ7f9kMytfqHiXTeiPsd2
+        ooAb5E2ckUOnCpoMrYbb8vo=
+X-Google-Smtp-Source: ABdhPJyArIphe7sL0+h3OTFg6e6Oc0MyMPpil5i3WNsyQo6pmmqGBZ9Unfn1LqzepY2cXIixtyIbFg==
+X-Received: by 2002:ac2:5190:: with SMTP id u16mr14837853lfi.257.1643652749969;
+        Mon, 31 Jan 2022 10:12:29 -0800 (PST)
+Received: from localhost.localdomain (109-252-138-136.dynamic.spd-mgts.ru. [109.252.138.136])
+        by smtp.gmail.com with ESMTPSA id r17sm3391297lfg.237.2022.01.31.10.12.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 31 Jan 2022 10:12:29 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
-In-Reply-To: <DM5PR12MB18505C4CB4A34F96E74BF28FC0259@DM5PR12MB1850.namprd12.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Svyatoslav Ryhel <clamor95@gmail.com>,
+        Anton Bambura <jenneron@protonmail.com>
+Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v4 0/3] Support Sharp LQ101R1SX03 and HannStar HSD101PWW2 panels
+Date:   Mon, 31 Jan 2022 21:12:05 +0300
+Message-Id: <20220131181208.27101-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.34.1
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-31.01.2022 18:38, Akhil R пишет:
-> Does the below method look good? bytes_xfer is updated on every ISR and in
-> tx_status(), the wcount is read to calculate the intermittent value. If the transfer
-> get complete in between, use wcount as 0 to add sg_req.len to bytes_xfer
-> 
-> static int tegra_dma_get_residual(struct tegra_dma_channel *tdc)
-> {
-> 	unsigned long wcount = 0, status;
-> 	unsigned int bytes_xfer, residual;
-> 	struct tegra_dma_desc *dma_desc = tdc->dma_desc;
-> 	struct tegra_dma_sg_req *sg_req = dma_desc->sg_req;
-> 
-> 	/*
-> 	 * Do not read from CHAN_XFER_COUNT if EOC bit is set
-> 	 * as the transfer would have already completed and
-> 	 * the register could have updated for next transfer
-> 	 * in case of cyclic transfers.
-> 	 */
-> 	status = tdc_read(tdc, TEGRA_GPCDMA_CHAN_STATUS);
-> 	if (!(status & TEGRA_GPCDMA_STATUS_ISE_EOC))
-> 		wcount = tdc_read(tdc, TEGRA_GPCDMA_CHAN_XFER_COUNT);
+This series adds support for Sharp LQ101R1SX03 and HannStar HSD101PWW2
+display panels that are used by Asus Transformer tablets, which we're
+planning to support since 5.17 kernel.
 
-You can't read WCOUNT after the STATUS without racing with the STATUS
-updates made by h/w. You should read the WCOUNT first and only then
-check the STATUS.
+Changelog:
 
-You should also check whether T20 tegra_dma_sg_bytes_xferred()
-workarounds apply to newer h/w. I see that the h/w base hasn't changed
-much since T20.
+v4: - Added r-b from Rob Herring that he gave to the LQ101R1SX01 DT patch
+      of v2. I missed to add it to the v3 by accident.
 
-Otherwise looks okay.
+v3: - No changes. Re-sending for 5.18. Device-trees of devices that use
+      these panels were merged to 5.17, so we're missing the display support.
+
+v2: - Added ack from Rob Herring to the HSD101PWW2 binding.
+
+    - Updated LQ101R1SX01 binding, like it was suggested by Rob Herring,
+      making LQ101R1SX03 directly compatible with the LQ101R1SX01.
+      Such that ["sharp,lq101r1sx03", "sharp,lq101r1sx01"] could be
+      used in DT. This removes need to update panel driver with the new
+      compatible.
+
+    - Improved commit message of the LQ101R1SX03 patch.
+
+    - Added my s-o-b to all patches.
+
+Anton Bambura (1):
+  dt-bindings: sharp,lq101r1sx01: Add compatible for LQ101R1SX03
+
+Svyatoslav Ryhel (2):
+  dt-bindings: display: simple: Add HannStar HSD101PWW2
+  drm/panel: simple: Add support for HannStar HSD101PWW2 panel
+
+ .../bindings/display/panel/panel-simple.yaml  |  2 ++
+ .../display/panel/sharp,lq101r1sx01.yaml      |  7 ++++-
+ drivers/gpu/drm/panel/panel-simple.c          | 28 +++++++++++++++++++
+ 3 files changed, 36 insertions(+), 1 deletion(-)
+
+-- 
+2.34.1
+
