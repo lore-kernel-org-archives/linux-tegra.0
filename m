@@ -2,130 +2,142 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98DB6C43217
-	for <linux-tegra@archiver.kernel.org>; Mon, 31 Jan 2022 18:13:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27469C4332F
+	for <linux-tegra@archiver.kernel.org>; Mon, 31 Jan 2022 20:39:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240600AbiAaSNA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 31 Jan 2022 13:13:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60382 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241657AbiAaSMg (ORCPT
+        id S1377071AbiAaUji (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 31 Jan 2022 15:39:38 -0500
+Received: from dfw.source.kernel.org ([139.178.84.217]:37656 "EHLO
+        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1343999AbiAaUjh (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 31 Jan 2022 13:12:36 -0500
-Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B347C06173D;
-        Mon, 31 Jan 2022 10:12:35 -0800 (PST)
-Received: by mail-lf1-x12f.google.com with SMTP id b9so28574041lfq.6;
-        Mon, 31 Jan 2022 10:12:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=cLMbzDUhFlSgdQoGKuc6SBBSjoGSeYRwJlFPN5QbfOY=;
-        b=ANUFXXwX2YcLIAHhlsl8gAwz4wWPRA0Xx6q0Cv81zIz5wxJM4NrZe/HyWIbPQjJzXb
-         /Ae30/sQTePYIB1p0u2pi3tKoqYV6Dna792X5FrDgwvqpE9819OyUyh/yWihNn437W6n
-         kjCAVMA9nf+RdayheNYrtzvlYt2UMHthAt5A1vrvjYZXo4RGA3C+EvmA1VOPklpCo0kp
-         6BJR3VL+I+S31HtHQ1LbV8yWxRw4mChptQnljGTR8prEEnKG/lR430wqhE5bKanqwMLI
-         5fSXMiWU4bt9r5g40pgWoI9dxPTJXlcvNVD83cMZ+oIsjCS46iGnU6I6qBbcZiOlQqH2
-         7XEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=cLMbzDUhFlSgdQoGKuc6SBBSjoGSeYRwJlFPN5QbfOY=;
-        b=j22m5TKnFJCHUsNzAYioDAHuNphmdJ1ZIvxl2rOj1G1RHG7q9IP9WnSUd4/Tut0drj
-         yaBcxvefwOXAhSiUGgbFDb108GwSdrKxMoSihLeUtMmzhLgmTdZSQmP5OGzh2OyZ7yyA
-         sHe8ifyvKnEqUnwOsC53WqYhGYnCjM8uxkFWEQaPilVkJoJ7jjO3VM22hS/2a4SxUKuX
-         U9odtO6248cMpUf0CWcpw7LEe7aEyoEbK86vxaUrmYo/vjZeKSW8eHI9zp/2gwdGNAtS
-         dbiUi1MBbZFN326qfCHx89AiCSvunJaI61tpzbFEVXjpCri0DrnxvZ4VVMDWr0ma1mrB
-         AaWA==
-X-Gm-Message-State: AOAM531sClG3exyIw5Z0efatjvz5SLALZmcxZHHfOGOxLNncdYh93kSc
-        imltwSjynQAj5MQpQ5OlJoA=
-X-Google-Smtp-Source: ABdhPJymMyjm5MduvH4M1VM7ckT6HH+iAiDsfRx9j23P6J5bCMxDdCIzNtS/+4EYF/aS/385tkmtcg==
-X-Received: by 2002:a19:5219:: with SMTP id m25mr17005211lfb.502.1643652753919;
-        Mon, 31 Jan 2022 10:12:33 -0800 (PST)
-Received: from localhost.localdomain (109-252-138-136.dynamic.spd-mgts.ru. [109.252.138.136])
-        by smtp.gmail.com with ESMTPSA id r17sm3391297lfg.237.2022.01.31.10.12.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 31 Jan 2022 10:12:32 -0800 (PST)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Svyatoslav Ryhel <clamor95@gmail.com>,
-        Anton Bambura <jenneron@protonmail.com>
-Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 3/3] drm/panel: simple: Add support for HannStar HSD101PWW2 panel
-Date:   Mon, 31 Jan 2022 21:12:08 +0300
-Message-Id: <20220131181208.27101-4-digetx@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220131181208.27101-1-digetx@gmail.com>
-References: <20220131181208.27101-1-digetx@gmail.com>
+        Mon, 31 Jan 2022 15:39:37 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id D4412614C2;
+        Mon, 31 Jan 2022 20:39:36 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37D95C340E8;
+        Mon, 31 Jan 2022 20:39:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1643661576;
+        bh=LlCWcmjo9XBLXtkZjmaUu+sQAjNy8t3wD356RhDm6+8=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=dbIvvaZtUtglyEdPJeUXqJeRCSK+nQ6All4q5LCLeHNekPbJGzAd5HBkBDMUdPyEX
+         aLGoz9yVDcpb77joBuHGnfcQ20RTksmJJA8Y7SrJ9Rew6tW4rcMIZRXV5cttCSPQ0D
+         HkEINXYQFrsUCNmd3iD1ToriUf9adNj2trOKs5EHQpQh2ZgYg2jkD+SsyjO4qmwmJU
+         upmD5OlqmrXdrSY7oYrS3dOZxgV98KvJJ3JFZxzIEf0AVbUnMz0iuLBk8UlKNXkBOk
+         lpi4tu/p3npuGwGoPD/pO37vgzqDNONpZMMhn8MfAwiO9zjbATlOiIceIevlZ9aNye
+         Lvr+4f0EY7Kbg==
+Received: from disco-boy.misterjones.org ([51.254.78.96] helo=www.loen.fr)
+        by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <maz@kernel.org>)
+        id 1nEdSX-004Ugn-LI; Mon, 31 Jan 2022 20:39:33 +0000
 MIME-Version: 1.0
+Date:   Mon, 31 Jan 2022 20:39:33 +0000
+From:   Marc Zyngier <maz@kernel.org>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Jon Hunter <jonathanh@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        =?UTF-8?Q?U?= =?UTF-8?Q?we_Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>, Nishanth Menon <nm@ti.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-pwm@vger.kernel.org,
+        linux-mmc@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-clk@vger.kernel.org, David Heidelberg <david@ixit.cz>
+Subject: Re: [PATCH v16 08/40] gpu: host1x: Add initial runtime PM and OPP
+ support
+In-Reply-To: <40983f6e-92ee-40d4-861f-06faea0113fc@gmail.com>
+References: <20211130232347.950-1-digetx@gmail.com>
+ <20211130232347.950-9-digetx@gmail.com>
+ <21212ddb-205f-71d6-0199-d75768eaf32c@nvidia.com>
+ <41edc53b-5ed1-d524-2546-c3d1ee6cdea4@gmail.com>
+ <6652ac84-36f5-0e43-65fa-04786f384f21@nvidia.com>
+ <56dce9c7-397d-75b0-b5b8-18ce1084e72b@nvidia.com>
+ <6dbc8205-5669-8b08-16b8-fe5e1acdd06f@gmail.com>
+ <796eb3f7-80e2-bc55-fd52-43e76220f8c2@nvidia.com>
+ <40983f6e-92ee-40d4-861f-06faea0113fc@gmail.com>
+User-Agent: Roundcube Webmail/1.4.13
+Message-ID: <6adda63b4de6b55d11426ecbb08d6c51@kernel.org>
+X-Sender: maz@kernel.org
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
 Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 51.254.78.96
+X-SA-Exim-Rcpt-To: digetx@gmail.com, jonathanh@nvidia.com, thierry.reding@gmail.com, ulf.hansson@linaro.org, vireshk@kernel.org, sboyd@kernel.org, pdeschrijver@nvidia.com, mperttunen@nvidia.com, lee.jones@linaro.org, u.kleine-koenig@pengutronix.de, nm@ti.com, adrian.hunter@intel.com, mturquette@baylibre.com, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, linux-pwm@vger.kernel.org, linux-mmc@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org, david@ixit.cz
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Svyatoslav Ryhel <clamor95@gmail.com>
+Hi all,
 
-Add definition of the HannStar HSD101PWW2 Rev0-A00/A01 LCD
-SuperIPS+ HD panel.
+On 2021-12-22 19:31, Dmitry Osipenko wrote:
+> 22.12.2021 22:30, Jon Hunter пишет:
+>> 
+>> On 22/12/2021 19:01, Dmitry Osipenko wrote:
+>> 
+>> ...
+>> 
+>>> diff --git a/drivers/gpu/host1x/syncpt.c 
+>>> b/drivers/gpu/host1x/syncpt.c
+>>> index e08e331e46ae..8194826c9ce3 100644
+>>> --- a/drivers/gpu/host1x/syncpt.c
+>>> +++ b/drivers/gpu/host1x/syncpt.c
+>>> @@ -137,6 +137,15 @@ void host1x_syncpt_restore(struct host1x *host)
+>>>       struct host1x_syncpt *sp_base = host->syncpt;
+>>>       unsigned int i;
+>>> 
+>>> +    for (i = 0; i < host->info->nb_pts; i++) {
+>>> +        /*
+>>> +         * Unassign syncpt from channels for purposes of Tegra186
+>>> +         * syncpoint protection. This prevents any channel from
+>>> +         * accessing it until it is reassigned.
+>>> +         */
+>>> +        host1x_hw_syncpt_assign_to_channel(host, sp_base + i, NULL);
+>>> +    }
+>>> +
+>>>       for (i = 0; i < host1x_syncpt_nb_pts(host); i++)
+>>>           host1x_hw_syncpt_restore(host, sp_base + i);
+>>> 
+>>> @@ -352,13 +361,6 @@ int host1x_syncpt_init(struct host1x *host)
+>>>       for (i = 0; i < host->info->nb_pts; i++) {
+>>>           syncpt[i].id = i;
+>>>           syncpt[i].host = host;
+>>> -
+>>> -        /*
+>>> -         * Unassign syncpt from channels for purposes of Tegra186
+>>> -         * syncpoint protection. This prevents any channel from
+>>> -         * accessing it until it is reassigned.
+>>> -         */
+>>> -        host1x_hw_syncpt_assign_to_channel(host, &syncpt[i], NULL);
+>>>       }
+>>> 
+>>>       for (i = 0; i < host->info->nb_bases; i++)
+>>> 
+>> 
+>> 
+>> Thanks! This fixed it!
+> 
+> I'll prepare proper patch with yours t-b, thank you.
 
-Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/gpu/drm/panel/panel-simple.c | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+The fix has been in -next for some time now, but it still hasn't
+made it into Linus' tree (at least not in -rc2).
 
-diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
-index 9e46db5e359c..1bfa2d1b61fd 100644
---- a/drivers/gpu/drm/panel/panel-simple.c
-+++ b/drivers/gpu/drm/panel/panel-simple.c
-@@ -1927,6 +1927,31 @@ static const struct panel_desc hannstar_hsd100pxn1 = {
- 	.connector_type = DRM_MODE_CONNECTOR_LVDS,
- };
- 
-+static const struct display_timing hannstar_hsd101pww2_timing = {
-+	.pixelclock = { 64300000, 71100000, 82000000 },
-+	.hactive = { 1280, 1280, 1280 },
-+	.hfront_porch = { 1, 1, 10 },
-+	.hback_porch = { 1, 1, 10 },
-+	.hsync_len = { 58, 158, 661 },
-+	.vactive = { 800, 800, 800 },
-+	.vfront_porch = { 1, 1, 10 },
-+	.vback_porch = { 1, 1, 10 },
-+	.vsync_len = { 1, 21, 203 },
-+	.flags = DISPLAY_FLAGS_DE_HIGH,
-+};
-+
-+static const struct panel_desc hannstar_hsd101pww2 = {
-+	.timings = &hannstar_hsd101pww2_timing,
-+	.num_timings = 1,
-+	.bpc = 8,
-+	.size = {
-+		.width = 217,
-+		.height = 136,
-+	},
-+	.bus_format = MEDIA_BUS_FMT_RGB888_1X7X4_SPWG,
-+	.connector_type = DRM_MODE_CONNECTOR_LVDS,
-+};
-+
- static const struct drm_display_mode hitachi_tx23d38vm0caa_mode = {
- 	.clock = 33333,
- 	.hdisplay = 800,
-@@ -3802,6 +3827,9 @@ static const struct of_device_id platform_of_match[] = {
- 	}, {
- 		.compatible = "hannstar,hsd100pxn1",
- 		.data = &hannstar_hsd100pxn1,
-+	}, {
-+		.compatible = "hannstar,hsd101pww2",
-+		.data = &hannstar_hsd101pww2,
- 	}, {
- 		.compatible = "hit,tx23d38vm0caa",
- 		.data = &hitachi_tx23d38vm0caa
+Any hope for this to land -rc3?
+
+Thanks,
+
+      M.
 -- 
-2.34.1
-
+Jazz is not dead. It just smells funny...
