@@ -2,76 +2,59 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85626C433EF
-	for <linux-tegra@archiver.kernel.org>; Tue,  1 Feb 2022 23:44:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D6E2C433EF
+	for <linux-tegra@archiver.kernel.org>; Wed,  2 Feb 2022 10:07:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230139AbiBAXok (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 1 Feb 2022 18:44:40 -0500
-Received: from mail-oi1-f179.google.com ([209.85.167.179]:33642 "EHLO
-        mail-oi1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230127AbiBAXoj (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 1 Feb 2022 18:44:39 -0500
-Received: by mail-oi1-f179.google.com with SMTP id x193so36704723oix.0;
-        Tue, 01 Feb 2022 15:44:39 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=xJ5ww5IowYah3vuOkTM8CuTagH4Jd5vAIL+T4NILP4U=;
-        b=g380H+4YQ8sp3j/fYvePpI99GGgxYYvSyaG1Gp+pZlakKuyT0Rb0NNKbSVae7wkAwv
-         9O3suv/feGBIVSRZHwh8ritwlRu59ZoFaW5uBI4kviFQ9W11pLwopYZgw5vSQQwjX2OS
-         WOA28j5/EXd5TY4Eo+Eddw/weOb5vJdZOuujsybSmMg8AeP6Wm0Kv+w0RLsIFaJTmBhe
-         4U42N6RMBx/TjSaYQeedgVs9EJ/N/ZxuRlUMBTdbjXc5te2Tf87e4dkJ4x/r8PVRIvl/
-         uYExYgpBw7bUVrM/rLbKz39bFhJQTrOdZ4VeR74j5SeRqJxyWFWKGxo5kiPXmznhOdzJ
-         mjig==
-X-Gm-Message-State: AOAM531A5Mpkf5wJjEtlFnZCh7iIAXSqmjqaO6ZO099xjctyk6CObN/j
-        UkyTpohszAiiTJT7q6AWYw==
-X-Google-Smtp-Source: ABdhPJze9s7mNLSyDWw1RyySuLSwpCDHLYGjvVviYTYm+PB29dALZWT1UEjiI37xaHSSpMrSmOPzsQ==
-X-Received: by 2002:a05:6808:23cc:: with SMTP id bq12mr2761135oib.230.1643759079139;
-        Tue, 01 Feb 2022 15:44:39 -0800 (PST)
-Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id g34sm11925438ooi.48.2022.02.01.15.44.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Feb 2022 15:44:38 -0800 (PST)
-Received: (nullmailer pid 989022 invoked by uid 1000);
-        Tue, 01 Feb 2022 23:44:37 -0000
-Date:   Tue, 1 Feb 2022 17:44:37 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Sam Ravnborg <sam@ravnborg.org>, linux-tegra@vger.kernel.org,
-        Svyatoslav Ryhel <clamor95@gmail.com>,
-        dri-devel@lists.freedesktop.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        linux-kernel@vger.kernel.org, David Airlie <airlied@linux.ie>,
-        Anton Bambura <jenneron@protonmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>, devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 1/3] dt-bindings: sharp,lq101r1sx01: Add compatible
- for LQ101R1SX03
-Message-ID: <YfnF5XqvdQ8RpB/O@robh.at.kernel.org>
-References: <20220130235945.22746-1-digetx@gmail.com>
- <20220130235945.22746-2-digetx@gmail.com>
+        id S239774AbiBBKHQ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 2 Feb 2022 05:07:16 -0500
+Received: from mail.trueanalyze24.com ([149.154.157.156]:39204 "EHLO
+        mail.trueanalyze24.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239755AbiBBKHQ (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 2 Feb 2022 05:07:16 -0500
+Received: by mail.trueanalyze24.com (Postfix, from userid 1001)
+        id B598143F4F; Wed,  2 Feb 2022 10:29:43 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=trueanalyze24.com;
+        s=mail; t=1643796264;
+        bh=EGenFkmmv/iHCwB4AbTzX8IXCMu1xRW+9eep7HJGZMM=;
+        h=Date:From:To:Subject:From;
+        b=XE0/r6bd3LRuyop9N5W/6tVDT7J1gHi8Ma7RkEacG3K8RUUWTvR1PmEPQXe5FGv0Y
+         s2Hawwbqdxy3nHsPGWCUC9hfv4nbtFXBGXKDlLSO4M1QtgnM1SwrmIoaDmG5ZeU3TB
+         RR+KxCIuxaYkiiRIJAKEZqAJt3VDieD/AwDOW/9ZdT062vLlZmhHZi5xcjnPuM+DUo
+         vAIDU6NPsmPEC6O4AkJ1wPGC6edGMi2/hWSu8SBXkjh+xEZZIPEd+kHq/XqYNG3BRy
+         B888b9tV5JQ4pWiwxDB3egAFZJ5lM0ahOVG5vXrPTgmxmYhCdVPfNxTjwTtK73fb0T
+         U2x96Y+dS3Vbg==
+Received: by mail.trueanalyze24.com for <linux-tegra@vger.kernel.org>; Wed,  2 Feb 2022 09:28:42 GMT
+Message-ID: <20220202084511-0.1.1h.h5cq.0.pbu7bjq89l@trueanalyze24.com>
+Date:   Wed,  2 Feb 2022 09:28:42 GMT
+From:   "Mateusz Talaga" <mateusz.talaga@trueanalyze24.com>
+To:     <linux-tegra@vger.kernel.org>
+Subject: Prezentacja
+X-Mailer: mail.trueanalyze24.com
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220130235945.22746-2-digetx@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, 31 Jan 2022 02:59:43 +0300, Dmitry Osipenko wrote:
-> From: Anton Bambura <jenneron@protonmail.com>
-> 
-> LQ101R1SX03 is compatible with LQ101R1SX01 from software perspective,
-> document it. The LQ101R1SX03 is a newer revision of LQ101R1SX01, it has
-> minor differences in hardware pins in comparison to the older version.
-> The newer version of the panel can be found on Android tablets, like
-> ASUS TF701T.
-> 
-> Signed-off-by: Anton Bambura <jenneron@protonmail.com>
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  .../bindings/display/panel/sharp,lq101r1sx01.yaml          | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
-> 
+Dzie=C5=84 dobry!
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Czy m=C3=B3g=C5=82bym przedstawi=C4=87 rozwi=C4=85zanie, kt=C3=B3re umo=C5=
+=BCliwia monitoring ka=C5=BCdego auta w czasie rzeczywistym w tym jego po=
+zycj=C4=99, zu=C5=BCycie paliwa i przebieg?
+
+Dodatkowo nasze narz=C4=99dzie minimalizuje koszty utrzymania samochod=C3=
+=B3w, skraca czas przejazd=C3=B3w, a tak=C5=BCe tworzenie planu tras czy =
+dostaw.
+
+Z naszej wiedzy i do=C5=9Bwiadczenia korzysta ju=C5=BC ponad 49 tys. Klie=
+nt=C3=B3w. Monitorujemy 809 000 pojazd=C3=B3w na ca=C5=82ym =C5=9Bwiecie,=
+ co jest nasz=C4=85 najlepsz=C4=85 wizyt=C3=B3wk=C4=85.
+
+Bardzo prosz=C4=99 o e-maila zwrotnego, je=C5=9Bli mogliby=C5=9Bmy wsp=C3=
+=B3lnie om=C3=B3wi=C4=87 potencja=C5=82 wykorzystania takiego rozwi=C4=85=
+zania w Pa=C5=84stwa firmie.
+
+
+Z powa=C5=BCaniem,
+Mateusz Talaga
