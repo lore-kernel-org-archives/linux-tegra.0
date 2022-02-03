@@ -2,123 +2,92 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC0A1C43219
-	for <linux-tegra@archiver.kernel.org>; Thu,  3 Feb 2022 17:52:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5C88C433EF
+	for <linux-tegra@archiver.kernel.org>; Thu,  3 Feb 2022 18:22:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353177AbiBCRwz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 3 Feb 2022 12:52:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48824 "EHLO
+        id S240035AbiBCSWx (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 3 Feb 2022 13:22:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56470 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344584AbiBCRvl (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 3 Feb 2022 12:51:41 -0500
-Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CB4DC061753;
-        Thu,  3 Feb 2022 09:51:10 -0800 (PST)
-Received: by mail-lf1-x135.google.com with SMTP id k13so7571908lfg.9;
-        Thu, 03 Feb 2022 09:51:09 -0800 (PST)
+        with ESMTP id S233836AbiBCSWw (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 3 Feb 2022 13:22:52 -0500
+Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 678AFC061714;
+        Thu,  3 Feb 2022 10:22:52 -0800 (PST)
+Received: by mail-lf1-x12d.google.com with SMTP id u6so7725370lfm.10;
+        Thu, 03 Feb 2022 10:22:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=c40bPrHQjIbgf0eWeT2zwsJ4RQU/yT+6ZwMVByjiTgI=;
-        b=VlXK0AMpTH0qhx6en1xgTax8rQm7INYcf+/H+QO1D3+gRrPsazrMxrDydLT42k13jh
-         nUCmQqMtGq8RLgBi06k6w/dUnZR19gpmfZXQSlch7P780eb9z/F+o96bsjDR+6NiJivn
-         FckpEcHjELx1VWq8lM3kw3MKLKlPhZ5IaqC5tNxySysLzAFvekO26FbtyWF8lWov9kYM
-         G/+yq3y98JuD/oxPlc3GQ8QE2XbzxD9k4shlm75Fobkqk1JgCiP+WAlKyVNv6edgsacp
-         BUknqEdlETyXIkqSGsDSU+9/iectZv7PRWhPqNfd/rfvkEimlfDB9WyFAj8MWAcRb1/Q
-         lFeg==
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=bng1VAntY/a3MWNMO6+RyoYVA2d8DbBn++5DPIHqtuE=;
+        b=oUvg3YIN+C0100TFCoV/mVO86/Yq4luRNsxS6SFksfs2C5x06U7fRzh0nfJCu2979d
+         Yo6Cx8hO0BldiQfZQsUOR9xbBocmoaYRNuJ9rCM5YNkLNGFD+2E3uYMiNc8byQixijs7
+         DX0uCXEY8A0PRyMIkh9Bq/RBmLlu7w5e5TWv1m7x/G1uAC2iPFedObhXYVN54UCMOwVp
+         ZnrZFAoKsG/7Z/1GQU0uLo7o36gqNmMtbgsaGQ6LZuZSlPFW+QmLPWO3tZN1CbcvlW/Z
+         xKk4yx1pHU62LGb4FGzUkNQyTk2AeWo5DSYd49sDLdlJO4UhrzAlqxy+JRbc8LHxgS8M
+         pZow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=c40bPrHQjIbgf0eWeT2zwsJ4RQU/yT+6ZwMVByjiTgI=;
-        b=bJ/57GxL0zxsgEj9H66RG5WgN0fNaxOFgjVj7lHxQtqT5JwChj//Kdl0FN0sGjnJee
-         7tPCIjUvw/CZNtPFY+XdW0UB8iFkIRxlccNaYCr+wWu+xdxNIFZB1dCw6SXihABvtSHu
-         3wliWMMHfqkM4Lr4O54mJauk+MFsAV3NLeKEm5zh6ZGBLZrinXyjB0DzWlbXEGgT3rYX
-         4VIFSn0RIWQrlv2wKIz9TYMFlRJ4DIwcP8MIge4t53p2BwWlB0b2tle49G+DFrVG56K+
-         5aV8WV4tiSEUg7QopIjVrJnCNVg260m84IKAlenTUiEByC0djPaGSgXkXmv8iuwLNATH
-         m4Lg==
-X-Gm-Message-State: AOAM531s1LhmLgM0ZD+pDQ/SICCes3zBS+/H8MnMoUSC8P4ltC4csUfv
-        9NlP57hKf0lyNQffxNTUEaI=
-X-Google-Smtp-Source: ABdhPJyi9FtMW5FIeWes6Fh5+v4jj6jJF+9c4Bne95ATRab6MsvPKb383kpap7zsh4dEvWwcd9dsBg==
-X-Received: by 2002:a05:6512:68e:: with SMTP id t14mr28263542lfe.366.1643910668248;
-        Thu, 03 Feb 2022 09:51:08 -0800 (PST)
-Received: from orome ([193.209.96.43])
-        by smtp.gmail.com with ESMTPSA id 8sm3857623lfq.200.2022.02.03.09.51.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Feb 2022 09:51:07 -0800 (PST)
-Date:   Thu, 3 Feb 2022 18:51:04 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>, Nishanth Menon <nm@ti.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-pwm@vger.kernel.org,
-        linux-mmc@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-clk@vger.kernel.org, David Heidelberg <david@ixit.cz>
-Subject: Re: [PATCH v16 33/40] soc/tegra: pmc: Enable core domain support for
- Tegra20 and Tegra30
-Message-ID: <YfwWCBzuN5q0JGm8@orome>
-References: <20211130232347.950-1-digetx@gmail.com>
- <20211130232347.950-34-digetx@gmail.com>
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=bng1VAntY/a3MWNMO6+RyoYVA2d8DbBn++5DPIHqtuE=;
+        b=Mh3Xu1w77z8CAVhHAgpzOG5SPP5n/cdvMw5tiPLZL2zIg45u9KAJNbRCtQojxuYw23
+         w8/YCf7ZOnX4MZG8FuiOH6l3TLjBQ6pC36NPUg3kgv2iVhJ+Ry84Hb+tG5trRNse+74e
+         /QVxeqzQUiK5QVyncUEz7KitCAmjVwKUlWIbM0kzNeD5xMks8FzNF4CUUuh+OaRh6hxI
+         pH37AZx8NweQZuOppTxpIM7oEJG0Br/lEvajYqOSVhFzbZj/DLXulTqmmE0pFyEbSgSG
+         X0GZq6ksFGt1xq8UGeI7cksj9zhhCPTLWNr75sRffiD5hOjiVgxW4TFIpyDgWoZEqlTH
+         HI8g==
+X-Gm-Message-State: AOAM531XnA3+eWTMSfveJh0MMeHwCZxklTzn1rJQ/HQSD87jgExd2qgG
+        aJY+sLPyqPKrmKSpWITk/gg=
+X-Google-Smtp-Source: ABdhPJyV14em01gGXmQXgKKTGilU91Wd86iUbuo0lyi5ZsD93O/rCDbCKeIysAnznWdx7ZJ2Ek8c7A==
+X-Received: by 2002:ac2:4e08:: with SMTP id e8mr27847098lfr.266.1643912570622;
+        Thu, 03 Feb 2022 10:22:50 -0800 (PST)
+Received: from [192.168.2.145] (109-252-138-165.dynamic.spd-mgts.ru. [109.252.138.165])
+        by smtp.googlemail.com with ESMTPSA id s16sm4319314lfp.197.2022.02.03.10.22.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 03 Feb 2022 10:22:50 -0800 (PST)
+Message-ID: <d6d70e52-a984-d973-f3bb-f70f1a4ce95d@gmail.com>
+Date:   Thu, 3 Feb 2022 21:22:49 +0300
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="8ffx5k3tX5AIfR+/"
-Content-Disposition: inline
-In-Reply-To: <20211130232347.950-34-digetx@gmail.com>
-User-Agent: Mutt/2.1.5 (31b18ae9) (2021-12-30)
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [PATCH v18 2/4] dmaengine: tegra: Add tegra gpcdma driver
+Content-Language: en-US
+To:     Akhil R <akhilrajeev@nvidia.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Krishna Yarlagadda <kyarlagadda@nvidia.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+        Rajesh Gumasta <rgumasta@nvidia.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        "vkoul@kernel.org" <vkoul@kernel.org>
+Cc:     Pavan Kunapuli <pkunapuli@nvidia.com>
+References: <1643729199-19161-1-git-send-email-akhilrajeev@nvidia.com>
+ <1643729199-19161-3-git-send-email-akhilrajeev@nvidia.com>
+ <3feaa359-31bb-bb07-75d7-2a39c837a7a2@gmail.com>
+ <DM5PR12MB18509939C17ABEB5EEA825FFC0289@DM5PR12MB1850.namprd12.prod.outlook.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+In-Reply-To: <DM5PR12MB18509939C17ABEB5EEA825FFC0289@DM5PR12MB1850.namprd12.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+03.02.2022 06:44, Akhil R пишет:
+>> But why do you need to pause at all here and can't use
+>> tegra_dma_stop_client() even if pause is supported?
+> The recommended method to terminate a transfer in
+> between is to pause the channel first and then disable it.
+> This is more graceful and stable for the hardware.
+> stop_client() is more abrupt, though it does the job.
 
---8ffx5k3tX5AIfR+/
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Dec 01, 2021 at 02:23:40AM +0300, Dmitry Osipenko wrote:
-> All device drivers got runtime PM and OPP support. Flip the core domain
-> support status for Tegra20 and Tegra30 SoCs.
->=20
-> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/soc/tegra/pmc.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-
-Applied now. I'll give it a few days in linux-next and will then send a
-PR with this for ARM SoC.
-
-Thierry
-
---8ffx5k3tX5AIfR+/
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmH8FggACgkQ3SOs138+
-s6FO5w//cPW87rvUKeQQiBIG3MKYHivxZPlxXlkfRG5W+Y9oMFE5HyfE03v28G1S
-qcGQX+fjbKaISc+4hOem3NaDKKlpItUVQUD8akNUSHoZLX3SYrNQ/v4ZNqRKjrGg
-bkZTolF7BsabsFq84dlnpUJN6JPIdHaaaPiq2btwqSf1ubAW9JgA613VYHlG/+me
-mVkYI84z2K2kvOevWtk44pubJmfPPea53g4MP2TFtXYtK7NvdX+VWpG89ZazJmUq
-cGJpNrtIDmjL/aYbmxWi0nQvv3JKp4aO2MvjMvV4ZEcl25VccIP4a9NuJXj3kCe3
-P62k+Yv1DJWkTOpSXx7NfzAl3iTkx7hTx6WlNBZDD9uanine+ZGmRZNR17q84zN/
-CJstSdhkyfhWtddP8JV/SEODRUXk936eAk8cQTNPUDtvCGu1Xr43QoYXCFGxpeD6
-MUUeRYyVQDuCo2UmeVqNNXS/5kvyTlE/Qr4xKmw+hLe0fZOVSAUt9o8kqRV6NkMq
-wqremWTw1FmAYzJnsgfDRnY5SlPeCJFBPxH+LkXDzEOsAmIMYeYi0qykqGGkwPQA
-BYOWaXKMggviplovauBvfRKTVCsKnnxgeRDbcwNX8Dn/uwwH4tHHQjzB7A7domEB
-RJkbnuYFInpC7nNrtcT1QedT+G7nVsDLwqW3f682nUcDnq9DYxs=
-=IVU8
------END PGP SIGNATURE-----
-
---8ffx5k3tX5AIfR+/--
+If there is no real practical difference, then I'd use the common method
+only. This will make code cleaner and simpler a tad.
