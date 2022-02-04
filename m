@@ -2,122 +2,138 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22D32C433EF
-	for <linux-tegra@archiver.kernel.org>; Fri,  4 Feb 2022 14:09:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3606BC433F5
+	for <linux-tegra@archiver.kernel.org>; Fri,  4 Feb 2022 15:19:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234987AbiBDOJ3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 4 Feb 2022 09:09:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42590 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232803AbiBDOJ3 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 4 Feb 2022 09:09:29 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E988C061714;
-        Fri,  4 Feb 2022 06:09:29 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id E89A8B83742;
-        Fri,  4 Feb 2022 14:09:27 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 554A5C004E1;
-        Fri,  4 Feb 2022 14:09:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1643983766;
-        bh=0Uun2P4TB48A1jqJfMKkkYNWDxl6cd7nzbvPWMj5TEo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=XPui98YVAgK0vBO5CTHh7ceNAxtmay7KvmcVs0vev5W1dgzvqD4pfTGgf/Ym8X5Kp
-         uC1r/vT7gRFYUzq+61s1jtZsTH9xLMO5nsTuT7uVkFc6Bm8aBGP2e6zd0JOV/G5tfM
-         u0vk/GLCJeLfCT/dHRA0ySQH2PRR0p/oL94eimjr0ViJKlXrr7UwKGjz1OChRbnqhu
-         6CuzEa6jVzClu7EF1KI6VSmdmsxOpV6lspveiDZRaVHIoCTtohrN/jdzaQ1s5R6DnZ
-         mT12qVrhpkHZ/J9Y4sMkMHnGEJqzrKxjZhyfThMeuotDur8cfqDQeDyhxYvwNTTspL
-         Cj+C4RBRZf0GA==
-Date:   Fri, 4 Feb 2022 14:09:21 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Krishna Yarlagadda <kyarlagadda@nvidia.com>
-Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com,
-        linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org,
-        skomatineni@nvidia.com, ldewangan@nvidia.com, robh+dt@kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        p.zabel@pengutronix.de
-Subject: Re: [PATCH 6/6] spi: tegra210-quad: combined sequence mode
-Message-ID: <Yf0zkdS2nqHOZjMG@sirena.org.uk>
-References: <1643970576-31503-1-git-send-email-kyarlagadda@nvidia.com>
- <1643970576-31503-7-git-send-email-kyarlagadda@nvidia.com>
+        id S1359633AbiBDPTp (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 4 Feb 2022 10:19:45 -0500
+Received: from mail-mw2nam12on2073.outbound.protection.outlook.com ([40.107.244.73]:63810
+        "EHLO NAM12-MW2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1350985AbiBDPTn (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Fri, 4 Feb 2022 10:19:43 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=VqQ+TZ+mISDn/ZVCKmZ5EfaXv0DItnhf7hGvchV+ey+Kun1hP3Zn5++lyobqNM/J0vFPBQqb87ZzSuTD86OqTX4h5AcaHYPsHKebqRB0ECpkhDtvTdLXoxv7N+PvK9cIIHmDj6cx7SMlZU38j5Ro41+tkSmS7VpgkGTbrH2vmpqZwwD8KGBtxHbffKvjQudwDetMIT8DmgTHQi0MuX+violZihFUeh+NXFbkCV/OpD+S1DUEK4OI8hhLbARTR4/KJhBNK00wFyUQDh6yNoL0/2qIjNv/P2N8qdoeSVh02X2j79+ZaKgrNE6sHfzpJ2pLl79AxHL2AqXJdiHqfcsJtA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Cts3xwZ4z4tMw8qusR1RT8OUfk9mTKsGBcugK5DXo/A=;
+ b=SFXtZveXsDN17yvE1pFS4aX/M2XyFTHI9DxfQKYh5yzrHfp+q1Jaxb5AUAN6VReOfKuNYvZA//tsufYn2XG/Z6kMBi6W+pVGsd9S52BAwPgczpMnRIKk0n57Vi1slISuoV9b9VyhUhcJWAsJC0yO7iWd4+o184g8mfM2FuyfKgb6To0Gk8RD+3GvaKLmgzhmnhSpc+aT/ekZF2Ta9RAtJ936NjEEUFLcLaZ8f3GJuIBymjWV1T/Rr0ddCv6OOcPQmulqOIKkI1gEHDpUyjuILbhqx/pZxdksU6lYkdq+EfO8ooInEMWZHyQ61DV0mo9EyOaaLGuuODwuGnUTn3mOKg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 12.22.5.236) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com; dmarc=pass
+ (p=reject sp=reject pct=100) action=none header.from=nvidia.com; dkim=none
+ (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Cts3xwZ4z4tMw8qusR1RT8OUfk9mTKsGBcugK5DXo/A=;
+ b=B3eNwsWBN8qyVeRzr09JNuMKha/8q4I6A16dGjhRC3w/FM1uxcjZwvBBpi+UtL53Zok1e8tD3BLD9xlASHdP1j/bmwqLwRvBCEe7a2OJohnsbTwwHw619XSQ66NjonNR9M8tzkCm36jRonUFivWDyO6hV58lcatHjHpYIeVuzVl4QfnsQeMAcP7SjCkcXiJ7vx/nl5lsDiah4WVNEskLXkZv4rIspD3T2RDc2nIp3ICMqApt+bi0CuThjrpJK17B2c7CSPzJrHop5qO6dLsEoHtSKwd+rpBxRpiZh9TPHgPBOR0YpDvELGWTkncHuCZs7AXFN6AbE59LmtfhfJcBCg==
+Received: from DM6PR01CA0006.prod.exchangelabs.com (2603:10b6:5:296::11) by
+ BN8PR12MB4596.namprd12.prod.outlook.com (2603:10b6:408:71::19) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.4951.12; Fri, 4 Feb 2022 15:19:41 +0000
+Received: from DM6NAM11FT011.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:5:296:cafe::95) by DM6PR01CA0006.outlook.office365.com
+ (2603:10b6:5:296::11) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4951.12 via Frontend
+ Transport; Fri, 4 Feb 2022 15:19:41 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.236)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 12.22.5.236 as permitted sender) receiver=protection.outlook.com;
+ client-ip=12.22.5.236; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (12.22.5.236) by
+ DM6NAM11FT011.mail.protection.outlook.com (10.13.172.108) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.4951.12 via Frontend Transport; Fri, 4 Feb 2022 15:19:41 +0000
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by DRHQMAIL109.nvidia.com
+ (10.27.9.19) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Fri, 4 Feb
+ 2022 15:19:40 +0000
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail205.nvidia.com
+ (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.9; Fri, 4 Feb 2022
+ 07:19:39 -0800
+Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.9 via Frontend
+ Transport; Fri, 4 Feb 2022 07:19:39 -0800
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <stable@vger.kernel.org>, <torvalds@linux-foundation.org>,
+        <akpm@linux-foundation.org>, <linux@roeck-us.net>,
+        <shuah@kernel.org>, <patches@kernelci.org>,
+        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
+        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
+        <sudipm.mukherjee@gmail.com>, <slade@sladewatkins.com>,
+        <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 5.4 00/10] 5.4.177-rc1 review
+In-Reply-To: <20220204091912.329106021@linuxfoundation.org>
+References: <20220204091912.329106021@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="a24AQkG5lH/zcdwt"
-Content-Disposition: inline
-In-Reply-To: <1643970576-31503-7-git-send-email-kyarlagadda@nvidia.com>
-X-Cookie: Torque is cheap.
+Message-ID: <2efbefc0-276e-4db3-a92c-ba38d4057913@rnnvmail202.nvidia.com>
+Date:   Fri, 4 Feb 2022 07:19:39 -0800
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 55da9062-f990-45b8-982a-08d9e7f1c40b
+X-MS-TrafficTypeDiagnostic: BN8PR12MB4596:EE_
+X-Microsoft-Antispam-PRVS: <BN8PR12MB4596AAD6F4754E67C2F2D8CFD9299@BN8PR12MB4596.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: ai7eRVCzDarRa0f4ERd63Wx3YbYKsFK+FWpcQm+ca3xfB8MAiAIG+E9ubT0DndQAfII+2ooZIgZ5+Nnzf4MTEcCGUjS7mVtH4nyvKS8XRZxYU+CL7sX+W/HM8siSxvqH5TfOK9B0rzRsRyobFa4ivhw4WibjYb+VT5rsFunXLeogsG95SzYAEn8MfCIw84UCz61FsaNMh/WYnXJ5j/qgbHC/mSCVlACQfqBpUEbgPGDu5xHQRvjo9RJ2iU2tHColhvBxkYA13HDyM7THIcbCJoZohdDW9MmOIDW7A7Receby9LhwJweUmqWixtiEiicOEkg0HljjImGQ+Wq0dHYANg633QD8A5vWPmm5bzdfvFDe0n4kWrWhdc5bxEE6mYJruVrtg6DGiKrVX4vOlYDe+yawy8S5CRJjkxuUybheEMC+rpg/7Ow9ieeAlBmu54uUtY/LGI6jnbCqDAU51N5eMlBZR8P9Sgh2CObsl0dXDBnnskn3IP9L/qsoob3fCw2TwOCazT6I8APJJRTLMaHh4Or9UykiNsqtVCTHpDaifN+MjWtI2Lpeq2jmefq2OclBj3V6FVsovbwnjhqu5Zs93Z6xuB1EjyRVij2OfmPrERmWib2SlGOHehyDRWRMYu2xgV49yZ3NkPtgtCUXV8H2ufHStpnxCFtqrLQRI3u7qW2SgLRGS/cFaV04bRqdtC4iDBBY29Vx1FeY5oz8Ln0OPtZyp3GHrH3S0XkmVnNxPmwtsSucNK1Khs7uHPqTgpiOeF3PPS9f6MjPkScCEdbU7QOG/sq5vIID0MGIBWjpHQs=
+X-Forefront-Antispam-Report: CIP:12.22.5.236;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:mail.nvidia.com;PTR:ErrorRetry;CAT:NONE;SFS:(13230001)(4636009)(46966006)(36840700001)(40470700004)(186003)(966005)(508600001)(26005)(6916009)(82310400004)(86362001)(7416002)(40460700003)(47076005)(5660300002)(31696002)(426003)(336012)(316002)(31686004)(70206006)(54906003)(81166007)(4326008)(8676002)(8936002)(70586007)(356005)(2906002)(36860700001)(36900700001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Feb 2022 15:19:41.0770
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 55da9062-f990-45b8-982a-08d9e7f1c40b
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.236];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT011.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN8PR12MB4596
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On Fri, 04 Feb 2022 10:20:13 +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.4.177 release.
+> There are 10 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sun, 06 Feb 2022 09:19:05 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.177-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
---a24AQkG5lH/zcdwt
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+All tests passing for Tegra ...
 
-On Fri, Feb 04, 2022 at 03:59:36PM +0530, Krishna Yarlagadda wrote:
+Test results for stable-v5.4:
+    10 builds:	10 pass, 0 fail
+    26 boots:	26 pass, 0 fail
+    59 tests:	59 pass, 0 fail
 
-> +	/* Process individual transfer list */
-> +	list_for_each_entry(xfer, &msg->transfers, transfer_list) {
-> +		if (transfer_phase == CMD_TRANSFER) {
+Linux version:	5.4.177-rc1-gdb9bfa6e8ef5
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra20-ventana,
+                tegra210-p2371-2180, tegra210-p3450-0000,
+                tegra30-cardhu-a04
 
-> +		} else if (transfer_phase == ADDR_TRANSFER) {
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
-> +		} else {
-
-Looks like you're writing a switch statement here...
-
-> +			/* X1 SDR mode */
-> +			cmd_config = tegra_qspi_cmd_config(false, 0,
-> +							   xfer->len);
-> +			cmd_value = *((const u8 *)(xfer->tx_buf));
-> +
-> +			len = xfer->len;
-
-> +			/* X1 SDR mode */
-> +			addr_config = tegra_qspi_addr_config(false, 0,
-> +							     xfer->len);
-> +			address_value = *((const u32 *)(xfer->tx_buf));
-
-> +			/* Program Command, Address value in register */
-> +			tegra_qspi_writel(tqspi, cmd_value, QSPI_CMB_SEQ_CMD);
-> +			tegra_qspi_writel(tqspi, address_value,
-> +					  QSPI_CMB_SEQ_ADDR);
-> +			/* Program Command and Address config in register */
-> +			tegra_qspi_writel(tqspi, cmd_config,
-> +					  QSPI_CMB_SEQ_CMD_CFG);
-> +			tegra_qspi_writel(tqspi, addr_config,
-> +					  QSPI_CMB_SEQ_ADDR_CFG);
-
-It looks like the command and address have to be specific lengths?  If
-that's the case then
-
-> +	if (cdata->is_cmb_xfer && transfer_count == 3)
-> +		ret = tegra_qspi_combined_seq_xfer(tqspi, msg);
-> +	else
-> +		ret = tegra_qspi_non_combined_seq_xfer(tqspi, msg);
-
-This check needs to be more specific.  But like I said in reply to the
-binding patch I don't see why we can't just pattern match on the data
-without requiring a property here, we'd need to check that the message
-is suitable no matter what.
-
---a24AQkG5lH/zcdwt
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmH9M5AACgkQJNaLcl1U
-h9CHWAf9Fv7WpqdKpI5qGpLRrspS+onHqhjxBDK3qP8XYNE8GGIoewvk/y93TrmP
-PT7a/zw1UGFtvHomlXqcnvm7KxGfbsOr+JfBbWQ8hrddfbof84GSaWNyRiJl80Y7
-gmMNPp1WfNen9c5z0wwyH0LS2c+6W4PdOwgipGoGQd4gh1vVzM1zRCja47CM1BD6
-r8WiE3UnnBch6gpC20Ggrb4qjb2piUie7wAdBcvf8Ol9CCU8olylsE9mkE8yTPXR
-5LJ02ayJG9HxTRxlhTG8zEGlhXTq/MI/is7a14BFQt2E3r92WqQBt26dp3jKcmlS
-k9jlTRaQCxNF0WpexPzjM5jpjPZefA==
-=0qb3
------END PGP SIGNATURE-----
-
---a24AQkG5lH/zcdwt--
+Jon
