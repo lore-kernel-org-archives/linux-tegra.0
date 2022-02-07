@@ -2,233 +2,192 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE88EC43219
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD61CC4321E
 	for <linux-tegra@archiver.kernel.org>; Mon,  7 Feb 2022 15:21:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345112AbiBGPVC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 7 Feb 2022 10:21:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33404 "EHLO
+        id S1345451AbiBGPVD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 7 Feb 2022 10:21:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57442 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345227AbiBGPCn (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 7 Feb 2022 10:02:43 -0500
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2072.outbound.protection.outlook.com [40.107.92.72])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C0C5C0401C2;
-        Mon,  7 Feb 2022 07:02:41 -0800 (PST)
+        with ESMTP id S1391650AbiBGOyC (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 7 Feb 2022 09:54:02 -0500
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2069.outbound.protection.outlook.com [40.107.223.69])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E15B9C0401C1;
+        Mon,  7 Feb 2022 06:54:01 -0800 (PST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=QQXuzhKMrvZHSsXxpXmwUdmbnqq6TJXMVjgmRT1v5EA4WGe+lPStCup2KBYefJ/3Ou4rjrD2sNVl1PipokWKqOFxWLvo14FwnDq+Ms3KCmPzC3OB8y1dfboCUUnnPu1Aj6MZhX8vIUjMmf39KuJIULuq6ni1i5Ww1fDckRX72csLNDWKqqzfQuY7cKui8W81GhiV6vk3QcAv6KdCMogkYAuA3Zkt94qfLxFfYKhaEWwfsCVuuLcOIW7EvApLD5pib2H5p1YDD5lfMvBPWw/Z+sDp1Xc+1CiiLlsXMApy5WiT6nfAC6ENa+Tewfdo5ZMNhJPxG3fveyMZBawf06aOQw==
+ b=a6rkVI+9rRe+3/KsjWl0/e6LbNOBgdQqX40hcrfAA3ZSE/OJs45cetV9OF3cwLFdz9uxQFz2AJPMQd6YLgz9cSTNg9nBiNXF5AoU0KKCuRrOhu636HSvTWJgfqdMnkyYvx0IUaTngOzb6eP+BtW2vhcQSjlCQi28gS6xP6s69fAnEJMMYYFSszR1aFOE4WkFO60EWY8U62344UD+z3dAIy0Al55WAbU+lbWRItu1XoPGsF1RrrOKcG2IcMWIZyEqdtNJn/abMVO7jc50r4tzGa1RrWJZKoJ3OHKmxrVramBtv0ObMuqv67au4iCnn9jihqRAkHpxRqCPeRwZ/S0sbQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3WndexYVCK98d38b2fVEzcBXyUysSWHywX1VgnTCHrA=;
- b=RzcPTUpI+JW95vuy7P2tqsUc1zuTGmzfwDeO6MjKdYWykRxtW5PTbXJzoJSqYg1wbYv+p16ANTZwRapAlJ1lMphcHq3UWBhOMBYA4VcBjK1G/eDmmbWvgRebaNQ4MRy67JNAJzIssXMN8/0EwUqOHTDHtJEXdv4Zw5D2ek9lRJ+Faj6TauBlrM47e1JJNQuuWxTcL5/Moem1lulL/7urvKXtsoFGQHDAMHY4GgU3/g7qLjMhgg96EDkPdKGJvzuQ16O5CBFI7u3ZFSPFFlod2Ajngxg5JXSuXxNSzyHCP6gJhGOUcM/p9xRVRqGcVdLvGtFhFKx6MGDeAjOYwGQAgQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 12.22.5.238) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
+ bh=2/EsQ2Z706JUUyg+l9K94heo5JrbW6AY6MQTaL3hGZQ=;
+ b=nXpwW8DF6VH1Yxc1qjPOhUezHvROfqH5XJAwxru+4guSMRaaFd3YSQXkLbS6A378IX53Tq3pSgSmwrJ2GsjMhWzsE321sQp/QLlRTGtkBk48ndLbvh345JIgI4Cfhx3SOwy3dsw0BzQrz9tUUxohtlkOA+xWR8IdK7b0gKq1Dss6ruPAkccisqzifILoqvMb5cOCHQWBMRvJLiZJ85qzkf/gSyAeAhSEk0MXOg1soee1w397oIbSXHZWsen9Y9CPhEtaqg/P1Cxi5QLci1RCIKeddYQol4anviCg9tInP+d2+TkhnpnynJr66xdgmXoy+Q9RnFo+FNolMrkoOqNuyw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3WndexYVCK98d38b2fVEzcBXyUysSWHywX1VgnTCHrA=;
- b=p9RB7PCe+jvReXpZteUmMixmTNJrETcTHzh7l8aVNMMHc4sIez0emNIFw1+LOcpC/FtPeaY1HaWKzM7TjWmrXuoXzYX+xDUmbF5lxkxKCGJgNwBEw/4H7qP6CAQDz6w0R854VlfMwnhwytxLNaXBVgqjE2yYWse/MlyZbixj2wmCBeHu4E+lMUhmKRUDGKWgFrPaE7Y5D0X4lXE44Sl/GBGBhx9hNxR8skW7GewvZyLPwJDnNcGH2VgkANnLi8P5JX90grC9AyOZXKlGZ4w7RNkKr5qEl4Z0qe2tmCuIObRo1SBaqoWCXAFatAjvNA+B639YiidG/fEWXq92N6wyfg==
-Received: from BN9P221CA0012.NAMP221.PROD.OUTLOOK.COM (2603:10b6:408:10a::7)
- by BY5PR12MB4289.namprd12.prod.outlook.com (2603:10b6:a03:204::14) with
+ bh=2/EsQ2Z706JUUyg+l9K94heo5JrbW6AY6MQTaL3hGZQ=;
+ b=aHMS4sJTYa98k91P4rQHXz45noGdwfA5YKw5fidiE14JSNOPwqhI+PqrXpHivJlVvFhyr0MGOXDGNmBsag9TUcecjobHOMKK7MQbkjvIzFgtmZFoWl+T0X/gJwHyzBrWGes98qmMIE6QAtaGL4xivNTWLhR+Sy8OpnuFHy+mZCVGHZDQ6tM44yqmzjUfjV36L5DXXR8/aQv65ByuLMRbjFUT2FVcLxfppSS7lwTUulAYyvJzFy7RVlIp+x+fvaXDglloNkj47EMiam0P8Shq4D+xMWj1wHVCVQzDd0ti8m0B1cVdYdGtd7AuqPAMfFz9nFeexa4IciR0q3XCxI4ybw==
+Received: from DM6PR12MB3563.namprd12.prod.outlook.com (2603:10b6:5:11a::19)
+ by MN2PR12MB4637.namprd12.prod.outlook.com (2603:10b6:208:3e::14) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4951.12; Mon, 7 Feb
- 2022 15:02:36 +0000
-Received: from BN8NAM11FT046.eop-nam11.prod.protection.outlook.com
- (2603:10b6:408:10a:cafe::52) by BN9P221CA0012.outlook.office365.com
- (2603:10b6:408:10a::7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4951.12 via Frontend
- Transport; Mon, 7 Feb 2022 15:02:35 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.238)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 12.22.5.238 as permitted sender) receiver=protection.outlook.com;
- client-ip=12.22.5.238; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (12.22.5.238) by
- BN8NAM11FT046.mail.protection.outlook.com (10.13.177.127) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.4951.12 via Frontend Transport; Mon, 7 Feb 2022 15:02:35 +0000
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by DRHQMAIL105.nvidia.com
- (10.27.9.14) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Mon, 7 Feb
- 2022 15:02:34 +0000
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail204.nvidia.com
- (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.9; Mon, 7 Feb 2022
- 07:02:33 -0800
-Received: from kyarlagadda-linux.nvidia.com (10.127.8.10) by mail.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server id 15.2.986.9 via Frontend
- Transport; Mon, 7 Feb 2022 07:02:29 -0800
-From:   Akhil R <akhilrajeev@nvidia.com>
-To:     <devicetree@vger.kernel.org>, <dmaengine@vger.kernel.org>,
-        <jonathanh@nvidia.com>, <kyarlagadda@nvidia.com>,
-        <ldewangan@nvidia.com>, <linux-kernel@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <p.zabel@pengutronix.de>,
-        <rgumasta@nvidia.com>, <robh+dt@kernel.org>,
-        <thierry.reding@gmail.com>, <vkoul@kernel.org>
-CC:     <akhilrajeev@nvidia.com>
-Subject: [PATCH v19 1/4] dt-bindings: dmaengine: Add doc for tegra gpcdma
-Date:   Mon, 7 Feb 2022 20:31:31 +0530
-Message-ID: <1644246094-29423-2-git-send-email-akhilrajeev@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1644246094-29423-1-git-send-email-akhilrajeev@nvidia.com>
-References: <1644246094-29423-1-git-send-email-akhilrajeev@nvidia.com>
-X-NVConfidentiality: public
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4951.16; Mon, 7 Feb
+ 2022 14:54:00 +0000
+Received: from DM6PR12MB3563.namprd12.prod.outlook.com
+ ([fe80::5125:d2ad:cbef:fcd4]) by DM6PR12MB3563.namprd12.prod.outlook.com
+ ([fe80::5125:d2ad:cbef:fcd4%7]) with mapi id 15.20.4909.019; Mon, 7 Feb 2022
+ 14:54:00 +0000
+From:   Krishna Yarlagadda <kyarlagadda@nvidia.com>
+To:     Mark Brown <broonie@kernel.org>
+CC:     "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>
+Subject: RE: [PATCH 6/6] spi: tegra210-quad: combined sequence mode
+Thread-Topic: [PATCH 6/6] spi: tegra210-quad: combined sequence mode
+Thread-Index: AQHYGbI5hON+MFM3SE2C51fYICcN6ayDbjeAgATDdiA=
+Date:   Mon, 7 Feb 2022 14:54:00 +0000
+Message-ID: <DM6PR12MB35630A9020EC4B309D877086C32C9@DM6PR12MB3563.namprd12.prod.outlook.com>
+References: <1643970576-31503-1-git-send-email-kyarlagadda@nvidia.com>
+ <1643970576-31503-7-git-send-email-kyarlagadda@nvidia.com>
+ <Yf0zkdS2nqHOZjMG@sirena.org.uk>
+In-Reply-To: <Yf0zkdS2nqHOZjMG@sirena.org.uk>
+Accept-Language: en-IN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: b652b184-cc3c-4139-0ba5-08d9ea49acf2
+x-ms-traffictypediagnostic: MN2PR12MB4637:EE_
+x-microsoft-antispam-prvs: <MN2PR12MB46377E2B3898948C2A6DF79DC32C9@MN2PR12MB4637.namprd12.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:9508;
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: jRf5PLPQOwRl17zMv90TEXo13DEA8QouWjY62ruw47QcxBf3eyorsORWmFsYn1v/njdJvs1ouBNG3fWb4bW4q/oURPBPkWL1sJHI3xwK/oJR/AbexKOIErjtq69AYLc1Q8RaFJIfP7J/rdKdv78BIrqkwI4iVn63bkIubQ9umm+kZ32bcBGI1UcQ8wCPtSOoBUNa/xe1JbdphQSVgA4665ARxEwHS9jq4QWIi2nYhWfbcKpFpySAbFhaYJNmew1b48BOcya86Zl3/bntXek2qlA1NfcVSoe+uXPayMbLUfXC/vst/jYWt/OiEm3hZrlIb/ZyuonFlMFLR7764CAz39eZiSjTnAplGjCiQ2jOVsXtj8XKvtuH56x+a8xbaKyEgdPjTuD/KnfiRIyg4gVl+bSSyzQAItsbqPIe84fO7JiaxhqhRO7SpaAMj6Jr0mSqyztM2ljZOIhvrWj6hAkz1fyvKdPMPMc1Sb/boWEmJl7McTmQjo4ebL670U1zCbL8l8JjbS9YK9iRwQU9SzbeIpgyCVchzksYiSzZm36u9ZN7Eh5cbyDKfaCSu/TP4SJiapHmA+2XHJ/tm8Nl9+5QhBat0R6qZhgB22G0MxWQadhHhUfOFSkUKjFWTwcV0pgmssO04fjb9HLfnFTjTN2Nxra0V4/YvEebo7NKrp1Q0na84kCYef3Us7dpei3HRsWGYs/KeMTU0ji046EsKHbE6A==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB3563.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(55016003)(38070700005)(6916009)(5660300002)(54906003)(52536014)(9686003)(316002)(186003)(26005)(83380400001)(53546011)(66476007)(66946007)(66556008)(64756008)(66446008)(76116006)(8936002)(8676002)(7696005)(6506007)(508600001)(122000001)(86362001)(33656002)(38100700002)(4326008)(55236004)(2906002)(71200400001);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?AdenHaSRwvGysu9/gID0iARI0ru8uFUB2Lnfc8cSztj6u6ijZ49orjEui/k4?=
+ =?us-ascii?Q?V5VQSXcub08s8DLdpEEmp+sOHNik0QsWzUHE4Ai2d1iTy0TKESO/dNVDUnXy?=
+ =?us-ascii?Q?2Ia0kQTvWMRq+ZvmztYJm6JtI+4aTPr5a7s88tiR2WDJ0pbUyIGhiZfxf0ND?=
+ =?us-ascii?Q?DIAl+OvB7mralXceDdhSohiXyQUjlX5vitzlrgRYSaHh2gZ4Ln/vJhAuLuMd?=
+ =?us-ascii?Q?k9ayOKqN3vUFbgWznUmyRR9fdyscMMOT55Rbs3HNnid0wWvKXfTA/Y5rG2sI?=
+ =?us-ascii?Q?skT1bBZCTcxa+8CWOt6nYNCEbVC95lgUTfIBBiNMuHRyq0VVeehOqNKs+qrR?=
+ =?us-ascii?Q?wkKk3T+9VVSKmjBHmW56GAKP32wq6tZcoHHS5aPUFxyJPW3WfuqRH8l2w7fj?=
+ =?us-ascii?Q?sEOOFYvGUjc4ZKinsGd5n2wRXWpxWriV8Es2XL5I5sAABKS9fsjJuRVm5q01?=
+ =?us-ascii?Q?TYfUfzNjBTCYzZ1DcoKfFnuk8yEaLiCUkHDyVUVvrxxH5RLkbAPRUXLooIiv?=
+ =?us-ascii?Q?6URNAN4y2VkLcP1RKosbSV5F4aiOlWLqIr/gRblmznXP0QS428jKLYJHAkVt?=
+ =?us-ascii?Q?aDltOTdXWbM6EUfNYYgWE+ilaULjTzqpRizXOBzAch4Kkd9pwga21u9urXy2?=
+ =?us-ascii?Q?oUoseD8DSzsnxth850x81ljX89vXTH0jYCvTNB7VtTiLR9ZonWYmfQY8AIMU?=
+ =?us-ascii?Q?r13biGYiTVAsbWXgJDed8XVr+zh+Yil0qhHRoL/FGE5hckhdg1ZHkQH4Wa4J?=
+ =?us-ascii?Q?bm6TAA1Bfj65MQb7PLK1fhmOSZ1DU9/MFbSoX0LZvbj1eLfJ6lbva4ZqUyEV?=
+ =?us-ascii?Q?cj2p8Ll6lnpJne93OsT1fGZ/I9t0FO4fjXsF6xEDF18w0z2F5TimqoOrD7l3?=
+ =?us-ascii?Q?Tg0+gn2brMcXrL3KzL/YIcnVbK4UamdHSUaAJWMc9fgiEkbuClSJuIcmcuBI?=
+ =?us-ascii?Q?Q7NqJaVF9866+cjPQaQsSof0dXkKpAKHe546mmb+rrhdC77jRrdT9K+xyYix?=
+ =?us-ascii?Q?nmrv+vgSAtXC1z+k+XfxHb6sfR4WobU7v+pmdDEtYcNmGX03obt5ZAu9frUf?=
+ =?us-ascii?Q?HgyhEfn3dkXhzznoHU3kJKCqdiOUlYdkPKqI7SsQH850LQD1Q1Tuo9+eO4Dl?=
+ =?us-ascii?Q?MO8boCMqY/jEXQ/syn2mz7skMbiVqxf26brHCFnGT5YaAArkAWh+ZA/u9n/M?=
+ =?us-ascii?Q?TQ1OvPbup7VVULU06r5oe+MGYT7eC7OYiHMxX+rLcJqHZPkwLmfDrklTWybv?=
+ =?us-ascii?Q?M1eCWVsR3Iyt6nboqLBu0HCyzo1gDBFZSZovnnI8z+ce3AVK0dmPoOIWB9aA?=
+ =?us-ascii?Q?3Vn8GI56BJEKeS9SmxTbKiMzvlmbgMciW7lf2icb+XfFC3B5UgeuHV7nuNja?=
+ =?us-ascii?Q?A1UnoNpz9SpwzgvVbDepvFlExYOByXKaHNQIDK38F4LUxawFaP3v++c/2Im7?=
+ =?us-ascii?Q?8dcM57c9bQyEWeO82VUC5j2iGkNvgQ1DRdg1WtZgG2DTqGk6dg3xAnry4kYd?=
+ =?us-ascii?Q?MgqAK0YMJ0FSN3wEu33cSDZFNDW2ENcMkoqjjQBOKwwfnbHTEIiZgl4Y0NKL?=
+ =?us-ascii?Q?ptEWHzzzf7ILYk1pJJ5SBB/4hvYe/BQWIAGTCS9mkXn+7YKD7eCLg6CddPki?=
+ =?us-ascii?Q?kVYCcEROxDgvnBxlxufT/mE=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 2416ac9a-da18-4ede-d13c-08d9ea4ae003
-X-MS-TrafficTypeDiagnostic: BY5PR12MB4289:EE_
-X-Microsoft-Antispam-PRVS: <BY5PR12MB4289EEBC6ACB413FCA714EA4C02C9@BY5PR12MB4289.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:5516;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: UDmqMV15gB6UAmFso7o7vp55LXIi2xrOs0i6U8Oi1S7yfkGJLEfE5yc2AzNVGmItJINM9m+lkNvtJQY+7/qfnPaSM8pI3aPFklIMi1s4N3phnj4Jn59iE6WrGc04g3BKPCS6C88v5euJCARJq4V2wkK7kwrdSK1vrYY0SDcBWEXOOQaKWCwo1eg4VH4R5ZzWixqyatR2SiXr2sETL6HDYmP9LMxoFIJXye7VRIY9WjQKqrci2ObiyBJf4TJndpmpuYSHMMsypV7tIG/nlCyCl8xqCKa/AingbW01Jlmf+YMf6Q+WWar/ufuoTfxhJZ92ospUPKZJKhT3thP+PPHl3ftvVyhdaJ0nFXZIZFvwry3gyzemPSkGvcEEkVnkfwvcUGqg8fY37/sfcsSQT+SaxFs9mDqRfvjbJmDDRu7BYmWzKewJN6CoAjB3eMg8+l5540tjhcL1DmO+9LwQfc95Qu54VqQ31u+UcW8mB0IYiiXhz+YF1KZREzisNXQmplmNwV6Vi54wqWQpggpbjurvLJvKvdBrS+Zz0U1eP27YVr3pqjDKRrJHqjU+huqzDfHKvPI+eOa5jOYZmI2wDie3DEGx1dcAp0zXQ6Wdv/7vYnFj6SRvTsmPQHTlsNJckHwaUxPnTvutL+0E1CVDC6QnoZY3e3W47SEg5bLBeips1TrsjFIvTfUU5WU5Cd76wWhQa7avZvctM8gOG/fLWEaMdlkEum2pwpr8dVks5kveKaio94DXNPZ1IWSH2XsYsFUDgsqNRn4twx+MqUwZ4E+ZKqNemgQZ0/jqcSnSAIy1HfUIpQByo+DBQA2c7tJlP5CMbkfZKNtqsHIib6EqiDAEL9OYaZpgD0EGF/bgEwY48K33x+8A5c+9CvlLqnu7uO5Qj1atFNajzTgjByAcgEXxDw==
-X-Forefront-Antispam-Report: CIP:12.22.5.238;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230001)(4636009)(46966006)(36840700001)(40470700004)(2906002)(107886003)(36860700001)(83380400001)(26005)(36756003)(426003)(186003)(336012)(2616005)(47076005)(5660300002)(508600001)(6666004)(7696005)(40460700003)(82310400004)(86362001)(110136005)(316002)(70586007)(966005)(70206006)(356005)(921005)(81166007)(4326008)(8936002)(8676002)(36900700001)(83996005)(2101003);DIR:OUT;SFP:1101;
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Feb 2022 15:02:35.4743
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB3563.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b652b184-cc3c-4139-0ba5-08d9ea49acf2
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Feb 2022 14:54:00.3910
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2416ac9a-da18-4ede-d13c-08d9ea4ae003
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.238];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT046.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4289
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: zy+nxxLp+UvpsfBTOLqR0LGmNCXGezG4jvDRLEoJObFltey6ZtnCkHaEHF+ryS82TkBlR4ezjvXezx2CIw8EIQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4637
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Add DT binding document for Nvidia Tegra GPCDMA controller.
-
-Signed-off-by: Rajesh Gumasta <rgumasta@nvidia.com>
-Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
-Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
- .../bindings/dma/nvidia,tegra186-gpc-dma.yaml      | 110 +++++++++++++++++++++
- 1 file changed, 110 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/dma/nvidia,tegra186-gpc-dma.yaml
-
-diff --git a/Documentation/devicetree/bindings/dma/nvidia,tegra186-gpc-dma.yaml b/Documentation/devicetree/bindings/dma/nvidia,tegra186-gpc-dma.yaml
-new file mode 100644
-index 0000000..9dd1476
---- /dev/null
-+++ b/Documentation/devicetree/bindings/dma/nvidia,tegra186-gpc-dma.yaml
-@@ -0,0 +1,110 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/dma/nvidia,tegra186-gpc-dma.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: NVIDIA Tegra GPC DMA Controller Device Tree Bindings
-+
-+description: |
-+  The Tegra General Purpose Central (GPC) DMA controller is used for faster
-+  data transfers between memory to memory, memory to device and device to
-+  memory.
-+
-+maintainers:
-+  - Jon Hunter <jonathanh@nvidia.com>
-+  - Rajesh Gumasta <rgumasta@nvidia.com>
-+
-+allOf:
-+  - $ref: "dma-controller.yaml#"
-+
-+properties:
-+  compatible:
-+    oneOf:
-+      - const: nvidia,tegra186-gpcdma
-+      - items:
-+          - const: nvidia,tegra194-gpcdma
-+          - const: nvidia,tegra186-gpcdma
-+
-+  "#dma-cells":
-+    const: 1
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    description:
-+      Should contain all of the per-channel DMA interrupts in
-+      ascending order with respect to the DMA channel index.
-+    minItems: 1
-+    maxItems: 31
-+
-+  resets:
-+    maxItems: 1
-+
-+  reset-names:
-+    const: gpcdma
-+
-+  iommus:
-+    maxItems: 1
-+
-+  dma-coherent: true
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - resets
-+  - reset-names
-+  - "#dma-cells"
-+  - iommus
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+    #include <dt-bindings/memory/tegra186-mc.h>
-+    #include <dt-bindings/reset/tegra186-reset.h>
-+
-+    dma-controller@2600000 {
-+        compatible = "nvidia,tegra186-gpcdma";
-+        reg = <0x2600000 0x210000>;
-+        resets = <&bpmp TEGRA186_RESET_GPCDMA>;
-+        reset-names = "gpcdma";
-+        interrupts = <GIC_SPI 76 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 79 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 81 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 82 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 83 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 89 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 90 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 91 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 92 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 93 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 94 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 95 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 96 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 99 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 101 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 102 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>;
-+        #dma-cells = <1>;
-+        iommus = <&smmu TEGRA186_SID_GPCDMA_0>;
-+        dma-coherent;
-+    };
-+...
--- 
-2.7.4
-
+> -----Original Message-----
+> From: Mark Brown <broonie@kernel.org>
+> Sent: 04 February 2022 19:39
+> To: Krishna Yarlagadda <kyarlagadda@nvidia.com>
+> Cc: thierry.reding@gmail.com; Jonathan Hunter <jonathanh@nvidia.com>;
+> linux-spi@vger.kernel.org; linux-tegra@vger.kernel.org; Sowjanya Komatine=
+ni
+> <skomatineni@nvidia.com>; Laxman Dewangan <ldewangan@nvidia.com>;
+> robh+dt@kernel.org; devicetree@vger.kernel.org; linux-
+> kernel@vger.kernel.org; p.zabel@pengutronix.de
+> Subject: Re: [PATCH 6/6] spi: tegra210-quad: combined sequence mode
+>=20
+> On Fri, Feb 04, 2022 at 03:59:36PM +0530, Krishna Yarlagadda wrote:
+>=20
+> > +	/* Process individual transfer list */
+> > +	list_for_each_entry(xfer, &msg->transfers, transfer_list) {
+> > +		if (transfer_phase =3D=3D CMD_TRANSFER) {
+>=20
+> > +		} else if (transfer_phase =3D=3D ADDR_TRANSFER) {
+>=20
+> > +		} else {
+>=20
+> Looks like you're writing a switch statement here...
+Yes. This can be switch statement.
+>=20
+> > +			/* X1 SDR mode */
+> > +			cmd_config =3D tegra_qspi_cmd_config(false, 0,
+> > +							   xfer->len);
+> > +			cmd_value =3D *((const u8 *)(xfer->tx_buf));
+> > +
+> > +			len =3D xfer->len;
+>=20
+> > +			/* X1 SDR mode */
+> > +			addr_config =3D tegra_qspi_addr_config(false, 0,
+> > +							     xfer->len);
+> > +			address_value =3D *((const u32 *)(xfer->tx_buf));
+>=20
+> > +			/* Program Command, Address value in register */
+> > +			tegra_qspi_writel(tqspi, cmd_value,
+> QSPI_CMB_SEQ_CMD);
+> > +			tegra_qspi_writel(tqspi, address_value,
+> > +					  QSPI_CMB_SEQ_ADDR);
+> > +			/* Program Command and Address config in register
+> */
+> > +			tegra_qspi_writel(tqspi, cmd_config,
+> > +					  QSPI_CMB_SEQ_CMD_CFG);
+> > +			tegra_qspi_writel(tqspi, addr_config,
+> > +					  QSPI_CMB_SEQ_ADDR_CFG);
+>=20
+> It looks like the command and address have to be specific lengths?  If th=
+at's the
+> case then
+Cmd  and address are configurable to a limit. Will add min and max check.
+>=20
+> > +	if (cdata->is_cmb_xfer && transfer_count =3D=3D 3)
+> > +		ret =3D tegra_qspi_combined_seq_xfer(tqspi, msg);
+> > +	else
+> > +		ret =3D tegra_qspi_non_combined_seq_xfer(tqspi, msg);
+>=20
+> This check needs to be more specific.  But like I said in reply to the bi=
+nding
+> patch I don't see why we can't just pattern match on the data without req=
+uiring
+> a property here, we'd need to check that the message is suitable no matte=
+r
+> what.
+There is no real-world use case we encountered so far preventing us stick t=
+o pattern.
+But this was to avoid any corner case where there could be 3 different tran=
+sfers sent in single msg.
