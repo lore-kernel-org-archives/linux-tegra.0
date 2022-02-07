@@ -2,36 +2,36 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B53FC46467
-	for <linux-tegra@archiver.kernel.org>; Mon,  7 Feb 2022 17:49:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 394A6C4332F
+	for <linux-tegra@archiver.kernel.org>; Mon,  7 Feb 2022 18:24:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235585AbiBGRtF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 7 Feb 2022 12:49:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56192 "EHLO
+        id S233401AbiBGSYE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 7 Feb 2022 13:24:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48980 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1384311AbiBGRgy (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 7 Feb 2022 12:36:54 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33FB7C0401D5;
-        Mon,  7 Feb 2022 09:36:53 -0800 (PST)
+        with ESMTP id S231651AbiBGST6 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 7 Feb 2022 13:19:58 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08402C0401DA;
+        Mon,  7 Feb 2022 10:19:58 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id E5717B815C6;
-        Mon,  7 Feb 2022 17:36:51 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51C3CC004E1;
-        Mon,  7 Feb 2022 17:36:50 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 8DC7E6134E;
+        Mon,  7 Feb 2022 18:19:57 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97E27C340EE;
+        Mon,  7 Feb 2022 18:19:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1644255410;
-        bh=/7YN1m76qf4snYDMVXR15LGTPvRjVN/AzA2qo6qhVtI=;
+        s=k20201202; t=1644257996;
+        bh=Pn51NOBNr1hKEsHOlr0Wztr3o+6cLRvr8UUIea4mfNM=;
         h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=sIIeoPL8OANAhj44U1X2u3zQNXXTY1oNGPK1fQdVT33tNkvktg0GpxHLyNj3K0x0Y
-         wtLfKFRIAPZAXgk6+w5ADLpkcGocrbN7xLd3pMhnGVkDs7MLXNgdzQHEBb+dHjMOCA
-         lPu5UbwA4JkRzAAZglw0pPUuwOTIVReV56CBlvm1GdMxqXbvCjeYYGxm1aKC3/xnlE
-         LVAsPetTzl99KaBACPC+Q4vhd2QS7IScea5Vt041eaunVaLh9tAUgXN4J26/cEi2V1
-         gqn18+3Cut7ljOd6vFbBscsv+wvwpDnmq2ODyZpbafGo39RxgCSfqrEsbZ3+4IsH09
-         yhC3Bq8NCI8wg==
-Date:   Mon, 7 Feb 2022 11:36:48 -0600
+        b=Vi7nyWHM6I2FbeXRzzUmIxGqGot0X4pDHvK+1sp9Q/rsT6ZKy37CrxN3HL5RwdZKP
+         hYed5PNqtSLMDdKKBsbsnceFf28XsNxDEJ68rsmUdkxJDjxwr5fH3e97AAH3NwFWPf
+         wcGpYPEXQqMC7MsyQiZ+o1ffmOZF5xvp9KOij9gNTPLj2aqQ84vqmLgryLcWFc0xVH
+         gB2WIpQRBGfBQnyuqsxE8k52pjJ9n1DKxXgfpu5o7BDrTz9+BP8aanPgZjkcNkIQTZ
+         1ZL1oFUCDxIbeKzAGVSoUVKF5CPFKgenlsaJseCALicG70jmrzlF9siVwmAq3c4phI
+         kIo6Zn0iZwTqQ==
+Date:   Mon, 7 Feb 2022 12:19:55 -0600
 From:   Bjorn Helgaas <helgaas@kernel.org>
 To:     Vidya Sagar <vidyas@nvidia.com>
 Cc:     bhelgaas@google.com, lorenzo.pieralisi@arm.com, robh+dt@kernel.org,
@@ -42,83 +42,29 @@ Cc:     bhelgaas@google.com, lorenzo.pieralisi@arm.com, robh+dt@kernel.org,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-phy@lists.infradead.org, kthota@nvidia.com,
         mmaddireddy@nvidia.com, sagar.tv@gmail.com
-Subject: Re: [PATCH V1 09/10] PCI: Disable MSI for Tegra234 root ports
-Message-ID: <20220207173648.GA402391@bhelgaas>
+Subject: Re: [PATCH V1 10/10] PCI: tegra: Add Tegra234 PCIe support
+Message-ID: <20220207181955.GA407458@bhelgaas>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220205162144.30240-10-vidyas@nvidia.com>
+In-Reply-To: <20220205162144.30240-11-vidyas@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Sat, Feb 05, 2022 at 09:51:43PM +0530, Vidya Sagar wrote:
-> Tegra234 PCIe rootports don't generate MSI interrupts for PME and AER
-> events. Since PCIe spec (Ref: r4.0 sec 7.7.1.2 and 7.7.2.2) doesn't support
-> using a mix of INTx and MSI/MSI-X, MSI needs to be disabled to avoid root
-> ports service drivers registering their respective ISRs with MSI interrupt
-> and to let only INTx be used for all events.
+On Sat, Feb 05, 2022 at 09:51:44PM +0530, Vidya Sagar wrote:
+> Add support for Synopsys DesignWare core IP based PCIe host controllers
+> present in the Tegra234 SoC.
 
-s/rootports/root ports/ to match other usage here.
+Can you please split this into two patches?
 
-This argument matches that in 8c7e96d3fe75 ("PCI: Disable MSI for
-Tegra root ports") [1], but that's not quite what sec 7.7.1.2 and
-7.7.2.2 say.  Those sections talk about what happens when both MSI and
-MSI-X are disabled:
+  - A patch that does the struct tegra194_pcie_of_data to struct
+    tegra_pcie_of_data conversion but doesn't change any
+    functionality, and
 
-  If MSI and MSI-X are both disabled, the Function requests servicing
-  using INTx interrupts (if supported).
+  - A patch that adds Tegra234 support?
 
-but they don't say anything about what happens when MSI or MSI-X is
-*enabled*.
+It would be really helpful to be able to see the Tegra234 stuff by
+itself.
 
-I think a better citation is PCIe r6.0, sec 6.1.4.3, which says:
-
-  While enabled for MSI or MSI-X operation, a Function is prohibited
-  from using INTx interrupts (if implemented) to request service (MSI,
-  MSI-X, and INTx are mutually exclusive).
-
-Can you please update the comment in the code and this commit log to
-cite PCIe r6.0, sec 6.1.4.3 instead, and to clarify that these Tegra
-devices always use INTx for PME and AER, even when MSI/MSI-X is
-enabled?
-
-Why do these Tegra quirks use DECLARE_PCI_FIXUP_CLASS_EARLY() instead
-of just DECLARE_PCI_FIXUP_EARLY()?  quirk_al_msi_disable() uses the
-_CLASS version because the same Device ID is used for non-Root Port
-devices.  Is the same true here, or could these use
-DECLARE_PCI_FIXUP_EARLY()?
-
-There are many quirks that disable MSI, and they're a mixture of EARLY
-and FINAL.  They should probably all be the same.
-
-[1] https://git.kernel.org/linus/8c7e96d3fe75
-
-> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
-> ---
->  drivers/pci/quirks.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
-> 
-> diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-> index d2dd6a6cda60..3ac5c45e61a1 100644
-> --- a/drivers/pci/quirks.c
-> +++ b/drivers/pci/quirks.c
-> @@ -2747,6 +2747,15 @@ DECLARE_PCI_FIXUP_CLASS_EARLY(PCI_VENDOR_ID_NVIDIA, 0x10e5,
->  DECLARE_PCI_FIXUP_CLASS_EARLY(PCI_VENDOR_ID_NVIDIA, 0x10e6,
->  			      PCI_CLASS_BRIDGE_PCI, 8,
->  			      pci_quirk_nvidia_tegra_disable_rp_msi);
-> +DECLARE_PCI_FIXUP_CLASS_EARLY(PCI_VENDOR_ID_NVIDIA, 0x229a,
-> +			      PCI_CLASS_BRIDGE_PCI, 8,
-> +			      pci_quirk_nvidia_tegra_disable_rp_msi);
-> +DECLARE_PCI_FIXUP_CLASS_EARLY(PCI_VENDOR_ID_NVIDIA, 0x229c,
-> +			      PCI_CLASS_BRIDGE_PCI, 8,
-> +			      pci_quirk_nvidia_tegra_disable_rp_msi);
-> +DECLARE_PCI_FIXUP_CLASS_EARLY(PCI_VENDOR_ID_NVIDIA, 0x229e,
-> +			      PCI_CLASS_BRIDGE_PCI, 8,
-> +			      pci_quirk_nvidia_tegra_disable_rp_msi);
->  
->  /*
->   * Some versions of the MCP55 bridge from Nvidia have a legacy IRQ routing
-> -- 
-> 2.17.1
-> 
+Bjorn
