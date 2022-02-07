@@ -2,51 +2,51 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CBB1C43217
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83D87C433F5
 	for <linux-tegra@archiver.kernel.org>; Mon,  7 Feb 2022 21:28:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239501AbiBGV2n (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        id S239831AbiBGV2n (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
         Mon, 7 Feb 2022 16:28:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50700 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50706 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239634AbiBGV2l (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 7 Feb 2022 16:28:41 -0500
-Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C169C043182;
-        Mon,  7 Feb 2022 13:28:40 -0800 (PST)
-Received: by mail-lf1-x133.google.com with SMTP id u6so8455029lfc.3;
-        Mon, 07 Feb 2022 13:28:40 -0800 (PST)
+        with ESMTP id S239693AbiBGV2m (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 7 Feb 2022 16:28:42 -0500
+Received: from mail-lj1-x22d.google.com (mail-lj1-x22d.google.com [IPv6:2a00:1450:4864:20::22d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96271C061355;
+        Mon,  7 Feb 2022 13:28:41 -0800 (PST)
+Received: by mail-lj1-x22d.google.com with SMTP id t14so21593687ljh.8;
+        Mon, 07 Feb 2022 13:28:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=E2zd9qSMx7SACXDQ3TCJWSxyhyik37cN7ytcy2kkvgM=;
-        b=W4rJWInqPQLoRJwxqUdM++mooZfTQzFc7hnkmWoKDU5K3SRLMe6O2IKOe55XtyXdr8
-         8sToojRW+aO3/pUmO8bg8yAAHBEwV2Z9Sl9xRk/wSrqVf/9fEzjxGHD9vD7+49T7OHnT
-         vGT6snfaiTCXNBTbjgU/RF0BzrItwGGe3vF2TIODPvwwrGqHZ/BuDJVJPuSBYpGJ4VR2
-         2lSD+qIbivy1Scox1rQ9gHILSYVUPPHfSpegGhbzVJgNjhiYATOjAaxb2Q8UYrYPTzAX
-         C4yjOUz16iol6qa2dUxm3nbfR4UEd9Z6P23lKzKHGlw7B04qudAqpIt9jGCMF6anEfhw
-         2Z+g==
+        bh=JsnvO3rI0+4fx0hfi5N5XanAKysJ+GmqbV5i8hTt1PU=;
+        b=YIfY4SL0GTsR8+0O8tf1ZeI9rQE/y62ul1fzP6lIGyz8802y80cdTc21Wj6LVDNeHO
+         Zy+HBlM9G9YfPIVX+BXrhxxu7at9jTvasrv/nM+Sci0NH077UZMJFJvyymHv4qWGsqXa
+         p4vBrrxu6eowtMSRleEME8DiX7wYeziYcFeFWydNXDgH/lhRnbgH9+zljgShvsr2jduy
+         rVTCHmcOzGvPrJwFd9WMYAqjp8/oc+62DJiN6gxZdlHy2fjJfviIaagPKO++Na8E6WT5
+         4Jvfn14xQN2xyiCK/lRqEKlgw268c2DwDuhgJ9G9yuuJnr4oGfb7m/gGtnnvn0HPguj1
+         /OtQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=E2zd9qSMx7SACXDQ3TCJWSxyhyik37cN7ytcy2kkvgM=;
-        b=xHMS3plLDWnxiNs18npVW8h+JvywYGmJOuYX3v2XGlBgCBWMiH/tPQ5uWJNGwVWqGi
-         87BRbKoHT3cSemsN5R8jDdxCAL0kKoH2UeAPb2PcuSLNaUB5KdEDSjAzE5DfnevzS1GD
-         w5hirRjCaMOoa9ttvrSlvbT7FOsJ/YyWSLgOSFRXFY8P4Uk8GKaBuFNfYcOX4IXgJXs1
-         N3uQFyDQIYL4IF0+SBMHep+fqJJD6Bd71yAniiCI1tmbE4/R91/ui0csVlstLaFoewn5
-         kt1gVapc5cjTtLCsAx9UeJHRllARtJbW+uPqtPArfXfEO/sy9+/LyyyietaD9gEBAZMK
-         YMHA==
-X-Gm-Message-State: AOAM53182vaXUx3sua9rB6roDm4jvwYpK+ear0d91T/dGscWWUA8kOBm
-        AL2wji21wjRbaggxm2fW31y9yNcN+Qw=
-X-Google-Smtp-Source: ABdhPJxXLXAxKtMWq6WRLQeB8t6rVF8KYPPA6CJK3xKXepxOhU0hwVLrjf9RUml1sK/qjcNZJoRcbg==
-X-Received: by 2002:a05:6512:238c:: with SMTP id c12mr913797lfv.333.1644269318526;
-        Mon, 07 Feb 2022 13:28:38 -0800 (PST)
+        bh=JsnvO3rI0+4fx0hfi5N5XanAKysJ+GmqbV5i8hTt1PU=;
+        b=qKp5VQvMPkFAYxWkHSozfMQo6za1zENkCmCJlYsBTaK0Cg0uCQq//B/0rZ05OFt0P/
+         StioeBojk9vHsljRuuimQcXjfLp/F0X3vsDoJRzenyXVQxi0PktBCREFFyYo9er1GxNG
+         y0ajPq9lPq3tSaI/2L2fTZ4uAeWbEzZgW3msRG42QyTH4SJUlLoQCGX7AljWUfwtWY1k
+         lIRVrLx1LRsd0ynJyfZiAszTXcrwBNF9JmLJgBDj813TzYuYfXsgJgVzB3VxinWBwraU
+         iIlLZktMigzg+UOeGKQ2J3x6opAd8ZNUAmYAUD/i3vQeCGRxFpIu2fAoaVpr9LGwXdxP
+         9ezw==
+X-Gm-Message-State: AOAM533iPwvwEAkKPyeahMSMOL58UPnIQeimxKh6vJ9yKoM8nvAQ319q
+        ZMfiX7UTtGCrcMd4NFaODpU=
+X-Google-Smtp-Source: ABdhPJzYfESh7qQYfY3f8FgXV5iyT4MTLoMeKiZZXdkSkmU+76CoZyNmut0UCSBJVXCWeuFe6UDgWQ==
+X-Received: by 2002:a2e:bc11:: with SMTP id b17mr879679ljf.74.1644269320006;
+        Mon, 07 Feb 2022 13:28:40 -0800 (PST)
 Received: from localhost.localdomain (109-252-138-165.dynamic.spd-mgts.ru. [109.252.138.165])
-        by smtp.gmail.com with ESMTPSA id i3sm1650867lfj.144.2022.02.07.13.28.37
+        by smtp.gmail.com with ESMTPSA id i3sm1650867lfj.144.2022.02.07.13.28.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Feb 2022 13:28:38 -0800 (PST)
+        Mon, 07 Feb 2022 13:28:39 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -55,9 +55,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Robert Eckelmann <longnoserob@gmail.com>,
         Agneli <poczt@protonmail.ch>
 Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v1 2/4] ARM: tegra: transformer: Drop reg-shift for Tegra HS UART
-Date:   Tue,  8 Feb 2022 00:28:24 +0300
-Message-Id: <20220207212826.10307-3-digetx@gmail.com>
+Subject: [PATCH v1 4/4] ARM: tegra: paz00: Add MMC aliases
+Date:   Tue,  8 Feb 2022 00:28:26 +0300
+Message-Id: <20220207212826.10307-5-digetx@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220207212826.10307-1-digetx@gmail.com>
 References: <20220207212826.10307-1-digetx@gmail.com>
@@ -67,77 +67,45 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Svyatoslav Ryhel <clamor95@gmail.com>
+Add MMC aliases to ensure that the /dev/mmcblk IDs won't change depending
+on the probe order of the MMC drivers.
 
-When the Tegra High-Speed UART is used instead of the regular UART, the
-reg-shift property is implied from the compatible string and should not
-be explicitly listed.
-
-Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- arch/arm/boot/dts/tegra20-asus-tf101.dts               | 2 ++
- arch/arm/boot/dts/tegra30-asus-transformer-common.dtsi | 2 ++
- arch/arm/boot/dts/tegra30-pegatron-chagall.dts         | 2 ++
- 3 files changed, 6 insertions(+)
+ arch/arm/boot/dts/tegra20-paz00.dts | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/tegra20-asus-tf101.dts b/arch/arm/boot/dts/tegra20-asus-tf101.dts
-index 68b0fdb89aa6..f95e84fbb20a 100644
---- a/arch/arm/boot/dts/tegra20-asus-tf101.dts
-+++ b/arch/arm/boot/dts/tegra20-asus-tf101.dts
-@@ -450,11 +450,13 @@ i2s@70002800 {
+diff --git a/arch/arm/boot/dts/tegra20-paz00.dts b/arch/arm/boot/dts/tegra20-paz00.dts
+index d53a175dc17a..0fb4b1f5bc1c 100644
+--- a/arch/arm/boot/dts/tegra20-paz00.dts
++++ b/arch/arm/boot/dts/tegra20-paz00.dts
+@@ -13,6 +13,8 @@ / {
+ 	compatible = "compal,paz00", "nvidia,tegra20";
  
- 	serial@70006040 {
- 		compatible = "nvidia,tegra20-hsuart";
-+		/delete-property/ reg-shift;
- 		/* GPS BCM4751 */
+ 	aliases {
++		mmc0 = &sdmmc4; /* eMMC */
++		mmc1 = &sdmmc1; /* MicroSD */
+ 		rtc0 = "/i2c@7000d000/tps6586x@34";
+ 		rtc1 = "/rtc@7000e000";
+ 		serial0 = &uarta;
+@@ -558,7 +560,7 @@ usb-phy@c5008000 {
+ 		status = "okay";
  	};
  
- 	serial@70006200 {
- 		compatible = "nvidia,tegra20-hsuart";
-+		/delete-property/ reg-shift;
+-	mmc@c8000000 {
++	sdmmc1: mmc@c8000000 {
  		status = "okay";
+ 		cd-gpios = <&gpio TEGRA_GPIO(V, 5) GPIO_ACTIVE_LOW>;
+ 		wp-gpios = <&gpio TEGRA_GPIO(H, 1) GPIO_ACTIVE_HIGH>;
+@@ -566,7 +568,7 @@ mmc@c8000000 {
+ 		bus-width = <4>;
+ 	};
  
- 		/* Azurewave AW-NH615 BCM4329B1 */
-diff --git a/arch/arm/boot/dts/tegra30-asus-transformer-common.dtsi b/arch/arm/boot/dts/tegra30-asus-transformer-common.dtsi
-index 85b43a86a26d..c662ab261ed5 100644
---- a/arch/arm/boot/dts/tegra30-asus-transformer-common.dtsi
-+++ b/arch/arm/boot/dts/tegra30-asus-transformer-common.dtsi
-@@ -1080,6 +1080,7 @@ drive_sdio1 {
- 
- 	serial@70006040 {
- 		compatible = "nvidia,tegra30-hsuart";
-+		/delete-property/ reg-shift;
+-	mmc@c8000600 {
++	sdmmc4: mmc@c8000600 {
  		status = "okay";
- 
- 		/* Broadcom GPS BCM47511 */
-@@ -1087,6 +1088,7 @@ serial@70006040 {
- 
- 	serial@70006200 {
- 		compatible = "nvidia,tegra30-hsuart";
-+		/delete-property/ reg-shift;
- 		status = "okay";
- 
- 		nvidia,adjust-baud-rates = <0 9600 100>,
-diff --git a/arch/arm/boot/dts/tegra30-pegatron-chagall.dts b/arch/arm/boot/dts/tegra30-pegatron-chagall.dts
-index f4b2d4218849..8ce61035290b 100644
---- a/arch/arm/boot/dts/tegra30-pegatron-chagall.dts
-+++ b/arch/arm/boot/dts/tegra30-pegatron-chagall.dts
-@@ -1103,6 +1103,7 @@ drive_lcd2 {
- 
- 	uartb: serial@70006040 {
- 		compatible = "nvidia,tegra30-hsuart";
-+		/delete-property/ reg-shift;
- 		status = "okay";
- 
- 		/* Broadcom GPS BCM47511 */
-@@ -1110,6 +1111,7 @@ uartb: serial@70006040 {
- 
- 	uartc: serial@70006200 {
- 		compatible = "nvidia,tegra30-hsuart";
-+		/delete-property/ reg-shift;
- 		status = "okay";
- 
- 		nvidia,adjust-baud-rates = <0 9600 100>,
+ 		bus-width = <8>;
+ 		non-removable;
 -- 
 2.34.1
 
