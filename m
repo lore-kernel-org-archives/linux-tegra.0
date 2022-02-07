@@ -2,112 +2,183 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC42AC433EF
-	for <linux-tegra@archiver.kernel.org>; Mon,  7 Feb 2022 07:13:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA0AFC433F5
+	for <linux-tegra@archiver.kernel.org>; Mon,  7 Feb 2022 11:16:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231701AbiBGHMW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 7 Feb 2022 02:12:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45376 "EHLO
+        id S237648AbiBGLN4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 7 Feb 2022 06:13:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45848 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236113AbiBGGzi (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 7 Feb 2022 01:55:38 -0500
-X-Greylist: delayed 483 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sun, 06 Feb 2022 22:55:33 PST
-Received: from mail.tambre.ee (mail.tambre.ee [IPv6:2a01:7e01:e001:cc::3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30B0DC043185;
-        Sun,  6 Feb 2022 22:55:32 -0800 (PST)
-Received: from [172.16.1.108] (unknown [194.204.61.131])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: raul)
-        by mail.tambre.ee (Postfix) with ESMTPSA id 249867EB02;
-        Mon,  7 Feb 2022 08:47:26 +0200 (EET)
-DMARC-Filter: OpenDMARC Filter v1.4.1 mail.tambre.ee 249867EB02
-Authentication-Results: mail.tambre.ee; dmarc=fail (p=reject dis=none) header.from=tambre.ee
-Authentication-Results: mail.tambre.ee; spf=fail smtp.mailfrom=tambre.ee
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.tambre.ee 249867EB02
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tambre.ee; s=201812;
-        t=1644216446; bh=1ZuSZkK917+DnbsBJTyoKnsNI3AbwbnGFtaNh1AErE8=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=wOHR/Bbmhh6Zh+XHczx2X0WjMYtd3PP60SzboIictEX28QeQkfOtl1UKOxSkIxoY2
-         SOOxEUqfTq+y+xPTWTRcQqYagfE58hP8e7eH5zQ+RIKiUlEU6Oc0W5VLhOFe+wYEbb
-         OxS5Ji36pH7WzTmHCYgHIYCKJ1uoWRaAddTbmdD6/yvWNrSTBYcA3AygkhNPuRetc7
-         bpzDvgLycBGe6Pn638YaKrICwH+vTpOhddcGwnq1s3XzcUWEycRxRFr4q/l8cbas+M
-         CHUY+yK1FZuDSYlWfXupJ/M5bcVTTQs9kMae8BlHPGVL0LHDKbhKtI51sSqpC8DIpK
-         O1+s4ytj8wg5w==
-Message-ID: <dcbf28db-d47a-a2e1-dae1-48f17f9a703a@tambre.ee>
-Date:   Mon, 7 Feb 2022 08:47:26 +0200
+        with ESMTP id S245754AbiBGLGI (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 7 Feb 2022 06:06:08 -0500
+X-Greylist: delayed 63 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 07 Feb 2022 03:06:08 PST
+Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14BA7C043188;
+        Mon,  7 Feb 2022 03:06:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1644231968; x=1675767968;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=vKJ4QcP9fRqWs4tGoyWgQwEyJftVIBFH0F7ZDLnXbgE=;
+  b=YTqVopbV7Yprp1smcwWntyi7L9pCGNTVe8xdzmtBnIPqi1HaE+44ofjg
+   QACugBIve4qwicGfQ5yX9wua8i7lr+nMiZ4InBrhCy611YExaEgGXROtW
+   /T3MV1jBrqs3ZKeP/P85/VHom8MoSIW7Lzns9waXiojFaPDKlh4y4GqKC
+   vre4XlXkYPGFIFLM2McTrLEwc4oLNAqXo0MtTF9YfeL1koVUcO88oayBg
+   QqiMQCePj3jFCUBDL7WCbGcZlKE0F0GoI7GhmC1tomcJJMjefAGjEqPNf
+   zfe/0OeTGiZOKwcWqrk6hlGcndhRrsQZi9fUpXuViAvPjEccfQrQTRvrQ
+   Q==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10250"; a="232257838"
+X-IronPort-AV: E=Sophos;i="5.88,349,1635231600"; 
+   d="scan'208";a="232257838"
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Feb 2022 03:05:05 -0800
+X-IronPort-AV: E=Sophos;i="5.88,349,1635231600"; 
+   d="scan'208";a="628486542"
+Received: from nbaca1-mobl.ger.corp.intel.com (HELO localhost) ([10.252.18.25])
+  by fmsmga002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Feb 2022 03:05:00 -0800
+From:   Jani Nikula <jani.nikula@linux.intel.com>
+To:     Kees Cook <keescook@chromium.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>
+Cc:     Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        dri-devel@lists.freedesktop.org,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Lyude Paul <lyude@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] drm/dp: Remove common Post Cursor2 register handling
+In-Reply-To: <202202041740.F368F91F5@keescook>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20220105173507.2420910-1-keescook@chromium.org>
+ <202202041740.F368F91F5@keescook>
+Date:   Mon, 07 Feb 2022 13:04:55 +0200
+Message-ID: <87y22nq6nc.fsf@intel.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.1
-Subject: Re: [PATCH V1 04/10] dt-bindings: PHY: P2U: Add support for Tegra234
- P2U block
-To:     Vidya Sagar <vidyas@nvidia.com>, bhelgaas@google.com,
-        lorenzo.pieralisi@arm.com, robh+dt@kernel.org,
-        thierry.reding@gmail.com, jonathanh@nvidia.com
-Cc:     kishon@ti.com, vkoul@kernel.org, kw@linux.com,
-        krzysztof.kozlowski@canonical.com, p.zabel@pengutronix.de,
-        mperttunen@nvidia.com, linux-pci@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
-        kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
-References: <20220205162144.30240-1-vidyas@nvidia.com>
- <20220205162144.30240-5-vidyas@nvidia.com>
-From:   Raul Tambre <raul@tambre.ee>
-In-Reply-To: <20220205162144.30240-5-vidyas@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 2022-02-05 18:21, Vidya Sagar wrote:
-> Subject:
-> [PATCH V1 04/10] dt-bindings: PHY: P2U: Add support for Tegra234 P2U block
-> From:
-> Vidya Sagar <vidyas@nvidia.com>
-> Date:
-> 2022-02-05, 18:21
-> 
-> To:
-> <bhelgaas@google.com>, <lorenzo.pieralisi@arm.com>, 
-> <robh+dt@kernel.org>, <thierry.reding@gmail.com>, <jonathanh@nvidia.com>
-> CC:
-> <kishon@ti.com>, <vkoul@kernel.org>, <kw@linux.com>, 
-> <krzysztof.kozlowski@canonical.com>, <p.zabel@pengutronix.de>, 
-> <mperttunen@nvidia.com>, <linux-pci@vger.kernel.org>, 
-> <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>, 
-> <linux-kernel@vger.kernel.org>, <linux-phy@lists.infradead.org>, 
-> <kthota@nvidia.com>, <mmaddireddy@nvidia.com>, <vidyas@nvidia.com>, 
-> <sagar.tv@gmail.com>
-> 
-> 
-> Add support for Tegra234 P2U (PIPE to UPHY) module block which is a glue
-> module instantiated once for each PCIe lane between Synopsys DesignWare
-> core based PCIe IP and Universal PHY block.
-> 
-> Signed-off-by: Vidya Sagar<vidyas@nvidia.com>
-> ---
->   .../bindings/phy/phy-tegra194-p2u.yaml          | 17 +++++++++++++----
->   1 file changed, 13 insertions(+), 4 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/phy/phy-tegra194-p2u.yaml b/Documentation/devicetree/bindings/phy/phy-tegra194-p2u.yaml
-> index 9a89d05efbda..6ba1f69b1126 100644
-> --- a/Documentation/devicetree/bindings/phy/phy-tegra194-p2u.yaml
-> +++ b/Documentation/devicetree/bindings/phy/phy-tegra194-p2u.yaml
-> @@ -4,7 +4,7 @@
->   $id:"http://devicetree.org/schemas/phy/phy-tegra194-p2u.yaml#"
->   $schema:"http://devicetree.org/meta-schemas/core.yaml#"
->   
-> -title: NVIDIA Tegra194 P2U binding
-> +title: NVIDIA Tegra194 & Tegra234 P2U binding
->   
->   maintainers:
->     - Thierry Reding<treding@nvidia.com>
-> @@ -12,13 +12,17 @@ maintainers:
->   description: >
->     Tegra194 has two PHY bricks namely HSIO (High Speed IO) and NVHS (NVIDIA High
->     Speed) each interfacing with 12 and 8 P2U instances respectively.
-> +  Tegra234 has three PHY bricks namesly HSIO, NVHS and GBE (Gigabit Ethernet)
+On Fri, 04 Feb 2022, Kees Cook <keescook@chromium.org> wrote:
+> Ping,
+>
+> This is a OOB read fix. Can someone please pick this up?
 
-typo: namely
+Daniel? Thierry?
+
+As I said, I reviewed this but I'm not comfortable applying patches that
+change the functionality of drivers I don't maintain.
+
+BR,
+Jani.
+
+
+>
+> -Kees
+>
+> On Wed, Jan 05, 2022 at 09:35:07AM -0800, Kees Cook wrote:
+>> The link_status array was not large enough to read the Adjust Request
+>> Post Cursor2 register, so remove the common helper function to avoid
+>> an OOB read, found with a -Warray-bounds build:
+>> 
+>> drivers/gpu/drm/drm_dp_helper.c: In function 'drm_dp_get_adjust_request_post_cursor':
+>> drivers/gpu/drm/drm_dp_helper.c:59:27: error: array subscript 10 is outside array bounds of 'const u8[6]' {aka 'const unsigned char[6]'} [-Werror=array-bounds]
+>>    59 |         return link_status[r - DP_LANE0_1_STATUS];
+>>       |                ~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~
+>> drivers/gpu/drm/drm_dp_helper.c:147:51: note: while referencing 'link_status'
+>>   147 | u8 drm_dp_get_adjust_request_post_cursor(const u8 link_status[DP_LINK_STATUS_SIZE],
+>>       |                                          ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>> 
+>> Replace the only user of the helper with an open-coded fetch and decode,
+>> similar to drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c.
+>> 
+>> Fixes: 79465e0ffeb9 ("drm/dp: Add helper to get post-cursor adjustments")
+>> Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+>> Cc: Maxime Ripard <mripard@kernel.org>
+>> Cc: Thomas Zimmermann <tzimmermann@suse.de>
+>> Cc: David Airlie <airlied@linux.ie>
+>> Cc: Daniel Vetter <daniel@ffwll.ch>
+>> Cc: dri-devel@lists.freedesktop.org
+>> Signed-off-by: Kees Cook <keescook@chromium.org>
+>> ---
+>> This is the alternative to:
+>> https://lore.kernel.org/lkml/20211203084354.3105253-1-keescook@chromium.org/
+>> ---
+>>  drivers/gpu/drm/drm_dp_helper.c | 10 ----------
+>>  drivers/gpu/drm/tegra/dp.c      | 11 ++++++++++-
+>>  include/drm/drm_dp_helper.h     |  2 --
+>>  3 files changed, 10 insertions(+), 13 deletions(-)
+>> 
+>> diff --git a/drivers/gpu/drm/drm_dp_helper.c b/drivers/gpu/drm/drm_dp_helper.c
+>> index 23f9073bc473..c9528aa62c9c 100644
+>> --- a/drivers/gpu/drm/drm_dp_helper.c
+>> +++ b/drivers/gpu/drm/drm_dp_helper.c
+>> @@ -144,16 +144,6 @@ u8 drm_dp_get_adjust_tx_ffe_preset(const u8 link_status[DP_LINK_STATUS_SIZE],
+>>  }
+>>  EXPORT_SYMBOL(drm_dp_get_adjust_tx_ffe_preset);
+>>  
+>> -u8 drm_dp_get_adjust_request_post_cursor(const u8 link_status[DP_LINK_STATUS_SIZE],
+>> -					 unsigned int lane)
+>> -{
+>> -	unsigned int offset = DP_ADJUST_REQUEST_POST_CURSOR2;
+>> -	u8 value = dp_link_status(link_status, offset);
+>> -
+>> -	return (value >> (lane << 1)) & 0x3;
+>> -}
+>> -EXPORT_SYMBOL(drm_dp_get_adjust_request_post_cursor);
+>> -
+>>  static int __8b10b_clock_recovery_delay_us(const struct drm_dp_aux *aux, u8 rd_interval)
+>>  {
+>>  	if (rd_interval > 4)
+>> diff --git a/drivers/gpu/drm/tegra/dp.c b/drivers/gpu/drm/tegra/dp.c
+>> index 70dfb7d1dec5..f5535eb04c6b 100644
+>> --- a/drivers/gpu/drm/tegra/dp.c
+>> +++ b/drivers/gpu/drm/tegra/dp.c
+>> @@ -549,6 +549,15 @@ static void drm_dp_link_get_adjustments(struct drm_dp_link *link,
+>>  {
+>>  	struct drm_dp_link_train_set *adjust = &link->train.adjust;
+>>  	unsigned int i;
+>> +	u8 post_cursor;
+>> +	int err;
+>> +
+>> +	err = drm_dp_dpcd_read(link->aux, DP_ADJUST_REQUEST_POST_CURSOR2,
+>> +			       &post_cursor, sizeof(post_cursor));
+>> +	if (err < 0) {
+>> +		DRM_ERROR("failed to read post_cursor2: %d\n", err);
+>> +		post_cursor = 0;
+>> +	}
+>>  
+>>  	for (i = 0; i < link->lanes; i++) {
+>>  		adjust->voltage_swing[i] =
+>> @@ -560,7 +569,7 @@ static void drm_dp_link_get_adjustments(struct drm_dp_link *link,
+>>  				DP_TRAIN_PRE_EMPHASIS_SHIFT;
+>>  
+>>  		adjust->post_cursor[i] =
+>> -			drm_dp_get_adjust_request_post_cursor(status, i);
+>> +			(post_cursor >> (i << 1)) & 0x3;
+>>  	}
+>>  }
+>>  
+>> diff --git a/include/drm/drm_dp_helper.h b/include/drm/drm_dp_helper.h
+>> index 472dac376284..fdf3cf6ccc02 100644
+>> --- a/include/drm/drm_dp_helper.h
+>> +++ b/include/drm/drm_dp_helper.h
+>> @@ -1528,8 +1528,6 @@ u8 drm_dp_get_adjust_request_pre_emphasis(const u8 link_status[DP_LINK_STATUS_SI
+>>  					  int lane);
+>>  u8 drm_dp_get_adjust_tx_ffe_preset(const u8 link_status[DP_LINK_STATUS_SIZE],
+>>  				   int lane);
+>> -u8 drm_dp_get_adjust_request_post_cursor(const u8 link_status[DP_LINK_STATUS_SIZE],
+>> -					 unsigned int lane);
+>>  
+>>  #define DP_BRANCH_OUI_HEADER_SIZE	0xc
+>>  #define DP_RECEIVER_CAP_SIZE		0xf
+>> -- 
+>> 2.30.2
+>> 
+
+-- 
+Jani Nikula, Intel Open Source Graphics Center
