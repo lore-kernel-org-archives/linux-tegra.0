@@ -2,104 +2,139 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 580ACC433F5
-	for <linux-tegra@archiver.kernel.org>; Tue,  8 Feb 2022 08:11:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80E37C433F5
+	for <linux-tegra@archiver.kernel.org>; Tue,  8 Feb 2022 08:30:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345717AbiBHILE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 8 Feb 2022 03:11:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49716 "EHLO
+        id S239897AbiBHIa5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 8 Feb 2022 03:30:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60228 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239115AbiBHILD (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 8 Feb 2022 03:11:03 -0500
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12FCAC0401F5
-        for <linux-tegra@vger.kernel.org>; Tue,  8 Feb 2022 00:11:02 -0800 (PST)
-Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com [209.85.208.71])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id EBD654004D
-        for <linux-tegra@vger.kernel.org>; Tue,  8 Feb 2022 08:11:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1644307860;
-        bh=cYW0zgVOSV27j3Dwlea9zIlvvDmCtZOXKx4U6dIIDS4=;
-        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-         In-Reply-To:Content-Type;
-        b=tt5Kru5yq6/U3QEm9O8lD59jt50DCmvpAZ1safLxyFAzbFWwS8MfWpdZq5phw1Smy
-         LOT2nTT/lUpApws8YuP0oCEXfKDTu7Id6UYh0NueUHu4ON2XJd3GPEolIimkZFKHQz
-         Brcphw5MXZOXfaCumjM8zpQQ5GzM2GcWpXBhPV8v1/arwmg585KBjZv7RSHrYOLFeB
-         aUQkkDYt5LalnO0Ccr3mynOsDmvoADnmnrf0F6auK3VKm0G0ErYiS+Ujw2FrJVtu5P
-         SgLT27YFYBJ9Kwib8SSROTasUz3Y1H2sMzmrtGvErecmwzepKS86H5Rpt+ebv06EU5
-         qYb70rZ4b6i3Q==
-Received: by mail-ed1-f71.google.com with SMTP id k5-20020a508ac5000000b00408dec8390aso9184196edk.13
-        for <linux-tegra@vger.kernel.org>; Tue, 08 Feb 2022 00:11:00 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=cYW0zgVOSV27j3Dwlea9zIlvvDmCtZOXKx4U6dIIDS4=;
-        b=i3u3tatTndArlNOgIC2qSOj+kGVZjFpO7Wcr8xJQNWsnW+Oex+pGUdHHt+yadFeD2g
-         dvgYUE1Z0j9pS0nfhX85eAI2JWaGVOTUGQjsY9wO4fwR2mIZkGwKHQpyhUD60KVdtgSq
-         fSk3qPsGFbBmN4P2NcUX7pCZ7a5y9k54qgHaQ9Ty5qwg8rSZopsXJoL62MdaKz7RtPxc
-         H8U+zgQjSXYcP3JeepXMrl2v9PZN81K3Zao/2eyjsGTBEh6DVt1PQsGxY5BnwoRLgU6X
-         HqDtA0nf3eml3ItESTYuls+GF2hu/4cLxwWOz/Wo6AgSu/HoCUA8oxn1gVVETUToA4hC
-         4rLg==
-X-Gm-Message-State: AOAM53244J1RsbICPyg9DDL5ekYY07ZrQf9f9r3x526TBV1AouytIITN
-        M7D1IZyc27vHryV1vHGJzR8pK1TBpIOI7tgx4Yl9fF4wv4YkOtbDtwbtIaGjFLHmpO2jMFMjQGu
-        5HpXrQL3BJglbk227uGxoLx76nzjOA4Wl1kpCoYGK
-X-Received: by 2002:a17:907:6e1f:: with SMTP id sd31mr2753370ejc.286.1644307860301;
-        Tue, 08 Feb 2022 00:11:00 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJwUmnHD6q4SC2IMLlDe1bCpDWpJOnkm1iK1Rtn8sYQXbzQepNcfnchaDeO0+DwjK7XfD5g5VA==
-X-Received: by 2002:a17:907:6e1f:: with SMTP id sd31mr2753353ejc.286.1644307860092;
-        Tue, 08 Feb 2022 00:11:00 -0800 (PST)
-Received: from [192.168.0.92] (xdsl-188-155-168-84.adslplus.ch. [188.155.168.84])
-        by smtp.gmail.com with ESMTPSA id z2sm2739333ejr.68.2022.02.08.00.10.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Feb 2022 00:10:59 -0800 (PST)
-Message-ID: <d69f99ed-75a4-9b8c-addb-3eaa2b2be6a6@canonical.com>
-Date:   Tue, 8 Feb 2022 09:10:59 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH v5 3/9] dt-bindings: memory: lpddr2: Add revision-id
- properties
-Content-Language: en-US
-To:     Julius Werner <jwerner@chromium.org>, Rob Herring <robh@kernel.org>
-Cc:     Dmitry Osipenko <digetx@gmail.com>, linux-tegra@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>
-References: <20211006224659.21434-1-digetx@gmail.com>
- <20211006224659.21434-4-digetx@gmail.com>
- <YWimShkkxkR+bQLK@robh.at.kernel.org>
- <CAODwPW-2othAhTC9a_joBdHScA86iqs-FkZJZDrK5LxrJm8F8Q@mail.gmail.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-In-Reply-To: <CAODwPW-2othAhTC9a_joBdHScA86iqs-FkZJZDrK5LxrJm8F8Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+        with ESMTP id S229920AbiBHIa5 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 8 Feb 2022 03:30:57 -0500
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2077.outbound.protection.outlook.com [40.107.243.77])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C779C0401F6;
+        Tue,  8 Feb 2022 00:30:56 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=WpkXbekYg8Vyyn/l7i1BoHXcSWycUqZT4DeB6lbGNCy0g8I9wS+BSDqd7QI3tV2eTKrC2m4/CwA2hY4221qKFnmV3Nb0i+JUQM72IfGNahfS6Beqw5zfutBRdJhlc3XfhF7gRTasqVvA4ates0LjEBuln6kEzfuG2vgNjB+voiNkS9KpNbsmkCkhxZcyIcklZEs+2ywBVsaP/Jnnng1dnYsmghOr5MjBMSaMIDOCl8tBUEMN2/XyrCxGwJqV0XrsHRG3VXI2n5xMa/r0ylx7eLXcJYoAw4vaxXWwi+Jzs+YBsfAKO7vqguA3b3g4gmLTijnotf6FrngajmUX9N7A4A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=KscgSzTB10lwddLE7TE4OQ4aJVbeARmEl8M1qbSFO9Y=;
+ b=Z4fosyD0bzptc1MgqKkl934MKot3YdWFuy6mJRRE0/XFJfmPZ5m4Vg/wdenqIcRwqNmSEuYSaT7gJjneykzb1qyumppd4A4367IVNB2YSGS660pvuSGau7cLj8rqgup9DCsTKUwoJenV//3riEzUTrZxRJTItYhUPryLfPIpj4QqqU5oYY0WkJIL2ps8ugHkLAnoCJnyKjd2dLjezC8KXyu/W8gRUs45CIxEr8ckwk5QtGxWVfVFT4tC3+1Oi0QsSZCX8CQLsjPw90f/4Igv6D3AuMDlL4ueL60IEFSkd098A4Cuplp4I4Wwusryd7ol27QC9VIGpjtMQSW7uhmq7A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 12.22.5.235) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com; dmarc=pass
+ (p=reject sp=reject pct=100) action=none header.from=nvidia.com; dkim=none
+ (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=KscgSzTB10lwddLE7TE4OQ4aJVbeARmEl8M1qbSFO9Y=;
+ b=or0qUbx4d473JpJwRt8zyiVnPHEBmiA14DwrImJrSvRyJfKHjPjP8yPL8XkY6F+rmJTZlnwJqHt5iTJD5mkcnq4gwcv0j4b1/KKesgVF3jhSXeQ+Q43jeg960zn+qCxBizoPlK5PDy2H304FgCW86Tv4S1kFYKuCP7wl8InIIdjYQ+Ax0YPaOMhegxhUKAmlMKX1UQHkFmgFJu7HdigVTt+YBO3EHP2oDmPtpvK2qGs/pCml52cgBuNRiuEbPwHUPrwDZAQeIB7iGc9c3LZg2cuzNa0HB1ZzKalOP6BonDxVt3rwFCs99lnwmCCcGXTeTIMqsww9Ctft2uyzDeGEgQ==
+Received: from DM6PR06CA0049.namprd06.prod.outlook.com (2603:10b6:5:54::26) by
+ BY5PR12MB4148.namprd12.prod.outlook.com (2603:10b6:a03:208::23) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4951.12; Tue, 8 Feb
+ 2022 08:30:54 +0000
+Received: from DM6NAM11FT059.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:5:54:cafe::38) by DM6PR06CA0049.outlook.office365.com
+ (2603:10b6:5:54::26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4951.12 via Frontend
+ Transport; Tue, 8 Feb 2022 08:30:53 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.235)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 12.22.5.235 as permitted sender) receiver=protection.outlook.com;
+ client-ip=12.22.5.235; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (12.22.5.235) by
+ DM6NAM11FT059.mail.protection.outlook.com (10.13.172.92) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.4951.12 via Frontend Transport; Tue, 8 Feb 2022 08:30:53 +0000
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by DRHQMAIL107.nvidia.com
+ (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Tue, 8 Feb
+ 2022 08:30:53 +0000
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail205.nvidia.com
+ (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.9; Tue, 8 Feb 2022
+ 00:30:52 -0800
+Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.9 via Frontend
+ Transport; Tue, 8 Feb 2022 00:30:52 -0800
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <stable@vger.kernel.org>, <torvalds@linux-foundation.org>,
+        <akpm@linux-foundation.org>, <linux@roeck-us.net>,
+        <shuah@kernel.org>, <patches@kernelci.org>,
+        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
+        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
+        <sudipm.mukherjee@gmail.com>, <slade@sladewatkins.com>,
+        <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 4.9 00/48] 4.9.300-rc1 review
+In-Reply-To: <20220207103752.341184175@linuxfoundation.org>
+References: <20220207103752.341184175@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Message-ID: <7c1d5531-d756-4cff-986f-02b57fd45ede@rnnvmail203.nvidia.com>
+Date:   Tue, 8 Feb 2022 00:30:52 -0800
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 4b628416-7e11-4046-15da-08d9eadd5240
+X-MS-TrafficTypeDiagnostic: BY5PR12MB4148:EE_
+X-Microsoft-Antispam-PRVS: <BY5PR12MB4148820315E211F4EC315953D92D9@BY5PR12MB4148.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: v9yyjUAxaF/vzzDbENkW6MmqydirEEpnAd64qc4m+q/KW2zhCnLW7CDSvnr36U39Ua9bLWb9kEslIMKGnmikz9IW8JVxA+Y12NmEYYMDZTeWpzeR/HLjDbRMJM5lqPA+vpUZq+LatLzZizVmtANqdvUWbwO/ckIoFcFzv226zyX4rcIGJ5YICbmDToDbXoGg0yv3kmwyCkPiHP2u4bJFhiQHLVnhRu+BFIoRiW/IQrWZ60zRbk/ZnXTTsTAbg19MkhUSwGwquriYPboHfesMUz9i69rqPWhv4lCSTEJ2VDztX4tOCwtwifuxHhVvDzhF9W0JeGh+cS86t3zAZc/yM1npwQ0+Az1prEY1IeLP9VeMlZpN5kUVUGe8HRHafi8iaBizQDRt5kestoFe9JritI6CwjckJVUqb3QerTKleI1nHJtw1xWaf1sGKX15sTAsbUMQZhQGz0ULU+42vSmPCv/TJ/flWW9t8jzfHNbFvqgwiYgu+eJe2CUALMB8KXsmyAHshOut/duMxcZTAEVWTqFob/pLxl06Zn9R7EUGH3qPghjMeUtzv/n51qWHAN4kspieK6k8w29lSM4vV7Q5a0I54fXHIrrWqZh1eq284COZOfPihqHk/LufAgKPOMYvvvGe4XBvsuTCy0J8wYgLaoGVONy4XV7SuInFZPcsEiif3UC1JlAoRuVA/+RY1o0VVnUMfmahHOxIj0COakASzrhOhKe3Sn1oIxmrlXBH6Ml2gw2vs11v9atdZpoWUo1zMRL1AJjad6t6ovl5EaiTuiNjWUKM8PplOc/GvHfv22g=
+X-Forefront-Antispam-Report: CIP:12.22.5.235;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230001)(4636009)(36840700001)(40470700004)(46966006)(316002)(47076005)(336012)(8676002)(70586007)(31686004)(8936002)(70206006)(7416002)(4326008)(5660300002)(54906003)(2906002)(6916009)(508600001)(40460700003)(186003)(26005)(31696002)(356005)(36860700001)(966005)(81166007)(86362001)(82310400004)(426003)(36900700001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Feb 2022 08:30:53.7145
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4b628416-7e11-4046-15da-08d9eadd5240
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.235];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT059.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4148
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 08/02/2022 03:06, Julius Werner wrote:
-> Apologies for only noticing this a couple of months too late... but
-> this patch added the same thing to the "jedec,lpddr2" bindings that
-> were previously added by
-> https://www.spinics.net/lists/devicetree/msg413733.html to
-> "jedec,lpddr3", but in a slightly incompatible manner. Should we
-> adjust it to make them consistent (two bytes in one property, rather
-> than a separate property for each)? Or is it too late to change that?
+On Mon, 07 Feb 2022 12:05:33 +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.9.300 release.
+> There are 48 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Wed, 09 Feb 2022 10:37:42 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.300-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-Unfortunately I have no clue what patch you talk about ("this patch").
-There is no context here, no link except the older LPDDR3.
+All tests passing for Tegra ...
 
-The latest discussion is about dtschema conversion, so no new fields are
-being added:
-https://lore.kernel.org/lkml/20220206135807.211767-1-krzysztof.kozlowski@canonical.com/
+Test results for stable-v4.9:
+    8 builds:	8 pass, 0 fail
+    16 boots:	16 pass, 0 fail
+    32 tests:	32 pass, 0 fail
 
-Feel free to propose something new on top of it.
+Linux version:	4.9.300-rc1-gfa39f098578a
+Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+                tegra210-p2371-2180, tegra30-cardhu-a04
 
-Best regards,
-Krzysztof
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+
+Jon
