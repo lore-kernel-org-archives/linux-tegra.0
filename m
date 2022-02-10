@@ -2,116 +2,97 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08AC8C433EF
-	for <linux-tegra@archiver.kernel.org>; Wed,  9 Feb 2022 17:35:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EC17C433F5
+	for <linux-tegra@archiver.kernel.org>; Thu, 10 Feb 2022 01:57:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237353AbiBIRfF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 9 Feb 2022 12:35:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33178 "EHLO
+        id S233635AbiBJB5i (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 9 Feb 2022 20:57:38 -0500
+Received: from gmail-smtp-in.l.google.com ([23.128.96.19]:60036 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234972AbiBIRfF (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 9 Feb 2022 12:35:05 -0500
-Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74348C0613C9;
-        Wed,  9 Feb 2022 09:35:07 -0800 (PST)
-Received: by mail-lf1-x12b.google.com with SMTP id i17so5561764lfg.11;
-        Wed, 09 Feb 2022 09:35:07 -0800 (PST)
+        with ESMTP id S233698AbiBJB4N (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 9 Feb 2022 20:56:13 -0500
+Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51A95237DD
+        for <linux-tegra@vger.kernel.org>; Wed,  9 Feb 2022 17:33:01 -0800 (PST)
+Received: by mail-pl1-x636.google.com with SMTP id x3so512098pll.3
+        for <linux-tegra@vger.kernel.org>; Wed, 09 Feb 2022 17:33:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=8NIjqqLl8Q8d9yGDh9LTnBdmuxZgRMGqN0071eUrnzg=;
-        b=bgJPEUrvi/HTcJB2kr8J3TQqHRG6Xl82Im5VYrsuLLpEjt3Fyvx66kc7NebndQEIuZ
-         a4nNGkJWiwFRfgfTKzasa2Qb7cW+Sbi1iZNyynsWjfgpoKl3sSyCOPC4FPPou0VD6PES
-         e0R1D6ufDztwl74jVU24v8KI4H52gBaHBAqWfHMCTMfqyjVw9qEJDvFU7/Ndnvu14wHa
-         BZgr/fmERCdAfHHiXtQMS7+/7ZA+/F+hr748c0+XSk+k/hsLuz6mXibDQFJha29KZkzb
-         0ar42ni1u2Z4enA7Tr/ulznj9Fxz85LLkgjYRATISjB2wb7o7vdbYX71vvp0MKb4EJBh
-         cn7A==
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=CpXL3kPoVZ7att1zdwN8Mf8Da7ajP98VvjIjGbgaZGA=;
+        b=ENY37unj6f6SjoHK/K0Df/VIBp8PpZN9GGdjmw2F5RHMgth0BKvyfe7sX2l5TwfuMv
+         Bw72HuoCoav/n3JPrtIVxRyg7PhW6XYai1AIx9e9CG7QfpdEhEDh7DNsywpBfEYsuHG0
+         PC/EAciecqkqFtBE+fMv5STFjECmxiVAH8eSI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=8NIjqqLl8Q8d9yGDh9LTnBdmuxZgRMGqN0071eUrnzg=;
-        b=LGYV10doOeEzL92YrF8plEZ9Yc5xYMR0CEH4gyQ8zDgKt+LfxqwvdqJZYrPoWLtMxR
-         I+v0lYzjaNBP6BbHn82dERfGrc0WyN66lfn5RA0cfekArqc5aW01lvyRLG3rJ9XEgHsz
-         3xuL5hFScNU/Ln/p0tgjRZoHiZ3/LN+mcgZHBHhJFPZp7qcH3jfw8x6uLySyeUJPDmyZ
-         2vusvRg/8xm2+8GXN6ELEQXwJQ77Lafj5Bq1obflL995rJ/Xd8cpQ9NquZcT/Ikt3gqK
-         ghs0WVkMjjoF/c9dZbLMY+5gPA7fbv4LPnjimhcu37EKw+jMC56rLIEeV1jBsTuTI/F3
-         lUjA==
-X-Gm-Message-State: AOAM533C60WAew1s4UGdUGqqooE1erPqgtmz4JOdNnvZFwzsS5rAwiTM
-        Q4Vma4jpYRTcwC6B2Vgu8dpoOb1epufH8Q==
-X-Google-Smtp-Source: ABdhPJwE5Y+59qnObPBcVWqGD0RYLvE4fzpJxuV4YvPqdSwZMNvhqL65ykklDYjFLEOMG0iUKrsyDA==
-X-Received: by 2002:ac2:598e:: with SMTP id w14mr2271364lfn.218.1644428105714;
-        Wed, 09 Feb 2022 09:35:05 -0800 (PST)
-Received: from orome ([193.209.96.43])
-        by smtp.gmail.com with ESMTPSA id w11sm2451132lfr.201.2022.02.09.09.35.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Feb 2022 09:35:04 -0800 (PST)
-Date:   Wed, 9 Feb 2022 18:35:01 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Kartik <kkartik@nvidia.com>
-Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        jonathanh@nvidia.com, digetx@gmail.com, smangipudi@nvidia.com,
-        pshete@nvidia.com
-Subject: Re: [PATCH] soc/tegra: fuse: update nvmem cell list
-Message-ID: <YgP7RRy/PTuXZlw8@orome>
-References: <1638791565-3137-1-git-send-email-kkartik@nvidia.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=CpXL3kPoVZ7att1zdwN8Mf8Da7ajP98VvjIjGbgaZGA=;
+        b=jF9kmtowO7793euq8Ps5+Xk1OQwcjXn6BHEXbyDOLw+FTxLrqvtX8owGmUk0eNDIxU
+         0DW7QNk4WVcTfX95Vxvg4TGsKraxz3mbqWufj20Y9pQ0UflGQXxPOegOucssLK91wARv
+         y5Re7EjrkLEipEhM1N2GROU55udp/liZ8fk8Ag+qo2pwSwAlcJoiAaGp/l6YGWqd0Z2x
+         qyFjCtb+N1US4yqlUScCOKlP+s2+bbUvxu38aEUwbvj+yUU/k/dd2/7lG0qy2Lg7m+BA
+         xF5htstiIZ0KfOWHdRmrZFbQVMiHgpFq/VVduUViV5ZuFHGmMc/TPhxFB3YhL9xCeW3i
+         YC4g==
+X-Gm-Message-State: AOAM530f7LSWeYUcLKQzanTEY81QglUb7DQey6vbwFkWR0Pz1ZGHj8y7
+        VaDhd6ARipBpQoE6lnRnLEG2vw9q8tFHIjc9gd8gS4Yydlxnug==
+X-Google-Smtp-Source: ABdhPJz8Fs/lByCRrqqXLa3uco/tN8npZwUZ9fqdEfcHy+dfvEkvZxsQSmSiX8brFmaAbGdrbukbIMqI5en+3f8e4rg=
+X-Received: by 2002:a05:6102:cc8:: with SMTP id g8mr1471720vst.39.1644453157351;
+ Wed, 09 Feb 2022 16:32:37 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="wlDecwlbAShuVnde"
-Content-Disposition: inline
-In-Reply-To: <1638791565-3137-1-git-send-email-kkartik@nvidia.com>
-User-Agent: Mutt/2.1.5 (31b18ae9) (2021-12-30)
+References: <20211006224659.21434-1-digetx@gmail.com> <20211006224659.21434-4-digetx@gmail.com>
+ <YWimShkkxkR+bQLK@robh.at.kernel.org> <CAODwPW-2othAhTC9a_joBdHScA86iqs-FkZJZDrK5LxrJm8F8Q@mail.gmail.com>
+ <d69f99ed-75a4-9b8c-addb-3eaa2b2be6a6@canonical.com> <CAODwPW-AMqQ+ZbnvUTuxP5Bbxdcy08GSXnhcLC+V6BW=OPYaqg@mail.gmail.com>
+ <6568fd31-113f-1581-4eff-45a4a1eb4e5d@canonical.com> <c33c9de2-ff0f-0ba7-b424-728d316dcca2@gmail.com>
+In-Reply-To: <c33c9de2-ff0f-0ba7-b424-728d316dcca2@gmail.com>
+From:   Julius Werner <jwerner@chromium.org>
+Date:   Wed, 9 Feb 2022 16:32:25 -0800
+Message-ID: <CAODwPW-VfbvWs3OVON1m=WWFXN2V86o9jqurVDShpfTrSn=Mkw@mail.gmail.com>
+Subject: Re: [PATCH v5 3/9] dt-bindings: memory: lpddr2: Add revision-id properties
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Julius Werner <jwerner@chromium.org>,
+        Rob Herring <robh@kernel.org>, linux-tegra@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+> I don't mind, but I also don't see where the revision-id property of
+> LPDDR3 is used at all. I can't find any device-tree with LPDDR3
+> revision-id and don't see it being used in the code either. Maybe it's
+> the LPDDR3 binding that needs to be changed?
 
---wlDecwlbAShuVnde
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+We are using the revision ID in userspace (read through
+/proc/device-tree) for runtime memory identification. We don't have a
+kernel driver bound to it. Our boot firmware is inserting this value
+at runtime into the FDT (that's basically the reason we have this, our
+firmware auto-detects memory during boot and we use the FDT to report
+what it found to userspace), that's why you can't find it anywhere in
+the static device trees in boot/dts/.
 
-On Mon, Dec 06, 2021 at 05:22:45PM +0530, Kartik wrote:
-> From: kartik <kkartik@nvidia.com>
->=20
-> Update tegra_fuse_cells with below entries:
->  - gcplex-config-fuse:
->      Configuration bits for GPU, used to enable/disable write protected
->      region used for storing GPU firmware.
->  - pdi0:
->      Unique per chip public identifier.
->  - pdi1:
->      Unique per chip public identifier.
->=20
-> Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
-> Signed-off-by: kartik <kkartik@nvidia.com>
-> ---
->  drivers/soc/tegra/fuse/fuse-tegra.c | 20 +++++++++++++++++++-
->  1 file changed, 19 insertions(+), 1 deletion(-)
+> I made each LPDDR2 revision-id property to correspond to a dedicated MR
+> of LPDDR, which feels okay to me to since it matches h/w.
 
-Applied, thanks.
+I'm not super married to my solution, so if that makes things easier
+we can standardize on the two-property version as well. I mostly
+designed it my way because I thought we may one day also want to do
+something like this for the 8-byte LPDDR5 serial-id, and then it would
+get kinda cumbersome to have serial-id1 through serial-id8 all as
+separate properties. But that's also a bridge we can cross when we get
+there.
 
-Thierry
-
---wlDecwlbAShuVnde
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmID+0MACgkQ3SOs138+
-s6FazA/+N8CLS2hBOqfp79hXy4cX5pQLIfdyWqOXE+8QAMy9+PMKYpPUFXqOFIGp
-7FVv1ymK5dmjp4NgNhDxiVUZEllhFmtNX8Is8P9S5HgQnOg6oT5AiWs9jvt1tB62
-NlhcpWc9vaiDDFLl3kEyfQIz9tCDkq2KU/yH0TrlPQ2jzGtT4D8WspMdtZrHIL24
-yIrZAXjooimuNTDgf7+pRBQMwpY7m+F/+IO+xtdU2vQzoNeGHaXm5pcn2xEyAGCm
-Hi51o+2+kuEBcr0DH3tSSJmxVgn0KVxZ/IsZ59FmKsoOwr/5OXf0EQRo2lPT4F1X
-rY15hESZSM4TDdS6QKtGZHfJ5tZzMFI5dEUkV1QjZsDQQnpCH5DChzOfnfwcKGG1
-NvHQ8rwkULn5WDfSBwFy5UWXah0kJDQ/9ocI3Fo0I0g5YeL1nmfEFN6IlY61sQbQ
-Cyu9OvyUeurOyRBqwyU9PVlDAdAvKHV4XHQdoDLirdk3AYocJPZGONzMc4wLm86O
-BkzhiFAjg5W5oRX3PehmkwyzGHiHXb62YB87k7jo/wBymIKp5azQ70rd/fNYjcCm
-go6BJ5N1c9OjCRC3/K3otGTaa8V/H5rUtHBEv+QtZpjEaj6WFcMtb9BClljtFUb5
-UX7YMMGox3lxmtUPc/enBEiUmw+gLfbpaC4+UAZwTMNxli6jhcE=
-=0yLe
------END PGP SIGNATURE-----
-
---wlDecwlbAShuVnde--
+My use case is in a position where we could still change this now
+without requiring backwards-compatibility. Krzysztof, would you be
+okay if I instead changed the "jedec,lpddr3" to the same thing
+"jedec,lpddr2" does -- seeing as the original patch was from me, my
+use case could handle the switch, there has never been any actual
+kernel code using the property, and it seems very unlikely that anyone
+else has silently started using the same thing in the time it's been
+in the tree? Or do we also need to go the official deprecation route
+for that?
