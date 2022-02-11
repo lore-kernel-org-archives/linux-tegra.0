@@ -2,182 +2,114 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41E42C433EF
-	for <linux-tegra@archiver.kernel.org>; Fri, 11 Feb 2022 09:11:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FD16C433EF
+	for <linux-tegra@archiver.kernel.org>; Fri, 11 Feb 2022 10:32:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236211AbiBKJLZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 11 Feb 2022 04:11:25 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:55020 "EHLO
+        id S1348925AbiBKKcS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 11 Feb 2022 05:32:18 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:56822 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229462AbiBKJLZ (ORCPT
+        with ESMTP id S1348919AbiBKKcS (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 11 Feb 2022 04:11:25 -0500
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2087.outbound.protection.outlook.com [40.107.243.87])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C4851020;
-        Fri, 11 Feb 2022 01:11:24 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=WFW0mSoakIoao9kcMLCYXixQKOkpnmsto1AKqghzZPUuZ2LB7N0aCCAM81XJi7BBoSI4qR8Jop4dgukm9/v162zdZKteVoQcchoyYi/gidNtD0m35lPpHjn4kKE7YtOoC5q9MW5fuO0S0QUODQEcrCL5eJhRxYBUNAJuZ9QBcsBWaQTePVfvPyLvUJFerOTezcED4Q1nB3GX6OrD2Zqfhvy0VEnlDeSdFrM0bP0UHtrjz4ae3KQ134hHyi6BaH9joXPkYZXca4hGrL1Gcfl+ArB4trb7z+AIOQ33L29z39ZKDPnHAinF7HnlupaIVGQHNg5FWWBwignHVuRSkrVa9A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=rzgNYxwP4OQ/k2ZE6i76k7EnUA3nicTOLkhnDbf9wpM=;
- b=WKwKiRXGJg2ulH4cgNdkDK2k1yiRF8qK0UviATOSk6FNmVVDkguqrPf5pphwc+ZGhAVzVjzFNtHDlw0pvZdB/v4ru1L9D1TNUD5wr9d5X8cp1w87tOs2jbXa/teRSlUh+w2TmvqBvuCvqfPKGUanKaxNUWW1RFbmUzljaA7JvchA+9dqI8vR324l7YTQv5v+T44P9vp5h04l9RQNFVQD+vLsats58tqSLV7olpQJQ6LsXK+ze80h+CVJ94uLwiA0XrT0HcNCajv1qzpQRoUdyLDzdPj+zWNolynSVL0MJ07M69gwaImM2MpmmoHd4NG5Eq+c5muDtpjNeakys9mkCg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rzgNYxwP4OQ/k2ZE6i76k7EnUA3nicTOLkhnDbf9wpM=;
- b=Znxnq4IdrGEVtZf2aw1grUzH4F0It06ti3l0QbZ6jr8e2fvdt3d6ohlN0Kwil0Bi/2UHEq8qOT1Hpz+3mu/ch0TGPd8UKeVHLpir97jAtaog4CIXstGTHUa2J35r/oB+8pX7mjhpQ76tTkG6df4OaYcyxuXg4dqd79UXsmV+kWfW8H5dsBcj0AGtivO/LZQa8GXiJmacK9HVIXUDd7fzvD0tNWBaeFZRt8toxTFrhroPCR/ycGLyz4s93uwgTGG2lXOkEABtQiZ+v1WOeVA2q6k/IbC20ETBekp+PCuYv88TKe9o1cWBfH9eIuWYSsEClKxkk36nozMIY0MAoR80jA==
-Received: from DM5PR12MB1850.namprd12.prod.outlook.com (2603:10b6:3:108::23)
- by MWHPR12MB1870.namprd12.prod.outlook.com (2603:10b6:300:10a::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4951.14; Fri, 11 Feb
- 2022 09:11:21 +0000
-Received: from DM5PR12MB1850.namprd12.prod.outlook.com
- ([fe80::94d8:5850:e33d:b133]) by DM5PR12MB1850.namprd12.prod.outlook.com
- ([fe80::94d8:5850:e33d:b133%4]) with mapi id 15.20.4951.021; Fri, 11 Feb 2022
- 09:11:21 +0000
-From:   Akhil R <akhilrajeev@nvidia.com>
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        "christian.koenig@amd.com" <christian.koenig@amd.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
-        "sumit.semwal@linaro.org" <sumit.semwal@linaro.org>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>
-Subject: RE: [PATCH RESEND] i2c: tegra: Add SMBus block read function
-Thread-Topic: [PATCH RESEND] i2c: tegra: Add SMBus block read function
-Thread-Index: AQHYHpP+iBNzHq+ctEuAu+zpK3JSjayNO4IAgADToJA=
-Date:   Fri, 11 Feb 2022 09:11:21 +0000
-Message-ID: <DM5PR12MB18502CF86E602F7071A1EA58C0309@DM5PR12MB1850.namprd12.prod.outlook.com>
-References: <20220210153603.61894-1-akhilrajeev@nvidia.com>
- <ae6d300f-962d-9731-bb78-3594b4c31aea@gmail.com>
-In-Reply-To: <ae6d300f-962d-9731-bb78-3594b4c31aea@gmail.com>
-Accept-Language: en-IN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 0cbb2167-30e7-4297-35f1-08d9ed3e7884
-x-ms-traffictypediagnostic: MWHPR12MB1870:EE_
-x-microsoft-antispam-prvs: <MWHPR12MB187096F2474E10BF51B4D6DEC0309@MWHPR12MB1870.namprd12.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:7691;
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: Wb3cK/pWn71oUDj9++cVOgvdqIT4HTgZC8IpHUIDyaxh9o8i7/C9lcI+5J9DD5rDRHq0WHlJuCmOSAIBmbtQumRGk2ZzchQ2Cy3QVEV7RP5xTuMQWVZGV8thQAhD51LZ1HaPEnJPlhxtt7Alyd24/GMPlF+3C24QcLiuQADexaICiTf09bXUaC4hMg5HxJSoarVwM/IlmbYxM4r08bF5pE07qXHV0d3OqqbAIQS2uOIguEwPY9anSf/6jPEEdkQiTJxZG8NYdSB1N4t6mvVfF+h9QrzSuufbz8T+q7Z93aszgDnNAIyAjbLxCvZlrN5EgG2LjxhjIIV03D3Hyt5mVKUNU9oiuRVMxifjM5o18a3XB6UyjLAG4ow3qTGhsjVmkcGjxEU8md9jebhbuxLlUvHzHd1JpkwfrRUdufB9nzjQ9bNw82fpSL3OMdk8ipWitJkMDT8FaZsuwGLtdXTyt+BqMB8u/deWR0nc+WJV33nDeD3WDa19l+0hplMZGoNfC2+bLvNf/TMvyIvhxsxqsS1u9lvQ+wmffj/ohMmALN9pz+PncmYLC7P3joyjToVIhADKFuKK3UxspbyzCbLb/hQB8bF7MVBonCBpUMTAfam6D0shVoEi9PiwvdUN8vGjlxnAhj47YiwY/MApr2XjMRAVYFXvDeb6qiQ30Pki0VL8NaeWYBF5EXAuDMiSwRyYwTXbc1TfQunTomSvmOzzT1SemFm3DeVXgf9yRdnYPZ8=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM5PR12MB1850.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(71200400001)(110136005)(921005)(38100700002)(2906002)(66946007)(66446008)(8676002)(26005)(186003)(76116006)(64756008)(66476007)(66556008)(122000001)(8936002)(55016003)(52536014)(86362001)(5660300002)(316002)(83380400001)(508600001)(7696005)(9686003)(38070700005)(33656002)(6506007);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?V3JvUUs4czF0d1VaQ0hHKzNBTk9ydDAzdXFEcHJOc2VRTVZSdVUrYkRDOTZq?=
- =?utf-8?B?YTMrOW9lN1RBUCt2QzN3TEJCM2E2Y1JlK2JTQTBrRnRLeGQ4N2p1SmR1TXRh?=
- =?utf-8?B?aTZMSGM2aklhR25CVVZJZ1JPcXBqQW1ManBmL3U3TWJsT0tuR3hMSFFrSEpG?=
- =?utf-8?B?ajZaTGR0ckt2Q2tiZGUvbUpuZ0VFV0NEMXVJQWMrWFdpbkIrOVM3YmsrVkhM?=
- =?utf-8?B?Q3d5WHdaRjNIQ1RPN3lwK2E1TWQ3TjVjZkZBU3ZuQisvM2laNTRkZDBNUnhl?=
- =?utf-8?B?QnlyRzI4NXdpNHJNQUltRHdQT2JHajlEYlBTTzRBVHJXN09oV01PNGFxeUg0?=
- =?utf-8?B?eldXbnk5NTRxS3RPNzQyMzBzeDFOUm80bVpWNUlETGE4WWg5V3YyOWhLbm15?=
- =?utf-8?B?b05iVUNJbHlnRU9URDhzWHU1RTZRRWNwQmlhTmZpRGpFMS9FVXAxazF3WndN?=
- =?utf-8?B?ek9obkovcDJrekhTTU5BNXdYbUJxY1JyQ2N0dG8rbmd0Z3ZYaWRhajV1c3Mz?=
- =?utf-8?B?UXk3aTdrcU1Ydi8xQlUvQ0l6MC9uVTBoRmdDa090TnJxK3NNa1htUW9obUtn?=
- =?utf-8?B?ZVZQQlNoam5aeDhpdDRPZlplRGJFUnJrWWxRRUtmWHNkYUhrU1YwMGhqM3FT?=
- =?utf-8?B?dEVNeDZUbENqZi9WT0dUNnhJVU94MUhyejFKWVdmRXhPTUdIREhzNU1ZeGhr?=
- =?utf-8?B?R0NRRXkxQ1pEckMzMGJjdnRCQlJmWkZrMTdiS3RkZkRLTm4zaG91dVcxVU5M?=
- =?utf-8?B?WjBFWGZ0ZmdRU3RTamZ2NXQzZm1vM21XaUNMUUFmOFhsdXJnMjYrOFVXYlN6?=
- =?utf-8?B?Nm5xbFBKZmEwckVLV3JsbUJqLzVrK1k2M2IyTXZRU3RVTjk2ZUs5aDNjbmhh?=
- =?utf-8?B?c1FWT3FFSG9YRzlsdUI4T0Y3c3pOb242dXMrZ0NqRGtwZ2VhVXZTVmUzVnpu?=
- =?utf-8?B?MFFVWmE4aUtENkdBZUt3NkVIbEVuak95VkFwcW1DUWxzNnhGeGwvVGVSb2lJ?=
- =?utf-8?B?MzJjQlJBNFpGWXdZeXgwSEtTSGQ4Tzg3SXhPRTUwMk5tTXBpZnFGdytUSE01?=
- =?utf-8?B?Zmh6cUxtTkY3UWRCRWJCTXA5NVBLZEdjKzc2WXRMSzZBNy8rZXZxQ1c2eUQ3?=
- =?utf-8?B?cXo4NkRmQnBwb3YzNlN2K0puSGQyNmE5a1JJYVprU0dFaVRVYWI5bnp4bURB?=
- =?utf-8?B?dStPM0dhSk0yV0VZZGNZOXJUeW5pR1l5OUdZUWtldFo1bWtVMVl1NDF1MzBJ?=
- =?utf-8?B?V2tBWkFHTGRuV0htYlBENFdKdEpnQXBRaUlONHhxbTZ5NDNVRFJ6ZDVJaDVH?=
- =?utf-8?B?Vmc2bEhXMUw2YmZVai9BL3JzcEdMNXNydGVzWTlDS3YvYXFNalVJc1dEWFpr?=
- =?utf-8?B?VEhhU3NaSzdzRVc5T1JxR0JQbDVlZ3VEV0MveTBxeGtXMWFCbHRJcUVPSnNp?=
- =?utf-8?B?S3pzNjQzeFpvcHdrVEVyUXp3bGNOaDU3KzAxWksxakluM0UranBZcTZ6QkNi?=
- =?utf-8?B?MHpUc0U1ZFVadzNITU1UWEx6endXOWpuTkpYTXRQbFA2MGZoVmY3SE56V0NT?=
- =?utf-8?B?bDV2bWVqMHVRUFJFMWNMdm9obVRBWkE4Yno3N3hoZ0tqaFpZeEl4L1dZaWxX?=
- =?utf-8?B?ZjQxdTBTcGUvSmhKb3Z6UHpoc0hOdkh3TG5iNTBkTlRSZStTT2R3VHBBRERC?=
- =?utf-8?B?NkRjM2dJNXdVS2l4QmJQcFdLRjNzaHdYb1dxa0dkdWxoUHZKWkRqRUZJSzZI?=
- =?utf-8?B?SnZoaFFmamFxUmx5SE9PdWdNek5sZFZDQXJuN2UxeS9xSUpGN3R2T1l5Tk9T?=
- =?utf-8?B?Um9BY1pxL1BoMkRwZU95QmY4ZlJ3ckI2MEhWZjd0T1BwTUYzaHRJMWVwSHNV?=
- =?utf-8?B?NVdPbDIvWDVQRnlzN3lRZGZmTXQyOHZNSUtVcDNBTmw4eEdKZXNINDA4Ymgy?=
- =?utf-8?B?ZTB2YTdvZGovand4RENwalRuY3hMTzB3MUduRTArWjlhN0p2VHlJNUpjUm04?=
- =?utf-8?B?bVhqNjJtUUl3QmN6dFVUU2pmbEJKazhLK3hQWFE4dXUrZVlBVWFXNTFYc3pP?=
- =?utf-8?B?Tnk1K2ZFSXd1d3FrbVY2dUNHQVRSSFpkQ2Q3SzVBZXNkM004eDVndjdzYWsy?=
- =?utf-8?B?TGtWK2xseHl0NnNFYnN5RzQ2ZnFvY3l4bERuQzR3ZTRrL0N5dkM2bCtvbTdh?=
- =?utf-8?Q?zOI04LANAaT2Wc9QdC+jGHg=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Fri, 11 Feb 2022 05:32:18 -0500
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 205D1E9E;
+        Fri, 11 Feb 2022 02:32:17 -0800 (PST)
+Received: by mail-wr1-x42f.google.com with SMTP id d27so10642943wrb.5;
+        Fri, 11 Feb 2022 02:32:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
+        bh=CTKCm88v7qTQ2R8sYmJYejrVwfkvF1N7DAtwHgyHITA=;
+        b=PEVvI8lvyG+yyMuME6bK+NTUsE9VvoSvcZ4MFjHGv/9JTjXB5/7gUu/nqdrnmGCQQm
+         OueBhXQhUMI0LuetsVxITm0ROgg7pw0c7ZZHVr44THPeXeuhKDqURax/pVdIgBIpYHXH
+         /ZIgIHxPDXcL9CPWn53STCsmHaIDtxOs5/0TYZ0ShMcOCkZQv3xNmqgPJV4ZwxW0Gqf6
+         f4QyUzQ4m3Fs50iKseKBV77iMM/V+AYaU94j531twb2pBv+DAXnjekLQHDAqn3WWbV0g
+         8m2gvpBo505dvgtughe0vKh7kEfe6SOuiXjgRZs1e9Hb3pGCg9MN9YWbjQpWbw7q/abd
+         zgjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=CTKCm88v7qTQ2R8sYmJYejrVwfkvF1N7DAtwHgyHITA=;
+        b=Mtmd2ar1ddz49s29OjxuetvpKv/JnFe3hrL5O7LwzvqdTLYwIxXroLaV7GODJvnF8C
+         o7Ro+bUgCPY62ooCXun3GzM+vs+/hWfd9Nw31rMSxcN78O/vCpXR+dAXdvJ7RFWnhENt
+         GeP63mmER+fpSfVlz7qex4rWmlwKmF7wRjfYQaa7teIuTb+tSJUR6w20nv9WUORfK+bG
+         A1F3p2oZFCOR13BGPQHZcsJ7MgkStmUXYHnGVKZqU7ViCH9PDtr1UBgr3OkD3shTGA6e
+         cPkDAUKZ2vcTcWIaYPJz7Z8JNnLAw3JZaX30WxpuLnvlFSJcjiuqCJIn2a4upfd2BYiH
+         dbig==
+X-Gm-Message-State: AOAM533GNT32bz6fAVPS0OM7rZo/r6FO80K1YPMbSGSnY5MTNwhmbWo9
+        TSEUlrewGcCUrWFF6T7yI5U=
+X-Google-Smtp-Source: ABdhPJy/olguZC72hWtA2h8VahlzAoOL3pM5jrE8dTwRcymyszjlSN/r88pZnO/nGFQlgNwxrH7new==
+X-Received: by 2002:a05:6000:137b:: with SMTP id q27mr852318wrz.430.1644575535558;
+        Fri, 11 Feb 2022 02:32:15 -0800 (PST)
+Received: from Red ([2a01:cb1d:3d5:a100:264b:feff:fe03:2806])
+        by smtp.googlemail.com with ESMTPSA id y15sm30478038wry.36.2022.02.11.02.32.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Feb 2022 02:32:15 -0800 (PST)
+Date:   Fri, 11 Feb 2022 11:32:13 +0100
+From:   Corentin Labbe <clabbe.montjoie@gmail.com>
+To:     hkallweit1@gmail.com, swsd@realtek.com, davem@davemloft.net,
+        kuba@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com
+Cc:     linux-tegra@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: NETDEV WATCHDOG: enp1s0 (r8169): transmit queue 0 timed out
+Message-ID: <YgY7LW8WLtTCZUu0@Red>
 MIME-Version: 1.0
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DM5PR12MB1850.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0cbb2167-30e7-4297-35f1-08d9ed3e7884
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Feb 2022 09:11:21.3915
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: OxJIFs/g0UJojZ7Jabmudad2zYd6v49fZkCB1dMO8ReRpnyYKVJJBM+zQEXLzHvwDnmMJtGaba9sc1x6A0KLeQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR12MB1870
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-PiAxMC4wMi4yMDIyIDE4OjM2LCBBa2hpbCBSINC/0LjRiNC10YI6DQo+ID4gRW11bGF0ZSBTTUJ1
-cyBibG9jayByZWFkIHVzaW5nIENvbnRpbnVlWGZlciB0byByZWFkIHRoZSBsZW5ndGggYnl0ZQ0K
-PiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogQWtoaWwgUiA8YWtoaWxyYWplZXZAbnZpZGlhLmNvbT4N
-Cj4gPiAtLS0NCj4gPiAgZHJpdmVycy9pMmMvYnVzc2VzL2kyYy10ZWdyYS5jIHwgMTggKysrKysr
-KysrKysrKysrKy0tDQo+ID4gIDEgZmlsZSBjaGFuZ2VkLCAxNiBpbnNlcnRpb25zKCspLCAyIGRl
-bGV0aW9ucygtKQ0KPiA+DQo+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvaTJjL2J1c3Nlcy9pMmMt
-dGVncmEuYyBiL2RyaXZlcnMvaTJjL2J1c3Nlcy9pMmMtdGVncmEuYw0KPiA+IGluZGV4IDAzY2Vh
-MTAyYWI3Ni4uMjk0MWU0MmFhNmEwIDEwMDY0NA0KPiA+IC0tLSBhL2RyaXZlcnMvaTJjL2J1c3Nl
-cy9pMmMtdGVncmEuYw0KPiA+ICsrKyBiL2RyaXZlcnMvaTJjL2J1c3Nlcy9pMmMtdGVncmEuYw0K
-PiA+IEBAIC0xMjMzLDYgKzEyMzMsMTEgQEAgc3RhdGljIGludCB0ZWdyYV9pMmNfeGZlcl9tc2co
-c3RydWN0IHRlZ3JhX2kyY19kZXYNCj4gKmkyY19kZXYsDQo+ID4gICAgICAgICAgICAgICByZXR1
-cm4gZXJyOw0KPiA+DQo+ID4gICAgICAgaTJjX2Rldi0+bXNnX2J1ZiA9IG1zZy0+YnVmOw0KPiA+
-ICsNCj4gPiArICAgICAvKiBUaGUgY29uZGl0aW9uIHRydWUgaW1wbGllcyBzbWJ1cyBibG9jayBy
-ZWFkIGFuZCBsZW4gaXMgYWxyZWFkeSByZWFkICovDQo+ID4gKyAgICAgaWYgKG1zZy0+ZmxhZ3Mg
-JiBJMkNfTV9SRUNWX0xFTiAmJiBlbmRfc3RhdGUgIT0NCj4gTVNHX0VORF9DT05USU5VRSkNCj4g
-PiArICAgICAgICAgICAgIGkyY19kZXYtPm1zZ19idWYgPSBtc2ctPmJ1ZiArIDE7DQo+ID4gKw0K
-PiA+ICAgICAgIGkyY19kZXYtPm1zZ19idWZfcmVtYWluaW5nID0gbXNnLT5sZW47DQo+ID4gICAg
-ICAgaTJjX2Rldi0+bXNnX2VyciA9IEkyQ19FUlJfTk9ORTsNCj4gPiAgICAgICBpMmNfZGV2LT5t
-c2dfcmVhZCA9ICEhKG1zZy0+ZmxhZ3MgJiBJMkNfTV9SRCk7DQo+ID4gQEAgLTEzODksNiArMTM5
-NCwxNSBAQCBzdGF0aWMgaW50IHRlZ3JhX2kyY194ZmVyKHN0cnVjdCBpMmNfYWRhcHRlciAqYWRh
-cCwNCj4gc3RydWN0IGkyY19tc2cgbXNnc1tdLA0KPiA+ICAgICAgICAgICAgICAgICAgICAgICBl
-bHNlDQo+ID4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgZW5kX3R5cGUgPSBNU0dfRU5E
-X1JFUEVBVF9TVEFSVDsNCj4gPiAgICAgICAgICAgICAgIH0NCj4gPiArICAgICAgICAgICAgIC8q
-IElmIE1fUkVDVl9MRU4gdXNlIENvbnRpbnVlWGZlciB0byByZWFkIHRoZSBmaXJzdCBieXRlICov
-DQo+ID4gKyAgICAgICAgICAgICBpZiAobXNnc1tpXS5mbGFncyAmIEkyQ19NX1JFQ1ZfTEVOKSB7
-DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgIHJldCA9IHRlZ3JhX2kyY194ZmVyX21zZyhpMmNf
-ZGV2LCAmbXNnc1tpXSwNCj4gTVNHX0VORF9DT05USU5VRSk7DQo+ID4gKyAgICAgICAgICAgICAg
-ICAgICAgIGlmIChyZXQpDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgYnJlYWs7
-DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgIC8qIFNldCB0aGUgcmVhZCBieXRlIGFzIG1zZyBs
-ZW4gKi8NCj4gPiArICAgICAgICAgICAgICAgICAgICAgbXNnc1tpXS5sZW4gPSBtc2dzW2ldLmJ1
-ZlswXTsNCj4gPiArICAgICAgICAgICAgICAgICAgICAgZGV2X2RiZyhpMmNfZGV2LT5kZXYsICJy
-ZWFkaW5nICVkIGJ5dGVzXG4iLCBtc2dzW2ldLmxlbik7DQo+ID4gKyAgICAgICAgICAgICB9DQo+
-ID4gICAgICAgICAgICAgICByZXQgPSB0ZWdyYV9pMmNfeGZlcl9tc2coaTJjX2RldiwgJm1zZ3Nb
-aV0sIGVuZF90eXBlKTsNCj4gPiAgICAgICAgICAgICAgIGlmIChyZXQpDQo+ID4gICAgICAgICAg
-ICAgICAgICAgICAgIGJyZWFrOw0KPiA+IEBAIC0xNDE2LDEwICsxNDMwLDEwIEBAIHN0YXRpYyB1
-MzIgdGVncmFfaTJjX2Z1bmMoc3RydWN0IGkyY19hZGFwdGVyDQo+ICphZGFwKQ0KPiA+ICB7DQo+
-ID4gICAgICAgc3RydWN0IHRlZ3JhX2kyY19kZXYgKmkyY19kZXYgPSBpMmNfZ2V0X2FkYXBkYXRh
-KGFkYXApOw0KPiA+ICAgICAgIHUzMiByZXQgPSBJMkNfRlVOQ19JMkMgfCAoSTJDX0ZVTkNfU01C
-VVNfRU1VTCAmDQo+IH5JMkNfRlVOQ19TTUJVU19RVUlDSykgfA0KPiA+IC0gICAgICAgICAgICAg
-ICBJMkNfRlVOQ18xMEJJVF9BRERSIHwgSTJDX0ZVTkNfUFJPVE9DT0xfTUFOR0xJTkc7DQo+ID4g
-KyAgICAgICAgICAgICAgIEkyQ19GVU5DXzEwQklUX0FERFIgfCBJMkNfRlVOQ19QUk9UT0NPTF9N
-QU5HTElORzsNCj4gPg0KPiA+ICAgICAgIGlmIChpMmNfZGV2LT5ody0+aGFzX2NvbnRpbnVlX3hm
-ZXJfc3VwcG9ydCkNCj4gPiAtICAgICAgICAgICAgIHJldCB8PSBJMkNfRlVOQ19OT1NUQVJUOw0K
-PiA+ICsgICAgICAgICAgICAgcmV0IHw9IEkyQ19GVU5DX05PU1RBUlQgfCBJMkNfRlVOQ19TTUJV
-U19SRUFEX0JMT0NLX0RBVEE7DQo+ID4NCj4gPiAgICAgICByZXR1cm4gcmV0Ow0KPiA+ICB9DQo+
-IA0KPiBQbGVhc2UgZGVzY3JpYmUgaG93IHRoaXMgd2FzIHRlc3RlZC4NClRoaXMgaXMgdGVzdGVk
-IHVzaW5nIGFuIEkyQyBFRVBST00gdG8gZW11bGF0ZSBTTUJ1cyBibG9jayByZWFkIGluIHdoaWNo
-DQp3ZSByZWFkIHRoZSBmaXJzdCBieXRlIGFzIHRoZSBsZW5ndGggb2YgYnl0ZXMgdG8gcmVhZC4g
-VGhpcyBpcyBhbiBleHBlY3RlZA0KZmVhdHVyZSBmb3IgTlZJRElBIEdyYWNlIGNoaXBzZXQgd2hl
-cmUgdGhlcmUgd2lsbCBiZSBhbiBhY3R1YWwgU01CdXMgZGV2aWNlLg0KDQpUaGFua3MsDQpBa2hp
-bA0K
+Hello
+
+On my tegra124-jetson-tk1, I always got:
+[ 1311.064826] ------------[ cut here ]------------
+[ 1311.064880] WARNING: CPU: 0 PID: 0 at net/sched/sch_generic.c:477 dev_watchdog+0x2fc/0x300
+[ 1311.064976] NETDEV WATCHDOG: enp1s0 (r8169): transmit queue 0 timed out
+[ 1311.065011] Modules linked in:
+[ 1311.065074] CPU: 0 PID: 0 Comm: swapper/0 Not tainted 5.16.7-dirty #7
+[ 1311.065116] Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
+[ 1311.065177] [<c01103e4>] (unwind_backtrace) from [<c010ade0>] (show_stack+0x10/0x14)
+[ 1311.065253] [<c010ade0>] (show_stack) from [<c0bbe884>] (dump_stack_lvl+0x40/0x4c)
+[ 1311.065322] [<c0bbe884>] (dump_stack_lvl) from [<c0122d6c>] (__warn+0xd0/0x12c)
+[ 1311.065379] [<c0122d6c>] (__warn) from [<c0bb8c48>] (warn_slowpath_fmt+0x90/0xb4)
+[ 1311.065434] [<c0bb8c48>] (warn_slowpath_fmt) from [<c0a0f0f0>] (dev_watchdog+0x2fc/0x300)
+[ 1311.065493] [<c0a0f0f0>] (dev_watchdog) from [<c01a8ab0>] (call_timer_fn+0x34/0x1a8)
+[ 1311.065554] [<c01a8ab0>] (call_timer_fn) from [<c01a8e50>] (__run_timers.part.0+0x22c/0x328)
+[ 1311.065599] [<c01a8e50>] (__run_timers.part.0) from [<c01a8f84>] (run_timer_softirq+0x38/0x68)
+[ 1311.065648] [<c01a8f84>] (run_timer_softirq) from [<c0101394>] (__do_softirq+0x124/0x3cc)
+[ 1311.065732] [<c0101394>] (__do_softirq) from [<c0129ff4>] (irq_exit+0xa4/0xd4)
+[ 1311.065818] [<c0129ff4>] (irq_exit) from [<c0100b90>] (__irq_svc+0x50/0x80)
+[ 1311.065860] Exception stack(0xc1101ed8 to 0xc1101f20)
+[ 1311.065884] 1ec0:                                                       00000000 00000001
+[ 1311.065913] 1ee0: c110a800 00000060 00000001 eed889f8 c121eaa0 418a949d 00000001 00000131
+[ 1311.065940] 1f00: 00000001 00000131 00000000 c1101f28 c08bbe20 c08bbee8 60000113 ffffffff
+[ 1311.065962] [<c0100b90>] (__irq_svc) from [<c08bbee8>] (cpuidle_enter_state+0x270/0x480)
+[ 1311.066031] [<c08bbee8>] (cpuidle_enter_state) from [<c08bc15c>] (cpuidle_enter+0x50/0x54)
+[ 1311.066078] [<c08bc15c>] (cpuidle_enter) from [<c015a658>] (do_idle+0x1e0/0x298)
+[ 1311.066133] [<c015a658>] (do_idle) from [<c015a9e0>] (cpu_startup_entry+0x18/0x1c)
+[ 1311.066174] [<c015a9e0>] (cpu_startup_entry) from [<c1000fc8>] (start_kernel+0x678/0x6bc)
+[ 1311.066242] ---[ end trace 3df1a997f30c7eb8 ]---
+[ 1311.083269] r8169 0000:01:00.0 enp1s0: rtl_rxtx_empty_cond == 0 (loop: 42, delay: 100).
+[ 2671.118597] r8169 0000:01:00.0 enp1s0: rtl_rxtx_empty_cond == 0 (loop: 42, delay: 100).
+[27521.391461] r8169 0000:01:00.0 enp1s0: rtl_rxtx_empty_cond == 0 (loop: 42, delay: 100).
+[47441.629280] r8169 0000:01:00.0 enp1s0: rtl_rxtx_empty_cond == 0 (loop: 42, delay: 100).
+[49046.691475] r8169 0000:01:00.0 enp1s0: rtl_rxtx_empty_cond == 0 (loop: 42, delay: 100).
+[53081.713430] r8169 0000:01:00.0 enp1s0: rtl_rxtx_empty_cond == 0 (loop: 42, delay: 100).
+[55101.737951] r8169 0000:01:00.0 enp1s0: rtl_rxtx_empty_cond == 0 (loop: 42, delay: 100).
+[59351.771382] r8169 0000:01:00.0 enp1s0: rtl_rxtx_empty_cond == 0 (loop: 42, delay: 100).
+[60491.797371] r8169 0000:01:00.0 enp1s0: rtl_rxtx_empty_cond == 0 (loop: 42, delay: 100).
+[61351.805499] r8169 0000:01:00.0 enp1s0: rtl_rxtx_empty_cond == 0 (loop: 42, delay: 100).
+[69631.911327] r8169 0000:01:00.0 enp1s0: rtl_rxtx_empty_cond == 0 (loop: 42, delay: 100).
+[71246.958267] r8169 0000:01:00.0 enp1s0: rtl_rxtx_empty_cond == 0 (loop: 42, delay: 100).
+[86522.110241] r8169 0000:01:00.0 enp1s0: rtl_rxtx_empty_cond == 0 (loop: 42, delay: 100).
+[88507.174307] r8169 0000:01:00.0 enp1s0: rtl_rxtx_empty_cond == 0 (loop: 42, delay: 100).
+[104612.315286] r8169 0000:01:00.0 enp1s0: rtl_rxtx_empty_cond == 0 (loop: 42, delay: 100).
+[132797.695339] r8169 0000:01:00.0 enp1s0: rtl_rxtx_empty_cond == 0 (loop: 42, delay: 100).
+
+This happen since at least 5.10.
+Any idea on how to debug this ?
+
+Regards
