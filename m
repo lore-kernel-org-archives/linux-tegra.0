@@ -2,71 +2,76 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6123C433FE
-	for <linux-tegra@archiver.kernel.org>; Fri, 11 Feb 2022 14:48:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38836C433EF
+	for <linux-tegra@archiver.kernel.org>; Fri, 11 Feb 2022 14:51:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350655AbiBKOsc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 11 Feb 2022 09:48:32 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:44556 "EHLO
+        id S1346535AbiBKOvg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 11 Feb 2022 09:51:36 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:46782 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235874AbiBKOsb (ORCPT
+        with ESMTP id S1351051AbiBKOvf (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 11 Feb 2022 09:48:31 -0500
-Received: from mail-oo1-f54.google.com (mail-oo1-f54.google.com [209.85.161.54])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0513FFE;
-        Fri, 11 Feb 2022 06:48:31 -0800 (PST)
-Received: by mail-oo1-f54.google.com with SMTP id q145-20020a4a3397000000b002e85c7234b1so10586744ooq.8;
-        Fri, 11 Feb 2022 06:48:30 -0800 (PST)
+        Fri, 11 Feb 2022 09:51:35 -0500
+Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED12F1E3;
+        Fri, 11 Feb 2022 06:51:33 -0800 (PST)
+Received: by mail-oi1-f175.google.com with SMTP id t199so9750417oie.10;
+        Fri, 11 Feb 2022 06:51:33 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=O7OnEPb9fuxvqN5g26fYv9LVZN/hhTSP1Ptizy/y4t4=;
-        b=4HYyEzVFEVplAPl4HkWUpZ7ErWnb3ju7MmUVmm1ecFTms/MnN0pQG815aSJjavyr4o
-         lYsq+f4gOy2z/GcPOlRulr2hA4N9MqydLzWVP0g/DPoWGndMhmfw18rval51TC1P2h2g
-         UHVSQ6bDfxxHvUARWiWQdtUvANQnDElFmtK2tl8HO0PNEyAxC+Kss+hCEiFoGwFgV33W
-         ODvDi79NZf5R3J0qLHf8XAHYw2dIljkk5jgRI8Gwo0HRvNVp5dk7g/LyERnYdFqMMDQL
-         WqUcbkap+WpPNbVmjY9YvS3FNMt/o/IDqdmc2peIUF9GSHQ7OysKI0jarpgnUbVQYYq8
-         LFyA==
-X-Gm-Message-State: AOAM531YrXm+HX6zEBMHOAJ+W96jgs4Q+McJ0zVg7JSSJWJzGClRnjJy
-        T3a5RCRsF57QjYwBxALHK/JhYngeiw==
-X-Google-Smtp-Source: ABdhPJwSho7dl9kUe2vpyZezvoFcWfxPQXu+OgRj2U5Ws1eHSTaaDMolpTOT7Wg0n/fvvuq5FPudzw==
-X-Received: by 2002:a05:6870:4:: with SMTP id a4mr242110oaa.228.1644590910339;
-        Fri, 11 Feb 2022 06:48:30 -0800 (PST)
+        bh=+5HYimg0tnFafFhrdKH24tvbdQcqH1zrjEeXF+N6Kzw=;
+        b=Qo/1K1D6s5ePl/USOjZA16gwyOH2xgXOUYs73CgNiEmSYmBvh3Ornq+O+c7wF+bGGa
+         LZ1ZKgEib3pwyu0b35cEzs7RvkLoBuzqG6YP4j+vW0VEJ6XL6iJ3+UfNwQVVI9aGYz47
+         A04UhpxmxJ+xUqQjoeEYg9Kx5QyQuW3pXRl88tIyh8rA2rgQ0La/I2jVLyB2FI8Xb/86
+         MsWaDLZbd5LK8A6DfKfeaeQxEmWbsN83z0pYQoy9fbCzs45Kcm1032WHaCQGkBnIREAG
+         JxF/BkUlmviYFJBlpkwCC6FrlBgc3Q3icsWHFrplGiTKr4OS6Nk7kAOl3BRNj0AerpG5
+         uHvw==
+X-Gm-Message-State: AOAM530cxdOizAmbl8EMJwq2jarbbN8VMs/I9mCa7fe2kl7I4SpE0nh4
+        ijqo1Gm/8pfSGQ/IUB8yUzWPzTbJDg==
+X-Google-Smtp-Source: ABdhPJxSkCKYKDlnidQlV/ZXv5y6FgA77jqYTWxtKOLiC1oSke9iBJJE5U2Avuu5UkGuGCAM2B9IdQ==
+X-Received: by 2002:a05:6808:15aa:: with SMTP id t42mr303368oiw.227.1644591093217;
+        Fri, 11 Feb 2022 06:51:33 -0800 (PST)
 Received: from robh.at.kernel.org ([2607:fb90:20d7:a802:e6b0:6d9c:32f7:4bd9])
-        by smtp.gmail.com with ESMTPSA id g17sm9065240ots.73.2022.02.11.06.48.28
+        by smtp.gmail.com with ESMTPSA id r41sm9261548oap.2.2022.02.11.06.51.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Feb 2022 06:48:29 -0800 (PST)
-Received: (nullmailer pid 342457 invoked by uid 1000);
-        Fri, 11 Feb 2022 14:48:27 -0000
-Date:   Fri, 11 Feb 2022 08:48:27 -0600
+        Fri, 11 Feb 2022 06:51:32 -0800 (PST)
+Received: (nullmailer pid 347029 invoked by uid 1000);
+        Fri, 11 Feb 2022 14:51:29 -0000
+Date:   Fri, 11 Feb 2022 08:51:29 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Krishna Yarlagadda <kyarlagadda@nvidia.com>
-Cc:     ldewangan@nvidia.com, linux-spi@vger.kernel.org,
-        thierry.reding@gmail.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, skomatineni@nvidia.com,
-        broonie@kernel.org, p.zabel@pengutronix.de,
-        linux-tegra@vger.kernel.org, robh+dt@kernel.org,
-        jonathanh@nvidia.com
-Subject: Re: [PATCH 2/6] dt-bindings: spi: Tegra234 QUAD SPI compatible
-Message-ID: <YgZ3O7cMeLIqD8aE@robh.at.kernel.org>
-References: <1643970576-31503-1-git-send-email-kyarlagadda@nvidia.com>
- <1643970576-31503-3-git-send-email-kyarlagadda@nvidia.com>
+To:     Vidya Sagar <vidyas@nvidia.com>
+Cc:     sagar.tv@gmail.com, kw@linux.com,
+        krzysztof.kozlowski@canonical.com, kthota@nvidia.com,
+        p.zabel@pengutronix.de, mmaddireddy@nvidia.com,
+        devicetree@vger.kernel.org, linux-phy@lists.infradead.org,
+        vkoul@kernel.org, jonathanh@nvidia.com, robh+dt@kernel.org,
+        bhelgaas@google.com, lorenzo.pieralisi@arm.com,
+        thierry.reding@gmail.com, linux-kernel@vger.kernel.org,
+        kishon@ti.com, linux-pci@vger.kernel.org,
+        linux-tegra@vger.kernel.org, mperttunen@nvidia.com
+Subject: Re: [PATCH V1 01/10] dt-bindings: Add Tegra234 PCIe clocks and resets
+Message-ID: <YgZ38TRtmTkQBzqL@robh.at.kernel.org>
+References: <20220205162144.30240-1-vidyas@nvidia.com>
+ <20220205162144.30240-2-vidyas@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1643970576-31503-3-git-send-email-kyarlagadda@nvidia.com>
+In-Reply-To: <20220205162144.30240-2-vidyas@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, 04 Feb 2022 15:59:32 +0530, Krishna Yarlagadda wrote:
-> Add compatible string for Tegra234 for Tegra QUAD SPI
+On Sat, 05 Feb 2022 21:51:35 +0530, Vidya Sagar wrote:
+> Add the clocks and resets used by the PCIe hardware found on
+> Tegra234 SoCs.
 > 
-> Signed-off-by: Krishna Yarlagadda <kyarlagadda@nvidia.com>
+> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
 > ---
->  Documentation/devicetree/bindings/spi/nvidia,tegra210-quad.yaml | 1 +
->  1 file changed, 1 insertion(+)
+>  include/dt-bindings/clock/tegra234-clock.h | 25 +++++++++++++++++++-
+>  include/dt-bindings/reset/tegra234-reset.h | 27 +++++++++++++++++++++-
+>  2 files changed, 50 insertions(+), 2 deletions(-)
 > 
 
 Acked-by: Rob Herring <robh@kernel.org>
