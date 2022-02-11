@@ -2,162 +2,124 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E993CC433EF
-	for <linux-tegra@archiver.kernel.org>; Fri, 11 Feb 2022 12:42:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A57B4C433EF
+	for <linux-tegra@archiver.kernel.org>; Fri, 11 Feb 2022 13:29:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347167AbiBKMma (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 11 Feb 2022 07:42:30 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:45780 "EHLO
+        id S1350532AbiBKN3i (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 11 Feb 2022 08:29:38 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:53010 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232672AbiBKMm3 (ORCPT
+        with ESMTP id S1350529AbiBKN3h (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 11 Feb 2022 07:42:29 -0500
-Received: from esa1.hgst.iphmx.com (esa1.hgst.iphmx.com [68.232.141.245])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D424EAE
-        for <linux-tegra@vger.kernel.org>; Fri, 11 Feb 2022 04:42:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1644583347; x=1676119347;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=HIsmyyzxnOL+9tGfKWdV0u2iF9CQusQW1c1Ow4acMmI=;
-  b=oWSt2FvWInbJOWZyx8m6FBfDtbubtPo0kkcTI0fr9s5IQn2sd87iz34p
-   WfR+KGKuIBd7MlH7mZ3rMYUr2LvDoBSg0FKGyru8n92woL4ChdmY+7QBO
-   6r6hvVbnx0aus/QL7GqxIClESanqAcSmBm2jr+tWmYxd5IOsOD1SdD1SZ
-   dhvlyXFK+VsOHcHQiizEF1hBCkeeJGlaYnCNKjRoMKuWE5k/L5LU66sYS
-   hpJx7uG3cXPL/Omly711OuVMt1xNBOuV5w9Mr5K8J1zPANl1Ra1D6fcwI
-   qEHerFfTsoFdHw5lYH0N1KtAgTwzN6I8nqRIaNY18MqB11IjdpyPL/3AR
-   w==;
-X-IronPort-AV: E=Sophos;i="5.88,360,1635177600"; 
-   d="scan'208";a="304599335"
-Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 11 Feb 2022 20:42:26 +0800
-IronPort-SDR: 63rgZER7kwi1IJ7ngFxZD67EDFT2UPrEhlamGCY8qgsb0GlAmWXMGcW/nkrksWsVd9naORpLo0
- V0DFi4Dot8nVqaBYF7HkxMopj4QzUgr1yYUPX/g4AfwR5P0pdnhaQR2fn8L4fHuhwwfqTFAKM+
- v0vflcxHJWOh2mvTeX5VC1JV/68/kaxCgM1RXAIZ4mewsj6MooYky5rXnMuXtCyJGXXLdwAexB
- 7qyNISxEB20s0VWkbdvu6SIlQR3RWKqxcgF846aLYhcq+mtpVBmShXNmnymU3tBVvGKVoy2UrW
- b0QyggV3/BY8X/BkL4Z3svtN
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Feb 2022 04:14:13 -0800
-IronPort-SDR: 4kA5IH2iee/2VCnubNSNc5kE3cqoK3M+qEPDAJqJR08BP0xZ48Vlz2O1wG1yLDdZiGz8PCmpwR
- SZn3+IFXbpRtsZt6Sk+EhTyNAQSPnad+O0ft3CsFFzBBDk3EYGIkdYRLXR4iYQDBKCYSK3RWR4
- twPpYSYs8EJDaEs88kpqDDN7RAlczJSL6OAdPGuVHMo+wUk5cfFK8DB3yLwoxWPIwM6tTw+TQE
- Yx5JJkLQGMaKvqQVYIThNCaWxsk+qM7MdVWjizlNhgbgRIkQ8FIZzvN0t7XJHVWGDIQ+F7YTws
- /rI=
-WDCIronportException: Internal
-Received: from usg-ed-osssrv.wdc.com ([10.3.10.180])
-  by uls-op-cesaip02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Feb 2022 04:42:27 -0800
-Received: from usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1])
-        by usg-ed-osssrv.wdc.com (Postfix) with ESMTP id 4JwCtp1Y7lz1SVp1
-        for <linux-tegra@vger.kernel.org>; Fri, 11 Feb 2022 04:42:26 -0800 (PST)
-Authentication-Results: usg-ed-osssrv.wdc.com (amavisd-new); dkim=pass
-        reason="pass (just generated, assumed good)"
-        header.d=opensource.wdc.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=
-        opensource.wdc.com; h=content-transfer-encoding:content-type
-        :in-reply-to:organization:from:references:to:content-language
-        :subject:user-agent:mime-version:date:message-id; s=dkim; t=
-        1644583345; x=1647175346; bh=HIsmyyzxnOL+9tGfKWdV0u2iF9CQusQW1c1
-        Ow4acMmI=; b=NgqVOoHtwDArmRjZbY48Xu4IAbnBTgFUYcBqJ/SlRdrqjamYaD8
-        hGP6mg1BruTMl64bTIFleULFcRZQJ/LDpkqMCOK95Hb9QsSBLzz/xOfqyfWyLman
-        6JF+c6wYVvPoiRwZpDKOxSNhB4f150y4JZdUfboBCikoRD7MD9xpOV69s8CTVnFC
-        cAS1POaWMzybUMRBUVcm0/thTw8vH68AXqjKtDLeOQsfAN636dOiri1AyTC0RTN/
-        VBz8lFYAuYdgVcntthULQ38p+ESk/OIgrFxJ7el868HH7obLkvgbA5YfJdY9cVD+
-        MZAwvcvHs3Tdu2RZKYMG7otDJ1oe91EcB/A==
-X-Virus-Scanned: amavisd-new at usg-ed-osssrv.wdc.com
-Received: from usg-ed-osssrv.wdc.com ([127.0.0.1])
-        by usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id f3uS8JcwaU9R for <linux-tegra@vger.kernel.org>;
-        Fri, 11 Feb 2022 04:42:25 -0800 (PST)
-Received: from [10.225.163.67] (unknown [10.225.163.67])
-        by usg-ed-osssrv.wdc.com (Postfix) with ESMTPSA id 4JwCtm3vFWz1Rwrw;
-        Fri, 11 Feb 2022 04:42:24 -0800 (PST)
-Message-ID: <472dc8ad-1fe4-a87f-1301-09b475abd9d0@opensource.wdc.com>
-Date:   Fri, 11 Feb 2022 21:42:23 +0900
+        Fri, 11 Feb 2022 08:29:37 -0500
+Received: from mail-qk1-x731.google.com (mail-qk1-x731.google.com [IPv6:2607:f8b0:4864:20::731])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE6D21DE
+        for <linux-tegra@vger.kernel.org>; Fri, 11 Feb 2022 05:29:36 -0800 (PST)
+Received: by mail-qk1-x731.google.com with SMTP id m25so8246493qka.9
+        for <linux-tegra@vger.kernel.org>; Fri, 11 Feb 2022 05:29:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ndufresne-ca.20210112.gappssmtp.com; s=20210112;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=C8RcQS3Onc34aY4WsNPDQx96xSdhXMEMcF2iWP8p8/s=;
+        b=4GhGoUc/c11sseBRYQgnSGHSukX7xuuq//IPBzW+/F3ULsPiwfAXs/iPbJ2EpckRc6
+         mzAS19V+zo/+vlD/Ole7qsvK6uHUe5Vlddpkz20LDNIbKPchqKPErG445oXCSeUEJ3nR
+         Y93rF0TEX3mMjgsypXRO4FCc/MMX+bOfzy09qeAXdVv1ZGOMobYHWLpcQg3HYvO6/TMq
+         Xx9DPu5l8RnrOKl5oFNxmeie0IHYsXiQ6ePF8GCOi5Zubof5UemFP4bWtt2lRpngB7NN
+         3iqHa+dEEBnh9Pg/DFZ8iNRZC4bTy7fQ1A6ojRaT7PlRvaioiTe2YQdvZa2OFzCZswit
+         fv7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=C8RcQS3Onc34aY4WsNPDQx96xSdhXMEMcF2iWP8p8/s=;
+        b=QktX2ssl25apOdnPKKZ/bu8pWHoBvQbYMQkU42Dwl9aAF+f4c6fPoM9zFytbkvi1ep
+         IAysA4Qcm1FeyEPbbQOtoZRsmuS0J5EEaJO8Vw3CL+/cE2bTo+ofM12ZUM+XXmPhVBNx
+         02ddh+lp5zGA7+sViUcg/kbl638TF7ZqBr4Q+3NmNvVQmVoLBKRT+kKOXGjz8DT67v0D
+         AXgDS/nyJdgIeUk3HEyfOrYpmWkH9LSx9xQozpTQxvsRKXIFa+K/Z9+JANU16zAysUKX
+         qD+bucY49z4a64bSWSrktiPMjdHAEa53m9rirtz4D/BuAbrwIOu/pVIxaZ4MYsqgAnYU
+         LMUA==
+X-Gm-Message-State: AOAM530Z4VUR/WC5h95zGCwW2ppvoCAYp142L1aGHBtFjRVgJBbI0UAk
+        dUYXh65AjZxH5Eb+qdSvHQxY/ZM7jr26tYH0
+X-Google-Smtp-Source: ABdhPJx3tflCKvRAYZjABa3eTJaLgwV9YMRtRuFiWIDpJpG/kVVAP086Nrm+UHeTe0IgS1KD4BQHlw==
+X-Received: by 2002:a05:620a:ced:: with SMTP id c13mr693431qkj.636.1644586175987;
+        Fri, 11 Feb 2022 05:29:35 -0800 (PST)
+Received: from nicolas-tpx395.localdomain (173-246-12-168.qc.cable.ebox.net. [173.246.12.168])
+        by smtp.gmail.com with ESMTPSA id h6sm11294073qkk.14.2022.02.11.05.29.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Feb 2022 05:29:35 -0800 (PST)
+Message-ID: <d986ab76a7c52a9a2ce62c1edb07f520c9df51c4.camel@ndufresne.ca>
+Subject: Re: [PATCH v3 1/4] media: v4l2-ctrls: Add new
+ V4L2_H264_DECODE_PARAM_FLAG_P/BFRAME flags
+From:   Nicolas Dufresne <nicolas@ndufresne.ca>
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
+Cc:     linux-media@vger.kernel.org, linux-staging@lists.linux.dev,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Fri, 11 Feb 2022 08:29:33 -0500
+In-Reply-To: <20220207141937.13089-2-digetx@gmail.com>
+References: <20220207141937.13089-1-digetx@gmail.com>
+         <20220207141937.13089-2-digetx@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.3 (3.42.3-1.fc35) 
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: DMA-API: tegra-ahci 70027000.sata: device driver maps memory from
- kernel text or rodata
-Content-Language: en-US
-To:     Corentin Labbe <clabbe.montjoie@gmail.com>,
-        thierry.reding@gmail.com, jonathanh@nvidia.com
-Cc:     linux-ide@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <YgY+57iPSHo+YXHC@Red>
-From:   Damien Le Moal <damien.lemoal@opensource.wdc.com>
-Organization: Western Digital Research
-In-Reply-To: <YgY+57iPSHo+YXHC@Red>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 2/11/22 19:48, Corentin Labbe wrote:
-> Hello
+Le lundi 07 février 2022 à 17:19 +0300, Dmitry Osipenko a écrit :
+> Add new V4L2_H264_DECODE_PARAM_FLAG_P/BFRAME flags that are needed by
+> NVIDIA Tegra video decoder. Userspace will have to set these flags in
+> accordance to the type of a decoded frame.
 > 
-> I boot my tegra-jetson-tk1 with some debug enabled and I got:
-> [   46.232240] WARNING: CPU: 1 PID: 2144 at kernel/dma/debug.c:1073 check_for_illegal_area+0xec/0x180
-> [   46.232255] DMA-API: tegra-ahci 70027000.sata: device driver maps memory from kernel text or rodata [addr=3f4026ed] [len=4096]
-> [   46.232262] Modules linked in:
-> [   46.232271] CPU: 1 PID: 2144 Comm: containerd Not tainted 5.16.9-dirty #8
-> [   46.232277] Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
-> [   46.232283] [<c0110c24>] (unwind_backtrace) from [<c010b4d4>] (show_stack+0x10/0x14)
-> [   46.232294] [<c010b4d4>] (show_stack) from [<c0ce90b0>] (dump_stack_lvl+0x58/0x70)
-> [   46.232305] [<c0ce90b0>] (dump_stack_lvl) from [<c0124648>] (__warn+0xd0/0x134)
-> [   46.232314] [<c0124648>] (__warn) from [<c0ce2b00>] (warn_slowpath_fmt+0x90/0xb4)
-> [   46.232322] [<c0ce2b00>] (warn_slowpath_fmt) from [<c01cdcd8>] (check_for_illegal_area+0xec/0x180)
-> [   46.232330] [<c01cdcd8>] (check_for_illegal_area) from [<c01cfab4>] (debug_dma_map_sg+0xa4/0x424)
-> [   46.232340] [<c01cfab4>] (debug_dma_map_sg) from [<c01ca4d8>] (__dma_map_sg_attrs+0xc4/0x140)
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
 
-It seems to be the command buffer that is at a weird address. So it may
-not be the driver but the IO issuer that is doing something wrong.
-The stack shows that this comes from a page fault and there does not
-seem to be any filesystem involved.
+Can you share here (out of commit) a userland implementation that was used to
+demonstrate the new API ? It does not matter which project (GStreamer, FFMPEG,
+Chromium, your_test_progtram). Should be fairly straightforward. This is just to
+be transparent.
 
-What is the reproducer for this ?
-
-Note that I do not have such hardware, so I will not be able to do
-anything about this.
-
-> [   46.232349] [<c01ca4d8>] (__dma_map_sg_attrs) from [<c01ca568>] (dma_map_sg_attrs+0x14/0x20)
-> [   46.232357] [<c01ca568>] (dma_map_sg_attrs) from [<c07cc408>] (ata_qc_issue+0x16c/0x414)
-> [   46.232366] [<c07cc408>] (ata_qc_issue) from [<c07d64f4>] (__ata_scsi_queuecmd+0x27c/0x4c4)
-> [   46.232376] [<c07d64f4>] (__ata_scsi_queuecmd) from [<c07d679c>] (ata_scsi_queuecmd+0x60/0x90)
-> [   46.232385] [<c07d679c>] (ata_scsi_queuecmd) from [<c07b36bc>] (scsi_queue_rq+0x440/0xb98)
-> [   46.232397] [<c07b36bc>] (scsi_queue_rq) from [<c05808fc>] (blk_mq_dispatch_rq_list+0x1d0/0x87c)
-> [   46.232406] [<c05808fc>] (blk_mq_dispatch_rq_list) from [<c0586628>] (__blk_mq_do_dispatch_sched+0x14c/0x2dc)
-> [   46.232415] [<c0586628>] (__blk_mq_do_dispatch_sched) from [<c0586b38>] (__blk_mq_sched_dispatch_requests+0x10c/0x168)
-> [   46.232423] [<c0586b38>] (__blk_mq_sched_dispatch_requests) from [<c0586c64>] (blk_mq_sched_dispatch_requests+0x34/0x5c)
-> [   46.232432] [<c0586c64>] (blk_mq_sched_dispatch_requests) from [<c057da8c>] (__blk_mq_run_hw_queue+0x5c/0xcc)
-> [   46.232442] [<c057da8c>] (__blk_mq_run_hw_queue) from [<c057dc9c>] (__blk_mq_delay_run_hw_queue+0x18c/0x1b4)
-> [   46.232451] [<c057dc9c>] (__blk_mq_delay_run_hw_queue) from [<c0586f80>] (blk_mq_sched_insert_requests+0xd0/0x320)
-> [   46.232460] [<c0586f80>] (blk_mq_sched_insert_requests) from [<c0581604>] (blk_mq_flush_plug_list+0x1c4/0x434)
-> [   46.232468] [<c0581604>] (blk_mq_flush_plug_list) from [<c0573d40>] (blk_flush_plug+0xd4/0x114)
-> [   46.232475] [<c0573d40>] (blk_flush_plug) from [<c0573f9c>] (blk_finish_plug+0x1c/0x28)
-> [   46.232482] [<c0573f9c>] (blk_finish_plug) from [<c0285740>] (read_pages+0x190/0x2bc)
-> [   46.232493] [<c0285740>] (read_pages) from [<c0285c1c>] (page_cache_ra_unbounded+0x164/0x230)
-> [   46.232501] [<c0285c1c>] (page_cache_ra_unbounded) from [<c027846c>] (filemap_fault+0x6d4/0xd04)
-> [   46.232509] [<c027846c>] (filemap_fault) from [<c02bacd0>] (__do_fault+0x38/0x104)
-> [   46.232519] [<c02bacd0>] (__do_fault) from [<c02c0920>] (handle_mm_fault+0xaa0/0xea8)
-> [   46.232528] [<c02c0920>] (handle_mm_fault) from [<c011563c>] (do_page_fault+0x15c/0x484)
-> [   46.232537] [<c011563c>] (do_page_fault) from [<c0115b2c>] (do_DataAbort+0x3c/0xb0)
-> [   46.232544] [<c0115b2c>] (do_DataAbort) from [<c0100e98>] (__dabt_usr+0x58/0x60)
-> [   46.232552] Exception stack(0xc6bc9fb0 to 0xc6bc9ff8)
-> [   46.232558] 9fa0:                                     00000001 bea726d8 014d40e0 01911fb8
-> [   46.232563] 9fc0: 00490000 0004cb15 00523858 006f6b68 00000000 b6f0c9c8 b6f0c9c8 bea72724
-> [   46.232569] 9fe0: 00000000 bea72678 b6ee2cbc b6ee41ec 200d0010 ffffffff
-> [   46.232573] irq event stamp: 15628
-> [   46.232577] hardirqs last  enabled at (15627): [<c01dba64>] ktime_get+0x1a4/0x1c8
-> [   46.232585] hardirqs last disabled at (15628): [<c0cfbfb0>] _raw_spin_lock_irqsave+0x68/0x6c
-> [   46.232594] softirqs last  enabled at (15332): [<c01015d8>] __do_softirq+0x328/0x590
-> [   46.232600] softirqs last disabled at (15327): [<c012cda8>] __irq_exit_rcu+0x128/0x1a8
-> [   46.232607] ---[ end trace 8655230c4b3626fb ]---
+>  .../userspace-api/media/v4l/ext-ctrls-codec-stateless.rst   | 6 ++++++
+>  include/uapi/linux/v4l2-controls.h                          | 2 ++
+>  2 files changed, 8 insertions(+)
 > 
-> Regards
+> diff --git a/Documentation/userspace-api/media/v4l/ext-ctrls-codec-stateless.rst b/Documentation/userspace-api/media/v4l/ext-ctrls-codec-stateless.rst
+> index cc080c4257d0..f87584ad90ba 100644
+> --- a/Documentation/userspace-api/media/v4l/ext-ctrls-codec-stateless.rst
+> +++ b/Documentation/userspace-api/media/v4l/ext-ctrls-codec-stateless.rst
+> @@ -616,6 +616,12 @@ Stateless Codec Control ID
+>      * - ``V4L2_H264_DECODE_PARAM_FLAG_BOTTOM_FIELD``
+>        - 0x00000004
+>        -
+> +    * - ``V4L2_H264_DECODE_PARAM_FLAG_PFRAME``
+> +      - 0x00000008
+> +      -
+> +    * - ``V4L2_H264_DECODE_PARAM_FLAG_BFRAME``
+> +      - 0x00000010
+> +      -
+>  
+>  .. raw:: latex
+>  
+> diff --git a/include/uapi/linux/v4l2-controls.h b/include/uapi/linux/v4l2-controls.h
+> index c8e0f84d204d..e3d48d571062 100644
+> --- a/include/uapi/linux/v4l2-controls.h
+> +++ b/include/uapi/linux/v4l2-controls.h
+> @@ -1563,6 +1563,8 @@ struct v4l2_h264_dpb_entry {
+>  #define V4L2_H264_DECODE_PARAM_FLAG_IDR_PIC		0x01
+>  #define V4L2_H264_DECODE_PARAM_FLAG_FIELD_PIC		0x02
+>  #define V4L2_H264_DECODE_PARAM_FLAG_BOTTOM_FIELD	0x04
+> +#define V4L2_H264_DECODE_PARAM_FLAG_PFRAME		0x08
+> +#define V4L2_H264_DECODE_PARAM_FLAG_BFRAME		0x10
+>  
+>  #define V4L2_CID_STATELESS_H264_DECODE_PARAMS	(V4L2_CID_CODEC_STATELESS_BASE + 7)
+>  /**
 
+Please update the doc too, see:
+  Documentation/userspace-api/media/v4l/ext-ctrls-codec-stateless.rst:
 
--- 
-Damien Le Moal
-Western Digital Research
