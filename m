@@ -2,77 +2,71 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3E41C433EF
-	for <linux-tegra@archiver.kernel.org>; Fri, 11 Feb 2022 14:21:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6123C433FE
+	for <linux-tegra@archiver.kernel.org>; Fri, 11 Feb 2022 14:48:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348719AbiBKOVd (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 11 Feb 2022 09:21:33 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:57090 "EHLO
+        id S1350655AbiBKOsc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 11 Feb 2022 09:48:32 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:44556 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234454AbiBKOVd (ORCPT
+        with ESMTP id S235874AbiBKOsb (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 11 Feb 2022 09:21:33 -0500
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [46.235.227.227])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40B6D188;
-        Fri, 11 Feb 2022 06:21:32 -0800 (PST)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: dmitry.osipenko)
-        with ESMTPSA id F2E6E1F46F48
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1644589290;
-        bh=nPecqjoPg/Wa/ujakqZuIp1Ml6tDHiENrm9NfMMwz70=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=C5NvHNXK9bE8RER/lY869+H+O/Yt8R1BpMU4xgQcZeGB15iIguUrs1cw7VnwAlo+i
-         2pXXGi7w2gtK24JQHyU4IkyG5x7kmcbEGleynQxNzFHgn04ZWyJLhQXWYIseJFcKRO
-         Dxjbvz/1KMFkHRv+gltZeAPyQZUMA9zlTTicR6yt/Z1AUBaZnlYm0w45fFQ1pgLrNV
-         EyuhY3CTc3jIzPJh37J2Tg95V88aThGZ1MKezzF4mHauJpPEbdQcBfXC0y4zB6y+CD
-         jN/C1n5ojpEYgBHCXwKGrm8z6qUExACmaU2U1bCUQPZQR5qGMjA8XZpIy9/EZeRFh8
-         lYZ7qjRyCEfSw==
-Message-ID: <fbdc230c-35f8-01d9-ae26-0bfbd92ffaa6@collabora.com>
-Date:   Fri, 11 Feb 2022 17:21:26 +0300
+        Fri, 11 Feb 2022 09:48:31 -0500
+Received: from mail-oo1-f54.google.com (mail-oo1-f54.google.com [209.85.161.54])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0513FFE;
+        Fri, 11 Feb 2022 06:48:31 -0800 (PST)
+Received: by mail-oo1-f54.google.com with SMTP id q145-20020a4a3397000000b002e85c7234b1so10586744ooq.8;
+        Fri, 11 Feb 2022 06:48:30 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=O7OnEPb9fuxvqN5g26fYv9LVZN/hhTSP1Ptizy/y4t4=;
+        b=4HYyEzVFEVplAPl4HkWUpZ7ErWnb3ju7MmUVmm1ecFTms/MnN0pQG815aSJjavyr4o
+         lYsq+f4gOy2z/GcPOlRulr2hA4N9MqydLzWVP0g/DPoWGndMhmfw18rval51TC1P2h2g
+         UHVSQ6bDfxxHvUARWiWQdtUvANQnDElFmtK2tl8HO0PNEyAxC+Kss+hCEiFoGwFgV33W
+         ODvDi79NZf5R3J0qLHf8XAHYw2dIljkk5jgRI8Gwo0HRvNVp5dk7g/LyERnYdFqMMDQL
+         WqUcbkap+WpPNbVmjY9YvS3FNMt/o/IDqdmc2peIUF9GSHQ7OysKI0jarpgnUbVQYYq8
+         LFyA==
+X-Gm-Message-State: AOAM531YrXm+HX6zEBMHOAJ+W96jgs4Q+McJ0zVg7JSSJWJzGClRnjJy
+        T3a5RCRsF57QjYwBxALHK/JhYngeiw==
+X-Google-Smtp-Source: ABdhPJwSho7dl9kUe2vpyZezvoFcWfxPQXu+OgRj2U5Ws1eHSTaaDMolpTOT7Wg0n/fvvuq5FPudzw==
+X-Received: by 2002:a05:6870:4:: with SMTP id a4mr242110oaa.228.1644590910339;
+        Fri, 11 Feb 2022 06:48:30 -0800 (PST)
+Received: from robh.at.kernel.org ([2607:fb90:20d7:a802:e6b0:6d9c:32f7:4bd9])
+        by smtp.gmail.com with ESMTPSA id g17sm9065240ots.73.2022.02.11.06.48.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Feb 2022 06:48:29 -0800 (PST)
+Received: (nullmailer pid 342457 invoked by uid 1000);
+        Fri, 11 Feb 2022 14:48:27 -0000
+Date:   Fri, 11 Feb 2022 08:48:27 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Krishna Yarlagadda <kyarlagadda@nvidia.com>
+Cc:     ldewangan@nvidia.com, linux-spi@vger.kernel.org,
+        thierry.reding@gmail.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, skomatineni@nvidia.com,
+        broonie@kernel.org, p.zabel@pengutronix.de,
+        linux-tegra@vger.kernel.org, robh+dt@kernel.org,
+        jonathanh@nvidia.com
+Subject: Re: [PATCH 2/6] dt-bindings: spi: Tegra234 QUAD SPI compatible
+Message-ID: <YgZ3O7cMeLIqD8aE@robh.at.kernel.org>
+References: <1643970576-31503-1-git-send-email-kyarlagadda@nvidia.com>
+ <1643970576-31503-3-git-send-email-kyarlagadda@nvidia.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH v3 1/4] media: v4l2-ctrls: Add new
- V4L2_H264_DECODE_PARAM_FLAG_P/BFRAME flags
-Content-Language: en-US
-To:     Nicolas Dufresne <nicolas@ndufresne.ca>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
-Cc:     linux-media@vger.kernel.org, linux-staging@lists.linux.dev,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20220207141937.13089-1-digetx@gmail.com>
- <20220207141937.13089-2-digetx@gmail.com>
- <d986ab76a7c52a9a2ce62c1edb07f520c9df51c4.camel@ndufresne.ca>
-From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
-In-Reply-To: <d986ab76a7c52a9a2ce62c1edb07f520c9df51c4.camel@ndufresne.ca>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1643970576-31503-3-git-send-email-kyarlagadda@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-11.02.2022 16:29, Nicolas Dufresne пишет:
-> Le lundi 07 février 2022 à 17:19 +0300, Dmitry Osipenko a écrit :
->> Add new V4L2_H264_DECODE_PARAM_FLAG_P/BFRAME flags that are needed by
->> NVIDIA Tegra video decoder. Userspace will have to set these flags in
->> accordance to the type of a decoded frame.
->>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> ---
-> Can you share here (out of commit) a userland implementation that was used to
-> demonstrate the new API ? It does not matter which project (GStreamer, FFMPEG,
-> Chromium, your_test_progtram). Should be fairly straightforward. This is just to
-> be transparent.
+On Fri, 04 Feb 2022 15:59:32 +0530, Krishna Yarlagadda wrote:
+> Add compatible string for Tegra234 for Tegra QUAD SPI
+> 
+> Signed-off-by: Krishna Yarlagadda <kyarlagadda@nvidia.com>
+> ---
+>  Documentation/devicetree/bindings/spi/nvidia,tegra210-quad.yaml | 1 +
+>  1 file changed, 1 insertion(+)
 > 
 
-You may find all the links in the cover letter, please see the
-grate-driver's GStreamer [1] and libvdpau-tegra [2]:
-
-[1] https://github.com/grate-driver/gstreamer/commits/main
-[2] https://github.com/grate-driver/libvdpau-tegra/commits/master
-
+Acked-by: Rob Herring <robh@kernel.org>
