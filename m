@@ -2,397 +2,224 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20B4FC433F5
-	for <linux-tegra@archiver.kernel.org>; Sat, 12 Feb 2022 20:23:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEE2DC433EF
+	for <linux-tegra@archiver.kernel.org>; Mon, 14 Feb 2022 04:50:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231514AbiBLUXJ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 12 Feb 2022 15:23:09 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:50218 "EHLO
+        id S237255AbiBNEuL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 13 Feb 2022 23:50:11 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:39120 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231411AbiBLUXI (ORCPT
+        with ESMTP id S230384AbiBNEuK (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sat, 12 Feb 2022 15:23:08 -0500
-X-Greylist: delayed 382 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sat, 12 Feb 2022 12:23:03 PST
-Received: from mxout01.lancloud.ru (mxout01.lancloud.ru [45.84.86.81])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B1B4606E4;
-        Sat, 12 Feb 2022 12:23:02 -0800 (PST)
-Received: from LanCloud
-DKIM-Filter: OpenDKIM Filter v2.11.0 mxout01.lancloud.ru 380DE209AC65
-Received: from LanCloud
-Received: from LanCloud
-Received: from LanCloud
-From:   Sergey Shtylyov <s.shtylyov@omp.ru>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Qiang Yu <yuq825@gmail.com>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Jassi Brar <jassisinghbrar@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
+        Sun, 13 Feb 2022 23:50:10 -0500
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2060b.outbound.protection.outlook.com [IPv6:2a01:111:f400:fe59::60b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB03150463;
+        Sun, 13 Feb 2022 20:50:03 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=LW77YkKWBM9oqLeaAm1DRRCfwaONejA62sDnWhqjIsMqgXLJf3ZkNCjAe80VPxnFGo993INaSUjU/v0lHWDG0rv/AAUMx77bVu4B18NFroToJi7Qv5Q3xXwu4kdOPDbfgfwMigcElgTPz/4w10FL63+bx8fDTfHdQm1PEyp9+0AvZEeGK8YqdYOUsjjc9RBmpLdQAhh/HyIbJ/KN+NcEuROcvMo4aUlvFOhsCbKhmzL35mBwje8ejT6FXb9xC6yJdRSPY7M3jWs+qs6GdhqEkMnINBoDRwNLfHB7mjaiKcidI1+AG/OcjxkgRG/etoimOuyJUOwGONfFIGQFPfxS2w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=2nZGeRTXsbaBE19tzJyoneDWqhsmiRbdPZXtqDWL5Jc=;
+ b=msRsDeHzShJE6m8n9dXVdGExVgINZUO6fOjN4F7llG7wALtYYASSDf7m3VnEDuJjGPOKvp31XsshBHosTcl8iRx1ZcpJSydBUaFdESpa7TNdn36JkiISnBM1GyjgkDWww/ZsoFp5V9WUIEXoKsaoPeaYdbBmDwq0Ht/q1PjsapLa/1dgJkJ/UnlwVH+7zoO2/0+ZVuQ9VLykdftPOty41haeNikNXbe+g6S2xvvu6qct6NPhA7RLRBuw3SrCyefXVzUSxspgx+v/GaWTi2Y5Pq6ZCd+cX8bQn1TJY6FKIopJLcRUgB9uvhT5ijdGwhgd3YBLD3bo4VOc/V1YCGqm7Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=2nZGeRTXsbaBE19tzJyoneDWqhsmiRbdPZXtqDWL5Jc=;
+ b=pXzBZnE6XvqkwierBAHsNFSeYZ1sxi0e/i+AFqdYq4DTrSvcbvR3fPuMPEbwxSiOmCfUgfjHPHfrSFAgWxgG9/R/3uIpPw7lksooaDJgTD0l0+1bUCv1yHGNSa83s45oq2wEDRVXZsFOgSZMaW1EGVZaS5Nejk64Sm5h2/iJRQlqIVe/n6FR1trdYZnDinHLOp2sSJsqdP1FIyTOs/eE5S1WXBfNlcf+vCAJdHSsfKeqPaUXQDFVUd9jZ80GdB7W6A3p9wfrkkfkRKREnvC7rtLIBYUaZFIyFbSjV2ERQ5jBxYjd8B3PdxNjTjrwy2ul4zrCSYTVot4xUNcqUb9oMA==
+Received: from DM5PR12MB1850.namprd12.prod.outlook.com (2603:10b6:3:108::23)
+ by BYAPR12MB2838.namprd12.prod.outlook.com (2603:10b6:a03:6f::23) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4975.17; Mon, 14 Feb
+ 2022 04:49:59 +0000
+Received: from DM5PR12MB1850.namprd12.prod.outlook.com
+ ([fe80::94d8:5850:e33d:b133]) by DM5PR12MB1850.namprd12.prod.outlook.com
+ ([fe80::94d8:5850:e33d:b133%4]) with mapi id 15.20.4975.017; Mon, 14 Feb 2022
+ 04:49:59 +0000
+From:   Akhil R <akhilrajeev@nvidia.com>
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        "christian.koenig@amd.com" <christian.koenig@amd.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        "Wolfgang Grandegger" <wg@grandegger.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        "Vivien Didelot" <vivien.didelot@gmail.com>,
-        Vladimir Oltean <olteanv@gmail.com>,
-        Joakim Zhang <qiangqing.zhang@nxp.com>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Jose Abreu <joabreu@synopsys.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        "Gustavo Pimentel" <gustavo.pimentel@synopsys.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Rob Herring <robh@kernel.org>,
-        =?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Kamal Dasu <kdasu.kdev@gmail.com>,
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Mark Brown <broonie@kernel.org>,
-        Peter Chen <peter.chen@kernel.org>,
-        Pawel Laszczak <pawell@cadence.com>,
-        Roger Quadros <rogerq@kernel.org>,
-        Aswath Govindraju <a-govindraju@ti.com>,
-        Mathias Nyman <mathias.nyman@intel.com>,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <dri-devel@lists.freedesktop.org>, <lima@lists.freedesktop.org>,
-        <linux-tegra@vger.kernel.org>, <linux-can@vger.kernel.org>,
-        <netdev@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-pci@vger.kernel.org>, <linux-spi@vger.kernel.org>,
-        <linux-usb@vger.kernel.org>, <linux-mediatek@lists.infradead.org>
-Subject: [PATCH v2 2/2] platform: make platform_get_irq_byname_optional() optional
-Date:   Sat, 12 Feb 2022 23:16:31 +0300
-Message-ID: <20220212201631.12648-3-s.shtylyov@omp.ru>
-X-Mailer: git-send-email 2.26.3
-In-Reply-To: <20220212201631.12648-1-s.shtylyov@omp.ru>
-References: <20220212201631.12648-1-s.shtylyov@omp.ru>
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+        "sumit.semwal@linaro.org" <sumit.semwal@linaro.org>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        Svyatoslav Ryhel <clamor95@gmail.com>,
+        =?ks_c_5601-1987?B?TWljaGGpqSBNaXJvc6mpYXc=?= 
+        <mirq-linux@rere.qmqm.pl>,
+        Krishna Yarlagadda <kyarlagadda@nvidia.com>
+Subject: RE: [PATCH RESEND] i2c: tegra: Add SMBus block read function
+Thread-Topic: [PATCH RESEND] i2c: tegra: Add SMBus block read function
+Thread-Index: AQHYHpP+iBNzHq+ctEuAu+zpK3JSjayNO4IAgADToJCAAgsrAIAAAYMAgAA/wYCAAg7GQA==
+Date:   Mon, 14 Feb 2022 04:49:59 +0000
+Message-ID: <DM5PR12MB18509DCA809CCE62A4A74133C0339@DM5PR12MB1850.namprd12.prod.outlook.com>
+References: <20220210153603.61894-1-akhilrajeev@nvidia.com>
+ <ae6d300f-962d-9731-bb78-3594b4c31aea@gmail.com>
+ <DM5PR12MB18502CF86E602F7071A1EA58C0309@DM5PR12MB1850.namprd12.prod.outlook.com>
+ <94fc8b11-6149-56ca-a028-cf7f39930992@gmail.com>
+ <ff83adba-7919-fa48-4637-a4cb9b94a8e1@gmail.com>
+ <f3db5152-0e1f-4258-4cfd-521828a243c2@gmail.com>
+In-Reply-To: <f3db5152-0e1f-4258-4cfd-521828a243c2@gmail.com>
+Accept-Language: en-IN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 6794a46b-a2a0-40ff-5731-08d9ef7574b3
+x-ms-traffictypediagnostic: BYAPR12MB2838:EE_
+x-microsoft-antispam-prvs: <BYAPR12MB2838567BAA39337C85C0A3ABC0339@BYAPR12MB2838.namprd12.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:4941;
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: FmWm4ydCi7uf3gjPmVyDE6McnJwsIKtYYT+DIy5IgcdPrC1VBvnx/3kwinyI80wca75RD6kAttyDw1WDmpoXUVMsPw0EyzGRGN340/N0PLlPb9+hub65XO/ODmiMSldy8IfSIiVjVNrOjInmB5sJ+ZuCfZ32iaif1Er5UvoNcSTT6oB6Xhl2MIkUF9deFSN8EMN9naVIqh6m3hb+aVEVijdNvJO15YHgKNMuezCToMiMjqJmOubK9cgHCbPtaZiYPKoXQZaIZGGWMvEL4RlaVrh0W8h2CyE/V+gwR6b5TJGDD5DyRXFtAFIA8aVCuSd6n+rSCYdLktG76sq6tl3LS6Kzk3bs4R7O++wFiL7C+TkuKjPMRwAfB8Wt0n7yTuVLri3Dx4mPH+RlTWH5u0Is5FuzOL5DLCk62N9LMamKQFYKxkYYpdM98TcscNTmwDoDoa4OhciOHdNDR/U02uiPkM7toPy/QT+tXGie52LhgelcoDOrErsIVsCvMmXAFq/IEzy9kTPqVy3g93042LfU8wKoxaErIOGM1lP9yl4/E+TdBGhV3SaMKpjKlQ4E3gFxq76cTEeLcCNdV/5zWzot8oRcuKJUY8mpwxRRyWrFSn8DUCmWDBs/9uESXR4B84cwbivLZ9FVJ2Qp6pXY4YMOkqo72pjUZCQLtV5ogEyDJEv5tZC6MpNDoWxKDYzUz2k4nTnYNPG7KnMZLnVuFJfm+HDtjhOEF4LVIWzD6YJ/caBd6LNfI0WB3VCDU9sV4k5ZUYh4DWH+oe+RsgERcsL3qKJ1tLAaLUcAVn2RZqWfJqQSm00ElNTFrT2k9dXYJ6nb
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM5PR12MB1850.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(71200400001)(52536014)(55016003)(86362001)(9686003)(2906002)(83380400001)(38070700005)(7416002)(5660300002)(8936002)(7696005)(8676002)(6506007)(110136005)(508600001)(64756008)(966005)(122000001)(66476007)(66556008)(66446008)(921005)(316002)(66946007)(38100700002)(6636002)(76116006)(186003)(26005)(33656002);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?ks_c_5601-1987?B?UFFraTVXT21CS0x6aVlyZFVHeVZFRW1nZkN0K0NWdk9DL3ZRNk9V?=
+ =?ks_c_5601-1987?B?dndIc1M4VDBLWVF2Nk1QWWU5TWJKM3Q4NEI2aURuOHFVWVJMMDN0?=
+ =?ks_c_5601-1987?B?QTB0NDFnUUxFZjdhRUpqckRleFFZYWUzZFFRRXYrNEFVRk5BVUg3?=
+ =?ks_c_5601-1987?B?U1ZZOTdUVjdMbTAzZXg5Z3lVSTZINzVTOWxreituNWtuWVoxbnAv?=
+ =?ks_c_5601-1987?B?SkVmbU55L0JpUXRaWnhpaTAxZ1h5TTZCUXJKa2ZlSHFncHB0L21s?=
+ =?ks_c_5601-1987?B?K2FOb1NxL1NtaEVhQ0ZmK09sT21OeTZhRWpQSTRXWldzaUkrazFJ?=
+ =?ks_c_5601-1987?B?OFd3WGxSVXE0NjJhNnRjUDBUR3I5MUthLy9DZDlMSDluaWlZSUlV?=
+ =?ks_c_5601-1987?B?b1NhYzJNWmxReDJzUFk5dlFIbjhNc2d2VEp5czdQOHhmTDBGQlll?=
+ =?ks_c_5601-1987?B?bHl1UUFNVkZYUzdiY2Fma1QwMDBnaHZNN29VVjVKUzIvbWltQnJy?=
+ =?ks_c_5601-1987?B?KzNvTWFmYU9yMnJZMEFsNzNsV2Y0bTJJQ25Fc2diVEkvY0lmcjE4?=
+ =?ks_c_5601-1987?B?dnhibWNJOHZJdnZJZ3RZRWEwV3prSHZrYW1WWHZGMGZpRTNGcXJs?=
+ =?ks_c_5601-1987?B?aTEyYjdRREZUWHUzOTVBTkVLWVdSVkIwQmUrWXlUOEtRSGdvYUxo?=
+ =?ks_c_5601-1987?B?blorM0ZVVVI4Y05LdlFObDZUL2tLaXVsaENUeEVpRVJZV3lUa0Zw?=
+ =?ks_c_5601-1987?B?bEdndjFTTCs4UU0vRElEZDBTdTN5ZU1HaWJwdEdHNWEyQUF0L2tR?=
+ =?ks_c_5601-1987?B?aTc1VStvU0w2cTBjeU5CK3EzZWkrRkxjNUtwZ1I5ZGNHc1NJYmpE?=
+ =?ks_c_5601-1987?B?VStmemd0MHI5dlFmelhFWlJmelE4dEl6dzNkbnpmMXFVVXRlM2Vn?=
+ =?ks_c_5601-1987?B?czhSVnRSYllsYXcvNjJFa2d4YVdsNlhrNm5FSDZWRDNhMERMWlFF?=
+ =?ks_c_5601-1987?B?SGNvamc4dDhma3pWWmN4QnlLVXVhV1B1Uys5Ymw1VUxOMkJ5NGRp?=
+ =?ks_c_5601-1987?B?RnZZano4NDR6N1dvRWtsZ05peC8yekF0SitGakd5QnY2cEFiT1VT?=
+ =?ks_c_5601-1987?B?TWRVWVpwa2pCWnhueDBLYWRLZUlxWURjeWg0OTVubFNqaFhDQmdF?=
+ =?ks_c_5601-1987?B?YlVaVGQ4VTBkb0txZ2grUDJhendmNVZ5UEkxUUNPanBrbGxoUGpi?=
+ =?ks_c_5601-1987?B?dnh6bExhSnhQMzl1MVVOZDFzUWc1a0ZOd1h2UEZCbENWay95VGpl?=
+ =?ks_c_5601-1987?B?M0tRWkF4d3prcU1JNGR1Z2sxQkF6Y3cyL0pLY0kvZTVia09NRTRl?=
+ =?ks_c_5601-1987?B?ZXpObnlQV01sTm96MHBQVjVGc2dNMVhhTEJDdTFpRUFKY2o4MWhY?=
+ =?ks_c_5601-1987?B?WjhNT2hwbElQN3oyUlE5U2dJNzlwYTJBU3JxU2VxZjdjOEEzVUll?=
+ =?ks_c_5601-1987?B?NHdzZmVUeC9DZ05pTEF5bk13TE1nUXFHN0doNFJuZE1iZlFuQ3RF?=
+ =?ks_c_5601-1987?B?MExYc2hSVW4rblBDNVZMK0hwdVc3S0JXTGxCQ1hHTG5icERkSHJS?=
+ =?ks_c_5601-1987?B?eHQ3REhYV2hTb1Jqbk5oMFdINzEvS0RTVmdqeDdYOFV5eU40dFMz?=
+ =?ks_c_5601-1987?B?c3MzRFh2S2ZUWFRmQ25pRi9zaUt4cEtNVXZlZC9ESFhqd3hCak5a?=
+ =?ks_c_5601-1987?B?eEIyNmpJK1UwUkhhNUlnWTNyd1R2aTJHVFF6MG1tSUl5NEw1Tm12?=
+ =?ks_c_5601-1987?B?dDNzR0o0TlpsSzdvcU00NEVEd0JYeDRtalBXbDR1V3FXWDliRGlN?=
+ =?ks_c_5601-1987?B?bDZyRWcrck13M3NwUXFNbFc0QmFEYnM1WlpTcC95R2hGL0NBaWR3?=
+ =?ks_c_5601-1987?B?RWhBWjZHc0RwZlh3NEtQQWphMjBsTEFkVEhCR3UyQkJMaW4rTitx?=
+ =?ks_c_5601-1987?B?dVRueEszeVdVWWx2NXRNL3RpQVdoM0pUVXdaOWp1Zktvc0tSd25x?=
+ =?ks_c_5601-1987?B?Um40dXFvREJqUmJtcDB6ajlLK1ZMbWQvTENoTGpqT1lXZ1A4R2xZ?=
+ =?ks_c_5601-1987?B?cGRwWDdhNHpGdU9lTUFWMS9GTy9MK0pDTndJMWVpQnBoMVhQWjR1?=
+ =?ks_c_5601-1987?B?WTdqUnlKQi81emlBS2dYZDhnM01XWXZnbTFMeFlqcGhsSzJOR0du?=
+ =?ks_c_5601-1987?B?MFRyOGY0dTlESytyQytuR1R2bmh6RVgvY2poZlI5cGRISGxrR0Z2?=
+ =?ks_c_5601-1987?B?dmFYY1VOdThkam5NRDB6NTRDcVhkODg0NTRuSFNFdGcrZlNjOHYw?=
+ =?ks_c_5601-1987?B?K2FYbjEyMWl3RmV3bzErSUtGdDJWdFBIUWFXYXRpY3ZDUy9RMWU0?=
+ =?ks_c_5601-1987?B?YUpCeXc1SmZqWmZ0TE9TZmUreDlpanBTbnpTUzZiVURCZWZmOWJ1?=
+ =?ks_c_5601-1987?B?cXpJOHk3MUI0WHF5RzhVM2RIUkprMXc9PQ==?=
+Content-Type: text/plain; charset="ks_c_5601-1987"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [192.168.11.198]
-X-ClientProxiedBy: LFEXT02.lancloud.ru (fd00:f066::142) To
- LFEX1907.lancloud.ru (fd00:f066::207)
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DM5PR12MB1850.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6794a46b-a2a0-40ff-5731-08d9ef7574b3
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Feb 2022 04:49:59.6820
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: g+sy22qzY6x/7opQphxi/kk5pFVj94QkZDDsKUk/tXx4xYd19YXn6Umvbc2f74cbr/7FYMPBRhXEM+dy5KhIPA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR12MB2838
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Currently platform_get_irq_byname_optional() returns an error code even
-if IRQ resource simply has not been found.  It prevents the callers from
-being error code agnostic in their error handling:
-
-	ret = platform_get_irq_byname_optional(...);
-	if (ret < 0 && ret != -ENXIO)
-		return ret; // respect deferred probe
-	if (ret > 0)
-		...we get an IRQ...
-
-All other *_optional() APIs seem to return 0 or NULL in case an optional
-resource is not available.  Let's follow this good example, so that the
-callers would look like:
-
-	ret = platform_get_irq_byname_optional(...);
-	if (ret < 0)
-		return ret;
-	if (ret > 0)
-		...we get an IRQ...
-
-Signed-off-by: Sergey Shtylyov <s.shtylyov@omp.ru>
----
-Changes in version 2:
-- added the error check using dev_err_probe() to
-  platform_get_irq_byname_optional();
-- reformatted the patch description.
-
- drivers/base/platform.c                         | 17 ++++++++++++++---
- drivers/gpu/drm/lima/lima_device.c              |  2 +-
- drivers/mailbox/tegra-hsp.c                     |  4 ++--
- drivers/net/can/rcar/rcar_canfd.c               |  4 ++--
- drivers/net/dsa/b53/b53_srab.c                  |  2 +-
- drivers/net/ethernet/freescale/fec_main.c       |  2 +-
- drivers/net/ethernet/freescale/fec_ptp.c        |  2 +-
- .../net/ethernet/stmicro/stmmac/dwmac-stm32.c   |  4 ++--
- .../ethernet/stmicro/stmmac/stmmac_platform.c   |  4 ++--
- .../pci/controller/dwc/pcie-designware-host.c   |  2 +-
- drivers/spi/spi-bcm-qspi.c                      |  2 +-
- drivers/spi/spi-rspi.c                          |  8 ++++----
- drivers/usb/cdns3/cdns3-plat.c                  |  5 +----
- drivers/usb/host/xhci-mtk.c                     |  2 +-
- drivers/usb/mtu3/mtu3_core.c                    |  2 +-
- 15 files changed, 35 insertions(+), 27 deletions(-)
-
-diff --git a/drivers/base/platform.c b/drivers/base/platform.c
-index 52a8356f8261..c704d51a6dd5 100644
---- a/drivers/base/platform.c
-+++ b/drivers/base/platform.c
-@@ -500,14 +500,25 @@ EXPORT_SYMBOL_GPL(platform_get_irq_byname);
-  * @name: IRQ name
-  *
-  * Get an optional IRQ by name like platform_get_irq_byname(). Except that it
-- * does not print an error message if an IRQ can not be obtained.
-+ * does not print an error message if an IRQ can not be obtained and returns
-+ * 0 when IRQ resource has not been found.
-  *
-- * Return: non-zero IRQ number on success, negative error number on failure.
-+ * Return: non-zero IRQ number on success, 0 if IRQ wasn't found, negative error
-+ * number on failure.
-  */
- int platform_get_irq_byname_optional(struct platform_device *dev,
- 				     const char *name)
- {
--	return __platform_get_irq_byname(dev, name);
-+	int ret;
-+
-+	ret = __platform_get_irq_byname(dev, name);
-+	if (ret == -ENXIO)
-+		return 0;
-+	if (ret < 0)
-+		return dev_err_probe(&dev->dev, ret, "IRQ %s not found\n",
-+				     name);
-+
-+	return ret;
- }
- EXPORT_SYMBOL_GPL(platform_get_irq_byname_optional);
- 
-diff --git a/drivers/gpu/drm/lima/lima_device.c b/drivers/gpu/drm/lima/lima_device.c
-index 02cef0cea657..08a86484ce6f 100644
---- a/drivers/gpu/drm/lima/lima_device.c
-+++ b/drivers/gpu/drm/lima/lima_device.c
-@@ -224,7 +224,7 @@ static int lima_init_ip(struct lima_device *dev, int index)
- 	if (irq_name) {
- 		err = must ? platform_get_irq_byname(pdev, irq_name) :
- 			     platform_get_irq_byname_optional(pdev, irq_name);
--		if (err < 0)
-+		if (err <= 0)
- 			goto out;
- 		ip->irq = err;
- 	}
-diff --git a/drivers/mailbox/tegra-hsp.c b/drivers/mailbox/tegra-hsp.c
-index acd0675da681..17aa88e31445 100644
---- a/drivers/mailbox/tegra-hsp.c
-+++ b/drivers/mailbox/tegra-hsp.c
-@@ -667,7 +667,7 @@ static int tegra_hsp_probe(struct platform_device *pdev)
- 	hsp->num_si = (value >> HSP_nSI_SHIFT) & HSP_nINT_MASK;
- 
- 	err = platform_get_irq_byname_optional(pdev, "doorbell");
--	if (err >= 0)
-+	if (err > 0)
- 		hsp->doorbell_irq = err;
- 
- 	if (hsp->num_si > 0) {
-@@ -687,7 +687,7 @@ static int tegra_hsp_probe(struct platform_device *pdev)
- 				return -ENOMEM;
- 
- 			err = platform_get_irq_byname_optional(pdev, name);
--			if (err >= 0) {
-+			if (err > 0) {
- 				hsp->shared_irqs[i] = err;
- 				count++;
- 			}
-diff --git a/drivers/net/can/rcar/rcar_canfd.c b/drivers/net/can/rcar/rcar_canfd.c
-index b7dc1c32875f..fa163ec0db80 100644
---- a/drivers/net/can/rcar/rcar_canfd.c
-+++ b/drivers/net/can/rcar/rcar_canfd.c
-@@ -1772,7 +1772,7 @@ static int rcar_canfd_probe(struct platform_device *pdev)
- 
- 	if (chip_id == RENESAS_RCAR_GEN3) {
- 		ch_irq = platform_get_irq_byname_optional(pdev, "ch_int");
--		if (ch_irq < 0) {
-+		if (ch_irq <= 0) {
- 			/* For backward compatibility get irq by index */
- 			ch_irq = platform_get_irq(pdev, 0);
- 			if (ch_irq < 0)
-@@ -1780,7 +1780,7 @@ static int rcar_canfd_probe(struct platform_device *pdev)
- 		}
- 
- 		g_irq = platform_get_irq_byname_optional(pdev, "g_int");
--		if (g_irq < 0) {
-+		if (g_irq <= 0) {
- 			/* For backward compatibility get irq by index */
- 			g_irq = platform_get_irq(pdev, 1);
- 			if (g_irq < 0)
-diff --git a/drivers/net/dsa/b53/b53_srab.c b/drivers/net/dsa/b53/b53_srab.c
-index 4591bb1c05d2..80b7c8f053ad 100644
---- a/drivers/net/dsa/b53/b53_srab.c
-+++ b/drivers/net/dsa/b53/b53_srab.c
-@@ -420,7 +420,7 @@ static int b53_srab_irq_enable(struct b53_device *dev, int port)
- 	/* Interrupt is optional and was not specified, do not make
- 	 * this fatal
- 	 */
--	if (p->irq == -ENXIO)
-+	if (!p->irq)
- 		return ret;
- 
- 	ret = request_threaded_irq(p->irq, b53_srab_port_isr,
-diff --git a/drivers/net/ethernet/freescale/fec_main.c b/drivers/net/ethernet/freescale/fec_main.c
-index 796133de527e..93d1cca831dd 100644
---- a/drivers/net/ethernet/freescale/fec_main.c
-+++ b/drivers/net/ethernet/freescale/fec_main.c
-@@ -3941,7 +3941,7 @@ fec_probe(struct platform_device *pdev)
- 	for (i = 0; i < irq_cnt; i++) {
- 		snprintf(irq_name, sizeof(irq_name), "int%d", i);
- 		irq = platform_get_irq_byname_optional(pdev, irq_name);
--		if (irq < 0)
-+		if (irq <= 0)
- 			irq = platform_get_irq(pdev, i);
- 		if (irq < 0) {
- 			ret = irq;
-diff --git a/drivers/net/ethernet/freescale/fec_ptp.c b/drivers/net/ethernet/freescale/fec_ptp.c
-index de1d23808b6c..a7ef0aaaf2be 100644
---- a/drivers/net/ethernet/freescale/fec_ptp.c
-+++ b/drivers/net/ethernet/freescale/fec_ptp.c
-@@ -611,7 +611,7 @@ void fec_ptp_init(struct platform_device *pdev, int irq_idx)
- 	INIT_DELAYED_WORK(&fep->time_keep, fec_time_keep);
- 
- 	irq = platform_get_irq_byname_optional(pdev, "pps");
--	if (irq < 0)
-+	if (irq <= 0)
- 		irq = platform_get_irq_optional(pdev, irq_idx);
- 	/* Failure to get an irq is not fatal,
- 	 * only the PTP_CLOCK_PPS clock events should stop
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c
-index 2b38a499a404..5519b5b35365 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c
-@@ -342,7 +342,7 @@ static int stm32mp1_parse_data(struct stm32_dwmac *dwmac,
- 	if (dwmac->irq_pwr_wakeup == -EPROBE_DEFER)
- 		return -EPROBE_DEFER;
- 
--	if (!dwmac->clk_eth_ck && dwmac->irq_pwr_wakeup >= 0) {
-+	if (!dwmac->clk_eth_ck && dwmac->irq_pwr_wakeup > 0) {
- 		err = device_init_wakeup(&pdev->dev, true);
- 		if (err) {
- 			dev_err(&pdev->dev, "Failed to init wake up irq\n");
-@@ -426,7 +426,7 @@ static int stm32_dwmac_remove(struct platform_device *pdev)
- 
- 	stm32_dwmac_clk_disable(priv->plat->bsp_priv);
- 
--	if (dwmac->irq_pwr_wakeup >= 0) {
-+	if (dwmac->irq_pwr_wakeup > 0) {
- 		dev_pm_clear_wake_irq(&pdev->dev);
- 		device_init_wakeup(&pdev->dev, false);
- 	}
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
-index 5d29f336315b..33fdfab93aa6 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
-@@ -679,7 +679,7 @@ int stmmac_get_platform_resources(struct platform_device *pdev,
- 	 */
- 	stmmac_res->wol_irq =
- 		platform_get_irq_byname_optional(pdev, "eth_wake_irq");
--	if (stmmac_res->wol_irq < 0) {
-+	if (stmmac_res->wol_irq <= 0) {
- 		if (stmmac_res->wol_irq == -EPROBE_DEFER)
- 			return -EPROBE_DEFER;
- 		dev_info(&pdev->dev, "IRQ eth_wake_irq not found\n");
-@@ -688,7 +688,7 @@ int stmmac_get_platform_resources(struct platform_device *pdev,
- 
- 	stmmac_res->lpi_irq =
- 		platform_get_irq_byname_optional(pdev, "eth_lpi");
--	if (stmmac_res->lpi_irq < 0) {
-+	if (stmmac_res->lpi_irq <= 0) {
- 		if (stmmac_res->lpi_irq == -EPROBE_DEFER)
- 			return -EPROBE_DEFER;
- 		dev_info(&pdev->dev, "IRQ eth_lpi not found\n");
-diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
-index f4755f3a03be..00e1a33fd06d 100644
---- a/drivers/pci/controller/dwc/pcie-designware-host.c
-+++ b/drivers/pci/controller/dwc/pcie-designware-host.c
-@@ -364,7 +364,7 @@ int dw_pcie_host_init(struct pcie_port *pp)
- 		} else if (pp->has_msi_ctrl) {
- 			if (!pp->msi_irq) {
- 				pp->msi_irq = platform_get_irq_byname_optional(pdev, "msi");
--				if (pp->msi_irq < 0) {
-+				if (pp->msi_irq <= 0) {
- 					pp->msi_irq = platform_get_irq(pdev, 0);
- 					if (pp->msi_irq < 0)
- 						return pp->msi_irq;
-diff --git a/drivers/spi/spi-bcm-qspi.c b/drivers/spi/spi-bcm-qspi.c
-index c9a769b8594b..21fb80291d03 100644
---- a/drivers/spi/spi-bcm-qspi.c
-+++ b/drivers/spi/spi-bcm-qspi.c
-@@ -1627,7 +1627,7 @@ int bcm_qspi_probe(struct platform_device *pdev,
- 			irq = platform_get_irq(pdev, 0);
- 		}
- 
--		if (irq  >= 0) {
-+		if (irq > 0) {
- 			ret = devm_request_irq(&pdev->dev, irq,
- 					       qspi_irq_tab[val].irq_handler, 0,
- 					       name,
-diff --git a/drivers/spi/spi-rspi.c b/drivers/spi/spi-rspi.c
-index bd5708d7e5a1..1ddbd30e68d5 100644
---- a/drivers/spi/spi-rspi.c
-+++ b/drivers/spi/spi-rspi.c
-@@ -1355,16 +1355,16 @@ static int rspi_probe(struct platform_device *pdev)
- 	ctlr->max_native_cs = rspi->ops->num_hw_ss;
- 
- 	ret = platform_get_irq_byname_optional(pdev, "rx");
--	if (ret < 0) {
-+	if (ret <= 0) {
- 		ret = platform_get_irq_byname_optional(pdev, "mux");
--		if (ret < 0)
-+		if (ret <= 0)
- 			ret = platform_get_irq(pdev, 0);
--		if (ret >= 0)
-+		if (ret > 0)
- 			rspi->rx_irq = rspi->tx_irq = ret;
- 	} else {
- 		rspi->rx_irq = ret;
- 		ret = platform_get_irq_byname(pdev, "tx");
--		if (ret >= 0)
-+		if (ret > 0)
- 			rspi->tx_irq = ret;
- 	}
- 
-diff --git a/drivers/usb/cdns3/cdns3-plat.c b/drivers/usb/cdns3/cdns3-plat.c
-index dc068e940ed5..3a0bdf726af2 100644
---- a/drivers/usb/cdns3/cdns3-plat.c
-+++ b/drivers/usb/cdns3/cdns3-plat.c
-@@ -110,10 +110,7 @@ static int cdns3_plat_probe(struct platform_device *pdev)
- 	cdns->wakeup_irq = platform_get_irq_byname_optional(pdev, "wakeup");
- 	if (cdns->wakeup_irq == -EPROBE_DEFER)
- 		return cdns->wakeup_irq;
--	else if (cdns->wakeup_irq == 0)
--		return -EINVAL;
--
--	if (cdns->wakeup_irq < 0) {
-+	if (cdns->wakeup_irq <= 0) {
- 		dev_dbg(dev, "couldn't get wakeup irq\n");
- 		cdns->wakeup_irq = 0x0;
- 	}
-diff --git a/drivers/usb/host/xhci-mtk.c b/drivers/usb/host/xhci-mtk.c
-index 91738af0ab14..19c742bf3ce0 100644
---- a/drivers/usb/host/xhci-mtk.c
-+++ b/drivers/usb/host/xhci-mtk.c
-@@ -493,7 +493,7 @@ static int xhci_mtk_probe(struct platform_device *pdev)
- 		return ret;
- 
- 	irq = platform_get_irq_byname_optional(pdev, "host");
--	if (irq < 0) {
-+	if (irq <= 0) {
- 		if (irq == -EPROBE_DEFER)
- 			return irq;
- 
-diff --git a/drivers/usb/mtu3/mtu3_core.c b/drivers/usb/mtu3/mtu3_core.c
-index c4a2c37abf62..08173c05a1d6 100644
---- a/drivers/usb/mtu3/mtu3_core.c
-+++ b/drivers/usb/mtu3/mtu3_core.c
-@@ -925,7 +925,7 @@ int ssusb_gadget_init(struct ssusb_mtk *ssusb)
- 		return -ENOMEM;
- 
- 	mtu->irq = platform_get_irq_byname_optional(pdev, "device");
--	if (mtu->irq < 0) {
-+	if (mtu->irq <= 0) {
- 		if (mtu->irq == -EPROBE_DEFER)
- 			return mtu->irq;
- 
--- 
-2.26.3
-
+PiAxMi4wMi4yMDIyIDE5OjIwLCBEbWl0cnkgT3NpcGVua28grOGs2qzqrNas5DoNCj4gPiAxMi4w
+Mi4yMDIyIDE5OjE1LCBEbWl0cnkgT3NpcGVua28grOGs2qzqrNas5DoNCj4gPj4gMTEuMDIuMjAy
+MiAxMjoxMSwgQWtoaWwgUiCs4azarOqs1qzkOg0KPiA+Pj4+IDEwLjAyLjIwMjIgMTg6MzYsIEFr
+aGlsIFIgrOGs2qzqrNas5DoNCj4gPj4+Pj4gRW11bGF0ZSBTTUJ1cyBibG9jayByZWFkIHVzaW5n
+IENvbnRpbnVlWGZlciB0byByZWFkIHRoZSBsZW5ndGggYnl0ZQ0KPiA+Pj4+Pg0KPiA+Pj4+PiBT
+aWduZWQtb2ZmLWJ5OiBBa2hpbCBSIDxha2hpbHJhamVldkBudmlkaWEuY29tPg0KPiA+Pj4+PiAt
+LS0NCj4gPj4+Pj4gIGRyaXZlcnMvaTJjL2J1c3Nlcy9pMmMtdGVncmEuYyB8IDE4ICsrKysrKysr
+KysrKysrKystLQ0KPiA+Pj4+PiAgMSBmaWxlIGNoYW5nZWQsIDE2IGluc2VydGlvbnMoKyksIDIg
+ZGVsZXRpb25zKC0pDQo+ID4+Pj4+DQo+ID4+Pj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2kyYy9i
+dXNzZXMvaTJjLXRlZ3JhLmMgYi9kcml2ZXJzL2kyYy9idXNzZXMvaTJjLXRlZ3JhLmMNCj4gPj4+
+Pj4gaW5kZXggMDNjZWExMDJhYjc2Li4yOTQxZTQyYWE2YTAgMTAwNjQ0DQo+ID4+Pj4+IC0tLSBh
+L2RyaXZlcnMvaTJjL2J1c3Nlcy9pMmMtdGVncmEuYw0KPiA+Pj4+PiArKysgYi9kcml2ZXJzL2ky
+Yy9idXNzZXMvaTJjLXRlZ3JhLmMNCj4gPj4+Pj4gQEAgLTEyMzMsNiArMTIzMywxMSBAQCBzdGF0
+aWMgaW50IHRlZ3JhX2kyY194ZmVyX21zZyhzdHJ1Y3QNCj4gdGVncmFfaTJjX2Rldg0KPiA+Pj4+
+ICppMmNfZGV2LA0KPiA+Pj4+PiAgICAgICAgICAgICAgIHJldHVybiBlcnI7DQo+ID4+Pj4+DQo+
+ID4+Pj4+ICAgICAgIGkyY19kZXYtPm1zZ19idWYgPSBtc2ctPmJ1ZjsNCj4gPj4+Pj4gKw0KPiA+
+Pj4+PiArICAgICAvKiBUaGUgY29uZGl0aW9uIHRydWUgaW1wbGllcyBzbWJ1cyBibG9jayByZWFk
+IGFuZCBsZW4gaXMgYWxyZWFkeSByZWFkDQo+ICovDQo+ID4+Pj4+ICsgICAgIGlmIChtc2ctPmZs
+YWdzICYgSTJDX01fUkVDVl9MRU4gJiYgZW5kX3N0YXRlICE9DQo+ID4+Pj4gTVNHX0VORF9DT05U
+SU5VRSkNCj4gPj4+Pj4gKyAgICAgICAgICAgICBpMmNfZGV2LT5tc2dfYnVmID0gbXNnLT5idWYg
+KyAxOw0KPiA+Pj4+PiArDQo+ID4+Pj4+ICAgICAgIGkyY19kZXYtPm1zZ19idWZfcmVtYWluaW5n
+ID0gbXNnLT5sZW47DQo+ID4+Pj4+ICAgICAgIGkyY19kZXYtPm1zZ19lcnIgPSBJMkNfRVJSX05P
+TkU7DQo+ID4+Pj4+ICAgICAgIGkyY19kZXYtPm1zZ19yZWFkID0gISEobXNnLT5mbGFncyAmIEky
+Q19NX1JEKTsNCj4gPj4+Pj4gQEAgLTEzODksNiArMTM5NCwxNSBAQCBzdGF0aWMgaW50IHRlZ3Jh
+X2kyY194ZmVyKHN0cnVjdCBpMmNfYWRhcHRlcg0KPiAqYWRhcCwNCj4gPj4+PiBzdHJ1Y3QgaTJj
+X21zZyBtc2dzW10sDQo+ID4+Pj4+ICAgICAgICAgICAgICAgICAgICAgICBlbHNlDQo+ID4+Pj4+
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGVuZF90eXBlID0gTVNHX0VORF9SRVBFQVRf
+U1RBUlQ7DQo+ID4+Pj4+ICAgICAgICAgICAgICAgfQ0KPiA+Pj4+PiArICAgICAgICAgICAgIC8q
+IElmIE1fUkVDVl9MRU4gdXNlIENvbnRpbnVlWGZlciB0byByZWFkIHRoZSBmaXJzdCBieXRlICov
+DQo+ID4+Pj4+ICsgICAgICAgICAgICAgaWYgKG1zZ3NbaV0uZmxhZ3MgJiBJMkNfTV9SRUNWX0xF
+Tikgew0KPiA+Pj4+PiArICAgICAgICAgICAgICAgICAgICAgcmV0ID0gdGVncmFfaTJjX3hmZXJf
+bXNnKGkyY19kZXYsICZtc2dzW2ldLA0KPiA+Pj4+IE1TR19FTkRfQ09OVElOVUUpOw0KPiA+Pj4+
+PiArICAgICAgICAgICAgICAgICAgICAgaWYgKHJldCkNCj4gPj4+Pj4gKyAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgYnJlYWs7DQo+ID4+Pj4+ICsgICAgICAgICAgICAgICAgICAgICAvKiBT
+ZXQgdGhlIHJlYWQgYnl0ZSBhcyBtc2cgbGVuICovDQo+ID4+Pj4+ICsgICAgICAgICAgICAgICAg
+ICAgICBtc2dzW2ldLmxlbiA9IG1zZ3NbaV0uYnVmWzBdOw0KPiA+Pj4+PiArICAgICAgICAgICAg
+ICAgICAgICAgZGV2X2RiZyhpMmNfZGV2LT5kZXYsICJyZWFkaW5nICVkIGJ5dGVzXG4iLCBtc2dz
+W2ldLmxlbik7DQo+ID4+Pj4+ICsgICAgICAgICAgICAgfQ0KPiA+Pj4+PiAgICAgICAgICAgICAg
+IHJldCA9IHRlZ3JhX2kyY194ZmVyX21zZyhpMmNfZGV2LCAmbXNnc1tpXSwgZW5kX3R5cGUpOw0K
+PiA+Pj4+PiAgICAgICAgICAgICAgIGlmIChyZXQpDQo+ID4+Pj4+ICAgICAgICAgICAgICAgICAg
+ICAgICBicmVhazsNCj4gPj4+Pj4gQEAgLTE0MTYsMTAgKzE0MzAsMTAgQEAgc3RhdGljIHUzMiB0
+ZWdyYV9pMmNfZnVuYyhzdHJ1Y3QgaTJjX2FkYXB0ZXINCj4gPj4+PiAqYWRhcCkNCj4gPj4+Pj4g
+IHsNCj4gPj4+Pj4gICAgICAgc3RydWN0IHRlZ3JhX2kyY19kZXYgKmkyY19kZXYgPSBpMmNfZ2V0
+X2FkYXBkYXRhKGFkYXApOw0KPiA+Pj4+PiAgICAgICB1MzIgcmV0ID0gSTJDX0ZVTkNfSTJDIHwg
+KEkyQ19GVU5DX1NNQlVTX0VNVUwgJg0KPiA+Pj4+IH5JMkNfRlVOQ19TTUJVU19RVUlDSykgfA0K
+PiA+Pj4+PiAtICAgICAgICAgICAgICAgSTJDX0ZVTkNfMTBCSVRfQUREUiB8IEkyQ19GVU5DX1BS
+T1RPQ09MX01BTkdMSU5HOw0KPiA+Pj4+PiArICAgICAgICAgICAgICAgSTJDX0ZVTkNfMTBCSVRf
+QUREUiB8IEkyQ19GVU5DX1BST1RPQ09MX01BTkdMSU5HOw0KPiA+Pj4+Pg0KPiA+Pj4+PiAgICAg
+ICBpZiAoaTJjX2Rldi0+aHctPmhhc19jb250aW51ZV94ZmVyX3N1cHBvcnQpDQo+ID4+Pj4+IC0g
+ICAgICAgICAgICAgcmV0IHw9IEkyQ19GVU5DX05PU1RBUlQ7DQo+ID4+Pj4+ICsgICAgICAgICAg
+ICAgcmV0IHw9IEkyQ19GVU5DX05PU1RBUlQgfA0KPiBJMkNfRlVOQ19TTUJVU19SRUFEX0JMT0NL
+X0RBVEE7DQo+ID4+Pj4+DQo+ID4+Pj4+ICAgICAgIHJldHVybiByZXQ7DQo+ID4+Pj4+ICB9DQo+
+ID4+Pj4NCj4gPj4+PiBQbGVhc2UgZGVzY3JpYmUgaG93IHRoaXMgd2FzIHRlc3RlZC4NCj4gPj4+
+IFRoaXMgaXMgdGVzdGVkIHVzaW5nIGFuIEkyQyBFRVBST00gdG8gZW11bGF0ZSBTTUJ1cyBibG9j
+ayByZWFkIGluIHdoaWNoDQo+ID4+PiB3ZSByZWFkIHRoZSBmaXJzdCBieXRlIGFzIHRoZSBsZW5n
+dGggb2YgYnl0ZXMgdG8gcmVhZC4gVGhpcyBpcyBhbiBleHBlY3RlZA0KPiA+Pj4gZmVhdHVyZSBm
+b3IgTlZJRElBIEdyYWNlIGNoaXBzZXQgd2hlcmUgdGhlcmUgd2lsbCBiZSBhbiBhY3R1YWwgU01C
+dXMNCj4gZGV2aWNlLg0KPiA+Pg0KPiA+PiBXZSBoYXZlIHNldmVyYWwgVGVncmEzMCsgdGFibGV0
+cyB0aGF0IGhhdmUgRUMgb24gU01CdXMuIFN2eWF0b3NsYXYgdHJpZWQNCj4gPj4geW91ciBJMkMg
+cGF0Y2ggKyBbMV0gb24gQXN1cyBURjIwMSBhbmQgcmVwb3J0ZWQgdGhhdCBpdCBicmVha3MgRUMu
+IEFueQ0KPiA+PiBpZGVhIHdoeSBpdCBkb2Vzbid0IHdvcms/DQo+ID4+DQo+ID4+IFsxXQ0KPiA+
+PiBodHRwczovL2dpdGh1Yi5jb20vZ3JhdGUtDQo+IGRyaXZlci9saW51eC9jb21taXQvYWE4ZDcx
+ZjVhOTYwZWY0MDUwM2U1NDQ4YzYyMmQ2MmQxYzUzYTJjMA0KPiA+DQo+ID4gQWgsIEkgc2VlIG5v
+dyB0aGF0IEkyQ19GVU5DX1NNQlVTX1dSSVRFX0JMT0NLX0RBVEEgbm90IHN1cHBvcnRlZCwNCj4g
+d2UNCj4gPiBzaG91bGQgY2hlY2sgYWdhaW4gd2l0aG91dCB0aGUgd3JpdGUgdGhlbi4NCj4gDQo+
+IFdlIGFsc28gbWlzc2VkIHRoYXQgaTJjX3NtYnVzX3JlYWRfaTJjX2Jsb2NrX2RhdGEoKSBwb3B1
+bGF0ZXMgdGhlIGZpcnN0DQo+IGJ5dGUgb2YgdGhlIHJlYWQgZGF0YSB3aXRoIHRoZSB0cmFuc2Zl
+ciBzaXplLiBTbw0KPiBpMmNfc21idXNfcmVhZF9ibG9ja19kYXRhKCkgYWN0dWFsbHkgd29ya3Mg
+cHJvcGVybHkuDQo+IA0KPiBJdCdzIHVuY2xlYXIgdG8gbWUgd2hhdCdzIHRoZSBwb2ludCBvZiBl
+bXVsYXRpbmcNCj4gSTJDX0ZVTkNfU01CVVNfUkVBRF9CTE9DS19EQVRBIHdpdGhpbiB0aGUgZHJp
+dmVyIGlmIHlvdSBjb3VsZCB1c2UNCj4gaTJjX3NtYnVzX3JlYWRfaTJjX2Jsb2NrX2RhdGEoKS4N
+Cg0KV2UgYXJlIGxvb2tpbmcgdG8gc3VwcG9ydCBJMkNfTV9SRUNWX0xFTiB3aGVyZSB0aGUgbGVu
+Z3RoIGlzIHJlYWQgZnJvbSB0aGUNCmZpcnN0IGJ5dGUgb2YgZGF0YS4gSSBzZWUgdGhhdCBpMmNf
+c21idXNfcmVhZF9pMmNfYmxvY2tfZGF0YSgpIHJlcXVpcmVzIHRoZSBsZW5ndGgNCnRvIGJlIHBh
+c3NlZCBmcm9tIHRoZSBjbGllbnQgZHJpdmVyLg0KDQpCVFcsIEkyQ19GVU5DX1NNQlVTX1dSSVRF
+X0JMT0NLX0RBVEEgaXMgYWxzbyBleHBlY3RlZCB0byBiZSBzdXBwb3J0ZWQuDQpJdCBpcyBpbmNs
+dWRlZCBpbiBJMkNfRlVOQ19TTUJVU19FTVVMLiBJIHN1cHBvc2UsIGl0IGRvZXNuJ3QgcmVxdWly
+ZSBhbnkgYWRkaXRpb25hbA0KY2hhbmdlIGluIHRoZSBkcml2ZXIuIFRoZSBjbGllbnQgZHJpdmVy
+IHNob3VsZCBwb3B1bGF0ZSB0aGUgZmlyc3QgYnl0ZSBhcyB0aGUgbGVuZ3RoDQpvZiBkYXRhIHRv
+IGJlIHRyYW5zZmVycmVkLg0KDQpUaGFua3MsDQpBa2hpbA0K
