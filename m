@@ -2,99 +2,94 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11137C433FE
-	for <linux-tegra@archiver.kernel.org>; Mon, 14 Feb 2022 16:18:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAB95C433FE
+	for <linux-tegra@archiver.kernel.org>; Mon, 14 Feb 2022 21:35:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1356220AbiBNQS7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 14 Feb 2022 11:18:59 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:60132 "EHLO
+        id S231436AbiBNVfH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 14 Feb 2022 16:35:07 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:53158 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233120AbiBNQS5 (ORCPT
+        with ESMTP id S231511AbiBNVfA (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 14 Feb 2022 11:18:57 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D15C42EE7;
-        Mon, 14 Feb 2022 08:18:50 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id BDA85614B9;
-        Mon, 14 Feb 2022 16:18:49 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4100C340EE;
-        Mon, 14 Feb 2022 16:18:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1644855529;
-        bh=30+VMmwq/+Ww84ESrOXe06POA0Lt6UwrPtl9Lt+70b4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=KOdYiF6NBh0X3dd/jzIhVKqdjaCmSJlkRYSvp07dsQjKWRt87+hxE5Qkxzgiox82b
-         Q0lG9XKZMUafPhEzNdkWJ9pgtbWL/Ae6TS6H2p9dxHs056p1kYoDx3tcOc8LOxq+QN
-         6Lcj/tKD80W5TqvPm2mHxabC4PROpQUJQZZxrRjdy1nLxqZ8rt8jiGUtWRjxFZiAdQ
-         oAlCm5pe0ZzQqlvfZQsvUsI/ThgHSr4gPsN0Y/2C8ge+S1lxr94UEacWYVwU0wARZw
-         G1XfdixxC/bixfsPJcml60Rx6vBQwu0P1eZGiPKWbnFsl3J9WBV+FmnXya0Yh+Q9gs
-         znGjTT7Owwbrg==
-Date:   Mon, 14 Feb 2022 16:18:43 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Krishna Yarlagadda <kyarlagadda@nvidia.com>
-Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com,
-        linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org,
-        skomatineni@nvidia.com, ldewangan@nvidia.com, robh+dt@kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        p.zabel@pengutronix.de
-Subject: Re: [PATCH 2/6] spi: Tegra234 QUAD SPI compatible
-Message-ID: <YgqA45CXxLTx7TY4@sirena.org.uk>
-References: <1643970576-31503-1-git-send-email-kyarlagadda@nvidia.com>
- <1643970576-31503-3-git-send-email-kyarlagadda@nvidia.com>
+        Mon, 14 Feb 2022 16:35:00 -0500
+Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B60B2158798;
+        Mon, 14 Feb 2022 13:32:26 -0800 (PST)
+Received: by mail-wm1-x32f.google.com with SMTP id c192so10338847wma.4;
+        Mon, 14 Feb 2022 13:32:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=AYGIU0lBgl4d0sNWP4gNGrwgFdAF2VqmrC+fnt5WHX8=;
+        b=lEibEIIHHaNkCIBCOonaCkB5WT0qXvdINVme8DbMAQ4gXD8Y8gZ7MmRFtd+jeI340G
+         P3yf2zfHNl4eNYBwgYS2eODg+RA4I5mMh1mCS+Lsd+UlvDz55haq+BGGz2DX4ZB3rtAo
+         B7HUaJ0ax5xaUp++lwEdMWrz65Ju6n935WWXFf38LS6uYUOqNAD5fRcTd3xzF2R3J3CZ
+         L5pZq0TOkqyPaqpej5PXp/t89XLsmWFHUYxavOGXBPiE0pNqlCvoX0ifpawuBMaanR7a
+         hAU0T9yUZknzlJnd9XDhiGBMjpXYDKAzF+6oK2uqe197+OOhOiRiJba/J48mBYHoIjwn
+         XcVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=AYGIU0lBgl4d0sNWP4gNGrwgFdAF2VqmrC+fnt5WHX8=;
+        b=rb3yvXW62IM0hvQQX7fAgqOjBtKs82xeoP/E4OgUPtalPg0/0amQmJ0d98b/4Lveqm
+         fv5FcNLz2dIyXq2IS7R0l5P2Qp8IXyi8l74+WHup3nW2AjKtA8mDWQM1RgxEDD8H3SXk
+         7lPxm1o62i/AqcO8s1IHez8Lg2rxVA5txFvuTIdyYkjR4b6IZ58jGQP3bYoSF6nD/mlH
+         W9HRV74kbG9EViHRxbGhjL5bFeLFPS/h5617+74HIvEkWdoL/xiwoVVF1FOYYktPBTrV
+         eSdx5cuLFKASIXbE/3S/tM6Okr63DFzzu4IpN9bY7lxqjpySH8s17ub+NgoMHLSBSKYW
+         /LIw==
+X-Gm-Message-State: AOAM533zGAbPUrun+KQ1KOwGxpwLN+JGvWv1YtszM2sK5u0WsHUayA6N
+        KJnbVUnDMMfCnV9EVaXl9GE=
+X-Google-Smtp-Source: ABdhPJzA+5buwGThU/StogQFez2aB+m4K2P39OqNL7jF9GJPAEIJXA4IsgbPmSGM6C562aVhBfktGg==
+X-Received: by 2002:a1c:7318:0:b0:37b:fa1b:1472 with SMTP id d24-20020a1c7318000000b0037bfa1b1472mr496215wmb.57.1644874345208;
+        Mon, 14 Feb 2022 13:32:25 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id 3sm26537410wrz.86.2022.02.14.13.32.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Feb 2022 13:32:24 -0800 (PST)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ASoC: tegra20: spdif: make const array rates static
+Date:   Mon, 14 Feb 2022 21:32:23 +0000
+Message-Id: <20220214213223.65780-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="At+QsLQe3QIxJ5HT"
-Content-Disposition: inline
-In-Reply-To: <1643970576-31503-3-git-send-email-kyarlagadda@nvidia.com>
-X-Cookie: Your lucky color has faded.
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+Don't populate the read-only const array rates on the stack but
+instead it static. Also makes the object code a little smaller.
 
---At+QsLQe3QIxJ5HT
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ sound/soc/tegra/tegra20_spdif.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Fri, Feb 04, 2022 at 03:59:32PM +0530, Krishna Yarlagadda wrote:
-> Add compatible string for Tegra234 for Tegra QUAD SPI
->=20
-> Signed-off-by: Krishna Yarlagadda <kyarlagadda@nvidia.com>
+diff --git a/sound/soc/tegra/tegra20_spdif.c b/sound/soc/tegra/tegra20_spdif.c
+index d09cd7ee6879..64c2f304f254 100644
+--- a/sound/soc/tegra/tegra20_spdif.c
++++ b/sound/soc/tegra/tegra20_spdif.c
+@@ -186,7 +186,7 @@ static int tegra20_spdif_filter_rates(struct snd_pcm_hw_params *params,
+ 	struct snd_soc_dai *dai = rule->private;
+ 	struct tegra20_spdif *spdif = dev_get_drvdata(dai->dev);
+ 	struct clk *parent = clk_get_parent(spdif->clk_spdif_out);
+-	const unsigned int rates[] = { 32000, 44100, 48000 };
++	static const unsigned int rates[] = { 32000, 44100, 48000 };
+ 	long i, parent_rate, valid_rates = 0;
+ 
+ 	parent_rate = clk_get_rate(parent);
+-- 
+2.34.1
 
-This breaks an x86_64 allmodconfig build:
-
-/mnt/kernel/drivers/spi/spi-tegra210-quad.c: In function 'tegra_qspi_probe':
-/mnt/kernel/drivers/spi/spi-tegra210-quad.c:1322:2: error: ignoring return =
-value of 'device_reset' declared with attribute 'warn_unused_result' [-Werr=
-or=3Dunused-result]
- 1322 |  device_reset(tqspi->dev);
-      |  ^~~~~~~~~~~~~~~~~~~~~~~~
-/mnt/kernel/drivers/spi/spi-tegra210-quad.c: In function 'tegra_qspi_handle=
-_error':
-/mnt/kernel/drivers/spi/spi-tegra210-quad.c:957:2: error: ignoring return v=
-alue of 'device_reset' declared with attribute 'warn_unused_result' [-Werro=
-r=3Dunused-result]
-  957 |  device_reset(tqspi->dev);
-      |  ^~~~~~~~~~~~~~~~~~~~~~~~
-
-
---At+QsLQe3QIxJ5HT
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmIKgOMACgkQJNaLcl1U
-h9Bjuwf/VbgBj6Nl0baUijAzK/jUkC0Q/kbtBGV9SdEmIYhv1GZQySMAxbh69PMl
-MXwI4JwdVs0SHVHCFFqmCL3X4f6+dZIabNSdTlo6UfTxbM4LvGNyoqMC99fasg9/
-0XV/eyb51O783NVT4ZGumapiz07W/Urlw3QIgM0lmINoH0RlD1Aqh58LW4EUd+zA
-IkwVm5OpcU6Am5ubysVmInNBiU5OmhMAN1TVdLaTz2r5R+ooducLijBE7gMnNluZ
-yPgC/UdkFEUwT4oW4xpzeuXASX+94/E+r1OGfesPq/qou21P8fAh59K0Fskp1ssf
-vEPF3R2bOU9ivbOb0Q6aYRNFI2974Q==
-=zBVd
------END PGP SIGNATURE-----
-
---At+QsLQe3QIxJ5HT--
