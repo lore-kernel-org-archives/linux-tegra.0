@@ -2,43 +2,43 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2015FC433F5
-	for <linux-tegra@archiver.kernel.org>; Tue, 15 Feb 2022 13:29:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C1F8C433EF
+	for <linux-tegra@archiver.kernel.org>; Tue, 15 Feb 2022 13:34:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237729AbiBONaG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 15 Feb 2022 08:30:06 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:57022 "EHLO
+        id S229449AbiBONeN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 15 Feb 2022 08:34:13 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:59478 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232236AbiBONaF (ORCPT
+        with ESMTP id S238286AbiBONeM (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 15 Feb 2022 08:30:05 -0500
+        Tue, 15 Feb 2022 08:34:12 -0500
 Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CBEB106B05;
-        Tue, 15 Feb 2022 05:29:55 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF5DB106CAE;
+        Tue, 15 Feb 2022 05:34:02 -0800 (PST)
 Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id 387E51F38A;
-        Tue, 15 Feb 2022 13:29:54 +0000 (UTC)
+        by smtp-out2.suse.de (Postfix) with ESMTP id AE5A71F38A;
+        Tue, 15 Feb 2022 13:34:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1644931794; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1644932041; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=y7TuJb01MxHR8ILN71qt78hpvGNPxuxb3fSK52SQW5s=;
-        b=kbXIIVQxDUyMeSo23lxkbHz595B4YBWvOJfWYdP8w8hnlFuTzc7ectt3sXzAuyO37dpR9D
-        1ykMFI3eWcTAYIEVuRKgDpgpK9Mv1kwPtQJcGbguYEqRTTsrJ4dQ8M+w1zPkuphmvhLCte
-        VBUatHQUV+8B/nKfjph5d0rs9mLcANY=
+        bh=BrN4c0pgOML/EcLVozpTZVE4KY9kQPNPjtOpgr4a6iw=;
+        b=ywFp+K87BqwPlH6WVcbm3R4jOg1r/MIDX2LzsvM3SGef2Fpz+t73sSXbYxQeqjaEtwsq51
+        9wEzFS08K9Q/IoKXvXgr7MF0XX8YfKfGnqCIoVkotPAcFlRCsdXzapIXH4SIcVqiLaqp+a
+        sFGu9XRPFvhRbICo4MeN1Oqp20d+xxM=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1644931794;
+        s=susede2_ed25519; t=1644932041;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=y7TuJb01MxHR8ILN71qt78hpvGNPxuxb3fSK52SQW5s=;
-        b=O1k0di7vp4H8u5b/CloGSi511qqPzZcslRwg4kaGt+Fm0h3bca3mbiVcegQ7KHCkX/M4Ww
-        stV/XG0RxjGtuuDA==
+        bh=BrN4c0pgOML/EcLVozpTZVE4KY9kQPNPjtOpgr4a6iw=;
+        b=gL0vbRx5Ip+3TkhKpFtKG/oiPLair6eNv5DWL6KhjCYWInZF0kjD5PVsh73Y76MOu1TJ+s
+        S/0N7IDkAUVd/vAQ==
 Received: from alsa1.suse.de (alsa1.suse.de [10.160.4.42])
-        by relay2.suse.de (Postfix) with ESMTP id 1EB45A3B81;
-        Tue, 15 Feb 2022 13:29:54 +0000 (UTC)
-Date:   Tue, 15 Feb 2022 14:29:54 +0100
-Message-ID: <s5hmtiscl65.wl-tiwai@suse.de>
+        by relay2.suse.de (Postfix) with ESMTP id 9C555A3B88;
+        Tue, 15 Feb 2022 13:34:01 +0000 (UTC)
+Date:   Tue, 15 Feb 2022 14:34:01 +0100
+Message-ID: <s5hk0dwckza.wl-tiwai@suse.de>
 From:   Takashi Iwai <tiwai@suse.de>
 To:     Mohan Kumar <mkumard@nvidia.com>
 Cc:     <broonie@kernel.org>, <lgirdwood@gmail.com>, <robh+dt@kernel.org>,
@@ -47,8 +47,9 @@ Cc:     <broonie@kernel.org>, <lgirdwood@gmail.com>, <robh+dt@kernel.org>,
         <alsa-devel@alsa-project.org>, <devicetree@vger.kernel.org>,
         <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
 Subject: Re: [PATCH v2 0/6] Add Tegra234 HDA support
-In-Reply-To: <20220210065057.13555-1-mkumard@nvidia.com>
+In-Reply-To: <s5hmtiscl65.wl-tiwai@suse.de>
 References: <20220210065057.13555-1-mkumard@nvidia.com>
+        <s5hmtiscl65.wl-tiwai@suse.de>
 User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
  FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/25.3
  (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
@@ -58,22 +59,28 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, 10 Feb 2022 07:50:51 +0100,
-Mohan Kumar wrote:
+On Tue, 15 Feb 2022 14:29:54 +0100,
+Takashi Iwai wrote:
 > 
-> This series add the support for TEGRA234 HDA driver support
+> On Thu, 10 Feb 2022 07:50:51 +0100,
+> Mohan Kumar wrote:
+> > 
+> > This series add the support for TEGRA234 HDA driver support
+> > 
+> > Mohan Kumar (6):
+> >   ALSA: hda/tegra: Add Tegra234 hda driver support
+> >   ALSA: hda/tegra: Hardcode GCAP ISS value on T234
+> >   ALSA: hda/tegra: Update scratch reg. communication
+> >   dt-bindings: Add HDA support for Tegra234
+> >   dt-bindings: Document Tegra234 HDA support
+> >   arm64: tegra: Add hda dts node for Tegra234
 > 
-> Mohan Kumar (6):
->   ALSA: hda/tegra: Add Tegra234 hda driver support
->   ALSA: hda/tegra: Hardcode GCAP ISS value on T234
->   ALSA: hda/tegra: Update scratch reg. communication
->   dt-bindings: Add HDA support for Tegra234
->   dt-bindings: Document Tegra234 HDA support
->   arm64: tegra: Add hda dts node for Tegra234
+> Applied all six patches to for-next branch now.
 
-Applied all six patches to for-next branch now.
+... and now I realized that it's conflicting with the latest Tegra234
+reset stuff on linux-next.
 
+Maybe better to split the patches to be merged through several trees?
 
-thanks,
 
 Takashi
