@@ -2,87 +2,78 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C648C433EF
-	for <linux-tegra@archiver.kernel.org>; Tue, 15 Feb 2022 13:18:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2015FC433F5
+	for <linux-tegra@archiver.kernel.org>; Tue, 15 Feb 2022 13:29:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238195AbiBONSr (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 15 Feb 2022 08:18:47 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:55776 "EHLO
+        id S237729AbiBONaG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 15 Feb 2022 08:30:06 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:57022 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232192AbiBONSp (ORCPT
+        with ESMTP id S232236AbiBONaF (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 15 Feb 2022 08:18:45 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4A71D10A0;
-        Tue, 15 Feb 2022 05:18:35 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 88C24B819C2;
-        Tue, 15 Feb 2022 13:18:34 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3062CC340ED;
-        Tue, 15 Feb 2022 13:18:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1644931113;
-        bh=6sDK0ccoSzhYNr2YTp0NKTVctS799bzZHwni9VvC+GI=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=CeIMzQji6pQPppttKX9ZxoE2OPFrWW9a+9Fu8Coii2iyM02IjSEw+UxvuZ4ouWUt2
-         SsJlW8lFWyj2o7mR+xGUnSVGvyeEBjQrMauJS5pY3nxkqFk2U3tuabW1GPt7HKCbMd
-         zGUKpP2Uylv5OPTAqCGLkBNVgv920ngnO8CGHQN21B0nqMuamtknG5ra4t/pUjek98
-         mwTHb66jaPsTTV1QREPLPJqoB4zVqOQERavSVroCXrbWqNARdgA7gmyMi/6u3OgrlL
-         Gxut4aQT4COPorjx2VNFAEL2BAmeh8MIXHLzaxyftpXG7E2FrWkjzwBdMGAMECbUut
-         9OBjgEoT7yzqA==
-From:   Mark Brown <broonie@kernel.org>
-To:     Dmitry Osipenko <digetx@gmail.com>, Takashi Iwai <tiwai@suse.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org,
-        linux-tegra@vger.kernel.org,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Colin Ian King <colin.i.king@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20220214213223.65780-1-colin.i.king@gmail.com>
-References: <20220214213223.65780-1-colin.i.king@gmail.com>
-Subject: Re: [PATCH] ASoC: tegra20: spdif: make const array rates static
-Message-Id: <164493111091.974741.18170472602420654568.b4-ty@kernel.org>
-Date:   Tue, 15 Feb 2022 13:18:30 +0000
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+        Tue, 15 Feb 2022 08:30:05 -0500
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CBEB106B05;
+        Tue, 15 Feb 2022 05:29:55 -0800 (PST)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id 387E51F38A;
+        Tue, 15 Feb 2022 13:29:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1644931794; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=y7TuJb01MxHR8ILN71qt78hpvGNPxuxb3fSK52SQW5s=;
+        b=kbXIIVQxDUyMeSo23lxkbHz595B4YBWvOJfWYdP8w8hnlFuTzc7ectt3sXzAuyO37dpR9D
+        1ykMFI3eWcTAYIEVuRKgDpgpK9Mv1kwPtQJcGbguYEqRTTsrJ4dQ8M+w1zPkuphmvhLCte
+        VBUatHQUV+8B/nKfjph5d0rs9mLcANY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1644931794;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=y7TuJb01MxHR8ILN71qt78hpvGNPxuxb3fSK52SQW5s=;
+        b=O1k0di7vp4H8u5b/CloGSi511qqPzZcslRwg4kaGt+Fm0h3bca3mbiVcegQ7KHCkX/M4Ww
+        stV/XG0RxjGtuuDA==
+Received: from alsa1.suse.de (alsa1.suse.de [10.160.4.42])
+        by relay2.suse.de (Postfix) with ESMTP id 1EB45A3B81;
+        Tue, 15 Feb 2022 13:29:54 +0000 (UTC)
+Date:   Tue, 15 Feb 2022 14:29:54 +0100
+Message-ID: <s5hmtiscl65.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     Mohan Kumar <mkumard@nvidia.com>
+Cc:     <broonie@kernel.org>, <lgirdwood@gmail.com>, <robh+dt@kernel.org>,
+        <thierry.reding@gmail.com>, <tiwai@suse.com>,
+        <jonathanh@nvidia.com>, <spujar@nvidia.com>,
+        <alsa-devel@alsa-project.org>, <devicetree@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 0/6] Add Tegra234 HDA support
+In-Reply-To: <20220210065057.13555-1-mkumard@nvidia.com>
+References: <20220210065057.13555-1-mkumard@nvidia.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/25.3
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, 14 Feb 2022 21:32:23 +0000, Colin Ian King wrote:
-> Don't populate the read-only const array rates on the stack but
-> instead it static. Also makes the object code a little smaller.
+On Thu, 10 Feb 2022 07:50:51 +0100,
+Mohan Kumar wrote:
 > 
+> This series add the support for TEGRA234 HDA driver support
 > 
+> Mohan Kumar (6):
+>   ALSA: hda/tegra: Add Tegra234 hda driver support
+>   ALSA: hda/tegra: Hardcode GCAP ISS value on T234
+>   ALSA: hda/tegra: Update scratch reg. communication
+>   dt-bindings: Add HDA support for Tegra234
+>   dt-bindings: Document Tegra234 HDA support
+>   arm64: tegra: Add hda dts node for Tegra234
 
-Applied to
+Applied all six patches to for-next branch now.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-Thanks!
+thanks,
 
-[1/1] ASoC: tegra20: spdif: make const array rates static
-      commit: 83a1bed1f49869ea0fc7de321d5dcc598d0dfb15
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+Takashi
