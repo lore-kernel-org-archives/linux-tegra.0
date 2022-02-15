@@ -2,100 +2,152 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F8E7C433EF
-	for <linux-tegra@archiver.kernel.org>; Tue, 15 Feb 2022 21:33:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB622C4167D
+	for <linux-tegra@archiver.kernel.org>; Tue, 15 Feb 2022 22:00:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244416AbiBOVdu (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 15 Feb 2022 16:33:50 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:52888 "EHLO
+        id S238756AbiBOWA7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 15 Feb 2022 17:00:59 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:56626 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244415AbiBOVdu (ORCPT
+        with ESMTP id S243036AbiBOWAs (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 15 Feb 2022 16:33:50 -0500
-Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27775F4057;
-        Tue, 15 Feb 2022 13:33:39 -0800 (PST)
-Received: by mail-lj1-x229.google.com with SMTP id t14so408725ljh.8;
-        Tue, 15 Feb 2022 13:33:39 -0800 (PST)
+        Tue, 15 Feb 2022 17:00:48 -0500
+Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E9207679;
+        Tue, 15 Feb 2022 14:00:37 -0800 (PST)
+Received: by mail-lf1-x133.google.com with SMTP id d23so156794lfv.13;
+        Tue, 15 Feb 2022 14:00:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :references:from:in-reply-to:content-transfer-encoding;
-        bh=Ovvir5BtpZLZ8DCjyJs2646HrpaMhCZVk8jBms3NL6w=;
-        b=dCy5EmnocrQKemV8SOj+IlR/sNEHWp1BrACPRUYSEzyeUijyBIqMX7SJJOfCk9zKZq
-         RuzvecWZC6XYj8VaJTm2lX/mwx5PfJq4Lmc4L+QMcnkmMUwXBZjEzGDxzpZ2G9jAMlf5
-         dnGBIw8ZqgTLNP8JK7Td6hmXG4OxO9Nu10wkL6tjPWCHI8xFlhGTTHFRBJ0Qt4Q/zmhv
-         LZ3GRWU9NDow8/aR/dmhTmxInK89gaY2czlLuI5WosqE7YeSvbOiROwGSMxSFLKz7GGC
-         pSn+OaIDLKKBjbtDOu7wxxn1/tYB/O3TGSUtthAL0qvyzTD+y83EG+Z4TqHJA7pF5TZS
-         L1KQ==
+        h=message-id:date:mime-version:user-agent:subject:content-language
+         :from:cc:references:to:in-reply-to:content-transfer-encoding;
+        bh=DVulEGE2JpmKCAwv+Z9nIfk2u5ZwvRtSEnvF0++tohE=;
+        b=eAbTUd8SWrkduWMDvYSL9PCIMvTyx1/PDNq+g34U5a6HTO/JfyDazuc/276Sm7ld7f
+         RQAUjz9KnJpaex/eozKDcsnVqqRwA5Fj5CSlNJHiQfzBkJVLCc7y3vw02lxihPY3TExU
+         lYcUYoYFkQWAG/XD2qnNsvTl5P4zqH6pcaasqRB1LojAt2IN4Q9BVX82FHrNStE8wYB4
+         mmhCvKeDI7YjVSy4dXfgCBsx8WWHAoaLNoouUIXdBuim6buHAqSq3/5veKqw8hxrEwEf
+         aYlaoKh86/GFDdT8ghhsvoX3tr735feUL8boUX68tZ9vbfpFMdKPrE/wFw8zC0NNEmPZ
+         ssKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:references:from:in-reply-to
+         :content-language:from:cc:references:to:in-reply-to
          :content-transfer-encoding;
-        bh=Ovvir5BtpZLZ8DCjyJs2646HrpaMhCZVk8jBms3NL6w=;
-        b=ZhnVxIHQJVESsABUcRYNaot25r93kmbx5gp/stmxNcZyfbjtAi1suhsfvfp2jnQyxr
-         P9dFqgkUJI7KVt9lrxqI/mC2G7XWVwSwBvRxVe2Jk7EZrBhdcpcaG1p1ZvP/j0Sust35
-         iEHZ0NhtEP6TgfnH2s/+FidwhnVkHbF0R7yM576QtxRpU4PFkSDS+I2xGX2FS2siRv+h
-         Kxv5TqZ00PEEjrgxq6V0twu/Q8S/Vl9xCval2LtqAaL4kcj5l0ivM6IIriIaImaV148E
-         D5yvuRb1RWMy0nYuw2tfntkcfero2R7UDGQT76qTis8lERHv1lNU8z32ZTnj8YyCLols
-         VHpQ==
-X-Gm-Message-State: AOAM532zYT4KRCK5hNYDNQEqhVaIYpK5dZp2rGH17MK97NjyXjqX/sdW
-        orslHZXIUNiO/CakY1z10TQ=
-X-Google-Smtp-Source: ABdhPJyApZwOB54j1wGuh+A5cT9IZ70e0f6fM/BpGnGfw64Q4qGeMP1F38CSuo7bSA4zsY9lqc/jrQ==
-X-Received: by 2002:a05:651c:199e:: with SMTP id bx30mr705963ljb.274.1644960817394;
-        Tue, 15 Feb 2022 13:33:37 -0800 (PST)
+        bh=DVulEGE2JpmKCAwv+Z9nIfk2u5ZwvRtSEnvF0++tohE=;
+        b=wTomICDpoIwEpCbz/72bMDFaEmVWU7jQc/NuRAsg5bofzOt+vrWhjPQ2iKSRqFWatq
+         2nn/6InANIri5CuyLP57qbEDM9mNc+5oZNOvgWA5aUbfkk3r9wDjbUSkFFER2DeqtH/a
+         bADUAVck22cpEUHFrfulL2xsLu64LIqrFQ+00XUn0A7FBhLtpL22/xqTllsHNe4eEPm7
+         g1Fru5sO0wB860IhOJJiDRGaDBtpzxBNQqYE73Et7s+bciz4Ih7cIC4g6X8+IJ3dqZ+K
+         17whSiQLXyb07yrqfCubnrkgnA7Ks4PppPUCaKBYPiXtyTFtzwoLKHoc68JFMAcjRFuF
+         yOWA==
+X-Gm-Message-State: AOAM531oZB9VDs53ngcnjqCct//CiNbyr8ZzJgloNmrvVFVlHGjuR1ts
+        zMznJoIsXh+/1v7IepFIBTg=
+X-Google-Smtp-Source: ABdhPJyJtWqeT1e2wzvijosINOm/qc6wwzWUL/FDa9uqhHR32CJOoO1KF1UaVLhHtHEQQhQBEaQuLQ==
+X-Received: by 2002:a05:6512:96d:: with SMTP id v13mr790998lft.343.1644962435902;
+        Tue, 15 Feb 2022 14:00:35 -0800 (PST)
 Received: from [192.168.2.145] (109-252-138-165.dynamic.spd-mgts.ru. [109.252.138.165])
-        by smtp.googlemail.com with ESMTPSA id k5sm162684ljc.4.2022.02.15.13.33.36
+        by smtp.googlemail.com with ESMTPSA id k3sm66075lfo.10.2022.02.15.14.00.33
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Feb 2022 13:33:36 -0800 (PST)
-Message-ID: <bfed059f-046c-63e9-800f-b8c9b1544471@gmail.com>
-Date:   Wed, 16 Feb 2022 00:33:35 +0300
+        Tue, 15 Feb 2022 14:00:35 -0800 (PST)
+Message-ID: <635e8121-fca4-580c-6af5-d9317a2eee1b@gmail.com>
+Date:   Wed, 16 Feb 2022 01:00:33 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.5.0
-Subject: Re: [PATCH RESEND] i2c: tegra: Add SMBus block read function
+Subject: Re: [PATCH v6 00/21] Introduce power-off+restart call chain API
 Content-Language: en-US
-To:     Akhil R <akhilrajeev@nvidia.com>,
-        "christian.koenig@amd.com" <christian.koenig@amd.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
-        "sumit.semwal@linaro.org" <sumit.semwal@linaro.org>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        Svyatoslav Ryhel <clamor95@gmail.com>,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-        Krishna Yarlagadda <kyarlagadda@nvidia.com>
-References: <20220210153603.61894-1-akhilrajeev@nvidia.com>
- <ae6d300f-962d-9731-bb78-3594b4c31aea@gmail.com>
- <DM5PR12MB18502CF86E602F7071A1EA58C0309@DM5PR12MB1850.namprd12.prod.outlook.com>
- <94fc8b11-6149-56ca-a028-cf7f39930992@gmail.com>
- <ff83adba-7919-fa48-4637-a4cb9b94a8e1@gmail.com>
- <f3db5152-0e1f-4258-4cfd-521828a243c2@gmail.com>
- <DM5PR12MB18509DCA809CCE62A4A74133C0339@DM5PR12MB1850.namprd12.prod.outlook.com>
 From:   Dmitry Osipenko <digetx@gmail.com>
-In-Reply-To: <DM5PR12MB18509DCA809CCE62A4A74133C0339@DM5PR12MB1850.namprd12.prod.outlook.com>
+Cc:     linux-kernel@vger.kernel.org, linux-csky@vger.kernel.org,
+        linux-ia64@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+        linux-riscv@lists.infradead.org, linux-sh@vger.kernel.org,
+        xen-devel@lists.xenproject.org, linux-acpi@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Guo Ren <guoren@kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Joshua Thompson <funaho@jurai.org>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Sebastian Reichel <sre@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Greentime Hu <green.hu@gmail.com>,
+        Vincent Chen <deanbo422@gmail.com>,
+        "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+        Helge Deller <deller@gmx.de>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        Len Brown <lenb@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>, Pavel Machek <pavel@ucw.cz>,
+        Lee Jones <lee.jones@linaro.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>, alankao@andestech.com,
+        "K . C . Kuen-Chern Lin" <kclin@andestech.com>,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
+References: <20220130233718.21544-1-digetx@gmail.com>
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+In-Reply-To: <20220130233718.21544-1-digetx@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-14.02.2022 07:49, Akhil R пишет:
->> It's unclear to me what's the point of emulating
->> I2C_FUNC_SMBUS_READ_BLOCK_DATA within the driver if you could use
->> i2c_smbus_read_i2c_block_data().
-> We are looking to support I2C_M_RECV_LEN where the length is read from the
-> first byte of data. I see that i2c_smbus_read_i2c_block_data() requires the length
-> to be passed from the client driver.
+31.01.2022 02:36, Dmitry Osipenko пишет:
+> Problem
+> -------
 > 
-> BTW, I2C_FUNC_SMBUS_WRITE_BLOCK_DATA is also expected to be supported.
-> It is included in I2C_FUNC_SMBUS_EMUL. I suppose, it doesn't require any additional
-> change in the driver. The client driver should populate the first byte as the length
-> of data to be transferred.
+> SoC devices require power-off call chaining functionality from kernel.
+> We have a widely used restart chaining provided by restart notifier API,
+> but nothing for power-off.
+> 
+> Solution
+> --------
+> 
+> Introduce new API that provides both restart and power-off call chains.
+> 
+> Why combine restart with power-off? Because drivers often do both.
+> More practical to have API that provides both under the same roof.
+> 
+> The new API is designed with simplicity and extensibility in mind.
+> It's built upon the existing restart and reboot APIs. The simplicity
+> is in new helper functions that are convenient for drivers. The
+> extensibility is in the design that doesn't hardcode callback
+> arguments, making easy to add new parameters and remove old.
+> 
+> This is a third attempt to introduce the new API. First was made by
+> Guenter Roeck back in 2014, second was made by Thierry Reding in 2017.
+> In fact the work didn't stop and recently arm_pm_restart() was removed
+> from v5.14 kernel, which was a part of preparatory work started by
+> Guenter Roeck. I took into account experience and ideas from the
+> previous attempts, extended and polished them.
 
-Please support both read and write.
+
+Rafael and all, do you see anything critical that needs to be improved
+in this v6?
+
+Will be great if you could take this patchset via the power tree if it
+looks okay, or give an ack.
