@@ -2,94 +2,147 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAB95C433FE
-	for <linux-tegra@archiver.kernel.org>; Mon, 14 Feb 2022 21:35:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B183DC4167D
+	for <linux-tegra@archiver.kernel.org>; Tue, 15 Feb 2022 08:10:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231436AbiBNVfH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 14 Feb 2022 16:35:07 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:53158 "EHLO
+        id S235151AbiBOIKL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 15 Feb 2022 03:10:11 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:52440 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231511AbiBNVfA (ORCPT
+        with ESMTP id S235141AbiBOIKL (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 14 Feb 2022 16:35:00 -0500
-Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B60B2158798;
-        Mon, 14 Feb 2022 13:32:26 -0800 (PST)
-Received: by mail-wm1-x32f.google.com with SMTP id c192so10338847wma.4;
-        Mon, 14 Feb 2022 13:32:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=AYGIU0lBgl4d0sNWP4gNGrwgFdAF2VqmrC+fnt5WHX8=;
-        b=lEibEIIHHaNkCIBCOonaCkB5WT0qXvdINVme8DbMAQ4gXD8Y8gZ7MmRFtd+jeI340G
-         P3yf2zfHNl4eNYBwgYS2eODg+RA4I5mMh1mCS+Lsd+UlvDz55haq+BGGz2DX4ZB3rtAo
-         B7HUaJ0ax5xaUp++lwEdMWrz65Ju6n935WWXFf38LS6uYUOqNAD5fRcTd3xzF2R3J3CZ
-         L5pZq0TOkqyPaqpej5PXp/t89XLsmWFHUYxavOGXBPiE0pNqlCvoX0ifpawuBMaanR7a
-         hAU0T9yUZknzlJnd9XDhiGBMjpXYDKAzF+6oK2uqe197+OOhOiRiJba/J48mBYHoIjwn
-         XcVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=AYGIU0lBgl4d0sNWP4gNGrwgFdAF2VqmrC+fnt5WHX8=;
-        b=rb3yvXW62IM0hvQQX7fAgqOjBtKs82xeoP/E4OgUPtalPg0/0amQmJ0d98b/4Lveqm
-         fv5FcNLz2dIyXq2IS7R0l5P2Qp8IXyi8l74+WHup3nW2AjKtA8mDWQM1RgxEDD8H3SXk
-         7lPxm1o62i/AqcO8s1IHez8Lg2rxVA5txFvuTIdyYkjR4b6IZ58jGQP3bYoSF6nD/mlH
-         W9HRV74kbG9EViHRxbGhjL5bFeLFPS/h5617+74HIvEkWdoL/xiwoVVF1FOYYktPBTrV
-         eSdx5cuLFKASIXbE/3S/tM6Okr63DFzzu4IpN9bY7lxqjpySH8s17ub+NgoMHLSBSKYW
-         /LIw==
-X-Gm-Message-State: AOAM533zGAbPUrun+KQ1KOwGxpwLN+JGvWv1YtszM2sK5u0WsHUayA6N
-        KJnbVUnDMMfCnV9EVaXl9GE=
-X-Google-Smtp-Source: ABdhPJzA+5buwGThU/StogQFez2aB+m4K2P39OqNL7jF9GJPAEIJXA4IsgbPmSGM6C562aVhBfktGg==
-X-Received: by 2002:a1c:7318:0:b0:37b:fa1b:1472 with SMTP id d24-20020a1c7318000000b0037bfa1b1472mr496215wmb.57.1644874345208;
-        Mon, 14 Feb 2022 13:32:25 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id 3sm26537410wrz.86.2022.02.14.13.32.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Feb 2022 13:32:24 -0800 (PST)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ASoC: tegra20: spdif: make const array rates static
-Date:   Mon, 14 Feb 2022 21:32:23 +0000
-Message-Id: <20220214213223.65780-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        Tue, 15 Feb 2022 03:10:11 -0500
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7BBD2DABF
+        for <linux-tegra@vger.kernel.org>; Tue, 15 Feb 2022 00:10:01 -0800 (PST)
+Received: from dude.hi.pengutronix.de ([2001:67c:670:100:1d::7])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ore@pengutronix.de>)
+        id 1nJsu4-0002EE-5h; Tue, 15 Feb 2022 09:09:40 +0100
+Received: from ore by dude.hi.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ore@pengutronix.de>)
+        id 1nJsu2-009Ukl-3n; Tue, 15 Feb 2022 09:09:38 +0100
+From:   Oleksij Rempel <o.rempel@pengutronix.de>
+To:     =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Nicolas Saenz Julienne <nsaenz@kernel.org>,
+        Ray Jui <rjui@broadcom.com>, Rob Herring <robh+dt@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Scott Branden <sbranden@broadcom.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Tony Lindgren <tony@atomide.com>
+Cc:     Oleksij Rempel <o.rempel@pengutronix.de>, kernel@pengutronix.de,
+        bcm-kernel-feedback-list@broadcom.com, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: [PATCH v3 1/8] dt-bindings: net: add schema for ASIX USB Ethernet controllers
+Date:   Tue, 15 Feb 2022 09:09:30 +0100
+Message-Id: <20220215080937.2263111-1-o.rempel@pengutronix.de>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::7
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Don't populate the read-only const array rates on the stack but
-instead it static. Also makes the object code a little smaller.
+Create schema for ASIX USB Ethernet controllers and import some of
+currently supported USB IDs form drivers/net/usb/asix_devices.c
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+This devices are already used in some of DTs. So, this schema makes it official.
+NOTE: there was no previously documented txt based DT binding for this
+controllers.
+
+Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 ---
- sound/soc/tegra/tegra20_spdif.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../devicetree/bindings/net/asix,ax88178.yaml | 68 +++++++++++++++++++
+ 1 file changed, 68 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/net/asix,ax88178.yaml
 
-diff --git a/sound/soc/tegra/tegra20_spdif.c b/sound/soc/tegra/tegra20_spdif.c
-index d09cd7ee6879..64c2f304f254 100644
---- a/sound/soc/tegra/tegra20_spdif.c
-+++ b/sound/soc/tegra/tegra20_spdif.c
-@@ -186,7 +186,7 @@ static int tegra20_spdif_filter_rates(struct snd_pcm_hw_params *params,
- 	struct snd_soc_dai *dai = rule->private;
- 	struct tegra20_spdif *spdif = dev_get_drvdata(dai->dev);
- 	struct clk *parent = clk_get_parent(spdif->clk_spdif_out);
--	const unsigned int rates[] = { 32000, 44100, 48000 };
-+	static const unsigned int rates[] = { 32000, 44100, 48000 };
- 	long i, parent_rate, valid_rates = 0;
- 
- 	parent_rate = clk_get_rate(parent);
+diff --git a/Documentation/devicetree/bindings/net/asix,ax88178.yaml b/Documentation/devicetree/bindings/net/asix,ax88178.yaml
+new file mode 100644
+index 000000000000..1af52358de4c
+--- /dev/null
++++ b/Documentation/devicetree/bindings/net/asix,ax88178.yaml
+@@ -0,0 +1,68 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/net/asix,ax88178.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: The device tree bindings for the USB Ethernet controllers
++
++maintainers:
++  - Oleksij Rempel <o.rempel@pengutronix.de>
++
++description: |
++  Device tree properties for hard wired USB Ethernet devices.
++
++allOf:
++  - $ref: ethernet-controller.yaml#
++
++properties:
++  compatible:
++    items:
++      - enum:
++          - usbb95,1720   # ASIX AX88172
++          - usbb95,172a   # ASIX AX88172A
++          - usbb95,1780   # ASIX AX88178
++          - usbb95,7720   # ASIX AX88772
++          - usbb95,772a   # ASIX AX88772A
++          - usbb95,772b   # ASIX AX88772B
++          - usbb95,7e2b   # ASIX AX88772B
++
++  reg: true
++  local-mac-address: true
++  mac-address: true
++
++required:
++  - compatible
++  - reg
++
++additionalProperties: false
++
++examples:
++  - |
++    usb {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        ethernet@1 {
++            compatible = "usbb95,7e2b";
++            reg = <1>;
++            local-mac-address = [00 00 00 00 00 00];
++        };
++    };
++  - |
++    usb {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        usb1@1 {
++            compatible = "usb1234,5678";
++            reg = <1>;
++            #address-cells = <1>;
++            #size-cells = <0>;
++
++            ethernet@1 {
++               compatible = "usbb95,772b";
++               reg = <1>;
++            };
++        };
++    };
 -- 
-2.34.1
+2.30.2
 
