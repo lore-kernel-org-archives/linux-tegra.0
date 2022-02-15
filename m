@@ -2,89 +2,100 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F33EC433FE
-	for <linux-tegra@archiver.kernel.org>; Tue, 15 Feb 2022 21:28:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F8E7C433EF
+	for <linux-tegra@archiver.kernel.org>; Tue, 15 Feb 2022 21:33:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243431AbiBOV2e (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 15 Feb 2022 16:28:34 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:37054 "EHLO
+        id S244416AbiBOVdu (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 15 Feb 2022 16:33:50 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:52888 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233069AbiBOV2d (ORCPT
+        with ESMTP id S244415AbiBOVdu (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 15 Feb 2022 16:28:33 -0500
-X-Greylist: delayed 1885 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 15 Feb 2022 13:28:21 PST
-Received: from vps0.lunn.ch (vps0.lunn.ch [185.16.172.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA51CC24A9;
-        Tue, 15 Feb 2022 13:28:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-        Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-        Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-        bh=keg/iMk+UdaNfyy0BZm+iDOzuvq0G4cjTusXA9Hp92k=; b=CAkseX/Qyh+FIx8oj8t3veXNKf
-        UKyx6v1rPPeE7gNSMBgBfKGoC0Yi6enZ8NhlM1sTilCU+NodZ4d8ft4POAS992JSNuPDdt6ZG8am+
-        w+FwWzbH0q1dp0OqCSHkFnaLXFtmo/c81EZlMzbsdwPVNZ/IfR35QWsvVNInmaVq9sSE=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1nK4sU-0067XH-Bw; Tue, 15 Feb 2022 21:56:50 +0100
-Date:   Tue, 15 Feb 2022 21:56:50 +0100
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Oleksij Rempel <o.rempel@pengutronix.de>
-Cc:     Marc Kleine-Budde <mkl@pengutronix.de>,
-        Tony Lindgren <tony@atomide.com>,
-        linux-samsung-soc@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Jakub Kicinski <kuba@kernel.org>, devicetree@vger.kernel.org,
-        Nicolas Saenz Julienne <nsaenz@kernel.org>,
-        =?iso-8859-1?Q?Beno=EEt?= Cousson <bcousson@baylibre.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-rpi-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Scott Branden <sbranden@broadcom.com>, netdev@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel@pengutronix.de, Shawn Guo <shawnguo@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: Re: [PATCH v3 5/8] ARM: dts: exynos: fix ethernet node name for
- different odroid boards
-Message-ID: <YgwTkr1UIGH6hgJ6@lunn.ch>
-References: <20220215080937.2263111-1-o.rempel@pengutronix.de>
- <20220215080937.2263111-5-o.rempel@pengutronix.de>
- <20220215081240.hhie4niqnc5tuka2@pengutronix.de>
- <20220215081645.GD672@pengutronix.de>
+        Tue, 15 Feb 2022 16:33:50 -0500
+Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27775F4057;
+        Tue, 15 Feb 2022 13:33:39 -0800 (PST)
+Received: by mail-lj1-x229.google.com with SMTP id t14so408725ljh.8;
+        Tue, 15 Feb 2022 13:33:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :references:from:in-reply-to:content-transfer-encoding;
+        bh=Ovvir5BtpZLZ8DCjyJs2646HrpaMhCZVk8jBms3NL6w=;
+        b=dCy5EmnocrQKemV8SOj+IlR/sNEHWp1BrACPRUYSEzyeUijyBIqMX7SJJOfCk9zKZq
+         RuzvecWZC6XYj8VaJTm2lX/mwx5PfJq4Lmc4L+QMcnkmMUwXBZjEzGDxzpZ2G9jAMlf5
+         dnGBIw8ZqgTLNP8JK7Td6hmXG4OxO9Nu10wkL6tjPWCHI8xFlhGTTHFRBJ0Qt4Q/zmhv
+         LZ3GRWU9NDow8/aR/dmhTmxInK89gaY2czlLuI5WosqE7YeSvbOiROwGSMxSFLKz7GGC
+         pSn+OaIDLKKBjbtDOu7wxxn1/tYB/O3TGSUtthAL0qvyzTD+y83EG+Z4TqHJA7pF5TZS
+         L1KQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=Ovvir5BtpZLZ8DCjyJs2646HrpaMhCZVk8jBms3NL6w=;
+        b=ZhnVxIHQJVESsABUcRYNaot25r93kmbx5gp/stmxNcZyfbjtAi1suhsfvfp2jnQyxr
+         P9dFqgkUJI7KVt9lrxqI/mC2G7XWVwSwBvRxVe2Jk7EZrBhdcpcaG1p1ZvP/j0Sust35
+         iEHZ0NhtEP6TgfnH2s/+FidwhnVkHbF0R7yM576QtxRpU4PFkSDS+I2xGX2FS2siRv+h
+         Kxv5TqZ00PEEjrgxq6V0twu/Q8S/Vl9xCval2LtqAaL4kcj5l0ivM6IIriIaImaV148E
+         D5yvuRb1RWMy0nYuw2tfntkcfero2R7UDGQT76qTis8lERHv1lNU8z32ZTnj8YyCLols
+         VHpQ==
+X-Gm-Message-State: AOAM532zYT4KRCK5hNYDNQEqhVaIYpK5dZp2rGH17MK97NjyXjqX/sdW
+        orslHZXIUNiO/CakY1z10TQ=
+X-Google-Smtp-Source: ABdhPJyApZwOB54j1wGuh+A5cT9IZ70e0f6fM/BpGnGfw64Q4qGeMP1F38CSuo7bSA4zsY9lqc/jrQ==
+X-Received: by 2002:a05:651c:199e:: with SMTP id bx30mr705963ljb.274.1644960817394;
+        Tue, 15 Feb 2022 13:33:37 -0800 (PST)
+Received: from [192.168.2.145] (109-252-138-165.dynamic.spd-mgts.ru. [109.252.138.165])
+        by smtp.googlemail.com with ESMTPSA id k5sm162684ljc.4.2022.02.15.13.33.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Feb 2022 13:33:36 -0800 (PST)
+Message-ID: <bfed059f-046c-63e9-800f-b8c9b1544471@gmail.com>
+Date:   Wed, 16 Feb 2022 00:33:35 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220215081645.GD672@pengutronix.de>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [PATCH RESEND] i2c: tegra: Add SMBus block read function
+Content-Language: en-US
+To:     Akhil R <akhilrajeev@nvidia.com>,
+        "christian.koenig@amd.com" <christian.koenig@amd.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+        "sumit.semwal@linaro.org" <sumit.semwal@linaro.org>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        Svyatoslav Ryhel <clamor95@gmail.com>,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        Krishna Yarlagadda <kyarlagadda@nvidia.com>
+References: <20220210153603.61894-1-akhilrajeev@nvidia.com>
+ <ae6d300f-962d-9731-bb78-3594b4c31aea@gmail.com>
+ <DM5PR12MB18502CF86E602F7071A1EA58C0309@DM5PR12MB1850.namprd12.prod.outlook.com>
+ <94fc8b11-6149-56ca-a028-cf7f39930992@gmail.com>
+ <ff83adba-7919-fa48-4637-a4cb9b94a8e1@gmail.com>
+ <f3db5152-0e1f-4258-4cfd-521828a243c2@gmail.com>
+ <DM5PR12MB18509DCA809CCE62A4A74133C0339@DM5PR12MB1850.namprd12.prod.outlook.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+In-Reply-To: <DM5PR12MB18509DCA809CCE62A4A74133C0339@DM5PR12MB1850.namprd12.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-> > > -	ethernet: usbether@2 {
-> > > -		compatible = "usb0424,9730";
-> > > +	ethernet: ethernet@2 {
-> > > +		compatible = "usb424,9730";
-> > 
-> > The change of the compatible is not mentioned in the patch description.
-> > Is this intentional?
+14.02.2022 07:49, Akhil R пишет:
+>> It's unclear to me what's the point of emulating
+>> I2C_FUNC_SMBUS_READ_BLOCK_DATA within the driver if you could use
+>> i2c_smbus_read_i2c_block_data().
+> We are looking to support I2C_M_RECV_LEN where the length is read from the
+> first byte of data. I see that i2c_smbus_read_i2c_block_data() requires the length
+> to be passed from the client driver.
 > 
-> No, I forgot to mentione it. According to the USB schema 0 should be
-> removed. So, this compatible was incorrect as well. With leading zero
-> present yaml schema was not able to detect and validate this node.
+> BTW, I2C_FUNC_SMBUS_WRITE_BLOCK_DATA is also expected to be supported.
+> It is included in I2C_FUNC_SMBUS_EMUL. I suppose, it doesn't require any additional
+> change in the driver. The client driver should populate the first byte as the length
+> of data to be transferred.
 
-Does the current code not actually care about a leading 0? It will
-match with or without it? It would be good to mention that as well in
-the commit message, otherwise somebody like me is going to ask if this
-breaks backwards compatibility, since normally compatible is an exact
-string match.
-
-And i actually think this is the sort of change which should be as a
-patch of its own. If this causes a regression, a git bisect would then
-tell you if it is the change of usbether -> ethernet, or 0424 to
-424. That is part of why we ask for lots of small changes.
-
-
-       Andrew
+Please support both read and write.
