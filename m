@@ -2,27 +2,27 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03087C433FE
-	for <linux-tegra@archiver.kernel.org>; Tue, 15 Feb 2022 10:01:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A8F5C433EF
+	for <linux-tegra@archiver.kernel.org>; Tue, 15 Feb 2022 10:01:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236328AbiBOKBf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 15 Feb 2022 05:01:35 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:36988 "EHLO
+        id S236220AbiBOKBy (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 15 Feb 2022 05:01:54 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:37058 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232499AbiBOKBW (ORCPT
+        with ESMTP id S230075AbiBOKBd (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 15 Feb 2022 05:01:22 -0500
+        Tue, 15 Feb 2022 05:01:33 -0500
 Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7AC9A111DEE
-        for <linux-tegra@vger.kernel.org>; Tue, 15 Feb 2022 02:01:01 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E88C1162BD
+        for <linux-tegra@vger.kernel.org>; Tue, 15 Feb 2022 02:01:07 -0800 (PST)
 Received: from dude.hi.pengutronix.de ([2001:67c:670:100:1d::7])
         by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <ore@pengutronix.de>)
-        id 1nJudB-0001tD-PA; Tue, 15 Feb 2022 11:00:21 +0100
+        id 1nJudB-0001tK-Oc; Tue, 15 Feb 2022 11:00:21 +0100
 Received: from ore by dude.hi.pengutronix.de with local (Exim 4.94.2)
         (envelope-from <ore@pengutronix.de>)
-        id 1nJud9-009fvv-BE; Tue, 15 Feb 2022 11:00:19 +0100
+        id 1nJud9-009fwr-IZ; Tue, 15 Feb 2022 11:00:19 +0100
 From:   Oleksij Rempel <o.rempel@pengutronix.de>
 To:     =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
         "David S. Miller" <davem@davemloft.net>,
@@ -42,9 +42,9 @@ Cc:     Oleksij Rempel <o.rempel@pengutronix.de>, kernel@pengutronix.de,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org,
         linux-tegra@vger.kernel.org
-Subject: [PATCH v4 1/8] dt-bindings: net: add schema for ASIX USB Ethernet controllers
-Date:   Tue, 15 Feb 2022 11:00:11 +0100
-Message-Id: <20220215100018.2306046-2-o.rempel@pengutronix.de>
+Subject: [PATCH v4 7/8] ARM: dts: tegra20/30: fix ethernet node name for different tegra boards
+Date:   Tue, 15 Feb 2022 11:00:17 +0100
+Message-Id: <20220215100018.2306046-8-o.rempel@pengutronix.de>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20220215100018.2306046-1-o.rempel@pengutronix.de>
 References: <20220215100018.2306046-1-o.rempel@pengutronix.de>
@@ -58,93 +58,56 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Create schema for ASIX USB Ethernet controllers and import some of
-currently supported USB IDs form drivers/net/usb/asix_devices.c
-
-This devices are already used in some of DTs. So, this schema makes it official.
-NOTE: there was no previously documented txt based DT binding for this
-controllers.
+The node name of Ethernet controller should be "ethernet" instead of
+"asix" or "smsc" as required by Ethernet controller devicetree schema:
+ Documentation/devicetree/bindings/net/ethernet-controller.yaml
 
 Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 ---
- .../devicetree/bindings/net/asix,ax88178.yaml | 68 +++++++++++++++++++
- 1 file changed, 68 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/net/asix,ax88178.yaml
+ arch/arm/boot/dts/tegra20-colibri.dtsi | 2 +-
+ arch/arm/boot/dts/tegra30-colibri.dtsi | 2 +-
+ arch/arm/boot/dts/tegra30-ouya.dts     | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/net/asix,ax88178.yaml b/Documentation/devicetree/bindings/net/asix,ax88178.yaml
-new file mode 100644
-index 000000000000..1af52358de4c
---- /dev/null
-+++ b/Documentation/devicetree/bindings/net/asix,ax88178.yaml
-@@ -0,0 +1,68 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/net/asix,ax88178.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: The device tree bindings for the USB Ethernet controllers
-+
-+maintainers:
-+  - Oleksij Rempel <o.rempel@pengutronix.de>
-+
-+description: |
-+  Device tree properties for hard wired USB Ethernet devices.
-+
-+allOf:
-+  - $ref: ethernet-controller.yaml#
-+
-+properties:
-+  compatible:
-+    items:
-+      - enum:
-+          - usbb95,1720   # ASIX AX88172
-+          - usbb95,172a   # ASIX AX88172A
-+          - usbb95,1780   # ASIX AX88178
-+          - usbb95,7720   # ASIX AX88772
-+          - usbb95,772a   # ASIX AX88772A
-+          - usbb95,772b   # ASIX AX88772B
-+          - usbb95,7e2b   # ASIX AX88772B
-+
-+  reg: true
-+  local-mac-address: true
-+  mac-address: true
-+
-+required:
-+  - compatible
-+  - reg
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    usb {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        ethernet@1 {
-+            compatible = "usbb95,7e2b";
-+            reg = <1>;
-+            local-mac-address = [00 00 00 00 00 00];
-+        };
-+    };
-+  - |
-+    usb {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        usb1@1 {
-+            compatible = "usb1234,5678";
-+            reg = <1>;
-+            #address-cells = <1>;
-+            #size-cells = <0>;
-+
-+            ethernet@1 {
-+               compatible = "usbb95,772b";
-+               reg = <1>;
-+            };
-+        };
-+    };
+diff --git a/arch/arm/boot/dts/tegra20-colibri.dtsi b/arch/arm/boot/dts/tegra20-colibri.dtsi
+index 1eefb9ee4ac8..8ebd8afc857d 100644
+--- a/arch/arm/boot/dts/tegra20-colibri.dtsi
++++ b/arch/arm/boot/dts/tegra20-colibri.dtsi
+@@ -691,7 +691,7 @@ usb@c5004000 {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 
+-		asix@1 {
++		ethernet@1 {
+ 			compatible = "usbb95,772b";
+ 			reg = <1>;
+ 			local-mac-address = [00 00 00 00 00 00];
+diff --git a/arch/arm/boot/dts/tegra30-colibri.dtsi b/arch/arm/boot/dts/tegra30-colibri.dtsi
+index be691a1c33a1..22231d450b1b 100644
+--- a/arch/arm/boot/dts/tegra30-colibri.dtsi
++++ b/arch/arm/boot/dts/tegra30-colibri.dtsi
+@@ -960,7 +960,7 @@ usb@7d004000 {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 
+-		asix@1 {
++		ethernet@1 {
+ 			compatible = "usbb95,772b";
+ 			reg = <1>;
+ 			local-mac-address = [00 00 00 00 00 00];
+diff --git a/arch/arm/boot/dts/tegra30-ouya.dts b/arch/arm/boot/dts/tegra30-ouya.dts
+index a5cfbab5f565..e58dda4f9d2c 100644
+--- a/arch/arm/boot/dts/tegra30-ouya.dts
++++ b/arch/arm/boot/dts/tegra30-ouya.dts
+@@ -4553,7 +4553,7 @@ usb@7d004000 {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 
+-		smsc@2 { /* SMSC 10/100T Ethernet Controller */
++		ethernet@2 { /* SMSC 10/100T Ethernet Controller */
+ 			compatible = "usb424,9e00";
+ 			reg = <2>;
+ 			local-mac-address = [00 11 22 33 44 55];
 -- 
 2.30.2
 
