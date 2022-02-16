@@ -2,174 +2,145 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 193F3C433F5
-	for <linux-tegra@archiver.kernel.org>; Wed, 16 Feb 2022 07:52:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D67BFC433EF
+	for <linux-tegra@archiver.kernel.org>; Wed, 16 Feb 2022 08:39:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231206AbiBPHwu (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 16 Feb 2022 02:52:50 -0500
-Received: from gmail-smtp-in.l.google.com ([23.128.96.19]:59516 "EHLO
+        id S231239AbiBPIkD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 16 Feb 2022 03:40:03 -0500
+Received: from gmail-smtp-in.l.google.com ([23.128.96.19]:38226 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231220AbiBPHwu (ORCPT
+        with ESMTP id S229828AbiBPIkC (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 16 Feb 2022 02:52:50 -0500
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9DD2FFBA71
-        for <linux-tegra@vger.kernel.org>; Tue, 15 Feb 2022 23:52:29 -0800 (PST)
-Received: from dude.hi.pengutronix.de ([2001:67c:670:100:1d::7])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ore@pengutronix.de>)
-        id 1nKF46-000362-Vb; Wed, 16 Feb 2022 08:49:30 +0100
-Received: from ore by dude.hi.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ore@pengutronix.de>)
-        id 1nKF45-00FBbj-7m; Wed, 16 Feb 2022 08:49:29 +0100
-From:   Oleksij Rempel <o.rempel@pengutronix.de>
-To:     =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Nicolas Saenz Julienne <nsaenz@kernel.org>,
-        Ray Jui <rjui@broadcom.com>, Rob Herring <robh+dt@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Scott Branden <sbranden@broadcom.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Tony Lindgren <tony@atomide.com>
-Cc:     Oleksij Rempel <o.rempel@pengutronix.de>, kernel@pengutronix.de,
-        bcm-kernel-feedback-list@broadcom.com, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: [PATCH v5 6/9] ARM: dts: exynos: fix compatible strings for Ethernet USB devices
-Date:   Wed, 16 Feb 2022 08:49:24 +0100
-Message-Id: <20220216074927.3619425-7-o.rempel@pengutronix.de>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20220216074927.3619425-1-o.rempel@pengutronix.de>
-References: <20220216074927.3619425-1-o.rempel@pengutronix.de>
+        Wed, 16 Feb 2022 03:40:02 -0500
+X-Greylist: delayed 1800 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 16 Feb 2022 00:39:50 PST
+Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C538120E8B;
+        Wed, 16 Feb 2022 00:39:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
+         s=20161220; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+        References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=YLqbvNAQ5McurwQxgQURUxYEK/101B81ffBYTWQOubQ=; b=eL7Hr/lkBZAvTbiBImym7WqBQv
+        fFtLWY1zFgcvz0Y28ZdTef3hq5UPUDbyOdU9owOcUlMeUyuZ3oyA98+tA7VtWzh/V83PJpmahWg5r
+        mvo8+O4dcwNzaE4UT8NttIU5Q9B24c2fgT7vTH888Bt6ebP3Ss7Na0xbwHiYPj0X9IyrjurNjA5eB
+        ZWjzedHDsBYGuHo0wwQOWbdJJooJ46j4RrmUOFAYciKhQ5IxMuRrv2wAplC9c/d+YFiFj0HwvJvHq
+        KNdq7ecLO91xqhxo3t7F2RmN2eLeyUJ6R9jJqyAbe7jDYAW+nOrk0ELj+fWkrABrJye0Ksa6W80gd
+        A3UB8CtA==;
+Received: from 91-158-25-70.elisa-laajakaista.fi ([91.158.25.70] helo=[192.168.1.10])
+        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <cyndis@kapsi.fi>)
+        id 1nKEop-0001Qm-2c; Wed, 16 Feb 2022 09:33:43 +0200
+Message-ID: <f0eb82eb-dec6-0870-3896-0973758caebb@kapsi.fi>
+Date:   Wed, 16 Feb 2022 09:33:42 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::7
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.4.1
+Subject: Re: [PATCH v2 4/6] dt-bindings: Add HDA support for Tegra234
+Content-Language: en-US
+To:     Mohan Kumar <mkumard@nvidia.com>, broonie@kernel.org,
+        lgirdwood@gmail.com, robh+dt@kernel.org, thierry.reding@gmail.com,
+        tiwai@suse.com, jonathanh@nvidia.com, spujar@nvidia.com
+Cc:     alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20220210065057.13555-1-mkumard@nvidia.com>
+ <20220210065057.13555-5-mkumard@nvidia.com>
+From:   Mikko Perttunen <cyndis@kapsi.fi>
+In-Reply-To: <20220210065057.13555-5-mkumard@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 91.158.25.70
+X-SA-Exim-Mail-From: cyndis@kapsi.fi
+X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Fix compatible string for Ethernet USB device as required by USB device schema:
- Documentation/devicetree/bindings/usb/usb-device.yaml
-  The textual representation of VID and PID shall be in lower case hexadecimal
-  with leading zeroes suppressed.
+On 2/10/22 08:50, Mohan Kumar wrote:
+> Add hda clocks, memory ,power and reset binding entries
+> for Tegra234.
+> 
+> Signed-off-by: Mohan Kumar <mkumard@nvidia.com>
+> ---
+>   include/dt-bindings/clock/tegra234-clock.h     | 4 ++++
+>   include/dt-bindings/memory/tegra234-mc.h       | 6 ++++++
+>   include/dt-bindings/power/tegra234-powergate.h | 9 +++++++++
+>   include/dt-bindings/reset/tegra234-reset.h     | 2 ++
+>   4 files changed, 21 insertions(+)
+>   create mode 100644 include/dt-bindings/power/tegra234-powergate.h
+> 
+> diff --git a/include/dt-bindings/clock/tegra234-clock.h b/include/dt-bindings/clock/tegra234-clock.h
+> index 8d7e66e1b6ef..c014269b7245 100644
+> --- a/include/dt-bindings/clock/tegra234-clock.h
+> +++ b/include/dt-bindings/clock/tegra234-clock.h
+> @@ -30,5 +30,9 @@
+>   #define TEGRA234_CLK_PLLC4			237U
+>   /** @brief 32K input clock provided by PMIC */
+>   #define TEGRA234_CLK_CLK_32K			289U
+> +/** @brief CLK_RST_CONTROLLER_AZA2XBITCLK_OUT_SWITCH_DIVIDER switch divider output (aza_2xbitclk) */
+> +#define TEGRA234_CLK_AZA_2XBIT			457U
+> +/** @brief aza_2xbitclk / 2 (aza_bitclk) */
+> +#define TEGRA234_CLK_AZA_BIT			458U
+>   
+>   #endif
+> diff --git a/include/dt-bindings/memory/tegra234-mc.h b/include/dt-bindings/memory/tegra234-mc.h
+> index 2662f70c15c6..f538fc442cee 100644
+> --- a/include/dt-bindings/memory/tegra234-mc.h
+> +++ b/include/dt-bindings/memory/tegra234-mc.h
+> @@ -7,6 +7,8 @@
+>   #define TEGRA234_SID_INVALID		0x00
+>   #define TEGRA234_SID_PASSTHROUGH	0x7f
+>   
+> +/* NISO0 SMMU STREAM IDs */
+> +#define TEGRA234_SID_NISO0_HDA		0x03
 
-Since there are no kernel driver matching against this compatibles, I
-expect no regressions with this patch. At the same time, without this fix, we
-are not be able to validate this device nodes with newly provided DT
-schema.
+Please follow the existing convention in this file.
 
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
----
- arch/arm/boot/dts/exynos4412-odroidu3.dts       | 2 +-
- arch/arm/boot/dts/exynos4412-odroidx.dts        | 6 +++---
- arch/arm/boot/dts/exynos5410-odroidxu.dts       | 2 +-
- arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts | 4 ++--
- arch/arm/boot/dts/exynos5422-odroidxu3.dts      | 4 ++--
- 5 files changed, 9 insertions(+), 9 deletions(-)
+/* NISO0 stream IDs */
+#define TEGRA234_SID_HDA	0x03
 
-diff --git a/arch/arm/boot/dts/exynos4412-odroidu3.dts b/arch/arm/boot/dts/exynos4412-odroidu3.dts
-index 5ddbb6cbe1bf..36c369c42b77 100644
---- a/arch/arm/boot/dts/exynos4412-odroidu3.dts
-+++ b/arch/arm/boot/dts/exynos4412-odroidu3.dts
-@@ -120,7 +120,7 @@ &ehci {
- 	phy-names = "hsic0", "hsic1";
- 
- 	ethernet: ethernet@2 {
--		compatible = "usb0424,9730";
-+		compatible = "usb424,9730";
- 		reg = <2>;
- 		local-mac-address = [00 00 00 00 00 00]; /* Filled in by a bootloader */
- 	};
-diff --git a/arch/arm/boot/dts/exynos4412-odroidx.dts b/arch/arm/boot/dts/exynos4412-odroidx.dts
-index ea7bccec518d..ba46baf9117f 100644
---- a/arch/arm/boot/dts/exynos4412-odroidx.dts
-+++ b/arch/arm/boot/dts/exynos4412-odroidx.dts
-@@ -70,19 +70,19 @@ &ehci {
- 	phy-names = "hsic0";
- 
- 	hub@2 {
--		compatible = "usb0424,3503";
-+		compatible = "usb424,3503";
- 		reg = <2>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 
- 		hub@1 {
--			compatible = "usb0424,9514";
-+			compatible = "usb424,9514";
- 			reg = <1>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 
- 			ethernet: ethernet@1 {
--				compatible = "usb0424,ec00";
-+				compatible = "usb424,ec00";
- 				reg = <1>;
- 				/* Filled in by a bootloader */
- 				local-mac-address = [00 00 00 00 00 00];
-diff --git a/arch/arm/boot/dts/exynos5410-odroidxu.dts b/arch/arm/boot/dts/exynos5410-odroidxu.dts
-index 38e23b4ae730..4c7039e771db 100644
---- a/arch/arm/boot/dts/exynos5410-odroidxu.dts
-+++ b/arch/arm/boot/dts/exynos5410-odroidxu.dts
-@@ -676,7 +676,7 @@ &usbhost2 {
- 	#size-cells = <0>;
- 
- 	ethernet: ethernet@2 {
--		compatible = "usb0424,9730";
-+		compatible = "usb424,9730";
- 		reg = <2>;
- 		local-mac-address = [00 00 00 00 00 00]; /* Filled in by a bootloader */
- 	};
-diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts b/arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts
-index 749f051ffe70..e3154a1cae23 100644
---- a/arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts
-+++ b/arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts
-@@ -113,13 +113,13 @@ &usbhost2 {
- 	#size-cells = <0>;
- 
- 	hub@1 {
--		compatible = "usb0424,9514";
-+		compatible = "usb424,9514";
- 		reg = <1>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 
- 		ethernet: ethernet@1 {
--			compatible = "usb0424,ec00";
-+			compatible = "usb424,ec00";
- 			reg = <1>;
- 			local-mac-address = [00 00 00 00 00 00]; /* Filled in by a bootloader */
- 		};
-diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-index 8cf3d644a4c1..a378d4937ff7 100644
---- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-+++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-@@ -80,13 +80,13 @@ &usbhost2 {
- 	#size-cells = <0>;
- 
- 	hub@1 {
--		compatible = "usb0424,9514";
-+		compatible = "usb424,9514";
- 		reg = <1>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 
- 		ethernet: ethernet@1 {
--			compatible = "usb0424,ec00";
-+			compatible = "usb424,ec00";
- 			reg = <1>;
- 			local-mac-address = [00 00 00 00 00 00]; /* Filled in by a bootloader */
- 		};
--- 
-2.30.2
+>   
+>   /* NISO1 stream IDs */
+>   #define TEGRA234_SID_SDMMC4	0x02
+> @@ -16,6 +18,10 @@
+>    * memory client IDs
+>    */
+>   
+> +/* High-definition audio (HDA) read clients */
+> +#define TEGRA234_MEMORY_CLIENT_HDAR 0x15
+> +/* High-definition audio (HDA) write clients */
+> +#define TEGRA234_MEMORY_CLIENT_HDAW 0x35
+>   /* sdmmcd memory read client */
+>   #define TEGRA234_MEMORY_CLIENT_SDMMCRAB 0x63
+>   /* sdmmcd memory write client */
+> diff --git a/include/dt-bindings/power/tegra234-powergate.h b/include/dt-bindings/power/tegra234-powergate.h
+> new file mode 100644
+> index 000000000000..3c5575a51296
+> --- /dev/null
+> +++ b/include/dt-bindings/power/tegra234-powergate.h
+> @@ -0,0 +1,9 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/* Copyright (c) 2022, NVIDIA CORPORATION. All rights reserved. */
+> +
+> +#ifndef __ABI_MACH_T234_POWERGATE_T234_H_
+> +#define __ABI_MACH_T234_POWERGATE_T234_H_
+> +
+> +#define TEGRA234_POWER_DOMAIN_DISP	3U
+> +
+> +#endif
+> diff --git a/include/dt-bindings/reset/tegra234-reset.h b/include/dt-bindings/reset/tegra234-reset.h
+> index 50e13bced642..2ab61c69a3d9 100644
+> --- a/include/dt-bindings/reset/tegra234-reset.h
+> +++ b/include/dt-bindings/reset/tegra234-reset.h
+> @@ -10,6 +10,8 @@
+>    * @brief Identifiers for Resets controllable by firmware
+>    * @{
+>    */
+> +#define TEGRA234_RESET_HDA			20U
+> +#define TEGRA234_RESET_HDACODEC			21U
+>   #define TEGRA234_RESET_SDMMC4			85U
+>   #define TEGRA234_RESET_UARTA			100U
+>   
 
