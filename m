@@ -2,92 +2,150 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDA13C433F5
-	for <linux-tegra@archiver.kernel.org>; Wed, 16 Feb 2022 10:58:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8E63C4167B
+	for <linux-tegra@archiver.kernel.org>; Wed, 16 Feb 2022 12:25:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231200AbiBPK6c (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 16 Feb 2022 05:58:32 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:39552 "EHLO
+        id S233156AbiBPM0H convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 16 Feb 2022 07:26:07 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:48638 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230062AbiBPK6c (ORCPT
+        with ESMTP id S229643AbiBPM0F (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 16 Feb 2022 05:58:32 -0500
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EED66DA84A
-        for <linux-tegra@vger.kernel.org>; Wed, 16 Feb 2022 02:58:19 -0800 (PST)
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com [209.85.218.70])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 952F140338
-        for <linux-tegra@vger.kernel.org>; Wed, 16 Feb 2022 10:58:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1645009098;
-        bh=APDj2JQowla5VN9wgYQvqEBkeDwB1AQlKi39bfuox6w=;
-        h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-         To:Cc:Content-Type;
-        b=fd5QC5V+cESXhKdtBRnGjOxYs20VglPL1pDLyYUP9lm0u8bZeMq4dXrPhHE+OqAmP
-         EcPEI4jjAm8HiRnnCDG92wjAPQ14VZQPBeB6t+4C2F4AdQ2vGWH3xb5HiZdL/1kXYo
-         d6MCwTp5LWtPBlOgt198cFRZ8Dtlp6fY3iVdeOVZeb1xjxVJj0wTQiV6nzwC+8b579
-         AFzRla9L8jwSz4j0fklCcBSq8tHrVqQZQNVjYRpT9nstAQlSlxkiz1ybsO8Y9FbPrP
-         +WiKvD1HyukpehHl3aTKNAm2YTAZFjq9/+Y/JMwgO0pZWJpG8mKvH/ADhZBBUMEPA1
-         CHkbGU4LsuPIw==
-Received: by mail-ej1-f70.google.com with SMTP id hq19-20020a1709073f1300b006cdd7712c2cso662999ejc.11
-        for <linux-tegra@vger.kernel.org>; Wed, 16 Feb 2022 02:58:18 -0800 (PST)
+        Wed, 16 Feb 2022 07:26:05 -0500
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC0B027AA10;
+        Wed, 16 Feb 2022 04:25:53 -0800 (PST)
+Received: by mail-yb1-f173.google.com with SMTP id bt13so5538742ybb.2;
+        Wed, 16 Feb 2022 04:25:53 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=APDj2JQowla5VN9wgYQvqEBkeDwB1AQlKi39bfuox6w=;
-        b=6buzpvTnf+WG3B7ewJoUkyWCrtaZUskLk9L/QyE+8JhJOADlbdDkWRTxuLjzHe8Wo8
-         /KK/BTthOajjZf8I1hCzk7HPLTLaFcOxZWavpGAkwDruFsXS9WzaHLSvN2grfVMPWiSY
-         1sh/GFlJT79GES/CFhM6ym3hLXRXSzMm6BQdHThqCYqtu8IsH4z6k6CrgRmOpAaGrtdr
-         9cP1UwOhtMK6548cKVQiEzz1HcLWYJMwMEIjkV0Mcy7ZxUdTa1af1EwWiNvioTtYSa3d
-         V4VWjeByvadcWpEbnbpqAT054s/jngoiA9eYDVK5kUAHm8RauP9fq9dtpFZcbnV/b+DI
-         fZmQ==
-X-Gm-Message-State: AOAM532fLPS4QjG3HAYtZK02/TaC9F5pwV0R2NeSxTtu8OXEybRVry7r
-        Fexio/M/D1ww36X67d+4TuQrKorkxGzsnSt9iXJkxZztG//fRrXiE4I5+4Ku1CvpaYdgz4KjL4A
-        GaHW44y/Ohytqy/jKDD36aXgSshrY4F48kAlg8+Lv5RDIMBRdqo/41H5w
-X-Received: by 2002:a17:906:d8dc:b0:6cf:d1d1:db25 with SMTP id re28-20020a170906d8dc00b006cfd1d1db25mr1808012ejb.285.1645009098276;
-        Wed, 16 Feb 2022 02:58:18 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJy5GVqeYDxf8KFG6ucnyHvzLbGYzH9A2TyOYd9tau6dRiSUPrlEWjw70ZXBEh1BoDUDDU1MjaUHZ/lMRXjFl3s=
-X-Received: by 2002:a17:906:d8dc:b0:6cf:d1d1:db25 with SMTP id
- re28-20020a170906d8dc00b006cfd1d1db25mr1808003ejb.285.1645009098094; Wed, 16
- Feb 2022 02:58:18 -0800 (PST)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=ZzgKkF+Qi9uD0PohBja9X66WgBtIRyDp12JGMxNBcpY=;
+        b=SmFG6cMNn2WzcalJa27s9eH1YqlUBva1gEkgs99/RkIpoUz6kxJSHUIqIP7IRJx6zM
+         2cEsy4f2xS3oirL8EQeh/CI1NAiwXnbQvdfzVfu02n721tJsL2/AuNc1vM7QZ9KWhAMM
+         WVoauxya1DfWyx/5DmjnV0NDxwqzmH2YKw2Yf+t6ZUXasSFFCXZg/7BG+1ZKrGzN0umZ
+         uZiKTrlruhxGMLpVdVQZOkREYLBpFIp/tUz71rL7dD2XPupu+bXIk//dgX5JMg6Q5/VF
+         nRn8ocKmLjm8+2xI1oA4PniZi16eW6h9mhgr9cdwwmrT84vYCT32ceA88etkK8vxNX1n
+         zXpw==
+X-Gm-Message-State: AOAM531dUfwXvaobtSMX/InoOCL/yhv4RMB/74kpsaF6OhowM7VW9glf
+        GHM3ooZHTWYtAdEvXiLHWpd23aAcTie6I4M2hkA=
+X-Google-Smtp-Source: ABdhPJzgB2WXDlMNWyEW279no9A0knLc+PLldmsjtAqBW5sJWGuZ+ouM0fPGPUzKV7R9c8p8BV9gaIDPnZPFqeD/pjM=
+X-Received: by 2002:a81:f008:0:b0:2d0:cd72:74e5 with SMTP id
+ p8-20020a81f008000000b002d0cd7274e5mr2135032ywm.301.1645014353165; Wed, 16
+ Feb 2022 04:25:53 -0800 (PST)
 MIME-Version: 1.0
-References: <20220216092240.26464-1-mkumard@nvidia.com> <20220216092240.26464-6-mkumard@nvidia.com>
- <2249cf46-5c54-2e59-f247-5a22f2e6e5b9@canonical.com> <DM6PR12MB4435ABC8098A6C3EB2357B47C1359@DM6PR12MB4435.namprd12.prod.outlook.com>
-In-Reply-To: <DM6PR12MB4435ABC8098A6C3EB2357B47C1359@DM6PR12MB4435.namprd12.prod.outlook.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Date:   Wed, 16 Feb 2022 11:58:07 +0100
-Message-ID: <CA+Eumj6UU-WqNckYrE8YMJaSVS_E2KFydPs4B-Q=ESiVZw=QDQ@mail.gmail.com>
-Subject: Re: [PATCH v3 5/6] dt-bindings: Document Tegra234 HDA support
-To:     Mohan Kumar D <mkumard@nvidia.com>
-Cc:     "broonie@kernel.org" <broonie@kernel.org>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        "tiwai@suse.com" <tiwai@suse.com>,
+References: <20220130233718.21544-1-digetx@gmail.com> <635e8121-fca4-580c-6af5-d9317a2eee1b@gmail.com>
+In-Reply-To: <635e8121-fca4-580c-6af5-d9317a2eee1b@gmail.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Wed, 16 Feb 2022 13:25:39 +0100
+Message-ID: <CAJZ5v0g0MrBm2+GwctkB7kUyBEt6HTAexRCFFRmTF1UKDrVQ-g@mail.gmail.com>
+Subject: Re: [PATCH v6 00/21] Introduce power-off+restart call chain API
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-csky@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org,
+        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
+        linux-parisc@vger.kernel.org, linux-riscv@lists.infradead.org,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        xen-devel@lists.xenproject.org,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Sameer Pujar <spujar@nvidia.com>,
-        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Guo Ren <guoren@kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Joshua Thompson <funaho@jurai.org>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Sebastian Reichel <sre@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Greentime Hu <green.hu@gmail.com>,
+        Vincent Chen <deanbo422@gmail.com>,
+        "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+        Helge Deller <deller@gmx.de>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        Len Brown <lenb@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>, Pavel Machek <pavel@ucw.cz>,
+        Lee Jones <lee.jones@linaro.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>, alankao@andestech.com,
+        "K . C . Kuen-Chern Lin" <kclin@andestech.com>,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, 16 Feb 2022 at 11:54, Mohan Kumar D <mkumard@nvidia.com> wrote:
+On Tue, Feb 15, 2022 at 11:00 PM Dmitry Osipenko <digetx@gmail.com> wrote:
 >
-> Hi Krzysztof Kozlowski,
-> The current order is intentional to reflect the new->old chip, the top entry is newer chip. If needed we can add comment to reflect this info.
+> 31.01.2022 02:36, Dmitry Osipenko пишет:
+> > Problem
+> > -------
+> >
+> > SoC devices require power-off call chaining functionality from kernel.
+> > We have a widely used restart chaining provided by restart notifier API,
+> > but nothing for power-off.
+> >
+> > Solution
+> > --------
+> >
+> > Introduce new API that provides both restart and power-off call chains.
+> >
+> > Why combine restart with power-off? Because drivers often do both.
+> > More practical to have API that provides both under the same roof.
+> >
+> > The new API is designed with simplicity and extensibility in mind.
+> > It's built upon the existing restart and reboot APIs. The simplicity
+> > is in new helper functions that are convenient for drivers. The
+> > extensibility is in the design that doesn't hardcode callback
+> > arguments, making easy to add new parameters and remove old.
+> >
+> > This is a third attempt to introduce the new API. First was made by
+> > Guenter Roeck back in 2014, second was made by Thierry Reding in 2017.
+> > In fact the work didn't stop and recently arm_pm_restart() was removed
+> > from v5.14 kernel, which was a part of preparatory work started by
+> > Guenter Roeck. I took into account experience and ideas from the
+> > previous attempts, extended and polished them.
 >
+>
+> Rafael and all, do you see anything critical that needs to be improved
+> in this v6?
+>
+> Will be great if you could take this patchset via the power tree if it
+> looks okay, or give an ack.
 
-Hm, okay, such ordering sounds good as well. :)
+I need some more time for this, sorry.
 
-Thanks!
+I'm a bit concerned about seeing no response to this set from anyone.
 
-Best regards,
-Krzysztof
+It looks like multiple platforms may be affected by it in principle,
+so doesn't anyone care?
