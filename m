@@ -2,137 +2,137 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CFCEC433EF
-	for <linux-tegra@archiver.kernel.org>; Wed, 16 Feb 2022 13:48:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8CE7C433F5
+	for <linux-tegra@archiver.kernel.org>; Wed, 16 Feb 2022 14:23:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232660AbiBPNsq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 16 Feb 2022 08:48:46 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:44094 "EHLO
+        id S234982AbiBPOXr (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 16 Feb 2022 09:23:47 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:54566 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230377AbiBPNsp (ORCPT
+        with ESMTP id S233338AbiBPOXp (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 16 Feb 2022 08:48:45 -0500
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3449C7F6D2;
-        Wed, 16 Feb 2022 05:48:32 -0800 (PST)
-Received: by mail-ed1-x52c.google.com with SMTP id g7so4020802edb.5;
-        Wed, 16 Feb 2022 05:48:32 -0800 (PST)
+        Wed, 16 Feb 2022 09:23:45 -0500
+Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80561269AA5;
+        Wed, 16 Feb 2022 06:23:32 -0800 (PST)
+Received: by mail-lf1-x129.google.com with SMTP id m14so4145415lfu.4;
+        Wed, 16 Feb 2022 06:23:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=FlRChV2ED66U1fV2UHlPevpzTBOWajWUQYxF7iIvvyk=;
-        b=qv/vc03s2YbobtXaOohRYrtMGKaiPeoul7yaXpDYp9Y8BCPMXPgdTH8hkDVyyxKKzc
-         ieV6spSKvomI4/UXpEouoWG/oY9V63xQPHlTU7P8iAwoRd29MbwfCS8x/HPZ5daqjKpo
-         7FdSTmIpY9smQlACRWFTIsUn6Yas6dm9VrbtgNW1T/+ZOmd2WVPBUWzcCbXeXRwIa3o4
-         fABK7daW4Y09JE81WsWyCmDM2Bv/HN7mg7tAmU2psxcdCsBBqOLelrT9DmZkY4ZIyPdO
-         QwG4SrNtCZ5km0oe8JP1kO67fwzSI4/gG2rx79OPI5NhQQTn+zqAfRivbZNvEsonmdYa
-         NbeQ==
+        bh=va/yWTy9MrRSSdtZcieKKV2PhylVY4vI/a5Ddx5B+oU=;
+        b=lM7kOT9InRBydE6wj3ozrEtILhkUXKE0lRwyZfwgVo0OE/7OXKVw/b4fE20H782RkQ
+         vVFOPqY1UizuWCzYR2/nebNYI5nxSpXh+LET0j2L9i+Imfv8uCx6KM6NBwUWhLkRbvp3
+         L3eYchz4fSa9N/CJ28phJ/9xRBxRVRvQUix6vKBVr7iowJS4yrn79a0rdWXhmjb+IFt6
+         mfDeUb+5VpJgMfUW1ahMwkUvlu0MBFNn9O5+9favxP1ttxoON4/ujSgw+IJ90zlj6N+j
+         XcKHVoqjp1ofl3L/ZPNyMEfULiyJ7jTMK4bNFwDANpC1iZSNSzc2SaczvhDhldXryhFH
+         q28g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=FlRChV2ED66U1fV2UHlPevpzTBOWajWUQYxF7iIvvyk=;
-        b=C+3Pt4+OawqGHF4kDeyy4NfGCYOeUNDp3AVlH9SgLL/oy5dbj1LLd480l+W1fTAwrX
-         z9mCbSXWjyH0yRH1jooT9oiCJGbOeqkJVTLUfK+TwJX2JdWuQeX1JBY9VHsO56YKCV66
-         EEQq0gEG5yoOSNWAsa3v3HKD8lSG1GMd9pl6DYjQLaOXRY/efbHJ4IGk6ClMZVJRUhIe
-         owQceMo6/L5blzF8JWry/bnLLbKRzMZfhxf92rSjMLTXlJu5LD062YQ6B/fTtjJ/R9Wx
-         snE0ficbiHOz9UUDoUxmQ8xl1Juw6mcEiEp5LP2wpbzfnSzy5QiLooYuZdXu2OXrg9QY
-         3JNQ==
-X-Gm-Message-State: AOAM532hI/RvkTIw74bcuNaX2efjth1Z71baujD0uH6s3yseUuAjoso4
-        82vFk6ft2seuXolYUmVbWwI=
-X-Google-Smtp-Source: ABdhPJywvjh3cUfTL6Z618E7/SfBQBXo7KQhw71ZpUbdF4ZEaTN3AkTWga5vyZBBC2CiwwhHXNUqdQ==
-X-Received: by 2002:a05:6402:2694:b0:411:f0b1:7f90 with SMTP id w20-20020a056402269400b00411f0b17f90mr2995670edd.398.1645019310575;
-        Wed, 16 Feb 2022 05:48:30 -0800 (PST)
+        bh=va/yWTy9MrRSSdtZcieKKV2PhylVY4vI/a5Ddx5B+oU=;
+        b=Q0M+2f9voBjxTdoWPjkrewNVGlKODN/Nb1CtKvbpuM8C5F7rLvB3uyB544Ic1N56b0
+         VQMG6RBDI148gi34lWdZizqtGZNOcCu8d3R5lnZNfU5ef2FbTGqwN07DEeLeXFzSjyRM
+         Tmkaa9yB+JhMylO1UTwGrL8Y+a9XBVO2Ep0awKEy3D9tsE2Zj9q2KGBD2rnf2o3YFZl0
+         V5/ubcR9bb4BmWWFWEsqe7zomWL2NYb5LSYhI0lvjz0s2zH7qpJ2o9oXV/OH2xe0WPwZ
+         WnVJ+WezQ+LATCmG513vToAGEcW7cT+JNBs8uWhPAmK6BDk5Z7KML3CRQACCIElA4Ck9
+         JsGg==
+X-Gm-Message-State: AOAM5305h/aLfQc217JpF4qsASSaJBuHLKFwCF4nncr3C8GULq3qZnXG
+        qHjkxmE5LHBXsBfa8306GN4=
+X-Google-Smtp-Source: ABdhPJxvhWFbRVVGJ1Sq8mFAIA7VycYW4svgIQxOm7tAeOrNQS/KdIxux7uuPOhFeYxqpbqlDIld3Q==
+X-Received: by 2002:a05:6512:12c3:b0:42b:461e:36a0 with SMTP id p3-20020a05651212c300b0042b461e36a0mr2309960lfg.462.1645021410687;
+        Wed, 16 Feb 2022 06:23:30 -0800 (PST)
 Received: from orome ([193.209.96.43])
-        by smtp.gmail.com with ESMTPSA id p25sm5245206ejn.33.2022.02.16.05.48.28
+        by smtp.gmail.com with ESMTPSA id z9sm1250518lja.53.2022.02.16.06.23.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Feb 2022 05:48:29 -0800 (PST)
-Date:   Wed, 16 Feb 2022 14:48:26 +0100
+        Wed, 16 Feb 2022 06:23:29 -0800 (PST)
+Date:   Wed, 16 Feb 2022 15:23:27 +0100
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Miaoqian Lin <linmq006@gmail.com>
-Cc:     Krishna Reddy <vdumpa@nvidia.com>, Joerg Roedel <joro@8bytes.org>,
-        Will Deacon <will@kernel.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Nicolin Chen <nicoleotsuka@gmail.com>,
-        linux-tegra@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iommu/tegra-smmu: Fix missing put_device() call in
- tegra_smmu_find
-Message-ID: <Yg0AqkLA7eXQOuh2@orome>
-References: <20220107080915.12686-1-linmq006@gmail.com>
+To:     Takashi Iwai <tiwai@suse.de>
+Cc:     Mohan Kumar <mkumard@nvidia.com>, broonie@kernel.org,
+        lgirdwood@gmail.com, robh+dt@kernel.org, tiwai@suse.com,
+        jonathanh@nvidia.com, spujar@nvidia.com,
+        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/6] Add Tegra234 HDA support
+Message-ID: <Yg0I312RA5gh1Rra@orome>
+References: <20220210065057.13555-1-mkumard@nvidia.com>
+ <s5hmtiscl65.wl-tiwai@suse.de>
+ <s5hk0dwckza.wl-tiwai@suse.de>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="enq9AsaXPXANugPJ"
+        protocol="application/pgp-signature"; boundary="WpdOLmAFG2mpJZKT"
 Content-Disposition: inline
-In-Reply-To: <20220107080915.12686-1-linmq006@gmail.com>
+In-Reply-To: <s5hk0dwckza.wl-tiwai@suse.de>
 User-Agent: Mutt/2.2 (7160e05a) (2022-02-12)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---enq9AsaXPXANugPJ
+--WpdOLmAFG2mpJZKT
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jan 07, 2022 at 08:09:11AM +0000, Miaoqian Lin wrote:
-> The reference taken by 'of_find_device_by_node()' must be released when
-> not needed anymore.
-> Add the corresponding 'put_device()' in the error handling path.
+On Tue, Feb 15, 2022 at 02:34:01PM +0100, Takashi Iwai wrote:
+> On Tue, 15 Feb 2022 14:29:54 +0100,
+> Takashi Iwai wrote:
+> >=20
+> > On Thu, 10 Feb 2022 07:50:51 +0100,
+> > Mohan Kumar wrote:
+> > >=20
+> > > This series add the support for TEGRA234 HDA driver support
+> > >=20
+> > > Mohan Kumar (6):
+> > >   ALSA: hda/tegra: Add Tegra234 hda driver support
+> > >   ALSA: hda/tegra: Hardcode GCAP ISS value on T234
+> > >   ALSA: hda/tegra: Update scratch reg. communication
+> > >   dt-bindings: Add HDA support for Tegra234
+> > >   dt-bindings: Document Tegra234 HDA support
+> > >   arm64: tegra: Add hda dts node for Tegra234
+> >=20
+> > Applied all six patches to for-next branch now.
 >=20
-> Fixes: 765a9d1d02b2 ("iommu/tegra-smmu: Fix mc errors on tegra124-nyan")
-> Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
-> ---
->  drivers/iommu/tegra-smmu.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+> ... and now I realized that it's conflicting with the latest Tegra234
+> reset stuff on linux-next.
 >=20
-> diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
-> index e900e3c46903..2561ce8a2ce8 100644
-> --- a/drivers/iommu/tegra-smmu.c
-> +++ b/drivers/iommu/tegra-smmu.c
-> @@ -808,8 +808,10 @@ static struct tegra_smmu *tegra_smmu_find(struct dev=
-ice_node *np)
->  		return NULL;
-> =20
->  	mc =3D platform_get_drvdata(pdev);
-> -	if (!mc)
-> +	if (!mc) {
-> +		put_device(&pdev->dev);
->  		return NULL;
-> +	}
-> =20
->  	return mc->smmu;
->  }
+> Maybe better to split the patches to be merged through several trees?
 
-Sorry for the late reply, looks correct. We probably also need a similar
-call in ->release_device(). I also wonder if we should be returning an
--EPROBE_DEFER here, which is technically the correct thing to do, though
-in practice that will likely never happen because these pointers are set
-during an arch_initcall, so should always be available by the time a
-driver tries to attach to an IOMMU.
+It's usually best for me to pick up at least the DT changes (patch 6)
+into the Tegra tree, that way I can easily resolve conflicts there when
+they arise.
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+The device tree bindings (patches 3 & 4) traditionally go along with
+the driver changes, though.
 
---enq9AsaXPXANugPJ
+If you prefer the patch series to be split, that's fine. For other
+subsystems we usually deal with this by having one series and then the
+subsystem maintainer picking up all the non-DT changes and I take the
+rest.
+
+Thierry
+
+--WpdOLmAFG2mpJZKT
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmINAKcACgkQ3SOs138+
-s6E1Dw/+JdYuxQb5lyl9zrWDXni3KEEqylRty/S9yBZqB5op/xogYj6rZ/tCOc66
-CAA/cFSERk918QsbfuuajpAwiDBoivU8XAjn2pRhwfS30pE1wttCbvnYx/Pa6fhj
-rFCI7P86LtlW8ppsKt2j2YE6Ro6iBe78vMu2NHsRyF/dTqdF77LBBbHc/1D7jvKJ
-E516Wgps8uBmnElGaBXaWqBJm9gF+1DUcRB2iCqqKoKcZGd4cU1Z97caIfwzmxF8
-+Pfy3xsZQUM/q0NEUQkYS24RhFaPIMSlVNJuBq4X8RUkobx/bSaQQybtY+CYeOfE
-CdZhCt1Uvwt3REBb4crS1obr39XHDrmg9DPhwBPOxXJdoT+gHntny13RVB9PysER
-SXDv62b8R/ZR4ORh9vNSlY355IauVLEJGgRqyloH0W6ylj5QVM1/PEnHUJu+E6Bp
-tXAyNRwUfysUryxZgjhVjYTJnCzxhszhR8hPhwk5uxyyyzBI7oB8T9FwIuVukkqW
-bw5UvHWlrKj1dQVu1Eup9qn039PjZs4cHldFi9gkjMFAupaS07mAY1FHPe2U1lD0
-bq+aIHuenFUa3F+sfC4PTptGWxEcfPWEPk0QHts7FTRLEBwy4b97RLRKHwa942v6
-wPzUzR62Raw96lTAPiq8UYPqB82nxDiRTIqalgVPL9DJTyk4lOA=
-=FvXw
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmINCNwACgkQ3SOs138+
+s6EXuw/9F6JKANiIO2CI2JqhaJ2UxIofJCAM5RgH9vFvU5emWUcF9WDUvAx6C967
+rd5ThJkit9WTy+Am+40xvky1siWsoQ3K3VfNI2oH6ZqTmM7aE62DF7eqUcz7Cwp/
+k+09/jx+ESF9Pvrirk06EtPsKpz2nJmvqNEoZ4/81mAkyZBYK9lHp7GPUpYusxfq
+t7bq9ru4sOyV/PA6sPeellMCmr5OBhoIs/GH4R0P0WimCG5+KP9rPQSGHX6ec3XL
+WB4vQLAyHU+2kyuCq+Y4JQeprlkrIS1oeke8En7uRsH7gTOvdjonwZ5M2ttvOC6r
+Vj3Sky6S+IirTA42LAVoPweJy4ZtygB7yeTc1xwO0vGBD0SlLocCmNmlvagbF/eK
+ERlMgwT2XinPvtsJav0hrxB3yDN4qnkbUaK7GB+ixoiZ97HKhEqknAI9nA3QLjV0
+Klgqr+HRURMYdOhUgQ+fUbV8yqcTidI+tjz1N9XTvhudlM9/jYTx1Y81WhPejqt+
+NAV4PFWmn1iFaKDtlxl9owqkOmaaiwNiy/e6CCUIb7uF3t/ro0gayrW55gutW704
+BT59C8XFocHSE8WO+6Ak7tADGUxgWZDw+evIXpkEPODEmI+AlSRMQrw//L0c7Xqe
+bYqQyKtukPxQ6glL9fueg6OIFy/xQYxysXxMmk+1e0nRFHmyx48=
+=tDWF
 -----END PGP SIGNATURE-----
 
---enq9AsaXPXANugPJ--
+--WpdOLmAFG2mpJZKT--
