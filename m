@@ -2,188 +2,180 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CC01C43217
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Feb 2022 10:13:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF060C433EF
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Feb 2022 19:16:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239052AbiBQKNQ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 17 Feb 2022 05:13:16 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:55988 "EHLO
+        id S240190AbiBQTQq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 17 Feb 2022 14:16:46 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:37430 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236012AbiBQKNP (ORCPT
+        with ESMTP id S234211AbiBQTQp (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 17 Feb 2022 05:13:15 -0500
-Received: from mail-lj1-x22e.google.com (mail-lj1-x22e.google.com [IPv6:2a00:1450:4864:20::22e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 140AB143469;
-        Thu, 17 Feb 2022 02:13:01 -0800 (PST)
-Received: by mail-lj1-x22e.google.com with SMTP id n24so7474925ljj.10;
-        Thu, 17 Feb 2022 02:13:00 -0800 (PST)
+        Thu, 17 Feb 2022 14:16:45 -0500
+Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 876B563B2
+        for <linux-tegra@vger.kernel.org>; Thu, 17 Feb 2022 11:16:29 -0800 (PST)
+Received: by mail-ej1-x62a.google.com with SMTP id p9so9582942ejd.6
+        for <linux-tegra@vger.kernel.org>; Thu, 17 Feb 2022 11:16:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=OO8O5AkWPhI/5yGYSTEQp+LjZetKZnyQ+pZ7++XrzEA=;
-        b=X8w7in6JtN9+vwIDY375tbKdJ6/kAXjQzoJEMNX/aRNZ/xldyGjWjXODYmSy5mi1RE
-         IVBvYSJ5Q0hWoh3euDgluS6hajxAwota0SjPBhdLfholDQzq33VHuJfcHHzCkXGyz8tb
-         MDBzs6ibY/EGdDqB/ff2GewtKr6TpYHNqvy5y4L9nhOeKSaVrEEfVSAdHs3oIc8/KGvy
-         BUoC/Ntz4HLIebyoKI3bup9qeurRZrprpsOzzaMBNquRHtxpasWvx6s1xD7yjJ47gW7a
-         aqMUkT2VhDOvjwLmzIlZFje3GuDLrgVXuDJcvjJJbqm/WRU77L4UMZYg+2nxY7fnS64M
-         8wzw==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=CCwNIlXAZWZJUVV5yDfrYRA4cFSXUrx9sbZ5mmkUKNc=;
+        b=G+AekBmdfQ0a9bxmZ9jWUwRUlAO0sv5qVX6RPDukFhhOYBcNXlnRQfP0k80ffE1oye
+         px78g3w7p+7B/szHNUydbnTpRwfLiPdpFKb+6D8O9mEqHbtwjSOsQOMSeTjzvsz5uKw7
+         fEyCZkcyI4OFWxxet+OFLzszLV/TVEG7nLaHqm7AxkkaSAUlhjfFWwUk5iBcSSGYf/S4
+         brI8638rlPxk+bs0eyViV3Aq9NJVMlVLQYZpfaNOXVmq3XeC52c0gM02t5pNnPMcgSn9
+         eP0JTA+tAJv9mWqZ19bCE+io3miECqy8GzS7/RqI0e5pQqnpTW0gqjrJoWzPrQK5bdqQ
+         xKxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=OO8O5AkWPhI/5yGYSTEQp+LjZetKZnyQ+pZ7++XrzEA=;
-        b=7pr47jE/gdAdaDrCCfyYmBUiEIX35Jia+LTn+J6qHiHUFJ3a6Bm/wYJfBtMgD80XM7
-         08+9aZXK57FDzfN0oNQNxysoi9K3/Z9SCmgPPmMAqi5DvgiNWbWGtT1Psubir4+SXU+o
-         gRV+UCMI/bHhNXyFqqq4EYldR+1mU0vky+FWzW805Nb6ZzUABhsqUHBgWy3W64kJuagb
-         xrQofwp652Cdq7wqG1Ppo7wdJLFt4fCdhv7dcE/6F5zEC0gt38PkKdGWMDRMUqoHH14A
-         Lbe+x56E4n+G+Qrx8fdAHjTSmjCd/nzEYPt6JB/gtxXm0ufp6JJ870vKPi7kBlYpJT/q
-         PKYw==
-X-Gm-Message-State: AOAM531lg7CNRkr5GP49SV/u3DBjyETkU9AirEe1YGwbGmOKQGR7AOrk
-        mSTXBVd88G2R12+sHTThCSLVPemO/hU=
-X-Google-Smtp-Source: ABdhPJzppLbwPh7ryO4JRMtpJc/4Lz2rbVquaymBUgCgBO2OneSkA3o02raf386TVCaqFDiGA98BPg==
-X-Received: by 2002:a05:651c:1544:b0:246:1887:cf4c with SMTP id y4-20020a05651c154400b002461887cf4cmr917179ljp.118.1645092779295;
-        Thu, 17 Feb 2022 02:12:59 -0800 (PST)
-Received: from [192.168.2.145] (109-252-138-165.dynamic.spd-mgts.ru. [109.252.138.165])
-        by smtp.googlemail.com with ESMTPSA id o10sm5079173lfl.116.2022.02.17.02.12.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Feb 2022 02:12:58 -0800 (PST)
-Message-ID: <4f0d1b50-9f55-dd81-f0c7-f5e0dfd75c2a@gmail.com>
-Date:   Thu, 17 Feb 2022 13:12:57 +0300
+        bh=CCwNIlXAZWZJUVV5yDfrYRA4cFSXUrx9sbZ5mmkUKNc=;
+        b=H+0ddtLwlVWZPGANy0GWZupw8WZRi0PhX5NBEg/JRNEqhzk0LbabizmhHw9bJ4w5gT
+         uPH7JTD4sliTQiuV3ZzJ2vvq6+I58t3KDNG7VbSMH+KTj1kQarC1XRsy5tjQ0TJkhutU
+         5RiAMaXFNkPh2oXvqkfzoiyYVS4cXfDJiZtaF4nhcUm6FMFcxTvGzS1h8+fgc8Hg5pDl
+         VB5qqZLFYyihlBNGSs7ieF04LCIfZqNl9Tx6/ax0IXdHMvAxSdJuc88QdVNTyobDiuV5
+         +r/e3c6vST0TGup0EJZGpXwxXNpB2ichvwlPFEVnvVL9vsHJ2+JHTzRBWw6Gn6QU2HIE
+         VOOQ==
+X-Gm-Message-State: AOAM531c0d30MTmipxU3gvpxryZbwLTy72KMgj4iqGEEw/yzIWpN9wf7
+        a7aTVWX0MOc9FHvgY4fn59k=
+X-Google-Smtp-Source: ABdhPJzyihI0kvofqnsyf9Be23/8AnlYgXHFIGrlZegBhBlRFN80Q7gB7DuY6mGBTWDTpb2t84M7tg==
+X-Received: by 2002:a17:906:7197:b0:6cd:ef8f:ecbf with SMTP id h23-20020a170906719700b006cdef8fecbfmr3489806ejk.18.1645125387546;
+        Thu, 17 Feb 2022 11:16:27 -0800 (PST)
+Received: from localhost (p200300e41f0a6900000000000000043a.dip0.t-ipconnect.de. [2003:e4:1f0a:6900::43a])
+        by smtp.gmail.com with ESMTPSA id w17sm3742289edd.18.2022.02.17.11.16.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Feb 2022 11:16:26 -0800 (PST)
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
+Subject: [PATCH libdrm v2 00/25] Update Tegra support
+Date:   Thu, 17 Feb 2022 20:16:00 +0100
+Message-Id: <20220217191625.2534521-1-thierry.reding@gmail.com>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH v6 00/21] Introduce power-off+restart call chain API
-Content-Language: en-US
-To:     Helge Deller <deller@gmx.de>,
-        "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-csky@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linux-m68k@lists.linux-m68k.org,
-        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
-        linux-parisc@vger.kernel.org, linux-riscv@lists.infradead.org,
-        Linux-sh list <linux-sh@vger.kernel.org>,
-        xen-devel@lists.xenproject.org,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Guo Ren <guoren@kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        Joshua Thompson <funaho@jurai.org>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Sebastian Reichel <sre@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Greentime Hu <green.hu@gmail.com>,
-        Vincent Chen <deanbo422@gmail.com>,
-        "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        Len Brown <lenb@kernel.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, Pavel Machek <pavel@ucw.cz>,
-        Lee Jones <lee.jones@linaro.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>, alankao@andestech.com,
-        "K . C . Kuen-Chern Lin" <kclin@andestech.com>,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
-References: <20220130233718.21544-1-digetx@gmail.com>
- <635e8121-fca4-580c-6af5-d9317a2eee1b@gmail.com>
- <CAJZ5v0g0MrBm2+GwctkB7kUyBEt6HTAexRCFFRmTF1UKDrVQ-g@mail.gmail.com>
- <de2cbd2a-8d0d-8678-e514-b153d04546cc@gmx.de>
-From:   Dmitry Osipenko <digetx@gmail.com>
-In-Reply-To: <de2cbd2a-8d0d-8678-e514-b153d04546cc@gmx.de>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-16.02.2022 23:30, Helge Deller пишет:
-> On 2/16/22 13:25, Rafael J. Wysocki wrote:
->> On Tue, Feb 15, 2022 at 11:00 PM Dmitry Osipenko <digetx@gmail.com> wrote:
->>>
->>> 31.01.2022 02:36, Dmitry Osipenko пишет:
->>>> Problem
->>>> -------
->>>>
->>>> SoC devices require power-off call chaining functionality from kernel.
->>>> We have a widely used restart chaining provided by restart notifier API,
->>>> but nothing for power-off.
->>>>
->>>> Solution
->>>> --------
->>>>
->>>> Introduce new API that provides both restart and power-off call chains.
->>>>
->>>> Why combine restart with power-off? Because drivers often do both.
->>>> More practical to have API that provides both under the same roof.
->>>>
->>>> The new API is designed with simplicity and extensibility in mind.
->>>> It's built upon the existing restart and reboot APIs. The simplicity
->>>> is in new helper functions that are convenient for drivers. The
->>>> extensibility is in the design that doesn't hardcode callback
->>>> arguments, making easy to add new parameters and remove old.
->>>>
->>>> This is a third attempt to introduce the new API. First was made by
->>>> Guenter Roeck back in 2014, second was made by Thierry Reding in 2017.
->>>> In fact the work didn't stop and recently arm_pm_restart() was removed
->>>> from v5.14 kernel, which was a part of preparatory work started by
->>>> Guenter Roeck. I took into account experience and ideas from the
->>>> previous attempts, extended and polished them.
->>>
->>>
->>> Rafael and all, do you see anything critical that needs to be improved
->>> in this v6?
->>>
->>> Will be great if you could take this patchset via the power tree if it
->>> looks okay, or give an ack.
->>
->> I need some more time for this, sorry.
+From: Thierry Reding <treding@nvidia.com>
 
-No worries, we're not in a rush.
+Hi all,
 
->> I'm a bit concerned about seeing no response to this set from anyone.
->>
->> It looks like multiple platforms may be affected by it in principle,
->> so doesn't anyone care?
+this is the userspace part of the kernel patches that were recently
+merged into drm-next:
 
-The platforms that didn't provide ack so far are: SH, x86, IA64, MIPS
-and NDS32. At least x86 and MIPS are alive, not sure why maintainers
-didn't bother to answer yet.
+  https://patchwork.freedesktop.org/series/92378/
 
-> I did looked into the whole patch set after applying it locally.
-> 
-> While I agree a new combined API is good, and the beginning looked promising,
-> after some time I started to ask myself if the whole infrastructure might
-> be a little overdesigned.
-> 
-> Anyway, I tested it and it works for me on parisc.
-> And it's probably better than what we have today.
+The goal is to provide a userspace implementation of the UAPI exposed by
+the kernel and show its usage in some test programs that can also be
+used for basic sanity testing. More complete userspace implementations
+are available here:
 
-Thank you!
+  * https://github.com/cyndis/vaapi-tegra-driver
+  * https://github.com/grate-driver/xf86-video-opentegra
+  * https://github.com/grate-driver/grate
+
+Changes in v2:
+- implement vic_clear() as a helper using ->fill() (Michał Mirosław)
+- rebase and fix a couple of Meson errors/warnings
+
+Thierry
+
+Thierry Reding (25):
+  tegra: Indent according to .editorconfig
+  tegra: Remove unused IOCTL implementations
+  tegra: Extract common buffer object allocation code
+  tegra: Fix mmap() of GEM buffer objects
+  tegra: Add flink helpers
+  tegra: Add PRIME support helpers
+  tegra: Make API more consistent
+  tegra: Install tegra-openclose test
+  tegra: Update for new UABI
+  tegra: Include private.h in list of source files
+  tegra: Add channel APIs
+  tegra: Add job and push buffer APIs
+  tegra: Add syncpoint APIs
+  tests: tegra: Add helper library for tests
+  tests: tegra: Add gr2d-fill test
+  tests: tegra: Add syncpt-wait test
+  tests: tegra: Add syncpoint timeout test
+  tests: tegra: Add VIC support
+  tests: tegra: Add VIC 3.0 support
+  tests: tegra: Add VIC 4.0 support
+  tests: tegra: Add VIC 4.1 support
+  tests: tegra: Add VIC 4.2 support
+  tests: tegra: Add VIC clear test
+  tests: tegra: Add VIC blit test
+  tests: tegra: Add VIC flip test
+
+ include/drm/tegra_drm.h      | 429 +++++++++++++++++++++++--
+ tegra/channel.c              | 195 ++++++++++++
+ tegra/job.c                  | 187 +++++++++++
+ tegra/meson.build            |   7 +-
+ tegra/private.h              |  85 ++++-
+ tegra/pushbuf.c              | 184 +++++++++++
+ tegra/syncpt.c               | 101 ++++++
+ tegra/tegra-symbols.txt      |  27 +-
+ tegra/tegra.c                | 386 +++++++++++-----------
+ tegra/tegra.h                |  95 +++++-
+ tests/tegra/.gitignore       |   3 +-
+ tests/tegra/drm-test-tegra.c | 147 +++++++++
+ tests/tegra/drm-test-tegra.h |  55 ++++
+ tests/tegra/drm-test.c       | 248 +++++++++++++++
+ tests/tegra/drm-test.h       |  72 +++++
+ tests/tegra/gr2d-fill.c      | 146 +++++++++
+ tests/tegra/host1x.h         |  34 ++
+ tests/tegra/meson.build      |  88 +++++-
+ tests/tegra/openclose.c      |  52 +--
+ tests/tegra/syncpt-timeout.c | 163 ++++++++++
+ tests/tegra/syncpt-wait.c    | 151 +++++++++
+ tests/tegra/vic-blit.c       | 333 +++++++++++++++++++
+ tests/tegra/vic-clear.c      | 173 ++++++++++
+ tests/tegra/vic-flip.c       | 333 +++++++++++++++++++
+ tests/tegra/vic.c            | 184 +++++++++++
+ tests/tegra/vic.h            | 181 +++++++++++
+ tests/tegra/vic30.c          | 458 +++++++++++++++++++++++++++
+ tests/tegra/vic30.h          | 439 ++++++++++++++++++++++++++
+ tests/tegra/vic40.c          | 370 ++++++++++++++++++++++
+ tests/tegra/vic40.h          | 285 +++++++++++++++++
+ tests/tegra/vic41.c          | 374 ++++++++++++++++++++++
+ tests/tegra/vic41.h          | 372 ++++++++++++++++++++++
+ tests/tegra/vic42.c          | 374 ++++++++++++++++++++++
+ tests/tegra/vic42.h          | 597 +++++++++++++++++++++++++++++++++++
+ 34 files changed, 7068 insertions(+), 260 deletions(-)
+ create mode 100644 tegra/channel.c
+ create mode 100644 tegra/job.c
+ create mode 100644 tegra/pushbuf.c
+ create mode 100644 tegra/syncpt.c
+ create mode 100644 tests/tegra/drm-test-tegra.c
+ create mode 100644 tests/tegra/drm-test-tegra.h
+ create mode 100644 tests/tegra/drm-test.c
+ create mode 100644 tests/tegra/drm-test.h
+ create mode 100644 tests/tegra/gr2d-fill.c
+ create mode 100644 tests/tegra/host1x.h
+ create mode 100644 tests/tegra/syncpt-timeout.c
+ create mode 100644 tests/tegra/syncpt-wait.c
+ create mode 100644 tests/tegra/vic-blit.c
+ create mode 100644 tests/tegra/vic-clear.c
+ create mode 100644 tests/tegra/vic-flip.c
+ create mode 100644 tests/tegra/vic.c
+ create mode 100644 tests/tegra/vic.h
+ create mode 100644 tests/tegra/vic30.c
+ create mode 100644 tests/tegra/vic30.h
+ create mode 100644 tests/tegra/vic40.c
+ create mode 100644 tests/tegra/vic40.h
+ create mode 100644 tests/tegra/vic41.c
+ create mode 100644 tests/tegra/vic41.h
+ create mode 100644 tests/tegra/vic42.c
+ create mode 100644 tests/tegra/vic42.h
+
+-- 
+2.35.1
+
