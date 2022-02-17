@@ -2,438 +2,160 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77F0EC433F5
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Feb 2022 19:22:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2169C433EF
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Feb 2022 20:03:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245117AbiBQTXH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 17 Feb 2022 14:23:07 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:56828 "EHLO
+        id S242293AbiBQUDO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 17 Feb 2022 15:03:14 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:54226 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245111AbiBQTXG (ORCPT
+        with ESMTP id S237756AbiBQUDN (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 17 Feb 2022 14:23:06 -0500
-Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21B04CCC41
-        for <linux-tegra@vger.kernel.org>; Thu, 17 Feb 2022 11:22:50 -0800 (PST)
-Received: by mail-ed1-x529.google.com with SMTP id i11so9803332eda.9
-        for <linux-tegra@vger.kernel.org>; Thu, 17 Feb 2022 11:22:50 -0800 (PST)
+        Thu, 17 Feb 2022 15:03:13 -0500
+Received: from mail-lj1-x22f.google.com (mail-lj1-x22f.google.com [IPv6:2a00:1450:4864:20::22f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A53773B55B
+        for <linux-tegra@vger.kernel.org>; Thu, 17 Feb 2022 12:02:58 -0800 (PST)
+Received: by mail-lj1-x22f.google.com with SMTP id s21so1118330ljp.2
+        for <linux-tegra@vger.kernel.org>; Thu, 17 Feb 2022 12:02:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=M0e3VJ0bS12JJ8JkG0rtjJHWWTbEehg0Nr+IkUkHMC8=;
-        b=GMik/6fCXgjyX9ftT57GCPA3ldu3Xnr6TksIaE8B5fsj8AH8lf9tL7yigq0UVvhtQl
-         qjodrBTwlvSeE0Y6YHnmVaACZMZLJmxRolUmlvx0IJ7av6m004LIQJNQqkl4KetiBxlM
-         FYrESBXnJRJcwMb5UCf08BCovpSgrtC7esTd8FWDLHF6gyp1YcujBVVbV8EW3zfsLpE6
-         L2KidxZNn3tCy7xY33LHETiSrZcn7eEnWQvsXyfCzpaxEaj4WTikhcH9b45YzMkWiZ9M
-         S/cUKOs2YnIZvt+POrGHL5y3B+BBH08w9D/nRVuEBfPE6f5uPISLBpnpwOrBDoJ4Jx12
-         0D0g==
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=KQR8LCJbjQjXzcxrSAYZuk3yAvGZoRDFWFTfgMCscjE=;
+        b=InOmyOIc3UKHzULdSjo/eX57m68E6HkyQvI6Cc+ZLjM6vdVvycLA3wsmc7w1252CPj
+         DVRgcAQWAhM2VR+9nbM+7xT11OVWNGOWiYRysVtnEWE7clIYd3oGlXzuODvAGGovkgab
+         8SJK19kkOYhAWcY/fi7R9uSHMbnTfDbmDHfy8yHI0AIae1LndRlawz/moFGM6uLqJtBB
+         TkaCi1xHAlUPTCH7LjWVcBXwNlTO8VTrpx/+qNTjvWmnQsrpakdBAuQYbr29xT1vz163
+         qDUcTWP+hXJlVqHfqAXplop0lKdiZTWTszmrbbdDpSslMmQ/kst4wS4NuGyhVOMjg5P7
+         66dw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=M0e3VJ0bS12JJ8JkG0rtjJHWWTbEehg0Nr+IkUkHMC8=;
-        b=oyDesX90cEtVDFSG4UULdgLiJBumcJvsyrkce9I0RMQpkO7fX7+zy4nUyJJdtasT9g
-         Yp/seRtNS36DNP2dG0DXw8INqLO0OWJF14klKe8TxwTk80IeEtdXb0/hUkyqxteG6CJn
-         A/ZFzlehkc4Oh5M3jkkAGz0BkaLeSRcQomJcYZjGoZ0c88X2pdfO+LPxVNw3UIbD+0fk
-         0LRrDCuEqdK7pxD6pK6qU+/Dajjv/PFx4sLq5ZsXHB7U8UvhzPpI5aA5ALmmoIAKTGk0
-         +F6EUpNANOLjyqFPDw7G82a7h7LT9U0DjCVXsA80UqstDkWNIPNmWPyKoZLE9drJHVzI
-         2p2g==
-X-Gm-Message-State: AOAM530P9s1f8VvA6niFAF+sCt4SJAno/QSO4uMFDiuUHMAmscNsFZKW
-        3WH4j/+Q4ZKBRwjsGcow15uSfxz7h/M=
-X-Google-Smtp-Source: ABdhPJxU892lGYgPUi2T0/gdWx0X4JhVGmTmdh0ClJvG/Kpx95ZQG5qZZtbrvI9nh6F3StwPHelzWA==
-X-Received: by 2002:a05:6402:42ca:b0:408:ed7:b011 with SMTP id i10-20020a05640242ca00b004080ed7b011mr4208022edc.6.1645125768597;
-        Thu, 17 Feb 2022 11:22:48 -0800 (PST)
-Received: from localhost (p2e5bec5d.dip0.t-ipconnect.de. [46.91.236.93])
-        by smtp.gmail.com with ESMTPSA id d25sm1490580ejz.4.2022.02.17.11.22.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Feb 2022 11:22:47 -0800 (PST)
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
-Subject: [PATCH libdrm v2 25/25] tests: tegra: Add VIC flip test
-Date:   Thu, 17 Feb 2022 20:19:31 +0100
-Message-Id: <20220217191931.2534836-20-thierry.reding@gmail.com>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220217191931.2534836-1-thierry.reding@gmail.com>
-References: <20220217191931.2534836-1-thierry.reding@gmail.com>
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=KQR8LCJbjQjXzcxrSAYZuk3yAvGZoRDFWFTfgMCscjE=;
+        b=3Xl2HgXhv+vMZJcIULNqCvJxh4t3cG/v8+2HDTpiCM3txvsqAn09HLcLqr+DqGUrWc
+         PkE5iHpmefBcrG/xISq1WWBlchlHFJDSruGx7JKbqu0TPAtaZtTuB986neE4A2rOA4ic
+         Hb9Q6e9G98nEMFUjUQqcNCF6weg8oJa8c+Rj0zyzueQl8YAO1Lsdhe/hbLYD/ZNi//Lw
+         ct/uNuYVPSlqjQQYiBUx2J1ZTx/UZd4zLm+wdo8S6tai1jTsQf69tm/Ejt+mczucYCUW
+         oyxOMOGRjJMXqEP7gyApEF+zR0+IvJgE5k75WEiMVyEVv0vjioMzNF/COIKhRLpGo1QV
+         vk9w==
+X-Gm-Message-State: AOAM533yEgghW8ZlWhvWb0BVlIMkudZAvwHu0tWZ0gZag0wDNIRvOud/
+        H0a0GXiMmwqiBZgOfKjD14VxxAvv0hI=
+X-Google-Smtp-Source: ABdhPJzvaBZWOYC6umpuobEIYSMG4QFjsdwfwEO2xcJuAguncF4cG1MX1DNFVdyK/lsgeIjKQEmPXw==
+X-Received: by 2002:a05:651c:1725:b0:244:bbe7:2433 with SMTP id be37-20020a05651c172500b00244bbe72433mr3346794ljb.144.1645128176835;
+        Thu, 17 Feb 2022 12:02:56 -0800 (PST)
+Received: from [192.168.2.145] (109-252-138-165.dynamic.spd-mgts.ru. [109.252.138.165])
+        by smtp.googlemail.com with ESMTPSA id v6sm71113ljd.86.2022.02.17.12.02.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 17 Feb 2022 12:02:54 -0800 (PST)
+Message-ID: <fb059f6f-013a-4a7e-55a7-81acbdda80fc@gmail.com>
+Date:   Thu, 17 Feb 2022 23:02:53 +0300
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [PATCH libdrm v2 00/25] Update Tegra support
+Content-Language: en-US
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
+References: <20220217191625.2534521-1-thierry.reding@gmail.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+In-Reply-To: <20220217191625.2534521-1-thierry.reding@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+17.02.2022 22:16, Thierry Reding пишет:
+> From: Thierry Reding <treding@nvidia.com>
+> 
+> Hi all,
+> 
+> this is the userspace part of the kernel patches that were recently
+> merged into drm-next:
+> 
+>   https://patchwork.freedesktop.org/series/92378/
+> 
+> The goal is to provide a userspace implementation of the UAPI exposed by
+> the kernel and show its usage in some test programs that can also be
+> used for basic sanity testing. More complete userspace implementations
+> are available here:
+> 
+>   * https://github.com/cyndis/vaapi-tegra-driver
+>   * https://github.com/grate-driver/xf86-video-opentegra
+>   * https://github.com/grate-driver/grate
+> 
+> Changes in v2:
+> - implement vic_clear() as a helper using ->fill() (Michał Mirosław)
+> - rebase and fix a couple of Meson errors/warnings
+> 
+> Thierry
+> 
+> Thierry Reding (25):
+>   tegra: Indent according to .editorconfig
+>   tegra: Remove unused IOCTL implementations
+>   tegra: Extract common buffer object allocation code
+>   tegra: Fix mmap() of GEM buffer objects
+>   tegra: Add flink helpers
+>   tegra: Add PRIME support helpers
+>   tegra: Make API more consistent
+>   tegra: Install tegra-openclose test
+>   tegra: Update for new UABI
+>   tegra: Include private.h in list of source files
+>   tegra: Add channel APIs
+>   tegra: Add job and push buffer APIs
+>   tegra: Add syncpoint APIs
+>   tests: tegra: Add helper library for tests
+>   tests: tegra: Add gr2d-fill test
+>   tests: tegra: Add syncpt-wait test
+>   tests: tegra: Add syncpoint timeout test
+>   tests: tegra: Add VIC support
+>   tests: tegra: Add VIC 3.0 support
+>   tests: tegra: Add VIC 4.0 support
+>   tests: tegra: Add VIC 4.1 support
+>   tests: tegra: Add VIC 4.2 support
+>   tests: tegra: Add VIC clear test
+>   tests: tegra: Add VIC blit test
+>   tests: tegra: Add VIC flip test
+> 
+>  include/drm/tegra_drm.h      | 429 +++++++++++++++++++++++--
+>  tegra/channel.c              | 195 ++++++++++++
+>  tegra/job.c                  | 187 +++++++++++
+>  tegra/meson.build            |   7 +-
+>  tegra/private.h              |  85 ++++-
+>  tegra/pushbuf.c              | 184 +++++++++++
+>  tegra/syncpt.c               | 101 ++++++
+>  tegra/tegra-symbols.txt      |  27 +-
+>  tegra/tegra.c                | 386 +++++++++++-----------
+>  tegra/tegra.h                |  95 +++++-
+>  tests/tegra/.gitignore       |   3 +-
+>  tests/tegra/drm-test-tegra.c | 147 +++++++++
+>  tests/tegra/drm-test-tegra.h |  55 ++++
+>  tests/tegra/drm-test.c       | 248 +++++++++++++++
+>  tests/tegra/drm-test.h       |  72 +++++
+>  tests/tegra/gr2d-fill.c      | 146 +++++++++
+>  tests/tegra/host1x.h         |  34 ++
+>  tests/tegra/meson.build      |  88 +++++-
+>  tests/tegra/openclose.c      |  52 +--
+>  tests/tegra/syncpt-timeout.c | 163 ++++++++++
+>  tests/tegra/syncpt-wait.c    | 151 +++++++++
+>  tests/tegra/vic-blit.c       | 333 +++++++++++++++++++
+>  tests/tegra/vic-clear.c      | 173 ++++++++++
+>  tests/tegra/vic-flip.c       | 333 +++++++++++++++++++
+>  tests/tegra/vic.c            | 184 +++++++++++
+>  tests/tegra/vic.h            | 181 +++++++++++
+>  tests/tegra/vic30.c          | 458 +++++++++++++++++++++++++++
+>  tests/tegra/vic30.h          | 439 ++++++++++++++++++++++++++
+>  tests/tegra/vic40.c          | 370 ++++++++++++++++++++++
+>  tests/tegra/vic40.h          | 285 +++++++++++++++++
+>  tests/tegra/vic41.c          | 374 ++++++++++++++++++++++
+>  tests/tegra/vic41.h          | 372 ++++++++++++++++++++++
+>  tests/tegra/vic42.c          | 374 ++++++++++++++++++++++
+>  tests/tegra/vic42.h          | 597 +++++++++++++++++++++++++++++++++++
+>  34 files changed, 7068 insertions(+), 260 deletions(-)
 
-This test will attempt to use the VIC to blit one surface to another
-and perform a vertical flip.
 
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- tests/tegra/meson.build |   9 ++
- tests/tegra/vic-flip.c  | 333 ++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 342 insertions(+)
- create mode 100644 tests/tegra/vic-flip.c
-
-diff --git a/tests/tegra/meson.build b/tests/tegra/meson.build
-index 3cccbf64ecf4..26a32e868593 100644
---- a/tests/tegra/meson.build
-+++ b/tests/tegra/meson.build
-@@ -100,3 +100,12 @@ vic_blit = executable(
-   link_with : [libdrm, libdrm_tegra, libdrm_test, libdrm_test_tegra],
-   install : with_install_tests,
- )
-+
-+vic_flip = executable(
-+  'tegra-vic-flip',
-+  files('vic-flip.c'),
-+  include_directories : [inc_root, inc_drm, inc_tegra],
-+  c_args : libdrm_c_args,
-+  link_with : [libdrm, libdrm_tegra, libdrm_test, libdrm_test_tegra],
-+  install : with_install_tests,
-+)
-diff --git a/tests/tegra/vic-flip.c b/tests/tegra/vic-flip.c
-new file mode 100644
-index 000000000000..e94336be1697
---- /dev/null
-+++ b/tests/tegra/vic-flip.c
-@@ -0,0 +1,333 @@
-+/*
-+ * Copyright © 2018 NVIDIA Corporation
-+ *
-+ * Permission is hereby granted, free of charge, to any person obtaining a
-+ * copy of this software and associated documentation files (the "Software"),
-+ * to deal in the Software without restriction, including without limitation
-+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
-+ * and/or sell copies of the Software, and to permit persons to whom the
-+ * Software is furnished to do so, subject to the following conditions:
-+ *
-+ * The above copyright notice and this permission notice shall be included in
-+ * all copies or substantial portions of the Software.
-+ *
-+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
-+ * THE COPYRIGHT HOLDER(S) OR AUTHOR(S) BE LIABLE FOR ANY CLAIM, DAMAGES OR
-+ * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
-+ * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-+ * OTHER DEALINGS IN THE SOFTWARE.
-+ */
-+
-+#include <errno.h>
-+#include <fcntl.h>
-+#include <stdio.h>
-+#include <string.h>
-+#include <unistd.h>
-+
-+#include "tegra.h"
-+
-+#include "host1x.h"
-+#include "vic.h"
-+
-+/* clear output image to red */
-+static int clear(struct vic *vic, struct drm_tegra_channel *channel,
-+                 struct vic_image *output)
-+{
-+    struct drm_tegra_pushbuf *pushbuf;
-+    struct drm_tegra_job *job;
-+    uint32_t *ptr;
-+    int err;
-+
-+    err = drm_tegra_job_new(channel, &job);
-+    if (err < 0) {
-+        fprintf(stderr, "failed to create job: %s\n", strerror(-err));
-+        return 1;
-+    }
-+
-+    err = drm_tegra_job_get_pushbuf(job, &pushbuf);
-+    if (err < 0) {
-+        fprintf(stderr, "failed to create push buffer: %s\n", strerror(-err));
-+        return 1;
-+    }
-+
-+    err = drm_tegra_pushbuf_begin(pushbuf, 32, &ptr);
-+    if (err < 0) {
-+        fprintf(stderr, "failed to prepare push buffer: %s\n", strerror(-err));
-+        return err;
-+    }
-+
-+    err = vic_clear(vic, output, 1023, 0, 0, 1023);
-+    if (err < 0) {
-+        fprintf(stderr, "failed to clear surface: %s\n", strerror(-err));
-+        return err;
-+    }
-+
-+    err = vic->ops->execute(vic, pushbuf, &ptr, output, NULL, 0);
-+    if (err < 0) {
-+        fprintf(stderr, "failed to execute operation: %s\n", strerror(-err));
-+        return err;
-+    }
-+
-+    err = drm_tegra_pushbuf_sync_cond(pushbuf, &ptr, vic->syncpt,
-+                                      DRM_TEGRA_SYNC_COND_OP_DONE);
-+    if (err < 0) {
-+        fprintf(stderr, "failed to push syncpoint: %s\n", strerror(-err));
-+        return err;
-+    }
-+
-+    err = drm_tegra_pushbuf_end(pushbuf, ptr);
-+    if (err < 0) {
-+        fprintf(stderr, "failed to update push buffer: %s\n", strerror(-err));
-+        return err;
-+    }
-+
-+    err = drm_tegra_job_submit(job, NULL);
-+    if (err < 0) {
-+        fprintf(stderr, "failed to submit job: %s\n", strerror(-err));
-+        return err;
-+    }
-+
-+    err = drm_tegra_job_wait(job, 1000000000);
-+    if (err < 0) {
-+        fprintf(stderr, "failed to wait for job: %s\n", strerror(-err));
-+        return err;
-+    }
-+
-+    drm_tegra_job_free(job);
-+
-+    return 0;
-+}
-+
-+/* fill bottom half of image to blue */
-+static int fill(struct vic *vic, struct drm_tegra_channel *channel,
-+                struct vic_image *output)
-+{
-+    struct drm_tegra_pushbuf *pushbuf;
-+    struct drm_tegra_job *job;
-+    uint32_t *ptr;
-+    int err;
-+
-+    err = drm_tegra_job_new(channel, &job);
-+    if (err < 0) {
-+        fprintf(stderr, "failed to create job: %s\n", strerror(-err));
-+        return 1;
-+    }
-+
-+    err = drm_tegra_job_get_pushbuf(job, &pushbuf);
-+    if (err < 0) {
-+        fprintf(stderr, "failed to create push buffer: %s\n", strerror(-err));
-+        return 1;
-+    }
-+
-+    err = drm_tegra_pushbuf_begin(pushbuf, 32, &ptr);
-+    if (err < 0) {
-+        fprintf(stderr, "failed to prepare push buffer: %s\n", strerror(-err));
-+        return err;
-+    }
-+
-+    err = vic->ops->fill(vic, output, 0, output->height / 2, output->width - 1,
-+                         output->height - 1, 0, 0, 1023, 1023);
-+    if (err < 0) {
-+        fprintf(stderr, "failed ot fill surface: %s\n", strerror(-err));
-+        return err;
-+    }
-+
-+    err = vic->ops->execute(vic, pushbuf, &ptr, output, NULL, 0);
-+    if (err < 0) {
-+        fprintf(stderr, "failed to execute operation: %s\n", strerror(-err));
-+        return err;
-+    }
-+
-+    err = drm_tegra_pushbuf_sync_cond(pushbuf, &ptr, vic->syncpt,
-+                                      DRM_TEGRA_SYNC_COND_OP_DONE);
-+    if (err < 0) {
-+        fprintf(stderr, "failed to push syncpoint: %s\n", strerror(-err));
-+        return err;
-+    }
-+
-+    err = drm_tegra_pushbuf_end(pushbuf, ptr);
-+    if (err < 0) {
-+        fprintf(stderr, "failed to update push buffer: %s\n", strerror(-err));
-+        return err;
-+    }
-+
-+    err = drm_tegra_job_submit(job, NULL);
-+    if (err < 0) {
-+        fprintf(stderr, "failed to submit job: %s\n", strerror(-err));
-+        return err;
-+    }
-+
-+    err = drm_tegra_job_wait(job, 1000000000);
-+    if (err < 0) {
-+        fprintf(stderr, "failed to wait for job: %s\n", strerror(-err));
-+        return err;
-+    }
-+
-+    drm_tegra_job_free(job);
-+
-+    return 0;
-+}
-+
-+/* flip image vertically */
-+static int flip(struct vic *vic, struct drm_tegra_channel *channel,
-+                struct vic_image *output, struct vic_image *input)
-+{
-+    struct drm_tegra_pushbuf *pushbuf;
-+    struct drm_tegra_job *job;
-+    uint32_t *ptr;
-+    int err;
-+
-+    err = drm_tegra_job_new(channel, &job);
-+    if (err < 0) {
-+        fprintf(stderr, "failed to create job: %s\n", strerror(-err));
-+        return 1;
-+    }
-+
-+    err = drm_tegra_job_get_pushbuf(job, &pushbuf);
-+    if (err < 0) {
-+        fprintf(stderr, "failed to create push buffer: %s\n", strerror(-err));
-+        return 1;
-+    }
-+
-+    err = drm_tegra_pushbuf_begin(pushbuf, 32, &ptr);
-+    if (err < 0) {
-+        fprintf(stderr, "failed to prepare push buffer: %s\n", strerror(-err));
-+        return err;
-+    }
-+
-+    err = vic->ops->flip(vic, output, input);
-+    if (err < 0) {
-+        fprintf(stderr, "failed to flip: %s\n", strerror(-err));
-+        return err;
-+    }
-+
-+    err = vic->ops->execute(vic, pushbuf, &ptr, output, &input, 1);
-+    if (err < 0) {
-+        fprintf(stderr, "failed to execute operation: %s\n", strerror(-err));
-+        return err;
-+    }
-+
-+    err = drm_tegra_pushbuf_sync_cond(pushbuf, &ptr, vic->syncpt,
-+                                      DRM_TEGRA_SYNC_COND_OP_DONE);
-+    if (err < 0) {
-+        fprintf(stderr, "failed to push syncpoint: %s\n", strerror(-err));
-+        return err;
-+    }
-+
-+    err = drm_tegra_pushbuf_end(pushbuf, ptr);
-+    if (err < 0) {
-+        fprintf(stderr, "failed to update push buffer: %s\n", strerror(-err));
-+        return err;
-+    }
-+
-+    err = drm_tegra_job_submit(job, NULL);
-+    if (err < 0) {
-+        fprintf(stderr, "failed to submit job: %s\n", strerror(-err));
-+        return err;
-+    }
-+
-+    err = drm_tegra_job_wait(job, 1000000000);
-+    if (err < 0) {
-+        fprintf(stderr, "failed to wait for job: %s\n", strerror(-err));
-+        return err;
-+    }
-+
-+    drm_tegra_job_free(job);
-+
-+    return 0;
-+}
-+
-+int main(int argc, char *argv[])
-+{
-+    const unsigned int format = VIC_PIXEL_FORMAT_A8R8G8B8;
-+    const unsigned int kind = VIC_BLK_KIND_PITCH;
-+    const unsigned int width = 16, height = 16;
-+    const char *device = "/dev/dri/renderD128";
-+    struct drm_tegra_channel *channel;
-+    struct vic_image *input, *output;
-+    struct drm_tegra *drm;
-+    unsigned int version;
-+    struct vic *vic;
-+    int fd, err;
-+
-+    if (argc > 1)
-+        device = argv[1];
-+
-+    fd = open(device, O_RDWR);
-+    if (fd < 0) {
-+        fprintf(stderr, "open() failed: %s\n", strerror(errno));
-+        return 1;
-+    }
-+
-+    err = drm_tegra_new(fd, &drm);
-+    if (err < 0) {
-+        fprintf(stderr, "failed to open Tegra device: %s\n", strerror(-err));
-+        close(fd);
-+        return 1;
-+    }
-+
-+    err = drm_tegra_channel_open(drm, DRM_TEGRA_VIC, &channel);
-+    if (err < 0) {
-+        fprintf(stderr, "failed to open channel to VIC: %s\n", strerror(-err));
-+        return 1;
-+    }
-+
-+    version = drm_tegra_channel_get_version(channel);
-+    printf("version: %08x\n", version);
-+
-+    err = vic_new(drm, channel, &vic);
-+    if (err < 0) {
-+        fprintf(stderr, "failed to create VIC: %s\n", strerror(-err));
-+        return 1;
-+    }
-+
-+    err = vic_image_new(vic, width, height, format, kind, DRM_TEGRA_CHANNEL_MAP_READ_WRITE,
-+                        &input);
-+    if (err < 0) {
-+        fprintf(stderr, "failed to create input image: %d\n", err);
-+        return 1;
-+    }
-+
-+    err = vic_image_new(vic, width, height, format, kind, DRM_TEGRA_CHANNEL_MAP_READ_WRITE,
-+                        &output);
-+    if (err < 0) {
-+        fprintf(stderr, "failed to create output image: %d\n", err);
-+        return 1;
-+    }
-+
-+    err = clear(vic, channel, input);
-+    if (err < 0) {
-+        fprintf(stderr, "failed to clear image: %s\n", strerror(-err));
-+        return 1;
-+    }
-+
-+    err = fill(vic, channel, input);
-+    if (err < 0) {
-+        fprintf(stderr, "failed to fill rectangle: %s\n", strerror(-err));
-+        return 1;
-+    }
-+
-+    err = flip(vic, channel, output, input);
-+    if (err < 0) {
-+        fprintf(stderr, "failed to flip image: %s\n", strerror(-err));
-+        return 1;
-+    }
-+
-+    printf("input: %ux%u\n", input->width, input->height);
-+    vic_image_dump(input, stdout);
-+
-+    printf("output: %ux%u\n", output->width, output->height);
-+    vic_image_dump(output, stdout);
-+
-+    vic_image_free(output);
-+    vic_image_free(input);
-+
-+    vic_free(vic);
-+    drm_tegra_channel_close(channel);
-+    drm_tegra_close(drm);
-+    close(fd);
-+
-+    return 0;
-+}
--- 
-2.35.1
+Why do we need these tests in libdrm? Why not IGT?
 
