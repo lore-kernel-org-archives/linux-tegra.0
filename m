@@ -2,60 +2,60 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E09B4C433EF
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Feb 2022 19:20:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82461C433EF
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Feb 2022 19:20:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245103AbiBQTUh (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 17 Feb 2022 14:20:37 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:50612 "EHLO
+        id S229604AbiBQTUx (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 17 Feb 2022 14:20:53 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:50678 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229604AbiBQTUg (ORCPT
+        with ESMTP id S245105AbiBQTUs (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 17 Feb 2022 14:20:36 -0500
-Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0926C3C37
-        for <linux-tegra@vger.kernel.org>; Thu, 17 Feb 2022 11:20:20 -0800 (PST)
-Received: by mail-ej1-x62d.google.com with SMTP id hw13so9548039ejc.9
-        for <linux-tegra@vger.kernel.org>; Thu, 17 Feb 2022 11:20:20 -0800 (PST)
+        Thu, 17 Feb 2022 14:20:48 -0500
+Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 616E4C3C3B
+        for <linux-tegra@vger.kernel.org>; Thu, 17 Feb 2022 11:20:32 -0800 (PST)
+Received: by mail-ej1-x62a.google.com with SMTP id p14so9536702ejf.11
+        for <linux-tegra@vger.kernel.org>; Thu, 17 Feb 2022 11:20:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=SIia1rBwiVNCAd5Q1ZX/xY0Vg0f6A5WzajpeysDIC+8=;
-        b=JBP3m0VFnEUA7sR7ESOOgYr2lB01XKYBb7rETqBPvnr0e60jIpKv7jJEqWQtjbK8RF
-         SYbTc0G3H7O4Zrv/Rmtl41olYqYUsWSVc1ZT12tJd9z02VgG7f+zX9xgVAOvJ18wGdEW
-         f2PJgQdG1mN8AxSRdku/FiAuPg+bN+f9ggw9USLn+zw6fk8DPWm5gXAc9IYcxiyKXdZ0
-         DyK5l/E6q0l1r9WGnUBDdv5TCbGSrxgwJd6SSvi1aFzjUURxPMqLezOKe/bCzgGtte8d
-         tXAWd4MvWPKXqnZvMKMXV2mAQnqB2c0gkUAb2gIXNzAPhGlCH507U7UAUC0laJPlJuNk
-         MjKg==
+        bh=tk/OH48XvBg3Yj1hF1+iSHnphu7CKNd/Jzy6pGBzzJw=;
+        b=O7HcYGQhMaw54F2sc5KJdjSwuuyMwWJOBd1nLAvO2qI2LQV8YduqPPJZIxWvFFMKWl
+         maP2A4xJ6jgUif2Tjehv/W3HfWk6GcfbKXnzh3bgZBOH74dsyd5qzFkZc4AFDuShEI8N
+         mWaHQQbJAlrnUNaiosVpK51M1KqvfUOAN259sSR2bEpEgcXhXWOX4gulsaBlphAenp4T
+         PwURapDgGL43HWjabiHLHd60uuks89DFdRiS8DqXC/JyBvwvxXdzqbJnD59TbN5jvGtK
+         6xt+2JHfhw0Hlvwlfz9+tdiHER1Ezn6P762ZELGNYykNOdOSt1CZFIpEQ4EghSzntpHp
+         X3qg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=SIia1rBwiVNCAd5Q1ZX/xY0Vg0f6A5WzajpeysDIC+8=;
-        b=N19wRYX6DLUxCD8g6MrNtKUv1WOFTGkbBO07DdvTSTKXVq7U94oFQ3C0WCqQ3EWPkI
-         /IMPeoVTCaG7DD9iegCGBbPMQJO3CMAZAtTKjTNPd5r6+wxeWInxu4VxLi8+CwQyEOpJ
-         XfuQ/U6wUTLI+0kb2M2ANPhklgQyOPQU41a0sRRk7R4u4DGBK1JvNoF3ETi/8r97Mm6S
-         vNB3crcKbXyVP+bLCoG1o9Fa2Nq+GgsiaC+ar/b0b5gp78eQpXTmlmgTGB5JXa2EFky3
-         xSCZ2JsFO2lCi5Ob3wuj70GvvcxZFgCmg5ixoShh7ENr/X8I02xkFX4c+svYdnzzBztR
-         7PWg==
-X-Gm-Message-State: AOAM533CReDRPc7P+ULe7ps1as2+B70OYAzbqBlUQuXZMy/rFSRLjKky
-        TihwjeGwlnqLcOZNhHqKcB0=
-X-Google-Smtp-Source: ABdhPJyZkyFy3bjcIN7OJAeYyzcznjscer6S6yR5hI/rQd6rbfbn9KYCNOVZi8ll3bQx/UglYqAbeg==
-X-Received: by 2002:a17:906:70c2:b0:6cf:e1cc:4d8c with SMTP id g2-20020a17090670c200b006cfe1cc4d8cmr3654245ejk.696.1645125619337;
-        Thu, 17 Feb 2022 11:20:19 -0800 (PST)
+        bh=tk/OH48XvBg3Yj1hF1+iSHnphu7CKNd/Jzy6pGBzzJw=;
+        b=t3Y0d378gLxl4PnmiSj/DB5UIplCohnF9T/MWYh3tofEQI/mVR5HTBEUM1iV5OJjqJ
+         n9XOafvG4s0oLqg8VFlHQvGZCLvJuQ80I25Jrw4UwUsY3n6SEwouBHlX/lQKxKnVKrcP
+         oyBNJJz4xV9cg957OKdHwijTebBP/qW/buhsMjC2jJW462zkaWoOdoQF+65o7Vb4ZrUl
+         Mb5WjMdsCCi5mfybAzkeB83W0N+eelHAt8HPeQFe9LBzyqDO8wjaqX5FxN95U1b1YFzt
+         0WbZ5b7+iFJ0DE7z5p+MLMFosxNTLV8VhVtnyc+uZxp2wov1fFH795tCKmKi+LVB4B6Y
+         HfCA==
+X-Gm-Message-State: AOAM532SsM0oueRhoXbHmd+Uyr4KO4FM8wTeEMMDFOx6ZRLoKSGVY52d
+        z2mRPZvE7NIj4oa4/0Xwa/SuPRZkj48=
+X-Google-Smtp-Source: ABdhPJxFVRpRv7RcwV/02HYZ9z5/pwmK+6WFFq8ItlCMtFUtXE8iFjwwQblydB4Ywwdy8q+x5s2hEQ==
+X-Received: by 2002:a17:906:dfca:b0:6bb:c8d8:31c with SMTP id jt10-20020a170906dfca00b006bbc8d8031cmr3522862ejc.240.1645125630928;
+        Thu, 17 Feb 2022 11:20:30 -0800 (PST)
 Received: from localhost (p2e5bec5d.dip0.t-ipconnect.de. [46.91.236.93])
-        by smtp.gmail.com with ESMTPSA id u4sm1472541ejn.216.2022.02.17.11.20.18
+        by smtp.gmail.com with ESMTPSA id z22sm3927368edd.45.2022.02.17.11.20.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Feb 2022 11:20:18 -0800 (PST)
+        Thu, 17 Feb 2022 11:20:30 -0800 (PST)
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>
 Cc:     =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>,
         Dmitry Osipenko <digetx@gmail.com>,
         dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
-Subject: [PATCH libdrm v2 12/25] tegra: Add job and push buffer APIs
-Date:   Thu, 17 Feb 2022 20:19:18 +0100
-Message-Id: <20220217191931.2534836-7-thierry.reding@gmail.com>
+Subject: [PATCH libdrm v2 13/25] tegra: Add syncpoint APIs
+Date:   Thu, 17 Feb 2022 20:19:19 +0100
+Message-Id: <20220217191931.2534836-8-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220217191931.2534836-1-thierry.reding@gmail.com>
 References: <20220217191931.2534836-1-thierry.reding@gmail.com>
@@ -68,255 +68,151 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-These new functions can be used to create a job on a given channel, add
-commands to the job using its push buffer and submit the job.
+These new functions can be used to allocate and free syncpoints, as well
+as wait for a syncpoint threshold to be reached. Jobs can also be waited
+on if a syncpoint was attached to them.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- tegra/job.c             | 164 ++++++++++++++++++++++++++++++++++++++++
+ tegra/job.c             |  23 +++++++++
  tegra/meson.build       |   2 +-
- tegra/private.h         |  32 ++++++++
- tegra/pushbuf.c         | 136 +++++++++++++++++++++++++++++++++
- tegra/tegra-symbols.txt |   7 ++
- tegra/tegra.h           |  34 +++++++++
- 6 files changed, 374 insertions(+), 1 deletion(-)
- create mode 100644 tegra/job.c
- create mode 100644 tegra/pushbuf.c
+ tegra/private.h         |   5 ++
+ tegra/pushbuf.c         |  48 +++++++++++++++++++
+ tegra/syncpt.c          | 101 ++++++++++++++++++++++++++++++++++++++++
+ tegra/tegra-symbols.txt |   7 +++
+ tegra/tegra.h           |  16 +++++++
+ 7 files changed, 201 insertions(+), 1 deletion(-)
+ create mode 100644 tegra/syncpt.c
 
 diff --git a/tegra/job.c b/tegra/job.c
-new file mode 100644
-index 000000000000..c8c94e131ef0
---- /dev/null
+index c8c94e131ef0..75a344f1dcc5 100644
+--- a/tegra/job.c
 +++ b/tegra/job.c
-@@ -0,0 +1,164 @@
-+/*
-+ * Copyright © 2012, 2013 Thierry Reding
-+ * Copyright © 2013 Erik Faye-Lund
-+ * Copyright © 2014 NVIDIA Corporation
-+ *
-+ * Permission is hereby granted, free of charge, to any person obtaining a
-+ * copy of this software and associated documentation files (the "Software"),
-+ * to deal in the Software without restriction, including without limitation
-+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
-+ * and/or sell copies of the Software, and to permit persons to whom the
-+ * Software is furnished to do so, subject to the following conditions:
-+ *
-+ * The above copyright notice and this permission notice shall be included in
-+ * all copies or substantial portions of the Software.
-+ *
-+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
-+ * THE COPYRIGHT HOLDER(S) OR AUTHOR(S) BE LIABLE FOR ANY CLAIM, DAMAGES OR
-+ * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
-+ * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-+ * OTHER DEALINGS IN THE SOFTWARE.
-+ */
-+
-+#ifdef HAVE_CONFIG_H
-+#  include "config.h"
-+#endif
-+
-+#include <errno.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <time.h>
-+#include <unistd.h>
-+
-+#include <sys/ioctl.h>
-+#include <sys/poll.h>
-+
-+#include "private.h"
-+
-+struct drm_tegra_submit_cmd *
-+drm_tegra_job_add_command(struct drm_tegra_job *job, uint32_t type,
-+                          uint32_t flags)
-+{
-+    struct drm_tegra_submit_cmd *commands, *command;
-+    size_t size;
-+
-+    size = (job->num_commands + 1) * sizeof(*commands);
-+
-+    commands = realloc(job->commands, size);
-+    if (!commands)
-+        return NULL;
-+
-+    command = &commands[job->num_commands];
-+    memset(command, 0, sizeof(*command));
-+    command->type = type;
-+    command->flags = flags;
-+
-+    job->commands = commands;
-+    job->num_commands++;
-+
-+    return command;
-+}
+@@ -162,3 +162,26 @@ drm_tegra_job_submit(struct drm_tegra_job *job, struct drm_tegra_fence *fence)
+ 
+     return 0;
+ }
 +
 +drm_public int
-+drm_tegra_job_new(struct drm_tegra_channel *channel,
-+                  struct drm_tegra_job **jobp)
-+{
-+    struct drm_tegra_job *job;
-+
-+    job = calloc(1, sizeof(*job));
-+    if (!job)
-+        return -ENOMEM;
-+
-+    job->page_size = sysconf(_SC_PAGESIZE);
-+    job->channel = channel;
-+
-+    *jobp = job;
-+
-+    return 0;
-+}
-+
-+drm_public int drm_tegra_job_free(struct drm_tegra_job *job)
-+{
-+    if (!job)
-+        return -EINVAL;
-+
-+    if (job->pushbuf)
-+        drm_tegra_pushbuf_free(job->pushbuf);
-+
-+    if (job->commands)
-+        free(job->commands);
-+
-+    if (job->buffers)
-+        free(job->buffers);
-+
-+    free(job);
-+
-+    return 0;
-+}
-+
-+drm_public int
-+drm_tegra_job_get_pushbuf(struct drm_tegra_job *job,
-+                          struct drm_tegra_pushbuf **pushbufp)
-+{
-+    struct drm_tegra_pushbuf *pushbuf;
-+
-+    if (!job->pushbuf) {
-+        pushbuf = calloc(1, sizeof(*pushbuf));
-+        if (!pushbuf)
-+            return -ENOMEM;
-+
-+        pushbuf->job = job;
-+
-+        pushbuf->start = calloc(1, job->page_size);
-+        if (!pushbuf->start) {
-+            free(pushbuf);
-+            return -ENOMEM;
-+        }
-+
-+        pushbuf->end = pushbuf->start + job->page_size / 4;
-+        pushbuf->ptr = pushbuf->start;
-+
-+        job->pushbuf = pushbuf;
-+    }
-+
-+    *pushbufp = job->pushbuf;
-+
-+    return 0;
-+}
-+
-+drm_public int
-+drm_tegra_job_submit(struct drm_tegra_job *job, struct drm_tegra_fence *fence)
++drm_tegra_job_wait(struct drm_tegra_job *job, unsigned long timeout)
 +{
 +    struct drm_tegra_channel *channel = job->channel;
 +    struct drm_tegra *drm = channel->drm;
-+    struct drm_tegra_channel_submit args;
++    struct drm_tegra_syncpoint_wait args;
++    struct timespec ts;
 +    int err;
 +
++    clock_gettime(CLOCK_MONOTONIC, &ts);
++
 +    memset(&args, 0, sizeof(args));
-+    args.context = channel->context;
-+    args.num_bufs = job->num_buffers;
-+    args.num_cmds = job->num_commands;
-+    args.gather_data_words = job->pushbuf->ptr - job->pushbuf->start;
-+    args.syncpt.id = job->syncpt.id;
-+    args.syncpt.increments = job->syncpt.increments;
++    args.timeout_ns = ts.tv_sec * 1000000000 + ts.tv_nsec + timeout;
++    args.id = job->syncpt.id;
++    args.threshold = job->syncpt.fence;
 +
-+    args.bufs_ptr = (uintptr_t)job->buffers;
-+    args.cmds_ptr = (uintptr_t)job->commands;
-+    args.gather_data_ptr = (uintptr_t)job->pushbuf->start;
-+
-+    err = ioctl(drm->fd, DRM_IOCTL_TEGRA_CHANNEL_SUBMIT, &args);
++    err = ioctl(drm->fd, DRM_IOCTL_TEGRA_SYNCPOINT_WAIT, &args);
 +    if (err < 0)
 +        return -errno;
-+
-+    job->syncpt.fence = args.syncpt.value;
-+
-+    if (fence) {
-+        fence->drm = drm;
-+        fence->syncpt = job->syncpt.id;
-+        fence->value = job->syncpt.fence;
-+    }
 +
 +    return 0;
 +}
 diff --git a/tegra/meson.build b/tegra/meson.build
-index 34900c896f15..7698acec9ad0 100644
+index 7698acec9ad0..0b63d7894f9d 100644
 --- a/tegra/meson.build
 +++ b/tegra/meson.build
 @@ -22,7 +22,7 @@ libdrm_tegra = library(
    'drm_tegra',
    [
      files(
--      'channel.c', 'private.h', 'tegra.c'
-+      'channel.c', 'job.c', 'private.h', 'pushbuf.c', 'tegra.c'
+-      'channel.c', 'job.c', 'private.h', 'pushbuf.c', 'tegra.c'
++      'channel.c', 'job.c', 'private.h', 'pushbuf.c', 'syncpt.c', 'tegra.c'
      ),
      config_file
    ],
 diff --git a/tegra/private.h b/tegra/private.h
-index 7c05276707bf..970ee8ad66d4 100644
+index 970ee8ad66d4..f134f3ea2cea 100644
 --- a/tegra/private.h
 +++ b/tegra/private.h
-@@ -72,4 +72,36 @@ struct drm_tegra_mapping {
-     uint32_t id;
- };
+@@ -104,4 +104,9 @@ struct drm_tegra_submit_cmd *
+ drm_tegra_job_add_command(struct drm_tegra_job *job, uint32_t type,
+                           uint32_t flags);
  
-+struct drm_tegra_pushbuf {
-+    struct drm_tegra_job *job;
-+
-+    uint32_t *start;
-+    uint32_t *end;
-+    uint32_t *ptr;
++struct drm_tegra_syncpoint {
++    struct drm_tegra *drm;
++    uint32_t id;
 +};
-+
-+void drm_tegra_pushbuf_free(struct drm_tegra_pushbuf *pushbuf);
-+
-+struct drm_tegra_job {
-+    struct drm_tegra_channel *channel;
-+    struct drm_tegra_pushbuf *pushbuf;
-+    size_t page_size;
-+
-+    struct drm_tegra_submit_cmd *commands;
-+    unsigned int num_commands;
-+
-+    struct drm_tegra_submit_buf *buffers;
-+    unsigned int num_buffers;
-+
-+    struct {
-+        uint32_t id;
-+        uint32_t increments;
-+        uint32_t fence;
-+    } syncpt;
-+};
-+
-+struct drm_tegra_submit_cmd *
-+drm_tegra_job_add_command(struct drm_tegra_job *job, uint32_t type,
-+                          uint32_t flags);
 +
  #endif /* __DRM_TEGRA_PRIVATE_H__ */
 diff --git a/tegra/pushbuf.c b/tegra/pushbuf.c
-new file mode 100644
-index 000000000000..380a50abbbb0
---- /dev/null
+index 380a50abbbb0..0c0212e127a7 100644
+--- a/tegra/pushbuf.c
 +++ b/tegra/pushbuf.c
-@@ -0,0 +1,136 @@
+@@ -101,6 +101,25 @@ drm_tegra_pushbuf_end(struct drm_tegra_pushbuf *pushbuf, uint32_t *ptr)
+     return 0;
+ }
+ 
++drm_public int
++drm_tegra_pushbuf_wait(struct drm_tegra_pushbuf *pushbuf,
++                       struct drm_tegra_syncpoint *syncpt,
++                       uint32_t value)
++{
++    struct drm_tegra_submit_cmd *command;
++
++    command = drm_tegra_job_add_command(pushbuf->job,
++                                        DRM_TEGRA_SUBMIT_CMD_WAIT_SYNCPT,
++                                        0);
++    if (!command)
++        return -ENOMEM;
++
++    command->wait_syncpt.id = syncpt->id;
++    command->wait_syncpt.value = value;
++
++    return 0;
++}
++
+ drm_public int
+ drm_tegra_pushbuf_relocate(struct drm_tegra_pushbuf *pushbuf, uint32_t **ptrp,
+                            struct drm_tegra_mapping *target,
+@@ -134,3 +153,32 @@ drm_tegra_pushbuf_relocate(struct drm_tegra_pushbuf *pushbuf, uint32_t **ptrp,
+ 
+     return 0;
+ }
++
++drm_public int
++drm_tegra_pushbuf_sync(struct drm_tegra_pushbuf *pushbuf,
++                       struct drm_tegra_syncpoint *syncpt,
++                       unsigned int count)
++{
++    struct drm_tegra_job *job = pushbuf->job;
++
++    job->syncpt.increments += count;
++    job->syncpt.id = syncpt->id;
++
++    return 0;
++}
++
++drm_public int
++drm_tegra_pushbuf_sync_cond(struct drm_tegra_pushbuf *pushbuf, uint32_t **ptrp,
++                            struct drm_tegra_syncpoint *syncpt,
++                            enum drm_tegra_sync_cond cond)
++{
++    struct drm_tegra_channel *channel = pushbuf->job->channel;
++
++    if (cond >= DRM_TEGRA_SYNC_COND_MAX)
++        return -EINVAL;
++
++    *(*ptrp)++ = HOST1X_OPCODE_NONINCR(0x0, 0x1);
++    *(*ptrp)++ = cond << channel->cond_shift | syncpt->id;
++
++    return drm_tegra_pushbuf_sync(pushbuf, syncpt, 1);
++}
+diff --git a/tegra/syncpt.c b/tegra/syncpt.c
+new file mode 100644
+index 000000000000..16014186fa30
+--- /dev/null
++++ b/tegra/syncpt.c
+@@ -0,0 +1,101 @@
 +/*
-+ * Copyright © 2012, 2013 Thierry Reding
-+ * Copyright © 2013 Erik Faye-Lund
-+ * Copyright © 2014 NVIDIA Corporation
++ * Copyright © 2021 NVIDIA Corporation
 + *
 + * Permission is hereby granted, free of charge, to any person obtaining a
 + * copy of this software and associated documentation files (the "Software"),
@@ -342,178 +238,140 @@ index 000000000000..380a50abbbb0
 +#endif
 +
 +#include <errno.h>
-+#include <stdlib.h>
 +#include <string.h>
 +
-+#include "util_math.h"
++#include <sys/ioctl.h>
++
 +#include "private.h"
 +
-+#define HOST1X_OPCODE_NONINCR(offset, count) \
-+    ((0x2 << 28) | (((offset) & 0xfff) << 16) | ((count) & 0xffff))
-+
-+static inline unsigned int
-+drm_tegra_pushbuf_get_offset(struct drm_tegra_pushbuf *pushbuf, uint32_t *ptr)
-+{
-+    return ptr - pushbuf->start;
-+}
-+
-+void drm_tegra_pushbuf_free(struct drm_tegra_pushbuf *pushbuf)
-+{
-+    if (pushbuf->start)
-+        free(pushbuf->start);
-+
-+    free(pushbuf);
-+}
-+
-+/**
-+ * drm_tegra_pushbuf_begin() - prepare push buffer for a series of pushes
-+ * @pushbuf: push buffer
-+ * @words: maximum number of words in series of pushes to follow
-+ */
 +drm_public int
-+drm_tegra_pushbuf_begin(struct drm_tegra_pushbuf *pushbuf,
-+                        unsigned int words, uint32_t **ptrp)
++drm_tegra_syncpoint_new(struct drm_tegra *drm,
++                        struct drm_tegra_syncpoint **syncptp)
 +{
-+    struct drm_tegra_job *job = pushbuf->job;
-+    unsigned long offset;
-+    size_t size;
-+    void *ptr;
++    struct drm_tegra_syncpoint_allocate args;
++    struct drm_tegra_syncpoint *syncpt;
++    int err;
 +
-+    if (pushbuf->ptr + words >= pushbuf->end) {
-+        words = pushbuf->end - pushbuf->start + words;
-+        size = ALIGN(words * 4, job->page_size);
-+        offset = pushbuf->ptr - pushbuf->start;
++    syncpt = calloc(1, sizeof(*syncpt));
++    if (!syncpt)
++        return -ENOMEM;
 +
-+        ptr = realloc(pushbuf->start, size);
-+        if (!ptr)
-+            return -ENOMEM;
++    memset(&args, 0, sizeof(args));
 +
-+        pushbuf->start = ptr;
-+        pushbuf->end = pushbuf->start + size / 4;
-+        pushbuf->ptr = pushbuf->start + offset;
++    err = ioctl(drm->fd, DRM_IOCTL_TEGRA_SYNCPOINT_ALLOCATE, &args);
++    if (err < 0) {
++        free(syncpt);
++        return -errno;
 +    }
 +
-+    if (ptrp)
-+        *ptrp = pushbuf->ptr;
++    syncpt->drm = drm;
++    syncpt->id = args.id;
++
++    *syncptp = syncpt;
 +
 +    return 0;
 +}
 +
 +drm_public int
-+drm_tegra_pushbuf_end(struct drm_tegra_pushbuf *pushbuf, uint32_t *ptr)
++drm_tegra_syncpoint_free(struct drm_tegra_syncpoint *syncpt)
 +{
-+    struct drm_tegra_submit_cmd *command;
++    struct drm_tegra_syncpoint_free args;
++    struct drm_tegra *drm = syncpt->drm;
++    int err;
 +
-+    command = drm_tegra_job_add_command(pushbuf->job,
-+                                        DRM_TEGRA_SUBMIT_CMD_GATHER_UPTR,
-+                                        0);
-+    if (!command)
-+        return -ENOMEM;
++    if (!syncpt)
++        return -EINVAL;
 +
-+    command->gather_uptr.words = ptr - pushbuf->start;
-+    pushbuf->ptr = ptr;
++    memset(&args, 0, sizeof(args));
++    args.id = syncpt->id;
++
++    err = ioctl(drm->fd, DRM_IOCTL_TEGRA_SYNCPOINT_FREE, &args);
++    if (err < 0)
++        return -errno;
++
++    free(syncpt);
 +
 +    return 0;
 +}
 +
 +drm_public int
-+drm_tegra_pushbuf_relocate(struct drm_tegra_pushbuf *pushbuf, uint32_t **ptrp,
-+                           struct drm_tegra_mapping *target,
-+                           unsigned long offset, unsigned int shift,
-+                           uint32_t flags)
++drm_tegra_fence_wait(struct drm_tegra_fence *fence, unsigned long timeout)
 +{
-+    struct drm_tegra_submit_buf *buffers, *buffer;
-+    struct drm_tegra_job *job = pushbuf->job;
-+    size_t size;
++    struct drm_tegra_syncpoint_wait args;
++    struct drm_tegra *drm = fence->drm;
++    int err;
 +
-+    size = (job->num_buffers + 1) * sizeof(*buffer);
++    memset(&args, 0, sizeof(args));
++    args.timeout_ns = 0;
++    args.id = fence->syncpt;
++    args.threshold = fence->value;
 +
-+    buffers = realloc(job->buffers, size);
-+    if (!buffers)
-+        return -ENOMEM;
-+
-+    buffer = &buffers[job->num_buffers];
-+
-+    memset(buffer, 0, sizeof(*buffer));
-+    buffer->mapping = target->id;
-+    buffer->flags = flags;
-+    buffer->reloc.target_offset = offset;
-+    buffer->reloc.gather_offset_words = drm_tegra_pushbuf_get_offset(pushbuf,
-+                                                                     *ptrp);
-+    buffer->reloc.shift = shift;
-+
-+    *(*ptrp)++ = 0xdeadbeef;
-+
-+    job->buffers = buffers;
-+    job->num_buffers++;
++    err = ioctl(drm->fd, DRM_IOCTL_TEGRA_SYNCPOINT_WAIT, &args);
++    if (err < 0)
++        return -errno;
 +
 +    return 0;
 +}
 diff --git a/tegra/tegra-symbols.txt b/tegra/tegra-symbols.txt
-index c16a351171f1..da3972cb99e1 100644
+index da3972cb99e1..1a75c3d27c83 100644
 --- a/tegra/tegra-symbols.txt
 +++ b/tegra/tegra-symbols.txt
-@@ -15,4 +15,11 @@ drm_tegra_channel_map
+@@ -15,11 +15,18 @@ drm_tegra_channel_map
  drm_tegra_channel_open
  drm_tegra_channel_unmap
  drm_tegra_close
-+drm_tegra_job_free
-+drm_tegra_job_get_pushbuf
-+drm_tegra_job_new
-+drm_tegra_job_submit
++drm_tegra_fence_wait
+ drm_tegra_job_free
+ drm_tegra_job_get_pushbuf
+ drm_tegra_job_new
+ drm_tegra_job_submit
++drm_tegra_job_wait
  drm_tegra_new
-+drm_tegra_pushbuf_begin
-+drm_tegra_pushbuf_end
-+drm_tegra_pushbuf_relocate
+ drm_tegra_pushbuf_begin
+ drm_tegra_pushbuf_end
+ drm_tegra_pushbuf_relocate
++drm_tegra_pushbuf_sync
++drm_tegra_pushbuf_sync_cond
++drm_tegra_pushbuf_wait
++drm_tegra_syncpoint_free
++drm_tegra_syncpoint_new
 diff --git a/tegra/tegra.h b/tegra/tegra.h
-index 621fef6b7000..0213e3b11e04 100644
+index 0213e3b11e04..8f3c0554f29b 100644
 --- a/tegra/tegra.h
 +++ b/tegra/tegra.h
-@@ -63,6 +63,22 @@ int drm_tegra_bo_import(struct drm_tegra *drm, int fd,
- 
- struct drm_tegra_channel;
+@@ -65,6 +65,7 @@ struct drm_tegra_channel;
  struct drm_tegra_mapping;
-+struct drm_tegra_pushbuf;
-+struct drm_tegra_job;
-+
-+enum drm_tegra_sync_cond {
-+    DRM_TEGRA_SYNC_COND_IMMEDIATE,
-+    DRM_TEGRA_SYNC_COND_OP_DONE,
-+    DRM_TEGRA_SYNC_COND_RD_DONE,
-+    DRM_TEGRA_SYNC_COND_WR_SAFE,
-+    DRM_TEGRA_SYNC_COND_MAX,
-+  };
-+
-+struct drm_tegra_fence {
-+    struct drm_tegra *drm;
-+    uint32_t syncpt;
-+    uint32_t value;
-+};
+ struct drm_tegra_pushbuf;
+ struct drm_tegra_job;
++struct drm_tegra_syncpoint;
  
- int drm_tegra_channel_open(struct drm_tegra *drm,
-                            enum drm_tegra_class client,
-@@ -74,4 +90,22 @@ int drm_tegra_channel_map(struct drm_tegra_channel *channel,
-                           struct drm_tegra_mapping **mapp);
- int drm_tegra_channel_unmap(struct drm_tegra_mapping *map);
+ enum drm_tegra_sync_cond {
+     DRM_TEGRA_SYNC_COND_IMMEDIATE,
+@@ -102,10 +103,25 @@ int drm_tegra_job_wait(struct drm_tegra_job *job, unsigned long timeout);
+ int drm_tegra_pushbuf_begin(struct drm_tegra_pushbuf *pushbuf,
+                             unsigned int words, uint32_t **ptrp);
+ int drm_tegra_pushbuf_end(struct drm_tegra_pushbuf *pushbuf, uint32_t *ptr);
++int drm_tegra_pushbuf_wait(struct drm_tegra_pushbuf *pushbuf,
++                           struct drm_tegra_syncpoint *syncpt,
++                           uint32_t value);
+ int drm_tegra_pushbuf_relocate(struct drm_tegra_pushbuf *pushbuf,
+                                uint32_t **ptrp,
+                                struct drm_tegra_mapping *target,
+                                unsigned long offset, unsigned int shift,
+                                uint32_t flags);
++int drm_tegra_pushbuf_sync(struct drm_tegra_pushbuf *pushbuf,
++                           struct drm_tegra_syncpoint *syncpt,
++                           unsigned int count);
++int drm_tegra_pushbuf_sync_cond(struct drm_tegra_pushbuf *pushbuf,
++                                uint32_t **ptrp,
++                                struct drm_tegra_syncpoint *syncpt,
++                                enum drm_tegra_sync_cond cond);
++
++int drm_tegra_syncpoint_new(struct drm_tegra *drm,
++                            struct drm_tegra_syncpoint **syncptp);
++int drm_tegra_syncpoint_free(struct drm_tegra_syncpoint *syncpt);
++int drm_tegra_fence_wait(struct drm_tegra_fence *fence, unsigned long timeout);
  
-+int drm_tegra_job_new(struct drm_tegra_channel *channel,
-+                      struct drm_tegra_job **jobp);
-+int drm_tegra_job_free(struct drm_tegra_job *job);
-+int drm_tegra_job_get_pushbuf(struct drm_tegra_job *job,
-+                              struct drm_tegra_pushbuf **pushbufp);
-+int drm_tegra_job_submit(struct drm_tegra_job *job,
-+                         struct drm_tegra_fence *fence);
-+int drm_tegra_job_wait(struct drm_tegra_job *job, unsigned long timeout);
-+
-+int drm_tegra_pushbuf_begin(struct drm_tegra_pushbuf *pushbuf,
-+                            unsigned int words, uint32_t **ptrp);
-+int drm_tegra_pushbuf_end(struct drm_tegra_pushbuf *pushbuf, uint32_t *ptr);
-+int drm_tegra_pushbuf_relocate(struct drm_tegra_pushbuf *pushbuf,
-+                               uint32_t **ptrp,
-+                               struct drm_tegra_mapping *target,
-+                               unsigned long offset, unsigned int shift,
-+                               uint32_t flags);
-+
  #endif /* __DRM_TEGRA_H__ */
 -- 
 2.35.1
