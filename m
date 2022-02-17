@@ -2,60 +2,60 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3183FC433F5
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Feb 2022 19:22:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77F0EC433F5
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Feb 2022 19:22:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245116AbiBQTWy (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 17 Feb 2022 14:22:54 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:55898 "EHLO
+        id S245117AbiBQTXH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 17 Feb 2022 14:23:07 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:56828 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245111AbiBQTWx (ORCPT
+        with ESMTP id S245111AbiBQTXG (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 17 Feb 2022 14:22:53 -0500
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B9A5CCC41
-        for <linux-tegra@vger.kernel.org>; Thu, 17 Feb 2022 11:22:38 -0800 (PST)
-Received: by mail-ed1-x535.google.com with SMTP id m17so11378279edc.13
-        for <linux-tegra@vger.kernel.org>; Thu, 17 Feb 2022 11:22:38 -0800 (PST)
+        Thu, 17 Feb 2022 14:23:06 -0500
+Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21B04CCC41
+        for <linux-tegra@vger.kernel.org>; Thu, 17 Feb 2022 11:22:50 -0800 (PST)
+Received: by mail-ed1-x529.google.com with SMTP id i11so9803332eda.9
+        for <linux-tegra@vger.kernel.org>; Thu, 17 Feb 2022 11:22:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=WE14/F3cMbSOGlAZaArtSnsJPKOc0RYsfrCItQ2+SDg=;
-        b=WWT1QUgKVEcE+jWPl+JM6/nryvqJrRUJpmkFpa8/f41eZCMIVWdvEZOQGnSM8hrw/z
-         1XtJY8FANcqjWK6ESw5X1uWPus4yyAXP63pok9gYzA7q7mGjcU1kh6vZdrB+O+RHDy+A
-         8SqUHRQUUSQ8kzYEiwQ7DORJTh1FAfDDrVN2SaKE6UNhGmZr7Rdid7E4uJhOFJxGcTFO
-         KBC9TUSOCS2IXBIX3THZU46NiUW1Wtf7ne2wJfZcyPTl25uExArB2A8dsMPzY2jljEcJ
-         yLuKTr5yOJ0PfyBEZF8+GzJHFadRLtK3EYjgOIfY7/3KRWzytmOQ5A1xl7iwULi/3hYa
-         thAA==
+        bh=M0e3VJ0bS12JJ8JkG0rtjJHWWTbEehg0Nr+IkUkHMC8=;
+        b=GMik/6fCXgjyX9ftT57GCPA3ldu3Xnr6TksIaE8B5fsj8AH8lf9tL7yigq0UVvhtQl
+         qjodrBTwlvSeE0Y6YHnmVaACZMZLJmxRolUmlvx0IJ7av6m004LIQJNQqkl4KetiBxlM
+         FYrESBXnJRJcwMb5UCf08BCovpSgrtC7esTd8FWDLHF6gyp1YcujBVVbV8EW3zfsLpE6
+         L2KidxZNn3tCy7xY33LHETiSrZcn7eEnWQvsXyfCzpaxEaj4WTikhcH9b45YzMkWiZ9M
+         S/cUKOs2YnIZvt+POrGHL5y3B+BBH08w9D/nRVuEBfPE6f5uPISLBpnpwOrBDoJ4Jx12
+         0D0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=WE14/F3cMbSOGlAZaArtSnsJPKOc0RYsfrCItQ2+SDg=;
-        b=BFQ39nZDn5rVztK9Zd+UbjC+1UlY1gSozaO+i1xVsngIYQo3C3kF3v6x8A3WYsXJoY
-         NYLflDgrfHWumSFnv5pwSiMmv3WwgL34rGZxdHsCaexoz1brGE1mtaPETlH5quNtTFRE
-         YW38XBbpdgD2IBTVCRKJVkp17hU4N+3cNOcCJ/q8yZodCg5W8j4GaJRKznYzp9kJB9ef
-         8HUu1LdyLQ740rOAHhRmIB/OpLjjXCY4EDxUOSPSvDctlUFZLd3uDO5s1y4cft8yLcGY
-         9hMC1Vt/9YIJaFDIfJhK0xB5DEpGod91y6FzvmAAhJ5nmxepc6vNLYtIrFypXfVQA0I6
-         oWNQ==
-X-Gm-Message-State: AOAM532kSp0gQQwFpK81IcKuIOBtPk3Se1IvQ9J5oZxUxcaKw72ATIv0
-        W5C67BUdZC8iXLJ5MDmZmldAeTbV6J4=
-X-Google-Smtp-Source: ABdhPJzh81YACGR5m+eqAzXqw82fKDVzaRXz0V6Lrd0bk13rUKfKKopo6Ftw84RYek5uQoSIMwik5A==
-X-Received: by 2002:a05:6402:4c6:b0:410:b8e5:334 with SMTP id n6-20020a05640204c600b00410b8e50334mr4233611edw.321.1645125756923;
-        Thu, 17 Feb 2022 11:22:36 -0800 (PST)
+        bh=M0e3VJ0bS12JJ8JkG0rtjJHWWTbEehg0Nr+IkUkHMC8=;
+        b=oyDesX90cEtVDFSG4UULdgLiJBumcJvsyrkce9I0RMQpkO7fX7+zy4nUyJJdtasT9g
+         Yp/seRtNS36DNP2dG0DXw8INqLO0OWJF14klKe8TxwTk80IeEtdXb0/hUkyqxteG6CJn
+         A/ZFzlehkc4Oh5M3jkkAGz0BkaLeSRcQomJcYZjGoZ0c88X2pdfO+LPxVNw3UIbD+0fk
+         0LRrDCuEqdK7pxD6pK6qU+/Dajjv/PFx4sLq5ZsXHB7U8UvhzPpI5aA5ALmmoIAKTGk0
+         +F6EUpNANOLjyqFPDw7G82a7h7LT9U0DjCVXsA80UqstDkWNIPNmWPyKoZLE9drJHVzI
+         2p2g==
+X-Gm-Message-State: AOAM530P9s1f8VvA6niFAF+sCt4SJAno/QSO4uMFDiuUHMAmscNsFZKW
+        3WH4j/+Q4ZKBRwjsGcow15uSfxz7h/M=
+X-Google-Smtp-Source: ABdhPJxU892lGYgPUi2T0/gdWx0X4JhVGmTmdh0ClJvG/Kpx95ZQG5qZZtbrvI9nh6F3StwPHelzWA==
+X-Received: by 2002:a05:6402:42ca:b0:408:ed7:b011 with SMTP id i10-20020a05640242ca00b004080ed7b011mr4208022edc.6.1645125768597;
+        Thu, 17 Feb 2022 11:22:48 -0800 (PST)
 Received: from localhost (p2e5bec5d.dip0.t-ipconnect.de. [46.91.236.93])
-        by smtp.gmail.com with ESMTPSA id l6sm1445214ejz.189.2022.02.17.11.22.35
+        by smtp.gmail.com with ESMTPSA id d25sm1490580ejz.4.2022.02.17.11.22.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Feb 2022 11:22:36 -0800 (PST)
+        Thu, 17 Feb 2022 11:22:47 -0800 (PST)
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>
 Cc:     =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>,
         Dmitry Osipenko <digetx@gmail.com>,
         dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
-Subject: [PATCH libdrm v2 24/25] tests: tegra: Add VIC blit test
-Date:   Thu, 17 Feb 2022 20:19:30 +0100
-Message-Id: <20220217191931.2534836-19-thierry.reding@gmail.com>
+Subject: [PATCH libdrm v2 25/25] tests: tegra: Add VIC flip test
+Date:   Thu, 17 Feb 2022 20:19:31 +0100
+Message-Id: <20220217191931.2534836-20-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220217191931.2534836-1-thierry.reding@gmail.com>
 References: <20220217191931.2534836-1-thierry.reding@gmail.com>
@@ -68,38 +68,38 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-This test will attempt to use the VIC to blit from one surface to
-another.
+This test will attempt to use the VIC to blit one surface to another
+and perform a vertical flip.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
  tests/tegra/meson.build |   9 ++
- tests/tegra/vic-blit.c  | 333 ++++++++++++++++++++++++++++++++++++++++
+ tests/tegra/vic-flip.c  | 333 ++++++++++++++++++++++++++++++++++++++++
  2 files changed, 342 insertions(+)
- create mode 100644 tests/tegra/vic-blit.c
+ create mode 100644 tests/tegra/vic-flip.c
 
 diff --git a/tests/tegra/meson.build b/tests/tegra/meson.build
-index c7bf35899780..3cccbf64ecf4 100644
+index 3cccbf64ecf4..26a32e868593 100644
 --- a/tests/tegra/meson.build
 +++ b/tests/tegra/meson.build
-@@ -91,3 +91,12 @@ vic_clear = executable(
+@@ -100,3 +100,12 @@ vic_blit = executable(
    link_with : [libdrm, libdrm_tegra, libdrm_test, libdrm_test_tegra],
    install : with_install_tests,
  )
 +
-+vic_blit = executable(
-+  'tegra-vic-blit',
-+  files('vic-blit.c'),
++vic_flip = executable(
++  'tegra-vic-flip',
++  files('vic-flip.c'),
 +  include_directories : [inc_root, inc_drm, inc_tegra],
 +  c_args : libdrm_c_args,
 +  link_with : [libdrm, libdrm_tegra, libdrm_test, libdrm_test_tegra],
 +  install : with_install_tests,
 +)
-diff --git a/tests/tegra/vic-blit.c b/tests/tegra/vic-blit.c
+diff --git a/tests/tegra/vic-flip.c b/tests/tegra/vic-flip.c
 new file mode 100644
-index 000000000000..7baf9e7a0cc1
+index 000000000000..e94336be1697
 --- /dev/null
-+++ b/tests/tegra/vic-blit.c
++++ b/tests/tegra/vic-flip.c
 @@ -0,0 +1,333 @@
 +/*
 + * Copyright © 2018 NVIDIA Corporation
@@ -155,15 +155,15 @@ index 000000000000..7baf9e7a0cc1
 +        return 1;
 +    }
 +
-+    err = vic_clear(vic, output, 1023, 1023, 0, 0);
-+    if (err < 0) {
-+        fprintf(stderr, "failed to clear surface: %s\n", strerror(-err));
-+        return err;
-+    }
-+
 +    err = drm_tegra_pushbuf_begin(pushbuf, 32, &ptr);
 +    if (err < 0) {
 +        fprintf(stderr, "failed to prepare push buffer: %s\n", strerror(-err));
++        return err;
++    }
++
++    err = vic_clear(vic, output, 1023, 0, 0, 1023);
++    if (err < 0) {
++        fprintf(stderr, "failed to clear surface: %s\n", strerror(-err));
 +        return err;
 +    }
 +
@@ -231,9 +231,9 @@ index 000000000000..7baf9e7a0cc1
 +    }
 +
 +    err = vic->ops->fill(vic, output, 0, output->height / 2, output->width - 1,
-+                         output->height -1, 1023, 0, 0, 1023);
++                         output->height - 1, 0, 0, 1023, 1023);
 +    if (err < 0) {
-+        fprintf(stderr, "failed to fill surface: %s\n", strerror(-err));
++        fprintf(stderr, "failed ot fill surface: %s\n", strerror(-err));
 +        return err;
 +    }
 +
@@ -273,8 +273,8 @@ index 000000000000..7baf9e7a0cc1
 +    return 0;
 +}
 +
-+/* blit image */
-+static int blit(struct vic *vic, struct drm_tegra_channel *channel,
++/* flip image vertically */
++static int flip(struct vic *vic, struct drm_tegra_channel *channel,
 +                struct vic_image *output, struct vic_image *input)
 +{
 +    struct drm_tegra_pushbuf *pushbuf;
@@ -300,9 +300,9 @@ index 000000000000..7baf9e7a0cc1
 +        return err;
 +    }
 +
-+    err = vic->ops->blit(vic, output, input);
++    err = vic->ops->flip(vic, output, input);
 +    if (err < 0) {
-+        fprintf(stderr, "failed to blit surface: %s\n", strerror(-err));
++        fprintf(stderr, "failed to flip: %s\n", strerror(-err));
 +        return err;
 +    }
 +
@@ -412,9 +412,9 @@ index 000000000000..7baf9e7a0cc1
 +        return 1;
 +    }
 +
-+    err = blit(vic, channel, output, input);
++    err = flip(vic, channel, output, input);
 +    if (err < 0) {
-+        fprintf(stderr, "failed to blit image: %s\n", strerror(-err));
++        fprintf(stderr, "failed to flip image: %s\n", strerror(-err));
 +        return 1;
 +    }
 +
