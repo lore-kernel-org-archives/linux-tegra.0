@@ -2,201 +2,157 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80818C433EF
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Feb 2022 21:38:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A73BBC433F5
+	for <linux-tegra@archiver.kernel.org>; Fri, 18 Feb 2022 05:02:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242126AbiBQViW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 17 Feb 2022 16:38:22 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:38286 "EHLO
+        id S230155AbiBRFCq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 18 Feb 2022 00:02:46 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:50024 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229755AbiBQViV (ORCPT
+        with ESMTP id S230243AbiBRFCe (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 17 Feb 2022 16:38:21 -0500
-Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D306CC1165
-        for <linux-tegra@vger.kernel.org>; Thu, 17 Feb 2022 13:38:04 -0800 (PST)
-Received: by mail-lj1-x22a.google.com with SMTP id c15so1390576ljf.11
-        for <linux-tegra@vger.kernel.org>; Thu, 17 Feb 2022 13:38:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=7GVM4Imaflj4JIe8CRzxVHc58Ab/xWCMTV8z5JInLLY=;
-        b=V6A3E7siPvJSxNL4Zw1sa/9jV7UvEiLulVjANFUwEz8UL/RE3kv6tjbKRIwRCsuksU
-         axGQOKBP/ixHQhKjvMw09I92EXDIn2oudQ5SooxthoXhvncdDWfSDss7JVpAo6I/dzAB
-         CQOw5vQBgNav1GrpqcSmp/qj8FO9/4KBZitKKvIpdCAvEu1FvpQDvrUp+CK0HpEV3hnC
-         q2aVxAQeKAXCRmNCJV6VcWJhyM79+F11RxLErs2n3195DkxlCzVidk2Yv5tO3hECN6o0
-         A3pI0rDpMRKEBarg4bv2Je5GUj4KQ6HPxKQFOi9mDMkp5It+c8TWM6GxDi+a3fCp1gY5
-         vxZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=7GVM4Imaflj4JIe8CRzxVHc58Ab/xWCMTV8z5JInLLY=;
-        b=7IxDtFYt9bgW9pn3PLd047cU6UCcyto4DCXX+90slGMuh0Z3VYXksbYiAvsOYBx5bz
-         pJy06FGmnjG4j5FBOf8IE0AwitSL1TmcVW5Na1mQomBTeWaAJ0x6GTBrV4PI21pzU83x
-         9Q4QsqKQkaNBJ77tMhx3ZI5ovq/Rp906qDi0FAp4R/9u3w7bv/RLNfgGYC1csmIacjyP
-         xHNiwKc/IzxKMesgYMVrpcpwehdFtxFhzotYt53ppdX2JkPlnddmb99G8mrqtldKyaND
-         tv/Vao72YFetk7FwW8jx5VZBggFivc4M5o3YNBjPW12ZIxZ6yKUO5kyjCrDeq5uvdAMV
-         7U2A==
-X-Gm-Message-State: AOAM530WaoR0apqugSh7qXKap/SZFtTtd4me1p8J9aoVVjy04HEtIRwJ
-        TbkYRdTcib5138wz6gHe30r467RUPnk=
-X-Google-Smtp-Source: ABdhPJzaJgT2M4QR68WHPwUssS6ksK1ClTpavhjLm192RraKOqYf+favGGfVt7pfUeNRS6ST3qUlTA==
-X-Received: by 2002:a2e:a886:0:b0:244:de6f:1bf6 with SMTP id m6-20020a2ea886000000b00244de6f1bf6mr3609835ljq.375.1645133882866;
-        Thu, 17 Feb 2022 13:38:02 -0800 (PST)
-Received: from orome (p200300e41f0a6900000000000000043a.dip0.t-ipconnect.de. [2003:e4:1f0a:6900::43a])
-        by smtp.gmail.com with ESMTPSA id k14sm94762ljh.82.2022.02.17.13.38.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Feb 2022 13:38:01 -0800 (PST)
-Date:   Thu, 17 Feb 2022 22:37:57 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH libdrm v2 00/25] Update Tegra support
-Message-ID: <Yg7ANdIhSiEsZf8E@orome>
-References: <20220217191625.2534521-1-thierry.reding@gmail.com>
- <fb059f6f-013a-4a7e-55a7-81acbdda80fc@gmail.com>
+        Fri, 18 Feb 2022 00:02:34 -0500
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam08on2053.outbound.protection.outlook.com [40.107.102.53])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96F49266A;
+        Thu, 17 Feb 2022 21:01:54 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Z/oAaqW3bUh07dcTlDNcN/+y42UJ7PaxdakNAPAn4AQxX3tgmu5G8CAVLj+j2aLTGsE7mSM0p6LWXf4Sx84+DBN2g7nCiyVIOZNauvWk/voVYCZj2z8Ue5OPdYohOecoCgHAoNattvVAwxEIvP+jufw/Ssqq8tEkX/B/frnbIIe2CFR6Q0R/AxGdVRelr6+20uoKpQMBG0YY9ujXJOcLFSLhJhRKQUxSlOSx7xvsg6P+ZneyNQod5qiSpeEi1PfhUtEEx2X4HAacE7cAD9tzSmFaxBz6Yg5E79lGUBsYzFLnfASU1kbicsJqLmsH3Z3+2BXFNtgBn3xkIwVtfBdAzg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=8kpeKIqyxftSZHTlx1V/g8hGZu6mZYTo3Iy9q0o/bUI=;
+ b=csnMBMxuyaSok0p6Vq0wpaOCn2bihYY2CBtfs7Vy6fHmwdZNvZp36rxZ0MDtwW1T8gYshGH6TwCaRvGLPdWeihiV0DJrTSp5svpfX41ilcG5W8ibhAm+xCT3c/tGJnl+Wg8yx051I+0KeQUnu6qnErwa5pXmomF2xAQA4ieAggVmONIbyjg3fPfdGbLops2ZGorZy4sYKssU4i6qraqqLb5Q15Ubt5SFLrWIm//Lnpyei2l7Jj8O1/EJa+v5C9aOMFA0SIA7AB9uNT11qcuYSKfT1fP1RumZhBMZMYUjTCD5emrgkwynJxTAFJx5HZvA+xW0gIJOMgm5Rb2TEp4jNw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=8kpeKIqyxftSZHTlx1V/g8hGZu6mZYTo3Iy9q0o/bUI=;
+ b=FUTzfqkslMJ4GYUeRjqp/BgXx1pZdBRRtr4ABzk3pvw8eV/2CA07JUeKNFH/LhjPHJgib9D3GCQcAQpxiABmjiSUq2ABdpZ/U45POlj9Nxrbyxe2r+5hzugTvxvGCu49CBJKHOmI8ET5Li7+l2S0FQ+fkZD/LE4jPSfk9OMTbWdJxozeLcRQ/SLnA/Rw2hEziAKBb5i9P+qGGg41i31PuDqt4LKQVKXLDZKUMPYJNccHRPfPp5ux3HFX/Ox+OSponBRRqka+9iuPr4rd7PupSakahpd4sB8jUfNP7dNBwGbV75XFXg7aGS3ChiImVcnwFO6ldCyKm8rFHviq5tyMbw==
+Received: from DM5PR12MB1850.namprd12.prod.outlook.com (2603:10b6:3:108::23)
+ by BYAPR12MB3333.namprd12.prod.outlook.com (2603:10b6:a03:a9::30) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4995.22; Fri, 18 Feb
+ 2022 05:01:52 +0000
+Received: from DM5PR12MB1850.namprd12.prod.outlook.com
+ ([fe80::94d8:5850:e33d:b133]) by DM5PR12MB1850.namprd12.prod.outlook.com
+ ([fe80::94d8:5850:e33d:b133%4]) with mapi id 15.20.4995.017; Fri, 18 Feb 2022
+ 05:01:52 +0000
+From:   Akhil R <akhilrajeev@nvidia.com>
+To:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Krishna Yarlagadda <kyarlagadda@nvidia.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+        Rajesh Gumasta <rgumasta@nvidia.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        "vkoul@kernel.org" <vkoul@kernel.org>
+Subject: RE: [PATCH v19 0/4] Add NVIDIA Tegra GPC-DMA driver
+Thread-Topic: [PATCH v19 0/4] Add NVIDIA Tegra GPC-DMA driver
+Thread-Index: AQHYHDOhosviul8qH0O0gfnObfQ556yYz4vg
+Date:   Fri, 18 Feb 2022 05:01:51 +0000
+Message-ID: <DM5PR12MB1850AEFF5FA511525E25905EC0379@DM5PR12MB1850.namprd12.prod.outlook.com>
+References: <1644246094-29423-1-git-send-email-akhilrajeev@nvidia.com>
+In-Reply-To: <1644246094-29423-1-git-send-email-akhilrajeev@nvidia.com>
+Accept-Language: en-IN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: e0b09852-b58a-4e6b-a375-08d9f29bc6f5
+x-ms-traffictypediagnostic: BYAPR12MB3333:EE_
+x-microsoft-antispam-prvs: <BYAPR12MB333354FC08F30072A5A72CC2C0379@BYAPR12MB3333.namprd12.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:7219;
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: PEIyqNT+lAskp7DAZuA8gmSg8aaWWi+HvV9sc8SixfwoYQj2BiWkT4UIIxjHxucmK6ida8Kp7i0nig9AuObhlWAjZP8aGCzwxS71a4D36AvMLEHMzS9163yjXJuknFCU5wnrD3POMl52vg+vjzRzGfqezaZifw3nT+ixOcTCx0NbcF2GkyhUCLCbLaCFZDzTbJTWIWBW+/py8Kmasq2BSTI7QP9/CIwdhTUKqALOpw4NLUIT48Z+MHXawreJ2sUE8FDWpuzgdfIOaXSWIjHBxzGWJkVoMHe1qGuxFDqXH+P8n0gnKQZHmKJz7dyWKXoti/c/DWf72KzhDyLwPpLoB1UT3VeRCcOnhaczC/o6/HSyQB8x/boC5hYouL0pqWaFWqd3Z0UUG51qnMDAokHc+3chqZH6wnP9bWhf4K7xdunsm1wMQQ4ETnzhyDTMLOXhWb0KKcru3VaHWpWN0VaNZf9UJj3jKzNUXoFaM2O2JcHmbA3t6N0TTwqKHiWW9E0lNv5H/jXP0OSDpkKrWXZs6JbwU7a0ebqYU0VYTjiA/kpxZ2zCT5AyB2kmONqLNdckOUA0gmMY2kveYnRZspo1KQWMXYJLJpY6bgmDBdBeOVJL9pwgPii0F+g06TQNvhNFHaJhAuB31XoYu9CqECz3F5qKcdrLn/Y3037lXaikL3CtNUexPZB0CkSLa1cGMLcm2n+FX/py2ObviBAUpuj67mYnmwAiBxo6awTw1hzaM80Uu0yLWpbq1s/r3STtnjk+QndP8jE5dANiiAqsA6sf7r8ZT5zDR7SpTt+8ZPlPJqo=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM5PR12MB1850.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(76116006)(508600001)(86362001)(8676002)(64756008)(66446008)(66476007)(66556008)(966005)(71200400001)(316002)(110136005)(55016003)(66946007)(9686003)(7696005)(6506007)(2906002)(33656002)(8936002)(52536014)(38100700002)(122000001)(921005)(5660300002)(55236004)(186003)(26005)(38070700005);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?twDD1S+hiTL3qzNXxs/sVIu324ObKnrQLjEp4B3d3B8Cvp6h0lcrSnLVqoc8?=
+ =?us-ascii?Q?/g/oR1BaeNaBNcGbTwvtrRpGEdFbPoIVvarEeGZwKHeD9oNzVvtM00i4U9V8?=
+ =?us-ascii?Q?TJbo4xIE6r5GJQGdP+z7cdQmNnlJsUqeY+DCsTtk+r2Th2WzE32aCDul9/kJ?=
+ =?us-ascii?Q?ErIWSOVfTcoW/1qOU/H85s3S92Dxx2hTPhTjrbR7UAQsC63nOs3W2n2uB1yj?=
+ =?us-ascii?Q?2dM0KpK0VrIJ20w3fKD9A7VUUxlzTOH3hqEQw2JKC8ODu9KNy8uspzoCndjI?=
+ =?us-ascii?Q?4eNjUO8kRR2b9TfVPPzpHqY3C6Cic6E5ltFukZkStBPY4fMl4WaI2EiZuKYX?=
+ =?us-ascii?Q?1kgpBRZQKNavO5LVBAfiQhkdqSpHF7g4y4fnH3q47nr0KDL8QYFOLKaf7SdF?=
+ =?us-ascii?Q?cLgzYfNBhjBp6DWkCK4nxELyoEW/CmosQKUuQz0x8rHwCsqB+qE0ham7EjWX?=
+ =?us-ascii?Q?IMNaGaUdvReTw0ee/38qbudKc+GfNNDbBvLPEGy123NwnsE+2b1zHMPqYLkm?=
+ =?us-ascii?Q?pI8sgoUMe/mM6RWGmUU8m/fFECCMJATbmZukPPex5VxlzamQ94NcaILz6Yy/?=
+ =?us-ascii?Q?ykQt6xf6yBpBmpyauCSy7R+JBTVHtC7TLNAO+wq28WRpLotuFgfiBxNgEdNf?=
+ =?us-ascii?Q?XzfL+mCNVNEhbu4lBUzK5t44htmtZg18BQnGh5O94WvaEMwUJeR1uw0beSQn?=
+ =?us-ascii?Q?CjN4AONnCVrVIo5iZz4YBm+HBzhARtS7grVEPMhn+kvf0Vib+MaLI39jBr2g?=
+ =?us-ascii?Q?JzGnzJ8GSJluUb4iYXcRKRkWeDGeoFImaDJiOdThJvmWrNqw/PK6qcjiicvG?=
+ =?us-ascii?Q?C5EF4gqjN/iQq8rTXUxwmeQlH6YAMJwpxV54GpXC+h5DT0VL+DomVa6SPeJJ?=
+ =?us-ascii?Q?FImwGE93TkdgPFCX+7l276Vx/iBHUBxuC2MUbyc94cdJLqiund78PTi0LD4M?=
+ =?us-ascii?Q?+eHNRcdpkqAAbqcV99Lu9h/y0dQJ8o5niICMb9RDdx7TY6+oUEz7VKDnstlk?=
+ =?us-ascii?Q?hJB7diaDJqFfHKkj7cEAf5dTOQi+WU1kgJW5HsuC/mXSK0KMY3VI5+5mqeRL?=
+ =?us-ascii?Q?nFh/Aon2RwfJdhELQC44L30L2Iln4btDEo7/Dh/BEv3/WIWUZKdj05fpkYbb?=
+ =?us-ascii?Q?mLYroE6wl3yBwmcxIWcEwbOmXeckiKOwHnWIsEZlGlQeNKtkpvfzV4LhtvjW?=
+ =?us-ascii?Q?ORL3kGTK+GcG7zS4DSxdev0Wr78ys5GDA10njowQN+960iaAW/+4gq0p1j5f?=
+ =?us-ascii?Q?Lbzw10SxhSTnDTzdhidbHPliz58WkcSgbkSIxKLmt4g6JKCKcJ+yqBPvonK2?=
+ =?us-ascii?Q?LY2b6QM7imOTCMR6GxPwgw+ykGzO3oT+G8MEAQBH8S8Y/qQT4SfL0YyrenFp?=
+ =?us-ascii?Q?kW5sxxWyTcQwfCub1zuozpudmjmYWKLLcl4lR3tfaeYXoCaLkEPMZyGYGcJT?=
+ =?us-ascii?Q?BCyGl+tg4QM/4C2wXI+KKT/AcDPuBFndAPvE7mJGxXf1H+kYaVczWsKX7olP?=
+ =?us-ascii?Q?/0Dp+uCIoZExNMI3DQSaMH7290LNfqQo1C81bmHLrVtBmxRWwbE773U10ABe?=
+ =?us-ascii?Q?deWwGHE+eugNSw9qGaLODktVV15AsOP3kBh/6QQorxlwx74b8kr3iYIEmdmL?=
+ =?us-ascii?Q?5Q=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="Wh3BVJzbBMulczrm"
-Content-Disposition: inline
-In-Reply-To: <fb059f6f-013a-4a7e-55a7-81acbdda80fc@gmail.com>
-User-Agent: Mutt/2.2 (7160e05a) (2022-02-12)
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DM5PR12MB1850.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e0b09852-b58a-4e6b-a375-08d9f29bc6f5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Feb 2022 05:01:52.0069
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: YUWscUgtrXBqY2I/Tz4P2HtKmZqs+LIzZUqAilj8mtfJDrILGPm/nhMEj4a2pkybSucjmqskD4izU2xnFQ+MhA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR12MB3333
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-
---Wh3BVJzbBMulczrm
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Feb 17, 2022 at 11:02:53PM +0300, Dmitry Osipenko wrote:
-> 17.02.2022 22:16, Thierry Reding =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > From: Thierry Reding <treding@nvidia.com>
-> >=20
-> > Hi all,
-> >=20
-> > this is the userspace part of the kernel patches that were recently
-> > merged into drm-next:
-> >=20
-> >   https://patchwork.freedesktop.org/series/92378/
-> >=20
-> > The goal is to provide a userspace implementation of the UAPI exposed by
-> > the kernel and show its usage in some test programs that can also be
-> > used for basic sanity testing. More complete userspace implementations
-> > are available here:
-> >=20
-> >   * https://github.com/cyndis/vaapi-tegra-driver
-> >   * https://github.com/grate-driver/xf86-video-opentegra
-> >   * https://github.com/grate-driver/grate
-> >=20
-> > Changes in v2:
-> > - implement vic_clear() as a helper using ->fill() (Micha=C5=82 Miros=
-=C5=82aw)
-> > - rebase and fix a couple of Meson errors/warnings
-> >=20
-> > Thierry
-> >=20
-> > Thierry Reding (25):
-> >   tegra: Indent according to .editorconfig
-> >   tegra: Remove unused IOCTL implementations
-> >   tegra: Extract common buffer object allocation code
-> >   tegra: Fix mmap() of GEM buffer objects
-> >   tegra: Add flink helpers
-> >   tegra: Add PRIME support helpers
-> >   tegra: Make API more consistent
-> >   tegra: Install tegra-openclose test
-> >   tegra: Update for new UABI
-> >   tegra: Include private.h in list of source files
-> >   tegra: Add channel APIs
-> >   tegra: Add job and push buffer APIs
-> >   tegra: Add syncpoint APIs
-> >   tests: tegra: Add helper library for tests
-> >   tests: tegra: Add gr2d-fill test
-> >   tests: tegra: Add syncpt-wait test
-> >   tests: tegra: Add syncpoint timeout test
-> >   tests: tegra: Add VIC support
-> >   tests: tegra: Add VIC 3.0 support
-> >   tests: tegra: Add VIC 4.0 support
-> >   tests: tegra: Add VIC 4.1 support
-> >   tests: tegra: Add VIC 4.2 support
-> >   tests: tegra: Add VIC clear test
-> >   tests: tegra: Add VIC blit test
-> >   tests: tegra: Add VIC flip test
-> >=20
-> >  include/drm/tegra_drm.h      | 429 +++++++++++++++++++++++--
-> >  tegra/channel.c              | 195 ++++++++++++
-> >  tegra/job.c                  | 187 +++++++++++
-> >  tegra/meson.build            |   7 +-
-> >  tegra/private.h              |  85 ++++-
-> >  tegra/pushbuf.c              | 184 +++++++++++
-> >  tegra/syncpt.c               | 101 ++++++
-> >  tegra/tegra-symbols.txt      |  27 +-
-> >  tegra/tegra.c                | 386 +++++++++++-----------
-> >  tegra/tegra.h                |  95 +++++-
-> >  tests/tegra/.gitignore       |   3 +-
-> >  tests/tegra/drm-test-tegra.c | 147 +++++++++
-> >  tests/tegra/drm-test-tegra.h |  55 ++++
-> >  tests/tegra/drm-test.c       | 248 +++++++++++++++
-> >  tests/tegra/drm-test.h       |  72 +++++
-> >  tests/tegra/gr2d-fill.c      | 146 +++++++++
-> >  tests/tegra/host1x.h         |  34 ++
-> >  tests/tegra/meson.build      |  88 +++++-
-> >  tests/tegra/openclose.c      |  52 +--
-> >  tests/tegra/syncpt-timeout.c | 163 ++++++++++
-> >  tests/tegra/syncpt-wait.c    | 151 +++++++++
-> >  tests/tegra/vic-blit.c       | 333 +++++++++++++++++++
-> >  tests/tegra/vic-clear.c      | 173 ++++++++++
-> >  tests/tegra/vic-flip.c       | 333 +++++++++++++++++++
-> >  tests/tegra/vic.c            | 184 +++++++++++
-> >  tests/tegra/vic.h            | 181 +++++++++++
-> >  tests/tegra/vic30.c          | 458 +++++++++++++++++++++++++++
-> >  tests/tegra/vic30.h          | 439 ++++++++++++++++++++++++++
-> >  tests/tegra/vic40.c          | 370 ++++++++++++++++++++++
-> >  tests/tegra/vic40.h          | 285 +++++++++++++++++
-> >  tests/tegra/vic41.c          | 374 ++++++++++++++++++++++
-> >  tests/tegra/vic41.h          | 372 ++++++++++++++++++++++
-> >  tests/tegra/vic42.c          | 374 ++++++++++++++++++++++
-> >  tests/tegra/vic42.h          | 597 +++++++++++++++++++++++++++++++++++
-> >  34 files changed, 7068 insertions(+), 260 deletions(-)
+> Add support for NVIDIA Tegra general purpose DMA driver for
+> Tegra186 and Tegra194 platform.
 >=20
+> v18 -> v19:
+>   * Use function pointer to call pause/stop_client() in terminate_all()
+>   * Remove unused arg in program_sid()
 >=20
-> Why do we need these tests in libdrm? Why not IGT?
+> v18 - https://lkml.org/lkml/2022/2/4/379
+>=20
+> Akhil R (4):
+>   dt-bindings: dmaengine: Add doc for tegra gpcdma
+>   dmaengine: tegra: Add tegra gpcdma driver
+>   arm64: defconfig: tegra: Enable GPCDMA
+>   arm64: tegra: Add GPCDMA node for tegra186 and tegra194
+>=20
+>  .../bindings/dma/nvidia,tegra186-gpc-dma.yaml      |  110 ++
+>  arch/arm64/boot/dts/nvidia/tegra186.dtsi           |   42 +
+>  arch/arm64/boot/dts/nvidia/tegra194.dtsi           |   43 +
+>  arch/arm64/configs/defconfig                       |    1 +
+>  drivers/dma/Kconfig                                |   11 +
+>  drivers/dma/Makefile                               |    1 +
+>  drivers/dma/tegra186-gpc-dma.c                     | 1505 ++++++++++++++=
+++++++
+>  7 files changed, 1713 insertions(+)
+>  create mode 100644
+> Documentation/devicetree/bindings/dma/nvidia,tegra186-gpc-dma.yaml
+>  create mode 100644 drivers/dma/tegra186-gpc-dma.c
 
-Oops, sorry. I had meant to reply to your question in the previous
-version. The idea was to have this minimal set of tests in libdrm as a
-way to demonstrate how to use the various APIs. At the same time, this
-is meant to serve as an easy way to validate that everything works from
-the comparatively simple libdrm package.
+Please help to apply the patchset if there are no further concerns or sugge=
+stions.
 
-But yes, adding more tests on top of this to IGT is something that I've
-been pondering and I certainly wouldn't object if anyone else was going
-to attempt to do so. I don't think IGT and libdrm need to be mutually
-exclusive, though.
+Thanks,
+Akhil
 
-Thierry
-
---Wh3BVJzbBMulczrm
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmIOwDQACgkQ3SOs138+
-s6Fl5A/+PXZCaNobNnhmYfw5bctJSqyvzggoj9MaW3Jn9VE85IFwOimWKjRlbWlm
-OLf5xyFtWmPAOJY521k/db7CD5wvlUHH7zF13XsZAgeL9jDxEJZXWYr6BfIX06JQ
-ztTGWZZh2EC3tIhgf0bFMHvyogn32Hs3sWwsFeGaNVNcSWwPiDD80BTOLkPPL4Jj
-OejvUUVd0moSbghddx3KoP1OTpXynI2r3QXU6WgCkUarjtP3Mr/gwtsm0sOAM/LJ
-QtlxdqomgOv4JJSg9NSBp7UbztRG+2QvOMDNFuDPx4b+FQogrYMSa42OqOcxczjr
-dBV5102Z2d7zLMPWEgBBFZdFIUVnPL2ac4TuWPRGwL6h1CbMW5coSi4ZgciADKqJ
-Vn5XwZ5PB8PFqwYOi7J4dAMlJo78njHOk71hdY/g5PRjRk5R/KlDt3be8z6dh/3g
-YnjaDdwd45kuQSBXJux+UlWzjjwDAE4EdwJZUv2oQAHtODsHQyRy6sTdVrlKNIUB
-FHXAUW/ItLQVInywIEVISnYbIk6Se+Ay48hVJJ0THoZE9e4PVD9zHEp2zEblG0+m
-YFOhqZdIxIwAZjyou74WcydfdRN5quYvdJvF54M1SuBLyWx2CtXNc8zmticJvCZk
-+07G84jHLEp/lgpXkFXGiLsFVxznude00zbi7PLtO5OoNRD5rKo=
-=1Msg
------END PGP SIGNATURE-----
-
---Wh3BVJzbBMulczrm--
