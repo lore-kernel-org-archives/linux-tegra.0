@@ -2,395 +2,151 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF57EC433F5
-	for <linux-tegra@archiver.kernel.org>; Fri, 18 Feb 2022 11:44:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8114C433EF
+	for <linux-tegra@archiver.kernel.org>; Fri, 18 Feb 2022 12:18:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234878AbiBRLon (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 18 Feb 2022 06:44:43 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:50636 "EHLO
+        id S233501AbiBRMSY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 18 Feb 2022 07:18:24 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:37264 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234930AbiBRLoZ (ORCPT
+        with ESMTP id S232963AbiBRMSX (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 18 Feb 2022 06:44:25 -0500
-Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26A822182D;
-        Fri, 18 Feb 2022 03:43:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-         s=20161220; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
-        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=A0ES94RB8ss0IE5g/Imh4fw5K6SE/rzur7MuY1WTuvE=; b=vtczx+b9uHmxAJfzit9FlIrEX7
-        wlQ3II06qVnJhbCuexXqp0AO8xMqszCUCFVevcuxouVxSHFdNNNVhXRJC+9CkfMJfK2Wl5hLSGpwP
-        4e+7yI7Nt5WeSCEpo1OIyCMhqdTimmfIdPAlK/ZO8OWLlhveCws+g5+krO9K7EV4tbKYosFtrR27t
-        PHMTaipD5gw8P17EVZQgqxrgPxHmEcRZ9AspZ/f8H6LC0FfzgMm/UTP5GkZPe5KEgcJFjwkgpFofy
-        0kRJBvAX2Laa1qID70nUeAvHxU3IHfrh41PLOSMFeTKxPVkcM1EdETGuL2qnhYNvl/ZzW2BPMXVtx
-        u8ESujqw==;
-Received: from 91-158-25-70.elisa-laajakaista.fi ([91.158.25.70] helo=toshino.localdomain)
-        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <mperttunen@nvidia.com>)
-        id 1nL1fq-0006eP-0w; Fri, 18 Feb 2022 13:43:42 +0200
-From:   Mikko Perttunen <mperttunen@nvidia.com>
-To:     thierry.reding@gmail.com, jonathanh@nvidia.com, joro@8bytes.org,
-        will@kernel.org, robh+dt@kernel.org, robin.murphy@arm.com
-Cc:     linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Mikko Perttunen <mperttunen@nvidia.com>
-Subject: [PATCH v3 3/9] gpu: host1x: Add context device management code
-Date:   Fri, 18 Feb 2022 13:39:46 +0200
-Message-Id: <20220218113952.3077606-4-mperttunen@nvidia.com>
-X-Mailer: git-send-email 2.35.0
-In-Reply-To: <20220218113952.3077606-1-mperttunen@nvidia.com>
-References: <20220218113952.3077606-1-mperttunen@nvidia.com>
+        Fri, 18 Feb 2022 07:18:23 -0500
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2056.outbound.protection.outlook.com [40.107.223.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 226ED294FCC;
+        Fri, 18 Feb 2022 04:18:05 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=k/DIs9ZdmQjc5veV7echyMVS0G3ZDwACgFRdB+W+T4N0HuHvUi/YD1jT2iVgzYzwiMOh3glcW90wGT+1DHmWOUA/hTOkIkqxRbOv338yUK9Av5+qP1ogOJP6AAqeiLjGDIpneMwshpxvqt7NEs3veBttNaBYjzSZQ8eLyUchLa7DVDo1yWIdufAuWE9zi4A2I5x3PXU8LtBha/mPCCBtBWpwvUGtkJhEN/5gxC6OHn920IVeOL/7e8Vc8ROWnokMXqT2rpKct4bSc86CT0mlP1d01X+tofaNQ3EGMW/yhjhsfeW1e7x4btGZU3NrOopK/PB5vaOueElo4KlDq1kfxg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=GjNndLZ7oDcnGiZ6yBpPbJ50crBgvrrghGer3OqGcHk=;
+ b=k2HO+CoXZ7Gl2aW2hH/3ScRUmzTLrOnWWZVKLfksatrdZMCi9eYFZmpNcdDvUd40F4imaDb2h2dIY8DDhJ6PrEskQrdbg2AKuj819qBzLB+SB3BY2Z4UeE6Aegg0C9Ex7F4BklIUH9etb86cFh1RtVma+YsCOm/zeJU26mCCGnk5Yz3FC2kV8QRbU9CGLuFXzBl8FDQ/QosYaWgW6/RBfcYZnj8rAK9dBOUWn3I5dro56Uz/KUZU7Kfkx2DEbKqaaFtxq9o//WyZbr6roSsiFbetzhpcxNrFFmp8iRCZgwa8b/xc3WmZDLnjEZITEW9L3zzeaw7gSSllu0BmWcK16w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=temperror (sender ip
+ is 12.22.5.234) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=temperror action=none header.from=nvidia.com; dkim=none (message not
+ signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=GjNndLZ7oDcnGiZ6yBpPbJ50crBgvrrghGer3OqGcHk=;
+ b=jll7ZC1xWASlO4MWArN1IQqfPRKQBBnpc+Vw2NX8eRaiHXH/kihL8EsXQnVjeoAnr9c27QTzOEkQHzL+pujIVMswqVLIyJSCNI2iRi6XEbgTa8Db0ApLNH6DnXXOI8znyajf4DQdRTaCA73AtL1+INIgPv4Iaz4tjF3xPWDAmV0GG5uE2zI/51Ij9yhvyEyWzcU/oTsElwodpd/eiv5Gsx4kobXbb/WCf5nncxtK46P0P0MAwKnn1DOo5rhJcdRSR+CF3kR/tfTBu1qIeVICuI48U/VJ191cwW4QGbZmtTz1sA9giH1Q6wRlbQH0YQ+gtf6NI+u5+BIsoIr+afzycQ==
+Received: from BN0PR04CA0086.namprd04.prod.outlook.com (2603:10b6:408:ea::31)
+ by PH0PR12MB5629.namprd12.prod.outlook.com (2603:10b6:510:141::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4975.14; Fri, 18 Feb
+ 2022 12:18:03 +0000
+Received: from BN8NAM11FT046.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:408:ea:cafe::96) by BN0PR04CA0086.outlook.office365.com
+ (2603:10b6:408:ea::31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4995.14 via Frontend
+ Transport; Fri, 18 Feb 2022 12:18:03 +0000
+X-MS-Exchange-Authentication-Results: spf=temperror (sender IP is 12.22.5.234)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=temperror action=none header.from=nvidia.com;
+Received-SPF: TempError (protection.outlook.com: error in processing during
+ lookup of nvidia.com: DNS Timeout)
+Received: from mail.nvidia.com (12.22.5.234) by
+ BN8NAM11FT046.mail.protection.outlook.com (10.13.177.127) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.4995.15 via Frontend Transport; Fri, 18 Feb 2022 12:18:01 +0000
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by DRHQMAIL101.nvidia.com
+ (10.27.9.10) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Fri, 18 Feb
+ 2022 12:17:58 +0000
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail204.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.9; Fri, 18 Feb 2022
+ 04:17:57 -0800
+Received: from audio.nvidia.com (10.127.8.10) by mail.nvidia.com (10.129.68.9)
+ with Microsoft SMTP Server id 15.2.986.9 via Frontend Transport; Fri, 18 Feb
+ 2022 04:17:55 -0800
+From:   Sameer Pujar <spujar@nvidia.com>
+To:     <krzysztof.kozlowski@canonical.com>, <thierry.reding@gmail.com>
+CC:     <jonathanh@nvidia.com>, <linux-kernel@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, Sameer Pujar <spujar@nvidia.com>
+Subject: [PATCH] memory: tegra: Add APE memory clients for Tegra234
+Date:   Fri, 18 Feb 2022 17:46:29 +0530
+Message-ID: <1645186589-25118-1-git-send-email-spujar@nvidia.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 91.158.25.70
-X-SA-Exim-Mail-From: mperttunen@nvidia.com
-X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 7d21ef22-4c14-4224-8a0d-08d9f2d8b54e
+X-MS-TrafficTypeDiagnostic: PH0PR12MB5629:EE_
+X-Microsoft-Antispam-PRVS: <PH0PR12MB56290EA36F4781A1C089AF9DA7379@PH0PR12MB5629.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:6108;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: OsjL/ZfmqdA+VAKp69HwEHI5xQqnwb7cvFHI2lMcTTf8g9ZkfNW8neMhlHB67UFpdScskcDdV3XX8uqrNFFIo3s0SrO2NBr6Q/Ouk5jvksTcSi8p4XN4vUY/+uY7A2+falIw40SWvFX91Ij6U/gv7yD0siFAt4exabFC3GDRSu9Jk5Rr5BUMLEL5xP/U7FcFCuuKzCI4B0VXibIiafB7iR5ePL9O9pspTTCUvsGoCSYfrYq992vmoEvEJGrvSkfuP9O6+8pvUbKMX4/cm4yfLnyOrsimu73fP0e7JQQX40f1XAkMhxnZl16ruGFR5vHZsl5xyO5rQB6uly25N7PbuGQQDhNhlMyWm2COZLdjKc1sSsuhFxy3B2WdfT3PU3wuvKTNHuHx52iwBfSEHj3xNA+vqi6BavCWkXzHl4aQksCLx7PbLLp1txrv4EXH2dJ614OLpeghQ3mfvN1oWK1n+GvH8pdrVXSbHgoCK/wfDXg1OjMukFK1ouKzXJCZ5aPgrKmATeSiQ3Zypzqk0wrl/zNRIWoGzH/BihLRru+X9Jt2FA6G8eQG9Jam47eFKvgfN+pYLaFvn8r90TyBmu0sWGymselpVz0sBBbLIOkC/NZNpPLPshIUh+IepZYyEcitQDzqxD0Bk9K76VWBajJ6wu+KJV6ihUN7rdZct+ryks6oj+8r+N8iwucL5z0Iezu7A19gTW/9GWoUKEKyrZRSuy+TQVM1BX3HvCbd/Lbgtbedc4AdNZM9vJ+ao42yT/JQgi5yWOh1GLGYaKCiXxi9iIVgnPNhVPXxA1jY1xfkl7g=
+X-Forefront-Antispam-Report: CIP:12.22.5.234;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230001)(4636009)(46966006)(40470700004)(36840700001)(40460700003)(63350400001)(47076005)(83380400001)(107886003)(5660300002)(86362001)(966005)(508600001)(6666004)(63370400001)(36756003)(36860700001)(2906002)(4326008)(336012)(426003)(356005)(186003)(70206006)(8676002)(81166007)(316002)(70586007)(54906003)(110136005)(26005)(2616005)(7696005)(82310400004)(8936002)(36900700001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Feb 2022 12:18:01.6441
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7d21ef22-4c14-4224-8a0d-08d9f2d8b54e
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.234];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT046.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB5629
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Add code to register context devices from device tree, allocate them
-out and manage their refcounts.
+Add the memory clients on Tegra234 which are needed for APE
+DMA to properly use the SMMU.
 
-Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+Signed-off-by: Sameer Pujar <spujar@nvidia.com>
 ---
-v2:
-* Directly set DMA mask instead of inheriting from Host1x.
-* Use iommu-map instead of custom DT property.
----
- drivers/gpu/host1x/Makefile  |   1 +
- drivers/gpu/host1x/context.c | 174 +++++++++++++++++++++++++++++++++++
- drivers/gpu/host1x/context.h |  27 ++++++
- drivers/gpu/host1x/dev.c     |  12 ++-
- drivers/gpu/host1x/dev.h     |   2 +
- include/linux/host1x.h       |  17 ++++
- 6 files changed, 232 insertions(+), 1 deletion(-)
- create mode 100644 drivers/gpu/host1x/context.c
- create mode 100644 drivers/gpu/host1x/context.h
+ Please note that this patch depends on the DT binding patches of series
+ https://patchwork.kernel.org/project/alsa-devel/list/?series=609494&state=*.
+ So please consider this patch once Thierry picks up DT binding patches and
+ provides ACK on this.
 
-diff --git a/drivers/gpu/host1x/Makefile b/drivers/gpu/host1x/Makefile
-index c891a3e33844..8a65e13d113a 100644
---- a/drivers/gpu/host1x/Makefile
-+++ b/drivers/gpu/host1x/Makefile
-@@ -10,6 +10,7 @@ host1x-y = \
- 	debug.o \
- 	mipi.o \
- 	fence.o \
-+	context.o \
- 	hw/host1x01.o \
- 	hw/host1x02.o \
- 	hw/host1x04.o \
-diff --git a/drivers/gpu/host1x/context.c b/drivers/gpu/host1x/context.c
-new file mode 100644
-index 000000000000..987c08a1e2f2
---- /dev/null
-+++ b/drivers/gpu/host1x/context.c
-@@ -0,0 +1,174 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (c) 2021, NVIDIA Corporation.
-+ */
-+
-+#include <linux/device.h>
-+#include <linux/kref.h>
-+#include <linux/of.h>
-+#include <linux/of_platform.h>
-+#include <linux/pid.h>
-+#include <linux/slab.h>
-+
-+#include "context.h"
-+#include "dev.h"
-+
-+/*
-+ * Due to an issue with T194 NVENC, only 38 bits can be used.
-+ * Anyway, 256GiB of IOVA ought to be enough for anyone.
-+ */
-+static dma_addr_t context_device_dma_mask = DMA_BIT_MASK(38);
-+
-+int host1x_context_list_init(struct host1x *host1x)
-+{
-+	struct host1x_context_list *cdl = &host1x->context_list;
-+	struct host1x_context *ctx;
-+	struct device_node *node;
-+	int index;
-+	int err;
-+
-+	node = of_get_child_by_name(host1x->dev->of_node, "memory-contexts");
-+	if (!node)
-+		return 0;
-+
-+	cdl->devs = NULL;
-+	cdl->len = 0;
-+	mutex_init(&cdl->lock);
-+
-+	err = of_property_count_u32_elems(node, "iommu-map");
-+	if (err < 0) {
-+		err = 0;
-+		goto put_node;
-+	}
-+
-+	cdl->devs = kcalloc(err, sizeof(*cdl->devs), GFP_KERNEL);
-+	if (!cdl->devs) {
-+		err = -ENOMEM;
-+		goto put_node;
-+	}
-+	cdl->len = err / 4;
-+
-+	for (index = 0; index < cdl->len; index++) {
-+		struct iommu_fwspec *fwspec;
-+
-+		ctx = &cdl->devs[index];
-+
-+		ctx->host = host1x;
-+
-+		device_initialize(&ctx->dev);
-+
-+		ctx->dev.dma_mask = &context_device_dma_mask;
-+		ctx->dev.coherent_dma_mask = context_device_dma_mask;
-+		dev_set_name(&ctx->dev, "host1x-ctx.%d", index);
-+		ctx->dev.bus = &host1x_context_device_bus_type;
-+		ctx->dev.parent = host1x->dev;
-+
-+		dma_set_max_seg_size(&ctx->dev, UINT_MAX);
-+
-+		err = device_add(&ctx->dev);
-+		if (err) {
-+			dev_err(host1x->dev, "could not add context device %d: %d\n", index, err);
-+			goto del_devices;
-+		}
-+
-+		err = of_dma_configure_id(&ctx->dev, node, true, &index);
-+		if (err) {
-+			dev_err(host1x->dev, "IOMMU configuration failed for context device %d: %d\n",
-+				index, err);
-+			device_del(&ctx->dev);
-+			goto del_devices;
-+		}
-+
-+		fwspec = dev_iommu_fwspec_get(&ctx->dev);
-+		if (!fwspec) {
-+			dev_err(host1x->dev, "Context device %d has no IOMMU!\n", index);
-+			device_del(&ctx->dev);
-+			goto del_devices;
-+		}
-+
-+		ctx->stream_id = fwspec->ids[0] & 0xffff;
-+	}
-+
-+	of_node_put(node);
-+
-+	return 0;
-+
-+del_devices:
-+	while (--index >= 0)
-+		device_del(&cdl->devs[index].dev);
-+
-+	kfree(cdl->devs);
-+	cdl->len = 0;
-+
-+put_node:
-+	of_node_put(node);
-+
-+	return err;
-+}
-+
-+void host1x_context_list_free(struct host1x_context_list *cdl)
-+{
-+	int i;
-+
-+	for (i = 0; i < cdl->len; i++)
-+		device_del(&cdl->devs[i].dev);
-+
-+	kfree(cdl->devs);
-+	cdl->len = 0;
-+}
-+
-+struct host1x_context *host1x_context_alloc(struct host1x *host1x,
-+					    struct pid *pid)
-+{
-+	struct host1x_context_list *cdl = &host1x->context_list;
-+	struct host1x_context *free = NULL;
-+	int i;
-+
-+	if (!cdl->len)
-+		return ERR_PTR(-EOPNOTSUPP);
-+
-+	mutex_lock(&cdl->lock);
-+
-+	for (i = 0; i < cdl->len; i++) {
-+		struct host1x_context *cd = &cdl->devs[i];
-+
-+		if (cd->owner == pid) {
-+			refcount_inc(&cd->ref);
-+			mutex_unlock(&cdl->lock);
-+			return cd;
-+		} else if (!cd->owner && !free) {
-+			free = cd;
-+		}
-+	}
-+
-+	if (!free) {
-+		mutex_unlock(&cdl->lock);
-+		return ERR_PTR(-EBUSY);
-+	}
-+
-+	refcount_set(&free->ref, 1);
-+	free->owner = get_pid(pid);
-+
-+	mutex_unlock(&cdl->lock);
-+
-+	return free;
-+}
-+EXPORT_SYMBOL(host1x_context_alloc);
-+
-+void host1x_context_get(struct host1x_context *cd)
-+{
-+	refcount_inc(&cd->ref);
-+}
-+EXPORT_SYMBOL(host1x_context_get);
-+
-+void host1x_context_put(struct host1x_context *cd)
-+{
-+	struct host1x_context_list *cdl = &cd->host->context_list;
-+
-+	if (refcount_dec_and_mutex_lock(&cd->ref, &cdl->lock)) {
-+		put_pid(cd->owner);
-+		cd->owner = NULL;
-+		mutex_unlock(&cdl->lock);
-+	}
-+}
-+EXPORT_SYMBOL(host1x_context_put);
-diff --git a/drivers/gpu/host1x/context.h b/drivers/gpu/host1x/context.h
-new file mode 100644
-index 000000000000..268ecdf6b1bb
---- /dev/null
-+++ b/drivers/gpu/host1x/context.h
-@@ -0,0 +1,27 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Host1x context devices
-+ *
-+ * Copyright (c) 2020, NVIDIA Corporation.
-+ */
-+
-+#ifndef __HOST1X_CONTEXT_H
-+#define __HOST1X_CONTEXT_H
-+
-+#include <linux/mutex.h>
-+#include <linux/refcount.h>
-+
-+struct host1x;
-+
-+extern struct bus_type host1x_context_device_bus_type;
-+
-+struct host1x_context_list {
-+	struct mutex lock;
-+	struct host1x_context *devs;
-+	unsigned int len;
-+};
-+
-+int host1x_context_list_init(struct host1x *host1x);
-+void host1x_context_list_free(struct host1x_context_list *cdl);
-+
-+#endif
-diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
-index 6994f8c0e02e..40f64efd5865 100644
---- a/drivers/gpu/host1x/dev.c
-+++ b/drivers/gpu/host1x/dev.c
-@@ -28,6 +28,7 @@
+ drivers/memory/tegra/tegra234.c | 22 +++++++++++++++++++++-
+ 1 file changed, 21 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/memory/tegra/tegra234.c b/drivers/memory/tegra/tegra234.c
+index f7b24ba..1d19cb9 100644
+--- a/drivers/memory/tegra/tegra234.c
++++ b/drivers/memory/tegra/tegra234.c
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0-only
+ /*
+- * Copyright (C) 2021 NVIDIA CORPORATION.  All rights reserved.
++ * Copyright (C) 2021-2022, NVIDIA CORPORATION.  All rights reserved.
+  */
  
- #include "bus.h"
- #include "channel.h"
-+#include "context.h"
- #include "debug.h"
- #include "dev.h"
- #include "intr.h"
-@@ -502,10 +503,16 @@ static int host1x_probe(struct platform_device *pdev)
- 		goto iommu_exit;
- 	}
+ #include <soc/tegra/mc.h>
+@@ -170,6 +170,26 @@ static const struct tegra_mc_client tegra234_mc_clients[] = {
+ 				.security = 0x4b4,
+ 			},
+ 		},
++	}, {
++		.id = TEGRA234_MEMORY_CLIENT_APEDMAR,
++		.name = "apedmar",
++		.sid = TEGRA234_SID_APE,
++		.regs = {
++			.sid = {
++				.override = 0x4f8,
++				.security = 0x4fc,
++			},
++		},
++	}, {
++		.id = TEGRA234_MEMORY_CLIENT_APEDMAW,
++		.name = "apedmaw",
++		.sid = TEGRA234_SID_APE,
++		.regs = {
++			.sid = {
++				.override = 0x500,
++				.security = 0x504,
++			},
++		},
+ 	},
+ };
  
-+	err = host1x_context_list_init(host);
-+	if (err) {
-+		dev_err(&pdev->dev, "failed to initialize context list\n");
-+		goto free_channels;
-+	}
-+
- 	err = host1x_syncpt_init(host);
- 	if (err) {
- 		dev_err(&pdev->dev, "failed to initialize syncpts\n");
--		goto free_channels;
-+		goto free_contexts;
- 	}
- 
- 	err = host1x_intr_init(host, syncpt_irq);
-@@ -549,6 +556,8 @@ static int host1x_probe(struct platform_device *pdev)
- 	host1x_intr_deinit(host);
- deinit_syncpt:
- 	host1x_syncpt_deinit(host);
-+free_contexts:
-+	host1x_context_list_free(&host->context_list);
- free_channels:
- 	host1x_channel_list_free(&host->channel_list);
- iommu_exit:
-@@ -568,6 +577,7 @@ static int host1x_remove(struct platform_device *pdev)
- 
- 	host1x_intr_deinit(host);
- 	host1x_syncpt_deinit(host);
-+	host1x_context_list_free(&host->context_list);
- 	host1x_iommu_exit(host);
- 	host1x_bo_cache_destroy(&host->cache);
- 
-diff --git a/drivers/gpu/host1x/dev.h b/drivers/gpu/host1x/dev.h
-index ca4b082f0cd4..92f4804d8b70 100644
---- a/drivers/gpu/host1x/dev.h
-+++ b/drivers/gpu/host1x/dev.h
-@@ -14,6 +14,7 @@
- 
- #include "cdma.h"
- #include "channel.h"
-+#include "context.h"
- #include "intr.h"
- #include "job.h"
- #include "syncpt.h"
-@@ -141,6 +142,7 @@ struct host1x {
- 	struct mutex syncpt_mutex;
- 
- 	struct host1x_channel_list channel_list;
-+	struct host1x_context_list context_list;
- 
- 	struct dentry *debugfs;
- 
-diff --git a/include/linux/host1x.h b/include/linux/host1x.h
-index e8dc5bc41f79..9d9f1711472b 100644
---- a/include/linux/host1x.h
-+++ b/include/linux/host1x.h
-@@ -440,4 +440,21 @@ int tegra_mipi_disable(struct tegra_mipi_device *device);
- int tegra_mipi_start_calibration(struct tegra_mipi_device *device);
- int tegra_mipi_finish_calibration(struct tegra_mipi_device *device);
- 
-+/* host1x context devices */
-+
-+struct host1x_context {
-+	struct host1x *host;
-+
-+	refcount_t ref;
-+	struct pid *owner;
-+
-+	struct device dev;
-+	u32 stream_id;
-+};
-+
-+struct host1x_context *host1x_context_alloc(struct host1x *host1x,
-+					    struct pid *pid);
-+void host1x_context_get(struct host1x_context *cd);
-+void host1x_context_put(struct host1x_context *cd);
-+
- #endif
 -- 
-2.35.0
+2.7.4
 
