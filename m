@@ -2,157 +2,787 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A73BBC433F5
-	for <linux-tegra@archiver.kernel.org>; Fri, 18 Feb 2022 05:02:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8940FC433F5
+	for <linux-tegra@archiver.kernel.org>; Fri, 18 Feb 2022 09:29:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230155AbiBRFCq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 18 Feb 2022 00:02:46 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:50024 "EHLO
+        id S233358AbiBRJ37 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 18 Feb 2022 04:29:59 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:60612 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230243AbiBRFCe (ORCPT
+        with ESMTP id S233129AbiBRJ36 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 18 Feb 2022 00:02:34 -0500
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam08on2053.outbound.protection.outlook.com [40.107.102.53])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96F49266A;
-        Thu, 17 Feb 2022 21:01:54 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Z/oAaqW3bUh07dcTlDNcN/+y42UJ7PaxdakNAPAn4AQxX3tgmu5G8CAVLj+j2aLTGsE7mSM0p6LWXf4Sx84+DBN2g7nCiyVIOZNauvWk/voVYCZj2z8Ue5OPdYohOecoCgHAoNattvVAwxEIvP+jufw/Ssqq8tEkX/B/frnbIIe2CFR6Q0R/AxGdVRelr6+20uoKpQMBG0YY9ujXJOcLFSLhJhRKQUxSlOSx7xvsg6P+ZneyNQod5qiSpeEi1PfhUtEEx2X4HAacE7cAD9tzSmFaxBz6Yg5E79lGUBsYzFLnfASU1kbicsJqLmsH3Z3+2BXFNtgBn3xkIwVtfBdAzg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8kpeKIqyxftSZHTlx1V/g8hGZu6mZYTo3Iy9q0o/bUI=;
- b=csnMBMxuyaSok0p6Vq0wpaOCn2bihYY2CBtfs7Vy6fHmwdZNvZp36rxZ0MDtwW1T8gYshGH6TwCaRvGLPdWeihiV0DJrTSp5svpfX41ilcG5W8ibhAm+xCT3c/tGJnl+Wg8yx051I+0KeQUnu6qnErwa5pXmomF2xAQA4ieAggVmONIbyjg3fPfdGbLops2ZGorZy4sYKssU4i6qraqqLb5Q15Ubt5SFLrWIm//Lnpyei2l7Jj8O1/EJa+v5C9aOMFA0SIA7AB9uNT11qcuYSKfT1fP1RumZhBMZMYUjTCD5emrgkwynJxTAFJx5HZvA+xW0gIJOMgm5Rb2TEp4jNw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8kpeKIqyxftSZHTlx1V/g8hGZu6mZYTo3Iy9q0o/bUI=;
- b=FUTzfqkslMJ4GYUeRjqp/BgXx1pZdBRRtr4ABzk3pvw8eV/2CA07JUeKNFH/LhjPHJgib9D3GCQcAQpxiABmjiSUq2ABdpZ/U45POlj9Nxrbyxe2r+5hzugTvxvGCu49CBJKHOmI8ET5Li7+l2S0FQ+fkZD/LE4jPSfk9OMTbWdJxozeLcRQ/SLnA/Rw2hEziAKBb5i9P+qGGg41i31PuDqt4LKQVKXLDZKUMPYJNccHRPfPp5ux3HFX/Ox+OSponBRRqka+9iuPr4rd7PupSakahpd4sB8jUfNP7dNBwGbV75XFXg7aGS3ChiImVcnwFO6ldCyKm8rFHviq5tyMbw==
-Received: from DM5PR12MB1850.namprd12.prod.outlook.com (2603:10b6:3:108::23)
- by BYAPR12MB3333.namprd12.prod.outlook.com (2603:10b6:a03:a9::30) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4995.22; Fri, 18 Feb
- 2022 05:01:52 +0000
-Received: from DM5PR12MB1850.namprd12.prod.outlook.com
- ([fe80::94d8:5850:e33d:b133]) by DM5PR12MB1850.namprd12.prod.outlook.com
- ([fe80::94d8:5850:e33d:b133%4]) with mapi id 15.20.4995.017; Fri, 18 Feb 2022
- 05:01:52 +0000
-From:   Akhil R <akhilrajeev@nvidia.com>
-To:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Krishna Yarlagadda <kyarlagadda@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
-        Rajesh Gumasta <rgumasta@nvidia.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        "vkoul@kernel.org" <vkoul@kernel.org>
-Subject: RE: [PATCH v19 0/4] Add NVIDIA Tegra GPC-DMA driver
-Thread-Topic: [PATCH v19 0/4] Add NVIDIA Tegra GPC-DMA driver
-Thread-Index: AQHYHDOhosviul8qH0O0gfnObfQ556yYz4vg
-Date:   Fri, 18 Feb 2022 05:01:51 +0000
-Message-ID: <DM5PR12MB1850AEFF5FA511525E25905EC0379@DM5PR12MB1850.namprd12.prod.outlook.com>
-References: <1644246094-29423-1-git-send-email-akhilrajeev@nvidia.com>
-In-Reply-To: <1644246094-29423-1-git-send-email-akhilrajeev@nvidia.com>
-Accept-Language: en-IN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: e0b09852-b58a-4e6b-a375-08d9f29bc6f5
-x-ms-traffictypediagnostic: BYAPR12MB3333:EE_
-x-microsoft-antispam-prvs: <BYAPR12MB333354FC08F30072A5A72CC2C0379@BYAPR12MB3333.namprd12.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:7219;
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: PEIyqNT+lAskp7DAZuA8gmSg8aaWWi+HvV9sc8SixfwoYQj2BiWkT4UIIxjHxucmK6ida8Kp7i0nig9AuObhlWAjZP8aGCzwxS71a4D36AvMLEHMzS9163yjXJuknFCU5wnrD3POMl52vg+vjzRzGfqezaZifw3nT+ixOcTCx0NbcF2GkyhUCLCbLaCFZDzTbJTWIWBW+/py8Kmasq2BSTI7QP9/CIwdhTUKqALOpw4NLUIT48Z+MHXawreJ2sUE8FDWpuzgdfIOaXSWIjHBxzGWJkVoMHe1qGuxFDqXH+P8n0gnKQZHmKJz7dyWKXoti/c/DWf72KzhDyLwPpLoB1UT3VeRCcOnhaczC/o6/HSyQB8x/boC5hYouL0pqWaFWqd3Z0UUG51qnMDAokHc+3chqZH6wnP9bWhf4K7xdunsm1wMQQ4ETnzhyDTMLOXhWb0KKcru3VaHWpWN0VaNZf9UJj3jKzNUXoFaM2O2JcHmbA3t6N0TTwqKHiWW9E0lNv5H/jXP0OSDpkKrWXZs6JbwU7a0ebqYU0VYTjiA/kpxZ2zCT5AyB2kmONqLNdckOUA0gmMY2kveYnRZspo1KQWMXYJLJpY6bgmDBdBeOVJL9pwgPii0F+g06TQNvhNFHaJhAuB31XoYu9CqECz3F5qKcdrLn/Y3037lXaikL3CtNUexPZB0CkSLa1cGMLcm2n+FX/py2ObviBAUpuj67mYnmwAiBxo6awTw1hzaM80Uu0yLWpbq1s/r3STtnjk+QndP8jE5dANiiAqsA6sf7r8ZT5zDR7SpTt+8ZPlPJqo=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM5PR12MB1850.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(76116006)(508600001)(86362001)(8676002)(64756008)(66446008)(66476007)(66556008)(966005)(71200400001)(316002)(110136005)(55016003)(66946007)(9686003)(7696005)(6506007)(2906002)(33656002)(8936002)(52536014)(38100700002)(122000001)(921005)(5660300002)(55236004)(186003)(26005)(38070700005);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?twDD1S+hiTL3qzNXxs/sVIu324ObKnrQLjEp4B3d3B8Cvp6h0lcrSnLVqoc8?=
- =?us-ascii?Q?/g/oR1BaeNaBNcGbTwvtrRpGEdFbPoIVvarEeGZwKHeD9oNzVvtM00i4U9V8?=
- =?us-ascii?Q?TJbo4xIE6r5GJQGdP+z7cdQmNnlJsUqeY+DCsTtk+r2Th2WzE32aCDul9/kJ?=
- =?us-ascii?Q?ErIWSOVfTcoW/1qOU/H85s3S92Dxx2hTPhTjrbR7UAQsC63nOs3W2n2uB1yj?=
- =?us-ascii?Q?2dM0KpK0VrIJ20w3fKD9A7VUUxlzTOH3hqEQw2JKC8ODu9KNy8uspzoCndjI?=
- =?us-ascii?Q?4eNjUO8kRR2b9TfVPPzpHqY3C6Cic6E5ltFukZkStBPY4fMl4WaI2EiZuKYX?=
- =?us-ascii?Q?1kgpBRZQKNavO5LVBAfiQhkdqSpHF7g4y4fnH3q47nr0KDL8QYFOLKaf7SdF?=
- =?us-ascii?Q?cLgzYfNBhjBp6DWkCK4nxELyoEW/CmosQKUuQz0x8rHwCsqB+qE0ham7EjWX?=
- =?us-ascii?Q?IMNaGaUdvReTw0ee/38qbudKc+GfNNDbBvLPEGy123NwnsE+2b1zHMPqYLkm?=
- =?us-ascii?Q?pI8sgoUMe/mM6RWGmUU8m/fFECCMJATbmZukPPex5VxlzamQ94NcaILz6Yy/?=
- =?us-ascii?Q?ykQt6xf6yBpBmpyauCSy7R+JBTVHtC7TLNAO+wq28WRpLotuFgfiBxNgEdNf?=
- =?us-ascii?Q?XzfL+mCNVNEhbu4lBUzK5t44htmtZg18BQnGh5O94WvaEMwUJeR1uw0beSQn?=
- =?us-ascii?Q?CjN4AONnCVrVIo5iZz4YBm+HBzhARtS7grVEPMhn+kvf0Vib+MaLI39jBr2g?=
- =?us-ascii?Q?JzGnzJ8GSJluUb4iYXcRKRkWeDGeoFImaDJiOdThJvmWrNqw/PK6qcjiicvG?=
- =?us-ascii?Q?C5EF4gqjN/iQq8rTXUxwmeQlH6YAMJwpxV54GpXC+h5DT0VL+DomVa6SPeJJ?=
- =?us-ascii?Q?FImwGE93TkdgPFCX+7l276Vx/iBHUBxuC2MUbyc94cdJLqiund78PTi0LD4M?=
- =?us-ascii?Q?+eHNRcdpkqAAbqcV99Lu9h/y0dQJ8o5niICMb9RDdx7TY6+oUEz7VKDnstlk?=
- =?us-ascii?Q?hJB7diaDJqFfHKkj7cEAf5dTOQi+WU1kgJW5HsuC/mXSK0KMY3VI5+5mqeRL?=
- =?us-ascii?Q?nFh/Aon2RwfJdhELQC44L30L2Iln4btDEo7/Dh/BEv3/WIWUZKdj05fpkYbb?=
- =?us-ascii?Q?mLYroE6wl3yBwmcxIWcEwbOmXeckiKOwHnWIsEZlGlQeNKtkpvfzV4LhtvjW?=
- =?us-ascii?Q?ORL3kGTK+GcG7zS4DSxdev0Wr78ys5GDA10njowQN+960iaAW/+4gq0p1j5f?=
- =?us-ascii?Q?Lbzw10SxhSTnDTzdhidbHPliz58WkcSgbkSIxKLmt4g6JKCKcJ+yqBPvonK2?=
- =?us-ascii?Q?LY2b6QM7imOTCMR6GxPwgw+ykGzO3oT+G8MEAQBH8S8Y/qQT4SfL0YyrenFp?=
- =?us-ascii?Q?kW5sxxWyTcQwfCub1zuozpudmjmYWKLLcl4lR3tfaeYXoCaLkEPMZyGYGcJT?=
- =?us-ascii?Q?BCyGl+tg4QM/4C2wXI+KKT/AcDPuBFndAPvE7mJGxXf1H+kYaVczWsKX7olP?=
- =?us-ascii?Q?/0Dp+uCIoZExNMI3DQSaMH7290LNfqQo1C81bmHLrVtBmxRWwbE773U10ABe?=
- =?us-ascii?Q?deWwGHE+eugNSw9qGaLODktVV15AsOP3kBh/6QQorxlwx74b8kr3iYIEmdmL?=
- =?us-ascii?Q?5Q=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Fri, 18 Feb 2022 04:29:58 -0500
+Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF3DB1E8BD5
+        for <linux-tegra@vger.kernel.org>; Fri, 18 Feb 2022 01:29:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
+         s=20161220; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+        References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=BJjb6Lr/KdszzvUS5md5uC8G+IsraxEJYpwwN+0mmjc=; b=xTdHSp2soBhXoniyX3DVxXJY5R
+        APWq0a92BYoWkEBreKcA6lWPqPthtWkBXliIn3DzdOzSP9UDO/FvQxW0EBRnfdiYMUytIgTHl2EPP
+        CmBWNEaz99jPYbizo1awj+nYjTpLhcbPJ+Pg2Ba1EQC6QFuMQnjFJmi/hN84rXLf+bvmTYX8lAOhR
+        ZuXJCouLbKZL9nfu8+1l2LPENtx37Z6/hPbuZZfb7uGM8ho+AkzxOHM3pTrOK6sJb/NlkKVnM5YRs
+        8qpWDKX8jbJBbObFoUHi2paO8ibJV7jWoMD6m8b/BKyyr5ZNSX41BnKggbmVOM7NE1Qi0WYwgLFEn
+        8lpCqUNg==;
+Received: from 91-158-25-70.elisa-laajakaista.fi ([91.158.25.70] helo=[192.168.1.10])
+        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <cyndis@kapsi.fi>)
+        id 1nKza2-0003jo-La; Fri, 18 Feb 2022 11:29:34 +0200
+Message-ID: <aecb46db-20c6-61d4-ffde-798b42842a7d@kapsi.fi>
+Date:   Fri, 18 Feb 2022 11:29:34 +0200
 MIME-Version: 1.0
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DM5PR12MB1850.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e0b09852-b58a-4e6b-a375-08d9f29bc6f5
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Feb 2022 05:01:52.0069
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: YUWscUgtrXBqY2I/Tz4P2HtKmZqs+LIzZUqAilj8mtfJDrILGPm/nhMEj4a2pkybSucjmqskD4izU2xnFQ+MhA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR12MB3333
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.4.1
+Subject: Re: [PATCH libdrm v2 20/25] tests: tegra: Add VIC 4.0 support
+Content-Language: en-US
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
+References: <20220217191931.2534836-1-thierry.reding@gmail.com>
+ <20220217191931.2534836-15-thierry.reding@gmail.com>
+From:   Mikko Perttunen <cyndis@kapsi.fi>
+In-Reply-To: <20220217191931.2534836-15-thierry.reding@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 91.158.25.70
+X-SA-Exim-Mail-From: cyndis@kapsi.fi
+X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-> Add support for NVIDIA Tegra general purpose DMA driver for
-> Tegra186 and Tegra194 platform.
->=20
-> v18 -> v19:
->   * Use function pointer to call pause/stop_client() in terminate_all()
->   * Remove unused arg in program_sid()
->=20
-> v18 - https://lkml.org/lkml/2022/2/4/379
->=20
-> Akhil R (4):
->   dt-bindings: dmaengine: Add doc for tegra gpcdma
->   dmaengine: tegra: Add tegra gpcdma driver
->   arm64: defconfig: tegra: Enable GPCDMA
->   arm64: tegra: Add GPCDMA node for tegra186 and tegra194
->=20
->  .../bindings/dma/nvidia,tegra186-gpc-dma.yaml      |  110 ++
->  arch/arm64/boot/dts/nvidia/tegra186.dtsi           |   42 +
->  arch/arm64/boot/dts/nvidia/tegra194.dtsi           |   43 +
->  arch/arm64/configs/defconfig                       |    1 +
->  drivers/dma/Kconfig                                |   11 +
->  drivers/dma/Makefile                               |    1 +
->  drivers/dma/tegra186-gpc-dma.c                     | 1505 ++++++++++++++=
-++++++
->  7 files changed, 1713 insertions(+)
->  create mode 100644
-> Documentation/devicetree/bindings/dma/nvidia,tegra186-gpc-dma.yaml
->  create mode 100644 drivers/dma/tegra186-gpc-dma.c
+On 2/17/22 21:19, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
+> 
+> The Video Image Composer (VIC) 4.0 can be found on NVIDIA Tegra210 SoCs.
+> It uses a different class (B0B6) that is slightly incompatible with the
+> class found on earlier generations.
+> 
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
+>   tests/tegra/meson.build |   2 +
+>   tests/tegra/vic.c       |   7 +
+>   tests/tegra/vic40.c     | 370 ++++++++++++++++++++++++++++++++++++++++
+>   tests/tegra/vic40.h     | 285 +++++++++++++++++++++++++++++++
+>   4 files changed, 664 insertions(+)
+>   create mode 100644 tests/tegra/vic40.c
+>   create mode 100644 tests/tegra/vic40.h
+> 
+> diff --git a/tests/tegra/meson.build b/tests/tegra/meson.build
+> index 1ee29d0afe1b..e9c2bc875a01 100644
+> --- a/tests/tegra/meson.build
+> +++ b/tests/tegra/meson.build
+> @@ -36,6 +36,8 @@ libdrm_test_tegra = static_library(
+>       'vic.h',
+>       'vic30.c',
+>       'vic30.h',
+> +    'vic40.c',
+> +    'vic40.h',
+>     ), config_file ],
+>     include_directories : [inc_root, inc_drm, inc_tegra],
+>     link_with : libdrm,
+> diff --git a/tests/tegra/vic.c b/tests/tegra/vic.c
+> index f24961ac5c6d..e0a97c059eca 100644
+> --- a/tests/tegra/vic.c
+> +++ b/tests/tegra/vic.c
+> @@ -134,6 +134,10 @@ void vic_image_dump(struct vic_image *image, FILE *fp)
+>   int vic30_new(struct drm_tegra *drm, struct drm_tegra_channel *channel,
+>                 struct vic **vicp);
+>   
+> +/* from vic40.c */
+> +int vic40_new(struct drm_tegra *drm, struct drm_tegra_channel *channel,
+> +              struct vic **vicp);
+> +
+>   int vic_new(struct drm_tegra *drm, struct drm_tegra_channel *channel,
+>               struct vic **vicp)
+>   {
+> @@ -144,6 +148,9 @@ int vic_new(struct drm_tegra *drm, struct drm_tegra_channel *channel,
+>       switch (version) {
+>       case 0x40:
+>           return vic30_new(drm, channel, vicp);
+> +
+> +    case 0x21:
+> +        return vic40_new(drm, channel, vicp);
+>       }
+>   
+>       return -ENOTSUP;
+> diff --git a/tests/tegra/vic40.c b/tests/tegra/vic40.c
+> new file mode 100644
+> index 000000000000..1a5d2af6b0b6
+> --- /dev/null
+> +++ b/tests/tegra/vic40.c
+> @@ -0,0 +1,370 @@
+> +/*
+> + * Copyright © 2018 NVIDIA Corporation
+> + *
+> + * Permission is hereby granted, free of charge, to any person obtaining a
+> + * copy of this software and associated documentation files (the "Software"),
+> + * to deal in the Software without restriction, including without limitation
+> + * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+> + * and/or sell copies of the Software, and to permit persons to whom the
+> + * Software is furnished to do so, subject to the following conditions:
+> + *
+> + * The above copyright notice and this permission notice shall be included in
+> + * all copies or substantial portions of the Software.
+> + *
+> + * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+> + * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+> + * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+> + * THE COPYRIGHT HOLDER(S) OR AUTHOR(S) BE LIABLE FOR ANY CLAIM, DAMAGES OR
+> + * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+> + * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+> + * OTHER DEALINGS IN THE SOFTWARE.
+> + */
+> +
+> +#include <errno.h>
+> +#include <string.h>
+> +
+> +#include "private.h"
+> +#include "tegra.h"
+> +#include "vic.h"
+> +#include "vic40.h"
+> +
+> +struct vic40 {
+> +    struct vic base;
+> +
+> +    struct {
+> +        struct drm_tegra_mapping *map;
+> +        struct drm_tegra_bo *bo;
+> +    } config;
+> +
+> +    struct {
+> +        struct drm_tegra_mapping *map;
+> +        struct drm_tegra_bo *bo;
+> +    } filter;
+> +
+> +    struct {
+> +        struct drm_tegra_mapping *map;
+> +        struct drm_tegra_bo *bo;
+> +    } hist;
+> +};
 
-Please help to apply the patchset if there are no further concerns or sugge=
-stions.
+Histogram buffer not necessary at least on VIC4.0 and later. (Same 
+applies to VIC4.1 and VIC4.2 patches).
 
-Thanks,
-Akhil
+Also not sure if it's worth duplicating all this for the very minor 
+differences between VIC4.0/4.1/4.2?
+
+> +
+> +static int vic40_fill(struct vic *v, struct vic_image *output,
+> +                      unsigned int left, unsigned int top,
+> +                      unsigned int right, unsigned int bottom,
+> +                      unsigned int alpha, unsigned int red,
+> +                      unsigned int green, unsigned int blue)
+> +{
+> +    struct vic40 *vic = container_of(v, struct vic40, base);
+> +    ConfigStruct *c;
+> +    int err;
+> +
+> +    err = drm_tegra_bo_map(vic->config.bo, (void **)&c);
+> +    if (err < 0) {
+> +        fprintf(stderr, "failed to map configuration structure: %s\n",
+> +                strerror(-err));
+> +        return err;
+> +    }
+> +
+> +    memset(c, 0, sizeof(*c));
+> +
+> +    c->outputConfig.TargetRectTop = top;
+> +    c->outputConfig.TargetRectLeft = left;
+> +    c->outputConfig.TargetRectRight = right;
+> +    c->outputConfig.TargetRectBottom = bottom;
+> +    c->outputConfig.BackgroundAlpha = alpha;
+> +    c->outputConfig.BackgroundR = red;
+> +    c->outputConfig.BackgroundG = green;
+> +    c->outputConfig.BackgroundB = blue;
+> +
+> +    c->outputSurfaceConfig.OutPixelFormat = output->format;
+> +    c->outputSurfaceConfig.OutBlkKind = output->kind;
+> +    c->outputSurfaceConfig.OutBlkHeight = 0;
+> +    c->outputSurfaceConfig.OutSurfaceWidth = output->width - 1;
+> +    c->outputSurfaceConfig.OutSurfaceHeight = output->height - 1;
+> +    c->outputSurfaceConfig.OutLumaWidth = output->stride - 1;
+> +    c->outputSurfaceConfig.OutLumaHeight = output->height - 1;
+> +    c->outputSurfaceConfig.OutChromaWidth = 16383;
+> +    c->outputSurfaceConfig.OutChromaHeight = 16383;
+> +
+> +    drm_tegra_bo_unmap(vic->config.bo);
+> +
+> +    return 0;
+> +}
+> +
+> +static int vic40_blit(struct vic *v, struct vic_image *output,
+> +                      struct vic_image *input)
+> +{
+> +    struct vic40 *vic = container_of(v, struct vic40, base);
+> +    SlotSurfaceConfig *surface;
+> +    SlotConfig *slot;
+> +    ConfigStruct *c;
+> +    int err;
+> +
+> +    err = drm_tegra_bo_map(vic->config.bo, (void **)&c);
+> +    if (err < 0) {
+> +        fprintf(stderr, "failed to map configuration structure: %s\n",
+> +                strerror(-err));
+> +        return err;
+> +    }
+> +
+> +    memset(c, 0, sizeof(*c));
+> +
+> +    c->outputConfig.TargetRectTop = 0;
+> +    c->outputConfig.TargetRectLeft = 0;
+> +    c->outputConfig.TargetRectRight = output->width - 1;
+> +    c->outputConfig.TargetRectBottom = output->height - 1;
+> +    c->outputConfig.BackgroundAlpha = 1023;
+> +    c->outputConfig.BackgroundR = 1023;
+> +    c->outputConfig.BackgroundG = 1023;
+> +    c->outputConfig.BackgroundB = 1023;
+> +
+> +    c->outputSurfaceConfig.OutPixelFormat = output->format;
+> +    c->outputSurfaceConfig.OutBlkKind = output->kind;
+> +    c->outputSurfaceConfig.OutBlkHeight = 0;
+> +    c->outputSurfaceConfig.OutSurfaceWidth = output->width - 1;
+> +    c->outputSurfaceConfig.OutSurfaceHeight = output->height - 1;
+> +    c->outputSurfaceConfig.OutLumaWidth = output->stride - 1;
+> +    c->outputSurfaceConfig.OutLumaHeight = output->height - 1;
+> +    c->outputSurfaceConfig.OutChromaWidth = 16383;
+> +    c->outputSurfaceConfig.OutChromaHeight = 16383;
+> +
+> +    slot = &c->slotStruct[0].slotConfig;
+> +    slot->SlotEnable = 1;
+> +    slot->CurrentFieldEnable = 1;
+> +    slot->PlanarAlpha = 1023;
+> +    slot->ConstantAlpha = 1;
+> +    slot->SourceRectLeft = 0 << 16;
+> +    slot->SourceRectRight = (input->width - 1) << 16;
+> +    slot->SourceRectTop = 0 << 16;
+> +    slot->SourceRectBottom = (input->height - 1) << 16;
+> +    slot->DestRectLeft = 0;
+> +    slot->DestRectRight = output->width - 1;
+> +    slot->DestRectTop = 0;
+> +    slot->DestRectBottom = output->height - 1;
+> +    slot->SoftClampHigh = 1023;
+> +
+> +    surface = &c->slotStruct[0].slotSurfaceConfig;
+> +    surface->SlotPixelFormat = input->format;
+> +    surface->SlotBlkKind = input->kind;
+> +    surface->SlotBlkHeight = 0; /* XXX */
+> +    surface->SlotCacheWidth = VIC_CACHE_WIDTH_64Bx4; /* XXX */
+> +    surface->SlotSurfaceWidth = input->width - 1;
+> +    surface->SlotSurfaceHeight = input->height - 1;
+> +    surface->SlotLumaWidth = input->stride - 1;
+> +    surface->SlotLumaHeight = input->height - 1;
+> +    surface->SlotChromaWidth = 16383;
+> +    surface->SlotChromaHeight = 16383;
+> +
+> +    drm_tegra_bo_unmap(vic->config.bo);
+> +
+> +    return 0;
+> +}
+> +
+> +static int vic40_flip(struct vic *v, struct vic_image *output,
+> +                      struct vic_image *input)
+> +{
+> +    struct vic40 *vic = container_of(v, struct vic40, base);
+> +    SlotSurfaceConfig *surface;
+> +    SlotConfig *slot;
+> +    ConfigStruct *c;
+> +    int err;
+> +
+> +    err = drm_tegra_bo_map(vic->config.bo, (void **)&c);
+> +    if (err < 0) {
+> +        fprintf(stderr, "failed to map configuration structure: %s\n",
+> +                strerror(-err));
+> +        return err;
+> +    }
+> +
+> +    memset(c, 0, sizeof(*c));
+> +
+> +    c->outputConfig.TargetRectTop = 0;
+> +    c->outputConfig.TargetRectLeft = 0;
+> +    c->outputConfig.TargetRectRight = output->width - 1;
+> +    c->outputConfig.TargetRectBottom = output->height - 1;
+> +    c->outputConfig.BackgroundAlpha = 1023;
+> +    c->outputConfig.BackgroundR = 1023;
+> +    c->outputConfig.BackgroundG = 1023;
+> +    c->outputConfig.BackgroundB = 1023;
+> +    c->outputConfig.OutputFlipY = 1;
+> +
+> +    c->outputSurfaceConfig.OutPixelFormat = output->format;
+> +    c->outputSurfaceConfig.OutBlkKind = output->kind;
+> +    c->outputSurfaceConfig.OutBlkHeight = 0;
+> +    c->outputSurfaceConfig.OutSurfaceWidth = output->width - 1;
+> +    c->outputSurfaceConfig.OutSurfaceHeight = output->height - 1;
+> +    c->outputSurfaceConfig.OutLumaWidth = output->stride - 1;
+> +    c->outputSurfaceConfig.OutLumaHeight = output->height - 1;
+> +    c->outputSurfaceConfig.OutChromaWidth = 16383;
+> +    c->outputSurfaceConfig.OutChromaHeight = 16383;
+> +
+> +    slot = &c->slotStruct[0].slotConfig;
+> +    slot->SlotEnable = 1;
+> +    slot->CurrentFieldEnable = 1;
+> +    slot->PlanarAlpha = 1023;
+> +    slot->ConstantAlpha = 1;
+> +    slot->SourceRectLeft = 0 << 16;
+> +    slot->SourceRectRight = (input->width - 1) << 16;
+> +    slot->SourceRectTop = 0 << 16;
+> +    slot->SourceRectBottom = (input->height - 1) << 16;
+> +    slot->DestRectLeft = 0;
+> +    slot->DestRectRight = output->width - 1;
+> +    slot->DestRectTop = 0;
+> +    slot->DestRectBottom = output->height - 1;
+> +    slot->SoftClampHigh = 1023;
+> +
+> +    surface = &c->slotStruct[0].slotSurfaceConfig;
+> +    surface->SlotPixelFormat = input->format;
+> +    surface->SlotBlkKind = input->kind;
+> +    surface->SlotBlkHeight = 0; /* XXX */
+> +    surface->SlotCacheWidth = VIC_CACHE_WIDTH_64Bx4; /* XXX */
+> +    surface->SlotSurfaceWidth = input->width - 1;
+> +    surface->SlotSurfaceHeight = input->height - 1;
+> +    surface->SlotLumaWidth = input->stride - 1;
+> +    surface->SlotLumaHeight = input->height - 1;
+> +    surface->SlotChromaWidth = 16383;
+> +    surface->SlotChromaHeight = 16383;
+> +
+> +    drm_tegra_bo_unmap(vic->config.bo);
+> +
+> +    return 0;
+> +}
+> +
+> +static int vic40_execute(struct vic *v, struct drm_tegra_pushbuf *pushbuf,
+> +                         uint32_t **ptrp, struct vic_image *output,
+> +                         struct vic_image **inputs, unsigned int num_inputs)
+> +{
+> +    struct vic40 *vic = container_of(v, struct vic40, base);
+> +    unsigned int i;
+> +
+> +    if (num_inputs > 1)
+> +        return -EINVAL;
+> +
+> +    VIC_PUSH_METHOD(pushbuf, ptrp, NVB0B6_VIDEO_COMPOSITOR_SET_APPLICATION_ID, 1);
+> +    VIC_PUSH_METHOD(pushbuf, ptrp, NVB0B6_VIDEO_COMPOSITOR_SET_CONTROL_PARAMS, (sizeof(ConfigStruct) / 16) << 16);
+> +    VIC_PUSH_BUFFER(pushbuf, ptrp, NVB0B6_VIDEO_COMPOSITOR_SET_CONFIG_STRUCT_OFFSET, vic->config.map, 0, 0);
+> +    VIC_PUSH_BUFFER(pushbuf, ptrp, NVB0B6_VIDEO_COMPOSITOR_SET_OUTPUT_SURFACE_LUMA_OFFSET, output->map, 0, 0);
+> +
+> +    for (i = 0; i < num_inputs; i++)
+> +        VIC_PUSH_BUFFER(pushbuf, ptrp, NVB0B6_VIDEO_COMPOSITOR_SET_SURFACE0_SLOT0_LUMA_OFFSET, inputs[i]->map, 0, 0);
+> +
+> +    VIC_PUSH_METHOD(pushbuf, ptrp, NVB0B6_VIDEO_COMPOSITOR_EXECUTE, 1 << 8);
+> +
+> +    return 0;
+> +}
+> +
+> +static void vic40_free(struct vic *v)
+> +{
+> +    struct vic40 *vic = container_of(v, struct vic40, base);
+> +
+> +    drm_tegra_channel_unmap(vic->hist.map);
+> +    drm_tegra_bo_unref(vic->hist.bo);
+> +
+> +    drm_tegra_channel_unmap(vic->filter.map);
+> +    drm_tegra_bo_unref(vic->filter.bo);
+> +
+> +    drm_tegra_channel_unmap(vic->config.map);
+> +    drm_tegra_bo_unref(vic->config.bo);
+> +
+> +    drm_tegra_syncpoint_free(v->syncpt);
+> +
+> +    free(vic);
+> +}
+> +
+> +static const struct vic_ops vic40_ops = {
+> +    .fill = vic40_fill,
+> +    .blit = vic40_blit,
+> +    .flip = vic40_flip,
+> +    .execute = vic40_execute,
+> +    .free = vic40_free,
+> +};
+> +
+> +int vic40_new(struct drm_tegra *drm, struct drm_tegra_channel *channel,
+> +              struct vic **vicp)
+> +{
+> +    struct vic40 *vic;
+> +    void *ptr;
+> +    int err;
+> +
+> +    vic = calloc(1, sizeof(*vic));
+> +    if (!vic)
+> +        return -ENOMEM;
+> +
+> +    vic->base.drm = drm;
+> +    vic->base.channel = channel;
+> +    vic->base.ops = &vic40_ops;
+> +    vic->base.version = 0x21;
+> +
+> +    err = drm_tegra_syncpoint_new(drm, &vic->base.syncpt);
+> +    if (err < 0) {
+> +        fprintf(stderr, "failed to allocate syncpoint: %s\n", strerror(-err));
+> +        return err;
+> +    }
+> +
+> +    err = drm_tegra_bo_new(drm, 0, 16384, &vic->config.bo);
+> +    if (err < 0) {
+> +        fprintf(stderr, "failed to allocate configuration structurer: %s\n",
+> +                strerror(-err));
+> +        return err;
+> +    }
+> +
+> +    err = drm_tegra_channel_map(channel, vic->config.bo, DRM_TEGRA_CHANNEL_MAP_READ,
+> +                                &vic->config.map);
+> +    if (err < 0) {
+> +        fprintf(stderr, "failed to map configuration structure: %s\n",
+> +                strerror(-err));
+> +        return err;
+> +    }
+> +
+> +    err = drm_tegra_bo_new(drm, 0, 16384, &vic->filter.bo);
+> +    if (err < 0) {
+> +        fprintf(stderr, "failed to allocate filter buffer: %s\n",
+> +                strerror(-err));
+> +        return err;
+> +    }
+> +
+> +    err = drm_tegra_bo_map(vic->filter.bo, &ptr);
+> +    if (err < 0) {
+> +        fprintf(stderr, "failed to map filter buffer: %s\n", strerror(-err));
+> +        return err;
+> +    }
+> +
+> +    memset(ptr, 0, 16384);
+> +    drm_tegra_bo_unmap(vic->filter.bo);
+> +
+> +    err = drm_tegra_channel_map(channel, vic->filter.bo, DRM_TEGRA_CHANNEL_MAP_READ,
+> +                                &vic->filter.map);
+> +    if (err < 0) {
+> +        fprintf(stderr, "failed to map filter buffer: %s\n",
+> +                strerror(-err));
+> +        return err;
+> +    }
+> +
+> +    err = drm_tegra_bo_new(drm, 0, 4096, &vic->hist.bo);
+> +    if (err < 0) {
+> +        fprintf(stderr, "failed to allocate history buffer: %s\n",
+> +                strerror(-err));
+> +        return err;
+> +    }
+> +
+> +    err = drm_tegra_bo_map(vic->hist.bo, &ptr);
+> +    if (err < 0) {
+> +        fprintf(stderr, "failed to map history buffer: %s\n", strerror(-err));
+> +        return err;
+> +    }
+> +
+> +    memset(ptr, 0, 4096);
+> +    drm_tegra_bo_unmap(vic->hist.bo);
+> +
+> +    err = drm_tegra_channel_map(channel, vic->hist.bo, DRM_TEGRA_CHANNEL_MAP_READ_WRITE,
+> +                                &vic->hist.map);
+> +    if (err < 0) {
+> +        fprintf(stderr, "failed to map histogram buffer: %s\n",
+> +                strerror(-err));
+> +        return err;
+> +    }
+> +
+> +    if (vicp)
+> +        *vicp = &vic->base;
+> +
+> +    return 0;
+> +}
+> diff --git a/tests/tegra/vic40.h b/tests/tegra/vic40.h
+> new file mode 100644
+> index 000000000000..a62301a8a94c
+> --- /dev/null
+> +++ b/tests/tegra/vic40.h
+> @@ -0,0 +1,285 @@
+> +/*
+> + * Copyright © 2016-2018 NVIDIA Corporation
+> + *
+> + * Permission is hereby granted, free of charge, to any person obtaining a
+> + * copy of this software and associated documentation files (the "Software"),
+> + * to deal in the Software without restriction, including without limitation
+> + * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+> + * and/or sell copies of the Software, and to permit persons to whom the
+> + * Software is furnished to do so, subject to the following conditions:
+> + *
+> + * The above copyright notice and this permission notice shall be included in
+> + * all copies or substantial portions of the Software.
+> + *
+> + * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+> + * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+> + * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+> + * THE COPYRIGHT HOLDER(S) OR AUTHOR(S) BE LIABLE FOR ANY CLAIM, DAMAGES OR
+> + * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+> + * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+> + * OTHER DEALINGS IN THE SOFTWARE.
+> + */
+> +
+> +#ifndef VIC40_H
+> +#define VIC40_H
+> +
+> +#include <stdint.h>
+> +
+> +#define NVB0B6_VIDEO_COMPOSITOR_SET_APPLICATION_ID 0x00000200
+> +#define NVB0B6_VIDEO_COMPOSITOR_EXECUTE 0x00000300
+> +#define NVB0B6_VIDEO_COMPOSITOR_SET_SURFACE0_SLOT0_LUMA_OFFSET 0x00000400
+> +#define NVB0B6_VIDEO_COMPOSITOR_SET_SURFACE0_SLOT0_CHROMA_U_OFFSET 0x00000404
+> +#define NVB0B6_VIDEO_COMPOSITOR_SET_SURFACE0_SLOT0_CHROMA_V_OFFSET 0x00000408
+> +#define NVB0B6_VIDEO_COMPOSITOR_SET_CONTROL_PARAMS 0x00000704
+> +#define NVB0B6_VIDEO_COMPOSITOR_SET_CONFIG_STRUCT_OFFSET 0x00000708
+> +#define NVB0B6_VIDEO_COMPOSITOR_SET_HIST_OFFSET 0x00000714
+> +#define NVB0B6_VIDEO_COMPOSITOR_SET_OUTPUT_SURFACE_LUMA_OFFSET 0x00000720
+> +
+> +typedef struct {
+> +    uint64_t SlotEnable : 1; /* 0 */
+> +    uint64_t DeNoise : 1; /* 1 */
+> +    uint64_t AdvancedDenoise : 1; /* 2 */
+> +    uint64_t CadenceDetect : 1; /* 3 */
+> +    uint64_t MotionMap : 1; /* 4 */
+> +    uint64_t MMapCombine : 1; /* 5 */
+> +    uint64_t IsEven : 1; /* 6 */
+> +    uint64_t ChromaEven : 1; /* 7 */
+> +    uint64_t CurrentFieldEnable : 1; /* 8 */
+> +    uint64_t PrevFieldEnable : 1; /* 9 */
+> +    uint64_t NextFieldEnable : 1; /* 10 */
+> +    uint64_t NextNrFieldEnable : 1; /* 11 */
+> +    uint64_t CurMotionFieldEnable : 1; /* 12 */
+> +    uint64_t PrevMotionFieldEnable : 1; /* 13 */
+> +    uint64_t PpMotionFieldEnable : 1; /* 14 */
+> +    uint64_t CombMotionFieldEnable : 1; /* 15 */
+> +    uint64_t FrameFormat : 4; /* 19..16 */
+> +    uint64_t FilterLengthY : 2; /* 21..20 */
+> +    uint64_t FilterLengthX : 2; /* 23..22 */
+> +    uint64_t Panoramic : 12; /* 35..24 */
+> +    uint64_t reserved1 : 22; /* 57..36 */
+> +    uint64_t DetailFltClamp : 6; /* 63..58 */
+> +    uint64_t FilterNoise : 10; /* 73..64 */
+> +    uint64_t FilterDetail : 10; /* 83..74 */
+> +    uint64_t ChromaNoise : 10; /* 93..84 */
+> +    uint64_t ChromaDetail : 10; /* 103..94 */
+> +    uint64_t DeinterlaceMode : 4; /* 107..104 */
+> +    uint64_t MotionAccumWeight : 3; /* 110..108 */
+> +    uint64_t NoiseIir : 11; /* 121..111 */
+> +    uint64_t LightLevel : 4; /* 125..122 */
+> +    uint64_t reserved4 : 2; /* 127..126 */
+> +    /* 128 */
+> +    uint64_t SoftClampLow : 10; /* 9..0 */
+> +    uint64_t SoftClampHigh : 10; /* 19..10 */
+> +    uint64_t reserved5 : 3; /* 22..20 */
+> +    uint64_t reserved6 : 9; /* 31..23 */
+> +    uint64_t PlanarAlpha : 10; /* 41..32 */
+> +    uint64_t ConstantAlpha : 1; /* 42 */
+> +    uint64_t StereoInterleave : 3; /* 45..43 */
+> +    uint64_t ClipEnabled : 1; /* 46 */
+> +    uint64_t ClearRectMask : 8; /* 54..47 */
+> +    uint64_t DegammaMode : 2; /* 56..55 */
+> +    uint64_t reserved7 : 1; /* 57 */
+> +    uint64_t DecompressEnable : 1; /* 58 */
+> +    uint64_t reserved9 : 5; /* 63..59 */
+> +    uint64_t DecompressCtbCount : 8; /* 71..64 */
+> +    uint64_t DecompressZbcColor : 32; /* 103..72 */
+> +    uint64_t reserved12 : 24; /* 127..104 */
+> +    /* 256 */
+> +    uint64_t SourceRectLeft : 30; /* 29..0 */
+> +    uint64_t reserved14 : 2; /* 31..30 */
+> +    uint64_t SourceRectRight : 30; /* 61..32 */
+> +    uint64_t reserved15 : 2; /* 63..62 */
+> +    uint64_t SourceRectTop : 30; /* 93..64 */
+> +    uint64_t reserved16 : 2; /* 95..94 */
+> +    uint64_t SourceRectBottom : 30; /* 125..96 */
+> +    uint64_t reserved17 : 2; /* 127..126 */
+> +    /* 384 */
+> +    uint64_t DestRectLeft : 14; /* 13..0 */
+> +    uint64_t reserved18 : 2; /* 15..14 */
+> +    uint64_t DestRectRight : 14; /* 29..16 */
+> +    uint64_t reserved19 : 2; /* 31..30 */
+> +    uint64_t DestRectTop : 14; /* 45..32 */
+> +    uint64_t reserved20 : 2; /* 47..46 */
+> +    uint64_t DestRectBottom : 14; /* 61..48 */
+> +    uint64_t reserved21 : 2; /* 63..62 */
+> +    uint64_t reserved22 : 32; /* 95..64 */
+> +    uint64_t reserved23 : 32; /* 127..96 */
+> +} SlotConfig;
+> +
+> +typedef struct {
+> +    uint64_t SlotPixelFormat : 7; /* 6..0 */
+> +    uint64_t SlotChromaLocHoriz : 2; /* 8..7 */
+> +    uint64_t SlotChromaLocVert : 2; /* 10..9 */
+> +    uint64_t SlotBlkKind : 4; /* 14..11 */
+> +    uint64_t SlotBlkHeight : 4; /* 18..15 */
+> +    uint64_t SlotCacheWidth : 3; /* 21..19 */
+> +    uint64_t reserved0 : 10; /* 31..22 */
+> +    uint64_t SlotSurfaceWidth : 14; /* 45..32 */
+> +    uint64_t SlotSurfaceHeight : 14; /* 59..46 */
+> +    uint64_t reserved1 : 4; /* 63..60 */
+> +    uint64_t SlotLumaWidth : 14; /* 77..64 */
+> +    uint64_t SlotLumaHeight : 14; /* 91..78 */
+> +    uint64_t reserved2 : 4; /* 95..92 */
+> +    uint64_t SlotChromaWidth : 14; /* 109..96 */
+> +    uint64_t SlotChromaHeight : 14; /* 123..110 */
+> +    uint64_t reserved3 : 4; /* 127..124 */
+> +} SlotSurfaceConfig;
+> +
+> +typedef struct {
+> +    uint64_t luma_coeff0 : 20; /* 19..0 */
+> +    uint64_t luma_coeff1 : 20; /* 39..20 */
+> +    uint64_t luma_coeff2 : 20; /* 59..40 */
+> +    uint64_t luma_r_shift : 4; /* 63..60 */
+> +    uint64_t luma_coeff3 : 20; /* 83..64 */
+> +    uint64_t LumaKeyLower : 10; /* 93..84 */
+> +    uint64_t LumaKeyUpper : 10; /* 103..94 */
+> +    uint64_t LumaKeyEnabled : 1; /* 104 */
+> +    uint64_t reserved0 : 2; /* 106..105 */
+> +    uint64_t reserved1 : 21; /* 127..107 */
+> +} LumaKeyStruct;
+> +
+> +typedef struct {
+> +    uint64_t matrix_coeff00 : 20; /* 19..0 */
+> +    uint64_t matrix_coeff10 : 20; /* 39..20 */
+> +    uint64_t matrix_coeff20 : 20; /* 59..40 */
+> +    uint64_t matrix_r_shift : 4; /* 63..60 */
+> +    uint64_t matrix_coeff01 : 20; /* 83..64 */
+> +    uint64_t matrix_coeff11 : 20; /* 103..84 */
+> +    uint64_t matrix_coeff21 : 20; /* 123..104 */
+> +    uint64_t reserved0 : 3; /* 126..124 */
+> +    uint64_t matrix_enable : 1; /* 127 */
+> +    /* 128 */
+> +    uint64_t matrix_coeff02 : 20; /* 19..0 */
+> +    uint64_t matrix_coeff12 : 20; /* 39..20 */
+> +    uint64_t matrix_coeff22 : 20; /* 59..40 */
+> +    uint64_t reserved1 : 4; /* 63..60 */
+> +    uint64_t matrix_coeff03 : 20; /* 83..64 */
+> +    uint64_t matrix_coeff13 : 20; /* 103..84 */
+> +    uint64_t matrix_coeff23 : 20; /* 123..104 */
+> +    uint64_t reserved2 : 4; /* 127..124 */
+> +} MatrixStruct;
+> +
+> +typedef struct {
+> +    uint64_t ClearRect0Left : 14; /* 13..0 */
+> +    uint64_t reserved0 : 2; /* 15..14 */
+> +    uint64_t ClearRect0Right : 14; /* 29..16 */
+> +    uint64_t reserved1 : 2; /* 31..30 */
+> +    uint64_t ClearRect0Top : 14; /* 45..32 */
+> +    uint64_t reserved2 : 2; /* 47..46 */
+> +    uint64_t ClearRect0Bottom : 14; /* 61..48 */
+> +    uint64_t reserved3 : 2; /* 63..62 */
+> +    uint64_t ClearRect1Left : 14; /* 77..64 */
+> +    uint64_t reserved4 : 2; /* 79..78 */
+> +    uint64_t ClearRect1Right : 14; /* 93..80 */
+> +    uint64_t reserved5 : 2; /* 95..94 */
+> +    uint64_t ClearRect1Top : 14; /* 109..96 */
+> +    uint64_t reserved6 : 2; /* 111..110 */
+> +    uint64_t ClearRect1Bottom : 14; /* 125..112 */
+> +    uint64_t reserved7 : 2; /* 127..126 */
+> +} ClearRectStruct;
+> +
+> +typedef struct {
+> +    uint64_t AlphaK1 : 10; /* 9..0 */
+> +    uint64_t reserved0 : 6; /* 15..10 */
+> +    uint64_t AlphaK2 : 10; /* 25..16 */
+> +    uint64_t reserved1 : 6; /* 31..26 */
+> +    uint64_t SrcFactCMatchSelect : 3; /* 34..32 */
+> +    uint64_t reserved2 : 1; /* 35 */
+> +    uint64_t DstFactCMatchSelect : 3; /* 38..36 */
+> +    uint64_t reserved3 : 1; /* 39 */
+> +    uint64_t SrcFactAMatchSelect : 3; /* 42..40 */
+> +    uint64_t reserved4 : 1; /* 43 */
+> +    uint64_t DstFactAMatchSelect : 3; /* 46..44 */
+> +    uint64_t reserved5 : 1; /* 47 */
+> +    uint64_t reserved6 : 4; /* 51..48 */
+> +    uint64_t reserved7 : 4; /* 55..52 */
+> +    uint64_t reserved8 : 4; /* 59..56 */
+> +    uint64_t reserved9 : 4; /* 63..60 */
+> +    uint64_t reserved10 : 2; /* 65..64 */
+> +    uint64_t OverrideR : 10; /* 75..66 */
+> +    uint64_t OverrideG : 10; /* 85..76 */
+> +    uint64_t OverrideB : 10; /* 95..86 */
+> +    uint64_t OverrideA : 10; /* 105..96 */
+> +    uint64_t reserved11 : 2; /* 107..106 */
+> +    uint64_t UseOverrideR : 1; /* 108 */
+> +    uint64_t UseOverrideG : 1; /* 109 */
+> +    uint64_t UseOverrideB : 1; /* 110 */
+> +    uint64_t UseOverrideA : 1; /* 111 */
+> +    uint64_t MaskR : 1; /* 112 */
+> +    uint64_t MaskG : 1; /* 113 */
+> +    uint64_t MaskB : 1; /* 114 */
+> +    uint64_t MaskA : 1; /* 115 */
+> +    uint64_t reserved12 : 12; /* 127..116 */
+> +} BlendingSlotStruct;
+> +
+> +typedef struct {
+> +    uint64_t AlphaFillMode : 3; /* 2..0 */
+> +    uint64_t AlphaFillSlot : 3; /* 5..3 */
+> +    uint64_t BackgroundAlpha : 10; /* 15..6 */
+> +    uint64_t BackgroundR : 10; /* 25..16 */
+> +    uint64_t BackgroundG : 10; /* 35..26 */
+> +    uint64_t BackgroundB : 10; /* 45..36 */
+> +    uint64_t RegammaMode : 2; /* 47..46 */
+> +    uint64_t OutputFlipX : 1; /* 48 */
+> +    uint64_t OutputFlipY : 1; /* 49 */
+> +    uint64_t OutputTranspose : 1; /* 50 */
+> +    uint64_t reserved1 : 1; /* 51 */
+> +    uint64_t reserved2 : 12; /* 63..52 */
+> +    uint64_t TargetRectLeft : 14; /* 77..64 */
+> +    uint64_t reserved3 : 2; /* 79..78 */
+> +    uint64_t TargetRectRight : 14; /* 93..80 */
+> +    uint64_t reserved4 : 2; /* 95..94 */
+> +    uint64_t TargetRectTop : 14; /* 109..96 */
+> +    uint64_t reserved5 : 2; /* 111..110 */
+> +    uint64_t TargetRectBottom : 14; /* 125..112 */
+> +    uint64_t reserved6 : 2; /* 127..126 */
+> +} OutputConfig;
+> +
+> +typedef struct {
+> +    uint64_t OutPixelFormat : 7; /* 6..0 */
+> +    uint64_t OutChromaLocHoriz : 2; /* 8..7 */
+> +    uint64_t OutChromaLocVert : 2; /* 10..9 */
+> +    uint64_t OutBlkKind : 4; /* 14..11 */
+> +    uint64_t OutBlkHeight : 4; /* 18..15 */
+> +    uint64_t reserved0 : 3; /* 21..19 */
+> +    uint64_t reserved1 : 10; /* 31..22 */
+> +    uint64_t OutSurfaceWidth : 14; /* 45..32 */
+> +    uint64_t OutSurfaceHeight : 14; /* 59..46 */
+> +    uint64_t reserved2 : 4; /* 63..60 */
+> +    uint64_t OutLumaWidth : 14; /* 77..64 */
+> +    uint64_t OutLumaHeight : 14; /* 91..78 */
+> +    uint64_t reserved3 : 4; /* 95..92 */
+> +    uint64_t OutChromaWidth : 14; /* 109..96 */
+> +    uint64_t OutChromaHeight : 14; /* 123..110 */
+> +    uint64_t reserved4 : 4; /* 127..124 */
+> +} OutputSurfaceConfig;
+> +
+> +typedef struct {
+> +    uint64_t DownsampleHoriz : 11; /* 10..0 */
+> +    uint64_t reserved0 : 5; /* 15..11 */
+> +    uint64_t DownsampleVert : 11; /* 26..16 */
+> +    uint64_t reserved1 : 5; /* 31..27 */
+> +    uint64_t reserved2 : 32; /* 63..32 */
+> +    uint64_t reserved3 : 32; /* 95..64 */
+> +    uint64_t reserved4 : 32; /* 127..96 */
+> +} PipeConfig;
+> +
+> +typedef struct {
+> +    SlotConfig slotConfig;
+> +    SlotSurfaceConfig slotSurfaceConfig;
+> +    LumaKeyStruct lumaKeyStruct;
+> +    MatrixStruct colorMatrixStruct;
+> +    MatrixStruct gamutMatrixStruct;
+> +    BlendingSlotStruct blendingSlotStruct;
+> +} SlotStruct;
+> +
+> +typedef struct {
+> +    PipeConfig pipeConfig;
+> +    OutputConfig outputConfig;
+> +    OutputSurfaceConfig outputSurfaceConfig;
+> +    MatrixStruct outColorMatrixStruct;
+> +    ClearRectStruct clearRectStruct[4];
+> +    SlotStruct slotStruct[8];
+> +} ConfigStruct;
+> +
+> +#endif
 
