@@ -2,18 +2,18 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C005C4332F
-	for <linux-tegra@archiver.kernel.org>; Fri, 18 Feb 2022 11:43:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BA40C4167B
+	for <linux-tegra@archiver.kernel.org>; Fri, 18 Feb 2022 11:43:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234762AbiBRLoJ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 18 Feb 2022 06:44:09 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:49602 "EHLO
+        id S234830AbiBRLoL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 18 Feb 2022 06:44:11 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:49644 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233577AbiBRLoJ (ORCPT
+        with ESMTP id S234794AbiBRLoJ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
         Fri, 18 Feb 2022 06:44:09 -0500
 Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A757E01F;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D114212A9F;
         Fri, 18 Feb 2022 03:43:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
          s=20161220; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
@@ -21,17 +21,17 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
         Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
         :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
         List-Post:List-Owner:List-Archive;
-        bh=le8J3Q+swUQK72SWqH/pFu4gtI1ZxsJUZkSugFcW4UE=; b=GvqVkSo71ZV0LNkaCuTQ+h6buR
-        ye1u5HICSKjef7ZSPGIhg1VITXbc6lhdSrUbBi9BYJHp8t2787QgXftqfYUMJRBEkr/wUsW9Rjeu1
-        EQ0539h+YrqglEzJpeCMEyCSelOoDbaAd9zBByTYJb/rqPGD7kWgXf+8yt1R0WU6ajpNVSL4XEx0m
-        lsCxHzbwmTAxnlJTCidbXoVeqfppMlFdupm0tjw8/obF+xBs91xBWUIyo/N9xlqM2ExN9j48Brgrn
-        yIodLQumjFdNIQkr8uMoDjRMZKuq71+JhHIEl1Qz3Y7fvfLkBtGwf1R185enm2EJssDPEjbniybl3
-        hNK2G4pg==;
+        bh=iaZ2YwwaXhprQE4TTv31BuqY9LdJr/rYDXwCvqNldvI=; b=qtiK08zgzPqBW++b1c9rjs26rc
+        Iy2EgWbs6SwnjKWdjX1l8+cKj7dS4GohjExp7VU9CuLK6lprO38SOt+4iRuOOLRDIWXDZtPOuMnbU
+        rF5HSV7S7iaXR7lOvT/gyjEvNwev4+ufgcRFOfygfBOFtfBjBlyUV9kNLOo7pfJOO7/2FvESCvJ+j
+        WjNFF6rZvdjQjlvgnPO9MFhWsuXzzcDnNvyhBjV5JzAmEdxK3/E1CCXnUYKEk63uU5KEuBZ4F/6pK
+        xMRkXzLyXnqDnNRa8eQEuSCUAHXISejAjqRei4MSJ9Py5WgDEFyAThqUPQ+q6N93pBWi/3s/7lihU
+        Mx6h4eZA==;
 Received: from 91-158-25-70.elisa-laajakaista.fi ([91.158.25.70] helo=toshino.localdomain)
         by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.89)
         (envelope-from <mperttunen@nvidia.com>)
-        id 1nL1fq-0006eP-F1; Fri, 18 Feb 2022 13:43:42 +0200
+        id 1nL1fq-0006eP-4B; Fri, 18 Feb 2022 13:43:42 +0200
 From:   Mikko Perttunen <mperttunen@nvidia.com>
 To:     thierry.reding@gmail.com, jonathanh@nvidia.com, joro@8bytes.org,
         will@kernel.org, robh+dt@kernel.org, robin.murphy@arm.com
@@ -39,9 +39,9 @@ Cc:     linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
         iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         Mikko Perttunen <mperttunen@nvidia.com>
-Subject: [PATCH v3 8/9] drm/tegra: vic: Implement get_streamid_offset
-Date:   Fri, 18 Feb 2022 13:39:51 +0200
-Message-Id: <20220218113952.3077606-9-mperttunen@nvidia.com>
+Subject: [PATCH v3 4/9] gpu: host1x: Program context stream ID on submission
+Date:   Fri, 18 Feb 2022 13:39:47 +0200
+Message-Id: <20220218113952.3077606-5-mperttunen@nvidia.com>
 X-Mailer: git-send-email 2.35.0
 In-Reply-To: <20220218113952.3077606-1-mperttunen@nvidia.com>
 References: <20220218113952.3077606-1-mperttunen@nvidia.com>
@@ -54,90 +54,157 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Implement the get_streamid_offset required for supporting context
-isolation. Since old firmware cannot support context isolation
-without hacks that we don't want to implement, check the firmware
-binary to see if context isolation should be enabled.
+Add code to do stream ID switching at the beginning of a job. The
+stream ID is switched to the stream ID specified by the context
+passed in the job structure.
+
+Before switching the stream ID, an OP_DONE wait is done on the
+channel's engine to ensure that there is no residual ongoing
+work that might do DMA using the new stream ID.
 
 Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
 ---
- drivers/gpu/drm/tegra/vic.c | 38 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 38 insertions(+)
+ drivers/gpu/host1x/hw/channel_hw.c        | 52 +++++++++++++++++++++--
+ drivers/gpu/host1x/hw/host1x06_hardware.h | 10 +++++
+ drivers/gpu/host1x/hw/host1x07_hardware.h | 10 +++++
+ include/linux/host1x.h                    |  4 ++
+ 4 files changed, 72 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/tegra/vic.c b/drivers/gpu/drm/tegra/vic.c
-index 1e342fa3d27b..2863ee5e0e67 100644
---- a/drivers/gpu/drm/tegra/vic.c
-+++ b/drivers/gpu/drm/tegra/vic.c
-@@ -38,6 +38,8 @@ struct vic {
- 	struct clk *clk;
- 	struct reset_control *rst;
- 
-+	bool can_use_context;
-+
- 	/* Platform configuration */
- 	const struct vic_config *config;
- };
-@@ -229,6 +231,7 @@ static int vic_load_firmware(struct vic *vic)
- {
- 	struct host1x_client *client = &vic->client.base;
- 	struct tegra_drm *tegra = vic->client.drm;
-+	u32 fce_bin_data_offset;
- 	dma_addr_t iova;
- 	size_t size;
- 	void *virt;
-@@ -277,6 +280,25 @@ static int vic_load_firmware(struct vic *vic)
- 		vic->falcon.firmware.phys = phys;
- 	}
- 
-+	/*
-+	 * Check if firmware is new enough to not require mapping firmware
-+	 * to data buffer domains.
-+	 */
-+	fce_bin_data_offset = *(u32 *)(virt + VIC_UCODE_FCE_DATA_OFFSET);
-+
-+	if (!vic->config->supports_sid) {
-+		vic->can_use_context = false;
-+	} else if (fce_bin_data_offset != 0x0 && fce_bin_data_offset != 0xa5a5a5a5) {
-+		/*
-+		 * Firmware will access FCE through STREAMID0, so context
-+		 * isolation cannot be used.
-+		 */
-+		vic->can_use_context = false;
-+		dev_warn_once(vic->dev, "context isolation disabled due to old firmware\n");
-+	} else {
-+		vic->can_use_context = true;
-+	}
-+
- 	return 0;
- 
- cleanup:
-@@ -358,10 +380,26 @@ static void vic_close_channel(struct tegra_drm_context *context)
- 	host1x_channel_put(context->channel);
+diff --git a/drivers/gpu/host1x/hw/channel_hw.c b/drivers/gpu/host1x/hw/channel_hw.c
+index 6b40e9af1e88..e23e1395c9f4 100644
+--- a/drivers/gpu/host1x/hw/channel_hw.c
++++ b/drivers/gpu/host1x/hw/channel_hw.c
+@@ -180,6 +180,45 @@ static void host1x_enable_gather_filter(struct host1x_channel *ch)
+ #endif
  }
  
-+static int vic_get_streamid_offset(struct tegra_drm_client *client)
++static void host1x_channel_program_engine_streamid(struct host1x_job *job)
 +{
-+	struct vic *vic = to_vic(client);
-+	int err;
++#if HOST1X_HW >= 6
++	u32 fence;
 +
-+	err = vic_load_firmware(vic);
-+	if (err < 0)
-+		return err;
++	if (!job->context)
++		return;
 +
-+	if (vic->can_use_context)
-+		return 0x30;
-+	else
-+		return -ENOTSUPP;
++	fence = host1x_syncpt_incr_max(job->syncpt, 1);
++
++	/* First, increment a syncpoint on OP_DONE condition.. */
++
++	host1x_cdma_push(&job->channel->cdma,
++		host1x_opcode_nonincr(HOST1X_UCLASS_INCR_SYNCPT, 1),
++		HOST1X_UCLASS_INCR_SYNCPT_INDX_F(job->syncpt->id) |
++			HOST1X_UCLASS_INCR_SYNCPT_COND_F(1));
++
++	/* Wait for syncpoint to increment */
++
++	host1x_cdma_push(&job->channel->cdma,
++		host1x_opcode_setclass(HOST1X_CLASS_HOST1X,
++			host1x_uclass_wait_syncpt_r(), 1),
++		host1x_class_host_wait_syncpt(job->syncpt->id, fence));
++
++	/*
++	 * Now that we know the engine is idle, return to class and
++	 * change stream ID.
++	 */
++
++	host1x_cdma_push(&job->channel->cdma,
++		host1x_opcode_setclass(job->class, 0, 0),
++		HOST1X_OPCODE_NOP);
++
++	host1x_cdma_push(&job->channel->cdma,
++		host1x_opcode_setpayload(job->context->stream_id),
++		host1x_opcode_setstreamid(job->engine_streamid_offset / 4));
++#endif
 +}
 +
- static const struct tegra_drm_client_ops vic_ops = {
- 	.open_channel = vic_open_channel,
- 	.close_channel = vic_close_channel,
- 	.submit = tegra_drm_submit,
-+	.get_streamid_offset = vic_get_streamid_offset,
+ static int channel_submit(struct host1x_job *job)
+ {
+ 	struct host1x_channel *ch = job->channel;
+@@ -236,18 +275,23 @@ static int channel_submit(struct host1x_job *job)
+ 	if (sp->base)
+ 		synchronize_syncpt_base(job);
+ 
+-	syncval = host1x_syncpt_incr_max(sp, user_syncpt_incrs);
+-
+ 	host1x_hw_syncpt_assign_to_channel(host, sp, ch);
+ 
+-	job->syncpt_end = syncval;
+-
+ 	/* add a setclass for modules that require it */
+ 	if (job->class)
+ 		host1x_cdma_push(&ch->cdma,
+ 				 host1x_opcode_setclass(job->class, 0, 0),
+ 				 HOST1X_OPCODE_NOP);
+ 
++	/*
++	 * Ensure engine DMA is idle and set new stream ID. May increment
++	 * syncpt max.
++	 */
++	host1x_channel_program_engine_streamid(job);
++
++	syncval = host1x_syncpt_incr_max(sp, user_syncpt_incrs);
++	job->syncpt_end = syncval;
++
+ 	submit_gathers(job, syncval - user_syncpt_incrs);
+ 
+ 	/* end CDMA submit & stash pinned hMems into sync queue */
+diff --git a/drivers/gpu/host1x/hw/host1x06_hardware.h b/drivers/gpu/host1x/hw/host1x06_hardware.h
+index 01a142a09800..5d515745eee7 100644
+--- a/drivers/gpu/host1x/hw/host1x06_hardware.h
++++ b/drivers/gpu/host1x/hw/host1x06_hardware.h
+@@ -127,6 +127,16 @@ static inline u32 host1x_opcode_gather_incr(unsigned offset, unsigned count)
+ 	return (6 << 28) | (offset << 16) | BIT(15) | BIT(14) | count;
+ }
+ 
++static inline u32 host1x_opcode_setstreamid(unsigned streamid)
++{
++	return (7 << 28) | streamid;
++}
++
++static inline u32 host1x_opcode_setpayload(unsigned payload)
++{
++	return (9 << 28) | payload;
++}
++
+ static inline u32 host1x_opcode_gather_wide(unsigned count)
+ {
+ 	return (12 << 28) | count;
+diff --git a/drivers/gpu/host1x/hw/host1x07_hardware.h b/drivers/gpu/host1x/hw/host1x07_hardware.h
+index e6582172ebfd..82c0cc9bb0b5 100644
+--- a/drivers/gpu/host1x/hw/host1x07_hardware.h
++++ b/drivers/gpu/host1x/hw/host1x07_hardware.h
+@@ -127,6 +127,16 @@ static inline u32 host1x_opcode_gather_incr(unsigned offset, unsigned count)
+ 	return (6 << 28) | (offset << 16) | BIT(15) | BIT(14) | count;
+ }
+ 
++static inline u32 host1x_opcode_setstreamid(unsigned streamid)
++{
++	return (7 << 28) | streamid;
++}
++
++static inline u32 host1x_opcode_setpayload(unsigned payload)
++{
++	return (9 << 28) | payload;
++}
++
+ static inline u32 host1x_opcode_gather_wide(unsigned count)
+ {
+ 	return (12 << 28) | count;
+diff --git a/include/linux/host1x.h b/include/linux/host1x.h
+index 9d9f1711472b..185ce6c56365 100644
+--- a/include/linux/host1x.h
++++ b/include/linux/host1x.h
+@@ -321,6 +321,10 @@ struct host1x_job {
+ 
+ 	/* Whether host1x-side firewall should be ran for this job or not */
+ 	bool enable_firewall;
++
++	/* Options for configuring engine data stream ID */
++	struct host1x_context *context;
++	u32 engine_streamid_offset;
  };
  
- #define NVIDIA_TEGRA_124_VIC_FIRMWARE "nvidia/tegra124/vic03_ucode.bin"
+ struct host1x_job *host1x_job_alloc(struct host1x_channel *ch,
 -- 
 2.35.0
 
