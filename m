@@ -2,118 +2,120 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 014BEC433EF
-	for <linux-tegra@archiver.kernel.org>; Fri, 18 Feb 2022 14:53:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 729C7C433EF
+	for <linux-tegra@archiver.kernel.org>; Fri, 18 Feb 2022 15:04:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234938AbiBROxb (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 18 Feb 2022 09:53:31 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:40840 "EHLO
+        id S235748AbiBRPEu (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 18 Feb 2022 10:04:50 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:55248 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234729AbiBROxa (ORCPT
+        with ESMTP id S234018AbiBRPEt (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 18 Feb 2022 09:53:30 -0500
-Received: from mail-qk1-x736.google.com (mail-qk1-x736.google.com [IPv6:2607:f8b0:4864:20::736])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9DB8F48E5D
-        for <linux-tegra@vger.kernel.org>; Fri, 18 Feb 2022 06:53:13 -0800 (PST)
-Received: by mail-qk1-x736.google.com with SMTP id n185so8218272qke.5
-        for <linux-tegra@vger.kernel.org>; Fri, 18 Feb 2022 06:53:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ndufresne-ca.20210112.gappssmtp.com; s=20210112;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=XCJgFl0zb6Np3SwMPpLvvP3l3nq1MdfLV+ikmQDUG3s=;
-        b=AUPu13zo54l+idCIL+fH26rteHJK42TpmEDpDH/cjEYqJBmuqqTINgGSIP4WKKUs9B
-         HomsZELFx2heoftLLvSzvUeXyxO5PmLsXZzFzfrS9k/QACvzHyzB5NcbphcDuFmb33ZG
-         pg3zOvN9r/Jw5/V2Jtv7pZd/slHYzRvl8L5XTARxXKrOBHbrUYRlkhmmvmrTcOdFHm1A
-         29QFqcKACAcGricMQ5Ey3GZKQbC2yfbaFvPRf6l4+b2YsPKSXGMUeXgIuNzQE3rDxK0A
-         LNFBl/Ipx4zoGpucjh6jlD8cLZSxSwRgkXS8z8FsfC2UazNrpTunlXOdHMpnKZAN2DTg
-         S2oA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=XCJgFl0zb6Np3SwMPpLvvP3l3nq1MdfLV+ikmQDUG3s=;
-        b=darMIQ6hKlLcyfvZ22xpA7eispzbKpe9fHzr55F5dJMp01ZmJIXoRt2QYRg8SbaVsY
-         Iw8d/U+ktYc/LJE9/fC1tnZ/mpfU6TSlItkKiZhvgorYnK79fCFpmh8g5MlgwhuAUWKv
-         lzphIBHsLdqtzM34zIPeVEaM0bbdY+iFFd5NFa921hppSFxqKDbRno4eeaF24CLbfMeI
-         2AmjP7+MAHk6hYASOaR3FezyQlum284uktWA6hG9Tby+Y1VskCFkoRypzbzvckFFONJx
-         vd2O5W1ylXrgWc4hPWL7zS2xZXBTSViHqk+6Olg2wSPJfCaIZXUhWyelAdGmfraWjGZd
-         alAw==
-X-Gm-Message-State: AOAM531sNjDk+/iwEikoKXyp5SwQ2TQ3IHLmVIvr8d3LBP2OPwb3lPoE
-        xrqW/G8QebAEYR8oqK5AEH8ebg==
-X-Google-Smtp-Source: ABdhPJwXH1h/po2pdL5t6lLulOVmk5rA2cO/TnGOOCjAdQ1pevbQSrVjLH/1u3+wQIHPgXNBctDZdg==
-X-Received: by 2002:a37:bdc6:0:b0:47d:4c1f:817b with SMTP id n189-20020a37bdc6000000b0047d4c1f817bmr4699996qkf.154.1645195992776;
-        Fri, 18 Feb 2022 06:53:12 -0800 (PST)
-Received: from nicolas-tpx395.localdomain (173-246-12-168.qc.cable.ebox.net. [173.246.12.168])
-        by smtp.gmail.com with ESMTPSA id bl34sm19728766qkb.15.2022.02.18.06.53.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Feb 2022 06:53:12 -0800 (PST)
-Message-ID: <d2a039f25b5e359c4df1eb55d9f4ebcf66234d93.camel@ndufresne.ca>
-Subject: Re: [PATCH v3 1/4] media: v4l2-ctrls: Add new
- V4L2_H264_DECODE_PARAM_FLAG_P/BFRAME flags
-From:   Nicolas Dufresne <nicolas@ndufresne.ca>
+        Fri, 18 Feb 2022 10:04:49 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF84B29720E;
+        Fri, 18 Feb 2022 07:04:32 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 4D8F561D5A;
+        Fri, 18 Feb 2022 15:04:32 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18B0EC340EF;
+        Fri, 18 Feb 2022 15:04:29 +0000 (UTC)
+Message-ID: <58bfb1fb-431d-a47d-ee9e-fbef89a700a0@xs4all.nl>
+Date:   Fri, 18 Feb 2022 16:04:28 +0100
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.1
+Subject: Re: [PATCH v3 0/4] Add V4L stateless video decoder API support to
+ NVIDIA Tegra driver
+Content-Language: en-US
 To:     Dmitry Osipenko <digetx@gmail.com>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
+        Nicolas Dufresne <nicolas@ndufresne.ca>,
         Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
 Cc:     linux-media@vger.kernel.org, linux-staging@lists.linux.dev,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Fri, 18 Feb 2022 09:53:11 -0500
-In-Reply-To: <20220207141937.13089-2-digetx@gmail.com>
 References: <20220207141937.13089-1-digetx@gmail.com>
-         <20220207141937.13089-2-digetx@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.3 (3.42.3-1.fc35) 
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+In-Reply-To: <20220207141937.13089-1-digetx@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Le lundi 07 février 2022 à 17:19 +0300, Dmitry Osipenko a écrit :
-> Add new V4L2_H264_DECODE_PARAM_FLAG_P/BFRAME flags that are needed by
-> NVIDIA Tegra video decoder. Userspace will have to set these flags in
-> accordance to the type of a decoded frame.
-> 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Dmitry,
 
-Reviewed-by: Nicolas Dufresne <nicolas@collabora.com>
-
-> ---
->  .../userspace-api/media/v4l/ext-ctrls-codec-stateless.rst   | 6 ++++++
->  include/uapi/linux/v4l2-controls.h                          | 2 ++
->  2 files changed, 8 insertions(+)
+On 07/02/2022 15:19, Dmitry Osipenko wrote:
+> Support V4L stateless video decoder API by NVIDIA Tegra decoder driver.
+> Tested using GStreamer [1] and libvdpau-tegra [2][8].
 > 
-> diff --git a/Documentation/userspace-api/media/v4l/ext-ctrls-codec-stateless.rst b/Documentation/userspace-api/media/v4l/ext-ctrls-codec-stateless.rst
-> index cc080c4257d0..f87584ad90ba 100644
-> --- a/Documentation/userspace-api/media/v4l/ext-ctrls-codec-stateless.rst
-> +++ b/Documentation/userspace-api/media/v4l/ext-ctrls-codec-stateless.rst
-> @@ -616,6 +616,12 @@ Stateless Codec Control ID
->      * - ``V4L2_H264_DECODE_PARAM_FLAG_BOTTOM_FIELD``
->        - 0x00000004
->        -
-> +    * - ``V4L2_H264_DECODE_PARAM_FLAG_PFRAME``
-> +      - 0x00000008
-> +      -
-> +    * - ``V4L2_H264_DECODE_PARAM_FLAG_BFRAME``
-> +      - 0x00000010
-> +      -
->  
->  .. raw:: latex
->  
-> diff --git a/include/uapi/linux/v4l2-controls.h b/include/uapi/linux/v4l2-controls.h
-> index c8e0f84d204d..e3d48d571062 100644
-> --- a/include/uapi/linux/v4l2-controls.h
-> +++ b/include/uapi/linux/v4l2-controls.h
-> @@ -1563,6 +1563,8 @@ struct v4l2_h264_dpb_entry {
->  #define V4L2_H264_DECODE_PARAM_FLAG_IDR_PIC		0x01
->  #define V4L2_H264_DECODE_PARAM_FLAG_FIELD_PIC		0x02
->  #define V4L2_H264_DECODE_PARAM_FLAG_BOTTOM_FIELD	0x04
-> +#define V4L2_H264_DECODE_PARAM_FLAG_PFRAME		0x08
-> +#define V4L2_H264_DECODE_PARAM_FLAG_BFRAME		0x10
->  
->  #define V4L2_CID_STATELESS_H264_DECODE_PARAMS	(V4L2_CID_CODEC_STATELESS_BASE + 7)
->  /**
+> [1] https://github.com/grate-driver/gstreamer/commit/b8509bdbb69b534e61419ea1798f32f9ad2f3597
+> [2] https://github.com/grate-driver/libvdpau-tegra/commit/f822e95911e5e0c39f8ba19f843ddc1e0138d5ce
+> [8] https://github.com/grate-driver/libvdpau-tegra/commit/80db4d02369f2a984ce3173d6bc305f32e9fdb97
+
+Nice work!
+
+Can you make a v4 that just moves the whole driver to drivers/media/platform? I see no
+reason for keeping this in staging.
+
+Once I have a v4 that does that I plan to make a PR for it.
+
+For the v4 don't forget to update MAINTAINERS with the new path and to drop the TODO
+file in staging.
+
+Regards,
+
+	Hans
+
+> 
+> Changelog:
+> 
+> v3: - Added new decode_params flags [7] instead of V4L2_BUF_FLAG_*FRAME flags,
+>       as was suggested by Nicolas Dufresne.
+> 
+>       [7] https://github.com/grate-driver/gstreamer/commit/c5cd847f9c26b7669720ae58f9058de2515f51a2
+> 
+>     - Added new patch that removes legacy UAPI.
+> 
+> v2: - Made V4L2_BUF_FLAG_*FRAME flags mandatory [3] and dropped reading
+>       of raw bitstream from the driver code, as was suggested by
+>       Nicolas Dufresne.
+> 
+>       [3] https://github.com/grate-driver/gstreamer/commit/aee292f0f2e84b7654a314dd7e63f916888ffaa5
+> 
+>     - Ran v4l2-compliance [4] and fluster [5][6] tests, like was suggested by
+>       Nicolas Dufresne. Fixed minor v4l2-compliance errors that were related
+>       to a partial initialization of the coded format and were harmless in
+>       practice, but made compliance checker unhappy.
+> 
+>       [4] https://gist.github.com/digetx/5d6bcdab633488f1dcc7c141ab90d30e
+>       [5] https://gist.github.com/digetx/b06c5d779e9d25afa41d9f46946fe399
+>       [6] https://gist.github.com/digetx/ac4198bc340e5065aa8ec3288bb21356
+> 
+> Dmitry Osipenko (4):
+>   media: v4l2-ctrls: Add new V4L2_H264_DECODE_PARAM_FLAG_P/BFRAME flags
+>   media: staging: tegra-vde: Factor out H.264 code
+>   media: staging: tegra-vde: Support V4L stateless video decoder API
+>   media: staging: tegra-vde: Remove legacy UAPI support
+> 
+>  .../media/v4l/ext-ctrls-codec-stateless.rst   |    6 +
+>  drivers/staging/media/tegra-vde/Kconfig       |    7 +
+>  drivers/staging/media/tegra-vde/Makefile      |    2 +-
+>  .../staging/media/tegra-vde/dmabuf-cache.c    |    2 +-
+>  drivers/staging/media/tegra-vde/h264.c        |  946 +++++++++++++++
+>  drivers/staging/media/tegra-vde/iommu.c       |    2 +-
+>  drivers/staging/media/tegra-vde/uapi.h        |   73 --
+>  drivers/staging/media/tegra-vde/v4l2.c        | 1018 +++++++++++++++++
+>  drivers/staging/media/tegra-vde/vde.c         |  945 ++-------------
+>  drivers/staging/media/tegra-vde/vde.h         |  121 +-
+>  include/uapi/linux/v4l2-controls.h            |    2 +
+>  11 files changed, 2170 insertions(+), 954 deletions(-)
+>  create mode 100644 drivers/staging/media/tegra-vde/h264.c
+>  delete mode 100644 drivers/staging/media/tegra-vde/uapi.h
+>  create mode 100644 drivers/staging/media/tegra-vde/v4l2.c
+> 
 
