@@ -2,18 +2,18 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28096C4321E
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 958D6C41535
 	for <linux-tegra@archiver.kernel.org>; Fri, 18 Feb 2022 11:43:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234851AbiBRLoO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        id S234860AbiBRLoO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
         Fri, 18 Feb 2022 06:44:14 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:49654 "EHLO
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:49676 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234799AbiBRLoJ (ORCPT
+        with ESMTP id S234805AbiBRLoK (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 18 Feb 2022 06:44:09 -0500
+        Fri, 18 Feb 2022 06:44:10 -0500
 Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4EE7813CF6;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E556412AB1;
         Fri, 18 Feb 2022 03:43:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
          s=20161220; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
@@ -21,17 +21,17 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
         Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
         :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
         List-Post:List-Owner:List-Archive;
-        bh=kI2Y6FC34ujTihl6CDjHGjleimjTYg+32wil4qWAtbY=; b=emjAyPEwTpAqQAVxDRmqRV/8sS
-        4VBE36vI/5WUgsMkA9/QqmWfR+sG5GYt67RwJ/7HFQbpux6Nhc/YruZamH7d07p+6JdAYdnr3m4Xx
-        6mRnbDAO3CKx2S+iGOer4H+gpgKxeChyxG3Lm7qGZ6xz2fUGxxwEJSPMWQO1Tmh6UY1ID6yHNw1oB
-        56moj3NbDdB93/eU7N1F3eDIYzBOSsfztW3u1ASdkZPD+MgeVFiOoEm+IibZHBRwClcufLq/HvRlN
-        BGBwVOAaU3NdbrGb44gKFYcYD+jdFezlj4/D7URTtyC/zoUyxTACgdicILBBgqveXcfKHPllJV6sU
-        MIXKwV7w==;
+        bh=IZ3hJ//ZY9jCeQD6DvUNkLgqmO36XNeE4mU4/ws/jeQ=; b=vChxJtIvCk0whXkzpXJ2dGqwUg
+        2NEMormh+YAhCOEFcBWpepRo8PCyHxzdBiFGqFj2le15X8nch/fGL+ntFyWrIujHG9jGco92HVVhK
+        fRn1x7qqN3cd2k5qnUDl3RvI7qi+E/XwL3Pga6GYQiTA5GhzPsVt3EBE1wuwcLaSHghkAJ1xhkY1p
+        /gnhjhE9nQuh02zCYNmpnhcFpUi9a4b+UunBZbCCxgck9XkJdoHE8rDh693uJjAOAu/K9XRSD4CY5
+        kJV7Pu0r/VrICra8TdFn3ARrmg9R0tcoLtL7FJEDP9nk2URNFdGETwDs9vbm6TAcEANKnK5sKlg9s
+        WFR972gQ==;
 Received: from 91-158-25-70.elisa-laajakaista.fi ([91.158.25.70] helo=toshino.localdomain)
         by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.89)
         (envelope-from <mperttunen@nvidia.com>)
-        id 1nL1fq-0006eP-9v; Fri, 18 Feb 2022 13:43:42 +0200
+        id 1nL1fq-0006eP-HX; Fri, 18 Feb 2022 13:43:42 +0200
 From:   Mikko Perttunen <mperttunen@nvidia.com>
 To:     thierry.reding@gmail.com, jonathanh@nvidia.com, joro@8bytes.org,
         will@kernel.org, robh+dt@kernel.org, robin.murphy@arm.com
@@ -39,9 +39,9 @@ Cc:     linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
         iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         Mikko Perttunen <mperttunen@nvidia.com>
-Subject: [PATCH v3 6/9] arm64: tegra: Add Host1x context stream IDs on Tegra186+
-Date:   Fri, 18 Feb 2022 13:39:49 +0200
-Message-Id: <20220218113952.3077606-7-mperttunen@nvidia.com>
+Subject: [PATCH v3 9/9] drm/tegra: Support context isolation
+Date:   Fri, 18 Feb 2022 13:39:52 +0200
+Message-Id: <20220218113952.3077606-10-mperttunen@nvidia.com>
 X-Mailer: git-send-email 2.35.0
 In-Reply-To: <20220218113952.3077606-1-mperttunen@nvidia.com>
 References: <20220218113952.3077606-1-mperttunen@nvidia.com>
@@ -54,69 +54,160 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Add Host1x context stream IDs on systems that support Host1x context
-isolation. Host1x and attached engines can use these stream IDs to
-allow isolation between memory used by different processes.
-
-The specified stream IDs must match those configured by the hypervisor,
-if one is present.
+For engines that support context isolation, allocate a context when
+opening a channel, and set up stream ID offset and context fields
+when submitting a job.
 
 Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
 ---
-v2:
-* Added context devices on T194.
-* Use iommu-map instead of custom property.
----
- arch/arm64/boot/dts/nvidia/tegra186.dtsi | 12 ++++++++++++
- arch/arm64/boot/dts/nvidia/tegra194.dtsi | 12 ++++++++++++
- 2 files changed, 24 insertions(+)
+ drivers/gpu/drm/tegra/drm.h    |  2 ++
+ drivers/gpu/drm/tegra/submit.c | 13 ++++++++++++
+ drivers/gpu/drm/tegra/uapi.c   | 36 ++++++++++++++++++++++++++++++++--
+ 3 files changed, 49 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-index c91afff1b757..7c49a0281986 100644
---- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-@@ -1406,6 +1406,18 @@ host1x@13e00000 {
+diff --git a/drivers/gpu/drm/tegra/drm.h b/drivers/gpu/drm/tegra/drm.h
+index fc0a19554eac..717e9f81ee1f 100644
+--- a/drivers/gpu/drm/tegra/drm.h
++++ b/drivers/gpu/drm/tegra/drm.h
+@@ -80,6 +80,7 @@ struct tegra_drm_context {
  
- 		iommus = <&smmu TEGRA186_SID_HOST1X>;
+ 	/* Only used by new UAPI. */
+ 	struct xarray mappings;
++	struct host1x_context *memory_context;
+ };
  
-+		memory-contexts {
-+			iommu-map = <
-+				0 &smmu TEGRA186_SID_HOST1X_CTX0 1
-+				1 &smmu TEGRA186_SID_HOST1X_CTX1 1
-+				2 &smmu TEGRA186_SID_HOST1X_CTX2 1
-+				3 &smmu TEGRA186_SID_HOST1X_CTX3 1
-+				4 &smmu TEGRA186_SID_HOST1X_CTX4 1
-+				5 &smmu TEGRA186_SID_HOST1X_CTX5 1
-+				6 &smmu TEGRA186_SID_HOST1X_CTX6 1
-+				7 &smmu TEGRA186_SID_HOST1X_CTX7 1>;
-+		};
+ struct tegra_drm_client_ops {
+@@ -91,6 +92,7 @@ struct tegra_drm_client_ops {
+ 	int (*submit)(struct tegra_drm_context *context,
+ 		      struct drm_tegra_submit *args, struct drm_device *drm,
+ 		      struct drm_file *file);
++	int (*get_streamid_offset)(struct tegra_drm_client *client);
+ };
+ 
+ int tegra_drm_submit(struct tegra_drm_context *context,
+diff --git a/drivers/gpu/drm/tegra/submit.c b/drivers/gpu/drm/tegra/submit.c
+index 6d6dd8c35475..8d74b82b83a5 100644
+--- a/drivers/gpu/drm/tegra/submit.c
++++ b/drivers/gpu/drm/tegra/submit.c
+@@ -498,6 +498,9 @@ static void release_job(struct host1x_job *job)
+ 	struct tegra_drm_submit_data *job_data = job->user_data;
+ 	u32 i;
+ 
++	if (job->context)
++		host1x_context_put(job->context);
 +
- 		dpaux1: dpaux@15040000 {
- 			compatible = "nvidia,tegra186-dpaux";
- 			reg = <0x15040000 0x10000>;
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-index 2d48c3715fc6..240202f2669b 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-@@ -1686,6 +1686,18 @@ host1x@13e00000 {
- 			interconnect-names = "dma-mem";
- 			iommus = <&smmu TEGRA194_SID_HOST1X>;
+ 	for (i = 0; i < job_data->num_used_mappings; i++)
+ 		tegra_drm_mapping_put(job_data->used_mappings[i].mapping);
  
-+			memory-contexts {
-+				iommu-map = <
-+					0 &smmu TEGRA194_SID_HOST1X_CTX0 1
-+					1 &smmu TEGRA194_SID_HOST1X_CTX1 1
-+					2 &smmu TEGRA194_SID_HOST1X_CTX2 1
-+					3 &smmu TEGRA194_SID_HOST1X_CTX3 1
-+					4 &smmu TEGRA194_SID_HOST1X_CTX4 1
-+					5 &smmu TEGRA194_SID_HOST1X_CTX5 1
-+					6 &smmu TEGRA194_SID_HOST1X_CTX6 1
-+					7 &smmu TEGRA194_SID_HOST1X_CTX7 1>;
-+			};
+@@ -599,6 +602,16 @@ int tegra_drm_ioctl_channel_submit(struct drm_device *drm, void *data,
+ 	job->release = release_job;
+ 	job->timeout = 10000;
+ 
++	if (context->memory_context && context->client->ops->get_streamid_offset) {
++		int offset = context->client->ops->get_streamid_offset(context->client);
 +
- 			nvdec@15140000 {
- 				compatible = "nvidia,tegra194-nvdec";
- 				reg = <0x15140000 0x00040000>;
++		if (offset >= 0) {
++			job->context = context->memory_context;
++			job->engine_streamid_offset = offset;
++			host1x_context_get(job->context);
++		}
++	}
++
+ 	/*
+ 	 * job_data is now part of job reference counting, so don't release
+ 	 * it from here.
+diff --git a/drivers/gpu/drm/tegra/uapi.c b/drivers/gpu/drm/tegra/uapi.c
+index 9ab9179d2026..be33da54d12c 100644
+--- a/drivers/gpu/drm/tegra/uapi.c
++++ b/drivers/gpu/drm/tegra/uapi.c
+@@ -33,6 +33,9 @@ static void tegra_drm_channel_context_close(struct tegra_drm_context *context)
+ 	struct tegra_drm_mapping *mapping;
+ 	unsigned long id;
+ 
++	if (context->memory_context)
++		host1x_context_put(context->memory_context);
++
+ 	xa_for_each(&context->mappings, id, mapping)
+ 		tegra_drm_mapping_put(mapping);
+ 
+@@ -72,6 +75,7 @@ static struct tegra_drm_client *tegra_drm_find_client(struct tegra_drm *tegra, u
+ 
+ int tegra_drm_ioctl_channel_open(struct drm_device *drm, void *data, struct drm_file *file)
+ {
++	struct host1x *host = tegra_drm_to_host1x(drm->dev_private);
+ 	struct tegra_drm_file *fpriv = file->driver_priv;
+ 	struct tegra_drm *tegra = drm->dev_private;
+ 	struct drm_tegra_channel_open *args = data;
+@@ -102,10 +106,29 @@ int tegra_drm_ioctl_channel_open(struct drm_device *drm, void *data, struct drm_
+ 		}
+ 	}
+ 
++	/* Only allocate context if the engine supports context isolation. */
++	if (client->ops->get_streamid_offset &&
++	    client->ops->get_streamid_offset(client) >= 0) {
++		context->memory_context =
++			host1x_context_alloc(host, get_task_pid(current, PIDTYPE_TGID));
++		if (IS_ERR(context->memory_context)) {
++			if (PTR_ERR(context->memory_context) != -EOPNOTSUPP) {
++				err = PTR_ERR(context->memory_context);
++				goto put_channel;
++			} else {
++				/*
++				 * OK, HW does not support contexts or contexts
++				 * are disabled.
++				 */
++				context->memory_context = NULL;
++			}
++		}
++	}
++
+ 	err = xa_alloc(&fpriv->contexts, &args->context, context, XA_LIMIT(1, U32_MAX),
+ 		       GFP_KERNEL);
+ 	if (err < 0)
+-		goto put_channel;
++		goto put_memctx;
+ 
+ 	context->client = client;
+ 	xa_init_flags(&context->mappings, XA_FLAGS_ALLOC1);
+@@ -118,6 +141,9 @@ int tegra_drm_ioctl_channel_open(struct drm_device *drm, void *data, struct drm_
+ 
+ 	return 0;
+ 
++put_memctx:
++	if (context->memory_context)
++		host1x_context_put(context->memory_context);
+ put_channel:
+ 	host1x_channel_put(context->channel);
+ free:
+@@ -156,6 +182,7 @@ int tegra_drm_ioctl_channel_map(struct drm_device *drm, void *data, struct drm_f
+ 	struct tegra_drm_mapping *mapping;
+ 	struct tegra_drm_context *context;
+ 	enum dma_data_direction direction;
++	struct device *mapping_dev;
+ 	int err = 0;
+ 
+ 	if (args->flags & ~DRM_TEGRA_CHANNEL_MAP_READ_WRITE)
+@@ -177,6 +204,11 @@ int tegra_drm_ioctl_channel_map(struct drm_device *drm, void *data, struct drm_f
+ 
+ 	kref_init(&mapping->ref);
+ 
++	if (context->memory_context)
++		mapping_dev = &context->memory_context->dev;
++	else
++		mapping_dev = context->client->base.dev;
++
+ 	mapping->bo = tegra_gem_lookup(file, args->handle);
+ 	if (!mapping->bo) {
+ 		err = -EINVAL;
+@@ -201,7 +233,7 @@ int tegra_drm_ioctl_channel_map(struct drm_device *drm, void *data, struct drm_f
+ 		goto put_gem;
+ 	}
+ 
+-	mapping->map = host1x_bo_pin(context->client->base.dev, mapping->bo, direction, NULL);
++	mapping->map = host1x_bo_pin(mapping_dev, mapping->bo, direction, NULL);
+ 	if (IS_ERR(mapping->map)) {
+ 		err = PTR_ERR(mapping->map);
+ 		goto put_gem;
 -- 
 2.35.0
 
