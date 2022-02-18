@@ -2,129 +2,177 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66C01C433F5
-	for <linux-tegra@archiver.kernel.org>; Fri, 18 Feb 2022 13:25:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19FD7C433EF
+	for <linux-tegra@archiver.kernel.org>; Fri, 18 Feb 2022 14:16:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230412AbiBRNZs (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 18 Feb 2022 08:25:48 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:38766 "EHLO
+        id S235977AbiBRORD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 18 Feb 2022 09:17:03 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:47112 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235756AbiBRNZr (ORCPT
+        with ESMTP id S232114AbiBRORC (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 18 Feb 2022 08:25:47 -0500
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C4A6284213;
-        Fri, 18 Feb 2022 05:25:30 -0800 (PST)
-Received: by mail-wr1-x433.google.com with SMTP id u2so13448140wrw.1;
-        Fri, 18 Feb 2022 05:25:30 -0800 (PST)
+        Fri, 18 Feb 2022 09:17:02 -0500
+Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A80BC18C5A9
+        for <linux-tegra@vger.kernel.org>; Fri, 18 Feb 2022 06:16:44 -0800 (PST)
+Received: by mail-lj1-x22a.google.com with SMTP id e2so1110640ljq.12
+        for <linux-tegra@vger.kernel.org>; Fri, 18 Feb 2022 06:16:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=0+R8f+FpWdVZsXC3JORiW96PDrtpa5Q+9MhYbuvNLCA=;
-        b=NspUSG2MzoWykLe1gT+VBXfNPirrN5xihqH+oh1f9MdkCNY8oeJvF4Aa0AFVKXRqDD
-         1HMakMkjkmP77pgl0dsR4b4e2z9RymheMwR6YD3T3PyWAnu74inWtCa5KZ4vFtGiFwjt
-         /GGK7sRqpwbCMcSHzpUM3xkDmt4ou1QRPLUHnluU/E2No+MHjs188noFMG9ZBmH8OQMw
-         H2oyO60awq8PAWT3MJWja3gBAk6G0r6miN3VKgNA0t226xLDfTXqGWuXYlRVoVrOO34J
-         7hZ2CgKPBdwJ7Anm8pDkmKcYVJQHlkPwtGRAZ5aJOvJWt+NlsQB+EFbyWXiFdEb07iQ/
-         DrkA==
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=uF68xvWcLx76IR6CWRwh/pPzuX0RgzE30BHq223TBtE=;
+        b=FzdIE5ExskgQXsPsUcc/+PrxvJEenKLjZkIpwhU1v6DSIt8OcIxW6RlcnaZQ3OxZxU
+         ARjBptI9pkzMDE6zcLGAqZi3FdhGGFiyEZsc/V+H5+rDDNhYXwdmalEDcAgJFoO+40M/
+         auFXBjLNRX7NZa3FyVMIxmfxkVPhvYS4Vyu+vd2jlXzMLskgcrHUG/aWAQYgO45SWeAR
+         RoySGtc+51y/m7blHTGBdkmYDrVwURA4kDBBTIG0vncukAAW/oyc3dlEPI7sVOgJJg30
+         Z+urn37MUd5lmpcSvjsEjYmmRIYeeb0a+539nXscyVOcrV3Sj8hQUu27cZRd5ppEm4tw
+         984w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=0+R8f+FpWdVZsXC3JORiW96PDrtpa5Q+9MhYbuvNLCA=;
-        b=avFaHPyM1ht+CrtQ0KcJrY6GiwOTLYX3erDmSfpWlm+Yr2tY3MCfWcqlo8dZ0rzsmG
-         3umAhnB6CEQMTBkMsetXZUJB7VvfuS6joVF4ceI5V/OAWLDvNpVHaA1bQrbqS8Qmd0xL
-         H5MvjdIzJLsufeBwZ7Qpau5dgRj0VF8x7F7karhLYW1L8BxmrLV9RNNy1LYurI8np4IM
-         mwMrs0ofnRV28Pt5G9c8odY02b3lV0uoMwg4XquL9/x9l67aL3+yj7cpA4Fe78TMpx/t
-         LZYdSXpVZ3GgGdz4dGJbaFUhCtDpSJSyhYacLAAjBeb5Ow/mHmdtsRmpUYViG01Z9hXp
-         jpZw==
-X-Gm-Message-State: AOAM531mBT7q9JlyKS8x5P6nyoddn4GIecOcCymzmES1+pz9H7FQIn2H
-        /kl/ig0IKrlfvzUpXlafZ6s=
-X-Google-Smtp-Source: ABdhPJyczukn/8AkfYdykkOt1pezwFEOwk60IxxwLY3jFkHxtFCbrspatY44fmxkmGx8RWJThO8AMA==
-X-Received: by 2002:a5d:6ac6:0:b0:1e3:3a96:fa27 with SMTP id u6-20020a5d6ac6000000b001e33a96fa27mr6459061wrw.285.1645190728912;
-        Fri, 18 Feb 2022 05:25:28 -0800 (PST)
-Received: from orome ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id i15sm5736155wmq.23.2022.02.18.05.25.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Feb 2022 05:25:27 -0800 (PST)
-Date:   Fri, 18 Feb 2022 14:25:21 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Sameer Pujar <spujar@nvidia.com>, jonathanh@nvidia.com,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH] memory: tegra: Add APE memory clients for Tegra234
-Message-ID: <Yg+eQT4P3UTe+D5R@orome>
-References: <1645186589-25118-1-git-send-email-spujar@nvidia.com>
- <028f766d-e5ba-fc12-665c-8f65d6bdf817@canonical.com>
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=uF68xvWcLx76IR6CWRwh/pPzuX0RgzE30BHq223TBtE=;
+        b=5g6qgYSMxN5LvulV8fuHqOXt2/uExevmhkycIEDUvxW9xyj74qfL/IsqW4yxvRudHZ
+         DyQGDZ+i3eHg4oBJd8lSAxrJ3JpBcnbFMAxq63ywodNc/dksbr/CPNY4+18nZTofMxgv
+         pdaZc2xc6tXUPdaGqwYZxwq52qRd4gkuAhnvgKdYLqFYfKkIeoOtDwlMq5d8vwFJxq5h
+         s4h/kUyk3A++R2zvAEnRABVHxFc6W9ggU4aQf5h9fef24HPPIPKpVgQ/xwtkbHO6Nx47
+         slnaBnvg9i9traryiQaYE/zZxme8yRc79Iz74SkWf9W6z3Njff/QHe0vJa9lSf81SQMP
+         wHHg==
+X-Gm-Message-State: AOAM531vgxirPRU/dpBAbUAiiqYXTKcFlXp7gGXhpychBCvqQ5VttwPt
+        1uGruASD5eU9oUMm8Wd4tUk=
+X-Google-Smtp-Source: ABdhPJy4TANF3ZWP7o81wk90zI7oXc9TbkAP3k0Y6qF9Amiv/qj+iJGq7IKqH4PJbO4d6Qn5OHR1Fw==
+X-Received: by 2002:a05:651c:901:b0:245:f621:55ff with SMTP id e1-20020a05651c090100b00245f62155ffmr5781816ljq.247.1645193802865;
+        Fri, 18 Feb 2022 06:16:42 -0800 (PST)
+Received: from [192.168.2.145] (109-252-138-165.dynamic.spd-mgts.ru. [109.252.138.165])
+        by smtp.googlemail.com with ESMTPSA id e30sm321572ljb.89.2022.02.18.06.16.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 18 Feb 2022 06:16:42 -0800 (PST)
+Message-ID: <0e936e9a-57a2-3881-1a55-50682b859acc@gmail.com>
+Date:   Fri, 18 Feb 2022 17:16:41 +0300
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="lBQDofXHql3wr2x9"
-Content-Disposition: inline
-In-Reply-To: <028f766d-e5ba-fc12-665c-8f65d6bdf817@canonical.com>
-User-Agent: Mutt/2.2 (7160e05a) (2022-02-12)
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [PATCH libdrm v2 00/25] Update Tegra support
+Content-Language: en-US
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
+References: <20220217191625.2534521-1-thierry.reding@gmail.com>
+ <fb059f6f-013a-4a7e-55a7-81acbdda80fc@gmail.com> <Yg7ANdIhSiEsZf8E@orome>
+From:   Dmitry Osipenko <digetx@gmail.com>
+In-Reply-To: <Yg7ANdIhSiEsZf8E@orome>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+18.02.2022 00:37, Thierry Reding пишет:
+> On Thu, Feb 17, 2022 at 11:02:53PM +0300, Dmitry Osipenko wrote:
+>> 17.02.2022 22:16, Thierry Reding пишет:
+>>> From: Thierry Reding <treding@nvidia.com>
+>>>
+>>> Hi all,
+>>>
+>>> this is the userspace part of the kernel patches that were recently
+>>> merged into drm-next:
+>>>
+>>>   https://patchwork.freedesktop.org/series/92378/
+>>>
+>>> The goal is to provide a userspace implementation of the UAPI exposed by
+>>> the kernel and show its usage in some test programs that can also be
+>>> used for basic sanity testing. More complete userspace implementations
+>>> are available here:
+>>>
+>>>   * https://github.com/cyndis/vaapi-tegra-driver
+>>>   * https://github.com/grate-driver/xf86-video-opentegra
+>>>   * https://github.com/grate-driver/grate
+>>>
+>>> Changes in v2:
+>>> - implement vic_clear() as a helper using ->fill() (Michał Mirosław)
+>>> - rebase and fix a couple of Meson errors/warnings
+>>>
+>>> Thierry
+>>>
+>>> Thierry Reding (25):
+>>>   tegra: Indent according to .editorconfig
+>>>   tegra: Remove unused IOCTL implementations
+>>>   tegra: Extract common buffer object allocation code
+>>>   tegra: Fix mmap() of GEM buffer objects
+>>>   tegra: Add flink helpers
+>>>   tegra: Add PRIME support helpers
+>>>   tegra: Make API more consistent
+>>>   tegra: Install tegra-openclose test
+>>>   tegra: Update for new UABI
+>>>   tegra: Include private.h in list of source files
+>>>   tegra: Add channel APIs
+>>>   tegra: Add job and push buffer APIs
+>>>   tegra: Add syncpoint APIs
+>>>   tests: tegra: Add helper library for tests
+>>>   tests: tegra: Add gr2d-fill test
+>>>   tests: tegra: Add syncpt-wait test
+>>>   tests: tegra: Add syncpoint timeout test
+>>>   tests: tegra: Add VIC support
+>>>   tests: tegra: Add VIC 3.0 support
+>>>   tests: tegra: Add VIC 4.0 support
+>>>   tests: tegra: Add VIC 4.1 support
+>>>   tests: tegra: Add VIC 4.2 support
+>>>   tests: tegra: Add VIC clear test
+>>>   tests: tegra: Add VIC blit test
+>>>   tests: tegra: Add VIC flip test
+>>>
+>>>  include/drm/tegra_drm.h      | 429 +++++++++++++++++++++++--
+>>>  tegra/channel.c              | 195 ++++++++++++
+>>>  tegra/job.c                  | 187 +++++++++++
+>>>  tegra/meson.build            |   7 +-
+>>>  tegra/private.h              |  85 ++++-
+>>>  tegra/pushbuf.c              | 184 +++++++++++
+>>>  tegra/syncpt.c               | 101 ++++++
+>>>  tegra/tegra-symbols.txt      |  27 +-
+>>>  tegra/tegra.c                | 386 +++++++++++-----------
+>>>  tegra/tegra.h                |  95 +++++-
+>>>  tests/tegra/.gitignore       |   3 +-
+>>>  tests/tegra/drm-test-tegra.c | 147 +++++++++
+>>>  tests/tegra/drm-test-tegra.h |  55 ++++
+>>>  tests/tegra/drm-test.c       | 248 +++++++++++++++
+>>>  tests/tegra/drm-test.h       |  72 +++++
+>>>  tests/tegra/gr2d-fill.c      | 146 +++++++++
+>>>  tests/tegra/host1x.h         |  34 ++
+>>>  tests/tegra/meson.build      |  88 +++++-
+>>>  tests/tegra/openclose.c      |  52 +--
+>>>  tests/tegra/syncpt-timeout.c | 163 ++++++++++
+>>>  tests/tegra/syncpt-wait.c    | 151 +++++++++
+>>>  tests/tegra/vic-blit.c       | 333 +++++++++++++++++++
+>>>  tests/tegra/vic-clear.c      | 173 ++++++++++
+>>>  tests/tegra/vic-flip.c       | 333 +++++++++++++++++++
+>>>  tests/tegra/vic.c            | 184 +++++++++++
+>>>  tests/tegra/vic.h            | 181 +++++++++++
+>>>  tests/tegra/vic30.c          | 458 +++++++++++++++++++++++++++
+>>>  tests/tegra/vic30.h          | 439 ++++++++++++++++++++++++++
+>>>  tests/tegra/vic40.c          | 370 ++++++++++++++++++++++
+>>>  tests/tegra/vic40.h          | 285 +++++++++++++++++
+>>>  tests/tegra/vic41.c          | 374 ++++++++++++++++++++++
+>>>  tests/tegra/vic41.h          | 372 ++++++++++++++++++++++
+>>>  tests/tegra/vic42.c          | 374 ++++++++++++++++++++++
+>>>  tests/tegra/vic42.h          | 597 +++++++++++++++++++++++++++++++++++
+>>>  34 files changed, 7068 insertions(+), 260 deletions(-)
+>>
+>>
+>> Why do we need these tests in libdrm? Why not IGT?
+> 
+> Oops, sorry. I had meant to reply to your question in the previous
+> version. The idea was to have this minimal set of tests in libdrm as a
+> way to demonstrate how to use the various APIs. At the same time, this
+> is meant to serve as an easy way to validate that everything works from
+> the comparatively simple libdrm package.
 
---lBQDofXHql3wr2x9
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Who will be validating libdrm on Tegra?
 
-On Fri, Feb 18, 2022 at 02:04:46PM +0100, Krzysztof Kozlowski wrote:
-> On 18/02/2022 13:16, Sameer Pujar wrote:
-> > Add the memory clients on Tegra234 which are needed for APE
-> > DMA to properly use the SMMU.
-> >=20
-> > Signed-off-by: Sameer Pujar <spujar@nvidia.com>
-> > ---
-> >  Please note that this patch depends on the DT binding patches of series
-> >  https://patchwork.kernel.org/project/alsa-devel/list/?series=3D609494&=
-state=3D*.
-> >  So please consider this patch once Thierry picks up DT binding patches=
- and
-> >  provides ACK on this.
->=20
-> I was not Cced on that patchset. Could you use
-> scripts/get_maintainers.pl for obtaining list of people and lists to Cc?
->=20
-> If Thierry picks up dt-bindings patch and I take this one, does it
-> compile? No, I don't think so. The order is screwed. This should be sent
-> together to make such dependencies obvious.
->=20
-> Anyway, I cannot take it so:
-> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+> But yes, adding more tests on top of this to IGT is something that I've
+> been pondering and I certainly wouldn't object if anyone else was going
+> to attempt to do so. I don't think IGT and libdrm need to be mutually
+> exclusive, though.
 
-This is my fault. I suggested Sameer send this out separately because we
-noticed the absence of this only after all the other patches had already
-been merged.
-
-I'll pick this up into the Tegra tree and will send a PR sometime next
-week for your tree that contains all the dependencies needed for this to
-build.
-
-Thierry
-
---lBQDofXHql3wr2x9
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmIPnj4ACgkQ3SOs138+
-s6GzhxAAu6fp6UsJR7IdYYZ6FkRqvzSwGKuIyZLdOjDzT7NfFwkHDyd06W1HTmSQ
-CyDtp9CsVvzUqwmyfToG0BgXbgDA75ARy3UPBVKovybcKXb/0EmK/S/t4LeweTvf
-aBT5PP8iV3hS79SkX2avMfctmKQv09LEf11ZAyHQSau1EjpUXnpbV0W68IMtLuYU
-E7KiBInNE3YmvUYVSmZ/N3npi/HZtzKahTfj5H+vXq2cEe5R8wMgta9lJWc+clmd
-FvCwS5Vw71KONRTqv1NV2H9MSPoe8ANGf0VlAktSiKjvzwEefpdJZvHTspJUmkDG
-Osfu4vZggDHY+IOChJ+ZvbUU/NnfmkK3VF3p7cPHURQNEwwxIwvuA7eXB6uuGhen
-+y7d9s/ApC3CJATFGE+Psiv4oWTlWOpw/5L2V+DAHS3KG2fU6YPEgycl7V4Ntbls
-8bJaiLiaae1bE7tDK8VE541qzILTTeWySMBLNhPxir1hdXKjJ5DuP37zgl7Trmgc
-JWulfts10xIgUqCgnhoU8lFD7gzAD1NQspWhbrrCACYF02BMtaZXQNlPK0j3UqLs
-VeYilmLDoJPc6aXULYr3pkCwT4EH3I5QbbvouRoQsQWJpGG9tXkhLS3ezskf7rpv
-GP7ZiqGWzJKz7YEp7THxch+bFWCri/Mpuk+zJkjYGHbDuxnaaKI=
-=yoXn
------END PGP SIGNATURE-----
-
---lBQDofXHql3wr2x9--
+I know that IGT tests are regularly run by the KernelCI at least on TK1.
