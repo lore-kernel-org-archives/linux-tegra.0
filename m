@@ -2,322 +2,174 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24D36C4332F
-	for <linux-tegra@archiver.kernel.org>; Fri, 18 Feb 2022 11:30:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 271DFC433F5
+	for <linux-tegra@archiver.kernel.org>; Fri, 18 Feb 2022 11:43:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233968AbiBRLaQ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 18 Feb 2022 06:30:16 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:48496 "EHLO
+        id S234721AbiBRLoJ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 18 Feb 2022 06:44:09 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:49604 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234499AbiBRLaP (ORCPT
+        with ESMTP id S232115AbiBRLoI (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 18 Feb 2022 06:30:15 -0500
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13F9F2AF92C
-        for <linux-tegra@vger.kernel.org>; Fri, 18 Feb 2022 03:29:58 -0800 (PST)
-Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com [209.85.208.70])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 9F5A140257
-        for <linux-tegra@vger.kernel.org>; Fri, 18 Feb 2022 11:29:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1645183796;
-        bh=5vu8Aw1W8wtoUUoiu3zrUlU5vDSdum5E40oXQSHrvFY=;
-        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-         In-Reply-To:Content-Type;
-        b=oyqHD8G5sahpxXlb/GRpyzFsmr5MOliYiV0SlwBgcsuvs85zpZAanqmL/vHc0mZHu
-         RLcEotbvxCX7NZln0rqS8Zg06WhDnntkc4N0zIqxzQcVPbFxu1E9s9g8z3t6xv6S6n
-         G6wgrP1dMTGggyW7cW1pJM2xX9ZuiqB6LixArR62JlU0pjT7MRZY8+BpWPUglOUt0o
-         zI9Fx2e3U98gMHnPUAuLay29j4h7T6nBA+Q+IECHklCDzipiRGljs8XML8u3htSjIN
-         M+U63Jceq3jv9Lq7y2YMaGAV1opKfLVej2fkr6lltyg+YhxdhgzPFVgyDdsbJB659x
-         qf77MhyluY95w==
-Received: by mail-ed1-f70.google.com with SMTP id d11-20020a50c88b000000b00410ba7a14acso5355061edh.6
-        for <linux-tegra@vger.kernel.org>; Fri, 18 Feb 2022 03:29:56 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=5vu8Aw1W8wtoUUoiu3zrUlU5vDSdum5E40oXQSHrvFY=;
-        b=fIrF0LQjlF+VMNY3SUZ9fCeP/F0+p9BqmVSwOJfT1eL0DxlxGBYHrxd1Cj+mvvt24U
-         41qZyq9i4UmVoFW1LF7GRdg+Wr0eW+GtE33JgJIHcXWKeLmN9H8AnHHV7Yxdg9QOZ85l
-         0h1l43uvCyISnoIsCUEAQjWbS8xAMssg0P+3roPmfi727tGOPVHN7fxIWs08801OpfSp
-         +FZKwwsmYQ5TrMJEUIr+dz0K+fojFfh5gCGgA6i75TFoYml5PLdCf7V7p8hfZUR0KUt2
-         gKH/wfbPHS1omT0El4IIUTeTahe7bHNRSYvsOhms1uH/Bi8x8UnGsmPbB1+CWbCDqmSt
-         Upgw==
-X-Gm-Message-State: AOAM530um6xTeZcxHG8gvrgb0BCTX0ziCjyWa/iJM1wW24F7XQSqgVnT
-        n0176I0+aNeq9trPS+NxAzOqBFE/xGO3OrNYsVoqpZGeIOpXdXZUduOyrcyzhNVgxFY87E93Jok
-        2+Zz0ebwcH1s6aXBnW5n0TENv6hpXwYHV2oPL25ci
-X-Received: by 2002:a50:d9ce:0:b0:410:f199:56ab with SMTP id x14-20020a50d9ce000000b00410f19956abmr7555704edj.182.1645183795973;
-        Fri, 18 Feb 2022 03:29:55 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJx15pzi/Z1NawSn2EWE5GK+1O9N+/OnokCiUugNjZZzD6iKk05cmwfAS1/FuQrIi+oq2rOcxA==
-X-Received: by 2002:a50:d9ce:0:b0:410:f199:56ab with SMTP id x14-20020a50d9ce000000b00410f19956abmr7555679edj.182.1645183795698;
-        Fri, 18 Feb 2022 03:29:55 -0800 (PST)
-Received: from [192.168.0.114] (xdsl-188-155-168-84.adslplus.ch. [188.155.168.84])
-        by smtp.gmail.com with ESMTPSA id b17sm2142489ejd.34.2022.02.18.03.29.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 18 Feb 2022 03:29:54 -0800 (PST)
-Message-ID: <d4fcf76c-5d43-d8fc-bdc7-1a04ab517678@canonical.com>
-Date:   Fri, 18 Feb 2022 12:29:53 +0100
+        Fri, 18 Feb 2022 06:44:08 -0500
+Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B32FB1274F;
+        Fri, 18 Feb 2022 03:43:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
+         s=20161220; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=inygvsTKfEXEunoehkv9TOnDCh7ocDzvGgEnXeVlJ14=; b=fC7/UvtxWrNHz/LroVaKr+xyNi
+        CULXHBM749m/qv3rsSOwNjnBb+c5NE/ftC+esIUeYhY4UIAEm0bL9CODzshLXks1B8azo8iJxoDPB
+        8j4Mmq+xY2nZppIlU8SMrMCqIZ+kkYgicrC78UF6reAdFEzJnVvQP/91HDXLDmKLGJU1dfHDzCKe4
+        ZmZ8aKY3iYC5VeoNARcKylFM5onaGAvSkOXV4eAy0la8P4QrU3Uvjje2QWUaqxNGnMZ2Ul7FDXOLl
+        viLknOHFEBMb8H7/2K014Hio+EBQpS4sQFaY3vEKi2qyIzGzUqGLwIpAqw88RlyMqBFBOp3fCozhw
+        NZ7nquaw==;
+Received: from 91-158-25-70.elisa-laajakaista.fi ([91.158.25.70] helo=toshino.localdomain)
+        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <mperttunen@nvidia.com>)
+        id 1nL1fp-0006eP-U9; Fri, 18 Feb 2022 13:43:41 +0200
+From:   Mikko Perttunen <mperttunen@nvidia.com>
+To:     thierry.reding@gmail.com, jonathanh@nvidia.com, joro@8bytes.org,
+        will@kernel.org, robh+dt@kernel.org, robin.murphy@arm.com
+Cc:     linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Mikko Perttunen <mperttunen@nvidia.com>
+Subject: [PATCH v3 2/9] gpu: host1x: Add context bus
+Date:   Fri, 18 Feb 2022 13:39:45 +0200
+Message-Id: <20220218113952.3077606-3-mperttunen@nvidia.com>
+X-Mailer: git-send-email 2.35.0
+In-Reply-To: <20220218113952.3077606-1-mperttunen@nvidia.com>
+References: <20220218113952.3077606-1-mperttunen@nvidia.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH] dt-bindings: nvidia,tegra20-kbc: Convert to json-schema
-Content-Language: en-US
-To:     Max Buchholz <max.buchholz@gmx.de>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>
-Cc:     David Heidelberg <david@ixit.cz>, linux-input@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20220218101011.22988-1-max.buchholz@gmx.de>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-In-Reply-To: <20220218101011.22988-1-max.buchholz@gmx.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 91.158.25.70
+X-SA-Exim-Mail-From: mperttunen@nvidia.com
+X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 18/02/2022 11:10, Max Buchholz wrote:
-> From: Max Buchholz <Max.Buchholz@gmx.de>
-> 
-> This converts the Nvidia Tegra keyboard controller bindings to YAML
-> and fix them up a bit.
-> 
-> Acked-by: David Heidelberg <david@ixit.cz>
-> Signed-off-by: Max Buchholz <max.buchholz@gmx.de>
-> ---
->  .../bindings/input/nvidia,tegra20-kbc.txt     |  55 ---------
->  .../bindings/input/nvidia,tegra20-kbc.yaml    | 114 ++++++++++++++++++
->  2 files changed, 114 insertions(+), 55 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/input/nvidia,tegra20-kbc.txt
->  create mode 100644 Documentation/devicetree/bindings/input/nvidia,tegra20-kbc.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/input/nvidia,tegra20-kbc.txt b/Documentation/devicetree/bindings/input/nvidia,tegra20-kbc.txt
-> deleted file mode 100644
-> index 1faa7292e21f..000000000000
-> --- a/Documentation/devicetree/bindings/input/nvidia,tegra20-kbc.txt
-> +++ /dev/null
-> @@ -1,55 +0,0 @@
-> -* Tegra keyboard controller
-> -The key controller has maximum 24 pins to make matrix keypad. Any pin
-> -can be configured as row or column. The maximum column pin can be 8
-> -and maximum row pins can be 16 for Tegra20/Tegra30.
-> -
-> -Required properties:
-> -- compatible: "nvidia,tegra20-kbc"
-> -- reg: Register base address of KBC.
-> -- interrupts: Interrupt number for the KBC.
-> -- nvidia,kbc-row-pins: The KBC pins which are configured as row. This is an
-> -  array of pin numbers which is used as rows.
-> -- nvidia,kbc-col-pins: The KBC pins which are configured as column. This is an
-> -  array of pin numbers which is used as column.
-> -- linux,keymap: The keymap for keys as described in the binding document
-> -  devicetree/bindings/input/matrix-keymap.txt.
-> -- clocks: Must contain one entry, for the module clock.
-> -  See ../clocks/clock-bindings.txt for details.
-> -- resets: Must contain an entry for each entry in reset-names.
-> -  See ../reset/reset.txt for details.
-> -- reset-names: Must include the following entries:
-> -  - kbc
-> -
-> -Optional properties, in addition to those specified by the shared
-> -matrix-keyboard bindings:
-> -
-> -- linux,fn-keymap: a second keymap, same specification as the
-> -  matrix-keyboard-controller spec but to be used when the KEY_FN modifier
-> -  key is pressed.
-> -- nvidia,debounce-delay-ms: delay in milliseconds per row scan for debouncing
-> -- nvidia,repeat-delay-ms: delay in milliseconds before repeat starts
-> -- nvidia,ghost-filter: enable ghost filtering for this device
-> -- wakeup-source: configure keyboard as a wakeup source for suspend/resume
-> -		 (Legacy property supported: "nvidia,wakeup-source")
-> -
-> -Example:
-> -
-> -keyboard: keyboard {
-> -	compatible = "nvidia,tegra20-kbc";
-> -	reg = <0x7000e200 0x100>;
-> -	interrupts = <0 85 0x04>;
-> -	clocks = <&tegra_car 36>;
-> -	resets = <&tegra_car 36>;
-> -	reset-names = "kbc";
-> -	nvidia,ghost-filter;
-> -	nvidia,debounce-delay-ms = <640>;
-> -	nvidia,kbc-row-pins = <0 1 2>;    /* pin 0, 1, 2 as rows */
-> -	nvidia,kbc-col-pins = <11 12 13>; /* pin 11, 12, 13 as columns */
-> -	linux,keymap = <0x00000074
-> -			0x00010067
-> -			0x00020066
-> -			0x01010068
-> -			0x02000069
-> -			0x02010070
-> -			0x02020071>;
-> -};
-> diff --git a/Documentation/devicetree/bindings/input/nvidia,tegra20-kbc.yaml b/Documentation/devicetree/bindings/input/nvidia,tegra20-kbc.yaml
-> new file mode 100644
-> index 000000000000..076b347a6f07
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/input/nvidia,tegra20-kbc.yaml
-> @@ -0,0 +1,114 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +%YAML 1.2
-> +---
-> +$id: "http://devicetree.org/schemas/input/nvidia,tegra20-kbc.yaml#"
-> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
-> +
-> +title: Nvidia Tegra keyboard controller
-> +
-> +maintainers:
-> +  - Max Buchholz <max.buchholz@gmx.de>
+The context bus is a "dummy" bus that contains struct devices that
+correspond to IOMMU contexts assigned through Host1x to processes.
 
-Maybe also add TEGRA KBC DRIVER maintainer? He was not CC here...
+Even when host1x itself is built as a module, the bus is registered
+in built-in code so that the built-in ARM SMMU driver is able to
+reference it.
 
-> +
-> +description: >
-> +  The key controller has maximum 24 pins to make matrix keypad. Any pin
-> +  can be configured as row or column. The maximum column pin can be 8
-> +  and maximum row pins can be 16 for Tegra20/Tegra30.
-> +
-> +properties:
-> +  compatible:
-> +    const: nvidia,tegra20-kbc
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
+Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+---
+ drivers/gpu/Makefile               |  3 +--
+ drivers/gpu/host1x/Kconfig         |  5 +++++
+ drivers/gpu/host1x/Makefile        |  1 +
+ drivers/gpu/host1x/context_bus.c   | 31 ++++++++++++++++++++++++++++++
+ include/linux/host1x_context_bus.h | 15 +++++++++++++++
+ 5 files changed, 53 insertions(+), 2 deletions(-)
+ create mode 100644 drivers/gpu/host1x/context_bus.c
+ create mode 100644 include/linux/host1x_context_bus.h
 
-maxItems: 1
+diff --git a/drivers/gpu/Makefile b/drivers/gpu/Makefile
+index 835c88318cec..8997f0096545 100644
+--- a/drivers/gpu/Makefile
++++ b/drivers/gpu/Makefile
+@@ -2,7 +2,6 @@
+ # drm/tegra depends on host1x, so if both drivers are built-in care must be
+ # taken to initialize them in the correct order. Link order is the only way
+ # to ensure this currently.
+-obj-$(CONFIG_TEGRA_HOST1X)	+= host1x/
+-obj-y			+= drm/ vga/
++obj-y			+= host1x/ drm/ vga/
+ obj-$(CONFIG_IMX_IPUV3_CORE)	+= ipu-v3/
+ obj-$(CONFIG_TRACE_GPU_MEM)		+= trace/
+diff --git a/drivers/gpu/host1x/Kconfig b/drivers/gpu/host1x/Kconfig
+index 6815b4db17c1..1861a8180d3f 100644
+--- a/drivers/gpu/host1x/Kconfig
++++ b/drivers/gpu/host1x/Kconfig
+@@ -1,8 +1,13 @@
+ # SPDX-License-Identifier: GPL-2.0-only
++
++config TEGRA_HOST1X_CONTEXT_BUS
++	bool
++
+ config TEGRA_HOST1X
+ 	tristate "NVIDIA Tegra host1x driver"
+ 	depends on ARCH_TEGRA || (ARM && COMPILE_TEST)
+ 	select DMA_SHARED_BUFFER
++	select TEGRA_HOST1X_CONTEXT_BUS
+ 	select IOMMU_IOVA
+ 	help
+ 	  Driver for the NVIDIA Tegra host1x hardware.
+diff --git a/drivers/gpu/host1x/Makefile b/drivers/gpu/host1x/Makefile
+index d2b6f7de0498..c891a3e33844 100644
+--- a/drivers/gpu/host1x/Makefile
++++ b/drivers/gpu/host1x/Makefile
+@@ -18,3 +18,4 @@ host1x-y = \
+ 	hw/host1x07.o
+ 
+ obj-$(CONFIG_TEGRA_HOST1X) += host1x.o
++obj-$(CONFIG_TEGRA_HOST1X_CONTEXT_BUS) += context_bus.o
+diff --git a/drivers/gpu/host1x/context_bus.c b/drivers/gpu/host1x/context_bus.c
+new file mode 100644
+index 000000000000..2625914f3c7d
+--- /dev/null
++++ b/drivers/gpu/host1x/context_bus.c
+@@ -0,0 +1,31 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Copyright (c) 2021, NVIDIA Corporation.
++ */
++
++#include <linux/device.h>
++#include <linux/of.h>
++
++struct bus_type host1x_context_device_bus_type = {
++	.name = "host1x-context",
++};
++EXPORT_SYMBOL(host1x_context_device_bus_type);
++
++static int __init host1x_context_device_bus_init(void)
++{
++	int err;
++
++	if (!of_machine_is_compatible("nvidia,tegra186") &&
++	    !of_machine_is_compatible("nvidia,tegra194") &&
++	    !of_machine_is_compatible("nvidia,tegra234"))
++		return 0;
++
++	err = bus_register(&host1x_context_device_bus_type);
++	if (err < 0) {
++		pr_err("bus type registration failed: %d\n", err);
++		return err;
++	}
++
++	return 0;
++}
++postcore_initcall(host1x_context_device_bus_init);
+diff --git a/include/linux/host1x_context_bus.h b/include/linux/host1x_context_bus.h
+new file mode 100644
+index 000000000000..72462737a6db
+--- /dev/null
++++ b/include/linux/host1x_context_bus.h
+@@ -0,0 +1,15 @@
++/* SPDX-License-Identifier: GPL-2.0-or-later */
++/*
++ * Copyright (c) 2021, NVIDIA Corporation. All rights reserved.
++ */
++
++#ifndef __LINUX_HOST1X_CONTEXT_BUS_H
++#define __LINUX_HOST1X_CONTEXT_BUS_H
++
++#include <linux/device.h>
++
++#ifdef CONFIG_TEGRA_HOST1X_CONTEXT_BUS
++extern struct bus_type host1x_context_device_bus_type;
++#endif
++
++#endif
+-- 
+2.35.0
 
-> +    description: Interrupt number for the KBC.
-
-It's fairly obvious, so description can be skipped.
-
-> +
-> +  nvidia,kbc-row-pins:
-> +    description: >
-> +      The KBC pins which are configured as row. This is an
-> +      array of pin numbers which is used as rows.
-
-You basically duplicate the property name in description. "Row" is
-obvious from property name. "Pins" as well. "Array" from the type below.
-Please document the field without repeating the type and property name.
-
-> +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> +
-> +  nvidia,kbc-col-pins:
-> +    description: >
-> +      The KBC pins which are configured as column. This is an
-> +      array of pin numbers which is used as column.
-> +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> +
-> +  linux,keymap:
-> +    description: >
-> +      The keymap for keys as described in the binding document
-> +      devicetree/bindings/input/matrix-keymap.txt.
-
-1. The file is empty.
-2. Reference matrxi-keymap.yaml instead with allOf.
-
-> +
-> +  clocks:
-> +    maxItems: 1
-> +    description: >
-> +      Must contain one entry, for the module clock.
-> +      See ../clocks/clock-bindings.txt for details.
-
-Skip description, it's obvious and no need to reference old TXT.
-
-> +
-> +  resets:
-> +    description: >
-> +      Must contain an entry for each entry in reset-names.
-> +      See ../reset/reset.txt for details.
-
-maxItems
-Skip description.
-
-> +
-> +  reset-names:
-> +    const: kbc
-> +
-> +  linux,fn-keymap:
-> +    description: >
-> +      a second keymap, same specification as the
-> +      matrix-keyboard-controller spec but to be used when the KEY_FN modifier
-> +      key is pressed.
-
-Does not look like standard property, so you need type.
-
-> +
-> +  nvidia,debounce-delay-ms:
-> +    description: delay in milliseconds per row scan for debouncing
-> +
-> +  nvidia,repeat-delay-ms:
-> +    description: delay in milliseconds before repeat starts
-> +
-> +  nvidia,ghost-filter:
-> +    description: enable ghost filtering for this device
-> +    type: boolean
-> +
-> +  wakeup-source:
-> +    description: configure keyboard as a wakeup source for suspend/resume
-> +
-> +  nvidia,wakeup-source:
-> +    description: configure keyboard as a wakeup source for suspend/resume
-> +    deprecated: true
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - nvidia,kbc-row-pins
-> +  - nvidia,kbc-col-pins
-> +  - linux,keymap
-> +  - clocks
-> +  - resets
-> +  - reset-names
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    keyboard: {
-> +        compatible = "nvidia,tegra20-kbc";
-> +        reg = <0x7000e200 0x100>;
-> +        interrupts = <0 85 0x04>;
-
-0 is GIC_SPI?
-0x4 is a speficif flag? Use defines for these.
-
-> +        clocks = <&tegra_car 36>;
-> +        resets = <&tegra_car 36>;
-> +        reset-names = "kbc";
-> +        nvidia,ghost-filter;
-> +        nvidia,debounce-delay-ms = <640>;
-> +        nvidia,kbc-row-pins = <0 1 2>;    /* pin 0, 1, 2 as rows */
-> +        nvidia,kbc-col-pins = <11 12 13>; /* pin 11, 12, 13 as columns */
-> +        linux,keymap = <0x00000074
-> +                0x00010067
-> +                0x00020066
-> +                0x01010068
-> +                0x02000069
-> +                0x02010070
-> +                0x02020071>;
-
-Align with 0x0000074 in first line.
-
-> +    };
-> --
-> 2.35.1
-> 
-
-
-Best regards,
-Krzysztof
