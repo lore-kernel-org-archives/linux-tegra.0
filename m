@@ -2,59 +2,59 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9C7EC433FE
-	for <linux-tegra@archiver.kernel.org>; Sat, 19 Feb 2022 18:35:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7B96C433EF
+	for <linux-tegra@archiver.kernel.org>; Sat, 19 Feb 2022 18:49:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242855AbiBSSfm (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 19 Feb 2022 13:35:42 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:43556 "EHLO
+        id S241914AbiBSStd (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 19 Feb 2022 13:49:33 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:42320 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229800AbiBSSfl (ORCPT
+        with ESMTP id S242082AbiBSStd (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sat, 19 Feb 2022 13:35:41 -0500
-Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FCE1158DBC;
-        Sat, 19 Feb 2022 10:35:22 -0800 (PST)
-Received: by mail-lj1-x22a.google.com with SMTP id v22so6974911ljh.7;
-        Sat, 19 Feb 2022 10:35:22 -0800 (PST)
+        Sat, 19 Feb 2022 13:49:33 -0500
+Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F6D96E783;
+        Sat, 19 Feb 2022 10:49:14 -0800 (PST)
+Received: by mail-lf1-x131.google.com with SMTP id b9so11325471lfv.7;
+        Sat, 19 Feb 2022 10:49:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=message-id:date:mime-version:user-agent:subject:content-language:to
          :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=ihAhYAdeg+5mNGGybXtL07Go2hn89yUQuHza/hGj/wQ=;
-        b=CKbEo/EfSh655da36ya0jrhiGmnzQqTJlKVP0gefuCExsV+Ab7Ta4cauO8X8eA3OWK
-         TEZrfeFlxRC+gQEgaRmPQeXwLBjjzfgOYxrodtJQGs+efxIkqMPTUKC4v9B7eVm7qKYl
-         YGUfTC6sdtKsKCnDAFUKWJTjZ9s2Zr79iREHv35eU1e/w4U8VDM29SYxf88A+zdYNJs0
-         9hAbRMheWeo4Hmth/m1GzpzOmPFDZ5rP+lCPG8lUufpRM2Alh00ttY9Ml9cgAXiicfP6
-         HYkiHJhRMbJTXV+hdEPibOskEipA8014nW1jPmS00i/Qqz9eCUw8Pc36FwSTGZ0Y0L6F
-         xTtg==
+        bh=7YhVG8Dy+S1k40YAXhEZryTJrbvkmx9GiFs6+GPhuaQ=;
+        b=H2eafIb0d+gnPTeQfQp3hdpbyrFDjuxHlgGunCA2MiiBccQeIlixC6yWs5I08xT0nN
+         Xdxjxk6Mzk8p+BE7e+dKuSRT5dolF+XjEsJlja7p0ETEvEEvuH8Yh4dlWKRoZ4iZ8OXR
+         U2uMxEimT2NduF42uHLQHUyEfjdv17in99/lWPBlj/UL2FNWAnSXBzrBQJDMu+DCgkAH
+         rM5Bvsb9e5s2clBjZTXORVVjUxCWI1VNQIWotvuonsawBYM+5GZBhOaAS/1YLepiFidN
+         FhhGEihUOKgcKs01grZCKhcxkiknAkYyU1UNow5+2vpKdwOxLKw3yYdKAJcq9QIwFmjy
+         ZvKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=ihAhYAdeg+5mNGGybXtL07Go2hn89yUQuHza/hGj/wQ=;
-        b=JwjAXoFNtblGnZ2uuzKZpdhDkouuJ6f1NGk2GHorpvhSS67CMtfwgkjQSwhogFLhvh
-         ETQEWspR49PQA+WjFLaut5mTHGsT3nyZnlFwCr7WhaQkTKyPNVNIp3UssL/XYcyH8dBu
-         ZAvo27PjQJ5KGvBGUHmD9cu8qRV0SBElWtOOFgeGaOV7oZoGt92K/5zyioYgdZjgS7wP
-         GsOJ+uOmnv3R72CgNCUa17Crrk5bpJKYUUMsevQKvmR38EFxvITFHDxtd2cHq/OcCJCv
-         KlrW2QKczt4UhDx1LzMFpEdHmKPjovnJtPoM4xddyFILqGILSMovZ4uWZ4z5w6vSmIWS
-         mYhQ==
-X-Gm-Message-State: AOAM531WyRYmavLv5bnH3uBhcPho6A5YrKtNA+q/fa9O/UFQqqezaqPs
-        9ROJFNVYXK5rnQ5eBulL1Ec=
-X-Google-Smtp-Source: ABdhPJyUuey/Cp/BTWCj1MjuWX+PNTm6NcAPr+wmv4r6uS40/QsJrxTXnPwEO8K6bkDeKyB/mQeKDw==
-X-Received: by 2002:a05:651c:201b:b0:246:34b5:155e with SMTP id s27-20020a05651c201b00b0024634b5155emr1600949ljo.273.1645295720866;
-        Sat, 19 Feb 2022 10:35:20 -0800 (PST)
+        bh=7YhVG8Dy+S1k40YAXhEZryTJrbvkmx9GiFs6+GPhuaQ=;
+        b=SOFA9UcPAmDR55npkUyF9ObyBBfv5vFSOolQUApNdwbAcZ+meH7R0bHttk/M9J1X8W
+         2TTT3LsawlCjeC1JI6q4kxSZQ00OKvhKqq2xmfna0+YAddQdLoOc+j44JECF3YFXRrJY
+         84OkCLjED0yR9TGux5A23IMEVjyHfNOoYhOmbdIBASZYU5gq2zU+7K6f3pLBv2jelijV
+         U675+zeyD9AcNc0dG9YRoNOY9C1JWKf6Cn2He5axrX56/j6ChpOAAPDxpJlEzhrZsrki
+         5TKV42ZazXOnjgvrPDeZlkelLfMZ3wvkTjDeNbhdPTIgDD4EwGXwJ5wfeldEuJJ0yRQq
+         Umug==
+X-Gm-Message-State: AOAM530HFqa1hfBcvlKlypV65ReIOtD80QV8A99Mq6d2CT10tysGRkPB
+        btdUG4ZI1k0suPSG9GA9OW0=
+X-Google-Smtp-Source: ABdhPJxu4c7EAYfGM/Z+Iq7ORPC+Om71HaUK4ew3FTkSHXyN9PFMoo+/wBKUzofOsjvEek347LaSWQ==
+X-Received: by 2002:a05:6512:3f91:b0:43e:da3e:464b with SMTP id x17-20020a0565123f9100b0043eda3e464bmr9015660lfa.673.1645296552456;
+        Sat, 19 Feb 2022 10:49:12 -0800 (PST)
 Received: from [192.168.2.145] (109-252-138-165.dynamic.spd-mgts.ru. [109.252.138.165])
-        by smtp.googlemail.com with ESMTPSA id j11sm642315lfm.40.2022.02.19.10.35.19
+        by smtp.googlemail.com with ESMTPSA id y18sm737447ljd.13.2022.02.19.10.49.11
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 19 Feb 2022 10:35:20 -0800 (PST)
-Message-ID: <2b4dd244-f918-4d26-2322-00a0bb226ccf@gmail.com>
-Date:   Sat, 19 Feb 2022 21:35:19 +0300
+        Sat, 19 Feb 2022 10:49:12 -0800 (PST)
+Message-ID: <b1df816b-6838-c435-1a23-5029144e4cfe@gmail.com>
+Date:   Sat, 19 Feb 2022 21:49:11 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.5.0
-Subject: Re: [PATCH v3 9/9] drm/tegra: Support context isolation
+Subject: Re: [PATCH v3 8/9] drm/tegra: vic: Implement get_streamid_offset
 Content-Language: en-US
 To:     Mikko Perttunen <mperttunen@nvidia.com>, thierry.reding@gmail.com,
         jonathanh@nvidia.com, joro@8bytes.org, will@kernel.org,
@@ -63,9 +63,9 @@ Cc:     linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
         iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 References: <20220218113952.3077606-1-mperttunen@nvidia.com>
- <20220218113952.3077606-10-mperttunen@nvidia.com>
+ <20220218113952.3077606-9-mperttunen@nvidia.com>
 From:   Dmitry Osipenko <digetx@gmail.com>
-In-Reply-To: <20220218113952.3077606-10-mperttunen@nvidia.com>
+In-Reply-To: <20220218113952.3077606-9-mperttunen@nvidia.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -73,35 +73,25 @@ List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 18.02.2022 14:39, Mikko Perttunen пишет:
-> +	if (context->memory_context && context->client->ops->get_streamid_offset) {
-            ^^^
-> +		int offset = context->client->ops->get_streamid_offset(context->client);
+> +static int vic_get_streamid_offset(struct tegra_drm_client *client)
+> +{
+> +	struct vic *vic = to_vic(client);
+> +	int err;
 > +
-> +		if (offset >= 0) {
-> +			job->context = context->memory_context;
-> +			job->engine_streamid_offset = offset;
-> +			host1x_context_get(job->context);
-> +		}
+> +	err = vic_load_firmware(vic);
 
-You should bump refcount unconditionally or you'll get refcnt underflow
-on put, when offset < 0.
+You can't invoke vic_load_firmware() while RPM is suspended. Either
+replace this with RPM get/put or do something else.
 
-> +	}
+> +	if (err < 0)
+> +		return err;
 > +
->  	/*
->  	 * job_data is now part of job reference counting, so don't release
->  	 * it from here.
-> diff --git a/drivers/gpu/drm/tegra/uapi.c b/drivers/gpu/drm/tegra/uapi.c
-> index 9ab9179d2026..be33da54d12c 100644
-> --- a/drivers/gpu/drm/tegra/uapi.c
-> +++ b/drivers/gpu/drm/tegra/uapi.c
-> @@ -33,6 +33,9 @@ static void tegra_drm_channel_context_close(struct tegra_drm_context *context)
->  	struct tegra_drm_mapping *mapping;
->  	unsigned long id;
->  
-> +	if (context->memory_context)
-> +		host1x_context_put(context->memory_context);
+> +	if (vic->can_use_context)
+> +		return 0x30;
+> +	else
+> +		return -ENOTSUPP;
 
-The "if (context->memory_context &&
-context->client->ops->get_streamid_offset)" above doesn't match the "if
-(context->memory_context)". You'll get refcount underflow.
+If (!vic->can_use_context)
+	return -ENOTSUPP;
+
+return 0x30;
