@@ -2,60 +2,61 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7B96C433EF
-	for <linux-tegra@archiver.kernel.org>; Sat, 19 Feb 2022 18:49:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC5C8C433F5
+	for <linux-tegra@archiver.kernel.org>; Sat, 19 Feb 2022 18:54:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241914AbiBSStd (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 19 Feb 2022 13:49:33 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:42320 "EHLO
+        id S230148AbiBSSyn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 19 Feb 2022 13:54:43 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:35376 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242082AbiBSStd (ORCPT
+        with ESMTP id S229437AbiBSSym (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sat, 19 Feb 2022 13:49:33 -0500
-Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F6D96E783;
-        Sat, 19 Feb 2022 10:49:14 -0800 (PST)
-Received: by mail-lf1-x131.google.com with SMTP id b9so11325471lfv.7;
-        Sat, 19 Feb 2022 10:49:13 -0800 (PST)
+        Sat, 19 Feb 2022 13:54:42 -0500
+Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D810694BC;
+        Sat, 19 Feb 2022 10:54:23 -0800 (PST)
+Received: by mail-lf1-x129.google.com with SMTP id d23so11271215lfv.13;
+        Sat, 19 Feb 2022 10:54:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=7YhVG8Dy+S1k40YAXhEZryTJrbvkmx9GiFs6+GPhuaQ=;
-        b=H2eafIb0d+gnPTeQfQp3hdpbyrFDjuxHlgGunCA2MiiBccQeIlixC6yWs5I08xT0nN
-         Xdxjxk6Mzk8p+BE7e+dKuSRT5dolF+XjEsJlja7p0ETEvEEvuH8Yh4dlWKRoZ4iZ8OXR
-         U2uMxEimT2NduF42uHLQHUyEfjdv17in99/lWPBlj/UL2FNWAnSXBzrBQJDMu+DCgkAH
-         rM5Bvsb9e5s2clBjZTXORVVjUxCWI1VNQIWotvuonsawBYM+5GZBhOaAS/1YLepiFidN
-         FhhGEihUOKgcKs01grZCKhcxkiknAkYyU1UNow5+2vpKdwOxLKw3yYdKAJcq9QIwFmjy
-         ZvKA==
+        h=message-id:date:mime-version:user-agent:subject:content-language
+         :from:to:cc:references:in-reply-to:content-transfer-encoding;
+        bh=Ci6QRGwAlkUphSDT6SSS26W4w72+zrbvF3RFtSti1zA=;
+        b=hxmOALR7fu4NSCDBQpNlkYo3cbQuBRUGBm6lqCfXOABtakxfFcfezKMvO+rZUKfYYB
+         K7nd2fsc2Y2y8Fo3EbiQKJsxIpdlW68MopfYn9lH59b5EvdJSK/rc2co4kiBiHTMCxJr
+         5mixYHCQduWGM1vSXhLxd7X44w9m6tHtBzUxgCM5DcUFR6pfYQFRDt1VBtXLR1G6ZMkA
+         AWDtx6ST7x2efloQyAMVCN7wXJfIUwUAAApgInco0cEY8j5L/B6gEXM3Qv/aViH93nPc
+         ku0aOl5uiULvMBHjnODgB2UFdF1T4J1TGbSbktZ4H9hnay+tfEw7SGlajbPSd69mgFyN
+         sy4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
+         :content-language:from:to:cc:references:in-reply-to
          :content-transfer-encoding;
-        bh=7YhVG8Dy+S1k40YAXhEZryTJrbvkmx9GiFs6+GPhuaQ=;
-        b=SOFA9UcPAmDR55npkUyF9ObyBBfv5vFSOolQUApNdwbAcZ+meH7R0bHttk/M9J1X8W
-         2TTT3LsawlCjeC1JI6q4kxSZQ00OKvhKqq2xmfna0+YAddQdLoOc+j44JECF3YFXRrJY
-         84OkCLjED0yR9TGux5A23IMEVjyHfNOoYhOmbdIBASZYU5gq2zU+7K6f3pLBv2jelijV
-         U675+zeyD9AcNc0dG9YRoNOY9C1JWKf6Cn2He5axrX56/j6ChpOAAPDxpJlEzhrZsrki
-         5TKV42ZazXOnjgvrPDeZlkelLfMZ3wvkTjDeNbhdPTIgDD4EwGXwJ5wfeldEuJJ0yRQq
-         Umug==
-X-Gm-Message-State: AOAM530HFqa1hfBcvlKlypV65ReIOtD80QV8A99Mq6d2CT10tysGRkPB
-        btdUG4ZI1k0suPSG9GA9OW0=
-X-Google-Smtp-Source: ABdhPJxu4c7EAYfGM/Z+Iq7ORPC+Om71HaUK4ew3FTkSHXyN9PFMoo+/wBKUzofOsjvEek347LaSWQ==
-X-Received: by 2002:a05:6512:3f91:b0:43e:da3e:464b with SMTP id x17-20020a0565123f9100b0043eda3e464bmr9015660lfa.673.1645296552456;
-        Sat, 19 Feb 2022 10:49:12 -0800 (PST)
+        bh=Ci6QRGwAlkUphSDT6SSS26W4w72+zrbvF3RFtSti1zA=;
+        b=0V0hsNwS8AncWgNRIugHfjPWmn9I0zaos9wiGmIuk69w2/KUjP3R6wiMwmp4rEFn2g
+         ro1Q331bWeoVjoRNktmIgtBe4dArx0Z3j3CaR7q8Eqz+uNGOr5DXXZjwqLDTbEXHgmTm
+         47wg3BXDBE0mhiiIIbDgefSRkK+rqPZ0AmA543DYgnH9Qf9KfvUiHzIa/mYGN0Pj0MrQ
+         uVBiWKcJKExWYM7MSjQD7OS/dEYIzHM7ycQbjK32gF2oc6nkBy/aPjHgoXo2U0lr9LO5
+         kChL7mGC4b4d1MP0vUqSyA1khI07Fp0YzVFlSI3JQ4sUMS1dD0rv/DcSPUl2R7uot3Ls
+         /+HA==
+X-Gm-Message-State: AOAM531Gob0N/01kNH9pFotghr01hbAED7E6TvWizHOlDM0+0+EvfxYD
+        oUrVlgVr7u+G6+Kw0URjpIE=
+X-Google-Smtp-Source: ABdhPJxmMnmGlPqJgyh+vYOuXmx5fXZ96x5FviI71xKObjIWMROoDlv5HlFyEEe4tE1z3VFN7Oh3sg==
+X-Received: by 2002:a05:6512:220b:b0:443:3113:ef90 with SMTP id h11-20020a056512220b00b004433113ef90mr9303085lfu.475.1645296861746;
+        Sat, 19 Feb 2022 10:54:21 -0800 (PST)
 Received: from [192.168.2.145] (109-252-138-165.dynamic.spd-mgts.ru. [109.252.138.165])
-        by smtp.googlemail.com with ESMTPSA id y18sm737447ljd.13.2022.02.19.10.49.11
+        by smtp.googlemail.com with ESMTPSA id h11sm638555lfr.208.2022.02.19.10.54.20
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 19 Feb 2022 10:49:12 -0800 (PST)
-Message-ID: <b1df816b-6838-c435-1a23-5029144e4cfe@gmail.com>
-Date:   Sat, 19 Feb 2022 21:49:11 +0300
+        Sat, 19 Feb 2022 10:54:21 -0800 (PST)
+Message-ID: <7f4e4c47-59f1-1def-36bf-a2ded912f76d@gmail.com>
+Date:   Sat, 19 Feb 2022 21:54:20 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.5.0
 Subject: Re: [PATCH v3 8/9] drm/tegra: vic: Implement get_streamid_offset
 Content-Language: en-US
+From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Mikko Perttunen <mperttunen@nvidia.com>, thierry.reding@gmail.com,
         jonathanh@nvidia.com, joro@8bytes.org, will@kernel.org,
         robh+dt@kernel.org, robin.murphy@arm.com
@@ -64,34 +65,37 @@ Cc:     linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 References: <20220218113952.3077606-1-mperttunen@nvidia.com>
  <20220218113952.3077606-9-mperttunen@nvidia.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-In-Reply-To: <20220218113952.3077606-9-mperttunen@nvidia.com>
+ <b1df816b-6838-c435-1a23-5029144e4cfe@gmail.com>
+In-Reply-To: <b1df816b-6838-c435-1a23-5029144e4cfe@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-18.02.2022 14:39, Mikko Perttunen пишет:
-> +static int vic_get_streamid_offset(struct tegra_drm_client *client)
-> +{
-> +	struct vic *vic = to_vic(client);
-> +	int err;
-> +
-> +	err = vic_load_firmware(vic);
+19.02.2022 21:49, Dmitry Osipenko пишет:
+> 18.02.2022 14:39, Mikko Perttunen пишет:
+>> +static int vic_get_streamid_offset(struct tegra_drm_client *client)
+>> +{
+>> +	struct vic *vic = to_vic(client);
+>> +	int err;
+>> +
+>> +	err = vic_load_firmware(vic);
+> 
+> You can't invoke vic_load_firmware() while RPM is suspended. Either
+> replace this with RPM get/put or do something else.
+> 
+>> +	if (err < 0)
+>> +		return err;
+>> +
+>> +	if (vic->can_use_context)
+>> +		return 0x30;
+>> +	else
+>> +		return -ENOTSUPP;
+> 
+> If (!vic->can_use_context)
+> 	return -ENOTSUPP;
+> 
+> return 0x30;
 
-You can't invoke vic_load_firmware() while RPM is suspended. Either
-replace this with RPM get/put or do something else.
-
-> +	if (err < 0)
-> +		return err;
-> +
-> +	if (vic->can_use_context)
-> +		return 0x30;
-> +	else
-> +		return -ENOTSUPP;
-
-If (!vic->can_use_context)
-	return -ENOTSUPP;
-
-return 0x30;
+and s/ENOTSUPP/EOPNOTSUPP/
