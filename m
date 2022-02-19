@@ -2,61 +2,60 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F06AFC433EF
-	for <linux-tegra@archiver.kernel.org>; Sat, 19 Feb 2022 18:15:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9C7EC433FE
+	for <linux-tegra@archiver.kernel.org>; Sat, 19 Feb 2022 18:35:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242791AbiBSSQG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 19 Feb 2022 13:16:06 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:58788 "EHLO
+        id S242855AbiBSSfm (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 19 Feb 2022 13:35:42 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:43556 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232963AbiBSSQE (ORCPT
+        with ESMTP id S229800AbiBSSfl (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sat, 19 Feb 2022 13:16:04 -0500
-Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBA967B576;
-        Sat, 19 Feb 2022 10:15:44 -0800 (PST)
-Received: by mail-lf1-x134.google.com with SMTP id m14so11248484lfu.4;
-        Sat, 19 Feb 2022 10:15:44 -0800 (PST)
+        Sat, 19 Feb 2022 13:35:41 -0500
+Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FCE1158DBC;
+        Sat, 19 Feb 2022 10:35:22 -0800 (PST)
+Received: by mail-lj1-x22a.google.com with SMTP id v22so6974911ljh.7;
+        Sat, 19 Feb 2022 10:35:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language
-         :from:to:cc:references:in-reply-to:content-transfer-encoding;
-        bh=ZCklAq/Hx2JD+s8iRJLRBAzKBHd1Vzm6GJgE7/9rJMc=;
-        b=UYwoW4i1T7TbzJAmNBBE/HsET4YSXMQnecavrbyKf7inSJeH4v/AfLKQ8XpquPHPFX
-         iHWiMhWE8hnIwE5wwQ3x0sdr0DvGHneRSwv0U2sPFqcr7o2DoUyEq7lJM/bZLipvNcMC
-         FGPUSRotuOyEZfkkLmM8T8ov0xh8zYlkKpiKNlY/bpuf2avLCS8tbvakdIc8fZiIcZAl
-         uXtLVd8pJH3TJ8H9fpqUO8MzYZDNfYOJ12TTEqjdLsIjHcXOCObWpLBMGuA3JGPAAkIy
-         B9O/fZAgXJHykF3mbMeYmOwvr5MNeDygsQx+NDu5kT8ZAWAalmLWUf9u70TYiNCsahas
-         38ig==
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=ihAhYAdeg+5mNGGybXtL07Go2hn89yUQuHza/hGj/wQ=;
+        b=CKbEo/EfSh655da36ya0jrhiGmnzQqTJlKVP0gefuCExsV+Ab7Ta4cauO8X8eA3OWK
+         TEZrfeFlxRC+gQEgaRmPQeXwLBjjzfgOYxrodtJQGs+efxIkqMPTUKC4v9B7eVm7qKYl
+         YGUfTC6sdtKsKCnDAFUKWJTjZ9s2Zr79iREHv35eU1e/w4U8VDM29SYxf88A+zdYNJs0
+         9hAbRMheWeo4Hmth/m1GzpzOmPFDZ5rP+lCPG8lUufpRM2Alh00ttY9Ml9cgAXiicfP6
+         HYkiHJhRMbJTXV+hdEPibOskEipA8014nW1jPmS00i/Qqz9eCUw8Pc36FwSTGZ0Y0L6F
+         xTtg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:from:to:cc:references:in-reply-to
+         :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=ZCklAq/Hx2JD+s8iRJLRBAzKBHd1Vzm6GJgE7/9rJMc=;
-        b=0JoWACQyFY0kQkUj4ZVmlqYI5JfRXQXWx8gb7jCANyBA/6+VG+0l5t74HWXYnHP+Ic
-         TDfDFQ0G41sk16nil9bPXMGrunu8ftgYjXRmhRQnfwqCZZD2GcTaCQRQObbmOD67V9bn
-         96eubvi/QSvhTnECE/96hy/qsL4ts1Cef5M8PznP5xCn3t3DgXxzKXV6GpnM5dYCxd8m
-         gJBjSab27i5CvZ1NWzXN+N/h4KSrUTvod3J1MfvfuOdNGE5L7MbvxO+0dmgoPmbIZFYx
-         OZbIQpqNdnby6cvcaSO776SW8ryhPSRjdBtyyUGsb7WEouFZZWvL7yDFVcpA78viN83W
-         DuQw==
-X-Gm-Message-State: AOAM533Gpno+B1tBsYqb6K71XDH78Ljm2mBIWKhuqe5v/+2ZvovzfgqP
-        YtYu9CdjkIrg5xrCgGU0E8Y=
-X-Google-Smtp-Source: ABdhPJwJdZ0Gd/bbMF0s0unbw8e1WaovO3J5g4uv+x1CAXGO8sdtzQ4dLL+prgBxwbaaJyAXR9g9RQ==
-X-Received: by 2002:a05:6512:548:b0:438:a549:d499 with SMTP id h8-20020a056512054800b00438a549d499mr9082717lfl.326.1645294543281;
-        Sat, 19 Feb 2022 10:15:43 -0800 (PST)
+        bh=ihAhYAdeg+5mNGGybXtL07Go2hn89yUQuHza/hGj/wQ=;
+        b=JwjAXoFNtblGnZ2uuzKZpdhDkouuJ6f1NGk2GHorpvhSS67CMtfwgkjQSwhogFLhvh
+         ETQEWspR49PQA+WjFLaut5mTHGsT3nyZnlFwCr7WhaQkTKyPNVNIp3UssL/XYcyH8dBu
+         ZAvo27PjQJ5KGvBGUHmD9cu8qRV0SBElWtOOFgeGaOV7oZoGt92K/5zyioYgdZjgS7wP
+         GsOJ+uOmnv3R72CgNCUa17Crrk5bpJKYUUMsevQKvmR38EFxvITFHDxtd2cHq/OcCJCv
+         KlrW2QKczt4UhDx1LzMFpEdHmKPjovnJtPoM4xddyFILqGILSMovZ4uWZ4z5w6vSmIWS
+         mYhQ==
+X-Gm-Message-State: AOAM531WyRYmavLv5bnH3uBhcPho6A5YrKtNA+q/fa9O/UFQqqezaqPs
+        9ROJFNVYXK5rnQ5eBulL1Ec=
+X-Google-Smtp-Source: ABdhPJyUuey/Cp/BTWCj1MjuWX+PNTm6NcAPr+wmv4r6uS40/QsJrxTXnPwEO8K6bkDeKyB/mQeKDw==
+X-Received: by 2002:a05:651c:201b:b0:246:34b5:155e with SMTP id s27-20020a05651c201b00b0024634b5155emr1600949ljo.273.1645295720866;
+        Sat, 19 Feb 2022 10:35:20 -0800 (PST)
 Received: from [192.168.2.145] (109-252-138-165.dynamic.spd-mgts.ru. [109.252.138.165])
-        by smtp.googlemail.com with ESMTPSA id v18sm729633ljn.78.2022.02.19.10.15.41
+        by smtp.googlemail.com with ESMTPSA id j11sm642315lfm.40.2022.02.19.10.35.19
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 19 Feb 2022 10:15:42 -0800 (PST)
-Message-ID: <50838e8c-8121-d6fb-d693-031739829157@gmail.com>
-Date:   Sat, 19 Feb 2022 21:15:41 +0300
+        Sat, 19 Feb 2022 10:35:20 -0800 (PST)
+Message-ID: <2b4dd244-f918-4d26-2322-00a0bb226ccf@gmail.com>
+Date:   Sat, 19 Feb 2022 21:35:19 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.5.0
-Subject: Re: [PATCH v3 2/9] gpu: host1x: Add context bus
+Subject: Re: [PATCH v3 9/9] drm/tegra: Support context isolation
 Content-Language: en-US
-From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Mikko Perttunen <mperttunen@nvidia.com>, thierry.reding@gmail.com,
         jonathanh@nvidia.com, joro@8bytes.org, will@kernel.org,
         robh+dt@kernel.org, robin.murphy@arm.com
@@ -64,27 +63,45 @@ Cc:     linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
         iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 References: <20220218113952.3077606-1-mperttunen@nvidia.com>
- <20220218113952.3077606-3-mperttunen@nvidia.com>
- <1c97bbb5-ba0b-742c-2a21-8abf195b9e6d@gmail.com>
-In-Reply-To: <1c97bbb5-ba0b-742c-2a21-8abf195b9e6d@gmail.com>
+ <20220218113952.3077606-10-mperttunen@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+In-Reply-To: <20220218113952.3077606-10-mperttunen@nvidia.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-19.02.2022 20:54, Dmitry Osipenko пишет:
-> 18.02.2022 14:39, Mikko Perttunen пишет:
->> +config TEGRA_HOST1X_CONTEXT_BUS
->> +	bool
->> +
->>  config TEGRA_HOST1X
->>  	tristate "NVIDIA Tegra host1x driver"
->>  	depends on ARCH_TEGRA || (ARM && COMPILE_TEST)
->>  	select DMA_SHARED_BUFFER
->> +	select TEGRA_HOST1X_CONTEXT_BUS
-> 
-> What is the point of TEGRA_HOST1X_CONTEXT_BUS if it's selected
-> unconditionally?
+18.02.2022 14:39, Mikko Perttunen пишет:
+> +	if (context->memory_context && context->client->ops->get_streamid_offset) {
+            ^^^
+> +		int offset = context->client->ops->get_streamid_offset(context->client);
+> +
+> +		if (offset >= 0) {
+> +			job->context = context->memory_context;
+> +			job->engine_streamid_offset = offset;
+> +			host1x_context_get(job->context);
+> +		}
 
-I see now that it's used by arm-smmu.c, should be okay then.
+You should bump refcount unconditionally or you'll get refcnt underflow
+on put, when offset < 0.
+
+> +	}
+> +
+>  	/*
+>  	 * job_data is now part of job reference counting, so don't release
+>  	 * it from here.
+> diff --git a/drivers/gpu/drm/tegra/uapi.c b/drivers/gpu/drm/tegra/uapi.c
+> index 9ab9179d2026..be33da54d12c 100644
+> --- a/drivers/gpu/drm/tegra/uapi.c
+> +++ b/drivers/gpu/drm/tegra/uapi.c
+> @@ -33,6 +33,9 @@ static void tegra_drm_channel_context_close(struct tegra_drm_context *context)
+>  	struct tegra_drm_mapping *mapping;
+>  	unsigned long id;
+>  
+> +	if (context->memory_context)
+> +		host1x_context_put(context->memory_context);
+
+The "if (context->memory_context &&
+context->client->ops->get_streamid_offset)" above doesn't match the "if
+(context->memory_context)". You'll get refcount underflow.
