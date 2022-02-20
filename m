@@ -2,52 +2,60 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75861C4167D
-	for <linux-tegra@archiver.kernel.org>; Sun, 20 Feb 2022 20:46:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39D45C433F5
+	for <linux-tegra@archiver.kernel.org>; Sun, 20 Feb 2022 22:53:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245024AbiBTUrQ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 20 Feb 2022 15:47:16 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:49700 "EHLO
+        id S238820AbiBTWyR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 20 Feb 2022 17:54:17 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:51476 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244997AbiBTUrK (ORCPT
+        with ESMTP id S243011AbiBTWyQ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 20 Feb 2022 15:47:10 -0500
-Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C597B2ACE;
-        Sun, 20 Feb 2022 12:46:48 -0800 (PST)
-Received: by mail-lf1-x12c.google.com with SMTP id e5so14998204lfr.9;
-        Sun, 20 Feb 2022 12:46:48 -0800 (PST)
+        Sun, 20 Feb 2022 17:54:16 -0500
+Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC1833F89E;
+        Sun, 20 Feb 2022 14:53:54 -0800 (PST)
+Received: by mail-lf1-x12e.google.com with SMTP id y24so2997464lfg.1;
+        Sun, 20 Feb 2022 14:53:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=SYoPT4Z7CKQZG/RxZi19Qq6arsiSyAJia5fwuEqEeTg=;
-        b=bnploH8suwijQrwbMVg3fvPo8ek8FjJ78WxZMH4xFEpTl/H+3XzbOXqDYDdjucMJmM
-         ZQhcYcp4Up6oPFzENNMMPbRIg9vKgkRvl0O0ltpe+Q/gFerRBGvUUW3ghxV6t6xW9vpg
-         sy2RGPA1ed9EILRbqQXDmVSo1wuUSABsDLllzipwAyKjvMSV4mJ36JHSASZuQgrBdIkl
-         ffrPT0bZBF7Dke6MmIckMH3tUdOu+bds08FChgOE/v185TELtmO8r6qh5fvExSAqUJpg
-         na5cR+EHpAuOpWOxSGl2gAixN/eMfWMyGHJoG4jkvXu6JhjVXFr1pQLi40q5a5vnW/SW
-         Mpnw==
+        h=message-id:date:mime-version:user-agent:subject:content-language
+         :from:to:cc:references:in-reply-to:content-transfer-encoding;
+        bh=lrJ1JybLeaLsFNVAmzwjpCp9vU3YBmIsvmQRFGbIsFo=;
+        b=K13PlyzB7OWjeZ1pDRkI8crdU86abyRnUW6hPGgC2JK72tjnpVHjOZo6oQBOspHhTp
+         on5rN1S+b7f9uTRLps8OCDZQcZbIWD/D9Rm7D2ST5V6NZGUCvKGr91dojV5qbTORPM4W
+         nVQ/SB4aqFAu/OcJShGjOI39CMePM0f5WGHaPlT3ZDvjUKtEqU3ZOM4aNhw0QXne9JD9
+         dVqCsXfQDIa5CLugvFuIygnV03cLgkCEhJD25pdknUVB5atFevyTVMdzchdcpKqX+OSL
+         N4F69eilarFOD4qBLNerLx2mRcW/BcMiuw1GcSQ7JSDeMqLJot2VlSSh7vykULMuBgYg
+         WlOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=SYoPT4Z7CKQZG/RxZi19Qq6arsiSyAJia5fwuEqEeTg=;
-        b=Cq7ax6sQhGoIIu/hOVqh6iD2+6hwx9eDf04G51HQCcbwLw7lIh0LfiNjPLXFdkXCDC
-         lFDoUs4rzQd6d7XCjDtztK6jF4QrNW2QvQXIlbWyq4TNDkhQ9CqLd99vPUF8LQq793Rc
-         eGO/5EfOB/7hdztNm6yVfzB0JbM1TREn8eoSYpyMwuWW68ZWwJvJKxCStCw41+UoiVNG
-         RW++0cAQLjD03XFpyT6ttli4p5syUz5VChdAQzAxJR0aHmPfy8MbjuyeQTT17lurNcRj
-         ZDmNRyVDUdzkAXycXCJAGdnUPGVtKpTUA8vEFAbupBpXd/NFU/vZvxvhRuHZyl3lPMfn
-         cefQ==
-X-Gm-Message-State: AOAM533wawhNqg99ZlOMiNYdt+0ZQwX82/Tbobbvm13luT3AmdjlfY+9
-        5GURJiCIb9uVSkYrVsX4iuU=
-X-Google-Smtp-Source: ABdhPJy2AsiJXOFIQkabHeV9Ot4ScnYx6th0lVvMfVR9KgtrQJD5mWaAxemvUnRTfuKYKIkg1Q2LDQ==
-X-Received: by 2002:a05:6512:c11:b0:442:bdfd:3b7d with SMTP id z17-20020a0565120c1100b00442bdfd3b7dmr11342577lfu.283.1645390007222;
-        Sun, 20 Feb 2022 12:46:47 -0800 (PST)
-Received: from localhost.localdomain (109-252-138-165.dynamic.spd-mgts.ru. [109.252.138.165])
-        by smtp.gmail.com with ESMTPSA id o14sm913955lfo.117.2022.02.20.12.46.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 20 Feb 2022 12:46:46 -0800 (PST)
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:from:to:cc:references:in-reply-to
+         :content-transfer-encoding;
+        bh=lrJ1JybLeaLsFNVAmzwjpCp9vU3YBmIsvmQRFGbIsFo=;
+        b=rbFcbQbTuX7+3MxVfWq+S1h3zwIJT0DfWWzv73yok35dBKC8YVoLhsoY4FOTiH5wMS
+         X3kKfHaf3VMtsgKNrXqv3Zw1h9av/DevD/SHTmTrjDerqqcQ+VqETKCWy6npdvwhHiSg
+         3J4/WZf+TlnIoM3f58wf6fbGfctrlZnpFlaeKaouvP+mcOG8Lfrnhz/7jZbltSE+vPqd
+         R90vkJHU9JKXMfMU0dLb2XP2jibYLSaykWmLsFfpV1Yoe4qa5xYVYrrF1yPBIxFli3rT
+         inK9KkCVXtu5dH3+nFwg2jKCE54UU9Guut8QCmQEC+ssmBCubJlcl/xd0nhw2jBFN5CE
+         38cg==
+X-Gm-Message-State: AOAM533AjJLY38rYA1Spx+VWh++8e6bWwX0dG13tA1nt+77c7xkqzfux
+        0tYLPS1LA02LRmfVShlg+Ig=
+X-Google-Smtp-Source: ABdhPJxMnh4SIB/X6gO4KKootcvFEKV5OuRHvzCbdfRNqOg9mqOIK4qbxcOhs4DpmlS+ICFEpfL5CQ==
+X-Received: by 2002:ac2:5e69:0:b0:443:eaad:2284 with SMTP id a9-20020ac25e69000000b00443eaad2284mr2221624lfr.597.1645397633012;
+        Sun, 20 Feb 2022 14:53:53 -0800 (PST)
+Received: from [192.168.2.145] (109-252-138-165.dynamic.spd-mgts.ru. [109.252.138.165])
+        by smtp.googlemail.com with ESMTPSA id i28sm939540lfv.78.2022.02.20.14.53.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 20 Feb 2022 14:53:52 -0800 (PST)
+Message-ID: <92f821cd-5fff-9dca-7e63-e33dfc7b391a@gmail.com>
+Date:   Mon, 21 Feb 2022 01:53:51 +0300
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [PATCH v5 5/8] media: staging: tegra-vde: Bump BSEV DMA timeout
+Content-Language: en-US
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -58,37 +66,39 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     linux-media@vger.kernel.org, linux-staging@lists.linux.dev,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v5 8/8] ARM: config: multi v7: Enable NVIDIA Tegra video decoder driver
-Date:   Sun, 20 Feb 2022 23:46:23 +0300
-Message-Id: <20220220204623.30107-9-digetx@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220220204623.30107-1-digetx@gmail.com>
 References: <20220220204623.30107-1-digetx@gmail.com>
-MIME-Version: 1.0
+ <20220220204623.30107-6-digetx@gmail.com>
+In-Reply-To: <20220220204623.30107-6-digetx@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Enable NVIDIA Tegra V4L2 video decoder driver.
+20.02.2022 23:46, Dmitry Osipenko пишет:
+> BSEV DMA timeouts if VDE is downclocked by x10. Bump the timeout to allow
+> DMA to complete. We don't support freq scaling yet, this is just a minor
+> improvement which may become useful sometime later.
+> 
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/staging/media/tegra-vde/h264.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/staging/media/tegra-vde/h264.c b/drivers/staging/media/tegra-vde/h264.c
+> index a46c648a26c6..d8e5534e80c8 100644
+> --- a/drivers/staging/media/tegra-vde/h264.c
+> +++ b/drivers/staging/media/tegra-vde/h264.c
+> @@ -135,7 +135,7 @@ static int tegra_vde_wait_bsev(struct tegra_vde *vde, bool wait_dma)
+>  		return 0;
+>  
+>  	err = readl_relaxed_poll_timeout(vde->bsev + INTR_STATUS, value,
+> -					 !(value & BSE_DMA_BUSY), 1, 100);
+> +					 !(value & BSE_DMA_BUSY), 1, 1000);
+>  	if (err) {
+>  		dev_err(dev, "BSEV DMA timeout\n");
+>  		return err;
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- arch/arm/configs/multi_v7_defconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index dc0581deea9f..8a360d7f517e 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -669,6 +669,7 @@ CONFIG_VIDEO_STI_DELTA=m
- CONFIG_VIDEO_RENESAS_FDP1=m
- CONFIG_VIDEO_RENESAS_JPU=m
- CONFIG_VIDEO_RENESAS_VSP1=m
-+CONFIG_VIDEO_TEGRA_VDE=m
- CONFIG_V4L_TEST_DRIVERS=y
- CONFIG_VIDEO_VIVID=m
- CONFIG_VIDEO_ADV7180=m
--- 
-2.34.1
-
+For the reference: This is a new patch in v4/v5 and I didn't intend to
+include it into this patchset, it happened by accident. On the other
+hand, this patch is harmless, so it's okay to keep it.
