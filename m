@@ -2,52 +2,52 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E22DC4332F
-	for <linux-tegra@archiver.kernel.org>; Sun, 20 Feb 2022 20:46:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75EBFC433F5
+	for <linux-tegra@archiver.kernel.org>; Sun, 20 Feb 2022 20:46:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244981AbiBTUrJ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 20 Feb 2022 15:47:09 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:49584 "EHLO
+        id S244995AbiBTUrK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 20 Feb 2022 15:47:10 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:49650 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244977AbiBTUrH (ORCPT
+        with ESMTP id S244984AbiBTUrJ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 20 Feb 2022 15:47:07 -0500
+        Sun, 20 Feb 2022 15:47:09 -0500
 Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B57FFE2;
-        Sun, 20 Feb 2022 12:46:43 -0800 (PST)
-Received: by mail-lf1-x135.google.com with SMTP id b9so15030300lfv.7;
-        Sun, 20 Feb 2022 12:46:43 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 743D22ACE;
+        Sun, 20 Feb 2022 12:46:45 -0800 (PST)
+Received: by mail-lf1-x135.google.com with SMTP id j7so15025811lfu.6;
+        Sun, 20 Feb 2022 12:46:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=x+VXjCkiZxc+GM+xhYuZsjmrU+JOXjG/zgoumjo/aV8=;
-        b=da9SdwjMZo1PpD9v9FXI6n6Cle22eTpk8foGAaPH7RD+3ygmlqzzWhb4YucT3x3XKY
-         8hxhpM0fmWvYGrWrV5L31k/E+ZbKh0EnDwXTLYO1mAw5Pr3ez8nGLWwxeuS+x6hYIW0p
-         rZwvknV29Q2ulEAElUkV4ZO/3l620a2xUxwRJAoeaFA8VYSYi+2rWrHvvWRzS3tlwi2G
-         lnP7il0wEtlupAzigs47d/y+G5BIgNCcW2B0zrmJJHQYmfFYb6YTsaH0y0rYeQyCs7E5
-         46IvEznR1FmU4bcOdbBovheG1TwXXDGhMKV7MrnTl0OP8bOezbYhPLKFhxKWKTBJ6Yd0
-         5eXg==
+        bh=gSi+JnFUcMxH+thg7c07KEbycAW5CMH/rd67OUchC/4=;
+        b=k9j1Zc8SmmsM8mTfwGoOSmIpyLPlGsIM+QiIP3AL+MLtRKWyy+D6DlSKZgFnhd318/
+         J6tK9NDru+sL7jQWF3mX1VXqTKD8JG2Ly1UxkvC0ft4rmZ0eLqmiDjSoNrReFXdzzjT9
+         gPjOFi6t1i4iZ4AgHf48fbF7Wj/sMdy45h5QEFt9RfEieGkXe+8UsymGEdTMlHHXj8R+
+         Hp51TINZck0ppwxsNmaSj2+Hknie1VS9CJDsyWfO2G55L1M2x9HMFmot3w0qdqKvleGa
+         QfmfhSDyYVRdoOj1L8QYhqGzTK4lRFPR2dOqGzUnZXTfJcsqW0EuLXgGhzUa6H0Ao/WN
+         wTtg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=x+VXjCkiZxc+GM+xhYuZsjmrU+JOXjG/zgoumjo/aV8=;
-        b=rlGEHh1YgBuIcDOSNk5T3tKKz0YeEgDZ+DCuKF1gr600U3bJA/TDDXSMMDMh+/Pdsk
-         GnfIn9oIh4EN4q40WhPiwANMbOoPtU9p2/7mwMvbc1aoNYNz1nuvUklCigWOGLCiIqAA
-         axTRwygmGAo1K92yY6QHhTBSOojU3YrJqw5hWKLcW00lLCxH/1CkkDeugVSWORz061tw
-         wanvH7WhRQ2xHvIOvbmXiFn2c/E1fVxUdZw+DMwB6Q7FdX8pt2zcRnEn9YLWh42dbnZ/
-         K7QpWaqC3UHmnSHx75SUrvHCdEa6ccmIAwcyaY9FZ4rR5cB01zWf72Zdep04yykd7Txd
-         oB2w==
-X-Gm-Message-State: AOAM5312YqyYSV6zFJ9EnzyjQpeYhdUVxCJssiTzo1Z3Z4OpDU01POMc
-        gGurSHJSy55xovcB59OH1upTiElaZh0=
-X-Google-Smtp-Source: ABdhPJz6HT3QXseIB1yVjNH8QI6SdtlY1j+2V4qBZRO7Uz549bS/JMkwYqqZPtnvZcaV5Rh2qeIjEw==
-X-Received: by 2002:a05:6512:1029:b0:443:1bb6:1838 with SMTP id r9-20020a056512102900b004431bb61838mr12353221lfr.432.1645390001444;
-        Sun, 20 Feb 2022 12:46:41 -0800 (PST)
+        bh=gSi+JnFUcMxH+thg7c07KEbycAW5CMH/rd67OUchC/4=;
+        b=lxbLE2aLKQmKGDJzuSyxkkvGtFTFhY0wT3WrNzkT8g12AV/csZNsEvrvYaA60aZY/u
+         R6VfIwmOOr+ZnGhShn5N7TaTs3jPOA5uFNoQg/3MCcanatxnFQnMcBgsEW0kptHulWzL
+         AmbVii8xyxNnWCjXWcJaBq7hvkvPKmsDYmYxIXVYcPpCPgFT/JDCDfXaV+uSweUYorqz
+         HN1TkmXik8vmI4RQ854Lu4zjgod7NQt65Uhjrm6q6LlDiJhjnDO2ZBkojvbvC/0AQHJ1
+         2Ip0xdvnYuZMKRNpnRM0X1mrHk1/vA/dgrVapA4GgLXN75Fbe2kVF6nYE8WRJdMhOMIl
+         H0sg==
+X-Gm-Message-State: AOAM532pfkVY67AeVhpCIJITWEy17EWuhuNHZhifV3JjkVwr6mDbyKRE
+        KD8HwAlcOTFpXQgzLTjCcE5qHi1Q9jg=
+X-Google-Smtp-Source: ABdhPJw5ITxPOSkx88ZDe20E7MVAU3YXumH/ccs6bCjNlL77lIL8brfjIKFr/+qGPEbcjORQgYSOVg==
+X-Received: by 2002:ac2:5097:0:b0:443:bbb6:b3c with SMTP id f23-20020ac25097000000b00443bbb60b3cmr8452808lfm.525.1645390003791;
+        Sun, 20 Feb 2022 12:46:43 -0800 (PST)
 Received: from localhost.localdomain (109-252-138-165.dynamic.spd-mgts.ru. [109.252.138.165])
-        by smtp.gmail.com with ESMTPSA id o14sm913955lfo.117.2022.02.20.12.46.40
+        by smtp.gmail.com with ESMTPSA id o14sm913955lfo.117.2022.02.20.12.46.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 20 Feb 2022 12:46:41 -0800 (PST)
+        Sun, 20 Feb 2022 12:46:43 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -58,9 +58,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     linux-media@vger.kernel.org, linux-staging@lists.linux.dev,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v5 2/8] media: staging: tegra-vde: Factor out H.264 code
-Date:   Sun, 20 Feb 2022 23:46:17 +0300
-Message-Id: <20220220204623.30107-3-digetx@gmail.com>
+Subject: [PATCH v5 4/8] media: staging: tegra-vde: Remove legacy UAPI support
+Date:   Sun, 20 Feb 2022 23:46:19 +0300
+Message-Id: <20220220204623.30107-5-digetx@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220220204623.30107-1-digetx@gmail.com>
 References: <20220220204623.30107-1-digetx@gmail.com>
@@ -70,1196 +70,83 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Factor out H.264 hardware programming code into separate source file in a
-preparation to support V4L API by the Tegra video decoder driver.
+The legacy UAPI became unnecessary with the V4L stateless decoder API
+support addition to the Tegra decoder driver. Remove legacy UAPI support.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/staging/media/tegra-vde/Makefile |   2 +-
- drivers/staging/media/tegra-vde/h264.c   | 647 +++++++++++++++++++++++
- drivers/staging/media/tegra-vde/vde.c    | 626 +---------------------
- drivers/staging/media/tegra-vde/vde.h    |  42 ++
- 4 files changed, 706 insertions(+), 611 deletions(-)
- create mode 100644 drivers/staging/media/tegra-vde/h264.c
+ .../staging/media/tegra-vde/dmabuf-cache.c    |   2 +-
+ drivers/staging/media/tegra-vde/h264.c        |  61 ++--
+ drivers/staging/media/tegra-vde/iommu.c       |   2 +-
+ drivers/staging/media/tegra-vde/uapi.h        |  73 -----
+ drivers/staging/media/tegra-vde/vde.c         | 283 +-----------------
+ drivers/staging/media/tegra-vde/vde.h         |  11 -
+ 6 files changed, 35 insertions(+), 397 deletions(-)
+ delete mode 100644 drivers/staging/media/tegra-vde/uapi.h
 
-diff --git a/drivers/staging/media/tegra-vde/Makefile b/drivers/staging/media/tegra-vde/Makefile
-index 2827f7601de8..43525b08b3b0 100644
---- a/drivers/staging/media/tegra-vde/Makefile
-+++ b/drivers/staging/media/tegra-vde/Makefile
-@@ -1,3 +1,3 @@
- # SPDX-License-Identifier: GPL-2.0
--tegra-vde-y := vde.o iommu.o dmabuf-cache.o
-+tegra-vde-y := vde.o iommu.o dmabuf-cache.o h264.o
- obj-$(CONFIG_TEGRA_VDE)	+= tegra-vde.o
+diff --git a/drivers/staging/media/tegra-vde/dmabuf-cache.c b/drivers/staging/media/tegra-vde/dmabuf-cache.c
+index a98d03419b8f..69c346148070 100644
+--- a/drivers/staging/media/tegra-vde/dmabuf-cache.c
++++ b/drivers/staging/media/tegra-vde/dmabuf-cache.c
+@@ -66,9 +66,9 @@ int tegra_vde_dmabuf_cache_map(struct tegra_vde *vde,
+ 			       struct dma_buf_attachment **ap,
+ 			       dma_addr_t *addrp)
+ {
+-	struct device *dev = vde->miscdev.parent;
+ 	struct dma_buf_attachment *attachment;
+ 	struct tegra_vde_cache_entry *entry;
++	struct device *dev = vde->dev;
+ 	struct sg_table *sgt;
+ 	struct iova *iova;
+ 	int err;
 diff --git a/drivers/staging/media/tegra-vde/h264.c b/drivers/staging/media/tegra-vde/h264.c
-new file mode 100644
-index 000000000000..03faa705bf71
---- /dev/null
+index cbf27f0cfdb1..a46c648a26c6 100644
+--- a/drivers/staging/media/tegra-vde/h264.c
 +++ b/drivers/staging/media/tegra-vde/h264.c
-@@ -0,0 +1,647 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * NVIDIA Tegra Video decoder driver
-+ *
-+ * Copyright (C) 2016-2022 Dmitry Osipenko <digetx@gmail.com>
-+ *
-+ */
-+
-+#include <linux/iopoll.h>
-+#include <linux/pm_runtime.h>
-+#include <linux/reset.h>
-+#include <linux/slab.h>
-+
-+#include "trace.h"
-+#include "uapi.h"
-+#include "vde.h"
-+
-+static int tegra_vde_wait_mbe(struct tegra_vde *vde)
-+{
-+	u32 tmp;
-+
-+	return readl_relaxed_poll_timeout(vde->mbe + 0x8C, tmp,
-+					  tmp >= 0x10, 1, 100);
-+}
-+
-+static int tegra_vde_setup_mbe_frame_idx(struct tegra_vde *vde,
-+					 unsigned int refs_nb,
-+					 bool setup_refs)
-+{
-+	u32 value, frame_idx_enb_mask = 0;
-+	unsigned int frame_idx;
-+	unsigned int idx;
-+	int err;
-+
-+	tegra_vde_writel(vde, 0xD0000000 | (0 << 23), vde->mbe, 0x80);
-+	tegra_vde_writel(vde, 0xD0200000 | (0 << 23), vde->mbe, 0x80);
-+
-+	err = tegra_vde_wait_mbe(vde);
-+	if (err)
-+		return err;
-+
-+	if (!setup_refs)
-+		return 0;
-+
-+	for (idx = 0, frame_idx = 1; idx < refs_nb; idx++, frame_idx++) {
-+		tegra_vde_writel(vde, 0xD0000000 | (frame_idx << 23),
-+				 vde->mbe, 0x80);
-+		tegra_vde_writel(vde, 0xD0200000 | (frame_idx << 23),
-+				 vde->mbe, 0x80);
-+
-+		frame_idx_enb_mask |= frame_idx << (6 * (idx % 4));
-+
-+		if (idx % 4 == 3 || idx == refs_nb - 1) {
-+			value = 0xC0000000;
-+			value |= (idx >> 2) << 24;
-+			value |= frame_idx_enb_mask;
-+
-+			tegra_vde_writel(vde, value, vde->mbe, 0x80);
-+
-+			err = tegra_vde_wait_mbe(vde);
-+			if (err)
-+				return err;
-+
-+			frame_idx_enb_mask = 0;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static void tegra_vde_mbe_set_0xa_reg(struct tegra_vde *vde, int reg, u32 val)
-+{
-+	tegra_vde_writel(vde, 0xA0000000 | (reg << 24) | (val & 0xFFFF),
-+			 vde->mbe, 0x80);
-+	tegra_vde_writel(vde, 0xA0000000 | ((reg + 1) << 24) | (val >> 16),
-+			 vde->mbe, 0x80);
-+}
-+
-+static int tegra_vde_wait_bsev(struct tegra_vde *vde, bool wait_dma)
-+{
-+	struct device *dev = vde->dev;
-+	u32 value;
-+	int err;
-+
-+	err = readl_relaxed_poll_timeout(vde->bsev + INTR_STATUS, value,
-+					 !(value & BIT(2)), 1, 100);
-+	if (err) {
-+		dev_err(dev, "BSEV unknown bit timeout\n");
-+		return err;
-+	}
-+
-+	err = readl_relaxed_poll_timeout(vde->bsev + INTR_STATUS, value,
-+					 (value & BSE_ICMDQUE_EMPTY), 1, 100);
-+	if (err) {
-+		dev_err(dev, "BSEV ICMDQUE flush timeout\n");
-+		return err;
-+	}
-+
-+	if (!wait_dma)
-+		return 0;
-+
-+	err = readl_relaxed_poll_timeout(vde->bsev + INTR_STATUS, value,
-+					 !(value & BSE_DMA_BUSY), 1, 100);
-+	if (err) {
-+		dev_err(dev, "BSEV DMA timeout\n");
-+		return err;
-+	}
-+
-+	return 0;
-+}
-+
-+static int tegra_vde_push_to_bsev_icmdqueue(struct tegra_vde *vde,
-+					    u32 value, bool wait_dma)
-+{
-+	tegra_vde_writel(vde, value, vde->bsev, ICMDQUE_WR);
-+
-+	return tegra_vde_wait_bsev(vde, wait_dma);
-+}
-+
-+static void tegra_vde_setup_frameid(struct tegra_vde *vde,
-+				    struct tegra_video_frame *frame,
-+				    unsigned int frameid,
-+				    u32 mbs_width, u32 mbs_height)
-+{
-+	u32 y_addr  = frame ? frame->y_addr  : 0x6CDEAD00;
-+	u32 cb_addr = frame ? frame->cb_addr : 0x6CDEAD00;
-+	u32 cr_addr = frame ? frame->cr_addr : 0x6CDEAD00;
-+	u32 value1 = frame ? ((mbs_width << 16) | mbs_height) : 0;
-+	u32 value2 = frame ? ((((mbs_width + 1) >> 1) << 6) | 1) : 0;
-+
-+	tegra_vde_writel(vde, y_addr  >> 8, vde->frameid, 0x000 + frameid * 4);
-+	tegra_vde_writel(vde, cb_addr >> 8, vde->frameid, 0x100 + frameid * 4);
-+	tegra_vde_writel(vde, cr_addr >> 8, vde->frameid, 0x180 + frameid * 4);
-+	tegra_vde_writel(vde, value1,       vde->frameid, 0x080 + frameid * 4);
-+	tegra_vde_writel(vde, value2,       vde->frameid, 0x280 + frameid * 4);
-+}
-+
-+static void tegra_setup_frameidx(struct tegra_vde *vde,
-+				 struct tegra_video_frame *frames,
-+				 unsigned int frames_nb,
-+				 u32 mbs_width, u32 mbs_height)
-+{
-+	unsigned int idx;
-+
-+	for (idx = 0; idx < frames_nb; idx++)
-+		tegra_vde_setup_frameid(vde, &frames[idx], idx,
-+					mbs_width, mbs_height);
-+
-+	for (; idx < 17; idx++)
-+		tegra_vde_setup_frameid(vde, NULL, idx, 0, 0);
-+}
-+
-+static void tegra_vde_setup_iram_entry(struct tegra_vde *vde,
-+				       unsigned int table,
-+				       unsigned int row,
-+				       u32 value1, u32 value2)
-+{
-+	u32 *iram_tables = vde->iram;
-+
-+	trace_vde_setup_iram_entry(table, row, value1, value2);
-+
-+	iram_tables[0x20 * table + row * 2 + 0] = value1;
-+	iram_tables[0x20 * table + row * 2 + 1] = value2;
-+}
-+
-+static void tegra_vde_setup_iram_tables(struct tegra_vde *vde,
-+					struct tegra_video_frame *dpb_frames,
-+					unsigned int ref_frames_nb,
-+					unsigned int with_earlier_poc_nb)
-+{
-+	struct tegra_video_frame *frame;
-+	int with_later_poc_nb;
-+	u32 value, aux_addr;
-+	unsigned int i, k;
-+
-+	trace_vde_ref_l0(dpb_frames[0].frame_num);
-+
-+	for (i = 0; i < 16; i++) {
-+		if (i < ref_frames_nb) {
-+			frame = &dpb_frames[i + 1];
-+
-+			aux_addr = frame->aux_addr;
-+
-+			value  = (i + 1) << 26;
-+			value |= !(frame->flags & FLAG_B_FRAME) << 25;
-+			value |= 1 << 24;
-+			value |= frame->frame_num;
-+		} else {
-+			aux_addr = 0x6ADEAD00;
-+			value = 0x3f;
-+		}
-+
-+		tegra_vde_setup_iram_entry(vde, 0, i, value, aux_addr);
-+		tegra_vde_setup_iram_entry(vde, 1, i, value, aux_addr);
-+		tegra_vde_setup_iram_entry(vde, 2, i, value, aux_addr);
-+		tegra_vde_setup_iram_entry(vde, 3, i, value, aux_addr);
-+	}
-+
-+	if (!(dpb_frames[0].flags & FLAG_B_FRAME))
-+		return;
-+
-+	if (with_earlier_poc_nb >= ref_frames_nb)
-+		return;
-+
-+	with_later_poc_nb = ref_frames_nb - with_earlier_poc_nb;
-+
-+	trace_vde_ref_l1(with_later_poc_nb, with_earlier_poc_nb);
-+
-+	for (i = 0, k = with_earlier_poc_nb; i < with_later_poc_nb; i++, k++) {
-+		frame = &dpb_frames[k + 1];
-+
-+		aux_addr = frame->aux_addr;
-+
-+		value  = (k + 1) << 26;
-+		value |= !(frame->flags & FLAG_B_FRAME) << 25;
-+		value |= 1 << 24;
-+		value |= frame->frame_num;
-+
-+		tegra_vde_setup_iram_entry(vde, 2, i, value, aux_addr);
-+	}
-+
-+	for (k = 0; i < ref_frames_nb; i++, k++) {
-+		frame = &dpb_frames[k + 1];
-+
-+		aux_addr = frame->aux_addr;
-+
-+		value  = (k + 1) << 26;
-+		value |= !(frame->flags & FLAG_B_FRAME) << 25;
-+		value |= 1 << 24;
-+		value |= frame->frame_num;
-+
-+		tegra_vde_setup_iram_entry(vde, 2, i, value, aux_addr);
-+	}
-+}
-+
-+static int tegra_vde_setup_hw_context(struct tegra_vde *vde,
-+				      struct tegra_vde_h264_decoder_ctx *ctx,
-+				      struct tegra_video_frame *dpb_frames,
-+				      dma_addr_t bitstream_data_addr,
-+				      size_t bitstream_data_size,
-+				      unsigned int macroblocks_nb)
-+{
-+	struct device *dev = vde->dev;
-+	u32 value;
-+	int err;
-+
-+	tegra_vde_set_bits(vde, 0x000A, vde->sxe, 0xF0);
-+	tegra_vde_set_bits(vde, 0x000B, vde->bsev, CMDQUE_CONTROL);
-+	tegra_vde_set_bits(vde, 0x8002, vde->mbe, 0x50);
-+	tegra_vde_set_bits(vde, 0x000A, vde->mbe, 0xA0);
-+	tegra_vde_set_bits(vde, 0x000A, vde->ppe, 0x14);
-+	tegra_vde_set_bits(vde, 0x000A, vde->ppe, 0x28);
-+	tegra_vde_set_bits(vde, 0x0A00, vde->mce, 0x08);
-+	tegra_vde_set_bits(vde, 0x000A, vde->tfe, 0x00);
-+	tegra_vde_set_bits(vde, 0x0005, vde->vdma, 0x04);
-+
-+	tegra_vde_writel(vde, 0x00000000, vde->vdma, 0x1C);
-+	tegra_vde_writel(vde, 0x00000000, vde->vdma, 0x00);
-+	tegra_vde_writel(vde, 0x00000007, vde->vdma, 0x04);
-+	tegra_vde_writel(vde, 0x00000007, vde->frameid, 0x200);
-+	tegra_vde_writel(vde, 0x00000005, vde->tfe, 0x04);
-+	tegra_vde_writel(vde, 0x00000000, vde->mbe, 0x84);
-+	tegra_vde_writel(vde, 0x00000010, vde->sxe, 0x08);
-+	tegra_vde_writel(vde, 0x00000150, vde->sxe, 0x54);
-+	tegra_vde_writel(vde, 0x0000054C, vde->sxe, 0x58);
-+	tegra_vde_writel(vde, 0x00000E34, vde->sxe, 0x5C);
-+	tegra_vde_writel(vde, 0x063C063C, vde->mce, 0x10);
-+	tegra_vde_writel(vde, 0x0003FC00, vde->bsev, INTR_STATUS);
-+	tegra_vde_writel(vde, 0x0000150D, vde->bsev, BSE_CONFIG);
-+	tegra_vde_writel(vde, 0x00000100, vde->bsev, BSE_INT_ENB);
-+	tegra_vde_writel(vde, 0x00000000, vde->bsev, 0x98);
-+	tegra_vde_writel(vde, 0x00000060, vde->bsev, 0x9C);
-+
-+	memset(vde->iram + 128, 0, macroblocks_nb / 2);
-+
-+	tegra_setup_frameidx(vde, dpb_frames, ctx->dpb_frames_nb,
-+			     ctx->pic_width_in_mbs, ctx->pic_height_in_mbs);
-+
-+	tegra_vde_setup_iram_tables(vde, dpb_frames,
-+				    ctx->dpb_frames_nb - 1,
-+				    ctx->dpb_ref_frames_with_earlier_poc_nb);
-+
-+	/*
-+	 * The IRAM mapping is write-combine, ensure that CPU buffers have
-+	 * been flushed at this point.
-+	 */
-+	wmb();
-+
-+	tegra_vde_writel(vde, 0x00000000, vde->bsev, 0x8C);
-+	tegra_vde_writel(vde, bitstream_data_addr + bitstream_data_size,
-+			 vde->bsev, 0x54);
-+
-+	vde->bitstream_data_addr = bitstream_data_addr;
-+
-+	value = ctx->pic_width_in_mbs << 11 | ctx->pic_height_in_mbs << 3;
-+
-+	tegra_vde_writel(vde, value, vde->bsev, 0x88);
-+
-+	err = tegra_vde_wait_bsev(vde, false);
-+	if (err)
-+		return err;
-+
-+	err = tegra_vde_push_to_bsev_icmdqueue(vde, 0x800003FC, false);
-+	if (err)
-+		return err;
-+
-+	value = 0x01500000;
-+	value |= ((vde->iram_lists_addr + 512) >> 2) & 0xFFFF;
-+
-+	err = tegra_vde_push_to_bsev_icmdqueue(vde, value, true);
-+	if (err)
-+		return err;
-+
-+	err = tegra_vde_push_to_bsev_icmdqueue(vde, 0x840F054C, false);
-+	if (err)
-+		return err;
-+
-+	err = tegra_vde_push_to_bsev_icmdqueue(vde, 0x80000080, false);
-+	if (err)
-+		return err;
-+
-+	value = 0x0E340000 | ((vde->iram_lists_addr >> 2) & 0xFFFF);
-+
-+	err = tegra_vde_push_to_bsev_icmdqueue(vde, value, true);
-+	if (err)
-+		return err;
-+
-+	value = 0x00800005;
-+	value |= ctx->pic_width_in_mbs << 11;
-+	value |= ctx->pic_height_in_mbs << 3;
-+
-+	tegra_vde_writel(vde, value, vde->sxe, 0x10);
-+
-+	value = !ctx->baseline_profile << 17;
-+	value |= ctx->level_idc << 13;
-+	value |= ctx->log2_max_pic_order_cnt_lsb << 7;
-+	value |= ctx->pic_order_cnt_type << 5;
-+	value |= ctx->log2_max_frame_num;
-+
-+	tegra_vde_writel(vde, value, vde->sxe, 0x40);
-+
-+	value = ctx->pic_init_qp << 25;
-+	value |= !!(ctx->deblocking_filter_control_present_flag) << 2;
-+	value |= !!ctx->pic_order_present_flag;
-+
-+	tegra_vde_writel(vde, value, vde->sxe, 0x44);
-+
-+	value = ctx->chroma_qp_index_offset;
-+	value |= ctx->num_ref_idx_l0_active_minus1 << 5;
-+	value |= ctx->num_ref_idx_l1_active_minus1 << 10;
-+	value |= !!ctx->constrained_intra_pred_flag << 15;
-+
-+	tegra_vde_writel(vde, value, vde->sxe, 0x48);
-+
-+	value = 0x0C000000;
-+	value |= !!(dpb_frames[0].flags & FLAG_B_FRAME) << 24;
-+
-+	tegra_vde_writel(vde, value, vde->sxe, 0x4C);
-+
-+	value = 0x03800000;
-+	value |= bitstream_data_size & GENMASK(19, 15);
-+
-+	tegra_vde_writel(vde, value, vde->sxe, 0x68);
-+
-+	tegra_vde_writel(vde, bitstream_data_addr, vde->sxe, 0x6C);
-+
-+	if (vde->soc->supports_ref_pic_marking)
-+		tegra_vde_writel(vde, vde->secure_bo->dma_addr, vde->sxe, 0x7c);
-+
-+	value = 0x10000005;
-+	value |= ctx->pic_width_in_mbs << 11;
-+	value |= ctx->pic_height_in_mbs << 3;
-+
-+	tegra_vde_writel(vde, value, vde->mbe, 0x80);
-+
-+	value = 0x26800000;
-+	value |= ctx->level_idc << 4;
-+	value |= !ctx->baseline_profile << 1;
-+	value |= !!ctx->direct_8x8_inference_flag;
-+
-+	tegra_vde_writel(vde, value, vde->mbe, 0x80);
-+
-+	tegra_vde_writel(vde, 0xF4000001, vde->mbe, 0x80);
-+	tegra_vde_writel(vde, 0x20000000, vde->mbe, 0x80);
-+	tegra_vde_writel(vde, 0xF4000101, vde->mbe, 0x80);
-+
-+	value = 0x20000000;
-+	value |= ctx->chroma_qp_index_offset << 8;
-+
-+	tegra_vde_writel(vde, value, vde->mbe, 0x80);
-+
-+	err = tegra_vde_setup_mbe_frame_idx(vde,
-+					    ctx->dpb_frames_nb - 1,
-+					    ctx->pic_order_cnt_type == 0);
-+	if (err) {
-+		dev_err(dev, "MBE frames setup failed %d\n", err);
-+		return err;
-+	}
-+
-+	tegra_vde_mbe_set_0xa_reg(vde, 0, 0x000009FC);
-+	tegra_vde_mbe_set_0xa_reg(vde, 2, 0x61DEAD00);
-+	tegra_vde_mbe_set_0xa_reg(vde, 4, 0x62DEAD00);
-+	tegra_vde_mbe_set_0xa_reg(vde, 6, 0x63DEAD00);
-+	tegra_vde_mbe_set_0xa_reg(vde, 8, dpb_frames[0].aux_addr);
-+
-+	value = 0xFC000000;
-+	value |= !!(dpb_frames[0].flags & FLAG_B_FRAME) << 2;
-+
-+	if (!ctx->baseline_profile)
-+		value |= !!(dpb_frames[0].flags & FLAG_REFERENCE) << 1;
-+
-+	tegra_vde_writel(vde, value, vde->mbe, 0x80);
-+
-+	err = tegra_vde_wait_mbe(vde);
-+	if (err) {
-+		dev_err(dev, "MBE programming failed %d\n", err);
-+		return err;
-+	}
-+
-+	return 0;
-+}
-+
-+static void tegra_vde_decode_frame(struct tegra_vde *vde,
-+				   unsigned int macroblocks_nb)
-+{
-+	reinit_completion(&vde->decode_completion);
-+
-+	tegra_vde_writel(vde, 0x00000001, vde->bsev, 0x8C);
-+	tegra_vde_writel(vde, 0x20000000 | (macroblocks_nb - 1),
-+			 vde->sxe, 0x00);
-+}
-+
-+int tegra_vde_validate_h264_frame(struct device *dev,
-+				  struct tegra_vde_h264_frame *frame)
-+{
-+	if (frame->frame_num > 0x7FFFFF) {
-+		dev_err(dev, "Bad frame_num %u\n", frame->frame_num);
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+int tegra_vde_validate_h264_ctx(struct device *dev,
-+				struct tegra_vde_h264_decoder_ctx *ctx)
-+{
-+	if (ctx->dpb_frames_nb == 0 || ctx->dpb_frames_nb > 17) {
-+		dev_err(dev, "Bad DPB size %u\n", ctx->dpb_frames_nb);
-+		return -EINVAL;
-+	}
-+
-+	if (ctx->level_idc > 15) {
-+		dev_err(dev, "Bad level value %u\n", ctx->level_idc);
-+		return -EINVAL;
-+	}
-+
-+	if (ctx->pic_init_qp > 52) {
-+		dev_err(dev, "Bad pic_init_qp value %u\n", ctx->pic_init_qp);
-+		return -EINVAL;
-+	}
-+
-+	if (ctx->log2_max_pic_order_cnt_lsb > 16) {
-+		dev_err(dev, "Bad log2_max_pic_order_cnt_lsb value %u\n",
-+			ctx->log2_max_pic_order_cnt_lsb);
-+		return -EINVAL;
-+	}
-+
-+	if (ctx->log2_max_frame_num > 16) {
-+		dev_err(dev, "Bad log2_max_frame_num value %u\n",
-+			ctx->log2_max_frame_num);
-+		return -EINVAL;
-+	}
-+
-+	if (ctx->chroma_qp_index_offset > 31) {
-+		dev_err(dev, "Bad chroma_qp_index_offset value %u\n",
-+			ctx->chroma_qp_index_offset);
-+		return -EINVAL;
-+	}
-+
-+	if (ctx->pic_order_cnt_type > 2) {
-+		dev_err(dev, "Bad pic_order_cnt_type value %u\n",
-+			ctx->pic_order_cnt_type);
-+		return -EINVAL;
-+	}
-+
-+	if (ctx->num_ref_idx_l0_active_minus1 > 15) {
-+		dev_err(dev, "Bad num_ref_idx_l0_active_minus1 value %u\n",
-+			ctx->num_ref_idx_l0_active_minus1);
-+		return -EINVAL;
-+	}
-+
-+	if (ctx->num_ref_idx_l1_active_minus1 > 15) {
-+		dev_err(dev, "Bad num_ref_idx_l1_active_minus1 value %u\n",
-+			ctx->num_ref_idx_l1_active_minus1);
-+		return -EINVAL;
-+	}
-+
-+	if (!ctx->pic_width_in_mbs || ctx->pic_width_in_mbs > 127) {
-+		dev_err(dev, "Bad pic_width_in_mbs value %u\n",
-+			ctx->pic_width_in_mbs);
-+		return -EINVAL;
-+	}
-+
-+	if (!ctx->pic_height_in_mbs || ctx->pic_height_in_mbs > 127) {
-+		dev_err(dev, "Bad pic_height_in_mbs value %u\n",
-+			ctx->pic_height_in_mbs);
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+static int tegra_vde_decode_begin(struct tegra_vde *vde,
-+				  struct tegra_vde_h264_decoder_ctx *ctx,
-+				  struct tegra_video_frame *dpb_frames,
-+				  dma_addr_t bitstream_data_addr,
-+				  size_t bitstream_data_size)
-+{
-+	struct device *dev = vde->dev;
-+	unsigned int macroblocks_nb;
-+	int err;
-+
-+	err = mutex_lock_interruptible(&vde->lock);
-+	if (err)
-+		return err;
-+
-+	err = pm_runtime_resume_and_get(dev);
-+	if (err < 0)
-+		goto unlock;
-+
-+	/*
-+	 * We rely on the VDE registers reset value, otherwise VDE
-+	 * causes bus lockup.
-+	 */
-+	err = reset_control_assert(vde->rst_mc);
-+	if (err) {
-+		dev_err(dev, "DEC start: Failed to assert MC reset: %d\n",
-+			err);
-+		goto put_runtime_pm;
-+	}
-+
-+	err = reset_control_reset(vde->rst);
-+	if (err) {
-+		dev_err(dev, "DEC start: Failed to reset HW: %d\n", err);
-+		goto put_runtime_pm;
-+	}
-+
-+	err = reset_control_deassert(vde->rst_mc);
-+	if (err) {
-+		dev_err(dev, "DEC start: Failed to deassert MC reset: %d\n",
-+			err);
-+		goto put_runtime_pm;
-+	}
-+
-+	macroblocks_nb = ctx->pic_width_in_mbs * ctx->pic_height_in_mbs;
-+
-+	err = tegra_vde_setup_hw_context(vde, ctx, dpb_frames,
-+					 bitstream_data_addr,
-+					 bitstream_data_size,
-+					 macroblocks_nb);
-+	if (err)
-+		goto put_runtime_pm;
-+
-+	tegra_vde_decode_frame(vde, macroblocks_nb);
-+
-+	return 0;
-+
-+put_runtime_pm:
-+	pm_runtime_mark_last_busy(dev);
-+	pm_runtime_put_autosuspend(dev);
-+
-+unlock:
-+	mutex_unlock(&vde->lock);
-+
-+	return err;
-+}
-+
-+static void tegra_vde_decode_abort(struct tegra_vde *vde)
-+{
-+	struct device *dev = vde->dev;
-+	int err;
-+
-+	/*
-+	 * At first reset memory client to avoid resetting VDE HW in the
-+	 * middle of DMA which could result into memory corruption or hang
-+	 * the whole system.
-+	 */
-+	err = reset_control_assert(vde->rst_mc);
-+	if (err)
-+		dev_err(dev, "DEC end: Failed to assert MC reset: %d\n", err);
-+
-+	err = reset_control_assert(vde->rst);
-+	if (err)
-+		dev_err(dev, "DEC end: Failed to assert HW reset: %d\n", err);
-+
-+	pm_runtime_mark_last_busy(dev);
-+	pm_runtime_put_autosuspend(dev);
-+
-+	mutex_unlock(&vde->lock);
-+}
-+
-+static int tegra_vde_decode_end(struct tegra_vde *vde)
-+{
-+	unsigned int read_bytes, macroblocks_nb;
-+	struct device *dev = vde->dev;
-+	dma_addr_t bsev_ptr;
-+	long timeout;
-+	int ret;
-+
-+	timeout = wait_for_completion_interruptible_timeout(
-+			&vde->decode_completion, msecs_to_jiffies(1000));
-+	if (timeout == 0) {
-+		bsev_ptr = tegra_vde_readl(vde, vde->bsev, 0x10);
-+		macroblocks_nb = tegra_vde_readl(vde, vde->sxe, 0xC8) & 0x1FFF;
-+		read_bytes = bsev_ptr ? bsev_ptr - vde->bitstream_data_addr : 0;
-+
-+		dev_err(dev, "Decoding failed: read 0x%X bytes, %u macroblocks parsed\n",
-+			read_bytes, macroblocks_nb);
-+
-+		ret = -EIO;
-+	} else if (timeout < 0) {
-+		ret = timeout;
-+	} else {
-+		ret = 0;
-+	}
-+
-+	tegra_vde_decode_abort(vde);
-+
-+	return ret;
-+}
-+
-+int tegra_vde_decode_h264(struct tegra_vde *vde,
-+			  struct tegra_vde_h264_decoder_ctx *ctx,
-+			  struct tegra_video_frame *dpb_frames,
-+			  dma_addr_t bitstream_data_addr,
-+			  size_t bitstream_data_size)
-+{
-+	int err;
-+
-+	err = tegra_vde_decode_begin(vde, ctx, dpb_frames,
-+				     bitstream_data_addr,
-+				     bitstream_data_size);
-+	if (err)
-+		return err;
-+
-+	return tegra_vde_decode_end(vde);
-+}
-diff --git a/drivers/staging/media/tegra-vde/vde.c b/drivers/staging/media/tegra-vde/vde.c
-index a8f1a024c343..36f5595c0fd8 100644
---- a/drivers/staging/media/tegra-vde/vde.c
-+++ b/drivers/staging/media/tegra-vde/vde.c
-@@ -10,7 +10,6 @@
- #include <linux/dma-buf.h>
- #include <linux/genalloc.h>
- #include <linux/interrupt.h>
--#include <linux/iopoll.h>
- #include <linux/list.h>
- #include <linux/miscdevice.h>
- #include <linux/module.h>
-@@ -29,38 +28,15 @@
- #define CREATE_TRACE_POINTS
+@@ -14,9 +14,36 @@
+ #include <media/v4l2-h264.h>
+ 
  #include "trace.h"
+-#include "uapi.h"
+ #include "vde.h"
  
--#define ICMDQUE_WR		0x00
--#define CMDQUE_CONTROL		0x08
--#define INTR_STATUS		0x18
--#define BSE_INT_ENB		0x40
--#define BSE_CONFIG		0x44
--
--#define BSE_ICMDQUE_EMPTY	BIT(3)
--#define BSE_DMA_BUSY		BIT(23)
--
--struct video_frame {
--	struct dma_buf_attachment *y_dmabuf_attachment;
--	struct dma_buf_attachment *cb_dmabuf_attachment;
--	struct dma_buf_attachment *cr_dmabuf_attachment;
--	struct dma_buf_attachment *aux_dmabuf_attachment;
--	dma_addr_t y_addr;
--	dma_addr_t cb_addr;
--	dma_addr_t cr_addr;
--	dma_addr_t aux_addr;
--	u32 frame_num;
--	u32 flags;
--};
--
--static void tegra_vde_writel(struct tegra_vde *vde,
--			     u32 value, void __iomem *base, u32 offset)
-+void tegra_vde_writel(struct tegra_vde *vde, u32 value,
-+		      void __iomem *base, u32 offset)
- {
- 	trace_vde_writel(vde, base, offset, value);
- 
- 	writel_relaxed(value, base + offset);
++#define FLAG_B_FRAME		0x1
++#define FLAG_REFERENCE		0x2
++
++struct tegra_vde_h264_frame {
++	unsigned int frame_num;
++	unsigned int flags;
++};
++
++struct tegra_vde_h264_decoder_ctx {
++	unsigned int dpb_frames_nb;
++	unsigned int dpb_ref_frames_with_earlier_poc_nb;
++	unsigned int baseline_profile;
++	unsigned int level_idc;
++	unsigned int log2_max_pic_order_cnt_lsb;
++	unsigned int log2_max_frame_num;
++	unsigned int pic_order_cnt_type;
++	unsigned int direct_8x8_inference_flag;
++	unsigned int pic_width_in_mbs;
++	unsigned int pic_height_in_mbs;
++	unsigned int pic_init_qp;
++	unsigned int deblocking_filter_control_present_flag;
++	unsigned int constrained_intra_pred_flag;
++	unsigned int chroma_qp_index_offset;
++	unsigned int pic_order_present_flag;
++	unsigned int num_ref_idx_l0_active_minus1;
++	unsigned int num_ref_idx_l1_active_minus1;
++};
++
+ struct h264_reflists {
+ 	u8 p[V4L2_H264_NUM_DPB_ENTRIES];
+ 	u8 b0[V4L2_H264_NUM_DPB_ENTRIES];
+@@ -438,19 +465,8 @@ static void tegra_vde_decode_frame(struct tegra_vde *vde,
+ 			 vde->sxe, 0x00);
  }
  
--static u32 tegra_vde_readl(struct tegra_vde *vde,
--			   void __iomem *base, u32 offset)
-+u32 tegra_vde_readl(struct tegra_vde *vde, void __iomem *base, u32 offset)
- {
- 	u32 value = readl_relaxed(base + offset);
- 
-@@ -69,22 +45,14 @@ static u32 tegra_vde_readl(struct tegra_vde *vde,
- 	return value;
- }
- 
--static void tegra_vde_set_bits(struct tegra_vde *vde,
--			       u32 mask, void __iomem *base, u32 offset)
-+void tegra_vde_set_bits(struct tegra_vde *vde, u32 mask,
-+			void __iomem *base, u32 offset)
- {
- 	u32 value = tegra_vde_readl(vde, base, offset);
- 
- 	tegra_vde_writel(vde, value | mask, base, offset);
- }
- 
--static int tegra_vde_wait_mbe(struct tegra_vde *vde)
--{
--	u32 tmp;
--
--	return readl_relaxed_poll_timeout(vde->mbe + 0x8C, tmp,
--					  (tmp >= 0x10), 1, 100);
--}
--
- static int tegra_vde_alloc_bo(struct tegra_vde *vde,
- 			      struct tegra_vde_bo **ret_bo,
- 			      enum dma_data_direction dma_dir,
-@@ -175,412 +143,6 @@ static void tegra_vde_free_bo(struct tegra_vde_bo *bo)
- 	kfree(bo);
- }
- 
--static int tegra_vde_setup_mbe_frame_idx(struct tegra_vde *vde,
--					 unsigned int refs_nb,
--					 bool setup_refs)
--{
--	u32 frame_idx_enb_mask = 0;
--	u32 value;
--	unsigned int frame_idx;
--	unsigned int idx;
--	int err;
--
--	tegra_vde_writel(vde, 0xD0000000 | (0 << 23), vde->mbe, 0x80);
--	tegra_vde_writel(vde, 0xD0200000 | (0 << 23), vde->mbe, 0x80);
--
--	err = tegra_vde_wait_mbe(vde);
--	if (err)
--		return err;
--
--	if (!setup_refs)
--		return 0;
--
--	for (idx = 0, frame_idx = 1; idx < refs_nb; idx++, frame_idx++) {
--		tegra_vde_writel(vde, 0xD0000000 | (frame_idx << 23),
--				 vde->mbe, 0x80);
--		tegra_vde_writel(vde, 0xD0200000 | (frame_idx << 23),
--				 vde->mbe, 0x80);
--
--		frame_idx_enb_mask |= frame_idx << (6 * (idx % 4));
--
--		if (idx % 4 == 3 || idx == refs_nb - 1) {
--			value = 0xC0000000;
--			value |= (idx >> 2) << 24;
--			value |= frame_idx_enb_mask;
--
--			tegra_vde_writel(vde, value, vde->mbe, 0x80);
--
--			err = tegra_vde_wait_mbe(vde);
--			if (err)
--				return err;
--
--			frame_idx_enb_mask = 0;
--		}
--	}
--
--	return 0;
--}
--
--static void tegra_vde_mbe_set_0xa_reg(struct tegra_vde *vde, int reg, u32 val)
--{
--	tegra_vde_writel(vde, 0xA0000000 | (reg << 24) | (val & 0xFFFF),
--			 vde->mbe, 0x80);
--	tegra_vde_writel(vde, 0xA0000000 | ((reg + 1) << 24) | (val >> 16),
--			 vde->mbe, 0x80);
--}
--
--static int tegra_vde_wait_bsev(struct tegra_vde *vde, bool wait_dma)
--{
--	struct device *dev = vde->miscdev.parent;
--	u32 value;
--	int err;
--
--	err = readl_relaxed_poll_timeout(vde->bsev + INTR_STATUS, value,
--					 !(value & BIT(2)), 1, 100);
--	if (err) {
--		dev_err(dev, "BSEV unknown bit timeout\n");
--		return err;
--	}
--
--	err = readl_relaxed_poll_timeout(vde->bsev + INTR_STATUS, value,
--					 (value & BSE_ICMDQUE_EMPTY), 1, 100);
--	if (err) {
--		dev_err(dev, "BSEV ICMDQUE flush timeout\n");
--		return err;
--	}
--
--	if (!wait_dma)
--		return 0;
--
--	err = readl_relaxed_poll_timeout(vde->bsev + INTR_STATUS, value,
--					 !(value & BSE_DMA_BUSY), 1, 100);
--	if (err) {
--		dev_err(dev, "BSEV DMA timeout\n");
--		return err;
--	}
--
--	return 0;
--}
--
--static int tegra_vde_push_to_bsev_icmdqueue(struct tegra_vde *vde,
--					    u32 value, bool wait_dma)
--{
--	tegra_vde_writel(vde, value, vde->bsev, ICMDQUE_WR);
--
--	return tegra_vde_wait_bsev(vde, wait_dma);
--}
--
--static void tegra_vde_setup_frameid(struct tegra_vde *vde,
--				    struct video_frame *frame,
--				    unsigned int frameid,
--				    u32 mbs_width, u32 mbs_height)
--{
--	u32 y_addr  = frame ? frame->y_addr  : 0x6CDEAD00;
--	u32 cb_addr = frame ? frame->cb_addr : 0x6CDEAD00;
--	u32 cr_addr = frame ? frame->cr_addr : 0x6CDEAD00;
--	u32 value1 = frame ? ((mbs_width << 16) | mbs_height) : 0;
--	u32 value2 = frame ? ((((mbs_width + 1) >> 1) << 6) | 1) : 0;
--
--	tegra_vde_writel(vde, y_addr  >> 8, vde->frameid, 0x000 + frameid * 4);
--	tegra_vde_writel(vde, cb_addr >> 8, vde->frameid, 0x100 + frameid * 4);
--	tegra_vde_writel(vde, cr_addr >> 8, vde->frameid, 0x180 + frameid * 4);
--	tegra_vde_writel(vde, value1,       vde->frameid, 0x080 + frameid * 4);
--	tegra_vde_writel(vde, value2,       vde->frameid, 0x280 + frameid * 4);
--}
--
--static void tegra_setup_frameidx(struct tegra_vde *vde,
--				 struct video_frame *frames,
--				 unsigned int frames_nb,
--				 u32 mbs_width, u32 mbs_height)
--{
--	unsigned int idx;
--
--	for (idx = 0; idx < frames_nb; idx++)
--		tegra_vde_setup_frameid(vde, &frames[idx], idx,
--					mbs_width, mbs_height);
--
--	for (; idx < 17; idx++)
--		tegra_vde_setup_frameid(vde, NULL, idx, 0, 0);
--}
--
--static void tegra_vde_setup_iram_entry(struct tegra_vde *vde,
--				       unsigned int table,
--				       unsigned int row,
--				       u32 value1, u32 value2)
--{
--	u32 *iram_tables = vde->iram;
--
--	trace_vde_setup_iram_entry(table, row, value1, value2);
--
--	iram_tables[0x20 * table + row * 2] = value1;
--	iram_tables[0x20 * table + row * 2 + 1] = value2;
--}
--
--static void tegra_vde_setup_iram_tables(struct tegra_vde *vde,
--					struct video_frame *dpb_frames,
--					unsigned int ref_frames_nb,
--					unsigned int with_earlier_poc_nb)
--{
--	struct video_frame *frame;
--	u32 value, aux_addr;
--	int with_later_poc_nb;
--	unsigned int i, k;
--
--	trace_vde_ref_l0(dpb_frames[0].frame_num);
--
--	for (i = 0; i < 16; i++) {
--		if (i < ref_frames_nb) {
--			frame = &dpb_frames[i + 1];
--
--			aux_addr = frame->aux_addr;
--
--			value  = (i + 1) << 26;
--			value |= !(frame->flags & FLAG_B_FRAME) << 25;
--			value |= 1 << 24;
--			value |= frame->frame_num;
--		} else {
--			aux_addr = 0x6ADEAD00;
--			value = 0x3f;
--		}
--
--		tegra_vde_setup_iram_entry(vde, 0, i, value, aux_addr);
--		tegra_vde_setup_iram_entry(vde, 1, i, value, aux_addr);
--		tegra_vde_setup_iram_entry(vde, 2, i, value, aux_addr);
--		tegra_vde_setup_iram_entry(vde, 3, i, value, aux_addr);
--	}
--
--	if (!(dpb_frames[0].flags & FLAG_B_FRAME))
--		return;
--
--	if (with_earlier_poc_nb >= ref_frames_nb)
--		return;
--
--	with_later_poc_nb = ref_frames_nb - with_earlier_poc_nb;
--
--	trace_vde_ref_l1(with_later_poc_nb, with_earlier_poc_nb);
--
--	for (i = 0, k = with_earlier_poc_nb; i < with_later_poc_nb; i++, k++) {
--		frame = &dpb_frames[k + 1];
--
--		aux_addr = frame->aux_addr;
--
--		value  = (k + 1) << 26;
--		value |= !(frame->flags & FLAG_B_FRAME) << 25;
--		value |= 1 << 24;
--		value |= frame->frame_num;
--
--		tegra_vde_setup_iram_entry(vde, 2, i, value, aux_addr);
--	}
--
--	for (k = 0; i < ref_frames_nb; i++, k++) {
--		frame = &dpb_frames[k + 1];
--
--		aux_addr = frame->aux_addr;
--
--		value  = (k + 1) << 26;
--		value |= !(frame->flags & FLAG_B_FRAME) << 25;
--		value |= 1 << 24;
--		value |= frame->frame_num;
--
--		tegra_vde_setup_iram_entry(vde, 2, i, value, aux_addr);
--	}
--}
--
--static int tegra_vde_setup_hw_context(struct tegra_vde *vde,
--				      struct tegra_vde_h264_decoder_ctx *ctx,
--				      struct video_frame *dpb_frames,
--				      dma_addr_t bitstream_data_addr,
--				      size_t bitstream_data_size,
--				      unsigned int macroblocks_nb)
--{
--	struct device *dev = vde->miscdev.parent;
--	u32 value;
--	int err;
--
--	tegra_vde_set_bits(vde, 0x000A, vde->sxe, 0xF0);
--	tegra_vde_set_bits(vde, 0x000B, vde->bsev, CMDQUE_CONTROL);
--	tegra_vde_set_bits(vde, 0x8002, vde->mbe, 0x50);
--	tegra_vde_set_bits(vde, 0x000A, vde->mbe, 0xA0);
--	tegra_vde_set_bits(vde, 0x000A, vde->ppe, 0x14);
--	tegra_vde_set_bits(vde, 0x000A, vde->ppe, 0x28);
--	tegra_vde_set_bits(vde, 0x0A00, vde->mce, 0x08);
--	tegra_vde_set_bits(vde, 0x000A, vde->tfe, 0x00);
--	tegra_vde_set_bits(vde, 0x0005, vde->vdma, 0x04);
--
--	tegra_vde_writel(vde, 0x00000000, vde->vdma, 0x1C);
--	tegra_vde_writel(vde, 0x00000000, vde->vdma, 0x00);
--	tegra_vde_writel(vde, 0x00000007, vde->vdma, 0x04);
--	tegra_vde_writel(vde, 0x00000007, vde->frameid, 0x200);
--	tegra_vde_writel(vde, 0x00000005, vde->tfe, 0x04);
--	tegra_vde_writel(vde, 0x00000000, vde->mbe, 0x84);
--	tegra_vde_writel(vde, 0x00000010, vde->sxe, 0x08);
--	tegra_vde_writel(vde, 0x00000150, vde->sxe, 0x54);
--	tegra_vde_writel(vde, 0x0000054C, vde->sxe, 0x58);
--	tegra_vde_writel(vde, 0x00000E34, vde->sxe, 0x5C);
--	tegra_vde_writel(vde, 0x063C063C, vde->mce, 0x10);
--	tegra_vde_writel(vde, 0x0003FC00, vde->bsev, INTR_STATUS);
--	tegra_vde_writel(vde, 0x0000150D, vde->bsev, BSE_CONFIG);
--	tegra_vde_writel(vde, 0x00000100, vde->bsev, BSE_INT_ENB);
--	tegra_vde_writel(vde, 0x00000000, vde->bsev, 0x98);
--	tegra_vde_writel(vde, 0x00000060, vde->bsev, 0x9C);
--
--	memset(vde->iram + 128, 0, macroblocks_nb / 2);
--
--	tegra_setup_frameidx(vde, dpb_frames, ctx->dpb_frames_nb,
--			     ctx->pic_width_in_mbs, ctx->pic_height_in_mbs);
--
--	tegra_vde_setup_iram_tables(vde, dpb_frames,
--				    ctx->dpb_frames_nb - 1,
--				    ctx->dpb_ref_frames_with_earlier_poc_nb);
--
--	/*
--	 * The IRAM mapping is write-combine, ensure that CPU buffers have
--	 * been flushed at this point.
--	 */
--	wmb();
--
--	tegra_vde_writel(vde, 0x00000000, vde->bsev, 0x8C);
--	tegra_vde_writel(vde, bitstream_data_addr + bitstream_data_size,
--			 vde->bsev, 0x54);
--
--	value = ctx->pic_width_in_mbs << 11 | ctx->pic_height_in_mbs << 3;
--
--	tegra_vde_writel(vde, value, vde->bsev, 0x88);
--
--	err = tegra_vde_wait_bsev(vde, false);
--	if (err)
--		return err;
--
--	err = tegra_vde_push_to_bsev_icmdqueue(vde, 0x800003FC, false);
--	if (err)
--		return err;
--
--	value = 0x01500000;
--	value |= ((vde->iram_lists_addr + 512) >> 2) & 0xFFFF;
--
--	err = tegra_vde_push_to_bsev_icmdqueue(vde, value, true);
--	if (err)
--		return err;
--
--	err = tegra_vde_push_to_bsev_icmdqueue(vde, 0x840F054C, false);
--	if (err)
--		return err;
--
--	err = tegra_vde_push_to_bsev_icmdqueue(vde, 0x80000080, false);
--	if (err)
--		return err;
--
--	value = 0x0E340000 | ((vde->iram_lists_addr >> 2) & 0xFFFF);
--
--	err = tegra_vde_push_to_bsev_icmdqueue(vde, value, true);
--	if (err)
--		return err;
--
--	value = 0x00800005;
--	value |= ctx->pic_width_in_mbs << 11;
--	value |= ctx->pic_height_in_mbs << 3;
--
--	tegra_vde_writel(vde, value, vde->sxe, 0x10);
--
--	value = !ctx->baseline_profile << 17;
--	value |= ctx->level_idc << 13;
--	value |= ctx->log2_max_pic_order_cnt_lsb << 7;
--	value |= ctx->pic_order_cnt_type << 5;
--	value |= ctx->log2_max_frame_num;
--
--	tegra_vde_writel(vde, value, vde->sxe, 0x40);
--
--	value = ctx->pic_init_qp << 25;
--	value |= !!(ctx->deblocking_filter_control_present_flag) << 2;
--	value |= !!ctx->pic_order_present_flag;
--
--	tegra_vde_writel(vde, value, vde->sxe, 0x44);
--
--	value = ctx->chroma_qp_index_offset;
--	value |= ctx->num_ref_idx_l0_active_minus1 << 5;
--	value |= ctx->num_ref_idx_l1_active_minus1 << 10;
--	value |= !!ctx->constrained_intra_pred_flag << 15;
--
--	tegra_vde_writel(vde, value, vde->sxe, 0x48);
--
--	value = 0x0C000000;
--	value |= !!(dpb_frames[0].flags & FLAG_B_FRAME) << 24;
--
--	tegra_vde_writel(vde, value, vde->sxe, 0x4C);
--
--	value = 0x03800000;
--	value |= bitstream_data_size & GENMASK(19, 15);
--
--	tegra_vde_writel(vde, value, vde->sxe, 0x68);
--
--	tegra_vde_writel(vde, bitstream_data_addr, vde->sxe, 0x6C);
--
--	if (vde->soc->supports_ref_pic_marking)
--		tegra_vde_writel(vde, vde->secure_bo->dma_addr, vde->sxe, 0x7c);
--
--	value = 0x10000005;
--	value |= ctx->pic_width_in_mbs << 11;
--	value |= ctx->pic_height_in_mbs << 3;
--
--	tegra_vde_writel(vde, value, vde->mbe, 0x80);
--
--	value = 0x26800000;
--	value |= ctx->level_idc << 4;
--	value |= !ctx->baseline_profile << 1;
--	value |= !!ctx->direct_8x8_inference_flag;
--
--	tegra_vde_writel(vde, value, vde->mbe, 0x80);
--
--	tegra_vde_writel(vde, 0xF4000001, vde->mbe, 0x80);
--	tegra_vde_writel(vde, 0x20000000, vde->mbe, 0x80);
--	tegra_vde_writel(vde, 0xF4000101, vde->mbe, 0x80);
--
--	value = 0x20000000;
--	value |= ctx->chroma_qp_index_offset << 8;
--
--	tegra_vde_writel(vde, value, vde->mbe, 0x80);
--
--	err = tegra_vde_setup_mbe_frame_idx(vde,
--					    ctx->dpb_frames_nb - 1,
--					    ctx->pic_order_cnt_type == 0);
--	if (err) {
--		dev_err(dev, "MBE frames setup failed %d\n", err);
--		return err;
--	}
--
--	tegra_vde_mbe_set_0xa_reg(vde, 0, 0x000009FC);
--	tegra_vde_mbe_set_0xa_reg(vde, 2, 0x61DEAD00);
--	tegra_vde_mbe_set_0xa_reg(vde, 4, 0x62DEAD00);
--	tegra_vde_mbe_set_0xa_reg(vde, 6, 0x63DEAD00);
--	tegra_vde_mbe_set_0xa_reg(vde, 8, dpb_frames[0].aux_addr);
--
--	value = 0xFC000000;
--	value |= !!(dpb_frames[0].flags & FLAG_B_FRAME) << 2;
--
--	if (!ctx->baseline_profile)
--		value |= !!(dpb_frames[0].flags & FLAG_REFERENCE) << 1;
--
--	tegra_vde_writel(vde, value, vde->mbe, 0x80);
--
--	err = tegra_vde_wait_mbe(vde);
--	if (err) {
--		dev_err(dev, "MBE programming failed %d\n", err);
--		return err;
--	}
--
--	return 0;
--}
--
--static void tegra_vde_decode_frame(struct tegra_vde *vde,
--				   unsigned int macroblocks_nb)
--{
--	reinit_completion(&vde->decode_completion);
--
--	tegra_vde_writel(vde, 0x00000001, vde->bsev, 0x8C);
--	tegra_vde_writel(vde, 0x20000000 | (macroblocks_nb - 1),
--			 vde->sxe, 0x00);
--}
--
- static int tegra_vde_attach_dmabuf(struct tegra_vde *vde,
- 				   int fd,
- 				   unsigned long offset,
-@@ -631,7 +193,7 @@ static int tegra_vde_attach_dmabuf(struct tegra_vde *vde,
- }
- 
- static int tegra_vde_attach_dmabufs_to_frame(struct tegra_vde *vde,
--					     struct video_frame *frame,
-+					     struct tegra_video_frame *frame,
- 					     struct tegra_vde_h264_frame *src,
- 					     enum dma_data_direction dma_dir,
- 					     bool baseline_profile,
-@@ -689,7 +251,7 @@ static int tegra_vde_attach_dmabufs_to_frame(struct tegra_vde *vde,
- }
- 
- static void tegra_vde_release_frame_dmabufs(struct tegra_vde *vde,
--					    struct video_frame *frame,
-+					    struct tegra_video_frame *frame,
- 					    enum dma_data_direction dma_dir,
- 					    bool baseline_profile,
- 					    bool release)
-@@ -703,106 +265,22 @@ static void tegra_vde_release_frame_dmabufs(struct tegra_vde *vde,
- 	tegra_vde_dmabuf_cache_unmap(vde, frame->y_dmabuf_attachment, release);
- }
- 
--static int tegra_vde_validate_frame(struct device *dev,
--				    struct tegra_vde_h264_frame *frame)
+-int tegra_vde_validate_h264_frame(struct device *dev,
+-				  struct tegra_vde_h264_frame *frame)
 -{
 -	if (frame->frame_num > 0x7FFFFF) {
 -		dev_err(dev, "Bad frame_num %u\n", frame->frame_num);
@@ -1269,282 +156,515 @@ index a8f1a024c343..36f5595c0fd8 100644
 -	return 0;
 -}
 -
--static int tegra_vde_validate_h264_ctx(struct device *dev,
--				       struct tegra_vde_h264_decoder_ctx *ctx)
+-int tegra_vde_validate_h264_ctx(struct device *dev,
+-				struct tegra_vde_h264_decoder_ctx *ctx)
++static int tegra_vde_validate_h264_ctx(struct device *dev,
++				       struct tegra_vde_h264_decoder_ctx *ctx)
+ {
+ 	if (ctx->dpb_frames_nb == 0 || ctx->dpb_frames_nb > 17) {
+ 		dev_err(dev, "Bad DPB size %u\n", ctx->dpb_frames_nb);
+@@ -637,23 +653,6 @@ static int tegra_vde_decode_end(struct tegra_vde *vde)
+ 	return ret;
+ }
+ 
+-int tegra_vde_decode_h264(struct tegra_vde *vde,
+-			  struct tegra_vde_h264_decoder_ctx *ctx,
+-			  struct tegra_video_frame *dpb_frames,
+-			  dma_addr_t bitstream_data_addr,
+-			  size_t bitstream_data_size)
 -{
--	if (ctx->dpb_frames_nb == 0 || ctx->dpb_frames_nb > 17) {
--		dev_err(dev, "Bad DPB size %u\n", ctx->dpb_frames_nb);
+-	int err;
+-
+-	err = tegra_vde_decode_begin(vde, ctx, dpb_frames,
+-				     bitstream_data_addr,
+-				     bitstream_data_size);
+-	if (err)
+-		return err;
+-
+-	return tegra_vde_decode_end(vde);
+-}
+-
+ static struct vb2_buffer *get_ref_buf(struct tegra_ctx *ctx,
+ 				      struct vb2_v4l2_buffer *dst,
+ 				      unsigned int dpb_idx)
+diff --git a/drivers/staging/media/tegra-vde/iommu.c b/drivers/staging/media/tegra-vde/iommu.c
+index adf8dc7ee25c..5521ed3e465f 100644
+--- a/drivers/staging/media/tegra-vde/iommu.c
++++ b/drivers/staging/media/tegra-vde/iommu.c
+@@ -60,7 +60,7 @@ void tegra_vde_iommu_unmap(struct tegra_vde *vde, struct iova *iova)
+ 
+ int tegra_vde_iommu_init(struct tegra_vde *vde)
+ {
+-	struct device *dev = vde->miscdev.parent;
++	struct device *dev = vde->dev;
+ 	struct iova *iova;
+ 	unsigned long order;
+ 	unsigned long shift;
+diff --git a/drivers/staging/media/tegra-vde/uapi.h b/drivers/staging/media/tegra-vde/uapi.h
+deleted file mode 100644
+index ffb4983e5bb6..000000000000
+--- a/drivers/staging/media/tegra-vde/uapi.h
++++ /dev/null
+@@ -1,73 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0+ */
+-/* Copyright (C) 2016-2017 Dmitry Osipenko <digetx@gmail.com> */
+-#ifndef _UAPI_TEGRA_VDE_H_
+-#define _UAPI_TEGRA_VDE_H_
+-
+-#include <linux/types.h>
+-#include <asm/ioctl.h>
+-
+-#define FLAG_B_FRAME		0x1
+-#define FLAG_REFERENCE		0x2
+-
+-struct tegra_vde_h264_frame {
+-	__s32 y_fd;
+-	__s32 cb_fd;
+-	__s32 cr_fd;
+-	__s32 aux_fd;
+-	__u32 y_offset;
+-	__u32 cb_offset;
+-	__u32 cr_offset;
+-	__u32 aux_offset;
+-	__u32 frame_num;
+-	__u32 flags;
+-
+-	// Must be zero'ed
+-	__u32 reserved[6];
+-};
+-
+-struct tegra_vde_h264_decoder_ctx {
+-	__s32 bitstream_data_fd;
+-	__u32 bitstream_data_offset;
+-
+-	__u64 dpb_frames_ptr;
+-	__u32 dpb_frames_nb;
+-	__u32 dpb_ref_frames_with_earlier_poc_nb;
+-
+-	// SPS
+-	__u32 baseline_profile;
+-	__u32 level_idc;
+-	__u32 log2_max_pic_order_cnt_lsb;
+-	__u32 log2_max_frame_num;
+-	__u32 pic_order_cnt_type;
+-	__u32 direct_8x8_inference_flag;
+-	__u32 pic_width_in_mbs;
+-	__u32 pic_height_in_mbs;
+-
+-	// PPS
+-	__u32 pic_init_qp;
+-	__u32 deblocking_filter_control_present_flag;
+-	__u32 constrained_intra_pred_flag;
+-	__u32 chroma_qp_index_offset;
+-	__u32 pic_order_present_flag;
+-
+-	// Slice header
+-	__u32 num_ref_idx_l0_active_minus1;
+-	__u32 num_ref_idx_l1_active_minus1;
+-
+-	// Must be zero'ed
+-	__u32 reserved[11];
+-};
+-
+-#define VDE_IOCTL_BASE			('v' + 0x20)
+-
+-#define VDE_IO(nr)			_IO(VDE_IOCTL_BASE, nr)
+-#define VDE_IOR(nr, type)		_IOR(VDE_IOCTL_BASE, nr, type)
+-#define VDE_IOW(nr, type)		_IOW(VDE_IOCTL_BASE, nr, type)
+-#define VDE_IOWR(nr, type)		_IOWR(VDE_IOCTL_BASE, nr, type)
+-
+-#define TEGRA_VDE_DECODE_H264		0x00
+-
+-#define TEGRA_VDE_IOCTL_DECODE_H264	\
+-	VDE_IOW(TEGRA_VDE_DECODE_H264, struct tegra_vde_h264_decoder_ctx)
+-
+-#endif // _UAPI_TEGRA_VDE_H_
+diff --git a/drivers/staging/media/tegra-vde/vde.c b/drivers/staging/media/tegra-vde/vde.c
+index c147d58c3bfb..f3e863a94c5a 100644
+--- a/drivers/staging/media/tegra-vde/vde.c
++++ b/drivers/staging/media/tegra-vde/vde.c
+@@ -11,7 +11,6 @@
+ #include <linux/genalloc.h>
+ #include <linux/interrupt.h>
+ #include <linux/list.h>
+-#include <linux/miscdevice.h>
+ #include <linux/module.h>
+ #include <linux/of_device.h>
+ #include <linux/pm_runtime.h>
+@@ -22,7 +21,6 @@
+ #include <soc/tegra/common.h>
+ #include <soc/tegra/pmc.h>
+ 
+-#include "uapi.h"
+ #include "vde.h"
+ 
+ #define CREATE_TRACE_POINTS
+@@ -58,7 +56,7 @@ int tegra_vde_alloc_bo(struct tegra_vde *vde,
+ 		       enum dma_data_direction dma_dir,
+ 		       size_t size)
+ {
+-	struct device *dev = vde->miscdev.parent;
++	struct device *dev = vde->dev;
+ 	struct tegra_vde_bo *bo;
+ 	int err;
+ 
+@@ -129,7 +127,7 @@ int tegra_vde_alloc_bo(struct tegra_vde *vde,
+ void tegra_vde_free_bo(struct tegra_vde_bo *bo)
+ {
+ 	struct tegra_vde *vde = bo->vde;
+-	struct device *dev = vde->miscdev.parent;
++	struct device *dev = vde->dev;
+ 
+ 	if (vde->domain)
+ 		tegra_vde_iommu_unmap(vde, bo->iova);
+@@ -143,266 +141,6 @@ void tegra_vde_free_bo(struct tegra_vde_bo *bo)
+ 	kfree(bo);
+ }
+ 
+-static int tegra_vde_attach_dmabuf(struct tegra_vde *vde,
+-				   int fd,
+-				   unsigned long offset,
+-				   size_t min_size,
+-				   size_t align_size,
+-				   struct dma_buf_attachment **a,
+-				   dma_addr_t *addrp,
+-				   size_t *size,
+-				   enum dma_data_direction dma_dir)
+-{
+-	struct device *dev = vde->miscdev.parent;
+-	struct dma_buf *dmabuf;
+-	int err;
+-
+-	dmabuf = dma_buf_get(fd);
+-	if (IS_ERR(dmabuf)) {
+-		dev_err(dev, "Invalid dmabuf FD\n");
+-		return PTR_ERR(dmabuf);
+-	}
+-
+-	if (dmabuf->size & (align_size - 1)) {
+-		dev_err(dev, "Unaligned dmabuf 0x%zX, should be aligned to 0x%zX\n",
+-			dmabuf->size, align_size);
 -		return -EINVAL;
 -	}
 -
--	if (ctx->level_idc > 15) {
--		dev_err(dev, "Bad level value %u\n", ctx->level_idc);
+-	if ((u64)offset + min_size > dmabuf->size) {
+-		dev_err(dev, "Too small dmabuf size %zu @0x%lX, should be at least %zu\n",
+-			dmabuf->size, offset, min_size);
 -		return -EINVAL;
 -	}
 -
--	if (ctx->pic_init_qp > 52) {
--		dev_err(dev, "Bad pic_init_qp value %u\n", ctx->pic_init_qp);
--		return -EINVAL;
+-	err = tegra_vde_dmabuf_cache_map(vde, dmabuf, dma_dir, a, addrp);
+-	if (err)
+-		goto err_put;
+-
+-	*addrp = *addrp + offset;
+-
+-	if (size)
+-		*size = dmabuf->size - offset;
+-
+-	return 0;
+-
+-err_put:
+-	dma_buf_put(dmabuf);
+-
+-	return err;
+-}
+-
+-static int tegra_vde_attach_dmabufs_to_frame(struct tegra_vde *vde,
+-					     struct tegra_video_frame *frame,
+-					     struct tegra_vde_h264_frame *src,
+-					     enum dma_data_direction dma_dir,
+-					     bool baseline_profile,
+-					     size_t lsize, size_t csize)
+-{
+-	int err;
+-
+-	err = tegra_vde_attach_dmabuf(vde, src->y_fd,
+-				      src->y_offset, lsize, SZ_256,
+-				      &frame->y_dmabuf_attachment,
+-				      &frame->y_addr,
+-				      NULL, dma_dir);
+-	if (err)
+-		return err;
+-
+-	err = tegra_vde_attach_dmabuf(vde, src->cb_fd,
+-				      src->cb_offset, csize, SZ_256,
+-				      &frame->cb_dmabuf_attachment,
+-				      &frame->cb_addr,
+-				      NULL, dma_dir);
+-	if (err)
+-		goto err_release_y;
+-
+-	err = tegra_vde_attach_dmabuf(vde, src->cr_fd,
+-				      src->cr_offset, csize, SZ_256,
+-				      &frame->cr_dmabuf_attachment,
+-				      &frame->cr_addr,
+-				      NULL, dma_dir);
+-	if (err)
+-		goto err_release_cb;
+-
+-	if (baseline_profile) {
+-		frame->aux_addr = 0x64DEAD00;
+-		return 0;
 -	}
 -
--	if (ctx->log2_max_pic_order_cnt_lsb > 16) {
--		dev_err(dev, "Bad log2_max_pic_order_cnt_lsb value %u\n",
--			ctx->log2_max_pic_order_cnt_lsb);
--		return -EINVAL;
+-	err = tegra_vde_attach_dmabuf(vde, src->aux_fd,
+-				      src->aux_offset, csize, SZ_256,
+-				      &frame->aux_dmabuf_attachment,
+-				      &frame->aux_addr,
+-				      NULL, dma_dir);
+-	if (err)
+-		goto err_release_cr;
+-
+-	return 0;
+-
+-err_release_cr:
+-	tegra_vde_dmabuf_cache_unmap(vde, frame->cr_dmabuf_attachment, true);
+-err_release_cb:
+-	tegra_vde_dmabuf_cache_unmap(vde, frame->cb_dmabuf_attachment, true);
+-err_release_y:
+-	tegra_vde_dmabuf_cache_unmap(vde, frame->y_dmabuf_attachment, true);
+-
+-	return err;
+-}
+-
+-static void tegra_vde_release_frame_dmabufs(struct tegra_vde *vde,
+-					    struct tegra_video_frame *frame,
+-					    enum dma_data_direction dma_dir,
+-					    bool baseline_profile,
+-					    bool release)
+-{
+-	if (!baseline_profile)
+-		tegra_vde_dmabuf_cache_unmap(vde, frame->aux_dmabuf_attachment,
+-					     release);
+-
+-	tegra_vde_dmabuf_cache_unmap(vde, frame->cr_dmabuf_attachment, release);
+-	tegra_vde_dmabuf_cache_unmap(vde, frame->cb_dmabuf_attachment, release);
+-	tegra_vde_dmabuf_cache_unmap(vde, frame->y_dmabuf_attachment, release);
+-}
+-
+-static int tegra_vde_ioctl_decode_h264(struct tegra_vde *vde,
+-				       unsigned long vaddr)
+-{
+-	struct dma_buf_attachment *bitstream_data_dmabuf_attachment;
+-	struct tegra_vde_h264_frame __user *frames_user;
+-	size_t bitstream_data_size, lsize, csize;
+-	struct device *dev = vde->miscdev.parent;
+-	struct tegra_vde_h264_decoder_ctx ctx;
+-	struct tegra_video_frame *dpb_frames;
+-	struct tegra_vde_h264_frame *frames;
+-	enum dma_data_direction dma_dir;
+-	dma_addr_t bitstream_data_addr;
+-	unsigned int macroblocks_nb;
+-	unsigned int cstride;
+-	unsigned int i;
+-	int ret;
+-
+-	if (copy_from_user(&ctx, (void __user *)vaddr, sizeof(ctx)))
+-		return -EFAULT;
+-
+-	ret = tegra_vde_validate_h264_ctx(dev, &ctx);
+-	if (ret)
+-		return ret;
+-
+-	ret = tegra_vde_attach_dmabuf(vde, ctx.bitstream_data_fd,
+-				      ctx.bitstream_data_offset,
+-				      SZ_16K, SZ_16K,
+-				      &bitstream_data_dmabuf_attachment,
+-				      &bitstream_data_addr,
+-				      &bitstream_data_size,
+-				      DMA_TO_DEVICE);
+-	if (ret)
+-		return ret;
+-
+-	frames = kmalloc_array(ctx.dpb_frames_nb, sizeof(*frames), GFP_KERNEL);
+-	if (!frames) {
+-		ret = -ENOMEM;
+-		goto release_bitstream_dmabuf;
 -	}
 -
--	if (ctx->log2_max_frame_num > 16) {
--		dev_err(dev, "Bad log2_max_frame_num value %u\n",
--			ctx->log2_max_frame_num);
--		return -EINVAL;
+-	dpb_frames = kcalloc(ctx.dpb_frames_nb, sizeof(*dpb_frames),
+-			     GFP_KERNEL);
+-	if (!dpb_frames) {
+-		ret = -ENOMEM;
+-		goto free_frames;
 -	}
 -
--	if (ctx->chroma_qp_index_offset > 31) {
--		dev_err(dev, "Bad chroma_qp_index_offset value %u\n",
--			ctx->chroma_qp_index_offset);
--		return -EINVAL;
+-	macroblocks_nb = ctx.pic_width_in_mbs * ctx.pic_height_in_mbs;
+-	frames_user = u64_to_user_ptr(ctx.dpb_frames_ptr);
+-
+-	if (copy_from_user(frames, frames_user,
+-			   ctx.dpb_frames_nb * sizeof(*frames))) {
+-		ret = -EFAULT;
+-		goto free_dpb_frames;
 -	}
 -
--	if (ctx->pic_order_cnt_type > 2) {
--		dev_err(dev, "Bad pic_order_cnt_type value %u\n",
--			ctx->pic_order_cnt_type);
--		return -EINVAL;
+-	cstride = ALIGN(ctx.pic_width_in_mbs * 8, 16);
+-	csize = cstride * ctx.pic_height_in_mbs * 8;
+-	lsize = macroblocks_nb * 256;
+-
+-	for (i = 0; i < ctx.dpb_frames_nb; i++) {
+-		ret = tegra_vde_validate_h264_frame(dev, &frames[i]);
+-		if (ret)
+-			goto release_dpb_frames;
+-
+-		dpb_frames[i].flags = frames[i].flags;
+-		dpb_frames[i].frame_num = frames[i].frame_num;
+-		dpb_frames[i].luma_atoms_pitch = ctx.pic_width_in_mbs;
+-		dpb_frames[i].chroma_atoms_pitch = cstride / VDE_ATOM;
+-
+-		dma_dir = (i == 0) ? DMA_FROM_DEVICE : DMA_TO_DEVICE;
+-
+-		ret = tegra_vde_attach_dmabufs_to_frame(vde, &dpb_frames[i],
+-							&frames[i], dma_dir,
+-							ctx.baseline_profile,
+-							lsize, csize);
+-		if (ret)
+-			goto release_dpb_frames;
 -	}
 -
--	if (ctx->num_ref_idx_l0_active_minus1 > 15) {
--		dev_err(dev, "Bad num_ref_idx_l0_active_minus1 value %u\n",
--			ctx->num_ref_idx_l0_active_minus1);
--		return -EINVAL;
+-	ret = tegra_vde_decode_h264(vde, &ctx, dpb_frames,
+-				    bitstream_data_addr, bitstream_data_size);
+-
+-release_dpb_frames:
+-	while (i--) {
+-		dma_dir = (i == 0) ? DMA_FROM_DEVICE : DMA_TO_DEVICE;
+-
+-		tegra_vde_release_frame_dmabufs(vde, &dpb_frames[i], dma_dir,
+-						ctx.baseline_profile, ret != 0);
 -	}
 -
--	if (ctx->num_ref_idx_l1_active_minus1 > 15) {
--		dev_err(dev, "Bad num_ref_idx_l1_active_minus1 value %u\n",
--			ctx->num_ref_idx_l1_active_minus1);
--		return -EINVAL;
+-free_dpb_frames:
+-	kfree(dpb_frames);
+-
+-free_frames:
+-	kfree(frames);
+-
+-release_bitstream_dmabuf:
+-	tegra_vde_dmabuf_cache_unmap(vde, bitstream_data_dmabuf_attachment,
+-				     ret != 0);
+-
+-	return ret;
+-}
+-
+-static long tegra_vde_unlocked_ioctl(struct file *filp,
+-				     unsigned int cmd, unsigned long arg)
+-{
+-	struct miscdevice *miscdev = filp->private_data;
+-	struct tegra_vde *vde = container_of(miscdev, struct tegra_vde,
+-					     miscdev);
+-
+-	switch (cmd) {
+-	case TEGRA_VDE_IOCTL_DECODE_H264:
+-		return tegra_vde_ioctl_decode_h264(vde, arg);
 -	}
 -
--	if (!ctx->pic_width_in_mbs || ctx->pic_width_in_mbs > 127) {
--		dev_err(dev, "Bad pic_width_in_mbs value %u\n",
--			ctx->pic_width_in_mbs);
--		return -EINVAL;
--	}
+-	dev_err(miscdev->parent, "Invalid IOCTL command %u\n", cmd);
 -
--	if (!ctx->pic_height_in_mbs || ctx->pic_height_in_mbs > 127) {
--		dev_err(dev, "Bad pic_height_in_mbs value %u\n",
--			ctx->pic_height_in_mbs);
--		return -EINVAL;
--	}
+-	return -ENOTTY;
+-}
+-
+-static int tegra_vde_release_file(struct inode *inode, struct file *filp)
+-{
+-	struct miscdevice *miscdev = filp->private_data;
+-	struct tegra_vde *vde = container_of(miscdev, struct tegra_vde,
+-					     miscdev);
+-
+-	tegra_vde_dmabuf_cache_unmap_sync(vde);
 -
 -	return 0;
 -}
 -
- static int tegra_vde_ioctl_decode_h264(struct tegra_vde *vde,
- 				       unsigned long vaddr)
+-static const struct file_operations tegra_vde_fops = {
+-	.owner		= THIS_MODULE,
+-	.unlocked_ioctl	= tegra_vde_unlocked_ioctl,
+-	.release	= tegra_vde_release_file,
+-};
+-
+ static irqreturn_t tegra_vde_isr(int irq, void *data)
  {
-+	struct dma_buf_attachment *bitstream_data_dmabuf_attachment;
-+	struct tegra_vde_h264_frame __user *frames_user;
-+	size_t bitstream_data_size, lsize, csize;
- 	struct device *dev = vde->miscdev.parent;
- 	struct tegra_vde_h264_decoder_ctx ctx;
-+	struct tegra_video_frame *dpb_frames;
- 	struct tegra_vde_h264_frame *frames;
--	struct tegra_vde_h264_frame __user *frames_user;
--	struct video_frame *dpb_frames;
--	struct dma_buf_attachment *bitstream_data_dmabuf_attachment;
- 	enum dma_data_direction dma_dir;
- 	dma_addr_t bitstream_data_addr;
--	dma_addr_t bsev_ptr;
--	size_t lsize, csize;
--	size_t bitstream_data_size;
- 	unsigned int macroblocks_nb;
--	unsigned int read_bytes;
- 	unsigned int cstride;
- 	unsigned int i;
--	long timeout;
--	int ret, err;
-+	int ret;
+ 	struct tegra_vde *vde = data;
+@@ -590,11 +328,6 @@ static int tegra_vde_probe(struct platform_device *pdev)
+ 	mutex_init(&vde->lock);
+ 	init_completion(&vde->decode_completion);
  
- 	if (copy_from_user(&ctx, (void __user *)vaddr, sizeof(ctx)))
- 		return -EFAULT;
-@@ -848,7 +326,7 @@ static int tegra_vde_ioctl_decode_h264(struct tegra_vde *vde,
- 	lsize = macroblocks_nb * 256;
- 
- 	for (i = 0; i < ctx.dpb_frames_nb; i++) {
--		ret = tegra_vde_validate_frame(dev, &frames[i]);
-+		ret = tegra_vde_validate_h264_frame(dev, &frames[i]);
- 		if (ret)
- 			goto release_dpb_frames;
- 
-@@ -865,81 +343,8 @@ static int tegra_vde_ioctl_decode_h264(struct tegra_vde *vde,
- 			goto release_dpb_frames;
+-	vde->miscdev.minor = MISC_DYNAMIC_MINOR;
+-	vde->miscdev.name = "tegra_vde";
+-	vde->miscdev.fops = &tegra_vde_fops;
+-	vde->miscdev.parent = dev;
+-
+ 	err = tegra_vde_iommu_init(vde);
+ 	if (err) {
+ 		dev_err(dev, "Failed to initialize IOMMU: %d\n", err);
+@@ -622,22 +355,14 @@ static int tegra_vde_probe(struct platform_device *pdev)
+ 		goto err_pm_runtime;
  	}
  
--	ret = mutex_lock_interruptible(&vde->lock);
--	if (ret)
--		goto release_dpb_frames;
--
--	ret = pm_runtime_resume_and_get(dev);
--	if (ret < 0)
--		goto unlock;
--
--	/*
--	 * We rely on the VDE registers reset value, otherwise VDE
--	 * causes bus lockup.
--	 */
--	ret = reset_control_assert(vde->rst_mc);
--	if (ret) {
--		dev_err(dev, "DEC start: Failed to assert MC reset: %d\n",
--			ret);
--		goto put_runtime_pm;
+-	err = misc_register(&vde->miscdev);
+-	if (err) {
+-		dev_err(dev, "Failed to register misc device: %d\n", err);
+-		goto err_free_secure_bo;
 -	}
 -
--	ret = reset_control_reset(vde->rst);
--	if (ret) {
--		dev_err(dev, "DEC start: Failed to reset HW: %d\n", ret);
--		goto put_runtime_pm;
--	}
--
--	ret = reset_control_deassert(vde->rst_mc);
--	if (ret) {
--		dev_err(dev, "DEC start: Failed to deassert MC reset: %d\n",
--			ret);
--		goto put_runtime_pm;
--	}
--
--	ret = tegra_vde_setup_hw_context(vde, &ctx, dpb_frames,
--					 bitstream_data_addr,
--					 bitstream_data_size,
--					 macroblocks_nb);
--	if (ret)
--		goto put_runtime_pm;
--
--	tegra_vde_decode_frame(vde, macroblocks_nb);
--
--	timeout = wait_for_completion_interruptible_timeout(
--			&vde->decode_completion, msecs_to_jiffies(1000));
--	if (timeout == 0) {
--		bsev_ptr = tegra_vde_readl(vde, vde->bsev, 0x10);
--		macroblocks_nb = tegra_vde_readl(vde, vde->sxe, 0xC8) & 0x1FFF;
--		read_bytes = bsev_ptr ? bsev_ptr - bitstream_data_addr : 0;
--
--		dev_err(dev, "Decoding failed: read 0x%X bytes, %u macroblocks parsed\n",
--			read_bytes, macroblocks_nb);
--
--		ret = -EIO;
--	} else if (timeout < 0) {
--		ret = timeout;
--	}
--
--	/*
--	 * At first reset memory client to avoid resetting VDE HW in the
--	 * middle of DMA which could result into memory corruption or hang
--	 * the whole system.
--	 */
--	err = reset_control_assert(vde->rst_mc);
--	if (err)
--		dev_err(dev, "DEC end: Failed to assert MC reset: %d\n", err);
--
--	err = reset_control_assert(vde->rst);
--	if (err)
--		dev_err(dev, "DEC end: Failed to assert HW reset: %d\n", err);
--
--put_runtime_pm:
--	pm_runtime_mark_last_busy(dev);
--	pm_runtime_put_autosuspend(dev);
--
--unlock:
--	mutex_unlock(&vde->lock);
-+	ret = tegra_vde_decode_h264(vde, &ctx, dpb_frames,
-+				    bitstream_data_addr, bitstream_data_size);
+ 	err = tegra_vde_v4l2_init(vde);
+ 	if (err) {
+ 		dev_err(dev, "Failed to initialize V4L2: %d\n", err);
+-		goto misc_unreg;
++		goto err_free_secure_bo;
+ 	}
  
- release_dpb_frames:
- 	while (i--) {
-@@ -1088,6 +493,7 @@ static int tegra_vde_probe(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, vde);
+ 	return 0;
  
- 	vde->soc = of_device_get_match_data(&pdev->dev);
-+	vde->dev = dev;
+-misc_unreg:
+-	misc_deregister(&vde->miscdev);
+ err_free_secure_bo:
+ 	tegra_vde_free_bo(vde->secure_bo);
+ err_pm_runtime:
+@@ -659,8 +384,6 @@ static int tegra_vde_remove(struct platform_device *pdev)
+ 	struct device *dev = &pdev->dev;
  
- 	vde->sxe = devm_platform_ioremap_resource_byname(pdev, "sxe");
- 	if (IS_ERR(vde->sxe))
+ 	tegra_vde_v4l2_deinit(vde);
+-	misc_deregister(&vde->miscdev);
+-
+ 	tegra_vde_free_bo(vde->secure_bo);
+ 
+ 	/*
 diff --git a/drivers/staging/media/tegra-vde/vde.h b/drivers/staging/media/tegra-vde/vde.h
-index bbd42b8d9991..8ba6a71e3e40 100644
+index e0396bb0b986..0fbb1f3d2c88 100644
 --- a/drivers/staging/media/tegra-vde/vde.h
 +++ b/drivers/staging/media/tegra-vde/vde.h
-@@ -16,6 +16,15 @@
+@@ -12,7 +12,6 @@
+ #include <linux/dma-direction.h>
+ #include <linux/iova.h>
+ #include <linux/list.h>
+-#include <linux/miscdevice.h>
  #include <linux/mutex.h>
  #include <linux/types.h>
- 
-+#define ICMDQUE_WR		0x00
-+#define CMDQUE_CONTROL		0x08
-+#define INTR_STATUS		0x18
-+#define BSE_INT_ENB		0x40
-+#define BSE_CONFIG		0x44
-+
-+#define BSE_ICMDQUE_EMPTY	BIT(3)
-+#define BSE_DMA_BUSY		BIT(23)
-+
- struct clk;
- struct dma_buf;
- struct gen_pool;
-@@ -23,6 +32,21 @@ struct iommu_group;
- struct iommu_domain;
- struct reset_control;
- struct dma_buf_attachment;
-+struct tegra_vde_h264_frame;
-+struct tegra_vde_h264_decoder_ctx;
-+
-+struct tegra_video_frame {
-+	struct dma_buf_attachment *y_dmabuf_attachment;
-+	struct dma_buf_attachment *cb_dmabuf_attachment;
-+	struct dma_buf_attachment *cr_dmabuf_attachment;
-+	struct dma_buf_attachment *aux_dmabuf_attachment;
-+	dma_addr_t y_addr;
-+	dma_addr_t cb_addr;
-+	dma_addr_t cr_addr;
-+	dma_addr_t aux_addr;
-+	u32 frame_num;
-+	u32 flags;
-+};
- 
- struct tegra_vde_soc {
- 	bool supports_ref_pic_marking;
-@@ -50,6 +74,7 @@ struct tegra_vde {
- 	void __iomem *ppb;
- 	void __iomem *vdma;
- 	void __iomem *frameid;
-+	struct device *dev;
+ #include <linux/workqueue.h>
+@@ -107,7 +106,6 @@ struct tegra_vde {
  	struct mutex lock;
  	struct mutex map_lock;
  	struct list_head map_list;
-@@ -66,10 +91,27 @@ struct tegra_vde {
- 	struct iova *iova_resv_last_page;
- 	const struct tegra_vde_soc *soc;
- 	struct tegra_vde_bo *secure_bo;
-+	dma_addr_t bitstream_data_addr;
- 	dma_addr_t iram_lists_addr;
- 	u32 *iram;
- };
+-	struct miscdevice miscdev;
+ 	struct reset_control *rst;
+ 	struct reset_control *rst_mc;
+ 	struct gen_pool *iram_pool;
+@@ -183,15 +181,6 @@ u32 tegra_vde_readl(struct tegra_vde *vde, void __iomem *base, u32 offset);
+ void tegra_vde_set_bits(struct tegra_vde *vde, u32 mask, void __iomem *base,
+ 			u32 offset);
  
-+void tegra_vde_writel(struct tegra_vde *vde, u32 value, void __iomem *base,
-+		      u32 offset);
-+u32 tegra_vde_readl(struct tegra_vde *vde, void __iomem *base, u32 offset);
-+void tegra_vde_set_bits(struct tegra_vde *vde, u32 mask, void __iomem *base,
-+			u32 offset);
-+
-+int tegra_vde_validate_h264_frame(struct device *dev,
-+				  struct tegra_vde_h264_frame *frame);
-+int tegra_vde_validate_h264_ctx(struct device *dev,
-+				struct tegra_vde_h264_decoder_ctx *ctx);
-+int tegra_vde_decode_h264(struct tegra_vde *vde,
-+			  struct tegra_vde_h264_decoder_ctx *ctx,
-+			  struct tegra_video_frame *dpb_frames,
-+			  dma_addr_t bitstream_data_addr,
-+			  size_t bitstream_data_size);
-+
- int tegra_vde_iommu_init(struct tegra_vde *vde);
- void tegra_vde_iommu_deinit(struct tegra_vde *vde);
- int tegra_vde_iommu_map(struct tegra_vde *vde,
+-int tegra_vde_validate_h264_frame(struct device *dev,
+-				  struct tegra_vde_h264_frame *frame);
+-int tegra_vde_validate_h264_ctx(struct device *dev,
+-				struct tegra_vde_h264_decoder_ctx *ctx);
+-int tegra_vde_decode_h264(struct tegra_vde *vde,
+-			  struct tegra_vde_h264_decoder_ctx *ctx,
+-			  struct tegra_video_frame *dpb_frames,
+-			  dma_addr_t bitstream_data_addr,
+-			  size_t bitstream_data_size);
+ int tegra_vde_h264_decode_run(struct tegra_ctx *ctx);
+ int tegra_vde_h264_decode_wait(struct tegra_ctx *ctx);
+ 
 -- 
 2.34.1
 
