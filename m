@@ -2,125 +2,96 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC2ACC433F5
-	for <linux-tegra@archiver.kernel.org>; Mon, 21 Feb 2022 10:38:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12B20C433F5
+	for <linux-tegra@archiver.kernel.org>; Mon, 21 Feb 2022 10:38:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343809AbiBUKii (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 21 Feb 2022 05:38:38 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:35076 "EHLO
+        id S1355279AbiBUKiv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 21 Feb 2022 05:38:51 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:33194 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1355245AbiBUKiX (ORCPT
+        with ESMTP id S1355209AbiBUKih (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 21 Feb 2022 05:38:23 -0500
-Received: from new2-smtp.messagingengine.com (new2-smtp.messagingengine.com [66.111.4.224])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F338545538
-        for <linux-tegra@vger.kernel.org>; Mon, 21 Feb 2022 02:00:06 -0800 (PST)
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 388E158025E;
-        Mon, 21 Feb 2022 04:59:40 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Mon, 21 Feb 2022 04:59:40 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
-        :cc:content-transfer-encoding:date:date:from:from:in-reply-to
-        :in-reply-to:message-id:mime-version:references:reply-to:sender
-        :subject:subject:to:to; s=fm2; bh=77RGyVA/YjrqNFdg/LAOBetIJ60fLt
-        bQq6xYKSdv5R4=; b=nDqBfvUmbD70CmOwRlMHpnPcZIA/GmNXJ1d/K4MyLhZ2s/
-        e6nkPkYV/gzHy/Tsdmh2h2vk5gcx241jV85N1K2qiSxAfBOsR3eQraUD/lNq3GMR
-        t9Fi16cN3PFt9bym5f6/L6XVbKfcQ7XVVpelo3JpAi+4Z+ZJSCK43da7NMsCAZyp
-        i/LtlwmM7UJfGDulKvJPG7PYOD67pBpKyN25d7FNnqcbI008i7dUM8Rhrir9gvNi
-        vQx7YZFDcEKRK4Ld2CcGMQ6dR2B99UvvLqj0E/4fvre2rjoZmYXxLloCdY+BYhRU
-        N4pXdosoR3nkIw+hulKGe0eZOHv/rwCrqCuFfkag==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding:date:date
-        :from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=77RGyV
-        A/YjrqNFdg/LAOBetIJ60fLtbQq6xYKSdv5R4=; b=fpIzDchz6f2eXpnnx7WKzV
-        MY2FtkW3TZPHwxnF0Ooas0btfRGAIlH60rYYtO+FNZF575y1CQpkWSo5cwsHVAHp
-        8LVE+F6cvEdf0WaFlxy9ZgEIv+gKhm6ikhs1CxlR7Z70Wvbfqa6an2GBwQZQP/IH
-        kGCt/0XBHLng0r8z5+r2uWahIzwOd2v10nzz9tD3klvOeVnT7qecaHITq7yjGAAS
-        OfyDCXO1u1hx2O4JT7UksZABCyutr6C8+Hkoc84EEOhoiRFVHpBXoD41btyjyRwI
-        dtYEUcQOyx/4MtHty9ZxmxS6d8pMMDxsuYPTXDfv67IehZdXrx/M9Co0T2FH37xw
-        ==
-X-ME-Sender: <xms:jGITYnGWaqhLU1NSUxUJOVJI6Uc_y30jfNN_Z2Ubd_tWayDYtm22cw>
-    <xme:jGITYkWwrW6XJNhs0gJTsjs2CyJ1ZwFd5DfBaIX5wgVjmr19RVi8WjWKU1hnB1xnZ
-    lISUjQ9sL_KShGVAjQ>
-X-ME-Received: <xmr:jGITYpJjTnk0mUKEtpg-9wXIBSRAyIjy1uHDGvgiCkQaId6DoVCXgzvhqvlBwm5ZyHLGcyKIUuV0Ifs4u9sHYLUDJMpq6SBetN-xSl4>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrkeeigddtlecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefhvffufffkofgjfhgggfestdekredtredttdenucfhrhhomhepofgrgihimhgv
-    ucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrghtth
-    gvrhhnpedvkeelveefffekjefhffeuleetleefudeifeehuddugffghffhffehveevheeh
-    vdenucevlhhushhtvghrufhiiigvpedunecurfgrrhgrmhepmhgrihhlfhhrohhmpehmrg
-    igihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:jGITYlH9UL-u8T7ULExwvV0FdDpH2PrN4P0NmPIcTg6BghrQA5OP3g>
-    <xmx:jGITYtVlAjrM5pj8dNEceCtBdwAHlLgH4OCXLPAqF7Ymes4aULSDZw>
-    <xmx:jGITYgNWxfFKcimvHoJMsqo4_yU5b4lnJlk8cQ2WH2ruNydHQNZbEw>
-    <xmx:jGITYoPvuEVBlzikJWLpZeUdth2-mlm7VUleIIl6RcoZ4wgvCOJ-Mg>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 21 Feb 2022 04:59:39 -0500 (EST)
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Daniel Vetter <daniel.vetter@intel.com>,
-        David Airlie <airlied@linux.ie>
-Cc:     Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        Phil Elwell <phil@raspberrypi.com>,
-        Tim Gover <tim.gover@raspberrypi.com>,
-        Dom Cobley <dom@raspberrypi.com>,
-        dri-devel@lists.freedesktop.org,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Maxime Ripard <maxime@cerno.tech>, linux-tegra@vger.kernel.org,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH v2 08/22] drm/tegra: plane: Remove redundant zpos initialisation
-Date:   Mon, 21 Feb 2022 10:59:04 +0100
-Message-Id: <20220221095918.18763-9-maxime@cerno.tech>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220221095918.18763-1-maxime@cerno.tech>
-References: <20220221095918.18763-1-maxime@cerno.tech>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Mon, 21 Feb 2022 05:38:37 -0500
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E531546644;
+        Mon, 21 Feb 2022 02:00:23 -0800 (PST)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id DDE7B21109;
+        Mon, 21 Feb 2022 09:59:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1645437589; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=fHL0JZPXyX1YIVnRK0AS+olhsoA5+HUzzw6KQSXtmAw=;
+        b=WMckRs2ovKZQ2zqZfI9aewp2LSqa5hManvNPe090MnzBTNPRuhaJ8wH/xYP/O3I0WNhTkj
+        q0NtJ1lUUi7ZK0Y08SYpUsh58n4f0SIwHgoki5ZViX1x1YQSfI3w3wDVEaOTyuETjAtDpO
+        iULc36RcU8pW2PYr96frSeh5N/S4B7Q=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1645437589;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=fHL0JZPXyX1YIVnRK0AS+olhsoA5+HUzzw6KQSXtmAw=;
+        b=GloitVsiZK6acWdPu60/OPMK5WiLZ+Ot5zVxWOr78ZA6Dqi7OyBzxwAiJkoR8F8EdhrkfT
+        wzTBeVfyQgNScVBA==
+Received: from alsa1.suse.de (alsa1.suse.de [10.160.4.42])
+        by relay2.suse.de (Postfix) with ESMTP id CDFC1A3B9C;
+        Mon, 21 Feb 2022 09:59:49 +0000 (UTC)
+Date:   Mon, 21 Feb 2022 10:59:49 +0100
+Message-ID: <s5hy22435gq.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Mohan Kumar <mkumard@nvidia.com>, broonie@kernel.org,
+        lgirdwood@gmail.com, robh+dt@kernel.org, tiwai@suse.com,
+        jonathanh@nvidia.com, spujar@nvidia.com,
+        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 4/6] dt-bindings: Add HDA support for Tegra234
+In-Reply-To: <s5hr18295n7.wl-tiwai@suse.de>
+References: <20220216092240.26464-1-mkumard@nvidia.com>
+        <20220216092240.26464-5-mkumard@nvidia.com>
+        <Yg0aXq+T5/xsBHRG@orome>
+        <s5hr18295n7.wl-tiwai@suse.de>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/25.3
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The tegra KMS driver will call drm_plane_create_zpos_property() with an
-init value of the plane index.
+On Wed, 16 Feb 2022 16:45:48 +0100,
+Takashi Iwai wrote:
+> 
+> On Wed, 16 Feb 2022 16:38:06 +0100,
+> Thierry Reding wrote:
+> > 
+> > On Wed, Feb 16, 2022 at 02:52:38PM +0530, Mohan Kumar wrote:
+> > > Add hda clocks, memory ,power and reset binding entries
+> > > for Tegra234.
+> > > 
+> > > Signed-off-by: Mohan Kumar <mkumard@nvidia.com>
+> > > ---
+> > >  include/dt-bindings/clock/tegra234-clock.h     | 4 ++++
+> > >  include/dt-bindings/memory/tegra234-mc.h       | 6 ++++++
+> > >  include/dt-bindings/power/tegra234-powergate.h | 9 +++++++++
+> > >  include/dt-bindings/reset/tegra234-reset.h     | 2 ++
+> > >  4 files changed, 21 insertions(+)
+> > >  create mode 100644 include/dt-bindings/power/tegra234-powergate.h
+> > 
+> > Actually it looks like I may need to pick this up as well to satisfy the
+> > dependency from patch 6.
+> > 
+> > Takashi, any objections if I pick up patches 4 and 6 and you take the
+> > remainder through your tree? I don't think there are any dependencies on
+> > this patch 4 from patches 1-3 and 5.
+> 
+> Sure, I'm fine with it.
 
-Since the initial value wasn't carried over in the state, the driver had
-to set it again in tegra_plane_reset(). However, the helpers have been
-adjusted to set it properly at reset, so this is not needed anymore.
+Now I merged patches 1, 2, 3 and 5 to sound.git tree for-next branch.
 
-Cc: linux-tegra@vger.kernel.org
-Cc: Jonathan Hunter <jonathanh@nvidia.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>
-Signed-off-by: Maxime Ripard <maxime@cerno.tech>
----
- drivers/gpu/drm/tegra/plane.c | 3 ---
- 1 file changed, 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/tegra/plane.c b/drivers/gpu/drm/tegra/plane.c
-index ec0822c86926..a00913d064d3 100644
---- a/drivers/gpu/drm/tegra/plane.c
-+++ b/drivers/gpu/drm/tegra/plane.c
-@@ -25,7 +25,6 @@ static void tegra_plane_destroy(struct drm_plane *plane)
- 
- static void tegra_plane_reset(struct drm_plane *plane)
- {
--	struct tegra_plane *p = to_tegra_plane(plane);
- 	struct tegra_plane_state *state;
- 	unsigned int i;
- 
-@@ -38,8 +37,6 @@ static void tegra_plane_reset(struct drm_plane *plane)
- 	state = kzalloc(sizeof(*state), GFP_KERNEL);
- 	if (state) {
- 		__drm_atomic_helper_plane_reset(plane, &state->base);
--		plane->state->zpos = p->index;
--		plane->state->normalized_zpos = p->index;
- 
- 		for (i = 0; i < 3; i++)
- 			state->iova[i] = DMA_MAPPING_ERROR;
--- 
-2.35.1
+thanks,
 
+Takashi
