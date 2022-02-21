@@ -2,113 +2,132 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 446E9C433EF
-	for <linux-tegra@archiver.kernel.org>; Mon, 21 Feb 2022 18:40:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88447C433FE
+	for <linux-tegra@archiver.kernel.org>; Mon, 21 Feb 2022 20:02:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231932AbiBUSkv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 21 Feb 2022 13:40:51 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:56520 "EHLO
+        id S233227AbiBUUC4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 21 Feb 2022 15:02:56 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:39468 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232676AbiBUSjF (ORCPT
+        with ESMTP id S232083AbiBUUCz (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 21 Feb 2022 13:39:05 -0500
-Received: from mail-qv1-xf2a.google.com (mail-qv1-xf2a.google.com [IPv6:2607:f8b0:4864:20::f2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D58B195;
-        Mon, 21 Feb 2022 10:38:41 -0800 (PST)
-Received: by mail-qv1-xf2a.google.com with SMTP id d7so34157193qvk.2;
-        Mon, 21 Feb 2022 10:38:41 -0800 (PST)
+        Mon, 21 Feb 2022 15:02:55 -0500
+Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C56F7237C5;
+        Mon, 21 Feb 2022 12:02:31 -0800 (PST)
+Received: by mail-lf1-x135.google.com with SMTP id g39so20592820lfv.10;
+        Mon, 21 Feb 2022 12:02:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=sender:message-id:date:mime-version:user-agent:content-language:to
-         :cc:references:from:subject:in-reply-to:content-transfer-encoding;
-        bh=RN31mHdSa5wYyQSVLhAEYvtn+xnOanN4vGFOLl7R7B0=;
-        b=GdM6CDQL60eI3AHBnGebNcB+QkmJyOrwN7E1TWLw0qjkxf5D4ioQcnniehfJ4n4MMG
-         XWypBmEqNbz6ScOOdyiWsrob0WScNUWOrCeN79a6AZmcOAo0ElvvA1jJR9DTLl4k6de3
-         K6k5D6dlAsESvyC91bNBLzXR89PxF3swfSEjeDn/fjCQ+u67IhVYrh9JKDp3swk+xzld
-         M+jdWbfIZG6rji1WXAfqfwFfFxBiFCTjHqsMeVGa2nCpr66PHztsdNCnObU7l6yHbbUc
-         Mhw8B72LadlYXhWdFMrMFhsXjqJ3JdSTCjYv60gQhyLbxeh0Db/TbcJDeWrC3jkyabDS
-         0Azg==
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=fb+j2sk074uBhHwnP84qNW+Wlx2FB7d28dJPNkXMgrg=;
+        b=gfZpsarTMe8zv8kNNuq658hFcX165O74Khr5ONbccSUuNk9HZplFmoclpWHVjrtTP1
+         CjB0a7K9VEof0eheFxjkWmb1/BJ3TM3xpxUE8qpaHHfjK/lcJcWQL5+0e/YMOOi57TQO
+         tOFQzm9J531Nfysi9H9SFHqFRDal61VkFMN/61bQ7LPvsbWiac7qjr47Wf39nzwi6rhC
+         s8R5VqTz32sZJQlodkO5eG4h9VI/ZjdRqH7NP1+wSYeGx6QTtg4yzJheiIvIbKCFzm2v
+         CWtpbzNUrZzSH+r8xrS+4iuIcDsucGpyTcRgV33dFhy7Kgyk2V5uOa6YjBXMKz03AvYb
+         +6ww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:sender:message-id:date:mime-version:user-agent
-         :content-language:to:cc:references:from:subject:in-reply-to
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=RN31mHdSa5wYyQSVLhAEYvtn+xnOanN4vGFOLl7R7B0=;
-        b=lDsHDH+vgSJVuc5DhjU8wtKJTuhO4W2u4jzXnXbK8kA/Y5unBzAbYDLtqxtldB4WzS
-         z5JtQOviEli9AvRbDiTONPzSupO73K4yCCvj4VdWF7LxYMpOWQftusnFK46EVtzK5kfn
-         SnEkgh8zutDzxEg9OD4QcxiPOdfOwsTQRfj+Fcx8CBzX34km2fBotR6Cc5cCUnIq8Mur
-         dKnE8G5gL7mVMVEGFRhOMKIsT1J7qFFllS/pCzg1nF0N7jtF6WOaJYZvcKHSejLWpD09
-         J85bSdaGFLhUNMkp11mHNICikp6s5NicI+IU4oX15cweRgGzSc8VCTU+oXARI0C9Qj5D
-         8N8Q==
-X-Gm-Message-State: AOAM53194x8WjYkh+laRQwlyc/nKwHB97ztCGVHtMIMGN0m1Q5htoCZx
-        QqKwypYDsqmBBKJOJ1cI6Cs=
-X-Google-Smtp-Source: ABdhPJwADDy5QP1mBjAbLYzYSKO2QHI0N9Z1xnyVErkrXnybkR5RTq0By2lQ3/JYd/giBhL4IMi7Dg==
-X-Received: by 2002:a05:6214:27c2:b0:42d:adf:ab1c with SMTP id ge2-20020a05621427c200b0042d0adfab1cmr16174650qvb.83.1645468720769;
-        Mon, 21 Feb 2022 10:38:40 -0800 (PST)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id n19sm20182350qtk.66.2022.02.21.10.38.39
+        bh=fb+j2sk074uBhHwnP84qNW+Wlx2FB7d28dJPNkXMgrg=;
+        b=wnMpB1oouaKWbO3ntK42M65Bf750HsWnHqWPAEwJHUygbGxbmb8k4CxlHxUkt+8x2J
+         h8iJV3aT2CE9D1R2ld+4nZoAAKwV3XtmNxA8RhPv9WgaaQ29hEmdMLWNvbAAKOtN6nLK
+         toVmClJvxAgS/Yq5X5UwVFguA5ECc1njFuBB8qJzb4SaMw/j8AN9XWF+aUuYju2CE740
+         B949SJrXkUm8b7vzhUVdSqdDCXsjOYJUleDKQMC8kNrS8SkETvwa5TF8dFne0hoINiry
+         dSddV0tJOHnlNHeO0FCUPIsknwmZR5QzdUOXjJPB3c8Nqb9bckpu5JmLkT0tN20JZEEW
+         4AvQ==
+X-Gm-Message-State: AOAM533pUeooNfWMur6gF2of+bzquIThIweQ/m5tu2f7nqwcuB6iv/tu
+        t1ymwwJFR7CwtfSCDFo0t+0=
+X-Google-Smtp-Source: ABdhPJy4/bripNm193lusUsi4gc6siiKT+oZ6eEPNsLASVQRtAyZf8khtnW/p16T4mOlUK/g6+a8vQ==
+X-Received: by 2002:a05:6512:3310:b0:443:4c51:6b60 with SMTP id k16-20020a056512331000b004434c516b60mr14689786lfe.398.1645473750057;
+        Mon, 21 Feb 2022 12:02:30 -0800 (PST)
+Received: from [192.168.2.145] (109-252-138-165.dynamic.spd-mgts.ru. [109.252.138.165])
+        by smtp.googlemail.com with ESMTPSA id v6sm1451504ljd.86.2022.02.21.12.02.29
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Feb 2022 10:38:40 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <e776981b-e729-b027-7512-5d5555c2ff74@roeck-us.net>
-Date:   Mon, 21 Feb 2022 10:38:38 -0800
+        Mon, 21 Feb 2022 12:02:29 -0800 (PST)
+Message-ID: <bb533634-6cde-3835-db11-7b6191385294@gmail.com>
+Date:   Mon, 21 Feb 2022 23:02:28 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.5.0
+Subject: Re: [PATCH v3 9/9] drm/tegra: Support context isolation
 Content-Language: en-US
-To:     Jon Hunter <jonathanh@nvidia.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Jean Delvare <jdelvare@suse.com>
-Cc:     linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-References: <20210618215455.19986-1-digetx@gmail.com>
- <20210618215455.19986-3-digetx@gmail.com>
- <9580f660-2a11-40e4-2986-f05703822d72@nvidia.com>
- <2aae3bac-c9b3-ab47-aae4-a3c7b6fb4bb5@roeck-us.net>
- <84ddad27-eb22-0ba6-594f-2fc6d098dc2a@nvidia.com>
- <bdb8b51f-93ac-9f99-914e-e1ce16c0076d@roeck-us.net>
- <20da6f55-682f-4b30-7be7-f425f8efa995@nvidia.com>
- <6b5e4dfd-ca60-b934-527a-8ccc994047dc@nvidia.com>
-From:   Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [PATCH v3 2/4] hwmon: (lm90) Use hwmon_notify_event()
-In-Reply-To: <6b5e4dfd-ca60-b934-527a-8ccc994047dc@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To:     Mikko Perttunen <cyndis@kapsi.fi>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, joro@8bytes.org,
+        will@kernel.org, robh+dt@kernel.org, robin.murphy@arm.com
+Cc:     linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20220218113952.3077606-1-mperttunen@nvidia.com>
+ <20220218113952.3077606-10-mperttunen@nvidia.com>
+ <2b4dd244-f918-4d26-2322-00a0bb226ccf@gmail.com>
+ <ea65fcd6-9451-7f5b-f4a9-57b8575f09ff@kapsi.fi>
+From:   Dmitry Osipenko <digetx@gmail.com>
+In-Reply-To: <ea65fcd6-9451-7f5b-f4a9-57b8575f09ff@kapsi.fi>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 2/21/22 08:22, Jon Hunter wrote:
+21.02.2022 15:06, Mikko Perttunen пишет:
+> On 2/19/22 20:35, Dmitry Osipenko wrote:
+>> 18.02.2022 14:39, Mikko Perttunen пишет:
+>>> +    if (context->memory_context &&
+>>> context->client->ops->get_streamid_offset) {
+>>              ^^^
+>>> +        int offset =
+>>> context->client->ops->get_streamid_offset(context->client);
+>>> +
+>>> +        if (offset >= 0) {
+>>> +            job->context = context->memory_context;
+>>> +            job->engine_streamid_offset = offset;
+>>> +            host1x_context_get(job->context);
+>>> +        }
+>>
+>> You should bump refcount unconditionally or you'll get refcnt underflow
+>> on put, when offset < 0.
 > 
-> On 21/02/2022 16:16, Jon Hunter wrote:
->>
->> On 21/02/2022 16:02, Guenter Roeck wrote:
->>
->> ...
->>
->>>> The platform I see this on does use device-tree and it does have a node for the ti,tmp451 device which uses the lm90 device. This platform uses the device-tree source arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts and the tmp451 node is in arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi.
->>>>
->>>
->>> Interesting. It appears that the call to devm_thermal_zone_of_sensor_register()
->>> in the hwmon core nevertheless returns -ENODEV which is not handled properly
->>> in the hwmon core. I can see a number of reasons for this to happen:
->>> - there is no devicetree node for the lm90 device
->>> - there is no thermal-zones devicetree node
->>> - there is no thermal zone entry in the thermal-zones node which matches
->>>    the sensor
->>
->>
->> So we definitely have the node for the lm90 device and a thermal-zones node, but I do not see a thermal-sensor node. Maybe this is what we are missing?
+> This refcount is intended to be dropped from 'release_job', where it's
+> dropped if job->context is set, which it is from this path.
 > 
-> Actually, that is not true. We do have thermal-sensor nodes in arch/arm64/boot/dts/nvidia/tegra194.dtsi.
+>>
+>>> +    }
+>>> +
+>>>       /*
+>>>        * job_data is now part of job reference counting, so don't
+>>> release
+>>>        * it from here.
+>>> diff --git a/drivers/gpu/drm/tegra/uapi.c b/drivers/gpu/drm/tegra/uapi.c
+>>> index 9ab9179d2026..be33da54d12c 100644
+>>> --- a/drivers/gpu/drm/tegra/uapi.c
+>>> +++ b/drivers/gpu/drm/tegra/uapi.c
+>>> @@ -33,6 +33,9 @@ static void tegra_drm_channel_context_close(struct
+>>> tegra_drm_context *context)
+>>>       struct tegra_drm_mapping *mapping;
+>>>       unsigned long id;
+>>>   +    if (context->memory_context)
+>>> +        host1x_context_put(context->memory_context);
+>>
+>> The "if (context->memory_context &&
+>> context->client->ops->get_streamid_offset)" above doesn't match the "if
+>> (context->memory_context)". You'll get refcount underflow.
 > 
+> And this drop is for the refcount implicitly added when allocating the
+> memory context through host1x_context_alloc; so these two places should
+> be independent.
+> 
+> Please elaborate if I missed something.
 
-There is probably a zone to sensor id mismatch. hwmon sends the sensor index
-as sensor_id to the thermal subsystem. Those sensor IDs would be 0, 1, and
-possibly 2 for the lm90 driver. Assuming this should match the thermal-sensors
-values in arch/arm64/boot/dts/nvidia/tegra194.dtsi, those start with 2,
-so there would be a likely mismatch. Also, all those dtsi entries match
-against pbmp/thermal, not against the lm90 sensor(s).
+You named context as memory_context and then have
+context=context->memory_context. Please try to improve the variable
+names, like drm_ctx->host1x_ctx for example.
 
-Thanks,
-Guenter
+I'm also not a big fan of the "if (ref) put(ref)" pattern. Won't be
+better to move all the "if (!NULL)" checks inside of get()/put() and
+make the invocations unconditional?
