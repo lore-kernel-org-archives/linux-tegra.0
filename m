@@ -2,114 +2,115 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7B79C433EF
-	for <linux-tegra@archiver.kernel.org>; Mon, 21 Feb 2022 10:34:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 615C3C433F5
+	for <linux-tegra@archiver.kernel.org>; Mon, 21 Feb 2022 10:37:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354918AbiBUKe3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 21 Feb 2022 05:34:29 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:53304 "EHLO
+        id S1354934AbiBUKh4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 21 Feb 2022 05:37:56 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:57302 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354936AbiBUKdj (ORCPT
+        with ESMTP id S1354936AbiBUKhg (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 21 Feb 2022 05:33:39 -0500
-Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BF4637030;
-        Mon, 21 Feb 2022 01:54:02 -0800 (PST)
-Received: by mail-lf1-x12b.google.com with SMTP id i11so17571366lfu.3;
-        Mon, 21 Feb 2022 01:54:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=FBQCAwLGItt59fBHH1fMX/rXCxY4p1v9wuPJWfMr/EE=;
-        b=OMjFpUKSoI/8tDW559i/11H2ijvy+X7Cyy6+WRTh9BpYhAd0ESthUOs21QFcduRLUX
-         tGwZzFtj90IC1hBoKntcyQvsn11UKiofViSoSA/V7l/NNjHPUvvL4b9XTN6qSrbYDpLs
-         gbdjvTfYbe7a8VYjZFTFv0/F88nhCwe5RCFWeRMN79SOD+ga3jJgJPl85LdsYhffSx9O
-         f0KieNs5r3M64JzpMGPsA6JxAEaFgRZUxnb+MT8MmRvmkHQVofikUxrarsiCe+saU+TX
-         qmZ7towRvoIrZdYqqnFpWmWme6fYEZVk2g784cMY0LEkmtGG9Zj/XjfRtzaUPbkWq6VZ
-         9gtg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=FBQCAwLGItt59fBHH1fMX/rXCxY4p1v9wuPJWfMr/EE=;
-        b=fzErLDosCq+yQQvdLCzy/3VRe9IRWl+osHQBZeYNE2mQxEv2mE3SyJF+A+oWnqzOPh
-         rM80g//N+ucPKltopcs9e4kc99D9wo4SNF7lJT/gA8TrjOEHr9Ui6G7btCgoXKXmDwcH
-         gYnU3cisUjj/vdlSGE3xN5uirrd+BHkFi8w5UHr0259ii+/u7MOc1FSj/TRcgYgLJikE
-         7haNkEd3+9iEPof8o0nkMECt/+0mfUltTwtJwUhP7kUB7VEq27cXKGpj8PSmVgGJUdRD
-         n2kI/eKV3AeylL/gs5O38eE9lYWtVaMSicpGYRbDWdDqiOPlm/3v+2QfISGd2dXxS6QV
-         or0Q==
-X-Gm-Message-State: AOAM530vmvEOfc/fUZYeXyNYEcIkPmF/AMvup+TQfyBIwa5QJaInCR6A
-        mD2KvR1cku940Ds7rkgbnto=
-X-Google-Smtp-Source: ABdhPJyjpoLC4dkht2ubnC2fLVCm11jEQES+SqN3/jJaPUC4j1RTjBwAfYihJh/DiezuaKLTQVLqDw==
-X-Received: by 2002:a19:4f02:0:b0:441:39df:161c with SMTP id d2-20020a194f02000000b0044139df161cmr13408076lfb.504.1645437240280;
-        Mon, 21 Feb 2022 01:54:00 -0800 (PST)
-Received: from [192.168.2.145] (109-252-138-165.dynamic.spd-mgts.ru. [109.252.138.165])
-        by smtp.googlemail.com with ESMTPSA id q12sm1066973lfr.157.2022.02.21.01.53.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Feb 2022 01:53:59 -0800 (PST)
-Message-ID: <677beebd-5a16-297f-c09a-fa4b72c001c9@gmail.com>
-Date:   Mon, 21 Feb 2022 12:53:58 +0300
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH v16 21/40] pwm: tegra: Add runtime PM and OPP support
-Content-Language: en-US
-To:     =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Mon, 21 Feb 2022 05:37:36 -0500
+Received: from new2-smtp.messagingengine.com (new2-smtp.messagingengine.com [66.111.4.224])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C48C39691
+        for <linux-tegra@vger.kernel.org>; Mon, 21 Feb 2022 01:59:32 -0800 (PST)
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 3C0B0580259;
+        Mon, 21 Feb 2022 04:59:26 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute2.internal (MEProxy); Mon, 21 Feb 2022 04:59:26 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
+        :cc:content-transfer-encoding:date:date:from:from:in-reply-to
+        :in-reply-to:message-id:mime-version:references:reply-to:sender
+        :subject:subject:to:to; s=fm2; bh=e9llmULFBZir3x1yh/t3kAZB5vKeMJ
+        hBlkDfaXXh7+g=; b=tZJaMQ5IqqG9VHFIwSmSgtTPd9Efbhejg9lvbZZChsqToU
+        PrK787pX3H3t/nFyQSt1lIHU1q39qxEV338ESTfSSHV5PpCBn9ikti2LM3CzmZTR
+        KRecNfpadlRimbm9V9ivlZupVbeEQP6tgtNiRhOgR5neQh2Qy0JTNFDmMSwnPzmb
+        Yv+YitxXpm8ZbQOGHctbNsgMhYDx0Y1Amh4bJYr7rQcf5Zqe+xxhJGEi2OSEcgJ7
+        9ROY7CmCOvoguyAzkXqpqDJapjxKmHC0+5lzFP37r59MCZ3x/I1Uha8y2J3xBAmO
+        3hlYs3569K6QM0ipqnwCFMJNRXVqpYwFjJtGM3TQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding:date:date
+        :from:from:in-reply-to:in-reply-to:message-id:mime-version
+        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=e9llmU
+        LFBZir3x1yh/t3kAZB5vKeMJhBlkDfaXXh7+g=; b=dJ/uW5aCkbx7uFYdHl1tjq
+        9nf16ekfnzSKRbTof6oKPpWLqnrXeoYg6RZEPZAYT/HDgFyZYGIArWpx9/x/sDgr
+        xwvDPdxf78gI8I2j3a/IbtOkVpf/gpMjZwcRCXBjXVRr9VvR/Y6MP5M5NhZ65WB2
+        HWjyIJ23QdF/kvL43h7/woUXfmDYhbX9yawG0rMhZz6gF39vGYKhE2ec1O70rumy
+        XMyadIUXQ1tkisYt6YBsbuAZFOoOe73qsh0xjqr4r+42pmN2zwCacWeqZD3rF17o
+        BA10r5sDUF07zRNfiOnqssxLXAXFcBza2JD64UQSVkOC2Hd5kkNn3T8LIEfdyOYg
+        ==
+X-ME-Sender: <xms:fWITYu7hmE8u7aAgO1tuAMdLpTEPxMyCtOuhyqPFAwOfiPzMXcNgAw>
+    <xme:fWITYn4icjLh7Yl7J1hY6RXOslgJh0ja_DKDY3_OGWaSh_UDdrPB8HhZk_HtYkLgD
+    fZ4iDYNSXYzcdjkq4Y>
+X-ME-Received: <xmr:fWITYtc7Hg1hTQ4CrjxeY2qh8EqZmYUaQ3V0DdEZ0LVzCVj61dct-rIvVKkinMW1bCHKWH789aD-MTwPpzB02QrLV4s0KZuUOHf2SPo>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrkeeigddtlecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefhvffufffkofgjfhgggfestdekredtredttdenucfhrhhomhepofgrgihimhgv
+    ucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrghtth
+    gvrhhnpedvkeelveefffekjefhffeuleetleefudeifeehuddugffghffhffehveevheeh
+    vdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmrg
+    igihhmvgestggvrhhnohdrthgvtghh
+X-ME-Proxy: <xmx:fWITYrIQuqA0WzaRpfAq8k-dxG1-QmzDtihj18iaEGhbvLsJDtqa7w>
+    <xmx:fWITYiLMlJZl9ZFYcnyB5Cr4wDbMSQWTjTsf-wZAEargIrVkJUrkeg>
+    <xmx:fWITYswSAPlaOPepykxDKLlnyPCFzMX-Z10-TCfhAVKg1XLP-2TNSQ>
+    <xmx:fmITYoxwMHwYw4f58lPSy6NiVR44h0B7NxcP969evTzQs3qe_IztSQ>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 21 Feb 2022 04:59:25 -0500 (EST)
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Daniel Vetter <daniel.vetter@intel.com>,
+        David Airlie <airlied@linux.ie>
+Cc:     Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        Phil Elwell <phil@raspberrypi.com>,
+        Tim Gover <tim.gover@raspberrypi.com>,
+        Dom Cobley <dom@raspberrypi.com>,
+        dri-devel@lists.freedesktop.org,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Maxime Ripard <maxime@cerno.tech>, linux-tegra@vger.kernel.org,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Lee Jones <lee.jones@linaro.org>, Nishanth Menon <nm@ti.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-pwm@vger.kernel.org,
-        linux-mmc@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-clk@vger.kernel.org, David Heidelberg <david@ixit.cz>
-References: <20211130232347.950-1-digetx@gmail.com>
- <20211130232347.950-22-digetx@gmail.com>
- <20220221081727.jeq2jff5ewjzubxv@pengutronix.de>
-From:   Dmitry Osipenko <digetx@gmail.com>
-In-Reply-To: <20220221081727.jeq2jff5ewjzubxv@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8
+        Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH v2 02/22] drm/tegra: plane: switch to plane reset helper
+Date:   Mon, 21 Feb 2022 10:58:58 +0100
+Message-Id: <20220221095918.18763-3-maxime@cerno.tech>
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220221095918.18763-1-maxime@cerno.tech>
+References: <20220221095918.18763-1-maxime@cerno.tech>
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hello Uwe,
+tegra_plane_reset() does the state initialisation by copying a lot of
+the code found in the __drm_atomic_helper_plane_reset(). Let's switch to
+that helper and reduce the boilerplate.
 
-21.02.2022 11:17, Uwe Kleine-König пишет:
->> @@ -344,7 +387,10 @@ static const struct of_device_id tegra_pwm_of_match[] = {
->>  MODULE_DEVICE_TABLE(of, tegra_pwm_of_match);
->>  
->>  static const struct dev_pm_ops tegra_pwm_pm_ops = {
->> -	SET_SYSTEM_SLEEP_PM_OPS(tegra_pwm_suspend, tegra_pwm_resume)
->> +	SET_RUNTIME_PM_OPS(tegra_pwm_runtime_suspend, tegra_pwm_runtime_resume,
->> +			   NULL)
->> +	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
->> +				pm_runtime_force_resume)
->>  };
->>  
->>  static struct platform_driver tegra_pwm_driver = {
-> I admit to not completely understand the effects of this patch, but I
-> don't see a problem either. So for me this patch is OK:
-> 
-> Acked-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-> 
-> I spot a problem, it's not introduced by this patch however: If the
-> consumer of the PWM didn't stop the hardware, the suspend should IMHO be
-> prevented.
+Cc: linux-tegra@vger.kernel.org
+Cc: Jonathan Hunter <jonathanh@nvidia.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>
+Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+---
+ drivers/gpu/drm/tegra/plane.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Why? The PWM driver itself will stop the h/w on suspend.
+diff --git a/drivers/gpu/drm/tegra/plane.c b/drivers/gpu/drm/tegra/plane.c
+index 321cb1f13da6..ec0822c86926 100644
+--- a/drivers/gpu/drm/tegra/plane.c
++++ b/drivers/gpu/drm/tegra/plane.c
+@@ -37,8 +37,7 @@ static void tegra_plane_reset(struct drm_plane *plane)
+ 
+ 	state = kzalloc(sizeof(*state), GFP_KERNEL);
+ 	if (state) {
+-		plane->state = &state->base;
+-		plane->state->plane = plane;
++		__drm_atomic_helper_plane_reset(plane, &state->base);
+ 		plane->state->zpos = p->index;
+ 		plane->state->normalized_zpos = p->index;
+ 
+-- 
+2.35.1
 
-> I wonder if the patches in this series go in in one go via an ARM or
-> Tegra tree, or each patch via its respective maintainer tree.
-
-This series, including this patch, was already applied to 5.17 via the
-tegra/soc tree. No action is needed anymore.
