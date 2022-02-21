@@ -2,158 +2,113 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B6B9C433F5
-	for <linux-tegra@archiver.kernel.org>; Mon, 21 Feb 2022 17:36:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 446E9C433EF
+	for <linux-tegra@archiver.kernel.org>; Mon, 21 Feb 2022 18:40:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234226AbiBURgi (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 21 Feb 2022 12:36:38 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:43634 "EHLO
+        id S231932AbiBUSkv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 21 Feb 2022 13:40:51 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:56520 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232022AbiBURgi (ORCPT
+        with ESMTP id S232676AbiBUSjF (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 21 Feb 2022 12:36:38 -0500
-Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5BEFF1B797;
-        Mon, 21 Feb 2022 09:36:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-         s=20161220; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-        References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=PkpUpGJ5fnZavlDzdbOdq/17AO+V95dcZa/mE2WXAVg=; b=NY4d56ipV+ocFh5z0mNXf4EUne
-        0cybsnz+sCoMyNGGmrBQAF3IztUaD4VTsdgx3LQjBi4E4Kx6kty0oDhd81IngYd5FWuvuDAL4+kgu
-        R9SntmnlQl8dPHbaAW/Hs56NWT/CI6btDP3MeORUQEe3u4D/L3eFkQ/SeNsvg9ienk5G+9X7nyq3n
-        mNGMmY0u90eqfUddJbp7AVkc74mGY372hpeAo3GbU4sjBvd4jmCnC2XsfqUlpz/0QHcI9szjyxG8v
-        QpIJ6gyG8M9cC0eSIZRxljwFXf0fMFGHXnzqnoy7vI0ZngkKYanPfVYSr3DwcFwJGC69NqWoCJy1S
-        P7D0XKBQ==;
-Received: from 91-158-25-70.elisa-laajakaista.fi ([91.158.25.70] helo=[192.168.1.10])
-        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <cyndis@kapsi.fi>)
-        id 1nMCbW-0002UU-8v; Mon, 21 Feb 2022 19:36:06 +0200
-Message-ID: <6be67fc4-3343-123e-5dc3-d45f51f42624@kapsi.fi>
-Date:   Mon, 21 Feb 2022 19:36:05 +0200
+        Mon, 21 Feb 2022 13:39:05 -0500
+Received: from mail-qv1-xf2a.google.com (mail-qv1-xf2a.google.com [IPv6:2607:f8b0:4864:20::f2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D58B195;
+        Mon, 21 Feb 2022 10:38:41 -0800 (PST)
+Received: by mail-qv1-xf2a.google.com with SMTP id d7so34157193qvk.2;
+        Mon, 21 Feb 2022 10:38:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=sender:message-id:date:mime-version:user-agent:content-language:to
+         :cc:references:from:subject:in-reply-to:content-transfer-encoding;
+        bh=RN31mHdSa5wYyQSVLhAEYvtn+xnOanN4vGFOLl7R7B0=;
+        b=GdM6CDQL60eI3AHBnGebNcB+QkmJyOrwN7E1TWLw0qjkxf5D4ioQcnniehfJ4n4MMG
+         XWypBmEqNbz6ScOOdyiWsrob0WScNUWOrCeN79a6AZmcOAo0ElvvA1jJR9DTLl4k6de3
+         K6k5D6dlAsESvyC91bNBLzXR89PxF3swfSEjeDn/fjCQ+u67IhVYrh9JKDp3swk+xzld
+         M+jdWbfIZG6rji1WXAfqfwFfFxBiFCTjHqsMeVGa2nCpr66PHztsdNCnObU7l6yHbbUc
+         Mhw8B72LadlYXhWdFMrMFhsXjqJ3JdSTCjYv60gQhyLbxeh0Db/TbcJDeWrC3jkyabDS
+         0Azg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:sender:message-id:date:mime-version:user-agent
+         :content-language:to:cc:references:from:subject:in-reply-to
+         :content-transfer-encoding;
+        bh=RN31mHdSa5wYyQSVLhAEYvtn+xnOanN4vGFOLl7R7B0=;
+        b=lDsHDH+vgSJVuc5DhjU8wtKJTuhO4W2u4jzXnXbK8kA/Y5unBzAbYDLtqxtldB4WzS
+         z5JtQOviEli9AvRbDiTONPzSupO73K4yCCvj4VdWF7LxYMpOWQftusnFK46EVtzK5kfn
+         SnEkgh8zutDzxEg9OD4QcxiPOdfOwsTQRfj+Fcx8CBzX34km2fBotR6Cc5cCUnIq8Mur
+         dKnE8G5gL7mVMVEGFRhOMKIsT1J7qFFllS/pCzg1nF0N7jtF6WOaJYZvcKHSejLWpD09
+         J85bSdaGFLhUNMkp11mHNICikp6s5NicI+IU4oX15cweRgGzSc8VCTU+oXARI0C9Qj5D
+         8N8Q==
+X-Gm-Message-State: AOAM53194x8WjYkh+laRQwlyc/nKwHB97ztCGVHtMIMGN0m1Q5htoCZx
+        QqKwypYDsqmBBKJOJ1cI6Cs=
+X-Google-Smtp-Source: ABdhPJwADDy5QP1mBjAbLYzYSKO2QHI0N9Z1xnyVErkrXnybkR5RTq0By2lQ3/JYd/giBhL4IMi7Dg==
+X-Received: by 2002:a05:6214:27c2:b0:42d:adf:ab1c with SMTP id ge2-20020a05621427c200b0042d0adfab1cmr16174650qvb.83.1645468720769;
+        Mon, 21 Feb 2022 10:38:40 -0800 (PST)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id n19sm20182350qtk.66.2022.02.21.10.38.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Feb 2022 10:38:40 -0800 (PST)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <e776981b-e729-b027-7512-5d5555c2ff74@roeck-us.net>
+Date:   Mon, 21 Feb 2022 10:38:38 -0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.4.1
-Subject: Re: [PATCH v3 8/9] drm/tegra: vic: Implement get_streamid_offset
+ Thunderbird/91.5.0
 Content-Language: en-US
-To:     Robin Murphy <robin.murphy@arm.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        thierry.reding@gmail.com, jonathanh@nvidia.com, joro@8bytes.org,
-        will@kernel.org, robh+dt@kernel.org
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, iommu@lists.linux-foundation.org,
-        linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20220218113952.3077606-1-mperttunen@nvidia.com>
- <20220218113952.3077606-9-mperttunen@nvidia.com>
- <71e94ac3-20fc-6f41-270f-fe246740e7e0@arm.com>
-From:   Mikko Perttunen <cyndis@kapsi.fi>
-In-Reply-To: <71e94ac3-20fc-6f41-270f-fe246740e7e0@arm.com>
+To:     Jon Hunter <jonathanh@nvidia.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Jean Delvare <jdelvare@suse.com>
+Cc:     linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+References: <20210618215455.19986-1-digetx@gmail.com>
+ <20210618215455.19986-3-digetx@gmail.com>
+ <9580f660-2a11-40e4-2986-f05703822d72@nvidia.com>
+ <2aae3bac-c9b3-ab47-aae4-a3c7b6fb4bb5@roeck-us.net>
+ <84ddad27-eb22-0ba6-594f-2fc6d098dc2a@nvidia.com>
+ <bdb8b51f-93ac-9f99-914e-e1ce16c0076d@roeck-us.net>
+ <20da6f55-682f-4b30-7be7-f425f8efa995@nvidia.com>
+ <6b5e4dfd-ca60-b934-527a-8ccc994047dc@nvidia.com>
+From:   Guenter Roeck <linux@roeck-us.net>
+Subject: Re: [PATCH v3 2/4] hwmon: (lm90) Use hwmon_notify_event()
+In-Reply-To: <6b5e4dfd-ca60-b934-527a-8ccc994047dc@nvidia.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 91.158.25.70
-X-SA-Exim-Mail-From: cyndis@kapsi.fi
-X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 2/21/22 19:27, Robin Murphy wrote:
-> On 2022-02-18 11:39, Mikko Perttunen via iommu wrote:
->> Implement the get_streamid_offset required for supporting context
->> isolation. Since old firmware cannot support context isolation
->> without hacks that we don't want to implement, check the firmware
->> binary to see if context isolation should be enabled.
->>
->> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
->> ---
->>   drivers/gpu/drm/tegra/vic.c | 38 +++++++++++++++++++++++++++++++++++++
->>   1 file changed, 38 insertions(+)
->>
->> diff --git a/drivers/gpu/drm/tegra/vic.c b/drivers/gpu/drm/tegra/vic.c
->> index 1e342fa3d27b..2863ee5e0e67 100644
->> --- a/drivers/gpu/drm/tegra/vic.c
->> +++ b/drivers/gpu/drm/tegra/vic.c
->> @@ -38,6 +38,8 @@ struct vic {
->>       struct clk *clk;
->>       struct reset_control *rst;
->> +    bool can_use_context;
->> +
->>       /* Platform configuration */
->>       const struct vic_config *config;
->>   };
->> @@ -229,6 +231,7 @@ static int vic_load_firmware(struct vic *vic)
->>   {
->>       struct host1x_client *client = &vic->client.base;
->>       struct tegra_drm *tegra = vic->client.drm;
->> +    u32 fce_bin_data_offset;
->>       dma_addr_t iova;
->>       size_t size;
->>       void *virt;
->> @@ -277,6 +280,25 @@ static int vic_load_firmware(struct vic *vic)
->>           vic->falcon.firmware.phys = phys;
->>       }
->> +    /*
->> +     * Check if firmware is new enough to not require mapping firmware
->> +     * to data buffer domains.
->> +     */
->> +    fce_bin_data_offset = *(u32 *)(virt + VIC_UCODE_FCE_DATA_OFFSET);
->> +
->> +    if (!vic->config->supports_sid) {
->> +        vic->can_use_context = false;
->> +    } else if (fce_bin_data_offset != 0x0 && fce_bin_data_offset != 
->> 0xa5a5a5a5) {
->> +        /*
->> +         * Firmware will access FCE through STREAMID0, so context
->> +         * isolation cannot be used.
->> +         */
->> +        vic->can_use_context = false;
->> +        dev_warn_once(vic->dev, "context isolation disabled due to 
->> old firmware\n");
->> +    } else {
->> +        vic->can_use_context = true;
->> +    }
->> +
->>       return 0;
->>   cleanup:
->> @@ -358,10 +380,26 @@ static void vic_close_channel(struct 
->> tegra_drm_context *context)
->>       host1x_channel_put(context->channel);
->>   }
->> +static int vic_get_streamid_offset(struct tegra_drm_client *client)
->> +{
->> +    struct vic *vic = to_vic(client);
->> +    int err;
->> +
->> +    err = vic_load_firmware(vic);
->> +    if (err < 0)
->> +        return err;
->> +
->> +    if (vic->can_use_context)
->> +        return 0x30;
->> +    else
->> +        return -ENOTSUPP;
->> +}
->> +
->>   static const struct tegra_drm_client_ops vic_ops = {
->>       .open_channel = vic_open_channel,
->>       .close_channel = vic_close_channel,
->>       .submit = tegra_drm_submit,
->> +    .get_streamid_offset = vic_get_streamid_offset,
+On 2/21/22 08:22, Jon Hunter wrote:
 > 
-> The patch order seems off here, since the .get_streamid_offset member 
-> isn't defined yet.
+> On 21/02/2022 16:16, Jon Hunter wrote:
+>>
+>> On 21/02/2022 16:02, Guenter Roeck wrote:
+>>
+>> ...
+>>
+>>>> The platform I see this on does use device-tree and it does have a node for the ti,tmp451 device which uses the lm90 device. This platform uses the device-tree source arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts and the tmp451 node is in arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi.
+>>>>
+>>>
+>>> Interesting. It appears that the call to devm_thermal_zone_of_sensor_register()
+>>> in the hwmon core nevertheless returns -ENODEV which is not handled properly
+>>> in the hwmon core. I can see a number of reasons for this to happen:
+>>> - there is no devicetree node for the lm90 device
+>>> - there is no thermal-zones devicetree node
+>>> - there is no thermal zone entry in the thermal-zones node which matches
+>>>    the sensor
+>>
+>>
+>> So we definitely have the node for the lm90 device and a thermal-zones node, but I do not see a thermal-sensor node. Maybe this is what we are missing?
 > 
-> Robin.
+> Actually, that is not true. We do have thermal-sensor nodes in arch/arm64/boot/dts/nvidia/tegra194.dtsi.
+> 
 
-Indeed, will fix.
+There is probably a zone to sensor id mismatch. hwmon sends the sensor index
+as sensor_id to the thermal subsystem. Those sensor IDs would be 0, 1, and
+possibly 2 for the lm90 driver. Assuming this should match the thermal-sensors
+values in arch/arm64/boot/dts/nvidia/tegra194.dtsi, those start with 2,
+so there would be a likely mismatch. Also, all those dtsi entries match
+against pbmp/thermal, not against the lm90 sensor(s).
 
 Thanks,
-Mikko
-
-> 
->>   };
->>   #define NVIDIA_TEGRA_124_VIC_FIRMWARE "nvidia/tegra124/vic03_ucode.bin"
-
+Guenter
