@@ -2,51 +2,51 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59C0CC433EF
-	for <linux-tegra@archiver.kernel.org>; Mon, 21 Feb 2022 10:37:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC2ACC433F5
+	for <linux-tegra@archiver.kernel.org>; Mon, 21 Feb 2022 10:38:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354893AbiBUKiS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 21 Feb 2022 05:38:18 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:53304 "EHLO
+        id S1343809AbiBUKii (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 21 Feb 2022 05:38:38 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:35076 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354368AbiBUKh4 (ORCPT
+        with ESMTP id S1355245AbiBUKiX (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 21 Feb 2022 05:37:56 -0500
+        Mon, 21 Feb 2022 05:38:23 -0500
 Received: from new2-smtp.messagingengine.com (new2-smtp.messagingengine.com [66.111.4.224])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E942542EEE
-        for <linux-tegra@vger.kernel.org>; Mon, 21 Feb 2022 01:59:43 -0800 (PST)
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 0196F58025B;
-        Mon, 21 Feb 2022 04:59:30 -0500 (EST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F338545538
+        for <linux-tegra@vger.kernel.org>; Mon, 21 Feb 2022 02:00:06 -0800 (PST)
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 388E158025E;
+        Mon, 21 Feb 2022 04:59:40 -0500 (EST)
 Received: from mailfrontend2 ([10.202.2.163])
-  by compute3.internal (MEProxy); Mon, 21 Feb 2022 04:59:30 -0500
+  by compute5.internal (MEProxy); Mon, 21 Feb 2022 04:59:40 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
         :cc:content-transfer-encoding:date:date:from:from:in-reply-to
         :in-reply-to:message-id:mime-version:references:reply-to:sender
-        :subject:subject:to:to; s=fm2; bh=e6fsAJHMFdp2g1HWcSV/TmUkgSAzo/
-        AUvrgSfJ4rv1s=; b=NO8qhAad/yFGngJeBnbhhlobysqMgdJc/mXevNn82T+oyN
-        Y8G8Bx6aQuZd461qr4zXL97R5tw0LRHIhC6PKamsahP4w4wTFegknyILwBRqELN9
-        czGxU1YW0AMDdnK9FPK0apA2BnPq4fQ934DfusuUUmr64SRFyWGbwwE4TPrEU+dv
-        rWxnU4h9cCA5MoWzg9/Iceys0nzhBEnb6uQqQyuzOzoClLRWmjspWRnzSlh4Kyn4
-        b2C3za6hUTi4ZPwQSyhjl/Sv7t9NR8vyBUQoGygnRO1Yzt/zXKTGxtM04QOy1/iP
-        luwG0avsrabzQ/5q5LCxwl56NNaheTC+4DtcKyog==
+        :subject:subject:to:to; s=fm2; bh=77RGyVA/YjrqNFdg/LAOBetIJ60fLt
+        bQq6xYKSdv5R4=; b=nDqBfvUmbD70CmOwRlMHpnPcZIA/GmNXJ1d/K4MyLhZ2s/
+        e6nkPkYV/gzHy/Tsdmh2h2vk5gcx241jV85N1K2qiSxAfBOsR3eQraUD/lNq3GMR
+        t9Fi16cN3PFt9bym5f6/L6XVbKfcQ7XVVpelo3JpAi+4Z+ZJSCK43da7NMsCAZyp
+        i/LtlwmM7UJfGDulKvJPG7PYOD67pBpKyN25d7FNnqcbI008i7dUM8Rhrir9gvNi
+        vQx7YZFDcEKRK4Ld2CcGMQ6dR2B99UvvLqj0E/4fvre2rjoZmYXxLloCdY+BYhRU
+        N4pXdosoR3nkIw+hulKGe0eZOHv/rwCrqCuFfkag==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:cc:content-transfer-encoding:date:date
         :from:from:in-reply-to:in-reply-to:message-id:mime-version
         :references:reply-to:sender:subject:subject:to:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=e6fsAJ
-        HMFdp2g1HWcSV/TmUkgSAzo/AUvrgSfJ4rv1s=; b=oZrXE7TBpmix+rJ0QpZUeH
-        mS/QooOdEd2+V4DNGBbx2T5Se38We19zthFx7S1WGAqdtaQaTrmUI/XFDe9nnkT2
-        dhQnXvopgTFSTfSVnQIIQkZUPFdv/zbQZDnO5xrICXjgDDYLu9IN/1nzRB5/rZh1
-        E2nnjdCMKqvkHa6D1CM8EmKz9vHV+k1DmpWceXqaW0tKewwn3qaYK/ec2viclLGu
-        2AkxoFtr+cfar16Ud/f1/COswkX3jvci0Xx70dDxzyy15sCOH4KG5PcaYdQbuTH1
-        XvK/FlxZvH78TZlaOY/N7ZFArGXUFfyscrUSlZZuHgAxW3svnkUTrkoftzoHOYuw
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=77RGyV
+        A/YjrqNFdg/LAOBetIJ60fLtbQq6xYKSdv5R4=; b=fpIzDchz6f2eXpnnx7WKzV
+        MY2FtkW3TZPHwxnF0Ooas0btfRGAIlH60rYYtO+FNZF575y1CQpkWSo5cwsHVAHp
+        8LVE+F6cvEdf0WaFlxy9ZgEIv+gKhm6ikhs1CxlR7Z70Wvbfqa6an2GBwQZQP/IH
+        kGCt/0XBHLng0r8z5+r2uWahIzwOd2v10nzz9tD3klvOeVnT7qecaHITq7yjGAAS
+        OfyDCXO1u1hx2O4JT7UksZABCyutr6C8+Hkoc84EEOhoiRFVHpBXoD41btyjyRwI
+        dtYEUcQOyx/4MtHty9ZxmxS6d8pMMDxsuYPTXDfv67IehZdXrx/M9Co0T2FH37xw
         ==
-X-ME-Sender: <xms:gWITYo_msLTsKcstqoSoMa-ItS5NnxIBUDXOAMBjpkBTRjMly0K-bA>
-    <xme:gWITYgvBQLTZ0ljpYCURYo0Lh-1oHIkX5tYJQGZ68iWGH9R2UkXxh_d7TPCKxZRc-
-    F7DiY5VazkpaY8w_fI>
-X-ME-Received: <xmr:gWITYuBrhmTAV3wg8mu6HsHcmRopuLrUqovWKvTW3Jy7aprX4p4QcLbp9rAn7ReESj9Yr8KTMHqGUK2Veih-VA41L9GiVUNaCHJIYfI>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrkeeigddutdcutefuodetggdotefrodftvf
+X-ME-Sender: <xms:jGITYnGWaqhLU1NSUxUJOVJI6Uc_y30jfNN_Z2Ubd_tWayDYtm22cw>
+    <xme:jGITYkWwrW6XJNhs0gJTsjs2CyJ1ZwFd5DfBaIX5wgVjmr19RVi8WjWKU1hnB1xnZ
+    lISUjQ9sL_KShGVAjQ>
+X-ME-Received: <xmr:jGITYpJjTnk0mUKEtpg-9wXIBSRAyIjy1uHDGvgiCkQaId6DoVCXgzvhqvlBwm5ZyHLGcyKIUuV0Ifs4u9sHYLUDJMpq6SBetN-xSl4>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrkeeigddtlecutefuodetggdotefrodftvf
     curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
     uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
     fjughrpefhvffufffkofgjfhgggfestdekredtredttdenucfhrhhomhepofgrgihimhgv
@@ -54,12 +54,12 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrkeeigddutdcutefuodetggdote
     gvrhhnpedvkeelveefffekjefhffeuleetleefudeifeehuddugffghffhffehveevheeh
     vdenucevlhhushhtvghrufhiiigvpedunecurfgrrhgrmhepmhgrihhlfhhrohhmpehmrg
     igihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:gWITYoeaionaQ9olD2f3Tdl5vrPvoI6KisMRQa4ia6jSVm--ttS-WQ>
-    <xmx:gWITYtPZkNkedKj9W7CafDVSROp6P331QiIC7VK47ZU4cwj_hoWYdQ>
-    <xmx:gWITYintyg95yJSHV1-h2uyvLaLqHSUPY0drx-JObjZxUI4Ujs9G2w>
-    <xmx:gWITYimciq0bYWapIiVEoHwcCWA_LWRGfcz7ZPgxlB1A0i8bNgQRWg>
+X-ME-Proxy: <xmx:jGITYlH9UL-u8T7ULExwvV0FdDpH2PrN4P0NmPIcTg6BghrQA5OP3g>
+    <xmx:jGITYtVlAjrM5pj8dNEceCtBdwAHlLgH4OCXLPAqF7Ymes4aULSDZw>
+    <xmx:jGITYgNWxfFKcimvHoJMsqo4_yU5b4lnJlk8cQ2WH2ruNydHQNZbEw>
+    <xmx:jGITYoPvuEVBlzikJWLpZeUdth2-mlm7VUleIIl6RcoZ4wgvCOJ-Mg>
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 21 Feb 2022 04:59:29 -0500 (EST)
+ 21 Feb 2022 04:59:39 -0500 (EST)
 From:   Maxime Ripard <maxime@cerno.tech>
 To:     Daniel Vetter <daniel.vetter@intel.com>,
         David Airlie <airlied@linux.ie>
@@ -73,9 +73,9 @@ Cc:     Dave Stevenson <dave.stevenson@raspberrypi.com>,
         Maxime Ripard <maxime@cerno.tech>, linux-tegra@vger.kernel.org,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH v2 03/22] drm/tegra: hub: Fix zpos initial value mismatch
-Date:   Mon, 21 Feb 2022 10:58:59 +0100
-Message-Id: <20220221095918.18763-4-maxime@cerno.tech>
+Subject: [PATCH v2 08/22] drm/tegra: plane: Remove redundant zpos initialisation
+Date:   Mon, 21 Feb 2022 10:59:04 +0100
+Message-Id: <20220221095918.18763-9-maxime@cerno.tech>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220221095918.18763-1-maxime@cerno.tech>
 References: <20220221095918.18763-1-maxime@cerno.tech>
@@ -85,34 +85,42 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-While the tegra_shared_plane_create() function calls
-drm_plane_create_zpos_property() with an initial value of 0,
-tegra_plane_reset() will force it to the plane index.
+The tegra KMS driver will call drm_plane_create_zpos_property() with an
+init value of the plane index.
 
-Fix the discrepancy by setting the initial zpos value to the plane index
-in the function call.
+Since the initial value wasn't carried over in the state, the driver had
+to set it again in tegra_plane_reset(). However, the helpers have been
+adjusted to set it properly at reset, so this is not needed anymore.
 
 Cc: linux-tegra@vger.kernel.org
 Cc: Jonathan Hunter <jonathanh@nvidia.com>
 Cc: Thierry Reding <thierry.reding@gmail.com>
 Signed-off-by: Maxime Ripard <maxime@cerno.tech>
 ---
- drivers/gpu/drm/tegra/hub.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/tegra/plane.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/tegra/hub.c b/drivers/gpu/drm/tegra/hub.c
-index b910155f80c4..7f68a142d922 100644
---- a/drivers/gpu/drm/tegra/hub.c
-+++ b/drivers/gpu/drm/tegra/hub.c
-@@ -788,7 +788,7 @@ struct drm_plane *tegra_shared_plane_create(struct drm_device *drm,
- 	}
+diff --git a/drivers/gpu/drm/tegra/plane.c b/drivers/gpu/drm/tegra/plane.c
+index ec0822c86926..a00913d064d3 100644
+--- a/drivers/gpu/drm/tegra/plane.c
++++ b/drivers/gpu/drm/tegra/plane.c
+@@ -25,7 +25,6 @@ static void tegra_plane_destroy(struct drm_plane *plane)
  
- 	drm_plane_helper_add(p, &tegra_shared_plane_helper_funcs);
--	drm_plane_create_zpos_property(p, 0, 0, 255);
-+	drm_plane_create_zpos_property(p, index, 0, 255);
+ static void tegra_plane_reset(struct drm_plane *plane)
+ {
+-	struct tegra_plane *p = to_tegra_plane(plane);
+ 	struct tegra_plane_state *state;
+ 	unsigned int i;
  
- 	return p;
- }
+@@ -38,8 +37,6 @@ static void tegra_plane_reset(struct drm_plane *plane)
+ 	state = kzalloc(sizeof(*state), GFP_KERNEL);
+ 	if (state) {
+ 		__drm_atomic_helper_plane_reset(plane, &state->base);
+-		plane->state->zpos = p->index;
+-		plane->state->normalized_zpos = p->index;
+ 
+ 		for (i = 0; i < 3; i++)
+ 			state->iova[i] = DMA_MAPPING_ERROR;
 -- 
 2.35.1
 
