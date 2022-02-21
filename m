@@ -2,190 +2,136 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D37C9C433FE
-	for <linux-tegra@archiver.kernel.org>; Mon, 21 Feb 2022 12:59:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4746C433FE
+	for <linux-tegra@archiver.kernel.org>; Mon, 21 Feb 2022 13:37:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1358443AbiBUM7e (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 21 Feb 2022 07:59:34 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:58374 "EHLO
+        id S1359146AbiBUNiH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 21 Feb 2022 08:38:07 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:54170 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1358452AbiBUM7d (ORCPT
+        with ESMTP id S232752AbiBUNiF (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 21 Feb 2022 07:59:33 -0500
-Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6FA11EADE;
-        Mon, 21 Feb 2022 04:59:08 -0800 (PST)
-Received: by mail-lf1-x133.google.com with SMTP id j7so18473968lfu.6;
-        Mon, 21 Feb 2022 04:59:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=6QVIzj/QKTBf3Ax92LA0XrnaBxugELYFmeGg6xhiMRU=;
-        b=LOtBKCSjh69IiZ8cVDisWRXHNKzBkfGKRzGWQZWNELkYMqrnf6ZOqsNSrHm0+26ALv
-         A7Ju8T6BVhkmvkXb3KjXPZwp2HwgfTCpkViUIAnJ090bvbYfK8NNTgiqyU/+QN54uWBM
-         4bWJDV5ttFRGs+bPlVn99eZRQssSszzCuDqNRnIYmNGTNxmSjA18/Gpwy7ZMkVD1OP+1
-         sk6Vf6CatMXTaDlPTfM0HygLJwa6tjiPCqgKu+eXgOilsZTdo8Xav12OmAgBOGvF/9CW
-         ftMR4TrtvftFEvK/TSNV+AwvkUaSQOngfDuukyDeDKEknp6m/U1rdfCatZAkV62Q7dAm
-         WsYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=6QVIzj/QKTBf3Ax92LA0XrnaBxugELYFmeGg6xhiMRU=;
-        b=P74Qfd7DjdDryDtw5Y3MqdrgDhHMmFqch0CqWTbqe6IToik2C75pwDjAqZ6QDRghH6
-         umn4b1kSEx2HEtL/LtseChbVMYOiYRSYvunNeG96zLcmolfsZy0/ryiE+MlWzNu8gB0v
-         QTL0lnT7kWzSVxkZ+jdKUGrOK0XFY6WI7aLlMtWADjl4oqbhSZ53q9KldnHhadDJc658
-         2nZcIHLmEcmwmVFEWyGrzxU/24f7JjMWKmshcwHtStwEggeV26lbQ7spjM2I4c3eXpYj
-         Bq6/i7aNz19cDWOu37rp+VirwbrEbmQ7yEyPLtV5o1W4i8vITZo8DT+8/ZfT5Gzx0tNY
-         aYzA==
-X-Gm-Message-State: AOAM532kjEP5bGhMw0mtbWxYpLeHWgyQlnPpQUH7La6ww0cmy8rqHETg
-        lrleYcRHrWXFTb4Fcwt+hl4=
-X-Google-Smtp-Source: ABdhPJz0q8FLvZq4rS2pRaJDajF4cYv2YkHRkuXUyrJHeDxhtWrjb45ADkN4VVNTt9S4H9K7/Hm60A==
-X-Received: by 2002:ac2:4c10:0:b0:444:8c:e717 with SMTP id t16-20020ac24c10000000b00444008ce717mr192313lfq.117.1645448347154;
-        Mon, 21 Feb 2022 04:59:07 -0800 (PST)
-Received: from [192.168.2.145] (109-252-138-165.dynamic.spd-mgts.ru. [109.252.138.165])
-        by smtp.googlemail.com with ESMTPSA id y10sm1328964lja.25.2022.02.21.04.59.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Feb 2022 04:59:06 -0800 (PST)
-Message-ID: <4c12cab4-6265-78c0-46ce-d4014c9919fe@gmail.com>
-Date:   Mon, 21 Feb 2022 15:59:06 +0300
+        Mon, 21 Feb 2022 08:38:05 -0500
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D175F13E25
+        for <linux-tegra@vger.kernel.org>; Mon, 21 Feb 2022 05:37:41 -0800 (PST)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1nM8sa-0007tK-MQ; Mon, 21 Feb 2022 14:37:28 +0100
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1nM8sY-000R0Q-Ao; Mon, 21 Feb 2022 14:37:25 +0100
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1nM8sX-004bq8-12; Mon, 21 Feb 2022 14:37:25 +0100
+Date:   Mon, 21 Feb 2022 14:37:24 +0100
+From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Lee Jones <lee.jones@linaro.org>, Nishanth Menon <nm@ti.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-pwm@vger.kernel.org,
+        linux-mmc@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-clk@vger.kernel.org, David Heidelberg <david@ixit.cz>
+Subject: Re: [PATCH v16 21/40] pwm: tegra: Add runtime PM and OPP support
+Message-ID: <20220221133724.iusksyn7n7hmxil2@pengutronix.de>
+References: <20211130232347.950-1-digetx@gmail.com>
+ <20211130232347.950-22-digetx@gmail.com>
+ <20220221081727.jeq2jff5ewjzubxv@pengutronix.de>
+ <677beebd-5a16-297f-c09a-fa4b72c001c9@gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH v3 2/4] hwmon: (lm90) Use hwmon_notify_event()
-Content-Language: en-US
-To:     Jon Hunter <jonathanh@nvidia.com>,
-        Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Matt Merhar <mattmerhar@protonmail.com>
-Cc:     linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-References: <20210618215455.19986-1-digetx@gmail.com>
- <20210618215455.19986-3-digetx@gmail.com>
- <9580f660-2a11-40e4-2986-f05703822d72@nvidia.com>
- <8d0c818a-d714-d8ab-f825-073cf549b959@gmail.com>
- <13b07bb3-90e4-a501-469c-ce64bc90bfd5@nvidia.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-In-Reply-To: <13b07bb3-90e4-a501-469c-ce64bc90bfd5@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="l5jzzhwrtignnt6r"
+Content-Disposition: inline
+In-Reply-To: <677beebd-5a16-297f-c09a-fa4b72c001c9@gmail.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-21.02.2022 15:56, Jon Hunter пишет:
-> 
-> On 21/02/2022 12:36, Dmitry Osipenko wrote:
->> 21.02.2022 15:01, Jon Hunter пишет:
->>> Hi Dmitry,
->>>
->>> On 18/06/2021 22:54, Dmitry Osipenko wrote:
->>>> Use hwmon_notify_event() to notify userspace and thermal core about
->>>> temperature changes.
->>>>
->>>> Suggested-by: Guenter Roeck <linux@roeck-us.net>
->>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>>> ---
->>>>    drivers/hwmon/lm90.c | 44
->>>> +++++++++++++++++++++++++++++++++-----------
->>>>    1 file changed, 33 insertions(+), 11 deletions(-)
->>>>
->>>> diff --git a/drivers/hwmon/lm90.c b/drivers/hwmon/lm90.c
->>>> index 2e057fad05b4..e7b678a40b39 100644
->>>> --- a/drivers/hwmon/lm90.c
->>>> +++ b/drivers/hwmon/lm90.c
->>>> @@ -465,6 +465,7 @@ enum lm90_temp11_reg_index {
->>>>      struct lm90_data {
->>>>        struct i2c_client *client;
->>>> +    struct device *hwmon_dev;
->>>>        u32 channel_config[4];
->>>>        struct hwmon_channel_info temp_info;
->>>>        const struct hwmon_channel_info *info[3];
->>>> @@ -1731,22 +1732,41 @@ static bool lm90_is_tripped(struct i2c_client
->>>> *client, u16 *status)
->>>>          if ((st & (LM90_STATUS_LLOW | LM90_STATUS_LHIGH |
->>>> LM90_STATUS_LTHRM)) ||
->>>>            (st2 & MAX6696_STATUS2_LOT2))
->>>> -        dev_warn(&client->dev,
->>>> -             "temp%d out of range, please check!\n", 1);
->>>> +        dev_dbg(&client->dev,
->>>> +            "temp%d out of range, please check!\n", 1);
->>>>        if ((st & (LM90_STATUS_RLOW | LM90_STATUS_RHIGH |
->>>> LM90_STATUS_RTHRM)) ||
->>>>            (st2 & MAX6696_STATUS2_ROT2))
->>>> -        dev_warn(&client->dev,
->>>> -             "temp%d out of range, please check!\n", 2);
->>>> +        dev_dbg(&client->dev,
->>>> +            "temp%d out of range, please check!\n", 2);
->>>>        if (st & LM90_STATUS_ROPEN)
->>>> -        dev_warn(&client->dev,
->>>> -             "temp%d diode open, please check!\n", 2);
->>>> +        dev_dbg(&client->dev,
->>>> +            "temp%d diode open, please check!\n", 2);
->>>>        if (st2 & (MAX6696_STATUS2_R2LOW | MAX6696_STATUS2_R2HIGH |
->>>>               MAX6696_STATUS2_R2THRM | MAX6696_STATUS2_R2OT2))
->>>> -        dev_warn(&client->dev,
->>>> -             "temp%d out of range, please check!\n", 3);
->>>> +        dev_dbg(&client->dev,
->>>> +            "temp%d out of range, please check!\n", 3);
->>>>        if (st2 & MAX6696_STATUS2_R2OPEN)
->>>> -        dev_warn(&client->dev,
->>>> -             "temp%d diode open, please check!\n", 3);
->>>> +        dev_dbg(&client->dev,
->>>> +            "temp%d diode open, please check!\n", 3);
->>>> +
->>>> +    if (st & LM90_STATUS_LLOW)
->>>> +        hwmon_notify_event(data->hwmon_dev, hwmon_temp,
->>>> +                   hwmon_temp_min, 0);
->>>> +    if (st & LM90_STATUS_RLOW)
->>>> +        hwmon_notify_event(data->hwmon_dev, hwmon_temp,
->>>> +                   hwmon_temp_min, 1);
->>>> +    if (st2 & MAX6696_STATUS2_R2LOW)
->>>> +        hwmon_notify_event(data->hwmon_dev, hwmon_temp,
->>>> +                   hwmon_temp_min, 2);
->>>> +    if (st & LM90_STATUS_LHIGH)
->>>> +        hwmon_notify_event(data->hwmon_dev, hwmon_temp,
->>>> +                   hwmon_temp_max, 0);
->>>> +    if (st & LM90_STATUS_RHIGH)
->>>> +        hwmon_notify_event(data->hwmon_dev, hwmon_temp,
->>>> +                   hwmon_temp_max, 1);
->>>> +    if (st2 & MAX6696_STATUS2_R2HIGH)
->>>> +        hwmon_notify_event(data->hwmon_dev, hwmon_temp,
->>>> +                   hwmon_temp_max, 2);
->>>
->>>
->>> We observed a random null pointer deference crash somewhere in the
->>> thermal core (crash log below is not very helpful) when calling
->>> mutex_lock(). It looks like we get an interrupt when this crash
->>> happens.
->>>
->>> Looking at the lm90 driver, per the above, I now see we are calling
->>> hwmon_notify_event() from the lm90 interrupt handler. Looking at
->>> hwmon_notify_event() I see that ...
->>>
->>> hwmon_notify_event()
->>>    --> hwmon_thermal_notify()
->>>      --> thermal_zone_device_update()
->>>        --> update_temperature()
->>>          --> mutex_lock()
->>>
->>> So although I don't completely understand the crash, it does seem
->>> that we should not be calling hwmon_notify_event() from the
->>> interrupt handler.
->>>
->>> BTW I have not reproduced this myself yet, so I have just been
->>> reviewing the code to try and understand this.
->>
->> Matt Merhar was experiencing a similar issue on T30 Ouya, but I never
->> managed to reproduce it on Nexus 7 and Acer A500 tablets, and couldn't
->> spot any problem in the code. IIRC, it was a NULL dereference of another
->> pointer within that code.
-> 
-> 
-> OK. From looking at the above I don't think we can call
-> hwmon_notify_event() from an interrupt handler because this is going to
-> try and request a mutex. So we need to fix that.
 
-The interrupt is threaded, so it can take a mutex.
+--l5jzzhwrtignnt6r
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hello,
+
+On Mon, Feb 21, 2022 at 12:53:58PM +0300, Dmitry Osipenko wrote:
+> 21.02.2022 11:17, Uwe Kleine-K=C3=B6nig =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> >> @@ -344,7 +387,10 @@ static const struct of_device_id tegra_pwm_of_mat=
+ch[] =3D {
+> >>  MODULE_DEVICE_TABLE(of, tegra_pwm_of_match);
+> >> =20
+> >>  static const struct dev_pm_ops tegra_pwm_pm_ops =3D {
+> >> -	SET_SYSTEM_SLEEP_PM_OPS(tegra_pwm_suspend, tegra_pwm_resume)
+> >> +	SET_RUNTIME_PM_OPS(tegra_pwm_runtime_suspend, tegra_pwm_runtime_resu=
+me,
+> >> +			   NULL)
+> >> +	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
+> >> +				pm_runtime_force_resume)
+> >>  };
+> >> =20
+> >>  static struct platform_driver tegra_pwm_driver =3D {
+> > I admit to not completely understand the effects of this patch, but I
+> > don't see a problem either. So for me this patch is OK:
+> >=20
+> > Acked-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
+> >=20
+> > I spot a problem, it's not introduced by this patch however: If the
+> > consumer of the PWM didn't stop the hardware, the suspend should IMHO be
+> > prevented.
+>=20
+> Why? The PWM driver itself will stop the h/w on suspend.
+
+Stopping the PWM might be bad. Only the consumer can know if it's ok to
+stop the PWM on suspend. If so the consumer should stop the PWM in their
+suspend callback and the PWM should prevent suspend if it wasn't
+stopped.
+
+> > I wonder if the patches in this series go in in one go via an ARM or
+> > Tegra tree, or each patch via its respective maintainer tree.
+>=20
+> This series, including this patch, was already applied to 5.17 via the
+> tegra/soc tree. No action is needed anymore.
+
+Ah, I missed that, thanks.
+
+Best regards
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=C3=B6nig         =
+   |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--l5jzzhwrtignnt6r
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmITlYwACgkQwfwUeK3K
+7Ak0Awf7Bng3Bp8dIdZWVJ0IKQy7Zh14yrunKW/TyOp4ENrNgLtH1N+DE2F332Mj
+dYGX26syp+azTB+kvoYCzH3Ro0Cisl+Ssvvm95pL0PiFStqoSwXJgti+dSqIWspK
+bwYm7tYUNcvJecG8YuuCZwSrUC6N15wccUN/VU2i8ZTOWfVAjmAKbxTNj6yLJNIU
+VvWsqthnEOGiHxH6KueZlwL3DRbTZ2QmykKmUaUFAnJwvjH24B6lAFHQnUDOFIQv
+vIbPMFpKTOvm8tOIFpqse8QJLzRAHbu5iuIiZkGnN5MVJg2C6fbo2fYVM1Ya/2c2
+YXsdY3K0KB4X8v/eFrEX5qZdljYVCA==
+=NwNV
+-----END PGP SIGNATURE-----
+
+--l5jzzhwrtignnt6r--
