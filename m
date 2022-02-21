@@ -2,61 +2,51 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77788C433EF
-	for <linux-tegra@archiver.kernel.org>; Mon, 21 Feb 2022 15:43:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28370C433EF
+	for <linux-tegra@archiver.kernel.org>; Mon, 21 Feb 2022 15:49:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1379394AbiBUPno (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 21 Feb 2022 10:43:44 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:36548 "EHLO
+        id S1379528AbiBUPty (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 21 Feb 2022 10:49:54 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:46594 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348013AbiBUPnn (ORCPT
+        with ESMTP id S1379526AbiBUPtu (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 21 Feb 2022 10:43:43 -0500
-Received: from mail-qk1-x730.google.com (mail-qk1-x730.google.com [IPv6:2607:f8b0:4864:20::730])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF93622B0D;
-        Mon, 21 Feb 2022 07:43:19 -0800 (PST)
-Received: by mail-qk1-x730.google.com with SMTP id f10so13043412qkg.9;
-        Mon, 21 Feb 2022 07:43:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=sender:message-id:date:mime-version:user-agent:content-language:to
-         :cc:references:from:subject:in-reply-to:content-transfer-encoding;
-        bh=fnv2CA3CXLhV9zUWiwOd3ew24NJh0NPxMi5GC2dqx58=;
-        b=E9sa5bYYmbLzI+ApcAIqNvFwo2ioZ6Pu5rmKBfRK+161EO9Rr6PUnCNfSDK7HEuv+M
-         ezpoc4YGMwHoKp+23uIF9ytxGdaCslVGZxtAcC5Ze18g1JfMsH8zO9ZIfuktU83zy/cF
-         Cl8AuRJzTpIk8dWp49/jor8eFX4/xnqskCkg98v1qABMHVYuwaEqbHyt4vXfVaWjoFbb
-         UjnzN7PZFZaS3Go47J3+n/ew1aP7KX6n2QtHFsdgBm9NIC0vHqd8S/28oI/kQgM2ZKpO
-         cokLYx7UMb/TV34etSi1mzrPtZu9OodrqLh+YPpvVk0RgBa5H8vuRsERVCPScU9RwcWh
-         X46Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:sender:message-id:date:mime-version:user-agent
-         :content-language:to:cc:references:from:subject:in-reply-to
-         :content-transfer-encoding;
-        bh=fnv2CA3CXLhV9zUWiwOd3ew24NJh0NPxMi5GC2dqx58=;
-        b=kpQ20TlIVaUAttcqH1r4C0feKCx9rHG6AzWNsDXUdF5IT5B8ZeKdjEQulzSyHF6Y0r
-         DmHIfEI18QzhraLhfMvv7dOfrF2nwCptCdtNnNxAiFdjZOxn8iPh8lr1CoifyFVw7etY
-         JTJrKu+9lKQ6fDL/8wSgRY1UDPBvCHrL1CuCtFkglQrxBaa0I5V9HJ9hzFovJ/z5I40W
-         hPUEUqH7/ziqZ8MlaCE/hWQehVSd12UmyQ9/EYk8nGO7xxovtu0saywQnuAdddCikk7V
-         Pg5oKDag9TSTuV6LHk2d3yt4dfgfjGWYsAfi83C6OtSjygBGP6ABubQje6meAJ7cUwrO
-         Zb1Q==
-X-Gm-Message-State: AOAM530U6Bn1a5DNTTXZs033AV+P15RYyB/zGr/TKWzjsAoMS07UpghN
-        U3o6bKCZonjZ1q5ZbPFBcFQ=
-X-Google-Smtp-Source: ABdhPJzIYEcQwhc+ZoLryEqJ6lhYs1dxTsRwSnSbGA7rFcuqT40r3GT4SP+PTyr24dIgJz1RKclqsQ==
-X-Received: by 2002:a37:f719:0:b0:648:cd93:3198 with SMTP id q25-20020a37f719000000b00648cd933198mr4108766qkj.179.1645458199024;
-        Mon, 21 Feb 2022 07:43:19 -0800 (PST)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id u9sm26827239qko.110.2022.02.21.07.43.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Feb 2022 07:43:18 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <2aae3bac-c9b3-ab47-aae4-a3c7b6fb4bb5@roeck-us.net>
-Date:   Mon, 21 Feb 2022 07:43:16 -0800
-MIME-Version: 1.0
+        Mon, 21 Feb 2022 10:49:50 -0500
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2073.outbound.protection.outlook.com [40.107.237.73])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72F7F2459F;
+        Mon, 21 Feb 2022 07:49:26 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=k4DtuTROhG9EOgd90xMxb02BB5YCv+TK7ZuxPKNEGZ5t5TSvzYfdX5YX0Il17jRpVK820ltCz+fSHYczJUhcwLRVjQ5zZY/Tuw2J6JcAzvxLXqxQY0PAK6VJqDL4fbTHzA4V+a4WoyXdhrd5otspHxXH3dm3PKhvR+iOpsOiSahZ+8OFNpu8f2a3u5ZE1IWceAbL/sz+pwf36XvyKyG54oxMDO0q+FrPweTnSLmxnE5MCaxK1m2GHqdeYO+VUBNQC3WZzDXLISz/gxe6X1vdiJnrp21fOANdqIgaiqsWOfZHTGE+jKX+juiHSA09EKSkPsR8Ql1rGJ9RmuAc66M2BQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=qKZqDgrQIhTAopC2D34EIHLHiBrEF9oblKvc8/O8i0c=;
+ b=EX6NodiRBzHh0ueG4grQze+5yiDpVpVA0ZGO6YF9tvq0uZq7Q6vuZoArJy4SbMlMr62PZ4kTdqqSC6unf6oIaJC2oSZtlp7Eo0cYEoaXUK1B+ud9nif9hPfouVWJFwQwRvyF5aii+OBE2gQ4D5IRuhuG1V5zYYLwiSbdpWWTGFWSxNrtLp7kZM4CpVo96SBG2Z06sEpytpHxTed5hnDRmnc7qdRqlBt5ORPDQvGhqgAO85QEkERxSYIrj+NbCMJEHMS06VDPEdtkU2erKMQdAYTEHti0fXAHbaK6YeD5ettTYnCY+sr/tDo7k6zIihxj65G8L9sdByAssACOD7xSEw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=qKZqDgrQIhTAopC2D34EIHLHiBrEF9oblKvc8/O8i0c=;
+ b=GZMfq6t24tqOF643hZyDguaNGZdN2Oj70XDy/PoRmpAa29OwkKTaT/aSfSUUBLe3WnfcbJkl1nD1JT0s0oNY8Wp1nIIafN/I5IsOlx6kIJycIZh+8FkILynZ3HdYcohm3s1s9ccdZy3DdjabdeKF9At3IWToYl7J065NJ77QqJJPdjNfrRFwkYTtMvm4EfIO+4NtjIYDXkLZpVqX1PwbcyeZ1Dima56XkynokOSd4P2YJPLmaexbs8odZ7kpjXO1gR2Pxshue1wJlliJKC5IZh4NmLTsg/hvxp7Yhvw6T7lUmjUXvoJ0Sicuu86iK9L5xR84SK0unMMfeFQD+w92Gg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CO6PR12MB5444.namprd12.prod.outlook.com (2603:10b6:5:35e::8) by
+ MW3PR12MB4441.namprd12.prod.outlook.com (2603:10b6:303:59::9) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.4995.17; Mon, 21 Feb 2022 15:49:24 +0000
+Received: from CO6PR12MB5444.namprd12.prod.outlook.com
+ ([fe80::3df2:54be:277e:7ed7]) by CO6PR12MB5444.namprd12.prod.outlook.com
+ ([fe80::3df2:54be:277e:7ed7%5]) with mapi id 15.20.4995.027; Mon, 21 Feb 2022
+ 15:49:24 +0000
+Message-ID: <84ddad27-eb22-0ba6-594f-2fc6d098dc2a@nvidia.com>
+Date:   Mon, 21 Feb 2022 15:49:16 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.5.0
+Subject: Re: [PATCH v3 2/4] hwmon: (lm90) Use hwmon_notify_event()
 Content-Language: en-US
-To:     Jon Hunter <jonathanh@nvidia.com>,
+To:     Guenter Roeck <linux@roeck-us.net>,
         Dmitry Osipenko <digetx@gmail.com>,
         Jean Delvare <jdelvare@suse.com>
 Cc:     linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
@@ -64,169 +54,120 @@ Cc:     linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
 References: <20210618215455.19986-1-digetx@gmail.com>
  <20210618215455.19986-3-digetx@gmail.com>
  <9580f660-2a11-40e4-2986-f05703822d72@nvidia.com>
-From:   Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [PATCH v3 2/4] hwmon: (lm90) Use hwmon_notify_event()
-In-Reply-To: <9580f660-2a11-40e4-2986-f05703822d72@nvidia.com>
+ <2aae3bac-c9b3-ab47-aae4-a3c7b6fb4bb5@roeck-us.net>
+From:   Jon Hunter <jonathanh@nvidia.com>
+In-Reply-To: <2aae3bac-c9b3-ab47-aae4-a3c7b6fb4bb5@roeck-us.net>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: LO2P265CA0016.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:62::28) To CO6PR12MB5444.namprd12.prod.outlook.com
+ (2603:10b6:5:35e::8)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: b034f608-2dc2-4d15-f17b-08d9f551bb92
+X-MS-TrafficTypeDiagnostic: MW3PR12MB4441:EE_
+X-Microsoft-Antispam-PRVS: <MW3PR12MB444158B76D1A87BDC12BC65FD93A9@MW3PR12MB4441.namprd12.prod.outlook.com>
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: aXUPKXSSL1sx4bKilPn+XZ4Uob4kWuhh+M21l/Dj+FgLUUbNAvuffrmoAVOqn+vxZ2ytZdezMoof6rOO76+ZI1ELHF+XVAJw7rWerST3ouKhCXEa8PR3eCkHv3mg0cPfkGRDtHEsXA5r2RCNA5D78dZI0TtKqy7B9+gt8xNCC02FzZvA03mnhnI3brTMbwtZskVFZF7QnDYNaG8Wq3Maj8P8yhJp0+eHJPTUnS/PzAxAGOVOo+A3iZaRN4usZ6RdU4f5e/lxN9tQvkOMkFUsb1EMYQx/cgjkcozMkmxhCMNh30qywo6y1Y2qUoYXUmRoiM6rl1Ocxo+Swj/QCTWTfNg6qO6zQRG3h1t0vg0WxEtAk0QQwFEvo+zzUBl+WCkQpORtvVP1qSKCbA2p4Ez5KA4mgyxTMQw1FPmhyqNQYbf9UOPRfDcJJJvnEuRAT9OtBlsZpUq5XZzIrf3qqf7MAB6NgoK6LVu2zjKvibnWSBd/QIpdiS7T63tqBXeRWpShG+mCRr9ghZ7m/r1JzjnnMQ4juYGk3ZEb+bjIAPqTGYmXl2o+C3fUdBGDEYAEV/3CxesZoU6wLwnTeDHUHvUE4w7b9C+A+2J6K+CY2Lu7W8k17dc4yluRJIxTMQ5AgjBfSy3HS1OSKjY/BN83/1KvP8jVZltvH4nfqwGBidmErIVhfUvYiPvBLQv7Hpkczr7Fr4+2IKEorUduiPgypXBXLKTqWligR9wekafU3ALIJaN+Dvya6Uws8cj2Cdxq20WN
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR12MB5444.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(36756003)(6506007)(6666004)(508600001)(6486002)(6512007)(31686004)(53546011)(2616005)(55236004)(2906002)(38100700002)(66946007)(5660300002)(186003)(110136005)(26005)(8936002)(316002)(31696002)(86362001)(83380400001)(4326008)(66476007)(8676002)(66556008)(43740500002)(45980500001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?aEltbkY0S2FwRXkydFFnUTlxRFhxUmpxalRtZm0zQ0UwS08weXQyRXJYVm5L?=
+ =?utf-8?B?Zi9JdWZCWkI2K3VseDgwVFNGbEhLZWRHOHFvNHc1MHU0WXBWOGxYMlFlZTBW?=
+ =?utf-8?B?WHB6dlYwREIvVjg1MCt2RVd5d1hhSUdlc2hYZFJGRFFWa0xUWXZkVm5ROGFI?=
+ =?utf-8?B?dlA0cktSMjVNcFdlTVd6blNSOHdyNW13aHV4L1g2NWNiMGphUlBxeVRUWTBo?=
+ =?utf-8?B?dFd0MzByRWN1akp6K3JOdCt2T1pJd3NhNHpiK0lESkRnd0ZLZTlvekc4cVNp?=
+ =?utf-8?B?TFpRV2Z4SzJlbEVMcElocWh6dTNWV3pMT0JDUDNLVFR6cEhjU3lOaVhGd2Rw?=
+ =?utf-8?B?QUlHYmhiQ2Y2cytpcnlUZCtqYnVOUFNuZXVuR3dnNVZhc0t3WnZVOWVSSlEz?=
+ =?utf-8?B?a3ZNS0JHTzNoUWZBeXU4M2hFS3MxejF6Vk9IR0NscEg0TE9CT3kwa1ZGampi?=
+ =?utf-8?B?QWZzYUNZNG9PbVBBMzlMYjhHT3ZsRThDM2x5NTEwa1l0eFFzOWszbjRwR0NZ?=
+ =?utf-8?B?L01QWTVIMDhoVDI0RDB2MDI5aDVqNkN3WHdtUmdtTUZuV1lUSG1iU2VJSVVN?=
+ =?utf-8?B?dC95M3NUblMzYkRwVzJ5MkJ2Nk5naHRBcy9lT0xqdDBlbnJ6dHR1MUlSZFlF?=
+ =?utf-8?B?ZGtOc1Zoa0NYaUIzU1Q2cG9kcDZxellqZ2JmTFJYK3hkL0R4Q25NOU50WEpX?=
+ =?utf-8?B?MG5PYVk4Y0xtVTFzY3BnNXZhU1krRU0rMHcvWFJFM0czRHhicE1WUzVkNlJF?=
+ =?utf-8?B?RWhORDhBOS9BdWdqOXprTEhvaEk3SW1OZ1Q3RVpPOXpxMGIwUms5MSs4NytO?=
+ =?utf-8?B?UlRyaG9LVFFsR3RERjlNejUxNVhrMGRHVDZTQm9HSzEyTWRNeHVOTEhSa2d2?=
+ =?utf-8?B?OFQ5T1NqSStEeVJSRWs4WEkvY05rcWFTRkluMFNaVkNWMUdiMHAweERwUGl4?=
+ =?utf-8?B?NUVmR0llV1M1cW1YQkdxcVRzYUxMYThINHdFYmQyNXo3YWluRmRuYzAzVm1v?=
+ =?utf-8?B?Q2VMb1dNMUkxaHJmVzdLTjJOd0crYW1xOGc3azg5SzBnYmlEblZsd2tBSExR?=
+ =?utf-8?B?MnROT3VSemxRNGVHN29KZW5zVUthcGdPWldzK0RUdDNaQ05vSml6LzkxNXlt?=
+ =?utf-8?B?VHhWa3RCYURkZWxKUnAzTjdmcnR3bWdUN2dyZGxYcnRUZG5IRmsyT3dmUTMy?=
+ =?utf-8?B?UWZua2V5UWp4NEpxWkZadmZvMk5wZzVBZVlsR21id29MSzgvZnFpMFNoMmtu?=
+ =?utf-8?B?bHJNU0RlbWlFNzI2QklUQzdrWUQ0K2h2TGdDT0N2QnU1SkxOa1RGNDZBZjJT?=
+ =?utf-8?B?ZVdsZTRFU1VoSlEzcHF4Ymh0VEJBd1JCa2N3aXliQW1vd2dsTXo5d2ZFaWlu?=
+ =?utf-8?B?dlYwM0lqdWZ6VUZOanR3NXRKYzVnaVVmSnNQMGZkTkEwTFdsOGFHTXpTVzlI?=
+ =?utf-8?B?T2pybFdWVlNsSjAwZjhTY25UbTUreExHbjVteWpxSVY3bXRwQWl1WDhrdDJj?=
+ =?utf-8?B?UHdtQTRYMk1HczJXbnNtdzI2dk9DaVptTlM1OGhjK2k2ZG92aTFValNsNW1m?=
+ =?utf-8?B?RVcxTkk3K1RPeSsxWTNMeldWUXFFUWZVNWV0SEp3NEpkc3g1dWk5R01zcTNF?=
+ =?utf-8?B?ckdHRXUxWEwrVzVvWHZDcERHN2Mrc0VGREFoaVlGWHFVdnE4eFpXdHcvRnZS?=
+ =?utf-8?B?VFFKVE8vYTlIYVUxcjRLbEhyTGZ2ZXEzby9qQlRCTmlXMjh5a05Qay8rTXFD?=
+ =?utf-8?B?QnFUNzBlanV5NVZsWVZXN3JoSGtHS3hveXVHcjRnUlBQSVo0TWxwNlg0MnVJ?=
+ =?utf-8?B?bEdKOE5kMkphdyszaHh3TTlUS2ZPaXdicm82R3ExWmJqaDEzdWNXam5Zb1Yv?=
+ =?utf-8?B?S1R1alNZVG52MUd0TmMvVmowVWtYandoY1JrQ1d2ZVlXVDgwTUpnTDVoWm14?=
+ =?utf-8?B?VGxsby9DSFlSNUNSejJPYlVlOG8vaGdMZHV6NSs0ckxORE5heEJSNkVTbjRB?=
+ =?utf-8?B?d2I5SGhTdUZadDcxOUNwTUc5ZHB4VjFGc210bklMNGtxTlgzWXhPTjFjck1o?=
+ =?utf-8?B?YXV4emRrRm5aLzJwNC9DSTl6WHd4a2UzMXcza3VYQVNHeWYxVHZvZVhZZTI5?=
+ =?utf-8?B?a1Y3UHRzalVWS3Z2QzNNZDMrNEtWVjBqVzBXT0ZWN1pLejZMaitQSmVOUmpP?=
+ =?utf-8?Q?WO16SiGMo3BR0tCxUsY4nqo=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b034f608-2dc2-4d15-f17b-08d9f551bb92
+X-MS-Exchange-CrossTenant-AuthSource: CO6PR12MB5444.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Feb 2022 15:49:24.0885
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: OtdpmebR8J+L31rNaD+22eOPQIAr0EGzHmHdSfhlDwTsK0OpDmlFeljSQg3rLe0i6ehxtDWDJWE3mRAEZWjXaA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR12MB4441
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 2/21/22 04:01, Jon Hunter wrote:
-> Hi Dmitry,
-> 
-> On 18/06/2021 22:54, Dmitry Osipenko wrote:
->> Use hwmon_notify_event() to notify userspace and thermal core about
->> temperature changes.
+
+On 21/02/2022 15:43, Guenter Roeck wrote:
+
+...
+
+>> We observed a random null pointer deference crash somewhere in the
+>> thermal core (crash log below is not very helpful) when calling
+>> mutex_lock(). It looks like we get an interrupt when this crash
+>> happens.
 >>
->> Suggested-by: Guenter Roeck <linux@roeck-us.net>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> ---
->>   drivers/hwmon/lm90.c | 44 +++++++++++++++++++++++++++++++++-----------
->>   1 file changed, 33 insertions(+), 11 deletions(-)
+>> Looking at the lm90 driver, per the above, I now see we are calling
+>> hwmon_notify_event() from the lm90 interrupt handler. Looking at
+>> hwmon_notify_event() I see that ...
 >>
->> diff --git a/drivers/hwmon/lm90.c b/drivers/hwmon/lm90.c
->> index 2e057fad05b4..e7b678a40b39 100644
->> --- a/drivers/hwmon/lm90.c
->> +++ b/drivers/hwmon/lm90.c
->> @@ -465,6 +465,7 @@ enum lm90_temp11_reg_index {
->>   struct lm90_data {
->>       struct i2c_client *client;
->> +    struct device *hwmon_dev;
->>       u32 channel_config[4];
->>       struct hwmon_channel_info temp_info;
->>       const struct hwmon_channel_info *info[3];
->> @@ -1731,22 +1732,41 @@ static bool lm90_is_tripped(struct i2c_client *client, u16 *status)
->>       if ((st & (LM90_STATUS_LLOW | LM90_STATUS_LHIGH | LM90_STATUS_LTHRM)) ||
->>           (st2 & MAX6696_STATUS2_LOT2))
->> -        dev_warn(&client->dev,
->> -             "temp%d out of range, please check!\n", 1);
->> +        dev_dbg(&client->dev,
->> +            "temp%d out of range, please check!\n", 1);
->>       if ((st & (LM90_STATUS_RLOW | LM90_STATUS_RHIGH | LM90_STATUS_RTHRM)) ||
->>           (st2 & MAX6696_STATUS2_ROT2))
->> -        dev_warn(&client->dev,
->> -             "temp%d out of range, please check!\n", 2);
->> +        dev_dbg(&client->dev,
->> +            "temp%d out of range, please check!\n", 2);
->>       if (st & LM90_STATUS_ROPEN)
->> -        dev_warn(&client->dev,
->> -             "temp%d diode open, please check!\n", 2);
->> +        dev_dbg(&client->dev,
->> +            "temp%d diode open, please check!\n", 2);
->>       if (st2 & (MAX6696_STATUS2_R2LOW | MAX6696_STATUS2_R2HIGH |
->>              MAX6696_STATUS2_R2THRM | MAX6696_STATUS2_R2OT2))
->> -        dev_warn(&client->dev,
->> -             "temp%d out of range, please check!\n", 3);
->> +        dev_dbg(&client->dev,
->> +            "temp%d out of range, please check!\n", 3);
->>       if (st2 & MAX6696_STATUS2_R2OPEN)
->> -        dev_warn(&client->dev,
->> -             "temp%d diode open, please check!\n", 3);
->> +        dev_dbg(&client->dev,
->> +            "temp%d diode open, please check!\n", 3);
->> +
->> +    if (st & LM90_STATUS_LLOW)
->> +        hwmon_notify_event(data->hwmon_dev, hwmon_temp,
->> +                   hwmon_temp_min, 0);
->> +    if (st & LM90_STATUS_RLOW)
->> +        hwmon_notify_event(data->hwmon_dev, hwmon_temp,
->> +                   hwmon_temp_min, 1);
->> +    if (st2 & MAX6696_STATUS2_R2LOW)
->> +        hwmon_notify_event(data->hwmon_dev, hwmon_temp,
->> +                   hwmon_temp_min, 2);
->> +    if (st & LM90_STATUS_LHIGH)
->> +        hwmon_notify_event(data->hwmon_dev, hwmon_temp,
->> +                   hwmon_temp_max, 0);
->> +    if (st & LM90_STATUS_RHIGH)
->> +        hwmon_notify_event(data->hwmon_dev, hwmon_temp,
->> +                   hwmon_temp_max, 1);
->> +    if (st2 & MAX6696_STATUS2_R2HIGH)
->> +        hwmon_notify_event(data->hwmon_dev, hwmon_temp,
->> +                   hwmon_temp_max, 2);
-> 
-> 
-> We observed a random null pointer deference crash somewhere in the
-> thermal core (crash log below is not very helpful) when calling
-> mutex_lock(). It looks like we get an interrupt when this crash
-> happens.
-> 
-> Looking at the lm90 driver, per the above, I now see we are calling
-> hwmon_notify_event() from the lm90 interrupt handler. Looking at
-> hwmon_notify_event() I see that ...
-> 
-> hwmon_notify_event()
->    --> hwmon_thermal_notify()
->      --> thermal_zone_device_update()
->        --> update_temperature()
->          --> mutex_lock()
-> 
-> So although I don't completely understand the crash, it does seem
-> that we should not be calling hwmon_notify_event() from the
-> interrupt handler.
-> 
-As mentioned separately, this is not the problem.
+>> hwmon_notify_event()
+>>    --> hwmon_thermal_notify()
+>>      --> thermal_zone_device_update()
+>>        --> update_temperature()
+>>          --> mutex_lock()
+>>
+>> So although I don't completely understand the crash, it does seem
+>> that we should not be calling hwmon_notify_event() from the
+>> interrupt handler.
+>>
+> As mentioned separately, this is not the problem.
 
-I think the problem may be that this is not a devicetree system
-(or the lm90 devide does not have a devicetree node), but thermal
-notification currently only works in such systems because the hwmon
-subsystem uses the devicetree registration method. At the same time,
-CONFIG_THERMAL_OF is obviously enabled. Unfortunately, the hwmon code
-does not bail out in that situation due to another bug.
+Yes I can see that now.
 
-I'll revert the related patches. This will have to be sorted out
-separately in a later kernel release.
+> I think the problem may be that this is not a devicetree system
+> (or the lm90 devide does not have a devicetree node), but thermal
+> notification currently only works in such systems because the hwmon
+> subsystem uses the devicetree registration method. At the same time,
+> CONFIG_THERMAL_OF is obviously enabled. Unfortunately, the hwmon code
+> does not bail out in that situation due to another bug.
 
-Thanks,
-Guenter
+The platform I see this on does use device-tree and it does have a node 
+for the ti,tmp451 device which uses the lm90 device. This platform uses 
+the device-tree source 
+arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts and the tmp451 node 
+is in arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi.
 
-> BTW I have not reproduced this myself yet, so I have just been
-> reviewing the code to try and understand this.
-> 
-> Jon
-> 
-> [ 7465.595066] Unable to handle kernel NULL pointer dereference at virtual address 00000000000003cd
-> [ 7465.596619] Mem abort info:
-> [ 7465.597854]   ESR = 0x96000021
-> [ 7465.599097]   EC = 0x25: DABT (current EL), IL = 32 bits
-> [ 7465.600338]   SET = 0, FnV = 0
-> [ 7465.601526]   EA = 0, S1PTW = 0
-> [ 7465.602705]   FSC = 0x21: alignment fault
-> [ 7465.603885] Data abort info:
-> [ 7465.605017]   ISV = 0, ISS = 0x00000021
-> [ 7465.606171]   CM = 0, WnR = 0
-> [ 7465.607301] user pgtable: 64k pages, 48-bit VAs, pgdp=00000001041f1800
-> [ 7465.608490] [00000000000003cd] pgd=0000000000000000, p4d=0000000000000000, pud=0000000000000000
-> [ 7465.609814] Internal error: Oops: 96000021 [#1] PREEMPT SMP
-> [ 7465.610991] Modules linked in: bridge stp llc snd_soc_tegra210_admaif snd_soc_tegra_pcm snd_soc_tegra210_mixer snd_soc_tegra210_mvc snd_soc_tegra210_i2s snd_soc_tegra210_dmic sn
-> d_soc_tegra210_adx snd_soc_tegra210_sfc snd_soc_tegra210_amx snd_soc_tegra210_ahub tegra210_adma snd_soc_rt5659 snd_soc_rl6231 pwm_tegra tegra_aconnect snd_hda_codec_hdmi rfkill snd_hda_tegra snd_hda_codec at24 phy_tegra194_p2u snd_hda_core lm90 snd_soc_tegra_audio_graph_card tegra_bpmp_thermal snd_soc_audio_graph_card snd_soc_simple_card_utils pwm_fan crct10dif_ce pcie_tegra194 cec drm_kms_helper drm ip_tables x_tables ipv6
-> [ 7465.632232] CPU: 2 PID: 433 Comm: irq/140-lm90 Tainted: G           O      5.16.0-tegra-g9d109504d83a #1
-> [ 7465.636285] Hardware name: Unknown NVIDIA Jetson AGX Xavier Developer Kit/NVIDIA Jetson AGX Xavier Developer Kit, BIOS v1.1.2-901d3c52 02/07/2022
-> [ 7465.650457] pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> [ 7465.656210] pc : mutex_lock+0x18/0x60
-> [ 7465.660134] lr : thermal_zone_device_update+0x40/0x2e0
-> [ 7465.665117] sp : ffff800014c4fc60
-> [ 7465.668781] x29: ffff800014c4fc60 x28: ffff365ee3f6e000 x27: ffffdde218426790
-> [ 7465.675882] x26: ffff365ee3f6e000 x25: 0000000000000000 x24: ffff365ee3f6e000
-> [ 7465.683485] x23: ffffdde218426870 x22: ffff365ee3f6e000 x21: 00000000000003cd
-> [ 7465.690816] x20: ffff365ee8bf3308 x19: ffffffffffffffed x18: 0000000000000000
-> [ 7465.697982] x17: ffffdde21842689c x16: ffffdde1cb7a0b7c x15: 0000000000000040
-> [ 7465.705320] x14: ffffdde21a4889a0 x13: 0000000000000228 x12: 0000000000000000
-> [ 7465.712493] x11: 0000000000000000 x10: 0000000000000000 x9 : 0000000000000000
-> [ 7465.719580] x8 : 0000000001120000 x7 : 0000000000000001 x6 : 0000000000000000
-> [ 7465.727099] x5 : 0068000878e20f07 x4 : 0000000000000000 x3 : 00000000000003cd
-> [ 7465.734348] x2 : ffff365ee3f6e000 x1 : 0000000000000000 x0 : 00000000000003cd
-> [ 7465.741347] Call trace:
-> [ 7465.744207]  mutex_lock+0x18/0x60
-> [ 7465.747427]  hwmon_notify_event+0xfc/0x110
-> [ 7465.751358]  0xffffdde1cb7a0a90
-> [ 7465.754574]  0xffffdde1cb7a0b7c
-> [ 7465.757705]  irq_thread_fn+0x2c/0xa0
-> [ 7465.760937]  irq_thread+0x134/0x240
-> [ 7465.764850]  kthread+0x178/0x190
-> [ 7465.768083]  ret_from_fork+0x10/0x20
-> [ 7465.771748] Code: d503201f d503201f d2800001 aa0103e4 (c8e47c02)
-> [ 7465.777865] ---[ end trace f0b3723991411538 ]---
-> 
+Cheers
+Jon
 
+-- 
+nvpublic
