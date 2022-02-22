@@ -2,116 +2,132 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31DA2C433F5
-	for <linux-tegra@archiver.kernel.org>; Tue, 22 Feb 2022 15:31:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1532C433F5
+	for <linux-tegra@archiver.kernel.org>; Tue, 22 Feb 2022 16:21:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233475AbiBVPbg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 22 Feb 2022 10:31:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56950 "EHLO
+        id S232948AbiBVQV7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 22 Feb 2022 11:21:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47438 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233469AbiBVPbg (ORCPT
+        with ESMTP id S230429AbiBVQV6 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 22 Feb 2022 10:31:36 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D139D16304A;
-        Tue, 22 Feb 2022 07:31:10 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 8786CB81AB0;
-        Tue, 22 Feb 2022 15:31:09 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0B84C340E8;
-        Tue, 22 Feb 2022 15:31:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1645543868;
-        bh=9i4xuAv3MAiVPzxe+5g/FOn2ai3P/TMo7VhrUW14K+E=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=O2IFr1uJQF5P3+BH4KDnb3lCGnQ0dO4zVDFzNwNAOsBSyd0vdUO7zOqKcw6jnU86d
-         +N/SDg0tbXP4GZNAfMsypnDtvYGLx1c/qxngV9EEEA+YC5G9XXexTXFWGgQVx53L9s
-         Ylf1QA9YmFhnLjCv5BHlCi/Qk7iGdBbBmQXpuj3GCXROcqQesURsx4THmKpjKWIpYE
-         ZzOhm0DVEm2wh9/9vDB8hrQN7xCdXuEsbJFK8Khm3XxSAzntG6ZSWLRx5fnqxmDxiJ
-         ZGVhEeTfBksBamVcq3uB/3HOztGYZ4wHbI8S37wg0nwO95p2Z3V7LuWF2kxNX3Csof
-         xe/VCRFUeJJZg==
-Date:   Tue, 22 Feb 2022 08:31:03 -0700
-From:   Nathan Chancellor <nathan@kernel.org>
-To:     Akhil R <akhilrajeev@nvidia.com>
-Cc:     devicetree@vger.kernel.org, dmaengine@vger.kernel.org,
-        jonathanh@nvidia.com, kyarlagadda@nvidia.com, ldewangan@nvidia.com,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        p.zabel@pengutronix.de, rgumasta@nvidia.com, robh+dt@kernel.org,
-        thierry.reding@gmail.com, vkoul@kernel.org,
-        Pavan Kunapuli <pkunapuli@nvidia.com>
-Subject: Re: [PATCH v20 2/2] dmaengine: tegra: Add tegra gpcdma driver
-Message-ID: <YhUBt20I471s9Bhv@dev-arch.archlinux-ax161>
-References: <20220221153934.5226-1-akhilrajeev@nvidia.com>
- <20220221153934.5226-3-akhilrajeev@nvidia.com>
+        Tue, 22 Feb 2022 11:21:58 -0500
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D779827B3C;
+        Tue, 22 Feb 2022 08:21:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=ev42OadWq8vJV+artW66Bqa32qEn5wnRjyQS5YnZUfA=; b=K85J3/EmImSwh8Nm5XOiFvEDhn
+        10fci+/n1GGjuKrYNG9qXk0EV8sGEgb51sAWMB+hp4Pe56CU4l1OyYkpdiSQw+3IaRB8Dq7CNzVVV
+        cKtLXyA7PaUtOFdiGX8PtGssDgZi3O04oAx3J0iK5vrJQUIYJB5ESrw1xSymRNJbTg2v3/iT3OobL
+        OFmKLXDV7AiNAiX/F63tCkivHIVYGv51ygmO6qZbbdVm0oAIWk66lU+Gpd2iqUhdF/UIpa6s5Cn5y
+        8gdTWUTyGvFgEjbA2/HN8DVe9tPEcGSfG0LVnWLWYEZavmOL885zA7WzTj5eHaFuKE42rJh/0zYc+
+        uuL2MGxg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1nMXuq-00AbjJ-8Z; Tue, 22 Feb 2022 16:21:28 +0000
+Date:   Tue, 22 Feb 2022 08:21:28 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Mikko Perttunen <mperttunen@nvidia.com>
+Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com, joro@8bytes.org,
+        will@kernel.org, robh+dt@kernel.org, robin.murphy@arm.com,
+        linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 2/9] gpu: host1x: Add context bus
+Message-ID: <YhUNiHiYdQfxJybk@infradead.org>
+References: <20220218113952.3077606-1-mperttunen@nvidia.com>
+ <20220218113952.3077606-3-mperttunen@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220221153934.5226-3-akhilrajeev@nvidia.com>
+In-Reply-To: <20220218113952.3077606-3-mperttunen@nvidia.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Akhil,
-
-On Mon, Feb 21, 2022 at 09:09:34PM +0530, Akhil R wrote:
-> Adding GPC DMA controller driver for Tegra. The driver supports dma
-> transfers between memory to memory, IO peripheral to memory and
-> memory to IO peripheral.
+On Fri, Feb 18, 2022 at 01:39:45PM +0200, Mikko Perttunen wrote:
+> The context bus is a "dummy" bus that contains struct devices that
+> correspond to IOMMU contexts assigned through Host1x to processes.
 > 
-> Co-developed-by: Pavan Kunapuli <pkunapuli@nvidia.com>
-> Signed-off-by: Pavan Kunapuli <pkunapuli@nvidia.com>
-> Co-developed-by: Rajesh Gumasta <rgumasta@nvidia.com>
-> Signed-off-by: Rajesh Gumasta <rgumasta@nvidia.com>
-> Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
-> Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
-> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+> Even when host1x itself is built as a module, the bus is registered
+> in built-in code so that the built-in ARM SMMU driver is able to
+> reference it.
+> 
+> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
 > ---
->  drivers/dma/Kconfig            |   11 +
->  drivers/dma/Makefile           |    1 +
->  drivers/dma/tegra186-gpc-dma.c | 1507 ++++++++++++++++++++++++++++++++
->  3 files changed, 1519 insertions(+)
->  create mode 100644 drivers/dma/tegra186-gpc-dma.c
-
-<snip>
-
-> +static const struct __maybe_unused dev_pm_ops tegra_dma_dev_pm_ops = {
-
-The __maybe_unused cannot split the type ("struct dev_pm_ops") otherwise
-it causes a clang warning:
-
-https://lore.kernel.org/r/202202221207.lQ53BwKp-lkp@intel.com/
-
-static const struct dev_pm_ops tegra_dma_dev_pm_ops __maybe_unused = {
-
-would look a litle better I think. However, is this attribute even
-needed? The variable is unconditionally used below, so there should be
-no warning about it being unused?
-
-Cheers,
-Nathan
-
-> +	SET_SYSTEM_SLEEP_PM_OPS(tegra_dma_pm_suspend, tegra_dma_pm_resume)
-> +};
-> +
-> +static struct platform_driver tegra_dma_driver = {
-> +	.driver = {
-> +		.name	= "tegra-gpcdma",
-> +		.pm	= &tegra_dma_dev_pm_ops,
-> +		.of_match_table = tegra_dma_of_match,
-> +	},
-> +	.probe		= tegra_dma_probe,
-> +	.remove		= tegra_dma_remove,
-> +};
-> +
-> +module_platform_driver(tegra_dma_driver);
-> +
-> +MODULE_DESCRIPTION("NVIDIA Tegra GPC DMA Controller driver");
-> +MODULE_AUTHOR("Pavan Kunapuli <pkunapuli@nvidia.com>");
-> +MODULE_AUTHOR("Rajesh Gumasta <rgumasta@nvidia.com>");
-> +MODULE_LICENSE("GPL");
-> -- 
-> 2.17.1
+>  drivers/gpu/Makefile               |  3 +--
+>  drivers/gpu/host1x/Kconfig         |  5 +++++
+>  drivers/gpu/host1x/Makefile        |  1 +
+>  drivers/gpu/host1x/context_bus.c   | 31 ++++++++++++++++++++++++++++++
+>  include/linux/host1x_context_bus.h | 15 +++++++++++++++
+>  5 files changed, 53 insertions(+), 2 deletions(-)
+>  create mode 100644 drivers/gpu/host1x/context_bus.c
+>  create mode 100644 include/linux/host1x_context_bus.h
 > 
-> 
+> diff --git a/drivers/gpu/Makefile b/drivers/gpu/Makefile
+> index 835c88318cec..8997f0096545 100644
+> --- a/drivers/gpu/Makefile
+> +++ b/drivers/gpu/Makefile
+> @@ -2,7 +2,6 @@
+>  # drm/tegra depends on host1x, so if both drivers are built-in care must be
+>  # taken to initialize them in the correct order. Link order is the only way
+>  # to ensure this currently.
+> -obj-$(CONFIG_TEGRA_HOST1X)	+= host1x/
+> -obj-y			+= drm/ vga/
+> +obj-y			+= host1x/ drm/ vga/
+>  obj-$(CONFIG_IMX_IPUV3_CORE)	+= ipu-v3/
+>  obj-$(CONFIG_TRACE_GPU_MEM)		+= trace/
+> diff --git a/drivers/gpu/host1x/Kconfig b/drivers/gpu/host1x/Kconfig
+> index 6815b4db17c1..1861a8180d3f 100644
+> --- a/drivers/gpu/host1x/Kconfig
+> +++ b/drivers/gpu/host1x/Kconfig
+> @@ -1,8 +1,13 @@
+>  # SPDX-License-Identifier: GPL-2.0-only
+> +
+> +config TEGRA_HOST1X_CONTEXT_BUS
+> +	bool
+> +
+>  config TEGRA_HOST1X
+>  	tristate "NVIDIA Tegra host1x driver"
+>  	depends on ARCH_TEGRA || (ARM && COMPILE_TEST)
+>  	select DMA_SHARED_BUFFER
+> +	select TEGRA_HOST1X_CONTEXT_BUS
+>  	select IOMMU_IOVA
+>  	help
+>  	  Driver for the NVIDIA Tegra host1x hardware.
+> diff --git a/drivers/gpu/host1x/Makefile b/drivers/gpu/host1x/Makefile
+> index d2b6f7de0498..c891a3e33844 100644
+> --- a/drivers/gpu/host1x/Makefile
+> +++ b/drivers/gpu/host1x/Makefile
+> @@ -18,3 +18,4 @@ host1x-y = \
+>  	hw/host1x07.o
+>  
+>  obj-$(CONFIG_TEGRA_HOST1X) += host1x.o
+> +obj-$(CONFIG_TEGRA_HOST1X_CONTEXT_BUS) += context_bus.o
+> diff --git a/drivers/gpu/host1x/context_bus.c b/drivers/gpu/host1x/context_bus.c
+> new file mode 100644
+> index 000000000000..2625914f3c7d
+> --- /dev/null
+> +++ b/drivers/gpu/host1x/context_bus.c
+> @@ -0,0 +1,31 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (c) 2021, NVIDIA Corporation.
+> + */
+> +
+> +#include <linux/device.h>
+> +#include <linux/of.h>
+> +
+> +struct bus_type host1x_context_device_bus_type = {
+> +	.name = "host1x-context",
+> +};
+> +EXPORT_SYMBOL(host1x_context_device_bus_type);
+
+EXPORT_SYMBOL_GPL, please.
+
+But the pattern that this copies in arm_smmu_bus_init is really
+ugly.  I think we need to figure out a way todo that without having
+to export all the low-level bus types.
