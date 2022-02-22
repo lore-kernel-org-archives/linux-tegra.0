@@ -2,42 +2,42 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15FCCC433EF
-	for <linux-tegra@archiver.kernel.org>; Tue, 22 Feb 2022 08:27:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2ED74C433EF
+	for <linux-tegra@archiver.kernel.org>; Tue, 22 Feb 2022 08:37:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229448AbiBVI1m (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 22 Feb 2022 03:27:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35478 "EHLO
+        id S229540AbiBVIhk (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 22 Feb 2022 03:37:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47352 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229739AbiBVI1l (ORCPT
+        with ESMTP id S229515AbiBVIhj (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 22 Feb 2022 03:27:41 -0500
+        Tue, 22 Feb 2022 03:37:39 -0500
 Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9EA609F6E1;
-        Tue, 22 Feb 2022 00:27:14 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2483C8F61E;
+        Tue, 22 Feb 2022 00:37:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
          s=20161220; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
         References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
         Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
         Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
         List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=zfYHUsgUj9bMp9XYzGWc9eCMGjpGs1SMSVRvMazWtpo=; b=QHyYx+SEEBJQcikLDxVb11HMI/
-        2DeGvHzOW+RxzucK9R5fB+ys4CS7odv616RThf4BocUwCSEmx+Lgo8ekre1mE+DOGH5lndthE7cuF
-        LJgPVhqRqWgWCAwG2TShhc4y5cDEJ63yjNi8IHNyaSJLrMcgUDNYKl7HJyGUK2qTaSkzVh4tyafcG
-        tX4n0/urq6mUwVFF5eL9hyy7tytH9AsCsf4Fic8G6mLH/0FQc9k8/jPHwKQCHQ+f9xZty259++SHc
-        THiCCaySgOh3OTTdIV5o2RXnNsbn/dhsifKpI422xSjAbDXK5+DFwC3r7RAsQ7fYFLz9LiuepQ1Sf
-        AEBNkh5g==;
+        bh=7Y5Q0bIv6KCJJMw/T06DdwsQiFx+TO703WYBc0RO2zg=; b=1BASgC2ZmAp7Yuf1iRh/CZrpM+
+        fUes0bn2kS7zkMDCz1SLhO7N2+FCpEpAiKn1Y3+EZMMlwpwQ7R7NKXAtcCaom+H6pkDtZWlW+wIx/
+        8hnwMmQ+V4dv//mER9Yle4tcbymSC3T5g6HMT7YDP0pzHTb1rEQsuTX0nosAUfeIn5lJe9hHKKvwP
+        gbcThs7e1pUbiiiK+Ye8R9KPzRr9nggO5p5zj1XuaZIiSuXK3c662c0q+M02SlRwvTranKvMD6sQg
+        4LKm0IlHl2rJElKURPmgu6a80acIsyj3EnNIVWxgkO1mETmOJBImYmwsQDTT6qReeeXHHXyYZegpV
+        81lXv4Pg==;
 Received: from 91-158-25-70.elisa-laajakaista.fi ([91.158.25.70] helo=[192.168.1.10])
         by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.89)
         (envelope-from <cyndis@kapsi.fi>)
-        id 1nMQVk-0003Nm-2i; Tue, 22 Feb 2022 10:27:04 +0200
-Message-ID: <30033f5b-3fd1-22c7-896b-af034a4041df@kapsi.fi>
-Date:   Tue, 22 Feb 2022 10:27:03 +0200
+        id 1nMQfS-00063Y-Iy; Tue, 22 Feb 2022 10:37:06 +0200
+Message-ID: <134c4a28-4331-deed-a374-75c9711168f0@kapsi.fi>
+Date:   Tue, 22 Feb 2022 10:37:05 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.4.1
-Subject: Re: [PATCH v3 8/9] drm/tegra: vic: Implement get_streamid_offset
+Subject: Re: [PATCH v3 9/9] drm/tegra: Support context isolation
 Content-Language: en-US
 To:     Dmitry Osipenko <digetx@gmail.com>,
         Mikko Perttunen <mperttunen@nvidia.com>,
@@ -47,13 +47,12 @@ Cc:     linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
         iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 References: <20220218113952.3077606-1-mperttunen@nvidia.com>
- <20220218113952.3077606-9-mperttunen@nvidia.com>
- <b1df816b-6838-c435-1a23-5029144e4cfe@gmail.com>
- <7f4e4c47-59f1-1def-36bf-a2ded912f76d@gmail.com>
- <5d1b6e82-2c9d-8388-697f-0d7305a1206f@kapsi.fi>
- <ee648994-b296-2ac4-a676-ddcac463a428@gmail.com>
+ <20220218113952.3077606-10-mperttunen@nvidia.com>
+ <2b4dd244-f918-4d26-2322-00a0bb226ccf@gmail.com>
+ <ea65fcd6-9451-7f5b-f4a9-57b8575f09ff@kapsi.fi>
+ <bb533634-6cde-3835-db11-7b6191385294@gmail.com>
 From:   Mikko Perttunen <cyndis@kapsi.fi>
-In-Reply-To: <ee648994-b296-2ac4-a676-ddcac463a428@gmail.com>
+In-Reply-To: <bb533634-6cde-3835-db11-7b6191385294@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 91.158.25.70
@@ -63,31 +62,71 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 2/21/22 22:10, Dmitry Osipenko wrote:
-> 21.02.2022 14:44, Mikko Perttunen пишет:
->> On 2/19/22 20:54, Dmitry Osipenko wrote:
->>> 19.02.2022 21:49, Dmitry Osipenko пишет:
->>>> 18.02.2022 14:39, Mikko Perttunen пишет:
->>>>> +static int vic_get_streamid_offset(struct tegra_drm_client *client)
->>>>> +{
->>>>> +    struct vic *vic = to_vic(client);
->>>>> +    int err;
->>>>> +
->>>>> +    err = vic_load_firmware(vic);
->>>>
->>>> You can't invoke vic_load_firmware() while RPM is suspended. Either
->>>> replace this with RPM get/put or do something else.
+On 2/21/22 22:02, Dmitry Osipenko wrote:
+> 21.02.2022 15:06, Mikko Perttunen пишет:
+>> On 2/19/22 20:35, Dmitry Osipenko wrote:
+>>> 18.02.2022 14:39, Mikko Perttunen пишет:
+>>>> +    if (context->memory_context &&
+>>>> context->client->ops->get_streamid_offset) {
+>>>               ^^^
+>>>> +        int offset =
+>>>> context->client->ops->get_streamid_offset(context->client);
+>>>> +
+>>>> +        if (offset >= 0) {
+>>>> +            job->context = context->memory_context;
+>>>> +            job->engine_streamid_offset = offset;
+>>>> +            host1x_context_get(job->context);
+>>>> +        }
+>>>
+>>> You should bump refcount unconditionally or you'll get refcnt underflow
+>>> on put, when offset < 0.
 >>
->> Why not, I'm not seeing any HW accesses in vic_load_firmware? Although
->> it looks like it might race with the vic_load_firmware call in
->> vic_runtime_resume which probably needs to be fixed.
+>> This refcount is intended to be dropped from 'release_job', where it's
+>> dropped if job->context is set, which it is from this path.
+>>
+>>>
+>>>> +    }
+>>>> +
+>>>>        /*
+>>>>         * job_data is now part of job reference counting, so don't
+>>>> release
+>>>>         * it from here.
+>>>> diff --git a/drivers/gpu/drm/tegra/uapi.c b/drivers/gpu/drm/tegra/uapi.c
+>>>> index 9ab9179d2026..be33da54d12c 100644
+>>>> --- a/drivers/gpu/drm/tegra/uapi.c
+>>>> +++ b/drivers/gpu/drm/tegra/uapi.c
+>>>> @@ -33,6 +33,9 @@ static void tegra_drm_channel_context_close(struct
+>>>> tegra_drm_context *context)
+>>>>        struct tegra_drm_mapping *mapping;
+>>>>        unsigned long id;
+>>>>    +    if (context->memory_context)
+>>>> +        host1x_context_put(context->memory_context);
+>>>
+>>> The "if (context->memory_context &&
+>>> context->client->ops->get_streamid_offset)" above doesn't match the "if
+>>> (context->memory_context)". You'll get refcount underflow.
+>>
+>> And this drop is for the refcount implicitly added when allocating the
+>> memory context through host1x_context_alloc; so these two places should
+>> be independent.
+>>
+>> Please elaborate if I missed something.
 > 
-> It was not clear from the function's name that h/w is untouched, I read
-> "load" as "upload" and then looked at vic_runtime_resume(). I'd rename
-> vic_load_firmware() to vic_prepare_firmware_image().
+> You named context as memory_context and then have
+> context=context->memory_context. Please try to improve the variable
+> names, like drm_ctx->host1x_ctx for example.
 > 
-> And yes, technically lock is needed.
+> I'm also not a big fan of the "if (ref) put(ref)" pattern. Won't be
+> better to move all the "if (!NULL)" checks inside of get()/put() and
+> make the invocations unconditional?
 
-Yep, I'll consider renaming it.
+I agree that the naming here is confusing with different kinds of 
+contexts flying around, though I would prefer not to change the original 
+'struct tegra_drm_context *context' since it's used all around the code. 
+But I'll try to make it clearer.
+
+Regarding moving NULL checks inside get/put, I personally dislike that 
+pattern (also with e.g. kfree) since when reading the code, it makes it 
+more difficult to see that the pointer can be NULL.
 
 Mikko
