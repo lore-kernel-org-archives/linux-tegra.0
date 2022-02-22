@@ -2,85 +2,73 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28707C433EF
-	for <linux-tegra@archiver.kernel.org>; Tue, 22 Feb 2022 18:41:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73285C433EF
+	for <linux-tegra@archiver.kernel.org>; Tue, 22 Feb 2022 20:27:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234815AbiBVSmE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 22 Feb 2022 13:42:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32894 "EHLO
+        id S235270AbiBVU1l (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 22 Feb 2022 15:27:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32900 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233516AbiBVSmD (ORCPT
+        with ESMTP id S231694AbiBVU1l (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 22 Feb 2022 13:42:03 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2B8D3190C;
-        Tue, 22 Feb 2022 10:41:37 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 5F8D161295;
-        Tue, 22 Feb 2022 18:41:37 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F537C340E8;
-        Tue, 22 Feb 2022 18:41:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1645555296;
-        bh=PlcILcXwOi9fBpsm7seOqoPGQWIfouA8pxkgWFTFfJE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=D8+SlpmptrI87aGvfboenq5So/2aJLP0cDinsaic44I2HTUR0bMnVtONdsmMCafKE
-         LQ4vpL2j5lwsKlYbDYy+oEeOuHgMZoS4t7NHcl1UzDwoJ6VQVtUzXFHWH0XzHoE7+4
-         x2CjSraa+BqwHwpK3DQiteyQVgPdd6F5mmg/ZAiz3Xh5QuGtSvf/qC0oI8y/GlrRbL
-         wa8v4t6tEhHsGGrsyGrFQ6TQZXF9VlLbxSaV6u51LJNz9EHTbd2+i+0TkwXHS2mAK6
-         hhU3R5t+Ef8rvxbaxk4GMn1nDLnNBvnwYd9M3rZN65xjWbOE7sxJC5ukNdYjpxs5P/
-         3oYesyjVyZ6FQ==
-Date:   Tue, 22 Feb 2022 18:41:31 +0000
-From:   Mark Brown <broonie@kernel.org>
+        Tue, 22 Feb 2022 15:27:41 -0500
+Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E2949D051;
+        Tue, 22 Feb 2022 12:27:15 -0800 (PST)
+Received: by mail-ot1-f42.google.com with SMTP id j3-20020a9d7683000000b005aeed94f4e9so7087423otl.6;
+        Tue, 22 Feb 2022 12:27:15 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=uPnUbQrAlFPwBsKQK/FHM3ApbVo/5s8mNMNmKnxO5co=;
+        b=pDTbECdoXBX2cqC8oVNUUqqjOGWAVH4pLzUAvipZ8k9W83WRIMED3yT9gtG3ht36NF
+         Ij3noHsARUbGZsyJrTjtfwiGnVogBse8aMrmyo1jdjgDjbKytslPxkn2D+QsravFzSzW
+         Q6aoZoCAEGsKmieO1JH4qkHCgmqHTaLtHiIS8HnuC6b5svbh9LjeC18DrL76j5CmCp/7
+         ShdDjSYXXi/go/eEG7DRl6mKF4o7by4d3VBfuuAnCYG0IaAL4xopX4TFFGReZpmDQmro
+         1WNwinmz33OOGRLZKNVwh1XG9Q3PdccrIxn4hbn9TVXFSFVY2KUlthccOdv1ho2Ed97o
+         XqNg==
+X-Gm-Message-State: AOAM532jSGXm5mc1hgsUgdI02zL8gfKKbzhQBJnG/qk3mBYg84VwgQCm
+        xCy47cePMP069yA8lPjc62Okc694SQ==
+X-Google-Smtp-Source: ABdhPJzu1Y7MfdsZBnFKD4tdGj0xn3CXifVlJN/265Lw6Z6FbCDdeAP5RHP7woKaVlQzblKUciWqww==
+X-Received: by 2002:a9d:5e92:0:b0:59e:28db:41cf with SMTP id f18-20020a9d5e92000000b0059e28db41cfmr9175612otl.366.1645561634834;
+        Tue, 22 Feb 2022 12:27:14 -0800 (PST)
+Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
+        by smtp.gmail.com with ESMTPSA id j2sm4716448ooi.39.2022.02.22.12.27.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Feb 2022 12:27:14 -0800 (PST)
+Received: (nullmailer pid 3527901 invoked by uid 1000);
+        Tue, 22 Feb 2022 20:27:13 -0000
+Date:   Tue, 22 Feb 2022 14:27:13 -0600
+From:   Rob Herring <robh@kernel.org>
 To:     Krishna Yarlagadda <kyarlagadda@nvidia.com>
-Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com,
+Cc:     broonie@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com,
         linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org,
-        skomatineni@nvidia.com, ldewangan@nvidia.com, robh+dt@kernel.org,
+        skomatineni@nvidia.com, ldewangan@nvidia.com,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         p.zabel@pengutronix.de
-Subject: Re: [PATCH v2 5/5] spi: tegra210-quad: combined sequence mode
-Message-ID: <YhUuW+MlgeQRTVZB@sirena.org.uk>
+Subject: Re: [PATCH v2 2/5] dt-bindings: spi: Tegra234 QUAD SPI compatible
+Message-ID: <YhVHIVJlCwhbVAH7@robh.at.kernel.org>
 References: <20220222175611.58051-1-kyarlagadda@nvidia.com>
- <20220222175611.58051-6-kyarlagadda@nvidia.com>
+ <20220222175611.58051-3-kyarlagadda@nvidia.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="WWVA/QWcCulnhLx/"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220222175611.58051-6-kyarlagadda@nvidia.com>
-X-Cookie: I smell a wumpus.
+In-Reply-To: <20220222175611.58051-3-kyarlagadda@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On Tue, Feb 22, 2022 at 11:26:08PM +0530, Krishna Yarlagadda wrote:
+> Add compatible string for Tegra234 for Tegra QUAD SPI
+> 
+> Signed-off-by: Krishna Yarlagadda <kyarlagadda@nvidia.com>
+> ---
+>  Documentation/devicetree/bindings/spi/nvidia,tegra210-quad.yaml | 1 +
+>  1 file changed, 1 insertion(+)
 
---WWVA/QWcCulnhLx/
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Please add Acked-by/Reviewed-by tags when posting new versions. However,
+there's no need to repost patches *only* to add the tags. The upstream
+maintainer will do that for acks received on the version they apply.
 
-On Tue, Feb 22, 2022 at 11:26:11PM +0530, Krishna Yarlagadda wrote:
-
-> +	val = tegra_qspi_readl(tqspi, QSPI_GLOBAL_CONFIG);
-> +	val |= QSPI_CMB_SEQ_EN;
-> +	tegra_qspi_writel(tqspi, val, QSPI_GLOBAL_CONFIG);
-
-I notice that nothing seems to clear QSPI_CMB_SEQ_EN - is that self
-clearing or something?
-
---WWVA/QWcCulnhLx/
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmIVLloACgkQJNaLcl1U
-h9CEGAf/VSroGQl8z/3WJdxNVBdGUYCSFKyikKK8yzn9796Gh2t+sA96yEW6uFJY
-x45RQmeKDruKl5sWoDb695A3S6g6fwP8hO3ZbARV/06g9Ib7DZsB9WTpuVICXXZ2
-AO7Pysc3R0qBb+4XKZpgWt+8g5u16UXptgmGa7bUI02gJNW3Nn4/RfcR3hsNnKOe
-9uAeq2Dpncm8H5+gxP0i8Ngr1aba8MZHa61Rr0j/I2zLADVK4Mcwpy6XfVZoNXns
-UlZvRs0FiygfEQnLEJ3a9Q9ZAPMPnE1/iJi9LtyS/H7SpIx0POv/AbKtaEWgHe/E
-NaSmsp5CtTJg3R8H3LDX8fDxif7ARQ==
-=z2l3
------END PGP SIGNATURE-----
-
---WWVA/QWcCulnhLx/--
+If a tag was not added on purpose, please state why and what changed.
