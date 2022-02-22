@@ -2,141 +2,219 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DECD5C433FE
-	for <linux-tegra@archiver.kernel.org>; Tue, 22 Feb 2022 12:09:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6409C433EF
+	for <linux-tegra@archiver.kernel.org>; Tue, 22 Feb 2022 12:55:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231530AbiBVMJh (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 22 Feb 2022 07:09:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58296 "EHLO
+        id S232041AbiBVMzy (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 22 Feb 2022 07:55:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55122 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231338AbiBVMJg (ORCPT
+        with ESMTP id S232040AbiBVMzy (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 22 Feb 2022 07:09:36 -0500
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2044.outbound.protection.outlook.com [40.107.243.44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F031CB3E7C;
-        Tue, 22 Feb 2022 04:09:11 -0800 (PST)
+        Tue, 22 Feb 2022 07:55:54 -0500
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2088.outbound.protection.outlook.com [40.107.236.88])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC85E128DEF;
+        Tue, 22 Feb 2022 04:55:27 -0800 (PST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=DCD0RbuGUKhjGT9An/gUez+7T6RJgYg1sRXuMAhM/2CISifXk6O6BPuVt1Em3xB/NV5AboHNVE5nGO7RMyrO6FhtMhyuCe7erwLs4lLPCtdpJ4dr5sPT0l0nXNccqj6o/fWnI1CbayQaA/L4cnkYsvtxKEGVeW3ix2XmhGfb5uCUX4RHXDybarAZuWIpduP2tPBiFsQNMfpDwXas8OCcrRb+2aSseWafO5DV6wZqCyB7livcnMErX0rKN/e+icAG0v1xKcMFuPsaEMXtabWAASIfLytB9S8APweR7/b57j8tCFs1eCRIj/MNYp3ZfoE643xyjLiwm/Do4IABIQXgFQ==
+ b=HLstoaT22ghzyP4H4r0ZyCDEYf8M4F4jvurYxxOQX9CNql4jKnZ38i60vc0rmI7v/e4z9JXRREqvwPv1/eLZr6uCHlDzC4wW5K4iuF/hc15aJWuHvzn2H1B5qm/5SmgGWJUkOnsCocWB+/IgHWOxCi66Ntpiu8jz3UYiu3ujbe/LkfCuZf+3Fda7F3RecTyabVnfXSBKmLz1eIoOj4/heDCk6etN/G3gslHoalEfdREzNhkK7ICfrr0HoibnvaI3vWlDm7fOyW42qlEtAEgUNycK7xe19EFAwVfD8xsNNMXm2QsvlXi5HAhXcx4MlPPSQfT4TZ1fhqZSEJ2Ot/o+NQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Gw0LyOytf3ilc8PeAbjT5LfVWOr7Y9hgAgMBwHy9sRQ=;
- b=TKAPRDhBNGe9DMZ85C2BSbHhTc8eGWXk6h114mexhqnYec7xOVElAAQDThnm8rqU0Uyzc1gZB0v/drpCQYJ2FHYfMOghEieRo92uXeCqCv4C6KyTP+7QvrcQPpr2mLrS3TAb2cUveAkCA/j5f9XnucSKlpvCk2PE/Ow/GVMdRT8K0uY2voc8Vl0nTxK7yLvZiyU/4CEGnj6hzNubO361DbyHksWy8N7nO6k3K2MuMaxW9OYA3qQq+UsqjIE1azMOTK1coE9ofrQLdFDA7c01jN/lSHHc0kd0jibTKVKBHvak138KH87+f3qTsDLsOdsUyKG0IT06JYtY7bL02Fk3ZQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 12.22.5.234) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com; dmarc=pass
- (p=reject sp=reject pct=100) action=none header.from=nvidia.com; dkim=none
- (message not signed); arc=none
+ bh=v1CjRxs1ggFwWsmPygQrj4pYOgH2fbUG1oBR1VtxZ0E=;
+ b=SmRTDVZ1PS9Z+xqu4Hx5K12JcWM0ZI4DSpX1xtKkWycF4rK2KQj+rkfxVT8yKWrg/vY5Uygu6BFswI054jh2G4F5E8vyqsrDu5FkH5QpoILyqDHeCJtGysXjFDLW8OPFIAKCxbiKVdljWHL2kmN75beU8GuXcliuyRFnSwPFYRht0HPkquokJA4zWmJbhzfPwZaOcGne41RIVcHAr1ydako3DDxUAsetEvGLv0TiTcdNnDAR7VlD49IqmTnNAuOxG21eDHPSVr8FoJNAFIRohrzIwJ0xjfkhwnv6PgwQIthYp4PdnoTIHqlJTASnAVjMyhW2RUOC6n8zioNFhybydA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Gw0LyOytf3ilc8PeAbjT5LfVWOr7Y9hgAgMBwHy9sRQ=;
- b=GDTEtcXZW8CWnrTcN3TcZCcMUQaguDWdeK1b/grTMS1dirICFth7kbLFdaOWYwPyVQYDLSEzdRPyYm/H1dmOePiLJfsJPdAZYHee33jGB7PSoZHqXLFHqvQw5nnbwt/Nlko9HJQKYILS3xLD87uANSzEcPoBi/RPBO1F8io2wQnkNnoOoW+NTu9YnOkDyoc5A3yTjxWNkUnWm9GQPVf9Bf2MojVJJQQRtZ+5LGcy7rkqAmJTyCdLmoH2FoL8bVzSUQtlpHIwMIL5mHxtFRq45c8XXuQgA/vep+uwREr8Ivw46LN7w7e151WLbdu/5jqFpd5o9JO8g3lUFPRa+dCbFg==
-Received: from CO1PR15CA0077.namprd15.prod.outlook.com (2603:10b6:101:20::21)
- by DM5PR12MB1449.namprd12.prod.outlook.com (2603:10b6:4:10::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4995.17; Tue, 22 Feb
- 2022 12:09:10 +0000
-Received: from CO1NAM11FT016.eop-nam11.prod.protection.outlook.com
- (2603:10b6:101:20:cafe::dd) by CO1PR15CA0077.outlook.office365.com
- (2603:10b6:101:20::21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4975.18 via Frontend
- Transport; Tue, 22 Feb 2022 12:09:09 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.234)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 12.22.5.234 as permitted sender) receiver=protection.outlook.com;
- client-ip=12.22.5.234; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (12.22.5.234) by
- CO1NAM11FT016.mail.protection.outlook.com (10.13.175.141) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.4995.15 via Frontend Transport; Tue, 22 Feb 2022 12:09:09 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by DRHQMAIL101.nvidia.com
- (10.27.9.10) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Tue, 22 Feb
- 2022 12:09:08 +0000
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.9; Tue, 22 Feb 2022
- 04:09:07 -0800
-Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.9 via Frontend
- Transport; Tue, 22 Feb 2022 04:09:07 -0800
+ bh=v1CjRxs1ggFwWsmPygQrj4pYOgH2fbUG1oBR1VtxZ0E=;
+ b=q4ZlNuzgvFHG90LeARCL9Hn5MsXPuQxyR/qJIekI6yTz2Cn025CYuuwHV4OrcT2MrGt2QxMDjRU+1ccQVBOwvzvJlj5Ki3tY3tw6RNQWX2ALZmHGAtoX7wgkKjYvPVCRYiQKIf5td/8hpXoaGJsVv9+PFAwRE8UIddMiS0zR/vfeFDi/oySBxgl84QfAB9zhMpcIFwyo/DH2svHUqNSIBemej/n+/QZlR2B7Ce91t9PMgS/vE/X+xsDvcdlGMmJlfRAw9gqUe2ZrTGJpqro7dvZQbBNluy9MvwO5hqC0FqBNTxoOfk5lH+R6Qt2h3vnv9So+4JwK1OViPkIVm+HRqQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CO6PR12MB5444.namprd12.prod.outlook.com (2603:10b6:5:35e::8) by
+ MW2PR12MB2522.namprd12.prod.outlook.com (2603:10b6:907:f::28) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.4995.16; Tue, 22 Feb 2022 12:55:25 +0000
+Received: from CO6PR12MB5444.namprd12.prod.outlook.com
+ ([fe80::3df2:54be:277e:7ed7]) by CO6PR12MB5444.namprd12.prod.outlook.com
+ ([fe80::3df2:54be:277e:7ed7%5]) with mapi id 15.20.4995.027; Tue, 22 Feb 2022
+ 12:55:25 +0000
+Message-ID: <fd3aa188-56a5-064d-f63f-846b909dd2a3@nvidia.com>
+Date:   Tue, 22 Feb 2022 12:55:19 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [PATCH v2] hwmon: Handle failure to register sensor with thermal
+ zone correctly
+Content-Language: en-US
+To:     Guenter Roeck <linux@roeck-us.net>,
+        Hardware Monitoring <linux-hwmon@vger.kernel.org>
+Cc:     Jean Delvare <jdelvare@suse.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+References: <20220221182209.1795242-1-linux@roeck-us.net>
 From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <stable@vger.kernel.org>, <torvalds@linux-foundation.org>,
-        <akpm@linux-foundation.org>, <linux@roeck-us.net>,
-        <shuah@kernel.org>, <patches@kernelci.org>,
-        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
-        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
-        <sudipm.mukherjee@gmail.com>, <slade@sladewatkins.com>,
-        <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 5.10 000/121] 5.10.102-rc1 review
-In-Reply-To: <20220221084921.147454846@linuxfoundation.org>
-References: <20220221084921.147454846@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20220221182209.1795242-1-linux@roeck-us.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: AM6P193CA0063.EURP193.PROD.OUTLOOK.COM
+ (2603:10a6:209:8e::40) To CO6PR12MB5444.namprd12.prod.outlook.com
+ (2603:10b6:5:35e::8)
 MIME-Version: 1.0
-Message-ID: <57a7b2f9-9459-40e1-9c10-de3cda7fb605@rnnvmail203.nvidia.com>
-Date:   Tue, 22 Feb 2022 04:09:07 -0800
-X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 26320fed-21fb-45d9-fb42-08d9f5fc21ba
-X-MS-TrafficTypeDiagnostic: DM5PR12MB1449:EE_
-X-Microsoft-Antispam-PRVS: <DM5PR12MB1449E91604EFD35B2C8FDA86D93B9@DM5PR12MB1449.namprd12.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: 7fb306c2-72f8-4ff2-0cbc-08d9f6029828
+X-MS-TrafficTypeDiagnostic: MW2PR12MB2522:EE_
+X-Microsoft-Antispam-PRVS: <MW2PR12MB2522667A09FC308204A6357BD93B9@MW2PR12MB2522.namprd12.prod.outlook.com>
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: pBIT1EZONQaPkJWKZ4w86Wxbs9AzdlH0FmFYnprWuxciFNfRwJOzt9CadhMbdnsD3xzzEDcda5XBoxvpfT68LjbkH5NBHQu3IjtksyzZVAaLt+46MJsPjYeVw27m/cUsSClztV1jx4jDFTv+oEFYGYKokhANOsM2WQxsAkkP2hiSpxHdFCkW9MLHXQfdFsKtw9K+fNoh2fNQPiUpjU5jLD+1HsY0ItJc1b7dF+fSQIymNFbQfpOZANJ6uUDH8SCHMOtOy+3/4IW52Um+Yc3yAKE44OxGbhkPPpmpcq2CbLt5dliPu9dzKjMuMvbN47VIsSfDPqk+gsmCtVa2FeEFcNOACZwDOs/FbXvqUPY8rm1O/CibD76dw9KsuHIstoTMl7CM53aYdG+9dCuK11pDqqr/tLe2UNvVhlx4EA+KVaEcs1ewqHuW5tHEk258Ax6kXxa7aPU2igqTb7MsFJpu3BopIaFd7odcJaTICVH8PR6sHebpPC+z/HhXwsIuEDrcYmTdm4lIEYuCFijXz6Zvfd25RHcte8CMUH2IygqOoZDJcvTnOrcmlxt2tOly6ANE2ijNKgX6E5q9EDewVuSnD8DvI/mKEjYc76eqTrNLq0VzGBvbA6R2CEWuBWBN5+J34v//euiPpM6z8s2ixaUdFdopW5/jJShiBNCR/I4Ns3TG9tZ6skYAmMyzKvcPXpgFUqOKenQs6v4ifG6lYNVhhvT0SIPwrLVLMwFJ7dc4Z504hVVolTQazeg8IyjeUWNXR1BTlIsl8SMOVc+iXuqBXQ+hb0NKBWXtOHFxK6dv3/U=
-X-Forefront-Antispam-Report: CIP:12.22.5.234;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230001)(4636009)(36840700001)(40470700004)(46966006)(186003)(26005)(70206006)(70586007)(966005)(31696002)(86362001)(508600001)(8676002)(54906003)(82310400004)(36860700001)(316002)(6916009)(81166007)(356005)(426003)(7416002)(336012)(4326008)(47076005)(40460700003)(5660300002)(2906002)(8936002)(31686004)(36900700001);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: MUD2FVU7Ta0Iz6K3yCOIGA2WqME82OvRILts39ScNX7Lu6Qr9/CmKWhMjJddn4458evYfMn+6c8Ljvb8U87mRrJ89JZmbkSFdMZ8oaDlyLDRy40XYNbiCYyQDyhzm606DcQQf4uZPdMVvtMFX2rbWp7zKmBlMkUoMfVumKvUcP2iQPldfqFDQjEvGhi/TSEqCajK7orWKbugfxT31e5CfWSZJTYIBR51RN8IB6/yXxTtB5TialEi+/oNgV5uCslnb0lGl84afX1pWw9NHuZhjJHVW/Ke7UdmLJRvjYWS6sZ8pQAtSnMwzAntWLvqTWTYSF9DQvjYT9f+sH67r5Ayyjv3gVlnCRIkPGy14EPRMbG2Dw7RztWm5dj7B/N0UVS5jeK7vIw01kBH9VCWD/l2E57XXG1CDvidah+wN/fA5kM3hiwIuQIm6FKNaNlq3tEaKkP87OFkmP39ZuoLMriU3AY3+YJQIFshPaRk3iFC/S10gFVpNI78uOFBVoz/ZF84EznnaBccJOdAHVvkVSJlro/sBxpVCUXLmBBE6UfQyF05UaRUc86DU0wRXJsIHTcdSwWu0WozwbDRNoQntwa9jKCi713C1xccIDHCqYF3An3W14/AJu8/WUMCENZXB40lJXGXsUucF4fWq+/QGFS2XSaXWNNGGuJfCbuR6lSgTDEYQF5PCpU5e3KldVAf3z9wWuJ35eogiRz7p0gRAHOj7wB6c2rtb6o4/6jHOoVeskg=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR12MB5444.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(8676002)(4326008)(66476007)(66556008)(2616005)(6486002)(26005)(186003)(316002)(66946007)(508600001)(6512007)(38100700002)(86362001)(31696002)(110136005)(54906003)(2906002)(83380400001)(8936002)(31686004)(53546011)(36756003)(6506007)(55236004)(6666004)(5660300002)(43740500002)(45980500001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?eXBHajZtM0hJR1pNL1RLbnliRFhjTVI5V20zTmNTZnliamdIZkg3NnFkV1Uv?=
+ =?utf-8?B?dlhjYjBvcFlscnV6SXhSeTAreUczQnRITkpydTB5NEZMZmFhMW5OdXZBL25u?=
+ =?utf-8?B?SXB6ZWZVN29FbldKbkpqRkc1cUlDb1pFZ2dyY0xFWHpOb2lvNmVRalZhYVFS?=
+ =?utf-8?B?dkxPekJ0UmdEQ3cyOXVMcUhxUkJ0Znp3REE1U1d4NEZvNFBQU3pPVjIxOG1v?=
+ =?utf-8?B?ZVphb0NOTHhjNHFvNHdaelNBVEY5ZW5WMURlYXpGak9jYkRwY0R0c2l2a3Fs?=
+ =?utf-8?B?bU1FeDl2V3BtdjNxOS9pVjlETCs1b0U0RDZkdTUwWVU2RVRRakZVY3JUYzJW?=
+ =?utf-8?B?TXc4azREN1RqaXhkUUxSWlhMWDRvek9MRENkNENVeC9NMW9XRG1JTjM5c1ll?=
+ =?utf-8?B?ZDArMUJQa2pXbjZxa2JwaUQ4QmtLRFgvSTlPUk9OV1Nxd3dHeXZxVkdUWlFN?=
+ =?utf-8?B?aWVPeCt0TzAyY1pmZ2oyMkZPQ3NTa2RyV1gwM2M2eWQrSGRvTUsxMkg2R0Ro?=
+ =?utf-8?B?L09pelJxd1grTGtvN0JQZ1FkZS9oT011bHRiTEI1WFZpSnlnZm1QQWNXQVoy?=
+ =?utf-8?B?ZFdGWXN5Qkx5YzFSTHd0WFh2Q0tkQWI1TTMzL1QzcG9RQ1o2azQ4UXpKMEhj?=
+ =?utf-8?B?K3h5Rmd6dXo0T2dnQUMxbmlUc1ZMeGlyU3hMbGJNNWc5eWhHY3VBR09QNVVH?=
+ =?utf-8?B?SFA5OVVZQ0hjZ2FYMEJXNVNlOFBLelFONk5MaE1pRGthVVBEbURpWjliajI1?=
+ =?utf-8?B?NXJCNk00YlFBMGtxRStjOXhVdkY1OUZLNEVEUEFpYWwvMXErNmxnNHdXQzN0?=
+ =?utf-8?B?V3ZaeGxrRlN2UStDUjhHTytCbVZsNHNhL05NRGtBK2ZlRGJnRktPTEZ2cDR2?=
+ =?utf-8?B?ZHB4cFdRYjU5d1U5TDJmQTROZTdGTFNTYjgrdUZrV3hmS0EreUZkRzJUZTZz?=
+ =?utf-8?B?N2MxNkY4SDBPT3JRLzNDR1lELzdXeUhtTUhIQi9pcy9YT294UUxZaGdlSk5E?=
+ =?utf-8?B?OXkycjZnUGpNUjlmeTR4SmY3bS9CTDRVWllveWU5OEQybFVhZktQMkVwcGVO?=
+ =?utf-8?B?ZjR6bzUvN3NKaEZZaHI1SmFvZ2FOTnpBS1V1bUZjOUdGWjZ0dHAxaTNERlN0?=
+ =?utf-8?B?aElhUUlnbmFoc0ZUNGNuaWVyNmxOdFB1czZHSGlFTGZiOVNrbmdZbHVSL3V2?=
+ =?utf-8?B?MHUzam9RQTVSZ1hIc1BBdUhYTjIyOGFQSWYxaVZKWGNNdEFxOXJVeG0wVzlT?=
+ =?utf-8?B?M0FvU09LdlZGR2tEVDdTZ2dzNFRob1d2dE5xbHYvS2JnaUVtQlUzNmtkU3ow?=
+ =?utf-8?B?MlN0NWZBNVRWNmw1Y0VEZDNOY3p6N1lhNEJYbi8wV1ZzU2tnMjhOYXdVdk5u?=
+ =?utf-8?B?WWxWOHBxRWUrR0hpNTFuK0dFV3I3WWRSU2pVSzVIRmNDMmxLMFc0SlNsMEhY?=
+ =?utf-8?B?Z3RNcURJNDIwNlg3a0k5M1Y3QU1ncUlIenMrRmM3by94N3g2b2FPSGpVY20x?=
+ =?utf-8?B?MUZQbzI0UVpEOHNQTXhOcG1UTU9PZ3V5aXY0OVo0R1lDR2R6SHZ3RmFCVUxn?=
+ =?utf-8?B?K3JCTmlhUU5qNzRrVzl0RnJoOE10RXl3KzhCS1RZTTJDWmNJdXRtcjRFS1oz?=
+ =?utf-8?B?ZkE4anRLRW5PZE9kamNMdGFmUGE3Z1VXUXAraFB4czdoaVg0aFh6TXZsRHFB?=
+ =?utf-8?B?YXliT2ZETjlzVktaM2dobEhadmw4VWhEWklXQndXWXY3VWMvTnpxekZUVE1L?=
+ =?utf-8?B?NVV4d1BlcElnNGtkTzFTSGpiSkRtSUkvMWV4cnBBUWdBYnkveXozOWRWWGZw?=
+ =?utf-8?B?akg4TFdBTjgwM1p4MSs0bS9XZHBnYS9Xckl5S2hjcjQ2UHRJYXpzTVluaStJ?=
+ =?utf-8?B?RnNvVytENmNKWnNsMFhQeS9FWTN3K25TY1NwVXAwaWVXdmlRREhWTkR2OVEy?=
+ =?utf-8?B?ZW1CWi8zc29NcEZoNDBnNmlNWHJ6SHJ3ZDR6YW1yTUxjZ3NEYk44cUNKRVI0?=
+ =?utf-8?B?R3FlRHFrMUs3WmYxV2xxTGdtTzFtTjRGY0JpUlVDQ1NmVjVGTWZ4dVZsVkVT?=
+ =?utf-8?B?dkFndzRVTEpjN1pxbG4zOHpIWnI0cEEySkNBcXE2YnhkUmt4c0FhcWNlSmxz?=
+ =?utf-8?B?WDBmVldZb05WbnpTb0JxWFFXYmY1M2dmWGc3L2ZObjl6TjY2VWxDbHNwbWNs?=
+ =?utf-8?Q?GgbwWV7f+cng2H374IK3NJw=3D?=
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Feb 2022 12:09:09.5164
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7fb306c2-72f8-4ff2-0cbc-08d9f6029828
+X-MS-Exchange-CrossTenant-AuthSource: CO6PR12MB5444.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Feb 2022 12:55:25.5733
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 26320fed-21fb-45d9-fb42-08d9f5fc21ba
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.234];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT016.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB1449
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: uyxNxF45aST4m2iWs9iG+rp8MeoLs2yMnEVHpmVeotBvGgVebtOlK2BOOQhlVL35edAmM42mT0UnAYUipcdVMQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW2PR12MB2522
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, 21 Feb 2022 09:48:12 +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.10.102 release.
-> There are 121 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Wed, 23 Feb 2022 08:48:58 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.102-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+Hi Guenter,
 
-All tests passing for Tegra ...
+On 21/02/2022 18:22, Guenter Roeck wrote:
+> If an attempt is made to a sensor with a thermal zone and it fails,
+> the call to devm_thermal_zone_of_sensor_register() may return -ENODEV.
+> This may result in crashes similar to the following.
+> 
+> Unable to handle kernel NULL pointer dereference at virtual address 00000000000003cd
+> ...
+> Internal error: Oops: 96000021 [#1] PREEMPT SMP
+> ...
+> pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> pc : mutex_lock+0x18/0x60
+> lr : thermal_zone_device_update+0x40/0x2e0
+> sp : ffff800014c4fc60
+> x29: ffff800014c4fc60 x28: ffff365ee3f6e000 x27: ffffdde218426790
+> x26: ffff365ee3f6e000 x25: 0000000000000000 x24: ffff365ee3f6e000
+> x23: ffffdde218426870 x22: ffff365ee3f6e000 x21: 00000000000003cd
+> x20: ffff365ee8bf3308 x19: ffffffffffffffed x18: 0000000000000000
+> x17: ffffdde21842689c x16: ffffdde1cb7a0b7c x15: 0000000000000040
+> x14: ffffdde21a4889a0 x13: 0000000000000228 x12: 0000000000000000
+> x11: 0000000000000000 x10: 0000000000000000 x9 : 0000000000000000
+> x8 : 0000000001120000 x7 : 0000000000000001 x6 : 0000000000000000
+> x5 : 0068000878e20f07 x4 : 0000000000000000 x3 : 00000000000003cd
+> x2 : ffff365ee3f6e000 x1 : 0000000000000000 x0 : 00000000000003cd
+> Call trace:
+>   mutex_lock+0x18/0x60
+>   hwmon_notify_event+0xfc/0x110
+>   0xffffdde1cb7a0a90
+>   0xffffdde1cb7a0b7c
+>   irq_thread_fn+0x2c/0xa0
+>   irq_thread+0x134/0x240
+>   kthread+0x178/0x190
+>   ret_from_fork+0x10/0x20
+> Code: d503201f d503201f d2800001 aa0103e4 (c8e47c02)
+> 
+> Jon Hunter reports that the exact call sequence is:
+> 
+> hwmon_notify_event()
+>    --> hwmon_thermal_notify()
+>      --> thermal_zone_device_update()
+>        --> update_temperature()
+>          --> mutex_lock()
+> 
+> The hwmon core needs to handle all errors returned from calls
+> to devm_thermal_zone_of_sensor_register(). If the call fails
+> with -ENODEV, report that the sensor was not attached to a
+> thermal zone  but continue to register the hwmon device.
+> 
+> Reported-by: Jon Hunter <jonathanh@nvidia.com>
+> Cc: Dmitry Osipenko <digetx@gmail.com>
+> Fixes: 1597b374af222 ("hwmon: Add notification support")
+> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+> ---
+> v2: Use dev_info instead of dev_warn, and change message to be
+>      less alarming.
+> 
+>   drivers/hwmon/hwmon.c | 14 ++++++++------
+>   1 file changed, 8 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/hwmon/hwmon.c b/drivers/hwmon/hwmon.c
+> index 3501a3ead4ba..3ae961986fc3 100644
+> --- a/drivers/hwmon/hwmon.c
+> +++ b/drivers/hwmon/hwmon.c
+> @@ -214,12 +214,14 @@ static int hwmon_thermal_add_sensor(struct device *dev, int index)
+>   
+>   	tzd = devm_thermal_zone_of_sensor_register(dev, index, tdata,
+>   						   &hwmon_thermal_ops);
+> -	/*
+> -	 * If CONFIG_THERMAL_OF is disabled, this returns -ENODEV,
+> -	 * so ignore that error but forward any other error.
+> -	 */
+> -	if (IS_ERR(tzd) && (PTR_ERR(tzd) != -ENODEV))
+> -		return PTR_ERR(tzd);
+> +	if (IS_ERR(tzd)) {
+> +		if (PTR_ERR(tzd) != -ENODEV)
+> +			return PTR_ERR(tzd);
+> +		dev_info(dev, "temp%d_input not attached to any thermal zone\n",
+> +			 index + 1);
+> +		devm_kfree(dev, tdata);
+> +		return 0;
+> +	}
+>   
+>   	err = devm_add_action(dev, hwmon_thermal_remove_sensor, &tdata->node);
+>   	if (err)
 
-Test results for stable-v5.10:
-    10 builds:	10 pass, 0 fail
-    28 boots:	28 pass, 0 fail
-    75 tests:	75 pass, 0 fail
 
-Linux version:	5.10.102-rc1-g6c935cea31db
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
-                tegra20-ventana, tegra210-p2371-2180,
-                tegra210-p3450-0000, tegra30-cardhu-a04
+Thanks for the quick fix. Works for me!
 
 Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
 Jon
+
+-- 
+nvpublic
