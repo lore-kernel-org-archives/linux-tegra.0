@@ -2,57 +2,52 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2ED74C433EF
-	for <linux-tegra@archiver.kernel.org>; Tue, 22 Feb 2022 08:37:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16D40C433EF
+	for <linux-tegra@archiver.kernel.org>; Tue, 22 Feb 2022 08:41:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229540AbiBVIhk (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 22 Feb 2022 03:37:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47352 "EHLO
+        id S229523AbiBVIlg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 22 Feb 2022 03:41:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33232 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229515AbiBVIhj (ORCPT
+        with ESMTP id S229503AbiBVIlf (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 22 Feb 2022 03:37:39 -0500
+        Tue, 22 Feb 2022 03:41:35 -0500
 Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2483C8F61E;
-        Tue, 22 Feb 2022 00:37:14 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B722159293
+        for <linux-tegra@vger.kernel.org>; Tue, 22 Feb 2022 00:41:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
          s=20161220; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
         References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
         Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
         Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
         List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=7Y5Q0bIv6KCJJMw/T06DdwsQiFx+TO703WYBc0RO2zg=; b=1BASgC2ZmAp7Yuf1iRh/CZrpM+
-        fUes0bn2kS7zkMDCz1SLhO7N2+FCpEpAiKn1Y3+EZMMlwpwQ7R7NKXAtcCaom+H6pkDtZWlW+wIx/
-        8hnwMmQ+V4dv//mER9Yle4tcbymSC3T5g6HMT7YDP0pzHTb1rEQsuTX0nosAUfeIn5lJe9hHKKvwP
-        gbcThs7e1pUbiiiK+Ye8R9KPzRr9nggO5p5zj1XuaZIiSuXK3c662c0q+M02SlRwvTranKvMD6sQg
-        4LKm0IlHl2rJElKURPmgu6a80acIsyj3EnNIVWxgkO1mETmOJBImYmwsQDTT6qReeeXHHXyYZegpV
-        81lXv4Pg==;
+        bh=fY8k2STnR5+RK9IDQgN/eppZnxcQVA2GD760hanPcdw=; b=S5ppBVU5yncGjqFGtu0TAPQySd
+        mY3u031G6mQWQB5B6yoUbSAQJMx6FQ4R2zXTqIK8hAzrZG5Cmwh6QLateUWu4qh5XJelU/nDHCDox
+        kxQ+ifpeo7oY8ZZE4nmsfWuG9ni7zyFl4//LbYTYclX0N5LnGhPgTBOTVuFJ3rMGCL0q5wJBsniXW
+        3QBIVUN3iJg3M4FpIuy2IocCMD5f3fMaAWcNc0qE/mo17u4JWS61Qpx7LEH+Zw6e91QnRWDoBvnai
+        VUbe60H4l1l9XzuKH2xSBajQ4Db9Mipy1VvGaZEg7MtgC3OPbONr790tAoZPSkHdidzp93AoPAp6i
+        sb4hFA1A==;
 Received: from 91-158-25-70.elisa-laajakaista.fi ([91.158.25.70] helo=[192.168.1.10])
         by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.89)
         (envelope-from <cyndis@kapsi.fi>)
-        id 1nMQfS-00063Y-Iy; Tue, 22 Feb 2022 10:37:06 +0200
-Message-ID: <134c4a28-4331-deed-a374-75c9711168f0@kapsi.fi>
-Date:   Tue, 22 Feb 2022 10:37:05 +0200
+        id 1nMQjJ-00079k-Vu; Tue, 22 Feb 2022 10:41:06 +0200
+Message-ID: <79444c32-64a7-ff54-95b5-b743cbc0a97d@kapsi.fi>
+Date:   Tue, 22 Feb 2022 10:41:05 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.4.1
-Subject: Re: [PATCH v3 9/9] drm/tegra: Support context isolation
+Subject: Re: [PATCH libdrm v2 00/25] Update Tegra support
 Content-Language: en-US
 To:     Dmitry Osipenko <digetx@gmail.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        thierry.reding@gmail.com, jonathanh@nvidia.com, joro@8bytes.org,
-        will@kernel.org, robh+dt@kernel.org, robin.murphy@arm.com
-Cc:     linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20220218113952.3077606-1-mperttunen@nvidia.com>
- <20220218113952.3077606-10-mperttunen@nvidia.com>
- <2b4dd244-f918-4d26-2322-00a0bb226ccf@gmail.com>
- <ea65fcd6-9451-7f5b-f4a9-57b8575f09ff@kapsi.fi>
- <bb533634-6cde-3835-db11-7b6191385294@gmail.com>
+        Thierry Reding <thierry.reding@gmail.com>
+Cc:     =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
+References: <20220217191625.2534521-1-thierry.reding@gmail.com>
+ <ed92bf43-1df2-8059-5228-83b98d6bbfae@kapsi.fi>
+ <c207663d-7d7e-6c10-6ee4-3dd0378181f9@gmail.com>
 From:   Mikko Perttunen <cyndis@kapsi.fi>
-In-Reply-To: <bb533634-6cde-3835-db11-7b6191385294@gmail.com>
+In-Reply-To: <c207663d-7d7e-6c10-6ee4-3dd0378181f9@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 91.158.25.70
@@ -62,71 +57,31 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 2/21/22 22:02, Dmitry Osipenko wrote:
-> 21.02.2022 15:06, Mikko Perttunen пишет:
->> On 2/19/22 20:35, Dmitry Osipenko wrote:
->>> 18.02.2022 14:39, Mikko Perttunen пишет:
->>>> +    if (context->memory_context &&
->>>> context->client->ops->get_streamid_offset) {
->>>               ^^^
->>>> +        int offset =
->>>> context->client->ops->get_streamid_offset(context->client);
->>>> +
->>>> +        if (offset >= 0) {
->>>> +            job->context = context->memory_context;
->>>> +            job->engine_streamid_offset = offset;
->>>> +            host1x_context_get(job->context);
->>>> +        }
->>>
->>> You should bump refcount unconditionally or you'll get refcnt underflow
->>> on put, when offset < 0.
+On 2/21/22 22:29, Dmitry Osipenko wrote:
+> 18.02.2022 12:31, Mikko Perttunen пишет:
+>> On 2/17/22 21:16, Thierry Reding wrote:
+>>> ...
 >>
->> This refcount is intended to be dropped from 'release_job', where it's
->> dropped if job->context is set, which it is from this path.
+>> Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
 >>
->>>
->>>> +    }
->>>> +
->>>>        /*
->>>>         * job_data is now part of job reference counting, so don't
->>>> release
->>>>         * it from here.
->>>> diff --git a/drivers/gpu/drm/tegra/uapi.c b/drivers/gpu/drm/tegra/uapi.c
->>>> index 9ab9179d2026..be33da54d12c 100644
->>>> --- a/drivers/gpu/drm/tegra/uapi.c
->>>> +++ b/drivers/gpu/drm/tegra/uapi.c
->>>> @@ -33,6 +33,9 @@ static void tegra_drm_channel_context_close(struct
->>>> tegra_drm_context *context)
->>>>        struct tegra_drm_mapping *mapping;
->>>>        unsigned long id;
->>>>    +    if (context->memory_context)
->>>> +        host1x_context_put(context->memory_context);
->>>
->>> The "if (context->memory_context &&
->>> context->client->ops->get_streamid_offset)" above doesn't match the "if
->>> (context->memory_context)". You'll get refcount underflow.
->>
->> And this drop is for the refcount implicitly added when allocating the
->> memory context through host1x_context_alloc; so these two places should
->> be independent.
->>
->> Please elaborate if I missed something.
+>> Left one cosmetic comment in the VIC4.0 patch, but overall looks OK. I
+>> think it would be fine to have some basic tests in libdrm as well.
 > 
-> You named context as memory_context and then have
-> context=context->memory_context. Please try to improve the variable
-> names, like drm_ctx->host1x_ctx for example.
+> There is a question about who is going to use this libdrm API. Are you
+> going to use it in the VAAPI driver?
 > 
-> I'm also not a big fan of the "if (ref) put(ref)" pattern. Won't be
-> better to move all the "if (!NULL)" checks inside of get()/put() and
-> make the invocations unconditional?
+> Grate drivers can't use this API because:
+> 
+> 1. More features are needed
+> 2. There is no stable API
+> 3. It's super painful to keep all drivers and libdrm in sync from a
+> packaging perspective.
+> 
+> It's much more practical nowadays to use DRM directly, without
+> SoC-specific libdrm API, i.e. to bundle that SoC-specific API within the
+> drivers.
 
-I agree that the naming here is confusing with different kinds of 
-contexts flying around, though I would prefer not to change the original 
-'struct tegra_drm_context *context' since it's used all around the code. 
-But I'll try to make it clearer.
-
-Regarding moving NULL checks inside get/put, I personally dislike that 
-pattern (also with e.g. kfree) since when reading the code, it makes it 
-more difficult to see that the pointer can be NULL.
+I'm not planning to use this in the VAAPI driver -- I don't personally 
+have any use case for the libdrm API.
 
 Mikko
