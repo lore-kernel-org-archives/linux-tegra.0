@@ -2,121 +2,117 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39B3EC433EF
-	for <linux-tegra@archiver.kernel.org>; Tue, 22 Feb 2022 10:39:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC7C6C433EF
+	for <linux-tegra@archiver.kernel.org>; Tue, 22 Feb 2022 10:46:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230382AbiBVKjk (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 22 Feb 2022 05:39:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44716 "EHLO
+        id S230452AbiBVKq6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 22 Feb 2022 05:46:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36338 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230313AbiBVKjj (ORCPT
+        with ESMTP id S229526AbiBVKq5 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 22 Feb 2022 05:39:39 -0500
-Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 618A91520E6
-        for <linux-tegra@vger.kernel.org>; Tue, 22 Feb 2022 02:39:14 -0800 (PST)
-Received: by mail-lf1-x130.google.com with SMTP id w27so6122553lfa.5
-        for <linux-tegra@vger.kernel.org>; Tue, 22 Feb 2022 02:39:14 -0800 (PST)
+        Tue, 22 Feb 2022 05:46:57 -0500
+Received: from mail-lj1-x22e.google.com (mail-lj1-x22e.google.com [IPv6:2a00:1450:4864:20::22e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16282DF08;
+        Tue, 22 Feb 2022 02:46:32 -0800 (PST)
+Received: by mail-lj1-x22e.google.com with SMTP id f11so11047542ljq.11;
+        Tue, 22 Feb 2022 02:46:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=message-id:date:mime-version:user-agent:subject:content-language:to
          :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=bA82aRvveeHb4EfwxS91IfJ8rNVGJgeKZIsr7UMLI1g=;
-        b=Gb358b/tkcnDwPm0miT5c8AUxhKk3NMVBDVKVh76hn1QnBgsP7txJa3g7CqqXWqaeK
-         eKIWfL4V9xFON8mVeLC1KXgOXR0M3AF/fuAt2TftjIokBgV7+erBBUUdivtH0mTMPVOv
-         uaiT1is+XAZalMf1P33AdTHRb04PVUPuU8HWhcdjkrNbjsdw3RGdbG/UKmVv74qXsvOO
-         W/FJW8rjXnALvs619uQX55IWOEmfJvgJMQC4BDlOAHdXtJerKGVbaGawcmGJbT/eVqpS
-         +SzWSLbtcpOro58I4EHOmoZ9CQlvGQ5UyU7UR/LJsrIVtBvWqgNv5JakxdW0Pb+B+BJC
-         gNLQ==
+        bh=iabqwLRHm/0Z6nOkM33Y0js7aZKJwfXcVsR9drxTBpI=;
+        b=Wvvk4dYJGf5Y8/8AlZicv/dhMGLGNFdMJpU3wenpSJZw/ybyjG3nx9inX0NopTAr9b
+         hki9SqFotR4DokiJbsxi3yGsFbnL/zXxiDg/fRjfzRxiszEbWkFKpYheubiSHqOaxP34
+         rjOvLBDn9kWi79ogs4Zh8W6upcZAtRRWT4N5DEvXeccq1jr0fRCdDH4AhV3jc6YMVzYY
+         6IEqUC1xQpeJJXazlibsxRAUbsunJcLJ+Q8OZRSlkEt2s3SOTVvGTqVfVXppSIfJi21t
+         hGpypFfvt3zGUuu9KQLV5peGeZ7tki5MqV+SxDeCYQ79bdLGMFynXY4YZv5rFu2cevD6
+         iV7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=bA82aRvveeHb4EfwxS91IfJ8rNVGJgeKZIsr7UMLI1g=;
-        b=4cNHqBf186F/S08IUCkt10/5DcmQE0gTjjUMueGrtVt9UIS9Dta8zHdcE+UcWCvVo4
-         GEv+KLe5zm6t7JgxYD5YfGuHxQIGvV/6kit2Q5BS7+1xAWR6XfFy9vsQoohuFRvSFB78
-         jpxGNJXc9ufQ+SEtGiQeczp4TAV7bjg/vn6GIFsufdTYfCf7xXIymrGyy5zWfqh3/PBi
-         /vqddcnXRNQ5Doedje4+BQBwk4guoaks0o4ZrEUv25jODvdvl87Hnck2zbYJ7oBouD/7
-         P+oDUuQUOhL13RVCB5qa+fB6+CuR5/LLogN4Ch3syRTgLtvE3JR7QYz9TVpEMJ0++oRv
-         f6oA==
-X-Gm-Message-State: AOAM533AwG0ik2r1vhkJs8BHNLlF3aMJu49sodsmSy0nFvukvYaK30da
-        48WhA0kQ8XLCre/VNCMdH7g=
-X-Google-Smtp-Source: ABdhPJwRW2DfFi7vaENUA23Jq3YSQCwkSFxTvN+A+UDSLBW3imjJteLUnHwhO8atUISlgmzgaNxWbQ==
-X-Received: by 2002:ac2:4194:0:b0:442:ed9e:4a25 with SMTP id z20-20020ac24194000000b00442ed9e4a25mr16609681lfh.629.1645526352564;
-        Tue, 22 Feb 2022 02:39:12 -0800 (PST)
+        bh=iabqwLRHm/0Z6nOkM33Y0js7aZKJwfXcVsR9drxTBpI=;
+        b=cZWsUQrpeNMJ/5tY5f6YHyGGkTaVS7erzwy/JEYzin03ru86tPNOwOPBlXiPWEzusl
+         XO46VVjeDABvAfnItk1UzTkZYJxR6+tlfcCKn3itIH6CmyN6yLM51XGgkOGScwWhyfsB
+         6Z04ThtISuQ59WxM/X/zYrZROkg5+g/VHNHhN1/5CUArD4YSv7h6Wl3SGVIM3umhV2aO
+         cKdBwXATBkfInR4eT+QsE9SqE3hioj1kRM3x0Z/9dqptzWIUOr2nU+nXsmTDO79q9q8L
+         NjuylXIVok8HemGRscKxpwUHWZGkvyNuMlcif0IX9QsZFkpQDEZNWI4Lvqpvpm2N+03T
+         TF2A==
+X-Gm-Message-State: AOAM533BHA/D1cKZ1sOIF1Pwyb1qMDo8wldJNRoptG7vS6hUSvILWOd4
+        FvPkePefuIjUyeOloBLq+7I=
+X-Google-Smtp-Source: ABdhPJwZ1McSWpt8xE8JSzJ7PFSX/UI6DWDglB8xl7blNXCItqUCMFWL3e68OUp80Bgn508refVPUw==
+X-Received: by 2002:a2e:980f:0:b0:246:3fb6:816b with SMTP id a15-20020a2e980f000000b002463fb6816bmr6085199ljj.242.1645526790359;
+        Tue, 22 Feb 2022 02:46:30 -0800 (PST)
 Received: from [192.168.2.145] (109-252-138-165.dynamic.spd-mgts.ru. [109.252.138.165])
-        by smtp.googlemail.com with ESMTPSA id 26sm1674219ljt.99.2022.02.22.02.39.11
+        by smtp.googlemail.com with ESMTPSA id w10sm1599556ljd.101.2022.02.22.02.46.29
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Feb 2022 02:39:11 -0800 (PST)
-Message-ID: <de5a48a4-4aca-5ac6-e4f2-e90244c9936d@gmail.com>
-Date:   Tue, 22 Feb 2022 13:39:10 +0300
+        Tue, 22 Feb 2022 02:46:29 -0800 (PST)
+Message-ID: <4352fda7-ecb6-4a5e-7d6c-a50537d8eaff@gmail.com>
+Date:   Tue, 22 Feb 2022 13:46:29 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.5.0
-Subject: Re: [PATCH 0/2] drm/tegra: Fix panel support on Venice 2 and Nyan
+Subject: Re: [PATCH v3 8/9] drm/tegra: vic: Implement get_streamid_offset
 Content-Language: en-US
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Thomas Graichen <thomas.graichen@gmail.com>,
-        Douglas Anderson <dianders@chromium.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
-References: <20211220104855.428290-1-thierry.reding@gmail.com>
+To:     Mikko Perttunen <cyndis@kapsi.fi>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, joro@8bytes.org,
+        will@kernel.org, robh+dt@kernel.org, robin.murphy@arm.com
+Cc:     linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20220218113952.3077606-1-mperttunen@nvidia.com>
+ <20220218113952.3077606-9-mperttunen@nvidia.com>
+ <b1df816b-6838-c435-1a23-5029144e4cfe@gmail.com>
+ <7f4e4c47-59f1-1def-36bf-a2ded912f76d@gmail.com>
+ <5d1b6e82-2c9d-8388-697f-0d7305a1206f@kapsi.fi>
+ <ee648994-b296-2ac4-a676-ddcac463a428@gmail.com>
+ <30033f5b-3fd1-22c7-896b-af034a4041df@kapsi.fi>
 From:   Dmitry Osipenko <digetx@gmail.com>
-In-Reply-To: <20211220104855.428290-1-thierry.reding@gmail.com>
+In-Reply-To: <30033f5b-3fd1-22c7-896b-af034a4041df@kapsi.fi>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-20.12.2021 13:48, Thierry Reding пишет:
-> From: Thierry Reding <treding@nvidia.com>
+22.02.2022 11:27, Mikko Perttunen пишет:
+> On 2/21/22 22:10, Dmitry Osipenko wrote:
+>> 21.02.2022 14:44, Mikko Perttunen пишет:
+>>> On 2/19/22 20:54, Dmitry Osipenko wrote:
+>>>> 19.02.2022 21:49, Dmitry Osipenko пишет:
+>>>>> 18.02.2022 14:39, Mikko Perttunen пишет:
+>>>>>> +static int vic_get_streamid_offset(struct tegra_drm_client *client)
+>>>>>> +{
+>>>>>> +    struct vic *vic = to_vic(client);
+>>>>>> +    int err;
+>>>>>> +
+>>>>>> +    err = vic_load_firmware(vic);
+>>>>>
+>>>>> You can't invoke vic_load_firmware() while RPM is suspended. Either
+>>>>> replace this with RPM get/put or do something else.
+>>>
+>>> Why not, I'm not seeing any HW accesses in vic_load_firmware? Although
+>>> it looks like it might race with the vic_load_firmware call in
+>>> vic_runtime_resume which probably needs to be fixed.
+>>
+>> It was not clear from the function's name that h/w is untouched, I read
+>> "load" as "upload" and then looked at vic_runtime_resume(). I'd rename
+>> vic_load_firmware() to vic_prepare_firmware_image().
+>>
+>> And yes, technically lock is needed.
 > 
-> Hi,
-> 
-> this is an alternative proposal to fix panel support on Venice 2 and
-> Nyan. Dmitry had proposed a different solution that involved reverting
-> the I2C/DDC registration order and would complicate things by breaking
-> the encapsulation of the driver by introducing a global (though locally
-> scoped) variable[0].
-> 
-> This set of patches avoids that by using the recently introduced DP AUX
-> bus infrastructure. The result is that the changes are actually less
-> intrusive and not a step back. Instead they nicely remove the circular
-> dependency that previously existed and caused these issues in the first
-> place.
-> 
-> To be fair, this is not perfect either because it requires a device tree
-> change and hence isn't technically backwards-compatible. However, given
-> that the original device tree was badly broken in the first place, I
-> think we can make an exception, especially since it is not generally a
-> problem to update device trees on the affected devices.
-> 
-> Secondly, this relies on infrastructure that was introduced in v5.15 and
-> therefore will be difficult to backport beyond that. However, since this
-> functionality has been broken since v5.13 and all of the kernel versions
-> between that and v5.15 are EOL anyway, there isn't much that we can do
-> to fix the interim versions anyway.
-> 
-> Adding Doug and Laurent since they originally designed the AUX bus
-> patches in case they see anything in here that would be objectionable.
-> 
-> Thierry
-> 
-> [0]: https://lore.kernel.org/dri-devel/20211130230957.30213-1-digetx@gmail.com/
-> 
-> Thierry Reding (2):
->   drm/tegra: dpaux: Populate AUX bus
->   ARM: tegra: Move panels to AUX bus
-> 
->  arch/arm/boot/dts/tegra124-nyan-big.dts   | 15 +++++++++------
->  arch/arm/boot/dts/tegra124-nyan-blaze.dts | 15 +++++++++------
->  arch/arm/boot/dts/tegra124-venice2.dts    | 14 +++++++-------
->  drivers/gpu/drm/tegra/Kconfig             |  1 +
->  drivers/gpu/drm/tegra/dpaux.c             |  7 +++++++
->  5 files changed, 33 insertions(+), 19 deletions(-)
-> 
+> Yep, I'll consider renaming it.
 
-Will we see the v2 anytime soon?
+Looking at this all again, I'd suggest to change:
+
+int get_streamid_offset(client)
+
+to:
+
+int get_streamid_offset(client, *offset)
+
+and bail out if get_streamid_offset() returns error. It's never okay to
+ignore errors.
