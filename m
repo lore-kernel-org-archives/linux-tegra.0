@@ -2,41 +2,41 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6013C433F5
-	for <linux-tegra@archiver.kernel.org>; Wed, 23 Feb 2022 15:44:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1B6BC4332F
+	for <linux-tegra@archiver.kernel.org>; Wed, 23 Feb 2022 15:44:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242334AbiBWPo4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 23 Feb 2022 10:44:56 -0500
+        id S242320AbiBWPpE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 23 Feb 2022 10:45:04 -0500
 Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56876 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242318AbiBWPox (ORCPT
+        with ESMTP id S242314AbiBWPoz (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 23 Feb 2022 10:44:53 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95AFCBF970;
-        Wed, 23 Feb 2022 07:44:24 -0800 (PST)
+        Wed, 23 Feb 2022 10:44:55 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C3BEBF962;
+        Wed, 23 Feb 2022 07:44:26 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 17EE36174C;
-        Wed, 23 Feb 2022 15:44:24 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 739EFC340E7;
+        by ams.source.kernel.org (Postfix) with ESMTPS id 27570B820C9;
+        Wed, 23 Feb 2022 15:44:25 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAAE5C340F4;
         Wed, 23 Feb 2022 15:44:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=k20201202; t=1645631063;
-        bh=PVgeRt4LHCp9CTieLVRpqy0rj4cCYLX/Dq99wsHMmPU=;
-        h=From:To:Cc:Subject:Date:From;
-        b=tlZZm79gjjtiP8+zk3/zOOLSkEoC4f6peYZ6h0GfuWhfOU9WR19HvhIKFX9AfC36K
-         V69iwNnjpt56KnRRNZDoip11T58CLJZvHM8b3sMkw+ixcWjTFw8A3+GCvAKL7lPBgu
-         8V0KTwVLhkxlsyOMim11/HsU34l7bhs55snoAApFW1Et1mr4Ae7Pd6TlnifbBCgmOu
-         u7x7PQZM2kkUfABVRUTzGB75JZmPmoEBEvmLQeVH2HfI4M1Y1mlAAvJF09mCPig1sy
-         YSvpspIxbb6gKOBC/iCKFFyKQIkIOMsrfquTLNGptMvk7mtTxXJVLvkAJ6GDuR9mw4
-         UixT8ABNV0afg==
+        bh=Qfdv6adW74CN704wOxVv3M2DoN5MT3Ou0BkWhDGVEyA=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=dPiA2G1VQMiKzHixzoxIVSA8sDLUzgBQ7SskBO4Sr51RGpDl/lqZNxmO9CvJGe50n
+         z8ABeO1WumlYLrKX/lcRdlIh20cVGMyd4uCnCuOX2SoQyCW2t36GKA9Er/aSAsO53u
+         7yD5rqlSdf3zXxx6V9jsZFSBcmSOMCzs+/5cwFJJH7iF7iRRQmmzUTCA7R3c5HX+c1
+         XTaVLThvgFHIGJRSev/v7o+xGZbeDo7Ne/kBPQIY3NnFjBxklYVzD9tREZh0HBE780
+         WsXgjDUwxWxMZfnPEpF09ZkWrnhIzBgbdHFc/MwMN5V1naLh3xP6RnjoFefySWPSFj
+         fnzIz9HDsHlNQ==
 Received: from sofa.misterjones.org ([185.219.108.64] helo=why.lan)
         by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.94.2)
         (envelope-from <maz@kernel.org>)
-        id 1nMtoT-009wgt-7P; Wed, 23 Feb 2022 15:44:21 +0000
+        id 1nMtoT-009wgt-P3; Wed, 23 Feb 2022 15:44:21 +0000
 From:   Marc Zyngier <maz@kernel.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Linus Walleij <linus.walleij@linaro.org>,
@@ -53,10 +53,12 @@ Cc:     Linus Walleij <linus.walleij@linaro.org>,
         linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-arm-msm@vger.kernel.org, kernel-team@android.com
-Subject: [PATCH 0/5] gpiolib: Handle immutable irq_chip structures
-Date:   Wed, 23 Feb 2022 15:44:00 +0000
-Message-Id: <20220223154405.54912-1-maz@kernel.org>
+Subject: [PATCH 2/5] gpio: Expose the gpiochip_irq_re[ql]res helpers
+Date:   Wed, 23 Feb 2022 15:44:02 +0000
+Message-Id: <20220223154405.54912-3-maz@kernel.org>
 X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20220223154405.54912-1-maz@kernel.org>
+References: <20220223154405.54912-1-maz@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 185.219.108.64
@@ -67,60 +69,59 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-I recently realised that the gpiolib play ugly tricks on the
-unsuspecting irq_chip structures by patching the callbacks.
+The GPIO subsystem has a couple of internal helpers to manage
+resources on behalf of the irqchip. Expose them so that GPIO
+drivers can use them directly.
 
-Not only this breaks when an irq_chip structure is made const (which
-really should be the default case), but it also forces this structure
-to be copied at nauseam for each instance of the GPIO block, which is
-a waste of memory.
+Signed-off-by: Marc Zyngier <maz@kernel.org>
+---
+ drivers/gpio/gpiolib.c      | 6 ++++--
+ include/linux/gpio/driver.h | 4 ++++
+ 2 files changed, 8 insertions(+), 2 deletions(-)
 
-My current approach is to add a new irq_chip flag (IRQCHIP_IMMUTABLE)
-which does what it says on the tin: don't you dare writing there.
-Gpiolib is further updated not to install its own callbacks, and it
-becomes the responsibility of the driver to call into the gpiolib when
-required. This is similar to what we do for other subsystems such as
-PCI-MSI.
-
-3 drivers are updated to this new model: M1, QC and Tegra, as I
-actively use them (though Tegra is hosed at the moment), keeping a
-single irq_chip structure, marking it const, and exposing the new
-flag.
-
-Nothing breaks, the volume of change is small, the memory usage goes
-down and we have fewer callbacks that can be used as attack vectors.
-
-Another approach was to let gpiolib provide its own irq_chip structure
-and stack it, but:
-- only a few drivers are hierarchy aware
-- the diversity of interrupt flows makes it impractical
-
-I'd welcome comments on the approach. If deemed acceptable, there are
-another 300+ drivers to update! Not to mention the documentation. I
-appreciate that this is a lot of potential changes, but the current
-situation is messy.
-
-Note that these patches are on top of irqchip-next, which contains
-more constifying work.
-
-	M.
-
-Marc Zyngier (5):
-  gpio: Don't fiddle with irqchips marked as immutable
-  gpio: Expose the gpiochip_irq_re[ql]res helpers
-  pinctrl: apple-gpio: Make the irqchip immutable
-  pinctrl: msmgpio: Make the irqchip immutable
-  gpio: tegra186: Make the irqchip immutable
-
- drivers/gpio/gpio-tegra186.c         | 33 ++++++++++++-----
- drivers/gpio/gpiolib.c               | 13 +++++--
- drivers/pinctrl/pinctrl-apple-gpio.c | 30 +++++++++-------
- drivers/pinctrl/qcom/pinctrl-msm.c   | 53 +++++++++++++++++-----------
- include/linux/gpio/driver.h          |  4 +++
- include/linux/irq.h                  |  2 ++
- kernel/irq/debugfs.c                 |  1 +
- 7 files changed, 91 insertions(+), 45 deletions(-)
-
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 515838708b00..408ff8f262d3 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -1423,19 +1423,21 @@ static int gpiochip_to_irq(struct gpio_chip *gc, unsigned int offset)
+ 	return irq_create_mapping(domain, offset);
+ }
+ 
+-static int gpiochip_irq_reqres(struct irq_data *d)
++int gpiochip_irq_reqres(struct irq_data *d)
+ {
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+ 
+ 	return gpiochip_reqres_irq(gc, d->hwirq);
+ }
++EXPORT_SYMBOL(gpiochip_irq_reqres);
+ 
+-static void gpiochip_irq_relres(struct irq_data *d)
++void gpiochip_irq_relres(struct irq_data *d)
+ {
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+ 
+ 	gpiochip_relres_irq(gc, d->hwirq);
+ }
++EXPORT_SYMBOL(gpiochip_irq_relres);
+ 
+ static void gpiochip_irq_mask(struct irq_data *d)
+ {
+diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
+index b0728c8ad90c..89291c02854d 100644
+--- a/include/linux/gpio/driver.h
++++ b/include/linux/gpio/driver.h
+@@ -576,6 +576,10 @@ void gpiochip_relres_irq(struct gpio_chip *gc, unsigned int offset);
+ void gpiochip_disable_irq(struct gpio_chip *gc, unsigned int offset);
+ void gpiochip_enable_irq(struct gpio_chip *gc, unsigned int offset);
+ 
++/* irq_data versions of the above */
++int gpiochip_irq_reqres(struct irq_data *data);
++void gpiochip_irq_relres(struct irq_data *data);
++
+ /* Line status inquiry for drivers */
+ bool gpiochip_line_is_open_drain(struct gpio_chip *gc, unsigned int offset);
+ bool gpiochip_line_is_open_source(struct gpio_chip *gc, unsigned int offset);
 -- 
 2.30.2
 
