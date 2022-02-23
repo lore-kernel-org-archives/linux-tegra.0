@@ -2,140 +2,163 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9C2DC433EF
-	for <linux-tegra@archiver.kernel.org>; Tue, 22 Feb 2022 21:30:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EF9AC433EF
+	for <linux-tegra@archiver.kernel.org>; Wed, 23 Feb 2022 03:02:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231492AbiBVVbD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 22 Feb 2022 16:31:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58962 "EHLO
+        id S235901AbiBWDC1 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 22 Feb 2022 22:02:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41166 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230181AbiBVVbC (ORCPT
+        with ESMTP id S233935AbiBWDC0 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 22 Feb 2022 16:31:02 -0500
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 6914A12A748;
-        Tue, 22 Feb 2022 13:30:36 -0800 (PST)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 27135139F;
-        Tue, 22 Feb 2022 13:30:36 -0800 (PST)
-Received: from [10.57.40.147] (unknown [10.57.40.147])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 37F8E3F70D;
-        Tue, 22 Feb 2022 13:30:34 -0800 (PST)
-Message-ID: <c0dee650-df1c-4fad-aa97-fb9eab03f3a2@arm.com>
-Date:   Tue, 22 Feb 2022 21:30:30 +0000
+        Tue, 22 Feb 2022 22:02:26 -0500
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2071.outbound.protection.outlook.com [40.107.220.71])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6B7C40A2B;
+        Tue, 22 Feb 2022 19:01:55 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ZnoZwo63JSe637u3NV2OUtuI+Ahf0yIFbOmqcUxddI6gwONGAQGUg3HeR7nUi9SPSLRaahbdKWPY72jQQUfh9DvsPvVFRPorkD9PoQ4wdnM1OHhVl75pbxa68zDPffbogZnTEcmsd307ukADTJud6Wvc2eFDFGg987pNbK3L5aeGDZUMcDSLrg9J6iAr88RvPuOiqmSu2bIy0xNAwmCjcLvfUi0sgtBfXmrajE4/06r9OLaTx6Y/QAZcBMj8+NhHEILNHELUO48nLBqO5n44+aBbJgqdTEoxCQgxHzbDRkG8LaBER1ihfVGiN/7YPsd/pmpuyAxScJ7QwOO2+QVZTA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=XGROMFgY2/LtyNCc4I2UJr0p9UOCroE+iOx8LJU95LE=;
+ b=AngqzC+1hA/4Yfc/C/Oi6pu79a8c/XOYquXArhu1Xi0dSXwkdyQ3wSfbY00r6WCxmyhrBnW9z6lACnBe//gsyLhT16CYeidr7MxzafUnK9tQ1N7RxhpPNzyrs/UA/w7ZUuly32jAQEx9a+zCDZ7NdUDzuuB52cCA5c3QxVZRtgzwnRqean0LD+wVEgmH7rjmWDmfPKBfEAuBJ0uz8D9wPy8CLR7BYkgdhBwbjDUVV/jcZqeo/I2FvRONTls9iK7XwETIYn4EIcCrxOrKQOW0B3yoAmGuDktHyeBbGyL+cWxCnv8GkipAjoyiqfTy4+D5n0iSPQAhwFsTlvvEPc8K0g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XGROMFgY2/LtyNCc4I2UJr0p9UOCroE+iOx8LJU95LE=;
+ b=YkErW4wMvn6ARCdnLC2mxbVJLUJL/PVcLRhLEfQzhistODU+Ckq/28mPo6kKbxKwjyT3QT2U7sg5pCZC1rEbevVPbeqpQRpjvjY14SnuuS1g450RNFWti4aksIxIoRwMA/0/B4CaZzj5cM4DnwxQCmcNb4/p79q3jqxtSwqlvghzjOHSoNVu8ECcMEZJF+RG0FSTiFQMeQEDhbqHxmnLUS8OUvOIt2SpoHfkbNjvGGj/DRaKBwCPvq43vhbi39P+GwluoWpUFza6cd2ExzspaFTxS8ruxl/LKcDzqg2bNh8r9Cwsw/0tUztte6ljlGC/krl62oQvL/SY158WtybAuw==
+Received: from DM4PR12MB5769.namprd12.prod.outlook.com (2603:10b6:8:60::6) by
+ BL0PR12MB4738.namprd12.prod.outlook.com (2603:10b6:208:8e::13) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.5017.22; Wed, 23 Feb 2022 03:01:52 +0000
+Received: from DM4PR12MB5769.namprd12.prod.outlook.com
+ ([fe80::d91c:c44d:f621:18b6]) by DM4PR12MB5769.namprd12.prod.outlook.com
+ ([fe80::d91c:c44d:f621:18b6%3]) with mapi id 15.20.4995.027; Wed, 23 Feb 2022
+ 03:01:52 +0000
+From:   Krishna Yarlagadda <kyarlagadda@nvidia.com>
+To:     Rob Herring <robh@kernel.org>
+CC:     "broonie@kernel.org" <broonie@kernel.org>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>
+Subject: RE: [PATCH v2 2/5] dt-bindings: spi: Tegra234 QUAD SPI compatible
+Thread-Topic: [PATCH v2 2/5] dt-bindings: spi: Tegra234 QUAD SPI compatible
+Thread-Index: AQHYKBWYtWPHAOm4hUqZVqh+BMWsdqygBPuAgABtiCA=
+Date:   Wed, 23 Feb 2022 03:01:52 +0000
+Message-ID: <DM4PR12MB57695126D8BF37F74E98DB42C33C9@DM4PR12MB5769.namprd12.prod.outlook.com>
+References: <20220222175611.58051-1-kyarlagadda@nvidia.com>
+ <20220222175611.58051-3-kyarlagadda@nvidia.com>
+ <YhVHIVJlCwhbVAH7@robh.at.kernel.org>
+In-Reply-To: <YhVHIVJlCwhbVAH7@robh.at.kernel.org>
+Accept-Language: en-IN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: b8a1dfe9-08b9-49fc-41ea-08d9f678d7d4
+x-ms-traffictypediagnostic: BL0PR12MB4738:EE_
+x-microsoft-antispam-prvs: <BL0PR12MB4738CEF605D207725B27BC34C33C9@BL0PR12MB4738.namprd12.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: XfzUieZQ5ZfSTpf8zB+puaMvFC0KryfR47VuP/NH0lLJd1JrmauVecwm+akjo+zTryv1TZYetnfXGZ6NqIaQSGX0pPA5hST4DWyMUgNT5CbnKsSqpCzwNFn5yvVzQm4H4IuiLMU6uhLjYBUqk8s7p508x042zj9tQxuiLIdHs6X4WlxCaVWGvrsJCziNUIvsXJ69DnY1btF956xAJkHW6D28G5hOIaeBuyBmlIbRGeh+ZAqn+AC9N4Big7sRb9PuYExgef6W8rKJMYxhk3ltW2FcbVj4UEhF+sVgUxQBSXIsMZ8obijKSzMBpFIGFCeo1ksJRT7iBRlq4ZUqsgbbeqdk8+a5hIfxMQV9dOyXZ58ix6K8iw5qVEIqSy2oP8k87hKKqF7Nn2fq7rEm5xutg9aACl/EIRLYlEb3YV1XXoTVRMI8CqplfGUD8+KDyB0YcG0skWNMfr4CqNt2Mn82JCO3JF8AYHju/WK9FWqQ5XVg/DkjKM+pVYrG5GA2RzjQHg55C2lKq1vjMEGRfMMl1gxbHS+3Kg82UwMRNVNdXSBLVqMoz7zgjaRKAGB8h/pPnKmaM/FFJh64C+AAEtm2lgH7E7Co8YEzT3Cwre+LY9RpJJNdIG6r4U8abn7ONVyIeL3KExSJ56a4A84/0GpMJVDNKUJ40raOyfmZH5q470lfPOR4U6RHFYZb+qd/xOTd7StD4TcLTwfiwJxK+PrrXQ==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB5769.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(508600001)(122000001)(7696005)(316002)(6506007)(71200400001)(86362001)(33656002)(38100700002)(26005)(9686003)(83380400001)(53546011)(55236004)(54906003)(6916009)(186003)(66946007)(66476007)(55016003)(66446008)(76116006)(8936002)(5660300002)(64756008)(66556008)(8676002)(52536014)(4326008)(38070700005)(2906002);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?ZNCWH3zohUY8pPZ3lkhU/OnFMRw53f5GkH8AplKoNj71yujqrESj2E5pHuc5?=
+ =?us-ascii?Q?Glw2Fa3F9AaZoHcCYZxHVlR2m3NIlcw+EayzxX/G0yZhydRCTt8sNrIzohdU?=
+ =?us-ascii?Q?eHlcJbNwtTaK3P/aGYJrTVrDC+A7mxHsaRCU3qo8r1qXc0+SJ848j4Ar/Juk?=
+ =?us-ascii?Q?11z76SHJPe6plmAjKgp0ajggTpyH3gwKhXwYeI6vD1iq+uq+cUQJSkWDbAtP?=
+ =?us-ascii?Q?JWBQJribbAWrw96jlZG5rC4jQ+v6bNZV+3uN6lVVqhr3caN1vcq4RTWcSrN9?=
+ =?us-ascii?Q?oZnkYvKzQuocdafZin3aKZ494+hxIj0nfS/Z4bqEP9kBk9zLUx2v/RoR43l2?=
+ =?us-ascii?Q?lp2p3fHmelmpQqBl6Z1tCYF2o2Unw/NwL20AVnNdt4v2DxanfbtMf+X/UQgO?=
+ =?us-ascii?Q?VP3jXUTzVWXlhm7L+8bICSf1wJ6oF4i23IYnlu2Wfmti8EXjyJNpOvEQhTsb?=
+ =?us-ascii?Q?E10tV88Bez55ciMiSZQpTit4f5htjh+v0PCOLe6m30/Wc6f2sJpGsHEXdifc?=
+ =?us-ascii?Q?joeKfIMn4lZfzzuZ/pxyWpCOy2daQuKyxq4cdcLWea5vpIiQh9sHXM5LR9Qy?=
+ =?us-ascii?Q?nNicgkifMo4iZS4/h83SXflFaUhGR7zKBcXBvkhD/gxcaJ5lh1sVyqtPw81q?=
+ =?us-ascii?Q?oYsx+zyxnenql5hk2W1vUvgwSWhU2vxqnF9IbVCO+cA9HpUD9UpOUGaCe5Rp?=
+ =?us-ascii?Q?oT0PkVb4cwFaV3+5VtnDnGXR/OhRX4AtzFuCnjnt6hWNnI0+mF798Q72mTvq?=
+ =?us-ascii?Q?aZeTLGb46L5XDf/Ffa+Tk9qDbincDwu1C7ykbUVcN0M1pWRC2N3BLCx1rF90?=
+ =?us-ascii?Q?/6Vyv2rQm3HUz785WfWrukXhANAaqb9MkAWsB9PblGykp65Z/EY9Mjel48Xz?=
+ =?us-ascii?Q?edmjvgG1vr1QgjLLnQRg2wjVxrYLYHcq0H9v/Yss99JmVO2jKgHqpNP7GtSg?=
+ =?us-ascii?Q?0xG/s/qFvZq/nKBloZ9jULaU3pLlQsYDkjls3/bti1dabc+40qa4Iou0yQL/?=
+ =?us-ascii?Q?X+z1ee7UNBkefmEpbF2YIXVpDkrnSOBWkbi+tWZeNdIQqC/oobQ/WTORbkwN?=
+ =?us-ascii?Q?k4EqIAw9sM3/e1fMLa6XieCTCfjjgPFRGb+rZ5bQJjGJ7yuCDiCj6yvkqc/l?=
+ =?us-ascii?Q?6uSkyYYwKYZXfwk9e0vlhtyULBnhWo2chOHV/yawe6rwPZzD7YuBPV8wtxxW?=
+ =?us-ascii?Q?9Z5VLkHLtNIeIDVBcd5HEhryKiAKFj3Jre3TIaY1/QgVBBTfuZHyv/b8tB0X?=
+ =?us-ascii?Q?bt37oWZr6jNd3YcaqYDxLhsQz4OC7fZm8Myg1an5zBd0/wjY554WmZSYRWTg?=
+ =?us-ascii?Q?0os6YZxAkOs5kpZLpaIAqRpK3jEKUWzb+80ikMINCbNa+2UZWstMxnNQQI/r?=
+ =?us-ascii?Q?UQRZxL/XiLP8HSy56NiTvHSBdxCi60ZVs0dhmBQV/cqmjKbBikX0SyLExSrm?=
+ =?us-ascii?Q?oR2SPpNe7oYhhy+OZ9VZiQyxGafHTBSyLF5QZn5OBWKu7Y0ODiu1HBHDmBta?=
+ =?us-ascii?Q?kbR8TVkqZPBnsFe9X11lZMhFx2rrk93OyGy4SGATIJBaJ64HE+/XKyoAwzWx?=
+ =?us-ascii?Q?BKA0/advoE1bQRI8hiLWHHQuZSgWDyzFpBgtG37I4LJWh4wOy1PBOBklpGWq?=
+ =?us-ascii?Q?hy2wFcGSYgw6bEpBDeR4/k0=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:91.0) Gecko/20100101
- Thunderbird/91.6.1
-Subject: Re: [PATCH v3 2/9] gpu: host1x: Add context bus
-Content-Language: en-GB
-To:     Christoph Hellwig <hch@infradead.org>,
-        Mikko Perttunen <mperttunen@nvidia.com>
-Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com, joro@8bytes.org,
-        will@kernel.org, robh+dt@kernel.org, linux-tegra@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-References: <20220218113952.3077606-1-mperttunen@nvidia.com>
- <20220218113952.3077606-3-mperttunen@nvidia.com>
- <YhUNiHiYdQfxJybk@infradead.org>
-From:   Robin Murphy <robin.murphy@arm.com>
-In-Reply-To: <YhUNiHiYdQfxJybk@infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5769.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b8a1dfe9-08b9-49fc-41ea-08d9f678d7d4
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Feb 2022 03:01:52.6218
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: LFTMaknjrkGFUBKU1Rt5UBpDHTl2x6qqcUbQaivweQrLTph7rrDDiUke0sHE2WNsUDhO7jsJiG+eclqQuIhSjg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL0PR12MB4738
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 2022-02-22 16:21, Christoph Hellwig wrote:
-> On Fri, Feb 18, 2022 at 01:39:45PM +0200, Mikko Perttunen wrote:
->> The context bus is a "dummy" bus that contains struct devices that
->> correspond to IOMMU contexts assigned through Host1x to processes.
->>
->> Even when host1x itself is built as a module, the bus is registered
->> in built-in code so that the built-in ARM SMMU driver is able to
->> reference it.
->>
->> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
->> ---
->>   drivers/gpu/Makefile               |  3 +--
->>   drivers/gpu/host1x/Kconfig         |  5 +++++
->>   drivers/gpu/host1x/Makefile        |  1 +
->>   drivers/gpu/host1x/context_bus.c   | 31 ++++++++++++++++++++++++++++++
->>   include/linux/host1x_context_bus.h | 15 +++++++++++++++
->>   5 files changed, 53 insertions(+), 2 deletions(-)
->>   create mode 100644 drivers/gpu/host1x/context_bus.c
->>   create mode 100644 include/linux/host1x_context_bus.h
->>
->> diff --git a/drivers/gpu/Makefile b/drivers/gpu/Makefile
->> index 835c88318cec..8997f0096545 100644
->> --- a/drivers/gpu/Makefile
->> +++ b/drivers/gpu/Makefile
->> @@ -2,7 +2,6 @@
->>   # drm/tegra depends on host1x, so if both drivers are built-in care must be
->>   # taken to initialize them in the correct order. Link order is the only way
->>   # to ensure this currently.
->> -obj-$(CONFIG_TEGRA_HOST1X)	+= host1x/
->> -obj-y			+= drm/ vga/
->> +obj-y			+= host1x/ drm/ vga/
->>   obj-$(CONFIG_IMX_IPUV3_CORE)	+= ipu-v3/
->>   obj-$(CONFIG_TRACE_GPU_MEM)		+= trace/
->> diff --git a/drivers/gpu/host1x/Kconfig b/drivers/gpu/host1x/Kconfig
->> index 6815b4db17c1..1861a8180d3f 100644
->> --- a/drivers/gpu/host1x/Kconfig
->> +++ b/drivers/gpu/host1x/Kconfig
->> @@ -1,8 +1,13 @@
->>   # SPDX-License-Identifier: GPL-2.0-only
->> +
->> +config TEGRA_HOST1X_CONTEXT_BUS
->> +	bool
->> +
->>   config TEGRA_HOST1X
->>   	tristate "NVIDIA Tegra host1x driver"
->>   	depends on ARCH_TEGRA || (ARM && COMPILE_TEST)
->>   	select DMA_SHARED_BUFFER
->> +	select TEGRA_HOST1X_CONTEXT_BUS
->>   	select IOMMU_IOVA
->>   	help
->>   	  Driver for the NVIDIA Tegra host1x hardware.
->> diff --git a/drivers/gpu/host1x/Makefile b/drivers/gpu/host1x/Makefile
->> index d2b6f7de0498..c891a3e33844 100644
->> --- a/drivers/gpu/host1x/Makefile
->> +++ b/drivers/gpu/host1x/Makefile
->> @@ -18,3 +18,4 @@ host1x-y = \
->>   	hw/host1x07.o
->>   
->>   obj-$(CONFIG_TEGRA_HOST1X) += host1x.o
->> +obj-$(CONFIG_TEGRA_HOST1X_CONTEXT_BUS) += context_bus.o
->> diff --git a/drivers/gpu/host1x/context_bus.c b/drivers/gpu/host1x/context_bus.c
->> new file mode 100644
->> index 000000000000..2625914f3c7d
->> --- /dev/null
->> +++ b/drivers/gpu/host1x/context_bus.c
->> @@ -0,0 +1,31 @@
->> +// SPDX-License-Identifier: GPL-2.0-only
->> +/*
->> + * Copyright (c) 2021, NVIDIA Corporation.
->> + */
->> +
->> +#include <linux/device.h>
->> +#include <linux/of.h>
->> +
->> +struct bus_type host1x_context_device_bus_type = {
->> +	.name = "host1x-context",
->> +};
->> +EXPORT_SYMBOL(host1x_context_device_bus_type);
-> 
-> EXPORT_SYMBOL_GPL, please.
-> 
-> But the pattern that this copies in arm_smmu_bus_init is really
-> ugly.  I think we need to figure out a way todo that without having
-> to export all the low-level bus types.
 
-Yup, as it happens that was the first step on my mission :)
 
-https://gitlab.arm.com/linux-arm/linux-rm/-/commits/iommu/bus
+Regards
+KY
 
-Still a way to go with the main meat of that work, though, so I was 
-figuring this could probably land as-is and I'll sweep it up in due course.
-
-Robin.
+> -----Original Message-----
+> From: Rob Herring <robh@kernel.org>
+> Sent: 23 February 2022 01:57
+> To: Krishna Yarlagadda <kyarlagadda@nvidia.com>
+> Cc: broonie@kernel.org; thierry.reding@gmail.com; Jonathan Hunter
+> <jonathanh@nvidia.com>; linux-spi@vger.kernel.org; linux-
+> tegra@vger.kernel.org; Sowjanya Komatineni
+> <skomatineni@nvidia.com>; Laxman Dewangan
+> <ldewangan@nvidia.com>; devicetree@vger.kernel.org; linux-
+> kernel@vger.kernel.org; p.zabel@pengutronix.de
+> Subject: Re: [PATCH v2 2/5] dt-bindings: spi: Tegra234 QUAD SPI
+> compatible
+>=20
+> External email: Use caution opening links or attachments
+>=20
+>=20
+> On Tue, Feb 22, 2022 at 11:26:08PM +0530, Krishna Yarlagadda wrote:
+> > Add compatible string for Tegra234 for Tegra QUAD SPI
+> >
+> > Signed-off-by: Krishna Yarlagadda <kyarlagadda@nvidia.com>
+> > ---
+> >  Documentation/devicetree/bindings/spi/nvidia,tegra210-quad.yaml
+> | 1 +
+> >  1 file changed, 1 insertion(+)
+>=20
+> Please add Acked-by/Reviewed-by tags when posting new versions.
+Sure. Will do that next time.
+> However, there's no need to repost patches *only* to add the tags.
+> The upstream maintainer will do that for acks received on the version
+> they apply.
+>=20
+I resent the patch as it was not clear to me if this patch can be applied.
+I received warning and assumed this cannot be applied without resend.
+-- This breaks an x86_64 allmodconfig build
+> If a tag was not added on purpose, please state why and what
+> changed.
