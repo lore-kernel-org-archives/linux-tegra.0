@@ -2,67 +2,80 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3F80C433F5
-	for <linux-tegra@archiver.kernel.org>; Wed, 23 Feb 2022 06:36:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F78CC4332F
+	for <linux-tegra@archiver.kernel.org>; Wed, 23 Feb 2022 09:44:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236337AbiBWGhI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 23 Feb 2022 01:37:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52070 "EHLO
+        id S239373AbiBWJou (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 23 Feb 2022 04:44:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37976 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233316AbiBWGhH (ORCPT
+        with ESMTP id S239365AbiBWJot (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 23 Feb 2022 01:37:07 -0500
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF73F62E6;
-        Tue, 22 Feb 2022 22:36:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=/iX0wAICLVMEM1N1QRmtagYvAxCkv3rP8cMN2xrU/F0=; b=1LSr7rAmQ8gLIePxkwSjmV52zI
-        XxP3kWpPZm1/Ue2ppNdJud+IF3UugAVr8sazajGI9MK1YPeWEFbPVj+tHDjbGjiWeI1DEn43JFOm5
-        kzpXI8vFDze19m1HGhImheK14zjFW2ESUV6xf9yVntJ5gB65BjhRNrQ66MCfkjyIqcFZtySp67xYG
-        8Oeo0T5B28wYJObsGTz2dkUGXWpYRjo5CVp6A75OQNMMmtUJMefGhUdJBRknxp23/LwLchfBhZ1na
-        RAxXD+FYJNRPAfXGpipRMirKlxOqANGEniZWMh/trLFa+bkaL5qxp9qf8aHyzfkymn8Ilg0Tj8Okc
-        DEixtwzA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nMlGJ-00CzV0-8q; Wed, 23 Feb 2022 06:36:31 +0000
-Date:   Tue, 22 Feb 2022 22:36:31 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Robin Murphy <robin.murphy@arm.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        thierry.reding@gmail.com, jonathanh@nvidia.com, joro@8bytes.org,
-        will@kernel.org, robh+dt@kernel.org, linux-tegra@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 2/9] gpu: host1x: Add context bus
-Message-ID: <YhXV7x+MzE6yQ4J8@infradead.org>
-References: <20220218113952.3077606-1-mperttunen@nvidia.com>
- <20220218113952.3077606-3-mperttunen@nvidia.com>
- <YhUNiHiYdQfxJybk@infradead.org>
- <c0dee650-df1c-4fad-aa97-fb9eab03f3a2@arm.com>
+        Wed, 23 Feb 2022 04:44:49 -0500
+Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9582A70F4A;
+        Wed, 23 Feb 2022 01:44:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
+         s=20161220; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+        References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=uD+YdSB7BK2YZwHIlrFrUTb1ozQHZ1Cv2M2UMS1FjFg=; b=ddUFMN63QJ6TBX1ryUpKDsU/sP
+        +7bMajKfZDclWj9HZR+nZqarXuhOYEc6+hQbWxMk1nIPbkJT3HthlJ+E3J7gP+aY9mkI12PxJTwVz
+        j5o4v0FG6u/gMKV4m/QztKGHnt4kpcUZrULZUio4pv6LvX8W9HuQ+EaSsI9UA1MTfYL2wRR0+siSb
+        8+VsToOmQMrcizomZAYvuvXA1fqbsA30K5w1Xbfa/4JFtCLIOP4S5Sxd+MR15CRsWy1QPPk6NaoIz
+        OXPOpzYJ93NSv7xV6y6zIGnswVRXmhe45W0UBnXxJV4IBbSb9j4ZVAbXKcNb7/9F5yjdZDB2l8pd9
+        Aid3wUXg==;
+Received: from 91-158-25-70.elisa-laajakaista.fi ([91.158.25.70] helo=[192.168.1.10])
+        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <cyndis@kapsi.fi>)
+        id 1nMoBn-0003QL-UA; Wed, 23 Feb 2022 11:44:03 +0200
+Message-ID: <d2579e10-e5c2-0d99-4233-19318a1db6c1@kapsi.fi>
+Date:   Wed, 23 Feb 2022 11:44:02 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c0dee650-df1c-4fad-aa97-fb9eab03f3a2@arm.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.4.1
+Subject: Re: [PATCH v3 3/9] gpu: host1x: Add context device management code
+Content-Language: en-US
+To:     Christoph Hellwig <hch@infradead.org>,
+        Mikko Perttunen <mperttunen@nvidia.com>
+Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com, joro@8bytes.org,
+        will@kernel.org, robh+dt@kernel.org, robin.murphy@arm.com,
+        linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20220218113952.3077606-1-mperttunen@nvidia.com>
+ <20220218113952.3077606-4-mperttunen@nvidia.com>
+ <YhUOKaoCA7dyAZAh@infradead.org>
+From:   Mikko Perttunen <cyndis@kapsi.fi>
+In-Reply-To: <YhUOKaoCA7dyAZAh@infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 91.158.25.70
+X-SA-Exim-Mail-From: cyndis@kapsi.fi
+X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Feb 22, 2022 at 09:30:30PM +0000, Robin Murphy wrote:
-> > But the pattern that this copies in arm_smmu_bus_init is really
-> > ugly.  I think we need to figure out a way todo that without having
-> > to export all the low-level bus types.
+On 2/22/22 18:24, Christoph Hellwig wrote:
+> On Fri, Feb 18, 2022 at 01:39:46PM +0200, Mikko Perttunen wrote:
+>> +
+>> +/*
+>> + * Due to an issue with T194 NVENC, only 38 bits can be used.
+>> + * Anyway, 256GiB of IOVA ought to be enough for anyone.
+>> + */
+>> +static dma_addr_t context_device_dma_mask = DMA_BIT_MASK(38);
 > 
-> Yup, as it happens that was the first step on my mission :)
+> You need a mask per device.  Please don't share the same variable
+> for multiple masks.
 > 
-> https://gitlab.arm.com/linux-arm/linux-rm/-/commits/iommu/bus
+>> +EXPORT_SYMBOL(host1x_context_alloc);
 > 
-> Still a way to go with the main meat of that work, though, so I was figuring
-> this could probably land as-is and I'll sweep it up in due course.
+> All this low-level code really should be EXPORT_SYMBOL_GPL.
 
-Yes, that part looks very nice.  It would be great to get that merged
-ASAP.
+Thanks, will fix (and same for patch 2).
+
+Mikko
