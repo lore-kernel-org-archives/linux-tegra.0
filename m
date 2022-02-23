@@ -2,264 +2,203 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 855EEC43219
-	for <linux-tegra@archiver.kernel.org>; Wed, 23 Feb 2022 12:47:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09461C433F5
+	for <linux-tegra@archiver.kernel.org>; Wed, 23 Feb 2022 13:22:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240578AbiBWMsD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 23 Feb 2022 07:48:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38710 "EHLO
+        id S236992AbiBWNXN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 23 Feb 2022 08:23:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46422 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234236AbiBWMsD (ORCPT
+        with ESMTP id S236619AbiBWNXK (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 23 Feb 2022 07:48:03 -0500
-Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2886A4A3EF;
-        Wed, 23 Feb 2022 04:47:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1645620455; x=1677156455;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=oqju8IXdyV7NCCHhUut3vmqr4DdqWtFCCvY5rooimh0=;
-  b=fpCAjUPoeG1ddRqNywzQBvLQ9R0XGls9ZJ/tqm6sFLF6yVRj/s8/FyZO
-   UDfzAvwasJs/Wllyf2I0Lzi/mX9o9hIyl9A/iGm5IUv/Q9CzymC5VKwOk
-   bWeu9MsujROwepMjcVxa7JqwmeWLbhODPtXb9rD4FOs4Sf4p2LvFWBp1k
-   SPvTArN0es4hRgxUVm29QgnVb1hKaLUpSTP1FNHleFPxQWgfMwxRioijm
-   B1Y6t0+xssWgEnKLzoWciCKP95wodIonOTynZvQp50MVkGcrpXfNhLNhf
-   JlB27lMVeowMQDHa1J7ceVGF9GPgwOi3x3MiLqrigeD1HA7RRM2y9xmHU
-   w==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10266"; a="231927545"
-X-IronPort-AV: E=Sophos;i="5.88,390,1635231600"; 
-   d="scan'208";a="231927545"
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Feb 2022 04:47:34 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.88,390,1635231600"; 
-   d="scan'208";a="639294376"
-Received: from lkp-server01.sh.intel.com (HELO 788b1cd46f0d) ([10.239.97.150])
-  by orsmga004.jf.intel.com with ESMTP; 23 Feb 2022 04:47:30 -0800
-Received: from kbuild by 788b1cd46f0d with local (Exim 4.92)
-        (envelope-from <lkp@intel.com>)
-        id 1nMr3J-0001Oi-VB; Wed, 23 Feb 2022 12:47:29 +0000
-Date:   Wed, 23 Feb 2022 20:46:55 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Krishna Yarlagadda <kyarlagadda@nvidia.com>, broonie@kernel.org,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org
-Cc:     llvm@lists.linux.dev, kbuild-all@lists.01.org,
-        skomatineni@nvidia.com, ldewangan@nvidia.com, robh+dt@kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        p.zabel@pengutronix.de, Krishna Yarlagadda <kyarlagadda@nvidia.com>
-Subject: Re: [PATCH v2 5/5] spi: tegra210-quad: combined sequence mode
-Message-ID: <202202231856.T049n8gm-lkp@intel.com>
-References: <20220222175611.58051-6-kyarlagadda@nvidia.com>
+        Wed, 23 Feb 2022 08:23:10 -0500
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A39DDAB44B;
+        Wed, 23 Feb 2022 05:22:42 -0800 (PST)
+Received: by mail-wm1-x331.google.com with SMTP id i20so3363661wmc.3;
+        Wed, 23 Feb 2022 05:22:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=vGb2ARjYKMt2Kvks9J2lDsUiX/tTNuHKRpCYsHVcRkI=;
+        b=kNKKfuaa00aoAnTcnnO+KZaAksC+0IILYIogAnyAAhwNrakLcAe5J7O0QAwR0RDN/1
+         Ze4OTeX6LbZ0Mpnq4ZeshG4K375CfLfFlr94dBoO5I+NX57CJ+PBkIWxoqfOOLCqvPnb
+         OqjkLE7Z3EwN4+TfHKj0tFwX/njk68Vbf54LslksMqjZDyofemE9KCUoT1qYQwih0hka
+         AVX+s7VJu6boMSoACspKaowjsJBZGTgEelCzkyXzLfZASWl70Img0zGWZZPF7EqkRLwd
+         w/Qe8lxpSAENYseOIGLVH1UTpggc0nnfA/VWoqHPCw2PGTOex2OaIHOMp47ad7zZOeNk
+         gnlw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=vGb2ARjYKMt2Kvks9J2lDsUiX/tTNuHKRpCYsHVcRkI=;
+        b=TXU6w9LasioNuUPzldTvyXTLeCARAhAByRBvLASVBNn2ZoVEmb22MtAlrvMErNC+WM
+         uTy9FLmOQ35H3sjDcu7VkL7uEvEy6PoE29Y0cyt6/4bzBIApffm5RZK0FHjntvxTL67N
+         FScEyeO7hc4C2AxGQuVCrGCb2MwTlZ9D60t0bxxB3UZotPW/SSe5lYHC07Dq2StIUYpP
+         +PZ8E8Zbck6Wi6uTogydWBO+P2V3KoRAHU2G2gNGMVPCD7nvpUNSVpN9Ue9Go+UNy7Wz
+         5yZOcDBJFkLIIxznCmjoWyFce38BC9OXUBa7haMwa2MQ/MWokGsO+gOb2JHMS9+PGt71
+         AyFw==
+X-Gm-Message-State: AOAM531PHxQ+5eVSQM2KeZ/8X3V2AUFxG1uhrw21YDUMa3GYLPRttM+y
+        Kc9PkT7HW8Z6NF8IPfGOP5QVypySKl8=
+X-Google-Smtp-Source: ABdhPJxBb9fVmzJnugIzRqLWFDZChGUnTqVK+AjpBU9JMUTg1LRe8IlxoBZPAE0QkkWoUccti5ECHQ==
+X-Received: by 2002:a05:600c:3d06:b0:37b:f831:2a98 with SMTP id bh6-20020a05600c3d0600b0037bf8312a98mr7411709wmb.36.1645622560974;
+        Wed, 23 Feb 2022 05:22:40 -0800 (PST)
+Received: from orome (p200300e41f0a6900000000000000043a.dip0.t-ipconnect.de. [2003:e4:1f0a:6900::43a])
+        by smtp.gmail.com with ESMTPSA id c14-20020a7bc84e000000b0038100c9a593sm153072wml.45.2022.02.23.05.22.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Feb 2022 05:22:39 -0800 (PST)
+Date:   Wed, 23 Feb 2022 14:22:38 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Sumit Gupta <sumitg@nvidia.com>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        devicetree@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>,
+        kbuild-all@lists.01.org, bbasu@nvidia.com, vsethi@nvidia.com,
+        jsequeira@nvidia.com, Thierry Reding <treding@nvidia.com>
+Subject: Re: [Patch v3 3/9] dt-bindings: arm: tegra: Add NVIDIA Tegra194
+ axi2apb binding
+Message-ID: <YhY1Hhgz/O724oYL@orome>
+References: <20211221125117.6545-1-sumitg@nvidia.com>
+ <20211221125117.6545-4-sumitg@nvidia.com>
+ <YcNv7xm19sFTlfjW@robh.at.kernel.org>
+ <226fd57c-2631-ec7a-fc48-d6547d557681@nvidia.com>
+ <CAL_Jsq+=hGG-cMwvM0sKFW=Rwa56=fqS379jL4ZjSyDKOia-RA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ek0gW7MJ0WaqCJOs"
 Content-Disposition: inline
-In-Reply-To: <20220222175611.58051-6-kyarlagadda@nvidia.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAL_Jsq+=hGG-cMwvM0sKFW=Rwa56=fqS379jL4ZjSyDKOia-RA@mail.gmail.com>
+User-Agent: Mutt/2.2.1 (c8109e14) (2022-02-19)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Krishna,
 
-Thank you for the patch! Perhaps something to improve:
+--ek0gW7MJ0WaqCJOs
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-[auto build test WARNING on broonie-spi/for-next]
-[also build test WARNING on v5.17-rc5 next-20220222]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch]
+On Mon, Dec 27, 2021 at 11:41:10AM -0400, Rob Herring wrote:
+> On Thu, Dec 23, 2021 at 4:24 AM Sumit Gupta <sumitg@nvidia.com> wrote:
+> > > On Tue, Dec 21, 2021 at 06:21:11PM +0530, Sumit Gupta wrote:
+> > >> Add device-tree binding documentation to represent the axi2apb bridg=
+es
+> > >> used by Control Backbone (CBB) 1.0 in Tegra194 SOC. All errors for A=
+PB
+> > >> slaves are reported as slave error because APB bas single bit to rep=
+ort
+> > >> error. So, CBB driver needs to further check error status registers =
+of
+> > >> all the axi2apb bridges to find error type.
+> > >>
+> > >> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+> > >> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> > >> ---
+> > >>   .../arm/tegra/nvidia,tegra194-axi2apb.yaml    | 40 +++++++++++++++=
+++++
+> > >>   1 file changed, 40 insertions(+)
+> > >>   create mode 100644 Documentation/devicetree/bindings/arm/tegra/nvi=
+dia,tegra194-axi2apb.yaml
+> > >>
+> > >> diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegr=
+a194-axi2apb.yaml b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegr=
+a194-axi2apb.yaml
+> > >> new file mode 100644
+> > >> index 000000000000..788a13f8aa93
+> > >> --- /dev/null
+> > >> +++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra194-ax=
+i2apb.yaml
+> > >> @@ -0,0 +1,40 @@
+> > >> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > >> +%YAML 1.2
+> > >> +---
+> > >> +$id: "http://devicetree.org/schemas/arm/tegra/nvidia,tegra194-axi2a=
+pb.yaml#"
+> > >> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+> > >> +
+> > >> +title: NVIDIA Tegra194 AXI2APB bridge
+> > >> +
+> > >> +maintainers:
+> > >> +  - Sumit Gupta <sumitg@nvidia.com>
+> > >> +
+> > >> +properties:
+> > >> +  $nodename:
+> > >> +    pattern: "^axi2apb@([0-9a-f]+)$"
+> > >> +
+> > >> +  compatible:
+> > >> +    enum:
+> > >> +      - nvidia,tegra194-axi2apb
+> > >> +
+> > >> +  reg:
+> > >> +    maxItems: 6
+> > >> +    description: Physical base address and length of registers for =
+all bridges
+> > >> +
+> > >> +additionalProperties: false
+> > >> +
+> > >> +required:
+> > >> +  - compatible
+> > >> +  - reg
+> > >> +
+> > >> +examples:
+> > >> +  - |
+> > >> +    axi2apb: axi2apb@2390000 {
+> > >
+> > > As axi2apb appears to be a bus, then all the child nodes (APB devices)
+> > > should be under this node.
+> >
+> > axi2apb is a bridge which coverts an AXI to APB interface and not a bus.
+>=20
+> A bus and bridge node are pretty much one and the same in DT
+> representation. A PCI host bridge has a PCI bus beneath it for
+> example.
 
-url:    https://github.com/0day-ci/linux/commits/Krishna-Yarlagadda/Tegra-QUAD-SPI-combined-sequence-mode/20220223-015906
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
-config: riscv-randconfig-r042-20220221 (https://download.01.org/0day-ci/archive/20220223/202202231856.T049n8gm-lkp@intel.com/config)
-compiler: clang version 15.0.0 (https://github.com/llvm/llvm-project d271fc04d5b97b12e6b797c6067d3c96a8d7470e)
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # install riscv cross compiling tool for clang build
-        # apt-get install binutils-riscv64-linux-gnu
-        # https://github.com/0day-ci/linux/commit/3b852b330b0b8332a67fd7b183ae798031c7a207
-        git remote add linux-review https://github.com/0day-ci/linux
-        git fetch --no-tags linux-review Krishna-Yarlagadda/Tegra-QUAD-SPI-combined-sequence-mode/20220223-015906
-        git checkout 3b852b330b0b8332a67fd7b183ae798031c7a207
-        # save the config file to linux build tree
-        mkdir build_dir
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=riscv SHELL=/bin/bash drivers/spi/
+Sorry for taking so long to reply, this fell through the cracks.
 
-If you fix the issue, kindly add following tag as appropriate
-Reported-by: kernel test robot <lkp@intel.com>
+These aren't really bridges as such. CBB (which we call /bus@0 in DT) is
+a sort of large container for all IP. Within that there are various shim
+layers that connect these "legacy" interfaces to CBB. I suppose you
+could call them bridges, but it's a bit of a stretch. From a software
+point of view there is no observable translation happening. The only
+reason why we need this is for improved error reporting.
 
-All warnings (new ones prefixed by >>):
+The TRM also doesn't make a distinction between the various bridges. The
+devices are all just mapped into a single address space via the CBB.
 
->> drivers/spi/spi-tegra210-quad.c:1044:20: warning: variable 'len' set but not used [-Wunused-but-set-variable]
-           u8 cmd_value = 0, len = 0, val = 0;
-                             ^
->> drivers/spi/spi-tegra210-quad.c:1140:3: warning: variable 'ret' is used uninitialized whenever switch default is taken [-Wsometimes-uninitialized]
-                   default:
-                   ^~~~~~~
-   drivers/spi/spi-tegra210-quad.c:1148:16: note: uninitialized use occurs here
-           msg->status = ret;
-                         ^~~
->> drivers/spi/spi-tegra210-quad.c:1051:2: warning: variable 'ret' is used uninitialized whenever 'for' loop exits because its condition is false [-Wsometimes-uninitialized]
-           list_for_each_entry(xfer, &msg->transfers, transfer_list) {
-           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/list.h:639:7: note: expanded from macro 'list_for_each_entry'
-                !list_entry_is_head(pos, head, member);                    \
-                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/spi/spi-tegra210-quad.c:1148:16: note: uninitialized use occurs here
-           msg->status = ret;
-                         ^~~
-   drivers/spi/spi-tegra210-quad.c:1051:2: note: remove the condition if it is always true
-           list_for_each_entry(xfer, &msg->transfers, transfer_list) {
-           ^
-   include/linux/list.h:639:7: note: expanded from macro 'list_for_each_entry'
-                !list_entry_is_head(pos, head, member);                    \
-                ^
-   drivers/spi/spi-tegra210-quad.c:1041:9: note: initialize the variable 'ret' to silence this warning
-           int ret;
-                  ^
-                   = 0
->> drivers/spi/spi-tegra210-quad.c:1140:3: warning: unannotated fall-through between switch labels [-Wimplicit-fallthrough]
-                   default:
-                   ^
-   drivers/spi/spi-tegra210-quad.c:1140:3: note: insert '__attribute__((fallthrough));' to silence this warning
-                   default:
-                   ^
-                   __attribute__((fallthrough)); 
-   drivers/spi/spi-tegra210-quad.c:1140:3: note: insert 'break;' to avoid fall-through
-                   default:
-                   ^
-                   break; 
-   4 warnings generated.
+My understanding is that this is also gone in newer chips, so matters
+become a bit simpler there.
 
+Reorganizing /bus@0 into multiple bridges and busses would be a lot of
+churn and likely confuse people that want to correlate what's in the TRM
+to what's in DT, so I don't think it's worth it.
 
-vim +/len +1044 drivers/spi/spi-tegra210-quad.c
+For newer chips we may want to keep this in mind so we structure the DT
+more accurately from the beginning, though as I said, things have been
+simplified a bit, so this may not be an issue anymore.
 
-  1032	
-  1033	static int tegra_qspi_combined_seq_xfer(struct tegra_qspi *tqspi,
-  1034						struct spi_message *msg)
-  1035	{
-  1036		bool is_first_msg = true;
-  1037		struct spi_transfer *xfer;
-  1038		struct spi_device *spi = msg->spi;
-  1039		u8 transfer_phase = 0;
-  1040		u32 cmd1 = 0, dma_ctl = 0;
-> 1041		int ret;
-  1042		u32 address_value = 0;
-  1043		u32 cmd_config = 0, addr_config = 0;
-> 1044		u8 cmd_value = 0, len = 0, val = 0;
-  1045	
-  1046		/* Enable Combined sequence mode */
-  1047		val = tegra_qspi_readl(tqspi, QSPI_GLOBAL_CONFIG);
-  1048		val |= QSPI_CMB_SEQ_EN;
-  1049		tegra_qspi_writel(tqspi, val, QSPI_GLOBAL_CONFIG);
-  1050		/* Process individual transfer list */
-> 1051		list_for_each_entry(xfer, &msg->transfers, transfer_list) {
-  1052			switch (transfer_phase) {
-  1053			case CMD_TRANSFER:
-  1054				/* X1 SDR mode */
-  1055				cmd_config = tegra_qspi_cmd_config(false, 0,
-  1056								   xfer->len);
-  1057				cmd_value = *((const u8 *)(xfer->tx_buf));
-  1058				break;
-  1059			case ADDR_TRANSFER:
-  1060				len = xfer->len;
-  1061				/* X1 SDR mode */
-  1062				addr_config = tegra_qspi_addr_config(false, 0,
-  1063								     xfer->len);
-  1064				address_value = *((const u32 *)(xfer->tx_buf));
-  1065				break;
-  1066			case DATA_TRANSFER:
-  1067				/* Program Command, Address value in register */
-  1068				tegra_qspi_writel(tqspi, cmd_value, QSPI_CMB_SEQ_CMD);
-  1069				tegra_qspi_writel(tqspi, address_value,
-  1070						  QSPI_CMB_SEQ_ADDR);
-  1071				/* Program Command and Address config in register */
-  1072				tegra_qspi_writel(tqspi, cmd_config,
-  1073						  QSPI_CMB_SEQ_CMD_CFG);
-  1074				tegra_qspi_writel(tqspi, addr_config,
-  1075						  QSPI_CMB_SEQ_ADDR_CFG);
-  1076	
-  1077				reinit_completion(&tqspi->xfer_completion);
-  1078				cmd1 = tegra_qspi_setup_transfer_one(spi, xfer,
-  1079								     is_first_msg);
-  1080				ret = tegra_qspi_start_transfer_one(spi, xfer,
-  1081								    cmd1);
-  1082	
-  1083				if (ret < 0) {
-  1084					dev_err(tqspi->dev, "Failed to start transfer-one: %d\n",
-  1085						ret);
-  1086					return ret;
-  1087				}
-  1088	
-  1089				is_first_msg = false;
-  1090				ret = wait_for_completion_timeout
-  1091						(&tqspi->xfer_completion,
-  1092						QSPI_DMA_TIMEOUT);
-  1093	
-  1094				if (WARN_ON(ret == 0)) {
-  1095					dev_err(tqspi->dev, "QSPI Transfer failed with timeout: %d\n",
-  1096						ret);
-  1097					if (tqspi->is_curr_dma_xfer &&
-  1098					    (tqspi->cur_direction & DATA_DIR_TX))
-  1099						dmaengine_terminate_all
-  1100							(tqspi->tx_dma_chan);
-  1101	
-  1102					if (tqspi->is_curr_dma_xfer &&
-  1103					    (tqspi->cur_direction & DATA_DIR_RX))
-  1104						dmaengine_terminate_all
-  1105							(tqspi->rx_dma_chan);
-  1106	
-  1107					/* Abort transfer by resetting pio/dma bit */
-  1108					if (!tqspi->is_curr_dma_xfer) {
-  1109						cmd1 = tegra_qspi_readl
-  1110								(tqspi,
-  1111								 QSPI_COMMAND1);
-  1112						cmd1 &= ~QSPI_PIO;
-  1113						tegra_qspi_writel
-  1114								(tqspi, cmd1,
-  1115								 QSPI_COMMAND1);
-  1116					} else {
-  1117						dma_ctl = tegra_qspi_readl
-  1118								(tqspi,
-  1119								 QSPI_DMA_CTL);
-  1120						dma_ctl &= ~QSPI_DMA_EN;
-  1121						tegra_qspi_writel(tqspi, dma_ctl,
-  1122								  QSPI_DMA_CTL);
-  1123					}
-  1124	
-  1125					/* Reset controller if timeout happens */
-  1126					if (device_reset(tqspi->dev) < 0)
-  1127						dev_warn_once(tqspi->dev,
-  1128							      "device reset failed\n");
-  1129					ret = -EIO;
-  1130					goto exit;
-  1131				}
-  1132	
-  1133				if (tqspi->tx_status ||  tqspi->rx_status) {
-  1134					dev_err(tqspi->dev, "QSPI Transfer failed\n");
-  1135					tqspi->tx_status = 0;
-  1136					tqspi->rx_status = 0;
-  1137					ret = -EIO;
-  1138					goto exit;
-  1139				}
-> 1140			default:
-  1141				goto exit;
-  1142			}
-  1143			msg->actual_length += xfer->len;
-  1144			transfer_phase++;
-  1145		}
-  1146	
-  1147	exit:
-  1148		msg->status = ret;
-  1149	
-  1150		return ret;
-  1151	}
-  1152	
+Thierry
 
----
-0-DAY CI Kernel Test Service, Intel Corporation
-https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
+--ek0gW7MJ0WaqCJOs
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmIWNRsACgkQ3SOs138+
+s6FZOQ/+LbbpJ1EmeqjNCY26tK+hEL1Y8oOHW2uV65Aq9zQu/JVNRCaPVfasdvD9
+9blDOZNeaBBp0Ri0NJbjKyInvBKS3W2/G9RBR2HxUQkibabTvfNuovoS3gNorw4/
+EygTUAuWX6p2lAKu+mAN0JW4rnkQRrrnqbTXQiGa1nnfsBorzIil+MXY8MBb8mxV
+AN1tIdITQli7dByU2OA3g431h1yBB+CFc5q1kXhgVxrd24s/bqmHHofHvOCbiTX8
+8oXV2pEwUq+4IfCEZRl8J2LgV0jLqSTUYNheWfMaKhH5iS63XSzTTE1IjsV903y5
+8UJpLvj7x8h3pj4WTOOv7skc8AoWL0F7vsFXccJDtvTvGbUrL+pBn/6zxfgicV3n
+W2Qty4P+dL+RzukHXV6pMyXeZnSvAvrqkVrSwoaWddaaeIcQ3nQE08vQxLD5jWnD
++KTn4/wWEefqqoh9x/gvWiJqcCyKejWgSlqIL2FXVSHVcQ/d7ZeL99NHnDb/H/iE
+osQl6tNezgI/FVTPkwTMgdJ6Qh9vy5yt8GyOEPe3H2tRb48hCgRF0VWwWfD8njun
+Noe9m9m8DPYpQ+4sAQtiWZTQgLozMzD5y4Rx0O5Hdo71TfVE9B2u5vqN5pbplLKp
+BkTOo8JyU415bhThgCa4K0F5XexhW1wjsamb78hccEWuP2+eWBg=
+=IRCr
+-----END PGP SIGNATURE-----
+
+--ek0gW7MJ0WaqCJOs--
