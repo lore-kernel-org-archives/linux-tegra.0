@@ -2,53 +2,53 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76E91C433FE
-	for <linux-tegra@archiver.kernel.org>; Thu, 24 Feb 2022 16:40:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4358C433FE
+	for <linux-tegra@archiver.kernel.org>; Thu, 24 Feb 2022 16:51:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230078AbiBXQlU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 24 Feb 2022 11:41:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39668 "EHLO
+        id S230150AbiBXQwZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 24 Feb 2022 11:52:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54348 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229473AbiBXQlT (ORCPT
+        with ESMTP id S229978AbiBXQwY (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 24 Feb 2022 11:41:19 -0500
-Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5E8626AED;
-        Thu, 24 Feb 2022 08:40:48 -0800 (PST)
-Received: by mail-ed1-x52d.google.com with SMTP id s24so3672378edr.5;
-        Thu, 24 Feb 2022 08:40:48 -0800 (PST)
+        Thu, 24 Feb 2022 11:52:24 -0500
+Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 709553586B;
+        Thu, 24 Feb 2022 08:51:46 -0800 (PST)
+Received: by mail-ej1-x62a.google.com with SMTP id qx21so5603428ejb.13;
+        Thu, 24 Feb 2022 08:51:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=qALsUfBRNZNy1q4MnFnN/Mg68ORU7TGkkXw7GkgCc1I=;
-        b=Ssjj3P1kELJ8G5JUikFQhi0FmjJbN5NEY1VUlZ/Va4BVNhkXvxOxH2PMKMAG0LTXJD
-         uOe8kD+hfDyom7n8ch4Ni8Qg57So73H2MfsXxUxUCmYOZbWEuG1BRlB2QS5qyZUvHRCi
-         a66Kml+ysys3+kH2Oft17MXzFK0J5qwFjIW8+b0lQ0DV1MgIu/0HQ49vAlo1UlDtWlHP
-         8fkCv9eaeLa2SeYkcoChzqFoDXp03jX7KgTYrSqs4qlf76BBghLgOL5nDop0b6u9Ht03
-         etRz+Neju6nQkwBHq5n7Q2tCHOOfi0g6UUdDyf1Ewld0RQJ27U/0BiYMKSKPqzn5/WZV
-         S1Pw==
+        bh=0BX8BM017uCOv9ckNj58aZrZbCd/kR/+hefTXMO9tPo=;
+        b=kiIocb6M3Uuv4xiRzAdVw033se264t+5e8SmYP5ibq1I4FYRMAbbkXLawlWwzOm54C
+         xHb9/0YbSlMUpw2Y6llCywFgYrAx7ZpZqQ+LatVEGnWWdWhVfJOQgo+QQSMiaB0nhH26
+         kpkq/SZK9dynlhtQuiHfpLZe9Mhcoq6diD0oyzZr+Eab5VLwELySFw3E0vHze+1GYjcg
+         a7cktJzM4p6B4R9ymuUjhoB5MBJsi2ax6GGP6CGvS9MpQvS2yOvXYqUupHSeCx/uSRcg
+         PBt4OTHJvYUrvjPylxPIa+CChh3DpYRgOwluNXETDaED4nhajMnp9x/THJUOxJfe+68g
+         DzYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=qALsUfBRNZNy1q4MnFnN/Mg68ORU7TGkkXw7GkgCc1I=;
-        b=NMWSZXZ4rK9/OaEUidXVWybmo/vRsFWapW2raiHDQsgrd2N8jUq/x7V7SLzfGO8Dm4
-         Ndjw9Qj2i+8IGOW78HtZHDev1oJ+9bp4kT0jNxKJc99LSEMNY6uCmJliY9AP7R3afFg3
-         FS/qPq4pOYNuun52Cq3J8g0D+dj+DMD3m09p3lqHeG2hKoQCzQ4K6LoYCrlED2mQXpKr
-         3KZtKCgv4fjTpVCG3eG/+fHPbRCGyjNB9nCL6oBpZXu0CSqOMkmiysoRLWs1jKqBY/0D
-         H40lSVkPmh0OilXT2sQwO/GDlCMiNQvCn+LnvzRW7hSxq/DS8c+aGlMpM+WUYSrqaPB3
-         kw2w==
-X-Gm-Message-State: AOAM532bPR3IH6JIeePq+FqgMdJnmvNupm12+5+pDItkZ8AhoST3wkl7
-        NeTktQyrqA6U6kgGluFBoxc=
-X-Google-Smtp-Source: ABdhPJyjBea5qD7kSqwqF+o5kzXVs8iZMyCe9mWUHCCP8R6Qw0DaiQ97szh10dh6UTSupoTJtGQJow==
-X-Received: by 2002:a05:6402:5cb:b0:410:82a0:5d76 with SMTP id n11-20020a05640205cb00b0041082a05d76mr3158717edx.130.1645720846536;
-        Thu, 24 Feb 2022 08:40:46 -0800 (PST)
+        bh=0BX8BM017uCOv9ckNj58aZrZbCd/kR/+hefTXMO9tPo=;
+        b=q0d+qe+miDlHrQtrL3aAVTcYOPTh5r2IqEd5/F6rQOf3TMCfxCfQH1Fl0kLayU1sZk
+         6Yer7JpcT6ivvv7mgbek8wi63WwhW16JmZV6TSSaZRd/V9sFGCPu3uEPCkmIhVTghPzB
+         H9CP5rtCgfw8pdb70v9zbMqxyDLXVP9o6Czb3oIxHiI1DidN5kufSKxmD0lvjUdDpRve
+         LMg2QxfF7RQYOEx+RfS4J0VU+XYV51b0Gaes8Q+HRbsumzD68qmNWGz0YuX6HMyXAXsG
+         vMjcgQKxkcO00ukPPaGf1bWpWQIfv6DUUBZzYxbIFZGb1fC+Ea9RtMu/1ANfnwYtWA6p
+         UQ7g==
+X-Gm-Message-State: AOAM531+xG7c1bJwT1zAPYutuRRcATc/BrDYIbZ+OsSe+Yrx9qzbDRfN
+        DpdFEbjSrU443oifsv4aIuA=
+X-Google-Smtp-Source: ABdhPJyWV1zkvb8+mEvqp9ZSTYLeQknbMbcIBqw4G7wy2t0xWvm2gOYKTOxfOHmqMh5tXSGKmjzpjg==
+X-Received: by 2002:a17:906:af79:b0:6ce:61d3:7e9b with SMTP id os25-20020a170906af7900b006ce61d37e9bmr3085459ejb.191.1645721505223;
+        Thu, 24 Feb 2022 08:51:45 -0800 (PST)
 Received: from orome ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id v30sm1585123ejv.76.2022.02.24.08.40.44
+        by smtp.gmail.com with ESMTPSA id j3sm1600520ejj.9.2022.02.24.08.51.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Feb 2022 08:40:45 -0800 (PST)
-Date:   Thu, 24 Feb 2022 17:40:43 +0100
+        Thu, 24 Feb 2022 08:51:44 -0800 (PST)
+Date:   Thu, 24 Feb 2022 17:51:41 +0100
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Marc Zyngier <maz@kernel.org>
 Cc:     linux-kernel@vger.kernel.org,
@@ -65,66 +65,75 @@ Cc:     linux-kernel@vger.kernel.org,
         linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-arm-msm@vger.kernel.org, kernel-team@android.com
-Subject: Re: [PATCH 0/5] gpiolib: Handle immutable irq_chip structures
-Message-ID: <Yhe1Cxdn8t3oVxMZ@orome>
+Subject: Re: [PATCH 1/5] gpio: Don't fiddle with irqchips marked as immutable
+Message-ID: <Yhe3neSJbAxRbt+Z@orome>
 References: <20220223154405.54912-1-maz@kernel.org>
+ <20220223154405.54912-2-maz@kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="wDjQmXbwTP1gIXI+"
+        protocol="application/pgp-signature"; boundary="vbN/cyUZyiD0I2CK"
 Content-Disposition: inline
-In-Reply-To: <20220223154405.54912-1-maz@kernel.org>
+In-Reply-To: <20220223154405.54912-2-maz@kernel.org>
 User-Agent: Mutt/2.2.1 (c8109e14) (2022-02-19)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---wDjQmXbwTP1gIXI+
+--vbN/cyUZyiD0I2CK
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Feb 23, 2022 at 03:44:00PM +0000, Marc Zyngier wrote:
-> I recently realised that the gpiolib play ugly tricks on the
-> unsuspecting irq_chip structures by patching the callbacks.
+On Wed, Feb 23, 2022 at 03:44:01PM +0000, Marc Zyngier wrote:
+> In order to move away from gpiolib messing with the internals of
+> unsuspecting irqchips, add a flag by which irqchips advertise
+> that they are not to be messed with, and do solemnly swear that
+> they correctly call into the gpiolib helpers wueh required.
 >=20
-> Not only this breaks when an irq_chip structure is made const (which
-> really should be the default case), but it also forces this structure
-> to be copied at nauseam for each instance of the GPIO block, which is
-> a waste of memory.
->=20
-> My current approach is to add a new irq_chip flag (IRQCHIP_IMMUTABLE)
-> which does what it says on the tin: don't you dare writing there.
-> Gpiolib is further updated not to install its own callbacks, and it
-> becomes the responsibility of the driver to call into the gpiolib when
-> required. This is similar to what we do for other subsystems such as
-> PCI-MSI.
->=20
-> 3 drivers are updated to this new model: M1, QC and Tegra, as I
-> actively use them (though Tegra is hosed at the moment), keeping a
+> Signed-off-by: Marc Zyngier <maz@kernel.org>
+> ---
+>  drivers/gpio/gpiolib.c | 7 ++++++-
+>  include/linux/irq.h    | 2 ++
+>  kernel/irq/debugfs.c   | 1 +
+>  3 files changed, 9 insertions(+), 1 deletion(-)
 
-Hosed in what way? Anything I can help with?
+I kind of like this. The bit where the const cast is essentially guarded
+by an "immutable" flag is a bit funky, but it doesn't look like there is
+a good way to do it by making all references const without doing a huge
+all-at-once conversion.
 
-Thierry
+I've always found it a bit irritating that irq_chip was somewhere
+between a container for chip-specific data and an "ops" structure. I
+think it'd be even nicer if this was split into an extra struct
+irq_chip_ops, which could then always be const and a struct irq_chip
+that contained primarily chip-specific data as well as a pointer to
+struct irq_chip_ops.
 
---wDjQmXbwTP1gIXI+
+But again, this seems fairly tricky to pull off given all the
+interdependencies and we can iterate on this in the future, so this
+seems like a good enough compromise:
+
+Acked-by: Thierry Reding <treding@nvidia.com>
+
+--vbN/cyUZyiD0I2CK
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmIXtQoACgkQ3SOs138+
-s6GqbBAAhO4/JiZXWM3idaYCebTwochmkwPmAKDKubIQPPRSDMr23n5LKH7MR8QO
-I45Xq0AkDNOEjxx0qCWn+gJ+f8mTn5QfCrkOT74ysx4ifZtPs4ZTxC9IFuf1VZV4
-3S4Q4cv7GlCecPYs7P43Tj7EJwGp/oHFdAA87n4ESLf391p4xOMscXbu1KRVmJJm
-0HcOEsjKNzXk89JDS5UyuY+Vy9mIT/+yQsnNnI3LbZug3x6I/zeu2EZjCvI8mZY6
-d1GR96HuEEMkQULGYFQC/Ur/GE4ewF41LB8RLCmdb4pInXWjBakTKnKfuRJfLPbR
-BB9kLBquMmb9K/fmLBiH+CA5PwwYQbpBflUcERAO3bQ+drNzN+sbzM2bXret0KQH
-+jizLi6oTJmDZTiWIVXffqctZBgpJ+jX8WnSZH9BPsLl5tuX0J51vabLgknYcF+P
-TRN8srwKbHpza25UeDctjyvzb7esps/ssWf7Bpay8M2J9BiJ6/MwVJ6jtDMu+NDj
-nZnrUy1Mh/plKCNbPvWP/Xlwqno/1y0vYaX0g3Jd6m8b6v6SicgcezH6lx9JsPJE
-tCxZGyzesMspVlCxso2UIKkO+V63e5TWiEAZmlr1KhYoaJvOVy1DpuRo1ubQMLP2
-prAS4hGV6aFCSGqaQIyODIy1pploi3mjgVzGsV1dvbiriSy/co8=
-=i/AT
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmIXt5oACgkQ3SOs138+
+s6Hsmg//ZlvIGlAISsBwoAWBpifpjvE4OPtPa2w5okmTJxjSFYwmu1dcqaGOQbqk
+PM58PdveLzwtzZUMy2BFNGtyE1cXPfDvIQlUP2QXjkpmpOH0nZvLbKLtbaOKPe5/
+k7ZT1snfCCPyCSkTt3ObyRr/vd09RHkcocvJ3BPX8qgcFs8RP+csLO4LbtPdN4Mp
+DTPbjaUqdqG2RvSuEtRrHenTZ6f+g+39LrwgfzRXztvQvFtNEmK+D/sZDENkTVtm
++YIJBgiANbzhXtib+/9FaG3MJECmu6ZBNNSaZat91Ksn+TWDz/RYRdZSsEcposEx
+eH5P6Oas2DsQ8P8ny7jplcGV1nOGobRdQBRWnWHXKDGrsDBaVzdFjc4Z/rzoRshO
+a5kV7CL+T6Gu+xVWS81PBBcUcwFsIpn5QWe32g3g0cPuNJpsWYpM6lnbH+CrQcQR
+LTOMQiTe8hyf6vdhTbdMfb6I/i3JscSm23KJYgZD1Se1bYkzi6DbCf62W2ygqHgT
+yakOPdNcZP8KZKp85niKcUdG/ecW9HtTSBGSLDkyMUgBqg4Jr/2uC6C1h/ra3t/D
+HlMJDYR4rrx0kR6JDiHl4Be0AJPPo2YksA+YZzVYIOgv0dMLzk9JX0AXeSwo6xBT
+Byu+xRCU7+shobZGJlJOJXnRXw7XwLhg3pdOwotfppxKxXcUgzU=
+=JQTC
 -----END PGP SIGNATURE-----
 
---wDjQmXbwTP1gIXI+--
+--vbN/cyUZyiD0I2CK--
