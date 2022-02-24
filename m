@@ -2,90 +2,86 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FEC3C433F5
-	for <linux-tegra@archiver.kernel.org>; Thu, 24 Feb 2022 17:13:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D92FC433FE
+	for <linux-tegra@archiver.kernel.org>; Thu, 24 Feb 2022 17:18:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230103AbiBXRNx (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 24 Feb 2022 12:13:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37368 "EHLO
+        id S229715AbiBXRSe (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 24 Feb 2022 12:18:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50594 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229559AbiBXRNw (ORCPT
+        with ESMTP id S229635AbiBXRSd (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 24 Feb 2022 12:13:52 -0500
-Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 166661AEEFF;
-        Thu, 24 Feb 2022 09:13:23 -0800 (PST)
-Received: by mail-ot1-f46.google.com with SMTP id j8-20020a056830014800b005ad00ef6d5dso1774152otp.0;
-        Thu, 24 Feb 2022 09:13:23 -0800 (PST)
+        Thu, 24 Feb 2022 12:18:33 -0500
+Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C4DE1B0180
+        for <linux-tegra@vger.kernel.org>; Thu, 24 Feb 2022 09:18:03 -0800 (PST)
+Received: by mail-lf1-x132.google.com with SMTP id b9so5055584lfv.7
+        for <linux-tegra@vger.kernel.org>; Thu, 24 Feb 2022 09:18:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=ZEF24tzNN36Ad6E2QTpV8p5Sa4Vkb2AWklLMy5ayQGA=;
+        b=WpodwI797Rwd5d3Bqh4Ioe16qGHmgCq95omZ7cEKxJIStGiKXtvn5YYQjBCG/MVoE8
+         MkrwSod9DOdWu4ufQ+G6EJFktP0MI/vAE6Le/k5cqnofP06II26wzYqlo76bLeUJjd35
+         2cFTI4mclwQkDi6QC3k6FkF8igTaePP3nExo/K1Ej+6j86esRvLEyiH/1ZD5jg7YCHj3
+         ZS7Yl+8PEvwRYuu9QiLQUoFQ/CXYn94/JoMIK4q1YyWuDNQxlt/Fl2DvOxUalyML7Y4z
+         5yi8KpjOiqVXI0B3YzIdHebbS++F8NDtdXjqDbIL3s/ck6WVzw235HOsEEA3P57iHDam
+         FM/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=+ZX27TrioUK0w9RGeSuhrt2+KeVxOCfnnAKkSXg0Y28=;
-        b=fas3EfMMo9gKu51kaEbeb4SyG6jOL4W2Qqg39ispmcu2rdfUUSdqXTMwt4pPXahJwf
-         wvCgucb+El6sghc8QPCF0QigRlBAdkYmiKLDMYnYe6r/zENy3sVYIIMHaeEVCo5FsKKX
-         Kbct7ABSlXAoD20RTcbM9v8c/Ragv5qMkc0b23cuJagk6CadASCq5MPWu1WBIheEzJEu
-         3UtAzKUqKX8Hweg+Pdn7/qm7mjw4n/fRyA0tP0d7XMgB0a3lyUFFobwW+hcicihMzXba
-         6OJeTXRRyRw57ZEHcsU9Pu5MxWtnW95AyfkhbgbSuGzDaIzHc/twOAbSA2Kq00wUdTle
-         nb0Q==
-X-Gm-Message-State: AOAM532k+cvIC2psPh+6NwqcT4UYFenHXHvoGB8RVbxxoDCDjCXYF+Jb
-        mkN4/wjt5+oWpx5PlEGxbA==
-X-Google-Smtp-Source: ABdhPJx9dXKdja8XTbBg2/bLvMZID1GMmU5Hnt+lvFxh5MqDE25B95ZmXREQdNQ0X9yYv6+ivnGGwA==
-X-Received: by 2002:a05:6830:1c62:b0:5ad:364d:5e9c with SMTP id s2-20020a0568301c6200b005ad364d5e9cmr1296986otg.164.1645722802376;
-        Thu, 24 Feb 2022 09:13:22 -0800 (PST)
-Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id m18sm1383094otq.31.2022.02.24.09.13.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Feb 2022 09:13:21 -0800 (PST)
-Received: (nullmailer pid 3257244 invoked by uid 1000);
-        Thu, 24 Feb 2022 17:13:19 -0000
-Date:   Thu, 24 Feb 2022 11:13:19 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Oleksij Rempel <o.rempel@pengutronix.de>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
-        Ray Jui <rjui@broadcom.com>,
-        linux-rpi-kernel@lists.infradead.org,
-        Scott Branden <sbranden@broadcom.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Nicolas Saenz Julienne <nsaenz@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>, kernel@pengutronix.de,
-        linux-tegra@vger.kernel.org, Tony Lindgren <tony@atomide.com>,
-        Jakub Kicinski <kuba@kernel.org>, devicetree@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        =?iso-8859-1?Q?Beno=EEt?= Cousson <bcousson@baylibre.com>,
-        linux-samsung-soc@vger.kernel.org,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        netdev@vger.kernel.org
-Subject: Re: [PATCH v5 1/9] dt-bindings: net: add schema for ASIX USB
- Ethernet controllers
-Message-ID: <Yhe8r5dGmSvwJeY6@robh.at.kernel.org>
-References: <20220216074927.3619425-1-o.rempel@pengutronix.de>
- <20220216074927.3619425-2-o.rempel@pengutronix.de>
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=ZEF24tzNN36Ad6E2QTpV8p5Sa4Vkb2AWklLMy5ayQGA=;
+        b=2V5wGiLwwGpvDL7oaExfs1tRnpALsqeIVRWSpzT+GCWJw9uv0NzGAAD/WX32JDyZ/e
+         OA11JZcaDYnh9LaY69uc2PZbGE011hYfDXvNSFsj3Jeh5XEeMizjZ3dql5hGxvcOyok7
+         OiyN//VFmT7MsTcA0ciVh5dSdd4fvhZ83Vjaq5l5BAwQbZqF9SsfLAC69rp6KB9TvTjz
+         eKiKFGaLVd0klFwHJUOiaGSrI0CE/gHMaufxzhg1nftnzAqKTA2BLzNi/EI9VlwjL/dN
+         0ttx+kvyHCL4z6FkCTlxHkrmwcAlzRq1AYXpQWN2s2goLgPI/Mw9QIaufH3AS7ot19fQ
+         +aDw==
+X-Gm-Message-State: AOAM530YOK3LNPru6CzrciQgOFzxQ0mprJ0Qb/p8gz697VWgYLljHeiA
+        OU9rjyWovK7JizOHdIlqghhxiAR/uoE=
+X-Google-Smtp-Source: ABdhPJwcR7KJ1sG1dWn4HB4VUsHPfcXidHtpADKlS/xYTpv7jH43cB37PGeqQzvuPx8FQvhZsYDIFA==
+X-Received: by 2002:ac2:5148:0:b0:442:f24f:1aea with SMTP id q8-20020ac25148000000b00442f24f1aeamr2421864lfd.20.1645723081906;
+        Thu, 24 Feb 2022 09:18:01 -0800 (PST)
+Received: from [192.168.2.145] (109-252-137-194.dynamic.spd-mgts.ru. [109.252.137.194])
+        by smtp.googlemail.com with ESMTPSA id n23-20020a2e86d7000000b002460f3e885asm20837ljj.20.2022.02.24.09.18.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 24 Feb 2022 09:18:01 -0800 (PST)
+Message-ID: <0a550dde-7c06-c61d-2cbf-e63ad1a7dcc5@gmail.com>
+Date:   Thu, 24 Feb 2022 20:18:00 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220216074927.3619425-2-o.rempel@pengutronix.de>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [PATCH libdrm v2 05/25] tegra: Add flink helpers
+Content-Language: en-US
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
+References: <20220217191625.2534521-1-thierry.reding@gmail.com>
+ <20220217191625.2534521-6-thierry.reding@gmail.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+In-Reply-To: <20220217191625.2534521-6-thierry.reding@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, 16 Feb 2022 08:49:19 +0100, Oleksij Rempel wrote:
-> Create schema for ASIX USB Ethernet controllers and import some of
-> currently supported USB IDs form drivers/net/usb/asix_devices.c
-> 
-> These devices are already used in some of DTs. So, this schema makes it official.
-> NOTE: there was no previously documented txt based DT binding for this
-> controllers.
-> 
-> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-> ---
->  .../devicetree/bindings/net/asix,ax88178.yaml | 68 +++++++++++++++++++
->  1 file changed, 68 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/net/asix,ax88178.yaml
-> 
+17.02.2022 22:16, Thierry Reding пишет:
+> +int drm_tegra_bo_get_name(struct drm_tegra_bo *bo, uint32_t *name);
+> +int drm_tegra_bo_open(struct drm_tegra *drm, uint32_t name, uint32_t flags,
+> +                      struct drm_tegra_bo **bop);
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+drm_tegra_bo_open() isn't a very good name for a function. How will you
+name dmabuf and handle variants?
+
+In grate-drive we're using these names:
+
+drm_tegra_bo_from_name
+drm_tegra_bo_from_dmabuf
+drm_tegra_bo_from_handle
+
+I suggest to use more meaningful function names before will be too late,
+especially given that this is the upstream libdrm.
