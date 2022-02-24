@@ -2,170 +2,144 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2ADCBC433EF
-	for <linux-tegra@archiver.kernel.org>; Thu, 24 Feb 2022 19:05:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 655CDC433FE
+	for <linux-tegra@archiver.kernel.org>; Thu, 24 Feb 2022 19:31:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231749AbiBXTFb (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 24 Feb 2022 14:05:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57722 "EHLO
+        id S233925AbiBXTcT (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 24 Feb 2022 14:32:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56048 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232312AbiBXTFa (ORCPT
+        with ESMTP id S233629AbiBXTcR (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 24 Feb 2022 14:05:30 -0500
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2EF351E5201;
-        Thu, 24 Feb 2022 11:05:00 -0800 (PST)
-Received: by mail-wm1-x32a.google.com with SMTP id p4so417445wmg.1;
-        Thu, 24 Feb 2022 11:05:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=aFSvFpoW7B9DJRHLFArsN58BcbVn7XQ4fEO+dHkCaWo=;
-        b=fZ0v/Uavza86hMkYeQ88kaG9Ke4iew/K3geHYwkYFX7iQ72z9S+duCZ3M/Cy9OY26T
-         7Av4baaaBUWDkQcmej4uRef68cv3FW2nsYO5pDhptA0ymBuT8T81RicWVuqcyYC4jSHX
-         JNFHGF5FLz7P7gf4JsZJ7hhvXN1PNVJ4xQ0xQe918/tUKLbYTQSVit/8z5x4st22nrVu
-         gEDrBHsIoiIGMEqLFF4sElodexG4L6MPWiMMOwHQgKb03IP3XQw/PyNVbY0sY+4JTbZv
-         Iy6vyw/YaPv5SlIXTKd5B9QYz1t+JzRyIcr42NPPPXLzOiuU5hzkVtXQTn8YKoX1NuVw
-         vPYw==
+        Thu, 24 Feb 2022 14:32:17 -0500
+Received: from mail-oi1-f170.google.com (mail-oi1-f170.google.com [209.85.167.170])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFC2750054;
+        Thu, 24 Feb 2022 11:31:43 -0800 (PST)
+Received: by mail-oi1-f170.google.com with SMTP id q5so4443355oij.6;
+        Thu, 24 Feb 2022 11:31:43 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=aFSvFpoW7B9DJRHLFArsN58BcbVn7XQ4fEO+dHkCaWo=;
-        b=fHQMIZxOApzMrXmQAWglj/gND7k4mCJlqyE+wAPLZ4YWApxnMBCguTep++yxp5e1qn
-         268wBRDJrz0h+Je94SlXjbQQgjYUKzQR4vq6k/mXc+IBRWjgssPDgb/IQ2X6Vjjr6AO9
-         vBwNTT0mTltCwfgBW63S+znRdqaWxDuuRJ8qGj6+uV42O8u1gblLrckPNn2QSixUgGZp
-         VKn6iZXwsM03C+XVvj2UgxcCGOW8Iq2+c2RgbopKGpww22cHUmKLYy3lcExjI2LtgWuW
-         Mm2Kw6H29b98v0nuI+lUC4PO1EeqFL9kfHWawkPiNj2BMAEumFS6DidanWzoOxbqs8iI
-         8jcA==
-X-Gm-Message-State: AOAM530joq5jTgauagOFjRnauiOMrmAbQovjmbugCiM0M1lWaOAaqwVN
-        GdbqTaZ6wjzvKyuxRIFhwAuCzmvF+aA=
-X-Google-Smtp-Source: ABdhPJxEBiw9aeUuGCsx8c5UEPVIxpUCdiZ7rWpSlDfBThBzsm2aLMCXfyQ/P8GC3tsejywBnxc64w==
-X-Received: by 2002:a05:600c:500c:b0:37b:b8a5:856c with SMTP id n12-20020a05600c500c00b0037bb8a5856cmr13093838wmr.65.1645729498536;
-        Thu, 24 Feb 2022 11:04:58 -0800 (PST)
-Received: from orome ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id f9-20020adffcc9000000b001e9e8163a46sm245157wrs.54.2022.02.24.11.04.56
+         :mime-version:content-disposition:in-reply-to;
+        bh=ZiafZeplBWhT7qA6TILDu8RUDYpdcUkSvNy49Uo79Y4=;
+        b=6WHEiE2939aMhWbKPVZp69i0TT92WG1CSxQMaEFJofU5IOLRpEpxzjsA32Yd4g8DNj
+         eURk0CcLFl+UmIeS+VgMZHbLkVG68ZsvoC6Zd27gM/08vAwm0507oOO6fY6yMWpmBMVe
+         Wrxj2cj+nPKz1C3hAIz3/DgD9RNXpZ9M0YQvbSttlpif7idIKygLOQ7VOYyqP/7k48m/
+         1FRMIzUQcBYknKZA9oth5ezvZY9wv21Ez1IFjDZdizjDeZfpodG1M+e78z2DKziufzni
+         f0KRadfgtZR7iEBxQbTgWi4DkAuLFwCMxJzSpCI4R+y0d8jKrZFqp6TF5eMPicE1Aeso
+         Utvw==
+X-Gm-Message-State: AOAM530m8XewdDMMAIphyCh2vewp5eKlEzorDUnppa9njQcO7lZhpzBN
+        5q7jlnyLLReUkxdp4ZftmDa8fGHOaw==
+X-Google-Smtp-Source: ABdhPJwZKPUfwn6b609ImZjzM72DsS1EGoc6MqGOxqYPh0gRQ8a18eVWjrPShbIcgD6oyXqcu+p1kQ==
+X-Received: by 2002:a05:6808:138e:b0:2d5:1ed5:e0ac with SMTP id c14-20020a056808138e00b002d51ed5e0acmr2252281oiw.214.1645731103283;
+        Thu, 24 Feb 2022 11:31:43 -0800 (PST)
+Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
+        by smtp.gmail.com with ESMTPSA id v7-20020a4aa507000000b0031c01a4ef37sm79465ook.32.2022.02.24.11.31.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Feb 2022 11:04:57 -0800 (PST)
-Date:   Thu, 24 Feb 2022 20:04:54 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Vidya Sagar <vidyas@nvidia.com>, bhelgaas@google.com,
-        lorenzo.pieralisi@arm.com, robh+dt@kernel.org,
-        jonathanh@nvidia.com, kishon@ti.com, vkoul@kernel.org,
-        kw@linux.com, p.zabel@pengutronix.de, mperttunen@nvidia.com,
-        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-phy@lists.infradead.org, kthota@nvidia.com,
-        mmaddireddy@nvidia.com, sagar.tv@gmail.com
-Subject: Re: [PATCH V1 03/10] dt-bindings: memory: Add Tegra234 PCIe memory
-Message-ID: <YhfW1rXr+5/o7E5N@orome>
-References: <20220205162144.30240-1-vidyas@nvidia.com>
- <20220205162144.30240-4-vidyas@nvidia.com>
- <4e2bec9b-4759-b699-fa7b-974f5f43da9d@canonical.com>
+        Thu, 24 Feb 2022 11:31:42 -0800 (PST)
+Received: (nullmailer pid 3451260 invoked by uid 1000);
+        Thu, 24 Feb 2022 19:31:41 -0000
+Date:   Thu, 24 Feb 2022 13:31:41 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Mohan Kumar <mkumard@nvidia.com>
+Cc:     broonie@kernel.org, lgirdwood@gmail.com, thierry.reding@gmail.com,
+        tiwai@suse.com, jonathanh@nvidia.com, spujar@nvidia.com,
+        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 4/6] dt-bindings: Add HDA support for Tegra234
+Message-ID: <YhfdHd2LPc+ifFTS@robh.at.kernel.org>
+References: <20220216092240.26464-1-mkumard@nvidia.com>
+ <20220216092240.26464-5-mkumard@nvidia.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="P1IEsKe5Ui8//ysj"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <4e2bec9b-4759-b699-fa7b-974f5f43da9d@canonical.com>
-User-Agent: Mutt/2.2.1 (c8109e14) (2022-02-19)
+In-Reply-To: <20220216092240.26464-5-mkumard@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On Wed, Feb 16, 2022 at 02:52:38PM +0530, Mohan Kumar wrote:
+> Add hda clocks, memory ,power and reset binding entries
+> for Tegra234.
+> 
+> Signed-off-by: Mohan Kumar <mkumard@nvidia.com>
+> ---
+>  include/dt-bindings/clock/tegra234-clock.h     | 4 ++++
+>  include/dt-bindings/memory/tegra234-mc.h       | 6 ++++++
+>  include/dt-bindings/power/tegra234-powergate.h | 9 +++++++++
+>  include/dt-bindings/reset/tegra234-reset.h     | 2 ++
+>  4 files changed, 21 insertions(+)
+>  create mode 100644 include/dt-bindings/power/tegra234-powergate.h
+> 
+> diff --git a/include/dt-bindings/clock/tegra234-clock.h b/include/dt-bindings/clock/tegra234-clock.h
+> index 2529e7ec0bf4..2ab651916127 100644
+> --- a/include/dt-bindings/clock/tegra234-clock.h
+> +++ b/include/dt-bindings/clock/tegra234-clock.h
+> @@ -64,4 +64,8 @@
+>  #define TEGRA234_CLK_PLLC4			237U
+>  /** @brief 32K input clock provided by PMIC */
+>  #define TEGRA234_CLK_CLK_32K			289U
+> +/** @brief CLK_RST_CONTROLLER_AZA2XBITCLK_OUT_SWITCH_DIVIDER switch divider output (aza_2xbitclk) */
+> +#define TEGRA234_CLK_AZA_2XBIT			457U
+> +/** @brief aza_2xbitclk / 2 (aza_bitclk) */
+> +#define TEGRA234_CLK_AZA_BIT			458U
+>  #endif
+> diff --git a/include/dt-bindings/memory/tegra234-mc.h b/include/dt-bindings/memory/tegra234-mc.h
+> index 2662f70c15c6..c42fe61fba5e 100644
+> --- a/include/dt-bindings/memory/tegra234-mc.h
+> +++ b/include/dt-bindings/memory/tegra234-mc.h
+> @@ -7,6 +7,8 @@
+>  #define TEGRA234_SID_INVALID		0x00
+>  #define TEGRA234_SID_PASSTHROUGH	0x7f
+>  
+> +/* NISO0 stream IDs */
+> +#define TEGRA234_SID_HDA		0x03
+>  
+>  /* NISO1 stream IDs */
+>  #define TEGRA234_SID_SDMMC4	0x02
+> @@ -16,6 +18,10 @@
+>   * memory client IDs
+>   */
+>  
+> +/* High-definition audio (HDA) read clients */
+> +#define TEGRA234_MEMORY_CLIENT_HDAR 0x15
+> +/* High-definition audio (HDA) write clients */
+> +#define TEGRA234_MEMORY_CLIENT_HDAW 0x35
+>  /* sdmmcd memory read client */
+>  #define TEGRA234_MEMORY_CLIENT_SDMMCRAB 0x63
+>  /* sdmmcd memory write client */
+> diff --git a/include/dt-bindings/power/tegra234-powergate.h b/include/dt-bindings/power/tegra234-powergate.h
+> new file mode 100644
+> index 000000000000..3c5575a51296
+> --- /dev/null
+> +++ b/include/dt-bindings/power/tegra234-powergate.h
+> @@ -0,0 +1,9 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
 
---P1IEsKe5Ui8//ysj
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Dual license please.
 
-On Sun, Feb 06, 2022 at 12:33:27PM +0100, Krzysztof Kozlowski wrote:
-> On 05/02/2022 17:21, Vidya Sagar wrote:
-> > Add the memory client and stream ID definitions for the PCIe hardware
-> > found on Tegra234 SoCs.
->=20
-> I could not find dependencies or merging strategy in cover letter.
-> Please always describe it, so I don't have to go through all the patches
-> to figure this out.
->=20
-> >=20
-> > Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
-> > ---
-> >  include/dt-bindings/memory/tegra234-mc.h | 64 ++++++++++++++++++++++++
-> >  1 file changed, 64 insertions(+)
-> >=20
-> > diff --git a/include/dt-bindings/memory/tegra234-mc.h b/include/dt-bind=
-ings/memory/tegra234-mc.h
-> > index 2662f70c15c6..60017684858a 100644
-> > --- a/include/dt-bindings/memory/tegra234-mc.h
-> > +++ b/include/dt-bindings/memory/tegra234-mc.h
-> > @@ -7,15 +7,53 @@
-> >  #define TEGRA234_SID_INVALID		0x00
-> >  #define TEGRA234_SID_PASSTHROUGH	0x7f
-> > =20
-> > +/* NISO0 stream IDs */
-> > +#define TEGRA234_SID_PCIE0	0x12U
-> > +#define TEGRA234_SID_PCIE4	0x13U
-> > +#define TEGRA234_SID_PCIE5	0x14U
-> > +#define TEGRA234_SID_PCIE6	0x15U
-> > +#define TEGRA234_SID_PCIE9	0x1FU
-> > =20
-> >  /* NISO1 stream IDs */
-> >  #define TEGRA234_SID_SDMMC4	0x02
-> > +#define TEGRA234_SID_PCIE1	0x5U
-> > +#define TEGRA234_SID_PCIE2	0x6U
-> > +#define TEGRA234_SID_PCIE3	0x7U
-> > +#define TEGRA234_SID_PCIE7	0x8U
-> > +#define TEGRA234_SID_PCIE8	0x9U
-> > +#define TEGRA234_SID_PCIE10	0xBU
->=20
-> I don't see usage of these...
->=20
-> >  #define TEGRA234_SID_BPMP	0x10
-> > =20
-> >  /*
-> >   * memory client IDs
-> >   */
-> > =20
-> > +/* PCIE6 read clients */
-> > +#define TEGRA234_MEMORY_CLIENT_PCIE6AR 0x28
->=20
-> I see you use them in DTS but not in mc driver. Don't you miss anything
-> here?
-
-This is along the same lines as the APE and HDA patches earlier, so I
-would expect Vidya to add a memory controller patch that makes use of
-these once the initial Tegra234 memory controller patch was merged.
-
-Meanwhile, I've applied this to the Tegra tree, on top of the other
-patches that add memory client definitions and resolved the conflicts
-that ensued.
-
-That way, by the time we get around to the next cycle all of these
-dependencies will exist and applying the memory controller patches
-should become easier.
-
-Thierry
-
---P1IEsKe5Ui8//ysj
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmIX1tQACgkQ3SOs138+
-s6FaSxAAqaAzeWrUt+ekUE4mYyQm5IsTvaxzM49tL5qE1eNmGPw0X17Th4N5CWV3
-2JlZfn6hU7DOFnnsF7geN39pLOgbzhN5HQ/NKCxTeujNG7/yvwk875MYj5o2AmQJ
-9EpbM2xiCmzbo0D0hkOds3Dj9WePSeXHm2w7kUUfr9PoA+pVyCfifnkY0edD63Yy
-YhzPsJA95elzU1ysJ0o8mk205CKZelQrPDCtxAmlJczjBQBJfUP4t2/oXxRSlVur
-IRPs/WSItsh3EL4fvQcaIs24Tac2omhPNtH+qp0cF+YdHiB9pJ6s7DaQ1zRDvvTT
-Do5H3/Px+v9Oh6WKAZaJDljinfWB8kUAsQQCTBP9nCYCyP43lfwEJW+4x5L4lC2t
-sAW4lGM/Jk2psaIVOpR1i07aw8QlGr3S2PUQwYr/3xTC7LSlDG14u8ss4+oFRZsT
-Z3w5J/7de0jirRMlV7MJunUNA9L51VTW9F/k09+yKlfuBNlm3etc0LQGw6W+ntwg
-DJTn0vdhIiugRV95QF+BrDUYaFhu6Rmla2+1Rq79+lMWLnIpGNDVV1vfd7wSK4LU
-Zz89jqQoBaH47WAxgNkTWMNmZ7KannprydkrX9TEE+u1P0RCpnDsT3iknLylP/R5
-fCxa8AkIJZhDsoL9fRD2qpF+qzQELgJyW4yqSEUqPOFnh80bQDA=
-=WK2m
------END PGP SIGNATURE-----
-
---P1IEsKe5Ui8//ysj--
+> +/* Copyright (c) 2022, NVIDIA CORPORATION. All rights reserved. */
+> +
+> +#ifndef __ABI_MACH_T234_POWERGATE_T234_H_
+> +#define __ABI_MACH_T234_POWERGATE_T234_H_
+> +
+> +#define TEGRA234_POWER_DOMAIN_DISP	3U
+> +
+> +#endif
+> diff --git a/include/dt-bindings/reset/tegra234-reset.h b/include/dt-bindings/reset/tegra234-reset.h
+> index ba390b86361d..178e73a687f0 100644
+> --- a/include/dt-bindings/reset/tegra234-reset.h
+> +++ b/include/dt-bindings/reset/tegra234-reset.h
+> @@ -10,6 +10,8 @@
+>   * @brief Identifiers for Resets controllable by firmware
+>   * @{
+>   */
+> +#define TEGRA234_RESET_HDA			20U
+> +#define TEGRA234_RESET_HDACODEC			21U
+>  #define TEGRA234_RESET_I2C1			24U
+>  #define TEGRA234_RESET_I2C2			29U
+>  #define TEGRA234_RESET_I2C3			30U
+> -- 
+> 2.17.1
+> 
+> 
