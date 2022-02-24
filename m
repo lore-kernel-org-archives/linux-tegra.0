@@ -2,113 +2,125 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F643C433F5
-	for <linux-tegra@archiver.kernel.org>; Thu, 24 Feb 2022 16:32:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A680BC433F5
+	for <linux-tegra@archiver.kernel.org>; Thu, 24 Feb 2022 16:38:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229971AbiBXQc7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 24 Feb 2022 11:32:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59260 "EHLO
+        id S229807AbiBXQiu (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 24 Feb 2022 11:38:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56862 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230016AbiBXQcv (ORCPT
+        with ESMTP id S230202AbiBXQis (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 24 Feb 2022 11:32:51 -0500
-Received: from mail-lj1-x22e.google.com (mail-lj1-x22e.google.com [IPv6:2a00:1450:4864:20::22e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 211761E6974;
-        Thu, 24 Feb 2022 08:32:11 -0800 (PST)
-Received: by mail-lj1-x22e.google.com with SMTP id r20so3715145ljj.1;
-        Thu, 24 Feb 2022 08:32:11 -0800 (PST)
+        Thu, 24 Feb 2022 11:38:48 -0500
+Received: from mail-lj1-x22f.google.com (mail-lj1-x22f.google.com [IPv6:2a00:1450:4864:20::22f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB4F61342E4;
+        Thu, 24 Feb 2022 08:38:08 -0800 (PST)
+Received: by mail-lj1-x22f.google.com with SMTP id f11so3675650ljq.11;
+        Thu, 24 Feb 2022 08:38:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=QxdeQ03DOR4RUC1RUGZAh5JLbtSCzS9nhA1X4N35/bw=;
-        b=KmC0LCs2Vxk9FBRyReMaUV3AKq9Rlbiqsam70nDmlZsqjW1y7j6LXnK9gFFcTDJlFa
-         Ks+Sr2Qffjmvoj18qUVEiFXgRAUE3kcgo1wFqtq4+HHKHzRDwrnm680F3AwJ7gV3JLDq
-         DN+3exlceOtVKKWiOj8ZZ0Vq7EuMw9+xyHqEXtfc/DKOJfn7/EAgqUCgNJLpMwV0IdlE
-         ApRg6eggZSPjPreGaEWY+U0axCKkz54UeUK7/+pTM+D28ifoAmrMau29U+NEy6EunAGy
-         9An76HikDYT9bTtymPfBDV8uQbGmVZ9LSkTqDhjZVMb7j6zia2jUv96pNZEgW+QG5gf5
-         X+og==
+        bh=HKzxqhI5E0hInxN0B+6sR1bWJjqg6HiuWwnAoTz4dj4=;
+        b=DJuDDee+DDCURX0UIukj5cQPc9oTEG0zT+tpAYxK9ESNxmlrUYLCP4f3NKkP5cMl5D
+         Fo+SnrpogamdLZTbsL9jR7/9/kvKh05PNsAZH/gScGru1RhZEsErUm8syZZHQE5Jr0/D
+         nlj6IbxXpoDgrsbXsGPW5LQBYmGjWdym8/uSdecx34EZTfDzgVeI8qorvDqMYmt5miy0
+         11EVy8ALh20uMAxGIn2spoie8Hqze5Uoq42AsL7tUOulFAIrGVO6Adnatt0kUIS3gwuU
+         rTi3xeg4GxZ2AMFAK6IjmduZ6vbk4kqLlVawakv93NQqTsSGJyuO3b0wYU5Y2Nrfci/D
+         tQUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=QxdeQ03DOR4RUC1RUGZAh5JLbtSCzS9nhA1X4N35/bw=;
-        b=jCnGIMl9lVn1iTPVuwuuodwlT2nOM5OKAtni4bvEW6m553GeHCgVx1IL3+cF0IO75X
-         4duF0xibGDyBMuYzy04M9LL12V98xiXk07AgA6Zfg8EnmJwYkhHyk6+MFx65tYbn6eQX
-         HnfGdk5uw+KnPwyoErYLJEvX2G3X24t63llQnfbXP8w+/li6Tj1dCGxRtd92BNID/ctC
-         13kD5V0E6u/VbU0atntPXqpa0ee8VmoJru7ZcQ7+niqf7mjQ/x0Uo99soYIszXXbLwEx
-         ALZioYoJvFyNVMSoS/PYmRUdgADyAw3hITGRfjVqXGviKT2bUrimIMep/9KO8gtNExli
-         vv1Q==
-X-Gm-Message-State: AOAM532nLZkvnhn5v9Thsbf7lk7oxpHmxDwjkgeYEXJSDbI8YcCMVDV0
-        0C24QRcVB+RktFjCBNIvbn7swNXT8IY=
-X-Google-Smtp-Source: ABdhPJzGSFV9ICsyeh1MhD6IF+T1wQ5Hlmu7RGqgBZ+IBS0v6RBOWl4mje++5heJI0kcnHQt6WaXng==
-X-Received: by 2002:a2e:b014:0:b0:23c:9593:f7 with SMTP id y20-20020a2eb014000000b0023c959300f7mr2397143ljk.209.1645720328197;
-        Thu, 24 Feb 2022 08:32:08 -0800 (PST)
+        bh=HKzxqhI5E0hInxN0B+6sR1bWJjqg6HiuWwnAoTz4dj4=;
+        b=xBFjj2ds2/nqZKNdv4B0RG20nLh0FGmADtGnLti4OODdxZDh2uJoEaf3om/i7hyKOb
+         8YneEeBsdhTxy0liLz0mzn+IyvtgHgnHybeUM8hXDW+fSZinfXJLkYblzTn3fWnA14rt
+         exDSpR/3MUrkJDx9/3o7HzlO9DduukpEX8o98SYj+h1U/tShMJdRA4rj41VUI7CFa7qb
+         fXOgZcUJe6XAQnT2aspatWS/rd6qHoGJonupet4z1WiwPykRpwn4gsl3hwdNqK17rl/L
+         fQP9/IhErMEMVN7OOf9Q/lUrMtv6DnvIS6Tl9RQHfXx9Yvi9fDxe5XION5hsbew2tptF
+         sFSQ==
+X-Gm-Message-State: AOAM533n0dnF/WqwHxjA4Z/OE1HDUHt1xqN8Ij2MG89SLUpAgA738xru
+        sXF0rBjtXMYiVVrXM+7vrxM=
+X-Google-Smtp-Source: ABdhPJw9JaJ1kjvCUb4y4AB0oU89kshZAxRNFwS/j2Jfr3k5bqBT/d5vxMxfL/zEMZJOyzM9iJed+w==
+X-Received: by 2002:a2e:a171:0:b0:244:c2fc:d1d with SMTP id u17-20020a2ea171000000b00244c2fc0d1dmr2369703ljl.159.1645720686690;
+        Thu, 24 Feb 2022 08:38:06 -0800 (PST)
 Received: from orome ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id 7sm243339lft.194.2022.02.24.08.32.05
+        by smtp.gmail.com with ESMTPSA id t20sm245402lfk.159.2022.02.24.08.38.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Feb 2022 08:32:06 -0800 (PST)
-Date:   Thu, 24 Feb 2022 17:32:04 +0100
+        Thu, 24 Feb 2022 08:38:05 -0800 (PST)
+Date:   Thu, 24 Feb 2022 17:38:03 +0100
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Akhil R <akhilrajeev@nvidia.com>
-Cc:     devicetree@vger.kernel.org, dmaengine@vger.kernel.org,
-        jonathanh@nvidia.com, kyarlagadda@nvidia.com, ldewangan@nvidia.com,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        p.zabel@pengutronix.de, rgumasta@nvidia.com, robh+dt@kernel.org,
-        nathan@kernel.org, vkoul@kernel.org
-Subject: Re: [PATCH v21 1/2] dt-bindings: dmaengine: Add doc for tegra gpcdma
-Message-ID: <YhezBG9tpNDG24R6@orome>
-References: <20220224123903.5020-1-akhilrajeev@nvidia.com>
- <20220224123903.5020-2-akhilrajeev@nvidia.com>
+To:     Jiri Slaby <jslaby@suse.cz>
+Cc:     gregkh@linuxfoundation.org, linux-serial@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-tegra@vger.kernel.org
+Subject: Re: [PATCH 2/5] tty: serial: make use of UART_LCR_WLEN() +
+ tty_get_char_size()
+Message-ID: <Yhe0a0RX8XTBF8BL@orome>
+References: <20220224095517.30872-1-jslaby@suse.cz>
+ <20220224095558.30929-1-jslaby@suse.cz>
+ <20220224095558.30929-2-jslaby@suse.cz>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="r/ttdRDeDVZvVJVR"
+        protocol="application/pgp-signature"; boundary="bGyWIReJ9zdg8psW"
 Content-Disposition: inline
-In-Reply-To: <20220224123903.5020-2-akhilrajeev@nvidia.com>
+In-Reply-To: <20220224095558.30929-2-jslaby@suse.cz>
 User-Agent: Mutt/2.2.1 (c8109e14) (2022-02-19)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---r/ttdRDeDVZvVJVR
+--bGyWIReJ9zdg8psW
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Feb 24, 2022 at 06:09:02PM +0530, Akhil R wrote:
-> Add DT binding document for Nvidia Tegra GPCDMA controller.
+On Thu, Feb 24, 2022 at 10:55:55AM +0100, Jiri Slaby wrote:
+> Having a generic UART_LCR_WLEN() macro and the tty_get_char_size()
+> helper, we can remove all those repeated switch-cases in drivers.
 >=20
-> Signed-off-by: Rajesh Gumasta <rgumasta@nvidia.com>
-> Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
-> Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Jiri Slaby <jslaby@suse.cz>
+> Cc: Laxman Dewangan <ldewangan@nvidia.com>
+> Cc: Thierry Reding <thierry.reding@gmail.com>
+> Cc: Jonathan Hunter <jonathanh@nvidia.com>
+> Cc: linux-tegra@vger.kernel.org
 > ---
->  .../bindings/dma/nvidia,tegra186-gpc-dma.yaml | 110 ++++++++++++++++++
->  1 file changed, 110 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/dma/nvidia,tegra186=
--gpc-dma.yaml
+>  drivers/tty/serial/8250/8250_omap.c | 16 +---------------
+>  drivers/tty/serial/8250/8250_port.c | 16 +---------------
+>  drivers/tty/serial/jsm/jsm_cls.c    | 16 +---------------
+>  drivers/tty/serial/jsm/jsm_neo.c    | 16 +---------------
+>  drivers/tty/serial/omap-serial.c    | 16 +---------------
+>  drivers/tty/serial/pxa.c            | 16 +---------------
+>  drivers/tty/serial/serial-tegra.c   | 22 ++++------------------
+>  drivers/tty/serial/vr41xx_siu.c     | 15 +--------------
+>  8 files changed, 11 insertions(+), 122 deletions(-)
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+This would've been easier to review if I had this in my inbox, but I did
+find it on lkml.org and this does look correct, so:
 
---r/ttdRDeDVZvVJVR
+Reviewed-by: Thierry Reding <treding@nvidia.com>
+
+--bGyWIReJ9zdg8psW
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmIXswQACgkQ3SOs138+
-s6FH/w//X7V7oWBuRIHPW4LFa+M3TSBMgEuz3noJYqm1is6ABFrLv4sdprTm/ykI
-3dmEvSS5y0CoyW7VgnUDnmQ+UYwXzAGisFo/fIR7VjKdIkgIjQrejEF/hWNj4RY4
-Os1OejpnpNQJXq/4LRxqO7DVe7iFPMGhzO8jrHkpMuDACDHUnz5fF95FqLLwrMBo
-aJ0c0kzuCj1j3op+yfQuc900AbX07bPpYYMk2kicD5/2NhoYQUVSCo6Q7KvI6lyj
-p55v0eqtqe14gNeO4QG3lE2jtGmA2KEMs/+Yn+CQ3mnkQiC5RJR+A5IS+GdCINR7
-1wavUab7pQUGCVie80j1AcdOP616q8q7AmO23F+O2lahT80QLzPj1Rdl5rQOQS5z
-uksopvbpGNO4ACxsL8UoUZ9IGb+9NV/kEp1iDIHuLUslURtrAQJvz2cp6vWpM+Tx
-EeuO1Y0JEXdW4N1pBf73FjUut5f4lp9d2s20w9ByfMRnHfaeKyU6kPPWEWup2z9X
-IQNkCtFEKwdsBbFm8w6Ftq4dSTmcA/+hmr/vl7Q5vMuYQUAYiiIpD2uyeuquNiQy
-0nYX8VYWDQy9t53GzB5cj5gSgKqnaqdVEvSCcJ+/mg1tmw8tU+vxRbg8qQTy4xuy
-LpMxvFWSh9Fb4hG+oQ6TL13O9tigX1vIs8pFbNHs7AlLbMxCXdg=
-=7ran
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmIXtGsACgkQ3SOs138+
+s6G8LA//a6T2l7OdGOi6gS4JTGpVy3oswh/dgzFUZyXLfgc/hZ4+XfafpeRT0tHj
+F3NYARAAYfXtWh0WXj7scRQd1Kcax8wBO8ltzhUU+Qv/QWzmt3tDhrzD3LqxHoN1
+qmI+AEBkfr81HRR/NWnbn1h11SwtEUzPrPaOhSkaGkTZqD2gk8D093cC7YVqB+er
+5TvEM9BP9/BGtcLoA+1p/Ir+TIbxUd1fFdGVYsJ32rYBssAtBvn3wiC08oByrOrL
+Qx0im6NLDjxffI7Ijxw4257lQy9wSGq7S8HxmPb+gTSn9IYwllo4zhC9A6ZzT643
+CheDmqm++kfg5Ijrg8PQmuXzQ2m89Z0b0n3rQA6P/N59hqWg0obU8M8+wTbQfiXw
+GPeWHW9iwe+yrcU0B+CjP8uVFCq/6m/JzalevUvP1G2tnIG3At7xL45YpU+YI07h
+cdEYQuG5Yom0RCwSX8f4W7UB8KRL6UJclqUbAfUc2h6MReYMkhguxTi7O/Qc7Lkv
+SuUJ6765xPhSmqouxo+b4Id0gvCg9AHElyD/q6K4sgEFdFy4NqonAJZJj00YsGVf
+BoLZ834npx8Vd9DUgPrGzRzTSOBvPzUAIOli8pk5e2DyvO2fNgg6RJrWESn1U+Ly
+vTaLIAsh31wu9T9/E67OBAaohALhLETkgjh5Wed9uBOAwpxFbhw=
+=5bfD
 -----END PGP SIGNATURE-----
 
---r/ttdRDeDVZvVJVR--
+--bGyWIReJ9zdg8psW--
