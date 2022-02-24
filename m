@@ -2,49 +2,49 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC576C433EF
-	for <linux-tegra@archiver.kernel.org>; Thu, 24 Feb 2022 22:59:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89FFDC4332F
+	for <linux-tegra@archiver.kernel.org>; Thu, 24 Feb 2022 22:59:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235849AbiBXXAF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 24 Feb 2022 18:00:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39446 "EHLO
+        id S235936AbiBXXAM (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 24 Feb 2022 18:00:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42026 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235895AbiBXXAA (ORCPT
+        with ESMTP id S235920AbiBXXAJ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 24 Feb 2022 18:00:00 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 270CE18BA70;
-        Thu, 24 Feb 2022 14:59:30 -0800 (PST)
+        Thu, 24 Feb 2022 18:00:09 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29CA02177FC;
+        Thu, 24 Feb 2022 14:59:38 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id B52AE61BE9;
-        Thu, 24 Feb 2022 22:59:29 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01172C340E9;
-        Thu, 24 Feb 2022 22:59:26 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id D4CCAB829EB;
+        Thu, 24 Feb 2022 22:59:36 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74E25C340EF;
+        Thu, 24 Feb 2022 22:59:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1645743569;
-        bh=mwMf2sXFT+R1GnLD1CG83eIfYZaiUYX3qLQFhuBiwI8=;
+        s=k20201202; t=1645743575;
+        bh=qE4XyM/mZdO91/dwF8RysGfMurvwkXipPfmnP9dak8w=;
         h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=PUB5SVssO6+xc31SxlVYxCAaG2kOvlkuhNj+vxO8vdOkfUZ0JnH+xmhelaehmoeMD
-         9GuakJvWc9MfSU2J6pGzUNMOR7yngxN9ufBKDihVuVTND4viomw/CWesm7E/K2r/vN
-         sVMQf1EAI9FAWCszr4dOeHi0upiaXDQntz2Tu9aRY29Bd3apJ3Gx7J/qSdCcYim10I
-         +4BhkGf5QxK2xrOpfs3EslIhyps7aQ9GUVDDF2B2ByMWMotJBlAfi3mCGPDGoIBK/J
-         hoU59IlZL7cwE+K3BAky4CCtEeXY2RitMaP9GHr84gCkk53bL9OipScDeGwFlD/oUF
-         RbUcEF6/qH/Eg==
+        b=dR3hi76re7kAtMsa+aJ7Ekrp3v5K2UbVEcjxAdiN7XhYIzNYrXKO1m1NJm3nYAKIU
+         AtHWIkO8jqFoyP/QgLY3aAntINce8+mf8mA3D6pDUpeodQug+3EgkduRkTz+5MIIAS
+         e/raYQB2aNNXY1KjR23Ug/C7R42CdvlR8Twpb7Bv3phXikIleWLfDIrHpo++uU1Q+n
+         N84RQqW6VM+nafp//BmyuJpadaCRKOX9/HZ1cAubSoyE5dcFH79iT7gBx3D15qxKMA
+         0E1zQiXAv+hJCGgVDCwzaH2Uu/uqbdiI9MWxixr/v2K+2z7Tuhk5YT8G1Djt2oAgQj
+         IdEyss2gmVj+A==
 From:   Mark Brown <broonie@kernel.org>
-To:     jonathanh@nvidia.com, thierry.reding@gmail.com,
+To:     thierry.reding@gmail.com, jonathanh@nvidia.com,
         linux-tegra@vger.kernel.org,
         Krishna Yarlagadda <kyarlagadda@nvidia.com>,
         linux-spi@vger.kernel.org
 Cc:     robh+dt@kernel.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, p.zabel@pengutronix.de,
         skomatineni@nvidia.com, ldewangan@nvidia.com
-In-Reply-To: <1643970576-31503-1-git-send-email-kyarlagadda@nvidia.com>
-References: <1643970576-31503-1-git-send-email-kyarlagadda@nvidia.com>
-Subject: Re: (subset) [PATCH 0/6] Tegra QUAD SPI combined sequence mode
-Message-Id: <164574356672.4024751.8070854824917838488.b4-ty@kernel.org>
-Date:   Thu, 24 Feb 2022 22:59:26 +0000
+In-Reply-To: <20220222175611.58051-1-kyarlagadda@nvidia.com>
+References: <20220222175611.58051-1-kyarlagadda@nvidia.com>
+Subject: Re: (subset) [PATCH v2 0/5] Tegra QUAD SPI combined sequence mode
+Message-Id: <164574357320.4024751.14439329373672289056.b4-ty@kernel.org>
+Date:   Thu, 24 Feb 2022 22:59:33 +0000
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -52,17 +52,14 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, 4 Feb 2022 15:59:30 +0530, Krishna Yarlagadda wrote:
+On Tue, 22 Feb 2022 23:26:06 +0530, Krishna Yarlagadda wrote:
 > Add ACPI support for Tegra210 QUAD SPI driver and support
 > new Tegra194 feature, combined sequence mode.
 > 
-> Krishna Yarlagadda (6):
->   spi: tegra210-quad: use device_reset method
->   dt-bindings: spi: Tegra234 QUAD SPI compatible
->   spi: tegra210-quad: add new chips to compatible
->   spi: tegra210-quad: add acpi support
->   dt-bindings: spi: Tegra QUAD SPI combined sequence
->   spi: tegra210-quad: combined sequence mode
+> v2 changes:
+> - use combined sequence mode as default
+> - remove property to switch transfer modes
+> - fix compilation warnings
 > 
 > [...]
 
@@ -72,14 +69,12 @@ Applied to
 
 Thanks!
 
-[1/6] spi: tegra210-quad: use device_reset method
+[1/5] spi: tegra210-quad: use device_reset method
       commit: ac982578e7d340dc4f4fd243f4a4b24787d28c3f
-[2/6] dt-bindings: spi: Tegra234 QUAD SPI compatible
-      (no commit info)
-[3/6] spi: tegra210-quad: add new chips to compatible
+[2/5] dt-bindings: spi: Tegra234 QUAD SPI compatible
+      commit: de2f678b11bdcbabb6d804c543f9a3325c0e83bf
+[3/5] spi: tegra210-quad: add new chips to compatible
       commit: ea23f0e148b82e5bcbc6c814926f53133552f0f3
-[4/6] spi: tegra210-quad: add acpi support
-      (no commit info)
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
