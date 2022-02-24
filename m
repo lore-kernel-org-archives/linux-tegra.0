@@ -2,106 +2,103 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E843C433F5
-	for <linux-tegra@archiver.kernel.org>; Thu, 24 Feb 2022 17:42:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB883C433F5
+	for <linux-tegra@archiver.kernel.org>; Thu, 24 Feb 2022 18:22:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230120AbiBXRmj (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 24 Feb 2022 12:42:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50646 "EHLO
+        id S232750AbiBXSXH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 24 Feb 2022 13:23:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47444 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229744AbiBXRmh (ORCPT
+        with ESMTP id S229642AbiBXSWu (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 24 Feb 2022 12:42:37 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59E921C60CB;
-        Thu, 24 Feb 2022 09:42:07 -0800 (PST)
+        Thu, 24 Feb 2022 13:22:50 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AAF16191405;
+        Thu, 24 Feb 2022 10:22:20 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 089A7B8270D;
-        Thu, 24 Feb 2022 17:42:06 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A05FCC340E9;
-        Thu, 24 Feb 2022 17:42:04 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 659C9B82423;
+        Thu, 24 Feb 2022 18:22:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AD85C340E9;
+        Thu, 24 Feb 2022 18:22:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1645724524;
-        bh=iD5+0LBNH7T6gpbIgLDfaNdtblX7tu5a+rnPBgdz2ag=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=cZjRTQ2AJH31EaiDy2kOqeFg/ZVo9YKsQ+rfXyIwvlJ1MWHCw1TQJQp/2z3Km5uyp
-         5u/HLfIDqQ4D3lPJyP3+v5lPnFIgbTvflxesDJh6RqzMvNbL+FPwFBBNj7exCLM5qX
-         12gz0AhM95QVbQtdptv9qadAetfCZidcI2vobDykVoYjtmrhTpFOmvPX7CkAynpNDZ
-         fdpg1qUtigQ7l4XP54yjT6033TZxiMNZui6jx5mmeapTAETFD9aHB2b2MZ0P3B3W35
-         B7aYl3RZD0k1uK04XlaKl+RXwD4Ti5UBEmA+4iXPdFJ+/7+3VUbl4dMfheyzOQKJcE
-         qv7yuXxygQ8NQ==
-Received: from disco-boy.misterjones.org ([51.254.78.96] helo=www.loen.fr)
-        by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <maz@kernel.org>)
-        id 1nNI7u-00AGAn-7S; Thu, 24 Feb 2022 17:42:02 +0000
-MIME-Version: 1.0
-Date:   Thu, 24 Feb 2022 17:42:02 +0000
-From:   Marc Zyngier <maz@kernel.org>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Joey Gouly <joey.gouly@arm.com>,
+        s=k20201202; t=1645726938;
+        bh=1v8i4Usg2NZhQW/sf9Ue9s+VQpGM0wf62sj9FcuUiCo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=c5HtBT8xRekoXQ9TFILItsIyY5OZbGan9Gf0sw92TzJ+YxT0Ej6xTuC1G/QWQxEym
+         svCNfPjA1CSlA1o68nGuAKlOovsj3yLllwSSKOotyQ0NfJiosGnLXSYv6Pt2GZG+FP
+         MyOfjeqj7lhtqpeVl3tEYI/qPOPW+JZjCalkGDMwHh5fJ8r3rIv1VCqzWKAG+7CNT7
+         Lqe5AjcPJmbiruhnyw4Q33BxD5OnIISnaFgZK1IVBJUgVjyatF838ptBSgiIYfAo0S
+         //UDM+ctqsmVzHn9UCndE8juMdvtNgKg/pB7EK3q0WpMtxVgJjgMRFOjKZQMXblFam
+         A+Wd+V28yPEgQ==
+Date:   Thu, 24 Feb 2022 18:22:12 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Krishna Yarlagadda <kyarlagadda@nvidia.com>
+Cc:     "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Hector Martin <marcan@marcan.st>,
-        Sven Peter <sven@svenpeter.dev>,
-        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, kernel-team@android.com
-Subject: Re: [PATCH 0/5] gpiolib: Handle immutable irq_chip structures
-In-Reply-To: <Yhe1Cxdn8t3oVxMZ@orome>
-References: <20220223154405.54912-1-maz@kernel.org> <Yhe1Cxdn8t3oVxMZ@orome>
-User-Agent: Roundcube Webmail/1.4.13
-Message-ID: <371a530ea9ae8c58bf13ac16d1f2cd3c@kernel.org>
-X-Sender: maz@kernel.org
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 51.254.78.96
-X-SA-Exim-Rcpt-To: thierry.reding@gmail.com, linux-kernel@vger.kernel.org, linus.walleij@linaro.org, brgl@bgdev.pl, joey.gouly@arm.com, jonathanh@nvidia.com, marcan@marcan.st, sven@svenpeter.dev, alyssa@rosenzweig.io, bjorn.andersson@linaro.org, agross@kernel.org, tglx@linutronix.de, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, kernel-team@android.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>
+Subject: Re: [PATCH v2 4/5] spi: tegra210-quad: add acpi support
+Message-ID: <YhfM1DO8vmvHah+f@sirena.org.uk>
+References: <20220222175611.58051-1-kyarlagadda@nvidia.com>
+ <20220222175611.58051-5-kyarlagadda@nvidia.com>
+ <YhUtQ/8Kgcx4OY4S@sirena.org.uk>
+ <DM4PR12MB57693F28A727964ED67BBEB4C33C9@DM4PR12MB5769.namprd12.prod.outlook.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="NN31DYzJ28edf/nu"
+Content-Disposition: inline
+In-Reply-To: <DM4PR12MB57693F28A727964ED67BBEB4C33C9@DM4PR12MB5769.namprd12.prod.outlook.com>
+X-Cookie: I smell a wumpus.
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 2022-02-24 16:40, Thierry Reding wrote:
-> On Wed, Feb 23, 2022 at 03:44:00PM +0000, Marc Zyngier wrote:
->> I recently realised that the gpiolib play ugly tricks on the
->> unsuspecting irq_chip structures by patching the callbacks.
->> 
->> Not only this breaks when an irq_chip structure is made const (which
->> really should be the default case), but it also forces this structure
->> to be copied at nauseam for each instance of the GPIO block, which is
->> a waste of memory.
->> 
->> My current approach is to add a new irq_chip flag (IRQCHIP_IMMUTABLE)
->> which does what it says on the tin: don't you dare writing there.
->> Gpiolib is further updated not to install its own callbacks, and it
->> becomes the responsibility of the driver to call into the gpiolib when
->> required. This is similar to what we do for other subsystems such as
->> PCI-MSI.
->> 
->> 3 drivers are updated to this new model: M1, QC and Tegra, as I
->> actively use them (though Tegra is hosed at the moment), keeping a
-> 
-> Hosed in what way? Anything I can help with?
 
-Tegra186 doesn't boot as host1x is been broken since -rc1.
+--NN31DYzJ28edf/nu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-I have been carrying this[1] patch which has been in -next for
-some time, but still not merged AFAICS.
+On Wed, Feb 23, 2022 at 06:32:56AM +0000, Krishna Yarlagadda wrote:
 
-         M.
+> > > +	if (has_acpi_companion(tqspi->dev))
+> > > +		return 0;
+> > >  	/* flush all write which are in PPSB queue by reading back */
+> > >  	tegra_qspi_readl(tqspi, QSPI_COMMAND1);
 
-[1] 
-https://git.kernel.org/pub/scm/linux/kernel/git/maz/arm-platforms.git/commit/?h=irq/gpio-immutable&id=58d1d925f05485020306e5141336cfd2989843dc
--- 
-Jazz is not dead. It just smells funny...
+> > As well as clock stuff this is also skipping flushing of pending writes
+> > - is that intentional?  It's not called out in the changelog and seems like
+> > something that could cause issues if someone runs on a system where
+> > the firmware does implement runtime suspend.
+
+> Runtime suspend is not enabled with ACPI firmware. Converted compiler flag in v1 to runtime check.
+> We must add more changes like setting DPM flags for runtime pm support with ACPI.
+> Can take this as part of a different series.
+
+It at least needs to be clearer what's going on here, the changelog
+doesn't match the code and it's not obvious from the code that ACPI
+won't kick in and power manage the device as things stand.
+
+--NN31DYzJ28edf/nu
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmIXzNMACgkQJNaLcl1U
+h9DJyAf9Hrv8ZOPOazKwh+GeTMwE1UXZSJtI+PhEMyvmN762w6PZV/oFVg3ZBx9E
+rTMUjp7KwLQ810g+62lvBwu3Qqqhq3q50DXXLLtMStFHB1m+S9KaNlnWSAQyXjF2
+A9388F0TTvnpOOzHufONVxNKqUCl3my8vvAFNYL24IHD/7af4ZGJGwMvTC7o6LtI
+4Cjfm8BgQAaDcxBW2928tC1/NIZ5Qsep35p12FFL1dtHzlr30+Nlr44L8PZqIPDv
+0Fv9hAi5Lg2LaA6bTZPmBh+cLIdL8BEOiw1gxFprahc+EKqkxIUN1KC+ZQDnMQhD
+/G9CuHYJgIah4Oa9LBiDsQIDJc/xYA==
+=Nx2b
+-----END PGP SIGNATURE-----
+
+--NN31DYzJ28edf/nu--
