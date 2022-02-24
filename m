@@ -2,115 +2,116 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 093E8C433F5
-	for <linux-tegra@archiver.kernel.org>; Thu, 24 Feb 2022 15:56:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85FC1C433EF
+	for <linux-tegra@archiver.kernel.org>; Thu, 24 Feb 2022 16:05:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236654AbiBXP4t (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 24 Feb 2022 10:56:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41752 "EHLO
+        id S229506AbiBXQGJ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 24 Feb 2022 11:06:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60846 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234301AbiBXP4t (ORCPT
+        with ESMTP id S229496AbiBXQGI (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 24 Feb 2022 10:56:49 -0500
-Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 584DA1C60DB;
-        Thu, 24 Feb 2022 07:56:18 -0800 (PST)
-Received: by mail-lf1-x134.google.com with SMTP id d23so4593807lfv.13;
-        Thu, 24 Feb 2022 07:56:18 -0800 (PST)
+        Thu, 24 Feb 2022 11:06:08 -0500
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC1F31C6EF9
+        for <linux-tegra@vger.kernel.org>; Thu, 24 Feb 2022 08:05:31 -0800 (PST)
+Received: by mail-wr1-x429.google.com with SMTP id u1so342503wrg.11
+        for <linux-tegra@vger.kernel.org>; Thu, 24 Feb 2022 08:05:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=Jxgwod+cjKF0cMAJ2EBnyYhyhK2ZuDAR5dbHn7cZPXk=;
-        b=e0C8B4o5e6PB8M5l1Tjy3WOI8+vIpkflzmaFjVAKz6E2CsUYjN+xl60dDhP14Q0/Aq
-         cY9LS+LKkU7QOP7gKmyHlAGCf+4a4wnoe/EpWa4wkcKycWvp4CqDWdTU2NOk7OvMDqny
-         2s7J3iVZIWz19QbkIwQnbZdf5x7DpB+im6Ihh9bVekOYbvuOdlLu0sUapKXdYiYCQd3e
-         F7TSvUKDm1DI5U4LeGP9MNobObTORkZil13+1X02okcnFgmhwrEh0Bu+JDUhY/aiMxZV
-         wRknmwdz1LWjBPVG4MY/Ky1Rcgv+iWyWR/8pCNPsIRxr/ZTOeUlSwf9yt/DsN4BNV/nN
-         mZnw==
+        bh=bmWCDhCLgHqbLcu4zq+gTabVGdCJ3VfshRrjvuSuZn4=;
+        b=KMuwV3IWYYZFHnKCAS355Tm8ua1AtfKhURR2/YUPZTo+ryVCi4PI7vUr69YeklRQdu
+         LIEuJ04EGSbXSLOf2SwphJBFxw8AT6sgh2K5rHaZK2IM4aEFI1pw2LS8i9rbL2yyQmfz
+         iW3FhemIg7vrEZXLL40Yw9GRP5XeizSyuYrn3p6cIdMr2Dh/j2DUyWoi+Rg4OQGuvvSt
+         PAmnzHscrlFKkwZysu9X05s9Eq1gLQ8ciTVn4yh4RASw7E0J6pDiBHivbn9qUZGy8YKf
+         IlhSZQDWJj6GxqXTg6bmj+na/osXderBrENcqMcQcXUhF6TwxK+OlTh+Y/PYhs5L7EYS
+         FZXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Jxgwod+cjKF0cMAJ2EBnyYhyhK2ZuDAR5dbHn7cZPXk=;
-        b=kb8GMgRKTNLCNFX+1PNh1DpyKFeFkwQQ3Kub/yVh3csWg8pCuUt3vGFmoyRFX7pGXm
-         NVIxXOCooaAjp5xrRkdP+eq2zKrgIFltWrFIebdwdxsFlK8u+s8VYiHiHZc+2OWijrZL
-         uywMypISnBkcaYjRjR3e5pd5kI3B7VPe7XGcS4BFmAVjxff9yjvH3HI5RYXMQ+gNDhGc
-         KPRvXi+XG4dm/Jd7tlAnD0g2lwTh4lRw4486c7tnzauwWSTBuAuTAiwfvMxGtPWRwHWd
-         zVrP6E38pr81H6EUES5OfCGw7GtwUuv8bxIM8j5IjH/AkievIMF/mLhDdsMpxiPZ7KGF
-         t8Pw==
-X-Gm-Message-State: AOAM532KwStynrie8DJ79069a0zfJS5cMMnpVQVCQE67UUqygYKcocoh
-        Y/ImyExuEfPyon8p7qqVP/Q=
-X-Google-Smtp-Source: ABdhPJzaXZ8qcjNBoF7BIApIIdH26xRybKIPiTiVeuInTO23K+HAxK1nPPGw0ctm0nVZ1ijP5CbvgA==
-X-Received: by 2002:a05:6512:3f17:b0:43d:8e7f:29f8 with SMTP id y23-20020a0565123f1700b0043d8e7f29f8mr2099730lfa.609.1645718176505;
-        Thu, 24 Feb 2022 07:56:16 -0800 (PST)
+        bh=bmWCDhCLgHqbLcu4zq+gTabVGdCJ3VfshRrjvuSuZn4=;
+        b=lXDj5M0aw/UfksxyLLw1dWGpuWEcu4iHiFIF+qlShvtB9PP0WbwHfOjgEdI9hgCggV
+         yHEOSW9OUK5iJi180shp8qqMYde7H7LHxsW6ZOYi/9+DBUXWSPU+tajDF741JqJk+Kfj
+         wUa3fEaD+drIkj2CAyVefJt0cbBL/zUPitKm8AKz9ukvWBNAGu8Ey7EMjSkegAyId+84
+         AaPhDGbWQKoGLy8+7/WZrnyupVODmD1zug6RI+FSg5hsTqwFBr88R7vZKs9DrEOKmMbj
+         4u5KP0m0r1GxfYXX8WYSkvRajO5/ekjc/HEmdGi/USUQAFVZeO7OtvFwedIP06/0dhQH
+         kASQ==
+X-Gm-Message-State: AOAM533RopA74ciou4ZrjGdRM8ptKr8ng1TqKWB2IFo8RIxX/v+7rZRt
+        dk9Ri64rganD7WkSy0CG2+M=
+X-Google-Smtp-Source: ABdhPJwnla5iOEohAZplej8ESMAiPZbMgCeoEBe+9bYVAHyR/1OmHH3f7CJYBq5mbv3HzYyPuWkUrA==
+X-Received: by 2002:adf:f991:0:b0:1ed:c156:b6e3 with SMTP id f17-20020adff991000000b001edc156b6e3mr2862623wrr.411.1645718612169;
+        Thu, 24 Feb 2022 08:03:32 -0800 (PST)
 Received: from orome ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id f39sm233996lfv.302.2022.02.24.07.56.14
+        by smtp.gmail.com with ESMTPSA id k18sm2588699wrp.104.2022.02.24.08.03.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Feb 2022 07:56:15 -0800 (PST)
-Date:   Thu, 24 Feb 2022 16:56:12 +0100
+        Thu, 24 Feb 2022 08:03:31 -0800 (PST)
+Date:   Thu, 24 Feb 2022 17:03:29 +0100
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Dmitry Osipenko <digetx@gmail.com>
 Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
-        Svyatoslav Ryhel <clamor95@gmail.com>,
-        David Heidelberg <david@ixit.cz>,
-        Robert Eckelmann <longnoserob@gmail.com>,
-        Agneli <poczt@protonmail.ch>, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 0/4] NVIDIA Tegra ARM32 device-tree improvements for
- 5.18
-Message-ID: <YheqnF1CgQTNgRs5@orome>
-References: <20220207212826.10307-1-digetx@gmail.com>
+        Mikko Perttunen <cyndis@kapsi.fi>,
+        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v1] drm/tegra: Use dev_err_probe()
+Message-ID: <YhesUVCU/2E0cwUa@orome>
+References: <20220207212923.10386-1-digetx@gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="TpGEX/9APYzb/M4O"
+        protocol="application/pgp-signature"; boundary="TBBSrxsIdYbcaitO"
 Content-Disposition: inline
-In-Reply-To: <20220207212826.10307-1-digetx@gmail.com>
+In-Reply-To: <20220207212923.10386-1-digetx@gmail.com>
 User-Agent: Mutt/2.2.1 (c8109e14) (2022-02-19)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---TpGEX/9APYzb/M4O
+--TBBSrxsIdYbcaitO
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Feb 08, 2022 at 12:28:22AM +0300, Dmitry Osipenko wrote:
-> Here are couple minor DT improvements and enabling of HDMI audio on
-> Asus TF101 tablet.
+On Tue, Feb 08, 2022 at 12:29:23AM +0300, Dmitry Osipenko wrote:
+> Replace dev_printk() with a generic dev_err_probe() helper which silences
+> noisy error messages about deferred probe and makes easy to debug failing
+> deferred probe by printing notification about the failure to KMSG in the
+> end of kernel booting process and by adding failing device and the reason
+> of deferred probe to devices_deferred of debugfs. This was proven to be
+> useful in the case of eDP driver regression by immediately showing why
+> display driver was failing when user asked for help, otherwise it would've
+> been much more difficult to debug such problems on a third party device
+> that doesn't have developer setup.
 >=20
-> Dmitry Osipenko (3):
->   ARM: tegra: asus-tf101: Enable S/PDIF and HDMI audio
->   ARM: tegra: tf700t: Rename DSI node
->   ARM: tegra: paz00: Add MMC aliases
->=20
-> Svyatoslav Ryhel (1):
->   ARM: tegra: transformer: Drop reg-shift for Tegra HS UART
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/gpu/drm/tegra/dc.c   | 13 +++----------
+>  drivers/gpu/drm/tegra/hdmi.c | 34 +++++++++-------------------------
+>  2 files changed, 12 insertions(+), 35 deletions(-)
 
-Applied all four patches, thanks.
+Applied, thanks.
 
 Thierry
 
---TpGEX/9APYzb/M4O
+--TBBSrxsIdYbcaitO
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmIXqpoACgkQ3SOs138+
-s6EJYhAApMCT89bKrNdY5f5zz04hJj8rlGJ86IyOYP+JVq1micAqhS1mOX/3fFBQ
-zU34ZBzlv/H4B7cxnUHm4//mm74c7KoLo3TtQxhOyAFOEtqgtkYm7xhlBBG4sWTO
-JHYfSnYk+Ljiok1tVXG1tjcTBSNe3nUPAJevgVSVWvqx7h6FwKvfx0/3CW7yRyYz
-xLrjj426ORsnK061VVrSC3Oz7Ngf/W152xp+whvc398adDRzoRxa3gG8imfGuT46
-jAeY3AdvOagw8ps9egLFYqHe2gz0/SCW18AYEA4bggrbh9mo9Pc2k6Eccz4jOyTO
-0sTk85Pvb4monlnNYXHFBRMxO2X7Yzx173nlsp6f10paDAbROCP4NCjSCQV+KAiv
-VhMVpeRRO5s8GbXKCJQCK7cdL6roOZmX7H33EQUAbf7A1VLYdqjn725cGWy72NZk
-TolbrF9RFGXCODRYNTfH57njAR9WGD8+AkwQtynLADfS+TUpBwq+XsyNk0JVjYWg
-+ZPbHqfeFDhLgTnzOLrmJfd1zGmd+QCZpLE6VhykQj6ykhnXhzzYE5sdsk79xfC+
-fkTk0YbXXp1Uj8LqmnNxuM8bOnQFHJLXN/gGTDMLlX35XMx4Q4u863tV0jUSEF8E
-iITccdHwwouoyX/eZUjEWoqjs023VkDTAUszuC7jzKwDv/++kAU=
-=PN3i
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmIXrFAACgkQ3SOs138+
+s6E1vg//fMlOjgAdGesdZVvKGdBBfBpeh/YzJ5aGWpYZmV64VrqSjp23f0Y0ZJqs
+kszvGnLEuhk6pmBSndIxvirBFNDVEvaOrHcKhmnJpR8LrbDOPZn7VY27t2xPNj5T
+ABmRLiAvpgFTQsOYQktn1iyC0CnRiNnE842z8487bYO9pEtH2/6LV16l4NeBhnBa
+L4uxx09AJc+FVtXJ+fz6LZy3h8DVlVIchzPbUBUePdUj7xxYEnql1QnATgmHIdwY
+dyG+viunJqBflWiVrH9nBIxQSWkql7pso7XL+RF/K2ApCzaocwE8C4PF0smFGfDC
+AgZeAj7hm2xl1SBD10+8rnHNja1TpMr3wUgE2HzXVa9RzgqWcXoamOqB1AxWHNFQ
+u5QoaNqA6MSuO4FE72ahXiX+6BwSnlGB+vyBmwg53lORBGJW2aLjUsuqljb8xumu
+sKbpnRjO/g+/mjukZTRfRwV0puaDYJ6jzt21VbQN27du20oajoy26h3ImLVdQPMT
+Q1krSFT0VFdtwwjeh9Q7ZXn+eeiCLD4VDh31FJpjbWhwETYhYUPPnz65XCo+6Yr7
+XcqNUacH2bZzkXkTXlkvzhg9bKsB6Mfv62CCXp6NMPNqKH5pfancS9fFz1voC9Ys
+SKjZ2F2sdGTQTe6TmmllxjKLPwz9XVQoo+E5NVWUaJsZbwat928=
+=31Or
 -----END PGP SIGNATURE-----
 
---TpGEX/9APYzb/M4O--
+--TBBSrxsIdYbcaitO--
