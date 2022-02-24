@@ -2,86 +2,184 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D92FC433FE
-	for <linux-tegra@archiver.kernel.org>; Thu, 24 Feb 2022 17:18:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4157EC433F5
+	for <linux-tegra@archiver.kernel.org>; Thu, 24 Feb 2022 17:18:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229715AbiBXRSe (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 24 Feb 2022 12:18:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50594 "EHLO
+        id S229755AbiBXRTD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 24 Feb 2022 12:19:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50958 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229635AbiBXRSd (ORCPT
+        with ESMTP id S229635AbiBXRTC (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 24 Feb 2022 12:18:33 -0500
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C4DE1B0180
-        for <linux-tegra@vger.kernel.org>; Thu, 24 Feb 2022 09:18:03 -0800 (PST)
-Received: by mail-lf1-x132.google.com with SMTP id b9so5055584lfv.7
-        for <linux-tegra@vger.kernel.org>; Thu, 24 Feb 2022 09:18:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=ZEF24tzNN36Ad6E2QTpV8p5Sa4Vkb2AWklLMy5ayQGA=;
-        b=WpodwI797Rwd5d3Bqh4Ioe16qGHmgCq95omZ7cEKxJIStGiKXtvn5YYQjBCG/MVoE8
-         MkrwSod9DOdWu4ufQ+G6EJFktP0MI/vAE6Le/k5cqnofP06II26wzYqlo76bLeUJjd35
-         2cFTI4mclwQkDi6QC3k6FkF8igTaePP3nExo/K1Ej+6j86esRvLEyiH/1ZD5jg7YCHj3
-         ZS7Yl+8PEvwRYuu9QiLQUoFQ/CXYn94/JoMIK4q1YyWuDNQxlt/Fl2DvOxUalyML7Y4z
-         5yi8KpjOiqVXI0B3YzIdHebbS++F8NDtdXjqDbIL3s/ck6WVzw235HOsEEA3P57iHDam
-         FM/g==
+        Thu, 24 Feb 2022 12:19:02 -0500
+Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABA125B894;
+        Thu, 24 Feb 2022 09:18:32 -0800 (PST)
+Received: by mail-oi1-f175.google.com with SMTP id y7so3596669oih.5;
+        Thu, 24 Feb 2022 09:18:32 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=ZEF24tzNN36Ad6E2QTpV8p5Sa4Vkb2AWklLMy5ayQGA=;
-        b=2V5wGiLwwGpvDL7oaExfs1tRnpALsqeIVRWSpzT+GCWJw9uv0NzGAAD/WX32JDyZ/e
-         OA11JZcaDYnh9LaY69uc2PZbGE011hYfDXvNSFsj3Jeh5XEeMizjZ3dql5hGxvcOyok7
-         OiyN//VFmT7MsTcA0ciVh5dSdd4fvhZ83Vjaq5l5BAwQbZqF9SsfLAC69rp6KB9TvTjz
-         eKiKFGaLVd0klFwHJUOiaGSrI0CE/gHMaufxzhg1nftnzAqKTA2BLzNi/EI9VlwjL/dN
-         0ttx+kvyHCL4z6FkCTlxHkrmwcAlzRq1AYXpQWN2s2goLgPI/Mw9QIaufH3AS7ot19fQ
-         +aDw==
-X-Gm-Message-State: AOAM530YOK3LNPru6CzrciQgOFzxQ0mprJ0Qb/p8gz697VWgYLljHeiA
-        OU9rjyWovK7JizOHdIlqghhxiAR/uoE=
-X-Google-Smtp-Source: ABdhPJwcR7KJ1sG1dWn4HB4VUsHPfcXidHtpADKlS/xYTpv7jH43cB37PGeqQzvuPx8FQvhZsYDIFA==
-X-Received: by 2002:ac2:5148:0:b0:442:f24f:1aea with SMTP id q8-20020ac25148000000b00442f24f1aeamr2421864lfd.20.1645723081906;
-        Thu, 24 Feb 2022 09:18:01 -0800 (PST)
-Received: from [192.168.2.145] (109-252-137-194.dynamic.spd-mgts.ru. [109.252.137.194])
-        by smtp.googlemail.com with ESMTPSA id n23-20020a2e86d7000000b002460f3e885asm20837ljj.20.2022.02.24.09.18.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Feb 2022 09:18:01 -0800 (PST)
-Message-ID: <0a550dde-7c06-c61d-2cbf-e63ad1a7dcc5@gmail.com>
-Date:   Thu, 24 Feb 2022 20:18:00 +0300
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=7slgzKqOG5WOC/WsENczH0GLZVRx1odPiIFNJSTj50w=;
+        b=rDa2m5fEWXhmO8g+wDRXQWzeUcq5AL4qkzoJnHKMB82jpYb9VP3P0uU+qBTBlADMc5
+         UwtkxZtwYaaFWTOWz03KgZqjC43doG7cQa84MO4vcRKbjIvC+dc79ArGgsuNZzXDfufC
+         JHlJMLWOmp6IQ61gAKARMfBmdfo251MuKU9IzQW+LBgJgRNnE3tbgAvascO8Wxg5Z6Rj
+         DRJ6NMr3Kb0n8CgebZBAkaNU5I0/DLExm7hESu764MmPbhFZzLAyelp/tsr2SClPbYfp
+         rR1ZLAMWoteEr06QgmpEG1EhjGidK4RILJWDKJmP2dpM4Aa6cs/GkxvvIovVfjd1w9sX
+         lIBw==
+X-Gm-Message-State: AOAM531g5VT3yokV7oALZ5me/uVxbByvzanUfnR2UkxF2pUq96ugQxTb
+        oRhaDAV7KvvWMvUyzqTeug==
+X-Google-Smtp-Source: ABdhPJy7WQuDbUVEbzTIos+FK5YUQdNoBAGXEivNXy6JWYVM6FV6rNsboC4U1JBu0ZFrlMKW5PA40g==
+X-Received: by 2002:a05:6808:202a:b0:2d4:df36:68a4 with SMTP id q42-20020a056808202a00b002d4df3668a4mr7750425oiw.16.1645723111948;
+        Thu, 24 Feb 2022 09:18:31 -0800 (PST)
+Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
+        by smtp.gmail.com with ESMTPSA id t40-20020a05680815a800b002d48ffad94bsm11498oiw.2.2022.02.24.09.18.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Feb 2022 09:18:31 -0800 (PST)
+Received: (nullmailer pid 3263579 invoked by uid 1000);
+        Thu, 24 Feb 2022 17:18:30 -0000
+Date:   Thu, 24 Feb 2022 11:18:30 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Oleksij Rempel <o.rempel@pengutronix.de>
+Cc:     =?iso-8859-1?Q?Beno=EEt?= Cousson <bcousson@baylibre.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Nicolas Saenz Julienne <nsaenz@kernel.org>,
+        Ray Jui <rjui@broadcom.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Scott Branden <sbranden@broadcom.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Tony Lindgren <tony@atomide.com>, kernel@pengutronix.de,
+        bcm-kernel-feedback-list@broadcom.com, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v5 2/9] dt-bindings: net: add schema for Microchip/SMSC
+ LAN95xx USB Ethernet controllers
+Message-ID: <Yhe95rXZc7RzgO5o@robh.at.kernel.org>
+References: <20220216074927.3619425-1-o.rempel@pengutronix.de>
+ <20220216074927.3619425-3-o.rempel@pengutronix.de>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH libdrm v2 05/25] tegra: Add flink helpers
-Content-Language: en-US
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
-References: <20220217191625.2534521-1-thierry.reding@gmail.com>
- <20220217191625.2534521-6-thierry.reding@gmail.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-In-Reply-To: <20220217191625.2534521-6-thierry.reding@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220216074927.3619425-3-o.rempel@pengutronix.de>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-17.02.2022 22:16, Thierry Reding пишет:
-> +int drm_tegra_bo_get_name(struct drm_tegra_bo *bo, uint32_t *name);
-> +int drm_tegra_bo_open(struct drm_tegra *drm, uint32_t name, uint32_t flags,
-> +                      struct drm_tegra_bo **bop);
+On Wed, Feb 16, 2022 at 08:49:20AM +0100, Oleksij Rempel wrote:
+> Create initial schema for Microchip/SMSC LAN95xx USB Ethernet controllers and
+> import some of currently supported USB IDs form drivers/net/usb/smsc95xx.c
+> 
+> These devices are already used in some of DTs. So, this schema makes it official.
+> NOTE: there was no previously documented txt based DT binding for this
+> controllers.
+> 
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> ---
+>  .../bindings/net/microchip,lan95xx.yaml       | 80 +++++++++++++++++++
+>  1 file changed, 80 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/net/microchip,lan95xx.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/net/microchip,lan95xx.yaml b/Documentation/devicetree/bindings/net/microchip,lan95xx.yaml
+> new file mode 100644
+> index 000000000000..8521c65366b4
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/net/microchip,lan95xx.yaml
+> @@ -0,0 +1,80 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/net/microchip,lan95xx.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: The device tree bindings for the USB Ethernet controllers
+> +
+> +maintainers:
+> +  - Oleksij Rempel <o.rempel@pengutronix.de>
+> +
+> +description: |
+> +  Device tree properties for hard wired SMSC95xx compatible USB Ethernet
+> +  controller.
+> +
+> +allOf:
+> +  - $ref: ethernet-controller.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - enum:
+> +          - usb424,9500   # SMSC9500 USB Ethernet Device
+> +          - usb424,9505   # SMSC9505 USB Ethernet Device
+> +          - usb424,9530   # SMSC LAN9530 USB Ethernet Device
+> +          - usb424,9730   # SMSC LAN9730 USB Ethernet Device
+> +          - usb424,9900   # SMSC9500 USB Ethernet Device (SAL10)
+> +          - usb424,9901   # SMSC9505 USB Ethernet Device (SAL10)
+> +          - usb424,9902   # SMSC9500A USB Ethernet Device (SAL10)
+> +          - usb424,9903   # SMSC9505A USB Ethernet Device (SAL10)
+> +          - usb424,9904   # SMSC9512/9514 USB Hub & Ethernet Device (SAL10)
+> +          - usb424,9905   # SMSC9500A USB Ethernet Device (HAL)
+> +          - usb424,9906   # SMSC9505A USB Ethernet Device (HAL)
+> +          - usb424,9907   # SMSC9500 USB Ethernet Device (Alternate ID)
+> +          - usb424,9908   # SMSC9500A USB Ethernet Device (Alternate ID)
+> +          - usb424,9909   # SMSC9512/9514 USB Hub & Ethernet Devic.  ID)
+> +          - usb424,9e00   # SMSC9500A USB Ethernet Device
+> +          - usb424,9e01   # SMSC9505A USB Ethernet Device
+> +          - usb424,9e08   # SMSC LAN89530 USB Ethernet Device
+> +          - usb424,ec00   # SMSC9512/9514 USB Hub & Ethernet Device
+> +
+> +  reg: true
+> +  local-mac-address: true
+> +  mac-address: true
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    usb {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        ethernet@1 {
+> +            compatible = "usb424,ec00";
 
-drm_tegra_bo_open() isn't a very good name for a function. How will you
-name dmabuf and handle variants?
+If this is a hub/ethernet combo device, how is it valid to be standalone 
+without the hub?
 
-In grate-drive we're using these names:
+> +            reg = <1>;
+> +            local-mac-address = [00 00 00 00 00 00];
+> +        };
+> +    };
+> +  - |
+> +    usb {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        usb1@1 {
+> +            compatible = "usb424,9514";
 
-drm_tegra_bo_from_name
-drm_tegra_bo_from_dmabuf
-drm_tegra_bo_from_handle
+Not documented.
 
-I suggest to use more meaningful function names before will be too late,
-especially given that this is the upstream libdrm.
+> +            reg = <1>;
+> +            #address-cells = <1>;
+> +            #size-cells = <0>;
+> +
+> +            ethernet@1 {
+> +               compatible = "usb424,ec00";
+> +               reg = <1>;
+> +            };
+> +        };
+> +    };
+> -- 
+> 2.30.2
+> 
+> 
