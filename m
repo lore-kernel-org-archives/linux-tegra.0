@@ -2,138 +2,88 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4358C433FE
-	for <linux-tegra@archiver.kernel.org>; Thu, 24 Feb 2022 16:51:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D329AC433F5
+	for <linux-tegra@archiver.kernel.org>; Thu, 24 Feb 2022 16:53:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230150AbiBXQwZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 24 Feb 2022 11:52:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54348 "EHLO
+        id S229447AbiBXQxc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 24 Feb 2022 11:53:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57590 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229978AbiBXQwY (ORCPT
+        with ESMTP id S229776AbiBXQxb (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 24 Feb 2022 11:52:24 -0500
-Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 709553586B;
-        Thu, 24 Feb 2022 08:51:46 -0800 (PST)
-Received: by mail-ej1-x62a.google.com with SMTP id qx21so5603428ejb.13;
-        Thu, 24 Feb 2022 08:51:46 -0800 (PST)
+        Thu, 24 Feb 2022 11:53:31 -0500
+Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AB5175C1F
+        for <linux-tegra@vger.kernel.org>; Thu, 24 Feb 2022 08:53:01 -0800 (PST)
+Received: by mail-lj1-x233.google.com with SMTP id e2so3721759ljq.12
+        for <linux-tegra@vger.kernel.org>; Thu, 24 Feb 2022 08:53:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=0BX8BM017uCOv9ckNj58aZrZbCd/kR/+hefTXMO9tPo=;
-        b=kiIocb6M3Uuv4xiRzAdVw033se264t+5e8SmYP5ibq1I4FYRMAbbkXLawlWwzOm54C
-         xHb9/0YbSlMUpw2Y6llCywFgYrAx7ZpZqQ+LatVEGnWWdWhVfJOQgo+QQSMiaB0nhH26
-         kpkq/SZK9dynlhtQuiHfpLZe9Mhcoq6diD0oyzZr+Eab5VLwELySFw3E0vHze+1GYjcg
-         a7cktJzM4p6B4R9ymuUjhoB5MBJsi2ax6GGP6CGvS9MpQvS2yOvXYqUupHSeCx/uSRcg
-         PBt4OTHJvYUrvjPylxPIa+CChh3DpYRgOwluNXETDaED4nhajMnp9x/THJUOxJfe+68g
-         DzYQ==
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=6rQxjXtpXu2yAb/jowAuwRKR0kniyxdOrLxDLFvi0yI=;
+        b=pJ+/uf9rIZEsItagsr2tmkqzFW9yixs9CzyRhYdA+vydMSnQto9SssCtMdU+vGn217
+         ufQTQTy9nXGhxAeyGHlQCDl625iYrmpROdqAnpSzZAbCxwHlEIzIbDYn+lp38PNEXH1N
+         ZPSO3epfeS7e5sdxN9fhMvkSmQGSIJiSS2QwPeaCH6lfLGpjRLgtNS2vALMhPx82h8fq
+         VFPVWFKsCNyBGdLQCEtIijK1NIP9GHyHVDfDR6embgmBulp/iXPspc/DhZwz9Kwy3gL3
+         Y3H1CmkTs+LA4iAHRi+NO6h+mJ91nCXORA2FGH+WWZul2JSQr0eMt2lXnNrQym2hs1Cs
+         2+1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=0BX8BM017uCOv9ckNj58aZrZbCd/kR/+hefTXMO9tPo=;
-        b=q0d+qe+miDlHrQtrL3aAVTcYOPTh5r2IqEd5/F6rQOf3TMCfxCfQH1Fl0kLayU1sZk
-         6Yer7JpcT6ivvv7mgbek8wi63WwhW16JmZV6TSSaZRd/V9sFGCPu3uEPCkmIhVTghPzB
-         H9CP5rtCgfw8pdb70v9zbMqxyDLXVP9o6Czb3oIxHiI1DidN5kufSKxmD0lvjUdDpRve
-         LMg2QxfF7RQYOEx+RfS4J0VU+XYV51b0Gaes8Q+HRbsumzD68qmNWGz0YuX6HMyXAXsG
-         vMjcgQKxkcO00ukPPaGf1bWpWQIfv6DUUBZzYxbIFZGb1fC+Ea9RtMu/1ANfnwYtWA6p
-         UQ7g==
-X-Gm-Message-State: AOAM531+xG7c1bJwT1zAPYutuRRcATc/BrDYIbZ+OsSe+Yrx9qzbDRfN
-        DpdFEbjSrU443oifsv4aIuA=
-X-Google-Smtp-Source: ABdhPJyWV1zkvb8+mEvqp9ZSTYLeQknbMbcIBqw4G7wy2t0xWvm2gOYKTOxfOHmqMh5tXSGKmjzpjg==
-X-Received: by 2002:a17:906:af79:b0:6ce:61d3:7e9b with SMTP id os25-20020a170906af7900b006ce61d37e9bmr3085459ejb.191.1645721505223;
-        Thu, 24 Feb 2022 08:51:45 -0800 (PST)
-Received: from orome ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id j3sm1600520ejj.9.2022.02.24.08.51.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Feb 2022 08:51:44 -0800 (PST)
-Date:   Thu, 24 Feb 2022 17:51:41 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Marc Zyngier <maz@kernel.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Joey Gouly <joey.gouly@arm.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Hector Martin <marcan@marcan.st>,
-        Sven Peter <sven@svenpeter.dev>,
-        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, kernel-team@android.com
-Subject: Re: [PATCH 1/5] gpio: Don't fiddle with irqchips marked as immutable
-Message-ID: <Yhe3neSJbAxRbt+Z@orome>
-References: <20220223154405.54912-1-maz@kernel.org>
- <20220223154405.54912-2-maz@kernel.org>
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=6rQxjXtpXu2yAb/jowAuwRKR0kniyxdOrLxDLFvi0yI=;
+        b=dWWeZ2kFuNqUgNnBoEQ0o0zUuJQjkUeVs7K648j4RgRrTTo8cY4tCpPJi9f4vcCO6Z
+         HWoEEW87kzU9UgTCM9YoOd+kpYBvYFYI/e52mrSXF/BGSkKWsYULd86/IIaUAGdsfaQD
+         4j4Oo6CgV1FeQd8Nsk8MKpoOID3dgByR99W7ckiJFYV9OnjMJI4WshVghte4Hv0WBdAX
+         w3e1r3FdLhUaI0Ocbgvrj/gd2CWvKyOaP+MlwG8halOHDcduBQ15vt9dfl3BLn4Q8Q0e
+         7zCZUnX6tdXwJVCHOX6sJqxnpdrSixfBhdUnGQD4hj6AFuAtQVRcA+hX/MNLSw6jgZ0K
+         ipLg==
+X-Gm-Message-State: AOAM5305/S249G6+qFZLSihf8r+RSj3ix7NGuu70BACINdAV6887rfrl
+        rDga9YmwlV0NRzmXIaNe81vuSxIRcVg=
+X-Google-Smtp-Source: ABdhPJySeNUF9Se5vXIwdNTcbknxa5e1zw6LB0LqowdsG230BkAJogc8AqFWu/aXzHRkruaOnntzTg==
+X-Received: by 2002:a2e:5c81:0:b0:246:3c1e:b4db with SMTP id q123-20020a2e5c81000000b002463c1eb4dbmr2527010ljb.292.1645721579401;
+        Thu, 24 Feb 2022 08:52:59 -0800 (PST)
+Received: from [192.168.2.145] (109-252-137-194.dynamic.spd-mgts.ru. [109.252.137.194])
+        by smtp.googlemail.com with ESMTPSA id a17sm250224lfb.41.2022.02.24.08.52.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 24 Feb 2022 08:52:58 -0800 (PST)
+Message-ID: <6392f6b1-c41a-b9b9-d3c4-29252b349d97@gmail.com>
+Date:   Thu, 24 Feb 2022 19:52:58 +0300
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="vbN/cyUZyiD0I2CK"
-Content-Disposition: inline
-In-Reply-To: <20220223154405.54912-2-maz@kernel.org>
-User-Agent: Mutt/2.2.1 (c8109e14) (2022-02-19)
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [PATCH libdrm v2 02/25] tegra: Remove unused IOCTL
+ implementations
+Content-Language: en-US
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
+References: <20220217191625.2534521-1-thierry.reding@gmail.com>
+ <20220217191625.2534521-3-thierry.reding@gmail.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+In-Reply-To: <20220217191625.2534521-3-thierry.reding@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+17.02.2022 22:16, Thierry Reding пишет:
+> From: Thierry Reding <treding@nvidia.com>
+> 
+> The DRM_TEGRA_GEM_{GET,SET}_FLAGS and DRM_TEGRA_GEM_{GET,SET}_TILING
+> IOCTLs were badly designed and have since been obsoleted by framebuffer
+> modifiers. Remove these implementations to make it clear their usage is
+> discouraged.
+> 
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
 
---vbN/cyUZyiD0I2CK
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+To me it's not a good idea to remove any function, you're breaking ABI.
 
-On Wed, Feb 23, 2022 at 03:44:01PM +0000, Marc Zyngier wrote:
-> In order to move away from gpiolib messing with the internals of
-> unsuspecting irqchips, add a flag by which irqchips advertise
-> that they are not to be messed with, and do solemnly swear that
-> they correctly call into the gpiolib helpers wueh required.
->=20
-> Signed-off-by: Marc Zyngier <maz@kernel.org>
-> ---
->  drivers/gpio/gpiolib.c | 7 ++++++-
->  include/linux/irq.h    | 2 ++
->  kernel/irq/debugfs.c   | 1 +
->  3 files changed, 9 insertions(+), 1 deletion(-)
+I foresee that get/set flags should become useful.
 
-I kind of like this. The bit where the const cast is essentially guarded
-by an "immutable" flag is a bit funky, but it doesn't look like there is
-a good way to do it by making all references const without doing a huge
-all-at-once conversion.
-
-I've always found it a bit irritating that irq_chip was somewhere
-between a container for chip-specific data and an "ops" structure. I
-think it'd be even nicer if this was split into an extra struct
-irq_chip_ops, which could then always be const and a struct irq_chip
-that contained primarily chip-specific data as well as a pointer to
-struct irq_chip_ops.
-
-But again, this seems fairly tricky to pull off given all the
-interdependencies and we can iterate on this in the future, so this
-seems like a good enough compromise:
-
-Acked-by: Thierry Reding <treding@nvidia.com>
-
---vbN/cyUZyiD0I2CK
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmIXt5oACgkQ3SOs138+
-s6Hsmg//ZlvIGlAISsBwoAWBpifpjvE4OPtPa2w5okmTJxjSFYwmu1dcqaGOQbqk
-PM58PdveLzwtzZUMy2BFNGtyE1cXPfDvIQlUP2QXjkpmpOH0nZvLbKLtbaOKPe5/
-k7ZT1snfCCPyCSkTt3ObyRr/vd09RHkcocvJ3BPX8qgcFs8RP+csLO4LbtPdN4Mp
-DTPbjaUqdqG2RvSuEtRrHenTZ6f+g+39LrwgfzRXztvQvFtNEmK+D/sZDENkTVtm
-+YIJBgiANbzhXtib+/9FaG3MJECmu6ZBNNSaZat91Ksn+TWDz/RYRdZSsEcposEx
-eH5P6Oas2DsQ8P8ny7jplcGV1nOGobRdQBRWnWHXKDGrsDBaVzdFjc4Z/rzoRshO
-a5kV7CL+T6Gu+xVWS81PBBcUcwFsIpn5QWe32g3g0cPuNJpsWYpM6lnbH+CrQcQR
-LTOMQiTe8hyf6vdhTbdMfb6I/i3JscSm23KJYgZD1Se1bYkzi6DbCf62W2ygqHgT
-yakOPdNcZP8KZKp85niKcUdG/ecW9HtTSBGSLDkyMUgBqg4Jr/2uC6C1h/ra3t/D
-HlMJDYR4rrx0kR6JDiHl4Be0AJPPo2YksA+YZzVYIOgv0dMLzk9JX0AXeSwo6xBT
-Byu+xRCU7+shobZGJlJOJXnRXw7XwLhg3pdOwotfppxKxXcUgzU=
-=JQTC
------END PGP SIGNATURE-----
-
---vbN/cyUZyiD0I2CK--
+Instead of the removal, you may mark functions deprecated to let
+compiler produce a compile-time warning and add clarifying comments to
+the code.
