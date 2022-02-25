@@ -2,115 +2,107 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 063A4C433F5
-	for <linux-tegra@archiver.kernel.org>; Fri, 25 Feb 2022 16:33:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1083C433EF
+	for <linux-tegra@archiver.kernel.org>; Fri, 25 Feb 2022 16:47:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243011AbiBYQdf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 25 Feb 2022 11:33:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35446 "EHLO
+        id S241400AbiBYQsZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 25 Feb 2022 11:48:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55040 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243027AbiBYQda (ORCPT
+        with ESMTP id S243312AbiBYQsX (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 25 Feb 2022 11:33:30 -0500
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41504A8ED3
-        for <linux-tegra@vger.kernel.org>; Fri, 25 Feb 2022 08:32:54 -0800 (PST)
-Received: by mail-wr1-x429.google.com with SMTP id d28so5348597wra.4
-        for <linux-tegra@vger.kernel.org>; Fri, 25 Feb 2022 08:32:54 -0800 (PST)
+        Fri, 25 Feb 2022 11:48:23 -0500
+Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8CAA71BBF6E
+        for <linux-tegra@vger.kernel.org>; Fri, 25 Feb 2022 08:47:47 -0800 (PST)
+Received: by mail-wr1-x42e.google.com with SMTP id r10so5420964wrp.3
+        for <linux-tegra@vger.kernel.org>; Fri, 25 Feb 2022 08:47:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=pcnpMGkUTwrOq6wVD6KDZaXy5/GdTI9lT9U97nS7O4s=;
-        b=OT2dbyd+i3BammGBmQ7seIq+G/W89xOguMk7ZOmU3RGt+q+4q5MOMApY2hmn1v4ZtS
-         tRWfhh6zV8GBPDv4M4WgpjiAcIISYhGN62/un1z6+/nOOGGZZWPVecsX4NL6MPjH6hSK
-         aPM9DX2aNuk4Saw4NyJvi+dfgL1B5g00JPqzDvL1lI86n4jwEE5zozq69DuRVLXiz2tb
-         oeRZ4loKnhca4NC10OovgafbKlSFMcIUXrIEykKiv+pNn08tAbcjWLE04l9loLcHWCnA
-         MPOH0XkCZjT4XDGkLHt37wTw17Tyn3XsE4k62M0tmr4IZyifU7DNQuPXO+srQaH/JAKg
-         gcTQ==
+        bh=Jqez2ASWm8yfcVM64bGimZztQHH7JgrjZ5N5ycpQJ98=;
+        b=dJ583PiDSsc0CTIFoORKzTJnFbabL/WJ3XAuT4T13ac5lop0E1FyKH6kmoaLErKT7y
+         +lAF3f3T0vgxm8uitLDHVs+fS5l6/Fln8btcP7eNzIhssGtmTXGfIN3oHpMiixRZSMRT
+         XrHwP0B6hXC3pAcz7KLhsonHNk3KMuKGoMFNNP1oo3vgKogKCTejLtowe2iOot8ReZjk
+         r5DWMqt4RLfZmygi4TW+NcU2ppdEMxfd3d/3zrgG11G4oAIgtYJYt3EW0t9jG45rEcrS
+         E0DOSN+5OuoUHVm0PNbbYGJ1shq2yIugkIvNbALS6TsJAlcIhUBWbnvS5whKPdum1PdL
+         6iGg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=pcnpMGkUTwrOq6wVD6KDZaXy5/GdTI9lT9U97nS7O4s=;
-        b=jQnvMGyFAVce2ldFRVf7rrWA1Op/xKz1Zvhke4H7OtgXfZGK/EZg9YJOzritEv6Ks9
-         huh/1L4Oof+9HpijBi3mPOvXuk1LJJ3mIVo2m1rDuYo24FB1dE307lgThP373L+eAPOK
-         gBwXJkoyjAKlCqzJAv7Ib94Ra9MXo4LBx9jtKqeXYuBfBiU+kZbepm40nSgPPrcIicPV
-         VXIvimqJvzVlOXCPcl7s/Kc8qKYA6piuYXp7tZURxEGH+UZUkM/rHuxbSpG/nFAZyLzH
-         1Otr32HTdxwll9lw3GDK9cYNtNWrbNq8tXxH7qCOTTz+LJib9ifSBf0fppYF0+V3+nTT
-         NY/Q==
-X-Gm-Message-State: AOAM5319j698F/Ukvsg6crNQmShnofEfSRh7wE2NZeTMNRJGrvp0XgBw
-        jHJKJlwffdI324CIQjahA2s=
-X-Google-Smtp-Source: ABdhPJxHrcf/hcepc+TJ2lVBWStLolYNEo/QWbjcFrnuG5b+myntxby6A1xyg7CzQ3cgZOw640/yTQ==
-X-Received: by 2002:a5d:410c:0:b0:1ef:766b:ef5b with SMTP id l12-20020a5d410c000000b001ef766bef5bmr1692763wrp.183.1645806772593;
-        Fri, 25 Feb 2022 08:32:52 -0800 (PST)
+        bh=Jqez2ASWm8yfcVM64bGimZztQHH7JgrjZ5N5ycpQJ98=;
+        b=lKqUiPkw2QUNXEDwDQcRA8A7EMVFnjNNiDqN7Dv4ZC8lTwofsQ1HVLIH32bu35oK5Z
+         8rIDfsfNB1LccgXB2wD1Tv8l3sGSvCkL/l85lvMoEPg0y3O+0M3Elv7UQjckINs0j/ci
+         ZhtS0bMdYl4CLo11PpJahhXt2mEtHBjxCTnPJlCV3/sFwsieyeByalqqzuc+bE1jeYLX
+         D/xXKeaoLXIATJRh5jfvqKAymKA26MvNGs5T/VtndhTrDr+ztjM3oAP4k1cS6Q7x6PXK
+         OJFN1CnyqUKwVCYX5X8KQ3JaoPropMd6mt0ashi+5/ux53rCSMepsg2emY3sMcf+/VEH
+         ZLZA==
+X-Gm-Message-State: AOAM5335FMgovHjK0S/ejMBCRtBkj6I5gLzGl/An+NUrFvPO/kWzSwOU
+        w5DxHMfrZBWa1kHpU3+evRytzL2nY8Q=
+X-Google-Smtp-Source: ABdhPJxt4R2rH0g0wJNhaKs5g/tkqacC9iwePLzEU/roQ9c2kuVZC5CygKyYx4/H7yxxqlz9SpK8DQ==
+X-Received: by 2002:adf:8067:0:b0:1ea:9c01:d8f3 with SMTP id 94-20020adf8067000000b001ea9c01d8f3mr6872706wrk.556.1645807665986;
+        Fri, 25 Feb 2022 08:47:45 -0800 (PST)
 Received: from localhost ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id t14-20020a5d460e000000b001edc107e4f7sm3985207wrq.81.2022.02.25.08.32.51
+        by smtp.gmail.com with ESMTPSA id t14-20020a5d460e000000b001edc107e4f7sm4036873wrq.81.2022.02.25.08.47.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Feb 2022 08:32:51 -0800 (PST)
+        Fri, 25 Feb 2022 08:47:45 -0800 (PST)
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Dave Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
-Cc:     dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
-Subject: [GIT PULL] drm/tegra: Changes for v5.18-rc1
-Date:   Fri, 25 Feb 2022 17:32:50 +0100
-Message-Id: <20220225163250.1063101-1-thierry.reding@gmail.com>
+To:     arm@kernel.org, soc@kernel.org
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [GIT PULL 1/5] soc/tegra: Changes for v5.18-rc1
+Date:   Fri, 25 Feb 2022 17:47:37 +0100
+Message-Id: <20220225164741.1064416-1-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.35.1
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Dave, Daniel,
+Hi ARM SoC maintainers,
 
-The following changes since commit 8913e1aea4b32a866343b14e565c62cec54f3f78:
+The following changes since commit e783362eb54cd99b2cac8b3a9aeac942e6f6ac07:
 
-  drm/tegra: dpaux: Populate AUX bus (2022-02-23 13:00:37 +0100)
+  Linux 5.17-rc1 (2022-01-23 10:12:53 +0200)
 
 are available in the Git repository at:
 
-  https://gitlab.freedesktop.org/drm/tegra.git tags/drm/tegra/for-5.18-rc1
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.18-soc
 
-for you to fetch changes up to b53c24f69199b88671293de503f1f999a762f4f9:
+for you to fetch changes up to fcfaff508b9fa9ad6d8a17d4855e3ec7382886ae:
 
-  drm/tegra: Support YVYU, VYUY and YU24 formats (2022-02-25 16:37:40 +0100)
+  soc/tegra: bpmp: cleanup double word in comment (2022-02-25 14:10:09 +0100)
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-drm/tegra: Changes for v5.18-rc1
+soc/tegra: Changes for v5.18-rc1
 
-This contains a couple more minor fixes that didn't seem urgent enough
-for v5.17. On top of that this improves YUV format support on older
-chips.
+This contains the final bit to enable advanced power management on
+Tegra20 and Tegra30. It also contains some cleanups and wake event
+support on Tegra234.
 
 ----------------------------------------------------------------
-Christophe JAILLET (2):
-      gpu: host1x: Fix an error handling path in 'host1x_probe()'
-      gpu: host1x: Fix a memory leak in 'host1x_remove()'
-
 Dmitry Osipenko (1):
-      drm/tegra: Use dev_err_probe()
+      soc/tegra: pmc: Enable core domain support for Tegra20 and Tegra30
 
-Miaoqian Lin (1):
-      drm/tegra: Fix reference leak in tegra_dsi_ganged_probe
+Thierry Reding (1):
+      soc/tegra: fuse: Explicitly cast to/from __iomem
 
-Thierry Reding (3):
-      drm/tegra: Fix planar formats on Tegra186 and later
-      drm/tegra: Support semi-planar formats on Tegra114+
-      drm/tegra: Support YVYU, VYUY and YU24 formats
+Tom Rix (1):
+      soc/tegra: bpmp: cleanup double word in comment
 
-chiminghao (1):
-      drm/tegra: dpaux: Remove unneeded variable
+kartik (2):
+      soc/tegra: fuse: Update nvmem cell list
+      soc/tegra: pmc: Add Tegra234 wake events
 
- drivers/gpu/drm/tegra/dc.c    | 50 ++++++++++++++++++-----------
- drivers/gpu/drm/tegra/dc.h    |  7 +++++
- drivers/gpu/drm/tegra/dpaux.c |  3 +-
- drivers/gpu/drm/tegra/dsi.c   |  4 ++-
- drivers/gpu/drm/tegra/hdmi.c  | 34 ++++++--------------
- drivers/gpu/drm/tegra/hub.c   | 24 ++++++++------
- drivers/gpu/drm/tegra/plane.c | 73 ++++++++++++++++++++++++++++++++++++++-----
- drivers/gpu/drm/tegra/plane.h |  2 +-
- drivers/gpu/host1x/dev.c      |  8 +++--
- 9 files changed, 140 insertions(+), 65 deletions(-)
+ drivers/soc/tegra/fuse/fuse-tegra.c | 24 +++++++++++++++++++++---
+ drivers/soc/tegra/pmc.c             | 16 +++++++++++-----
+ include/soc/tegra/bpmp-abi.h        |  2 +-
+ 3 files changed, 33 insertions(+), 9 deletions(-)
