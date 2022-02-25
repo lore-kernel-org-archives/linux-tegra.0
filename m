@@ -2,119 +2,114 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F17AC433EF
-	for <linux-tegra@archiver.kernel.org>; Fri, 25 Feb 2022 13:16:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2995EC433EF
+	for <linux-tegra@archiver.kernel.org>; Fri, 25 Feb 2022 13:18:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237798AbiBYNQk (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 25 Feb 2022 08:16:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42978 "EHLO
+        id S236008AbiBYNTJ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 25 Feb 2022 08:19:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53692 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231822AbiBYNQk (ORCPT
+        with ESMTP id S231594AbiBYNTJ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 25 Feb 2022 08:16:40 -0500
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8537F181E57;
-        Fri, 25 Feb 2022 05:16:06 -0800 (PST)
-Received: by mail-wm1-x32e.google.com with SMTP id y5so1658450wmi.0;
-        Fri, 25 Feb 2022 05:16:06 -0800 (PST)
+        Fri, 25 Feb 2022 08:19:09 -0500
+Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1895D1DEAB8;
+        Fri, 25 Feb 2022 05:18:37 -0800 (PST)
+Received: by mail-wr1-x42c.google.com with SMTP id s13so4481694wrb.6;
+        Fri, 25 Feb 2022 05:18:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=PR0fVE6nKdbpIIw7hJEF8MSW4jXjDeHQgC3lme605B8=;
-        b=anJqAJyqR1JJuKkVL5flu3y/k4W+jFAWd/iGY0wrg5hQcRUWZfJAwh9AmqHSsSpFna
-         mtygh6JpGd7rbFet8a3QIrcyZ/lxy6eSRMb8eHARVTPUGHuPNVEgLaajW5/iZTclku7y
-         I+CKNcMURZ5WOKfTmxeAGyRWeB25TJm4OKGO2g3zx8aNR0nYAbST6fZQ72+6Zuon9GmP
-         yEQVzo/PBqgXoAtTBPjO1FquPb/BvrxbKebokI5qjsn/1czkJO0luF44Pj6/0Co+Zcwc
-         W2AAZL8402+Ej8udlpP4WL3uI8j4HeMuRcRrCWW/EHrUC2n8ITZxDHolNJmVDTyW6uln
-         WEjw==
+        bh=TUNqvCWmIrBg9AkYSUR1RB4M4A7kfSnYMvROvFnKfhg=;
+        b=j34xvGzqjyBYiAAOwY7JHrdHu1rkNvDOGXX7gxXtmyjkerHILCJokmNP41CJIZnryB
+         ZEH3/Hik489CnU4J629rErfejhVEk4/5e+GfdkrT4gvi8ZFkATfEiOHhizMwrmi7enwT
+         uK7Hk4YTx+JoxB6xpBEhyFXhWkp9DSAXDCxKbcX4mkXDjbByTftwo/gcbBuz3S1EYQ8I
+         D34V/rEMWW/SS8FMVqmfLUSF0nVV7M/Etg3SYTY4lp9E13CrL4hdpWSIiNrswZJ8sR20
+         iTt6OpInQ/fi5rYwdx0sDjmYSZwITpLEGX1wgoW7qJ3vST3z+EMVNL/DoUV582g5Vabz
+         acuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=PR0fVE6nKdbpIIw7hJEF8MSW4jXjDeHQgC3lme605B8=;
-        b=76x7kqX21mhw3l8af2O1INu0kzSPEUT5L1p6NxWiu7Lwc4dZWy2VfpSKCrCteZS9C0
-         moZt0bDIyn3tpZG2SPLOw7zaHd2RrElgZntYRzO2R2eLrWeVMkDllJlBo8YVOobm7tz7
-         OzL/l2ypekT2FkmHsc1fMgl8mXaSp901QL1EBMG+6u1NdZ3FOmLnri4k05tz88ogDWlk
-         MnolsUWLr/mdalPr85IjQSXcJXDLzibLK7tnNc8XUkhGm+KtOAeUXjnSM7QzRDtAOJqm
-         cXEf1n4nPrafWwReLmf2boxRJ6M+KH1Ib/EwNmLUapub6Abi5TNQSALJT+ugkm2z+h3X
-         Wuog==
-X-Gm-Message-State: AOAM533A77VvFxle8YrpxeSDQDCNozVp6KIxW/9vBaMiHDnF6CdYk7n7
-        U/CECEonc/pr44EkaRAQ3Hs=
-X-Google-Smtp-Source: ABdhPJyq4qAAE2JwMqRKyRmCEqKdxr+spBqAPqTGrh1UYZFlm2gbd/sq9mwJ58JcFT9kLFmHqjb/pw==
-X-Received: by 2002:a7b:c844:0:b0:37b:b986:7726 with SMTP id c4-20020a7bc844000000b0037bb9867726mr2715536wml.160.1645794965095;
-        Fri, 25 Feb 2022 05:16:05 -0800 (PST)
+        bh=TUNqvCWmIrBg9AkYSUR1RB4M4A7kfSnYMvROvFnKfhg=;
+        b=BIOfKLUQFoaXjcQUK2gIc8WvTB6drlZ3m0uYvnSEyhY3u4aEnz5dU2AW9eFGbs2HNO
+         1tI6tQxuvcUGYfp4Oxt66oV1vDuKQTLz+CxNKXFecQj6Blqno+S6qbySt3gUdW2xCskH
+         2lndpUeSoRh/VWdi9+cvHbjNv8EH9N0mtEGeSmknuNuFjRg8R0tSZVfupsZFxoTZmofO
+         E3hFd+hwrTTEG5TdvAgTpnj+FQNjbFTT3taqN16bTIoZxVGCAhTQ0228Ik1XjLb+iDey
+         MSoTjqVpRMvkiTPEwlX6qJWafvH2FqvNN1cmvS/0OMLHYi1zLDz8xbpu0WoPTuFxlhkd
+         Tbug==
+X-Gm-Message-State: AOAM531TduUQ7TomJxgoCXauZ0TgX1GIWv92mjPcYvPhd8lO3nWXBSPH
+        zKAkMXwQ9tMwmoapp5GT1HU=
+X-Google-Smtp-Source: ABdhPJwdToPn6zXqf0btBQUbsIS1HEM2rWHiwnrHufoGb3rKSRGNweoBfq5nI9RGMEFTVexq0CNuEg==
+X-Received: by 2002:a05:6000:15cb:b0:1ea:78fc:2201 with SMTP id y11-20020a05600015cb00b001ea78fc2201mr6384877wry.362.1645795115668;
+        Fri, 25 Feb 2022 05:18:35 -0800 (PST)
 Received: from orome ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id j7-20020a05600c1c0700b0037c2c6d2a91sm2337948wms.2.2022.02.25.05.16.03
+        by smtp.gmail.com with ESMTPSA id l15-20020a05600c4f0f00b0037d62a899b1sm2512792wmq.6.2022.02.25.05.18.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Feb 2022 05:16:04 -0800 (PST)
-Date:   Fri, 25 Feb 2022 14:16:01 +0100
+        Fri, 25 Feb 2022 05:18:34 -0800 (PST)
+Date:   Fri, 25 Feb 2022 14:18:32 +0100
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Miaoqian Lin <linmq006@gmail.com>
-Cc:     sboyd@kernel.org, jonathanh@nvidia.com, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        mturquette@baylibre.com, pdeschrijver@nvidia.com,
-        pgaikwad@nvidia.com
-Subject: Re: [PATCH v2] clk: tegra: tegra124-emc: Fix missing put_device()
- call in emc_ensure_emc_driver
-Message-ID: <YhjWkVnjGvTkOgnM@orome>
-References: <20220112025200.95C4BC36AEB@smtp.kernel.org>
- <20220112104501.30655-1-linmq006@gmail.com>
+To:     Wayne Chang <waynec@nvidia.com>
+Cc:     balbi@kernel.org, gregkh@linuxfoundation.org, jonathanh@nvidia.com,
+        zhangqilong3@huawei.com, yangyingliang@huawei.com,
+        rikard.falkeborn@gmail.com, chunfeng.yun@mediatek.com,
+        linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] usb: gadget: tegra-xudc: Do not program SPARAM
+Message-ID: <YhjXKLVYgpop27R9@orome>
+References: <20220107090443.149021-1-waynec@nvidia.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="fsBpXhVaVDYjKv6h"
+        protocol="application/pgp-signature"; boundary="gl8CDPNI6wZnzrfJ"
 Content-Disposition: inline
-In-Reply-To: <20220112104501.30655-1-linmq006@gmail.com>
+In-Reply-To: <20220107090443.149021-1-waynec@nvidia.com>
 User-Agent: Mutt/2.2.1 (c8109e14) (2022-02-19)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---fsBpXhVaVDYjKv6h
+--gl8CDPNI6wZnzrfJ
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jan 12, 2022 at 10:45:01AM +0000, Miaoqian Lin wrote:
-> The reference taken by 'of_find_device_by_node()' must be released when
-> not needed anymore.
-> Add the corresponding 'put_device()' in the error handling path.
+On Fri, Jan 07, 2022 at 05:04:43PM +0800, Wayne Chang wrote:
+> According to the Tegra Technical Reference Manual, SPARAM
+> is a read-only register and should not be programmed in
+> the driver.
 >=20
-> Fixes: 2db04f16b589 ("clk: tegra: Add EMC clock driver")
-> Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
+> The change removes the wrong SPARAM usage.
+>=20
+> Signed-off-by: Wayne Chang <waynec@nvidia.com>
 > ---
-> Changes in v2:
-> - add fixes tag.
-> ---
->  drivers/clk/tegra/clk-tegra124-emc.c | 1 +
->  1 file changed, 1 insertion(+)
+>  drivers/usb/gadget/udc/tegra-xudc.c | 8 --------
+>  1 file changed, 8 deletions(-)
 
-Stephen, Mike,
+What's the impact on this? Does it fix a bug? Or is it more of a
+cosmetic change?
 
-I don't have anything else for clock tree this cycle, so perhaps best
-for you guys to pick this up directly:
+Thierry
 
-Acked-by: Thierry Reding <treding@nvidia.com>
-
---fsBpXhVaVDYjKv6h
+--gl8CDPNI6wZnzrfJ
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmIY1pEACgkQ3SOs138+
-s6F9DxAApzyiKCjUIjlfxY3qWe0+3n4QDbO17EIyirLw6UzgcmFRXkV1Qru1Vcc7
-aJHjdcBYlHRX4X6/sIlxqG/QavChcvYDBW4pSNKdlAXoF9EJiifV1j/hnpW5RM3a
-L5ShTie7gsvPyNW5+HqpYcmwHUoHRE2VEU/VRZAza1nAf64nygHYiOPo4u0K01NX
-9qs8gWUh/4kJBkCQxruiFnnqpe9UblsGVJ85HMADVLzacamzmMVkjBKSYGvg6eSr
-0YycbJkX3G1W54saPY7wfUiSGSZuUQZBrnmgWjJHJ+k7jQxIj5UvrHlBxZwglrOc
-LMVCxHqiDlzuIM6daT/hHWE5FaVTmVGVsBqYIgUMK6KXwZ2YbZUh/WiJ57pnK9uE
-xqR05HAkRapHy40rpr6uLz0uFmu9prvLahxl1W7PyD2ENbWym8765j5ZstxeFzw4
-zY95aC/NSieGa/IU0Gdlen1t1dkhkxT23rwwI1wAlEF7WXuxGER/EMYBWtFAAiR/
-SY0PE97YYEawIIfbxLQr3OzcWT+54M+KTz/aTjVk8ahIrVJ3SSXX54NNSTmIi1p4
-Jiv5rQCZgejYfVnTc6IpIqXfnYJxly8B4s4pAApjw6fhNWT9fbIy0JzFYxThCW5+
-pAIVe+5N1ymwR2F8NYxDqGpNhrDJixgDwRp4Zw+tK5D2bEg8kuM=
-=Vhua
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmIY1ygACgkQ3SOs138+
+s6HEHg/7BPV/te79tMNbpLbDXsmVdevmiKD9gyzneQk9jA2xEg7SNmeNCMuhyL7h
+FVl1Kd46D2ZYfcOTXQ/FANEWLRRaqY3KLCdp3OsjqibkiR98tRGcvrjHIxZGaiU+
+qMcV+Ok1rLesSfdvEi0tlFVkL1+jE3pHnX4KvOWb7KRQ2obnXpusYL2e4XJo+i5W
+iyEe7BIrnq1SFBQTq3L3G8V/s3BeHVpmpcgyAPvsmq7gG7cF8X6WbeKnE5Z8GXi0
+8RzT3L7S29RYqjWnSfWE4p6HKX1jTL7LPILl1nbLJyelJJCsVgPSoaL/Ls4aq+QJ
+3wluNy2h40YcBEORncgr15l0FxVTZUhYPOMh5FT+cqVpAISHYKyfvnvL4Chiaibb
+ZwG7SGY8Z9pYH/96vXr3CXddRfzmhhZ7kPi2LZ6HJ47QRTnnYnMtQBP2KlsR04fO
+1DZzJWqovwtKuescW0Zq++6ga3jtifHdh36LFf9w2uIxaNUpwLc8tgZ7l2H4phvj
+W4zahDZyxvZy6zstgxy/lmw8u6Sxnw6nRHbXC+c3UbbmOCl3vnBnzbQPME8CJy2l
+dR316IDKh0+lo+ZyHQRgZfbpFQwV2dN1m3P8owKvN+HcJ1Twi6ZAQl2hJS09Nyjg
+aFTPbwA4CbkJlJIeF91zx+bwSkOXIxN9PJpFU+A3oRATQ/Y6vfk=
+=A+Ss
 -----END PGP SIGNATURE-----
 
---fsBpXhVaVDYjKv6h--
+--gl8CDPNI6wZnzrfJ--
