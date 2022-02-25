@@ -2,107 +2,110 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37907C4167B
-	for <linux-tegra@archiver.kernel.org>; Fri, 25 Feb 2022 13:04:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BB9DC433EF
+	for <linux-tegra@archiver.kernel.org>; Fri, 25 Feb 2022 13:10:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240872AbiBYNEc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 25 Feb 2022 08:04:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35820 "EHLO
+        id S235339AbiBYNKb (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 25 Feb 2022 08:10:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55712 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240846AbiBYNEb (ORCPT
+        with ESMTP id S235751AbiBYNKa (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 25 Feb 2022 08:04:31 -0500
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 848AC1E374D;
-        Fri, 25 Feb 2022 05:03:59 -0800 (PST)
-Received: by mail-wr1-x42d.google.com with SMTP id x15so4403484wrg.8;
-        Fri, 25 Feb 2022 05:03:59 -0800 (PST)
+        Fri, 25 Feb 2022 08:10:30 -0500
+Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 838CC1E7A43;
+        Fri, 25 Feb 2022 05:09:58 -0800 (PST)
+Received: by mail-wm1-x329.google.com with SMTP id bg16-20020a05600c3c9000b00380f6f473b0so1662916wmb.1;
+        Fri, 25 Feb 2022 05:09:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=FiLW0R7L/dZRfqfxW28BOR12U87eLnNRWa67PzOy/CI=;
-        b=HHrWK7ne97eI6fFX7Fv835jZNK5hk+zS0o37dYh4zMpZ48ZCsoXwSBrbFhU31sgYQi
-         lAUmjiRExX2V5fdeAloRqNXELDIpBAxEbWOWpAGphmSnP8L8jdKvBF3DAY1auH6V13Pn
-         CHETEmfIKf+kEuXvDei7y3d/AwbzD1BHsDrtOSAd/wnIClLCgO+kg9GpTIweShTsb9Tp
-         4EZULZf4/o4Lh/+ETyx5qscnWrmt0HyafLeqaJY2QSNNSrifH1UTDS+1bZ1hJNnWwa40
-         UQRQpmORxDXiJOuy7DYefgqqgDJdS/qMATk3j20ycljtYTPEwdBtef4QQD50dWwYPmhO
-         UBbw==
+        bh=2vH+wdo1zZSlCkX6ymcEDv0Mvliw9n+m3623hvmf1xs=;
+        b=cScqFsKxDDQbkO4dyvsF3zUzh0LrQ34YStyHEtoe1If6m2XxgehSmIVZsnjn6N0eTQ
+         6dQp9wYI7kzmDm3eSngRjcWGq/sVEZrbQMtaFwibvq6TK9orwbE6AxGBcXQ/mdOCvH3y
+         7vzS+OBtdHSkR7K6DhZFJHThbPb4xiY7bW32SBD/4pJEd0M6e9GDU3LbVDMc8sDxrTeP
+         1eGcnwrNndb7I/jVrkfYxUogCpucGMFE4uwmMyMT8ZItXV8grR5jIyRNy7jUZ0z/jzZR
+         csaYo32EVaPgXubZgYcQyAIDGaEzE6fiu7ta52oOPE4+mYOroi/dEiN7C0Qt18ZhAi6N
+         MNyw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=FiLW0R7L/dZRfqfxW28BOR12U87eLnNRWa67PzOy/CI=;
-        b=jEjCSBqp7ZZ8S7KdxuhY0LWPIBeWenfWfBn+HUKbjKcbAv7kjNUL4KAUEVCSw5EXbq
-         5l+3a+50LIcPc1draTneONLS9BNY37iUw5mAwhot/pbWZCq8dVN+I5za/t5+hU7OGK9p
-         +YmCOA/n7nD2qkIUq0oxD2ApGvtrBzmV5FmktlHhS31K+6T3n5/RSdhfkEI6/mZQtFM7
-         i5GFwlewm4FSku1uHkjf0NLK9y5gASfNOqio27PwJfq5N12GhcknJ+WfjZNWrYaQt8bg
-         GxxMdsU3DRszwEdN7j08K62Tidru6UwDd6VuSyDTQ9StXN9w9GywyV4K1PaQYREsQ+U4
-         qtnQ==
-X-Gm-Message-State: AOAM532IbLJgBrsqPwSOo6Uv0f4VGGhKvdBMxCYe1RpxcydFKBaU29NB
-        OGsHNcSCwzXi+8gx+dRc8Ws=
-X-Google-Smtp-Source: ABdhPJyz0Q8QDhOWS3XCU+i92LkHDxlAgtGQ8dY8haf/uZWkN5FsPOJpWFC2E/2dJxW+SQiXbc6W1w==
-X-Received: by 2002:a5d:598f:0:b0:1e3:649:e6c3 with SMTP id n15-20020a5d598f000000b001e30649e6c3mr6182784wri.520.1645794237992;
-        Fri, 25 Feb 2022 05:03:57 -0800 (PST)
+        bh=2vH+wdo1zZSlCkX6ymcEDv0Mvliw9n+m3623hvmf1xs=;
+        b=IcbkcvO/Ia9px8t5IiACNsLyfVTv2Ske/cCXtnGhfLYEVXiT0h2y0TVXDRIvTmyuD/
+         DEiPd+wnV2IHnfQ4cO63Mu1JyRaaPff9eKiyLt1KbhJGBloLoKJCuj/bzR+ioze2BtKK
+         Re0FSpfS937TSKFKReeMqMoaZYlB1epox3Z5TZOWydZEwQ3DVHs2j6sEdQtW2riLxec5
+         Efnm16zkj2ww2/YSO7syj561V30/JRKs3sBfrXqHRFXTMY/jUlTNNom9YKp+6qqm2rGu
+         j7KXlMzcVdOfL4SAeQAT3FN0McDB+EZWmttByWMexfPo6/dCo839UFJ9Aa0V4x916R3p
+         V3RA==
+X-Gm-Message-State: AOAM5306+Rk4+TWStLJODV4dMkxFYYYQqgP6SUgmZMO0+jA60eOk09WG
+        OjTNtRlB0DUJHRfalsS9rVg=
+X-Google-Smtp-Source: ABdhPJwaW4mB1jJYszYmVuf/mOCBDH8wKGGL9kiPQxaRbyxQLUeYh+XqR4e11x74+/qykGlDVLzJaw==
+X-Received: by 2002:a05:600c:2319:b0:380:e369:83ea with SMTP id 25-20020a05600c231900b00380e36983eamr2674993wmo.45.1645794596964;
+        Fri, 25 Feb 2022 05:09:56 -0800 (PST)
 Received: from orome ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id b10-20020a5d550a000000b001e30e81afd1sm2293641wrv.2.2022.02.25.05.03.56
+        by smtp.gmail.com with ESMTPSA id e6-20020a056000120600b001ea9414f2c3sm2236362wrx.12.2022.02.25.05.09.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Feb 2022 05:03:56 -0800 (PST)
-Date:   Fri, 25 Feb 2022 14:03:54 +0100
+        Fri, 25 Feb 2022 05:09:56 -0800 (PST)
+Date:   Fri, 25 Feb 2022 14:09:54 +0100
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Akhil R <akhilrajeev@nvidia.com>
-Cc:     christian.koenig@amd.com, digetx@gmail.com, jonathanh@nvidia.com,
-        ldewangan@nvidia.com, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        mperttunen@nvidia.com, p.zabel@pengutronix.de,
-        sumit.semwal@linaro.org
-Subject: Re: [PATCH RESEND] i2c: tegra: Add SMBus block read function
-Message-ID: <YhjTum2zWhRF3Ya4@orome>
-References: <20220210153603.61894-1-akhilrajeev@nvidia.com>
+To:     Kartik <kkartik@nvidia.com>
+Cc:     jonathanh@nvidia.com, digetx@gmail.com, ulf.hansson@linaro.org,
+        christophe.jaillet@wanadoo.fr, andriy.shevchenko@linux.intel.com,
+        jckuo@nvidia.com, caihuoqing@baidu.com,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] soc/tegra: pmc: Add Tegra234 wake events
+Message-ID: <YhjVItNqI2QpUQs/@orome>
+References: <1643090262-26127-1-git-send-email-kkartik@nvidia.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="lWAEqUEAsHWaCsS8"
+        protocol="application/pgp-signature"; boundary="uE4ihRcxPjwmpkFm"
 Content-Disposition: inline
-In-Reply-To: <20220210153603.61894-1-akhilrajeev@nvidia.com>
+In-Reply-To: <1643090262-26127-1-git-send-email-kkartik@nvidia.com>
 User-Agent: Mutt/2.2.1 (c8109e14) (2022-02-19)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---lWAEqUEAsHWaCsS8
+--uE4ihRcxPjwmpkFm
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Feb 10, 2022 at 09:06:03PM +0530, Akhil R wrote:
-> Emulate SMBus block read using ContinueXfer to read the length byte
+On Tue, Jan 25, 2022 at 11:27:42AM +0530, Kartik wrote:
+> From: kartik <kkartik@nvidia.com>
 >=20
-> Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
+> Enable the Tegra RTC alarm and power key wake-ups for Tegra234
+>=20
+> Signed-off-by: kartik <kkartik@nvidia.com>
 > ---
->  drivers/i2c/busses/i2c-tegra.c | 18 ++++++++++++++++--
->  1 file changed, 16 insertions(+), 2 deletions(-)
+>  drivers/soc/tegra/pmc.c | 12 +++++++++---
+>  1 file changed, 9 insertions(+), 3 deletions(-)
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+Applied, thanks.
 
---lWAEqUEAsHWaCsS8
+Thierry
+
+--uE4ihRcxPjwmpkFm
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmIY07oACgkQ3SOs138+
-s6GwVhAAmLZXYPEtR5O+sa6Wbv/sGE5ainR5eQ4QkP3KEsBu65zUsivQF0e/gL51
-nU3UWLjbgW6r+KL+0rlb/p55E5n6OwFPHsXZM9oSBtBfg75TuhJT8JCqvEnV8oKS
-edblc5WW2X32hhYpZOo5/EInl2kXM6gzluasrC+ZAjz8dIcF6ynuNa6uotFMcujI
-ZG+iOtPt7AaVEP0u8MBJU1u+Ni4UXUw8tMaJ+5QoiXqVI4dtnbsNr/3fGEE4lc/O
-jVIbKXM0fwMfcGuNxfBoM8Yq5vIJshpnNsyJUjTyiWNteeZkTqAA8OcDXejoh6x9
-En8QxZjO8s/l8DAW5u1ZiUvqLSYBZoJG8NrhjnHLb6GPbN5JtbCCyMo8YeOD2lG8
-prCLh9LVSbcM0zo9xoBFIC2N3alybgH2THZ3IeQCMW7/2ITnZwk0FISOoXnEFOmp
-98hZNgPQ436PHB15iSwF2FuaWq95Tfoinnrf0qWedMGCkOY0CdocvPiOnuMLW9o1
-2XYXEagCwLKO3H0SJdsofPvGLPx5tuWqu2sXL/yyzy4dhwcmtMqjywkIuSkF8aHD
-6UpZMqApcaE82shB3jtFIfX4rqDD0oOos6JRvVskesLhlXxoGck0fdBE7POLOCwA
-ZTjRhKuFZLmOEGPBUyOHrBQSvx3lSiur8Rqus+/6hR5ke2mxmlE=
-=PNMy
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmIY1SEACgkQ3SOs138+
+s6ELNg//R/Jd7IYNPAHQ+SZSJyl2uFUbGtSNrT46r/OqGyCETQSF5zzJqltghtIT
+ASYZyO94Y1PcoK1AvQksFI7wWIAuGz/qCxjvcwdi/84OaGkO7E3pok5/xJxKHpxH
+lcSKqIBVNtOiQpQLpUauoaBktXgvfDCUJ40Zky1KXTQxpDgi2Eq3lx2GTFtAKMPy
+8uEmIuAkOLWr0gPJKwuCgPlAoJlmntTUJy/K6RzTcezQhayyqltGkimiysvtYxfr
+sVOxcKZSvcZuq4CgF0HfhtSuR2h6LeWN6W27lrE/eKg5wHIE7pfShxPH7FV3AmI1
+cizzim1WtZcO8A0+U2gSWmOkL70KVd2fqfJYOlO5S0jVASO8kjDe8GPIqTH7Wo9U
+Kgtrph8Atwrqj/zJ7GV6Vc1OTdOjP09GAyCOdPMS5J6Zsfyn573nQxvYfvw4lWXP
+QOqhF/UGEdhWkym0r5BpNkKfTWEMtFjfGnOznqcV7Oom66C0LNdGFK9XflxQoZ80
+PmJLn5DJzy3cG8ApFcxR6YR2OcMQt0iNY4ggvTX+rBWEh/lLtenV6cRErzhmoBK+
+bNnQ5k+pab3K6wBrMlYSTsMnsBYC4U4g9GMKZBy2DakjX2B+dt94AxSzQGCOrlb+
+nj3hSNWCvEHTUYj7QSsJCgxn0JtDU7L0pi/fgJwSmfnIQK41cys=
+=Xr/P
 -----END PGP SIGNATURE-----
 
---lWAEqUEAsHWaCsS8--
+--uE4ihRcxPjwmpkFm--
