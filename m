@@ -2,179 +2,164 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25273C433EF
-	for <linux-tegra@archiver.kernel.org>; Fri, 25 Feb 2022 03:56:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C9EDC433FE
+	for <linux-tegra@archiver.kernel.org>; Fri, 25 Feb 2022 04:19:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231768AbiBYD4r (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 24 Feb 2022 22:56:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49666 "EHLO
+        id S237324AbiBYEUX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 24 Feb 2022 23:20:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36034 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236402AbiBYD4q (ORCPT
+        with ESMTP id S229702AbiBYEUW (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 24 Feb 2022 22:56:46 -0500
-Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69C27E339B
-        for <linux-tegra@vger.kernel.org>; Thu, 24 Feb 2022 19:56:15 -0800 (PST)
-Received: by mail-pl1-x62e.google.com with SMTP id l9so3283359pls.6
-        for <linux-tegra@vger.kernel.org>; Thu, 24 Feb 2022 19:56:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=t1YLXoniWu3jrtmL+uCy1jECjrrpF17pHln6fAOn2n8=;
-        b=EQ8sDEC4veLnMVpqMOWCemJqVV4A/T0kWbaYbsy4HrDd3J+hgLPFr87nfMeHoP69eE
-         5CGIDZF3DYzdVjoL30WQ579opBa3sI8PY9akERrv9MkpP749itHUKrRBSi+qvDc96OG/
-         ZBxkfnDsokLI52Dg0z9j5giVU6zhavAPmxfzc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=t1YLXoniWu3jrtmL+uCy1jECjrrpF17pHln6fAOn2n8=;
-        b=6N3SCA4kUs+HCJZKnN11d0vQgRiBopNO0qB8jI9MP1MVpO/HBcCYteOJUT8IiXAPQB
-         PKnhX2SvVVAhJ/cXKlooEuN/mTQlJLt3YTBFukWb5ZuRJQuppOsqWFZ57hFqIGBBpNsh
-         /zslsuMwfJJHg5c9S11BD8mQNooFz8bMw2XX7lmimSOM/iSfrlp7apA9crwYZmSAbfNq
-         2UiicjI1VeeKXZNYtS49RTuYyeEbDXrKiXVoWIhdzRsa02BBPKnIZNjdqDcc4i/l6lf/
-         VkTwky6HkmidQXK3qZ/LtDRZqnjgsFkoGR4/YNvp3KkRurSnHkqGruRuk7jRGOnnz+ZH
-         9p0g==
-X-Gm-Message-State: AOAM532fjM7mkX+Zx9YqarpXwcd3xy424cI2uxKrGyaDfprBURv4W1KB
-        5Ao7kWupjpbdbs2H4LCIOUogOg==
-X-Google-Smtp-Source: ABdhPJyvsfwDWHtraGkWKHzQl5t0UqG9qA17+lPffgcNfhBwhleZBUpk0aciqN27yz1NpueBnjzKZw==
-X-Received: by 2002:a17:90a:3944:b0:1bc:b6a2:f14d with SMTP id n4-20020a17090a394400b001bcb6a2f14dmr1288168pjf.124.1645761374904;
-        Thu, 24 Feb 2022 19:56:14 -0800 (PST)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id my6-20020a17090b4c8600b001bc2cb011dasm705551pjb.4.2022.02.24.19.56.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Feb 2022 19:56:14 -0800 (PST)
-From:   Kees Cook <keescook@chromium.org>
-To:     Daniel Vetter <daniel@ffwll.ch>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org,
-        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
-        Jani Nikula <jani.nikula@intel.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
+        Thu, 24 Feb 2022 23:20:22 -0500
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam07on2071.outbound.protection.outlook.com [40.107.95.71])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62A6127579D;
+        Thu, 24 Feb 2022 20:19:51 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ar9pWuzJKIPlTBdcCVzKXPU+aTBFLknTCNR8iBpSPuYkXedkownY8MnwMc4fLbcPBFmfwmHhUcJnedb1s/YIFpoOACK6NWsPBUnV1N66i7qY2L4+Ywkk823u98DPHTPCBHWefRBOAv2mVWCsyZVKbYEoipyTlVSNQf0lBFI4UxVeo+EZNIW3l6UPZqIEMPWuSS+xqJmEdApMKcTNU0zrYT12DjVEGR47P8WT+Ha+u7J7ft2phGaHbJHl3ePmPKoTOrK4BKar3ICeg4ejK8NC72i3NiNTq5yegl7dngyiG7L95Mmud2uWLTsuH2dn1stsCx18Z9QDjrU0+jz0TmrnGg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=BqXH1MBRtNt+n6NCeBoUpzEeGmCk4xVnR7RXEIUTHeI=;
+ b=OHwSizii0Agn4u6zFLRNYf4zhHF/RQw4BUZsarI/FlY2z/QeHb1wDsVGBaEEaPVcIiENDi+ziGU0JY3TUKXeEuD4dKW+SoCUNJhKOX2g8k02PoTt/qoHltzpALrl35CwtwpGvn/aBvpgnt/SSN6j9X+Oa8/8S6X5fz6X86E7CRgmZanHp3ISQp0roMNHHYJuueHVhFigQ+tX+njMjfFPUlHgu/cT4aaGsgSKR+OAp0qhcRfPawTYij7Oe13J2GNjhgdPK9rPU+8rUyUi4k+liGMtyrkWbD9frCvx2NijI2F3n2mVEBmzKxcxhwhIzCk2WESMs+grcA3YhhSI2byVnQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=BqXH1MBRtNt+n6NCeBoUpzEeGmCk4xVnR7RXEIUTHeI=;
+ b=uuHusxzRhTraajHHGubzmFNRW+gA4/kHauRDr1jUKJQ11mhGhZ+nHZoD2pq9//i8tPURnqZSEN1FYXeX0mJQeSuPjzJQfWtIuxeoCQiB/id78jNAsqq2th+XYZDBbVGBlYnewbsBHGaZ4TU9MXQrSKJWFqQU0xwbJAZ9ICZSvig5XcALDYy4ck/Va5QwlbxN7MpbSY2+DknWd94EACAh8IASGxegJOc94FpcdFPnist/+eiGHl38yj/8wGQMopr+w0f1sHtmVd0JaRfCnJ+zJ3D9+HQnFpP3U919G8uFC6dG5K4CqYyrZcnHL3HRXt99J0YoNAMsHkdBoK97dUL3dQ==
+Received: from DM4PR12MB5769.namprd12.prod.outlook.com (2603:10b6:8:60::6) by
+ BN6PR1201MB2498.namprd12.prod.outlook.com (2603:10b6:404:ae::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5017.23; Fri, 25 Feb
+ 2022 04:19:49 +0000
+Received: from DM4PR12MB5769.namprd12.prod.outlook.com
+ ([fe80::d91c:c44d:f621:18b6]) by DM4PR12MB5769.namprd12.prod.outlook.com
+ ([fe80::d91c:c44d:f621:18b6%3]) with mapi id 15.20.5017.024; Fri, 25 Feb 2022
+ 04:19:49 +0000
+From:   Krishna Yarlagadda <kyarlagadda@nvidia.com>
+To:     Mark Brown <broonie@kernel.org>
+CC:     "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Lyude Paul <lyude@redhat.com>,
-        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
-        <ville.syrjala@linux.intel.com>, Dave Airlie <airlied@redhat.com>,
-        Douglas Anderson <dianders@chromium.org>,
-        Ankit Nautiyal <ankit.k.nautiyal@intel.com>,
-        Uma Shankar <uma.shankar@intel.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-hardening@vger.kernel.org
-Subject: [PATCH v3 2/2] drm/dp: Fix OOB read when handling Post Cursor2 register
-Date:   Thu, 24 Feb 2022 19:56:10 -0800
-Message-Id: <20220225035610.2552144-3-keescook@chromium.org>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20220225035610.2552144-1-keescook@chromium.org>
-References: <20220225035610.2552144-1-keescook@chromium.org>
+        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>
+Subject: RE: [PATCH v2 4/5] spi: tegra210-quad: add acpi support
+Thread-Topic: [PATCH v2 4/5] spi: tegra210-quad: add acpi support
+Thread-Index: AQHYKBWa+O2JqvcM5kOPguoIZ3KOyqyf5iWAgADIESCAAliAAIAApvfQ
+Date:   Fri, 25 Feb 2022 04:19:49 +0000
+Message-ID: <DM4PR12MB5769C42A0DFD716508CD737CC33E9@DM4PR12MB5769.namprd12.prod.outlook.com>
+References: <20220222175611.58051-1-kyarlagadda@nvidia.com>
+ <20220222175611.58051-5-kyarlagadda@nvidia.com>
+ <YhUtQ/8Kgcx4OY4S@sirena.org.uk>
+ <DM4PR12MB57693F28A727964ED67BBEB4C33C9@DM4PR12MB5769.namprd12.prod.outlook.com>
+ <YhfM1DO8vmvHah+f@sirena.org.uk>
+In-Reply-To: <YhfM1DO8vmvHah+f@sirena.org.uk>
+Accept-Language: en-IN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 6920da16-e5b5-423d-9f8f-08d9f8161056
+x-ms-traffictypediagnostic: BN6PR1201MB2498:EE_
+x-microsoft-antispam-prvs: <BN6PR1201MB2498B7515E900F5EBDF1B8B5C33E9@BN6PR1201MB2498.namprd12.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: T7cxQ3z+qIA5qKiBNjtUuDNqz6TA9C/ZTMXwrwxiaoP4YmV2l7hTuZ1xF90hjks7XXF0XA78l6ywn2856OM1it55DntH8yv2LhQEJ6OWuhnQ4V8zXuEj5kyuaLhLXOjJwUvzaUrsssKa8lHE3CuU/p5go9lya9SitGARDOFrac7lz4iPhVe/HD6YDz0KsRKwOrpdljrJEBWsN+S+nU0QydIvswmSgCTiDA1kTG3OZWBwo16wHYXPFIh5H8hQyDRc99TRomt4VGu7JogTTwCTKWFmwsUvrohyrs4iUx3fVChojAkWQvfd0A0hWFy5+1guNoTV+VWfCgQ/yJemdbb1TOpHpiZsI5v7Qfa8+OCCidMrgow+En+41tiydEvO4jqlW/nyguD9Dw2eBX8HK2MOXDBTTjZFTB0YPPjzFhRJA+Rch6Kfila3B2bpv1I9q6vziI0o4Kw6gM846jNnQk6SPM3JOqIHI7dX6AWu7wo0Vzeer7ia9nIlZFwhmJepx0yfOQ5bM4mdR1eYrWNiDaYt+UNbFdjkKwK+/NThY/vd1zsFp1fThcwug3RAYet109CfJL8NgvheFyu8IuijpyEsxNKrBOmdn3XVkl5rZ2igOxivX/Huqn5mcEF/NNXGQRPdsYq+ssHYKdPWV2lbrRx4E4LwS2wCwdj3+UiNVReCKC0CjCQmCBOKYSKnZ4ccpXORkjIQz1dRn8c+E3ofeipwMg==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB5769.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(55016003)(508600001)(122000001)(38070700005)(71200400001)(83380400001)(33656002)(2906002)(316002)(6916009)(4326008)(64756008)(8676002)(186003)(38100700002)(66946007)(54906003)(66476007)(66556008)(76116006)(7696005)(6506007)(53546011)(9686003)(8936002)(66446008)(52536014)(5660300002)(86362001);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?d1tqiEns7HotNNiVMwFlAVFPXCa+71u37Qss92Zgp0bIpg453C3bTaA/SZO/?=
+ =?us-ascii?Q?2tYmB6iVTq4UfreDsW+62k2WfEDNUJzLpALxgSuUjZtj5HJyojDkLSBf+BmD?=
+ =?us-ascii?Q?aBtMZG1B1kKJYqBg6zwupsD/yMwj2HiJrT64QpUtZAQYd4n0e9UV+66Tfg1B?=
+ =?us-ascii?Q?T6Z3IBI0sH8232ZaWqvKucdGk0rFcaTQABIucYFvdCI1wImBxllG+oVIoATQ?=
+ =?us-ascii?Q?O1CqtnBJgwiBZaCvt1b+LvVBGtPuhQERHw92ODD4SEhHljwM61WFZ6HSPUvO?=
+ =?us-ascii?Q?QPMbYX37FUxP35bXCDUt6dBJ35oN1V2YKo3SHgeue6ZxOpnr3aBWEE+RVdaN?=
+ =?us-ascii?Q?2GW5sIL73yZsmYNwHx0jdFaUtuLSRhd0nej/oq8Iex2w5H9a/okS0BBeBhmb?=
+ =?us-ascii?Q?kyBSzRueQu69M8mrSZtQjsFJoJ8u2ijyCeHvs3wl1vY/uncJppd9SJ25lXkP?=
+ =?us-ascii?Q?8bbsm194DeeXZk9fHDfyhNtuqS6SSaLZEpkYYxuYep0RHJX05FKuzlb6oBNx?=
+ =?us-ascii?Q?VqGDAFf/LNMHjFK+c3mm6Uo7tFXZbCmNhk2IT5F5iavcQOC2M0NyYYuAyB+8?=
+ =?us-ascii?Q?fKXA0Ip0RDQYBE7y0kYV8rJnN2zUl5g7JQSaKn3kscQUcAMAhMTHmx9gJ4gh?=
+ =?us-ascii?Q?ry1HsjERybbxTlmmyodEHx+cOMPc5u7HxtM/6I5w0PAS2Atb67FA2C6BXLJC?=
+ =?us-ascii?Q?nVT2weEnUt4drvNt4irOwOOUX7N3HATjfTTMGr673jSaF3h30loib+kOTdfq?=
+ =?us-ascii?Q?8spVHsqTICYxEgrt1YPdm0PVfruVec3Q+/BlaL/DUn1AGngD+27Ks2jxfia+?=
+ =?us-ascii?Q?9If0qasu1ozRY/AnerXxickJcfPhhtBZEc8a3XR+vxcV/ZlniOKrKtOR6hzB?=
+ =?us-ascii?Q?9cKQ/ZTdTVnWvNJsE5wMMXIlYSqRXl5RRRQZKVJKj/Co+qnPqu3C9cLFY0Pj?=
+ =?us-ascii?Q?QRajpVBBIL3Ix/SJMHrzVfAA6OIeUdXO2hXmcCkTatdZWlIQ4rX7LI/hzlcz?=
+ =?us-ascii?Q?LJQaRBJAw5OM9AabdlqBIi78s9BBYdWewRnfZhAVcIrTKCc6BeixvJousZ+/?=
+ =?us-ascii?Q?E11s8zmRE08hi/rbHBunX+bU0Oaf9VHYT+EUVcZ2QRE2riIo4ZrRaxJOKTjX?=
+ =?us-ascii?Q?Aiqv9xIDb47BfQ6YNX4QTQjAOdN9H5LT68Qq1ouN0iFuRVBxlwZxsGhGr9o9?=
+ =?us-ascii?Q?gso3JLWLttMyrSXV8nsnJNfFDUcufzbZXHmAW9+5IUfsLXWYVbUBV5luUYez?=
+ =?us-ascii?Q?zuIpWzFrQUw7bv7NpNQYLY/EVk/k8DC6js9nQG7cnroKk7sWztmX7kevbl0U?=
+ =?us-ascii?Q?GeY1yV+u4CTP2Rh8fcjY8orBgdGhJHY/f6qLi7CrFt0wc1oUAgsI3OZwLoM5?=
+ =?us-ascii?Q?bPXz1EzzJFN+hOGtTET9JCHWMMxFYbEhoPZ32GTx3kcONkb5i6ki318ziRkK?=
+ =?us-ascii?Q?4BkKlN+Ik1QDomnl7BlIXbBAPgxFyDVbJVcHqVfJFjJzivIT+hu1vTvSm6Id?=
+ =?us-ascii?Q?DeE2fg5sd8rwJIGRLIuFx7FhAa7tri4xDum2zzixau42rE3XQWF2NmdaOdEb?=
+ =?us-ascii?Q?6RMq/GLziw0+zkOQFqWBJi/c75c1ANzss78IIx3h9dQohYSSeKgGcf58CSam?=
+ =?us-ascii?Q?N38sKeBlzm7G/TC61FW6HhR+nDdcNLlA5vshWWASniH+J2nYWVUYGwAJIBXP?=
+ =?us-ascii?Q?/dvNITuqTVP4AcYvrBlSGLMBg4s=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4091; h=from:subject; bh=96sk9Gtx/XNCiooctnCaqAKLVeawEGKb7AZz4nCMFf0=; b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBiGFNadg22VDVgjy8AQWiUERRf01Zq/MODlSMQoZ58 a8tOe/eJAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCYhhTWgAKCRCJcvTf3G3AJr2MEA CBjU4bY3VxDS3wV7gdhWpz4b/0P9Ujgue2yyAHPN90Srm5SEbd9jMDRfp9H3dMTE6A7BySPc4o4gCR H8DpGL5CHRY0FwK8TG4Cr5Zlzz9LxG6uR1SmCoPMKTL/XffQmUhYksEoIu/3dEgJZ7eoM+vpJFskuW 1T7Rcvu7jZ67Fx9sx6UfydjkuT6ETIT2gXIcDQXoHV8yCTYlmeDitJC1PApnRtnt5jgsfijdWuaSiU eRQjO6kjpgRtVOQlIz+hSyrPRksjiOY8OP+BGBaOLSFmQKF/Dkq49nk6Tu35mBToYfI8ia6o9ad9jo phgnUAVHAb+HZNPaWujqkDUhtjnj2tEw18prgdSuhZDOg6h8F0asOGLDwphnrAek3sC38g+sqACLjI t4KGvAf/MLwYNA9ikaSgtexLqdviP6zkiRni6rIWS2Yq+reSSGMnhD9dN9hJXQLZn/Fe0bLEO6CK/V 4tNBT8bwGzxQvENSJcZ5J2nEK7E6q0hNscsbSpm26rQk6F5GBzHgYpaanauTxZrAzvdTAKLeI3+ekA 2ldZ2W9gkc3qihSz/5JUWAEhXQnu7vmiEiUiXEJMKNRRl1kR4lAF2nWF5+EeGQOdDNWzuDP3bo2MGY RPn4uZ8FQrQ/wlvt862eva/iKsmIKqTzYp32O+WmGyCqNgisw2umSF8GYzHg==
-X-Developer-Key: i=keescook@chromium.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5769.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6920da16-e5b5-423d-9f8f-08d9f8161056
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Feb 2022 04:19:49.5936
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: TrDVw0jy3ukSctAF/84+tNtN8XKvaZYh9ebzqK2CDaHh6pGN53DEoE0kudihKk4z8gRa+quvP2LxJwnxCs/FDA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR1201MB2498
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The link_status array was not large enough to read the Adjust Request
-Post Cursor2 register, so remove the common helper function to avoid
-an OOB read, found with a -Warray-bounds build:
-
-drivers/gpu/drm/drm_dp_helper.c: In function 'drm_dp_get_adjust_request_post_cursor':
-drivers/gpu/drm/drm_dp_helper.c:59:27: error: array subscript 10 is outside array bounds of 'const u8[6]' {aka 'const unsigned char[6]'} [-Werror=array-bounds]
-   59 |         return link_status[r - DP_LANE0_1_STATUS];
-      |                ~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~
-drivers/gpu/drm/drm_dp_helper.c:147:51: note: while referencing 'link_status'
-  147 | u8 drm_dp_get_adjust_request_post_cursor(const u8 link_status[DP_LINK_STATUS_SIZE],
-      |                                          ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Replace the only user of the helper with an open-coded fetch and decode,
-similar to drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c.
-
-Cc: Daniel Vetter <daniel@ffwll.ch>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Cc: Maxime Ripard <mripard@kernel.org>
-Cc: Thomas Zimmermann <tzimmermann@suse.de>
-Cc: David Airlie <airlied@linux.ie>
-Cc: dri-devel@lists.freedesktop.org
-Fixes: 79465e0ffeb9 ("drm/dp: Add helper to get post-cursor adjustments")
-Signed-off-by: Kees Cook <keescook@chromium.org>
-Reviewed-by: Gustavo A. R. Silva <gustavoars@kernel.org>
-Reviewed-by: Jani Nikula <jani.nikula@intel.com>
-Link: https://lore.kernel.org/r/20220105173507.2420910-1-keescook@chromium.org
----
- drivers/gpu/drm/dp/drm_dp.c    | 10 ----------
- drivers/gpu/drm/tegra/dp.c     | 11 ++++++++++-
- include/drm/dp/drm_dp_helper.h |  2 --
- 3 files changed, 10 insertions(+), 13 deletions(-)
-
-diff --git a/drivers/gpu/drm/dp/drm_dp.c b/drivers/gpu/drm/dp/drm_dp.c
-index e159b81800d4..703972ae14c6 100644
---- a/drivers/gpu/drm/dp/drm_dp.c
-+++ b/drivers/gpu/drm/dp/drm_dp.c
-@@ -208,16 +208,6 @@ bool drm_dp_128b132b_link_training_failed(const u8 link_status[DP_LINK_STATUS_SI
- }
- EXPORT_SYMBOL(drm_dp_128b132b_link_training_failed);
- 
--u8 drm_dp_get_adjust_request_post_cursor(const u8 link_status[DP_LINK_STATUS_SIZE],
--					 unsigned int lane)
--{
--	unsigned int offset = DP_ADJUST_REQUEST_POST_CURSOR2;
--	u8 value = dp_link_status(link_status, offset);
--
--	return (value >> (lane << 1)) & 0x3;
--}
--EXPORT_SYMBOL(drm_dp_get_adjust_request_post_cursor);
--
- static int __8b10b_clock_recovery_delay_us(const struct drm_dp_aux *aux, u8 rd_interval)
- {
- 	if (rd_interval > 4)
-diff --git a/drivers/gpu/drm/tegra/dp.c b/drivers/gpu/drm/tegra/dp.c
-index e4369e5b2943..7295975e5733 100644
---- a/drivers/gpu/drm/tegra/dp.c
-+++ b/drivers/gpu/drm/tegra/dp.c
-@@ -549,6 +549,15 @@ static void drm_dp_link_get_adjustments(struct drm_dp_link *link,
- {
- 	struct drm_dp_link_train_set *adjust = &link->train.adjust;
- 	unsigned int i;
-+	u8 post_cursor;
-+	int err;
-+
-+	err = drm_dp_dpcd_read(link->aux, DP_ADJUST_REQUEST_POST_CURSOR2,
-+			       &post_cursor, sizeof(post_cursor));
-+	if (err < 0) {
-+		DRM_ERROR("failed to read post_cursor2: %d\n", err);
-+		post_cursor = 0;
-+	}
- 
- 	for (i = 0; i < link->lanes; i++) {
- 		adjust->voltage_swing[i] =
-@@ -560,7 +569,7 @@ static void drm_dp_link_get_adjustments(struct drm_dp_link *link,
- 				DP_TRAIN_PRE_EMPHASIS_SHIFT;
- 
- 		adjust->post_cursor[i] =
--			drm_dp_get_adjust_request_post_cursor(status, i);
-+			(post_cursor >> (i << 1)) & 0x3;
- 	}
- }
- 
-diff --git a/include/drm/dp/drm_dp_helper.h b/include/drm/dp/drm_dp_helper.h
-index 2a0e75e69e80..51e02cf75277 100644
---- a/include/drm/dp/drm_dp_helper.h
-+++ b/include/drm/dp/drm_dp_helper.h
-@@ -1530,8 +1530,6 @@ u8 drm_dp_get_adjust_request_pre_emphasis(const u8 link_status[DP_LINK_STATUS_SI
- 					  int lane);
- u8 drm_dp_get_adjust_tx_ffe_preset(const u8 link_status[DP_LINK_STATUS_SIZE],
- 				   int lane);
--u8 drm_dp_get_adjust_request_post_cursor(const u8 link_status[DP_LINK_STATUS_SIZE],
--					 unsigned int lane);
- 
- #define DP_BRANCH_OUI_HEADER_SIZE	0xc
- #define DP_RECEIVER_CAP_SIZE		0xf
--- 
-2.30.2
-
+> -----Original Message-----
+> From: Mark Brown <broonie@kernel.org>
+> Sent: 24 February 2022 23:52
+> To: Krishna Yarlagadda <kyarlagadda@nvidia.com>
+> Cc: thierry.reding@gmail.com; Jonathan Hunter <jonathanh@nvidia.com>; lin=
+ux-spi@vger.kernel.org; linux-tegra@vger.kernel.org;
+> Sowjanya Komatineni <skomatineni@nvidia.com>; Laxman Dewangan <ldewangan@=
+nvidia.com>; robh+dt@kernel.org;
+> devicetree@vger.kernel.org; linux-kernel@vger.kernel.org; p.zabel@pengutr=
+onix.de
+> Subject: Re: [PATCH v2 4/5] spi: tegra210-quad: add acpi support
+>=20
+> On Wed, Feb 23, 2022 at 06:32:56AM +0000, Krishna Yarlagadda wrote:
+>=20
+> > > > +	if (has_acpi_companion(tqspi->dev))
+> > > > +		return 0;
+> > > >  	/* flush all write which are in PPSB queue by reading back */
+> > > >  	tegra_qspi_readl(tqspi, QSPI_COMMAND1);
+>=20
+> > > As well as clock stuff this is also skipping flushing of pending writ=
+es
+> > > - is that intentional?  It's not called out in the changelog and seem=
+s like
+> > > something that could cause issues if someone runs on a system where
+> > > the firmware does implement runtime suspend.
+>=20
+> > Runtime suspend is not enabled with ACPI firmware. Converted compiler f=
+lag in v1 to runtime check.
+> > We must add more changes like setting DPM flags for runtime pm support =
+with ACPI.
+> > Can take this as part of a different series.
+>=20
+> It at least needs to be clearer what's going on here, the changelog
+> doesn't match the code and it's not obvious from the code that ACPI
+> won't kick in and power manage the device as things stand.
+Understood Mark. I will add comments to make it clear.
+Also update change log indicating runtime suspend does not work
+with ACPI.
