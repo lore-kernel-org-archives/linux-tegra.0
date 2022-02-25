@@ -2,104 +2,171 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADF3DC433EF
-	for <linux-tegra@archiver.kernel.org>; Fri, 25 Feb 2022 12:22:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75010C433EF
+	for <linux-tegra@archiver.kernel.org>; Fri, 25 Feb 2022 12:51:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240602AbiBYMXP (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 25 Feb 2022 07:23:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36154 "EHLO
+        id S239670AbiBYMvk (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 25 Feb 2022 07:51:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46854 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240596AbiBYMXN (ORCPT
+        with ESMTP id S229998AbiBYMvj (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 25 Feb 2022 07:23:13 -0500
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95C841DCCC8
-        for <linux-tegra@vger.kernel.org>; Fri, 25 Feb 2022 04:22:41 -0800 (PST)
-Received: by mail-wm1-x32a.google.com with SMTP id y5so1576371wmi.0
-        for <linux-tegra@vger.kernel.org>; Fri, 25 Feb 2022 04:22:41 -0800 (PST)
+        Fri, 25 Feb 2022 07:51:39 -0500
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43EB3B715F;
+        Fri, 25 Feb 2022 04:51:07 -0800 (PST)
+Received: by mail-wm1-x330.google.com with SMTP id i20so1588832wmc.3;
+        Fri, 25 Feb 2022 04:51:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=OETEWwvv9RFP7XYmInP3bfKnzep+PqGUkb76y2TbWCE=;
-        b=aePHe9Yy5kBZxHKom2jnALVrMKuGLj0XXCWvo4FXTH2h3JJQQuN9qZhTYdXHho9GiZ
-         KMcbzp3MQAKRs0JPS29Ohg9hCjPIz6E4/sY+5toS6HKaQeC7WlGpHXgnfnO4I2lIDL85
-         QiU3ENEhKGSRZZc5V77zpdFtFKNnwY+MT7If429y/Y34008hw0sSP9LxBK9UqSidWnAH
-         nD8uwrGy5Hnc1R1bu4SvTljkCWj2ejYPO1tUExSc4Kur0tm1Gjaq/nvgc5cNdS6LtUil
-         Z2tkMsvA/ynFVcBYnQIlfTpJbut2W/SibqFNyENpwIX4YmV//Ij4bSmTCVBZ4hSLimPn
-         gv0w==
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=D8OkI5TiOmFqdEQ1+JExn8L7GZBvYCU0s5pvA+scH4E=;
+        b=qFtlxCmsJW0iYp6O6aQUAt92qxIp3FA3KLYPQqOkTNYMBNmitYRRSJ/2XNzOlWbitx
+         FBO14LkJ/Hsoks8Ycb6aOb+Udtayxs9u3mkLKbwh18PPlHXXjLBJsuM+pg4REcFo0eR/
+         JnC8khZewuHT6+ea+Kp20IzzJrPaVSLgGV/n7ChimT/UUYCZ2uXKV3TkiySMFu9nW2Lj
+         cYNhU0ppyM9yR+Y6iC9AZi05cjvJM3E55j41DBYEg87ULbWS6E3xkLvEN6Xl6F9ERUcr
+         uTw2nbB6YwhMD+QhBCiiUNDvfbRjw401gSdkZllKI1SIUghvuK/MxqYGR+h5CpEBOjJD
+         HxCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=OETEWwvv9RFP7XYmInP3bfKnzep+PqGUkb76y2TbWCE=;
-        b=a8nmhn5JIV9jVoJqcgcbAdqkeU8acdJl2y8w74mLVjYTs4hjtPNTGWTVExol/qq9l3
-         YqWIBbph9KfBFULq34iXNYy1amsI1J3ObfaGNrcQ0ehFeOk9QCy2Z81dkYfblqfZjukI
-         vq27P97T2YGfjT1knmf/Cxzrl0ITUGe9mhv+x2Aczz0BrmsIUMLYUOY+0Qk+cfKr2gNF
-         G8b6C9wpdrjEMqalfdWdNwaFnY9kLIJc11bdXb7f+UyOCatovftlUpqxGSke7QbMFdPA
-         XK4DigTC9RQ/FS/vHn508ahxbBGR8JqJ70SF3Ecv/glNHNuTT7FvbSe86I0+0HW5bQ93
-         nVZQ==
-X-Gm-Message-State: AOAM531dvdebtI8vDFj+9f16tSH0kTbOF8Qs8wZhSYARblOzekM087L0
-        tZWVPp4bOnz32hl1/WGVNTQW9A==
-X-Google-Smtp-Source: ABdhPJz8fEwup5DY7Gel/4fG39qakCdzfviq7s+zlcO2JVDKuhr/zY47COWQpiNf7MwJAwFLO9rkGA==
-X-Received: by 2002:a05:600c:798:b0:381:3b9a:6ba3 with SMTP id z24-20020a05600c079800b003813b9a6ba3mr1487826wmo.153.1645791760081;
-        Fri, 25 Feb 2022 04:22:40 -0800 (PST)
-Received: from ?IPV6:2a01:e34:ed2f:f020:25a:d4d2:9383:c638? ([2a01:e34:ed2f:f020:25a:d4d2:9383:c638])
-        by smtp.googlemail.com with ESMTPSA id s12-20020a5d6a8c000000b001e32cc8adb7sm2056155wru.107.2022.02.25.04.22.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 25 Feb 2022 04:22:39 -0800 (PST)
-Message-ID: <3a1bd8c0-2522-2f4a-2505-e3a3edfb290c@linaro.org>
-Date:   Fri, 25 Feb 2022 13:22:37 +0100
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=D8OkI5TiOmFqdEQ1+JExn8L7GZBvYCU0s5pvA+scH4E=;
+        b=23re+1oHhDHojV6qYmkdyIoFhIUCLZpELnVUKfylMT2W5XSvH+Yuop7KhfiHZuDLWi
+         NnMs6PyU1/LMVEfz4+HAeIEETjjbC+CiehcUzxZz35E1c9mIVIm7utwtAlezHd3CwRkK
+         H29XqLkSnrY0Aj54q3U7r5PeS9PQ1Km2vJR8qmOGQWZs4jid9mX2pdZVCAm8zyWswU7+
+         +28W9hxRacIri0h45HnWZjlkJJhq1hpKBGmkWbA/FBnkk9kyNa9b6DWbjwCc3pZzZ5//
+         6hS7RJ9vWdHx8sKU+FnZk9gdleaz0DnLu1KVHw6YnUY3dwbZD9fifNGW8tX2fSLJR+5x
+         zZvQ==
+X-Gm-Message-State: AOAM533uTh2EfZQFIYtoKqz3EHmK8uNlXFjTVvS/lFiUzbtDOLzXt2un
+        NNrpbgHRUZ5drgCkLYWz43A=
+X-Google-Smtp-Source: ABdhPJwgg6EZexSvdvXpWUwvbWOLrPrcS8JCeV5BHAXFWiezdJXjxL0kWP6rSVFEBHQhGy66O1fbXw==
+X-Received: by 2002:a05:600c:4107:b0:381:1c3:5d3 with SMTP id j7-20020a05600c410700b0038101c305d3mr2567355wmi.107.1645793465616;
+        Fri, 25 Feb 2022 04:51:05 -0800 (PST)
+Received: from orome ([62.96.65.119])
+        by smtp.gmail.com with ESMTPSA id t14-20020a5d460e000000b001edc107e4f7sm3253983wrq.81.2022.02.25.04.51.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Feb 2022 04:51:04 -0800 (PST)
+Date:   Fri, 25 Feb 2022 13:51:02 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Mohan Kumar <mkumard@nvidia.com>, broonie@kernel.org,
+        lgirdwood@gmail.com, tiwai@suse.com, jonathanh@nvidia.com,
+        spujar@nvidia.com, alsa-devel@alsa-project.org,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 4/6] dt-bindings: Add HDA support for Tegra234
+Message-ID: <YhjQtrueEYNGQrSA@orome>
+References: <20220216092240.26464-1-mkumard@nvidia.com>
+ <20220216092240.26464-5-mkumard@nvidia.com>
+ <YhfdHd2LPc+ifFTS@robh.at.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH 1/5] thermal: tegra-bpmp: Handle errors in BPMP response
-Content-Language: en-US
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>
-Cc:     rafael@kernel.org, viresh.kumar@linaro.org, jonathanh@nvidia.com,
-        krzysztof.kozlowski@canonical.com, lorenzo.pieralisi@arm.com,
-        robh@kernel.org, kw@linux.com, p.zabel@pengutronix.de,
-        rui.zhang@intel.com, amitk@kernel.org, linux-pm@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org
-References: <20210915085517.1669675-1-mperttunen@nvidia.com>
- <YV86cX/omlQa3kpq@orome.fritz.box>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <YV86cX/omlQa3kpq@orome.fritz.box>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="VMSq3re6wkdG1hOh"
+Content-Disposition: inline
+In-Reply-To: <YhfdHd2LPc+ifFTS@robh.at.kernel.org>
+User-Agent: Mutt/2.2.1 (c8109e14) (2022-02-19)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 07/10/2021 20:20, Thierry Reding wrote:
-> On Wed, Sep 15, 2021 at 11:55:13AM +0300, Mikko Perttunen wrote:
->> The return value from tegra_bpmp_transfer indicates the success or
->> failure of the IPC transaction with BPMP. If the transaction
->> succeeded, we also need to check the actual command's result code.
->> Add code to do this.
->>
->> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
->> ---
->>   drivers/thermal/tegra/tegra-bpmp-thermal.c | 13 ++++++++++++-
->>   1 file changed, 12 insertions(+), 1 deletion(-)
-> 
-> Perhaps this should be moved into tegra_bpmp_transfer() or some new
-> helper to make sure we can keep this consistent across all callers.
-> 
-> For instance, I'm not sure -EINVAL is the right (or best) error code in
-> all the cases. Either way, seems fine in this case and this is certainly
-> an improvement, so:
-> 
-> Acked-by: Thierry Reding <treding@nvidia.com>
 
-Applied, thanks
+--VMSq3re6wkdG1hOh
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+On Thu, Feb 24, 2022 at 01:31:41PM -0600, Rob Herring wrote:
+> On Wed, Feb 16, 2022 at 02:52:38PM +0530, Mohan Kumar wrote:
+> > Add hda clocks, memory ,power and reset binding entries
+> > for Tegra234.
+> >=20
+> > Signed-off-by: Mohan Kumar <mkumard@nvidia.com>
+> > ---
+> >  include/dt-bindings/clock/tegra234-clock.h     | 4 ++++
+> >  include/dt-bindings/memory/tegra234-mc.h       | 6 ++++++
+> >  include/dt-bindings/power/tegra234-powergate.h | 9 +++++++++
+> >  include/dt-bindings/reset/tegra234-reset.h     | 2 ++
+> >  4 files changed, 21 insertions(+)
+> >  create mode 100644 include/dt-bindings/power/tegra234-powergate.h
+> >=20
+> > diff --git a/include/dt-bindings/clock/tegra234-clock.h b/include/dt-bi=
+ndings/clock/tegra234-clock.h
+> > index 2529e7ec0bf4..2ab651916127 100644
+> > --- a/include/dt-bindings/clock/tegra234-clock.h
+> > +++ b/include/dt-bindings/clock/tegra234-clock.h
+> > @@ -64,4 +64,8 @@
+> >  #define TEGRA234_CLK_PLLC4			237U
+> >  /** @brief 32K input clock provided by PMIC */
+> >  #define TEGRA234_CLK_CLK_32K			289U
+> > +/** @brief CLK_RST_CONTROLLER_AZA2XBITCLK_OUT_SWITCH_DIVIDER switch di=
+vider output (aza_2xbitclk) */
+> > +#define TEGRA234_CLK_AZA_2XBIT			457U
+> > +/** @brief aza_2xbitclk / 2 (aza_bitclk) */
+> > +#define TEGRA234_CLK_AZA_BIT			458U
+> >  #endif
+> > diff --git a/include/dt-bindings/memory/tegra234-mc.h b/include/dt-bind=
+ings/memory/tegra234-mc.h
+> > index 2662f70c15c6..c42fe61fba5e 100644
+> > --- a/include/dt-bindings/memory/tegra234-mc.h
+> > +++ b/include/dt-bindings/memory/tegra234-mc.h
+> > @@ -7,6 +7,8 @@
+> >  #define TEGRA234_SID_INVALID		0x00
+> >  #define TEGRA234_SID_PASSTHROUGH	0x7f
+> > =20
+> > +/* NISO0 stream IDs */
+> > +#define TEGRA234_SID_HDA		0x03
+> > =20
+> >  /* NISO1 stream IDs */
+> >  #define TEGRA234_SID_SDMMC4	0x02
+> > @@ -16,6 +18,10 @@
+> >   * memory client IDs
+> >   */
+> > =20
+> > +/* High-definition audio (HDA) read clients */
+> > +#define TEGRA234_MEMORY_CLIENT_HDAR 0x15
+> > +/* High-definition audio (HDA) write clients */
+> > +#define TEGRA234_MEMORY_CLIENT_HDAW 0x35
+> >  /* sdmmcd memory read client */
+> >  #define TEGRA234_MEMORY_CLIENT_SDMMCRAB 0x63
+> >  /* sdmmcd memory write client */
+> > diff --git a/include/dt-bindings/power/tegra234-powergate.h b/include/d=
+t-bindings/power/tegra234-powergate.h
+> > new file mode 100644
+> > index 000000000000..3c5575a51296
+> > --- /dev/null
+> > +++ b/include/dt-bindings/power/tegra234-powergate.h
+> > @@ -0,0 +1,9 @@
+> > +/* SPDX-License-Identifier: GPL-2.0 */
+>=20
+> Dual license please.
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+We've got a bunch of similar files in this directory that are not
+dual licensed. These files originally are part of the BPMP firmware
+tree, so I'll check with the owners if relicensing would be possible.
+If so, I think we should be able to relicense all of those header files.
+
+Thierry
+
+--VMSq3re6wkdG1hOh
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmIY0LMACgkQ3SOs138+
+s6Ez8xAAn+49vmQ+ErSD9Sg2/t6O8Sil+0KTyZF+OSNKNEOKafvj38Sv+zjGH7ZN
+OH0666hghTwlDgDBX9L/ZI4fItEVAXr7l/lMjoIiXtZ0CYb0xIXBXqIRvP8R7xOp
+TjPWFBe1oTBqALv+GSRE0f4ZPT1OsWtCddlONIwMtzO4SmHjtTKTx6PvCvOL62AC
+s+xHeUtfCeh8orT1Qcmr9XK0XGDikxqVi1SFfl7rgUBX2TS+7zmjHVDF5vmSkpw7
+lTQ3rZsRTWlyScBolyIhNAP9y6N4/Ix3ASVrEQSPjkRx6S8UgnlCsjN9qjXS0I4W
+C7rQgFPPHQVpIEFxdfZBWaP1ReyDUN/5kseJzPVqB+XQ+/cUXsFYsuP8Nnx8+F4m
+/GlQwsmtLzanpKOgwyMEN9sgJcWLbXa+9ZtT2lOEr9dDMFbnMq27bZZ319DvTQ6o
+Fh9aahMgLu45+gRhGMJsrGRaFqoVYzFPUh6+7bJmSshVIvvp1esNNy9ofZXdBKIW
+oPzfNjAd0l4KQ2eDmZdjfZyYjgcnU6gTeSoXIPvjwf3i6Vp3kjcB5eAR6qwcKxDc
+8r+dsJaPfBoS0qMWpe2zMPgiHJ5N034/Au6JqDjuv94vY1sVDCRvS1UejJlItHe9
+9iTv9lVa4Fa+6r6vj0MnPhLSCk8PpmXqiuGWBMyAc8MyWMbtHyA=
+=xQrv
+-----END PGP SIGNATURE-----
+
+--VMSq3re6wkdG1hOh--
