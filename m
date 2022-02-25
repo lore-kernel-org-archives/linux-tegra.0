@@ -2,61 +2,63 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1083C433EF
-	for <linux-tegra@archiver.kernel.org>; Fri, 25 Feb 2022 16:47:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3754C433F5
+	for <linux-tegra@archiver.kernel.org>; Fri, 25 Feb 2022 16:47:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241400AbiBYQsZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 25 Feb 2022 11:48:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55040 "EHLO
+        id S235062AbiBYQs0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 25 Feb 2022 11:48:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55052 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243312AbiBYQsX (ORCPT
+        with ESMTP id S238399AbiBYQsY (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 25 Feb 2022 11:48:23 -0500
-Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8CAA71BBF6E
-        for <linux-tegra@vger.kernel.org>; Fri, 25 Feb 2022 08:47:47 -0800 (PST)
-Received: by mail-wr1-x42e.google.com with SMTP id r10so5420964wrp.3
-        for <linux-tegra@vger.kernel.org>; Fri, 25 Feb 2022 08:47:47 -0800 (PST)
+        Fri, 25 Feb 2022 11:48:24 -0500
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B6301C65CF
+        for <linux-tegra@vger.kernel.org>; Fri, 25 Feb 2022 08:47:49 -0800 (PST)
+Received: by mail-wr1-x432.google.com with SMTP id b5so5438603wrr.2
+        for <linux-tegra@vger.kernel.org>; Fri, 25 Feb 2022 08:47:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Jqez2ASWm8yfcVM64bGimZztQHH7JgrjZ5N5ycpQJ98=;
-        b=dJ583PiDSsc0CTIFoORKzTJnFbabL/WJ3XAuT4T13ac5lop0E1FyKH6kmoaLErKT7y
-         +lAF3f3T0vgxm8uitLDHVs+fS5l6/Fln8btcP7eNzIhssGtmTXGfIN3oHpMiixRZSMRT
-         XrHwP0B6hXC3pAcz7KLhsonHNk3KMuKGoMFNNP1oo3vgKogKCTejLtowe2iOot8ReZjk
-         r5DWMqt4RLfZmygi4TW+NcU2ppdEMxfd3d/3zrgG11G4oAIgtYJYt3EW0t9jG45rEcrS
-         E0DOSN+5OuoUHVm0PNbbYGJ1shq2yIugkIvNbALS6TsJAlcIhUBWbnvS5whKPdum1PdL
-         6iGg==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=sEAbzHBtsMRbbB0Qh6txLc9CyFxKn7iPshhwUtVfgHQ=;
+        b=JDA4ZNE+ShzjxEoT7HCdrGSDHjmI4W53S9kDi82hQHtD1TB+0VeeJNszlJplwkiaLm
+         XaAnydo8W5AfInN8JidJLp24J45DPfRObUUNFtPKXZAd9HTIcXra5wL/+MtDk+9DOdXC
+         H36Gp4ELLLsPe2Fhaq/iK63MVgiqbmEeFNoR1YIWkAhcJ9zQ40gh/1MsCydWMzCpYkB3
+         FqJNbYkoIrB6dfmRDqVFXpoHJy5ff3kvfnduw/LU5uev+BnXKmXWY1hBoBV8NxQnlgmR
+         YsFBsMtxJ1KhZ7Rgr5SZBg9ODWRodMjbHfGGs8kuUOQOrfwPNaTjdtA5AkKAjmrnYyED
+         NIFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Jqez2ASWm8yfcVM64bGimZztQHH7JgrjZ5N5ycpQJ98=;
-        b=lKqUiPkw2QUNXEDwDQcRA8A7EMVFnjNNiDqN7Dv4ZC8lTwofsQ1HVLIH32bu35oK5Z
-         8rIDfsfNB1LccgXB2wD1Tv8l3sGSvCkL/l85lvMoEPg0y3O+0M3Elv7UQjckINs0j/ci
-         ZhtS0bMdYl4CLo11PpJahhXt2mEtHBjxCTnPJlCV3/sFwsieyeByalqqzuc+bE1jeYLX
-         D/xXKeaoLXIATJRh5jfvqKAymKA26MvNGs5T/VtndhTrDr+ztjM3oAP4k1cS6Q7x6PXK
-         OJFN1CnyqUKwVCYX5X8KQ3JaoPropMd6mt0ashi+5/ux53rCSMepsg2emY3sMcf+/VEH
-         ZLZA==
-X-Gm-Message-State: AOAM5335FMgovHjK0S/ejMBCRtBkj6I5gLzGl/An+NUrFvPO/kWzSwOU
-        w5DxHMfrZBWa1kHpU3+evRytzL2nY8Q=
-X-Google-Smtp-Source: ABdhPJxt4R2rH0g0wJNhaKs5g/tkqacC9iwePLzEU/roQ9c2kuVZC5CygKyYx4/H7yxxqlz9SpK8DQ==
-X-Received: by 2002:adf:8067:0:b0:1ea:9c01:d8f3 with SMTP id 94-20020adf8067000000b001ea9c01d8f3mr6872706wrk.556.1645807665986;
-        Fri, 25 Feb 2022 08:47:45 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=sEAbzHBtsMRbbB0Qh6txLc9CyFxKn7iPshhwUtVfgHQ=;
+        b=E9GHLHSbcANrDp+waxc2XYNhG5OOhePpM9LB3qPvt8yVyyzq28Afilzx2SURqhL84N
+         N80S8Xip3FJVexwCpnQCXuWOsBK+wBqjZ40dV+Vz9Bkr+SxRypJ+IlV9HAUN4M8e0Yi9
+         NuwrAUh8M/uDZEKARBYhoq0oj59EQtNcjUz/X6V8XM3PghhayEdgRor6syIrBkKlFRV7
+         T1enTT6svdE6svujh8KykVk1IcAYR5/AxBaM/Mwx3MLOqEUwqlAjsYpHKwCTWbwnjOc7
+         1U9k1Q3um+oi502eZOzvj8Aiy6BduxJ5L7yyG/G8lxNyNRWHxpLGFlZF4M54LvjG4dkg
+         XzHw==
+X-Gm-Message-State: AOAM531Iv0L2cbzbMHmL41LIHyiiceoOX4yH3XkHHbt1hbbE5jOPlasZ
+        OC/ZA0RidJTbt1pe1TbqD5A=
+X-Google-Smtp-Source: ABdhPJwriQC0+MVdvf+aMvzIUfh6lPOimFqwgYYwA+ZqNrems5vinnQzgGzPvup8iSKetAwW57IoQg==
+X-Received: by 2002:adf:9d84:0:b0:1ed:f546:bd8b with SMTP id p4-20020adf9d84000000b001edf546bd8bmr6442275wre.375.1645807668017;
+        Fri, 25 Feb 2022 08:47:48 -0800 (PST)
 Received: from localhost ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id t14-20020a5d460e000000b001edc107e4f7sm4036873wrq.81.2022.02.25.08.47.44
+        by smtp.gmail.com with ESMTPSA id f10-20020a05600c154a00b0037bbbc15ca7sm11923744wmg.36.2022.02.25.08.47.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Feb 2022 08:47:45 -0800 (PST)
+        Fri, 25 Feb 2022 08:47:47 -0800 (PST)
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     arm@kernel.org, soc@kernel.org
 Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [GIT PULL 1/5] soc/tegra: Changes for v5.18-rc1
-Date:   Fri, 25 Feb 2022 17:47:37 +0100
-Message-Id: <20220225164741.1064416-1-thierry.reding@gmail.com>
+Subject: [GIT PULL 2/5] dt-bindings: Changes for v5.18-rc1
+Date:   Fri, 25 Feb 2022 17:47:38 +0100
+Message-Id: <20220225164741.1064416-2-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220225164741.1064416-1-thierry.reding@gmail.com>
+References: <20220225164741.1064416-1-thierry.reding@gmail.com>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -72,37 +74,43 @@ The following changes since commit e783362eb54cd99b2cac8b3a9aeac942e6f6ac07:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.18-soc
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.18-dt-bindings
 
-for you to fetch changes up to fcfaff508b9fa9ad6d8a17d4855e3ec7382886ae:
+for you to fetch changes up to a4ad66da3fccebdcbd53d55c035d5851b73f8bcb:
 
-  soc/tegra: bpmp: cleanup double word in comment (2022-02-25 14:10:09 +0100)
+  dt-bindings: memory: Add Tegra234 PCIe memory (2022-02-24 20:00:25 +0100)
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-soc/tegra: Changes for v5.18-rc1
+dt-bindings: Changes for v5.18-rc1
 
-This contains the final bit to enable advanced power management on
-Tegra20 and Tegra30. It also contains some cleanups and wake event
-support on Tegra234.
+This contains additions to various DT bindings includes (such as clocks,
+resets, power domains, memory controller clients and SMMU stream IDs)
+for Tegra234.
 
 ----------------------------------------------------------------
-Dmitry Osipenko (1):
-      soc/tegra: pmc: Enable core domain support for Tegra20 and Tegra30
+Akhil R (2):
+      dt-bindings: Add headers for Tegra234 I2C
+      dt-bindings: Add headers for Tegra234 PWM
 
-Thierry Reding (1):
-      soc/tegra: fuse: Explicitly cast to/from __iomem
+Mohan Kumar (2):
+      dt-bindings: Add HDA support for Tegra234
+      dt-bindings: Document Tegra234 HDA support
 
-Tom Rix (1):
-      soc/tegra: bpmp: cleanup double word in comment
+Sameer Pujar (1):
+      dt-bindings: Add Tegra234 APE support
 
-kartik (2):
-      soc/tegra: fuse: Update nvmem cell list
-      soc/tegra: pmc: Add Tegra234 wake events
+Vidya Sagar (3):
+      dt-bindings: Add Tegra234 PCIe clocks and resets
+      dt-bindings: power: Add Tegra234 PCIe power domains
+      dt-bindings: memory: Add Tegra234 PCIe memory
 
- drivers/soc/tegra/fuse/fuse-tegra.c | 24 +++++++++++++++++++++---
- drivers/soc/tegra/pmc.c             | 16 +++++++++++-----
- include/soc/tegra/bpmp-abi.h        |  2 +-
- 3 files changed, 33 insertions(+), 9 deletions(-)
+ .../bindings/sound/nvidia,tegra30-hda.yaml         |   3 +
+ include/dt-bindings/clock/tegra234-clock.h         | 135 ++++++++++++++++++++-
+ include/dt-bindings/memory/tegra234-mc.h           |  75 ++++++++++++
+ include/dt-bindings/power/tegra234-powergate.h     |  22 ++++
+ include/dt-bindings/reset/tegra234-reset.h         |  45 ++++++-
+ 5 files changed, 277 insertions(+), 3 deletions(-)
+ create mode 100644 include/dt-bindings/power/tegra234-powergate.h
