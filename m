@@ -2,132 +2,91 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 717A2C433F5
-	for <linux-tegra@archiver.kernel.org>; Mon, 28 Feb 2022 15:34:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70C6CC4321E
+	for <linux-tegra@archiver.kernel.org>; Mon, 28 Feb 2022 18:41:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236946AbiB1PfF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 28 Feb 2022 10:35:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58816 "EHLO
+        id S240712AbiB1Sm1 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 28 Feb 2022 13:42:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43164 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234104AbiB1PfE (ORCPT
+        with ESMTP id S240706AbiB1SmV (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 28 Feb 2022 10:35:04 -0500
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2046.outbound.protection.outlook.com [40.107.92.46])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29A1E13F45;
-        Mon, 28 Feb 2022 07:34:25 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=EP3EnQ1V+vFQjUR92u4GBSVz+hc0sLtkKogxBMBIjCUqDFKgNzNRSlkknh3JTAtgJ8r4b5WMMNdytG+jb/kriXOXKZI2jcNRz+YUQ6zv68+fXEc561yO/Xb7zbSyJX/SJJNN4wED5c1v+eprpR2MQbuZhlvpt5WH3vjJFX/iFgSbGuHL0ESIdI8dnZVbbOGerETvY3AmPjPuxhkyC1GkBgisBb1v8TcMpMiTEQ74SikgxLsWT7Iwh8TZLbjacb58Cq2zwlhPJoZ9iyMYwjpf8GxtRM0wm7focAMZhKp6wTf/hwx/KKIzFLtV5g/YVOvZ4v5KeJ1jXH7IFc54usCIPA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ff8eusduYTHK+ZDOwXUpauVCtlGTHEkj4j5ukv6xRXU=;
- b=C9pUOBarBuZSbktLRRgi3W8Jt/A5/hYxa6iNLKHKgmU83pI50/L6iaFdvZ/498H/elL5hpmku56byvKuTQoKrazkulPCInQjmSLYxbrfx7vcXAuP2BXoYFRI7PcLNmTdjG5qLwLHt+akB8nEwhWqRRV/wGpgsS2lW9JAQUYwGFtzz8CATaco3zqZGn+vHfUUj1591kOAiCZ96AvuxAZjwHzrvx4Y7uJj9irzwIpcQoiu3uUqmsh+dUR2t7tJ3r/jeFsZHUd+J47XPbL8ZUElqiHUOOXlzDT88BmjCqrnDPyMcI3bSo9onwJnoqHIjSV3KBpfonw0h8esK6gk/rJeOw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 12.22.5.234) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ff8eusduYTHK+ZDOwXUpauVCtlGTHEkj4j5ukv6xRXU=;
- b=uHRwRAd48od0OjUj1PBdp1g7xLcICOdazDhOtwECi6fWplXDk9Ehh+WHYOUKNmpXxRVUkd3ihlqbfxIPsuB9PlligS08B0oqtNZ7d/zWH51o0MSw4E6EPMvkxQHhnQTnm3wGK2KWgs/6Z8vqaJzLRFI1J/ykcYJWaPSo6rQHYGJ6+tkKrlsYdyWK6kulRuh2gVNP00OaN9e63jeG6Y9oEIeBDXFEUx1IyzMqcd0uCUUkJDMtBfRCQsgqo2RljWnIPxCqcizeu24X/3cGwC3TWBWNp4J6Gs6IeJXCfm0rIH6CJATPGo5riESW9KW5Wtt1FpPgEhsrlhkdzeLQ5n+OUg==
-Received: from CO2PR05CA0104.namprd05.prod.outlook.com (2603:10b6:104:1::30)
- by DM6PR12MB5699.namprd12.prod.outlook.com (2603:10b6:5:35::33) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5017.26; Mon, 28 Feb
- 2022 15:34:23 +0000
-Received: from CO1NAM11FT032.eop-nam11.prod.protection.outlook.com
- (2603:10b6:104:1:cafe::de) by CO2PR05CA0104.outlook.office365.com
- (2603:10b6:104:1::30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5038.10 via Frontend
- Transport; Mon, 28 Feb 2022 15:34:23 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.234)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 12.22.5.234 as permitted sender) receiver=protection.outlook.com;
- client-ip=12.22.5.234; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (12.22.5.234) by
- CO1NAM11FT032.mail.protection.outlook.com (10.13.174.218) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.5017.22 via Frontend Transport; Mon, 28 Feb 2022 15:34:23 +0000
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by DRHQMAIL101.nvidia.com
- (10.27.9.10) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Mon, 28 Feb
- 2022 15:34:22 +0000
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail202.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.9; Mon, 28 Feb 2022
- 07:34:21 -0800
-Received: from BUILDSERVER-IO-L4T.nvidia.com (10.127.8.14) by mail.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server id 15.2.986.9 via Frontend
- Transport; Mon, 28 Feb 2022 07:34:19 -0800
-From:   Akhil R <akhilrajeev@nvidia.com>
-To:     <linus.walleij@linaro.org>, <brgl@bgdev.pl>,
-        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <linux-gpio@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <andy.shevchenko@gmail.com>
-CC:     <akhilrajeev@nvidia.com>
-Subject: [PATCH v2] gpio: tegra186: Add IRQ per bank for Tegra241
-Date:   Mon, 28 Feb 2022 21:04:05 +0530
-Message-ID: <20220228153405.49981-1-akhilrajeev@nvidia.com>
-X-Mailer: git-send-email 2.17.1
+        Mon, 28 Feb 2022 13:42:21 -0500
+X-Greylist: delayed 599 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 28 Feb 2022 10:36:57 PST
+Received: from relay3.hostedemail.com (relay3.hostedemail.com [64.99.140.34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84515DB6;
+        Mon, 28 Feb 2022 10:36:57 -0800 (PST)
+Received: from omf09.hostedemail.com (a10.router.float.18 [10.200.18.1])
+        by unirelay11.hostedemail.com (Postfix) with ESMTP id 8480C81766;
+        Mon, 28 Feb 2022 18:20:49 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf09.hostedemail.com (Postfix) with ESMTPA id 5C4272002A;
+        Mon, 28 Feb 2022 18:20:29 +0000 (UTC)
+Message-ID: <0be9de3920442df490f01b6fb1c42521c3de6190.camel@perches.com>
+Subject: Re: [PATCH 1/6] drivers: usb: remove usage of list iterator past
+ the loop body
+From:   Joe Perches <joe@perches.com>
+To:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Jakob Koschel <jakobkoschel@gmail.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Arnd Bergman <arnd@arndb.de>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        Mike Rapoport <rppt@kernel.org>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Brian Johannesmeyer <bjohannesmeyer@gmail.com>,
+        Cristiano Giuffrida <c.giuffrida@vu.nl>,
+        "Bos, H.J." <h.j.bos@vu.nl>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Nathan Chancellor <nathan@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-sgx@vger.kernel.org,
+        drbd-dev@lists.linbit.com, linux-block@vger.kernel.org,
+        linux-iio@vger.kernel.org, linux-crypto@vger.kernel.org,
+        dmaengine@vger.kernel.org, linux1394-devel@lists.sourceforge.net,
+        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        intel-gfx@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+        linux-rdma@vger.kernel.org, linux-media@vger.kernel.org,
+        intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+        linux-wireless@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-staging@lists.linux.dev,
+        linux-usb@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
+        bcm-kernel-feedback-list@broadcom.com, linux-tegra@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, kvm@vger.kernel.org,
+        linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org,
+        kgdb-bugreport@lists.sourceforge.net,
+        v9fs-developer@lists.sourceforge.net,
+        tipc-discussion@lists.sourceforge.net, alsa-devel@alsa-project.org
+Date:   Mon, 28 Feb 2022 10:20:28 -0800
+In-Reply-To: <20220228112413.GA2812@kadam>
+References: <20220228110822.491923-1-jakobkoschel@gmail.com>
+         <20220228110822.491923-2-jakobkoschel@gmail.com>
+         <20220228112413.GA2812@kadam>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.40.4-1ubuntu2 
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 9fca3b12-96f2-41d4-ee13-08d9facfcbc7
-X-MS-TrafficTypeDiagnostic: DM6PR12MB5699:EE_
-X-Microsoft-Antispam-PRVS: <DM6PR12MB5699CB5A4580239EC8AADD8FC0019@DM6PR12MB5699.namprd12.prod.outlook.com>
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: Fp+yy0dTSoMfCjiqhb3ijpNUATxPmoVt7btdsm+//LC2iwebEWQKgnRqUBM1ir5L3Pmce0GJE5Vr1KsmYG+3YA9B84zccISIfdQhGHK+TRjR07Nj110TqP9p9iKtsIlAP8bRM3+OnkPR2K94HV0uq8OqhA+pVk3a52qNJ8+stnj91isW8rQgNqhG0qQbULwLoktEUf2te1N2HXVn5th928a37iXsOcHHxTYciX1DTtbN9IfeaWPTLkK8xqIARtydCOmT/sn7Gd+KkNM0uAI5YEAk0Vih0pSwKDqz7rIRlHWRXpz9GeNdQ2X/16vPiJ/h+SBU1YagoGagpLZw2s9alpnA/zCYgxpagt4dBDL8cL0Tg+Tvg4X0+zAZrZMYe2az3Spj5X3trWORfOqWSEAIbycotpH0N8w5AekLo1ynmHX1qttUG+ub5NVmmjKbca26wV3xkXWq+mD/Rvwiy8UmwQ8JOFpYepbpZEU358/04c6u4Qiuit+1nwrRDjgA+MKMea5y/wTt9rS7KPeIDi1NR4hZqDALEztWnQhat7sKNZWUZTGp+Yet404rCkUhQKJJl9cHZCAiNkqUL3pDpMU+TBK8E1tr7FBPCYf3TQemDvxkBhYTOT0FdYxxbnEf2inyD18f6BRN2oaOvlz7xU1eFjF7bqLgTtd0hRiDCq8zGvVQ+myT6W+LZ27sCUfP1HiVD9gdfjDiDvljUaFRpXyt0A==
-X-Forefront-Antispam-Report: CIP:12.22.5.234;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230001)(4636009)(36840700001)(40470700004)(46966006)(70206006)(82310400004)(7696005)(6666004)(2906002)(36860700001)(5660300002)(83380400001)(86362001)(15650500001)(508600001)(426003)(1076003)(4744005)(8936002)(107886003)(47076005)(8676002)(4326008)(40460700003)(70586007)(186003)(2616005)(26005)(356005)(36756003)(110136005)(336012)(81166007)(316002)(36900700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Feb 2022 15:34:23.1812
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9fca3b12-96f2-41d4-ee13-08d9facfcbc7
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.234];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT032.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB5699
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: 1e1i8ombnsc3cdkptu3anccezjc89zox
+X-Rspamd-Server: rspamout07
+X-Rspamd-Queue-Id: 5C4272002A
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Session-ID: U2FsdGVkX1+i6vY6IDwHpNq++UEo/5hqvP4PvgQNb4E=
+X-HE-Tag: 1646072429-12569
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Add the number of interrupts per bank for Tegra241 (Grace) to
-fix the probe failure.
+On Mon, 2022-02-28 at 14:24 +0300, Dan Carpenter wrote:
 
-Fixes: d1056b771ddb ("gpio: tegra186: Add support for Tegra241")
-Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
----
-v1->v2: Add 'Fixes' tag in the commit message
+> a multi-line indent gets curly braces for readability even though
+> it's not required by C.  And then both sides would get curly braces.
 
- drivers/gpio/gpio-tegra186.c | 2 ++
- 1 file changed, 2 insertions(+)
+That's more your personal preference than a coding style guideline.
 
-diff --git a/drivers/gpio/gpio-tegra186.c b/drivers/gpio/gpio-tegra186.c
-index 8d298beffd86..031fe105b58e 100644
---- a/drivers/gpio/gpio-tegra186.c
-+++ b/drivers/gpio/gpio-tegra186.c
-@@ -1075,6 +1075,7 @@ static const struct tegra_gpio_soc tegra241_main_soc = {
- 	.ports = tegra241_main_ports,
- 	.name = "tegra241-gpio",
- 	.instance = 0,
-+	.num_irqs_per_bank = 8,
- };
- 
- #define TEGRA241_AON_GPIO_PORT(_name, _bank, _port, _pins)	\
-@@ -1095,6 +1096,7 @@ static const struct tegra_gpio_soc tegra241_aon_soc = {
- 	.ports = tegra241_aon_ports,
- 	.name = "tegra241-gpio-aon",
- 	.instance = 1,
-+	.num_irqs_per_bank = 8,
- };
- 
- static const struct of_device_id tegra186_gpio_of_match[] = {
--- 
-2.17.1
 
