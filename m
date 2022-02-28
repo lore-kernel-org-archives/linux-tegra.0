@@ -2,135 +2,128 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45412C433EF
-	for <linux-tegra@archiver.kernel.org>; Mon, 28 Feb 2022 06:51:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34850C433EF
+	for <linux-tegra@archiver.kernel.org>; Mon, 28 Feb 2022 10:03:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233408AbiB1GwO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 28 Feb 2022 01:52:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48690 "EHLO
+        id S229970AbiB1KET (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 28 Feb 2022 05:04:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56388 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232851AbiB1GwN (ORCPT
+        with ESMTP id S233158AbiB1KEO (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 28 Feb 2022 01:52:13 -0500
-Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9402D673D0
-        for <linux-tegra@vger.kernel.org>; Sun, 27 Feb 2022 22:51:34 -0800 (PST)
-Received: by mail-ej1-x632.google.com with SMTP id gb39so22780971ejc.1
-        for <linux-tegra@vger.kernel.org>; Sun, 27 Feb 2022 22:51:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=KV1JbAhuNJTz+C0DM9/emDJPo6FVaVp0kLIz6S7VmPE=;
-        b=obAbKdYyq7nhBGXksSdwDXMC+AOppFf3t3FR/4OgFpoA0SSxyJw5Dqt5vgY+rLAWsK
-         7VFY0tAoNHkhp9CZDR73I+Vb+GNrVdEvkDA8ojQP5ifaNOyPKcAuR1lOfnVYcO2vc7qo
-         v91LV+o1RHC/URnQwJGjoycBwAf0YubvOE9pL9+jNseK9J0U3hcaND/kOQyfUCFY7Yv+
-         L1YFwpQFqhgDYxJp/WhlfhhCXrgUs1vPzvF2MNTOGhF5+KjmzO8vuDwdnAtZ6jfa2TUe
-         7kG/yZEPjQxV8bEFOoum/qReqC7CLz3TV2n+e0rIKhJgV+3N/ZKczfle7D8aainvC9CT
-         +UYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=KV1JbAhuNJTz+C0DM9/emDJPo6FVaVp0kLIz6S7VmPE=;
-        b=vJhOVLvA1ayKIdGTG3BTsF0cuikKFoFK8LBPyiSA+zthI/9D7legX7airseM6EL46d
-         WuOq98fIjx5aZ/KqEhDxDxT8eeBWG9NTYOBetanKXd3mnAuNbO9rEKIU5FoHIwchtO9y
-         I6xPl/J5bY7tJO/kMkG1yvaZCHXCGF1J4E5q6GSLZnazUqolGsUZiIHn6QT1V1f8UqVU
-         BmzP1Un2Xs6MJYfbw+2NDM8TguCIeElsUXjt3m4NuHAVMPoK6OLlDxPnF/+J+MmzPEbt
-         UERi1+AjSu45uO6rSfcIduqd9jfXkSkY3EjfhSbu/2stY+hC65jPsqTdWk4AUUpbZQCj
-         u/1w==
-X-Gm-Message-State: AOAM533K8W0J2rD4cP0N0rdcF80TdDV7ecWDWAROE2/WJKt5WJdUVkV7
-        FuuyB4Rew5epkTePuZbCYq7nDG8OQteRtZ8dWoc=
-X-Google-Smtp-Source: ABdhPJwB9Sb4/CjGLWD5bUE/RRpRyGSfzqrgJ+wBZ2l1he+hHz/gx/Zr0GoryWF8c6D7yq4+m2Trm0ek+OVh6H0CYes=
-X-Received: by 2002:a17:906:c59:b0:6b9:59d8:263e with SMTP id
- t25-20020a1709060c5900b006b959d8263emr14489489ejf.770.1646031093129; Sun, 27
- Feb 2022 22:51:33 -0800 (PST)
+        Mon, 28 Feb 2022 05:04:14 -0500
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2076.outbound.protection.outlook.com [40.107.223.76])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 726272D1C3;
+        Mon, 28 Feb 2022 02:03:36 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ZMbpMndPQOE8PNdB5xHjLfJkEF0mSPc1Cl/rlyJ4dVKiTFb4q+4/QVLGoZmIIL/058CfjsA/bjOmSuCuTqw6H9DrtHCINN+51NkcOTcKdGPaZblXwCfovoFE483jWKNuH1R6FZLEjwypegq0f7RPjWKxKA8BjT/SteL44bbwqseQrfTou8To1h2RRt25R4PMU82SgT5dH+Rq2fuygiwtWXvqonXo9Ix5rNVxc0CthfM23gPzd3KkA6HvA9pnkZMiTBKuWrVZMWntOy+R4UB4wGoS1rDp099+zvcD4FpmJg2yy771JFJkdt8nWb/0hFVqyaJhQ9wRzQBvbrIguHVynA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=y/Uu9HUAr6DHKPpkxrTh+l3FmT1N3LSt0R7pkJ2mBLU=;
+ b=GRtgMuo364MZanUxnmfvmn7FSpi1EwYSI4IbF9EqZxD9/JD3oDK8SIUGEJ0wEz5Dn3Wsg/rBXklXbWkTIU9SJJRuMOgS0oJBn4ybU55M/sT4K9sTtEi4ZOqnx5YlKb8+/tY2GjDFNc5q3W/R7yDJbmH2ivGmlIAD99oLc80s1WAsHvferij+Ni1xqbJOVDchrJm3DpFBUWbiUxb2KyJmXy9Gn2PTLFMU+GHUYGHP0EoJX8GyzQEkdAxfxX4/raAZrdKbnKiJgzY3M9mW8NvdhW+XIMusHQ13K+E9yKnsqIoYh4DSdbCFV8FcrUM6T4nOI0SQz4TGd4wXW/vEr3crUA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 12.22.5.235) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=y/Uu9HUAr6DHKPpkxrTh+l3FmT1N3LSt0R7pkJ2mBLU=;
+ b=U8bsY5dNaaOK7l8nbhI+uO3doFfTaNnGpptMVvuT19T9u8jCmOirgTccdK0dOG3ih+q1cZhYFEIu0my6czOkrPpu+CeLPrr9y3aVFn7YfzQ2CD/ih3OgSeStZRAv4acDbM63lDRcx4FuUUioskNyPz/kWXzJHRqHK0l80PK0Ux9iSx94G14SzlSYf+UoGjkwZOBMzcoNs3VdFdkta9FhmnwDyICRfxNl8wJPm6wfprcqg6YraWnRapdkvN0jDs15tI97V27SIHFen7vPOTq+IkjgSu/WTDwWI2cNcJQw+V6ia/cHnbfzhC4yMPiL8/GCHiKGwdn9T5jSLso0J3b86Q==
+Received: from MW4PR04CA0091.namprd04.prod.outlook.com (2603:10b6:303:83::6)
+ by BL1PR12MB5753.namprd12.prod.outlook.com (2603:10b6:208:390::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5017.21; Mon, 28 Feb
+ 2022 10:03:34 +0000
+Received: from CO1NAM11FT022.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:303:83:cafe::d3) by MW4PR04CA0091.outlook.office365.com
+ (2603:10b6:303:83::6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5017.21 via Frontend
+ Transport; Mon, 28 Feb 2022 10:03:34 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.235)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 12.22.5.235 as permitted sender) receiver=protection.outlook.com;
+ client-ip=12.22.5.235; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (12.22.5.235) by
+ CO1NAM11FT022.mail.protection.outlook.com (10.13.175.199) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.5017.22 via Frontend Transport; Mon, 28 Feb 2022 10:03:34 +0000
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by DRHQMAIL107.nvidia.com
+ (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Mon, 28 Feb
+ 2022 10:03:34 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail204.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.9; Mon, 28 Feb 2022
+ 02:03:32 -0800
+Received: from BUILDSERVER-IO-L4T.nvidia.com (10.127.8.14) by mail.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server id 15.2.986.9 via Frontend
+ Transport; Mon, 28 Feb 2022 02:03:30 -0800
+From:   Akhil R <akhilrajeev@nvidia.com>
+To:     <linus.walleij@linaro.org>, <brgl@bgdev.pl>,
+        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <linux-gpio@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <akhilrajeev@nvidia.com>
+Subject: [PATCH] gpio: tegra186: Add IRQ per bank for Tegra241
+Date:   Mon, 28 Feb 2022 15:33:17 +0530
+Message-ID: <20220228100317.59885-1-akhilrajeev@nvidia.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-References: <20220225163250.1063101-1-thierry.reding@gmail.com>
-In-Reply-To: <20220225163250.1063101-1-thierry.reding@gmail.com>
-From:   Dave Airlie <airlied@gmail.com>
-Date:   Mon, 28 Feb 2022 16:51:22 +1000
-Message-ID: <CAPM=9tzr0LSnkHHwP0rUOz+AFwQwtTs38vu+6B-d8VAN=x+BPg@mail.gmail.com>
-Subject: Re: [GIT PULL] drm/tegra: Changes for v5.18-rc1
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-tegra@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 7d414f05-81ac-4588-b07d-08d9faa194ea
+X-MS-TrafficTypeDiagnostic: BL1PR12MB5753:EE_
+X-Microsoft-Antispam-PRVS: <BL1PR12MB5753ECF29FB09589D0DF5B38C0019@BL1PR12MB5753.namprd12.prod.outlook.com>
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 9mGjv5dnRE1aVOlGUqC7roKXVAccq2tolFxEQS8RB/eygfviLHNM2UqCKZW+hAzDhqZnfrgZc+xbpB8mgZclBm4uy6w+262p5yjnZR2A40Vr2OTUqT6k2gs0ywTxXOD10X3KWuh8RVW8H+mN6ZI2PAToj0ln5LzEboSplDCPMiEKuK1NA25Y4EmFpdyiN8gGDJ0xc2bUghWSSvLUhmKoD5rYr4FJf+YgdQgSbfCR/Fe2gMu0muVB1T5SwJfxruJ0DjefTRoKi4Oy9vp7zJk537rXx4WhxX58/BsbQc/ih2uQwm8iyGII2/mqIEjixyCcggItdwrjAL0ZEoadjfRJBej7f24c413WlhZvsOCKFTGqM+tFUEAykvPUGiJmH/p7j6HV/P4c0EkQ8Qorg1HlzZKIt+m1WlarJLoRKeC42xDnyYrL15tAf3QudWWJzVIppvs6MfKCS2e5K8EbUOxsl7CbNq6nHjVv0Z2fTzpiMQt5lZ++znQmYpfBQxVvShPqhnqm/ZPiYoV9I4ecVxnILs4jnGrlzGdz1vfgyQiY6Acircc9lA5sRydmg7lcTRbM0I0i9RGvBbHWoEim06EVZ1/xLxlrpkQ29IiFIZb/GYNZZ/sIbw8fAWVSSsvJZx3AIwIbjdC7VXvcCVpJEGQNsAsYh9F2Vo+bH1646E2vAhH3/dqghrw2w/SwwtVPBq/VTb6V40fXBKm/FZY8613nbQ==
+X-Forefront-Antispam-Report: CIP:12.22.5.235;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230001)(4636009)(36840700001)(40470700004)(46966006)(107886003)(426003)(336012)(36756003)(2616005)(4744005)(82310400004)(26005)(2906002)(8936002)(4326008)(8676002)(70586007)(70206006)(47076005)(36860700001)(86362001)(186003)(316002)(5660300002)(1076003)(356005)(81166007)(40460700003)(7696005)(110136005)(15650500001)(83380400001)(508600001)(6666004)(36900700001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Feb 2022 10:03:34.3629
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7d414f05-81ac-4588-b07d-08d9faa194ea
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.235];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT022.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5753
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Thierry,
+Add the number of interrupts per bank for Tegra241 (Grace).
 
-dim: d65e338027e7 ("gpu: host1x: Fix an error handling path in
-'host1x_probe()'"): SHA1 in fixes line not found:
-dim:     e3166698a8a0 ("drm/tegra: Implement buffer object cache")
+Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
+---
+ drivers/gpio/gpio-tegra186.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-not the same as
+diff --git a/drivers/gpio/gpio-tegra186.c b/drivers/gpio/gpio-tegra186.c
+index 8d298beffd86..031fe105b58e 100644
+--- a/drivers/gpio/gpio-tegra186.c
++++ b/drivers/gpio/gpio-tegra186.c
+@@ -1075,6 +1075,7 @@ static const struct tegra_gpio_soc tegra241_main_soc = {
+ 	.ports = tegra241_main_ports,
+ 	.name = "tegra241-gpio",
+ 	.instance = 0,
++	.num_irqs_per_bank = 8,
+ };
+ 
+ #define TEGRA241_AON_GPIO_PORT(_name, _bank, _port, _pins)	\
+@@ -1095,6 +1096,7 @@ static const struct tegra_gpio_soc tegra241_aon_soc = {
+ 	.ports = tegra241_aon_ports,
+ 	.name = "tegra241-gpio-aon",
+ 	.instance = 1,
++	.num_irqs_per_bank = 8,
+ };
+ 
+ static const struct of_device_id tegra186_gpio_of_match[] = {
+-- 
+2.17.1
 
- 1f39b1dfa53c84b56d7ad37fed44afda7004959d
-Author: Thierry Reding <treding@nvidia.com>
-Date:   Fri Feb 7 16:50:52 2020 +0100
-
-    drm/tegra: Implement buffer object cache
-
-Please fix that up.
-
-Dave.
-
-On Sat, 26 Feb 2022 at 02:32, Thierry Reding <thierry.reding@gmail.com> wrote:
->
-> Hi Dave, Daniel,
->
-> The following changes since commit 8913e1aea4b32a866343b14e565c62cec54f3f78:
->
->   drm/tegra: dpaux: Populate AUX bus (2022-02-23 13:00:37 +0100)
->
-> are available in the Git repository at:
->
->   https://gitlab.freedesktop.org/drm/tegra.git tags/drm/tegra/for-5.18-rc1
->
-> for you to fetch changes up to b53c24f69199b88671293de503f1f999a762f4f9:
->
->   drm/tegra: Support YVYU, VYUY and YU24 formats (2022-02-25 16:37:40 +0100)
->
-> Thanks,
-> Thierry
->
-> ----------------------------------------------------------------
-> drm/tegra: Changes for v5.18-rc1
->
-> This contains a couple more minor fixes that didn't seem urgent enough
-> for v5.17. On top of that this improves YUV format support on older
-> chips.
->
-> ----------------------------------------------------------------
-> Christophe JAILLET (2):
->       gpu: host1x: Fix an error handling path in 'host1x_probe()'
->       gpu: host1x: Fix a memory leak in 'host1x_remove()'
->
-> Dmitry Osipenko (1):
->       drm/tegra: Use dev_err_probe()
->
-> Miaoqian Lin (1):
->       drm/tegra: Fix reference leak in tegra_dsi_ganged_probe
->
-> Thierry Reding (3):
->       drm/tegra: Fix planar formats on Tegra186 and later
->       drm/tegra: Support semi-planar formats on Tegra114+
->       drm/tegra: Support YVYU, VYUY and YU24 formats
->
-> chiminghao (1):
->       drm/tegra: dpaux: Remove unneeded variable
->
->  drivers/gpu/drm/tegra/dc.c    | 50 ++++++++++++++++++-----------
->  drivers/gpu/drm/tegra/dc.h    |  7 +++++
->  drivers/gpu/drm/tegra/dpaux.c |  3 +-
->  drivers/gpu/drm/tegra/dsi.c   |  4 ++-
->  drivers/gpu/drm/tegra/hdmi.c  | 34 ++++++--------------
->  drivers/gpu/drm/tegra/hub.c   | 24 ++++++++------
->  drivers/gpu/drm/tegra/plane.c | 73 ++++++++++++++++++++++++++++++++++++++-----
->  drivers/gpu/drm/tegra/plane.h |  2 +-
->  drivers/gpu/host1x/dev.c      |  8 +++--
->  9 files changed, 140 insertions(+), 65 deletions(-)
