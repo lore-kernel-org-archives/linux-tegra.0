@@ -2,17 +2,17 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A46DC433FE
-	for <linux-tegra@archiver.kernel.org>; Tue,  1 Mar 2022 16:15:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28048C4332F
+	for <linux-tegra@archiver.kernel.org>; Tue,  1 Mar 2022 16:15:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236107AbiCAQQY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 1 Mar 2022 11:16:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42092 "EHLO
+        id S236112AbiCAQQZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 1 Mar 2022 11:16:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42090 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233033AbiCAQQS (ORCPT
+        with ESMTP id S233241AbiCAQQS (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>); Tue, 1 Mar 2022 11:16:18 -0500
 Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C0BE91370;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 115868EB47;
         Tue,  1 Mar 2022 08:15:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
          s=20161220; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
@@ -20,17 +20,17 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
         Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
         :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
         List-Post:List-Owner:List-Archive;
-        bh=6sRdRmuArPB9M+DZhEXPrB8b5Pq6lEbN63VVfh3955E=; b=hghlNdvKgM7ALxY2nJrCubp8BI
-        XPNh06HpEJya/ZJJK4ZhiiqygiGORv5OIM5sLeb8wEZlMUUJtmoP17eV3WW2ZFqPn3kA8+WBKzz4M
-        +koy7DKYiq6WlfWT6zMJ4t3h1dM2M0rzlLpJLd7iskKEw8P5rAWyAfLR9IlcMRr3fgFN4FtybcHkh
-        P0I3h3d6kY4YKr8iITrY9D+DcfXwmgH0/Wh31pJV3MBG8CqxDosDy08yB1nC7ZZY4UXxdW3gUGZDe
-        pnDBPIFHftenPECJFbOVvgcpe2HeLj92e06W7eqWthuyaQAcxZ/yETzOOj0ovGMaYtnU2HEB/iANK
-        7BhbbcNw==;
+        bh=5Mix95hZnPw7DLW+zsx/wARTOVHfJ0lbWWEi2ceaxVE=; b=XguYhe2T6oPS1+3HvX2t1KOvtX
+        SH368tVJZutQsy1JmZ4FYNPEqUd+yXavrMPpVRVqbywj0Vnjq5ITdpZicyYcSNCcsVP+Ev1nfP7Nu
+        dbmKwNyzSEldiI7Gv2uHv/UwXHVVMGpELJDR03DOjLTqL44cQnkZvrccB//G6/sEIDKfBUfI0W4W1
+        fWxnTy6/kIsqOSjdRJRSh1LrJMnTGm8ZHVqUASNhczmY9uSkVzVxDmX+qKnf6FwIGzwfNCe8WIiY1
+        M8bSrntAKqoaG03FE2S7CGHJN3o5S2ERDtUwH2eam07KgQm9k7dRYxNZU46WqJSqam+ispmdzXb3b
+        Mnwtj+Vw==;
 Received: from 91-158-25-70.elisa-laajakaista.fi ([91.158.25.70] helo=toshino.localdomain)
         by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.89)
         (envelope-from <cyndis@kapsi.fi>)
-        id 1nP59q-0003Z8-LR; Tue, 01 Mar 2022 18:15:26 +0200
+        id 1nP59r-0003Z8-6M; Tue, 01 Mar 2022 18:15:27 +0200
 From:   cyndis@kapsi.fi
 To:     thierry.reding@gmail.com, jonathanh@nvidia.com, joro@8bytes.org,
         will@kernel.org, robin.murphy@arm.com, robh+dt@kernel.org,
@@ -39,9 +39,9 @@ Cc:     linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
         iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         Mikko Perttunen <mperttunen@nvidia.com>
-Subject: [PATCH v4 2/9] gpu: host1x: Add context bus
-Date:   Tue,  1 Mar 2022 18:14:48 +0200
-Message-Id: <20220301161455.4037062-3-cyndis@kapsi.fi>
+Subject: [PATCH v4 7/9] drm/tegra: falcon: Set DMACTX field on DMA transactions
+Date:   Tue,  1 Mar 2022 18:14:53 +0200
+Message-Id: <20220301161455.4037062-8-cyndis@kapsi.fi>
 X-Mailer: git-send-email 2.35.0
 In-Reply-To: <20220301161455.4037062-1-cyndis@kapsi.fi>
 References: <20220301161455.4037062-1-cyndis@kapsi.fi>
@@ -56,125 +56,48 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Mikko Perttunen <mperttunen@nvidia.com>
 
-The context bus is a "dummy" bus that contains struct devices that
-correspond to IOMMU contexts assigned through Host1x to processes.
-
-Even when host1x itself is built as a module, the bus is registered
-in built-in code so that the built-in ARM SMMU driver is able to
-reference it.
+The DMACTX field determines which context, as specified in the
+TRANSCFG register, is used. While during boot it doesn't matter
+which is used, later on it matters and this value is reused by
+the firmware.
 
 Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
 ---
-v4:
-* Export bus as GPL
----
- drivers/gpu/Makefile               |  3 +--
- drivers/gpu/host1x/Kconfig         |  5 +++++
- drivers/gpu/host1x/Makefile        |  1 +
- drivers/gpu/host1x/context_bus.c   | 31 ++++++++++++++++++++++++++++++
- include/linux/host1x_context_bus.h | 15 +++++++++++++++
- 5 files changed, 53 insertions(+), 2 deletions(-)
- create mode 100644 drivers/gpu/host1x/context_bus.c
- create mode 100644 include/linux/host1x_context_bus.h
+ drivers/gpu/drm/tegra/falcon.c | 8 ++++++++
+ drivers/gpu/drm/tegra/falcon.h | 1 +
+ 2 files changed, 9 insertions(+)
 
-diff --git a/drivers/gpu/Makefile b/drivers/gpu/Makefile
-index 835c88318cec..8997f0096545 100644
---- a/drivers/gpu/Makefile
-+++ b/drivers/gpu/Makefile
-@@ -2,7 +2,6 @@
- # drm/tegra depends on host1x, so if both drivers are built-in care must be
- # taken to initialize them in the correct order. Link order is the only way
- # to ensure this currently.
--obj-$(CONFIG_TEGRA_HOST1X)	+= host1x/
--obj-y			+= drm/ vga/
-+obj-y			+= host1x/ drm/ vga/
- obj-$(CONFIG_IMX_IPUV3_CORE)	+= ipu-v3/
- obj-$(CONFIG_TRACE_GPU_MEM)		+= trace/
-diff --git a/drivers/gpu/host1x/Kconfig b/drivers/gpu/host1x/Kconfig
-index 6815b4db17c1..1861a8180d3f 100644
---- a/drivers/gpu/host1x/Kconfig
-+++ b/drivers/gpu/host1x/Kconfig
-@@ -1,8 +1,13 @@
- # SPDX-License-Identifier: GPL-2.0-only
-+
-+config TEGRA_HOST1X_CONTEXT_BUS
-+	bool
-+
- config TEGRA_HOST1X
- 	tristate "NVIDIA Tegra host1x driver"
- 	depends on ARCH_TEGRA || (ARM && COMPILE_TEST)
- 	select DMA_SHARED_BUFFER
-+	select TEGRA_HOST1X_CONTEXT_BUS
- 	select IOMMU_IOVA
- 	help
- 	  Driver for the NVIDIA Tegra host1x hardware.
-diff --git a/drivers/gpu/host1x/Makefile b/drivers/gpu/host1x/Makefile
-index d2b6f7de0498..c891a3e33844 100644
---- a/drivers/gpu/host1x/Makefile
-+++ b/drivers/gpu/host1x/Makefile
-@@ -18,3 +18,4 @@ host1x-y = \
- 	hw/host1x07.o
+diff --git a/drivers/gpu/drm/tegra/falcon.c b/drivers/gpu/drm/tegra/falcon.c
+index 223ab2ceb7e6..8bdb72f08f58 100644
+--- a/drivers/gpu/drm/tegra/falcon.c
++++ b/drivers/gpu/drm/tegra/falcon.c
+@@ -48,6 +48,14 @@ static int falcon_copy_chunk(struct falcon *falcon,
+ 	if (target == FALCON_MEMORY_IMEM)
+ 		cmd |= FALCON_DMATRFCMD_IMEM;
  
- obj-$(CONFIG_TEGRA_HOST1X) += host1x.o
-+obj-$(CONFIG_TEGRA_HOST1X_CONTEXT_BUS) += context_bus.o
-diff --git a/drivers/gpu/host1x/context_bus.c b/drivers/gpu/host1x/context_bus.c
-new file mode 100644
-index 000000000000..b0d35b2bbe89
---- /dev/null
-+++ b/drivers/gpu/host1x/context_bus.c
-@@ -0,0 +1,31 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (c) 2021, NVIDIA Corporation.
-+ */
++	/*
++	 * Use second DMA context (i.e. the one for firmware). Strictly
++	 * speaking, at this point both DMA contexts point to the firmware
++	 * stream ID, but this register's value will be reused by the firmware
++	 * for later DMA transactions, so we need to use the correct value.
++	 */
++	cmd |= FALCON_DMATRFCMD_DMACTX(1);
 +
-+#include <linux/device.h>
-+#include <linux/of.h>
-+
-+struct bus_type host1x_context_device_bus_type = {
-+	.name = "host1x-context",
-+};
-+EXPORT_SYMBOL_GPL(host1x_context_device_bus_type);
-+
-+static int __init host1x_context_device_bus_init(void)
-+{
-+	int err;
-+
-+	if (!of_machine_is_compatible("nvidia,tegra186") &&
-+	    !of_machine_is_compatible("nvidia,tegra194") &&
-+	    !of_machine_is_compatible("nvidia,tegra234"))
-+		return 0;
-+
-+	err = bus_register(&host1x_context_device_bus_type);
-+	if (err < 0) {
-+		pr_err("bus type registration failed: %d\n", err);
-+		return err;
-+	}
-+
-+	return 0;
-+}
-+postcore_initcall(host1x_context_device_bus_init);
-diff --git a/include/linux/host1x_context_bus.h b/include/linux/host1x_context_bus.h
-new file mode 100644
-index 000000000000..72462737a6db
---- /dev/null
-+++ b/include/linux/host1x_context_bus.h
-@@ -0,0 +1,15 @@
-+/* SPDX-License-Identifier: GPL-2.0-or-later */
-+/*
-+ * Copyright (c) 2021, NVIDIA Corporation. All rights reserved.
-+ */
-+
-+#ifndef __LINUX_HOST1X_CONTEXT_BUS_H
-+#define __LINUX_HOST1X_CONTEXT_BUS_H
-+
-+#include <linux/device.h>
-+
-+#ifdef CONFIG_TEGRA_HOST1X_CONTEXT_BUS
-+extern struct bus_type host1x_context_device_bus_type;
-+#endif
-+
-+#endif
+ 	falcon_writel(falcon, offset, FALCON_DMATRFMOFFS);
+ 	falcon_writel(falcon, base, FALCON_DMATRFFBOFFS);
+ 	falcon_writel(falcon, cmd, FALCON_DMATRFCMD);
+diff --git a/drivers/gpu/drm/tegra/falcon.h b/drivers/gpu/drm/tegra/falcon.h
+index c56ee32d92ee..1955cf11a8a6 100644
+--- a/drivers/gpu/drm/tegra/falcon.h
++++ b/drivers/gpu/drm/tegra/falcon.h
+@@ -50,6 +50,7 @@
+ #define FALCON_DMATRFCMD_IDLE			(1 << 1)
+ #define FALCON_DMATRFCMD_IMEM			(1 << 4)
+ #define FALCON_DMATRFCMD_SIZE_256B		(6 << 8)
++#define FALCON_DMATRFCMD_DMACTX(v)		(((v) & 0x7) << 12)
+ 
+ #define FALCON_DMATRFFBOFFS			0x0000111c
+ 
 -- 
 2.35.0
 
