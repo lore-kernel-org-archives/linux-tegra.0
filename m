@@ -2,390 +2,180 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C3E9C433FE
-	for <linux-tegra@archiver.kernel.org>; Tue,  1 Mar 2022 16:15:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F48DC433EF
+	for <linux-tegra@archiver.kernel.org>; Tue,  1 Mar 2022 17:36:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236103AbiCAQQ3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 1 Mar 2022 11:16:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42096 "EHLO
+        id S236545AbiCARhW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 1 Mar 2022 12:37:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41052 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236084AbiCAQQT (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 1 Mar 2022 11:16:19 -0500
-Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62A919682A;
-        Tue,  1 Mar 2022 08:15:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-         s=20161220; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
-        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=6OJiMNq4xXSwhQjWakj+XiedN7LRKxKK1btq8hnzu0w=; b=vqTTyNt3FiealCrzcS5BgHTfOF
-        IWeuwI9Y7t3J7WeCJxbMd4PaRCKwrV6zcffOF7hefyB9naDxGNVUBAs9DBwatzqUCazmUZypS9Q9K
-        16jakxSHgulj5MLVbvjMiIYGUL4bkZkWa804QYXdCKVSyWZEdn4s4ouGFIYxv6qi/u5EAu05iiwdp
-        lAgZjgCffe7ou54CmHzJo6XVrcJrzasWFiStzbM4G91+bhDv4vt2YqqQXL0/oGPhTJe7y12PTCs5Z
-        aISwNYt5u5lxUCMHiUUv59xlYJdP2RzVYz4t9A57E2BAgusnvkDhj5epKFlYr08b/0z6cPUsUd+fP
-        IoKeJg5w==;
-Received: from 91-158-25-70.elisa-laajakaista.fi ([91.158.25.70] helo=toshino.localdomain)
-        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <cyndis@kapsi.fi>)
-        id 1nP59q-0003Z8-PE; Tue, 01 Mar 2022 18:15:26 +0200
-From:   cyndis@kapsi.fi
-To:     thierry.reding@gmail.com, jonathanh@nvidia.com, joro@8bytes.org,
-        will@kernel.org, robin.murphy@arm.com, robh+dt@kernel.org,
-        krzysztof.kozlowski@canonical.com
-Cc:     linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Mikko Perttunen <mperttunen@nvidia.com>
-Subject: [PATCH v4 3/9] gpu: host1x: Add context device management code
-Date:   Tue,  1 Mar 2022 18:14:49 +0200
-Message-Id: <20220301161455.4037062-4-cyndis@kapsi.fi>
-X-Mailer: git-send-email 2.35.0
-In-Reply-To: <20220301161455.4037062-1-cyndis@kapsi.fi>
-References: <20220301161455.4037062-1-cyndis@kapsi.fi>
+        with ESMTP id S230313AbiCARhT (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 1 Mar 2022 12:37:19 -0500
+Received: from new3-smtp.messagingengine.com (new3-smtp.messagingengine.com [66.111.4.229])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A879F2F03E;
+        Tue,  1 Mar 2022 09:36:37 -0800 (PST)
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 668835801CF;
+        Tue,  1 Mar 2022 12:36:34 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute2.internal (MEProxy); Tue, 01 Mar 2022 12:36:34 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
+        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to; s=fm3; bh=5OE8xr6GO9X7MbNpDAcWFGeEO3b3B/8LX5WMVM
+        23luQ=; b=PuP2NuoqB9WepsjY0Uqokte1F02OSePW/KnqWPOHGfC62jDMQy8d6J
+        jihmHY7jaxPeYmV/brYSLMo2rdd0E65RFIbVZNaw+d6hF5TlV5h/HTFiyyQeuhEh
+        tTvMohVc8vJzz2F3uGXDhJ11n60AMBcwryX0OIQ4h4vBoJz9sXnQjtTWmMBfJvV8
+        ASNImP/JJmHc6aQngUkaR/9ejN6V67gkY3Ss3hOhMxZ05fa2rytR+8neryd7GnHR
+        NnoILjHkJCXbghnuIwO3WAIr0wjFgm+H99CgrlgjXtrJoB87p0eZTz8QaQ9jXLS7
+        eUmDU4ThQ2iD/GAcK9q8FPfYZ3dj5Siw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:date:date:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=5OE8xr6GO9X7MbNpD
+        AcWFGeEO3b3B/8LX5WMVM23luQ=; b=EDVGv6yEMy7PTbky8OfXVA9jYKh0oiM5+
+        sk6xt1CX3smAZYI0P9oaKzOCIkwMemVmh9foKoLwOV/IyVUBTTJc+ljLrovpUDdP
+        pIA4BCkMgcGpU96mM/8o9zjz4bY87GlxWmxlUETAhWUvR7QqjYOuAQqLjAz9vvM2
+        9w41DE+muRcTBgXgq7R5mX2xPAK9bu7QEmldC6d/UhIWw84PgZEMMUkVZDfimvGr
+        9rb1WTZ4HmbXffSgmjvpYAD0fz3a3kb/jxO9vzcKzkIUx9MDQUxolnVJ5gWPPm0P
+        3SACLLdt3Ji3p4//lVUF9os4MIANF8EQiUgikZ8An4R/ZWSxaE7Og==
+X-ME-Sender: <xms:oFkeYrv0LJt2Pjt0ZOYMYd1jCK6G-Z0GZXtRlOiCbijoVlbqDToesg>
+    <xme:oFkeYsdRXoRXAxTjhPFWtM5JX8rU2-dsIwxZfpFocA89gDBFD4vx9xsWmcbxEuUyQ
+    lpRakwPpYLi7A>
+X-ME-Received: <xmr:oFkeYuzzdQb5kL72Vvj74Xn0xRRyhzff8uvNHTyUqFsrLF_56anw9-ykyIbZGqAzSj0KTqXLBgC1Qf0KKdPZ7IM>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddruddtvddguddttdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpeffhffvuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepifhrvghg
+    ucfmjfcuoehgrhgvgheskhhrohgrhhdrtghomheqnecuggftrfgrthhtvghrnhepveeuhe
+    ejgfffgfeivddukedvkedtleelleeghfeljeeiueeggeevueduudekvdetnecuvehluhhs
+    thgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepghhrvghgsehkrhhorg
+    hhrdgtohhm
+X-ME-Proxy: <xmx:oFkeYqNP0oPgoNRpau1EsmnsGvsi8MuHt5Oau7Uh5DcasQw65k9YTg>
+    <xmx:oFkeYr8eoBRonSMDQgE0d2CdwAX12XsrowbLGxOxF_rvtS3YwiTEgg>
+    <xmx:oFkeYqVNxx7WBcYUGhcHc73BR9KI7xEAuh9FjZrqFDwJGYsF_7MqUw>
+    <xmx:olkeYkWtK93reuC1fg-f2X2RrUvR780eGtvCg6vOtajRgdiJ73bSmQ>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 1 Mar 2022 12:36:31 -0500 (EST)
+Date:   Tue, 1 Mar 2022 18:36:27 +0100
+From:   Greg KH <greg@kroah.com>
+To:     Jakob Koschel <jakobkoschel@gmail.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        alsa-devel@alsa-project.org, linux-aspeed@lists.ozlabs.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        linux-iio@vger.kernel.org, nouveau@lists.freedesktop.org,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Cristiano Giuffrida <c.giuffrida@vu.nl>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        samba-technical@lists.samba.org,
+        linux1394-devel@lists.sourceforge.net, drbd-dev@lists.linbit.com,
+        linux-arch <linux-arch@vger.kernel.org>,
+        CIFS <linux-cifs@vger.kernel.org>,
+        KVM list <kvm@vger.kernel.org>,
+        linux-scsi <linux-scsi@vger.kernel.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        linux-staging@lists.linux.dev, "Bos, H.J." <h.j.bos@vu.nl>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        intel-wired-lan@lists.osuosl.org,
+        kgdb-bugreport@lists.sourceforge.net,
+        bcm-kernel-feedback-list@broadcom.com,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Arnd Bergman <arnd@arndb.de>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        intel-gfx <intel-gfx@lists.freedesktop.org>,
+        Brian Johannesmeyer <bjohannesmeyer@gmail.com>,
+        Nathan Chancellor <nathan@kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        v9fs-developer@lists.sourceforge.net,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-sgx@vger.kernel.org,
+        linux-block <linux-block@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>, linux-usb@vger.kernel.org,
+        linux-wireless <linux-wireless@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux F2FS Dev Mailing List 
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        tipc-discussion@lists.sourceforge.net,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        dma <dmaengine@vger.kernel.org>,
+        linux-mediatek@lists.infradead.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Mike Rapoport <rppt@kernel.org>
+Subject: Re: [PATCH 2/6] treewide: remove using list iterator after loop body
+ as a ptr
+Message-ID: <Yh5ZmwiH5AxtQ69K@kroah.com>
+References: <20220228110822.491923-1-jakobkoschel@gmail.com>
+ <20220228110822.491923-3-jakobkoschel@gmail.com>
+ <2e4e95d6-f6c9-a188-e1cd-b1eae465562a@amd.com>
+ <CAHk-=wgQps58DPEOe4y5cTh5oE9EdNTWRLXzgMiETc+mFX7jzw@mail.gmail.com>
+ <CAHk-=wj8fkosQ7=bps5K+DDazBXk=ypfn49A0sEq+7-nZnyfXA@mail.gmail.com>
+ <CAHk-=wiTCvLQkHcJ3y0hpqH7FEk9D28LDvZZogC6OVLk7naBww@mail.gmail.com>
+ <FC710A1A-524E-481B-A668-FC258F529A2E@gmail.com>
+ <CAHk-=whLK11HyvpUtEftOjc3Gup2V77KpAQ2fycj3uai=qceHw@mail.gmail.com>
+ <CEDAD0D9-56EE-4105-9107-72C2EAD940B0@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 91.158.25.70
-X-SA-Exim-Mail-From: cyndis@kapsi.fi
-X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CEDAD0D9-56EE-4105-9107-72C2EAD940B0@gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Mikko Perttunen <mperttunen@nvidia.com>
+On Tue, Mar 01, 2022 at 12:28:15PM +0100, Jakob Koschel wrote:
+> 
+> 
+> > On 1. Mar 2022, at 01:41, Linus Torvalds <torvalds@linux-foundation.org> wrote:
+> > 
+> > On Mon, Feb 28, 2022 at 1:47 PM Jakob Koschel <jakobkoschel@gmail.com> wrote:
+> >> 
+> >> The goal of this is to get compiler warnings right? This would indeed be great.
+> > 
+> > Yes, so I don't mind having a one-time patch that has been gathered
+> > using some automated checker tool, but I don't think that works from a
+> > long-term maintenance perspective.
+> > 
+> > So if we have the basic rule being "don't use the loop iterator after
+> > the loop has finished, because it can cause all kinds of subtle
+> > issues", then in _addition_ to fixing the existing code paths that
+> > have this issue, I really would want to (a) get a compiler warning for
+> > future cases and (b) make it not actually _work_ for future cases.
+> > 
+> > Because otherwise it will just happen again.
+> > 
+> >> Changing the list_for_each_entry() macro first will break all of those cases
+> >> (e.g. the ones using 'list_entry_is_head()).
+> > 
+> > So I have no problems with breaking cases that we basically already
+> > have a patch for due to  your automated tool. There were certainly
+> > more than a handful, but it didn't look _too_ bad to just make the
+> > rule be "don't use the iterator after the loop".
+> > 
+> > Of course, that's just based on that patch of yours. Maybe there are a
+> > ton of other cases that your patch didn't change, because they didn't
+> > match your trigger case, so I may just be overly optimistic here.
+> 
+> Based on the coccinelle script there are ~480 cases that need fixing
+> in total. I'll now finish all of them and then split them by
+> submodules as Greg suggested and repost a patch set per submodule.
+> Sounds good?
 
-Add code to register context devices from device tree, allocate them
-out and manage their refcounts.
+Sounds good to me!
 
-Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
----
-v2:
-* Directly set DMA mask instead of inheriting from Host1x.
-* Use iommu-map instead of custom DT property.
-v4:
-* Use u64 instead of dma_addr_t for DMA mask
-* Use unsigned ints for indexes and adjust error handling flow
-* Parse iommu-map property at top level host1x DT node
-* Use separate DMA mask per device
-* Export symbols as GPL
----
- drivers/gpu/host1x/Makefile  |   1 +
- drivers/gpu/host1x/context.c | 160 +++++++++++++++++++++++++++++++++++
- drivers/gpu/host1x/context.h |  27 ++++++
- drivers/gpu/host1x/dev.c     |  12 ++-
- drivers/gpu/host1x/dev.h     |   2 +
- include/linux/host1x.h       |  18 ++++
- 6 files changed, 219 insertions(+), 1 deletion(-)
- create mode 100644 drivers/gpu/host1x/context.c
- create mode 100644 drivers/gpu/host1x/context.h
+If you need help carving these up and maintaining them over time as
+different subsystem maintainers accept/ignore them, just let me know.
+Doing large patchsets like this can be tough without a lot of
+experience.
 
-diff --git a/drivers/gpu/host1x/Makefile b/drivers/gpu/host1x/Makefile
-index c891a3e33844..8a65e13d113a 100644
---- a/drivers/gpu/host1x/Makefile
-+++ b/drivers/gpu/host1x/Makefile
-@@ -10,6 +10,7 @@ host1x-y = \
- 	debug.o \
- 	mipi.o \
- 	fence.o \
-+	context.o \
- 	hw/host1x01.o \
- 	hw/host1x02.o \
- 	hw/host1x04.o \
-diff --git a/drivers/gpu/host1x/context.c b/drivers/gpu/host1x/context.c
-new file mode 100644
-index 000000000000..c5889be64634
---- /dev/null
-+++ b/drivers/gpu/host1x/context.c
-@@ -0,0 +1,160 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (c) 2021, NVIDIA Corporation.
-+ */
-+
-+#include <linux/device.h>
-+#include <linux/kref.h>
-+#include <linux/of.h>
-+#include <linux/of_platform.h>
-+#include <linux/pid.h>
-+#include <linux/slab.h>
-+
-+#include "context.h"
-+#include "dev.h"
-+
-+int host1x_context_list_init(struct host1x *host1x)
-+{
-+	struct host1x_context_list *cdl = &host1x->context_list;
-+	struct device_node *node = host1x->dev->of_node;
-+	struct host1x_context *ctx;
-+	unsigned int i;
-+	int err;
-+
-+	cdl->devs = NULL;
-+	cdl->len = 0;
-+	mutex_init(&cdl->lock);
-+
-+	err = of_property_count_u32_elems(node, "iommu-map");
-+	if (err < 0)
-+		return 0;
-+
-+	cdl->devs = kcalloc(err, sizeof(*cdl->devs), GFP_KERNEL);
-+	if (!cdl->devs)
-+		return -ENOMEM;
-+	cdl->len = err / 4;
-+
-+	for (i = 0; i < cdl->len; i++) {
-+		struct iommu_fwspec *fwspec;
-+
-+		ctx = &cdl->devs[i];
-+
-+		ctx->host = host1x;
-+
-+		device_initialize(&ctx->dev);
-+
-+		/*
-+		 * Due to an issue with T194 NVENC, only 38 bits can be used.
-+		 * Anyway, 256GiB of IOVA ought to be enough for anyone.
-+		 */
-+		ctx->dma_mask = DMA_BIT_MASK(38);
-+		ctx->dev.dma_mask = &ctx->dma_mask;
-+		ctx->dev.coherent_dma_mask = ctx->dma_mask;
-+		dev_set_name(&ctx->dev, "host1x-ctx.%d", i);
-+		ctx->dev.bus = &host1x_context_device_bus_type;
-+		ctx->dev.parent = host1x->dev;
-+
-+		dma_set_max_seg_size(&ctx->dev, UINT_MAX);
-+
-+		err = device_add(&ctx->dev);
-+		if (err) {
-+			dev_err(host1x->dev, "could not add context device %d: %d\n", i, err);
-+			goto del_devices;
-+		}
-+
-+		err = of_dma_configure_id(&ctx->dev, node, true, &i);
-+		if (err) {
-+			dev_err(host1x->dev, "IOMMU configuration failed for context device %d: %d\n",
-+				i, err);
-+			device_del(&ctx->dev);
-+			goto del_devices;
-+		}
-+
-+		fwspec = dev_iommu_fwspec_get(&ctx->dev);
-+		if (!fwspec) {
-+			dev_err(host1x->dev, "Context device %d has no IOMMU!\n", i);
-+			device_del(&ctx->dev);
-+			goto del_devices;
-+		}
-+
-+		ctx->stream_id = fwspec->ids[0] & 0xffff;
-+	}
-+
-+	return 0;
-+
-+del_devices:
-+	while (i--)
-+		device_del(&cdl->devs[i].dev);
-+
-+	kfree(cdl->devs);
-+	cdl->len = 0;
-+
-+	return err;
-+}
-+
-+void host1x_context_list_free(struct host1x_context_list *cdl)
-+{
-+	unsigned int i;
-+
-+	for (i = 0; i < cdl->len; i++)
-+		device_del(&cdl->devs[i].dev);
-+
-+	kfree(cdl->devs);
-+	cdl->len = 0;
-+}
-+
-+struct host1x_context *host1x_context_alloc(struct host1x *host1x,
-+					    struct pid *pid)
-+{
-+	struct host1x_context_list *cdl = &host1x->context_list;
-+	struct host1x_context *free = NULL;
-+	int i;
-+
-+	if (!cdl->len)
-+		return ERR_PTR(-EOPNOTSUPP);
-+
-+	mutex_lock(&cdl->lock);
-+
-+	for (i = 0; i < cdl->len; i++) {
-+		struct host1x_context *cd = &cdl->devs[i];
-+
-+		if (cd->owner == pid) {
-+			refcount_inc(&cd->ref);
-+			mutex_unlock(&cdl->lock);
-+			return cd;
-+		} else if (!cd->owner && !free) {
-+			free = cd;
-+		}
-+	}
-+
-+	if (!free) {
-+		mutex_unlock(&cdl->lock);
-+		return ERR_PTR(-EBUSY);
-+	}
-+
-+	refcount_set(&free->ref, 1);
-+	free->owner = get_pid(pid);
-+
-+	mutex_unlock(&cdl->lock);
-+
-+	return free;
-+}
-+EXPORT_SYMBOL_GPL(host1x_context_alloc);
-+
-+void host1x_context_get(struct host1x_context *cd)
-+{
-+	refcount_inc(&cd->ref);
-+}
-+EXPORT_SYMBOL_GPL(host1x_context_get);
-+
-+void host1x_context_put(struct host1x_context *cd)
-+{
-+	struct host1x_context_list *cdl = &cd->host->context_list;
-+
-+	if (refcount_dec_and_mutex_lock(&cd->ref, &cdl->lock)) {
-+		put_pid(cd->owner);
-+		cd->owner = NULL;
-+		mutex_unlock(&cdl->lock);
-+	}
-+}
-+EXPORT_SYMBOL_GPL(host1x_context_put);
-diff --git a/drivers/gpu/host1x/context.h b/drivers/gpu/host1x/context.h
-new file mode 100644
-index 000000000000..268ecdf6b1bb
---- /dev/null
-+++ b/drivers/gpu/host1x/context.h
-@@ -0,0 +1,27 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Host1x context devices
-+ *
-+ * Copyright (c) 2020, NVIDIA Corporation.
-+ */
-+
-+#ifndef __HOST1X_CONTEXT_H
-+#define __HOST1X_CONTEXT_H
-+
-+#include <linux/mutex.h>
-+#include <linux/refcount.h>
-+
-+struct host1x;
-+
-+extern struct bus_type host1x_context_device_bus_type;
-+
-+struct host1x_context_list {
-+	struct mutex lock;
-+	struct host1x_context *devs;
-+	unsigned int len;
-+};
-+
-+int host1x_context_list_init(struct host1x *host1x);
-+void host1x_context_list_free(struct host1x_context_list *cdl);
-+
-+#endif
-diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
-index 6994f8c0e02e..40f64efd5865 100644
---- a/drivers/gpu/host1x/dev.c
-+++ b/drivers/gpu/host1x/dev.c
-@@ -28,6 +28,7 @@
- 
- #include "bus.h"
- #include "channel.h"
-+#include "context.h"
- #include "debug.h"
- #include "dev.h"
- #include "intr.h"
-@@ -502,10 +503,16 @@ static int host1x_probe(struct platform_device *pdev)
- 		goto iommu_exit;
- 	}
- 
-+	err = host1x_context_list_init(host);
-+	if (err) {
-+		dev_err(&pdev->dev, "failed to initialize context list\n");
-+		goto free_channels;
-+	}
-+
- 	err = host1x_syncpt_init(host);
- 	if (err) {
- 		dev_err(&pdev->dev, "failed to initialize syncpts\n");
--		goto free_channels;
-+		goto free_contexts;
- 	}
- 
- 	err = host1x_intr_init(host, syncpt_irq);
-@@ -549,6 +556,8 @@ static int host1x_probe(struct platform_device *pdev)
- 	host1x_intr_deinit(host);
- deinit_syncpt:
- 	host1x_syncpt_deinit(host);
-+free_contexts:
-+	host1x_context_list_free(&host->context_list);
- free_channels:
- 	host1x_channel_list_free(&host->channel_list);
- iommu_exit:
-@@ -568,6 +577,7 @@ static int host1x_remove(struct platform_device *pdev)
- 
- 	host1x_intr_deinit(host);
- 	host1x_syncpt_deinit(host);
-+	host1x_context_list_free(&host->context_list);
- 	host1x_iommu_exit(host);
- 	host1x_bo_cache_destroy(&host->cache);
- 
-diff --git a/drivers/gpu/host1x/dev.h b/drivers/gpu/host1x/dev.h
-index ca4b082f0cd4..92f4804d8b70 100644
---- a/drivers/gpu/host1x/dev.h
-+++ b/drivers/gpu/host1x/dev.h
-@@ -14,6 +14,7 @@
- 
- #include "cdma.h"
- #include "channel.h"
-+#include "context.h"
- #include "intr.h"
- #include "job.h"
- #include "syncpt.h"
-@@ -141,6 +142,7 @@ struct host1x {
- 	struct mutex syncpt_mutex;
- 
- 	struct host1x_channel_list channel_list;
-+	struct host1x_context_list context_list;
- 
- 	struct dentry *debugfs;
- 
-diff --git a/include/linux/host1x.h b/include/linux/host1x.h
-index e8dc5bc41f79..9dbdc4b0bb82 100644
---- a/include/linux/host1x.h
-+++ b/include/linux/host1x.h
-@@ -440,4 +440,22 @@ int tegra_mipi_disable(struct tegra_mipi_device *device);
- int tegra_mipi_start_calibration(struct tegra_mipi_device *device);
- int tegra_mipi_finish_calibration(struct tegra_mipi_device *device);
- 
-+/* host1x context devices */
-+
-+struct host1x_context {
-+	struct host1x *host;
-+
-+	refcount_t ref;
-+	struct pid *owner;
-+
-+	struct device dev;
-+	u64 dma_mask;
-+	u32 stream_id;
-+};
-+
-+struct host1x_context *host1x_context_alloc(struct host1x *host1x,
-+					    struct pid *pid);
-+void host1x_context_get(struct host1x_context *cd);
-+void host1x_context_put(struct host1x_context *cd);
-+
- #endif
--- 
-2.35.0
+thanks,
 
+greg k-h
