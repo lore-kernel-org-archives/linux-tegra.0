@@ -2,117 +2,214 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8B54C433FE
-	for <linux-tegra@archiver.kernel.org>; Tue,  1 Mar 2022 12:45:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17A6FC433FE
+	for <linux-tegra@archiver.kernel.org>; Tue,  1 Mar 2022 16:15:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234132AbiCAMpp (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 1 Mar 2022 07:45:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58650 "EHLO
+        id S236045AbiCAQQT (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 1 Mar 2022 11:16:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42016 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232420AbiCAMpp (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 1 Mar 2022 07:45:45 -0500
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA2B4985AF
-        for <linux-tegra@vger.kernel.org>; Tue,  1 Mar 2022 04:45:04 -0800 (PST)
-Received: by mail-wm1-x332.google.com with SMTP id c18-20020a7bc852000000b003806ce86c6dso1157698wml.5
-        for <linux-tegra@vger.kernel.org>; Tue, 01 Mar 2022 04:45:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=vVkDLDktF1NJ9W5pxZGteLQiXPtYz4QvqpHL8HfSgw0=;
-        b=Ly23InJsarN0c8lW9n6BqRnQoZXO6uhUx+iFgQRtqL0fbo/KO78/tC0dA81HXKuyZU
-         ZfhASA/BQj/jacTHdgQMOVkSVezfqiFZbHXlAcT6hSYxHxtpFakk3YSQD/BTUdrZMj/D
-         nHCDcGrffrfX46NuDsoqZpkutTJTns3b2zWy1IFxABNml5FJbz/dyFi1oWirxU5YMI9F
-         YZI+SRa8o10rqeVlgowu2BcLyXgQtUI9fiq1Sq93sIRduco06Ayh0gidnV6XatWkR0pR
-         FqCRCl3TXT6SjuvzD0oI2wNI+/CM1IJqKnpuPe7NWWL6rKFgn05ci8DrzoWT6tz6/tj/
-         pvbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=vVkDLDktF1NJ9W5pxZGteLQiXPtYz4QvqpHL8HfSgw0=;
-        b=n/b0OIL6m2pzw0fT7XFWx086SNs1rHeZbZXkXxiUTrT/GLsyjuGWw9eInREqCUOHly
-         PNEDyBupClQWol2qXuwZo0nIePtacEcnwwVVrpWkTKZp9f+v23C4O17eFQoL+9izIJ94
-         QO4bkq9TlBChQHk6MEtWYJq67fWqUpNvi2LifDn1gCWl28va/Bt8XS7zcGltt4QzDTEe
-         DX24GmHE7d+DPxKV0GCXkNfbLH1Oh1A4yILT0AXqmy5LNW4HBbOD3Yo6V+UNG9DrvQ3q
-         AJPh7COJb1P/sfcinF/wKETEI8vp+8Nk3OOtBeIafzNCrdcjSykQLzjUrCHfJu3+bBG2
-         yAVQ==
-X-Gm-Message-State: AOAM533vKOzA/3maqvvR8/ubSdDjrSRPLxCSAsMPh3BHer8wvvHGuPxS
-        Frzh3F98NqucDbpPy1ZfVRA=
-X-Google-Smtp-Source: ABdhPJywC8YXo+zt45LkAYRRmneKn10kApwWhiB5/AayLAA+CYj8PUsfWsvxUj2wLmjavkXBdTP8pA==
-X-Received: by 2002:a05:600c:3503:b0:345:858e:cbe8 with SMTP id h3-20020a05600c350300b00345858ecbe8mr17148371wmq.73.1646138703180;
-        Tue, 01 Mar 2022 04:45:03 -0800 (PST)
-Received: from orome ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id m10-20020adfe94a000000b001ef57f562ccsm13767800wrn.51.2022.03.01.04.45.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Mar 2022 04:45:01 -0800 (PST)
-Date:   Tue, 1 Mar 2022 13:45:00 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Dave Airlie <airlied@gmail.com>
-Cc:     Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-tegra@vger.kernel.org
-Subject: Re: [GIT PULL] drm/tegra: Changes for v5.18-rc1
-Message-ID: <Yh4VTKcJPm8IC38r@orome>
-References: <20220225163250.1063101-1-thierry.reding@gmail.com>
- <CAPM=9tzr0LSnkHHwP0rUOz+AFwQwtTs38vu+6B-d8VAN=x+BPg@mail.gmail.com>
+        with ESMTP id S229572AbiCAQQR (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 1 Mar 2022 11:16:17 -0500
+Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1764B8EB4A;
+        Tue,  1 Mar 2022 08:15:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
+         s=20161220; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=6+Oq8jelzlqbQiX8GzoogawtERz/ajBxD9i6+lY5xew=; b=u02XHB57b1GKnYc4eKtQlwP+YU
+        mQzI2aQ7gBpzvs/NLdHuaJcj18KHwWj5mPIxm/UxGyNTVVhNKFXQkXnjlqjTGWzwB/cR4TgPw7yyT
+        7WWxqwhn+jNSSP8Au3EryjQFWS/gwY9znJ+iMU0NkZ7qhAGWEpHM4Q6cpjoalrSNTuquqhQyI0Hr7
+        Hqmnb+iKXftQObzvgg4sZfrc11i+9mcYqG9Gkmiq6l1Cb5qhmsq2pPEF77KXFLuVbp0KlK4tzvbCh
+        CUBizMBlQib5poaAKt5Lg4INTaoDCMw+VFETwlf0b0EOyK6bf+FvTSGWyORprvJjwCJwPjVMJXCwE
+        LDx23K7g==;
+Received: from 91-158-25-70.elisa-laajakaista.fi ([91.158.25.70] helo=toshino.localdomain)
+        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <cyndis@kapsi.fi>)
+        id 1nP59q-0003Z8-TY; Tue, 01 Mar 2022 18:15:26 +0200
+From:   cyndis@kapsi.fi
+To:     thierry.reding@gmail.com, jonathanh@nvidia.com, joro@8bytes.org,
+        will@kernel.org, robin.murphy@arm.com, robh+dt@kernel.org,
+        krzysztof.kozlowski@canonical.com
+Cc:     linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Mikko Perttunen <mperttunen@nvidia.com>
+Subject: [PATCH v4 4/9] gpu: host1x: Program context stream ID on submission
+Date:   Tue,  1 Mar 2022 18:14:50 +0200
+Message-Id: <20220301161455.4037062-5-cyndis@kapsi.fi>
+X-Mailer: git-send-email 2.35.0
+In-Reply-To: <20220301161455.4037062-1-cyndis@kapsi.fi>
+References: <20220301161455.4037062-1-cyndis@kapsi.fi>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="wWYfb0W2agy2UDs5"
-Content-Disposition: inline
-In-Reply-To: <CAPM=9tzr0LSnkHHwP0rUOz+AFwQwtTs38vu+6B-d8VAN=x+BPg@mail.gmail.com>
-User-Agent: Mutt/2.2.1 (c8109e14) (2022-02-19)
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 91.158.25.70
+X-SA-Exim-Mail-From: cyndis@kapsi.fi
+X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+From: Mikko Perttunen <mperttunen@nvidia.com>
 
---wWYfb0W2agy2UDs5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Add code to do stream ID switching at the beginning of a job. The
+stream ID is switched to the stream ID specified by the context
+passed in the job structure.
 
-On Mon, Feb 28, 2022 at 04:51:22PM +1000, Dave Airlie wrote:
-> Hi Thierry,
->=20
-> dim: d65e338027e7 ("gpu: host1x: Fix an error handling path in
-> 'host1x_probe()'"): SHA1 in fixes line not found:
-> dim:     e3166698a8a0 ("drm/tegra: Implement buffer object cache")
->=20
-> not the same as
->=20
->  1f39b1dfa53c84b56d7ad37fed44afda7004959d
-> Author: Thierry Reding <treding@nvidia.com>
-> Date:   Fri Feb 7 16:50:52 2020 +0100
->=20
->     drm/tegra: Implement buffer object cache
->=20
-> Please fix that up.
+Before switching the stream ID, an OP_DONE wait is done on the
+channel's engine to ensure that there is no residual ongoing
+work that might do DMA using the new stream ID.
 
-Good catch. I sent up an updated version of the PR.
+Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+---
+v4:
+* Rename job->context to job->memory_context for clarity
+---
+ drivers/gpu/host1x/hw/channel_hw.c        | 52 +++++++++++++++++++++--
+ drivers/gpu/host1x/hw/host1x06_hardware.h | 10 +++++
+ drivers/gpu/host1x/hw/host1x07_hardware.h | 10 +++++
+ include/linux/host1x.h                    |  4 ++
+ 4 files changed, 72 insertions(+), 4 deletions(-)
 
-Thanks,
-Thierry
+diff --git a/drivers/gpu/host1x/hw/channel_hw.c b/drivers/gpu/host1x/hw/channel_hw.c
+index 6b40e9af1e88..f84caf06621a 100644
+--- a/drivers/gpu/host1x/hw/channel_hw.c
++++ b/drivers/gpu/host1x/hw/channel_hw.c
+@@ -180,6 +180,45 @@ static void host1x_enable_gather_filter(struct host1x_channel *ch)
+ #endif
+ }
+ 
++static void host1x_channel_program_engine_streamid(struct host1x_job *job)
++{
++#if HOST1X_HW >= 6
++	u32 fence;
++
++	if (!job->memory_context)
++		return;
++
++	fence = host1x_syncpt_incr_max(job->syncpt, 1);
++
++	/* First, increment a syncpoint on OP_DONE condition.. */
++
++	host1x_cdma_push(&job->channel->cdma,
++		host1x_opcode_nonincr(HOST1X_UCLASS_INCR_SYNCPT, 1),
++		HOST1X_UCLASS_INCR_SYNCPT_INDX_F(job->syncpt->id) |
++			HOST1X_UCLASS_INCR_SYNCPT_COND_F(1));
++
++	/* Wait for syncpoint to increment */
++
++	host1x_cdma_push(&job->channel->cdma,
++		host1x_opcode_setclass(HOST1X_CLASS_HOST1X,
++			host1x_uclass_wait_syncpt_r(), 1),
++		host1x_class_host_wait_syncpt(job->syncpt->id, fence));
++
++	/*
++	 * Now that we know the engine is idle, return to class and
++	 * change stream ID.
++	 */
++
++	host1x_cdma_push(&job->channel->cdma,
++		host1x_opcode_setclass(job->class, 0, 0),
++		HOST1X_OPCODE_NOP);
++
++	host1x_cdma_push(&job->channel->cdma,
++		host1x_opcode_setpayload(job->memory_context->stream_id),
++		host1x_opcode_setstreamid(job->engine_streamid_offset / 4));
++#endif
++}
++
+ static int channel_submit(struct host1x_job *job)
+ {
+ 	struct host1x_channel *ch = job->channel;
+@@ -236,18 +275,23 @@ static int channel_submit(struct host1x_job *job)
+ 	if (sp->base)
+ 		synchronize_syncpt_base(job);
+ 
+-	syncval = host1x_syncpt_incr_max(sp, user_syncpt_incrs);
+-
+ 	host1x_hw_syncpt_assign_to_channel(host, sp, ch);
+ 
+-	job->syncpt_end = syncval;
+-
+ 	/* add a setclass for modules that require it */
+ 	if (job->class)
+ 		host1x_cdma_push(&ch->cdma,
+ 				 host1x_opcode_setclass(job->class, 0, 0),
+ 				 HOST1X_OPCODE_NOP);
+ 
++	/*
++	 * Ensure engine DMA is idle and set new stream ID. May increment
++	 * syncpt max.
++	 */
++	host1x_channel_program_engine_streamid(job);
++
++	syncval = host1x_syncpt_incr_max(sp, user_syncpt_incrs);
++	job->syncpt_end = syncval;
++
+ 	submit_gathers(job, syncval - user_syncpt_incrs);
+ 
+ 	/* end CDMA submit & stash pinned hMems into sync queue */
+diff --git a/drivers/gpu/host1x/hw/host1x06_hardware.h b/drivers/gpu/host1x/hw/host1x06_hardware.h
+index 01a142a09800..5d515745eee7 100644
+--- a/drivers/gpu/host1x/hw/host1x06_hardware.h
++++ b/drivers/gpu/host1x/hw/host1x06_hardware.h
+@@ -127,6 +127,16 @@ static inline u32 host1x_opcode_gather_incr(unsigned offset, unsigned count)
+ 	return (6 << 28) | (offset << 16) | BIT(15) | BIT(14) | count;
+ }
+ 
++static inline u32 host1x_opcode_setstreamid(unsigned streamid)
++{
++	return (7 << 28) | streamid;
++}
++
++static inline u32 host1x_opcode_setpayload(unsigned payload)
++{
++	return (9 << 28) | payload;
++}
++
+ static inline u32 host1x_opcode_gather_wide(unsigned count)
+ {
+ 	return (12 << 28) | count;
+diff --git a/drivers/gpu/host1x/hw/host1x07_hardware.h b/drivers/gpu/host1x/hw/host1x07_hardware.h
+index e6582172ebfd..82c0cc9bb0b5 100644
+--- a/drivers/gpu/host1x/hw/host1x07_hardware.h
++++ b/drivers/gpu/host1x/hw/host1x07_hardware.h
+@@ -127,6 +127,16 @@ static inline u32 host1x_opcode_gather_incr(unsigned offset, unsigned count)
+ 	return (6 << 28) | (offset << 16) | BIT(15) | BIT(14) | count;
+ }
+ 
++static inline u32 host1x_opcode_setstreamid(unsigned streamid)
++{
++	return (7 << 28) | streamid;
++}
++
++static inline u32 host1x_opcode_setpayload(unsigned payload)
++{
++	return (9 << 28) | payload;
++}
++
+ static inline u32 host1x_opcode_gather_wide(unsigned count)
+ {
+ 	return (12 << 28) | count;
+diff --git a/include/linux/host1x.h b/include/linux/host1x.h
+index 9dbdc4b0bb82..2793131e8c96 100644
+--- a/include/linux/host1x.h
++++ b/include/linux/host1x.h
+@@ -321,6 +321,10 @@ struct host1x_job {
+ 
+ 	/* Whether host1x-side firewall should be ran for this job or not */
+ 	bool enable_firewall;
++
++	/* Options for configuring engine data stream ID */
++	struct host1x_context *memory_context;
++	u32 engine_streamid_offset;
+ };
+ 
+ struct host1x_job *host1x_job_alloc(struct host1x_channel *ch,
+-- 
+2.35.0
 
---wWYfb0W2agy2UDs5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmIeFUwACgkQ3SOs138+
-s6HAiw/+LMPw4Gg1CT1MPuljUaQb9yxW4TPoJIusARcNaIwGwpViYD5EXBuibhK4
-c/6nbXStHQkQEC+mgXh7RndAdNqinTGcpidnN2Kw5YvYsDxnVEc4L0xmc62FNHcH
-aVJGVBTInfdg2KRGxBIUhTUXxEV505JV/RaKNqe+W0FHST5L2ueBsAs2Izu8ADa2
-V6ktwtWbq0nxslAAjVx29BeT2fgSy0gKN/AGGiv9ggclP2WdQj4sto5F26bHnHu1
-TritSWIcff9NWq/2l4OG1mmPz55iUr9OKA479bUUSAXCZuvmdXleFJSMy8kD5S0D
-zHnAunCtkugCBRYSaOCP1tyb7ir7C/Ewbhqgag4mdG5xriXE7v1KXFtG3DVKALt7
-CvlJ6eqmjaKdCdPuEIvO1BrNgWZ+AkuG3m0ims90bn99ZLOuE1r0M5c/EtUCwRaG
-dQK5T7rHogNndPNgd8jeBPOEM7IWaCZ2YQ+0FLHHJQAIgpYcMzqCYkPPYBHWhFof
-0sR3zDz2lYrNU4h7KgcuEIHmpRjS2Lg/3Xd8mMhbV/PU7lX/k8MOJ98cSOmEy5y1
-v2pS3ugb8roNilUvtHGkmMM+DavgbI/cO++u/AiRvkIdHPQcvOSjrS2nJCvHk0J2
-cYZIiCXxeMWqcWUobWmpEGyOETszc7SGH9vYeTbhTAvxnORV6TA=
-=6hPg
------END PGP SIGNATURE-----
-
---wWYfb0W2agy2UDs5--
