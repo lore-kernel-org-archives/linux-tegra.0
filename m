@@ -2,17 +2,17 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17A6FC433FE
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D889EC433F5
 	for <linux-tegra@archiver.kernel.org>; Tue,  1 Mar 2022 16:15:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236045AbiCAQQT (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        id S235982AbiCAQQT (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
         Tue, 1 Mar 2022 11:16:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42016 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42026 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229572AbiCAQQR (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 1 Mar 2022 11:16:17 -0500
+        with ESMTP id S230335AbiCAQQS (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 1 Mar 2022 11:16:18 -0500
 Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1764B8EB4A;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 282D990CEF;
         Tue,  1 Mar 2022 08:15:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
          s=20161220; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
@@ -20,17 +20,17 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
         Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
         :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
         List-Post:List-Owner:List-Archive;
-        bh=6+Oq8jelzlqbQiX8GzoogawtERz/ajBxD9i6+lY5xew=; b=u02XHB57b1GKnYc4eKtQlwP+YU
-        mQzI2aQ7gBpzvs/NLdHuaJcj18KHwWj5mPIxm/UxGyNTVVhNKFXQkXnjlqjTGWzwB/cR4TgPw7yyT
-        7WWxqwhn+jNSSP8Au3EryjQFWS/gwY9znJ+iMU0NkZ7qhAGWEpHM4Q6cpjoalrSNTuquqhQyI0Hr7
-        Hqmnb+iKXftQObzvgg4sZfrc11i+9mcYqG9Gkmiq6l1Cb5qhmsq2pPEF77KXFLuVbp0KlK4tzvbCh
-        CUBizMBlQib5poaAKt5Lg4INTaoDCMw+VFETwlf0b0EOyK6bf+FvTSGWyORprvJjwCJwPjVMJXCwE
-        LDx23K7g==;
+        bh=6TpezAeFb9g9AHiww5bc22k1x+PyMf+mQ2/IdP7xRCs=; b=S29TLmBdJzh5hHidtdj1FNr9ar
+        GDU7/g3f17LE/bFVTb9oIOHaOG0fWmX8gQKZLbZyo/WvfVlW+woMrIphRpTpT5Kh76GzfiRbiuDLi
+        d1Z46CYkAwPGocfnSsCbZgI02xeJjcjsFChtSD4HxlZS9qQ1Bm8goYXtIRaQMKm1ihZWCSxMYVWmG
+        eqiqMhry612GITThisyjeSiq3puDcE09ICV4sEJzyDR4hIuNyIHQDMu2huwww9XIRySznfXRThco7
+        jLzP+uyfgb5RDYpSU/VzwwEya5GXjBeDPZB7l8Tgs1NRhR6ixDksruSpm9Gv25V2PTJf0GkVwGFIs
+        Z0rMmVQA==;
 Received: from 91-158-25-70.elisa-laajakaista.fi ([91.158.25.70] helo=toshino.localdomain)
         by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.89)
         (envelope-from <cyndis@kapsi.fi>)
-        id 1nP59q-0003Z8-TY; Tue, 01 Mar 2022 18:15:26 +0200
+        id 1nP59r-0003Z8-8n; Tue, 01 Mar 2022 18:15:27 +0200
 From:   cyndis@kapsi.fi
 To:     thierry.reding@gmail.com, jonathanh@nvidia.com, joro@8bytes.org,
         will@kernel.org, robin.murphy@arm.com, robh+dt@kernel.org,
@@ -39,9 +39,9 @@ Cc:     linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
         iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         Mikko Perttunen <mperttunen@nvidia.com>
-Subject: [PATCH v4 4/9] gpu: host1x: Program context stream ID on submission
-Date:   Tue,  1 Mar 2022 18:14:50 +0200
-Message-Id: <20220301161455.4037062-5-cyndis@kapsi.fi>
+Subject: [PATCH v4 8/9] drm/tegra: Support context isolation
+Date:   Tue,  1 Mar 2022 18:14:54 +0200
+Message-Id: <20220301161455.4037062-9-cyndis@kapsi.fi>
 X-Mailer: git-send-email 2.35.0
 In-Reply-To: <20220301161455.4037062-1-cyndis@kapsi.fi>
 References: <20220301161455.4037062-1-cyndis@kapsi.fi>
@@ -56,160 +56,193 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Mikko Perttunen <mperttunen@nvidia.com>
 
-Add code to do stream ID switching at the beginning of a job. The
-stream ID is switched to the stream ID specified by the context
-passed in the job structure.
-
-Before switching the stream ID, an OP_DONE wait is done on the
-channel's engine to ensure that there is no residual ongoing
-work that might do DMA using the new stream ID.
+For engines that support context isolation, allocate a context when
+opening a channel, and set up stream ID offset and context fields
+when submitting a job.
 
 Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
 ---
 v4:
+* Separate error and output values in get_streamid_offset API
+* Improve error handling
 * Rename job->context to job->memory_context for clarity
 ---
- drivers/gpu/host1x/hw/channel_hw.c        | 52 +++++++++++++++++++++--
- drivers/gpu/host1x/hw/host1x06_hardware.h | 10 +++++
- drivers/gpu/host1x/hw/host1x07_hardware.h | 10 +++++
- include/linux/host1x.h                    |  4 ++
- 4 files changed, 72 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/tegra/drm.h    |  2 ++
+ drivers/gpu/drm/tegra/submit.c | 21 +++++++++++++++-
+ drivers/gpu/drm/tegra/uapi.c   | 45 ++++++++++++++++++++++++++++++++--
+ 3 files changed, 65 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/host1x/hw/channel_hw.c b/drivers/gpu/host1x/hw/channel_hw.c
-index 6b40e9af1e88..f84caf06621a 100644
---- a/drivers/gpu/host1x/hw/channel_hw.c
-+++ b/drivers/gpu/host1x/hw/channel_hw.c
-@@ -180,6 +180,45 @@ static void host1x_enable_gather_filter(struct host1x_channel *ch)
- #endif
- }
+diff --git a/drivers/gpu/drm/tegra/drm.h b/drivers/gpu/drm/tegra/drm.h
+index fc0a19554eac..608daba01587 100644
+--- a/drivers/gpu/drm/tegra/drm.h
++++ b/drivers/gpu/drm/tegra/drm.h
+@@ -80,6 +80,7 @@ struct tegra_drm_context {
  
-+static void host1x_channel_program_engine_streamid(struct host1x_job *job)
-+{
-+#if HOST1X_HW >= 6
-+	u32 fence;
-+
-+	if (!job->memory_context)
-+		return;
-+
-+	fence = host1x_syncpt_incr_max(job->syncpt, 1);
-+
-+	/* First, increment a syncpoint on OP_DONE condition.. */
-+
-+	host1x_cdma_push(&job->channel->cdma,
-+		host1x_opcode_nonincr(HOST1X_UCLASS_INCR_SYNCPT, 1),
-+		HOST1X_UCLASS_INCR_SYNCPT_INDX_F(job->syncpt->id) |
-+			HOST1X_UCLASS_INCR_SYNCPT_COND_F(1));
-+
-+	/* Wait for syncpoint to increment */
-+
-+	host1x_cdma_push(&job->channel->cdma,
-+		host1x_opcode_setclass(HOST1X_CLASS_HOST1X,
-+			host1x_uclass_wait_syncpt_r(), 1),
-+		host1x_class_host_wait_syncpt(job->syncpt->id, fence));
-+
-+	/*
-+	 * Now that we know the engine is idle, return to class and
-+	 * change stream ID.
-+	 */
-+
-+	host1x_cdma_push(&job->channel->cdma,
-+		host1x_opcode_setclass(job->class, 0, 0),
-+		HOST1X_OPCODE_NOP);
-+
-+	host1x_cdma_push(&job->channel->cdma,
-+		host1x_opcode_setpayload(job->memory_context->stream_id),
-+		host1x_opcode_setstreamid(job->engine_streamid_offset / 4));
-+#endif
-+}
-+
- static int channel_submit(struct host1x_job *job)
- {
- 	struct host1x_channel *ch = job->channel;
-@@ -236,18 +275,23 @@ static int channel_submit(struct host1x_job *job)
- 	if (sp->base)
- 		synchronize_syncpt_base(job);
- 
--	syncval = host1x_syncpt_incr_max(sp, user_syncpt_incrs);
--
- 	host1x_hw_syncpt_assign_to_channel(host, sp, ch);
- 
--	job->syncpt_end = syncval;
--
- 	/* add a setclass for modules that require it */
- 	if (job->class)
- 		host1x_cdma_push(&ch->cdma,
- 				 host1x_opcode_setclass(job->class, 0, 0),
- 				 HOST1X_OPCODE_NOP);
- 
-+	/*
-+	 * Ensure engine DMA is idle and set new stream ID. May increment
-+	 * syncpt max.
-+	 */
-+	host1x_channel_program_engine_streamid(job);
-+
-+	syncval = host1x_syncpt_incr_max(sp, user_syncpt_incrs);
-+	job->syncpt_end = syncval;
-+
- 	submit_gathers(job, syncval - user_syncpt_incrs);
- 
- 	/* end CDMA submit & stash pinned hMems into sync queue */
-diff --git a/drivers/gpu/host1x/hw/host1x06_hardware.h b/drivers/gpu/host1x/hw/host1x06_hardware.h
-index 01a142a09800..5d515745eee7 100644
---- a/drivers/gpu/host1x/hw/host1x06_hardware.h
-+++ b/drivers/gpu/host1x/hw/host1x06_hardware.h
-@@ -127,6 +127,16 @@ static inline u32 host1x_opcode_gather_incr(unsigned offset, unsigned count)
- 	return (6 << 28) | (offset << 16) | BIT(15) | BIT(14) | count;
- }
- 
-+static inline u32 host1x_opcode_setstreamid(unsigned streamid)
-+{
-+	return (7 << 28) | streamid;
-+}
-+
-+static inline u32 host1x_opcode_setpayload(unsigned payload)
-+{
-+	return (9 << 28) | payload;
-+}
-+
- static inline u32 host1x_opcode_gather_wide(unsigned count)
- {
- 	return (12 << 28) | count;
-diff --git a/drivers/gpu/host1x/hw/host1x07_hardware.h b/drivers/gpu/host1x/hw/host1x07_hardware.h
-index e6582172ebfd..82c0cc9bb0b5 100644
---- a/drivers/gpu/host1x/hw/host1x07_hardware.h
-+++ b/drivers/gpu/host1x/hw/host1x07_hardware.h
-@@ -127,6 +127,16 @@ static inline u32 host1x_opcode_gather_incr(unsigned offset, unsigned count)
- 	return (6 << 28) | (offset << 16) | BIT(15) | BIT(14) | count;
- }
- 
-+static inline u32 host1x_opcode_setstreamid(unsigned streamid)
-+{
-+	return (7 << 28) | streamid;
-+}
-+
-+static inline u32 host1x_opcode_setpayload(unsigned payload)
-+{
-+	return (9 << 28) | payload;
-+}
-+
- static inline u32 host1x_opcode_gather_wide(unsigned count)
- {
- 	return (12 << 28) | count;
-diff --git a/include/linux/host1x.h b/include/linux/host1x.h
-index 9dbdc4b0bb82..2793131e8c96 100644
---- a/include/linux/host1x.h
-+++ b/include/linux/host1x.h
-@@ -321,6 +321,10 @@ struct host1x_job {
- 
- 	/* Whether host1x-side firewall should be ran for this job or not */
- 	bool enable_firewall;
-+
-+	/* Options for configuring engine data stream ID */
+ 	/* Only used by new UAPI. */
+ 	struct xarray mappings;
 +	struct host1x_context *memory_context;
-+	u32 engine_streamid_offset;
  };
  
- struct host1x_job *host1x_job_alloc(struct host1x_channel *ch,
+ struct tegra_drm_client_ops {
+@@ -91,6 +92,7 @@ struct tegra_drm_client_ops {
+ 	int (*submit)(struct tegra_drm_context *context,
+ 		      struct drm_tegra_submit *args, struct drm_device *drm,
+ 		      struct drm_file *file);
++	int (*get_streamid_offset)(struct tegra_drm_client *client, u32 *offset);
+ };
+ 
+ int tegra_drm_submit(struct tegra_drm_context *context,
+diff --git a/drivers/gpu/drm/tegra/submit.c b/drivers/gpu/drm/tegra/submit.c
+index 6d6dd8c35475..fd0ba09e552a 100644
+--- a/drivers/gpu/drm/tegra/submit.c
++++ b/drivers/gpu/drm/tegra/submit.c
+@@ -498,6 +498,9 @@ static void release_job(struct host1x_job *job)
+ 	struct tegra_drm_submit_data *job_data = job->user_data;
+ 	u32 i;
+ 
++	if (job->memory_context)
++		host1x_context_put(job->memory_context);
++
+ 	for (i = 0; i < job_data->num_used_mappings; i++)
+ 		tegra_drm_mapping_put(job_data->used_mappings[i].mapping);
+ 
+@@ -588,11 +591,24 @@ int tegra_drm_ioctl_channel_submit(struct drm_device *drm, void *data,
+ 		goto put_job;
+ 	}
+ 
++	if (context->memory_context && context->client->ops->get_streamid_offset) {
++		int offset;
++
++		err = context->client->ops->get_streamid_offset(context->client, &offset);
++		if (!err) {
++			job->memory_context = context->memory_context;
++			job->engine_streamid_offset = offset;
++			host1x_context_get(job->memory_context);
++		} else if (err != -EOPNOTSUPP) {
++			goto unpin_job;
++		}
++	}
++
+ 	/* Boot engine. */
+ 	err = pm_runtime_resume_and_get(context->client->base.dev);
+ 	if (err < 0) {
+ 		SUBMIT_ERR(context, "could not power up engine: %d", err);
+-		goto unpin_job;
++		goto put_memory_context;
+ 	}
+ 
+ 	job->user_data = job_data;
+@@ -627,6 +643,9 @@ int tegra_drm_ioctl_channel_submit(struct drm_device *drm, void *data,
+ 
+ 	goto put_job;
+ 
++put_memory_context:
++	if (job->memory_context)
++		host1x_context_put(job->memory_context);
+ unpin_job:
+ 	host1x_job_unpin(job);
+ put_job:
+diff --git a/drivers/gpu/drm/tegra/uapi.c b/drivers/gpu/drm/tegra/uapi.c
+index 9ab9179d2026..475febb6d86b 100644
+--- a/drivers/gpu/drm/tegra/uapi.c
++++ b/drivers/gpu/drm/tegra/uapi.c
+@@ -33,6 +33,9 @@ static void tegra_drm_channel_context_close(struct tegra_drm_context *context)
+ 	struct tegra_drm_mapping *mapping;
+ 	unsigned long id;
+ 
++	if (context->memory_context)
++		host1x_context_put(context->memory_context);
++
+ 	xa_for_each(&context->mappings, id, mapping)
+ 		tegra_drm_mapping_put(mapping);
+ 
+@@ -72,6 +75,7 @@ static struct tegra_drm_client *tegra_drm_find_client(struct tegra_drm *tegra, u
+ 
+ int tegra_drm_ioctl_channel_open(struct drm_device *drm, void *data, struct drm_file *file)
+ {
++	struct host1x *host = tegra_drm_to_host1x(drm->dev_private);
+ 	struct tegra_drm_file *fpriv = file->driver_priv;
+ 	struct tegra_drm *tegra = drm->dev_private;
+ 	struct drm_tegra_channel_open *args = data;
+@@ -102,10 +106,38 @@ int tegra_drm_ioctl_channel_open(struct drm_device *drm, void *data, struct drm_
+ 		}
+ 	}
+ 
++	/* Only allocate context if the engine supports context isolation. */
++	if (client->ops->get_streamid_offset) {
++		u32 offset;
++
++		err = client->ops->get_streamid_offset(client, &offset);
++		if (!err) {
++			context->memory_context =
++				host1x_context_alloc(host, get_task_pid(current, PIDTYPE_TGID));
++		} else if (err == -EOPNOTSUPP) {
++			context->memory_context = NULL;
++		} else {
++			goto put_channel;
++		}
++
++		if (IS_ERR(context->memory_context)) {
++			if (PTR_ERR(context->memory_context) != -EOPNOTSUPP) {
++				err = PTR_ERR(context->memory_context);
++				goto put_channel;
++			} else {
++				/*
++				 * OK, HW does not support contexts or contexts
++				 * are disabled.
++				 */
++				context->memory_context = NULL;
++			}
++		}
++	}
++
+ 	err = xa_alloc(&fpriv->contexts, &args->context, context, XA_LIMIT(1, U32_MAX),
+ 		       GFP_KERNEL);
+ 	if (err < 0)
+-		goto put_channel;
++		goto put_memctx;
+ 
+ 	context->client = client;
+ 	xa_init_flags(&context->mappings, XA_FLAGS_ALLOC1);
+@@ -118,6 +150,9 @@ int tegra_drm_ioctl_channel_open(struct drm_device *drm, void *data, struct drm_
+ 
+ 	return 0;
+ 
++put_memctx:
++	if (context->memory_context)
++		host1x_context_put(context->memory_context);
+ put_channel:
+ 	host1x_channel_put(context->channel);
+ free:
+@@ -156,6 +191,7 @@ int tegra_drm_ioctl_channel_map(struct drm_device *drm, void *data, struct drm_f
+ 	struct tegra_drm_mapping *mapping;
+ 	struct tegra_drm_context *context;
+ 	enum dma_data_direction direction;
++	struct device *mapping_dev;
+ 	int err = 0;
+ 
+ 	if (args->flags & ~DRM_TEGRA_CHANNEL_MAP_READ_WRITE)
+@@ -177,6 +213,11 @@ int tegra_drm_ioctl_channel_map(struct drm_device *drm, void *data, struct drm_f
+ 
+ 	kref_init(&mapping->ref);
+ 
++	if (context->memory_context)
++		mapping_dev = &context->memory_context->dev;
++	else
++		mapping_dev = context->client->base.dev;
++
+ 	mapping->bo = tegra_gem_lookup(file, args->handle);
+ 	if (!mapping->bo) {
+ 		err = -EINVAL;
+@@ -201,7 +242,7 @@ int tegra_drm_ioctl_channel_map(struct drm_device *drm, void *data, struct drm_f
+ 		goto put_gem;
+ 	}
+ 
+-	mapping->map = host1x_bo_pin(context->client->base.dev, mapping->bo, direction, NULL);
++	mapping->map = host1x_bo_pin(mapping_dev, mapping->bo, direction, NULL);
+ 	if (IS_ERR(mapping->map)) {
+ 		err = PTR_ERR(mapping->map);
+ 		goto put_gem;
 -- 
 2.35.0
 
