@@ -2,70 +2,73 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED4EAC433F5
-	for <linux-tegra@archiver.kernel.org>; Tue,  1 Mar 2022 00:41:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA515C433EF
+	for <linux-tegra@archiver.kernel.org>; Tue,  1 Mar 2022 00:45:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231618AbiCAAmP (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 28 Feb 2022 19:42:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51724 "EHLO
+        id S231894AbiCAAqY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 28 Feb 2022 19:46:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38900 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231605AbiCAAmO (ORCPT
+        with ESMTP id S231865AbiCAAqX (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 28 Feb 2022 19:42:14 -0500
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4269FB7C4
-        for <linux-tegra@vger.kernel.org>; Mon, 28 Feb 2022 16:41:33 -0800 (PST)
-Received: by mail-ej1-x630.google.com with SMTP id hw13so28189512ejc.9
-        for <linux-tegra@vger.kernel.org>; Mon, 28 Feb 2022 16:41:33 -0800 (PST)
+        Mon, 28 Feb 2022 19:46:23 -0500
+Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31FEE140B0
+        for <linux-tegra@vger.kernel.org>; Mon, 28 Feb 2022 16:45:43 -0800 (PST)
+Received: by mail-ej1-x636.google.com with SMTP id vz16so28356723ejb.0
+        for <linux-tegra@vger.kernel.org>; Mon, 28 Feb 2022 16:45:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=cUh7YOptqnvj33mIS3WykOaibv0ctq8lQu0USbAcExo=;
-        b=gduPBw6Te4zeyjZyaNuQQxqABiMq6fHp34ckrObT/FmzNLnDhHL/6KerjIgP5i0R8H
-         Vm0a8HwZ8W8PnRRZRxnIsSc7yENLFtSGfKUqeeqvjpp8888PKIgF8NBwqM5k9ZzIrQCZ
-         iYuicfiGesL4zlgkSDywOQeUUhyrP2kMozUBc=
+        bh=BlmDHl6uq7o6y8aC/cJk7fo5oLGvHdeOO4XUoHPiZHY=;
+        b=CuWkmdhnuqYUPLlFfSW5kqvLG+/BaUYxswQvwT5TlbeMKdgX0f6Tdop/2MomIxMIWT
+         P4yfskuo3sOir2HSEC5b7N//0EkwPlLVbS+ffho6xWO2QaHJfy0oi9bnLtClO4bSDX+r
+         dQzBghLtont2uRRAhfDOfzUglX2wpO3DzhpXQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=cUh7YOptqnvj33mIS3WykOaibv0ctq8lQu0USbAcExo=;
-        b=yCHhm0TeLLFBO3x4/uNPZQ3UlONQohY9Zw/1PWGUKaDOrE6MRR1JzYW9pP98epQhVH
-         R+4KhC9sx/eVRHrBXP2Byg3CZD+ha1O5NKk7TzXJGar4jf/iE1wPx1+mRGnQ4hTD5+MJ
-         iILv6+IaHxNgJNkEYQOkcF7zvraYeBJX7Br8PElNeB5sE//kvaXvH5fA5n3E3B5/nOCE
-         V8ZrosF6bEy/wM3RIr2Q6slRbDvMxrfTFqLg8RfJSPIo0N2b2GR6VUddEjH+BA/qQ3XZ
-         LyRZf6nJb3CjGfEGC7stuPnWUB5rTBQvzANcOv8osQDf/+kxPWlywT3WJ67iCExe3gNS
-         G8hA==
-X-Gm-Message-State: AOAM530TMMO7sAoKQay1Eo+sQjv7gzDUf9FfcX1lNlQeU0YqX8APyWOv
-        tc5kQ6+qc/dSkuVvMWqkpZe13XsC4yGEBnMRYuk=
-X-Google-Smtp-Source: ABdhPJzTs8zJD1StWLrnIk7Y2yNrzwW3LMAnOFRm4vU0KEbuj+zauwY4fXU45gXtVBfs4NgDjqW9fw==
-X-Received: by 2002:a17:906:1ec3:b0:6cf:d118:59e2 with SMTP id m3-20020a1709061ec300b006cfd11859e2mr17503006ejj.767.1646095291897;
-        Mon, 28 Feb 2022 16:41:31 -0800 (PST)
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com. [209.85.218.52])
-        by smtp.gmail.com with ESMTPSA id gs39-20020a1709072d2700b006d3ed4f51c6sm4916932ejc.0.2022.02.28.16.41.31
+        bh=BlmDHl6uq7o6y8aC/cJk7fo5oLGvHdeOO4XUoHPiZHY=;
+        b=5keyrhjKIuI9USXNTsa4Pi1lFOUwLufK+YrOiNylmLGjVjWXP5VgahWOKhGH/cGkUU
+         mZ2waQwdN64MBlMa3c6GVwJImxbhTI2DbJEgDQ1PloLkDou9VjjYJQAcufHcsaarIbDq
+         GCKbHCrfwHI7vbexZVv6PaaGG/r5X+rdYKtBcAW4KADJiBFiKZb+sL8vhvzQor9CyRXh
+         iR2OCpFvLR/POsiUoBriacBfpycDmUzw0Uk+8U75ezOMjnV6hMZw9J7Fz6xSzlcBGNyA
+         hwZJxRK98Y+TdW8mpwAaNiu4t19DcFPQONz55qF1FIJ9Y7lzI4L1G+mlvkVdvETJ6fvG
+         xgLA==
+X-Gm-Message-State: AOAM531oyIbd5dhHTCw47STxKhZRrY2vW35lmLGVIJWTvdmhDfjR4Dmt
+        5PJKB31uUtZARycP+KhhTqhGpI/BItM35LFFQvI=
+X-Google-Smtp-Source: ABdhPJyNqSDFtKTEWZRp0jJLhIyYIjIcS1RjQMOXE04D4IdxBSJ4McyyHUjQeMlUuM0hGnUbopLeAA==
+X-Received: by 2002:a17:906:ae04:b0:6d6:e573:b1df with SMTP id le4-20020a170906ae0400b006d6e573b1dfmr260955ejb.24.1646095541517;
+        Mon, 28 Feb 2022 16:45:41 -0800 (PST)
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com. [209.85.221.53])
+        by smtp.gmail.com with ESMTPSA id w19-20020a17090633d300b006ce3d425b22sm4803507eja.1.2022.02.28.16.45.38
         for <linux-tegra@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Feb 2022 16:41:31 -0800 (PST)
-Received: by mail-ej1-f52.google.com with SMTP id dr20so3530019ejc.6
-        for <linux-tegra@vger.kernel.org>; Mon, 28 Feb 2022 16:41:31 -0800 (PST)
-X-Received: by 2002:ac2:4d91:0:b0:443:127b:558a with SMTP id
- g17-20020ac24d91000000b00443127b558amr14552706lfe.542.1646095280878; Mon, 28
- Feb 2022 16:41:20 -0800 (PST)
+        Mon, 28 Feb 2022 16:45:39 -0800 (PST)
+Received: by mail-wr1-f53.google.com with SMTP id d3so18019625wrf.1
+        for <linux-tegra@vger.kernel.org>; Mon, 28 Feb 2022 16:45:38 -0800 (PST)
+X-Received: by 2002:a05:6512:3042:b0:437:96f5:e68a with SMTP id
+ b2-20020a056512304200b0043796f5e68amr14778245lfb.449.1646095527444; Mon, 28
+ Feb 2022 16:45:27 -0800 (PST)
 MIME-Version: 1.0
 References: <20220228110822.491923-1-jakobkoschel@gmail.com>
  <20220228110822.491923-3-jakobkoschel@gmail.com> <2e4e95d6-f6c9-a188-e1cd-b1eae465562a@amd.com>
  <CAHk-=wgQps58DPEOe4y5cTh5oE9EdNTWRLXzgMiETc+mFX7jzw@mail.gmail.com>
  <CAHk-=wj8fkosQ7=bps5K+DDazBXk=ypfn49A0sEq+7-nZnyfXA@mail.gmail.com>
- <CAHk-=wiTCvLQkHcJ3y0hpqH7FEk9D28LDvZZogC6OVLk7naBww@mail.gmail.com> <FC710A1A-524E-481B-A668-FC258F529A2E@gmail.com>
-In-Reply-To: <FC710A1A-524E-481B-A668-FC258F529A2E@gmail.com>
+ <CAHk-=wiTCvLQkHcJ3y0hpqH7FEk9D28LDvZZogC6OVLk7naBww@mail.gmail.com>
+ <Yh0tl3Lni4weIMkl@casper.infradead.org> <CAHk-=wgBfJ1-cPA2LTvFyyy8owpfmtCuyiZi4+um8DhFNe+CyA@mail.gmail.com>
+ <Yh1aMm3hFe/j9ZbI@casper.infradead.org>
+In-Reply-To: <Yh1aMm3hFe/j9ZbI@casper.infradead.org>
 From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 28 Feb 2022 16:41:04 -0800
-X-Gmail-Original-Message-ID: <CAHk-=whLK11HyvpUtEftOjc3Gup2V77KpAQ2fycj3uai=qceHw@mail.gmail.com>
-Message-ID: <CAHk-=whLK11HyvpUtEftOjc3Gup2V77KpAQ2fycj3uai=qceHw@mail.gmail.com>
+Date:   Mon, 28 Feb 2022 16:45:11 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wi0gSUMBr2SVF01Gy1xC1w1iGtJT5ztju9BPWYKjdh+NA@mail.gmail.com>
+Message-ID: <CAHk-=wi0gSUMBr2SVF01Gy1xC1w1iGtJT5ztju9BPWYKjdh+NA@mail.gmail.com>
 Subject: Re: [PATCH 2/6] treewide: remove using list iterator after loop body
  as a ptr
-To:     Jakob Koschel <jakobkoschel@gmail.com>
+To:     Matthew Wilcox <willy@infradead.org>
 Cc:     =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+        Jakob Koschel <jakobkoschel@gmail.com>,
         alsa-devel@alsa-project.org, linux-aspeed@lists.ozlabs.org,
         "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
         linux-iio@vger.kernel.org, nouveau@lists.freedesktop.org,
@@ -119,100 +122,22 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, Feb 28, 2022 at 1:47 PM Jakob Koschel <jakobkoschel@gmail.com> wrote:
+On Mon, Feb 28, 2022 at 3:26 PM Matthew Wilcox <willy@infradead.org> wrote:
 >
-> The goal of this is to get compiler warnings right? This would indeed be great.
+> #define ___PASTE(a, b)  a##b
+> #define __PASTE(a, b) ___PASTE(a, b)
+> #define _min(a, b, u) ({         \
 
-Yes, so I don't mind having a one-time patch that has been gathered
-using some automated checker tool, but I don't think that works from a
-long-term maintenance perspective.
+Yeah, except that's ugly beyond belief, plus it's literally not what
+we do in the kernel.
 
-So if we have the basic rule being "don't use the loop iterator after
-the loop has finished, because it can cause all kinds of subtle
-issues", then in _addition_ to fixing the existing code paths that
-have this issue, I really would want to (a) get a compiler warning for
-future cases and (b) make it not actually _work_ for future cases.
+Really. The "-Wshadow doesn't work on the kernel" is not some new
+issue, because you have to do completely insane things to the source
+code to enable it.
 
-Because otherwise it will just happen again.
+Just compare your uglier-than-sin version to my straightforward one.
+One does the usual and obvious "use a private variable to avoid the
+classic multi-use of a macro argument". And the other one is an
+abomination.
 
-> Changing the list_for_each_entry() macro first will break all of those cases
-> (e.g. the ones using 'list_entry_is_head()).
-
-So I have no problems with breaking cases that we basically already
-have a patch for due to  your automated tool. There were certainly
-more than a handful, but it didn't look _too_ bad to just make the
-rule be "don't use the iterator after the loop".
-
-Of course, that's just based on that patch of yours. Maybe there are a
-ton of other cases that your patch didn't change, because they didn't
-match your trigger case, so I may just be overly optimistic here.
-
-But basically to _me_, the important part is that the end result is
-maintainable longer-term. I'm more than happy to have a one-time patch
-to fix a lot of dubious cases if we can then have clean rules going
-forward.
-
-> I assumed it is better to fix those cases first and then have a simple
-> coccinelle script changing the macro + moving the iterator into the scope
-> of the macro.
-
-So that had been another plan of mine, until I actually looked at
-changing the macro. In the one case I looked at, it was ugly beyond
-belief.
-
-It turns out that just syntactically, it's really nice to give the
-type of the iterator from outside the way we do now. Yeah, it may be a
-bit odd, and maybe it's partly because I'm so used to the
-"list_for_each_list_entry()" syntax, but moving the type into the loop
-construct really made it nasty - either one very complex line, or
-having to split it over two lines which was even worse.
-
-Maybe the place I looked at just happened to have a long typename, but
-it's basically always going to be a struct, so it's never a _simple_
-type. And it just looked very odd adn unnatural to have the type as
-one of the "arguments" to that list_for_each_entry() macro.
-
-So yes, initially my idea had been to just move the iterator entirely
-inside the macro. But specifying the type got so ugly that I think
-that
-
-        typeof (pos) pos
-
-trick inside the macro really ends up giving us the best of all worlds:
-
- (a) let's us keep the existing syntax and code for all the nice cases
-that did everything inside the loop anyway
-
- (b) gives us a nice warning for any normal use-after-loop case
-(unless you explicitly initialized it like that
-sgx_mmu_notifier_release() function did for no good reason
-
- (c) also guarantees that even if you don't get a warning,
-non-converted (or newly written) bad code won't actually _work_
-
-so you end up getting the new rules without any ambiguity or mistaken
-
-> With this you are no longer able to set the 'outer' pos within the list
-> iterator loop body or am I missing something?
-
-Correct. Any assignment inside the loop will be entirely just to the
-local loop case. So any "break;" out of the loop will have to set
-another variable - like your updated patch did.
-
-> I fail to see how this will make most of the changes in this
-> patch obsolete (if that was the intention).
-
-I hope my explanation above clarifies my thinking: I do not dislike
-your patch, and in fact your patch is indeed required to make the new
-semantics work.
-
-What I disliked was always the maintainability of your patch - making
-the rules be something that isn't actually visible in the source code,
-and letting the old semantics still work as well as they ever did, and
-having to basically run some verification pass to find bad users.
-
-(I also disliked your original patch that mixed up the "CPU
-speculation type safety" with the actual non-speculative problems, but
-that was another issue).
-
-                Linus
+              Linus
