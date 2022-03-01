@@ -2,35 +2,35 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 579CDC43217
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9B1DC4707F
 	for <linux-tegra@archiver.kernel.org>; Tue,  1 Mar 2022 16:15:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236094AbiCAQQ0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 1 Mar 2022 11:16:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42094 "EHLO
+        id S233150AbiCAQQ2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 1 Mar 2022 11:16:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42092 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234513AbiCAQQT (ORCPT
+        with ESMTP id S236083AbiCAQQT (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>); Tue, 1 Mar 2022 11:16:19 -0500
 Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F160954A3;
-        Tue,  1 Mar 2022 08:15:34 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0935096827;
+        Tue,  1 Mar 2022 08:15:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-         s=20161220; h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject
-        :Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
-        Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-        In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+         s=20161220; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
         List-Post:List-Owner:List-Archive;
-        bh=VGbStSHHARqJktrOgniVFQ6u0YwBTQjRQ0LEmnlIFkk=; b=IGDQmo+alZXTaMgomNyLpt9hOp
-        RpRfQKGalr145FjoQqtQsOfL0gL723d/LvXjlKaftAggH2uEPmGCY8o1ZgSQDSlcd/oO8f9ouw8rl
-        e64D/b+z1RNubnT4aeNXTRH/kfN4GJ0voe5AkBq58ziumHy5WTyWnReXt5IwjGhoyn5o+gSYYZ1Ya
-        Jp9nIN17ohV73LcDbtqdW2jIf9x8w+yQhCxKbQmNSx0px19iOqreuBfln8TeGuPjV+DvejSaeeyqU
-        9ooN3s3wnAQ2qpLtJOMkLeyWf+8dG8dxtYVQLY5ub3XtuzaatMqVW8fy6m0hi11EMGTmX6rolKY8f
-        JBQ21oJA==;
+        bh=ha+4JdGR01aPCEcI+dlbBNP+Ioox1ADjVil79AF8qOA=; b=zeM6jd67B0+PzUFDZuFDCJDo+G
+        Cg49AY8Id9mWUKWuqyAngYieIIp2FboCKYyppzOjnPihz278hPHJ++lE0DKlex2EPwUF1Zajlu/ms
+        XBnEf43ICpeygIBhdTORDydoKEvyc91k1FdEEFWGOMeAssgJ8kFLtFofH7c518Gn/ZM0jFxYmh6ve
+        unMAh7ZazXwuLev2KfH6v7kJwULXm1INE+4D4MxGiBgAPbf2zkugUdZlPo/wsskF9jfVWTb0pG7Qe
+        Wdf4mpQAfg9wiLSG0zFZLk/jLJGGvltwjGZGQsk5isv6+58C0dpNbKy+quBkaEmrwC45CWUgEf++6
+        IHH9vmfg==;
 Received: from 91-158-25-70.elisa-laajakaista.fi ([91.158.25.70] helo=toshino.localdomain)
         by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.89)
         (envelope-from <cyndis@kapsi.fi>)
-        id 1nP59q-0003Z8-EU; Tue, 01 Mar 2022 18:15:26 +0200
+        id 1nP59r-0003Z8-Bb; Tue, 01 Mar 2022 18:15:27 +0200
 From:   cyndis@kapsi.fi
 To:     thierry.reding@gmail.com, jonathanh@nvidia.com, joro@8bytes.org,
         will@kernel.org, robin.murphy@arm.com, robh+dt@kernel.org,
@@ -39,10 +39,12 @@ Cc:     linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
         iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         Mikko Perttunen <mperttunen@nvidia.com>
-Subject: [PATCH v4 0/9] Host1x context isolation support
-Date:   Tue,  1 Mar 2022 18:14:46 +0200
-Message-Id: <20220301161455.4037062-1-cyndis@kapsi.fi>
+Subject: [PATCH v4 9/9] drm/tegra: vic: Implement get_streamid_offset
+Date:   Tue,  1 Mar 2022 18:14:55 +0200
+Message-Id: <20220301161455.4037062-10-cyndis@kapsi.fi>
 X-Mailer: git-send-email 2.35.0
+In-Reply-To: <20220301161455.4037062-1-cyndis@kapsi.fi>
+References: <20220301161455.4037062-1-cyndis@kapsi.fi>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 91.158.25.70
@@ -54,101 +56,149 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Mikko Perttunen <mperttunen@nvidia.com>
 
-***
-New in v4:
+Implement the get_streamid_offset required for supporting context
+isolation. Since old firmware cannot support context isolation
+without hacks that we don't want to implement, check the firmware
+binary to see if context isolation should be enabled.
 
-Addressed review comments. See individual patches.
-***
+Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+---
+v4:
+* Add locking in vic_load_firmware
+* Return -EOPNOTSUPP if context isolation is not available
+* Update for changed get_streamid_offset declaration
+* Add comment noting that vic_load_firmware is safe to call
+  without the hardware being powered on
+---
+ drivers/gpu/drm/tegra/vic.c | 68 ++++++++++++++++++++++++++++++++-----
+ 1 file changed, 60 insertions(+), 8 deletions(-)
 
-***
-New in v3:
-
-Added device tree bindings for new property.
-***
-
-***
-New in v2:
-
-Added support for Tegra194
-Use standard iommu-map property instead of custom mechanism
-***
-
-This series adds support for Host1x 'context isolation'. Since
-when programming engines through Host1x, userspace can program in
-any addresses it wants, we need some way to isolate the engines'
-memory spaces. Traditionally this has either been done imperfectly
-with a single shared IOMMU domain, or by copying and verifying the
-programming command stream at submit time (Host1x firewall).
-
-Since Tegra186 there is a privileged (only usable by kernel)
-Host1x opcode that allows setting the stream ID sent by the engine
-to the SMMU. So, by allocating a number of context banks and stream
-IDs for this purpose, and using this opcode at the beginning of
-each job, we can implement isolation. Due to the limited number of
-context banks only each process gets its own context, and not
-each channel.
-
-This feature also allows sharing engines among multiple VMs when
-used with Host1x's hardware virtualization support - up to 8 VMs
-can be configured with a subset of allowed stream IDs, enforced
-at hardware level.
-
-To implement this, this series adds a new host1x context bus, which
-will contain the 'struct device's corresponding to each context
-bank / stream ID, changes to device tree and SMMU code to allow
-registering the devices and using the bus, as well as the Host1x
-stream ID programming code and support in TegraDRM.
-
--------------
-Merging notes
--------------
-
-The changes to DT bindings should be applied on top of Thierry's patch
-'dt-bindings: display: tegra: Convert to json-schema'.
-
-Thanks,
-Mikko
-
-Mikko Perttunen (9):
-  dt-bindings: host1x: Add iommu-map property
-  gpu: host1x: Add context bus
-  gpu: host1x: Add context device management code
-  gpu: host1x: Program context stream ID on submission
-  iommu/arm-smmu: Attach to host1x context device bus
-  arm64: tegra: Add Host1x context stream IDs on Tegra186+
-  drm/tegra: falcon: Set DMACTX field on DMA transactions
-  drm/tegra: Support context isolation
-  drm/tegra: vic: Implement get_streamid_offset
-
- .../display/tegra/nvidia,tegra20-host1x.yaml  |   5 +
- arch/arm64/boot/dts/nvidia/tegra186.dtsi      |  11 ++
- arch/arm64/boot/dts/nvidia/tegra194.dtsi      |  11 ++
- drivers/gpu/Makefile                          |   3 +-
- drivers/gpu/drm/tegra/drm.h                   |   2 +
- drivers/gpu/drm/tegra/falcon.c                |   8 +
- drivers/gpu/drm/tegra/falcon.h                |   1 +
- drivers/gpu/drm/tegra/submit.c                |  21 ++-
- drivers/gpu/drm/tegra/uapi.c                  |  45 ++++-
- drivers/gpu/drm/tegra/vic.c                   |  68 +++++++-
- drivers/gpu/host1x/Kconfig                    |   5 +
- drivers/gpu/host1x/Makefile                   |   2 +
- drivers/gpu/host1x/context.c                  | 160 ++++++++++++++++++
- drivers/gpu/host1x/context.h                  |  27 +++
- drivers/gpu/host1x/context_bus.c              |  31 ++++
- drivers/gpu/host1x/dev.c                      |  12 +-
- drivers/gpu/host1x/dev.h                      |   2 +
- drivers/gpu/host1x/hw/channel_hw.c            |  52 +++++-
- drivers/gpu/host1x/hw/host1x06_hardware.h     |  10 ++
- drivers/gpu/host1x/hw/host1x07_hardware.h     |  10 ++
- drivers/iommu/arm/arm-smmu/arm-smmu.c         |  13 ++
- include/linux/host1x.h                        |  22 +++
- include/linux/host1x_context_bus.h            |  15 ++
- 23 files changed, 518 insertions(+), 18 deletions(-)
- create mode 100644 drivers/gpu/host1x/context.c
- create mode 100644 drivers/gpu/host1x/context.h
- create mode 100644 drivers/gpu/host1x/context_bus.c
- create mode 100644 include/linux/host1x_context_bus.h
-
+diff --git a/drivers/gpu/drm/tegra/vic.c b/drivers/gpu/drm/tegra/vic.c
+index 1e342fa3d27b..61eb0407de2a 100644
+--- a/drivers/gpu/drm/tegra/vic.c
++++ b/drivers/gpu/drm/tegra/vic.c
+@@ -38,6 +38,8 @@ struct vic {
+ 	struct clk *clk;
+ 	struct reset_control *rst;
+ 
++	bool can_use_context;
++
+ 	/* Platform configuration */
+ 	const struct vic_config *config;
+ };
+@@ -229,28 +231,38 @@ static int vic_load_firmware(struct vic *vic)
+ {
+ 	struct host1x_client *client = &vic->client.base;
+ 	struct tegra_drm *tegra = vic->client.drm;
++	static DEFINE_MUTEX(lock);
++	u32 fce_bin_data_offset;
+ 	dma_addr_t iova;
+ 	size_t size;
+ 	void *virt;
+ 	int err;
+ 
+-	if (vic->falcon.firmware.virt)
+-		return 0;
++	mutex_lock(&lock);
++
++	if (vic->falcon.firmware.virt) {
++		err = 0;
++		goto unlock;
++	}
+ 
+ 	err = falcon_read_firmware(&vic->falcon, vic->config->firmware);
+ 	if (err < 0)
+-		return err;
++		goto unlock;
+ 
+ 	size = vic->falcon.firmware.size;
+ 
+ 	if (!client->group) {
+ 		virt = dma_alloc_coherent(vic->dev, size, &iova, GFP_KERNEL);
+-		if (!virt)
+-			return -ENOMEM;
++		if (!virt) {
++			err = -ENOMEM;
++			goto unlock;
++		}
+ 	} else {
+ 		virt = tegra_drm_alloc(tegra, size, &iova);
+-		if (IS_ERR(virt))
+-			return PTR_ERR(virt);
++		if (IS_ERR(virt)) {
++			err = PTR_ERR(virt);
++			goto unlock;
++		}
+ 	}
+ 
+ 	vic->falcon.firmware.virt = virt;
+@@ -277,7 +289,28 @@ static int vic_load_firmware(struct vic *vic)
+ 		vic->falcon.firmware.phys = phys;
+ 	}
+ 
+-	return 0;
++	/*
++	 * Check if firmware is new enough to not require mapping firmware
++	 * to data buffer domains.
++	 */
++	fce_bin_data_offset = *(u32 *)(virt + VIC_UCODE_FCE_DATA_OFFSET);
++
++	if (!vic->config->supports_sid) {
++		vic->can_use_context = false;
++	} else if (fce_bin_data_offset != 0x0 && fce_bin_data_offset != 0xa5a5a5a5) {
++		/*
++		 * Firmware will access FCE through STREAMID0, so context
++		 * isolation cannot be used.
++		 */
++		vic->can_use_context = false;
++		dev_warn_once(vic->dev, "context isolation disabled due to old firmware\n");
++	} else {
++		vic->can_use_context = true;
++	}
++
++unlock:
++	mutex_unlock(&lock);
++	return err;
+ 
+ cleanup:
+ 	if (!client->group)
+@@ -285,6 +318,7 @@ static int vic_load_firmware(struct vic *vic)
+ 	else
+ 		tegra_drm_free(tegra, size, virt, iova);
+ 
++	mutex_unlock(&lock);
+ 	return err;
+ }
+ 
+@@ -358,10 +392,28 @@ static void vic_close_channel(struct tegra_drm_context *context)
+ 	host1x_channel_put(context->channel);
+ }
+ 
++static int vic_get_streamid_offset(struct tegra_drm_client *client, u32 *offset)
++{
++	struct vic *vic = to_vic(client);
++	int err;
++
++	/* This doesn't access HW so it's safe to call without powering up. */
++	err = vic_load_firmware(vic);
++	if (err < 0)
++		return err;
++
++	if (!vic->can_use_context)
++		return -EOPNOTSUPP;
++
++	*offset = 0x30;
++	return 0;
++}
++
+ static const struct tegra_drm_client_ops vic_ops = {
+ 	.open_channel = vic_open_channel,
+ 	.close_channel = vic_close_channel,
+ 	.submit = tegra_drm_submit,
++	.get_streamid_offset = vic_get_streamid_offset,
+ };
+ 
+ #define NVIDIA_TEGRA_124_VIC_FIRMWARE "nvidia/tegra124/vic03_ucode.bin"
 -- 
 2.35.0
 
