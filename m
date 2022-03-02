@@ -2,177 +2,125 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C21BDC3525A
-	for <linux-tegra@archiver.kernel.org>; Wed,  2 Mar 2022 09:31:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9CF8C433EF
+	for <linux-tegra@archiver.kernel.org>; Wed,  2 Mar 2022 12:32:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240530AbiCBJcR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 2 Mar 2022 04:32:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42232 "EHLO
+        id S241792AbiCBMcm (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 2 Mar 2022 07:32:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57736 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234241AbiCBJcO (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 2 Mar 2022 04:32:14 -0500
-Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BC44B82C6;
-        Wed,  2 Mar 2022 01:31:31 -0800 (PST)
-Received: by mail-pf1-x442.google.com with SMTP id g21so1381278pfj.11;
-        Wed, 02 Mar 2022 01:31:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=yRnvPGVK9XQdKYPg/H0ecgdZJeSxpiKw/X1pv37GC+w=;
-        b=FSwFYVuD0cAwR74FpWh/UVnJlZEuhHuzmEJF2CmWuTU5VQk08y1iQ6Cm+4Kk/IHZ7f
-         ykn4dSn+LtVJ/QNPcAOF0Kr9OP0uyQbpGUjZhyE2BsGEuIYzlTgMZwHl/BYpjMpkMG0+
-         P9mnuSE0YONb1xqLwPVeO/elgzKWhvv7I7OGEBThyQYghI00EIr5RS9MGp7GsCYrqLUi
-         wR7dcG4fdae3Ke7WyU9tBlNyUPSMcC8RmnmBsmKYAmxRcsIUhLqhpYW4uCJTlnf3AogC
-         YxEVbABh4/fwCz1Lhf2xi5Cnii6w5cwNjqEkAadiEwyP0C/cLXPnnAaLLll6ns+CdAHq
-         Ceuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=yRnvPGVK9XQdKYPg/H0ecgdZJeSxpiKw/X1pv37GC+w=;
-        b=25yx3bE7Tdrh/FIfqtXGWF61WwqDjC5WxWRj3uOQy+xFnOnfSJl4gpSITPKOL6ppvz
-         xr1P/lP+YEIjzKBbNpn03p1MRiNHMFQej41PCQiM7ZYsONScWzARDV9MTLbKYCaJYJKQ
-         0PMbmVDfkgxq+NGUQ/4L1sjWJCqawtx0WZc8uvOruTsaRxv/JHUoXdW3juEItsMZijYe
-         x2y+YeZzcxjNVO2IQiv/vTcoq57n/NERNBTqppUmx/bB0aCArn2Ue28JJCF3twXdYp3U
-         vU+mkukYaeKpIEfnGoPctJjIVuyPhmzcWRY3JAuBB5C9SBIozZ19ogGvwbwxCHlWpuG7
-         k/Jw==
-X-Gm-Message-State: AOAM531WtYP64z3jF1qFTFjDxv9zG3DFlHc4cRXPthGe4IdA63Ho0KnG
-        GBKdtpGAym33H9R0xGshBiw=
-X-Google-Smtp-Source: ABdhPJxxYDNcbSMxl56+YduSTiv9ULKN3/PKEO9PEtlxvCfSyuhc7esxotc8paaSBF6ReGk5V/MJxQ==
-X-Received: by 2002:a05:6a00:244b:b0:4c9:319e:ecb7 with SMTP id d11-20020a056a00244b00b004c9319eecb7mr31990006pfj.58.1646213490674;
-        Wed, 02 Mar 2022 01:31:30 -0800 (PST)
-Received: from ubuntu.huawei.com ([119.3.119.20])
-        by smtp.googlemail.com with ESMTPSA id y74-20020a62644d000000b004f129e94f40sm19496506pfb.131.2022.03.02.01.31.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Mar 2022 01:31:30 -0800 (PST)
-From:   Xiaomeng Tong <xiam0nd.tong@gmail.com>
-To:     torvalds@linux-foundation.org
-Cc:     akpm@linux-foundation.org, alsa-devel@alsa-project.org,
-        amd-gfx@lists.freedesktop.org, andriy.shevchenko@linux.intel.com,
-        arnd@arndb.de, bcm-kernel-feedback-list@broadcom.com,
-        bjohannesmeyer@gmail.com, c.giuffrida@vu.nl,
-        christian.koenig@amd.com, christophe.jaillet@wanadoo.fr,
-        dan.carpenter@oracle.com, dmaengine@vger.kernel.org,
-        drbd-dev@lists.linbit.com, dri-devel@lists.freedesktop.org,
-        gustavo@embeddedor.com, h.j.bos@vu.nl,
-        intel-gfx@lists.freedesktop.org, intel-wired-lan@lists.osuosl.org,
-        jakobkoschel@gmail.com, jgg@ziepe.ca, keescook@chromium.org,
-        kgdb-bugreport@lists.sourceforge.net, kvm@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, linux-block@vger.kernel.org,
-        linux-cifs@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, linux-pm@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-sgx@vger.kernel.org, linux-staging@lists.linux.dev,
-        linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-wireless@vger.kernel.org,
-        linux1394-devel@lists.sourceforge.net, linux@rasmusvillemoes.dk,
-        linuxppc-dev@lists.ozlabs.org, nathan@kernel.org,
-        netdev@vger.kernel.org, nouveau@lists.freedesktop.org,
-        rppt@kernel.org, samba-technical@lists.samba.org,
-        tglx@linutronix.de, tipc-discussion@lists.sourceforge.net,
-        v9fs-developer@lists.sourceforge.net
-Subject: Re: [PATCH 2/6] treewide: remove using list iterator after loop body as a ptr
-Date:   Wed,  2 Mar 2022 17:31:06 +0800
-Message-Id: <20220302093106.8402-1-xiam0nd.tong@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <CAHk-=whLK11HyvpUtEftOjc3Gup2V77KpAQ2fycj3uai=qceHw@mail.gmail.com>
-References: <CAHk-=whLK11HyvpUtEftOjc3Gup2V77KpAQ2fycj3uai=qceHw@mail.gmail.com>
+        with ESMTP id S235226AbiCBMcl (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 2 Mar 2022 07:32:41 -0500
+Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C5D86212C;
+        Wed,  2 Mar 2022 04:31:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
+         s=20161220; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+        References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=zs30rfcp9Gy4eJZTj0VHE0zYlF+YvSpqPJY+NDZEYbQ=; b=UUTGwTkeNLZrsWztZAVHFKWbag
+        mghQYTZlvPjb4FN4MLAnP6GihRzwI+TJBnDNClIiajEHBC7JdWRUYGLHfi6TxGllLez/0oIIAJU8K
+        q7YHlVx9JkDBJLAOZXnHujwAED4tjQDplKkOaPng/B60rGnXAqtXztQq9iaJGjAjWOsi7XUM3SKKr
+        iPP8zgnmXrJ40CLUIrmGb852hMqt7ItWxEPzbXzRRQbV8cny5ANiwfQKpHwlljH17brygcWa4K71o
+        0AbKmnfOw/QUhc99QJiKykKala7dZO/LplW+jorpooSnXx2jkI/Zq0Ak+e6AYaGG+yBwb+3G0BxZ6
+        AJc2KK1Q==;
+Received: from 91-158-25-70.elisa-laajakaista.fi ([91.158.25.70] helo=[192.168.1.10])
+        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <cyndis@kapsi.fi>)
+        id 1nPO8x-00023j-D7; Wed, 02 Mar 2022 14:31:47 +0200
+Message-ID: <3466cb33-7f5c-7b57-85f8-387e93516432@kapsi.fi>
+Date:   Wed, 2 Mar 2022 14:31:46 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.4.1
+Subject: Re: [PATCH v4 1/9] dt-bindings: host1x: Add iommu-map property
+Content-Language: en-US
+To:     Robin Murphy <robin.murphy@arm.com>, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, joro@8bytes.org, will@kernel.org,
+        robh+dt@kernel.org, krzysztof.kozlowski@canonical.com
+Cc:     linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Mikko Perttunen <mperttunen@nvidia.com>
+References: <20220301161455.4037062-1-cyndis@kapsi.fi>
+ <20220301161455.4037062-2-cyndis@kapsi.fi>
+ <4a748c85-4fdb-0c10-19d8-0379b9e42ab5@arm.com>
+From:   Mikko Perttunen <cyndis@kapsi.fi>
+In-Reply-To: <4a748c85-4fdb-0c10-19d8-0379b9e42ab5@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 91.158.25.70
+X-SA-Exim-Mail-From: cyndis@kapsi.fi
+X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, 28 Feb 2022 16:41:04 -0800, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> But basically to _me_, the important part is that the end result is
-> maintainable longer-term.
+On 3/1/22 20:12, Robin Murphy wrote:
+> On 2022-03-01 16:14, cyndis@kapsi.fi wrote:
+>> From: Mikko Perttunen <mperttunen@nvidia.com>
+>>
+>> Add schema information for specifying context stream IDs. This uses
+>> the standard iommu-map property.
+>>
+>> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+>> ---
+>> v3:
+>> * New patch
+>> v4:
+>> * Remove memory-contexts subnode.
+>> ---
+>>   .../bindings/display/tegra/nvidia,tegra20-host1x.yaml        | 5 +++++
+>>   1 file changed, 5 insertions(+)
+>>
+>> diff --git 
+>> a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.yaml 
+>> b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.yaml 
+>>
+>> index 4fd513efb0f7..0adeb03b9e3a 100644
+>> --- 
+>> a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.yaml 
+>>
+>> +++ 
+>> b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.yaml 
+>>
+>> @@ -144,6 +144,11 @@ allOf:
+>>           reset-names:
+>>             maxItems: 1
+>> +        iommu-map:
+>> +          description: Specification of stream IDs available for 
+>> memory context device
+>> +            use. Should be a mapping of IDs 0..n to IOMMU entries 
+>> corresponding to
+> 
+> Nit: maybe "context IDs 0..n" for maximum possible clarity?
 
-I couldn't agree more. And because of that, I stick with the following
-approach because it's maintainable longer-term than "type(pos) pos" one:
- Implements a new macro for each list_for_each_entry* with _inside suffix.
-  #define list_for_each_entry_inside(pos, type, head, member)
+I left it at "IDs" since there is no "context ID" or similar concept in 
+the hardware, so I thought to leave it just as a kind of an 'abstract ID 
+as used in iommu-map property'.
 
-I have posted a patch series here to demonstrate this approach:
-https://lore.kernel.org/lkml/20220301075839.4156-3-xiam0nd.tong@gmail.com/
+> 
+> Either way, though, I'm happy that if the simplest and most 
+> straightforward approach works, then it's the best choice.
 
-Although we need replace all the use of list_for_each_entry* (15000+)
-with list_for_each_entry*_inside, the work can be done gradually rather
-than all at once. We can incrementally replace these callers until
-all these in the kernel are completely updated with *_inside* one. At
-that time, we can just remove the implements of origin macros and rename
-the *_inside* macro back to the origin name just in one single patch.
+I am happy as well, this is certainly much cleaner than the mess in the 
+downstream driver :)
 
-And the "type(pos) pos" approach need teach developers to "not initialize
-the iterator variable, otherwise the use-after-loop will not be reported by
-compiler", which is unreasonable and impossible for all developers. 
+> 
+> Reviewed-by: Robin Murphy <robin.murphy@arm.com>
+> 
+> Cheers,
+> Robin.
 
-And it will mess up the following code logic and no warnning reported by
-compiler, even without initializing "ext" at the beginning:
-void foo(struct mem_extent *arg) {
-  struct mem_extent *ext;  // used both for iterator and normal ptr
-  ...
-  ext = arg;  // this assignment can alse be done in another bar() func
-  ...
-  list_for_each_entry(ext, head, member) {
-    if (found(ext))
-       break;
-  }
-  ...
-  // use ext after the loop
-  ret = ext;
-}
-If the loop hit the break, the last "ret" will be the found ext iterator.
-However, if the "type(pos) pos" approach applied, the last "ret" will be
-"arg" which is not the intention of the developers, because the "ext" is
-two different variables inside and outside the loop.
+Thanks!
+Mikko
 
-Thus, my idea is *better a finger off than always aching*, let's choose
-the "list_for_each_entry_inside(pos, type, head, member)" approach.
+> 
+>> +            usable stream IDs.
+>> +
+>>         required:
+>>           - reg-names
 
-> It turns out that just syntactically, it's really nice to give the
-> type of the iterator from outside the way we do now. Yeah, it may be a
-> bit odd, and maybe it's partly because I'm so used to the
-> "list_for_each_list_entry()" syntax, but moving the type into the loop
-> construct really made it nasty - either one very complex line, or
-> having to split it over two lines which was even worse.
->
-> Maybe the place I looked at just happened to have a long typename, but
-> it's basically always going to be a struct, so it's never a _simple_
-> type. And it just looked very odd adn unnatural to have the type as
-> one of the "arguments" to that list_for_each_entry() macro.
-
-we can pass a shorter type name to list_for_each_entry_inside, thus no
-need to split it over two lines. Actually it is not a big problem.
-+ #define t struct sram_bank_info
-- list_for_each_entry(pos, head, member) {
-+ list_for_each_entry_inside(pos, t, head, member) {
-
-I put the type at the second argument not the first to avoid messing up
-the pattern match in some coccinelle scripts.
-
->  (b) gives us a nice warning for any normal use-after-loop case
-> (unless you explicitly initialized it like that
-> sgx_mmu_notifier_release() function did for no good reason
-
-sometimes developers can be confused by the reported warnning:
-"used without having been initialized", and can not figure out immediately
-that "oh, now i am using another different variable but with the same name
-of the loop iterator variable", which has changed the programming habits
-of developers.
-
->  (c) also guarantees that even if you don't get a warning,
-> non-converted (or newly written) bad code won't actually _work_
->
-> so you end up getting the new rules without any ambiguity or mistaken
-
-It will lead to a wrong/NULL pointer dereference if the pointer is used
-anywhere else, depend on which value is used to initialized with.
-
-Best regard,
---
-Xiaomeng Tong
