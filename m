@@ -2,186 +2,184 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B4F4C433EF
-	for <linux-tegra@archiver.kernel.org>; Wed,  2 Mar 2022 19:44:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCCE6C43217
+	for <linux-tegra@archiver.kernel.org>; Wed,  2 Mar 2022 20:07:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236198AbiCBTpJ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 2 Mar 2022 14:45:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53942 "EHLO
+        id S242856AbiCBUIC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 2 Mar 2022 15:08:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38816 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236234AbiCBTpI (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 2 Mar 2022 14:45:08 -0500
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7236CA0D9
-        for <linux-tegra@vger.kernel.org>; Wed,  2 Mar 2022 11:44:24 -0800 (PST)
-Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com [209.85.208.71])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 968703F1D8
-        for <linux-tegra@vger.kernel.org>; Wed,  2 Mar 2022 19:44:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1646250263;
-        bh=CXgP08C1PuFq4bqpjNjFmw31qLuU1W2/XX2cgUb+4wc=;
-        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-         In-Reply-To:Content-Type;
-        b=ReaNoNkZPHpbDnlCJb8wdbhj7vA9g0We8sf6i4wYTFmJTehsAlJVK+utKO2MNZ8wu
-         MSIYT2JiVykvc2YU85iB/59PF2lRDxmpcbJ8xSiNJ/DOGt/HA6scoKRrlb53/l5V8O
-         KR11Ix7mvZSFjv05Wa94kvaAxFkTZRIssVapA31snbA9jgZ3NICwnzcuDFlTxZI+FN
-         wI0bESjkQPdD0Uogase46Vg9u2O7Q1bWK2MwP9bMu9G9JEdfrGLbIrIXntcIo3pGxF
-         Plcfjg26f/tPhteP5ElSI0qzF/9XWR8kmt7kednP+HI3vYEbVmf0kEuBe3DnBIGeL2
-         VjnPcnbeUxabw==
-Received: by mail-ed1-f71.google.com with SMTP id m12-20020a056402510c00b00413298c3c42so1548782edd.15
-        for <linux-tegra@vger.kernel.org>; Wed, 02 Mar 2022 11:44:23 -0800 (PST)
+        with ESMTP id S242872AbiCBUH6 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 2 Mar 2022 15:07:58 -0500
+Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72890D207E
+        for <linux-tegra@vger.kernel.org>; Wed,  2 Mar 2022 12:07:06 -0800 (PST)
+Received: by mail-pj1-x1033.google.com with SMTP id mr24-20020a17090b239800b001bf0a375440so394989pjb.4
+        for <linux-tegra@vger.kernel.org>; Wed, 02 Mar 2022 12:07:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=9llME+iRL2iH9L07jwvbWbmbHLr47Rbz7WJ4fOgTlZc=;
+        b=IvpJRwG7ynxkReEE85KaN5rJUYtD4xKNHA+hy6TwBmoQ8B3uYeJI+QViQcnaGiWq86
+         F88M3HTERkoil1v4VBpPtCvYuei+/tfueI2kCXzM7ddvcotxLyWZwiewhTHLUCy28lRK
+         BraqPBOXvwYRthhpbxTgJWS9pGCc3zSZJBqHk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=CXgP08C1PuFq4bqpjNjFmw31qLuU1W2/XX2cgUb+4wc=;
-        b=cxTTpNfBEnGz10rNrPlhn13bpRJD9glR4NKvtJ/0mZqCi+2tFORGhkKgRqCNE5XH0g
-         OPKtFfrazhY9HcAVEp2uF3vX4WP/JrYKRSs7/GVKAJsn1/fHUJyWwQ7/zvGlCrGRPFEN
-         tqxVj0QLNtfou80Q4uEFeAm4xD0tuIjxv4sWv8+odHIdziB0R2OFfjK5E4q0KOs0RkJS
-         +CO7BGPPrOmMOqQSYhmzqKNqOwppKKJBxhwO0Puy4xrxKtc0uVP/kMvmXMkiov6ABVZK
-         w+4PBZIHIlIorNeu/aU4N2a00ACGbCWPizO4aiZR/DdxLwwJs7AsfpaGGAK9cVNSReWr
-         QDxg==
-X-Gm-Message-State: AOAM533GDbNWf4S13ub8VNF8zSPTWDTOW//fNY6sdbfoQNiATPCJ5Imk
-        ZHcd8BdZtzSCbiPcPKkdUZCEsaldAiIrZpITQX67TZ0/0hzxHRU4qVnPhZfIl9VQ6tcTiQYB9Na
-        8hi6+RnmaDZO0SZhPh3ljc4UOthpgrvc7drqUm0z+
-X-Received: by 2002:a17:906:7056:b0:6d6:dd99:f2a4 with SMTP id r22-20020a170906705600b006d6dd99f2a4mr9253745ejj.43.1646250263270;
-        Wed, 02 Mar 2022 11:44:23 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJxeddp5OV+Flh+0Pd77oYKfgd5Yl2rsTAbN/GiVUOQXPIPUCAJzYFwH4LA4d4WjKVxsccE4rQ==
-X-Received: by 2002:a17:906:7056:b0:6d6:dd99:f2a4 with SMTP id r22-20020a170906705600b006d6dd99f2a4mr9253733ejj.43.1646250263033;
-        Wed, 02 Mar 2022 11:44:23 -0800 (PST)
-Received: from [192.168.0.137] (xdsl-188-155-181-108.adslplus.ch. [188.155.181.108])
-        by smtp.gmail.com with ESMTPSA id y12-20020a50eb8c000000b00410f02e577esm9138825edr.7.2022.03.02.11.44.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Mar 2022 11:44:22 -0800 (PST)
-Message-ID: <72fafc84-4986-926f-67ae-155f4fced88b@canonical.com>
-Date:   Wed, 2 Mar 2022 20:44:21 +0100
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=9llME+iRL2iH9L07jwvbWbmbHLr47Rbz7WJ4fOgTlZc=;
+        b=QQNimV/FF119dlHRDMudrj2k8oF5IUCf8d47k15jjTGF/ELJqMsVHjArCxocSMaUo3
+         W5kpsCaAUt6ZmqzRkrGm/+/YEyrM1tnb+T35pi71HBbhjGuKcl57Gd3hkgbvX2WTFvuI
+         BrrjePIYo/Atw+e8LkjQ4FAGoQ/spN24bnvv5uJtUihUD5NotOF0+jomXDf62KE4ad31
+         mF9Qp66AjcuhnoS6kt7WoLyeXbuK5KlgS8HFucMXP0gMUAIyiQ7lgGaoLccGbB/lf+Is
+         pv1QZ4CG6TQgwMfxo+g/huXJYWDv0d4rT/3EMrkepbJro+/qD6m766HSBouNoEeYeqb2
+         57Cw==
+X-Gm-Message-State: AOAM530BR9/mnkSkgpv1cEeY1bi1bCuw4CTJnHyuUoLu+D2RR8E5aZL2
+        YQJoBY3cgPBcmWNXGnmzRAsEXw==
+X-Google-Smtp-Source: ABdhPJyalZw/yElDAQSdRYusWOxjkvZUrvn+e5j/jboS/+hXUtUpvVb6mMnbBbqlv1j/a0ygzQBPkQ==
+X-Received: by 2002:a17:90b:94e:b0:1bc:c99f:ede1 with SMTP id dw14-20020a17090b094e00b001bcc99fede1mr1518926pjb.49.1646251625762;
+        Wed, 02 Mar 2022 12:07:05 -0800 (PST)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id d25-20020a637359000000b0037843afb785sm6664pgn.25.2022.03.02.12.07.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Mar 2022 12:07:05 -0800 (PST)
+Date:   Wed, 2 Mar 2022 12:07:04 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        David Laight <David.Laight@aculab.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        linux-wireless <linux-wireless@vger.kernel.org>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        KVM list <kvm@vger.kernel.org>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+        "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Cristiano Giuffrida <c.giuffrida@vu.nl>,
+        "Bos, H.J." <h.j.bos@vu.nl>,
+        "linux1394-devel@lists.sourceforge.net" 
+        <linux1394-devel@lists.sourceforge.net>,
+        "drbd-dev@lists.linbit.com" <drbd-dev@lists.linbit.com>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        CIFS <linux-cifs@vger.kernel.org>,
+        "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
+        linux-scsi <linux-scsi@vger.kernel.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        "linux-staging@lists.linux.dev" <linux-staging@lists.linux.dev>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
+        "kgdb-bugreport@lists.sourceforge.net" 
+        <kgdb-bugreport@lists.sourceforge.net>,
+        "bcm-kernel-feedback-list@broadcom.com" 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Arnd Bergman <arnd@arndb.de>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        intel-gfx <intel-gfx@lists.freedesktop.org>,
+        Brian Johannesmeyer <bjohannesmeyer@gmail.com>,
+        Nathan Chancellor <nathan@kernel.org>,
+        dma <dmaengine@vger.kernel.org>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Jakob Koschel <jakobkoschel@gmail.com>,
+        "v9fs-developer@lists.sourceforge.net" 
+        <v9fs-developer@lists.sourceforge.net>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "samba-technical@lists.samba.org" <samba-technical@lists.samba.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux F2FS Dev Mailing List 
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        "tipc-discussion@lists.sourceforge.net" 
+        <tipc-discussion@lists.sourceforge.net>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        "linux-mediatek@lists.infradead.org" 
+        <linux-mediatek@lists.infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        Mike Rapoport <rppt@kernel.org>
+Subject: Re: [PATCH 2/6] treewide: remove using list iterator after loop body
+ as a ptr
+Message-ID: <202203021158.DB5204A0@keescook>
+References: <282f0f8d-f491-26fc-6ae0-604b367a5a1a@amd.com>
+ <b2d20961dbb7533f380827a7fcc313ff849875c1.camel@HansenPartnership.com>
+ <7D0C2A5D-500E-4F38-AD0C-A76E132A390E@kernel.org>
+ <73fa82a20910c06784be2352a655acc59e9942ea.camel@HansenPartnership.com>
+ <CAHk-=wiT5HX6Kp0Qv4ZYK_rkq9t5fZ5zZ7vzvi6pub9kgp=72g@mail.gmail.com>
+ <7dc860874d434d2288f36730d8ea3312@AcuMS.aculab.com>
+ <CAHk-=whKqg89zu4T95+ctY-hocR6kDArpo2qO14-kV40Ga7ufw@mail.gmail.com>
+ <0ced2b155b984882b39e895f0211037c@AcuMS.aculab.com>
+ <CAHk-=wix0HLCBs5sxAeW3uckg0YncXbTjMsE-Tv8WzmkOgLAXQ@mail.gmail.com>
+ <78ccb184-405e-da93-1e02-078f90d2b9bc@rasmusvillemoes.dk>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [Patch v4 4/4] memory: tegra: Add MC error logging on tegra186
- onward
-Content-Language: en-US
-To:     Ashish Mhetre <amhetre@nvidia.com>, robh+dt@kernel.org,
-        thierry.reding@gmail.com, jonathanh@nvidia.com, digetx@gmail.com,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Cc:     vdumpa@nvidia.com, Snikam@nvidia.com
-References: <1646210609-21943-1-git-send-email-amhetre@nvidia.com>
- <1646210609-21943-5-git-send-email-amhetre@nvidia.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-In-Reply-To: <1646210609-21943-5-git-send-email-amhetre@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <78ccb184-405e-da93-1e02-078f90d2b9bc@rasmusvillemoes.dk>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 02/03/2022 09:43, Ashish Mhetre wrote:
-> Add new function 'get_int_channel' in tegra_mc_soc struture which is
-> implemented by tegra SOCs which support multiple MC channels. This
-> function returns the channel which should be used to get the information
-> of interrupts.
-> Remove static from tegra30_mc_handle_irq and use it as interrupt handler
-> for MC interrupts on tegra186, tegra194 and tegra234 to log the errors.
-> Add error specific MC status and address register bits and use them on
-> tegra186, tegra194 and tegra234.
-> Add error logging for generalized carveout interrupt on tegra186, tegra194
-> and tegra234.
-> Add error logging for route sanity interrupt on tegra194 an tegra234.
-> Add register for higher bits of error address which is available on
-> tegra194 and tegra234.
-> Add a boolean variable 'has_addr_hi_reg' in tegra_mc_soc struture which
-> will be true if soc has register for higher bits of memory controller
-> error address. Set it true for tegra194 and tegra234.
+On Wed, Mar 02, 2022 at 10:29:31AM +0100, Rasmus Villemoes wrote:
+> This won't help the current issue (because it doesn't exist and might
+> never), but just in case some compiler people are listening, I'd like to
+> have some sort of way to tell the compiler "treat this variable as
+> uninitialized from here on". So one could do
 > 
-> Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
-> ---
->  drivers/memory/tegra/mc.c       | 102 ++++++++++++++++++++++++++++++++++------
->  drivers/memory/tegra/mc.h       |  37 ++++++++++++++-
->  drivers/memory/tegra/tegra186.c |  45 ++++++++++++++++++
->  drivers/memory/tegra/tegra194.c |  44 +++++++++++++++++
->  drivers/memory/tegra/tegra234.c |  59 +++++++++++++++++++++++
->  include/soc/tegra/mc.h          |   4 ++
->  6 files changed, 275 insertions(+), 16 deletions(-)
+> #define kfree(p) do { __kfree(p); __magic_uninit(p); } while (0)
 > 
+> with __magic_uninit being a magic no-op that doesn't affect the
+> semantics of the code, but could be used by the compiler's "[is/may be]
+> used uninitialized" machinery to flag e.g. double frees on some odd
+> error path etc. It would probably only work for local automatic
+> variables, but it should be possible to just ignore the hint if p is
+> some expression like foo->bar or has side effects. If we had that, the
+> end-of-loop test could include that to "uninitialize" the iterator.
 
-(...)
+I've long wanted to change kfree() to explicitly set pointers to NULL on
+free. https://github.com/KSPP/linux/issues/87
 
->  
-> +static int tegra186_mc_get_channel(struct tegra_mc *mc, int *mc_channel)
-> +{
-> +	u32 g_intstatus;
-> +
-> +	g_intstatus = mc_ch_readl(mc, MC_BROADCAST_CHANNEL,
-> +				  MC_GLOBAL_INTSTATUS);
-> +
-> +	switch (g_intstatus & mc->soc->int_channel_mask) {
-> +	case BIT(0):
-> +		*mc_channel = 0;
-> +		break;
-> +
-> +	case BIT(1):
-> +		*mc_channel = 1;
-> +		break;
-> +
-> +	case BIT(2):
-> +		*mc_channel = 2;
-> +		break;
-> +
-> +	case BIT(3):
-> +		*mc_channel = 3;
-> +		break;
-> +
-> +	case BIT(24):
-> +		*mc_channel = MC_BROADCAST_CHANNEL;
-> +		break;
-> +
-> +	default:
-> +		pr_err("Unknown interrupt source\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  const struct tegra_mc_soc tegra186_mc_soc = {
->  	.num_clients = ARRAY_SIZE(tegra186_mc_clients),
->  	.clients = tegra186_mc_clients,
->  	.num_address_bits = 40,
->  	.num_channels = 4,
-> +	.client_id_mask = 0xff,
-> +	.intmask = MC_INT_DECERR_GENERALIZED_CARVEOUT | MC_INT_DECERR_MTS |
-> +		   MC_INT_SECERR_SEC | MC_INT_DECERR_VPR |
-> +		   MC_INT_SECURITY_VIOLATION | MC_INT_DECERR_EMEM,
->  	.ops = &tegra186_mc_ops,
-> +	.int_channel_mask = 0x100000f,
-> +	.get_int_channel = tegra186_mc_get_channel,
->  };
->  #endif
-> diff --git a/drivers/memory/tegra/tegra194.c b/drivers/memory/tegra/tegra194.c
-> index 9400117..bc16567 100644
-> --- a/drivers/memory/tegra/tegra194.c
-> +++ b/drivers/memory/tegra/tegra194.c
-> @@ -1343,10 +1343,54 @@ static const struct tegra_mc_client tegra194_mc_clients[] = {
->  	},
->  };
->  
-> +static int tegra194_mc_get_channel(struct tegra_mc *mc, int *mc_channel)
+The thing stopping a trivial transformation of kfree() is:
 
-Looks like 'mc' could be a pointer to const.
+	kfree(get_some_pointer());
 
-> +{
-> +	u32 g_intstatus;
+I would argue, though, that the above is poor form: the thing holding
+the pointer should be the thing freeing it, so these cases should be
+refactored and kfree() could do the NULLing by default.
 
-Variable name just "status" because it looks like some
-hungarian-notation-style...
-
-The same in other places like this.
+Quoting myself in the above issue:
 
 
-Best regards,
-Krzysztof
+Without doing massive tree-wide changes, I think we need compiler
+support. If we had something like __builtin_is_lvalue(), we could
+distinguish function returns from lvalues. For example, right now a
+common case are things like:
+
+	kfree(get_some_ptr());
+
+But if we could at least gain coverage of the lvalue cases, and detect
+them statically at compile-time, we could do:
+
+#define __kfree_and_null(x) do { __kfree(*x); *x = NULL; } while (0)
+#define kfree(x) __builtin_choose_expr(__builtin_is_lvalue(x),
+			__kfree_and_null(&(x)), __kfree(x))
+
+Alternatively, we could do a tree-wide change of the former case (findable
+with Coccinelle) and change them into something like kfree_no_null()
+and redefine kfree() itself:
+
+#define kfree_no_null(x) do { void *__ptr = (x); __kfree(__ptr); } while (0)
+#define kfree(x) do { __kfree(x); x = NULL; } while (0)
+
+-- 
+Kees Cook
