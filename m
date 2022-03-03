@@ -2,112 +2,126 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D825C433EF
-	for <linux-tegra@archiver.kernel.org>; Thu,  3 Mar 2022 13:03:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7654BC433FE
+	for <linux-tegra@archiver.kernel.org>; Thu,  3 Mar 2022 17:51:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232486AbiCCNED (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 3 Mar 2022 08:04:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50602 "EHLO
+        id S230487AbiCCRw0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 3 Mar 2022 12:52:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47696 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230201AbiCCNEC (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 3 Mar 2022 08:04:02 -0500
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A5AC4EF66
-        for <linux-tegra@vger.kernel.org>; Thu,  3 Mar 2022 05:03:17 -0800 (PST)
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com [209.85.128.70])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id D06ED3F4C2
-        for <linux-tegra@vger.kernel.org>; Thu,  3 Mar 2022 13:03:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1646312590;
-        bh=Rx4ZxbVhDyZFayUzEjmbuXvhfELZHztCqgfiHOmaXUk=;
-        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-         In-Reply-To:Content-Type;
-        b=I08YoXc/4myiweY/9P4Pjj9pDXlH9vZZ8kpIE2pxxLVEnEfjMs2pLuIFVBly7XksS
-         izZNfEvb3Yb2TIWjfzxk/8+fzs4f1zjYrAIrHh8K2gXKrQNB3WySbt1yU9nxCDpuRO
-         LfkXFglFXOP8i2M5EYdtE1UiZRae6MWXMWIB+orHF0zUFo2JgksGJgN3p2SCrkWhtT
-         yslZ1LI3Z64mP5KLlI/54E+Kw5V/IO5LBOyytUNhlvs3x0t1P6B2PUKBDwEW1Kae5i
-         V9j4SjoA2l43LqDZtAHgHhaD8TugtLdtzw4DfV5gtNqvdH7/SgrfvZM4DFrgA8r3FX
-         xE4V7q0qmokeQ==
-Received: by mail-wm1-f70.google.com with SMTP id j42-20020a05600c1c2a00b00381febe402eso2700814wms.0
-        for <linux-tegra@vger.kernel.org>; Thu, 03 Mar 2022 05:03:10 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=Rx4ZxbVhDyZFayUzEjmbuXvhfELZHztCqgfiHOmaXUk=;
-        b=aUrdjFXW5mMoG9jwpaIL1tseHS1Bbl3EFZ7rB4ffGsGsyxWM5mVUiWYD3DRl4fky1o
-         ekhjwWaM09fYBQ1jIUdvPkHotmpiG8BFhjGFb9Ze1d2vGrVGakRJgPReY5vV0fjl/OfY
-         1h+71/bqYJBWs4RdJMucRWVq+ECpgzMCJuS07sZIDmRh3NtVthlVRGnVBU+MKpI0rRZs
-         3hlBLELnd4vGvO1vTzH9jggptC+tBzSj3Y5lDD+5T/owYwMXmoDGxLsaWLbAWBqAduSz
-         orw2fZoNiGzmEdN/bwuBu0+/Oi7m5AZOXi68jsgAS/6dm9igHNw7o3aCqh5OZpFgyV3V
-         tmEw==
-X-Gm-Message-State: AOAM530NSr+BXo+KrdTJtQNrsaDusZwBkhwVJgJClzInekf76SPAhAx1
-        uTOHCqb264vcf/NtPTJIWZXCBzWM8yMs82mps5nIiQxk5MytMOoCtu4FEwrYCJBp1YJ93Kf5XG3
-        cC9KdFVj8Nd83AZh64uRvdsurJFseCEX7J6uRj/ls
-X-Received: by 2002:a5d:678f:0:b0:1f0:2471:5a93 with SMTP id v15-20020a5d678f000000b001f024715a93mr6943667wru.164.1646312590101;
-        Thu, 03 Mar 2022 05:03:10 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJwtq12b/0QiPZ1UiPJj10zJ0+nXXE5RfkSxXjl3iTmlxz4AnHd2ZbB0Iubafpeh3O6Fry4k2Q==
-X-Received: by 2002:a5d:678f:0:b0:1f0:2471:5a93 with SMTP id v15-20020a5d678f000000b001f024715a93mr6943647wru.164.1646312589904;
-        Thu, 03 Mar 2022 05:03:09 -0800 (PST)
-Received: from [192.168.0.137] (xdsl-188-155-181-108.adslplus.ch. [188.155.181.108])
-        by smtp.gmail.com with ESMTPSA id w6-20020a05600018c600b001efe4a49566sm2002944wrq.78.2022.03.03.05.03.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 03 Mar 2022 05:03:08 -0800 (PST)
-Message-ID: <a1f26936-6522-a3a5-f812-a80a63003453@canonical.com>
-Date:   Thu, 3 Mar 2022 14:03:07 +0100
+        with ESMTP id S229496AbiCCRwZ (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 3 Mar 2022 12:52:25 -0500
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26DD31A1C6B
+        for <linux-tegra@vger.kernel.org>; Thu,  3 Mar 2022 09:51:40 -0800 (PST)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1nPpbz-0006WA-E1; Thu, 03 Mar 2022 18:51:35 +0100
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1nPpby-002SG9-LD; Thu, 03 Mar 2022 18:51:33 +0100
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1nPpbx-006kwO-0s; Thu, 03 Mar 2022 18:51:33 +0100
+From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc:     linux-pwm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        kernel@pengutronix.de
+Subject: [PATCH] pwm: tegra: Optimize period calculation
+Date:   Thu,  3 Mar 2022 18:50:12 +0100
+Message-Id: <20220303175012.358613-1-u.kleine-koenig@pengutronix.de>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [Patch v4 4/4] memory: tegra: Add MC error logging on tegra186
- onward
-Content-Language: en-US
-To:     Dan Carpenter <dan.carpenter@oracle.com>, kbuild@lists.01.org,
-        Ashish Mhetre <amhetre@nvidia.com>, robh+dt@kernel.org,
-        thierry.reding@gmail.com, jonathanh@nvidia.com, digetx@gmail.com,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Cc:     lkp@intel.com, kbuild-all@lists.01.org, vdumpa@nvidia.com,
-        Snikam@nvidia.com
-References: <202203031247.0bBX70B3-lkp@intel.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-In-Reply-To: <202203031247.0bBX70B3-lkp@intel.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2744; h=from:subject; bh=g0VDo2ZTwl5abWqLJlDJgWxv6PzZwMxPfrKBw55rvTA=; b=owEBbQGS/pANAwAKAcH8FHityuwJAcsmYgBiIP/QaamitcKfZEryPLRMlFNY7JjYB7J4xU1Umz45 B8fLnJ6JATMEAAEKAB0WIQR+cioWkBis/z50pAvB/BR4rcrsCQUCYiD/0AAKCRDB/BR4rcrsCUZNB/ 9P4MYim6PxAN9CTWyOeh7VgK0wxFh4CSeyOcK+r3ze3L17nYP0dVrK6RzHhKvsqxrgtH+//37nTRmB 0UjzmnZgBJHV9lo/gO7d8uh9DNuv7NmS7nFSS7aW6iSBcqWuoy0YMZGvvd+ExEC98fsF23x/CASyup mZYJE3QhmSxlOs88U/NiFl+81hUq0YgoCRfixHEEWZvFiNeuuQJmdI4NxjYxkgz6SJONKpWPBmw+fM xapB4qk7CcLwY+2TXe2hNUSQzj3qGBkvBLp1DGrAPkwc74VKlGWtyYXhP+30cynTs/FBcQdo3443T9 8djFAl7dYdl+x8OtFMXFYkWnQirGrg
+X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 03/03/2022 13:31, Dan Carpenter wrote:
-> Hi Ashish,
-> 
-> url:    https://github.com/0day-ci/linux/commits/Ashish-Mhetre/memory-tegra-Add-MC-channels-and-error-logging/20220302-164625
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git for-next
-> config: openrisc-randconfig-m031-20220302 (https://download.01.org/0day-ci/archive/20220303/202203031247.0bBX70B3-lkp@intel.com/config)
-> compiler: or1k-linux-gcc (GCC) 11.2.0
-> 
-> If you fix the issue, kindly add following tag as appropriate
-> Reported-by: kernel test robot <lkp@intel.com>
-> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> New smatch warnings:
-> drivers/memory/tegra/mc.c:593 tegra30_mc_handle_irq() error: uninitialized symbol 'channel'.
+Dividing by the result of a division looses precision because the result is
+rounded twice. E.g. with clk_rate = 48000000 and period = 32760033 the
+following numbers result:
 
-Ashish,
+	rate = pc->clk_rate >> PWM_DUTY_WIDTH = 187500
+	hz = DIV_ROUND_CLOSEST_ULL(100ULL * NSEC_PER_SEC, period_ns) = 3052
+	rate = DIV_ROUND_CLOSEST_ULL(100ULL * rate, hz) = 6144
 
-I mentioned with your v3 that it is expected for submitter to run
-certain automatic tools:
-"We not only expect to compile it but also compile with W=1, run sparse,
-smatch and coccicheck. Then also test."
+The exact result would be 6142.5061875 and (apart from rounding) this is
+found by using a single division. As a side effect is also a tad
+cheaper to calculate.
 
-Judging by the output here, it could be that either you used old
-compiler or did not run the checks.
+Also using clk_rate >> PWM_DUTY_WIDTH looses precision. Consider for
+example clk_rate = 47999999 and period = 106667:
 
-Can you please confirm that you performed all the activities mentioned
-before?
+	mul_u64_u64_div_u64(pc->clk_rate >> PWM_DUTY_WIDTH, period_ns,
+			    NSEC_PER_SEC) = 19
 
-Best regards,
-Krzysztof
+	mul_u64_u64_div_u64(pc->clk_rate, period_ns,
+			    NSEC_PER_SEC << PWM_DUTY_WIDTH) = 20
+
+(The exact result is 20.000062083332033.)
+
+With this optimizations also switch from round-closest to round-down. Given
+that the calculations were non-optimal for quite some time now which
+nobody reported as a problem, this is the opportunity to align the driver's
+behavior to the requirements of new drivers. (Note however that the
+duty_cycle calculation isn't aligned yet.)
+
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+---
+ drivers/pwm/pwm-tegra.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/pwm/pwm-tegra.c b/drivers/pwm/pwm-tegra.c
+index e5a9ffef4a71..7fc03a9ec154 100644
+--- a/drivers/pwm/pwm-tegra.c
++++ b/drivers/pwm/pwm-tegra.c
+@@ -99,7 +99,7 @@ static int tegra_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
+ 			    int duty_ns, int period_ns)
+ {
+ 	struct tegra_pwm_chip *pc = to_tegra_pwm_chip(chip);
+-	unsigned long long c = duty_ns, hz;
++	unsigned long long c = duty_ns;
+ 	unsigned long rate, required_clk_rate;
+ 	u32 val = 0;
+ 	int err;
+@@ -156,11 +156,9 @@ static int tegra_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
+ 		pc->clk_rate = clk_get_rate(pc->clk);
+ 	}
+ 
+-	rate = pc->clk_rate >> PWM_DUTY_WIDTH;
+-
+ 	/* Consider precision in PWM_SCALE_WIDTH rate calculation */
+-	hz = DIV_ROUND_CLOSEST_ULL(100ULL * NSEC_PER_SEC, period_ns);
+-	rate = DIV_ROUND_CLOSEST_ULL(100ULL * rate, hz);
++	rate = mul_u64_u64_div_u64(pc->clk_rate, period_ns,
++				   (u64)NSEC_PER_SEC << PWM_DUTY_WIDTH);
+ 
+ 	/*
+ 	 * Since the actual PWM divider is the register's frequency divider
+@@ -169,6 +167,8 @@ static int tegra_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
+ 	 */
+ 	if (rate > 0)
+ 		rate--;
++	else
++		return -EINVAL;
+ 
+ 	/*
+ 	 * Make sure that the rate will fit in the register's frequency
+
+base-commit: ed14d36498c8d15be098df4af9ca324f96e9de74
+-- 
+2.34.1
+
