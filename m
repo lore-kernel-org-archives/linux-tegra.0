@@ -2,34 +2,33 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2106C433F5
-	for <linux-tegra@archiver.kernel.org>; Thu,  3 Mar 2022 21:16:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65549C433F5
+	for <linux-tegra@archiver.kernel.org>; Thu,  3 Mar 2022 21:22:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236440AbiCCVRT (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 3 Mar 2022 16:17:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46712 "EHLO
+        id S236488AbiCCVXI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 3 Mar 2022 16:23:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59360 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234718AbiCCVRQ (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 3 Mar 2022 16:17:16 -0500
-X-Greylist: delayed 118 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 03 Mar 2022 13:16:29 PST
+        with ESMTP id S234966AbiCCVXH (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 3 Mar 2022 16:23:07 -0500
 Received: from ixit.cz (ip-94-112-206-30.net.upcbroadband.cz [94.112.206.30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1609C49246;
-        Thu,  3 Mar 2022 13:16:28 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A177E131F40
+        for <linux-tegra@vger.kernel.org>; Thu,  3 Mar 2022 13:22:20 -0800 (PST)
 Received: from newone.lan (_gateway [10.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by ixit.cz (Postfix) with ESMTPSA id 0913724D27;
-        Thu,  3 Mar 2022 22:16:22 +0100 (CET)
+        by ixit.cz (Postfix) with ESMTPSA id C304B23249;
+        Thu,  3 Mar 2022 22:14:22 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ixit.cz; s=dkim;
-        t=1646342182;
+        t=1646342062;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding;
-        bh=Sq+25tuV9QbwdtZmTRqWKwg0uXfKLTlngPrLI4NiamE=;
-        b=Bq8V/2Kkg1gVdgtrPQqbcjbHZhYqOO1spbPcykul6H3/2i7w8bAsxUiHA/xy14q+6gX+yw
-        MMpbIiKsHichlW/NuYtud1c/IUFdY5P2Ok0W+u2WlHxdEGQpNFTbBuevpEHjaPfjx++CwJ
-        VJ8kCpHpQidy0OWDi3ydOvDYPa5kGU4=
+        bh=too842p3tbwzefk7Ahe3EmkzU3tQNyp9cfSRShMO0jU=;
+        b=M2we+3/pZQKSXSwnDt1agCFjCCT1vSQD/3Y4aPTuIfrIlGgCRbh8bU76zeOArZg3erkfYh
+        JilJ6Fe0e2JhQfHKayUvsFRWZ2QSbc/eRcx1NeGq/KNnqSTfu8zHOGUk4DmkzEqdvkWeSa
+        O4a671SiwowbvMbFzdmcJFukSjE2W7c=
 From:   David Heidelberg <david@ixit.cz>
 To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -41,9 +40,9 @@ To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
 Cc:     ~okias/devicetree@lists.sr.ht, David Heidelberg <david@ixit.cz>,
         linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         linux-tegra@vger.kernel.org
-Subject: [PATCH v2] dt-bindings: timer: Tegra: Convert text bindings to yaml
-Date:   Thu,  3 Mar 2022 22:16:19 +0100
-Message-Id: <20220303211620.32456-1-david@ixit.cz>
+Subject: [PATCH] dt-bindings: timer: Tegra: Convert text bindings to yaml
+Date:   Thu,  3 Mar 2022 22:14:20 +0100
+Message-Id: <20220303211421.32073-1-david@ixit.cz>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -59,14 +58,11 @@ identical content (differens in number of registers).
 
 Signed-off-by: David Heidelberg <david@ixit.cz>
 ---
-v2:
- - reg: true -> reg: maxItems: 1
----
- .../bindings/timer/nvidia,tegra-timer.yaml    | 150 ++++++++++++++++++
+ .../bindings/timer/nvidia,tegra-timer.yaml    | 149 ++++++++++++++++++
  .../bindings/timer/nvidia,tegra20-timer.txt   |  24 ---
  .../bindings/timer/nvidia,tegra210-timer.txt  |  36 -----
  .../bindings/timer/nvidia,tegra30-timer.txt   |  28 ----
- 4 files changed, 150 insertions(+), 88 deletions(-)
+ 4 files changed, 149 insertions(+), 88 deletions(-)
  create mode 100644 Documentation/devicetree/bindings/timer/nvidia,tegra-timer.yaml
  delete mode 100644 Documentation/devicetree/bindings/timer/nvidia,tegra20-timer.txt
  delete mode 100644 Documentation/devicetree/bindings/timer/nvidia,tegra210-timer.txt
@@ -74,10 +70,10 @@ v2:
 
 diff --git a/Documentation/devicetree/bindings/timer/nvidia,tegra-timer.yaml b/Documentation/devicetree/bindings/timer/nvidia,tegra-timer.yaml
 new file mode 100644
-index 000000000000..f0b401f80aff
+index 000000000000..8a982514383a
 --- /dev/null
 +++ b/Documentation/devicetree/bindings/timer/nvidia,tegra-timer.yaml
-@@ -0,0 +1,150 @@
+@@ -0,0 +1,149 @@
 +# SPDX-License-Identifier: GPL-2.0-only
 +%YAML 1.2
 +---
@@ -168,8 +164,7 @@ index 000000000000..f0b401f80aff
 +          The Tegra20 timer provides four 29-bit timer channels and a single 32-bit free
 +          running counter. The first two channels may also trigger a watchdog reset.
 +
-+  reg:
-+    maxItems: 1
++  reg: true
 +
 +  interrupts: true
 +
