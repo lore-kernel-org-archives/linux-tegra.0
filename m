@@ -2,163 +2,119 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CBEEC433EF
-	for <linux-tegra@archiver.kernel.org>; Wed,  2 Mar 2022 20:59:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94613C433FE
+	for <linux-tegra@archiver.kernel.org>; Thu,  3 Mar 2022 02:28:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244961AbiCBVAW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 2 Mar 2022 16:00:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45510 "EHLO
+        id S231804AbiCCC2l (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 2 Mar 2022 21:28:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41870 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244975AbiCBVAQ (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 2 Mar 2022 16:00:16 -0500
-Received: from mail-pf1-x42a.google.com (mail-pf1-x42a.google.com [IPv6:2607:f8b0:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56C80DBD2E
-        for <linux-tegra@vger.kernel.org>; Wed,  2 Mar 2022 12:59:30 -0800 (PST)
-Received: by mail-pf1-x42a.google.com with SMTP id d187so2964389pfa.10
-        for <linux-tegra@vger.kernel.org>; Wed, 02 Mar 2022 12:59:30 -0800 (PST)
+        with ESMTP id S231743AbiCCC2i (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 2 Mar 2022 21:28:38 -0500
+Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B340D10FC6;
+        Wed,  2 Mar 2022 18:27:53 -0800 (PST)
+Received: by mail-pj1-x102e.google.com with SMTP id p3-20020a17090a680300b001bbfb9d760eso6464723pjj.2;
+        Wed, 02 Mar 2022 18:27:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=R/oQqieG0aXWXHs93Td97reRxAIjZoSgBmUtDJFVhjU=;
-        b=d2ZFN7FzXJICmnX4Tyt0wAx0nHny3V7g7RBF7BzoFi4JqvMjvTlFe6r9CSmtZHYpfY
-         sI7cCbacBhQSn0c2nYjk/wWGRSWn9quhJSSynH9lMYRKPPdVW/LYlF+HQ4F3tfS4GoN+
-         rfxT6gA9HHGJJFfNnOWheyqKpysRyPxkd0f8U=
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=C6016/38QKZUQAyk5HMPjenTvm42Pe8sPBzTcqL5vmY=;
+        b=qBGtve+IuFrAkJa+gsN1WQjHRs2fvQkSK1D44BenBKAqsyswWIPF49CjeAw6Lc/Xiz
+         7VY9uX10GWOeYOq3Roffx9lK59MGCnSnWmLkHD6Zz3XGADMqQbIXFAspvzlfyt7tl87F
+         C44YITS/y0gKUKqqxM42VKL4jH/Xx4KasojD++jZOWXtcwkx1m//DlSoFwhQEbp4i/NS
+         eGEaCL2abI9d2Qo/vgVE47lljuFHl9RIsYb9haWI9DYl1+oIMHXMK3O9uyeK26H4D1AX
+         Jy4saNgfSyFkb5FP8pbKE6ds3BSqIpGBCoZu+qijzq/vfSl1dGYXTnehjmH9/ySByi+z
+         BIOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=R/oQqieG0aXWXHs93Td97reRxAIjZoSgBmUtDJFVhjU=;
-        b=dyV0Mq1u8zml9AAz/XEbXdB8iYuHXlwjLWuRDE9pU6nQT0wUVgAi6yrIiq4r474WCE
-         vCi6oC3K0p+H7iULlAVs+m9plsZrIpTN1XHBfPyeWu5WZ+nqhPKyz0fCeKBvj5T4elFP
-         6NsuJ6NYu5YVcRaT1AArbGcHlOkuX/1NQd6heXP+MDZqQwDuFPPEzDc2mnIPsOsvZJ/e
-         1VnF05I83i9IrATSLj7S6hpmkAtHY6RwxxUeA29pJARVByS+qAT+bYGdQwy3oGTIk6D1
-         wBliG+00/cAkqar+AjDiY1ot6LagPoLIde/ke6uFuAS5alU/e7obibDwbvu4V7cvwx0N
-         +OoA==
-X-Gm-Message-State: AOAM532V3n4i/n0o+7fIBlPz0bUp+0maBOI3enu6CvViY+unTDjdLj50
-        xPi6gFrYDgOr/5pCr+eOfk6k7g==
-X-Google-Smtp-Source: ABdhPJwV5Vftpu3BNFYOd1YAI3xcgBfQbmCq2DPnKYT59xnVma61vCMoUamoUdgwMbiUWTPibOctJw==
-X-Received: by 2002:a63:595e:0:b0:378:b203:a74e with SMTP id j30-20020a63595e000000b00378b203a74emr13280856pgm.328.1646254769698;
-        Wed, 02 Mar 2022 12:59:29 -0800 (PST)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id z9-20020a655a49000000b00373459df190sm58337pgs.35.2022.03.02.12.59.29
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=C6016/38QKZUQAyk5HMPjenTvm42Pe8sPBzTcqL5vmY=;
+        b=CzJtZPcuhcWcftaDgdBMfTH8+c9EoS3XmQ505LWS57kdN7/Y7hxiGiFhGCtkVhWR4n
+         9QiYMg9DgjK+2U+OgCUW8Ihc/Zsz1tArsI+VPvsbHeizYXBDN8PT/Evowom4DSVx5ZKW
+         SbKPrObrC5eMgExacIP+ZPEND4qx5Us+NJQ0WRDXPRpYk5m/o2sqMuwebEko7dN7/HEk
+         eAq5ky/UWz0+SWqk5EOcM1gkci5Yts4Pn4Ct+p/tQQvAT2EONElmTfre57WvwdfOJKPi
+         0JSo3Tr1FuDqKJWi6MM1A+v0Yqa4E2WoDAES5x9cgi/rm9pPbPuEvHVBoD12sn5e/d+j
+         6agg==
+X-Gm-Message-State: AOAM531YwoKciGKl5/xB3iguH9sB6KyY7W/Y8igN4n9GDfpUTuo8ZSvU
+        LuwF03lr62QEMLGgZKYD3hLDUsWYyg5BSQ==
+X-Google-Smtp-Source: ABdhPJwdGKGtPoJbq9KB0b78P8kOQOqlHazHAUCZQHvA6TzNHcldJErwW75BUHOqmaVxrll88UvLqQ==
+X-Received: by 2002:a17:902:ec90:b0:151:a632:7ebb with SMTP id x16-20020a170902ec9000b00151a6327ebbmr1936164plg.154.1646274473191;
+        Wed, 02 Mar 2022 18:27:53 -0800 (PST)
+Received: from ubuntu.huawei.com ([119.3.119.19])
+        by smtp.googlemail.com with ESMTPSA id d15-20020a17090ab30f00b001b8e65326b3sm359822pjr.9.2022.03.02.18.27.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Mar 2022 12:59:29 -0800 (PST)
-Date:   Wed, 2 Mar 2022 12:59:28 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        David Laight <David.Laight@aculab.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        linux-wireless <linux-wireless@vger.kernel.org>,
-        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-        KVM list <kvm@vger.kernel.org>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-        "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Cristiano Giuffrida <c.giuffrida@vu.nl>,
-        "Bos, H.J." <h.j.bos@vu.nl>,
-        "linux1394-devel@lists.sourceforge.net" 
-        <linux1394-devel@lists.sourceforge.net>,
-        "drbd-dev@lists.linbit.com" <drbd-dev@lists.linbit.com>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        CIFS <linux-cifs@vger.kernel.org>,
-        "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
-        linux-scsi <linux-scsi@vger.kernel.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        "linux-staging@lists.linux.dev" <linux-staging@lists.linux.dev>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
-        "kgdb-bugreport@lists.sourceforge.net" 
-        <kgdb-bugreport@lists.sourceforge.net>,
-        "bcm-kernel-feedback-list@broadcom.com" 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Arnd Bergman <arnd@arndb.de>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        intel-gfx <intel-gfx@lists.freedesktop.org>,
-        Brian Johannesmeyer <bjohannesmeyer@gmail.com>,
-        Nathan Chancellor <nathan@kernel.org>,
-        dma <dmaengine@vger.kernel.org>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Jakob Koschel <jakobkoschel@gmail.com>,
-        "v9fs-developer@lists.sourceforge.net" 
-        <v9fs-developer@lists.sourceforge.net>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        linux-block <linux-block@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "samba-technical@lists.samba.org" <samba-technical@lists.samba.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux F2FS Dev Mailing List 
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        "tipc-discussion@lists.sourceforge.net" 
-        <tipc-discussion@lists.sourceforge.net>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        "linux-mediatek@lists.infradead.org" 
-        <linux-mediatek@lists.infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        Mike Rapoport <rppt@kernel.org>
-Subject: Re: [PATCH 2/6] treewide: remove using list iterator after loop body
- as a ptr
-Message-ID: <202203021256.69D7C4BCA6@keescook>
-References: <7D0C2A5D-500E-4F38-AD0C-A76E132A390E@kernel.org>
- <73fa82a20910c06784be2352a655acc59e9942ea.camel@HansenPartnership.com>
- <CAHk-=wiT5HX6Kp0Qv4ZYK_rkq9t5fZ5zZ7vzvi6pub9kgp=72g@mail.gmail.com>
- <7dc860874d434d2288f36730d8ea3312@AcuMS.aculab.com>
- <CAHk-=whKqg89zu4T95+ctY-hocR6kDArpo2qO14-kV40Ga7ufw@mail.gmail.com>
- <0ced2b155b984882b39e895f0211037c@AcuMS.aculab.com>
- <CAHk-=wix0HLCBs5sxAeW3uckg0YncXbTjMsE-Tv8WzmkOgLAXQ@mail.gmail.com>
- <78ccb184-405e-da93-1e02-078f90d2b9bc@rasmusvillemoes.dk>
- <202203021158.DB5204A0@keescook>
- <CAHk-=wikKPC0LUqZ8++EC5JOvGdBqVH9uUaTX=DvBioDoReYww@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wikKPC0LUqZ8++EC5JOvGdBqVH9uUaTX=DvBioDoReYww@mail.gmail.com>
+        Wed, 02 Mar 2022 18:27:52 -0800 (PST)
+From:   Xiaomeng Tong <xiam0nd.tong@gmail.com>
+To:     david.laight@aculab.com
+Cc:     akpm@linux-foundation.org, alsa-devel@alsa-project.org,
+        amd-gfx@lists.freedesktop.org, andriy.shevchenko@linux.intel.com,
+        arnd@arndb.de, bcm-kernel-feedback-list@broadcom.com,
+        bjohannesmeyer@gmail.com, c.giuffrida@vu.nl,
+        christian.koenig@amd.com, christophe.jaillet@wanadoo.fr,
+        dan.carpenter@oracle.com, dmaengine@vger.kernel.org,
+        drbd-dev@lists.linbit.com, dri-devel@lists.freedesktop.org,
+        gustavo@embeddedor.com, h.j.bos@vu.nl,
+        intel-gfx@lists.freedesktop.org, intel-wired-lan@lists.osuosl.org,
+        jakobkoschel@gmail.com, jgg@ziepe.ca, keescook@chromium.org,
+        kgdb-bugreport@lists.sourceforge.net, kvm@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, linux-block@vger.kernel.org,
+        linux-cifs@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, linux-pm@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-sgx@vger.kernel.org, linux-staging@lists.linux.dev,
+        linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-wireless@vger.kernel.org,
+        linux1394-devel@lists.sourceforge.net, linux@rasmusvillemoes.dk,
+        linuxppc-dev@lists.ozlabs.org, nathan@kernel.org,
+        netdev@vger.kernel.org, nouveau@lists.freedesktop.org,
+        rppt@kernel.org, samba-technical@lists.samba.org,
+        tglx@linutronix.de, tipc-discussion@lists.sourceforge.net,
+        torvalds@linux-foundation.org,
+        v9fs-developer@lists.sourceforge.net, xiam0nd.tong@gmail.com
+Subject: RE: [PATCH 2/6] treewide: remove using list iterator after loop body as a ptr
+Date:   Thu,  3 Mar 2022 10:27:29 +0800
+Message-Id: <20220303022729.9321-1-xiam0nd.tong@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <1077f17e50d34dc2bbfdf4e52a1cb2fd@AcuMS.aculab.com>
+References: <1077f17e50d34dc2bbfdf4e52a1cb2fd@AcuMS.aculab.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, Mar 02, 2022 at 12:18:45PM -0800, Linus Torvalds wrote:
-> On Wed, Mar 2, 2022 at 12:07 PM Kees Cook <keescook@chromium.org> wrote:
-> >
-> > I've long wanted to change kfree() to explicitly set pointers to NULL on
-> > free. https://github.com/KSPP/linux/issues/87
-> 
-> We've had this discussion with the gcc people in the past, and gcc
-> actually has some support for it, but it's sadly tied to the actual
-> function name (ie gcc has some special-casing for "free()")
-> 
-> See
-> 
->     https://gcc.gnu.org/bugzilla/show_bug.cgi?id=94527
-> 
-> for some of that discussion.
-> 
-> Oh, and I see some patch actually got merged since I looked there last
-> so that you can mark "deallocator" functions, but I think it's only
-> for the context matching, not for actually killing accesses to the
-> pointer afterwards.
+On Wed, 2 Mar 2022 14:04:06 +0000, David Laight
+<David.Laight@ACULAB.COM> wrote:
+> I think that it would be better to make any alternate loop macro
+> just set the variable to NULL on the loop exit.
+> That is easier to code for and the compiler might be persuaded to
+> not redo the test.
 
-Ah! I missed that getting added in GCC 11. But yes, there it is:
+No, that would lead to a NULL dereference.
 
-https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html#index-malloc-function-attribute
+The problem is the mis-use of iterator outside the loop on exit, and
+the iterator will be the HEAD's container_of pointer which pointers
+to a type-confused struct. Sidenote: The *mis-use* here refers to
+mistakely access to other members of the struct, instead of the
+list_head member which acutally is the valid HEAD.
 
-Hah, now we may need to split __malloc from __alloc_size. ;)
+IOW, you would dereference a (NULL + offset_of_member) address here.
 
-I'd still like the NULL assignment behavior, though, since some things
-can easily avoid static analysis.
+Please remind me if i missed something, thanks.
 
--- 
-Kees Cook
+> OTOH there may be alternative definitions that can be used to get
+> the compiler (or other compiler-like tools) to detect broken code.
+> Even if the definition can't possibly generate a working kerrnel.
+
+The "list_for_each_entry_inside(pos, type, head, member)" way makes
+the iterator invisiable outside the loop, and would be catched by
+compiler if use-after-loop things happened.
+
+Can you share your "alternative definitions" details? thanks!
+
+--
+Xiaomeng Tong
