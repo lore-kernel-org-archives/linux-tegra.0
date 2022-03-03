@@ -2,126 +2,338 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7654BC433FE
-	for <linux-tegra@archiver.kernel.org>; Thu,  3 Mar 2022 17:51:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2106C433F5
+	for <linux-tegra@archiver.kernel.org>; Thu,  3 Mar 2022 21:16:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230487AbiCCRw0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 3 Mar 2022 12:52:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47696 "EHLO
+        id S236440AbiCCVRT (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 3 Mar 2022 16:17:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46712 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229496AbiCCRwZ (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 3 Mar 2022 12:52:25 -0500
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26DD31A1C6B
-        for <linux-tegra@vger.kernel.org>; Thu,  3 Mar 2022 09:51:40 -0800 (PST)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1nPpbz-0006WA-E1; Thu, 03 Mar 2022 18:51:35 +0100
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1nPpby-002SG9-LD; Thu, 03 Mar 2022 18:51:33 +0100
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1nPpbx-006kwO-0s; Thu, 03 Mar 2022 18:51:33 +0100
-From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Cc:     linux-pwm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        kernel@pengutronix.de
-Subject: [PATCH] pwm: tegra: Optimize period calculation
-Date:   Thu,  3 Mar 2022 18:50:12 +0100
-Message-Id: <20220303175012.358613-1-u.kleine-koenig@pengutronix.de>
+        with ESMTP id S234718AbiCCVRQ (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 3 Mar 2022 16:17:16 -0500
+X-Greylist: delayed 118 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 03 Mar 2022 13:16:29 PST
+Received: from ixit.cz (ip-94-112-206-30.net.upcbroadband.cz [94.112.206.30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1609C49246;
+        Thu,  3 Mar 2022 13:16:28 -0800 (PST)
+Received: from newone.lan (_gateway [10.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ixit.cz (Postfix) with ESMTPSA id 0913724D27;
+        Thu,  3 Mar 2022 22:16:22 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ixit.cz; s=dkim;
+        t=1646342182;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=Sq+25tuV9QbwdtZmTRqWKwg0uXfKLTlngPrLI4NiamE=;
+        b=Bq8V/2Kkg1gVdgtrPQqbcjbHZhYqOO1spbPcykul6H3/2i7w8bAsxUiHA/xy14q+6gX+yw
+        MMpbIiKsHichlW/NuYtud1c/IUFdY5P2Ok0W+u2WlHxdEGQpNFTbBuevpEHjaPfjx++CwJ
+        VJ8kCpHpQidy0OWDi3ydOvDYPa5kGU4=
+From:   David Heidelberg <david@ixit.cz>
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Stephen Warren <swarren@nvidia.com>
+Cc:     ~okias/devicetree@lists.sr.ht, David Heidelberg <david@ixit.cz>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: [PATCH v2] dt-bindings: timer: Tegra: Convert text bindings to yaml
+Date:   Thu,  3 Mar 2022 22:16:19 +0100
+Message-Id: <20220303211620.32456-1-david@ixit.cz>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2744; h=from:subject; bh=g0VDo2ZTwl5abWqLJlDJgWxv6PzZwMxPfrKBw55rvTA=; b=owEBbQGS/pANAwAKAcH8FHityuwJAcsmYgBiIP/QaamitcKfZEryPLRMlFNY7JjYB7J4xU1Umz45 B8fLnJ6JATMEAAEKAB0WIQR+cioWkBis/z50pAvB/BR4rcrsCQUCYiD/0AAKCRDB/BR4rcrsCUZNB/ 9P4MYim6PxAN9CTWyOeh7VgK0wxFh4CSeyOcK+r3ze3L17nYP0dVrK6RzHhKvsqxrgtH+//37nTRmB 0UjzmnZgBJHV9lo/gO7d8uh9DNuv7NmS7nFSS7aW6iSBcqWuoy0YMZGvvd+ExEC98fsF23x/CASyup mZYJE3QhmSxlOs88U/NiFl+81hUq0YgoCRfixHEEWZvFiNeuuQJmdI4NxjYxkgz6SJONKpWPBmw+fM xapB4qk7CcLwY+2TXe2hNUSQzj3qGBkvBLp1DGrAPkwc74VKlGWtyYXhP+30cynTs/FBcQdo3443T9 8djFAl7dYdl+x8OtFMXFYkWnQirGrg
-X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
+X-Spam: Yes
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Dividing by the result of a division looses precision because the result is
-rounded twice. E.g. with clk_rate = 48000000 and period = 32760033 the
-following numbers result:
+Convert Tegra timer binding into yaml format.
 
-	rate = pc->clk_rate >> PWM_DUTY_WIDTH = 187500
-	hz = DIV_ROUND_CLOSEST_ULL(100ULL * NSEC_PER_SEC, period_ns) = 3052
-	rate = DIV_ROUND_CLOSEST_ULL(100ULL * rate, hz) = 6144
+This commit also merge 3 text bindings with almost
+identical content (differens in number of registers).
 
-The exact result would be 6142.5061875 and (apart from rounding) this is
-found by using a single division. As a side effect is also a tad
-cheaper to calculate.
-
-Also using clk_rate >> PWM_DUTY_WIDTH looses precision. Consider for
-example clk_rate = 47999999 and period = 106667:
-
-	mul_u64_u64_div_u64(pc->clk_rate >> PWM_DUTY_WIDTH, period_ns,
-			    NSEC_PER_SEC) = 19
-
-	mul_u64_u64_div_u64(pc->clk_rate, period_ns,
-			    NSEC_PER_SEC << PWM_DUTY_WIDTH) = 20
-
-(The exact result is 20.000062083332033.)
-
-With this optimizations also switch from round-closest to round-down. Given
-that the calculations were non-optimal for quite some time now which
-nobody reported as a problem, this is the opportunity to align the driver's
-behavior to the requirements of new drivers. (Note however that the
-duty_cycle calculation isn't aligned yet.)
-
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+Signed-off-by: David Heidelberg <david@ixit.cz>
 ---
- drivers/pwm/pwm-tegra.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+v2:
+ - reg: true -> reg: maxItems: 1
+---
+ .../bindings/timer/nvidia,tegra-timer.yaml    | 150 ++++++++++++++++++
+ .../bindings/timer/nvidia,tegra20-timer.txt   |  24 ---
+ .../bindings/timer/nvidia,tegra210-timer.txt  |  36 -----
+ .../bindings/timer/nvidia,tegra30-timer.txt   |  28 ----
+ 4 files changed, 150 insertions(+), 88 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/timer/nvidia,tegra-timer.yaml
+ delete mode 100644 Documentation/devicetree/bindings/timer/nvidia,tegra20-timer.txt
+ delete mode 100644 Documentation/devicetree/bindings/timer/nvidia,tegra210-timer.txt
+ delete mode 100644 Documentation/devicetree/bindings/timer/nvidia,tegra30-timer.txt
 
-diff --git a/drivers/pwm/pwm-tegra.c b/drivers/pwm/pwm-tegra.c
-index e5a9ffef4a71..7fc03a9ec154 100644
---- a/drivers/pwm/pwm-tegra.c
-+++ b/drivers/pwm/pwm-tegra.c
-@@ -99,7 +99,7 @@ static int tegra_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
- 			    int duty_ns, int period_ns)
- {
- 	struct tegra_pwm_chip *pc = to_tegra_pwm_chip(chip);
--	unsigned long long c = duty_ns, hz;
-+	unsigned long long c = duty_ns;
- 	unsigned long rate, required_clk_rate;
- 	u32 val = 0;
- 	int err;
-@@ -156,11 +156,9 @@ static int tegra_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
- 		pc->clk_rate = clk_get_rate(pc->clk);
- 	}
- 
--	rate = pc->clk_rate >> PWM_DUTY_WIDTH;
+diff --git a/Documentation/devicetree/bindings/timer/nvidia,tegra-timer.yaml b/Documentation/devicetree/bindings/timer/nvidia,tegra-timer.yaml
+new file mode 100644
+index 000000000000..f0b401f80aff
+--- /dev/null
++++ b/Documentation/devicetree/bindings/timer/nvidia,tegra-timer.yaml
+@@ -0,0 +1,150 @@
++# SPDX-License-Identifier: GPL-2.0-only
++%YAML 1.2
++---
++$id: "http://devicetree.org/schemas/timer/nvidia,tegra-timer.yaml#"
++$schema: "http://devicetree.org/meta-schemas/core.yaml#"
++
++title: NVIDIA Tegra timer
++
++maintainers:
++  - Stephen Warren <swarren@nvidia.com>
++
++allOf:
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: nvidia,tegra210-timer
++    then:
++      properties:
++        interrupts:
++          # Either a single combined interrupt or up to 14 individual interrupts
++          minItems: 1
++          maxItems: 14
++          description: >
++            A list of 14 interrupts; one per each timer channels 0 through 13
++
++  - if:
++      properties:
++        compatible:
++          oneOf:
++            - items:
++                - enum:
++                    - nvidia,tegra114-timer
++                    - nvidia,tegra124-timer
++                    - nvidia,tegra132-timer
++                - const: nvidia,tegra30-timer
++            - items:
++                - const: nvidia,tegra30-timer
++                - const: nvidia,tegra20-timer
++    then:
++      properties:
++        interrupts:
++          # Either a single combined interrupt or up to 6 individual interrupts
++          minItems: 1
++          maxItems: 6
++          description: >
++            A list of 6 interrupts; one per each of timer channels 1 through 5,
++            and one for the shared interrupt for the remaining channels.
++
++  - if:
++      properties:
++        compatible:
++          const: nvidia,tegra20-timer
++    then:
++      properties:
++        interrupts:
++          # Either a single combined interrupt or up to 4 individual interrupts
++          minItems: 1
++          maxItems: 4
++          description: |
++            A list of 4 interrupts; one per timer channel.
++
++properties:
++  compatible:
++    oneOf:
++      - const: nvidia,tegra210-timer
++        description: >
++          The Tegra210 timer provides fourteen 29-bit timer counters and one 32-bit
++          timestamp counter. The TMRs run at either a fixed 1 MHz clock rate derived
++          from the oscillator clock (TMR0-TMR9) or directly at the oscillator clock
++          (TMR10-TMR13). Each TMR can be programmed to generate one-shot, periodic,
++          or watchdog interrupts.
++      - items:
++          - enum:
++              - nvidia,tegra114-timer
++              - nvidia,tegra124-timer
++              - nvidia,tegra132-timer
++          - const: nvidia,tegra30-timer
++      - items:
++          - const: nvidia,tegra30-timer
++          - const: nvidia,tegra20-timer
++        description: >
++          The Tegra30 timer provides ten 29-bit timer channels, a single 32-bit free
++          running counter, and 5 watchdog modules. The first two channels may also
++          trigger a legacy watchdog reset.
++      - const: nvidia,tegra20-timer
++        description: >
++          The Tegra20 timer provides four 29-bit timer channels and a single 32-bit free
++          running counter. The first two channels may also trigger a watchdog reset.
++
++  reg:
++    maxItems: 1
++
++  interrupts: true
++
++  clocks:
++    maxItems: 1
++
++  clock-names:
++    items:
++      - const: timer
++
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - clocks
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/irq.h>
++    timer@60005000 {
++        compatible = "nvidia,tegra30-timer", "nvidia,tegra20-timer";
++        reg = <0x60005000 0x400>;
++        interrupts = <0 0 IRQ_TYPE_LEVEL_HIGH
++                      0 1 IRQ_TYPE_LEVEL_HIGH
++                      0 41 IRQ_TYPE_LEVEL_HIGH
++                      0 42 IRQ_TYPE_LEVEL_HIGH
++                      0 121 IRQ_TYPE_LEVEL_HIGH
++                      0 122 IRQ_TYPE_LEVEL_HIGH>;
++        clocks = <&tegra_car 214>;
++    };
++  - |
++    #include <dt-bindings/clock/tegra210-car.h>
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++    #include <dt-bindings/interrupt-controller/irq.h>
++
++    timer@60005000 {
++        compatible = "nvidia,tegra210-timer";
++        reg = <0x60005000 0x400>;
++        interrupts = <GIC_SPI 156 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 155 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 176 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 177 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 178 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 179 IRQ_TYPE_LEVEL_HIGH>;
++        clocks = <&tegra_car TEGRA210_CLK_TIMER>;
++        clock-names = "timer";
++    };
+diff --git a/Documentation/devicetree/bindings/timer/nvidia,tegra20-timer.txt b/Documentation/devicetree/bindings/timer/nvidia,tegra20-timer.txt
+deleted file mode 100644
+index 4a864bd10d3d..000000000000
+--- a/Documentation/devicetree/bindings/timer/nvidia,tegra20-timer.txt
++++ /dev/null
+@@ -1,24 +0,0 @@
+-NVIDIA Tegra20 timer
 -
- 	/* Consider precision in PWM_SCALE_WIDTH rate calculation */
--	hz = DIV_ROUND_CLOSEST_ULL(100ULL * NSEC_PER_SEC, period_ns);
--	rate = DIV_ROUND_CLOSEST_ULL(100ULL * rate, hz);
-+	rate = mul_u64_u64_div_u64(pc->clk_rate, period_ns,
-+				   (u64)NSEC_PER_SEC << PWM_DUTY_WIDTH);
- 
- 	/*
- 	 * Since the actual PWM divider is the register's frequency divider
-@@ -169,6 +167,8 @@ static int tegra_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
- 	 */
- 	if (rate > 0)
- 		rate--;
-+	else
-+		return -EINVAL;
- 
- 	/*
- 	 * Make sure that the rate will fit in the register's frequency
-
-base-commit: ed14d36498c8d15be098df4af9ca324f96e9de74
+-The Tegra20 timer provides four 29-bit timer channels and a single 32-bit free
+-running counter. The first two channels may also trigger a watchdog reset.
+-
+-Required properties:
+-
+-- compatible : should be "nvidia,tegra20-timer".
+-- reg : Specifies base physical address and size of the registers.
+-- interrupts : A list of 4 interrupts; one per timer channel.
+-- clocks : Must contain one entry, for the module clock.
+-  See ../clocks/clock-bindings.txt for details.
+-
+-Example:
+-
+-timer {
+-	compatible = "nvidia,tegra20-timer";
+-	reg = <0x60005000 0x60>;
+-	interrupts = <0 0 0x04
+-			0 1 0x04
+-			0 41 0x04
+-			0 42 0x04>;
+-	clocks = <&tegra_car 132>;
+-};
+diff --git a/Documentation/devicetree/bindings/timer/nvidia,tegra210-timer.txt b/Documentation/devicetree/bindings/timer/nvidia,tegra210-timer.txt
+deleted file mode 100644
+index 032cda96fe0d..000000000000
+--- a/Documentation/devicetree/bindings/timer/nvidia,tegra210-timer.txt
++++ /dev/null
+@@ -1,36 +0,0 @@
+-NVIDIA Tegra210 timer
+-
+-The Tegra210 timer provides fourteen 29-bit timer counters and one 32-bit
+-timestamp counter. The TMRs run at either a fixed 1 MHz clock rate derived
+-from the oscillator clock (TMR0-TMR9) or directly at the oscillator clock
+-(TMR10-TMR13). Each TMR can be programmed to generate one-shot, periodic,
+-or watchdog interrupts.
+-
+-Required properties:
+-- compatible : "nvidia,tegra210-timer".
+-- reg : Specifies base physical address and size of the registers.
+-- interrupts : A list of 14 interrupts; one per each timer channels 0 through
+-  13.
+-- clocks : Must contain one entry, for the module clock.
+-  See ../clocks/clock-bindings.txt for details.
+-
+-timer@60005000 {
+-	compatible = "nvidia,tegra210-timer";
+-	reg = <0x0 0x60005000 0x0 0x400>;
+-	interrupts = <GIC_SPI 156 IRQ_TYPE_LEVEL_HIGH>,
+-		     <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
+-		     <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
+-		     <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>,
+-		     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>,
+-		     <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>,
+-		     <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>,
+-		     <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>,
+-		     <GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>,
+-		     <GIC_SPI 155 IRQ_TYPE_LEVEL_HIGH>,
+-		     <GIC_SPI 176 IRQ_TYPE_LEVEL_HIGH>,
+-		     <GIC_SPI 177 IRQ_TYPE_LEVEL_HIGH>,
+-		     <GIC_SPI 178 IRQ_TYPE_LEVEL_HIGH>,
+-		     <GIC_SPI 179 IRQ_TYPE_LEVEL_HIGH>;
+-	clocks = <&tegra_car TEGRA210_CLK_TIMER>;
+-	clock-names = "timer";
+-};
+diff --git a/Documentation/devicetree/bindings/timer/nvidia,tegra30-timer.txt b/Documentation/devicetree/bindings/timer/nvidia,tegra30-timer.txt
+deleted file mode 100644
+index 1761f53ee36f..000000000000
+--- a/Documentation/devicetree/bindings/timer/nvidia,tegra30-timer.txt
++++ /dev/null
+@@ -1,28 +0,0 @@
+-NVIDIA Tegra30 timer
+-
+-The Tegra30 timer provides ten 29-bit timer channels, a single 32-bit free
+-running counter, and 5 watchdog modules. The first two channels may also
+-trigger a legacy watchdog reset.
+-
+-Required properties:
+-
+-- compatible : For Tegra30, must contain "nvidia,tegra30-timer".  Otherwise,
+-  must contain '"nvidia,<chip>-timer", "nvidia,tegra30-timer"' where
+-  <chip> is tegra124 or tegra132.
+-- reg : Specifies base physical address and size of the registers.
+-- interrupts : A list of 6 interrupts; one per each of timer channels 1
+-    through 5, and one for the shared interrupt for the remaining channels.
+-- clocks : Must contain one entry, for the module clock.
+-  See ../clocks/clock-bindings.txt for details.
+-
+-timer {
+-	compatible = "nvidia,tegra30-timer", "nvidia,tegra20-timer";
+-	reg = <0x60005000 0x400>;
+-	interrupts = <0 0 0x04
+-		      0 1 0x04
+-		      0 41 0x04
+-		      0 42 0x04
+-		      0 121 0x04
+-		      0 122 0x04>;
+-	clocks = <&tegra_car 214>;
+-};
 -- 
 2.34.1
 
