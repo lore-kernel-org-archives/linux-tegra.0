@@ -2,340 +2,185 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE118C433F5
-	for <linux-tegra@archiver.kernel.org>; Thu,  3 Mar 2022 23:33:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95382C433FE
+	for <linux-tegra@archiver.kernel.org>; Fri,  4 Mar 2022 07:00:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236892AbiCCXeF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 3 Mar 2022 18:34:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55244 "EHLO
+        id S238618AbiCDHBP (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 4 Mar 2022 02:01:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50796 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229809AbiCCXeE (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 3 Mar 2022 18:34:04 -0500
-Received: from ixit.cz (ip-94-112-206-30.net.upcbroadband.cz [94.112.206.30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06523B2E1D;
-        Thu,  3 Mar 2022 15:33:16 -0800 (PST)
-Received: from newone.lan (_gateway [10.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ixit.cz (Postfix) with ESMTPSA id C09B4202BA;
-        Fri,  4 Mar 2022 00:33:08 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ixit.cz; s=dkim;
-        t=1646350388;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=bHYpFZSUmUANi/7SmmSRcgqV3gsfMpiU9wroDaSqz2E=;
-        b=mq7oRWP+Y2QZbGS21Z0k1ZHt13mPyltR4FhfE80uHLsYgLIkh+OI/ovtnG53U8HxMc4rQJ
-        BReIwjTM43k6SYjXFQLRkEqvjLz9/4k+N6NoNKI/+OL0uNoU6jR8r9r1Nv+xIlM3yZoeJD
-        aqwLPhC+/lBVZqkJL4Py9vPKYIMyZ5I=
-From:   David Heidelberg <david@ixit.cz>
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Stephen Warren <swarren@nvidia.com>
-Cc:     ~okias/devicetree@lists.sr.ht, David Heidelberg <david@ixit.cz>,
-        Rob Herring <robh@kernel.org>, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: [PATCH v3] dt-bindings: timer: Tegra: Convert text bindings to yaml
-Date:   Fri,  4 Mar 2022 00:33:06 +0100
-Message-Id: <20220303233307.61753-1-david@ixit.cz>
-X-Mailer: git-send-email 2.34.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam: Yes
+        with ESMTP id S238446AbiCDHBM (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 4 Mar 2022 02:01:12 -0500
+Received: from mail-pg1-x534.google.com (mail-pg1-x534.google.com [IPv6:2607:f8b0:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8AF318E3DF;
+        Thu,  3 Mar 2022 23:00:21 -0800 (PST)
+Received: by mail-pg1-x534.google.com with SMTP id t187so2483135pgb.1;
+        Thu, 03 Mar 2022 23:00:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=0a+oQu3LYTAbOOyoILb+F/zkApGIum0yjd+xPCLEHo4=;
+        b=UcHSzcmMAevEFsqxc8gimvoSIew96LrW3UYvjfgkcaeLb/Edql9668oTELTgMdhcyh
+         uwTLYgNgPfuwuQfZCbkLtuIX59UkP2xXrD0mK6eOfNdOu/KSihdjQUFHL7gwAFzgpb4Z
+         PeSQfhLMwS3uLkuXfSSL1QQyblGTA4kTyWBkcty1viz6EkWmIbbGn99xu95lY6jAsJ0c
+         CbisDo/RPFGn8gAJnKluj00ht4OQ80XaXmCEvGalnXTnvAWrV5UWFfWh6kgUBnLZJvSQ
+         W0PYU136vUwP4grvjJEIhDxHc0WM1lPQ2cysIXPjh+breTQ07tU9AM0RgZ3Jr4UsSFjT
+         NaGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=0a+oQu3LYTAbOOyoILb+F/zkApGIum0yjd+xPCLEHo4=;
+        b=wb2esMQoam0yRdU1iiWooJMh4JC1GjnRkNWIV6OwsjoezbD+7+ifd1PhuzPjaxCPmO
+         u1fcrH6eLHtxqL4KDTLuseNeth97iCChifcBxeofjvT0Byq082mjxQBMfKUbi4/3XunZ
+         7O1vtdoC6GJQEe1jCXtEwSzf90DWRIWVtkfFAhBCXU/4JQ9/KiwbJufulDJ2q3IPax49
+         jtXkkkenH5kmYciK/w/TThMkCF+OMj+Sm8kubeVraTrTJ9SBcdzW0IJc/7q7VtLNcYPK
+         tCqru2KpLGaD7gEtqsW5aTHIjrKYId6o+E8n1FslfMQUFX2avWIb0/I/Jx8Qwp0u0z7d
+         d27Q==
+X-Gm-Message-State: AOAM532aXFpfPfPgP0BGzvfNmwbT3nDlpYgI2HlLyy0AbUqKoKxKSL90
+        x6bmOo7yTyt/Z10hh54ZEPQ=
+X-Google-Smtp-Source: ABdhPJxBFOb3A6C/RlDh1uHGrWM51HjSkR68cXfNAhNGErUbSC2hd/FilwMHkJmidt1eEHAWD7GVrA==
+X-Received: by 2002:a05:6a00:cc7:b0:4ec:c6f3:ad29 with SMTP id b7-20020a056a000cc700b004ecc6f3ad29mr41958698pfv.66.1646377221067;
+        Thu, 03 Mar 2022 23:00:21 -0800 (PST)
+Received: from ubuntu.huawei.com ([119.3.119.19])
+        by smtp.googlemail.com with ESMTPSA id f6-20020a654006000000b00346193b405fsm3665134pgp.44.2022.03.03.23.00.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Mar 2022 23:00:20 -0800 (PST)
+From:   Xiaomeng Tong <xiam0nd.tong@gmail.com>
+To:     daniel.thompson@linaro.org
+Cc:     akpm@linux-foundation.org, alsa-devel@alsa-project.org,
+        amd-gfx@lists.freedesktop.org, andriy.shevchenko@linux.intel.com,
+        arnd@arndb.de, bcm-kernel-feedback-list@broadcom.com,
+        bjohannesmeyer@gmail.com, c.giuffrida@vu.nl,
+        christian.koenig@amd.com, christophe.jaillet@wanadoo.fr,
+        dan.carpenter@oracle.com, david.laight@aculab.com,
+        dmaengine@vger.kernel.org, drbd-dev@lists.linbit.com,
+        dri-devel@lists.freedesktop.org, gustavo@embeddedor.com,
+        h.j.bos@vu.nl, intel-gfx@lists.freedesktop.org,
+        intel-wired-lan@lists.osuosl.org, jakobkoschel@gmail.com,
+        jgg@ziepe.ca, keescook@chromium.org,
+        kgdb-bugreport@lists.sourceforge.net, kvm@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, linux-block@vger.kernel.org,
+        linux-cifs@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, linux-pm@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-sgx@vger.kernel.org, linux-staging@lists.linux.dev,
+        linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-wireless@vger.kernel.org,
+        linux1394-devel@lists.sourceforge.net, linux@rasmusvillemoes.dk,
+        linuxppc-dev@lists.ozlabs.org, nathan@kernel.org,
+        netdev@vger.kernel.org, nouveau@lists.freedesktop.org,
+        rppt@kernel.org, samba-technical@lists.samba.org,
+        tglx@linutronix.de, tipc-discussion@lists.sourceforge.net,
+        torvalds@linux-foundation.org,
+        v9fs-developer@lists.sourceforge.net, xiam0nd.tong@gmail.com
+Subject: Re: [PATCH 2/6] treewide: remove using list iterator after loop body as a ptr
+Date:   Fri,  4 Mar 2022 14:59:57 +0800
+Message-Id: <20220304065957.16799-1-xiam0nd.tong@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20220303121824.qdyrognluik74iph@maple.lan>
+References: <20220303121824.qdyrognluik74iph@maple.lan>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Convert Tegra timer binding into yaml format.
+On Thu, 3 Mar 2022 12:18:24 +0000, Daniel Thompson wrote:
+> On Thu, Mar 03, 2022 at 03:26:57PM +0800, Xiaomeng Tong wrote:
+> > On Thu, 3 Mar 2022 04:58:23 +0000, David Laight wrote:
+> > > on 3 Mar 2022 10:27:29 +0800, Xiaomeng Tong wrote:
+> > > > The problem is the mis-use of iterator outside the loop on exit, and
+> > > > the iterator will be the HEAD's container_of pointer which pointers
+> > > > to a type-confused struct. Sidenote: The *mis-use* here refers to
+> > > > mistakely access to other members of the struct, instead of the
+> > > > list_head member which acutally is the valid HEAD.
+> > >
+> > > The problem is that the HEAD's container_of pointer should never
+> > > be calculated at all.
+> > > This is what is fundamentally broken about the current definition.
+> > 
+> > Yes, the rule is "the HEAD's container_of pointer should never be
+> > calculated at all outside the loop", but how do you make sure everyone
+> > follows this rule?
+> 
+> Your formulation of the rule is correct: never run container_of() on HEAD
+> pointer.
 
-This commit also merge 3 text bindings with almost
-identical content (differens in number of registers).
+Actually, it is not my rule. My rule is that never access other members
+of the struct except for the list_head member after the loop, because
+this is a invalid member after loop exit, but valid for the list_head
+member which just is HEAD and the lately caculation (&pos->head) seems
+harmless.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
-Signed-off-by: David Heidelberg <david@ixit.cz>
----
-v2:
- - reg: true -> reg: maxItems: 1
-v3:
- - add brackets around interrupts in the first example
+I have considered the case that the HEAD's container "pos" is layouted
+across the max and the min address boundary, which means the address of
+HEAD is likely 0x60, and the address of pos is likely 0xffffffe0.
+It seems ok to caculate pos with:
+((type *)(__mptr - offsetof(type, member)));
+and it seems ok to caculate head outside the loop with:
+if (&pos->head == &HEAD)
+    return NULL;
 
- .../bindings/timer/nvidia,tegra-timer.yaml    | 150 ++++++++++++++++++
- .../bindings/timer/nvidia,tegra20-timer.txt   |  24 ---
- .../bindings/timer/nvidia,tegra210-timer.txt  |  36 -----
- .../bindings/timer/nvidia,tegra30-timer.txt   |  28 ----
- 4 files changed, 150 insertions(+), 88 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/timer/nvidia,tegra-timer.yaml
- delete mode 100644 Documentation/devicetree/bindings/timer/nvidia,tegra20-timer.txt
- delete mode 100644 Documentation/devicetree/bindings/timer/nvidia,tegra210-timer.txt
- delete mode 100644 Documentation/devicetree/bindings/timer/nvidia,tegra30-timer.txt
+The only case I can think of with the rule "never run container_of()
+on HEAD" must be followed is when the first argument (which is &HEAD)
+passing to container_of() is NULL + some offset, it may lead to the
+resulting "pos->member" access being a NULL dereference. But maybe
+the caller can take the responsibility to check if it is NULL, not
+container_of() itself.
 
-diff --git a/Documentation/devicetree/bindings/timer/nvidia,tegra-timer.yaml b/Documentation/devicetree/bindings/timer/nvidia,tegra-timer.yaml
-new file mode 100644
-index 000000000000..b78209cd0f28
---- /dev/null
-+++ b/Documentation/devicetree/bindings/timer/nvidia,tegra-timer.yaml
-@@ -0,0 +1,150 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+%YAML 1.2
-+---
-+$id: "http://devicetree.org/schemas/timer/nvidia,tegra-timer.yaml#"
-+$schema: "http://devicetree.org/meta-schemas/core.yaml#"
-+
-+title: NVIDIA Tegra timer
-+
-+maintainers:
-+  - Stephen Warren <swarren@nvidia.com>
-+
-+allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: nvidia,tegra210-timer
-+    then:
-+      properties:
-+        interrupts:
-+          # Either a single combined interrupt or up to 14 individual interrupts
-+          minItems: 1
-+          maxItems: 14
-+          description: >
-+            A list of 14 interrupts; one per each timer channels 0 through 13
-+
-+  - if:
-+      properties:
-+        compatible:
-+          oneOf:
-+            - items:
-+                - enum:
-+                    - nvidia,tegra114-timer
-+                    - nvidia,tegra124-timer
-+                    - nvidia,tegra132-timer
-+                - const: nvidia,tegra30-timer
-+            - items:
-+                - const: nvidia,tegra30-timer
-+                - const: nvidia,tegra20-timer
-+    then:
-+      properties:
-+        interrupts:
-+          # Either a single combined interrupt or up to 6 individual interrupts
-+          minItems: 1
-+          maxItems: 6
-+          description: >
-+            A list of 6 interrupts; one per each of timer channels 1 through 5,
-+            and one for the shared interrupt for the remaining channels.
-+
-+  - if:
-+      properties:
-+        compatible:
-+          const: nvidia,tegra20-timer
-+    then:
-+      properties:
-+        interrupts:
-+          # Either a single combined interrupt or up to 4 individual interrupts
-+          minItems: 1
-+          maxItems: 4
-+          description: |
-+            A list of 4 interrupts; one per timer channel.
-+
-+properties:
-+  compatible:
-+    oneOf:
-+      - const: nvidia,tegra210-timer
-+        description: >
-+          The Tegra210 timer provides fourteen 29-bit timer counters and one 32-bit
-+          timestamp counter. The TMRs run at either a fixed 1 MHz clock rate derived
-+          from the oscillator clock (TMR0-TMR9) or directly at the oscillator clock
-+          (TMR10-TMR13). Each TMR can be programmed to generate one-shot, periodic,
-+          or watchdog interrupts.
-+      - items:
-+          - enum:
-+              - nvidia,tegra114-timer
-+              - nvidia,tegra124-timer
-+              - nvidia,tegra132-timer
-+          - const: nvidia,tegra30-timer
-+      - items:
-+          - const: nvidia,tegra30-timer
-+          - const: nvidia,tegra20-timer
-+        description: >
-+          The Tegra30 timer provides ten 29-bit timer channels, a single 32-bit free
-+          running counter, and 5 watchdog modules. The first two channels may also
-+          trigger a legacy watchdog reset.
-+      - const: nvidia,tegra20-timer
-+        description: >
-+          The Tegra20 timer provides four 29-bit timer channels and a single 32-bit free
-+          running counter. The first two channels may also trigger a watchdog reset.
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts: true
-+
-+  clocks:
-+    maxItems: 1
-+
-+  clock-names:
-+    items:
-+      - const: timer
-+
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - clocks
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+    timer@60005000 {
-+        compatible = "nvidia,tegra30-timer", "nvidia,tegra20-timer";
-+        reg = <0x60005000 0x400>;
-+        interrupts = <0 0 IRQ_TYPE_LEVEL_HIGH>,
-+                     <0 1 IRQ_TYPE_LEVEL_HIGH>,
-+                     <0 41 IRQ_TYPE_LEVEL_HIGH>,
-+                     <0 42 IRQ_TYPE_LEVEL_HIGH>,
-+                     <0 121 IRQ_TYPE_LEVEL_HIGH>,
-+                     <0 122 IRQ_TYPE_LEVEL_HIGH>;
-+        clocks = <&tegra_car 214>;
-+    };
-+  - |
-+    #include <dt-bindings/clock/tegra210-car.h>
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+
-+    timer@60005000 {
-+        compatible = "nvidia,tegra210-timer";
-+        reg = <0x60005000 0x400>;
-+        interrupts = <GIC_SPI 156 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 155 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 176 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 177 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 178 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 179 IRQ_TYPE_LEVEL_HIGH>;
-+        clocks = <&tegra_car TEGRA210_CLK_TIMER>;
-+        clock-names = "timer";
-+    };
-diff --git a/Documentation/devicetree/bindings/timer/nvidia,tegra20-timer.txt b/Documentation/devicetree/bindings/timer/nvidia,tegra20-timer.txt
-deleted file mode 100644
-index 4a864bd10d3d..000000000000
---- a/Documentation/devicetree/bindings/timer/nvidia,tegra20-timer.txt
-+++ /dev/null
-@@ -1,24 +0,0 @@
--NVIDIA Tegra20 timer
--
--The Tegra20 timer provides four 29-bit timer channels and a single 32-bit free
--running counter. The first two channels may also trigger a watchdog reset.
--
--Required properties:
--
--- compatible : should be "nvidia,tegra20-timer".
--- reg : Specifies base physical address and size of the registers.
--- interrupts : A list of 4 interrupts; one per timer channel.
--- clocks : Must contain one entry, for the module clock.
--  See ../clocks/clock-bindings.txt for details.
--
--Example:
--
--timer {
--	compatible = "nvidia,tegra20-timer";
--	reg = <0x60005000 0x60>;
--	interrupts = <0 0 0x04
--			0 1 0x04
--			0 41 0x04
--			0 42 0x04>;
--	clocks = <&tegra_car 132>;
--};
-diff --git a/Documentation/devicetree/bindings/timer/nvidia,tegra210-timer.txt b/Documentation/devicetree/bindings/timer/nvidia,tegra210-timer.txt
-deleted file mode 100644
-index 032cda96fe0d..000000000000
---- a/Documentation/devicetree/bindings/timer/nvidia,tegra210-timer.txt
-+++ /dev/null
-@@ -1,36 +0,0 @@
--NVIDIA Tegra210 timer
--
--The Tegra210 timer provides fourteen 29-bit timer counters and one 32-bit
--timestamp counter. The TMRs run at either a fixed 1 MHz clock rate derived
--from the oscillator clock (TMR0-TMR9) or directly at the oscillator clock
--(TMR10-TMR13). Each TMR can be programmed to generate one-shot, periodic,
--or watchdog interrupts.
--
--Required properties:
--- compatible : "nvidia,tegra210-timer".
--- reg : Specifies base physical address and size of the registers.
--- interrupts : A list of 14 interrupts; one per each timer channels 0 through
--  13.
--- clocks : Must contain one entry, for the module clock.
--  See ../clocks/clock-bindings.txt for details.
--
--timer@60005000 {
--	compatible = "nvidia,tegra210-timer";
--	reg = <0x0 0x60005000 0x0 0x400>;
--	interrupts = <GIC_SPI 156 IRQ_TYPE_LEVEL_HIGH>,
--		     <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
--		     <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
--		     <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>,
--		     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>,
--		     <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>,
--		     <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>,
--		     <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>,
--		     <GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>,
--		     <GIC_SPI 155 IRQ_TYPE_LEVEL_HIGH>,
--		     <GIC_SPI 176 IRQ_TYPE_LEVEL_HIGH>,
--		     <GIC_SPI 177 IRQ_TYPE_LEVEL_HIGH>,
--		     <GIC_SPI 178 IRQ_TYPE_LEVEL_HIGH>,
--		     <GIC_SPI 179 IRQ_TYPE_LEVEL_HIGH>;
--	clocks = <&tegra_car TEGRA210_CLK_TIMER>;
--	clock-names = "timer";
--};
-diff --git a/Documentation/devicetree/bindings/timer/nvidia,tegra30-timer.txt b/Documentation/devicetree/bindings/timer/nvidia,tegra30-timer.txt
-deleted file mode 100644
-index 1761f53ee36f..000000000000
---- a/Documentation/devicetree/bindings/timer/nvidia,tegra30-timer.txt
-+++ /dev/null
-@@ -1,28 +0,0 @@
--NVIDIA Tegra30 timer
--
--The Tegra30 timer provides ten 29-bit timer channels, a single 32-bit free
--running counter, and 5 watchdog modules. The first two channels may also
--trigger a legacy watchdog reset.
--
--Required properties:
--
--- compatible : For Tegra30, must contain "nvidia,tegra30-timer".  Otherwise,
--  must contain '"nvidia,<chip>-timer", "nvidia,tegra30-timer"' where
--  <chip> is tegra124 or tegra132.
--- reg : Specifies base physical address and size of the registers.
--- interrupts : A list of 6 interrupts; one per each of timer channels 1
--    through 5, and one for the shared interrupt for the remaining channels.
--- clocks : Must contain one entry, for the module clock.
--  See ../clocks/clock-bindings.txt for details.
--
--timer {
--	compatible = "nvidia,tegra30-timer", "nvidia,tegra20-timer";
--	reg = <0x60005000 0x400>;
--	interrupts = <0 0 0x04
--		      0 1 0x04
--		      0 41 0x04
--		      0 42 0x04
--		      0 121 0x04
--		      0 122 0x04>;
--	clocks = <&tegra_car 214>;
--};
--- 
-2.34.1
+Please remind me if i missed somthing, thanks.
 
+> 
+> However the rule that is introduced by list_for_each_entry_inside() is
+> *not* this rule. The rule it introduces is: never access the iterator
+> variable outside the loop.
+
+Sorry for the confusion, indeed, that is two *different* rule.
+
+> 
+> Making the iterator NULL on loop exit does follow the rule you proposed
+> but using a different technique: do not allow HEAD to be stored in the
+> iterator variable after loop exit. This also makes it impossible to run
+> container_of() on the HEAD pointer.
+> 
+
+It does not. My rule is: never access the iterator variable outside the loop.
+The "Making the iterator NULL on loop exit" way still leak the pos with NULL
+outside the loop, may lead to a NULL deference.
+
+> 
+> > Everyone makes mistakes, but we can eliminate them all from the beginning
+> > with the help of compiler which can catch such use-after-loop things.
+> 
+> Indeed but if we introduce new interfaces then we don't have to worry
+> about existing usages and silent regressions. Code will have been
+> written knowing the loop can exit with the iterator set to NULL.
+
+Yes, it is more simple and compatible with existing interfaces. Howerver,
+you should make every developers to remember that "pos will be set NULL on
+loop exit", which is unreasonable and impossible for *every* single person.
+Otherwise the mis-use-after-loop will lead to a NULL dereference.
+But we can kill this problem by declaring iterator inside the loop and the
+complier will catch it if somebody mis-use-after-loop.
+
+> 
+> Sure it is still possible for programmers to make mistakes and
+> dereference the NULL pointer but C programmers are well training w.r.t.
+> NULL pointer checking so such mistakes are much less likely than with
+> the current list_for_each_entry() macro. This risk must be offset
+> against the way a NULLify approach can lead to more elegant code when we
+> are doing a list search.
+> 
+
+Yes, the NULLify approach is better than the current list_for_each_entry()
+macro, but i stick with that the list_for_each_entry_inside() way is best
+and perfect _technically_.
+
+Thus, my idea is *better a finger off than always aching*, let's settle this
+damn problem once and for all, with list_for_each_entry_inside().
+
+--
+Xiaomeng Tong
