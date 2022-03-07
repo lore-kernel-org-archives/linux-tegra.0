@@ -2,164 +2,131 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A0F0C433F5
-	for <linux-tegra@archiver.kernel.org>; Mon,  7 Mar 2022 15:26:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3ACDC433F5
+	for <linux-tegra@archiver.kernel.org>; Mon,  7 Mar 2022 16:55:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243763AbiCGP1v convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 7 Mar 2022 10:27:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55824 "EHLO
+        id S240013AbiCGQ40 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 7 Mar 2022 11:56:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33228 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234575AbiCGP1u (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 7 Mar 2022 10:27:50 -0500
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 3F77D92871
-        for <linux-tegra@vger.kernel.org>; Mon,  7 Mar 2022 07:26:55 -0800 (PST)
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-85-dcBRBPURPaqNT771jbYVzw-1; Mon, 07 Mar 2022 15:26:52 +0000
-X-MC-Unique: dcBRBPURPaqNT771jbYVzw-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:994c:f5c2:35d6:9b65) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:994c:f5c2:35d6:9b65) with Microsoft SMTP
- Server (TLS) id 15.0.1497.28; Mon, 7 Mar 2022 15:26:48 +0000
-Received: from AcuMS.Aculab.com ([fe80::994c:f5c2:35d6:9b65]) by
- AcuMS.aculab.com ([fe80::994c:f5c2:35d6:9b65%12]) with mapi id
- 15.00.1497.028; Mon, 7 Mar 2022 15:26:48 +0000
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Dan Carpenter' <dan.carpenter@oracle.com>,
-        Jakob Koschel <jakobkoschel@gmail.com>
-CC:     "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-        "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-        "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        Cristiano Giuffrida <c.giuffrida@vu.nl>,
-        "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
-        "samba-technical@lists.samba.org" <samba-technical@lists.samba.org>,
-        "linux1394-devel@lists.sourceforge.net" 
-        <linux1394-devel@lists.sourceforge.net>,
-        "drbd-dev@lists.linbit.com" <drbd-dev@lists.linbit.com>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        "linux-cifs@vger.kernel.org" <linux-cifs@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "linux-staging@lists.linux.dev" <linux-staging@lists.linux.dev>,
-        "Bos, H.J." <h.j.bos@vu.nl>, Jason Gunthorpe <jgg@ziepe.ca>,
-        "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
-        "kgdb-bugreport@lists.sourceforge.net" 
-        <kgdb-bugreport@lists.sourceforge.net>,
-        "bcm-kernel-feedback-list@broadcom.com" 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        "Arnd Bergman" <arnd@arndb.de>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
-        Brian Johannesmeyer <bjohannesmeyer@gmail.com>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        "v9fs-developer@lists.sourceforge.net" 
-        <v9fs-developer@lists.sourceforge.net>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        Nathan Chancellor <nathan@kernel.org>,
-        "Linus Torvalds" <torvalds@linux-foundation.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-f2fs-devel@lists.sourceforge.net" 
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        "tipc-discussion@lists.sourceforge.net" 
-        <tipc-discussion@lists.sourceforge.net>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
-        "linux-mediatek@lists.infradead.org" 
-        <linux-mediatek@lists.infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        Mike Rapoport <rppt@kernel.org>
-Subject: RE: [PATCH 0/6] Remove usage of list iterator past the loop body
-Thread-Topic: [PATCH 0/6] Remove usage of list iterator past the loop body
-Thread-Index: AQHYMjRtYqIeET2JD0yO+p9PX3jHEKy0Bmqg
-Date:   Mon, 7 Mar 2022 15:26:48 +0000
-Message-ID: <f7ffd78aa68340e1ade6af15fa2f06d8@AcuMS.aculab.com>
-References: <20220228110822.491923-1-jakobkoschel@gmail.com>
- <20220307150037.GD3293@kadam>
-In-Reply-To: <20220307150037.GD3293@kadam>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        with ESMTP id S239265AbiCGQ40 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 7 Mar 2022 11:56:26 -0500
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2066.outbound.protection.outlook.com [40.107.236.66])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83AF82DD7C;
+        Mon,  7 Mar 2022 08:55:31 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=LebmS8wvAF5kqM4AQpgDOT3QlM2gE8Nyy5/JgEzgP/1dB6iHdpWAuta6PDjkEatyEswpeJmZhGIl0BZZyDXWDtJYxCiELUxkhjYjQUMFLkuVUwAVyn59a7tuTRXWH+tF8AXti95z3OHiMm9ZVzgN4zvUfT1eyt37PHl5cA6qrj2mHlEbS01ildmSGzqnrLXtlsVTqsG5ODIdNfttj+PMJdfjXzjkMhByxYhrYT/HYmerajjoZmPQyN/JkUQkXasUaKf+NHs7zWtz/SEO5YwVrzCOH1hBlhiNtFlxM22DfTMyNWno4ZMgETJ7weCbkKqWJD/sKBKV3ftEHz3aMwlkEA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=slBoERK2AHmUJWNUzkEuC9d9KKE4C54N2Nm+Tze5zCY=;
+ b=eG1ffvdBh60XaGERNdSsaiN5pykB+nKleyLZRartHmeXC5qsGyqw/aukiq8J/TEYnhp/G/X8VPtDIg3eTKp9wwasSvdpJhLN9eh2f42gnI28WYZPmMuoHVHN6inWkHSc2GGH4WZ0V4lrGwjRhzaVoQ8CgJuC6eKjVdg65A9iS+Ev2IPuuYqHDm97Yn5vNImzjT9bY2I6gpNYlBRlEPHP3sY23gftUqk5ByOh2Aqr1XnOg9NpAoCkMWFQNKYu4cH2LyrrOGpo4vP7Bz7UpwXSFXPEQqdkoEbkgL7YPmw7w1Hb/4HhV8XsOmCpmcOyYSLpLTXoPB5QJe39G0Drog7I8Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 12.22.5.238) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=slBoERK2AHmUJWNUzkEuC9d9KKE4C54N2Nm+Tze5zCY=;
+ b=fiGZsiLSP1RWRKde9QAxAd7fA9kw0CK9Jf0MMAuC0F7MoxyDDechLSIsAlEbprkIO8yFLRAguLGxjBTTMpnzcc7RTpO3T+0tDRroAETxZtPK++FRDXdhbpPiE7F/5Iwu776s00As2WftUPhF8SEKLXVGEoOxPZUOO1zHuMlnLDWUxwkgAdmnIfVSnnEnQ8fzNkK4m62cvoT40OLrH9geiQ/EaTnblSQM1nS/8sW4P0aFQiMQ2bnpcnRdtauTFIgOV5Wy1D3yxIaLztTcOWAq5t3PcHkeTOK+VvVbUTE9VY/rrDhCuCpK7pNWBX39oS/tVWcMAHPLY/md8TtjYOphig==
+Received: from DM6PR07CA0101.namprd07.prod.outlook.com (2603:10b6:5:337::34)
+ by SN1PR12MB2574.namprd12.prod.outlook.com (2603:10b6:802:26::32) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5038.13; Mon, 7 Mar
+ 2022 16:55:29 +0000
+Received: from DM6NAM11FT062.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:5:337:cafe::7a) by DM6PR07CA0101.outlook.office365.com
+ (2603:10b6:5:337::34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5038.13 via Frontend
+ Transport; Mon, 7 Mar 2022 16:55:29 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.238)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 12.22.5.238 as permitted sender) receiver=protection.outlook.com;
+ client-ip=12.22.5.238; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (12.22.5.238) by
+ DM6NAM11FT062.mail.protection.outlook.com (10.13.173.40) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.5038.14 via Frontend Transport; Mon, 7 Mar 2022 16:55:28 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by DRHQMAIL105.nvidia.com
+ (10.27.9.14) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Mon, 7 Mar
+ 2022 16:55:28 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.9; Mon, 7 Mar 2022
+ 08:55:27 -0800
+Received: from BUILDSERVER-IO-L4T.nvidia.com (10.127.8.14) by mail.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server id 15.2.986.9 via Frontend
+ Transport; Mon, 7 Mar 2022 08:55:23 -0800
+From:   Krishna Yarlagadda <kyarlagadda@nvidia.com>
+To:     <broonie@kernel.org>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <linux-spi@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <ashishsingha@nvidia.com>
+CC:     <skomatineni@nvidia.com>, <ldewangan@nvidia.com>,
+        <robh+dt@kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <p.zabel@pengutronix.de>,
+        Krishna Yarlagadda <kyarlagadda@nvidia.com>
+Subject: [PATCH v3 0/3] Tegra QUAD SPI combined sequence mode
+Date:   Mon, 7 Mar 2022 22:25:16 +0530
+Message-ID: <20220307165519.38380-1-kyarlagadda@nvidia.com>
+X-Mailer: git-send-email 2.17.1
+X-NVConfidentiality: public
 MIME-Version: 1.0
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: ccbe8083-fd94-480f-c140-08da005b48d2
+X-MS-TrafficTypeDiagnostic: SN1PR12MB2574:EE_
+X-Microsoft-Antispam-PRVS: <SN1PR12MB25746A8E599637790AF2D58AC3089@SN1PR12MB2574.namprd12.prod.outlook.com>
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 0QcAtJae/geOmE2onvMNJ890/AR/vMa9tO5d6POXK+autfII2m/LqL2OqhQSEHHcgk8jfUj85LubepQUfTOdBnc72aW7PQZkgmMlXuI1kxX6kkKRLAcFuaKXedNo2d6LwCGous9m6F9jTR3L5PuLj0g0q42Wt6AXZfXnbxEMUObnVWrWK6tZqf0Xzy2DSWvBUdTToqRIBHEwmL2XmqE7R89WJZnWhSjoV+3KblkC0yqFnCbbF8cfJpig7Palie0ccGa0Wqd7jWwWDRAuM8FpkcRchnE4eqNBtSdh7r3Ab5vKaycJ+eqrZ+7XVridg9lTWjrKSvE9YHPKP91P3M4jpCOHvV2HpJ4NCT7/uRxRq0wAE/E2jiiOBS5SwtYm0VTh3tx+A6LZbsmOdA7szdxJzLS8E56lBJHlElL+SX3IhL9A0tLAXxdhv8TBnTLbFPlR4BubqbIRBUsDIYonuNpq7BMNNO3JwDJzPwZTjFlx9jy/U3oRhg5zMluZP2Q9T69V1vkhvOJiIvBa3JCsKJ3IMqzKwbpNgdPEMqryqzZEjXJ8CguwGPv2vkn2o3/1gHVHICCjvCINuoOt4+YNTOdnSliPVhjrbS/o5ttZIbJS2h00w19oSxzi6Cucso/d8RThqvzwQBmsejC1f89F3g/c/8VdSGy/BM8l5QinNsSBrbVwACF52P0WPiIW9RxDN5WRyYk51eQWSWsYVBuQXEML8w==
+X-Forefront-Antispam-Report: CIP:12.22.5.238;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230001)(4636009)(36840700001)(40470700004)(46966006)(70206006)(8936002)(81166007)(426003)(356005)(336012)(4744005)(70586007)(40460700003)(316002)(5660300002)(82310400004)(26005)(54906003)(508600001)(8676002)(4326008)(110136005)(86362001)(6636002)(186003)(1076003)(6666004)(36756003)(7696005)(36860700001)(47076005)(107886003)(83380400001)(2906002)(2616005)(36900700001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Mar 2022 16:55:28.8735
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: ccbe8083-fd94-480f-c140-08da005b48d2
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.238];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT062.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN1PR12MB2574
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Dan Carpenter
-> Sent: 07 March 2022 15:01
-> 
-> Updating this API is risky because some places rely on the old behavior
-> and not all of them have been updated.  Here are some additional places
-> you might want to change.
+Add ACPI support for Tegra210 QUAD SPI driver
+Support new Tegra194 feature, combined sequence mode.
+Add Tegra234 bindings.
 
-I really can't help thinking that trying to merge this patch is
-actually impossible.
-It affects far too many different parts of the tree.
+v3 changes:
+- document runtime pm disabled in ACPI
+- clear cmb register for non combined sequence
+- fixes for errors reported by kernel test robot
+- skip approved patches
+v2 changes:
+- use combined sequence mode as default
+- remove property to switch transfer modes
+- fix compilation warnings
 
-Since (I believe) this is a doubly linked list with forwards and
-backwards pointers that point to a 'node' (not that there is a
-nice comment to that effect in the header - and there are lots of
-ways to do linked lists) the 'head' pretty much has to be a 'node'.
+Ashish Singhal (1):
+  arm64: tegra: Add QSPI controllers on Tegra234
 
-I'd write the following new defines (but I might be using
-the old names here):
+Krishna Yarlagadda (2):
+  spi: tegra210-quad: add acpi support
+  spi: tegra210-quad: combined sequence mode
 
-list_first(head, field) First item, NULL if empty.
-list_last(head, field) Last item NULL if empty.
-list_next(head, item, field) Item after 'item', NULL if last.
-list_prev(head, item. field) Item before 'item', NULL if first.
+ .../boot/dts/nvidia/tegra234-p3701-0000.dtsi  |  12 +
+ arch/arm64/boot/dts/nvidia/tegra234.dtsi      |  28 ++
+ drivers/spi/spi-tegra210-quad.c               | 290 +++++++++++++++++-
+ include/dt-bindings/clock/tegra234-clock.h    |   8 +
+ include/dt-bindings/reset/tegra234-reset.h    |   2 +
+ 5 files changed, 324 insertions(+), 16 deletions(-)
 
-You get (something like):
-#define list_first(head, field) \
-	head->next == &head ? NULL : list_item(head->next, field)
-(probably needs typeof(item) from somewhere).
-
-The iterator loop is then just:
-#define loop_iterate(item, head, field) \
-	for (item = list_first(head, field); item; \
-		item = list_next(head, item, field)
-
-I'm not sure, but making the 'head' be a structure that contains
-a single member that is a 'node' might help type checking.
-
-Then all the code that uses the current defines can slowly be
-moved over (probably a couple of releases) before the existing
-defines are deleted.
-
-That should simplify all the open-coded search loops that are
-just as likely to be buggy (possibly more so).
-
-	David
-
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
+-- 
+2.17.1
 
