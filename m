@@ -2,88 +2,113 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3827EC43217
-	for <linux-tegra@archiver.kernel.org>; Mon,  7 Mar 2022 20:39:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E149C433EF
+	for <linux-tegra@archiver.kernel.org>; Tue,  8 Mar 2022 00:17:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245386AbiCGUks (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 7 Mar 2022 15:40:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42536 "EHLO
+        id S243999AbiCHASg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 7 Mar 2022 19:18:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38922 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245358AbiCGUkk (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 7 Mar 2022 15:40:40 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B2587B562;
-        Mon,  7 Mar 2022 12:39:45 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 19E756150B;
-        Mon,  7 Mar 2022 20:39:45 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 485ECC340EF;
-        Mon,  7 Mar 2022 20:39:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1646685584;
-        bh=mZvkk4eExyyshNaj1KkfsbMVNXCaa6NAACmHjXogaa8=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=GIrCUnOhLb7pfVCwvXPpt8dnoS+MokHmtSh3YR2uHJZ/4wim7fXxYTx8AZWAQ7CMI
-         lUzB5E6I5sYQPVFI4uCL64CAubi3e8nml1IqfH4lWhvx8vz4OXzvwyUnIcxoUinfrG
-         meF2kFpQlf1PZSilnA3L0J4wvz1hAf32HvW/KSzig0//tcbBw+MAXvPcXcuJ2QPx7M
-         KZ7KU6ieJN+h5GVcyYPy9wIbrXiy9jBeEpMJff6np/eijZaeRTlifIFNGPgUNoLhZU
-         xD5gpGlwRcPEnq9SzHFpU75u/+87icOHtyixrdWRjToteDe7GkJJFtRFxqFAVq7wqy
-         ATS3Gxc+XrAbw==
-From:   Mark Brown <broonie@kernel.org>
-To:     Jon Hunter <jonathanh@nvidia.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>
-Cc:     linux-tegra@vger.kernel.org, linux-spi@vger.kernel.org,
-        devicetree@vger.kernel.org
-In-Reply-To: <20220307113529.315685-1-jonathanh@nvidia.com>
-References: <20220307113529.315685-1-jonathanh@nvidia.com>
-Subject: Re: [PATCH] dt-bindings: spi: Fix Tegra QSPI example
-Message-Id: <164668558302.3137564.11139957927665508409.b4-ty@kernel.org>
-Date:   Mon, 07 Mar 2022 20:39:43 +0000
+        with ESMTP id S244050AbiCHASf (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 7 Mar 2022 19:18:35 -0500
+Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DE332679;
+        Mon,  7 Mar 2022 16:17:39 -0800 (PST)
+Received: by mail-lj1-x233.google.com with SMTP id l12so22803279ljh.12;
+        Mon, 07 Mar 2022 16:17:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=7qQ2UPHfggKLpoo8clS5DCRvOxKGuJ2u7/O95gt+nh0=;
+        b=Y9AaF3vYVObdlV4tqCqvgbtaR0uL71cSaqkRVD+gxb2eCEgILGeNhcVW8uRAGWUUPO
+         TVMYPo1IVe3FiXArgYU2moX9ZDWQjHAOuR3YCQDShx9bYEstZmGIdL34uUZH+kzzElbg
+         Yxxjl2PFuGlWbwdL/Yy7/6dnlx8IU+pbYOhe9FsDVqJ2fsALFXOq1pKYDAvLtesx+Vb4
+         WAzQfrnRgK6RT+I3dFnBXKKKB0evXXuPKaWktqmXoavI8JIio+Pl/W6+wBSp5vDU/rBo
+         Ob3ajld012Ydpm8yCLSBFZYOzAcfkIouhIgecEpreY7yHtTkcEcOdcmnxD8R5SVJRtb1
+         Rw5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=7qQ2UPHfggKLpoo8clS5DCRvOxKGuJ2u7/O95gt+nh0=;
+        b=s6/LOd5iZdDWGN0LRy/0R9ewdEXJoCqoMmHERF6V6pgEyJIiOxp5t3ijWcc1BvSPud
+         w0Z88xp87QmopROH8S2JFRPCJPRNW8unhpBiuKXQHsbnEe2bHae6iRwRLNNitpjsgLXC
+         71i+d/oN82rFaJXMeBS5p6UFMYX8C0qKfpcPqaemgNCRsSBHDG4FYoAuUkIUd6rnpTZz
+         NGw7nqEjlEpgCUczT0IKBDAN+jDtt+wYdiyY1IU5jFkBCG4RxYetsXthpVP+MyANMq3w
+         Hfj9Vj7wnqmnYd8LIlCuVsB9yuGxL7VOXVbdU+JMCDypFqt4SquiRaOyUyx+0YxP3+ne
+         p9jA==
+X-Gm-Message-State: AOAM530395qdSjXnKHWa+1TXaPqbD7MEtDS+begkCQbKwZUNyhal5obX
+        /Mx6z3EqWBTJ+GAtecJuw3k=
+X-Google-Smtp-Source: ABdhPJz8gPXv9lQFUT9LaedMm8Bcu4wn9HEFRG9bGBjyz9H3VvAx/T9d+5sXFOG+F6ZFqKyK6qeqwA==
+X-Received: by 2002:a2e:7a1a:0:b0:246:210:65cd with SMTP id v26-20020a2e7a1a000000b00246021065cdmr8974169ljc.99.1646698657231;
+        Mon, 07 Mar 2022 16:17:37 -0800 (PST)
+Received: from [192.168.2.145] (109-252-136-171.dynamic.spd-mgts.ru. [109.252.136.171])
+        by smtp.googlemail.com with ESMTPSA id bq42-20020a056512152a00b00447431cc768sm2764256lfb.170.2022.03.07.16.17.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Mar 2022 16:17:36 -0800 (PST)
+Message-ID: <e3c8078d-0e1a-6332-fbd5-6339561cd24d@gmail.com>
+Date:   Tue, 8 Mar 2022 03:17:35 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [PATCH] MAINTAINERS: rectify entry for MEDIA DRIVERS FOR NVIDIA
+ TEGRA - VDE
+Content-Language: en-US
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        linux-media@vger.kernel.org, linux-tegra@vger.kernel.org
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-staging@lists.linux.dev, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20220307145935.13178-1-lukas.bulwahn@gmail.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+In-Reply-To: <20220307145935.13178-1-lukas.bulwahn@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, 7 Mar 2022 11:35:29 +0000, Jon Hunter wrote:
-> When running dt_binding_check on the nvidia,tegra210-quad.yaml binding
-> document the following error is reported ...
+07.03.2022 17:59, Lukas Bulwahn пишет:
+> Commit ccc3016261ed ("media: dt: bindings: tegra-vde: Convert to schema")
+> converts nvidia,tegra-vde.txt to nvidia,tegra-vde.yaml, but missed to
+> adjust its reference in MAINTAINERS.
 > 
->  nvidia,tegra210-quad.example.dt.yaml:0:0: /example-0/spi@70410000/flash@0:
->  	failed to match any schema with compatible: ['spi-nor']
+> Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
+> broken reference.
 > 
-> Update the example in the binding document to fix the above error.
+> Repair this file reference in  MEDIA DRIVERS FOR NVIDIA TEGRA - VDE.
 > 
-> [...]
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> ---
+> Dmitry, please ack.
+> 
+> Thierry, please pick this minor non-urgent clean-up patch.
+> 
+>  MAINTAINERS | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 05fd080b82f3..2b96a22cf5ea 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -11964,7 +11964,7 @@ L:	linux-media@vger.kernel.org
+>  L:	linux-tegra@vger.kernel.org
+>  S:	Maintained
+>  T:	git git://linuxtv.org/media_tree.git
+> -F:	Documentation/devicetree/bindings/media/nvidia,tegra-vde.txt
+> +F:	Documentation/devicetree/bindings/media/nvidia,tegra-vde.yaml
+>  F:	drivers/staging/media/tegra-vde/
+>  
+>  MEDIA DRIVERS FOR RENESAS - CEU
 
-Applied to
+This patch will have to go via the media tree. You'll may need to rebase
+it on a recent linux-next soon because the driver path was changed
+recently, otherwise maybe Mauro could resolve the merge conflict while
+applying the patch.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
-
-Thanks!
-
-[1/1] dt-bindings: spi: Fix Tegra QSPI example
-      commit: 320689a1b543ca1396b3ed43bb18045e4a7ffd79
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+Acked-by: Dmitry Osipenko <digetx@gmail.com>
