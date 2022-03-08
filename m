@@ -2,113 +2,102 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E149C433EF
-	for <linux-tegra@archiver.kernel.org>; Tue,  8 Mar 2022 00:17:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45BCBC433EF
+	for <linux-tegra@archiver.kernel.org>; Tue,  8 Mar 2022 07:42:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243999AbiCHASg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 7 Mar 2022 19:18:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38922 "EHLO
+        id S1344675AbiCHHnG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 8 Mar 2022 02:43:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52306 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244050AbiCHASf (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 7 Mar 2022 19:18:35 -0500
-Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DE332679;
-        Mon,  7 Mar 2022 16:17:39 -0800 (PST)
-Received: by mail-lj1-x233.google.com with SMTP id l12so22803279ljh.12;
-        Mon, 07 Mar 2022 16:17:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=7qQ2UPHfggKLpoo8clS5DCRvOxKGuJ2u7/O95gt+nh0=;
-        b=Y9AaF3vYVObdlV4tqCqvgbtaR0uL71cSaqkRVD+gxb2eCEgILGeNhcVW8uRAGWUUPO
-         TVMYPo1IVe3FiXArgYU2moX9ZDWQjHAOuR3YCQDShx9bYEstZmGIdL34uUZH+kzzElbg
-         Yxxjl2PFuGlWbwdL/Yy7/6dnlx8IU+pbYOhe9FsDVqJ2fsALFXOq1pKYDAvLtesx+Vb4
-         WAzQfrnRgK6RT+I3dFnBXKKKB0evXXuPKaWktqmXoavI8JIio+Pl/W6+wBSp5vDU/rBo
-         Ob3ajld012Ydpm8yCLSBFZYOzAcfkIouhIgecEpreY7yHtTkcEcOdcmnxD8R5SVJRtb1
-         Rw5w==
+        with ESMTP id S1344724AbiCHHnB (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 8 Mar 2022 02:43:01 -0500
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC0363DDFB
+        for <linux-tegra@vger.kernel.org>; Mon,  7 Mar 2022 23:42:05 -0800 (PST)
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com [209.85.218.72])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 92BF83F7FD
+        for <linux-tegra@vger.kernel.org>; Tue,  8 Mar 2022 07:42:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1646725324;
+        bh=Un+PBm7TVpil6wZFl7iMD+ssa0pQW3YglAFfrUmMR/0=;
+        h=From:To:Subject:Date:Message-Id:MIME-Version:Content-Type;
+        b=W69ZLe3tSwrcrThJ6oa5hI6KQyeCf/yge1ZpKEf9YCJ0zHcZoZA4HgXgBKLDV9nCE
+         azZcqyZlBFvuK6Ap8qMZJxPRHhJngOtkQtkXsY3+ElZ3lp1p564alZeK8wJOYsaF92
+         isx7fjupCBVxN20Lt2Bb/V81mi2a/s9P3zzHV67KWLYlvf5qCVTqdC5NII7xxyjehp
+         IQKkuu/lQ6G4v7qBCBHrB1SFT22zcanXnMqkobjrIZ/oJiKty+ZWh5/ofxycS+Pywh
+         l5EMOFxJxPmhkbbqW6HhyaBFWngmfO9yHXjNi0wNQeYgpwDPx9CglMBnlVoe2pLGkk
+         eL3frctLIxIiA==
+Received: by mail-ej1-f72.google.com with SMTP id h22-20020a1709060f5600b006b11a2d3dcfso8217454ejj.4
+        for <linux-tegra@vger.kernel.org>; Mon, 07 Mar 2022 23:42:04 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=7qQ2UPHfggKLpoo8clS5DCRvOxKGuJ2u7/O95gt+nh0=;
-        b=s6/LOd5iZdDWGN0LRy/0R9ewdEXJoCqoMmHERF6V6pgEyJIiOxp5t3ijWcc1BvSPud
-         w0Z88xp87QmopROH8S2JFRPCJPRNW8unhpBiuKXQHsbnEe2bHae6iRwRLNNitpjsgLXC
-         71i+d/oN82rFaJXMeBS5p6UFMYX8C0qKfpcPqaemgNCRsSBHDG4FYoAuUkIUd6rnpTZz
-         NGw7nqEjlEpgCUczT0IKBDAN+jDtt+wYdiyY1IU5jFkBCG4RxYetsXthpVP+MyANMq3w
-         Hfj9Vj7wnqmnYd8LIlCuVsB9yuGxL7VOXVbdU+JMCDypFqt4SquiRaOyUyx+0YxP3+ne
-         p9jA==
-X-Gm-Message-State: AOAM530395qdSjXnKHWa+1TXaPqbD7MEtDS+begkCQbKwZUNyhal5obX
-        /Mx6z3EqWBTJ+GAtecJuw3k=
-X-Google-Smtp-Source: ABdhPJz8gPXv9lQFUT9LaedMm8Bcu4wn9HEFRG9bGBjyz9H3VvAx/T9d+5sXFOG+F6ZFqKyK6qeqwA==
-X-Received: by 2002:a2e:7a1a:0:b0:246:210:65cd with SMTP id v26-20020a2e7a1a000000b00246021065cdmr8974169ljc.99.1646698657231;
-        Mon, 07 Mar 2022 16:17:37 -0800 (PST)
-Received: from [192.168.2.145] (109-252-136-171.dynamic.spd-mgts.ru. [109.252.136.171])
-        by smtp.googlemail.com with ESMTPSA id bq42-20020a056512152a00b00447431cc768sm2764256lfb.170.2022.03.07.16.17.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Mar 2022 16:17:36 -0800 (PST)
-Message-ID: <e3c8078d-0e1a-6332-fbd5-6339561cd24d@gmail.com>
-Date:   Tue, 8 Mar 2022 03:17:35 +0300
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH] MAINTAINERS: rectify entry for MEDIA DRIVERS FOR NVIDIA
- TEGRA - VDE
-Content-Language: en-US
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        bh=Un+PBm7TVpil6wZFl7iMD+ssa0pQW3YglAFfrUmMR/0=;
+        b=EAPPIxXrEPPNVne+t7Ef7ugYLVpEq6rwZr1r1zTL6v35kEfosmditPDPqwYv4ZXu0V
+         hEJmyKg5tCY4A1x9MJSng9tIcOgrPHxpXFksEMkKRCcvBIj+IcThXuVo8T34+QrqbVxE
+         MqU+tibhlpXRxnf3LV70h3pfhrdGEnCIf2Bv4nWVwmS2hrSj1w+P61TScqm77J4TWenw
+         ELYVJsoVe9s+zDjJonHkpP+ByxhUCcXIf6V5NJHQJkj14I3KgI6j0m+rEBAzenNMbGC3
+         6KmR3HL7MsgBJpLvJvBGY9dWVJ+udbkUYDgfiHXGxOQX2PUtzzdbfblA06f3by97unVp
+         nJQg==
+X-Gm-Message-State: AOAM5302AxbERNc3Vju4g3aLwwybzFnIGuf/5uZiQpZ1vLPohH+hhwZc
+        3tITtOV5cG0JhoPdBQvNoYTExgUwkSbclfaD59jTQxr+SNrhjb12Z6V8D28W+RoCcmOEPr9nqpn
+        e2/2eSYav+dsPgZU2FFfQ6eq/cloalLzYsrVp4khK
+X-Received: by 2002:a50:d498:0:b0:416:2b00:532 with SMTP id s24-20020a50d498000000b004162b000532mr13081362edi.396.1646725320735;
+        Mon, 07 Mar 2022 23:42:00 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJzjhCqo9HH0cK+RI8/E89ekTwyLjLyg0tpT17qz7uVBuNxty/NMegrabspJHC1kBpHoMxQrTQ==
+X-Received: by 2002:a50:d498:0:b0:416:2b00:532 with SMTP id s24-20020a50d498000000b004162b000532mr13081352edi.396.1646725320534;
+        Mon, 07 Mar 2022 23:42:00 -0800 (PST)
+Received: from localhost.localdomain (xdsl-188-155-174-239.adslplus.ch. [188.155.174.239])
+        by smtp.gmail.com with ESMTPSA id d4-20020a1709067a0400b006d6e3ca9f71sm5565533ejo.198.2022.03.07.23.41.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Mar 2022 23:41:59 -0800 (PST)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
         Thierry Reding <thierry.reding@gmail.com>,
-        linux-media@vger.kernel.org, linux-tegra@vger.kernel.org
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-staging@lists.linux.dev, kernel-janitors@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        linux-serial@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
-References: <20220307145935.13178-1-lukas.bulwahn@gmail.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-In-Reply-To: <20220307145935.13178-1-lukas.bulwahn@gmail.com>
+Subject: [PATCH] serial: 8250_tegra: mark acpi_device_id as unused with !ACPI
+Date:   Tue,  8 Mar 2022 08:41:57 +0100
+Message-Id: <20220308074157.113568-1-krzysztof.kozlowski@canonical.com>
+X-Mailer: git-send-email 2.32.0
+MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-07.03.2022 17:59, Lukas Bulwahn пишет:
-> Commit ccc3016261ed ("media: dt: bindings: tegra-vde: Convert to schema")
-> converts nvidia,tegra-vde.txt to nvidia,tegra-vde.yaml, but missed to
-> adjust its reference in MAINTAINERS.
-> 
-> Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
-> broken reference.
-> 
-> Repair this file reference in  MEDIA DRIVERS FOR NVIDIA TEGRA - VDE.
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
-> Dmitry, please ack.
-> 
-> Thierry, please pick this minor non-urgent clean-up patch.
-> 
->  MAINTAINERS | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 05fd080b82f3..2b96a22cf5ea 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -11964,7 +11964,7 @@ L:	linux-media@vger.kernel.org
->  L:	linux-tegra@vger.kernel.org
->  S:	Maintained
->  T:	git git://linuxtv.org/media_tree.git
-> -F:	Documentation/devicetree/bindings/media/nvidia,tegra-vde.txt
-> +F:	Documentation/devicetree/bindings/media/nvidia,tegra-vde.yaml
->  F:	drivers/staging/media/tegra-vde/
->  
->  MEDIA DRIVERS FOR RENESAS - CEU
+The driver's acpi_device_id table is referenced via ACPI_PTR() so it
+will be unused for !CONFIG_ACPI builds:
 
-This patch will have to go via the media tree. You'll may need to rebase
-it on a recent linux-next soon because the driver path was changed
-recently, otherwise maybe Mauro could resolve the merge conflict while
-applying the patch.
+  drivers/tty/serial/8250/8250_tegra.c:178:36:
+    warning: ‘tegra_uart_acpi_match’ defined but not used [-Wunused-const-variable=]
 
-Acked-by: Dmitry Osipenko <digetx@gmail.com>
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+---
+ drivers/tty/serial/8250/8250_tegra.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/tty/serial/8250/8250_tegra.c b/drivers/tty/serial/8250/8250_tegra.c
+index e13ae18b0713..e7cddeec9d8e 100644
+--- a/drivers/tty/serial/8250/8250_tegra.c
++++ b/drivers/tty/serial/8250/8250_tegra.c
+@@ -175,7 +175,7 @@ static const struct of_device_id tegra_uart_of_match[] = {
+ };
+ MODULE_DEVICE_TABLE(of, tegra_uart_of_match);
+ 
+-static const struct acpi_device_id tegra_uart_acpi_match[] = {
++static const struct acpi_device_id tegra_uart_acpi_match[] __maybe_unused = {
+ 	{ "NVDA0100", 0 },
+ 	{ },
+ };
+-- 
+2.32.0
+
