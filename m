@@ -2,71 +2,30 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60780C433EF
-	for <linux-tegra@archiver.kernel.org>; Tue,  8 Mar 2022 11:02:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35362C433EF
+	for <linux-tegra@archiver.kernel.org>; Tue,  8 Mar 2022 11:16:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346114AbiCHLDk (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 8 Mar 2022 06:03:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56642 "EHLO
+        id S1346451AbiCHLQx (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 8 Mar 2022 06:16:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34522 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346125AbiCHLDg (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 8 Mar 2022 06:03:36 -0500
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA89463FB
-        for <linux-tegra@vger.kernel.org>; Tue,  8 Mar 2022 03:02:35 -0800 (PST)
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com [209.85.218.71])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 930843F7E0
-        for <linux-tegra@vger.kernel.org>; Tue,  8 Mar 2022 11:02:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1646737352;
-        bh=cmIEv3+2duqaZszEh7bUQ4/zmJnqkg7ujOQpTYxWoCc=;
-        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-         In-Reply-To:Content-Type;
-        b=YbyzsTi8IUMfoNvd4XdLE1JGIxR09hgvQbmpguSJ4SQWTHldKKt2CKO8TJ6LI5Kpz
-         0wFdjfXfNXqulHCdWhVkWlQiLnwVDmHWzTOE2k41plCGnM+7Hlun8uu0PfjXo0AA/F
-         tNfDjtRghXsvJLrWLwkIx5aGby6LY8ffl5T8hgyGayPhrjzkmwDjgjFHAVCyJvPjYB
-         ZbmVtMfxHQzG8uwIULYlIsGEiJG38tjNG7PCPk8aWttDcyzBDDT3G/cmh/AiuAFuVz
-         iP9R0o7nuTItNvlzz4mPzr4q+7kVhqsfQvlNZ0nhjBQmBYniwFn/zos1L3lFtEnFz0
-         rJjPNftPNpi5A==
-Received: by mail-ej1-f71.google.com with SMTP id h22-20020a1709060f5600b006b11a2d3dcfso8493813ejj.4
-        for <linux-tegra@vger.kernel.org>; Tue, 08 Mar 2022 03:02:32 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=cmIEv3+2duqaZszEh7bUQ4/zmJnqkg7ujOQpTYxWoCc=;
-        b=kTiQq48G7jNL2vb8ntDsaxjAXsAZ9wdwBVEg5b34km/k5hGnAAfIw8lldgpYUaYeJj
-         SKCNl7ASogCFfHKwf7p9fUUijcuwvn8qT/HeqZUicTFk5/NlufV+8aT93b5HYsVFBRUB
-         qe2fhA+dirDYDCl17orDwIBk6bMfukUKx/csfflwLvhNQJHbMfxWqUluKC8tcK9dWO8o
-         mXLg87nW287EHQmK4tj9SelY9wQd2br0tJzZ+dDTKx1O7zPJoM7kVqFppzcpoEhuTQ5g
-         pfLR2ZR3FT3uKxH4+TJFxRig06ZKpVJfrmW9ptV0hD/HHSM2cXgmJv4mtUn6Jne4jRg+
-         vkww==
-X-Gm-Message-State: AOAM531wIfnmYmu06jTTRGpB1i/QLpb3nPbnCBXTwWpRwm3wH0+ymXK2
-        091aCpQr+N6bcS29lHs39rxabgQuAOxFPd+QqXGCQfXEaojobCF5EwAQ7vW3HZs9W20F0sS3/rP
-        eJizd0meR6Z/I+J/CYmUJSgnG3Inm8JEIRoJqCS5N
-X-Received: by 2002:a50:ee83:0:b0:416:63c:3dd2 with SMTP id f3-20020a50ee83000000b00416063c3dd2mr15418706edr.361.1646737351852;
-        Tue, 08 Mar 2022 03:02:31 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJx3p9DGak2cIN3Oy9Pu0jBYckHw9+LyOxxPiom+Z6kSsNDhhsbDrANi6ehjTkjpzIfTQQ7yrA==
-X-Received: by 2002:a50:ee83:0:b0:416:63c:3dd2 with SMTP id f3-20020a50ee83000000b00416063c3dd2mr15418664edr.361.1646737351463;
-        Tue, 08 Mar 2022 03:02:31 -0800 (PST)
-Received: from [192.168.0.143] (xdsl-188-155-174-239.adslplus.ch. [188.155.174.239])
-        by smtp.gmail.com with ESMTPSA id fx3-20020a170906b74300b006daecedee44sm4069130ejb.220.2022.03.08.03.02.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Mar 2022 03:02:30 -0800 (PST)
-Message-ID: <bbb7e8fa-757a-64c6-640e-c24bf3e56b82@canonical.com>
-Date:   Tue, 8 Mar 2022 12:02:29 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH v5 5/9] ARM: dts: exynos: fix ethernet node name for
- different odroid boards
-Content-Language: en-US
-To:     Oleksij Rempel <o.rempel@pengutronix.de>,
-        =?UTF-8?Q?Beno=c3=aet_Cousson?= <bcousson@baylibre.com>,
+        with ESMTP id S1346429AbiCHLQs (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 8 Mar 2022 06:16:48 -0500
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1681546647
+        for <linux-tegra@vger.kernel.org>; Tue,  8 Mar 2022 03:15:52 -0800 (PST)
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ore@pengutronix.de>)
+        id 1nRXoO-0001bV-04; Tue, 08 Mar 2022 12:15:28 +0100
+Received: from ore by ptx.hi.pengutronix.de with local (Exim 4.92)
+        (envelope-from <ore@pengutronix.de>)
+        id 1nRXoM-0000Ry-4J; Tue, 08 Mar 2022 12:15:26 +0100
+Date:   Tue, 8 Mar 2022 12:15:26 +0100
+From:   Oleksij Rempel <o.rempel@pengutronix.de>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     =?utf-8?Q?Beno=C3=AEt?= Cousson <bcousson@baylibre.com>,
         "David S. Miller" <davem@davemloft.net>,
         Florian Fainelli <f.fainelli@gmail.com>,
         Jakub Kicinski <kuba@kernel.org>,
@@ -75,47 +34,70 @@ To:     Oleksij Rempel <o.rempel@pengutronix.de>,
         Sascha Hauer <s.hauer@pengutronix.de>,
         Scott Branden <sbranden@broadcom.com>,
         Shawn Guo <shawnguo@kernel.org>,
-        Tony Lindgren <tony@atomide.com>
-Cc:     kernel@pengutronix.de, bcm-kernel-feedback-list@broadcom.com,
-        netdev@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
+        Tony Lindgren <tony@atomide.com>, kernel@pengutronix.de,
+        bcm-kernel-feedback-list@broadcom.com, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org,
         linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v5 5/9] ARM: dts: exynos: fix ethernet node name for
+ different odroid boards
+Message-ID: <20220308111526.GA1086@pengutronix.de>
 References: <20220216074927.3619425-1-o.rempel@pengutronix.de>
  <20220216074927.3619425-6-o.rempel@pengutronix.de>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-In-Reply-To: <20220216074927.3619425-6-o.rempel@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+ <bbb7e8fa-757a-64c6-640e-c24bf3e56b82@canonical.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <bbb7e8fa-757a-64c6-640e-c24bf3e56b82@canonical.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL:  http://www.pengutronix.de/
+X-IRC:  #ptxdist @freenode
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-Uptime: 12:14:51 up 87 days, 20:00, 87 users,  load average: 0.94, 0.50,
+ 0.31
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 16/02/2022 08:49, Oleksij Rempel wrote:
-> The node name of Ethernet controller should be "ethernet" instead of
-> "usbether" as required by Ethernet controller devicetree schema:
->  Documentation/devicetree/bindings/net/ethernet-controller.yaml
+On Tue, Mar 08, 2022 at 12:02:29PM +0100, Krzysztof Kozlowski wrote:
+> On 16/02/2022 08:49, Oleksij Rempel wrote:
+> > The node name of Ethernet controller should be "ethernet" instead of
+> > "usbether" as required by Ethernet controller devicetree schema:
+> >  Documentation/devicetree/bindings/net/ethernet-controller.yaml
+> > 
+> > This patch can potentially affect boot loaders patching against full
+> > node path instead of using device aliases.
+> > 
+> > Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> > ---
+> >  arch/arm/boot/dts/exynos4412-odroidu3.dts       | 2 +-
+> >  arch/arm/boot/dts/exynos4412-odroidx.dts        | 2 +-
+> >  arch/arm/boot/dts/exynos5410-odroidxu.dts       | 2 +-
+> >  arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts | 2 +-
+> >  arch/arm/boot/dts/exynos5422-odroidxu3.dts      | 2 +-
+> >  5 files changed, 5 insertions(+), 5 deletions(-)
+> > 
 > 
-> This patch can potentially affect boot loaders patching against full
-> node path instead of using device aliases.
+> Hi Oleksij,
 > 
-> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-> ---
->  arch/arm/boot/dts/exynos4412-odroidu3.dts       | 2 +-
->  arch/arm/boot/dts/exynos4412-odroidx.dts        | 2 +-
->  arch/arm/boot/dts/exynos5410-odroidxu.dts       | 2 +-
->  arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts | 2 +-
->  arch/arm/boot/dts/exynos5422-odroidxu3.dts      | 2 +-
->  5 files changed, 5 insertions(+), 5 deletions(-)
-> 
+> Both Exynos patches look good, unfortunately I forgot about them a week
+> ago when I was preparing late pull request and now it is too late for
+> this cycle. I will pick them up after the merge window. Sorry, for this.
 
-Hi Oleksij,
+No problem. Thank you for the feedback :)
 
-Both Exynos patches look good, unfortunately I forgot about them a week
-ago when I was preparing late pull request and now it is too late for
-this cycle. I will pick them up after the merge window. Sorry, for this.
-
-Best regards,
-Krzysztof
+Regards,
+Oleksij
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
