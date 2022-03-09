@@ -2,97 +2,80 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0ED0C433F5
-	for <linux-tegra@archiver.kernel.org>; Wed,  9 Mar 2022 12:43:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 389A6C433EF
+	for <linux-tegra@archiver.kernel.org>; Wed,  9 Mar 2022 14:02:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231339AbiCIMov (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 9 Mar 2022 07:44:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59176 "EHLO
+        id S231370AbiCIODk (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 9 Mar 2022 09:03:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40546 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230231AbiCIMov (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 9 Mar 2022 07:44:51 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFA0C53711;
-        Wed,  9 Mar 2022 04:43:52 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 6371661995;
-        Wed,  9 Mar 2022 12:43:52 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0704FC340E8;
-        Wed,  9 Mar 2022 12:43:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1646829831;
-        bh=NfpZrz/N2z7mKEqxDudtRMZkspXLAswLYMQk23y6/AQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=tK04+G+eh8HiQbfVzo9KJZkzySqvXhheh+6DNZALmaiC5uoP6ANl6ksKfrnZblpEj
-         xJox+Mo4pseHbX09hV9KZEr56gERT0PfU0NE7Wjh+nVj/rq4wqfzdpOAUuQTZN3TT1
-         077EIBTVvrTrRZQmwdTNY4BUhDcPkbe9fjZ8c+pZy5S1PAzm/FRtbZa/ruI/4ZIXoC
-         df2bLserL/oi/mFV/ThJf22+yNn6vYfI9pYwFj9WH4mDMxXD0luAGRVZQgp6dRVYjG
-         Zp90lJjXbWJ89zAUmeE3fYGaHhEx9r7kdE7UNPnnFTH45OKTE75xWk9chKicR3QjsV
-         IjozpGq4upSBA==
-Date:   Wed, 9 Mar 2022 12:43:45 +0000
-From:   Will Deacon <will@kernel.org>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Joerg Roedel <joro@8bytes.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 1/4] dt-bindings: arm-smmu: Document
- nvidia,memory-controller property
-Message-ID: <20220309124344.GF397@willie-the-truck>
-References: <20211209163600.609613-1-thierry.reding@gmail.com>
- <Ygz7QD4EJX3vZJtD@orome>
- <Yid9SWbpPQQhNgA4@orome>
+        with ESMTP id S233393AbiCIODj (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 9 Mar 2022 09:03:39 -0500
+Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com [209.85.210.51])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0183227CC5;
+        Wed,  9 Mar 2022 06:02:41 -0800 (PST)
+Received: by mail-ot1-f51.google.com with SMTP id o106-20020a9d2273000000b005b21f46878cso1800231ota.3;
+        Wed, 09 Mar 2022 06:02:40 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=l2bsT/eha6vQRCunWyuGCCZHXPrqQ9VTlY5oTvI04YI=;
+        b=3nyGjQ6JPF6p/Ta+LUnBKDn14m30XR+P/5Ba27LvReYPxSUAIs3vrG6h24Z/k2stdq
+         Nb0nXfWpv+cnE39tXbzW+62X/c1WB0TXzUHUfk9VTM6TDx7hW6ClveWko/v3PEO1H48y
+         Ecpx/G11lxHIHK+djOQbBizxy5jeWMRV7rrlMh1Bx6QQQsmOXEhTYNkoSPvYGIaaeEWh
+         Szgf9PeqBg43bvf2r9nfTWQhijM4gXk4VmFBS/5lAAjVy02SqD3YudNUjAJRcQ1DuYdk
+         /ucsDWodaSen8qKBomvyH69aVNaoLcYun7PBfpLeoyAHeRAXjitnamczI73B8IDC6KTN
+         g3Vg==
+X-Gm-Message-State: AOAM533mLVTat3JbeIssiRSBq4HQYYpZwNr8S+cUq/DOpvoSRmN9Oial
+        3BsIYkMF/HaALgOI9IgtJQ==
+X-Google-Smtp-Source: ABdhPJzd/R0M9Di5kVne+hQYW3KIlYwUwdKbU/tPCjkd3SYy5tmwWk2sEh5o27IvJtXqUKCC5IpBMQ==
+X-Received: by 2002:a9d:325:0:b0:5b2:4b69:4e73 with SMTP id 34-20020a9d0325000000b005b24b694e73mr4181198otv.34.1646834560263;
+        Wed, 09 Mar 2022 06:02:40 -0800 (PST)
+Received: from rob (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id r21-20020a05683002f500b005b249ffa43fsm961722ote.22.2022.03.09.06.02.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Mar 2022 06:02:39 -0800 (PST)
+Received: (nullmailer pid 2797503 invoked by uid 1000);
+        Wed, 09 Mar 2022 14:02:38 -0000
+Date:   Wed, 9 Mar 2022 07:02:38 -0700
+From:   Rob Herring <robh@kernel.org>
+To:     Krishna Yarlagadda <kyarlagadda@nvidia.com>
+Cc:     skomatineni@nvidia.com, linux-spi@vger.kernel.org,
+        robh+dt@kernel.org, jonathanh@nvidia.com,
+        devicetree@vger.kernel.org, ashishsingha@nvidia.com,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        broonie@kernel.org, ldewangan@nvidia.com, thierry.reding@gmail.com,
+        p.zabel@pengutronix.de
+Subject: Re: [PATCH v4] arm64: tegra: Add QSPI controllers on Tegra234
+Message-ID: <20220309140238.GA2797451@robh.at.kernel.org>
+References: <20220308183026.66394-1-kyarlagadda@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Yid9SWbpPQQhNgA4@orome>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20220308183026.66394-1-kyarlagadda@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Mar 08, 2022 at 04:59:05PM +0100, Thierry Reding wrote:
-> On Wed, Feb 16, 2022 at 02:25:20PM +0100, Thierry Reding wrote:
-> > On Thu, Dec 09, 2021 at 05:35:57PM +0100, Thierry Reding wrote:
-> > > From: Thierry Reding <treding@nvidia.com>
-> > > 
-> > > On NVIDIA SoC's the ARM SMMU needs to interact with the memory
-> > > controller in order to map memory clients to the corresponding stream
-> > > IDs. Document how the nvidia,memory-controller property can be used to
-> > > achieve this.
-> > > 
-> > > Note that this is a backwards-incompatible change that is, however,
-> > > necessary to ensure correctness. Without the new property, most of the
-> > > devices would still work but it is not guaranteed that all will.
-> > > 
-> > > Signed-off-by: Thierry Reding <treding@nvidia.com>
-> > > ---
-> > > Changes in v2:
-> > > - clarify why the new nvidia,memory-controller property is required
-> > > 
-> > >  .../devicetree/bindings/iommu/arm,smmu.yaml     | 17 +++++++++++++++++
-> > >  1 file changed, 17 insertions(+)
-> > 
-> > Hi Joerg,
-> > 
-> > can you pick up patches 1-3 of this series? DT bindings have been
-> > reviewed by Rob and Will acked the ARM SMMU change. I can take the
-> > device tree changes (patch 4) through the Tegra tree.
+On Wed, 09 Mar 2022 00:00:26 +0530, Krishna Yarlagadda wrote:
+> From: Ashish Singhal <ashishsingha@nvidia.com>
 > 
-> Will, Robin, Joerg,
+> This adds the QSPI controllers on the Tegra234 SoC and populates the
+> SPI NOR flash device for the Jetson AGX Orin platform.
 > 
-> I haven't seen this show up in linux-next yet but was hoping to see this
-> go in for v5.18. Anything I can do to help this move along?
+> Signed-off-by: Ashish Singhal <ashishsingha@nvidia.com>
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> Signed-off-by: Krishna Yarlagadda <kyarlagadda@nvidia.com>
+> ---
+> v4:
+> sort definitions in include and dt files
+> 
+>  .../boot/dts/nvidia/tegra234-p3701-0000.dtsi  | 12 ++++++++
+>  arch/arm64/boot/dts/nvidia/tegra234.dtsi      | 28 +++++++++++++++++++
+>  include/dt-bindings/clock/tegra234-clock.h    |  8 ++++++
+>  include/dt-bindings/reset/tegra234-reset.h    |  2 ++
+>  4 files changed, 50 insertions(+)
+> 
 
-Hmm, I guess I could've taken 1-3, but after your message to Joerg I just
-Acked the driver change on the assumption that was a dependency or
-something.
-
-In any case, I'm happy for Joerg to pick these three up directly if he has
-time this late in the cycle.
-
-Will
+Acked-by: Rob Herring <robh@kernel.org>
