@@ -2,80 +2,144 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 389A6C433EF
-	for <linux-tegra@archiver.kernel.org>; Wed,  9 Mar 2022 14:02:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEC9AC433EF
+	for <linux-tegra@archiver.kernel.org>; Thu, 10 Mar 2022 11:42:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231370AbiCIODk (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 9 Mar 2022 09:03:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40546 "EHLO
+        id S235484AbiCJLni (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 10 Mar 2022 06:43:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42380 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233393AbiCIODj (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 9 Mar 2022 09:03:39 -0500
-Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com [209.85.210.51])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0183227CC5;
-        Wed,  9 Mar 2022 06:02:41 -0800 (PST)
-Received: by mail-ot1-f51.google.com with SMTP id o106-20020a9d2273000000b005b21f46878cso1800231ota.3;
-        Wed, 09 Mar 2022 06:02:40 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=l2bsT/eha6vQRCunWyuGCCZHXPrqQ9VTlY5oTvI04YI=;
-        b=3nyGjQ6JPF6p/Ta+LUnBKDn14m30XR+P/5Ba27LvReYPxSUAIs3vrG6h24Z/k2stdq
-         Nb0nXfWpv+cnE39tXbzW+62X/c1WB0TXzUHUfk9VTM6TDx7hW6ClveWko/v3PEO1H48y
-         Ecpx/G11lxHIHK+djOQbBizxy5jeWMRV7rrlMh1Bx6QQQsmOXEhTYNkoSPvYGIaaeEWh
-         Szgf9PeqBg43bvf2r9nfTWQhijM4gXk4VmFBS/5lAAjVy02SqD3YudNUjAJRcQ1DuYdk
-         /ucsDWodaSen8qKBomvyH69aVNaoLcYun7PBfpLeoyAHeRAXjitnamczI73B8IDC6KTN
-         g3Vg==
-X-Gm-Message-State: AOAM533mLVTat3JbeIssiRSBq4HQYYpZwNr8S+cUq/DOpvoSRmN9Oial
-        3BsIYkMF/HaALgOI9IgtJQ==
-X-Google-Smtp-Source: ABdhPJzd/R0M9Di5kVne+hQYW3KIlYwUwdKbU/tPCjkd3SYy5tmwWk2sEh5o27IvJtXqUKCC5IpBMQ==
-X-Received: by 2002:a9d:325:0:b0:5b2:4b69:4e73 with SMTP id 34-20020a9d0325000000b005b24b694e73mr4181198otv.34.1646834560263;
-        Wed, 09 Mar 2022 06:02:40 -0800 (PST)
-Received: from rob (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id r21-20020a05683002f500b005b249ffa43fsm961722ote.22.2022.03.09.06.02.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Mar 2022 06:02:39 -0800 (PST)
-Received: (nullmailer pid 2797503 invoked by uid 1000);
-        Wed, 09 Mar 2022 14:02:38 -0000
-Date:   Wed, 9 Mar 2022 07:02:38 -0700
-From:   Rob Herring <robh@kernel.org>
-To:     Krishna Yarlagadda <kyarlagadda@nvidia.com>
-Cc:     skomatineni@nvidia.com, linux-spi@vger.kernel.org,
-        robh+dt@kernel.org, jonathanh@nvidia.com,
-        devicetree@vger.kernel.org, ashishsingha@nvidia.com,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        broonie@kernel.org, ldewangan@nvidia.com, thierry.reding@gmail.com,
-        p.zabel@pengutronix.de
-Subject: Re: [PATCH v4] arm64: tegra: Add QSPI controllers on Tegra234
-Message-ID: <20220309140238.GA2797451@robh.at.kernel.org>
-References: <20220308183026.66394-1-kyarlagadda@nvidia.com>
+        with ESMTP id S241763AbiCJLne (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 10 Mar 2022 06:43:34 -0500
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2042.outbound.protection.outlook.com [40.107.236.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5D63145E30;
+        Thu, 10 Mar 2022 03:42:28 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=j27EDWcbQHPDQWfGt2ma4VRWvHvaAUOSFZqAT4wIbY78+x9YbiiHmwE4fYDK31uwVNtBgKFk/sHvNEVFvMi5HkaH5Zm6hMnAgP/1H83GeylHeibpj6pqkvQ/DA4G9gThg543x5WJytIxKwTly+VY3/NJM8SlDeFPJVU1qZMPxR2DNzP3R06WY1avUZPbPVWf/DI/FKGa2x90Dquc+0Pz47ouI+KhZRnG6J7nQkc27CJ4c4+Ob58xDi1CCcMJU4v3PobYcz40zb4XDRGSOv7sbU/NjoQKjlo30YemjkHvVvew6B//ON2NPGgOnsueSEPL8bSl5DRNvNArjSh6O1QeLg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Pn9ha6MI+JkQb6XPGZPSLKR/Hbe4jEnN3HXYYdnT+Wo=;
+ b=Enc//0OWXdKuamzOiL+oOoc5oGaoCiSt0jYitA8QSqlMVJGWsb5tFeaEEJ7Drtlzr06VKb2qLPIlfY93QjacbRMMhoUAkpg9K0Yl9Jx3FJVbV07XZ5EGwIDPurW3sD+oqnMCNAHPfiqXaWOZY+4i6PVI5O7K8WD5lDAaqqmUFIXAieJWPR32R0kYonSRtulCTO5fVHyU9Auoel3ApKUFJl+jV6kIVSYgOvLdUcqn3BeAjcF4gTMxOpIAPAylgeMQOb64xf5qR1dWCiAqIw+pYfEyJGAuA/m4G5LdUxqCnJDXVaxCsogj2RiyA4Nio6YU3MmhBzZ7fl1qJSuiuKnX2w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 12.22.5.238) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com; dmarc=pass
+ (p=reject sp=reject pct=100) action=none header.from=nvidia.com; dkim=none
+ (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Pn9ha6MI+JkQb6XPGZPSLKR/Hbe4jEnN3HXYYdnT+Wo=;
+ b=SvlGoB0p1c3gobPsp/71xDMxQYLW/+l6ISQBOFL92Zf4kO2Eoff8sprL8pIzssbiV40PbfF6/a8VwbPr1yz8dfE8az1M9rYj3PSFj1Rxcctr+Jv9YNoMPnSGwviWUdsYHY9ZhuNzdqLiF3SD/x9Fea0psYErXCOBA+xvYZMAanbwaxTnh3vMmKxiWI1mj/f5M4BbJWectOQP2sK/nnvMLpR8zXMm5FKEiwXBF4if9UnBSdwXeDBULcbn3MPDsfnhcyWqpJAOsU3XuOyVXaKCbWGhfxBnC09gywPotEQ3lz2/Du8xk15o97UG3xjGRbR4PmdLhT0XR8PKmBURRnqXEg==
+Received: from DM5PR17CA0067.namprd17.prod.outlook.com (2603:10b6:3:13f::29)
+ by MN2PR12MB4848.namprd12.prod.outlook.com (2603:10b6:208:1be::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5038.14; Thu, 10 Mar
+ 2022 11:42:26 +0000
+Received: from DM6NAM11FT056.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:3:13f:cafe::42) by DM5PR17CA0067.outlook.office365.com
+ (2603:10b6:3:13f::29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5061.22 via Frontend
+ Transport; Thu, 10 Mar 2022 11:42:26 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.238)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 12.22.5.238 as permitted sender) receiver=protection.outlook.com;
+ client-ip=12.22.5.238; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (12.22.5.238) by
+ DM6NAM11FT056.mail.protection.outlook.com (10.13.173.99) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.5038.14 via Frontend Transport; Thu, 10 Mar 2022 11:42:26 +0000
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by DRHQMAIL105.nvidia.com
+ (10.27.9.14) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Thu, 10 Mar
+ 2022 11:42:25 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail205.nvidia.com
+ (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.22; Thu, 10 Mar
+ 2022 03:42:24 -0800
+Received: from audio.nvidia.com (10.127.8.10) by mail.nvidia.com (10.129.68.8)
+ with Microsoft SMTP Server id 15.2.986.22 via Frontend Transport; Thu, 10 Mar
+ 2022 03:42:21 -0800
+From:   Sameer Pujar <spujar@nvidia.com>
+To:     <broonie@kernel.org>, <lgirdwood@gmail.com>, <perex@perex.cz>,
+        <tiwai@suse.com>, <oder_chiou@realtek.com>, <robh@kernel.org>
+CC:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, Sameer Pujar <spujar@nvidia.com>
+Subject: [RFC PATCH 0/3] Flexible codec clock configuration
+Date:   Thu, 10 Mar 2022 17:11:14 +0530
+Message-ID: <1646912477-3160-1-git-send-email-spujar@nvidia.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220308183026.66394-1-kyarlagadda@nvidia.com>
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: d467749a-e86d-41d6-9f02-08da028b0cbf
+X-MS-TrafficTypeDiagnostic: MN2PR12MB4848:EE_
+X-Microsoft-Antispam-PRVS: <MN2PR12MB4848B979CF269FCB33DA5305A70B9@MN2PR12MB4848.namprd12.prod.outlook.com>
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: tEwgMOzYRGgQEAz2aV7NMweK6VOkVH2neKBrVuEum4Eb1F0shp7ypZLzf/P5LWofpuK+eKGIc2+K4H3SeOnw/E7b20ERrEuR32aiCnQuc0vG6H1DyoRZlSeWx9ptdsqdL+scxjd+uVKPpNa/uAzWYy648j3Dqzv9g246tI5KYMs760095swKzzphCnZQrDamy/aLJzYPkeZrOGPYIZtc2WsWiWb5/Tf3zUQpVNrb7GJUhPUDX2/evAprNRRihdrAQ4DYoLgJMv0Xi9vYkkt6WBcVKpWOdft2f3I2rfDje+07ovhkQNT2Pe0xk5VQ6aYB/lLONRGpDOEC2zLdUjDlYWwLAEQh1jNwpU1rbGwQsIupGPn9WTQXcS6NEvfsUm6k8YsWi8zpw1HSEzGArUHZSK08ZjCkb/4shzu9RDSIzUStxSKPDuNknfa+VLdVUNzC/XOhpe17f7iq2yzmIdrXTzIY6Er3qxbQh1HxHraaDLaV1uDyGlu4OE4d1bU9CR7SKn2lYiVphR9yQBYTV4BoOiaXH1le6MDj0Gl4HEkZDkGTQQi9q0wAJPfa1s7/MfWzN9lw+fVrBs5Y63TwzqySJmRNVsPMcgdKgJnJVNqCAu6v1FmB+qKZL8pj6WwFmarNh9N/iNQKciC/uKlRl2CCu2lAZFetusQ0Shg2bbT7ZG6yft7Ap/q/wfpfgKNgiLfuKMXN86JdZSQ76VPzB5fXlK20iny5Vqaxmjmo4Yx40KZQXoNl3vORfuftclQ0tp1BY/DQNslyOajBeGm7ZR7nnLwWK54viv4f5WrCTlIQ41Y=
+X-Forefront-Antispam-Report: CIP:12.22.5.238;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230001)(4636009)(36840700001)(46966006)(40470700004)(47076005)(70586007)(4326008)(2906002)(8936002)(5660300002)(40460700003)(7416002)(86362001)(36860700001)(70206006)(8676002)(83380400001)(316002)(426003)(2616005)(508600001)(107886003)(36756003)(186003)(26005)(54906003)(110136005)(82310400004)(966005)(356005)(6666004)(81166007)(7696005)(336012)(36900700001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Mar 2022 11:42:26.2534
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: d467749a-e86d-41d6-9f02-08da028b0cbf
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.238];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT056.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4848
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, 09 Mar 2022 00:00:26 +0530, Krishna Yarlagadda wrote:
-> From: Ashish Singhal <ashishsingha@nvidia.com>
-> 
-> This adds the QSPI controllers on the Tegra234 SoC and populates the
-> SPI NOR flash device for the Jetson AGX Orin platform.
-> 
-> Signed-off-by: Ashish Singhal <ashishsingha@nvidia.com>
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> Signed-off-by: Krishna Yarlagadda <kyarlagadda@nvidia.com>
-> ---
-> v4:
-> sort definitions in include and dt files
-> 
->  .../boot/dts/nvidia/tegra234-p3701-0000.dtsi  | 12 ++++++++
->  arch/arm64/boot/dts/nvidia/tegra234.dtsi      | 28 +++++++++++++++++++
->  include/dt-bindings/clock/tegra234-clock.h    |  8 ++++++
->  include/dt-bindings/reset/tegra234-reset.h    |  2 ++
->  4 files changed, 50 insertions(+)
-> 
+Typically the codec drivers require setting up of Sysclk. Sometimes
+presence of internal PLL can provide more options of Sysclk configuration.
+Presently ASoC provides callbacks set_sysclk() and set_pll() in such
+cases. However it comes with following limitations considering generic
+machine drivers (simple-card or audio-graph-card):
 
-Acked-by: Rob Herring <robh@kernel.org>
+ 1. The Sysclk source needs to be passed to set_sysclk() callback.
+    Presently simple-card or audio-graph-card card rely on default
+    source value (which is 0). If any other source needs to be used,
+    it is currently not possible.
+
+ 2. The same would be true for codec PLL configuration as well, though
+    simple-card or audio-graph-card don't have support yet for the PLL
+    configuration.
+
+
+Earlier attempt[0] to address above was not felt suitable. The suggestion
+was to use standard clock based bindings instead.
+
+This RFC series takes RT5659 as a reference and exposes clock relationships
+via DT. **This is not in the final shape yet**, but I wanted to get some
+valuable feedback to understand if the idea is right. If this appears fine,
+this can be extended to other codecs (wherever necessary).
+
+This does not completely remove the need of set_sysclk() callback because
+the clock requirement (MCLK * fs) would come from the machine driver. But
+machine driver need not worry about Sysclk source. It would be internally
+managed by Codec via DT clock relationships.
+
+
+[0] https://patchwork.kernel.org/project/alsa-devel/list/?series=438531&archive=both&state=* 
+
+Sameer Pujar (3):
+  ASoC: soc-pcm: tweak DPCM BE hw_param() call order
+  ASoC: rt5659: Expose internal clock relationships
+  ASoC: tegra: Get clock rate in consumer mode
+
+ sound/soc/codecs/rt5659.c      | 257 +++++++++++++++++++++++++++++++++++++++--
+ sound/soc/codecs/rt5659.h      |   9 ++
+ sound/soc/soc-pcm.c            |  60 +++++++++-
+ sound/soc/tegra/tegra210_i2s.c |  25 ++--
+ 4 files changed, 332 insertions(+), 19 deletions(-)
+
+-- 
+2.7.4
+
