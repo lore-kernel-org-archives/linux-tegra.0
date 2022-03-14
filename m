@@ -2,170 +2,169 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BF41C433FE
-	for <linux-tegra@archiver.kernel.org>; Mon, 14 Mar 2022 12:48:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04E04C433F5
+	for <linux-tegra@archiver.kernel.org>; Mon, 14 Mar 2022 13:58:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238181AbiCNMtG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 14 Mar 2022 08:49:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52418 "EHLO
+        id S242041AbiCNN7e (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 14 Mar 2022 09:59:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46506 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242119AbiCNMsY (ORCPT
+        with ESMTP id S242044AbiCNN7d (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 14 Mar 2022 08:48:24 -0400
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4EDFE34BAA;
-        Mon, 14 Mar 2022 05:43:24 -0700 (PDT)
-Received: by mail-ej1-x630.google.com with SMTP id p15so33619141ejc.7;
-        Mon, 14 Mar 2022 05:43:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=2vlX4DbLKn7EsX9mBszyL4iwXvVb8LRGjvbGLc+VjE8=;
-        b=bvPF8LFBpKtsqY0RirALI6zI9T/YQGwB6H5GhL9/NksMVHupuHBMRHdrfWHdsilUVQ
-         BMV8PHtMBlai53snDNFFyTLhYbITIgnUPoBtL7LunC0mN9WilaVLL+bIsO3zepsudSqC
-         /iquj6bcH67AFDbfE2DpEzQKbna6NnpG5xMqREd2wg+8nOxpgIqiMtfNtjx/sVl3Fk23
-         mLJ66+WydlCGg+Rd/UkuQ9zg0wwY4E+XDhoxCzLPCLtJmgurctXsPqXVM8IVSNeb8IAY
-         CGqElBSo2vK/PrrSC1fSx8+i37XM9c7m6ZikFRzIEnCR5+Bltan35ZLPq44yCYBMLjRN
-         s8IQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=2vlX4DbLKn7EsX9mBszyL4iwXvVb8LRGjvbGLc+VjE8=;
-        b=A6sTZojNAEXwWXkrWqpqFRWUoVSYR4QXFrKM00N/IqxH7EOgzo0AeVwubqfDq0ZR3P
-         5zQonEWjpdHeWYK7F7Vo2V15P5qCGI0s06Cf0BDG2uW/VJH8NlQPHWd83Nq4gsvYOaAq
-         hqPnOfRuJZB81Vd/KMee43PmMM5et5ygykTQM+2ED02JY7m5WGjOEgpeF+xGeE5eLIEb
-         FgfVDw1wlwiICBcq9ciZxLp9bUP5Gaimn2sHlVkSG1RqZ5ASfULZCqKn5Y95o+/YBMso
-         5/uFU+MxSvpFrO2xNvRAWg3J7tkyjfIGRw1B3Ffubr2mP87EdfkfamjF/pzwTXlXj/Bc
-         Xk7w==
-X-Gm-Message-State: AOAM532I2qditlbgwZjvY0a+efknETpqjLf8oKLw+ixnj2LLdDzDSWbA
-        Bc8aNI4IW8qtLm3Z4K12KjZn+1+/VDA=
-X-Google-Smtp-Source: ABdhPJzaXnhoIJ/WRBIn60QfuleJTsJl8I0mtZFsE5YKOPQ10wKMUDesQjiWdn+mX0Vk1ByCTAOl1A==
-X-Received: by 2002:a17:907:3f9e:b0:6da:842e:873e with SMTP id hr30-20020a1709073f9e00b006da842e873emr18566337ejc.383.1647261802390;
-        Mon, 14 Mar 2022 05:43:22 -0700 (PDT)
-Received: from Ansuel-xps.localdomain (93-42-71-246.ip85.fastwebnet.it. [93.42.71.246])
-        by smtp.gmail.com with ESMTPSA id ca21-20020aa7cd75000000b004188bc5712fsm1330334edb.73.2022.03.14.05.43.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Mar 2022 05:43:21 -0700 (PDT)
-Date:   Mon, 14 Mar 2022 13:43:20 +0100
-From:   Ansuel Smith <ansuelsmth@gmail.com>
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 12/16] clk: qcom: clk-krait: add 8064 errata workaround
-Message-ID: <Yi84aNrJ7p+3jy2A@Ansuel-xps.localdomain>
-References: <20220313190419.2207-1-ansuelsmth@gmail.com>
- <20220313190419.2207-13-ansuelsmth@gmail.com>
- <169795c1-607e-ee60-7ac7-538ed888bedf@linaro.org>
+        Mon, 14 Mar 2022 09:59:33 -0400
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam07on2061.outbound.protection.outlook.com [40.107.95.61])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F365524F2E;
+        Mon, 14 Mar 2022 06:58:21 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=GEYvr2G6FOQXVxOuNv9zl7asLFpwpMs9Vxi60BT9i6ZIR94m+F6yztEDDnG+5TMuefu5CxBGJVGGLMqhXJ3onT/D2H3cw7Pgm9hEA6243hnw0/J57LrQnYyCxPywQ4UvMW5pZOXxQfmic3BZ3C5uUWXKiUtg2FWc7lLy4h3/tAN/auYyZC9ty2vQ0jKgzOzs7Qn4/GzQ7aG4MhLnDxUBtqS+Yn7a1IU9HqmUV/wdy1UvYbThulpfoJgKarXowSZyMxqQ4kHfvfduzigu5n4NCnvz6DRBOzTS9fiUBYwhKdlFuWUrpzc9s5cTsHeN6noG+ltxJqXAStT4nf/3S7Gu5A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=K74HEb4uW97UusE69BxwmLK9fbMug3aAD7HxH+Z/UTo=;
+ b=abwCyPdsqIglbJMFHJswnx+I+IXDBGiHsYwTPCtWCOcu6iwUAH7G+H+KzaSPJQotvL80/dJWcwB7uTzsUmZ82wH5oJ9NK0BV8U3d/FvZ7A0ecOdR31u2OjMUu9BoZqYa/rIwslOq+hvJ++HnmSS1LKIuziwqWt4UDZlfqP3PCMowe0XnWou4WHDdXTavAGo/KuZplELBE46WPQ8RwNgGYPZ/vTd1zLOK605zh4qmqCSqLN0PN7ubt/bpQxiMZX8U5E6OL1oJRj02tY7Pr/EVexha1DmB5NQKD27GQfkpOJwC1wZvL/UT3reaR84s1MrnYQ5Ci1rBC7tOSsjKghvHYA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=K74HEb4uW97UusE69BxwmLK9fbMug3aAD7HxH+Z/UTo=;
+ b=rTDk2Dh3mh8Cvwwl7rZLoYyisRf022rFWujQEqVrzHsXSKBwtMIrMw7UJipX0UAlTBUKAalB6A7sajIfatVZXLVzGO4feS7ThmfmQ085dYNan5ru4bImAaVgTmXxbdn31JDvetOn00LJ8gfjzwyHdBvrrvqtRcblEbvTOLjnmzNHeYkpi8HXn6o3gwI2rGmqoU8mQIUnGrfzeQZiu/lAxcdGC2q8Kt+HmNwaEpMiSH3gH3KIVLzv5+lmRHhCdQheeTWN4IrJ6108ChJHSHrOz8pk5uOygKHQyFqTke5MMoDeJEnUrlBzVlIpKjLy3rc8lcRmCloGcwYRu6h0wK6NhQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CO6PR12MB5444.namprd12.prod.outlook.com (2603:10b6:5:35e::8) by
+ CY4PR12MB1896.namprd12.prod.outlook.com (2603:10b6:903:124::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5061.24; Mon, 14 Mar
+ 2022 13:58:20 +0000
+Received: from CO6PR12MB5444.namprd12.prod.outlook.com
+ ([fe80::88c:baca:7f34:fba7]) by CO6PR12MB5444.namprd12.prod.outlook.com
+ ([fe80::88c:baca:7f34:fba7%5]) with mapi id 15.20.5061.028; Mon, 14 Mar 2022
+ 13:58:20 +0000
+Message-ID: <0ac87017-362d-33e2-eace-3407e0891a94@nvidia.com>
+Date:   Mon, 14 Mar 2022 13:58:12 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [PATCH 4.19 00/30] 4.19.235-rc1 review
+Content-Language: en-US
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc:     stable@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+        patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+        f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+        slade@sladewatkins.com,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+References: <20220314112731.785042288@linuxfoundation.org>
+From:   Jon Hunter <jonathanh@nvidia.com>
+In-Reply-To: <20220314112731.785042288@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: AS8P189CA0016.EURP189.PROD.OUTLOOK.COM
+ (2603:10a6:20b:31f::7) To CO6PR12MB5444.namprd12.prod.outlook.com
+ (2603:10b6:5:35e::8)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <169795c1-607e-ee60-7ac7-538ed888bedf@linaro.org>
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 81d3a79a-0193-455f-79e0-08da05c2b249
+X-MS-TrafficTypeDiagnostic: CY4PR12MB1896:EE_
+X-Microsoft-Antispam-PRVS: <CY4PR12MB1896FBD0B152944069DA3F5ED90F9@CY4PR12MB1896.namprd12.prod.outlook.com>
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: DxTew+YJiJhxpeycZsw8gpHbcUwgYxhi8XYT9+INxVpixGYrOTwTbg0ZaU+EGz3Q7qTCygN5fEmG1ln6NovFj3ZkKUWJRaTAW8rVPJkygLzgdg30b18ueYOgBwcSC44d8V9xjGiA2BwUAYoqRi0Ppa7nEbNzjZa9gL1IpAVM4KbVt9vYWl/a2nGK1blVADjredgzcHRRhNakNhkXSiwEhrgZlZT6QDZj5sRA188mYWoQQ3HOmnxGNMfhl+9/9gPMqlTRYXl1w93Lp3lLpLY4XNkI9w79djcCEUmcxjhoeHzTTvhHpbHLEm04Wv4Tiz/yB5xM68APm555VpGVm1xAn1DKsyUiryZqBTeXbbmjS4EEne27MfqPvsMW874Mn6dgkoDTfeuLaI0pwaVbd59cB3aMfE6d57ft+90HVtZ15Dzm3a4SDyXtKbGE2XBUYv0C16eqvv0yst4aouJ+XJSk4hrw03ePHhGvaxs+936VtsjNgIss5m+wrRSekkTCfatWSAdMZRrgCSvde5gNtH/RRou9ZZIFHbdi1GXmLVCK0b5jtSKhnBmrv/o08k4+ZPNS2xDnafidjjV/lOFrSkFmC438IO7/gsea0xXqJygxm4kRm5EPKxL1kwMEk5SMckR8ESQXcOHt4y5RR/sKZFVDMMw8q4lvICroohhPyl8zEk5xRS+c6l7zElLWxF8eSl4bgU24+N4lDgfHjrAR0FmX2pxEAVtbewRulZpVrflLcEKmqxzULPlKJNtUtO4PHMeVYcoxWoooWLKUoiT3PnrlRE+QUFFVXqCDX9w5aYf5JXyQgLF+bibw7DrVgLykxjz8lfciuMuck7FRfF+3Ng9I8w==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR12MB5444.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(31686004)(966005)(8936002)(7416002)(5660300002)(508600001)(6486002)(36756003)(2906002)(38100700002)(8676002)(4326008)(66556008)(66476007)(66946007)(86362001)(6666004)(6512007)(53546011)(45080400002)(31696002)(55236004)(316002)(6506007)(26005)(186003)(2616005)(43740500002)(45980500001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?OE5UU3lNR3BpeC9yTSsrQk11K3JIL1hzdnMzYXpIUmdoSC90aSt6RjJieVZ1?=
+ =?utf-8?B?SEJrOEpNbkI4ekNEV09FSDJobFk4bXY5bUFOeW5LclB6RkxkaTRjaFdMOVU3?=
+ =?utf-8?B?aFV2Qit4MzhNRFFBVkRDaTBNVDU2K3dEMXh3WXB4MlhHeEsvSE5oVXhGTzVm?=
+ =?utf-8?B?RXFodXZqMTBvRHRqRy9nTjdMQWlLYzVScTN0TndzTUt5OE53ZjJtcXFjbWly?=
+ =?utf-8?B?VWc1ajZLRFQrRlFLdWdOVEpHdVF1RThrenArcWpjZ242QTlrNEw2REY0U0FI?=
+ =?utf-8?B?c0VGMHltbzZ5clI1N2NrRnpPSEM2ZTFLSVdKUElRN0ZmbEFWUlI1M1RaNXNq?=
+ =?utf-8?B?ZmZXZ2d6TktmTjJEV0gyZjZLSjREYkhnaW1YOXFNL3lPUVBkNDN3Y1k4MXFS?=
+ =?utf-8?B?SUZwWVcwNXFlemxGZHVjQnJtT3ZmTGdteldQdG0vVXMxVnBiYTc1RER3N2xE?=
+ =?utf-8?B?c2NNQXhDcTNnZ0tiUDRtaXY3UXRmYnlLRExHT0g5aU1MNkpiRjV6R3pKL3Fq?=
+ =?utf-8?B?WXgvc05rYTBKcDhjRms0ZWNiM2lRNmFnMFZVaXRwbFQ0aTJqY016ZXpQTGJV?=
+ =?utf-8?B?azI2MEhMWEFIelBnN0lQcEY3Mkt0TTZFY1RpbW00UnZab2xtVVRyR1ZIQmRZ?=
+ =?utf-8?B?TlM3TmZ4U1ZlZXBwdmNWbmllZjhxVFFPdzNpaG1Jd2t5OUNTL2lTKzFHNzZj?=
+ =?utf-8?B?bW9URzBpdTA4b2h3c2Qxc0JNVEJLSWh0NWl4RUtPait5VFdGWkZjNXY2YnBP?=
+ =?utf-8?B?RW8zU283WGdxbldLVktsZlBVaUYvVTQzekRwQ2Z5NmROR0IyNWNhYy80TVZG?=
+ =?utf-8?B?dVFVUDRLVjNFN1cvaUlHTWRRR2pBemZ0cno2Y1hvYjk2SDZaQVJXZDh0NXdJ?=
+ =?utf-8?B?VDZDanM2eXhUYjRCNHFiQVlzU2M2ZVU4S3EvTGVnOWdRSXYvdGowTnF4WDBQ?=
+ =?utf-8?B?N0dlUTN4cGs4UlBLcGtMbU10OWZEUDljREJKcWlFQm9CNlNIb0VtZUZxZ2lB?=
+ =?utf-8?B?cEtBZ0ZaZ2ZhNEtLU3pjNE5id3d0VFV6MFNQRWZjVWwrZy92QmE1Q01QSzBU?=
+ =?utf-8?B?T1F6dHhNYW1neWpETnNtQzcxVHZJblJOK0lLU3k1Y2xSS0Y3Smtvbi9DYlNR?=
+ =?utf-8?B?SGxTbUQrTHZjYkFNYTdDdzZqaHIwWG5FdEFWQktNTDRWazdUVXhFcG93bDlm?=
+ =?utf-8?B?OHJLQmQvRDBJY211bXZUUjVCaFJmUWpORzg1TjA4ZEFxUUdqaTY2djB5WGRD?=
+ =?utf-8?B?YzdvYjRmMk9HT1o0c1Z0TFh1TjhmOWxJb1hoRU1rUDVMNCswMithTmtVZlU0?=
+ =?utf-8?B?d3R4Sm5VSzBFV29BdHZyaFg2WEtic1dsVG5uZkNOS090WEpZNXh2d01QMVNo?=
+ =?utf-8?B?eGVFVTlEWHh6bWhCMlNPMUFINVhudU9ROUJ2M01BaitYckt5RnpocmJEazcv?=
+ =?utf-8?B?UVUzT3drZy9EdkZCWHJqTWJGOXgyeEY3WjBzRnlaQjRiYTRFcmRBbU5rOTlV?=
+ =?utf-8?B?QkJQcjczOHo5bytWR1paVDRkNzdOU3hXTVV2YVhkQUpxdExlcC9scEp4RWJY?=
+ =?utf-8?B?YWwzOVBoVzZTNE54d1d5ZmJhamd6eElCTXdsaXZBMVMrcEhUNE1uMFZNT1hC?=
+ =?utf-8?B?cFRmQ3JrVEkrekNFajR2eXNlMW0vTHhpbjFVQnNqMnpML1JEdTJPczc4Qmgz?=
+ =?utf-8?B?aUJEcDEyamdndDBmcUs2alYyUTJJc1lvYmtYVGxhamVkMWRMSG12ZkhuTGJz?=
+ =?utf-8?B?UUdUelBFZDJPTlZHdThKMUllOXVQSWFLRE1DWDdyUU8zV2VHZjJDNzRTQ1A1?=
+ =?utf-8?B?ZjJjc2w0bndaMnZLTFgxa0Nqa0JpdWUrb1F4citBMDZEL1Z0QUU3SFM3SkJK?=
+ =?utf-8?B?aUZZdHRjQWFPTmFLUWxaeU5MN3B3elBJMXpQQmVTaUhXWXByY245K1l3Tkp5?=
+ =?utf-8?B?NzBsQ29UbnJ5ZCttZXNIR3orSzYybEVtR3lwZ2dzS0VmdXpEbE9uOFBZVjZT?=
+ =?utf-8?B?TjFGMU9LVXpnPT0=?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 81d3a79a-0193-455f-79e0-08da05c2b249
+X-MS-Exchange-CrossTenant-AuthSource: CO6PR12MB5444.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Mar 2022 13:58:20.2268
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: eK98i0+ogAStaq+3ud+F9JOj/644llykOYMWyG0CBSju3xEVVp+518kwf7kMrLUF66mrao7rsgedkJozSFKIAA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR12MB1896
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, Mar 14, 2022 at 11:20:21AM +0300, Dmitry Baryshkov wrote:
-> On 13/03/2022 22:04, Ansuel Smith wrote:
-> > Add 8064 errata workaround where the sec_src clock gating needs to be
-> 
-> Could you please be more specific whether the errata applies only to the
-> ipq8064 or to the apq8064 too? 8064 is not specific enough.
->
+Hi Greg,
 
-That's a good question... Problem is that we really don't know the
-answer. This errata comes from qsdk on an old sourcecode. I assume this
-is specific to ipq8064 and apq8064 have different mux configuration.
+On 14/03/2022 11:34, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.19.235 release.
+> There are 30 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Wed, 16 Mar 2022 11:27:22 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://nam11.safelinks.protection.outlook.com/?url=https%3A%2F%2Fwww.kernel.org%2Fpub%2Flinux%2Fkernel%2Fv4.x%2Fstable-review%2Fpatch-4.19.235-rc1.gz&amp;data=04%7C01%7Cjonathanh%40nvidia.com%7C4c0c664e42044e5bd8a208da05af4c30%7C43083d15727340c1b7db39efd9ccc17a%7C0%7C0%7C637828547981871505%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000&amp;sdata=xF4hLHeQMZiCVtbZX2jXwWYGz30QY84EzlbqHLPUZSs%3D&amp;reserved=0
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
+> -------------
+> Pseudo-Shortlog of commits:
 
-> > disabled during switching. To enable this set disable_sec_src_gating in
-> > the mux struct.
-> > 
-> > Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
-> > ---
-> >   drivers/clk/qcom/clk-krait.c | 16 ++++++++++++++++
-> >   drivers/clk/qcom/clk-krait.h |  1 +
-> >   drivers/clk/qcom/krait-cc.c  |  1 +
-> >   3 files changed, 18 insertions(+)
-> > 
-> > diff --git a/drivers/clk/qcom/clk-krait.c b/drivers/clk/qcom/clk-krait.c
-> > index d8af281eba0e..82fe7031e1f4 100644
-> > --- a/drivers/clk/qcom/clk-krait.c
-> > +++ b/drivers/clk/qcom/clk-krait.c
-> > @@ -18,13 +18,23 @@
-> >   static DEFINE_SPINLOCK(krait_clock_reg_lock);
-> >   #define LPL_SHIFT	8
-> > +#define SECCLKAGD	BIT(4)
-> > +
-> >   static void __krait_mux_set_sel(struct krait_mux_clk *mux, int sel)
-> >   {
-> >   	unsigned long flags;
-> >   	u32 regval;
-> >   	spin_lock_irqsave(&krait_clock_reg_lock, flags);
-> > +
-> >   	regval = krait_get_l2_indirect_reg(mux->offset);
-> > +
-> > +	/* 8064 Errata: disable sec_src clock gating during switch. */
-> > +	if (mux->disable_sec_src_gating) {
-> > +		regval |= SECCLKAGD;
-> > +		krait_set_l2_indirect_reg(mux->offset, regval);
-> > +	}
-> > +
-> >   	regval &= ~(mux->mask << mux->shift);
-> >   	regval |= (sel & mux->mask) << mux->shift;
-> >   	if (mux->lpl) {
-> > @@ -33,6 +43,12 @@ static void __krait_mux_set_sel(struct krait_mux_clk *mux, int sel)
-> >   	}
-> >   	krait_set_l2_indirect_reg(mux->offset, regval);
-> > +	/* 8064 Errata: re-enabled sec_src clock gating. */
-> 
-> And here too
-> 
-> > +	if (mux->disable_sec_src_gating) {
-> > +		regval &= ~SECCLKAGD;
-> > +		krait_set_l2_indirect_reg(mux->offset, regval);
-> > +	}
-> > +
-> >   	/* Wait for switch to complete. */
-> >   	mb();
-> >   	udelay(1);
-> > diff --git a/drivers/clk/qcom/clk-krait.h b/drivers/clk/qcom/clk-krait.h
-> > index 9120bd2f5297..f930538c539e 100644
-> > --- a/drivers/clk/qcom/clk-krait.h
-> > +++ b/drivers/clk/qcom/clk-krait.h
-> > @@ -15,6 +15,7 @@ struct krait_mux_clk {
-> >   	u8		safe_sel;
-> >   	u8		old_index;
-> >   	bool		reparent;
-> > +	bool		disable_sec_src_gating;
-> >   	struct clk_hw	hw;
-> >   	struct notifier_block   clk_nb;
-> > diff --git a/drivers/clk/qcom/krait-cc.c b/drivers/clk/qcom/krait-cc.c
-> > index 1bdc89c097e6..533a770332be 100644
-> > --- a/drivers/clk/qcom/krait-cc.c
-> > +++ b/drivers/clk/qcom/krait-cc.c
-> > @@ -154,6 +154,7 @@ krait_add_sec_mux(struct device *dev, struct clk *qsb, int id,
-> >   	mux->shift = 2;
-> >   	mux->parent_map = sec_mux_map;
-> >   	mux->hw.init = &init;
-> > +	mux->disable_sec_src_gating = true;
-> >   	init.name = kasprintf(GFP_KERNEL, "krait%s_sec_mux", s);
-> >   	if (!init.name)
-> 
-> 
-> -- 
-> With best wishes
-> Dmitry
+...
+
+> James Morse <james.morse@arm.com>
+>      KVM: arm64: Reset PMC_EL0 to avoid a panic() on systems with no PMU
+
+
+The above is causing the following build error for ARM64 ...
+
+arch/arm64/kvm/sys_regs.c: In function ‘reset_pmcr’:
+arch/arm64/kvm/sys_regs.c:624:3: error: implicit declaration of function ‘vcpu_sys_reg’ [-Werror=implicit-function-declaration]
+    vcpu_sys_reg(vcpu, PMCR_EL0) = 0;
+    ^~~~~~~~~~~~
+arch/arm64/kvm/sys_regs.c:624:32: error: lvalue required as left operand of assignment
+    vcpu_sys_reg(vcpu, PMCR_EL0) = 0;
+
+
+Cheers
+Jon
 
 -- 
-	Ansuel
+nvpublic
