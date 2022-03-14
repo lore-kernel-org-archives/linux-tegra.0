@@ -2,255 +2,169 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9F98C433FE
-	for <linux-tegra@archiver.kernel.org>; Mon, 14 Mar 2022 08:05:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 875CCC433F5
+	for <linux-tegra@archiver.kernel.org>; Mon, 14 Mar 2022 08:20:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237256AbiCNIGW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 14 Mar 2022 04:06:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33246 "EHLO
+        id S234599AbiCNIVl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 14 Mar 2022 04:21:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47794 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238698AbiCNIEW (ORCPT
+        with ESMTP id S236832AbiCNIVk (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 14 Mar 2022 04:04:22 -0400
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F18F3B2BF
-        for <linux-tegra@vger.kernel.org>; Mon, 14 Mar 2022 01:02:04 -0700 (PDT)
-Received: by mail-wr1-x434.google.com with SMTP id k24so22461098wrd.7
-        for <linux-tegra@vger.kernel.org>; Mon, 14 Mar 2022 01:02:03 -0700 (PDT)
+        Mon, 14 Mar 2022 04:21:40 -0400
+Received: from mail-lj1-x22d.google.com (mail-lj1-x22d.google.com [IPv6:2a00:1450:4864:20::22d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24FC43F324
+        for <linux-tegra@vger.kernel.org>; Mon, 14 Mar 2022 01:20:30 -0700 (PDT)
+Received: by mail-lj1-x22d.google.com with SMTP id u7so20607563ljk.13
+        for <linux-tegra@vger.kernel.org>; Mon, 14 Mar 2022 01:20:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20210112.gappssmtp.com; s=20210112;
+        d=linaro.org; s=google;
         h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:organization:in-reply-to
-         :content-transfer-encoding;
-        bh=ZbQvHoyGIYzvUki2Rr3koBlbf8HphwGvoPoiGFCWjVI=;
-        b=Px/AIFSkS5xiQntL+czEDZNooaKyKwCT5+5oX3Dxiuaq0p2Muil6CAGE/yKjTcSPRk
-         zDe4uh38/LLZAeLwbHMGwjTg12kmpC6yeWSofKA0umP5cCfX9/OYY82Bw345RNYb0ncn
-         orCm5F+5ZfCmlxK+d1VXp7nIMCWzluoafQnmDOcfqWejvaYNcsBVEphbI2O0YMhV2/Sw
-         btjwvk4hgGfi1Ebtg7vyteqdSKhr8lp3tlnQhW8mViZOmcTxC9P84ODdx/3FeHEOfW8P
-         6h58+Jo9NlVZHRXuw0qPEJXdJKCF5VgLcohK/rtJkyKSW2QSe8R2Hvd+nhg3g9Uwmmee
-         CRRw==
+         :references:from:in-reply-to:content-transfer-encoding;
+        bh=0jsGDZGuE1wFeDgrRVvKz3gMkQvG2OtkGgkBW7bJIIY=;
+        b=SzgtULj3Rl6JojXcMunC64uc+o+TjwdnMSkBlloSVDnK5jPfszaNn21wkMHEK/ITNa
+         yiZY0GzFsJZtjWswmSdhnjRams5TUswISNTAwjR2cUpwGpnJwkHfTH/JXY9U9HLdYmjp
+         QMqTNlhF5/LGN9hfHybecV8wonADSuwQ0smkLc/4EFHBZVFCwNUDkvZ2VXlB6rhMocoK
+         VNpqDUOWAotRn/RnW8sXBrEfkv1TER0RrYutQ0FkZ82KSw6QFPwU2sVgk7CIOTLlr39H
+         2LQ/c25FuJzeRB85Jp0UJDl7epcDBXFGEwiBPqNgGawRFG88sUdJ4mhZOWx9mT2V/g9s
+         heDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:organization:in-reply-to
+         :content-language:to:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=ZbQvHoyGIYzvUki2Rr3koBlbf8HphwGvoPoiGFCWjVI=;
-        b=4dJ+fecnl3Jh7f3aGGpIUPDNRfNfb40VNUPGevPMSavFqciEpgssvA1LRCb/uB5cN0
-         Ty5inK03oEW+nbxPGwUFrneTgsBsM2FOBGnnmoWtCwOlscrr7hCCXbKIrfgYJco2KoBR
-         aWmqm4ommvvDgQUB2wJS6NyU+JzJS/v+r51T86cw0WGpsmQyEYBp/DAQBt4uK55OJfVD
-         FKFAx2ZohvW+6KtylDuIX5e4LCGrnREQyM5fZeZcUbrKB45KWFmIAY5RkNmFL1y6cVfq
-         9/SWGHzyU4xTma1KOesmWAeZW3SBzp245ld5mrf7ZHB8XHjp62nZLbonYseyJfDWMVK0
-         /dFQ==
-X-Gm-Message-State: AOAM531rXIXTUHPsKpHEd/BIKBs2q+eNs2FmARmmTTe9/i9ty6vBqr+I
-        efH8FDybLD1qb4z17Q2RjualFw==
-X-Google-Smtp-Source: ABdhPJztePfcEZyw3gKDCW6el7zVf+skc/7D+PKs0YU6FDvddmqBB//lsO2gITU97Xj5EZ5qC+/51g==
-X-Received: by 2002:adf:fb4e:0:b0:1e3:3e66:d5f6 with SMTP id c14-20020adffb4e000000b001e33e66d5f6mr16194756wrs.615.1647244875196;
-        Mon, 14 Mar 2022 01:01:15 -0700 (PDT)
-Received: from ?IPV6:2001:861:44c0:66c0:67f0:57f7:2185:6d18? ([2001:861:44c0:66c0:67f0:57f7:2185:6d18])
-        by smtp.gmail.com with ESMTPSA id v188-20020a1cacc5000000b00384b71a50d5sm14188253wme.24.2022.03.14.01.01.14
+        bh=0jsGDZGuE1wFeDgrRVvKz3gMkQvG2OtkGgkBW7bJIIY=;
+        b=wxZSd72p/KHH3DFJz459yAyQhlZ35K+yh4mGYVcxqnY5oI7oMfe9LJtkPhUZjriG4N
+         mQFrCjIs7OkzTh9lQV9zZDZwN46EibMzgPCKQiHxNCIXcJXfX5AnnzY4khwU5AzePM1v
+         HmIx5bvIcIzJIBt0S+RHDs2yw5LtEvrLvFoB+TJCoNNt2/927rfkpms0svBpZhkpOHoV
+         ge302FUe04WCwk6eZsRYwIM+Eoe5JLmtoJgD9TfVRzEp+0PkxVoaFjntN9PSA3xvy1SL
+         TDZ0PpxysP8QFa7HdUi0fA+Tcpn20FKETUWnslrPZlUhZwIAroAO9DbuD4+tKIO+aS9n
+         KnuA==
+X-Gm-Message-State: AOAM53292Jg3N2B4/weByM0PfAWc0uw9Qw3Gdq2ufwZKamVkqXZPb5sc
+        shNluyz0oOB0+r4ayext7xfmKA==
+X-Google-Smtp-Source: ABdhPJzS/POZUDP6+CYrgOXdz6HjJeNcuxARNO8TOkiRP249gvnf2SkXE8Ah7YjoekbbvAGqtJdJgw==
+X-Received: by 2002:a05:651c:243:b0:247:eb1b:939d with SMTP id x3-20020a05651c024300b00247eb1b939dmr13654168ljn.250.1647246028276;
+        Mon, 14 Mar 2022 01:20:28 -0700 (PDT)
+Received: from [192.168.1.211] ([37.153.55.125])
+        by smtp.gmail.com with ESMTPSA id u13-20020a056512094d00b0043e6c108925sm3140943lft.136.2022.03.14.01.20.27
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Mar 2022 01:01:14 -0700 (PDT)
-Message-ID: <18f984ff-36c8-dbe5-6dd0-404c4fe9deab@baylibre.com>
-Date:   Mon, 14 Mar 2022 09:01:19 +0100
+        Mon, 14 Mar 2022 01:20:27 -0700 (PDT)
+Message-ID: <169795c1-607e-ee60-7ac7-538ed888bedf@linaro.org>
+Date:   Mon, 14 Mar 2022 11:20:21 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH 64/64] media: Kconfig: cleanup VIDEO_DEV dependencies
-Content-Language: en-US
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc:     alsa-devel@alsa-project.org, bcm-kernel-feedback-list@broadcom.com,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-staging@lists.linux.dev,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
-        linux-usb@vger.kernel.org, mjpeg-users@lists.sourceforge.net,
-        openbmc@lists.ozlabs.org
-References: <cover.1647242578.git.mchehab@kernel.org>
- <decd26e90adc5c16470e4f738810f22fe6478b27.1647242579.git.mchehab@kernel.org>
-From:   Neil Armstrong <narmstrong@baylibre.com>
-Organization: Baylibre
-In-Reply-To: <decd26e90adc5c16470e4f738810f22fe6478b27.1647242579.git.mchehab@kernel.org>
+ Thunderbird/91.6.1
+Subject: Re: [PATCH 12/16] clk: qcom: clk-krait: add 8064 errata workaround
+Content-Language: en-GB
+To:     Ansuel Smith <ansuelsmth@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+References: <20220313190419.2207-1-ansuelsmth@gmail.com>
+ <20220313190419.2207-13-ansuelsmth@gmail.com>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+In-Reply-To: <20220313190419.2207-13-ansuelsmth@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 14/03/2022 08:55, Mauro Carvalho Chehab wrote:
-> media Kconfig has two entries associated to V4L API:
-> VIDEO_DEV and VIDEO_V4L2.
+On 13/03/2022 22:04, Ansuel Smith wrote:
+> Add 8064 errata workaround where the sec_src clock gating needs to be
+
+Could you please be more specific whether the errata applies only to the 
+ipq8064 or to the apq8064 too? 8064 is not specific enough.
+
+> disabled during switching. To enable this set disable_sec_src_gating in
+> the mux struct.
 > 
-> On Kernel 2.6.x, there were two V4L APIs, each one with its own flag.
-> VIDEO_DEV were meant to:
-> 	1) enable Video4Linux and make its Kconfig options to appear;
-> 	2) it makes the Kernel build the V4L core.
-> 
-> while VIDEO_V4L2 where used to distinguish between drivers that
-> implement the newer API and drivers that implemented the former one.
-> 
-> With time, such meaning changed, specially after the removal of
-> all V4L version 1 drivers.
-> 
-> At the current implementation, VIDEO_DEV only does (1): it enables
-> the media options related to V4L, that now has:
-> 
-> 	menu "Video4Linux options"
-> 		visible if VIDEO_DEV
-> 
-> 	source "drivers/media/v4l2-core/Kconfig"
-> 	endmenu
-> 
-> but it doesn't affect anymore the V4L core drivers.
-> 
-> The rationale is that the V4L2 core has a "soft" dependency
-> at the I2C bus, and now requires to select a number of other
-> Kconfig options:
-> 
-> 	config VIDEO_V4L2
-> 		tristate
-> 		depends on (I2C || I2C=n) && VIDEO_DEV
-> 		select RATIONAL
-> 		select VIDEOBUF2_V4L2 if VIDEOBUF2_CORE
-> 		default (I2C || I2C=n) && VIDEO_DEV
-> 
-> In the past, merging them would be tricky, but it seems that it is now
-> possible to merge those symbols, in order to simplify V4L dependencies.
-> 
-> Let's keep VIDEO_DEV, as this one is used on some make *defconfig
-> configurations.
-> 
-> Suggested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Signed-off-by: Mauro Carvalho Chehab <mchehab@kernel.org>
+> Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
 > ---
+>   drivers/clk/qcom/clk-krait.c | 16 ++++++++++++++++
+>   drivers/clk/qcom/clk-krait.h |  1 +
+>   drivers/clk/qcom/krait-cc.c  |  1 +
+>   3 files changed, 18 insertions(+)
 > 
-> To avoid mailbombing on a large number of people, only mailing lists were C/C on the cover.
-> See [PATCH 00/64] at: https://lore.kernel.org/all/cover.1647242578.git.mchehab@kernel.org/
-> 
->   drivers/input/rmi4/Kconfig                    |   2 +-
->   drivers/input/touchscreen/Kconfig             |   4 +-
->   drivers/media/Kconfig                         |   3 +
->   drivers/media/common/saa7146/Kconfig          |   2 +-
->   drivers/media/dvb-core/Kconfig                |   2 +-
->   drivers/media/dvb-frontends/Kconfig           |   4 +-
->   drivers/media/i2c/Kconfig                     | 250 +++++++++---------
->   drivers/media/i2c/ccs/Kconfig                 |   2 +-
->   drivers/media/i2c/cx25840/Kconfig             |   2 +-
->   drivers/media/i2c/et8ek8/Kconfig              |   2 +-
->   drivers/media/i2c/m5mols/Kconfig              |   2 +-
->   drivers/media/pci/Kconfig                     |   2 +-
->   drivers/media/pci/bt8xx/Kconfig               |   2 +-
->   drivers/media/pci/cobalt/Kconfig              |   2 +-
->   drivers/media/pci/cx18/Kconfig                |   2 +-
->   drivers/media/pci/dt3155/Kconfig              |   2 +-
->   drivers/media/pci/intel/ipu3/Kconfig          |   2 +-
->   drivers/media/pci/ivtv/Kconfig                |   2 +-
->   drivers/media/pci/meye/Kconfig                |   2 +-
->   drivers/media/pci/saa7146/Kconfig             |   6 +-
->   drivers/media/pci/sta2x11/Kconfig             |   2 +-
->   drivers/media/pci/tw5864/Kconfig              |   2 +-
->   drivers/media/pci/tw68/Kconfig                |   2 +-
->   drivers/media/pci/tw686x/Kconfig              |   2 +-
->   drivers/media/platform/Kconfig                |   6 +-
->   drivers/media/platform/allegro-dvt/Kconfig    |   2 +-
->   .../platform/allwinner/sun4i-csi/Kconfig      |   2 +-
->   .../platform/allwinner/sun6i-csi/Kconfig      |   2 +-
->   .../media/platform/allwinner/sun8i-di/Kconfig |   2 +-
->   .../platform/allwinner/sun8i-rotate/Kconfig   |   2 +-
->   .../media/platform/amlogic/meson-ge2d/Kconfig |   2 +-
->   drivers/media/platform/aspeed/Kconfig         |   2 +-
->   drivers/media/platform/atmel/Kconfig          |   8 +-
->   drivers/media/platform/cadence/Kconfig        |   4 +-
->   drivers/media/platform/chips-media/Kconfig    |   2 +-
->   drivers/media/platform/intel/Kconfig          |   2 +-
->   drivers/media/platform/marvell/Kconfig        |   4 +-
->   .../media/platform/mediatek/mtk-jpeg/Kconfig  |   2 +-
->   .../media/platform/mediatek/mtk-mdp/Kconfig   |   2 +-
->   .../platform/mediatek/mtk-vcodec/Kconfig      |   2 +-
->   .../media/platform/mediatek/mtk-vpu/Kconfig   |   2 +-
->   .../media/platform/nvidia/tegra-vde/Kconfig   |   2 +-
->   drivers/media/platform/nxp/Kconfig            |   6 +-
->   drivers/media/platform/nxp/amphion/Kconfig    |   2 +-
->   drivers/media/platform/nxp/imx-jpeg/Kconfig   |   2 +-
->   drivers/media/platform/qcom/camss/Kconfig     |   2 +-
->   drivers/media/platform/qcom/venus/Kconfig     |   2 +-
->   drivers/media/platform/renesas/Kconfig        |  30 +--
->   .../media/platform/renesas/rcar-vin/Kconfig   |   4 +-
->   drivers/media/platform/rockchip/rga/Kconfig   |   2 +-
->   .../media/platform/rockchip/rkisp1/Kconfig    |   2 +-
->   .../media/platform/samsung/exynos-gsc/Kconfig |   2 +-
->   .../media/platform/samsung/exynos4-is/Kconfig |   2 +-
->   .../media/platform/samsung/s3c-camif/Kconfig  |   2 +-
->   .../media/platform/samsung/s5p-g2d/Kconfig    |   2 +-
->   .../media/platform/samsung/s5p-jpeg/Kconfig   |   2 +-
->   .../media/platform/samsung/s5p-mfc/Kconfig    |   2 +-
->   drivers/media/platform/sti/bdisp/Kconfig      |   2 +-
->   drivers/media/platform/sti/delta/Kconfig      |   2 +-
->   drivers/media/platform/sti/hva/Kconfig        |   2 +-
->   drivers/media/platform/sti/stm32/Kconfig      |   4 +-
->   drivers/media/platform/ti/am437x/Kconfig      |   2 +-
->   drivers/media/platform/ti/davinci/Kconfig     |  12 +-
->   drivers/media/platform/ti/omap/Kconfig        |   2 +-
->   drivers/media/platform/ti/omap3isp/Kconfig    |   2 +-
->   drivers/media/platform/ti/vpe/Kconfig         |   4 +-
->   drivers/media/platform/via/Kconfig            |   2 +-
->   drivers/media/platform/xilinx/Kconfig         |   2 +-
->   drivers/media/radio/Kconfig                   |  54 ++--
->   drivers/media/radio/si470x/Kconfig            |   2 +-
->   drivers/media/radio/wl128x/Kconfig            |   2 +-
->   drivers/media/spi/Kconfig                     |   4 +-
->   drivers/media/test-drivers/Kconfig            |   2 +-
->   drivers/media/test-drivers/vicodec/Kconfig    |   2 +-
->   drivers/media/test-drivers/vimc/Kconfig       |   2 +-
->   drivers/media/test-drivers/vivid/Kconfig      |   2 +-
->   drivers/media/tuners/Kconfig                  |   6 +-
->   drivers/media/tuners/e4000.c                  |   6 +-
->   drivers/media/tuners/fc2580.c                 |   6 +-
->   drivers/media/usb/airspy/Kconfig              |   2 +-
->   drivers/media/usb/au0828/Kconfig              |   6 +-
->   drivers/media/usb/cpia2/Kconfig               |   2 +-
->   drivers/media/usb/dvb-usb-v2/Kconfig          |   8 +-
->   drivers/media/usb/dvb-usb/Kconfig             |   4 +-
->   drivers/media/usb/gspca/Kconfig               |  96 +++----
->   drivers/media/usb/gspca/gl860/Kconfig         |   2 +-
->   drivers/media/usb/gspca/m5602/Kconfig         |   2 +-
->   drivers/media/usb/hackrf/Kconfig              |   2 +-
->   drivers/media/usb/hdpvr/Kconfig               |   2 +-
->   drivers/media/usb/msi2500/Kconfig             |   2 +-
->   drivers/media/usb/pvrusb2/Kconfig             |   2 +-
->   drivers/media/usb/pwc/Kconfig                 |   2 +-
->   drivers/media/usb/s2255/Kconfig               |   2 +-
->   drivers/media/usb/stkwebcam/Kconfig           |   2 +-
->   drivers/media/usb/usbtv/Kconfig               |   2 +-
->   drivers/media/usb/uvc/Kconfig                 |   2 +-
->   drivers/media/usb/zr364xx/Kconfig             |   2 +-
->   drivers/media/v4l2-core/Kconfig               |  12 +-
->   drivers/media/v4l2-core/Makefile              |   2 +-
->   drivers/staging/media/atomisp/Kconfig         |   2 +-
->   drivers/staging/media/atomisp/i2c/Kconfig     |  14 +-
->   drivers/staging/media/hantro/Kconfig          |   2 +-
->   drivers/staging/media/imx/Kconfig             |   2 +-
->   drivers/staging/media/ipu3/Kconfig            |   2 +-
->   drivers/staging/media/max96712/Kconfig        |   2 +-
->   drivers/staging/media/meson/vdec/Kconfig      |   2 +-
->   drivers/staging/media/omap4iss/Kconfig        |   2 +-
->   drivers/staging/media/rkvdec/Kconfig          |   2 +-
->   drivers/staging/media/sunxi/cedrus/Kconfig    |   2 +-
->   drivers/staging/media/tegra-video/Kconfig     |   2 +-
->   drivers/staging/media/zoran/Kconfig           |   2 +-
->   drivers/staging/most/video/Kconfig            |   2 +-
->   .../vc04_services/bcm2835-camera/Kconfig      |   2 +-
->   drivers/usb/gadget/Kconfig                    |   2 +-
->   drivers/usb/gadget/legacy/Kconfig             |   2 +-
->   sound/pci/Kconfig                             |   4 +-
->   116 files changed, 371 insertions(+), 376 deletions(-)
+> diff --git a/drivers/clk/qcom/clk-krait.c b/drivers/clk/qcom/clk-krait.c
+> index d8af281eba0e..82fe7031e1f4 100644
+> --- a/drivers/clk/qcom/clk-krait.c
+> +++ b/drivers/clk/qcom/clk-krait.c
+> @@ -18,13 +18,23 @@
+>   static DEFINE_SPINLOCK(krait_clock_reg_lock);
+>   
+>   #define LPL_SHIFT	8
+> +#define SECCLKAGD	BIT(4)
+> +
+>   static void __krait_mux_set_sel(struct krait_mux_clk *mux, int sel)
+>   {
+>   	unsigned long flags;
+>   	u32 regval;
+>   
+>   	spin_lock_irqsave(&krait_clock_reg_lock, flags);
+> +
+>   	regval = krait_get_l2_indirect_reg(mux->offset);
+> +
+> +	/* 8064 Errata: disable sec_src clock gating during switch. */
+> +	if (mux->disable_sec_src_gating) {
+> +		regval |= SECCLKAGD;
+> +		krait_set_l2_indirect_reg(mux->offset, regval);
+> +	}
+> +
+>   	regval &= ~(mux->mask << mux->shift);
+>   	regval |= (sel & mux->mask) << mux->shift;
+>   	if (mux->lpl) {
+> @@ -33,6 +43,12 @@ static void __krait_mux_set_sel(struct krait_mux_clk *mux, int sel)
+>   	}
+>   	krait_set_l2_indirect_reg(mux->offset, regval);
+>   
+> +	/* 8064 Errata: re-enabled sec_src clock gating. */
+
+And here too
+
+> +	if (mux->disable_sec_src_gating) {
+> +		regval &= ~SECCLKAGD;
+> +		krait_set_l2_indirect_reg(mux->offset, regval);
+> +	}
+> +
+>   	/* Wait for switch to complete. */
+>   	mb();
+>   	udelay(1);
+> diff --git a/drivers/clk/qcom/clk-krait.h b/drivers/clk/qcom/clk-krait.h
+> index 9120bd2f5297..f930538c539e 100644
+> --- a/drivers/clk/qcom/clk-krait.h
+> +++ b/drivers/clk/qcom/clk-krait.h
+> @@ -15,6 +15,7 @@ struct krait_mux_clk {
+>   	u8		safe_sel;
+>   	u8		old_index;
+>   	bool		reparent;
+> +	bool		disable_sec_src_gating;
+>   
+>   	struct clk_hw	hw;
+>   	struct notifier_block   clk_nb;
+> diff --git a/drivers/clk/qcom/krait-cc.c b/drivers/clk/qcom/krait-cc.c
+> index 1bdc89c097e6..533a770332be 100644
+> --- a/drivers/clk/qcom/krait-cc.c
+> +++ b/drivers/clk/qcom/krait-cc.c
+> @@ -154,6 +154,7 @@ krait_add_sec_mux(struct device *dev, struct clk *qsb, int id,
+>   	mux->shift = 2;
+>   	mux->parent_map = sec_mux_map;
+>   	mux->hw.init = &init;
+> +	mux->disable_sec_src_gating = true;
+>   
+>   	init.name = kasprintf(GFP_KERNEL, "krait%s_sec_mux", s);
+>   	if (!init.name)
 
 
-Reviewed-by: Neil Armstrong <narmstrong@baylibre.com> # for meson-vdec & meson-ge2d
+-- 
+With best wishes
+Dmitry
