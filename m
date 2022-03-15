@@ -2,112 +2,170 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1795CC433F5
-	for <linux-tegra@archiver.kernel.org>; Tue, 15 Mar 2022 12:28:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA8C0C433FE
+	for <linux-tegra@archiver.kernel.org>; Tue, 15 Mar 2022 13:05:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348271AbiCOM3k (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 15 Mar 2022 08:29:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57592 "EHLO
+        id S238074AbiCONG0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 15 Mar 2022 09:06:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57436 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235801AbiCOM3k (ORCPT
+        with ESMTP id S1348540AbiCONGY (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 15 Mar 2022 08:29:40 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4256410E2;
-        Tue, 15 Mar 2022 05:28:28 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id D2044B81604;
-        Tue, 15 Mar 2022 12:28:26 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BE02C340EE;
-        Tue, 15 Mar 2022 12:28:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1647347305;
-        bh=Ye/ocCGoca+qFVAWeKWtxYvCf9/D8eC+LLNNN0SVF8I=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=dwoyEDyPlZeusu3XvRaZorYD9Ag4OSd+LxC8HFYTcS6xHRV3uXWCTtJVpMGRrnc8b
-         hLVncT+SxCzFNgGXx7MzqxhUKU8GfVxdb6UrRw1b4EyjLgio8duvlSsZa4DW0PGGrF
-         RkhmW/dO0qHS9rv0WBtCblD0NBOjCrt3XBcdbnJo=
-Date:   Tue, 15 Mar 2022 13:28:21 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     James Morse <james.morse@arm.com>
-Cc:     Jon Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-        patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-        f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
-        slade@sladewatkins.com,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 4.19 00/30] 4.19.235-rc1 review
-Message-ID: <YjCGZVxDgtxzzswA@kroah.com>
-References: <20220314112731.785042288@linuxfoundation.org>
- <0ac87017-362d-33e2-eace-3407e0891a94@nvidia.com>
- <Yi9LlP+x2swdsrbE@kroah.com>
- <ae60e4a0-3333-1ad7-1ac9-62e6ac3751de@nvidia.com>
- <Yi9X4jqy4RT4jr5n@kroah.com>
- <3f809462-217d-fc4d-8e1e-a3d265350fcb@arm.com>
+        Tue, 15 Mar 2022 09:06:24 -0400
+Received: from mail-il1-x12c.google.com (mail-il1-x12c.google.com [IPv6:2607:f8b0:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6EF15132C
+        for <linux-tegra@vger.kernel.org>; Tue, 15 Mar 2022 06:05:02 -0700 (PDT)
+Received: by mail-il1-x12c.google.com with SMTP id d3so13230040ilr.10
+        for <linux-tegra@vger.kernel.org>; Tue, 15 Mar 2022 06:05:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sartura-hr.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=kJctDznwgrmoIyAuf9bUVGsb0D7V175hvwVVt9jW9gw=;
+        b=d4mR+kDbmTiAUcXc1886xV8kIQFzaMsTtL61b7IYflmu+Ku0mBap2UE7WQ0c+R9B4y
+         VKGgMRMRMdT0vmCb6a8Y9ou2iFXvTAvcDQwUpRKcIzLXUVUrRSFPr4U+09U6tQVDIsp8
+         mW9kRcmtHwZm2chttAOYegWNOglE96/u74Y4lbOxLutYe5vByCWEsnBmNrd98g6yg5mf
+         8Imx8Ep1Vgw7JS7mKCmRyvEwVqlPS8yBTTsA/UFv1gSGu1z+KI3kIrTRZcdscKSPtXt2
+         mV+i5dNl1E5GmIKvzailpWsZuMjlmPuAotYPWSZcX94lOxZIF2kV/LWjOxtqZsjYjKw3
+         fHSg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=kJctDznwgrmoIyAuf9bUVGsb0D7V175hvwVVt9jW9gw=;
+        b=hKkync/uXFluMrsi/oL0EpnIGpFcWrRYYrfXMMUO50zWZHbgOy3w5p9c4J6fg/Pmif
+         Z7Adkj6JJO/3kt7N+uNqKn95phdaYbuawblmiFUH+WOwdSa9nfXNXTBSzVxmDpJb22mE
+         ypsgGmOQCvQRtUzAe9MTtYEvNhZalQTB9ZVFUNas8qV+cyOmeGgQLUTBURDNEM5VKje9
+         hYAMd/+wDpXFpvOPh/TTLY3YFetTU+Z/uIznZi2EuAhMGySj/AUlkbKLrvfFk0iADd0V
+         Z8fk32o/RWFcx0iwYGZEwsq4UhkrLf5HnsRHOg4M73rBZ0y581++uUqKQSdF4l/u+f4M
+         r3LQ==
+X-Gm-Message-State: AOAM530YRvE6ATxJBQRfktt7pQSUSee7SBvNu5+Xk/t2Nai0P3kguh07
+        Bn1w6Ytu+UIYMX/a+aLcGrOTzwz43830BpqiwmLnQA==
+X-Google-Smtp-Source: ABdhPJyrkaCXQOljy5xtaGdh0dwlkFZe7LnuxQg+YrF/pDCR18e8YPQy0VIlL1m27PyYcQCgEKEv1B8FmVzqvSf7344=
+X-Received: by 2002:a92:ca45:0:b0:2c7:c473:6785 with SMTP id
+ q5-20020a92ca45000000b002c7c4736785mr363815ilo.40.1647349501920; Tue, 15 Mar
+ 2022 06:05:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <3f809462-217d-fc4d-8e1e-a3d265350fcb@arm.com>
+References: <cover.1644234441.git.baruch@tkos.co.il> <20220211160645.GA448@lpieralisi>
+In-Reply-To: <20220211160645.GA448@lpieralisi>
+From:   Robert Marko <robert.marko@sartura.hr>
+Date:   Tue, 15 Mar 2022 14:04:51 +0100
+Message-ID: <CA+HBbNEham1bukiEv5Px2=fCnqnbBKWBy3xOKe89fioQWttoGg@mail.gmail.com>
+Subject: Re: [PATCH v6 0/3] PCI: IPQ6018 platform support
+To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc:     Baruch Siach <baruch@tkos.co.il>, Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Selvam Sathappan Periakaruppan <speriaka@codeaurora.org>,
+        Kathiravan T <kathirav@codeaurora.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        "Bryan O'Donoghue" <pure.logic@nexus-software.ie>,
+        linux-pci@vger.kernel.org,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Mar 15, 2022 at 12:14:08PM +0000, James Morse wrote:
-> Hi Greg,
-> 
-> On 3/14/22 2:57 PM, Greg Kroah-Hartman wrote:
-> > On Mon, Mar 14, 2022 at 02:14:41PM +0000, Jon Hunter wrote:
-> > > On 14/03/2022 14:05, Greg Kroah-Hartman wrote:
-> > > > On Mon, Mar 14, 2022 at 01:58:12PM +0000, Jon Hunter wrote:
-> > > > > On 14/03/2022 11:34, Greg Kroah-Hartman wrote:
-> > > > > > This is the start of the stable review cycle for the 4.19.235 release.
-> > > > > > There are 30 patches in this series, all will be posted as a response
-> > > > > > to this one.  If anyone has any issues with these being applied, please
-> > > > > > let me know.
-> > > > > > 
-> > > > > > Responses should be made by Wed, 16 Mar 2022 11:27:22 +0000.
-> > > > > > Anything received after that time might be too late.
-> 
-> 
-> > > > > > James Morse <james.morse@arm.com>
-> > > > > >        KVM: arm64: Reset PMC_EL0 to avoid a panic() on systems with no PMU
-> > > > > 
-> > > > > 
-> > > > > The above is causing the following build error for ARM64 ...
-> > > > > 
-> > > > > arch/arm64/kvm/sys_regs.c: In function ‘reset_pmcr’:
-> > > > > arch/arm64/kvm/sys_regs.c:624:3: error: implicit declaration of function ‘vcpu_sys_reg’ [-Werror=implicit-function-declaration]
-> > > > >      vcpu_sys_reg(vcpu, PMCR_EL0) = 0;
-> > > > >      ^~~~~~~~~~~~
-> > > > > arch/arm64/kvm/sys_regs.c:624:32: error: lvalue required as left operand of assignment
-> > > > >      vcpu_sys_reg(vcpu, PMCR_EL0) = 0;
-> > > > > 
-> > > > 
-> > > > Is this also broken in Linus's tree?
-> > > 
-> > > 
-> > > No, Linus' tree is not broken. However, I don't see this change in Linus'
-> > > tree (v5.17-rc8).
-> > 
-> > Ah, this is a "fix something broken in stable-only" type patch :(
-> 
-> > James, I'm dropping this from the 4.19, 4.9, and 4.14 trees right now as
-> > it looks broken :(
-> 
-> What would you prefer I do here:
->  1 post a revert for the original problematic backport.
->  2 post versions of this to fix each of the above 3 stable kernels. (instead of putting conditions in the stable tag).
+On Fri, Feb 11, 2022 at 5:06 PM Lorenzo Pieralisi
+<lorenzo.pieralisi@arm.com> wrote:
+>
+> On Mon, Feb 07, 2022 at 04:51:23PM +0200, Baruch Siach wrote:
+> > This series adds support for the single PCIe lane on IPQ6018 SoCs. The code is
+> > ported from downstream Codeaurora v5.4 kernel. The main difference from
+> > downstream code is the split of PCIe registers configuration from .init to
+> > .post_init, since it requires phy_power_on().
+> >
+> > Tested on IPQ6010 based hardware.
+> >
+> > Changes in v6:
+> >
+> >   * Drop DT patch applied to the qcom tree
+> >
+> >   * Normalize driver changes subject line
+> >
+> >   * Add a preparatory patch to rename PCIE_CAP_LINK1_VAL to PCIE_CAP_SLOT_VAL,
+> >     and define it using PCI_EXP_SLTCAP_* macros
+> >
+> >   * Drop a vague comment about ASPM configuration
+> >
+> >   * Add a comment about the source of delay periods
+> >
+> > Changes in v5:
+> >
+> >   * Remove comments from qcom_pcie_init_2_9_0() (Bjorn Andersson)
+> >
+> > Changes in v4:
+> >
+> >   * Drop applied DT bits
+> >
+> >   * Add max-link-speed that was missing from the applied v2 patch
+> >
+> >   * Rebase the driver on v5.16-rc3
+> >
+> > Changes in v3:
+> >
+> >   * Drop applied patches
+> >
+> >   * Rely on generic code for speed setup
+> >
+> >   * Drop unused macros
+> >
+> >   * Formatting fixes
+> >
+> > Changes in v2:
+> >
+> >   * Add patch moving GEN3_RELATED macros to a common header
+> >
+> >   * Drop ATU configuration from pcie-qcom
+> >
+> >   * Remove local definition of common registers
+> >
+> >   * Use bulk clk and reset APIs
+> >
+> >   * Remove msi-parent from device-tree
+> >
+> > Baruch Siach (2):
+> >   PCI: dwc: tegra: move GEN3_RELATED DBI register to common header
+> >   PCI: qcom: Define slot capabilities using PCI_EXP_SLTCAP_*
+> >
+> > Selvam Sathappan Periakaruppan (1):
+> >   PCI: qcom: Add IPQ60xx support
+> >
+> >  drivers/pci/controller/dwc/pcie-designware.h |   7 +
+> >  drivers/pci/controller/dwc/pcie-qcom.c       | 155 ++++++++++++++++++-
+> >  drivers/pci/controller/dwc/pcie-tegra194.c   |   6 -
+> >  3 files changed, 160 insertions(+), 8 deletions(-)
+>
+> Bjorn, Andy,
+>
+> Can you ACK please if this series is ready to be merged ?
 
-I don't see what I did wrong with the "conditions" in the existing
-commit you sent.  How did I get it wrong?
+Hi,
+This would also help the IPQ8074 which has the same controller for the
+Gen3 port.
 
-Best case, send a patch series for each kernel tree.  That way I "know"
-I got the right thing here.
+I have been using this for OpenWrt for a while and it works.
 
-thanks,
+Regards,
+Robert
+>
+> Thanks,
+> Lorenzo
 
-greg k-h
+
+
+-- 
+Robert Marko
+Staff Embedded Linux Engineer
+Sartura Ltd.
+Lendavska ulica 16a
+10000 Zagreb, Croatia
+Email: robert.marko@sartura.hr
+Web: www.sartura.hr
