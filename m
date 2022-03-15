@@ -2,100 +2,81 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3D4EC433FE
-	for <linux-tegra@archiver.kernel.org>; Tue, 15 Mar 2022 02:31:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EB64C433EF
+	for <linux-tegra@archiver.kernel.org>; Tue, 15 Mar 2022 02:41:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344468AbiCOCcz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 14 Mar 2022 22:32:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44884 "EHLO
+        id S1344500AbiCOCmQ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 14 Mar 2022 22:42:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33534 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344497AbiCOCcx (ORCPT
+        with ESMTP id S233882AbiCOCmP (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 14 Mar 2022 22:32:53 -0400
-Received: from mail-pl1-x62f.google.com (mail-pl1-x62f.google.com [IPv6:2607:f8b0:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74B9D473A7;
-        Mon, 14 Mar 2022 19:31:43 -0700 (PDT)
-Received: by mail-pl1-x62f.google.com with SMTP id u2so144867ple.10;
-        Mon, 14 Mar 2022 19:31:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=NsGzSUuRAUEHH/9SM8pnSMjXSu1YX9VwAzHp5uJO3Bo=;
-        b=SG5515+bdjCSQH5TVjdvzA0SK6Uio2R/TvBkAU2wCBacAYVukzHSTcac/Rf3MlRazC
-         PwTYCKE02yWjMCAQxUAdmNKlzZe2z8zy07nyYoVzXEw7Y1OVRoePD7V9lF7VNNahUv3L
-         B5m4SB4SvfZacPiMXdsNjUD0OBXHmgXCB5Dsana21MIN/2VB5O9M7J61lYqlm/IlPtTQ
-         PZOQUFLuOvDQCv0lJ7+5G175b6NUweNXRyIoJ/TkKyR63lQPMxgK7tZNRt1SUTTocPv7
-         SXl9hjC72Q1xBKXUs7M1clgyEMNUgTGjX24rIfYKrOGt7q9sDpo/7IR2RopvhwHXpIaM
-         bNaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=NsGzSUuRAUEHH/9SM8pnSMjXSu1YX9VwAzHp5uJO3Bo=;
-        b=wMNcOjFzgCKqWTzh4g42S9OWHplxhEiioqkByLFqP2AqNmjZHqU4R28K1oO4WSZeBD
-         MdJUnIIGip718hL4sdyQR2zprRsXrn5sKJJif/QHE6ETqPgr6D21Jl37QX+kSOJ2bjdw
-         9+iHz74woDZAx6pwjTmrsckCI0vXmUpabIUYZzhjb3L3eYm6zhcDXi5chWdvKN7ePuUS
-         Df+4kCKmPwJh6QlCEMyjnFaPZ8yZAweEQL2qeimCkkaN6GUU9g1rlegE6Z2sVHOU0JMQ
-         FOjAg4qfbqfNyZMhNTIHOcIOv4QkqLNxBJQYmfzjSbeTrigX/EyXYrJ638UFFh1hZW65
-         h25A==
-X-Gm-Message-State: AOAM532H681xlzJM5FqXXCKgMU4sLNB65cM3MN4Ibj/VAxBpD+KQoz86
-        jrSRU7ds9BbpdV7O24e0DRA=
-X-Google-Smtp-Source: ABdhPJx3e0thfMZRyXjYf49ySSC0Jr5740y5Bhz/nQTIW5Em1or5HO+v6U26gDMredBMgOeFWZSOrg==
-X-Received: by 2002:a17:90a:5ae4:b0:1bf:9c61:6973 with SMTP id n91-20020a17090a5ae400b001bf9c616973mr2149929pji.73.1647311503033;
-        Mon, 14 Mar 2022 19:31:43 -0700 (PDT)
-Received: from localhost.localdomain ([193.203.214.57])
-        by smtp.gmail.com with ESMTPSA id q2-20020a056a00150200b004f8d80ced3csm2050220pfu.40.2022.03.14.19.31.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Mar 2022 19:31:42 -0700 (PDT)
-From:   cgel.zte@gmail.com
-X-Google-Original-From: chi.minghao@zte.com.cn
-To:     broonie@kernel.org
-Cc:     ldewangan@nvidia.com, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, linux-spi@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Minghao Chi <chi.minghao@zte.com.cn>,
-        Zeal Robot <zealci@zte.com.cn>
-Subject: [PATCH] spi: tegra20: Use of_device_get_match_data()
-Date:   Tue, 15 Mar 2022 02:31:38 +0000
-Message-Id: <20220315023138.2118293-1-chi.minghao@zte.com.cn>
-X-Mailer: git-send-email 2.25.1
+        Mon, 14 Mar 2022 22:42:15 -0400
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 091F747AE7;
+        Mon, 14 Mar 2022 19:41:04 -0700 (PDT)
+Received: from kwepemi500014.china.huawei.com (unknown [172.30.72.56])
+        by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4KHcwQ4NCjz1GCVc;
+        Tue, 15 Mar 2022 10:36:06 +0800 (CST)
+Received: from kwepemm600014.china.huawei.com (7.193.23.54) by
+ kwepemi500014.china.huawei.com (7.221.188.232) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.21; Tue, 15 Mar 2022 10:41:02 +0800
+Received: from huawei.com (10.175.127.227) by kwepemm600014.china.huawei.com
+ (7.193.23.54) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2308.21; Tue, 15 Mar
+ 2022 10:41:02 +0800
+From:   zhangqilong <zhangqilong3@huawei.com>
+To:     <mathias.nyman@intel.com>, <gregkh@linuxfoundation.org>,
+        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>
+CC:     <linux-usb@vger.kernel.org>, <linux-tegra@vger.kernel.org>
+Subject: [PATCH -next] usb: xhci: tegra:Fix PM usage reference leak of tegra_xusb_unpowergate_partitions
+Date:   Tue, 15 Mar 2022 10:56:14 +0800
+Message-ID: <20220315025614.2599576-1-zhangqilong3@huawei.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.127.227]
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemm600014.china.huawei.com (7.193.23.54)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Minghao Chi <chi.minghao@zte.com.cn>
+pm_runtime_get_sync will increment pm usage counter
+even it failed. Forgetting to putting operation will
+result in reference leak here. We fix it by replacing
+it with pm_runtime_resume_and_get to keep usage counter
+balanced.
 
-Use of_device_get_match_data() to simplify the code.
-
-Reported-by: Zeal Robot <zealci@zte.com.cn>
-Signed-off-by: Minghao Chi <chi.minghao@zte.com.cn>
+Fixes:1a7426d25fa3 ("usb: xhci: tegra: Unlink power domain devices")
+Signed-off-by: Zhang Qilong <zhangqilong3@huawei.com>
 ---
- drivers/spi/spi-tegra20-slink.c | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+ drivers/usb/host/xhci-tegra.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/spi/spi-tegra20-slink.c b/drivers/spi/spi-tegra20-slink.c
-index 2a03739a0c60..80c3787deea9 100644
---- a/drivers/spi/spi-tegra20-slink.c
-+++ b/drivers/spi/spi-tegra20-slink.c
-@@ -1006,14 +1006,8 @@ static int tegra_slink_probe(struct platform_device *pdev)
- 	struct resource		*r;
- 	int ret, spi_irq;
- 	const struct tegra_slink_chip_data *cdata = NULL;
--	const struct of_device_id *match;
+diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
+index c8af2cd2216d..996958a6565c 100644
+--- a/drivers/usb/host/xhci-tegra.c
++++ b/drivers/usb/host/xhci-tegra.c
+@@ -1034,13 +1034,13 @@ static int tegra_xusb_unpowergate_partitions(struct tegra_xusb *tegra)
+ 	int rc;
  
--	match = of_match_device(tegra_slink_of_match, &pdev->dev);
--	if (!match) {
--		dev_err(&pdev->dev, "Error: No device match found\n");
--		return -ENODEV;
--	}
--	cdata = match->data;
-+	cdata = of_device_get_match_data(&pdev->dev);
+ 	if (tegra->use_genpd) {
+-		rc = pm_runtime_get_sync(tegra->genpd_dev_ss);
++		rc = pm_runtime_resume_and_get(tegra->genpd_dev_ss);
+ 		if (rc < 0) {
+ 			dev_err(dev, "failed to enable XUSB SS partition\n");
+ 			return rc;
+ 		}
  
- 	master = spi_alloc_master(&pdev->dev, sizeof(*tspi));
- 	if (!master) {
+-		rc = pm_runtime_get_sync(tegra->genpd_dev_host);
++		rc = pm_runtime_resume_and_get(tegra->genpd_dev_host);
+ 		if (rc < 0) {
+ 			dev_err(dev, "failed to enable XUSB Host partition\n");
+ 			pm_runtime_put_sync(tegra->genpd_dev_ss);
 -- 
-2.25.1
+2.31.1
 
