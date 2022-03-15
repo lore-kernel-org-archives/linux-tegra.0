@@ -2,119 +2,141 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E5D7C433EF
-	for <linux-tegra@archiver.kernel.org>; Tue, 15 Mar 2022 09:35:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58D3EC433F5
+	for <linux-tegra@archiver.kernel.org>; Tue, 15 Mar 2022 09:42:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346597AbiCOJgZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 15 Mar 2022 05:36:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57082 "EHLO
+        id S242260AbiCOJnl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 15 Mar 2022 05:43:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41578 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346222AbiCOJgZ (ORCPT
+        with ESMTP id S1346737AbiCOJnk (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 15 Mar 2022 05:36:25 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3A3A39B8A;
-        Tue, 15 Mar 2022 02:35:12 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 1C57F60AF4;
-        Tue, 15 Mar 2022 09:35:12 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BD33C340E8;
-        Tue, 15 Mar 2022 09:35:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1647336911;
-        bh=tc/AYlU5h+rIvqjL5oTMpd37Nh1Iiz2jAlGUG+y+Abg=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=q7bQgqkRSdMHOm+/K3QDJHpE1nyNo7Ji1VCcUgPEggRZTuigZa2fouitaaOdiUlPl
-         2e4i6K72aVpXtZjFaDGOuPsB68Aa4JU25BusLuar/XS7B741AUbovWEXrcSEoVZKj1
-         ztK4enbfxZpuW/7OwLkzPTLPMJU95Mkd9NquoysZkFt9Uh/ldbvfhZ4q2ldXsp/tRH
-         qdL/5ZTffFR49LTTg/IgkvEVWesLOVu7Za7Rm7uIdemcseM/GEg20+LP+ocLJCVx2D
-         nGLOEKN+AHB4leKMND21ADdNjwWM+pdeOpB9+sq3AJbAcguseZCfjS5ozc1t9tdh6B
-         ISqclEZpOq0uw==
-Received: from disco-boy.misterjones.org ([51.254.78.96] helo=www.loen.fr)
-        by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <maz@kernel.org>)
-        id 1nU3a8-00EbLe-Tm; Tue, 15 Mar 2022 09:35:09 +0000
-MIME-Version: 1.0
-Date:   Tue, 15 Mar 2022 09:35:08 +0000
-From:   Marc Zyngier <maz@kernel.org>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Joey Gouly <joey.gouly@arm.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Hector Martin <marcan@marcan.st>,
-        Sven Peter <sven@svenpeter.dev>,
-        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, kernel-team@android.com
-Subject: Re: [PATCH 0/5] gpiolib: Handle immutable irq_chip structures
-In-Reply-To: <CACRpkdbEDoPeu=TWmsJ_t-4+NtyiiSCXoj9rymspZt0nC+yrsQ@mail.gmail.com>
-References: <20220223154405.54912-1-maz@kernel.org>
- <CACRpkdbEDoPeu=TWmsJ_t-4+NtyiiSCXoj9rymspZt0nC+yrsQ@mail.gmail.com>
-User-Agent: Roundcube Webmail/1.4.13
-Message-ID: <e39c68c6c8c99fec796461cde33f78df@kernel.org>
-X-Sender: maz@kernel.org
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+        Tue, 15 Mar 2022 05:43:40 -0400
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2075.outbound.protection.outlook.com [40.107.220.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01BFC4F446;
+        Tue, 15 Mar 2022 02:42:20 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=G0tBHQlUbV/Vry7iKFxIi+WjkpSDICuxiOQfyYdevXXv00BnSbaBCGMiwofxkQ+VuHMftyO/YoDnTgY3p58gSVF8zhy5ywSldLp/jo1JcQRfLd+1mpPt8LTYWRg8K1PvFjQ0UL1cSWvHvmVOnFVY8G7KzltTa/l04Sn2w010OoZ5oxq6u3332e+R8RXzcRfl5uUo/Clg7/jnRF3J4lGxZVYAId1pwTO+Yscwuz0qVMw+7g7BniceQm1nzUOthim3/axYW2kOlj2zxCqjnB27grzcbgd1rqbFUlusJq0wc/x9Jm6FzYfRvMRGsAXX6xZROAggtMQQkdkC6Wx/egNq1g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=KvsQHI0j3a/aA4/ttjGW3o/bFjmPEAdYOVlofhpfbPI=;
+ b=gVsjpJl3iAwdjRDan2E62piO+A0YdUgA8IfDJSYdvvS2GswLScnw1IRJggoQKqrycnQ5czZv3QDjUt4pnSptL8PZn2hWsIRMCijnRVe6ioVuZzPF1wGjaweBO28UDoUojIhZ+O+5qje1XPjAZj27KXx/Rgceh7UuASqKkl0/MXXMy0dhabNFkJGsKnAhrBVTXyR3MFdDEjl+7FNEc4aBJ/zeyQl6bibgUzmm0OCf+RAKJ0IrQeodp1g6n7UUSzsjMb529MoBjh/VUvfRNWqij+5ORLQF63fhI0SEYqopxxF0zKGUsBw2yHVXsVKC89g5YJjaDWC/gO7olapcrea40w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 12.22.5.238) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com; dmarc=pass
+ (p=reject sp=reject pct=100) action=none header.from=nvidia.com; dkim=none
+ (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=KvsQHI0j3a/aA4/ttjGW3o/bFjmPEAdYOVlofhpfbPI=;
+ b=RxpLKqfAqviTJnTX+gCew45jfd6vsCPJ+8/O1uPzJtq4hcjafigmeB0jE7TRBsPWBXSxKD6dInBcHmNzExVThmye8Sdrsc9KaoN2u7Z9XKvotixPa/7SgpQ9lAx6O2gudG+W+buPTh8jNfl8YaKWJVKu8X+fsHB4Nmbo4ALZWmMiD8Z4xTt+PlGzOGHqkhhbtL7LcHl302ZJmBQimsIdpDNTq37DZdtHQbjPYJO/jXKyniRW0MOIY4icTyNzsNubWzEUQsBg7rKX4TXBAtFENbdoEBebeyTq/jMCCQPPmMNghayg5aIu+H/zmvBQZJ0GdwsC1YOTqpAVdphVMt9sGQ==
+Received: from MWHPR14CA0019.namprd14.prod.outlook.com (2603:10b6:300:ae::29)
+ by CY4PR12MB1319.namprd12.prod.outlook.com (2603:10b6:903:41::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5061.25; Tue, 15 Mar
+ 2022 09:42:19 +0000
+Received: from CO1NAM11FT015.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:300:ae:cafe::e1) by MWHPR14CA0019.outlook.office365.com
+ (2603:10b6:300:ae::29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5081.13 via Frontend
+ Transport; Tue, 15 Mar 2022 09:42:19 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.238)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 12.22.5.238 as permitted sender) receiver=protection.outlook.com;
+ client-ip=12.22.5.238; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (12.22.5.238) by
+ CO1NAM11FT015.mail.protection.outlook.com (10.13.175.130) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.5061.22 via Frontend Transport; Tue, 15 Mar 2022 09:42:18 +0000
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by DRHQMAIL105.nvidia.com
+ (10.27.9.14) with Microsoft SMTP Server (TLS) id 15.0.1497.32; Tue, 15 Mar
+ 2022 09:42:18 +0000
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail205.nvidia.com
+ (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.22; Tue, 15 Mar
+ 2022 02:42:17 -0700
+Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.22 via Frontend
+ Transport; Tue, 15 Mar 2022 02:42:17 -0700
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <stable@vger.kernel.org>, <torvalds@linux-foundation.org>,
+        <akpm@linux-foundation.org>, <linux@roeck-us.net>,
+        <shuah@kernel.org>, <patches@kernelci.org>,
+        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
+        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
+        <sudipm.mukherjee@gmail.com>, <slade@sladewatkins.com>,
+        <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 5.16 000/121] 5.16.15-rc1 review
+In-Reply-To: <20220314112744.120491875@linuxfoundation.org>
+References: <20220314112744.120491875@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 51.254.78.96
-X-SA-Exim-Rcpt-To: linus.walleij@linaro.org, linux-kernel@vger.kernel.org, brgl@bgdev.pl, thierry.reding@gmail.com, joey.gouly@arm.com, jonathanh@nvidia.com, marcan@marcan.st, sven@svenpeter.dev, alyssa@rosenzweig.io, bjorn.andersson@linaro.org, agross@kernel.org, tglx@linutronix.de, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, kernel-team@android.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Message-ID: <7a0cf3ca-1106-4a91-9228-f6d4af055f0f@rnnvmail203.nvidia.com>
+Date:   Tue, 15 Mar 2022 02:42:17 -0700
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 6f709695-4763-422e-6826-08da066818ce
+X-MS-TrafficTypeDiagnostic: CY4PR12MB1319:EE_
+X-Microsoft-Antispam-PRVS: <CY4PR12MB13199AA910D38CAFA7C6AC72D9109@CY4PR12MB1319.namprd12.prod.outlook.com>
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: etAddT/dii1UVzjyF+779AGlnWh3MW3rlMdu/0WCHRKW8aAsuJ3ICu0pIbu5q4kzSB0+sd3iWGxOXmjcfPEY8n0EIMNUMl3lmBBsKeiof0uWHTIhUWLIZJbM4+UExEIf8Ww3fojm8IEMVM6G8YdEquMNoDt6qvjspdMzvKW2ev2jm02V/7f3xEyXHLyM/iKyJ8SVZNoqPFi1V9KPNGWTCcjpQaMffHpyF66NhW+rv63Rj++anuL6fvg1YbZ5lBClhPd/7Wa4vJlu+cO5blZA/LrMtvGUTKaLV5l7WMHkvbqmXMlBaLRHXHpa/RFW8WxcfNaZ4cr+VA880kgnvxqKAJaLxJuGQo28SX8bzKbHC6/BJHqSQdR9Gt6xzNhVo9Sh9/qaKJCPdN+2Hn39NpkbHr3dHkJPrxz6dFpkbmHx/bf2R0FN9+EWP4024Dq4DKwtaWgY1tyW3KBuckUQeoxztigw18KzyuEsAyzzTEtKvwwrFQfvz1R4EePaycdi2/c7nS8ME6WTykj3OKrZ+U1uxAUJgQoMPwAvqWUaN06dIwX+cY++WRi9rBbz0E9RSblkStYMC51yfXx9eIARQsIGNaTZSzcwn4Ru+GksVJn8VCoY4eYrJ5rOw693dKXKsbdB0vdiYzQiPH4YiyxT8SmpPdkkckBI9kBCVbIL8Cd7t2aJq+cFiEMFuabueprCg3FliM6dWG6fmImekcpfqBWnHwtQ/cPwW0EYF9Kqwd4HWW1R6cdWhFpwPN8UvQCpAHv/wZFkjhYOP7tjR/B4q7aU9uslYPzkAUurZBJIT9/Voes=
+X-Forefront-Antispam-Report: CIP:12.22.5.238;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230001)(4636009)(36840700001)(46966006)(40470700004)(508600001)(81166007)(356005)(31686004)(186003)(26005)(36860700001)(54906003)(2906002)(7416002)(316002)(4326008)(966005)(70206006)(70586007)(86362001)(8936002)(5660300002)(336012)(47076005)(426003)(8676002)(6916009)(31696002)(40460700003)(82310400004)(36900700001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Mar 2022 09:42:18.7798
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6f709695-4763-422e-6826-08da066818ce
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.238];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT015.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR12MB1319
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 2022-03-15 00:44, Linus Walleij wrote:
-> On Wed, Feb 23, 2022 at 4:44 PM Marc Zyngier <maz@kernel.org> wrote:
+On Mon, 14 Mar 2022 12:53:03 +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.16.15 release.
+> There are 121 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
->> I recently realised that the gpiolib play ugly tricks on the
->> unsuspecting irq_chip structures by patching the callbacks.
+> Responses should be made by Wed, 16 Mar 2022 11:27:22 +0000.
+> Anything received after that time might be too late.
 > 
-> Sorry about that...
-
-No worries. It probably did seem like a good idea at the
-time, and I have the benefit of hindsight here...
-
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.16.15-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.16.y
+> and the diffstat can be found below.
 > 
->> My current approach is to add a new irq_chip flag (IRQCHIP_IMMUTABLE)
->> which does what it says on the tin: don't you dare writing there.
->> Gpiolib is further updated not to install its own callbacks, and it
->> becomes the responsibility of the driver to call into the gpiolib when
->> required. This is similar to what we do for other subsystems such as
->> PCI-MSI.
+> thanks,
 > 
-> OK if there is a precedent it is usually wise to follow.
-> 
->> I'd welcome comments on the approach. If deemed acceptable, there are
->> another 300+ drivers to update! Not to mention the documentation. I
->> appreciate that this is a lot of potential changes, but the current
->> situation is messy.
-> 
-> I'm happy with this approach as long as the 300+ drivers get fixed
-> and the old way of doing it gets deleted.
+> greg k-h
 
-Of course. Note that it will take some time before it actually happens.
-My current plan is to stick in a pr_warn() each time a driver
-following the old scheme gets registered, as a nudge for people to
-update their driver if they care about it.
+All tests passing for Tegra ...
 
-Regarding documentation, are you OK with me simply replacing the
-current code samples with the new approach? It will at least avoid
-giving people the wrong idea. I also want to write a brief migration
-guide that people willing to bump up their patch count can follow.
+Test results for stable-v5.16:
+    10 builds:	10 pass, 0 fail
+    28 boots:	28 pass, 0 fail
+    122 tests:	122 pass, 0 fail
 
-I'll repost something once -rc1 is out.
+Linux version:	5.16.15-rc1-gb2a408c85a22
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
+                tegra20-ventana, tegra210-p2371-2180,
+                tegra210-p3450-0000, tegra30-cardhu-a04
 
-Thanks,
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
-         M.
--- 
-Jazz is not dead. It just smells funny...
+Jon
