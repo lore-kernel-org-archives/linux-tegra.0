@@ -2,100 +2,86 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42676C433F5
-	for <linux-tegra@archiver.kernel.org>; Wed, 16 Mar 2022 18:37:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8508FC433FE
+	for <linux-tegra@archiver.kernel.org>; Wed, 16 Mar 2022 20:38:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1357742AbiCPSis (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 16 Mar 2022 14:38:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41708 "EHLO
+        id S1356035AbiCPUjs (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 16 Mar 2022 16:39:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52844 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241347AbiCPSip (ORCPT
+        with ESMTP id S1358106AbiCPUhl (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 16 Mar 2022 14:38:45 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FEC56E290;
-        Wed, 16 Mar 2022 11:37:31 -0700 (PDT)
+        Wed, 16 Mar 2022 16:37:41 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A02B96E4CE;
+        Wed, 16 Mar 2022 13:36:22 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A32E8618D3;
-        Wed, 16 Mar 2022 18:37:30 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CF1AC340F7;
-        Wed, 16 Mar 2022 18:37:27 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 3037FB81D4B;
+        Wed, 16 Mar 2022 20:36:21 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8120C340EE;
+        Wed, 16 Mar 2022 20:36:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1647455850;
-        bh=SIbAZruduzRSnrWzOuWAI4SxaF18hsmgKxmS/1M5bhI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=M7pAnQaGxH5XguHxVvJXRImcQeTVI3Ghe06RgDHhhIeS2LKTdJ5665C2pJ5SdYO+7
-         Di2cKTvLZSwnBz71+ZkTKj6c8kFx9zThPZCxgSspTu24wQJPs59+/IYh9gqBDNoM0p
-         GzeFUdcI+WWA0Pioii1/wbYWRjGV03+Dc+DnuF5sBGLI1FT/wCbTjT3CowmUgylqP8
-         /aOUAkBV7+slOzBawZSK0Q6+rP77MxjawrlvTZUAMclTdgyLVYKobaUFFyo01GQm5A
-         D/Zy9AtQ+M4e4OGlPYqOEfLm8Toee2Tg8HVhC3AVBbtQ6wQ3v5TksI/TbTDXwO5gIZ
-         WMJ7CvOwTgfiQ==
-From:   Arnd Bergmann <arnd@kernel.org>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/tegra: vic: fix unused-function warnings
-Date:   Wed, 16 Mar 2022 19:36:47 +0100
-Message-Id: <20220316183708.1505846-2-arnd@kernel.org>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20220316183708.1505846-1-arnd@kernel.org>
-References: <20220316183708.1505846-1-arnd@kernel.org>
+        s=k20201202; t=1647462979;
+        bh=JU8bh3oAnltrOOy06ldYgVZ5Y6Ez415dRPGhjhNXI+8=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=dkigp/ew2LlyYiIX/WtQlQxT9L0mCFauK3ZYoa+ytfxD3roeluVrS+NCOM1mGKwfw
+         C8MMTGadaO2euJJ5gMh9QlpNP8Yafn/yEDvk/moK2h8D4POeD5z7wZmsiZKjmDW48G
+         xbqGpUjVPnB5UirO1+ED3kkBRAq/vQJT55XFubusUeNjiFrhdCwXUk0hH1SAdlqjRJ
+         qglioYLXBH7HIVFvUFjwgbSx5W3QnyhUcsTI3tBbhm79uo3QF6Xe2JGjHAmxFefZLm
+         f1UNGPakEPDnTfYAvrPML7P9aIvju6uPwfpQpOLkwDDhTB55FwOknkM+pMnrUeGUip
+         QYfaSz1hybr7A==
+From:   Mark Brown <broonie@kernel.org>
+To:     cgel.zte@gmail.com
+Cc:     linux-kernel@vger.kernel.org, jonathanh@nvidia.com,
+        linux-spi@vger.kernel.org, thierry.reding@gmail.com,
+        Minghao Chi <chi.minghao@zte.com.cn>,
+        linux-tegra@vger.kernel.org, Zeal Robot <zealci@zte.com.cn>,
+        ldewangan@nvidia.com
+In-Reply-To: <20220315023138.2118293-1-chi.minghao@zte.com.cn>
+References: <20220315023138.2118293-1-chi.minghao@zte.com.cn>
+Subject: Re: [PATCH] spi: tegra20: Use of_device_get_match_data()
+Message-Id: <164746297766.1220434.5469365380012677264.b4-ty@kernel.org>
+Date:   Wed, 16 Mar 2022 20:36:17 +0000
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+On Tue, 15 Mar 2022 02:31:38 +0000, cgel.zte@gmail.com wrote:
+> From: Minghao Chi <chi.minghao@zte.com.cn>
+> 
+> Use of_device_get_match_data() to simplify the code.
+> 
+> 
 
-The use of the old-style SET_RUNTIME_PM_OPS() and
-SET_SYSTEM_SLEEP_PM_OPS() macros requires function definitions
-to be hidden to avoid
+Applied to
 
-drivers/gpu/drm/tegra/vic.c:326:12: error: 'vic_runtime_suspend' defined but not used [-Werror=unused-function]
-  326 | static int vic_runtime_suspend(struct device *dev)
-      |            ^~~~~~~~~~~~~~~~~~~
-drivers/gpu/drm/tegra/vic.c:292:12: error: 'vic_runtime_resume' defined but not used [-Werror=unused-function]
-  292 | static int vic_runtime_resume(struct device *dev)
-      |            ^~~~~~~~~~~~~~~~~~
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
-Use the new-style SYSTEM_SLEEP_PM_OPS() and RUNTIME_PM_OPS() instead.
+Thanks!
 
-Fixes: 1e15f5b911d6 ("drm/tegra: vic: Stop channel on suspend")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/gpu/drm/tegra/vic.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+[1/1] spi: tegra20: Use of_device_get_match_data()
+      commit: c9839acfcbe20ce43d363c2a9d0772472d9921c0
 
-I see this warning on 5.17-rc8, but did not test it on linux-next,
-which may already have a fix.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
-diff --git a/drivers/gpu/drm/tegra/vic.c b/drivers/gpu/drm/tegra/vic.c
-index 1e342fa3d27b..f56f5921a8c2 100644
---- a/drivers/gpu/drm/tegra/vic.c
-+++ b/drivers/gpu/drm/tegra/vic.c
-@@ -513,9 +513,8 @@ static int vic_remove(struct platform_device *pdev)
- }
- 
- static const struct dev_pm_ops vic_pm_ops = {
--	SET_RUNTIME_PM_OPS(vic_runtime_suspend, vic_runtime_resume, NULL)
--	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
--				pm_runtime_force_resume)
-+	RUNTIME_PM_OPS(vic_runtime_suspend, vic_runtime_resume, NULL)
-+	SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend, pm_runtime_force_resume)
- };
- 
- struct platform_driver tegra_vic_driver = {
--- 
-2.29.2
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
