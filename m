@@ -2,263 +2,161 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C825CC433FE
-	for <linux-tegra@archiver.kernel.org>; Wed, 16 Mar 2022 13:59:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 482DAC4321E
+	for <linux-tegra@archiver.kernel.org>; Wed, 16 Mar 2022 15:47:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1356307AbiCPOA3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 16 Mar 2022 10:00:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50734 "EHLO
+        id S1357327AbiCPPsO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 16 Mar 2022 11:48:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53986 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1356395AbiCPOAT (ORCPT
+        with ESMTP id S230089AbiCPPsN (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 16 Mar 2022 10:00:19 -0400
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2073.outbound.protection.outlook.com [40.107.93.73])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8800443F1;
-        Wed, 16 Mar 2022 06:59:02 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=iKh5jG+khcYfwkZqDM0NWMe6TlG16KK2Vv3RciOIZ+LyZfMZ4QZl9HEsh8E4N8UMKJM7FDbNvQ0XjxPerso/oBNObZ0SIWFCJaWpvsiQScZhQrUQlwUYyu64O+uS2yf1ExhbfR+2pRyety+6BgXsbqa6wajr6Htv2JSML1DPtYJZSKY+H8atOnQGSnrOFXIgU22H63AdV5GS8z0ohOETK2Dg/uyFdEZn2OnyUMm33HBkMIEC7B3jx34CVSLqZeslU5QXRL0xtUerBrPYYRoEeQ4aTsoffC3rP4qgEq7tWpqF/hFAU1afK7PWy22vqiEDJqL5OSKfLcQ/Xv/voju17w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=tjGna8v4bnh52VWGQIdvcj8kzLJ8QGi0ODbLx6zVlTY=;
- b=JGnjrL5dvvzeLKvoS4qJ+oJ8NCvice+vKS0Wm8qFS0bzGp7a9CjOet8slWiFFmGfbN2MYaw1PjJCO9Zq1KitpVMB1nM8huE/i2/Z+xXjCZm3dvfT8YRZw94N4MMzAyDsX8PskkBWA6l9bNFFd6+N5yVTE6nG6vett1fbbYZZMzJH22CZvfxJ9MwiB367rR3Y+8i29YI9e6Y7WeNmkxnmSp9gfTB3t+h58luxFZ3bWufCJNLZN3Jm6Dp84vNBlIVNF6mjpY6WOEV7021UOZfRe/3RC/BbdRorWhi95b+gYfsNWzhFSplDR0pWVm7o/5oQfua2brO3NWcQcXN968+hYg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 12.22.5.234) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=tjGna8v4bnh52VWGQIdvcj8kzLJ8QGi0ODbLx6zVlTY=;
- b=cFPoZjFIC24WVPDefknk+0yVMuPfj1yYuCNqW20q+7gJERh+Df2pCjR++D6RLvbBeRazMTfp/gzzPZ1NhP2v4KjLQv4aiJnTx29DLAe1n6qwxTyBzK3Gnq2Iq+DzteUMnejk1SaWsC4894adR2QxAObyjgCIZ1FNozL9iE9sICXLqhVK4rQenQg1FstlwuPMNvdvHUcszc7Y6/BXSUfmrej4dfWRcUJgBEi/DKCvMkg1U43AHrmfBw7toi0UgEn6s22J757qm5lnn942lMlm/kdWVxlWf1DSeyhAYNvipnB9ARMvl75M17mkcq/bKV5sf+qeo2S6+s34yfAlXlNtNg==
-Received: from DM5PR13CA0055.namprd13.prod.outlook.com (2603:10b6:3:117::17)
- by DM4PR12MB5119.namprd12.prod.outlook.com (2603:10b6:5:392::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5081.15; Wed, 16 Mar
- 2022 13:59:01 +0000
-Received: from DM6NAM11FT011.eop-nam11.prod.protection.outlook.com
- (2603:10b6:3:117:cafe::bb) by DM5PR13CA0055.outlook.office365.com
- (2603:10b6:3:117::17) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5081.7 via Frontend
- Transport; Wed, 16 Mar 2022 13:59:01 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.234)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 12.22.5.234 as permitted sender) receiver=protection.outlook.com;
- client-ip=12.22.5.234; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (12.22.5.234) by
- DM6NAM11FT011.mail.protection.outlook.com (10.13.172.108) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.5081.14 via Frontend Transport; Wed, 16 Mar 2022 13:59:00 +0000
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by DRHQMAIL101.nvidia.com
- (10.27.9.10) with Microsoft SMTP Server (TLS) id 15.0.1497.32; Wed, 16 Mar
- 2022 13:59:00 +0000
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail204.nvidia.com
- (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.22; Wed, 16 Mar
- 2022 06:58:58 -0700
-Received: from sumitg-l4t.nvidia.com (10.127.8.10) by mail.nvidia.com
- (10.129.68.9) with Microsoft SMTP Server id 15.2.986.22 via Frontend
- Transport; Wed, 16 Mar 2022 06:58:54 -0700
-From:   Sumit Gupta <sumitg@nvidia.com>
-To:     <rafael@kernel.org>, <viresh.kumar@linaro.org>,
-        <robh+dt@kernel.org>, <krzk+dt@kernel.org>, <treding@nvidia.com>,
-        <jonathanh@nvidia.com>, <linux-pm@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <ksitaraman@nvidia.com>, <sanjayc@nvidia.com>, <bbasu@nvidia.com>,
-        <sumitg@nvidia.com>
-Subject: [Patch v1 3/3] cpufreq: tegra194: Add support for Tegra234
-Date:   Wed, 16 Mar 2022 19:28:31 +0530
-Message-ID: <20220316135831.900-4-sumitg@nvidia.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20220316135831.900-1-sumitg@nvidia.com>
-References: <20220316135831.900-1-sumitg@nvidia.com>
-X-NVConfidentiality: public
+        Wed, 16 Mar 2022 11:48:13 -0400
+Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06BC66D1BA;
+        Wed, 16 Mar 2022 08:46:59 -0700 (PDT)
+Received: by mail-ej1-x62d.google.com with SMTP id a8so5068243ejc.8;
+        Wed, 16 Mar 2022 08:46:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=f3ts7NrETiD/n+vGF+vAT89sY+x2BlKtnOMPf3PZf04=;
+        b=Lkv9c8HyZ6iRngQe1gj3rOwvUiOqcf11dtCXHUzAo430dtSDwHvHNs73TVoH3YS0EI
+         8w9dXdJzXDyU6d9rI+E19PoW/DaPwiqFAAp7P1JDGN9ZQ4sMe4KHGPn/JL+0RDSNQP5b
+         DAEn2FiUzfv6OQpa8T7/GPntezVHuP6TPzbAqpE9xydvP+P3f3LlyBA4hYYPQ7vcSMyK
+         KOQcog8dO8ZeouHQDnuu9hE4XAb4lZ/pqxIUX1f2bpcH9EwMyi1SpLh70mPoVXl+/4Kt
+         BXqz0jqaT1yXASDhiHXQaaRw7hn7TqmZ7ttmuZML+vpdPvN3IIalWLAInye23B5fqvbA
+         c6Qw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=f3ts7NrETiD/n+vGF+vAT89sY+x2BlKtnOMPf3PZf04=;
+        b=hRTXUEERQ8O5wWns6ekfFO1Yy/jdRBrCItp74NxSBRIygEdDFloySWwyL8tUv0j98s
+         yy1U1PPskjFIU8XbEeBopWhGrQB3OT+XGJ2Wq6/O5vObCNS/F/DRvIEczZC94PGk0/PV
+         Or0pz5EBb/AK0iciD/ZJRGAQJnp9qmG0tJ7fX6DoyGMA4IUiXo0dvWPCGtP0yaI9EBoL
+         lVm5s78/6glzCuvKF09DWeGu+zCyMM38kXVhlAve5SqlpEMLg5zgZD3JdOOBT7V4wEhA
+         fFq7HMq6dEhyQKhWC/2dmeIFa8sX5yYSp1uylIl0r9XvWFspOwV78HH4N73TM8DmaTgP
+         FD4Q==
+X-Gm-Message-State: AOAM533SzPFYWa1GRuPzI/+dFjBix1qst8EnSzlYqj6kGOfHtg5exhuN
+        TRRH5Wp8wj6RP2uVMXDzxq6JdKqMk1U=
+X-Google-Smtp-Source: ABdhPJwTDo0b3UgbE88SkpZ3LeHwHJ4IP8X1wdvjwxvXjhF64Gmi2f42UFZQA6PavRIQ4AtL/D4JDg==
+X-Received: by 2002:a17:906:1e4c:b0:6cf:7429:cfea with SMTP id i12-20020a1709061e4c00b006cf7429cfeamr556994ejj.158.1647445617173;
+        Wed, 16 Mar 2022 08:46:57 -0700 (PDT)
+Received: from Ansuel-xps.localdomain (93-42-69-170.ip85.fastwebnet.it. [93.42.69.170])
+        by smtp.gmail.com with ESMTPSA id sb31-20020a1709076d9f00b006ceb969822esm1042752ejc.76.2022.03.16.08.46.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Mar 2022 08:46:56 -0700 (PDT)
+Date:   Wed, 16 Mar 2022 16:46:54 +0100
+From:   Ansuel Smith <ansuelsmth@gmail.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: Re: [PATCH 12/16] clk: qcom: clk-krait: add 8064 errata workaround
+Message-ID: <YjIGbs+Pz2EK9riB@Ansuel-xps.localdomain>
+References: <20220313190419.2207-1-ansuelsmth@gmail.com>
+ <20220313190419.2207-13-ansuelsmth@gmail.com>
+ <169795c1-607e-ee60-7ac7-538ed888bedf@linaro.org>
+ <Yi84aNrJ7p+3jy2A@Ansuel-xps.localdomain>
+ <20220315213431.DB6C4C340EE@smtp.kernel.org>
+ <YjEJjB/Hwj/1Ncum@Ansuel-xps.localdomain>
+ <20220315224115.EA1F9C340E8@smtp.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 2c32d092-4ddc-432a-5f5f-08da07551f92
-X-MS-TrafficTypeDiagnostic: DM4PR12MB5119:EE_
-X-Microsoft-Antispam-PRVS: <DM4PR12MB5119244F844BAF3276052DF4B9119@DM4PR12MB5119.namprd12.prod.outlook.com>
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 3YvcD0gnT0WDBRAr94Os74WsaNdpud3yyQABynJIrQwbyDFW+TQ5umS+nXwUAEFW15pZ8lt5lCqxlK9b5hughOSlfwlnJLuqT7yQ5Ii+2nEd9lLPYc1iXS4EOmv9a1/yBZDLKPTnaRbfPr3wiDMWJtpXgjCLHJYfdexNw3COhm1sMr9miicO315IVSd0ktXzMUl3QZSbXiGE/r0LdBmFDSC1nVfSnL00+q25USVolDWhr2NecbH5wnvti0zfry9rFPHlU168NUi8uPXWO878O3pvTvmkhoL53RcHHWJ3h+sjhoq3L2aeMpRL+8JKQfpfp5hrrTyKjEXmActiNyh+sWW7QlNT1cGzXow8e29+TgiAzDZ+0JFCsLPdFlX6Qq0YW/m5r1tZSHod+qZ+ttKNqw4iubNW1qk3FNmnmwhamBY7BYTITF+pVUcEEOZA+Vqj0ZoPgyB2DTlrPG5IEKAfljtAcxbIsj6AOZ1FbEVaRkWwNHC7A+y+phdHfTMNDThUNtFl+orOW4IUMeQHiWdvtSK9rNhaQiQih4u7XZ3faigkg9ghiujxkXkpqwkCAviqE5+WNgeSZ4Ex888MB6Ip3qO9unvak/wmFEHV3PnY+38lVMHOMPJ6QiESXZBq/74/vAlMyTAVHH+6MqKj5ClCe5G9t4MBl3/c3xnhh58iyYYLc7VPiBbqlruxHvemE1FO6YqEAQPjUotsCgEzisXYDF4u93PmZsx3Tzd9kpJuZPE=
-X-Forefront-Antispam-Report: CIP:12.22.5.234;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230001)(4636009)(40470700004)(36840700001)(46966006)(2616005)(86362001)(110136005)(426003)(336012)(82310400004)(5660300002)(40460700003)(8936002)(107886003)(1076003)(54906003)(186003)(81166007)(921005)(356005)(4326008)(508600001)(26005)(70206006)(8676002)(70586007)(6666004)(316002)(7696005)(2906002)(83380400001)(36756003)(36860700001)(47076005)(36900700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Mar 2022 13:59:00.8553
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2c32d092-4ddc-432a-5f5f-08da07551f92
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.234];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT011.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB5119
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220315224115.EA1F9C340E8@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-This patch adds driver support for Tegra234 cpufreq.
-Tegra234 has per core MMIO registers instead of system registers for
-cpu frequency requests and to read the counters for re-constructing
-the cpu frequency. Also, MPIDR affinity info in Tegra234 is different
-from Tegra194.
-Added ops hooks  and soc data for Tegra234. This will help to easily
-add variants of Tegra234 and future SoC's which use similar logic to
-{get|set} the cpu frequency.
+On Tue, Mar 15, 2022 at 03:41:14PM -0700, Stephen Boyd wrote:
+> Quoting Ansuel Smith (2022-03-15 14:47:56)
+> > On Tue, Mar 15, 2022 at 02:34:30PM -0700, Stephen Boyd wrote:
+> > > Quoting Ansuel Smith (2022-03-14 05:43:20)
+> > > > On Mon, Mar 14, 2022 at 11:20:21AM +0300, Dmitry Baryshkov wrote:
+> > > > > On 13/03/2022 22:04, Ansuel Smith wrote:
+> > > > > > Add 8064 errata workaround where the sec_src clock gating needs to be
+> > > > > 
+> > > > > Could you please be more specific whether the errata applies only to the
+> > > > > ipq8064 or to the apq8064 too? 8064 is not specific enough.
+> > > > >
+> > > > 
+> > > > That's a good question... Problem is that we really don't know the
+> > > > answer. This errata comes from qsdk on an old sourcecode. I assume this
+> > > > is specific to ipq8064 and apq8064 have different mux configuration.
+> > > > 
+> > > 
+> > > I think it was some glitch that happened when the automatic clk gating
+> > > was enabled during a switch. The automatic clk gating didn't know that
+> > > software was running and switching the input so it killed the CPU and
+> > > stopped the clk. That lead to hangs and super badness. I assume it was
+> > > applicable to apq8064 as well because ipq8064 is basically apq8064 with
+> > > the multimedia subsystem replaced by the networking subsystem. Also I
+> > > wouldn't remember all these details because I worked on apq8064 but not
+> > > so much on ipq8064 :)
+> > 
+> > Honest question. Do you remember other glitch present on the platform?
+> > We are trying to bisect an instability problem and we still needs to
+> > find the reason. We really can't understand if it's just a power
+> > delivery problem or a scaling problem from muxes or other things.
+> > 
+> > The current problem is that after some time the device kernel panics
+> > with a number of strange reason like invalid kernel paging and other
+> > strange (or the device just freze and reboots, not even a crash log)
+> > Many kernel panics reports the crash near the mux switch (like random
+> > error right before the mux switch) So I suspect there is a problem
+> > there. But due to the fact that is very random we have NO exact way to
+> > repro it. I manage sometime, while playing with the code, to repo
+> > similar kernel crash but still i'm not sure of the real cause.
+> > 
+> > I know it's OT but do you have any idea about it? If you remember
+> > anything about it?
+> > (To scale the freq i'm using a dedicated cpufreq driver that works this
+> > way:
+> > - We first scale the cache to the max freq across all core, we set the
+> >   voltage
+> > - We scale the cpu to the correct target.
+> > This is all done under a lock. Do you see anything wrong in this logic?
+> 
+> I honestly don't remember much anymore about this. It's been a decade.
+> Scaling the cache used to be an independent clk and operation vs. the
+> CPU. Basically the clk domain and power domain for the cache was
+> separate from the CPU. There's also the fuse stuff that means you have
+> to read the fuse to know what OPP table to use. Otherwise you may be
+> overclocking the CPU or undervolting it. It may also be that cpuidle
+> can't happen during a frequency transition. Otherwise the clk gating
+> will be reenabled when the cpu startup code reinitializes all the cpu
+> registers? I'd have to look through some old vendor kernels to see if
+> anything jogs my memory.
+> 
+> > To mee these random crash looks to be really related to something wrong
+> > with the mux or with the cache set to a wrong state)
+> > 
+> > Thx for any suggestion about this.
+> > (also I will update this commit and mention both apq and ipq in the
+> > comments)
 
-Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
----
- drivers/cpufreq/tegra194-cpufreq.c | 104 +++++++++++++++++++++++++++++
- 1 file changed, 104 insertions(+)
+Hi, i'm checking the spm qcom idle driver and something doesn't look
+right to me... Aside from the different sequence used for boot cpu and
+the abset l2 sequence, it looks like to me that WFI is enabled anyway
+(even if it's not defined in the DTS or set disabled) and on top of that
+it looks like we overwrite the WFI logic but we actually set to
+enter power collapse (spc). Why?
 
-diff --git a/drivers/cpufreq/tegra194-cpufreq.c b/drivers/cpufreq/tegra194-cpufreq.c
-index 2d59b2bd0e1d..6b944d00c35a 100644
---- a/drivers/cpufreq/tegra194-cpufreq.c
-+++ b/drivers/cpufreq/tegra194-cpufreq.c
-@@ -24,6 +24,17 @@
- #define CPUFREQ_TBL_STEP_HZ     (50 * KHZ * KHZ)
- #define MAX_CNT                 ~0U
- 
-+#define NDIV_MASK              0x1FF
-+
-+#define CORE_OFFSET(cpu)			(cpu * 8)
-+#define CMU_CLKS_BASE				0x2000
-+#define SCRATCH_FREQ_CORE_REG(data, cpu)	(data->regs + CMU_CLKS_BASE + CORE_OFFSET(cpu))
-+
-+#define MMCRAB_CLUSTER_BASE(cl)			(0x30000 + (cl * 0x10000))
-+#define CLUSTER_ACTMON_BASE(data, cl) \
-+			(data->regs + (MMCRAB_CLUSTER_BASE(cl) + data->soc->actmon_cntr_base))
-+#define CORE_ACTMON_CNTR_REG(data, cl, cpu)	(CLUSTER_ACTMON_BASE(data, cl) + CORE_OFFSET(cpu))
-+
- /* cpufreq transisition latency */
- #define TEGRA_CPUFREQ_TRANSITION_LATENCY (300 * 1000) /* unit in nanoseconds */
- 
-@@ -56,6 +67,7 @@ struct tegra_cpufreq_ops {
- struct tegra_cpufreq_soc {
- 	struct tegra_cpufreq_ops *ops;
- 	int maxcpus_per_cluster;
-+	phys_addr_t actmon_cntr_base;
- };
- 
- struct tegra194_cpufreq_data {
-@@ -72,6 +84,90 @@ static void tegra_get_cpu_mpidr(void *mpidr)
- 	*((u64 *)mpidr) = read_cpuid_mpidr() & MPIDR_HWID_BITMASK;
- }
- 
-+static void tegra234_get_cpu_cluster_id(u32 cpu, u32 *cpuid, u32 *clusterid)
-+{
-+	u64 mpidr;
-+
-+	smp_call_function_single(cpu, tegra_get_cpu_mpidr, &mpidr, true);
-+
-+	if (cpuid)
-+		*cpuid = MPIDR_AFFINITY_LEVEL(mpidr, 1);
-+	if (clusterid)
-+		*clusterid = MPIDR_AFFINITY_LEVEL(mpidr, 2);
-+}
-+
-+static int tegra234_get_cpu_ndiv(u32 cpu, u32 cpuid, u32 clusterid, u64 *ndiv)
-+{
-+	struct tegra194_cpufreq_data *data = cpufreq_get_driver_data();
-+	void __iomem *freq_core_reg;
-+	u64 mpidr_id;
-+
-+	/* use physical id to get address of per core frequency register */
-+	mpidr_id = (clusterid * data->soc->maxcpus_per_cluster) + cpuid;
-+	freq_core_reg = SCRATCH_FREQ_CORE_REG(data, mpidr_id);
-+
-+	*ndiv = readl(freq_core_reg) & NDIV_MASK;
-+
-+	return 0;
-+}
-+
-+static void tegra234_set_cpu_ndiv(struct cpufreq_policy *policy, u64 ndiv)
-+{
-+	struct tegra194_cpufreq_data *data = cpufreq_get_driver_data();
-+	void __iomem *freq_core_reg;
-+	u32 cpu, cpuid, clusterid;
-+	u64 mpidr_id;
-+
-+	for_each_cpu_and(cpu, policy->cpus, cpu_online_mask) {
-+		data->soc->ops->get_cpu_cluster_id(cpu, &cpuid, &clusterid);
-+
-+		/* use physical id to get address of per core frequency register */
-+		mpidr_id = (clusterid * data->soc->maxcpus_per_cluster) + cpuid;
-+		freq_core_reg = SCRATCH_FREQ_CORE_REG(data, mpidr_id);
-+
-+		writel(ndiv, freq_core_reg);
-+	}
-+}
-+
-+/*
-+ * This register provides access to two counter values with a single
-+ * 64-bit read. The counter values are used to determine the average
-+ * actual frequency a core has run at over a period of time.
-+ *     [63:32] PLLP counter: Counts at fixed frequency (408 MHz)
-+ *     [31:0] Core clock counter: Counts on every core clock cycle
-+ */
-+static void tegra234_read_counters(struct tegra_cpu_ctr *c)
-+{
-+	struct tegra194_cpufreq_data *data = cpufreq_get_driver_data();
-+	void __iomem *actmon_reg;
-+	u32 cpuid, clusterid;
-+	u64 val;
-+
-+	data->soc->ops->get_cpu_cluster_id(c->cpu, &cpuid, &clusterid);
-+	actmon_reg = CORE_ACTMON_CNTR_REG(data, clusterid, cpuid);
-+
-+	val = readq(actmon_reg);
-+	c->last_refclk_cnt = upper_32_bits(val);
-+	c->last_coreclk_cnt = lower_32_bits(val);
-+	udelay(US_DELAY);
-+	val = readq(actmon_reg);
-+	c->refclk_cnt = upper_32_bits(val);
-+	c->coreclk_cnt = lower_32_bits(val);
-+}
-+
-+static struct tegra_cpufreq_ops tegra234_cpufreq_ops = {
-+	.read_counters = tegra234_read_counters,
-+	.get_cpu_cluster_id = tegra234_get_cpu_cluster_id,
-+	.get_cpu_ndiv = tegra234_get_cpu_ndiv,
-+	.set_cpu_ndiv = tegra234_set_cpu_ndiv,
-+};
-+
-+const struct tegra_cpufreq_soc tegra234_cpufreq_soc = {
-+	.ops = &tegra234_cpufreq_ops,
-+	.actmon_cntr_base = 0x9000,
-+	.maxcpus_per_cluster = 4,
-+};
-+
- static void tegra194_get_cpu_cluster_id(u32 cpu, u32 *cpuid, u32 *clusterid)
- {
- 	u64 mpidr;
-@@ -442,6 +538,13 @@ static int tegra194_cpufreq_probe(struct platform_device *pdev)
- 	if (!data->tables)
- 		return -ENOMEM;
- 
-+	if (of_device_is_compatible(pdev->dev.of_node, "nvidia,tegra234-ccplex-cluster")) {
-+		/* mmio registers are used for frequency request and re-construction */
-+		data->regs = devm_platform_ioremap_resource(pdev, 0);
-+		if (IS_ERR(data->regs))
-+			return PTR_ERR(data->regs);
-+	}
-+
- 	platform_set_drvdata(pdev, data);
- 
- 	bpmp = tegra_bpmp_get(&pdev->dev);
-@@ -486,6 +589,7 @@ static int tegra194_cpufreq_remove(struct platform_device *pdev)
- 
- static const struct of_device_id tegra194_cpufreq_of_match[] = {
- 	{ .compatible = "nvidia,tegra194-ccplex", .data = &tegra194_cpufreq_soc },
-+	{ .compatible = "nvidia,tegra234-ccplex-cluster", .data = &tegra234_cpufreq_soc },
- 	{ /* sentinel */ }
- };
- 
+Also I think we are missing the assembly code to enter wfi on krait cpu.
+Am I totally confused or there are some problems in the code that nobody
+notice?
+
 -- 
-2.17.1
-
+	Ansuel
