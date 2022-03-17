@@ -2,275 +2,221 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0490FC433F5
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Mar 2022 09:31:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20B94C433F5
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Mar 2022 09:44:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230129AbiCQJcf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 17 Mar 2022 05:32:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41330 "EHLO
+        id S232153AbiCQJqE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 17 Mar 2022 05:46:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45558 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229557AbiCQJce (ORCPT
+        with ESMTP id S232147AbiCQJqB (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 17 Mar 2022 05:32:34 -0400
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2050.outbound.protection.outlook.com [40.107.243.50])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 920F31D4C17;
-        Thu, 17 Mar 2022 02:31:17 -0700 (PDT)
+        Thu, 17 Mar 2022 05:46:01 -0400
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on20628.outbound.protection.outlook.com [IPv6:2a01:111:f400:7e89::628])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04BB81A6357;
+        Thu, 17 Mar 2022 02:44:45 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=huML0IRdm0milXTfKOewdfTRm9xkNu7j/joJBDZpW27sRfm1nImKzkWxlLi8kK8l6fleN6okLhSJtGkc2GvGH4AVS9Y7va0jFHeB2Nxkmqgscy5SJ1Uy+6KfvHaWcu5WnoASa42AxaKD0roZGmUkeczmP8BM0230dH+3iEkRwDKctwi/Ghj4t5RuZotuqAJa+JgFHozz46SkoXv8gcg+Bnp8r6hcjvTx9F1Cg6aE29PKXFWqWgh2/DBAoiAeVISC28ZcwtpObQzVgRnSedvNyDiopVtfCqd//beCZdGdqPupLj46T62J9X+GVCp0Nh0oFPhI+bI8zlJBZHvnjIi92w==
+ b=ZKqmsjfaIxQhODQbK5PTuyIHjc7VFFUBYX2Ot/yeKr9t+EYMqxU8NnUuVdUpLDnlrwVqhnyT9UFcLk+i1LVzaUAKLPxtoGuR/Cj9dPUKcM/WNfyupuIc6fuVWYMys0APDJPwxr8Ik58qU5H5sHYLw99f8x1l+6j02uIECpEpIrZ/kvo5m0JcaAXlcRxQ9nxZKRYjFq/dU6KkP2NuUzw9qJL2x/JxVDV5P+c4+E/A1FiS0CbpRtk6ke/WbiU8GM7p1ztVPyrYaNEVmyD8FG4ZtWGvSaKv4GVbzLtbtUN7P5BzRQY7NhbcE5w8FvKtsJNrsm8436iCF97kl/Tcj3h8xg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=woA/u1JS5C0cRW9D81lh46h03/H8Ufgz1K+L+GXNSeU=;
- b=nrcQPDtx6cmSPZjz4qWTul4hiQWRHLJmNc46sbwDpKeo50cSnu2TlagAO1hRG4Oyri0HSaRHkt40Rm7wou4+uhv1bCnum4/dFuiBa45I0MBz3YZv7B2jcUcmN1f0pgTLGlMrCFww2IQc1+acgFuOS+oCUFleoVEFtvvhIaK7snuRkYvRUbJk3WMjQAKfv84XN5O7XbdaNXhcuUywJyT3BF0pfG5BRmkpoAMU0N/impA4aajpix87lLXsQewCqHnGKOQbvIwf3ydr2iHZ3hyAlz75MUcBj8szeDW2EmU7I3zjaRhWkpYBkEBy5XfhBGrbjYpJMoJdeEZxU0A3ZSuGoA==
+ bh=Qw5+qCe91bvLgIqfxCSgkFRDIj/jgBMn3b1Dgy0nhZY=;
+ b=RCZx9t5yoU7dR+yVTwwIxqjW5LyCxCM0lWXniBuHQqXI+oeBd1phS5gA0BYhSk5W814Z2JbyDhDYpAoNkSS7nn6tDBzAZmjWOU2kRtp/rT2wgKC8SaLYiaUf99Jz6Fxj/oNm8V/ptuhYy6WWVp1FfnZFgy6hvv7lF0nhLEiCdQvNeYoPZ0plSG61fvKIPJfYyQnWw5U6Fn8M3K9fHpgF+tkDzFZdri48ST3xMpAxbar0jHVnLIrR/UoRs8BC1QijIUP3picayTnRhtMLXnWW2arbFDsDDTG5yPYbIxF+XF03QNFrk+Jal10kRLnfxd5uV0RKE1jxshyJDa91uEJDzQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
  dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=woA/u1JS5C0cRW9D81lh46h03/H8Ufgz1K+L+GXNSeU=;
- b=IxZCxW+6mwfpqNZyFgBuWjkG1zze37uW8p3tsIASA3fZOCoI+r3f4Tk5RiGrMY4S7OM96/OBef4o7DOq7E8JtGZaoamFXLKoN+4+rWc9N/BfPd0c5nY+TqYvxU8IsqB95ZwNmicM1AUxKuAIokeQ2GVqDIKqXXLrYfauEjQZHxcbMTKnDFvOSCwb9By9U6Ru2kpSBL1O1zuATV4EjUW4Ibi0wKs/ury4nQmo8QX7Fb218ySjxwUWfi02I2mKMIaUsGwh+IZ6nMczhA5rk47C/rI3COtKPBXrCwrUxm1RS0X9OU+uzZGIzrQFiImmixIrZIdFpmg3JoRbQ6gJpz2WWg==
+ bh=Qw5+qCe91bvLgIqfxCSgkFRDIj/jgBMn3b1Dgy0nhZY=;
+ b=rberAeMNfq4dpA0DDypfh45OrmNtLc5v1q2pOS+L6+HAL5xCVR/uR7d1VJKuS004/E4jZ9EySyiLXf2ft7UCUGw8bbrbdOa/7302ODf7D46XSLc6tPqdCWbbxmbDn1H9i7gYkP6phBQ9jJ5/ckWMhfdExvaWi4VB83Q18pmSQRfEwrD8Dzmy5al8yfZSFt2csh3c8Y1aDUVcO080dfS9Q2WpZS1wnE8wFKPn3ltDh0QUhlBdCk8e10USpmq5kSrsn+p+xh+0mf9vFKyT7mXSy1cyQvnpAadph2EBE6UMfOHLEKtof6+lupQYTMYCmAtRgC97LnEyMpu5JypVtneksw==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nvidia.com;
 Received: from CO6PR12MB5444.namprd12.prod.outlook.com (2603:10b6:5:35e::8) by
- MW3PR12MB4458.namprd12.prod.outlook.com (2603:10b6:303:5d::10) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.5081.17; Thu, 17 Mar 2022 09:31:15 +0000
+ MWHPR1201MB2478.namprd12.prod.outlook.com (2603:10b6:300:e5::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5081.14; Thu, 17 Mar
+ 2022 09:44:42 +0000
 Received: from CO6PR12MB5444.namprd12.prod.outlook.com
  ([fe80::88c:baca:7f34:fba7]) by CO6PR12MB5444.namprd12.prod.outlook.com
  ([fe80::88c:baca:7f34:fba7%5]) with mapi id 15.20.5061.032; Thu, 17 Mar 2022
- 09:31:15 +0000
-Message-ID: <11af24f0-41ad-3972-9ddb-5468283302e8@nvidia.com>
-Date:   Thu, 17 Mar 2022 09:31:06 +0000
+ 09:44:42 +0000
+Message-ID: <edcae0c1-a576-1560-5ecb-9dcf08d8ead3@nvidia.com>
+Date:   Thu, 17 Mar 2022 09:44:34 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.5.0
 Subject: Re: [PATCH 2/3] spi: tegra210-quad: Add wait polling support
 Content-Language: en-US
-To:     Krishna Yarlagadda <kyarlagadda@nvidia.com>, broonie@kernel.org,
-        thierry.reding@gmail.com, linux-spi@vger.kernel.org,
-        linux-tegra@vger.kernel.org, ashishsingha@nvidia.com
-Cc:     skomatineni@nvidia.com, ldewangan@nvidia.com, robh+dt@kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     Krishna Yarlagadda <kyarlagadda@nvidia.com>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        Ashish Singhal <ashishsingha@nvidia.com>
+Cc:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 References: <20220317012006.15080-1-kyarlagadda@nvidia.com>
  <20220317012006.15080-3-kyarlagadda@nvidia.com>
+ <391736bc-84c2-ec8b-9f04-614365953da3@nvidia.com>
+ <DM4PR12MB57692EB17ABCA36E0515412EC3129@DM4PR12MB5769.namprd12.prod.outlook.com>
 From:   Jon Hunter <jonathanh@nvidia.com>
-In-Reply-To: <20220317012006.15080-3-kyarlagadda@nvidia.com>
+In-Reply-To: <DM4PR12MB57692EB17ABCA36E0515412EC3129@DM4PR12MB5769.namprd12.prod.outlook.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: AS9PR06CA0241.eurprd06.prod.outlook.com
- (2603:10a6:20b:45f::20) To CO6PR12MB5444.namprd12.prod.outlook.com
+X-ClientProxiedBy: LO4P123CA0438.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:1a9::11) To CO6PR12MB5444.namprd12.prod.outlook.com
  (2603:10b6:5:35e::8)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 3c732ea9-7214-48ab-8dd4-08da07f8e1ac
-X-MS-TrafficTypeDiagnostic: MW3PR12MB4458:EE_
-X-Microsoft-Antispam-PRVS: <MW3PR12MB4458521C366F0A0CA1AF8130D9129@MW3PR12MB4458.namprd12.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: 7506be7b-46ea-417a-c417-08da07fac2c0
+X-MS-TrafficTypeDiagnostic: MWHPR1201MB2478:EE_
+X-Microsoft-Antispam-PRVS: <MWHPR1201MB2478A42EE608C19E8BE9AF46D9129@MWHPR1201MB2478.namprd12.prod.outlook.com>
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: HIpJWbNPMK7LnRmXH2WtkKKCSee7B1aSjbIng9cCdUpoXrbs8uOMNv6CJGDPNu6QOLiIOEbsV2bkllHO+kYiillwx/d3yizH48+jdelVJR9WV+UwQmjY4GVfdhM8N70UpiMCncV/aZ4IKYHgxSmn8DwJDDpZwMfGuU1KTnZDDUo6xns5y4BmNHvUlKTgyhxiv3VyTilzTa9Vv8pnTplB3F8/n0GfgxYeEFsRhrEofTv9xbnq+dhITq6XCrF6oD4JIH3Bnl8uS6y0R4X4kb/DLFla5czi3RYg5DarEzHlQtbU75LqbYXKofWySOJpBQJkxqaLHyI8xv7l6pqrLo0GyKgJ77UDoN2+ociL+db7z1NOdhicMIWkLen7fEUlIH2keBx9gpFzuK1DatZIWM5an5twbu+z02GuSgVjPetE+YSFvCPcwBMtE3cmYJKRVH4GggqbVY7bSvgdyFtelr4+vmAq9tTHqzlIg1sNCbtxIUZ/f4WG9NuzjdKjjwKVKQYer3rgTpMxW/U7r3j4orXoUP7m7qCyenNE3oXoy8rTgc1I6BLuTuCHg0PexWoNJetV9/M4Sqb8JBXIkD5LYD+ssNIkfl/zWj9XXvGSZqROq+AXHQPOs0MiQzares+7HXFMKaE/hgRS3VlNZ8i/nRrNm27Xx5Y5fzUt7kxKCmzUKxmYAsXzYFQXj19m/dDiksuKfbjv8pCUL/wWxyVNQ9RL2gpooOv4y1pT6Y2tIPEFCnjLTsMphnESXsQ5PIGu+vlD
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR12MB5444.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(8936002)(508600001)(6486002)(86362001)(6512007)(31696002)(26005)(2616005)(186003)(6666004)(5660300002)(55236004)(53546011)(6506007)(2906002)(36756003)(6636002)(4326008)(8676002)(66476007)(66556008)(66946007)(38100700002)(31686004)(316002)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: 0UI5cKfjJPUDgaLaMVBSXpzSwJ+jdMGVFOkf+9YrTLzNKR4hoQRj+xtGofnZLgz+2LAzS/r6RGv/GQaE6+NUrwRLHubh979/yS5fF+gKcIew119VepnPncza6KoILy6NumnxSBo9LBR7uLqljNXTbBxtQFyzduYsNdMqscGFcRe7rag533ocsrN/kjOY6+PLVMC1RiKPPeWoGHldTPm4qD/xZjoYk0NAZ8lJ2StrBUYhjBAVtmK8CwNLrwFbksxEVKbrP8elgqFX5K1wti8Z532ofOrIsXhvJv5smDe2DNV5lRex1syoEdA34pD0gmTAnxuhD7vmyHFpp/lRm2V7pgE7pGKZVdbXLv6HnOtQ2ABIqWq6aDZM5FXbdMdflmwsTKFSonTCngAjZuNHmZLu27DJuyPw3zKAytOwbKzTGVZwQZvEpcelK5XgKdrsQb+STuUt9FOpxJ4S1KWOgR3D51R8Jxbab2FfLIPU8GauUSY+zSQgy4OIV9DMPiV0k211ZkMCmVeZJwjxLoGceiOBpaMVj5dQzu7DkU4t40TqS/k7IUCHdUC3V43irpRMqZjoz9ue1KKUAWPUIJXSDOgsN6CTrVt5dU+kXnfOJxZ+u0YAq0AaufKx9RydlqN58oeyYQyG7ssMZCZIaQEcQaeJjy2hh/+f9Mzn3gFI+fgmnb/AXoW3yc9mpYIipS/0IbsgQI9AAjZMy4kDf0799l1uStDTHY3noIheKkYux90yJkSrfnD9bW00bxu7EwsoWT4Z
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR12MB5444.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(8936002)(6506007)(6512007)(36756003)(31686004)(6636002)(316002)(508600001)(6486002)(5660300002)(8676002)(2906002)(53546011)(4326008)(6666004)(55236004)(66556008)(66476007)(38100700002)(54906003)(2616005)(186003)(66946007)(86362001)(31696002)(26005)(83380400001)(110136005)(43740500002)(45980500001);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?Rk01cFNFdHVCVHM2SEFvWHRyUlhieWREdnQ5bk9yNGpvL0I1SEg0a3ZTRU92?=
- =?utf-8?B?bGR6TncyWU0zQzlsbGVZYThRM29tNFR2eFArakE5aXFMbm9rODlqaENFMXJK?=
- =?utf-8?B?STJpUjd6WUNvNEduU3EzOTN1VVVtWjB5czBPZ1piOU9mdUtoWE91NEpJeE1y?=
- =?utf-8?B?RXNia2o4UWJmYVg0K21aZGJtTm03RWdUQkZoOUNBQ0hzWmdUT3BYS082TC93?=
- =?utf-8?B?aWhzLzlSbWduMHlvWkFaMHUyaXlVaUg0cVNjdmU0dkUzVktvWXNhTGJxemlh?=
- =?utf-8?B?cUFRYVNCY3ZqRGg1dHM5RnpGZGs0eGV2S0dGVWhWK04xVlhDVlA0RnJGaFZs?=
- =?utf-8?B?QTFGV3JOQy9KL1l0V004OWFySXRScDhsU0lOdUdsMi90Zm10VGZrWDY1dXFj?=
- =?utf-8?B?c2UwcEdwT3BWNHAxeU1VQ1JBNWU4bWw5ZGR1aDRZVWF4cVJtTWprTGdVZ05L?=
- =?utf-8?B?QlExd3BlMTlCYzlVcnhCR29pNSsrT3Y4d1VwYXlicXYrZ0tkM0VXNDJhVHdo?=
- =?utf-8?B?UThlb3pCbm9kdWRwSU5zaGlMbUxjN1g0S1RLTWIzUkZZNDI4d1RWaGltSko0?=
- =?utf-8?B?dUlhbUJuVW5yUkI0QkYrbUZ5VGFrU1MyeFF0UWxpMURVbWlLamlNT1hFVnA1?=
- =?utf-8?B?M013Mk5ka1d5eFUrYklTbFd1amtMZjRndy9KTmNBQisvTUFrS1lpQkZNTG54?=
- =?utf-8?B?U0p3VmJzZUx3b3VWeDVHb0JhMXdUZXhBeHhUbXRzZ1BrVWpGZG5hM1kvcVlh?=
- =?utf-8?B?Lzd5MG5Mbk9BeGR3ODlHOGtOWEU2ZzhQSW42d2RRZE5TMkFqWml5NjZJTUZX?=
- =?utf-8?B?bWxRa2Nmc29aVzlrMFVkVzgzbC9qMFkyME9OeDVTZ2ZDVzl0RGs5ZXZXcEds?=
- =?utf-8?B?NVRhZG5WTUlNY2E1dGpJUnZSZ3ZTakdnZUFEUy9jWmhUSEY0Y0lzSnlBUlM5?=
- =?utf-8?B?NjFLTXZIUVJRSU5OTE9yZ3M0NzB6YTBrYjRHVlBsbHdxQ0o2cFpQcWY3Q0Fi?=
- =?utf-8?B?T0pyL3JzVkQwWFloUDZEcSs4RHQwT0FTeEl1KzdPNktJdytORkVRblJRN1l5?=
- =?utf-8?B?MHJBMk5Wb05nRm5uWFJiRUdRMUFjTWJnQzNXUGVyMzAyNkhVZWtFZHhQeHZS?=
- =?utf-8?B?NE9RMzRyOGtDQXFvR0phbmxrQ2c4WllTM0J0dERRTTZSUHZPL2NLOFNrVXpE?=
- =?utf-8?B?dE1vOXNaNGluK0E4Vk5nVXI0amd0dDAzYjJQbjBsVXh6bkhoV2hGa0licVVJ?=
- =?utf-8?B?SzFRZU5iQ0swaFphWHZUbi9ac3BCUElqNUZ0RE1RWTRGelp5UlpYZmZORXpE?=
- =?utf-8?B?eWdxYmQwdUNKV3JUMkZ2TU0zWER3SmFFdlNIZjFTZWxxMVZTRFNCU0VhaEMx?=
- =?utf-8?B?TFBjRWdSdW5LOGtIalBPZGtmYThIbXJ0Z3NHbGdjcG5HR0VScEhkdDFpdHJD?=
- =?utf-8?B?KzYxWit3MFhMaWtvRFBqUm42OTBKNXJBVklQdXk3OTNVMm5yNWVhRlh4bk9O?=
- =?utf-8?B?clRLd0NGQ2laY1V6Vnp0Y2x3YWIyZG05TVVJamEzVWd4cFBLTyt0VXRHUGpQ?=
- =?utf-8?B?MFpBVjR6VDFLelNveVZOOEtDeXQ5Ti85TStPelh2SEZDUnBIeEVGb0d4WmJK?=
- =?utf-8?B?TGhpZEJCbmJQbFZvbk5ndVBIVVp1bG1raVlsbVI4bTFtZlZaVUxUQUNpS2wv?=
- =?utf-8?B?aHliNTBmdjQ4OXhaaFRyMllTYUVxQUQwbHI5MUJTQTdOYjVIMk9IWGhLMVY3?=
- =?utf-8?B?MjlvRFB0VzBCcjV6WXg3NUdiSTNqREtPVGFSSldEclhKMnZINUdYYmMya29E?=
- =?utf-8?B?TTJNM0JDSU5SemlDT2R1cFgzc2hCMmhXV3dwSlhBa1NUWHEwTUxPNXE2K2Zy?=
- =?utf-8?B?bWR5ejByN21UOVRFakc2MHZpemNZMDRRTjNLUTQ2NzF2MjlrekM3bmZTL3Fn?=
- =?utf-8?B?SkVuWGc2M1ZMd0xPd0t3RFpIeCs3MTI2V0tZcUY3cFhCSHRJS01lL0ZrQ2J4?=
- =?utf-8?B?Tmhia2IrRCtnPT0=?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?S1EzQ2xmejRvS0dGWStvdlNwMkFmWkJNOE1nd0s0WTlXUEExRDd0TGs3M3Vk?=
+ =?utf-8?B?OUtZNUVrYkpqVDRKdDdTY005aFQ3OG95VHdXOEdkR2NYajM5MHBDZVlYQ3BC?=
+ =?utf-8?B?NDFSOGs4bytnb2dyMXpOWUc1R2pwWnUzRjB2cDdKeTZZWmtJV1Q1ZXZITDN5?=
+ =?utf-8?B?YU0xYXVRQ3pxK1JBSkJDM2Y3U0ptdng0aDVuYi9pclNqU0I3eXRqbnYxWWpT?=
+ =?utf-8?B?c0FSdWJsM0o0TTVxTk4xTkhVWFlBcEFoRlN1NjdXODhDQ1IzVmgvRXNmS0pq?=
+ =?utf-8?B?NFdFS3BoaUJ2NVcvVnQxT0dscFJzZFI2eTV5UENCNUsxZE1QTlc2QTg2dFFn?=
+ =?utf-8?B?dGs1QmZYZ2FqZThwNFRDNFRXTFJtdHRaTHlOSkVScFBodWN5RGc1bUJyTHpv?=
+ =?utf-8?B?Q3BBR1FYUG5DQTRYUWFZcjdqYnFoTlZqWDhydW1xdUZOZmV2LzBBRkVyM3pC?=
+ =?utf-8?B?Q2lzZzYrcU9yK3ViaHl3WXFVQlhubmJ6OUJlQWI0eGJRemR1eVFqY2pyWnBx?=
+ =?utf-8?B?ZlNnVzBka295QWtib0o5aHZVN2VzTUhMVzJpbEx6WmY5TXc5RDFaS2JaVzFs?=
+ =?utf-8?B?eTZpZFQwQ1g0M3hGcnpmWVF5aXp6M2lxUTN2MWp0SW5TNDF1THVqSzBIZHRo?=
+ =?utf-8?B?Mm5NdU1hWnpSNUtleVQrUmtrQlI0Rm9YTVJLNXBSVk9rdWprU3lycHlzWStr?=
+ =?utf-8?B?M0RpNE5Wc1NLbnBVVkh4ZGM3WHBmcVh4dVVubDRZTkFpcThSbDJqemFOcWgw?=
+ =?utf-8?B?Vzc2TWRxVWQ3OHNLTmVmdWpsbVQxRXJ2ZzlaTTdYSGo4TEhMbC9jd1ZqWStO?=
+ =?utf-8?B?dTRFNm1WTUlVcnk3MmttQTRZdHJwckt1RE9ueGhQOGF4YjJnV3BUeEZSU1Mv?=
+ =?utf-8?B?V3pTdTVEeER6N0JnTXZjcGRaMWhSVEhJOWFEZzdTcnZleU51WnZ4V0pwY0ky?=
+ =?utf-8?B?WEJjS2VTN1RGM0FSUjE2Q3BiOVdyRjdSNFpnRzBVYXViYjZGMkdFRisySXhv?=
+ =?utf-8?B?Ry9US0ZobGNxYVQxMjB6SEZuaHA5cysza3NXTXc1ZzJId04wUHpYcTNKQXEz?=
+ =?utf-8?B?cGkrZEJxeEFKdGZZekNHUlJaTk1HdEZQZzZBY2xXczhhVWdsWHpYdng5a29v?=
+ =?utf-8?B?MUxPS0NMZ1hVb2hkUkdPRnNzRkdVMVF1Y1JaN1FqRW1SaDcxak1ZZUpwd1F6?=
+ =?utf-8?B?YlBLUzJOWEVNem1kakloSCtFUGowcndJWkVxT25Tclp1T0ZOZWo2Z0FVOHhU?=
+ =?utf-8?B?RHU3SGV6dzdLWFkvZFpYTkRCZE1ZT1k3U2dPc0JieExBUmFSTXgreVVZUnhV?=
+ =?utf-8?B?eG1aZXJ1SVpMaVhVWjVlb21VNzFXTnpHaWpLak50QlhSbkhPZko1ZHJmUE5O?=
+ =?utf-8?B?VW5xUGpKYTgvMkNsa0cxczVtRjZNaDhmRmNiMG1UR3hybEwxK0ZoM2NrbnJN?=
+ =?utf-8?B?RHYrUFFhWE1haTZiLzNjenNkQ0drbkdQRGdTTEFhTXJ4eGVKMmlVR3pQRDRq?=
+ =?utf-8?B?RTlMWEd6SHFzbGVpRXcwQ29xZDVVWVFjOSttR2lGRkdXb205YVp2c1l5U3lV?=
+ =?utf-8?B?VXZ1Mlh6dElUcEl1WldackxzNTd3UDdvMURGMU5QNE13MFNUVS9lcTlJVGRm?=
+ =?utf-8?B?a2VsUTA5SW9VMnpSUU1USHVYZnpBWWswMjJOZFpaS2dpUC94ZGhrdnZJNDlp?=
+ =?utf-8?B?eitzZ29BeTNzeUxBYzcrUTNiUTNCcVNjV2pEYm8vT0pLeGQ2MzR3cnpDemVB?=
+ =?utf-8?B?MmpJdHEzNWVidlEwT25YQ0haMS9ZQSt0UDB5N09nVGwxQWV3ZElpcW1vUDk2?=
+ =?utf-8?B?VGdkaWRVQVJCSHlkUFBic2UxZmx1U0c2MU1LMGdQajBvdjlzMW1pVWVFTFJl?=
+ =?utf-8?B?UURUeWc0U1VFVTNjcnk4eVJCYmVpbFp4bkVKWDU2TEk5eThndEk2Y01VRmlq?=
+ =?utf-8?B?ckRheTRkZVNWMjAxWGVjeGJDdDc0d00vM0trVXROUEJaV3Z1Yk4vcGRuNldR?=
+ =?utf-8?B?K2hPb3FZdjhRPT0=?=
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3c732ea9-7214-48ab-8dd4-08da07f8e1ac
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7506be7b-46ea-417a-c417-08da07fac2c0
 X-MS-Exchange-CrossTenant-AuthSource: CO6PR12MB5444.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Mar 2022 09:31:14.8311
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Mar 2022 09:44:41.9633
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: wKNntX7UYl0Xdx66RLKknRHjF0mx0TytsURoFR9yX+8j6iB4PBxhZu9MKyfLNZo1AygqcVwss/XFwAklLDEVuQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR12MB4458
+X-MS-Exchange-CrossTenant-UserPrincipalName: KG+9bExSmzTp1js5fIXmPjZz77ZYkRH9xDX9Ur5HPXilOW2AQCLYtEAirF5x+HpEGH9FJkrATjUbO+uur63pig==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR1201MB2478
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
+On 17/03/2022 09:02, Krishna Yarlagadda wrote:
+>> -----Original Message-----
+>> From: Jonathan Hunter <jonathanh@nvidia.com>
+>> Sent: 17 March 2022 14:25
+>> To: Krishna Yarlagadda <kyarlagadda@nvidia.com>; broonie@kernel.org; thierry.reding@gmail.com; linux-spi@vger.kernel.org; linux-
+>> tegra@vger.kernel.org; Ashish Singhal <ashishsingha@nvidia.com>
+>> Cc: Sowjanya Komatineni <skomatineni@nvidia.com>; Laxman Dewangan <ldewangan@nvidia.com>; robh+dt@kernel.org;
+>> devicetree@vger.kernel.org; linux-kernel@vger.kernel.org
+>> Subject: Re: [PATCH 2/3] spi: tegra210-quad: Add wait polling support
+>>
+>>
+>> On 17/03/2022 01:20, Krishna Yarlagadda wrote:
+>>> Controller can poll for wait state inserted by TPM device and
+>>> handle it.
+>>>
+>>> Signed-off-by: Krishna Yarlagadda <kyarlagadda@nvidia.com>
+>>> ---
+>>>    drivers/spi/spi-tegra210-quad.c | 31 +++++++++++++++++++++++++++++++
+>>>    1 file changed, 31 insertions(+)
+>>>
+>>> diff --git a/drivers/spi/spi-tegra210-quad.c b/drivers/spi/spi-tegra210-quad.c
+>>> index a2e225e8f7f0..ecf171bfcdce 100644
+>>> --- a/drivers/spi/spi-tegra210-quad.c
+>>> +++ b/drivers/spi/spi-tegra210-quad.c
+>>> @@ -142,6 +142,7 @@
+>>>
+>>>    #define QSPI_GLOBAL_CONFIG			0X1a4
+>>>    #define QSPI_CMB_SEQ_EN				BIT(0)
+>>> +#define QSPI_TPM_WAIT_POLL_EN			BIT(1)
+>>>
+>>>    #define QSPI_CMB_SEQ_ADDR			0x1a8
+>>>    #define QSPI_ADDRESS_VALUE_SET(X)		(((x) & 0xFFFF) << 0)
+>>> @@ -165,11 +166,13 @@ struct tegra_qspi_soc_data {
+>>>    	bool has_dma;
+>>>    	bool cmb_xfer_capable;
+>>>    	bool cs_count;
+>>> +	bool has_wait_polling;
+>>>    };
+>>>
+>>>    struct tegra_qspi_client_data {
+>>>    	int tx_clk_tap_delay;
+>>>    	int rx_clk_tap_delay;
+>>> +	bool wait_polling;
+>>>    };
+>>>
+>>>    struct tegra_qspi {
+>>> @@ -833,6 +836,11 @@ static u32 tegra_qspi_setup_transfer_one(struct spi_device *spi, struct spi_tran
+>>>    		else
+>>>    			command1 |= QSPI_CONTROL_MODE_0;
+>>>
+>>> +		if (tqspi->soc_data->cmb_xfer_capable)
+>>> +			command1 &= ~QSPI_CS_SW_HW;
+>>> +		else
+>>> +			command1 |= QSPI_CS_SW_HW;
+>>> +
+>>>    		if (spi->mode & SPI_CS_HIGH)
+>>>    			command1 |= QSPI_CS_SW_VAL;
+>>>    		else
+>>> @@ -917,6 +925,7 @@ static int tegra_qspi_start_transfer_one(struct spi_device *spi,
+>>>
+>>>    static struct tegra_qspi_client_data *tegra_qspi_parse_cdata_dt(struct spi_device *spi)
+>>>    {
+>>> +	struct tegra_qspi *tqspi = spi_master_get_devdata(spi->master);
+>>>    	struct tegra_qspi_client_data *cdata;
+>>>
+>>>    	cdata = devm_kzalloc(&spi->dev, sizeof(*cdata), GFP_KERNEL);
+>>> @@ -927,6 +936,11 @@ static struct tegra_qspi_client_data *tegra_qspi_parse_cdata_dt(struct spi_devic
+>>>    				 &cdata->tx_clk_tap_delay);
+>>>    	device_property_read_u32(&spi->dev, "nvidia,rx-clk-tap-delay",
+>>>    				 &cdata->rx_clk_tap_delay);
+>>> +	if (tqspi->soc_data->has_wait_polling)
+>>> +		cdata->wait_polling = device_property_read_bool
+>>> +					(&spi->dev,
+>>> +					 "nvidia,wait-polling");
+>>> +
+>>
+>>
+>> This looks odd. Why do we need this device-tree property if it is
+>> already specified in the SoC data?
+> Soc data specifies chip is capable of wait-polling.
+> Wait polling still has to be selected on slave devices that can support it.
+> I will add one line description for the properties in next version.
 
-On 17/03/2022 01:20, Krishna Yarlagadda wrote:
-> Controller can poll for wait state inserted by TPM device and
-> handle it.
-> 
-> Signed-off-by: Krishna Yarlagadda <kyarlagadda@nvidia.com>
-> ---
->   drivers/spi/spi-tegra210-quad.c | 31 +++++++++++++++++++++++++++++++
->   1 file changed, 31 insertions(+)
-> 
-> diff --git a/drivers/spi/spi-tegra210-quad.c b/drivers/spi/spi-tegra210-quad.c
-> index a2e225e8f7f0..ecf171bfcdce 100644
-> --- a/drivers/spi/spi-tegra210-quad.c
-> +++ b/drivers/spi/spi-tegra210-quad.c
-> @@ -142,6 +142,7 @@
->   
->   #define QSPI_GLOBAL_CONFIG			0X1a4
->   #define QSPI_CMB_SEQ_EN				BIT(0)
-> +#define QSPI_TPM_WAIT_POLL_EN			BIT(1)
->   
->   #define QSPI_CMB_SEQ_ADDR			0x1a8
->   #define QSPI_ADDRESS_VALUE_SET(X)		(((x) & 0xFFFF) << 0)
-> @@ -165,11 +166,13 @@ struct tegra_qspi_soc_data {
->   	bool has_dma;
->   	bool cmb_xfer_capable;
->   	bool cs_count;
-> +	bool has_wait_polling;
->   };
->   
->   struct tegra_qspi_client_data {
->   	int tx_clk_tap_delay;
->   	int rx_clk_tap_delay;
-> +	bool wait_polling;
->   };
->   
->   struct tegra_qspi {
-> @@ -833,6 +836,11 @@ static u32 tegra_qspi_setup_transfer_one(struct spi_device *spi, struct spi_tran
->   		else
->   			command1 |= QSPI_CONTROL_MODE_0;
->   
-> +		if (tqspi->soc_data->cmb_xfer_capable)
-> +			command1 &= ~QSPI_CS_SW_HW;
-> +		else
-> +			command1 |= QSPI_CS_SW_HW;
-> +
->   		if (spi->mode & SPI_CS_HIGH)
->   			command1 |= QSPI_CS_SW_VAL;
->   		else
-> @@ -917,6 +925,7 @@ static int tegra_qspi_start_transfer_one(struct spi_device *spi,
->   
->   static struct tegra_qspi_client_data *tegra_qspi_parse_cdata_dt(struct spi_device *spi)
->   {
-> +	struct tegra_qspi *tqspi = spi_master_get_devdata(spi->master);
->   	struct tegra_qspi_client_data *cdata;
->   
->   	cdata = devm_kzalloc(&spi->dev, sizeof(*cdata), GFP_KERNEL);
-> @@ -927,6 +936,11 @@ static struct tegra_qspi_client_data *tegra_qspi_parse_cdata_dt(struct spi_devic
->   				 &cdata->tx_clk_tap_delay);
->   	device_property_read_u32(&spi->dev, "nvidia,rx-clk-tap-delay",
->   				 &cdata->rx_clk_tap_delay);
-> +	if (tqspi->soc_data->has_wait_polling)
-> +		cdata->wait_polling = device_property_read_bool
-> +					(&spi->dev,
-> +					 "nvidia,wait-polling");
-> +
->   
->   	return cdata;
->   }
-> @@ -1049,6 +1063,7 @@ static int tegra_qspi_combined_seq_xfer(struct tegra_qspi *tqspi,
->   	bool is_first_msg = true;
->   	struct spi_transfer *xfer;
->   	struct spi_device *spi = msg->spi;
-> +	struct tegra_qspi_client_data *cdata = spi->controller_data;
->   	u8 transfer_phase = 0;
->   	u32 cmd1 = 0, dma_ctl = 0;
->   	int ret = 0;
-> @@ -1059,6 +1074,10 @@ static int tegra_qspi_combined_seq_xfer(struct tegra_qspi *tqspi,
->   	/* Enable Combined sequence mode */
->   	val = tegra_qspi_readl(tqspi, QSPI_GLOBAL_CONFIG);
->   	val |= QSPI_CMB_SEQ_EN;
-> +	if (cdata->wait_polling)
-> +		val |= QSPI_TPM_WAIT_POLL_EN;
-> +	else
-> +		val &= ~QSPI_TPM_WAIT_POLL_EN;
->   	tegra_qspi_writel(tqspi, val, QSPI_GLOBAL_CONFIG);
->   	/* Process individual transfer list */
->   	list_for_each_entry(xfer, &msg->transfers, transfer_list) {
-> @@ -1158,6 +1177,8 @@ static int tegra_qspi_combined_seq_xfer(struct tegra_qspi *tqspi,
->   		transfer_phase++;
->   	}
->   
-> +	ret = 0;
-> +
->   exit:
->   	msg->status = ret;
->   
-> @@ -1180,6 +1201,7 @@ static int tegra_qspi_non_combined_seq_xfer(struct tegra_qspi *tqspi,
->   	/* Disable Combined sequence mode */
->   	val = tegra_qspi_readl(tqspi, QSPI_GLOBAL_CONFIG);
->   	val &= ~QSPI_CMB_SEQ_EN;
-> +	val &= ~QSPI_TPM_WAIT_POLL_EN;
->   	tegra_qspi_writel(tqspi, val, QSPI_GLOBAL_CONFIG);
->   	list_for_each_entry(transfer, &msg->transfers, transfer_list) {
->   		struct spi_transfer *xfer = transfer;
-> @@ -1439,24 +1461,28 @@ static struct tegra_qspi_soc_data tegra210_qspi_soc_data = {
->   	.has_dma = true,
->   	.cmb_xfer_capable = false,
->   	.cs_count = 1,
-> +	.has_wait_polling = false,
->   };
->   
->   static struct tegra_qspi_soc_data tegra186_qspi_soc_data = {
->   	.has_dma = true,
->   	.cmb_xfer_capable = true,
->   	.cs_count = 1,
-> +	.has_wait_polling = false,
->   };
->   
->   static struct tegra_qspi_soc_data tegra234_qspi_soc_data = {
->   	.has_dma = false,
->   	.cmb_xfer_capable = true,
->   	.cs_count = 1,
-> +	.has_wait_polling = true,
->   };
->   
->   static struct tegra_qspi_soc_data tegra_grace_qspi_soc_data = {
->   	.has_dma = false,
->   	.cmb_xfer_capable = true,
->   	.cs_count = 4,
-> +	.has_wait_polling = true,
->   };
->   
->   static const struct of_device_id tegra_qspi_of_match[] = {
-> @@ -1509,6 +1535,7 @@ static int tegra_qspi_probe(struct platform_device *pdev)
->   	struct resource		*r;
->   	int ret, qspi_irq;
->   	int bus_num;
-> +	u8 val = 0;
->   
->   	master = devm_spi_alloc_master(&pdev->dev, sizeof(*tqspi));
->   	if (!master)
-> @@ -1585,6 +1612,10 @@ static int tegra_qspi_probe(struct platform_device *pdev)
->   	tqspi->spi_cs_timing1 = tegra_qspi_readl(tqspi, QSPI_CS_TIMING1);
->   	tqspi->spi_cs_timing2 = tegra_qspi_readl(tqspi, QSPI_CS_TIMING2);
->   	tqspi->def_command2_reg = tegra_qspi_readl(tqspi, QSPI_COMMAND2);
-> +	val = tegra_qspi_readl(tqspi, QSPI_GLOBAL_CONFIG);
-> +	val &= ~QSPI_CMB_SEQ_EN;
-> +	val &= ~QSPI_TPM_WAIT_POLL_EN;
 
-Don't we need to check here is the device support this TPM_WAIT_POLL?
+I can't say I am familiar with this, but it seems that the ideal 
+solution would be able to detect if this needs to be enabled depending 
+on the device connected. Is that not possible?
 
 Jon
 
