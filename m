@@ -2,141 +2,213 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5412C433FE
-	for <linux-tegra@archiver.kernel.org>; Fri, 18 Mar 2022 13:14:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CAC4C4167D
+	for <linux-tegra@archiver.kernel.org>; Fri, 18 Mar 2022 20:59:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236578AbiCRNP5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 18 Mar 2022 09:15:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38246 "EHLO
+        id S240970AbiCRVAd (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 18 Mar 2022 17:00:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34016 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234686AbiCRNP4 (ORCPT
+        with ESMTP id S239610AbiCRVAb (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 18 Mar 2022 09:15:56 -0400
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2046.outbound.protection.outlook.com [40.107.237.46])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF40C2921CC;
-        Fri, 18 Mar 2022 06:14:38 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=XKak55sW2rAJmX+tTEjejSFIsCLLN7Rtnj+ndhxeUXc0dV9aFRZaLPpAmC6k9B+9tZ98FUjqUMV/0BTOJVPZioRbgpQFl/P3J7cHLtdsZOP46h6IOnZWrWV7vTYHft4CpUYZ3ulPFsV1afUsLteFxqsoEMiKkhyk85JWkXPIQsXldQuOZ48KtU4qpvrsENl/nmGLBBe6ZiCankPzIrp6cfhVhS2RSpigAavxN0StTajPZKMgnMJegvBODhiNwBKb+LtlDje3WcCv9XXn6kjKOm5GkK1LbeK2nnnwAc0HT+9kM40IGV/QOo76d8ntctBsKrTKZxyFN+cu1FTPXJT9nw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=7cJmtEnZJiuBoRiObfxbH+RE77wKx76yDylJ701Ac2k=;
- b=Fajto62Y8l49fplhQBjAo5GFq4lMRwb+tf2vfGzbUAYJi7A/5fWwdDAy4yQNSaLx/b314rsqlxdgZPOaK6E6Q8T5Fpz63L+G2hqkbrqSbs3EInsr4nD+qI7liTjFB0tSuBmvrihr7eyjN+9D/E4tw18hxP906N4N8wJPy4WNiJ0EzyizN0q+T59cscp69GnafXesWBO7JUuIFLshehSVcTHeGWqnWX8fxOP+Fc8mFNtJ+GIkH/x0Hntlqrc5B6VRFV2oPMdNQ53I2kvS22/NZT6hPvnu6LgoElwtd1sRw9JShmC1D0bjxw0AYHju+YZCNCw4PiAheT29Qq0A6gN7Rg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 12.22.5.236) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com; dmarc=pass
- (p=reject sp=reject pct=100) action=none header.from=nvidia.com; dkim=none
- (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7cJmtEnZJiuBoRiObfxbH+RE77wKx76yDylJ701Ac2k=;
- b=c8lCxbLIS6ZMuzh26opEl9RE7r8HWRGg7gbz9tbwtcGG/y8z47Q8zJgou5N/t8Qt+aMb/vFV/8CkqGRFteo986IlRy1MCZVQioCyII0XniAEAcuc6j1n8Qa0KAfKSkuOzzv2D+avUENjYcBn+lrH/UAnb6W2DyedsMycffzoWFCQmn4XL5eaetkJms900kGitteXloOgO21uj/y5WR226J7JKiXjIj/iFuNY5onsPsZDDQXnFiiJLDYk0jVx44fTCYqcLImwFQrqOQ9/XHLHHdlh0HsBMpTr6mxNB/FfbXqrxQUygfmbcm/Rwr0rLJNPddtrBGoSLi/YHKECY8w71w==
-Received: from DM5PR15CA0039.namprd15.prod.outlook.com (2603:10b6:4:4b::25) by
- BN6PR12MB1747.namprd12.prod.outlook.com (2603:10b6:404:106::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5081.15; Fri, 18 Mar
- 2022 13:14:37 +0000
-Received: from DM6NAM11FT036.eop-nam11.prod.protection.outlook.com
- (2603:10b6:4:4b:cafe::81) by DM5PR15CA0039.outlook.office365.com
- (2603:10b6:4:4b::25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5081.18 via Frontend
- Transport; Fri, 18 Mar 2022 13:14:36 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.236)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 12.22.5.236 as permitted sender) receiver=protection.outlook.com;
- client-ip=12.22.5.236; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (12.22.5.236) by
- DM6NAM11FT036.mail.protection.outlook.com (10.13.172.64) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.5081.14 via Frontend Transport; Fri, 18 Mar 2022 13:14:35 +0000
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by DRHQMAIL109.nvidia.com
- (10.27.9.19) with Microsoft SMTP Server (TLS) id 15.0.1497.32; Fri, 18 Mar
- 2022 13:14:34 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail205.nvidia.com
- (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.22; Fri, 18 Mar
- 2022 06:14:33 -0700
-Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.22 via Frontend
- Transport; Fri, 18 Mar 2022 06:14:33 -0700
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <stable@vger.kernel.org>, <torvalds@linux-foundation.org>,
-        <akpm@linux-foundation.org>, <linux@roeck-us.net>,
-        <shuah@kernel.org>, <patches@kernelci.org>,
-        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
-        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
-        <sudipm.mukherjee@gmail.com>, <slade@sladewatkins.com>,
-        <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 5.16 00/28] 5.16.16-rc1 review
-In-Reply-To: <20220317124526.768423926@linuxfoundation.org>
-References: <20220317124526.768423926@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        Fri, 18 Mar 2022 17:00:31 -0400
+Received: from mail-io1-xd29.google.com (mail-io1-xd29.google.com [IPv6:2607:f8b0:4864:20::d29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1AE71B3F6D
+        for <linux-tegra@vger.kernel.org>; Fri, 18 Mar 2022 13:59:09 -0700 (PDT)
+Received: by mail-io1-xd29.google.com with SMTP id w7so10667365ioj.5
+        for <linux-tegra@vger.kernel.org>; Fri, 18 Mar 2022 13:59:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=oNAPpR+5qx5bHO8wJ1SIgWig3LUKuwuqLo641jvFAak=;
+        b=R3B03hXdzmRL4FMHavxss76+tb9Q0Hy78NbdGoHIgmWRsuIfciGr2JWywHMf/Kpkhf
+         QniqntLtfhiE8E3Wo0oxTFcS1KWerJtG5tNgnrk3j2xUiX43wMMg+/mjp1wKd5A4aRIu
+         ErIGjgvdava6sQlmLmDCO8Qr2P9RfzXvczFjE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=oNAPpR+5qx5bHO8wJ1SIgWig3LUKuwuqLo641jvFAak=;
+        b=Unj+thl+AQhGBc5K/gPEtBMBgXpNC/zvA/IcTnzsPjiiu9IrvziePMHN68PhsE8OTw
+         YVfJFA7XWrWMovsu9lvybNBSYZwE7TAsnorvMUNRf0pCGUcoQOsjgckTOQf+sN1+Sp9o
+         zdz+dhb8+p/PRGWMU7SK4vPJBV6XAHRa2CS4HlmJzHuBlvvwo3MTdPo66WwNO1+6lMsP
+         1RPEXnLjFjIqfJeioFkTw+lwpIh8cZHfr+DNO8cDagXECxs+gDj44Dre1zkbNCfYiFV1
+         ETCKZ3uXLr3yXsVcYXtyCzi6NR9HYEpBNCExhk7ISJEasazr2WthGfXo2trL9jpFobfD
+         Q58g==
+X-Gm-Message-State: AOAM533ORNVK+pUdDmsBJF3LVaFq3h5qdqJ36eSerlo/cXFyMdYskbIy
+        LYMyU7iL1ZPfwc4IoTpQ/mUvzQ==
+X-Google-Smtp-Source: ABdhPJw+g6qtXnLujFKVRv55AGvVhZcbGPndogV4eznqetPdpLwXYueCN6beIFsP8OoV/l235xaSaw==
+X-Received: by 2002:a5d:9542:0:b0:648:f92b:7bc6 with SMTP id a2-20020a5d9542000000b00648f92b7bc6mr5223132ios.73.1647637149068;
+        Fri, 18 Mar 2022 13:59:09 -0700 (PDT)
+Received: from [192.168.1.128] ([71.205.29.0])
+        by smtp.gmail.com with ESMTPSA id d14-20020a056602328e00b006494aa126c2sm3528385ioz.11.2022.03.18.13.59.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 18 Mar 2022 13:59:08 -0700 (PDT)
+Subject: Re: [PATCH 64/64] media: Kconfig: cleanup VIDEO_DEV dependencies
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc:     Fabio Estevam <festevam@gmail.com>,
+        Felipe Balbi <balbi@kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Giulio Benetti <giulio.benetti@benettiengineering.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Heungjun Kim <riverful.kim@samsung.com>,
+        Houlong Wei <houlong.wei@mediatek.com>,
+        Hugues Fruchet <hugues.fruchet@foss.st.com>,
+        Hyun Kwon <hyun.kwon@xilinx.com>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Jacob Chen <jacob-chen@iotwrt.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Jean-Christophe Trotin <jean-christophe.trotin@foss.st.com>,
+        Jeff LaBundy <jeff@labundy.com>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Joe Hung <joe_hung@ilitek.com>, Joel Stanley <joel@jms.id.au>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Marek Vasut <marex@denx.de>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Martina Krasteva <martinax.krasteva@intel.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Michael Grzeschik <m.grzeschik@pengutronix.de>,
+        Michael Tretter <m.tretter@pengutronix.de>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Mike Isely <isely@pobox.com>, Ming Qian <ming.qian@nxp.com>,
+        Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
+        Mirela Rabulea <mirela.rabulea@nxp.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Nicolas Saenz Julienne <nsaenz@kernel.org>,
+        Olivier Lorin <o.lorin@laposte.net>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Pavel Machek <pavel@ucw.cz>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Ray Jui <rjui@broadcom.com>,
+        Rick Chang <rick.chang@mediatek.com>,
+        Robert Foss <robert.foss@linaro.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Scott Branden <sbranden@broadcom.com>,
+        Sean Young <sean@mess.org>, Shawn Guo <shawnguo@kernel.org>,
+        Shawn Tu <shawnx.tu@intel.com>,
+        Shijie Qin <shijie.qin@nxp.com>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Steve Longerbeam <slongerbeam@gmail.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Takashi Iwai <tiwai@suse.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Tianshu Qiu <tian.shu.qiu@intel.com>,
+        Tiffany Lin <tiffany.lin@mediatek.com>,
+        Todor Tomov <todor.too@gmail.com>,
+        Vincent Knecht <vincent.knecht@mailoo.org>,
+        Yong Deng <yong.deng@magewell.com>,
+        Yong Zhi <yong.zhi@intel.com>, Zhou Peng <eagle.zhou@nxp.com>,
+        alsa-devel@alsa-project.org, bcm-kernel-feedback-list@broadcom.com,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-rockchip@lists.infradead.org,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-staging@lists.linux.dev,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
+        linux-usb@vger.kernel.org, mjpeg-users@lists.sourceforge.net,
+        openbmc@lists.ozlabs.org, Shuah Khan <skhan@linuxfoundation.org>
+References: <cover.1647242578.git.mchehab@kernel.org>
+ <decd26e90adc5c16470e4f738810f22fe6478b27.1647242579.git.mchehab@kernel.org>
+From:   Shuah Khan <skhan@linuxfoundation.org>
+Message-ID: <9e02d88a-3344-8d91-c652-72cb989506de@linuxfoundation.org>
+Date:   Fri, 18 Mar 2022 14:59:05 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 MIME-Version: 1.0
-Message-ID: <e745d908-46a2-46d0-a8a4-e6d6c69c18a1@rnnvmail201.nvidia.com>
-Date:   Fri, 18 Mar 2022 06:14:33 -0700
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 682f2012-3f40-47c2-87d5-08da08e13fc7
-X-MS-TrafficTypeDiagnostic: BN6PR12MB1747:EE_
-X-Microsoft-Antispam-PRVS: <BN6PR12MB1747611324B8F8377ADAB574D9139@BN6PR12MB1747.namprd12.prod.outlook.com>
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: aWf5cMwQF1BQla29mKNkwPlaYPGcxh9ejeRwZYHyMTswZAMndOe+1Traxu7yM3NGx2fOEu7C+8n43mRAWNmpZ94xFV2sHdJXVP3wlWWvxKy2Te+M1+lRwtFNCeKBRaO+DrrllNfFHdatlTGXZahh5bMaDcxIgIPV9lgtVNYbbEzVHpz2gYq278xsgaVlbxl6+N5e/fT0fwGoaVTU1PS9Q+/CaIn0Ts8Pzhw+yv9BjLg7Fame4QQsgXMgIE6f4tI7ksJa4sjckdwKOTwTIk2zynmb7gJRSJhaQ8zOZ3KjObsCerw24xjO20FY0bk+lhBVqYr2faahiEYO54aCiD8SaFH97bfZWRAXgaZ9s4vfXxVlrbuKX4KS1Cej/NUT8svBV/acDJfmu7RYACatTuuiAkUwRj4LM+kf8eKq/9N3+SPt1LOguFti3qYfTN8z/JMa8lEnGwIB1kU14oCdBLAJbewWtjKXNVxeWbl09ajNUe+QGYaqEUGpJjhD1FNgkxQAM5dSmtDTJOxI7EZsav3wlEvBcmtU1+ARYlxRoYE8zoD9Qkv3CR9rlKArtUbq+WiJMfsFbFjPgLqm36lt/4pY7GQjjzrav0XKZMNJV+k6tR40bqjax9yumGbzKEKftEsA1xMZYn97iCFQMFKy8ItuqZMeSaYZeZbi/6dIml9rW8ug+uJepjkBnwl16+Nl5BB3U9SF7ZHohuZ7RiJZQ/CsesepIi6cQDZcGyUjgYdfHmcNj+QklM88tcGRGYSorb8e1jc1idhfZj4oRfSEADDCP7xKNhpXx+3rfp/AgTu3TCM=
-X-Forefront-Antispam-Report: CIP:12.22.5.236;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:mail.nvidia.com;PTR:ErrorRetry;CAT:NONE;SFS:(13230001)(4636009)(36840700001)(40470700004)(46966006)(47076005)(508600001)(36860700001)(426003)(82310400004)(186003)(26005)(336012)(966005)(31696002)(356005)(2906002)(316002)(31686004)(86362001)(40460700003)(8936002)(7416002)(5660300002)(4326008)(8676002)(70206006)(81166007)(70586007)(6916009)(54906003)(36900700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Mar 2022 13:14:35.5957
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 682f2012-3f40-47c2-87d5-08da08e13fc7
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.236];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT036.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR12MB1747
+In-Reply-To: <decd26e90adc5c16470e4f738810f22fe6478b27.1647242579.git.mchehab@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, 17 Mar 2022 13:45:51 +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.16.16 release.
-> There are 28 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On 3/14/22 1:55 AM, Mauro Carvalho Chehab wrote:
+> media Kconfig has two entries associated to V4L API:
+> VIDEO_DEV and VIDEO_V4L2.
 > 
-> Responses should be made by Sat, 19 Mar 2022 12:45:16 +0000.
-> Anything received after that time might be too late.
+> On Kernel 2.6.x, there were two V4L APIs, each one with its own flag.
+> VIDEO_DEV were meant to:
+> 	1) enable Video4Linux and make its Kconfig options to appear;
+> 	2) it makes the Kernel build the V4L core.
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.16.16-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.16.y
-> and the diffstat can be found below.
+> while VIDEO_V4L2 where used to distinguish between drivers that
+> implement the newer API and drivers that implemented the former one.
 > 
-> thanks,
+> With time, such meaning changed, specially after the removal of
+> all V4L version 1 drivers.
 > 
-> greg k-h
+> At the current implementation, VIDEO_DEV only does (1): it enables
+> the media options related to V4L, that now has:
+> 
+> 	menu "Video4Linux options"
+> 		visible if VIDEO_DEV
+> 
+> 	source "drivers/media/v4l2-core/Kconfig"
+> 	endmenu
+> 
+> but it doesn't affect anymore the V4L core drivers.
+> 
+> The rationale is that the V4L2 core has a "soft" dependency
+> at the I2C bus, and now requires to select a number of other
+> Kconfig options:
+> 
+> 	config VIDEO_V4L2
+> 		tristate
+> 		depends on (I2C || I2C=n) && VIDEO_DEV
+> 		select RATIONAL
+> 		select VIDEOBUF2_V4L2 if VIDEOBUF2_CORE
+> 		default (I2C || I2C=n) && VIDEO_DEV
+> 
+> In the past, merging them would be tricky, but it seems that it is now
+> possible to merge those symbols, in order to simplify V4L dependencies.
+> 
+> Let's keep VIDEO_DEV, as this one is used on some make *defconfig
+> configurations.
+> 
+> Suggested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Signed-off-by: Mauro Carvalho Chehab <mchehab@kernel.org>
+> ---
+> 
 
-All tests passing for Tegra ...
+>   drivers/media/test-drivers/vicodec/Kconfig    |   2 +-
+>   drivers/media/test-drivers/vimc/Kconfig       |   2 +-
+>   drivers/media/test-drivers/vivid/Kconfig      |   2 +-
+>
 
-Test results for stable-v5.16:
-    10 builds:	10 pass, 0 fail
-    28 boots:	28 pass, 0 fail
-    122 tests:	122 pass, 0 fail
+For vimc change: (trimmed the recipient list to send response)
 
-Linux version:	5.16.16-rc1-g106ac438092e
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
-                tegra20-ventana, tegra210-p2371-2180,
-                tegra210-p3450-0000, tegra30-cardhu-a04
+Acked-by: Shuah Khan <skhan@linuxfoundation.org>
 
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
+thanks,
+-- Shuah
 
-Jon
+
+
