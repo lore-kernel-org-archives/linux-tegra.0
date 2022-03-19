@@ -2,84 +2,169 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21111C433F5
-	for <linux-tegra@archiver.kernel.org>; Sat, 19 Mar 2022 04:44:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A82CBC433F5
+	for <linux-tegra@archiver.kernel.org>; Sat, 19 Mar 2022 15:42:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241916AbiCSEpq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 19 Mar 2022 00:45:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35038 "EHLO
+        id S243511AbiCSPnx (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 19 Mar 2022 11:43:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38292 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241900AbiCSEpq (ORCPT
+        with ESMTP id S243503AbiCSPnx (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sat, 19 Mar 2022 00:45:46 -0400
-Received: from mail-pg1-x531.google.com (mail-pg1-x531.google.com [IPv6:2607:f8b0:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F9282FE6F;
-        Fri, 18 Mar 2022 21:44:26 -0700 (PDT)
-Received: by mail-pg1-x531.google.com with SMTP id t187so6424734pgb.1;
-        Fri, 18 Mar 2022 21:44:26 -0700 (PDT)
+        Sat, 19 Mar 2022 11:43:53 -0400
+Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3248D393C2;
+        Sat, 19 Mar 2022 08:42:32 -0700 (PDT)
+Received: by mail-lf1-x12c.google.com with SMTP id p15so7680346lfk.8;
+        Sat, 19 Mar 2022 08:42:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id;
-        bh=ePtpQVr2/xAxWdpNXmu4SCKmYKeBJUhhz3S5bqyfLKU=;
-        b=EG1wDIRdERFcS6rtxwyxLTBB6svh5CPPWQdMfQI+XSxBmUMIKmRYMq/zH5/4vLa+gx
-         DI1Pn6b400nSXUuDiOnrisn9P7BXv7NG6SU7vRbQzHidcu2xbsK14JrkT9JgqnG7h5Av
-         enYIgTcxTdJIqQDQPLtsFze/RIbTs2cOlvHLx4A+y5wXDROiixLNoiK0AnupGWpndGqo
-         LNGtnQlLfjcAcgtlnlkpz/qThYhOKB3JJJ5HVht/Gtl4ffLOeRwQwd65Kcmtp4eZRGEX
-         OuBlI88RokcQCshQ+pfXivIrz2UEzD73qzyHQfqdAFHGskXWoZr/oE5vaycvMXH2j78f
-         mAHA==
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=6ZeJmCk5mE5R2RccHBVmn2Ty11i285jE8gWuCxpKHAM=;
+        b=etnZaXT+cCQoaCs9sRpvFsEQsnbmphOmzCc0EYa/hQkW13cIbLsWLaVQ57hym7EiyD
+         9JfiyvKzrypHw7e9vTIhinDAIQ4u4GGZatRHqCRWWFUAeftkvXDgWT5d36ThYKzacbZo
+         lnyn4lBODMn7drMi/lCHvy8oEMMNYpNvsGeiPKpleGOF3zSi0W90qjW4+KrDl+uw3Yt+
+         na/w/sLZXUzMB6i+EupVNmNLk5MKL7H8LvBD9VfxjjV4MKRnC1zpZab0gSWGhDRWMn9u
+         7/wy0FWwhVtCZDzh5BcCnDnc7B+27a6038INslx/k9BW0vk+ai5HNCvAvA2upouhX2OQ
+         6U9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=ePtpQVr2/xAxWdpNXmu4SCKmYKeBJUhhz3S5bqyfLKU=;
-        b=IGSgGYapdhe+JCkifNT/ERMx4pCWPUovbDaAcorE3Tnd1DvMILkndsDI9GvXOdS2mb
-         luInlvey24P9zetM1AgJqXz2GX+Okui61ro1z6lyDveRudFrqqCI6o5jP7B1vB+6M09y
-         Ysma/KFklnvR3LEv+CTHkTizqIcZbsaXUBqsS9hvk+B31V3nT926FW/4iJfzPyVxazGj
-         iptXVEtwJdpf1HhbCvlA747BaiF5WtZduOxEh9caZc5S/mgkHhaI0OsMwIOyl0MN+u5Z
-         Vu560eIpqRynd0OHB7bj1XAWTecQE74ZCPa66JF4mD0dLu6aZLVJ8eKvIARkUcbvcB1e
-         S92Q==
-X-Gm-Message-State: AOAM531qADoPtaUl+jzPaGqfCJl1GS++N6R53le5agkDIEVDRAH/gj4y
-        eW7ZV2jtqqQg/PM+skW9W2lGwPLqLL4YqQ==
-X-Google-Smtp-Source: ABdhPJy7w74S5F0bIJTpM5fYznOxplyhk67otI6Uy9j8OyryERB8URYw+DyD067E3TaCC+XrvuDLKw==
-X-Received: by 2002:a63:710f:0:b0:378:c35a:3c3 with SMTP id m15-20020a63710f000000b00378c35a03c3mr10377084pgc.535.1647665065783;
-        Fri, 18 Mar 2022 21:44:25 -0700 (PDT)
-Received: from ubuntu.huawei.com ([119.3.119.18])
-        by smtp.googlemail.com with ESMTPSA id nu4-20020a17090b1b0400b001bf497a9324sm14301019pjb.31.2022.03.18.21.44.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Mar 2022 21:44:25 -0700 (PDT)
-From:   Xiaomeng Tong <xiam0nd.tong@gmail.com>
-To:     jassisinghbrar@gmail.com
-Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        Xiaomeng Tong <xiam0nd.tong@gmail.com>
-Subject: [PATCH] mailbox: remove an unneeded NULL check on list iterator
-Date:   Sat, 19 Mar 2022 12:44:16 +0800
-Message-Id: <20220319044416.24242-1-xiam0nd.tong@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=6ZeJmCk5mE5R2RccHBVmn2Ty11i285jE8gWuCxpKHAM=;
+        b=Fmp9O4QdkC5s+TXjVAcDc1PjOoyyKSGoyxYxVXrKpSN0Ql2tgtYFkWTdebFil/2YjL
+         FTa3u9hvIOuVt1hPeVpN0b1s/oWxnDNdkM4f+d0609AOBjBfxoFGKbozmMnOTKYLeVtS
+         s9lWa64sTLKFFwFQW/TO2/utLgriU16oZluxcq0CHDEATycx2vu/KIlMD3hByg8On+hg
+         1QYhXE1OuPv8NuaPHROzvC/D2xDwzVDYqKvIjSY+dbG7fFEoPu6dsb4pfaWlFzqFpsgD
+         xwmWj8+clJB9sdnZ9wT6kHGsaL5QYNBkBZcNfgWBD6ok7Wjtl4H+IOYA5pRb530xGFyS
+         1kPg==
+X-Gm-Message-State: AOAM530rRY/CMqMeS6dXzrOwr/y/+/+ylPSUe/MUd5M+kKvNG0oXKqKB
+        AT+gyObwhaQXKxQN1Q7++Js=
+X-Google-Smtp-Source: ABdhPJztR0oMkcNXDn7kJhzWOx2ynSO0TwuQ+yCpxHJ0VRIBa9+CowgcpLYhfc2vkAnsXyKfYK/mJg==
+X-Received: by 2002:ac2:4825:0:b0:443:b112:e513 with SMTP id 5-20020ac24825000000b00443b112e513mr8936592lft.114.1647704550369;
+        Sat, 19 Mar 2022 08:42:30 -0700 (PDT)
+Received: from [192.168.2.145] (109-252-136-171.dynamic.spd-mgts.ru. [109.252.136.171])
+        by smtp.googlemail.com with ESMTPSA id b11-20020ac2410b000000b004457116a575sm1325583lfi.273.2022.03.19.08.42.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 19 Mar 2022 08:42:29 -0700 (PDT)
+Message-ID: <83bc4c12-13e3-d239-3845-a3541b1fbb2a@gmail.com>
+Date:   Sat, 19 Mar 2022 18:42:28 +0300
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [Patch v5 1/4] memory: tegra: Add memory controller channels
+ support
+Content-Language: en-US
+To:     Ashish Mhetre <amhetre@nvidia.com>,
+        krzysztof.kozlowski@canonical.com, robh+dt@kernel.org,
+        thierry.reding@gmail.com, jonathanh@nvidia.com,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Cc:     vdumpa@nvidia.com, Snikam@nvidia.com
+References: <20220316092525.4554-1-amhetre@nvidia.com>
+ <20220316092525.4554-2-amhetre@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+In-Reply-To: <20220316092525.4554-2-amhetre@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The list iterator is always non-NULL so it doesn't need to be checked.
-Thus just remove the unnecessary NULL check.
+16.03.2022 12:25, Ashish Mhetre пишет:
+> From tegra186 onwards, memory controller support multiple channels.
+> Add support for mapping address spaces of these channels.
+> Make sure that number of channels are as expected on each SOC.
+> During error interrupts from memory controller, appropriate registers
+> from these channels need to be accessed for logging error info.
+> 
+> Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
+> ---
+>  drivers/memory/tegra/mc.c       |  6 ++++
+>  drivers/memory/tegra/tegra186.c | 52 +++++++++++++++++++++++++++++++++
+>  drivers/memory/tegra/tegra194.c |  1 +
+>  drivers/memory/tegra/tegra234.c |  1 +
+>  include/soc/tegra/mc.h          |  7 +++++
+>  5 files changed, 67 insertions(+)
+> 
+> diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
+> index bf3abb6d8354..3cda1d9ad32a 100644
+> --- a/drivers/memory/tegra/mc.c
+> +++ b/drivers/memory/tegra/mc.c
+> @@ -749,6 +749,12 @@ static int tegra_mc_probe(struct platform_device *pdev)
+>  	if (IS_ERR(mc->regs))
+>  		return PTR_ERR(mc->regs);
+>  
+> +	if (mc->soc->ops && mc->soc->ops->map_regs) {
+> +		err = mc->soc->ops->map_regs(mc, pdev);
+> +		if (err < 0)
+> +			return err;
+> +	}
+> +
+>  	mc->debugfs.root = debugfs_create_dir("mc", NULL);
+>  
+>  	if (mc->soc->ops && mc->soc->ops->probe) {
+> diff --git a/drivers/memory/tegra/tegra186.c b/drivers/memory/tegra/tegra186.c
+> index 3d153881abc1..a8a45e6ff1f1 100644
+> --- a/drivers/memory/tegra/tegra186.c
+> +++ b/drivers/memory/tegra/tegra186.c
+> @@ -139,11 +139,62 @@ static int tegra186_mc_probe_device(struct tegra_mc *mc, struct device *dev)
+>  	return 0;
+>  }
+>  
+> +static int tegra186_mc_map_regs(struct tegra_mc *mc,
+> +				struct platform_device *pdev)
+> +{
+> +	struct device_node *np = pdev->dev.parent->of_node;
+> +	int num_dt_channels, reg_cells = 0;
+> +	struct resource *res;
+> +	int i, ret;
+> +	u32 val;
+> +
+> +	ret = of_property_read_u32(np, "#address-cells", &val);
+> +	if (ret) {
+> +		dev_err(&pdev->dev, "missing #address-cells property\n");
+> +		return ret;
+> +	}
+> +
+> +	reg_cells = val;
+> +
+> +	ret = of_property_read_u32(np, "#size-cells", &val);
+> +	if (ret) {
+> +		dev_err(&pdev->dev, "missing #size-cells property\n");
+> +		return ret;
+> +	}
+> +
+> +	reg_cells += val;
+> +
+> +	num_dt_channels = of_property_count_elems_of_size(pdev->dev.of_node, "reg",
+> +							  reg_cells * sizeof(u32));
+> +	/*
+> +	 * On tegra186 onwards, memory controller support multiple channels.
+> +	 * Apart from regular memory controller channels, there is one broadcast
+> +	 * channel and one for stream-id registers.
+> +	 */
+> +	if (num_dt_channels < mc->soc->num_channels + 2) {
+> +		dev_warn(&pdev->dev, "MC channels are missing, please update\n");
 
-Signed-off-by: Xiaomeng Tong <xiam0nd.tong@gmail.com>
----
- drivers/mailbox/tegra-hsp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Update what?
 
-diff --git a/drivers/mailbox/tegra-hsp.c b/drivers/mailbox/tegra-hsp.c
-index acd0675da681..64eaee089b03 100644
---- a/drivers/mailbox/tegra-hsp.c
-+++ b/drivers/mailbox/tegra-hsp.c
-@@ -799,7 +799,7 @@ static int __maybe_unused tegra_hsp_resume(struct device *dev)
- 	struct tegra_hsp_doorbell *db;
- 
- 	list_for_each_entry(db, &hsp->doorbells, list) {
--		if (db && db->channel.chan)
-+		if (db->channel.chan)
- 			tegra_hsp_doorbell_startup(db->channel.chan);
- 	}
- 
--- 
-2.17.1
+> +		return 0;
+> +	}
+> +
+> +	mc->mcb_regs = devm_platform_get_and_ioremap_resource(pdev, 1, &res);
 
+Can't we name each reg bank individually in the DT and then use
+devm_platform_ioremap_resource_byname()?
+
+...
+> @@ -212,6 +217,8 @@ struct tegra_mc {
+>  	struct tegra_smmu *smmu;
+>  	struct gart_device *gart;
+>  	void __iomem *regs;
+> +	void __iomem *mcb_regs;
+> +	void __iomem *mc_regs[MC_MAX_CHANNELS];
+
+s/mc_regs/ch_regs/ ?
