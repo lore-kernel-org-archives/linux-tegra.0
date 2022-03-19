@@ -2,86 +2,84 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C748C433EF
-	for <linux-tegra@archiver.kernel.org>; Sat, 19 Mar 2022 02:38:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21111C433F5
+	for <linux-tegra@archiver.kernel.org>; Sat, 19 Mar 2022 04:44:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231868AbiCSCkA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 18 Mar 2022 22:40:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37148 "EHLO
+        id S241916AbiCSEpq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 19 Mar 2022 00:45:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35038 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233889AbiCSCkA (ORCPT
+        with ESMTP id S241900AbiCSEpq (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 18 Mar 2022 22:40:00 -0400
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13558E29C3;
-        Fri, 18 Mar 2022 19:38:40 -0700 (PDT)
-Received: from kwepemi100023.china.huawei.com (unknown [172.30.72.54])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4KL4l61sFnzCqjV;
-        Sat, 19 Mar 2022 10:36:34 +0800 (CST)
-Received: from kwepemm600014.china.huawei.com (7.193.23.54) by
- kwepemi100023.china.huawei.com (7.221.188.59) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Sat, 19 Mar 2022 10:38:37 +0800
-Received: from huawei.com (10.90.53.225) by kwepemm600014.china.huawei.com
- (7.193.23.54) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2308.21; Sat, 19 Mar
- 2022 10:38:37 +0800
-From:   Zhang Qilong <zhangqilong3@huawei.com>
-To:     <gregkh@linuxfoundation.org>, <mathias.nyman@intel.com>,
-        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>
-CC:     <linux-usb@vger.kernel.org>, <linux-tegra@vger.kernel.org>
-Subject: [PATCH -next v2] usb: xhci: tegra:Fix PM usage reference leak of tegra_xusb_unpowergate_partitions
-Date:   Sat, 19 Mar 2022 10:38:22 +0800
-Message-ID: <20220319023822.145641-1-zhangqilong3@huawei.com>
-X-Mailer: git-send-email 2.26.0.106.g9fadedd
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.90.53.225]
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemm600014.china.huawei.com (7.193.23.54)
-X-CFilter-Loop: Reflected
+        Sat, 19 Mar 2022 00:45:46 -0400
+Received: from mail-pg1-x531.google.com (mail-pg1-x531.google.com [IPv6:2607:f8b0:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F9282FE6F;
+        Fri, 18 Mar 2022 21:44:26 -0700 (PDT)
+Received: by mail-pg1-x531.google.com with SMTP id t187so6424734pgb.1;
+        Fri, 18 Mar 2022 21:44:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id;
+        bh=ePtpQVr2/xAxWdpNXmu4SCKmYKeBJUhhz3S5bqyfLKU=;
+        b=EG1wDIRdERFcS6rtxwyxLTBB6svh5CPPWQdMfQI+XSxBmUMIKmRYMq/zH5/4vLa+gx
+         DI1Pn6b400nSXUuDiOnrisn9P7BXv7NG6SU7vRbQzHidcu2xbsK14JrkT9JgqnG7h5Av
+         enYIgTcxTdJIqQDQPLtsFze/RIbTs2cOlvHLx4A+y5wXDROiixLNoiK0AnupGWpndGqo
+         LNGtnQlLfjcAcgtlnlkpz/qThYhOKB3JJJ5HVht/Gtl4ffLOeRwQwd65Kcmtp4eZRGEX
+         OuBlI88RokcQCshQ+pfXivIrz2UEzD73qzyHQfqdAFHGskXWoZr/oE5vaycvMXH2j78f
+         mAHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=ePtpQVr2/xAxWdpNXmu4SCKmYKeBJUhhz3S5bqyfLKU=;
+        b=IGSgGYapdhe+JCkifNT/ERMx4pCWPUovbDaAcorE3Tnd1DvMILkndsDI9GvXOdS2mb
+         luInlvey24P9zetM1AgJqXz2GX+Okui61ro1z6lyDveRudFrqqCI6o5jP7B1vB+6M09y
+         Ysma/KFklnvR3LEv+CTHkTizqIcZbsaXUBqsS9hvk+B31V3nT926FW/4iJfzPyVxazGj
+         iptXVEtwJdpf1HhbCvlA747BaiF5WtZduOxEh9caZc5S/mgkHhaI0OsMwIOyl0MN+u5Z
+         Vu560eIpqRynd0OHB7bj1XAWTecQE74ZCPa66JF4mD0dLu6aZLVJ8eKvIARkUcbvcB1e
+         S92Q==
+X-Gm-Message-State: AOAM531qADoPtaUl+jzPaGqfCJl1GS++N6R53le5agkDIEVDRAH/gj4y
+        eW7ZV2jtqqQg/PM+skW9W2lGwPLqLL4YqQ==
+X-Google-Smtp-Source: ABdhPJy7w74S5F0bIJTpM5fYznOxplyhk67otI6Uy9j8OyryERB8URYw+DyD067E3TaCC+XrvuDLKw==
+X-Received: by 2002:a63:710f:0:b0:378:c35a:3c3 with SMTP id m15-20020a63710f000000b00378c35a03c3mr10377084pgc.535.1647665065783;
+        Fri, 18 Mar 2022 21:44:25 -0700 (PDT)
+Received: from ubuntu.huawei.com ([119.3.119.18])
+        by smtp.googlemail.com with ESMTPSA id nu4-20020a17090b1b0400b001bf497a9324sm14301019pjb.31.2022.03.18.21.44.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Mar 2022 21:44:25 -0700 (PDT)
+From:   Xiaomeng Tong <xiam0nd.tong@gmail.com>
+To:     jassisinghbrar@gmail.com
+Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        Xiaomeng Tong <xiam0nd.tong@gmail.com>
+Subject: [PATCH] mailbox: remove an unneeded NULL check on list iterator
+Date:   Sat, 19 Mar 2022 12:44:16 +0800
+Message-Id: <20220319044416.24242-1-xiam0nd.tong@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: zhangqilong <zhangqilong3@huawei.com>
+The list iterator is always non-NULL so it doesn't need to be checked.
+Thus just remove the unnecessary NULL check.
 
-pm_runtime_get_sync will increment pm usage counter
-even it failed. Forgetting to putting operation will
-result in reference leak here. We fix it by replacing
-it with pm_runtime_resume_and_get to keep usage counter
-balanced.
-
-Fixes:41a7426d25fa3 ("usb: xhci: tegra: Unlink power domain devices")
-Signed-off-by: Zhang Qilong <zhangqilong3@huawei.com>
+Signed-off-by: Xiaomeng Tong <xiam0nd.tong@gmail.com>
 ---
-v2:
-- Fix commit id
----
- drivers/usb/host/xhci-tegra.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/mailbox/tegra-hsp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
-index c8af2cd2216d..996958a6565c 100644
---- a/drivers/usb/host/xhci-tegra.c
-+++ b/drivers/usb/host/xhci-tegra.c
-@@ -1034,13 +1034,13 @@ static int tegra_xusb_unpowergate_partitions(struct tegra_xusb *tegra)
- 	int rc;
+diff --git a/drivers/mailbox/tegra-hsp.c b/drivers/mailbox/tegra-hsp.c
+index acd0675da681..64eaee089b03 100644
+--- a/drivers/mailbox/tegra-hsp.c
++++ b/drivers/mailbox/tegra-hsp.c
+@@ -799,7 +799,7 @@ static int __maybe_unused tegra_hsp_resume(struct device *dev)
+ 	struct tegra_hsp_doorbell *db;
  
- 	if (tegra->use_genpd) {
--		rc = pm_runtime_get_sync(tegra->genpd_dev_ss);
-+		rc = pm_runtime_resume_and_get(tegra->genpd_dev_ss);
- 		if (rc < 0) {
- 			dev_err(dev, "failed to enable XUSB SS partition\n");
- 			return rc;
- 		}
+ 	list_for_each_entry(db, &hsp->doorbells, list) {
+-		if (db && db->channel.chan)
++		if (db->channel.chan)
+ 			tegra_hsp_doorbell_startup(db->channel.chan);
+ 	}
  
--		rc = pm_runtime_get_sync(tegra->genpd_dev_host);
-+		rc = pm_runtime_resume_and_get(tegra->genpd_dev_host);
- 		if (rc < 0) {
- 			dev_err(dev, "failed to enable XUSB Host partition\n");
- 			pm_runtime_put_sync(tegra->genpd_dev_ss);
 -- 
-2.31.1
+2.17.1
 
