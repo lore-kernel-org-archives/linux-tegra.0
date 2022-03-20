@@ -2,88 +2,143 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A43EBC433EF
-	for <linux-tegra@archiver.kernel.org>; Sun, 20 Mar 2022 02:13:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC12DC433EF
+	for <linux-tegra@archiver.kernel.org>; Sun, 20 Mar 2022 12:32:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239466AbiCTCPB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 19 Mar 2022 22:15:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56924 "EHLO
+        id S245074AbiCTMdW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 20 Mar 2022 08:33:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44188 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234519AbiCTCO7 (ORCPT
+        with ESMTP id S238798AbiCTMdV (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sat, 19 Mar 2022 22:14:59 -0400
-Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A77B813D07;
-        Sat, 19 Mar 2022 19:13:37 -0700 (PDT)
-Received: by mail-io1-f45.google.com with SMTP id b16so13398723ioz.3;
-        Sat, 19 Mar 2022 19:13:37 -0700 (PDT)
+        Sun, 20 Mar 2022 08:33:21 -0400
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A69C0129261;
+        Sun, 20 Mar 2022 05:31:58 -0700 (PDT)
+Received: by mail-ej1-f54.google.com with SMTP id qa43so24969627ejc.12;
+        Sun, 20 Mar 2022 05:31:58 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
-         :message-id;
-        bh=UF0SVjvxkvLMkbZAod4g1NcoKI8o6ZW/ztSqINDD0q4=;
-        b=ZKMlN2GU3jJR1H89yyTJ6sqQrzN53DDvgY3CPDh5WdjV0pb8RepkZMrlVmLTm8Yp+T
-         Q/yvTL064+4oyP/rR5TyJWn1DiRpykJaS7tl4TaTYCxvqzQdDRAnwhscXX+3cV+5B4Do
-         QtfrI4qNFYAVR613PcdXUkwnuQHv44bgDMXz6Pb5a3ytx5Eas7sxzc9NNLcRX1NRsn+f
-         d3swGX729eB09tKw4cyNgXEPwWneainm6n1v37tZ42dukJ7XA9RuvyPJadSSHlP/5FE3
-         AjmTFQ8J+RIliswKmt+XhOeOqhATndcyEkMg9suYO5cXglZ8Il4nG7+v28s9xMTYQ4N7
-         vqGQ==
-X-Gm-Message-State: AOAM531+bPMiqXF9VyWxes34FyJwxO1B6q7RYnTmCZ9k0FYwGYOIdjBp
-        vK+O/3S7a/NYGHOdudq1/Q==
-X-Google-Smtp-Source: ABdhPJwU2UMo2D/EvMgpqw90b/mGuw0WecnJreqQYWqeR/rv2y/4GyVZvigkx7FKlaHcaQn9Q9IgfA==
-X-Received: by 2002:a05:6638:1249:b0:321:2e10:c276 with SMTP id o9-20020a056638124900b003212e10c276mr1754149jas.304.1647742416902;
-        Sat, 19 Mar 2022 19:13:36 -0700 (PDT)
-Received: from robh.at.kernel.org ([64.188.179.253])
-        by smtp.gmail.com with ESMTPSA id a3-20020a5ec303000000b006496b4dd21csm2735762iok.5.2022.03.19.19.13.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 19 Mar 2022 19:13:35 -0700 (PDT)
-Received: (nullmailer pid 2990514 invoked by uid 1000);
-        Sun, 20 Mar 2022 02:13:33 -0000
-From:   Rob Herring <robh@kernel.org>
-To:     Ashish Mhetre <amhetre@nvidia.com>
-Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com,
-        linux-tegra@vger.kernel.org, robh+dt@kernel.org, digetx@gmail.com,
-        linux-kernel@vger.kernel.org, krzysztof.kozlowski@canonical.com,
-        vdumpa@nvidia.com, Snikam@nvidia.com, devicetree@vger.kernel.org
-In-Reply-To: <20220316092525.4554-4-amhetre@nvidia.com>
-References: <20220316092525.4554-1-amhetre@nvidia.com> <20220316092525.4554-4-amhetre@nvidia.com>
-Subject: Re: [Patch v5 3/4] dt-bindings: memory: Update reg maxitems for tegra186
-Date:   Sat, 19 Mar 2022 20:13:33 -0600
-Message-Id: <1647742413.932927.2990513.nullmailer@robh.at.kernel.org>
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=BFYdZiXw/eFAD7943y4ojts/SbsmJ5s3mAERW9ZqUmQ=;
+        b=QZLd442qQphlgnccaXawAAEP1mfGMogBwq+y+ZcMlJPeRDOCwgSNOT24oCgyX2OYOg
+         tVXplIIzz0ZuYOuF7k1lUwHmCdKtRi5Ya3l+iH+V8CPTjaSUT7rEgD0bEVIMTUnxZVWv
+         u2ZGoDFMDVSiCNTCW99tPW+VUzAy/VMNtH6KhMrKshF5AV1KHqebKn7pDA00hXOV+NMX
+         47E1m0eSrwsIv5kcmFbAdbey5UZ/DMOKqdAtG0vgVHb8CnocFbLQrJSxLFz1ytqF/pRb
+         8q6ing/uD+DrqqzLutKvxwvvOddIbII3UVQE791KFW/qr0kvR8TVuo/ZmN78hN4PEnbz
+         +LFg==
+X-Gm-Message-State: AOAM530oj91FnmLm4SsmRMK5b2UujLJUmA5KjqVEdHQrd9ylLCtWQaMQ
+        7oboyjNr/Iz0LrlwOOA68/Y=
+X-Google-Smtp-Source: ABdhPJzMwY0jdWTIGYQCaWFHvskjGM1PR9I4ncwINQ3+Tzx86M77tiIlPiHBh5BsD8pwZD30GVmQ6A==
+X-Received: by 2002:a17:907:86a3:b0:6da:870c:af44 with SMTP id qa35-20020a17090786a300b006da870caf44mr16234430ejc.445.1647779517155;
+        Sun, 20 Mar 2022 05:31:57 -0700 (PDT)
+Received: from [192.168.0.17] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
+        by smtp.googlemail.com with ESMTPSA id f6-20020a0564021e8600b00412ae7fda95sm6781002edf.44.2022.03.20.05.31.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 20 Mar 2022 05:31:56 -0700 (PDT)
+Message-ID: <81aa7be7-0bfa-05e6-624a-393e6810dc61@kernel.org>
+Date:   Sun, 20 Mar 2022 13:31:53 +0100
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [Patch v5 1/4] memory: tegra: Add memory controller channels
+ support
+Content-Language: en-US
+To:     Ashish Mhetre <amhetre@nvidia.com>, robh+dt@kernel.org,
+        thierry.reding@gmail.com, digetx@gmail.com, jonathanh@nvidia.com,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Cc:     vdumpa@nvidia.com, Snikam@nvidia.com
+References: <20220316092525.4554-1-amhetre@nvidia.com>
+ <20220316092525.4554-2-amhetre@nvidia.com>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+In-Reply-To: <20220316092525.4554-2-amhetre@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, 16 Mar 2022 14:55:24 +0530, Ashish Mhetre wrote:
+On 16/03/2022 10:25, Ashish Mhetre wrote:
+> From tegra186 onwards, memory controller support multiple channels.
+> Add support for mapping address spaces of these channels.
+> Make sure that number of channels are as expected on each SOC.
+> During error interrupts from memory controller, appropriate registers
+> from these channels need to be accessed for logging error info.
 > 
+> Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
+> ---
+>  drivers/memory/tegra/mc.c       |  6 ++++
+>  drivers/memory/tegra/tegra186.c | 52 +++++++++++++++++++++++++++++++++
+>  drivers/memory/tegra/tegra194.c |  1 +
+>  drivers/memory/tegra/tegra234.c |  1 +
+>  include/soc/tegra/mc.h          |  7 +++++
+>  5 files changed, 67 insertions(+)
+> 
+> diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
+> index bf3abb6d8354..3cda1d9ad32a 100644
+> --- a/drivers/memory/tegra/mc.c
+> +++ b/drivers/memory/tegra/mc.c
+> @@ -749,6 +749,12 @@ static int tegra_mc_probe(struct platform_device *pdev)
+>  	if (IS_ERR(mc->regs))
+>  		return PTR_ERR(mc->regs);
+>  
+> +	if (mc->soc->ops && mc->soc->ops->map_regs) {
+> +		err = mc->soc->ops->map_regs(mc, pdev);
+> +		if (err < 0)
+> +			return err;
+> +	}
+> +
+>  	mc->debugfs.root = debugfs_create_dir("mc", NULL);
+>  
+>  	if (mc->soc->ops && mc->soc->ops->probe) {
+> diff --git a/drivers/memory/tegra/tegra186.c b/drivers/memory/tegra/tegra186.c
+> index 3d153881abc1..a8a45e6ff1f1 100644
+> --- a/drivers/memory/tegra/tegra186.c
+> +++ b/drivers/memory/tegra/tegra186.c
+> @@ -139,11 +139,62 @@ static int tegra186_mc_probe_device(struct tegra_mc *mc, struct device *dev)
+>  	return 0;
+>  }
+>  
+> +static int tegra186_mc_map_regs(struct tegra_mc *mc,
+> +				struct platform_device *pdev)
+> +{
+> +	struct device_node *np = pdev->dev.parent->of_node;
+> +	int num_dt_channels, reg_cells = 0;
+> +	struct resource *res;
+> +	int i, ret;
+> +	u32 val;
+> +
+> +	ret = of_property_read_u32(np, "#address-cells", &val);
+> +	if (ret) {
+> +		dev_err(&pdev->dev, "missing #address-cells property\n");
+> +		return ret;
+> +	}
+> +
+> +	reg_cells = val;
+> +
+> +	ret = of_property_read_u32(np, "#size-cells", &val);
+> +	if (ret) {
+> +		dev_err(&pdev->dev, "missing #size-cells property\n");
+> +		return ret;
+> +	}
+> +
+> +	reg_cells += val;
+> +
+> +	num_dt_channels = of_property_count_elems_of_size(pdev->dev.of_node, "reg",
+> +							  reg_cells * sizeof(u32));
+> +	/*
+> +	 * On tegra186 onwards, memory controller support multiple channels.
+> +	 * Apart from regular memory controller channels, there is one broadcast
+> +	 * channel and one for stream-id registers.
+> +	 */
+> +	if (num_dt_channels < mc->soc->num_channels + 2) {
+> +		dev_warn(&pdev->dev, "MC channels are missing, please update\n");
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
+How did you address our previous comments about ABI break? I really do
+not see it.
 
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.example.dt.yaml: memory-controller@2c00000: reg: [[0, 46137344, 0, 720896]] is too short
-	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.example.dt.yaml: memory-controller@2c00000: external-memory-controller@2c60000:reg: [[0, 46137344, 0, 65536], [0, 46202880, 0, 65536], [0, 46268416, 0, 65536], [0, 46333952, 0, 65536], [0, 46399488, 0, 65536], [0, 46465024, 0, 65536]] is too long
-	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.example.dt.yaml: memory-controller@2c00000: external-memory-controller@2c60000:reg: [[0, 46137344, 0, 65536], [0, 46202880, 0, 65536], [0, 46268416, 0, 65536], [0, 46333952, 0, 65536], [0, 46399488, 0, 65536], [0, 46465024, 0, 65536]] is too long
-	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.example.dt.yaml: memory-controller@2c00000: reg: [[0, 46137344, 0, 720896]] is too short
-	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/patch/1606062
-
-This check can fail if there are any dependencies. The base for a patch
-series is generally the most recent rc1.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit.
-
+Best regards,
+Krzysztof
