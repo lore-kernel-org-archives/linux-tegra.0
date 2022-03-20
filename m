@@ -2,49 +2,69 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC12DC433EF
-	for <linux-tegra@archiver.kernel.org>; Sun, 20 Mar 2022 12:32:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 553E4C433EF
+	for <linux-tegra@archiver.kernel.org>; Sun, 20 Mar 2022 12:42:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245074AbiCTMdW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 20 Mar 2022 08:33:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44188 "EHLO
+        id S245090AbiCTMnr (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 20 Mar 2022 08:43:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55306 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238798AbiCTMdV (ORCPT
+        with ESMTP id S235927AbiCTMnr (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 20 Mar 2022 08:33:21 -0400
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A69C0129261;
-        Sun, 20 Mar 2022 05:31:58 -0700 (PDT)
-Received: by mail-ej1-f54.google.com with SMTP id qa43so24969627ejc.12;
-        Sun, 20 Mar 2022 05:31:58 -0700 (PDT)
+        Sun, 20 Mar 2022 08:43:47 -0400
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0C591A847B
+        for <linux-tegra@vger.kernel.org>; Sun, 20 Mar 2022 05:42:23 -0700 (PDT)
+Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com [209.85.208.71])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 563823F1FC
+        for <linux-tegra@vger.kernel.org>; Sun, 20 Mar 2022 12:42:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1647780135;
+        bh=SdUWMHmZ193wUTPTiF7ipsfDvKGml1ecvzIaMqPfwIA=;
+        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+         In-Reply-To:Content-Type;
+        b=bOOcD5ULx/b2QfC2o28RQkjhFjVqi6hLXOo6NL9WTXyXFd9dk970s3z4wau945C+X
+         IENBklif2QrNXb4RbQhWAjxC3IWZh8GyuyNaprPgNgo5oNBQuHanby9E5tYOPdS7lm
+         pnWIf3UDze4I52X/g86RCuaAq5S/66zB+UjrEw0JGlOtxzH3YNlEE6KudbZbJZOGPK
+         PoSdJ+nYG4gIooVTGnpxrIKupGt3tjXbsWimSwpgQGMBbKP6mFUuB0IGDLI23q/UOq
+         /KPzc3en862eoYDqKjiE3InonyOvAfPzMMfG78jt5BBuWiPqa38TYrHcZyWCma0Fwa
+         c16M9tIBRlH1w==
+Received: by mail-ed1-f71.google.com with SMTP id d28-20020a50f69c000000b00419125c67f4so3150937edn.17
+        for <linux-tegra@vger.kernel.org>; Sun, 20 Mar 2022 05:42:15 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=BFYdZiXw/eFAD7943y4ojts/SbsmJ5s3mAERW9ZqUmQ=;
-        b=QZLd442qQphlgnccaXawAAEP1mfGMogBwq+y+ZcMlJPeRDOCwgSNOT24oCgyX2OYOg
-         tVXplIIzz0ZuYOuF7k1lUwHmCdKtRi5Ya3l+iH+V8CPTjaSUT7rEgD0bEVIMTUnxZVWv
-         u2ZGoDFMDVSiCNTCW99tPW+VUzAy/VMNtH6KhMrKshF5AV1KHqebKn7pDA00hXOV+NMX
-         47E1m0eSrwsIv5kcmFbAdbey5UZ/DMOKqdAtG0vgVHb8CnocFbLQrJSxLFz1ytqF/pRb
-         8q6ing/uD+DrqqzLutKvxwvvOddIbII3UVQE791KFW/qr0kvR8TVuo/ZmN78hN4PEnbz
-         +LFg==
-X-Gm-Message-State: AOAM530oj91FnmLm4SsmRMK5b2UujLJUmA5KjqVEdHQrd9ylLCtWQaMQ
-        7oboyjNr/Iz0LrlwOOA68/Y=
-X-Google-Smtp-Source: ABdhPJzMwY0jdWTIGYQCaWFHvskjGM1PR9I4ncwINQ3+Tzx86M77tiIlPiHBh5BsD8pwZD30GVmQ6A==
-X-Received: by 2002:a17:907:86a3:b0:6da:870c:af44 with SMTP id qa35-20020a17090786a300b006da870caf44mr16234430ejc.445.1647779517155;
-        Sun, 20 Mar 2022 05:31:57 -0700 (PDT)
+        bh=SdUWMHmZ193wUTPTiF7ipsfDvKGml1ecvzIaMqPfwIA=;
+        b=M1ETQltlBkB6rNHXfHhknk7ZoTJzykZcVbFI/xnNkW4N3u+iGFPWaEZkv35NA3ADhu
+         PkTis+mtfbucaRVK7+daWJgP5EMu8ofZ45f74f+SSQJR6BgPRp0SreEft6r2R4YPMPEp
+         zwhOkxWJYq9sz7j2YXW3APhzeKFatm5fWnF80nqLV0LaXnzaTKB2K+IEb6QVc4+ZXrA1
+         fq99GxQ4/Foec4eiiPv6aTHDAmG9DYX2rt2eBKzvulJtqml7ZF9y6wvSx5CEE50AsO20
+         naFjeE6QVZl5KTZbys5ShQWEWcFRkSm1mqx4gViiROS+jUTn72TlH9vH5OPniDSNomU0
+         LTkA==
+X-Gm-Message-State: AOAM530gsgaYH6CnFCxMtpWyXOh/BBvUui+2oNbVI4aP/caLuYHo/GXM
+        Q0AMSyFEsPwYIjlJYgLrHNuLGMOq+q6q31dawjs4X95vXhJg8NtINQN0LIDj3PZOXhRgcTQyBky
+        08gZVKt6lYPrBACXD+6y1Y10hMcZgzTh37k30VGeu
+X-Received: by 2002:a05:6402:484:b0:415:d931:cb2f with SMTP id k4-20020a056402048400b00415d931cb2fmr18507925edv.287.1647780134921;
+        Sun, 20 Mar 2022 05:42:14 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJwFr8QjIsnRNA97/xRKhcXrC9HuSe14EplGK5C5xpZHxfHczzlRSkdY15/du/MsMa43QLRVZw==
+X-Received: by 2002:a05:6402:484:b0:415:d931:cb2f with SMTP id k4-20020a056402048400b00415d931cb2fmr18507916edv.287.1647780134738;
+        Sun, 20 Mar 2022 05:42:14 -0700 (PDT)
 Received: from [192.168.0.17] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.googlemail.com with ESMTPSA id f6-20020a0564021e8600b00412ae7fda95sm6781002edf.44.2022.03.20.05.31.54
+        by smtp.gmail.com with ESMTPSA id c14-20020a170906340e00b006ce98f2581asm5788379ejb.205.2022.03.20.05.42.13
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 20 Mar 2022 05:31:56 -0700 (PDT)
-Message-ID: <81aa7be7-0bfa-05e6-624a-393e6810dc61@kernel.org>
-Date:   Sun, 20 Mar 2022 13:31:53 +0100
+        Sun, 20 Mar 2022 05:42:14 -0700 (PDT)
+Message-ID: <74db8a20-7cce-ff86-7ae4-466416443ba9@canonical.com>
+Date:   Sun, 20 Mar 2022 13:42:12 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.5.0
-Subject: Re: [Patch v5 1/4] memory: tegra: Add memory controller channels
- support
+Subject: Re: [Patch v5 3/4] dt-bindings: memory: Update reg maxitems for
+ tegra186
 Content-Language: en-US
 To:     Ashish Mhetre <amhetre@nvidia.com>, robh+dt@kernel.org,
         thierry.reding@gmail.com, digetx@gmail.com, jonathanh@nvidia.com,
@@ -52,9 +72,9 @@ To:     Ashish Mhetre <amhetre@nvidia.com>, robh+dt@kernel.org,
         linux-tegra@vger.kernel.org
 Cc:     vdumpa@nvidia.com, Snikam@nvidia.com
 References: <20220316092525.4554-1-amhetre@nvidia.com>
- <20220316092525.4554-2-amhetre@nvidia.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-In-Reply-To: <20220316092525.4554-2-amhetre@nvidia.com>
+ <20220316092525.4554-4-amhetre@nvidia.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+In-Reply-To: <20220316092525.4554-4-amhetre@nvidia.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -63,82 +83,33 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 On 16/03/2022 10:25, Ashish Mhetre wrote:
 > From tegra186 onwards, memory controller support multiple channels.
-> Add support for mapping address spaces of these channels.
-> Make sure that number of channels are as expected on each SOC.
-> During error interrupts from memory controller, appropriate registers
-> from these channels need to be accessed for logging error info.
+> Reg items are updated with address and size of these channels.
+> Tegra186 has overall 5 memory controller channels. Tegra194 and tegra234
+> have overall 17 memory controller channels each.
+> There is 1 reg item for memory controller stream-id registers.
+> So update the reg maxItems to 18 in tegra186 devicetree documentation.
 > 
 > Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
 > ---
->  drivers/memory/tegra/mc.c       |  6 ++++
->  drivers/memory/tegra/tegra186.c | 52 +++++++++++++++++++++++++++++++++
->  drivers/memory/tegra/tegra194.c |  1 +
->  drivers/memory/tegra/tegra234.c |  1 +
->  include/soc/tegra/mc.h          |  7 +++++
->  5 files changed, 67 insertions(+)
+>  .../nvidia,tegra186-mc.yaml                   | 20 +++++++++++++------
+>  1 file changed, 14 insertions(+), 6 deletions(-)
 > 
-> diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
-> index bf3abb6d8354..3cda1d9ad32a 100644
-> --- a/drivers/memory/tegra/mc.c
-> +++ b/drivers/memory/tegra/mc.c
-> @@ -749,6 +749,12 @@ static int tegra_mc_probe(struct platform_device *pdev)
->  	if (IS_ERR(mc->regs))
->  		return PTR_ERR(mc->regs);
+> diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml
+> index 13c4c82fd0d3..3c4e231dc1de 100644
+> --- a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml
+> +++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml
+> @@ -34,8 +34,8 @@ properties:
+>            - nvidia,tegra234-mc
 >  
-> +	if (mc->soc->ops && mc->soc->ops->map_regs) {
-> +		err = mc->soc->ops->map_regs(mc, pdev);
-> +		if (err < 0)
-> +			return err;
-> +	}
-> +
->  	mc->debugfs.root = debugfs_create_dir("mc", NULL);
->  
->  	if (mc->soc->ops && mc->soc->ops->probe) {
-> diff --git a/drivers/memory/tegra/tegra186.c b/drivers/memory/tegra/tegra186.c
-> index 3d153881abc1..a8a45e6ff1f1 100644
-> --- a/drivers/memory/tegra/tegra186.c
-> +++ b/drivers/memory/tegra/tegra186.c
-> @@ -139,11 +139,62 @@ static int tegra186_mc_probe_device(struct tegra_mc *mc, struct device *dev)
->  	return 0;
->  }
->  
-> +static int tegra186_mc_map_regs(struct tegra_mc *mc,
-> +				struct platform_device *pdev)
-> +{
-> +	struct device_node *np = pdev->dev.parent->of_node;
-> +	int num_dt_channels, reg_cells = 0;
-> +	struct resource *res;
-> +	int i, ret;
-> +	u32 val;
-> +
-> +	ret = of_property_read_u32(np, "#address-cells", &val);
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "missing #address-cells property\n");
-> +		return ret;
-> +	}
-> +
-> +	reg_cells = val;
-> +
-> +	ret = of_property_read_u32(np, "#size-cells", &val);
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "missing #size-cells property\n");
-> +		return ret;
-> +	}
-> +
-> +	reg_cells += val;
-> +
-> +	num_dt_channels = of_property_count_elems_of_size(pdev->dev.of_node, "reg",
-> +							  reg_cells * sizeof(u32));
-> +	/*
-> +	 * On tegra186 onwards, memory controller support multiple channels.
-> +	 * Apart from regular memory controller channels, there is one broadcast
-> +	 * channel and one for stream-id registers.
-> +	 */
-> +	if (num_dt_channels < mc->soc->num_channels + 2) {
-> +		dev_warn(&pdev->dev, "MC channels are missing, please update\n");
+>    reg:
+> -    minItems: 1
+> -    maxItems: 3
+> +    minItems: 6
+> +    maxItems: 18
 
-How did you address our previous comments about ABI break? I really do
-not see it.
+Still ABI break and now the in-kernel DTS will report dt check errors.
+
+I think you ignored the comments you got about breaking ABI.
 
 Best regards,
 Krzysztof
