@@ -2,99 +2,152 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B99CC433F5
-	for <linux-tegra@archiver.kernel.org>; Sun, 20 Mar 2022 12:53:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11113C433FE
+	for <linux-tegra@archiver.kernel.org>; Mon, 21 Mar 2022 12:54:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242298AbiCTMys (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 20 Mar 2022 08:54:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38340 "EHLO
+        id S1347600AbiCUMz5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 21 Mar 2022 08:55:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53532 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235848AbiCTMyr (ORCPT
+        with ESMTP id S1343693AbiCUMz4 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 20 Mar 2022 08:54:47 -0400
-Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A704A1D321;
-        Sun, 20 Mar 2022 05:53:24 -0700 (PDT)
-Received: by mail-lj1-x235.google.com with SMTP id q5so16707585ljb.11;
-        Sun, 20 Mar 2022 05:53:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=NPj9f04sMJ3VkX20TlDwOIssZGRIWkPsk5pfadmGsnk=;
-        b=O8l8/fSJLECcqMdp6c8EoQHjLWPP4Jqo+Mn2mvGzLRadeGboXLsiVGVd8lcemhSizW
-         HrtiJ9Y0Jhyze/mkGbTLNz8V9zgcqWTEFhywWXbpr/qfucCRiZuH+WmaKTQ6xYkW276U
-         wvSBI7BGwcBS4zozwRChvkA4eeVlSSSW11+Ik/8n4ULx+EYSOdVJyGDpE2qwiqLfumwW
-         YY7iek4w7+Gm9c1MCOBdEIKnm7s514hute7EYudLAaWgoi+mbZitn3wruC72jcbxiBvp
-         ZkdTOQ2aKcug1RyRT/zCYgo2R4n3gMNx51W0sJ9K1q9gHfnH3RVwiYzg72/gEetsEWME
-         OL5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=NPj9f04sMJ3VkX20TlDwOIssZGRIWkPsk5pfadmGsnk=;
-        b=uYsSYuuwLVVA7yufYciuKbpILOP8ipKLKETrnPkPVbWjTbH6q7Z4vjBZkJiRe19QNB
-         6QJoffI2hj+sn8pt/trX0eVWyOOtMLOQooBfV/K5Ut6CeAxzXpFmukME5QhAP7Skd/Gy
-         LKqvkASQ3AiWc77GUviwVaYXh38eXhBCkMyQs6OoQxN6LIEGff54yW6MyXtOI8GpYCyL
-         huQg+Q4XixokaX8+3nKImUj/jBXoG8WJQYKexOXfcrYlKAHXzOtt9szeeZCrwSufS3dN
-         pVLoNFeJ9MYe4GEQGNagBGtYh8DhO/Sspdc4DiNNIDdp5M9DaOM8Qe5z/L04oEsz6l2z
-         hPAg==
-X-Gm-Message-State: AOAM5325uH/7dV6iEImFAPjNLoj5jtYXpLphENPm5+1883JVCWZndHmh
-        2jCOcpVlLtVfJXlFj/hzHew=
-X-Google-Smtp-Source: ABdhPJzvwSNPy6xtXY65ySuLrJ0+ws9oS3Q9dOVUXrq6EoQf69hU+0kXjD346is8XpVjM4HwFS/HWg==
-X-Received: by 2002:a2e:96d9:0:b0:249:8257:74ca with SMTP id d25-20020a2e96d9000000b00249825774camr1618118ljj.105.1647780802595;
-        Sun, 20 Mar 2022 05:53:22 -0700 (PDT)
-Received: from [192.168.2.145] (109-252-136-171.dynamic.spd-mgts.ru. [109.252.136.171])
-        by smtp.googlemail.com with ESMTPSA id z11-20020a05651c11cb00b00247dee7faeasm1832219ljo.12.2022.03.20.05.53.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 20 Mar 2022 05:53:21 -0700 (PDT)
-Message-ID: <55ae43f0-a22f-b532-2476-c3afa1e2cb73@gmail.com>
-Date:   Sun, 20 Mar 2022 15:53:21 +0300
+        Mon, 21 Mar 2022 08:55:56 -0400
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam08on2068.outbound.protection.outlook.com [40.107.102.68])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F7704CD70;
+        Mon, 21 Mar 2022 05:54:31 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=FNXYUsYxwcdJozVJsrL6jvcTLliWmrmdGxdD2blW/juhp/qcNQdj88oOaNv4y7wQba0G61v32ruOwpn86LgJy26LQEOXo/x45B+tQJ/kPTpxxGLPu7NeBeHedgWn9tNkvZQAXbNkx5zqWVBWQ3272PtTBZtSLSWfl9Okxnpg2CTnzuwLuqmhGVoqQjoGNfzkg83+HuEzXEdPMFFCtLEXJbznaYVyWorNRCZodSqujh561Pr9tzKfJFDdYx2jNGx/1/jKt5v+lBz0KU/Wgcc9F2tsFOl374KylhvGJ6OJknWFhFSN6hhoOU2PrL0Ca52/JUdhc3TvECtAhXq0MalJhA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=27tk8hMv5OqgP3OjLFaMwdoT1Msw3jdS+gyMcAYdVX0=;
+ b=BPwCqdZ9T48A44RCDhlRL51RTTPaKFWwbNbIMWBYAzsXNEojRQJsT6pAnjAoOKwLs7pr+nufO60wAWed+MEEG5ngJdaRvcsav1uMMRfTutiBrPAcOYKvSGZwCiDF/szIFsODTAd/Fk0Ni5WTkvjAIn/u8LejE2QX4TPo6Ud30LApibRVrvKXW2DSFLb8ewIa+NyE8y4wQ1n5raActMYWjnH31tCYv0DxSUAyyHGQwxPSZa11iR19sTP3Lyl4N5e7iE/hjepEGdhSvDvjE4clXFALpfJeMX4Fm6h05wpN59KNMtK3BCPoAKK41dlQYb7zRg1mamZ/6bQYXpzXowPxLQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 12.22.5.238) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=27tk8hMv5OqgP3OjLFaMwdoT1Msw3jdS+gyMcAYdVX0=;
+ b=WeZoOKk08S8rlzmZuf5JPBCKKcNTvxYxs6duYaOzqxVUcaUI2neabX2Z6fsBLTmyGRCCaRIl3pCX0ZwJr9QrUiPD2hkY9hVgCNLlxPZE4J4qNsyOmgggi/hlegQi1Yay66wyccJugv3iesyy46cHFdMoQnLPw70LtjOFgGY4pu45hjQxKRuPLPiqZiERx+bwkp7F4CiRw5sTCA26kHOxEo0ERwx9/58dimqD6+zMuTETCR2qAes7SvJi0AZAHOEhXebfRJAo0ZKs60RlCcnfOwFaZSFEwiwUzhSPtwmjTU9COoZ8qHuKhZYjy9cK+C3qC5gtbA4j+TDsCsixAnxKEQ==
+Received: from BN8PR03CA0032.namprd03.prod.outlook.com (2603:10b6:408:94::45)
+ by DM4PR12MB5723.namprd12.prod.outlook.com (2603:10b6:8:5e::9) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.5081.14; Mon, 21 Mar 2022 12:54:30 +0000
+Received: from BN8NAM11FT006.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:408:94:cafe::c9) by BN8PR03CA0032.outlook.office365.com
+ (2603:10b6:408:94::45) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5081.22 via Frontend
+ Transport; Mon, 21 Mar 2022 12:54:29 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.238)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 12.22.5.238 as permitted sender) receiver=protection.outlook.com;
+ client-ip=12.22.5.238; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (12.22.5.238) by
+ BN8NAM11FT006.mail.protection.outlook.com (10.13.177.21) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.5081.14 via Frontend Transport; Mon, 21 Mar 2022 12:54:29 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by DRHQMAIL105.nvidia.com
+ (10.27.9.14) with Microsoft SMTP Server (TLS) id 15.0.1497.32; Mon, 21 Mar
+ 2022 12:54:29 +0000
+Received: from [10.41.21.79] (10.126.231.35) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.22; Mon, 21 Mar
+ 2022 05:54:24 -0700
+Message-ID: <748d87c6-3f91-8bc0-ce8f-0a64278b4122@nvidia.com>
+Date:   Mon, 21 Mar 2022 18:24:21 +0530
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.5.0
-Subject: Re: [Patch v5 2/4] memory: tegra: Add MC error logging on tegra186
- onward
+Subject: Re: [Patch v1 2/3] arm64: tegra: add node for tegra234 cpufreq
 Content-Language: en-US
-To:     Ashish Mhetre <amhetre@nvidia.com>,
-        krzysztof.kozlowski@canonical.com, robh+dt@kernel.org,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Cc:     vdumpa@nvidia.com, Snikam@nvidia.com
-References: <20220316092525.4554-1-amhetre@nvidia.com>
- <20220316092525.4554-3-amhetre@nvidia.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-In-Reply-To: <20220316092525.4554-3-amhetre@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
+To:     Jon Hunter <jonathanh@nvidia.com>, <rafael@kernel.org>,
+        <viresh.kumar@linaro.org>, <robh+dt@kernel.org>,
+        <krzk+dt@kernel.org>, <treding@nvidia.com>,
+        <linux-pm@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     <ksitaraman@nvidia.com>, <sanjayc@nvidia.com>, <bbasu@nvidia.com>,
+        "Sumit Gupta" <sumitg@nvidia.com>
+References: <20220316135831.900-1-sumitg@nvidia.com>
+ <20220316135831.900-3-sumitg@nvidia.com>
+ <30bb04fe-4fed-04bc-6f99-158ac09d6bb8@nvidia.com>
+From:   Sumit Gupta <sumitg@nvidia.com>
+In-Reply-To: <30bb04fe-4fed-04bc-6f99-158ac09d6bb8@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.126.231.35]
+X-ClientProxiedBy: rnnvmail202.nvidia.com (10.129.68.7) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: f89de91c-dfed-4c40-ae72-08da0b39f03c
+X-MS-TrafficTypeDiagnostic: DM4PR12MB5723:EE_
+X-Microsoft-Antispam-PRVS: <DM4PR12MB5723BDAAD9C1A792143D7D90B9169@DM4PR12MB5723.namprd12.prod.outlook.com>
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: raBEaZ2XTXtKTp1rZG3Gpfb0KRAbyEsYKHQcoLPbgzC6ROaOKHLebEZ7nbUMisIV5HdT3zgE7TtWEg+SISBuImTDOVUJoJu/5iYTaBKgFjPOluMind9FoUB5XWpwk8s6x+/oq3D1zjnXMOy7uJ5VwZ2quKKJqGF8uPHr4Fp8cI7WmF0NOEbOAdS26WQfffPOwyIYPTZ40qJbGcqrF93znwRYNYCjviN3AMK2Y8Q6psfQqxeVwWcq8xr9jNoHm0v17XHbNYGyOfOn3iP5CAdZ99HXbGJfVh2AUYiM9fr00TxdjVdfkB89IxhVdmCEomt9fKfhwTxISyzA+jjRB0YyiiaPVAv07ouLq7/Kb2sgAZDTS43E2cmlKnIXiawiZ0/wAIvu/r0uUxCW4FHyBxnABkrIeMZkifh1o+zpPGL0mCjnWtn5hT9ght5c6smRbMaQ2kvyHEP53Shij6/Ujg1CIgCtJGwCkupU95K3Lgw0Es7plxQsLx3E/nhOulF/Px6EDp2A+v5h5SNZQxZ5WkdBm8pWNmEUFK2FZ/VW+Q/xkqg0qOQ7q3WFQW/+lGADbeHsPYowQtYXizQ65bQeKVR2LghwvYeToKtsvWoIYi6XtMvwLBy4u++GAoP5+qRHT+tMa+SiUKzlA+y2iZICVtHIiDCCBbasmZ5aJaHGC6zocAlMiBq4E1QI7GRgwCu+Ky5Fa408c9avPeKG8RDcb4sHSXODismC3mY8s57MhFHzHEv/LjBiivkG7+EBchb8kuYiZLTv0vwNRrMlVcCrCCw+Yqq9Fk+xiIFxlkF+E0/+8ZTSakvff4LuwZ03pu56rAOAbPuaAPeSTLPsoZVaLU5GeA==
+X-Forefront-Antispam-Report: CIP:12.22.5.238;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230001)(4636009)(36840700001)(46966006)(40470700004)(47076005)(6666004)(316002)(16576012)(36860700001)(36756003)(426003)(4326008)(83380400001)(336012)(86362001)(70206006)(70586007)(8676002)(186003)(16526019)(26005)(2616005)(82310400004)(31696002)(107886003)(2906002)(356005)(921005)(81166007)(966005)(40460700003)(31686004)(508600001)(54906003)(110136005)(8936002)(5660300002)(36900700001)(43740500002);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Mar 2022 12:54:29.6177
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: f89de91c-dfed-4c40-ae72-08da0b39f03c
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.238];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT006.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB5723
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-16.03.2022 12:25, Ashish Mhetre пишет:
-> +static int tegra186_mc_get_channel(const struct tegra_mc *mc, int *mc_channel)
-> +{
-> +	u32 status;
-> +
-> +	status = mc_ch_readl(mc, MC_BROADCAST_CHANNEL, MC_GLOBAL_INTSTATUS);
-> +
-> +	switch (status & mc->soc->int_channel_mask) {
-> +	case BIT(0):
-> +		*mc_channel = 0;
-> +		break;
-> +
-> +	case BIT(1):
-> +		*mc_channel = 1;
-> +		break;
-> +
-> +	case BIT(2):
-> +		*mc_channel = 2;
-> +		break;
-> +
-> +	case BIT(3):
-> +		*mc_channel = 3;
-> +		break;
 
-This won't work if multiple bits are set at once.
+
+>> Adding cclpex node to represent Tegra234 cpufreq.
+>> Tegra234 uses some of the CRAB (Control Register Access Bus)
+>> registers for cpu frequency requests. These registers are
+>> memory mapped to CCPLEX_MMCRAB_ARM region. In this node, mapping
+>> the range of MMCRAB registers required only for cpu frequency info.
+>>
+>> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+>> ---
+>>   arch/arm64/boot/dts/nvidia/tegra234.dtsi | 7 +++++++
+>>   1 file changed, 7 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/nvidia/tegra234.dtsi 
+>> b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
+>> index aaace605bdaa..610207f3f967 100644
+>> --- a/arch/arm64/boot/dts/nvidia/tegra234.dtsi
+>> +++ b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
+>> @@ -1258,6 +1258,13 @@
+>>           };
+>>       };
+>> +    ccplex@e000000 {
+>> +        compatible = "nvidia,tegra234-ccplex-cluster";
+>> +        reg = <0x0 0x0e000000 0x0 0x5ffff>;
+>> +        nvidia,bpmp = <&bpmp>;
+>> +        status = "okay";
+>> +    };
+>> +
+>>       sram@40000000 {
+>>           compatible = "nvidia,tegra234-sysram", "mmio-sram";
+>>           reg = <0x0 0x40000000 0x0 0x80000>;
+> 
+> 
+> We need to add this compatible string to a DT binding doc somewhere.
+It seems the binding doc was previously posted in [1] for T186 SoC.
+Same will be applicable for T234 SoC also. Only compatible string need 
+to be added.
+Should I sent a separate patch after converting it to yaml format and 
+add compatible string (or) send as part of v2.
+
+[1] https://lkml.org/lkml/2017/4/3/324
+
+> 
+> Cheers
+> Jon
+> 
