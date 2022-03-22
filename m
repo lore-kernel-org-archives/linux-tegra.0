@@ -2,74 +2,154 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 369ECC433F5
-	for <linux-tegra@archiver.kernel.org>; Tue, 22 Mar 2022 18:51:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A3CAC433FE
+	for <linux-tegra@archiver.kernel.org>; Tue, 22 Mar 2022 19:06:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229818AbiCVSwi (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 22 Mar 2022 14:52:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32814 "EHLO
+        id S230494AbiCVTHf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 22 Mar 2022 15:07:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49120 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229542AbiCVSwh (ORCPT
+        with ESMTP id S230383AbiCVTHe (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 22 Mar 2022 14:52:37 -0400
-Received: from mail-io1-xd32.google.com (mail-io1-xd32.google.com [IPv6:2607:f8b0:4864:20::d32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0CDA85955;
-        Tue, 22 Mar 2022 11:51:08 -0700 (PDT)
-Received: by mail-io1-xd32.google.com with SMTP id h63so21264192iof.12;
-        Tue, 22 Mar 2022 11:51:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vlocYw11wEUDko7lW9ol2D7OrBgmFM7X8i5I28iZY0E=;
-        b=AIy1pqIIOA1UydRLjpLRiADUTnZjQkIrGps0EE6mU0UkW1kamh/5BOOcPm57TRUD7g
-         JDv3yXGIMeTKswXof021i3kfYWLO4Atx/2ie/9SrB+cecQS3bg1RDmiVUPGd/VBZ/bxP
-         fAv53g47dhg51+lyt+156sQtTDMVBdFLYqEiONawCMyV1Iqr1IKDQOwuh2mGpj94dZhD
-         KYM1p4RogciLNd1NJTpUyX885Bs7qXlE84rP+FSBk9aFHcu8AyQ9Stp0j8utczFCgmVY
-         KPfJjJj+M+556NhhOZB9BaX5SQIVWKkjpeP9J1qrdS96yZi5xghj7llKYgpkJqUaJ9Ow
-         l6aQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vlocYw11wEUDko7lW9ol2D7OrBgmFM7X8i5I28iZY0E=;
-        b=pXuovlPHZMnpxxr/HQ3XkoLKLXrRX2Ijq/zxf8KD3ItucQSj5BpxAVRbQl9vJWNHEY
-         oENKSWgjQGM6o2X9t1RgwoxaHD7xhox6rTMgvvkAYCAAg1LKXXd7HIL2fq/WxM6ajerH
-         PnK6/h/OzSEUzBhBLs6PRDQw52EtNAlaMhOj7aTLpNiactgGlJcj8dd0YrIEwr8khJoJ
-         zJ/jLuhPTjtz1shQQDzdf6k0Rj33qUtN+rYMk8wq7+g9Cpsexqw4DApe6dsSgCohB5O0
-         tCcSjExeSaDfdxLpSjR1XQVFzpVoa92UNJtUnF6TJwVYcTm5uqGwUU2AIk9anipWy+8m
-         3WCg==
-X-Gm-Message-State: AOAM532rqKv7MXwndlRq4KevauTSJ3VWzTb2olsmlP+bN4LGeJPa3QvL
-        iLe62zoXh5AEvT5J8B7VkNSqo3olq62Tef02frU=
-X-Google-Smtp-Source: ABdhPJxfIVBQEfl46oCTC0NI/KkCvg1dn0UULUbfHVpnmndy0pkQgmjRlUoGe5oEFqOCLH0o/lsFqYwWeDJErB4KmV8=
-X-Received: by 2002:a05:6602:15cf:b0:614:52d4:952 with SMTP id
- f15-20020a05660215cf00b0061452d40952mr12907233iow.185.1647975068042; Tue, 22
- Mar 2022 11:51:08 -0700 (PDT)
+        Tue, 22 Mar 2022 15:07:34 -0400
+Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [46.235.227.227])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 147F121277;
+        Tue, 22 Mar 2022 12:06:02 -0700 (PDT)
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: dmitry.osipenko)
+        with ESMTPSA id 8F1C61F4414B
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1647975960;
+        bh=D6hgpxoxSbhmTxNI08QE3zs+RAds6Z3h0HTtecS2zSY=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=PTWkCR5eni7rM6R0IZivCAw/HYJ9Cvzt5muTfeNyqm5A+cvOhi9cRFlhWldTkNB2p
+         s3yaykh4JmPQM+EZ8WOrufMC4412fuxwt96tTY5vIzGqcSw3/PL/rh1kRxXPQAkBxC
+         f4WW0Jy+qn82v5i/ZHWUbQjF8IgIqID4AJfogwYTHaN8AHyuwrpVKLBcdtlbb/aZ8r
+         1lHjjO3mWT5ZRrtcNY2mCBcFESDHiunxkhkdQy9/8bQzIcMZxkmFzNBZbyrIUxuQf2
+         drcdzZbGVxUoB435/dXrL+wP0XwMxG81BIj4o4lbyQXwOSkFob6Lw1VhDquQueuEYc
+         f0FyOPGE/zSUw==
+Message-ID: <7720158d-10a7-a17b-73a4-a8615c9c6d5c@collabora.com>
+Date:   Tue, 22 Mar 2022 22:05:56 +0300
 MIME-Version: 1.0
-References: <20220302150424.1305301-1-thierry.reding@gmail.com>
- <42f99db6-f450-f2dd-fccd-17868b16b561@nvidia.com> <c84a0362-8cb0-2925-5a74-ad9c6c3ffe5f@nvidia.com>
- <a32c7181-79b1-07e7-81c5-9c692e4f958d@nvidia.com>
-In-Reply-To: <a32c7181-79b1-07e7-81c5-9c692e4f958d@nvidia.com>
-From:   Jassi Brar <jassisinghbrar@gmail.com>
-Date:   Tue, 22 Mar 2022 13:50:57 -0500
-Message-ID: <CABb+yY2hyM9G_fGTtm9vpxwH61SbTwEQtjwKT=w7Fb3x8gwzew@mail.gmail.com>
-Subject: Re: [PATCH v2] mailbox: tegra-hsp: Flush whole channel
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        linux-tegra@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [PATCH v7 06/12] clk: Always set the rate on clk_set_range_rate
+Content-Language: en-US
+To:     Maxime Ripard <maxime@cerno.tech>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        Phil Elwell <phil@raspberrypi.com>,
+        Tim Gover <tim.gover@raspberrypi.com>,
+        Dom Cobley <dom@raspberrypi.com>,
+        dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+References: <20220225143534.405820-1-maxime@cerno.tech>
+ <20220225143534.405820-7-maxime@cerno.tech>
+From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
+In-Reply-To: <20220225143534.405820-7-maxime@cerno.tech>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Mar 22, 2022 at 1:29 PM Jon Hunter <jonathanh@nvidia.com> wrote:
->
-> Jassi,
-> >
-> > Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
-> Any feedback?
->
-https://git.linaro.org/landing-teams/working/fujitsu/integration.git/commit/?h=mailbox-for-next&id=60de2d2dc284e0dd1c2c897d08625bde24ef3454
+On 2/25/22 17:35, Maxime Ripard wrote:
+> When we change a clock minimum or maximum using clk_set_rate_range(),
+> clk_set_min_rate() or clk_set_max_rate(), the current code will only
+> trigger a new rate change if the rate is outside of the new boundaries.
+> 
+> However, a clock driver might want to always keep the clock rate to
+> one of its boundary, for example the minimum to keep the power
+> consumption as low as possible.
+> 
+> Since they don't always get called though, clock providers don't have the
+> opportunity to implement this behaviour.
+> 
+> Let's trigger a clk_set_rate() on the previous requested rate every time
+> clk_set_rate_range() is called. That way, providers that care about the
+> new boundaries have a chance to adjust the rate, while providers that
+> don't care about those new boundaries will return the same rate than
+> before, which will be ignored by clk_set_rate() and won't result in a
+> new rate change.
+> 
+> Suggested-by: Stephen Boyd <sboyd@kernel.org>
+> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+> ---
+>  drivers/clk/clk.c      | 45 ++++++++++++++++----------------
+>  drivers/clk/clk_test.c | 58 +++++++++++++++++++-----------------------
+>  2 files changed, 49 insertions(+), 54 deletions(-)
+> 
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index c15ee5070f52..9bc8bf434b94 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -2373,28 +2373,29 @@ int clk_set_rate_range(struct clk *clk, unsigned long min, unsigned long max)
+>  		goto out;
+>  	}
+>  
+> -	rate = clk_core_get_rate_nolock(clk->core);
+> -	if (rate < min || rate > max) {
+> -		/*
+> -		 * FIXME:
+> -		 * We are in bit of trouble here, current rate is outside the
+> -		 * the requested range. We are going try to request appropriate
+> -		 * range boundary but there is a catch. It may fail for the
+> -		 * usual reason (clock broken, clock protected, etc) but also
+> -		 * because:
+> -		 * - round_rate() was not favorable and fell on the wrong
+> -		 *   side of the boundary
+> -		 * - the determine_rate() callback does not really check for
+> -		 *   this corner case when determining the rate
+> -		 */
+> -
+> -		rate = clamp(clk->core->req_rate, min, max);
+> -		ret = clk_core_set_rate_nolock(clk->core, rate);
+> -		if (ret) {
+> -			/* rollback the changes */
+> -			clk->min_rate = old_min;
+> -			clk->max_rate = old_max;
+> -		}
+> +	/*
+> +	 * Since the boundaries have been changed, let's give the
+> +	 * opportunity to the provider to adjust the clock rate based on
+> +	 * the new boundaries.
+> +	 *
+> +	 * We also need to handle the case where the clock is currently
+> +	 * outside of the boundaries. Clamping the last requested rate
+> +	 * to the current minimum and maximum will also handle this.
+> +	 *
+> +	 * FIXME:
+> +	 * There is a catch. It may fail for the usual reason (clock
+> +	 * broken, clock protected, etc) but also because:
+> +	 * - round_rate() was not favorable and fell on the wrong
+> +	 *   side of the boundary
+> +	 * - the determine_rate() callback does not really check for
+> +	 *   this corner case when determining the rate
+> +	 */
+> +	rate = clamp(clk->core->req_rate, min, max);
+> +	ret = clk_core_set_rate_nolock(clk->core, rate);
+> +	if (ret) {
+> +		/* rollback the changes */
+> +		clk->min_rate = old_min;
+> +		clk->max_rate = old_max;
+>  	}
+>  
+>  out:
 
-thnx
+Hi,
+
+NVIDIA Tegra30 no longer boots with this change.
+
+You can't assume that rate was requested by clk_set_rate() before
+clk_set_rate_range() is called, see what [1] does. T30 memory rate now
+drops to min on boot when clk debug range is inited innocuously and CPU
+no longer can make any progress because display controller takes out
+whole memory bandwidth.
+
+[1]
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/memory/tegra/tegra30-emc.c#n1437
+
+If clk_set_rate() wasn't ever invoked and req_rate=0, then you must not
+change the clk rate if it's within the new range. Please revert this
+patch, thanks.
