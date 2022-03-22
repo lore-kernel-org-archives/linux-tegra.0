@@ -2,167 +2,164 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66F60C433FE
-	for <linux-tegra@archiver.kernel.org>; Tue, 22 Mar 2022 18:12:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 597AEC433F5
+	for <linux-tegra@archiver.kernel.org>; Tue, 22 Mar 2022 18:25:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240220AbiCVSOQ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 22 Mar 2022 14:14:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37610 "EHLO
+        id S240474AbiCVS1I (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 22 Mar 2022 14:27:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47910 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235747AbiCVSOQ (ORCPT
+        with ESMTP id S240468AbiCVS1C (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 22 Mar 2022 14:14:16 -0400
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam07on2062.outbound.protection.outlook.com [40.107.95.62])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8059469CD3;
-        Tue, 22 Mar 2022 11:12:48 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=RQRprbEaTQRw4g5ymx+uW4rjEpifXwHWSjlrt90T5W5LGSRGh9GZguZSesB33TJJ1TaaMt11ghEOIAJVynhITks8jGB3cUrEqdjmwBd8fwKZE79bhGmqNrwD0wvJ51OFjBmItpxkPMBuGQtGEZGdBt3d5X4GCkRWN5rxSnUcW1FmtAq8TQfGy4ctUpV+GYoNQC6vvHJlXloFhJvKbVbqN9eQfQPOYxRYhUPZ2bFqDFBjjA5kWLo9hFESvCHjcvVS+dOs7bEXK1KBtynXzlizH+XH62B5gMX5cU/ZtJfoktz5V1qCowvk3ix2FqUGdWCMYUirJtAxPBKykP0rnAB5Fg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+GjhcNnzoG7h2fG3UApg32TYXeksyunoIwXbR0CW2Yw=;
- b=IYVi7D6Q1B46tKteu3I6GSujxgjj0ME5eMUa+zv9Gxu8rY+akc6oT/cHFBSTBLVuT6k6qqg49uLAtpjlFd6OOhPpGMUCU951dF0Lx7X/YsnCV3bezpgqfOME8R7aao83j3WuFxKbOjeD/FT2SxUFt+IYnK5Xl+/EprpcEy6YWj8wAY8AmeX19AQRwRMy/ZUamFwWOcB5jqI86wcnPXx52bCQfJ+B8ZApPepHbry/9IfPISvnUGPMU7Lsqh1kNpQupOf13J1i58gY/gnNttimsy5o+p5uxs9dnJ7vOHreKmON671o3cXjYA6X2weWFMb0x8lQWWSEOldIXKvrGXQAaw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+GjhcNnzoG7h2fG3UApg32TYXeksyunoIwXbR0CW2Yw=;
- b=YnYh+QVaouNyZX1F0cU+Az3AQp/mYijQ3B5kmk49CEPF22UjiCtahFG0/sVTu+SDg9O0bs4QW8g35jZRH7VmVVSJgOLcufhDBdMRYyKsLBhDmLzcpk7VTOr2Wme3j/nq2x4F6OTtxPSqPnqT1sZig2wuNOxtwNnJfrSXZ81PVQ32sYY2ZoVuZ87dIgtUBe/OTQ6YXO4a8jdv39o0FLcW8wMrewlxWH0oohO3fW36x+5c3USMdxEL1qlE13kwENlV+WfigVoKVGesg4iCGR07yS8ptwMoU2Qe2icpJSp100vyXydUlzivOfoQpTALnMxQ3AzULEa+OlBI6zTeL9ulDg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SA0PR12MB4349.namprd12.prod.outlook.com (2603:10b6:806:98::21)
- by CH0PR12MB5171.namprd12.prod.outlook.com (2603:10b6:610:ba::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5081.14; Tue, 22 Mar
- 2022 18:12:47 +0000
-Received: from SA0PR12MB4349.namprd12.prod.outlook.com
- ([fe80::e15c:41ca:1c76:2ef]) by SA0PR12MB4349.namprd12.prod.outlook.com
- ([fe80::e15c:41ca:1c76:2ef%3]) with mapi id 15.20.5081.023; Tue, 22 Mar 2022
- 18:12:47 +0000
-Message-ID: <66a3f996-ac12-9165-93c9-e1fa93b80eed@nvidia.com>
-Date:   Tue, 22 Mar 2022 23:42:35 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [Patch v5 3/4] dt-bindings: memory: Update reg maxitems for
- tegra186
+        Tue, 22 Mar 2022 14:27:02 -0400
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF69C90246;
+        Tue, 22 Mar 2022 11:24:57 -0700 (PDT)
+Received: by mail-ej1-f43.google.com with SMTP id d10so38035146eje.10;
+        Tue, 22 Mar 2022 11:24:57 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:from
+         :subject:content-language:to:cc:references:in-reply-to
+         :content-transfer-encoding;
+        bh=Ch4dJTVoF+0WgswAjEagoD6pjUX2twqhfq32t6y2FNg=;
+        b=03YAq3M7YBzGok+qLOdAqEl3PyQX1oJ1a8+nmcS9fQrKpkUh/9u/csbx6C6qaGSobN
+         Ir9Z8xXPfaJ5iGIWath1HWr+dw+jVZ0JrZLx1oKZsY4u7C2dValx/bmw5x/ndoA4yhzX
+         gtXDvpqkToUX4+f5lR9uW3Wxrg5U3GU+A4FjQk7jfHokqv0wYoE/nvteD3X/bd22zY1X
+         lglnKKTg7jUx5jtCSNF2NYROKN4CVYH/qWx/4iVSkogJsLerwy8FNtZZAkHvjNKTeXbu
+         iJyOjXUB8m7IQEaVu+gg+oT8mDVflQAarJWnhr4h3ocWmF387KKWZGwMUWdU1IczYhcj
+         unSQ==
+X-Gm-Message-State: AOAM532zbFp0zsOpsbhi+7Jzzc0VA7y4swwA6XBYrlzbtVfeIJ7eEgvv
+        35bPnI3r1oUbGVhuLyVzs6zSTCjUV+zWqQ==
+X-Google-Smtp-Source: ABdhPJwL2NYcf2QiGHS83/NbI8qe3jXBrTCPq7ILCOT4zC/SEv+zL+ze1H5U2Fk53Nuz0/Hj3GaDLQ==
+X-Received: by 2002:a17:907:2cc7:b0:6df:b76d:940d with SMTP id hg7-20020a1709072cc700b006dfb76d940dmr20180783ejc.742.1647973496135;
+        Tue, 22 Mar 2022 11:24:56 -0700 (PDT)
+Received: from [192.168.0.17] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
+        by smtp.googlemail.com with ESMTPSA id u18-20020a17090617d200b006db07a16cf5sm8685155eje.77.2022.03.22.11.24.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 22 Mar 2022 11:24:55 -0700 (PDT)
+Message-ID: <1096bc5a-5b0f-54a8-93aa-403c39e58283@kernel.org>
+Date:   Tue, 22 Mar 2022 19:24:54 +0100
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [Patch v5 1/4] memory: tegra: Add memory controller channels
+ support
 Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        robh+dt@kernel.org, thierry.reding@gmail.com, digetx@gmail.com,
-        jonathanh@nvidia.com, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
+To:     Ashish Mhetre <amhetre@nvidia.com>, robh+dt@kernel.org,
+        thierry.reding@gmail.com, digetx@gmail.com, jonathanh@nvidia.com,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org
 Cc:     vdumpa@nvidia.com, Snikam@nvidia.com
 References: <20220316092525.4554-1-amhetre@nvidia.com>
- <20220316092525.4554-4-amhetre@nvidia.com>
- <74db8a20-7cce-ff86-7ae4-466416443ba9@canonical.com>
-From:   Ashish Mhetre <amhetre@nvidia.com>
-In-Reply-To: <74db8a20-7cce-ff86-7ae4-466416443ba9@canonical.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+ <20220316092525.4554-2-amhetre@nvidia.com>
+ <81aa7be7-0bfa-05e6-624a-393e6810dc61@kernel.org>
+ <5259de16-6243-42f6-8252-40a23cd67798@nvidia.com>
+In-Reply-To: <5259de16-6243-42f6-8252-40a23cd67798@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MA0PR01CA0017.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a01:80::12) To SA0PR12MB4349.namprd12.prod.outlook.com
- (2603:10b6:806:98::21)
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 993be956-02ef-458e-d71d-08da0c2f9136
-X-MS-TrafficTypeDiagnostic: CH0PR12MB5171:EE_
-X-Microsoft-Antispam-PRVS: <CH0PR12MB51717D0BBE87A1B647F74D98CA179@CH0PR12MB5171.namprd12.prod.outlook.com>
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: FP1uCzI7lnyeun6FgCz2YASG8I4FNuVopjDKSOCgRFZcX/gcaiLHPt3l1hVgJHxuKO+qyPBpvgbWrqLUhxF4Ue4YjqMFfFoLdwh0YnvEGK73cvwyJemab13EUyty/nbzqal0zz28V+QbCR9NJ44ILUDP2wgjaT5S2x2nbaDQHRbzj9kxhTUfMgFCDUTYE66JrgKQcxQe61FKbOnUT12LGav1ay2Nof0BuAdyH38mEov5YfH40tzVl1s1vcrvbP8rlq8EmMhYyebw5XXB5txMepjcDAhxLHlDIFVL3YtReEFhbEd95pUB2+zT14Q3VVx/nDJazMpKFWX3s3M71aRJQmU5YV1u4jBYp+l6xDc8w4WgcijTd7ECPctKhXUd7oWgd8K4kd1y5Z5prNDenTEbLMnHPnM+hzRQm+IzJ+EzihUL8vTxwp5C5vhAFMT1ta9IE63R0ZC6WsxR+XWLl1XLIJDfibGu7otkqpSEyVdoOfEck1jdXwlHzbAkNoLesdhUh1WeeJefdVKc2ynsAqLUUaSsONY9L+ZTY3yVMsfLsjfv5w5PXNPz44Vj9GVsdA1khkeTthUoZ6TntcHq9myCCLmw6Hz0Ir8GiMQmRY273i2M8rUMEUJECom/3msS9TbF9fuA4yBdOIEmUviZj38/0axO6lx6zjXPXPpfVW6psDWZQHIXlzy7f7oPHUyifF0+QsYX+JmrY1A1o+Y+7MA6PHzhP86M2EQrPjkwAr9MF/k=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA0PR12MB4349.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(31686004)(2906002)(4326008)(66556008)(66946007)(31696002)(86362001)(316002)(6486002)(83380400001)(36756003)(8676002)(186003)(26005)(2616005)(107886003)(38100700002)(66476007)(8936002)(53546011)(15650500001)(55236004)(6506007)(6666004)(508600001)(6512007)(5660300002)(45980500001)(43740500002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?RjU1N3pkNVB0NXNuUG9STVZEclVLcFZ6Ulh4aEFKOHhNL2RnUmJveEYwTTkv?=
- =?utf-8?B?OElWS0diS2NhQjJiS0JtZjkzdTJUN2RWVGpSNktYcG9lcS92WFF4UVdGSFRy?=
- =?utf-8?B?TUVaUlloMm84dDc2a0VWMVhRd2Q2SW5SeHgzZmdSZEhNRVorZzQ4KzBxeGdv?=
- =?utf-8?B?R09ieGU1eE16ZmNPdlFlVHprNFJ3TkZweXpXSkZDTThmOXhMMjVQZHpMbzV4?=
- =?utf-8?B?VHcybW1ocWZmVDdhMlQxMVFIQVVJL2hGUVdoLzJITnhkWUxNMUQzU2tkU1c3?=
- =?utf-8?B?NUlTVE5wbDJXSDdZM2VySXdySHdXOHNIR0s5ekdkZ0N6REN4dStIUTVBZjlr?=
- =?utf-8?B?Y1NqNjJoQzFNS3B4eHAwcXJaNEFZcVY0SkwwTnR4djB5SWVwR08yNHV5VWNq?=
- =?utf-8?B?ck9XUWwrOGNPVlowZEtnZy9QYnVLUnNrUE12QlVCR1ZMOXlHOTl3MXo2a3VN?=
- =?utf-8?B?Z2VaWkhoRmJRSUE3RVB0a1pEc2RCTFRXMGFDZE9BT2JQNlp6OWJ4a2NYSkpJ?=
- =?utf-8?B?SHBFY2lXNDJicjE4T1FlNmxYZ2hMZkMxWUNkWXB3dm1Kc0UwQnUyazhyeFZP?=
- =?utf-8?B?UVZBTnVvZVRrT3kySERnQ2dmaHlJbC9EMk1OSVNCYm9xR2QrdmxubzdsdDNl?=
- =?utf-8?B?S3RuMmFzaU1iY3NLYXRPVkJiUzhhNkxkQVZKRkF0bEllN3ltS09yZWowM0VB?=
- =?utf-8?B?TzVuVTJDT3Jsbi9wUUwxdkwydmFYNEo3RUt6a0ZIOG9saHp5ZzJSb0k4OGxl?=
- =?utf-8?B?V3dVQ2YvSUdVR09iWklUakxwdjlYYUNjdFdhWVdLUk9aY0tTSFJVeHdnZHlj?=
- =?utf-8?B?ck9Zc0ZBajhBUWZDdlhWazc1dFhaZlBRM0E4VGZkb1UzSktIa0NIdlhQTmM5?=
- =?utf-8?B?bzdVZ2MvY3BrNDF2cnQxNCtDbnN4WjcyVWw5NXBnTTBWZkxmdlNtOWU5eUg3?=
- =?utf-8?B?NmtrTU9DMVVSdVN5YkJFektxSGJVVUhCalQ5Zm5HQ0I2M3RWbXRvdVJ0VDND?=
- =?utf-8?B?Umo0bFY0NHRNcS9BU1FCMTRENUp6WXRyVk9veTNEQXB2OXBMa1NLcVpPa2RP?=
- =?utf-8?B?aXYrYzdSa1RMT2JYY1BycDRzZm85L1IzTWY1c25QNlZRMFVveEs4eTBhaTNa?=
- =?utf-8?B?ZEJNVzBLKzUwZFVaWklDaWdDK1c0bEFtSjh6MUY1N3k0MERVWXE2UHpjMWN2?=
- =?utf-8?B?RTVjdW5wdGlrRStyclJleTRmS0JBekduV1VqUkZTeTIvZEYvTnlYajZ6RjFG?=
- =?utf-8?B?RXhFWjNJVmhQUHFWdFRCblptTDMxUnJDOXcyY1VYaGdLVHVZN2YzYTlmU0JI?=
- =?utf-8?B?OWc1ampmTVEwN3FRV0dCUWhpRTZ6cW9TVzVGRDJpajJiN21URVZvZTRSTytv?=
- =?utf-8?B?anZHNE5ESEUxTUs5aFB4aGFrYzBMNTFNeEFsR1ZZZUNpcW4rSmZCNUhnYVF3?=
- =?utf-8?B?eXFXclVCeGNQZ3NLS3NvNXdTZU5qQnFUbjJ6cVZVc3VvRndZMDRRTlBNV0hu?=
- =?utf-8?B?S0JhZFdDcXF0czgxbWJuOTNFMkRTdUgvT2cyN3dlK3h4YkNOWWFmVFliTlFt?=
- =?utf-8?B?eVhzS1Q1ZnZ2clBVNk9JcUQ4YTh6eGY4dms3RmFSY0ZlcklhdWVkeWNCbjU5?=
- =?utf-8?B?bDRYdW1BSE9wRG9Ec2xhQXczUWhiS0gyTGk5eUoxOUNHSXVuNDdDV3VZUGxv?=
- =?utf-8?B?ck1xamI1NXFsMlhGSTBiNjNMU1RuZnlkSE5oZlZyalZjSzdueWhHbmladUVX?=
- =?utf-8?B?dGJINDZ1dTg0T2dMVWRvZVJBYUh1RkJsL09meXJzMFpJcFFma3IzeTczR3Zo?=
- =?utf-8?B?bEZVelZkdXAxYzc1U25ZQzJUYXpJQ3pna09MalJoQXdXVnZkVFZBN1gxZ2xG?=
- =?utf-8?B?dnF1alJLVjU2UDRRTGJXaGZZdnNlVkFzQnk2K1VqWUZ3MDNiWFVBTjRpTTNl?=
- =?utf-8?Q?b9aL4H2AZ0iSyIVF324oKqpAL3N6lG8J?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 993be956-02ef-458e-d71d-08da0c2f9136
-X-MS-Exchange-CrossTenant-AuthSource: SA0PR12MB4349.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Mar 2022 18:12:46.9382
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: tEoL0CENnbIIPoIa1VMAIQbkgobVE+Pqf1/eS/Hvzb6UF8NGdFlfXOVGNInl7+AX3eemW56jntJ2ND1pvRjgfw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR12MB5171
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-
-
-On 3/20/2022 6:12 PM, Krzysztof Kozlowski wrote:
-> External email: Use caution opening links or attachments
+On 22/03/2022 19:04, Ashish Mhetre wrote:
 > 
 > 
-> On 16/03/2022 10:25, Ashish Mhetre wrote:
->>  From tegra186 onwards, memory controller support multiple channels.
->> Reg items are updated with address and size of these channels.
->> Tegra186 has overall 5 memory controller channels. Tegra194 and tegra234
->> have overall 17 memory controller channels each.
->> There is 1 reg item for memory controller stream-id registers.
->> So update the reg maxItems to 18 in tegra186 devicetree documentation.
+> On 3/20/2022 6:01 PM, Krzysztof Kozlowski wrote:
+>> External email: Use caution opening links or attachments
 >>
->> Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
->> ---
->>   .../nvidia,tegra186-mc.yaml                   | 20 +++++++++++++------
->>   1 file changed, 14 insertions(+), 6 deletions(-)
 >>
->> diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml
->> index 13c4c82fd0d3..3c4e231dc1de 100644
->> --- a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml
->> +++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml
->> @@ -34,8 +34,8 @@ properties:
->>             - nvidia,tegra234-mc
+>> On 16/03/2022 10:25, Ashish Mhetre wrote:
+>>>  From tegra186 onwards, memory controller support multiple channels.
+>>> Add support for mapping address spaces of these channels.
+>>> Make sure that number of channels are as expected on each SOC.
+>>> During error interrupts from memory controller, appropriate registers
+>>> from these channels need to be accessed for logging error info.
+>>>
+>>> Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
+>>> ---
+>>>   drivers/memory/tegra/mc.c       |  6 ++++
+>>>   drivers/memory/tegra/tegra186.c | 52 +++++++++++++++++++++++++++++++++
+>>>   drivers/memory/tegra/tegra194.c |  1 +
+>>>   drivers/memory/tegra/tegra234.c |  1 +
+>>>   include/soc/tegra/mc.h          |  7 +++++
+>>>   5 files changed, 67 insertions(+)
+>>>
+>>> diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
+>>> index bf3abb6d8354..3cda1d9ad32a 100644
+>>> --- a/drivers/memory/tegra/mc.c
+>>> +++ b/drivers/memory/tegra/mc.c
+>>> @@ -749,6 +749,12 @@ static int tegra_mc_probe(struct platform_device *pdev)
+>>>        if (IS_ERR(mc->regs))
+>>>                return PTR_ERR(mc->regs);
+>>>
+>>> +     if (mc->soc->ops && mc->soc->ops->map_regs) {
+>>> +             err = mc->soc->ops->map_regs(mc, pdev);
+>>> +             if (err < 0)
+>>> +                     return err;
+>>> +     }
+>>> +
+>>>        mc->debugfs.root = debugfs_create_dir("mc", NULL);
+>>>
+>>>        if (mc->soc->ops && mc->soc->ops->probe) {
+>>> diff --git a/drivers/memory/tegra/tegra186.c b/drivers/memory/tegra/tegra186.c
+>>> index 3d153881abc1..a8a45e6ff1f1 100644
+>>> --- a/drivers/memory/tegra/tegra186.c
+>>> +++ b/drivers/memory/tegra/tegra186.c
+>>> @@ -139,11 +139,62 @@ static int tegra186_mc_probe_device(struct tegra_mc *mc, struct device *dev)
+>>>        return 0;
+>>>   }
+>>>
+>>> +static int tegra186_mc_map_regs(struct tegra_mc *mc,
+>>> +                             struct platform_device *pdev)
+>>> +{
+>>> +     struct device_node *np = pdev->dev.parent->of_node;
+>>> +     int num_dt_channels, reg_cells = 0;
+>>> +     struct resource *res;
+>>> +     int i, ret;
+>>> +     u32 val;
+>>> +
+>>> +     ret = of_property_read_u32(np, "#address-cells", &val);
+>>> +     if (ret) {
+>>> +             dev_err(&pdev->dev, "missing #address-cells property\n");
+>>> +             return ret;
+>>> +     }
+>>> +
+>>> +     reg_cells = val;
+>>> +
+>>> +     ret = of_property_read_u32(np, "#size-cells", &val);
+>>> +     if (ret) {
+>>> +             dev_err(&pdev->dev, "missing #size-cells property\n");
+>>> +             return ret;
+>>> +     }
+>>> +
+>>> +     reg_cells += val;
+>>> +
+>>> +     num_dt_channels = of_property_count_elems_of_size(pdev->dev.of_node, "reg",
+>>> +                                                       reg_cells * sizeof(u32));
+>>> +     /*
+>>> +      * On tegra186 onwards, memory controller support multiple channels.
+>>> +      * Apart from regular memory controller channels, there is one broadcast
+>>> +      * channel and one for stream-id registers.
+>>> +      */
+>>> +     if (num_dt_channels < mc->soc->num_channels + 2) {
+>>> +             dev_warn(&pdev->dev, "MC channels are missing, please update\n");
 >>
->>     reg:
->> -    minItems: 1
->> -    maxItems: 3
->> +    minItems: 6
->> +    maxItems: 18
-> 
-> Still ABI break and now the in-kernel DTS will report dt check errors.
-> 
-The dt check error is because I mistakenly updated example in EMC node
-instead of MC. I'll fix it in next version.
+>> How did you address our previous comments about ABI break? I really do
+>> not see it.
+>>
+> In v4 patch, error was returned from here and probe failed causing ABI
+> break. In v5, we are checking if number of reg items in DT is as
+> expected or not. If number of reg items are less then we are just
+> printing warning to update DT and returning 0. So probe won't fail and
+> driver will work as expected.
+> Also I had tested just driver patches with existing DT and it worked
+> fine.
 
-> I think you ignored the comments you got about breaking ABI.
-> 
-No, I took care of the ABI break in v5. I have updated details about
-how we took care of it in first patch.
+Ah, right, thanks. I missed the return 0. Looks good, thanks for the
+changes and for explanation.
 
-> Best regards,
-> Krzysztof
+
+Best regards,
+Krzysztof
