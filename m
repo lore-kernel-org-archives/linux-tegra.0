@@ -2,102 +2,139 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E24DCC433EF
-	for <linux-tegra@archiver.kernel.org>; Tue, 22 Mar 2022 05:50:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA52EC433FE
+	for <linux-tegra@archiver.kernel.org>; Tue, 22 Mar 2022 08:45:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236939AbiCVFvt (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 22 Mar 2022 01:51:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59766 "EHLO
+        id S231681AbiCVIqn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 22 Mar 2022 04:46:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41136 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236822AbiCVFvo (ORCPT
+        with ESMTP id S231707AbiCVIql (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 22 Mar 2022 01:51:44 -0400
-Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1229013E92
-        for <linux-tegra@vger.kernel.org>; Mon, 21 Mar 2022 22:50:15 -0700 (PDT)
-Received: by mail-pl1-x631.google.com with SMTP id x2so1048184plm.7
-        for <linux-tegra@vger.kernel.org>; Mon, 21 Mar 2022 22:50:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=OiFNJfidtcLZL95dwA0p8vHTH/+gyq0cBwTFe4nfHC4=;
-        b=Xah2mlFjMxPCVZIJqy66fknjtsMhxeCVTydPkhuVIhFnZ/BgjgGhNaruBdgj1vZs0b
-         2QMa6sw4IY0eovwypGbY5TuWnxD7RFBNjbuOHKjHlXYB4Yu3e/vb1+PnDfyCPgOq5fbK
-         9aGO1/lXoHepeHBldsyDEKan7b9G6CzNcaA+PrdoAt6MJpmUttOPFoIppKVzJ3phEnmB
-         NpxDUDwv9dcKkYpsJ+BmSfpgbBdJKNNPRXr1yK1Wt1n4H5i++vO6BarrEMpL7FvHwJnY
-         cVVtFc//UpVaMp+244Mr+JBarhoElto4LmSS55vSEUqIeYBn/GR80lsLAZZ2pUmcBhTE
-         vqHQ==
+        Tue, 22 Mar 2022 04:46:41 -0400
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9FB2E2A718
+        for <linux-tegra@vger.kernel.org>; Tue, 22 Mar 2022 01:45:10 -0700 (PDT)
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com [209.85.128.72])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id F23183F1FC
+        for <linux-tegra@vger.kernel.org>; Tue, 22 Mar 2022 08:45:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1647938708;
+        bh=neGecA7HBSwD46fG4cAmxThQpgGejbSlPRN3sQKWp0I=;
+        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+         In-Reply-To:Content-Type;
+        b=G1GV1jo4GhDvShqjVA5zAct6OuJbDJRivDVlx047iy4OmGDROxZDAfpUxiTY6bsyo
+         gYdBRrB6zgDtWEUPaqj5/Us6J0WcqzCyxA9CVXLoNSMkwTN7VULezUiriX34zy+4Mn
+         h/UScrQ/bdDGd85CFRr9cwCX+rYoJM/bprOh8PqNEaPrUf/9T34e6RsdyFdo8AoZTh
+         kQmY45r9zCnhqO6wXXZTlfSEQEaEslaPpFL5wH6C8PN7NFNWoEl6V2ZudO8KPxpa7D
+         0awDy/I9bdpJzj5XkOwL1CWLk8LGdMnSCg6g1+e8Ep1Pq/h2aNmRfAqW0z5avtWPGj
+         YvRFRStDiwRtg==
+Received: by mail-wm1-f72.google.com with SMTP id 12-20020a05600c24cc00b0038c6caa95f7so539577wmu.4
+        for <linux-tegra@vger.kernel.org>; Tue, 22 Mar 2022 01:45:08 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=OiFNJfidtcLZL95dwA0p8vHTH/+gyq0cBwTFe4nfHC4=;
-        b=ZtOGJ+ASUvCUgZrCq5T0ZVJna0cvavC/v3xZ3QmTwIPDKXw+y9spaCa37KEELU8r5+
-         4J6t2aiESVj5rZ3CLWdnZty06viWc6HArQLTdU8w/evrehHsEg5tcAo+sI790ilPmlx8
-         AK4hBhX1zXfbbAJI463TowAEcYJPk2Xq4cCE6GHicTFFIFGflQ3ywcRGp+rEW7y6CVQv
-         Dl4/p4VgDV/5xg+CkKdwo5h7+lVMU6wBhlYNNZx2Nc/m6IlLLu4vfaEF70YbZdGWrnLM
-         lOxIM1tifZ8U7RrwezHxvJGqDnHJ5HNIk5b5xtUVzTTwzh+ZZMXgn5G2zQwy4AmhPztA
-         q5Cw==
-X-Gm-Message-State: AOAM533TNODklCvwn0bO7OPWiD6VU2G/mBHuIY1ZbtlLm+dJhz82fK3p
-        jI2mNIGaJv4wm1PygeWvt+0kmA==
-X-Google-Smtp-Source: ABdhPJyTbqoe7gBP/CG0o/jv5uRTemAQdRxljUYXISAvD47ve8cH8r8ZXSpYzJBA6cH1dGxCRFJKqw==
-X-Received: by 2002:a17:90b:504:b0:1c7:3095:fd78 with SMTP id r4-20020a17090b050400b001c73095fd78mr3068701pjz.142.1647928214587;
-        Mon, 21 Mar 2022 22:50:14 -0700 (PDT)
-Received: from localhost ([223.184.83.228])
-        by smtp.gmail.com with ESMTPSA id m14-20020a637d4e000000b00380b83e2e1fsm16229226pgn.70.2022.03.21.22.50.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Mar 2022 22:50:13 -0700 (PDT)
-Date:   Tue, 22 Mar 2022 11:20:12 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Sumit Gupta <sumitg@nvidia.com>
-Cc:     rafael@kernel.org, robh+dt@kernel.org, krzk+dt@kernel.org,
-        treding@nvidia.com, jonathanh@nvidia.com, linux-pm@vger.kernel.org,
-        linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ksitaraman@nvidia.com,
-        sanjayc@nvidia.com, bbasu@nvidia.com
-Subject: Re: [Patch v1 3/3] cpufreq: tegra194: Add support for Tegra234
-Message-ID: <20220322055012.oewlqykxb4dlkhbr@vireshk-i7>
-References: <20220316135831.900-1-sumitg@nvidia.com>
- <20220316135831.900-4-sumitg@nvidia.com>
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=neGecA7HBSwD46fG4cAmxThQpgGejbSlPRN3sQKWp0I=;
+        b=mZgt1yGkpOesjRIqZn+2wipbf5uCVDmijg3ICm3I5Mlp6IrAjt8XyodMLTAAwLUUH6
+         yqwHyo9Cd3aeEoGCsa1v47i3DwRzW6y9rrd1QaIeoesRRUPrZzJ5sQxt5lRcYjUa17kX
+         E3/WCYy5Q4+s4KdJJFm2tQp6QohuQ9p+kFWgP+WIRCZjc9UMVscibRLBa5pJ0z2+rtnz
+         0XZ8Agr6VyMmJ+vDDdDZ2TsR/dkd4XJQNVMn96ZwYD9zcNqtgmAAD8Y+eRGsSqFvV6nI
+         SjPDdgi9G7su1W8/1+SKJJplz9cbYCx2Qq64qLMo5HSsBkj7zKQNAGAskP7pHHx3BXHI
+         FHrw==
+X-Gm-Message-State: AOAM532bpL6zP3sG23BAsImwHCc0VuqPdHiTYXyGuVMPfYyhxa4wBcvn
+        +Xf9AXua+tVlbvj4SyZamliZrlOPEPU4Y6+02fK2G/JlZVbLEPG3n1cfJqRr3WdkRLBHUkGdWO7
+        0KX4geZHWSqUnHEKeGVMmSaozzjIbphoaY8jAkQKc
+X-Received: by 2002:a5d:59a1:0:b0:204:1777:fc08 with SMTP id p1-20020a5d59a1000000b002041777fc08mr5740202wrr.545.1647938708532;
+        Tue, 22 Mar 2022 01:45:08 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJw04a3TswDavls/3TZ+Ylafig5G9XRM4IJdq5o+8htxAoCK7PnTDqyBAOY10yAJcYtgnX428g==
+X-Received: by 2002:a5d:59a1:0:b0:204:1777:fc08 with SMTP id p1-20020a5d59a1000000b002041777fc08mr5740165wrr.545.1647938708324;
+        Tue, 22 Mar 2022 01:45:08 -0700 (PDT)
+Received: from [192.168.0.17] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
+        by smtp.gmail.com with ESMTPSA id f9-20020a05600c4e8900b0038c740951ebsm1522235wmq.24.2022.03.22.01.45.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 22 Mar 2022 01:45:07 -0700 (PDT)
+Message-ID: <a8290aa4-8a2c-68c3-bc55-82abcd27385e@canonical.com>
+Date:   Tue, 22 Mar 2022 09:45:05 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220316135831.900-4-sumitg@nvidia.com>
-User-Agent: NeoMutt/20180716-391-311a52
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [PATCH 2/2] dt-bindings: clock: drop useless consumer example
+Content-Language: en-US
+To:     Jesse Taube <mr.bossman075@gmail.com>,
+        Rob Herring <robh@kernel.org>
+Cc:     Manivannan Sadhasivam <mani@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Luca Ceresoli <luca@lucaceresoli.net>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Alexander Shiyan <shc_work@mail.ru>,
+        Steffen Trumtrar <s.trumtrar@pengutronix.de>,
+        "A.s. Dong" <aisheng.dong@nxp.com>,
+        Giulio Benetti <giulio.benetti@benettiengineering.com>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Ioana Ciornei <ioana.ciornei@nxp.com>
+References: <20220316130858.93455-1-krzysztof.kozlowski@canonical.com>
+ <20220316130858.93455-2-krzysztof.kozlowski@canonical.com>
+ <YjjCpQ9vwFoEmFFi@robh.at.kernel.org>
+ <ca6c4fe5-93c5-9ad4-0c9f-86ec3213d44e@gmail.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+In-Reply-To: <ca6c4fe5-93c5-9ad4-0c9f-86ec3213d44e@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 16-03-22, 19:28, Sumit Gupta wrote:
-> @@ -442,6 +538,13 @@ static int tegra194_cpufreq_probe(struct platform_device *pdev)
->  	if (!data->tables)
->  		return -ENOMEM;
->  
-> +	if (of_device_is_compatible(pdev->dev.of_node, "nvidia,tegra234-ccplex-cluster")) {
+On 22/03/2022 02:45, Jesse Taube wrote:
+> 
+> 
+> On 3/21/22 14:23, Rob Herring wrote:
+>> On Wed, Mar 16, 2022 at 02:08:58PM +0100, Krzysztof Kozlowski wrote:
+>>> Consumer examples in the bindings of resource providers are trivial,
+>>> useless and duplication of code.  Remove the example code for consumer
+>>>
+>>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+>>> ---
+>>>   .../bindings/clock/bitmain,bm1880-clk.yaml           | 12 ------------
+>>>   .../devicetree/bindings/clock/idt,versaclock5.yaml   |  7 -------
+>>>   .../devicetree/bindings/clock/imx1-clock.yaml        |  9 ---------
+>>>   .../devicetree/bindings/clock/imx21-clock.yaml       |  9 ---------
+>>>   .../devicetree/bindings/clock/imx23-clock.yaml       |  9 ---------
+>>>   .../devicetree/bindings/clock/imx25-clock.yaml       |  8 --------
+>>>   .../devicetree/bindings/clock/imx27-clock.yaml       |  9 ---------
+>>>   .../devicetree/bindings/clock/imx28-clock.yaml       |  9 ---------
+>>>   .../devicetree/bindings/clock/imx31-clock.yaml       |  8 --------
+>>>   .../devicetree/bindings/clock/imx35-clock.yaml       |  8 --------
+>>>   .../devicetree/bindings/clock/imx7ulp-pcc-clock.yaml | 11 -----------
+>>>   .../devicetree/bindings/clock/imx7ulp-scg-clock.yaml | 11 -----------
+>>>   .../devicetree/bindings/clock/imx8qxp-lpcg.yaml      | 11 -----------
+>>>   .../devicetree/bindings/clock/imxrt1050-clock.yaml   |  8 --------
+>>>   .../bindings/clock/nvidia,tegra124-car.yaml          |  7 -------
+>>>   .../bindings/clock/nvidia,tegra20-car.yaml           |  7 -------
+>>>   16 files changed, 143 deletions(-)
+>>
+>> Doesn't apply to my tree (no imxrt1050-clock.yaml), so
+> merge against linux-next I can submit another patch if needed.
+>> Acked-by: Rob Herring <robh@kernel.org>
 
-Since you have soc specific data, that should be used here to know if you need
-to map registers or not. You shouldn't use device-compatible here again.
+Let me send it after the merge window - all dependencies should be there.
 
-> +		/* mmio registers are used for frequency request and re-construction */
-> +		data->regs = devm_platform_ioremap_resource(pdev, 0);
-> +		if (IS_ERR(data->regs))
-> +			return PTR_ERR(data->regs);
-> +	}
-> +
->  	platform_set_drvdata(pdev, data);
->  
->  	bpmp = tegra_bpmp_get(&pdev->dev);
-> @@ -486,6 +589,7 @@ static int tegra194_cpufreq_remove(struct platform_device *pdev)
->  
->  static const struct of_device_id tegra194_cpufreq_of_match[] = {
->  	{ .compatible = "nvidia,tegra194-ccplex", .data = &tegra194_cpufreq_soc },
-> +	{ .compatible = "nvidia,tegra234-ccplex-cluster", .data = &tegra234_cpufreq_soc },
->  	{ /* sentinel */ }
->  };
->  
-> -- 
-> 2.17.1
 
--- 
-viresh
+Best regards,
+Krzysztof
