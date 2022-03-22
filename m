@@ -2,123 +2,102 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AF16C433EF
-	for <linux-tegra@archiver.kernel.org>; Tue, 22 Mar 2022 01:45:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E24DCC433EF
+	for <linux-tegra@archiver.kernel.org>; Tue, 22 Mar 2022 05:50:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235028AbiCVBrB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 21 Mar 2022 21:47:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45448 "EHLO
+        id S236939AbiCVFvt (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 22 Mar 2022 01:51:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59766 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234610AbiCVBrB (ORCPT
+        with ESMTP id S236822AbiCVFvo (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 21 Mar 2022 21:47:01 -0400
-Received: from mail-il1-x12b.google.com (mail-il1-x12b.google.com [IPv6:2607:f8b0:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2129E33E91;
-        Mon, 21 Mar 2022 18:45:34 -0700 (PDT)
-Received: by mail-il1-x12b.google.com with SMTP id e9so10790300ilu.9;
-        Mon, 21 Mar 2022 18:45:34 -0700 (PDT)
+        Tue, 22 Mar 2022 01:51:44 -0400
+Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1229013E92
+        for <linux-tegra@vger.kernel.org>; Mon, 21 Mar 2022 22:50:15 -0700 (PDT)
+Received: by mail-pl1-x631.google.com with SMTP id x2so1048184plm.7
+        for <linux-tegra@vger.kernel.org>; Mon, 21 Mar 2022 22:50:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=zr0mWxQ50In1k50aI0C4tqPbw585vCp4j+PEvB7bkb8=;
-        b=WPeQWzlV2V8L+K20EVJb+LMeyLxwsBHU8JgNhDMz2/4wk7Upkb0JOcwnXg8aFR+A+7
-         pEg6qPQ6Eob5oE0M4bP3muGozT/dxeB/eAusirOX1ledQNzJ1k4xcA3J7Rr2q34NGp50
-         3zwU8o43mM6yToZ5771Ww/E2I9vbLrXzC0q+kNaALhWkkKf5BDkpS+KdaKMTLPnuyxfE
-         ux232B2Pl8yJmWhorpLFITU1hHTa1Mwl8tXoK+gBBayyBOffGncDPSPI2LTyoqH40Aa2
-         40yEdRDRbW1tmENlHoVfU5G8yXHSA6agJM+Q/lGTtm6U8/kL91jFTbVThKbRKAIeDAC+
-         4rzQ==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=OiFNJfidtcLZL95dwA0p8vHTH/+gyq0cBwTFe4nfHC4=;
+        b=Xah2mlFjMxPCVZIJqy66fknjtsMhxeCVTydPkhuVIhFnZ/BgjgGhNaruBdgj1vZs0b
+         2QMa6sw4IY0eovwypGbY5TuWnxD7RFBNjbuOHKjHlXYB4Yu3e/vb1+PnDfyCPgOq5fbK
+         9aGO1/lXoHepeHBldsyDEKan7b9G6CzNcaA+PrdoAt6MJpmUttOPFoIppKVzJ3phEnmB
+         NpxDUDwv9dcKkYpsJ+BmSfpgbBdJKNNPRXr1yK1Wt1n4H5i++vO6BarrEMpL7FvHwJnY
+         cVVtFc//UpVaMp+244Mr+JBarhoElto4LmSS55vSEUqIeYBn/GR80lsLAZZ2pUmcBhTE
+         vqHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=zr0mWxQ50In1k50aI0C4tqPbw585vCp4j+PEvB7bkb8=;
-        b=Ygg+AecK7bVi/1ESvb6hDwHr/FOXaFYNM1bUtfhITcwX6c01tdnVDPHkHnpKlInYBE
-         c/2Ufw4W3CEjDs2So4cC9A1pVBFRfNkT3cLboTLL/GYNaHNI5Oab1IXVEi7JuzvlVB8g
-         mBcp8rUJlGxEAn9CB5cObofDY5EuaJDiIUyD3qMF+ia741WIxvNeP7r0SU/gFxlXAJuz
-         QUvnYt7nNyHMmLLT0Lvn8ER3Xnz6guR/cN6Re9bKbj0V6rN9PRj86GKyK+LOKhaVrUAn
-         /Ndz4FJBAP55cNNoe0bdjM/tLqmzAddkJFcmdfCu80nRChDehJJk+UjgzkB9PAfS5hDg
-         t5ug==
-X-Gm-Message-State: AOAM530bPUXT8eHXTPdBKvA6gJSyitQlYzZ6R7UDnqOq2vnVj/uiyfWt
-        D5IJZbSPDLdiKyIOpBOuBCg=
-X-Google-Smtp-Source: ABdhPJyO1XKSI7rN37fLL9+RWQm3FDgEEZEuiFvyfCvwgCm0b+qN5b2DQubr3ioFDqHp4GAM0w4Pzw==
-X-Received: by 2002:a92:cbc3:0:b0:2c6:78fa:41e9 with SMTP id s3-20020a92cbc3000000b002c678fa41e9mr11160986ilq.112.1647913533439;
-        Mon, 21 Mar 2022 18:45:33 -0700 (PDT)
-Received: from [10.4.10.38] (146-115-144-188.s4282.c3-0.nwt-cbr1.sbo-nwt.ma.cable.rcncustomer.com. [146.115.144.188])
-        by smtp.gmail.com with ESMTPSA id m2-20020a056e021c2200b002c837530587sm1389456ilh.60.2022.03.21.18.45.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Mar 2022 18:45:32 -0700 (PDT)
-Message-ID: <ca6c4fe5-93c5-9ad4-0c9f-86ec3213d44e@gmail.com>
-Date:   Mon, 21 Mar 2022 21:45:28 -0400
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=OiFNJfidtcLZL95dwA0p8vHTH/+gyq0cBwTFe4nfHC4=;
+        b=ZtOGJ+ASUvCUgZrCq5T0ZVJna0cvavC/v3xZ3QmTwIPDKXw+y9spaCa37KEELU8r5+
+         4J6t2aiESVj5rZ3CLWdnZty06viWc6HArQLTdU8w/evrehHsEg5tcAo+sI790ilPmlx8
+         AK4hBhX1zXfbbAJI463TowAEcYJPk2Xq4cCE6GHicTFFIFGflQ3ywcRGp+rEW7y6CVQv
+         Dl4/p4VgDV/5xg+CkKdwo5h7+lVMU6wBhlYNNZx2Nc/m6IlLLu4vfaEF70YbZdGWrnLM
+         lOxIM1tifZ8U7RrwezHxvJGqDnHJ5HNIk5b5xtUVzTTwzh+ZZMXgn5G2zQwy4AmhPztA
+         q5Cw==
+X-Gm-Message-State: AOAM533TNODklCvwn0bO7OPWiD6VU2G/mBHuIY1ZbtlLm+dJhz82fK3p
+        jI2mNIGaJv4wm1PygeWvt+0kmA==
+X-Google-Smtp-Source: ABdhPJyTbqoe7gBP/CG0o/jv5uRTemAQdRxljUYXISAvD47ve8cH8r8ZXSpYzJBA6cH1dGxCRFJKqw==
+X-Received: by 2002:a17:90b:504:b0:1c7:3095:fd78 with SMTP id r4-20020a17090b050400b001c73095fd78mr3068701pjz.142.1647928214587;
+        Mon, 21 Mar 2022 22:50:14 -0700 (PDT)
+Received: from localhost ([223.184.83.228])
+        by smtp.gmail.com with ESMTPSA id m14-20020a637d4e000000b00380b83e2e1fsm16229226pgn.70.2022.03.21.22.50.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Mar 2022 22:50:13 -0700 (PDT)
+Date:   Tue, 22 Mar 2022 11:20:12 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Sumit Gupta <sumitg@nvidia.com>
+Cc:     rafael@kernel.org, robh+dt@kernel.org, krzk+dt@kernel.org,
+        treding@nvidia.com, jonathanh@nvidia.com, linux-pm@vger.kernel.org,
+        linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ksitaraman@nvidia.com,
+        sanjayc@nvidia.com, bbasu@nvidia.com
+Subject: Re: [Patch v1 3/3] cpufreq: tegra194: Add support for Tegra234
+Message-ID: <20220322055012.oewlqykxb4dlkhbr@vireshk-i7>
+References: <20220316135831.900-1-sumitg@nvidia.com>
+ <20220316135831.900-4-sumitg@nvidia.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.4.0
-Subject: Re: [PATCH 2/2] dt-bindings: clock: drop useless consumer example
-Content-Language: en-US
-To:     Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Manivannan Sadhasivam <mani@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Luca Ceresoli <luca@lucaceresoli.net>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Alexander Shiyan <shc_work@mail.ru>,
-        Steffen Trumtrar <s.trumtrar@pengutronix.de>,
-        "A.s. Dong" <aisheng.dong@nxp.com>,
-        Giulio Benetti <giulio.benetti@benettiengineering.com>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Ioana Ciornei <ioana.ciornei@nxp.com>
-References: <20220316130858.93455-1-krzysztof.kozlowski@canonical.com>
- <20220316130858.93455-2-krzysztof.kozlowski@canonical.com>
- <YjjCpQ9vwFoEmFFi@robh.at.kernel.org>
-From:   Jesse Taube <mr.bossman075@gmail.com>
-In-Reply-To: <YjjCpQ9vwFoEmFFi@robh.at.kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220316135831.900-4-sumitg@nvidia.com>
+User-Agent: NeoMutt/20180716-391-311a52
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On 16-03-22, 19:28, Sumit Gupta wrote:
+> @@ -442,6 +538,13 @@ static int tegra194_cpufreq_probe(struct platform_device *pdev)
+>  	if (!data->tables)
+>  		return -ENOMEM;
+>  
+> +	if (of_device_is_compatible(pdev->dev.of_node, "nvidia,tegra234-ccplex-cluster")) {
 
+Since you have soc specific data, that should be used here to know if you need
+to map registers or not. You shouldn't use device-compatible here again.
 
-On 3/21/22 14:23, Rob Herring wrote:
-> On Wed, Mar 16, 2022 at 02:08:58PM +0100, Krzysztof Kozlowski wrote:
->> Consumer examples in the bindings of resource providers are trivial,
->> useless and duplication of code.  Remove the example code for consumer
->>
->> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
->> ---
->>   .../bindings/clock/bitmain,bm1880-clk.yaml           | 12 ------------
->>   .../devicetree/bindings/clock/idt,versaclock5.yaml   |  7 -------
->>   .../devicetree/bindings/clock/imx1-clock.yaml        |  9 ---------
->>   .../devicetree/bindings/clock/imx21-clock.yaml       |  9 ---------
->>   .../devicetree/bindings/clock/imx23-clock.yaml       |  9 ---------
->>   .../devicetree/bindings/clock/imx25-clock.yaml       |  8 --------
->>   .../devicetree/bindings/clock/imx27-clock.yaml       |  9 ---------
->>   .../devicetree/bindings/clock/imx28-clock.yaml       |  9 ---------
->>   .../devicetree/bindings/clock/imx31-clock.yaml       |  8 --------
->>   .../devicetree/bindings/clock/imx35-clock.yaml       |  8 --------
->>   .../devicetree/bindings/clock/imx7ulp-pcc-clock.yaml | 11 -----------
->>   .../devicetree/bindings/clock/imx7ulp-scg-clock.yaml | 11 -----------
->>   .../devicetree/bindings/clock/imx8qxp-lpcg.yaml      | 11 -----------
->>   .../devicetree/bindings/clock/imxrt1050-clock.yaml   |  8 --------
->>   .../bindings/clock/nvidia,tegra124-car.yaml          |  7 -------
->>   .../bindings/clock/nvidia,tegra20-car.yaml           |  7 -------
->>   16 files changed, 143 deletions(-)
-> 
-> Doesn't apply to my tree (no imxrt1050-clock.yaml), so
-merge against linux-next I can submit another patch if needed.
-> Acked-by: Rob Herring <robh@kernel.org>
+> +		/* mmio registers are used for frequency request and re-construction */
+> +		data->regs = devm_platform_ioremap_resource(pdev, 0);
+> +		if (IS_ERR(data->regs))
+> +			return PTR_ERR(data->regs);
+> +	}
+> +
+>  	platform_set_drvdata(pdev, data);
+>  
+>  	bpmp = tegra_bpmp_get(&pdev->dev);
+> @@ -486,6 +589,7 @@ static int tegra194_cpufreq_remove(struct platform_device *pdev)
+>  
+>  static const struct of_device_id tegra194_cpufreq_of_match[] = {
+>  	{ .compatible = "nvidia,tegra194-ccplex", .data = &tegra194_cpufreq_soc },
+> +	{ .compatible = "nvidia,tegra234-ccplex-cluster", .data = &tegra234_cpufreq_soc },
+>  	{ /* sentinel */ }
+>  };
+>  
+> -- 
+> 2.17.1
 
+-- 
+viresh
