@@ -2,47 +2,47 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E153C433F5
-	for <linux-tegra@archiver.kernel.org>; Tue, 22 Mar 2022 16:49:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AF2EC4332F
+	for <linux-tegra@archiver.kernel.org>; Tue, 22 Mar 2022 17:23:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239282AbiCVQud (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 22 Mar 2022 12:50:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42526 "EHLO
+        id S239591AbiCVRZK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 22 Mar 2022 13:25:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41642 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238086AbiCVQud (ORCPT
+        with ESMTP id S239560AbiCVRZB (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 22 Mar 2022 12:50:33 -0400
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2066.outbound.protection.outlook.com [40.107.93.66])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC6F534BA5;
-        Tue, 22 Mar 2022 09:49:03 -0700 (PDT)
+        Tue, 22 Mar 2022 13:25:01 -0400
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2055.outbound.protection.outlook.com [40.107.236.55])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C86A14033;
+        Tue, 22 Mar 2022 10:23:33 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=J2GqPk1cC7oTvGFoDRjMy/HTEq0eDOZbPLYRXOA9Xb+nw/A7jFmAum+CoNT8x/LZq3ZJDgzASwQTYwB3wTOqGQt6wAzBG61WEGcEElVsDnQ7mtUMoJpTtfoXazXJvCut3CDSyJTWmrKy2N8eCxysKVgdwKJ10mnIGymBaGokdsBZ41rNaUQQ6EINtbc0zK4T6H2ZoDM5ncpAkzGYNU13jhH3DPc8VlNp7ZGf7s6uPtuQ+ZQL4mkTy8fnta1be54lWiP7fenH7pMcbuzxWQcl281ha3oP2qf6j/nY4x7YStIPXaLWUs+lkW9Lz10Nvrs0fq8P4WILs0RKYo3wmylfFQ==
+ b=E3wxabyCosk7XPM7dVZtE9QgM2pEAkNujqr+9Xva4cHBbwpnRZB6hlgQ87JezIkUDL0sHeIsSY3xblbvRbzcIdsv21Jr5VTnvkvJDm9DfJzM3C9p8KGLyO88Y1mzFtHmleAErcVSsspQ9l08Mu45a9sIL/B/T4m8bc+O2a0DmzfDfHYlDgP4wYIl4ueGRwZs7Y8uXT+Kh0xgkCpH6yrL740v7AnQ3DM2oNNgweB2XqFgeX8tF4k2mKB905nuPNz/voQ8W57iMvmlc6u76G9sqEgk5/YmyIdsVSkOCLrxo+bbflfqYcxQ+6dQtCG/sb/T4dcHyDhZMAl7+3ShgjhpZQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=c0u1ecMhYcPBodsRDuyj92eTCcuElpTe4hYcekvqZS0=;
- b=dY+RxVwZx2bKo66kI75pu+jFJhX1ig7j7WkN+fKr6sqYFe64FV+lkE1Tq7T/rrh2v9JKVp7Wm9qlsH9VlyfmyvT22pvCvQB1Bhw1vzqTn9AUREAAwjILYiBh2SgXuJ/iuf4a3UBpWbyvKXIYHgm6LXx2nkK+WfAuD2HQJDymsjCfW7AP/pOjXh8j1Fi+9icCzjkE1lIlP6ilQxSyagy6wCHBhxn0GM2ST/nsc6sS6CxX48mJ7eOZGrZc8WcQXVvzTT+O8vxNI092bPZiG4yCfRPwuTtYT0DeTZljsxPSuNGhTgUxabsO/Eh4AquyrZH/ci1SWyp3rzTD+ckOoGH5bw==
+ bh=HHECv5EI76nUZwsIDPnPOmPSSr/poRwFxJcFMj3I45U=;
+ b=STlcJIu0j2v6q8qTgwQP/a223UiwDW1/Ig5kpIOZuRXXiyW/A8wDDDp3PAnmhBhObigqB+A8Bts1EcDu0tG54XfBtEhfc7Pc03H7AVESrq83gKuXHId/0SySx+YcBEJTHiUR4UcIE6jlRsO6jz7gH4VTFC3y+INZHbv9GtCKzHXam1cvTy1eB7ktmPesI2p6/cNvxhysXjEIkLOOVRh0cj+rl/yFRkuJPo8UfW/o4JN6NOhfWeSZgTolIUkmmNnliW9b0Ak2pR9NmN10eaFnlzT0qoKINSpMrI+Grkk2cztBF48PJtthir+/P84zauNL2COLGQMkOsCZMuIhEvQKOQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
  dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=c0u1ecMhYcPBodsRDuyj92eTCcuElpTe4hYcekvqZS0=;
- b=OSNuJIApkTNxI4WVbWsLAMVn0+QnN3Fcu9MfdyzrnN9u/AjBzaCO6WQ1SlAki3MLTt1IsRc0NHcng/gx0xysm7SCeh5MF8CNQzdSZhYfFYFffIStrhZukkvl0YItLWxIYUx7M3Q3DZReAmAe0G81ksUmzsQc3p8rrRq7VTEqCQ4xinrtzZHuV6F34e/q9nCN7USAsDJtSsARXFXRdnsfzxs+BiP+tuSZUec1/s9lmnR7Deix/yu+HNm8o7sUpIVTpcI+qe0v5ElgoUJo2cykIPPYhuQS4pcaFh/kF0DtcJj78w3cSwDp1yz6R73lnqHjzlmA72EV5FmO2m5Ld5Fh3g==
+ bh=HHECv5EI76nUZwsIDPnPOmPSSr/poRwFxJcFMj3I45U=;
+ b=JFkQtQad8Ko2YERLza1FcJVXySoEZehiXoOQj+aXEaWzkjgiUmTiazglC3Bsexpz0L6VWPqyz2EFOmkmzk2vbDNBFySzflWXcMXCjiUNj1yScJR9sxoyWMyIh4VnhBCmsiWvWdBrwUadHK6fbb5WFdLKJfEFS9c+0lvorGlVymDqc3/m+gqw7gioIuuFbDeR96BWoveGJG0+LUv01m+Xba3XRzeuy567BEOGl20Fo68Sb4PC2i61lsd8ysLZWjYI3NWFW8YnaQCGlT1REIycHHX8GNc5Ha1tohVSmucj5zEEWDriQeQ24NmTEhgwY/IyQaQF4mHKUqy3fifNYchd9Q==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nvidia.com;
 Received: from SA0PR12MB4349.namprd12.prod.outlook.com (2603:10b6:806:98::21)
- by DM5PR12MB1867.namprd12.prod.outlook.com (2603:10b6:3:10d::7) with
+ by MN2PR12MB3488.namprd12.prod.outlook.com (2603:10b6:208:ca::16) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5102.16; Tue, 22 Mar
- 2022 16:49:02 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5081.15; Tue, 22 Mar
+ 2022 17:23:31 +0000
 Received: from SA0PR12MB4349.namprd12.prod.outlook.com
  ([fe80::e15c:41ca:1c76:2ef]) by SA0PR12MB4349.namprd12.prod.outlook.com
  ([fe80::e15c:41ca:1c76:2ef%3]) with mapi id 15.20.5081.023; Tue, 22 Mar 2022
- 16:49:02 +0000
-Message-ID: <b3527362-8cc4-3435-7d06-0df57839ef82@nvidia.com>
-Date:   Tue, 22 Mar 2022 22:18:51 +0530
+ 17:23:31 +0000
+Message-ID: <ecdc86b4-c207-de89-a094-6923a5573ac6@nvidia.com>
+Date:   Tue, 22 Mar 2022 22:53:17 +0530
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
  Thunderbird/91.7.0
 Subject: Re: [Patch v5 2/4] memory: tegra: Add MC error logging on tegra186
@@ -56,111 +56,107 @@ To:     Dmitry Osipenko <digetx@gmail.com>,
 Cc:     vdumpa@nvidia.com, Snikam@nvidia.com
 References: <20220316092525.4554-1-amhetre@nvidia.com>
  <20220316092525.4554-3-amhetre@nvidia.com>
- <fc8f35f8-ccc5-e847-e988-c4b882e53a44@gmail.com>
+ <168cf065-bc17-1ffc-8cc0-75775c7f3bcb@gmail.com>
 From:   Ashish Mhetre <amhetre@nvidia.com>
-In-Reply-To: <fc8f35f8-ccc5-e847-e988-c4b882e53a44@gmail.com>
+In-Reply-To: <168cf065-bc17-1ffc-8cc0-75775c7f3bcb@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: MA1PR0101CA0049.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a00:20::11) To SA0PR12MB4349.namprd12.prod.outlook.com
+X-ClientProxiedBy: MA1PR01CA0161.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:a00:71::31) To SA0PR12MB4349.namprd12.prod.outlook.com
  (2603:10b6:806:98::21)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 9a96e0f6-b4f6-4bf4-73a8-08da0c23de38
-X-MS-TrafficTypeDiagnostic: DM5PR12MB1867:EE_
-X-Microsoft-Antispam-PRVS: <DM5PR12MB18670898AF4A3CFD07E9A036CA179@DM5PR12MB1867.namprd12.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: b1f7da0b-5ec6-488f-dd30-08da0c28af98
+X-MS-TrafficTypeDiagnostic: MN2PR12MB3488:EE_
+X-Microsoft-Antispam-PRVS: <MN2PR12MB34887884F02360FF3E284CF5CA179@MN2PR12MB3488.namprd12.prod.outlook.com>
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 1CwYewLxYgf8sRR6OZcmOaQEIk5bDPM+VWB3oTIScG3jvbYuC9PL7XA0Q/glH7XJkMRfSLwneMG3NeJpdltZyCaLHo5R7Ik2YWNq1LxyFr/RKGTAQOCik6cMV0uCZK+uQi46s2U7W9CfeGfpLI3lQ2SvtFiyP4zCxaSkV9tr0fGES4vjs2ljJUTXKFO9IK5fwybTEaNLo/N13BF6NdSK2Sc3eN6cDJSPSoYruHT1d+t5o0J2po9V8SI7am7T7yKrEEw7UBIU9JewX1It30EedH9ulCsUwE/nUV3BZqCjGMDtQ1NRJFY+DF1+xV5BfTLg2rstwfoItqKootBSWHznKx0v2dMhrZ+SUhGcPXKknRY1AValhEq+EGXERBozhRVMs39dJuDP5DzmrZHja3Gqxg2PZzCN4W2+QLGIp4AxlNsirfsnJhqm70xyZa3oBUtKBQQI6bWY0UzO15+zyxVmsa0oTlWw/FFdO+pxYX6EGl3TISJ8yFWfwUMcJGfu9oKcHoGhOAyEHTeRACRsN1yH3kBNhcgTqg5goXPcCrNitWXKgFc6pX5+tDE5cCzlFzfa6qbFnwdPNVhBM0yPESOwg6OPrp2wIPFO+tLg3ALj1ZvHVm4UACwwPqoFQNBKD/2Ri1MuPXVNRNZfeei8m9FqRtmpb3p3CGB1b9jeqJVTOz+vBRxrtfxvmmisPqEZyJKFZjS0FyovMm3U1EvDYdSD5i3Yj9JjV97slEKKTCbzpsg=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA0PR12MB4349.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(86362001)(31696002)(36756003)(107886003)(55236004)(508600001)(2616005)(53546011)(316002)(83380400001)(186003)(26005)(5660300002)(31686004)(8936002)(6512007)(6506007)(4326008)(6666004)(66946007)(66556008)(66476007)(8676002)(6486002)(38100700002)(2906002)(43740500002)(45980500001);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: CE8PSxK83Syhtyd/KxTf9K9x5jNS7Xjp+BAsiWsXF4LRyXVO9ja70nruEJRBqcySoU8nnUcumy1pl5pB7k5RHeRIFzd03c/8+xhZknHgmKaRXybCcAv0UVuQx1t8HnUljjlyCKiZhSyl7qgTbnvj/rfRezkHh9WchmlaBRpOFfb3RyQkH/BILxbttecyvCbfnftbqZTPSCfdq3rmmUfgwE87aZCVqXCl7pfTnKx4l+/L8wGMtQu3Q8EC5+p7vL1JmKznqocUIm50mHfsp3w0aqqJArFS+vdjLIxJAla1NgGcrSkvTSqJkasg/6G+pa6q6wseAwAaLcA52E+ScO8a+dD8DNscgnzhRxhKiSBtRjCOFmjlxX8oAmAsOOVm7BVahW0kX157pASm7+OBU8Qpvr88r1l0KPX3FYSGBLbYW2htb0PvTZhoE1uyS5vEJX55WxsPHWW0tlmB3HJSB3vZhLlCs9wMDexnsAvSKBgMdRxf4fiuMzwDhiRA8tsos/4Dl2sRdrERZ4siWMIwIv3GgC3UaVAN2wd2iA6DXvjTl7Pbcp/ODOOZwqFRLgkXMhT9jJ/KJCtzffJnNGM+niF+hC46S97Snr6sPteO63V/E1Nt4bpXQgW7Weuv3GUqYcyCfy7767zLk5jHO68Mnoz8bpneyD3b0ggygSIEzFMMonZRruP21/+m0jT57L24+1tzTRwhtA/7sOuXtvkzouUgNSwFDk+O9rPX24bk3F/fgFs=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA0PR12MB4349.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(8936002)(31686004)(508600001)(31696002)(86362001)(66946007)(66476007)(36756003)(66556008)(316002)(8676002)(6486002)(4326008)(26005)(186003)(55236004)(6512007)(6506007)(5660300002)(6666004)(38100700002)(107886003)(2616005)(2906002)(83380400001)(53546011)(45980500001)(43740500002);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?by9Sb2tDVW8rNGFnd3RTbE5mWnpwQVN1Q3FGc25WVXlFUE1KdDZmZ0UzMDVB?=
- =?utf-8?B?TUpXR1QwcjEwUGNoaGhRZnkzK0hpUUtpZXByQ0hFNDQ5bkdVTWVTY1FFM05w?=
- =?utf-8?B?WUJ4VXNjTGJPWjhUMU12ZWt2SFhZU2kzYkkxZno2dml3d0UzNUtUOHJORmNY?=
- =?utf-8?B?SnBpSHdCRW9iNlg3NnI5a2VhZDdLNFNRRi9RZXZHWnZxd3JqVEEvakk5Z0dU?=
- =?utf-8?B?b0t1bFV1YlRQZkxYSGUyYitsaVJNMnJMZW0xWWFrZGR4TVpyVWdNNmpodjMx?=
- =?utf-8?B?ZjJFT2g2c3ZzWkRield1MXRwQzdUUmlhMG5rUS96MldEVEc5alBLVmw2ekdM?=
- =?utf-8?B?akEyVWR0elNZNmZRQ1FsbmE5WDNRZmFiN1h2djNWVmpnQUtxRDdsMm42RHBw?=
- =?utf-8?B?UW1CVTh6a1JaNHdVeEJDck9kUCt3Yk1maDQ1Qk8xNFdQbmRmV0toMnhhc0JH?=
- =?utf-8?B?VXY0U0lyRk96OG5tWFJ4aFR6K3p0eHdMYzYwaUxHQmpsaDBzbk9WTDd6QlF0?=
- =?utf-8?B?TllqRm8xdHVNaWVvS2IxMEtVVU9UaElteWI1d2E3c2w0cThmbng0Qmkvclc2?=
- =?utf-8?B?cG0zcTA0amZrYk5sZEMrbHg5dFB2WWEzN0t2MTh1b3FtT0xWMHl3ZTQ2cTdU?=
- =?utf-8?B?TzRleGJ3QU4vZnRCd2VTbDNld3ZXaWhBWFVzUGFKQ2ZxYWkwNXJrTy94Z0py?=
- =?utf-8?B?VmNTNk5DQXlhSTZ4T2ladUgvVmxMTkVYV2FXbDFhSUtqZkJNUUVqUEFYaEJT?=
- =?utf-8?B?VklGbk9INWszQTU3YlN0T0VlblcwNTBQdURUaUNFbWJRbjdlZldsd1FqK2pV?=
- =?utf-8?B?Uy9NQTdPTmJ0blZqdndOVDdHUnhlVHZJSmdIQS8rK1AwLzNmY0ZNaXBKNTd1?=
- =?utf-8?B?OVJTNms4V1NUaldYMnBJeVZDUktORUUzMHRIdVF4amZwdFRvZ0xla3N3ejhE?=
- =?utf-8?B?RnRBYmRuOGtYaDRRSTFEQ3hGQm5ldXkvcTR6RzNIVExpV2tUT3pCNUVmODRj?=
- =?utf-8?B?ZGhqS085VFhyMm9HYWhCb1YrWUlZRjlDSzVMQ0RmM1VZaUhjZUhCRXg3REVO?=
- =?utf-8?B?WTNlSURULzF5bGNUa1pDRUh3eFZ2ZDF6c0RwcWlPMGhMNGNUWGRVVHZqV3Fo?=
- =?utf-8?B?bS9FcjRzVVV2Mk16bm1BNVcyVU95VDdURjlHRnAwNjZhYjNNN1VxQWFTdWJC?=
- =?utf-8?B?eEJjMHhYNXJFQnMzT3diajFzbFBFeEZIcTRWY2dWRG1iS2lHODlSMU40YUtQ?=
- =?utf-8?B?dTBTVVhpMHZLRHRYdkhVeUloVlpuMmF2ZURQcnNFcm1yc01XcEM3b0d5MVYy?=
- =?utf-8?B?Tys5elhERTBuU0pZakZPMUE2N05rMHJnOFNtTlEwdks5d0ZCekZtS3M5dTRB?=
- =?utf-8?B?U0Y1UEJkMjhqbGNzOHRsdzdTendubnMrOWx2cjhQRGxpb0ViK0VYaHQvYklC?=
- =?utf-8?B?dGZjMkRONTNYcHlsVnNoVWpxM1hzVlRZZE9FR1BHOGlQYlVmWWNMd1hCd1RQ?=
- =?utf-8?B?SExVZTdQNG1HaTRDdnRtSGpmUUE0VzVaZU1UcTZhM1lhTkEzenV2eEhDWTlM?=
- =?utf-8?B?Q3pWaUFheHZlMDRVQ3BXdHRaZ2E4Vlo1N2lWdkZPVmYyeXRHWThJdmNma2xu?=
- =?utf-8?B?MkhYN0l4S25LNk14c2hZeml1WnFQTmJKL3U2c3JtUitwdktJNFVCQkhLKzdu?=
- =?utf-8?B?WTdORlY2b01CWXFRWEhXVk14cEdwUDJrR0FwUXRqblZPenlkcERqUG0weUxZ?=
- =?utf-8?B?cDN5Q25qam0xMXRzRWhMN0RydUVNQlFUdUZIaUNBSlFEd0hDd3ZHMm1aWDZt?=
- =?utf-8?B?ckdaYnZSUGZOd1V3bi9JZFA2aEliVmlzb1FuVjdOMytYT05KZktkelpWZ2ZO?=
- =?utf-8?B?ZThmV2llU0krT1Z4TEdKeFpvL25paFdWQlY1QTluaEd2UmdDU1hBRitva2tP?=
- =?utf-8?Q?oi+fM+zS17lJ2T1GM+oBqOI9FpZmeNUq?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?NlZvakE5cHhlQ3RKeWtKdHl6b3RPUnZ0NEJwTWR0d0U1OVlFV2E4Q0o3R0hC?=
+ =?utf-8?B?anVZMWV0MHd4dVMwQytCM0NaWU9sbEQ0L1VrNDRFUWNoVGx2WHMxUTBvTTZh?=
+ =?utf-8?B?QTNVNnhMd0hwMWpNREpCYWl3ODlBM09vcVN1QWVrUEhkUlcwMGRXK1JHRnQ2?=
+ =?utf-8?B?UUZ3VG4ybUZXWGF4ZzhDc29xeUNFK29BMmE5SVhLMVpnRWtsV2V2QmRSRm5r?=
+ =?utf-8?B?Q01vb2M2SXNtNXVCcy9BeEdCTXJ2NTFDS1ltT2pVcS9hS3lyYkMybkRIWldi?=
+ =?utf-8?B?WWpYNTBVVUt6Y2JRR3JpcTVweHViMThENjc5WHVqQ2xWV3QyMWg1UVBxWlVX?=
+ =?utf-8?B?SWZLTmVnNzFrWFVMNHV2WHI5TG5LUkZkdjFjRy85bC9qc1c1VVMvdTFpTkd0?=
+ =?utf-8?B?NThJbnpidXdXQWcvUVNMV1BIeTAzN2k4WDlaY0J4UlVZNk1EWjNtTmljM3ZM?=
+ =?utf-8?B?RFhZdlZLRXVHZE5TL0lOTXoxOWtDZWgrQzBrTDNMRzA0UWdCNkpEeVltSkta?=
+ =?utf-8?B?WFdkMTRNYzNGQW1LeTMvZXFnOVhSNDRuM2N2ZTZYVUtKWG1lRWR4d2lpYm5v?=
+ =?utf-8?B?VEdEK0dMZVdBVFNuVDY1dkU0Z1Uvc3QvRktQb3B6NGQxUEZsMGpBMTB4c3RI?=
+ =?utf-8?B?NUN2K1k4TCtrTnZKcWl0TDVhS0R4aGRQZmI2VTJkTkhPR2wyd3FZTDMrd0Fu?=
+ =?utf-8?B?UFpJMVE4a2k3eWVJNVdJT3BBeTRsR2RjSlROZ2VwK1I5VlhPMHUwdjk2bUNH?=
+ =?utf-8?B?MXNwaFZpNjFpVW8zRElrV3h5NWJna25ib3pZdGYxVjdJNlpYSll5L2p2UDdC?=
+ =?utf-8?B?U0RjUkhnQ05WZ3Z3WGdDdkVkOG9iM1FqYVhTWTROTzhxTkJlWkpvdlF5Sytz?=
+ =?utf-8?B?emlKRG1EbXhJNStjaWpNSUZrRXFYWVJCMzVYejlqVVdRVVFxSExnUEs3Q1M2?=
+ =?utf-8?B?K2gyc0dEOENjQUllSy8vNWVUUGhkTi9tQ1UxRGJLRDFjYklDbFB1VlpFRlNq?=
+ =?utf-8?B?QmU0blQwWXc1Y1pzQ2VzbXc3WlRTMlFwRlNkekRsTVZBOXBaejc5RHV5Y2p3?=
+ =?utf-8?B?RHZUcyt6VjFkbVY1cDZXZmNuY2FUeEtLV0ZXWmZ4TytRclVocWg3Wk1KL0sr?=
+ =?utf-8?B?VEpzQzJ4QXdlRCtONFI3QWtuZXBFMTNzdVlTVi9VUm9ETmRvK3ZmMnZ5dlpm?=
+ =?utf-8?B?TVNPMGx3aFB0RzJYYWZhQ2t5M2FYQ1lOZm8vT1d5SUZVUENpSldoZ0R5R0hk?=
+ =?utf-8?B?THR4M3U5YnNBNlFqWDNQVDBsY3Z2YUJ5Skk3bW83Zm1hellnTjZuN0JiVlRk?=
+ =?utf-8?B?dFlSenlLcVFiQ3ZWOFdiTi9kT041bXZLVUpITkNTTUlLVUdDZjFDdmRQdEVU?=
+ =?utf-8?B?ZnZGQVRTa3lQNlV3MCt2cGRtaWRxVStGeFhiR3pERllwbTU2aU5LVjlEaU9E?=
+ =?utf-8?B?bmZQRDVtWE1tM0dBZHpYODJXdnZxY2hUQitNOVhESzFvRUsvVGRiWUxoUm9i?=
+ =?utf-8?B?NXE3R2ZsSkJPUHZqWDZBM1o5amtlSHAwTk1tUHZacHFKL2t3N3pmY0JNUmFj?=
+ =?utf-8?B?endBTUF2blpyL05jTGpkcVJHUDJ6RlBCODUyMWdtZFZNeTYyZitIaytzZ3h5?=
+ =?utf-8?B?aTFUb0plZVFHS1h5ckx3ZTc0V050QU1neitGL1YwdVlhN1Q4djB2TFRKZUJE?=
+ =?utf-8?B?UC9jSmhvUVl0QUJMN1hMSEV3dk1BcnBpajhGRWgrc0IvZjgvSUlaQTBvTlkv?=
+ =?utf-8?B?V1NuQkdmMzJZSHpZTmVjYXF0WG0zWmlzQW9OeWpyWFRPdWtsTFdPaE81Y2dn?=
+ =?utf-8?B?K0ZIaE5UYWxQQ1V6NEVMei9weDhEU0xNMnNYUzMzNzczOGtjS1RLN3hkdHZH?=
+ =?utf-8?B?SUZmQjQrZSt0Y3hXRnZwVUhsWkpaQllDbmtLU0dhdzJ5ZDJoYkRMUWorTi9B?=
+ =?utf-8?Q?jYr33fpbmgLZHe8B3qLCXCEC7du1K6mH?=
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9a96e0f6-b4f6-4bf4-73a8-08da0c23de38
+X-MS-Exchange-CrossTenant-Network-Message-Id: b1f7da0b-5ec6-488f-dd30-08da0c28af98
 X-MS-Exchange-CrossTenant-AuthSource: SA0PR12MB4349.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Mar 2022 16:49:02.1585
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Mar 2022 17:23:31.4810
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ASXHInKfhXZfoTlEEgoYLkJwxu22c+f0HSM5FLwJLb9JOIHVCww0hktzLoLPszId6b42P58qd0JpgW36dOhJKQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB1867
+X-MS-Exchange-CrossTenant-UserPrincipalName: 2OqQSpNQj5QBI01QFoK2eO+D+7DYBQFlRYBa8QM/dD1hb7/QZm1di4LLiC6gfJYdG6vY7PCMG/9Phzsqkmnp9A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB3488
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
 
-On 3/19/2022 9:20 PM, Dmitry Osipenko wrote:
+On 3/19/2022 9:29 PM, Dmitry Osipenko wrote:
 > External email: Use caution opening links or attachments
 > 
 > 
 > 16.03.2022 12:25, Ashish Mhetre пишет:
->> +irqreturn_t tegra30_mc_handle_irq(int irq, void *data)
->>   {
->>        struct tegra_mc *mc = data;
->>        unsigned long status;
->> +     bool mc_has_channels;
->>        unsigned int bit;
->> +     int channel;
+>> diff --git a/include/soc/tegra/mc.h b/include/soc/tegra/mc.h
+>> index 92f810c55b43..6f115436e344 100644
+>> --- a/include/soc/tegra/mc.h
+>> +++ b/include/soc/tegra/mc.h
+>> @@ -203,6 +203,8 @@ struct tegra_mc_soc {
+>>        const struct tegra_smmu_soc *smmu;
+>>
+>>        u32 intmask;
+>> +     u32 int_channel_mask;
 > 
-> unsigned int
+> ch_intmask
 > 
-Okay, I will update in next version.
+Okay, I will update,
 
->> +     mc_has_channels = mc->soc->num_channels && mc->soc->get_int_channel;
->> +     if (mc_has_channels) {
->> +             int err;
+>> +     bool has_addr_hi_reg;
+>>
+>>        const struct tegra_mc_reset_ops *reset_ops;
+>>        const struct tegra_mc_reset *resets;
+>> @@ -210,6 +212,8 @@ struct tegra_mc_soc {
+>>
+>>        const struct tegra_mc_icc_ops *icc_ops;
+>>        const struct tegra_mc_ops *ops;
 >> +
->> +             err = mc->soc->get_int_channel(mc, &channel);
->> +             if (err < 0)
->> +                     return IRQ_NONE;
->> +
->> +             /* mask all interrupts to avoid flooding */
->> +             status = mc_ch_readl(mc, channel, MC_INTSTATUS) & mc->soc->intmask;
->> +     } else {
->> +             status = mc_readl(mc, MC_INTSTATUS) & mc->soc->intmask;
->> +     }
+>> +     int (*get_int_channel)(const struct tegra_mc *mc, int *mc_channel);
 > 
-> So if mc_has_channels=false, while it should be true, then you're going
-> to handle interrupt incorrectly?
+> This should be a part of tegra_mc_ops.
 
-I am not able to understand the case where this can happen?
-num_channels and get_int_channels are both getting defined on T186
-onwards where mc_has_channels is expected to be true.
-Do you mean to say that we need to add more chip specific checks
-in case of mc_has_channels is false?
+tegra_mc_ops is common for T186, T194 and T234 i.e. all of them use
+tegra186_mc_ops. get_int_channel function has to be differently
+implemented for all of these SOCs. So I had put it in tegra_mc_soc.
