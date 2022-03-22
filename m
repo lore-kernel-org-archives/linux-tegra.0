@@ -2,164 +2,181 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 597AEC433F5
-	for <linux-tegra@archiver.kernel.org>; Tue, 22 Mar 2022 18:25:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C20BC433EF
+	for <linux-tegra@archiver.kernel.org>; Tue, 22 Mar 2022 18:29:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240474AbiCVS1I (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 22 Mar 2022 14:27:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47910 "EHLO
+        id S240402AbiCVSay (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 22 Mar 2022 14:30:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35732 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240468AbiCVS1C (ORCPT
+        with ESMTP id S237429AbiCVSax (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 22 Mar 2022 14:27:02 -0400
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF69C90246;
-        Tue, 22 Mar 2022 11:24:57 -0700 (PDT)
-Received: by mail-ej1-f43.google.com with SMTP id d10so38035146eje.10;
-        Tue, 22 Mar 2022 11:24:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:from
-         :subject:content-language:to:cc:references:in-reply-to
-         :content-transfer-encoding;
-        bh=Ch4dJTVoF+0WgswAjEagoD6pjUX2twqhfq32t6y2FNg=;
-        b=03YAq3M7YBzGok+qLOdAqEl3PyQX1oJ1a8+nmcS9fQrKpkUh/9u/csbx6C6qaGSobN
-         Ir9Z8xXPfaJ5iGIWath1HWr+dw+jVZ0JrZLx1oKZsY4u7C2dValx/bmw5x/ndoA4yhzX
-         gtXDvpqkToUX4+f5lR9uW3Wxrg5U3GU+A4FjQk7jfHokqv0wYoE/nvteD3X/bd22zY1X
-         lglnKKTg7jUx5jtCSNF2NYROKN4CVYH/qWx/4iVSkogJsLerwy8FNtZZAkHvjNKTeXbu
-         iJyOjXUB8m7IQEaVu+gg+oT8mDVflQAarJWnhr4h3ocWmF387KKWZGwMUWdU1IczYhcj
-         unSQ==
-X-Gm-Message-State: AOAM532zbFp0zsOpsbhi+7Jzzc0VA7y4swwA6XBYrlzbtVfeIJ7eEgvv
-        35bPnI3r1oUbGVhuLyVzs6zSTCjUV+zWqQ==
-X-Google-Smtp-Source: ABdhPJwL2NYcf2QiGHS83/NbI8qe3jXBrTCPq7ILCOT4zC/SEv+zL+ze1H5U2Fk53Nuz0/Hj3GaDLQ==
-X-Received: by 2002:a17:907:2cc7:b0:6df:b76d:940d with SMTP id hg7-20020a1709072cc700b006dfb76d940dmr20180783ejc.742.1647973496135;
-        Tue, 22 Mar 2022 11:24:56 -0700 (PDT)
-Received: from [192.168.0.17] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.googlemail.com with ESMTPSA id u18-20020a17090617d200b006db07a16cf5sm8685155eje.77.2022.03.22.11.24.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Mar 2022 11:24:55 -0700 (PDT)
-Message-ID: <1096bc5a-5b0f-54a8-93aa-403c39e58283@kernel.org>
-Date:   Tue, 22 Mar 2022 19:24:54 +0100
-MIME-Version: 1.0
+        Tue, 22 Mar 2022 14:30:53 -0400
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam08on2057.outbound.protection.outlook.com [40.107.101.57])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF0A96948F;
+        Tue, 22 Mar 2022 11:29:25 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=LEcEp/Cc7JtvnXRowAoDjuz33BU0GgW7QkpJH2w5YwaesIlP1eOlwSuGGX4+FBT4eYIVVbBA8cyKtwzAEC4DETp2TV2of0Rha4Ft7EM8aN47dEXKVEmE37Mc+rwWvWPlCeBqC+vxjPpTTfzcOSbAAW2i3ZpUnRR+aqIwUxK8rppHii4lKan09QFpyfZyoJDgQGLS674cPNBuW9JXDN5OsWuccvMfPyPf7stjgh5mFtkSBOWOJffXAmdNAEkRN0zEMzqSIMZ673GnncEwYXTfjffWWaclvvuVhxg1Tc/nPL4sUlWZppewPJdK9pw/McaOc8J8twjPZm/fjp1vadQOXA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=A/q15tuX/Db+KEIdTPjpnRcqQB8uSUBSo3nuBwPD4a0=;
+ b=nT/XHwjDsDU32+qkWJ71TGIyVrEFuJsdvUzUBXaU/Y/W3+buljMz7QEqF1W1lDHClTcoOvpI4HT/9xEQUJbKWLVC6ADfFxfWIDjszoM84g/fQQ2ZMY4jkTbowcbo49eAFHfkjGK5I2xxE3zySvIcvtet6QG+16Ck8rckLShq+vtMU536Q6hU/lV7njUdooXAz/BDSL6zHMnHvenu1GdYeZiQi4rZtHCfIn2w+sv8eJAlDswEEECuLyeyltjA9aYXc2HMtgZ5Hoz6qO1rodULlk06yeOc9uCXwt6vYx7ukd72zMYY4BCmWBEJQ1/6e1CkRunqyml3vmcZ/fKUs3Mz1g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=A/q15tuX/Db+KEIdTPjpnRcqQB8uSUBSo3nuBwPD4a0=;
+ b=N9Khxq+OkUOKUBW1u5xNkVKZkUFThu+IZAximJDb9BoQM6B93eMxp8Q1gKutdxAAUYo+J2v+uz5lsTQuDM11b3y0o59Y+SnvUUIW+6EuycIfl4yBpjsJ78O9pXmczFEPns+4hnpYbtdJXHBcbuNmO0ofQW9NS7/e0vfIlHuOpnLH1/liXuzM8AYLDNqcTpvQ3AeNKaAKvxBvYPVRvdL5St3+u7UjIC3Fhnk2m3N/2Kiw9LIMDirlboDv1FYSCWprA9b9HP3/9kVXJ1xWh/SugQISHvziCwowi/SHW7uX6b+4PhEEPBTpjLvJ0918rBmxjmaktF/Fqbg3EG2B/dywDw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CO6PR12MB5444.namprd12.prod.outlook.com (2603:10b6:5:35e::8) by
+ CY4PR1201MB0070.namprd12.prod.outlook.com (2603:10b6:910:18::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5081.15; Tue, 22 Mar
+ 2022 18:29:24 +0000
+Received: from CO6PR12MB5444.namprd12.prod.outlook.com
+ ([fe80::88c:baca:7f34:fba7]) by CO6PR12MB5444.namprd12.prod.outlook.com
+ ([fe80::88c:baca:7f34:fba7%6]) with mapi id 15.20.5081.023; Tue, 22 Mar 2022
+ 18:29:24 +0000
+Message-ID: <a32c7181-79b1-07e7-81c5-9c692e4f958d@nvidia.com>
+Date:   Tue, 22 Mar 2022 18:29:17 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.5.0
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [Patch v5 1/4] memory: tegra: Add memory controller channels
- support
+Subject: Re: [PATCH v2] mailbox: tegra-hsp: Flush whole channel
 Content-Language: en-US
-To:     Ashish Mhetre <amhetre@nvidia.com>, robh+dt@kernel.org,
-        thierry.reding@gmail.com, digetx@gmail.com, jonathanh@nvidia.com,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Cc:     vdumpa@nvidia.com, Snikam@nvidia.com
-References: <20220316092525.4554-1-amhetre@nvidia.com>
- <20220316092525.4554-2-amhetre@nvidia.com>
- <81aa7be7-0bfa-05e6-624a-393e6810dc61@kernel.org>
- <5259de16-6243-42f6-8252-40a23cd67798@nvidia.com>
-In-Reply-To: <5259de16-6243-42f6-8252-40a23cd67798@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jassi Brar <jassisinghbrar@gmail.com>
+Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20220302150424.1305301-1-thierry.reding@gmail.com>
+ <42f99db6-f450-f2dd-fccd-17868b16b561@nvidia.com>
+ <c84a0362-8cb0-2925-5a74-ad9c6c3ffe5f@nvidia.com>
+In-Reply-To: <c84a0362-8cb0-2925-5a74-ad9c6c3ffe5f@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: LO4P123CA0343.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:18d::6) To CO6PR12MB5444.namprd12.prod.outlook.com
+ (2603:10b6:5:35e::8)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 13e03d71-85b3-4642-93cc-08da0c31e39a
+X-MS-TrafficTypeDiagnostic: CY4PR1201MB0070:EE_
+X-Microsoft-Antispam-PRVS: <CY4PR1201MB00700B6A9382F6C107E47A14D9179@CY4PR1201MB0070.namprd12.prod.outlook.com>
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 2jWqVotR6o2yEoF4hNR1LgJ44Fnpma/GtmtGdjzC8zF0CV+O3JtD1MyZPMcXvg+Bd1SALxK+49zBVNK8NILvyit2GGX1XrtNvma3A9692rJ1y3l0a3snQiee6NCzEzLS5RB1W1Ucq//PA5dBTZw3nVUJ/XKP4SbMJ4zPzXqRQyN0vyMMLCnhdffLwRs2IsGeCvoOgbStA+tywd9IuGrdlHLfHAqU4pHYinlWcvjjBOJ3ql4bQ/4QPWVHYPBzQ42VWSoiQn8YbTrN+TQZOEOrOyZVqv3UoGouCUS0yuaxvlx2TRO9mtfLpqeFRU/5h0d7C5BJdovaJJ/WUtOZ7IKrWtgY3gDQr5J9RdCVlA8aUgl7fRnZCuIVgn0cymeP4tLvD2sfec5CYw2slpb4yRZw5Ac9FP8rCREGQ8kLzOaM10sdK7GrpsPPysoHyDgz6e6G0ucFPPcutf8dwkUwp43YWMyX7pkVRYvAIaBm2+v5moUqLHOUVW8LnxHJJGqKnrEGWj2NQNYDebN9/TbdP6HFr/DB6fMahkr1f0nw7OJHDcgUz3HstbYh5ESmFmmOfveqiYSZgTb4GQT/PZaPL2mY6csrkSRZglqMeH/qnr81POZAFUFINhT0kkBsk7VeaYmGnICeL7Qzgaak/6Qoe6SApb9Oa/Q466MH0jfvwZjmNuXUnKfts/lk5coPHi+w6Iyz887vCGhpLZMmMMNqoGkEFk92m/+UfzqS7XAsg9U15bKtX5s9adTy1qHS1jTzepJu
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR12MB5444.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(38100700002)(31686004)(15650500001)(31696002)(2906002)(316002)(6486002)(5660300002)(8936002)(508600001)(110136005)(53546011)(6506007)(36756003)(55236004)(6512007)(186003)(26005)(2616005)(8676002)(4326008)(66946007)(83380400001)(86362001)(6666004)(66556008)(66476007)(43740500002)(45980500001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?K2JPcE9ZU01ra1oyMFB2MmxFTGk4Z25IbFA3OHUwdlkvWUxQU2N2dEo4RWpw?=
+ =?utf-8?B?RWswZmxRT3lQRjFpYXBkYWlzb2VHaHN5V3ZUMTlMVTVXYWIrYjZqaTdPWTlt?=
+ =?utf-8?B?YlpPbUZxNnNac0tQazlZd200Unh3RWRORER4bzdUUnIzWmFyT2NtOVI5TlFM?=
+ =?utf-8?B?RUNkdDNwSlQ4a0VMVWtOWW03R2N3clFUTmt1MFVJeTRQYVhCaHZrbk8wL2lJ?=
+ =?utf-8?B?QXlPU0RxWVBkZHlQemNILzlCdjFoMjFwVkR4dWc5V3U4MXh3ZXFSdHp4L0FX?=
+ =?utf-8?B?U2lCUHJyQkQ0VGZleForbkZSUGYraVNPcjlab20yR29RMlQ1SmVUcGRzN2U4?=
+ =?utf-8?B?RllOR1NwMGd5OUtrZUx4K29sbElIdzVkelQzRGdEelFiTURTQ2tLQWl4ZUMr?=
+ =?utf-8?B?SSs3b3RyT0FZSGtPODBzWEEzWjhJQ05ZMjZCS0ZIUnRLN0xkaVNLaVcxbVBP?=
+ =?utf-8?B?aGhkMHFKa3R4bG4zYnhwUlVvbmdXdkRIaFZ0SGFJVys0aXJHcGE2L1lvemVK?=
+ =?utf-8?B?Tm56RkVPUkVhdXd1SHFVWGhoTVlnS24rZHdSSUIzeThWTm9udzdXWU1KYnlk?=
+ =?utf-8?B?bFNkNXAyQnV4bWRQSGpKMTJsTVVUcDFMN0FjZXAwcnhoRG1mR003czZrK2NG?=
+ =?utf-8?B?dG9XV0M5OVJEYm1HWTJTUXJUeDczazNoRVRSY296dmsyRTM0b0ZLYjRHQ1oy?=
+ =?utf-8?B?eGsxVnRyUkdmZkM5a3VQbTIrNzJNU05RaHlQMm9NSVBnZzdQUU91TEhQWVNi?=
+ =?utf-8?B?RllEQ2FJODl6U3RhRCtmdzBPUEsrblNjMmtkSU9tQ0FHd0R2SmZML0tUWTdU?=
+ =?utf-8?B?SWc1QkE4cGNucDB0S29mVDNLT3VIbFpZR0h6RnlQQ0VWYWNQUmlhS3FrbjF0?=
+ =?utf-8?B?ZE1jSVFwQUJ1ZmZnMFhzVUVjeFZQOHlXcitteHYrU29ubGNHQ1QydmpldkhM?=
+ =?utf-8?B?STJCNmFqaVJ3dWxiaGdJcGZmaFRhQjE3U01Ca3ZnWWg1NEQ1U0hvV3pPVzBY?=
+ =?utf-8?B?MWdlQWRmMmlQQnkxaWdzZ2tYbjFwTURsOCtFcXNuQzAxV2hjSUs5WDY3cWQ0?=
+ =?utf-8?B?azhEd3J3emE1MDVGWUV2dWpMTDAyY3FmRXlXMUpMamdMdFNkYy9zSExpbHVT?=
+ =?utf-8?B?YmhPcFErTGVpaHJQUW15Yy9XR1BuUVpKMzEzd1VlTlc1RklNdHdUTWQrOFFG?=
+ =?utf-8?B?aGJVZXNiTm5YZUhPUUZLbHFteU8rMktObS82WXBkRi91TjBkQWdhVnVJS2lD?=
+ =?utf-8?B?KzMvcjdIYWo3bzRVSEFJVDkyN2kvN0V6dnRWT2t0UDZnSTBrN09EMUxKaDBP?=
+ =?utf-8?B?NUdVSHZHd1o1QnhTdmVGSlg2R0FLcnh3bWFOUEVjOThabXNMZXFBZGFWVTdS?=
+ =?utf-8?B?VTVxU2lRUWh3ODgvM1k1TVVTUmoyelZVamViK0lJRS9PcGNPWlNkd0ZOTlBq?=
+ =?utf-8?B?TDlMaGxOQ0lYczBjeTBySUVJKzVLT2l6T2RYMmloaG1uL1hoME90RTdnR3Q3?=
+ =?utf-8?B?eTRIY1Y1a3VXTW1nOE5EWUhOZ0tmZ2ZSc2VvQ3g3N0xLQkFwNWxnOGpSUG5R?=
+ =?utf-8?B?cyt1QmZHU25qQko4UllEQ0JxMWJkNHFzU3FSaElSUlkwaklBWUh4UHBQV05R?=
+ =?utf-8?B?d0VYdjRIc1daRkxlVlduZ1I5ZGZZZys0NDFEZE84UnZXTy9XMVkyaS85Mk5U?=
+ =?utf-8?B?ZnZlMFVBMm5LUWhlelRxT2tSR2I3MDVzSzNOcnpBSHp2TlhRNTRmbG1XdzZQ?=
+ =?utf-8?B?SEp5OUh5dDlhZmlvNVN0Umg5M2JNQ3RIak1xaWtpeE4zSEsrT2RiU05XcnJG?=
+ =?utf-8?B?c3k2OFBzRno2YmNiYjlZTlJJRGNlMHZDcU1tSmhnVndleDFvbXhhRHpUdWh0?=
+ =?utf-8?B?TWFhdjg1Vy9VdmpWZXVoOVBWQTlxczZFSktZbEhSRFNFV25ieFkyYjRBeExt?=
+ =?utf-8?B?bjcvN3c1L0gxYzFMVmNQaGQ3N2NhQnJXRGg2RDdnRjNCL21YNGJQOW9wcmY1?=
+ =?utf-8?B?MmRST0s0aldRPT0=?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 13e03d71-85b3-4642-93cc-08da0c31e39a
+X-MS-Exchange-CrossTenant-AuthSource: CO6PR12MB5444.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Mar 2022 18:29:23.9710
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 60/kE4CoQHjwqfVkYxNqCBNGVd3PZRs/e0tJywTHTsiC0oJzLv7zJHaLUZqLRdATXCJwv5V8maNzbVq5LVwmfw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR1201MB0070
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 22/03/2022 19:04, Ashish Mhetre wrote:
+Jassi,
+
+On 10/03/2022 17:37, Jon Hunter wrote:
 > 
 > 
-> On 3/20/2022 6:01 PM, Krzysztof Kozlowski wrote:
->> External email: Use caution opening links or attachments
+> On 10/03/2022 16:51, Jon Hunter wrote:
+>> Hi Jassi,
 >>
->>
->> On 16/03/2022 10:25, Ashish Mhetre wrote:
->>>  From tegra186 onwards, memory controller support multiple channels.
->>> Add support for mapping address spaces of these channels.
->>> Make sure that number of channels are as expected on each SOC.
->>> During error interrupts from memory controller, appropriate registers
->>> from these channels need to be accessed for logging error info.
+>> On 02/03/2022 15:04, Thierry Reding wrote:
+>>> From: Pekka Pessi <ppessi@nvidia.com>
 >>>
->>> Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
+>>> The txdone can re-fill the mailbox. Keep polling the mailbox during the
+>>> flush until all the messages have been delivered.
+>>>
+>>> This fixes an issue with the Tegra Combined UART (TCU) where output can
+>>> get truncated under high traffic load.
+>>>
+>>> Signed-off-by: Pekka Pessi <ppessi@nvidia.com>
+>>> Tested-by: Jon Hunter <jonathanh@nvidia.com>
+>>> Fixes: 91b1b1c3da8a ("mailbox: tegra-hsp: Add support for shared 
+>>> mailboxes")
+>>> Cc: stable@vger.kernel.org
+>>> Signed-off-by: Thierry Reding <treding@nvidia.com>
 >>> ---
->>>   drivers/memory/tegra/mc.c       |  6 ++++
->>>   drivers/memory/tegra/tegra186.c | 52 +++++++++++++++++++++++++++++++++
->>>   drivers/memory/tegra/tegra194.c |  1 +
->>>   drivers/memory/tegra/tegra234.c |  1 +
->>>   include/soc/tegra/mc.h          |  7 +++++
->>>   5 files changed, 67 insertions(+)
+>>> Changes in v2:
+>>> - add Fixes: line
+>>> - Cc stable
 >>>
->>> diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
->>> index bf3abb6d8354..3cda1d9ad32a 100644
->>> --- a/drivers/memory/tegra/mc.c
->>> +++ b/drivers/memory/tegra/mc.c
->>> @@ -749,6 +749,12 @@ static int tegra_mc_probe(struct platform_device *pdev)
->>>        if (IS_ERR(mc->regs))
->>>                return PTR_ERR(mc->regs);
+>>>   drivers/mailbox/tegra-hsp.c | 5 +++++
+>>>   1 file changed, 5 insertions(+)
 >>>
->>> +     if (mc->soc->ops && mc->soc->ops->map_regs) {
->>> +             err = mc->soc->ops->map_regs(mc, pdev);
->>> +             if (err < 0)
->>> +                     return err;
->>> +     }
+>>> diff --git a/drivers/mailbox/tegra-hsp.c b/drivers/mailbox/tegra-hsp.c
+>>> index acd0675da681..78f7265039c6 100644
+>>> --- a/drivers/mailbox/tegra-hsp.c
+>>> +++ b/drivers/mailbox/tegra-hsp.c
+>>> @@ -412,6 +412,11 @@ static int tegra_hsp_mailbox_flush(struct 
+>>> mbox_chan *chan,
+>>>           value = tegra_hsp_channel_readl(ch, HSP_SM_SHRD_MBOX);
+>>>           if ((value & HSP_SM_SHRD_MBOX_FULL) == 0) {
+>>>               mbox_chan_txdone(chan, 0);
 >>> +
->>>        mc->debugfs.root = debugfs_create_dir("mc", NULL);
->>>
->>>        if (mc->soc->ops && mc->soc->ops->probe) {
->>> diff --git a/drivers/memory/tegra/tegra186.c b/drivers/memory/tegra/tegra186.c
->>> index 3d153881abc1..a8a45e6ff1f1 100644
->>> --- a/drivers/memory/tegra/tegra186.c
->>> +++ b/drivers/memory/tegra/tegra186.c
->>> @@ -139,11 +139,62 @@ static int tegra186_mc_probe_device(struct tegra_mc *mc, struct device *dev)
->>>        return 0;
->>>   }
->>>
->>> +static int tegra186_mc_map_regs(struct tegra_mc *mc,
->>> +                             struct platform_device *pdev)
->>> +{
->>> +     struct device_node *np = pdev->dev.parent->of_node;
->>> +     int num_dt_channels, reg_cells = 0;
->>> +     struct resource *res;
->>> +     int i, ret;
->>> +     u32 val;
+>>> +            /* Wait until channel is empty */
+>>> +            if (chan->active_req != NULL)
+>>> +                continue;
 >>> +
->>> +     ret = of_property_read_u32(np, "#address-cells", &val);
->>> +     if (ret) {
->>> +             dev_err(&pdev->dev, "missing #address-cells property\n");
->>> +             return ret;
->>> +     }
->>> +
->>> +     reg_cells = val;
->>> +
->>> +     ret = of_property_read_u32(np, "#size-cells", &val);
->>> +     if (ret) {
->>> +             dev_err(&pdev->dev, "missing #size-cells property\n");
->>> +             return ret;
->>> +     }
->>> +
->>> +     reg_cells += val;
->>> +
->>> +     num_dt_channels = of_property_count_elems_of_size(pdev->dev.of_node, "reg",
->>> +                                                       reg_cells * sizeof(u32));
->>> +     /*
->>> +      * On tegra186 onwards, memory controller support multiple channels.
->>> +      * Apart from regular memory controller channels, there is one broadcast
->>> +      * channel and one for stream-id registers.
->>> +      */
->>> +     if (num_dt_channels < mc->soc->num_channels + 2) {
->>> +             dev_warn(&pdev->dev, "MC channels are missing, please update\n");
+>>>               return 0;
+>>>           }
 >>
->> How did you address our previous comments about ABI break? I really do
->> not see it.
 >>
-> In v4 patch, error was returned from here and probe failed causing ABI
-> break. In v5, we are checking if number of reg items in DT is as
-> expected or not. If number of reg items are less then we are just
-> printing warning to update DT and returning 0. So probe won't fail and
-> driver will work as expected.
-> Also I had tested just driver patches with existing DT and it worked
-> fine.
+>> Any feedback on this? Can we queue this up for v5.18?
+> 
+> Feel free to add my ...
+> 
+> Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
+Any feedback?
 
-Ah, right, thanks. I missed the return 0. Looks good, thanks for the
-changes and for explanation.
+Jon
 
-
-Best regards,
-Krzysztof
+-- 
+nvpublic
