@@ -2,146 +2,109 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50A46C433F5
-	for <linux-tegra@archiver.kernel.org>; Wed, 23 Mar 2022 12:31:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D41DCC433F5
+	for <linux-tegra@archiver.kernel.org>; Wed, 23 Mar 2022 20:13:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242445AbiCWMck (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 23 Mar 2022 08:32:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42572 "EHLO
+        id S1344528AbiCWUOj (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 23 Mar 2022 16:14:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36338 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231716AbiCWMcj (ORCPT
+        with ESMTP id S236584AbiCWUOi (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 23 Mar 2022 08:32:39 -0400
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 784084839F;
-        Wed, 23 Mar 2022 05:31:10 -0700 (PDT)
-Received: by mail-ej1-x62e.google.com with SMTP id bi12so2540603ejb.3;
-        Wed, 23 Mar 2022 05:31:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Pr1tceJ5axwZ9yC4WRhMr6ZLanYIf+/neXLund54R+A=;
-        b=otx8RnRZQ2F3yrwx7ahJIs540TP6ZitRvGTwj9XKpxERUTTfAk4k1nkjWZGS5eJuNz
-         gysy8cnFBpLYFxGTJyQG0++7AqsNHxoR7BLjuLCFLTos6FuikYA1Z53amJ0UilSb7bmW
-         ScnKAVQ7LtunK5DWP1alJPH1+oQRqNN5rSjfN6Rre43yFD5n5ZwLdv8NzKXgadkWC5ai
-         MRPJB/AHfECXJkioAXM7UpD4Rs3REtIO07ItoQDQm5oRJCScYK6AYE8dRyb5XrxNsu1p
-         OVA1wMR1I1GY5FeHNybFEFh04GAEnKsx4swyRVMXdt/+z6W7JQzkSuARPIyDp2xKLhSy
-         luEQ==
+        Wed, 23 Mar 2022 16:14:38 -0400
+Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 168DBD63;
+        Wed, 23 Mar 2022 13:13:06 -0700 (PDT)
+Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-de3f2a19c8so2896851fac.1;
+        Wed, 23 Mar 2022 13:13:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Pr1tceJ5axwZ9yC4WRhMr6ZLanYIf+/neXLund54R+A=;
-        b=qaOoeT+cdOqCDvq7MEK5sIJR/o9XfyVLFAkE0bwC+IQYa2/4GvgMXldM0Q6HHBfRHq
-         jvlOzIlFbxnKbG8C+xbq7sxOe1d9IhtJzCGQnCOM8PfS7NgJHGsNMvF1N4j9PwjSWG+u
-         0RZjCxbowdobHO+TNKxxEWseBcJ9qRLISeGMLf+0vnyeg/vOlVpPJwD1CtBrWPwV4UHK
-         +tQjwDYlzNL0o5W2Yjj9j4V+/qpj0UVoLzcfSKphYFGEzDnhMHx3lSS2cGCs3dLTi+bM
-         DoqWjbhtkD+bCFCJ0SXCYu+vb/1hy9ZaTiuFWdwS/kmaKNLo/3eVajao6lIWg8ZWckMS
-         mOfg==
-X-Gm-Message-State: AOAM530ZKTEOdqYMAAPDNCfRmheeZaoW+0bAErtgnDSXaYjy+y5VER/k
-        XpspqWU8Df8bEwtcViWGLd3gW0FjZ1w=
-X-Google-Smtp-Source: ABdhPJyWb9xSYuH3pMaouoh955z1Yi5I2iWyIvxN7OHQy+kr8UClS1Jr2hxoZbb70XoECdC0mjNvng==
-X-Received: by 2002:a17:907:968f:b0:6db:a3c5:ae3e with SMTP id hd15-20020a170907968f00b006dba3c5ae3emr32282332ejc.770.1648038668818;
-        Wed, 23 Mar 2022 05:31:08 -0700 (PDT)
-Received: from orome ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id b11-20020a170906728b00b006df8494d384sm9562677ejl.122.2022.03.23.05.31.07
+         :mime-version:content-disposition:in-reply-to;
+        bh=0dtghV1fkEXQC3eY/8QyiqW6VQirMjQBl/NSTjJ0W9I=;
+        b=JGYUxljba0jZsOFk3PA5RW7Ys9FxFTVDybJpIwNc9MflcbRx08O0ZYjQcElC+gstN/
+         Kc/TBsoZRjnzSpjUC8lWpZiCYqJodlIAKLT9XPRLiLupNjr9hfPyhlNtkL1vgA1t2kh0
+         vh7UdjYO1EqQINxlZ+cBnrtv/Vgs0xgfrS20JTcEsbfVJYTYBJRU2f9Cm5TKLjP/p9nJ
+         ggwnalH/YwVRgaumFHBG0piVq9vKn0zohUCpK5EuZW5m5npJRMFLYyJ3JGVSfB9GDhnn
+         N3lvMzL3e2MJc6Ea2kUNeipNE1NNVhGaw8IWOTBiyhntP6wCw/X8hyUPXsnA2UQ2gV4Z
+         stfg==
+X-Gm-Message-State: AOAM532q8bjyiYZctrcJLpyaqxXixDNTvy0gjHYImlKJIsv2hAH2FfZD
+        M4Y6mnwBCXeZRaVzXd256g==
+X-Google-Smtp-Source: ABdhPJx08/NjwL/LKLNaYctq1rd2mdl4jiv/04ZWeiY6YBXgM0/680BNb6NQWQd/cV6Kt76ohwagPg==
+X-Received: by 2002:a05:6870:c101:b0:da:b3f:2b89 with SMTP id f1-20020a056870c10100b000da0b3f2b89mr5288216oad.296.1648066385933;
+        Wed, 23 Mar 2022 13:13:05 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id c9-20020a4a8ec9000000b0032438ba79b0sm449783ool.0.2022.03.23.13.13.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Mar 2022 05:31:07 -0700 (PDT)
-Date:   Wed, 23 Mar 2022 13:31:05 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Prathamesh Shete <pshete@nvidia.com>
-Cc:     linus.walleij@linaro.org, jonathanh@nvidia.com,
-        linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, smangipudi@nvidia.com,
-        EJ Hsu <ejh@nvidia.com>
-Subject: Re: [PATCH] pinctrl: tegra: Set SFIO mode to Mux Register
-Message-ID: <YjsTCRdc3yCLZkVY@orome>
-References: <20220311043015.4027-1-pshete@nvidia.com>
+        Wed, 23 Mar 2022 13:13:05 -0700 (PDT)
+Received: (nullmailer pid 373336 invoked by uid 1000);
+        Wed, 23 Mar 2022 20:13:04 -0000
+Date:   Wed, 23 Mar 2022 15:13:04 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Krishna Yarlagadda <kyarlagadda@nvidia.com>
+Cc:     broonie@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com,
+        linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org,
+        ashishsingha@nvidia.com, skomatineni@nvidia.com,
+        ldewangan@nvidia.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] spi: dt-bindings: Add wait state polling flag
+Message-ID: <Yjt/UDlkE9ciA4Yt@robh.at.kernel.org>
+References: <20220317012006.15080-1-kyarlagadda@nvidia.com>
+ <20220317012006.15080-4-kyarlagadda@nvidia.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="aDwnUUzQs80VnPan"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220311043015.4027-1-pshete@nvidia.com>
-User-Agent: Mutt/2.2.1 (c8109e14) (2022-02-19)
+In-Reply-To: <20220317012006.15080-4-kyarlagadda@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On Thu, Mar 17, 2022 at 06:50:06AM +0530, Krishna Yarlagadda wrote:
+> Add flag to enable tpm wait state polling and Tegra Grace binding.
 
---aDwnUUzQs80VnPan
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+TPM
 
-On Fri, Mar 11, 2022 at 10:00:15AM +0530, Prathamesh Shete wrote:
-> If the device has the 'sfsel' bit field, pin should be
-> muxed to set to SFIO mode to be used for pinmux operation.
->=20
-> Signed-off-by: EJ Hsu <ejh@nvidia.com>
-> Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
+> 
+> Signed-off-by: Krishna Yarlagadda <kyarlagadda@nvidia.com>
 > ---
->  drivers/pinctrl/tegra/pinctrl-tegra.c | 3 +++
->  1 file changed, 3 insertions(+)
->=20
-> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegr=
-a/pinctrl-tegra.c
-> index 50bd26a30ac0..30341c43da59 100644
-> --- a/drivers/pinctrl/tegra/pinctrl-tegra.c
-> +++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
-> @@ -270,6 +270,9 @@ static int tegra_pinctrl_set_mux(struct pinctrl_dev *=
-pctldev,
->  	val =3D pmx_readl(pmx, g->mux_bank, g->mux_reg);
->  	val &=3D ~(0x3 << g->mux_bit);
->  	val |=3D i << g->mux_bit;
-> +	/* Set the SFIO/GPIO selection to SFIO when under pinmux control*/
-> +	if (pmx->soc->sfsel_in_mux)
-> +		val |=3D (1 << g->sfsel_bit);
->  	pmx_writel(pmx, val, g->mux_bank, g->mux_reg);
-> =20
->  	return 0;
+>  .../devicetree/bindings/spi/nvidia,tegra210-quad.yaml       | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/spi/nvidia,tegra210-quad.yaml b/Documentation/devicetree/bindings/spi/nvidia,tegra210-quad.yaml
+> index 0296edd1de22..88b00fcad210 100644
+> --- a/Documentation/devicetree/bindings/spi/nvidia,tegra210-quad.yaml
+> +++ b/Documentation/devicetree/bindings/spi/nvidia,tegra210-quad.yaml
+> @@ -20,6 +20,7 @@ properties:
+>        - nvidia,tegra186-qspi
+>        - nvidia,tegra194-qspi
+>        - nvidia,tegra234-qspi
+> +      - nvidia,tegra-grace-qspi
+>  
+>    reg:
+>      maxItems: 1
+> @@ -57,6 +58,11 @@ patternProperties:
+>        spi-tx-bus-width:
+>          enum: [1, 2, 4]
+>  
+> +      nvidia,wait-polling:
+> +        description:
+> +          Enable TPM wait state polling on supported chips.
 
-So this is basically what tegra_pinctrl_gpio_disable_free() does. I'm
-wondering if we need to do both, though. Are ->gpio_disable_free() and
-->set_mux() always called in tandem? I suspect they are not because
-otherwise this wouldn't be needed.
+What's TPM?
 
-On the other hand, if ->set_mux() can be called in a code path without
-->gpio_disable_free() then this may be necessary to get the pin out of
-SF mode. But that doesn't necessarily mean that the reverse is true.
-If it isn't possible for ->gpio_disable_free() to be called in a code
-path that doesn't have ->set_mux() then this patch would make the former
-implementation redundant.
+Why is this not implied by the compatible string?
 
-That said, upon inspecting the pinmux core, I don't see a 1:1
-correlation between the two, so this seems fine.
+Also, how child node properties are handled has changed. See 
+Documentation/devicetree/bindings/spi/spi-peripheral-props.yaml. The 
+NVidia specific properties should be refactored first before adding 
+more.
 
-It might be worth stating in the commit message what the practical
-implications are of this. That is, you're explaining what you do in the
-commit message and assert that this is what should be done. But it'd be
-more useful to say *why* this is necessary. Specifically if this fixes a
-bug, then say what kind of bug this would fix.
-
-Thierry
-
---aDwnUUzQs80VnPan
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmI7EwcACgkQ3SOs138+
-s6EAVQ//UN048EY2ruCY7siM7mFkIa7bi2ZZNMtJUrAOCifmmEVcbiGLdznlNicU
-OZZswzDUXCD5bq0Ouug4AaFX9GkadYwm5UvI/FpjEzG29LSvcdb3rqECX3DzDwvn
-WjIGSI1QVH450nCg+FP2GtypTr8FvW2tsHZMKwia+xj2HMZQf63EjbMzDABAzvaC
-FDL/iVzTisNyxDqhZrEVegydjTwNxJug1dsEfCH7obu47QcVnuAknQOigHn2KFsx
-9IqCrva8VLTAm8i9kgRu7b1YJOhbMQRcQ+JzrYpdYi68pHkU+LtajTsqsIbjEEp3
-wnGdUP3gqinwd2km0ORV4DqG3BOQK4oXQDi5kOJjiGKuMA1wCmu3A2daTd11VRAN
-5IXTc3FkY8va1Fr4PRGJ3NjufGbovFoImOy5sT1AZ+jxTaNNN88xgJB7BrNGvNTE
-lNxcCQm1j7UCVo7oyiVj689hWRJJqSTxUst93pY9zAU8QyCUIjVrOecypzF9nNIV
-aawPUoWOy/eKP/4p/055sAFtfYafXCXcSQJVDw+L3bWMEYE3n3oKEDcrG8hHizz9
-FUH7YcBKazmBF+qgcDFNbbyYznC0AvP8bdkwJNvu73p89iu9OxX+MeibU+yPoXxd
-niR1JfvkDzWeDPXLk2A16c1iwn8VeiRGNwd5zIw2qgN8Qhgx614=
-=5/zk
------END PGP SIGNATURE-----
-
---aDwnUUzQs80VnPan--
+> +	type: boolean
+> +
+>        nvidia,tx-clk-tap-delay:
+>          description:
+>            Delays the clock going out to device with this tap value.
+> -- 
+> 2.17.1
+> 
+> 
