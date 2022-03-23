@@ -2,262 +2,146 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47B14C433EF
-	for <linux-tegra@archiver.kernel.org>; Wed, 23 Mar 2022 08:51:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50A46C433F5
+	for <linux-tegra@archiver.kernel.org>; Wed, 23 Mar 2022 12:31:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238490AbiCWIxS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 23 Mar 2022 04:53:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44414 "EHLO
+        id S242445AbiCWMck (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 23 Mar 2022 08:32:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42572 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233985AbiCWIxR (ORCPT
+        with ESMTP id S231716AbiCWMcj (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 23 Mar 2022 04:53:17 -0400
-Received: from wout5-smtp.messagingengine.com (wout5-smtp.messagingengine.com [64.147.123.21])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED4D972E07;
-        Wed, 23 Mar 2022 01:51:46 -0700 (PDT)
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-        by mailout.west.internal (Postfix) with ESMTP id 0B0FC3200C4A;
-        Wed, 23 Mar 2022 04:51:43 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute2.internal (MEProxy); Wed, 23 Mar 2022 04:51:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
-        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to; s=fm3; bh=F9M2I+3m5383hh01Q4rw+Q7eh2cWbcFSUcjzbo
-        ebKQE=; b=zJVdHWUg9SmFe9vt/aJgAUICqpCYrHT7IYBjVYIs10QpE4V5ITHkPS
-        X5Xb8lXHj1ie6x1zSkq3+//NkOkzWd0MutXF7ThRQGZXXpUuwG0IMN4BSnxk35Vg
-        LfdG+nD/A96s+l95aIdyuP5vLi2a4fm7wPK2i1rZSF5aR5G9K8nLR8U3hszkwoiY
-        kTpZT4XZ3qhr1dSdSB5j2s6A361eYOUWPKhTD00ANxWpfAU5vPWdq/Qyw0RL3I4k
-        hogvVYUmk2IkrXYSODTQ+t6a3W7JltXNhrBbElfxLgniA8lrM3PM6s+oaICmpY/T
-        BOxlIKMXAWimI/cjqI/X1iZBOIPPJaiA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:date:date:from:from
-        :in-reply-to:in-reply-to:message-id:mime-version:references
-        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=F9M2I+3m5383hh01Q
-        4rw+Q7eh2cWbcFSUcjzboebKQE=; b=Hmf9vAgJL1q7x0VUnmDwc0tHtwpybeKJh
-        nxOtKUOa1NoTQ/SJr+4jG60UP2qi49N8KO9IOzCLN3gj7NL4T3e5V9nSvkBPIt75
-        fJs8/xGK5MiK0I7Ki0yo5ki/omJOaQ+jmOlfHtIRTS9wVGr/z09mSjleUG+tnLrY
-        wKh+LDN0k549v43qBeYlR06/kl/cOrHKgwssxr4i5VwFY6o5UJio/zzuQvh79WDT
-        NMOV2bShWt18yH7s98jMKiMYejP/l+5D1YaOQyevfiNCztpt/5pOEHySpqme3kLL
-        GofxnKhj1mbAUAODBMwf8Y4L7VkrpWSVSSC0tsxem3/A2iUmqXQVQ==
-X-ME-Sender: <xms:n986YpAJzcgsibHiBn4mTn1DA9fmaCjNOeOcGaLgMWMyVm6ea6OX8g>
-    <xme:n986YniOmq4dwsg9Zd39bQqGoCr45rHIyx5lgueoVEI9GN_oyuafa7imV_lNVrAT5
-    0NEFCd22jfFGFPF48s>
-X-ME-Received: <xmr:n986YknRzpFum28ukV52a3fBdEvQ0bS0KppKu3FXZ0gf0Vo4YgpOd9onsy9yLvjoKcnzWqhHnycTvRzM7Fve9RD6qKRbVVHGqT0uwbg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrudegiedguddvfecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpeffhffvuffkfhggtggujgesghdtreertddtvdenucfhrhhomhepofgrgihi
-    mhgvucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrg
-    htthgvrhhnpeduhedugeelgeegieetheekteegudfffeeuudfhuefhudeihfelheelheef
-    hfehleenucffohhmrghinhepkhgvrhhnvghlrdhorhhgpdgsohhothhlihhnrdgtohhmne
-    cuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmhgrgihi
-    mhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:n986YjweRmdAm-IhElpeqZHwIQfFkHjqgHWSI49mqRml2TaqQqD0TQ>
-    <xmx:n986YuSLmBuYrYqwQgEviDV_ryFhuaHFJbUVfTbXwWFNI909zHXSiw>
-    <xmx:n986YmYEufxUy13E0HvzHbYih1uO7qEWCWNNjLM9EQ7Vf1ULbqWfig>
-    <xmx:n986YhGe6A-DDNi9KvJEKRYc53buZpSte5_ycVitwDA33QSMX_vY9w>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 23 Mar 2022 04:51:42 -0400 (EDT)
-Date:   Wed, 23 Mar 2022 09:51:40 +0100
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Dmitry Osipenko <dmitry.osipenko@collabora.com>
-Cc:     Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        Phil Elwell <phil@raspberrypi.com>,
-        Tim Gover <tim.gover@raspberrypi.com>,
-        Dom Cobley <dom@raspberrypi.com>,
-        dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v7 06/12] clk: Always set the rate on clk_set_range_rate
-Message-ID: <20220323085140.ifeclmttkrqo55ru@houat>
-References: <20220225143534.405820-1-maxime@cerno.tech>
- <20220225143534.405820-7-maxime@cerno.tech>
- <7720158d-10a7-a17b-73a4-a8615c9c6d5c@collabora.com>
+        Wed, 23 Mar 2022 08:32:39 -0400
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 784084839F;
+        Wed, 23 Mar 2022 05:31:10 -0700 (PDT)
+Received: by mail-ej1-x62e.google.com with SMTP id bi12so2540603ejb.3;
+        Wed, 23 Mar 2022 05:31:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Pr1tceJ5axwZ9yC4WRhMr6ZLanYIf+/neXLund54R+A=;
+        b=otx8RnRZQ2F3yrwx7ahJIs540TP6ZitRvGTwj9XKpxERUTTfAk4k1nkjWZGS5eJuNz
+         gysy8cnFBpLYFxGTJyQG0++7AqsNHxoR7BLjuLCFLTos6FuikYA1Z53amJ0UilSb7bmW
+         ScnKAVQ7LtunK5DWP1alJPH1+oQRqNN5rSjfN6Rre43yFD5n5ZwLdv8NzKXgadkWC5ai
+         MRPJB/AHfECXJkioAXM7UpD4Rs3REtIO07ItoQDQm5oRJCScYK6AYE8dRyb5XrxNsu1p
+         OVA1wMR1I1GY5FeHNybFEFh04GAEnKsx4swyRVMXdt/+z6W7JQzkSuARPIyDp2xKLhSy
+         luEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Pr1tceJ5axwZ9yC4WRhMr6ZLanYIf+/neXLund54R+A=;
+        b=qaOoeT+cdOqCDvq7MEK5sIJR/o9XfyVLFAkE0bwC+IQYa2/4GvgMXldM0Q6HHBfRHq
+         jvlOzIlFbxnKbG8C+xbq7sxOe1d9IhtJzCGQnCOM8PfS7NgJHGsNMvF1N4j9PwjSWG+u
+         0RZjCxbowdobHO+TNKxxEWseBcJ9qRLISeGMLf+0vnyeg/vOlVpPJwD1CtBrWPwV4UHK
+         +tQjwDYlzNL0o5W2Yjj9j4V+/qpj0UVoLzcfSKphYFGEzDnhMHx3lSS2cGCs3dLTi+bM
+         DoqWjbhtkD+bCFCJ0SXCYu+vb/1hy9ZaTiuFWdwS/kmaKNLo/3eVajao6lIWg8ZWckMS
+         mOfg==
+X-Gm-Message-State: AOAM530ZKTEOdqYMAAPDNCfRmheeZaoW+0bAErtgnDSXaYjy+y5VER/k
+        XpspqWU8Df8bEwtcViWGLd3gW0FjZ1w=
+X-Google-Smtp-Source: ABdhPJyWb9xSYuH3pMaouoh955z1Yi5I2iWyIvxN7OHQy+kr8UClS1Jr2hxoZbb70XoECdC0mjNvng==
+X-Received: by 2002:a17:907:968f:b0:6db:a3c5:ae3e with SMTP id hd15-20020a170907968f00b006dba3c5ae3emr32282332ejc.770.1648038668818;
+        Wed, 23 Mar 2022 05:31:08 -0700 (PDT)
+Received: from orome ([62.96.65.119])
+        by smtp.gmail.com with ESMTPSA id b11-20020a170906728b00b006df8494d384sm9562677ejl.122.2022.03.23.05.31.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Mar 2022 05:31:07 -0700 (PDT)
+Date:   Wed, 23 Mar 2022 13:31:05 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Prathamesh Shete <pshete@nvidia.com>
+Cc:     linus.walleij@linaro.org, jonathanh@nvidia.com,
+        linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, smangipudi@nvidia.com,
+        EJ Hsu <ejh@nvidia.com>
+Subject: Re: [PATCH] pinctrl: tegra: Set SFIO mode to Mux Register
+Message-ID: <YjsTCRdc3yCLZkVY@orome>
+References: <20220311043015.4027-1-pshete@nvidia.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="cicq5zfd5kk2y3zt"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="aDwnUUzQs80VnPan"
 Content-Disposition: inline
-In-Reply-To: <7720158d-10a7-a17b-73a4-a8615c9c6d5c@collabora.com>
+In-Reply-To: <20220311043015.4027-1-pshete@nvidia.com>
+User-Agent: Mutt/2.2.1 (c8109e14) (2022-02-19)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---cicq5zfd5kk2y3zt
+--aDwnUUzQs80VnPan
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
-
-On Tue, Mar 22, 2022 at 10:05:56PM +0300, Dmitry Osipenko wrote:
-> On 2/25/22 17:35, Maxime Ripard wrote:
-> > When we change a clock minimum or maximum using clk_set_rate_range(),
-> > clk_set_min_rate() or clk_set_max_rate(), the current code will only
-> > trigger a new rate change if the rate is outside of the new boundaries.
-> >=20
-> > However, a clock driver might want to always keep the clock rate to
-> > one of its boundary, for example the minimum to keep the power
-> > consumption as low as possible.
-> >=20
-> > Since they don't always get called though, clock providers don't have t=
-he
-> > opportunity to implement this behaviour.
-> >=20
-> > Let's trigger a clk_set_rate() on the previous requested rate every time
-> > clk_set_rate_range() is called. That way, providers that care about the
-> > new boundaries have a chance to adjust the rate, while providers that
-> > don't care about those new boundaries will return the same rate than
-> > before, which will be ignored by clk_set_rate() and won't result in a
-> > new rate change.
-> >=20
-> > Suggested-by: Stephen Boyd <sboyd@kernel.org>
-> > Signed-off-by: Maxime Ripard <maxime@cerno.tech>
-> > ---
-> >  drivers/clk/clk.c      | 45 ++++++++++++++++----------------
-> >  drivers/clk/clk_test.c | 58 +++++++++++++++++++-----------------------
-> >  2 files changed, 49 insertions(+), 54 deletions(-)
-> >=20
-> > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> > index c15ee5070f52..9bc8bf434b94 100644
-> > --- a/drivers/clk/clk.c
-> > +++ b/drivers/clk/clk.c
-> > @@ -2373,28 +2373,29 @@ int clk_set_rate_range(struct clk *clk, unsigne=
-d long min, unsigned long max)
-> >  		goto out;
-> >  	}
-> > =20
-> > -	rate =3D clk_core_get_rate_nolock(clk->core);
-> > -	if (rate < min || rate > max) {
-> > -		/*
-> > -		 * FIXME:
-> > -		 * We are in bit of trouble here, current rate is outside the
-> > -		 * the requested range. We are going try to request appropriate
-> > -		 * range boundary but there is a catch. It may fail for the
-> > -		 * usual reason (clock broken, clock protected, etc) but also
-> > -		 * because:
-> > -		 * - round_rate() was not favorable and fell on the wrong
-> > -		 *   side of the boundary
-> > -		 * - the determine_rate() callback does not really check for
-> > -		 *   this corner case when determining the rate
-> > -		 */
-> > -
-> > -		rate =3D clamp(clk->core->req_rate, min, max);
-> > -		ret =3D clk_core_set_rate_nolock(clk->core, rate);
-> > -		if (ret) {
-> > -			/* rollback the changes */
-> > -			clk->min_rate =3D old_min;
-> > -			clk->max_rate =3D old_max;
-> > -		}
-> > +	/*
-> > +	 * Since the boundaries have been changed, let's give the
-> > +	 * opportunity to the provider to adjust the clock rate based on
-> > +	 * the new boundaries.
-> > +	 *
-> > +	 * We also need to handle the case where the clock is currently
-> > +	 * outside of the boundaries. Clamping the last requested rate
-> > +	 * to the current minimum and maximum will also handle this.
-> > +	 *
-> > +	 * FIXME:
-> > +	 * There is a catch. It may fail for the usual reason (clock
-> > +	 * broken, clock protected, etc) but also because:
-> > +	 * - round_rate() was not favorable and fell on the wrong
-> > +	 *   side of the boundary
-> > +	 * - the determine_rate() callback does not really check for
-> > +	 *   this corner case when determining the rate
-> > +	 */
-> > +	rate =3D clamp(clk->core->req_rate, min, max);
-> > +	ret =3D clk_core_set_rate_nolock(clk->core, rate);
-> > +	if (ret) {
-> > +		/* rollback the changes */
-> > +		clk->min_rate =3D old_min;
-> > +		clk->max_rate =3D old_max;
-> >  	}
-> > =20
-> >  out:
->
-> NVIDIA Tegra30 no longer boots with this change.
+On Fri, Mar 11, 2022 at 10:00:15AM +0530, Prathamesh Shete wrote:
+> If the device has the 'sfsel' bit field, pin should be
+> muxed to set to SFIO mode to be used for pinmux operation.
 >=20
-> You can't assume that rate was requested by clk_set_rate() before
-> clk_set_rate_range() is called, see what [1] does.
-
-We don't, and it would be bad indeed.
-
-We even have (multiple) tests to cover that case:
-https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/tree/drivers/=
-clk/clk_test.c?h=3Dclk-range&id=3Da9b269310ad9abb2f206fe814fd3afcadddce3aa#=
-n242
-
-> T30 memory rate now drops to min on boot when clk debug range is
-> inited innocuously and CPU no longer can make any progress because
-> display controller takes out whole memory bandwidth.
+> Signed-off-by: EJ Hsu <ejh@nvidia.com>
+> Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
+> ---
+>  drivers/pinctrl/tegra/pinctrl-tegra.c | 3 +++
+>  1 file changed, 3 insertions(+)
 >=20
-> [1]
-> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/=
-drivers/memory/tegra/tegra30-emc.c#n1437
->=20
-> If clk_set_rate() wasn't ever invoked and req_rate=3D0, then you must not
-> change the clk rate if it's within the new range. Please revert this
-> patch, thanks.
+> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegr=
+a/pinctrl-tegra.c
+> index 50bd26a30ac0..30341c43da59 100644
+> --- a/drivers/pinctrl/tegra/pinctrl-tegra.c
+> +++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
+> @@ -270,6 +270,9 @@ static int tegra_pinctrl_set_mux(struct pinctrl_dev *=
+pctldev,
+>  	val =3D pmx_readl(pmx, g->mux_bank, g->mux_reg);
+>  	val &=3D ~(0x3 << g->mux_bit);
+>  	val |=3D i << g->mux_bit;
+> +	/* Set the SFIO/GPIO selection to SFIO when under pinmux control*/
+> +	if (pmx->soc->sfsel_in_mux)
+> +		val |=3D (1 << g->sfsel_bit);
+>  	pmx_writel(pmx, val, g->mux_bank, g->mux_reg);
+> =20
+>  	return 0;
 
-The whole point of this patch is to give an opportunity to every driver
-to change the rate whenever the boundaries have changed, so we very much
-want to have the option to change it if clk_set_rate() has never been
-called.
+So this is basically what tegra_pinctrl_gpio_disable_free() does. I'm
+wondering if we need to do both, though. Are ->gpio_disable_free() and
+->set_mux() always called in tandem? I suspect they are not because
+otherwise this wouldn't be needed.
 
-However, I think the issue is why req_rate would be 0 in the first
-place?
+On the other hand, if ->set_mux() can be called in a code path without
+->gpio_disable_free() then this may be necessary to get the pin out of
+SF mode. But that doesn't necessarily mean that the reverse is true.
+If it isn't possible for ->gpio_disable_free() to be called in a code
+path that doesn't have ->set_mux() then this patch would make the former
+implementation redundant.
 
-req_rate is initialized to what recalc_rate returns:
-https://elixir.bootlin.com/linux/latest/source/drivers/clk/clk.c#L3607
+That said, upon inspecting the pinmux core, I don't see a 1:1
+correlation between the two, so this seems fine.
 
-So the case where req_rate is 0 shouldn't occur unless you had an
-explicit clk_set_rate to 0, or if your clock was orphaned at some point.
+It might be worth stating in the commit message what the practical
+implications are of this. That is, you're explaining what you do in the
+commit message and assert that this is what should be done. But it'd be
+more useful to say *why* this is necessary. Specifically if this fixes a
+bug, then say what kind of bug this would fix.
 
-Judging from the code, it seems like the latter is the most plausible.
-Indeed, __clk_core_init() will set req_rate to 0 if the clock is
-orphaned (just like rate and accuracy), and
-clk_core_reparent_orphans_nolock will be in charge of updating them when
-the clock is no longer an orphan.
+Thierry
 
-However, clk_core_reparent_orphans_nolock() will update rate by calling
-__clk_recalc_rate and accuracy by calling __clk_recalc_accuracies, but
-it never sets req_rate.
-
-I'm not sure if this is the right patch, Stephen will tell, but could
-you test:
-
------------------------- >8 ------------------------
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 9bc8bf434b94..c43340afedee 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -3479,6 +3479,7 @@ static void clk_core_reparent_orphans_nolock(void)
- 			__clk_set_parent_after(orphan, parent, NULL);
- 			__clk_recalc_accuracies(orphan);
- 			__clk_recalc_rates(orphan, 0);
-+			orphan->req_rate =3D orphan->rate;
- 		}
- 	}
- }
-
------------------------- >8 ------------------------
-
-Maxime
-
---cicq5zfd5kk2y3zt
+--aDwnUUzQs80VnPan
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYjrflwAKCRDj7w1vZxhR
-xSfZAP9hSMfZjOdlobFqCwZaycsyt8eFvkcipSAJf5yuxXuzxwEAllH2qwBrezuC
-5+HjlqOdhVrM+Lk9twk9YdX494m1KgY=
-=j69K
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmI7EwcACgkQ3SOs138+
+s6EAVQ//UN048EY2ruCY7siM7mFkIa7bi2ZZNMtJUrAOCifmmEVcbiGLdznlNicU
+OZZswzDUXCD5bq0Ouug4AaFX9GkadYwm5UvI/FpjEzG29LSvcdb3rqECX3DzDwvn
+WjIGSI1QVH450nCg+FP2GtypTr8FvW2tsHZMKwia+xj2HMZQf63EjbMzDABAzvaC
+FDL/iVzTisNyxDqhZrEVegydjTwNxJug1dsEfCH7obu47QcVnuAknQOigHn2KFsx
+9IqCrva8VLTAm8i9kgRu7b1YJOhbMQRcQ+JzrYpdYi68pHkU+LtajTsqsIbjEEp3
+wnGdUP3gqinwd2km0ORV4DqG3BOQK4oXQDi5kOJjiGKuMA1wCmu3A2daTd11VRAN
+5IXTc3FkY8va1Fr4PRGJ3NjufGbovFoImOy5sT1AZ+jxTaNNN88xgJB7BrNGvNTE
+lNxcCQm1j7UCVo7oyiVj689hWRJJqSTxUst93pY9zAU8QyCUIjVrOecypzF9nNIV
+aawPUoWOy/eKP/4p/055sAFtfYafXCXcSQJVDw+L3bWMEYE3n3oKEDcrG8hHizz9
+FUH7YcBKazmBF+qgcDFNbbyYznC0AvP8bdkwJNvu73p89iu9OxX+MeibU+yPoXxd
+niR1JfvkDzWeDPXLk2A16c1iwn8VeiRGNwd5zIw2qgN8Qhgx614=
+=5/zk
 -----END PGP SIGNATURE-----
 
---cicq5zfd5kk2y3zt--
+--aDwnUUzQs80VnPan--
