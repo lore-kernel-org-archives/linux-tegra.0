@@ -2,141 +2,236 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4ED4AC433F5
-	for <linux-tegra@archiver.kernel.org>; Mon, 28 Mar 2022 14:25:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4FDCC4321E
+	for <linux-tegra@archiver.kernel.org>; Mon, 28 Mar 2022 15:12:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243796AbiC1O0s (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 28 Mar 2022 10:26:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48406 "EHLO
+        id S240315AbiC1PNv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 28 Mar 2022 11:13:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37988 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243794AbiC1O0s (ORCPT
+        with ESMTP id S244578AbiC1PNf (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 28 Mar 2022 10:26:48 -0400
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2050.outbound.protection.outlook.com [40.107.220.50])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 180CE1EECF;
-        Mon, 28 Mar 2022 07:25:07 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=N1/mBImBhhveM8SZG5DjdLF2Pu11BDFU4R9J4dfpoA+fLymRflEST2aIzjLOBEf6GCRKa/mVukkpHehcJr/gWCH5E2RlXNKqcuIF8NZzIyG9mKS4V/OfwSSFVXoAa7ZDoiZISQBss4Ecrxu6taj1al4B/OU6Mx7T21TwzAbKDFf1tRJJLC7PXK2tCplsSrQir7yVTA3Tf7JKaIy/YklBhrTjiIJVF7JCuJFvicmgyB96cNr+7MydzsNaM0bGzHu9GsSZpQJwi4d9jmRqRz95ZMZPNICPDe3XsfPHpRd79spA3uX25FCmKRKn8mQwOrFjQEha2RcyEbgAjm3jenh86w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=rBy+US8ejgjumVL3wdHyXLd95fjtt8Jk8/6jRNV/3nQ=;
- b=D2LjacscHjwsRuVz5F99XT0YGurMTi+zZBFT/lxx0/+3eyk5d4VKIPVMKri2ym0lIenq8Lsni7vDvFaQBqkmm/2DoX3PkFfVOTIIwwEImDX/dez3yHiaiwWy4nYhzhbkk6aMe7Bbp+3sI4b/LM5KDAlK8ZKCsTKBGBQVlTxQ20GoR4mysGwxXPMJtEpwvT0NYMz6CccaFf89Ui3R6ZQgqrZWAJ5UBp1P+n2L5B0Kq2yoGu3rtYc8+lLW9svU79jfox1fP50+dy56KEXGtWA2BB/L3mmelLQviCJGLn0BV0IkntusB53RBtsN0SjP0EEJIdQ9i/LP2bL9n7UpMsazaQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 12.22.5.235) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com; dmarc=pass
- (p=reject sp=reject pct=100) action=none header.from=nvidia.com; dkim=none
- (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rBy+US8ejgjumVL3wdHyXLd95fjtt8Jk8/6jRNV/3nQ=;
- b=bXpRqRpQGcgC07z/jAbHvWa8DY4KwpaAq1/fbRPdnrb/gEIlj5WSc63/TavcAkL460ij2PDgfw1mpWfU++niFKtxJycmqODWT2PRSqQGVLO44HpEXaYynzDSd1uGKHK1W2BjFUq1X2eomWP//npHWpWx5dfjCZodAIKlL1rh/b3xqQTrl05IPUh1BNoJCtHLDHGIhFXkOgNqQzInknOVX1IrLCZG0toIzzqpeYfPmwS4mIraiqNARVPI0/r+1vR+FMG7w5rxYKsIWLa+Hcx0DHw+MlKJ1MS8c6kGxiCuh3jiQC+GFxVl8VomMFPUHrP9Tl5COJN74PT2xeJPTTGUyg==
-Received: from DS7PR03CA0106.namprd03.prod.outlook.com (2603:10b6:5:3b7::21)
- by DM5PR1201MB0185.namprd12.prod.outlook.com (2603:10b6:4:55::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5102.21; Mon, 28 Mar
- 2022 14:25:05 +0000
-Received: from DM6NAM11FT003.eop-nam11.prod.protection.outlook.com
- (2603:10b6:5:3b7:cafe::55) by DS7PR03CA0106.outlook.office365.com
- (2603:10b6:5:3b7::21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5102.18 via Frontend
- Transport; Mon, 28 Mar 2022 14:25:05 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.235)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 12.22.5.235 as permitted sender) receiver=protection.outlook.com;
- client-ip=12.22.5.235; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (12.22.5.235) by
- DM6NAM11FT003.mail.protection.outlook.com (10.13.173.162) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.5102.17 via Frontend Transport; Mon, 28 Mar 2022 14:25:05 +0000
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by DRHQMAIL107.nvidia.com
- (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1497.32; Mon, 28 Mar
- 2022 14:25:05 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail203.nvidia.com
- (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.22; Mon, 28 Mar
- 2022 07:25:04 -0700
-Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.22 via Frontend
- Transport; Mon, 28 Mar 2022 07:25:04 -0700
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <stable@vger.kernel.org>, <torvalds@linux-foundation.org>,
-        <akpm@linux-foundation.org>, <linux@roeck-us.net>,
-        <shuah@kernel.org>, <patches@kernelci.org>,
-        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
-        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
-        <sudipm.mukherjee@gmail.com>, <slade@sladewatkins.com>,
-        <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 5.16 00/37] 5.16.18-rc1 review
-In-Reply-To: <20220325150420.046488912@linuxfoundation.org>
-References: <20220325150420.046488912@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        Mon, 28 Mar 2022 11:13:35 -0400
+Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CD8653A46;
+        Mon, 28 Mar 2022 08:11:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1648480315; x=1680016315;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=0Xfm6ZmBe6qP65GEW9BCvq91UKkCOHo/5Qe8dITTyQs=;
+  b=ngmVcqbMtM6+a3J4CdzaKjJNJ4fKpaNjWjhiVZ35CS3FHmymgU+VZ9yn
+   uNCzucvlXTThxXNdz7o5pxiuD2rBR7giboer4umtaeCgNkbY60UTj3LIp
+   pPUpMF9RC0HNOuPaogt6qkf2NXtZCBqm8ySKU1SOw0Nf4nwEm654V3pYm
+   52jgB45ue2EzCE+keShQMABSEvqpg+A68tQBCV2TS+XYGQtgg2PXZHKoE
+   OEXFxCReu9JVmyUgKrCp/4xtQAXbEi2utNhyWFn+Gh9roqeStPX+SnsuY
+   /UAeZ7Tjs4vWcK7fmLij2cZgUeFIjfuyNNjvhd9649tn/muGSUujD8CoP
+   w==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10300"; a="258991028"
+X-IronPort-AV: E=Sophos;i="5.90,217,1643702400"; 
+   d="scan'208";a="258991028"
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Mar 2022 08:11:54 -0700
+X-IronPort-AV: E=Sophos;i="5.90,217,1643702400"; 
+   d="scan'208";a="719145825"
+Received: from aslawinx-mobl.ger.corp.intel.com (HELO [10.99.249.166]) ([10.99.249.166])
+  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Mar 2022 08:11:50 -0700
+Message-ID: <6ae534e4-25f8-5825-a2ec-cb1c512dac57@linux.intel.com>
+Date:   Mon, 28 Mar 2022 17:11:48 +0200
 MIME-Version: 1.0
-Message-ID: <e2435d8b-82d0-4bfd-aaa5-c155cdb3621c@rnnvmail201.nvidia.com>
-Date:   Mon, 28 Mar 2022 07:25:04 -0700
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: b35aefaa-aa35-40d3-22ec-08da10c6c12f
-X-MS-TrafficTypeDiagnostic: DM5PR1201MB0185:EE_
-X-Microsoft-Antispam-PRVS: <DM5PR1201MB0185C7A6F010AE137FC89F58D91D9@DM5PR1201MB0185.namprd12.prod.outlook.com>
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: D6oi3GfV/F/XPuxOiX7kN77XsD3vF2imv/sLMXCYMKZHJzfaH4/ULN+fpgwbklYXQvgDMMJ1dcJqF9ECAnQdjgUus8qwMqI2An4GLjqWDIT9zQk4LxVghNguuQUYIiehTC1ECIVfRFG1EuTuj3IHVnXkASS4PEpNUDy+A4m1TvbqRYYblYx8088GxyhbOP7SPAuwyWPb4ggmSaeuC7kTVJ4tzJb1a7aXb7jpmGkyh2483H/l5GJmwCzE2Si5MyX1RAv1Hp8qNR6nbszeXQA0aD8i9pRjcGEZJVHI+JDCnfOP9bdzPjBqD25gYHvHqmIpcoK/VO2hOa+fhSJ3///nyBcp61I0CMV71/S8o1lOuMPPGLd4nF9o4jDlBg0A5GUEjvXM/LjW/oCxNEpDvOJrxHzj6lfGDII2RGOGvkRd5rKRodTLEnf37G216xnM93THL3wGoxwzyvYaV4VgkSFcQieGjFxbLlYJLgXOx3HRookaJ8X0zcmAD4Ga3zNy1raxYnKEqftLFbot5cIwv8k9o5pZ3RkSWI9xXQ1pxhetwJECHcHruFIs/gn706TdSJJ+Iix1NGiane2rMgiSIeZeqApginTmsuflqCPL2I83fjSUwh92FV0V3IMlt08+jCQ3A3NDqHmtlYJbFVRSh/xU+f8IC0ZEraVu/os+6aYnG82iqIsR/Ahr7phws3IHIYWHVA72iWRiNRfRFEgHoJx5C0Ra5chcmjJk3GetT9hSHMT71KiLBij9wQKukzBXaiz11QBRb8wL18MYYGVA7vlcF6NkHiOcaazfucHTdmKmQdE=
-X-Forefront-Antispam-Report: CIP:12.22.5.235;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230001)(4636009)(46966006)(40470700004)(36840700001)(82310400004)(70586007)(70206006)(8676002)(4326008)(356005)(81166007)(8936002)(316002)(40460700003)(54906003)(7416002)(5660300002)(6916009)(508600001)(47076005)(86362001)(966005)(2906002)(36860700001)(31696002)(186003)(31686004)(426003)(336012)(26005)(36900700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Mar 2022 14:25:05.5601
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: b35aefaa-aa35-40d3-22ec-08da10c6c12f
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.235];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT003.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR1201MB0185
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [RFC PATCH v2 4/6] ASoC: soc-pcm: tweak DPCM BE hw_param() call
+ order
+Content-Language: en-US
+To:     Sameer Pujar <spujar@nvidia.com>, broonie@kernel.org,
+        lgirdwood@gmail.com, robh+dt@kernel.org, krzk+dt@kernel.org,
+        perex@perex.cz, tiwai@suse.com, peter.ujfalusi@linux.intel.com,
+        pierre-louis.bossart@linux.intel.com
+Cc:     oder_chiou@realtek.com, devicetree@vger.kernel.org,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        jonathanh@nvidia.com, thierry.reding@gmail.com,
+        linux-tegra@vger.kernel.org
+References: <1648448050-15237-1-git-send-email-spujar@nvidia.com>
+ <1648448050-15237-5-git-send-email-spujar@nvidia.com>
+From:   =?UTF-8?Q?Amadeusz_S=c5=82awi=c5=84ski?= 
+        <amadeuszx.slawinski@linux.intel.com>
+In-Reply-To: <1648448050-15237-5-git-send-email-spujar@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, 25 Mar 2022 16:14:10 +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.16.18 release.
-> There are 37 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On 3/28/2022 8:14 AM, Sameer Pujar wrote:
+> For DPCM links, the order of hw_param() call depends on the sequence of
+> BE connection to FE. It is possible that one BE link can provide clock
+> to another BE link. In such cases consumer BE DAI, to get the rate set
+> by provider BE DAI, can use the standard clock functions only if provider
+> has already set the appropriate rate during its hw_param() stage.
+
+Above sentence seems to suggest that consumer can set clock only after 
+provider has started, but code in this patch seems to do it the other 
+way around?
+
 > 
-> Responses should be made by Sun, 27 Mar 2022 15:04:08 +0000.
-> Anything received after that time might be too late.
+> Presently the order is fixed and does not depend on the provider and
+> consumer relationships. So the clock rates need to be known ahead of
+> hw_param() stage.
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.16.18-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.16.y
-> and the diffstat can be found below.
+> This patch tweaks the hw_param() order by connecting the provider BEs
+> late to a FE. With this hw_param() calls for provider BEs happen first
+> and then followed by consumer BEs. The consumers can use the standard
+> clk_get_rate() function to get the rate of the clock they depend on.
 > 
-> thanks,
+
+I'm bit confused by " With this hw_param() calls for provider BEs happen 
+first and then followed by consumer BEs. "
+
+Aren't consumers started first and provider second? Code and previous 
+sentence "connecting the provider BEs late to a FE" confuse me.
+
+Overall I don't exactly understand correct order of events after reading 
+commit message and patch...
+
+> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
+> ---
+>   TODO:
+>    * The FE link is not considered in this. For Tegra it is fine to
+>      call hw_params() for FE at the end. But systems, which want to apply
+>      this tweak for FE as well, have to extend this tweak to FE.
+>    * Also only DPCM is considered here. If normal links require such
+>      tweak, it needs to be extended.
 > 
-> greg k-h
+>   sound/soc/soc-pcm.c | 60 ++++++++++++++++++++++++++++++++++++++++++++++++++++-
+>   1 file changed, 59 insertions(+), 1 deletion(-)
+> 
+> diff --git a/sound/soc/soc-pcm.c b/sound/soc/soc-pcm.c
+> index 9a95468..5829514 100644
+> --- a/sound/soc/soc-pcm.c
+> +++ b/sound/soc/soc-pcm.c
+> @@ -1442,6 +1442,29 @@ static int dpcm_prune_paths(struct snd_soc_pcm_runtime *fe, int stream,
+>   	return prune;
+>   }
+>   
+> +static bool defer_dpcm_be_connect(struct snd_soc_pcm_runtime *rtd)
+> +{
+> +	struct snd_soc_dai *dai;
+> +	int i;
+> +
+> +	if (!(rtd->dai_link->dai_fmt & SND_SOC_DAIFMT_FORMAT_MASK))
+> +		return false;
+> +
+> +	if ((rtd->dai_link->dai_fmt & SND_SOC_DAIFMT_CLOCK_PROVIDER_MASK) ==
+> +	    SND_SOC_DAIFMT_CBC_CFC) {
+> +
+> +		for_each_rtd_cpu_dais(rtd, i, dai) {
+> +
+> +			if (!snd_soc_dai_is_dummy(dai))
+> +				return true;
+> +		}
+> +	}
+> +
+> +	return false;
+> +}
+> +
+> +#define MAX_CLK_PROVIDER_BE 10
 
-All tests passing for Tegra ...
+Not sure about this define, it adds unnecessary limitation on max clock 
+number, can't you just run same loop twice while checking 
+defer_dpcm_be_connect() first time and !defer_dpcm_be_connect() second 
+time? defer_dpcm_be_connect() function name may need a bit of adjustment 
+(rtd_is_clock_consumer() maybe?), but it gets rid of the limit.
 
-Test results for stable-v5.16:
-    10 builds:	10 pass, 0 fail
-    28 boots:	28 pass, 0 fail
-    122 tests:	122 pass, 0 fail
+or do something like following instead of copy pasting loop twice:
 
-Linux version:	5.16.18-rc1-gf6cd6b12e190
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
-                tegra20-ventana, tegra210-p2371-2180,
-                tegra210-p3450-0000, tegra30-cardhu-a04
+rename original dpcm_add_paths() to _dpcm_add_paths() and add additional 
+argument and check somewhere inline:
+static int dpcm_add_paths(struct snd_soc_pcm_runtime *fe, int stream,
+	struct snd_soc_dapm_widget_list **list_, bool clock_consumer)
+{
+	...
 
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
+  // with renamed defer_dpcm_be_connect
+	if (clock_consumer ^ !rtd_is_clock_consumer())
+		continue;
 
-Jon
+	...
+}
+
+static int dpcm_add_paths(struct snd_soc_pcm_runtime *fe, int stream,
+    	struct snd_soc_dapm_widget_list **list_)
+{
+	int ret;
+
+	/* start clock consumer BEs */
+	ret = _dpcm_add_paths(*fe, stream, **list_, true);
+	if (ret)
+		return ret;
+
+	/* start clock provider BEs */
+	ret = _dpcm_add_paths(*fe, stream, **list_, false);
+
+	return ret;
+}
+
+> +
+>   static int dpcm_add_paths(struct snd_soc_pcm_runtime *fe, int stream,
+>   	struct snd_soc_dapm_widget_list **list_)
+>   {
+> @@ -1449,7 +1472,8 @@ static int dpcm_add_paths(struct snd_soc_pcm_runtime *fe, int stream,
+>   	struct snd_soc_dapm_widget_list *list = *list_;
+>   	struct snd_soc_pcm_runtime *be;
+>   	struct snd_soc_dapm_widget *widget;
+> -	int i, new = 0, err;
+> +	struct snd_soc_pcm_runtime *prov[MAX_CLK_PROVIDER_BE];
+> +	int i, new = 0, err, count = 0;
+>   
+>   	/* Create any new FE <--> BE connections */
+>   	for_each_dapm_widgets(list, i, widget) {
+> @@ -1489,6 +1513,40 @@ static int dpcm_add_paths(struct snd_soc_pcm_runtime *fe, int stream,
+>   		    (be->dpcm[stream].state != SND_SOC_DPCM_STATE_CLOSE))
+>   			continue;
+>   
+> +		/* Connect clock provider BEs at the end */
+> +		if (defer_dpcm_be_connect(be)) {
+> +			if (count >= MAX_CLK_PROVIDER_BE) {
+> +				dev_err(fe->dev, "ASoC: too many clock provider BEs\n");
+> +				return -EINVAL;
+> +			}
+> +
+> +			prov[count++] = be;
+> +			continue;
+> +		}
+> +
+> +		/* newly connected FE and BE */
+> +		err = dpcm_be_connect(fe, be, stream);
+> +		if (err < 0) {
+> +			dev_err(fe->dev, "ASoC: can't connect %s\n",
+> +				widget->name);
+> +			break;
+> +		} else if (err == 0) /* already connected */
+> +			continue;
+> +
+> +		/* new */
+> +		dpcm_set_be_update_state(be, stream, SND_SOC_DPCM_UPDATE_BE);
+> +		new++;
+> +	}
+> +
+> +	/*
+> +	 * Now connect clock provider BEs. A late connection means,
+> +	 * these BE links appear first in the list maintained by FE
+> +	 * and hw_param() call for these happen first.
+
+Let's stick to ALSA terminology, hw_params() please, same in commit message.
+
+> +	 */
+> +	for (i = 0; i < count; i++) {
+> +
+> +		be = prov[i];
+> +
+>   		/* newly connected FE and BE */
+>   		err = dpcm_be_connect(fe, be, stream);
+>   		if (err < 0) {
+
