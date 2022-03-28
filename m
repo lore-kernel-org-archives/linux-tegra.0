@@ -2,168 +2,101 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EFCBC433F5
-	for <linux-tegra@archiver.kernel.org>; Mon, 28 Mar 2022 08:07:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 807C2C43217
+	for <linux-tegra@archiver.kernel.org>; Mon, 28 Mar 2022 08:30:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234283AbiC1IJh (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 28 Mar 2022 04:09:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44246 "EHLO
+        id S239370AbiC1Ibv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 28 Mar 2022 04:31:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58114 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231181AbiC1IJg (ORCPT
+        with ESMTP id S233720AbiC1Ibt (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 28 Mar 2022 04:09:36 -0400
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CD8052E58;
-        Mon, 28 Mar 2022 01:07:51 -0700 (PDT)
-Received: by mail-wm1-f41.google.com with SMTP id h126-20020a1c2184000000b0038d043aac51so738224wmh.0;
-        Mon, 28 Mar 2022 01:07:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=aqhIXOehpG2sn3GYsWc941YXJLzzHilfcGYNNCqo6QM=;
-        b=TuqBix4Pvc+wCi0Z+SljSG+VkieklhagQITlSeky9hamXq54FjkcBlkHp04ADtjUGb
-         0amTFIAh/30c/iL7ZLSdHUjZ6bIns+37MJOGQD2cu9uT78QhezOR+ZWisqRDCZWrgm90
-         rZJZxj/+4IS02n80ypLk7jwy3HBfGNv9oLd0pc0b4J8Wjl0JYpKWGOhtD0Gzze1a5pTl
-         i2iX/Ixh5f2X+Ry10jGZXB+FCmEBthjElgOQKwSiH/C6PaiZ+/5dSPrjlaxqDdRq/1c2
-         fXldXfOCehfnh6gOgajU5gQBObmvDEGKYHXsKTvzGEFJTj9tZiRlXGlyveATG8Ipq5NH
-         Tklw==
-X-Gm-Message-State: AOAM530jx5Rae6+3FkkVUWyoRqYeCB8GiwxvpJkEBNPaXoM8sqbwBZ1D
-        gsYmO06rhXXnfnKVdvWIOkc=
-X-Google-Smtp-Source: ABdhPJwKQEhNvAqduG5eNAfs0wurvmYokocu7FgFYMj6haT87acsa3lSCjzm5F29F803nAII8IyeoQ==
-X-Received: by 2002:a1c:e915:0:b0:37b:d847:e127 with SMTP id q21-20020a1ce915000000b0037bd847e127mr24995447wmc.180.1648454869508;
-        Mon, 28 Mar 2022 01:07:49 -0700 (PDT)
-Received: from [192.168.0.162] (xdsl-188-155-201-27.adslplus.ch. [188.155.201.27])
-        by smtp.googlemail.com with ESMTPSA id z18-20020a5d6412000000b0020400dde72esm11530807wru.37.2022.03.28.01.07.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Mar 2022 01:07:48 -0700 (PDT)
-Message-ID: <5e4e11b5-02b8-e03e-2924-c9f2882921be@kernel.org>
-Date:   Mon, 28 Mar 2022 10:07:47 +0200
+        Mon, 28 Mar 2022 04:31:49 -0400
+X-Greylist: delayed 66 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 28 Mar 2022 01:30:06 PDT
+Received: from smtp2.axis.com (smtp2.axis.com [195.60.68.18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 362D413D32;
+        Mon, 28 Mar 2022 01:30:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=axis.com; q=dns/txt; s=axis-central1; t=1648456208;
+  x=1679992208;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=6lodqU722XqqMCnjzMd3/cpwy1KHIQLMRjx1NSCdEKA=;
+  b=dK0NkDNIrE+1O1Mr6UHChku4GO1I8+QNjRKCSdMBzYDCBIo8jD2EcKqa
+   MbrwOk5EwyMQZmga5eBqxqdLtzBsN0o7D+4YCB7Gp8TTGw0FEhC8zFWFI
+   dSduFBklVQ4xJThQbSNCaC8TlJ4NIchnQf2BANEr8lZ02NJZlH1JYOTva
+   pdVgIoTx/umKDQ6MAffb9e47m0fx74YMfO+wrFknWVFtjGeWbHi7M9grQ
+   fLDy5RRCiClaLJ3yZb6kCsVx+dpkmpeAKAXoyL7dc85od4NQ8ehN+yVpr
+   65ABdKdAeITuZeNCa+8Zy3YhCMn3MAbxgghjW4q52RLjeDEAyoYn2DXu6
+   g==;
+Date:   Mon, 28 Mar 2022 10:28:58 +0200
+From:   Jesper Nilsson <jesper.nilsson@axis.com>
+To:     Ansuel Smith <ansuelsmth@gmail.com>
+CC:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-actions@lists.infradead.org" 
+        <linux-actions@lists.infradead.org>,
+        "linux-sunxi@lists.linux.dev" <linux-sunxi@lists.linux.dev>,
+        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
+        "linux-amlogic@lists.infradead.org" 
+        <linux-amlogic@lists.infradead.org>,
+        linux-arm-kernel <linux-arm-kernel@axis.com>,
+        "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
+        "linux-rpi-kernel@lists.infradead.org" 
+        <linux-rpi-kernel@lists.infradead.org>,
+        "chrome-platform@lists.linux.dev" <chrome-platform@lists.linux.dev>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>,
+        "linux-stm32@st-md-mailman.stormreply.com" 
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        "kernel@dh-electronics.com" <kernel@dh-electronics.com>,
+        "linux-mediatek@lists.infradead.org" 
+        <linux-mediatek@lists.infradead.org>,
+        "openbmc@lists.ozlabs.org" <openbmc@lists.ozlabs.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "linux-oxnas@groups.io" <linux-oxnas@groups.io>,
+        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
+        "linux-unisoc@lists.infradead.org" <linux-unisoc@lists.infradead.org>,
+        "linux-rockchip@lists.infradead.org" 
+        <linux-rockchip@lists.infradead.org>,
+        "linux-realtek-soc@lists.infradead.org" 
+        <linux-realtek-soc@lists.infradead.org>
+Subject: Re: [RFC PATCH 1/1] ARM/arm64: categorize dts in arm dir and fix
+ dependency in arm64
+Message-ID: <20220328082858.GJ7371@axis.com>
+References: <20220328000915.15041-1-ansuelsmth@gmail.com>
+ <20220328000915.15041-2-ansuelsmth@gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [RFC PATCH v2 3/6] ASoC: dt-bindings: Extend clock bindings of
- rt5659
-Content-Language: en-US
-To:     Sameer Pujar <spujar@nvidia.com>, broonie@kernel.org,
-        lgirdwood@gmail.com, robh+dt@kernel.org, krzk+dt@kernel.org,
-        perex@perex.cz, tiwai@suse.com, peter.ujfalusi@linux.intel.com,
-        pierre-louis.bossart@linux.intel.com
-Cc:     oder_chiou@realtek.com, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-References: <1648448050-15237-1-git-send-email-spujar@nvidia.com>
- <1648448050-15237-4-git-send-email-spujar@nvidia.com>
- <da414b44-1bec-5918-84f5-9dfff2009f41@kernel.org>
- <53d77f33-27e8-3446-d758-3e545eea2db4@nvidia.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-In-Reply-To: <53d77f33-27e8-3446-d758-3e545eea2db4@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20220328000915.15041-2-ansuelsmth@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 28/03/2022 09:58, Sameer Pujar wrote:
-> 
-> On 28-03-2022 12:36, Krzysztof Kozlowski wrote:
->> External email: Use caution opening links or attachments
->>
->>
->> On 28/03/2022 08:14, Sameer Pujar wrote:
->>> The rt5658 or rt5659 CODEC system clock (SYSCLK) can be derived from
->>> various clock sources. For example it can be derived either from master
->>> clock (MCLK) or by internal PLL. The internal PLL again can take input
->>> clock references from bit clocks (BCLKs) and MCLK. To enable a flexible
->>> clocking configuration the DT binding is extended here.
->>>
->>> It makes use of standard clock bindings and sets up the clock relation
->>> via DT.
->>>
->>> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
->>> Cc: Oder Chiou <oder_chiou@realtek.com>
->>> ---
->>>   .../devicetree/bindings/sound/realtek,rt5659.yaml  | 53 ++++++++++++++++++++--
->>>   1 file changed, 49 insertions(+), 4 deletions(-)
->>>
->>> diff --git a/Documentation/devicetree/bindings/sound/realtek,rt5659.yaml b/Documentation/devicetree/bindings/sound/realtek,rt5659.yaml
->>> index b0485b8..0c2f3cb 100644
->>> --- a/Documentation/devicetree/bindings/sound/realtek,rt5659.yaml
->>> +++ b/Documentation/devicetree/bindings/sound/realtek,rt5659.yaml
->>> @@ -29,12 +29,28 @@ properties:
->>>       maxItems: 1
->>>
->>>     clocks:
->>> -    items:
->>> -      - description: Master clock (MCLK) to the CODEC
->>> +    description: |
->>> +      CODEC can receive multiple clock inputs like Master
->>> +      clock (MCLK), I2S bit clocks (BCLK1, BCLK2, BCLK3,
->>> +      BCLK4). The CODEC SYSCLK can be generated from MCLK
->>> +      or internal PLL. In turn PLL can reference from MCLK
->>> +      and BCLKs.
->>>
->>>     clock-names:
->>> -    items:
->>> -      - const: mclk
->>> +    description: |
->>> +      The clock names can be combination of following:
->>> +        "mclk"        : Master clock
->>> +        "pll_ref"     : Reference to CODEC PLL clock
->>> +        "sysclk"      : CODEC SYSCLK
->>> +        "^bclk[1-4]$" : Bit clocks to CODEC
->> No, that does not look correct. You allow anything as clock input (even
->> 20 clocks, different names, any order). That's not how DT schema should
->> work and that's not how hardware looks like.
-> 
->>
->> Usually the clock inputs are always there which also you mentioned in
->> description - "multiple clock inputs". All these clocks should be
->> expected, unless really the wires (physical wires) can be left disconnected.
-> 
-> The CODEC can receive multiple clocks but all the input clocks need not 
-> be present or connected always. If a specific configuration is needed 
-> and platform supports such an input, then all these inputs can be added. 
-> I don't know how to define this detail in the schema. If I make all of 
-> them expected, then binding check throws errors. If I were to list all 
-> the possible combinations, the list is going to be big (not sure if this 
-> would be OK?).
+Hi Ansuel,
 
-Thanks for explanation. Please differentiate between these two:
-1. clock inputs connected, but unused (not needed for driver or for
-particular use case),
-2. clock inputs really not connected.
+On Mon, Mar 28, 2022 at 02:09:15AM +0200, Ansuel Smith wrote:
+> - Categorize every dts in arm directory in subdirectory
+> - Fix Makefile to address for the arm subdirectory
+> - Fix any arm64 dependency
+> [...]
+>  arch/arm/boot/dts/axix/Makefile               |    3 +
+>  .../boot/dts/{ => axix}/artpec6-devboard.dts  |    0
+>  arch/arm/boot/dts/{ => axix}/artpec6.dtsi     |    0
 
-For the 1. above, such clock inputs should still be listed in the
-bindings and DTS. For the 2. above, such clocks should actually not be
-there. How to achieve this depends on number of your combinations. IOW,
-how many clocks are physically optional. For some small number of
-variations this can be:
-oneOf:
- - const: mclk
- - items:
-   - const: mclk
-   - enum:
-       - bclk1
-       - bclk2
-       - bclk3
-       - bclk4
- - items:
-   - const: mclk
-   - const: pll_ref
-   - enum:
-       - bclk1
-       - bclk2
-       - bclk3
-       - bclk4
+All ARTPEC platforms should be in a directory called "axis".
+Otherwise LGTM.
 
-For a total flexibility that any clock input can be disconnected, this
-should be a list of enums I guess (with minItems). However please find
-the clocks always connected and include them if possible in a fixed way
-(like this oneOf above).
+Thanks!
 
-
-Best regards,
-Krzysztof
+/^JN - Jesper Nilsson
+-- 
+               Jesper Nilsson -- jesper.nilsson@axis.com
