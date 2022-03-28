@@ -2,118 +2,63 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98431C433EF
-	for <linux-tegra@archiver.kernel.org>; Mon, 28 Mar 2022 07:06:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCD92C433F5
+	for <linux-tegra@archiver.kernel.org>; Mon, 28 Mar 2022 07:54:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238684AbiC1HIa (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 28 Mar 2022 03:08:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54276 "EHLO
+        id S238974AbiC1H4E (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 28 Mar 2022 03:56:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35488 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235517AbiC1HI3 (ORCPT
+        with ESMTP id S235479AbiC1Hz7 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 28 Mar 2022 03:08:29 -0400
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D05B052B0B;
-        Mon, 28 Mar 2022 00:06:49 -0700 (PDT)
-Received: by mail-ed1-f43.google.com with SMTP id z92so15724837ede.13;
-        Mon, 28 Mar 2022 00:06:49 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=bWHNH/EfXpoNd6GDO+NCVI8AReob2nLGcB93Fy6VsBU=;
-        b=HGgVkuhVWivmPBLSISJL3YLvYy9oKFi1Bx+GvT4GFLzfY7Cnb44h0f+9tBjqbgXYNV
-         K8q7T0kQn8PyMPvghT09LoIst+2VIVN1aGVyiMPXCsRmWocfINCLFlCnbiwG0NgNyacx
-         vgInjHe+eOu3ueuvZz0nJ+X1j6AsrkvJfH6hXZEj/piJVaxiD4pv293TKwI7eoxJVExw
-         OM1G6CWoDw02MMr2mCxkuIJaQMtgoM7CSDbtXayysOYJLFFwSWdPPgZvWmu/mHeGiluT
-         bdkG1Z4UGd+FYbenkLbj3ocsAGbgQR+UWzc208B/MG5BBJ4JSsRstzodKVggz3ovDX96
-         BEQA==
-X-Gm-Message-State: AOAM531lToNovJSKf2nokdxWvEhS5xaLMQmLa09uvASzA4SkPp2qIbUn
-        YyFf9zRIEQg5rGJd6JZScno=
-X-Google-Smtp-Source: ABdhPJyIknQbldb2sxGzz5k0GbACmYk7LHZl4P9ANNwRnBbA6fgve5eGIekXkq4wWYc5UHkwHDUhEQ==
-X-Received: by 2002:a05:6402:3496:b0:419:82d5:f1d9 with SMTP id v22-20020a056402349600b0041982d5f1d9mr14537977edc.36.1648451208200;
-        Mon, 28 Mar 2022 00:06:48 -0700 (PDT)
-Received: from [192.168.0.162] (xdsl-188-155-201-27.adslplus.ch. [188.155.201.27])
-        by smtp.googlemail.com with ESMTPSA id k12-20020aa7c38c000000b0041939d9ccd0sm6618012edq.81.2022.03.28.00.06.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Mar 2022 00:06:47 -0700 (PDT)
-Message-ID: <da414b44-1bec-5918-84f5-9dfff2009f41@kernel.org>
-Date:   Mon, 28 Mar 2022 09:06:46 +0200
+        Mon, 28 Mar 2022 03:55:59 -0400
+X-Greylist: delayed 401 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 28 Mar 2022 00:54:19 PDT
+Received: from mail.ourpartnership.pl (mail.ourpartnership.pl [80.211.82.238])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 494D69FE0
+        for <linux-tegra@vger.kernel.org>; Mon, 28 Mar 2022 00:54:19 -0700 (PDT)
+Received: by mail.ourpartnership.pl (Postfix, from userid 1001)
+        id 567326171D; Mon, 28 Mar 2022 08:46:36 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ourpartnership.pl;
+        s=mail; t=1648453655;
+        bh=M1ZVeu3q6Upppe+FUx/3rgI7MKJXh389NZDbgCK1SX4=;
+        h=Date:From:To:Subject:From;
+        b=iO0yxulAsLw/I2HHJWfZLv/oBUSXn8IG+NLlk5lT8tiLJ0PjLU1SIPHppY0pZ07j+
+         eya8qptdorVoVoVKYcS7UoNLVTwyIYMy3BReWMi2bb5R37HQK/facaCbXZ/KGGasPQ
+         LDv7YpXJcz/Qjy4m/gZ8bPRPDqjfHBh8GGwgJr212JNLkCFigs+QqinDzDVFFOc8Y3
+         xg/n6q5iJBsRQij5cdgGXvV/MSZpkvbPrxr5F5zgM57nmqACTzuSih3Rl6drwO39UV
+         11arZ0hefp2IjdugACutuoKvCVTGeXnHxvkXgFxMtezzaAntguPVntzaf1dUqg8Vws
+         0HstOtURyT52g==
+Received: by mail.ourpartnership.pl for <linux-tegra@vger.kernel.org>; Mon, 28 Mar 2022 07:46:04 GMT
+Message-ID: <20220328074501-0.1.9.2amd.0.jcrvny213x@ourpartnership.pl>
+Date:   Mon, 28 Mar 2022 07:46:04 GMT
+From:   =?UTF-8?Q? "Arkadiusz_Soko=C5=82owski" ?= 
+        <arkadiusz.sokolowski@ourpartnership.pl>
+To:     <linux-tegra@vger.kernel.org>
+Subject: Koszty instalacji fotowoltaicznej
+X-Mailer: mail.ourpartnership.pl
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [RFC PATCH v2 3/6] ASoC: dt-bindings: Extend clock bindings of
- rt5659
-Content-Language: en-US
-To:     Sameer Pujar <spujar@nvidia.com>, broonie@kernel.org,
-        lgirdwood@gmail.com, robh+dt@kernel.org, krzk+dt@kernel.org,
-        perex@perex.cz, tiwai@suse.com, peter.ujfalusi@linux.intel.com,
-        pierre-louis.bossart@linux.intel.com
-Cc:     oder_chiou@realtek.com, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-References: <1648448050-15237-1-git-send-email-spujar@nvidia.com>
- <1648448050-15237-4-git-send-email-spujar@nvidia.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-In-Reply-To: <1648448050-15237-4-git-send-email-spujar@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 28/03/2022 08:14, Sameer Pujar wrote:
-> The rt5658 or rt5659 CODEC system clock (SYSCLK) can be derived from
-> various clock sources. For example it can be derived either from master
-> clock (MCLK) or by internal PLL. The internal PLL again can take input
-> clock references from bit clocks (BCLKs) and MCLK. To enable a flexible
-> clocking configuration the DT binding is extended here.
-> 
-> It makes use of standard clock bindings and sets up the clock relation
-> via DT.
-> 
-> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
-> Cc: Oder Chiou <oder_chiou@realtek.com>
-> ---
->  .../devicetree/bindings/sound/realtek,rt5659.yaml  | 53 ++++++++++++++++++++--
->  1 file changed, 49 insertions(+), 4 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/sound/realtek,rt5659.yaml b/Documentation/devicetree/bindings/sound/realtek,rt5659.yaml
-> index b0485b8..0c2f3cb 100644
-> --- a/Documentation/devicetree/bindings/sound/realtek,rt5659.yaml
-> +++ b/Documentation/devicetree/bindings/sound/realtek,rt5659.yaml
-> @@ -29,12 +29,28 @@ properties:
->      maxItems: 1
->  
->    clocks:
-> -    items:
-> -      - description: Master clock (MCLK) to the CODEC
-> +    description: |
-> +      CODEC can receive multiple clock inputs like Master
-> +      clock (MCLK), I2S bit clocks (BCLK1, BCLK2, BCLK3,
-> +      BCLK4). The CODEC SYSCLK can be generated from MCLK
-> +      or internal PLL. In turn PLL can reference from MCLK
-> +      and BCLKs.
->  
->    clock-names:
-> -    items:
-> -      - const: mclk
-> +    description: |
-> +      The clock names can be combination of following:
-> +        "mclk"        : Master clock
-> +        "pll_ref"     : Reference to CODEC PLL clock
-> +        "sysclk"      : CODEC SYSCLK
-> +        "^bclk[1-4]$" : Bit clocks to CODEC
+Dzie=C5=84 dobry,
 
-No, that does not look correct. You allow anything as clock input (even
-20 clocks, different names, any order). That's not how DT schema should
-work and that's not how hardware looks like.
+stworzyli=C5=9Bmy specjaln=C4=85 ofert=C4=99 dla firm, na kompleksow=C4=85=
+ obs=C5=82ug=C4=99 inwestycji w fotowoltaik=C4=99. =20
 
-Usually the clock inputs are always there which also you mentioned in
-description - "multiple clock inputs". All these clocks should be
-expected, unless really the wires (physical wires) can be left disconnected.
+Specjalizujemy si=C4=99 w zakresie doboru, monta=C5=BCu i serwisie instal=
+acji fotowoltaicznych, dysponujemy najnowocze=C5=9Bniejszymi rozwi=C4=85z=
+ania, kt=C3=B3re zapewni=C4=85 Pa=C5=84stwu oczekiwane rezultaty.
 
-Best regards,
-Krzysztof
+Mo=C5=BCemy przygotowa=C4=87 dla Pa=C5=84stwa wst=C4=99pn=C4=85 kalkulacj=
+=C4=99 i przeanalizowa=C4=87 efekty mo=C5=BCliwe do osi=C4=85gni=C4=99cia=
+=2E
+
+Czy s=C4=85 Pa=C5=84stwo otwarci na wst=C4=99pn=C4=85 rozmow=C4=99 w tym =
+temacie?
+
+
+Pozdrawiam
+Arkadiusz Soko=C5=82owski
