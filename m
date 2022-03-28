@@ -2,85 +2,91 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1035EC4332F
-	for <linux-tegra@archiver.kernel.org>; Mon, 28 Mar 2022 12:51:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 847D1C433F5
+	for <linux-tegra@archiver.kernel.org>; Mon, 28 Mar 2022 13:14:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242685AbiC1MxG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 28 Mar 2022 08:53:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34952 "EHLO
+        id S242997AbiC1NQL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 28 Mar 2022 09:16:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48426 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242641AbiC1Mww (ORCPT
+        with ESMTP id S234985AbiC1NQK (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 28 Mar 2022 08:52:52 -0400
-Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com [209.85.160.49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35A733ED3E;
-        Mon, 28 Mar 2022 05:51:12 -0700 (PDT)
-Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-deb9295679so7821828fac.6;
-        Mon, 28 Mar 2022 05:51:12 -0700 (PDT)
+        Mon, 28 Mar 2022 09:16:10 -0400
+Received: from mail-yb1-xb2c.google.com (mail-yb1-xb2c.google.com [IPv6:2607:f8b0:4864:20::b2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B07C51F60A
+        for <linux-tegra@vger.kernel.org>; Mon, 28 Mar 2022 06:14:29 -0700 (PDT)
+Received: by mail-yb1-xb2c.google.com with SMTP id y142so25879731ybe.11
+        for <linux-tegra@vger.kernel.org>; Mon, 28 Mar 2022 06:14:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=upE3SDU3C7PmeiFHIHw5TJWEmI++MEjL3taGlr4esD0=;
+        b=EfZv6Bq8GrxdsUN0ohm2KNMCUo5KMF5yi14/mzkINXkalQGBmEbg5JnshyBfFMwYEi
+         L0bRXIflaiMXmklQuDXjTbOQ8VVwmJ6RBp2b24Po26k/l0O3ZpHv+ejllmFxJVnuUzUI
+         lndDpXOlYS+7zcXZFG/mjgzvFX3wOdek+LgXZ20NI8aMIUztkQacHCQDLPyBdrbTfjvm
+         HqjQEbyJoGqeEvKI/nRjWCLaG2b6S289WkZL7OIHIzjUVF2eb9Z3Kcx6+BRxb6bGgaII
+         LEc/9VwrqJIbpg171Sd+Z7jfdIVILS3gDjWcd8LeECY+XO9A8THOyIvQCnm10fXhIJ+3
+         gPfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
-         :message-id;
-        bh=GP1bdWVmsBSkAlGr/Gp2UnisAPKv1M13pEpomMv6UjQ=;
-        b=34iRuX7v98YsGgMuCZcu3ahfBcnI0ZtkR1TkfhKxI7/sTdEfORIy/Tv8d6TUjcRYlB
-         QUMyeCAjjflXqRKGIdmxb0vbqlTRN3ndVnp6RK7llXPtoAJiDplhmKy5pVMranYf5pYG
-         5TF6skor1HQYgo4xnWcQyxLjiaomVvesDwYkjGeimnbr36V0MEUJZsxXta8SGdNNCu0x
-         5SwAJLPqKtbsa+dOg/g0NBlfYjWDwaWupVZv7L+UtriSNKnHjqSgaiOqoJWot8DbUpbU
-         A8IElb7XuMd5jy+BAyEIXrJ5RCWsJRYdkMKkXDxY4d74xQiOAOnA3tUIxAzxI+a4Bzmi
-         p0fA==
-X-Gm-Message-State: AOAM530e7v26vHEuO/s9fZjSwW8TuE7ODmdkesoi8DP3pSIUP8Mi7HAS
-        9NH3qzjWKnq0iPo+U3NASb6wAbrJsA==
-X-Google-Smtp-Source: ABdhPJwT3yYx6LIv4tBCmidDkpcH2xuaILIymk6sDk/mQOiMYgThNK+zceGc8kgIC3YCSqd7omS/7w==
-X-Received: by 2002:a05:6870:65ab:b0:de:37be:30a6 with SMTP id fp43-20020a05687065ab00b000de37be30a6mr14525453oab.70.1648471871476;
-        Mon, 28 Mar 2022 05:51:11 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id n15-20020aca240f000000b002da2fc73741sm6940329oic.33.2022.03.28.05.51.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Mar 2022 05:51:10 -0700 (PDT)
-Received: (nullmailer pid 2153576 invoked by uid 1000);
-        Mon, 28 Mar 2022 12:51:05 -0000
-From:   Rob Herring <robh@kernel.org>
-To:     Sameer Pujar <spujar@nvidia.com>
-Cc:     broonie@kernel.org, robh+dt@kernel.org,
-        linux-tegra@vger.kernel.org, tiwai@suse.com, krzk+dt@kernel.org,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        oder_chiou@realtek.com, linux-kernel@vger.kernel.org,
-        peter.ujfalusi@linux.intel.com,
-        pierre-louis.bossart@linux.intel.com, devicetree@vger.kernel.org,
-        alsa-devel@alsa-project.org, lgirdwood@gmail.com, perex@perex.cz
-In-Reply-To: <1648448050-15237-2-git-send-email-spujar@nvidia.com>
-References: <1648448050-15237-1-git-send-email-spujar@nvidia.com> <1648448050-15237-2-git-send-email-spujar@nvidia.com>
-Subject: Re: [RFC PATCH v2 1/6] ASoC: dt-bindings: Convert rt5659 bindings to YAML schema
-Date:   Mon, 28 Mar 2022 07:51:05 -0500
-Message-Id: <1648471865.814225.2153575.nullmailer@robh.at.kernel.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=upE3SDU3C7PmeiFHIHw5TJWEmI++MEjL3taGlr4esD0=;
+        b=J79UxZRno4hYzxlfhnS7RNvaajOjGvNo9EDGo1YNQ77+o+T/FuLkM1t/T2WU1rMmSH
+         5J3H6vC+ragcKpGSir/pd3QDfC6+BCzL0hQXc3RCGpnBP5pH3LDHgXPA04l5oiASZbm+
+         VlN2UY/jnpLXiLkdiC53Km+QoIW8gpvLFW9dtr+4UZJfbBE+yw04njEgKoJ+Ot63k8+i
+         1VkJCktFLQmv+F/jbdH8kFEiesAX0Y8s9e1jg91w70Ef6ra471Jy46Eo+19BOsgOt6Ug
+         7HY5zylnU/HRwO7b41y+JQ6OkLPL3TqRQEgL4Y3/+dckv7zuixiRC0MDIiXZcESGVRfL
+         HiAA==
+X-Gm-Message-State: AOAM531bKrKEJFlaaU3iKJWaobUB+01B5KKq1y8YCaAU7ciRW7/v2DzL
+        hxartUJFWaPwIQ6Ep1tE9N6Y7SjR4uD1weN74KV/xg==
+X-Google-Smtp-Source: ABdhPJwNqWgS6omUR48daj1YAMojuzfje+uKRUJNG5FJfnkTUr8jft6B+QSyKWFojDCzCMz8v9pllzOTRFMprgvq+A4=
+X-Received: by 2002:a25:d088:0:b0:633:b902:2d29 with SMTP id
+ h130-20020a25d088000000b00633b9022d29mr22281939ybg.626.1648473268863; Mon, 28
+ Mar 2022 06:14:28 -0700 (PDT)
+MIME-Version: 1.0
+References: <20220311043015.4027-1-pshete@nvidia.com> <YjsTCRdc3yCLZkVY@orome>
+In-Reply-To: <YjsTCRdc3yCLZkVY@orome>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Mon, 28 Mar 2022 15:14:17 +0200
+Message-ID: <CACRpkdY2E+8quTVVkCqoph-h6Ye+hEb+z+D5+2g=ArmfLpGR1A@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: tegra: Set SFIO mode to Mux Register
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Prathamesh Shete <pshete@nvidia.com>, jonathanh@nvidia.com,
+        linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, smangipudi@nvidia.com,
+        EJ Hsu <ejh@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, 28 Mar 2022 11:44:05 +0530, Sameer Pujar wrote:
-> Convert rt5659.txt DT binding to YAML schema. This binding is applicable
-> to rt5658 and rt5659 audio CODECs.
-> 
-> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
-> Cc: Oder Chiou <oder_chiou@realtek.com>
-> ---
->  .../devicetree/bindings/sound/realtek,rt5659.yaml  | 112 +++++++++++++++++++++
->  Documentation/devicetree/bindings/sound/rt5659.txt |  89 ----------------
->  2 files changed, 112 insertions(+), 89 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/sound/realtek,rt5659.yaml
->  delete mode 100644 Documentation/devicetree/bindings/sound/rt5659.txt
-> 
+On Wed, Mar 23, 2022 at 1:31 PM Thierry Reding <thierry.reding@gmail.com> wrote:
 
-Running 'make dtbs_check' with the schema in this patch gives the
-following warnings. Consider if they are expected or the schema is
-incorrect. These may not be new warnings.
+> So this is basically what tegra_pinctrl_gpio_disable_free() does. I'm
+> wondering if we need to do both, though. Are ->gpio_disable_free() and
+> ->set_mux() always called in tandem? I suspect they are not because
+> otherwise this wouldn't be needed.
+>
+> On the other hand, if ->set_mux() can be called in a code path without
+> ->gpio_disable_free() then this may be necessary to get the pin out of
+> SF mode. But that doesn't necessarily mean that the reverse is true.
+> If it isn't possible for ->gpio_disable_free() to be called in a code
+> path that doesn't have ->set_mux() then this patch would make the former
+> implementation redundant.
+>
+> That said, upon inspecting the pinmux core, I don't see a 1:1
+> correlation between the two, so this seems fine.
 
-Note that it is not yet a requirement to have 0 warnings for dtbs_check.
-This will change in the future.
+Yups that's how it works. .gpio_*() callbacks are just a shortcut
+for enabling/disabling pins into GPIO mode, some drivers
+don't even use it and rely on users to set
+up the pin mux with explicit muxing instead. So these APIs
+are orthogonal.
 
-Full log is available here: https://patchwork.ozlabs.org/patch/1610026
+I'll wait for a version of the patch with your explicit reviewed-by
+though.
 
-
-audio-codec@1a: 'port' does not match any of the regexes: 'pinctrl-[0-9]+'
-	arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dt.yaml
-
+Yours,
+Linus Walleij
