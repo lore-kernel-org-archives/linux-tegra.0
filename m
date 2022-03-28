@@ -2,160 +2,137 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CBA4C433EF
-	for <linux-tegra@archiver.kernel.org>; Mon, 28 Mar 2022 15:29:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E990C4167B
+	for <linux-tegra@archiver.kernel.org>; Mon, 28 Mar 2022 15:44:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233207AbiC1Pb2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 28 Mar 2022 11:31:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34980 "EHLO
+        id S239578AbiC1Pq0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 28 Mar 2022 11:46:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47712 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232846AbiC1Pb1 (ORCPT
+        with ESMTP id S239298AbiC1PqZ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 28 Mar 2022 11:31:27 -0400
-Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1DEE3CA4D;
-        Mon, 28 Mar 2022 08:29:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1648481386; x=1680017386;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=ujQCSh8gd9iXs63iL8zY1QPpgpG7qcOOfXmWogNz3mg=;
-  b=Z9wZRuLYX1bKRDwZG2Q6NppxZLRflAt5DYNaTyxRp+BRNQHZCb/AprW9
-   NfnEppq+sbNvQNoLfcttE/xI4VWftehq0oenlquFVIdMP8ZE0pS3/iS6O
-   NJ+zGN6+KJ9QghfKR4NFrrczFgiOoWHiC4JnUcTEH3Q1exTZFH6HDu0TI
-   MOzgoN72saB0QzP/nCmhKWkYWR+wfDKu85MqZPjdKKgdB3tTWMlD1zYZ3
-   /plDZ1jvjSXU3X/XUcMBpTDqBfqheTYd+ySPurVQG/X8u3F1zIRw9ueiO
-   T6L0MiBgKQRMxaDAZEalqfeKJBAtPQtHwcblnVf+wipwZpAlsat4dQpTc
-   A==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10300"; a="258997215"
-X-IronPort-AV: E=Sophos;i="5.90,217,1643702400"; 
-   d="scan'208";a="258997215"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Mar 2022 08:29:46 -0700
-X-IronPort-AV: E=Sophos;i="5.90,217,1643702400"; 
-   d="scan'208";a="563756053"
-Received: from gsfreema-mobl1.amr.corp.intel.com ([10.251.131.129])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Mar 2022 08:29:45 -0700
-Message-ID: <51c8d2541ccff2689b9164ab9b671b0b2514e65f.camel@linux.intel.com>
-Subject: Re: [RFC PATCH v2 4/6] ASoC: soc-pcm: tweak DPCM BE hw_param() call
- order
-From:   Ranjani Sridharan <ranjani.sridharan@linux.intel.com>
-To:     Sameer Pujar <spujar@nvidia.com>, broonie@kernel.org,
-        lgirdwood@gmail.com, robh+dt@kernel.org, krzk+dt@kernel.org,
-        perex@perex.cz, tiwai@suse.com, peter.ujfalusi@linux.intel.com,
-        pierre-louis.bossart@linux.intel.com
-Cc:     oder_chiou@realtek.com, devicetree@vger.kernel.org,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        jonathanh@nvidia.com, thierry.reding@gmail.com,
-        linux-tegra@vger.kernel.org
-Date:   Mon, 28 Mar 2022 08:29:45 -0700
-In-Reply-To: <1648448050-15237-5-git-send-email-spujar@nvidia.com>
-References: <1648448050-15237-1-git-send-email-spujar@nvidia.com>
-         <1648448050-15237-5-git-send-email-spujar@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.3-0ubuntu1 
+        Mon, 28 Mar 2022 11:46:25 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F2D04C7A2;
+        Mon, 28 Mar 2022 08:44:40 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 33DA6B81123;
+        Mon, 28 Mar 2022 15:44:39 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE5B6C004DD;
+        Mon, 28 Mar 2022 15:44:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1648482278;
+        bh=bVwuxMR1FNIryjiDvIXdi9f+NUSMKrjmUQq6FdKXor8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=I+mXUJEaHR9d0bwysioVzxtU17wrckU+sj8J+vCUMXI3+mZ5IL3NvplD9Tmqliw5b
+         VMvY8sWSdaAfTdlY3vPFcCvltz1VT6gS1PDK6Ll1d+24jIse2UPucFPT5IiPARzAmU
+         3/wBfa+2+HG5vJWxzLi5SKxBic9jcGA0pgA8D+WgLTFlFSpS5/vxq1J7ULz+V5UOop
+         0ZFRvg343SeWzE+1t92wLS7rG5gEUod4BZyzNA5mKCfJugZgfGP8fP3AOOB0BR/wxZ
+         tPbEkN3Kdm5UlBelQIZ8q+wvYyun0QmQeLGGdHSGPswXp6/G7clumKRTAks8JFqGIb
+         XMJkMggW8YULA==
+Date:   Mon, 28 Mar 2022 16:44:31 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Sameer Pujar <spujar@nvidia.com>
+Cc:     robh+dt@kernel.org, krzk+dt@kernel.org, thierry.reding@gmail.com,
+        lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com,
+        jonathanh@nvidia.com, catalin.marinas@arm.com, will@kernel.org,
+        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 2/6] ASoC: tegra: Add Tegra186 based ASRC driver
+Message-ID: <YkHX3/8BbXo4obWI@sirena.org.uk>
+References: <1648447526-14523-1-git-send-email-spujar@nvidia.com>
+ <1648447526-14523-3-git-send-email-spujar@nvidia.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="Q6kdKZClj14YwsHl"
+Content-Disposition: inline
+In-Reply-To: <1648447526-14523-3-git-send-email-spujar@nvidia.com>
+X-Cookie: What hath Bob wrought?
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, 2022-03-28 at 11:44 +0530, Sameer Pujar wrote:
-> For DPCM links, the order of hw_param() call depends on the sequence
-> of
-> BE connection to FE. It is possible that one BE link can provide
-> clock
-> to another BE link. In such cases consumer BE DAI, to get the rate
-> set
-> by provider BE DAI, can use the standard clock functions only if
-> provider
-> has already set the appropriate rate during its hw_param() stage.
-> 
-> Presently the order is fixed and does not depend on the provider and
-> consumer relationships. So the clock rates need to be known ahead of
-> hw_param() stage.
-> 
-> This patch tweaks the hw_param() order by connecting the provider BEs
-> late to a FE. With this hw_param() calls for provider BEs happen
-> first
-> and then followed by consumer BEs. The consumers can use the standard
-> clk_get_rate() function to get the rate of the clock they depend on.
-> 
-> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
-> ---
->  TODO:
->   * The FE link is not considered in this. For Tegra it is fine to
->     call hw_params() for FE at the end. But systems, which want to
-> apply
->     this tweak for FE as well, have to extend this tweak to FE.
->   * Also only DPCM is considered here. If normal links require such
->     tweak, it needs to be extended.
-> 
->  sound/soc/soc-pcm.c | 60
-> ++++++++++++++++++++++++++++++++++++++++++++++++++++-
->  1 file changed, 59 insertions(+), 1 deletion(-)
-> 
-> diff --git a/sound/soc/soc-pcm.c b/sound/soc/soc-pcm.c
-> index 9a95468..5829514 100644
-> --- a/sound/soc/soc-pcm.c
-> +++ b/sound/soc/soc-pcm.c
-> @@ -1442,6 +1442,29 @@ static int dpcm_prune_paths(struct
-> snd_soc_pcm_runtime *fe, int stream,
->  	return prune;
->  }
->  
-> +static bool defer_dpcm_be_connect(struct snd_soc_pcm_runtime *rtd)
-> +{
-> +	struct snd_soc_dai *dai;
-> +	int i;
-> +
-> +	if (!(rtd->dai_link->dai_fmt & SND_SOC_DAIFMT_FORMAT_MASK))
-> +		return false;
-Is this check necessary?
-> +
-> +	if ((rtd->dai_link->dai_fmt &
-> SND_SOC_DAIFMT_CLOCK_PROVIDER_MASK) ==
-> +	    SND_SOC_DAIFMT_CBC_CFC) {
-> +
-> +		for_each_rtd_cpu_dais(rtd, i, dai) {
-> +
-> +			if (!snd_soc_dai_is_dummy(dai))
-> +				return true;
-> +		}
-> +	}
-> +
-> +	return false;
-> +}
-> +
-> +#define MAX_CLK_PROVIDER_BE 10
-> +
->  static int dpcm_add_paths(struct snd_soc_pcm_runtime *fe, int
-> stream,
->  	struct snd_soc_dapm_widget_list **list_)
->  {
-> @@ -1449,7 +1472,8 @@ static int dpcm_add_paths(struct
-> snd_soc_pcm_runtime *fe, int stream,
->  	struct snd_soc_dapm_widget_list *list = *list_;
->  	struct snd_soc_pcm_runtime *be;
->  	struct snd_soc_dapm_widget *widget;
-> -	int i, new = 0, err;
-> +	struct snd_soc_pcm_runtime *prov[MAX_CLK_PROVIDER_BE];
-> +	int i, new = 0, err, count = 0;
->  
->  	/* Create any new FE <--> BE connections */
->  	for_each_dapm_widgets(list, i, widget) {
-> @@ -1489,6 +1513,40 @@ static int dpcm_add_paths(struct
-> snd_soc_pcm_runtime *fe, int stream,
->  		    (be->dpcm[stream].state !=
-> SND_SOC_DPCM_STATE_CLOSE))
->  			continue;
->  
-> +		/* Connect clock provider BEs at the end */
-> +		if (defer_dpcm_be_connect(be)) {
-> +			if (count >= MAX_CLK_PROVIDER_BE) {
-What determines MAX_CLK_PROVIDER_BE? why 10? Can you use rtd->num_cpus
-instead? 
-Thanks,
-Ranjani
 
+--Q6kdKZClj14YwsHl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Mon, Mar 28, 2022 at 11:35:22AM +0530, Sameer Pujar wrote:
+
+> +	regcache_cache_only(asrc->regmap, false);
+> +	regcache_sync(asrc->regmap);
+> +
+> +	/* Setup global registers */
+> +	regmap_write(asrc->regmap, TEGRA186_ASRC_GLOBAL_SOFT_RESET, 0x1);
+> +	regmap_write(asrc->regmap, TEGRA186_ASRC_GLOBAL_SCRATCH_ADDR,
+> +		     TEGRA186_ASRC_ARAM_START_ADDR);
+> +	regmap_write(asrc->regmap, TEGRA186_ASRC_GLOBAL_INT_MASK, 0x01);
+> +	regmap_write(asrc->regmap, TEGRA186_ASRC_GLOBAL_ENB,
+> +		     TEGRA186_ASRC_GLOBAL_EN);
+> +	regmap_write(asrc->regmap, TEGRA186_ASRC_GLOBAL_INT_CLEAR, 0x01);
+
+This seems weird - we resync the cache, then do a soft reset (which
+presumably desyncs the cache) and then explicitly restore a bunch of
+things (hopefully everything that was in the cached state?).  This is
+certainly very much not idiomatic and looks worrying.  Are you sure that
+the device is getting anything out of the register cache?
+
+> +static int tegra186_asrc_put_ratio_source(struct snd_kcontrol *kcontrol,
+> +					  struct snd_ctl_elem_value *ucontrol)
+> +{
+> +	struct soc_enum *asrc_private =
+> +		(struct soc_enum  *)kcontrol->private_value;
+> +	struct snd_soc_component *cmpnt = snd_soc_kcontrol_component(kcontrol);
+> +	struct tegra186_asrc *asrc = snd_soc_component_get_drvdata(cmpnt);
+> +	unsigned int id = asrc_private->reg / TEGRA186_ASRC_STREAM_STRIDE;
+> +
+> +	asrc->lane[id].ratio_source = ucontrol->value.enumerated.item[0];
+> +
+> +	regmap_update_bits(asrc->regmap, asrc_private->reg,
+> +			   TEGRA186_ASRC_STREAM_RATIO_TYPE_MASK,
+> +			   asrc->lane[id].ratio_source);
+> +
+> +	return 1;
+> +}
+
+This should only return 1 if the value actually changed, you can use
+regmap_update_bits_check() to detect the change.  Current mixer-test
+ought to spot this.
+
+> +static const struct snd_kcontrol_new tegra186_asrc_controls[] = {
+> +	/* Controls for integer part of ratio */
+> +	SOC_SINGLE_EXT("Ratio1 Integer Part",
+> +		       ASRC_STREAM_REG(TEGRA186_ASRC_RATIO_INT_PART, 0),
+> +		       0, TEGRA186_ASRC_STREAM_RATIO_INT_PART_MASK, 0,
+> +		       tegra186_asrc_get_ratio_int,
+> +		       tegra186_asrc_put_ratio_int),
+
+Can't the driver work out the ratios based on...
+
+> +	/* Source of ratio provider */
+> +	SOC_ENUM_EXT("Ratio1 Source", src_select1,
+> +		     tegra186_asrc_get_ratio_source,
+> +		     tegra186_asrc_put_ratio_source),
+
+...the sources?  Or does it need to be configured before either side is
+ready in which case this might be the best we can do for now.
+
+--Q6kdKZClj14YwsHl
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmJB194ACgkQJNaLcl1U
+h9DJPQf/TvXk6oi+ijY9O9IQ133Gu9xWGWV+7fiQYkIlAtddglEabfYOJxtLVKuV
+xgm5SIaEfWvUPj3kevurFVLxyTvAZhpI8KfamsiUlRKjlK6IkKEsfx6yhYY9tvLn
+6QDMj18+mr1VrQNDyrlFRpuV8anPmnuHmXAJBb3gM4HSxM48Dn0uQyLgxkRwL9Ke
+X/j54DAQE8SAlTMafIfz24xWmojIyEyEY6CHIVrxfYqhJGIv24fQoIgA9P+b1vMW
+NmIlXb4oJ+TveCsUJBwRiwRzV8TIqoErgLkcReVThoeIf5yMz2smnJ7QltwRb+QN
+8BxNA3n76o2Idu8GGTH3RLmDwzHjhA==
+=G6cv
+-----END PGP SIGNATURE-----
+
+--Q6kdKZClj14YwsHl--
