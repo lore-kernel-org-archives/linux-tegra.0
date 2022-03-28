@@ -2,173 +2,184 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FFB5C433FE
-	for <linux-tegra@archiver.kernel.org>; Mon, 28 Mar 2022 13:27:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDEDEC433F5
+	for <linux-tegra@archiver.kernel.org>; Mon, 28 Mar 2022 13:29:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243189AbiC1N3F (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 28 Mar 2022 09:29:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57278 "EHLO
+        id S241189AbiC1Naq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 28 Mar 2022 09:30:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33022 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243186AbiC1N25 (ORCPT
+        with ESMTP id S243240AbiC1Nap (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 28 Mar 2022 09:28:57 -0400
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8163E5E762;
-        Mon, 28 Mar 2022 06:27:16 -0700 (PDT)
-Received: by mail-ed1-x52b.google.com with SMTP id w25so16894899edi.11;
-        Mon, 28 Mar 2022 06:27:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=PJXGZlpigjTh6H9JMMa18nQ2vBOjy1Eubx2lpLSUCN4=;
-        b=P+Xah39W4u3PaDSAqPLufO5/H/K2gU2w/d2wFaGX2dVMn3ptW0NhEHGwzIdwRpRl/0
-         z1FSOdPVtx96dA5F7FeFqr/xM+E7aaBMX+Jrr4ATSqkcDJ6ByLiqoci0ikB8zblEPzRr
-         AgfVgEhpKJPDuyJpnsbMs0owuaCWieQCxknWTP5AisVim3x2oWgpvZspTe1rCjJ71yEY
-         k1XEvY3EOHeoQH9GnIpyLgDu0KacloeGCU6qlaS6y84XNz0XNDoFZ24ZhfgNJ0IJhypy
-         Itw+T2ZDe09wzSYH9OizIncV+P60OAXYspmhj2dwWHF5nT/b4EcIUOf1ZGBuS6ErOxv8
-         XOvg==
+        Mon, 28 Mar 2022 09:30:45 -0400
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D62FB5E167;
+        Mon, 28 Mar 2022 06:29:02 -0700 (PDT)
+Received: by mail-wm1-f41.google.com with SMTP id r64so8393568wmr.4;
+        Mon, 28 Mar 2022 06:29:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=PJXGZlpigjTh6H9JMMa18nQ2vBOjy1Eubx2lpLSUCN4=;
-        b=kwByqwyHsmgVDDXPEUBpuYWgXhcrIPFMA7ryqfL9ZyX5jmNIK9p/pLd10BBxV0sH/y
-         5+cayCHfcZd4B2GbB8lJamLC7vtXyKdVIUdEOTkEw/6JC/RdgiBL7UfG6Wstp4mhwvFc
-         s0cDiwH7/8dbURRbArn4WRHIb2+M6L6o4i8DI5Qo8H2g2CBpNW3OiK+1aSgpdI16dbUS
-         clgbY1izjuJ72lqaHVsWcwlZJDYDUEtryKZgYcspg1TfpwJSX7XAQy+w54jz4B7zc2wA
-         6MS+dkAQP60/sequTrK+5NC9AfCLx14j4Dv27JQAPybz5uRZEraq4P2x2m4vP7+2sZ16
-         AXfg==
-X-Gm-Message-State: AOAM531Pif7ptqV/rXgVy1sqKMokLrTxCaZqnrxa2V0Ap2A+H7zpdAhB
-        oI+38FkUwNXRJh0cQklj3ss=
-X-Google-Smtp-Source: ABdhPJzfZMouNxSUPChSrobO0DmZY1dpjyjoJXynXzykI+ox1dAeHmzyb365QAjutoruA3M7o01bCQ==
-X-Received: by 2002:a05:6402:27d0:b0:419:5184:58ae with SMTP id c16-20020a05640227d000b00419518458aemr16315076ede.314.1648474034597;
-        Mon, 28 Mar 2022 06:27:14 -0700 (PDT)
-Received: from Ansuel-xps.localdomain (93-42-69-170.ip85.fastwebnet.it. [93.42.69.170])
-        by smtp.gmail.com with ESMTPSA id y16-20020aa7d510000000b004197c1cec7dsm6986648edq.6.2022.03.28.06.27.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Mar 2022 06:27:14 -0700 (PDT)
-Date:   Mon, 28 Mar 2022 15:27:13 +0200
-From:   Ansuel Smith <ansuelsmth@gmail.com>
-To:     Jonathan =?iso-8859-1?Q?Neusch=E4fer?= <j.neuschaefer@gmx.net>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-actions@lists.infradead.org,
-        linux-sunxi@lists.linux.dev, linux-omap@vger.kernel.org,
-        linux-amlogic@lists.infradead.org, linux-arm-kernel@axis.com,
-        linux-aspeed@lists.ozlabs.org,
-        linux-rpi-kernel@lists.infradead.org,
-        chrome-platform@lists.linux.dev, linux-renesas-soc@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        kernel@dh-electronics.com, linux-mediatek@lists.infradead.org,
-        openbmc@lists.ozlabs.org, linux-tegra@vger.kernel.org,
-        linux-oxnas@groups.io, linux-arm-msm@vger.kernel.org,
-        linux-unisoc@lists.infradead.org,
-        linux-rockchip@lists.infradead.org,
-        linux-realtek-soc@lists.infradead.org
-Subject: Re: [RFC PATCH 0/1] Categorize ARM dts directory
-Message-ID: <YkG3sQ3MDhVoW8l4@Ansuel-xps.localdomain>
-References: <20220328000915.15041-1-ansuelsmth@gmail.com>
- <YkG2RPrtPaBNXb7a@latitude>
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=uLvcnNGD7orwMt3H7FvAzNbV1+jVVtO3wV/gzqZo0EQ=;
+        b=dyHP+PwLbxiYYVnxiHYNbDIWC8X79p6vkPrgpbflAwQVgIC7U881QRdLBrPekkO3EA
+         ZXqpZbE21r2rGaPJ/zebhvw33HIGV3jlrEbYsa5kiqxNCw6RIEdTkhZvfQnKuXbtbN+M
+         PX1Ti6VrlyzlTjkE9ogkDvEPCKqYMYibCGy9ZHl5iX2azy/ANM66lKsX7SskS5PKunlj
+         hECzY88l71xgbu5mos2IKUb6nYZUbzTNK4BO6Vt3rg8yhj7M0mOP8M5JkVLoqbHG4kNZ
+         S3D0TlXj9hB68YTNiBy2PcuLD8bCj6NZ5pEzvYe8QZ1vltf1U982g7wmypYbC2g7jTSd
+         q9ig==
+X-Gm-Message-State: AOAM5330+op9inXcO9vC9VJbeEpzrO9AxUOQCnp0WdL1WpimQCqDc8Z2
+        aiC/80VhwArod9aDniS80gc=
+X-Google-Smtp-Source: ABdhPJzvXxx8G3oSboQduPDY5peChv4cOygHj3HSI2yRRkfQTz9OKVkIUO7HO/NYVQC/sQZwMl+zbQ==
+X-Received: by 2002:a05:600c:2e02:b0:38c:8390:d8ca with SMTP id o2-20020a05600c2e0200b0038c8390d8camr26669786wmf.15.1648474141242;
+        Mon, 28 Mar 2022 06:29:01 -0700 (PDT)
+Received: from [192.168.0.162] (xdsl-188-155-201-27.adslplus.ch. [188.155.201.27])
+        by smtp.googlemail.com with ESMTPSA id l9-20020a5d6d89000000b00203d62072c4sm13608526wrs.43.2022.03.28.06.28.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 28 Mar 2022 06:29:00 -0700 (PDT)
+Message-ID: <a06f24af-ea9a-c787-ed09-438c019c63ca@kernel.org>
+Date:   Mon, 28 Mar 2022 15:28:59 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <YkG2RPrtPaBNXb7a@latitude>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [RFC PATCH v2 3/6] ASoC: dt-bindings: Extend clock bindings of
+ rt5659
+Content-Language: en-US
+To:     Sameer Pujar <spujar@nvidia.com>, broonie@kernel.org,
+        lgirdwood@gmail.com, robh+dt@kernel.org, krzk+dt@kernel.org,
+        perex@perex.cz, tiwai@suse.com, peter.ujfalusi@linux.intel.com,
+        pierre-louis.bossart@linux.intel.com
+Cc:     oder_chiou@realtek.com, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, alsa-devel@alsa-project.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+References: <1648448050-15237-1-git-send-email-spujar@nvidia.com>
+ <1648448050-15237-4-git-send-email-spujar@nvidia.com>
+ <da414b44-1bec-5918-84f5-9dfff2009f41@kernel.org>
+ <53d77f33-27e8-3446-d758-3e545eea2db4@nvidia.com>
+ <5e4e11b5-02b8-e03e-2924-c9f2882921be@kernel.org>
+ <fbd9cbfe-d653-d6d2-e55c-fb80527bea13@nvidia.com>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+In-Reply-To: <fbd9cbfe-d653-d6d2-e55c-fb80527bea13@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, Mar 28, 2022 at 03:21:08PM +0200, Jonathan Neuschäfer wrote:
-> On Mon, Mar 28, 2022 at 02:09:14AM +0200, Ansuel Smith wrote:
-> > Hi,
-> > as the title say, the intention of this ""series"" is to finally categorize
-> > the ARM dts directory in subdirectory for each oem.
-> [...]
-> > [1] https://gist.github.com/Ansuel/47c49925ee7ef4b1dd035afc74679ab5
-> > [2] https://gist.github.com/Ansuel/19f61f1e583c49407ce35c10e770fbe0
+On 28/03/2022 15:19, Sameer Pujar wrote:
 > 
-> Nice idea, thank you!
+> On 28-03-2022 13:37, Krzysztof Kozlowski wrote:
+>> On 28/03/2022 09:58, Sameer Pujar wrote:
+>>> On 28-03-2022 12:36, Krzysztof Kozlowski wrote:
+>>>> External email: Use caution opening links or attachments
+>>>>
+>>>>
+>>>> On 28/03/2022 08:14, Sameer Pujar wrote:
+>>>>> The rt5658 or rt5659 CODEC system clock (SYSCLK) can be derived from
+>>>>> various clock sources. For example it can be derived either from master
+>>>>> clock (MCLK) or by internal PLL. The internal PLL again can take input
+>>>>> clock references from bit clocks (BCLKs) and MCLK. To enable a flexible
+>>>>> clocking configuration the DT binding is extended here.
+>>>>>
+>>>>> It makes use of standard clock bindings and sets up the clock relation
+>>>>> via DT.
+>>>>>
+>>>>> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
+>>>>> Cc: Oder Chiou <oder_chiou@realtek.com>
+>>>>> ---
+>>>>>    .../devicetree/bindings/sound/realtek,rt5659.yaml  | 53 ++++++++++++++++++++--
+>>>>>    1 file changed, 49 insertions(+), 4 deletions(-)
+>>>>>
+>>>>> diff --git a/Documentation/devicetree/bindings/sound/realtek,rt5659.yaml b/Documentation/devicetree/bindings/sound/realtek,rt5659.yaml
+>>>>> index b0485b8..0c2f3cb 100644
+>>>>> --- a/Documentation/devicetree/bindings/sound/realtek,rt5659.yaml
+>>>>> +++ b/Documentation/devicetree/bindings/sound/realtek,rt5659.yaml
+>>>>> @@ -29,12 +29,28 @@ properties:
+>>>>>        maxItems: 1
+>>>>>
+>>>>>      clocks:
+>>>>> -    items:
+>>>>> -      - description: Master clock (MCLK) to the CODEC
+>>>>> +    description: |
+>>>>> +      CODEC can receive multiple clock inputs like Master
+>>>>> +      clock (MCLK), I2S bit clocks (BCLK1, BCLK2, BCLK3,
+>>>>> +      BCLK4). The CODEC SYSCLK can be generated from MCLK
+>>>>> +      or internal PLL. In turn PLL can reference from MCLK
+>>>>> +      and BCLKs.
+>>>>>
+>>>>>      clock-names:
+>>>>> -    items:
+>>>>> -      - const: mclk
+>>>>> +    description: |
+>>>>> +      The clock names can be combination of following:
+>>>>> +        "mclk"        : Master clock
+>>>>> +        "pll_ref"     : Reference to CODEC PLL clock
+>>>>> +        "sysclk"      : CODEC SYSCLK
+>>>>> +        "^bclk[1-4]$" : Bit clocks to CODEC
+>>>> No, that does not look correct. You allow anything as clock input (even
+>>>> 20 clocks, different names, any order). That's not how DT schema should
+>>>> work and that's not how hardware looks like.
+>>>> Usually the clock inputs are always there which also you mentioned in
+>>>> description - "multiple clock inputs". All these clocks should be
+>>>> expected, unless really the wires (physical wires) can be left disconnected.
+>>> The CODEC can receive multiple clocks but all the input clocks need not
+>>> be present or connected always. If a specific configuration is needed
+>>> and platform supports such an input, then all these inputs can be added.
+>>> I don't know how to define this detail in the schema. If I make all of
+>>> them expected, then binding check throws errors. If I were to list all
+>>> the possible combinations, the list is going to be big (not sure if this
+>>> would be OK?).
+>> Thanks for explanation. Please differentiate between these two:
+>> 1. clock inputs connected, but unused (not needed for driver or for
+>> particular use case),
+>> 2. clock inputs really not connected.
+>>
+>> For the 1. above, such clock inputs should still be listed in the
+>> bindings and DTS. For the 2. above, such clocks should actually not be
+>> there.
 > 
-> A few notes on categorization below.
+> Thank you for the suggestion.
 > 
+>> How to achieve this depends on number of your combinations. IOW,
+>> how many clocks are physically optional.
 > 
-> >  create mode 100644 arch/arm/boot/dts/broadcom/Makefile
-> >  rename arch/arm/boot/dts/{ => broadcom}/bcm-cygnus-clock.dtsi (100%)
+>  From CODEC point of view all these clock inputs are possible and a 
+> platform may choose to connect a subset of it depending on the 
+> application. The binding is expected to support all such cases. To 
+> support all possibilities, the total combinations can be very big (100+).
 > 
-> Or maybe bcm instead of broadcom. Not sure which is preferred by
-> Broadcom people.
+>> For some small number of
+>> variations this can be:
+>> oneOf:
+>>   - const: mclk
+>>   - items:
+>>     - const: mclk
+>>     - enum:
+>>         - bclk1
+>>         - bclk2
+>>         - bclk3
+>>         - bclk4
+>>   - items:
+>>     - const: mclk
+>>     - const: pll_ref
+>>     - enum:
+>>         - bclk1
+>>         - bclk2
+>>         - bclk3
+>>         - bclk4
+>>
+>> For a total flexibility that any clock input can be disconnected, this
+>> should be a list of enums I guess (with minItems). However please find
+>> the clocks always connected and include them if possible in a fixed way
+>> (like this oneOf above).
 > 
+> May be I can list the most commonly required combinations like below and 
+> extend it whenever there is a need for specific combination?
 
-In arm64 they used broadcom so i assume the full name looks correct.
+Yes, this would work. Relaxing such constraints is possible.
 
-> >  create mode 100644 arch/arm/boot/dts/dove/Makefile
-> >  rename arch/arm/boot/dts/{ => dove}/dove-cm-a510.dtsi (100%)
-> 
-> Arguably part of Marvell.
-> 
-> >  create mode 100644 arch/arm/boot/dts/edac/Makefile
-> >  rename arch/arm/boot/dts/{ => edac}/ecx-2000.dts (100%)
-> >  rename arch/arm/boot/dts/{ => edac}/ecx-common.dtsi (100%)
-> >  rename arch/arm/boot/dts/{ => edac}/highbank.dts (100%)
-> 
-> Why edac?
-> The most obvious name I can see here is calxeda.
-> 
-> >  create mode 100644 arch/arm/boot/dts/freescale/Makefile
-> 
-> Freescale has been part of NXP for a while, so it might make sense to
-> merge the freescale and nxp directories. I can't speak for
-> NXP-the-company, so that's just my view as a bystander.
-> 
-> >  create mode 100644 arch/arm/boot/dts/kirkwood/Makefile
-> 
-> The Kirkwood family should probably be sorted into Marvell.
-> 
-> >  create mode 100644 arch/arm/boot/dts/layerscape/Makefile
-> >  rename arch/arm/boot/dts/{ => layerscape}/ls1021a-moxa-uc-8410a.dts (100%)
-> >  rename arch/arm/boot/dts/{ => layerscape}/ls1021a-qds.dts (100%)
-> >  rename arch/arm/boot/dts/{ => layerscape}/ls1021a-tsn.dts (100%)
-> >  rename arch/arm/boot/dts/{ => layerscape}/ls1021a-twr.dts (100%)
-> >  rename arch/arm/boot/dts/{ => layerscape}/ls1021a.dtsi (100%)
-> 
-> The Layerscape family is part of Freescale/NXP.
-> 
-> >  create mode 120000 arch/arm/boot/dts/nxp/armv7-m.dtsi
-> 
-> armv7-m.dtsi is a bit confusing, because it contains a few devices at
-> fixed addresses, so it looks vendor-specific at a first glance into the
-> file. However, if it is actually as vendor-neutral as the name implies,
-> I think it should live dts/ directly, rather than in vendor
-> subdirectories.
->
 
-Considering it's really just 3 binding IMHO it should be just dropped
-and merged in other dtsi... But lets not extend this too much.
-This is really just a simplic link and armv7-m.dtsi is placed in dts/
-I create links in each oem that includes it to skip any changes to the
-dts.
-
-> >  rename arch/arm/boot/dts/{ => nxp}/lpc18xx.dtsi (100%)
-> 
-> Here we have the NXP LPCxxxx family, which is AFAIK unrelated to the
-> i.MX family (and thus the bulk of the Freescale legacy).
-> 
-> >  create mode 100644 arch/arm/boot/dts/vybrid/Makefile
-> 
-> Vybrid is another chip family of NXP, with a good deal of Freescale
-> legacy in it as evidenced by the "fsl," prefix in the devicetrees.
-> 
-> 
-> 
-> Thanks,
-> Jonathan
-
-Thx for the hint hope to get more comments about the dubious
-categorization about nxp and freescale.
-
--- 
-	Ansuel
+Best regards,
+Krzysztof
