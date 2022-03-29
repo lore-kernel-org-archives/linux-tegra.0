@@ -2,186 +2,262 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0269C4167B
-	for <linux-tegra@archiver.kernel.org>; Tue, 29 Mar 2022 13:27:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A675AC433F5
+	for <linux-tegra@archiver.kernel.org>; Tue, 29 Mar 2022 15:00:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234762AbiC2N3d (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 29 Mar 2022 09:29:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43398 "EHLO
+        id S238203AbiC2PCZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 29 Mar 2022 11:02:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34612 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236241AbiC2N3b (ORCPT
+        with ESMTP id S235770AbiC2PCY (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 29 Mar 2022 09:29:31 -0400
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABF851FAA02;
-        Tue, 29 Mar 2022 06:27:47 -0700 (PDT)
-Received: by mail-wm1-x333.google.com with SMTP id r64so10307023wmr.4;
-        Tue, 29 Mar 2022 06:27:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=G7wKFxgcRTyIz5IG5tUGfB7pPXreJmvY/K1sYJIVl3I=;
-        b=I00DfUbeycyG0Dw8STKxnaghIk9ou0vzsESvQVIMlrT8eVhJ76sub43aulNKFPwOcL
-         UxrZOHCljyEJ/HaDNgCUIWBpBVJkWgK72ksZvBA9QY9H26c0L2pomM05DJyeVdODJT1L
-         ZDfmiULPqoY2YzMsRX9s3BZ6fZr0wWScSEvGAiN9EQhsRv4ZtMXuYOhzvXy24lUBQ6bK
-         U212hp2O1hlrhP4Lp/BXhgcuubNm0q3C4fqZCCg6NFMcEZcjVMCujqezRMtTGXjKH7oa
-         0ZByXf7N6pXKbL6bthUbJE+CpVy+hujtl+uEEi1+0UgZK+4eW7VFAsNQ9iZNA1q+EUqB
-         EltA==
+        Tue, 29 Mar 2022 11:02:24 -0400
+Received: from mail-ot1-f41.google.com (mail-ot1-f41.google.com [209.85.210.41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9FD7D17C431;
+        Tue, 29 Mar 2022 08:00:41 -0700 (PDT)
+Received: by mail-ot1-f41.google.com with SMTP id o20-20020a9d7194000000b005cb20cf4f1bso12918648otj.7;
+        Tue, 29 Mar 2022 08:00:41 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=G7wKFxgcRTyIz5IG5tUGfB7pPXreJmvY/K1sYJIVl3I=;
-        b=ci3zHiAebBy1wPfbrr/kpTqx3K2h0o8aQB0VVGYl15zWUPsUOZLpMXJwBAS40cU+um
-         MnEPd77zbNFQlbgxrPdKJ36Am8YKVEIKGi/1PZEc7ZR24JexuFmhs7I8b7AA2D8vO1NC
-         +41GeEv5rd85at3Tyr0IKVYmUoM0PdLK3bPv7GkP2csJpKQTHF5iU4I0zP4Fwvec9BLr
-         RmSh0lJenvjjzSPIr5iI420FqhqZAQ+R8GDLjq+0Vvbq5mh9Qwn4ZjAScIFjv8EGcpYK
-         p/mfFXlMvUu1lfaQH9iGtY4KBejrfWW+LUEQGsu7nE2mAhxVoAJHLfJNmucFA5QU+vUM
-         Uvcg==
-X-Gm-Message-State: AOAM5301UfoDLv+TbhW6fQMYLZPfJq+5PeLCtuUBFwRuDp6u8EKjOSyJ
-        ZEcefdOOc0wWo1i68YDuLOA=
-X-Google-Smtp-Source: ABdhPJxIZSXxt+SSJ4Wc109LDmTnDkbhvm93ISr03t8O0S/WPjtqWVCeq9qxFzIweZuojWFD/xazLQ==
-X-Received: by 2002:a05:600c:4f82:b0:38c:9185:1ecd with SMTP id n2-20020a05600c4f8200b0038c91851ecdmr6880980wmq.130.1648560465761;
-        Tue, 29 Mar 2022 06:27:45 -0700 (PDT)
-Received: from Ansuel-xps.localdomain (93-42-66-93.ip85.fastwebnet.it. [93.42.66.93])
-        by smtp.gmail.com with ESMTPSA id 11-20020a05600c26cb00b0037ff53511f2sm2193197wmv.31.2022.03.29.06.27.43
+        bh=ATnw6PEqyAxFDklqcM0ljDLZ/jMZkSYwbsmucfTRygY=;
+        b=aZ33l3mMTBrOqfw6DCMSFq9dSSMwQKF6sgNfgiYTtf/7u+23lrpDyTDx4+af05o3fJ
+         piL5l1f40ScP8S+2dtiSqTZf79dXxUH1EiYh8pAS5tQAU2tpMGOosAyAUfTOkRJ8cwLq
+         +BdtTmDLdxqQCbWBzktw/Y2QiYsS7t56cieZqIJuZjg9OX3q+s+9ZmqtbpdK0WQRmrjB
+         zzF0WXcYjKbzXzAA93+DgEeXWWuUpjbFaxywGobqdaIXOf7ic5yCziLF13qKDfOYbFEa
+         MIQmPs/lk5ePijXOJwPATVdfKkiaOJyARHKbpkmGfo11vpdjSUg4koS8PRQVzcN+TNAI
+         EI1A==
+X-Gm-Message-State: AOAM531cH/NNCrAGgphvsToS8e8spgbspKvBtcqscdjhJS1iy9cuEOIi
+        1pSpehd2ritXX8uQylKpvg==
+X-Google-Smtp-Source: ABdhPJyNJO0gA0k/KVdjVen1vXFioSf2B/kpcozdjb4xczFxoGU93vUVOmtUWW6a5SaJpCAnXw0XyA==
+X-Received: by 2002:a05:6830:3c1:b0:5b0:3e3d:b788 with SMTP id p1-20020a05683003c100b005b03e3db788mr1260223otc.179.1648566040718;
+        Tue, 29 Mar 2022 08:00:40 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id i7-20020a9d6247000000b005cdd13c217asm5626239otk.48.2022.03.29.08.00.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Mar 2022 06:27:44 -0700 (PDT)
-Date:   Tue, 29 Mar 2022 06:56:02 +0200
-From:   Ansuel Smith <ansuelsmth@gmail.com>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-actions@lists.infradead.org,
-        linux-sunxi@lists.linux.dev, linux-omap@vger.kernel.org,
-        linux-amlogic@lists.infradead.org, linux-arm-kernel@axis.com,
-        linux-aspeed@lists.ozlabs.org,
-        linux-rpi-kernel@lists.infradead.org,
-        chrome-platform@lists.linux.dev, linux-renesas-soc@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        kernel@dh-electronics.com, linux-mediatek@lists.infradead.org,
-        openbmc@lists.ozlabs.org, linux-tegra@vger.kernel.org,
-        linux-oxnas@groups.io, linux-arm-msm@vger.kernel.org,
-        linux-unisoc@lists.infradead.org,
-        linux-rockchip@lists.infradead.org,
-        linux-realtek-soc@lists.infradead.org,
-        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
-Subject: Re: [RFC PATCH 0/1] Categorize ARM dts directory
-Message-ID: <YkKRYnN84D9VZhGj@Ansuel-xps.localdomain>
-References: <20220328000915.15041-1-ansuelsmth@gmail.com>
- <85eb14ec-f465-7447-ad77-a3dabc666f47@kernel.org>
+        Tue, 29 Mar 2022 08:00:39 -0700 (PDT)
+Received: (nullmailer pid 665655 invoked by uid 1000);
+        Tue, 29 Mar 2022 15:00:38 -0000
+Date:   Tue, 29 Mar 2022 10:00:38 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Serge Semin <Sergey.Semin@baikalelectronics.ru>
+Cc:     Jingoo Han <jingoohan1@gmail.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+        Rahul Tanwar <rtanwar@maxlinear.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Serge Semin <fancer.lancer@gmail.com>,
+        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
+        Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>,
+        Frank Li <Frank.Li@nxp.com>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH 04/16] PCI: dwc: Convert to using native IP-core versions
+ representation
+Message-ID: <YkMfFrKzz5eHPMrJ@robh.at.kernel.org>
+References: <20220324013734.18234-1-Sergey.Semin@baikalelectronics.ru>
+ <20220324013734.18234-5-Sergey.Semin@baikalelectronics.ru>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <85eb14ec-f465-7447-ad77-a3dabc666f47@kernel.org>
+In-Reply-To: <20220324013734.18234-5-Sergey.Semin@baikalelectronics.ru>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Mar 29, 2022 at 03:20:18PM +0200, Krzysztof Kozlowski wrote:
-> On 28/03/2022 02:09, Ansuel Smith wrote:
-> > Hi,
-> > as the title say, the intention of this ""series"" is to finally categorize
-> > the ARM dts directory in subdirectory for each oem.
-> > 
-> > The main reason for this is that it became unpractical to handle 2600
-> > dts files and try to even understand/edit/check the situation for a
-> > specific target.
-> > 
-> > In arm64 we already have this kind of separation and I honestly think
-> > that this was never proposed for ARM due to the fact that there are
-> > 2600+ files to sort and the fact that it will be a mess to merge this
-> > entirely but IMHO with a little bit of effort we can finally solve this
-> > problem and have a well organized directory just like arm64.
-> > 
-> > Some prerequisite on how this work was done:
-> > - This comes entirely from a python script created by me for the task.
-> >   linked here [1]
-> > - I had to manually categorize all the different arch in the makefile
-> >   based on the oem. I searched every arch on the internet trying to
-> >   understand the correct oem. I hope they are correct but I would love
-> >   some comments about them.
-> > - This current ""series"" is all squashed in one big commit to better
-> >   receive comments for this. The final version ideally would have all
-> >   changes in separate commits. The script can already do this, it's just
-> >   commented.
-> > 
-> > Here is a list of some discoveries while doing all the sorting.
-> > These are totally additional reason why we need this.
-> > 
-> > While creating the script I discovered some funny things:
-> > - We have orphan dts! There are dts that are never compiled and are
-> >   there just for reference. We would never have noticed this without this
-> >   change and probably nobody noticed it. They are currently all listed
-> >   in the python script.
-> > - We have dtsi shared across different oem. My current solution for them
-> >   is: NOT SORT THEM and leave them in the generic directory and create a
-> >   link in each oem dts that points to these dtsi. This is to try in
-> >   every way possible to skip any additional changes to the dts.
-> >   Current dtsi that suffers from this are only 3. (listed in the script)
-> > - arm64 dts and dtsi reference ARM dts. Obviously this change would cause
-> >   broken include for these special dtsi. The script creates a dependency
-> >   table of the entire arm64 directory and fix every broken dependency
-> >   (hoping they all use a sane include logic... regex is used to parse
-> >   all the different dependency)
-> > 
-> > So in short the script does the following steps:
-> > 1. Enumerate all the action to do... (dts to move, scan dependency for
-> >    the dts...)
-> > 2. Generate the arm64 dependency
-> > 3. Creates the Makefile
-> > 4. Generate the Makefiles for the current oem
-> > 5. Move all the related dts and dtsi for the current oem
-> > 6. Check broken dependency and fix them by editing the dts and writing
-> >    the correct include (or fix any symbolic link)
-> > 
-> > This is an output that describes all the things done by the script [2]
-> > 
-> > I really hope I didn't commit any logic mistake in the script but most
-> > of the work should be done.
-> > 
+On Thu, Mar 24, 2022 at 04:37:22AM +0300, Serge Semin wrote:
+> Since DWC PCIe v4.70a the controller version can be read from the
+> PORT_LOGIC.PCIE_VERSION_OFF register. Version is represented in the FourCC
+> format [1]. It's standard versioning approach for the Synopsys DWC
+> IP-cores. Moreover some of the DWC kernel drivers already make use of it
+> to fixup version-dependent functionality (See DWC USB3, Stmicro STMMAC or
+> recent DW SPI driver). In order to preserve the standard version
+> representation and prevent the data conversion back and forth, we suggest
+> to preserve the native version representation in the DWC PCIe driver too
+> in the same way as it has already been done in the rest of the DWC
+> drivers. IP-core version reading from the CSR will be introduced in the
+> next commit together with a simple macro-based API to use it.
 > 
-> +Cc Arnd and Olof,
+> [1] https://en.wikipedia.org/wiki/FourCC
 > 
-> Ansuel,
-> Thanks for you patch. Please cc the SoC maintainers in such submissions.
-> It seems that you got some quite nice discussion, but still the core
-> folks are not Cced, so no one would be able to take your patch...
->
-
-I had some problem with gmail and sending mail too much users. I put Rob
-and You and all the various list to try to workaround the "gmail spam
-protection"
-
-> I am pretty sure we were discussing such split idea in the past and it
-> did not get traction, but I cannot recall the exact discussion.
+> Signed-off-by: Serge Semin <Sergey.Semin@baikalelectronics.ru>
+> ---
+>  drivers/pci/controller/dwc/pci-keystone.c    | 12 ++++++------
+>  drivers/pci/controller/dwc/pcie-designware.c |  8 ++++----
+>  drivers/pci/controller/dwc/pcie-designware.h | 10 +++++++++-
+>  drivers/pci/controller/dwc/pcie-intel-gw.c   |  4 ++--
+>  drivers/pci/controller/dwc/pcie-tegra194.c   |  2 +-
+>  5 files changed, 22 insertions(+), 14 deletions(-)
 > 
+> diff --git a/drivers/pci/controller/dwc/pci-keystone.c b/drivers/pci/controller/dwc/pci-keystone.c
+> index 1c2ee4e13f1c..ec65355dd29b 100644
+> --- a/drivers/pci/controller/dwc/pci-keystone.c
+> +++ b/drivers/pci/controller/dwc/pci-keystone.c
+> @@ -109,7 +109,7 @@ struct ks_pcie_of_data {
+>  	enum dw_pcie_device_mode mode;
+>  	const struct dw_pcie_host_ops *host_ops;
+>  	const struct dw_pcie_ep_ops *ep_ops;
+> -	unsigned int version;
+> +	u32 version;
+>  };
+>  
+>  struct keystone_pcie {
+> @@ -1069,19 +1069,19 @@ static int ks_pcie_am654_set_mode(struct device *dev,
+>  
+>  static const struct ks_pcie_of_data ks_pcie_rc_of_data = {
+>  	.host_ops = &ks_pcie_host_ops,
+> -	.version = 0x365A,
+> +	.version = DW_PCIE_VER_365A,
+>  };
+>  
+>  static const struct ks_pcie_of_data ks_pcie_am654_rc_of_data = {
+>  	.host_ops = &ks_pcie_am654_host_ops,
+>  	.mode = DW_PCIE_RC_TYPE,
+> -	.version = 0x490A,
+> +	.version = DW_PCIE_VER_490A,
 
-I think the main issue here is how to handle bot and how problematic is
-to merge this. As written in the cover letter the final version of this
-should be a big series of 50+ patch with every commit specific to each
-oem. In theory we should be able to merge the different oem separately
-and try to at least start the categorization. 
-Another idea I got to at least have a "migration path" is to convert
-every dts in the dts/ directory to a symbolic link that target the dts
-in the correct oem. But I assume that would fix only part of the problem
-and git am will still be problematic.
+This version should be readable, so get rid of hardcoding it here.
 
-> To me the idea is good but will cause huge `git am` conflicts.
-> Cherry-picks, backports and merges should nicely detect path renames,
-> but git am (and b4 am) I think cannot.
+>  };
+>  
+>  static const struct ks_pcie_of_data ks_pcie_am654_ep_of_data = {
+>  	.ep_ops = &ks_pcie_am654_ep_ops,
+>  	.mode = DW_PCIE_EP_TYPE,
+> -	.version = 0x490A,
+> +	.version = DW_PCIE_VER_490A,
+>  };
+>  
+>  static const struct of_device_id ks_pcie_of_match[] = {
+> @@ -1114,12 +1114,12 @@ static int __init ks_pcie_probe(struct platform_device *pdev)
+>  	struct device_link **link;
+>  	struct gpio_desc *gpiod;
+>  	struct resource *res;
+> -	unsigned int version;
+>  	void __iomem *base;
+>  	u32 num_viewport;
+>  	struct phy **phy;
+>  	u32 num_lanes;
+>  	char name[10];
+> +	u32 version;
+>  	int ret;
+>  	int irq;
+>  	int i;
+> @@ -1233,7 +1233,7 @@ static int __init ks_pcie_probe(struct platform_device *pdev)
+>  		goto err_get_sync;
+>  	}
+>  
+> -	if (pci->version >= 0x480A)
+> +	if (pci->version >= DW_PCIE_VER_480A)
+>  		ret = ks_pcie_am654_set_mode(dev, mode);
+>  	else
+>  		ret = ks_pcie_set_mode(dev);
+> diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
+> index f1693e25afcb..c21373c6cb51 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware.c
+> +++ b/drivers/pci/controller/dwc/pcie-designware.c
+> @@ -289,7 +289,7 @@ static void dw_pcie_prog_outbound_atu_unroll(struct dw_pcie *pci, u8 func_no,
+>  	val = type | PCIE_ATU_FUNC_NUM(func_no);
+>  	if (upper_32_bits(limit_addr) > upper_32_bits(cpu_addr))
+>  		val |= PCIE_ATU_INCREASE_REGION_SIZE;
+> -	if (pci->version == 0x490A)
+> +	if (pci->version == DW_PCIE_VER_490A)
+>  		val = dw_pcie_enable_ecrc(val);
+>  	dw_pcie_writel_ob_unroll(pci, index, PCIE_ATU_UNR_REGION_CTRL1, val);
+>  	dw_pcie_writel_ob_unroll(pci, index, PCIE_ATU_UNR_REGION_CTRL2,
+> @@ -336,7 +336,7 @@ static void __dw_pcie_prog_outbound_atu(struct dw_pcie *pci, u8 func_no,
+>  			   upper_32_bits(cpu_addr));
+>  	dw_pcie_writel_dbi(pci, PCIE_ATU_LIMIT,
+>  			   lower_32_bits(limit_addr));
+> -	if (pci->version >= 0x460A)
+> +	if (pci->version >= DW_PCIE_VER_460A)
+>  		dw_pcie_writel_dbi(pci, PCIE_ATU_UPPER_LIMIT,
+>  				   upper_32_bits(limit_addr));
+>  	dw_pcie_writel_dbi(pci, PCIE_ATU_LOWER_TARGET,
+> @@ -345,9 +345,9 @@ static void __dw_pcie_prog_outbound_atu(struct dw_pcie *pci, u8 func_no,
+>  			   upper_32_bits(pci_addr));
+>  	val = type | PCIE_ATU_FUNC_NUM(func_no);
+>  	if (upper_32_bits(limit_addr) > upper_32_bits(cpu_addr) &&
+> -	    pci->version >= 0x460A)
+> +	    pci->version >= DW_PCIE_VER_460A)
+>  		val |= PCIE_ATU_INCREASE_REGION_SIZE;
+> -	if (pci->version == 0x490A)
+> +	if (pci->version == DW_PCIE_VER_490A)
+>  		val = dw_pcie_enable_ecrc(val);
+>  	dw_pcie_writel_dbi(pci, PCIE_ATU_CR1, val);
+>  	dw_pcie_writel_dbi(pci, PCIE_ATU_CR2, PCIE_ATU_ENABLE);
+> diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
+> index 7d6e9b7576be..5be43c662176 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware.h
+> +++ b/drivers/pci/controller/dwc/pcie-designware.h
+> @@ -20,6 +20,14 @@
+>  #include <linux/pci-epc.h>
+>  #include <linux/pci-epf.h>
+>  
+> +/* DWC PCIe IP-core versions (native support since v4.70a) */
+> +#define DW_PCIE_VER_365A		0x3336352a
+> +#define DW_PCIE_VER_460A		0x3436302a
+> +#define DW_PCIE_VER_470A		0x3437302a
+> +#define DW_PCIE_VER_480A		0x3438302a
+> +#define DW_PCIE_VER_490A		0x3439302a
+> +#define DW_PCIE_VER_520A		0x3532302a
+
+Create a macro to form these so we can do:
+
+DW_PCIE_VER('5', '2', '0', 'A')
+
+> +
+>  /* Parameters for the waiting for link up routine */
+>  #define LINK_WAIT_MAX_RETRIES		10
+>  #define LINK_WAIT_USLEEP_MIN		90000
+> @@ -269,7 +277,7 @@ struct dw_pcie {
+>  	struct pcie_port	pp;
+>  	struct dw_pcie_ep	ep;
+>  	const struct dw_pcie_ops *ops;
+> -	unsigned int		version;
+> +	u32			version;
+>  	int			num_lanes;
+>  	int			link_gen;
+>  	u8			n_fts[2];
+> diff --git a/drivers/pci/controller/dwc/pcie-intel-gw.c b/drivers/pci/controller/dwc/pcie-intel-gw.c
+> index 5ba144924ff8..786af2ba379f 100644
+> --- a/drivers/pci/controller/dwc/pcie-intel-gw.c
+> +++ b/drivers/pci/controller/dwc/pcie-intel-gw.c
+> @@ -59,7 +59,7 @@
+>  #define RESET_INTERVAL_MS		100
+>  
+>  struct intel_pcie_soc {
+> -	unsigned int	pcie_ver;
+> +	u32	pcie_ver;
+>  };
+>  
+>  struct intel_pcie {
+> @@ -395,7 +395,7 @@ static const struct dw_pcie_host_ops intel_pcie_dw_ops = {
+>  };
+>  
+>  static const struct intel_pcie_soc pcie_data = {
+> -	.pcie_ver =		0x520A,
+> +	.pcie_ver =		DW_PCIE_VER_520A,
+>  };
+>  
+>  static int intel_pcie_probe(struct platform_device *pdev)
+> diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
+> index b1b5f836a806..6f1330ed63e5 100644
+> --- a/drivers/pci/controller/dwc/pcie-tegra194.c
+> +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
+> @@ -1981,7 +1981,7 @@ static int tegra194_pcie_probe(struct platform_device *pdev)
+>  	pci->ops = &tegra_dw_pcie_ops;
+>  	pci->n_fts[0] = N_FTS_VAL;
+>  	pci->n_fts[1] = FTS_VAL;
+> -	pci->version = 0x490A;
+> +	pci->version = DW_PCIE_VER_490A;
+>  
+>  	pp = &pci->pp;
+>  	pp->num_vectors = MAX_MSI_IRQS;
+> -- 
+> 2.35.1
 > 
-
-I know but we should really consider this kind of change. The current
-state of the dts/ directory is embarassing and keeping it that way cause
-only more problems and makes this even more difficult.
-Hope we find a solution and fix this for good!
-
-> Best regards,
-> Krzysztof
-
--- 
-	Ansuel
