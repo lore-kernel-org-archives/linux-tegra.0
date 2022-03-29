@@ -2,39 +2,39 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 587B1C433F5
-	for <linux-tegra@archiver.kernel.org>; Tue, 29 Mar 2022 23:48:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0164C43217
+	for <linux-tegra@archiver.kernel.org>; Tue, 29 Mar 2022 23:52:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240975AbiC2XuF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 29 Mar 2022 19:50:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59820 "EHLO
+        id S241330AbiC2Xx5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 29 Mar 2022 19:53:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46274 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240992AbiC2XuC (ORCPT
+        with ESMTP id S241307AbiC2Xxl (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 29 Mar 2022 19:50:02 -0400
+        Tue, 29 Mar 2022 19:53:41 -0400
 Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3431E9BBB6;
-        Tue, 29 Mar 2022 16:48:16 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3D2622321A;
+        Tue, 29 Mar 2022 16:51:48 -0700 (PDT)
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: dmitry.osipenko)
-        with ESMTPSA id EC0281F40F3A
+        with ESMTPSA id 6ED681F4422B
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1648597694;
-        bh=5RCxnQpK5I7Y2zWLKGLxBiVPTh/yCn+uO0KyYdxQQQ8=;
+        s=mail; t=1648597907;
+        bh=et/XZn08cRQRjlbxlsEMHOWSiI9trad+rRAwptS/tho=;
         h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=a9w3F/vzA0sFlOCcLd85ycKnYywA+CP5LeOCfthZ1gDdaKR6rF7wb+pGb1w3Lzsxb
-         8sKZMKFgzrGhqWiKyZhCBP7uOCaZF2rASpfVv1lDWpm/C6Xt7K67TGxiMUSg6S+/he
-         PK40aipOdT3Am2PfAWvr/S08mVe9IdvC++qY7+BIm/X12tiJMw6OB/8oo7mM9H0cB8
-         /4+gpdn+u+thh9lB0dL8yVtGxPULDQDas6PMYX53E5B4ZV6nBFBxbiaP0ygVJ9Vvx8
-         xXAcf1mdKKJGAbgf+K4GQw+GjQ+yMA46G0hGGJoeI0furZEDcXIJNvh9CWQMRe19+w
-         UF73voLivci6A==
-Message-ID: <22eb6b37-3bcd-71ab-f99f-dc059043b56b@collabora.com>
-Date:   Wed, 30 Mar 2022 02:48:11 +0300
+        b=eU/CXz4oCKEM4/AAl48PB10SdUxcEOaB3Blt+zaWn43GTSWZJrgDJ8Ybev+Blw9Tv
+         IT92GcGSNbrHHuAYrrXJz8AMihjNPjUbWhEvGrhP8IA3sQSQXoIfykLEPPiDaGdW26
+         O/pR1/c8HSh8NGHxPi5s33YDLQniat0vBgAsfJoZk6pQi9qCEsalSag5lKUFfT9p6u
+         qqiv2XAnhdKHMAPNgvcrn45clwjCCtd+0N9GtdTeC+pj2gvFa67dJPf3cnyr7OmVVw
+         hMSS+WBHsd90sFoqVzrWJtAlhX8+phvoQu7GPqIlZGXpjNB5ISerbaZNWO3yK59M0s
+         T55aaXozmguDA==
+Message-ID: <dacf1be8-f20c-de41-5ae5-9dba5e351881@collabora.com>
+Date:   Wed, 30 Mar 2022 02:51:43 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.7.0
-Subject: Re: [Patch v5 1/4] memory: tegra: Add memory controller channels
- support
+Subject: Re: [Patch v5 2/4] memory: tegra: Add MC error logging on tegra186
+ onward
 Content-Language: en-US
 To:     Ashish Mhetre <amhetre@nvidia.com>,
         Dmitry Osipenko <digetx@gmail.com>,
@@ -44,129 +44,55 @@ To:     Ashish Mhetre <amhetre@nvidia.com>,
         linux-tegra@vger.kernel.org
 Cc:     vdumpa@nvidia.com, Snikam@nvidia.com
 References: <20220316092525.4554-1-amhetre@nvidia.com>
- <20220316092525.4554-2-amhetre@nvidia.com>
- <83bc4c12-13e3-d239-3845-a3541b1fbb2a@gmail.com>
- <981610f0-374a-b18f-8e3a-445b20edb257@nvidia.com>
+ <20220316092525.4554-3-amhetre@nvidia.com>
+ <168cf065-bc17-1ffc-8cc0-75775c7f3bcb@gmail.com>
+ <ecdc86b4-c207-de89-a094-6923a5573ac6@nvidia.com>
 From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
-In-Reply-To: <981610f0-374a-b18f-8e3a-445b20edb257@nvidia.com>
+In-Reply-To: <ecdc86b4-c207-de89-a094-6923a5573ac6@nvidia.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 3/25/22 07:50, Ashish Mhetre wrote:
+On 3/22/22 20:23, Ashish Mhetre wrote:
 > 
 > 
-> On 3/19/2022 9:12 PM, Dmitry Osipenko wrote:
+> On 3/19/2022 9:29 PM, Dmitry Osipenko wrote:
 >> External email: Use caution opening links or attachments
 >>
 >>
 >> 16.03.2022 12:25, Ashish Mhetre пишет:
->>>  From tegra186 onwards, memory controller support multiple channels.
->>> Add support for mapping address spaces of these channels.
->>> Make sure that number of channels are as expected on each SOC.
->>> During error interrupts from memory controller, appropriate registers
->>> from these channels need to be accessed for logging error info.
+>>> diff --git a/include/soc/tegra/mc.h b/include/soc/tegra/mc.h
+>>> index 92f810c55b43..6f115436e344 100644
+>>> --- a/include/soc/tegra/mc.h
+>>> +++ b/include/soc/tegra/mc.h
+>>> @@ -203,6 +203,8 @@ struct tegra_mc_soc {
+>>>        const struct tegra_smmu_soc *smmu;
 >>>
->>> Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
->>> ---
->>>   drivers/memory/tegra/mc.c       |  6 ++++
->>>   drivers/memory/tegra/tegra186.c | 52 +++++++++++++++++++++++++++++++++
->>>   drivers/memory/tegra/tegra194.c |  1 +
->>>   drivers/memory/tegra/tegra234.c |  1 +
->>>   include/soc/tegra/mc.h          |  7 +++++
->>>   5 files changed, 67 insertions(+)
->>>
->>> diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
->>> index bf3abb6d8354..3cda1d9ad32a 100644
->>> --- a/drivers/memory/tegra/mc.c
->>> +++ b/drivers/memory/tegra/mc.c
->>> @@ -749,6 +749,12 @@ static int tegra_mc_probe(struct platform_device
->>> *pdev)
->>>        if (IS_ERR(mc->regs))
->>>                return PTR_ERR(mc->regs);
->>>
->>> +     if (mc->soc->ops && mc->soc->ops->map_regs) {
->>> +             err = mc->soc->ops->map_regs(mc, pdev);
->>> +             if (err < 0)
->>> +                     return err;
->>> +     }
->>> +
->>>        mc->debugfs.root = debugfs_create_dir("mc", NULL);
->>>
->>>        if (mc->soc->ops && mc->soc->ops->probe) {
->>> diff --git a/drivers/memory/tegra/tegra186.c
->>> b/drivers/memory/tegra/tegra186.c
->>> index 3d153881abc1..a8a45e6ff1f1 100644
->>> --- a/drivers/memory/tegra/tegra186.c
->>> +++ b/drivers/memory/tegra/tegra186.c
->>> @@ -139,11 +139,62 @@ static int tegra186_mc_probe_device(struct
->>> tegra_mc *mc, struct device *dev)
->>>        return 0;
->>>   }
->>>
->>> +static int tegra186_mc_map_regs(struct tegra_mc *mc,
->>> +                             struct platform_device *pdev)
->>> +{
->>> +     struct device_node *np = pdev->dev.parent->of_node;
->>> +     int num_dt_channels, reg_cells = 0;
->>> +     struct resource *res;
->>> +     int i, ret;
->>> +     u32 val;
->>> +
->>> +     ret = of_property_read_u32(np, "#address-cells", &val);
->>> +     if (ret) {
->>> +             dev_err(&pdev->dev, "missing #address-cells property\n");
->>> +             return ret;
->>> +     }
->>> +
->>> +     reg_cells = val;
->>> +
->>> +     ret = of_property_read_u32(np, "#size-cells", &val);
->>> +     if (ret) {
->>> +             dev_err(&pdev->dev, "missing #size-cells property\n");
->>> +             return ret;
->>> +     }
->>> +
->>> +     reg_cells += val;
->>> +
->>> +     num_dt_channels =
->>> of_property_count_elems_of_size(pdev->dev.of_node, "reg",
->>> +                                                       reg_cells *
->>> sizeof(u32));
->>> +     /*
->>> +      * On tegra186 onwards, memory controller support multiple
->>> channels.
->>> +      * Apart from regular memory controller channels, there is one
->>> broadcast
->>> +      * channel and one for stream-id registers.
->>> +      */
->>> +     if (num_dt_channels < mc->soc->num_channels + 2) {
->>> +             dev_warn(&pdev->dev, "MC channels are missing, please
->>> update\n");
+>>>        u32 intmask;
+>>> +     u32 int_channel_mask;
 >>
->> Update what?
+>> ch_intmask
 >>
->>> +             return 0;
->>> +     }
+> Okay, I will update,
+> 
+>>> +     bool has_addr_hi_reg;
+>>>
+>>>        const struct tegra_mc_reset_ops *reset_ops;
+>>>        const struct tegra_mc_reset *resets;
+>>> @@ -210,6 +212,8 @@ struct tegra_mc_soc {
+>>>
+>>>        const struct tegra_mc_icc_ops *icc_ops;
+>>>        const struct tegra_mc_ops *ops;
 >>> +
->>> +     mc->mcb_regs = devm_platform_get_and_ioremap_resource(pdev, 1,
->>> &res);
+>>> +     int (*get_int_channel)(const struct tegra_mc *mc, int
+>>> *mc_channel);
 >>
->> Can't we name each reg bank individually in the DT and then use
->> devm_platform_ioremap_resource_byname()?
->>
-> That can be done but I think current logic will be better as we can
-> simply ioremap them by running in loop and assigning the mc_regs array.
-> Otherwise there will be like 17 ioremap_byname() individual calls for
-> Tegra194 and Tegra234.
-> Will it be fine having that many ioremap_byname() calls?
-> Also, Tegra186 has 5 channels which are less than Tegra194 and Tegra234.
-> If we go with ioremap_byname() then we'll have to differentiate number
-> of ioremap_byname() calls.
-for (i = 0; i < mc->soc->num_channels; i++) {
-	sprintf(name, "mc%u", i);
-	err = devm_platform_ioremap_resource_byname(dev, name);
-	...
-}
+>> This should be a part of tegra_mc_ops.
+> 
+> tegra_mc_ops is common for T186, T194 and T234 i.e. all of them use
+> tegra186_mc_ops. get_int_channel function has to be differently
+> implemented for all of these SOCs. So I had put it in tegra_mc_soc.
+
+Then tegra_mc_ops shouldn't be common anymore?
