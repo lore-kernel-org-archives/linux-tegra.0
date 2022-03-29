@@ -2,99 +2,166 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADE99C433EF
-	for <linux-tegra@archiver.kernel.org>; Tue, 29 Mar 2022 11:31:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB190C433EF
+	for <linux-tegra@archiver.kernel.org>; Tue, 29 Mar 2022 13:16:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233746AbiC2Lcs (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 29 Mar 2022 07:32:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52726 "EHLO
+        id S237170AbiC2NSd (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 29 Mar 2022 09:18:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57914 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232299AbiC2Lcs (ORCPT
+        with ESMTP id S234581AbiC2NSd (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 29 Mar 2022 07:32:48 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9D7F249896;
-        Tue, 29 Mar 2022 04:31:04 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 7C6F36134B;
-        Tue, 29 Mar 2022 11:31:04 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA21AC34110;
-        Tue, 29 Mar 2022 11:31:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1648553463;
-        bh=8IHBVA335z9+DxgSxrKjPerzpnuiiqAmIHJNv8kPlSA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ZoDhW9pWmYzO+WzHTZU6h9Ok7BIRygXS8CudgpT71Js+3AMoH6VpCVc8WvaPOA2JK
-         qmjac818e0PUO6WhvFmNDP23JPWHAIiGEqZOX65jxllqSjRAByDImGWjTgrEx9ymTC
-         F3pY3fhvrYyUuIKh9k+vSvIRky2HM7Hlo7a4EO00Q3MhZVI4jwHDicX1t6tFdse9OY
-         szBgb5laDXTdZDUrSHtFBpmOcBaS9hBqiURtywywJ60ITAYjfRW6m7HcYkoiJHPMtE
-         Rk1z5aBRMXqSh+Fb8Y8LRiz1BlvtyedctdsMR56CscAu59+rtsmFZAXCijMZIVqvdb
-         wmfKt3c2OvrvQ==
-Date:   Tue, 29 Mar 2022 12:30:57 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Sameer Pujar <spujar@nvidia.com>
-Cc:     robh+dt@kernel.org, krzk+dt@kernel.org, thierry.reding@gmail.com,
-        lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com,
-        jonathanh@nvidia.com, catalin.marinas@arm.com, will@kernel.org,
-        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 2/6] ASoC: tegra: Add Tegra186 based ASRC driver
-Message-ID: <YkLt8U5MnG+0gFxl@sirena.org.uk>
-References: <1648447526-14523-1-git-send-email-spujar@nvidia.com>
- <1648447526-14523-3-git-send-email-spujar@nvidia.com>
- <YkHX3/8BbXo4obWI@sirena.org.uk>
- <4e8bd876-48ed-8fd8-7b7b-989b45b54f1e@nvidia.com>
+        Tue, 29 Mar 2022 09:18:33 -0400
+Received: from mail-pg1-x531.google.com (mail-pg1-x531.google.com [IPv6:2607:f8b0:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C588A639B;
+        Tue, 29 Mar 2022 06:16:47 -0700 (PDT)
+Received: by mail-pg1-x531.google.com with SMTP id z128so14781290pgz.2;
+        Tue, 29 Mar 2022 06:16:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :references:from:in-reply-to:content-transfer-encoding;
+        bh=w3815+MGXaDijvWMYtqcYwozP7wYjHgBU5ZGj2ffCo4=;
+        b=fCJ6lzlVxTfVgqckkBqb1S/nzl583ie/5M/JHaHBfoHc7by/n3+u6k/2uLuhJLX9kz
+         LoYV8tw4CbW3gC0Mtsb8bSIqTaVWZ2lmdR91CGnXpYlysrL7q5o+W+kCLKV7hVIQxfSN
+         4u45i720kDEBKzlXLZJ68/DJGmNfR9cYax+DosToVi7LFXoeW+otnOZ7lOul7yUgC/El
+         DN56g8OmHth+8F6zsnpr+a0+GE5msp7tQiw6r2HaFCn3WA4Jq/NxiL5M7AXP8DfHgtIT
+         oMLZpUOd6JUoBNj858rV7JFL5xcuLF4oaUhW1rXbl4BpjHGZ1V3+Gq35LgxMDpe2x4di
+         Ei3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=w3815+MGXaDijvWMYtqcYwozP7wYjHgBU5ZGj2ffCo4=;
+        b=LiyMGyFokLzHc/sAMSqEyzJ+q04K2ezByfTQuIfbwxLc+j0qM3ByeFHTl04tYoQigG
+         7mZMe9OKIjt0F4F/g/818e1gTMmGfaktTg/Hs9cR7oj29RD0/cTii6stAEeEHoidXmy3
+         3Ad0nBes7FJ3tMNDbOEAiaDaq0TR4f6Bxxr1siQJqNnJAJpCSguTLQTL9ezlr4ryUsfz
+         zAd3HFERMddZ6fzr1ivKq+XTy+IAUYELTsE/TVzg8Buu7y6TSgtfbM4m/UOK32RcX7lP
+         aAXj18wmjsxlw+LZkEsMbDgG59+tN6KNWnD4FJjKZWDUK986O1V8GvVsazPqrT6H0xHr
+         itAQ==
+X-Gm-Message-State: AOAM532HVkcqYRRWH4VvzWZn0ij5wHGzgFYYXmCIuvVtM/fJEmRzomZk
+        MJnoY9T3wHLQZJ/pNSHArzo=
+X-Google-Smtp-Source: ABdhPJwj/kTm0nl1gtMSWtdIMVETbuj+vIm8n6hboEbzzsDKKNVmImwLB0nynmcYk2YzKzlK7Q4Q6Q==
+X-Received: by 2002:a05:6a00:2408:b0:4f7:a8cb:9b63 with SMTP id z8-20020a056a00240800b004f7a8cb9b63mr27846870pfh.33.1648559807221;
+        Tue, 29 Mar 2022 06:16:47 -0700 (PDT)
+Received: from [192.168.43.80] (subs02-180-214-232-29.three.co.id. [180.214.232.29])
+        by smtp.gmail.com with ESMTPSA id j16-20020a63e750000000b00373598b8cbfsm15932192pgk.74.2022.03.29.06.16.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 29 Mar 2022 06:16:46 -0700 (PDT)
+Message-ID: <db81d120-039d-f49f-9a48-c91e96777a61@gmail.com>
+Date:   Tue, 29 Mar 2022 20:16:42 +0700
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="V7EwDDVgYNffjf6e"
-Content-Disposition: inline
-In-Reply-To: <4e8bd876-48ed-8fd8-7b7b-989b45b54f1e@nvidia.com>
-X-Cookie: Available while quantities last.
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [PATCH v5 01/11] Documentation: Add HTE subsystem guide
+Content-Language: en-US
+To:     Dipen Patel <dipenp@nvidia.com>, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, smangipudi@nvidia.com,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linus.walleij@linaro.org,
+        bgolaszewski@baylibre.com, warthog618@gmail.com,
+        devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
+        robh+dt@kernel.org
+References: <20220329054521.14420-1-dipenp@nvidia.com>
+ <20220329054521.14420-2-dipenp@nvidia.com>
+From:   Bagas Sanjaya <bagasdotme@gmail.com>
+In-Reply-To: <20220329054521.14420-2-dipenp@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On 29/03/22 12.45, Dipen Patel wrote:
+> +============================================
+> +The Linux Hardware Timestamping Engine (HTE)
+> +============================================
+> +
+> +:Author: Dipen Patel
+> +
 
---V7EwDDVgYNffjf6e
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Please learn how to convey semantics with rst format, see further comments
+below.
 
-On Tue, Mar 29, 2022 at 02:02:34PM +0530, Sameer Pujar wrote:
-> On 28-03-2022 21:14, Mark Brown wrote:
-> > On Mon, Mar 28, 2022 at 11:35:22AM +0530, Sameer Pujar wrote:
+> +This document describes the API that can be used by hardware timestamping
+> +engine provider and consumer drivers that want to use the hardware timestamping
+> +engine (HTE) framework. Both consumers and providers must include
+> +#include <linux/hte.h>.
+> +
 
-> > > +	/* Source of ratio provider */
-> > > +	SOC_ENUM_EXT("Ratio1 Source", src_select1,
-> > > +		     tegra186_asrc_get_ratio_source,
-> > > +		     tegra186_asrc_put_ratio_source),
+Maybe it's better to write as `... providers must ``#include <linux/hte.h>```.
 
-> > ...the sources?  Or does it need to be configured before either side is
-> > ready in which case this might be the best we can do for now.
+> +The HTE framework APIs for the providers
+> +----------------------------------------
+> +
+> +.. kernel-doc:: drivers/hte/hte.c
+> +   :functions: devm_hte_register_chip hte_push_ts_ns
+> +
+> +The HTE framework APIs for the consumers
+> +----------------------------------------
+> +
+> +.. kernel-doc:: drivers/hte/hte.c
+> +   :functions: devm_of_hte_request_ts_ns hte_req_ts_by_linedata_ns hte_release_ts hte_enable_ts hte_disable_ts hte_get_clk_src_info
+> +
+> +The HTE framework public structures
+> +-----------------------------------
+> +.. kernel-doc:: include/linux/hte.h
+> +
+> +More on the HTE timestamp data
+> +------------------------------
+> +The struct hte_ts_data is used to pass timestamp details between the consumers
+> +and the providers. It expresses timestamp data in nanoseconds in u64 data
+> +type. For now all the HTE APIs using struct hte_ts_data require tsc to be in
+> +nanoseconds. An example of the typical hte_ts_data data life cycle, for the
+> +GPIO line is as follows::
+> +
 
-> The ratio needs to be updated before start of the stream and this
-> programming via controls is required only when the ratio source is SW.
-> When ratio detector module is used (support is not yet added), the
-> ratio is automatically updated by HW.
+When we talk about name terms found in actual code (like keywords or variable
+names), it is customary to enclose them inside inline code (for example,
+``struct what`` or ``u64 what``).
 
-OK, that's not ideal but should be fine for now.  Ideally we'd have the
-rate detector support introduced in the same release.
+> + - Monitors GPIO line change.
+> + - Detects the state change on GPIO line.
+> + - Converts timestamps in nanoseconds and stores it in tsc.
+> + - Stores GPIO raw level in raw_level variable if the provider has that
+> + hardware capability.
+> + - Pushes this hte_ts_data object to HTE subsystem.
+> + - HTE subsystem increments seq counter and invokes consumer provided callback.
+> + Based on callback return value, the HTE core invokes secondary callback in
+> + the thread context.
+> +
+> +HTE subsystem debugfs attributes
+> +--------------------------------
+> +HTE subsystem creates debugfs attributes at ``/sys/kernel/debug/hte/``.
+> +It also creates line/signal-related debugfs attributes at
+> +``/sys/kernel/debug/hte/<provider>/<label or line id>/``.
+> +
+> +`ts_requested`
+> +		The total number of entities requested from the given provider,
+> +		where entity is specified by the provider and could represent
+> +		lines, GPIO, chip signals, buses etc...
+> +                The attribute will be available at
+> +		``/sys/kernel/debug/hte/<provider>/``.
+> +
+> +		Read-only value
+> +
+> +`total_ts`
+> +		The total number of entities supported by the provider.
+> +                The attribute will be available at
+> +		``/sys/kernel/debug/hte/<provider>/``.
+> +
+> +		Read-only value
+> +
+> +`dropped_timestamps`
+> +		The dropped timestamps for a given line.
+> +                The attribute will be available at
+> +		``/sys/kernel/debug/hte/<provider>/<label or line id>/``.
+> +
+> +		Read-only value
 
---V7EwDDVgYNffjf6e
-Content-Type: application/pgp-signature; name="signature.asc"
+Since all these debugfs variables are read-only, we can say "Note that all
+these values are read-only".
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmJC7fAACgkQJNaLcl1U
-h9ANSAf+IOqA/07bEMbKWE9/DpOYo8OUux8tdLQWz4Ll7egQt8NHkvEo388AqOTH
-t/y6I6zjXwXkALN/IguSFatfz11OkdNuL454wozODL795TEtdJQKTbPuTIM+NGWZ
-i4tqNr/nXk9jWWBeeSK7esZIS+a3c/W6e2b54XH1+P7nCYAJoMNW0RtKWIvXWBa/
-lzZACNRH6kojanb4bC/BZMIuOVoqOWxFWC5j6dVdO24Z0OWHkPZ11FN+8dp+f3nY
-YkvXv2WyEsg2syC6OzZVBn/BQcWgc3p+Yks54AEsNyUdHfyefggOAQ/R3Rj4oZp/
-njbYdmDQ1gNUsMD9M3IX0xhoEGkbtQ==
-=dnPU
------END PGP SIGNATURE-----
-
---V7EwDDVgYNffjf6e--
+-- 
+An old man doll... just what I always wanted! - Clara
